@@ -2,6 +2,9 @@
 # Quick commands for common development tasks
 # Install just: https://github.com/casey/just
 
+# Use sh shell for all commands (works on Windows Git Bash, WSL, and Unix)
+set shell := ["sh", "-cu"]
+
 # List all available commands
 default:
     @just --list
@@ -24,7 +27,7 @@ run-fresh:
 # Run all tests
 test:
     @echo "Running all tests..."
-    make test
+    go test ./...
 
 # Run tests with verbose output
 test-verbose:
