@@ -219,11 +219,11 @@ func (u *UserRecord) GrantXP(amt int, source string) {
 
 			levelUpEvent.LevelsGained += 1
 			levelUpEvent.StatsDelta.Strength.Value += statsDelta.Strength.Value
-			levelUpEvent.StatsDelta.Speed.Value += statsDelta.Speed.Value
-			levelUpEvent.StatsDelta.Smarts.Value += statsDelta.Smarts.Value
-			levelUpEvent.StatsDelta.Vitality.Value += statsDelta.Vitality.Value
-			levelUpEvent.StatsDelta.Mysticism.Value += statsDelta.Mysticism.Value
+			levelUpEvent.StatsDelta.Dexterity.Value += statsDelta.Dexterity.Value
 			levelUpEvent.StatsDelta.Perception.Value += statsDelta.Perception.Value
+			levelUpEvent.StatsDelta.Vitality.Value += statsDelta.Vitality.Value
+			levelUpEvent.StatsDelta.Willpower.Value += statsDelta.Willpower.Value
+			levelUpEvent.StatsDelta.Charisma.Value += statsDelta.Charisma.Value
 
 			levelUpEvent.TrainingPoints += 1
 			levelUpEvent.StatPoints += 1

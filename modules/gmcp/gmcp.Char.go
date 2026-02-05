@@ -476,11 +476,11 @@ func (g *GMCPCharModule) GetCharNode(user *users.UserRecord, gmcpModule string) 
 
 		payload.Stats = &GMCPCharModule_Payload_Stats{
 			Strength:   user.Character.Stats.Strength.ValueAdj,
-			Speed:      user.Character.Stats.Speed.ValueAdj,
-			Smarts:     user.Character.Stats.Smarts.ValueAdj,
-			Vitality:   user.Character.Stats.Vitality.ValueAdj,
-			Mysticism:  user.Character.Stats.Mysticism.ValueAdj,
+			Dexterity:  user.Character.Stats.Dexterity.ValueAdj,
 			Perception: user.Character.Stats.Perception.ValueAdj,
+			Vitality:   user.Character.Stats.Vitality.ValueAdj,
+			Willpower:  user.Character.Stats.Willpower.ValueAdj,
+			Charisma:   user.Character.Stats.Charisma.ValueAdj,
 		}
 
 		if !all {
@@ -751,11 +751,11 @@ func newInventory_Item(itm items.Item) GMCPCharModule_Payload_Inventory_Item {
 // /////////////////
 type GMCPCharModule_Payload_Stats struct {
 	Strength   int `json:"strength,omitempty"`
-	Speed      int `json:"speed,omitempty"`
-	Smarts     int `json:"smarts,omitempty"`
-	Vitality   int `json:"vitality,omitempty"`
-	Mysticism  int `json:"mysticism,omitempty"`
+	Dexterity  int `json:"dexterity,omitempty"`
 	Perception int `json:"perception,omitempty"`
+	Vitality   int `json:"vitality,omitempty"`
+	Willpower  int `json:"willpower,omitempty"`
+	Charisma   int `json:"charisma,omitempty"`
 }
 
 // /////////////////

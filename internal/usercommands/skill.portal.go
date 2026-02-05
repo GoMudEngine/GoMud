@@ -69,7 +69,7 @@ func Portal(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		}
 	}
 
-	portalLifeInSeconds := user.Character.Stats.Mysticism.ValueAdj * 10 // 0 mysticism = 30 seconds, 100 mysticism = 1030 seconds
+	portalLifeInSeconds := user.Character.Stats.Willpower.ValueAdj * 10 // 0 willpower = 60 seconds, 100 willpower = 1060 seconds
 	if portalLifeInSeconds < 0 {
 		portalLifeInSeconds = 0
 	}

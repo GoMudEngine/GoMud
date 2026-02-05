@@ -223,7 +223,7 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 
 	attackResult := AttackResult{}
 
-	attackCount := int(math.Ceil(float64(sourceChar.Stats.Speed.ValueAdj-targetChar.Stats.Speed.ValueAdj) / 25))
+	attackCount := int(math.Ceil(float64(sourceChar.Stats.Dexterity.ValueAdj-targetChar.Stats.Dexterity.ValueAdj) / 25))
 	if attackCount < 1 {
 		attackCount = 1
 	}
@@ -352,7 +352,7 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				attackSourceDamage := 0
 				attackSourceReduction := 0
 
-				if Hits(sourceChar.Stats.Speed.ValueAdj, targetChar.Stats.Speed.ValueAdj, penalty) {
+				if Hits(sourceChar.Stats.Dexterity.ValueAdj, targetChar.Stats.Dexterity.ValueAdj, penalty) {
 					attackResult.Hit = true
 					attackTargetDamage = util.RollDice(dCount, dSides) + dBonus
 
@@ -580,7 +580,7 @@ func Crits(sourceChar characters.Character, targetChar characters.Character) boo
 	if levelDiff < 1 {
 		levelDiff = 1
 	}
-	critChance := 5 + int(math.Round(float64(sourceChar.Stats.Strength.ValueAdj+sourceChar.Stats.Speed.ValueAdj)/float64(levelDiff)))
+	critChance := 5 + int(math.Round(float64(sourceChar.Stats.Strength.ValueAdj+sourceChar.Stats.Dexterity.ValueAdj)/float64(levelDiff)))
 
 	if sourceChar.HasBuffFlag(buffs.Accuracy) {
 		critChance *= 2

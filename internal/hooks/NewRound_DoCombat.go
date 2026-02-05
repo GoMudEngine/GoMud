@@ -80,7 +80,7 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 					}
 
 					// Stat comparison accounts for up to 70% of chance to flee.
-					chanceIn100 := int(float64(user.Character.Stats.Speed.ValueAdj) / (float64(user.Character.Stats.Speed.ValueAdj) + float64(mob.Character.Stats.Speed.ValueAdj)) * 70)
+					chanceIn100 := int(float64(user.Character.Stats.Dexterity.ValueAdj) / (float64(user.Character.Stats.Dexterity.ValueAdj) + float64(mob.Character.Stats.Dexterity.ValueAdj)) * 70)
 					chanceIn100 += 30
 
 					roll := util.Rand(100)
@@ -103,7 +103,7 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 					}
 
 					// if equal, 25% chance of fleeing... at best, 50% chance. Then add 50% on top.
-					chanceIn100 := int(float64(user.Character.Stats.Speed.ValueAdj) / (float64(user.Character.Stats.Speed.ValueAdj) + float64(u.Character.Stats.Speed.ValueAdj)) * 70)
+					chanceIn100 := int(float64(user.Character.Stats.Dexterity.ValueAdj) / (float64(user.Character.Stats.Dexterity.ValueAdj) + float64(u.Character.Stats.Dexterity.ValueAdj)) * 70)
 					chanceIn100 += 30
 
 					roll := util.Rand(100)
@@ -567,7 +567,7 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 			//
 			// Hostility default to 5 minutes
 			for _, groupName := range defMob.Groups {
-				mobs.MakeHostile(groupName, user.UserId, c.Timing.MinutesToRounds(2)-user.Character.Stats.Perception.ValueAdj)
+				mobs.MakeHostile(groupName, user.UserId, c.Timing.MinutesToRounds(2)-user.Character.Stats.Charisma.ValueAdj)
 			}
 
 			// Mobs get aggro when attacked
@@ -793,9 +793,9 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 
 				roll := util.Rand(100)
 
-				util.LogRoll(`Look for weapon`, roll, mob.Character.Stats.Perception.ValueAdj)
+				util.LogRoll(`Look for weapon`, roll, mob.Character.Stats.Charisma.ValueAdj)
 
-				if roll < mob.Character.Stats.Perception.ValueAdj {
+				if roll < mob.Character.Stats.Charisma.ValueAdj {
 					possibleWeapons := []string{}
 					for _, itm := range mob.Character.Items {
 						iSpec := itm.GetSpec()
