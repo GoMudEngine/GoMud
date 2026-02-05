@@ -59,6 +59,8 @@ type Character struct {
 	StatPoints       int                            // The number of skill points the character has
 	Health           int                            // The health of the character
 	Mana             int                            // The mana of the character
+	Stamina          int                            // The stamina of the character (physical energy)
+	Conviction       int                            // The conviction of the character (mental/spiritual energy)
 	ActionPoints     int                            // The resevoir of action points the character has to spend on movement etc.
 	Alignment        int8                           // The alignment of the character
 	Gold             int                            // The gold the character is holding
@@ -73,6 +75,8 @@ type Character struct {
 	TNLScale         float32                        `yaml:"-"`                       // The experience scale of the character. Don't write to yaml since is dynamically calculated.
 	HealthMax        stats.StatInfo                 `yaml:"-"`                       // The maximum health of the character. Don't write to yaml since is dynamically calculated.
 	ManaMax          stats.StatInfo                 `yaml:"-"`                       // The maximum mana of the character. Don't write to yaml since is dynamically calculated.
+	StaminaMax       stats.StatInfo                 `yaml:"-"`                       // The maximum stamina of the character. Don't write to yaml since is dynamically calculated.
+	ConvictionMax    stats.StatInfo                 `yaml:"-"`                       // The maximum conviction of the character. Don't write to yaml since is dynamically calculated.
 	ActionPointsMax  stats.StatInfo                 `yaml:"-"`                       // The maximum actions of character. Don't write to yaml since is dynamically calculated.
 	Aggro            *Aggro                         `yaml:"-"`                       // Dont' store this. If they leave they break their aggro
 	Skills           map[string]int                 `yaml:"skills,omitempty"`        // The skills the character has, and what level they are at
@@ -1317,6 +1321,8 @@ func (c *Character) LevelUp() (bool, stats.Statistics) {
 
 	c.Health = c.HealthMax.Value
 	c.Mana = c.ManaMax.Value
+	c.Stamina = c.StaminaMax.Value
+	c.Conviction = c.ConvictionMax.Value
 
 	return true, statsDelta
 }
@@ -1357,6 +1363,16 @@ func (c *Character) ManaPerRound() int {
 
 		return int(healAmt)
 	*/
+}
+
+func (c *Character) StaminaPerRound() int {
+	// Base 1 stamina per round + any modifiers
+	return 1 + c.StatMod(string(statmods.StaminaRecovery))
+}
+
+func (c *Character) ConvictionPerRound() int {
+	// Base 1 conviction per round + any modifiers
+	return 1 + c.StatMod(string(statmods.ConvictionRecovery))
 }
 
 // Where 1000 = a full round
@@ -1423,17 +1439,33 @@ func (c *Character) RecalculateStats() {
 		c.Level + // For every level you get 1 mp
 		c.Stats.Willpower.ValueAdj*3 // for every Willpower you get 3mp
 
+	c.StaminaMax.Mods = 5 +
+		c.Level + // For every level you get 1 stamina
+		c.Stats.Vitality.ValueAdj*3 // for every Vitality you get 3 stamina
+
+	c.ConvictionMax.Mods = 5 +
+		c.Level + // For every level you get 1 conviction
+		(c.Stats.Willpower.ValueAdj+c.Stats.Charisma.ValueAdj)*2 // for every Willpower+Charisma you get 2 conviction
+
 	// Set max action points
 	c.ActionPointsMax.Mods = 200 // hard coded for now
 
-	// Recalculate HP/MP stats
+	// Recalculate HP/MP/Stamina/Conviction stats
 	c.HealthMax.Recalculate(c.Level)
 	c.ManaMax.Recalculate(c.Level)
+	c.StaminaMax.Recalculate(c.Level)
+	c.ConvictionMax.Recalculate(c.Level)
 	c.ActionPointsMax.Recalculate(c.Level)
 
-	// HP can't max less than 1, MP can't max less than 0
+	// HP can't max less than 1, MP/Stamina/Conviction can't max less than 0
 	if c.ManaMax.Value < 0 {
 		c.ManaMax.Value = 0
+	}
+	if c.StaminaMax.Value < 0 {
+		c.StaminaMax.Value = 0
+	}
+	if c.ConvictionMax.Value < 0 {
+		c.ConvictionMax.Value = 0
 	}
 	if c.HealthMax.Value < 1 {
 		c.HealthMax.Value = 1
@@ -1547,10 +1579,16 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 	// Do a stats recalc based on equipment, race, level, etc.
 	c.RecalculateStats()
 
-	// Recalculate health and mana
+	// Recalculate health, mana, stamina, and conviction
 
 	if c.Mana > c.ManaMax.Value {
 		c.Mana = c.ManaMax.Value
+	}
+	if c.Stamina > c.StaminaMax.Value {
+		c.Stamina = c.StaminaMax.Value
+	}
+	if c.Conviction > c.ConvictionMax.Value {
+		c.Conviction = c.ConvictionMax.Value
 	}
 	if c.Health > c.HealthMax.Value {
 		c.Health = c.HealthMax.Value
@@ -1562,6 +1600,12 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 
 	if c.Mana < 0 {
 		c.Mana = 0
+	}
+	if c.Stamina < 0 {
+		c.Stamina = 0
+	}
+	if c.Conviction < 0 {
+		c.Conviction = 0
 	}
 
 	c.Cooldowns.Prune()
