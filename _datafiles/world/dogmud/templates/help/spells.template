@@ -1,0 +1,11 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">spells</ansi>
+
+The <ansi fg="command">spells</ansi> command lists spells you have learned, along with some useful information about them.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">spells</ansi>
+
+  To get help on a particular spell, try: <ansi fg="command">help spell [spellId]</ansi>
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help cast</ansi>

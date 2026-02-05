@@ -1,0 +1,7 @@
+The <ansi fg="command">grant</ansi> command can be used in the following ways:
+
+<ansi fg="command">grant [amount] experience</ansi> - e.g. <ansi fg="command">grant 1000 experience</ansi>
+Grant experience points to yourself
+
+<ansi fg="command">grant [target] [amount] experience</ansi> - e.g. <ansi fg="command">grant james 1000 experience</ansi>
+Grant experience points to a user

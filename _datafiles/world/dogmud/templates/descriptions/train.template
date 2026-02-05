@@ -1,0 +1,13 @@
+Train here to pick up new and interesting skills. You can train 
+skills more than once to increase their effectiveness.
+
+Type "<ansi fg="command">help [skill_name]</ansi>" to find out more
+
+ ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Skills Taught Here</ansi> ──────────────────────────────────────────────────┐
+ {{ range $skillName, $optionDetails := .Options }}  {{ if eq $optionDetails.Cost 0 }}<ansi fg="white">{{else}}<ansi fg="yellow-bold">{{ end }}{{ padRight 12 $optionDetails.Name }}</ansi> <ansi fg="white">[{{ pad 7 $optionDetails.CurrentStatus }}]</ansi> <ansi fg="white">{{ $optionDetails.Message }}</ansi>
+ {{ end -}}
+ └─────────────────────────────────────────────────────────────────────────┘
+  You have <ansi fg="{{ if eq .TrainingPoints 0 }}red{{ else }}yellow{{ end }}-bold">{{ .TrainingPoints }} Training Points</ansi> to spend. Level up to earn more.
+
+To train a skill, type "<ansi fg="command">train [skill_name]</ansi>"
+

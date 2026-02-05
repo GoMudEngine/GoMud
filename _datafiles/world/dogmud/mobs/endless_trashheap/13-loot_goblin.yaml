@@ -1,0 +1,37 @@
+mobid: 13
+zone: Endless Trashheap
+itemdropchance: 100
+hostile: false
+maxwander: -1
+idlecommands:
+  - 'portal home;go portal;wander;wander;wander;wander;wander;wander;wander;suicide'
+  - 'portal loot;go portal;get all'
+  - 'portal loot;go portal;get all'
+  - 'portal loot;go portal;get all'
+  - 'portal loot;go portal;get all'
+  - 'portal loot;go portal;get all'
+  - 'wander loot;get all'
+  - 'wander loot;get all'
+  - 'wander loot;get all'
+  - 'wander loot;get all'
+  - 'wander loot;get all'
+  - 'wander loot;get all'
+  - 'wander loot;get all'
+  - 'wander loot;get all'
+  - 'wander loot;get all'
+  - 'wander loot;get all'
+  - 'wear random'
+  - 'wear random'
+  - 'wear random'
+  - 'wear random'
+  - 'alchemy random'
+combatcommands:
+  - 'portal home;go portal;drop all;wander'
+activitylevel: 90
+character:
+  name: loot goblin
+  description: 'The Loot Goblin is a creature of legend among treasure hunters and adventurers, a skittish and elusive being whose obsession with objects both precious and mundane is unparalleled. Clad in mismatched patches of clothing and armor, this diminutive figure scurries through dungeons and across battlefields, its bulging sack jingling with a cacophony of pilfered trinkets and rarities. Its eyes, wide and gleaming with avarice, never stop darting around, always seeking the next addition to its hoard.'
+  raceid: 5
+  level: 20
+  gold: 0
+  

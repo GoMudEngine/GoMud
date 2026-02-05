@@ -1,0 +1,26 @@
+<ansi clear="all"></ansi><ansi fg="88">
+                 .---._                                  _,---_
+                /  ._  `-._        __.-----.__        _-'   _,  \
+                ( /  `.    `#==="""    ____   """===#'   _,'  \ )
+                 \|    `._/)  ._     --- --     _.  (\_,/     |/
+                         )*'     **.__     __.**     '*( 
+                         #  .==..__  ""   ""  __..==,  # 
+                         #   `"._(_).       .(_)_."'   #</ansi>
+<ansi fg="black-bold">{{ repeat "=" 80 }}</ansi>
+<ansi fg="cyan">
+                     <ansi fg="214">O</ansi>
+                <ansi fg="214">{)</ansi><ansi fg="94">xxx</ansi><ansi fg="214">|</ansi><ansi fg="252">===============-</ansi>
+                     <ansi fg="214">O</ansi>  ______         __  ___            __
+                       / ____/____    /  |/  /__  __ ____/ /
+                      / / __ / __ \  / /|_/ // / / // __  /
+                     / /_/ // /_/ / / /  / // /_/ // /_/ /
+                     \____/ \____/ /_/  /_/ \____/ \____/ <ansi fg="214">O</ansi>
+                                          <ansi fg="252">-===============</ansi><ansi fg="214">|</ansi><ansi fg="94">xxx</ansi><ansi fg="214">(}</ansi>
+                                                          <ansi fg="214">O</ansi></ansi>
+
+<ansi fg="black-bold">.:</ansi> Welcome to <ansi fg="45">GoMud</ansi>, an open source MUD Library written in <ansi fg="45">Go</ansi>.
+
+                                            <ansi fg="black-bold">Find out more (or get the code) at:
+                                                        <ansi fg="51">github.com/GoMudEngine/GoMud</ansi></ansi>
+
+<ansi fg="black-bold">{{ repeat "=" 80 }}</ansi>

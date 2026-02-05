@@ -1,0 +1,6 @@
+ ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Conditions</ansi> ─────────────────────────────────────────────────────────────┐
+{{ if eq (len .) 0 }}   None
+{{ else }}{{ range $key, $val := . }}   <ansi fg="yellow-bold">{{ padRight 16 $val.Name }}</ansi> {{ splitstring $val.Description 58 "                    " }}{{ if not .PermaBuff }}{{ $tLeft := roundstotime $val.RoundsLeft }}
+   {{ padLeft 16 "" }} <ansi fg="red">{{ $tLeft }} left</ansi>{{ end }}
+{{ end -}}
+{{- end }} └────────────────────────────────────────────────────────────────────────────┘

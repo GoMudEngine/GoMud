@@ -1,0 +1,7 @@
+itemid: 20006
+name: tattered pants
+namesimple: pants
+description: A pair of poorly held together pants.
+type: legs
+subtype: wearable
+damagereduction: 1

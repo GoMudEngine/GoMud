@@ -1,0 +1,8 @@
+spellid: mm
+name: Magic Missile
+description: Hurts for 1d6+2
+type: harmsingle
+school: conjuration
+cost: 6
+waitrounds: 1
+difficulty: 75

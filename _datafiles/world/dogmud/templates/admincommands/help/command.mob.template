@@ -1,0 +1,23 @@
+The <ansi fg="command">mob</ansi> command can be used in the following ways:
+
+<ansi fg="command">mob create</ansi>
+Asks a series of questions and then creates a new mob type and writes the file
+to the appropriate folder.
+
+<ansi fg="command">mob create [name/MobId]</ansi>
+Same as above, but starts with a copy of the mob named.
+
+<ansi fg="command">mob spawn loot goblin</ansi>
+A special case mob spawn command that puts the loot goblin into play.
+
+<ansi fg="command">mob spawn [name/MobId]</ansi>
+    <ansi fg="command">mob spawn [MobId]</ansi> - e.g. <ansi fg="command">mob spawn 1</ansi>
+    <ansi fg="command">mob spawn [MobName]</ansi> - e.g. <ansi fg="command">mob spawn goblin</ansi>
+
+<ansi fg="command">mob list</ansi>
+List all mob names.
+
+<ansi fg="command">mob list [name-to-search]</ansi>
+List mobs that match a provided search term. You can use a wildcard on either
+or both sides of the search term, such as <ansi fg="command">mob list *frost*</ansi>.
+

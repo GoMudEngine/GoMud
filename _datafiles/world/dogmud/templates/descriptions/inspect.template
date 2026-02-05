@@ -1,0 +1,42 @@
+{{ $inspectLevel := .InspectLevel }}{{ $damage := .Item.GetDamage }}
+ ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Basic Info</ansi> ──────────────────────────────────────────────────────────────┐
+   <ansi fg="yellow">Name:</ansi>        {{ padRight 53 (uc .Item.Name) }}
+   <ansi fg="yellow">Description:</ansi> {{ splitstring .ItemSpec.Description 61 "                " }}
+   <ansi fg="yellow">Type:</ansi>        {{ uc .ItemSpec.Type.String }} ({{ uc .ItemSpec.Subtype.String }})
+   <ansi fg="yellow">Value:</ansi>       {{ padRight 53 ( printf "%d gold" .ItemSpec.Value ) }}
+ └─────────────────────────────────────────────────────────────────────────────┘
+ ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Specifics Stats</ansi> ─────────────────────────────────────────────────────────┐
+{{- if gt $inspectLevel 1 }}
+   <ansi fg="yellow">Damage:</ansi>      {{ if ne .ItemSpec.Type.String "weapon" }}{{ padRight 53 "N/A" }}{{ else }}{{ padRight 53 (formatdiceroll $damage.DiceRoll) }}{{ end }}
+   <ansi fg="yellow">Defense:</ansi>     {{ if eq .ItemSpec.DamageReduction 0 }}{{ padRight 53 "N/A" }}{{ else }}{{ .ItemSpec.DamageReduction }} Armor{{ end }}
+   <ansi fg="yellow">Uses Left:</ansi>   {{ if eq .ItemSpec.Uses 0 }}{{ padRight 53 "N/A" }}{{ else }}{{ padRight 53 (printf "%d/%d" .Item.Uses .ItemSpec.Uses) }}{{ end }}
+{{- else }}
+   Unknown...
+{{- end }}
+ └─────────────────────────────────────────────────────────────────────────────┘
+ ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Modifiers</ansi> ───────────────────────────────────────────────────────────────┐
+{{- if gt $inspectLevel 2 }}{{ $ct := 0 }}{{ $total := len .ItemSpec.StatMods }}
+{{- range $statName, $qty := .ItemSpec.StatMods }}{{if eq (mod $ct 4) 0 }}{{ printf "\n" }}{{ end }}{{ $ct = add $ct 1 }}   <ansi fg="yellow">{{ printf "%-12s" (uc (printf "%s:" $statName)) }}</ansi> {{ $qty }}{{ if ne $total $ct }}{{ end }}{{ end }}
+{{- if gt (len .ItemSpec.BuffIds) 0 }}   
+   <ansi fg="yellow">Applies:</ansi>     {{ range $idx, $buffId := .ItemSpec.BuffIds }}<ansi fg="spellname">{{ buffname $buffId }}</ansi>
+                - {{ buffduration $buffId }}
+                {{- end }}{{ end }}
+{{- else }}
+   Unknown...
+{{- end }}
+ └─────────────────────────────────────────────────────────────────────────────┘
+ ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Magical Effects</ansi> ─────────────────────────────────────────────────────────┐
+{{- if gt $inspectLevel 3 }}
+{{- if .Item.IsCursed }}
+   It's <ansi fg="red-bold">CURSED!</ansi>{{ end }}
+{{- if gt (len .ItemSpec.Element.String) 0 }}
+   <ansi fg="yellow">Element:</ansi>     {{ padRight 53 (uc .ItemSpec.Element.String) }}{{ end }}
+{{- if gt (len .ItemSpec.Damage.CritBuffIds) 0 }}   
+   <ansi fg="yellow">Crits Apply:</ansi> {{ range $idx, $buffId := .ItemSpec.Damage.CritBuffIds }}<ansi fg="spellname">{{ buffname $buffId }}</ansi>
+                - {{ buffduration $buffId }}
+                {{ end }}{{ end }}
+{{- else }}
+   Unknown...
+{{- end }}
+ └─────────────────────────────────────────────────────────────────────────────┘
+

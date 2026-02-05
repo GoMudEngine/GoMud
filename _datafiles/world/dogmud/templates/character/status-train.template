@@ -1,0 +1,12 @@
+
+{{- $hpDisplay := printf "%d/%d" .Character.Health .Character.HealthMax.Value }}
+{{- $mpDisplay := printf "%d/%d" .Character.Mana .Character.ManaMax.Value }}
+  ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Base Value</ansi> ────────────────────────┐
+  │ <ansi fakeprop="strength"  ><ansi fg="yellow">Strength:   </ansi><ansi fg="201">{{ printf "%-4d" ( sub .Character.Stats.Strength.Value .Character.Stats.Strength.Mods     ) }}</ansi></ansi>  <ansi fg="black-bold">gear & buffs:</ansi> <ansi fg="statmod">{{ printf "%-4d" .Character.Stats.Strength.Mods   }}</ansi> 
+    <ansi fakeprop="vitality"  ><ansi fg="yellow">Vitality:   </ansi><ansi fg="201">{{ printf "%-4d" ( sub .Character.Stats.Vitality.Value .Character.Stats.Vitality.Mods     ) }}</ansi></ansi>  <ansi fg="black-bold">gear & buffs:</ansi> <ansi fg="statmod">{{ printf "%-4d" .Character.Stats.Vitality.Mods   }}</ansi> 
+    <ansi fakeprop="speed"     ><ansi fg="yellow">Speed:      </ansi><ansi fg="201">{{ printf "%-4d" ( sub .Character.Stats.Speed.Value .Character.Stats.Speed.Mods           ) }}</ansi></ansi>  <ansi fg="black-bold">gear & buffs:</ansi> <ansi fg="statmod">{{ printf "%-4d" .Character.Stats.Speed.Mods      }}</ansi> 
+    <ansi fakeprop="mysticism" ><ansi fg="yellow">Mysticism:  </ansi><ansi fg="201">{{ printf "%-4d" ( sub .Character.Stats.Mysticism.Value .Character.Stats.Mysticism.Mods   ) }}</ansi></ansi>  <ansi fg="black-bold">gear & buffs:</ansi> <ansi fg="statmod">{{ printf "%-4d" .Character.Stats.Mysticism.Mods  }}</ansi> 
+    <ansi fakeprop="smarts"    ><ansi fg="yellow">Smarts:     </ansi><ansi fg="201">{{ printf "%-4d" ( sub .Character.Stats.Smarts.Value .Character.Stats.Smarts.Mods         ) }}</ansi></ansi>  <ansi fg="black-bold">gear & buffs:</ansi> <ansi fg="statmod">{{ printf "%-4d" .Character.Stats.Smarts.Mods     }}</ansi> 
+  │ <ansi fakeprop="perception"><ansi fg="yellow">Perception: </ansi><ansi fg="201">{{ printf "%-4d" ( sub .Character.Stats.Perception.Value .Character.Stats.Perception.Mods ) }}</ansi></ansi>  <ansi fg="black-bold">gear & buffs:</ansi> <ansi fg="statmod">{{ printf "%-4d" .Character.Stats.Perception.Mods }}</ansi> 
+  └───────────────────────────────────────┘
+  You have <ansi fg="201">{{ .Character.StatPoints }}</ansi> points left to spend.

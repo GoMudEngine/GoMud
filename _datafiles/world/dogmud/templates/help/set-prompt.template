@@ -1,0 +1,53 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">set prompt</ansi>
+
+The <ansi fg="command">set prompt</ansi> command allows you to customize your in game prompt.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">set prompt [default/none]</ansi>  - Set your prompt back to the default or none
+  <ansi fg="command">set prompt [prompt text]</ansi>   - Set a custom prompt
+  <ansi fg="command">set fprompt [default/none]</ansi> - Set your prompt back to the default or none
+  <ansi fg="command">set fprompt [prompt text]</ansi>  - Set a custom prompt
+
+
+<ansi fg="yellow">Custom Prompt Tokens: </ansi>
+
+  <ansi fg="196">C</ansi><ansi fg="226">o</ansi><ansi fg="46">l</ansi><ansi fg="51">o</ansi><ansi fg="21">r</ansi><ansi fg="201">s</ansi><ansi fg="017">:</ansi>
+  <ansi fg="magenta">{fg#:bg#}</ansi> Color, where fg# and bg# are numeric color codes.
+            Example: "<ansi fg="109">{46:196}Hello world</ansi>" would look like <ansi fg="46" bg="196">Hello world</ansi>
+            See <ansi fg="command">help colors</ansi> for all color codes.
+            Note: Only one # (as in <ansi fg="109">{109}</ansi>) it is assumed to be a fg color.
+                  You can specify only the bg color as follows: <ansi fg="109">{:bg#}</ansi>
+
+  <ansi fg="health-100">Health:</ansi>
+    <ansi fg="magenta">{hp}</ansi>    Current Health - With coloring (see <ansi fg="command">help health</ansi>)
+    <ansi fg="magenta">{hp:-}</ansi>  Current Health
+    <ansi fg="magenta">{HP}</ansi>    Current Maximum Health - With coloring (see <ansi fg="command">help health</ansi>)
+    <ansi fg="magenta">{HP:-}</ansi>  Current Maximum Health
+    <ansi fg="magenta">{hp%}</ansi>   Percent of Health left - With coloring (see <ansi fg="command">help health</ansi>)
+    <ansi fg="magenta">{hp%:-}</ansi> Percent of Health left
+
+  <ansi fg="mana-100">Mana:</ansi>
+    <ansi fg="magenta">{mp}</ansi>    Current Mana - With coloring (see <ansi fg="command">help mana</ansi>)
+    <ansi fg="magenta">{mp:-}</ansi>  Current Mana
+    <ansi fg="magenta">{MP}</ansi>    Current Maximum Mana - With coloring (see <ansi fg="command">help mana</ansi>)
+    <ansi fg="magenta">{MP:-}</ansi>  Current Maximum Mana
+    <ansi fg="magenta">{mp%}</ansi>   Percent of Mana left - With coloring (see <ansi fg="command">help mana</ansi>)
+    <ansi fg="magenta">{mp%:-}</ansi> Percent of Mana left
+
+  <ansi fg="8">Other:</ansi>
+    <ansi fg="magenta">{xp}</ansi>    Current XP                <ansi fg="magenta">{XP}</ansi>    XP remaining for next level
+    <ansi fg="magenta">{xp%}</ansi>   % of level complete       <ansi fg="magenta">{lvl}</ansi>   Character Level
+    <ansi fg="magenta">{a}</ansi>     First letter alignment    <ansi fg="magenta">{A}</ansi>     Full alignment text
+    <ansi fg="magenta">{tp}</ansi>    Unspent Training Points   <ansi fg="magenta">{sp}</ansi>    Unspent Stat Points
+    <ansi fg="magenta">{i}</ansi>     Items carried count       <ansi fg="magenta">{I}</ansi>     Maximum carry capacity
+    <ansi fg="magenta">{g}</ansi>     Gold on hand              <ansi fg="magenta">{h}</ansi>     Hidden/Invisible flag
+    <ansi fg="magenta">{t}</ansi>     Day/Night symbol (<ansi fg="night">☾</ansi>/<ansi fg="day">☀️</ansi>)    <ansi fg="magenta">{T}</ansi>     Full time of day
+    <ansi fg="magenta">{ap}</ansi>    Action Points             <ansi fg="magenta">{w}</ansi>     Wait rounds (fprompt)
+    <ansi fg="magenta">{\n}</ansi>    New Line
+
+The default prompt is:
+<ansi fg="246">{8}[{t} {T} {255}HP:{hp}{8}/{HP} {255}MP:{13}{mp}{8}/{13}{MP}{8}]{239}{h}{8}:</ansi>
+
+<ansi fg="red">Note:</ansi> You can reset your prompt to the default with <ansi fg="command">set prompt default</ansi>
+

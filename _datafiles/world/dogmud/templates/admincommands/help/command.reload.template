@@ -1,0 +1,4 @@
+The <ansi fg="command">reload</ansi> command can be used in the following ways:
+
+<ansi fg="command">reload items</ansi> - Reloads items data files, including any new ones.
+<ansi fg="command">reload translations</ansi> - Reloads all translation localize files.

@@ -1,0 +1,6 @@
+- 
+  Supported: # A map of lowercase names of "Initiator" (#1) to array of "Participant" (#2) names allowed to use this conversation. 
+    "rat": ["rat", "big rat"]
+  Conversation:
+    - ["#1 sayto #2 SQUEEK!"]
+    - ["#2 sayto #1 SQUEEEEEEEK!"]

@@ -1,0 +1,11 @@
+biomeid: city
+name: City
+symbol: •
+description: Cities are generally well protected. Law enforcement will attempt to
+  subdue those who murder or steal. It's generally considered a safe area although
+  it's not unknown for predators to hunt within their walls.
+darkarea: false
+litarea: true
+requireditemid: 0
+usesitem: false
+burns: false

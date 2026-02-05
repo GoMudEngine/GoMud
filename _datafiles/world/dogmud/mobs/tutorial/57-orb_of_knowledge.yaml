@@ -1,0 +1,15 @@
+mobid:  57
+zone: Tutorial
+itemdropchance: 0
+hostile: false
+maxwander: 0
+activitylevel: 10
+character:
+  name: Orb of Knowledge
+  description: 'The orb glows with inner awareness. Although it''s only a sphere of light, you can sense wisdom and intent.'
+  raceid: 20
+  level: 1
+  equipment:
+    head:
+      itemid: 20044
+

@@ -1,0 +1,12 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">arcane scholar</ansi>
+
+Arcane Scholar is one of the jobs available to players, and has 3 skills areas
+to train in.
+
+The following skills are required to become an Arcane Scholar:
+
+- <ansi fg="skill">Enchant</ansi>
+- <ansi fg="skill">Scribe</ansi>
+- <ansi fg="skill">Inspect</ansi>
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help jobs</ansi>

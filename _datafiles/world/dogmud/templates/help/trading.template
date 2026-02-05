@@ -1,0 +1,12 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">trading</ansi> (skill)
+
+The <ansi fg="skill">brawling</ansi> skill gives you moves to use in combat. 
+
+<ansi fg="yellow">Usage: </ansi>
+
+(Lvl 1) <ansi fg="skill">auction [itemname]</ansi> Sell items system-wide in the global auctions
+(Lvl 2) <ansi fg="skill">appraise [itemname]</ansi> See the estimated value of any item by looking at it.
+(Lvl 3) <ansi fg="skill">haggle [itemname]</ansi> Attempt to haggle down the price of a shop item.
+(Lvl 4) <ansi fg="skill">stock [itemname] [price]</ansi> Stock items in your own travelling store.
+
+The odds of a successful haggle are: <ansi fg="red">Smarts - DefendSmarts + 10</ansi>

@@ -1,0 +1,19 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">mana</ansi>
+
+The <ansi fg="command">mana</ansi> (Magic/MP) stat represents how much magic you can channel.
+
+Mana will change color to reflect how much you have left:
+
+<ansi fg="mana-100">100%</ansi>
+<ansi fg="mana-90">90%-99%</ansi>
+<ansi fg="mana-80">80%-89%</ansi>
+<ansi fg="mana-70">70%-79%</ansi>
+<ansi fg="mana-60">60%-69%</ansi>
+<ansi fg="mana-50">50%-59%</ansi>
+<ansi fg="mana-40">40%-49%</ansi>
+<ansi fg="mana-30">30%-39%</ansi>
+<ansi fg="mana-20">20%-29%</ansi>
+<ansi fg="mana-10">10%-19%</ansi>
+<ansi fg="mana-0">0%-9%</ansi>
+
+

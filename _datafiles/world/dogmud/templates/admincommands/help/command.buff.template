@@ -1,0 +1,13 @@
+The <ansi fg="command">buff</ansi> command can be used in the following ways:
+
+<ansi fg="command">buff [buffId]</ansi> - e.g. <ansi fg="command">buff 1</ansi>
+Apply a buff to yourself by id
+
+<ansi fg="command">buff [username] [buffId]</ansi> - e.g. <ansi fg="command">buff sammy 1</ansi>
+Applie a buff to a player in the room by its id
+
+<ansi fg="command">buff search [searchstring]</ansi> - e.g. <ansi fg="command">buff search Liar</ansi> or <ansi fg="command">buff search "Liar's Tongue"</ansi>
+Searches for any buffs that match and returns a list along with their ids
+
+<ansi fg="command">buff list</ansi>
+Displays a list of all buffs

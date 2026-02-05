@@ -1,0 +1,9 @@
+The <ansi fg="command">skillset</ansi> can be used in the following ways:
+
+<ansi fg="command">skillset [skillName] [skillLevel]</ansi> Sets the skillName provided to the level number provided.
+<ansi fg="command">skillset all [skillLevel]</ansi>         Sets all skills to the level number provided.
+
+You can also target a character in the room by adding their name.
+Example: <ansi fg="command">skillset joebob all [skillLevel]</ansi>
+
+The skillName must be an actual skill, and the skillLevel must be between 0 and 4.

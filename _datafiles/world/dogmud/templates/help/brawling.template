@@ -1,0 +1,14 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">brawling</ansi> (skill)
+
+The <ansi fg="skill">brawling</ansi> skill gives you moves to use in combat. 
+
+<ansi fg="yellow">Usage: </ansi>
+
+(Lvl 1) <ansi fg="skill">recover</ansi> Enter a state of rest where health is recovered more quickly
+(Lvl 2) <ansi fg="skill">throw [object] [mob/direction]</ansi> You can throw objects at NPCs or other rooms.
+(Lvl 3) <ansi fg="skill">tackle [player/mob]</ansi> Attempt to tackle an opponent, making them miss a round.
+(Lvl 4) <ansi fg="skill">disarm [player/mob]</ansi> Attempt to disarm an opponent.
+
+The odds of a successful tackle are: <ansi fg="red">AttackSpeed - DefendPerception + 10</ansi>
+The chance to disarm is: <ansi fg="red">(attackSpeed+attackSmarts)-(defendStrength+defendPerception) + 5</ansi>
+

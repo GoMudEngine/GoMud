@@ -1,0 +1,29 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">health</ansi>
+
+The <ansi fg="command">health</ansi> (Hitpoints/HP) stat represents how much damage you can take.
+
+Health will change color to reflect how good/bad your health state is:
+
+<ansi fg="health-100">100%</ansi>
+<ansi fg="health-90">90%-99%</ansi>
+<ansi fg="health-80">80%-89%</ansi>
+<ansi fg="health-70">70%-79%</ansi>
+<ansi fg="health-60">60%-69%</ansi>
+<ansi fg="health-50">50%-59%</ansi>
+<ansi fg="health-40">40%-49%</ansi>
+<ansi fg="health-30">30%-39%</ansi>
+<ansi fg="health-20">20%-29%</ansi>
+<ansi fg="health-10">10%-19%</ansi>
+<ansi fg="health-0">0%-9%</ansi>
+<ansi fg="health-dead">dead</ansi>
+
+At <ansi fg="red">0 HP</ansi>, you will drop to the floor and slowly bleed out.
+
+At <ansi fg="red">-10 HP</ansi>, you will die. When you die, all gear you posess drops to the ground.
+
+Health is calculated based on: 
+ - Level
+ - Vitality * 4
+ 
+Plus some bonuses every so many levels.
+

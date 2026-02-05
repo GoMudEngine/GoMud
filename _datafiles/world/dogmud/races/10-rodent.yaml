@@ -1,0 +1,12 @@
+raceid: 10
+name: rodent
+description: A small furry creature with strong teeth.
+defaultalignment: -20
+size: small
+unarmedname: teeth and nails
+tnlscale: 1
+angrycommands: [emote squeeks angrily.]
+damage:
+  diceroll: 1d2
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet']
+tameable: true

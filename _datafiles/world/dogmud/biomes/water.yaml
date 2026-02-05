@@ -1,0 +1,10 @@
+biomeid: water
+name: Deep Water
+symbol: ≈
+description: Deep water is dangerous to traverse without the appropriate equipment.
+  Very easy to lose your footing, or go under.
+darkarea: false
+litarea: false
+requireditemid: 20030
+usesitem: false
+burns: false

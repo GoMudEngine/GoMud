@@ -1,0 +1,20 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="mobname">guide</ansi>
+
+The <ansi fg="mobname">guide</ansi> is a special character that joins you until you reach level 5.
+
+The <ansi fg="mobname">guide</ansi> will help you out in combat, and if you sit around idle, the 
+<ansi fg="mobname">guide</ansi> will occasionally give you some suggestions or tips tohelp get you
+started.
+
+When the <ansi fg="mobname">guide</ansi> dies, they will spawn to help you again in a little while.
+
+You can also <ansi fg="command">ask guide</ansi> for specific tasks such as:
+
+<ansi fg="command">ask guide silence</ansi> - This will request that the <ansi fg="mobname">guide</ansi> stop giving tips.
+<ansi fg="command">ask guide portal</ansi>  - This will request that the <ansi fg="mobname">guide</ansi> create a portal back to
+town square.
+
+If your <ansi fg="mobname">guide</ansi> dies, they will return after a little while to help out again.
+
+<ansi fg="red>TODO: </ansi> More to come.
+

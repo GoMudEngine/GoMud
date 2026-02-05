@@ -1,0 +1,21 @@
+mobid:  38
+zone: Startland
+itemdropchance: 2
+hostile: false
+maxwander: 0
+groups: 
+  - startland-npc
+activitylevel: 10
+character:
+  name: player guide
+  description: 'In combat, the Guide proves to be a steadfast protector, always ready to lend a helping hand when danger looms. They are a skilled warrior, wielding their weapon with precision and using their keen senses to anticipate threats. New players can rely on the Guide to watch their back in the heat of battle, providing both tactical advice and unwavering support to ensure their safety.'
+  raceid: 1
+  level: 10
+  gold: 3
+  equipment:
+    weapon:
+      itemid: 10002
+    neck:
+      itemid: 20002
+    feet:
+      itemid: 20003

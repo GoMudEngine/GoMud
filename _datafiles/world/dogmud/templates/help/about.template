@@ -1,0 +1,61 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">About </ansi><ansi fg="command">GoMud</ansi>
+
+<ansi fg="command">GoMud</ansi> is an open source <ansi fg="229">MUD</ansi> (Multi-user Dungeon) game world and library.
+
+The <ansi fg="command">GoMud</ansi> engine ships with a default world to play in, but can be overwritten
+or modified to build your own world using built-in tools.
+
+<ansi fg="black-bold">Join the <ansi fg="command">GoMud</ansi> Discord Server:</ansi>   <ansi fg="51">discord.gg/cjukKvQWyy</ansi>
+<ansi fg="black-bold">Find out more (or get the code):</ansi> <ansi fg="51">github.com/GoMudEngine/GoMud</ansi>
+
+<ansi fg="6">  .--.      .-'.      .--.      .--.      .--.      .--.      .`-.      .--.
+<ansi fg="187">:::::.</ansi>\<ansi fg="187">::::::::.</ansi>\<ansi fg="187">::::::::.</ansi>\<ansi fg="187">::::::::.</ansi>\<ansi fg="187">::::::::.</ansi>\<ansi fg="187">::::::::.</ansi>\<ansi fg="187">::::::::.</ansi>\<ansi fg="187">::::::::.</ansi>\<ansi fg="187"></ansi>
+'      `--'      `.-'      `--'      `--'      `--'      `-.'      `--'      `</ansi>
+
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta"><ansi fg="command">GoMud</ansi> History</ansi>
+
+<ansi fg="command">GoMud</ansi> development began in <ansi fg="red">late 2023</ansi> by <ansi fg="14">Dylan Squires</ansi> (aka <ansi fg="11">Volte6</ansi>) with 
+several key goals in mind:
+
+<ansi fg="red-bold">1.</ansi> <ansi fg="11">Offer a new, free code base in a modern language.</ansi> 
+   <ansi fg="command">Go</ansi> was selected as it has a fast build process and excellent OS/CPU 
+   Architecture compatibility (Windows, Linux, ARM, etc.). Additionally being 
+   statically linked it avoids many dependency issues encountered when running
+   engines based languages such as C. Finally, <ansi fg="command">Go</ansi> is able to pull libraries 
+   straight from their repositories (such as git), rather than rely on public
+   registries. 
+
+<ansi fg="red-bold">2.</ansi> <ansi fg="11">Commit to a high standard of color and style integration.</ansi> 
+   Legacy <ansi fg="229">MUD</ansi> engines tend to disappoint in terms of consistent and ubiquitous
+   color or visual style. <ansi fg="command">GoMud</ansi> seeks to address this issue directly by
+   fearlessly including color in the <ansi fg="229">MUD</ansi>, and supporting techniques to easily
+   include or adjust color styling as a <ansi fg="229">MUD</ansi> admin.
+
+<ansi fg="red-bold">3.</ansi> <ansi fg="11">Support a high degree of customization</ansi>
+   <ansi fg="command">GoMud</ansi> doesn't presume to know how you want your <ansi fg="229">MUD</ansi> to play. Do you want 
+   long days and short nights, or the other way around? Do you want PVP, or to 
+   use a specific color palette? Do you want to support permadeath and player 
+   loot drops? Should a round be 3 seconds or 4? <ansi fg="command">GoMud</ansi> seeks to make all of
+   these decisions easily customizable through config files.
+
+<ansi fg="6">  .--.      .-'.      .--.      .--.      .--.      .--.      .`-.      .--.
+<ansi fg="187">:::::.</ansi>\<ansi fg="187">::::::::.</ansi>\<ansi fg="187">::::::::.</ansi>\<ansi fg="187">::::::::.</ansi>\<ansi fg="187">::::::::.</ansi>\<ansi fg="187">::::::::.</ansi>\<ansi fg="187">::::::::.</ansi>\<ansi fg="187">::::::::.</ansi>\<ansi fg="187"></ansi>
+'      `--'      `.-'      `--'      `--'      `--'      `-.'      `--'      `</ansi>
+
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Special Thanks</ansi>
+
+<ansi fg="8">Those who contributed to <ansi fg="command">GoMud</ansi> via <ansi fg="15">testing</ansi>, <ansi fg="15">content</ansi>, <ansi fg="15">code</ansi>, and <ansi fg="15">discussion</ansi>
+during its first year of development. In alphabetical order:</ansi>
+
+    <ansi fg="14">Andrew Burns</ansi>    aka <ansi fg="11">mister_burns</ansi>
+    <ansi fg="14">Arin Bennett</ansi>    aka <ansi fg="11">Sloan</ansi>
+    <ansi fg="14">Colin Senner</ansi>    aka <ansi fg="11">colinsenner</ansi>
+    <ansi fg="14">Durf Durfleton</ansi>  aka <ansi fg="11">Durf</ansi>
+    <ansi fg="14">Ethan Samuels</ansi>   aka <ansi fg="11">ethaburd</ansi>
+    <ansi fg="14">Jake</ansi>            aka <ansi fg="11">Jake</ansi>
+    <ansi fg="14">Jeff</ansi>            aka <ansi fg="11">Armoredartist</ansi>
+    <ansi fg="14">Jeffrey Edwards</ansi> aka <ansi fg="11">Miphon</ansi>
+    <ansi fg="14">Jeremy Owens</ansi>
+    <ansi fg="14">Michael Myers</ansi>   aka <ansi fg="11">avatus</ansi>
+    <ansi fg="14">Scott</ansi>           aka <ansi fg="11">Neopong</ansi>
+    <ansi fg="14">William L</ansi>       aka <ansi fg="11">1aw123</ansi>

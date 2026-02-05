@@ -1,0 +1,12 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">assassin</ansi>
+
+Assassin is one of the jobs available to players, and has 3 skills areas
+to train in.
+
+The following skills are required to become an Assassin:
+
+- <ansi fg="skill">SkullDuggery</ansi>
+- <ansi fg="skill">Dual Wield</ansi>
+- <ansi fg="skill">Track</ansi>
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help jobs</ansi>

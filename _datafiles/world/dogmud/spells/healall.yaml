@@ -1,0 +1,9 @@
+# Learned at the Sanctuary of the Benevolent Heart (ROOM 18)
+spellid: healall
+name: Minor Heal All
+description: Heals party for 2d3
+type: helpmulti
+school: restoration
+cost: 6
+waitrounds: 2
+difficulty: 10

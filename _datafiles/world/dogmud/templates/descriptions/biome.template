@@ -1,0 +1,6 @@
+┌─ <ansi fg="black-bold">.:</ansi> Biome Info ─────────────────────────────────────────────────────────┐
+  <ansi fg="yellow">Name:</ansi>        {{ .Name }}
+  <ansi fg="yellow">Symbol:</ansi>      {{ .SymbolString }}
+  <ansi fg="yellow">Lighting:</ansi>    {{ if .IsDark }}It's always dark.{{ else if .IsLit }}It is kept well lit at night.{{ else }}Visibility is affected by the day/night cycle.{{ end }}
+  <ansi fg="yellow">Description:</ansi> {{ splitstring .Description 59 "               " }}
+└─────────────────────────────────────────────────────────────────────────┘

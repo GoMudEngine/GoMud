@@ -1,0 +1,7 @@
+
+<ansi fg="magenta-bold">*******************************************************************************</ansi>
+
+<ansi fg="yellow"> {{ . }}</ansi>
+<ansi fg="yellow"> type <ansi fg="command">quests</ansi> to track your progress on quests.</ansi>
+
+<ansi fg="magenta-bold">*******************************************************************************</ansi>

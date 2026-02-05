@@ -1,0 +1,109 @@
+# Possible tokens: 
+# {itemname}    - name of weapon/object e.g. 'whip'
+# {source}      - name of mob or user e.g. 'goblin'
+# {sourcetype}  - 'user' or 'mob'
+# {target}      - name of mob or user e.g. 'goblin'
+# {targettype}  - 'user' or 'mob'
+# {damage}      - damage dealt as an integer e.g. '5'
+# {exitname}    - name of exit for attack e.g. 'north'
+# {entrancename}- name of entrance for attack e.g. 'south'
+optionid: whipping
+options:
+  prepare:
+    together:
+      toattacker:
+      - 'You unfurl your <ansi fg="item">{itemname}</ansi> and prepare to whip <ansi fg="{targettype}">{target}</ansi>.'
+      - 'You grip your <ansi fg="item">{itemname}</ansi> tightly, eyeing <ansi fg="{targettype}">{target}</ansi> for an attack.'
+      - 'You get ready to strike <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>.'
+      todefender:
+      - '<ansi fg="{sourcetype}">{source}</ansi> unfurls their <ansi fg="item">{itemname}</ansi> and prepares to whip you.'
+      - '<ansi fg="{sourcetype}">{source}</ansi> eyes you menacingly, gripping their <ansi fg="item">{itemname}</ansi>.'
+      - '<ansi fg="{sourcetype}">{source}</ansi> prepares to strike you with their <ansi fg="item">{itemname}</ansi>.'
+      toroom:
+      - '<ansi fg="{sourcetype}">{source}</ansi> unfurls their <ansi fg="item">{itemname}</ansi> and prepares to attack <ansi fg="{targettype}">{target}</ansi>.'
+      - '<ansi fg="{sourcetype}">{source}</ansi> grips their <ansi fg="item">{itemname}</ansi>, focusing on <ansi fg="{targettype}">{target}</ansi>.'
+      - '<ansi fg="{sourcetype}">{source}</ansi> readies their <ansi fg="item">{itemname}</ansi> to strike <ansi fg="{targettype}">{target}</ansi>.'
+  wait:
+    together:
+      toattacker:
+      - 'You snap your <ansi fg="item">{itemname}</ansi> menacingly at <ansi fg="{targettype}">{target}</ansi>.'
+      - 'You circle around <ansi fg="{targettype}">{target}</ansi>, <ansi fg="item">{itemname}</ansi> at the ready.'
+      - 'You watch for an opening to strike <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>.'
+      todefender:
+      - '<ansi fg="{sourcetype}">{source}</ansi> snaps their <ansi fg="item">{itemname}</ansi> dangerously.'
+      - '<ansi fg="{sourcetype}">{source}</ansi> circles you, <ansi fg="item">{itemname}</ansi> poised to strike.'
+      - '<ansi fg="{sourcetype}">{source}</ansi> watches you carefully, their <ansi fg="item">{itemname}</ansi> ready.'
+      toroom:
+      - '<ansi fg="{sourcetype}">{source}</ansi> snaps their <ansi fg="item">{itemname}</ansi> at <ansi fg="{targettype}">{target}</ansi> with cruel intentions.'
+      - '<ansi fg="{sourcetype}">{source}</ansi> circles <ansi fg="{targettype}">{target}</ansi>, <ansi fg="item">{itemname}</ansi> in hand.'
+      - '<ansi fg="{sourcetype}">{source}</ansi> eyes <ansi fg="{targettype}">{target}</ansi>, readying their <ansi fg="item">{itemname}</ansi> for an attack.'
+  miss:
+    together:
+      toattacker:
+      - 'You lash out at <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi> but miss!'
+      - 'You swing your <ansi fg="item">{itemname}</ansi> at <ansi fg="{targettype}">{target}</ansi>, but they dodge!'
+      - 'Your attempt to whip <ansi fg="{targettype}">{target}</ansi> fails as you miss!'
+      todefender:
+      - '<ansi fg="{sourcetype}">{source}</ansi> lashes their <ansi fg="item">{itemname}</ansi> at you, but misses!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> swings their <ansi fg="item">{itemname}</ansi> at you, but you evade!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> tries to whip you but misses!'
+      toroom:
+      - '<ansi fg="{sourcetype}">{source}</ansi> lashes their <ansi fg="item">{itemname}</ansi> at <ansi fg="{targettype}">{target}</ansi>, but misses!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> swings their <ansi fg="item">{itemname}</ansi> at <ansi fg="{targettype}">{target}</ansi>, but fails to connect!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> tries to whip <ansi fg="{targettype}">{target}</ansi>, but misses!'
+  weak:
+    together:
+      toattacker:
+      - 'You flick your <ansi fg="item">{itemname}</ansi> at <ansi fg="{targettype}">{target}</ansi>, causing <ansi fg="damage">{damage} damage</ansi>.'
+      - 'You land a light strike on <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>, dealing <ansi fg="damage">{damage} damage</ansi>.'
+      - 'Your <ansi fg="item">{itemname}</ansi> grazes <ansi fg="{targettype}">{target}</ansi>, inflicting <ansi fg="damage">{damage} damage</ansi>.'
+      todefender:
+      - '<ansi fg="{sourcetype}">{source}</ansi> flicks their <ansi fg="item">{itemname}</ansi> at you, causing <ansi fg="damage">{damage} damage</ansi>.'
+      - '<ansi fg="{sourcetype}">{source}</ansi> lands a light strike on you with their <ansi fg="item">{itemname}</ansi>, dealing <ansi fg="damage">{damage} damage</ansi>.'
+      - '<ansi fg="{sourcetype}">{source}</ansi> grazes you with their <ansi fg="item">{itemname}</ansi>, inflicting <ansi fg="damage">{damage} damage</ansi>.'
+      toroom:
+      - '<ansi fg="{sourcetype}">{source}</ansi> flicks their <ansi fg="item">{itemname}</ansi> at <ansi fg="{targettype}">{target}</ansi>.'
+      - '<ansi fg="{sourcetype}">{source}</ansi> lands a light strike on <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>.'
+      - '<ansi fg="{sourcetype}">{source}</ansi> grazes <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>.'
+  normal:
+    together:
+      toattacker:
+      - 'You whip <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi> and deal <ansi fg="damage">{damage} damage</ansi>!'
+      - 'You strike <ansi fg="{targettype}">{target}</ansi> squarely with your <ansi fg="item">{itemname}</ansi>, causing <ansi fg="damage">{damage} damage</ansi>!'
+      - 'Your <ansi fg="item">{itemname}</ansi> snaps against <ansi fg="{targettype}">{target}</ansi>, dealing <ansi fg="damage">{damage} damage</ansi>!'
+      todefender:
+      - '<ansi fg="{sourcetype}">{source}</ansi> whips you with their <ansi fg="item">{itemname}</ansi>, dealing <ansi fg="damage">{damage} damage</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> strikes you with their <ansi fg="item">{itemname}</ansi>, causing <ansi fg="damage">{damage} damage</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> snaps their <ansi fg="item">{itemname}</ansi> against you, dealing <ansi fg="damage">{damage} damage</ansi>!'
+      toroom:
+      - '<ansi fg="{sourcetype}">{source}</ansi> whips <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> strikes <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> snaps their <ansi fg="item">{itemname}</ansi> against <ansi fg="{targettype}">{target}</ansi>!'
+  heavy:
+    together:
+      toattacker:
+      - 'You deliver a powerful lash to <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>, causing an impressive <ansi fg="damage">{damage} damage</ansi>!'
+      - 'You unleash a heavy strike on <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>, dealing <ansi fg="damage">{damage} damage</ansi>!'
+      - 'Your <ansi fg="item">{itemname}</ansi> cracks loudly against <ansi fg="{targettype}">{target}</ansi>, inflicting <ansi fg="damage">{damage} damage</ansi>!'
+      todefender:
+      - '<ansi fg="{sourcetype}">{source}</ansi> delivers a powerful lash to you with their <ansi fg="item">{itemname}</ansi>, causing an impressive <ansi fg="damage">{damage} damage</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> unleashes a heavy strike on you with their <ansi fg="item">{itemname}</ansi>, dealing <ansi fg="damage">{damage} damage</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> cracks their <ansi fg="item">{itemname}</ansi> loudly against you, inflicting <ansi fg="damage">{damage} damage</ansi>!'
+      toroom:
+      - '<ansi fg="{sourcetype}">{source}</ansi> delivers a powerful lash to <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> unleashes a heavy strike on <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> cracks their <ansi fg="item">{itemname}</ansi> loudly against <ansi fg="{targettype}">{target}</ansi>!'
+  critical:
+    together:
+      toattacker:
+      - 'Your <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRACKS VIOLENTLY</ansi> against <ansi fg="{targettype}">{target}</ansi> for <ansi fg="damage">{damage} damage</ansi>!'
+      - 'You land a <ansi fg="cyan-bold">DEVASTATING WHIP</ansi> on <ansi fg="{targettype}">{target}</ansi>, causing <ansi fg="damage">{damage} damage</ansi>!'
+      - 'Your <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">STRIKES WITH GREAT FORCE</ansi>, dealing <ansi fg="damage">{damage} damage</ansi> to <ansi fg="{targettype}">{target}</ansi>!'
+      todefender:
+      - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRACKS VIOLENTLY</ansi> against you for <ansi fg="damage">{damage} damage</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> lands a <ansi fg="cyan-bold">DEVASTATING WHIP</ansi> on you, causing <ansi fg="damage">{damage} damage</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">STRIKES WITH GREAT FORCE</ansi>, dealing <ansi fg="damage">{damage} damage</ansi> to you!'
+      toroom:
+      - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRACKS VIOLENTLY</ansi> against <ansi fg="{targettype}">{target}</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> lands a <ansi fg="cyan-bold">DEVASTATING WHIP</ansi> on <ansi fg="{targettype}">{target}</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">STRIKES WITH GREAT FORCE</ansi> against <ansi fg="{targettype}">{target}</ansi>!'

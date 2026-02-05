@@ -1,0 +1,39 @@
+questid: 0
+name: Tutorial
+description: A series of tutorial steps to take when first starting the game.
+secret: true
+steps:
+    # "look" command
+    # "look sign"
+    # "look east"
+    # "east" command
+  - id: start #0-start
+    description: Learn about the "look" command
+    # "get" command (put a sharp stick in the room)
+    # "get" command (put some gold on the floor)
+    # "inventory"
+    # "wield stick"
+    # "inventory" again to see it is equipped
+  - id: items #0-items
+    description: Learn about picking up objects and using them.
+    # "status" command
+    # give item "20039"
+    # explain how perception is higher due to worn items and buffs in the parenthesis
+  - id: stats #0-stats
+    description: Learn about character stats.
+    # Give a special buff (Eye of the Tiger) that heals quickly
+    # Spawn a red slime in the room
+    # "kill slime"
+    # Take away special buff
+  - id: combat #0-combat
+    description: Learn about combat.
+    # "say" command
+    # "broadcast" command
+    # "Help" command
+  - id: communication #0-communication
+    description: Learn about communication.
+    # choose to enter a portal to a starting point.
+  - id: end #0-end
+    description: You finished the tutorial!
+rewards:
+  experience: 1000

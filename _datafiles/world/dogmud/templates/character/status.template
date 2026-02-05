@@ -1,0 +1,18 @@
+
+ <ansi fg="black-bold">.:</ansi> <ansi fg="username">{{ .Character.Name }}</ansi> the <ansi fg="{{ .Character.AlignmentName }}">{{ .Character.AlignmentName }}</ansi> {{ profession .Character }}
+{{- $tnl := .Character.XPTNL -}}
+{{- $pct := (pct .Character.Experience $tnl ) -}}
+{{- $exp := printf "%d/%d (%d%%)" .Character.Experience $tnl $pct -}}
+{{- $hpDisplay := printf "%s" ( healthStr .Character.Health .Character.HealthMax.Value 22 ) }}
+{{- $mpDisplay := printf "%s" ( manaStr .Character.Mana .Character.ManaMax.Value 22 ) }}
+ ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Info</ansi> ──────────────────────┐ ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Attributes</ansi> ───────────────────────────┐
+ │ <ansi fg="yellow">Area:   </ansi>{{ printf "%-22s" .Character.Zone              }}│ │ <ansi fg="yellow">Strength: </ansi>{{ printf "<ansi fg=\"stat\">%-4d</ansi><ansi fg=\"statmod\">(%-3d)</ansi>" .Character.Stats.Strength.Value (.Character.StatMod "strength") }} <ansi fg="yellow">Vitality:  </ansi>{{  printf "<ansi fg=\"stat\">%-4d</ansi><ansi fg=\"statmod\">(%-3d)</ansi>" .Character.Stats.Vitality.Value (.Character.StatMod "vitality")   }} │
+   <ansi fg="yellow">Race:   </ansi>{{ printf "%-22s" .Character.Race              }}    <ansi fg="yellow">Speed:    </ansi>{{ printf "<ansi fg=\"stat\">%-4d</ansi><ansi fg=\"statmod\">(%-3d)</ansi>" .Character.Stats.Speed.Value (.Character.StatMod "speed")       }} <ansi fg="yellow">Mysticism: </ansi>{{  printf "<ansi fg=\"stat\">%-4d</ansi><ansi fg=\"statmod\">(%-3d)</ansi>" .Character.Stats.Mysticism.Value (.Character.StatMod "mysticism") }}
+   <ansi fg="yellow">Level:  </ansi>{{ printf "%-22d" .Character.Level              }}  │ <ansi fg="yellow">Smarts:   </ansi>{{ printf "<ansi fg=\"stat\">%-4d</ansi><ansi fg=\"statmod\">(%-3d)</ansi>" .Character.Stats.Smarts.Value (.Character.StatMod "smarts")     }} <ansi fg="yellow">Percept:   </ansi>{{  printf "<ansi fg=\"stat\">%-4d</ansi><ansi fg=\"statmod\">(%-3d)</ansi>" .Character.Stats.Perception.Value (.Character.StatMod "perception")   }} │
+   <ansi fg="yellow">Exp:    </ansi>{{ printf "%-22s" ( tnl .UserId )              }}  └──────────────────────────────────────────┘
+   <ansi fg="yellow">Health: </ansi>{{ printf "%s" $hpDisplay                   }}  ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Wealth</ansi> ────────┐ ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Training</ansi> ───────┐
+   <ansi fg="yellow">Mana:   </ansi>{{ printf "%s" $mpDisplay                   }}  │ <ansi fg="yellow">Gold: </ansi>{{ printf "%-11s" (numberFormat .Character.Gold) }} │ │ <ansi fg="yellow">Train Pts:</ansi> {{ printf "%-7d" .Character.TrainingPoints }} │
+ │ <ansi fg="yellow">Armor:  </ansi>{{ printf "%-6s" ( printf "%d" (.Character.GetDefense)) }} {{ if permadeath }}<ansi fg="yellow">Lives: </ansi>{{ printf "%-7d" .Character.ExtraLives }}{{ else }}              {{ end }} │ │ <ansi fg="yellow">Bank: </ansi>{{ printf "%-11s" (numberFormat .Character.Bank) }} │ │ <ansi fg="yellow">Stat Pts:</ansi>  {{ printf "%-7d" .Character.StatPoints }} │
+ └───────────────────────────────┘ └───────────────────┘ └────────────────────┘
+{{- if gt .Character.StatPoints 0 }}{{ if lt .Character.Level 5 }}
+                   <ansi fg="alert-5">TIP:</ansi> <ansi fg="alert-2">Type <ansi fg="command">status train</ansi> to spend stat points on improvements.</ansi> {{ end }}{{ end -}}

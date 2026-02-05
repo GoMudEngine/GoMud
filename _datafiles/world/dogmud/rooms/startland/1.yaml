@@ -1,0 +1,33 @@
+roomid: 1
+zone: Startland
+title: Town Square
+description: You stand at the town square of startland. This is the first room you
+  enter upon completing training and beginning the mud.
+mapsymbol: T
+maplegend: Townsquare
+biome: city
+exits:
+  north:
+    roomid: 2
+spawninfo:
+- mobid: 2
+  message: A town guard emerges from a nearby building.
+  idlecommands:
+  - say did you know there's a sign in the Townsquare with a map of the area?
+  - ""
+  - ""
+  - ""
+  - wander
+  levelmod: 10
+  respawnrate: 5 real minutes
+idlemessages:
+- A <ansi fg="mobname">citizen</ansi> walks up and examines the <ansi fg="itemname">map</ansi>
+  posted to the <ansi fg="itemname">sign</ansi>.
+- A <ansi fg="mobname">guard</ansi> is looking at the <ansi fg="itemname">sign</ansi>.
+- A <ansi fg="mobname">craftsman</ansi> gives the <ansi fg="itemname">sign</ansi>
+  a little kick, nodding in approval.
+- A couple of <ansi fg="mobname">townspeople</ansi> are arguing about the accuracy
+  of the <ansi fg="itemname">map</ansi> posted to the <ansi fg="itemname">sign</ansi>
+  here.
+- A <ansi fg="mobname">guard</ansi> brushes off some of the snow that has accumulated
+  on the <ansi fg="itemname">sign</ansi>.

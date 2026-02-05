@@ -1,0 +1,7 @@
+itemid: 20004
+name: wooden shield
+namesimple: shield
+description: A simple wooden shield.
+type: offhand
+subtype: wearable
+damagereduction: 5

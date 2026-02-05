@@ -1,0 +1,22 @@
+raceid: 0
+name: ghostly spirit
+description: A non-corporeal entity... mostly.
+  world... mostly.
+defaultalignment: 0
+size: small
+angrycommands: [emote drifts aggressively.]
+unarmedname: ectoplasm
+tnlscale: 1
+tameable: false
+stats:
+  strength:
+    base: 0
+  smarts:
+    base: 0
+  vitality:
+    base: 0
+  perception:
+    base: 0
+damage:
+  diceroll: 0d0
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'body', 'belt', 'gloves', 'ring', 'legs', 'feet']

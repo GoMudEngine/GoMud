@@ -1,0 +1,35 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">races</ansi>
+
+<ansi fg="command">races</ansi> represent the type of creature someone is. humans, elves, insects, and
+everything else.
+
+Races may have their own unique traits and abilities others do not.
+
+Races are also affected by Size:
+    <ansi fg="yellow">Small</ansi>  - 1-Handed weapons require 2 hands. 2-Handed weapons cannot be used.
+    <ansi fg="yellow">Medium</ansi> - Can use 1-Handed weapons with a shield, and sometimes dual-wield.
+    <ansi fg="yellow">Large</ansi>  - 2-Handed weapons require 1 hand. Can sometimes dual-wield 2-Handed
+             weapons.
+
+Here is some useful race detail:
+
+{{ range $index, $raceInfo := . }}{{ $slotCount := len $raceInfo.GetEnabledSlots }}
+┌──────────────────────────────────────────────────────────────────────────────┐
+
+  <ansi fg="yellow">Race Name:</ansi>   <ansi fg="yellow-bold">{{ $raceInfo.Name }}</ansi>
+  <ansi fg="yellow">Description:</ansi> <ansi fg="white">{{ splitstring $raceInfo.Description 65 "               " }}</ansi>
+  <ansi fg="yellow">XP Scale:</ansi>    <ansi fg="{{if gt $raceInfo.TNLScale 1.0 }}red-bold{{else if eq $raceInfo.TNLScale 1.0 }}white{{else}}blue-bold{{end}}">{{ printf "%3.0f%%" (multfloat $raceInfo.TNLScale 100) }}</ansi>
+  <ansi fg="yellow">Size:</ansi>        {{ $raceInfo.Size }}
+  <ansi fg="yellow">Unarmed:</ansi>     <ansi fg="white-bold">{{ $raceInfo.UnarmedName }}</ansi> (<ansi fg="red">{{ $raceInfo.Damage.DiceRoll }}</ansi>)
+  <ansi fg="yellow">First Aid:</ansi>   {{ if $raceInfo.KnowsFirstAid }}<ansi fg="123">Yes</ansi>{{ else }}<ansi fg="210">No</ansi>{{ end }}
+  <ansi fg="yellow">Gear Slots:</ansi>  {{ if eq (len $raceInfo.GetEnabledSlots) 0 }}<ansi fg="234">*None*</ansi>{{end}}{{ range $slotIndex, $slotName := $raceInfo.GetEnabledSlots }}{{if gt $slotIndex 0 }}{{ if eq (mod $slotIndex 5) 0 }}{{ printf "\n               " }}{{ end }}{{ end }}<ansi fg="157">{{ padRight 9 (uc $slotName) }}</ansi>{{ end }}
+  <ansi fg="yellow">Stat Gains:</ansi>  <ansi fg="{{ if gt $raceInfo.Stats.Strength.Base 0   }}cyan-bold{{ else}}234{{end}}">Str: {{ $raceInfo.Stats.Strength.Base   }}</ansi>{{- `   ` -}}
+                                        <ansi fg="{{ if gt $raceInfo.Stats.Speed.Base 0      }}cyan-bold{{ else}}234{{end}}">Spd: {{ $raceInfo.Stats.Speed.Base      }}</ansi>{{- `   ` -}}
+                                        <ansi fg="{{ if gt $raceInfo.Stats.Smarts.Base 0     }}cyan-bold{{ else}}234{{end}}">Smt: {{ $raceInfo.Stats.Smarts.Base     }}</ansi>{{- `   ` -}}
+                                        <ansi fg="{{ if gt $raceInfo.Stats.Vitality.Base 0   }}cyan-bold{{ else}}234{{end}}">Vit: {{ $raceInfo.Stats.Vitality.Base   }}</ansi>{{- `   ` -}}
+                                        <ansi fg="{{ if gt $raceInfo.Stats.Mysticism.Base 0  }}cyan-bold{{ else}}234{{end}}">Mys: {{ $raceInfo.Stats.Mysticism.Base  }}</ansi>{{- `   ` -}}
+                                        <ansi fg="{{ if gt $raceInfo.Stats.Perception.Base 0 }}cyan-bold{{ else}}234{{end}}">Per: {{ $raceInfo.Stats.Perception.Base }}</ansi>
+  <ansi fg="yellow">Buffs:</ansi>       {{if eq (len $raceInfo.BuffIds) 0}}<ansi fg="234">*None*</ansi>{{end}}{{ range $slotIndex, $buffId := $raceInfo.BuffIds }}{{if gt $slotIndex 0 }}{{ printf "\n               " }}{{ end }}<ansi fg="buff">{{ buffname $buffId }}</ansi>{{ end }}
+
+└──────────────────────────────────────────────────────────────────────────────┘
+{{ end }}

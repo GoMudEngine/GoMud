@@ -1,0 +1,30 @@
+The <ansi fg="command">build</ansi> command can be used in the following ways:
+
+<ansi fg="command">build zone [zone_name]</ansi> - e.g. <ansi fg="command">build zone "Smash land"</ansi>
+Create a new zone with the supplied name. An empty room will be created inside
+of it.
+
+<ansi fg="command">build room [exit1] [exit2(optional)]</ansi> - e.g. <ansi fg="command">build room north</ansi>
+Create a new empty room, and connect this room to it using the exit name 
+supplied. If a second exit name is supplied, the  room will be linked back 
+using that exit name.
+
+<ansi fg="yellow">Possible Exit Name Formats ("<ansi fg="command">east</ansi>" and "<ansi fg="command">cave</ansi>" used as examples):</ansi>
+
+  <ansi fg="command">cave</ansi>                  - An exit to somewhere that doesn't show up on the map.
+
+  <ansi fg="command">east</ansi>                  - Just an exist called east, that exits to the east 
+                          direction.
+  <ansi fg="command">east-x2</ansi> / <ansi fg="command">east-x3</ansi>     - Same as "east", just 2 or 3 spaces away.
+  <ansi fg="command">east-gap</ansi>              - Connects to the east, but does not show a 
+                          connection on the map.
+  <ansi fg="command">east-gap2</ansi> / <ansi fg="command">east-gap3</ansi> - Same as "east-gap" just 2 or 3 spaces away.
+
+  <ansi fg="command">cave:east</ansi>             - The exit will be called "cave", but the direction on 
+                          the map will be to the east.
+  <ansi fg="command">cave:east-x2</ansi>          - The pattern continues from above, just with a 
+                          freeform exit name.
+
+  So <ansi fg="command">build room cave:east-x2 out</ansi> would add a "<ansi fg="command">cave</ansi>" exit <ansi fg="command">2 spaces</ansi> to the <ansi fg="command">east</ansi>, 
+  and create a returning exit called "<ansi fg="command">out</ansi>"
+

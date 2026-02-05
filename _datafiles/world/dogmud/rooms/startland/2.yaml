@@ -1,0 +1,19 @@
+roomid: 2
+zone: Startland
+title: End of the Line
+description: You've reached the end of the line in Startland. One day, perhaps more
+  will be built.
+biome: city
+exits:
+  south:
+    roomid: 1
+spawninfo:
+- mobid: 1
+  message: A rat crawls out from a garbage pile.
+  respawnrate: 2 real minutes
+- mobid: 1
+  message: A rat crawls out from a garbage pile.
+  respawnrate: 3 real minutes
+- mobid: 1
+  message: A rat crawls out from a garbage pile.
+  respawnrate: 4 real minutes

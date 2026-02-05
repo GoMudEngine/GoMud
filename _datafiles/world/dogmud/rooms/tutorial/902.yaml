@@ -1,0 +1,14 @@
+roomid: 902
+zone: Tutorial
+title: Learning to Fight
+description: This is a room for basic fight training. Here you can learn how to engage
+  in combat.
+exits:
+  north:
+    roomid: 901
+    lock:
+      difficulty: 10
+  west:
+    roomid: 903
+mutators:
+- mutatorid: training-combat

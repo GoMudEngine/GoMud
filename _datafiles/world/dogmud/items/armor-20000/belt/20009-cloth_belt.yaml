@@ -1,0 +1,7 @@
+itemid: 20009
+name: cloth belt
+namesimple: belt
+description: Just enough to hold your pants up.
+type: belt
+subtype: wearable
+damagereduction: 1

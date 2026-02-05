@@ -1,0 +1,34 @@
+#
+# This uniquely identifies the quest.
+#
+questid: 1000000
+name: Generic Quest
+description: A generic sample quest.
+#
+# Quests consist of a series of "steps"
+# Each step has an id
+# All quests must begin with "start"
+# All quests must end with "end"
+#
+steps:
+  - id: start
+    description: You have been asked to provide a sharp stick.
+    hint: Maybe somebody sells sharp sticks.
+  - id: givegold
+    description: You have been asked to provide 10 gold.
+    hint: Sell something for gold, or possibly take it from someone.
+  - id: end
+    description: You have completed a generic sample quest.
+#
+# All of the following reward settings are optional and can be left out.
+#
+rewards:
+  playermessage: "Congratulations, here's some stuff!" # Message the player see's when they complete the quest
+  roommessage: "A Generic Quest has been completed!"   # Message the room see's when the quest is completed
+  experience: 500                                      # Give them 500 experience as a reward
+  gold: 10                                             # Give them the gold back as a reward
+  item_id: 10001                                       # Give them the items back as a reward
+  skillinfo: "map:1"                                   # Give them the map skill at level 1 as a reward
+  buffid: 4                                            # Apply buff 4 to them (healing) as a reward
+  # questid: "1234-start"                              # Give another quest as a reward?
+  # roomid: 1                                          # Send them to another room as a reward?

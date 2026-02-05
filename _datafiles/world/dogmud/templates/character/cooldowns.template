@@ -1,0 +1,5 @@
+ ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Cooldowns</ansi> ──────────────────────────────────────────────────────────────┐
+ {{ range $name, $cooldown := . }}  <ansi fg="yellow-bold">{{ padRight 24 $name }}</ansi> <ansi fg="red">{{ $cooldown }} rounds</ansi> - {{ roundstotime $cooldown }}
+ {{ end -}}
+ └────────────────────────────────────────────────────────────────────────────┘
+

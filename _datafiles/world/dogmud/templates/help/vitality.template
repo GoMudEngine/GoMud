@@ -1,0 +1,11 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">vitality</ansi>
+
+The <ansi fg="command">vitality</ansi> stat measures your physical hardiness.
+
+<ansi fg="yellow">Usage: </ansi>
+
+Besides various skils that use vitality, here are some other general uses for it:
+
+* Healing per round is affected by vitality 
+* You get 4HP per point of Vitality
+

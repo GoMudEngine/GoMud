@@ -1,0 +1,33 @@
+#
+# All paths are relative to WebCDNLocation in config.yaml
+# If blank, will be relative to host root
+#
+# Sound that plays when a "change" confirmation/activation occurs
+change: 
+  filepath: static/audio/sound/other/change.mp3
+  volume: 80
+# When a target is hit in combat
+hit-other: 
+  filepath: static/audio/sound/combat/hit-other.mp3
+# When receiving a hit in combat
+hit-self: 
+  filepath: static/audio/sound/combat/hit-self.mp3
+# Plays at login screen
+intro: 
+  filepath: static/audio/music/intro.mp3
+  volume: 20
+# When Leveling up
+levelup: 
+  filepath: static/audio/sound/other/levelup.mp3
+# When missing a hit in combat
+miss: 
+  filepath: static/audio/sound/combat/miss1.mp3
+# When a purchase is made
+purchase: 
+  filepath: static/audio/sound/other/buy.mp3
+# When someone leaves the room
+room-exit: 
+  filepath: static/audio/sound/movement/room-exit.mp3
+# When someone enters the room
+room-enter: 
+  filepath: static/audio/sound/movement/room-enter.mp3

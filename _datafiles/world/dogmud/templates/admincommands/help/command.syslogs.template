@@ -1,0 +1,18 @@
+The <ansi fg="command">syslogs</ansi> command can be used to watch the server logs live.
+
+<ansi fg="command">syslogs on</ansi>  - Begin following all of the logs
+
+There are 4 levels of log importance you can enable. 
+Each level includes all logs of higher importance levels.
+
+<ansi fg="13">DEBUG</ansi> - Debugging logs. May not be enabled on this server.
+<ansi fg="2">INFO</ansi>  - General info that may or may not be useful.
+<ansi fg="11">WARN</ansi>  - Non urgent/critical warnings.
+<ansi fg="1">ERROR</ansi> - Very serious problems that should be tracked.
+
+Example:
+    <ansi fg="command">syslogs info</ansi>  - Receive all <ansi fg="2">INFO</ansi>, <ansi fg="11">WARN</ansi>, and <ansi fg="1">ERROR</ansi> logs.
+    <ansi fg="command">syslogs error</ansi>  - Receive only <ansi fg="1">ERROR</ansi> logs.
+
+<ansi fg="command">syslogs off</ansi> - Stop following the logs
+

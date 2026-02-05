@@ -1,0 +1,8 @@
+# Only applied by the aid skill
+spellid: aidskill
+name: Aid
+description: Revives a fallen ally
+type: helpsingle
+cost: 0
+waitrounds: 2
+difficulty: 0

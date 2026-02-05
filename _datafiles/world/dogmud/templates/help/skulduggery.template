@@ -1,0 +1,21 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">skulduggery</ansi> (skill)
+
+The <ansi fg="skill">skulduggery</ansi> skill is actuall several skills you learn. 
+
+Each skill is improved by your stats and level as well.
+
+<ansi fg="yellow">Usage: </ansi>
+
+(Lvl 1) <ansi fg="skill">sneak [direction/exit]</ansi> Remain hidden for a period of time, even when moving between areas.
+(Lvl 2) <ansi fg="skill">bump [enemy]</ansi> Bump into a player or NPC, causing a fraction of their coins to drop to the ground.
+(Lvl 3) <ansi fg="skill">backstab [enemy]</ansi> Guarenteed critical on successful attack.
+(Lvl 4) <ansi fg="skill">pickpocket [enemy]</ansi> Gain ability to steal from players and NPC's while hidden.
+
+Odds of success on a bump attempt: <ansi fg="red">attackStrength / 2 / LevelDifference</ansi>
+On success up to 25% of their gold will drop to the floor.
+
+Odds of success on a pickpocket attempt: <ansi fg="red">((attackSpeed+attackSmarts+attackPerception)/3 - defendPerception) / LevelDifference</ansi>
+You gain a +15% chance of success if you are sneaking at the time of a pickpocket attempt.
+On success you steal at least 25% of their money and 1 item.
+
+

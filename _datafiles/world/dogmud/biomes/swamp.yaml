@@ -1,0 +1,10 @@
+biomeid: swamp
+name: Swamp
+symbol: ♨
+description: Dark, wet, muddy. All sorts of creatures that creep and crawl inhabit
+  swamps.
+darkarea: true
+litarea: false
+requireditemid: 0
+usesitem: false
+burns: false

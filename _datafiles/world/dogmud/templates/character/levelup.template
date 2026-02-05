@@ -1,0 +1,19 @@
+
+<ansi fg="yellow-bold">*******************************************************************************</ansi>
+<ansi fg="yellow-bold">*******************************************************************************</ansi>
+
+ <ansi fg="yellow-bold">You have gained {{ if gt .levelsGained 1 }}{{ .levelsGained }} levels{{ else }}a level{{ end }}!</ansi> You are now <ansi fg="magenta-bold">level {{ .level }}</ansi>!
+
+ <ansi fg="yellow">Stat Gains:</ansi>
+
+ Strength: <ansi fg="{{ if gt .statsDelta.Strength.Value 0 }}yellow{{ else }}black{{ end }}-bold">{{ .statsDelta.Strength.Value }}</ansi>    Speed:     <ansi fg="{{ if gt .statsDelta.Speed.Value 0     }}yellow{{ else }}black{{ end }}-bold">{{ .statsDelta.Speed.Value     }}</ansi>    Smarts:   <ansi fg="{{ if gt .statsDelta.Smarts.Value 0   }}yellow{{ else }}black{{ end }}-bold">{{ .statsDelta.Smarts.Value   }}</ansi> 
+ Vitality: <ansi fg="{{ if gt .statsDelta.Vitality.Value 0 }}yellow{{ else }}black{{ end }}-bold">{{ .statsDelta.Vitality.Value }}</ansi>    Mysticism: <ansi fg="{{ if gt .statsDelta.Mysticism.Value 0 }}yellow{{ else }}black{{ end }}-bold">{{ .statsDelta.Mysticism.Value }}</ansi>    Perception: <ansi fg="{{ if gt .statsDelta.Perception.Value 0 }}yellow{{ else }}black{{ end }}-bold">{{ .statsDelta.Perception.Value }}</ansi>
+
+ <ansi fg="yellow">Training Points:</ansi>   <ansi fg="yellow-bold">+{{ .trainingPoints }}</ansi>    
+ <ansi fg="yellow">Bonus Stat Points:</ansi> <ansi fg="yellow-bold">+{{ .statPoints }}</ansi>{{ if .livesUp }}
+ <ansi fg="yellow">Extra Lives:</ansi>       <ansi fg="yellow-bold">+{{ .livesUp }}</ansi>{{ end }}
+
+ Type <ansi fg="command">stat train</ansi> to spend your extra Stat Points and improve your character.
+
+<ansi fg="yellow-bold">*******************************************************************************</ansi>
+<ansi fg="yellow-bold">*******************************************************************************</ansi>

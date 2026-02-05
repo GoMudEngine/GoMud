@@ -1,0 +1,8 @@
+# Only applied by the tame skill
+spellid: tameskill
+name: Tame
+description: Attempts to tame a wild creature.
+type: harmsingle
+cost: 0
+waitrounds: 3
+difficulty: 0

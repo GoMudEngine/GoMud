@@ -1,0 +1,1 @@
+           A rune reads: [<ansi fg="magenta-bold">{{ .DisplayText }}</ansi>]

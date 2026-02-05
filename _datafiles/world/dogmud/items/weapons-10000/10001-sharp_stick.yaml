@@ -1,0 +1,10 @@
+itemid: 10001
+name: sharp stick
+namesimple: stick
+description: It looks kinda sticky.
+type: weapon
+hands: 1
+subtype: bludgeoning
+uses: 0
+damage:
+  diceroll: 1d2

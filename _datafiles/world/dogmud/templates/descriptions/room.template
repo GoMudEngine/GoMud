@@ -1,0 +1,10 @@
+<ansi fg="room-description{{ if or .IsNight .IsDark }}-dark{{ end }}">{{ .Description }}</ansi>
+{{- range $index, $alertStr := .RoomAlerts }}
+
+    <ansi fg="red">┌───────────────────────────────────────────────────────────────────┐</ansi>
+      {{ $alertStr }}
+    <ansi fg="red">└───────────────────────────────────────────────────────────────────┘</ansi>
+{{- end }}
+{{- if ne (len .TrackingString) 0 }}
+<ansi fg="182">{{ .TrackingString }}</ansi>
+{{ end }}

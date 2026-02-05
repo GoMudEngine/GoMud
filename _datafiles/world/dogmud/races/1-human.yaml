@@ -1,0 +1,28 @@
+raceid: 1
+name: human
+description: A basic human who gains ordinary stats.
+defaultalignment: 0
+size: medium
+unarmedname: fists
+tnlscale: 1
+selectable: true
+knowsfirstaid: true
+angrycommands: 
+  - emote is looking for trouble.
+  - shout it's time to die!
+  - shout oh man, it is on now!
+  - shout i've been waiting for this moment.
+tameable: false
+stats:
+  strength:
+    base: 1
+  smarts:
+    base: 1
+  vitality:
+    base: 1
+  perception:
+    base: 1
+damage:
+  diceroll: 1d3
+disabledslots: []
+

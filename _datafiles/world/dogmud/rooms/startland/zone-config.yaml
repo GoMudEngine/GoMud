@@ -1,0 +1,6 @@
+name: Startland
+roomid: 1
+autoscale:
+  minimum: 1
+  maximum: 5
+defaultbiome: city

@@ -1,0 +1,1 @@
+<ansi fg="yellow-bold">{{ t "Create new user?" }}</ansi> <ansi fg="black-bold">[y/<ansi fg="white">n</ansi>]: </ansi>

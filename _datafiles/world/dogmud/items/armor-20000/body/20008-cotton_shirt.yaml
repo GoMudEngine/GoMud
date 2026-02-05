@@ -1,0 +1,7 @@
+itemid: 20008
+name: cotton shirt
+namesimple: shirt
+description: Surprisingly clean.
+type: body
+subtype: wearable
+damagereduction: 1

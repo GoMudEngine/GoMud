@@ -1,0 +1,12 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">bank</ansi>
+
+The <ansi fg="command">bank</ansi> command lets you deposit and withdraw from a bank. 
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">bank</ansi> - See your gold on hand and in the bank
+
+  <ansi fg="command">deposit [amount/all]</ansi> - Deposit an amount of gold (or all) into the bank
+  
+  <ansi fg="command">withdraw [amount/all]</ansi> - Withdraw an amount of gold (or all) from the bank
+

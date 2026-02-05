@@ -1,0 +1,10 @@
+roomid: 900
+zone: Tutorial
+title: Learning to Look
+description: You are at the Newbie School. Here you will learn the very basics of
+  how to navigate and interact with the world. Pay attention, because once you complete
+  this area, you will be all on your own. Currently you are learning about looking
+  around.
+exits:
+  east:
+    roomid: 901

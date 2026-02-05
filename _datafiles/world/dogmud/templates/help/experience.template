@@ -1,0 +1,16 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">experience</ansi>
+
+The <ansi fg="command">experience</ansi> command gives you your current level, current experience points,
+what you need to reach for your next level, and how many unspent training 
+points you have.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">experience</ansi>                          - See a summary of your level information
+
+<ansi fg="yellow">Extra Usage: </ansi>
+
+  <ansi fg="command">experience chart [max_level]</ansi>        - See the level chart for your race
+  <ansi fg="command">experience chart [race]</ansi>             - See the level chart for any other race race
+  <ansi fg="command">experience chart [race] [max_level]</ansi> - See the level chart for any other race race
+  

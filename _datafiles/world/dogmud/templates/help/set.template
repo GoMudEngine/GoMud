@@ -1,0 +1,33 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">set</ansi> command
+
+The <ansi fg="command">set</ansi> command configures your account. 
+
+There are a handful of settings you can adjust with this command, including:
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">set =# [command]</ansi> - e.g. <ansi fg="command">set =1 "say hi everyone"</ansi>
+  Sets a macro # (0-10) to a command of your choice. You can then use this macro
+  as a shortcut to quickly issue to a command as follows: <ansi fg="command">=1</ansi>
+  If your terminal program supports it, prettying a corresponding F-Key
+  Type <ansi fg="command">help macros</ansi> for more information about macros.
+
+  <ansi fg="command">set description [description]</ansi> - e.g. <ansi fg="command">set description "A fearsome warrior"</ansi> 
+  This sets the description players see when they look at your character. You
+  can also look at yourself to see your current description.
+
+  <ansi fg="command">set auction</ansi>
+  This toggles the auction system on or off. If off, you will not receive notifications about system-wide auctions.
+
+  <ansi fg="command">set shortadjectives</ansi>
+  This toggles short adjective displayes on or off. See <ansi fg="command">help adjectives</ansi>
+
+  <ansi fg="command">set prompt [prompt text]</ansi>
+  This sets a custom prompt (See <ansi fg="command">help prompt</ansi>)
+  If you ommit the [prompt text], your current prompt will be displayed.
+
+  <ansi fg="command">set tinymap</ansi>
+  This toggles the automatic tinymap on or off. It shows when looking at rooms.
+
+  <ansi fg="command">set wimpy</ansi>
+  Set your wimpy percentage (See <ansi fg="command">help wimpy</ansi>)

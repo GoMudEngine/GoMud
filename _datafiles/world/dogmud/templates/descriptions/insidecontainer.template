@@ -1,0 +1,12 @@
+{{- $displayed := 0 -}}
+{{ $itemCt := len .ItemNames -}}
+<ansi fg="white"> ┌─────────────────────────────────────────────────────────────────────────┐</ansi>
+
+  <ansi fg="white">Inside: </ansi>
+{{- if ne $itemCt 0 -}}
+    {{ $formattedNames := .ItemNamesFormatted -}}{{- $strlen := 0 -}}{{- $lineCt := 1 -}}
+ {{ range $index, $name := .ItemNames -}}{{ $proposedLength := (add 2 (add $strlen (len $name))) }}{{- if gt $proposedLength 66 -}}{{- $strlen = 0 -}}{{- $lineCt = (add 1 $lineCt) -}}{{- printf "\n          " -}}{{- end -}}{{ index $formattedNames $index }}{{- if ne $index (sub $itemCt 1) }}, {{ $strlen = (add 2 (add $strlen (len $name))) }}{{ end }}{{ end }}
+{{ else -}}
+Nothing
+{{ end }}
+<ansi fg="white"> └─────────────────────────────────────────────────────────────────────────┘</ansi>

@@ -1,0 +1,23 @@
+{{ $room := .room }}{{ $zone := .zone }}
+<ansi fg="yellow-bold">RoomId:</ansi>         <ansi fg="red">{{ $room.RoomId }}</ansi>{{ if eq $zone.RoomId $room.RoomId }} <ansi fg="white">(This is the zone root)</ansi>{{ else }} <ansi fg="white">(Zone root is {{ $zone.RoomId }})</ansi>{{ end }}
+<ansi fg="yellow-bold">Filepath:</ansi>       <ansi fg="129">{{ $room.Filepath }}</ansi>
+<ansi fg="yellow-bold">Zone:</ansi>           <ansi fg="room-zone">{{ $room.Zone }}</ansi>
+<ansi fg="yellow-bold">MapSymbol:</ansi>      <ansi fg="map-{{ lowercase $room.MapLegend }}">{{ $room.GetMapSymbol }}</ansi>
+<ansi fg="yellow-bold">MapLegend:</ansi>      <ansi fg="map-{{ lowercase $room.MapLegend }}">{{ $room.MapLegend }}</ansi>
+<ansi fg="yellow-bold">Title:</ansi>          <ansi fg="room-title">{{ $room.Title }}</ansi>
+<ansi fg="yellow-bold">Description:</ansi>    {{ splitstring $room.GetDescription 64 "                " }}
+<ansi fg="yellow-bold">Exits:</ansi>          {{ if eq (len $room.Exits) 0 }}None{{ else }}
+{{- range $command, $exitInfo := $room.Exits }}[<ansi fg="{{ if $exitInfo.Secret }}secret-{{ end }}exit">{{ $command }}</ansi> ⇒ <ansi fg="red">{{ $exitInfo.RoomId }}</ansi>] {{ end -}}{{ end }}
+<ansi fg="yellow-bold">Temp Exits:</ansi>     {{ if eq (len $room.ExitsTemp) 0 }}None{{ else }}
+{{- range $command, $exitInfo := $room.ExitsTemp }}[<ansi fg="exit">{{ $command }}</ansi> ⇒ <ansi fg="red">{{ $exitInfo.RoomId }}</ansi>] {{ end -}}{{ end }}
+<ansi fg="yellow-bold">Training:</ansi>       {{ if eq (len $room.SkillTraining) 0 }}None{{ else }}{{- range $index, $skill := $room.SkillTraining }}[{{ $skill }}] {{ end -}}{{ end }}
+<ansi fg="yellow-bold">Script:</ansi>         {{ if gt (len $room.GetScript) 0 }}<ansi fg="green">Yes</ansi> - <ansi fg="129">{{ $room.GetScriptPath }}</ansi>{{ else }}<ansi fg="red">No</ansi>{{ end }}
+<ansi fg="yellow-bold">Room Mutators:</ansi>  {{ range $i, $a := $room.Mutators }}<ansi fg="mutator">{{ $a.MutatorId }}</ansi> {{ if $a.Live }}<ansi fg="12">(active)</ansi>{{else}}<ansi fg="red">(inactive)</ansi>{{ end }}
+           {{ end }}
+<ansi fg="yellow-bold">Zone Mutators:</ansi>  {{ range $i, $a := $zone.Mutators }}<ansi fg="mutator">{{ $a.MutatorId }}</ansi> {{ if $a.Live }}<ansi fg="12">(active)</ansi>{{else}}<ansi fg="red">(inactive)</ansi>{{ end }}
+           {{ end }}
+{{ if gt (len $room.IdleMessages) 0 -}}
+<ansi fg="yellow-bold">IdleMessages:</ansi>   {{ range $i, $a := $room.IdleMessages }}{{ $a }}
+                {{ end -}}{{- end }}
+<ansi fg="yellow-bold">Players here:</ansi>   {{ range $i, $a := $room.GetPlayers -}}<ansi fg="username">{{- $char := uidToCharacter $a -}}@{{ $a }}-{{ $char.Name }}</ansi>, {{- end }}
+<ansi fg="yellow-bold">Mobs here:</ansi>      {{ range $i, $a := $room.GetMobs -}}<ansi fg="mobname">{{- $mobName := idToMobCharacter $a -}}#{{ $a }}-{{ $mobName }}</ansi>, {{- end }}

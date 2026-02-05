@@ -1,0 +1,12 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">{{ .Name }}</ansi> spell
+
+<ansi fg="white-bold">{{ .Description }}</ansi>
+
+<ansi fg="yellow">SpellID:     </ansi> <ansi fg="white-bold">{{ .SpellId }}</ansi>
+<ansi fg="yellow">Name:        </ansi> <ansi fg="white-bold">{{ .Name }}</ansi>
+<ansi fg="yellow">Type:        </ansi> <ansi fg="spell-{{ lowercase .Type.HelpOrHarmString }}">{{ .Type.HelpOrHarmString }}</ansi>
+<ansi fg="yellow">Target:      </ansi> <ansi fg="white-bold">{{ .Type.TargetTypeString }}</ansi>
+<ansi fg="yellow">Mana Cost:   </ansi> <ansi fg="white-bold">{{ .Cost }}</ansi>
+<ansi fg="yellow">Wait Time:   </ansi> <ansi fg="white-bold">{{ .WaitRounds }} rounds</ansi>
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help spells</ansi>, <ansi fg="command">help cast</ansi>

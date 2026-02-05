@@ -1,0 +1,165 @@
+# Look up the numeric codes if it's easier here: https://en.wikipedia.org/wiki/ANSI_escape_code
+# Also useful: https://www.hackitu.de/termcolor256/
+colors:
+  table-title: 2
+  userid: black
+  username: 11 # Bright yellow
+  username-aggro: 124
+  username-downed: 8 # Bright black
+  mobname: 51
+  mobname-aggro: 9 # Bright red
+  mobname-downed: 124
+  petname: 215
+  spellname: magenta
+  spell-text: 183
+  nameprefix-pet: 10
+  role: 8
+  role-admin: 9
+  role-mod: 1
+  role-user: 2
+  role-guest: 8
+  command: 6
+  command-admin: 9
+  skill: 11
+  container: 12 # Bright blue
+  exit: 10 # Bright green
+  secret-exit: 8 # Bright black
+  zone: 124
+  map-shop: 2
+  map-bank: 10
+  map-you: 14
+  map-secret: 8 # Bright black
+  map-temple: 8 # Bright black BG
+  mapbg-temple: 15 # Bright black
+  map-water: 12 # Bright blue
+  map-shore: 12 # Bright blue
+  map-forest: 2
+  map-trainer: 12 # Bright blue
+  map-player: 11 # Bright yellow
+  map-friend: 11 # Bright green
+  map-mob: 9 # Bright red
+  map-npc: 6 # Bright cyan
+  map-here: 13 # Bright magenta
+  room-description: 15
+  room-description-dark: 8
+  map-default: 8
+  map-room: 15 # Bright white
+  map-target: 9 # Bright red
+  map-city: 15 # Bright white
+  map-snow: 15 # Bright white
+  map-house: 3
+  map-mountains: 3
+  map-wall:  cyan # Bright black
+  map-legend: 8
+  trail-dead: 8
+  trail-weak: 7
+  trail-good: 2
+  trail-warm: 1
+  trail-hot: 9
+  item: 2
+  itemname: 2
+  itemdesc: 79
+  item-stashed: 8
+  questname: 6
+  xp: 11 # Bright yellow
+  experience: 11 # Bright yellow
+  gold: 220 # light yellow
+  stat: 201 # Magenta
+  statmod: 6 # Bright cyan
+  damage: 9 # Bright red
+  healing: 157
+  shop-qty: 15 # Bright white
+  shop-name: 2
+  shop-price: 220
+  shop-trade: 2
+  shop-pet-type: 215
+  shop-enchantment: 147
+  uses-left: 8 # Bright black
+  holy: 21
+  good: 27
+  virtuous: 39
+  lawful: 51
+  neutral: 7 # bright black
+  misguided: 226
+  corrupt: 214
+  evil: 202
+  unholy: 196
+  item-nothing: 237 # darkish black
+  item-flags: 7 # light gray
+  item-enchanted: 147
+  item-cursed: 54
+  item-bonus-damage: 49
+  name-flags-wrapper: 240
+  name-flag: 246
+  room-title: 128
+  room-zone: 124
+  health-100: 46
+  health-90: 82
+  health-80: 118
+  health-70: 154
+  health-60: 190
+  health-50: 226
+  health-40: 220
+  health-30: 214
+  health-20: 208
+  health-10: 202
+  health-0: 196
+  health-dead: 8
+  mana-100: 195
+  mana-90: 159
+  mana-80: 123
+  mana-70: 87
+  mana-60: 51
+  mana-50: 44
+  mana-40: 37
+  mana-30: 30
+  mana-20: 23
+  mana-10: 245
+  mana-0: 8
+  suggested-text: 8
+  night: 19
+  day: 228
+  day-dusk: 214
+  enters-message: 8
+  leaves-message: 8
+  spell-neutral: white
+  spell-helpful: 2
+  spell-harmful: 124
+  questflag: 187
+  highlight: 238
+  saytext: 13
+  saytext-mob: 13 
+  alert-5: 196
+  alert-4: 203
+  alert-3: 210
+  alert-2: 210
+  alert-1: 217
+  noun: 115
+  mail-border: 105
+  mail-title: 51
+  mail-title-read: 37
+  mail-date: 13
+  mail-date-read: 135
+  mail-message: 229
+  mail-message-read: 188
+  mail-note: 10
+  mail-note-read: 2
+  mutator: 49
+  buff: 147
+  buff-text: 14
+  script-text: 155
+  broadcast-prefix: 135
+  broadcast-body: 164
+  mob-corpse: 67
+  user-corpse: 143
+  tip-text: 219
+  character-joined: 120
+  md-h1-prefix: black-bold
+  md-h1: magenta
+  md-h2: yellow-bold
+  md-li: white-bold
+  md-sp1: command
+  md-bold: 9
+  md-em: 208
+  md-hr1: 4
+  md-hr2: 4

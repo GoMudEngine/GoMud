@@ -1,0 +1,56 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">picklock</ansi>
+
+<ansi fg="yellow">Example: </ansi>
+
+    <ansi fg="black-bold">[HP:66/66 MP:35/35]:</ansi> <ansi fg="command">pick north</ansi>
+
+    <ansi fg="black-bold">.:</ansi> <ansi fg="table-title">The Lock Sequence Looks like:</ansi>
+    <ansi fg="yellow-bold">╔═══════╦═══════╦═══════╦═══════╦═══════╗
+    ║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║
+    ║<ansi fg="locksequence"> <ansi fg="red-bold">  ?  </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">  ?  </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">  ?  </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">  ?  </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">  ?  </ansi> </ansi>║
+    ║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║
+    ╚═══════╩═══════╩═══════╩═══════╩═══════╝</ansi>
+    <ansi fg="black-bold">.:</ansi> <ansi fg="yellow-bold">Move your lockpick?</ansi> <ansi fg="black-bold">[</ansi>UP<ansi fg="black-bold">/</ansi>DOWN<ansi fg="black-bold">/</ansi>quit<ansi fg="black-bold">]</ansi> up
+
+    <ansi fg="yellow-bold">***</ansi> <ansi fg="red-bold">Oops! Your <ansi fg="item">lockpicks</ansi> break off in the lock, resetting the lock. You'll have to start all over.</ansi> <ansi fg="yellow-bold">***</ansi>
+
+    <ansi fg="black-bold">[HP:66/66 MP:35/35]:</ansi> <ansi fg="command">pick north</ansi>
+
+    <ansi fg="black-bold">.:</ansi> <ansi fg="table-title">The Lock Sequence Looks like:</ansi>
+    <ansi fg="yellow-bold">╔═══════╦═══════╦═══════╦═══════╦═══════╗
+    ║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║
+    ║<ansi fg="locksequence"> <ansi fg="red-bold">  ?  </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">  ?  </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">  ?  </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">  ?  </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">  ?  </ansi> </ansi>║
+    ║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║
+    ╚═══════╩═══════╩═══════╩═══════╩═══════╝</ansi>
+    <ansi fg="black-bold">.:</ansi> <ansi fg="yellow-bold">Move your lockpick?</ansi> <ansi fg="black-bold">[</ansi>UP<ansi fg="black-bold">/</ansi>DOWN<ansi fg="black-bold">/</ansi>quit<ansi fg="black-bold">]</ansi> down
+
+    <ansi fg="green-bold">A satisfying *click* tells you that you're making progress...</ansi>
+
+    <ansi fg="black-bold">.:</ansi> <ansi fg="table-title">The Lock Sequence Looks like:</ansi>
+    <ansi fg="yellow-bold">╔═══════╦═══════╦═══════╦═══════╦═══════╗
+    ║<ansi fg="locksequence"> <ansi fg="green-bold">     </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║
+    ║<ansi fg="locksequence"> <ansi fg="green-bold">  ↓  </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">  ?  </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">  ?  </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">  ?  </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">  ?  </ansi> </ansi>║
+    ║<ansi fg="locksequence"> <ansi fg="green-bold">  D  </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║
+    ╚═══════╩═══════╩═══════╩═══════╩═══════╝</ansi>
+    <ansi fg="black-bold">.:</ansi> <ansi fg="yellow-bold">Move your lockpick?</ansi> <ansi fg="black-bold">[</ansi>UP<ansi fg="black-bold">/</ansi>DOWN<ansi fg="black-bold">/</ansi>quit<ansi fg="black-bold">]</ansi> down
+
+    <ansi fg="green-bold">A satisfying *click* tells you that you're making progress...</ansi>
+
+    <ansi fg="black-bold">.:</ansi> <ansi fg="table-title">The Lock Sequence Looks like:</ansi>
+    <ansi fg="yellow-bold">╔═══════╦═══════╦═══════╦═══════╦═══════╗
+    ║<ansi fg="locksequence"> <ansi fg="green-bold">     </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="green-bold">     </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║
+    ║<ansi fg="locksequence"> <ansi fg="green-bold">  ↓  </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="green-bold">  ↓  </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">  ?  </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">  ?  </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">  ?  </ansi> </ansi>║
+    ║<ansi fg="locksequence"> <ansi fg="green-bold">  D  </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="green-bold">  D  </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║<ansi fg="locksequence"> <ansi fg="red-bold">     </ansi> </ansi>║
+    ╚═══════╩═══════╩═══════╩═══════╩═══════╝</ansi>
+    <ansi fg="black-bold">.:</ansi> <ansi fg="yellow-bold">Move your lockpick?</ansi> <ansi fg="black-bold">[</ansi>UP<ansi fg="black-bold">/</ansi>DOWN<ansi fg="black-bold">/</ansi>quit<ansi fg="black-bold">]</ansi> up
+
+    <ansi fg="green-bold">A satisfying *click* tells you that you're making progress...</ansi>
+
+<ansi fg="red">Note:</ansi> When you successfully complete an entire sequence, you will see:
+
+    <ansi fg="yellow-bold">***</ansi> <ansi fg="green-bold">You Successfully picked the lock!</ansi> <ansi fg="yellow-bold">***</ansi>
+    <ansi fg="yellow-bold">***</ansi> <ansi fg="green-bold">You can automatically pick this lock any time as long as you carry
+    <ansi fg="item">lockpicks</ansi>!</ansi> <ansi fg="yellow-bold">***</ansi>
+
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help keyring</ansi>

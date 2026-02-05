@@ -1,0 +1,15 @@
+- 
+  Supported: # A map of lowercase names of "Participant" => "Initiator" allowed to use this conversation
+    "guard": ["guard"]
+  Conversation:
+    - ["#1 emote nods"]
+    - ["#1 sayto #2 Good day."]
+    - ["#2 sayto #1 Good day to you."]
+- 
+  Supported: # A map of lowercase names of "Participant" => "Initiator" allowed to use this conversation
+    "guard": ["rat"]
+  Conversation:
+    - ["#1 sayto #2 Evening, little one. You're out late. Did you find anything of interest tonight?"]
+    - ["#2 sayto #1 Squeak, squeak."]
+    - ["#1 sayto #2 Ah, scavenging for scraps, I see. There's plenty to find in the alleys, if you know where to look."]
+    - ["#2 sayto #1 Squeak."]

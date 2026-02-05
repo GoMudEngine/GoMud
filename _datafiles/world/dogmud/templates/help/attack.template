@@ -1,0 +1,14 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">attack</ansi>
+
+The <ansi fg="command">attack</ansi> command engages in combat with a player or NPC. Once started combat continues
+until someone flees or someone dies.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">attack goblin</ansi>
+  This would start combat with the goblin
+
+When in combat your chance to hit is:  <ansi fg="red">attackersSpeed / (atackerSpeed+defenderSpeed) * 70 + 30</ansi>
+You always have a minimum 5% chance to miss and a minimum 5% chance to hit 
+
+Crits Chance is calculated as follows: <ansi fg="red">(Strength+Speed) / (attackerLevel-defenderLevel) + 5</ansi>

@@ -1,0 +1,26 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">alignment</ansi>
+
+A player or mobs <ansi fg="command">alignment</ansi> reflects their reputation and behavior.
+
+You can see your alignment at the top of your <ansi fg="command">stats</ansi> information.
+
+The possible alignments are:
+
+    <ansi fg="yellow"> 80 to  100:</ansi> <ansi fg="holy">Holy</ansi>
+    <ansi fg="yellow"> 60 to   79:</ansi> <ansi fg="good">Good</ansi>
+    <ansi fg="yellow"> 40 to   59:</ansi> <ansi fg="virtuous">Virtuous</ansi>
+    <ansi fg="yellow"> 20 to   39:</ansi> <ansi fg="lawful">Lawful</ansi>
+    <ansi fg="yellow">-19 to   19:</ansi> <ansi fg="neutral">Neutral</ansi>
+    <ansi fg="yellow">-20 to  -39:</ansi> <ansi fg="misguided">Misguided</ansi>
+    <ansi fg="yellow">-40 to  -59:</ansi> <ansi fg="corrupt">Corrupt</ansi>
+    <ansi fg="yellow">-60 to  -79:</ansi> <ansi fg="evil">Evil</ansi>
+    <ansi fg="yellow">-80 to -100:</ansi> <ansi fg="unholy">Unholy</ansi>
+
+Alignment naturally decays over time, eventually settling back at <ansi fg="neutral">Neutral</ansi>.
+Mobs you encounter may behave differently towards you depending upon their 
+alignment, and yours. Some mobs with an alignment of <ansi fg="virtuous">Virtuous</ansi> or higher
+may see unscrupulous acts and intervene.
+
+When PVP is enabled, players may freely attack others with an <ansi fg="evil">Evil</ansi> alignment
+or lower, and receive no penalty.
+

@@ -1,0 +1,12 @@
+
+{{ $columnWidths := .ColumnWidths -}}
+{{- $tableData := . }}
+{{- $headers := .Header -}}
+{{- $padding := 1 -}}
+<ansi fg="black-bold">.:</ansi> <ansi fg="table-title">{{ .Title }}</ansi>
+<ansi fg="black-bold">╒{{ range $i, $w := $columnWidths }}{{ repeat "═" $w }}{{ repeat "═" $padding }}{{ repeat "═" $padding }}{{ if ne (sub (len $columnWidths) 1) $i }}╕{{ end }}{{ end }}╕
+{{ range $i, $col := .Header }}│<ansi fg="white">{{ repeat " " $padding }}{{ $tableData.GetHeaderCell $i }}{{ repeat " " $padding }}</ansi>{{ end }}│
+└{{ range $i, $w := $columnWidths }}{{ repeat "─" $padding }}{{ repeat "─" $w }}{{ repeat "─" $padding }}┘{{ end }}
+{{ range $rowIndex, $row := .Rows }}
+{{- range $i, $col := $row }}│<ansi fg="shop-{{ lowercase (index $headers $i) }}">{{ repeat " " $padding }}{{ $tableData.GetCell $rowIndex $i }}{{ repeat " " $padding }}</ansi>{{ end }}│
+{{ end }}└{{ range $i, $w := $columnWidths }}{{ repeat "─" $padding }}{{ repeat "─" $w }}{{ repeat "─" $padding }}┘{{ end }}</ansi>

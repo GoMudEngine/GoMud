@@ -1,0 +1,22 @@
+ ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Equipment</ansi> ──────────────────────────────────────────────────────────────┐
+{{ if not .Equipment.Weapon.IsDisabled }}   <ansi fg="yellow">Weapon:  </ansi><ansi fg="itemname">{{ .Equipment.Weapon.NameSimple  }}</ansi>
+{{ end -}}
+{{- if not .Equipment.Offhand.IsDisabled }}   <ansi fg="yellow">Offhand: </ansi><ansi fg="itemname">{{ .Equipment.Offhand.NameSimple }}</ansi>
+{{ end -}}
+{{- if not .Equipment.Head.IsDisabled }}   <ansi fg="yellow">Head:    </ansi><ansi fg="itemname">{{ .Equipment.Head.NameSimple    }}</ansi>
+{{ end -}}
+{{- if not .Equipment.Neck.IsDisabled }}   <ansi fg="yellow">Neck:    </ansi><ansi fg="itemname">{{ .Equipment.Neck.NameSimple    }}</ansi>
+{{ end -}}
+{{- if not .Equipment.Body.IsDisabled }}   <ansi fg="yellow">Body:    </ansi><ansi fg="itemname">{{ .Equipment.Body.NameSimple    }}</ansi>
+{{ end -}}
+{{- if not .Equipment.Belt.IsDisabled }}   <ansi fg="yellow">Belt:    </ansi><ansi fg="itemname">{{ .Equipment.Belt.NameSimple    }}</ansi>
+{{ end -}}
+{{- if not .Equipment.Gloves.IsDisabled }}   <ansi fg="yellow">Gloves:  </ansi><ansi fg="itemname">{{ .Equipment.Gloves.NameSimple  }}</ansi>
+{{ end -}}
+{{- if not .Equipment.Ring.IsDisabled }}   <ansi fg="yellow">Ring:    </ansi><ansi fg="itemname">{{ .Equipment.Ring.NameSimple    }}</ansi>
+{{ end -}}
+{{- if not .Equipment.Legs.IsDisabled }}   <ansi fg="yellow">Legs:    </ansi><ansi fg="itemname">{{ .Equipment.Legs.NameSimple    }}</ansi>
+{{ end -}}
+{{- if not .Equipment.Feet.IsDisabled }}   <ansi fg="yellow">Feet:    </ansi><ansi fg="itemname">{{ .Equipment.Feet.NameSimple    }}</ansi>
+{{ end }} └────────────────────────────────────────────────────────────────────────────┘
+ Carrying: {{ $itmCt := len .ItemNames }}{{ if eq $itmCt 0 }}no{{ else if lt $itmCt 4 }}a few{{ else if lt $itmCt 7 }}several{{ else }}lots of{{ end }} objects

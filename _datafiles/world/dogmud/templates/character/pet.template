@@ -1,0 +1,8 @@
+
+<ansi fg="black-bold">.:</ansi> {{ .Character.Pet.DisplayName }}
+ ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Description</ansi> ────────────────────────────────────────────────────────────┐
+   {{ .Character.Pet.DisplayName }} is a pet <ansi fg="petname">{{ .Character.Pet.Type }}</ansi> owned by <ansi fg="username">{{ .Character.Name }}</ansi>.
+   {{ .Character.Pet.DisplayName }} hunger is: <ansi fg="hunger-{{ .Character.Pet.Food }}">{{ .Character.Pet.Food }}</ansi>
+ └────────────────────────────────────────────────────────────────────────────┘
+ {{ $itemCt := len .Character.Pet.Items -}}{{- $strlen := 0 -}}{{- $lineCt := 1 -}}
+ Carrying: {{ range $index, $itm := .Character.Pet.Items -}}{{ $proposedLength := (add 2 (add $strlen (len $itm.Name))) }}{{- if gt $proposedLength 68 -}}{{- $strlen = 0 -}}{{- $lineCt = (add 1 $lineCt) -}}{{ if eq $lineCt 2 }}{{- print "\n           " -}}{{ else }}{{- printf "\n           " -}}{{ end }}{{- end -}}{{ $itm.DisplayName  }}{{- if ne $index (sub $itemCt 1) }}, {{ $strlen = (add 2 (add $strlen (len $itm.Name ))) }}{{ end }}{{ end }}

@@ -1,0 +1,5 @@
+
+<ansi fg="alert-5">CAUTION:</ansi> This will be your login username, NOT your character name!
+Whatever you use as your login name CANNOT be used as a character name.
+
+<ansi fg="39">Choose your username</ansi><ansi fg="black-bold">: </ansi>

@@ -33,7 +33,7 @@ Server:
   # - MudName -
   #   Display name of the MUD.
   #   This will be used a few places by default (such as the web pages).
-  MudName: "GoMud"
+  MudName: "DOGMud"
   # - Seed -
   #   The seed used for certain types of content generation
   #   To prevent certain secrets or content from being spoiled, you can set this
@@ -41,7 +41,7 @@ Server:
   #   Note: Once the Mud has been played and data saved, changing this will
   #   probably break certain things that get saved to files, such as user KeyRings,
   #   so only set it before the first time you run the server.
-  Seed: "Mud"
+  Seed: "DOGMud-Chrysalis-2026"
   # - MaxCPUCores -
   #   Maximum CPU cores to use. 0 for all available cores.
   #   Most of the game is single threaded, but there are a few things that can
@@ -196,7 +196,7 @@ FilePaths:
   #   The folder where all datafiles reside.
   #   If you are planning to create your own world, copying the current folder
   #   and its entire tree of content is a good place to start.
-  DataFiles: _datafiles/world/default
+  DataFiles: _datafiles/world/dogmud
   # - PublicHtml -
   #   The folder where all web html files/templates reside.
   PublicHtml: _datafiles/html/public

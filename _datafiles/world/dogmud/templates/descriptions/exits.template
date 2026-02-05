@@ -1,0 +1,15 @@
+<ansi fg="yellow">Exits: </ansi>
+{{- $exitCount := add (len .VisibleExits) (len .TemporaryExits) -}}
+{{- if eq $exitCount 0 -}}
+    <ansi fg="room-description{{ if or .IsNight .IsDark }}-dark{{ end }}">None</ansi>
+{{- else -}}
+    {{- $displayed := 0 -}}
+    {{- range $exitStr, $exitInfo := .VisibleExits -}}
+            {{- $displayed = add $displayed 1 -}}
+            <ansi fg="{{ if $exitInfo.Secret }}secret-{{ end }}exit">{{ if $exitInfo.Secret }}({{ end }}{{ $exitStr }}{{ if $exitInfo.Secret }}){{ end }}</ansi>{{ if $exitInfo.HasLock }}{{ if not $exitInfo.Lock.IsLocked }} (unlocked){{ else }} (locked){{ end }}{{ end }}{{- if ne $displayed $exitCount }}, {{ end -}}
+    {{- end -}}
+    {{- range $exitStr, $tmpExitInfo := .TemporaryExits -}}
+            {{- $displayed = add $displayed 1 -}}
+            <ansi fg="exit">{{ $tmpExitInfo.Title }}</ansi>{{- if ne $displayed $exitCount }}, {{ end -}}
+    {{- end -}}
+{{- end }}

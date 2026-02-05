@@ -1,0 +1,16 @@
+raceid: 19
+name: dummy
+description: A wooden target
+defaultalignment: 0
+size: small
+unarmedname: sticks
+tnlscale: 1
+selectable: false
+knowsfirstaid: false
+tameable: false
+stats:
+  vitality:
+    base: 4
+damage:
+  diceroll: 0d0
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'body', 'belt', 'gloves', 'ring', 'legs', 'feet']

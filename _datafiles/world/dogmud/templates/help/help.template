@@ -1,0 +1,35 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">help</ansi>
+
+The <ansi fg="command">help</ansi> command looks up guidance on a command.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">help say</ansi>
+  Find help on the command <ansi fg="command">say</ansi>.
+
+Here are some <ansi fg="skill">skills</ansi> and <ansi fg="command">commands</ansi> to look up to get started:
+{{/* padRight 80 "" "-" */}}
+{{ if gt (len .Commands) 0 -}}
+Commands:
+{{ range $category, $commandList := .Commands -}}
+<ansi fg="black-bold">  {{ uc $category }}</ansi>
+{{ $counter := 0 }}    {{ range $i, $cmdInfo := $commandList }}<ansi fg="{{ $cmdInfo.Type }}">{{ if $cmdInfo.Missing }}<ansi fg="red-bold">*</ansi>{{ else }} {{ end }}{{ padRight 17 $cmdInfo.Command " " }}</ansi> {{ if eq (mod $counter 4) 3 }}{{ if ne $i (sub (len $commandList) 1) }}{{ printf "\n    " }}{{ end }}{{ end }}{{ $counter = (add $counter 1) }}{{ end }}
+{{ end }}
+{{ end }}
+
+{{- if gt (len .Skills) 0 -}}
+Skills:
+{{- range $category, $commandList := .Skills -}}
+<ansi fg="black-bold">  {{ uc $category }}</ansi>
+{{ $counter := 0 }}    {{ range $i, $cmdInfo := $commandList }}<ansi fg="{{ $cmdInfo.Type }}">{{ if $cmdInfo.Missing }}<ansi fg="red-bold">*</ansi>{{ else }} {{ end }}{{ padRight 17 $cmdInfo.Command " " }}</ansi> {{ if eq (mod $counter 4) 3 }}{{ if ne $i (sub (len $commandList) 1) }}{{ printf "\n    " }}{{ end }}{{ end }}{{ $counter = (add $counter 1) }}{{ end }}
+{{ end }}
+{{ end }}
+
+{{- if gt (len .Admin) 0 -}}
+Admin:
+{{- range $category, $commandList := .Admin -}}
+<ansi fg="black-bold">  {{ uc $category }}</ansi>
+{{ $counter := 0 }}    {{ range $i, $cmdInfo := $commandList }}<ansi fg="{{ $cmdInfo.Type }}">{{ if $cmdInfo.Missing }}<ansi fg="red-bold">*</ansi>{{ else }} {{ end }}{{ padRight 17 $cmdInfo.Command " " }}</ansi> {{ if eq (mod $counter 4) 3 }}{{ if ne $i (sub (len $commandList) 1) }}{{ printf "\n    " }}{{ end }}{{ end }}{{ $counter = (add $counter 1) }}{{ end }}
+{{ end }}{{ end }}
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help gomud</ansi>

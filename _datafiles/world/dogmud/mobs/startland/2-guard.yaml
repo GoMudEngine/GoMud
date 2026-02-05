@@ -1,0 +1,24 @@
+mobid:  2
+zone: Startland
+itemdropchance: 2
+hostile: false
+maxwander: 20
+groups: 
+  - startland-npc
+activitylevel: 20
+character:
+  name: guard
+  description: 'Standing tall and vigilant, the guard of Startland exudes an aura of unwavering duty. Clad in a thick, deep-blue cape that flutters against the biting wind, the guard''s silhouette is a familiar sight against the snowy backdrop of the city. The cape, adorned with the emblem of Startland, shields a suit of polished chainmail that gleams faintly in the dim light. Resting securely at the guard''s side is a broadsword, its blade well-maintained and sharp, a testament to the guard''s readiness. The guard''s eyes, hardened by the challenges of the frozen city, constantly scan the surroundings, ensuring the safety of its inhabitants and maintaining the order that Startland is known for.'
+  raceid: 1
+  level: 10
+  alignment: 30
+  gold: 3
+  equipment:
+    weapon:
+      itemid: 10001
+    neck:
+      itemid: 20002
+    feet:
+      itemid: 20003
+hates:
+  - rats

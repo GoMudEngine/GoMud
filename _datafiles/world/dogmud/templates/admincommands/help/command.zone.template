@@ -1,0 +1,9 @@
+The <ansi fg="command">zone</ansi> command can be used in the following ways:
+
+<ansi fg="command">room info</ansi> 
+Get the zone config info
+<ansi fg="command">zone set autoscale [lowend] [highend]</ansi> - e.g. <ansi fg="command">zone set autoscale 5 10</ansi>
+Set the mob auto-scaling to a min/max range. Set to zeroes or empty to clear.
+
+You can interactively modify zone properties to the room using the command:
+<ansi fg="command">zone edit</ansi>

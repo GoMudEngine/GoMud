@@ -1,0 +1,7 @@
+itemid: 20003
+name: worn boots
+namesimple: boots
+description: Boots well past their usefulness.
+type: feet
+subtype: wearable
+damagereduction: 1

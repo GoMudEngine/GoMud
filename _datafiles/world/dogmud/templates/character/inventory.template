@@ -1,0 +1,28 @@
+{{ if not .Searching }} ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Equipment</ansi> ──────────────────────────────────────────────────────────────┐
+{{ if not .Equipment.Weapon.IsDisabled }}   <ansi fg="yellow">Weapon:  </ansi><ansi fg="itemname">{{ .Equipment.Weapon.NameComplex  }}</ansi>
+{{ end -}}
+{{- if not .Equipment.Offhand.IsDisabled }}   <ansi fg="yellow">Offhand: </ansi><ansi fg="itemname">{{ .Equipment.Offhand.NameComplex }}</ansi>
+{{ end -}}
+{{- if not .Equipment.Head.IsDisabled }}   <ansi fg="yellow">Head:    </ansi><ansi fg="itemname">{{ .Equipment.Head.NameComplex    }}</ansi>
+{{ end -}}
+{{- if not .Equipment.Neck.IsDisabled }}   <ansi fg="yellow">Neck:    </ansi><ansi fg="itemname">{{ .Equipment.Neck.NameComplex    }}</ansi>
+{{ end -}}
+{{- if not .Equipment.Body.IsDisabled }}   <ansi fg="yellow">Body:    </ansi><ansi fg="itemname">{{ .Equipment.Body.NameComplex    }}</ansi>
+{{ end -}}
+{{- if not .Equipment.Belt.IsDisabled }}   <ansi fg="yellow">Belt:    </ansi><ansi fg="itemname">{{ .Equipment.Belt.NameComplex    }}</ansi>
+{{ end -}}
+{{- if not .Equipment.Gloves.IsDisabled }}   <ansi fg="yellow">Gloves:  </ansi><ansi fg="itemname">{{ .Equipment.Gloves.NameComplex  }}</ansi>
+{{ end -}}
+{{- if not .Equipment.Ring.IsDisabled }}   <ansi fg="yellow">Ring:    </ansi><ansi fg="itemname">{{ .Equipment.Ring.NameComplex    }}</ansi>
+{{ end -}}
+{{- if not .Equipment.Legs.IsDisabled }}   <ansi fg="yellow">Legs:    </ansi><ansi fg="itemname">{{ .Equipment.Legs.NameComplex    }}</ansi>
+{{ end -}}
+{{- if not .Equipment.Feet.IsDisabled }}   <ansi fg="yellow">Feet:    </ansi><ansi fg="itemname">{{ .Equipment.Feet.NameComplex    }}</ansi>
+{{ end }} └────────────────────────────────────────────────────────────────────────────┘
+ {{ $itemCt := len .ItemNames -}}{{ $formattedNames := .ItemNamesFormatted -}}{{- $strlen := 0 -}}{{- $lineCt := 1 -}}{{- $itemCount := .Count -}}
+ Carrying: {{ range $index, $name := .ItemNames -}}{{ $proposedLength := (add 2 (add $strlen (len $name))) }}{{- if gt $proposedLength 68 -}}{{- $strlen = 0 -}}{{- $lineCt = (add 1 $lineCt) -}}{{ if eq $lineCt 2 }}{{- printf "\n %s  " (padLeft 8 $itemCount) -}}{{ else }}{{- printf "\n           " -}}{{ end }}{{- end -}}{{ index $formattedNames $index }}{{- if ne $index (sub $itemCt 1) }}, {{ $strlen = (add 2 (add $strlen (len $name))) }}{{ end }}{{ end }}
+{{ else }}
+{{ $itemCt := len .ItemNames -}}{{ $formattedNames := .ItemNamesFormatted -}}
+ Found in your bag: {{ range $index, $name := .ItemNames -}}{{  index $formattedNames $index }}
+                   {{ end -}}
+{{ end }}

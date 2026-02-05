@@ -1,0 +1,8 @@
+
+<ansi fg="black-bold">.:</ansi> <ansi fg="8">{{ .Name }} corpse</ansi>
+ ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Description</ansi> ────────────────────────────────────────────────────────────┐
+   <ansi fg="red-bold">☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠</ansi>
+   <ansi fg="8">{{ splitstring .GetDescription 72 "   "}}</ansi>
+   <ansi fg="red-bold">☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠ ☠</ansi>
+   <ansi fg="8">This is a corpse. They are dead.</ansi>
+ └────────────────────────────────────────────────────────────────────────────┘

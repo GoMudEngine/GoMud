@@ -1,0 +1,5 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">stat-train</ansi>
+
+The <ansi fg="command">stat-train</ansi> command spends Stat Points you gave from leveling to improve your character.
+
+It will start an interactive prompt to choose what to improve in.

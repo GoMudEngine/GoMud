@@ -1,0 +1,16 @@
+
+{{ $readMarker := "" -}}
+{{- if .Read }}{{ $readMarker = "-read" }}{{ else }}<ansi fg="alert-5">{{ t "Inbox.NewMessage" }}</ansi>
+{{ end -}}
+<ansi fg="mail-title{{ $readMarker }}">{{ t "Inbox.Sent" }}</ansi><ansi fg="mail-date{{ $readMarker }}">{{ .DateString }}</ansi>
+<ansi fg="mail-title{{ $readMarker }}">{{ t "Inbox.From" }}</ansi><ansi fg="username">{{ .FromName }}</ansi>
+
+<ansi fg="mail-title{{ $readMarker }}">{{ t "Inbox.Message" }}</ansi><ansi fg="mail-message{{ $readMarker }}">{{ splitstring .Message 71 "         " }}</ansi>
+{{ if gt .Gold 0 }}
+{{ $mapNoteGold := map "Gold" .Gold -}}
+<ansi fg="mail-note{{ $readMarker }}"><ansi fg="alert-4">{{ t "Inbox.Note" }}</ansi>{{ t "Inbox.NoteGold" $mapNoteGold }}</ansi>
+{{- end -}}
+{{ if ne .Item nil }}
+{{ $mapNoteItem := map "Item" .Item -}}
+<ansi fg="mail-note{{ $readMarker }}"><ansi fg="alert-4">{{ t "Inbox.Note" }}</ansi>{{ t "Inbox.NoteItem" $mapNoteItem }}</ansi>
+{{- end -}}

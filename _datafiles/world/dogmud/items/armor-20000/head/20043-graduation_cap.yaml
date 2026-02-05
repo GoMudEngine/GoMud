@@ -1,0 +1,8 @@
+itemid: 20043
+name: graduation cap
+description: A special hat signifying that you've completed the tutorial.
+type: head
+subtype: wearable
+damagereduction: 1
+statmods:
+  perception: 1

@@ -1,0 +1,52 @@
+The <ansi fg="command">room</ansi> command can be used in the following ways:
+
+<ansi fg="command">room info [room_id]</ansi> - e.g. <ansi fg="command">room info 1</ansi>
+Get information on a room. If ommitted, defaults to current room.
+
+<ansi fg="command">room copy [property] [room_id]</ansi>
+Copies the property from another room:
+
+    Properties:
+        <ansi fg="command">spawninfo</ansi> (string)   - e.g. <ansi fg="command">room copy spawninfo 1</ansi>
+
+<ansi fg="command">room set [property] [value]</ansi>
+Set a property of the room. This updates basic properties of the room you are in.
+
+    Properties:
+        <ansi fg="command">title</ansi> (string)       - e.g. <ansi fg="command">room set title "A rainbow road"</ansi>
+        <ansi fg="command">description</ansi> (string) - e.g. <ansi fg="command">room set description "The way is short and easy"</ansi>
+        <ansi fg="command">idlemessages</ansi> (string)- e.g. <ansi fg="command">room set idlemessages "The wind blow;the sand falls"</ansi>
+        <ansi fg="command">legend</ansi> (string)      - e.g. <ansi fg="command">room set legend "Pie-shop"</ansi>
+        <ansi fg="command">symbol</ansi> (string)      - e.g. <ansi fg="command">room set symbol "#"</ansi>
+        <ansi fg="command">zone</ansi> (string)        - e.g. <ansi fg="command">room set zone "trash"</ansi>
+        <ansi fg="command">spawninfo clear</ansi>      <ansi fg="red">CAREFUL! CLEARS SPAWN INFO!</ansi>
+        <ansi fg="command">mutators</ansi>             <ansi fg="red">list mutators for room</ansi>
+        <ansi fg="command">mutator [mutator-id]</ansi> <ansi fg="red">Toggles mutator on or off</ansi>
+
+    Nouns:
+        Room nouns are extra descriptive tags that can be "looked" at by players.
+        <ansi fg="command">room nouns</ansi> - List all nouns for the room
+        <ansi fg="command">room noun [name] [description]</ansi> - Add or overwrite a noun
+
+    Containers:
+        You can interactively add/remove/edit containers using the command:
+        <ansi fg="command">room edit containers</ansi>
+    Exits:
+        You can interactively add/remove/edit exits using the command:
+        <ansi fg="command">room edit exits</ansi>
+    Mutators:
+        You can interactively add/remove mutators to the room using the command:
+        <ansi fg="command">room edit mutators</ansi>
+
+<ansi fg="command">room exit [exit_name] [room_id]</ansi> - e.g. <ansi fg="command">room exit west 159</ansi>
+This will create a new exit that links to a specific room_id using the exit_name provided.
+<ansi fg="red-bold">!Beware!</ansi> if the spacial relationship with compass direction rooms is done incorrectly, 
+movement could confuse players and maps may generate strangely.
+It is recommended that this only be used to link rooms with non-compass directions, such as "inside" or "cave"
+
+<ansi fg="command">room exit [exit_name] [new_exit_name]</ansi> - e.g. <ansi fg="command">room exit up climb</ansi>
+This will rename an exit name to something new. This only works if the new exit name is non-numeric.
+
+<ansi fg="command">room secretexit [exit_name]</ansi> - e.g. <ansi fg="command">room secretexit south</ansi>
+Toggles the secrecy of an exit on or off.
+

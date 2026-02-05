@@ -1,0 +1,20 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">map</ansi> (skill)
+
+The <ansi fg="skill">map</ansi> command displays a map of the area, centered on your character. 
+
+Not everything is guaranteed to be shown on the map. For example, hidden areas 
+may not be shown.
+
+With each level of training, your mapping skill will become more effective, 
+covering more area.
+
+<ansi fg="yellow">Usage: </ansi>
+
+(Lvl 1) <ansi fg="skill">map</ansi>        Map a 5x5 area around you.
+(Lvl 2) <ansi fg="skill">map</ansi>        Map a 9x7 area around you.
+(Lvl 3) <ansi fg="skill">map</ansi>        Map a 13x9 area around you.
+(Lvl 4) <ansi fg="skill">map [wide]</ansi> Map a 17x9 area around you, or if "wide" is specified, 
+                   twice the distance zoomed out.
+
+Your maps continue to expand with your perception: <ansi fg="red">Perception/5</ansi>
+

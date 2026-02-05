@@ -1,0 +1,13 @@
+roomid: 901
+zone: Tutorial
+title: Learning about You
+description: In this room you will learn how to inspect your character. Your status,
+  conditions, and a few other useful bits of information are only a few keystrokes
+  away.
+exits:
+  south:
+    roomid: 902
+    lock:
+      difficulty: 10
+  west:
+    roomid: 900

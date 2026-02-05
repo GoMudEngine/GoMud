@@ -1,0 +1,9 @@
+ ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Recent Visitors</ansi> ─────────────────────────────────────────────────────┐
+ {{- if eq (len .) 0 }}
+   None
+ {{ else }}
+ {{- range $key, $val := . }}
+   [<ansi fg="trail-{{ padRight 4 (lowercase $val.Strength) }}">{{ $val.Strength }}</ansi>] <ansi fg="username">{{ stringor $val.Name "None" 0 }}</ansi> {{ if ne $val.ExitName "" }}- It seems like they went <ansi fg="exit">{{ $val.ExitName }}</ansi>{{ end }}
+{{- end }}
+{{- end }}
+ └─────────────────────────────────────────────────────────────────────────┘

@@ -1,0 +1,9 @@
+biomeid: farmland
+name: Farmland
+symbol: ','
+description: Cultivated land used for growing crops.
+darkarea: false
+litarea: false
+requireditemid: 0
+usesitem: false
+burns: true

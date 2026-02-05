@@ -1,0 +1,29 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">status</ansi>
+
+The <ansi fg="command">status</ansi> command gives you a summary of your characters information.
+
+When you level up, you gain <ansi>Stat Points</ansi> which you can spend to upgrade your 
+stats base value.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">status</ansi> - Show your character status
+
+  <ansi fg="command">status train</ansi> - Spend stat points on upgrades to base stats.
+
+<ansi fg="yellow">Related Help: </ansi>
+
+  <ansi fg="command">race</ansi>
+  <ansi fg="command">level</ansi>
+  <ansi fg="command">experience</ansi>
+  <ansi fg="command">health</ansi>
+  <ansi fg="command">mana</ansi>
+  <ansi fg="command">armor</ansi>
+
+  <ansi fg="command">strength</ansi>
+  <ansi fg="command">vitality</ansi>
+  <ansi fg="command">speed</ansi>
+  <ansi fg="command">mysticism</ansi>
+  <ansi fg="command">smarts</ansi>
+  <ansi fg="command">perception</ansi>
+

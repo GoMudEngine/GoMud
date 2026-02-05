@@ -1,0 +1,11 @@
+The <ansi fg="command">questtoken</ansi> command can be used in the following ways:
+
+<ansi fg="command">questtoken [token_name]</ansi> - e.g. <ansi fg="command">questtoken "HAM"</ansi>
+Give youself a quest token
+
+<ansi fg="command">questtoken list</ansi>
+List all quest tokens that you have
+
+<ansi fg="command">questtoken all</ansi>
+List all quest tokens
+

@@ -1,0 +1,10 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">break</ansi>
+
+The <ansi fg="command">break</ansi> command disengages your part of combat.
+<ansi fg="red">Note:</ansi> Enemies may still attack you!
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">break</ansi>
+  This would allow you to move around again.
+

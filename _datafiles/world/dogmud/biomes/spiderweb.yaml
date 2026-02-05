@@ -1,0 +1,10 @@
+biomeid: spiderweb
+name: Spiderweb
+symbol: "\U0001F578"
+description: Sticky strands of web that are strong enough to support a person. The
+  domain of spiders. It's naturally quite dark due to the thick coating of web everywhere.
+darkarea: true
+litarea: false
+requireditemid: 0
+usesitem: false
+burns: false

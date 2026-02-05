@@ -1,0 +1,11 @@
+mobid:  58
+zone: Tutorial
+itemdropchance: 0
+hostile: false
+maxwander: 0
+activitylevel: 10
+character:
+  name: training dummy
+  description: 'A wooden dummy to practice hitting.'
+  raceid: 19
+  level: 1

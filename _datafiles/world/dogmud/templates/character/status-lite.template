@@ -1,0 +1,12 @@
+
+ <ansi fg="black-bold">.:</ansi> <ansi fg="username">{{ .Name }}</ansi> the {{ profession . }}
+{{- $tnl := .XPTNL -}}
+{{- $pct := (pct .Experience $tnl ) -}}
+{{- $exp := printf "%d/%d (%d%%)" .Experience $tnl $pct }}
+ ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Info</ansi> ──────────────────────┐ ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Attributes</ansi> ───────────────────────────┐
+ │ <ansi fg="yellow">Health: </ansi>{{ printf "%-10d" .Health                      }} <ansi fg="yellow">Max: </ansi>{{  printf "%-6d" .HealthMax.Value }}│ │ <ansi fg="yellow">Strength: </ansi>{{ printf "%-4d<ansi fg=\"statmod\">(%-3d)</ansi>" .Stats.Strength.Value (.StatMod "strength") }} <ansi fg="yellow">Vitality:  </ansi>{{  printf "%-4d<ansi fg=\"statmod\">(%-3d)</ansi>" .Stats.Vitality.Value (.StatMod "vitality")     }} │
+   <ansi fg="yellow">Mana:   </ansi>{{ printf "%-10d" .Mana                        }} <ansi fg="yellow">Max: </ansi>{{  printf "%-6d" .ManaMax.Value   }}    <ansi fg="yellow">Speed:    </ansi>{{ printf "%-4d<ansi fg=\"statmod\">(%-3d)</ansi>" .Stats.Speed.Value (.StatMod "speed")       }} <ansi fg="yellow">Mysticism: </ansi>{{   printf "%-4d<ansi fg=\"statmod\">(%-3d)</ansi>" .Stats.Mysticism.Value (.StatMod "mysticism")  }}
+   <ansi fg="yellow">Armor:  </ansi>{{ printf "%-22s" ( printf "%d" (.GetDefense))                                                                               }}    <ansi fg="yellow">Smarts:   </ansi>{{ printf "%-4d<ansi fg=\"statmod\">(%-3d)</ansi>" .Stats.Smarts.Value (.StatMod "smarts")     }} <ansi fg="yellow">Percept:   </ansi>{{  printf "%-4d<ansi fg=\"statmod\">(%-3d)</ansi>" .Stats.Perception.Value (.StatMod "perception") }}
+   <ansi fg="yellow">Level:  </ansi>{{ printf "%-22d" .Level                                                                                                     }}  
+ │ <ansi fg="yellow">Gold:   </ansi>{{ printf "%-22s" (numberFormat .Gold)                                                                                       }}│ │                                          │
+ └───────────────────────────────┘ └──────────────────────────────────────────┘

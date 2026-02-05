@@ -1,0 +1,9 @@
+biomeid: cliffs
+name: Cliffs
+symbol: ▼
+description: Steep, rocky areas that can be dangerous to navigate.
+darkarea: false
+litarea: false
+requireditemid: 0
+usesitem: false
+burns: false

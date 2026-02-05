@@ -1,0 +1,18 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">party</ansi>
+
+The <ansi fg="command">party</ansi> manages player parties/groups.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">party</ansi>                      - Lists your current party and its members
+  <ansi fg="command">party [create/new/start]</ansi>   - Creates a new party that you lead
+  <ansi fg="command">party invite [name]</ansi>        - Invites a player to your party
+  <ansi fg="command">party [accept/join]</ansi>        - Accepts an invitation to a party
+  <ansi fg="command">party decline</ansi>              - Declines an invitation to a party
+  <ansi fg="command">party [leave/quit]</ansi>         - Leaves a party you are a member of
+  <ansi fg="command">party [disband/stop]</ansi>       - Destroys a party you lead
+  <ansi fg="command">party kick [name]</ansi>          - Kicks a player out of a party you lead
+  <ansi fg="command">party promote [name]</ansi>       - Promotes a player to leader of the party
+  <ansi fg="command">party [say/chat] [message]</ansi> - Sends a message only your party can receive
+  <ansi fg="command">party autoattack [on/off]</ansi>  - Automatically join your party leader in combat
+  

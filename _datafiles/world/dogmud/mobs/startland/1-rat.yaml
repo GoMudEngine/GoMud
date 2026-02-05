@@ -1,0 +1,20 @@
+mobid:  1
+zone: Startland
+itemdropchance: 10
+hostile: false
+maxwander: 8
+groups: 
+  - rats
+idlecommands:
+  - 'emote wiggles its nose'
+  - 'wander'
+  - ''
+activitylevel: 10
+character:
+  name: rat
+  description: 'The rats sleek, mottled fur, a mix of dark browns and grays, allows it to blend seamlessly with the cobblestones and discarded refuse. Beady, black eyes dart around constantly, always on the lookout for both threats and opportunities. Its whiskers, long and sensitive, twitch with every new scent or vibration, guiding it through the labyrinthine backstreets. The rat''s tail, hairless and sinuous, trails behind it like a rudder, balancing its swift and erratic movements.'
+  level: 1
+  raceid: 10
+  stats:
+    vitality:
+      training: -2

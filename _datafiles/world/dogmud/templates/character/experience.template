@@ -1,0 +1,3 @@
+[ <ansi fg="yellow">Lvl:</ansi> <ansi fg="white">{{.Level}}</ansi> ] [ <ansi fg="yellow">XP:</ansi> <ansi fg="white">{{.Exp}}/{{.Tnl}}</ansi> <ansi fg="black-bold">({{pct .Exp .Tnl}}%)</ansi> ] [ <ansi fg="yellow">Training Pts:</ansi> <ansi fg="white">{{.Tp}}</ansi> ] [ <ansi fg="yellow">Stat Pts:</ansi> <ansi fg="white">{{.Sp}}</ansi> ]
+{{ if gt .Sp 0 }}{{ if lt .Level 5 }}<ansi fg="alert-5">TIP:</ansi> <ansi fg="alert-2">Type <ansi fg="command">help status</ansi> to learn about using stat points.</ansi> 
+{{ end }}{{ end -}}
