@@ -12,17 +12,21 @@ default:
 # Build the DOGMud server
 build:
     @echo "Building DOGMud server..."
-    make build
+    go generate
+    go build -trimpath -a -o go-mud-server
 
 # Run the DOGMud server
 run:
     @echo "Starting DOGMud server..."
-    make run
+    go generate
+    go run .
 
 # Run with fresh instance data (clean slate)
 run-fresh:
     @echo "Starting DOGMud with fresh instance data..."
-    make run-new
+    rm -rf _datafiles/world/dogmud/rooms.instances
+    go generate
+    go run .
 
 # Run all tests
 test:
@@ -37,7 +41,9 @@ test-verbose:
 # Run tests with coverage report
 test-coverage:
     @echo "Running tests with coverage..."
-    make coverage
+    mkdir -p bin/covdatafiles
+    go test ./... -coverprofile=bin/covdatafiles/cover.out
+    go tool cover -html=bin/covdatafiles/cover.out
 
 # Run only specific package tests (usage: just test-package internal/characters)
 test-package PKG:
@@ -57,7 +63,7 @@ vet:
 # Validate code (format check + vet)
 validate:
     @echo "Validating code..."
-    make validate
+    go vet ./...
 
 # Clean build artifacts and Docker containers
 clean:
@@ -81,7 +87,7 @@ clean-users:
 # Generate module imports
 generate:
     @echo "Generating module imports..."
-    make generate
+    go generate
 
 # Build for Windows 64-bit
 build-win64:
