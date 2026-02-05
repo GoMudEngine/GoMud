@@ -88,15 +88,15 @@ func Experience(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 
 		zeroStr := ``
 
-		stats := []string{`str`, `spd`, `smt`, `vit`, `mys`, `per`}
+		stats := []string{`str`, `dex`, `per`, `vit`, `wil`, `cha`}
 
 		oldG := map[string]int{
 			`str`: mockChar.Stats.Strength.GainsForLevel(startLevel - 1),
-			`spd`: mockChar.Stats.Speed.GainsForLevel(startLevel - 1),
-			`smt`: mockChar.Stats.Smarts.GainsForLevel(startLevel - 1),
-			`vit`: mockChar.Stats.Vitality.GainsForLevel(startLevel - 1),
-			`mys`: mockChar.Stats.Mysticism.GainsForLevel(startLevel - 1),
+			`dex`: mockChar.Stats.Dexterity.GainsForLevel(startLevel - 1),
 			`per`: mockChar.Stats.Perception.GainsForLevel(startLevel - 1),
+			`vit`: mockChar.Stats.Vitality.GainsForLevel(startLevel - 1),
+			`wil`: mockChar.Stats.Willpower.GainsForLevel(startLevel - 1),
+			`cha`: mockChar.Stats.Charisma.GainsForLevel(startLevel - 1),
 		}
 
 		newG := map[string]int{}
@@ -109,11 +109,11 @@ func Experience(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 
 			newG = map[string]int{
 				`str`: mockChar.Stats.Strength.GainsForLevel(i),
-				`spd`: mockChar.Stats.Speed.GainsForLevel(i),
-				`smt`: mockChar.Stats.Smarts.GainsForLevel(i),
-				`vit`: mockChar.Stats.Vitality.GainsForLevel(i),
-				`mys`: mockChar.Stats.Mysticism.GainsForLevel(i),
+				`dex`: mockChar.Stats.Dexterity.GainsForLevel(i),
 				`per`: mockChar.Stats.Perception.GainsForLevel(i),
+				`vit`: mockChar.Stats.Vitality.GainsForLevel(i),
+				`wil`: mockChar.Stats.Willpower.GainsForLevel(i),
+				`cha`: mockChar.Stats.Charisma.GainsForLevel(i),
 			}
 
 			tnlXP := mockChar.XPTL(i) - mockChar.XPTL(i-1)

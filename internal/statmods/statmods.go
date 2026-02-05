@@ -25,11 +25,11 @@ var (
 
 	// Stat based
 	Strength   StatName = `strength`
-	Speed      StatName = `speed`
-	Smarts     StatName = `smarts`
-	Vitality   StatName = `vitality`
-	Mysticism  StatName = `mysticism`
+	Dexterity  StatName = `dexterity`
 	Perception StatName = `perception`
+	Vitality   StatName = `vitality`
+	Willpower  StatName = `willpower`
+	Charisma   StatName = `charisma`
 	HealthMax  StatName = `healthmax`
 	ManaMax    StatName = `manamax`
 )

@@ -46,7 +46,7 @@ func Pray(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	}
 
 	possibleBuffIds := []int{4, 11, 14, 16, 17, 18}
-	totalBuffCount := 1 + int(float64(user.Character.Stats.Mysticism.ValueAdj)/15) + util.Rand(2)
+	totalBuffCount := 1 + int(float64(user.Character.Stats.Willpower.ValueAdj)/15) + util.Rand(2)
 
 	if totalBuffCount > len(possibleBuffIds) {
 		totalBuffCount = len(possibleBuffIds)

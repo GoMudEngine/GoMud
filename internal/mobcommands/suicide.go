@@ -171,7 +171,7 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 					if levelDelta < 0 {
 						levelDelta = 0
 					}
-					skillsDelta := int((float64(user.Character.Stats.Perception.ValueAdj-mob.Character.Stats.Perception.ValueAdj) + float64(user.Character.Stats.Smarts.ValueAdj-mob.Character.Stats.Smarts.ValueAdj)) / 2)
+					skillsDelta := int((float64(user.Character.Stats.Charisma.ValueAdj-mob.Character.Stats.Charisma.ValueAdj) + float64(user.Character.Stats.Perception.ValueAdj-mob.Character.Stats.Perception.ValueAdj)) / 2)
 					if skillsDelta < 0 {
 						skillsDelta = 0
 					}
@@ -251,7 +251,7 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 						if levelDelta < 0 {
 							levelDelta = 0
 						}
-						skillsDelta := int((float64(user.Character.Stats.Perception.ValueAdj-mob.Character.Stats.Perception.ValueAdj) + float64(user.Character.Stats.Smarts.ValueAdj-mob.Character.Stats.Smarts.ValueAdj)) / 2)
+						skillsDelta := int((float64(user.Character.Stats.Charisma.ValueAdj-mob.Character.Stats.Charisma.ValueAdj) + float64(user.Character.Stats.Perception.ValueAdj-mob.Character.Stats.Perception.ValueAdj)) / 2)
 						if skillsDelta < 0 {
 							skillsDelta = 0
 						}

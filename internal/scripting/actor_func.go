@@ -81,24 +81,24 @@ func (a ScriptActor) GetStat(statName string) int {
 		return a.characterRecord.Stats.Strength.ValueAdj
 	}
 
-	if strings.HasPrefix(statName, "sp") {
-		return a.characterRecord.Stats.Speed.ValueAdj
+	if strings.HasPrefix(statName, "de") {
+		return a.characterRecord.Stats.Dexterity.ValueAdj
 	}
 
-	if strings.HasPrefix(statName, "sm") {
-		return a.characterRecord.Stats.Smarts.ValueAdj
+	if strings.HasPrefix(statName, "pe") {
+		return a.characterRecord.Stats.Perception.ValueAdj
 	}
 
 	if strings.HasPrefix(statName, "vi") {
 		return a.characterRecord.Stats.Vitality.ValueAdj
 	}
 
-	if strings.HasPrefix(statName, "my") {
-		return a.characterRecord.Stats.Mysticism.ValueAdj
+	if strings.HasPrefix(statName, "wi") {
+		return a.characterRecord.Stats.Willpower.ValueAdj
 	}
 
-	if strings.HasPrefix(statName, "pe") {
-		return a.characterRecord.Stats.Perception.ValueAdj
+	if strings.HasPrefix(statName, "ch") {
+		return a.characterRecord.Stats.Charisma.ValueAdj
 	}
 
 	return 0

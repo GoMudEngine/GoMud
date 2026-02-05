@@ -65,25 +65,25 @@ func Status(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			before = user.Character.Stats.Strength.Value - user.Character.Stats.Strength.Mods
 			user.Character.Stats.Strength.Training += 1
 			spent = 1
-		case `speed`:
-			before = user.Character.Stats.Speed.Value - user.Character.Stats.Speed.Mods
-			user.Character.Stats.Speed.Training += 1
+		case `dexterity`:
+			before = user.Character.Stats.Dexterity.Value - user.Character.Stats.Dexterity.Mods
+			user.Character.Stats.Dexterity.Training += 1
 			spent = 1
-		case `smarts`:
-			before = user.Character.Stats.Smarts.Value - user.Character.Stats.Smarts.Mods
-			user.Character.Stats.Smarts.Training += 1
+		case `perception`:
+			before = user.Character.Stats.Perception.Value - user.Character.Stats.Perception.Mods
+			user.Character.Stats.Perception.Training += 1
 			spent = 1
 		case `vitality`:
 			before = user.Character.Stats.Vitality.Value - user.Character.Stats.Vitality.Mods
 			user.Character.Stats.Vitality.Training += 1
 			spent = 1
-		case `mysticism`:
-			before = user.Character.Stats.Mysticism.Value - user.Character.Stats.Mysticism.Mods
-			user.Character.Stats.Mysticism.Training += 1
+		case `willpower`:
+			before = user.Character.Stats.Willpower.Value - user.Character.Stats.Willpower.Mods
+			user.Character.Stats.Willpower.Training += 1
 			spent = 1
-		case `perception`:
-			before = user.Character.Stats.Perception.Value - user.Character.Stats.Perception.Mods
-			user.Character.Stats.Perception.Training += 1
+		case `charisma`:
+			before = user.Character.Stats.Charisma.Value - user.Character.Stats.Charisma.Mods
+			user.Character.Stats.Charisma.Training += 1
 			spent = 1
 		}
 

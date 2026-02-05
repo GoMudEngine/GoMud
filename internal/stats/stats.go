@@ -8,12 +8,12 @@ const (
 )
 
 type Statistics struct {
-	Strength   StatInfo `yaml:"strength,omitempty"`   // Muscular strength (damage?)
-	Speed      StatInfo `yaml:"speed,omitempty"`      // Speed and agility (dodging)
-	Smarts     StatInfo `yaml:"smarts,omitempty"`     // Intelligence and wisdom (magic power, memory, deduction, etc)
+	Strength   StatInfo `yaml:"strength,omitempty"`   // Muscular strength (damage)
+	Dexterity  StatInfo `yaml:"dexterity,omitempty"`  // Speed and agility (dodging)
+	Perception StatInfo `yaml:"perception,omitempty"` // Awareness and intelligence (noticing things, memory, deduction)
 	Vitality   StatInfo `yaml:"vitality,omitempty"`   // Health and stamina (health capacity)
-	Mysticism  StatInfo `yaml:"mysticism,omitempty"`  // Magic and mana (magic capacity)
-	Perception StatInfo `yaml:"perception,omitempty"` // How well you notice things
+	Willpower  StatInfo `yaml:"willpower,omitempty"`  // Mental fortitude and conviction
+	Charisma   StatInfo `yaml:"charisma,omitempty"`   // Force of personality and social influence
 }
 
 // When saving to a file, we don't need to write all the properties that we calculate.

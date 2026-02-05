@@ -46,7 +46,7 @@ func Tackle(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 		if m != nil {
 
-			chanceIn100 := user.Character.Stats.Speed.ValueAdj - m.Character.Stats.Perception.ValueAdj
+			chanceIn100 := user.Character.Stats.Dexterity.ValueAdj - m.Character.Stats.Charisma.ValueAdj
 			if chanceIn100 < 0 {
 				chanceIn100 = 0
 			}
@@ -93,7 +93,7 @@ func Tackle(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 		if u != nil {
 
-			chanceIn100 := user.Character.Stats.Speed.ValueAdj - u.Character.Stats.Perception.ValueAdj
+			chanceIn100 := user.Character.Stats.Dexterity.ValueAdj - u.Character.Stats.Charisma.ValueAdj
 			if chanceIn100 < 0 {
 				chanceIn100 = 0
 			}
