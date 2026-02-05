@@ -164,7 +164,7 @@ log-detail:
     git log -5 --pretty=format:"%h - %an, %ar : %s" --stat
 
 # Stage 1.1: Rename stats (first dev stage)
-stage-1.1:
+stage-1-1:
     @echo "Starting Stage 1.1: Rename Stats"
     @just branch stage-1.1-rename-stats
     @echo "Ready to work on Stage 1.1!"
