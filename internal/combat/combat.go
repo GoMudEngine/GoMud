@@ -598,11 +598,11 @@ func Hits(attackSpd, defendSpd, hitModifier int) bool {
 // Whether they crit
 func Crits(sourceChar characters.Character, targetChar characters.Character) bool {
 
-	levelDiff := sourceChar.Level - targetChar.Level
-	if levelDiff < 1 {
-		levelDiff = 1
+	skillDiff := sourceChar.GetCombatSkillLevel() - targetChar.GetCombatSkillLevel()
+	if skillDiff < 1 {
+		skillDiff = 1
 	}
-	critChance := 5 + int(math.Round(float64(sourceChar.Stats.Strength.ValueAdj+sourceChar.Stats.Dexterity.ValueAdj)/float64(levelDiff)))
+	critChance := 5 + int(math.Round(float64(sourceChar.Stats.Strength.ValueAdj+sourceChar.Stats.Dexterity.ValueAdj)/float64(skillDiff)))
 
 	if sourceChar.HasBuffFlag(buffs.Accuracy) {
 		critChance *= 2

@@ -1021,6 +1021,23 @@ func (c *Character) IncreaseStat(statName string, amount int) bool {
 	return true
 }
 
+// GetCombatSkillLevel returns an effective combat skill value for use in
+// combat formulas. Characters with brawling skill use that rank (1-4).
+// NPCs without skills fall back to Level/5 (capped 1-4) for backward compat.
+func (c *Character) GetCombatSkillLevel() int {
+	if level := c.GetSkillLevel(skills.Brawling); level > 0 {
+		return level
+	}
+	fallback := c.Level / 5
+	if fallback < 1 {
+		fallback = 1
+	}
+	if fallback > 4 {
+		fallback = 4
+	}
+	return fallback
+}
+
 func (c *Character) GetMaxCharmedCreatures() int {
 	lvl := c.GetSkillLevel(skills.Tame)
 	return lvl + 1
