@@ -476,12 +476,6 @@
                 fill.style.width       = 100-p + '%';
                 txt.textContent       = obj.Vitals.hp + '/' + obj.Vitals.hp_max + ' hp';
 
-                p    = Math.max(0, Math.min(100, Math.floor(obj.Vitals.sp/obj.Vitals.sp_max*100)));  // clamp 0–100
-                fill = document.querySelector('#mana-bar .mana-fill');
-                txt  = document.querySelector('#mana-bar .mana-text');
-                fill.style.width       = 100-p + '%';
-                txt.textContent       = obj.Vitals.sp + '/' + obj.Vitals.sp_max + ' mp';
-
                 p    = Math.max(0, Math.min(100, Math.floor(obj.Vitals.stamina/obj.Vitals.stamina_max*100)));  // clamp 0–100
                 fill = document.querySelector('#stamina-bar .stamina-fill');
                 txt  = document.querySelector('#stamina-bar .stamina-text');
@@ -1058,7 +1052,7 @@
         #health-bar {
             position: relative;
             width: 100%;         /* or fixed px width */
-            height: 25%;
+            height: 33.33%;
             background: linear-gradient(
                 to right,
                 #f44336 0%,   /* red */
@@ -1132,7 +1126,7 @@
         #stamina-bar {
             position: relative;
             width: 100%;
-            height: 25%;
+            height: 33.33%;
             background: linear-gradient(
                 to right,
                 #8b4513 0%,   /* brown */
@@ -1169,7 +1163,7 @@
         #conviction-bar {
             position: relative;
             width: 100%;
-            height: 25%;
+            height: 33.33%;
             background: linear-gradient(
                 to right,
                 #ffd700 0%,   /* gold */
@@ -1309,10 +1303,6 @@
             <div id="health-bar">
                 <div class="health-fill" style="width: 100%;"></div>
                 <span class="health-text">100%</span>
-            </div>
-            <div id="mana-bar">
-                <div class="mana-fill" style="width: 100%;"></div>
-                <span class="mana-text">100%</span>
             </div>
             <div id="stamina-bar">
                 <div class="stamina-fill" style="width: 100%;"></div>
