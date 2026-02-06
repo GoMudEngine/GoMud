@@ -47,9 +47,9 @@ func AttackPlayerVsMob(user *users.UserRecord, mob *mobs.Mob) AttackResult {
 	user.Character.TrackStatUse("dexterity")
 	if attackResult.Hit {
 		user.PlaySound(`hit-other`, `combat`)
-		user.Character.OnSkillUse("combat")
+		user.Character.OnSkillUse("combat", user.UserId)
 		if attackResult.Crit {
-			user.Character.OnCriticalSuccess("combat")
+			user.Character.OnCriticalSuccess("combat", user.UserId)
 		}
 	} else {
 		user.PlaySound(`miss`, `combat`)
@@ -79,9 +79,9 @@ func AttackPlayerVsPlayer(userAtk *users.UserRecord, userDef *users.UserRecord) 
 	if attackResult.Hit {
 		userAtk.PlaySound(`hit-other`, `combat`)
 		userDef.PlaySound(`hit-self`, `combat`)
-		userAtk.Character.OnSkillUse("combat")
+		userAtk.Character.OnSkillUse("combat", userAtk.UserId)
 		if attackResult.Crit {
-			userAtk.Character.OnCriticalSuccess("combat")
+			userAtk.Character.OnCriticalSuccess("combat", userAtk.UserId)
 		}
 	} else {
 		userAtk.PlaySound(`miss`, `combat`)
@@ -100,6 +100,14 @@ func AttackMobVsPlayer(mob *mobs.Mob, user *users.UserRecord) AttackResult {
 	if attackResult.DamageToTarget != 0 {
 		user.Character.ApplyHealthChange(attackResult.DamageToTarget * -1)
 		user.WimpyCheck()
+
+		// Check for low-health progression trigger
+		if user.Character.HealthMax.Value > 0 {
+			healthPct := float64(user.Character.Health) / float64(user.Character.HealthMax.Value)
+			if healthPct > 0 && healthPct < 0.25 {
+				user.Character.OnLowResource("health", "vitality", user.UserId)
+			}
+		}
 	}
 
 	if attackResult.Hit {

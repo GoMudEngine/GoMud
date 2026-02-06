@@ -27,7 +27,10 @@ type GamePlay struct {
 	PVPMinimumLevel ConfigInt    `yaml:"PVPMinimumLevel"`
 	// XpScale (difficulty)
 	XPScale           ConfigFloat `yaml:"XPScale"`
-	MobConverseChance ConfigInt   `yaml:"MobConverseChance"` // Chance 1-100 of attempting to converse when idle
+	MobConverseChance ConfigInt `yaml:"MobConverseChance"` // Chance 1-100 of attempting to converse when idle
+
+	// Skill Progression
+	UseSkillProgression ConfigBool `yaml:"UseSkillProgression"` // Enable skill/stat progression checks (messages only until Stage 3.3)
 }
 
 type GameplayDeath struct {
