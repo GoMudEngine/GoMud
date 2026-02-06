@@ -493,8 +493,6 @@ func (g *GMCPCharModule) GetCharNode(user *users.UserRecord, gmcpModule string) 
 		payload.Vitals = &GMCPCharModule_Payload_Vitals{
 			Hp:            user.Character.Health,
 			HpMax:         user.Character.HealthMax.Value,
-			Sp:            user.Character.Mana,
-			SpMax:         user.Character.ManaMax.Value,
 			Stamina:       user.Character.Stamina,
 			StaminaMax:    user.Character.StaminaMax.Value,
 			Conviction:    user.Character.Conviction,
@@ -766,14 +764,12 @@ type GMCPCharModule_Payload_Stats struct {
 // Char.Vitals
 // /////////////////
 type GMCPCharModule_Payload_Vitals struct {
-	Hp             int `json:"hp,omitempty"`
-	HpMax          int `json:"hp_max,omitempty"`
-	Sp             int `json:"sp,omitempty"`
-	SpMax          int `json:"sp_max,omitempty"`
-	Stamina        int `json:"stamina,omitempty"`
-	StaminaMax     int `json:"stamina_max,omitempty"`
-	Conviction     int `json:"conviction,omitempty"`
-	ConvictionMax  int `json:"conviction_max,omitempty"`
+	Hp            int `json:"hp,omitempty"`
+	HpMax         int `json:"hp_max,omitempty"`
+	Stamina       int `json:"stamina,omitempty"`
+	StaminaMax    int `json:"stamina_max,omitempty"`
+	Conviction    int `json:"conviction,omitempty"`
+	ConvictionMax int `json:"conviction_max,omitempty"`
 }
 
 // /////////////////

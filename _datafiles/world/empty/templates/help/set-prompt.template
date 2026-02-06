@@ -27,13 +27,13 @@ The <ansi fg="command">set prompt</ansi> command allows you to customize your in
     <ansi fg="magenta">{hp%}</ansi>   Percent of Health left - With coloring (see <ansi fg="command">help health</ansi>)
     <ansi fg="magenta">{hp%:-}</ansi> Percent of Health left
 
-  <ansi fg="mana-100">Mana:</ansi>
-    <ansi fg="magenta">{mp}</ansi>    Current Mana - With coloring (see <ansi fg="command">help mana</ansi>)
-    <ansi fg="magenta">{mp:-}</ansi>  Current Mana
-    <ansi fg="magenta">{MP}</ansi>    Current Maximum Mana - With coloring (see <ansi fg="command">help mana</ansi>)
-    <ansi fg="magenta">{MP:-}</ansi>  Current Maximum Mana
-    <ansi fg="magenta">{mp%}</ansi>   Percent of Mana left - With coloring (see <ansi fg="command">help mana</ansi>)
-    <ansi fg="magenta">{mp%:-}</ansi> Percent of Mana left
+  <ansi fg="mana-100">Conviction:</ansi>
+    <ansi fg="magenta">{mp}</ansi>    Current Conviction - With coloring (see <ansi fg="command">help conviction</ansi>)
+    <ansi fg="magenta">{mp:-}</ansi>  Current Conviction
+    <ansi fg="magenta">{MP}</ansi>    Current Maximum Conviction - With coloring (see <ansi fg="command">help conviction</ansi>)
+    <ansi fg="magenta">{MP:-}</ansi>  Current Maximum Conviction
+    <ansi fg="magenta">{mp%}</ansi>   Percent of Conviction left - With coloring (see <ansi fg="command">help conviction</ansi>)
+    <ansi fg="magenta">{mp%:-}</ansi> Percent of Conviction left
 
   <ansi fg="8">Other:</ansi>
     <ansi fg="magenta">{xp}</ansi>    Current XP                <ansi fg="magenta">{XP}</ansi>    XP remaining for next level

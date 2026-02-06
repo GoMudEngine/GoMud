@@ -140,34 +140,34 @@ func (u *UserRecord) ProcessPromptString(promptStr string) string {
 
 			case `{mp}`:
 				if len(mpClass) == 0 {
-					mpClass = fmt.Sprintf(`mana-%d`, util.QuantizeTens(u.Character.Mana, u.Character.ManaMax.Value))
+					mpClass = fmt.Sprintf(`mana-%d`, util.QuantizeTens(u.Character.Conviction, u.Character.ConvictionMax.Value))
 				}
-				promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%d</ansi>`, mpClass, u.Character.Mana))
+				promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%d</ansi>`, mpClass, u.Character.Conviction))
 
 			case `{mp:-}`:
-				promptOut.WriteString(strconv.Itoa(u.Character.Mana))
+				promptOut.WriteString(strconv.Itoa(u.Character.Conviction))
 
 			case `{MP}`:
 				if len(mpClass) == 0 {
-					mpClass = fmt.Sprintf(`mana-%d`, util.QuantizeTens(u.Character.Mana, u.Character.ManaMax.Value))
+					mpClass = fmt.Sprintf(`mana-%d`, util.QuantizeTens(u.Character.Conviction, u.Character.ConvictionMax.Value))
 				}
-				promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%d</ansi>`, mpClass, u.Character.ManaMax.Value))
+				promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%d</ansi>`, mpClass, u.Character.ConvictionMax.Value))
 
 			case `{MP:-}`:
-				promptOut.WriteString(strconv.Itoa(u.Character.ManaMax.Value))
+				promptOut.WriteString(strconv.Itoa(u.Character.ConvictionMax.Value))
 
 			case `{mp%}`:
 				if mpPct == -1 {
-					mpPct = int(math.Floor(float64(u.Character.Mana) / float64(u.Character.ManaMax.Value) * 100))
+					mpPct = int(math.Floor(float64(u.Character.Conviction) / float64(u.Character.ConvictionMax.Value) * 100))
 				}
 				if len(mpClass) == 0 {
-					mpClass = fmt.Sprintf(`mana-%d`, util.QuantizeTens(u.Character.Mana, u.Character.ManaMax.Value))
+					mpClass = fmt.Sprintf(`mana-%d`, util.QuantizeTens(u.Character.Conviction, u.Character.ConvictionMax.Value))
 				}
 				promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%d%%</ansi>`, mpClass, mpPct))
 
 			case `{mp%:-}`:
 				if mpPct == -1 {
-					mpPct = int(math.Floor(float64(u.Character.Mana) / float64(u.Character.ManaMax.Value) * 100))
+					mpPct = int(math.Floor(float64(u.Character.Conviction) / float64(u.Character.ConvictionMax.Value) * 100))
 				}
 				promptOut.WriteString(strconv.Itoa(mpPct))
 				promptOut.WriteString(`%`)

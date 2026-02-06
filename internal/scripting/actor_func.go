@@ -294,16 +294,6 @@ func (a ScriptActor) AddHealth(amt int) int {
 	return ret
 }
 
-func (a ScriptActor) AddMana(amt int) int {
-	ret := a.characterRecord.ApplyManaChange(amt)
-
-	if ret != 0 && a.userId > 0 {
-		events.AddToQueue(events.CharacterVitalsChanged{UserId: a.userId})
-	}
-
-	return ret
-}
-
 func (a ScriptActor) Sleep(seconds int) {
 	if a.userId == 0 {
 		a.mobRecord.Sleep(seconds)
@@ -596,18 +586,6 @@ func (a ScriptActor) GetHealthMax() int {
 
 func (a ScriptActor) GetHealthPct() float64 {
 	return float64(a.characterRecord.Health) / float64(a.characterRecord.HealthMax.Value)
-}
-
-func (a ScriptActor) GetMana() int {
-	return a.characterRecord.Mana
-}
-
-func (a ScriptActor) GetManaMax() int {
-	return a.characterRecord.ManaMax.Value
-}
-
-func (a ScriptActor) GetManaPct() float64 {
-	return float64(a.characterRecord.Mana) / float64(a.characterRecord.ManaMax.Value)
 }
 
 func (a ScriptActor) SetAdjective(adj string, addIt bool) {

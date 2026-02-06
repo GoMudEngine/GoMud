@@ -57,8 +57,8 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
-	if user.Character.Mana < spellInfo.Cost {
-		user.SendText(fmt.Sprintf(`You don't have enough mana to cast <ansi fg="spellname">%s</ansi>.`, spellName))
+	if user.Character.Conviction < spellInfo.Cost {
+		user.SendText(fmt.Sprintf(`You don't have enough conviction to cast <ansi fg="spellname">%s</ansi>.`, spellName))
 		return true, nil
 	}
 
@@ -285,7 +285,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			// Fire an event that a skill has been used
 			events.AddToQueue(events.SkillUsed{user.UserId, skills.Cast, spellInfo.SpellId})
 
-			user.Character.Mana -= spellInfo.Cost
+			user.Character.Conviction -= spellInfo.Cost
 			events.AddToQueue(events.CharacterVitalsChanged{UserId: user.UserId})
 			user.Character.SetCast(spellInfo.WaitRounds, spellAggro)
 		}

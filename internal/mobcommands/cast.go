@@ -38,7 +38,7 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		return true, nil
 	}
 	/*
-		if mob.Character.Mana < spellInfo.Cost {
+		if mob.Character.Conviction < spellInfo.Cost {
 			return true, nil
 		}
 	*/
@@ -217,7 +217,7 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		}
 
 		if continueCasting {
-			mob.Character.Mana -= spellInfo.Cost
+			mob.Character.Conviction -= spellInfo.Cost
 			mob.Character.SetCast(spellInfo.WaitRounds, spellAggro)
 		}
 

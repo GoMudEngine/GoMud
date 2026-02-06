@@ -35,7 +35,7 @@ func Zap(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> zaps <ansi fg="mobname">%s</ansi> with a %s!`, user.Character.Name, mob.Character.Name, boltOfLightning), user.UserId)
 
 			mob.Character.Health = 1
-			mob.Character.Mana = 1
+			mob.Character.Conviction = 1
 
 			return true, nil
 		}
@@ -47,7 +47,7 @@ func Zap(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 				u.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> zaps you with a %s!`, user.Character.Name, boltOfLightning))
 
 				u.Character.Health = 1
-				u.Character.Mana = 1
+				u.Character.Conviction = 1
 
 				events.AddToQueue(events.CharacterVitalsChanged{UserId: u.UserId})
 
@@ -72,7 +72,7 @@ func Zap(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> zaps <ansi fg="mobname">%s</ansi> with a %s!`, user.Character.Name, mob.Character.Name, boltOfLightning), user.UserId)
 
 			mob.Character.Health = 1
-			mob.Character.Mana = 1
+			mob.Character.Conviction = 1
 		}
 	} else if user.Character.Aggro.UserId > 0 {
 		u := users.GetByUserId(user.Character.Aggro.UserId)
@@ -84,7 +84,7 @@ func Zap(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> zaps <ansi fg="username">%s</ansi> with a %s!`, user.Character.Name, u.Character.Name, boltOfLightning), user.UserId)
 
 			u.Character.Health = 1
-			u.Character.Mana = 1
+			u.Character.Conviction = 1
 
 			events.AddToQueue(events.CharacterVitalsChanged{UserId: u.UserId})
 		}

@@ -29,10 +29,9 @@ import (
 )
 
 var (
-	startingRace     = 0
-	startingHealth   = 10
-	startingMana     = 10
-	StartingRoomId   = -1
+	startingRace   = 0
+	startingHealth = 10
+	StartingRoomId = -1
 	startingZone     = `Nowhere`
 	defaultName      = `nameless`
 	descriptionCache = map[string]string{} // key is a hash, value is the description
@@ -59,7 +58,6 @@ type Character struct {
 	TrainingPoints   int                            // The number of training points the character has
 	StatPoints       int                            // The number of skill points the character has
 	Health           int                            // The health of the character
-	Mana             int                            // The mana of the character
 	Stamina          int                            // The stamina of the character (physical energy)
 	Conviction       int                            // The conviction of the character (mental/spiritual energy)
 	ActionPoints     int                            // The resevoir of action points the character has to spend on movement etc.
@@ -75,7 +73,6 @@ type Character struct {
 	Equipment        Worn                           `yaml:"equipment,omitempty"`     // The equipment the character is wearing
 	TNLScale         float32                        `yaml:"-"`                       // The experience scale of the character. Don't write to yaml since is dynamically calculated.
 	HealthMax        stats.StatInfo                 `yaml:"-"`                       // The maximum health of the character. Don't write to yaml since is dynamically calculated.
-	ManaMax          stats.StatInfo                 `yaml:"-"`                       // The maximum mana of the character. Don't write to yaml since is dynamically calculated.
 	StaminaMax       stats.StatInfo                 `yaml:"-"`                       // The maximum stamina of the character. Don't write to yaml since is dynamically calculated.
 	ConvictionMax    stats.StatInfo                 `yaml:"-"`                       // The maximum conviction of the character. Don't write to yaml since is dynamically calculated.
 	ActionPointsMax  stats.StatInfo                 `yaml:"-"`                       // The maximum actions of character. Don't write to yaml since is dynamically calculated.
@@ -113,8 +110,6 @@ func New() *Character {
 		TNLScale:       1.0,
 		Health:         startingHealth,
 		HealthMax:      stats.StatInfo{Base: 1},
-		Mana:           startingMana,
-		ManaMax:        stats.StatInfo{Base: 1},
 		Skills:         make(map[string]int),
 		Gold:           25,
 		Bank:           100,
@@ -137,9 +132,8 @@ func New() *Character {
 	// Validate and calculate stats (this calls RecalculateStats internally)
 	c.Validate()
 
-	// Set starting health/mana/stamina/conviction to max values
+	// Set starting health/stamina/conviction to max values
 	c.Health = c.HealthMax.Value
-	c.Mana = c.ManaMax.Value
 	c.Stamina = c.StaminaMax.Value
 	c.Conviction = c.ConvictionMax.Value
 
@@ -1278,17 +1272,6 @@ func (c *Character) ApplyHealthChange(healthChange int) int {
 	return newHealth - oldHealth
 }
 
-func (c *Character) ApplyManaChange(manaChange int) int {
-	oldMana := c.Mana
-	c.Mana += manaChange
-	if c.Mana < 0 {
-		c.Mana = 0
-	} else if c.Mana > c.ManaMax.Value {
-		c.Mana = c.ManaMax.Value
-	}
-	return c.Mana - oldMana
-}
-
 func (c *Character) BarterPrice(startPrice int) int {
 	factor := (float64(c.Stats.Charisma.ValueAdj) / 3) / 100 // 100 = 33% discount, 0 = 0% discount, 300 = 100% discount
 	if factor > .75 {
@@ -1350,27 +1333,21 @@ func (c *Character) LevelUp() (bool, stats.Statistics) {
 	statsDelta.Charisma.Value -= statsBefore.Charisma.Value
 
 	c.Health = c.HealthMax.Value
-	c.Mana = c.ManaMax.Value
 	c.Stamina = c.StaminaMax.Value
 	c.Conviction = c.ConvictionMax.Value
 
 	return true, statsDelta
 }
 
-func (c *Character) Heal(hp int, mana int) (int, int) {
+func (c *Character) Heal(hp int) int {
 	startHP := c.Health
-	startMP := c.Mana
 
 	c.Health += hp
 	if c.Health > c.HealthMax.Value {
 		c.Health = c.HealthMax.Value
 	}
-	c.Mana += hp
-	if c.Mana > c.ManaMax.Value {
-		c.Mana = c.ManaMax.Value
-	}
 
-	return c.Health - startHP, c.Mana - startMP
+	return c.Health - startHP
 }
 
 func (c *Character) HealthPerRound() int {
@@ -1384,16 +1361,6 @@ func (c *Character) HealthPerRound() int {
 	*/
 }
 
-func (c *Character) ManaPerRound() int {
-	return 1 + c.StatMod(string(statmods.ManaRecovery))
-	/*
-		healAmt := math.Round(float64(c.Stats.Willpower.ValueAdj)/8) +
-			math.Round(float64(c.Level)/12) +
-			1.0
-
-		return int(healAmt)
-	*/
-}
 
 func (c *Character) StaminaPerRound() int {
 	// Base 1 stamina per round + any modifiers
@@ -1422,7 +1389,6 @@ func (c *Character) RecalculateStats() {
 
 	// Make sure racial base stats are set
 	beforeHealthMax := c.HealthMax
-	beforeManaMax := c.ManaMax
 	beforeStats := c.Stats
 
 	if raceInfo := races.GetRace(c.RaceId); raceInfo != nil {
@@ -1480,11 +1446,6 @@ func (c *Character) RecalculateStats() {
 		c.Level + // For every level you get 1 hp
 		c.Stats.Vitality.ValueAdj*4 // for every vitality you get 3hp
 
-	c.ManaMax.Mods = 4 +
-		c.StatMod(string(statmods.ManaMax)) + // Any sort of spell buffs etc. are just direct modifiers
-		c.Level + // For every level you get 1 mp
-		c.Stats.Willpower.ValueAdj*3 // for every Willpower you get 3mp
-
 	c.StaminaMax.Mods = 5 +
 		c.Level + // For every level you get 1 stamina
 		c.Stats.Vitality.ValueAdj*3 // for every Vitality you get 3 stamina
@@ -1496,17 +1457,13 @@ func (c *Character) RecalculateStats() {
 	// Set max action points
 	c.ActionPointsMax.Mods = 200 // hard coded for now
 
-	// Recalculate HP/MP/Stamina/Conviction stats
+	// Recalculate HP/Stamina/Conviction stats
 	c.HealthMax.Recalculate(c.Level)
-	c.ManaMax.Recalculate(c.Level)
 	c.StaminaMax.Recalculate(c.Level)
 	c.ConvictionMax.Recalculate(c.Level)
 	c.ActionPointsMax.Recalculate(c.Level)
 
-	// HP can't max less than 1, MP/Stamina/Conviction can't max less than 0
-	if c.ManaMax.Value < 0 {
-		c.ManaMax.Value = 0
-	}
+	// HP can't max less than 1, Stamina/Conviction can't max less than 0
 	if c.StaminaMax.Value < 0 {
 		c.StaminaMax.Value = 0
 	}
@@ -1536,8 +1493,6 @@ func (c *Character) RecalculateStats() {
 		} else if beforeStats.Charisma.ValueAdj != c.Stats.Charisma.ValueAdj {
 			changed = true
 		} else if beforeHealthMax != c.HealthMax {
-			changed = true
-		} else if beforeManaMax != c.ManaMax {
 			changed = true
 		}
 
@@ -1625,11 +1580,8 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 	// Do a stats recalc based on equipment, race, level, etc.
 	c.RecalculateStats()
 
-	// Recalculate health, mana, stamina, and conviction
+	// Recalculate health, stamina, and conviction
 
-	if c.Mana > c.ManaMax.Value {
-		c.Mana = c.ManaMax.Value
-	}
 	if c.Stamina > c.StaminaMax.Value {
 		c.Stamina = c.StaminaMax.Value
 	}
@@ -1644,9 +1596,6 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 		c.Health = -10
 	}
 
-	if c.Mana < 0 {
-		c.Mana = 0
-	}
 	if c.Stamina < 0 {
 		c.Stamina = 0
 	}
