@@ -172,6 +172,48 @@ func TestResolveSkillName_PassThrough(t *testing.T) {
 	}
 }
 
+func TestGetCombatSkillLevel_WithBrawling(t *testing.T) {
+	c := New()
+	c.Skills["brawling"] = 3
+	if got := c.GetCombatSkillLevel(); got != 3 {
+		t.Errorf("Expected combat skill 3 from brawling, got %d", got)
+	}
+}
+
+func TestGetCombatSkillLevel_FallbackFromLevel(t *testing.T) {
+	c := New()
+	// No brawling skill, level 15 -> 15/5 = 3
+	c.Level = 15
+	if got := c.GetCombatSkillLevel(); got != 3 {
+		t.Errorf("Expected combat skill 3 from level 15 fallback, got %d", got)
+	}
+}
+
+func TestGetCombatSkillLevel_FallbackCapsAt4(t *testing.T) {
+	c := New()
+	c.Level = 30
+	if got := c.GetCombatSkillLevel(); got != 4 {
+		t.Errorf("Expected combat skill 4 (capped) from level 30 fallback, got %d", got)
+	}
+}
+
+func TestGetCombatSkillLevel_FallbackMinimum1(t *testing.T) {
+	c := New()
+	c.Level = 1
+	if got := c.GetCombatSkillLevel(); got != 1 {
+		t.Errorf("Expected combat skill 1 (minimum) from level 1 fallback, got %d", got)
+	}
+}
+
+func TestGetCombatSkillLevel_BrawlingOverridesLevel(t *testing.T) {
+	c := New()
+	c.Level = 30 // Would give fallback of 4
+	c.Skills["brawling"] = 2
+	if got := c.GetCombatSkillLevel(); got != 2 {
+		t.Errorf("Expected combat skill 2 from brawling (overriding level), got %d", got)
+	}
+}
+
 func TestCalculateProgressionChance_SampleValues(t *testing.T) {
 	// Verify the documented sample values are approximately correct
 	tests := []struct {

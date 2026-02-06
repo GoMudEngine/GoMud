@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -54,8 +55,9 @@ func ChanceToTame(s *users.UserRecord, t *mobs.Mob) int {
 	var MOD_SIZE_MEDIUM int = -10 // Modifier for medium creatures
 	var MOD_SIZE_LARGE int = -25  // Modifier for large creatures
 
-	var MOD_LEVELDIFF_MIN int = -25 // Lowest level delta modifier
-	var MOD_LEVELDIFF_MAX int = 25  // Highest level delta modifier
+	var MOD_SKILLDIFF_MIN int = -4 // Lowest skill delta modifier
+	var MOD_SKILLDIFF_MAX int = 4  // Highest skill delta modifier
+	var SKILL_SCALE int = 6        // Scale factor to preserve impact range (4*6=24, similar to old ±25)
 
 	var MOD_HEALTHPERCENT_MAX float64 = 50 // Highest possible bonus for target HP being reduced
 
@@ -82,12 +84,16 @@ func ChanceToTame(s *users.UserRecord, t *mobs.Mob) int {
 		sizeModifier = MOD_SIZE_MEDIUM
 	}
 
-	levelDiff := s.Character.Level - t.Character.Level
-	if levelDiff > MOD_LEVELDIFF_MAX {
-		levelDiff = MOD_LEVELDIFF_MAX
-	} else if levelDiff < MOD_LEVELDIFF_MIN {
-		levelDiff = MOD_LEVELDIFF_MIN
+	// Use Tame skill vs mob's combat skill instead of level difference
+	tamerSkill := s.Character.GetSkillLevel(skills.Tame)
+	mobSkill := t.Character.GetCombatSkillLevel()
+	skillDiff := tamerSkill - mobSkill
+	if skillDiff > MOD_SKILLDIFF_MAX {
+		skillDiff = MOD_SKILLDIFF_MAX
+	} else if skillDiff < MOD_SKILLDIFF_MIN {
+		skillDiff = MOD_SKILLDIFF_MIN
 	}
+	scaledSkillDiff := skillDiff * SKILL_SCALE
 
 	healthModifier := MOD_HEALTHPERCENT_MAX - math.Ceil(float64(s.Character.Health)/float64(s.Character.HealthMax.Value)*MOD_HEALTHPERCENT_MAX)
 
@@ -96,7 +102,7 @@ func ChanceToTame(s *users.UserRecord, t *mobs.Mob) int {
 		aggroModifier = FACTOR_IS_AGGRO
 	}
 
-	return int(math.Ceil((float64(proficiencyModifier) + float64(levelDiff) + healthModifier + float64(sizeModifier)) * aggroModifier))
+	return int(math.Ceil((float64(proficiencyModifier) + float64(scaledSkillDiff) + healthModifier + float64(sizeModifier)) * aggroModifier))
 }
 
 func AlignmentChange(killerAlignment int8, killedAlignment int8) int {
