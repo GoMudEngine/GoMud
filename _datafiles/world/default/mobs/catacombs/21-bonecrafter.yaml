@@ -20,7 +20,7 @@ activitylevel: 10
 character:
   name: bonecrafter
   description: 'The necromancer known as the Bonecrafter practices his grim craft. Cloaked in a robe that seems woven from the very darkness around him, his presence is an unnerving calm in the chaos of decay. His face, pale and gaunt, is marked with lines of concentration and arcane knowledge, with eyes that gleam with a morbid fascination for the dead. His fingers, long and delicate, dance with precision as he conducts the macabre ritual to awaken the bones that lie silent in the tombs. The necromancer''s lips whisper incantations that have not been heard by the living for centuries, and with each word, the skeletons jerk into a semblance of life, ready to serve those willing to pay his price.'
-  raceid: 1
+  speciesid: 1
   level: 10
   alignment: -20
   shop:

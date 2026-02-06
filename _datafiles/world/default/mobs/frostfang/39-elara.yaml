@@ -11,7 +11,7 @@ activitylevel: 20
 character:
   name: elara
   description: 'Elara is a tall, slender figure, exuding an aura of serene wisdom. Her skin is as pale as the snow-covered streets of Frostfang, and her long, silver hair flows down her back like a waterfall of ice. She dresses in elegant, deep blue robes adorned with silver embroidery depicting ancient runes and frost patterns. Her piercing blue eyes hold a glint of ancient knowledge, and her movements are graceful yet deliberate, as if she glides on an unseen layer of ice.'
-  raceid: 1
+  speciesid: 1
   level: 10
   alignment: 20
   gold: 3

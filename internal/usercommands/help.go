@@ -8,7 +8,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/keywords"
-	"github.com/GoMudEngine/GoMud/internal/races"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/templates"
@@ -92,44 +92,44 @@ func Help(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	return true, nil
 }
 
-func getRaceOptions(raceRequest string) []races.Race {
+func getSpeciesOptions(speciesRequest string) []species.Species {
 
-	allRaces := races.GetRaces()
-	sort.Slice(allRaces, func(i, j int) bool {
-		return allRaces[i].RaceId < allRaces[j].RaceId
+	allSpecies := species.GetAllSpecies()
+	sort.Slice(allSpecies, func(i, j int) bool {
+		return allSpecies[i].SpeciesId < allSpecies[j].SpeciesId
 	})
 
-	raceNames := strings.Split(raceRequest, ` `)
+	speciesNames := strings.Split(speciesRequest, ` `)
 
-	getAllRaces := false
-	if raceRequest == `all` {
-		getAllRaces = true
+	getAllSpecies := false
+	if speciesRequest == `all` {
+		getAllSpecies = true
 	}
 
-	raceOptions := []races.Race{}
-	for _, race := range allRaces {
+	speciesOptions := []species.Species{}
+	for _, sp := range allSpecies {
 
-		if len(raceRequest) == 0 {
-			if !race.Selectable && !getAllRaces {
+		if len(speciesRequest) == 0 {
+			if !sp.Selectable && !getAllSpecies {
 				continue
 			}
-		} else if len(raceNames) > 0 {
-			lowerName := strings.ToLower(race.Name)
+		} else if len(speciesNames) > 0 {
+			lowerName := strings.ToLower(sp.Name)
 			found := false
-			for _, rName := range raceNames {
+			for _, rName := range speciesNames {
 				if strings.Contains(lowerName, strings.ToLower(rName)) {
 					found = true
 					break
 				}
 			}
-			if !getAllRaces && !found {
+			if !getAllSpecies && !found {
 				continue
 			}
 		}
-		raceOptions = append(raceOptions, race)
+		speciesOptions = append(speciesOptions, sp)
 	}
 
-	return raceOptions
+	return speciesOptions
 }
 
 func GetHelpContents(input string) (string, error) {
@@ -159,7 +159,7 @@ func GetHelpContents(input string) (string, error) {
 	}
 
 	if helpName == `races` {
-		helpVars = getRaceOptions(helpRest)
+		helpVars = getSpeciesOptions(helpRest)
 	}
 
 	if helpName == `spell` {

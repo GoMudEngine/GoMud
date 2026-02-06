@@ -44,7 +44,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/pets"
 	"github.com/GoMudEngine/GoMud/internal/plugins"
 	"github.com/GoMudEngine/GoMud/internal/quests"
-	"github.com/GoMudEngine/GoMud/internal/races"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/spells"
@@ -63,7 +63,7 @@ import (
 // When updating this version:
 // 1. Expect to update the github release version
 // 2. Consider whether any migration code is needed for breaking changes, particularly in datafiles (see internal/migration)
-const VERSION = "0.11.0"
+const VERSION = "0.12.0"
 
 var (
 	sigChan            = make(chan os.Signal, 1)
@@ -949,7 +949,7 @@ func loadAllDataFiles(isReload bool) {
 	rooms.LoadDataFiles()
 	buffs.LoadDataFiles() // Load buffs before items for cost calculation reasons
 	items.LoadDataFiles()
-	races.LoadDataFiles()
+	species.LoadDataFiles()
 	mobs.LoadDataFiles()
 	pets.LoadDataFiles()
 	quests.LoadDataFiles()

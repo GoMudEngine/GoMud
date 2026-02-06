@@ -39,6 +39,15 @@ func doAllMigrations(lastConfigVersion version.Version) error {
 
 	}
 
+	// 0.11.0 -> 0.12.0
+	if lastConfigVersion.IsOlderThan(version.New(0, 12, 0)) {
+
+		if err := migrate_RaceToSpecies(); err != nil {
+			return err
+		}
+
+	}
+
 	return nil
 }
 

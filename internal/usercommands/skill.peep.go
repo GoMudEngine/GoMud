@@ -7,7 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
-	"github.com/GoMudEngine/GoMud/internal/races"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/templates"
@@ -91,7 +91,7 @@ func Peep(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 					itemNamesFormatted = append(itemNamesFormatted, iNameFormatted)
 				}
 
-				raceInfo := races.GetRace(u.Character.RaceId)
+				raceInfo := species.GetSpecies(u.Character.SpeciesId)
 
 				diceRoll := raceInfo.Damage.DiceRoll
 				if u.Character.Equipment.Weapon.ItemId != 0 {
@@ -156,7 +156,7 @@ func Peep(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 					itemNamesFormatted = append(itemNamesFormatted, iNameFormatted)
 				}
 
-				raceInfo := races.GetRace(m.Character.RaceId)
+				raceInfo := species.GetSpecies(m.Character.SpeciesId)
 
 				diceRoll := raceInfo.Damage.DiceRoll
 				if m.Character.Equipment.Weapon.ItemId != 0 {

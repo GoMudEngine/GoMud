@@ -7,7 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/parties"
-	"github.com/GoMudEngine/GoMud/internal/races"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -40,9 +40,9 @@ func LookForTrouble(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) 
 				continue
 			}
 
-			raceInfo := races.GetRace(user.Character.RaceId)
+			raceInfo := species.GetSpecies(user.Character.SpeciesId)
 			if raceInfo == nil {
-				mudlog.Error("RaceError", "Not Found", user.Character.RaceId)
+				mudlog.Error("SpeciesError", "Not Found", user.Character.SpeciesId)
 				continue
 			}
 
@@ -74,7 +74,7 @@ func LookForTrouble(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) 
 			}
 
 			// Does this specific mob hate this player?
-			if mob.HatesRace(raceInfo.Name) || mob.HatesAlignment(user.Character.Alignment) {
+			if mob.HatesSpecies(raceInfo.Name) || mob.HatesAlignment(user.Character.Alignment) {
 
 				allPotentialTargets = append(allPotentialTargets, playerId)
 
@@ -114,9 +114,9 @@ func LookForTrouble(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) 
 				continue
 			}
 
-			raceInfo := races.GetRace(mob.Character.RaceId)
+			raceInfo := species.GetSpecies(mob.Character.SpeciesId)
 
-			if mob.HatesMob(considerMob) || mob.HatesRace(raceInfo.Name) {
+			if mob.HatesMob(considerMob) || mob.HatesSpecies(raceInfo.Name) {
 				possibleMobTargets = append(possibleMobTargets, considerMobInstanceId)
 				continue
 			}

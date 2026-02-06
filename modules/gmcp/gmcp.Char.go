@@ -347,7 +347,7 @@ func (g *GMCPCharModule) GetCharNode(user *users.UserRecord, gmcpModule string) 
 			Account:   user.Username,
 			Name:      user.Character.Name,
 			Class:     skills.GetProfession(user.Character.GetAllSkillRanks()),
-			Race:      user.Character.Race(),
+			Race:      user.Character.Species(),
 			Alignment: user.Character.AlignmentName(),
 			Level:     user.Character.Level,
 		}

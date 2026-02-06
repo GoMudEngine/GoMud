@@ -15,7 +15,7 @@ character:
   description: 'Though formiddable in his own right, the trainee''s position amongst the clan is low ranking, as they have much to learn.'
   roomid: 0
   zone: Nowhere
-  raceid: 1
+  speciesid: 1
   level: 20
   alignment: -50
   gold: 2

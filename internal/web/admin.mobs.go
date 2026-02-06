@@ -11,7 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
-	"github.com/GoMudEngine/GoMud/internal/races"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
 
@@ -68,9 +68,9 @@ func mobData(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	allRaces := races.GetRaces()
-	sort.SliceStable(allRaces, func(i, j int) bool {
-		return allRaces[i].RaceId < allRaces[j].RaceId
+	allSpecies := species.GetAllSpecies()
+	sort.SliceStable(allSpecies, func(i, j int) bool {
+		return allSpecies[i].SpeciesId < allSpecies[j].SpeciesId
 	})
 
 	allZoneNames := rooms.GetAllZoneNames()
@@ -138,7 +138,7 @@ func mobData(w http.ResponseWriter, r *http.Request) {
 
 	tplData[`characterInfo`] = &mobInfo.Character
 	tplData[`allZoneNames`] = allZoneNames
-	tplData[`allRaces`] = allRaces
+	tplData[`allSpecies`] = allSpecies
 	tplData[`activityLevels`] = activityLevels
 	tplData[`dropChances`] = dropChances
 	tplData[`allMobGroups`] = allMobGroups

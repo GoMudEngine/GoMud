@@ -12,7 +12,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
-	"github.com/GoMudEngine/GoMud/internal/races"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/templates"
@@ -455,15 +455,15 @@ func Character(rest string, user *users.UserRecord, room *rooms.Room, flags even
 
 func getAltTable(nameToAlt map[string]characters.Character, charmedChars map[string]characters.Character, viewingUserId int) string {
 
-	headers := []string{"Name", "Level", "Race", "Profession", "Alignment", "Status"}
+	headers := []string{"Name", "Level", "Species", "Profession", "Alignment", "Status"}
 	rows := [][]string{}
 
 	for _, char := range nameToAlt {
 
 		allRanks := char.GetAllSkillRanks()
 		raceName := `Unknown`
-		if raceInfo := races.GetRace(char.RaceId); raceInfo != nil {
-			raceName = raceInfo.Name
+		if speciesInfo := species.GetSpecies(char.SpeciesId); speciesInfo != nil {
+			raceName = speciesInfo.Name
 		}
 
 		mobBusy := ``

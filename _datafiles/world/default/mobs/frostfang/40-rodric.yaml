@@ -13,7 +13,7 @@ activitylevel: 20
 character:
   name: Rodric
   description: 'Rodric Greystone, known throughout Frostfang as the "Rat King," is a rugged, muscular man in his mid-thirties. His wild, unkempt hair and beard are flecked with gray, giving him a slightly feral appearance. He wears a patchwork of thick furs and leather armor, patched together from various scavenged materials. His piercing green eyes seem to see everything in the shadows, and his face bears the weathered look of someone who has spent many nights in the city''s darkest corners. He carries a sturdy staff tipped with iron, adorned with tiny bells that jingle softly with his movements.'
-  raceid: 1
+  speciesid: 1
   level: 10
   alignment: -20
   gold: 3

@@ -9,7 +9,7 @@ activitylevel: 10
 character:
   name: dark acolyte
   description: 'Before you stands a solitary dark acolyte, an ominous figure enshrouded in a tattered ebony robe that seems to absorb the weak light around it. His face is obscured by the shadow of his hood, with only the faint glimmer of his malevolent gaze piercing the darkness. An aura of desolation clings to him, and the air grows colder in his presence. In one skeletal hand, he clutches a staff topped with a skull that emanates a soft, baleful light, symbolizing his mastery over the necrotic energies that pervade the catacombs. He remains motionless, a silent sentinel awaiting the command of his unseen master, yet the oppressive force of his malevolent intent is as tangible as the ancient stone beneath your feet.'
-  raceid: 1
+  speciesid: 1
   level: 28
   alignment: -50
   gold: 7

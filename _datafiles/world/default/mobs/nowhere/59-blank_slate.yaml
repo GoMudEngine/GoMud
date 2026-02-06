@@ -7,5 +7,5 @@ activitylevel: 10
 character:
   name: blank slate
   description: 'A blank slate.'
-  raceid: 0
+  speciesid: 0
   level: 1

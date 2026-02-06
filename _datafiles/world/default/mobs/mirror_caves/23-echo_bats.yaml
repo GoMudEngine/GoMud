@@ -12,5 +12,5 @@ activitylevel: 10
 character:
   name: echo bats
   description: 'Navigating through echolocation, these oversized bats swarm in the darker recesses of the caves.'
-  raceid: 7
+  speciesid: 7
   level: 25

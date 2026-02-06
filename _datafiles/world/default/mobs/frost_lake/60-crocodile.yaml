@@ -9,7 +9,7 @@ idlecommands:
 character:
   name: crocodile
   description: 'A large fearsome beast known to drag its victims underwater.'
-  raceid: 21
+  speciesid: 21
   level: 5
   equipment:
       body:

@@ -230,7 +230,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			fightingMobs := room.GetMobs(rooms.FindFightingPlayer)
 			for _, mobInstId := range fightingMobs {
 				if m := mobs.GetInstance(mobInstId); m != nil {
-					if m.Character.IsAggro(user.UserId, 0) || m.HatesRace(user.Character.Race()) {
+					if m.Character.IsAggro(user.UserId, 0) || m.HatesSpecies(user.Character.Species()) {
 						spellAggro.TargetMobInstanceIds = append(spellAggro.TargetMobInstanceIds, mobInstId)
 					}
 				}

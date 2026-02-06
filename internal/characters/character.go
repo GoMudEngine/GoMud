@@ -16,7 +16,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/pets"
 	"github.com/GoMudEngine/GoMud/internal/quests"
-	"github.com/GoMudEngine/GoMud/internal/races"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/statmods"
@@ -51,7 +51,7 @@ type Character struct {
 	Adjectives       []string                       `yaml:"adjectives,omitempty"` // Decorative text for the name of the character (e.g. "sleeping", "dead", "wounded")
 	RoomId           int                            // The room id the character is in.
 	Zone             string                         // The zone the character is in. The folder the room can be located in too.
-	RaceId           int                            // Character race
+	SpeciesId        int                            // Character species
 	Stats            stats.Statistics               // Character stats
 	Level            int                            // The level of the character
 	Experience       int                            // The experience of the character
@@ -102,7 +102,7 @@ func New() *Character {
 		Adjectives:     []string{},
 		RoomId:         StartingRoomId,
 		Zone:           startingZone,
-		RaceId:         startingRace,
+		SpeciesId:      startingRace,
 		Level:          1,
 		Experience:     1,
 		TrainingPoints: 0,
@@ -387,23 +387,23 @@ func (c *Character) CacheDescription() {
 
 func (c *Character) GetDefaultDiceRoll() (attacks int, dCount int, dSides int, bonus int, buffOnCrit []int) {
 	// default racial
-	raceInfo := races.GetRace(c.RaceId)
+	speciesInfo := species.GetSpecies(c.SpeciesId)
 
-	attacks = raceInfo.Damage.Attacks
-	dCount = raceInfo.Damage.DiceCount
-	dSides = raceInfo.Damage.SideCount
-	bonus = raceInfo.Damage.BonusDamage
-	buffOnCrit = raceInfo.Damage.CritBuffIds
+	attacks = speciesInfo.Damage.Attacks
+	dCount = speciesInfo.Damage.DiceCount
+	dSides = speciesInfo.Damage.SideCount
+	bonus = speciesInfo.Damage.BonusDamage
+	buffOnCrit = speciesInfo.Damage.CritBuffIds
 
 	dCount += int(math.Floor((float64(c.Stats.Dexterity.ValueAdj) / 50)))
 	dSides += int(math.Floor((float64(c.Stats.Strength.ValueAdj) / 12)))
 	bonus += int(math.Floor((float64(c.Stats.Charisma.ValueAdj) / 25)))
 
-	if dCount < raceInfo.Damage.DiceCount {
-		dCount = raceInfo.Damage.DiceCount
+	if dCount < speciesInfo.Damage.DiceCount {
+		dCount = speciesInfo.Damage.DiceCount
 	}
-	if dSides < raceInfo.Damage.SideCount {
-		dSides = raceInfo.Damage.SideCount
+	if dSides < speciesInfo.Damage.SideCount {
+		dSides = speciesInfo.Damage.SideCount
 	}
 
 	return attacks, dCount, dSides, bonus, buffOnCrit
@@ -510,7 +510,7 @@ func (c *Character) Charm(userId int, rounds int, expireCommand string) {
 }
 
 func (c *Character) KnowsFirstAid() bool {
-	if r := races.GetRace(c.RaceId); r != nil {
+	if r := species.GetSpecies(c.SpeciesId); r != nil {
 		return r.KnowsFirstAid
 	}
 	return false
@@ -812,12 +812,12 @@ func (c *Character) HandsRequired(i items.Item) int {
 		return iSpec.Hands
 	}
 
-	raceInfo := races.GetRace(c.RaceId)
-	if raceInfo.Size == races.Large {
+	speciesInfo := species.GetSpecies(c.SpeciesId)
+	if speciesInfo.Size == species.Large {
 		return 1
 	}
 
-	if raceInfo.Size == races.Small {
+	if speciesInfo.Size == species.Small {
 		return iSpec.Hands + 1
 	}
 
@@ -1391,8 +1391,8 @@ func (c *Character) RecalculateStats() {
 	beforeHealthMax := c.HealthMax
 	beforeStats := c.Stats
 
-	if raceInfo := races.GetRace(c.RaceId); raceInfo != nil {
-		c.TNLScale = raceInfo.TNLScale
+	if speciesInfo := species.GetSpecies(c.SpeciesId); speciesInfo != nil {
+		c.TNLScale = speciesInfo.TNLScale
 		// Safety check: ensure TNLScale is never 0
 		if c.TNLScale == 0 {
 			c.TNLScale = 1.0
@@ -1402,22 +1402,22 @@ func (c *Character) RecalculateStats() {
 		// (Base values of 0 indicate uninitialized stats)
 		// Rolled stats (from RollCharacterStats) will be 70-130, so they won't be overwritten
 		if c.Stats.Strength.Base == 0 {
-			c.Stats.Strength.Base = raceInfo.Stats.Strength.Base
+			c.Stats.Strength.Base = speciesInfo.Stats.Strength.Base
 		}
 		if c.Stats.Dexterity.Base == 0 {
-			c.Stats.Dexterity.Base = raceInfo.Stats.Dexterity.Base
+			c.Stats.Dexterity.Base = speciesInfo.Stats.Dexterity.Base
 		}
 		if c.Stats.Perception.Base == 0 {
-			c.Stats.Perception.Base = raceInfo.Stats.Perception.Base
+			c.Stats.Perception.Base = speciesInfo.Stats.Perception.Base
 		}
 		if c.Stats.Vitality.Base == 0 {
-			c.Stats.Vitality.Base = raceInfo.Stats.Vitality.Base
+			c.Stats.Vitality.Base = speciesInfo.Stats.Vitality.Base
 		}
 		if c.Stats.Willpower.Base == 0 {
-			c.Stats.Willpower.Base = raceInfo.Stats.Willpower.Base
+			c.Stats.Willpower.Base = speciesInfo.Stats.Willpower.Base
 		}
 		if c.Stats.Charisma.Base == 0 {
-			c.Stats.Charisma.Base = raceInfo.Stats.Charisma.Base
+			c.Stats.Charisma.Base = speciesInfo.Stats.Charisma.Base
 		}
 	}
 
@@ -1545,8 +1545,8 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 		c.Description = "They seem thoroughly uninteresting."
 	}
 
-	if race := races.GetRace(c.RaceId); race == nil {
-		c.RaceId = 1
+	if sp := species.GetSpecies(c.SpeciesId); sp == nil {
+		c.SpeciesId = 1
 	}
 
 	if c.Created.IsZero() {
@@ -1630,14 +1630,14 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 	c.Equipment.Feet.Validate()
 	// Done with validation
 
-	if raceInfo := races.GetRace(c.RaceId); raceInfo != nil {
+	if speciesInfo := species.GetSpecies(c.SpeciesId); speciesInfo != nil {
 
 		c.Equipment.EnableAll()
 
 		// Are there slots that SHOULD be disabled?
-		if len(raceInfo.DisabledSlots) > 0 {
+		if len(speciesInfo.DisabledSlots) > 0 {
 
-			for _, disabledSlot := range raceInfo.DisabledSlots {
+			for _, disabledSlot := range speciesInfo.DisabledSlots {
 
 				var itemFoundInDisabledSlot items.Item = items.ItemDisabledSlot
 
@@ -1711,8 +1711,8 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 	return nil
 }
 
-func (c *Character) Race() string {
-	if r := races.GetRace(c.RaceId); r != nil {
+func (c *Character) Species() string {
+	if r := species.GetSpecies(c.SpeciesId); r != nil {
 		return r.Name
 	}
 	return `Ghostly Spirit`
@@ -1994,10 +1994,10 @@ func (c *Character) reapplyPermabuffs(removedItems ...items.Item) {
 		buffIdCount[buffId] = 100 // Special case permabuffs associated with certain mobs
 	}
 
-	// Apply any buffs that come from a race
-	if rInfo := races.GetRace(c.RaceId); rInfo != nil {
+	// Apply any buffs that come from a species
+	if rInfo := species.GetSpecies(c.SpeciesId); rInfo != nil {
 		for _, buffId := range rInfo.BuffIds {
-			buffIdCount[buffId] = 100 // Don't allow racial buffs to be removed, keep this number high
+			buffIdCount[buffId] = 100 // Don't allow species buffs to be removed, keep this number high
 		}
 	}
 

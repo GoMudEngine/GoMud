@@ -17,7 +17,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
 	"github.com/GoMudEngine/GoMud/internal/items"
-	"github.com/GoMudEngine/GoMud/internal/races"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -187,9 +187,9 @@ func NewMobById(mobId MobId, homeRoomId int, forceLevel ...int) *Mob {
 		}
 
 		if mob.Character.Alignment == 0 {
-			if raceInfo := races.GetRace(mob.Character.RaceId); raceInfo != nil {
-				if raceInfo.DefaultAlignment != 0 {
-					mob.Character.Alignment = raceInfo.DefaultAlignment
+			if speciesInfo := species.GetSpecies(mob.Character.SpeciesId); speciesInfo != nil {
+				if speciesInfo.DefaultAlignment != 0 {
+					mob.Character.Alignment = speciesInfo.DefaultAlignment
 				}
 			}
 		}
@@ -383,7 +383,7 @@ func (m *Mob) IsTameable() bool {
 	if len(m.ScriptTag) > 0 {
 		return false
 	}
-	if r := races.GetRace(m.Character.RaceId); r != nil {
+	if r := species.GetSpecies(m.Character.SpeciesId); r != nil {
 		if !r.Tameable {
 			return false
 		}
@@ -490,7 +490,7 @@ func (m *Mob) GetSellPrice(item items.Item) int {
 	return int(math.Ceil(float64(value) * priceScale))
 }
 
-func (r *Mob) HatesRace(raceName string) bool {
+func (r *Mob) HatesSpecies(raceName string) bool {
 	raceName = strings.ToLower(raceName)
 	for _, hateGroup := range r.Hates {
 		if hateGroup == raceName {
@@ -527,7 +527,7 @@ func (r *Mob) HatesMob(m *Mob) bool {
 		return false // Can't hate exact same as self
 	}
 
-	mRace := races.GetRace(m.Character.RaceId)
+	mRace := species.GetSpecies(m.Character.SpeciesId)
 	raceName := strings.ToLower(mRace.Name)
 	for _, rGroup := range r.Groups {
 		if rGroup == raceName {
@@ -561,7 +561,7 @@ func (m *Mob) GetAngryCommand() string {
 	}
 
 	// default to race based actions
-	r := races.GetRace(m.Character.RaceId)
+	r := species.GetSpecies(m.Character.SpeciesId)
 	actionCt := len(r.AngryCommands)
 	if actionCt > 0 {
 		return r.AngryCommands[util.Rand(actionCt)]

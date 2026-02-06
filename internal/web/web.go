@@ -280,12 +280,12 @@ func Listen(wg *sync.WaitGroup, webSocketHandler func(*websocket.Conn)) {
 		doBasicAuth(itemData),
 	))
 
-	// Race Admin
-	http.HandleFunc("GET /admin/races/", RunWithMUDLocked(
-		doBasicAuth(racesIndex)),
+	// Species Admin
+	http.HandleFunc("GET /admin/species/", RunWithMUDLocked(
+		doBasicAuth(speciesIndex)),
 	)
-	http.HandleFunc("GET /admin/races/racedata/", RunWithMUDLocked(
-		doBasicAuth(raceData)),
+	http.HandleFunc("GET /admin/species/speciesdata/", RunWithMUDLocked(
+		doBasicAuth(speciesData)),
 	)
 
 	// Mob Admin

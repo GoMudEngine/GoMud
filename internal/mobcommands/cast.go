@@ -187,7 +187,7 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		mobsFightingMobs := room.GetMobs(rooms.FindFightingMob)
 		for _, mobInstId := range mobsFightingMobs {
 			if m := mobs.GetInstance(mobInstId); m != nil {
-				if m.Character.IsAggro(0, mob.InstanceId) || m.HatesRace(m.Character.Race()) {
+				if m.Character.IsAggro(0, mob.InstanceId) || m.HatesSpecies(m.Character.Species()) {
 					spellAggro.TargetMobInstanceIds = append(spellAggro.TargetMobInstanceIds, mobInstId)
 				}
 			}
