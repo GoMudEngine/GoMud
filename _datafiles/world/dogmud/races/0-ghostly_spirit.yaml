@@ -11,11 +11,15 @@ tameable: false
 stats:
   strength:
     base: 0
-  smarts:
+  dexterity:
+    base: 0
+  perception:
     base: 0
   vitality:
     base: 0
-  perception:
+  willpower:
+    base: 0
+  charisma:
     base: 0
 damage:
   diceroll: 0d0

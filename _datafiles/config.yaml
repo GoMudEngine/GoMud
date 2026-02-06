@@ -334,7 +334,7 @@ TextFormats:
   # - Prompt -
   #   Default prompt formatting.
   #   See: "help prompt" in game to learn more about this.
-  Prompt: '{8}[{t} {T} {255}HP:{hp}{8}/{HP} {255}MP:{13}{mp}{8}/{13}{MP}{8}]{239}{h}{8}:'
+  Prompt: '{8}[{t} {255}HP:{hp}{8}/{HP} {255}SP:{st}{8}/{ST} {255}CP:{13}{cv}{8}/{13}{CV}{8}]{239}{h}{8}:'
   # - TimeFormat -
   #   When real world time is shown, what format should be used?
   #   This uses a Go time format string, which is kinda weird.

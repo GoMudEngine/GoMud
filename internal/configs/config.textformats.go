@@ -15,7 +15,7 @@ type TextFormats struct {
 func (m *TextFormats) Validate() {
 
 	if m.Prompt == `` {
-		m.Prompt = `{8}[{t} {T} {255}HP:{hp}{8}/{HP} {255}MP:{13}{mp}{8}/{13}{MP}{8}]{239}{h}{8}:`
+		m.Prompt = `{8}[{t} {255}HP:{hp}{8}/{HP} {255}SP:{st}{8}/{ST} {255}CP:{13}{cv}{8}/{13}{CV}{8}]{239}{h}{8}:`
 	}
 
 	// Must have a message wrapper...
