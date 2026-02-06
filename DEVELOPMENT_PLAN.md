@@ -252,7 +252,7 @@ This plan breaks down the conversion of GoMud to DOGMud into small, testable inc
 **Changes**:
 1. Implement progression chance calculation:
    - Exponential difficulty curve
-   - Easier below soft cap (50 for skills, 100 for stats)
+   - Easier below soft cap (50 for skills, 150 for stats)
    - Very hard above soft cap
 2. Implement progression roll on triggers:
    - Critical success/failure

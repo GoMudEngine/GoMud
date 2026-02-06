@@ -11,7 +11,7 @@ angrycommands:
   - emote narrows their eyes, looking for trouble.
   - emote looks around, suspiciously.
   - shout i take no pleasure in your defeat!
-selectable: true
+selectable: false
 knowsfirstaid: true
 tnlscale: 1.2
 tameable: false
