@@ -3,124 +3,54 @@ package dice
 import (
 	"fmt"
 	"math"
-
-	"github.com/GoMudEngine/GoMud/internal/util"
+	"math/rand"
 )
 
-// RollType represents the type of roll being made
-type RollType int
-
-const (
-	Normal       RollType = iota // Standard roll
-	Advantage                    // Roll twice, take higher
-	Disadvantage                 // Roll twice, take lower
-)
-
-// RollResult contains detailed information about a dice roll
+// RollResult contains detailed information about a roll
 type RollResult struct {
-	Total       int      // Final result after all modifiers
-	RawRolls    []int    // Individual die results before modifiers
-	Modifier    int      // Total modifier applied
-	Success     bool     // Whether the roll succeeded (for checks)
-	Margin      int      // Margin of success/failure
-	Critical    bool     // Whether this was a critical success
-	Fumble      bool     // Whether this was a critical failure
-	Description string   // Human-readable description of the roll
-	Rolls       []int    // All rolls made (for advantage/disadvantage)
+	Value       float64 // The rolled value
+	Mean        float64 // The mean of the distribution
+	StdDev      float64 // The standard deviation used
+	Success     bool    // Whether the roll succeeded (for checks)
+	Margin      float64 // Margin of success/failure
+	ZScore      float64 // How many standard deviations from mean
+	Percentile  float64 // Approximate percentile (0-100)
+	Description string  // Human-readable description
 }
 
 // String returns a formatted string representation of the roll result
 func (r RollResult) String() string {
-	rollStr := fmt.Sprintf("%v", r.RawRolls)
-	if r.Modifier != 0 {
-		return fmt.Sprintf("%s %+d = %d", rollStr, r.Modifier, r.Total)
-	}
-	return fmt.Sprintf("%s = %d", rollStr, r.Total)
+	return fmt.Sprintf("%.2f (mean: %.2f, σ: %.2f, z: %.2f)", r.Value, r.Mean, r.StdDev, r.ZScore)
 }
 
-// Roll performs a standard dice roll (XdY+modifier)
-// Returns the total and individual die results
-// Checks for critical success (max roll) and fumble (min roll) on d20 and d100 rolls
-func Roll(diceCount, diceSides, modifier int) RollResult {
-	result := RollResult{
-		Modifier: modifier,
-		RawRolls: make([]int, diceCount),
+// Roll performs a normal distribution roll
+// mean: center of the distribution (typically the character's stat value)
+// stdDev: spread of the distribution (controls randomness/consistency)
+// Returns a RollResult with the value and statistical information
+func Roll(mean, stdDev float64) RollResult {
+	value := rand.NormFloat64()*stdDev + mean
+	zScore := (value - mean) / stdDev
+	percentile := normalCDF(zScore) * 100
+
+	return RollResult{
+		Value:      value,
+		Mean:       mean,
+		StdDev:     stdDev,
+		ZScore:     zScore,
+		Percentile: percentile,
+		Description: fmt.Sprintf("Normal(%.2f, %.2f)", mean, stdDev),
 	}
-
-	for i := 0; i < diceCount; i++ {
-		result.RawRolls[i] = util.Rand(diceSides) + 1
-		result.Total += result.RawRolls[i]
-	}
-
-	// Check for critical success/failure on common roll types
-	if diceCount == 1 {
-		naturalRoll := result.RawRolls[0]
-		if diceSides == 20 {
-			// d20: 20 is critical, 1 is fumble
-			if naturalRoll == 20 {
-				result.Critical = true
-			} else if naturalRoll == 1 {
-				result.Fumble = true
-			}
-		} else if diceSides == 100 {
-			// d100: 95+ is critical, 5- is fumble
-			if naturalRoll >= 95 {
-				result.Critical = true
-			} else if naturalRoll <= 5 {
-				result.Fumble = true
-			}
-		}
-	}
-
-	result.Total += modifier
-	result.Description = fmt.Sprintf("%dd%d%+d", diceCount, diceSides, modifier)
-
-	return result
 }
 
-// RollWithType performs a roll with advantage or disadvantage
-// For advantage: rolls twice and takes the higher result
-// For disadvantage: rolls twice and takes the lower result
-func RollWithType(diceCount, diceSides, modifier int, rollType RollType) RollResult {
-	if rollType == Normal {
-		return Roll(diceCount, diceSides, modifier)
-	}
+// OpposedRoll performs a contested check between two stats
+// Each side rolls using their stat as the mean with the given standard deviation
+// Returns true if attacker wins, the margin, and both roll results
+func OpposedRoll(attackerStat, defenderStat, stdDev float64) (bool, float64, RollResult, RollResult) {
+	attackRoll := Roll(attackerStat, stdDev)
+	defenseRoll := Roll(defenderStat, stdDev)
 
-	// Roll twice for advantage/disadvantage
-	roll1 := Roll(diceCount, diceSides, modifier)
-	roll2 := Roll(diceCount, diceSides, modifier)
-
-	var selected RollResult
-	if rollType == Advantage {
-		if roll1.Total >= roll2.Total {
-			selected = roll1
-		} else {
-			selected = roll2
-		}
-		selected.Description = fmt.Sprintf("%dd%d%+d [Advantage]", diceCount, diceSides, modifier)
-	} else { // Disadvantage
-		if roll1.Total <= roll2.Total {
-			selected = roll1
-		} else {
-			selected = roll2
-		}
-		selected.Description = fmt.Sprintf("%dd%d%+d [Disadvantage]", diceCount, diceSides, modifier)
-	}
-
-	// Track both rolls for transparency
-	selected.Rolls = []int{roll1.Total, roll2.Total}
-
-	return selected
-}
-
-// OpposedRoll performs an opposed check between two values
-// Returns true if the attacker wins, along with the margin of success
-func OpposedRoll(attackerStat, defenderStat int) (bool, int, RollResult, RollResult) {
-	attackRoll := Roll(1, 100, attackerStat)
-	defenseRoll := Roll(1, 100, defenderStat)
-
-	success := attackRoll.Total > defenseRoll.Total
-	margin := attackRoll.Total - defenseRoll.Total
+	success := attackRoll.Value > defenseRoll.Value
+	margin := attackRoll.Value - defenseRoll.Value
 
 	attackRoll.Success = success
 	attackRoll.Margin = margin
@@ -130,73 +60,137 @@ func OpposedRoll(attackerStat, defenderStat int) (bool, int, RollResult, RollRes
 	return success, margin, attackRoll, defenseRoll
 }
 
-// DifficultyCheck performs a check against a difficulty number
-// difficulty represents the target number to beat
-// Returns whether the check succeeded and by how much
-func DifficultyCheck(stat, difficulty int, rollType RollType) RollResult {
-	result := RollWithType(1, 100, stat, rollType)
-	result.Success = result.Total >= difficulty
-	result.Margin = result.Total - difficulty
-
-	// Check for critical success (natural 95+) or critical failure (natural 5 or less)
-	if len(result.RawRolls) > 0 {
-		naturalRoll := result.RawRolls[0]
-		if naturalRoll >= 95 {
-			result.Critical = true
-			result.Success = true // Critical success overrides normal failure
-		} else if naturalRoll <= 5 {
-			result.Fumble = true
-			result.Success = false // Fumble overrides normal success
-		}
-	}
+// DifficultyCheck performs a check against a target value
+// stat: the character's stat (used as mean)
+// difficulty: the target value to beat
+// stdDev: standard deviation (higher = more random)
+// Returns a RollResult with success/failure information
+func DifficultyCheck(stat, difficulty, stdDev float64) RollResult {
+	result := Roll(stat, stdDev)
+	result.Success = result.Value >= difficulty
+	result.Margin = result.Value - difficulty
 
 	return result
 }
 
-// RollStatArray generates an array of stats for character creation
-// Each stat is rolled using the specified method
-// Common methods:
-//   - 3d6: standard (10-11 average)
-//   - 4d6 drop lowest: more generous (12-13 average)
-//   - 2d6+6: bounded higher (13 average, min 8, max 18)
-func RollStatArray(diceCount, diceSides, modifier int, statCount int, dropLowest bool) []int {
-	stats := make([]int, statCount)
+// RollInt performs a normal distribution roll and returns an integer
+// Useful when you need whole number results
+func RollInt(mean, stdDev float64) int {
+	return int(math.Round(Roll(mean, stdDev).Value))
+}
 
-	for i := 0; i < statCount; i++ {
-		if dropLowest && diceCount > 1 {
-			// Roll one extra die and drop the lowest
-			rolls := make([]int, diceCount+1)
-			lowest := diceSides + 1
-			lowestIdx := 0
-			total := 0
-
-			for j := 0; j < diceCount+1; j++ {
-				rolls[j] = util.Rand(diceSides) + 1
-				total += rolls[j]
-				if rolls[j] < lowest {
-					lowest = rolls[j]
-					lowestIdx = j
-				}
-			}
-
-			// Drop the lowest
-			total -= rolls[lowestIdx]
-			stats[i] = total + modifier
-		} else {
-			result := Roll(diceCount, diceSides, modifier)
-			stats[i] = result.Total
-		}
+// RollClamped performs a roll and clamps the result to a range
+// Useful for ensuring rolls don't exceed logical bounds
+func RollClamped(mean, stdDev, min, max float64) RollResult {
+	result := Roll(mean, stdDev)
+	if result.Value < min {
+		result.Value = min
+	} else if result.Value > max {
+		result.Value = max
 	}
+	return result
+}
 
+// RollIntClamped performs a roll, clamps it, and returns an integer
+func RollIntClamped(mean, stdDev, min, max float64) int {
+	return int(math.Round(RollClamped(mean, stdDev, min, max).Value))
+}
+
+// SuccessChance calculates the probability of beating a difficulty
+// Returns a value from 0.0 to 1.0
+func SuccessChance(stat, difficulty, stdDev float64) float64 {
+	zScore := (stat - difficulty) / stdDev
+	return normalCDF(zScore)
+}
+
+// ExpectedMargin calculates the expected margin of success
+// Positive means expected success, negative means expected failure
+func ExpectedMargin(stat, difficulty float64) float64 {
+	return stat - difficulty
+}
+
+// OpposedSuccessChance calculates the probability of winning an opposed roll
+// Returns a value from 0.0 to 1.0
+func OpposedSuccessChance(attackerStat, defenderStat, stdDev float64) float64 {
+	// The difference of two normal distributions is also normal
+	// with mean = difference of means and variance = sum of variances
+	meanDiff := attackerStat - defenderStat
+	combinedStdDev := math.Sqrt(2) * stdDev // Both use same stdDev
+
+	// Probability that difference > 0
+	zScore := meanDiff / combinedStdDev
+	return normalCDF(zScore)
+}
+
+// RollStatArray generates character stats using normal distribution
+// count: number of stats to generate
+// mean: target average for stats
+// stdDev: variation in stats
+// min, max: bounds for stat values
+func RollStatArray(count int, mean, stdDev, min, max float64) []int {
+	stats := make([]int, count)
+	for i := 0; i < count; i++ {
+		stats[i] = RollIntClamped(mean, stdDev, min, max)
+	}
 	return stats
 }
 
-// Percentile performs a percentile roll (1d100)
-// Useful for chance checks - returns true if roll is less than chance
-func Percentile(chance int) (bool, int) {
-	roll := util.Rand(100) + 1
-	success := roll <= chance
-	return success, roll
+// RollDamage performs a damage roll with potential variance
+// baseDamage: the expected damage value
+// variance: how much the damage can vary (standard deviation)
+// minDamage: minimum damage that can be dealt
+func RollDamage(baseDamage, variance, minDamage float64) float64 {
+	damage := Roll(baseDamage, variance).Value
+	if damage < minDamage {
+		damage = minDamage
+	}
+	return damage
+}
+
+// RollDamageInt performs a damage roll and returns an integer
+func RollDamageInt(baseDamage, variance, minDamage float64) int {
+	return int(math.Round(RollDamage(baseDamage, variance, minDamage)))
+}
+
+// CriticalCheck determines if a roll is a critical based on z-score
+// criticalThreshold: how many standard deviations above mean (typically 2.0 for ~2.5% chance)
+// fumbleThreshold: how many standard deviations below mean (typically -2.0 for ~2.5% chance)
+// Returns (isCritical, isFumble)
+func CriticalCheck(result RollResult, criticalThreshold, fumbleThreshold float64) (bool, bool) {
+	isCritical := result.ZScore >= criticalThreshold
+	isFumble := result.ZScore <= fumbleThreshold
+	return isCritical, isFumble
+}
+
+// RollWithCriticals performs a roll and checks for criticals
+func RollWithCriticals(mean, stdDev, critThreshold, fumbleThreshold float64) (RollResult, bool, bool) {
+	result := Roll(mean, stdDev)
+	isCrit, isFumble := CriticalCheck(result, critThreshold, fumbleThreshold)
+	return result, isCrit, isFumble
+}
+
+// Percentile performs a simple percentile check (0-100)
+// chance: the percentage chance of success (0-100)
+// Returns (success, actualRoll)
+func Percentile(chance float64) (bool, float64) {
+	roll := rand.Float64() * 100
+	return roll <= chance, roll
+}
+
+// RollBetween generates a random float between min and max
+func RollBetween(min, max float64) float64 {
+	return min + rand.Float64()*(max-min)
+}
+
+// RollBetweenInt generates a random integer between min and max (inclusive)
+func RollBetweenInt(min, max int) int {
+	if min > max {
+		min, max = max, min
+	}
+	if min == max {
+		return min
+	}
+	return min + rand.Intn(max-min+1)
 }
 
 // RollTable rolls on a weighted table
@@ -212,7 +206,7 @@ func RollTable(weights []int) int {
 		total += w
 	}
 
-	roll := util.Rand(total)
+	roll := rand.Intn(total)
 	cumulative := 0
 
 	for i, weight := range weights {
@@ -222,229 +216,126 @@ func RollTable(weights []int) int {
 		}
 	}
 
-	// Fallback to last item (shouldn't happen with proper weights)
 	return len(weights) - 1
 }
 
-// BellCurve performs a bell curve roll (3d6 style)
-// This produces a more predictable distribution centered around the middle values
-// With 3d6: average is 10-11, range is 3-18
-func BellCurve(modifier int) RollResult {
-	return Roll(3, 6, modifier)
+// normalCDF approximates the cumulative distribution function of the standard normal distribution
+// This is the probability that a standard normal random variable is less than or equal to z
+func normalCDF(z float64) float64 {
+	// Using the approximation from Abramowitz and Stegun
+	// Maximum error: 7.5e-8
+
+	if z < 0 {
+		return 1 - normalCDF(-z)
+	}
+
+	const (
+		p  = 0.2316419
+		b1 = 0.319381530
+		b2 = -0.356563782
+		b3 = 1.781477937
+		b4 = -1.821255978
+		b5 = 1.330274429
+	)
+
+	t := 1.0 / (1.0 + p*z)
+	t2 := t * t
+	t3 := t2 * t
+	t4 := t3 * t
+	t5 := t4 * t
+
+	// Probability density function
+	phi := math.Exp(-z*z/2) / math.Sqrt(2*math.Pi)
+
+	// Cumulative probability
+	return 1 - phi*(b1*t+b2*t2+b3*t3+b4*t4+b5*t5)
 }
 
-// PointBuy converts a point-buy cost to a stat value
-// Common D&D style point buy where higher stats cost exponentially more
-func PointBuy(points int) int {
-	// Standard 3-18 range with exponential cost
-	// Cost: 8=0, 9=1, 10=2, 11=3, 12=4, 13=5, 14=7, 15=9, 16=12, 17=15, 18=19
-	pointCosts := map[int]int{
-		0: 8, 1: 9, 2: 10, 3: 11, 4: 12, 5: 13, 7: 14, 9: 15, 12: 16, 15: 17, 19: 18,
+// GetPercentile returns the value at a given percentile for a distribution
+// percentile: 0-100 (e.g., 50 = median, 95 = 95th percentile)
+func GetPercentile(mean, stdDev, percentile float64) float64 {
+	// Convert percentile to z-score using inverse normal CDF approximation
+	z := inverseNormalCDF(percentile / 100.0)
+	return mean + z*stdDev
+}
+
+// inverseNormalCDF approximates the inverse of the normal CDF
+// Returns the z-score for a given probability
+func inverseNormalCDF(p float64) float64 {
+	// Beasley-Springer-Moro algorithm
+	// Accurate to about 1e-9
+
+	if p <= 0 {
+		return math.Inf(-1)
+	}
+	if p >= 1 {
+		return math.Inf(1)
 	}
 
-	if stat, ok := pointCosts[points]; ok {
-		return stat
-	}
+	const (
+		a0 = 2.50662823884
+		a1 = -18.61500062529
+		a2 = 41.39119773534
+		a3 = -25.44106049637
+		b0 = -8.47351093090
+		b1 = 23.08336743743
+		b2 = -21.06224101826
+		b3 = 3.13082909833
+		c0 = 0.3374754822726147
+		c1 = 0.9761690190917186
+		c2 = 0.1607979714918209
+		c3 = 0.0276438810333863
+		c4 = 0.0038405729373609
+		c5 = 0.0003951896511919
+		c6 = 0.0000321767881768
+		c7 = 0.0000002888167364
+		c8 = 0.0000003960315187
+	)
 
-	// If not exact match, find the highest stat we can afford
-	maxStat := 8
-	for cost, stat := range pointCosts {
-		if cost <= points && stat > maxStat {
-			maxStat = stat
+	y := p - 0.5
+	var r, x float64
+
+	if math.Abs(y) < 0.42 {
+		// Central region
+		r = y * y
+		x = y * (((a3*r+a2)*r+a1)*r + a0) / ((((b3*r+b2)*r+b1)*r+b0)*r + 1)
+	} else {
+		// Tail region
+		if y > 0 {
+			r = 1 - p
+		} else {
+			r = p
+		}
+		r = math.Log(-math.Log(r))
+		x = c0 + r*(c1+r*(c2+r*(c3+r*(c4+r*(c5+r*(c6+r*(c7+r*c8)))))))
+		if y < 0 {
+			x = -x
 		}
 	}
 
-	return maxStat
+	return x
 }
 
-// AverageRoll calculates the average result of a dice roll
-// Useful for balancing and expected damage calculations
-func AverageRoll(diceCount, diceSides, modifier int) float64 {
-	avgPerDie := float64(diceSides+1) / 2.0
-	return float64(diceCount)*avgPerDie + float64(modifier)
-}
-
-// MaxRoll calculates the maximum possible result of a dice roll
-func MaxRoll(diceCount, diceSides, modifier int) int {
-	return (diceCount * diceSides) + modifier
-}
-
-// MinRoll calculates the minimum possible result of a dice roll
-func MinRoll(diceCount, diceSides, modifier int) int {
-	return diceCount + modifier
-}
-
-// CompareRolls compares two roll results and returns which is better
-// Returns 1 if roll1 is better, -1 if roll2 is better, 0 if tied
+// CompareRolls compares two roll results
+// Returns 1 if roll1 is higher, -1 if roll2 is higher, 0 if equal
 func CompareRolls(roll1, roll2 RollResult) int {
-	if roll1.Total > roll2.Total {
+	if roll1.Value > roll2.Value {
 		return 1
-	} else if roll1.Total < roll2.Total {
+	} else if roll1.Value < roll2.Value {
 		return -1
 	}
 	return 0
 }
 
-// RollBetween generates a random number between min and max (inclusive)
-// This is a convenience function for simple range generation
-func RollBetween(min, max int) int {
-	if min > max {
-		min, max = max, min
-	}
-	if min == max {
-		return min
-	}
-	return util.Rand(max-min+1) + min
+// AverageResult returns the expected value for a given distribution
+func AverageResult(mean, stdDev float64) float64 {
+	return mean // For normal distribution, mean is the expected value
 }
 
-// ExplodingDice rolls dice that "explode" on max value
-// When you roll the maximum value, you roll again and add it
-// maxExplosions limits how many times a single die can explode
-func ExplodingDice(diceCount, diceSides, modifier int, maxExplosions int) RollResult {
-	result := RollResult{
-		Modifier: modifier,
-		RawRolls: make([]int, 0, diceCount),
-	}
-
-	for i := 0; i < diceCount; i++ {
-		diceTotal := 0
-		explosions := 0
-
-		for {
-			roll := util.Rand(diceSides) + 1
-			diceTotal += roll
-			result.RawRolls = append(result.RawRolls, roll)
-
-			// Check if we should explode
-			if roll == diceSides && explosions < maxExplosions {
-				explosions++
-				continue
-			}
-			break
-		}
-
-		result.Total += diceTotal
-	}
-
-	result.Total += modifier
-	result.Description = fmt.Sprintf("%dd%d!%+d", diceCount, diceSides, modifier)
-
-	return result
-}
-
-// SuccessPool counts successes in a pool of dice
-// Each die that meets or exceeds the target is a success
-// Used in systems like World of Darkness or Shadowrun
-func SuccessPool(diceCount, diceSides, targetNumber int) RollResult {
-	result := RollResult{
-		RawRolls: make([]int, diceCount),
-	}
-
-	successes := 0
-	for i := 0; i < diceCount; i++ {
-		result.RawRolls[i] = util.Rand(diceSides) + 1
-		if result.RawRolls[i] >= targetNumber {
-			successes++
-		}
-	}
-
-	result.Total = successes
-	result.Success = successes > 0
-	result.Description = fmt.Sprintf("%dd%d (target %d)", diceCount, diceSides, targetNumber)
-
-	return result
-}
-
-// CriticalRange checks if a roll is within the critical range
-// critRange is the number from the top of the die range (e.g., 20 on d20, or 19-20 for range of 2)
-func CriticalRange(roll, diceSides, critRange int) bool {
-	threshold := diceSides - critRange + 1
-	return roll >= threshold
-}
-
-// CheckCritical determines if a roll result is a critical success or fumble
-// Can specify custom thresholds, or use defaults for d20 (20/1) and d100 (95+/5-)
-// Returns (isCritical, isFumble)
-func CheckCritical(naturalRoll, diceSides int, critThreshold, fumbleThreshold int) (bool, bool) {
-	// If no custom thresholds provided, use defaults based on die type
-	if critThreshold == 0 {
-		if diceSides == 20 {
-			critThreshold = 20
-		} else if diceSides == 100 {
-			critThreshold = 95
-		} else {
-			critThreshold = diceSides // Max roll is critical for other dice
-		}
-	}
-
-	if fumbleThreshold == 0 {
-		if diceSides == 20 {
-			fumbleThreshold = 1
-		} else if diceSides == 100 {
-			fumbleThreshold = 5
-		} else {
-			fumbleThreshold = 1 // Min roll is fumble for other dice
-		}
-	}
-
-	isCritical := naturalRoll >= critThreshold
-	isFumble := naturalRoll <= fumbleThreshold
-
-	return isCritical, isFumble
-}
-
-// ApplyCriticalToResult updates a RollResult with critical/fumble information
-// Uses CheckCritical internally with optional custom thresholds
-func ApplyCriticalToResult(result *RollResult, diceSides, critThreshold, fumbleThreshold int) {
-	if len(result.RawRolls) == 1 {
-		result.Critical, result.Fumble = CheckCritical(result.RawRolls[0], diceSides, critThreshold, fumbleThreshold)
-	}
-}
-
-// ContestedRoll performs a contested roll between two stats
-// Both sides roll, highest wins
-// In case of tie, returns false with 0 margin
-func ContestedRoll(stat1, stat2 int, rollType1, rollType2 RollType) (stat1Wins bool, margin int, roll1, roll2 RollResult) {
-	roll1 = RollWithType(1, 100, stat1, rollType1)
-	roll2 = RollWithType(1, 100, stat2, rollType2)
-
-	if roll1.Total > roll2.Total {
-		stat1Wins = true
-		margin = roll1.Total - roll2.Total
-		roll1.Success = true
-		roll2.Success = false
-	} else if roll2.Total > roll1.Total {
-		stat1Wins = false
-		margin = roll2.Total - roll1.Total
-		roll1.Success = false
-		roll2.Success = true
-	} else {
-		// Tie - neither wins
-		stat1Wins = false
-		margin = 0
-		roll1.Success = false
-		roll2.Success = false
-	}
-
-	roll1.Margin = margin
-	roll2.Margin = -margin
-
-	return
-}
-
-// GaussianRoll produces a Gaussian (normal) distribution approximation
-// Uses central limit theorem by rolling multiple dice and averaging
-// More rolls = tighter distribution around the mean
-func GaussianRoll(mean, stdDev float64, rolls int) int {
-	sum := 0
-	for i := 0; i < rolls; i++ {
-		sum += util.Rand(100) + 1
-	}
-	avg := float64(sum) / float64(rolls)
-
-	// Map [1,100] average to Gaussian with mean and stdDev
-	normalized := (avg - 50.5) / 28.87 // Normalize to ~N(0,1)
-	result := int(math.Round(normalized*stdDev + mean))
-
-	return result
+// StandardDeviation calculates a reasonable standard deviation based on stat range
+// This is a helper for determining how much randomness to apply
+// statRange: the typical range of the stat (e.g., 100 if stats range 0-100)
+// randomnessFactor: 0.0 = no randomness, 0.5 = very random (typically 0.1-0.2)
+func StandardDeviation(statRange, randomnessFactor float64) float64 {
+	return statRange * randomnessFactor
 }

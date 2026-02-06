@@ -2,424 +2,430 @@ package dice
 
 import (
 	"fmt"
+	"math"
 	"testing"
-
-	"github.com/GoMudEngine/GoMud/internal/mudlog"
 )
 
-func init() {
-	// Initialize logger for tests (write to stderr, no colors, ERROR level to reduce output)
-	mudlog.SetupLogger(nil, "ERROR", "", false)
-}
-
 func TestRoll(t *testing.T) {
+	mean := 50.0
+	stdDev := 10.0
+
 	// Test basic rolling
-	result := Roll(2, 6, 3)
+	result := Roll(mean, stdDev)
 
-	if result.Total < 5 || result.Total > 15 {
-		t.Errorf("Roll(2, 6, 3) produced invalid result: %d (expected 5-15)", result.Total)
+	if result.Mean != mean {
+		t.Errorf("Expected mean %f, got %f", mean, result.Mean)
 	}
 
-	if len(result.RawRolls) != 2 {
-		t.Errorf("Expected 2 raw rolls, got %d", len(result.RawRolls))
+	if result.StdDev != stdDev {
+		t.Errorf("Expected stdDev %f, got %f", stdDev, result.StdDev)
 	}
 
-	if result.Modifier != 3 {
-		t.Errorf("Expected modifier of 3, got %d", result.Modifier)
-	}
-
-	t.Logf("Roll(2d6+3): %s", result.String())
+	t.Logf("Roll(50, 10): %s", result.String())
 }
 
-func TestRollWithType(t *testing.T) {
-	// Test advantage roll
-	result := RollWithType(1, 20, 5, Advantage)
+func TestRollDistribution(t *testing.T) {
+	mean := 50.0
+	stdDev := 10.0
+	iterations := 10000
 
-	if len(result.Rolls) != 2 {
-		t.Errorf("Advantage roll should track both rolls, got %d rolls", len(result.Rolls))
+	sum := 0.0
+	sumSquares := 0.0
+
+	for i := 0; i < iterations; i++ {
+		result := Roll(mean, stdDev)
+		sum += result.Value
+		sumSquares += result.Value * result.Value
 	}
 
-	if result.Total < 6 || result.Total > 25 {
-		t.Errorf("Roll(1d20+5 Advantage) produced invalid result: %d", result.Total)
+	actualMean := sum / float64(iterations)
+	variance := (sumSquares / float64(iterations)) - (actualMean * actualMean)
+	actualStdDev := math.Sqrt(variance)
+
+	t.Logf("Over %d rolls:", iterations)
+	t.Logf("  Expected mean: %.2f, Actual mean: %.2f", mean, actualMean)
+	t.Logf("  Expected stdDev: %.2f, Actual stdDev: %.2f", stdDev, actualStdDev)
+
+	// Allow 5% variance due to randomness
+	if math.Abs(actualMean-mean) > mean*0.05 {
+		t.Errorf("Mean %.2f is too far from expected %.2f", actualMean, mean)
 	}
 
-	t.Logf("Advantage Roll(1d20+5): %s (rolls: %v, selected: %d)", result.Description, result.Rolls, result.Total)
-
-	// Test disadvantage roll
-	result2 := RollWithType(1, 20, 0, Disadvantage)
-
-	if len(result2.Rolls) != 2 {
-		t.Errorf("Disadvantage roll should track both rolls, got %d rolls", len(result2.Rolls))
+	if math.Abs(actualStdDev-stdDev) > stdDev*0.15 {
+		t.Errorf("StdDev %.2f is too far from expected %.2f", actualStdDev, stdDev)
 	}
-
-	t.Logf("Disadvantage Roll(1d20): %s (rolls: %v, selected: %d)", result2.Description, result2.Rolls, result2.Total)
 }
 
 func TestOpposedRoll(t *testing.T) {
-	attackerStat := 50
-	defenderStat := 40
+	attackerStat := 60.0
+	defenderStat := 50.0
+	stdDev := 10.0
 
-	success, margin, atkRoll, defRoll := OpposedRoll(attackerStat, defenderStat)
+	success, margin, atkRoll, defRoll := OpposedRoll(attackerStat, defenderStat, stdDev)
 
-	t.Logf("Opposed Roll: Attacker(%d)=%d vs Defender(%d)=%d | Success: %t, Margin: %d",
-		attackerStat, atkRoll.Total, defenderStat, defRoll.Total, success, margin)
-
-	if success && margin <= 0 {
-		t.Errorf("Success should have positive margin, got %d", margin)
-	}
-
-	if !success && margin >= 0 {
-		t.Errorf("Failure should have negative margin, got %d", margin)
-	}
+	t.Logf("Opposed Roll: Attacker(%.0f)=%.2f vs Defender(%.0f)=%.2f | Success: %t, Margin: %.2f",
+		attackerStat, atkRoll.Value, defenderStat, defRoll.Value, success, margin)
 
 	if atkRoll.Success != success {
 		t.Errorf("Attack roll success flag doesn't match result")
 	}
+
+	if math.Abs(margin-(atkRoll.Value-defRoll.Value)) > 0.001 {
+		t.Errorf("Margin calculation incorrect")
+	}
+}
+
+func TestOpposedRollStatistics(t *testing.T) {
+	attackerStat := 60.0
+	defenderStat := 50.0
+	stdDev := 10.0
+	iterations := 10000
+
+	wins := 0
+	for i := 0; i < iterations; i++ {
+		success, _, _, _ := OpposedRoll(attackerStat, defenderStat, stdDev)
+		if success {
+			wins++
+		}
+	}
+
+	winRate := float64(wins) / float64(iterations)
+	expectedWinRate := OpposedSuccessChance(attackerStat, defenderStat, stdDev)
+
+	t.Logf("Opposed roll statistics over %d iterations:", iterations)
+	t.Logf("  Attacker: %.0f, Defender: %.0f, StdDev: %.0f", attackerStat, defenderStat, stdDev)
+	t.Logf("  Win rate: %.1f%% (expected: %.1f%%)", winRate*100, expectedWinRate*100)
+
+	if math.Abs(winRate-expectedWinRate) > 0.03 {
+		t.Errorf("Win rate %.2f is too far from expected %.2f", winRate, expectedWinRate)
+	}
 }
 
 func TestDifficultyCheck(t *testing.T) {
-	stat := 60
-	difficulty := 50
+	stat := 60.0
+	difficulty := 50.0
+	stdDev := 10.0
 
-	result := DifficultyCheck(stat, difficulty, Normal)
+	result := DifficultyCheck(stat, difficulty, stdDev)
 
-	t.Logf("Difficulty Check: Stat %d vs DC %d = %d (%s) | Success: %t, Margin: %d",
-		stat, difficulty, result.Total, result.String(), result.Success, result.Margin)
+	t.Logf("Difficulty Check: Stat %.0f vs DC %.0f = %.2f | Success: %t, Margin: %.2f",
+		stat, difficulty, result.Value, result.Success, result.Margin)
 
-	// Result should be in valid range
-	if result.Total < 61 || result.Total > 160 {
-		t.Errorf("Difficulty check result out of expected range: %d", result.Total)
+	if result.Success && result.Margin < 0 {
+		t.Errorf("Success should have non-negative margin")
+	}
+
+	if !result.Success && result.Margin >= 0 {
+		t.Errorf("Failure should have negative margin")
 	}
 }
 
-func TestDifficultyCheckCriticals(t *testing.T) {
-	// Run many checks to try to get a critical and fumble
-	stat := 50
-	difficulty := 50
+func TestSuccessChance(t *testing.T) {
+	stat := 60.0
+	difficulty := 50.0
+	stdDev := 10.0
 
-	critCount := 0
-	fumbleCount := 0
-	iterations := 1000
+	chance := SuccessChance(stat, difficulty, stdDev)
 
+	t.Logf("Success chance for stat %.0f vs difficulty %.0f (stdDev %.0f): %.1f%%",
+		stat, difficulty, stdDev, chance*100)
+
+	// With stat 10 higher than difficulty and stdDev of 10,
+	// we expect about 84% success rate (z-score = 1.0)
+	if chance < 0.80 || chance > 0.88 {
+		t.Errorf("Success chance %.2f outside expected range [0.80, 0.88]", chance)
+	}
+
+	// Verify empirically
+	iterations := 10000
+	successes := 0
 	for i := 0; i < iterations; i++ {
-		result := DifficultyCheck(stat, difficulty, Normal)
-		if result.Critical {
-			critCount++
-			t.Logf("Critical success! Natural roll: %d, Total: %d", result.RawRolls[0], result.Total)
-		}
-		if result.Fumble {
-			fumbleCount++
-			t.Logf("Fumble! Natural roll: %d, Total: %d", result.RawRolls[0], result.Total)
+		result := DifficultyCheck(stat, difficulty, stdDev)
+		if result.Success {
+			successes++
 		}
 	}
 
-	t.Logf("Out of %d rolls: %d criticals (%.1f%%), %d fumbles (%.1f%%)",
-		iterations, critCount, float64(critCount)/float64(iterations)*100,
-		fumbleCount, float64(fumbleCount)/float64(iterations)*100)
+	empiricalChance := float64(successes) / float64(iterations)
+	t.Logf("  Empirical success rate: %.1f%%", empiricalChance*100)
 
-	// Should get at least some criticals and fumbles in 1000 rolls
-	if critCount == 0 {
-		t.Logf("Warning: No critical successes in %d rolls (expected ~6%%)", iterations)
-	}
-	if fumbleCount == 0 {
-		t.Logf("Warning: No fumbles in %d rolls (expected ~5%%)", iterations)
+	if math.Abs(empiricalChance-chance) > 0.03 {
+		t.Errorf("Empirical chance %.2f too far from calculated %.2f", empiricalChance, chance)
 	}
 }
 
 func TestRollStatArray(t *testing.T) {
-	// Test standard 3d6 method
-	stats := RollStatArray(3, 6, 0, 6, false)
+	mean := 12.0
+	stdDev := 2.0
+	min := 3.0
+	max := 18.0
+
+	stats := RollStatArray(6, mean, stdDev, min, max)
 
 	if len(stats) != 6 {
 		t.Errorf("Expected 6 stats, got %d", len(stats))
 	}
 
-	t.Logf("Standard 3d6 stats: %v", stats)
+	t.Logf("Stat array (mean: %.0f, stdDev: %.0f): %v", mean, stdDev, stats)
 
 	for i, stat := range stats {
-		if stat < 3 || stat > 18 {
-			t.Errorf("Stat %d out of range: %d (expected 3-18)", i, stat)
+		if stat < int(min) || stat > int(max) {
+			t.Errorf("Stat %d out of range: %d (expected %.0f-%.0f)", i, stat, min, max)
 		}
 	}
 
-	// Test 4d6 drop lowest (rolls 5 dice, drops lowest, so range is 4-24)
-	stats2 := RollStatArray(4, 6, 0, 6, true)
+	// Check average
+	sum := 0
+	for _, stat := range stats {
+		sum += stat
+	}
+	avg := float64(sum) / 6.0
+	t.Logf("  Average: %.1f", avg)
+}
 
-	if len(stats2) != 6 {
-		t.Errorf("Expected 6 stats, got %d", len(stats2))
+func TestRollDamage(t *testing.T) {
+	baseDamage := 50.0
+	variance := 10.0
+	minDamage := 10.0
+
+	damage := RollDamage(baseDamage, variance, minDamage)
+
+	if damage < minDamage {
+		t.Errorf("Damage %.2f below minimum %.2f", damage, minDamage)
 	}
 
-	t.Logf("4d6 drop lowest stats: %v", stats2)
+	t.Logf("Damage roll (base: %.0f, variance: %.0f, min: %.0f): %.2f",
+		baseDamage, variance, minDamage, damage)
 
-	for i, stat := range stats2 {
-		if stat < 4 || stat > 24 {
-			t.Errorf("Stat %d out of range: %d (expected 4-24)", i, stat)
+	// Test integer version
+	damageInt := RollDamageInt(baseDamage, variance, minDamage)
+	if damageInt < int(minDamage) {
+		t.Errorf("Damage int %d below minimum %.0f", damageInt, minDamage)
+	}
+	t.Logf("  Integer damage: %d", damageInt)
+}
+
+func TestCriticalCheck(t *testing.T) {
+	iterations := 100000
+	critThreshold := 2.0  // ~2.5% chance
+	fumbleThreshold := -2.0
+
+	critCount := 0
+	fumbleCount := 0
+
+	for i := 0; i < iterations; i++ {
+		result := Roll(50.0, 10.0)
+		isCrit, isFumble := CriticalCheck(result, critThreshold, fumbleThreshold)
+		if isCrit {
+			critCount++
+		}
+		if isFumble {
+			fumbleCount++
 		}
 	}
 
-	// Test 2d6+6 bounded method
-	stats3 := RollStatArray(2, 6, 6, 6, false)
+	critRate := float64(critCount) / float64(iterations) * 100
+	fumbleRate := float64(fumbleCount) / float64(iterations) * 100
 
-	if len(stats3) != 6 {
-		t.Errorf("Expected 6 stats, got %d", len(stats3))
+	t.Logf("Critical check over %d rolls (threshold: ±%.1f):", iterations, critThreshold)
+	t.Logf("  Criticals: %d (%.2f%%, expected ~2.28%%)", critCount, critRate)
+	t.Logf("  Fumbles: %d (%.2f%%, expected ~2.28%%)", fumbleCount, fumbleRate)
+
+	// Expected rate for z=2.0 is about 2.28%
+	expectedRate := 2.28
+	if math.Abs(critRate-expectedRate) > 0.5 {
+		t.Logf("Warning: Crit rate %.2f%% differs from expected %.2f%%", critRate, expectedRate)
 	}
-
-	t.Logf("2d6+6 stats: %v", stats3)
-
-	for i, stat := range stats3 {
-		if stat < 8 || stat > 18 {
-			t.Errorf("Stat %d out of range: %d (expected 8-18)", i, stat)
-		}
+	if math.Abs(fumbleRate-expectedRate) > 0.5 {
+		t.Logf("Warning: Fumble rate %.2f%% differs from expected %.2f%%", fumbleRate, expectedRate)
 	}
 }
 
 func TestPercentile(t *testing.T) {
-	// Test 50% chance
-	successes := 0
-	iterations := 1000
+	chance := 75.0
+	iterations := 10000
 
+	successes := 0
 	for i := 0; i < iterations; i++ {
-		success, _ := Percentile(50)
+		success, _ := Percentile(chance)
 		if success {
 			successes++
 		}
 	}
 
 	successRate := float64(successes) / float64(iterations) * 100
-	t.Logf("50%% percentile check: %d/%d successes (%.1f%%)", successes, iterations, successRate)
 
-	// Should be roughly 50% (allow 10% variance)
-	if successRate < 40 || successRate > 60 {
-		t.Logf("Warning: Success rate %.1f%% is outside expected range (40-60%%)", successRate)
+	t.Logf("Percentile check (%.0f%% chance) over %d iterations:", chance, iterations)
+	t.Logf("  Success rate: %.1f%%", successRate)
+
+	if math.Abs(successRate-chance) > 2.0 {
+		t.Errorf("Success rate %.1f%% too far from expected %.1f%%", successRate, chance)
 	}
 }
 
 func TestRollTable(t *testing.T) {
-	// Test weighted table
-	weights := []int{10, 20, 30, 40} // Total: 100
+	weights := []int{10, 20, 30, 40}
+	iterations := 10000
 
 	counts := make([]int, len(weights))
-	iterations := 1000
-
 	for i := 0; i < iterations; i++ {
-		result := RollTable(weights)
-		counts[result]++
+		index := RollTable(weights)
+		counts[index]++
 	}
 
-	t.Logf("Roll table results over %d iterations:", iterations)
+	t.Logf("Roll table over %d iterations:", iterations)
 	for i, count := range counts {
 		percentage := float64(count) / float64(iterations) * 100
-		expectedPct := float64(weights[i])
+		expected := float64(weights[i])
 		t.Logf("  Index %d (weight %d): %d times (%.1f%%, expected %.1f%%)",
-			i, weights[i], count, percentage, expectedPct)
+			i, weights[i], count, percentage, expected)
 	}
 }
 
-func TestExplodingDice(t *testing.T) {
-	result := ExplodingDice(3, 6, 0, 2)
+func TestGetPercentile(t *testing.T) {
+	mean := 50.0
+	stdDev := 10.0
 
-	t.Logf("Exploding dice (3d6!): %s", result.String())
-	t.Logf("  Raw rolls: %v (total: %d)", result.RawRolls, result.Total)
+	// Test common percentiles
+	percentiles := []float64{50, 75, 90, 95, 99}
 
-	// Should have at least 3 rolls
-	if len(result.RawRolls) < 3 {
-		t.Errorf("Expected at least 3 rolls, got %d", len(result.RawRolls))
+	t.Logf("Percentile values for Normal(%.0f, %.0f):", mean, stdDev)
+	for _, p := range percentiles {
+		value := GetPercentile(mean, stdDev, p)
+		t.Logf("  %3.0fth percentile: %.2f", p, value)
 	}
 
-	// Minimum possible is 3, no maximum due to explosions
-	if result.Total < 3 {
-		t.Errorf("Total %d is below minimum possible (3)", result.Total)
+	// Median should be very close to mean
+	median := GetPercentile(mean, stdDev, 50)
+	if math.Abs(median-mean) > 0.01 {
+		t.Errorf("Median %.2f differs from mean %.2f", median, mean)
+	}
+
+	// 95th percentile should be about 1.645 standard deviations above mean
+	p95 := GetPercentile(mean, stdDev, 95)
+	expected95 := mean + 1.645*stdDev
+	if math.Abs(p95-expected95) > 0.5 {
+		t.Errorf("95th percentile %.2f differs from expected %.2f", p95, expected95)
 	}
 }
 
-func TestSuccessPool(t *testing.T) {
-	// Roll 5d10, target 7+
-	result := SuccessPool(5, 10, 7)
+func TestRollClamped(t *testing.T) {
+	mean := 50.0
+	stdDev := 20.0
+	min := 30.0
+	max := 70.0
+	iterations := 1000
 
-	t.Logf("Success pool (5d10, target 7+): %d successes", result.Total)
-	t.Logf("  Rolls: %v", result.RawRolls)
+	belowMin := 0
+	aboveMax := 0
 
-	if len(result.RawRolls) != 5 {
-		t.Errorf("Expected 5 rolls, got %d", len(result.RawRolls))
-	}
+	for i := 0; i < iterations; i++ {
+		result := RollClamped(mean, stdDev, min, max)
 
-	// Count expected successes manually
-	expectedSuccesses := 0
-	for _, roll := range result.RawRolls {
-		if roll >= 7 {
-			expectedSuccesses++
+		if result.Value < min {
+			t.Errorf("Clamped roll %.2f below min %.2f", result.Value, min)
+		}
+		if result.Value > max {
+			t.Errorf("Clamped roll %.2f above max %.2f", result.Value, max)
+		}
+
+		// Count how many would have been out of range
+		unclamped := Roll(mean, stdDev)
+		if unclamped.Value < min {
+			belowMin++
+		}
+		if unclamped.Value > max {
+			aboveMax++
 		}
 	}
 
-	if result.Total != expectedSuccesses {
-		t.Errorf("Success count mismatch: got %d, expected %d", result.Total, expectedSuccesses)
-	}
+	t.Logf("Clamped rolls (mean: %.0f, stdDev: %.0f, range: %.0f-%.0f):", mean, stdDev, min, max)
+	t.Logf("  Unclamped: %d below min, %d above max out of %d", belowMin, aboveMax, iterations)
 }
 
-func TestContestedRoll(t *testing.T) {
-	stat1 := 60
-	stat2 := 50
+func TestStandardDeviation(t *testing.T) {
+	// Test the helper function for calculating stdDev
+	statRange := 100.0
 
-	stat1Wins, margin, roll1, roll2 := ContestedRoll(stat1, stat2, Normal, Normal)
-
-	t.Logf("Contested Roll: %d vs %d", stat1, stat2)
-	t.Logf("  Stat1 roll: %d, Stat2 roll: %d", roll1.Total, roll2.Total)
-	t.Logf("  Winner: Stat%d, Margin: %d", map[bool]int{true: 1, false: 2}[stat1Wins], margin)
-
-	if stat1Wins && roll1.Total <= roll2.Total {
-		t.Errorf("Stat1 won but roll1 (%d) <= roll2 (%d)", roll1.Total, roll2.Total)
+	tests := []struct {
+		factor   float64
+		expected float64
+	}{
+		{0.1, 10.0},
+		{0.15, 15.0},
+		{0.2, 20.0},
 	}
 
-	if !stat1Wins && margin != 0 && roll2.Total <= roll1.Total {
-		t.Errorf("Stat2 won but roll2 (%d) <= roll1 (%d)", roll2.Total, roll1.Total)
-	}
-}
-
-func TestAverageRoll(t *testing.T) {
-	avg := AverageRoll(2, 6, 3)
-	expected := 10.0 // (2 * 3.5) + 3 = 10
-
-	if avg != expected {
-		t.Errorf("AverageRoll(2d6+3) = %.1f, expected %.1f", avg, expected)
+	for _, tt := range tests {
+		result := StandardDeviation(statRange, tt.factor)
+		if result != tt.expected {
+			t.Errorf("StandardDeviation(%.0f, %.2f) = %.2f, expected %.2f",
+				statRange, tt.factor, result, tt.expected)
+		}
 	}
 
-	t.Logf("Average of 2d6+3: %.1f", avg)
-}
-
-func TestMinMaxRoll(t *testing.T) {
-	min := MinRoll(2, 6, 3)
-	max := MaxRoll(2, 6, 3)
-
-	expectedMin := 5  // 2 + 3
-	expectedMax := 15 // 12 + 3
-
-	if min != expectedMin {
-		t.Errorf("MinRoll(2d6+3) = %d, expected %d", min, expectedMin)
-	}
-
-	if max != expectedMax {
-		t.Errorf("MaxRoll(2d6+3) = %d, expected %d", max, expectedMax)
-	}
-
-	t.Logf("2d6+3 range: %d to %d (average: %.1f)", min, max, AverageRoll(2, 6, 3))
-}
-
-func TestCheckCritical(t *testing.T) {
-	// Test d20 criticals
-	isCrit, isFumble := CheckCritical(20, 20, 0, 0)
-	if !isCrit {
-		t.Errorf("Natural 20 on d20 should be critical")
-	}
-	if isFumble {
-		t.Errorf("Natural 20 on d20 should not be fumble")
-	}
-
-	isCrit, isFumble = CheckCritical(1, 20, 0, 0)
-	if isCrit {
-		t.Errorf("Natural 1 on d20 should not be critical")
-	}
-	if !isFumble {
-		t.Errorf("Natural 1 on d20 should be fumble")
-	}
-
-	// Test d100 criticals
-	isCrit, isFumble = CheckCritical(95, 100, 0, 0)
-	if !isCrit {
-		t.Errorf("95 on d100 should be critical")
-	}
-
-	isCrit, isFumble = CheckCritical(5, 100, 0, 0)
-	if !isFumble {
-		t.Errorf("5 on d100 should be fumble")
-	}
-
-	// Test custom thresholds
-	isCrit, isFumble = CheckCritical(18, 20, 18, 3)
-	if !isCrit {
-		t.Errorf("18 should be critical with threshold 18")
-	}
-
-	t.Log("Critical/fumble detection tests passed")
-}
-
-func TestRollBetween(t *testing.T) {
-	// Test rolling between specific values
-	result := RollBetween(10, 20)
-
-	if result < 10 || result > 20 {
-		t.Errorf("RollBetween(10, 20) = %d, expected 10-20", result)
-	}
-
-	// Test with reversed args
-	result2 := RollBetween(20, 10)
-
-	if result2 < 10 || result2 > 20 {
-		t.Errorf("RollBetween(20, 10) = %d, expected 10-20", result2)
-	}
-
-	// Test with equal args
-	result3 := RollBetween(15, 15)
-
-	if result3 != 15 {
-		t.Errorf("RollBetween(15, 15) = %d, expected 15", result3)
-	}
-
-	t.Logf("RollBetween tests: %d, %d, %d", result, result2, result3)
+	t.Logf("Standard deviation helper:")
+	t.Logf("  Stat range 0-100, factor 0.10 = %.1f (low randomness)", StandardDeviation(100, 0.10))
+	t.Logf("  Stat range 0-100, factor 0.15 = %.1f (moderate randomness)", StandardDeviation(100, 0.15))
+	t.Logf("  Stat range 0-100, factor 0.20 = %.1f (high randomness)", StandardDeviation(100, 0.20))
 }
 
 // Benchmark tests
 func BenchmarkRoll(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		Roll(2, 6, 3)
-	}
-}
-
-func BenchmarkRollWithAdvantage(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		RollWithType(1, 20, 5, Advantage)
+		Roll(50.0, 10.0)
 	}
 }
 
 func BenchmarkOpposedRoll(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		OpposedRoll(50, 40)
+		OpposedRoll(60.0, 50.0, 10.0)
 	}
 }
 
 func BenchmarkDifficultyCheck(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		DifficultyCheck(60, 50, Normal)
+		DifficultyCheck(60.0, 50.0, 10.0)
+	}
+}
+
+func BenchmarkSuccessChance(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		SuccessChance(60.0, 50.0, 10.0)
 	}
 }
 
 func BenchmarkRollStatArray(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		RollStatArray(4, 6, 0, 6, true)
+		RollStatArray(6, 12.0, 2.0, 3.0, 18.0)
 	}
 }
 
-// Example usage for documentation
+// Example usage
 func ExampleRoll() {
-	result := Roll(2, 6, 3)
-	fmt.Printf("Rolling 2d6+3: %s\n", result.String())
+	result := Roll(50.0, 10.0)
+	fmt.Printf("Result: %.2f (z-score: %.2f)\n", result.Value, result.ZScore)
 }
 
-func ExampleRollWithType() {
-	result := RollWithType(1, 20, 5, Advantage)
-	fmt.Printf("Rolling 1d20+5 with Advantage: %s\n", result.String())
-	fmt.Printf("Both rolls were: %v\n", result.Rolls)
+func ExampleOpposedRoll() {
+	success, margin, _, _ := OpposedRoll(60.0, 50.0, 10.0)
+	if success {
+		fmt.Printf("Attacker wins by %.2f\n", margin)
+	} else {
+		fmt.Printf("Defender wins by %.2f\n", -margin)
+	}
 }
 
 func ExampleDifficultyCheck() {
-	result := DifficultyCheck(60, 50, Normal)
+	result := DifficultyCheck(60.0, 50.0, 10.0)
 	if result.Success {
-		fmt.Printf("Success by %d! Total: %d\n", result.Margin, result.Total)
+		fmt.Printf("Success! Margin: %.2f\n", result.Margin)
 	} else {
-		fmt.Printf("Failed by %d. Total: %d\n", -result.Margin, result.Total)
+		fmt.Printf("Failure. Margin: %.2f\n", result.Margin)
 	}
 }
 
 func ExampleRollStatArray() {
-	stats := RollStatArray(4, 6, 0, 6, true)
-	fmt.Printf("Character stats (4d6 drop lowest): %v\n", stats)
+	stats := RollStatArray(6, 12.0, 2.0, 3.0, 18.0)
+	fmt.Printf("Character stats: %v\n", stats)
 }
