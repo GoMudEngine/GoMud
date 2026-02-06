@@ -191,7 +191,7 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 				// fail
 				user.SendText(fmt.Sprintf(`<ansi fg="spell-text"><ansi fg="magenta">***</ansi> Your spell fizzles! <ansi fg="magenta">***</ansi> (Rolled %d on %d%% chance of success)</ansi>`, roll, successChance))
 				uRoom.SendText(fmt.Sprintf(`<ansi fg="spell-text"><ansi fg="username">%s</ansi> tries to cast a spell but it <ansi fg="magenta">fizzles</ansi>!</ansi>`, user.Character.Name), userId)
-				user.Character.OnCriticalFailure("cast")
+				user.Character.OnCriticalFailure("cast", userId)
 				user.Character.TrackStatUse("mysticism")
 				user.Character.Aggro = nil
 
@@ -221,7 +221,7 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 			}
 
 			user.Character.TrackSpellCast(user.Character.Aggro.SpellInfo.SpellId)
-			user.Character.OnSkillUse("cast")
+			user.Character.OnSkillUse("cast", userId)
 			user.Character.TrackStatUse("mysticism")
 
 			if allowRetaliation {

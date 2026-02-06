@@ -129,6 +129,10 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 					if mob.Character.Zone != `Training` { // Don't track any kills in the training zone
 						user.Character.KD.AddMobKill(int(mob.MobId))
+						// Check for first kill of this mob type
+						if user.Character.KD.GetMobKills(int(mob.MobId)) == 1 {
+							user.Character.OnFirstMobKill(user.UserId)
+						}
 					}
 
 					xpScaler := 1.0
@@ -227,6 +231,10 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 						if mob.Character.Zone != `Training` { // Don't track any kills in the training zone
 							user.Character.KD.AddMobKill(int(mob.MobId))
+							// Check for first kill of this mob type
+							if user.Character.KD.GetMobKills(int(mob.MobId)) == 1 {
+								user.Character.OnFirstMobKill(user.UserId)
+							}
 						}
 
 						user.GrantXP(xpSplit, `combat`)

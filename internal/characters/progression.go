@@ -1,12 +1,85 @@
 package characters
 
 import (
+	"fmt"
+	"math"
+
+	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
+const (
+	SkillSoftCap = 50  // Progression becomes very hard above this virtual rank
+	StatSoftCap  = 150 // Progression becomes very hard above this virtual rank
+	UsesPerRank  = 10  // How many uses of a skill/stat equal one virtual rank
+)
+
+// CalculateProgressionChance returns the probability (0.0–1.0) that a
+// skill/stat progression event fires at the given virtual rank.
+// The curve is exponential decay: ~50% at rank 0, ~5% near the soft cap,
+// and very small above the soft cap.
+func CalculateProgressionChance(currentRank int, softCap int) float64 {
+	if softCap <= 0 {
+		softCap = 1
+	}
+	if currentRank <= 0 {
+		return 0.50
+	}
+	ratio := float64(currentRank) / float64(softCap)
+	if currentRank <= softCap {
+		return 0.50 * math.Exp(-3.0*ratio)
+	}
+	// Above soft cap: very hard, continues exponential decay
+	return 0.025 * math.Exp(-2.0*(ratio-1.0))
+}
+
+// CheckSkillProgression rolls against the progression chance for a skill.
+// If the roll succeeds, a notification message is sent to the player.
+// bonusMultiplier scales the chance (e.g. 2.0 for critical successes).
+// No actual skill changes happen in Stage 3.2 — messages only.
+func (c *Character) CheckSkillProgression(skillName string, userId int, bonusMultiplier float64) {
+	virtualRank := c.GetSkillUseCount(skillName) / UsesPerRank
+	chance := CalculateProgressionChance(virtualRank, SkillSoftCap) * bonusMultiplier
+	if chance > 1.0 {
+		chance = 1.0
+	}
+
+	// Roll: chance is 0.0–1.0, convert to 0–10000 for integer roll
+	threshold := int(chance * 10000)
+	roll := util.Rand(10000)
+
+	mudlog.Debug("Progression", "check", "skill", "skill", skillName, "rank", virtualRank, "chance", fmt.Sprintf("%.2f%%", chance*100), "roll", roll, "threshold", threshold, "character", c.Name)
+
+	if roll < threshold {
+		msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> You feel your <ansi fg="yellow">%s</ansi> skills sharpening! <ansi fg="magenta">***</ansi>`, skillName)
+		events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+	}
+}
+
+// CheckStatProgression rolls against the progression chance for a stat.
+// If the roll succeeds, a notification message is sent to the player.
+// No actual stat changes happen in Stage 3.2 — messages only.
+func (c *Character) CheckStatProgression(statName string, userId int, bonusMultiplier float64) {
+	virtualRank := c.GetStatUseCount(statName) / UsesPerRank
+	chance := CalculateProgressionChance(virtualRank, StatSoftCap) * bonusMultiplier
+	if chance > 1.0 {
+		chance = 1.0
+	}
+
+	threshold := int(chance * 10000)
+	roll := util.Rand(10000)
+
+	mudlog.Debug("Progression", "check", "stat", "stat", statName, "rank", virtualRank, "chance", fmt.Sprintf("%.2f%%", chance*100), "roll", roll, "threshold", threshold, "character", c.Name)
+
+	if roll < threshold {
+		msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> You feel your <ansi fg="yellow">%s</ansi> growing stronger! <ansi fg="magenta">***</ansi>`, statName)
+		events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+	}
+}
+
 // TrackSkillUse increments the usage counter for a specific skill.
-// This data will be used by the progression system (Stage 3.2+) to
-// determine skill advancement chances.
 func (c *Character) TrackSkillUse(skillName string) {
 	if c.SkillUseCount == nil {
 		c.SkillUseCount = make(map[string]int)
@@ -15,8 +88,6 @@ func (c *Character) TrackSkillUse(skillName string) {
 }
 
 // TrackStatUse increments the usage counter for a specific stat.
-// This data will be used by the progression system (Stage 3.2+) to
-// determine stat advancement chances.
 func (c *Character) TrackStatUse(statName string) {
 	if c.StatUseCount == nil {
 		c.StatUseCount = make(map[string]int)
@@ -25,28 +96,62 @@ func (c *Character) TrackStatUse(statName string) {
 }
 
 // OnSkillUse is called whenever a player uses a skill in gameplay.
-// Currently just tracks usage. In Stage 3.2, this will also trigger
-// progression chance calculations.
-func (c *Character) OnSkillUse(skillName string) {
+// Tracks usage and, if progression is enabled, rolls for skill advancement.
+func (c *Character) OnSkillUse(skillName string, userId int) {
 	c.TrackSkillUse(skillName)
 	mudlog.Debug("Progression", "event", "skill_use", "skill", skillName, "character", c.Name)
+
+	if configs.GetGamePlayConfig().UseSkillProgression {
+		c.CheckSkillProgression(skillName, userId, 1.0)
+	}
 }
 
 // OnCriticalSuccess is called when a player lands a critical hit or
-// achieves a critical success on a skill check.
-// Currently just tracks the event. In Stage 3.2, critical successes
-// will have a higher chance of triggering skill/stat progression.
-func (c *Character) OnCriticalSuccess(context string) {
+// achieves a critical success. Triggers progression checks with a
+// 2x bonus multiplier for both the skill and related stats.
+func (c *Character) OnCriticalSuccess(context string, userId int) {
 	c.TrackSkillUse("critical_success")
 	mudlog.Debug("Progression", "event", "critical_success", "context", context, "character", c.Name)
+
+	if configs.GetGamePlayConfig().UseSkillProgression {
+		msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> A moment of brilliance! Your <ansi fg="yellow">%s</ansi> technique improves! <ansi fg="magenta">***</ansi>`, context)
+		events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+		c.CheckSkillProgression(context, userId, 2.0)
+	}
 }
 
 // OnCriticalFailure is called when a player critically fails a skill
-// check or combat action. In Stage 3.2, critical failures will also
-// have a chance of triggering progression (learning from mistakes).
-func (c *Character) OnCriticalFailure(context string) {
+// check or combat action. Learning from mistakes — standard progression chance.
+func (c *Character) OnCriticalFailure(context string, userId int) {
 	c.TrackSkillUse("critical_failure")
 	mudlog.Debug("Progression", "event", "critical_failure", "context", context, "character", c.Name)
+
+	if configs.GetGamePlayConfig().UseSkillProgression {
+		c.CheckSkillProgression(context, userId, 1.0)
+	}
+}
+
+// OnFirstMobKill is called when a player kills a mob type for the first time.
+// Triggers a bonus combat skill progression check.
+func (c *Character) OnFirstMobKill(userId int) {
+	mudlog.Debug("Progression", "event", "first_mob_kill", "character", c.Name)
+
+	if configs.GetGamePlayConfig().UseSkillProgression {
+		msg := `<ansi fg="magenta">***</ansi> Defeating a new foe hones your combat instincts! <ansi fg="magenta">***</ansi>`
+		events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+		c.CheckSkillProgression("combat", userId, 2.0)
+	}
+}
+
+// OnLowResource is called when a resource (health, stamina, conviction)
+// drops below 25% of its maximum. Triggers a stat progression check
+// for the related stat (e.g. low health → vitality progression).
+func (c *Character) OnLowResource(resourceName string, relatedStat string, userId int) {
+	mudlog.Debug("Progression", "event", "low_resource", "resource", resourceName, "stat", relatedStat, "character", c.Name)
+
+	if configs.GetGamePlayConfig().UseSkillProgression {
+		c.CheckStatProgression(relatedStat, userId, 1.5)
+	}
 }
 
 // GetSkillUseCount returns how many times a skill has been used.
