@@ -30,7 +30,8 @@ type GamePlay struct {
 	MobConverseChance ConfigInt `yaml:"MobConverseChance"` // Chance 1-100 of attempting to converse when idle
 
 	// Skill Progression
-	UseSkillProgression ConfigBool `yaml:"UseSkillProgression"` // Enable skill/stat progression checks (messages only until Stage 3.3)
+	UseSkillProgression ConfigBool `yaml:"UseSkillProgression"` // Enable skill/stat progression checks on skill/stat use
+	DualProgressionMode ConfigBool `yaml:"DualProgressionMode"` // When true, progression checks grant actual skill/stat increases (requires UseSkillProgression)
 }
 
 type GameplayDeath struct {

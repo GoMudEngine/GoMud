@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -15,6 +16,20 @@ const (
 	StatSoftCap  = 150 // Progression becomes very hard above this virtual rank
 	UsesPerRank  = 10  // How many uses of a skill/stat equal one virtual rank
 )
+
+// skillNameMap maps progression context names to actual skill tags.
+// Combat hooks use "combat" as the context, but the real skill is "brawling".
+var skillNameMap = map[string]string{
+	"combat": string(skills.Brawling),
+}
+
+// resolveSkillName maps a progression context name to the actual skill tag.
+func resolveSkillName(name string) string {
+	if mapped, ok := skillNameMap[name]; ok {
+		return mapped
+	}
+	return name
+}
 
 // CalculateProgressionChance returns the probability (0.0–1.0) that a
 // skill/stat progression event fires at the given virtual rank.
@@ -36,9 +51,9 @@ func CalculateProgressionChance(currentRank int, softCap int) float64 {
 }
 
 // CheckSkillProgression rolls against the progression chance for a skill.
-// If the roll succeeds, a notification message is sent to the player.
+// If the roll succeeds and DualProgressionMode is enabled, the skill level
+// is actually increased (capped at 4). Otherwise, only a notification is sent.
 // bonusMultiplier scales the chance (e.g. 2.0 for critical successes).
-// No actual skill changes happen in Stage 3.2 — messages only.
 func (c *Character) CheckSkillProgression(skillName string, userId int, bonusMultiplier float64) {
 	virtualRank := c.GetSkillUseCount(skillName) / UsesPerRank
 	chance := CalculateProgressionChance(virtualRank, SkillSoftCap) * bonusMultiplier
@@ -53,14 +68,27 @@ func (c *Character) CheckSkillProgression(skillName string, userId int, bonusMul
 	mudlog.Debug("Progression", "check", "skill", "skill", skillName, "rank", virtualRank, "chance", fmt.Sprintf("%.2f%%", chance*100), "roll", roll, "threshold", threshold, "character", c.Name)
 
 	if roll < threshold {
-		msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> You feel your <ansi fg="yellow">%s</ansi> skills sharpening! <ansi fg="magenta">***</ansi>`, skillName)
-		events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+		actualSkill := resolveSkillName(skillName)
+
+		if bool(configs.GetGamePlayConfig().DualProgressionMode) && skills.SkillExists(actualSkill) {
+			if c.IncreaseSkill(actualSkill) {
+				newLevel := c.Skills[actualSkill]
+				msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> Your <ansi fg="yellow">%s</ansi> skill improves to rank <ansi fg="yellow-bold">%d</ansi>! <ansi fg="magenta">***</ansi>`, actualSkill, newLevel)
+				events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+			} else {
+				msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> You feel your <ansi fg="yellow">%s</ansi> skills sharpening! <ansi fg="magenta">***</ansi>`, actualSkill)
+				events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+			}
+		} else {
+			msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> You feel your <ansi fg="yellow">%s</ansi> skills sharpening! <ansi fg="magenta">***</ansi>`, skillName)
+			events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+		}
 	}
 }
 
 // CheckStatProgression rolls against the progression chance for a stat.
-// If the roll succeeds, a notification message is sent to the player.
-// No actual stat changes happen in Stage 3.2 — messages only.
+// If the roll succeeds and DualProgressionMode is enabled, the stat's
+// Training value is increased by 1. Otherwise, only a notification is sent.
 func (c *Character) CheckStatProgression(statName string, userId int, bonusMultiplier float64) {
 	virtualRank := c.GetStatUseCount(statName) / UsesPerRank
 	chance := CalculateProgressionChance(virtualRank, StatSoftCap) * bonusMultiplier
@@ -74,8 +102,15 @@ func (c *Character) CheckStatProgression(statName string, userId int, bonusMulti
 	mudlog.Debug("Progression", "check", "stat", "stat", statName, "rank", virtualRank, "chance", fmt.Sprintf("%.2f%%", chance*100), "roll", roll, "threshold", threshold, "character", c.Name)
 
 	if roll < threshold {
-		msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> You feel your <ansi fg="yellow">%s</ansi> growing stronger! <ansi fg="magenta">***</ansi>`, statName)
-		events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+		if bool(configs.GetGamePlayConfig().DualProgressionMode) {
+			if c.IncreaseStat(statName, 1) {
+				msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> Your <ansi fg="yellow">%s</ansi> grows stronger! <ansi fg="magenta">***</ansi>`, statName)
+				events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+			}
+		} else {
+			msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> You feel your <ansi fg="yellow">%s</ansi> growing stronger! <ansi fg="magenta">***</ansi>`, statName)
+			events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+		}
 	}
 }
 

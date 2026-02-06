@@ -984,6 +984,43 @@ func (c *Character) GetSkillLevelCost(currentLevel int) int {
 	return currentLevel
 }
 
+// IncreaseSkill increments the named skill by 1 if it is below the cap of 4.
+// Returns true if the skill was increased, false if already at cap.
+func (c *Character) IncreaseSkill(skillName string) bool {
+	if c.Skills == nil {
+		c.Skills = make(map[string]int)
+	}
+	current := c.Skills[skillName]
+	if current >= 4 {
+		return false
+	}
+	c.Skills[skillName] = current + 1
+	return true
+}
+
+// IncreaseStat increments the Training field of the named stat by the given amount,
+// then recalculates derived values via Validate.
+func (c *Character) IncreaseStat(statName string, amount int) bool {
+	switch statName {
+	case "strength":
+		c.Stats.Strength.Training += amount
+	case "dexterity":
+		c.Stats.Dexterity.Training += amount
+	case "perception":
+		c.Stats.Perception.Training += amount
+	case "vitality":
+		c.Stats.Vitality.Training += amount
+	case "willpower":
+		c.Stats.Willpower.Training += amount
+	case "charisma":
+		c.Stats.Charisma.Training += amount
+	default:
+		return false
+	}
+	c.Validate()
+	return true
+}
+
 func (c *Character) GetMaxCharmedCreatures() int {
 	lvl := c.GetSkillLevel(skills.Tame)
 	return lvl + 1
