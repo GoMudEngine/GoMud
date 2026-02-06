@@ -1,11 +1,9 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">species</ansi>
 
-<ansi fg="command">species</ansi> represent the type of creature someone is. humans, elves, insects, and
-everything else.
+<ansi fg="command">species</ansi> represent the type of creature someone is. All players are human.
+Non-human species exist as NPCs and creatures in the world of Gaius.
 
-Species may have their own unique traits and abilities others do not.
-
-Species are also affected by Size:
+Species are affected by Size:
     <ansi fg="yellow">Small</ansi>  - 1-Handed weapons require 2 hands. 2-Handed weapons cannot be used.
     <ansi fg="yellow">Medium</ansi> - Can use 1-Handed weapons with a shield, and sometimes dual-wield.
     <ansi fg="yellow">Large</ansi>  - 2-Handed weapons require 1 hand. Can sometimes dual-wield 2-Handed
