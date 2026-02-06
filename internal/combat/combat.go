@@ -42,8 +42,15 @@ func AttackPlayerVsMob(user *users.UserRecord, mob *mobs.Mob) AttackResult {
 	// Remember who has hit him
 	mob.Character.TrackPlayerDamage(user.UserId, attackResult.DamageToTarget)
 
+	// Track progression stats for the attacking player
+	user.Character.TrackStatUse("strength")
+	user.Character.TrackStatUse("dexterity")
 	if attackResult.Hit {
 		user.PlaySound(`hit-other`, `combat`)
+		user.Character.OnSkillUse("combat")
+		if attackResult.Crit {
+			user.Character.OnCriticalSuccess("combat")
+		}
 	} else {
 		user.PlaySound(`miss`, `combat`)
 	}
@@ -66,9 +73,16 @@ func AttackPlayerVsPlayer(userAtk *users.UserRecord, userDef *users.UserRecord) 
 		userDef.WimpyCheck()
 	}
 
+	// Track progression stats for the attacking player
+	userAtk.Character.TrackStatUse("strength")
+	userAtk.Character.TrackStatUse("dexterity")
 	if attackResult.Hit {
 		userAtk.PlaySound(`hit-other`, `combat`)
 		userDef.PlaySound(`hit-self`, `combat`)
+		userAtk.Character.OnSkillUse("combat")
+		if attackResult.Crit {
+			userAtk.Character.OnCriticalSuccess("combat")
+		}
 	} else {
 		userAtk.PlaySound(`miss`, `combat`)
 	}
