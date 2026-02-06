@@ -21,6 +21,15 @@ func doAllMigrations(lastConfigVersion version.Version) error {
 
 	}
 
+	// 0.9.1 -> 0.10.0
+	if lastConfigVersion.IsOlderThan(version.New(0, 10, 0)) {
+
+		if err := migrate_UserStatsRename(); err != nil {
+			return err
+		}
+
+	}
+
 	return nil
 }
 
