@@ -311,9 +311,12 @@ GamePlay:
   MobConverseChance: 3
   # - UseSkillProgression -
   #   If true, skill and stat usage will trigger progression chance checks.
-  #   Players will see messages when progression would occur, but no actual
-  #   stat/skill changes happen yet (preparation for skill-based advancement).
   UseSkillProgression: true
+  # - DualProgressionMode -
+  #   If true, successful progression checks grant actual skill/stat increases.
+  #   Requires UseSkillProgression to be true. Both the level system and
+  #   skill-based progression run in parallel.
+  DualProgressionMode: true
 
 ################################################################################
 #

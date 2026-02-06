@@ -88,6 +88,90 @@ func TestCalculateProgressionChance_StatSoftCap(t *testing.T) {
 	}
 }
 
+func TestIncreaseSkill_Basic(t *testing.T) {
+	c := New()
+	// Should increase from 0 to 1
+	if !c.IncreaseSkill("brawling") {
+		t.Error("Expected IncreaseSkill to return true for level 0→1")
+	}
+	if c.Skills["brawling"] != 1 {
+		t.Errorf("Expected skill level 1, got %d", c.Skills["brawling"])
+	}
+}
+
+func TestIncreaseSkill_Cap(t *testing.T) {
+	c := New()
+	c.Skills["brawling"] = 4
+	// Should not increase past cap
+	if c.IncreaseSkill("brawling") {
+		t.Error("Expected IncreaseSkill to return false at cap (4)")
+	}
+	if c.Skills["brawling"] != 4 {
+		t.Errorf("Expected skill level to stay at 4, got %d", c.Skills["brawling"])
+	}
+}
+
+func TestIncreaseSkill_Incremental(t *testing.T) {
+	c := New()
+	for expected := 1; expected <= 4; expected++ {
+		if !c.IncreaseSkill("cast") {
+			t.Errorf("Expected IncreaseSkill to return true for level %d", expected)
+		}
+		if c.Skills["cast"] != expected {
+			t.Errorf("Expected skill level %d, got %d", expected, c.Skills["cast"])
+		}
+	}
+	// 5th increase should fail
+	if c.IncreaseSkill("cast") {
+		t.Error("Expected IncreaseSkill to return false after reaching cap")
+	}
+}
+
+func TestIncreaseStat_Strength(t *testing.T) {
+	c := New()
+	before := c.Stats.Strength.Training
+	ok := c.IncreaseStat("strength", 1)
+	if !ok {
+		t.Error("Expected IncreaseStat to return true for valid stat")
+	}
+	if c.Stats.Strength.Training != before+1 {
+		t.Errorf("Expected Training to be %d, got %d", before+1, c.Stats.Strength.Training)
+	}
+}
+
+func TestIncreaseStat_AllStats(t *testing.T) {
+	statNames := []string{"strength", "dexterity", "perception", "vitality", "willpower", "charisma"}
+	for _, name := range statNames {
+		c := New()
+		ok := c.IncreaseStat(name, 3)
+		if !ok {
+			t.Errorf("Expected IncreaseStat to return true for %s", name)
+		}
+	}
+}
+
+func TestIncreaseStat_InvalidStat(t *testing.T) {
+	c := New()
+	ok := c.IncreaseStat("nonexistent", 1)
+	if ok {
+		t.Error("Expected IncreaseStat to return false for invalid stat name")
+	}
+}
+
+func TestResolveSkillName_CombatToBrawling(t *testing.T) {
+	result := resolveSkillName("combat")
+	if result != "brawling" {
+		t.Errorf("Expected 'combat' to resolve to 'brawling', got '%s'", result)
+	}
+}
+
+func TestResolveSkillName_PassThrough(t *testing.T) {
+	result := resolveSkillName("cast")
+	if result != "cast" {
+		t.Errorf("Expected 'cast' to pass through as 'cast', got '%s'", result)
+	}
+}
+
 func TestCalculateProgressionChance_SampleValues(t *testing.T) {
 	// Verify the documented sample values are approximately correct
 	tests := []struct {
