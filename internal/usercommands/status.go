@@ -32,7 +32,7 @@ func Status(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			user.SendText(tplTxt)
 		}
 
-		question := cmdPrompt.Ask(`Increase which?`, []string{`strength`, `speed`, `smarts`, `vitality`, `mysticism`, `perception`, `quit`}, `quit`)
+		question := cmdPrompt.Ask(`Increase which?`, []string{`strength`, `dexterity`, `perception`, `vitality`, `willpower`, `charisma`, `quit`}, `quit`)
 		if !question.Done {
 			return true, nil
 		}
@@ -42,7 +42,7 @@ func Status(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			return true, nil
 		}
 
-		match, closeMatch := util.FindMatchIn(question.Response, []string{`strength`, `speed`, `smarts`, `vitality`, `mysticism`, `perception`}...)
+		match, closeMatch := util.FindMatchIn(question.Response, []string{`strength`, `dexterity`, `perception`, `vitality`, `willpower`, `charisma`}...)
 
 		question.RejectResponse() // Always reset this question, since we want to keep reusing it.
 

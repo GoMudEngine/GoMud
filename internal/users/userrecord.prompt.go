@@ -172,6 +172,34 @@ func (u *UserRecord) ProcessPromptString(promptStr string) string {
 				promptOut.WriteString(strconv.Itoa(mpPct))
 				promptOut.WriteString(`%`)
 
+			case `{st}`:
+				stClass := fmt.Sprintf(`health-%d`, util.QuantizeTens(u.Character.Stamina, u.Character.StaminaMax.Value))
+				promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%d</ansi>`, stClass, u.Character.Stamina))
+
+			case `{st:-}`:
+				promptOut.WriteString(strconv.Itoa(u.Character.Stamina))
+
+			case `{ST}`:
+				stClass := fmt.Sprintf(`health-%d`, util.QuantizeTens(u.Character.Stamina, u.Character.StaminaMax.Value))
+				promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%d</ansi>`, stClass, u.Character.StaminaMax.Value))
+
+			case `{ST:-}`:
+				promptOut.WriteString(strconv.Itoa(u.Character.StaminaMax.Value))
+
+			case `{cv}`:
+				cvClass := fmt.Sprintf(`mana-%d`, util.QuantizeTens(u.Character.Conviction, u.Character.ConvictionMax.Value))
+				promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%d</ansi>`, cvClass, u.Character.Conviction))
+
+			case `{cv:-}`:
+				promptOut.WriteString(strconv.Itoa(u.Character.Conviction))
+
+			case `{CV}`:
+				cvClass := fmt.Sprintf(`mana-%d`, util.QuantizeTens(u.Character.Conviction, u.Character.ConvictionMax.Value))
+				promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%d</ansi>`, cvClass, u.Character.ConvictionMax.Value))
+
+			case `{CV:-}`:
+				promptOut.WriteString(strconv.Itoa(u.Character.ConvictionMax.Value))
+
 			case `{ap}`:
 				promptOut.WriteString(strconv.Itoa(u.Character.ActionPoints))
 

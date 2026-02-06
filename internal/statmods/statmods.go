@@ -17,11 +17,13 @@ var (
 	RacialBonusPrefix StatName = `racial-bonus-`
 
 	// any statnames/prefixes here
-	Casting        StatName = `casting`        // also used for `casting-` prefix followed by spell School
-	CastingPrefix  StatName = `casting-`       // followed by spell School
-	XPScale        StatName = `xpscale`        // Used for scaling xp after kills
-	HealthRecovery StatName = `healthrecovery` // Augments HP recovery speed
-	ManaRecovery   StatName = `manarecovery`   // Augments MP recovery speed
+	Casting            StatName = `casting`            // also used for `casting-` prefix followed by spell School
+	CastingPrefix      StatName = `casting-`           // followed by spell School
+	XPScale            StatName = `xpscale`            // Used for scaling xp after kills
+	HealthRecovery     StatName = `healthrecovery`     // Augments HP recovery speed
+	ManaRecovery       StatName = `manarecovery`       // Augments MP recovery speed
+	StaminaRecovery    StatName = `staminarecovery`    // Augments Stamina recovery speed
+	ConvictionRecovery StatName = `convictionrecovery` // Augments Conviction recovery speed
 
 	// Stat based
 	Strength   StatName = `strength`

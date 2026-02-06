@@ -61,6 +61,17 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 					user.Character.HealthPerRound(),
 					user.Character.ManaPerRound(),
 				)
+
+				// Regenerate Stamina and Conviction
+				user.Character.Stamina += user.Character.StaminaPerRound()
+				if user.Character.Stamina > user.Character.StaminaMax.Value {
+					user.Character.Stamina = user.Character.StaminaMax.Value
+				}
+
+				user.Character.Conviction += user.Character.ConvictionPerRound()
+				if user.Character.Conviction > user.Character.ConvictionMax.Value {
+					user.Character.Conviction = user.Character.ConvictionMax.Value
+				}
 			}
 		}
 

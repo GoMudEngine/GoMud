@@ -42,13 +42,20 @@ func (si *StatInfo) GainsForLevel(level int) int {
 	if level < 1 {
 		level = 1
 	}
-	levelScale := float64(level-1) * BaseModFactor
-	basePoints := int(levelScale * float64(si.Base))
 
-	// every x levels we get natural gains
+	// Start with the racial base stat value
+	// This ensures level 1 characters have functional stats
+	// For future: si.Base can be set to randomly rolled values during character creation
+	racialBase := si.Base
+
+	// Add level-based scaling (starts at level 2+)
+	levelScale := float64(level-1) * BaseModFactor
+	levelPoints := int(levelScale * float64(si.Base))
+
+	// Every x levels we get natural gains
 	freeStatPoints := int(float64(level) * NaturalGainsModFactor)
 
-	return basePoints + freeStatPoints
+	return racialBase + levelPoints + freeStatPoints
 }
 
 func (si *StatInfo) Recalculate(level int) {
