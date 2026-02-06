@@ -11,7 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/pets"
-	"github.com/GoMudEngine/GoMud/internal/races"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/templates"
@@ -49,14 +49,14 @@ func (a ScriptActor) MobTypeId() int {
 }
 
 func (a ScriptActor) GetRace() string {
-	return a.characterRecord.Race()
+	return a.characterRecord.Species()
 }
 
 func (a ScriptActor) GetSize() string {
-	if r := races.GetRace(a.characterRecord.RaceId); r != nil {
+	if r := species.GetSpecies(a.characterRecord.SpeciesId); r != nil {
 		return string(r.Size)
 	}
-	return string(races.Medium)
+	return string(species.Medium)
 }
 
 func (a ScriptActor) SendText(msg string) {
@@ -286,16 +286,6 @@ func (a ScriptActor) AddGold(amt int, bankAmt ...int) {
 
 func (a ScriptActor) AddHealth(amt int) int {
 	ret := a.characterRecord.ApplyHealthChange(amt)
-
-	if ret != 0 && a.userId > 0 {
-		events.AddToQueue(events.CharacterVitalsChanged{UserId: a.userId})
-	}
-
-	return ret
-}
-
-func (a ScriptActor) AddMana(amt int) int {
-	ret := a.characterRecord.ApplyManaChange(amt)
 
 	if ret != 0 && a.userId > 0 {
 		events.AddToQueue(events.CharacterVitalsChanged{UserId: a.userId})
@@ -570,7 +560,7 @@ func (a ScriptActor) GetRaceKills(race string) int {
 
 	for mid, kCt := range a.characterRecord.KD.Kills {
 		if mobSpec := mobs.GetMobSpec(mobs.MobId(mid)); mobSpec != nil {
-			if raceInfo := races.GetRace(mobSpec.Character.RaceId); raceInfo != nil {
+			if raceInfo := species.GetSpecies(mobSpec.Character.SpeciesId); raceInfo != nil {
 				raceKills[raceInfo.Name] = raceKills[raceInfo.Name] + kCt
 			}
 		}
@@ -596,18 +586,6 @@ func (a ScriptActor) GetHealthMax() int {
 
 func (a ScriptActor) GetHealthPct() float64 {
 	return float64(a.characterRecord.Health) / float64(a.characterRecord.HealthMax.Value)
-}
-
-func (a ScriptActor) GetMana() int {
-	return a.characterRecord.Mana
-}
-
-func (a ScriptActor) GetManaMax() int {
-	return a.characterRecord.ManaMax.Value
-}
-
-func (a ScriptActor) GetManaPct() float64 {
-	return float64(a.characterRecord.Mana) / float64(a.characterRecord.ManaMax.Value)
 }
 
 func (a ScriptActor) SetAdjective(adj string, addIt bool) {

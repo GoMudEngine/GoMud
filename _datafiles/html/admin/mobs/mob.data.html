@@ -107,7 +107,7 @@
         <div class="form-group col-sm">
             <label for="hates">Hates</label>
             <textarea class="form-control form-control-sm" id="hates" aria-describedby="hates-help">{{ join .mobInfo.Hates "\r\n" }}</textarea>
-            <small id="hates-help" class="form-text text-muted">Groups, races, or exact name matches of who this mob hates.</small>
+            <small id="hates-help" class="form-text text-muted">Groups, species, or exact name matches of who this mob hates.</small>
         </div>
     </div>
 
@@ -151,14 +151,14 @@
         </div>
 
         <div class="form-group col-sm">
-            <label for="character-raceid">Race</label>
-            <select class="form-control form-control-sm" name="character-raceid" id="character-raceid" aria-describedby="character-raceid-help"  rows="10">
+            <label for="character-speciesid">Species</label>
+            <select class="form-control form-control-sm" name="character-speciesid" id="character-speciesid" aria-describedby="character-speciesid-help"  rows="10">
                 <option value="-1" {{if eq .mobInfo.MaxWander -1}}SELECTED{{end}}>No Limit</option>
-                {{range $index, $raceInfo := .allRaces}}
-                    <option value="{{ $raceInfo.RaceId }}" {{if eq $raceInfo.RaceId $character.RaceId}}SELECTED{{end}}>{{ $raceInfo.RaceId }}. {{ $raceInfo.Name }}</option>
+                {{range $index, $speciesInfo := .allSpecies}}
+                    <option value="{{ $speciesInfo.SpeciesId }}" {{if eq $speciesInfo.SpeciesId $character.SpeciesId}}SELECTED{{end}}>{{ $speciesInfo.SpeciesId }}. {{ $speciesInfo.Name }}</option>
                 {{end}}
             </select>
-            <small id="character-raceid-help" class="form-text text-muted">Race of this mob.</small>
+            <small id="character-speciesid-help" class="form-text text-muted">Species of this mob.</small>
         </div>
     </div>
 

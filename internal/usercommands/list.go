@@ -12,7 +12,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/pets"
-	"github.com/GoMudEngine/GoMud/internal/races"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/term"
@@ -172,7 +172,7 @@ func List(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				if mobInfo == nil {
 					continue
 				}
-				raceInfo := races.GetRace(mobInfo.Character.RaceId)
+				raceInfo := species.GetSpecies(mobInfo.Character.SpeciesId)
 				if raceInfo == nil {
 					continue
 				}
@@ -533,7 +533,7 @@ func List(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				if mobInfo == nil {
 					continue
 				}
-				raceInfo := races.GetRace(mobInfo.Character.RaceId)
+				raceInfo := species.GetSpecies(mobInfo.Character.SpeciesId)
 				if raceInfo == nil {
 					continue
 				}

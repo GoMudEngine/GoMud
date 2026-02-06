@@ -20,5 +20,5 @@ activitylevel: 80
 character:
   name: cave stalker
   description: 'Stealthy and agile, these lizard-like predators blend seamlessly into the rocky environment.'
-  raceid: 7
+  speciesid: 7
   level: 25

@@ -10,7 +10,7 @@ points you have.
 
 <ansi fg="yellow">Extra Usage: </ansi>
 
-  <ansi fg="command">experience chart [max_level]</ansi>        - See the level chart for your race
-  <ansi fg="command">experience chart [race]</ansi>             - See the level chart for any other race race
-  <ansi fg="command">experience chart [race] [max_level]</ansi> - See the level chart for any other race race
+  <ansi fg="command">experience chart [max_level]</ansi>        - See the level chart for your species
+  <ansi fg="command">experience chart [species]</ansi>          - See the level chart for any other species
+  <ansi fg="command">experience chart [species] [max_level]</ansi> - See the level chart for any other species
   

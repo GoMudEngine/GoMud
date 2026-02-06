@@ -6,7 +6,7 @@ maxwander: 0
 character:
   name: hermit
   description: The hermit's presence exudes an aura of endurance and frost-hardened wisdom, and they regard you with a knowing yet weary expression, as if they have endured the very worst that winter can offer.
-  raceid: 1
+  speciesid: 1
   level: 5
   gold: 1
   equipment:

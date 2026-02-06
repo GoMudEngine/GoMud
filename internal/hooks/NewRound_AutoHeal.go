@@ -59,7 +59,6 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 			if user.Character.Health > 0 {
 				user.Character.Heal(
 					user.Character.HealthPerRound(),
-					user.Character.ManaPerRound(),
 				)
 
 				// Regenerate Stamina and Conviction

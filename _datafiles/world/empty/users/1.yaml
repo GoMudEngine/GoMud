@@ -18,7 +18,7 @@ character:
     to disrupt the balance of the world, swiftly and decisively.
   roomid: 1
   zone: Frostfang
-  raceid: 2
+  speciesid: 2
   stats:
     strength:
       training: 6

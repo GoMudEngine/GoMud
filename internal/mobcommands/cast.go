@@ -38,7 +38,7 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		return true, nil
 	}
 	/*
-		if mob.Character.Mana < spellInfo.Cost {
+		if mob.Character.Conviction < spellInfo.Cost {
 			return true, nil
 		}
 	*/
@@ -187,7 +187,7 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		mobsFightingMobs := room.GetMobs(rooms.FindFightingMob)
 		for _, mobInstId := range mobsFightingMobs {
 			if m := mobs.GetInstance(mobInstId); m != nil {
-				if m.Character.IsAggro(0, mob.InstanceId) || m.HatesRace(m.Character.Race()) {
+				if m.Character.IsAggro(0, mob.InstanceId) || m.HatesSpecies(m.Character.Species()) {
 					spellAggro.TargetMobInstanceIds = append(spellAggro.TargetMobInstanceIds, mobInstId)
 				}
 			}
@@ -217,7 +217,7 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		}
 
 		if continueCasting {
-			mob.Character.Mana -= spellInfo.Cost
+			mob.Character.Conviction -= spellInfo.Cost
 			mob.Character.SetCast(spellInfo.WaitRounds, spellAggro)
 		}
 

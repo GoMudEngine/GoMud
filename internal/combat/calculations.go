@@ -5,7 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
-	"github.com/GoMudEngine/GoMud/internal/races"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -69,15 +69,15 @@ func ChanceToTame(s *users.UserRecord, t *mobs.Mob) int {
 		proficiencyModifier = MOD_SKILL_MAX
 	}
 
-	raceInfo := races.GetRace(s.Character.RaceId)
+	speciesInfo := species.GetSpecies(s.Character.SpeciesId)
 
 	sizeModifier := 0
-	switch raceInfo.Size {
-	case races.Large:
+	switch speciesInfo.Size {
+	case species.Large:
 		sizeModifier = MOD_SIZE_LARGE
-	case races.Small:
+	case species.Small:
 		sizeModifier = MOD_SIZE_SMALL
-	case races.Medium:
+	case species.Medium:
 	default:
 		sizeModifier = MOD_SIZE_MEDIUM
 	}

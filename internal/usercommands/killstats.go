@@ -6,7 +6,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
-	"github.com/GoMudEngine/GoMud/internal/races"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -47,7 +47,7 @@ func Killstats(rest string, user *users.UserRecord, room *rooms.Room, flags even
 			mobKills[mobSpec.Character.Name] = mobKills[mobSpec.Character.Name] + kCt
 
 			// Populate race kills
-			if raceInfo := races.GetRace(mobSpec.Character.RaceId); raceInfo != nil {
+			if raceInfo := species.GetSpecies(mobSpec.Character.SpeciesId); raceInfo != nil {
 				raceKills[raceInfo.Name] = raceKills[raceInfo.Name] + kCt
 			}
 

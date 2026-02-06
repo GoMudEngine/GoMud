@@ -1,0 +1,18 @@
+speciesid: 12
+name: fungus
+description: A mushroomy entity.
+defaultalignment: 0
+size: medium
+unarmedname: spores
+angrycommands: [emote pulsates.]
+tnlscale: 1
+tameable: true
+stats:
+  vitality:
+    base: 4
+damage:
+  diceroll: 1d4
+  critbuffids:
+  - 13
+disabledslots: ['weapon', 'offhand', 'belt', 'gloves', 'ring']
+

@@ -14,7 +14,7 @@ combatcommands:
 character:
   name: fisherman
   description: 'The old fisherman of Frost Lake is a figure cloaked in mystery and legend. Once the captain of the king''s guard and the greatest swordsman in the land, his presence still exudes an air of quiet authority and strength despite his humble appearance. His hair, now silvered with age, falls in wild waves around his weathered face, framing eyes that hold the glint of countless untold stories and battles fought. His muscular frame, though slightly stooped from years of solitude and toil, hints at the formidable warrior he once was. His hands, calloused from both sword and net, move with a practiced grace whether mending a line or cleaning a fish.'
-  raceid: 1
+  speciesid: 1
   level: 70
   gold: 3
   equipment:

@@ -6,7 +6,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
-	"github.com/GoMudEngine/GoMud/internal/races"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -128,7 +128,7 @@ func Inventory(rest string, user *users.UserRecord, room *rooms.Room, flags even
 		itemNamesFormatted = append(itemNamesFormatted, iNameFormatted)
 	}
 
-	raceInfo := races.GetRace(user.Character.RaceId)
+	raceInfo := species.GetSpecies(user.Character.SpeciesId)
 
 	diceRoll := raceInfo.Damage.DiceRoll
 	if user.Character.Equipment.Weapon.ItemId != 0 {

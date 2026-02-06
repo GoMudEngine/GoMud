@@ -1,5 +1,5 @@
 buffid: 27
-name: Minor Potion Mana Recovery
-description: A small mana recovery effect is working on you
+name: Minor Potion Conviction Recovery
+description: A small conviction recovery effect is working on you
 triggerrate: 2 rounds
 triggercount: 3

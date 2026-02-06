@@ -12,7 +12,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
-	"github.com/GoMudEngine/GoMud/internal/races"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/templates"
@@ -34,29 +34,29 @@ func Start(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		user.SendText(fmt.Sprintf(`You'll need to answer some questions.%s`, term.CRLFStr))
 	}
 
-	if user.Character.RaceId == 0 {
+	if user.Character.SpeciesId == 0 {
 
-		raceOptions := []templates.NameDescription{}
+		speciesOptions := []templates.NameDescription{}
 
-		for _, r := range races.GetRaces() {
+		for _, r := range species.GetAllSpecies() {
 			if r.Selectable {
-				raceOptions = append(raceOptions, templates.NameDescription{
-					Id:          r.RaceId,
+				speciesOptions = append(speciesOptions, templates.NameDescription{
+					Id:          r.SpeciesId,
 					Name:        r.Name,
 					Description: r.Description,
 				})
 			}
 		}
-		sort.SliceStable(raceOptions, func(i, j int) bool {
-			return raceOptions[i].Name < raceOptions[j].Name
+		sort.SliceStable(speciesOptions, func(i, j int) bool {
+			return speciesOptions[i].Name < speciesOptions[j].Name
 		})
 
-		question := cmdPrompt.Ask(`Which race will you be?`, []string{})
+		question := cmdPrompt.Ask(`Which species will you be?`, []string{})
 		if !question.Done {
 
-			tplTxt, _ := templates.Process("tables/numbered-list", raceOptions, user.UserId)
+			tplTxt, _ := templates.Process("tables/numbered-list", speciesOptions, user.UserId)
 			user.SendText(tplTxt)
-			user.SendText(`  Want to know more details? Type <ansi fg="command">help {racename}</ansi> or <ansi fg="command">help {number}</ansi>`)
+			user.SendText(`  Want to know more details? Type <ansi fg="command">help {speciesname}</ansi> or <ansi fg="command">help {number}</ansi>`)
 			user.SendText(``)
 			return true, nil
 		}
@@ -67,8 +67,8 @@ func Start(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			helpRest := respLower[5:]
 
 			if restNum, err := strconv.Atoi(helpRest); err == nil {
-				if restNum > 0 && restNum <= len(raceOptions) {
-					helpRest = raceOptions[restNum-1].Name
+				if restNum > 0 && restNum <= len(speciesOptions) {
+					helpRest = speciesOptions[restNum-1].Name
 				} else {
 					helpCmd = `races`
 					helpRest = ``
@@ -81,18 +81,18 @@ func Start(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 		raceNameSelection := question.Response
 		if restNum, err := strconv.Atoi(raceNameSelection); err == nil {
-			if restNum > 0 && restNum <= len(raceOptions) {
-				raceNameSelection = raceOptions[restNum-1].Name
+			if restNum > 0 && restNum <= len(speciesOptions) {
+				raceNameSelection = speciesOptions[restNum-1].Name
 			}
 		}
 
 		matchFound := false
-		for _, r := range races.GetRaces() {
+		for _, r := range species.GetAllSpecies() {
 			if strings.EqualFold(r.Name, raceNameSelection) {
 
 				if r.Selectable {
 					matchFound = true
-					user.Character.RaceId = r.Id()
+					user.Character.SpeciesId = r.Id()
 					user.Character.Alignment = r.DefaultAlignment
 					user.Character.Validate()
 
@@ -107,9 +107,9 @@ func Start(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		if !matchFound {
 			question.RejectResponse()
 
-			tplTxt, _ := templates.Process("tables/numbered-list", raceOptions, user.UserId)
+			tplTxt, _ := templates.Process("tables/numbered-list", speciesOptions, user.UserId)
 			user.SendText(tplTxt)
-			user.SendText(`  Want to know more details? Type <ansi fg="command">help {racename}</ansi> or <ansi fg="command">help {number}</ansi>`)
+			user.SendText(`  Want to know more details? Type <ansi fg="command">help {speciesname}</ansi> or <ansi fg="command">help {number}</ansi>`)
 			user.SendText(``)
 
 			return true, nil

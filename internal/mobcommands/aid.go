@@ -4,7 +4,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
-	"github.com/GoMudEngine/GoMud/internal/races"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/spells"
@@ -13,7 +13,7 @@ import (
 
 func Aid(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
-	raceInfo := races.GetRace(mob.Character.RaceId)
+	raceInfo := species.GetSpecies(mob.Character.SpeciesId)
 	if !raceInfo.KnowsFirstAid {
 
 		mob.Command(`emote doesn't know first aid.`)

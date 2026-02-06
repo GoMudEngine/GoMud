@@ -21,7 +21,6 @@ var (
 	CastingPrefix      StatName = `casting-`           // followed by spell School
 	XPScale            StatName = `xpscale`            // Used for scaling xp after kills
 	HealthRecovery     StatName = `healthrecovery`     // Augments HP recovery speed
-	ManaRecovery       StatName = `manarecovery`       // Augments MP recovery speed
 	StaminaRecovery    StatName = `staminarecovery`    // Augments Stamina recovery speed
 	ConvictionRecovery StatName = `convictionrecovery` // Augments Conviction recovery speed
 
@@ -32,8 +31,7 @@ var (
 	Vitality   StatName = `vitality`
 	Willpower  StatName = `willpower`
 	Charisma   StatName = `charisma`
-	HealthMax  StatName = `healthmax`
-	ManaMax    StatName = `manamax`
+	HealthMax StatName = `healthmax`
 )
 
 func (s StatMods) Get(statName ...string) int {

@@ -6,7 +6,7 @@ maxwander: 0
 character:
   name: ice guardian
   description: A guardian of the ice, this creature is a formidable foe.
-  raceid: 16
+  speciesid: 16
   level: 75
   gold: 1
   equipment:

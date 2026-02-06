@@ -21,7 +21,7 @@ character:
   - zombie
   roomid: 2
   zone: Frostfang
-  raceid: 2
+  speciesid: 2
   stats:
     strength:
       training: 6

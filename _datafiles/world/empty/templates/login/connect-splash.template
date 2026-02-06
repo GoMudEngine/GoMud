@@ -1,26 +1,30 @@
-<ansi clear="all"></ansi><ansi fg="88">
+<ansi clear="all"></ansi>
+<ansi fg="88">
                  .---._                                  _,---_
                 /  ._  `-._        __.-----.__        _-'   _,  \
                 ( /  `.    `#==="""    ____   """===#'   _,'  \ )
                  \|    `._/)  ._     --- --     _.  (\_,/     |/
-                         )*'     **.__     __.**     '*( 
-                         #  .==..__  ""   ""  __..==,  # 
+                         )*'     **.__     __.**     '*(
+                         #  .==..__  ""   ""  __..==,  #
                          #   `"._(_).       .(_)_."'   #</ansi>
 <ansi fg="black-bold">{{ repeat "=" 80 }}</ansi>
 <ansi fg="cyan">
                      <ansi fg="214">O</ansi>
                 <ansi fg="214">{)</ansi><ansi fg="94">xxx</ansi><ansi fg="214">|</ansi><ansi fg="252">===============-</ansi>
-                     <ansi fg="214">O</ansi>  ______         __  ___            __
-                       / ____/____    /  |/  /__  __ ____/ /
-                      / / __ / __ \  / /|_/ // / / // __  /
-                     / /_/ // /_/ / / /  / // /_/ // /_/ /
-                     \____/ \____/ /_/  /_/ \____/ \____/ <ansi fg="214">O</ansi>
+                     <ansi fg="214">O</ansi>
+            <ansi fg="45"> ___          _               _                           __
+            |   \ ___   | | _   _  ___ (_)  ___   _ _   ___    / _|
+            | |) // -_) | || | | ||_ / | | / _ \ | ' \ (_-<   > _|
+            |___/ \___| |_| \_,_|//__| |_| \___/ |_||_|/__/   \__|
+
+              ___                          _
+             / __| _ _  __ _  _ _   ___ _| | ___  _  _  _ _
+            | (_ || '_|/ _` || ' \ / _` / _` |/ -_)| || || '_|
+             \___||_|  \__,_||_||_|\__,_\__,_|\___| \_,_||_|</ansi>                <ansi fg="214">O</ansi>
                                           <ansi fg="252">-===============</ansi><ansi fg="214">|</ansi><ansi fg="94">xxx</ansi><ansi fg="214">(}</ansi>
                                                           <ansi fg="214">O</ansi></ansi>
 
-<ansi fg="black-bold">.:</ansi> Welcome to <ansi fg="45">GoMud</ansi>, an open source MUD Library written in <ansi fg="45">Go</ansi>.
-
-                                            <ansi fg="black-bold">Find out more (or get the code) at:
-                                                        <ansi fg="51">github.com/GoMudEngine/GoMud</ansi></ansi>
+<ansi fg="black-bold">.:</ansi> Welcome to <ansi fg="45">Delusions of Grandeur</ansi>, a MUD set on the world of <ansi fg="45">Gaius</ansi>.
+                                                      <ansi fg="black-bold">The Chrysalis awaits.</ansi>
 
 <ansi fg="black-bold">{{ repeat "=" 80 }}</ansi>

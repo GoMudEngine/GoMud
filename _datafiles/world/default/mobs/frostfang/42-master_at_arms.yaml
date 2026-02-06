@@ -17,7 +17,7 @@ activitylevel: 50
 character:
   name: master-at-arms
   description: 'he Master-at-Arms is a seasoned warrior and expert in medieval weaponry, charged with the crucial role of training soldiers and adventurers in the arts of combat. Known for their unparalleled skill with a variety of weapons, from swords and axes to bows and polearms, they possess not only physical prowess but also deep strategic knowledge of battlefield tactics. In the halls of the castle or the dusty training grounds, the Master-at-Arms commands respect and authority, shaping novices into formidable fighters. Their keen eye for technique, relentless discipline, and unwavering commitment to the art of war make them an invaluable asset to any lord or commander seeking to strengthen their forces.'
-  raceid: 1
+  speciesid: 1
   level: 25
   alignment: 35
   gold: 25

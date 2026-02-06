@@ -35,7 +35,7 @@ func Paz(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> illuminates <ansi fg="mobname">%s</ansi> with a %s!`, user.Character.Name, mob.Character.Name, beamOfLight), user.UserId)
 
 			mob.Character.Health = mob.Character.HealthMax.Value
-			mob.Character.Mana = mob.Character.ManaMax.Value
+			mob.Character.Conviction = mob.Character.ConvictionMax.Value
 
 			return true, nil
 		}
@@ -47,7 +47,7 @@ func Paz(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 				u.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> illuminates you with a %s!`, user.Character.Name, beamOfLight))
 
 				u.Character.Health = u.Character.HealthMax.Value
-				u.Character.Mana = u.Character.ManaMax.Value
+				u.Character.Conviction = u.Character.ConvictionMax.Value
 
 				events.AddToQueue(events.CharacterVitalsChanged{UserId: u.UserId})
 
@@ -60,9 +60,9 @@ func Paz(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	user.SendText(`You paz yourself with a ` + beamOfLight + `!`)
 	room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> illuminates <ansi fg="username">%s</ansi> with a %s!`, user.Character.Name, user.Character.Name, beamOfLight), user.UserId)
 
-	if user.Character.Health != user.Character.HealthMax.Value || user.Character.Mana != user.Character.ManaMax.Value {
+	if user.Character.Health != user.Character.HealthMax.Value || user.Character.Conviction != user.Character.ConvictionMax.Value {
 		user.Character.Health = user.Character.HealthMax.Value
-		user.Character.Mana = user.Character.ManaMax.Value
+		user.Character.Conviction = user.Character.ConvictionMax.Value
 
 		events.AddToQueue(events.CharacterVitalsChanged{UserId: user.UserId})
 	}

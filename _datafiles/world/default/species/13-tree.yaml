@@ -1,0 +1,17 @@
+speciesid: 13
+name: tree
+description: A massive wooden lifeform.
+defaultalignment: 60
+size: large
+unarmedname: branches
+tnlscale: 1
+angrycommands: [emote creeks and sways with intent.]
+tameable: false
+stats:
+  strength:
+    base: 3
+  vitality:
+    base: 2
+damage:
+  diceroll: 1d6+4
+disabledslots: [ 'belt', 'gloves', 'ring', 'feet']

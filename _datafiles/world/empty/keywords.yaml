@@ -65,7 +65,7 @@ help:
       - help
       - look
       - online
-      - races
+      - species
       - who
       - history
     items:
@@ -162,7 +162,7 @@ help-aliases:
   perception:       [per, percep, percept]
   health:           [hp]
   mana:             [mp]
-  races:            [race]
+  species:          [race, races]
   protection:       [rank, backrank, frontrank, aid]
   picklock:         [pick]
   picklock-example: [pick-example]

@@ -31,7 +31,7 @@ activitylevel: 90
 character:
   name: loot goblin
   description: 'The Loot Goblin is a creature of legend among treasure hunters and adventurers, a skittish and elusive being whose obsession with objects both precious and mundane is unparalleled. Clad in mismatched patches of clothing and armor, this diminutive figure scurries through dungeons and across battlefields, its bulging sack jingling with a cacophony of pilfered trinkets and rarities. Its eyes, wide and gleaming with avarice, never stop darting around, always seeking the next addition to its hoard.'
-  raceid: 5
+  speciesid: 5
   level: 20
   gold: 0
   

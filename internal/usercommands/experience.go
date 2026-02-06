@@ -7,7 +7,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/events"
-	"github.com/GoMudEngine/GoMud/internal/races"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -25,7 +25,7 @@ func Experience(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 		startLevel := 1
 		endLevel := 25
 
-		chartRace := user.Character.RaceId
+		chartSpecies := user.Character.SpeciesId
 
 		// xp chart elf 50
 		if len(args) > 1 {
@@ -38,17 +38,17 @@ func Experience(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 				args = args[1:]
 			}
 
-			raceName := strings.Join(args, ` `)
-			if raceInfo, found := races.FindRace(raceName); found {
-				chartRace = raceInfo.RaceId
+			speciesName := strings.Join(args, ` `)
+			if speciesInfo, found := species.FindSpecies(speciesName); found {
+				chartSpecies = speciesInfo.SpeciesId
 			}
 		} else if len(args) == 1 {
 
 			if lvl, err := strconv.Atoi(args[0]); err == nil {
 				endLevel = lvl
 			} else {
-				if raceInfo, found := races.FindRace(args[0]); found {
-					chartRace = raceInfo.RaceId
+				if speciesInfo, found := species.FindSpecies(args[0]); found {
+					chartSpecies = speciesInfo.SpeciesId
 				}
 			}
 
@@ -68,7 +68,7 @@ func Experience(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 		}
 
 		mockChar := characters.New()
-		mockChar.RaceId = chartRace
+		mockChar.SpeciesId = chartSpecies
 		mockChar.Validate()
 
 		headers := []string{`Level`, `Experience`, `Str`, `Spd`, `Smt`, `Vit`, `Mys`, `Per`, `ALL`}
@@ -176,7 +176,7 @@ func Experience(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 
 		rows = append(rows, row)
 
-		raceInfo := races.GetRace(mockChar.RaceId)
+		raceInfo := species.GetSpecies(mockChar.SpeciesId)
 		searchResultsTable := templates.GetTable(fmt.Sprintf(`Experience Chart for %s`, raceInfo.Name), headers, rows, formatting)
 		tplTxt, _ := templates.Process("tables/generic", searchResultsTable, user.UserId)
 		user.SendText(tplTxt)

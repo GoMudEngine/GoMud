@@ -12,7 +12,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
-	"github.com/GoMudEngine/GoMud/internal/races"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/statmods"
@@ -127,7 +127,7 @@ func GetWaitMessages(stepType items.Intensity, sourceChar *characters.Character,
 	}
 
 	tokenReplacements := map[items.TokenName]string{
-		items.TokenItemName:     races.GetRace(sourceChar.RaceId).UnarmedName,
+		items.TokenItemName:     species.GetSpecies(sourceChar.SpeciesId).UnarmedName,
 		items.TokenSource:       sourceChar.Name,
 		items.TokenSourceType:   string(sourceType) + `name`,
 		items.TokenTarget:       targetChar.Name,
@@ -312,7 +312,7 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 			}
 
 			// Set the default weapon info
-			raceInfo := races.GetRace(sourceChar.RaceId)
+			raceInfo := species.GetSpecies(sourceChar.SpeciesId)
 			weaponName := raceInfo.UnarmedName
 			weaponSubType := items.Generic
 
@@ -332,7 +332,7 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				attacks, dCount, dSides, dBonus, critBuffs = weapon.GetDiceRoll()
 
 				// If there is a bonus vs. a specific race, apply it
-				dBonus += weapon.StatMod(string(statmods.RacialBonusPrefix) + strings.ToLower(targetChar.Race()))
+				dBonus += weapon.StatMod(string(statmods.RacialBonusPrefix) + strings.ToLower(targetChar.Species()))
 			}
 
 			// zero means randomly selected, otherwise use the ItemId to consistently choose a message

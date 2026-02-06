@@ -222,7 +222,7 @@ func spell_Create(rest string, user *users.UserRecord, room *rooms.Room, flags e
 	// Cost
 	//
 	{
-		question := cmdPrompt.Ask(`Mana cost of spell:`, []string{strconv.Itoa(newSpell.Cost)}, strconv.Itoa(newSpell.Cost))
+		question := cmdPrompt.Ask(`Conviction cost of spell:`, []string{strconv.Itoa(newSpell.Cost)}, strconv.Itoa(newSpell.Cost))
 		if !question.Done {
 			return true, nil
 		}
