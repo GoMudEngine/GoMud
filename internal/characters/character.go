@@ -86,6 +86,8 @@ type Character struct {
 	MiscData         map[string]any                 `yaml:"miscdata,omitempty"`      // Any random other data that needs to be stored
 	ExtraLives       int                            `yaml:"extralives,omitempty"`    // How many lives remain. If enabled, players can perma-die if they die at zero
 	MobMastery       MobMasteries                   `yaml:"mobmastery,omitempty"`    // Tracks particular masteries around a given mob
+	SkillUseCount    map[string]int                 `yaml:"skillusecount,omitempty"` // Tracks how many times each skill has been used
+	StatUseCount     map[string]int                 `yaml:"statusecount,omitempty"`  // Tracks how many times each stat has been checked
 	Pet              pets.Pet                       `yaml:"pet,omitempty"`           // Do they have a pet?
 	Created          time.Time                      `yaml:"created"`                 // When this character was created
 	Timers           map[string]gametime.RoundTimer `yaml:"timers,omitempty"`        // any special timers added to this character
@@ -119,6 +121,8 @@ func New() *Character {
 		Buffs:          buffs.New(),
 		Equipment:      Worn{},
 		MiscData:       make(map[string]any),
+		SkillUseCount:  make(map[string]int),
+		StatUseCount:   make(map[string]int),
 		roomHistory:    make([]int, 0, 10),
 		KeyRing:        make(map[string]string),
 		Created:        time.Now(),
