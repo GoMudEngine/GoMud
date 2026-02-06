@@ -9,6 +9,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
@@ -99,20 +100,12 @@ type Character struct {
 }
 
 func New() *Character {
-	return &Character{
+	c := &Character{
 		//Name:   defaultName,
-		Adjectives: []string{},
-		RoomId:     StartingRoomId,
-		Zone:       startingZone,
-		RaceId:     startingRace,
-		Stats: stats.Statistics{
-			Strength:   stats.StatInfo{Base: 1},
-			Dexterity:  stats.StatInfo{Base: 1},
-			Perception: stats.StatInfo{Base: 1},
-			Vitality:   stats.StatInfo{Base: 1},
-			Willpower:  stats.StatInfo{Base: 1},
-			Charisma:   stats.StatInfo{Base: 1},
-		},
+		Adjectives:     []string{},
+		RoomId:         StartingRoomId,
+		Zone:           startingZone,
+		RaceId:         startingRace,
 		Level:          1,
 		Experience:     1,
 		TrainingPoints: 0,
@@ -136,6 +129,43 @@ func New() *Character {
 		Created:        time.Now(),
 		PlayerDamage:   map[int]int{},
 		Timers:         map[string]gametime.RoundTimer{},
+	}
+
+	// Roll character stats using normal distribution
+	c.Stats = RollCharacterStats()
+
+	// Validate and calculate stats (this calls RecalculateStats internally)
+	c.Validate()
+
+	// Set starting health/mana/stamina/conviction to max values
+	c.Health = c.HealthMax.Value
+	c.Mana = c.ManaMax.Value
+	c.Stamina = c.StaminaMax.Value
+	c.Conviction = c.ConvictionMax.Value
+
+	return c
+}
+
+// RollCharacterStats generates a new set of character stats using normal distribution
+// Stats have a mean of 100 and standard deviation of 15, clamped between 70 and 130
+func RollCharacterStats() stats.Statistics {
+	const (
+		statMean   = 100.0 // Target average for all stats
+		statStdDev = 15.0  // Standard deviation (moderate randomness)
+		statMin    = 70.0  // Minimum stat value
+		statMax    = 130.0 // Maximum stat value
+	)
+
+	// Roll 6 stats
+	rolledStats := dice.RollStatArray(6, statMean, statStdDev, statMin, statMax)
+
+	return stats.Statistics{
+		Strength:   stats.StatInfo{Base: rolledStats[0]},
+		Dexterity:  stats.StatInfo{Base: rolledStats[1]},
+		Perception: stats.StatInfo{Base: rolledStats[2]},
+		Vitality:   stats.StatInfo{Base: rolledStats[3]},
+		Willpower:  stats.StatInfo{Base: rolledStats[4]},
+		Charisma:   stats.StatInfo{Base: rolledStats[5]},
 	}
 }
 
@@ -1401,12 +1431,28 @@ func (c *Character) RecalculateStats() {
 		if c.TNLScale == 0 {
 			c.TNLScale = 1.0
 		}
-		c.Stats.Strength.Base = raceInfo.Stats.Strength.Base
-		c.Stats.Dexterity.Base = raceInfo.Stats.Dexterity.Base
-		c.Stats.Perception.Base = raceInfo.Stats.Perception.Base
-		c.Stats.Vitality.Base = raceInfo.Stats.Vitality.Base
-		c.Stats.Willpower.Base = raceInfo.Stats.Willpower.Base
-		c.Stats.Charisma.Base = raceInfo.Stats.Charisma.Base
+
+		// Only set base stats from racial if they haven't been rolled yet
+		// (Base values of 0 indicate uninitialized stats)
+		// Rolled stats (from RollCharacterStats) will be 70-130, so they won't be overwritten
+		if c.Stats.Strength.Base == 0 {
+			c.Stats.Strength.Base = raceInfo.Stats.Strength.Base
+		}
+		if c.Stats.Dexterity.Base == 0 {
+			c.Stats.Dexterity.Base = raceInfo.Stats.Dexterity.Base
+		}
+		if c.Stats.Perception.Base == 0 {
+			c.Stats.Perception.Base = raceInfo.Stats.Perception.Base
+		}
+		if c.Stats.Vitality.Base == 0 {
+			c.Stats.Vitality.Base = raceInfo.Stats.Vitality.Base
+		}
+		if c.Stats.Willpower.Base == 0 {
+			c.Stats.Willpower.Base = raceInfo.Stats.Willpower.Base
+		}
+		if c.Stats.Charisma.Base == 0 {
+			c.Stats.Charisma.Base = raceInfo.Stats.Charisma.Base
+		}
 	}
 
 	// Add any mods for equipment
