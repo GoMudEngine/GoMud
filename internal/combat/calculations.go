@@ -4,6 +4,7 @@ import (
 	"math"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/species"
@@ -13,16 +14,18 @@ import (
 func PowerRanking(atkChar characters.Character, defChar characters.Character) float64 {
 
 	attacks, dCount, dSides, dBonus, _ := atkChar.Equipment.Weapon.GetDiceRoll()
-	atkDmg := attacks * (dCount*dSides + dBonus)
+	atkMean, _ := dice.DiceToDistribution(dCount, dSides, dBonus)
+	atkDmg := float64(attacks) * atkMean
 
 	attacks, dCount, dSides, dBonus, _ = defChar.Equipment.Weapon.GetDiceRoll()
-	defDmg := attacks * (dCount*dSides + dBonus)
+	defMean, _ := dice.DiceToDistribution(dCount, dSides, dBonus)
+	defDmg := float64(attacks) * defMean
 
 	pct := 0.0
-	if defDmg == 0 {
+	if defDmg <= 0 {
 		pct += 0.4
 	} else {
-		pct += 0.4 * float64(atkDmg) / float64(defDmg)
+		pct += 0.4 * atkDmg / defDmg
 	}
 
 	if defChar.Stats.Dexterity.ValueAdj == 0 {
