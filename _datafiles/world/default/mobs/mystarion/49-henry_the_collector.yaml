@@ -13,11 +13,11 @@ idlecommands:
 combatcommands:
   - 'say How dare you attack the citizens of Mystarion! We do not forget!'
 
+statpool: 30
 character:
   name: henry the collector
   description: 'Clad in robes or garments adorned with subtle enchanted patterns, they move with a grace that hints at their familiarity with the arcane. Their eyes often sparkle with the knowledge of spells and the wisdom of the ages, reflecting a deep connection to the mystical forces that permeate their world. Whether they are scholars, artisans, merchants, or healers, each citizen carries a small token of their magical craft-an amulet, a vial of potion, or a wand-symbolizing their personal expertise.'
   speciesid: 1
-  level: 30
   gold: 3
   shop:
     - itemid: 9

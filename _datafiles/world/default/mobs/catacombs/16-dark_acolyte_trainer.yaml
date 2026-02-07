@@ -9,9 +9,9 @@ idlecommands:
   - emote clears his throat
   - 'say I have picked up a few useful skills for navigating these catacombs.'
 activitylevel: 10
+statpool: 15
 character:
   name: dark acolyte trainer
   description: 'He appears to mean no harm, and may even have a few things to teach you.'
   speciesid: 1
-  level: 15
   alignment: -40

@@ -9,8 +9,8 @@ idlecommands:
   - 'emote writhes in the darkness.'
   - 'wander'
 activitylevel: 10
+statpool: 45
 character:
   name: abyssal creeper
   description: 'Dwelling in the deepest parts of the caves, these tentacled horrors can extend their limbs great distances to ensnare prey. They are sensitive to light and often retreat into the abyssal cracks and crevices of the cave.'
   speciesid: 9
-  level: 45

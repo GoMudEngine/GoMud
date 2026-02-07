@@ -21,5 +21,5 @@ spawninfo:
   maxwander: 2
   scripttag: hungry
   questflags: [4-start, 4-return]
-  levelmod: 18
+  statpoolmod: 18
   respawnrate: 7 real minutes

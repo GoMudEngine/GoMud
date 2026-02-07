@@ -10,11 +10,11 @@ idlecommands:
 combatcommands:
   - 'callforhelp calls upon the forest denizens for help!'
 activitylevel: 10
+statpool: 35
 character:
   name: ent
   description: 'Thick, mossy growths cling to its rough surface, and lush vines and ivy drape from its branches, creating an awe-inspiring spectacle. The Ent''s eyes, deep and wise, are set within the rough texture of its bark, shining with a profound intelligence that spans centuries.'
   speciesid: 13
-  level: 35
   gold: 12
   equipment:
     weapon:

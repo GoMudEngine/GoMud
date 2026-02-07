@@ -3,8 +3,8 @@ zone: Nowhere
 itemdropchance: 0
 activitylevel: 10
 maxwander: 0
+statpool: 999
 character:
   name: monkey wearing glasses 
   description: A monkey wearing glasses. It looks like it's trying to read a book.
   speciesid: 17
-  level: 999

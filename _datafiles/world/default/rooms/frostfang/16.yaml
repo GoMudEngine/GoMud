@@ -19,5 +19,5 @@ exits:
 spawninfo:
 - mobid: 1
   message: A rat scurries out from a dark hole and wiggles its whiskers.
-  level: 1
+  statpool: 1
   respawnrate: 1 real minutes

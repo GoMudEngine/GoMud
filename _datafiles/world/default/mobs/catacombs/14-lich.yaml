@@ -8,11 +8,11 @@ groups:
 idlecommands:
   - 'emote creaks and sways'
 activitylevel: 10
+statpool: 30
 character:
   name: lich
   description: 'The lich, once a king of unparalleled might, now stands as a gaunt figure shrouded in tattered royal vestments that cling to its skeletal frame. Its hollow eye sockets burn with an eldritch fire, a testament to the dark sorcery that anchors its undying spirit to the mortal plane, and in its withered hand, it clutches an ancient and malevolent scepter, casting an aura of fear and decay over the realm it refuses to relinquish.'
   speciesid: 6
-  level: 30
   gold: 50
   equipment:
     weapon:

@@ -11,11 +11,11 @@ idlecommands:
 combatcommands:
   - 'callforhelp tilts his head back and lets out a shrill cry!'
 activitylevel: 10
+statpool: 20
 character:
   name: forest imp
   description: 'Standing at just knee height, this creature possesses a lithe and agile form, covered in mossy-green skin that seamlessly blends with the surrounding foliage. Its large, almond-shaped eyes sparkle with an impish curiosity, and a crown of leaves and twigs adorns its head. The Forest Imp''s pointed ears twitch as it gazes back at you, revealing a sly intelligence that belies its whimsical appearance. Its fingers end in tiny, nimble claws, perfect for climbing and playing pranks.'
   speciesid: 5
-  level: 20
   gold: 12
   equipment:
     weapon:

@@ -21,17 +21,17 @@ spawninfo:
 - mobid: 31
   message: A dog walks up and sits.
   forcehostile: true
-  levelmod: 1
+  statpoolmod: 1
   respawnrate: 5 real minutes
 - mobid: 31
   message: A dog walks up and sits.
   forcehostile: true
-  levelmod: 3
+  statpoolmod: 3
   respawnrate: 5 real minutes
 - mobid: 31
   message: A dog walks up and sits.
   forcehostile: true
-  levelmod: 5
+  statpoolmod: 5
   respawnrate: 3 real minutes
 idlemessages:
 - Some movement stirs in the edge of your vision, and then is lost.

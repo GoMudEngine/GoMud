@@ -23,5 +23,5 @@ spawninfo:
   - emote watches you carefully.
   - emote conjures a glowing orb of light, using it to illuminate the pages of a book.
   questflags: [6-start, 6-return]
-  level: 40
+  statpool: 40
   respawnrate: 10 real minutes

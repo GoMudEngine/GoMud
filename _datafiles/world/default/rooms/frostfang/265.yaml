@@ -18,5 +18,5 @@ spawninfo:
   maxwander: 1
   scripttag: locketsadness
   questflags: [1-start, 1-return]
-  levelmod: 10
+  statpoolmod: 10
   respawnrate: 5 real minutes

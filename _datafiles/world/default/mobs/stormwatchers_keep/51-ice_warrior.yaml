@@ -3,11 +3,11 @@ zone: Stormwatchers Keep
 itemdropchance: 4
 activitylevel: 30
 maxwander: 0
+statpool: 65
 character:
   name: ice warrior
   description: The Ice Warrior stands as a formidable figure amidst the frozen tundra, a living embodiment of the harsh, unyielding cold. Clad in gleaming armor forged from enchanted ice, each piece intricately etched with runes that pulse with a pale, blue light, the warrior exudes an aura of both beauty and terror. 
   speciesid: 16
-  level: 65
   gold: 1
   equipment:
     body:
