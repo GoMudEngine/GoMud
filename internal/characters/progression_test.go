@@ -90,12 +90,12 @@ func TestCalculateProgressionChance_StatSoftCap(t *testing.T) {
 
 func TestIncreaseSkill_Basic(t *testing.T) {
 	c := New()
-	// Should increase from 0 to 1
+	// All skills start at rank 1 (Stage 3.5). Should increase from 1 to 2.
 	if !c.IncreaseSkill("brawling") {
-		t.Error("Expected IncreaseSkill to return true for level 0→1")
+		t.Error("Expected IncreaseSkill to return true for level 1→2")
 	}
-	if c.Skills["brawling"] != 1 {
-		t.Errorf("Expected skill level 1, got %d", c.Skills["brawling"])
+	if c.Skills["brawling"] != 2 {
+		t.Errorf("Expected skill level 2, got %d", c.Skills["brawling"])
 	}
 }
 
@@ -113,7 +113,8 @@ func TestIncreaseSkill_Cap(t *testing.T) {
 
 func TestIncreaseSkill_Incremental(t *testing.T) {
 	c := New()
-	for expected := 1; expected <= 4; expected++ {
+	// All skills start at rank 1 (Stage 3.5). Increase from 1→4.
+	for expected := 2; expected <= 4; expected++ {
 		if !c.IncreaseSkill("cast") {
 			t.Errorf("Expected IncreaseSkill to return true for level %d", expected)
 		}
@@ -121,7 +122,7 @@ func TestIncreaseSkill_Incremental(t *testing.T) {
 			t.Errorf("Expected skill level %d, got %d", expected, c.Skills["cast"])
 		}
 	}
-	// 5th increase should fail
+	// Next increase should fail (at cap)
 	if c.IncreaseSkill("cast") {
 		t.Error("Expected IncreaseSkill to return false after reaching cap")
 	}
@@ -181,8 +182,10 @@ func TestGetCombatSkillLevel_WithBrawling(t *testing.T) {
 }
 
 func TestGetCombatSkillLevel_FallbackFromLevel(t *testing.T) {
+	// Stage 3.5: Level fallback is for mobs without skills.
+	// Simulate a mob-like character with no brawling skill.
 	c := New()
-	// No brawling skill, level 15 -> 15/5 = 3
+	delete(c.Skills, "brawling") // Remove brawling to test fallback
 	c.Level = 15
 	if got := c.GetCombatSkillLevel(); got != 3 {
 		t.Errorf("Expected combat skill 3 from level 15 fallback, got %d", got)
@@ -191,6 +194,7 @@ func TestGetCombatSkillLevel_FallbackFromLevel(t *testing.T) {
 
 func TestGetCombatSkillLevel_FallbackCapsAt4(t *testing.T) {
 	c := New()
+	delete(c.Skills, "brawling") // Remove brawling to test fallback
 	c.Level = 30
 	if got := c.GetCombatSkillLevel(); got != 4 {
 		t.Errorf("Expected combat skill 4 (capped) from level 30 fallback, got %d", got)

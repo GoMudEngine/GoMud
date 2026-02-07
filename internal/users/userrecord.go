@@ -16,7 +16,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/prompt"
 	"github.com/GoMudEngine/GoMud/internal/skills"
-	"github.com/GoMudEngine/GoMud/internal/stats"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	//
 )
@@ -165,83 +164,11 @@ func (u *UserRecord) HasShop() bool {
 	return len(u.Character.Shop) > 0
 }
 
-// Grants experience to the user and notifies them
-// Additionally accepts `source` as a short identifier of the XP source
-// Example source: "combat", "quest progress", "trash cleanup", "exploration"
+// GrantXP is kept for backward compatibility but no longer triggers level-ups.
+// Stage 3.5: Progression is now 100% skill-based.
 func (u *UserRecord) GrantXP(amt int, source string) {
-
-	grantXP, xpScale := u.Character.GrantXP(amt)
-
-	if xpScale != 100 {
-		u.SendText(fmt.Sprintf(`You gained <ansi fg="yellow-bold">%d experience points</ansi> <ansi fg="yellow">(%d%% scale)</ansi>! <ansi fg="7">(%s)</ansi>`, grantXP, xpScale, source))
-
-		u.EventLog.Add(`xp`, fmt.Sprintf(`Gained <ansi fg="yellow-bold">%d experience points</ansi> <ansi fg="yellow">(%d%% scale)</ansi>! <ansi fg="7">(%s)</ansi>`, grantXP, xpScale, source))
-
-	} else {
-
-		u.SendText(fmt.Sprintf(`You gained <ansi fg="yellow-bold">%d experience points</ansi>! <ansi fg="7">(%s)</ansi>`, grantXP, source))
-
-		u.EventLog.Add(`xp`, fmt.Sprintf(`Gained <ansi fg="yellow-bold">%d experience points</ansi>! <ansi fg="7">(%s)</ansi>`, grantXP, source))
-	}
-
-	events.AddToQueue(events.GainExperience{
-		UserId:     u.UserId,
-		Experience: grantXP,
-		Scale:      xpScale,
-	})
-
-	if newLevel, statsDelta := u.Character.LevelUp(); newLevel {
-
-		c := configs.GetGamePlayConfig()
-
-		livesBefore := u.Character.ExtraLives
-
-		levelUpEvent := events.LevelUp{
-			UserId:         u.UserId,
-			RoomId:         u.Character.RoomId,
-			Username:       u.Username,
-			CharacterName:  u.Character.Name,
-			LevelsGained:   0,
-			NewLevel:       u.Character.Level,
-			StatsDelta:     stats.Statistics{},
-			TrainingPoints: 0,
-			StatPoints:     0,
-			LivesGained:    0,
-		}
-
-		for newLevel {
-
-			if c.Death.PermaDeath && c.LivesOnLevelUp > 0 {
-				u.Character.ExtraLives += int(c.LivesOnLevelUp)
-			}
-
-			u.EventLog.Add(`xp`, fmt.Sprintf(`<ansi fg="username">%s</ansi> is now <ansi fg="magenta-bold">level %d</ansi>!`, u.Character.Name, u.Character.Level))
-
-			levelUpEvent.LevelsGained += 1
-			levelUpEvent.StatsDelta.Strength.Value += statsDelta.Strength.Value
-			levelUpEvent.StatsDelta.Dexterity.Value += statsDelta.Dexterity.Value
-			levelUpEvent.StatsDelta.Perception.Value += statsDelta.Perception.Value
-			levelUpEvent.StatsDelta.Vitality.Value += statsDelta.Vitality.Value
-			levelUpEvent.StatsDelta.Willpower.Value += statsDelta.Willpower.Value
-			levelUpEvent.StatsDelta.Charisma.Value += statsDelta.Charisma.Value
-
-			levelUpEvent.TrainingPoints += 1
-			levelUpEvent.StatPoints += 1
-
-			newLevel, statsDelta = u.Character.LevelUp()
-		}
-
-		if u.Character.ExtraLives > int(c.LivesMax) {
-			u.Character.ExtraLives = int(c.LivesMax)
-		}
-
-		levelUpEvent.LivesGained = u.Character.ExtraLives - livesBefore
-		levelUpEvent.NewLevel = u.Character.Level
-
-		events.AddToQueue(levelUpEvent)
-
-		SaveUser(*u)
-	}
+	// Silently accumulate XP for legacy tracking only
+	u.Character.GrantXP(amt)
 }
 
 func (u *UserRecord) DidTip(tipName string, completed ...bool) bool {
