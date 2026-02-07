@@ -343,8 +343,9 @@ This plan breaks down the conversion of GoMud to DOGMud into small, testable inc
 
 ---
 
-### Stage 3.8: Add Foundational Non-Combat Skills
+### Stage 3.8: Add Foundational Non-Combat Skills ✅ COMPLETED
 **Goal**: Add a minimal set of non-combat skills so other systems have real skill references. Keep the list small — we can always expand later.
+**Status**: Merged into `development` — commit `e6d7cf1`.
 
 **New Skills (5 total — skeleton covering core non-combat mechanics)**:
 
@@ -747,7 +748,7 @@ Assuming ~4 hours per stage (implement + test):
 |-------|--------|-----------------|--------|
 | Phase 1: Stats | 3 stages (1.1–1.3) | 12 hours | **Complete** |
 | Phase 2: Species | 2 stages (2.1–2.2) | 8 hours | **Complete** |
-| Phase 3: Remove Levels | 9 stages (3.1–3.9) | 36 hours | **3.1–3.7 Complete** |
+| Phase 3: Remove Levels | 9 stages (3.1–3.9) | 36 hours | **3.1–3.8 Complete** |
 | Phase 4: Distribution Combat | 2 stages (4.1–4.2) | 8 hours | Not Started |
 | Phase 5: Stamina | 2 stages (5.1–5.2) | 8 hours | Not Started |
 | Phase 6: Conviction | 2 stages (6.1–6.2) | 8 hours | Not Started |
@@ -804,4 +805,4 @@ These phases will be detailed in a separate plan once core mechanics are stable.
 
 **Last Updated**: 2026-02-06
 **Status**: In Progress
-**Current Stage**: 3.8 — Add Foundational Non-Combat Skills (next up)
+**Current Stage**: 3.9 — Update Documentation (next up)
