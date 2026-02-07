@@ -1,8 +1,13 @@
-# GoMud Spells System Context
+# DOGMud Spells System Context
 
 ## Overview
 
-The GoMud spells system provides a comprehensive magic framework with support for multiple spell types, schools of magic, difficulty scaling, scripting integration, and flexible targeting systems. It features spell discovery, automatic script template generation, and seamless integration with the character and combat systems.
+The DOGMud spells system provides a comprehensive magic framework with support for multiple spell types, schools of magic, difficulty scaling, scripting integration, and flexible targeting systems. It features spell discovery, automatic script template generation, and seamless integration with the character and combat systems.
+
+**DOGMud Differences from upstream GoMud:**
+- Mana removed — spells currently cast without resource cost (Conviction costs coming in Phase 6)
+- Spellcasting skill (DOG) replaces legacy Cast skill for combat resolution
+- Psionics skill added for mental powers
 
 ## Architecture
 
@@ -65,7 +70,7 @@ type SpellData struct {
     Description string      // Spell description
     Type        SpellType   // Targeting and effect type
     School      SpellSchool // Magic school classification
-    Cost        int         // Mana cost to cast
+    Cost        int         // Resource cost (currently unused — Conviction costs coming in Phase 6)
     WaitRounds  int         // Casting delay in rounds
     Difficulty  int         // Success modifier (0-100%)
 }
