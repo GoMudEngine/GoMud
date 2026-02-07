@@ -442,75 +442,65 @@ This plan breaks down the conversion of GoMud to DOGMud into small, testable inc
 
 ## Phase 4: Distribution-Based Combat
 
-### Stage 4.1: Add Distribution Rolling (Parallel System)
-**Goal**: Implement DOG's distribution-based rolling without removing existing dice rolls.
+> **Note (2026-02-07):** The original plan had two stages (4.1 and 4.2). Stage 4.1's
+> distribution rolling library was implemented early as a side quest and already exists
+> in `internal/dice/dice.go` with full test coverage (`dice_test.go`). This includes:
+> `Roll()`, `OpposedRoll()`, `DifficultyCheck()`, `CriticalCheck()`, `RollDamage()`,
+> `normalCDF()`, `inverseNormalCDF()`, and more. Character creation already uses it
+> via `RollCharacterStats()`. Stages 4.1 and 4.2 are therefore collapsed into a single
+> stage that wires the existing `dice` package into combat.
 
-**Changes**:
-1. Create new `internal/rolling/distribution.go` module:
-   - `RollDistribution(mean, stdDevPercent float64) float64`
-   - `IsCritSuccess(roll, mean, stdDev float64) bool`
-   - `IsCritFailure(roll, mean, stdDev float64) bool`
-2. Add config flag `UseDistributionRolling bool` (default: false)
-3. Create parallel combat functions using distribution rolling
-4. Don't modify existing dice-based combat yet
+### Stage 4.1: ~~Add Distribution Rolling~~ ✅ COMPLETED (side quest)
+**Goal**: ~~Implement DOG's distribution-based rolling without removing existing dice rolls.~~
+**Status**: Already implemented in `internal/dice/dice.go` during earlier development.
 
-**Files to Modify** (~8 files, ~300 lines):
-1. `internal/rolling/distribution.go` - New file
-2. `internal/combat/combat_distribution.go` - New file (parallel combat)
-3. `internal/configs/config.gameplay.go` - Add config flag
-4. Test files for distribution rolling
+The `dice` package provides:
+- `Roll(mean, stdDev)` → `RollResult` with Value, ZScore, Percentile
+- `OpposedRoll(atkStat, defStat, stdDev)` → contested checks
+- `DifficultyCheck(stat, difficulty, stdDev)` → skill checks
+- `CriticalCheck(result, critThreshold, fumbleThreshold)` → crit/fumble detection
+- `RollDamage(baseDamage, variance, minDamage)` → damage rolls
+- `RollWithCriticals(mean, stdDev, critThresh, fumbleThresh)` → combined roll+crit
+- Full statistical math: `normalCDF`, `inverseNormalCDF`, `SuccessChance`, `OpposedSuccessChance`
+- Tests in `dice_test.go` including `TestRollDistribution`
 
-**Testing**:
-- [ ] **Unit Tests**: Test distribution rolling produces correct mean/stddev
-- [ ] **Unit Tests**: Test critical detection (2 std devs)
-- [ ] **Statistical Test**: Generate 10,000 rolls, verify distribution shape
-- [ ] **Manual Test**: Enable flag, test combat with distribution
-- [ ] **Manual Test**: Disable flag, verify dice combat still works
-
-**Acceptance Criteria**:
-- Distribution rolling implemented
-- Statistical properties verified
-- Critical success/failure detection works
-- Config flag controls which system is used
-- All tests pass
-
-**Estimated Changes**: ~300 lines, 8 files
+No config flag needed — we will wire the `dice` package directly into combat in Stage 4.2.
 
 ---
 
 ### Stage 4.2: Replace Dice Combat with Distribution Combat
-**Goal**: Completely replace dice-based combat with distribution-based combat.
+**Goal**: Replace all legacy `util.RollDice()` / `util.Rand()` combat calculations with the existing `dice` package's distribution-based rolling.
 
 **Changes**:
-1. Replace all combat calculations:
-   - Attack roll: `mean = Dexterity + Melee Combat skill, stddev = 15% of mean`
-   - Defense roll: `mean = Dexterity + Defense skill, stddev = 15% of mean`
-   - Compare rolls (higher wins)
-   - Critical on ±2 stddev
-2. Update damage calculation to use distributions
-3. Remove all dice roll references from combat
-4. Set `UseDistributionRolling: true` as default
+1. Replace all combat calculations in `internal/combat/`:
+   - Hit chance: Use `dice.OpposedRoll(atkDex + combatSkill, defDex + combatSkill, stdDev)`
+   - Critical hits: Use `dice.CriticalCheck()` with z-score thresholds (±2σ ≈ ~2.5% each)
+   - Damage: Use `dice.RollDamage(baseDamage, variance, minDamage)` instead of `util.RollDice()`
+   - Attack count: Derive from Dexterity differential using distribution math
+2. Update weapon items to use base damage + variance instead of dice notation (e.g., `2d6+3`)
+3. Convert weapon YAML files from dice notation to `baseDamage` / `variance` fields
+4. Remove old `util.RollDice()` calls from combat path
 
 **Files to Modify** (~15 files, ~800 lines):
-1. `internal/combat/combat.go` - Replace attack functions
-2. `internal/combat/calculations.go` - Replace all formulas
-3. `internal/items/itemspec.go` - Remove dice notation from weapons (use multipliers)
+1. `internal/combat/combat.go` - Replace attack functions to use `dice` package
+2. `internal/combat/calculations.go` - Replace hit/crit/damage formulas
+3. `internal/items/itemspec.go` - Add baseDamage/variance fields alongside or replacing dice notation
 4. All weapon YAML files - Convert dice to damage multipliers
 5. Test files
 
 **Testing**:
 - [ ] **Unit Tests**: Test all new combat calculations
-- [ ] **Unit Tests**: Test critical hit/miss detection
+- [ ] **Unit Tests**: Test critical hit/miss detection via z-score
 - [ ] **Manual Test**: Extensive combat testing (easy/medium/hard enemies)
 - [ ] **Manual Test**: Verify damage feels balanced
 - [ ] **Balance Test**: Compare statistical expected damage vs old system
-- [ ] **Regression Test**: Ensure no combat bugs
+- [ ] **Regression Test**: Ensure no combat bugs, `go test ./...` passes
 
 **Acceptance Criteria**:
-- All combat uses distribution rolling
-- No dice notation remains
+- All combat uses `dice` package distribution rolling
+- No `util.RollDice()` in combat path
 - Combat balance feels appropriate
-- Crits happen at expected rate (~5%)
+- Crits happen at expected rate (~5% total: ~2.5% crit success + ~2.5% crit fail)
 - All tests pass
 
 **Estimated Changes**: ~800 lines, 15 files
@@ -749,7 +739,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 1: Stats | 3 stages (1.1–1.3) | 12 hours | **Complete** |
 | Phase 2: Species | 2 stages (2.1–2.2) | 8 hours | **Complete** |
 | Phase 3: Remove Levels | 9 stages (3.1–3.9) | 36 hours | **Complete** |
-| Phase 4: Distribution Combat | 2 stages (4.1–4.2) | 8 hours | Not Started |
+| Phase 4: Distribution Combat | 2 stages (4.1–4.2) | 4 hours | **4.1 Complete** (side quest) |
 | Phase 5: Stamina | 2 stages (5.1–5.2) | 8 hours | Not Started |
 | Phase 6: Conviction | 2 stages (6.1–6.2) | 8 hours | Not Started |
 | **Total** | **20 stages** | **80 hours** | |
