@@ -41,6 +41,13 @@ const (
 	RangedCombat  SkillTag = `ranged-combat`  // Bows, crossbows, thrown weapons
 	Spellcasting  SkillTag = `spellcasting`   // All magic — offense & defense
 	Psionics      SkillTag = `psionics`       // Mental powers — offense & defense
+
+	// DOG non-combat skills
+	FirstAid  SkillTag = `first-aid`  // Healing others, treating wounds, stabilizing
+	Stealth   SkillTag = `stealth`    // Sneaking, hiding, avoiding detection
+	Tracking  SkillTag = `tracking`   // Finding creatures/players, reading trails
+	Bartering SkillTag = `bartering`  // Trade prices, negotiation, appraisal
+	Foraging  SkillTag = `foraging`   // Gathering resources — herbs, wood, ore, food
 )
 
 var (
@@ -238,8 +245,11 @@ func init() {
 		}
 	}
 
-	// Register DOG combat & magic skills directly
-	for _, sk := range []SkillTag{WeaponCombat, UnarmedCombat, RangedCombat, Spellcasting, Psionics} {
+	// Register DOG combat, magic, and non-combat skills directly
+	for _, sk := range []SkillTag{
+		WeaponCombat, UnarmedCombat, RangedCombat, Spellcasting, Psionics,
+		FirstAid, Stealth, Tracking, Bartering, Foraging,
+	} {
 		if _, ok := skillNameSet[sk]; !ok {
 			skillNameSet[sk] = struct{}{}
 			allSkillNames = append(allSkillNames, sk)
