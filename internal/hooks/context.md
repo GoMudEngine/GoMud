@@ -39,14 +39,14 @@ The hooks system is built around several key categories:
 ### 2. **Player Lifecycle Management**
 - **Join/Leave Handling**: Player spawn and despawn processing
 - **Character Updates**: Broadcasting character changes
-- **Level Progression**: Level-up notifications and guide spawning
+- **Skill Progression**: Skill-use notifications and guide spawning (Level-up disabled in DOGMud)
 - **Connection Management**: Zombie cleanup and inactive player handling
 
 ### 3. **Quest and Progression Systems**
 - **Quest Processing**: Multi-step quest advancement and rewards
 - **Item Integration**: Quest item requirements and rewards
 - **Skill Advancement**: Skill-based quest completion
-- **Experience Distribution**: Level-up rewards and notifications
+- **Progression Distribution**: Skill progression rewards and notifications
 
 ### 4. **System Maintenance and Optimization**
 - **Automatic Cleanup**: Zombie connections, expired buffs, ephemeral rooms

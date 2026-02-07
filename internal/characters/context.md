@@ -1,22 +1,38 @@
-# Characters Package Context
+# DOGMud Characters Package Context
 
 ## Overview
-The `internal/characters` package is the core character system for GoMud, handling both player characters (PCs) and non-player characters (NPCs/mobs). It provides a comprehensive character model with stats, equipment, skills, combat mechanics, and various character states.
+The `internal/characters` package is the core character system for DOGMud, handling both player characters (PCs) and non-player characters (NPCs/mobs). It provides a comprehensive character model with stats, equipment, skills, combat mechanics, and various character states.
+
+**DOGMud Differences from upstream GoMud:**
+- Level system disabled — progression is skill/stat-use-based
+- Mana removed — spells use Conviction resource pool
+- Three resource pools: Health, Stamina, Conviction
+- Six stats renamed: Strength, Dexterity, Perception, Vitality, Willpower, Charisma
+- Species system replaces races (all players are Human)
+- 10 core DOG skills + 15 legacy GoMud skills coexist
 
 ## Key Components
 
 ### Core Character Structure (`character.go`)
 - **Character struct**: The main character entity containing all character data
 - **Character creation and management**: Factory functions and lifecycle management
-- **Stat calculations**: Dynamic stat computation with buffs, equipment, and racial modifiers
-- **Experience and leveling**: Level progression and TNL (To Next Level) calculations
+- **Stat calculations**: Dynamic stat computation with buffs, equipment, and species modifiers
+- **Skill-based progression**: Skills and stats improve through use (`progression.go`)
 - **Persistence**: Character data serialization/deserialization
 
 ### Character Statistics System
-- **Six core stats**: Strength, Speed, Smarts, Vitality, Mysticism, Perception
+- **Six core stats**: Strength, Dexterity, Perception, Vitality, Willpower, Charisma
 - **Stat scaling**: Stats over 100 use `SQRT(overage)*2` formula for diminishing returns
-- **Dynamic modifiers**: Equipment, buffs, and racial bonuses affect final stats
-- **Stat points**: Manual allocation points gained per level
+- **Dynamic modifiers**: Equipment, buffs, and species bonuses affect final stats
+- **Use-based improvement**: Stats improve organically through gameplay
+
+### Skill System (`progression.go`)
+- **Use-based progression**: Skills improve through gameplay use, not training points
+- **Exponential decay curve**: ~50% chance at rank 0, ~2.5% at soft cap (rank 50)
+- **Skill aliasing**: `skillNameMap` supports mapping legacy skill names to DOG equivalents
+- **10 core DOG skills**: 5 combat (weapon-combat, unarmed-combat, ranged-combat, spellcasting, psionics) + 5 non-combat (first-aid, stealth, tracking, bartering, foraging)
+- **15 legacy GoMud skills**: Still functional alongside DOG skills
+- **Combat skill routing**: `GetCombatSkillTag()` selects weapon-appropriate skill
 
 ### Equipment System (`worn.go`)
 - **Equipment slots**: Weapon, Offhand, Head, Neck, Body, Belt, Gloves, Ring, Legs, Feet
@@ -28,6 +44,12 @@ The `internal/characters` package is the core character system for GoMud, handli
 - **Aggro system** (`aggro.go`): Combat targeting and threat management
 - **Buffs integration**: Status effects that modify character capabilities
 - **Cooldowns** (`cooldowns.go`): Time-based ability restrictions
+
+### Resource Pools
+- **Health**: Physical hitpoints, based on Vitality
+- **Stamina**: Physical endurance, based on Vitality (used for movement and combat actions)
+- **Conviction**: Mental/magical resource, based on Willpower + Charisma (used for spells)
+- Mana has been removed entirely
 
 ### Combat and Interaction Systems
 - **Kill/Death statistics** (`kdstats.go`): PvP and PvE combat tracking
@@ -49,11 +71,11 @@ The `internal/characters` package is the core character system for GoMud, handli
 - Room history for movement tracking
 
 ### Dynamic Stat System
-- Base stats from race definitions
+- Base stats from species definitions
 - Equipment stat modifications
 - Buff/debuff effects
-- Manual stat point allocation
-- Calculated maximums for Health, Mana, and Action Points
+- Use-based stat improvement through gameplay
+- Calculated maximums for Health, Stamina, and Conviction
 
 ### Social and Economic Systems
 - Gold and banking system
@@ -62,44 +84,14 @@ The `internal/characters` package is the core character system for GoMud, handli
 - Pet ownership and management
 - Quest progress tracking
 
-### Combat Integration
-- Aggro management for targeting
-- Damage tracking between players
-- Combat state management
-- Weapon and armor effectiveness
-
-### Scripting Integration
-- JavaScript-accessible character properties
-- Event-driven character updates
-- Scriptable character behaviors for NPCs
-
 ## Dependencies
 - `internal/stats`: Core statistics definitions
 - `internal/items`: Item system integration
 - `internal/buffs`: Status effect system
-- `internal/races`: Character race definitions
+- `internal/species`: Character species definitions
 - `internal/skills`: Skill system integration
 - `internal/spells`: Magic system integration
 - `internal/quests`: Quest system integration
 - `internal/pets`: Pet system integration
 - `internal/gametime`: Time-based mechanics
 - `internal/colorpatterns`: Text formatting and colors
-
-## Usage Patterns
-- Character creation through factory functions
-- Stat calculations via getter methods that apply all modifiers
-- Equipment management through worn item slots
-- State management through adjectives and flags
-- Combat integration through aggro and damage tracking
-
-## Testing
-Comprehensive test coverage in `*_test.go` files covering:
-- Character creation and initialization
-- Stat calculation accuracy
-- Equipment stat aggregation
-- Alignment system functionality
-- Shop mechanics and restocking
-- Kill/death tracking
-- Cooldown management
-
-This package serves as the foundation for all character-related functionality in GoMud, providing a rich and flexible character model that supports both player and NPC needs.

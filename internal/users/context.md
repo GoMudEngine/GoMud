@@ -457,7 +457,7 @@ func (u *UserRecord) ClientSettings() connections.ClientSettings {
 type OnlineInfo struct {
     Username      string // Login username
     CharacterName string // Character display name
-    Level         int    // Character level
+    Level         int    // Character level (deprecated in DOGMud — always 0)
     Alignment     string // Character alignment
     Profession    string // Character profession
     OnlineTime    int64  // Seconds online
@@ -474,7 +474,7 @@ type OnlineInfo struct {
 // Users have associated characters
 - user.Character                    // Full character data
 - user.Character.Name              // Character name
-- user.Character.Level             // Character progression
+- user.Character.Level             // Deprecated (always 0 in DOGMud)
 - user.Character.RoomId            // Current location
 ```
 
