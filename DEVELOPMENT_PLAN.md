@@ -13,9 +13,9 @@ This plan breaks down the conversion of GoMud to DOGMud into small, testable inc
 
 ---
 
-## Phase 1: Foundation - Stat System Refactor
+## Phase 1: Foundation - Stat System Refactor ✅ COMPLETED
 
-### Stage 1.1: Rename Stats (Minimal Risk)
+### Stage 1.1: Rename Stats (Minimal Risk) ✅ COMPLETED
 **Goal**: Rename existing 6 stats to DOG's stat names without changing functionality.
 
 **Changes**:
@@ -55,7 +55,7 @@ This plan breaks down the conversion of GoMud to DOGMud into small, testable inc
 
 ---
 
-### Stage 1.2: Add Secondary Stat Pools
+### Stage 1.2: Add Secondary Stat Pools ✅ COMPLETED
 **Goal**: Add Stamina and Conviction as secondary stats alongside existing Health/Mana.
 
 **Changes**:
@@ -91,7 +91,7 @@ This plan breaks down the conversion of GoMud to DOGMud into small, testable inc
 
 ---
 
-### Stage 1.3: Remove Mana, Rename Health
+### Stage 1.3: Remove Mana, Rename Health ✅ COMPLETED
 **Goal**: Remove Mana system entirely. Health stays as-is (will work with Stamina/Conviction as the 3 pools).
 
 **Changes**:
@@ -128,9 +128,9 @@ This plan breaks down the conversion of GoMud to DOGMud into small, testable inc
 
 ---
 
-## Phase 2: Species System Refactor
+## Phase 2: Species System Refactor ✅ COMPLETED
 
-### Stage 2.1: Rename Race to Species
+### Stage 2.1: Rename Race to Species ✅ COMPLETED
 **Goal**: Rename "Race" to "Species" throughout codebase (for clarity - players are human, NPCs/animals have species).
 
 **Changes**:
@@ -168,7 +168,7 @@ This plan breaks down the conversion of GoMud to DOGMud into small, testable inc
 
 ---
 
-### Stage 2.2: Create "Human" Default Species
+### Stage 2.2: Create "Human" Default Species ✅ COMPLETED
 **Goal**: Create a single "Human" species for all players. Convert existing playable races to be NPC-only species.
 
 **Changes**:
@@ -249,8 +249,9 @@ This plan breaks down the conversion of GoMud to DOGMud into small, testable inc
 
 ---
 
-### Stage 3.6: Remove Level/XP from Mobs (Mechanical Parity)
+### Stage 3.6: Remove Level/XP from Mobs (Mechanical Parity) ✅ COMPLETED
 **Goal**: Make mobs define their power through stats and skills directly, not derived from a level field. Players and mobs become truly mechanically identical.
+**Status**: Merged into `development` — commit `f65a9d4`.
 
 **Changes**:
 1. Remove `Level`-based stat initialization from mob creation:
@@ -743,9 +744,9 @@ Assuming ~4 hours per stage (implement + test):
 
 | Phase | Stages | Estimated Hours | Status |
 |-------|--------|-----------------|--------|
-| Phase 1: Stats | 3 stages (1.1–1.3) | 12 hours | Not Started |
-| Phase 2: Species | 2 stages (2.1–2.2) | 8 hours | Not Started |
-| Phase 3: Remove Levels | 9 stages (3.1–3.9) | 36 hours | **3.1–3.5 Complete** |
+| Phase 1: Stats | 3 stages (1.1–1.3) | 12 hours | **Complete** |
+| Phase 2: Species | 2 stages (2.1–2.2) | 8 hours | **Complete** |
+| Phase 3: Remove Levels | 9 stages (3.1–3.9) | 36 hours | **3.1–3.6 Complete** |
 | Phase 4: Distribution Combat | 2 stages (4.1–4.2) | 8 hours | Not Started |
 | Phase 5: Stamina | 2 stages (5.1–5.2) | 8 hours | Not Started |
 | Phase 6: Conviction | 2 stages (6.1–6.2) | 8 hours | Not Started |
@@ -802,4 +803,4 @@ These phases will be detailed in a separate plan once core mechanics are stable.
 
 **Last Updated**: 2026-02-06
 **Status**: In Progress
-**Current Stage**: 3.6 — Remove Level/XP from Mobs (next up)
+**Current Stage**: 3.7 — Add Core Combat & Magic Skills (next up)

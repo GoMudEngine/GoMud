@@ -47,9 +47,10 @@ func AttackPlayerVsMob(user *users.UserRecord, mob *mobs.Mob) AttackResult {
 	user.Character.TrackStatUse("dexterity")
 	if attackResult.Hit {
 		user.PlaySound(`hit-other`, `combat`)
-		user.Character.OnSkillUse("combat", user.UserId)
+		combatSkill := string(user.Character.GetCombatSkillTag())
+		user.Character.OnSkillUse(combatSkill, user.UserId)
 		if attackResult.Crit {
-			user.Character.OnCriticalSuccess("combat", user.UserId)
+			user.Character.OnCriticalSuccess(combatSkill, user.UserId)
 		}
 	} else {
 		user.PlaySound(`miss`, `combat`)
@@ -79,9 +80,10 @@ func AttackPlayerVsPlayer(userAtk *users.UserRecord, userDef *users.UserRecord) 
 	if attackResult.Hit {
 		userAtk.PlaySound(`hit-other`, `combat`)
 		userDef.PlaySound(`hit-self`, `combat`)
-		userAtk.Character.OnSkillUse("combat", userAtk.UserId)
+		combatSkill := string(userAtk.Character.GetCombatSkillTag())
+		userAtk.Character.OnSkillUse(combatSkill, userAtk.UserId)
 		if attackResult.Crit {
-			userAtk.Character.OnCriticalSuccess("combat", userAtk.UserId)
+			userAtk.Character.OnCriticalSuccess(combatSkill, userAtk.UserId)
 		}
 	} else {
 		userAtk.PlaySound(`miss`, `combat`)

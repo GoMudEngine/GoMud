@@ -248,7 +248,10 @@ func (c *Character) GetBaseCastSuccessChance(spellId string) int {
 
 	// add spell level bonus
 	// 10-30
-	skillLevel := c.GetSkillLevel(skills.Cast)
+	skillLevel := c.GetSkillLevel(skills.Spellcasting)
+	if skillLevel == 0 {
+		skillLevel = c.GetSkillLevel(skills.Cast) // backward compat with legacy Cast skill
+	}
 	//targetNumber += (skillLevel * 5)
 	//targetNumber -= 5 // cancel out the first level
 
@@ -990,7 +993,7 @@ func (c *Character) TrainSkill(skillName string, targetLevel ...int) int {
 			skillLevel = targetLevel[0]
 		}
 
-	} else if skillLevel < 4 {
+	} else {
 
 		skillLevel++
 
@@ -1017,17 +1020,13 @@ func (c *Character) GetSkillLevelCost(currentLevel int) int {
 	return currentLevel
 }
 
-// IncreaseSkill increments the named skill by 1 if it is below the cap of 4.
-// Returns true if the skill was increased, false if already at cap.
+// IncreaseSkill increments the named skill by 1.
+// No hard cap — progression is governed by the soft cap in CheckSkillProgression.
 func (c *Character) IncreaseSkill(skillName string) bool {
 	if c.Skills == nil {
 		c.Skills = make(map[string]int)
 	}
-	current := c.Skills[skillName]
-	if current >= 4 {
-		return false
-	}
-	c.Skills[skillName] = current + 1
+	c.Skills[skillName] = c.Skills[skillName] + 1
 	return true
 }
 
@@ -1054,10 +1053,28 @@ func (c *Character) IncreaseStat(statName string, amount int) bool {
 	return true
 }
 
+// GetCombatSkillTag returns the appropriate combat skill tag based on
+// the character's equipped weapon type.
+func (c *Character) GetCombatSkillTag() skills.SkillTag {
+	if c.Equipment.Weapon.ItemId > 0 {
+		weaponSpec := c.Equipment.Weapon.GetSpec()
+		if weaponSpec.Subtype == items.Shooting {
+			return skills.RangedCombat
+		}
+		if weaponSpec.Subtype != items.Claws {
+			return skills.WeaponCombat
+		}
+	}
+	return skills.UnarmedCombat
+}
+
 // GetCombatSkillLevel returns an effective combat skill value for use in
-// combat formulas. Characters with brawling skill use that rank (1-4).
-// Characters without skills default to 1 (minimum).
+// combat formulas. Checks the weapon-appropriate DOG skill first, then
+// falls back to legacy Brawling, then minimum 1.
 func (c *Character) GetCombatSkillLevel() int {
+	if level := c.GetSkillLevel(c.GetCombatSkillTag()); level > 0 {
+		return level
+	}
 	if level := c.GetSkillLevel(skills.Brawling); level > 0 {
 		return level
 	}

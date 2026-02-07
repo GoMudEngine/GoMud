@@ -34,6 +34,13 @@ const (
 	Protection  SkillTag = `protection`  // TODO
 	Tame        SkillTag = `tame`        // [LVL 1-4] Give mushroom to fairie in ROOM 558, train in ROOM 830
 	Trading     SkillTag = `trading`     // TODO
+
+	// DOG combat & magic skills
+	WeaponCombat  SkillTag = `weapon-combat`  // Melee attack & defense with weapons
+	UnarmedCombat SkillTag = `unarmed-combat` // Fist/body attacks & defense, grappling
+	RangedCombat  SkillTag = `ranged-combat`  // Bows, crossbows, thrown weapons
+	Spellcasting  SkillTag = `spellcasting`   // All magic — offense & defense
+	Psionics      SkillTag = `psionics`       // Mental powers — offense & defense
 )
 
 var (
@@ -228,6 +235,14 @@ func init() {
 
 			skillNameSet[skillName] = struct{}{}
 			allSkillNames = append(allSkillNames, skillName)
+		}
+	}
+
+	// Register DOG combat & magic skills directly
+	for _, sk := range []SkillTag{WeaponCombat, UnarmedCombat, RangedCombat, Spellcasting, Psionics} {
+		if _, ok := skillNameSet[sk]; !ok {
+			skillNameSet[sk] = struct{}{}
+			allSkillNames = append(allSkillNames, sk)
 		}
 	}
 

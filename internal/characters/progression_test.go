@@ -3,6 +3,8 @@ package characters
 import (
 	"math"
 	"testing"
+
+	"github.com/GoMudEngine/GoMud/internal/skills"
 )
 
 func TestCalculateProgressionChance_RankZero(t *testing.T) {
@@ -99,32 +101,28 @@ func TestIncreaseSkill_Basic(t *testing.T) {
 	}
 }
 
-func TestIncreaseSkill_Cap(t *testing.T) {
+func TestIncreaseSkill_NoCap(t *testing.T) {
 	c := New()
 	c.Skills["brawling"] = 4
-	// Should not increase past cap
-	if c.IncreaseSkill("brawling") {
-		t.Error("Expected IncreaseSkill to return false at cap (4)")
+	// No hard cap — should increase past 4
+	if !c.IncreaseSkill("brawling") {
+		t.Error("Expected IncreaseSkill to return true (no hard cap)")
 	}
-	if c.Skills["brawling"] != 4 {
-		t.Errorf("Expected skill level to stay at 4, got %d", c.Skills["brawling"])
+	if c.Skills["brawling"] != 5 {
+		t.Errorf("Expected skill level 5, got %d", c.Skills["brawling"])
 	}
 }
 
 func TestIncreaseSkill_Incremental(t *testing.T) {
 	c := New()
-	// All skills start at rank 1 (Stage 3.5). Increase from 1→4.
-	for expected := 2; expected <= 4; expected++ {
+	// All skills start at rank 1 (Stage 3.5). Increase several times.
+	for expected := 2; expected <= 6; expected++ {
 		if !c.IncreaseSkill("cast") {
 			t.Errorf("Expected IncreaseSkill to return true for level %d", expected)
 		}
 		if c.Skills["cast"] != expected {
 			t.Errorf("Expected skill level %d, got %d", expected, c.Skills["cast"])
 		}
-	}
-	// Next increase should fail (at cap)
-	if c.IncreaseSkill("cast") {
-		t.Error("Expected IncreaseSkill to return false after reaching cap")
 	}
 }
 
@@ -159,52 +157,53 @@ func TestIncreaseStat_InvalidStat(t *testing.T) {
 	}
 }
 
-func TestResolveSkillName_CombatToBrawling(t *testing.T) {
-	result := resolveSkillName("combat")
-	if result != "brawling" {
-		t.Errorf("Expected 'combat' to resolve to 'brawling', got '%s'", result)
-	}
-}
-
 func TestResolveSkillName_PassThrough(t *testing.T) {
-	result := resolveSkillName("cast")
+	// With empty skillNameMap, all names pass through unchanged
+	result := resolveSkillName("weapon-combat")
+	if result != "weapon-combat" {
+		t.Errorf("Expected 'weapon-combat' to pass through, got '%s'", result)
+	}
+	result = resolveSkillName("cast")
 	if result != "cast" {
 		t.Errorf("Expected 'cast' to pass through as 'cast', got '%s'", result)
 	}
 }
 
-func TestGetCombatSkillLevel_WithBrawling(t *testing.T) {
+func TestGetCombatSkillLevel_UnarmedWithUnarmedCombat(t *testing.T) {
+	// No weapon equipped → uses UnarmedCombat skill
 	c := New()
-	c.Skills["brawling"] = 3
+	c.Skills["unarmed-combat"] = 3
 	if got := c.GetCombatSkillLevel(); got != 3 {
-		t.Errorf("Expected combat skill 3 from brawling, got %d", got)
+		t.Errorf("Expected combat skill 3 from unarmed-combat, got %d", got)
 	}
 }
 
-func TestGetCombatSkillLevel_NoBrawlingReturnsMinimum(t *testing.T) {
-	// Stage 3.6: No Level fallback. Without brawling skill, returns 1.
+func TestGetCombatSkillLevel_BrawlingFallback(t *testing.T) {
+	// No weapon, no UnarmedCombat → falls back to Brawling
 	c := New()
-	delete(c.Skills, "brawling")
-	c.Level = 15
-	if got := c.GetCombatSkillLevel(); got != 1 {
-		t.Errorf("Expected combat skill 1 (minimum, no brawling), got %d", got)
-	}
-}
-
-func TestGetCombatSkillLevel_NoBrawlingAlwaysReturns1(t *testing.T) {
-	c := New()
-	delete(c.Skills, "brawling")
-	c.Level = 30
-	if got := c.GetCombatSkillLevel(); got != 1 {
-		t.Errorf("Expected combat skill 1 (minimum, no brawling regardless of level), got %d", got)
-	}
-}
-
-func TestGetCombatSkillLevel_BrawlingUsed(t *testing.T) {
-	c := New()
+	delete(c.Skills, "unarmed-combat")
 	c.Skills["brawling"] = 2
 	if got := c.GetCombatSkillLevel(); got != 2 {
-		t.Errorf("Expected combat skill 2 from brawling, got %d", got)
+		t.Errorf("Expected combat skill 2 from brawling fallback, got %d", got)
+	}
+}
+
+func TestGetCombatSkillLevel_NoSkillsReturns1(t *testing.T) {
+	// No combat skills at all → minimum 1
+	c := New()
+	delete(c.Skills, "unarmed-combat")
+	delete(c.Skills, "brawling")
+	delete(c.Skills, "weapon-combat")
+	delete(c.Skills, "ranged-combat")
+	if got := c.GetCombatSkillLevel(); got != 1 {
+		t.Errorf("Expected combat skill 1 (minimum), got %d", got)
+	}
+}
+
+func TestGetCombatSkillTag_NoWeapon(t *testing.T) {
+	c := New()
+	if got := c.GetCombatSkillTag(); got != skills.UnarmedCombat {
+		t.Errorf("Expected UnarmedCombat with no weapon, got %s", got)
 	}
 }
 

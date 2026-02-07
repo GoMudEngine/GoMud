@@ -46,9 +46,6 @@ func Experience(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 
 		for _, d := range details {
 			rankStr := fmt.Sprintf(`%d`, d.Rank)
-			if d.Rank >= 4 {
-				rankStr = `MAX`
-			}
 			rows = append(rows, []string{d.Name, rankStr, fmt.Sprintf(`%d`, d.Uses)})
 		}
 
@@ -101,10 +98,9 @@ func Experience(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 		rank := allRanks[name]
 		rankDisplay := fmt.Sprintf(`Rank %d`, rank)
 		color := "cyan"
-		if rank >= 4 {
-			rankDisplay = `MASTERED`
+		if rank >= 10 {
 			color = "yellow-bold"
-		} else if rank >= 3 {
+		} else if rank >= 5 {
 			color = "green"
 		}
 		user.SendText(fmt.Sprintf(`  <ansi fg="yellow">%-15s</ansi> <ansi fg="%s">[%s]</ansi>`, name, color, rankDisplay))

@@ -15,6 +15,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
+	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/usercommands"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -221,7 +222,7 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 			}
 
 			user.Character.TrackSpellCast(user.Character.Aggro.SpellInfo.SpellId)
-			user.Character.OnSkillUse("cast", userId)
+			user.Character.OnSkillUse(string(skills.Spellcasting), userId)
 			user.Character.TrackStatUse("mysticism")
 
 			if allowRetaliation {
