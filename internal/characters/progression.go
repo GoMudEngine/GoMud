@@ -18,10 +18,8 @@ const (
 )
 
 // skillNameMap maps progression context names to actual skill tags.
-// Combat hooks use "combat" as the context, but the real skill is "brawling".
-var skillNameMap = map[string]string{
-	"combat": string(skills.Brawling),
-}
+// Can be used to alias legacy names to new skill tags.
+var skillNameMap = map[string]string{}
 
 // resolveSkillName maps a progression context name to the actual skill tag.
 func resolveSkillName(name string) string {
