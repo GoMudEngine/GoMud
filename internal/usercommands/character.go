@@ -51,9 +51,9 @@ func Character(rest string, user *users.UserRecord, room *rooms.Room, flags even
 		return true, errors.New(`alt characters disabled`)
 	}
 
-	if user.Character.Level < 5 && len(nameToAlt) < 1 {
-		user.SendText(`<ansi fg="203">You must reach level 5 with this character to access character alts.</ansi>`)
-		return true, errors.New(`level 5 minimum`)
+	if user.Character.GetTotalSkillRanks() < 20 && len(nameToAlt) < 1 {
+		user.SendText(`<ansi fg="203">You must gain at least 20 total skill ranks to access character alts.</ansi>`)
+		return true, errors.New(`20 skill ranks minimum`)
 	}
 
 	// Form a set of all mobs currently charmed (and possibly hired)
@@ -385,9 +385,9 @@ func Character(rest string, user *users.UserRecord, room *rooms.Room, flags even
 
 			gearValue := char.GetGearValue()
 
-			charValue := gearValue + (250 * char.Level)
+			charValue := gearValue + (250 * char.GetTotalSkillRanks())
 
-			mudlog.Debug(`Hire Alt`, `UserId`, user.UserId, `alt-name`, char.Name, `gear-value`, gearValue, `level`, char.Level, `total`, charValue)
+			mudlog.Debug(`Hire Alt`, `UserId`, user.UserId, `alt-name`, char.Name, `gear-value`, gearValue, `skill-ranks`, char.GetTotalSkillRanks(), `total`, charValue)
 
 			question := cmdPrompt.Ask(fmt.Sprintf(`<ansi fg="51">The price to hire <ansi fg="username">%s</ansi> is <ansi fg="gold">%d gold</ansi>. Are you sure?</ansi>`, char.Name, charValue), []string{`yes`, `no`}, `no`)
 			if !question.Done {

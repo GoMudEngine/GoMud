@@ -2,7 +2,6 @@ package mobcommands
 
 import (
 	"fmt"
-	"math"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/combat"
@@ -77,8 +76,6 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		}
 	}
 
-	mobXP := mob.Character.XPTL(mob.Character.Level - 1)
-
 	events.AddToQueue(events.MobDeath{
 		MobId:         int(mob.MobId),
 		InstanceId:    mob.InstanceId,
@@ -88,30 +85,14 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		PlayerDamage:  mob.Character.PlayerDamage,
 	})
 
-	xpVal := mobXP / 90
-
-	xpVariation := xpVal / 100
-	if xpVariation < 1 {
-		xpVariation = 1
-	}
-
-	partyTracker := map[int]int{} // key is party leader ID, value is how much will be shared.
+	// Stage 3.5: No XP awarded. Progression is skill-based via combat hooks.
+	// Still track kills, alignment, and taming.
 
 	if len(mob.Character.PlayerDamage) > 0 {
 
-		xpVal = xpVal / len(mob.Character.PlayerDamage) // Div by number of players that beat him up
-		xpVal += ((util.Rand(3) - 1) * xpVariation)     // a little bit of variation
-
-		totalPlayerLevels := 0
-		for uId, _ := range mob.Character.PlayerDamage {
-			if user := users.GetByUserId(uId); user != nil {
-				totalPlayerLevels += user.Character.Level
-			}
-		}
-
 		attackerCt := len(mob.Character.PlayerDamage)
 
-		for uId, _ := range mob.Character.PlayerDamage {
+		for uId := range mob.Character.PlayerDamage {
 			if user := users.GetByUserId(uId); user != nil {
 
 				if user.Character.Aggro != nil {
@@ -122,177 +103,83 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 				scripting.TryMobScriptEvent(`onDie`, mob.InstanceId, uId, `user`, map[string]any{`attackerCount`: attackerCt})
 
-				p := parties.Get(user.UserId)
-
-				// Not in a party? Great give them the xp.
-				if p == nil {
-
-					if mob.Character.Zone != `Training` { // Don't track any kills in the training zone
-						user.Character.KD.AddMobKill(int(mob.MobId))
-						// Check for first kill of this mob type
-						if user.Character.KD.GetMobKills(int(mob.MobId)) == 1 {
-							user.Character.OnFirstMobKill(user.UserId)
-						}
+				if mob.Character.Zone != `Training` { // Don't track any kills in the training zone
+					user.Character.KD.AddMobKill(int(mob.MobId))
+					// Check for first kill of this mob type
+					if user.Character.KD.GetMobKills(int(mob.MobId)) == 1 {
+						user.Character.OnFirstMobKill(user.UserId)
 					}
+				}
 
-					xpScaler := 1.0
+				// Apply alignment changes
+				alignmentBefore := user.Character.AlignmentName()
+				alignmentAdj := combat.AlignmentChange(user.Character.Alignment, mob.Character.Alignment)
+				user.Character.UpdateAlignment(alignmentAdj)
+				alignmentAfter := user.Character.AlignmentName()
 
-					// If there's a level delta of more than 5, apply a scaler
-					if math.Abs(float64(mob.Character.Level)-float64(totalPlayerLevels)) > 5 {
+				mudlog.Debug("Alignment", "user Alignment", user.Character.Alignment, "mob Alignment", mob.Character.Alignment, `alignmentAdj`, alignmentAdj, `alignmentBefore`, alignmentBefore, `alignmentAfter`, alignmentAfter)
 
-						xpScaler = float64(mob.Character.Level) / float64(totalPlayerLevels) // How much of the mobs level is the player?
-						if xpScaler > 1.5 {
-							xpScaler = 1.5
-						} else if xpScaler < 0.25 {
-							xpScaler = 0.25
-						}
+				if alignmentBefore != alignmentAfter {
+					alignmentBefore = fmt.Sprintf(`<ansi fg="%s">%s</ansi>`, alignmentBefore, alignmentBefore)
+					alignmentAfter = fmt.Sprintf(`<ansi fg="%s">%s</ansi>`, alignmentAfter, alignmentAfter)
+					updateTxt := fmt.Sprintf(`<ansi fg="231">Your alignment has shifted from %s to %s!</ansi>`, alignmentBefore, alignmentAfter)
+					user.SendText(updateTxt)
+				}
 
-					}
+				// Chance to learn to tame the creature (skill-based, no level comparison)
+				skillsDelta := int((float64(user.Character.Stats.Charisma.ValueAdj-mob.Character.Stats.Charisma.ValueAdj) + float64(user.Character.Stats.Perception.ValueAdj-mob.Character.Stats.Perception.ValueAdj)) / 2)
+				if skillsDelta < 0 {
+					skillsDelta = 0
+				}
+				targetNumber := skillsDelta + user.Character.GetCombatSkillLevel()*2
+				if targetNumber < 1 {
+					targetNumber = 1
+				}
 
-					finalXPVal := int(math.Ceil(float64(xpVal) * xpScaler))
+				mudlog.Debug("Tame Chance", "skillsDelta", skillsDelta, "targetNumber", targetNumber)
 
-					mudlog.Debug("XP Calculation", "MobLevel", mob.Character.Level, "XPBase", mobXP, "xpVal", xpVal, "xpVariation", xpVariation, "xpScaler", xpScaler, "finalXPVal", finalXPVal)
+				if util.Rand(1000) < targetNumber {
+					if mob.IsTameable() && user.Character.GetSkillLevel(skills.Tame) > 0 {
 
-					user.GrantXP(finalXPVal, `combat`)
-
-					// Apply alignment changes
-					alignmentBefore := user.Character.AlignmentName()
-					alignmentAdj := combat.AlignmentChange(user.Character.Alignment, mob.Character.Alignment)
-					user.Character.UpdateAlignment(alignmentAdj)
-					alignmentAfter := user.Character.AlignmentName()
-
-					mudlog.Debug("Alignment", "user Alignment", user.Character.Alignment, "mob Alignment", mob.Character.Alignment, `alignmentAdj`, alignmentAdj, `alignmentBefore`, alignmentBefore, `alignmentAfter`, alignmentAfter)
-
-					if alignmentBefore != alignmentAfter {
-						alignmentBefore = fmt.Sprintf(`<ansi fg="%s">%s</ansi>`, alignmentBefore, alignmentBefore)
-						alignmentAfter = fmt.Sprintf(`<ansi fg="%s">%s</ansi>`, alignmentAfter, alignmentAfter)
-						updateTxt := fmt.Sprintf(`<ansi fg="231">Your alignment has shifted from %s to %s!</ansi>`, alignmentBefore, alignmentAfter)
-						user.SendText(updateTxt)
-					}
-
-					// Chance to learn to tame the creature.
-					levelDelta := user.Character.Level - mob.Character.Level
-					if levelDelta < 0 {
-						levelDelta = 0
-					}
-					skillsDelta := int((float64(user.Character.Stats.Charisma.ValueAdj-mob.Character.Stats.Charisma.ValueAdj) + float64(user.Character.Stats.Perception.ValueAdj-mob.Character.Stats.Perception.ValueAdj)) / 2)
-					if skillsDelta < 0 {
-						skillsDelta = 0
-					}
-					targetNumber := levelDelta + skillsDelta
-					if targetNumber < 1 {
-						targetNumber = 1
-					}
-
-					mudlog.Debug("Tame Chance", "levelDelta", levelDelta, "skillsDelta", skillsDelta, "targetNumber", targetNumber)
-
-					if util.Rand(1000) < targetNumber {
-						if mob.IsTameable() && user.Character.GetSkillLevel(skills.Tame) > 0 {
-
-							currentSkill := user.Character.MobMastery.GetTame(int(mob.MobId))
-							if currentSkill < 50 {
-								user.Character.MobMastery.SetTame(int(mob.MobId), currentSkill+1)
-								if currentSkill == -1 {
-									user.SendText(fmt.Sprintf(`<ansi fg="magenta">***</ansi> You've learned how to tame a <ansi fg="mobname">%s</ansi>! <ansi fg="magenta">***</ansi>`, mob.Character.Name))
-								} else {
-									user.SendText(fmt.Sprintf(`<ansi fg="magenta">***</ansi> Your <ansi fg="mobname">%s</ansi> taming skills get a little better! <ansi fg="magenta">***</ansi>`, mob.Character.Name))
-								}
+						currentSkill := user.Character.MobMastery.GetTame(int(mob.MobId))
+						if currentSkill < 50 {
+							user.Character.MobMastery.SetTame(int(mob.MobId), currentSkill+1)
+							if currentSkill == -1 {
+								user.SendText(fmt.Sprintf(`<ansi fg="magenta">***</ansi> You've learned how to tame a <ansi fg="mobname">%s</ansi>! <ansi fg="magenta">***</ansi>`, mob.Character.Name))
+							} else {
+								user.SendText(fmt.Sprintf(`<ansi fg="magenta">***</ansi> Your <ansi fg="mobname">%s</ansi> taming skills get a little better! <ansi fg="magenta">***</ansi>`, mob.Character.Name))
 							}
-
 						}
+
 					}
-
-					continue
 				}
-
-				if _, ok := partyTracker[p.LeaderUserId]; !ok {
-					partyTracker[p.LeaderUserId] = 0
-				}
-				partyTracker[p.LeaderUserId] += xpVal
 
 			}
 		}
 
 	}
 
-	if len(partyTracker) > 0 {
-
-		for leaderId, xp := range partyTracker {
-			if p := parties.Get(leaderId); p != nil {
-
-				allMembers := p.GetMembers()
-				xpSplit := xp / len(allMembers)
-
-				mudlog.Info(`Party XP`, `totalXP`, xp, `splitXP`, xpSplit, `memberCt`, len(allMembers))
-
-				for _, memberId := range allMembers {
-
-					if user := users.GetByUserId(memberId); user != nil {
-
-						if mob.Character.Zone != `Training` { // Don't track any kills in the training zone
-							user.Character.KD.AddMobKill(int(mob.MobId))
-							// Check for first kill of this mob type
-							if user.Character.KD.GetMobKills(int(mob.MobId)) == 1 {
-								user.Character.OnFirstMobKill(user.UserId)
-							}
-						}
-
-						user.GrantXP(xpSplit, `combat`)
-
-						// Apply alignment changes
-						alignmentBefore := user.Character.AlignmentName()
-						alignmentAdj := combat.AlignmentChange(user.Character.Alignment, mob.Character.Alignment)
-						user.Character.UpdateAlignment(alignmentAdj)
-						alignmentAfter := user.Character.AlignmentName()
-
-						mudlog.Debug("Alignment", "user Alignment", user.Character.Alignment, "mob Alignment", mob.Character.Alignment, `alignmentAdj`, alignmentAdj, `alignmentBefore`, alignmentBefore, `alignmentAfter`, alignmentAfter)
-
-						if alignmentBefore != alignmentAfter {
-							alignmentBefore = fmt.Sprintf(`<ansi fg="%s">%s</ansi>`, alignmentBefore, alignmentBefore)
-							alignmentAfter = fmt.Sprintf(`<ansi fg="%s">%s</ansi>`, alignmentAfter, alignmentAfter)
-							updateTxt := fmt.Sprintf(`<ansi fg="231">Your alignment has shifted from %s to %s!</ansi>`, alignmentBefore, alignmentAfter)
-							user.SendText(updateTxt)
-						}
-
-						// Chance to learn to tame the creature.
-						levelDelta := user.Character.Level - mob.Character.Level
-						if levelDelta < 0 {
-							levelDelta = 0
-						}
-						skillsDelta := int((float64(user.Character.Stats.Charisma.ValueAdj-mob.Character.Stats.Charisma.ValueAdj) + float64(user.Character.Stats.Perception.ValueAdj-mob.Character.Stats.Perception.ValueAdj)) / 2)
-						if skillsDelta < 0 {
-							skillsDelta = 0
-						}
-						targetNumber := levelDelta + skillsDelta
-						if targetNumber < 1 {
-							targetNumber = 1
-						}
-
-						mudlog.Debug("Tame Chance", "levelDelta", levelDelta, "skillsDelta", skillsDelta, "targetNumber", targetNumber)
-
-						if util.Rand(1000) < targetNumber {
-							if mob.IsTameable() && user.Character.GetSkillLevel(skills.Tame) > 0 {
-
-								currentSkill := user.Character.MobMastery.GetTame(int(mob.MobId))
-								if currentSkill < 50 {
-									user.Character.MobMastery.SetTame(int(mob.MobId), currentSkill+1)
-
-									if currentSkill == -1 {
-										user.SendText(fmt.Sprintf(`<ansi fg="magenta">***</ansi> You've learned how to tame a <ansi fg="mobname">%s</ansi>! <ansi fg="magenta">***</ansi>`, mob.Character.Name))
-									} else {
-										user.SendText(fmt.Sprintf(`<ansi fg="magenta">***</ansi> Your <ansi fg="mobname">%s</ansi> taming skills get a little better! <ansi fg="magenta">***</ansi>`, mob.Character.Name))
-									}
-								}
-
-							}
+	// Stage 3.5: Party members also get kill credit (no XP to split)
+	// Give kill tracking and alignment to party members who didn't directly attack
+	partyMembersHandled := map[int]bool{}
+	for uId := range mob.Character.PlayerDamage {
+		partyMembersHandled[uId] = true
+		if p := parties.Get(uId); p != nil {
+			for _, memberId := range p.GetMembers() {
+				if partyMembersHandled[memberId] {
+					continue
+				}
+				partyMembersHandled[memberId] = true
+				if user := users.GetByUserId(memberId); user != nil {
+					if mob.Character.Zone != `Training` {
+						user.Character.KD.AddMobKill(int(mob.MobId))
+						if user.Character.KD.GetMobKills(int(mob.MobId)) == 1 {
+							user.Character.OnFirstMobKill(user.UserId)
 						}
 					}
-
 				}
-
 			}
 		}
-
 	}
 
 	if !mob.Character.HasBuffFlag(buffs.PermaGear) {

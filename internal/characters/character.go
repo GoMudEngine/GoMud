@@ -112,7 +112,7 @@ func New() *Character {
 		TNLScale:       1.0,
 		Health:         startingHealth,
 		HealthMax:      stats.StatInfo{Base: 1},
-		Skills:         make(map[string]int),
+		Skills:         initAllSkills(),
 		Gold:           25,
 		Bank:           100,
 		SpellBook:      make(map[string]int),
@@ -142,6 +142,39 @@ func New() *Character {
 	c.Conviction = c.ConvictionMax.Value
 
 	return c
+}
+
+// initAllSkills creates a skill map with all known skills at rank 1.
+func initAllSkills() map[string]int {
+	allSkills := skills.GetAllSkillNames()
+	m := make(map[string]int, len(allSkills))
+	for _, sk := range allSkills {
+		m[string(sk)] = 1
+	}
+	return m
+}
+
+// ensureAllSkills ensures all known skills exist in the map at rank 1 minimum.
+// Used during Validate() to retroactively update existing characters.
+func ensureAllSkills(existing map[string]int) map[string]int {
+	if existing == nil {
+		return initAllSkills()
+	}
+	for _, sk := range skills.GetAllSkillNames() {
+		if existing[string(sk)] < 1 {
+			existing[string(sk)] = 1
+		}
+	}
+	return existing
+}
+
+// GetTotalSkillRanks returns the sum of all skill ranks.
+func (c *Character) GetTotalSkillRanks() int {
+	total := 0
+	for _, rank := range c.Skills {
+		total += rank
+	}
+	return total
 }
 
 // RollCharacterStats generates a new set of character stats using normal distribution
@@ -1367,34 +1400,10 @@ func (c *Character) XPTNLActual() (xpPastCurrentLevel int, tnlXP int) {
 	return xpPastCurrentLevel, tnlXP
 }
 
+// LevelUp is disabled in Stage 3.5 — progression is now 100% skill-based.
+// Kept for backward compatibility (callers check return value).
 func (c *Character) LevelUp() (bool, stats.Statistics) {
-
-	if c.XPTNL() > c.Experience {
-		return false, stats.Statistics{}
-	}
-
-	var statsBefore stats.Statistics = c.Stats
-
-	c.Level++
-	c.TrainingPoints++
-	c.StatPoints++
-
-	c.Validate()
-
-	var statsDelta stats.Statistics = c.Stats
-
-	statsDelta.Strength.Value -= statsBefore.Strength.Value
-	statsDelta.Dexterity.Value -= statsBefore.Dexterity.Value
-	statsDelta.Perception.Value -= statsBefore.Perception.Value
-	statsDelta.Vitality.Value -= statsBefore.Vitality.Value
-	statsDelta.Willpower.Value -= statsBefore.Willpower.Value
-	statsDelta.Charisma.Value -= statsBefore.Charisma.Value
-
-	c.Health = c.HealthMax.Value
-	c.Stamina = c.StaminaMax.Value
-	c.Conviction = c.ConvictionMax.Value
-
-	return true, statsDelta
+	return false, stats.Statistics{}
 }
 
 func (c *Character) Heal(hp int) int {
@@ -1433,7 +1442,6 @@ func (c *Character) ConvictionPerRound() int {
 // Where 1000 = a full round
 func (c *Character) MovementCost() int {
 	modifier := 3                                    // by default they should be able to move 3 times per round.
-	modifier += int(c.Level / 15)                    // Every 15 levels, get an extra movement.
 	modifier += int(c.Stats.Dexterity.ValueAdj / 15) // Every 15 dexterity, get an extra movement
 	return int(1000 / modifier)
 }
@@ -1497,20 +1505,20 @@ func (c *Character) RecalculateStats() {
 	c.Stats.Willpower.Recalculate(c.Level)
 	c.Stats.Charisma.Recalculate(c.Level)
 
-	// Set HP/MP maxes
+	// Set HP/Stamina/Conviction maxes (skill-based, no level dependency)
 	// This relies on the above stats so has to be calculated afterwards
 	c.HealthMax.Mods = 5 +
 		c.StatMod(string(statmods.HealthMax)) + // Any sort of spell buffs etc. are just direct modifiers
-		c.Level + // For every level you get 1 hp
-		c.Stats.Vitality.ValueAdj*4 // for every vitality you get 3hp
+		c.Stats.Strength.ValueAdj + // Strength contributes to health
+		c.Stats.Vitality.ValueAdj*4 // Vitality is primary health stat
 
 	c.StaminaMax.Mods = 5 +
-		c.Level + // For every level you get 1 stamina
-		c.Stats.Vitality.ValueAdj*3 // for every Vitality you get 3 stamina
+		c.Stats.Strength.ValueAdj + // Strength contributes to stamina
+		c.Stats.Willpower.ValueAdj + // Willpower contributes to stamina
+		c.Stats.Vitality.ValueAdj*3 // Vitality is primary stamina stat
 
 	c.ConvictionMax.Mods = 5 +
-		c.Level + // For every level you get 1 conviction
-		(c.Stats.Willpower.ValueAdj+c.Stats.Charisma.ValueAdj)*2 // for every Willpower+Charisma you get 2 conviction
+		(c.Stats.Willpower.ValueAdj+c.Stats.Charisma.ValueAdj)*2 // Willpower+Charisma drive conviction
 
 	// Set max action points
 	c.ActionPointsMax.Mods = 200 // hard coded for now
@@ -1634,6 +1642,9 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 	}
 
 	c.Buffs.Validate()
+
+	// Ensure all known skills exist at rank 1 minimum (retroactive for existing characters)
+	c.Skills = ensureAllSkills(c.Skills)
 
 	// Do a stats recalc based on equipment, race, level, etc.
 	c.RecalculateStats()

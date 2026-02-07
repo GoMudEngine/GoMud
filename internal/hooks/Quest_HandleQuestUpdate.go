@@ -124,10 +124,7 @@ func HandleQuestUpdate(e events.Event) events.ListenerReturn {
 		if questInfo.Rewards.BuffId > 0 {
 			questUser.AddBuff(questInfo.Rewards.BuffId, `quest`)
 		}
-		// Experience reward?
-		if questInfo.Rewards.Experience > 0 {
-			questUser.GrantXP(questInfo.Rewards.Experience, `quest progress`)
-		}
+		// Stage 3.5: XP rewards removed. Progression is skill-based.
 		// Skill reward?
 		if questInfo.Rewards.SkillInfo != `` {
 			details := strings.Split(questInfo.Rewards.SkillInfo, `:`)

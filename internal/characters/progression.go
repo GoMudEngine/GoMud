@@ -70,7 +70,7 @@ func (c *Character) CheckSkillProgression(skillName string, userId int, bonusMul
 	if roll < threshold {
 		actualSkill := resolveSkillName(skillName)
 
-		if bool(configs.GetGamePlayConfig().DualProgressionMode) && skills.SkillExists(actualSkill) {
+		if skills.SkillExists(actualSkill) {
 			if c.IncreaseSkill(actualSkill) {
 				newLevel := c.Skills[actualSkill]
 				msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> Your <ansi fg="yellow">%s</ansi> skill improves to rank <ansi fg="yellow-bold">%d</ansi>! <ansi fg="magenta">***</ansi>`, actualSkill, newLevel)
@@ -102,13 +102,8 @@ func (c *Character) CheckStatProgression(statName string, userId int, bonusMulti
 	mudlog.Debug("Progression", "check", "stat", "stat", statName, "rank", virtualRank, "chance", fmt.Sprintf("%.2f%%", chance*100), "roll", roll, "threshold", threshold, "character", c.Name)
 
 	if roll < threshold {
-		if bool(configs.GetGamePlayConfig().DualProgressionMode) {
-			if c.IncreaseStat(statName, 1) {
-				msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> Your <ansi fg="yellow">%s</ansi> grows stronger! <ansi fg="magenta">***</ansi>`, statName)
-				events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
-			}
-		} else {
-			msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> You feel your <ansi fg="yellow">%s</ansi> growing stronger! <ansi fg="magenta">***</ansi>`, statName)
+		if c.IncreaseStat(statName, 1) {
+			msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> Your <ansi fg="yellow">%s</ansi> grows stronger! <ansi fg="magenta">***</ansi>`, statName)
 			events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
 		}
 	}
