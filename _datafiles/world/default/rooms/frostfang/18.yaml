@@ -38,5 +38,5 @@ spawninfo:
   message: A priest emerges from a confession booth
   scripttag: sanctuary
   questflags: [2-start]
-  level: 40
+  statpool: 40
   respawnrate: 3 real minutes

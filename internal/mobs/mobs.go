@@ -55,6 +55,7 @@ type MobId int // Creating a custom type to help prevent confusion over MobId an
 type Mob struct {
 	MobId           MobId
 	Zone            string   `yaml:"zone,omitempty"`
+	StatPool        int      `yaml:"statpool,omitempty"`      // Stat points randomly distributed across stats on spawn
 	ItemDropChance  int      // chance in 100
 	ActivityLevel   int      `yaml:"activitylevel,omitempty"` // 1-100%
 	InstanceId      int      `yaml:"-"`
@@ -151,7 +152,7 @@ func MobIdByName(mobName string) MobId {
 	return 0
 }
 
-func NewMobById(mobId MobId, homeRoomId int, forceLevel ...int) *Mob {
+func NewMobById(mobId MobId, homeRoomId int, forceStatPool ...int) *Mob {
 
 	if m, ok := mobs[int(mobId)]; ok {
 
@@ -164,14 +165,14 @@ func NewMobById(mobId MobId, homeRoomId int, forceLevel ...int) *Mob {
 		mob.InstanceId = instanceCounter
 		mob.Character.PlayerDamage = make(map[int]int)
 
-		// Level related stuff
-		if len(forceLevel) > 0 && forceLevel[0] > 0 {
-			mob.Character.Level = forceLevel[0]
+		// Determine stat pool: use override if provided, otherwise use mob template's StatPool
+		statPool := mob.StatPool
+		if len(forceStatPool) > 0 && forceStatPool[0] > 0 {
+			statPool = forceStatPool[0]
 		}
-		mob.Character.StatPoints = mob.Character.Level
-		mob.Character.Level--
-		mob.Character.Experience = mob.Character.XPTNL()
-		mob.Character.Level++
+		mob.Character.StatPoints = statPool
+		mob.Character.Level = 0
+		mob.Character.Experience = 0
 
 		// Apply training for those stats
 		mob.Character.AutoTrain()

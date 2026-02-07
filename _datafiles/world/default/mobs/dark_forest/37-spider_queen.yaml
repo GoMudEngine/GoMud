@@ -8,11 +8,11 @@ groups:
 combatcommands:
   - 'callforhelp chitters and clicks urgently.'
 activitylevel: 10
+statpool: 40
 character:
   name: spider queen
   description: 'The Spider Queen is an abhorrent sight to behold. Her bloated abdomen, swollen with the promise of countless offspring, hangs low, dragging across the silken webs that shroud her lair. Her legs, eight in total, are covered in thick, chitinous armor that gleams with a sickly iridescence, each limb ending in razor-sharp, venomous claws.'
   speciesid: 14
-  level: 40
   alignment: -85
   equipment:
     body:

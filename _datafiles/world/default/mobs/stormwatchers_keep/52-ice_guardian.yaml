@@ -3,11 +3,11 @@ zone: Stormwatchers Keep
 itemdropchance: 4
 activitylevel: 30
 maxwander: 0
+statpool: 75
 character:
   name: ice guardian
   description: A guardian of the ice, this creature is a formidable foe.
   speciesid: 16
-  level: 75
   gold: 1
   equipment:
     body:

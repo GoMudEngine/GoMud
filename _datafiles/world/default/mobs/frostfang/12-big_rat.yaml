@@ -11,11 +11,11 @@ idlecommands:
   - 'wander'
   - ''
 activitylevel: 10
+statpool: 5
 character:
   name: big rat
   description: 'The imposing figure of the big rat dominates the dimly lit alley, its bulky form covered in a dense coat of glossy fur, interspersed with streaks of dark brown and sooty gray. Its large, beady eyes, reflecting a glint of cunning intelligence, survey the surroundings with a keen awareness, missing nothing. The big rat''s substantial whiskers, thick and highly sensitive, quiver at the slightest change in the air, navigating its formidable bulk through the narrow spaces with surprising agility. Its tail, thick and muscular, swings behind it like a pendulum, providing balance to its robust frame as it maneuvers with an unexpected grace. The big rat, a master of its domain, commands respect and attention in the shadowy world it inhabits.'
   speciesid: 10
-  level: 5
   equipment:
     body:
       itemid: 20010

@@ -16,5 +16,5 @@ exits:
 spawninfo:
 - mobid: 14
   message: Bones scattered about come together to form an undead lich.
-  levelmod: 8
+  statpoolmod: 8
   respawnrate: 30 real minutes

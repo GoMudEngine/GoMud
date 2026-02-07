@@ -4,11 +4,11 @@ itemdropchance: 1
 hostile: false
 maxwander: 5
 activitylevel: 10
+statpool: 25
 character:
   name: timber wolf
   description: 'The Timber Wolf is a hulking predator that prowls the shadowed depths of the Dark Forest, its mottled fur a blend of earthy browns and deep grays, perfectly suited to the dense, mist-laden woods it calls home. Unlike its northern cousins, the Timber Wolf is built for strength rather than speed, with a muscular frame and thick, knotted limbs that allow it to tear through underbrush and climb over fallen trees in pursuit of its prey. Its amber eyes gleam with a fierce intelligence, always scanning for movement among the forest shadows. The Timber Wolf is a pack animal, but its packs are smaller and more territorial, often staking claim to entire swathes of the forest. Its low, rumbling growl can be heard long before it strikes, a warning to those who dare venture into its realm.'
   speciesid: 11
-  level: 25
   equipment:
     body:
       itemid: 20042

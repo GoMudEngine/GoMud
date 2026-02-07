@@ -597,30 +597,30 @@ func (r *Room) Prepare(checkAdjacentRooms bool) {
 		// New instances needed? Spawn them
 		if spawnInfo.MobId > 0 {
 
-			forceLevel := 0
+			forceStatPool := 0
 
-			if spawnInfo.Level > 0 {
-				forceLevel = spawnInfo.Level
+			if spawnInfo.StatPool > 0 {
+				forceStatPool = spawnInfo.StatPool
 			} else {
 
 				// Get the zone settings, check for scaling
 				if zConfig := GetZoneConfig(r.Zone); zConfig != nil {
 
 					if zConfig.MobAutoScale.Minimum > 0 {
-						forceLevel = zConfig.GenerateRandomLevel()
+						forceStatPool = zConfig.GenerateRandomStatPool()
 					}
 
-					if forceLevel > 0 {
-						forceLevel += spawnInfo.LevelMod
-						if forceLevel < 1 {
-							forceLevel = 1
+					if forceStatPool > 0 {
+						forceStatPool += spawnInfo.StatPoolMod
+						if forceStatPool < 1 {
+							forceStatPool = 1
 						}
 					}
 
 				}
 			}
 
-			if mob := mobs.NewMobById(mobs.MobId(spawnInfo.MobId), r.RoomId, forceLevel); mob != nil {
+			if mob := mobs.NewMobById(mobs.MobId(spawnInfo.MobId), r.RoomId, forceStatPool); mob != nil {
 
 				// If a merchant, fill up stocks on first time being loaded in
 				if mob.HasShop() {

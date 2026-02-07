@@ -29,7 +29,7 @@ spawninfo:
   - ""
   - ""
   - wander
-  levelmod: 10
+  statpoolmod: 10
   respawnrate: 5 real minutes
 idlemessages:
 - A <ansi fg="mobname">citizen</ansi> walks up and examines the <ansi fg="itemname">map</ansi>

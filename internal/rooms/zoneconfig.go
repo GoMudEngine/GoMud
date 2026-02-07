@@ -9,9 +9,9 @@ type ZoneConfig struct {
 	Name         string `yaml:"name,omitempty"`
 	RoomId       int    `yaml:"roomid,omitempty"`
 	MobAutoScale struct {
-		Minimum int `yaml:"minimum,omitempty"` // level scaling minimum
-		Maximum int `yaml:"maximum,omitempty"` // level scaling maximum
-	} `yaml:"autoscale,omitempty"` // level scaling range if any
+		Minimum int `yaml:"minimum,omitempty"` // stat pool scaling minimum
+		Maximum int `yaml:"maximum,omitempty"` // stat pool scaling maximum
+	} `yaml:"autoscale,omitempty"` // stat pool scaling range if any
 	Mutators     mutators.MutatorList `yaml:"mutators,omitempty"`     // mutators defined here apply to entire zone
 	IdleMessages []string             `yaml:"idlemessages,omitempty"` // list of messages that can be displayed to players in the zone, assuming a room has none defined
 	MusicFile    string               `yaml:"musicfile,omitempty"`    // background music to play when in this zone
@@ -19,8 +19,8 @@ type ZoneConfig struct {
 	RoomIds      map[int]struct{}     `yaml:"-"`                      // Does not get written. Built dyanmically when rooms are loaded.
 }
 
-// Generates a random number between min and max
-func (z *ZoneConfig) GenerateRandomLevel() int {
+// Generates a random stat pool value between min and max
+func (z *ZoneConfig) GenerateRandomStatPool() int {
 	return util.Rand(z.MobAutoScale.Maximum-z.MobAutoScale.Minimum) + z.MobAutoScale.Minimum
 }
 

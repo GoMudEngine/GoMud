@@ -10,13 +10,13 @@ combatcommands:
   - 'sneak'
   - 'sneak;;;backstab'
   - 'sneak;;;backstab'
+statpool: 50
 character:
   name: shadow master
   description: 'The Shadow Master, a figure both revered and feared within the thieves'' guild, is an enigma wrapped in the allure of the night. Shrouded in a cloak that seems to absorb light, he moves with a silence that belies his presence, a ghostly whisper in a world of clatter and clamor. His face, often obscured by a deep hood or the dark of his lair, holds a stern, impassive expression, yet his eyes are alive with a piercing intelligence, missing nothing.'
   roomid: 0
   zone: Nowhere
   speciesid: 1
-  level: 50
   alignment: -65
   gold: 75
   equipment:

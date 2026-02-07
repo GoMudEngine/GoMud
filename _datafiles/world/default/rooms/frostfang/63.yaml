@@ -19,5 +19,5 @@ exits:
 spawninfo:
 - mobid: 5
   message: The armorer enters from a back room.
-  levelmod: 40
+  statpoolmod: 40
   respawnrate: 2 real minutes

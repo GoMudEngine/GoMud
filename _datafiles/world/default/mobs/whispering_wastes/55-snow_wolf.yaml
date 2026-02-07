@@ -4,11 +4,11 @@ itemdropchance: 1
 hostile: false
 maxwander: 5
 activitylevel: 10
+statpool: 25
 character:
   name: snow wolf
   description: 'The Snow Wolf is a fearsome predator that roams the frozen expanse of the Whispering Wastes, its thick, silver-gray fur allowing it to blend into the harsh, snow-covered landscape. Taller and more muscular than its warmer-climate cousins, the Snow Wolf has adapted to the brutal cold with an imposing frame and long, powerful limbs built for traversing deep snow. Its piercing yellow eyes seem to glow in the dim light of the Wastes'' endless winter, and its howl—low and mournful—can be heard echoing across the tundra, signaling the presence of its tightly-knit pack. Known for their intelligence and cunning, Snow Wolves are formidable hunters, able to track prey for days through fierce blizzards, using the winds and ice to their advantage.'
   speciesid: 11
-  level: 25
   equipment:
     neck:
       itemid: 20041

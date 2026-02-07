@@ -208,198 +208,232 @@ This plan breaks down the conversion of GoMud to DOGMud into small, testable inc
 
 ## Phase 3: Remove Level System (High Risk - Take Carefully)
 
-### Stage 3.1: Add Skill-Based Progression Hooks (Preparation)
+### Stage 3.1: Add Skill-Based Progression Hooks (Preparation) ✅ COMPLETED
 **Goal**: Create the infrastructure for skill-use progression without removing levels yet.
-
-**Changes**:
-1. Add `SkillProgression` tracking to Character:
-   - `SkillUseCount map[string]int` - Tracks skill usage
-   - `StatUseCount map[string]int` - Tracks stat checks
-2. Add progression trigger functions (don't activate yet):
-   - `OnCriticalSuccess(skill string)`
-   - `OnCriticalFailure(skill string)`
-   - `OnSkillUse(skill string)`
-3. Hook into existing combat/skill use (passive logging only)
-4. Add config for progression rates (disabled by default)
-
-**Files to Modify** (~10 files, ~300 lines):
-1. `internal/characters/character.go` - Add new fields/methods
-2. `internal/configs/config.gameplay.go` - Add progression config
-3. `internal/combat/combat.go` - Add hooks for crit success/fail
-4. `internal/skills/skills.go` - Add usage tracking hooks
-5. Test files
-
-**Testing**:
-- [ ] **Unit Tests**: Test usage tracking increments correctly
-- [ ] **Manual Test**: Use skills, verify usage counts increment
-- [ ] **Manual Test**: Combat with crits, verify tracking works
-- [ ] **Manual Test**: Verify existing level system still works
-- [ ] **Data Test**: Check character save files include new fields
-
-**Acceptance Criteria**:
-- Usage tracking works
-- No impact on existing level system
-- New fields save/load correctly
-- All tests pass
-
-**Estimated Changes**: ~300 lines, 10 files
+**Status**: Merged into `development` — see commit history for details.
 
 ---
 
-### Stage 3.2: Implement Skill Progression Formula
-**Goal**: Create the actual progression logic (still not activated).
-
-**Changes**:
-1. Implement progression chance calculation:
-   - Exponential difficulty curve
-   - Easier below soft cap (50 for skills, 150 for stats)
-   - Very hard above soft cap
-2. Implement progression roll on triggers:
-   - Critical success/failure
-   - Low health/stamina/conviction events
-   - Notable deeds (quest completion, first kill of mob type)
-3. Add progression notifications (messages only, no actual stat changes)
-4. Add config flag `UseSkillProgression bool` (default: false)
-
-**Files to Modify** (~12 files, ~500 lines):
-1. `internal/characters/progression.go` - New file with progression logic
-2. `internal/characters/character.go` - Integrate progression checks
-3. `internal/combat/combat.go` - Trigger on combat events
-4. `internal/configs/config.gameplay.go` - Add enable flag
-5. Test files with progression formula tests
-
-**Testing**:
-- [ ] **Unit Tests**: Test progression chance calculations
-- [ ] **Unit Tests**: Test exponential curve (easy→hard)
-- [ ] **Manual Test**: Enable progression, verify messages appear
-- [ ] **Manual Test**: Verify no actual stat/skill changes (messages only)
-- [ ] **Math Test**: Verify curve matches design (50% chance at low levels, 5% at high)
-
-**Acceptance Criteria**:
-- Progression formula implemented
-- Messages show when progression would occur
-- No actual changes to stats/skills yet
-- Config flag controls system
-- All tests pass
-
-**Estimated Changes**: ~500 lines, 12 files
+### Stage 3.2: Implement Skill Progression Formula ✅ COMPLETED
+**Goal**: Create the actual progression logic.
+**Status**: Merged into `development` — see commit history for details.
 
 ---
 
-### Stage 3.3: Dual Progression Mode (Levels + Skills)
-**Goal**: Run both systems in parallel - existing level system + new skill progression (opt-in via config).
+### Stage 3.3: Dual Progression Mode (Levels + Skills) ✅ COMPLETED
+**Goal**: Run both systems in parallel - existing level system + new skill progression.
+**Status**: Merged into `development` — see commit history for details.
+
+---
+
+### Stage 3.4: Decouple Combat from Levels ✅ COMPLETED
+**Goal**: Make combat use skill ranks instead of levels for calculations.
+**Status**: Merged into `development` — commit `f23260b`.
+
+---
+
+### Stage 3.5: Remove Level from Player Progression ✅ COMPLETED
+**Goal**: Stop awarding levels to players. Progression is skill-based.
+**Status**: Merged into `development` — commit `f020034`.
+
+**What was done**:
+- `LevelUp()` disabled (returns false)
+- Combat formulas decoupled from Level (use `GetCombatSkillLevel()` instead)
+- Level still exists in Character struct but is no longer advanced
+
+**What remains** (addressed in Stages 3.6–3.9 below):
+- Mobs still use Level for stat initialization (`AutoTrain()`, `StatPoints = Level`)
+- `Experience` field still populated on mob creation
+- Only 15 legacy GoMud skills exist; no DOG-specific combat skills yet
+- Documentation still describes old GoMud systems
+
+---
+
+### Stage 3.6: Remove Level/XP from Mobs (Mechanical Parity)
+**Goal**: Make mobs define their power through stats and skills directly, not derived from a level field. Players and mobs become truly mechanically identical.
 
 **Changes**:
-1. Enable actual stat/skill increases from progression system
-2. Keep level system active
-3. Add config `DualProgressionMode bool` (default: true)
-4. Characters can:
-   - Gain levels (traditional)
-   - Gain skill ranks from use (new)
-   - Gain stat points from use (new)
-5. Both systems work, neither interferes
+1. Remove `Level`-based stat initialization from mob creation:
+   - Remove `StatPoints = Level` and `AutoTrain()` from `NewMobById()`
+   - Remove `Experience = XPTNL()` initialization
+2. Mob YAML files define stats directly (already partially supported via `stats:` block)
+3. Mob YAML files define skills directly (add `skills:` block if not present)
+4. Remove or deprecate `forceLevel` parameter from `NewMobById()`
+5. Ensure mob stat recalculation works without Level input
+6. Keep `Level` field in Character struct for now (zero value / cosmetic) to avoid breaking serialization
 
 **Files to Modify** (~15 files, ~400 lines):
-1. `internal/characters/progression.go` - Enable actual increases
-2. `internal/characters/character.go` - Manage both systems
-3. `internal/usercommands/score.go` - Display both level and skill ranks
-4. `internal/configs/config.gameplay.go` - Add dual mode flag
-5. Test files for both systems
+1. `internal/mobs/mobs.go` - Remove level-based initialization from `NewMobById()`
+2. `internal/characters/character.go` - Ensure `Recalculate()` works with Level=0
+3. `internal/stats/stats.go` - Ensure stat calculation doesn't require Level
+4. `_datafiles/world/default/mobs/**/*.yaml` - Verify/update stat and skill definitions
+5. `internal/combat/` - Remove any remaining Level fallbacks (e.g., `GetCombatSkillLevel()` Level fallback)
+6. Test files
 
 **Testing**:
-- [ ] **Unit Tests**: Test skill increases work
-- [ ] **Unit Tests**: Test stat increases work
-- [ ] **Manual Test**: Level up (old system), verify it works
-- [ ] **Manual Test**: Use skills, verify they increase (new system)
-- [ ] **Manual Test**: Both systems visible in score
-- [ ] **Integration Test**: Character gains levels AND skill ranks
-- [ ] **Balance Test**: Verify progression rates feel appropriate
+- [ ] **Unit Tests**: Mob creation without level produces correct stats
+- [ ] **Manual Test**: Spawn mobs, verify stats match YAML definitions
+- [ ] **Manual Test**: Combat with mobs still works and feels balanced
+- [ ] **Manual Test**: Shopkeeper and persistent NPCs still function
+- [ ] **Regression Test**: `go test ./...` passes
 
 **Acceptance Criteria**:
-- Both systems functional
-- No conflicts between systems
-- Config flag controls dual mode
-- Score displays both level and skill ranks
+- Mobs initialize from stats/skills in YAML, not from Level
+- No `AutoTrain()` or `StatPoints = Level` in mob creation path
+- Combat works identically (mob difficulty unchanged)
+- Players and mobs use the same stat/skill resolution — no special cases
 - All tests pass
 
 **Estimated Changes**: ~400 lines, 15 files
 
 ---
 
-### Stage 3.4: Decouple Combat from Levels
-**Goal**: Make combat use skill ranks instead of levels for calculations.
+### Stage 3.7: Add Core Combat & Magic Skills
+**Goal**: Replace the legacy GoMud skill set with DOG's core combat and magic skills so combat has proper skill references instead of fallbacks.
+
+**New Skills (5 total — minimal set covering all combat/magic mechanics)**:
+
+| Skill | Covers | Replaces |
+|-------|--------|----------|
+| **Weapon Combat** | Melee attack & defense with weapons, parrying, weapon techniques | Brawling (partially), DualWield |
+| **Unarmed Combat** | Fist/body attacks & defense, grappling, martial arts | Brawling |
+| **Ranged Combat** | Bows, crossbows, thrown weapons — attack & defense at range | (new) |
+| **Spellcasting** | All magic — elemental, enhancement, vital schools — offense & defense | Cast, Enchant, Scribe |
+| **Psionics** | Mental powers — telepathy, telekinesis, illusion, charm — offense & defense | (new) |
+
+**Design Notes**:
+- Each skill covers both offense and defense in its domain (no separate Defense skill)
+- Opposed rolls: attacker's combat skill vs defender's combat skill (e.g., Weapon Combat vs Weapon Combat, or Weapon Combat vs Unarmed Combat)
+- Magic defense against physical: Spellcasting/Psionics can serve as defense (e.g., magical shield, mental dodge)
+- Skills use the existing 1-4 level system for now; progression rework comes in Phase 4+
+- Legacy skills (Map, Search, Track, Skulduggery, etc.) remain untouched — they still work
 
 **Changes**:
-1. Update combat calculations to use skill ranks:
-   - Attack bonus from `Melee Combat` skill instead of level
-   - Defense bonus from `Defense/Evasion` skill instead of level
-   - Damage from Strength + weapon + skill
-2. Keep level visible but non-functional in combat
-3. Add backwards compatibility for NPCs without skills (use level * 5 as skill)
+1. Add 5 new skill definitions to `internal/skills/skills.go`
+2. Update combat resolution to reference new skills instead of Brawling fallback
+3. Remove `GetCombatSkillLevel()` Level-based fallback (mobs now have real skills from 3.6)
+4. Add skill YAML data for the new skills
+5. Update mob YAML files to use new combat/magic skills where appropriate
 
-**Files to Modify** (~10 files, ~600 lines):
-1. `internal/combat/calculations.go` - Major refactor of combat math
-2. `internal/combat/combat.go` - Update attack functions
-3. `internal/mobs/mobs.go` - Add skill defaults for NPCs
-4. `internal/characters/character.go` - Add helper methods
-5. Combat test files
+**Files to Modify** (~15 files, ~500 lines):
+1. `internal/skills/skills.go` - Add new skill definitions
+2. `internal/combat/combat.go` - Use new skill names in resolution
+3. `internal/combat/calculations.go` - Update formulas for new skill references
+4. `_datafiles/` - Skill training data, mob skill assignments
+5. Test files
 
 **Testing**:
-- [ ] **Unit Tests**: Test new combat calculations
-- [ ] **Manual Test**: Combat at level 1 with high skill vs low skill
-- [ ] **Manual Test**: Combat with NPCs (verify backward compat)
-- [ ] **Manual Test**: Verify damage formulas feel balanced
-- [ ] **Balance Test**: Compare old vs new combat results
-- [ ] **Regression Test**: Ensure combat is still functional
+- [ ] **Unit Tests**: New skills load and resolve correctly
+- [ ] **Manual Test**: Combat using Weapon Combat / Unarmed Combat / Ranged Combat
+- [ ] **Manual Test**: Spellcasting and Psionics function in combat
+- [ ] **Manual Test**: Mobs with different combat skills fight appropriately
+- [ ] **Balance Test**: Combat with new skill references feels comparable to before
+- [ ] **Regression Test**: Legacy skills (Map, Search, etc.) still work
 
 **Acceptance Criteria**:
-- Combat uses skills, not levels
-- NPCs without skills still functional
-- Combat balance feels appropriate
+- 5 new combat/magic skills defined and functional
+- Combat uses real skills — no Level fallbacks anywhere
+- Mobs have appropriate combat skills assigned
+- Legacy utility skills unaffected
 - All tests pass
-- No combat bugs
 
-**Estimated Changes**: ~600 lines, 10 files
+**Estimated Changes**: ~500 lines, 15 files
 
 ---
 
-### Stage 3.5: Remove Level from Progression (Skills Only)
-**Goal**: Stop awarding levels. Progression is 100% skill-based now.
+### Stage 3.8: Add Foundational Non-Combat Skills
+**Goal**: Add a minimal set of non-combat skills so other systems have real skill references. Keep the list small — we can always expand later.
+
+**New Skills (5 total — skeleton covering core non-combat mechanics)**:
+
+| Skill | Covers | Replaces/Maps To |
+|-------|--------|-----------------|
+| **First Aid** | Healing others, treating wounds, stabilizing the dying | (new) |
+| **Stealth** | Sneaking, hiding, avoiding detection | Skulduggery (partially) |
+| **Tracking** | Finding creatures/players, reading trails, navigation | Track |
+| **Bartering** | Trade prices, negotiation, appraisal | Trading |
+| **Foraging** | Gathering resources — herbs, wood, ore, food | (new) |
+
+**Design Notes**:
+- These 5 + the 5 combat skills from 3.7 = 10 core DOG skills
+- Existing legacy skills that overlap (Track, Trading, Skulduggery) should be mapped/aliased to the new names
+- Legacy skills without a DOG equivalent (Map, Portal, Search, Peep, Inspect, Tame, DualWield) remain as-is for now
+- Crafting skills (Blacksmithing, Alchemy, etc.) deferred to a later phase when the crafting system is built
 
 **Changes**:
-1. Set `DualProgressionMode: false` as default
-2. Remove level-up on XP gain
-3. Remove XP system entirely (or keep for legacy NPCs)
-4. Remove training point system (tied to levels)
-5. Hide level from UI (or show as decorative only)
-6. Convert NPC levels to skill equivalents
+1. Add 5 new skill definitions
+2. Map/alias legacy skills to new DOG skills where appropriate
+3. Ensure the `score` command displays new skills
+4. Add skill YAML data
 
-**Files to Modify** (~20 files, ~700 lines):
-1. `internal/characters/character.go` - Remove level-up logic
-2. `internal/usercommands/experience.go` - Remove or deprecate
-3. `internal/usercommands/train.go` - Remove or refactor for skill-based training
-4. `internal/usercommands/score.go` - Remove level display
-5. `internal/mobs/mobs.go` - Convert levels to skills
-6. All NPC YAML files - Set default skills based on old levels
-7. Test files
+**Files to Modify** (~10 files, ~300 lines):
+1. `internal/skills/skills.go` - Add new skill definitions
+2. `internal/usercommands/score.go` - Display new skills
+3. `_datafiles/` - Skill data files
+4. Test files
 
 **Testing**:
-- [ ] **Unit Tests**: Verify level-up doesn't happen
-- [ ] **Unit Tests**: Verify XP doesn't accumulate
-- [ ] **Manual Test**: Play for extended period, verify no levels gained
-- [ ] **Manual Test**: Skills increase from use
-- [ ] **Manual Test**: Combat, crafting, all systems use skills
-- [ ] **Integration Test**: Full character progression lifecycle (create → skill up → combat)
-- [ ] **Migration Test**: Load old characters, verify level→skill conversion
+- [ ] **Manual Test**: New skills appear in character score
+- [ ] **Manual Test**: Skills can be trained at appropriate locations
+- [ ] **Manual Test**: Legacy skills still function
+- [ ] **Regression Test**: `go test ./...` passes
 
 **Acceptance Criteria**:
-- No levels gained
-- Skill progression is only progression
-- All systems functional without levels
-- Old characters convert successfully
+- 5 new non-combat skills defined
+- Legacy skill aliases work correctly
+- Score displays all skills
 - All tests pass
 
-**Estimated Changes**: ~700 lines, 20 files
+**Estimated Changes**: ~300 lines, 10 files
+
+---
+
+### Stage 3.9: Update Documentation
+**Goal**: Bring all documentation in sync with the actual codebase state after Stages 3.1–3.8.
+
+**Changes**:
+1. Update `DEVELOPMENT_PLAN.md`:
+   - Mark all completed stages
+   - Update "Current Stage" and "Status" fields
+   - Update timeline estimates
+2. Update `internal/stats/context.md`:
+   - Replace old stat names (Speed, Smarts, Mysticism) with current names
+   - Remove level-based progression documentation
+   - Document skill-based stat resolution
+3. Update `internal/mobs/context.md`:
+   - Remove level-based mob creation documentation
+   - Document stats/skills-based mob initialization
+4. Update `internal/skills/context.md`:
+   - Document new DOG skill set (10 core skills)
+   - Document legacy skill mapping
+5. Update `internal/combat/context.md`:
+   - Document skill-based combat resolution
+   - Remove level references
+6. Update `internal/characters/context.md`:
+   - Remove level/XP progression documentation
+   - Document skill-based progression
+7. Scan remaining `context.md` files for stale Level/XP/Mana references and update as needed
+
+**Files to Modify** (~10-20 context.md files):
+1. `internal/stats/context.md`
+2. `internal/mobs/context.md`
+3. `internal/skills/context.md`
+4. `internal/combat/context.md`
+5. `internal/characters/context.md`
+6. Other context.md files with stale references
+7. `DEVELOPMENT_PLAN.md` (final status update)
+
+**Testing**:
+- [ ] **Grep Test**: Search all context.md files for "level" / "Level" / "XP" / "experience" — verify references are accurate or removed
+- [ ] **Review**: Each updated file accurately describes the current code behavior
+
+**Acceptance Criteria**:
+- All context.md files reflect current codebase state
+- No stale references to level-based progression, old stat names, or mana
+- Dev plan accurately tracks completed vs. pending work
+- Documentation is useful as a reference for future development
+
+**Estimated Changes**: ~20 files, documentation only
 
 ---
 
@@ -707,15 +741,15 @@ If a stage breaks the MUD:
 
 Assuming ~4 hours per stage (implement + test):
 
-| Phase | Stages | Estimated Hours |
-|-------|--------|-----------------|
-| Phase 1: Stats | 3 stages | 12 hours |
-| Phase 2: Species | 2 stages | 8 hours |
-| Phase 3: Remove Levels | 5 stages | 20 hours |
-| Phase 4: Distribution Combat | 2 stages | 8 hours |
-| Phase 5: Stamina | 2 stages | 8 hours |
-| Phase 6: Conviction | 2 stages | 8 hours |
-| **Total** | **16 stages** | **64 hours** |
+| Phase | Stages | Estimated Hours | Status |
+|-------|--------|-----------------|--------|
+| Phase 1: Stats | 3 stages (1.1–1.3) | 12 hours | Not Started |
+| Phase 2: Species | 2 stages (2.1–2.2) | 8 hours | Not Started |
+| Phase 3: Remove Levels | 9 stages (3.1–3.9) | 36 hours | **3.1–3.5 Complete** |
+| Phase 4: Distribution Combat | 2 stages (4.1–4.2) | 8 hours | Not Started |
+| Phase 5: Stamina | 2 stages (5.1–5.2) | 8 hours | Not Started |
+| Phase 6: Conviction | 2 stages (6.1–6.2) | 8 hours | Not Started |
+| **Total** | **20 stages** | **80 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
 
@@ -766,6 +800,6 @@ These phases will be detailed in a separate plan once core mechanics are stable.
 
 ---
 
-**Last Updated**: 2026-02-05
-**Status**: Ready to Begin
-**Current Stage**: Not Started
+**Last Updated**: 2026-02-06
+**Status**: In Progress
+**Current Stage**: 3.6 — Remove Level/XP from Mobs (next up)

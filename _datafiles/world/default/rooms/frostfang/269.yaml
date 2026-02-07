@@ -15,7 +15,7 @@ exits:
     roomid: 259
 spawninfo:
 - mobid: 26
-  levelmod: 10
+  statpoolmod: 10
   respawnrate: 5 real minutes
 - itemid: 26
   respawnrate: 1 week

@@ -181,40 +181,30 @@ func TestGetCombatSkillLevel_WithBrawling(t *testing.T) {
 	}
 }
 
-func TestGetCombatSkillLevel_FallbackFromLevel(t *testing.T) {
-	// Stage 3.5: Level fallback is for mobs without skills.
-	// Simulate a mob-like character with no brawling skill.
+func TestGetCombatSkillLevel_NoBrawlingReturnsMinimum(t *testing.T) {
+	// Stage 3.6: No Level fallback. Without brawling skill, returns 1.
 	c := New()
-	delete(c.Skills, "brawling") // Remove brawling to test fallback
+	delete(c.Skills, "brawling")
 	c.Level = 15
-	if got := c.GetCombatSkillLevel(); got != 3 {
-		t.Errorf("Expected combat skill 3 from level 15 fallback, got %d", got)
-	}
-}
-
-func TestGetCombatSkillLevel_FallbackCapsAt4(t *testing.T) {
-	c := New()
-	delete(c.Skills, "brawling") // Remove brawling to test fallback
-	c.Level = 30
-	if got := c.GetCombatSkillLevel(); got != 4 {
-		t.Errorf("Expected combat skill 4 (capped) from level 30 fallback, got %d", got)
-	}
-}
-
-func TestGetCombatSkillLevel_FallbackMinimum1(t *testing.T) {
-	c := New()
-	c.Level = 1
 	if got := c.GetCombatSkillLevel(); got != 1 {
-		t.Errorf("Expected combat skill 1 (minimum) from level 1 fallback, got %d", got)
+		t.Errorf("Expected combat skill 1 (minimum, no brawling), got %d", got)
 	}
 }
 
-func TestGetCombatSkillLevel_BrawlingOverridesLevel(t *testing.T) {
+func TestGetCombatSkillLevel_NoBrawlingAlwaysReturns1(t *testing.T) {
 	c := New()
-	c.Level = 30 // Would give fallback of 4
+	delete(c.Skills, "brawling")
+	c.Level = 30
+	if got := c.GetCombatSkillLevel(); got != 1 {
+		t.Errorf("Expected combat skill 1 (minimum, no brawling regardless of level), got %d", got)
+	}
+}
+
+func TestGetCombatSkillLevel_BrawlingUsed(t *testing.T) {
+	c := New()
 	c.Skills["brawling"] = 2
 	if got := c.GetCombatSkillLevel(); got != 2 {
-		t.Errorf("Expected combat skill 2 from brawling (overriding level), got %d", got)
+		t.Errorf("Expected combat skill 2 from brawling, got %d", got)
 	}
 }
 

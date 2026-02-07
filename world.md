@@ -143,50 +143,33 @@ Players and NPCs are functionally identical, with 6 primary stats, derived secon
 **Skill Categories:**
 
 #### Combat Skills
-- Melee Combat
-- Unarmed Combat
-- Ranged Combat
-- Defense/Evasion
+- **Weapon Combat** — Melee attack & defense with weapons, parrying, weapon techniques
+- **Unarmed Combat** — Fist/body attacks & defense, grappling, martial arts
+- **Ranged Combat** — Bows, crossbows, thrown weapons — attack & defense at range
 
 #### Magic Skills
-- Spellcasting (general)
-- Psionics
-- Elemental Magic
-- Enhancement Magic
-- Mental Magic
-- Vital Magic
-
-#### Crafting Skills
-- Blacksmithing
-- Leatherworking
-- Alchemy
-- Cooking
-- Carpentry
-- Tailoring
-- (Additional crafting skills as needed)
+- **Spellcasting** — All magic (elemental, enhancement, vital schools) — offense & defense
+- **Psionics** — Mental powers (telepathy, telekinesis, illusion, charm) — offense & defense
 
 #### Survival Skills
-- Tracking
-- Stealth
-- Climbing
-- Swimming
-- Foraging
-- Animal Handling
+- **First Aid** — Healing others, treating wounds, stabilizing the dying
+- **Stealth** — Sneaking, hiding, avoiding detection
+- **Tracking** — Finding creatures/players, reading trails, navigation
+- **Foraging** — Gathering resources — herbs, wood, ore, food
 
 #### Social Skills
-- Persuasion
-- Intimidation
-- Deception
-- Bartering
-- Teaching
-- Pickpocketing
+- **Bartering** — Trade prices, negotiation, appraisal
 
-#### Knowledge Skills
-- Herbalism
-- First Aid
-- Linguistics
-- Lore
-- Appraisal
+#### Crafting Skills
+- Blacksmithing, Leatherworking, Alchemy, Cooking, Carpentry, Tailoring
+- (Deferred to crafting system implementation phase)
+
+#### Future Expansion Skills
+- Additional combat specializations (e.g., DualWield, Shields)
+- Additional survival skills (Climbing, Swimming, Animal Handling)
+- Additional social skills (Persuasion, Intimidation, Deception, Teaching, Pickpocketing)
+- Additional knowledge skills (Herbalism, Linguistics, Lore, Appraisal)
+- (Added as systems require them — start minimal, expand organically)
 
 **Starting Skills:** New characters start with a suite of rank 1 skills (Unarmed Combat, basic survival skills, etc.)
 

@@ -20,5 +20,5 @@ spawninfo:
 - mobid: 8
   message: The King has decided to make an appearance!
   questflags: [2-start, 2-investigate, 2-inform]
-  level: 100
+  statpool: 100
   respawnrate: 7 real minutes

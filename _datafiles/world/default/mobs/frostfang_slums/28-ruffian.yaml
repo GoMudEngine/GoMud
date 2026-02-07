@@ -8,13 +8,13 @@ groups:
 idlecommands:
   - 'wander'
 activitylevel: 10
+statpool: 20
 character:
   name: ruffian
   description: 'The ruffian looms in the dimly lit alleyway of the slums, a menacing figure carved out of the shadows. His rough, weather-beaten face is partly obscured by a tattered hood, but his eyes gleam with a predatory sharpness, scanning the surroundings with a mix of suspicion and brazen confidence. Broad-shouldered and solidly built, his presence is intimidating, the result of a life hardened by the unforgiving streets of the slums. His clothes are a patchwork of leather and cloth, well-worn and stained, telling a silent tale of numerous brawls and escapades.'
   roomid: 0
   zone: Nowhere
   speciesid: 1
-  level: 20
   alignment: -50
   gold: 10
   equipment:

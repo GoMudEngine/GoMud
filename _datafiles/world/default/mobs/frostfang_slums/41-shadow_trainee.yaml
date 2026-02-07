@@ -10,13 +10,13 @@ combatcommands:
   - 'sneak'
   - 'sneak;;;backstab'
   - 'sneak;;;backstab'
+statpool: 20
 character:
   name: shadow trainee
   description: 'Though formiddable in his own right, the trainee''s position amongst the clan is low ranking, as they have much to learn.'
   roomid: 0
   zone: Nowhere
   speciesid: 1
-  level: 20
   alignment: -50
   gold: 2
   equipment:

@@ -13,11 +13,11 @@ idlecommands:
   - emote is counting his coins
   - emote is watching you
 activitylevel: 10
+statpool: 29
 character:
   name: armorer
   description: 'Nestled amidst the vibrant array of goods and trinkets, the shop merchant conducts business with a keen eye and a persuasive charm. Their attire is a mix of practicality and flair, with a well-tailored vest displaying an array of intricate patterns that catch the eye. A multitude of pouches and pockets are strategically placed, holding an assortment of small items ready to be showcased to potential buyers. Their hair is neatly combed, and a pair of spectacles rests on the bridge of their nose, aiding in the appraisal of goods and coins alike. With a welcoming smile and a practiced sales pitch, they engage customers, showcasing their wares with a flair for highlighting each item''s unique qualities. Their hands, nimble and precise, handle the merchandise with care, ensuring that even the most delicate of items are presented in the best possible light. The merchant''s knowledge of their inventory is extensive, and they are always ready to provide recommendations or share interesting tidbits about the origins of their goods. With a sharp mind for business and a genuine enthusiasm for their trade, the shop merchant creates an inviting and engaging shopping experience for all.'
   speciesid: 1
-  level: 29
   alignment: 30
   gold: 10
   shop:
