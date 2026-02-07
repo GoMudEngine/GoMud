@@ -468,7 +468,7 @@ No config flag needed — we will wire the `dice` package directly into combat i
 
 ---
 
-### Stage 4.2: Replace Dice Combat with Distribution Combat
+### Stage 4.2: Replace Dice Combat with Distribution Combat ✅ COMPLETED (merge: 3892439)
 **Goal**: Replace all legacy `util.RollDice()` / `util.Rand()` combat calculations with the existing `dice` package's distribution-based rolling.
 
 **Changes**:
@@ -759,7 +759,7 @@ Before each git commit:
 ### High-Risk Stages (Extra Care Required)
 - **Stage 3.4**: Decouple Combat from Levels (combat refactor)
 - **Stage 3.5**: Remove Level System (major breaking change)
-- **Stage 4.2**: Replace Dice with Distribution (combat refactor)
+- **Stage 4.2**: ✅ Replace Dice with Distribution (combat refactor) — merge 3892439
 
 ### Backup Strategy
 Before each high-risk stage:
@@ -785,7 +785,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 1: Stats | 3 stages (1.1–1.3) | 12 hours | **Complete** |
 | Phase 2: Species | 2 stages (2.1–2.2) | 8 hours | **Complete** |
 | Phase 3: Remove Levels | 9 stages (3.1–3.9) | 36 hours | **Complete** |
-| Phase 4: Distribution Combat | 3 stages (4.1–4.3) | 6 hours | **4.1 Complete** (side quest) |
+| Phase 4: Distribution Combat | 3 stages (4.1–4.3) | 6 hours | **4.1–4.2 Complete** |
 | Phase 5: Stamina | 2 stages (5.1–5.2) | 8 hours | Not Started |
 | Phase 6: Conviction | 2 stages (6.1–6.2) | 8 hours | Not Started |
 | **Total** | **21 stages** | **82 hours** | |
@@ -841,4 +841,4 @@ These phases will be detailed in a separate plan once core mechanics are stable.
 
 **Last Updated**: 2026-02-07
 **Status**: In Progress
-**Current Stage**: 4.1 — Add Distribution Rolling (next up)
+**Current Stage**: 4.3 — Combat Test Content (next up)
