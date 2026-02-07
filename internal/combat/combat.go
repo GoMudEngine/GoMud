@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
@@ -17,7 +18,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/statmods"
 	"github.com/GoMudEngine/GoMud/internal/users"
-	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 type SourceTarget string
@@ -288,12 +288,7 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 			}
 
 			if dualWieldLevel == 2 {
-
-				roll := util.Rand(100)
-
-				util.LogRoll(`Both Weapons`, roll, 50)
-
-				if roll < 50 {
+				if success, _ := dice.Percentile(50); success {
 					maxWeapons = 2
 				}
 			}
@@ -309,7 +304,7 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 
 			for len(attackWeapons) > maxWeapons {
 				// Remove a random position
-				rnd := util.Rand(len(attackWeapons))
+				rnd := dice.RollBetweenInt(0, len(attackWeapons)-1)
 				attackWeapons = append(attackWeapons[:rnd], attackWeapons[rnd+1:]...)
 			}
 
@@ -376,31 +371,60 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				attackSourceDamage := 0
 				attackSourceReduction := 0
 
-				if Hits(sourceChar.Stats.Dexterity.ValueAdj, targetChar.Stats.Dexterity.ValueAdj, penalty) {
-					attackResult.Hit = true
-					attackTargetDamage = util.RollDice(dCount, dSides) + dBonus
+				// Compute distribution parameters for damage (used for rolling and pctDamage)
+				dmgMean, dmgVariance := dice.DiceToDistribution(dCount, dSides, dBonus)
 
-					if attackResult.Crit || Crits(sourceChar, targetChar) {
+				// Opposed roll: attacker dex+skill vs defender dex+skill
+				attackScore := float64(sourceChar.Stats.Dexterity.ValueAdj) + float64(sourceChar.GetCombatSkillLevel())
+				defendScore := float64(targetChar.Stats.Dexterity.ValueAdj) + float64(targetChar.GetCombatSkillLevel())
+				attackScore -= float64(penalty) // dual wield penalty
+
+				combatStdDev := 15.0
+				hit, _, hitRoll, _ := dice.OpposedRoll(attackScore, defendScore, combatStdDev)
+
+				if hit {
+					attackResult.Hit = true
+
+					// Distribution-based damage
+					damageResult := dice.Roll(dmgMean, dmgVariance)
+					attackTargetDamage = int(math.Round(math.Max(0, damageResult.Value)))
+
+					// Crit detection from hit roll z-score
+					critThreshold := 2.0 // ~2.5% of hits are crits
+					if sourceChar.HasBuffFlag(buffs.Accuracy) {
+						critThreshold = 1.5 // ~6.7% with Accuracy buff
+					}
+					if targetChar.HasBuffFlag(buffs.Blink) {
+						critThreshold = 2.5 // ~0.6% against Blink
+					}
+					// Skill advantage shifts crit threshold
+					skillDiff := sourceChar.GetCombatSkillLevel() - targetChar.GetCombatSkillLevel()
+					critThreshold -= float64(skillDiff) * 0.05
+
+					if hitRoll.ZScore >= critThreshold || attackResult.Crit {
 						attackResult.Crit = true
 						attackResult.BuffTarget = critBuffs
-						attackTargetDamage += dCount*dSides + dBonus
+						attackTargetDamage += int(math.Round(dmgMean))
 					}
 				}
 
-				defenseAmt := util.Rand(targetChar.GetDefense())
+				defenseAmt := dice.RollBetweenInt(0, targetChar.GetDefense())
 				if defenseAmt > 0 {
 					attackTargetReduction = int(math.Round((float64(defenseAmt) / 100) * float64(attackTargetDamage)))
 					attackTargetDamage -= attackTargetReduction
 				}
 
-				defenseAmt = util.Rand(sourceChar.GetDefense())
+				defenseAmt = dice.RollBetweenInt(0, sourceChar.GetDefense())
 				if defenseAmt > 0 {
 					attackSourceReduction = int(math.Round((float64(defenseAmt) / 100) * float64(attackSourceDamage)))
 					attackSourceDamage -= attackSourceReduction
 				}
 
-				// Calculate actual damage vs. possible damage pct
-				pctDamage := math.Ceil(float64(attackTargetDamage) / float64(dCount*dSides+dBonus) * 100)
+				// Calculate actual damage vs. expected damage pct
+				pctDamage := 0.0
+				if dmgMean > 0 {
+					pctDamage = math.Ceil(float64(attackTargetDamage) / dmgMean * 100)
+				}
 
 				msgs := items.GetAttackMessage(weaponSubType, int(pctDamage))
 
@@ -531,7 +555,7 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				attackResult.DamageToSourceReduction += attackSourceReduction
 			}
 
-			if util.RollDice(1, 5) == 1 { // 20% chance to join
+			if petJoins, _ := dice.Percentile(20); petJoins { // 20% chance to join
 				if sourceChar.RoomId == targetChar.RoomId {
 					if sourceChar.Pet.Exists() && sourceChar.Pet.Damage.DiceRoll != `` {
 
@@ -539,7 +563,8 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 
 						for i := 0; i < attacks; i++ {
 
-							attackTargetDamage := util.RollDice(dCount, dSides) + dBonus
+							petMean, petVariance := dice.DiceToDistribution(dCount, dSides, dBonus)
+							attackTargetDamage := int(math.Round(math.Max(0, dice.Roll(petMean, petVariance).Value)))
 
 							attackResult.DamageToTarget += attackTargetDamage
 
@@ -564,64 +589,3 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 
 }
 
-// hit chance will be between 30 and 100
-func hitChance(attackSpd, defendSpd int) int {
-	atkPlusDef := float64(attackSpd + defendSpd)
-	if atkPlusDef < 1 {
-		atkPlusDef = 1
-	}
-	return 30 + int(float64(attackSpd)/atkPlusDef*70)
-}
-
-// Chance to hit
-func Hits(attackSpd, defendSpd, hitModifier int) bool {
-	// Attack speeds affect 90% of the hit chance
-	toHit := hitChance(attackSpd, defendSpd)
-	if hitModifier != 0 {
-		toHit += hitModifier
-	}
-
-	// Always at leat a 5% chance
-	if toHit < 5 {
-		toHit = 5
-	}
-
-	// Always at most a 95% chance
-	if toHit > 95 {
-		toHit = 95
-	}
-	hitRoll := util.Rand(100)
-
-	util.LogRoll(`Hits`, hitRoll, toHit)
-
-	return hitRoll < toHit
-}
-
-// Whether they crit
-func Crits(sourceChar characters.Character, targetChar characters.Character) bool {
-
-	skillDiff := sourceChar.GetCombatSkillLevel() - targetChar.GetCombatSkillLevel()
-	if skillDiff < 1 {
-		skillDiff = 1
-	}
-	critChance := 5 + int(math.Round(float64(sourceChar.Stats.Strength.ValueAdj+sourceChar.Stats.Dexterity.ValueAdj)/float64(skillDiff)))
-
-	if sourceChar.HasBuffFlag(buffs.Accuracy) {
-		critChance *= 2
-	}
-
-	if targetChar.HasBuffFlag(buffs.Blink) {
-		critChance /= 2
-	}
-
-	// Minimum 5% chance
-	if critChance < 5 {
-		critChance = 5
-	}
-
-	critRoll := util.Rand(100)
-
-	util.LogRoll(`Crits`, critRoll, critChance)
-
-	return critRoll < critChance
-}

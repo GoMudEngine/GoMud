@@ -332,6 +332,16 @@ func AverageResult(mean, stdDev float64) float64 {
 	return mean // For normal distribution, mean is the expected value
 }
 
+// DiceToDistribution converts NdM+bonus dice notation to normal distribution parameters.
+// dCount: number of dice, dSides: sides per die, bonus: flat damage bonus
+// Returns (mean, stdDev) suitable for use with Roll() and RollDamage().
+func DiceToDistribution(dCount, dSides, bonus int) (mean float64, stdDev float64) {
+	mean = float64(dCount)*(float64(dSides)+1)/2 + float64(bonus)
+	variance := float64(dCount) * (float64(dSides)*float64(dSides) - 1) / 12
+	stdDev = math.Sqrt(variance)
+	return mean, stdDev
+}
+
 // StandardDeviation calculates a reasonable standard deviation based on stat range
 // This is a helper for determining how much randomness to apply
 // statRange: the typical range of the stat (e.g., 100 if stats range 0-100)

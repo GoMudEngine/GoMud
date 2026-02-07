@@ -370,6 +370,60 @@ func TestStandardDeviation(t *testing.T) {
 	t.Logf("  Stat range 0-100, factor 0.20 = %.1f (high randomness)", StandardDeviation(100, 0.20))
 }
 
+func TestDiceToDistribution(t *testing.T) {
+	tests := []struct {
+		dCount, dSides, bonus int
+		expectedMean          float64
+		expectedStdDev        float64
+	}{
+		{1, 6, 0, 3.5, 1.7078},   // 1d6: mean=3.5, stddev≈1.71
+		{2, 6, 0, 7.0, 2.4152},   // 2d6: mean=7.0, stddev≈2.42
+		{2, 6, 3, 10.0, 2.4152},  // 2d6+3: mean=10.0, stddev≈2.42
+		{1, 4, 0, 2.5, 1.1180},   // 1d4: mean=2.5, stddev≈1.12
+		{1, 20, 0, 10.5, 5.7662}, // 1d20: mean=10.5, stddev≈5.77
+		{3, 8, 2, 15.5, 3.9686},  // 3d8+2: mean=15.5, stddev≈3.97
+	}
+
+	for _, tt := range tests {
+		mean, stdDev := DiceToDistribution(tt.dCount, tt.dSides, tt.bonus)
+
+		if math.Abs(mean-tt.expectedMean) > 0.01 {
+			t.Errorf("DiceToDistribution(%dd%d+%d) mean = %.4f, want %.4f",
+				tt.dCount, tt.dSides, tt.bonus, mean, tt.expectedMean)
+		}
+
+		if math.Abs(stdDev-tt.expectedStdDev) > 0.01 {
+			t.Errorf("DiceToDistribution(%dd%d+%d) stdDev = %.4f, want %.4f",
+				tt.dCount, tt.dSides, tt.bonus, stdDev, tt.expectedStdDev)
+		}
+
+		t.Logf("%dd%d+%d → mean=%.2f, stdDev=%.4f", tt.dCount, tt.dSides, tt.bonus, mean, stdDev)
+	}
+}
+
+func TestDiceToDistributionDamageOutput(t *testing.T) {
+	// Verify that rolling damage via DiceToDistribution produces
+	// results with the expected mean and spread
+	dCount, dSides, bonus := 2, 6, 3
+	mean, stdDev := DiceToDistribution(dCount, dSides, bonus)
+	iterations := 10000
+
+	sum := 0.0
+	for i := 0; i < iterations; i++ {
+		result := Roll(mean, stdDev)
+		val := math.Max(0, result.Value)
+		sum += val
+	}
+
+	actualMean := sum / float64(iterations)
+	t.Logf("2d6+3 distribution damage over %d rolls: mean=%.2f (expected %.2f)",
+		iterations, actualMean, mean)
+
+	if math.Abs(actualMean-mean) > 0.5 {
+		t.Errorf("Actual mean %.2f too far from expected %.2f", actualMean, mean)
+	}
+}
+
 // Benchmark tests
 func BenchmarkRoll(b *testing.B) {
 	for i := 0; i < b.N; i++ {

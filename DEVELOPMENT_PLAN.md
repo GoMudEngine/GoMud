@@ -507,6 +507,52 @@ No config flag needed — we will wire the `dice` package directly into combat i
 
 ---
 
+### Stage 4.3: Combat Test Content
+**Goal**: Create a set of test rooms, mobs, and gear specifically tuned for playtesting the new distribution-based combat system. This gives us controlled scenarios to verify balance, crit rates, and damage curves.
+
+**Changes**:
+1. Create a small test zone (3–5 rooms) accessible from an existing area
+   - Training yard / combat arena theme
+   - Rooms connected linearly for easy navigation
+2. Create test mobs at varying difficulty tiers:
+   - **Training Dummy** — Very low stats, stands still. For testing basic hit/damage output
+   - **Sparring Partner** — Moderate stats, balanced. For testing opposed rolls
+   - **Arena Champion** — High stats, tough fight. For testing hard encounters and crit impact
+   - Each mob uses the StatPool system (no levels), with stats tuned to exercise different combat paths
+3. Create test weapons covering different combat skill routes:
+   - A basic sword (weapon-combat)
+   - A staff or fist wraps (unarmed-combat)
+   - A bow (ranged-combat)
+   - Each with `baseDamage` / `variance` fields (distribution-friendly format from 4.2)
+4. Create basic armor set for survivability testing
+   - Simple chest piece and shield with stat modifiers
+
+**Files to Create/Modify** (~8 files, ~200 lines):
+1. `_datafiles/rooms/test_arena/` — New room YAML files (3–5 rooms)
+2. `_datafiles/mobs/test_arena/` — New mob YAML files (3 mobs)
+3. `_datafiles/items/weapons/test/` — Test weapon YAML files (3 weapons)
+4. `_datafiles/items/armor/test/` — Test armor YAML files (1–2 items)
+5. Room exit connections to link test zone to an existing area
+
+**Testing**:
+- [ ] **Manual Test**: Navigate to test zone, verify all rooms load
+- [ ] **Manual Test**: Fight each mob tier, verify combat feels balanced
+- [ ] **Manual Test**: Equip each test weapon, verify correct combat skill routing
+- [ ] **Manual Test**: Verify crit/fumble rates feel reasonable over many fights
+- [ ] **Balance Test**: Easy mob should be trivial, medium should be fair, hard should be dangerous
+- [ ] **Regression Test**: `go build ./...` and `go test ./...` pass
+
+**Acceptance Criteria**:
+- Test zone accessible in-game
+- Three difficulty tiers of mobs exercising the distribution combat system
+- Three weapon types covering weapon-combat, unarmed-combat, ranged-combat skills
+- All content loads without errors
+- Combat balance feels appropriate for the new system
+
+**Estimated Changes**: ~200 lines, 8 files
+
+---
+
 ## Phase 5: Movement & Stamina System
 
 ### Stage 5.1: Connect Stamina to Movement
@@ -739,10 +785,10 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 1: Stats | 3 stages (1.1–1.3) | 12 hours | **Complete** |
 | Phase 2: Species | 2 stages (2.1–2.2) | 8 hours | **Complete** |
 | Phase 3: Remove Levels | 9 stages (3.1–3.9) | 36 hours | **Complete** |
-| Phase 4: Distribution Combat | 2 stages (4.1–4.2) | 4 hours | **4.1 Complete** (side quest) |
+| Phase 4: Distribution Combat | 3 stages (4.1–4.3) | 6 hours | **4.1 Complete** (side quest) |
 | Phase 5: Stamina | 2 stages (5.1–5.2) | 8 hours | Not Started |
 | Phase 6: Conviction | 2 stages (6.1–6.2) | 8 hours | Not Started |
-| **Total** | **20 stages** | **80 hours** | |
+| **Total** | **21 stages** | **82 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
 
