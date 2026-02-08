@@ -1,0 +1,22 @@
+mobid: 60
+zone: Test Arena
+itemdropchance: 0
+hostile: true
+maxwander: 0
+activitylevel: 10
+statpool: 15
+character:
+  name: sparring partner
+  description: A seasoned fighter wearing light training gear. They move with practiced
+    ease, weapon held in a balanced guard stance. Their eyes track your movements
+    carefully, ready to exploit any opening.
+  speciesid: 1
+  skills:
+    weapon-combat: 2
+    unarmed-combat: 2
+    ranged-combat: 2
+  equipment:
+    weapon:
+      itemid: 10002
+    body:
+      itemid: 20008

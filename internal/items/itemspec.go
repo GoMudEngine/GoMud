@@ -181,11 +181,13 @@ const (
 
 type Damage struct {
 	Attacks     int    `yaml:"attacks,omitempty"` // How many attacks this weapon gets (usually 1)
-	DiceRoll    string // 1d6, etc.
+	DiceRoll    string `yaml:"diceroll,omitempty"` // legacy: 1d6, etc.
 	CritBuffIds []int  `yaml:"critbuffids,omitempty"` // If this damage is a crit, what buffs does it apply?
 	DiceCount   int    `yaml:"dicecount,omitempty"`   // how many dice to roll for this weapons damage
 	SideCount   int    `yaml:"sidecount,omitempty"`   // how many sides per dice roll
 	BonusDamage int    `yaml:"bonusdamage,omitempty"` // flat damage bonus, so for example 1d6+1
+	BaseDamage  int    `yaml:"basedamage,omitempty"`  // distribution mode: mean damage
+	Variance    int    `yaml:"variance,omitempty"`    // distribution mode: standard deviation
 }
 
 type ItemMessage string
@@ -233,6 +235,9 @@ func (i ItemSubType) String() string {
 }
 
 func (d *Damage) String() string {
+	if d.BaseDamage > 0 {
+		return fmt.Sprintf("~%d ±%d", d.BaseDamage, d.Variance)
+	}
 	if d.DiceRoll == "" {
 		return "N/A"
 	}
@@ -338,8 +343,12 @@ func (i *ItemSpec) AutoCalculateValue() {
 	val := 5 // base value of 5
 
 	// Weapon based damage valuation
-	val += (i.Damage.DiceCount * i.Damage.DiceCount) * (i.Damage.SideCount * i.Damage.SideCount * 2)
-	val += i.Damage.BonusDamage * 25
+	if i.Damage.BaseDamage > 0 {
+		val += i.Damage.BaseDamage * i.Damage.BaseDamage * 2
+	} else {
+		val += (i.Damage.DiceCount * i.Damage.DiceCount) * (i.Damage.SideCount * i.Damage.SideCount * 2)
+		val += i.Damage.BonusDamage * 25
+	}
 	// Armor based damage valuation
 	val += (i.DamageReduction * i.DamageReduction) * 17
 
@@ -416,8 +425,10 @@ func (i *ItemSpec) Validate() error {
 		i.DisplayName = util.ConvertColorShortTags(i.DisplayName)
 	}
 
-	i.Damage.InitDiceRoll(i.Damage.DiceRoll)
-	i.Damage.FormatDiceRoll()
+	if i.Damage.BaseDamage == 0 {
+		i.Damage.InitDiceRoll(i.Damage.DiceRoll)
+		i.Damage.FormatDiceRoll()
+	}
 
 	if i.Value < 1 {
 		i.AutoCalculateValue()

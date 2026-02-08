@@ -553,6 +553,46 @@ No config flag needed — we will wire the `dice` package directly into combat i
 
 ---
 
+### Stage 4.4: Bypass Newbie Tutorial for New Characters
+**Goal**: New characters spawn directly in Town Square (Room 1) instead of the void (Room -1), skipping the tutorial flow entirely. The tutorial code stays in place but is disconnected — no characters will enter the void state that triggers it. This removes friction when creating test characters during development.
+
+**How the tutorial currently works:**
+1. New characters start with `RoomId = -1` (void) — defined as `StartingRoomId` in `character.go`
+2. The `start` command detects the void state and runs name selection → tutorial prompt → tutorial rooms (900-903)
+3. A newbie guide NPC (mob 38) spawns for players with Level ≤ 5 via `RoomChange_SpawnGuide` hook
+
+**Changes:**
+1. Change `StartingRoomId` from `-1` to `0` in `internal/characters/character.go`
+   - Room 0 means "use the configured StartRoom" — the room manager resolves this to Room 1 (Town Square)
+   - The `start` command's void-detection (`RoomId == -1`) never fires, so the tutorial is bypassed
+2. Disable the newbie guide spawn hook — since DOGMud doesn't use levels, the Level ≤ 5 check is already broken. Add an early return or config flag to prevent guide spawning entirely.
+
+**What stays intact (not deleted):**
+- Tutorial rooms (900-903) and their YAML files
+- The `start` command code (just won't be triggered)
+- Guide mob YAML (mob 38)
+- All ephemeral room logic
+
+**Files to Modify** (~3 files, ~10 lines):
+1. `internal/characters/character.go` — Change `StartingRoomId` constant
+2. `internal/hooks/RoomChange_SpawnGuide.go` — Add early return to disable guide spawning
+
+**Testing**:
+- [ ] **Manual Test**: Create new character, verify spawns in Town Square (not void)
+- [ ] **Manual Test**: Verify `start` command is not triggered
+- [ ] **Manual Test**: Verify guide NPC does not spawn
+- [ ] **Regression Test**: `go build ./...` and `go test ./...` pass
+
+**Acceptance Criteria**:
+- New characters land directly in Town Square
+- No tutorial prompt or void state
+- Guide NPC disabled
+- Tutorial code remains in codebase (not deleted)
+
+**Estimated Changes**: ~10 lines, 2-3 files
+
+---
+
 ## Phase 5: Movement & Stamina System
 
 ### Stage 5.1: Connect Stamina to Movement
@@ -785,10 +825,10 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 1: Stats | 3 stages (1.1–1.3) | 12 hours | **Complete** |
 | Phase 2: Species | 2 stages (2.1–2.2) | 8 hours | **Complete** |
 | Phase 3: Remove Levels | 9 stages (3.1–3.9) | 36 hours | **Complete** |
-| Phase 4: Distribution Combat | 3 stages (4.1–4.3) | 6 hours | **4.1–4.2 Complete** |
+| Phase 4: Distribution Combat | 4 stages (4.1–4.4) | 7 hours | **4.1–4.2 Complete** |
 | Phase 5: Stamina | 2 stages (5.1–5.2) | 8 hours | Not Started |
 | Phase 6: Conviction | 2 stages (6.1–6.2) | 8 hours | Not Started |
-| **Total** | **21 stages** | **82 hours** | |
+| **Total** | **22 stages** | **83 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
 

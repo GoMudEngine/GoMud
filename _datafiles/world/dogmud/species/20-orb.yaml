@@ -6,5 +6,6 @@ size: medium
 unarmedname: energy
 tnlscale: 1
 damage:
-  diceroll: 0d0
+  basedamage: 0
+  variance: 0
 disabledslots: ['weapon', 'offhand', 'neck', 'body', 'belt', 'gloves', 'ring', 'legs', 'feet']

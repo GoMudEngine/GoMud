@@ -1,0 +1,21 @@
+mobid: 62
+zone: Test Arena
+itemdropchance: 0
+hostile: true
+maxwander: 0
+activitylevel: 10
+statpool: 15
+character:
+  name: sparring archer
+  description: A keen-eyed archer in light training gear, standing at the firing line
+    with a bow drawn. They loose arrows with practiced precision, tracking targets
+    downrange with calm focus.
+  speciesid: 1
+  skills:
+    ranged-combat: 3
+    unarmed-combat: 1
+  equipment:
+    weapon:
+      itemid: 10004
+    body:
+      itemid: 20008

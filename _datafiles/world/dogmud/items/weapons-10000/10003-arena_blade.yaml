@@ -1,0 +1,11 @@
+itemid: 10003
+name: arena blade
+namesimple: blade
+description: A finely honed longsword bearing the arena's crest on its crossguard. Its
+  balance is superb, and the edge gleams with deadly sharpness.
+type: weapon
+hands: 1
+subtype: slashing
+damage:
+  basedamage: 9
+  variance: 2

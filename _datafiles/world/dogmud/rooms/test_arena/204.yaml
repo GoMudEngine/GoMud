@@ -1,0 +1,20 @@
+roomid: 204
+zone: Test Arena
+title: Champion's Pit
+description: A deep, stone-walled pit serves as the proving ground for the arena's
+  most fearsome warrior. Iron sconces flicker with torchlight, casting long shadows
+  across the bloodstained floor. The arena champion stands here, armored and armed,
+  eyes locked on anyone who dares enter. This is no place for the unprepared. The
+  training yard lies to the east.
+biome: fort
+exits:
+  east:
+    roomid: 201
+spawninfo:
+- mobid: 61
+  message: The arena champion emerges from the shadows, weapon gleaming.
+  respawnrate: 5 real minutes
+idlemessages:
+- The champion's blade catches the torchlight as it shifts in their grip.
+- A low growl echoes off the stone walls of the pit.
+- The torches flicker, casting dancing shadows across the arena floor.
