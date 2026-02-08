@@ -1,0 +1,31 @@
+roomid: 201
+zone: Test Arena
+title: Training Yard
+description: A large open-air yard with packed earth underfoot. Wooden training dummies
+  stand in a row along the western wall, their surfaces scarred from countless blows.
+  To the south, a roped-off sparring ring awaits challengers. An archery gallery
+  stretches to the east, and a heavy iron gate to the west leads to the champion's
+  pit. The arena entrance lies back to the north.
+mapsymbol: T
+maplegend: Training Yard
+biome: fort
+exits:
+  north:
+    roomid: 200
+  south:
+    roomid: 202
+  east:
+    roomid: 203
+  west:
+    roomid: 204
+spawninfo:
+- mobid: 59
+  message: A training dummy is propped up here.
+  respawnrate: 1 real minutes
+- mobid: 59
+  message: A training dummy is propped up here.
+  respawnrate: 1 real minutes
+idlemessages:
+- The wind whistles through the training yard, stirring up dust.
+- A distant clang of metal on metal rings out from the sparring ring.
+- Someone has left a practice sword leaning against the wall.

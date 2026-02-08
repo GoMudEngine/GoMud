@@ -1,0 +1,18 @@
+roomid: 203
+zone: Test Arena
+title: Ranged Gallery
+description: A long, narrow gallery with straw targets set at varying distances. Bales
+  of hay line the walls to catch stray arrows. A rack of training bows stands near
+  the entrance. An archer practices here, loosing arrows with practiced precision.
+  The training yard lies to the west.
+biome: fort
+exits:
+  west:
+    roomid: 201
+spawninfo:
+- mobid: 62
+  message: A sparring archer takes position at the firing line.
+  respawnrate: 2 real minutes
+idlemessages:
+- An arrow thuds into a distant target with a satisfying thwack.
+- Straw drifts lazily from a battered target dummy.

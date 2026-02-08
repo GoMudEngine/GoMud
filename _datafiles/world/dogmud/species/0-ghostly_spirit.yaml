@@ -22,5 +22,6 @@ stats:
   charisma:
     base: 0
 damage:
-  diceroll: 0d0
+  basedamage: 0
+  variance: 0
 disabledslots: ['weapon', 'offhand', 'head', 'neck', 'body', 'belt', 'gloves', 'ring', 'legs', 'feet']

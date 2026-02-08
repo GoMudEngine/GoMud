@@ -1,0 +1,13 @@
+roomid: 200
+zone: Test Arena
+title: Arena Entrance
+description: A wide stone archway opens into a sunlit training compound. The clang of
+  practice weapons and the shouts of sparring combatants echo from within. A wooden
+  sign reads "Combat Training Grounds - All skill levels welcome." The Town Square
+  lies to the north, while the training yard beckons further south.
+biome: fort
+exits:
+  north:
+    roomid: 1
+  south:
+    roomid: 201

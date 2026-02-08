@@ -1,0 +1,18 @@
+roomid: 202
+zone: Test Arena
+title: Sparring Ring
+description: A circular arena enclosed by thick rope barriers. The ground is covered
+  in packed sand, stained here and there with old sweat and the occasional drop of
+  blood. A sparring partner waits in the center, weapon drawn and ready to test your
+  mettle. The training yard lies to the north.
+biome: fort
+exits:
+  north:
+    roomid: 201
+spawninfo:
+- mobid: 60
+  message: A sparring partner steps into the ring, weapon at the ready.
+  respawnrate: 2 real minutes
+idlemessages:
+- The sand shifts beneath your feet as you circle the ring.
+- The ropes creak as someone leans against them from outside.

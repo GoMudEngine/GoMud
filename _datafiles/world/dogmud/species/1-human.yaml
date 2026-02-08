@@ -27,6 +27,7 @@ stats:
   charisma:
     base: 1
 damage:
-  diceroll: 1d3
+  basedamage: 2
+  variance: 1
 disabledslots: []
 

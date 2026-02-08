@@ -1,0 +1,11 @@
+itemid: 10002
+name: practice sword
+namesimple: sword
+description: A blunted training sword with a wrapped leather grip. The edge has been
+  deliberately dulled, but it still packs a solid wallop.
+type: weapon
+hands: 1
+subtype: slashing
+damage:
+  basedamage: 4
+  variance: 2

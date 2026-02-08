@@ -449,6 +449,30 @@ func (c *Character) GetDefaultDiceRoll() (attacks int, dCount int, dSides int, b
 	return attacks, dCount, dSides, bonus, buffOnCrit
 }
 
+// GetDefaultDistributionDamage returns distribution damage parameters for unarmed combat.
+// If the species defines BaseDamage/Variance, uses those directly.
+// Otherwise, converts legacy dice notation to distribution parameters.
+// Strength scaling is NOT applied here — it's applied in combat.go.
+func (c *Character) GetDefaultDistributionDamage() (attacks int, baseDamage float64, variance float64, buffOnCrit []int) {
+	speciesInfo := species.GetSpecies(c.SpeciesId)
+
+	attacks = speciesInfo.Damage.Attacks
+	if attacks < 1 {
+		attacks = 1
+	}
+	buffOnCrit = speciesInfo.Damage.CritBuffIds
+
+	if speciesInfo.Damage.BaseDamage > 0 {
+		baseDamage = float64(speciesInfo.Damage.BaseDamage)
+		variance = float64(speciesInfo.Damage.Variance)
+	} else {
+		// Fallback: convert legacy dice to distribution
+		baseDamage, variance = dice.DiceToDistribution(speciesInfo.Damage.DiceCount, speciesInfo.Damage.SideCount, speciesInfo.Damage.BonusDamage)
+	}
+
+	return attacks, baseDamage, variance, buffOnCrit
+}
+
 func (c *Character) GetSpells() map[string]int {
 	ret := make(map[string]int)
 	maps.Copy(ret, c.SpellBook)

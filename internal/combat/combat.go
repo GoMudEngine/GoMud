@@ -335,11 +335,8 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 			weaponName := raceInfo.UnarmedName
 			weaponSubType := items.Generic
 
-			// Get default racial dice rolls
-			attacks, dCount, dSides, dBonus, critBuffs := sourceChar.GetDefaultDiceRoll()
-
-			// Add damage bonus due to statmods
-			dBonus += statModDBonus
+			// Get default unarmed distribution damage
+			attacks, baseDmg, dmgVariance, critBuffs := sourceChar.GetDefaultDistributionDamage()
 
 			if weapon.ItemId > 0 {
 
@@ -348,11 +345,18 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				weaponName = weapon.DisplayName()
 
 				weaponSubType = itemSpec.Subtype
-				attacks, dCount, dSides, dBonus, critBuffs = weapon.GetDiceRoll()
+				attacks, baseDmg, dmgVariance, critBuffs = weapon.GetDistributionDamage()
 
 				// If there is a bonus vs. a specific race, apply it
-				dBonus += weapon.StatMod(string(statmods.RacialBonusPrefix) + strings.ToLower(targetChar.Species()))
+				baseDmg += float64(weapon.StatMod(string(statmods.RacialBonusPrefix) + strings.ToLower(targetChar.Species())))
 			}
+
+			// Add damage bonus due to statmods
+			baseDmg += float64(statModDBonus)
+
+			// Percentage-based strength scaling: Str/100 as multiplier
+			strMultiplier := 1.0 + float64(sourceChar.Stats.Strength.ValueAdj)/100.0
+			dmgMean := baseDmg * strMultiplier
 
 			// zero means randomly selected, otherwise use the ItemId to consistently choose a message
 			msgSeed := 0
@@ -360,7 +364,7 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				msgSeed = weapon.ItemId
 			}
 
-			mudlog.Debug("DiceRolls", "attacks", attacks, "dCount", dCount, "dSides", dSides, "dBonus", dBonus, "critBuffs", critBuffs)
+			mudlog.Debug("DistDamage", "attacks", attacks, "baseDmg", baseDmg, "variance", dmgVariance, "strMult", strMultiplier, "dmgMean", dmgMean, "critBuffs", critBuffs)
 
 			// Individual weapons may get multiple attacks
 			for j := 0; j < attacks; j++ {
@@ -370,9 +374,6 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 
 				attackSourceDamage := 0
 				attackSourceReduction := 0
-
-				// Compute distribution parameters for damage (used for rolling and pctDamage)
-				dmgMean, dmgVariance := dice.DiceToDistribution(dCount, dSides, dBonus)
 
 				// Opposed roll: attacker dex+skill vs defender dex+skill
 				attackScore := float64(sourceChar.Stats.Dexterity.ValueAdj) + float64(sourceChar.GetCombatSkillLevel())
@@ -557,14 +558,26 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 
 			if petJoins, _ := dice.Percentile(20); petJoins { // 20% chance to join
 				if sourceChar.RoomId == targetChar.RoomId {
-					if sourceChar.Pet.Exists() && sourceChar.Pet.Damage.DiceRoll != `` {
+					if sourceChar.Pet.Exists() && (sourceChar.Pet.Damage.BaseDamage > 0 || sourceChar.Pet.Damage.DiceRoll != ``) {
 
-						attacks, dCount, dSides, dBonus, critBuffs = sourceChar.Pet.GetDiceRoll()
+						petDmg := sourceChar.Pet.Damage
+						var petAttacks int
+						var petBaseDmg, petVar float64
+						if petDmg.BaseDamage > 0 {
+							petAttacks = petDmg.Attacks
+							if petAttacks < 1 {
+								petAttacks = 1
+							}
+							petBaseDmg = float64(petDmg.BaseDamage)
+							petVar = float64(petDmg.Variance)
+						} else {
+							petAttacks, _, _, _, _ = sourceChar.Pet.GetDiceRoll()
+							petBaseDmg, petVar = dice.DiceToDistribution(petDmg.DiceCount, petDmg.SideCount, petDmg.BonusDamage)
+						}
 
-						for i := 0; i < attacks; i++ {
+						for i := 0; i < petAttacks; i++ {
 
-							petMean, petVariance := dice.DiceToDistribution(dCount, dSides, dBonus)
-							attackTargetDamage := int(math.Round(math.Max(0, dice.Roll(petMean, petVariance).Value)))
+							attackTargetDamage := int(math.Round(math.Max(0, dice.Roll(petBaseDmg, petVar).Value)))
 
 							attackResult.DamageToTarget += attackTargetDamage
 

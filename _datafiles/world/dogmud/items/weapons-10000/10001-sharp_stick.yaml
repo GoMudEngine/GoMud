@@ -7,4 +7,5 @@ hands: 1
 subtype: bludgeoning
 uses: 0
 damage:
-  diceroll: 1d2
+  basedamage: 2
+  variance: 1

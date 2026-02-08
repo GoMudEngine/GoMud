@@ -6,7 +6,10 @@ import (
 	"strings"
 	"unicode"
 
+	"math"
+
 	"github.com/GoMudEngine/GoMud/internal/colorpatterns"
+	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/GoMudEngine/GoMud/internal/uuid"
 )
@@ -318,7 +321,11 @@ func (i *Item) Enchant(damageBonus int, defenseBonus int, statBonus map[string]i
 		newSpec = *i.Spec
 	}
 
-	newSpec.Damage.BonusDamage += damageBonus
+	if newSpec.Damage.BaseDamage > 0 {
+		newSpec.Damage.BaseDamage += damageBonus
+	} else {
+		newSpec.Damage.BonusDamage += damageBonus
+	}
 	newSpec.DamageReduction += defenseBonus
 
 	// Permanently add new statmods
@@ -330,7 +337,9 @@ func (i *Item) Enchant(damageBonus int, defenseBonus int, statBonus map[string]i
 
 	newSpec.Cursed = cursed
 
-	newSpec.Damage.FormatDiceRoll()
+	if newSpec.Damage.BaseDamage == 0 {
+		newSpec.Damage.FormatDiceRoll()
+	}
 	newSpec.AutoCalculateValue()
 
 	i.Spec = &newSpec
@@ -352,6 +361,27 @@ func (i *Item) GetDiceRoll() (attacks int, dCount int, dSides int, bonus int, bu
 	}
 	dmg := i.GetDamage()
 	return dmg.Attacks, dmg.DiceCount, dmg.SideCount, dmg.BonusDamage, dmg.CritBuffIds
+}
+
+// Gets distribution damage parameters for the item.
+// Returns (attacks, baseDamage, variance, critBuffs).
+// If the item uses BaseDamage/Variance, returns those directly.
+// Otherwise, converts legacy dice notation to distribution parameters.
+func (i *Item) GetDistributionDamage() (attacks int, baseDamage float64, variance float64, buffOnCrit []int) {
+	if i.ItemId < 1 {
+		return 1, 2.0, 1.0, []int{} // Default unarmed
+	}
+	dmg := i.GetDamage()
+	attacks = dmg.Attacks
+	if attacks < 1 {
+		attacks = 1
+	}
+	if dmg.BaseDamage > 0 {
+		return attacks, float64(dmg.BaseDamage), float64(dmg.Variance), dmg.CritBuffIds
+	}
+	// Fallback: convert legacy dice to distribution
+	mean, stdDev := dice.DiceToDistribution(dmg.DiceCount, dmg.SideCount, dmg.BonusDamage)
+	return attacks, math.Round(mean), math.Round(stdDev), dmg.CritBuffIds
 }
 
 func (i *Item) IsSpecial() bool {

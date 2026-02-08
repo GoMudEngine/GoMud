@@ -7,6 +7,7 @@ unarmedname: teeth and nails
 tnlscale: 1
 angrycommands: [emote squeeks angrily.]
 damage:
-  diceroll: 1d2
+  basedamage: 1
+  variance: 1
 disabledslots: ['weapon', 'offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet']
 tameable: true

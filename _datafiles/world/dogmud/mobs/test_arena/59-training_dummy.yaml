@@ -1,0 +1,13 @@
+mobid: 59
+zone: Test Arena
+itemdropchance: 0
+hostile: false
+maxwander: 0
+activitylevel: 1
+statpool: 5
+character:
+  name: training dummy
+  description: A sturdy wooden dummy mounted on a thick post. Its surface is covered
+    in dents and gouges from countless practice strikes. It stands motionless, an
+    ideal target for testing your damage output.
+  speciesid: 19
