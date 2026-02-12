@@ -21,6 +21,9 @@ const guideMobId = 38
 
 func SpawnGuide(e events.Event) events.ListenerReturn {
 
+	// DOGMud: Tutorial bypassed — new characters spawn directly in Town Square
+	return events.Continue
+
 	evt := e.(events.RoomChange)
 
 	// If this isn't a user changing rooms, just pass it along.
