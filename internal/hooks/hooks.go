@@ -13,7 +13,6 @@ func RegisterListeners() {
 	// RoomChange Listeners
 	events.RegisterListener(events.RoomChange{}, LocationMusicChange)
 	events.RegisterListener(events.RoomChange{}, CleanupEphemeralRooms)
-	events.RegisterListener(events.RoomChange{}, SpawnGuide)
 
 	// NewRound Listeners
 	events.RegisterListener(events.NewRound{}, PruneVMs)
@@ -51,9 +50,6 @@ func RegisterListeners() {
 	// Spawn events
 	events.RegisterListener(events.PlayerSpawn{}, HandleJoin)
 	events.RegisterListener(events.PlayerDespawn{}, HandleLeave, events.Last) // This is a final listener, has to happen last
-
-	// Levelup Notifications — disabled in Stage 3.5 (no level-ups occur)
-	// Guide dismissal now handled by CheckGuideBySkillRanks() called from combat hooks
 
 	// Day/Night cycle
 	events.RegisterListener(events.DayNightCycle{}, NotifySunriseSunset)

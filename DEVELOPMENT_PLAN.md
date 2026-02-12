@@ -738,32 +738,19 @@ After Stage 4.7, manual testing revealed that arena mobs were too weak for new p
 
 ---
 
-### Stage 4.8: Remove Player Guide
-**Goal**: Since levels have been removed, the player guide (which was level-oriented) is no longer relevant. Remove or replace it.
+### Stage 4.8: Remove Player Guide ✅ COMPLETED
+**Goal**: Since levels have been removed, the player guide (which was level-oriented) is no longer relevant. Remove all dead code and data files.
 
 **Changes**:
-1. Identify the player guide content (help files, guide command, any in-game references)
-2. Remove or disable the guide command
-3. If there's useful non-level content, preserve it in a simpler help system
-4. Remove any "type `guide` to learn more" references from login/tutorial text
-
-**Files to Modify** (~5 files, ~100 lines):
-1. Guide command handler
-2. Help/guide data files
-3. Any login or newbie text referencing the guide
-4. Test files if applicable
+1. Deleted `internal/hooks/RoomChange_SpawnGuide.go` — dead code (early return since Stage 4.4)
+2. Deleted `internal/hooks/LevelUp_CheckGuide.go` — `CheckGuideBySkillRanks()` defined but never called
+3. Removed `SpawnGuide` listener registration and stale guide dismissal comment from `internal/hooks/hooks.go`
+4. Deleted `_datafiles/world/dogmud/mobs/startland/38-player_guide.yaml` — guide mob data
+5. Deleted `_datafiles/world/dogmud/templates/help/guide.template` — guide help template
 
 **Testing**:
-- [ ] **Manual Test**: Verify `guide` command is removed or replaced
-- [ ] **Manual Test**: Verify no dangling references to the old guide
-- [ ] **Regression Test**: `go build ./...` and `go test ./...` pass
-
-**Acceptance Criteria**:
-- Player guide removed or replaced with level-free content
-- No references to levels remain in player-facing help
-- All tests pass
-
-**Estimated Changes**: ~100 lines, 5 files
+- [x] `go build ./...` — compiles cleanly
+- [x] `go test ./...` — all tests pass
 
 ---
 
@@ -1478,7 +1465,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 2: Species | 2 stages (2.1–2.2) | 8 hours | **Complete** |
 | Phase 3: Remove Levels | 9 stages (3.1–3.9) | 36 hours | **Complete** |
 | Phase 4: Distribution Combat | 4 stages (4.1–4.4) | 7 hours | **Complete** |
-| Phase 4b: Progression Fixes | 4 stages (4.5–4.8) | 12 hours | 4.5–4.7 Complete |
+| Phase 4b: Progression Fixes | 4 stages (4.5–4.8) | 12 hours | **Complete** |
 | Phase 5: Stamina & Attacks | 3 stages (5.1–5.3) | 16 hours | Not Started |
 | Phase 6: Conviction & Magic | 2 stages (6.1–6.2) | 8 hours | Not Started |
 | Phase 7: Defense & Combat | 4 stages (7.1–7.4) | 20 hours | Not Started |
@@ -1560,4 +1547,4 @@ Issues discovered during 2026-02-12 playtest session, mapped to stages:
 
 **Last Updated**: 2026-02-12
 **Status**: In Progress
-**Current Stage**: 4.8 — Remove Player Guide (next up)
+**Current Stage**: 5.1 — Connect Stamina to Movement (next up)
