@@ -553,7 +553,7 @@ No config flag needed — we will wire the `dice` package directly into combat i
 
 ---
 
-### Stage 4.4: Bypass Newbie Tutorial for New Characters ✅ COMPLETED (merge: TBD)
+### Stage 4.4: Bypass Newbie Tutorial for New Characters ✅ COMPLETED (merge: 6a831c7)
 **Goal**: New characters spawn directly in Town Square (Room 1) instead of the void (Room -1), skipping the tutorial flow entirely. The tutorial code stays in place but is disconnected — no characters will enter the void state that triggers it. This removes friction when creating test characters during development.
 
 **How the tutorial currently works:**
