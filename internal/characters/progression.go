@@ -14,7 +14,7 @@ import (
 const (
 	SkillSoftCap = 50  // Progression becomes very hard above this virtual rank
 	StatSoftCap  = 150 // Progression becomes very hard above this virtual rank
-	UsesPerRank  = 10  // How many uses of a skill/stat equal one virtual rank
+	UsesPerRank  = 25  // How many uses of a skill/stat equal one virtual rank
 )
 
 // skillNameMap maps progression context names to actual skill tags.
@@ -31,21 +31,21 @@ func resolveSkillName(name string) string {
 
 // CalculateProgressionChance returns the probability (0.0–1.0) that a
 // skill/stat progression event fires at the given virtual rank.
-// The curve is exponential decay: ~50% at rank 0, ~5% near the soft cap,
+// The curve is exponential decay: ~30% at rank 0, ~1.5% near the soft cap,
 // and very small above the soft cap.
 func CalculateProgressionChance(currentRank int, softCap int) float64 {
 	if softCap <= 0 {
 		softCap = 1
 	}
 	if currentRank <= 0 {
-		return 0.50
+		return 0.30
 	}
 	ratio := float64(currentRank) / float64(softCap)
 	if currentRank <= softCap {
-		return 0.50 * math.Exp(-3.0*ratio)
+		return 0.30 * math.Exp(-3.0*ratio)
 	}
 	// Above soft cap: very hard, continues exponential decay
-	return 0.025 * math.Exp(-2.0*(ratio-1.0))
+	return 0.015 * math.Exp(-2.0*(ratio-1.0))
 }
 
 // CheckSkillProgression rolls against the progression chance for a skill.
@@ -54,7 +54,7 @@ func CalculateProgressionChance(currentRank int, softCap int) float64 {
 // bonusMultiplier scales the chance (e.g. 2.0 for critical successes).
 func (c *Character) CheckSkillProgression(skillName string, userId int, bonusMultiplier float64) {
 	virtualRank := c.GetSkillUseCount(skillName) / UsesPerRank
-	chance := CalculateProgressionChance(virtualRank, SkillSoftCap) * bonusMultiplier
+	chance := CalculateProgressionChance(virtualRank, SkillSoftCap) * bonusMultiplier * skills.GetProgressionMultiplier(skillName)
 	if chance > 1.0 {
 		chance = 1.0
 	}

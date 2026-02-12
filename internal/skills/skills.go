@@ -229,6 +229,36 @@ func GetExperienceLevel(percentage float64) string {
 	return `scrub`
 }
 
+// SkillProgressionMultipliers controls how fast each skill progresses.
+// Combat skills fire many times per round, so they get a low multiplier.
+// Utility skills are used less often, so they get a high multiplier.
+var SkillProgressionMultipliers = map[SkillTag]float64{
+	// Combat skills — fire multiple times per round
+	WeaponCombat:  0.3,
+	UnarmedCombat: 0.3,
+	RangedCombat:  0.3,
+	Brawling:      0.3,
+	// Magic skills — moderate frequency
+	Spellcasting: 0.5,
+	Psionics:     0.5,
+	Cast:         0.5,
+	// Utility skills — used infrequently
+	Tracking:  2.0,
+	Bartering: 2.0,
+	Foraging:  2.0,
+	FirstAid:  2.0,
+	Stealth:   2.0,
+}
+
+// GetProgressionMultiplier returns the progression speed multiplier for a skill.
+// Returns 1.0 (default) for any skill not explicitly listed.
+func GetProgressionMultiplier(skillName string) float64 {
+	if mult, ok := SkillProgressionMultipliers[SkillTag(skillName)]; ok {
+		return mult
+	}
+	return 1.0
+}
+
 func init() {
 
 	skillNameSet := map[SkillTag]struct{}{}

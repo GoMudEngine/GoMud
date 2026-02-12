@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/language"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/term"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -140,6 +141,13 @@ func FinalizeLoginOrCreate(results map[string]string, sharedState map[string]any
 				connections.Remove(clientInput.ConnectionId)
 				return false
 			}
+		}
+
+		// All players are human in Delusions of Grandeur
+		if humanSpecies, ok := species.FindSpecies("human"); ok {
+			newUser.Character.SpeciesId = humanSpecies.Id()
+			newUser.Character.Alignment = humanSpecies.DefaultAlignment
+			newUser.Character.Validate()
 		}
 
 		if err := users.CreateUser(newUser); err != nil {

@@ -9,15 +9,15 @@ import (
 
 func TestCalculateProgressionChance_RankZero(t *testing.T) {
 	chance := CalculateProgressionChance(0, SkillSoftCap)
-	if chance != 0.50 {
-		t.Errorf("Expected 50%% at rank 0, got %.4f", chance)
+	if chance != 0.30 {
+		t.Errorf("Expected 30%% at rank 0, got %.4f", chance)
 	}
 }
 
 func TestCalculateProgressionChance_NegativeRank(t *testing.T) {
 	chance := CalculateProgressionChance(-5, SkillSoftCap)
-	if chance != 0.50 {
-		t.Errorf("Expected 50%% at negative rank, got %.4f", chance)
+	if chance != 0.30 {
+		t.Errorf("Expected 30%% at negative rank, got %.4f", chance)
 	}
 }
 
@@ -34,8 +34,7 @@ func TestCalculateProgressionChance_Decreasing(t *testing.T) {
 
 func TestCalculateProgressionChance_AtSoftCap(t *testing.T) {
 	chance := CalculateProgressionChance(SkillSoftCap, SkillSoftCap)
-	// Should be around 2.5% (0.50 * exp(-3))
-	expected := 0.50 * math.Exp(-3.0)
+	expected := 0.30 * math.Exp(-3.0)
 	if math.Abs(chance-expected) > 0.001 {
 		t.Errorf("Expected ~%.4f at soft cap, got %.4f", expected, chance)
 	}
@@ -79,8 +78,8 @@ func TestCalculateProgressionChance_StatSoftCap(t *testing.T) {
 	midRange := CalculateProgressionChance(StatSoftCap/2, StatSoftCap)
 	atCap := CalculateProgressionChance(StatSoftCap, StatSoftCap)
 
-	if rankZero != 0.50 {
-		t.Errorf("Expected 50%% at rank 0 for stats, got %.4f", rankZero)
+	if rankZero != 0.30 {
+		t.Errorf("Expected 30%% at rank 0 for stats, got %.4f", rankZero)
 	}
 	if midRange >= rankZero || midRange <= atCap {
 		t.Errorf("Mid-range should be between rank 0 and cap: %.4f not between %.4f and %.4f", midRange, rankZero, atCap)
@@ -215,11 +214,11 @@ func TestCalculateProgressionChance_SampleValues(t *testing.T) {
 		minPct  float64
 		maxPct  float64
 	}{
-		{0, 50, 49.0, 51.0},   // ~50%
-		{10, 50, 20.0, 35.0},  // ~27%
-		{25, 50, 5.0, 15.0},   // ~11%
-		{40, 50, 2.0, 7.0},    // ~4.5%
-		{50, 50, 1.0, 4.0},    // ~2.5%
+		{0, 50, 29.0, 31.0},  // ~30%
+		{10, 50, 12.0, 20.0}, // ~16%
+		{25, 50, 3.0, 9.0},   // ~6.7%
+		{40, 50, 1.0, 4.0},   // ~2.7%
+		{50, 50, 0.5, 2.5},   // ~1.5%
 	}
 
 	for _, tt := range tests {
@@ -227,6 +226,35 @@ func TestCalculateProgressionChance_SampleValues(t *testing.T) {
 		if chance < tt.minPct || chance > tt.maxPct {
 			t.Errorf("Rank %d (cap %d): expected %.1f-%.1f%%, got %.2f%%",
 				tt.rank, tt.softCap, tt.minPct, tt.maxPct, chance)
+		}
+	}
+}
+
+func TestGetProgressionMultiplier(t *testing.T) {
+	tests := []struct {
+		skill    string
+		expected float64
+	}{
+		{"weapon-combat", 0.3},
+		{"unarmed-combat", 0.3},
+		{"ranged-combat", 0.3},
+		{"brawling", 0.3},
+		{"spellcasting", 0.5},
+		{"psionics", 0.5},
+		{"cast", 0.5},
+		{"tracking", 2.0},
+		{"bartering", 2.0},
+		{"foraging", 2.0},
+		{"first-aid", 2.0},
+		{"stealth", 2.0},
+		{"skulduggery", 1.0}, // default
+		{"unknown-skill", 1.0},
+	}
+
+	for _, tt := range tests {
+		got := skills.GetProgressionMultiplier(tt.skill)
+		if got != tt.expected {
+			t.Errorf("GetProgressionMultiplier(%q) = %.1f, want %.1f", tt.skill, got, tt.expected)
 		}
 	}
 }
