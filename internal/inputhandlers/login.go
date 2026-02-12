@@ -132,6 +132,16 @@ func FinalizeLoginOrCreate(results map[string]string, sharedState map[string]any
 			return false
 		}
 
+		if charName, ok := results["character-name"]; ok && charName != "" {
+			if err := newUser.SetCharacterName(charName); err != nil {
+				mudlog.Error("Internal error setting character name post-validation", "name", charName, "error", err)
+				connections.SendTo([]byte(language.T("Error.UserCreationFailed")), clientInput.ConnectionId)
+				connections.SendTo(term.CRLF, clientInput.ConnectionId)
+				connections.Remove(clientInput.ConnectionId)
+				return false
+			}
+		}
+
 		if err := users.CreateUser(newUser); err != nil {
 			mudlog.Error("Could not create user", "username", username, "error", err)
 			// Try to give specific feedback if possible, otherwise generic
@@ -253,6 +263,13 @@ func GetLoginPromptHandler() connections.InputHandler {
 			MaskInput: false,
 			Validator: ValidateYesNo,
 			Condition: func(results map[string]string) bool { return results["username"] == `new` }, // Only run if username was "new"
+		},
+		{
+			ID:             "character-name",
+			PromptTemplate: "login/character-name.prompt",
+			MaskInput:      false,
+			Validator:      ValidateCharacterName,
+			Condition:      func(results map[string]string) bool { return results["username"] == `new` },
 		},
 		{
 			ID:             "confirm_create",
