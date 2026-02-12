@@ -30,6 +30,9 @@ func Consider(rest string, user *users.UserRecord, room *rooms.Room, flags event
 
 		if playerId > 0 || mobId > 0 {
 
+			// Track perception use when considering a target
+			user.Character.OnStatUse("perception", user.UserId)
+
 			ratio := 0.0
 
 			considerType := "mob"

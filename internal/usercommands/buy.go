@@ -74,6 +74,7 @@ func Buy(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		}
 
 		if success = tryPurchase(itemname, user, room, nil, shopUser); success {
+			user.Character.OnStatUse("charisma", user.UserId)
 			return true, nil
 		}
 	}
@@ -91,6 +92,7 @@ func Buy(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		shopMob.Character.Shop.Restock()
 
 		if success = tryPurchase(itemname, user, room, shopMob, nil); success {
+			user.Character.OnStatUse("charisma", user.UserId)
 			return true, nil
 		}
 	}
