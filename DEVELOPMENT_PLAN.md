@@ -726,6 +726,16 @@ No config flag needed — we will wire the `dice` package directly into combat i
 
 **Estimated Changes**: ~150 lines, 5 files
 
+**Merge commit**: `698011d`
+
+#### Side Quest: Arena Balance Tuning ✅ COMPLETED
+After Stage 4.7, manual testing revealed that arena mobs were too weak for new players (who start with ~100 stats and all skills). Applied the following balance changes:
+- **Human species**: Base stats raised from 1 → 100 (affects all human NPCs; player stats are rolled 70-130 so unaffected)
+- **Training dummy**: Weak stats (10) but high vitality (200) — punching bag for testing damage
+- **Sparring partner/archer**: Slightly above average (Training +10-20, skills ~40 in primaries)
+- **Arena champion**: Strong (Training +40-50 for ~150 raw stats, skills 100 in weapon/unarmed combat)
+- All arena mobs switched from random `statpool` to explicit `training` values for deterministic stats
+
 ---
 
 ### Stage 4.8: Remove Player Guide

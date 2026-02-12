@@ -4,7 +4,7 @@ itemdropchance: 0
 hostile: false
 maxwander: 0
 activitylevel: 1
-statpool: 5
+statpool: 0
 character:
   name: training dummy
   description: A sturdy wooden dummy mounted on a thick post. Its surface is covered

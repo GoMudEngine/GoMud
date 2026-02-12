@@ -15,17 +15,17 @@ angrycommands:
 tameable: false
 stats:
   strength:
-    base: 1
+    base: 100
   dexterity:
-    base: 1
+    base: 100
   perception:
-    base: 1
+    base: 100
   vitality:
-    base: 1
+    base: 100
   willpower:
-    base: 1
+    base: 100
   charisma:
-    base: 1
+    base: 100
 damage:
   basedamage: 2
   variance: 1

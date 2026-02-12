@@ -4,7 +4,7 @@ itemdropchance: 5
 hostile: true
 maxwander: 0
 activitylevel: 10
-statpool: 35
+statpool: 0
 character:
   name: arena champion
   description: A towering warrior clad in gleaming chain armor, wielding a razor-sharp
@@ -15,14 +15,20 @@ character:
   speciesid: 1
   stats:
     strength:
-      training: 5
+      training: 50
     dexterity:
-      training: 5
+      training: 50
+    perception:
+      training: 40
     vitality:
-      training: 5
+      training: 50
+    willpower:
+      training: 40
+    charisma:
+      training: 30
   skills:
-    weapon-combat: 4
-    unarmed-combat: 3
+    weapon-combat: 100
+    unarmed-combat: 100
   equipment:
     weapon:
       itemid: 10003

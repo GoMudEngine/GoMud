@@ -9,8 +9,18 @@ selectable: false
 knowsfirstaid: false
 tameable: false
 stats:
+  strength:
+    base: 10
+  dexterity:
+    base: 10
+  perception:
+    base: 10
   vitality:
-    base: 4
+    base: 200
+  willpower:
+    base: 10
+  charisma:
+    base: 10
 damage:
   basedamage: 0
   variance: 0
