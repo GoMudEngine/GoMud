@@ -31,7 +31,7 @@ import (
 var (
 	startingRace   = 0
 	startingHealth = 10
-	StartingRoomId = -1
+	StartingRoomId = 0
 	startingZone     = `Nowhere`
 	defaultName      = `nameless`
 	descriptionCache = map[string]string{} // key is a hash, value is the description

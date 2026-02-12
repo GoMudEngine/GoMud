@@ -553,7 +553,7 @@ No config flag needed — we will wire the `dice` package directly into combat i
 
 ---
 
-### Stage 4.4: Bypass Newbie Tutorial for New Characters
+### Stage 4.4: Bypass Newbie Tutorial for New Characters ✅ COMPLETED (merge: TBD)
 **Goal**: New characters spawn directly in Town Square (Room 1) instead of the void (Room -1), skipping the tutorial flow entirely. The tutorial code stays in place but is disconnected — no characters will enter the void state that triggers it. This removes friction when creating test characters during development.
 
 **How the tutorial currently works:**
@@ -825,7 +825,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 1: Stats | 3 stages (1.1–1.3) | 12 hours | **Complete** |
 | Phase 2: Species | 2 stages (2.1–2.2) | 8 hours | **Complete** |
 | Phase 3: Remove Levels | 9 stages (3.1–3.9) | 36 hours | **Complete** |
-| Phase 4: Distribution Combat | 4 stages (4.1–4.4) | 7 hours | **4.1–4.3 Complete** |
+| Phase 4: Distribution Combat | 4 stages (4.1–4.4) | 7 hours | **Complete** |
 | Phase 5: Stamina | 2 stages (5.1–5.2) | 8 hours | Not Started |
 | Phase 6: Conviction | 2 stages (6.1–6.2) | 8 hours | Not Started |
 | **Total** | **22 stages** | **83 hours** | |
@@ -881,4 +881,4 @@ These phases will be detailed in a separate plan once core mechanics are stable.
 
 **Last Updated**: 2026-02-07
 **Status**: In Progress
-**Current Stage**: 4.4 — Bypass Newbie Tutorial (next up)
+**Current Stage**: 5.1 — Connect Stamina to Movement (next up)
