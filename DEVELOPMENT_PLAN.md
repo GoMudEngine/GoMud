@@ -599,7 +599,7 @@ No config flag needed — we will wire the `dice` package directly into combat i
 > and combat issues. These are bug fixes and tuning passes that should land before
 > building new systems on top of a broken foundation.
 
-### Stage 4.5: Fix Stat Progression Triggers
+### Stage 4.5: Fix Stat Progression Triggers ✅ COMPLETED (merge: 3cda200)
 **Goal**: Fix why only Vitality appears to increase — other stats lack proper usage triggers and there's a stale stat name reference.
 
 **Known Issues**:
@@ -1468,7 +1468,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 2: Species | 2 stages (2.1–2.2) | 8 hours | **Complete** |
 | Phase 3: Remove Levels | 9 stages (3.1–3.9) | 36 hours | **Complete** |
 | Phase 4: Distribution Combat | 4 stages (4.1–4.4) | 7 hours | **Complete** |
-| Phase 4b: Progression Fixes | 4 stages (4.5–4.8) | 12 hours | Not Started |
+| Phase 4b: Progression Fixes | 4 stages (4.5–4.8) | 12 hours | 4.5 Complete |
 | Phase 5: Stamina & Attacks | 3 stages (5.1–5.3) | 16 hours | Not Started |
 | Phase 6: Conviction & Magic | 2 stages (6.1–6.2) | 8 hours | Not Started |
 | Phase 7: Defense & Combat | 4 stages (7.1–7.4) | 20 hours | Not Started |
@@ -1550,4 +1550,4 @@ Issues discovered during 2026-02-12 playtest session, mapped to stages:
 
 **Last Updated**: 2026-02-12
 **Status**: In Progress
-**Current Stage**: 4.5 — Fix Stat Progression Triggers (next up)
+**Current Stage**: 4.6 — Tune Skill Progression (next up)
