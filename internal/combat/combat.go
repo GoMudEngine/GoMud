@@ -43,8 +43,8 @@ func AttackPlayerVsMob(user *users.UserRecord, mob *mobs.Mob) AttackResult {
 	mob.Character.TrackPlayerDamage(user.UserId, attackResult.DamageToTarget)
 
 	// Track progression stats for the attacking player
-	user.Character.TrackStatUse("strength")
-	user.Character.TrackStatUse("dexterity")
+	user.Character.OnStatUse("strength", user.UserId)
+	user.Character.OnStatUse("dexterity", user.UserId)
 	if attackResult.Hit {
 		user.PlaySound(`hit-other`, `combat`)
 		combatSkill := string(user.Character.GetCombatSkillTag())
@@ -75,8 +75,8 @@ func AttackPlayerVsPlayer(userAtk *users.UserRecord, userDef *users.UserRecord) 
 	}
 
 	// Track progression stats for the attacking player
-	userAtk.Character.TrackStatUse("strength")
-	userAtk.Character.TrackStatUse("dexterity")
+	userAtk.Character.OnStatUse("strength", userAtk.UserId)
+	userAtk.Character.OnStatUse("dexterity", userAtk.UserId)
 	if attackResult.Hit {
 		userAtk.PlaySound(`hit-other`, `combat`)
 		userDef.PlaySound(`hit-self`, `combat`)
@@ -110,7 +110,28 @@ func AttackMobVsPlayer(mob *mobs.Mob, user *users.UserRecord) AttackResult {
 				user.Character.OnLowResource("health", "vitality", user.UserId)
 			}
 		}
+
+		// Check for low-stamina progression trigger
+		if user.Character.StaminaMax.Value > 0 {
+			staminaPct := float64(user.Character.Stamina) / float64(user.Character.StaminaMax.Value)
+			if staminaPct > 0 && staminaPct < 0.25 {
+				user.Character.OnLowResource("stamina", "strength", user.UserId)
+				user.Character.OnLowResource("stamina", "dexterity", user.UserId)
+			}
+		}
+
+		// Check for low-conviction progression trigger
+		if user.Character.ConvictionMax.Value > 0 {
+			convictionPct := float64(user.Character.Conviction) / float64(user.Character.ConvictionMax.Value)
+			if convictionPct > 0 && convictionPct < 0.25 {
+				user.Character.OnLowResource("conviction", "willpower", user.UserId)
+				user.Character.OnLowResource("conviction", "charisma", user.UserId)
+			}
+		}
 	}
+
+	// Track defender's dexterity use (reacting to attacks)
+	user.Character.OnStatUse("dexterity", user.UserId)
 
 	if attackResult.Hit {
 		user.PlaySound(`hit-self`, `combat`)

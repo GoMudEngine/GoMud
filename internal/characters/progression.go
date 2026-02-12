@@ -123,6 +123,17 @@ func (c *Character) TrackStatUse(statName string) {
 	c.StatUseCount[statName]++
 }
 
+// OnStatUse is called whenever a player uses a stat in gameplay.
+// Tracks usage and, if progression is enabled, rolls for stat advancement.
+func (c *Character) OnStatUse(statName string, userId int) {
+	c.TrackStatUse(statName)
+	mudlog.Debug("Progression", "event", "stat_use", "stat", statName, "character", c.Name)
+
+	if configs.GetGamePlayConfig().UseSkillProgression {
+		c.CheckStatProgression(statName, userId, 1.0)
+	}
+}
+
 // OnSkillUse is called whenever a player uses a skill in gameplay.
 // Tracks usage and, if progression is enabled, rolls for skill advancement.
 func (c *Character) OnSkillUse(skillName string, userId int) {

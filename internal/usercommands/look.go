@@ -77,6 +77,9 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 	if playerId > 0 || mobId > 0 {
 
+		// Track perception use when examining a target
+		user.Character.OnStatUse("perception", user.UserId)
+
 		statusTxt := ""
 		invTxt := ""
 

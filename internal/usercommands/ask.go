@@ -134,6 +134,9 @@ func Ask(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			}
 		}
 
+		// Track charisma use when asking an NPC
+		user.Character.OnStatUse("charisma", user.UserId)
+
 		room.SendTextToExits(`You hear someone talking.`, true)
 
 	} else {
