@@ -212,3 +212,32 @@ options:
       todefenderroom:
       - 'A devastating attack comes from elsewhere, <ansi fg="cyan-bold">CRITICALLY HITTING</ansi> <ansi fg="{targettype}">{target}</ansi>!'
       - '<ansi fg="{targettype}">{target}</ansi> is <ansi fg="cyan-bold">CRITICALLY STRUCK</ansi> by a distant attack!'
+  fumble:
+    # messages for when they are in the same room
+    together:
+      toattacker:
+      - 'You <ansi fg="red-bold">FUMBLE</ansi> your attack completely, stumbling backward!'
+      - 'Your grip fails you as you <ansi fg="red-bold">FUMBLE</ansi> your <ansi fg="item">{itemname}</ansi> pathetically!'
+      - 'You lose all sense of coordination and <ansi fg="red-bold">FUMBLE</ansi> badly at <ansi fg="{targettype}">{target}</ansi>!'
+      todefender:
+      - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> their attack, leaving themselves vulnerable!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> badly <ansi fg="red-bold">FUMBLES</ansi> their <ansi fg="item">{itemname}</ansi> in an embarrassing display!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> and nearly drops their weapon!'
+      toroom:
+      - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> their attack against <ansi fg="{targettype}">{target}</ansi> in an embarrassing display!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> attempts to attack <ansi fg="{targettype}">{target}</ansi> but <ansi fg="red-bold">FUMBLES</ansi> badly!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> their <ansi fg="item">{itemname}</ansi>, nearly losing it entirely!'
+    # messages for when they are in different rooms, such as with projectiles
+    separate:
+      toattacker:
+      - 'You <ansi fg="red-bold">FUMBLE</ansi> your attack completely, your projectile going nowhere!'
+      - 'You lose control and <ansi fg="red-bold">FUMBLE</ansi> your shot in an embarrassing manner!'
+      todefender:
+      - 'A wild attack from afar <ansi fg="red-bold">FUMBLES</ansi> harmlessly!'
+      - 'You sense an attack from the <ansi fg="exit">{entrancename}</ansi> but it <ansi fg="red-bold">FUMBLES</ansi> badly!'
+      toattackerroom:
+      - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> their attack towards the <ansi fg="exit">{exitname}</ansi> direction!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> loses control and <ansi fg="red-bold">FUMBLES</ansi> their weapon!'
+      todefenderroom:
+      - 'An attack from the <ansi fg="exit">{entrancename}</ansi> direction <ansi fg="red-bold">FUMBLES</ansi> pathetically!'
+      - 'A distant attacker <ansi fg="red-bold">FUMBLES</ansi> their attempt badly!'

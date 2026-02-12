@@ -107,3 +107,18 @@ options:
       - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRACKS VIOLENTLY</ansi> against <ansi fg="{targettype}">{target}</ansi>!'
       - '<ansi fg="{sourcetype}">{source}</ansi> lands a <ansi fg="cyan-bold">DEVASTATING WHIP</ansi> on <ansi fg="{targettype}">{target}</ansi>!'
       - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">STRIKES WITH GREAT FORCE</ansi> against <ansi fg="{targettype}">{target}</ansi>!'
+  fumble:
+    # messages for when they are in the same room
+    together:
+      toattacker:
+      - 'Your <ansi fg="item">{itemname}</ansi> <ansi fg="red-bold">FUMBLES</ansi> and tangles around your own arm!'
+      - 'You lose control and your <ansi fg="item">{itemname}</ansi> <ansi fg="red-bold">FUMBLES</ansi> wildly!'
+      - 'Your whip snaps back and <ansi fg="red-bold">FUMBLES</ansi>, hitting you instead!'
+      todefender:
+      - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> <ansi fg="red-bold">FUMBLES</ansi> and tangles pathetically!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> loses control of their <ansi fg="item">{itemname}</ansi> as it <ansi fg="red-bold">FUMBLES</ansi> wildly!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> their whip and it snaps back at themselves!'
+      toroom:
+      - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> <ansi fg="red-bold">FUMBLES</ansi> in a tangled mess!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> their attack on <ansi fg="{targettype}">{target}</ansi> as their whip wraps around them!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> loses complete control and their <ansi fg="item">{itemname}</ansi> <ansi fg="red-bold">FUMBLES</ansi> uselessly!'

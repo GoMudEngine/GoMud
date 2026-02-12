@@ -114,3 +114,18 @@ options:
       - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRITICALLY EVISCERATES</ansi> <ansi fg="{targettype}">{target}</ansi>!'
       - '<ansi fg="{sourcetype}">{source}</ansi> delivers a <ansi fg="cyan-bold">CRITICAL REND</ansi> to <ansi fg="{targettype}">{target}</ansi>!'
       - '<ansi fg="{sourcetype}">{source}</ansi>''s claws <ansi fg="cyan-bold">DEVASTATE</ansi> <ansi fg="{targettype}">{target}</ansi>!'
+  fumble:
+    # messages for when they are in the same room
+    together:
+      toattacker:
+      - 'Your claws <ansi fg="red-bold">FUMBLE</ansi> as your swipe goes completely wild!'
+      - 'You <ansi fg="red-bold">FUMBLE</ansi> and stumble off-balance!'
+      - 'Your claws <ansi fg="red-bold">FUMBLE</ansi> awkwardly, leaving you vulnerable!'
+      todefender:
+      - '<ansi fg="{sourcetype}">{source}</ansi>''s claws <ansi fg="red-bold">FUMBLE</ansi> pathetically as they stumble!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> their swipe in an embarrassing display!'
+      - '<ansi fg="{sourcetype}">{source}</ansi>''s attack <ansi fg="red-bold">FUMBLES</ansi> badly as they lose their footing!'
+      toroom:
+      - '<ansi fg="{sourcetype}">{source}</ansi>''s claws <ansi fg="red-bold">FUMBLE</ansi> wildly at <ansi fg="{targettype}">{target}</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> their attack at <ansi fg="{targettype}">{target}</ansi> and stumbles!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> their swipe in a clumsy manner!'

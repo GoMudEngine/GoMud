@@ -166,6 +166,8 @@ func (c *Character) OnCriticalFailure(context string, userId int) {
 	mudlog.Debug("Progression", "event", "critical_failure", "context", context, "character", c.Name)
 
 	if configs.GetGamePlayConfig().UseSkillProgression {
+		msg := fmt.Sprintf(`<ansi fg="red">!!!</ansi> You learn from your mistake! Your <ansi fg="yellow">%s</ansi> understanding deepens. <ansi fg="red">!!!</ansi>`, context)
+		events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
 		c.CheckSkillProgression(context, userId, 1.0)
 	}
 }

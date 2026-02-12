@@ -3,6 +3,7 @@ package combat
 type AttackResult struct {
 	Hit                     bool  // defaults false
 	Crit                    bool  // defaults false
+	Fumble                  bool  // defaults false
 	BuffSource              []int // defaults 0
 	BuffTarget              []int // defaults 0
 	DamageToTarget          int   // defaults 0

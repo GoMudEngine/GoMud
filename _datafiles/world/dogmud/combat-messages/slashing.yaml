@@ -114,3 +114,18 @@ options:
       - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRITICALLY LACERATES</ansi> <ansi fg="{targettype}">{target}</ansi>!'
       - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> delivers a <ansi fg="cyan-bold">CRITICAL STRIKE</ansi> to <ansi fg="{targettype}">{target}</ansi>!'
       - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="cyan-bold">DEVASTATES</ansi> <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>!'
+  fumble:
+    # messages for when they are in the same room
+    together:
+      toattacker:
+      - 'Your blade <ansi fg="red-bold">FUMBLES</ansi> awkwardly as your slash goes completely wild!'
+      - 'You <ansi fg="red-bold">FUMBLE</ansi> and your grip slips dangerously on your <ansi fg="item">{itemname}</ansi>!'
+      - 'You overcommit to your slash and <ansi fg="red-bold">FUMBLE</ansi>, nearly losing your balance!'
+      todefender:
+      - '<ansi fg="{sourcetype}">{source}</ansi>''s blade <ansi fg="red-bold">FUMBLES</ansi> awkwardly against their own armor!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> their <ansi fg="item">{itemname}</ansi> in a pathetic display of clumsy incompetence!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> loses control of their swing and <ansi fg="red-bold">FUMBLES</ansi> badly!'
+      toroom:
+      - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> <ansi fg="red-bold">FUMBLES</ansi> wildly as their slash goes nowhere!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> their swing against <ansi fg="{targettype}">{target}</ansi> in a ridiculous manner!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> loses their grip and their attack <ansi fg="red-bold">FUMBLES</ansi> pathetically!'

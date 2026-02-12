@@ -114,3 +114,18 @@ options:
       - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRITICALLY PULVERIZES</ansi> <ansi fg="{targettype}">{target}</ansi>!'
       - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="cyan-bold">DEVASTATES</ansi> <ansi fg="{targettype}">{target}</ansi> with a critical cleave!'
       - '<ansi fg="{sourcetype}">{source}</ansi> delivers a <ansi fg="cyan-bold">CRITICAL CLEAVE</ansi> to <ansi fg="{targettype}">{target}</ansi>!'
+  fumble:
+    # messages for when they are in the same room
+    together:
+      toattacker:
+      - 'Your axe <ansi fg="red-bold">FUMBLES</ansi> and gets stuck awkwardly on your own armor!'
+      - 'You <ansi fg="red-bold">FUMBLE</ansi> your swing and nearly lose your balance!'
+      - 'Your swing is too wide and <ansi fg="red-bold">FUMBLES</ansi> completely out of control!'
+      todefender:
+      - '<ansi fg="{sourcetype}">{source}</ansi>''s axe <ansi fg="red-bold">FUMBLES</ansi> and gets stuck in the ground!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> their cleave and falls on their backside!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> loses balance and their attack <ansi fg="red-bold">FUMBLES</ansi> pathetically!'
+      toroom:
+      - '<ansi fg="{sourcetype}">{source}</ansi>''s axe <ansi fg="red-bold">FUMBLES</ansi> wildly as they attempt to cleave <ansi fg="{targettype}">{target}</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> their cleave at <ansi fg="{targettype}">{target}</ansi> in a clumsy display!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> swings too wide and <ansi fg="red-bold">FUMBLES</ansi> their attack badly!'

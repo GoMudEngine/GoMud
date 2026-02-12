@@ -691,7 +691,7 @@ No config flag needed — we will wire the `dice` package directly into combat i
 
 ---
 
-### Stage 4.7: Tune Critical Hit/Failure Rates & Messaging
+### Stage 4.7: Tune Critical Hit/Failure Rates & Messaging ✅ COMPLETED
 **Goal**: Fix the perception that critical successes happen far more often than critical failures, and improve crit messaging clarity.
 
 **Known Issues**:
@@ -1468,7 +1468,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 2: Species | 2 stages (2.1–2.2) | 8 hours | **Complete** |
 | Phase 3: Remove Levels | 9 stages (3.1–3.9) | 36 hours | **Complete** |
 | Phase 4: Distribution Combat | 4 stages (4.1–4.4) | 7 hours | **Complete** |
-| Phase 4b: Progression Fixes | 4 stages (4.5–4.8) | 12 hours | 4.5–4.6 Complete |
+| Phase 4b: Progression Fixes | 4 stages (4.5–4.8) | 12 hours | 4.5–4.7 Complete |
 | Phase 5: Stamina & Attacks | 3 stages (5.1–5.3) | 16 hours | Not Started |
 | Phase 6: Conviction & Magic | 2 stages (6.1–6.2) | 8 hours | Not Started |
 | Phase 7: Defense & Combat | 4 stages (7.1–7.4) | 20 hours | Not Started |
@@ -1550,4 +1550,4 @@ Issues discovered during 2026-02-12 playtest session, mapped to stages:
 
 **Last Updated**: 2026-02-12
 **Status**: In Progress
-**Current Stage**: 4.7 — Tune Critical Hit/Failure Rates & Messaging (next up)
+**Current Stage**: 4.8 — Remove Player Guide (next up)

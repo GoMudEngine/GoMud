@@ -163,6 +163,7 @@ const (
 	Normal   Intensity = "normal"
 	Heavy    Intensity = "heavy"
 	Critical Intensity = "critical"
+	Fumble   Intensity = "fumble"
 
 	// Tokens
 	TokenItemName     TokenName = "{itemname}"

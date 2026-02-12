@@ -54,6 +54,10 @@ func AttackPlayerVsMob(user *users.UserRecord, mob *mobs.Mob) AttackResult {
 		}
 	} else {
 		user.PlaySound(`miss`, `combat`)
+		if attackResult.Fumble {
+			combatSkill := string(user.Character.GetCombatSkillTag())
+			user.Character.OnCriticalFailure(combatSkill, user.UserId)
+		}
 	}
 
 	return attackResult
@@ -87,6 +91,10 @@ func AttackPlayerVsPlayer(userAtk *users.UserRecord, userDef *users.UserRecord) 
 		}
 	} else {
 		userAtk.PlaySound(`miss`, `combat`)
+		if attackResult.Fumble {
+			combatSkill := string(userAtk.Character.GetCombatSkillTag())
+			userAtk.Character.OnCriticalFailure(combatSkill, userAtk.UserId)
+		}
 	}
 
 	return attackResult
@@ -404,6 +412,19 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				combatStdDev := 15.0
 				hit, _, hitRoll, _ := dice.OpposedRoll(attackScore, defendScore, combatStdDev)
 
+				// Dynamic threshold for crit/fumble detection
+				critThreshold := 2.0 // ~2.5% chance
+				if sourceChar.HasBuffFlag(buffs.Accuracy) {
+					critThreshold = 1.5 // ~6.7% with Accuracy buff
+				}
+				if targetChar.HasBuffFlag(buffs.Blink) {
+					critThreshold = 2.5 // ~0.6% against Blink
+				}
+				// Skill advantage shifts crit threshold
+				skillDiff := sourceChar.GetCombatSkillLevel() - targetChar.GetCombatSkillLevel()
+				critThreshold -= float64(skillDiff) * 0.05
+				fumbleThreshold := -critThreshold // Mirror the crit threshold
+
 				if hit {
 					attackResult.Hit = true
 
@@ -411,22 +432,17 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 					damageResult := dice.Roll(dmgMean, dmgVariance)
 					attackTargetDamage = int(math.Round(math.Max(0, damageResult.Value)))
 
-					// Crit detection from hit roll z-score
-					critThreshold := 2.0 // ~2.5% of hits are crits
-					if sourceChar.HasBuffFlag(buffs.Accuracy) {
-						critThreshold = 1.5 // ~6.7% with Accuracy buff
-					}
-					if targetChar.HasBuffFlag(buffs.Blink) {
-						critThreshold = 2.5 // ~0.6% against Blink
-					}
-					// Skill advantage shifts crit threshold
-					skillDiff := sourceChar.GetCombatSkillLevel() - targetChar.GetCombatSkillLevel()
-					critThreshold -= float64(skillDiff) * 0.05
-
 					if hitRoll.ZScore >= critThreshold || attackResult.Crit {
 						attackResult.Crit = true
 						attackResult.BuffTarget = critBuffs
 						attackTargetDamage += int(math.Round(dmgMean))
+						mudlog.Debug("CritDetected", "zScore", fmt.Sprintf("%.2f", hitRoll.ZScore), "threshold", fmt.Sprintf("%.2f", critThreshold), "source", sourceChar.Name, "target", targetChar.Name)
+					}
+				} else {
+					// Fumble detection on miss
+					if hitRoll.ZScore <= fumbleThreshold {
+						attackResult.Fumble = true
+						mudlog.Debug("FumbleDetected", "zScore", fmt.Sprintf("%.2f", hitRoll.ZScore), "threshold", fmt.Sprintf("%.2f", fumbleThreshold), "source", sourceChar.Name, "target", targetChar.Name)
 					}
 				}
 
@@ -448,7 +464,13 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 					pctDamage = math.Ceil(float64(attackTargetDamage) / dmgMean * 100)
 				}
 
-				msgs := items.GetAttackMessage(weaponSubType, int(pctDamage))
+				// Use fumble messages when a fumble is detected
+				var msgs items.AttackOptions
+				if attackResult.Fumble {
+					msgs = items.GetPreAttackMessage(weaponSubType, items.Fumble)
+				} else {
+					msgs = items.GetAttackMessage(weaponSubType, int(pctDamage))
+				}
 
 				var toAttackerMsg, toDefenderMsg, toAttackerRoomMsg, toDefenderRoomMsg items.ItemMessage
 
@@ -525,6 +547,15 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 					toAttackerRoomMsg = items.ItemMessage(`<ansi fg="yellow-bold">***</ansi> ` + string(toAttackerRoomMsg) + ` <ansi fg="yellow-bold">***</ansi>`)
 					if len(string(toDefenderRoomMsg)) > 0 {
 						toDefenderRoomMsg = items.ItemMessage(`<ansi fg="yellow-bold">***</ansi> ` + string(toDefenderRoomMsg) + ` <ansi fg="yellow-bold">***</ansi>`)
+					}
+				}
+
+				if attackResult.Fumble {
+					toAttackerMsg = items.ItemMessage(`<ansi fg="red-bold">!!!</ansi> ` + string(toAttackerMsg) + ` <ansi fg="red-bold">!!!</ansi>`)
+					toDefenderMsg = items.ItemMessage(`<ansi fg="red-bold">!!!</ansi> ` + string(toDefenderMsg) + ` <ansi fg="red-bold">!!!</ansi>`)
+					toAttackerRoomMsg = items.ItemMessage(`<ansi fg="red-bold">!!!</ansi> ` + string(toAttackerRoomMsg) + ` <ansi fg="red-bold">!!!</ansi>`)
+					if len(string(toDefenderRoomMsg)) > 0 {
+						toDefenderRoomMsg = items.ItemMessage(`<ansi fg="red-bold">!!!</ansi> ` + string(toDefenderRoomMsg) + ` <ansi fg="red-bold">!!!</ansi>`)
 					}
 				}
 
@@ -622,4 +653,3 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 	return attackResult
 
 }
-

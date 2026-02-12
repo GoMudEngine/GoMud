@@ -233,11 +233,52 @@ func TestCriticalCheck(t *testing.T) {
 
 	// Expected rate for z=2.0 is about 2.28%
 	expectedRate := 2.28
-	if math.Abs(critRate-expectedRate) > 0.5 {
-		t.Logf("Warning: Crit rate %.2f%% differs from expected %.2f%%", critRate, expectedRate)
+	tolerance := 0.5 // Allow ±0.5% due to randomness with 100k samples
+	if math.Abs(critRate-expectedRate) > tolerance {
+		t.Errorf("Crit rate %.2f%% outside tolerance of expected %.2f%% (±%.1f%%)", critRate, expectedRate, tolerance)
 	}
-	if math.Abs(fumbleRate-expectedRate) > 0.5 {
-		t.Logf("Warning: Fumble rate %.2f%% differs from expected %.2f%%", fumbleRate, expectedRate)
+	if math.Abs(fumbleRate-expectedRate) > tolerance {
+		t.Errorf("Fumble rate %.2f%% outside tolerance of expected %.2f%% (±%.1f%%)", fumbleRate, expectedRate, tolerance)
+	}
+}
+
+func TestCriticalCheckDynamicThreshold(t *testing.T) {
+	iterations := 100000
+
+	// Test with a skill differential that shifts the threshold
+	// Skilled attacker: threshold lowered to 1.5 (more crits, fewer fumbles)
+	critThreshold := 1.5
+	fumbleThreshold := -critThreshold
+
+	critCount := 0
+	fumbleCount := 0
+
+	for i := 0; i < iterations; i++ {
+		result := Roll(50.0, 10.0)
+		isCrit, isFumble := CriticalCheck(result, critThreshold, fumbleThreshold)
+		if isCrit {
+			critCount++
+		}
+		if isFumble {
+			fumbleCount++
+		}
+	}
+
+	critRate := float64(critCount) / float64(iterations) * 100
+	fumbleRate := float64(fumbleCount) / float64(iterations) * 100
+
+	t.Logf("Dynamic threshold check (crit: %.1f, fumble: %.1f):", critThreshold, fumbleThreshold)
+	t.Logf("  Criticals: %d (%.2f%%, expected ~6.68%%)", critCount, critRate)
+	t.Logf("  Fumbles: %d (%.2f%%, expected ~6.68%%)", fumbleCount, fumbleRate)
+
+	// z=1.5 gives ~6.68% rate
+	expectedRate := 6.68
+	tolerance := 1.0
+	if math.Abs(critRate-expectedRate) > tolerance {
+		t.Errorf("Crit rate %.2f%% outside tolerance of expected %.2f%% (±%.1f%%)", critRate, expectedRate, tolerance)
+	}
+	if math.Abs(fumbleRate-expectedRate) > tolerance {
+		t.Errorf("Fumble rate %.2f%% outside tolerance of expected %.2f%% (±%.1f%%)", fumbleRate, expectedRate, tolerance)
 	}
 }
 

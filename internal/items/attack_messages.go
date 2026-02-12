@@ -69,7 +69,7 @@ func (w *WeaponAttackMessageGroup) Id() ItemSubType {
 func (w *WeaponAttackMessageGroup) Validate() error {
 
 	// Make sure all important options are present.
-	optionsToCheck := []Intensity{Prepare, Wait, Miss, Weak, Normal, Heavy, Critical}
+	optionsToCheck := []Intensity{Prepare, Wait, Miss, Weak, Normal, Heavy, Critical, Fumble}
 	for _, option := range optionsToCheck {
 		if _, ok := w.Options[option]; !ok {
 			return fmt.Errorf("missing option[`%s`] for %s", option, w.OptionId)

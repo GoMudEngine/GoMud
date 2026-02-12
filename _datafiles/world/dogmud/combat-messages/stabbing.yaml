@@ -114,3 +114,18 @@ options:
       - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRITICALLY IMPALES</ansi> <ansi fg="{targettype}">{target}</ansi>!'
       - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> delivers a <ansi fg="cyan-bold">CRITICAL STRIKE</ansi> to <ansi fg="{targettype}">{target}</ansi>!'
       - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="cyan-bold">DEVASTATES</ansi> <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>!'
+  fumble:
+    # messages for when they are in the same room
+    together:
+      toattacker:
+      - 'Your thrust <ansi fg="red-bold">FUMBLES</ansi> and goes wildly off target!'
+      - 'You <ansi fg="red-bold">FUMBLE</ansi> your thrust and stumble forward awkwardly!'
+      - 'You overextend your <ansi fg="item">{itemname}</ansi> and <ansi fg="red-bold">FUMBLE</ansi> badly!'
+      todefender:
+      - '<ansi fg="{sourcetype}">{source}</ansi>''s thrust <ansi fg="red-bold">FUMBLES</ansi> pathetically as they lose their balance!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> their stab and nearly impales themselves!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> overextends and <ansi fg="red-bold">FUMBLES</ansi> their attack in a clumsy manner!'
+      toroom:
+      - '<ansi fg="{sourcetype}">{source}</ansi>''s thrust <ansi fg="red-bold">FUMBLES</ansi> wildly against <ansi fg="{targettype}">{target}</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> their stab at <ansi fg="{targettype}">{target}</ansi> in an embarrassing display!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> overextends and their attack <ansi fg="red-bold">FUMBLES</ansi> uselessly!'

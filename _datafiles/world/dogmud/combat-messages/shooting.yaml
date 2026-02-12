@@ -234,3 +234,36 @@ options:
       - 'A shot from a <ansi fg="item">{itemname}</ansi> flies in from the <ansi fg="exit">{entrancename}</ansi>, and <ansi fg="cyan-bold">CRITICALLY SNIPES</ansi> <ansi fg="{targettype}">{target}</ansi>.'
       - 'A shot from the <ansi fg="exit">{entrancename}</ansi> delivers a <ansi fg="cyan-bold">CRITICAL HIT</ansi> to <ansi fg="{targettype}">{target}</ansi>!'
       - '<ansi fg="{targettype}">{target}</ansi> is <ansi fg="cyan-bold">DEVASTATED</ansi> by a shot from the <ansi fg="exit">{entrancename}</ansi>!'
+  fumble:
+    # messages for when they are in the same room
+    together:
+      toattacker:
+      - 'Your arrow <ansi fg="red-bold">FUMBLES</ansi> wildly and flies off in a random direction!'
+      - 'You <ansi fg="red-bold">FUMBLE</ansi> your shot at <ansi fg="{targettype}">{target}</ansi> completely!'
+      - 'Your aim is so terrible that your arrow <ansi fg="red-bold">FUMBLES</ansi> pathetically!'
+      todefender:
+      - '<ansi fg="{sourcetype}">{source}</ansi>''s shot <ansi fg="red-bold">FUMBLES</ansi> wildly, missing by a mile!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> their shot at you in an embarrassing display!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> and nearly shoots themselves!'
+      toroom:
+      - '<ansi fg="{sourcetype}">{source}</ansi>''s shot <ansi fg="red-bold">FUMBLES</ansi> wildly away from <ansi fg="{targettype}">{target}</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> their shot at <ansi fg="{targettype}">{target}</ansi> in a clumsy manner!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> and their projectile goes flying off!'
+    # messages for when they are in different rooms, such as with projectiles
+    separate:
+      toattacker:
+      - 'Your arrow <ansi fg="red-bold">FUMBLES</ansi> wildly as you lose control of your aim!'
+      - 'You <ansi fg="red-bold">FUMBLE</ansi> your shot towards <ansi fg="{targettype}">{target}</ansi> through the <ansi fg="exit">{exitname}</ansi>!'
+      - 'Your bowstring <ansi fg="red-bold">FUMBLES</ansi> and your arrow goes nowhere near the target!'
+      todefender:
+      - 'A shot from the <ansi fg="exit">{entrancename}</ansi> <ansi fg="red-bold">FUMBLES</ansi> harmlessly past you!'
+      - 'An arrow from afar <ansi fg="red-bold">FUMBLES</ansi> wildly and misses completely!'
+      - 'A projectile from the <ansi fg="exit">{entrancename}</ansi> <ansi fg="red-bold">FUMBLES</ansi> harmlessly into the distance!'
+      toattackerroom:
+      - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> their shot through the <ansi fg="exit">{exitname}</ansi> direction!'
+      - '<ansi fg="{sourcetype}">{source}</ansi>''s bowstring <ansi fg="red-bold">FUMBLES</ansi> as they lose control!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> their aim at <ansi fg="{targettype}">{target}</ansi>!'
+      todefenderroom:
+      - 'A shot from the <ansi fg="exit">{entrancename}</ansi> <ansi fg="red-bold">FUMBLES</ansi> past <ansi fg="{targettype}">{target}</ansi>!'
+      - 'A projectile flies in from the <ansi fg="exit">{entrancename}</ansi> and <ansi fg="red-bold">FUMBLES</ansi> wildly!'
+      - 'A distant shot <ansi fg="red-bold">FUMBLES</ansi> harmlessly near <ansi fg="{targettype}">{target}</ansi>!'
