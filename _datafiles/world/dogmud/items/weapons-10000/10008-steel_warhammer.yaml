@@ -6,6 +6,7 @@ description: A one-handed warhammer with a steel head and reinforced haft. The w
 type: weapon
 hands: 1
 subtype: bludgeoning
+weight: 12.0  # Heavy one-handed weapon
 speedmultiplier: 0.6  # Slower one-handed weapon due to weight
 staminacost: 10  # Heavy one-handed weapon cost
 damage:

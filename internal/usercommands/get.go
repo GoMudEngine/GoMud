@@ -107,6 +107,9 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			if user.Character.Pet.RemoveItem(matchItem) {
 				if !user.Character.StoreItem(matchItem) {
 					user.Character.Pet.StoreItem(matchItem)
+					user.SendText(
+						fmt.Sprintf(`You can't carry the <ansi fg="itemname">%s</ansi> - you're already overloaded!`, matchItem.DisplayName()),
+					)
 				} else {
 
 					events.AddToQueue(events.ItemOwnership{
@@ -114,15 +117,18 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 						Item:   matchItem,
 						Gained: true,
 					})
-				}
 
-				user.SendText(
-					fmt.Sprintf(`You remove a <ansi fg="itemname">%s</ansi> from %s.`, matchItem.DisplayName(), user.Character.Pet.DisplayName()),
-				)
-				room.SendText(
-					fmt.Sprintf(`<ansi fg="username">%s</ansi> removes a <ansi fg="itemname">%s</ansi> from %s...`, user.Character.Name, matchItem.DisplayName(), user.Character.Pet.DisplayName()),
-					user.UserId,
-				)
+					user.SendText(
+						fmt.Sprintf(`You remove a <ansi fg="itemname">%s</ansi> from %s.`, matchItem.DisplayName(), user.Character.Pet.DisplayName()),
+					)
+					room.SendText(
+						fmt.Sprintf(`<ansi fg="username">%s</ansi> removes a <ansi fg="itemname">%s</ansi> from %s...`, user.Character.Name, matchItem.DisplayName(), user.Character.Pet.DisplayName()),
+						user.UserId,
+					)
+
+					// Check encumbrance and warn player
+					sendEncumbranceWarning(user)
+				}
 
 			}
 		}
@@ -194,11 +200,14 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 					user.UserId,
 				)
 
+				// Check encumbrance and warn player
+				sendEncumbranceWarning(user)
+
 				return true, nil
 
 			} else {
 				user.SendText(
-					fmt.Sprintf(`You can't carry the <ansi fg="itemname">%s</ansi>.`, matchItem.DisplayName()),
+					fmt.Sprintf(`You can't carry the <ansi fg="itemname">%s</ansi> - you're already overloaded!`, matchItem.DisplayName()),
 				)
 			}
 
@@ -292,9 +301,12 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 					)
 				}
 
+				// Check encumbrance and warn player
+				sendEncumbranceWarning(user)
+
 			} else {
 				user.SendText(
-					fmt.Sprintf(`You can't carry the <ansi fg="itemname">%s</ansi>.`, matchItem.DisplayName()),
+					fmt.Sprintf(`You can't carry the <ansi fg="itemname">%s</ansi> - you're already overloaded!`, matchItem.DisplayName()),
 				)
 			}
 
@@ -328,4 +340,22 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	}
 
 	return true, nil
+}
+
+// sendEncumbranceWarning checks the player's encumbrance level and sends appropriate warnings
+func sendEncumbranceWarning(user *users.UserRecord) {
+	weight := user.Character.GetCarriedWeight()
+	capacity := user.Character.CarryCapacity()
+	encPct := weight / capacity
+
+	if encPct >= 2.0 {
+		user.SendText(`<ansi fg="red-bold">You are severely overloaded!</ansi> Your combat and movement are heavily penalized.`)
+	} else if encPct >= 1.5 {
+		user.SendText(`<ansi fg="red">You are heavily encumbered.</ansi> Your combat and movement are significantly penalized.`)
+	} else if encPct >= 1.0 {
+		user.SendText(`<ansi fg="yellow">You are encumbered.</ansi> Your combat and movement are penalized.`)
+	} else if encPct >= 0.75 {
+		user.SendText(`<ansi fg="yellow">You are carrying a moderate load.</ansi>`)
+	}
+	// No message for light load or unencumbered
 }

@@ -6,6 +6,7 @@ description: A massive two-handed sword with a wide, thick blade. It requires bo
 type: weapon
 hands: 2
 subtype: slashing
+weight: 20.0  # Heavy two-handed weapon
 speedmultiplier: 0.5  # Slow, heavy two-handed weapon
 staminacost: 12  # Heavy weapon, high stamina cost
 damage:

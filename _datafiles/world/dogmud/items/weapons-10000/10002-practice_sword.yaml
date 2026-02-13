@@ -6,6 +6,7 @@ description: A blunted training sword with a wrapped leather grip. The edge has 
 type: weapon
 hands: 1
 subtype: slashing
+weight: 6.0  # Medium sword weight
 speedmultiplier: 0.7  # Standard sword - slower than unarmed but versatile
 damage:
   basedamage: 4

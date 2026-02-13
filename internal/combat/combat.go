@@ -321,13 +321,13 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 		}
 	}
 
-	// Apply encumbrance penalty to attack count
-	itemCount := len(sourceChar.Items)
+	// Apply encumbrance penalty to attack count (weight-based)
+	carriedWeight := sourceChar.GetCarriedWeight()
 	capacity := sourceChar.CarryCapacity()
-	if itemCount > capacity {
+	if carriedWeight > capacity {
 		// Overencumbered: reduce attacks based on how much over capacity
-		overAmount := float64(itemCount - capacity)
-		overRatio := overAmount / float64(capacity)
+		overAmount := carriedWeight - capacity
+		overRatio := overAmount / capacity
 		// Penalty scales from 0% at capacity to 50% at 2x capacity
 		encumbrancePenalty := math.Min(overRatio * 0.5, 0.5)
 		attackCount = int(math.Ceil(float64(attackCount) * (1.0 - encumbrancePenalty)))

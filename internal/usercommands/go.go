@@ -46,7 +46,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 
 		actionCost := 10
 		encumbered := false
-		if len(user.Character.Items) > user.Character.CarryCapacity() {
+		if user.Character.GetCarriedWeight() > user.Character.CarryCapacity() {
 			actionCost = 50
 			encumbered = true
 		}

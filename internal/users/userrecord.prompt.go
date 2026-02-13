@@ -251,7 +251,7 @@ func (u *UserRecord) ProcessPromptString(promptStr string) string {
 				promptOut.WriteString(strconv.Itoa(len(u.Character.Items)))
 
 			case `{I}`:
-				promptOut.WriteString(strconv.Itoa(u.Character.CarryCapacity()))
+				promptOut.WriteString(strconv.Itoa(int(u.Character.CarryCapacity())))
 
 			case `{lvl}`:
 				promptOut.WriteString(strconv.Itoa(u.Character.Level))

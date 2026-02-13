@@ -289,8 +289,53 @@ func (c *Character) GetBaseCastSuccessChance(spellId string) int {
 	return targetNumber
 }
 
-func (c *Character) CarryCapacity() int {
-	return 5 + c.Stats.Strength.ValueAdj/3
+// CarryCapacity returns weight capacity in pounds (Strength × 3)
+func (c *Character) CarryCapacity() float64 {
+	return float64(c.Stats.Strength.ValueAdj) * 3.0
+}
+
+// GetCarriedWeight returns the total weight of all carried items in pounds
+func (c *Character) GetCarriedWeight() float64 {
+	totalWeight := 0.0
+
+	// Add weight from inventory items
+	for _, item := range c.Items {
+		totalWeight += item.GetSpec().GetWeight()
+	}
+
+	// Add weight from equipped items
+	if c.Equipment.Weapon.ItemId > 0 {
+		totalWeight += c.Equipment.Weapon.GetSpec().GetWeight()
+	}
+	if c.Equipment.Offhand.ItemId > 0 {
+		totalWeight += c.Equipment.Offhand.GetSpec().GetWeight()
+	}
+	if c.Equipment.Head.ItemId > 0 {
+		totalWeight += c.Equipment.Head.GetSpec().GetWeight()
+	}
+	if c.Equipment.Neck.ItemId > 0 {
+		totalWeight += c.Equipment.Neck.GetSpec().GetWeight()
+	}
+	if c.Equipment.Body.ItemId > 0 {
+		totalWeight += c.Equipment.Body.GetSpec().GetWeight()
+	}
+	if c.Equipment.Belt.ItemId > 0 {
+		totalWeight += c.Equipment.Belt.GetSpec().GetWeight()
+	}
+	if c.Equipment.Gloves.ItemId > 0 {
+		totalWeight += c.Equipment.Gloves.GetSpec().GetWeight()
+	}
+	if c.Equipment.Ring.ItemId > 0 {
+		totalWeight += c.Equipment.Ring.GetSpec().GetWeight()
+	}
+	if c.Equipment.Legs.ItemId > 0 {
+		totalWeight += c.Equipment.Legs.GetSpec().GetWeight()
+	}
+	if c.Equipment.Feet.ItemId > 0 {
+		totalWeight += c.Equipment.Feet.GetSpec().GetWeight()
+	}
+
+	return totalWeight
 }
 
 func (c *Character) DeductActionPoints(amount int) bool {
@@ -329,15 +374,15 @@ func (c *Character) GetMovementStaminaCost(terrainMultiplier float64) int {
 	// Apply terrain multiplier
 	cost := baseCost * terrainMultiplier
 
-	// Calculate encumbrance multiplier
+	// Calculate encumbrance multiplier based on weight
 	encumbranceMultiplier := 1.0
-	itemCount := len(c.Items)
+	carriedWeight := c.GetCarriedWeight()
 	capacity := c.CarryCapacity()
 
-	if itemCount > capacity {
+	if carriedWeight > capacity {
 		// Overencumbered: scale from 1.0 to 5.0 based on how much over capacity
-		overAmount := float64(itemCount - capacity)
-		overRatio := overAmount / float64(capacity)
+		overAmount := carriedWeight - capacity
+		overRatio := overAmount / capacity
 		// Cap at 5x multiplier when carrying 2x capacity
 		encumbranceMultiplier = 1.0 + math.Min(overRatio*4.0, 4.0)
 	}
@@ -934,6 +979,15 @@ func (c *Character) StoreItem(i items.Item) bool {
 	}
 
 	i.Validate()
+
+	// Check if adding this item would exceed carry capacity
+	newWeight := c.GetCarriedWeight() + i.GetSpec().GetWeight()
+	capacity := c.CarryCapacity()
+
+	// Allow up to 2x capacity (overloaded, but possible)
+	if newWeight > capacity*2.0 {
+		return false
+	}
 
 	c.Items = append(c.Items, i)
 
