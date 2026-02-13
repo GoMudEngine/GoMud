@@ -1193,6 +1193,39 @@ func (c *Character) GetCombatSkillLevel() int {
 	return 1
 }
 
+// GetModifiedAttackCount calculates the number of attacks for a weapon
+// considering speed multiplier, skill, and dual wielding.
+// baseAttacks: The weapon's base attack count
+// weaponSpeed: The weapon's speed multiplier (1.0 = unarmed baseline)
+// isOffhand: Whether this is the offhand weapon
+func (c *Character) GetModifiedAttackCount(baseAttacks int, weaponSpeed float64, isOffhand bool) int {
+	attacks := float64(baseAttacks)
+
+	// Apply weapon speed multiplier
+	attacks *= weaponSpeed
+
+	// Apply skill modifier (small bonus, max ~10% at skill 50)
+	skillLevel := float64(c.GetCombatSkillLevel())
+	skillMod := 1.0 + (skillLevel / 50.0) * 0.1
+	attacks *= skillMod
+
+	// If offhand, dual wielding skill plays significant role
+	if isOffhand {
+		dualWieldLevel := float64(c.GetSkillLevel(skills.DualWield))
+		// Significant modifier: 0.5 at skill 0, 1.0 at skill 25, 1.2 at skill 50
+		dualWieldMod := 0.5 + (dualWieldLevel / 50.0) * 0.7
+		attacks *= dualWieldMod
+	}
+
+	// Minimum 1 attack
+	result := int(math.Round(attacks))
+	if result < 1 {
+		result = 1
+	}
+
+	return result
+}
+
 func (c *Character) GetMaxCharmedCreatures() int {
 	lvl := c.GetSkillLevel(skills.Tame)
 	return lvl + 1

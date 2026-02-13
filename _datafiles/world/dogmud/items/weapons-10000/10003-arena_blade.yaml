@@ -6,6 +6,7 @@ description: A finely honed longsword bearing the arena's crest on its crossguar
 type: weapon
 hands: 1
 subtype: slashing
+speedmultiplier: 0.75  # Quality balanced sword - slightly faster than basic swords
 damage:
   basedamage: 9
   variance: 2
