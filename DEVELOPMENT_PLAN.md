@@ -920,8 +920,9 @@ After Stage 4.7, manual testing revealed that arena mobs were too weak for new p
 
 ## Phase 6: Conviction & Magic System
 
-### Stage 6.1: Add Spell Schools as Tags
+### Stage 6.1: Add Spell Schools as Tags ✅ COMPLETED
 **Goal**: Implement DOG's 4 spell schools (Elemental, Enhancement, Mental, Vital).
+**Status**: Merged into `development` — commit `6b65be6`.
 
 **Changes**:
 1. Add `Schools []string` field to spell data (can have multiple tags)
@@ -951,8 +952,15 @@ After Stage 4.7, manual testing revealed that arena mobs were too weak for new p
 
 ---
 
-### Stage 6.2: Replace Mana with Conviction Costs
+### Stage 6.2: Replace Mana with Conviction Costs ✅ COMPLETED
 **Goal**: Make spells cost Conviction instead of mana.
+**Status**: Merged into `development` — commit `6b65be6`.
+
+**Note**: Core conviction cost system was implemented in Stage 1.3 (commit `5eb0bdf`). This stage added:
+- Optional Health costs for life-force magic (HealthCost field)
+- Spell cost scaling configuration (SpellConvictionCostMultiplier, SpellHealthCostMultiplier)
+- Health cost display in spells command
+- Example implementation in healall.yaml
 
 **Changes**:
 1. Add `ConvictionCost int` to spell data
@@ -1518,8 +1526,8 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 3: Remove Levels | 9 stages (3.1–3.9) | 36 hours | **Complete** |
 | Phase 4: Distribution Combat | 4 stages (4.1–4.4) | 7 hours | **Complete** |
 | Phase 4b: Progression Fixes | 4 stages (4.5–4.8) | 12 hours | **Complete** |
-| Phase 5: Stamina & Attacks | 4 stages (5.1–5.4) | 20 hours | 5.1–5.3 Complete |
-| Phase 6: Conviction & Magic | 2 stages (6.1–6.2) | 8 hours | Not Started |
+| Phase 5: Stamina & Attacks | 4 stages (5.1–5.4) | 20 hours | **Complete** |
+| Phase 6: Conviction & Magic | 2 stages (6.1–6.2) | 8 hours | **Complete** |
 | Phase 7: Defense & Combat | 4 stages (7.1–7.4) | 20 hours | Not Started |
 | Phase 8: Grappling | 2 stages (8.1–8.2) | 12 hours | Not Started |
 | Phase 9: Combat Presentation | 3 stages (9.1–9.3) | 16 hours | Not Started |
@@ -1597,6 +1605,6 @@ Issues discovered during 2026-02-12 playtest session, mapped to stages:
 
 ---
 
-**Last Updated**: 2026-02-12
+**Last Updated**: 2026-02-13
 **Status**: In Progress
-**Current Stage**: 5.4 — Weight-Based Encumbrance ✅ COMPLETED (Phase 5 complete, moving to Phase 6)
+**Current Stage**: 6.2 — Replace Mana with Conviction Costs ✅ COMPLETED (Phase 6 complete, moving to Phase 7)
