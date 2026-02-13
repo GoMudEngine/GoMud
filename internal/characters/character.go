@@ -278,7 +278,11 @@ func (c *Character) GetBaseCastSuccessChance(spellId string) int {
 
 	// add by any stat mods for casting, or casting school
 	// 0-xx
-	targetNumber += c.StatMod(string(statmods.Casting)) + c.StatMod(string(statmods.CastingPrefix)+string(sp.School))
+	targetNumber += c.StatMod(string(statmods.Casting))
+	// Add stat mods for each school the spell belongs to
+	for _, school := range sp.Schools {
+		targetNumber += c.StatMod(string(statmods.CastingPrefix) + school)
+	}
 
 	if targetNumber < 0 {
 		targetNumber = 0

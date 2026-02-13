@@ -32,6 +32,10 @@ type GamePlay struct {
 	// Skill Progression
 	UseSkillProgression ConfigBool `yaml:"UseSkillProgression"` // Enable skill/stat progression checks on skill/stat use
 	DualProgressionMode ConfigBool `yaml:"DualProgressionMode"` // When true, progression checks grant actual skill/stat increases (requires UseSkillProgression)
+
+	// Spell Cost Scaling
+	SpellConvictionCostMultiplier ConfigFloat `yaml:"SpellConvictionCostMultiplier"` // Global multiplier for spell conviction costs (default 1.0)
+	SpellHealthCostMultiplier     ConfigFloat `yaml:"SpellHealthCostMultiplier"`     // Global multiplier for spell health costs (default 1.0)
 }
 
 type GameplayDeath struct {
@@ -126,6 +130,14 @@ func (g *GamePlay) Validate() {
 		g.MobConverseChance = 0
 	} else if g.MobConverseChance > 100 {
 		g.MobConverseChance = 100
+	}
+
+	// Spell cost multipliers - default to 1.0 if not set or invalid
+	if g.SpellConvictionCostMultiplier <= 0 {
+		g.SpellConvictionCostMultiplier = 1.0
+	}
+	if g.SpellHealthCostMultiplier <= 0 {
+		g.SpellHealthCostMultiplier = 1.0
 	}
 
 }
