@@ -153,6 +153,42 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		}
 	*/
 
+	// --- TARGET SWITCHING LOGIC (Stage 7.4) ---
+	// If already in combat and trying to attack a different target, use target switching
+	if user.Character.Aggro != nil {
+		currentTargetUserId := user.Character.Aggro.UserId
+		currentTargetMobId := user.Character.Aggro.MobInstanceId
+
+		isDifferentTarget := false
+		if attackMobInstanceId > 0 && attackMobInstanceId != currentTargetMobId {
+			isDifferentTarget = true
+		}
+		if attackPlayerId > 0 && attackPlayerId != currentTargetUserId {
+			isDifferentTarget = true
+		}
+
+		// If switching targets, use the Target command logic instead
+		if isDifferentTarget && (user.Character.Aggro.Type == characters.DefaultAttack || user.Character.Aggro.Type == characters.Shooting) {
+			// Build target name for the Target command
+			targetName := rest
+			if targetName == "" || targetName[0] == '*' {
+				// For empty or random targets, find the actual name
+				if attackMobInstanceId > 0 {
+					if m := mobs.GetInstance(attackMobInstanceId); m != nil {
+						targetName = m.Character.Name
+					}
+				} else if attackPlayerId > 0 {
+					if p := users.GetByUserId(attackPlayerId); p != nil {
+						targetName = p.Character.Name
+					}
+				}
+			}
+			// Delegate to Target command for proper switching logic
+			return Target(targetName, user, room, flags)
+		}
+	}
+	// --- END TARGET SWITCHING LOGIC ---
+
 	if attackMobInstanceId > 0 {
 
 		m := mobs.GetInstance(attackMobInstanceId)

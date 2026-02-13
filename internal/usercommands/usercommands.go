@@ -153,6 +153,7 @@ var (
 		`suicide`:     {Suicide, true, true, false},
 		`syslogs`:     {SysLogs, true, true, true}, // Admin only
 		`tame`:        {Tame, false, true, false},
+		`target`:      {Target, false, true, false},
 		`teleport`:    {Teleport, true, true, true}, // Admin only
 		`throw`:       {Throw, false, true, false},
 		`track`:       {Track, false, true, false},
