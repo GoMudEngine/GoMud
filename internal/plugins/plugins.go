@@ -441,7 +441,7 @@ func Load(dataFilesPath string) {
 		pluginCt++
 
 		for cmd, info := range p.Callbacks.userCommands {
-			usercommands.RegisterCommand(cmd, info.Func, info.AllowedWhenDowned, info.AdminOnly)
+			usercommands.RegisterCommand(cmd, info.Func, info.AllowedWhenDowned, info.AllowedInCombat, info.AdminOnly)
 		}
 
 		for cmd, info := range p.Callbacks.mobCommands {
