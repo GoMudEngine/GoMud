@@ -474,10 +474,34 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				combatStdDev := 15.0
 				hit := false
 				var lastHitRoll dice.RollResult
-				var firstDefenseRoll dice.RollResult // For fumble detection
 
-				// Try each defense in sequence
-				for defenseIndex, defenseType := range defenseSequence {
+				// Dynamic threshold for crit/fumble detection (moved earlier to check on initial attack)
+				critThreshold := 2.0 // ~2.5% chance
+				if sourceChar.HasBuffFlag(buffs.Accuracy) {
+					critThreshold = 1.5 // ~6.7% with Accuracy buff
+				}
+				if targetChar.HasBuffFlag(buffs.Blink) {
+					critThreshold = 2.5 // ~0.6% against Blink
+				}
+				// Skill advantage shifts crit threshold
+				skillDiff := sourceChar.GetCombatSkillLevel() - targetChar.GetCombatSkillLevel()
+				critThreshold -= float64(skillDiff) * 0.05
+				fumbleThreshold := -critThreshold // Mirror the crit threshold
+
+				// Make initial attack roll to detect fumbles BEFORE defense sequence
+				// Fumbles are based on attacker's raw performance, not opposed roll outcomes
+				initialAttackRoll := dice.Roll(attackScore, combatStdDev)
+
+				// Check for fumble on the initial attack roll
+				if initialAttackRoll.ZScore <= fumbleThreshold {
+					// Attacker fumbled - auto-miss, skip defense sequence
+					attackResult.Fumble = true
+					hit = false
+					mudlog.Debug("FumbleDetected", "zScore", fmt.Sprintf("%.2f", initialAttackRoll.ZScore), "threshold", fmt.Sprintf("%.2f", fumbleThreshold), "source", sourceChar.Name, "target", targetChar.Name)
+				} else {
+					// No fumble, proceed with defense sequence
+					// Try each defense in sequence
+				for _, defenseType := range defenseSequence {
 					// Track defense attempt
 					attackResult.DefenseAttempts = append(attackResult.DefenseAttempts, DefenseType(defenseType))
 
@@ -493,11 +517,6 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 					// Opposed roll: attack vs this defense
 					defenseSucceeded, _, hitRoll, _ := dice.OpposedRoll(attackScore, defenseScore, combatStdDev)
 					lastHitRoll = hitRoll
-
-					// Track first defense roll for fumble detection
-					if defenseIndex == 0 {
-						firstDefenseRoll = hitRoll
-					}
 
 					if !defenseSucceeded {
 						// Defense failed, continue to next defense
@@ -537,23 +556,11 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 					break
 				}
 
-				// If no defense succeeded (or insufficient stamina for all), attack hits
-				if attackResult.DefenseUsed == DefenseNone {
-					hit = true
-				}
-
-				// Dynamic threshold for crit/fumble detection
-				critThreshold := 2.0 // ~2.5% chance
-				if sourceChar.HasBuffFlag(buffs.Accuracy) {
-					critThreshold = 1.5 // ~6.7% with Accuracy buff
-				}
-				if targetChar.HasBuffFlag(buffs.Blink) {
-					critThreshold = 2.5 // ~0.6% against Blink
-				}
-				// Skill advantage shifts crit threshold
-				skillDiff := sourceChar.GetCombatSkillLevel() - targetChar.GetCombatSkillLevel()
-				critThreshold -= float64(skillDiff) * 0.05
-				fumbleThreshold := -critThreshold // Mirror the crit threshold
+					// If no defense succeeded (or insufficient stamina for all), attack hits
+					if attackResult.DefenseUsed == DefenseNone {
+						hit = true
+					}
+				} // End else block (no fumble, proceeded with defense sequence)
 
 				if hit {
 					attackResult.Hit = true
@@ -568,14 +575,8 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 						attackTargetDamage += int(math.Round(dmgMean))
 						mudlog.Debug("CritDetected", "zScore", fmt.Sprintf("%.2f", lastHitRoll.ZScore), "threshold", fmt.Sprintf("%.2f", critThreshold), "source", sourceChar.Name, "target", targetChar.Name)
 					}
-				} else {
-					// Fumble detection on miss - use first defense roll (dodge) to detect attacker fumbles
-					// Only check if we actually had defense attempts (not bypassed due to zero stamina)
-					if len(attackResult.DefenseAttempts) > 0 && firstDefenseRoll.ZScore <= fumbleThreshold {
-						attackResult.Fumble = true
-						mudlog.Debug("FumbleDetected", "zScore", fmt.Sprintf("%.2f", firstDefenseRoll.ZScore), "threshold", fmt.Sprintf("%.2f", fumbleThreshold), "source", sourceChar.Name, "target", targetChar.Name)
-					}
 				}
+				// Note: Fumble detection now happens earlier based on initial attack roll, not defense rolls
 
 				// Stage 7.1: Passive defense removed - defense is now active via stamina-costing dodge/parry/block
 
