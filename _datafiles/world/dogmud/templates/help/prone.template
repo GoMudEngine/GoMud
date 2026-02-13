@@ -1,0 +1,56 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">prone</ansi>
+
+<ansi fg="red">Prone</ansi> is a combat condition that occurs when you've been knocked to the ground by
+special attacks like <ansi fg="command">bash</ansi>, <ansi fg="command">trip</ansi>, or <ansi fg="command">kick</ansi>.
+
+<ansi fg="yellow">How to Become Prone:</ansi>
+
+  - Hit by a successful <ansi fg="command">bash</ansi> attack (40% base knockdown chance)
+  - Hit by a successful <ansi fg="command">trip</ansi> attack (60% base knockdown chance)
+  - Hit by a successful <ansi fg="command">kick</ansi> attack (35% base knockdown chance)
+
+  Knockdown chances are modified by opposed skill checks (attacker vs defender).
+
+<ansi fg="yellow">Effects While Prone:</ansi>
+
+  <ansi fg="red">Attack Penalties:</ansi>
+    - -30 to attack success (harder to fight from the ground)
+    - -20% damage dealt (less power behind attacks)
+
+  <ansi fg="red">Defense Penalties:</ansi>
+    - -50% dodge effectiveness (can't move to avoid)
+    - -30% parry effectiveness (compromised stance)
+    - -20% block effectiveness (shield still works somewhat)
+
+  <ansi fg="red">Vulnerability:</ansi>
+    - Attackers get +20 to hit you (easy target on the ground)
+
+  <ansi fg="red">Restrictions:</ansi>
+    - Cannot flee from combat
+    - Cannot move to other rooms
+
+<ansi fg="yellow">Recovery:</ansi>
+
+You have two ways to recover from being prone:
+
+  1. <ansi fg="stat">Automatic Recovery:</ansi>
+     - After 1 full round minimum, you automatically attempt to stand each round
+     - Success chance based on Dexterity (25 DEX = 25%, 100 DEX = 53%, 300 DEX = 75%)
+     - Costs your first action that round (only 1 attack while attempting)
+     - No stamina cost
+
+  2. <ansi fg="stat">Manual Recovery:</ansi> (<ansi fg="command">help stand</ansi>)
+     - Use <ansi fg="command">stand</ansi> command for guaranteed success
+     - Costs 15% of maximum stamina
+     - Requires at least 15% stamina remaining
+     - Still uses your action for that round
+
+<ansi fg="yellow">Strategy:</ansi>
+
+Being prone is dangerous! Your opponent gets significant advantages. However, automatic
+recovery is free (just costs your action), so save stamina unless you MUST stand
+immediately. High Dexterity characters recover faster.
+
+<ansi fg="yellow">See Also:</ansi>
+
+  <ansi fg="command">help bash</ansi>, <ansi fg="command">help trip</ansi>, <ansi fg="command">help kick</ansi>, <ansi fg="command">help stand</ansi>, <ansi fg="command">help combat</ansi>

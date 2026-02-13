@@ -54,11 +54,15 @@ help:
       - quests
     combat:
       - attack
+      - bash
       - break
       - cast
       - consider
       - flee
+      - kick
       - shoot
+      - stand
+      - trip
     information:
       - biome
       - exits
@@ -148,7 +152,9 @@ help:
 # Aliases for keywords when typing: help <keyword>
 # Key is the target keyword, value is the list of aliases
 help-aliases:
-  brawling:         [tackle, brawl, disarm, recover, throw]
+  brawling:         [tackle, brawl, disarm, recover, throw, bash, trip, kick]
+  combat:           [fighting, battle]
+  prone:            [knockdown, knocked-down, knocked down]
   enchant:          [unenchant, uncurse]
   skulduggery:      [sneak, bump, backstab, pickpocket]
   bank:             [deposit, withdraw]

@@ -1,0 +1,31 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">bash</ansi>
+
+The <ansi fg="command">bash</ansi> command performs a shield bash attack during combat, using your shield
+as a weapon to damage and potentially knock your opponent to the ground.
+
+<ansi fg="yellow">Requirements:</ansi>
+
+  - Must be in active combat
+  - Must have a shield equipped
+  - Cannot be used if special move cooldown is active
+
+<ansi fg="yellow">Usage:</ansi>
+
+  <ansi fg="command">bash</ansi>
+  Bash your current combat target with your shield
+
+<ansi fg="yellow">Mechanics:</ansi>
+
+  <ansi fg="stat">Damage:</ansi> 50% of your normal attack damage
+  <ansi fg="stat">Knockdown Chance:</ansi> 40% base, modified by opposed skill check
+    - Attacker: Weapon Combat skill + Strength
+    - Defender: Combat skill + Dexterity
+  <ansi fg="stat">Cooldown:</ansi> 5 rounds (shared with trip and kick)
+  <ansi fg="stat">Skill:</ansi> Progresses Weapon Combat
+
+If the knockdown succeeds, your target becomes <ansi fg="red">prone</ansi> for a minimum of 1 full
+round, suffering attack and defense penalties. See <ansi fg="command">help prone</ansi> for details.
+
+<ansi fg="yellow">See Also:</ansi>
+
+  <ansi fg="command">help trip</ansi>, <ansi fg="command">help kick</ansi>, <ansi fg="command">help stand</ansi>, <ansi fg="command">help prone</ansi>, <ansi fg="command">help combat</ansi>
