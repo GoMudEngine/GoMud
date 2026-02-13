@@ -207,6 +207,7 @@ type ItemSpec struct {
 	WornBuffIds     []int       `yaml:"wornbuffids,omitempty"`     // BuffId's that are applied while worn, and expired when removed.
 	DamageReduction int         `yaml:"damagereduction,omitempty"` // % of damage it reduces when it blocks attacks
 	WaitRounds      int         `yaml:"waitrounds,omitempty"`      // How many extra rounds each combat requires
+	StaminaCost     int         `yaml:"staminacost,omitempty"`     // Stamina cost per attack with this weapon
 	Hands           WeaponHands `yaml:"hands"`                     // How many hands it takes to wield
 	Name            string
 	DisplayName     string `yaml:"displayname,omitempty"` // Name that is typically displayed to the user
@@ -259,6 +260,24 @@ func (d *Damage) InitDiceRoll(dRoll string) {
 	}
 
 	d.Attacks, d.DiceCount, d.SideCount, d.BonusDamage, _ = util.ParseDiceRoll(dRoll)
+}
+
+// GetAttackStaminaCost returns the stamina cost for attacking with this weapon.
+// Returns a default based on weapon type if not explicitly set.
+func (is *ItemSpec) GetAttackStaminaCost() int {
+	if is.StaminaCost > 0 {
+		return is.StaminaCost
+	}
+
+	// Default costs based on weapon type if not specified
+	// Unarmed (no weapon) will be handled separately
+	switch is.Type {
+	case Weapon:
+		// Default to medium weapon cost
+		return 8
+	default:
+		return 0 // Non-weapons don't cost stamina
+	}
 }
 
 func FindItem(nameOrId string) int {

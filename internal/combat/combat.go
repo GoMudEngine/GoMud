@@ -32,6 +32,9 @@ func AttackPlayerVsMob(user *users.UserRecord, mob *mobs.Mob) AttackResult {
 
 	attackResult := calculateCombat(*user.Character, mob.Character, User, Mob)
 
+	// Deduct stamina for the attack
+	user.Character.DeductAttackStamina()
+
 	if attackResult.DamageToSource != 0 {
 		user.Character.ApplyHealthChange(attackResult.DamageToSource * -1)
 		user.WimpyCheck()
@@ -67,6 +70,9 @@ func AttackPlayerVsMob(user *users.UserRecord, mob *mobs.Mob) AttackResult {
 func AttackPlayerVsPlayer(userAtk *users.UserRecord, userDef *users.UserRecord) AttackResult {
 
 	attackResult := calculateCombat(*userAtk.Character, *userDef.Character, User, User)
+
+	// Deduct stamina for the attack
+	userAtk.Character.DeductAttackStamina()
 
 	if attackResult.DamageToSource != 0 {
 		userAtk.Character.ApplyHealthChange(attackResult.DamageToSource * -1)
@@ -104,6 +110,9 @@ func AttackPlayerVsPlayer(userAtk *users.UserRecord, userDef *users.UserRecord) 
 func AttackMobVsPlayer(mob *mobs.Mob, user *users.UserRecord) AttackResult {
 
 	attackResult := calculateCombat(mob.Character, *user.Character, Mob, User)
+
+	// Deduct stamina for the attack
+	mob.Character.DeductAttackStamina()
 
 	mob.Character.ApplyHealthChange(attackResult.DamageToSource * -1)
 
@@ -152,6 +161,9 @@ func AttackMobVsPlayer(mob *mobs.Mob, user *users.UserRecord) AttackResult {
 func AttackMobVsMob(mobAtk *mobs.Mob, mobDef *mobs.Mob) AttackResult {
 
 	attackResult := calculateCombat(mobAtk.Character, mobDef.Character, Mob, User)
+
+	// Deduct stamina for the attack
+	mobAtk.Character.DeductAttackStamina()
 
 	mobAtk.Character.ApplyHealthChange(attackResult.DamageToSource * -1)
 	mobDef.Character.ApplyHealthChange(attackResult.DamageToTarget * -1)
@@ -286,6 +298,19 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 	// Add any additional attacks
 	attackCount += sourceChar.StatMod(`attacks`)
 
+	// Apply stamina-based penalties
+	if sourceChar.StaminaMax.Value > 0 {
+		staminaRatio := float64(sourceChar.Stamina) / float64(sourceChar.StaminaMax.Value)
+
+		// Reduce attack count when stamina is low (< 20%)
+		if staminaRatio < 0.2 {
+			attackCount = int(math.Ceil(float64(attackCount) * 0.5)) // 50% reduction
+			if attackCount < 1 {
+				attackCount = 1 // Always at least 1 attack
+			}
+		}
+	}
+
 	for i := 0; i < attackCount; i++ {
 
 		mudlog.Debug(`calculateCombat`, `Atk`, fmt.Sprintf(`%d/%d`, i+1, attackCount), `Source`, fmt.Sprintf(`%s (%s)`, sourceChar.Name, sourceType), `Target`, fmt.Sprintf(`%s (%s)`, targetChar.Name, targetType))
@@ -387,6 +412,15 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 			strMultiplier := 1.0 + float64(sourceChar.Stats.Strength.ValueAdj)/100.0
 			dmgMean := baseDmg * strMultiplier
 
+			// Apply stamina-based damage penalty
+			if sourceChar.StaminaMax.Value > 0 {
+				staminaRatio := float64(sourceChar.Stamina) / float64(sourceChar.StaminaMax.Value)
+				if staminaRatio < 0.25 {
+					// 25% damage reduction when very low on stamina
+					dmgMean *= 0.75
+				}
+			}
+
 			// zero means randomly selected, otherwise use the ItemId to consistently choose a message
 			msgSeed := 0
 			if configs.GetGamePlayConfig().ConsistentAttackMessages {
@@ -408,6 +442,16 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				attackScore := float64(sourceChar.Stats.Dexterity.ValueAdj) + float64(sourceChar.GetCombatSkillLevel())
 				defendScore := float64(targetChar.Stats.Dexterity.ValueAdj) + float64(targetChar.GetCombatSkillLevel())
 				attackScore -= float64(penalty) // dual wield penalty
+
+				// Apply stamina-based hit chance penalty
+				if sourceChar.StaminaMax.Value > 0 {
+					staminaRatio := float64(sourceChar.Stamina) / float64(sourceChar.StaminaMax.Value)
+					if staminaRatio < 0.5 {
+						// Penalty scales from 0 at 50% stamina to 30 at 0% stamina
+						staminaPenalty := (0.5 - staminaRatio) * 60.0
+						attackScore -= staminaPenalty
+					}
+				}
 
 				combatStdDev := 15.0
 				hit, _, hitRoll, _ := dice.OpposedRoll(attackScore, defendScore, combatStdDev)

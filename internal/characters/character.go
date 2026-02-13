@@ -358,6 +358,41 @@ func (c *Character) GetMovementStaminaCost(terrainMultiplier float64) int {
 	return int(math.Ceil(cost))
 }
 
+// GetAttackStaminaCost calculates the stamina cost for making an attack.
+// Cost is based on weapon type (or unarmed if no weapon).
+func (c *Character) GetAttackStaminaCost() int {
+	// Check main hand weapon
+	if c.Equipment.Weapon.ItemId > 0 {
+		weaponSpec := c.Equipment.Weapon.GetSpec()
+		return weaponSpec.GetAttackStaminaCost()
+	}
+
+	// Check offhand weapon (dual wielding)
+	if c.Equipment.Offhand.ItemId > 0 {
+		offhandSpec := c.Equipment.Offhand.GetSpec()
+		return offhandSpec.GetAttackStaminaCost()
+	}
+
+	// Unarmed combat costs less stamina
+	return 4
+}
+
+// DeductAttackStamina deducts stamina for an attack and returns the actual cost deducted.
+// If character doesn't have enough stamina, deducts what they have and returns that amount.
+func (c *Character) DeductAttackStamina() int {
+	cost := c.GetAttackStaminaCost()
+
+	if c.Stamina >= cost {
+		c.Stamina -= cost
+		return cost
+	}
+
+	// Insufficient stamina - deduct what we have
+	actualCost := c.Stamina
+	c.Stamina = 0
+	return actualCost
+}
+
 // Sometimes it's useful for a character to know what user it belongs to.
 func (c *Character) SetUserId(userId int) {
 	c.userId = userId

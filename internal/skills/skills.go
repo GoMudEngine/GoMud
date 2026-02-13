@@ -140,13 +140,13 @@ func GetProfessionRanks(allRanks map[string]int) []ProfessionRank {
 			if rankVal, ok := allRanks[string(skillName)]; ok {
 				skillLevel = rankVal
 			}
-			if skillLevel > 4 {
-				skillLevel = 4
-			}
-			totalSkill := (skillLevel * (skillLevel + 1)) / 2
 
-			ranking.PointsToMax += 10.0 // Each skill has 4 levels, so possible 10 points per skill
-			ranking.TotalPointsSpent += float64(totalSkill)
+			// DOG skill system: Skills can progress to ~50 (soft cap)
+			// Profession completion is based on progress toward soft cap
+			const skillSoftCap = 50.0
+
+			ranking.PointsToMax += skillSoftCap // Each skill can reach ~50
+			ranking.TotalPointsSpent += float64(skillLevel)
 			ranking.Skills = append(ranking.Skills, string(skillName))
 		}
 
