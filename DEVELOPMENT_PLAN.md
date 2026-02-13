@@ -2085,6 +2085,27 @@ Issues discovered during 2026-02-12 playtest session, mapped to stages:
 
 ---
 
+## Hotfixes & Bug Fixes
+
+Critical bugs fixed outside of formal stage development:
+
+### 2026-02-13: Fumble Detection Bug (commits 9b191c2, 2ff9c32)
+**Issue**: Arena Champion and all high-skill NPCs were fumbling 30%+ of attacks instead of the intended 2.5%.
+
+**Root Causes**:
+1. Fumbles were detected based on defender's dodge roll success (opposed roll), not attacker's raw performance
+2. Skill advantage calculation made fumbleThreshold positive for high-skill attackers, causing massive fumble rates
+
+**Fixes**:
+- Added initial attack roll before defense sequence for fumble detection
+- Fumbles now based on attacker's raw z-score (≤ -2.0)
+- Fumble threshold is now fixed at -2.0 (~2.5% chance) regardless of skill difference
+- Only crit threshold scales with skill advantage (as intended)
+
+**Result**: Combat balance restored. High-skill NPCs no longer fumble constantly. Stamina depletion now drives combat dynamics as designed.
+
+---
+
 ## Notes
 
 - Each stage is designed to be completable in 1-2 work sessions
