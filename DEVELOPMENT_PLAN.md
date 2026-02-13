@@ -1114,7 +1114,8 @@ After Stage 4.7, manual testing revealed that arena mobs were too weak for new p
 
 ---
 
-### Stage 7.3: Unarmed Damage Scaling
+### Stage 7.3: Unarmed Damage Scaling ✅ COMPLETED
+**Merge commit**: 1794919
 **Goal**: Make unarmed damage scale meaningfully with Unarmed Combat skill and Strength, so training unarmed feels rewarding.
 
 **Changes**:
@@ -2018,7 +2019,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 4b: Progression Fixes | 4 stages (4.5–4.8) | 12 hours | **Complete** |
 | Phase 5: Stamina & Attacks | 4 stages (5.1–5.4) | 20 hours | **Complete** |
 | Phase 6: Conviction & Magic | 2 stages (6.1–6.2) | 8 hours | **Complete** |
-| Phase 7: Defense & Combat | 5 stages (7.1–7.5) | 26 hours | **7.1-7.2 Complete** |
+| Phase 7: Defense & Combat | 5 stages (7.1–7.5) | 26 hours | **7.1-7.3 Complete** |
 | Phase 8: Grappling | 2 stages (8.1–8.2) | 12 hours | Not Started |
 | Phase 9: Combat Presentation | 3 stages (9.1–9.3) | 16 hours | Not Started |
 | Phase 10: Balance Pass | 1 stage (10.1) | 8 hours | Not Started |
@@ -2119,4 +2120,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-13
 **Status**: In Progress
-**Current Stage**: 7.3 — Unarmed Damage Scaling (next up after 7.2 completion)
+**Current Stage**: 7.4 — Target Switching in Combat (next up after 7.3 completion)
