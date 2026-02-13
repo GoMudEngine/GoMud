@@ -62,22 +62,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 			}
 		}
 
-		// Check stamina exhaustion (separate from health)
-		if user.Character.Stamina < 1 {
-			if user.Character.Stamina <= -10 {
-				// Death from exhaustion
-				user.Command(`suicide`)
-			} else {
-				// Exhausted - stamina continues to decrease
-				user.Character.Stamina--
-				user.SendText(`<ansi fg="yellow">you are exhausted!</ansi>`)
-				if room := rooms.LoadRoom(user.Character.RoomId); room != nil {
-					room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> is <ansi fg="yellow">exhausted</ansi>!`, user.Character.Name), user.UserId)
-				}
-			}
-		}
-
-		// Regenerate Stamina - slower during combat (always regenerate, even if health is low)
+		// Regenerate Stamina FIRST - slower during combat (always regenerate, even if health is low)
 		var staminaRegen int
 		if inCombat {
 			// Combat: 1/4 normal regen rate (much slower)
@@ -92,6 +77,21 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 		user.Character.Stamina += staminaRegen
 		if user.Character.Stamina > user.Character.StaminaMax.Value {
 			user.Character.Stamina = user.Character.StaminaMax.Value
+		}
+
+		// THEN check stamina exhaustion (after regen, so recovery is possible)
+		if user.Character.Stamina < 1 {
+			if user.Character.Stamina <= -10 {
+				// Death from exhaustion
+				user.Command(`suicide`)
+			} else {
+				// Exhausted - stamina continues to decrease
+				user.Character.Stamina--
+				user.SendText(`<ansi fg="yellow">you are exhausted!</ansi>`)
+				if room := rooms.LoadRoom(user.Character.RoomId); room != nil {
+					room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> is <ansi fg="yellow">exhausted</ansi>!`, user.Character.Name), user.UserId)
+				}
+			}
 		}
 
 		// Regenerate Conviction (not affected by combat state)
