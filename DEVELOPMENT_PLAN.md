@@ -869,6 +869,50 @@ After Stage 4.7, manual testing revealed that arena mobs were too weak for new p
 
 ---
 
+### Stage 5.4: Weight-Based Encumbrance (SKIPPED)
+**Goal**: Replace item-count based encumbrance with realistic weight-based system.
+
+**Current State**: Encumbrance uses item count (1 dagger = 1 greatsword = "1 item"). This is simple but unrealistic.
+
+**Changes**:
+1. Add `Weight float64` field to ItemSpec
+2. Update CarryCapacity to return weight capacity (e.g., Strength × 3)
+3. Change encumbrance calculations to use total carried weight
+4. Update movement stamina cost formula to use weight ratio
+5. Update combat attack count penalty to use weight ratio
+6. Add weight values to all item YAML files
+   - Light weapons: 2-5 lbs (daggers, shortswords)
+   - Medium weapons: 6-12 lbs (longswords, maces)
+   - Heavy weapons: 15-25 lbs (greatswords, warhammers)
+   - Armor: varies by type
+   - Consumables: 0.5-2 lbs
+
+**Files to Modify** (~50 files, ~200 lines):
+1. `internal/items/itemspec.go` - Add Weight field, GetWeight() method
+2. `internal/characters/character.go` - Update CarryCapacity, add GetCarriedWeight
+3. `internal/characters/character.go` - Update GetMovementStaminaCost to use weight
+4. `internal/combat/combat.go` - Update encumbrance penalty to use weight
+5. All item YAML files - Add weight values
+6. Test files
+
+**Testing**:
+- [ ] **Unit Tests**: Test weight calculations
+- [ ] **Manual Test**: Carry light items vs heavy items, verify different stamina costs
+- [ ] **Manual Test**: Carry greatswords vs daggers, verify combat penalties differ
+- [ ] **Balance Test**: Verify weights feel realistic
+
+**Acceptance Criteria**:
+- Items have weight values
+- Encumbrance based on weight vs strength
+- Heavier items more encumbering than lighter items
+- All tests pass
+
+**Estimated Changes**: ~200 lines, 50 files
+
+**Status**: SKIPPED - Using simpler item-count system for now
+
+---
+
 ## Phase 6: Conviction & Magic System
 
 ### Stage 6.1: Add Spell Schools as Tags
@@ -1469,7 +1513,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 3: Remove Levels | 9 stages (3.1–3.9) | 36 hours | **Complete** |
 | Phase 4: Distribution Combat | 4 stages (4.1–4.4) | 7 hours | **Complete** |
 | Phase 4b: Progression Fixes | 4 stages (4.5–4.8) | 12 hours | **Complete** |
-| Phase 5: Stamina & Attacks | 3 stages (5.1–5.3) | 16 hours | **Complete** |
+| Phase 5: Stamina & Attacks | 4 stages (5.1–5.4) | 16 hours | **Complete** (5.4 skipped) |
 | Phase 6: Conviction & Magic | 2 stages (6.1–6.2) | 8 hours | Not Started |
 | Phase 7: Defense & Combat | 4 stages (7.1–7.4) | 20 hours | Not Started |
 | Phase 8: Grappling | 2 stages (8.1–8.2) | 12 hours | Not Started |

@@ -296,7 +296,9 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 
 	attackResult := AttackResult{}
 
-	attackCount := int(math.Ceil(float64(sourceChar.Stats.Dexterity.ValueAdj-targetChar.Stats.Dexterity.ValueAdj) / 25))
+	// Base attack count from attacker's dexterity only (defender dex affects hit chance, not attack count)
+	// Formula: 1 base attack + 1 per 50 dex (so Dex 100 = 3 attacks, Dex 150 = 4 attacks)
+	attackCount := 1 + int(sourceChar.Stats.Dexterity.ValueAdj/50)
 	if attackCount < 1 {
 		attackCount = 1
 	}
