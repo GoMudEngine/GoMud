@@ -1,0 +1,13 @@
+itemid: 10005
+name: training dagger
+namesimple: dagger
+description: A lightweight practice dagger with a dulled blade and a well-balanced grip.
+  Perfect for quick strikes and dual wielding practice.
+type: weapon
+hands: 1
+subtype: stabbing
+speedmultiplier: 0.9  # Fast, light weapon - close to unarmed speed
+staminacost: 6  # Light weapon, lower stamina cost
+damage:
+  basedamage: 3
+  variance: 1

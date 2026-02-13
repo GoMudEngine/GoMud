@@ -1,0 +1,9 @@
+itemid: 11
+name: medium weighted stone
+namesimple: stone
+description: A moderate-sized training stone. Carry many of these to simulate moderate
+  encumbrance during combat practice.
+type: object
+subtype: mundane
+uses: 0
+value: 0

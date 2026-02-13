@@ -1,0 +1,9 @@
+itemid: 10
+name: light weighted stone
+namesimple: stone
+description: A small smooth stone used for training. Carry several of these to practice
+  fighting while encumbered. Each stone takes up inventory space.
+type: object
+subtype: mundane
+uses: 0
+value: 0
