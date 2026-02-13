@@ -2251,3 +2251,83 @@ func TestCharacter_GetMovementStaminaCost(t *testing.T) {
 		})
 	}
 }
+
+func TestCharacter_GetAttackStaminaCost(t *testing.T) {
+	tests := []struct {
+		name         string
+		weaponId     int
+		offhandId    int
+		expectedCost int
+	}{
+		{
+			name:         "Unarmed combat",
+			weaponId:     0,
+			offhandId:    0,
+			expectedCost: 4,
+		},
+		// Note: Testing with actual weapons requires loading weapon data
+		// which depends on item loading infrastructure. The weapon cost
+		// logic is tested via integration tests with real weapons.
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := New()
+			if tt.weaponId > 0 {
+				c.Equipment.Weapon = items.Item{ItemId: tt.weaponId}
+			}
+			if tt.offhandId > 0 {
+				c.Equipment.Offhand = items.Item{ItemId: tt.offhandId}
+			}
+
+			cost := c.GetAttackStaminaCost()
+			assert.Equal(t, tt.expectedCost, cost, "Attack stamina cost")
+		})
+	}
+}
+
+func TestCharacter_DeductAttackStamina(t *testing.T) {
+	tests := []struct {
+		name            string
+		initialStamina  int
+		weaponId        int
+		expectedDeducted int
+		expectedRemaining int
+	}{
+		{
+			name:            "Sufficient stamina - unarmed",
+			initialStamina:  100,
+			weaponId:        0,
+			expectedDeducted: 4,
+			expectedRemaining: 96,
+		},
+		{
+			name:            "Insufficient stamina",
+			initialStamina:  2,
+			weaponId:        0,
+			expectedDeducted: 2, // Deducts what's available
+			expectedRemaining: 0,
+		},
+		{
+			name:            "Zero stamina",
+			initialStamina:  0,
+			weaponId:        0,
+			expectedDeducted: 0,
+			expectedRemaining: 0,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := New()
+			c.Stamina = tt.initialStamina
+			if tt.weaponId > 0 {
+				c.Equipment.Weapon = items.Item{ItemId: tt.weaponId}
+			}
+
+			deducted := c.DeductAttackStamina()
+			assert.Equal(t, tt.expectedDeducted, deducted, "Stamina deducted")
+			assert.Equal(t, tt.expectedRemaining, c.Stamina, "Remaining stamina")
+		})
+	}
+}
