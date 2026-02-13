@@ -795,8 +795,9 @@ After Stage 4.7, manual testing revealed that arena mobs were too weak for new p
 
 ---
 
-### Stage 5.2: Stamina in Combat
+### Stage 5.2: Stamina in Combat ✅ COMPLETED
 **Goal**: Make combat actions consume stamina. Attacks, dodges, and blocks all cost stamina. Running out of stamina in combat has real consequences.
+**Status**: Merged into `development` — commit `5366e2b`.
 
 **Changes**:
 1. Each attack costs stamina (scaled by weapon weight/speed)
@@ -813,11 +814,11 @@ After Stage 4.7, manual testing revealed that arena mobs were too weak for new p
 5. Test files
 
 **Testing**:
-- [ ] **Unit Tests**: Test stamina costs for attacks
-- [ ] **Manual Test**: Long combat, verify stamina decreases
-- [ ] **Manual Test**: Run out of stamina in combat, verify penalties
-- [ ] **Manual Test**: Flee, verify stamina cost
-- [ ] **Balance Test**: Verify combat stamina drain feels appropriate
+- [x] **Unit Tests**: Test stamina costs for attacks
+- [x] **Manual Test**: Long combat, verify stamina decreases
+- [x] **Manual Test**: Run out of stamina in combat, verify penalties
+- [x] **Manual Test**: Flee, verify stamina cost
+- [x] **Balance Test**: Verify combat stamina drain feels appropriate
 
 **Acceptance Criteria**:
 - Combat consumes stamina
@@ -1467,7 +1468,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 3: Remove Levels | 9 stages (3.1–3.9) | 36 hours | **Complete** |
 | Phase 4: Distribution Combat | 4 stages (4.1–4.4) | 7 hours | **Complete** |
 | Phase 4b: Progression Fixes | 4 stages (4.5–4.8) | 12 hours | **Complete** |
-| Phase 5: Stamina & Attacks | 3 stages (5.1–5.3) | 16 hours | 5.1 Complete |
+| Phase 5: Stamina & Attacks | 3 stages (5.1–5.3) | 16 hours | 5.1–5.2 Complete |
 | Phase 6: Conviction & Magic | 2 stages (6.1–6.2) | 8 hours | Not Started |
 | Phase 7: Defense & Combat | 4 stages (7.1–7.4) | 20 hours | Not Started |
 | Phase 8: Grappling | 2 stages (8.1–8.2) | 12 hours | Not Started |
@@ -1548,4 +1549,4 @@ Issues discovered during 2026-02-12 playtest session, mapped to stages:
 
 **Last Updated**: 2026-02-12
 **Status**: In Progress
-**Current Stage**: 5.2 — Stamina in Combat (next up)
+**Current Stage**: 5.3 — Rework Number of Attacks Formula (next up)
