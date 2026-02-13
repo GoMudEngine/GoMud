@@ -1000,45 +1000,78 @@ After Stage 4.7, manual testing revealed that arena mobs were too weak for new p
 
 **Design**:
 - **Attack roll**: Attacker's combat skill + stat vs a base difficulty (not directly opposed by defender)
-- **Dodge check**: Based on Unarmed Combat skill + Dexterity. Available to everyone. Encumbrance and armor reduce dodge chance. Costs stamina.
-- **Parry check**: Based on Weapon Combat skill + weapon's parry rating. Only available if wielding a weapon. Two-handed weapons get a bonus. Costs stamina.
-- **Block check**: Based on Weapon Combat skill + shield's block rating. Only available if wielding a shield. Two shields = high block chance but no attack. Costs stamina.
-- Checks are rolled in order: dodge → parry → block. First success avoids the hit.
+- **Defensive checks** are equipment-dependent, rolled in order until one succeeds:
+  - **Dodge check**: Based on Unarmed Combat skill + Dexterity. Available to everyone. Encumbrance and armor reduce dodge chance. Costs stamina.
+  - **Parry check**: Based on Weapon Combat skill + weapon's parry rating. Only available if wielding a weapon. Two-handed weapons get a bonus. Costs stamina.
+  - **Block check**: Based on Weapon Combat skill + shield's block rating. Only available if wielding a shield. Costs stamina.
+- **Equipment configurations determine defensive sequence** (first success avoids the hit):
+  - **Unarmed**: dodge only
+  - **Weapon + Shield**: dodge → parry → block
+  - **Dual wielding** (2+ weapons): dodge → parry main hand → parry off hand (extensible for 4/6-limbed characters)
+  - **Single weapon, no shield**: dodge → parry
+  - **Two shields**: dodge → block main hand → block off hand (can still attack via shield bash - manual action with cooldown will be added in a later stage, but normal attack commands should work with shields in this stage)
+- **Parry and block** can use the same underlying mechanic, just with different output text for success/fail/crit success/crit failure
 - Each defensive action has a stamina cost, creating a resource tradeoff for long fights.
 
 **Changes**:
 1. Add `ParryRating float64` to weapon item spec
 2. Add `BlockRating float64` to shield item spec
-3. Implement `RollDodge()`, `RollParry()`, `RollBlock()` functions in combat calculations
-4. Refactor `AttackPlayerVsPlayer`/`AttackPlayerVsMob` to use layered defense
-5. Generate distinct combat messages for each avoidance type ("You dodge...", "You parry...", "You block...")
-6. Dual-shield support: if both hands hold shields, block chance stacks but no attacks possible
+3. Add config multipliers for defensive tuning:
+   - `DodgeMultiplier float64` (default: 0.9)
+   - `ParryMultiplier float64` (default: 0.9)
+   - `BlockMultiplier float64` (default: 0.9)
+   - Applied to final success chance for each defensive roll
+4. Implement `RollDodge()`, `RollParry()`, `RollBlock()` functions in combat calculations (parry and block can share logic with different output text)
+5. Implement equipment-aware defensive sequence logic:
+   - Detect what is equipped in main/off hands
+   - Determine which defensive checks are available (unarmed, weapon, shield, dual-wield, dual-shield)
+   - Execute checks in the correct order for that configuration
+6. Refactor `AttackPlayerVsPlayer`/`AttackPlayerVsMob` to use layered defense with equipment-based sequences
+7. Generate distinct combat messages for each avoidance type ("You dodge...", "You parry...", "You block...")
+8. Add extensible support for multi-limbed characters (3+ weapons/shields) in dual-wield defensive logic
 
-**Files to Modify** (~12 files, ~600 lines):
-1. `internal/combat/calculations.go` — Dodge/parry/block formulas
+**Files to Modify** (~13 files, ~650 lines):
+1. `internal/combat/calculations.go` — Dodge/parry/block formulas with multiplier support
 2. `internal/combat/combat.go` — Refactor attack resolution
 3. `internal/items/itemspec.go` — Add parry/block ratings
-4. Weapon/shield YAML files — Set parry/block ratings
-5. Combat message templates or inline strings
-6. Test files
+4. `internal/configs/config.gameplay.go` — Add dodge/parry/block multiplier configs
+5. `_datafiles/config.yaml` — Set default multiplier values (0.9 each)
+6. Weapon/shield YAML files — Set parry/block ratings
+7. Combat message templates or inline strings
+8. Test files
 
 **Testing**:
-- [ ] **Unit Tests**: Test each avoidance check independently
-- [ ] **Manual Test**: Fight unarmed, verify dodge messages appear
-- [ ] **Manual Test**: Fight with sword, verify parry messages appear
-- [ ] **Manual Test**: Fight with shield, verify block messages appear
-- [ ] **Manual Test**: Equip two shields, verify high block rate but no attacks
-- [ ] **Balance Test**: Verify overall hit rate feels right (~50-70% of attacks land)
+- [ ] **Unit Tests**: Test each avoidance check independently (dodge, parry, block)
+- [ ] **Unit Tests**: Test that multipliers correctly affect success rates (0.9 = 90% of base chance)
+- [ ] **Unit Tests**: Test equipment detection and defensive sequence determination for all configurations
+- [ ] **Manual Test**: Fight unarmed, verify dodge-only messages (no parry/block)
+- [ ] **Manual Test**: Fight with single weapon (no shield), verify dodge → parry sequence
+- [ ] **Manual Test**: Fight with weapon + shield, verify dodge → parry → block sequence
+- [ ] **Manual Test**: Fight dual-wielding, verify dodge → parry main → parry off sequence
+- [ ] **Manual Test**: Equip two shields, verify dodge → block main → block off sequence
+- [ ] **Manual Test**: With two shields, verify can still attack via normal attack command (bash)
+- [ ] **Manual Test**: Adjust multipliers in config, verify defensive rates change accordingly
+- [ ] **Balance Test**: Verify overall hit rate feels right (~50-70% of attacks land) across all configurations
 
 **Acceptance Criteria**:
-- Three distinct avoidance types with separate rolls
+- Three distinct avoidance types with separate rolls (dodge, parry, block)
 - Each avoidance tied to appropriate skill and equipment
-- Dual-shield is a viable defensive strategy
+- Config multipliers (DodgeMultiplier, ParryMultiplier, BlockMultiplier) allow tuning without code changes
+- Default multiplier values (0.9) applied correctly to all defensive rolls
+- All equipment configurations work correctly:
+  - Unarmed: dodge only
+  - Weapon only: dodge → parry
+  - Weapon + shield: dodge → parry → block
+  - Dual wield: dodge → parry main → parry off
+  - Two shields: dodge → block main → block off
+- Dual-shield users can still attack (normal attack = bash)
+- System is extensible for 4/6-limbed characters (additional parry/block checks)
+- Parry and block share underlying mechanic but have distinct output text
 - Combat messages clearly indicate dodge vs parry vs block
 - Stamina cost for each defensive action
 - All tests pass
 
-**Estimated Changes**: ~600 lines, 12 files
+**Estimated Changes**: ~650 lines, 13 files
 
 ---
 

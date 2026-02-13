@@ -474,9 +474,10 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				combatStdDev := 15.0
 				hit := false
 				var lastHitRoll dice.RollResult
+				var firstDefenseRoll dice.RollResult // For fumble detection
 
 				// Try each defense in sequence
-				for _, defenseType := range defenseSequence {
+				for defenseIndex, defenseType := range defenseSequence {
 					// Track defense attempt
 					attackResult.DefenseAttempts = append(attackResult.DefenseAttempts, DefenseType(defenseType))
 
@@ -492,6 +493,11 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 					// Opposed roll: attack vs this defense
 					defenseSucceeded, _, hitRoll, _ := dice.OpposedRoll(attackScore, defenseScore, combatStdDev)
 					lastHitRoll = hitRoll
+
+					// Track first defense roll for fumble detection
+					if defenseIndex == 0 {
+						firstDefenseRoll = hitRoll
+					}
 
 					if !defenseSucceeded {
 						// Defense failed, continue to next defense
@@ -563,10 +569,11 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 						mudlog.Debug("CritDetected", "zScore", fmt.Sprintf("%.2f", lastHitRoll.ZScore), "threshold", fmt.Sprintf("%.2f", critThreshold), "source", sourceChar.Name, "target", targetChar.Name)
 					}
 				} else {
-					// Fumble detection on miss
-					if lastHitRoll.ZScore <= fumbleThreshold {
+					// Fumble detection on miss - use first defense roll (dodge) to detect attacker fumbles
+					// Only check if we actually had defense attempts (not bypassed due to zero stamina)
+					if len(attackResult.DefenseAttempts) > 0 && firstDefenseRoll.ZScore <= fumbleThreshold {
 						attackResult.Fumble = true
-						mudlog.Debug("FumbleDetected", "zScore", fmt.Sprintf("%.2f", lastHitRoll.ZScore), "threshold", fmt.Sprintf("%.2f", fumbleThreshold), "source", sourceChar.Name, "target", targetChar.Name)
+						mudlog.Debug("FumbleDetected", "zScore", fmt.Sprintf("%.2f", firstDefenseRoll.ZScore), "threshold", fmt.Sprintf("%.2f", fumbleThreshold), "source", sourceChar.Name, "target", targetChar.Name)
 					}
 				}
 
