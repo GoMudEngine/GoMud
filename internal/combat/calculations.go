@@ -169,3 +169,40 @@ func AlignmentChange(killerAlignment int8, killedAlignment int8) int {
 
 	return factor * changeAmt
 }
+
+// ChanceToSwitchTarget calculates the percentage chance (0-100) that a character
+// can successfully switch targets mid-combat.
+// Success is based on:
+// - Combat skill (60% weight) - Higher skill = smoother transitions
+// - Dexterity (40% weight) - Agility helps reposition quickly
+//
+// Base chance: 50%
+// Skill bonus: +0.3% per combat skill level (max +30% at skill 100)
+// Dexterity bonus: +0.2% per dexterity point (max +20% at dex 100)
+//
+// Returns: chance out of 100 (e.g., 75 = 75% chance)
+func ChanceToSwitchTarget(c *characters.Character) int {
+	const baseChance float64 = 50.0
+	const skillWeight float64 = 0.3  // 0.3% per skill level
+	const dexWeight float64 = 0.2    // 0.2% per dex point
+
+	combatSkill := c.GetCombatSkillLevel()
+	dexterity := c.Stats.Dexterity.ValueAdj
+
+	skillBonus := float64(combatSkill) * skillWeight
+	dexBonus := float64(dexterity) * dexWeight
+
+	totalChance := baseChance + skillBonus + dexBonus
+
+	// Cap at 95% (always a small chance of failure)
+	if totalChance > 95.0 {
+		totalChance = 95.0
+	}
+
+	// Floor at 25% (even unskilled fighters have some chance)
+	if totalChance < 25.0 {
+		totalChance = 25.0
+	}
+
+	return int(totalChance)
+}

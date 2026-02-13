@@ -792,6 +792,59 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 
 			affectedPlayerIds = append(affectedPlayerIds, mob.Character.Aggro.UserId)
 
+			// --- BEGIN MOB TARGET SWITCHING AI (Stage 7.4) ---
+			// Mobs with higher combat skill may intelligently switch targets
+			// Only consider switching occasionally (10% of rounds)
+			if util.Rand(100) < 10 && mob.Character.Aggro.Type == characters.DefaultAttack {
+
+				combatSkill := mob.Character.GetCombatSkillLevel()
+
+				// Only mobs with decent combat skill (30+) can switch targets strategically
+				if combatSkill >= 30 {
+
+					// Find all players in the room who are fighting
+					potentialTargets := []int{}
+					for _, userId := range mobRoom.GetPlayers() {
+						if userId == mob.Character.Aggro.UserId {
+							continue // Skip current target
+						}
+						if u := users.GetByUserId(userId); u != nil {
+							if u.Character.Health > 0 && !u.Character.HasBuffFlag(buffs.Hidden) {
+								// Prefer switching to someone who's attacking this mob
+								if u.Character.Aggro != nil && u.Character.Aggro.MobInstanceId == mob.InstanceId {
+									potentialTargets = append(potentialTargets, userId)
+								}
+							}
+						}
+					}
+
+					// If we found someone attacking us, consider switching to them
+					if len(potentialTargets) > 0 {
+						switchChance := combat.ChanceToSwitchTarget(&mob.Character)
+						roll := util.Rand(100)
+
+						util.LogRoll("Mob Target Switch", roll, switchChance)
+
+						if roll < switchChance {
+							// Pick a random attacker to switch to
+							newTargetId := potentialTargets[util.Rand(len(potentialTargets))]
+
+							// Switch target with 1 round cost
+							mob.Character.SetAggro(newTargetId, 0, mob.Character.Aggro.Type, 1)
+
+							if newTarget := users.GetByUserId(newTargetId); newTarget != nil {
+								mobRoom.SendText(
+									fmt.Sprintf("<ansi fg=\"mobname\">%s</ansi> shifts focus to <ansi fg=\"username\">%s</ansi>!", mob.Character.Name, newTarget.Character.Name),
+								)
+							}
+
+							continue // Skip this round due to repositioning
+						}
+					}
+				}
+			}
+			// --- END MOB TARGET SWITCHING AI ---
+
 			// If no weapon but has stuff in the backpack, look for a weapon
 			// Especially useful for when they get disarmed
 			if mob.Character.Equipment.Weapon.ItemId == 0 && len(mob.Character.Items) > 0 {
