@@ -24,6 +24,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 	}
 
 	deathRecoveryRoomId := int(configs.GetSpecialRoomsConfig().DeathRecoveryRoom)
+	testingArenaEntrance := 200 // Fast regen room for testing (Arena Entrance)
 
 	onlineIds := users.GetOnlineUserIds()
 	for _, userId := range onlineIds {
@@ -31,6 +32,12 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 
 		if user.Character.RoomId == deathRecoveryRoomId {
 			continue
+		}
+
+		// Fast regen in testing area
+		regenMultiplier := 1.0
+		if user.Character.RoomId == testingArenaEntrance {
+			regenMultiplier = 10.0 // 10x faster regen for testing
 		}
 
 		inCombat := user.Character.Aggro != nil
@@ -56,9 +63,8 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 		if user.Character.Health > 0 {
 			// Only heal health when NOT in combat
 			if !inCombat {
-				user.Character.Heal(
-					user.Character.HealthPerRound(),
-				)
+				healthRegen := int(float64(user.Character.HealthPerRound()) * regenMultiplier)
+				user.Character.Heal(healthRegen)
 			}
 		}
 
@@ -74,6 +80,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 			// Out of combat: full regen
 			staminaRegen = user.Character.StaminaPerRound()
 		}
+		staminaRegen = int(float64(staminaRegen) * regenMultiplier)
 		user.Character.Stamina += staminaRegen
 		if user.Character.Stamina > user.Character.StaminaMax.Value {
 			user.Character.Stamina = user.Character.StaminaMax.Value
@@ -95,7 +102,8 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 		}
 
 		// Regenerate Conviction (not affected by combat state)
-		user.Character.Conviction += user.Character.ConvictionPerRound()
+		convictionRegen := int(float64(user.Character.ConvictionPerRound()) * regenMultiplier)
+		user.Character.Conviction += convictionRegen
 		if user.Character.Conviction > user.Character.ConvictionMax.Value {
 			user.Character.Conviction = user.Character.ConvictionMax.Value
 		}
