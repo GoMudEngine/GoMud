@@ -13,10 +13,3 @@
  │                               │    │ <ansi fg="yellow">Bank: </ansi>{{ printf "%-11s" (numberFormat .Character.Bank) }} │
  │ <ansi fg="yellow">Armor:  </ansi>{{ printf "%-6s" ( printf "%d" (.Character.GetDefense)) }} {{ if permadeath }}<ansi fg="yellow">Lives: </ansi>{{ printf "%-7d" .Character.ExtraLives }}{{ else }}              {{ end }} │    └───────────────────┘
  └───────────────────────────────┘
-{{- $skillRanks := .Character.GetAllSkillRanks -}}
-{{- if gt (len $skillRanks) 0 }}
- ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Skills</ansi> ─────────────────────────────────────────────────────────────────┐
- {{ range $skillName, $skillLevel := $skillRanks }}{{ if gt $skillLevel 0 }}  <ansi fg="yellow-bold">{{ padRight 12 $skillName }}</ansi> {{ if eq $skillLevel 4 }}<ansi fg="white">[MAXIMUM]</ansi>{{ else }}<ansi fg="white">[Rank {{ $skillLevel }}]</ansi>{{ end }}
- {{ end }}{{ end -}}
- └────────────────────────────────────────────────────────────────────────────┘
-{{- end }}

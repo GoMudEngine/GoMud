@@ -6,6 +6,7 @@ description: A sturdy iron longsword with a leather-wrapped hilt. The blade show
 type: weapon
 hands: 1
 subtype: slashing
+weight: 8.0  # Medium sword
 speedmultiplier: 0.7  # Standard one-handed sword speed
 staminacost: 8  # Medium weapon cost
 damage:

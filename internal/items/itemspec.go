@@ -209,6 +209,7 @@ type ItemSpec struct {
 	WaitRounds      int         `yaml:"waitrounds,omitempty"`      // How many extra rounds each combat requires
 	StaminaCost     int         `yaml:"staminacost,omitempty"`     // Stamina cost per attack with this weapon
 	SpeedMultiplier float64     `yaml:"speedmultiplier,omitempty"` // Attack speed modifier (1.0 = unarmed baseline, <1.0 slower, >1.0 faster)
+	Weight          float64     `yaml:"weight,omitempty"`          // Weight in pounds (affects encumbrance)
 	Hands           WeaponHands `yaml:"hands"`                     // How many hands it takes to wield
 	Name            string
 	DisplayName     string `yaml:"displayname,omitempty"` // Name that is typically displayed to the user
@@ -284,7 +285,7 @@ func (is *ItemSpec) GetAttackStaminaCost() int {
 // GetSpeedMultiplier returns the attack speed modifier for this weapon.
 // 1.0 = unarmed baseline, <1.0 = slower, >1.0 = faster
 // Most weapons should be <1.0 (fewer attacks than unarmed)
-func (is *ItemSpec) GetSpeedMultiplier() float64 {
+func (is ItemSpec) GetSpeedMultiplier() float64 {
 	if is.SpeedMultiplier > 0 {
 		return is.SpeedMultiplier
 	}
@@ -292,6 +293,12 @@ func (is *ItemSpec) GetSpeedMultiplier() float64 {
 	// Default to 1.0 (unarmed baseline)
 	// Most weapons will explicitly set values <1.0
 	return 1.0
+}
+
+// GetWeight returns the weight of this item in pounds.
+// Returns 0 for weightless items or if not specified.
+func (is ItemSpec) GetWeight() float64 {
+	return is.Weight
 }
 
 func FindItem(nameOrId string) int {

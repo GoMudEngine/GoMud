@@ -6,6 +6,7 @@ description: A lightweight practice dagger with a dulled blade and a well-balanc
 type: weapon
 hands: 1
 subtype: stabbing
+weight: 2.0  # Light weapon
 speedmultiplier: 0.9  # Fast, light weapon - close to unarmed speed
 staminacost: 6  # Light weapon, lower stamina cost
 damage:

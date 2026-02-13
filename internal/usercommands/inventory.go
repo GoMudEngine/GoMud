@@ -143,7 +143,7 @@ func Inventory(rest string, user *users.UserRecord, room *rooms.Room, flags even
 		`AttackDamage`:       diceRoll,
 		`RaceInfo`:           raceInfo,
 		`Searching`:          len(rest) > 0,
-		`Count`:              fmt.Sprintf(`(%d/%d)`, len(itemList), user.Character.CarryCapacity()),
+		`Count`:              fmt.Sprintf(`(%.1f/%.0f lbs)`, user.Character.GetCarriedWeight(), user.Character.CarryCapacity()),
 	}
 
 	tplTxt, _ := templates.Process("character/inventory", invData, user.UserId)
