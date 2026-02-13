@@ -20,6 +20,9 @@ items:
   - itemid: 10006  # Second longsword for dual wielding
   - itemid: 10007  # Heavy greatsword (slow, 0.5x speed, two-handed)
   - itemid: 10008  # Steel warhammer (slow, 0.6x speed, one-handed)
+  # Shields - for testing block defense (Stage 7.1)
+  - itemid: 20004  # Wooden shield (BlockRating: 12, DamageReduction: 5)
+  - itemid: 20010  # Iron buckler (BlockRating: 15, DamageReduction: 8)
   # Weighted stones barrel - for encumbrance testing
   # Test character capacity: 47 items
   # Light load: 5-10 stones (minimal encumbrance)
