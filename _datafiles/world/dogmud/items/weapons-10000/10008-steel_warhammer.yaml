@@ -12,3 +12,4 @@ staminacost: 10  # Heavy one-handed weapon cost
 damage:
   basedamage: 8
   variance: 2
+parryrating: 5

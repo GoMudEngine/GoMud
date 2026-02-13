@@ -12,3 +12,4 @@ staminacost: 12  # Heavy weapon, high stamina cost
 damage:
   basedamage: 12
   variance: 3
+parryrating: 13

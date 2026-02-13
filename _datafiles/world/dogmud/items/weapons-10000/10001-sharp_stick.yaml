@@ -11,3 +11,4 @@ speedmultiplier: 0.8  # Light improvised weapon - faster than heavy weapons
 damage:
   basedamage: 2
   variance: 1
+parryrating: 6

@@ -447,6 +447,10 @@ func (c *Character) SetUserId(userId int) {
 	c.userId = userId
 }
 
+func (c *Character) GetUserId() int {
+	return c.userId
+}
+
 func (c *Character) SetMiscData(key string, value any) {
 
 	if c.MiscData == nil {
@@ -1282,6 +1286,154 @@ func (c *Character) GetModifiedAttackCount(baseAttacks int, weaponSpeed float64,
 	}
 
 	return result
+}
+
+// ===================================================================
+// Stage 7.1: Segmented Defense Helper Methods
+// ===================================================================
+
+const (
+	DefenseNone  string = ""
+	DefenseDodge string = "dodge"
+	DefenseParry string = "parry"
+	DefenseBlock string = "block"
+)
+
+// HasShield returns true if the character is wielding a shield in offhand
+func (c *Character) HasShield() bool {
+	if c.Equipment.Offhand.ItemId <= 0 {
+		return false
+	}
+	spec := c.Equipment.Offhand.GetSpec()
+	// Shield detection: type offhand + has damage reduction or subtype wearable
+	return spec.Type == items.Offhand && (spec.DamageReduction > 0 || spec.Subtype == items.Wearable)
+}
+
+// IsDualWielding returns true if character has weapons in both hands
+func (c *Character) IsDualWielding() bool {
+	if c.Equipment.Weapon.ItemId <= 0 || c.Equipment.Offhand.ItemId <= 0 {
+		return false
+	}
+	// Dual wielding means both are weapons
+	weaponSpec := c.Equipment.Weapon.GetSpec()
+	offhandSpec := c.Equipment.Offhand.GetSpec()
+	return weaponSpec.Type == items.Weapon && offhandSpec.Type == items.Weapon
+}
+
+// IsUnarmed returns true if character has no weapon equipped
+func (c *Character) IsUnarmed() bool {
+	return c.Equipment.Weapon.ItemId <= 0
+}
+
+// GetDefenseSequence returns ordered defenses based on equipment (Stage 7.1)
+func (c *Character) GetDefenseSequence() []string {
+	defenses := []string{}
+
+	// Everyone can dodge
+	defenses = append(defenses, DefenseDodge)
+
+	// If unarmed, only dodge
+	if c.IsUnarmed() {
+		return defenses
+	}
+
+	// If dual wielding (two weapons)
+	if c.IsDualWielding() {
+		// dodge → parry main → parry off
+		defenses = append(defenses, DefenseParry) // main hand parry
+		defenses = append(defenses, DefenseParry) // offhand parry
+		return defenses
+	}
+
+	// If wielding weapon + shield
+	if c.Equipment.Weapon.ItemId > 0 && c.HasShield() {
+		// dodge → parry → block
+		defenses = append(defenses, DefenseParry)
+		defenses = append(defenses, DefenseBlock)
+		return defenses
+	}
+
+	// If wielding single weapon (no offhand or offhand is not shield/weapon)
+	if c.Equipment.Weapon.ItemId > 0 {
+		// dodge → parry
+		defenses = append(defenses, DefenseParry)
+		return defenses
+	}
+
+	// Default: just dodge
+	return defenses
+}
+
+// GetDefenseScore calculates defense score for a given defense type (Stage 7.1)
+func (c *Character) GetDefenseScore(defenseType string) float64 {
+	dex := float64(c.Stats.Dexterity.ValueAdj)
+
+	switch defenseType {
+	case DefenseDodge:
+		// Dodge: Dexterity + UnarmedCombat skill
+		unarmedSkill := float64(c.GetSkillLevel(skills.UnarmedCombat))
+		return dex + unarmedSkill
+
+	case DefenseParry:
+		// Parry: Dexterity + WeaponCombat skill + weapon ParryRating
+		weaponSkill := float64(c.GetSkillLevel(skills.WeaponCombat))
+		parryRating := 0
+		if c.Equipment.Weapon.ItemId > 0 {
+			parryRating = c.Equipment.Weapon.GetSpec().ParryRating
+		}
+		return dex + weaponSkill + float64(parryRating)
+
+	case DefenseBlock:
+		// Block: (Strength + Dexterity)/2 + WeaponCombat skill + shield BlockRating
+		str := float64(c.Stats.Strength.ValueAdj)
+		weaponSkill := float64(c.GetSkillLevel(skills.WeaponCombat))
+		blockRating := 0
+		if c.HasShield() {
+			blockRating = c.Equipment.Offhand.GetSpec().BlockRating
+		}
+		return (str+dex)/2 + weaponSkill + float64(blockRating)
+
+	default:
+		return 0
+	}
+}
+
+// GetDefenseStaminaCost returns stamina cost for a defense type (Stage 7.1)
+func (c *Character) GetDefenseStaminaCost(defenseType string) int {
+	cfg := configs.GetGamePlayConfig()
+
+	baseCost := 0
+	multiplier := 1.0
+
+	switch defenseType {
+	case DefenseDodge:
+		baseCost = 2
+		multiplier = float64(cfg.DodgeMultiplier)
+	case DefenseParry:
+		baseCost = 4
+		multiplier = float64(cfg.ParryMultiplier)
+	case DefenseBlock:
+		baseCost = 5
+		multiplier = float64(cfg.BlockMultiplier)
+	default:
+		return 0
+	}
+
+	cost := int(float64(baseCost) * multiplier)
+	if cost < 1 {
+		cost = 1 // minimum 1 stamina
+	}
+	return cost
+}
+
+// DeductDefenseStamina deducts stamina for a defense and returns true if successful (Stage 7.1)
+func (c *Character) DeductDefenseStamina(defenseType string) bool {
+	cost := c.GetDefenseStaminaCost(defenseType)
+	if c.Stamina >= cost {
+		c.Stamina -= cost
+		return true
+	}
+	return false
 }
 
 func (c *Character) GetMaxCharmedCreatures() int {

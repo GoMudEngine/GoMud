@@ -11,3 +11,4 @@ speedmultiplier: 0.5  # Ranged weapon - slower attack rate due to reload/aim tim
 damage:
   basedamage: 5
   variance: 2
+parryrating: 0
