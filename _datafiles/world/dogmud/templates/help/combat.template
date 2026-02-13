@@ -41,11 +41,11 @@ become wars of attrition. Run out of stamina and your defenses collapse!
 
 Wield two weapons for extra attacks, but with tradeoffs:
   - <ansi fg="stat">Extra Attacks:</ansi> Offhand weapon gets reduced attacks (×0.5 base)
-  - <ansi fg="stat">Accuracy Penalty:</ansi> -10 to hit with offhand attacks
+  - <ansi fg="stat">Accuracy Penalty:</ansi> Reduced hit chance with offhand attacks
   - <ansi fg="stat">Skill Progression:</ansi> Both weapons train your combat skill
   - <ansi fg="stat">Defense:</ansi> Can parry with either weapon
 
-Use <ansi fg="command">dual-wield</ansi> to toggle dual wielding mode.
+Simply equip two weapons to dual wield automatically.
 
 <ansi fg="yellow">━━━ Unarmed Combat ━━━</ansi>
 
@@ -80,6 +80,12 @@ In combat with multiple enemies, you can switch targets:
     - Regenerates slowly during combat
     - Low stamina (<50%) imposes severe penalties
     - Manage carefully in long fights!
+
+  <ansi fg="stat">Conviction:</ansi>
+    - Used for: Casting spells and psionic abilities
+    - Required for magical attacks and support
+    - Regenerates over time
+    - See <ansi fg="command">help cast</ansi> and <ansi fg="command">help spells</ansi> for details
 
   <ansi fg="stat">Health:</ansi>
     - Reach 0 health and you're downed (unconscious)

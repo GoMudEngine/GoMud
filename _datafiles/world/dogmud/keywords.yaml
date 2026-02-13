@@ -152,7 +152,7 @@ help:
 # Aliases for keywords when typing: help <keyword>
 # Key is the target keyword, value is the list of aliases
 help-aliases:
-  brawling:         [tackle, brawl, disarm, recover, throw, bash, trip, kick]
+  brawling:         [tackle, brawl, disarm, recover, throw]
   combat:           [fighting, battle]
   prone:            [knockdown, knocked-down, knocked down]
   enchant:          [unenchant, uncurse]
