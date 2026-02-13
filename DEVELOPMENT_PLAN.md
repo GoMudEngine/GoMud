@@ -869,8 +869,9 @@ After Stage 4.7, manual testing revealed that arena mobs were too weak for new p
 
 ---
 
-### Stage 5.4: Weight-Based Encumbrance
+### Stage 5.4: Weight-Based Encumbrance ✅ COMPLETED
 **Goal**: Replace item-count based encumbrance with realistic weight-based system and display encumbrance in character sheet.
+**Status**: Merged into `development` — commit `69eec06`.
 
 **Current State**: Encumbrance uses item count (1 dagger = 1 greatsword = "1 item"). This is simple but unrealistic.
 
@@ -1598,4 +1599,4 @@ Issues discovered during 2026-02-12 playtest session, mapped to stages:
 
 **Last Updated**: 2026-02-12
 **Status**: In Progress
-**Current Stage**: 5.4 — Weight-Based Encumbrance (next up)
+**Current Stage**: 5.4 — Weight-Based Encumbrance ✅ COMPLETED (Phase 5 complete, moving to Phase 6)
