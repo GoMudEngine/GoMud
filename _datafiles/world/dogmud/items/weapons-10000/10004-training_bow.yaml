@@ -6,6 +6,7 @@ description: A simple recurve bow made from laminated wood. It has a moderate dr
 type: weapon
 hands: 2
 subtype: shooting
+speedmultiplier: 0.5  # Ranged weapon - slower attack rate due to reload/aim time
 damage:
   basedamage: 5
   variance: 2

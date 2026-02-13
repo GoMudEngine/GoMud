@@ -373,7 +373,7 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 			sourceChar.SetAggro(sourceChar.Aggro.UserId, sourceChar.Aggro.MobInstanceId, characters.DefaultAttack)
 		}
 
-		for _, weapon := range attackWeapons {
+		for weaponIdx, weapon := range attackWeapons {
 
 			penalty := 0
 			if len(attackWeapons) > 1 {
@@ -392,6 +392,11 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 			// Get default unarmed distribution damage
 			attacks, baseDmg, dmgVariance, critBuffs := sourceChar.GetDefaultDistributionDamage()
 
+			// Determine if this is the offhand weapon
+			isOffhand := weaponIdx > 0 && weapon.ItemId == sourceChar.Equipment.Offhand.ItemId
+
+			weaponSpeed := 1.0 // Unarmed baseline
+
 			if weapon.ItemId > 0 {
 
 				itemSpec := weapon.GetSpec()
@@ -401,9 +406,15 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				weaponSubType = itemSpec.Subtype
 				attacks, baseDmg, dmgVariance, critBuffs = weapon.GetDistributionDamage()
 
+				// Get weapon speed multiplier
+				weaponSpeed = itemSpec.GetSpeedMultiplier()
+
 				// If there is a bonus vs. a specific race, apply it
 				baseDmg += float64(weapon.StatMod(string(statmods.RacialBonusPrefix) + strings.ToLower(targetChar.Species())))
 			}
+
+			// Apply speed multiplier, skill modifiers, and dual wielding bonuses
+			attacks = sourceChar.GetModifiedAttackCount(attacks, weaponSpeed, isOffhand)
 
 			// Add damage bonus due to statmods
 			baseDmg += float64(statModDBonus)

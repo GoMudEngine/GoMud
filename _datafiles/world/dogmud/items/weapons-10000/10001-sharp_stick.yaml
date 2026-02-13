@@ -6,6 +6,7 @@ type: weapon
 hands: 1
 subtype: bludgeoning
 uses: 0
+speedmultiplier: 0.8  # Light improvised weapon - faster than heavy weapons
 damage:
   basedamage: 2
   variance: 1
