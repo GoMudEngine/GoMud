@@ -51,6 +51,7 @@ var (
 		`attack`:      {Attack, false, true, false},
 		`backstab`:    {Backstab, false, true, false},
 		`badcommands`: {BadCommands, true, true, true}, // Admin only
+		`bash`:        {Bash, false, true, false},
 		`biome`:       {Biome, true, true, false},
 		`broadcast`:   {Broadcast, true, true, false},
 		`character`:   {Character, true, true, false},
@@ -84,6 +85,7 @@ var (
 		`grant`:       {Grant, true, true, true}, // Admin only
 		`help`:        {Help, true, true, false},
 		`keyring`:     {KeyRing, true, true, false},
+		`kick`:        {Kick, false, true, false},
 		`killstats`:   {Killstats, true, true, false},
 		`history`:     {History, true, true, false},
 		`inbox`:       {Inbox, true, true, false},
@@ -149,6 +151,7 @@ var (
 		`spells`:      {Spells, true, true, false},
 		`stash`:       {Stash, false, false, false}, // Can't manipulate stash in combat
 		`status`:      {Status, true, true, false},
+		`stand`:       {Stand, true, true, false}, // Can stand when downed
 		`storage`:     {Storage, false, false, false}, // Can't manipulate storage in combat
 		`suicide`:     {Suicide, true, true, false},
 		`syslogs`:     {SysLogs, true, true, true}, // Admin only
@@ -158,6 +161,7 @@ var (
 		`throw`:       {Throw, false, true, false},
 		`track`:       {Track, false, true, false},
 		`train`:       {Train, false, false, false}, // Can't train in combat
+		`trip`:        {Trip, false, true, false},
 		`unenchant`:   {Unenchant, false, false, false}, // Crafting - can't do in combat
 		`uncurse`:     {Uncurse, false, false, false},   // Crafting - can't do in combat
 		`unlock`:      {Unlock, false, true, false},

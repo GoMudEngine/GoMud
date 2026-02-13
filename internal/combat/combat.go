@@ -421,6 +421,11 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 			// Apply speed multiplier, skill modifiers, and dual wielding bonuses
 			attacks = sourceChar.GetModifiedAttackCount(attacks, weaponSpeed, isOffhand)
 
+			// Stage 7.5: Reduce attacks to 1 if attempting recovery this round
+			if sourceChar.RecoveryPenaltyThisRound {
+				attacks = 1
+			}
+
 			// Add damage bonus due to statmods
 			baseDmg += float64(statModDBonus)
 
@@ -435,6 +440,11 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 					// 25% damage reduction when very low on stamina
 					dmgMean *= 0.75
 				}
+			}
+
+			// Stage 7.5: Apply prone damage penalty
+			if sourceChar.Prone {
+				dmgMean *= float64(configs.GetGamePlayConfig().ProneDamagePenalty)
 			}
 
 			// zero means randomly selected, otherwise use the ItemId to consistently choose a message
@@ -467,6 +477,15 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 						staminaPenalty := (0.5 - staminaRatio) * 60.0
 						attackScore -= staminaPenalty
 					}
+				}
+
+				// Stage 7.5: Apply prone attack penalties/bonuses
+				cfg := configs.GetGamePlayConfig()
+				if sourceChar.Prone {
+					attackScore -= float64(cfg.ProneAttackPenalty) // Penalty for attacking while prone
+				}
+				if targetChar.Prone {
+					attackScore += float64(cfg.ProneVulnerabilityBonus) // Bonus when attacking prone targets
 				}
 
 				// Get defender's defense sequence based on equipment
@@ -516,6 +535,18 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 
 					// Calculate defense score for this defense type
 					defenseScore := targetChar.GetDefenseScore(defenseType)
+
+					// Stage 7.5: Apply prone defense penalties
+					if targetChar.Prone {
+						switch defenseType {
+						case "dodge":
+							defenseScore *= float64(cfg.ProneDodgePenalty) // Default: -50% dodge (can't move)
+						case "parry":
+							defenseScore *= float64(cfg.ProneParryPenalty) // Default: -30% parry (compromised stance)
+						case "block":
+							defenseScore *= float64(cfg.ProneBlockPenalty) // Default: -20% block (shield still works from ground)
+						}
+					}
 
 					// Opposed roll: attack vs this defense
 					defenseSucceeded, _, hitRoll, _ := dice.OpposedRoll(attackScore, defenseScore, combatStdDev)

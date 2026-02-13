@@ -332,6 +332,26 @@ GamePlay:
   DodgeMultiplier: 0.9
   ParryMultiplier: 0.9
   BlockMultiplier: 0.9
+  # - Stage 7.5: Prone Condition Effects -
+  #   Modifiers applied when a character is knocked prone
+  ProneAttackPenalty: 30.0       # Penalty to attack score when attacking while prone
+  ProneDodgePenalty: 0.50        # Multiplier for dodge effectiveness while prone (-50%)
+  ProneParryPenalty: 0.70        # Multiplier for parry effectiveness while prone (-30%)
+  ProneBlockPenalty: 0.80        # Multiplier for block effectiveness while prone (-20%)
+  ProneDamagePenalty: 0.80       # Damage multiplier when attacking while prone (-20%)
+  ProneVulnerabilityBonus: 20.0  # Bonus to attack score when attacking prone targets
+  StandStaminaCost: 0.15         # Stamina cost to stand (15% of max stamina)
+  StandMinStamina: 0.15          # Minimum stamina required to stand (15% of max)
+  # - Stage 7.5: Special Combat Moves -
+  #   Parameters for bash, trip, and kick commands
+  #   All three share a common cooldown to prevent knockdown spam
+  SpecialMoveCooldown: 5         # Shared cooldown for all special moves (5 rounds)
+  BashDamagePercent: 0.50        # Damage percentage for bash (50%)
+  BashKnockdownChance: 40        # Base knockdown chance for bash (40%)
+  TripDamagePercent: 0.25        # Damage percentage for trip (25%)
+  TripKnockdownChance: 60        # Base knockdown chance for trip (60%)
+  KickDamagePercent: 0.40        # Damage percentage for kick (40%)
+  KickKnockdownChance: 35        # Base knockdown chance for kick (35%)
 
 ################################################################################
 #

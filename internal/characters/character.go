@@ -75,9 +75,12 @@ type Character struct {
 	HealthMax        stats.StatInfo                 `yaml:"-"`                       // The maximum health of the character. Don't write to yaml since is dynamically calculated.
 	StaminaMax       stats.StatInfo                 `yaml:"-"`                       // The maximum stamina of the character. Don't write to yaml since is dynamically calculated.
 	ConvictionMax    stats.StatInfo                 `yaml:"-"`                       // The maximum conviction of the character. Don't write to yaml since is dynamically calculated.
-	ActionPointsMax  stats.StatInfo                 `yaml:"-"`                       // The maximum actions of character. Don't write to yaml since is dynamically calculated.
-	Aggro            *Aggro                         `yaml:"-"`                       // Dont' store this. If they leave they break their aggro
-	Skills           map[string]int                 `yaml:"skills,omitempty"`        // The skills the character has, and what level they are at
+	ActionPointsMax          stats.StatInfo                 `yaml:"-"`                       // The maximum actions of character. Don't write to yaml since is dynamically calculated.
+	Aggro                    *Aggro                         `yaml:"-"`                       // Dont' store this. If they leave they break their aggro
+	Prone                    bool                           `yaml:"-"`                       // Whether the character is knocked down/prone. Don't store this.
+	ProneRoundsRemaining     int                            `yaml:"-"`                       // Minimum rounds remaining before auto-recovery attempts. Don't store this.
+	RecoveryPenaltyThisRound bool                           `yaml:"-"`                       // If true, attacks reduced to 1 this round due to recovery attempt. Don't store this.
+	Skills                   map[string]int                 `yaml:"skills,omitempty"`        // The skills the character has, and what level they are at
 	Cooldowns        Cooldowns                      `yaml:"cooldowns,omitempty"`     // How many rounds until it is cooled down
 	Settings         map[string]string              `yaml:"settings,omitempty"`      // custom setting tracking, used for anything.
 	QuestProgress    map[int]string                 `yaml:"questprogress,omitempty"` // quest progress tracking
@@ -934,6 +937,10 @@ func (c *Character) GetAdjectives() []string {
 		retAdjectives = append(retAdjectives, `downed`)
 	}
 
+	if c.Prone {
+		retAdjectives = append(retAdjectives, `prone`)
+	}
+
 	if len(c.Shop) > 0 {
 		retAdjectives = append(retAdjectives, `shop`)
 	}
@@ -954,6 +961,55 @@ func (c *Character) GetAdjectives() []string {
 	retAdjectives = append(retAdjectives, c.Adjectives...)
 
 	return retAdjectives
+}
+
+// AttemptRecovery tries to recover from a condition using a stat-based chance
+// Formula: min(90, 25 + 20 * ln(statValue/25))
+// Returns: (attemptMade, success)
+// - attemptMade: whether the character had a condition to recover from
+// - success: whether the recovery succeeded (only meaningful if attemptMade is true)
+func (c *Character) AttemptRecovery(statValue int) (bool, bool) {
+	// Currently only handles Prone, but future-proofed for grapple/entangle/etc
+	if !c.Prone {
+		return false, false // No condition to recover from
+	}
+
+	// Decrement minimum prone duration counter
+	if c.ProneRoundsRemaining > 0 {
+		c.ProneRoundsRemaining--
+		// Still in minimum prone period, can't attempt recovery yet
+		// Reduce attacks to 1 this round (struggling to stand)
+		c.RecoveryPenaltyThisRound = true
+		return false, false // No recovery attempt yet (still in minimum duration)
+	}
+
+	// Minimum duration passed, now roll for recovery based on stat
+	// Calculate recovery chance using logarithmic formula
+	// DEX 25 = 25%, DEX 100 = 50%, DEX 300 = 75%, caps at 90%
+	chance := 25.0
+	if statValue > 0 {
+		chance = 25.0 + 20.0*math.Log(float64(statValue)/25.0)
+		if chance > 90.0 {
+			chance = 90.0
+		}
+		if chance < 0 {
+			chance = 0
+		}
+	}
+
+	// Roll for success
+	roll := dice.Roll(50, 15.0) // Mean of 50
+	success := roll.Value < chance
+
+	if success {
+		c.Prone = false
+		c.ProneRoundsRemaining = 0
+	} else {
+		// Failed recovery attempt - reduce attacks to 1 this round
+		c.RecoveryPenaltyThisRound = true
+	}
+
+	return true, success
 }
 
 func (c *Character) getFormattedName(viewingUserId int, uType string, renderFlags ...NameRenderFlag) FormattedName {
