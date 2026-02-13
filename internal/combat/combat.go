@@ -483,10 +483,13 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				if targetChar.HasBuffFlag(buffs.Blink) {
 					critThreshold = 2.5 // ~0.6% against Blink
 				}
-				// Skill advantage shifts crit threshold
+				// Skill advantage shifts crit threshold (better skill = more crits)
 				skillDiff := sourceChar.GetCombatSkillLevel() - targetChar.GetCombatSkillLevel()
 				critThreshold -= float64(skillDiff) * 0.05
-				fumbleThreshold := -critThreshold // Mirror the crit threshold
+
+				// Fumble threshold is FIXED - skill advantage doesn't make you fumble more
+				// A master doesn't fumble more when fighting a novice
+				fumbleThreshold := -2.0 // Always ~2.5% chance regardless of skill
 
 				// Make initial attack roll to detect fumbles BEFORE defense sequence
 				// Fumbles are based on attacker's raw performance, not opposed roll outcomes
