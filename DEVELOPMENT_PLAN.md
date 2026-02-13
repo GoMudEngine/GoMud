@@ -1548,6 +1548,378 @@ After Stage 4.7, manual testing revealed that arena mobs were too weak for new p
 
 ---
 
+## Phase 11: LLM Integration & AI NPCs
+
+> **Context**: Enable external LLM agents to interact with the MUD via structured data, and create a tiered AI NPC system that balances quality, performance, and cost. This phase uses a pragmatic approach: enhance existing GMCP for LLM agent access, build rule-based NPCs for most characters, and optionally add LLM-powered NPCs for special cases.
+
+### Stage 11.1: GMCP Enhancement for Full State Coverage
+**Goal**: Expand the existing GMCP (Generic Mud Communication Protocol) support to provide complete, structured game state data. This enables external LLM agents to "play" the MUD programmatically and provides rich context for AI decision-making.
+
+**Current State**: GoMud already has basic GMCP support. This stage expands it to cover all game state.
+
+**Changes**:
+1. Audit existing GMCP modules and identify gaps
+2. Add comprehensive GMCP modules:
+   - `gmcp.room.full` — Complete room data (description, entities, exits, terrain, biome)
+   - `gmcp.room.entities` — All mobs/players in room with stats visible to player
+   - `gmcp.combat.state` — Ongoing combat state (participants, rounds, current target)
+   - `gmcp.combat.result` — Structured combat round results (hit/miss, damage tier, defenses used)
+   - `gmcp.character.full` — Complete character state (stats, skills, conditions, encumbrance)
+   - `gmcp.character.equipment` — Equipped items with stats
+   - `gmcp.character.inventory` — Backpack contents
+   - `gmcp.commands.available` — Context-aware list of valid commands (excludes unavailable due to combat, cooldowns, etc.)
+   - `gmcp.world.time` — Game time, weather, season
+   - `gmcp.world.quests` — Active quests and objectives
+3. Add GMCP event notifications:
+   - `gmcp.event.combat_start`, `gmcp.event.combat_end`
+   - `gmcp.event.condition_applied`, `gmcp.event.condition_removed`
+   - `gmcp.event.cooldown_ready`
+   - `gmcp.event.skill_progress`, `gmcp.event.stat_progress`
+4. Create GMCP toggle in character settings (some players may want to disable)
+5. Add GMCP documentation for LLM agent developers
+
+**Files to Modify** (~12 files, ~600 lines):
+1. `internal/gmcp/gmcp.go` — Core GMCP module registration and dispatch
+2. `internal/gmcp/room.go` — Room state modules
+3. `internal/gmcp/combat.go` — Combat state modules (new file)
+4. `internal/gmcp/character.go` — Character state modules
+5. `internal/gmcp/commands.go` — Available commands module (new file)
+6. `internal/gmcp/world.go` — World state modules (new file)
+7. `internal/combat/combat.go` — Send GMCP combat updates
+8. `internal/hooks/` — Send GMCP event notifications from various hooks
+9. `internal/characters/character.go` — GMCP preference flag
+10. Documentation: `docs/GMCP_REFERENCE.md` (new file)
+11. Documentation: `docs/LLM_AGENT_GUIDE.md` (new file)
+12. Test files
+
+**Testing**:
+- [ ] **Unit Tests**: Test each GMCP module serialization
+- [ ] **Integration Test**: Connect with GMCP-enabled client, verify all modules populate
+- [ ] **Manual Test**: Walk through various game scenarios (combat, movement, quests) and verify GMCP updates
+- [ ] **Agent Test**: Create simple Python LLM agent that can navigate and fight using only GMCP data
+- [ ] **Regression Test**: Verify GMCP-disabled clients still work normally
+
+**Acceptance Criteria**:
+- All major game state is exposed via GMCP modules
+- GMCP data is accurate and updates in real-time
+- External agents can fully interact with the MUD using GMCP
+- Documentation allows third-party LLM agent development
+- No performance impact for non-GMCP clients
+- All tests pass
+
+**Estimated Changes**: ~600 lines, 12 files
+
+---
+
+### Stage 11.2: Rule-Based NPC Dialogue Framework
+**Goal**: Create a flexible, fast, zero-cost dialogue system for 99% of NPCs using pattern matching, dialogue trees, and scripted responses. This is the foundation for making NPCs feel alive without any LLM costs or performance overhead.
+
+**Design**:
+- **Pattern-based responses**: NPC recognizes keywords/phrases and responds appropriately
+- **Dialogue trees**: Branch based on previous conversation, quest state, player reputation
+- **Context awareness**: NPCs know about room, recent events, player state
+- **Emotion/mood system**: NPCs have moods that affect responses (friendly, hostile, afraid, etc.)
+- **Memory**: NPCs remember recent interactions with specific players
+
+**Example NPC Configuration** (YAML):
+```yaml
+npcId: 1001
+name: "Merchant Talia"
+personality: "friendly, greedy"
+defaultMood: "welcoming"
+
+dialoguePatterns:
+  - pattern: "(hello|hi|greet|hey)"
+    responses:
+      - "Welcome, traveler! Care to see my wares?"
+      - "Ah, a new face! What brings you to my shop?"
+    mood: "welcoming"
+
+  - pattern: "(price|cost|expensive|cheap)"
+    responses:
+      - "My prices are fair! The roads are dangerous, after all."
+      - "You won't find better deals in the wasteland."
+    mood: "defensive"
+
+  - pattern: "(temple|priest|sanctum)"
+    responses:
+      - "The temple? Head east through the market, you can't miss it."
+    requirements:
+      questComplete: ["intro_quest"]
+
+dialogueTree:
+  root:
+    text: "Hello, stranger."
+    options:
+      - text: "What do you sell?"
+        goto: "shop_intro"
+      - text: "Tell me about the temple."
+        goto: "temple_info"
+        requires:
+          questActive: ["find_temple"]
+
+memory:
+  rememberFor: "24h"
+  maxInteractions: 10
+```
+
+**Changes**:
+1. Create NPC dialogue data structure (patterns, trees, responses)
+2. Create dialogue engine:
+   - Pattern matching with regex
+   - Tree navigation with requirements checking
+   - Response selection (random, weighted, contextual)
+3. Add conversation memory system (per-player, time-limited)
+4. Add mood/emotion system affecting responses
+5. Create YAML dialogue file format
+6. Add conversation commands: `talk <npc>`, `ask <npc> about <topic>`, `tell <npc> <message>`
+7. Add NPC response delays (1-2 seconds) for realism
+8. Create example dialogues for common NPC types (merchant, guard, quest-giver)
+
+**Files to Modify** (~15 files, ~800 lines):
+1. `internal/npcs/dialogue/` — New package for dialogue system
+2. `internal/npcs/dialogue/pattern.go` — Pattern matching engine
+3. `internal/npcs/dialogue/tree.go` — Dialogue tree navigation
+4. `internal/npcs/dialogue/memory.go` — Conversation memory
+5. `internal/npcs/dialogue/mood.go` — Mood/emotion system
+6. `internal/mobs/mobs.go` — Add dialogue data to mob struct
+7. `internal/usercommands/talk.go` — New command (aliases: ask, tell, converse)
+8. `internal/fileloader/` — Add dialogue file loading
+9. `_datafiles/dialogues/` — Example dialogue files
+10. Test files
+
+**Testing**:
+- [ ] **Unit Tests**: Pattern matching, tree navigation, memory system
+- [ ] **Manual Test**: Converse with multiple NPCs, verify responses
+- [ ] **Manual Test**: Verify mood changes affect responses
+- [ ] **Manual Test**: Verify NPCs remember previous conversations
+- [ ] **Manual Test**: Verify quest/state requirements work
+- [ ] **Performance Test**: 100 NPCs in same room responding simultaneously
+
+**Acceptance Criteria**:
+- NPCs respond intelligently to player input using patterns
+- Dialogue trees support branching conversations
+- NPCs have distinct personalities via response variations
+- Memory system allows contextual follow-up conversations
+- Zero performance impact (all processing is trivial regex/lookups)
+- Easy to author new NPC dialogues via YAML
+- All tests pass
+
+**Estimated Changes**: ~800 lines, 15 files
+
+---
+
+### Stage 11.3: Local LLM Integration (Optional)
+**Goal**: Add support for 5-10 special NPCs powered by locally-hosted small language models (Llama 3.2 3B, Phi-3, Mistral 7B). These NPCs provide more dynamic, emergent conversations than rule-based NPCs while avoiding API costs.
+
+**Note**: This stage is **optional** and requires:
+- A separate machine or VPS to run the LLM service
+- ~8GB RAM minimum for 3B models, 16GB for 7B models
+- ollama, llama.cpp, or similar inference server
+
+**Design**:
+- **Async architecture**: NPC sends request to LLM service, continues other activities while waiting
+- **Separate process**: LLM runs on different machine/container, MUD server communicates via HTTP
+- **Heavy caching**: Same questions get cached responses (with minor variations)
+- **Rate limiting**: Max 1 response per NPC every 5-10 seconds
+- **Fallback**: If LLM service is down, fall back to rule-based responses
+
+**LLM Service Architecture**:
+```
+MUD Server ──(HTTP POST)──> LLM Service (ollama/llama.cpp)
+                             - Runs on separate machine/container
+                             - Model: Llama 3.2 3B or Phi-3 Mini
+                             - Response time: 0.5-2 seconds
+
+MUD Server ←─(JSON response)── LLM Service
+```
+
+**Changes**:
+1. Create LLM client package:
+   - HTTP client to ollama/llama.cpp API
+   - Async request/response handling
+   - Connection pooling and timeouts
+2. Add NPC type: `LLMControlledNPC`
+   - Has personality prompt template
+   - Has conversation history (rolling window)
+   - Has response cache
+3. Add response caching system:
+   - Exact match cache (question → answer)
+   - Semantic similarity cache (optional, uses embeddings)
+   - Time-based cache expiration (1 hour)
+4. Add rate limiting per NPC:
+   - Cooldown between responses
+   - Max responses per hour
+5. Add configuration for LLM service endpoint
+6. Add fallback to rule-based responses if LLM unavailable
+7. Add debug mode to log LLM prompts/responses
+
+**Example NPC Configuration** (YAML):
+```yaml
+npcId: 2001
+name: "Oracle of the Wastes"
+type: "llm_controlled"
+llmModel: "llama3.2-3b"
+
+personality: |
+  You are the Oracle of the Wastes, an ancient seer who speaks in cryptic riddles.
+  You know about the mutations, the old world, and the sanctum.
+  You are helpful but mysterious. Keep responses under 100 words.
+
+context: |
+  The player is in a post-apocalyptic wasteland. Mutations are common.
+  The Sanctum is a safe haven. The player is seeking answers.
+
+rateLimits:
+  minDelay: 10s
+  maxPerHour: 20
+
+cache:
+  enabled: true
+  ttl: 1h
+  maxSize: 1000
+
+fallback:
+  useRuleBasedOnFailure: true
+  patterns:
+    - pattern: "(hello|greet)"
+      response: "The sands whisper your name, traveler..."
+```
+
+**Files to Modify** (~12 files, ~700 lines):
+1. `internal/npcs/llm/` — New package for LLM integration
+2. `internal/npcs/llm/client.go` — HTTP client for LLM service
+3. `internal/npcs/llm/cache.go` — Response caching
+4. `internal/npcs/llm/ratelimit.go` — Rate limiting
+5. `internal/mobs/mobs.go` — Add LLM NPC type
+6. `internal/mobs/ai.go` — LLM NPC behavior (new file)
+7. `internal/configs/config.llm.go` — LLM configuration (new file)
+8. `_datafiles/config.yaml` — Add LLM service endpoint config
+9. `_datafiles/npcs/llm_npcs/` — Example LLM NPC definitions
+10. Documentation: `docs/LLM_NPC_SETUP.md` (new file)
+11. Test files
+
+**Testing**:
+- [ ] **Integration Test**: Mock LLM service, verify requests/responses
+- [ ] **Manual Test**: Converse with LLM NPC, verify responses are contextual
+- [ ] **Manual Test**: Verify caching reduces duplicate LLM calls
+- [ ] **Manual Test**: Verify rate limiting prevents spam
+- [ ] **Manual Test**: Verify fallback works when LLM service is down
+- [ ] **Performance Test**: Multiple players talking to LLM NPC simultaneously
+- [ ] **Load Test**: Verify MUD remains responsive with slow LLM responses
+
+**Acceptance Criteria**:
+- LLM NPCs respond with contextual, dynamic dialogue
+- Async architecture prevents MUD blocking
+- Caching reduces LLM calls by 80%+
+- Rate limiting prevents abuse
+- Graceful fallback when LLM unavailable
+- Clear documentation for deploying LLM service
+- All tests pass
+
+**Estimated Changes**: ~700 lines, 12 files
+
+---
+
+### Stage 11.4: Cloud API Integration (Optional)
+**Goal**: Add support for 1-2 "legendary" NPCs powered by cloud LLM APIs (OpenAI, Anthropic). These provide the highest quality conversations but have API costs, so they're reserved for critical story NPCs.
+
+**Note**: This stage is **optional** and **costly**. Only use for NPCs where quality is paramount (main quest hub, final boss, etc.). Budget $5-50/month depending on player traffic.
+
+**Design**:
+- Same architecture as Stage 11.3, but calls OpenAI/Anthropic instead of local service
+- **Aggressive cost mitigation**:
+  - Heavy caching (99% cache hit rate target)
+  - Very strict rate limiting (1 response per 30 seconds)
+  - Budget alerts (notify admin if costs exceed threshold)
+  - Automatic shutdown if budget exceeded
+- **Quality over quantity**: 1-2 NPCs total, not more
+
+**Changes**:
+1. Add cloud API clients:
+   - OpenAI client (using official SDK)
+   - Anthropic client (using official SDK)
+2. Add cost tracking and budget enforcement:
+   - Track API calls and estimated costs
+   - Alert when approaching budget limit
+   - Auto-disable NPCs if budget exceeded
+3. Add even heavier caching than Stage 11.3:
+   - Persistent cache (survives server restart)
+   - Semantic similarity matching for cache hits
+4. Add NPC type: `CloudLLMNPC`
+5. Add configuration for API keys and budgets
+
+**Example NPC Configuration** (YAML):
+```yaml
+npcId: 3001
+name: "The Sanctum Keeper"
+type: "cloud_llm"
+provider: "anthropic"
+model: "claude-3-haiku-20240307"
+
+personality: |
+  You are the Sanctum Keeper, guardian of the last bastion of civilization.
+  You guide newcomers, assign quests, and know the history of the wasteland.
+  You are wise, patient, and slightly melancholic about the old world.
+  Keep responses under 150 words.
+
+context: |
+  The Sanctum is a walled settlement protecting survivors.
+  Outside is a harsh wasteland filled with mutated creatures.
+  The player is a newcomer seeking refuge and purpose.
+
+budget:
+  maxCostPerDay: 5.00    # USD
+  alertThreshold: 4.00
+  autoDisableAt: 5.50
+
+rateLimits:
+  minDelay: 30s           # Very strict for cloud APIs
+  maxPerHour: 10
+  maxPerDay: 50
+
+cache:
+  enabled: true
+  persistent: true
+  ttl: 24h
+  semanticMatching: true
+  similarityThreshold: 0.90
+```
+
+**Files to Modify** (~10 files, ~600 lines):
+1. `internal/npcs/llm/openai.go` — OpenAI client (new file)
+2. `internal/npcs/llm/anthropic.go` — Anthropic client (new file)
+3. `internal/npcs/llm/cost.go` — Cost tracking and budget enforcement (new file)
+4. `internal/npcs/llm/cache.go` — Enhance with persistent storage and semantic matching
+5. `internal/mobs/mobs.go` — Add CloudLLM NPC type
+6. `internal/configs/config.llm.go` — Add cloud API configuration
+7. `_datafiles/config.yaml` — Add API keys and budget settings
+8. `_datafiles/npcs/cloud_npcs/` — Example cloud NPC definitions
+9. Documentation: `docs/CLOUD_LLM_SETUP.md` (new file)
+10. Test files
+
+**Testing**:
+- [ ] **Integration Test**: Mock cloud APIs, verify requests/responses
+- [ ] **Manual Test**: Converse with cloud NPC, verify high-quality responses
+- [ ] **Manual Test**: Verify budget tracking and alerts work
+- [ ] **Manual Test**: Verify auto-disable when budget exceeded
+- [ ] **Manual Test**: Verify persistent caching survives server restart
+- [ ] **Cost Test**: Monitor actual API costs over 24 hours with test traffic
+
+**Acceptance Criteria**:
+- Cloud NPCs provide very high quality, contextual dialogue
+- Cost tracking accurately estimates API spend
+- Budget enforcement prevents runaway costs
+- Cache hit rate >95%
+- Persistent cache survives restarts
+- Auto-disable protects against cost overruns
+- Clear documentation for API key setup
+- All tests pass
+
+**Estimated Changes**: ~600 lines, 10 files
+
+---
+
 ## Testing Strategy
 
 ### Manual Testing Checklist (Run After Each Stage)
@@ -1650,7 +2022,8 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 8: Grappling | 2 stages (8.1–8.2) | 12 hours | Not Started |
 | Phase 9: Combat Presentation | 3 stages (9.1–9.3) | 16 hours | Not Started |
 | Phase 10: Balance Pass | 1 stage (10.1) | 8 hours | Not Started |
-| **Total** | **38 stages** | **161 hours** | |
+| Phase 11: LLM Integration | 4 stages (11.1–11.4) | 35 hours | Not Started |
+| **Total** | **42 stages** | **196 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
 
@@ -1681,11 +2054,11 @@ Assuming ~4 hours per stage (implement + test):
 
 ## Next Steps After Core Mechanics
 
-Once core mechanics (Phases 1-10) are complete:
-1. **Phase 11**: Tutorial Area (Sanctum Basin)
-2. **Phase 12**: Mutation System
-3. **Phase 13**: Economy & Crafting
-4. **Phase 14**: World Building (Cities, NPCs)
+Once core mechanics (Phases 1-11) are complete:
+1. **Phase 12**: Tutorial Area (Sanctum Basin)
+2. **Phase 13**: Mutation System
+3. **Phase 14**: Economy & Crafting
+4. **Phase 15**: World Building (Cities, NPCs)
 
 These phases will be detailed in a separate plan once core mechanics are stable.
 
