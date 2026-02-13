@@ -454,9 +454,9 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				attackSourceDamage := 0
 				attackSourceReduction := 0
 
-				// Opposed roll: attacker dex+skill vs defender dex+skill
+				// Stage 7.1: Layered Defense System
+				// Calculate attack score with penalties
 				attackScore := float64(sourceChar.Stats.Dexterity.ValueAdj) + float64(sourceChar.GetCombatSkillLevel())
-				defendScore := float64(targetChar.Stats.Dexterity.ValueAdj) + float64(targetChar.GetCombatSkillLevel())
 				attackScore -= float64(penalty) // dual wield penalty
 
 				// Apply stamina-based hit chance penalty
@@ -469,8 +469,78 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 					}
 				}
 
+				// Get defender's defense sequence based on equipment
+				defenseSequence := targetChar.GetDefenseSequence()
 				combatStdDev := 15.0
-				hit, _, hitRoll, _ := dice.OpposedRoll(attackScore, defendScore, combatStdDev)
+				hit := false
+				var lastHitRoll dice.RollResult
+				var firstDefenseRoll dice.RollResult // For fumble detection
+
+				// Try each defense in sequence
+				for defenseIndex, defenseType := range defenseSequence {
+					// Track defense attempt
+					attackResult.DefenseAttempts = append(attackResult.DefenseAttempts, DefenseType(defenseType))
+
+					// Check if defender has stamina for this defense
+					if !targetChar.DeductDefenseStamina(defenseType) {
+						// Insufficient stamina, skip this defense
+						continue
+					}
+
+					// Calculate defense score for this defense type
+					defenseScore := targetChar.GetDefenseScore(defenseType)
+
+					// Opposed roll: attack vs this defense
+					defenseSucceeded, _, hitRoll, _ := dice.OpposedRoll(attackScore, defenseScore, combatStdDev)
+					lastHitRoll = hitRoll
+
+					// Track first defense roll for fumble detection
+					if defenseIndex == 0 {
+						firstDefenseRoll = hitRoll
+					}
+
+					if !defenseSucceeded {
+						// Defense failed, continue to next defense
+						continue
+					}
+
+					// Defense succeeded! Attack is avoided
+					attackResult.DefenseUsed = DefenseType(defenseType)
+					hit = false
+
+					// Add defense success messages (Stage 7.1)
+					var defenseVerb string
+					var skillToProgress string
+					switch defenseType {
+					case characters.DefenseDodge:
+						defenseVerb = "dodge"
+						skillToProgress = string(skills.UnarmedCombat)
+					case characters.DefenseParry:
+						defenseVerb = "parry"
+						skillToProgress = string(skills.WeaponCombat)
+					case characters.DefenseBlock:
+						defenseVerb = "block"
+						skillToProgress = string(skills.WeaponCombat)
+					}
+
+					// Trigger skill progression for successful defense
+					targetChar.TrackSkillUse(skillToProgress)
+					targetChar.CheckSkillProgression(skillToProgress, targetChar.GetUserId(), 1.0)
+
+					attackResult.SendToSource(fmt.Sprintf(`<ansi fg="attack-bad">%s %ss your attack!</ansi>`, targetChar.Name, defenseVerb))
+					attackResult.SendToTarget(fmt.Sprintf(`<ansi fg="defense-good">You %s %s's attack!</ansi>`, defenseVerb, sourceChar.Name))
+					attackResult.SendToSourceRoom(fmt.Sprintf(`<ansi fg="combat">%s %ss %s's attack.</ansi>`, targetChar.Name, defenseVerb, sourceChar.Name))
+					if sourceChar.RoomId != targetChar.RoomId {
+						attackResult.SendToTargetRoom(fmt.Sprintf(`<ansi fg="combat">%s %ss an attack.</ansi>`, targetChar.Name, defenseVerb))
+					}
+
+					break
+				}
+
+				// If no defense succeeded (or insufficient stamina for all), attack hits
+				if attackResult.DefenseUsed == DefenseNone {
+					hit = true
+				}
 
 				// Dynamic threshold for crit/fumble detection
 				critThreshold := 2.0 // ~2.5% chance
@@ -492,31 +562,22 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 					damageResult := dice.Roll(dmgMean, dmgVariance)
 					attackTargetDamage = int(math.Round(math.Max(0, damageResult.Value)))
 
-					if hitRoll.ZScore >= critThreshold || attackResult.Crit {
+					if lastHitRoll.ZScore >= critThreshold || attackResult.Crit {
 						attackResult.Crit = true
 						attackResult.BuffTarget = critBuffs
 						attackTargetDamage += int(math.Round(dmgMean))
-						mudlog.Debug("CritDetected", "zScore", fmt.Sprintf("%.2f", hitRoll.ZScore), "threshold", fmt.Sprintf("%.2f", critThreshold), "source", sourceChar.Name, "target", targetChar.Name)
+						mudlog.Debug("CritDetected", "zScore", fmt.Sprintf("%.2f", lastHitRoll.ZScore), "threshold", fmt.Sprintf("%.2f", critThreshold), "source", sourceChar.Name, "target", targetChar.Name)
 					}
 				} else {
-					// Fumble detection on miss
-					if hitRoll.ZScore <= fumbleThreshold {
+					// Fumble detection on miss - use first defense roll (dodge) to detect attacker fumbles
+					// Only check if we actually had defense attempts (not bypassed due to zero stamina)
+					if len(attackResult.DefenseAttempts) > 0 && firstDefenseRoll.ZScore <= fumbleThreshold {
 						attackResult.Fumble = true
-						mudlog.Debug("FumbleDetected", "zScore", fmt.Sprintf("%.2f", hitRoll.ZScore), "threshold", fmt.Sprintf("%.2f", fumbleThreshold), "source", sourceChar.Name, "target", targetChar.Name)
+						mudlog.Debug("FumbleDetected", "zScore", fmt.Sprintf("%.2f", firstDefenseRoll.ZScore), "threshold", fmt.Sprintf("%.2f", fumbleThreshold), "source", sourceChar.Name, "target", targetChar.Name)
 					}
 				}
 
-				defenseAmt := dice.RollBetweenInt(0, targetChar.GetDefense())
-				if defenseAmt > 0 {
-					attackTargetReduction = int(math.Round((float64(defenseAmt) / 100) * float64(attackTargetDamage)))
-					attackTargetDamage -= attackTargetReduction
-				}
-
-				defenseAmt = dice.RollBetweenInt(0, sourceChar.GetDefense())
-				if defenseAmt > 0 {
-					attackSourceReduction = int(math.Round((float64(defenseAmt) / 100) * float64(attackSourceDamage)))
-					attackSourceDamage -= attackSourceReduction
-				}
+				// Stage 7.1: Passive defense removed - defense is now active via stamina-costing dodge/parry/block
 
 				// Calculate actual damage vs. expected damage pct
 				pctDamage := 0.0

@@ -11,3 +11,4 @@ speedmultiplier: 0.7  # Standard sword - slower than unarmed but versatile
 damage:
   basedamage: 4
   variance: 2
+parryrating: 12

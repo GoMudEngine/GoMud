@@ -325,6 +325,13 @@ GamePlay:
   #   Global multiplier for spell health costs (life-force magic). Default 1.0.
   #   Increase to make life-force magic more risky, decrease to make it safer.
   SpellHealthCostMultiplier: 1.0
+  # - Stage 7.1: Segmented Avoidance -
+  #   Stamina cost multipliers for layered defense system
+  #   Base costs: dodge (2), parry (4), block (5)
+  #   Lower values make defense cheaper, higher values make it more expensive
+  DodgeMultiplier: 0.9
+  ParryMultiplier: 0.9
+  BlockMultiplier: 0.9
 
 ################################################################################
 #

@@ -12,3 +12,4 @@ staminacost: 8  # Medium weapon cost
 damage:
   basedamage: 6
   variance: 2
+parryrating: 12

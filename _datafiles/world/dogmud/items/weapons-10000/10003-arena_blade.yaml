@@ -11,3 +11,4 @@ speedmultiplier: 0.75  # Quality balanced sword - slightly faster than basic swo
 damage:
   basedamage: 9
   variance: 2
+parryrating: 15

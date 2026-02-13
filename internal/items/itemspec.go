@@ -206,6 +206,8 @@ type ItemSpec struct {
 	BuffIds         []int       `yaml:"buffids,omitempty"`         // What buffs it can apply (if used)
 	WornBuffIds     []int       `yaml:"wornbuffids,omitempty"`     // BuffId's that are applied while worn, and expired when removed.
 	DamageReduction int         `yaml:"damagereduction,omitempty"` // % of damage it reduces when it blocks attacks
+	ParryRating     int         `yaml:"parryrating,omitempty"`     // Weapon parry bonus (Stage 7.1)
+	BlockRating     int         `yaml:"blockrating,omitempty"`     // Shield block bonus (Stage 7.1)
 	WaitRounds      int         `yaml:"waitrounds,omitempty"`      // How many extra rounds each combat requires
 	StaminaCost     int         `yaml:"staminacost,omitempty"`     // Stamina cost per attack with this weapon
 	SpeedMultiplier float64     `yaml:"speedmultiplier,omitempty"` // Attack speed modifier (1.0 = unarmed baseline, <1.0 slower, >1.0 faster)

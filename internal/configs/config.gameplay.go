@@ -36,6 +36,11 @@ type GamePlay struct {
 	// Spell Cost Scaling
 	SpellConvictionCostMultiplier ConfigFloat `yaml:"SpellConvictionCostMultiplier"` // Global multiplier for spell conviction costs (default 1.0)
 	SpellHealthCostMultiplier     ConfigFloat `yaml:"SpellHealthCostMultiplier"`     // Global multiplier for spell health costs (default 1.0)
+
+	// Defense stamina cost multipliers (Stage 7.1)
+	DodgeMultiplier ConfigFloat `yaml:"DodgeMultiplier"` // Default 0.9 (base cost: 2 stamina)
+	ParryMultiplier ConfigFloat `yaml:"ParryMultiplier"` // Default 0.9 (base cost: 4 stamina)
+	BlockMultiplier ConfigFloat `yaml:"BlockMultiplier"` // Default 0.9 (base cost: 5 stamina)
 }
 
 type GameplayDeath struct {
@@ -138,6 +143,17 @@ func (g *GamePlay) Validate() {
 	}
 	if g.SpellHealthCostMultiplier <= 0 {
 		g.SpellHealthCostMultiplier = 1.0
+	}
+
+	// Defense cost multipliers - default to 0.9 if not set or invalid (Stage 7.1)
+	if g.DodgeMultiplier <= 0 {
+		g.DodgeMultiplier = 0.9
+	}
+	if g.ParryMultiplier <= 0 {
+		g.ParryMultiplier = 0.9
+	}
+	if g.BlockMultiplier <= 0 {
+		g.BlockMultiplier = 0.9
 	}
 
 }

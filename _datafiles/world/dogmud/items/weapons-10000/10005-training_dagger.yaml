@@ -12,3 +12,4 @@ staminacost: 6  # Light weapon, lower stamina cost
 damage:
   basedamage: 3
   variance: 1
+parryrating: 10
