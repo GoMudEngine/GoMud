@@ -1076,7 +1076,8 @@ After Stage 4.7, manual testing revealed that arena mobs were too weak for new p
 
 ---
 
-### Stage 7.2: Restrict Commands During Combat
+### Stage 7.2: Restrict Commands During Combat ✅ COMPLETED
+**Merge commit**: de5394a
 **Goal**: Prevent players from performing non-combat actions during combat that would be unrealistic or exploitable (e.g., equipping armor, picking up items, crafting).
 
 **Changes**:
@@ -1177,6 +1178,89 @@ After Stage 4.7, manual testing revealed that arena mobs were too weak for new p
 - All tests pass
 
 **Estimated Changes**: ~250 lines, 6 files
+
+---
+
+### Stage 7.5: Combat-Specific Commands with Cooldowns
+**Goal**: Add special combat-only commands with cooldowns that provide tactical options beyond basic attacks. These include maneuvers like shield bash, trip, and kick that can apply status conditions to opponents.
+
+**Design**:
+- **Combat-only commands** — these commands are only available during active combat:
+  - `bash` / `shield bash` — Uses shield to bash opponent, chance to knock them down (requires shield equipped)
+  - `trip` — Attempt to trip opponent using Unarmed Combat or Weapon Combat
+  - `kick` — Quick kick attack, lower damage but can knock down
+- **Cooldown system** — each special move has a cooldown period (measured in combat rounds):
+  - Shield bash: 3 rounds
+  - Trip: 2 rounds
+  - Kick: 2 rounds
+- **Knockdown condition** — successful maneuvers have a chance to apply "Prone" condition:
+  - **Success chance**: Opposed roll (attacker's skill + Strength vs defender's Dexterity + combat skill)
+  - **Duration**: Target can attempt to stand up each round (costs stamina, uses their action for that round)
+  - **Effects while Prone**:
+    - Reduced attack success rate (-30%)
+    - Reduced dodge/parry effectiveness (-50%)
+    - Vulnerable to attacks from standing opponents (+20% to hit)
+    - Cannot move or flee
+    - Can still attack (at penalty) or attempt to stand
+- **Spell interruption** — being knocked prone has a chance to interrupt spellcasting in progress (if casting time > 1 round)
+- **Damage** — special moves deal reduced damage compared to normal attacks, but the tactical advantage of knockdown is the real benefit
+
+**Changes**:
+1. Create cooldown tracking system:
+   - Add `CombatCooldowns map[string]int` to character state (tracks rounds until each move is available)
+   - Decrement all cooldowns each combat round
+   - Check cooldown before allowing special move
+2. Add `Prone` condition flag to character state
+3. Implement three new combat commands:
+   - `internal/usercommands/bash.go` — Shield bash (requires shield)
+   - `internal/usercommands/trip.go` — Trip attempt
+   - `internal/usercommands/kick.go` — Kick attack
+4. Add `stand` command to recover from Prone condition
+5. Apply Prone condition effects to combat calculations:
+   - Attack penalties in `internal/combat/calculations.go`
+   - Defense penalties (dodge/parry/block)
+   - Attack bonus for attackers vs prone targets
+6. Add spell interruption logic when knocked prone during cast
+7. Display cooldown status in combat prompt or via `cooldowns` command
+8. Add config values for cooldown durations and prone effect magnitudes
+
+**Files to Modify** (~12 files, ~600 lines):
+1. `internal/characters/character.go` — Add `CombatCooldowns` map, `Prone` condition flag
+2. `internal/usercommands/bash.go` — New command (shield bash)
+3. `internal/usercommands/trip.go` — New command (trip)
+4. `internal/usercommands/kick.go` — New command (kick)
+5. `internal/usercommands/stand.go` — New command (stand up from prone)
+6. `internal/combat/combat.go` — Integrate special moves, cooldown processing
+7. `internal/combat/calculations.go` — Prone condition modifiers
+8. `internal/spells/spells.go` — Spell interruption logic
+9. `internal/hooks/NewRound_DoCombat.go` — Cooldown decrements, prone recovery attempts
+10. `internal/configs/config.gameplay.go` — Add cooldown and prone effect configs
+11. Test files
+
+**Testing**:
+- [ ] **Unit Tests**: Test cooldown tracking (set, decrement, check)
+- [ ] **Unit Tests**: Test prone condition application and effects
+- [ ] **Manual Test**: Use shield bash, verify cooldown prevents immediate reuse
+- [ ] **Manual Test**: Trip opponent, verify prone condition applied
+- [ ] **Manual Test**: Kick in combat, verify damage + knockdown chance
+- [ ] **Manual Test**: While prone, verify attack/defense penalties apply
+- [ ] **Manual Test**: Use stand command to recover from prone
+- [ ] **Manual Test**: Knock down a spellcaster mid-cast, verify spell interruption
+- [ ] **Manual Test**: Verify commands only work during combat (blocked outside combat)
+- [ ] **Balance Test**: Verify special moves are tactically useful but not overpowered
+- [ ] **Balance Test**: Verify prone condition is significant but recoverable
+
+**Acceptance Criteria**:
+- Three special combat commands (bash, trip, kick) functional with cooldowns
+- Cooldown system prevents spam, displays remaining rounds
+- Prone condition has meaningful combat effects
+- Stand command allows recovery from prone
+- Special moves only available during combat
+- Spell interruption works when knocked prone while casting
+- Config values allow tuning without code changes
+- All tests pass
+
+**Estimated Changes**: ~600 lines, 12 files
 
 ---
 
@@ -1530,7 +1614,7 @@ Before each git commit:
 - **Stage 3.4**: ✅ Decouple Combat from Levels (combat refactor)
 - **Stage 3.5**: ✅ Remove Level System (major breaking change)
 - **Stage 4.2**: ✅ Replace Dice with Distribution (combat refactor) — merge 3892439
-- **Stage 7.1**: Segmented Avoidance (major combat refactor — dodge/parry/block replaces single defense roll)
+- **Stage 7.1**: ✅ Segmented Avoidance (major combat refactor — dodge/parry/block replaces single defense roll) — merge cd146e5
 - **Stage 8.1**: Grappling System (new combat subsystem, many interaction points)
 - **Stage 9.1**: Descriptive Damage Text (touches all combat output — high regression risk)
 
@@ -1562,11 +1646,11 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 4b: Progression Fixes | 4 stages (4.5–4.8) | 12 hours | **Complete** |
 | Phase 5: Stamina & Attacks | 4 stages (5.1–5.4) | 20 hours | **Complete** |
 | Phase 6: Conviction & Magic | 2 stages (6.1–6.2) | 8 hours | **Complete** |
-| Phase 7: Defense & Combat | 4 stages (7.1–7.4) | 20 hours | **7.1 Complete** |
+| Phase 7: Defense & Combat | 5 stages (7.1–7.5) | 26 hours | **7.1-7.2 Complete** |
 | Phase 8: Grappling | 2 stages (8.1–8.2) | 12 hours | Not Started |
 | Phase 9: Combat Presentation | 3 stages (9.1–9.3) | 16 hours | Not Started |
 | Phase 10: Balance Pass | 1 stage (10.1) | 8 hours | Not Started |
-| **Total** | **37 stages** | **155 hours** | |
+| **Total** | **38 stages** | **161 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
 
@@ -1641,4 +1725,4 @@ Issues discovered during 2026-02-12 playtest session, mapped to stages:
 
 **Last Updated**: 2026-02-13
 **Status**: In Progress
-**Current Stage**: 7.1 — Segmented Avoidance ✅ COMPLETED (dodge/parry/block system working)
+**Current Stage**: 7.3 — Unarmed Damage Scaling (next up after 7.2 completion)
