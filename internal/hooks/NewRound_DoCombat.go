@@ -454,6 +454,33 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 			if user.Character.Health <= 0 || defUser.Character.Health <= 0 {
 				defUser.Character.EndAggro()
 				user.Character.EndAggro()
+
+				// Auto-retarget: If target died but player is still alive and being attacked, auto-target attacker
+				if user.Character.Health > 0 && defUser.Character.Health <= 0 {
+					// Check for mobs attacking this player
+					for _, mobInstId := range uRoom.GetMobs(rooms.FindFighting) {
+						if attackingMob := mobs.GetInstance(mobInstId); attackingMob != nil {
+							if attackingMob.Character.Aggro != nil && attackingMob.Character.Aggro.UserId == user.UserId {
+								user.Character.SetAggro(0, attackingMob.InstanceId, characters.DefaultAttack)
+								user.SendText(fmt.Sprintf("You turn your attention to <ansi fg=\"mobname\">%s</ansi>!", attackingMob.Character.Name))
+								break
+							}
+						}
+					}
+
+					// If no mobs attacking, check for players attacking
+					if user.Character.Aggro == nil {
+						for _, playerId := range uRoom.GetPlayers(rooms.FindFighting) {
+							if attackingPlayer := users.GetByUserId(playerId); attackingPlayer != nil {
+								if attackingPlayer.Character.Aggro != nil && attackingPlayer.Character.Aggro.UserId == user.UserId {
+									user.Character.SetAggro(attackingPlayer.UserId, 0, characters.DefaultAttack)
+									user.SendText(fmt.Sprintf("You turn your attention to <ansi fg=\"username\">%s</ansi>!", attackingPlayer.Character.Name))
+									break
+								}
+							}
+						}
+					}
+				}
 			} else {
 				user.Character.SetAggro(defUser.UserId, 0, characters.DefaultAttack)
 			}
@@ -600,6 +627,33 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 			if user.Character.Health <= 0 || defMob.Character.Health <= 0 {
 				defMob.Character.EndAggro()
 				user.Character.EndAggro()
+
+				// Auto-retarget: If target died but player is still alive and being attacked, auto-target attacker
+				if user.Character.Health > 0 && defMob.Character.Health <= 0 {
+					// Check for mobs attacking this player
+					for _, mobInstId := range uRoom.GetMobs(rooms.FindFighting) {
+						if attackingMob := mobs.GetInstance(mobInstId); attackingMob != nil {
+							if attackingMob.Character.Aggro != nil && attackingMob.Character.Aggro.UserId == user.UserId {
+								user.Character.SetAggro(0, attackingMob.InstanceId, characters.DefaultAttack)
+								user.SendText(fmt.Sprintf("You turn your attention to <ansi fg=\"mobname\">%s</ansi>!", attackingMob.Character.Name))
+								break
+							}
+						}
+					}
+
+					// If no mobs attacking, check for players attacking
+					if user.Character.Aggro == nil {
+						for _, playerId := range uRoom.GetPlayers(rooms.FindFighting) {
+							if attackingPlayer := users.GetByUserId(playerId); attackingPlayer != nil {
+								if attackingPlayer.Character.Aggro != nil && attackingPlayer.Character.Aggro.UserId == user.UserId {
+									user.Character.SetAggro(attackingPlayer.UserId, 0, characters.DefaultAttack)
+									user.SendText(fmt.Sprintf("You turn your attention to <ansi fg=\"username\">%s</ansi>!", attackingPlayer.Character.Name))
+									break
+								}
+							}
+						}
+					}
+				}
 			} else {
 				user.Character.SetAggro(0, defMob.InstanceId, characters.DefaultAttack)
 			}

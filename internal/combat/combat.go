@@ -392,7 +392,7 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 			// Set the default weapon info
 			raceInfo := species.GetSpecies(sourceChar.SpeciesId)
 			weaponName := raceInfo.UnarmedName
-			weaponSubType := items.Generic
+			weaponSubType := items.Bludgeoning // Use bludgeoning messages for unarmed (Stage 7.4 fix)
 
 			// Get default unarmed distribution damage
 			attacks, baseDmg, dmgVariance, critBuffs := sourceChar.GetDefaultDistributionDamage()
