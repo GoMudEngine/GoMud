@@ -591,9 +591,8 @@ func (c *Character) GetDefaultDiceRoll() (attacks int, dCount int, dSides int, b
 }
 
 // GetDefaultDistributionDamage returns distribution damage parameters for unarmed combat.
-// If the species defines BaseDamage/Variance, uses those directly.
-// Otherwise, converts legacy dice notation to distribution parameters.
-// Strength scaling is NOT applied here — it's applied in combat.go.
+// Uses CalculateUnarmedDamage to scale with Strength and Unarmed Combat skill.
+// This provides meaningful progression for unarmed fighters.
 func (c *Character) GetDefaultDistributionDamage() (attacks int, baseDamage float64, variance float64, buffOnCrit []int) {
 	speciesInfo := species.GetSpecies(c.SpeciesId)
 
@@ -603,15 +602,87 @@ func (c *Character) GetDefaultDistributionDamage() (attacks int, baseDamage floa
 	}
 	buffOnCrit = speciesInfo.Damage.CritBuffIds
 
-	if speciesInfo.Damage.BaseDamage > 0 {
-		baseDamage = float64(speciesInfo.Damage.BaseDamage)
-		variance = float64(speciesInfo.Damage.Variance)
-	} else {
-		// Fallback: convert legacy dice to distribution
-		baseDamage, variance = dice.DiceToDistribution(speciesInfo.Damage.DiceCount, speciesInfo.Damage.SideCount, speciesInfo.Damage.BonusDamage)
-	}
+	// Use skill-based unarmed damage calculation (Stage 7.3)
+	baseDamage, variance = c.CalculateUnarmedDamage()
 
 	return attacks, baseDamage, variance, buffOnCrit
+}
+
+// CalculateUnarmedDamage returns the base damage and variance for unarmed attacks.
+// This function is designed to be extensible for future conditions/mutations.
+//
+// Formula: baseDamage = baseValue + (Strength / strengthDivisor) + (UnarmedSkill / skillDivisor)
+//
+// Scaling examples (at 100 Strength):
+//   - Skill 0 (untrained):  2 + 4 + 0  = 6 damage
+//   - Skill 50 (trained):   2 + 4 + 5  = 11 damage
+//   - Skill 100 (master):   2 + 4 + 10 = 16 damage
+//
+// Extension points for future conditions/mutations:
+//   - baseDamage can be modified by multipliers (e.g., "Stone Fists" mutation: baseDamage *= 1.5)
+//   - variance can be modified (e.g., "Precise Strikes" condition: variance *= 0.5)
+//   - Additional additive bonuses (e.g., "Enhanced Strength" buff: +5 damage)
+//
+// To add a buff/condition/mutation that affects unarmed damage:
+//   1. Check for the buff/condition after base calculation
+//   2. Apply multipliers: baseDamage *= multiplier
+//   3. Apply additive bonuses: baseDamage += bonus
+//   4. Modify variance if needed: variance *= varianceMultiplier
+func (c *Character) CalculateUnarmedDamage() (baseDamage float64, variance float64) {
+	// Base values for unarmed damage formula
+	const baseValue float64 = 2.0
+	const strengthDivisor float64 = 25.0
+	const skillDivisor float64 = 10.0
+	const baseVariance float64 = 3.0
+
+	// Calculate base damage from stats and skill
+	strengthBonus := float64(c.Stats.Strength.ValueAdj) / strengthDivisor
+	skillBonus := float64(c.GetSkillLevel(skills.UnarmedCombat)) / skillDivisor
+
+	baseDamage = baseValue + strengthBonus + skillBonus
+
+	// Base variance scales slightly with skill (more skill = more consistent)
+	// High skill fighters are more consistent, low skill fighters are erratic
+	skillLevel := c.GetSkillLevel(skills.UnarmedCombat)
+	varianceReduction := float64(skillLevel) / 50.0 // 0 at skill 0, 2 at skill 100
+	variance = math.Max(1.0, baseVariance-varianceReduction)
+
+	// --- FUTURE EXTENSION POINT: Buffs/Conditions/Mutations ---
+	// Example implementations (commented out for now):
+	//
+	// if c.HasBuffFlag(buffs.StoneFists) {
+	//     baseDamage *= 1.5  // Stone Fists: +50% damage
+	//     variance *= 1.2    // But less precise (heavier strikes)
+	// }
+	//
+	// if c.HasBuffFlag(buffs.PreciseStrikes) {
+	//     variance *= 0.5    // Precise Strikes: Half variance (more consistent)
+	// }
+	//
+	// if c.HasBuffFlag(buffs.EnhancedStrength) {
+	//     baseDamage += 5.0  // Flat +5 damage bonus
+	// }
+	//
+	// if c.HasCondition("weakened") {
+	//     baseDamage *= 0.7  // Weakened: -30% damage
+	// }
+	//
+	// if c.HasMutation("razor-claws") {
+	//     baseDamage += 3.0  // Razor Claws: +3 base damage
+	//     variance += 1.0    // Claws add slight variance
+	// }
+	//
+	// if c.HasMutation("padded-fists") {
+	//     baseDamage *= 0.8  // Padded Fists: -20% damage
+	//     variance *= 0.6    // But more consistent
+	// }
+	// --- END EXTENSION POINT ---
+
+	// Ensure minimums
+	baseDamage = math.Max(1.0, baseDamage)
+	variance = math.Max(0.5, variance)
+
+	return baseDamage, variance
 }
 
 func (c *Character) GetSpells() map[string]int {
