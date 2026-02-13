@@ -756,8 +756,9 @@ After Stage 4.7, manual testing revealed that arena mobs were too weak for new p
 
 ## Phase 5: Movement & Stamina System
 
-### Stage 5.1: Connect Stamina to Movement
+### Stage 5.1: Connect Stamina to Movement ✅ COMPLETED
 **Goal**: Make movement consume stamina.
+**Status**: Merged into `development` — commit `dc34e0c`.
 
 **Changes**:
 1. Update movement commands to deduct stamina:
@@ -776,12 +777,12 @@ After Stage 4.7, manual testing revealed that arena mobs were too weak for new p
 5. Test files
 
 **Testing**:
-- [ ] **Unit Tests**: Test stamina cost calculations
-- [ ] **Manual Test**: Move around, verify stamina decreases
-- [ ] **Manual Test**: Move while heavily encumbered, verify higher cost
-- [ ] **Manual Test**: Try to move with 0 stamina, verify blocked
-- [ ] **Manual Test**: Rest, verify stamina regenerates
-- [ ] **Balance Test**: Verify stamina costs feel appropriate
+- [x] **Unit Tests**: Test stamina cost calculations
+- [x] **Manual Test**: Move around, verify stamina decreases
+- [x] **Manual Test**: Move while heavily encumbered, verify higher cost
+- [x] **Manual Test**: Try to move with 0 stamina, verify blocked
+- [x] **Manual Test**: Rest, verify stamina regenerates
+- [x] **Balance Test**: Verify stamina costs feel appropriate
 
 **Acceptance Criteria**:
 - Movement costs stamina
@@ -1466,7 +1467,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 3: Remove Levels | 9 stages (3.1–3.9) | 36 hours | **Complete** |
 | Phase 4: Distribution Combat | 4 stages (4.1–4.4) | 7 hours | **Complete** |
 | Phase 4b: Progression Fixes | 4 stages (4.5–4.8) | 12 hours | **Complete** |
-| Phase 5: Stamina & Attacks | 3 stages (5.1–5.3) | 16 hours | Not Started |
+| Phase 5: Stamina & Attacks | 3 stages (5.1–5.3) | 16 hours | 5.1 Complete |
 | Phase 6: Conviction & Magic | 2 stages (6.1–6.2) | 8 hours | Not Started |
 | Phase 7: Defense & Combat | 4 stages (7.1–7.4) | 20 hours | Not Started |
 | Phase 8: Grappling | 2 stages (8.1–8.2) | 12 hours | Not Started |
@@ -1547,4 +1548,4 @@ Issues discovered during 2026-02-12 playtest session, mapped to stages:
 
 **Last Updated**: 2026-02-12
 **Status**: In Progress
-**Current Stage**: 5.1 — Connect Stamina to Movement (next up)
+**Current Stage**: 5.2 — Stamina in Combat (next up)
