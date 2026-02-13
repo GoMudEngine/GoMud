@@ -55,6 +55,10 @@ func AttackPlayerVsMob(user *users.UserRecord, mob *mobs.Mob) AttackResult {
 		if attackResult.Crit {
 			user.Character.OnCriticalSuccess(combatSkill, user.UserId)
 		}
+		// Track dual-wield skill if using two weapons
+		if user.Character.Equipment.Weapon.ItemId > 0 && user.Character.Equipment.Offhand.ItemId > 0 && user.Character.Equipment.Offhand.GetSpec().Type == items.Weapon {
+			user.Character.OnSkillUse(string(skills.DualWield), user.UserId)
+		}
 	} else {
 		user.PlaySound(`miss`, `combat`)
 		if attackResult.Fumble {
@@ -94,6 +98,10 @@ func AttackPlayerVsPlayer(userAtk *users.UserRecord, userDef *users.UserRecord) 
 		userAtk.Character.OnSkillUse(combatSkill, userAtk.UserId)
 		if attackResult.Crit {
 			userAtk.Character.OnCriticalSuccess(combatSkill, userAtk.UserId)
+		}
+		// Track dual-wield skill if using two weapons
+		if userAtk.Character.Equipment.Weapon.ItemId > 0 && userAtk.Character.Equipment.Offhand.ItemId > 0 && userAtk.Character.Equipment.Offhand.GetSpec().Type == items.Weapon {
+			userAtk.Character.OnSkillUse(string(skills.DualWield), userAtk.UserId)
 		}
 	} else {
 		userAtk.PlaySound(`miss`, `combat`)
@@ -308,6 +316,21 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 			if attackCount < 1 {
 				attackCount = 1 // Always at least 1 attack
 			}
+		}
+	}
+
+	// Apply encumbrance penalty to attack count
+	itemCount := len(sourceChar.Items)
+	capacity := sourceChar.CarryCapacity()
+	if itemCount > capacity {
+		// Overencumbered: reduce attacks based on how much over capacity
+		overAmount := float64(itemCount - capacity)
+		overRatio := overAmount / float64(capacity)
+		// Penalty scales from 0% at capacity to 50% at 2x capacity
+		encumbrancePenalty := math.Min(overRatio * 0.5, 0.5)
+		attackCount = int(math.Ceil(float64(attackCount) * (1.0 - encumbrancePenalty)))
+		if attackCount < 1 {
+			attackCount = 1 // Always at least 1 attack
 		}
 	}
 

@@ -52,6 +52,16 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 
 		}
 
+		// Regeneration (only heal health if health > 0)
+		if user.Character.Health > 0 {
+			// Only heal health when NOT in combat
+			if !inCombat {
+				user.Character.Heal(
+					user.Character.HealthPerRound(),
+				)
+			}
+		}
+
 		// Check stamina exhaustion (separate from health)
 		if user.Character.Stamina < 1 {
 			if user.Character.Stamina <= -10 {
@@ -67,37 +77,27 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 			}
 		}
 
-		// Regeneration (only if health > 0)
-		if user.Character.Health > 0 {
-				// Only heal health when NOT in combat
-				if !inCombat {
-					user.Character.Heal(
-						user.Character.HealthPerRound(),
-					)
-				}
-
-				// Regenerate Stamina - slower during combat
-				var staminaRegen int
-				if inCombat {
-					// Combat: 1/4 normal regen rate (much slower)
-					staminaRegen = user.Character.StaminaPerRound() / 4
-					if staminaRegen < 1 {
-						staminaRegen = 1 // Minimum 1 stamina per 3 rounds even in combat
-					}
-				} else {
-					// Out of combat: full regen
-					staminaRegen = user.Character.StaminaPerRound()
-				}
-				user.Character.Stamina += staminaRegen
-				if user.Character.Stamina > user.Character.StaminaMax.Value {
-					user.Character.Stamina = user.Character.StaminaMax.Value
-				}
-
-				// Regenerate Conviction (not affected by combat state)
-			user.Character.Conviction += user.Character.ConvictionPerRound()
-			if user.Character.Conviction > user.Character.ConvictionMax.Value {
-				user.Character.Conviction = user.Character.ConvictionMax.Value
+		// Regenerate Stamina - slower during combat (always regenerate, even if health is low)
+		var staminaRegen int
+		if inCombat {
+			// Combat: 1/4 normal regen rate (much slower)
+			staminaRegen = user.Character.StaminaPerRound() / 4
+			if staminaRegen < 1 {
+				staminaRegen = 1 // Minimum 1 stamina per 3 rounds even in combat
 			}
+		} else {
+			// Out of combat: full regen
+			staminaRegen = user.Character.StaminaPerRound()
+		}
+		user.Character.Stamina += staminaRegen
+		if user.Character.Stamina > user.Character.StaminaMax.Value {
+			user.Character.Stamina = user.Character.StaminaMax.Value
+		}
+
+		// Regenerate Conviction (not affected by combat state)
+		user.Character.Conviction += user.Character.ConvictionPerRound()
+		if user.Character.Conviction > user.Character.ConvictionMax.Value {
+			user.Character.Conviction = user.Character.ConvictionMax.Value
 		}
 
 		// If it has changed, send an update
