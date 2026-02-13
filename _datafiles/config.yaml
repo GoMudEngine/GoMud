@@ -317,6 +317,14 @@ GamePlay:
   #   Requires UseSkillProgression to be true. Both the level system and
   #   skill-based progression run in parallel.
   DualProgressionMode: true
+  # - SpellConvictionCostMultiplier -
+  #   Global multiplier for spell conviction costs. Default 1.0 means no scaling.
+  #   Set to 0.5 for half cost, 2.0 for double cost, etc.
+  SpellConvictionCostMultiplier: 1.0
+  # - SpellHealthCostMultiplier -
+  #   Global multiplier for spell health costs (life-force magic). Default 1.0.
+  #   Increase to make life-force magic more risky, decrease to make it safer.
+  SpellHealthCostMultiplier: 1.0
 
 ################################################################################
 #

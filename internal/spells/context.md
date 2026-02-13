@@ -5,9 +5,13 @@
 The DOGMud spells system provides a comprehensive magic framework with support for multiple spell types, schools of magic, difficulty scaling, scripting integration, and flexible targeting systems. It features spell discovery, automatic script template generation, and seamless integration with the character and combat systems.
 
 **DOGMud Differences from upstream GoMud:**
-- Mana removed — spells currently cast without resource cost (Conviction costs coming in Phase 6)
+- Mana removed — spells use Conviction resource
+- Optional Health costs for life-force magic (vital school spells may sacrifice health to fuel powerful effects)
+- Spell cost scaling via config multipliers (SpellConvictionCostMultiplier, SpellHealthCostMultiplier)
 - Spellcasting skill (DOG) replaces legacy Cast skill for combat resolution
 - Psionics skill added for mental powers
+- Schools changed from single value to array (can have multiple schools)
+- Four DOG schools: Elemental, Enhancement, Mental, Vital (replaces Restoration, Illusion, Conjuration)
 
 ## Architecture
 
@@ -69,8 +73,9 @@ type SpellData struct {
     Name        string      // Display name
     Description string      // Spell description
     Type        SpellType   // Targeting and effect type
-    School      SpellSchool // Magic school classification
-    Cost        int         // Resource cost (currently unused — Conviction costs coming in Phase 6)
+    Schools     []string    // Magic school classification (can have multiple)
+    Cost        int         // Conviction cost
+    HealthCost  int         // Optional Health cost for life-force magic
     WaitRounds  int         // Casting delay in rounds
     Difficulty  int         // Success modifier (0-100%)
 }
@@ -91,16 +96,17 @@ const (
 )
 ```
 
-### Magic School Enumeration
+### DOG Magic Schools
 ```go
-type SpellSchool string
-
 const (
-    SchoolRestoration SpellSchool = "restoration" // Healing and curing
-    SchoolIllusion    SpellSchool = "illusion"    // Light, stealth, vision
-    SchoolConjuration SpellSchool = "conjuration" // Summoning, teleportation
+    SchoolElemental   = "elemental"   // Fire, ice, lightning, earth, wind - offensive elemental magic
+    SchoolEnhancement = "enhancement" // Buffs, shields, enchantments - augmentation magic
+    SchoolMental      = "mental"      // Illusions, charms, telepathy - mind-affecting magic (Psionics skill)
+    SchoolVital       = "vital"       // Healing, curing, life/death manipulation - vital force magic
 )
 ```
+
+**Note:** Spells can belong to multiple schools. The `Schools` field is an array of strings.
 
 ## Spell Discovery and Lookup
 

@@ -3,6 +3,8 @@ spellid: aidskill
 name: Aid
 description: Revives a fallen ally
 type: helpsingle
+schools:
+  - vital
 cost: 0
 waitrounds: 2
 difficulty: 0

@@ -13,7 +13,7 @@ import (
 
 func Spells(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
-	headers := []string{`SpellId`, `Name`, `Description`, `Target`, `MPs`, `Wait`, `Casts`, `% Chance`}
+	headers := []string{`SpellId`, `Name`, `Description`, `Schools`, `Target`, `Cost`, `Wait`, `Casts`, `% Chance`}
 
 	helpfulRowFormatting := [][]string{}
 	helpfulRows := [][]string{}
@@ -46,6 +46,7 @@ func Spells(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				`<ansi fg="yellow-bold">%s</ansi>`,
 				`<ansi fg="white-bold">%s</ansi>`,
 				`<ansi fg="yellow">%s</ansi>`,
+				`<ansi fg="cyan">%s</ansi>`,
 				`<ansi fg="` + targetColor + `">%s</ansi>`,
 				`<ansi fg="magenta">%s</ansi>`,
 				`<ansi fg="white">%s</ansi>`,
@@ -53,11 +54,18 @@ func Spells(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				`<ansi fg="red">%s</ansi>`,
 			}
 
+			// Format cost display - show conviction and optionally health
+			costStr := fmt.Sprintf(`%d conv`, sp.Cost)
+			if sp.HealthCost > 0 {
+				costStr = fmt.Sprintf(`%d conv, %d hp`, sp.Cost, sp.HealthCost)
+			}
+
 			row := []string{sp.SpellId,
 				sp.Name,
 				sp.Description,
+				sp.GetSchoolsString(),
 				target,
-				fmt.Sprintf(`%d`, sp.Cost),
+				costStr,
 				fmt.Sprintf(`%d rnds`, sp.WaitRounds),
 				fmt.Sprintf(`%d`, casts),
 				fmt.Sprintf(`%d%%`, user.Character.GetBaseCastSuccessChance(sp.SpellId)),
@@ -88,8 +96,8 @@ func Spells(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	if len(harmfulRows) > 0 {
 
 		if len(rows) > 0 {
-			rowFormatting = append(rowFormatting, []string{`%s`, `%s`, `%s`, `%s`, `%s`, `%s`, `%s`, `%s`})
-			rows = append(rows, []string{`-`, ``, ``, ``, ``, ``, ``, ``})
+			rowFormatting = append(rowFormatting, []string{`%s`, `%s`, `%s`, `%s`, `%s`, `%s`, `%s`, `%s`, `%s`})
+			rows = append(rows, []string{`-`, ``, ``, ``, ``, ``, ``, ``, ``})
 		}
 
 		for i := 0; i < len(harmfulRows); i++ {
@@ -101,8 +109,8 @@ func Spells(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	if len(neutralRows) > 0 {
 
 		if len(rows) > 0 {
-			rowFormatting = append(rowFormatting, []string{`%s`, `%s`, `%s`, `%s`, `%s`, `%s`, `%s`, `%s`})
-			rows = append(rows, []string{`-`, ``, ``, ``, ``, ``, ``, ``})
+			rowFormatting = append(rowFormatting, []string{`%s`, `%s`, `%s`, `%s`, `%s`, `%s`, `%s`, `%s`, `%s`})
+			rows = append(rows, []string{`-`, ``, ``, ``, ``, ``, ``, ``, ``})
 		}
 
 		for i := 0; i < len(neutralRows); i++ {

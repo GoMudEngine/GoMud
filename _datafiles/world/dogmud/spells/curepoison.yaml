@@ -3,7 +3,8 @@ spellid: curepoison
 name: Cure Poison
 description: Cures basic poison status
 type: helpsingle
-school: restoration
+schools:
+  - vital
 cost: 10
 waitrounds: 2
 difficulty: 0

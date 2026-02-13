@@ -105,7 +105,7 @@ func Peep(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 					`ItemNamesFormatted`: itemNamesFormatted,
 					`AttackDamage`:       diceRoll,
 					`RaceInfo`:           raceInfo,
-					`Count`:              fmt.Sprintf(`(%d/%d)`, len(u.Character.Items), u.Character.CarryCapacity()),
+					`Count`:              fmt.Sprintf(`(%d/%.0f lbs)`, len(u.Character.Items), u.Character.CarryCapacity()),
 				}
 
 				invTxt, _ = templates.Process("character/inventory", invData, user.UserId)

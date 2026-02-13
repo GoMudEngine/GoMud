@@ -13,17 +13,17 @@ import (
 )
 
 type SpellType string
-type SpellSchool string
 
 type SpellData struct {
-	SpellId     string      `yaml:"spellid,omitempty"`
-	Name        string      `yaml:"name,omitempty"`
-	Description string      `yaml:"description,omitempty"`
-	Type        SpellType   `yaml:"type,omitempty"`
-	School      SpellSchool `yaml:"school,omitempty"`
-	Cost        int         `yaml:"cost,omitempty"`
-	WaitRounds  int         `yaml:"waitrounds,omitempty"`
-	Difficulty  int         `yaml:"difficulty,omitempty"` // Augments final success chance by this %
+	SpellId     string     `yaml:"spellid,omitempty"`
+	Name        string     `yaml:"name,omitempty"`
+	Description string     `yaml:"description,omitempty"`
+	Type        SpellType  `yaml:"type,omitempty"`
+	Schools     []string   `yaml:"schools,omitempty"` // Can have multiple school tags
+	Cost        int        `yaml:"cost,omitempty"`    // Conviction cost
+	HealthCost  int        `yaml:"healthcost,omitempty"` // Optional Health cost for life-force magic
+	WaitRounds  int        `yaml:"waitrounds,omitempty"`
+	Difficulty  int        `yaml:"difficulty,omitempty"` // Augments final success chance by this %
 }
 
 const (
@@ -37,9 +37,11 @@ const (
 	HarmArea   SpellType = "harmarea"   // Hits everyone in the room, even if hidden or friendly
 	HelpArea   SpellType = "helparea"   // Hits everyone in the room, even if hidden
 
-	SchoolRestoration SpellSchool = "restoration" // Healing, curing conditions, etc.
-	SchoolIllusion    SpellSchool = "illusion"    // Light, darkness, invisibility, blink, etc.
-	SchoolConjuration SpellSchool = "conjuration" // Summoning, teleportation, etc.
+	// DOG Spell Schools
+	SchoolElemental   = "elemental"   // Fire, ice, lightning, earth, wind - offensive elemental magic
+	SchoolEnhancement = "enhancement" // Buffs, shields, enchantments - augmentation magic
+	SchoolMental      = "mental"      // Illusions, charms, telepathy - mind-affecting magic (Psionics skill)
+	SchoolVital       = "vital"       // Healing, curing, life/death manipulation - vital force magic
 )
 
 var (
@@ -162,6 +164,30 @@ func (s *SpellData) Validate() error {
 
 func (s *SpellData) GetDifficulty() int {
 	return s.Difficulty
+}
+
+// GetSchoolsString returns a comma-separated string of spell schools
+func (s *SpellData) GetSchoolsString() string {
+	if len(s.Schools) == 0 {
+		return "Unknown"
+	}
+	return strings.Join(s.Schools, ", ")
+}
+
+// GetTotalConvictionCost returns the conviction cost, optionally scaled by a multiplier
+func (s *SpellData) GetTotalConvictionCost(multiplier float64) int {
+	if multiplier <= 0 {
+		multiplier = 1.0
+	}
+	return int(float64(s.Cost) * multiplier)
+}
+
+// GetTotalHealthCost returns the health cost, optionally scaled by a multiplier
+func (s *SpellData) GetTotalHealthCost(multiplier float64) int {
+	if multiplier <= 0 {
+		multiplier = 1.0
+	}
+	return int(float64(s.HealthCost) * multiplier)
 }
 
 func (s *SpellData) GetScript() string {

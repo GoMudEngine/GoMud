@@ -3,6 +3,8 @@ spellid: tameskill
 name: Tame
 description: Attempts to tame a wild creature.
 type: harmsingle
+schools:
+  - mental
 cost: 0
 waitrounds: 3
 difficulty: 0

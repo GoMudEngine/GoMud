@@ -1,9 +1,11 @@
 # Learned at the Sanctuary of the Benevolent Heart (ROOM 18)
 spellid: healall
 name: Minor Heal All
-description: Heals party for 2d3
+description: Heals party for 2d3 (transfers your life force)
 type: helpmulti
-school: restoration
+schools:
+  - vital
 cost: 6
+healthcost: 3
 waitrounds: 2
 difficulty: 10

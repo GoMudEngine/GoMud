@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
@@ -57,9 +58,22 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
-	if user.Character.Conviction < spellInfo.Cost {
+	// Calculate actual costs with config multipliers
+	gameConfig := configs.GetGamePlayConfig()
+	convictionCost := spellInfo.GetTotalConvictionCost(float64(gameConfig.SpellConvictionCostMultiplier))
+	healthCost := spellInfo.GetTotalHealthCost(float64(gameConfig.SpellHealthCostMultiplier))
+
+	if user.Character.Conviction < convictionCost {
 		user.SendText(fmt.Sprintf(`You don't have enough conviction to cast <ansi fg="spellname">%s</ansi>.`, spellName))
 		return true, nil
+	}
+
+	// Check if spell requires health sacrifice (life-force magic)
+	if healthCost > 0 {
+		if user.Character.Health <= healthCost {
+			user.SendText(fmt.Sprintf(`Casting <ansi fg="spellname">%s</ansi> would cost you your life. You need more than %d health.`, spellName, healthCost))
+			return true, nil
+		}
 	}
 
 	targetPlayerId := 0
@@ -285,7 +299,15 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			// Fire an event that a skill has been used
 			events.AddToQueue(events.SkillUsed{user.UserId, skills.Cast, spellInfo.SpellId})
 
-			user.Character.Conviction -= spellInfo.Cost
+			// Deduct conviction cost (with config multiplier applied)
+			user.Character.Conviction -= convictionCost
+
+			// Deduct health cost if spell requires life-force sacrifice (with config multiplier applied)
+			if healthCost > 0 {
+				user.Character.Health -= healthCost
+				user.SendText(fmt.Sprintf(`<ansi fg="red">You sacrifice %d health to fuel the spell.</ansi>`, healthCost))
+			}
+
 			events.AddToQueue(events.CharacterVitalsChanged{UserId: user.UserId})
 			user.Character.SetCast(spellInfo.WaitRounds, spellAggro)
 		}

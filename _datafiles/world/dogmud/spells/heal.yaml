@@ -3,7 +3,8 @@ spellid: heal
 name: Minor Heal
 description: Heals for 2d3
 type: helpsingle
-school: restoration
+schools:
+  - vital
 cost: 3
 waitrounds: 2
 difficulty: 0
