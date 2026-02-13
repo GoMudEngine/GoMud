@@ -63,6 +63,34 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 			return true, nil
 		}
 
+		// Calculate stamina cost for movement
+		// Get destination room biome for terrain difficulty
+		destRoom := rooms.LoadRoom(goRoomId)
+		if destRoom == nil {
+			return false, fmt.Errorf(`room %d not found`, goRoomId)
+		}
+
+		// Get biome movement cost
+		biome, _ := rooms.GetBiome(destRoom.Biome)
+		terrainMultiplier := 1.0
+		if biome != nil {
+			terrainMultiplier = biome.GetMovementCost()
+		}
+
+		// Calculate and check stamina cost
+		staminaCost := user.Character.GetMovementStaminaCost(terrainMultiplier)
+		if !user.Character.DeductStamina(staminaCost) {
+			user.SendText("You're too exhausted to move! Rest and recover your stamina.")
+			// Refund the action points since movement failed
+			user.Character.ActionPoints += actionCost
+			return true, nil
+		}
+
+		// Warn if stamina is getting low (< 25% of max)
+		if user.Character.Stamina < user.Character.StaminaMax.Value/4 {
+			user.SendText("<ansi fg=\"yellow\">You're feeling winded. Consider resting to recover your stamina.</ansi>")
+		}
+
 		originRoomId := user.Character.RoomId
 
 		exitInfo, _ := room.GetExitInfo(exitName)
@@ -157,12 +185,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 			return true, nil
 		}
 
-		// Load current room details
-		destRoom := rooms.LoadRoom(goRoomId)
-		if destRoom == nil {
-			return false, fmt.Errorf(`room %d not found`, goRoomId)
-		}
-
+		// destRoom already loaded above for stamina calculation
 		// Grab the exit in the target room that leads to this room (if any)
 		enterFromExit := destRoom.FindExitTo(room.RoomId)
 

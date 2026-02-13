@@ -305,6 +305,59 @@ func (c *Character) DeductActionPoints(amount int) bool {
 	return true
 }
 
+// DeductStamina attempts to deduct the specified amount of stamina.
+// Returns false if the character doesn't have enough stamina.
+func (c *Character) DeductStamina(amount int) bool {
+	if c.Stamina < amount {
+		return false
+	}
+	c.Stamina -= amount
+	if c.Stamina < 0 {
+		c.Stamina = 0
+	}
+	return true
+}
+
+// GetMovementStaminaCost calculates the stamina cost for movement based on
+// terrain difficulty and encumbrance.
+// terrainMultiplier: 1.0 = normal terrain, 2.0 = rough terrain, etc.
+// Returns stamina cost (2-20 stamina range).
+func (c *Character) GetMovementStaminaCost(terrainMultiplier float64) int {
+	// Base cost: 2 stamina for flat terrain, unencumbered
+	baseCost := 2.0
+
+	// Apply terrain multiplier
+	cost := baseCost * terrainMultiplier
+
+	// Calculate encumbrance multiplier
+	encumbranceMultiplier := 1.0
+	itemCount := len(c.Items)
+	capacity := c.CarryCapacity()
+
+	if itemCount > capacity {
+		// Overencumbered: scale from 1.0 to 5.0 based on how much over capacity
+		overAmount := float64(itemCount - capacity)
+		overRatio := overAmount / float64(capacity)
+		// Cap at 5x multiplier when carrying 2x capacity
+		encumbranceMultiplier = 1.0 + math.Min(overRatio*4.0, 4.0)
+	}
+
+	// Apply encumbrance multiplier
+	cost *= encumbranceMultiplier
+
+	// Cap at 20 stamina maximum
+	if cost > 20.0 {
+		cost = 20.0
+	}
+
+	// Minimum 1 stamina
+	if cost < 1.0 {
+		cost = 1.0
+	}
+
+	return int(math.Ceil(cost))
+}
+
 // Sometimes it's useful for a character to know what user it belongs to.
 func (c *Character) SetUserId(userId int) {
 	c.userId = userId

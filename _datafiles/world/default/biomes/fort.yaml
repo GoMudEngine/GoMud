@@ -7,3 +7,4 @@ litarea: true
 requireditemid: 0
 usesitem: false
 burns: false
+movementcost: 1.0

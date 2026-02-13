@@ -7,6 +7,7 @@ import (
 
 	"maps"
 
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/stretchr/testify/assert"
 )
@@ -2115,6 +2116,138 @@ func TestCharacter_GetSkillLevel(t *testing.T) {
 			}
 			got := c.GetSkillLevel(tt.args.skillTag)
 			assert.Equal(t, tt.expected, got)
+		})
+	}
+}
+
+func TestCharacter_DeductStamina(t *testing.T) {
+	tests := []struct {
+		name            string
+		initialStamina  int
+		deductAmount    int
+		expectedSuccess bool
+		expectedStamina int
+	}{
+		{
+			name:            "Sufficient stamina",
+			initialStamina:  100,
+			deductAmount:    20,
+			expectedSuccess: true,
+			expectedStamina: 80,
+		},
+		{
+			name:            "Exactly enough stamina",
+			initialStamina:  50,
+			deductAmount:    50,
+			expectedSuccess: true,
+			expectedStamina: 0,
+		},
+		{
+			name:            "Insufficient stamina",
+			initialStamina:  10,
+			deductAmount:    20,
+			expectedSuccess: false,
+			expectedStamina: 10,
+		},
+		{
+			name:            "Zero stamina deduction",
+			initialStamina:  50,
+			deductAmount:    0,
+			expectedSuccess: true,
+			expectedStamina: 50,
+		},
+		{
+			name:            "Deduct from zero stamina",
+			initialStamina:  0,
+			deductAmount:    10,
+			expectedSuccess: false,
+			expectedStamina: 0,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := New()
+			c.Stamina = tt.initialStamina
+			success := c.DeductStamina(tt.deductAmount)
+			assert.Equal(t, tt.expectedSuccess, success, "DeductStamina return value")
+			assert.Equal(t, tt.expectedStamina, c.Stamina, "Final stamina value")
+		})
+	}
+}
+
+func TestCharacter_GetMovementStaminaCost(t *testing.T) {
+	tests := []struct {
+		name              string
+		terrainMultiplier float64
+		itemCount         int
+		capacity          int
+		expectedCost      int
+	}{
+		{
+			name:              "Normal terrain, not encumbered",
+			terrainMultiplier: 1.0,
+			itemCount:         5,
+			capacity:          10,
+			expectedCost:      2,
+		},
+		{
+			name:              "Easy terrain (road), not encumbered",
+			terrainMultiplier: 0.5,
+			itemCount:         5,
+			capacity:          10,
+			expectedCost:      1,
+		},
+		{
+			name:              "Rough terrain (mountains), not encumbered",
+			terrainMultiplier: 2.0,
+			itemCount:         5,
+			capacity:          10,
+			expectedCost:      4,
+		},
+		{
+			name:              "Normal terrain, heavily encumbered",
+			terrainMultiplier: 1.0,
+			itemCount:         20,
+			capacity:          10,
+			expectedCost:      10,
+		},
+		{
+			name:              "Rough terrain, heavily encumbered",
+			terrainMultiplier: 2.0,
+			itemCount:         20,
+			capacity:          10,
+			expectedCost:      20,
+		},
+		{
+			name:              "Very rough terrain, heavily encumbered - capped at 20",
+			terrainMultiplier: 2.5,
+			itemCount:         25,
+			capacity:          10,
+			expectedCost:      20,
+		},
+		{
+			name:              "Slightly encumbered",
+			terrainMultiplier: 1.0,
+			itemCount:         12,
+			capacity:          10,
+			expectedCost:      4, // 2 * 1.0 * 1.8 = 3.6 → ceil(3.6) = 4
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := New()
+			// Create dummy items to simulate encumbrance
+			for i := 0; i < tt.itemCount; i++ {
+				c.Items = append(c.Items, items.Item{ItemId: i + 1})
+			}
+			strengthNeeded := (tt.capacity - 5) * 3
+			c.Stats.Strength.Value = strengthNeeded
+			c.Stats.Strength.ValueAdj = strengthNeeded
+
+			cost := c.GetMovementStaminaCost(tt.terrainMultiplier)
+			assert.Equal(t, tt.expectedCost, cost, "Movement stamina cost")
 		})
 	}
 }

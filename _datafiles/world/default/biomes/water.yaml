@@ -8,3 +8,4 @@ litarea: false
 requireditemid: 20030
 usesitem: false
 burns: false
+movementcost: 1.5

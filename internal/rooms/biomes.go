@@ -11,15 +11,16 @@ import (
 )
 
 type BiomeInfo struct {
-	BiomeId        string `yaml:"biomeid"`
-	Name           string `yaml:"name"`
-	Symbol         string `yaml:"symbol"`
-	Description    string `yaml:"description"`
-	DarkArea       bool   `yaml:"darkarea"`
-	LitArea        bool   `yaml:"litarea"`
-	RequiredItemId int    `yaml:"requireditemid"`
-	UsesItem       bool   `yaml:"usesitem"`
-	Burns          bool   `yaml:"burns"`
+	BiomeId        string  `yaml:"biomeid"`
+	Name           string  `yaml:"name"`
+	Symbol         string  `yaml:"symbol"`
+	Description    string  `yaml:"description"`
+	DarkArea       bool    `yaml:"darkarea"`
+	LitArea        bool    `yaml:"litarea"`
+	RequiredItemId int     `yaml:"requireditemid"`
+	UsesItem       bool    `yaml:"usesitem"`
+	Burns          bool    `yaml:"burns"`
+	MovementCost   float64 `yaml:"movementcost"` // Terrain difficulty multiplier for stamina cost (1.0 = normal, 2.0 = rough)
 
 	// Private fields for runtime use
 	symbolRune rune
@@ -46,6 +47,15 @@ func (bi *BiomeInfo) IsLit() bool {
 
 func (bi *BiomeInfo) IsDark() bool {
 	return !bi.LitArea && bi.DarkArea
+}
+
+// GetMovementCost returns the terrain difficulty multiplier for stamina cost.
+// Returns 1.0 (normal terrain) if not set.
+func (bi *BiomeInfo) GetMovementCost() float64 {
+	if bi.MovementCost <= 0 {
+		return 1.0
+	}
+	return bi.MovementCost
 }
 
 // Implement Loadable interface
@@ -95,21 +105,23 @@ func LoadBiomeDataFiles() {
 		mudlog.Warn("No biomes loaded from files, using default fallback biome")
 		// Create a single default fallback biome
 		biomes[`default`] = &BiomeInfo{
-			BiomeId:     `default`,
-			Name:        `Default`,
-			Symbol:      `•`,
-			LitArea:     true,
-			Description: `A default biome used when no other biome is specified.`,
+			BiomeId:      `default`,
+			Name:         `Default`,
+			Symbol:       `•`,
+			LitArea:      true,
+			Description:  `A default biome used when no other biome is specified.`,
+			MovementCost: 1.0,
 		}
 	} else {
 		// Always ensure a default biome exists as fallback
 		if _, ok := biomes[`default`]; !ok {
 			biomes[`default`] = &BiomeInfo{
-				BiomeId:     `default`,
-				Name:        `Default`,
-				Symbol:      `•`,
-				LitArea:     true,
-				Description: `A default biome used when no other biome is specified.`,
+				BiomeId:      `default`,
+				Name:         `Default`,
+				Symbol:       `•`,
+				LitArea:      true,
+				Description:  `A default biome used when no other biome is specified.`,
+				MovementCost: 1.0,
 			}
 		}
 	}
