@@ -1183,7 +1183,8 @@ After Stage 4.7, manual testing revealed that arena mobs were too weak for new p
 
 ---
 
-### Stage 7.5: Combat-Specific Commands with Cooldowns
+### Stage 7.5: Combat-Specific Commands with Cooldowns ✅ COMPLETED
+**Merge commit**: c252626
 **Goal**: Add special combat-only commands with cooldowns that provide tactical options beyond basic attacks. These include maneuvers like shield bash, trip, and kick that can apply status conditions to opponents.
 
 **Design**:
@@ -2121,4 +2122,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-13
 **Status**: In Progress
-**Current Stage**: 7.5 — Combat-Specific Commands with Cooldowns (next up after 7.4 completion)
+**Current Stage**: 7.5 Complete — Ready for Phase 8 or side quests
