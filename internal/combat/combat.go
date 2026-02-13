@@ -359,35 +359,9 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 			})
 		}
 
-		if len(attackWeapons) > 1 {
-
-			maxWeapons := 1
-			if dualWieldLevel == 1 {
-				maxWeapons = 1
-			}
-
-			if dualWieldLevel == 2 {
-				if success, _ := dice.Percentile(50); success {
-					maxWeapons = 2
-				}
-			}
-
-			if dualWieldLevel >= 3 {
-				maxWeapons = 2
-			}
-
-			// If two martial weapons are equipped, allow dual wielding even without the stat.
-			if sourceChar.Equipment.Weapon.GetSpec().Subtype == items.Claws && sourceChar.Equipment.Offhand.GetSpec().Subtype == items.Claws {
-				maxWeapons = 2
-			}
-
-			for len(attackWeapons) > maxWeapons {
-				// Remove a random position
-				rnd := dice.RollBetweenInt(0, len(attackWeapons)-1)
-				attackWeapons = append(attackWeapons[:rnd], attackWeapons[rnd+1:]...)
-			}
-
-		}
+		// Dual wielding: If two weapons equipped, always allow dual wielding
+		// Skill affects offhand attack count (via GetModifiedAttackCount) and hit penalty (below)
+		// No need to remove weapons - let skill determine effectiveness
 
 		attackMessagePrefix := ``
 		// If they are backstabbing it's a free crit
@@ -402,10 +376,16 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 
 			penalty := 0
 			if len(attackWeapons) > 1 {
-				if dualWieldLevel < 4 {
-					penalty = 35 //35% penalty to hit
+				// Dual wield hit penalty scales with skill: 50% at skill 0 → 10% at skill 50
+				// Natural weapons (claws) ignore penalty
+				if sourceChar.Equipment.Weapon.GetSpec().Subtype == items.Claws && sourceChar.Equipment.Offhand.GetSpec().Subtype == items.Claws {
+					penalty = 0 // Natural dual wielding has no penalty
 				} else {
-					penalty = 25 //25% penalty to hit
+					penaltyReduction := float64(dualWieldLevel) / 50.0 // 0.0 to 1.0
+					penalty = int(50.0 - (penaltyReduction * 40.0))    // 50 → 10
+					if penalty < 10 {
+						penalty = 10 // Minimum 10% penalty even at max skill
+					}
 				}
 			}
 
