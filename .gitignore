@@ -11,4 +11,5 @@ server.key
 tmp-gomud.exe
 go-mud-server.exe
 go-mud-server
+GoMud.exe
 __debug*
