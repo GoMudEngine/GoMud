@@ -3,8 +3,10 @@ zone: Test Arena
 itemdropchance: 5
 hostile: true
 maxwander: 0
-activitylevel: 10
+activitylevel: 80
 statpool: 0
+aiprofile: "aggressive"
+specialmovechance: 60
 character:
   name: arena champion
   description: A towering warrior clad in gleaming chain armor, wielding a razor-sharp

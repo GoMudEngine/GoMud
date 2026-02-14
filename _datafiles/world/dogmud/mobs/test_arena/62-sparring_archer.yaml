@@ -3,8 +3,10 @@ zone: Test Arena
 itemdropchance: 0
 hostile: true
 maxwander: 0
-activitylevel: 10
+activitylevel: 65
 statpool: 0
+aiprofile: "defensive"
+specialmovechance: 50
 character:
   name: sparring archer
   description: A keen-eyed archer in light training gear, standing at the firing line
