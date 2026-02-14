@@ -1341,7 +1341,9 @@ Standing ──[bash/trip]──> Prone ──[recovery]──> Standing
 
 ---
 
-### Stage 8.2: Grapple Command & Basic Position Transitions
+### Stage 8.2: Grapple Command & Basic Position Transitions ✅ COMPLETED
+**Commit**: `ed58029` - Merge feature/stage-8.2-grapple-command into development
+
 **Goal**: Add `grapple` command with cooldown. Successful grapples transition positions (Standing→Clinched, Prone→Grounded). Grapplers and grappled opponents are marked by controller tracking.
 
 **Design**:
@@ -2494,4 +2496,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-13
 **Status**: In Progress
-**Current Stage**: 7.5 Complete — Ready for Phase 8 or side quests
+**Current Stage**: 8.2 Complete — Grapple command implemented, ready for Stage 8.3
