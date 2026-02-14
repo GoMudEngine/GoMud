@@ -364,6 +364,9 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 
 			affectedPlayerIds = append(affectedPlayerIds, user.Character.Aggro.UserId)
 
+			// Stage 8.3: Process automatic grapple position progression
+			processGrappleProgression(user.Character, defUser.Character, user.Character.Name, defUser.Character.Name, uRoom, user.UserId, defUser.UserId)
+
 			roundResult := combat.AttackPlayerVsPlayer(user, defUser)
 
 			// If a mob attacks a player, check whether player has a charmed mob helping them, and if so, they will move to attack back
@@ -564,6 +567,9 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 			}
 
 			affectedPlayerIds = append(affectedPlayerIds, user.Character.Aggro.UserId)
+
+			// Stage 8.3: Process automatic grapple position progression
+			processGrappleProgression(user.Character, &defMob.Character, user.Character.Name, defMob.Character.Name, uRoom, user.UserId, 0)
 
 			var roundResult combat.AttackResult
 
@@ -846,6 +852,9 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 
 			affectedPlayerIds = append(affectedPlayerIds, mob.Character.Aggro.UserId)
 
+			// Stage 8.3: Process automatic grapple position progression
+			processGrappleProgression(&mob.Character, defUser.Character, mob.Character.Name, defUser.Character.Name, mobRoom, 0, defUser.UserId)
+
 			// --- BEGIN MOB TARGET SWITCHING AI (Stage 7.4) ---
 			// Mobs with higher combat skill may intelligently switch targets
 			// Only consider switching occasionally (10% of rounds)
@@ -1080,6 +1089,9 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 				continue
 			}
 
+			// Stage 8.3: Process automatic grapple position progression
+			processGrappleProgression(&mob.Character, &defMob.Character, mob.Character.Name, defMob.Character.Name, mobRoom, 0, 0)
+
 			var roundResult combat.AttackResult
 
 			roundResult = combat.AttackMobVsMob(mob, defMob)
@@ -1173,6 +1185,62 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 	util.TrackTime(`World::handleMobCombat()`, time.Since(tStart).Seconds())
 
 	return affectedPlayerIds, affectedMobInstanceIds
+}
+
+// processGrappleProgression handles automatic position changes for grappled fighters
+// Stage 8.3: Clinched → attempts to advance to Grounded or break free
+// Grounded → controlled fighter attempts to escape
+func processGrappleProgression(char1 *characters.Character, char2 *characters.Character, char1Name string, char2Name string, room *rooms.Room, user1Id int, user2Id int) {
+	// Only process if both are in a grapple position
+	if !char1.CombatPosition.IsGrapplePosition() || !char2.CombatPosition.IsGrapplePosition() {
+		return
+	}
+
+	// Determine who is controller and who is controlled
+	var controller, controlled *characters.Character
+	var controllerName, controlledName string
+
+	if char1.IsGrappleController {
+		controller = char1
+		controlled = char2
+		controllerName = char1Name
+		controlledName = char2Name
+	} else {
+		controller = char2
+		controlled = char1
+		controllerName = char2Name
+		controlledName = char1Name
+	}
+
+	var result combat.PositionProgressionResult
+
+	// Check position and perform appropriate progression
+	if char1.CombatPosition == characters.PositionClinched {
+		result = combat.CheckClinchProgression(controller, controlled)
+	} else if char1.CombatPosition == characters.PositionGrounded {
+		result = combat.CheckGroundedEscape(controller, controlled)
+	} else {
+		return // Not in a grapple position that needs processing
+	}
+
+	// Apply the result
+	combat.ApplyPositionProgression(char1, char2, result)
+
+	// Send messages if position changed
+	if result.Changed {
+		if result.NewPosition == characters.PositionStanding {
+			// Both broke apart
+			room.SendText(
+				fmt.Sprintf(`<ansi fg="combat">%s</ansi>`, result.RoomMessage),
+			)
+		} else if result.NewPosition == characters.PositionGrounded {
+			// Advanced to grounded
+			room.SendText(
+				fmt.Sprintf(`<ansi fg="combat"><ansi fg="username">%s</ansi> takes <ansi fg="mobname">%s</ansi> to the ground!</ansi>`,
+					controllerName, controlledName),
+			)
+		}
+	}
 }
 
 func handleAffected(affectedPlayerIds []int, affectedMobInstanceIds []int) {

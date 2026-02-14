@@ -22,6 +22,16 @@ const (
 	grappleStdDev = 20.0 // Standard deviation for grapple opposed rolls
 )
 
+// PositionProgressionResult represents the outcome of automatic position checks
+type PositionProgressionResult struct {
+	Changed          bool
+	NewPosition      characters.CombatPosition
+	ControllerWon    bool
+	Margin           float64
+	Message          string // For both participants
+	RoomMessage      string // For room observers
+}
+
 // AttemptGrapple performs a grapple attempt from attacker to defender.
 // Returns a GrappleResult with the outcome and details.
 //
@@ -102,4 +112,98 @@ func ApplyGrappleResult(attacker *characters.Character, defender *characters.Cha
 	// Track who initiated/controls the grapple
 	attacker.GrappleControllerId = attackerId
 	defender.GrappleControllerId = attackerId
+
+	// Stage 8.3: Mark who is the controller
+	attacker.IsGrappleController = true
+	defender.IsGrappleController = false
+}
+
+// CheckClinchProgression performs automatic control check for clinched fighters
+// Stage 8.3: Str + Combat Skill opposed roll
+// Success: Transition to Grounded (controller maintains control)
+// Failure: Break apart, both return to Standing
+func CheckClinchProgression(controller *characters.Character, controlled *characters.Character) PositionProgressionResult {
+	result := PositionProgressionResult{}
+
+	// Opposed roll: Str + Combat Skill
+	controllerScore := float64(controller.Stats.Strength.ValueAdj) + float64(controller.GetCombatSkillLevel())
+	controlledScore := float64(controlled.Stats.Strength.ValueAdj) + float64(controlled.GetCombatSkillLevel())
+
+	success, margin, _, _ := dice.OpposedRoll(controllerScore, controlledScore, grappleStdDev)
+
+	result.Changed = true
+	result.Margin = margin
+
+	if success {
+		// Controller advances to grounded
+		result.NewPosition = characters.PositionGrounded
+		result.ControllerWon = true
+		result.Message = "The grapple intensifies as you're taken to the ground!"
+		result.RoomMessage = "The grapple intensifies as they go to the ground!"
+	} else {
+		// Break apart, both return to standing
+		result.NewPosition = characters.PositionStanding
+		result.ControllerWon = false
+		result.Message = "You break free from the grapple and return to standing!"
+		result.RoomMessage = "They break apart and return to standing positions!"
+	}
+
+	return result
+}
+
+// CheckGroundedEscape performs automatic escape attempt for grounded fighters
+// Stage 8.3: Controlled fighter attempts to escape
+// Success: Both return to Standing
+// Failure: Remain Grounded
+func CheckGroundedEscape(controller *characters.Character, controlled *characters.Character) PositionProgressionResult {
+	result := PositionProgressionResult{}
+
+	// Opposed roll: controlled tries to escape
+	// Controlled: Str + Combat Skill + Dex
+	// Controller: Str + Combat Skill
+	controlledScore := float64(controlled.Stats.Strength.ValueAdj) +
+		float64(controlled.GetCombatSkillLevel()) +
+		float64(controlled.Stats.Dexterity.ValueAdj) * 0.5 // Half dex bonus for scrambling
+	controllerScore := float64(controller.Stats.Strength.ValueAdj) + float64(controller.GetCombatSkillLevel())
+
+	success, margin, _, _ := dice.OpposedRoll(controlledScore, controllerScore, grappleStdDev)
+
+	result.Changed = success
+	result.Margin = margin
+
+	if success {
+		// Escape successful
+		result.NewPosition = characters.PositionStanding
+		result.ControllerWon = false
+		result.Message = "You scramble free and return to standing!"
+		result.RoomMessage = "They scramble apart and return to standing positions!"
+	} else {
+		// Remain grounded
+		result.NewPosition = characters.PositionGrounded
+		result.ControllerWon = true
+		result.Message = "You struggle but remain pinned on the ground!"
+		result.RoomMessage = "They struggle on the ground!"
+	}
+
+	return result
+}
+
+// ApplyPositionProgression applies the result of a position progression check
+func ApplyPositionProgression(char1 *characters.Character, char2 *characters.Character, result PositionProgressionResult) {
+	if !result.Changed {
+		return
+	}
+
+	// Set new positions
+	char1.CombatPosition = result.NewPosition
+	char2.CombatPosition = result.NewPosition
+
+	// If returning to standing, clear grapple tracking
+	if result.NewPosition == characters.PositionStanding {
+		char1.GrappleControllerId = 0
+		char2.GrappleControllerId = 0
+		char1.IsGrappleController = false
+		char2.IsGrappleController = false
+	}
+	// If advancing to grounded, controller status stays the same (already set)
 }

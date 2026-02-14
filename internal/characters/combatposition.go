@@ -71,3 +71,20 @@ func (p CombatPosition) GetPositionColor() string {
 		return "white"
 	}
 }
+
+// GetSpeedMultiplier returns the attack speed multiplier for this position
+// Stage 8.3: Position-based attack speed modifiers
+func (p CombatPosition) GetSpeedMultiplier() float64 {
+	switch p {
+	case PositionStanding:
+		return 1.0 // Normal speed
+	case PositionProne:
+		return 0.5 // 50% speed (existing penalty, now formalized)
+	case PositionClinched:
+		return 0.6 // 60% speed (both fighters locked up, slow strikes)
+	case PositionGrounded:
+		return 0.3 // 30% speed (both fighters very limited movement)
+	default:
+		return 1.0
+	}
+}
