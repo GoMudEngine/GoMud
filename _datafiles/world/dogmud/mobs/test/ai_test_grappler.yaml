@@ -1,0 +1,14 @@
+mobid: 9002
+name: "AI Test Dummy (Grappler)"
+description: "A combat training dummy configured with grappler AI behavior."
+species: "human"
+hostile: false
+activitylevel: 80
+aiprofile: "grappler"
+specialmovechance: 70
+movepreferences:
+  grapple: 70
+  submit: 30
+statpool: 50
+combatcommands:
+  - "say Testing grappler AI!"

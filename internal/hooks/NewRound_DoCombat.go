@@ -868,6 +868,32 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 		// H2H is the base level combat, can do combat commands then
 		if mob.Character.Aggro.Type == characters.DefaultAttack {
 
+			// Stage 8.9: AI special move selection
+			var chosenMove string
+			if util.Rand(100) < mob.ActivityLevel {
+				// Get target for AI evaluation
+				var targetChar *characters.Character
+				if mob.Character.Aggro.UserId > 0 {
+					if user := users.GetByUserId(mob.Character.Aggro.UserId); user != nil {
+						targetChar = user.Character
+					}
+				} else if mob.Character.Aggro.MobInstanceId > 0 {
+					if targetMob := mobs.GetInstance(mob.Character.Aggro.MobInstanceId); targetMob != nil {
+						targetChar = &targetMob.Character
+					}
+				}
+
+				if targetChar != nil {
+					chosenMove = combat.ChooseSpecialMove(mob, targetChar)
+				}
+			}
+
+			// Execute AI-chosen move or fall back to CombatCommands
+			if chosenMove != "" {
+				mob.Command(chosenMove, 0)
+				continue
+			}
+
 			// If they have idle commands, maybe do one of them?
 			cmdCt := len(mob.CombatCommands)
 			if cmdCt > 0 {

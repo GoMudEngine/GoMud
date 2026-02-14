@@ -1,0 +1,11 @@
+mobid: 9004
+name: "AI Test Dummy (Brawler)"
+description: "A combat training dummy configured with brawler AI behavior."
+species: "human"
+hostile: false
+activitylevel: 80
+aiprofile: "brawler"
+specialmovechance: 55
+statpool: 50
+combatcommands:
+  - "say Testing brawler AI!"

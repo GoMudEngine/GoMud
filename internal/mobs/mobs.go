@@ -65,10 +65,13 @@ type Mob struct {
 	BoredomCounter  uint8    `yaml:"-"` // how many rounds have passed since this mob has seen a player
 	Groups          []string // What group do they identify with? Helps with teamwork
 	Hates           []string `yaml:"hates,omitempty"`        // What NPC groups or races do they hate and probably fight if encountered?
-	IdleCommands    []string `yaml:"idlecommands,omitempty"` // Commands they may do while idle (not in combat)
-	AngryCommands   []string // randomly chosen to queue when they are angry/entering combat.
-	CombatCommands  []string `yaml:"combatcommands,omitempty"` // Commands they may do while in combat
-	Character       characters.Character
+	IdleCommands      []string       `yaml:"idlecommands,omitempty"`   // Commands they may do while idle (not in combat)
+	AngryCommands     []string                                         // randomly chosen to queue when they are angry/entering combat.
+	CombatCommands    []string       `yaml:"combatcommands,omitempty"` // Commands they may do while in combat
+	AIProfile         string         `yaml:"aiprofile,omitempty"`      // Combat AI profile: "default", "aggressive", "defensive", "grappler", "brawler", "tactical" (Stage 8.9)
+	SpecialMoveChance int            `yaml:"specialmovechance,omitempty"` // Base % to use special moves (0-100) (Stage 8.9)
+	MovePreferences   map[string]int `yaml:"movepreferences,omitempty"`   // Custom weights per move (Stage 8.9)
+	Character         characters.Character
 	MaxWander       int      `yaml:"maxwander,omitempty"`       // Max rooms to wander from home
 	WanderCount     int      `yaml:"-"`                         // How many times this mob has wandered
 	PreventIdle     bool     `yaml:"-"`                         // Whether they can't possibly be idle
@@ -193,6 +196,14 @@ func NewMobById(mobId MobId, homeRoomId int, forceStatPool ...int) *Mob {
 					mob.Character.Alignment = speciesInfo.DefaultAlignment
 				}
 			}
+		}
+
+		// Stage 8.9: Initialize AI defaults
+		if mob.AIProfile == "" {
+			mob.AIProfile = "default"
+		}
+		if mob.SpecialMoveChance == 0 {
+			mob.SpecialMoveChance = 30 // 30% default chance to use special moves
 		}
 
 		mob.Character.Equipment.Weapon.Validate()
