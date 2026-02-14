@@ -1991,60 +1991,325 @@ Each combat round:
 ## Phase 9: Combat Presentation Overhaul
 
 > **Goal**: Transform combat from a "you hit for X damage" number game into an immersive,
-> descriptive experience. Inspired by the Evennia DOG combat system
-> (see `combat_example_evennia.png`). No raw damage numbers shown to players.
-
-### Stage 9.1: Descriptive Damage Text — Remove Numbers
-**Goal**: Replace all numeric damage output ("You hit Guard for 4 damage") with descriptive text based on damage severity and attack type.
-
-**Design**:
-- Damage ranges map to description tiers:
-  - **Negligible** (0-5% max HP): "with little effect", "barely scratching"
-  - **Light** (5-15%): colored "scratched", "nicked"
-  - **Moderate** (15-30%): colored "wounded"
-  - **Heavy** (30-50%): colored "seriously wounded"
-  - **Severe** (50-75%): colored "critically wounded"
-  - **Devastating** (75%+): colored "obliterated", "brutally wounded"
-- Attack descriptions vary by weapon/unarmed type:
-  - Sword: "slash", "uppercut slash", "thrust"
-  - Unarmed: "jab", "roundhouse kick", "elbow strike", "shoulder check"
-  - Bow: "arrow strikes", "bolt pierces"
-- Messages differ by perspective (attacker, defender, observer) like the Evennia system
-- Color coding: orange/red for hits, cyan for dodges, green for blocks (with text prefixes for screen readers)
-
-**Changes**:
-1. Create a damage description system with tier lookups
-2. Create attack flavor text dictionaries per weapon type / unarmed
-3. Replace all `fmt.Sprintf("you hit for %d damage")` with descriptive text calls
-4. Add perspective-based messaging (1st person, 2nd person, 3rd person observer)
-5. Add color coding with screen-reader-friendly prefixes
-
-**Files to Modify** (~10 files, ~600 lines):
-1. `internal/combat/messages.go` — New file: damage descriptions, attack flavor text
-2. `internal/combat/combat.go` — Replace numeric damage output
-3. `internal/combat/calculations.go` — Add description tier calculation
-4. Weapon YAML or combat data — Attack flavor text per weapon type
-5. Test files
-
-**Testing**:
-- [ ] **Manual Test**: Fight with sword, verify descriptive slash/thrust messages
-- [ ] **Manual Test**: Fight unarmed, verify kick/punch/elbow messages
-- [ ] **Manual Test**: Verify no raw damage numbers appear anywhere in combat output
-- [ ] **Manual Test**: Verify color coding (orange hits, cyan dodges, green blocks)
-- [ ] **Manual Test**: Verify screen reader mode still conveys the same information
-
-**Acceptance Criteria**:
-- Zero numeric damage in player-visible combat output
-- Descriptive text clearly conveys damage severity via color and wording
-- Attack descriptions vary by weapon type
-- Screen reader accessibility maintained
-- All tests pass
-
-**Estimated Changes**: ~600 lines, 10 files
+> descriptive experience inspired by the Evennia DOG combat system (see `combat_example_evennia.png`).
+> Progression: Remove numbers → Expand narrative variety → Add skill-based messaging depth.
 
 ---
 
-### Stage 9.2: Health/Stamina/Conviction Bars in Prompt
+### Stage 9.1: Remove Damage Numbers — Clean Foundation ✅ COMPLETED
+**Goal**: Remove numeric damage from all combat output, creating a clean foundation for narrative combat expansion.
+
+**Problem Identified**:
+- Initial approach (replacing numbers with HP% descriptions) created **double description issue**
+- YAML tier verbs (CRUSHES, lands squarely) already describe attack intensity
+- HP% damage descriptions (light wounds, critical injuries) describe damage result
+- These conflict when attack intensity ≠ damage result (e.g., "CRUSHES... light wounds")
+- Root cause: Two independent tier systems (attack strength vs actual damage %)
+
+**Revised Approach**:
+- **Remove `{damage}` token entirely** from YAML combat messages
+- Keep existing weapon-specific verbs from YAML tiers (weak/normal/heavy/critical)
+- Result: "Your fists CRITICALLY SMASHES training dummy!" (clean, immersive, no contradictions)
+- Foundation ready for future narrative expansion via YAML pool expansion
+
+**Changes**:
+1. Remove `{damage}` token and surrounding text from all 8 weapon YAML files
+2. Update special move commands (kick, bash, trip, submit) to remove numeric damage
+3. Keep the `GetDamageDescription()` function for potential future use
+4. Maintain existing YAML tier system (attack verbs already provide narrative)
+
+**Files Modified** (10 files, ~160 lines):
+1. ✅ `internal/combat/descriptions.go` — NEW: GetDamageDescription() function (kept for future)
+2. ✅ `internal/combat/combat.go` — Removed damage from token replacement, pet messages, blocked damage
+3. ✅ `_datafiles/world/dogmud/combat-messages/slashing.yaml` — Removed {damage} token
+4. ✅ `_datafiles/world/dogmud/combat-messages/stabbing.yaml` — Removed {damage} token
+5. ✅ `_datafiles/world/dogmud/combat-messages/bludgeoning.yaml` — Removed {damage} token
+6. ✅ `_datafiles/world/dogmud/combat-messages/cleaving.yaml` — Removed {damage} token
+7. ✅ `_datafiles/world/dogmud/combat-messages/whipping.yaml` — Removed {damage} token
+8. ✅ `_datafiles/world/dogmud/combat-messages/claws.yaml` — Removed {damage} token
+9. ✅ `_datafiles/world/dogmud/combat-messages/shooting.yaml` — Removed {damage} token
+10. ✅ `_datafiles/world/dogmud/combat-messages/generic.yaml` — Removed {damage} token
+11. ✅ `internal/usercommands/kick.go` — Removed numeric damage display
+12. ✅ `internal/usercommands/bash.go` — Removed numeric damage display
+13. ✅ `internal/usercommands/trip.go` — Removed numeric damage display
+14. ✅ `internal/usercommands/submit.go` — Removed numeric damage display
+
+**Testing**:
+- ✅ **Manual Test**: Fight with various weapons, verify no numeric damage appears
+- ✅ **Manual Test**: Use kick/bash/trip, verify no numeric damage appears
+- ✅ **Manual Test**: Verify weapon-specific verbs still work (slash, smash, pierce, etc.)
+- ✅ **Manual Test**: Verify critical hits show *** markers, fumbles show !!! markers
+- ✅ **Manual Test**: Verify dodge/parry/block messages unchanged
+
+**Acceptance Criteria**:
+- ✅ Zero numeric damage in player-visible combat output
+- ✅ Weapon-specific verbs from YAML work correctly
+- ✅ All existing combat mechanics (criticals, fumbles, defense) work unchanged
+- ✅ Clean foundation ready for narrative expansion
+- ✅ All tests pass
+
+**Estimated Changes**: ~160 lines, 14 files
+**Actual Changes**: ~243 lines, 14 files
+**Status**: ✅ COMPLETED
+**Merge Commit**: 8769807
+
+---
+
+### Stage 9.2: Expand Combat Narrative — Message Pool Variety
+**Goal**: Expand YAML message pools from 3 variants per tier to 10-15 variants, adding footwork, feints, and positioning flavor.
+
+**Key Insight**:
+The existing YAML system is **perfectly designed** for this enhancement. No code changes needed—just expand the creative content in YAML files.
+
+**Design**:
+- Current: 3 message variants per tier (weak/normal/heavy/critical)
+- Target: 10-15 message variants per tier
+- Add narrative variety:
+  - **Footwork**: "You circle left and slash...", "You sidestep and thrust..."
+  - **Feints**: "Feinting high, you bring your blade down...", "You fake left, then strike..."
+  - **Positioning**: "You press forward with a heavy slash...", "Dancing back, you riposte..."
+  - **Momentum**: "Following through, you spin and slash...", "You capitalize on your opening..."
+
+**Example Expansion** (slashing.yaml, normal tier):
+```yaml
+normal:
+  together:
+    toattacker:
+    # Original 3 messages (keep these)
+    - 'You connect with your {itemname}, wounding {target}!'
+    - 'You slash {target} with your {itemname}!'
+    - 'Your {itemname} cuts into {target}!'
+    # New narrative variants (add ~10 more)
+    - 'You circle left and slash at {target} with precision!'
+    - 'Feinting high, you bring your {itemname} down in a swift arc!'
+    - 'You step forward and deliver a sharp slash to {target}!'
+    - 'Dancing around {target}, you slice with practiced ease!'
+    - 'You press your advantage with a sweeping slash!'
+    - 'Pivoting on your heel, you cut at {target}''s flank!'
+    - 'Your {itemname} flashes as you strike with purpose!'
+    - 'You exploit an opening and slash decisively!'
+    - 'Following your momentum, you deliver a clean cut!'
+    - 'You weave past {target}''s guard and slash!'
+```
+
+**Changes**:
+1. Expand each weapon YAML file from ~130 lines to ~400 lines
+2. Add 10-15 variants per tier (weak, normal, heavy, critical) × 3 perspectives (toattacker, todefender, toroom)
+3. Maintain existing token system ({itemname}, {target}, {source}, etc.)
+4. Zero code changes—existing `msgs.Together.ToAttacker.Get(msgSeed)` already picks randomly
+
+**Files to Modify** (8 YAML files, ~2400 lines total):
+1. `_datafiles/world/dogmud/combat-messages/slashing.yaml` — Expand from 132 to ~400 lines
+2. `_datafiles/world/dogmud/combat-messages/stabbing.yaml` — Expand from 132 to ~400 lines
+3. `_datafiles/world/dogmud/combat-messages/bludgeoning.yaml` — Expand from 132 to ~400 lines
+4. `_datafiles/world/dogmud/combat-messages/cleaving.yaml` — Expand from 132 to ~400 lines
+5. `_datafiles/world/dogmud/combat-messages/whipping.yaml` — Expand from 132 to ~400 lines
+6. `_datafiles/world/dogmud/combat-messages/claws.yaml` — Expand from 132 to ~400 lines
+7. `_datafiles/world/dogmud/combat-messages/shooting.yaml` — Expand from 132 to ~400 lines
+8. `_datafiles/world/dogmud/combat-messages/generic.yaml` — Expand from 160 to ~400 lines
+
+**Testing**:
+- [ ] **Manual Test**: Fight 20+ rounds, verify message variety (minimal repetition)
+- [ ] **Manual Test**: Verify footwork/feint/positioning messages appear naturally
+- [ ] **Manual Test**: Verify all weapon types have expanded pools
+- [ ] **Manual Test**: Verify toattacker/todefender/toroom perspectives all work
+- [ ] **Manual Test**: Verify messages grammatically correct with all token replacements
+
+**Acceptance Criteria**:
+- Each tier has 10-15 message variants minimum
+- Messages include footwork, feints, and positioning variety
+- No repetition in typical 20-round combat
+- All token replacements work correctly
+- Messages feel natural and immersive
+- Zero code changes required
+
+**Estimated Effort**: 8-12 hours (creative writing)
+**Estimated Changes**: ~2400 lines (YAML only), 8 files
+
+---
+
+### Stage 9.3: Defensive Action Narrative — Dodge/Parry/Block Messages
+**Goal**: Add YAML message pools for defensive actions (dodge, parry, block) with same narrative variety as attacks.
+
+**Current State**:
+- Dodges show generic: "You dodge the attack"
+- Parries show generic: "You parry with your shield"
+- Blocks show generic: "You block the attack"
+
+**Target State**:
+- Dodges: "You weave under the blow", "You sidestep gracefully", "You roll aside"
+- Parries: "You deflect with your blade", "You catch the strike on your shield", "You redirect the blow"
+- Blocks: "You absorb the impact", "You brace and block", "Your armor turns the strike"
+
+**Design**:
+- Create new YAML files for defensive actions
+- Structure: Similar to attack messages (weak/normal/heavy tiers based on how close the attack was)
+- Perspective messaging: todefender, toattacker, toroom
+- Token system: {defender}, {attacker}, {weapon}, {defense_type}
+
+**Files to Create** (3 new YAML files):
+1. `_datafiles/world/dogmud/combat-messages/dodge.yaml` — Dodge message pools
+2. `_datafiles/world/dogmud/combat-messages/parry.yaml` — Parry message pools
+3. `_datafiles/world/dogmud/combat-messages/block.yaml` — Block message pools
+
+**Files to Modify** (~2 files, ~100 lines):
+1. `internal/combat/combat.go` — Wire dodge/parry/block events to YAML message system
+2. `internal/items/messages.go` — Add defensive message loading
+
+**Testing**:
+- [ ] **Manual Test**: Get dodged, verify variety in dodge messages
+- [ ] **Manual Test**: Parry attacks, verify variety in parry messages
+- [ ] **Manual Test**: Block attacks, verify variety in block messages
+- [ ] **Manual Test**: Verify perspective messages (what you see vs what attacker sees)
+
+**Acceptance Criteria**:
+- Dodge/parry/block have 10-15 message variants each
+- Messages vary by how close the attack was (narrow dodge vs easy dodge)
+- Perspective messaging works (defender, attacker, observer)
+- Zero repetition in typical combat
+- All tests pass
+
+**Estimated Effort**: 6-8 hours
+**Estimated Changes**: ~100 lines code, ~1200 lines YAML (3 new files)
+
+---
+
+### Stage 9.4: Contextual Combat Tokens — Stance, Position, Momentum
+**Goal**: Add new context tokens ({stance}, {position}, {momentum}) to make messages more dynamic and situational.
+
+**Design**:
+- New tokens:
+  - `{stance}` — "aggressive", "defensive", "balanced", "reckless" (based on combat behavior)
+  - `{position}` — "prone", "standing", "elevated", "cornered" (based on combat position)
+  - `{momentum}` — "on the offensive", "on the defensive", "pressured", "in control" (based on recent combat flow)
+
+**Example Usage**:
+```yaml
+# Message variant that uses new tokens
+- 'From your {stance} stance, you slash at {target}!'
+- 'While {position}, you strike desperately at {target}!'
+- 'You capitalize on your momentum, pressing {target} with a heavy blow!'
+```
+
+**Changes**:
+1. Add stance calculation based on recent attack/defense balance
+2. Add position tracking (already partially exists for prone)
+3. Add momentum tracking based on recent hits/misses
+4. Add new tokens to token replacement map in combat.go
+5. Update YAML messages to use new tokens (subset of messages, not all)
+
+**Files to Modify** (~4 files, ~200 lines):
+1. `internal/combat/combat.go` — Calculate stance, position, momentum; add to token map
+2. `internal/characters/character.go` — Add stance/momentum tracking fields
+3. `_datafiles/world/dogmud/combat-messages/*.yaml` — Add token usage to subset of messages
+4. Test files
+
+**Testing**:
+- [ ] **Manual Test**: Fight aggressively, verify "aggressive" stance appears
+- [ ] **Manual Test**: Fight while prone, verify "prone" position appears
+- [ ] **Manual Test**: Land multiple hits, verify momentum messages trigger
+- [ ] **Manual Test**: Verify tokens replace correctly in all message variants
+
+**Acceptance Criteria**:
+- Stance, position, momentum calculate correctly
+- New tokens work in message system
+- Messages feel contextual and responsive to combat flow
+- No performance impact (O(1) calculations)
+- All tests pass
+
+**Estimated Effort**: 8-10 hours
+**Estimated Changes**: ~200 lines code, ~400 lines YAML updates
+
+---
+
+### Stage 9.5: Skill-Tiered Message Pools — Beginner to Master
+**Goal**: Gate advanced combat messages behind weapon skill levels, creating progression from clumsy beginner to elegant master.
+
+**Design**:
+- Three skill tiers: `beginner`, `expert`, `master`
+- Message pools organized by skill tier within each attack tier
+- Low skill = simple, clumsy descriptions
+- High skill = elegant, tactical descriptions
+- Message selection:
+  - Beginner (skill 1-33): Only beginner pool
+  - Expert (skill 34-66): Beginner + expert pool
+  - Master (skill 67-100): Beginner + expert + master pool
+
+**Example Structure**:
+```yaml
+normal:
+  together:
+    toattacker:
+      beginner:  # Basic, simple attacks
+        - 'You swing your {itemname} at {target}!'
+        - 'You slash awkwardly at {target}!'
+        - 'You strike at {target} with your {itemname}!'
+      expert:  # Tactical, competent attacks
+        - 'You feint left and slash at {target}!'
+        - 'You circle and deliver a precise cut!'
+        - 'You exploit an opening and strike!'
+      master:  # Elegant, masterful attacks
+        - 'Your blade flows like water as you execute a perfect slash!'
+        - 'With practiced grace, you weave a deadly arc toward {target}!'
+        - 'You read {target}''s guard and strike the perfect opening!'
+```
+
+**Message Selection Algorithm**:
+```go
+// Collect available message pools based on skill level
+availablePools := []string{"beginner"}
+if weaponSkill >= 34 {
+    availablePools = append(availablePools, "expert")
+}
+if weaponSkill >= 67 {
+    availablePools = append(availablePools, "master")
+}
+
+// Pick random pool, then random message from that pool
+selectedPool := availablePools[rand.Intn(len(availablePools))]
+message := messages[tier][perspective][selectedPool].Get(msgSeed)
+```
+
+**Benefits**:
+- **Progression feel**: Players experience combat evolution as skills improve
+- **Immersion**: Messages match character competence level
+- **Replayability**: Combat feels different at different skill levels
+- **Training incentive**: Players want to level weapon skills to see master messages
+
+**Changes**:
+1. Update YAML structure to nest messages under skill tiers
+2. Add skill-based message pool selection to combat.go
+3. Expand each tier with beginner/expert/master variants (5 messages each = 15 total per tier)
+4. Update message loading to handle nested structure
+
+**Files to Modify** (~3 files, ~150 lines code + ~3200 lines YAML):
+1. `internal/combat/combat.go` — Add skill-based pool selection (~50 lines)
+2. `internal/items/messages.go` — Update YAML parsing for nested structure (~100 lines)
+3. `_datafiles/world/dogmud/combat-messages/*.yaml` — Restructure all 8 files with skill tiers (~3200 lines)
+4. Test files
+
+**Testing**:
+- [ ] **Manual Test**: Fight at skill 1, verify only beginner messages appear
+- [ ] **Manual Test**: Train to skill 50, verify beginner+expert messages appear
+- [ ] **Manual Test**: Train to skill 80, verify all three pools appear
+- [ ] **Manual Test**: Verify proper randomization across available pools
+- [ ] **Manual Test**: Verify message quality matches skill tier
+
+**Acceptance Criteria**:
+- Message pools gated correctly by skill level
+- Beginner messages feel simple/clumsy
+- Expert messages feel tactical/competent
+- Master messages feel elegant/masterful
+- Smooth progression from one tier to next
+- No performance impact
+- All tests pass
+
+**Estimated Effort**: 12-16 hours (8 hours code, 8 hours YAML restructuring/writing)
+**Estimated Changes**: ~150 lines code, ~3200 lines YAML
+
+---
+
+### Stage 9.6: Health/Stamina/Conviction Bars in Prompt
 **Goal**: Replace numeric HP/Stamina/Conviction in the player prompt with colored progress bars, matching the Evennia DOG style (see `combat_example_evennia.png`).
 
 **Design**:
@@ -2084,7 +2349,7 @@ Each combat round:
 
 ---
 
-### Stage 9.3: Configurable Combat Prompt
+### Stage 9.7: Configurable Combat Prompt
 **Goal**: Let players configure what information appears in their combat prompt. Options include: current tank, current target, relative health of target, and the resource bars from 9.2.
 
 **Design**:
@@ -2129,7 +2394,7 @@ Each combat round:
 
 ---
 
-### Stage 9.4: Combat Conditions System Refactor
+### Stage 9.8: Combat Conditions System Refactor
 **Goal**: Consolidate scattered boolean flags (RecoveryPenaltyThisRound, DefensePenaltyNextRound, etc.) into a unified, configurable combat conditions system. Make it easy to add new temporary combat states.
 
 **Problem**:
