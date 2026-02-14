@@ -2049,9 +2049,9 @@ Each combat round:
 - ✅ All tests pass
 
 **Estimated Changes**: ~160 lines, 14 files
-**Actual Changes**: ~243 lines, 14 files
+**Actual Changes**: ~298 lines, 14 files
 **Status**: ✅ COMPLETED
-**Merge Commit**: 8769807
+**Merge Commits**: 8769807 (YAML cleanup), 90b0b9b (special moves & combat system)
 
 ---
 
@@ -3124,4 +3124,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-14
 **Status**: In Progress
-**Current Stage**: 8.9 Complete — Phase 8 (Integrated Grappling + AI) fully implemented. Ready for Phase 9 (Leveling System)
+**Current Stage**: 9.1 Complete — Phase 9 (Combat Presentation Overhaul) started. Numeric damage removed, clean foundation ready for narrative expansion.
