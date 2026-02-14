@@ -219,3 +219,22 @@ func ApplyPositionProgression(char1 *characters.Character, char2 *characters.Cha
 	}
 	// If advancing to grounded, controller status stays the same (already set)
 }
+
+// IsThirdPartyAttack returns true if the attacker is not involved in the target's grapple.
+// This identifies opportunistic attackers targeting grappling fighters.
+// Stage 8.5: Third-party grapple vulnerability
+func IsThirdPartyAttack(attacker *characters.Character, target *characters.Character) bool {
+	// Target must be in a grapple position
+	if !target.CombatPosition.IsGrapplePosition() {
+		return false
+	}
+
+	// Target must have an active grapple (controller ID set)
+	if target.GrappleControllerId == 0 {
+		return false
+	}
+
+	// Attacker is third-party if they're not part of this grapple
+	// (different controller ID or no grapple at all)
+	return attacker.GrappleControllerId != target.GrappleControllerId
+}

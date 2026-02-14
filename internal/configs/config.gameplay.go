@@ -52,6 +52,9 @@ type GamePlay struct {
 	StandStaminaCost        ConfigFloat `yaml:"StandStaminaCost"`        // Default: 0.15 (15% of max stamina)
 	StandMinStamina         ConfigFloat `yaml:"StandMinStamina"`         // Default: 0.15 (minimum 15% stamina)
 
+	// Stage 8.5: Third-party grapple vulnerability
+	ThirdPartyGrapplePenalty ConfigFloat `yaml:"ThirdPartyGrapplePenalty"` // Default: 0.70 (-30% defense when entangled)
+
 	// Stage 7.5: Special move parameters
 	SpecialMoveCooldown ConfigInt   `yaml:"SpecialMoveCooldown"` // Default: 5 (shared cooldown for bash/trip/kick)
 	BashDamagePercent   ConfigFloat `yaml:"BashDamagePercent"`   // Default: 0.50

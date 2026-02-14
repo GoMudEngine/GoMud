@@ -342,6 +342,9 @@ GamePlay:
   ProneVulnerabilityBonus: 20.0  # Bonus to attack score when attacking prone targets
   StandStaminaCost: 0.15         # Stamina cost to stand (15% of max stamina)
   StandMinStamina: 0.15          # Minimum stamina required to stand (15% of max)
+  # - Stage 8.5: Third-Party Grapple Vulnerability -
+  #   When fighters are locked in a grapple, they're vulnerable to attacks from others
+  ThirdPartyGrapplePenalty: 0.70 # Defense multiplier against third-party attacks (-30%)
   # - Stage 7.5: Special Combat Moves -
   #   Parameters for bash, trip, and kick commands
   #   All three share a common cooldown to prevent knockdown spam

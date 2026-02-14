@@ -501,6 +501,35 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				hit := false
 				var lastHitRoll dice.RollResult
 
+				// Stage 8.5: Third-party attack vulnerability
+				// Fighters in grapples cannot dodge/parry attacks from third parties
+				isThirdParty := IsThirdPartyAttack(&sourceChar, &targetChar)
+				if isThirdParty {
+					// Remove active defenses (dodge, parry) - too focused on grapple
+					// Keep only block (passive shield defense)
+					filteredDefenses := []string{}
+					for _, def := range defenseSequence {
+						if def == characters.DefenseBlock {
+							filteredDefenses = append(filteredDefenses, def)
+						}
+					}
+					defenseSequence = filteredDefenses
+
+					// If no defenses remain (e.g., unarmed fighter with no shield),
+					// send vulnerability message and auto-hit
+					if len(defenseSequence) == 0 {
+						attackResult.SendToTarget(fmt.Sprintf(
+							`<ansi fg="red">You're too entangled to defend against %s's attack!</ansi>`,
+							sourceChar.Name))
+						attackResult.SendToSource(fmt.Sprintf(
+							`<ansi fg="attack-good">%s is helpless against your attack!</ansi>`,
+							targetChar.Name))
+						attackResult.SendToSourceRoom(fmt.Sprintf(
+							`<ansi fg="combat">%s is defenseless against %s's attack!</ansi>`,
+							targetChar.Name, sourceChar.Name))
+					}
+				}
+
 				// Dynamic threshold for crit/fumble detection (moved earlier to check on initial attack)
 				critThreshold := 2.0 // ~2.5% chance
 				if sourceChar.HasBuffFlag(buffs.Accuracy) {
@@ -571,6 +600,12 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 						}
 					}
 
+					// Stage 8.5: Apply third-party vulnerability penalty
+					// Even shield defenses are weakened when entangled
+					if isThirdParty {
+						defenseScore *= float64(cfg.ThirdPartyGrapplePenalty) // Default: 0.70 (-30% defense)
+					}
+
 					// Opposed roll: attack vs this defense
 					defenseSucceeded, _, hitRoll, defenseRoll := dice.OpposedRoll(attackScore, defenseScore, combatStdDev)
 					lastHitRoll = hitRoll
@@ -621,6 +656,12 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 					attackResult.SendToSourceRoom(fmt.Sprintf(`<ansi fg="combat">%s %ss %s's attack.</ansi>`, targetChar.Name, defenseVerb, sourceChar.Name))
 					if sourceChar.RoomId != targetChar.RoomId {
 						attackResult.SendToTargetRoom(fmt.Sprintf(`<ansi fg="combat">%s %ss an attack.</ansi>`, targetChar.Name, defenseVerb))
+					}
+
+					// Stage 8.5: Add third-party context if applicable
+					if isThirdParty {
+						attackResult.SendToTarget(fmt.Sprintf(
+							`<ansi fg="yellow">(Despite being entangled in a grapple!)</ansi>`))
 					}
 
 					break
