@@ -98,6 +98,40 @@ func Grapple(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		if result.PositionPenalty < 0 {
 			user.SendText(fmt.Sprintf(`<ansi fg="yellow">%s was already prone - they had little chance to resist!</ansi>`, targetName))
 		}
+
+		// Stage 8.4: Check for grapple crit disarm
+		// Only while in Clinched or Grounded position AND z > 2.0
+
+		// Debug logging for grapple crits
+		if result.AttackZScore > 1.5 {
+			user.SendText(fmt.Sprintf(`<ansi fg="cyan">[DEBUG: Grapple z-score: %.2f %s]</ansi>`,
+				result.AttackZScore,
+				map[bool]string{true: "(CRIT!)", false: "(close)"}[result.AttackZScore > 2.0]))
+		}
+
+		if result.AttackZScore > 2.0 &&
+			(result.NewPosition.String() == "clinched" || result.NewPosition.String() == "grounded") {
+
+			// 15% chance to trigger disarm
+			var disarmResult combat.DisarmResult
+			if targetMob != nil {
+				disarmResult = combat.AttemptCritDisarm(user.Character, &targetMob.Character, 15.0)
+			} else {
+				disarmResult = combat.AttemptCritDisarm(user.Character, targetChar.Character, 15.0)
+			}
+
+			if disarmResult.Success {
+				// Drop weapon to room
+				room.AddItem(disarmResult.Weapon, false)
+
+				// Send messages
+				user.SendText(disarmResult.Message)
+				if targetChar != nil {
+					targetChar.SendText(disarmResult.TargetMsg)
+				}
+				room.SendText(disarmResult.RoomMessage, user.UserId, targetPlayerId)
+			}
+		}
 	} else {
 		// Failure messages
 		user.SendText(fmt.Sprintf(`Your <ansi fg="yellow-bold">grapple</ansi> attempt against <ansi fg="mobname">%s</ansi> fails!`, targetName))

@@ -16,6 +16,8 @@ type GrappleResult struct {
 	AttackRoll       float64
 	DefenseRoll      float64
 	PositionPenalty  float64 // For defender if prone
+	AttackZScore     float64 // For crit detection (Stage 8.4)
+	DefenseZScore    float64 // For reference (Stage 8.4)
 }
 
 const (
@@ -53,8 +55,16 @@ func AttemptGrapple(attacker *characters.Character, defender *characters.Charact
 	attackerCombatSkill := float64(attacker.GetCombatSkillLevel())
 	defenderCombatSkill := float64(defender.GetCombatSkillLevel())
 
-	result.AttackScore = float64(attacker.Stats.Dexterity.ValueAdj) + attackerCombatSkill
+	// Check for 1-round grapple opportunity from prior dodge crit (Stage 8.4)
+	opportunityBonus := GetGrappleOpportunityBonus(attacker)
+
+	result.AttackScore = (float64(attacker.Stats.Dexterity.ValueAdj) + attackerCombatSkill) * opportunityBonus
 	result.DefenseScore = float64(defender.Stats.Dexterity.ValueAdj) + defenderCombatSkill
+
+	// Clear opportunity after use if it was active (Stage 8.4)
+	if opportunityBonus > 1.0 {
+		ClearGrappleOpportunity(attacker)
+	}
 
 	// Add weapon grapple modifier (if wielding a weapon)
 	if attacker.Equipment.Weapon.ItemId != 0 {
@@ -83,6 +93,8 @@ func AttemptGrapple(attacker *characters.Character, defender *characters.Charact
 	result.Margin = margin
 	result.AttackRoll = attackRoll.Value
 	result.DefenseRoll = defenseRoll.Value
+	result.AttackZScore = attackRoll.ZScore   // Stage 8.4: For crit detection
+	result.DefenseZScore = defenseRoll.ZScore // Stage 8.4: For reference
 
 	// Determine new position on success
 	if success {

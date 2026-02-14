@@ -22,6 +22,10 @@ type AttackResult struct {
 	DamageToSourceReduction int          // defaults 0
 	DefenseUsed             DefenseType  // Which defense avoided the hit (Stage 7.1)
 	DefenseAttempts         []DefenseType // Sequence of defenses attempted (Stage 7.1)
+	DefenseZScore           float64      // Defense roll z-score (Stage 8.4)
+	AttackZScore            float64      // Attack roll z-score (Stage 8.4)
+	ParryCritDetected       bool         // Flag for parry crit (Stage 8.4)
+	DodgeCritDetected       bool         // Flag for dodge crit (Stage 8.4)
 	MessagesToSource        []string
 	MessagesToTarget        []string
 	MessagesToSourceRoom    []string

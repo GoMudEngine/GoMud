@@ -572,8 +572,12 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 					}
 
 					// Opposed roll: attack vs this defense
-					defenseSucceeded, _, hitRoll, _ := dice.OpposedRoll(attackScore, defenseScore, combatStdDev)
+					defenseSucceeded, _, hitRoll, defenseRoll := dice.OpposedRoll(attackScore, defenseScore, combatStdDev)
 					lastHitRoll = hitRoll
+
+					// Store z-scores for crit detection (Stage 8.4)
+					attackResult.AttackZScore = hitRoll.ZScore
+					attackResult.DefenseZScore = defenseRoll.ZScore
 
 					if !defenseSucceeded {
 						// Defense failed, continue to next defense
@@ -583,6 +587,15 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 					// Defense succeeded! Attack is avoided
 					attackResult.DefenseUsed = DefenseType(defenseType)
 					hit = false
+
+					// Detect defense crits (z > 2.0) for Stage 8.4 crit outcomes
+					if defenseRoll.ZScore > 2.0 {
+						if defenseType == characters.DefenseParry {
+							attackResult.ParryCritDetected = true
+						} else if defenseType == characters.DefenseDodge {
+							attackResult.DodgeCritDetected = true
+						}
+					}
 
 					// Add defense success messages (Stage 7.1)
 					var defenseVerb string

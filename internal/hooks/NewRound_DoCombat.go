@@ -369,6 +369,48 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 
 			roundResult := combat.AttackPlayerVsPlayer(user, defUser)
 
+			// Stage 8.4: Process crit effects (parry crit disarm, dodge crit grapple opportunity)
+
+			// Debug logging for defense crits (player vs player)
+			if roundResult.DefenseZScore > 1.5 && roundResult.DefenseUsed != "" {
+				defUser.SendText(fmt.Sprintf(`<ansi fg="cyan">[DEBUG: %s z-score: %.2f %s]</ansi>`,
+					roundResult.DefenseUsed,
+					roundResult.DefenseZScore,
+					map[bool]string{true: "(CRIT!)", false: "(close)"}[roundResult.DefenseZScore > 2.0]))
+			}
+
+			// Process parry crit disarm (10% chance on parry crit)
+			if roundResult.ParryCritDetected {
+				disarmResult := combat.AttemptCritDisarm(defUser.Character, user.Character, 10.0)
+				if disarmResult.Success {
+					// Drop weapon to room
+					uRoom.AddItem(disarmResult.Weapon, false)
+
+					// Send messages to all parties
+					defUser.SendText(disarmResult.Message)
+					user.SendText(disarmResult.TargetMsg)
+					uRoom.SendText(disarmResult.RoomMessage, user.UserId, defUser.UserId)
+				}
+			}
+
+			// Process dodge crit grapple opportunity
+			if roundResult.DodgeCritDetected {
+				// Only set opportunity if grapple cooldown is available
+				// Check by examining the cooldown without consuming it
+				if defUser.Character.Cooldowns["special-move"] <= 0 {
+					combat.SetGrappleOpportunity(defUser.Character)
+
+					// Message
+					defUser.SendText(fmt.Sprintf(
+						`<ansi fg="yellow">You slip inside %s's guard! [Grapple opportunity]</ansi>`,
+						user.Character.Name))
+					uRoom.SendText(fmt.Sprintf(
+						`<ansi fg="combat">%s slips inside %s's guard!</ansi>`,
+						defUser.Character.Name, user.Character.Name),
+						user.UserId, defUser.UserId)
+				}
+			}
+
 			// If a mob attacks a player, check whether player has a charmed mob helping them, and if so, they will move to attack back
 			room := rooms.LoadRoom(roomId)
 			for _, instanceId := range room.GetMobs(rooms.FindCharmed) {
@@ -574,6 +616,41 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 			var roundResult combat.AttackResult
 
 			roundResult = combat.AttackPlayerVsMob(user, defMob)
+
+			// Stage 8.4: Process crit effects (parry crit disarm, dodge crit grapple opportunity)
+
+			// Debug logging for defense crits (player vs mob - mob defending)
+			if roundResult.DefenseZScore > 1.5 && roundResult.DefenseUsed != "" {
+				user.SendText(fmt.Sprintf(`<ansi fg="cyan">[DEBUG: Mob %s z-score: %.2f %s]</ansi>`,
+					roundResult.DefenseUsed,
+					roundResult.DefenseZScore,
+					map[bool]string{true: "(CRIT!)", false: "(close)"}[roundResult.DefenseZScore > 2.0]))
+			}
+
+			// Process parry crit disarm (10% chance on parry crit) - mob defending
+			if roundResult.ParryCritDetected {
+				disarmResult := combat.AttemptCritDisarm(&defMob.Character, user.Character, 10.0)
+				if disarmResult.Success {
+					// Drop weapon to room
+					uRoom.AddItem(disarmResult.Weapon, false)
+
+					// Send messages (mob defending, so mob gets credit for disarm)
+					user.SendText(disarmResult.TargetMsg)
+					uRoom.SendText(disarmResult.RoomMessage, user.UserId)
+				}
+			}
+
+			// Process dodge crit grapple opportunity - mob defending
+			if roundResult.DodgeCritDetected {
+				// Mobs don't have cooldown restrictions for grapple opportunity
+				combat.SetGrappleOpportunity(&defMob.Character)
+
+				// Message
+				uRoom.SendText(fmt.Sprintf(
+					`<ansi fg="combat"><ansi fg="mobname">%s</ansi> slips inside %s's guard!</ansi>`,
+					defMob.Character.Name, user.Character.Name),
+					user.UserId)
+			}
 
 			for _, buffId := range roundResult.BuffSource {
 				user.AddBuff(buffId, `combat`)
@@ -957,6 +1034,46 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 			var roundResult combat.AttackResult
 
 			roundResult = combat.AttackMobVsPlayer(mob, defUser)
+
+			// Stage 8.4: Process crit effects (parry crit disarm, dodge crit grapple opportunity)
+
+			// Debug logging for defense crits (mob vs player - player defending)
+			if roundResult.DefenseZScore > 1.5 && roundResult.DefenseUsed != "" {
+				defUser.SendText(fmt.Sprintf(`<ansi fg="cyan">[DEBUG: %s z-score: %.2f %s]</ansi>`,
+					roundResult.DefenseUsed,
+					roundResult.DefenseZScore,
+					map[bool]string{true: "(CRIT!)", false: "(close)"}[roundResult.DefenseZScore > 2.0]))
+			}
+
+			// Process parry crit disarm (10% chance on parry crit) - player defending
+			if roundResult.ParryCritDetected {
+				disarmResult := combat.AttemptCritDisarm(defUser.Character, &mob.Character, 10.0)
+				if disarmResult.Success {
+					// Drop weapon to room
+					mobRoom.AddItem(disarmResult.Weapon, false)
+
+					// Send messages to all parties
+					defUser.SendText(disarmResult.Message)
+					mobRoom.SendText(disarmResult.RoomMessage, defUser.UserId)
+				}
+			}
+
+			// Process dodge crit grapple opportunity - player defending
+			if roundResult.DodgeCritDetected {
+				// Only set opportunity if grapple cooldown is available
+				if defUser.Character.Cooldowns["special-move"] <= 0 {
+					combat.SetGrappleOpportunity(defUser.Character)
+
+					// Message
+					defUser.SendText(fmt.Sprintf(
+						`<ansi fg="yellow">You slip inside %s's guard! [Grapple opportunity]</ansi>`,
+						mob.Character.Name))
+					mobRoom.SendText(fmt.Sprintf(
+						`<ansi fg="combat">%s slips inside %s's guard!</ansi>`,
+						defUser.Character.Name, mob.Character.Name),
+						defUser.UserId)
+				}
+			}
 
 			// If a mob attacks a player, check whether player has a charmed mob helping them, and if so, they will move to attack back
 			room := rooms.LoadRoom(roomId)
