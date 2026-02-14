@@ -1777,9 +1777,11 @@ Asymmetric aggro state - mob spawning/aggro logic sets mob's aggro but doesn't s
 **Priority**: High - breaks combat flow, very noticeable to players
 
 **Testing**:
-- [ ] Wait for mob to respawn in same room → verify auto-aggro back
-- [ ] Hostile mob enters room → verify auto-aggro back
-- [ ] Special moves work without manual attack command
+- [x] Wait for mob to respawn in same room → verify auto-aggro back
+- [x] Hostile mob enters room → verify auto-aggro back
+- [x] Special moves work without manual attack command
+
+**Status**: ✅ COMPLETED - Added reciprocal aggro in `NewRound_DoCombat.go:932-935`
 
 ---
 
@@ -2654,4 +2656,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-14
 **Status**: In Progress
-**Current Stage**: 8.7 Complete — Weapon & armor grapple modifiers active, ready for Stage 8.8 (auto-aggro hotfix)
+**Current Stage**: 8.8 Complete — Auto-aggro hotfix applied, ready for Phase 9 (Combat Presentation Overhaul)

@@ -929,6 +929,11 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 
 			affectedPlayerIds = append(affectedPlayerIds, mob.Character.Aggro.UserId)
 
+			// Stage 8.8: Players get aggro when attacked by mobs (reciprocal aggro)
+			if defUser.Character.Aggro == nil {
+				defUser.Character.SetAggro(0, mob.InstanceId, characters.DefaultAttack)
+			}
+
 			// Stage 8.3: Process automatic grapple position progression
 			processGrappleProgression(&mob.Character, defUser.Character, mob.Character.Name, defUser.Character.Name, mobRoom, 0, defUser.UserId)
 
