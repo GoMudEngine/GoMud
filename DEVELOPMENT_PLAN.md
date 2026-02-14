@@ -1957,6 +1957,8 @@ Each combat round:
 - Low-skill mobs mostly use basic attacks with occasional special moves
 - Boss mobs can be configured with custom move sets
 
+**Status**: ✅ COMPLETED - NPC Combat AI implemented with 6 profiles, contextual move scoring, and YAML customization (10d908a)
+
 ---
 
 ## Phase 8 Summary
@@ -1971,8 +1973,8 @@ Each combat round:
 | 8.6 | Submissions + failure penalties | ~300 | 10 | ✅ Complete (e829213) |
 | 8.7 | Weapon/armor modifiers (data) | ~150 | 25 | ✅ Complete (737be35) |
 | 8.8 | Auto-aggro reciprocal (hotfix) | ~10 | 2 | ✅ Complete (61fae51) |
-| 8.9 | NPC combat AI for special moves | ~400 | 5 | 🔄 Ready to implement |
-| **Total** | **Integrated grappling + AI** | **~2260** | **~68 unique** | **Phase 8** |
+| 8.9 | NPC combat AI for special moves | ~400 | 13 | ✅ Complete (10d908a) |
+| **Total** | **Integrated grappling + AI** | **~2260** | **~68 unique** | **Phase 8 Complete** |
 
 **Phase Completion**: After Stage 8.9, combat system will include:
 - Position-based mechanics (Standing/Prone/Clinched/Grounded)
@@ -2857,4 +2859,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-14
 **Status**: In Progress
-**Current Stage**: 8.8 Complete — Auto-aggro hotfix applied, ready for Stage 8.9 (NPC Combat AI)
+**Current Stage**: 8.9 Complete — Phase 8 (Integrated Grappling + AI) fully implemented. Ready for Phase 9 (Leveling System)
