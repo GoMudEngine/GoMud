@@ -1736,7 +1736,7 @@ Heavy/Plate: -2.0  (historically accurate - stuck like a turtle!)
 | 8.4 | Crit outcomes (disarm, opportunities) | ~350 | 12 | ✅ Complete (7d17921) |
 | 8.5 | Multi-combatant penalties | ~200 | 8 | ✅ Complete (97085f2) |
 | 8.6 | Submissions + failure penalties | ~300 | 10 | ✅ Complete (e829213) |
-| 8.7 | Weapon/armor modifiers (data) | ~150 | 25 | Pending |
+| 8.7 | Weapon/armor modifiers (data) | ~150 | 25 | ✅ Complete (737be35) |
 | 8.8 | **HOTFIX**: Auto-aggro when attacked | ~50 | 3 | **KNOWN BUG** |
 | **Total** | **Integrated grappling system** | **~1900** | **~61 unique** | **Phase 8** |
 
@@ -2654,4 +2654,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-14
 **Status**: In Progress
-**Current Stage**: 8.6 Complete — Submission command and failed grapple penalties active, ready for Stage 8.7
+**Current Stage**: 8.7 Complete — Weapon & armor grapple modifiers active, ready for Stage 8.8 (auto-aggro hotfix)
