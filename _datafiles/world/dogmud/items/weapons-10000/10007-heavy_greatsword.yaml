@@ -9,6 +9,7 @@ subtype: slashing
 weight: 20.0  # Heavy two-handed weapon
 speedmultiplier: 0.5  # Slow, heavy two-handed weapon
 staminacost: 12  # Heavy weapon, high stamina cost
+grapplemodifier: -5.0  # Large, unwieldy weapon - very hard to grapple with
 damage:
   basedamage: 12
   variance: 3
