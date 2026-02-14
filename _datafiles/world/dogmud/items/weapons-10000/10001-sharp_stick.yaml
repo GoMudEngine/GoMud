@@ -8,6 +8,7 @@ subtype: bludgeoning
 uses: 0
 weight: 1.0  # Very light improvised weapon
 speedmultiplier: 0.8  # Light improvised weapon - faster than heavy weapons
+grapplemodifier: -2.0  # Improvised weapon - not ideal for grappling
 damage:
   basedamage: 2
   variance: 1

@@ -9,6 +9,7 @@ subtype: slashing
 weight: 8.0  # Medium sword
 speedmultiplier: 0.7  # Standard one-handed sword speed
 staminacost: 8  # Medium weapon cost
+grapplemodifier: 0.0  # Medium weapon - neutral grapple modifier
 damage:
   basedamage: 6
   variance: 2

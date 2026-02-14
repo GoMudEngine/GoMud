@@ -212,6 +212,7 @@ type ItemSpec struct {
 	StaminaCost     int         `yaml:"staminacost,omitempty"`     // Stamina cost per attack with this weapon
 	SpeedMultiplier float64     `yaml:"speedmultiplier,omitempty"` // Attack speed modifier (1.0 = unarmed baseline, <1.0 slower, >1.0 faster)
 	Weight          float64     `yaml:"weight,omitempty"`          // Weight in pounds (affects encumbrance)
+	GrappleModifier float64     `yaml:"grapplemodifier,omitempty"` // Grapple bonus/penalty (Stage 8.2)
 	Hands           WeaponHands `yaml:"hands"`                     // How many hands it takes to wield
 	Name            string
 	DisplayName     string `yaml:"displayname,omitempty"` // Name that is typically displayed to the user
