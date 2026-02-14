@@ -1785,6 +1785,202 @@ Asymmetric aggro state - mob spawning/aggro logic sets mob's aggro but doesn't s
 
 ---
 
+### Stage 8.9: NPC Combat AI - Special Moves
+**Goal**: Implement intelligent NPC AI for using special combat moves (bash, trip, kick, grapple, submit) with generic defaults and per-mob customization
+
+**Current State**:
+- Mobs have `CombatCommands []string` field for random combat actions
+- `ActivityLevel` (1-100%) determines action frequency
+- Target switching AI exists for skilled mobs (combat skill >= 30)
+- No AI for choosing special moves contextually
+
+**Design Philosophy**:
+- **Default AI**: Smart, context-aware decision making for all NPCs
+- **Configurable**: YAML-based customization per mob type
+- **Skill-scaled**: Higher combat skills = better tactical decisions
+- **Context-aware**: Considers health, position, grapple state, weapon type
+
+**Architecture**:
+
+1. **New File**: `internal/combat/ai.go`
+   - `ChooseSpecialMove(mob, target) string` - Main AI decision function
+   - `EvaluateMoveViability(mob, target, moveType) int` - Score each move (0-100)
+   - `GetMovePreferences(mob) map[string]int` - Get mob's move weights
+
+2. **New Mob Fields** (optional, for customization):
+   ```go
+   // Combat AI configuration
+   AIProfile string // "defensive", "aggressive", "grappler", "brawler", "tactical"
+   MovePreferences map[string]int // Custom weights: {"bash": 30, "grapple": 50, "kick": 20}
+   SpecialMoveChance int // Base % chance to attempt special move (default: 30%)
+   ```
+
+3. **YAML Configuration Example**:
+   ```yaml
+   mobid: 15
+   aiprofile: "grappler"  # Prefers grappling moves
+   specialmovechance: 50   # 50% chance to use special moves
+   movepreferences:
+     grapple: 60
+     submit: 40
+     bash: 10
+   ```
+
+**AI Decision Flow**:
+
+```
+Each combat round:
+1. Check ActivityLevel (existing mechanic)
+2. Roll against SpecialMoveChance (default 30%, scaled by combat skill)
+3. If yes, evaluate all viable special moves:
+   - Bash: Good if target standing, mob has bludgeon weapon, target health > 50%
+   - Trip: Good if target standing, mob has decent dexterity, close combat
+   - Kick: Good if target standing, mob unarmed or light weapon
+   - Grapple: Good if both standing, mob has wrestling skill, wants control
+   - Submit: Only if controller in dominant grapple position
+   - Escape: Only if grappled and in bad position
+4. Score each move based on:
+   - Viability (can it be used now?)
+   - Effectiveness (mob stats/skills favor it?)
+   - Tactical value (current combat state)
+   - Preference weight (from AI profile/YAML)
+5. Weight scores by preferences, pick highest
+6. Execute move command
+7. If no special move chosen, use regular attack/CombatCommands
+```
+
+**AI Profiles** (Default Behavior Templates):
+
+- **`default`**: Balanced mix, 30% special move chance
+  - Standing: bash 25%, trip 20%, kick 15%, grapple 40%
+  - Grappled: escape 60%, submit 40%
+
+- **`aggressive`**: High damage, rushes fights, 40% special move chance
+  - Prefers: bash 40%, kick 30%, trip 20%, grapple 10%
+  - Tends toward damage over control
+
+- **`defensive`**: Cautious, uses control moves, 25% special move chance
+  - Prefers: trip 35%, grapple 35%, bash 20%, kick 10%
+  - Higher threshold for submission
+
+- **`grappler`**: Wrestling specialist, 50% special move chance
+  - Prefers: grapple 60%, submit 30%, trip 10%
+  - Aggressive position progression
+
+- **`brawler`**: Unarmed specialist, 45% special move chance
+  - Prefers: kick 40%, trip 30%, grapple 20%, bash 10%
+  - Favors unarmed moves
+
+- **`tactical`**: Smart fighter, adapts to situation, 35% special move chance
+  - High variance based on target state
+  - Uses bash on healthy targets, submit on grappled, trip on low-dex targets
+
+**Move Viability Scoring** (0-100 scale):
+
+**Bash**:
+- Base: 50
+- +30 if wielding bludgeon weapon
+- +20 if target health > 60%
+- +15 if combat skill > 50
+- -50 if target prone
+- -100 if no weapon or wrong damage type
+
+**Trip**:
+- Base: 40
+- +25 if mob dexterity > 14
+- +20 if target dexterity < 10
+- +15 if mob has unarmed-combat skill > 40
+- -100 if target already prone
+- -50 if in grapple
+
+**Kick**:
+- Base: 45
+- +30 if unarmed or light weapon
+- +20 if mob unarmed-combat > 50
+- +15 if mob strength > 14
+- -100 if target prone
+- -30 if wielding heavy weapon
+
+**Grapple**:
+- Base: 50
+- +30 if mob wrestling > 40
+- +20 if mob strength > target strength
+- +15 if target health < 30% (finish them)
+- -100 if already in grapple
+- -50 if mob health < 20% (too risky)
+
+**Submit** (only when grapple controller):
+- Base: 40
+- +40 if in dominant position (mounted, standing over prone)
+- +20 if mob wrestling > 60
+- +15 if target health < 40%
+- -100 if not controller
+- -100 if not in grapple
+
+**Escape** (only when grappled and not controller):
+- Base: 60
+- +30 if mob health < 30% (desperate)
+- +20 if mob strength > target strength
+- +15 if mob dexterity > 14
+- -100 if controller
+- -40 if in favorable position
+
+**Implementation Steps**:
+
+1. **Create `internal/combat/ai.go`**:
+   - Define AI profiles (constants/structs)
+   - Implement `ChooseSpecialMove()` function
+   - Implement scoring functions for each move type
+   - Load preferences from mob YAML
+
+2. **Update `internal/mobs/mobs.go`**:
+   - Add optional AI fields to Mob struct
+   - Default `AIProfile = "default"`
+   - Default `SpecialMoveChance = 30`
+
+3. **Integrate into `internal/hooks/NewRound_DoCombat.go`**:
+   - In mob combat loop (around line 869-898, existing combat command logic)
+   - Before checking `CombatCommands`, call `ai.ChooseSpecialMove()`
+   - If special move chosen, execute it
+   - Otherwise fall back to existing CombatCommands or standard attack
+
+4. **YAML Loader Support** (if needed):
+   - Update YAML parsing to load `aiprofile`, `specialmovechance`, `movepreferences`
+   - Gracefully handle missing fields (use defaults)
+
+5. **Testing**:
+   - Create test mobs with different AI profiles
+   - Verify moves are chosen contextually
+   - Ensure customization via YAML works
+   - Test that defaults apply when no profile specified
+
+**Files to Modify**:
+- `internal/combat/ai.go` (NEW)
+- `internal/mobs/mobs.go` (add AI fields)
+- `internal/hooks/NewRound_DoCombat.go` (integrate AI)
+- `_datafiles/world/dogmud/mobs/*.yaml` (optional, for testing custom AI)
+
+**Testing Checklist**:
+- [ ] Default AI profile works for mobs without YAML config
+- [ ] Aggressive AI prefers bash/kick over grapple
+- [ ] Grappler AI initiates and maintains grapples
+- [ ] Defensive AI uses trip/control moves appropriately
+- [ ] Tactical AI adapts to combat state (health, position)
+- [ ] Custom YAML preferences override defaults
+- [ ] AI respects move viability (no bash when prone, no submit when not controller)
+- [ ] ActivityLevel still gates AI decisions
+- [ ] Combat skill scales decision quality (low skill = simpler tactics)
+
+**Expected Behavior After Implementation**:
+- Guards use defensive tactics (trip, control)
+- Brawlers/thugs use kicks and bashes
+- Wrestlers/grapplers attempt submissions
+- Skilled fighters adapt to combat flow
+- Low-skill mobs mostly use basic attacks with occasional special moves
+- Boss mobs can be configured with custom move sets
+
+---
+
 ## Phase 9: Combat Presentation Overhaul
 
 > **Goal**: Transform combat from a "you hit for X damage" number game into an immersive,
@@ -2656,4 +2852,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-14
 **Status**: In Progress
-**Current Stage**: 8.8 Complete — Auto-aggro hotfix applied, ready for Phase 9 (Combat Presentation Overhaul)
+**Current Stage**: 8.8 Complete — Auto-aggro hotfix applied, ready for Stage 8.9 (NPC Combat AI)
