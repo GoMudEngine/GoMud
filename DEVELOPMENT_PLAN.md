@@ -1591,8 +1591,10 @@ Clinched controller: +5% crit (slight advantage)
 
 ---
 
-### Stage 8.6: Submission Command & Failed Grapple Penalties
+### Stage 8.6: Submission Command & Failed Grapple Penalties ✅ COMPLETED
 **Goal**: Add high-risk submission finishing move. Add meaningful penalties for failed grapple attempts (risk/reward).
+
+**Merge Commit**: e829213
 
 **Design**:
 **Submission Mechanic**:
@@ -1732,8 +1734,8 @@ Heavy/Plate: -2.0  (historically accurate - stuck like a turtle!)
 | 8.2 | Grapple command + transitions | ~300 | 10 | ✅ Complete (170e9ec) |
 | 8.3 | Attack speed + auto-progression | ~350 | 10 | ✅ Complete (3f53cac) |
 | 8.4 | Crit outcomes (disarm, opportunities) | ~350 | 12 | ✅ Complete (7d17921) |
-| 8.5 | Multi-combatant penalties | ~200 | 8 | Pending |
-| 8.6 | Submissions + failure penalties | ~300 | 10 | Pending |
+| 8.5 | Multi-combatant penalties | ~200 | 8 | ✅ Complete (97085f2) |
+| 8.6 | Submissions + failure penalties | ~300 | 10 | ✅ Complete (e829213) |
 | 8.7 | Weapon/armor modifiers (data) | ~150 | 25 | Pending |
 | 8.8 | **HOTFIX**: Auto-aggro when attacked | ~50 | 3 | **KNOWN BUG** |
 | **Total** | **Integrated grappling system** | **~1900** | **~61 unique** | **Phase 8** |
@@ -2535,4 +2537,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-14
 **Status**: In Progress
-**Current Stage**: 8.5 Complete — Third-party grapple vulnerability active, ready for Stage 8.6
+**Current Stage**: 8.6 Complete — Submission command and failed grapple penalties active, ready for Stage 8.7
