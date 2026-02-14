@@ -20,6 +20,14 @@ type GrappleResult struct {
 	DefenseZScore    float64 // For reference (Stage 8.4)
 }
 
+// SubmissionResult represents the outcome of a submission attempt (Stage 8.6)
+type SubmissionResult struct {
+	Success      bool
+	Margin       float64
+	AttackZScore float64
+	Choice       string // "yield" or "resist"
+}
+
 const (
 	grappleStdDev = 20.0 // Standard deviation for grapple opposed rolls
 )
@@ -237,4 +245,105 @@ func IsThirdPartyAttack(attacker *characters.Character, target *characters.Chara
 	// Attacker is third-party if they're not part of this grapple
 	// (different controller ID or no grapple at all)
 	return attacker.GrappleControllerId != target.GrappleControllerId
+}
+
+// AttemptSubmission performs a submission attempt from controller to controlled.
+// Stage 8.6: High-risk finishing move requiring Grounded position.
+//
+// Submission calculation:
+// attackScore = controller.Str + controller.CombatSkill
+// defenseScore = controlled.Str + controlled.CombatSkill + (controlled.Dex / 2)
+//
+// Success threshold: z-score > 1.0 (harder than normal grapple)
+//
+// Note: Opponent choice logic (yield vs resist) is handled in the command handler
+// where we have access to player/mob distinction.
+func AttemptSubmission(controller *characters.Character, controlled *characters.Character) SubmissionResult {
+	result := SubmissionResult{}
+
+	// Base scores: Str + Combat Skill
+	controllerScore := float64(controller.Stats.Strength.ValueAdj) + float64(controller.GetCombatSkillLevel())
+	controlledScore := float64(controlled.Stats.Strength.ValueAdj) + float64(controlled.GetCombatSkillLevel()) +
+		(float64(controlled.Stats.Dexterity.ValueAdj) * 0.5) // Half dex bonus for escape attempts
+
+	// Opposed roll
+	success, margin, attackRoll, _ := dice.OpposedRoll(controllerScore, controlledScore, grappleStdDev)
+
+	result.Margin = margin
+	result.AttackZScore = attackRoll.ZScore
+
+	// Success requires z-score > 1.0 (harder than normal grapple)
+	result.Success = success && attackRoll.ZScore > 1.0
+
+	return result
+}
+
+// ApplySubmissionFailure applies the consequences of a failed submission attempt.
+// Stage 8.6: Controller falls prone, controlled escapes to standing.
+func ApplySubmissionFailure(controller *characters.Character, controlled *characters.Character) {
+	// Controlled escapes to standing
+	controlled.CombatPosition = characters.PositionStanding
+
+	// Controller falls prone (overcommitted)
+	controller.CombatPosition = characters.PositionProne
+	controller.PositionRoundsMin = 2 // Must spend 2 rounds recovering
+
+	// Clear grapple state for both
+	controller.GrappleControllerId = 0
+	controlled.GrappleControllerId = 0
+	controller.IsGrappleController = false
+	controlled.IsGrappleController = false
+}
+
+// ApplySubmissionSuccess applies the consequences of a successful submission.
+// Stage 8.6: If opponent yields, combat ends. If resists, takes 2x damage and attempts escape.
+func ApplySubmissionSuccess(controller *characters.Character, controlled *characters.Character, choice string) {
+	if choice == "yield" {
+		// Opponent yields - combat ends, they are helpless
+		// Note: Actual combat end logic is handled in submit.go command
+		// This function just marks the state
+		controlled.CombatPosition = characters.PositionProne
+		controlled.PositionRoundsMin = 3 // Helpless on ground
+	} else {
+		// Opponent resists - takes damage based on controller's strength
+		baseDamage := float64(controller.Stats.Strength.ValueAdj)
+		damage := int(baseDamage * 2.0) // 2x strength as damage
+		if damage < 1 {
+			damage = 1
+		}
+
+		controlled.Health -= damage
+
+		// Trigger automatic escape check (handled in position progression system)
+		// The grounded escape will be attempted in the next round tick
+	}
+}
+
+// CritFailureResult represents the outcome of a critical grapple failure (Stage 8.6)
+type CritFailureResult struct {
+	Message       string // For attacker
+	TargetMessage string // For defender
+	RoomMessage   string // For observers
+}
+
+// HandleGrappleCritFailure handles the consequences of a critical grapple failure.
+// Stage 8.6: Attacker falls prone, defender gets reversal opportunity (+15% grapple bonus).
+//
+// Triggered when grapple fails with z-score < -2.0 (~2-3% chance)
+func HandleGrappleCritFailure(attacker *characters.Character, defender *characters.Character) CritFailureResult {
+	result := CritFailureResult{}
+
+	// Attacker falls prone (badly overcommitted)
+	attacker.CombatPosition = characters.PositionProne
+	attacker.PositionRoundsMin = 2 // Must spend 2 rounds recovering
+
+	// Defender gets grapple opportunity (reuse existing system from Stage 8.4)
+	SetGrappleOpportunity(defender)
+
+	// Generate dramatic messages
+	result.Message = `<ansi fg="red-bold">You overextend badly and fall to the ground!</ansi>`
+	result.TargetMessage = `<ansi fg="yellow-bold">Your opponent overextends and falls - you see an opening!</ansi>`
+	result.RoomMessage = `<ansi fg="combat">The failed grapple sends them sprawling!</ansi>`
+
+	return result
 }

@@ -606,6 +606,11 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 						defenseScore *= float64(cfg.ThirdPartyGrapplePenalty) // Default: 0.70 (-30% defense)
 					}
 
+					// Stage 8.6: Apply failed grapple defense penalty
+					if targetChar.DefensePenaltyNextRound {
+						defenseScore *= 0.85 // -15% defense (off-balance, exposed)
+					}
+
 					// Opposed roll: attack vs this defense
 					defenseSucceeded, _, hitRoll, defenseRoll := dice.OpposedRoll(attackScore, defenseScore, combatStdDev)
 					lastHitRoll = hitRoll

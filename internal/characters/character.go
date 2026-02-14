@@ -82,6 +82,7 @@ type Character struct {
 	GrappleControllerId      int                            `yaml:"-"`                       // UserId or MobInstanceId of grapple controller (0 = none, Stage 8.2+). Don't store this.
 	IsGrappleController      bool                           `yaml:"-"`                       // True if this character is the controller in a grapple (Stage 8.3). Don't store this.
 	RecoveryPenaltyThisRound bool                           `yaml:"-"`                       // If true, attacks reduced to 1 this round due to recovery attempt. Don't store this.
+	DefensePenaltyNextRound  bool                           `yaml:"-"`                       // If true, defense reduced 15% next round (failed grapple exposure). Don't store this.
 	Skills                   map[string]int                 `yaml:"skills,omitempty"`        // The skills the character has, and what level they are at
 	Cooldowns        Cooldowns                      `yaml:"cooldowns,omitempty"`     // How many rounds until it is cooled down
 	Settings         map[string]string              `yaml:"settings,omitempty"`      // custom setting tracking, used for anything.

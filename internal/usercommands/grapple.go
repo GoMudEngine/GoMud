@@ -144,6 +144,29 @@ func Grapple(rest string, user *users.UserRecord, room *rooms.Room, flags events
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> tries to grapple <ansi fg="mobname">%s</ansi>, but fails!`, user.Character.Name, targetName),
 			user.UserId, targetPlayerId,
 		)
+
+		// Stage 8.6: Failed grapple penalties
+
+		// Simple failure (z < 0.5): Defense penalty
+		if result.AttackZScore < 0.5 {
+			user.Character.DefensePenaltyNextRound = true
+			user.SendText(`<ansi fg="red">Your failed attempt leaves you exposed!</ansi>`)
+		}
+
+		// Critical failure (z < -2.0): Fall prone + reversal opportunity
+		if result.AttackZScore < -2.0 {
+			var critResult combat.CritFailureResult
+			if targetMob != nil {
+				critResult = combat.HandleGrappleCritFailure(user.Character, &targetMob.Character)
+			} else {
+				critResult = combat.HandleGrappleCritFailure(user.Character, targetChar.Character)
+			}
+			user.SendText(critResult.Message)
+			if targetChar != nil {
+				targetChar.SendText(critResult.TargetMessage)
+			}
+			room.SendText(critResult.RoomMessage, user.UserId, targetPlayerId)
+		}
 	}
 
 	// Progress unarmed combat skill

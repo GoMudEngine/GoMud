@@ -144,6 +144,9 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 				// Stage 7.5: Clear recovery penalty flag at end of round
 				user.Character.RecoveryPenaltyThisRound = false
 
+				// Stage 8.6: Clear defense penalty flag at end of round
+				user.Character.DefensePenaltyNextRound = false
+
 				// Recalculate all stats at the end of the round tick
 				user.Character.Validate()
 

@@ -153,6 +153,7 @@ var (
 		`stash`:       {Stash, false, false, false}, // Can't manipulate stash in combat
 		`status`:      {Status, true, true, false},
 		`stand`:       {Stand, true, true, false}, // Can stand when downed
+		`submit`:      {Submit, false, true, false},
 		`storage`:     {Storage, false, false, false}, // Can't manipulate storage in combat
 		`suicide`:     {Suicide, true, true, false},
 		`syslogs`:     {SysLogs, true, true, true}, // Admin only
