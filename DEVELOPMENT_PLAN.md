@@ -1407,7 +1407,9 @@ success = OpposedRoll(attackScore, defenseScore)
 
 ---
 
-### Stage 8.3: Position-Based Attack Speed & Auto-Progression
+### Stage 8.3: Position-Based Attack Speed & Auto-Progression ✅ COMPLETED
+**Commit**: `170e9ec` - Merge feature/stage-8.3-position-combat-effects into development
+
 **Goal**: Make positions affect combat speed. Add automatic control checks (Clinched→Grounded) and escape checks (Grounded→Standing) each round.
 
 **Design**:
@@ -2496,4 +2498,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-13
 **Status**: In Progress
-**Current Stage**: 8.2 Complete — Grapple command implemented, ready for Stage 8.3
+**Current Stage**: 8.3 Complete — Position combat effects active, ready for Stage 8.4
