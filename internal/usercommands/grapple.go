@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/combat"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -19,14 +20,15 @@ func Grapple(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		return true, nil
 	}
 
-	// Check grapple cooldown (5 rounds)
-	if !user.Character.Cooldowns.Try("grapple", "5 rounds") {
-		remaining := user.Character.Cooldowns["grapple"]
+	// Check shared special move cooldown (same as bash/trip/kick)
+	cfg := configs.GetGamePlayConfig()
+	if !user.Character.Cooldowns.Try("special-move", fmt.Sprintf("%d rounds", cfg.SpecialMoveCooldown)) {
+		remaining := user.Character.Cooldowns["special-move"]
 		roundWord := "round"
 		if remaining > 1 {
 			roundWord = "rounds"
 		}
-		user.SendText(fmt.Sprintf("You can't grapple again yet! (%d %s remaining)", remaining, roundWord))
+		user.SendText(fmt.Sprintf("You can't use another special move yet! (%d %s remaining)", remaining, roundWord))
 		return true, nil
 	}
 
