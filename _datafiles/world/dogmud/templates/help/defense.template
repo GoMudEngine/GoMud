@@ -1,0 +1,99 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">defense</ansi>
+
+DOGMud uses a layered defense system where you get multiple chances to avoid incoming
+attacks. Each defense type uses different skills, costs different stamina, and has
+different requirements.
+
+<ansi fg="yellow">━━━ Defense Order ━━━</ansi>
+
+When attacked, your defenses are checked in this order (first success avoids the attack):
+
+  1. <ansi fg="stat">Dodge</ansi> → 2 stamina
+  2. <ansi fg="stat">Parry</ansi> → 4 stamina (only if weapon equipped)
+  3. <ansi fg="stat">Block</ansi> → 5 stamina (only if shield equipped)
+
+Each defense costs stamina even if it fails. Run out of stamina and your defenses
+collapse! This makes combat a war of attrition in long fights.
+
+<ansi fg="yellow">━━━ Dodge Defense ━━━</ansi>
+
+Your first line of defense, available to everyone.
+
+  <ansi fg="stat">Skills Used:</ansi> Unarmed Combat + Dexterity
+  <ansi fg="stat">Stamina Cost:</ansi> 2 per attempt
+  <ansi fg="stat">Requirements:</ansi> None (always available)
+
+  <ansi fg="stat">Effectiveness Reduced By:</ansi>
+  - Heavy armor (reduces mobility)
+  - High encumbrance (too much weight)
+  - Being prone (-50% effectiveness)
+
+Dodge is your bread-and-butter defense. Even heavily armored fighters rely on dodge
+as their first chance to avoid damage.
+
+<ansi fg="yellow">━━━ Parry Defense ━━━</ansi>
+
+Use your weapon to deflect incoming attacks.
+
+  <ansi fg="stat">Skills Used:</ansi> Weapon Combat + weapon parry rating
+  <ansi fg="stat">Stamina Cost:</ansi> 4 per attempt
+  <ansi fg="stat">Requirements:</ansi> Weapon equipped in primary or offhand
+
+  <ansi fg="stat">Bonuses:</ansi>
+  - Two-handed weapons get parry bonus
+  - Can parry with either hand when dual wielding
+
+  <ansi fg="stat">Penalties:</ansi>
+  - Being prone (-30% effectiveness)
+
+Parry is more stamina-intensive than dodge but can be very effective with the right
+weapon. Two-handed weapons excel at parrying.
+
+<ansi fg="yellow">━━━ Block Defense ━━━</ansi>
+
+Use your shield to absorb the blow.
+
+  <ansi fg="stat">Skills Used:</ansi> Weapon Combat + shield block rating
+  <ansi fg="stat">Stamina Cost:</ansi> 5 per attempt (most expensive)
+  <ansi fg="stat">Requirements:</ansi> Shield equipped in offhand
+
+  <ansi fg="stat">Benefits:</ansi>
+  - High effectiveness with quality shields
+  - Works reasonably well even when prone (-20% effectiveness)
+
+  <ansi fg="stat">Penalties:</ansi>
+  - Highest stamina cost
+  - Cannot dual wield weapons (shield takes offhand slot)
+
+Block is your final defense layer. Shields are stamina-hungry but provide excellent
+protection when your other defenses fail.
+
+<ansi fg="yellow">━━━ Defense Strategy ━━━</ansi>
+
+  <ansi fg="stat">Stamina Management:</ansi>
+  Long fights drain stamina quickly. Each missed defense costs stamina, so manage
+  your stamina pool carefully. Low stamina (<50%) imposes severe combat penalties.
+
+  <ansi fg="stat">Equipment Choices:</ansi>
+  - Dual wield: More attacks, only dodge and parry
+  - Sword + Shield: Fewer attacks, all three defenses
+  - Two-handed weapon: Moderate attacks, strong parry, no block
+
+  <ansi fg="stat">While Prone:</ansi>
+  All defenses are severely reduced when knocked down. Use <ansi fg="command">stand</ansi> to recover
+  quickly, or rely on auto-recovery to save stamina.
+
+<ansi fg="yellow">━━━ Defense Skills ━━━</ansi>
+
+Improve your defenses by progressing these skills:
+
+  <ansi fg="stat">Unarmed Combat:</ansi> Improves dodge effectiveness
+  <ansi fg="stat">Weapon Combat:</ansi> Improves parry and block effectiveness
+  <ansi fg="stat">Dexterity Stat:</ansi> Improves dodge chance (use-based progression)
+
+Train these skills through combat and see your survivability increase dramatically.
+
+<ansi fg="yellow">See Also:</ansi>
+
+  <ansi fg="command">help combat</ansi>, <ansi fg="command">help attack</ansi>, <ansi fg="command">help stamina</ansi>, <ansi fg="command">help prone</ansi>
+  <ansi fg="command">help skills</ansi>, <ansi fg="command">help dual-wield</ansi>

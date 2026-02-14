@@ -58,9 +58,12 @@ help:
       - break
       - cast
       - consider
+      - cooldowns
+      - defense
       - flee
       - kick
       - shoot
+      - stamina
       - stand
       - trip
     information:
@@ -154,7 +157,10 @@ help:
 help-aliases:
   brawling:         [tackle, brawl, disarm, recover, throw]
   combat:           [fighting, battle]
+  cooldowns:        [cooldown]
+  defense:          [dodge, parry, block, defenses]
   prone:            [knockdown, knocked-down, knocked down]
+  stamina:          [endurance, energy]
   enchant:          [unenchant, uncurse]
   skulduggery:      [sneak, bump, backstab, pickpocket]
   bank:             [deposit, withdraw]
