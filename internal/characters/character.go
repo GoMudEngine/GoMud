@@ -1683,6 +1683,13 @@ func (c *Character) SetAggroRemote(exitName string, userId int, mobInstanceId in
 
 func (c *Character) SetAggro(userId int, mobInstanceId int, aggroType AggroType, roundsWaitTime ...int) {
 
+	// Stage 8.3: Clear grapple state if switching targets
+	if c.Aggro != nil {
+		if c.Aggro.UserId != userId || c.Aggro.MobInstanceId != mobInstanceId {
+			c.ClearGrappleState()
+		}
+	}
+
 	var combatAddlWaitRounds int = 0
 
 	if len(roundsWaitTime) > 0 {
@@ -1720,6 +1727,18 @@ func (c *Character) SetCast(roundsWaitTime int, sInfo SpellAggroInfo) {
 
 func (c *Character) EndAggro() {
 	c.Aggro = nil
+	c.ClearGrappleState()
+}
+
+// ClearGrappleState clears all grapple-related state
+// Stage 8.3: Called when combat ends, targets change, or participant dies
+func (c *Character) ClearGrappleState() {
+	c.GrappleControllerId = 0
+	c.IsGrappleController = false
+	// Reset to standing if in a grapple position
+	if c.CombatPosition.IsGrapplePosition() {
+		c.CombatPosition = PositionStanding
+	}
 }
 
 func (c *Character) IsAggro(targetUserId int, targetMobInstanceId int) bool {
