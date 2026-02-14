@@ -418,8 +418,15 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				baseDmg += float64(weapon.StatMod(string(statmods.RacialBonusPrefix) + strings.ToLower(targetChar.Species())))
 			}
 
-			// Apply speed multiplier, skill modifiers, and dual wielding bonuses
+			// Apply weapon speed multiplier, skill modifiers, and dual wielding bonuses
 			attacks = sourceChar.GetModifiedAttackCount(attacks, weaponSpeed, isOffhand)
+
+			// Stage 8.3: Apply position-based speed modifier
+			positionSpeed := sourceChar.CombatPosition.GetSpeedMultiplier()
+			attacks = int(math.Ceil(float64(attacks) * positionSpeed))
+			if attacks < 1 {
+				attacks = 1 // Always at least 1 attack
+			}
 
 			// Stage 7.5: Reduce attacks to 1 if attempting recovery this round
 			if sourceChar.RecoveryPenaltyThisRound {
@@ -505,6 +512,22 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				// Skill advantage shifts crit threshold (better skill = more crits)
 				skillDiff := sourceChar.GetCombatSkillLevel() - targetChar.GetCombatSkillLevel()
 				critThreshold -= float64(skillDiff) * 0.05
+
+				// Stage 8.3: Position-based crit modifiers
+				// Grounded controller gets +10% crit, controlled gets -10%
+				// Clinched controller gets +5% crit
+				if sourceChar.CombatPosition.IsGrapplePosition() && sourceChar.IsGrappleController {
+					// Source is the grapple controller
+					if sourceChar.CombatPosition == characters.PositionGrounded {
+						critThreshold -= 0.4 // ~+10% crit chance (lower threshold = more crits)
+					} else if sourceChar.CombatPosition == characters.PositionClinched {
+						critThreshold -= 0.2 // ~+5% crit chance
+					}
+				}
+				if targetChar.CombatPosition == characters.PositionGrounded && !targetChar.IsGrappleController {
+					// Target is controlled in grounded position
+					critThreshold += 0.4 // Target gets -10% crit chance when controlled on ground
+				}
 
 				// Fumble threshold is FIXED - skill advantage doesn't make you fumble more
 				// A master doesn't fumble more when fighting a novice

@@ -80,6 +80,7 @@ type Character struct {
 	CombatPosition           CombatPosition                 `yaml:"-"`                       // Current combat position (Standing/Prone/Clinched/Grounded). Don't store this.
 	PositionRoundsMin        int                            `yaml:"-"`                       // Minimum rounds in current position (for Prone bash/trip, etc). Don't store this.
 	GrappleControllerId      int                            `yaml:"-"`                       // UserId or MobInstanceId of grapple controller (0 = none, Stage 8.2+). Don't store this.
+	IsGrappleController      bool                           `yaml:"-"`                       // True if this character is the controller in a grapple (Stage 8.3). Don't store this.
 	RecoveryPenaltyThisRound bool                           `yaml:"-"`                       // If true, attacks reduced to 1 this round due to recovery attempt. Don't store this.
 	Skills                   map[string]int                 `yaml:"skills,omitempty"`        // The skills the character has, and what level they are at
 	Cooldowns        Cooldowns                      `yaml:"cooldowns,omitempty"`     // How many rounds until it is cooled down
