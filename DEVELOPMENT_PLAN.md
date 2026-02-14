@@ -1280,7 +1280,9 @@ After Stage 4.7, manual testing revealed that arena mobs were too weak for new p
 
 ---
 
-### Stage 8.1: Combat Position System (Replaces Prone Boolean)
+### Stage 8.1: Combat Position System (Replaces Prone Boolean) ✅ COMPLETED
+**Commit**: `ace56e2` - feat: implement Stage 8.1 - Combat Position System
+
 **Goal**: Replace the `Prone` boolean flag with a unified `CombatPosition` enum system. Migrate existing bash/trip mechanics to use positions. This lays the foundation for integrated grappling without changing combat behavior.
 
 **Design**:
@@ -1318,13 +1320,14 @@ Standing ──[bash/trip]──> Prone ──[recovery]──> Standing
 8. Test files
 
 **Testing**:
-- [ ] **Unit Tests**: Position enum values and transitions
-- [ ] **Manual Test**: Bash opponent, verify they show as "prone" in adjectives
-- [ ] **Manual Test**: Verify recovery still works (prone → standing after rounds)
-- [ ] **Manual Test**: Verify prone attack/defense penalties still apply
-- [ ] **Manual Test**: `score` shows combat position
-- [ ] **Regression Test**: All Stage 7.5 prone functionality still works identically
-- [ ] **Integration Test**: Bash → wait → recover → verify standing
+- [x] **Unit Tests**: Position enum values and transitions
+- [x] **Manual Test**: Bash opponent, verify they show as "prone" in adjectives
+- [x] **Manual Test**: Verify recovery still works (prone → standing after rounds)
+- [x] **Manual Test**: Verify prone attack/defense penalties still apply
+- [x] **Manual Test**: Position shows in `look` command and `{pos}` prompt tag
+- [x] **Regression Test**: All Stage 7.5 prone functionality still works identically
+- [x] **Integration Test**: Bash → wait → recover → verify standing
+- [x] **Bug Fix**: Fixed cooldowns not persisting (changed to pointer receivers)
 
 **Acceptance Criteria**:
 - Prone system works identically to before (zero behavior change)
@@ -1718,7 +1721,7 @@ Heavy/Plate: -2.0  (historically accurate - stuck like a turtle!)
 
 | Stage | Focus | Lines | Files | Status |
 |-------|-------|-------|-------|--------|
-| 8.1 | Position system (replace Prone boolean) | ~200 | 8 | Pending |
+| 8.1 | Position system (replace Prone boolean) | ~200 | 10 | ✅ Complete (ace56e2) |
 | 8.2 | Grapple command + transitions | ~300 | 10 | Pending |
 | 8.3 | Attack speed + auto-progression | ~350 | 10 | Pending |
 | 8.4 | Crit outcomes (disarm, opportunities) | ~350 | 12 | Pending |
