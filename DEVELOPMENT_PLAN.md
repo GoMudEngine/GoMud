@@ -1732,7 +1732,8 @@ Heavy/Plate: -2.0  (historically accurate - stuck like a turtle!)
 | 8.5 | Multi-combatant penalties | ~200 | 8 | Pending |
 | 8.6 | Submissions + failure penalties | ~300 | 10 | Pending |
 | 8.7 | Weapon/armor modifiers (data) | ~150 | 25 | Pending |
-| **Total** | **Integrated grappling system** | **~1850** | **~58 unique** | **Phase 8** |
+| 8.8 | **HOTFIX**: Auto-aggro when attacked | ~50 | 3 | **KNOWN BUG** |
+| **Total** | **Integrated grappling system** | **~1900** | **~61 unique** | **Phase 8** |
 
 **Phase Completion**: After Stage 8.7, combat system includes:
 - Position-based mechanics (Standing/Prone/Clinched/Grounded)
@@ -1741,6 +1742,39 @@ Heavy/Plate: -2.0  (historically accurate - stuck like a turtle!)
 - Equipment-driven playstyles
 - Multi-combatant tactics
 - Risk/reward grappling decisions
+
+### Stage 8.8: Hotfix - Auto-Aggro When Attacked (KNOWN BUG)
+**Goal**: Fix player not auto-aggroing back when attacked by respawned/spawned mobs
+
+**Bug Description**:
+When a mob respawns in the same room as a player (or otherwise becomes aggro with a player):
+- Mob.Character.Aggro is set → mob attacks player
+- Player.Character.Aggro is NOT set → player doesn't attack back
+- Player takes damage without fighting back
+- Special move commands (grapple, etc.) fail: "You must be in combat!"
+- Player must manually type `attack <mob>` to start fighting
+
+**Root Cause**:
+Asymmetric aggro state - mob spawning/aggro logic sets mob's aggro but doesn't set player's aggro reciprocally.
+
+**Fix Required**:
+1. When mob sets aggro on player (in spawn/idle/patrol logic), also set player's aggro on mob
+2. Check mob spawn code, idle action code, and aggro-setting code
+3. Ensure reciprocal aggro: if A attacks B, then B should auto-attack A back
+4. May need to check `handleMobCombat()` or mob AI routines
+
+**Files to Check**:
+1. `internal/mobs/mobs.go` - Spawn/respawn logic
+2. `internal/mobs/*.go` - Idle/patrol/aggro logic
+3. `internal/hooks/NewRound_*.go` - Round processing
+4. Anywhere `mob.Character.SetAggro()` is called without reciprocal player aggro
+
+**Priority**: High - breaks combat flow, very noticeable to players
+
+**Testing**:
+- [ ] Wait for mob to respawn in same room → verify auto-aggro back
+- [ ] Hostile mob enters room → verify auto-aggro back
+- [ ] Special moves work without manual attack command
 
 ---
 
