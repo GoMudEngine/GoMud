@@ -1924,6 +1924,123 @@ Asymmetric aggro state - mob spawning/aggro logic sets mob's aggro but doesn't s
 
 ---
 
+### Stage 9.4: Combat Conditions System Refactor
+**Goal**: Consolidate scattered boolean flags (RecoveryPenaltyThisRound, DefensePenaltyNextRound, etc.) into a unified, configurable combat conditions system. Make it easy to add new temporary combat states.
+
+**Problem**:
+As combat has evolved through Stages 7-8, we've added individual boolean flags for various temporary states:
+- `RecoveryPenaltyThisRound` (Stage 7.5: prone recovery)
+- `DefensePenaltyNextRound` (Stage 8.6: failed grapple)
+- `IsGrappleController` (Stage 8.3: grapple state tracking)
+- Various timer-based states (GrappleOpportunity, etc.)
+
+Each flag requires:
+- Field in Character struct
+- Manual clearing in round tick hooks (both user and mob)
+- Individual application logic scattered across combat.go
+
+This is fragile, verbose, and error-prone. Adding a new temporary state requires touching 4+ files.
+
+**Solution**: Unified Conditions System
+```go
+type CombatCondition struct {
+    Type        ConditionType  // enum: RecoveryPenalty, DefensePenalty, GrappleOpportunity, etc.
+    Duration    int            // rounds remaining (0 = permanent until cleared)
+    Magnitude   float64        // effect strength (e.g., -0.15 for defense penalty)
+    Source      string         // what caused it (for debugging/messages)
+    Metadata    map[string]any // flexible data for condition-specific state
+}
+
+type ConditionType int
+const (
+    ConditionRecoveryPenalty ConditionType = iota  // -1 attack this round
+    ConditionDefensePenalty                         // -15% defense next round
+    ConditionGrappleOpportunity                     // +15% grapple bonus
+    ConditionGrappleController                      // is the grapple controller
+    // Future: Stunned, Dazed, Bleeding, Entangled, etc.
+)
+
+// Character struct changes
+type Character struct {
+    // ... existing fields ...
+    Conditions []CombatCondition `yaml:"-"` // Active combat conditions
+}
+```
+
+**API Design**:
+```go
+// Simple, consistent API
+char.AddCondition(ConditionDefensePenalty, 1, -0.15, "failed grapple")
+char.HasCondition(ConditionRecoveryPenalty) bool
+char.GetConditionMagnitude(ConditionDefensePenalty) float64
+char.RemoveCondition(ConditionGrappleOpportunity)
+char.TickConditions() // Called once in round tick, decrements all durations
+```
+
+**Changes**:
+1. Create `internal/combat/conditions.go` — Condition types, struct, management functions
+2. Add `Conditions []CombatCondition` field to Character struct
+3. Replace `RecoveryPenaltyThisRound` with `ConditionRecoveryPenalty`
+4. Replace `DefensePenaltyNextRound` with `ConditionDefensePenalty`
+5. Replace `IsGrappleController` with `ConditionGrappleController`
+6. Migrate grapple opportunity from Timers to Conditions
+7. Update combat.go to check conditions instead of individual flags
+8. Replace scattered flag clearing in hooks with single `TickConditions()` call
+9. Add condition display to `score`/`effects` command
+
+**Files to Modify** (~12 files, ~400 lines):
+1. `internal/combat/conditions.go` — New file, core conditions system
+2. `internal/characters/character.go` — Add Conditions field, remove old flags
+3. `internal/combat/combat.go` — Check conditions instead of flags
+4. `internal/combat/grapple.go` — Use condition API instead of flags
+5. `internal/combat/criteffects.go` — Migrate grapple opportunity to conditions
+6. `internal/usercommands/stand.go` — Check recovery penalty via condition
+7. `internal/usercommands/grapple.go` — Apply conditions instead of flags
+8. `internal/hooks/NewRound_UserRoundTick.go` — Replace flag clearing with TickConditions()
+9. `internal/hooks/NewRound_MobRoundTick.go` — Replace flag clearing with TickConditions()
+10. `internal/usercommands/score.go` — Display active conditions
+11. Test files
+
+**Migration Strategy**:
+1. Implement conditions system alongside existing flags (both work in parallel)
+2. Migrate one flag at a time (RecoveryPenalty → DefensePenalty → GrappleController → GrappleOpportunity)
+3. Test thoroughly after each migration
+4. Remove old flags only after all are migrated and tested
+5. Clean up scattered clearing logic from round ticks
+
+**Testing**:
+- [ ] **Unit Tests**: Condition add/remove/tick logic
+- [ ] **Manual Test**: Prone recovery, verify RecoveryPenalty condition applies and clears
+- [ ] **Manual Test**: Failed grapple, verify DefensePenalty condition applies and clears
+- [ ] **Manual Test**: Successful grapple, verify GrappleController condition tracks correctly
+- [ ] **Manual Test**: Dodge crit, verify GrappleOpportunity condition applies and clears after use
+- [ ] **Manual Test**: Multiple conditions active simultaneously, verify they stack correctly
+- [ ] **Manual Test**: Save/reload, verify conditions don't persist (yaml:"-" flag)
+- [ ] **Integration Test**: Full combat with multiple condition interactions
+
+**Acceptance Criteria**:
+- All existing combat flags migrated to conditions system
+- Single `TickConditions()` call replaces scattered flag clearing
+- Adding new temporary combat states requires only:
+  1. Add ConditionType enum value
+  2. Add application logic where state triggers
+  3. Add effect logic in combat calculations
+- No more manual hook updates for new flags
+- Conditions display in `score` or `effects` command
+- All existing combat mechanics work identically to before
+- All tests pass
+
+**Benefits**:
+- **Maintainability**: One system instead of scattered flags
+- **Discoverability**: Players can see active conditions via `effects`
+- **Extensibility**: Easy to add Stunned, Dazed, Bleeding, Entangled, etc. in future
+- **Debuggability**: Conditions track their source ("failed grapple", "dodge crit", etc.)
+- **Consistency**: All temporary combat states managed the same way
+
+**Estimated Changes**: ~400 lines, 12 files
+
+---
+
 ## Phase 10: Combat Balance Pass
 
 > **Note**: This phase deliberately comes after all mechanical combat changes are in place.
@@ -2438,10 +2555,10 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 6: Conviction & Magic | 2 stages (6.1–6.2) | 8 hours | **Complete** |
 | Phase 7: Defense & Combat | 5 stages (7.1–7.5) | 26 hours | **Complete** |
 | Phase 8: Grappling | 5 stages (8.1–8.5) | 24 hours | **8.1–8.5 Complete** |
-| Phase 9: Combat Presentation | 3 stages (9.1–9.3) | 16 hours | Not Started |
+| Phase 9: Combat Presentation | 4 stages (9.1–9.4) | 22 hours | Not Started |
 | Phase 10: Balance Pass | 1 stage (10.1) | 8 hours | Not Started |
 | Phase 11: LLM Integration | 4 stages (11.1–11.4) | 35 hours | Not Started |
-| **Total** | **42 stages** | **196 hours** | |
+| **Total** | **43 stages** | **202 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
 
