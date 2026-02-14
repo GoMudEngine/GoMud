@@ -1541,7 +1541,8 @@ Clinched controller: +5% crit (slight advantage)
 
 ---
 
-### Stage 8.5: Multi-Combatant Grappling Penalties
+### Stage 8.5: Multi-Combatant Grappling Penalties ✅ COMPLETED
+**Commit**: `97085f2` - feat: implement Stage 8.5 third-party grapple vulnerability
 **Goal**: Make grappling risky in group combat. Both grappler and grappled are vulnerable to third-party attacks.
 
 **Design**:
@@ -1573,11 +1574,11 @@ Clinched controller: +5% crit (slight advantage)
 4. Test files
 
 **Testing**:
-- [ ] **Manual Test**: 3-combatant fight, grapple one opponent
-- [ ] **Manual Test**: Third party attacks grappler, verify easier to hit
-- [ ] **Manual Test**: Third party attacks grappled target, verify easier to hit
-- [ ] **Manual Test**: Verify defense messages ("too entangled to dodge")
-- [ ] **Balance Test**: Grappling in group combat is high-risk
+- [x] **Manual Test**: 3-combatant fight, grapple one opponent
+- [x] **Manual Test**: Third party attacks grappler, verify easier to hit
+- [x] **Manual Test**: Third party attacks grappled target, verify easier to hit
+- [x] **Manual Test**: Verify defense messages ("too entangled to dodge")
+- [x] **Balance Test**: Grappling in group combat is high-risk
 
 **Acceptance Criteria**:
 - Both grappler and grappled are vulnerable to third parties
@@ -2434,7 +2435,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 5: Stamina & Attacks | 4 stages (5.1–5.4) | 20 hours | **Complete** |
 | Phase 6: Conviction & Magic | 2 stages (6.1–6.2) | 8 hours | **Complete** |
 | Phase 7: Defense & Combat | 5 stages (7.1–7.5) | 26 hours | **Complete** |
-| Phase 8: Grappling | 2 stages (8.1–8.2) | 12 hours | Not Started |
+| Phase 8: Grappling | 5 stages (8.1–8.5) | 24 hours | **8.1–8.5 Complete** |
 | Phase 9: Combat Presentation | 3 stages (9.1–9.3) | 16 hours | Not Started |
 | Phase 10: Balance Pass | 1 stage (10.1) | 8 hours | Not Started |
 | Phase 11: LLM Integration | 4 stages (11.1–11.4) | 35 hours | Not Started |
@@ -2532,6 +2533,6 @@ Critical bugs fixed outside of formal stage development:
 
 ---
 
-**Last Updated**: 2026-02-13
+**Last Updated**: 2026-02-14
 **Status**: In Progress
-**Current Stage**: 8.4 Complete — Crit outcomes (disarm, dodge opportunities) active, ready for Stage 8.5
+**Current Stage**: 8.5 Complete — Third-party grapple vulnerability active, ready for Stage 8.6
