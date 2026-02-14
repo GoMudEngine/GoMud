@@ -1,6 +1,8 @@
 package combat
 
 import (
+	"math"
+
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/items"
@@ -184,6 +186,22 @@ func CheckGroundedEscape(controller *characters.Character, controlled *character
 	controlledScore := float64(controlled.Stats.Strength.ValueAdj) +
 		float64(controlled.GetCombatSkillLevel()) +
 		float64(controlled.Stats.Dexterity.ValueAdj) * 0.5 // Half dex bonus for scrambling
+
+	// Stage 8.7: Apply armor escape modifier
+	if controlled.Equipment.Body.ItemId != 0 {
+		armorSpec := items.GetItemSpec(controlled.Equipment.Body.ItemId)
+		if armorSpec != nil && armorSpec.EscapeModifier != 0.0 {
+			// Multiplicative modifiers (compatible with future balance config YAML)
+			if armorSpec.EscapeModifier > 0.0 {
+				// Positive modifier: bonus to escape (e.g., +1.0 = doubles escape score for light armor)
+				controlledScore *= (1.0 + armorSpec.EscapeModifier)
+			} else {
+				// Negative modifier: penalty to escape (e.g., -2.0 = reduces to 1/3 for heavy armor)
+				controlledScore /= (1.0 + math.Abs(armorSpec.EscapeModifier))
+			}
+		}
+	}
+
 	controllerScore := float64(controller.Stats.Strength.ValueAdj) + float64(controller.GetCombatSkillLevel())
 
 	success, margin, _, _ := dice.OpposedRoll(controlledScore, controllerScore, grappleStdDev)

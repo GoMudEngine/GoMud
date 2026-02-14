@@ -8,6 +8,7 @@ hands: 1
 subtype: slashing
 weight: 7.0  # Quality sword, well-balanced
 speedmultiplier: 0.75  # Quality balanced sword - slightly faster than basic swords
+grapplemodifier: 0.7  # Stage 8.7: Quality longsword, slightly harder to grapple with
 damage:
   basedamage: 9
   variance: 2

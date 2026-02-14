@@ -6,3 +6,4 @@ description: A shirt of interlocking iron rings that provides solid protection w
 type: body
 subtype: wearable
 damagereduction: 10
+escapemodifier: 0.0  # Stage 8.7: Medium armor - neutral escape modifier

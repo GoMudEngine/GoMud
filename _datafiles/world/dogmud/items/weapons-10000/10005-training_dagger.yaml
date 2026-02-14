@@ -9,7 +9,7 @@ subtype: stabbing
 weight: 2.0  # Light weapon
 speedmultiplier: 0.9  # Fast, light weapon - close to unarmed speed
 staminacost: 6  # Light weapon, lower stamina cost
-grapplemodifier: 3.0  # Small weapon, easier to grapple with
+grapplemodifier: 1.2  # Stage 8.7: Agile weapon, easier to grapple with
 damage:
   basedamage: 3
   variance: 1

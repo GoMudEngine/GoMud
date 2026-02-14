@@ -8,6 +8,7 @@ hands: 1
 subtype: slashing
 weight: 6.0  # Medium sword weight
 speedmultiplier: 0.7  # Standard sword - slower than unarmed but versatile
+grapplemodifier: 1.0  # Stage 8.7: Training sword, manageable for grappling
 damage:
   basedamage: 4
   variance: 2
