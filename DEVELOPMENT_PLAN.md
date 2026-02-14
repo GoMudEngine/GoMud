@@ -1473,7 +1473,8 @@ Clinched controller: +5% crit (slight advantage)
 
 ---
 
-### Stage 8.4: Crit Outcomes (Disarm, Dodge Opportunities)
+### Stage 8.4: Crit Outcomes (Disarm, Dodge Opportunities) ✅ COMPLETED
+**Merge Commit**: 7d17921 (2026-02-13)
 **Goal**: Add organic special moves triggered by critical successes: disarms from grapple/parry crits, grapple opportunities from dodge crits.
 
 **Design**:
@@ -1726,9 +1727,9 @@ Heavy/Plate: -2.0  (historically accurate - stuck like a turtle!)
 | Stage | Focus | Lines | Files | Status |
 |-------|-------|-------|-------|--------|
 | 8.1 | Position system (replace Prone boolean) | ~200 | 10 | ✅ Complete (ace56e2) |
-| 8.2 | Grapple command + transitions | ~300 | 10 | Pending |
-| 8.3 | Attack speed + auto-progression | ~350 | 10 | Pending |
-| 8.4 | Crit outcomes (disarm, opportunities) | ~350 | 12 | Pending |
+| 8.2 | Grapple command + transitions | ~300 | 10 | ✅ Complete (170e9ec) |
+| 8.3 | Attack speed + auto-progression | ~350 | 10 | ✅ Complete (3f53cac) |
+| 8.4 | Crit outcomes (disarm, opportunities) | ~350 | 12 | ✅ Complete (7d17921) |
 | 8.5 | Multi-combatant penalties | ~200 | 8 | Pending |
 | 8.6 | Submissions + failure penalties | ~300 | 10 | Pending |
 | 8.7 | Weapon/armor modifiers (data) | ~150 | 25 | Pending |
@@ -2532,4 +2533,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-13
 **Status**: In Progress
-**Current Stage**: 8.3 Complete — Position combat effects active, ready for Stage 8.4
+**Current Stage**: 8.4 Complete — Crit outcomes (disarm, dodge opportunities) active, ready for Stage 8.5
