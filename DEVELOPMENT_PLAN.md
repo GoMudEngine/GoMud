@@ -1726,28 +1726,6 @@ Heavy/Plate: -2.0  (historically accurate - stuck like a turtle!)
 
 ---
 
-## Phase 8 Summary
-
-| Stage | Focus | Lines | Files | Status |
-|-------|-------|-------|-------|--------|
-| 8.1 | Position system (replace Prone boolean) | ~200 | 10 | ✅ Complete (ace56e2) |
-| 8.2 | Grapple command + transitions | ~300 | 10 | ✅ Complete (170e9ec) |
-| 8.3 | Attack speed + auto-progression | ~350 | 10 | ✅ Complete (3f53cac) |
-| 8.4 | Crit outcomes (disarm, opportunities) | ~350 | 12 | ✅ Complete (7d17921) |
-| 8.5 | Multi-combatant penalties | ~200 | 8 | ✅ Complete (97085f2) |
-| 8.6 | Submissions + failure penalties | ~300 | 10 | ✅ Complete (e829213) |
-| 8.7 | Weapon/armor modifiers (data) | ~150 | 25 | ✅ Complete (737be35) |
-| 8.8 | **HOTFIX**: Auto-aggro when attacked | ~50 | 3 | **KNOWN BUG** |
-| **Total** | **Integrated grappling system** | **~1900** | **~61 unique** | **Phase 8** |
-
-**Phase Completion**: After Stage 8.7, combat system includes:
-- Position-based mechanics (Standing/Prone/Clinched/Grounded)
-- Grappling integrated with striking
-- Organic special moves (disarms, submissions)
-- Equipment-driven playstyles
-- Multi-combatant tactics
-- Risk/reward grappling decisions
-
 ### Stage 8.8: Hotfix - Auto-Aggro When Attacked (KNOWN BUG)
 **Goal**: Fix player not auto-aggroing back when attacked by respawned/spawned mobs
 
@@ -1833,10 +1811,10 @@ Each combat round:
 1. Check ActivityLevel (existing mechanic)
 2. Roll against SpecialMoveChance (default 30%, scaled by combat skill)
 3. If yes, evaluate all viable special moves:
-   - Bash: Good if target standing, mob has bludgeon weapon, target health > 50%
+   - Bash: Good if target standing, mob has shield equipped, target health > 50%
    - Trip: Good if target standing, mob has decent dexterity, close combat
    - Kick: Good if target standing, mob unarmed or light weapon
-   - Grapple: Good if both standing, mob has wrestling skill, wants control
+   - Grapple: Good if both standing, mob has unarmed-combat skill, wants control
    - Submit: Only if controller in dominant grapple position
    - Escape: Only if grappled and in bad position
 4. Score each move based on:
@@ -1879,11 +1857,11 @@ Each combat round:
 
 **Bash**:
 - Base: 50
-- +30 if wielding bludgeon weapon
+- +40 if wielding shield
 - +20 if target health > 60%
 - +15 if combat skill > 50
 - -50 if target prone
-- -100 if no weapon or wrong damage type
+- -100 if no shield equipped
 
 **Trip**:
 - Base: 40
@@ -1903,7 +1881,7 @@ Each combat round:
 
 **Grapple**:
 - Base: 50
-- +30 if mob wrestling > 40
+- +30 if mob unarmed-combat > 40
 - +20 if mob strength > target strength
 - +15 if target health < 30% (finish them)
 - -100 if already in grapple
@@ -1912,7 +1890,7 @@ Each combat round:
 **Submit** (only when grapple controller):
 - Base: 40
 - +40 if in dominant position (mounted, standing over prone)
-- +20 if mob wrestling > 60
+- +20 if mob unarmed-combat > 60
 - +15 if target health < 40%
 - -100 if not controller
 - -100 if not in grapple
@@ -1978,6 +1956,33 @@ Each combat round:
 - Skilled fighters adapt to combat flow
 - Low-skill mobs mostly use basic attacks with occasional special moves
 - Boss mobs can be configured with custom move sets
+
+---
+
+## Phase 8 Summary
+
+| Stage | Focus | Lines | Files | Status |
+|-------|-------|-------|-------|--------|
+| 8.1 | Position system (replace Prone boolean) | ~200 | 10 | ✅ Complete (ace56e2) |
+| 8.2 | Grapple command + transitions | ~300 | 10 | ✅ Complete (170e9ec) |
+| 8.3 | Attack speed + auto-progression | ~350 | 10 | ✅ Complete (3f53cac) |
+| 8.4 | Crit outcomes (disarm, opportunities) | ~350 | 12 | ✅ Complete (7d17921) |
+| 8.5 | Multi-combatant penalties | ~200 | 8 | ✅ Complete (97085f2) |
+| 8.6 | Submissions + failure penalties | ~300 | 10 | ✅ Complete (e829213) |
+| 8.7 | Weapon/armor modifiers (data) | ~150 | 25 | ✅ Complete (737be35) |
+| 8.8 | Auto-aggro reciprocal (hotfix) | ~10 | 2 | ✅ Complete (61fae51) |
+| 8.9 | NPC combat AI for special moves | ~400 | 5 | 🔄 Ready to implement |
+| **Total** | **Integrated grappling + AI** | **~2260** | **~68 unique** | **Phase 8** |
+
+**Phase Completion**: After Stage 8.9, combat system will include:
+- Position-based mechanics (Standing/Prone/Clinched/Grounded)
+- Grappling integrated with striking
+- Organic special moves (disarms, submissions, bash, trip, kick)
+- Equipment-driven playstyles (shields for bash, etc.)
+- Multi-combatant tactics
+- Risk/reward grappling decisions
+- **Intelligent NPC AI** using special moves contextually
+- Customizable per-mob combat behavior via AI profiles
 
 ---
 
