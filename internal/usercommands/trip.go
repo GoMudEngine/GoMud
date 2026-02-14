@@ -3,6 +3,7 @@ package usercommands
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -97,8 +98,8 @@ func Trip(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				targetMob.Character.Health = 0
 			}
 			if knockedDown {
-				targetMob.Character.Prone = true
-				targetMob.Character.ProneRoundsRemaining = 2 // Guarantees 1 full round prone
+				targetMob.Character.CombatPosition = characters.PositionProne
+				targetMob.Character.PositionRoundsMin = 2 // Guarantees 1 full round prone
 			}
 		} else if targetChar != nil {
 			targetChar.Character.Health -= baseDamage
@@ -106,8 +107,8 @@ func Trip(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				targetChar.Character.Health = 0
 			}
 			if knockedDown {
-				targetChar.Character.Prone = true
-				targetChar.Character.ProneRoundsRemaining = 2 // Guarantees 1 full round prone
+				targetChar.Character.CombatPosition = characters.PositionProne
+				targetChar.Character.PositionRoundsMin = 2 // Guarantees 1 full round prone
 			}
 		}
 

@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
@@ -229,6 +230,13 @@ func (u *UserRecord) ProcessPromptString(promptStr string) string {
 					hiddenFlag = `H`
 				}
 				promptOut.WriteString(hiddenFlag)
+
+			case `{pos}`:
+				// Combat position (Standing/Prone/Clinched/Grounded) - Stage 8.1
+				if u.Character.CombatPosition != characters.PositionStanding {
+					posColor := u.Character.CombatPosition.GetPositionColor()
+					promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%s</ansi>`, posColor, u.Character.CombatPosition.String()))
+				}
 
 			case `{a}`:
 				alignClass := u.Character.AlignmentName()

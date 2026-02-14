@@ -443,7 +443,7 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 			}
 
 			// Stage 7.5: Apply prone damage penalty
-			if sourceChar.Prone {
+			if sourceChar.CombatPosition == characters.PositionProne {
 				dmgMean *= float64(configs.GetGamePlayConfig().ProneDamagePenalty)
 			}
 
@@ -481,10 +481,10 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 
 				// Stage 7.5: Apply prone attack penalties/bonuses
 				cfg := configs.GetGamePlayConfig()
-				if sourceChar.Prone {
+				if sourceChar.CombatPosition == characters.PositionProne {
 					attackScore -= float64(cfg.ProneAttackPenalty) // Penalty for attacking while prone
 				}
-				if targetChar.Prone {
+				if targetChar.CombatPosition == characters.PositionProne {
 					attackScore += float64(cfg.ProneVulnerabilityBonus) // Bonus when attacking prone targets
 				}
 
@@ -537,7 +537,7 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 					defenseScore := targetChar.GetDefenseScore(defenseType)
 
 					// Stage 7.5: Apply prone defense penalties
-					if targetChar.Prone {
+					if targetChar.CombatPosition == characters.PositionProne {
 						switch defenseType {
 						case "dodge":
 							defenseScore *= float64(cfg.ProneDodgePenalty) // Default: -50% dodge (can't move)

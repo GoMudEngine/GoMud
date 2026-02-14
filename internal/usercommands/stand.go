@@ -3,6 +3,7 @@ package usercommands
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -12,7 +13,7 @@ import (
 func Stand(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	// Check if character is prone
-	if !user.Character.Prone {
+	if user.Character.CombatPosition != characters.PositionProne {
 		user.SendText("You're already standing.")
 		return true, nil
 	}
@@ -37,8 +38,8 @@ func Stand(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	}
 
 	// Remove prone status (bypasses minimum duration)
-	user.Character.Prone = false
-	user.Character.ProneRoundsRemaining = 0
+	user.Character.CombatPosition = characters.PositionStanding
+	user.Character.PositionRoundsMin = 0
 
 	// Send messages
 	user.SendText("You struggle to your feet!")

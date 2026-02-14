@@ -1267,104 +1267,473 @@ After Stage 4.7, manual testing revealed that arena mobs were too weak for new p
 
 ---
 
-## Phase 8: Grappling & Advanced Unarmed Combat
+## Phase 8: Combat Positions & Integrated Grappling System
 
-> **Inspiration**: The Evennia-based DOG combat system (see `combat_example_evennia.png` and
-> [Evennia discussion #2411](https://github.com/evennia/evennia/discussions/2411)).
-> Unarmed combat should include grappling as a stamina-based win condition, not just
-> punching for health damage.
-
-### Stage 8.1: Grappling System — Stamina Damage Attacks
-**Goal**: Add grappling as a combat action that damages the opponent's stamina instead of (or in addition to) health. This creates an alternate win condition — exhaust your opponent.
-
-**Design**:
-- `grapple <target>` initiates a grapple attempt (Unarmed Combat skill check vs target's Unarmed Combat or Dexterity)
-- Successful grapple applies the **Grappled** condition to the target
-- While grappled, each round the grappler deals **stamina damage** (based on Strength + Unarmed Combat)
-- Grappler can also deal minor health damage (chokes, joint locks)
-- Target can attempt to **escape** each round (Unarmed Combat + Strength check)
-- When a target's stamina hits 0 while grappled, they **yield** (combat ends, they're at the grappler's mercy)
-
-**Changes**:
-1. Add `grapple` command
-2. Add `Grappled` condition flag to character state
-3. Add grapple resolution logic (initiate, maintain, escape)
-4. Add stamina damage calculation for grapples
-5. Add yield/submission mechanic when stamina reaches 0 while grappled
-6. Grapple-specific combat messages ("You lock Guard in a rear naked choke...", "Guard tries to escape your hold...")
-
-**Files to Modify** (~10 files, ~500 lines):
-1. `internal/usercommands/grapple.go` — New command
-2. `internal/combat/grapple.go` — Grapple resolution logic
-3. `internal/combat/combat.go` — Integrate grapple into combat round
-4. `internal/characters/character.go` — Grappled condition flag
-5. `internal/hooks/NewRound_DoCombat.go` — Grapple round processing
-6. Test files
-
-**Testing**:
-- [ ] **Manual Test**: Initiate grapple, verify grapple messages
-- [ ] **Manual Test**: Verify stamina damage while grappled
-- [ ] **Manual Test**: Escape from grapple, verify escape messages
-- [ ] **Manual Test**: Exhaust opponent's stamina, verify yield
-- [ ] **Balance Test**: Grappling should be viable but not dominant
-
-**Acceptance Criteria**:
-- Grapple is a distinct combat action with its own command
-- Grappled condition has real mechanical effects
-- Stamina damage creates an alternate win condition
-- Escape mechanics prevent grapple from being inescapable
-- All tests pass
-
-**Estimated Changes**: ~500 lines, 10 files
+> **Design Philosophy**: Create an integrated combat position system that naturally weaves together striking, grappling, and ground fighting. Positions (Standing/Prone/Clinched/Grounded) affect attack speed, crit chance, and defense. Grappling flows organically from equipment, crits, and player choices rather than being a separate minigame.
+>
+> **Core Principles**:
+> - **Gear-driven playstyles**: Weapon and armor choices naturally influence grappling effectiveness (daggers = agile grapplers, greatswords = terrible grapplers, heavy armor = hard to escape from ground)
+> - **Simplified positions**: 4 states instead of complex body positioning (Standing, Prone, Clinched, Grounded)
+> - **Organic special moves**: Disarms and submissions emerge from critical successes rather than explicit commands
+> - **Risk/reward mechanics**: Grappling is powerful but risky (vulnerable to third parties, failure penalties)
+> - **Z-score integration**: Uses existing crit system (z > 2.0 for crits, z < -2.0 for fumbles)
 
 ---
 
-### Stage 8.2: Grappled Condition Effects
-**Goal**: Make the Grappled condition have meaningful combat penalties for the target (and some drawbacks for the grappler).
+### Stage 8.1: Combat Position System (Replaces Prone Boolean)
+**Goal**: Replace the `Prone` boolean flag with a unified `CombatPosition` enum system. Migrate existing bash/trip mechanics to use positions. This lays the foundation for integrated grappling without changing combat behavior.
 
-**Grappled Target Penalties**:
-- Cannot use weapons (hands are occupied)
-- Cannot dodge (movement restricted)
-- Cannot flee (pinned)
-- Reduced attack count (struggling)
-- Can only use Unarmed Combat to attack or attempt escape
-- Can still cast spells (if they have the concentration)
+**Design**:
+Four combat positions:
+- **Standing**: Default state, on feet, normal combat
+- **Prone**: Knocked down (bash/trip), scrambling to stand, vulnerable to grappling
+- **Clinched**: Standing grapple, reduced attack speed, automatic control checks
+- **Grounded**: Ground grapple, very slow attacks, controller has advantage
 
-**Grappler Drawbacks**:
-- Cannot use weapons (hands occupied with the hold)
-- Cannot dodge (committed to the grapple)
-- Vulnerable to attacks from third parties (focused on hold)
-- Reduced perception (tunnel vision on the grapple)
+**Position Transitions** (Stage 8.1 scope):
+```
+Standing ──[bash/trip]──> Prone ──[recovery]──> Standing
+         (existing mechanics, just using new position system)
+```
 
 **Changes**:
-1. Apply combat penalties when `Grappled` flag is set
-2. Restrict weapon use for both grappler and target
-3. Disable dodge/flee for grappled target
-4. Reduce grappler's defenses against third-party attacks
-5. Add messaging for attempted actions while grappled ("You can't swing your sword while grappled!")
+1. Add `CombatPosition` enum type with 4 constants
+2. Replace `Prone bool` with `CombatPosition CombatPositionType` in Character struct
+3. Rename `ProneRoundsRemaining` → `PositionRoundsMin` (more general name)
+4. Add `GrappleControllerId int` field (preparation for 8.2, not used yet)
+5. Migrate bash/trip commands: set `CombatPosition = PositionProne` instead of `Prone = true`
+6. Update all prone penalty checks: `if c.Prone` → `if c.CombatPosition == PositionProne`
+7. Update recovery logic to check position
+8. Update character adjectives: "prone" only when position is Prone
+9. Display position in `score` command
 
-**Files to Modify** (~8 files, ~300 lines):
-1. `internal/combat/combat.go` — Apply grapple penalties to attack/defense
-2. `internal/combat/calculations.go` — Grapple modifiers
-3. `internal/usercommands/flee.go` — Block while grappled
-4. `internal/usercommands/attack.go` — Restrict weapon attacks while grappled
+**Files to Modify** (~8 files, ~200 lines):
+1. `internal/characters/character.go` — Replace Prone fields with CombatPosition
+2. `internal/characters/combatposition.go` — New file: position enum and constants
+3. `internal/combat/combat.go` — Update all `if c.Prone` checks to use CombatPosition
+4. `internal/usercommands/bash.go` — Set CombatPosition instead of Prone flag
+5. `internal/usercommands/trip.go` — Set CombatPosition instead of Prone flag
+6. `internal/usercommands/score.go` — Display combat position
+7. Character recovery logic — Check CombatPosition == PositionProne
+8. Test files
+
+**Testing**:
+- [ ] **Unit Tests**: Position enum values and transitions
+- [ ] **Manual Test**: Bash opponent, verify they show as "prone" in adjectives
+- [ ] **Manual Test**: Verify recovery still works (prone → standing after rounds)
+- [ ] **Manual Test**: Verify prone attack/defense penalties still apply
+- [ ] **Manual Test**: `score` shows combat position
+- [ ] **Regression Test**: All Stage 7.5 prone functionality still works identically
+- [ ] **Integration Test**: Bash → wait → recover → verify standing
+
+**Acceptance Criteria**:
+- Prone system works identically to before (zero behavior change)
+- All bash/trip tests pass
+- Position displays in score and adjectives
+- Recovery mechanics unchanged
+- All existing tests pass
+- Code is cleaner (no boolean + rounds tracking, just position state)
+
+**Estimated Changes**: ~200 lines, 8 files
+
+---
+
+### Stage 8.2: Grapple Command & Basic Position Transitions
+**Goal**: Add `grapple` command with cooldown. Successful grapples transition positions (Standing→Clinched, Prone→Grounded). Grapplers and grappled opponents are marked by controller tracking.
+
+**Design**:
+- `grapple <target>` initiates opposed check (Dex + Combat Skill + weapon modifier vs Dex + Combat Skill)
+- **Huge advantage when grappling prone targets**: Defender at -70% if prone (nasty!)
+- Success: `Standing → Clinched` OR `Prone → Grounded` (direct, skip Clinched)
+- 5-round cooldown on grapple attempts
+- `GrappleControllerId` tracks who initiated/controls the grapple
+
+**Grapple Calculation**:
+```go
+attackScore = attacker.Dex + attacker.CombatSkill + weapon.GrappleModifier
+defenseScore = defender.Dex + defender.CombatSkill
+
+// Position modifiers
+if defender.CombatPosition == PositionProne {
+    defenseScore *= 0.3  // -70% defense when already down (brutal!)
+}
+if attacker.CombatPosition == PositionProne {
+    attackScore *= 0.5   // -50% offense when attacking from ground
+}
+
+// Opposed z-score roll
+success = OpposedRoll(attackScore, defenseScore)
+```
+
+**Changes**:
+1. Add `grapple <target>` user command with cooldown check
+2. Create `internal/combat/grapple.go` with grapple calculation logic
+3. Add `GrappleModifier float64` field to `ItemSpec` (weapon property)
+4. Position transitions: Standing→Clinched, Prone→Grounded
+5. Set `GrappleControllerId` to track who initiated the grapple
+6. Add 5-round cooldown: `character.Cooldowns["grapple"] = 5`
+7. Grapple success/failure messaging
+8. Update a few weapon YAMLs with test grapple modifiers
+
+**Files to Modify** (~10 files, ~300 lines):
+1. `internal/usercommands/grapple.go` — New command
+2. `internal/combat/grapple.go` — New file: grapple calculations and transitions
+3. `internal/items/itemspec.go` — Add GrappleModifier field
+4. `internal/characters/character.go` — GrappleControllerId field (added in 8.1)
+5. Weapon YAML files — Add grapple_modifier to 3-4 test weapons
+6. Test files
+
+**Testing**:
+- [ ] **Manual Test**: Grapple from Standing, verify transition to Clinched
+- [ ] **Manual Test**: Grapple a prone target, verify transition to Grounded (and it's easy!)
+- [ ] **Manual Test**: Try to grapple while on cooldown, verify blocked
+- [ ] **Manual Test**: Grapple with dagger vs greatsword, verify modifier difference
+- [ ] **Balance Test**: Prone targets should be MUCH easier to grapple
+
+**Acceptance Criteria**:
+- Grapple command functional with cooldown
+- Position transitions work (Standing→Clinched, Prone→Grounded)
+- Prone targets are very vulnerable to grappling
+- Weapon modifiers apply
+- Clear messaging for success/failure
+- All tests pass
+
+**Estimated Changes**: ~300 lines, 10 files
+
+---
+
+### Stage 8.3: Position-Based Attack Speed & Auto-Progression
+**Goal**: Make positions affect combat speed. Add automatic control checks (Clinched→Grounded) and escape checks (Grounded→Standing) each round.
+
+**Design**:
+**Attack Speed Multipliers**:
+```
+Standing: 1.0x (normal)
+Prone:    0.5x (existing penalty, now formalized by position)
+Clinched: 0.6x (both fighters locked up, slow strikes)
+Grounded: 0.3x (both fighters very limited movement)
+```
+
+**Crit Chance Modifiers**:
+```
+Grounded controller: +10% crit (dominant position)
+Grounded controlled: -10% crit (defensive position)
+Clinched controller: +5% crit (slight advantage)
+```
+
+**Auto-Progression Each Round**:
+- **Clinched**: Automatic control check (Str + Combat Skill opposed roll)
+  - Success → Transition to Grounded (controller maintains control)
+  - Failure → Break apart, both return to Standing
+- **Grounded**: Automatic escape attempt by controlled fighter
+  - Success → Both return to Standing (scramble up together)
+  - Failure → Remain Grounded
+
+**Changes**:
+1. Apply attack speed multipliers in `calculateCombat()` based on `CombatPosition`
+2. Apply crit threshold modifiers based on position and controller status
+3. Add automatic control check logic in `NewRound_DoCombat` hook
+4. Add automatic escape check logic in `NewRound_DoCombat` hook
+5. Control/escape calculations use Strength + Combat Skill opposed rolls
+6. Position transition messaging ("You drive Guard to the ground!", "You break free!")
+
+**Files to Modify** (~10 files, ~350 lines):
+1. `internal/combat/combat.go` — Apply position attack speed multipliers
+2. `internal/combat/combat.go` — Apply position crit modifiers
+3. `internal/combat/grapple.go` — Add ControlCheck() and EscapeCheck() functions
+4. `internal/hooks/NewRound_DoCombat.go` — Call auto-checks for Clinched/Grounded positions
+5. `internal/characters/character.go` — Helper methods for position checks
+6. Test files
+
+**Testing**:
+- [ ] **Manual Test**: Enter Clinched, verify slower attacks (0.6x speed)
+- [ ] **Manual Test**: Stay Clinched multiple rounds, verify auto control check
+- [ ] **Manual Test**: Successful control check, verify transition to Grounded
+- [ ] **Manual Test**: Enter Grounded, verify very slow attacks (0.3x speed)
+- [ ] **Manual Test**: Grounded controlled fighter auto-escapes eventually
+- [ ] **Manual Test**: Verify controller has higher crit chance when Grounded
+- [ ] **Balance Test**: Typical grapple sequence (Clinched 1-2 rounds → Grounded 2-4 rounds)
+
+**Acceptance Criteria**:
+- Attack speed reduced appropriately by position
+- Clinched fighters automatically progress to Grounded or break apart
+- Grounded fighters have escape opportunities each round
+- Crit modifiers make controller position advantageous
+- Fights don't get permanently stuck in grapples
+- All tests pass
+
+**Estimated Changes**: ~350 lines, 10 files
+
+---
+
+### Stage 8.4: Crit Outcomes (Disarm, Dodge Opportunities)
+**Goal**: Add organic special moves triggered by critical successes: disarms from grapple/parry crits, grapple opportunities from dodge crits.
+
+**Design**:
+**Disarm Mechanics**:
+1. **Grapple Crit Disarm** (z > 2.0 while Clinched/Grounded):
+   - 15% chance to disarm opponent
+   - Weapon drops to room floor
+   - Fallback to unarmed combat (secondary weapon system deferred)
+   - Message: "You wrench the iron longsword from Guard's grip! It clatters to the floor."
+
+2. **Parry Crit Disarm** (z > 2.0 on successful parry):
+   - 10% chance to disarm attacker
+   - Represents a perfect parry that twists weapon away
+   - Message: "You parry and twist, disarming Guard!"
+
+**Dodge Crit → Grapple Opportunity**:
+- On dodge with z > 2.0: Set `GrappleOpportunity = true` (1-round flag)
+- **Only if grapple cooldown is available** (prevents spam)
+- Next grapple attempt gets +15% bonus
+- Flag expires after 1 round if not used
+- Message: "You slip inside Guard's guard! [Grapple opportunity]"
+
+**Disarm Fallback** (simplified for now):
+- Disarmed → equip unarmed (fall back to fists/claws)
+- Secondary weapon system deferred to later stage
+- Certain weapons can be flagged `disarm_immune` (natural weapons, magical bindings)
+
+**Changes**:
+1. Detect z-score > 2.0 in grapple checks, trigger disarm chance
+2. Detect z-score > 2.0 in parry defense, trigger disarm chance
+3. Detect z-score > 2.0 in dodge defense, set GrappleOpportunity flag (if cooldown available)
+4. Add `GrappleOpportunity bool` flag to Character (expires each round)
+5. Apply +15% bonus to grapple checks when opportunity flag is set
+6. Disarm logic: drop weapon to room, switch to unarmed
+7. Add messaging for all special outcomes
+
+**Files to Modify** (~12 files, ~350 lines):
+1. `internal/combat/combat.go` — Detect parry/dodge crits, trigger outcomes
+2. `internal/combat/grapple.go` — Detect grapple crits, trigger disarm, apply opportunity bonus
+3. `internal/characters/character.go` — Add GrappleOpportunity flag, disarm helper
+4. `internal/items/item.go` — Drop weapon to room logic
+5. `internal/hooks/NewRound_DoCombat.go` — Expire GrappleOpportunity flag each round
+6. Test files
+
+**Testing**:
+- [ ] **Manual Test**: Get grapple crit, verify occasional disarm
+- [ ] **Manual Test**: Get parry crit, verify occasional disarm
+- [ ] **Manual Test**: Disarmed fighter switches to unarmed combat
+- [ ] **Manual Test**: Crit dodge, verify grapple opportunity message (if cooldown up)
+- [ ] **Manual Test**: Use grapple opportunity, verify +15% bonus
+- [ ] **Manual Test**: Ignore opportunity, verify it expires next round
+- [ ] **Balance Test**: Special outcomes are rare but impactful
+
+**Acceptance Criteria**:
+- Disarms occur organically from crits (not explicit command)
+- Grapple opportunities create reactive tactical choices
+- Disarmed fighters can continue fighting (unarmed)
+- Opportunity window is short (1 round) and requires cooldown
+- Clear messaging for all special outcomes
+- All tests pass
+
+**Estimated Changes**: ~350 lines, 12 files
+
+---
+
+### Stage 8.5: Multi-Combatant Grappling Penalties
+**Goal**: Make grappling risky in group combat. Both grappler and grappled are vulnerable to third-party attacks.
+
+**Design**:
+**Vulnerability When Clinched/Grounded**:
+- Both fighters: -30% defense against third-party attacks
+- Both fighters: Cannot parry/dodge attacks from others (too focused on grapple)
+- Attacks from third parties bypass layered defense system (auto-hit against static defense)
+
+**Pile-On Bonus** (optional):
+- Additional attackers get +20% hit chance against Grounded targets
+- Simulates multiple people attacking a downed opponent
+
+**Messaging**:
+- "The goblin is too entangled with you to defend against the orc's attack!"
+- "You're too focused on holding the guard down to dodge the bandit's strike!"
+
+**Changes**:
+1. In `calculateCombat()`: Check if target is Clinched/Grounded
+2. If attacker is NOT the grapple controller/controlled: apply third-party penalties
+3. Disable dodge/parry defense for entangled fighters (vs third parties only)
+4. Apply -30% defense modifier against third-party attacks
+5. Optional: Apply +20% attack bonus for attackers hitting Grounded targets
+6. Add third-party vulnerability messaging
+
+**Files to Modify** (~8 files, ~200 lines):
+1. `internal/combat/combat.go` — Detect third-party attacks, apply penalties
+2. `internal/combat/calculations.go` — Third-party attack modifiers
+3. `internal/combat/grapple.go` — Helper to check if attack is third-party
+4. Test files
+
+**Testing**:
+- [ ] **Manual Test**: 3-combatant fight, grapple one opponent
+- [ ] **Manual Test**: Third party attacks grappler, verify easier to hit
+- [ ] **Manual Test**: Third party attacks grappled target, verify easier to hit
+- [ ] **Manual Test**: Verify defense messages ("too entangled to dodge")
+- [ ] **Balance Test**: Grappling in group combat is high-risk
+
+**Acceptance Criteria**:
+- Both grappler and grappled are vulnerable to third parties
+- Defense penalties are meaningful (grappling in groups is risky)
+- Clear messaging explains why defense failed
+- Tactical choice: grapple in 1v1 good, in groups risky
+- All tests pass
+
+**Estimated Changes**: ~200 lines, 8 files
+
+---
+
+### Stage 8.6: Submission Command & Failed Grapple Penalties
+**Goal**: Add high-risk submission finishing move. Add meaningful penalties for failed grapple attempts (risk/reward).
+
+**Design**:
+**Submission Mechanic**:
+- `submit` command (only available when Grounded as controller)
+- **Requires grapple cooldown available** (prevents grapple→submit spam)
+- High-threshold opposed check (harder than normal grapple)
+- Success: Opponent chooses [yield] or [resist]
+  - Yield: Combat ends, they're at your mercy
+  - Resist: Take 2x damage, make escape check, likely break free
+- Failure: Opponent auto-escapes to Standing, you fall Prone (overcommitted)
+- Sets 5-round cooldown (burned whether success or fail)
+- Message: "You overcommit to the armbar and Guard scrambles free, leaving you prone!"
+
+**Failed Grapple Penalties** (risk/reward):
+```
+Grapple outcomes:
+  Success (z > 0.5):     Clinched (or Grounded if target was Prone)
+  Failure (z < 0.5):     -15% defense next round (exposed, off-balance)
+  Crit Failure (z < -2.0): Fall Prone, opponent gets reversal opportunity
+```
+
+**Reversal Opportunity**:
+- On crit failed grapple: Defender can immediately attempt grapple (if cooldown up)
+- Represents capitalizing on attacker's mistake
+- Message: "Guard capitalizes on your failed takedown and grabs you!"
+
+**Changes**:
+1. Add `submit` user command with position check (must be Grounded controller)
+2. Check grapple cooldown available
+3. High-threshold submission check logic
+4. Opponent choice prompt: [yield] or [resist]
+5. Failure consequence: Opponent escapes, attacker falls Prone
+6. Add failed grapple defense penalty (-15% next round)
+7. Add crit failed grapple: attacker falls Prone, defender gets reversal
+8. Set 5-round cooldown on submit attempt
+9. Add to combat help file
+
+**Files to Modify** (~10 files, ~300 lines):
+1. `internal/usercommands/submit.go` — New command
+2. `internal/combat/grapple.go` — Submission logic, failure penalties, reversals
+3. `internal/characters/character.go` — Track defense penalty flag
+4. Help files — Add grapple/submit documentation
 5. Test files
 
 **Testing**:
-- [ ] **Manual Test**: While grappled, try to use a weapon — verify blocked
-- [ ] **Manual Test**: While grappled, try to flee — verify blocked
-- [ ] **Manual Test**: Attack a grappler as a third party — verify they're easier to hit
-- [ ] **Manual Test**: While grappling, verify reduced defense
-- [ ] **Balance Test**: Grapple penalties are meaningful but not instant death
+- [ ] **Manual Test**: Submit while Grounded as controller, verify check
+- [ ] **Manual Test**: Succeed submit, verify opponent gets yield/resist choice
+- [ ] **Manual Test**: Opponent resists, verify 2x damage + escape
+- [ ] **Manual Test**: Fail submit, verify auto-escape and you fall Prone
+- [ ] **Manual Test**: Crit fail grapple, verify you fall Prone
+- [ ] **Manual Test**: Crit fail grapple, opponent capitalizes with reversal
+- [ ] **Manual Test**: Try to submit when cooldown not ready, verify blocked
+- [ ] **Balance Test**: Submit is powerful but very risky
 
 **Acceptance Criteria**:
-- Grappled targets have significant but fair penalties
-- Grapplers have meaningful drawbacks (not free advantage)
-- Third-party intervention is effective against grapplers
-- Clear messaging for all restricted actions
+- Submit is a high-stakes finishing move
+- Failed grapples have meaningful penalties (not free attempts)
+- Crit failures create dramatic reversals
+- Cooldown prevents grapple→submit spam
+- Clear messaging for all outcomes
 - All tests pass
 
-**Estimated Changes**: ~300 lines, 8 files
+**Estimated Changes**: ~300 lines, 10 files
+
+---
+
+### Stage 8.7: Weapon & Armor Grapple Modifiers (Data-Driven)
+**Goal**: Add grapple modifiers to weapon and armor data files. Equipment naturally dictates grappling effectiveness.
+
+**Design**:
+**Weapon Grapple Modifiers**:
+```yaml
+# Agile, close-quarters weapons
+Unarmed/Claws:  1.3  (natural grapplers)
+Dagger:         1.2  (easy to maintain grip)
+Shortsword:     1.0  (neutral)
+
+# Unwieldy weapons
+Longsword:      0.7  (harder to grapple)
+Greatsword:     0.4  (terrible for grappling)
+Polearm:        0.3  (completely unwieldy)
+
+# Special
+Net:            0.8  (hands full, but see below)
+```
+
+**Net Special Mechanic** (deferred):
+- Treat net as throwing weapon for now
+- Entangle condition deferred to later stage (8.8 or Phase 9)
+- Future: Net crit → "Entangled" condition (like Prone but requires cutting free)
+
+**Armor Escape Modifiers**:
+```yaml
+# Affects escape checks when Grounded
+Light/None:  +1.0  (agile, easy to stand)
+Medium:       0.0  (neutral)
+Heavy/Plate: -2.0  (historically accurate - stuck like a turtle!)
+```
+
+**Changes**:
+1. `GrappleModifier` field already added in Stage 8.2 to ItemSpec
+2. Add `EscapeModifier` field to armor ItemSpec
+3. Update ~15 weapon YAML files with grapple_modifier values
+4. Update ~5 armor YAML files with escape_modifier values
+5. Apply armor escape modifier in escape checks
+6. Net deferred (mark as throwing weapon, entangle mechanic later)
+
+**Files to Modify** (~25 files, ~150 lines):
+1. `internal/items/itemspec.go` — Add EscapeModifier field for armor
+2. `internal/combat/grapple.go` — Use armor escape modifier in checks
+3. Weapon YAML files — Add grapple_modifier (~15 files, 2-3 lines each)
+4. Armor YAML files — Add escape_modifier (~5 files, 2-3 lines each)
+5. Test files
+
+**Testing**:
+- [ ] **Manual Test**: Grapple with dagger, verify easier than greatsword
+- [ ] **Manual Test**: Try to escape in plate armor, verify harder than leather
+- [ ] **Manual Test**: Grapple opponent in heavy armor, verify they struggle to escape
+- [ ] **Balance Test**: Equipment creates meaningful playstyle differences
+
+**Acceptance Criteria**:
+- Weapon modifiers create distinct grappling effectiveness
+- Armor modifiers make heavy armor a liability on the ground
+- Equipment choices have strategic grappling implications
+- Data-driven (easy to tune via YAML)
+- All tests pass
+
+**Estimated Changes**: ~150 lines, 25 files
+
+---
+
+## Phase 8 Summary
+
+| Stage | Focus | Lines | Files | Status |
+|-------|-------|-------|-------|--------|
+| 8.1 | Position system (replace Prone boolean) | ~200 | 8 | Pending |
+| 8.2 | Grapple command + transitions | ~300 | 10 | Pending |
+| 8.3 | Attack speed + auto-progression | ~350 | 10 | Pending |
+| 8.4 | Crit outcomes (disarm, opportunities) | ~350 | 12 | Pending |
+| 8.5 | Multi-combatant penalties | ~200 | 8 | Pending |
+| 8.6 | Submissions + failure penalties | ~300 | 10 | Pending |
+| 8.7 | Weapon/armor modifiers (data) | ~150 | 25 | Pending |
+| **Total** | **Integrated grappling system** | **~1850** | **~58 unique** | **Phase 8** |
+
+**Phase Completion**: After Stage 8.7, combat system includes:
+- Position-based mechanics (Standing/Prone/Clinched/Grounded)
+- Grappling integrated with striking
+- Organic special moves (disarms, submissions)
+- Equipment-driven playstyles
+- Multi-combatant tactics
+- Risk/reward grappling decisions
 
 ---
 

@@ -77,8 +77,9 @@ type Character struct {
 	ConvictionMax    stats.StatInfo                 `yaml:"-"`                       // The maximum conviction of the character. Don't write to yaml since is dynamically calculated.
 	ActionPointsMax          stats.StatInfo                 `yaml:"-"`                       // The maximum actions of character. Don't write to yaml since is dynamically calculated.
 	Aggro                    *Aggro                         `yaml:"-"`                       // Dont' store this. If they leave they break their aggro
-	Prone                    bool                           `yaml:"-"`                       // Whether the character is knocked down/prone. Don't store this.
-	ProneRoundsRemaining     int                            `yaml:"-"`                       // Minimum rounds remaining before auto-recovery attempts. Don't store this.
+	CombatPosition           CombatPosition                 `yaml:"-"`                       // Current combat position (Standing/Prone/Clinched/Grounded). Don't store this.
+	PositionRoundsMin        int                            `yaml:"-"`                       // Minimum rounds in current position (for Prone bash/trip, etc). Don't store this.
+	GrappleControllerId      int                            `yaml:"-"`                       // UserId or MobInstanceId of grapple controller (0 = none, Stage 8.2+). Don't store this.
 	RecoveryPenaltyThisRound bool                           `yaml:"-"`                       // If true, attacks reduced to 1 this round due to recovery attempt. Don't store this.
 	Skills                   map[string]int                 `yaml:"skills,omitempty"`        // The skills the character has, and what level they are at
 	Cooldowns        Cooldowns                      `yaml:"cooldowns,omitempty"`     // How many rounds until it is cooled down
@@ -123,6 +124,8 @@ func New() *Character {
 		Items:          []items.Item{},
 		Buffs:          buffs.New(),
 		Equipment:      Worn{},
+		CombatPosition: PositionStanding, // Stage 8.1: Default combat position
+		Cooldowns:      make(Cooldowns),  // Initialize cooldowns map
 		MiscData:       make(map[string]any),
 		SkillUseCount:  make(map[string]int),
 		StatUseCount:   make(map[string]int),
@@ -937,7 +940,7 @@ func (c *Character) GetAdjectives() []string {
 		retAdjectives = append(retAdjectives, `downed`)
 	}
 
-	if c.Prone {
+	if c.CombatPosition == PositionProne {
 		retAdjectives = append(retAdjectives, `prone`)
 	}
 
@@ -970,13 +973,13 @@ func (c *Character) GetAdjectives() []string {
 // - success: whether the recovery succeeded (only meaningful if attemptMade is true)
 func (c *Character) AttemptRecovery(statValue int) (bool, bool) {
 	// Currently only handles Prone, but future-proofed for grapple/entangle/etc
-	if !c.Prone {
+	if c.CombatPosition != PositionProne {
 		return false, false // No condition to recover from
 	}
 
 	// Decrement minimum prone duration counter
-	if c.ProneRoundsRemaining > 0 {
-		c.ProneRoundsRemaining--
+	if c.PositionRoundsMin > 0 {
+		c.PositionRoundsMin--
 		// Still in minimum prone period, can't attempt recovery yet
 		// Reduce attacks to 1 this round (struggling to stand)
 		c.RecoveryPenaltyThisRound = true
@@ -1002,8 +1005,8 @@ func (c *Character) AttemptRecovery(statValue int) (bool, bool) {
 	success := roll.Value < chance
 
 	if success {
-		c.Prone = false
-		c.ProneRoundsRemaining = 0
+		c.CombatPosition = PositionStanding
+		c.PositionRoundsMin = 0
 	} else {
 		// Failed recovery attempt - reduce attacks to 1 this round
 		c.RecoveryPenaltyThisRound = true
