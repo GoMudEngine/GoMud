@@ -1184,7 +1184,7 @@ After Stage 4.7, manual testing revealed that arena mobs were too weak for new p
 ---
 
 ### Stage 7.5: Combat-Specific Commands with Cooldowns ✅ COMPLETED
-**Merge commit**: c252626
+**Merge commit**: 53a6ca0 (includes comprehensive documentation)
 **Goal**: Add special combat-only commands with cooldowns that provide tactical options beyond basic attacks. These include maneuvers like shield bash, trip, and kick that can apply status conditions to opponents.
 
 **Design**:
@@ -2021,7 +2021,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 4b: Progression Fixes | 4 stages (4.5–4.8) | 12 hours | **Complete** |
 | Phase 5: Stamina & Attacks | 4 stages (5.1–5.4) | 20 hours | **Complete** |
 | Phase 6: Conviction & Magic | 2 stages (6.1–6.2) | 8 hours | **Complete** |
-| Phase 7: Defense & Combat | 5 stages (7.1–7.5) | 26 hours | **7.1-7.4 Complete** |
+| Phase 7: Defense & Combat | 5 stages (7.1–7.5) | 26 hours | **Complete** |
 | Phase 8: Grappling | 2 stages (8.1–8.2) | 12 hours | Not Started |
 | Phase 9: Combat Presentation | 3 stages (9.1–9.3) | 16 hours | Not Started |
 | Phase 10: Balance Pass | 1 stage (10.1) | 8 hours | Not Started |
