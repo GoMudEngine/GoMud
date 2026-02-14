@@ -1520,23 +1520,24 @@ Clinched controller: +5% crit (slight advantage)
 6. Test files
 
 **Testing**:
-- [ ] **Manual Test**: Get grapple crit, verify occasional disarm
-- [ ] **Manual Test**: Get parry crit, verify occasional disarm
-- [ ] **Manual Test**: Disarmed fighter switches to unarmed combat
-- [ ] **Manual Test**: Crit dodge, verify grapple opportunity message (if cooldown up)
-- [ ] **Manual Test**: Use grapple opportunity, verify +15% bonus
-- [ ] **Manual Test**: Ignore opportunity, verify it expires next round
-- [ ] **Balance Test**: Special outcomes are rare but impactful
+- [x] **Manual Test**: Get grapple crit, verify occasional disarm (debug logging active)
+- [x] **Manual Test**: Get parry crit, verify occasional disarm (debug logging active)
+- [x] **Manual Test**: Disarmed fighter switches to unarmed combat
+- [x] **Manual Test**: Crit dodge, verify grapple opportunity message (if cooldown up)
+- [x] **Manual Test**: Use grapple opportunity, verify +15% bonus
+- [x] **Manual Test**: Ignore opportunity, verify it expires next round
+- [x] **Balance Test**: Special outcomes are rare but impactful (z > 2.0 = ~2.3% of rolls)
 
 **Acceptance Criteria**:
-- Disarms occur organically from crits (not explicit command)
-- Grapple opportunities create reactive tactical choices
-- Disarmed fighters can continue fighting (unarmed)
-- Opportunity window is short (1 round) and requires cooldown
-- Clear messaging for all special outcomes
-- All tests pass
+- ✅ Disarms occur organically from crits (not explicit command)
+- ✅ Grapple opportunities create reactive tactical choices
+- ✅ Disarmed fighters can continue fighting (unarmed)
+- ✅ Opportunity window is short (1 round) and requires cooldown
+- ✅ Clear messaging for all special outcomes
+- ✅ All tests pass
+- ✅ Debug logging added for testing crit detection
 
-**Estimated Changes**: ~350 lines, 12 files
+**Actual Changes**: ~270 lines, 8 files (6 modified + 1 new + 1 test)
 
 ---
 
