@@ -3,7 +3,6 @@ package combat
 import (
 	"fmt"
 	"math"
-	"strconv"
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
@@ -719,7 +718,7 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 					items.TokenTarget:       targetChar.Name,
 					items.TokenTargetType:   string(targetType) + `name`,
 					items.TokenUsesLeft:     `[Invalid]`,
-					items.TokenDamage:       strconv.Itoa(attackTargetDamage),
+					items.TokenDamage:       GetDamageDescription(attackTargetDamage, targetChar.HealthMax.Value),
 					items.TokenEntranceName: `unknown`,
 					items.TokenExitName:     `unknown`,
 				}
@@ -809,7 +808,7 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				// Send to attacker
 				attackerMsg := string(toAttackerMsg)
 				if attackSourceDamage > 0 && attackSourceReduction > 0 {
-					attackerMsg += fmt.Sprintf(` <ansi fg="white">[%d was blocked]</ansi>`, attackSourceReduction)
+					attackerMsg += fmt.Sprintf(` <ansi fg="white">[%s was blocked]</ansi>`, GetDamageDescription(attackSourceReduction, sourceChar.HealthMax.Value))
 				}
 
 				attackResult.SendToSource(
@@ -819,7 +818,7 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				// Send to victim
 				defenderMsg := string(toDefenderMsg)
 				if attackTargetDamage > 0 && attackTargetReduction > 0 {
-					defenderMsg += fmt.Sprintf(` <ansi fg="red">[you blocked %d]</ansi>`, attackTargetReduction)
+					defenderMsg += fmt.Sprintf(` <ansi fg="red">[you blocked %s]</ansi>`, GetDamageDescription(attackTargetReduction, targetChar.HealthMax.Value))
 				}
 
 				attackResult.SendToTarget(
@@ -871,13 +870,13 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 
 							attackResult.DamageToTarget += attackTargetDamage
 
-							toAttackerMsg := fmt.Sprintf(`%s jumps into the fray and deals <ansi fg="damage">%d damage</ansi> to <ansi fg="%sname">%s</ansi>!`, sourceChar.Pet.DisplayName(), attackTargetDamage, string(targetType), targetChar.Name)
+							toAttackerMsg := fmt.Sprintf(`%s jumps into the fray and deals <ansi fg="damage">%s</ansi> to <ansi fg="%sname">%s</ansi>!`, sourceChar.Pet.DisplayName(), GetDamageDescription(attackTargetDamage, targetChar.HealthMax.Value), string(targetType), targetChar.Name)
 							attackResult.SendToSource(toAttackerMsg)
 
-							toDefenderMsg := fmt.Sprintf(`%s jumps into the fray and deals <ansi fg="damage">%d damage</ansi> to you!`, sourceChar.Pet.DisplayName(), attackTargetDamage)
+							toDefenderMsg := fmt.Sprintf(`%s jumps into the fray and deals <ansi fg="damage">%s</ansi> to you!`, sourceChar.Pet.DisplayName(), GetDamageDescription(attackTargetDamage, targetChar.HealthMax.Value))
 							attackResult.SendToTarget(toDefenderMsg)
 
-							toAttackerRoomMsg := fmt.Sprintf(`%s jumps into the fray and deals <ansi fg="damage">%d damage</ansi> to <ansi fg="%sname">%s</ansi>!`, sourceChar.Pet.DisplayName(), attackTargetDamage, string(targetType), targetChar.Name)
+							toAttackerRoomMsg := fmt.Sprintf(`%s jumps into the fray and deals <ansi fg="damage">%s</ansi> to <ansi fg="%sname">%s</ansi>!`, sourceChar.Pet.DisplayName(), GetDamageDescription(attackTargetDamage, targetChar.HealthMax.Value), string(targetType), targetChar.Name)
 							attackResult.SendToTargetRoom(toAttackerRoomMsg)
 
 						}

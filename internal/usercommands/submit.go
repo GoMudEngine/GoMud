@@ -130,12 +130,20 @@ func Submit(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				damage = 1
 			}
 
+			// Get target's max HP for damage description
+			targetMaxHP := 0
+			if targetMob != nil {
+				targetMaxHP = targetMob.Character.HealthMax.Value
+			} else if targetChar != nil {
+				targetMaxHP = targetChar.Character.HealthMax.Value
+			}
+
 			user.SendText(fmt.Sprintf(`<ansi fg="yellow-bold">You attempt to force %s into submission, but they resist!</ansi>`, targetName))
-			user.SendText(fmt.Sprintf(`<ansi fg="combat">You wrench and torque, dealing %d damage!</ansi>`, damage))
+			user.SendText(fmt.Sprintf(`<ansi fg="combat">You wrench and torque, dealing %s!</ansi>`, combat.GetDamageDescription(damage, targetMaxHP)))
 
 			if targetChar != nil {
 				targetChar.SendText(fmt.Sprintf(`<ansi fg="red">%s attempts to force you into submission!</ansi>`, user.Character.Name))
-				targetChar.SendText(fmt.Sprintf(`<ansi fg="red-bold">You resist, but take %d damage from the brutal hold!</ansi>`, damage))
+				targetChar.SendText(fmt.Sprintf(`<ansi fg="red-bold">You resist, but take %s from the brutal hold!</ansi>`, combat.GetDamageDescription(damage, targetMaxHP)))
 			}
 
 			room.SendText(

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -82,6 +83,14 @@ func Kick(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		baseDamage = 1
 	}
 
+	// Get target's max HP for damage description
+	targetMaxHP := 0
+	if targetMob != nil {
+		targetMaxHP = targetMob.Character.HealthMax.Value
+	} else if targetChar != nil {
+		targetMaxHP = targetChar.Character.HealthMax.Value
+	}
+
 	// Apply damage and determine knockdown
 	knockedDown := false
 	if attackSuccess {
@@ -114,10 +123,10 @@ func Kick(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 		// Send messages
 		if knockedDown {
-			user.SendText(fmt.Sprintf(`Your <ansi fg="yellow-bold">kick</ansi> knocks <ansi fg="mobname">%s</ansi> to the ground! (<ansi fg="damage">%d</ansi> damage)`, targetName, baseDamage))
+			user.SendText(fmt.Sprintf(`Your <ansi fg="yellow-bold">kick</ansi> knocks <ansi fg="mobname">%s</ansi> to the ground! (<ansi fg="damage">%s</ansi>)`, targetName, combat.GetDamageDescription(baseDamage, targetMaxHP)))
 
 			if targetChar != nil {
-				targetChar.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi>'s powerful <ansi fg="yellow-bold">kick</ansi> knocks you to the ground! (<ansi fg="damage">%d</ansi> damage)`, user.Character.Name, baseDamage))
+				targetChar.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi>'s powerful <ansi fg="yellow-bold">kick</ansi> knocks you to the ground! (<ansi fg="damage">%s</ansi>)`, user.Character.Name, combat.GetDamageDescription(baseDamage, targetMaxHP)))
 			}
 
 			room.SendText(
@@ -125,10 +134,10 @@ func Kick(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				user.UserId, targetPlayerId,
 			)
 		} else {
-			user.SendText(fmt.Sprintf(`Your <ansi fg="yellow-bold">kick</ansi> strikes <ansi fg="mobname">%s</ansi>! (<ansi fg="damage">%d</ansi> damage)`, targetName, baseDamage))
+			user.SendText(fmt.Sprintf(`Your <ansi fg="yellow-bold">kick</ansi> strikes <ansi fg="mobname">%s</ansi>! (<ansi fg="damage">%s</ansi>)`, targetName, combat.GetDamageDescription(baseDamage, targetMaxHP)))
 
 			if targetChar != nil {
-				targetChar.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> kicks you hard! (<ansi fg="damage">%d</ansi> damage)`, user.Character.Name, baseDamage))
+				targetChar.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> kicks you hard! (<ansi fg="damage">%s</ansi>)`, user.Character.Name, combat.GetDamageDescription(baseDamage, targetMaxHP)))
 			}
 
 			room.SendText(
