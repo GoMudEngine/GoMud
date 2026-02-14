@@ -58,28 +58,28 @@ options:
     # messages for when they are in the same room
     together:
       toattacker:
-      - 'Your <ansi fg="item">{itemname}</ansi> grazes <ansi fg="{targettype}">{target}</ansi> for <ansi fg="damage">{damage} damage</ansi>.'
-      - 'You scratch <ansi fg="{targettype}">{target}</ansi> lightly with your <ansi fg="item">{itemname}</ansi>, causing <ansi fg="damage">{damage} damage</ansi>.'
-      - 'Your claws barely nick <ansi fg="{targettype}">{target}</ansi>, dealing minor damage of <ansi fg="damage">{damage}</ansi>.'
+      - 'Your <ansi fg="item">{itemname}</ansi> grazes <ansi fg="{targettype}">{target}</ansi>.'
+      - 'You scratch <ansi fg="{targettype}">{target}</ansi> lightly with your <ansi fg="item">{itemname}</ansi>.'
+      - 'Your claws barely nick <ansi fg="{targettype}">{target}</ansi>.'
       todefender:
-      - '<ansi fg="{sourcetype}">{source}</ansi> grazes you with their <ansi fg="item">{itemname}</ansi> for <ansi fg="damage">{damage} damage</ansi>.'
-      - '<ansi fg="{sourcetype}">{source}</ansi> scratches you lightly with their <ansi fg="item">{itemname}</ansi>, causing <ansi fg="damage">{damage} damage</ansi>.'
-      - 'You feel a slight scratch as <ansi fg="{sourcetype}">{source}</ansi>''s claws barely nick you for <ansi fg="damage">{damage} damage</ansi>.'
+      - '<ansi fg="{sourcetype}">{source}</ansi> grazes you with their <ansi fg="item">{itemname}</ansi>.'
+      - '<ansi fg="{sourcetype}">{source}</ansi> scratches you lightly with their <ansi fg="item">{itemname}</ansi>.'
+      - 'You feel a slight scratch as <ansi fg="{sourcetype}">{source}</ansi>''s claws barely nick you.'
       toroom:
       - '<ansi fg="{sourcetype}">{source}</ansi> grazes <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>.'
       - '<ansi fg="{sourcetype}">{source}</ansi> scratches <ansi fg="{targettype}">{target}</ansi> lightly with their <ansi fg="item">{itemname}</ansi>.'
-      - '<ansi fg="{sourcetype}">{source}</ansi>''s claws barely nick <ansi fg="{targettype}">{target}</ansi>, causing minor damage.'
+      - '<ansi fg="{sourcetype}">{source}</ansi>''s claws barely nick <ansi fg="{targettype}">{target}</ansi>.'
   normal:
     # messages for when they are in the same room
     together:
       toattacker:
-      - 'Your <ansi fg="item">{itemname}</ansi> rends <ansi fg="{targettype}">{target}</ansi> for <ansi fg="damage">{damage} damage</ansi>!'
-      - 'You slash <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>, causing <ansi fg="damage">{damage} damage</ansi>!'
-      - 'Your claws tear into <ansi fg="{targettype}">{target}</ansi>, dealing <ansi fg="damage">{damage} damage</ansi>!'
+      - 'Your <ansi fg="item">{itemname}</ansi> rends <ansi fg="{targettype}">{target}</ansi>!'
+      - 'You slash <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>!'
+      - 'Your claws tear into <ansi fg="{targettype}">{target}</ansi>!'
       todefender:
-      - '<ansi fg="{sourcetype}">{source}</ansi> rends you with their <ansi fg="item">{itemname}</ansi> for <ansi fg="damage">{damage} damage</ansi>!'
-      - '<ansi fg="{sourcetype}">{source}</ansi> slashes you with their <ansi fg="item">{itemname}</ansi>, causing <ansi fg="damage">{damage} damage</ansi>!'
-      - 'You feel sharp pain as <ansi fg="{sourcetype}">{source}</ansi>''s claws tear into you for <ansi fg="damage">{damage} damage</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> rends you with their <ansi fg="item">{itemname}</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> slashes you with their <ansi fg="item">{itemname}</ansi>!'
+      - 'You feel sharp pain as <ansi fg="{sourcetype}">{source}</ansi>''s claws tear into you!'
       toroom:
       - '<ansi fg="{sourcetype}">{source}</ansi> rends <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>!'
       - '<ansi fg="{sourcetype}">{source}</ansi> slashes <ansi fg="{targettype}">{target}</ansi> with their claws!'
@@ -88,13 +88,13 @@ options:
     # messages for when they are in the same room
     together:
       toattacker:
-      - 'Your <ansi fg="item">{itemname}</ansi> bites into <ansi fg="{targettype}">{target}</ansi> causing <ansi fg="damage">{damage} damage</ansi>!'
-      - 'You deliver a powerful slash to <ansi fg="{targettype}">{target}</ansi>, causing <ansi fg="damage">{damage} damage</ansi>!'
-      - 'Your claws sink deeply into <ansi fg="{targettype}">{target}</ansi>, dealing significant damage of <ansi fg="damage">{damage}</ansi>!'
+      - 'Your <ansi fg="item">{itemname}</ansi> bites into <ansi fg="{targettype}">{target}</ansi>!'
+      - 'You deliver a powerful slash to <ansi fg="{targettype}">{target}</ansi>!'
+      - 'Your claws sink deeply into <ansi fg="{targettype}">{target}</ansi>!'
       todefender:
-      - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> bites into you for <ansi fg="damage">{damage} damage</ansi>!'
-      - 'You are hit hard as <ansi fg="{sourcetype}">{source}</ansi> delivers a powerful slash for <ansi fg="damage">{damage} damage</ansi>!'
-      - '<ansi fg="{sourcetype}">{source}</ansi>''s claws sink deeply into you, dealing significant damage of <ansi fg="damage">{damage}</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> bites into you!'
+      - 'You are hit hard as <ansi fg="{sourcetype}">{source}</ansi> delivers a powerful slash!'
+      - '<ansi fg="{sourcetype}">{source}</ansi>''s claws sink deeply into you!'
       toroom:
       - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> bites into <ansi fg="{targettype}">{target}</ansi>!'
       - '<ansi fg="{sourcetype}">{source}</ansi> delivers a powerful slash to <ansi fg="{targettype}">{target}</ansi>!'
@@ -103,13 +103,13 @@ options:
     # messages for when they are in the same room
     together:
       toattacker:
-      - 'Your <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRITICALLY EVISCERATES</ansi> <ansi fg="{targettype}">{target}</ansi> for <ansi fg="damage">{damage} damage</ansi>!'
-      - 'You deliver a <ansi fg="cyan-bold">CRITICAL REND</ansi> to <ansi fg="{targettype}">{target}</ansi>, causing <ansi fg="damage">{damage} damage</ansi>!'
-      - 'Your claws <ansi fg="cyan-bold">DEVASTATE</ansi> <ansi fg="{targettype}">{target}</ansi>, dealing a massive <ansi fg="damage">{damage} damage</ansi>!'
+      - 'Your <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRITICALLY EVISCERATES</ansi> <ansi fg="{targettype}">{target}</ansi>!'
+      - 'You deliver a <ansi fg="cyan-bold">CRITICAL REND</ansi> to <ansi fg="{targettype}">{target}</ansi>!'
+      - 'Your claws <ansi fg="cyan-bold">DEVASTATE</ansi> <ansi fg="{targettype}">{target}</ansi>!'
       todefender:
-      - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRITICALLY EVISCERATES</ansi> you for <ansi fg="damage">{damage} damage</ansi>!'
-      - 'You are <ansi fg="cyan-bold">CRITICALLY RENDED</ansi> by <ansi fg="{sourcetype}">{source}</ansi>, taking <ansi fg="damage">{damage} damage</ansi>!'
-      - '<ansi fg="{sourcetype}">{source}</ansi>''s claws <ansi fg="cyan-bold">DEVASTATE</ansi> you, dealing a massive <ansi fg="damage">{damage} damage</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRITICALLY EVISCERATES</ansi> you!'
+      - 'You are <ansi fg="cyan-bold">CRITICALLY RENDED</ansi> by <ansi fg="{sourcetype}">{source}</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi>''s claws <ansi fg="cyan-bold">DEVASTATE</ansi> you!'
       toroom:
       - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRITICALLY EVISCERATES</ansi> <ansi fg="{targettype}">{target}</ansi>!'
       - '<ansi fg="{sourcetype}">{source}</ansi> delivers a <ansi fg="cyan-bold">CRITICAL REND</ansi> to <ansi fg="{targettype}">{target}</ansi>!'

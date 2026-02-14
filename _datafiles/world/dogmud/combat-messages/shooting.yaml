@@ -106,13 +106,13 @@ options:
     # messages for when they are in the same room
     together:
       toattacker:
-      - 'You fire at <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi> causing <ansi fg="damage">{damage} damage</ansi>.'
-      - 'Your shot grazes <ansi fg="{targettype}">{target}</ansi>, causing <ansi fg="damage">{damage} damage</ansi>.'
-      - 'You manage to wound <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi> for <ansi fg="damage">{damage} damage</ansi>.'
+      - 'You fire at <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>.'
+      - 'Your shot grazes <ansi fg="{targettype}">{target}</ansi>.'
+      - 'You manage to wound <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>.'
       todefender:
-      - '<ansi fg="{sourcetype}">{source}</ansi> fires at you with their <ansi fg="item">{itemname}</ansi> causing <ansi fg="damage">{damage} damage</ansi>.'
-      - 'You feel a sting as <ansi fg="{sourcetype}">{source}</ansi> grazes you with a shot for <ansi fg="damage">{damage} damage</ansi>.'
-      - '<ansi fg="{sourcetype}">{source}</ansi> wounds you slightly with their <ansi fg="item">{itemname}</ansi>, causing <ansi fg="damage">{damage} damage</ansi>.'
+      - '<ansi fg="{sourcetype}">{source}</ansi> fires at you with their <ansi fg="item">{itemname}</ansi>.'
+      - 'You feel a sting as <ansi fg="{sourcetype}">{source}</ansi> grazes you with a shot.'
+      - '<ansi fg="{sourcetype}">{source}</ansi> wounds you slightly with their <ansi fg="item">{itemname}</ansi>.'
       toroom:
       - '<ansi fg="{sourcetype}">{source}</ansi> lands a shot on <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>.'
       - '<ansi fg="{sourcetype}">{source}</ansi> wounds <ansi fg="{targettype}">{target}</ansi> with a glancing shot.'
@@ -120,13 +120,13 @@ options:
     # messages for when they are in different rooms, such as with projectiles
     separate:
       toattacker:
-      - 'You fire at <ansi fg="{targettype}">{target}</ansi> through the <ansi fg="exit">{exitname}</ansi> direction, doing <ansi fg="damage">{damage} damage</ansi>.'
-      - 'Your shot through the <ansi fg="exit">{exitname}</ansi> grazes <ansi fg="{targettype}">{target}</ansi>, causing <ansi fg="damage">{damage} damage</ansi>.'
-      - 'You manage to hit <ansi fg="{targettype}">{target}</ansi> through the <ansi fg="exit">{exitname}</ansi>, causing <ansi fg="damage">{damage} damage</ansi>.'
+      - 'You fire at <ansi fg="{targettype}">{target}</ansi> through the <ansi fg="exit">{exitname}</ansi> direction.'
+      - 'Your shot through the <ansi fg="exit">{exitname}</ansi> grazes <ansi fg="{targettype}">{target}</ansi>.'
+      - 'You manage to hit <ansi fg="{targettype}">{target}</ansi> through the <ansi fg="exit">{exitname}</ansi>.'
       todefender:
-      - 'A shot from a <ansi fg="item">{itemname}</ansi> flies in from the <ansi fg="exit">{entrancename}</ansi> direction, hitting you for <ansi fg="damage">{damage} damage</ansi>!'
-      - 'You are grazed by a shot from the <ansi fg="exit">{entrancename}</ansi> direction, taking <ansi fg="damage">{damage} damage</ansi>!'
-      - 'A projectile from the <ansi fg="exit">{entrancename}</ansi> wounds you for <ansi fg="damage">{damage} damage</ansi>.'
+      - 'A shot from a <ansi fg="item">{itemname}</ansi> flies in from the <ansi fg="exit">{entrancename}</ansi> direction, hitting you!'
+      - 'You are grazed by a shot from the <ansi fg="exit">{entrancename}</ansi> direction!'
+      - 'A projectile from the <ansi fg="exit">{entrancename}</ansi> wounds you.'
       toattackerroom:
       - '<ansi fg="{sourcetype}">{source}</ansi> fires their <ansi fg="item">{itemname}</ansi> towards the <ansi fg="exit">{exitname}</ansi> direction.'
       - '<ansi fg="{sourcetype}">{source}</ansi> shoots through the <ansi fg="exit">{exitname}</ansi>, attempting to hit <ansi fg="{targettype}">{target}</ansi>.'
@@ -139,13 +139,13 @@ options:
     # messages for when they are in the same room
     together:
       toattacker:
-      - 'You fire your <ansi fg="item">{itemname}</ansi>, wounding <ansi fg="{targettype}">{target}</ansi> for <ansi fg="damage">{damage} damage</ansi>!'
-      - 'Your shot hits <ansi fg="{targettype}">{target}</ansi>, dealing <ansi fg="damage">{damage} damage</ansi>!'
-      - 'You successfully wound <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>, causing <ansi fg="damage">{damage} damage</ansi>!'
+      - 'You fire your <ansi fg="item">{itemname}</ansi>, wounding <ansi fg="{targettype}">{target}</ansi>!'
+      - 'Your shot hits <ansi fg="{targettype}">{target}</ansi>!'
+      - 'You successfully wound <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>!'
       todefender:
-      - '<ansi fg="{sourcetype}">{source}</ansi> fires their <ansi fg="item">{itemname}</ansi>, wounding you for <ansi fg="damage">{damage} damage</ansi>!'
-      - 'You are hit by <ansi fg="{sourcetype}">{source}</ansi>''s shot, taking <ansi fg="damage">{damage} damage</ansi>!'
-      - '<ansi fg="{sourcetype}">{source}</ansi> wounds you with their <ansi fg="item">{itemname}</ansi>, causing <ansi fg="damage">{damage} damage</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> fires their <ansi fg="item">{itemname}</ansi>, wounding you!'
+      - 'You are hit by <ansi fg="{sourcetype}">{source}</ansi>''s shot!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> wounds you with their <ansi fg="item">{itemname}</ansi>!'
       toroom:
       - '<ansi fg="{sourcetype}">{source}</ansi> fires their <ansi fg="item">{itemname}</ansi>, wounding <ansi fg="{targettype}">{target}</ansi>!'
       - '<ansi fg="{sourcetype}">{source}</ansi>''s shot hits <ansi fg="{targettype}">{target}</ansi>, dealing damage!'
@@ -153,13 +153,13 @@ options:
     # messages for when they are in different rooms, such as with projectiles
     separate:
       toattacker:
-      - 'You fire through the <ansi fg="exit">{exitname}</ansi> direction, wounding <ansi fg="{targettype}">{target}</ansi> for <ansi fg="damage">{damage} damage</ansi>.'
-      - 'Your shot through the <ansi fg="exit">{exitname}</ansi> hits <ansi fg="{targettype}">{target}</ansi>, dealing <ansi fg="damage">{damage} damage</ansi>!'
-      - 'You successfully wound <ansi fg="{targettype}">{target}</ansi> through the <ansi fg="exit">{exitname}</ansi>, causing <ansi fg="damage">{damage} damage</ansi>!'
+      - 'You fire through the <ansi fg="exit">{exitname}</ansi> direction, wounding <ansi fg="{targettype}">{target}</ansi>.'
+      - 'Your shot through the <ansi fg="exit">{exitname}</ansi> hits <ansi fg="{targettype}">{target}</ansi>!'
+      - 'You successfully wound <ansi fg="{targettype}">{target}</ansi> through the <ansi fg="exit">{exitname}</ansi>!'
       todefender:
-      - 'A shot from a <ansi fg="item">{itemname}</ansi> flies in from the <ansi fg="exit">{entrancename}</ansi> direction, wounding you for <ansi fg="damage">{damage} damage</ansi>!'
-      - 'You are hit by a shot from the <ansi fg="exit">{entrancename}</ansi> direction, taking <ansi fg="damage">{damage} damage</ansi>!'
-      - 'A projectile from the <ansi fg="exit">{entrancename}</ansi> wounds you for <ansi fg="damage">{damage} damage</ansi>!'
+      - 'A shot from a <ansi fg="item">{itemname}</ansi> flies in from the <ansi fg="exit">{entrancename}</ansi> direction, wounding you!'
+      - 'You are hit by a shot from the <ansi fg="exit">{entrancename}</ansi> direction!'
+      - 'A projectile from the <ansi fg="exit">{entrancename}</ansi> wounds you!'
       toattackerroom:
       - '<ansi fg="{sourcetype}">{source}</ansi> fires their <ansi fg="item">{itemname}</ansi> towards the <ansi fg="exit">{exitname}</ansi> direction.'
       - '<ansi fg="{sourcetype}">{source}</ansi> shoots through the <ansi fg="exit">{exitname}</ansi>, hitting their target.'
@@ -172,13 +172,13 @@ options:
     # messages for when they are in the same room
     together:
       toattacker:
-      - 'In a moment of clarity, you fire at <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>, doing an impressive <ansi fg="damage">{damage} damage</ansi>!'
-      - 'You land a powerful shot on <ansi fg="{targettype}">{target}</ansi>, causing an impressive <ansi fg="damage">{damage} damage</ansi>!'
-      - 'Your <ansi fg="item">{itemname}</ansi> hits <ansi fg="{targettype}">{target}</ansi> squarely, dealing significant damage of <ansi fg="damage">{damage}</ansi>!'
+      - 'In a moment of clarity, you fire at <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>!'
+      - 'You land a powerful shot on <ansi fg="{targettype}">{target}</ansi>!'
+      - 'Your <ansi fg="item">{itemname}</ansi> hits <ansi fg="{targettype}">{target}</ansi> squarely!'
       todefender:
-      - 'With incredible accuracy, <ansi fg="{sourcetype}">{source}</ansi> wounds you with their <ansi fg="item">{itemname}</ansi>, doing an impressive <ansi fg="damage">{damage} damage</ansi>!'
-      - 'You are struck hard by <ansi fg="{sourcetype}">{source}</ansi>, taking an impressive <ansi fg="damage">{damage} damage</ansi>!'
-      - '<ansi fg="{sourcetype}">{source}</ansi>''s shot hits you with force, dealing <ansi fg="damage">{damage} damage</ansi>!'
+      - 'With incredible accuracy, <ansi fg="{sourcetype}">{source}</ansi> wounds you with their <ansi fg="item">{itemname}</ansi>!'
+      - 'You are struck hard by <ansi fg="{sourcetype}">{source}</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi>''s shot hits you with force!'
       toroom:
       - 'With incredible accuracy, <ansi fg="{sourcetype}">{source}</ansi> wounds <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>!'
       - '<ansi fg="{sourcetype}">{source}</ansi> lands a powerful shot on <ansi fg="{targettype}">{target}</ansi>!'
@@ -186,13 +186,13 @@ options:
     # messages for when they are in different rooms, such as with projectiles
     separate:
       toattacker:
-      - 'In a moment of clarity, you fire through the <ansi fg="exit">{exitname}</ansi> direction, doing an impressive <ansi fg="damage">{damage} damage</ansi> to <ansi fg="{targettype}">{target}</ansi>!'
-      - 'You land a powerful shot on <ansi fg="{targettype}">{target}</ansi> through the <ansi fg="exit">{exitname}</ansi>, causing <ansi fg="damage">{damage} damage</ansi>!'
-      - 'Your shot through the <ansi fg="exit">{exitname}</ansi> hits <ansi fg="{targettype}">{target}</ansi> squarely, dealing significant damage of <ansi fg="damage">{damage}</ansi>!'
+      - 'In a moment of clarity, you fire through the <ansi fg="exit">{exitname}</ansi> direction to <ansi fg="{targettype}">{target}</ansi>!'
+      - 'You land a powerful shot on <ansi fg="{targettype}">{target}</ansi> through the <ansi fg="exit">{exitname}</ansi>!'
+      - 'Your shot through the <ansi fg="exit">{exitname}</ansi> hits <ansi fg="{targettype}">{target}</ansi> squarely!'
       todefender:
-      - 'With incredible accuracy, a shot from a <ansi fg="item">{itemname}</ansi> flies in from the <ansi fg="exit">{entrancename}</ansi> direction, hitting you for an impressive <ansi fg="damage">{damage} damage</ansi>!'
-      - 'You are struck hard by a shot from the <ansi fg="exit">{entrancename}</ansi>, taking an impressive <ansi fg="damage">{damage} damage</ansi>!'
-      - 'A projectile from the <ansi fg="exit">{entrancename}</ansi> hits you with force, dealing <ansi fg="damage">{damage} damage</ansi>!'
+      - 'With incredible accuracy, a shot from a <ansi fg="item">{itemname}</ansi> flies in from the <ansi fg="exit">{entrancename}</ansi> direction, hitting you!'
+      - 'You are struck hard by a shot from the <ansi fg="exit">{entrancename}</ansi>!'
+      - 'A projectile from the <ansi fg="exit">{entrancename}</ansi> hits you with force!'
       toattackerroom:
       - '<ansi fg="{sourcetype}">{source}</ansi> fires their <ansi fg="item">{itemname}</ansi> towards the <ansi fg="exit">{exitname}</ansi> direction.'
       - '<ansi fg="{sourcetype}">{source}</ansi> shoots through the <ansi fg="exit">{exitname}</ansi>, hitting their target powerfully.'
@@ -205,13 +205,13 @@ options:
     # messages for when they are in the same room
     together:
       toattacker:
-      - 'Your <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRITICALLY SNIPES</ansi> <ansi fg="{targettype}">{target}</ansi> for <ansi fg="damage">{damage} damage</ansi>!'
-      - 'You deliver a <ansi fg="cyan-bold">CRITICAL HIT</ansi> to <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>, causing <ansi fg="damage">{damage} damage</ansi>!'
-      - 'Your shot <ansi fg="cyan-bold">PIERCES</ansi> <ansi fg="{targettype}">{target}</ansi> for a devastating <ansi fg="damage">{damage} damage</ansi>!'
+      - 'Your <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRITICALLY SNIPES</ansi> <ansi fg="{targettype}">{target}</ansi>!'
+      - 'You deliver a <ansi fg="cyan-bold">CRITICAL HIT</ansi> to <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>!'
+      - 'Your shot <ansi fg="cyan-bold">PIERCES</ansi> <ansi fg="{targettype}">{target}</ansi>!'
       todefender:
-      - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRITICALLY SNIPES</ansi> you for <ansi fg="damage">{damage} damage</ansi>!'
-      - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> delivers a <ansi fg="cyan-bold">CRITICAL HIT</ansi>, causing you <ansi fg="damage">{damage} damage</ansi>!'
-      - 'You are <ansi fg="cyan-bold">DEVASTATED</ansi> by <ansi fg="{sourcetype}">{source}''s</ansi> shot for <ansi fg="damage">{damage} damage</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRITICALLY SNIPES</ansi> you!'
+      - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> delivers a <ansi fg="cyan-bold">CRITICAL HIT</ansi>!'
+      - 'You are <ansi fg="cyan-bold">DEVASTATED</ansi> by <ansi fg="{sourcetype}">{source}''s</ansi> shot!'
       toroom:
       - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRITICALLY SNIPES</ansi> <ansi fg="{targettype}">{target}</ansi>!'
       - '<ansi fg="{sourcetype}">{source}''s</ansi> shot delivers a <ansi fg="cyan-bold">CRITICAL HIT</ansi> to <ansi fg="{targettype}">{target}</ansi>!'
@@ -219,13 +219,13 @@ options:
     # messages for when they are in different rooms, such as with projectiles
     separate:
       toattacker:
-      - 'Your <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRITICALLY SNIPES</ansi> <ansi fg="{targettype}">{target}</ansi> through the <ansi fg="exit">{exitname}</ansi> direction for <ansi fg="damage">{damage} damage</ansi>!'
-      - 'You deliver a <ansi fg="cyan-bold">CRITICAL HIT</ansi> to <ansi fg="{targettype}">{target}</ansi> through the <ansi fg="exit">{exitname}</ansi>, causing <ansi fg="damage">{damage} damage</ansi>!'
-      - 'Your shot <ansi fg="cyan-bold">PIERCES</ansi> <ansi fg="{targettype}">{target}</ansi> through the <ansi fg="exit">{exitname}</ansi>, dealing a devastating <ansi fg="damage">{damage} damage</ansi>!'
+      - 'Your <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRITICALLY SNIPES</ansi> <ansi fg="{targettype}">{target}</ansi> through the <ansi fg="exit">{exitname}</ansi> direction!'
+      - 'You deliver a <ansi fg="cyan-bold">CRITICAL HIT</ansi> to <ansi fg="{targettype}">{target}</ansi> through the <ansi fg="exit">{exitname}</ansi>!'
+      - 'Your shot <ansi fg="cyan-bold">PIERCES</ansi> <ansi fg="{targettype}">{target}</ansi> through the <ansi fg="exit">{exitname}</ansi></ansi>!'
       todefender:
-      - 'A <ansi fg="item">{itemname}</ansi> shot from the <ansi fg="exit">{entrancename}</ansi> direction <ansi fg="cyan-bold">CRITICALLY SNIPES</ansi> you for <ansi fg="damage">{damage} damage</ansi>!'
-      - 'A shot from the <ansi fg="exit">{entrancename}</ansi> delivers a <ansi fg="cyan-bold">CRITICAL HIT</ansi>, causing you <ansi fg="damage">{damage} damage</ansi>!'
-      - 'You are <ansi fg="cyan-bold">DEVASTATED</ansi> by a shot from the <ansi fg="exit">{entrancename}</ansi> for <ansi fg="damage">{damage} damage</ansi>!'
+      - 'A <ansi fg="item">{itemname}</ansi> shot from the <ansi fg="exit">{entrancename}</ansi> direction <ansi fg="cyan-bold">CRITICALLY SNIPES</ansi> you!'
+      - 'A shot from the <ansi fg="exit">{entrancename}</ansi> delivers a <ansi fg="cyan-bold">CRITICAL HIT</ansi>!'
+      - 'You are <ansi fg="cyan-bold">DEVASTATED</ansi> by a shot from the <ansi fg="exit">{entrancename}</ansi>!'
       toattackerroom:
       - '<ansi fg="{sourcetype}">{source}</ansi> fires their <ansi fg="item">{itemname}</ansi> towards the <ansi fg="exit">{exitname}</ansi> direction.'
       - '<ansi fg="{sourcetype}">{source}</ansi> fires a critical shot through the <ansi fg="exit">{exitname}</ansi>.'

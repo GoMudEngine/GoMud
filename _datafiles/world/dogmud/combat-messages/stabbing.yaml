@@ -58,13 +58,13 @@ options:
     # messages for when they are in the same room
     together:
       toattacker:
-      - 'You jab your <ansi fg="item">{itemname}</ansi> into <ansi fg="{targettype}">{target}</ansi> causing <ansi fg="damage">{damage} damage</ansi>.'
-      - 'You lightly wound <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>, dealing <ansi fg="damage">{damage} damage</ansi>.'
-      - 'Your <ansi fg="item">{itemname}</ansi> grazes <ansi fg="{targettype}">{target}</ansi>, causing minor damage of <ansi fg="damage">{damage}</ansi>.'
+      - 'You jab your <ansi fg="item">{itemname}</ansi> into <ansi fg="{targettype}">{target}</ansi>.'
+      - 'You lightly wound <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>.'
+      - 'Your <ansi fg="item">{itemname}</ansi> grazes <ansi fg="{targettype}">{target}</ansi>.'
       todefender:
-      - '<ansi fg="{sourcetype}">{source}</ansi> jabs their <ansi fg="item">{itemname}</ansi> into you, causing <ansi fg="damage">{damage} damage</ansi>.'
-      - '<ansi fg="{sourcetype}">{source}</ansi> slightly wounds you with their <ansi fg="item">{itemname}</ansi>, dealing <ansi fg="damage">{damage} damage</ansi>.'
-      - '<ansi fg="{sourcetype}">{source}</ansi> grazes you with their <ansi fg="item">{itemname}</ansi>, causing minor damage of <ansi fg="damage">{damage}</ansi>.'
+      - '<ansi fg="{sourcetype}">{source}</ansi> jabs their <ansi fg="item">{itemname}</ansi> into you.'
+      - '<ansi fg="{sourcetype}">{source}</ansi> slightly wounds you with their <ansi fg="item">{itemname}</ansi>.'
+      - '<ansi fg="{sourcetype}">{source}</ansi> grazes you with their <ansi fg="item">{itemname}</ansi>.'
       toroom:
       - '<ansi fg="{sourcetype}">{source}</ansi> jabs their <ansi fg="item">{itemname}</ansi> into <ansi fg="{targettype}">{target}</ansi>.'
       - '<ansi fg="{sourcetype}">{source}</ansi> lightly wounds <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>.'
@@ -73,13 +73,13 @@ options:
     # messages for when they are in the same room
     together:
       toattacker:
-      - 'You stab <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi> and do <ansi fg="damage">{damage} damage</ansi>!'
-      - 'You strike <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>, dealing <ansi fg="damage">{damage} damage</ansi>!'
-      - 'Your <ansi fg="item">{itemname}</ansi> pierces <ansi fg="{targettype}">{target}</ansi>, inflicting <ansi fg="damage">{damage} damage</ansi>!'
+      - 'You stab <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>!'
+      - 'You strike <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>!'
+      - 'Your <ansi fg="item">{itemname}</ansi> pierces <ansi fg="{targettype}">{target}</ansi>!'
       todefender:
-      - '<ansi fg="{sourcetype}">{source}</ansi> stabs you with their <ansi fg="item">{itemname}</ansi> and does <ansi fg="damage">{damage} damage</ansi>!'
-      - '<ansi fg="{sourcetype}">{source}</ansi> strikes you with their <ansi fg="item">{itemname}</ansi>, dealing <ansi fg="damage">{damage} damage</ansi>!'
-      - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> pierces you, inflicting <ansi fg="damage">{damage} damage</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> stabs you with their <ansi fg="item">{itemname}</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> strikes you with their <ansi fg="item">{itemname}</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> pierces you!'
       toroom:
       - '<ansi fg="{sourcetype}">{source}</ansi> stabs <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>!'
       - '<ansi fg="{sourcetype}">{source}</ansi> strikes <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>!'
@@ -88,13 +88,13 @@ options:
     # messages for when they are in the same room
     together:
       toattacker:
-      - 'You impale <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>, causing an impressive <ansi fg="damage">{damage} damage</ansi>!'
-      - 'Your powerful strike pierces deeply into <ansi fg="{targettype}">{target}</ansi>, dealing a significant <ansi fg="damage">{damage} damage</ansi>!'
-      - 'You deliver a heavy blow to <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>, inflicting <ansi fg="damage">{damage} damage</ansi>!'
+      - 'You impale <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>!'
+      - 'Your powerful strike pierces deeply into <ansi fg="{targettype}">{target}</ansi>!'
+      - 'You deliver a heavy blow to <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>!'
       todefender:
-      - '<ansi fg="{sourcetype}">{source}</ansi> impales you with their <ansi fg="item">{itemname}</ansi>, causing an impressive <ansi fg="damage">{damage} damage</ansi>!'
-      - '<ansi fg="{sourcetype}">{source}</ansi>''s powerful strike pierces deeply into you, dealing a significant <ansi fg="damage">{damage} damage</ansi>!'
-      - '<ansi fg="{sourcetype}">{source}</ansi> delivers a heavy blow with their <ansi fg="item">{itemname}</ansi>, inflicting <ansi fg="damage">{damage} damage</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> impales you with their <ansi fg="item">{itemname}</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi>''s powerful strike pierces deeply into you!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> delivers a heavy blow with their <ansi fg="item">{itemname}</ansi>!'
       toroom:
       - '<ansi fg="{sourcetype}">{source}</ansi> impales <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>!'
       - '<ansi fg="{sourcetype}">{source}</ansi>''s powerful strike pierces deeply into <ansi fg="{targettype}">{target}</ansi>!'
@@ -103,13 +103,13 @@ options:
     # messages for when they are in the same room
     together:
       toattacker:
-      - 'Your <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRITICALLY IMPALES</ansi> <ansi fg="{targettype}">{target}</ansi> for <ansi fg="damage">{damage} damage</ansi>!'
-      - 'You deliver a <ansi fg="cyan-bold">CRITICAL STRIKE</ansi> to <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>, causing <ansi fg="damage">{damage} damage</ansi>!'
-      - 'Your <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">PIERCES THROUGH</ansi> <ansi fg="{targettype}">{target}</ansi> for a devastating <ansi fg="damage">{damage} damage</ansi>!'
+      - 'Your <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRITICALLY IMPALES</ansi> <ansi fg="{targettype}">{target}</ansi>!'
+      - 'You deliver a <ansi fg="cyan-bold">CRITICAL STRIKE</ansi> to <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>!'
+      - 'Your <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">PIERCES THROUGH</ansi> <ansi fg="{targettype}">{target}</ansi>!'
       todefender:
-      - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRITICALLY IMPALES</ansi> you for <ansi fg="damage">{damage} damage</ansi>!'
-      - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> delivers a <ansi fg="cyan-bold">CRITICAL STRIKE</ansi>, causing you <ansi fg="damage">{damage} damage</ansi>!'
-      - 'You are <ansi fg="cyan-bold">DEVASTATED</ansi> by <ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> for <ansi fg="damage">{damage} damage</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRITICALLY IMPALES</ansi> you!'
+      - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> delivers a <ansi fg="cyan-bold">CRITICAL STRIKE</ansi>!'
+      - 'You are <ansi fg="cyan-bold">DEVASTATED</ansi> by <ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi>!'
       toroom:
       - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRITICALLY IMPALES</ansi> <ansi fg="{targettype}">{target}</ansi>!'
       - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> delivers a <ansi fg="cyan-bold">CRITICAL STRIKE</ansi> to <ansi fg="{targettype}">{target}</ansi>!'
