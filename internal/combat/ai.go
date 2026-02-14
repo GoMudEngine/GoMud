@@ -223,8 +223,8 @@ func ScoreBash(mob *mobs.Mob, target *characters.Character) int {
 		score += 15
 	}
 
-	// Penalty if target is already prone
-	if target.CombatPosition == characters.PositionProne {
+	// Penalty if target is already on the ground (prone or grounded)
+	if target.CombatPosition.IsGroundPosition() {
 		score -= 50
 	}
 
@@ -252,8 +252,8 @@ func ScoreTrip(mob *mobs.Mob, target *characters.Character) int {
 		score += 15
 	}
 
-	// Can't trip prone target
-	if target.CombatPosition == characters.PositionProne {
+	// Can't trip someone already on the ground
+	if target.CombatPosition.IsGroundPosition() {
 		return 0
 	}
 
