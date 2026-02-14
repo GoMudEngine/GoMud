@@ -1,0 +1,14 @@
+mobid: 9004
+zone: test
+hostile: false
+activitylevel: 80
+aiprofile: "brawler"
+specialmovechance: 55
+statpool: 50
+combatcommands:
+  - "say Testing brawler AI!"
+character:
+  name: ai_test_brawler
+  description: "A combat training dummy configured with brawler AI behavior."
+  speciesid: 1
+  level: 10

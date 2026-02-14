@@ -1,7 +1,5 @@
 mobid: 9002
-name: "AI Test Dummy (Grappler)"
-description: "A combat training dummy configured with grappler AI behavior."
-species: "human"
+zone: test
 hostile: false
 activitylevel: 80
 aiprofile: "grappler"
@@ -12,3 +10,8 @@ movepreferences:
 statpool: 50
 combatcommands:
   - "say Testing grappler AI!"
+character:
+  name: ai_test_grappler
+  description: "A combat training dummy configured with grappler AI behavior."
+  speciesid: 1
+  level: 10
