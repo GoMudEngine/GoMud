@@ -2161,17 +2161,17 @@ normal:
 
 **Testing**:
 - [x] **Build Test**: Code compiles successfully
-- [ ] **Manual Test**: Get dodged, verify variety in dodge messages
-- [ ] **Manual Test**: Parry attacks, verify variety in parry messages
-- [ ] **Manual Test**: Block attacks, verify variety in block messages
-- [ ] **Manual Test**: Verify perspective messages (what you see vs what attacker sees)
+- [x] **Manual Test**: Get dodged, verify variety in dodge messages
+- [x] **Manual Test**: Parry attacks, verify variety in parry messages
+- [x] **Manual Test**: Block attacks, verify variety in block messages
+- [x] **Manual Test**: Verify perspective messages (what you see vs what attacker sees)
 
 **Acceptance Criteria**:
 - ✅ Dodge/parry/block have 10-15 message variants each (achieved 40+ each across 3 intensities)
 - ✅ Messages vary by how close the attack was (weak/normal/heavy based on z-score)
 - ✅ Perspective messaging works (defender, attacker, observer)
 - ✅ Token system supports {defender}, {attacker}, {weapon}
-- [ ] Zero repetition in typical combat (requires manual testing)
+- ✅ Zero repetition in typical combat (manual testing confirmed)
 
 **Actual Effort**: ~2 hours
 **Actual Changes**: ~140 lines code, ~1200 lines YAML (4 new files, 2 modified)
