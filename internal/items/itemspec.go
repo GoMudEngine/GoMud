@@ -175,6 +175,9 @@ const (
 	TokenDamage       TokenName = "{damage}"
 	TokenEntranceName TokenName = "{entrancename}"
 	TokenExitName     TokenName = "{exitname}"
+	TokenDefender     TokenName = "{defender}" // Stage 9.3: defensive action messages
+	TokenAttacker     TokenName = "{attacker}" // Stage 9.3: defensive action messages
+	TokenWeapon       TokenName = "{weapon}"   // Stage 9.3: defensive action messages
 
 	POVUser  = 0
 	POVOther = 1
@@ -540,6 +543,13 @@ func LoadDataFiles() {
 
 	attackMessages = tmpAttackMessages
 
-	mudlog.Info("itemspec.LoadDataFiles()", "itemLoadedCount", len(items), "attackMessageCount", len(attackMessages), "Time Taken", time.Since(start))
+	tmpDefenseMessages, err := fileloader.LoadAllFlatFiles[DefenseType, *DefenseMessageGroup](string(configs.GetFilePathsConfig().DataFiles) + `/combat-messages/defense`)
+	if err != nil {
+		panic(err)
+	}
+
+	defenseMessages = tmpDefenseMessages
+
+	mudlog.Info("itemspec.LoadDataFiles()", "itemLoadedCount", len(items), "attackMessageCount", len(attackMessages), "defenseMessageCount", len(defenseMessages), "Time Taken", time.Since(start))
 
 }
