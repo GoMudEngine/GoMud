@@ -83,6 +83,10 @@ type Character struct {
 	IsGrappleController      bool                           `yaml:"-"`                       // True if this character is the controller in a grapple (Stage 8.3). Don't store this.
 	RecoveryPenaltyThisRound bool                           `yaml:"-"`                       // If true, attacks reduced to 1 this round due to recovery attempt. Don't store this.
 	DefensePenaltyNextRound  bool                           `yaml:"-"`                       // If true, defense reduced 15% next round (failed grapple exposure). Don't store this.
+	AttacksThisRound         int                            `yaml:"-"`                       // Stage 9.4: Tracks recent attacks for stance calculation. Don't store this.
+	DefensesThisRound        int                            `yaml:"-"`                       // Stage 9.4: Tracks recent defenses for stance calculation. Don't store this.
+	ConsecutiveHits          int                            `yaml:"-"`                       // Stage 9.4: Consecutive successful hits for momentum. Don't store this.
+	ConsecutiveMisses        int                            `yaml:"-"`                       // Stage 9.4: Consecutive misses for momentum. Don't store this.
 	Skills                   map[string]int                 `yaml:"skills,omitempty"`        // The skills the character has, and what level they are at
 	Cooldowns        Cooldowns                      `yaml:"cooldowns,omitempty"`     // How many rounds until it is cooled down
 	Settings         map[string]string              `yaml:"settings,omitempty"`      // custom setting tracking, used for anything.
@@ -133,9 +137,13 @@ func New() *Character {
 		StatUseCount:   make(map[string]int),
 		roomHistory:    make([]int, 0, 10),
 		KeyRing:        make(map[string]string),
-		Created:        time.Now(),
-		PlayerDamage:   map[int]int{},
-		Timers:         map[string]gametime.RoundTimer{},
+		Created:           time.Now(),
+		PlayerDamage:      map[int]int{},
+		Timers:            map[string]gametime.RoundTimer{},
+		AttacksThisRound:  0,
+		DefensesThisRound: 0,
+		ConsecutiveHits:   0,
+		ConsecutiveMisses: 0,
 	}
 
 	// Roll character stats using normal distribution

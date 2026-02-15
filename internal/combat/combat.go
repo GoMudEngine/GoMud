@@ -198,6 +198,9 @@ func GetWaitMessages(stepType items.Intensity, sourceChar *characters.Character,
 		msgSeed = sourceChar.Equipment.Weapon.ItemId
 	}
 
+	// Stage 9.4: Track attack for stance calculation
+	sourceChar.IncrementAttackCount()
+
 	tokenReplacements := map[items.TokenName]string{
 		items.TokenItemName:     species.GetSpecies(sourceChar.SpeciesId).UnarmedName,
 		items.TokenSource:       sourceChar.Name,
@@ -208,6 +211,9 @@ func GetWaitMessages(stepType items.Intensity, sourceChar *characters.Character,
 		items.TokenDamage:       `[Invalid]`,
 		items.TokenEntranceName: `unknown`,
 		items.TokenExitName:     `unknown`,
+		items.TokenStance:       sourceChar.CalculateStanceString(),
+		items.TokenPosition:     sourceChar.CalculatePositionString(),
+		items.TokenMomentum:     sourceChar.CalculateMomentumString(),
 	}
 
 	if sourceChar.RoomId == targetChar.RoomId {
@@ -578,6 +584,9 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 					// Track defense attempt
 					attackResult.DefenseAttempts = append(attackResult.DefenseAttempts, DefenseType(defenseType))
 
+					// Stage 9.4: Track defense for stance calculation
+					targetChar.IncrementDefenseCount()
+
 					// Check if defender has stamina for this defense
 					if !targetChar.DeductDefenseStamina(defenseType) {
 						// Insufficient stamina, skip this defense
@@ -672,6 +681,9 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 						items.TokenDefender: targetChar.Name,
 						items.TokenAttacker: sourceChar.Name,
 						items.TokenWeapon:   weaponName,
+						items.TokenStance:   targetChar.CalculateStanceString(),
+						items.TokenPosition: targetChar.CalculatePositionString(),
+						items.TokenMomentum: targetChar.CalculateMomentumString(),
 					}
 
 					// If we have custom defense messages, use them
@@ -718,6 +730,9 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 					}
 				} // End else block (no fumble, proceeded with defense sequence)
 
+				// Stage 9.4: Track momentum based on hit/miss outcome
+				sourceChar.UpdateMomentum(hit)
+
 				if hit {
 					attackResult.Hit = true
 
@@ -762,6 +777,9 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 					items.TokenDamage:       GetDamageDescription(attackTargetDamage, targetChar.HealthMax.Value),
 					items.TokenEntranceName: `unknown`,
 					items.TokenExitName:     `unknown`,
+					items.TokenStance:       sourceChar.CalculateStanceString(),
+					items.TokenPosition:     sourceChar.CalculatePositionString(),
+					items.TokenMomentum:     sourceChar.CalculateMomentumString(),
 				}
 
 				if sourceChar.RoomId == targetChar.RoomId {
