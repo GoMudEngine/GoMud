@@ -19,6 +19,8 @@ options:
       - 'You prepare to enter into mortal combat with <ansi fg="{targettype}">{target}</ansi>.'
       - 'You grip your <ansi fg="item">{itemname}</ansi> tightly, readying yourself against <ansi fg="{targettype}">{target}</ansi>.'
       - 'You lock eyes with <ansi fg="{targettype}">{target}</ansi>, your <ansi fg="item">{itemname}</ansi> poised to strike.'
+      - 'You take a {stance} stance, {position}, preparing to face <ansi fg="{targettype}">{target}</ansi>!'
+      - 'While {position}, you ready your <ansi fg="item">{itemname}</ansi> in a {stance} posture!'
       todefender:
       - '<ansi fg="{sourcetype}">{source}</ansi> prepares to fight you with their <ansi fg="item">{itemname}</ansi>.'
       - '<ansi fg="{sourcetype}">{source}</ansi> raises their <ansi fg="item">{itemname}</ansi> menacingly at you.'
@@ -193,14 +195,20 @@ options:
       - 'You step in close and deliver a brutal slash to <ansi fg="{targettype}">{target}</ansi>!'
       - 'Pivoting on your heel, you cut deeply into <ansi fg="{targettype}">{target}</ansi>''s flank!'
       - 'You advance aggressively and slash with tremendous force!'
+      - 'From your {stance} stance, you step in and slash with devastating power!'
+      - '{momentum}, you press forward and cut deeply into <ansi fg="{targettype}">{target}</ansi>!'
       # Feint/tactical variants
       - 'Feinting a retreat, you surge forward with a devastating slash!'
       - 'You draw their guard aside and deliver a punishing cut!'
       - 'Reading their weakness, you strike with overwhelming force!'
+      - 'While {position} and {momentum}, you feint and strike with brutal precision!'
+      - 'Your {stance} approach pays off as you deliver a crushing blow!'
       # Positioning variants
       - 'You press forward relentlessly, your <ansi fg="item">{itemname}</ansi> biting deep!'
       - 'Seizing the advantage, you deliver a savage slash to <ansi fg="{targettype}">{target}</ansi>!'
       - 'You exploit their position and cut with brutal efficiency!'
+      - 'Even while {position}, {momentum}, you slash with overwhelming force!'
+      - 'Your {stance} fighting style overwhelms <ansi fg="{targettype}">{target}</ansi> completely!'
       # Momentum variants
       - 'Following your momentum, you spin and slash with great force!'
       - 'You surge forward on the offensive, your blade cutting deep!'
@@ -264,6 +272,8 @@ options:
       - 'Your masterful feint opens <ansi fg="{targettype}">{target}</ansi> completely - you <ansi fg="cyan-bold">ANNIHILATE</ansi> them!'
       - 'Reading every move, you deliver a <ansi fg="cyan-bold">FLAWLESS CUT</ansi> through <ansi fg="{targettype}">{target}</ansi>!'
       - 'Your tactical brilliance creates the perfect opening - you <ansi fg="cyan-bold">EVISCERATE</ansi> <ansi fg="{targettype}">{target}</ansi>!'
+      - 'Your {stance} approach culminates in a <ansi fg="cyan-bold">DEVASTATING CRITICAL</ansi> strike!'
+      - 'While {position}, {momentum}, you deliver a <ansi fg="cyan-bold">PERFECT EXECUTION</ansi>!'
       # Positioning variants
       - 'You execute a <ansi fg="cyan-bold">DEVASTATING STRIKE</ansi> from the perfect angle!'
       - 'Exploiting total advantage, you <ansi fg="cyan-bold">SHRED</ansi> <ansi fg="{targettype}">{target}</ansi> with precision!'
