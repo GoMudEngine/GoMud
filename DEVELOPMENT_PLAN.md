@@ -2130,7 +2130,7 @@ normal:
 ---
 
 ### Stage 9.3: Defensive Action Narrative — Dodge/Parry/Block Messages ✅ COMPLETED
-**Merge Commit**: (pending)
+**Merge Commit**: 9ed3b69
 **Goal**: Add YAML message pools for defensive actions (dodge, parry, block) with same narrative variety as attacks.
 
 **Current State**:
