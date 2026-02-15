@@ -2287,12 +2287,15 @@ message := messages[tier][perspective][selectedPool].Get(msgSeed)
 2. Add skill-based message pool selection to combat.go
 3. Expand each tier with beginner/expert/master variants (5 messages each = 15 total per tier)
 4. Update message loading to handle nested structure
+5. **Full integration of Stage 9.4 tokens** ({stance}, {position}, {momentum}) across all weapon types and skill tiers
 
 **Files to Modify** (~3 files, ~150 lines code + ~3200 lines YAML):
 1. `internal/combat/combat.go` — Add skill-based pool selection (~50 lines)
 2. `internal/items/messages.go` — Update YAML parsing for nested structure (~100 lines)
-3. `_datafiles/world/dogmud/combat-messages/*.yaml` — Restructure all 8 files with skill tiers (~3200 lines)
+3. `_datafiles/world/dogmud/combat-messages/*.yaml` — Restructure all 8 files with skill tiers + integrate Stage 9.4 tokens throughout (~3200 lines)
 4. Test files
+
+**Note**: This stage will complete the integration of Stage 9.4's contextual combat tokens ({stance}, {position}, {momentum}) across all weapon types and skill tiers.
 
 **Testing**:
 - [ ] **Manual Test**: Fight at skill 1, verify only beginner messages appear
