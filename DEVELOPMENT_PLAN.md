@@ -2151,9 +2151,9 @@ normal:
 
 **Files Created** (4 new files):
 1. `internal/items/defensive_messages.go` — Defense message data structures and loader (90 lines)
-2. `_datafiles/world/dogmud/combat-messages/defense/dodge.yaml` — Dodge message pools (40+ variants)
-3. `_datafiles/world/dogmud/combat-messages/defense/parry.yaml` — Parry message pools (40+ variants)
-4. `_datafiles/world/dogmud/combat-messages/defense/block.yaml` — Block message pools (40+ variants)
+2. `_datafiles/world/dogmud/defense-messages/dodge.yaml` — Dodge message pools (40+ variants)
+3. `_datafiles/world/dogmud/defense-messages/parry.yaml` — Parry message pools (40+ variants)
+4. `_datafiles/world/dogmud/defense-messages/block.yaml` — Block message pools (40+ variants)
 
 **Files Modified** (2 files):
 1. `internal/combat/combat.go` — Replaced generic defense messages with narrative variety system (~40 lines)

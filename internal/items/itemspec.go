@@ -543,7 +543,7 @@ func LoadDataFiles() {
 
 	attackMessages = tmpAttackMessages
 
-	tmpDefenseMessages, err := fileloader.LoadAllFlatFiles[DefenseType, *DefenseMessageGroup](string(configs.GetFilePathsConfig().DataFiles) + `/combat-messages/defense`)
+	tmpDefenseMessages, err := fileloader.LoadAllFlatFiles[DefenseType, *DefenseMessageGroup](string(configs.GetFilePathsConfig().DataFiles) + `/defense-messages`)
 	if err != nil {
 		panic(err)
 	}
