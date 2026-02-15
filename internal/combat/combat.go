@@ -216,18 +216,21 @@ func GetWaitMessages(stepType items.Intensity, sourceChar *characters.Character,
 		items.TokenMomentum:     sourceChar.CalculateMomentumString(),
 	}
 
+	// Get source character's weapon skill level for message selection
+	skillLevel := sourceChar.GetCombatSkillLevel()
+
 	if sourceChar.RoomId == targetChar.RoomId {
-		toAttackerMsg = msgs.Together.ToAttacker.Get(msgSeed)
-		toDefenderMsg = msgs.Together.ToDefender.Get(msgSeed)
-		toAttackerRoomMsg = msgs.Together.ToRoom.Get(msgSeed)
+		toAttackerMsg = msgs.Together.ToAttacker.GetForSkillLevel(skillLevel, msgSeed)
+		toDefenderMsg = msgs.Together.ToDefender.GetForSkillLevel(skillLevel, msgSeed)
+		toAttackerRoomMsg = msgs.Together.ToRoom.GetForSkillLevel(skillLevel, msgSeed)
 		toDefenderRoomMsg = items.ItemMessage("")
 
 	} else {
 
-		toAttackerMsg = msgs.Separate.ToAttacker.Get(msgSeed)
-		toDefenderMsg = msgs.Separate.ToDefender.Get(msgSeed)
-		toAttackerRoomMsg = msgs.Separate.ToAttackerRoom.Get(msgSeed)
-		toDefenderRoomMsg = msgs.Separate.ToDefenderRoom.Get(msgSeed)
+		toAttackerMsg = msgs.Separate.ToAttacker.GetForSkillLevel(skillLevel, msgSeed)
+		toDefenderMsg = msgs.Separate.ToDefender.GetForSkillLevel(skillLevel, msgSeed)
+		toAttackerRoomMsg = msgs.Separate.ToAttackerRoom.GetForSkillLevel(skillLevel, msgSeed)
+		toDefenderRoomMsg = msgs.Separate.ToDefenderRoom.GetForSkillLevel(skillLevel, msgSeed)
 
 		// Find the exit that leads to the target from the source (if any)
 		if atkRoom := rooms.LoadRoom(sourceChar.RoomId); atkRoom != nil {
@@ -782,19 +785,22 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 					items.TokenMomentum:     sourceChar.CalculateMomentumString(),
 				}
 
+			// Get source character's weapon skill level for message selection
+				skillLevel := sourceChar.GetCombatSkillLevel()
+
 				if sourceChar.RoomId == targetChar.RoomId {
 
-					toAttackerMsg = msgs.Together.ToAttacker.Get(msgSeed)
-					toDefenderMsg = msgs.Together.ToDefender.Get(msgSeed)
-					toAttackerRoomMsg = msgs.Together.ToRoom.Get(msgSeed)
+					toAttackerMsg = msgs.Together.ToAttacker.GetForSkillLevel(skillLevel, msgSeed)
+					toDefenderMsg = msgs.Together.ToDefender.GetForSkillLevel(skillLevel, msgSeed)
+					toAttackerRoomMsg = msgs.Together.ToRoom.GetForSkillLevel(skillLevel, msgSeed)
 					toDefenderRoomMsg = items.ItemMessage("")
 
 				} else {
 
-					toAttackerMsg = msgs.Separate.ToAttacker.Get(msgSeed)
-					toDefenderMsg = msgs.Separate.ToDefender.Get(msgSeed)
-					toAttackerRoomMsg = msgs.Separate.ToAttackerRoom.Get(msgSeed)
-					toDefenderRoomMsg = msgs.Separate.ToDefenderRoom.Get(msgSeed)
+					toAttackerMsg = msgs.Separate.ToAttacker.GetForSkillLevel(skillLevel, msgSeed)
+					toDefenderMsg = msgs.Separate.ToDefender.GetForSkillLevel(skillLevel, msgSeed)
+					toAttackerRoomMsg = msgs.Separate.ToAttackerRoom.GetForSkillLevel(skillLevel, msgSeed)
+					toDefenderRoomMsg = msgs.Separate.ToDefenderRoom.GetForSkillLevel(skillLevel, msgSeed)
 
 					// Find the exit that leads to the target from the source (if any)
 					if atkRoom := rooms.LoadRoom(sourceChar.RoomId); atkRoom != nil {

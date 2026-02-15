@@ -11,6 +11,14 @@ var (
 	attackMessages map[ItemSubType]*WeaponAttackMessageGroup = map[ItemSubType]*WeaponAttackMessageGroup{}
 )
 
+type SkillTier string
+
+const (
+	Beginner SkillTier = "beginner"
+	Expert   SkillTier = "expert"
+	Master   SkillTier = "master"
+)
+
 type WeaponAttackMessageGroup struct {
 	OptionId ItemSubType `yaml:"optionid"`
 	Options  AttackTypes `yaml:"options"`
@@ -24,16 +32,22 @@ type AttackOptions struct {
 }
 
 type TogetherMessages struct {
-	ToAttacker MessageOptions `yaml:"toattacker"`
-	ToDefender MessageOptions `yaml:"todefender"`
-	ToRoom     MessageOptions `yaml:"toroom"`
+	ToAttacker SkillTieredMessages `yaml:"toattacker"`
+	ToDefender SkillTieredMessages `yaml:"todefender"`
+	ToRoom     SkillTieredMessages `yaml:"toroom"`
 }
 
 type SeparateMessages struct {
-	ToAttacker     MessageOptions `yaml:"toattacker"`
-	ToDefender     MessageOptions `yaml:"todefender"`
-	ToAttackerRoom MessageOptions `yaml:"toattackerroom"`
-	ToDefenderRoom MessageOptions `yaml:"todefenderroom"`
+	ToAttacker     SkillTieredMessages `yaml:"toattacker"`
+	ToDefender     SkillTieredMessages `yaml:"todefender"`
+	ToAttackerRoom SkillTieredMessages `yaml:"toattackerroom"`
+	ToDefenderRoom SkillTieredMessages `yaml:"todefenderroom"`
+}
+
+type SkillTieredMessages struct {
+	Beginner MessageOptions `yaml:"beginner"`
+	Expert   MessageOptions `yaml:"expert,omitempty"`
+	Master   MessageOptions `yaml:"master,omitempty"`
 }
 
 type MessageOptions []ItemMessage
@@ -58,6 +72,41 @@ func (mo MessageOptions) Get(seedNum ...int) ItemMessage {
 	}
 
 	return ItemMessage("")
+}
+
+// GetForSkillLevel selects a message based on character's skill level.
+// Returns messages from available tiers based on skill:
+//   - Skill 1-33: beginner only
+//   - Skill 34-66: beginner + expert
+//   - Skill 67-100: beginner + expert + master
+func (stm SkillTieredMessages) GetForSkillLevel(skillLevel int, msgSeed ...int) ItemMessage {
+	// Collect available message pools
+	var allMessages []ItemMessage
+
+	// Always include beginner messages
+	allMessages = append(allMessages, stm.Beginner...)
+
+	// Add expert if skill >= 34
+	if skillLevel >= 34 {
+		allMessages = append(allMessages, stm.Expert...)
+	}
+
+	// Add master if skill >= 67
+	if skillLevel >= 67 {
+		allMessages = append(allMessages, stm.Master...)
+	}
+
+	// Select from combined pool
+	if len(allMessages) == 0 {
+		return ItemMessage("")
+	}
+
+	// Use seed if provided
+	if len(msgSeed) > 0 && msgSeed[0] != 0 {
+		return allMessages[msgSeed[0]%len(allMessages)]
+	}
+
+	return allMessages[util.Rand(len(allMessages))]
 }
 
 // Presumably to ensure the datafile hasn't messed something up.

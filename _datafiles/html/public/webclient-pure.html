@@ -474,19 +474,19 @@
                 var fill = document.querySelector('#health-bar .health-fill');
                 var txt  = document.querySelector('#health-bar .health-text');
                 fill.style.width       = 100-p + '%';
-                txt.textContent       = obj.Vitals.hp + '/' + obj.Vitals.hp_max + ' hp';
+                txt.textContent       = 'HP';
 
                 p    = Math.max(0, Math.min(100, Math.floor(obj.Vitals.stamina/obj.Vitals.stamina_max*100)));  // clamp 0–100
                 fill = document.querySelector('#stamina-bar .stamina-fill');
                 txt  = document.querySelector('#stamina-bar .stamina-text');
                 fill.style.width       = 100-p + '%';
-                txt.textContent       = obj.Vitals.stamina + '/' + obj.Vitals.stamina_max + ' sp';
+                txt.textContent       = 'SP';
 
                 p    = Math.max(0, Math.min(100, Math.floor(obj.Vitals.conviction/obj.Vitals.conviction_max*100)));  // clamp 0–100
                 fill = document.querySelector('#conviction-bar .conviction-fill');
                 txt  = document.querySelector('#conviction-bar .conviction-text');
                 fill.style.width       = 100-p + '%';
-                txt.textContent       = obj.Vitals.conviction + '/' + obj.Vitals.conviction_max + ' cp'; 
+                txt.textContent       = 'CP'; 
                 
             },
         };
