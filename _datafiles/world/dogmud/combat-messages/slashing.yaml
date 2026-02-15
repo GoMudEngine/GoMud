@@ -7,6 +7,9 @@
 # {damage}      - damage dealt as an integer e.g. '5'
 # {exitname}    - name of exit for attack e.g. 'north'
 # {entrancename}- name of entrance for attack e.g. 'south'
+# {stance}      - combat stance: 'aggressive', 'defensive', 'balanced', 'reckless' (Stage 9.4)
+# {position}    - combat position: 'standing', 'prone', 'locked in close combat', 'grappling on the ground' (Stage 9.4)
+# {momentum}    - combat momentum: 'on the offensive', 'on the defensive', 'in control', 'pressured' (Stage 9.4)
 optionid: slashing
 options:
   prepare:
@@ -31,6 +34,8 @@ options:
       - 'You aim carefully at <ansi fg="{targettype}">{target}</ansi>.'
       - 'You circle around <ansi fg="{targettype}">{target}</ansi>, looking for an opening.'
       - 'You watch <ansi fg="{targettype}">{target}</ansi> closely, waiting for the perfect moment.'
+      - 'From your {stance} stance, you stand {position}, eyeing <ansi fg="{targettype}">{target}</ansi>.'
+      - 'While {position}, you adopt a {stance} posture against <ansi fg="{targettype}">{target}</ansi>.'
       todefender:
       - '<ansi fg="{sourcetype}">{source}</ansi> circles dangerously.'
       - '<ansi fg="{sourcetype}">{source}</ansi> watches you intently, waiting to strike.'
@@ -132,6 +137,8 @@ options:
       - 'Following through, you deliver a solid slash to <ansi fg="{targettype}">{target}</ansi>!'
       - 'You capitalize on your momentum and strike true!'
       - 'Your <ansi fg="item">{itemname}</ansi> flashes as you maintain the pressure!'
+      - 'You are {momentum} as your blade cuts into <ansi fg="{targettype}">{target}</ansi>!'
+      - 'While {momentum}, you slash decisively at <ansi fg="{targettype}">{target}</ansi>!'
       todefender:
       # Original messages
       - '<ansi fg="{sourcetype}">{source}</ansi> connects with their <ansi fg="item">{itemname}</ansi>, wounding you!'
@@ -198,6 +205,7 @@ options:
       - 'Following your momentum, you spin and slash with great force!'
       - 'You surge forward on the offensive, your blade cutting deep!'
       - 'Maintaining your assault, you deliver a powerful sweeping cut!'
+      - 'From your {stance} stance, {momentum}, you deliver a devastating slash while {position}!'
       todefender:
       # Original messages
       - 'In a sweeping motion, <ansi fg="{sourcetype}">{source}</ansi> slashes you with their <ansi fg="item">{itemname}</ansi>!'
