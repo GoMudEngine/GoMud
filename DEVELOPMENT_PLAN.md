@@ -2178,7 +2178,9 @@ normal:
 
 ---
 
-### Stage 9.4: Contextual Combat Tokens — Stance, Position, Momentum
+### Stage 9.4: Contextual Combat Tokens — Stance, Position, Momentum ✅ COMPLETED
+**Merge Commit**: 5cf780d
+
 **Goal**: Add new context tokens ({stance}, {position}, {momentum}) to make messages more dynamic and situational.
 
 **Design**:
@@ -3029,7 +3031,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 6: Conviction & Magic | 2 stages (6.1–6.2) | 8 hours | **Complete** |
 | Phase 7: Defense & Combat | 5 stages (7.1–7.5) | 26 hours | **Complete** |
 | Phase 8: Grappling | 5 stages (8.1–8.5) | 24 hours | **8.1–8.5 Complete** |
-| Phase 9: Combat Presentation | 4 stages (9.1–9.4) | 22 hours | **9.1–9.3 Complete** |
+| Phase 9: Combat Presentation | 4 stages (9.1–9.4) | 22 hours | **9.1–9.4 Complete** |
 | Phase 10: Balance Pass | 1 stage (10.1) | 8 hours | Not Started |
 | Phase 11: LLM Integration | 4 stages (11.1–11.4) | 35 hours | Not Started |
 | **Total** | **43 stages** | **202 hours** | |
@@ -3128,4 +3130,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-14
 **Status**: In Progress
-**Current Stage**: 9.3 Complete — Defensive action narrative added with 40+ message variants for dodge/parry/block across 3 intensity tiers. Ready for manual testing and Stage 9.4 (Contextual Combat Tokens).
+**Current Stage**: 9.4 Complete — Contextual combat tokens implemented ({stance}, {position}, {momentum}) with dynamic calculation based on combat state. Phase 9 complete. Ready for Phase 10 (Balance Pass).
