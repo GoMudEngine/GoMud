@@ -1,4 +1,4 @@
-# Possible tokens: 
+# Possible tokens:
 # {itemname}    - name of weapon/object e.g. 'sword'
 # {source}      - name of mob or user e.g. 'goblin'
 # {sourcetype}  - 'user' or 'mob'
@@ -58,62 +58,254 @@ options:
     # messages for when they are in the same room
     together:
       toattacker:
+      # Original messages
       - 'You jab your <ansi fg="item">{itemname}</ansi> into <ansi fg="{targettype}">{target}</ansi>.'
       - 'You lightly wound <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>.'
       - 'Your <ansi fg="item">{itemname}</ansi> grazes <ansi fg="{targettype}">{target}</ansi>.'
+      # Footwork variants
+      - 'You step forward and puncture <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>.'
+      - 'Circling left, you score a shallow thrust on <ansi fg="{targettype}">{target}</ansi>.'
+      - 'You sidestep and thrust, barely piercing <ansi fg="{targettype}">{target}</ansi>.'
+      # Feint/tactical variants
+      - 'You feint high and thrust low, nicking <ansi fg="{targettype}">{target}</ansi>.'
+      - 'Testing their guard, you deliver a probing stab to <ansi fg="{targettype}">{target}</ansi>.'
+      - 'You draw their defense and land a light thrust on <ansi fg="{targettype}">{target}</ansi>.'
+      # Positioning variants
+      - 'You press forward with a quick thrust, pricking <ansi fg="{targettype}">{target}</ansi>.'
+      - 'Dancing back, you flick your <ansi fg="item">{itemname}</ansi> at <ansi fg="{targettype}">{target}</ansi>.'
+      - 'You find a small opening and deliver a shallow puncture to <ansi fg="{targettype}">{target}</ansi>.'
       todefender:
+      # Original messages
       - '<ansi fg="{sourcetype}">{source}</ansi> jabs their <ansi fg="item">{itemname}</ansi> into you.'
       - '<ansi fg="{sourcetype}">{source}</ansi> slightly wounds you with their <ansi fg="item">{itemname}</ansi>.'
       - '<ansi fg="{sourcetype}">{source}</ansi> grazes you with their <ansi fg="item">{itemname}</ansi>.'
+      # Footwork variants
+      - '<ansi fg="{sourcetype}">{source}</ansi> steps in and punctures you with their <ansi fg="item">{itemname}</ansi>.'
+      - '<ansi fg="{sourcetype}">{source}</ansi> circles and scores a shallow thrust on you.'
+      - 'You feel a prick as <ansi fg="{sourcetype}">{source}</ansi> sidesteps and thrusts.'
+      # Feint/tactical variants
+      - '<ansi fg="{sourcetype}">{source}</ansi> feints and nicks you with a quick thrust.'
+      - '<ansi fg="{sourcetype}">{source}</ansi> tests your defense with a probing stab.'
+      - '<ansi fg="{sourcetype}">{source}</ansi> draws your guard and lands a light thrust.'
+      # Positioning variants
+      - '<ansi fg="{sourcetype}">{source}</ansi> presses forward and pricks you.'
+      - '<ansi fg="{sourcetype}">{source}</ansi> flicks their blade at you while retreating.'
+      - '<ansi fg="{sourcetype}">{source}</ansi> finds a small opening and punctures you shallowly.'
       toroom:
+      # Original messages
       - '<ansi fg="{sourcetype}">{source}</ansi> jabs their <ansi fg="item">{itemname}</ansi> into <ansi fg="{targettype}">{target}</ansi>.'
       - '<ansi fg="{sourcetype}">{source}</ansi> lightly wounds <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>.'
       - '<ansi fg="{sourcetype}">{source}</ansi> grazes <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>.'
+      # Footwork variants
+      - '<ansi fg="{sourcetype}">{source}</ansi> steps forward and punctures <ansi fg="{targettype}">{target}</ansi>.'
+      - '<ansi fg="{sourcetype}">{source}</ansi> circles left and scores a shallow thrust.'
+      - '<ansi fg="{sourcetype}">{source}</ansi> sidesteps and thrusts, barely piercing <ansi fg="{targettype}">{target}</ansi>.'
+      # Feint/tactical variants
+      - '<ansi fg="{sourcetype}">{source}</ansi> feints high and thrusts low, nicking <ansi fg="{targettype}">{target}</ansi>.'
+      - '<ansi fg="{sourcetype}">{source}</ansi> tests <ansi fg="{targettype}">{target}</ansi>''s defense with a probing stab.'
+      - '<ansi fg="{sourcetype}">{source}</ansi> draws the guard and lands a light thrust.'
+      # Positioning variants
+      - '<ansi fg="{sourcetype}">{source}</ansi> presses forward with a quick thrust.'
+      - '<ansi fg="{sourcetype}">{source}</ansi> dances back while flicking their blade at <ansi fg="{targettype}">{target}</ansi>.'
+      - '<ansi fg="{sourcetype}">{source}</ansi> finds a small opening and delivers a shallow puncture.'
   normal:
     # messages for when they are in the same room
     together:
       toattacker:
+      # Original messages
       - 'You stab <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>!'
       - 'You strike <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>!'
       - 'Your <ansi fg="item">{itemname}</ansi> pierces <ansi fg="{targettype}">{target}</ansi>!'
+      # Footwork variants
+      - 'You circle right and thrust decisively at <ansi fg="{targettype}">{target}</ansi>!'
+      - 'Stepping forward, you deliver a clean puncture to <ansi fg="{targettype}">{target}</ansi>!'
+      - 'You pivot and thrust through <ansi fg="{targettype}">{target}</ansi>''s guard!'
+      # Feint/tactical variants
+      - 'Feinting left, you bring your <ansi fg="item">{itemname}</ansi> forward in a swift thrust!'
+      - 'You draw their defense high and stab low at <ansi fg="{targettype}">{target}</ansi>!'
+      - 'Reading their stance, you strike with practiced precision!'
+      # Positioning variants
+      - 'You press your advantage with a powerful thrust!'
+      - 'Dancing around <ansi fg="{targettype}">{target}</ansi>, you pierce with purpose!'
+      - 'You exploit an opening and stab decisively at <ansi fg="{targettype}">{target}</ansi>!'
+      # Momentum variants
+      - 'Following through, you deliver a solid thrust to <ansi fg="{targettype}">{target}</ansi>!'
+      - 'You capitalize on your momentum and strike true!'
+      - 'Your <ansi fg="item">{itemname}</ansi> flashes as you maintain the pressure!'
       todefender:
+      # Original messages
       - '<ansi fg="{sourcetype}">{source}</ansi> stabs you with their <ansi fg="item">{itemname}</ansi>!'
       - '<ansi fg="{sourcetype}">{source}</ansi> strikes you with their <ansi fg="item">{itemname}</ansi>!'
       - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> pierces you!'
+      # Footwork variants
+      - '<ansi fg="{sourcetype}">{source}</ansi> circles and thrusts you decisively!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> steps in and delivers a clean puncture!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> pivots and thrusts through your guard!'
+      # Feint/tactical variants
+      - '<ansi fg="{sourcetype}">{source}</ansi> feints and brings their blade forward in a swift thrust!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> draws your defense and stabs low!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> reads your stance and strikes with precision!'
+      # Positioning variants
+      - '<ansi fg="{sourcetype}">{source}</ansi> presses their advantage with a powerful thrust!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> dances around you and pierces purposefully!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> exploits an opening and stabs decisively!'
+      # Momentum variants
+      - '<ansi fg="{sourcetype}">{source}</ansi> follows through with a solid thrust!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> capitalizes on their momentum and strikes true!'
+      - '<ansi fg="{sourcetype}">{source}</ansi>''s blade flashes as they maintain pressure!'
       toroom:
+      # Original messages
       - '<ansi fg="{sourcetype}">{source}</ansi> stabs <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>!'
       - '<ansi fg="{sourcetype}">{source}</ansi> strikes <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>!'
       - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> pierces <ansi fg="{targettype}">{target}</ansi>!'
+      # Footwork variants
+      - '<ansi fg="{sourcetype}">{source}</ansi> circles right and thrusts decisively!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> steps forward and delivers a clean puncture!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> pivots and thrusts through the guard!'
+      # Feint/tactical variants
+      - '<ansi fg="{sourcetype}">{source}</ansi> feints left and brings their blade forward swiftly!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> draws the defense high and stabs low!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> reads the stance and strikes with precision!'
+      # Positioning variants
+      - '<ansi fg="{sourcetype}">{source}</ansi> presses forward with a powerful thrust!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> dances around <ansi fg="{targettype}">{target}</ansi> and pierces purposefully!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> exploits an opening and stabs decisively!'
+      # Momentum variants
+      - '<ansi fg="{sourcetype}">{source}</ansi> follows through with a solid thrust!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> capitalizes on momentum and strikes true!'
+      - '<ansi fg="{sourcetype}">{source}</ansi>''s blade flashes as the pressure continues!'
   heavy:
     # messages for when they are in the same room
     together:
       toattacker:
+      # Original messages
       - 'You impale <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>!'
       - 'Your powerful strike pierces deeply into <ansi fg="{targettype}">{target}</ansi>!'
       - 'You deliver a heavy blow to <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>!'
+      # Footwork variants
+      - 'You step in close and drive your <ansi fg="item">{itemname}</ansi> brutally into <ansi fg="{targettype}">{target}</ansi>!'
+      - 'Pivoting on your heel, you thrust deeply into <ansi fg="{targettype}">{target}</ansi>''s torso!'
+      - 'You advance aggressively and lunge with tremendous force!'
+      # Feint/tactical variants
+      - 'Feinting a retreat, you surge forward with a devastating thrust!'
+      - 'You draw their guard aside and deliver a punishing stab!'
+      - 'Reading their weakness, you strike with overwhelming force!'
+      # Positioning variants
+      - 'You press forward relentlessly, your <ansi fg="item">{itemname}</ansi> piercing deep!'
+      - 'Seizing the advantage, you deliver a savage thrust to <ansi fg="{targettype}">{target}</ansi>!'
+      - 'You exploit their position and thrust with brutal efficiency!'
+      # Momentum variants
+      - 'Following your momentum, you spin and thrust with great force!'
+      - 'You surge forward on the offensive, your blade piercing deep!'
+      - 'Maintaining your assault, you deliver a powerful skewering thrust!'
       todefender:
+      # Original messages
       - '<ansi fg="{sourcetype}">{source}</ansi> impales you with their <ansi fg="item">{itemname}</ansi>!'
       - '<ansi fg="{sourcetype}">{source}</ansi>''s powerful strike pierces deeply into you!'
       - '<ansi fg="{sourcetype}">{source}</ansi> delivers a heavy blow with their <ansi fg="item">{itemname}</ansi>!'
+      # Footwork variants
+      - '<ansi fg="{sourcetype}">{source}</ansi> steps in close and drives their blade brutally into you!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> pivots and thrusts deeply into your torso!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> advances and lunges with tremendous force!'
+      # Feint/tactical variants
+      - '<ansi fg="{sourcetype}">{source}</ansi> feints retreat then surges with a devastating thrust!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> draws your guard and delivers a punishing stab!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> reads your weakness and strikes with overwhelming force!'
+      # Positioning variants
+      - '<ansi fg="{sourcetype}">{source}</ansi> presses forward relentlessly, blade piercing deep!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> seizes advantage and delivers a savage thrust!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> exploits your position and pierces brutally!'
+      # Momentum variants
+      - '<ansi fg="{sourcetype}">{source}</ansi> spins and thrusts with great force!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> surges forward on the offensive, blade piercing deep!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> maintains their assault with a powerful skewering!'
       toroom:
+      # Original messages
       - '<ansi fg="{sourcetype}">{source}</ansi> impales <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>!'
       - '<ansi fg="{sourcetype}">{source}</ansi>''s powerful strike pierces deeply into <ansi fg="{targettype}">{target}</ansi>!'
       - '<ansi fg="{sourcetype}">{source}</ansi> delivers a heavy blow to <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>!'
+      # Footwork variants
+      - '<ansi fg="{sourcetype}">{source}</ansi> steps in close and drives their blade brutally into <ansi fg="{targettype}">{target}</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> pivots and thrusts deeply into <ansi fg="{targettype}">{target}</ansi>''s torso!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> advances and lunges with tremendous force!'
+      # Feint/tactical variants
+      - '<ansi fg="{sourcetype}">{source}</ansi> feints retreat then surges with a devastating thrust!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> draws the guard aside and delivers a punishing stab!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> reads the weakness and strikes with overwhelming force!'
+      # Positioning variants
+      - '<ansi fg="{sourcetype}">{source}</ansi> presses forward relentlessly, blade piercing deep!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> seizes advantage and delivers a savage thrust!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> exploits position and pierces with brutal efficiency!'
+      # Momentum variants
+      - '<ansi fg="{sourcetype}">{source}</ansi> spins and thrusts with great force!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> surges forward on the offensive, blade piercing deep!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> maintains the assault with a powerful skewering thrust!'
   critical:
     # messages for when they are in the same room
     together:
       toattacker:
+      # Original messages
       - 'Your <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRITICALLY IMPALES</ansi> <ansi fg="{targettype}">{target}</ansi>!'
       - 'You deliver a <ansi fg="cyan-bold">CRITICAL STRIKE</ansi> to <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>!'
       - 'Your <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">PIERCES THROUGH</ansi> <ansi fg="{targettype}">{target}</ansi>!'
+      # Footwork variants
+      - 'You whirl and your <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">DEVASTATES</ansi> <ansi fg="{targettype}">{target}</ansi>!'
+      - 'Lunging forward, you deliver a <ansi fg="cyan-bold">PERFECT STRIKE</ansi> to <ansi fg="{targettype}">{target}</ansi>!'
+      - 'You flow like water and your blade <ansi fg="cyan-bold">SKEWERS</ansi> <ansi fg="{targettype}">{target}</ansi>!'
+      # Feint/tactical variants
+      - 'Your masterful feint opens <ansi fg="{targettype}">{target}</ansi> completely - you <ansi fg="cyan-bold">ANNIHILATE</ansi> them!'
+      - 'Reading every move, you deliver a <ansi fg="cyan-bold">FLAWLESS THRUST</ansi> through <ansi fg="{targettype}">{target}</ansi>!'
+      - 'Your tactical brilliance creates the perfect opening - you <ansi fg="cyan-bold">EVISCERATE</ansi> <ansi fg="{targettype}">{target}</ansi>!'
+      # Positioning variants
+      - 'You execute a <ansi fg="cyan-bold">DEVASTATING STRIKE</ansi> from the perfect angle!'
+      - 'Exploiting total advantage, you <ansi fg="cyan-bold">PUNCTURE</ansi> <ansi fg="{targettype}">{target}</ansi> with precision!'
+      - 'Your positioning is flawless - your <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">OBLITERATES</ansi> <ansi fg="{targettype}">{target}</ansi>!'
+      # Momentum variants
+      - 'Your unstoppable assault culminates in a <ansi fg="cyan-bold">CRITICAL IMPALEMENT</ansi>!'
+      - 'Channeling all momentum, you <ansi fg="cyan-bold">DRIVE THROUGH</ansi> <ansi fg="{targettype}">{target}</ansi> utterly!'
+      - 'The tide of battle favors you - your blade <ansi fg="cyan-bold">DECIMATES</ansi> <ansi fg="{targettype}">{target}</ansi>!'
       todefender:
+      # Original messages
       - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRITICALLY IMPALES</ansi> you!'
       - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> delivers a <ansi fg="cyan-bold">CRITICAL STRIKE</ansi>!'
       - 'You are <ansi fg="cyan-bold">DEVASTATED</ansi> by <ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi>!'
+      # Footwork variants
+      - '<ansi fg="{sourcetype}">{source}</ansi> whirls and their blade <ansi fg="cyan-bold">DEVASTATES</ansi> you!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> lunges and delivers a <ansi fg="cyan-bold">PERFECT STRIKE</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> flows like water and <ansi fg="cyan-bold">SKEWERS</ansi> you!'
+      # Feint/tactical variants
+      - '<ansi fg="{sourcetype}">{source}''s</ansi> masterful feint opens you completely - they <ansi fg="cyan-bold">ANNIHILATE</ansi> you!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> reads every move and delivers a <ansi fg="cyan-bold">FLAWLESS THRUST</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}''s</ansi> tactical brilliance creates the perfect opening - you are <ansi fg="cyan-bold">EVISCERATED</ansi>!'
+      # Positioning variants
+      - '<ansi fg="{sourcetype}">{source}</ansi> executes a <ansi fg="cyan-bold">DEVASTATING STRIKE</ansi> from the perfect angle!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> exploits total advantage and <ansi fg="cyan-bold">PUNCTURES</ansi> you with precision!'
+      - '<ansi fg="{sourcetype}">{source}''s</ansi> positioning is flawless - you are <ansi fg="cyan-bold">OBLITERATED</ansi>!'
+      # Momentum variants
+      - '<ansi fg="{sourcetype}">{source}''s</ansi> unstoppable assault culminates in a <ansi fg="cyan-bold">CRITICAL IMPALEMENT</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> channels all momentum and <ansi fg="cyan-bold">DRIVES THROUGH</ansi> you utterly!'
+      - 'The tide favors <ansi fg="{sourcetype}">{source}</ansi> - their blade <ansi fg="cyan-bold">DECIMATES</ansi> you!'
       toroom:
+      # Original messages
       - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRITICALLY IMPALES</ansi> <ansi fg="{targettype}">{target}</ansi>!'
       - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> delivers a <ansi fg="cyan-bold">CRITICAL STRIKE</ansi> to <ansi fg="{targettype}">{target}</ansi>!'
       - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="cyan-bold">DEVASTATES</ansi> <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>!'
+      # Footwork variants
+      - '<ansi fg="{sourcetype}">{source}</ansi> whirls and their blade <ansi fg="cyan-bold">DEVASTATES</ansi> <ansi fg="{targettype}">{target}</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> lunges forward with a <ansi fg="cyan-bold">PERFECT STRIKE</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> flows like water and <ansi fg="cyan-bold">SKEWERS</ansi> <ansi fg="{targettype}">{target}</ansi>!'
+      # Feint/tactical variants
+      - '<ansi fg="{sourcetype}">{source}''s</ansi> masterful feint opens <ansi fg="{targettype}">{target}</ansi> completely - <ansi fg="cyan-bold">ANNIHILATION</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> reads every move and delivers a <ansi fg="cyan-bold">FLAWLESS THRUST</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}''s</ansi> tactical brilliance creates the perfect opening - <ansi fg="cyan-bold">EVISCERATION</ansi>!'
+      # Positioning variants
+      - '<ansi fg="{sourcetype}">{source}</ansi> executes a <ansi fg="cyan-bold">DEVASTATING STRIKE</ansi> from the perfect angle!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> exploits total advantage and <ansi fg="cyan-bold">PUNCTURES</ansi> <ansi fg="{targettype}">{target}</ansi> with precision!'
+      - '<ansi fg="{sourcetype}">{source}''s</ansi> positioning is flawless - <ansi fg="cyan-bold">OBLITERATION</ansi>!'
+      # Momentum variants
+      - '<ansi fg="{sourcetype}">{source}''s</ansi> unstoppable assault culminates in a <ansi fg="cyan-bold">CRITICAL IMPALEMENT</ansi>!'
+      - '<ansi fg="{sourcetype}">{source}</ansi> channels all momentum and <ansi fg="cyan-bold">DRIVES THROUGH</ansi> <ansi fg="{targettype}">{target}</ansi> utterly!'
+      - 'The tide favors <ansi fg="{sourcetype}">{source}</ansi> - their blade <ansi fg="cyan-bold">DECIMATES</ansi> <ansi fg="{targettype}">{target}</ansi>!'
   fumble:
     # messages for when they are in the same room
     together:

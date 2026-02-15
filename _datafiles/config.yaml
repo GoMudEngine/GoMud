@@ -292,7 +292,7 @@ GamePlay:
   #   each weapon a more consistent feel in battle, though combat may feel less
   #   varied.
   #   Note: see _datafiles/combat-messages/*
-  ConsistentAttackMessages: true
+  ConsistentAttackMessages: false
   # - PVP -
   #   Possible Values:
   #     enabled   - PVP is enabled everywhere

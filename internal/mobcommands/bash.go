@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -89,6 +90,14 @@ func Bash(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		baseDamage = 1
 	}
 
+	// Get target's max HP for damage description
+	targetMaxHP := 0
+	if targetMob != nil {
+		targetMaxHP = targetMob.Character.HealthMax.Value
+	} else if targetChar != nil {
+		targetMaxHP = targetChar.Character.HealthMax.Value
+	}
+
 	// Apply damage and determine knockdown
 	knockedDown := false
 	if attackSuccess {
@@ -122,7 +131,7 @@ func Bash(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		// Send messages
 		if knockedDown {
 			if targetChar != nil {
-				targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s <ansi fg="yellow-bold">shield bash</ansi> knocks you to the ground! (<ansi fg="damage">%d</ansi> damage)`, mob.Character.Name, baseDamage))
+				targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s <ansi fg="yellow-bold">shield bash</ansi> knocks you to the ground! (<ansi fg="damage">%s</ansi> damage)`, mob.Character.Name, combat.GetDamageDescription(baseDamage, targetMaxHP)))
 			}
 
 			room.SendText(
@@ -131,7 +140,7 @@ func Bash(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			)
 		} else {
 			if targetChar != nil {
-				targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s <ansi fg="yellow-bold">shield bash</ansi> strikes you! (<ansi fg="damage">%d</ansi> damage)`, mob.Character.Name, baseDamage))
+				targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s <ansi fg="yellow-bold">shield bash</ansi> strikes you! (<ansi fg="damage">%s</ansi> damage)`, mob.Character.Name, combat.GetDamageDescription(baseDamage, targetMaxHP)))
 			}
 
 			room.SendText(

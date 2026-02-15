@@ -113,9 +113,17 @@ func Submit(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 				damage = 1
 			}
 
+			// Get target's max HP for damage description
+			targetMaxHP := 0
+			if targetMob != nil {
+				targetMaxHP = targetMob.Character.HealthMax.Value
+			} else if targetChar != nil {
+				targetMaxHP = targetChar.Character.HealthMax.Value
+			}
+
 			if targetChar != nil {
 				targetChar.SendText(fmt.Sprintf(`<ansi fg="red">%s attempts to force you into submission!</ansi>`, mob.Character.Name))
-				targetChar.SendText(fmt.Sprintf(`<ansi fg="red-bold">You resist, but take %d damage from the brutal hold!</ansi>`, damage))
+				targetChar.SendText(fmt.Sprintf(`<ansi fg="red-bold">You resist, but take %s damage from the brutal hold!</ansi>`, combat.GetDamageDescription(damage, targetMaxHP)))
 			}
 
 			room.SendText(
