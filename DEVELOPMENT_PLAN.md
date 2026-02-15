@@ -2055,7 +2055,8 @@ Each combat round:
 
 ---
 
-### Stage 9.2: Expand Combat Narrative — Message Pool Variety
+### Stage 9.2: Expand Combat Narrative — Message Pool Variety ✅ COMPLETED
+**Merge Commit**: bcd0870
 **Goal**: Expand YAML message pools from 3 variants per tier to 10-15 variants, adding footwork, feints, and positioning flavor.
 
 **Key Insight**:
@@ -3025,7 +3026,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 6: Conviction & Magic | 2 stages (6.1–6.2) | 8 hours | **Complete** |
 | Phase 7: Defense & Combat | 5 stages (7.1–7.5) | 26 hours | **Complete** |
 | Phase 8: Grappling | 5 stages (8.1–8.5) | 24 hours | **8.1–8.5 Complete** |
-| Phase 9: Combat Presentation | 4 stages (9.1–9.4) | 22 hours | Not Started |
+| Phase 9: Combat Presentation | 4 stages (9.1–9.4) | 22 hours | **9.1–9.2 Complete** |
 | Phase 10: Balance Pass | 1 stage (10.1) | 8 hours | Not Started |
 | Phase 11: LLM Integration | 4 stages (11.1–11.4) | 35 hours | Not Started |
 | **Total** | **43 stages** | **202 hours** | |
@@ -3124,4 +3125,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-14
 **Status**: In Progress
-**Current Stage**: 9.1 Complete — Phase 9 (Combat Presentation Overhaul) started. Numeric damage removed, clean foundation ready for narrative expansion.
+**Current Stage**: 9.2 Complete — Combat message variety expanded across all weapon types with footwork, feints, positioning, and momentum narrative. Stage 9.3 (Defensive Action Narrative) ready to begin.
