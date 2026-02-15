@@ -2228,7 +2228,9 @@ normal:
 
 ---
 
-### Stage 9.5: Skill-Tiered Message Pools — Beginner to Master
+### Stage 9.5: Skill-Tiered Message Pools — Beginner to Master ✅ COMPLETED
+**Commit**: `39878e4` - feat: implement Stage 9.5 skill-tiered combat messages and vitals privacy
+
 **Goal**: Gate advanced combat messages behind weapon skill levels, creating progression from clumsy beginner to elegant master.
 
 **Design**:
@@ -3131,6 +3133,6 @@ Critical bugs fixed outside of formal stage development:
 
 ---
 
-**Last Updated**: 2026-02-14
+**Last Updated**: 2026-02-15
 **Status**: In Progress
-**Current Stage**: 9.4 Complete — Contextual combat tokens implemented ({stance}, {position}, {momentum}) with dynamic calculation based on combat state. Ready for Stage 9.5 (Skill-Tiered Message Pools) or can proceed to Phase 10 (Balance Pass).
+**Current Stage**: 9.5 Complete — Skill-tiered combat messages implemented (beginner/expert/master progression) with full Stage 9.4 token integration. Vitals window privacy updated (removed numerical displays). Phase 9 (Combat Narrative Enhancement) now complete. Ready for Phase 10 (Balance Pass).
