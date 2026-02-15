@@ -636,18 +636,22 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 						}
 					}
 
-					// Add defense success messages (Stage 7.1)
+					// Add defense success messages (Stage 9.3: narrative variety)
 					var defenseVerb string
 					var skillToProgress string
+					var itemsDefenseType items.DefenseType
 					switch defenseType {
 					case characters.DefenseDodge:
 						defenseVerb = "dodge"
+						itemsDefenseType = items.DefenseDodge
 						skillToProgress = string(skills.UnarmedCombat)
 					case characters.DefenseParry:
 						defenseVerb = "parry"
+						itemsDefenseType = items.DefenseParry
 						skillToProgress = string(skills.WeaponCombat)
 					case characters.DefenseBlock:
 						defenseVerb = "block"
+						itemsDefenseType = items.DefenseBlock
 						skillToProgress = string(skills.WeaponCombat)
 					}
 
@@ -655,11 +659,48 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 					targetChar.TrackSkillUse(skillToProgress)
 					targetChar.CheckSkillProgression(skillToProgress, targetChar.GetUserId(), 1.0)
 
-					attackResult.SendToSource(fmt.Sprintf(`<ansi fg="attack-bad">%s %ss your attack!</ansi>`, targetChar.Name, defenseVerb))
-					attackResult.SendToTarget(fmt.Sprintf(`<ansi fg="defense-good">You %s %s's attack!</ansi>`, defenseVerb, sourceChar.Name))
-					attackResult.SendToSourceRoom(fmt.Sprintf(`<ansi fg="combat">%s %ss %s's attack.</ansi>`, targetChar.Name, defenseVerb, sourceChar.Name))
-					if sourceChar.RoomId != targetChar.RoomId {
-						attackResult.SendToTargetRoom(fmt.Sprintf(`<ansi fg="combat">%s %ss an attack.</ansi>`, targetChar.Name, defenseVerb))
+					// Get narrative defense messages based on defense z-score
+					defenseMsgs := items.GetDefenseMessage(itemsDefenseType, defenseRoll.ZScore)
+
+					// Prepare token replacements
+					weaponName := species.GetSpecies(sourceChar.SpeciesId).UnarmedName
+					if sourceChar.Equipment.Weapon.ItemId > 0 {
+						weaponName = sourceChar.Equipment.Weapon.GetSpec().Name
+					}
+
+					tokenReplacements := map[items.TokenName]string{
+						items.TokenDefender: targetChar.Name,
+						items.TokenAttacker: sourceChar.Name,
+						items.TokenWeapon:   weaponName,
+					}
+
+					// If we have custom defense messages, use them
+					if len(defenseMsgs.Together.ToDefender) > 0 {
+						toDefenderMsg := defenseMsgs.Together.ToDefender.Get()
+						toAttackerMsg := defenseMsgs.Together.ToAttacker.Get()
+						toRoomMsg := defenseMsgs.Together.ToRoom.Get()
+
+						// Replace tokens
+						for token, value := range tokenReplacements {
+							toDefenderMsg = toDefenderMsg.SetTokenValue(token, value)
+							toAttackerMsg = toAttackerMsg.SetTokenValue(token, value)
+							toRoomMsg = toRoomMsg.SetTokenValue(token, value)
+						}
+
+						attackResult.SendToTarget(string(toDefenderMsg))
+						attackResult.SendToSource(string(toAttackerMsg))
+						attackResult.SendToSourceRoom(string(toRoomMsg))
+						if sourceChar.RoomId != targetChar.RoomId {
+							attackResult.SendToTargetRoom(string(toRoomMsg))
+						}
+					} else {
+						// Fallback to generic messages if custom messages not available
+						attackResult.SendToSource(fmt.Sprintf(`<ansi fg="attack-bad">%s %ss your attack!</ansi>`, targetChar.Name, defenseVerb))
+						attackResult.SendToTarget(fmt.Sprintf(`<ansi fg="defense-good">You %s %s's attack!</ansi>`, defenseVerb, sourceChar.Name))
+						attackResult.SendToSourceRoom(fmt.Sprintf(`<ansi fg="combat">%s %ss %s's attack.</ansi>`, targetChar.Name, defenseVerb, sourceChar.Name))
+						if sourceChar.RoomId != targetChar.RoomId {
+							attackResult.SendToTargetRoom(fmt.Sprintf(`<ansi fg="combat">%s %ss an attack.</ansi>`, targetChar.Name, defenseVerb))
+						}
 					}
 
 					// Stage 8.5: Add third-party context if applicable

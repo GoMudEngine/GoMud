@@ -1,0 +1,142 @@
+# Block defense messages
+# Tokens available:
+# {defender} - name of the defending character
+# {attacker} - name of the attacking character
+# {weapon}   - name of attacker's weapon
+
+optionid: block
+options:
+  weak:
+    # Narrow blocks - defender barely absorbed the attack (z-score < 0.5)
+    together:
+      todefender:
+      - '<ansi fg="defense-good">You barely block <ansi fg="user">{attacker}</ansi>''s attack!</ansi>'
+      - '<ansi fg="defense-good">You brace desperately, barely absorbing the blow!</ansi>'
+      - '<ansi fg="defense-good">Your defense holds, but just barely!</ansi>'
+      - '<ansi fg="defense-good">You awkwardly intercept the strike with your shield!</ansi>'
+      - '<ansi fg="defense-good">You scramble to block, feeling the impact jar your bones!</ansi>'
+      - '<ansi fg="defense-good">Your armor barely turns the strike aside!</ansi>'
+      - '<ansi fg="defense-good">You raise your guard at the last second, absorbing the heavy blow!</ansi>'
+      - '<ansi fg="defense-good">You hunker down, your defense creaking under the impact!</ansi>'
+      - '<ansi fg="defense-good">You catch the strike awkwardly, staggering from the force!</ansi>'
+      - '<ansi fg="defense-good">Your shield shudders as it barely holds against the attack!</ansi>'
+      toattacker:
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> barely blocks your attack!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> braces desperately, barely absorbing your blow!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi>''s defense holds, but just barely!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> awkwardly intercepts your strike!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> scrambles to block, your impact jarring them!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi>''s armor barely turns your strike aside!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> raises their guard at the last second!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> hunkers down, their defense creaking!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> catches your strike awkwardly, staggering!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi>''s shield shudders under your attack!</ansi>'
+      toroom:
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> barely blocks <ansi fg="user">{attacker}</ansi>''s attack.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> braces desperately.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi>''s defense holds, but just barely.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> awkwardly intercepts the strike.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> scrambles to block.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi>''s armor barely turns the strike aside.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> raises their guard at the last second.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> hunkers down under the impact.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> staggers from the force of the blow.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi>''s shield shudders.</ansi>'
+
+  normal:
+    # Standard blocks - defender successfully absorbed the attack (z-score 0.5-2.0)
+    together:
+      todefender:
+      - '<ansi fg="defense-good">You block <ansi fg="user">{attacker}</ansi>''s attack!</ansi>'
+      - '<ansi fg="defense-good">You absorb the blow with your shield!</ansi>'
+      - '<ansi fg="defense-good">Your armor turns the strike away!</ansi>'
+      - '<ansi fg="defense-good">You brace firmly, blocking the attack!</ansi>'
+      - '<ansi fg="defense-good">You catch the strike on your guard!</ansi>'
+      - '<ansi fg="defense-good">You turn the blow with your shield!</ansi>'
+      - '<ansi fg="defense-good">You weather the strike behind your defense!</ansi>'
+      - '<ansi fg="defense-good">You stand firm, absorbing the impact!</ansi>'
+      - '<ansi fg="defense-good">You meet the attack head-on with your shield!</ansi>'
+      - '<ansi fg="defense-good">You intercept the blow solidly!</ansi>'
+      - '<ansi fg="defense-good">Your defense holds strong against the strike!</ansi>'
+      - '<ansi fg="defense-good">You deflect the attack with your shield!</ansi>'
+      - '<ansi fg="defense-good">You hunker behind your guard, blocking effectively!</ansi>'
+      - '<ansi fg="defense-good">You turn aside the blow with solid defense!</ansi>'
+      toattacker:
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> blocks your attack!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> absorbs your blow with their shield!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi>''s armor turns your strike away!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> braces firmly, blocking your attack!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> catches your strike on their guard!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> turns your blow with their shield!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> weathers your strike behind their defense!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> stands firm, absorbing the impact!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> meets your attack head-on!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> intercepts your blow solidly!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi>''s defense holds strong!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> deflects your attack with their shield!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> hunkers behind their guard!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> turns aside your blow!</ansi>'
+      toroom:
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> blocks <ansi fg="user">{attacker}</ansi>''s attack.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> absorbs the blow with their shield.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi>''s armor turns the strike away.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> braces firmly.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> catches the strike on their guard.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> turns the blow with their shield.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> weathers the strike.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> stands firm, absorbing the impact.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> meets the attack head-on.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> intercepts the blow solidly.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi>''s defense holds strong.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> deflects with their shield.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> hunkers behind their guard.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> turns aside the blow.</ansi>'
+
+  heavy:
+    # Easy/decisive blocks - defender easily absorbed a weak attack (z-score >= 2.0)
+    together:
+      todefender:
+      - '<ansi fg="defense-good">You effortlessly block <ansi fg="user">{attacker}</ansi>''s feeble attack!</ansi>'
+      - '<ansi fg="defense-good">You casually absorb the weak blow!</ansi>'
+      - '<ansi fg="defense-good">Your armor shrugs off the pitiful strike with ease!</ansi>'
+      - '<ansi fg="defense-good">You barely feel the impact on your shield!</ansi>'
+      - '<ansi fg="defense-good">You stand like a wall, the attack bouncing off harmlessly!</ansi>'
+      - '<ansi fg="defense-good">You contemptuously weather the feeble strike!</ansi>'
+      - '<ansi fg="defense-good">The weak blow glances off your solid defense!</ansi>'
+      - '<ansi fg="defense-good">You don''t even flinch as the attack fails to penetrate!</ansi>'
+      - '<ansi fg="defense-good">Your defense easily turns away the pathetic blow!</ansi>'
+      - '<ansi fg="defense-good">You lazily intercept the weak strike, barely noticing it!</ansi>'
+      - '<ansi fg="defense-good">Your shield dismissively absorbs the feeble attack!</ansi>'
+      - '<ansi fg="defense-good">You stand unmoved as the strike bounces off!</ansi>'
+      - '<ansi fg="defense-good">The pitiful blow is no match for your solid guard!</ansi>'
+      - '<ansi fg="defense-good">You effortlessly turn aside the weak attack!</ansi>'
+      toattacker:
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> effortlessly blocks your feeble attack!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> casually absorbs your weak blow!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi>''s armor shrugs off your pitiful strike!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> barely feels your impact!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> stands like a wall, your attack bouncing off!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> contemptuously weathers your feeble strike!</ansi>'
+      - '<ansi fg="attack-bad">Your weak blow glances off harmlessly!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> doesn''t even flinch as your attack fails!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi>''s defense easily turns away your pathetic blow!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> lazily intercepts your weak strike!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi>''s shield dismissively absorbs your feeble attack!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> stands unmoved as your strike bounces off!</ansi>'
+      - '<ansi fg="attack-bad">Your pitiful blow is no match for their guard!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> effortlessly turns aside your weak attack!</ansi>'
+      toroom:
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> effortlessly blocks the feeble attack.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> casually absorbs the weak blow.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi>''s armor shrugs off the pitiful strike.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> barely feels the impact.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> stands like a wall.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> contemptuously weathers the feeble strike.</ansi>'
+      - '<ansi fg="combat">The weak blow glances off harmlessly.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> doesn''t even flinch.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi>''s defense easily turns away the blow.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> lazily intercepts the weak strike.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi>''s shield dismissively absorbs the attack.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> stands unmoved.</ansi>'
+      - '<ansi fg="combat">The pitiful blow is no match for the solid guard.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> effortlessly turns aside the attack.</ansi>'
