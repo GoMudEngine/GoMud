@@ -27,9 +27,10 @@ import (
 //
 
 var (
-	promptDefaultCompiled = ``
-	promptColorRegex      = regexp.MustCompile(`\{(\d*)(?::)?(\d*)?\}`)
-	promptFindTagsRegex   = regexp.MustCompile(`\{[a-zA-Z%:\-]+\}`)
+	promptDefaultCompiled      = ``
+	fightPromptDefaultCompiled = ``
+	promptColorRegex           = regexp.MustCompile(`\{(\d*)(?::)?(\d*)?\}`)
+	promptFindTagsRegex        = regexp.MustCompile(`\{[a-zA-Z%:\-]+\}`)
 )
 
 // renderVitalBar returns a 10-block ANSI progress bar for a vital stat.
@@ -103,8 +104,9 @@ func targetHealthDesc(health, maxHealth int) (string, string) {
 	}
 }
 
-// buildFightPromptTemplate assembles the fight prompt template string from enabled toggles.
-func (u *UserRecord) buildFightPromptTemplate() string {
+// BuildFightPromptTemplate assembles the fight prompt template string from enabled toggles.
+// It is exported so that usercommands/set.go can rebuild and cache it when a toggle changes.
+func (u *UserRecord) BuildFightPromptTemplate() string {
 	var b strings.Builder
 	b.WriteString(`{8}[{t}`)
 	if u.getPromptToggle(`bars`) {
@@ -167,14 +169,17 @@ func (u *UserRecord) GetCommandPrompt() string {
 		if inCombat {
 			customPrompt = u.GetConfigOption(`fprompt-compiled`)
 			if customPrompt == nil {
-				// Use cached toggle-driven default or rebuild
+				// Toggle-driven cache (kept current by set.go when a toggle changes)
 				cached := u.GetConfigOption(`fprompt-default-compiled`)
 				if cached == nil {
-					built := util.ConvertColorShortTags(u.buildFightPromptTemplate())
-					u.SetConfigOption(`fprompt-default-compiled`, built)
-					cached = built
+					// No toggle customizations — use the server config default
+					if fightPromptDefaultCompiled == `` {
+						fightPromptDefaultCompiled = util.ConvertColorShortTags(configs.GetTextFormatsConfig().FightPrompt.String())
+					}
+					customPrompt = fightPromptDefaultCompiled
+				} else {
+					customPrompt = cached
 				}
-				customPrompt = cached
 			}
 		}
 

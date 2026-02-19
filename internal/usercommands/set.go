@@ -68,7 +68,7 @@ func Set(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 
 		currentPrompt = user.GetConfigOption(`fprompt`)
 		if currentPrompt == nil {
-			currentPrompt = c.Prompt.String()
+			currentPrompt = c.FightPrompt.String()
 		}
 		user.SendText(`<ansi fg="yellow-bold">fprompt:</ansi> `)
 		user.SendText(currentPrompt.(string))
@@ -280,7 +280,8 @@ func Set(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 				}
 			}
 			user.SetConfigOption(key, !current)
-			user.SetConfigOption(`fprompt-default-compiled`, nil) // invalidate cache
+			// Rebuild and cache the toggle-driven template immediately
+			user.SetConfigOption(`fprompt-default-compiled`, util.ConvertColorShortTags(user.BuildFightPromptTemplate()))
 			if !current {
 				user.SendText(fmt.Sprintf(`Fight prompt: %s <ansi fg="green">[ON]</ansi>`, desc))
 			} else {

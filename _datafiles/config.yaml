@@ -381,6 +381,11 @@ TextFormats:
   #   Default prompt formatting.
   #   See: "help prompt" in game to learn more about this.
   Prompt: '{8}[{t} {255}HP:{hpbar} {255}SP:{stbar} {255}CP:{cvbar}{8}]{239}{h}{8}:'
+  # - FightPrompt -
+  #   Default fight prompt (shown during combat). Players can toggle individual
+  #   elements with "set fprompt tog <name>" or set a fully custom string with
+  #   "set fprompt <string>". See "help set-prompt" in game for all options.
+  FightPrompt: '{8}[{t} {255}HP:{hpbar} SP:{stbar} CP:{cvbar}{pos}{8}] {255}» {target}{8}[{targetpos}{8}|{targethealth}{8}] {255}{tank}{tankpos}{tankbar}{239}{h}{8}:'
   # - TimeFormat -
   #   When real world time is shown, what format should be used?
   #   This uses a Go time format string, which is kinda weird.
