@@ -2320,7 +2320,9 @@ message := messages[tier][perspective][selectedPool].Get(msgSeed)
 
 ---
 
-### Stage 9.6: Health/Stamina/Conviction Bars in Prompt
+### Stage 9.6: Health/Stamina/Conviction Bars in Prompt ✅ COMPLETED
+**Commit**: `98ecfe6` - feat: merge Stage 9.6 vital bars in prompt
+
 **Goal**: Replace numeric HP/Stamina/Conviction in the player prompt with colored progress bars, matching the Evennia DOG style (see `combat_example_evennia.png`).
 
 **Design**:
@@ -3133,6 +3135,6 @@ Critical bugs fixed outside of formal stage development:
 
 ---
 
-**Last Updated**: 2026-02-15
+**Last Updated**: 2026-02-19
 **Status**: In Progress
-**Current Stage**: 9.5 Complete — Skill-tiered combat messages implemented (beginner/expert/master progression) with full Stage 9.4 token integration. Vitals window privacy updated (removed numerical displays). Phase 9 (Combat Narrative Enhancement) now complete. Ready for Phase 10 (Balance Pass).
+**Current Stage**: 9.6 Complete — 10-block ANSI vital bars ({hpbar}/{stbar}/{cvbar}) replace numeric HP/SP/CP in the default prompt. Color breakpoints (>60% green, 30–60% yellow, ≤30% red) match the web client vitals gradient. Ready for Stage 9.7 (Configurable Combat Prompt).
