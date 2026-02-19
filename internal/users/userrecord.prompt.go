@@ -30,6 +30,41 @@ var (
 	promptFindTagsRegex   = regexp.MustCompile(`\{[a-zA-Z%:\-]+\}`)
 )
 
+// renderVitalBar returns a 10-block ANSI progress bar for a vital stat.
+// Color breakpoints match the web client vitals window gradient:
+//
+//	>60% → green (ANSI 82), >30% → yellow (ANSI 226), ≤30% → red (ANSI 196)
+func renderVitalBar(current, max int) string {
+	if max <= 0 {
+		max = 1
+	}
+	if current < 0 {
+		current = 0
+	}
+	pct := float64(current) / float64(max) * 100.0
+	if pct > 100 {
+		pct = 100
+	}
+
+	filled := int(math.Round(pct / 10.0))
+	empty := 10 - filled
+
+	var barColor string
+	switch {
+	case pct > 60:
+		barColor = "82"  // bright green
+	case pct > 30:
+		barColor = "226" // yellow
+	default:
+		barColor = "196" // red
+	}
+
+	return fmt.Sprintf(`<ansi fg="%s">%s</ansi><ansi fg="238">%s</ansi>`,
+		barColor,
+		strings.Repeat("█", filled),
+		strings.Repeat("░", empty))
+}
+
 func (u *UserRecord) GetCommandPrompt() string {
 
 	promptOut := ``
@@ -200,6 +235,15 @@ func (u *UserRecord) ProcessPromptString(promptStr string) string {
 
 			case `{CV:-}`:
 				promptOut.WriteString(strconv.Itoa(u.Character.ConvictionMax.Value))
+
+			case `{hpbar}`:
+				promptOut.WriteString(renderVitalBar(u.Character.Health, u.Character.HealthMax.Value))
+
+			case `{stbar}`:
+				promptOut.WriteString(renderVitalBar(u.Character.Stamina, u.Character.StaminaMax.Value))
+
+			case `{cvbar}`:
+				promptOut.WriteString(renderVitalBar(u.Character.Conviction, u.Character.ConvictionMax.Value))
 
 			case `{ap}`:
 				promptOut.WriteString(strconv.Itoa(u.Character.ActionPoints))
