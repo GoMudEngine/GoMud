@@ -12,6 +12,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/term"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -65,6 +67,78 @@ func renderVitalBar(current, max int) string {
 		strings.Repeat("░", empty))
 }
 
+// getPromptToggle returns the toggle state for a fight prompt element.
+// Returns true (on) by default when not explicitly set.
+func (u *UserRecord) getPromptToggle(key string) bool {
+	val := u.GetConfigOption(`fprompt-tog-` + key)
+	if val == nil {
+		return true
+	}
+	if b, ok := val.(bool); ok {
+		return b
+	}
+	return true
+}
+
+// targetHealthDesc returns a descriptive label and color class for a target's health percentage.
+func targetHealthDesc(health, maxHealth int) (string, string) {
+	if maxHealth <= 0 {
+		maxHealth = 1
+	}
+	if health <= 0 {
+		return "dead", "health-0"
+	}
+	pct := int(float64(health) / float64(maxHealth) * 100.0)
+	switch {
+	case pct >= 80:
+		return "healthy", "health-100"
+	case pct >= 60:
+		return "bruised", "health-60"
+	case pct >= 40:
+		return "wounded", "health-40"
+	case pct >= 20:
+		return "badly wounded", "health-20"
+	default:
+		return "near death", "health-10"
+	}
+}
+
+// buildFightPromptTemplate assembles the fight prompt template string from enabled toggles.
+func (u *UserRecord) buildFightPromptTemplate() string {
+	var b strings.Builder
+	b.WriteString(`{8}[{t}`)
+	if u.getPromptToggle(`bars`) {
+		b.WriteString(` {255}HP:{hpbar} SP:{stbar} CP:{cvbar}`)
+	}
+	if u.getPromptToggle(`pos`) {
+		b.WriteString(`{pos}`)
+	}
+	b.WriteString(`{8}]`)
+	if u.getPromptToggle(`target`) {
+		b.WriteString(` {255}» {target}`)
+	}
+	showTargetHealth := u.getPromptToggle(`targethealth`)
+	showTargetPos := u.getPromptToggle(`targetpos`)
+	if showTargetPos || showTargetHealth {
+		b.WriteString(`{8}[`)
+		if showTargetPos {
+			b.WriteString(`{targetpos}`)
+		}
+		if showTargetPos && showTargetHealth {
+			b.WriteString(`{8}|`)
+		}
+		if showTargetHealth {
+			b.WriteString(`{targethealth}`)
+		}
+		b.WriteString(`{8}]`)
+	}
+	if u.getPromptToggle(`tank`) {
+		b.WriteString(` {255}{tank}{tankpos}{tankbar}`)
+	}
+	b.WriteString(`{239}{h}{8}:`)
+	return b.String()
+}
+
 func (u *UserRecord) GetCommandPrompt() string {
 
 	promptOut := ``
@@ -92,6 +166,16 @@ func (u *UserRecord) GetCommandPrompt() string {
 
 		if inCombat {
 			customPrompt = u.GetConfigOption(`fprompt-compiled`)
+			if customPrompt == nil {
+				// Use cached toggle-driven default or rebuild
+				cached := u.GetConfigOption(`fprompt-default-compiled`)
+				if cached == nil {
+					built := util.ConvertColorShortTags(u.buildFightPromptTemplate())
+					u.SetConfigOption(`fprompt-default-compiled`, built)
+					cached = built
+				}
+				customPrompt = cached
+			}
 		}
 
 		// No other custom prompts? try the default setting
@@ -244,6 +328,98 @@ func (u *UserRecord) ProcessPromptString(promptStr string) string {
 
 			case `{cvbar}`:
 				promptOut.WriteString(renderVitalBar(u.Character.Conviction, u.Character.ConvictionMax.Value))
+
+			case `{target}`:
+				if u.Character.Aggro != nil {
+					if u.Character.Aggro.MobInstanceId > 0 {
+						if m := mobs.GetInstance(u.Character.Aggro.MobInstanceId); m != nil {
+							promptOut.WriteString(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>`, m.Character.Name))
+						}
+					} else if u.Character.Aggro.UserId > 0 {
+						if target := GetByUserId(u.Character.Aggro.UserId); target != nil {
+							promptOut.WriteString(fmt.Sprintf(`<ansi fg="username">%s</ansi>`, target.Character.Name))
+						}
+					}
+				}
+
+			case `{targethealth}`:
+				if u.Character.Aggro != nil {
+					var tHealth, tMax int
+					if u.Character.Aggro.MobInstanceId > 0 {
+						if m := mobs.GetInstance(u.Character.Aggro.MobInstanceId); m != nil {
+							tHealth, tMax = m.Character.Health, m.Character.HealthMax.Value
+						}
+					} else if u.Character.Aggro.UserId > 0 {
+						if target := GetByUserId(u.Character.Aggro.UserId); target != nil {
+							tHealth, tMax = target.Character.Health, target.Character.HealthMax.Value
+						}
+					}
+					if tMax > 0 {
+						desc, color := targetHealthDesc(tHealth, tMax)
+						promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%s</ansi>`, color, desc))
+					}
+				}
+
+			case `{targetpos}`:
+				if u.Character.Aggro != nil {
+					var tPos characters.CombatPosition
+					if u.Character.Aggro.MobInstanceId > 0 {
+						if m := mobs.GetInstance(u.Character.Aggro.MobInstanceId); m != nil {
+							tPos = m.Character.CombatPosition
+						}
+					} else if u.Character.Aggro.UserId > 0 {
+						if target := GetByUserId(u.Character.Aggro.UserId); target != nil {
+							tPos = target.Character.CombatPosition
+						}
+					}
+					if tPos != `` {
+						promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%s</ansi>`,
+							tPos.GetPositionColor(), tPos.String()))
+					}
+				}
+
+			case `{tank}`:
+				if p := parties.Get(u.UserId); p != nil {
+					for _, memberId := range p.GetMembers() {
+						if memberId != u.UserId && p.GetRank(memberId) == `front` {
+							if tankUser := GetByUserId(memberId); tankUser != nil {
+								promptOut.WriteString(fmt.Sprintf(`<ansi fg="username">%s</ansi>`,
+									tankUser.Character.Name))
+							}
+							break
+						}
+					}
+				}
+
+			case `{tankpos}`:
+				if p := parties.Get(u.UserId); p != nil {
+					for _, memberId := range p.GetMembers() {
+						if memberId != u.UserId && p.GetRank(memberId) == `front` {
+							if tankUser := GetByUserId(memberId); tankUser != nil {
+								tPos := tankUser.Character.CombatPosition
+								if tPos != `` {
+									promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%s</ansi>`,
+										tPos.GetPositionColor(), tPos.String()))
+								}
+							}
+							break
+						}
+					}
+				}
+
+			case `{tankbar}`:
+				if p := parties.Get(u.UserId); p != nil {
+					for _, memberId := range p.GetMembers() {
+						if memberId != u.UserId && p.GetRank(memberId) == `front` {
+							if tankUser := GetByUserId(memberId); tankUser != nil {
+								promptOut.WriteString(renderVitalBar(
+									tankUser.Character.Health,
+									tankUser.Character.HealthMax.Value))
+							}
+							break
+						}
+					}
+				}
 
 			case `{ap}`:
 				promptOut.WriteString(strconv.Itoa(u.Character.ActionPoints))

@@ -1,13 +1,31 @@
-<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">set prompt</ansi>
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">set prompt</ansi> / <ansi fg="command">set fprompt</ansi>
 
-The <ansi fg="command">set prompt</ansi> command allows you to customize your in game prompt.
+The <ansi fg="command">set prompt</ansi> and <ansi fg="command">set fprompt</ansi> commands let you customize your
+in-game prompt. The fight prompt (<ansi fg="command">fprompt</ansi>) appears during combat.
 
 <ansi fg="yellow">Usage: </ansi>
 
-  <ansi fg="command">set prompt [default/none]</ansi>  - Set your prompt back to the default or none
-  <ansi fg="command">set prompt [prompt text]</ansi>   - Set a custom prompt
-  <ansi fg="command">set fprompt [default/none]</ansi> - Set your prompt back to the default or none
-  <ansi fg="command">set fprompt [prompt text]</ansi>  - Set a custom prompt
+  <ansi fg="command">set prompt [default/none]</ansi>       - Reset to default or hide prompt
+  <ansi fg="command">set prompt [prompt text]</ansi>        - Set a custom prompt
+
+  <ansi fg="command">set fprompt</ansi>                     - Show current fight prompt & toggle states
+  <ansi fg="command">set fprompt default</ansi>             - Reset custom string AND all toggles
+  <ansi fg="command">set fprompt [prompt text]</ansi>       - Set fully custom fight prompt (overrides toggles)
+  <ansi fg="command">set fprompt tog <name></ansi>          - Toggle individual fight prompt elements on/off
+
+
+<ansi fg="yellow">Fight Prompt Toggles: </ansi>
+
+  Type <ansi fg="command">set fprompt tog <name></ansi> to turn an element on or off. All are ON by default.
+
+  <ansi fg="magenta">bars</ansi>          HP/SP/CP vital bars
+  <ansi fg="magenta">pos</ansi>           Your combat position (hidden when standing)
+  <ansi fg="magenta">target</ansi>        Target name
+  <ansi fg="magenta">targethealth</ansi>  Target health description (healthy/bruised/wounded/etc)
+  <ansi fg="magenta">targetpos</ansi>     Target's current combat position
+  <ansi fg="magenta">tank</ansi>          Party front-rank tank name and health bar
+
+  Example: <ansi fg="command">set fprompt tog tank</ansi>  → hides the tank block when soloing
 
 
 <ansi fg="yellow">Custom Prompt Tokens: </ansi>
@@ -35,6 +53,20 @@ The <ansi fg="command">set prompt</ansi> command allows you to customize your in
     <ansi fg="magenta">{mp%}</ansi>   Percent of Conviction left - With coloring (see <ansi fg="command">help conviction</ansi>)
     <ansi fg="magenta">{mp%:-}</ansi> Percent of Conviction left
 
+  <ansi fg="8">Vital Bars (fight prompt):</ansi>
+    <ansi fg="magenta">{hpbar}</ansi>        Health bar (10-block color bar)
+    <ansi fg="magenta">{stbar}</ansi>        Stamina bar (10-block color bar)
+    <ansi fg="magenta">{cvbar}</ansi>        Conviction bar (10-block color bar)
+
+  <ansi fg="8">Combat Info (fight prompt):</ansi>
+    <ansi fg="magenta">{pos}</ansi>          Your combat position (empty when standing)
+    <ansi fg="magenta">{target}</ansi>       Your current target's name
+    <ansi fg="magenta">{targethealth}</ansi> Target health: healthy/bruised/wounded/badly wounded/near death/dead
+    <ansi fg="magenta">{targetpos}</ansi>    Target's combat position
+    <ansi fg="magenta">{tank}</ansi>         Party front-rank tank's name
+    <ansi fg="magenta">{tankpos}</ansi>      Tank's combat position
+    <ansi fg="magenta">{tankbar}</ansi>      Tank's health bar
+
   <ansi fg="8">Other:</ansi>
     <ansi fg="magenta">{xp}</ansi>    Current XP                <ansi fg="magenta">{XP}</ansi>    XP remaining for next level
     <ansi fg="magenta">{xp%}</ansi>   % of level complete       <ansi fg="magenta">{lvl}</ansi>   Character Level
@@ -49,5 +81,9 @@ The <ansi fg="command">set prompt</ansi> command allows you to customize your in
 The default prompt is:
 <ansi fg="246">{8}[{t} {T} {255}HP:{hp}{8}/{HP} {255}MP:{13}{mp}{8}/{13}{MP}{8}]{239}{h}{8}:</ansi>
 
-<ansi fg="red">Note:</ansi> You can reset your prompt to the default with <ansi fg="command">set prompt default</ansi>
+The default fight prompt is assembled automatically from your toggle settings.
+Use <ansi fg="command">set fprompt default</ansi> to restore all defaults at any time.
+
+<ansi fg="red">Note:</ansi> A custom fprompt string (set with <ansi fg="command">set fprompt <text></ansi>) overrides the toggle
+system entirely. Use <ansi fg="command">set fprompt default</ansi> to return to toggle-driven mode.
 
