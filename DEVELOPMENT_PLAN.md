@@ -2362,48 +2362,25 @@ message := messages[tier][perspective][selectedPool].Get(msgSeed)
 
 ---
 
-### Stage 9.7: Configurable Combat Prompt
-**Goal**: Let players configure what information appears in their combat prompt. Options include: current tank, current target, relative health of target, and the resource bars from 9.2.
+### Stage 9.7: Configurable Combat Prompt ✅ COMPLETED
+**Commit**: `c7ec255` - feat: implement Stage 9.7 configurable combat prompt
 
-**Design**:
-- `prompt set` command to toggle prompt elements:
-  - `tank` — Show who is currently tanking (taking hits) in your group
-  - `target` — Show who you are currently attacking
-  - `targethealth` — Show relative health of your target (descriptive, not numeric: "healthy", "wounded", "near death")
-  - `bars` — Toggle resource bars on/off (default: on)
-  - `compact` — Single-line vs multi-line prompt
-- Settings saved to character data, persist across sessions
-- Default prompt shows: resource bars + target name + target condition
-- Example: `Health:[████████░░░░] Stamina:[████████████░] | Target: Guard (wounded) | Tank: You`
+**Goal**: Let players configure what information appears in their combat prompt via per-element toggles.
 
-**Changes**:
-1. Add `PromptConfig` struct to character data with toggle fields
-2. Add `prompt` command to configure settings
-3. Update prompt rendering to conditionally include elements
-4. Add target condition descriptions ("healthy", "bruised", "wounded", "critical", "near death")
-5. Add tank detection for group play
+**Implemented**:
+- `set fprompt tog <element>` — toggle bars/pos/target/targethealth/targetpos/tank on/off (all ON by default)
+- `set fprompt` (no args) — shows custom string (if set) plus toggle table with current state
+- `set fprompt default` — resets custom string AND all toggles to defaults
+- Toggle state stored in `ConfigOptions` as `fprompt-tog-<name>` (bool), persists across sessions
+- Dynamic prompt assembled from enabled toggles, cached as `fprompt-default-compiled`; invalidated on toggle change
+- New prompt tags: `{target}`, `{targethealth}`, `{targetpos}`, `{tank}`, `{tankpos}`, `{tankbar}`
+- `targetHealthDesc`: healthy/bruised/wounded/badly wounded/near death/dead
+- Updated `help/set-prompt.template` with full toggle documentation
 
-**Files to Modify** (~8 files, ~350 lines):
-1. `internal/characters/character.go` — Add `PromptConfig` struct
-2. `internal/usercommands/prompt.go` — New command
-3. `internal/prompt/` — Conditional prompt rendering
-4. Prompt template files — Support configurable sections
-5. Test files
-
-**Testing**:
-- [ ] **Manual Test**: Configure prompt to show target, verify it appears
-- [ ] **Manual Test**: Toggle tank display on/off
-- [ ] **Manual Test**: Verify target health description updates as target takes damage
-- [ ] **Manual Test**: Save/quit/reload, verify prompt settings persist
-
-**Acceptance Criteria**:
-- All prompt elements are independently toggleable
-- Settings persist across sessions
-- Target health shown as descriptive text (not numbers)
-- Default prompt is sensible for new players
-- All tests pass
-
-**Estimated Changes**: ~350 lines, 8 files
+**Files Modified** (3 files, 284 lines):
+1. `internal/users/userrecord.prompt.go` — helpers + new tags + dynamic fprompt cache
+2. `internal/usercommands/set.go` — `tog` subcommand + improved zero-arg display + `default` clears toggles
+3. `_datafiles/world/dogmud/templates/help/set-prompt.template` — full rewrite
 
 ---
 
@@ -3137,4 +3114,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-19
 **Status**: In Progress
-**Current Stage**: 9.6 Complete — 10-block ANSI vital bars ({hpbar}/{stbar}/{cvbar}) replace numeric HP/SP/CP in the default prompt. Color breakpoints (>60% green, 30–60% yellow, ≤30% red) match the web client vitals gradient. Ready for Stage 9.7 (Configurable Combat Prompt).
+**Current Stage**: 9.7 Complete — Per-element fight prompt toggle system. Players use `set fprompt tog <name>` to turn bars/pos/target/targethealth/targetpos/tank on or off. Dynamic template cache, new prompt tags ({target}, {targethealth}, {targetpos}, {tank}, {tankpos}, {tankbar}), updated help file. Ready for Stage 9.8 (Combat Conditions System Refactor).
