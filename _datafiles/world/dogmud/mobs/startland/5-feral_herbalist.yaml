@@ -1,0 +1,19 @@
+mobid: 5
+zone: Startland
+itemdropchance: 100
+hostile: true
+maxwander: 2
+groups:
+  - cultist
+activitylevel: 30
+character:
+  name: feral herbalist
+  description: >
+    A gaunt figure in dirty robes, eyes glazed and muttering to themselves.
+    They clutch a fistful of herbs like a weapon.
+  level: 2
+  speciesid: 1
+  items:
+    - itemid: 40004
+    - itemid: 40005
+    - itemid: 40007

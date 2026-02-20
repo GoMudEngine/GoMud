@@ -106,6 +106,7 @@ type Character struct {
 	PlayerDamage     map[int]int                    `yaml:"-"` // key = who, value = how much
 	LastPlayerDamage uint64                         `yaml:"-"` // last round a player damaged this character
 	CastingState     *CastingState                  `yaml:"-"` // Active fold-based cast in progress (Stage 11.2). Not persisted.
+	CraftingState    *CraftingState                 `yaml:"-"` // Active crafting in progress (Stage 13.1). Not persisted.
 	permaBuffIds     []int                          // Buff Id's that are always present for this character
 	userId           int                            // User ID of the character if any
 }
@@ -747,6 +748,9 @@ func (c *Character) GetSpells() map[string]int {
 
 // IsCasting returns true if the character has an active fold-based cast in progress.
 func (c *Character) IsCasting() bool { return c.CastingState != nil }
+
+// IsCrafting returns true if the character has an active crafting operation in progress.
+func (c *Character) IsCrafting() bool { return c.CraftingState != nil }
 
 func (c *Character) HasSpell(spellName string) bool {
 	if intVal, ok := c.SpellBook[spellName]; ok {

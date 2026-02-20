@@ -11,6 +11,8 @@ exits:
     roomid: 2
   south:
     roomid: 200
+  east:
+    roomid: 5
 spawninfo:
 - mobid: 2
   message: A town guard emerges from a nearby building.

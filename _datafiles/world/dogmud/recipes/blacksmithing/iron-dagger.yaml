@@ -1,0 +1,16 @@
+id: iron-dagger
+name: Iron Dagger
+skill: blacksmithing
+skill_minimum: 0
+station: forge
+time_rounds: 3
+ingredients:
+  - item_tag: iron-ingot
+    quantity: 1
+  - item_tag: leather-strip
+    quantity: 1
+output:
+  item_id: 10009
+  quantity: 1
+success_message: "You hammer the iron into shape and wrap the grip tightly. An iron dagger!"
+failure_message: "The iron cracks from uneven heating. The materials are ruined."

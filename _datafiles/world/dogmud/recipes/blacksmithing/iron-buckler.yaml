@@ -1,0 +1,16 @@
+id: iron-buckler
+name: Iron Buckler
+skill: blacksmithing
+skill_minimum: 5
+station: forge
+time_rounds: 4
+ingredients:
+  - item_tag: iron-ingot
+    quantity: 2
+  - item_tag: wooden-plank
+    quantity: 1
+output:
+  item_id: 20010
+  quantity: 1
+success_message: "You beat the iron plates into a round shield and bolt the grip. An iron buckler!"
+failure_message: "The iron warps badly. The materials are wasted."

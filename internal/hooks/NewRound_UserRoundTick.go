@@ -7,7 +7,9 @@ import (
 	"strconv"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
+	"github.com/GoMudEngine/GoMud/internal/crafting"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
@@ -188,6 +190,42 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 											`<ansi fg="magenta">The Chrysalis deepens its hold. Your <ansi fg="yellow">%s</ansi> grows stronger (%s).</ansi>`,
 											spec.Name, levelTag))
 									}
+								}
+							}
+						}
+					}
+				}
+
+				// Stage 13.1: Crafting tick — advance or complete active crafting
+				if user.Character.CraftingState != nil {
+					if user.Character.Aggro != nil {
+						user.Character.CraftingState = nil
+						user.SendText(`<ansi fg="red">Your work is interrupted!</ansi>`)
+					} else {
+						cs := user.Character.CraftingState
+						cs.RoundsComplete++
+						if cs.RoundsComplete < cs.RoundsTotal {
+							user.SendText(fmt.Sprintf(
+								`<ansi fg="yellow">You continue working on %s... (%d/%d)</ansi>`,
+								cs.RecipeId, cs.RoundsComplete, cs.RoundsTotal))
+						} else {
+							recipe := crafting.GetRecipe(cs.RecipeId)
+							user.Character.CraftingState = nil
+							if recipe != nil {
+								sl := user.Character.Skills[recipe.Skill]
+								chance := crafting.CalcSuccessChance(sl, recipe.SkillMinimum)
+								roll := util.Rand(100)
+								util.LogRoll("Craft", roll, chance)
+								if roll < chance {
+									user.Character.Items = crafting.ConsumeIngredients(user.Character.Items, recipe)
+									newItem := items.New(recipe.Output.ItemId)
+									user.Character.StoreItem(newItem)
+									events.AddToQueue(events.ItemOwnership{UserId: user.UserId, Item: newItem, Gained: true})
+									user.Character.OnSkillUse(recipe.Skill, user.UserId)
+									user.SendText(fmt.Sprintf(`<ansi fg="green">%s</ansi>`, recipe.SuccessMessage))
+								} else {
+									user.Character.Items = crafting.ConsumeIngredients(user.Character.Items, recipe)
+									user.SendText(fmt.Sprintf(`<ansi fg="red">%s</ansi>`, recipe.FailureMessage))
 								}
 							}
 						}

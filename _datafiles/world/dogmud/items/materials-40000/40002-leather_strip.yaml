@@ -1,0 +1,9 @@
+itemid: 40002
+name: leather strip
+namesimple: strip
+description: A narrow strip of tanned hide, supple and strong.
+type: object
+subtype: mundane
+component_tag: leather-strip
+weight: 0.1
+value: 1

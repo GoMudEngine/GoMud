@@ -1,0 +1,11 @@
+itemid: 30010
+name: healing poultice
+namesimple: poultice
+description: A compress of pressed herbs bound with linen. It smells strongly of
+  root and damp earth.
+type: potion
+subtype: drinkable
+uses: 1
+buffids:
+  - 5
+value: 8
