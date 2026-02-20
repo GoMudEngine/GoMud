@@ -77,22 +77,24 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 
 			// Fold accumulation: loop FoldsPerRound times per combat round,
 			// doubling on each iteration (mirrors the attacks-per-round pattern).
-			// FoldsPerRound=1 → one doubling/round; FoldsPerRound=2 → two doublings/round.
-			// Sequence with FoldsPerRound=1: 0 → 1 → 2 → 4 (3 rounds for a 4-fold spell)
-			// Sequence with FoldsPerRound=2: 0 → 1 → 2, then 2 → 4 (2 rounds)
-			oldFolds := cs.FoldsAccumulated
+			// Each iteration emits its own message, like each attack in combat.
+			// FoldsPerRound=1: 0→1, 1→2, 2→4  (one message per round)
+			// FoldsPerRound=2: 0→1→2 in round 1 (two messages), 2→4 in round 2 (one message)
+
+			// Pre-flight: simulate the loop to calculate foldDelta for the conviction check.
+			simFolds := cs.FoldsAccumulated
 			for i := 0; i < cs.FoldsPerRound; i++ {
-				if cs.FoldsAccumulated == 0 {
-					cs.FoldsAccumulated = 1
+				if simFolds == 0 {
+					simFolds = 1
 				} else {
-					cs.FoldsAccumulated *= 2
+					simFolds *= 2
 				}
-				if cs.FoldsAccumulated >= cs.FoldsNeeded {
-					cs.FoldsAccumulated = cs.FoldsNeeded
+				if simFolds >= cs.FoldsNeeded {
+					simFolds = cs.FoldsNeeded
 					break
 				}
 			}
-			foldDelta := cs.FoldsAccumulated - oldFolds
+			foldDelta := simFolds - cs.FoldsAccumulated
 
 			// Conviction cost proportional to folds gained this round.
 			// Early rounds are cheap; the final doubling costs the most.
@@ -114,23 +116,34 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 			user.Character.Conviction -= roundCost
 			cs.ConvictionSpent += roundCost
 
-			// Stage 11.3: add a concentration check here that scales with
-			// cs.FoldsAccumulated (harder to hold more folds).
+			// Real loop: advance folds and emit a message per iteration.
+			for i := 0; i < cs.FoldsPerRound; i++ {
+				if cs.FoldsAccumulated == 0 {
+					cs.FoldsAccumulated = 1
+				} else {
+					cs.FoldsAccumulated *= 2
+				}
+				if cs.FoldsAccumulated > cs.FoldsNeeded {
+					cs.FoldsAccumulated = cs.FoldsNeeded
+				}
 
-			if cs.FoldsAccumulated < cs.FoldsNeeded {
-				// Still folding — report progress
+				// Stage 11.3: add a concentration check here that scales with
+				// cs.FoldsAccumulated (harder to hold more folds).
+
+				if cs.FoldsAccumulated >= cs.FoldsNeeded {
+					// Folds complete — placeholder until Stage 11.4 resolves
+					user.SendText(fmt.Sprintf(
+						`<ansi fg="cyan-bold">Your folds are complete! %s holds in your mind... [Stage 11.4 will resolve this spell]</ansi>`,
+						spellData.Name))
+					user.Character.TrackSpellCast(cs.SpellId)
+					user.Character.OnSkillUse(string(skills.Spellcasting), userId)
+					user.Character.OnStatUse("willpower", userId)
+					user.Character.CastingState = nil
+					break
+				}
 				user.SendText(fmt.Sprintf(
 					`<ansi fg="cyan">You fold your will deeper. You now hold <ansi fg="cyan-bold">%d/%d</ansi> folds.</ansi>`,
 					cs.FoldsAccumulated, cs.FoldsNeeded))
-				} else {
-				// Folds complete — placeholder until Stage 11.4 resolves
-				user.SendText(fmt.Sprintf(
-					`<ansi fg="cyan-bold">Your folds are complete! %s holds in your mind... [Stage 11.4 will resolve this spell]</ansi>`,
-					spellData.Name))
-				user.Character.TrackSpellCast(cs.SpellId)
-				user.Character.OnSkillUse(string(skills.Spellcasting), userId)
-				user.Character.OnStatUse("willpower", userId)
-				user.Character.CastingState = nil
 			}
 
 			continue
