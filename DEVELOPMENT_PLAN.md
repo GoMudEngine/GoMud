@@ -2937,7 +2937,7 @@ New characters currently have no spells in their spellbook, making it impossible
 
 ---
 
-### Stage 11.5: Combat Integration & NPC Caster AI
+### Stage 11.5: Combat Integration & NPC Caster AI ✅ COMPLETED (merge 10bc02c)
 **Goal**: Fully integrate casting into the combat action economy. Update NPC AI with a caster archetype that uses the fold system.
 
 **Changes**:
@@ -4005,7 +4005,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 8: Grappling | 5 stages (8.1–8.5) | 24 hours | **8.1–8.5 Complete** |
 | Phase 9: Combat Presentation | 8 stages (9.1–9.8) | ~40 hours | **9.1–9.8 Complete** |
 | Phase 10: Skill System Cleanup | 2 stages (10.1–10.2) | 12 hours | 10.1–10.2 Complete |
-| Phase 11: Magic Rework | 5 stages (11.1–11.5) | 30 hours | 11.1–11.4 Complete |
+| Phase 11: Magic Rework | 5 stages (11.1–11.5) | 30 hours | **11.1–11.5 Complete** |
 | Phase 12: Mutations | 2 stages (12.1–12.2) | 16 hours | Not Started |
 | Phase 13: Basic Crafting | 2 stages (13.1–13.2) | 16 hours | Not Started |
 | Phase 14: Balance Config | 1 stage (14.1) | 8 hours | Not Started |
@@ -4115,4 +4115,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-20
 **Status**: In Progress
-**Current Stage**: Post-11.4 polish complete (hotfixes ce3ba22, 34efec5) — descriptive spell messages, Minor Shield status display, scaled shield duration, and accurate spell help files. Ready for Stage 11.5 (Combat Integration & NPC Caster AI).
+**Current Stage**: Stage 11.5 complete (10bc02c) — cooldown gate for casting, mob fold casting, caster AI profile, {casting} prompt tag, conviction regen for mobs, Startland practice arena with apprentice mage. Ready for Phase 12 (Mutations).
