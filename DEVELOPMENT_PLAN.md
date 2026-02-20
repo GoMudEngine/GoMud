@@ -2911,6 +2911,32 @@ New characters currently have no spells in their spellbook, making it impossible
 
 ---
 
+### Hotfix: Descriptive Messages, Minor Shield Status Display & Duration ✅ COMPLETED (merge ce3ba22)
+**Goal**: Polish the Stage 11.4 spell resolution output and fix a Minor Shield bug.
+
+**Fixes**:
+1. All raw numeric values removed from player-facing spell messages — damage uses `combat.GetDamageDescription()`, healing uses new `combat.GetHealDescription()`, shield and backfire use descriptive text
+2. Minor Shield armor bonus now included in `GetDefense()` so it shows in the `status` command's Armor line
+3. Minor Shield duration changed from hardcoded `10` to `10 + round(skillLevel/5)` — scales with spellcasting investment
+4. Added `CLAUDE.md` rule: never display raw numbers in player messages; use descriptive language
+
+**Files changed**: `character.go` (GetDefense), `spell_resolution.go` (messages + duration), `combat/descriptions.go` (GetHealDescription), `CLAUDE.md`
+
+---
+
+### Hotfix: Spell Help Files ✅ COMPLETED (merge 34efec5)
+**Goal**: Update stale help templates that still described old skill-based mechanics.
+
+**Fixes**:
+1. `spell.template` — generic fallback now shows Base Folds, conditional Resisted-by (physical/mental), and conditional Requires (component tag); covers all spells without custom templates
+2. `heal.template` — rewritten: describes fold-based healing spell, removes cooldown/level references
+3. `tame.template` — rewritten: removes old level-cap/learned-creature text; describes opposed mental roll, animal-only restriction, 24h charm, backfire risk
+4. `minor-shield.template` — new file: explains armor bonus formula, skill-scaled duration, status display integration
+
+**Files changed**: `spell.template`, `heal.template`, `tame.template`, `minor-shield.template` (new)
+
+---
+
 ### Stage 11.5: Combat Integration & NPC Caster AI
 **Goal**: Fully integrate casting into the combat action economy. Update NPC AI with a caster archetype that uses the fold system.
 
@@ -4089,4 +4115,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-20
 **Status**: In Progress
-**Current Stage**: Refactor complete (merge a66eee4) — single RollSpread knob wired through config.yaml → main.go → dice package; all stat-based rolls now use dice.RollStat / dice.OpposedRollStat. Ready for Stage 11.5 (Combat Integration & NPC Caster AI).
+**Current Stage**: Post-11.4 polish complete (hotfixes ce3ba22, 34efec5) — descriptive spell messages, Minor Shield status display, scaled shield duration, and accurate spell help files. Ready for Stage 11.5 (Combat Integration & NPC Caster AI).
