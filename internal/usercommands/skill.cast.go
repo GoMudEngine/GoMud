@@ -40,9 +40,13 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	}
 
 	// 3. Verify spell exists and user knows it
-	spellInfo := spells.FindSpellByName(spellName)
+	// Try spell ID first (e.g. "mm"), then fall back to display-name prefix match (e.g. "magic missile")
+	spellInfo := spells.GetSpell(spellName)
 	if spellInfo == nil {
-		user.SendText(fmt.Sprintf(`<ansi fg="red">You don't know a spell called "%s".</ansi>`, spellName))
+		spellInfo = spells.FindSpellByName(spellName)
+	}
+	if spellInfo == nil {
+		user.SendText(fmt.Sprintf(`<ansi fg="red">No spell found for "%s". Use the spell ID (e.g. <ansi fg="cyan-bold">mm</ansi>, <ansi fg="cyan-bold">heal</ansi>). Type <ansi fg="cyan-bold">spells</ansi> to list what you know.</ansi>`, spellName))
 		return true, nil
 	}
 	if !user.Character.HasSpell(spellInfo.SpellId) {
