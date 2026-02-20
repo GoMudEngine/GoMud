@@ -28,7 +28,7 @@ func Submit(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	}
 
 	// Must be the grapple controller
-	if !user.Character.IsGrappleController {
+	if !user.Character.HasCondition(characters.ConditionGrappleController) {
 		user.SendText("You must be in control of the grapple to attempt a submission!")
 		return true, nil
 	}

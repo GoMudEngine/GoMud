@@ -136,8 +136,8 @@ func ApplyGrappleResult(attacker *characters.Character, defender *characters.Cha
 	defender.GrappleControllerId = attackerId
 
 	// Stage 8.3: Mark who is the controller
-	attacker.IsGrappleController = true
-	defender.IsGrappleController = false
+	attacker.AddCondition(characters.ConditionGrappleController, 0, 1.0, "grapple")
+	defender.RemoveCondition(characters.ConditionGrappleController)
 }
 
 // CheckClinchProgression performs automatic control check for clinched fighters
@@ -240,8 +240,8 @@ func ApplyPositionProgression(char1 *characters.Character, char2 *characters.Cha
 	if result.NewPosition == characters.PositionStanding {
 		char1.GrappleControllerId = 0
 		char2.GrappleControllerId = 0
-		char1.IsGrappleController = false
-		char2.IsGrappleController = false
+		char1.RemoveCondition(characters.ConditionGrappleController)
+		char2.RemoveCondition(characters.ConditionGrappleController)
 	}
 	// If advancing to grounded, controller status stays the same (already set)
 }
@@ -309,8 +309,8 @@ func ApplySubmissionFailure(controller *characters.Character, controlled *charac
 	// Clear grapple state for both
 	controller.GrappleControllerId = 0
 	controlled.GrappleControllerId = 0
-	controller.IsGrappleController = false
-	controlled.IsGrappleController = false
+	controller.RemoveCondition(characters.ConditionGrappleController)
+	controlled.RemoveCondition(characters.ConditionGrappleController)
 }
 
 // ApplySubmissionSuccess applies the consequences of a successful submission.

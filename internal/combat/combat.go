@@ -437,7 +437,7 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 			}
 
 			// Stage 7.5: Reduce attacks to 1 if attempting recovery this round
-			if sourceChar.RecoveryPenaltyThisRound {
+			if sourceChar.HasCondition(characters.ConditionRecoveryPenalty) {
 				attacks = 1
 			}
 
@@ -553,7 +553,7 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				// Stage 8.3: Position-based crit modifiers
 				// Grounded controller gets +10% crit, controlled gets -10%
 				// Clinched controller gets +5% crit
-				if sourceChar.CombatPosition.IsGrapplePosition() && sourceChar.IsGrappleController {
+				if sourceChar.CombatPosition.IsGrapplePosition() && sourceChar.HasCondition(characters.ConditionGrappleController) {
 					// Source is the grapple controller
 					if sourceChar.CombatPosition == characters.PositionGrounded {
 						critThreshold -= 0.4 // ~+10% crit chance (lower threshold = more crits)
@@ -561,7 +561,7 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 						critThreshold -= 0.2 // ~+5% crit chance
 					}
 				}
-				if targetChar.CombatPosition == characters.PositionGrounded && !targetChar.IsGrappleController {
+				if targetChar.CombatPosition == characters.PositionGrounded && !targetChar.HasCondition(characters.ConditionGrappleController) {
 					// Target is controlled in grounded position
 					critThreshold += 0.4 // Target gets -10% crit chance when controlled on ground
 				}
@@ -618,8 +618,8 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 					}
 
 					// Stage 8.6: Apply failed grapple defense penalty
-					if targetChar.DefensePenaltyNextRound {
-						defenseScore *= 0.85 // -15% defense (off-balance, exposed)
+					if targetChar.HasCondition(characters.ConditionDefensePenalty) {
+						defenseScore *= targetChar.GetConditionMagnitude(characters.ConditionDefensePenalty)
 					}
 
 					// Opposed roll: attack vs this defense

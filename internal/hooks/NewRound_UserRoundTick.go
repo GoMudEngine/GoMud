@@ -141,11 +141,8 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 					events.AddToQueue(events.BuffsTriggered{UserId: user.UserId, BuffIds: triggeredBuffIds})
 				}
 
-				// Stage 7.5: Clear recovery penalty flag at end of round
-				user.Character.RecoveryPenaltyThisRound = false
-
-				// Stage 8.6: Clear defense penalty flag at end of round
-				user.Character.DefensePenaltyNextRound = false
+				// Stage 9.8: Tick all combat conditions (decrements Duration, removes expired)
+				user.Character.TickConditions()
 
 				// Recalculate all stats at the end of the round tick
 				user.Character.Validate()

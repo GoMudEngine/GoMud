@@ -80,9 +80,7 @@ type Character struct {
 	CombatPosition           CombatPosition                 `yaml:"-"`                       // Current combat position (Standing/Prone/Clinched/Grounded). Don't store this.
 	PositionRoundsMin        int                            `yaml:"-"`                       // Minimum rounds in current position (for Prone bash/trip, etc). Don't store this.
 	GrappleControllerId      int                            `yaml:"-"`                       // UserId or MobInstanceId of grapple controller (0 = none, Stage 8.2+). Don't store this.
-	IsGrappleController      bool                           `yaml:"-"`                       // True if this character is the controller in a grapple (Stage 8.3). Don't store this.
-	RecoveryPenaltyThisRound bool                           `yaml:"-"`                       // If true, attacks reduced to 1 this round due to recovery attempt. Don't store this.
-	DefensePenaltyNextRound  bool                           `yaml:"-"`                       // If true, defense reduced 15% next round (failed grapple exposure). Don't store this.
+	Conditions               []CombatCondition              `yaml:"-"`                       // Active temporary combat conditions (Stage 9.8). Don't store this.
 	AttacksThisRound         int                            `yaml:"-"`                       // Stage 9.4: Tracks recent attacks for stance calculation. Don't store this.
 	DefensesThisRound        int                            `yaml:"-"`                       // Stage 9.4: Tracks recent defenses for stance calculation. Don't store this.
 	ConsecutiveHits          int                            `yaml:"-"`                       // Stage 9.4: Consecutive successful hits for momentum. Don't store this.
@@ -997,7 +995,7 @@ func (c *Character) AttemptRecovery(statValue int) (bool, bool) {
 		c.PositionRoundsMin--
 		// Still in minimum prone period, can't attempt recovery yet
 		// Reduce attacks to 1 this round (struggling to stand)
-		c.RecoveryPenaltyThisRound = true
+		c.AddCondition(ConditionRecoveryPenalty, 1, 1.0, "prone recovery")
 		return false, false // No recovery attempt yet (still in minimum duration)
 	}
 
@@ -1024,7 +1022,7 @@ func (c *Character) AttemptRecovery(statValue int) (bool, bool) {
 		c.PositionRoundsMin = 0
 	} else {
 		// Failed recovery attempt - reduce attacks to 1 this round
-		c.RecoveryPenaltyThisRound = true
+		c.AddCondition(ConditionRecoveryPenalty, 1, 1.0, "prone recovery")
 	}
 
 	return true, success
@@ -1748,7 +1746,7 @@ func (c *Character) EndAggro() {
 // Stage 8.3: Called when combat ends, targets change, or participant dies
 func (c *Character) ClearGrappleState() {
 	c.GrappleControllerId = 0
-	c.IsGrappleController = false
+	c.RemoveCondition(ConditionGrappleController)
 	// Reset to standing if in a grapple position
 	if c.CombatPosition.IsGrapplePosition() {
 		c.CombatPosition = PositionStanding

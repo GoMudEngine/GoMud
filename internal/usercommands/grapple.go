@@ -3,6 +3,7 @@ package usercommands
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -149,7 +150,7 @@ func Grapple(rest string, user *users.UserRecord, room *rooms.Room, flags events
 
 		// Simple failure (z < 0.5): Defense penalty
 		if result.AttackZScore < 0.5 {
-			user.Character.DefensePenaltyNextRound = true
+			user.Character.AddCondition(characters.ConditionDefensePenalty, 1, 0.85, "failed grapple")
 			user.SendText(`<ansi fg="red">Your failed attempt leaves you exposed!</ansi>`)
 		}
 
