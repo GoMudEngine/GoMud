@@ -24,7 +24,7 @@ func Submit(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	}
 
 	// Must be the grapple controller
-	if !mob.Character.IsGrappleController {
+	if !mob.Character.HasCondition(characters.ConditionGrappleController) {
 		return true, nil
 	}
 

@@ -3,6 +3,7 @@ package mobcommands
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -118,7 +119,7 @@ func Grapple(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 		// Simple failure (z < 0.5): Defense penalty
 		if result.AttackZScore < 0.5 {
-			mob.Character.DefensePenaltyNextRound = true
+			mob.Character.AddCondition(characters.ConditionDefensePenalty, 1, 0.85, "failed grapple")
 		}
 
 		// Critical failure (z < -2.0): Fall prone + reversal opportunity

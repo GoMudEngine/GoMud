@@ -1348,7 +1348,7 @@ func processGrappleProgression(char1 *characters.Character, char2 *characters.Ch
 	var controller, controlled *characters.Character
 	var controllerName, controlledName string
 
-	if char1.IsGrappleController {
+	if char1.HasCondition(characters.ConditionGrappleController) {
 		controller = char1
 		controlled = char2
 		controllerName = char1Name

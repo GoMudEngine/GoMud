@@ -192,7 +192,7 @@ func CanUseSubmit(char *characters.Character) bool {
 		return false
 	}
 	// Must be grapple controller
-	if !char.IsGrappleController {
+	if !char.HasCondition(characters.ConditionGrappleController) {
 		return false
 	}
 	// Must not be on cooldown
@@ -331,7 +331,7 @@ func ScoreGrapple(mob *mobs.Mob, target *characters.Character) int {
 
 func ScoreSubmit(mob *mobs.Mob, target *characters.Character) int {
 	// Only viable if in grounded position and controlling
-	if !mob.Character.IsGrappleController {
+	if !mob.Character.HasCondition(characters.ConditionGrappleController) {
 		return 0
 	}
 	if mob.Character.CombatPosition != characters.PositionGrounded {

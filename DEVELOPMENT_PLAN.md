@@ -2389,7 +2389,8 @@ message := messages[tier][perspective][selectedPool].Get(msgSeed)
 
 ---
 
-### Stage 9.8: Combat Conditions System Refactor
+### Stage 9.8: Combat Conditions System Refactor ✅ COMPLETED
+**Merge commit**: (see feature/stage-9.8-combat-conditions branch)
 **Goal**: Consolidate scattered boolean flags (RecoveryPenaltyThisRound, DefensePenaltyNextRound, etc.) into a unified, configurable combat conditions system. Make it easy to add new temporary combat states.
 
 **Problem**:
@@ -3020,7 +3021,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 6: Conviction & Magic | 2 stages (6.1–6.2) | 8 hours | **Complete** |
 | Phase 7: Defense & Combat | 5 stages (7.1–7.5) | 26 hours | **Complete** |
 | Phase 8: Grappling | 5 stages (8.1–8.5) | 24 hours | **8.1–8.5 Complete** |
-| Phase 9: Combat Presentation | 8 stages (9.1–9.8) | ~40 hours | **9.1–9.4 Complete** |
+| Phase 9: Combat Presentation | 8 stages (9.1–9.8) | ~40 hours | **9.1–9.8 Complete** |
 | Phase 10: Balance Pass | 1 stage (10.1) | 8 hours | Not Started |
 | Phase 11: LLM Integration | 4 stages (11.1–11.4) | 35 hours | Not Started |
 | **Total** | **43 stages** | **202 hours** | |
@@ -3119,4 +3120,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-19
 **Status**: In Progress
-**Current Stage**: 9.7 Complete — Per-element fight prompt toggle system. Players use `set fprompt tog <name>` to turn bars/pos/target/targethealth/targetpos/tank on or off. Dynamic template cache, new prompt tags ({target}, {targethealth}, {targetpos}, {tank}, {tankpos}, {tankbar}), updated help file. Ready for Stage 9.8 (Combat Conditions System Refactor).
+**Current Stage**: 9.8 Complete — Combat Conditions System Refactor. Replaced three boolean flags (RecoveryPenaltyThisRound, DefensePenaltyNextRound, IsGrappleController) with a unified `CombatCondition` system in `internal/characters/conditions.go`. Single `TickConditions()` call in each round-tick hook replaces scattered manual clearing. Active conditions are visible via `conditions` command. Phase 9 complete. Ready for Phase 10 (Balance Pass).
