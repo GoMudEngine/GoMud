@@ -2947,20 +2947,18 @@ New characters currently have no spells in their spellbook, making it impossible
    - Evaluates whether folds can plausibly complete before likely death
    - Prioritizes defensive actions when being hit mid-cast (tries to maintain concentration)
 3. Add `{casting}` prompt tag: shows `Casting: Throw Stone [4/8 folds]` when actively casting
+4. Mob fold casting — mobs use CastingState instead of legacy SpellCast/onMagic path
+5. Conviction regen for mobs in NewRound_AutoHeal
+6. Startland Practice Arena (room 3) + Caster's Alcove (room 4) with apprentice mage (mob 3)
 
-**Files to Modify** (~4 files, ~200 lines):
-1. `internal/hooks/NewRound_DoCombat.go` — Casting shares special move cooldown slot
-2. `internal/combat/ai.go` — Add caster AI profile
-3. `internal/users/userrecord.prompt.go` — Add {casting} prompt tag
-4. Test files
+**Post-completion balance pass** (commit 6056681):
+- Spell conviction costs increased ~8x (tame/aidskill unchanged)
+- Harm spell effect_magnitude increased 10x (mm, fire-bolt, fireball, sparks, throw-stone)
+- `heal` reworked from flat instant heal to `ConditionRegen`: 50 HP/tick every 3 rounds for `max(1, skillLevel/10)` ticks; works in combat
+- `ConditionRegen` added to `characters/conditions.go`; processed in `NewRound_AutoHeal` for players and mobs
+- `mobcommands/cast.go` gates mob casting with the same `special-move` cooldown as players
 
-**Acceptance Criteria**:
-- Cannot initiate casting and use a special move in the same round
-- NPC casters use the fold system contextually
-- `{casting}` prompt tag displays fold progress while casting
-- All tests pass
-
-**Estimated Changes**: ~200 lines, 4 files
+**Files changed**: `internal/combat/ai.go`, `internal/hooks/NewRound_DoCombat.go`, `internal/hooks/NewRound_AutoHeal.go`, `internal/hooks/spell_resolution.go`, `internal/mobcommands/cast.go`, `internal/usercommands/skill.cast.go`, `internal/users/userrecord.prompt.go`, `internal/characters/conditions.go`, all spell YAMLs, startland rooms 2–4, apprentice mage mob
 
 ---
 
@@ -4115,4 +4113,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-20
 **Status**: In Progress
-**Current Stage**: Stage 11.5 complete (10bc02c) — cooldown gate for casting, mob fold casting, caster AI profile, {casting} prompt tag, conviction regen for mobs, Startland practice arena with apprentice mage. Ready for Phase 12 (Mutations).
+**Current Stage**: Stage 11.5 balance pass complete (6056681) — spell costs 8x, harm damage 10x, heal reworked to ConditionRegen over-time, mob casting cooldown-gated. Phase 11 fully complete. Ready for Phase 12 (Mutations).
