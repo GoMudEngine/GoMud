@@ -2898,6 +2898,7 @@ New characters currently have no spells in their spellbook, making it impossible
 ---
 
 ### Hotfix: Proportional stdDev & Physical Armor Formula ✅ COMPLETED (merge 0eb9d38)
+### Refactor: RollSpread Master Knob ✅ COMPLETED (merge a66eee4)
 **Goal**: Fix two systematic errors introduced in Stage 11.4 and present throughout existing combat code.
 
 **Fixes**:
@@ -4088,4 +4089,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-20
 **Status**: In Progress
-**Current Stage**: Hotfix Complete (merge 0eb9d38) — proportional stdDev (dice.StdDevFor) + physical armor formula. Ready for Stage 11.5 (Combat Integration & NPC Caster AI).
+**Current Stage**: Refactor complete (merge a66eee4) — single RollSpread knob wired through config.yaml → main.go → dice package; all stat-based rolls now use dice.RollStat / dice.OpposedRollStat. Ready for Stage 11.5 (Combat Integration & NPC Caster AI).
