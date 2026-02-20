@@ -2974,6 +2974,8 @@ New characters currently have no spells in their spellbook, making it impossible
 ---
 
 ### Stage 12.1: Mutation Framework & First 10 Mutations
+**Status**: ✅ COMPLETED — merge commit ebc22e0
+
 **Goal**: Build the mutation data system, acquisition mechanics, and implement 10 starter mutations with pro/con effects.
 
 **Data Structure**:
@@ -4004,7 +4006,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 9: Combat Presentation | 8 stages (9.1–9.8) | ~40 hours | **9.1–9.8 Complete** |
 | Phase 10: Skill System Cleanup | 2 stages (10.1–10.2) | 12 hours | 10.1–10.2 Complete |
 | Phase 11: Magic Rework | 5 stages (11.1–11.5) | 30 hours | **11.1–11.5 Complete** |
-| Phase 12: Mutations | 2 stages (12.1–12.2) | 16 hours | Not Started |
+| Phase 12: Mutations | 2 stages (12.1–12.2) | 16 hours | 12.1 Complete |
 | Phase 13: Basic Crafting | 2 stages (13.1–13.2) | 16 hours | Not Started |
 | Phase 14: Balance Config | 1 stage (14.1) | 8 hours | Not Started |
 | Phase 15: Dev Tools | 2 stages (15.1–15.2) | 12 hours | Not Started |
@@ -4113,4 +4115,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-20
 **Status**: In Progress
-**Current Stage**: Stage 11.5 balance pass complete (6056681) — spell costs 8x, harm damage 10x, heal reworked to ConditionRegen over-time, mob casting cooldown-gated. Phase 11 fully complete. Ready for Phase 12 (Mutations).
+**Current Stage**: Stage 12.2 — Mutation Deepening & Visual Integration. Stage 12.1 complete (ebc22e0): mutation framework, 10 mutations, acquisition system, all effect hooks integrated.
