@@ -3094,7 +3094,7 @@ type MutationEffect struct {
 
 ---
 
-### Stage 13.1: Crafting Framework
+### Stage 13.1: Crafting Framework ✅ COMPLETED (merge: b04e22e)
 **Goal**: Build the core crafting system: new crafting skills, recipe data structure, crafting station support, and the `craft` command.
 
 **New Crafting Skills** (added to the 9 DOG core skills — 11 total):
@@ -4115,4 +4115,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-20
 **Status**: In Progress
-**Current Stage**: Stage 13.1 — Basic Crafting. Phase 12 complete: Stage 12.1 (ebc22e0) mutation framework + 10 mutations; Stage 12.2 (107c187) deepening L1→L3 with linear scaling, visual integration in look command, level-scaled Adrenaline Surge.
+**Current Stage**: Stage 13.2 — First Recipes & Foraging Integration. Stage 13.1 (b04e22e) complete: crafting framework with `craft` command, 2 blacksmithing + 2 alchemy recipes, 7 material items, 4 crafted output items, The Forge and Alchemist's Workshop rooms, cave goblin and feral herbalist mobs with reagent drops.
