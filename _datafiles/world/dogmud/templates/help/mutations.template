@@ -1,0 +1,45 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">mutations</ansi>
+
+The Chrysalis — a plague that swept across Gaius — does not merely sicken. Over time, it
+reshapes those it infects. Through sustained combat, your body is pushed beyond its limits
+and the Chrysalis seizes the opportunity to rewrite you.
+
+<ansi fg="yellow">━━━ Acquiring Mutations ━━━</ansi>
+
+Mutations emerge on their own — you cannot choose or train for them. Each combat round you
+spend in active battle builds internal pressure. When that pressure reaches a threshold, the
+Chrysalis forces a change. You will see a message:
+
+  <ansi fg="magenta">Something stirs beneath your skin. A mutation emerges: <ansi fg="yellow">Tough Skin</ansi>.</ansi>
+
+Each subsequent mutation requires significantly more combat to trigger. You can carry up to
+five mutations at once.
+
+<ansi fg="yellow">━━━ Pros and Cons ━━━</ansi>
+
+Every mutation has both a benefit and a drawback. The Chrysalis does not improve you cleanly —
+it trades one capability for another. A mutation that toughens your hide may dull your
+reflexes. Claws that rend enemies will unsettle the people around you.
+
+<ansi fg="yellow">━━━ Commands ━━━</ansi>
+
+  <ansi fg="command">mutations</ansi>           List your current mutations with descriptions.
+  <ansi fg="command">status</ansi>              Shows active mutations (IDs and level) in your stat panel.
+
+<ansi fg="yellow">━━━ Known Mutations ━━━</ansi>
+
+  <ansi fg="yellow">Fast Reflexes</ansi>      Quicker reactions; slightly reduced raw strength.
+  <ansi fg="yellow">Tough Skin</ansi>         Natural physical armor; slightly reduced agility.
+  <ansi fg="yellow">Dense Muscles</ansi>      Exceptional strength; stamina recovers more slowly.
+  <ansi fg="yellow">Clawed Hands</ansi>       Deadly unarmed attacks; unsettling to others.
+  <ansi fg="yellow">Keen Eyes</ansi>          Sharpened perception; coordination suffers.
+  <ansi fg="yellow">Iron Constitution</ansi>  Greater maximum health; stamina recovers more slowly.
+  <ansi fg="yellow">Hollow Bones</ansi>       Freed muscle potential; more fragile under punishment.
+  <ansi fg="yellow">Adrenaline Surge</ansi>   Devastating power near death; stamina drains faster.
+  <ansi fg="yellow">Magical Resistance</ansi> Incoming spells diminished; casting costs more conviction.
+  <ansi fg="yellow">Pheromone Glands</ansi>   Compelling presence; predatory beasts fixate on you.
+
+<ansi fg="yellow">See Also:</ansi>
+
+  <ansi fg="command">help status</ansi>, <ansi fg="command">help combat</ansi>
+

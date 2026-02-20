@@ -145,6 +145,7 @@ help-aliases:
   prone:            [knockdown, knocked-down, knocked down]
   stamina:          [endurance, energy]
   bank:             [deposit, withdraw]
+  mutations:        [mutation, chrysalis, mutate]
   storage:          [store, unstore]
   strength:         [str]
   vitality:         [vit]
