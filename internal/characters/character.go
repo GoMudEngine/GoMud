@@ -124,7 +124,12 @@ func New() *Character {
 		Skills:         initAllSkills(),
 		Gold:           25,
 		Bank:           100,
-		SpellBook:      make(map[string]int),
+		// Temporary starter spells for Phase 11 testing — migrate to tutorial area in Stage 16+
+		SpellBook: map[string]int{
+			"heal":   1, // Minor Heal (helpsingle, vital)
+			"mm":     1, // Magic Missile (harmsingle, elemental)
+			"sparks": 1, // Shower of Sparks (harmmulti, elemental)
+		},
 		CharmedMobs:    []int{},
 		Items:          []items.Item{},
 		Buffs:          buffs.New(),
