@@ -2,10 +2,13 @@
 package hooks
 
 import (
+	"fmt"
+	"math"
 	"strconv"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -143,6 +146,28 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 
 				// Stage 9.8: Tick all combat conditions (decrements Duration, removes expired)
 				user.Character.TickConditions()
+
+				// Stage 12.1: Mutation progress — accumulates during combat, triggers acquisition
+				if user.Character.Aggro != nil && len(user.Character.Mutations) < mutations.MutationMaxCount {
+					user.Character.MutationProgress += mutations.MutationProgressGain
+					threshold := mutations.MutationBaseProgress *
+						math.Pow(mutations.MutationProgressScale, float64(len(user.Character.Mutations)))
+					if user.Character.MutationProgress >= threshold {
+						pool := mutations.GetWeightedPool(user.Character.Mutations)
+						if len(pool) > 0 {
+							mutId := mutations.RollAcquisition(pool)
+							user.Character.Mutations[mutId] = 1
+							user.Character.MutationProgress = 0
+							spec := mutations.GetMutation(mutId)
+							if spec != nil {
+								user.SendText(fmt.Sprintf(
+									`<ansi fg="magenta">Something stirs beneath your skin. A mutation emerges: <ansi fg="yellow">%s</ansi>.</ansi>`,
+									spec.Name))
+								user.SendText(fmt.Sprintf(`<ansi fg="magenta">%s</ansi>`, spec.Description))
+							}
+						}
+					}
+				}
 
 				// Recalculate all stats at the end of the round tick
 				user.Character.Validate()

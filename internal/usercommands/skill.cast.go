@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
@@ -65,7 +66,9 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	}
 
 	// 5. Conviction check — must have enough for the full cast
-	totalConvictionCost := spellInfo.GetTotalConvictionCost(1.0)
+	// Stage 12.1: Apply conviction_cost_multiplier from Magical Resistance mutation
+	convMult := 1.0 + mutations.GetConvictionCostMultiplier(user.Character.Mutations)
+	totalConvictionCost := spellInfo.GetTotalConvictionCost(convMult)
 	if totalConvictionCost > 0 && user.Character.Conviction < totalConvictionCost {
 		user.SendText(fmt.Sprintf(
 			`<ansi fg="red">You don't have enough conviction to cast %s. (Need %d, have %d)</ansi>`,

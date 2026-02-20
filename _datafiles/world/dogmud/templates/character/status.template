@@ -13,3 +13,9 @@
  │                               │    │ <ansi fg="yellow">Bank: </ansi>{{ printf "%-11s" (numberFormat .Character.Bank) }} │
  │ <ansi fg="yellow">Armor:  </ansi>{{ printf "%-6s" ( printf "%d" (.Character.GetDefense)) }} {{ if permadeath }}<ansi fg="yellow">Lives: </ansi>{{ printf "%-7d" .Character.ExtraLives }}{{ else }}              {{ end }} │    └───────────────────┘
  └───────────────────────────────┘
+{{- if .Character.Mutations }}
+ <ansi fg="black-bold">.:</ansi><ansi fg="20">Mutations</ansi><ansi fg="black-bold">:.</ansi>
+{{- range $id, $level := .Character.Mutations }}
+   <ansi fg="yellow">{{ printf "%-25s" $id }}</ansi> <ansi fg="magenta">Lv {{ $level }}</ansi>
+{{- end }}
+{{- end }}

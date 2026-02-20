@@ -2,6 +2,7 @@ package hooks
 
 import (
 	"fmt"
+	"math"
 	"strings"
 	"time"
 
@@ -13,6 +14,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/skills"
@@ -635,6 +637,18 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 			var roundResult combat.AttackResult
 
 			roundResult = combat.AttackPlayerVsMob(user, defMob)
+
+			// Stage 12.1: Adrenaline Surge — +20% bonus damage when HP < 25%
+			if roundResult.Hit && roundResult.DamageToTarget > 0 {
+				if mutations.IsAdrenalSurgeActive(user.Character.Mutations, user.Character.Health, user.Character.HealthMax.Value) {
+					bonusDmg := int(math.Round(float64(roundResult.DamageToTarget) * 0.20))
+					if bonusDmg < 1 {
+						bonusDmg = 1
+					}
+					defMob.Character.Health -= bonusDmg
+					roundResult.DamageToTarget += bonusDmg
+				}
+			}
 
 			// Stage 8.4: Process crit effects (parry crit disarm, dodge crit grapple opportunity)
 

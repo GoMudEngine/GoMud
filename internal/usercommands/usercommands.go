@@ -100,6 +100,7 @@ var (
 		`motd`:        {Motd, true, true, false},
 		`mudmail`:     {Mudmail, true, true, true}, // Admin only
 		`mute`:        {Mute, true, true, true},
+		`mutations`:   {Mutations, true, true, false},
 		`noop`:        {Noop, true, true, false},
 		`offer`:       {Offer, false, true, false},
 		`online`:      {Online, true, true, false},

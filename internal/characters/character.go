@@ -14,6 +14,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/pets"
 	"github.com/GoMudEngine/GoMud/internal/quests"
 	"github.com/GoMudEngine/GoMud/internal/species"
@@ -86,6 +87,8 @@ type Character struct {
 	ConsecutiveHits          int                            `yaml:"-"`                       // Stage 9.4: Consecutive successful hits for momentum. Don't store this.
 	ConsecutiveMisses        int                            `yaml:"-"`                       // Stage 9.4: Consecutive misses for momentum. Don't store this.
 	Skills                   map[string]int                 `yaml:"skills,omitempty"`        // The skills the character has, and what level they are at
+	Mutations        map[string]int                 `yaml:"mutations,omitempty"`     // mutationId → level (Stage 12.1)
+	MutationProgress float64                        `yaml:"mutationprogress,omitempty"` // accumulates toward next mutation (Stage 12.1)
 	Cooldowns        Cooldowns                      `yaml:"cooldowns,omitempty"`     // How many rounds until it is cooled down
 	Settings         map[string]string              `yaml:"settings,omitempty"`      // custom setting tracking, used for anything.
 	QuestProgress    map[int]string                 `yaml:"questprogress,omitempty"` // quest progress tracking
@@ -705,6 +708,9 @@ func (c *Character) CalculateUnarmedDamage() (baseDamage float64, variance float
 	// }
 	// --- END EXTENSION POINT ---
 
+	// Stage 12.1: Natural weapon bonus from mutations (Clawed Hands etc.)
+	baseDamage += mutations.GetNaturalWeaponBonus(c.Mutations)
+
 	// Ensure minimums
 	baseDamage = math.Max(1.0, baseDamage)
 	variance = math.Max(0.5, variance)
@@ -919,6 +925,9 @@ func (c *Character) GetDefense() int {
 
 	// Add magical armor from Minor Shield (or any future ConditionShield source)
 	reduction += int(c.GetConditionMagnitude(ConditionShield))
+
+	// Stage 12.1: Add natural armor from mutations (Tough Skin etc.)
+	reduction += mutations.GetNaturalArmor(c.Mutations)
 
 	if reduction > 100 {
 		reduction = 100
@@ -1968,7 +1977,15 @@ func (c *Character) HealthPerRound() int {
 
 func (c *Character) StaminaPerRound() int {
 	// Base 1 stamina per round + any modifiers
-	return 1 + c.StatMod(string(statmods.StaminaRecovery))
+	base := 1 + c.StatMod(string(statmods.StaminaRecovery))
+	// Stage 12.1: Apply stamina_regen_multiplier mutations
+	if mult := mutations.GetStaminaRegenMultiplier(c.Mutations); mult != 0 {
+		base = int(float64(base) * (1.0 + mult))
+		if base < 1 {
+			base = 1
+		}
+	}
+	return base
 }
 
 func (c *Character) ConvictionPerRound() int {
@@ -2032,6 +2049,14 @@ func (c *Character) RecalculateStats() {
 	c.Stats.Willpower.Mods = c.StatMod(string(statmods.Willpower))
 	c.Stats.Charisma.Mods = c.StatMod(string(statmods.Charisma))
 
+	// Stage 12.1: Apply stat_flat mutation bonuses to Mods before Recalculate()
+	c.Stats.Strength.Mods += mutations.GetStatFlat(c.Mutations, "strength")
+	c.Stats.Dexterity.Mods += mutations.GetStatFlat(c.Mutations, "dexterity")
+	c.Stats.Perception.Mods += mutations.GetStatFlat(c.Mutations, "perception")
+	c.Stats.Vitality.Mods += mutations.GetStatFlat(c.Mutations, "vitality")
+	c.Stats.Willpower.Mods += mutations.GetStatFlat(c.Mutations, "willpower")
+	c.Stats.Charisma.Mods += mutations.GetStatFlat(c.Mutations, "charisma")
+
 	// Recalculate stats
 	// Stats are basically:
 	// level*base + training + mods
@@ -2041,6 +2066,26 @@ func (c *Character) RecalculateStats() {
 	c.Stats.Vitality.Recalculate(c.Level)
 	c.Stats.Willpower.Recalculate(c.Level)
 	c.Stats.Charisma.Recalculate(c.Level)
+
+	// Stage 12.1: Apply stat_multiplier mutations after Recalculate()
+	if v := mutations.GetStatMultiplier(c.Mutations, "strength"); v != 0 {
+		c.Stats.Strength.ValueAdj = int(float64(c.Stats.Strength.ValueAdj) * (1.0 + v))
+	}
+	if v := mutations.GetStatMultiplier(c.Mutations, "dexterity"); v != 0 {
+		c.Stats.Dexterity.ValueAdj = int(float64(c.Stats.Dexterity.ValueAdj) * (1.0 + v))
+	}
+	if v := mutations.GetStatMultiplier(c.Mutations, "perception"); v != 0 {
+		c.Stats.Perception.ValueAdj = int(float64(c.Stats.Perception.ValueAdj) * (1.0 + v))
+	}
+	if v := mutations.GetStatMultiplier(c.Mutations, "vitality"); v != 0 {
+		c.Stats.Vitality.ValueAdj = int(float64(c.Stats.Vitality.ValueAdj) * (1.0 + v))
+	}
+	if v := mutations.GetStatMultiplier(c.Mutations, "willpower"); v != 0 {
+		c.Stats.Willpower.ValueAdj = int(float64(c.Stats.Willpower.ValueAdj) * (1.0 + v))
+	}
+	if v := mutations.GetStatMultiplier(c.Mutations, "charisma"); v != 0 {
+		c.Stats.Charisma.ValueAdj = int(float64(c.Stats.Charisma.ValueAdj) * (1.0 + v))
+	}
 
 	// Set HP/Stamina/Conviction maxes (skill-based, no level dependency)
 	// This relies on the above stats so has to be calculated afterwards
@@ -2065,6 +2110,14 @@ func (c *Character) RecalculateStats() {
 	c.StaminaMax.Recalculate(c.Level)
 	c.ConvictionMax.Recalculate(c.Level)
 	c.ActionPointsMax.Recalculate(c.Level)
+
+	// Stage 12.1: Apply health_multiplier mutations after HealthMax.Recalculate()
+	if hMult := mutations.GetHealthMultiplier(c.Mutations); hMult != 0 {
+		c.HealthMax.Value = int(float64(c.HealthMax.Value) * (1.0 + hMult))
+		if c.HealthMax.Value < 1 {
+			c.HealthMax.Value = 1
+		}
+	}
 
 	// HP can't max less than 1, Stamina/Conviction can't max less than 0
 	if c.StaminaMax.Value < 0 {
@@ -2163,6 +2216,10 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 
 	if c.SpellBook == nil {
 		c.SpellBook = make(map[string]int)
+	}
+
+	if c.Mutations == nil {
+		c.Mutations = make(map[string]int)
 	}
 
 	if c.Zone == "" {

@@ -8,6 +8,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
@@ -436,6 +437,14 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 		}
 		if isCrit {
 			dmg += magnitude
+		}
+		// Stage 12.1: Magical Resistance mutation reduces incoming spell damage
+		if resist := mutations.GetMagicalResistance(target.Character.Mutations); resist > 0 {
+			dmg = int(float64(dmg) * (1.0 - resist))
+			if dmg < 1 {
+				dmg = 1
+			}
+			target.SendText(`<ansi fg="blue">Your magical resistance dampens the blow.</ansi>`)
 		}
 		target.Character.Health -= dmg
 		target.SendText(fmt.Sprintf(

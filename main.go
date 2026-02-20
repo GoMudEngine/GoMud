@@ -42,6 +42,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mapper"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/mutators"
 	"github.com/GoMudEngine/GoMud/internal/pets"
 	"github.com/GoMudEngine/GoMud/internal/plugins"
@@ -953,6 +954,7 @@ func loadAllDataFiles(isReload bool) {
 	// Load biomes before rooms since rooms reference biomes
 	rooms.LoadBiomeDataFiles()
 	spells.LoadSpellFiles()
+	mutations.LoadMutationFiles()
 	rooms.LoadDataFiles()
 	buffs.LoadDataFiles() // Load buffs before items for cost calculation reasons
 	items.LoadDataFiles()

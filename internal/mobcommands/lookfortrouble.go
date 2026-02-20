@@ -2,10 +2,12 @@ package mobcommands
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -59,6 +61,19 @@ func LookForTrouble(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) 
 			entries := 1
 			if party := parties.Get(playerId); party != nil {
 				entries += party.ChanceToBeTargetted(playerId)
+			}
+
+			// Stage 12.1: Pheromone Glands — predatory mobs prefer this player
+			if aggroMagnet := mutations.GetAggroMagnet(user.Character.Mutations); aggroMagnet > 0 {
+				for _, g := range mob.Groups {
+					if g == "predatory" {
+						entries = int(math.Round(float64(entries) * aggroMagnet))
+						if entries < 1 {
+							entries = 1
+						}
+						break
+					}
+				}
 			}
 
 			if mob.Hostile { // Does it always attack players?
