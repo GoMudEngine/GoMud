@@ -3052,7 +3052,7 @@ type MutationEffect struct {
 
 ---
 
-### Stage 12.2: Mutation Deepening & Visual Integration
+### Stage 12.2: Mutation Deepening & Visual Integration ✅ COMPLETED (107c187)
 **Goal**: Allow mutations to strengthen over time (Level 1–3). Integrate mutation visuals into character descriptions.
 
 **Mutation Deepening**:
@@ -4006,7 +4006,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 9: Combat Presentation | 8 stages (9.1–9.8) | ~40 hours | **9.1–9.8 Complete** |
 | Phase 10: Skill System Cleanup | 2 stages (10.1–10.2) | 12 hours | 10.1–10.2 Complete |
 | Phase 11: Magic Rework | 5 stages (11.1–11.5) | 30 hours | **11.1–11.5 Complete** |
-| Phase 12: Mutations | 2 stages (12.1–12.2) | 16 hours | 12.1 Complete |
+| Phase 12: Mutations | 2 stages (12.1–12.2) | 16 hours | **12.1–12.2 Complete** |
 | Phase 13: Basic Crafting | 2 stages (13.1–13.2) | 16 hours | Not Started |
 | Phase 14: Balance Config | 1 stage (14.1) | 8 hours | Not Started |
 | Phase 15: Dev Tools | 2 stages (15.1–15.2) | 12 hours | Not Started |
@@ -4115,4 +4115,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-20
 **Status**: In Progress
-**Current Stage**: Stage 12.2 — Mutation Deepening & Visual Integration. Stage 12.1 complete (ebc22e0): mutation framework, 10 mutations, acquisition system, all effect hooks integrated.
+**Current Stage**: Stage 13.1 — Basic Crafting. Phase 12 complete: Stage 12.1 (ebc22e0) mutation framework + 10 mutations; Stage 12.2 (107c187) deepening L1→L3 with linear scaling, visual integration in look command, level-scaled Adrenaline Surge.
