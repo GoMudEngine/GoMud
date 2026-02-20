@@ -1,0 +1,45 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">foraging</ansi> (skill)
+
+Foraging is the skill of gathering useful materials directly from the environment —
+herbs, wood, ore, and other raw resources. What you find depends on where you are and
+how sharp your eye is. The skill is governed by <ansi fg="yellow">Perception</ansi>.
+
+At higher skill levels foraging yields better-quality materials and items that are
+harder to find. A novice scrapes together weeds; a skilled forager finds rare roots
+and choice timber.
+
+<ansi fg="yellow">━━━ Commands ━━━</ansi>
+
+  <ansi fg="command">forage</ansi>          Search the current room for harvestable materials.
+
+Some rooms have nothing to forage. Wilderness, dungeons, and natural environments tend
+to yield more than city streets or polished floors.
+
+<ansi fg="yellow">━━━ Connection to Crafting ━━━</ansi>
+
+Materials you gather through foraging feed directly into crafting recipes. Herbs gathered
+in the wild become alchemy ingredients; ore and wood become blacksmithing stock.
+
+You can also find crafting materials by:
+  - Picking them up from the floor in crafting rooms.
+  - Looting mobs that carry them (cave goblins, feral herbalists, rats).
+
+<ansi fg="yellow">━━━ Skill Progression ━━━</ansi>
+
+Foraging improves through use. Each forage attempt has a chance to advance your skill.
+The more you forage, the wider the range of materials you can find.
+
+<ansi fg="yellow">━━━ Material Types ━━━</ansi>
+
+  <ansi fg="yellow">healers-root</ansi>     Used in: Healing Poultice (alchemy)
+  <ansi fg="yellow">bitter-thistle</ansi>   Used in: Stamina Draught (alchemy)
+  <ansi fg="yellow">cloth-strip</ansi>      Used in: Healing Poultice (alchemy)
+  <ansi fg="yellow">iron-ingot</ansi>       Used in: Iron Dagger, Iron Buckler (blacksmithing)
+  <ansi fg="yellow">leather-strip</ansi>    Used in: Iron Dagger (blacksmithing)
+  <ansi fg="yellow">wooden-plank</ansi>     Used in: Iron Buckler (blacksmithing)
+  <ansi fg="yellow">small-vial</ansi>       Used in: Stamina Draught (alchemy)
+
+<ansi fg="yellow">See Also:</ansi>
+
+  <ansi fg="command">help craft</ansi>, <ansi fg="command">help alchemy</ansi>, <ansi fg="command">help blacksmithing</ansi>, <ansi fg="command">help skills</ansi>
+

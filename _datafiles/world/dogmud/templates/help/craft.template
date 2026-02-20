@@ -1,0 +1,83 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">craft</ansi>
+
+Crafting lets you combine raw materials into useful items — weapons, armor, potions,
+and more. You need the right skill, the right ingredients, and in most cases a crafting
+station in the room with you.
+
+<ansi fg="yellow">━━━ Basic Usage ━━━</ansi>
+
+  <ansi fg="command">craft list</ansi>               Show all known recipes with their status.
+  <ansi fg="command">craft</ansi>                    Same as craft list.
+  <ansi fg="command">craft <recipe name></ansi>      Start crafting a recipe (partial name works).
+
+Examples:
+  <ansi fg="command">craft list</ansi>
+  <ansi fg="command">craft iron dagger</ansi>
+  <ansi fg="command">craft healing</ansi>
+
+<ansi fg="yellow">━━━ Recipe List ━━━</ansi>
+
+The list shows every recipe your character could potentially learn about, grouped by skill.
+Each entry shows a status indicator:
+
+  <ansi fg="green">[V]</ansi>  You can craft this right now (station present, skill met, ingredients in pack).
+  <ansi fg="red">[X]</ansi>  Something is blocking the craft (see the reason shown to the right).
+
+Blocking reasons:
+  <ansi fg="red">skill N required</ansi>   Your skill level is too low.
+  <ansi fg="red">need forge</ansi>         You must be at the right crafting station.
+  <ansi fg="red">missing iron-ingot</ansi> You don't have one of the required ingredients.
+
+<ansi fg="yellow">━━━ Starting a Craft ━━━</ansi>
+
+When you start crafting, the work takes several rounds to complete:
+
+  Round 0 (command):  <ansi fg="yellow">You begin crafting Iron Dagger... (3 rounds)</ansi>
+  Round 1 (tick):     <ansi fg="yellow">You continue working on iron-dagger... (1/3)</ansi>
+  Round 2 (tick):     <ansi fg="yellow">You continue working on iron-dagger... (2/3)</ansi>
+  Round 3 (tick):     Success or failure message; item appears in your inventory.
+
+You cannot start crafting while in active combat. If something attacks you mid-craft,
+your work is interrupted and you must start over. Your ingredients are NOT consumed on
+an interruption — only on a completed attempt (success or failure).
+
+<ansi fg="yellow">━━━ Success and Failure ━━━</ansi>
+
+When the final round completes, your success chance is:
+
+  50% + (your skill level − recipe minimum) × 5%
+  Clamped between 5% and 95%.
+
+At skill 0 crafting a recipe with minimum 0: 50% chance.
+At skill 10 with minimum 0: 95% chance (capped).
+At skill 0 with minimum 5: 25% chance.
+
+On failure your ingredients are consumed but no item is produced. Higher skill makes
+failure rare, but never impossible until 95%.
+
+<ansi fg="yellow">━━━ Crafting Stations ━━━</ansi>
+
+Most recipes require a specific crafting station in the room:
+
+  <ansi fg="yellow">forge</ansi>          Required for blacksmithing recipes. Found in The Forge (east of Town Square).
+  <ansi fg="yellow">alchemy_bench</ansi>  Required for alchemy recipes. Found in The Alchemist's Workshop
+                   (west of Training Grounds).
+
+The recipe list tells you which station a recipe needs. If you type <ansi fg="command">craft iron dagger</ansi>
+from a room with no forge, you will see an error rather than waste your time.
+
+<ansi fg="yellow">━━━ Getting Ingredients ━━━</ansi>
+
+Ingredients are picked up from the floor or looted from mobs, just like any other item.
+Look for materials on the ground in crafting station rooms, or kill mobs that carry them:
+
+  <ansi fg="yellow">Cave goblin</ansi>     (The Forge) drops iron ingot + leather strip.
+  <ansi fg="yellow">Feral herbalist</ansi> (Workshop)  drops healer's root, bitter thistle, cloth strip.
+  <ansi fg="yellow">Rat</ansi>             (Training Grounds) drops leather strip.
+
+Use <ansi fg="command">get <item></ansi> to pick up floor items, <ansi fg="command">inventory</ansi> to check what you are carrying.
+
+<ansi fg="yellow">See Also:</ansi>
+
+  <ansi fg="command">help blacksmithing</ansi>, <ansi fg="command">help alchemy</ansi>, <ansi fg="command">help foraging</ansi>, <ansi fg="command">help skills</ansi>, <ansi fg="command">help inventory</ansi>
+

@@ -66,6 +66,8 @@ help:
       - stamina
       - stand
       - trip
+    crafting:
+      - craft
     information:
       - biome
       - exits
@@ -109,6 +111,9 @@ help:
       - search
       - sneak
       - track
+      - blacksmithing
+      - alchemy
+      - foraging
   admin:
     all:
       - badcommands
@@ -146,6 +151,10 @@ help-aliases:
   stamina:          [endurance, energy]
   bank:             [deposit, withdraw]
   mutations:        [mutation, chrysalis, mutate]
+  craft:            [crafting, recipes, recipe, make, create]
+  blacksmithing:    [blacksmith, smith, smithing, forge, metalwork]
+  alchemy:          [alchemist, potion, potions, brewing, brew, herbalism]
+  foraging:         [forage, gather, gathering, harvest, harvesting]
   storage:          [store, unstore]
   strength:         [str]
   vitality:         [vit]

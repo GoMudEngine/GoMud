@@ -1,0 +1,47 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">alchemy</ansi> (skill)
+
+Alchemy is the craft of combining herbs, reagents, and vessels into consumable preparations
+— potions, salves, poultices, and draughts. Results range from basic healing to more exotic
+effects. The skill is governed by <ansi fg="yellow">Perception</ansi>, since precision and careful observation
+matter more than brute force.
+
+<ansi fg="yellow">━━━ Requirements ━━━</ansi>
+
+  Station:   An <ansi fg="yellow">alchemy_bench</ansi> must be in the room with you.
+             The Alchemist's Workshop is west of Training Grounds in Startland.
+  Materials: Herbs, plant matter, and empty vessels such as vials.
+             Find them on the ground in the Workshop or loot feral herbalists.
+
+<ansi fg="yellow">━━━ Known Recipes ━━━</ansi>
+
+  <ansi fg="yellow">Healing Poultice</ansi>   Skill 0   2x healers-root, 1x cloth-strip     2 rounds
+  <ansi fg="yellow">Stamina Draught</ansi>    Skill 0   2x bitter-thistle, 1x small-vial     2 rounds
+
+<ansi fg="yellow">━━━ Using Consumables ━━━</ansi>
+
+Crafted potions and poultices are used with the <ansi fg="command">drink</ansi> command:
+
+  <ansi fg="command">drink poultice</ansi>
+  <ansi fg="command">drink draught</ansi>
+
+They apply their effect immediately. Check <ansi fg="command">inventory</ansi> to see what you are carrying,
+and <ansi fg="command">conditions</ansi> to see active effects.
+
+<ansi fg="yellow">━━━ Skill Progression ━━━</ansi>
+
+Alchemy improves through use. Each completed craft attempt (success or failure) has a
+chance to advance the skill. Alchemy progresses faster per use than combat skills because
+crafting opportunities are less frequent.
+
+There is no trainer for alchemy — practice is the only teacher.
+
+<ansi fg="yellow">━━━ Commands ━━━</ansi>
+
+  <ansi fg="command">craft list</ansi>          Show all recipes, including alchemy ones, with status.
+  <ansi fg="command">craft <recipe></ansi>      Begin crafting an alchemy recipe.
+  <ansi fg="command">drink <item></ansi>        Consume a crafted potion or poultice.
+  <ansi fg="command">skills</ansi>              Check your current alchemy skill level.
+
+<ansi fg="yellow">See Also:</ansi>
+
+  <ansi fg="command">help craft</ansi>, <ansi fg="command">help blacksmithing</ansi>, <ansi fg="command">help foraging</ansi>, <ansi fg="command">help skills</ansi>, <ansi fg="command">help drink</ansi>
