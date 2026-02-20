@@ -2390,7 +2390,7 @@ message := messages[tier][perspective][selectedPool].Get(msgSeed)
 ---
 
 ### Stage 9.8: Combat Conditions System Refactor ✅ COMPLETED
-**Merge commit**: (see feature/stage-9.8-combat-conditions branch)
+**Merge commit**: 5877c00
 **Goal**: Consolidate scattered boolean flags (RecoveryPenaltyThisRound, DefensePenaltyNextRound, etc.) into a unified, configurable combat conditions system. Make it easy to add new temporary combat states.
 
 **Problem**:
