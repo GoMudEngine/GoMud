@@ -1,0 +1,28 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">minor-shield</ansi> spell
+
+The <ansi fg="command">Minor Shield</ansi> spell conjures a shimmering barrier of force around the
+target, bolstering their defenses against physical attacks. The barrier
+absorbs incoming damage and appears in your armor rating on the status sheet.
+
+The shield's strength scales with the caster's willpower and spellcasting
+skill. More skilled casters also sustain the barrier for longer.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">cast minor-shield</ansi>              Shields yourself.
+  <ansi fg="command">cast minor-shield [target]</ansi>     Shields a nearby ally.
+
+<ansi fg="yellow">Base Folds:  </ansi> <ansi fg="white-bold">4</ansi>
+<ansi fg="yellow">Target:      </ansi> <ansi fg="white-bold">Single ally (or self)</ansi>
+<ansi fg="yellow">Defense:     </ansi> <ansi fg="white-bold">None — help spells always apply</ansi>
+<ansi fg="yellow">Duration:    </ansi> <ansi fg="white-bold">10 rounds, +1 per 5 spellcasting skill levels</ansi>
+<ansi fg="yellow">Armor bonus: </ansi> <ansi fg="white-bold">(willpower + spellcasting) / 3</ansi>
+<ansi fg="yellow">Conv. Cost:  </ansi> <ansi fg="white-bold">4</ansi>
+<ansi fg="yellow">School:      </ansi> <ansi fg="white-bold">Enhancement</ansi>
+
+<ansi fg="white-bold">Notes:</ansi>
+  - The barrier's armor bonus shows up under Armor in the <ansi fg="command">status</ansi> display.
+  - The bonus applies to both incoming weapon attacks and physical spells.
+  - Casting minor-shield again while a barrier is active will overwrite it.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help cast</ansi>, <ansi fg="command">help spells</ansi>, <ansi fg="command">help heal</ansi>

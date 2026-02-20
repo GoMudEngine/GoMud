@@ -1,32 +1,28 @@
-<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">tame</ansi> (skill)
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">tame</ansi> spell
 
-The <ansi fg="skill">tame</ansi> skill lets you tame certain types of creatures for up to an hour. 
+The <ansi fg="command">Tame</ansi> spell channels mental force to pacify a wild creature, binding it
+to your will as a companion. Once tamed, the creature will follow you and
+fight at your side for a full day.
 
-Each skill level you train adds to the number of creatures you can have tamed 
-at once.
-
-You have a random chance to learn to tame a new creature whenever you defeat
-it in combat. This random chance can also increase over time if you continue to
-defeat the same creature type over and over.
+Success is determined by an opposed mental roll — your willpower and
+spellcasting skill against the creature's willpower. A stronger mind and
+higher spellcasting skill greatly improve your odds.
 
 <ansi fg="yellow">Usage: </ansi>
 
-(Lvl ?) <ansi fg="skill">tame</ansi> List specific creatures you have learned to tame.
+  <ansi fg="command">cast tame</ansi>              Attempts to tame your current combat target.
+  <ansi fg="command">cast tame [target]</ansi>     Targets a specific creature by name.
 
-(Lvl 1) <ansi fg="skill">tame [mobname]</ansi> 2 tamed creatures.
-(Lvl 2) <ansi fg="skill">tame [mobname]</ansi> 3 tamed creatures.
-(Lvl 3) <ansi fg="skill">tame [mobname]</ansi> 4 tamed creatures.
-(Lvl 4) <ansi fg="skill">tame [mobname]</ansi> 5 tamed creatures.
+<ansi fg="yellow">Base Folds:  </ansi> <ansi fg="white-bold">16</ansi>
+<ansi fg="yellow">Target:      </ansi> <ansi fg="white-bold">Single creature</ansi>
+<ansi fg="yellow">Defense:     </ansi> <ansi fg="white-bold">Mental (opposed by target's willpower)</ansi>
+<ansi fg="yellow">Duration:    </ansi> <ansi fg="white-bold">24 hours</ansi>
+<ansi fg="yellow">Conv. Cost:  </ansi> <ansi fg="white-bold">0</ansi>
+<ansi fg="yellow">School:      </ansi> <ansi fg="white-bold">Mental</ansi>
 
-Your skill level affects how long a creature stays tamed for.
+<ansi fg="white-bold">Notes:</ansi>
+  - Only wild animals can be tamed. Other creature types are immune.
+  - The creature's aggro is cleared on a successful tame.
+  - A fumble (very poor roll) will backfire and wound the caster.
 
-Only some creatures can be successfully tamed, and some may require special
-equipment. It is up to you to discover what creatures or equipment.
-
-Your chances of tame success are calculated from the following factors:
-  1. Your level difference (the more of a level advantage you have the easier)
-  2. The size of your target (the bigger the more difficult)
-  3. The number of successes you have for this mob type - increases each 10
-  4. The targets health % - the lower their HP the easier it is.
-  5. Whether the target is aggro'ed towards you. A 50% penalty if so.
-
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help cast</ansi>, <ansi fg="command">help spells</ansi>
