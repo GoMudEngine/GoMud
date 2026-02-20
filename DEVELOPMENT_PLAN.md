@@ -2391,6 +2391,7 @@ message := messages[tier][perspective][selectedPool].Get(msgSeed)
 
 ### Stage 9.8: Combat Conditions System Refactor ✅ COMPLETED
 **Merge commit**: 5877c00
+**Fix commit**: 2f7e608 — removed position adjectives (prone/clinched/grounded) from combat name labels; position now shown exclusively via fight prompt {pos}/{targetpos} tags
 **Goal**: Consolidate scattered boolean flags (RecoveryPenaltyThisRound, DefensePenaltyNextRound, etc.) into a unified, configurable combat conditions system. Make it easy to add new temporary combat states.
 
 **Problem**:
