@@ -2832,7 +2832,7 @@ New characters currently have no spells in their spellbook, making it impossible
 
 ---
 
-### Stage 11.4: Core Spells & Components
+### Stage 11.4: Core Spells & Components ✅ COMPLETED (merge 80045f3)
 **Goal**: Port and rewrite core spells to the fold system. Implement component checking before casting begins. Add spell resolution with critical outcomes.
 
 **Core Spell Set**:
@@ -3965,7 +3965,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 8: Grappling | 5 stages (8.1–8.5) | 24 hours | **8.1–8.5 Complete** |
 | Phase 9: Combat Presentation | 8 stages (9.1–9.8) | ~40 hours | **9.1–9.8 Complete** |
 | Phase 10: Skill System Cleanup | 2 stages (10.1–10.2) | 12 hours | 10.1–10.2 Complete |
-| Phase 11: Magic Rework | 5 stages (11.1–11.5) | 30 hours | 11.1–11.3 Complete |
+| Phase 11: Magic Rework | 5 stages (11.1–11.5) | 30 hours | 11.1–11.4 Complete |
 | Phase 12: Mutations | 2 stages (12.1–12.2) | 16 hours | Not Started |
 | Phase 13: Basic Crafting | 2 stages (13.1–13.2) | 16 hours | Not Started |
 | Phase 14: Balance Config | 1 stage (14.1) | 8 hours | Not Started |
@@ -4075,4 +4075,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-20
 **Status**: In Progress
-**Current Stage**: 11.3 Complete — Concentration Mechanics (merge d5bf9d6). Added CalcConcentrationChance helper (clamp(50 + willpower/4 - damagePct, 5, 95)); prone CombatPosition auto-cancels casting before conviction is charged; mob damage triggers concentration roll via util.LogRoll with roll >= chance cancelling CastingState; removed Stage 11.3 stub comment from fold loop; 6-case TestCalcConcentrationChance covers clamp boundaries. Power sources (flame/sunlight/health multipliers) deferred to Stage 11.5 or cut as flavor. Ready for Stage 11.4 (Core Spells & Components).
+**Current Stage**: 11.4 Complete — Core Spells & Components (merge 80045f3). Replaced Stage 11.4 placeholder with full spell resolution via dice.OpposedRoll: opposed normal-distribution rolls for hit/miss/crit/fumble; damage, heal, buff, tame, and shield effect types; component consumption (stone items for throw-stone); 8 core spell YAMLs (throw-stone, fire-bolt, minor-shield, stun, blind, fireball, tame, plus updated heal/mm/sparks); 2 new buff YAMLs (stun no-combat, blind perception-40); ConditionShield for Minor Shield (10-round armor bonus, round expiry in handlePlayerCombat, damage reduction in handleMobCombat); CalcSpellAttack helper + 4-case test; component check in skill.cast.go; rat mob gets animal group for tame targeting. Ready for Stage 11.5 (Combat Integration & NPC Caster AI).
