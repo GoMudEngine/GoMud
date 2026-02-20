@@ -54,10 +54,10 @@ func TestCalcInitiationChance(t *testing.T) {
 		expected        int
 	}{
 		// clamp(60 + willpower/4 + skillLevel*5, 10, 95)
-		{0, 0, 60},   // 60 + 0 + 0 = 60
-		{40, 1, 75},  // 60 + 10 + 5 = 75
-		{100, 7, 95}, // 60 + 25 + 35 = 120 → clamped to 95
-		{0, 7, 95},   // 60 + 0 + 35 = 95 → exactly at cap
+		{0, 0, 60},    // 60 + 0 + 0 = 60
+		{40, 1, 75},   // 60 + 10 + 5 = 75
+		{100, 7, 95},  // 60 + 25 + 35 = 120 → clamped to 95
+		{0, 7, 95},    // 60 + 0 + 35 = 95 → exactly at cap
 		{-200, 0, 10}, // negative willpower → clamped to 10
 	}
 
@@ -66,6 +66,29 @@ func TestCalcInitiationChance(t *testing.T) {
 		if got != tt.expected {
 			t.Errorf("CalcInitiationChance(%d, %d) = %d, want %d",
 				tt.willpower, tt.spellcastingLvl, got, tt.expected)
+		}
+	}
+}
+
+func TestCalcConcentrationChance(t *testing.T) {
+	tests := []struct {
+		willpower int
+		damagePct int
+		expected  int
+	}{
+		// clamp(50 + willpower/4 - damagePct, 5, 95)
+		{100, 5, 70},  // 50+25-5=70  (average caster, minor hit)
+		{100, 20, 55}, // 50+25-20=55 (average caster, moderate hit)
+		{100, 50, 25}, // 50+25-50=25 (average caster, heavy hit)
+		{0, 50, 5},    // 50+0-50=0  → clamped to 5
+		{180, 5, 90},  // 50+45-5=90 (high willpower caster)
+		{200, 1, 95},  // 50+50-1=99 → clamped to 95
+	}
+	for _, tt := range tests {
+		got := CalcConcentrationChance(tt.willpower, tt.damagePct)
+		if got != tt.expected {
+			t.Errorf("CalcConcentrationChance(%d, %d) = %d, want %d",
+				tt.willpower, tt.damagePct, got, tt.expected)
 		}
 	}
 }

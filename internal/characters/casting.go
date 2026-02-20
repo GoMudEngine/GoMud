@@ -50,3 +50,24 @@ func CalcInitiationChance(willpower, spellcastingLevel int) int {
 	}
 	return chance
 }
+
+// CalcConcentrationChance returns the % chance to maintain concentration
+// when struck for damagePct percent of max health.
+// Formula: clamp(50 + willpower/4 - damagePct, 5, 95)
+// Examples (baseline human willpower ~100):
+//
+//	willpower=100, damagePct=5  → 50+25-5  = 70%
+//	willpower=100, damagePct=20 → 50+25-20 = 55%
+//	willpower=100, damagePct=50 → 50+25-50 = 25%
+//	willpower=0,   damagePct=50 → 50+0-50  = 0  → clamped to 5%
+//	willpower=180, damagePct=5  → 50+45-5  = 90%
+func CalcConcentrationChance(willpower, damagePct int) int {
+	chance := 50 + willpower/4 - damagePct
+	if chance < 5 {
+		return 5
+	}
+	if chance > 95 {
+		return 95
+	}
+	return chance
+}

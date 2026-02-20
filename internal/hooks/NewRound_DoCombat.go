@@ -65,6 +65,19 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 		**************************/
 
 		if user.Character.CastingState != nil {
+
+			// Stage 11.3: prone = automatic concentration break
+			if user.Character.CombatPosition == characters.PositionProne {
+				user.Character.CastingState = nil
+				user.SendText(`<ansi fg="red">You lose your concentration as you hit the ground!</ansi>`)
+				room := rooms.LoadRoom(user.Character.RoomId)
+				if room != nil {
+					room.SendText(fmt.Sprintf(
+						`<ansi fg="username">%s</ansi>'s concentration breaks.`, user.Character.Name), user.UserId)
+				}
+				continue
+			}
+
 			cs := user.Character.CastingState
 
 			spellData := spells.GetSpell(cs.SpellId)
@@ -126,9 +139,6 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 				if cs.FoldsAccumulated > cs.FoldsNeeded {
 					cs.FoldsAccumulated = cs.FoldsNeeded
 				}
-
-				// Stage 11.3: add a concentration check here that scales with
-				// cs.FoldsAccumulated (harder to hold more folds).
 
 				if cs.FoldsAccumulated >= cs.FoldsNeeded {
 					// Folds complete — placeholder until Stage 11.4 resolves
@@ -1138,6 +1148,26 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 
 			for _, msg := range roundResult.MessagesToTargetRoom {
 				defRoom.SendText(msg, defUser.UserId)
+			}
+
+			// Stage 11.3: concentration check when caster takes damage
+			if defUser.Character.CastingState != nil && roundResult.DamageToTarget > 0 {
+				maxHealth := defUser.Character.HealthMax.Value
+				damagePct := roundResult.DamageToTarget * 100 / maxHealth
+				if damagePct < 1 {
+					damagePct = 1
+				}
+				chance := characters.CalcConcentrationChance(
+					defUser.Character.Stats.Willpower.ValueAdj, damagePct)
+				roll := util.Rand(100)
+				util.LogRoll(`Concentration`, roll, chance)
+				if roll >= chance {
+					defUser.Character.CastingState = nil
+					defUser.SendText(`<ansi fg="red">The pain shatters your concentration!</ansi>`)
+					defRoom.SendText(fmt.Sprintf(
+						`<ansi fg="username">%s</ansi>'s concentration breaks.`,
+						defUser.Character.Name), defUser.UserId)
+				}
 			}
 
 			// If the attack connected, check for damage to equipment.
