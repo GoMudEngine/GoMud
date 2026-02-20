@@ -438,7 +438,9 @@ func (i *ItemSpec) AutoCalculateValue() {
 
 func (i *ItemSpec) ItemFolder(baseonly ...bool) string {
 	folderName := ``
-	if i.ItemId >= 30000 {
+	if i.ItemId >= 40000 {
+		folderName = `materials-40000` // Stage 13.1: crafting material items
+	} else if i.ItemId >= 30000 {
 		folderName = `consumables-30000`
 	} else if i.ItemId >= 20000 {
 
