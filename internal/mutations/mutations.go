@@ -18,6 +18,7 @@ const (
 	MutationBaseProgress  = 50.0 // progress needed for first acquisition attempt
 	MutationProgressScale = 1.5  // each subsequent mutation needs BaseProgress * Scale^n more
 	MutationMaxCount      = 5    // max mutations per character
+	MutationMaxLevel      = 3    // maximum level a single mutation can reach (Stage 12.2)
 	MutationProgressGain  = 1.0  // progress added per combat round
 )
 
@@ -125,20 +126,76 @@ func RollAcquisition(pool []string) string {
 // ─── Effect helper functions ───────────────────────────────────────────────────
 // All accept the character's mutations map (mutationId → level).
 
-// sumEffects totals all matching pro and con effects across owned mutations.
+// LevelMultiplier returns the effect scaling factor for a given mutation level.
+// L1 → 1.0×, L2 → 1.5×, L3 → 2.0×. Any other value defaults to 1.0.
+func LevelMultiplier(level int) float64 {
+	switch level {
+	case 2:
+		return 1.5
+	case 3:
+		return 2.0
+	default:
+		return 1.0
+	}
+}
+
+// TotalMutationEvents returns the sum of all mutation levels owned.
+// This is the "events so far" value used by the deepening threshold curve.
+func TotalMutationEvents(owned map[string]int) int {
+	total := 0
+	for _, level := range owned {
+		total += level
+	}
+	return total
+}
+
+// CanDeepen returns true if any owned mutation is below MutationMaxLevel.
+func CanDeepen(owned map[string]int) bool {
+	for _, level := range owned {
+		if level < MutationMaxLevel {
+			return true
+		}
+	}
+	return false
+}
+
+// RollDeepening picks a random mutation id that is below MutationMaxLevel.
+// Returns "" if all mutations are already at max level or owned is empty.
+func RollDeepening(owned map[string]int) string {
+	var candidates []string
+	for id, level := range owned {
+		if level < MutationMaxLevel {
+			candidates = append(candidates, id)
+		}
+	}
+	if len(candidates) == 0 {
+		return ""
+	}
+	return candidates[util.Rand(len(candidates))]
+}
+
+// GetAdrenalSurgeBonus returns the level-scaled conditional_damage_low_hp bonus.
+// Returns 0 if adrenaline-surge is not owned.
+func GetAdrenalSurgeBonus(owned map[string]int) float64 {
+	return sumEffects(owned, "conditional_damage_low_hp", "")
+}
+
+// sumEffects totals all matching pro and con effects across owned mutations,
+// scaling each value by LevelMultiplier for the mutation's current level.
 // If target is "" it matches effects regardless of their Target field.
 func sumEffects(owned map[string]int, effectType, target string) float64 {
 	var total float64
-	for id := range owned {
+	for id, level := range owned {
 		spec := GetMutation(id)
 		if spec == nil {
 			continue
 		}
+		mult := LevelMultiplier(level)
 		if spec.Pro.Type == effectType && (target == "" || spec.Pro.Target == target) {
-			total += spec.Pro.Value
+			total += spec.Pro.Value * mult
 		}
 		if spec.Con.Type == effectType && (target == "" || spec.Con.Target == target) {
-			total += spec.Con.Value
+			total += spec.Con.Value * mult
 		}
 	}
 	return total

@@ -638,15 +638,17 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 
 			roundResult = combat.AttackPlayerVsMob(user, defMob)
 
-			// Stage 12.1: Adrenaline Surge — +20% bonus damage when HP < 25%
+			// Stage 12.2: Adrenaline Surge — level-scaled bonus damage when HP < 25%
 			if roundResult.Hit && roundResult.DamageToTarget > 0 {
 				if mutations.IsAdrenalSurgeActive(user.Character.Mutations, user.Character.Health, user.Character.HealthMax.Value) {
-					bonusDmg := int(math.Round(float64(roundResult.DamageToTarget) * 0.20))
-					if bonusDmg < 1 {
-						bonusDmg = 1
+					if surgeBonus := mutations.GetAdrenalSurgeBonus(user.Character.Mutations); surgeBonus > 0 {
+						bonusDmg := int(math.Round(float64(roundResult.DamageToTarget) * surgeBonus))
+						if bonusDmg < 1 {
+							bonusDmg = 1
+						}
+						defMob.Character.Health -= bonusDmg
+						roundResult.DamageToTarget += bonusDmg
 					}
-					defMob.Character.Health -= bonusDmg
-					roundResult.DamageToTarget += bonusDmg
 				}
 			}
 

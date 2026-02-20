@@ -5,5 +5,8 @@
 {{- $exp := printf "%d/%d (%d%%)" .Experience $tnl $pct }}
  ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Description</ansi> ────────────────────────────────────────────────────────────┐
    {{ splitstring .GetDescription 72 "   "}}
+{{- if .GetMutationVisuals }}
+   <ansi fg="magenta">{{ splitstring .GetMutationVisuals 72 "   " }}</ansi>
+{{- end }}
    {{ .GetHealthAppearance }}
  └────────────────────────────────────────────────────────────────────────────┘

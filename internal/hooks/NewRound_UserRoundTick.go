@@ -147,23 +147,48 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 				// Stage 9.8: Tick all combat conditions (decrements Duration, removes expired)
 				user.Character.TickConditions()
 
-				// Stage 12.1: Mutation progress — accumulates during combat, triggers acquisition
-				if user.Character.Aggro != nil && len(user.Character.Mutations) < mutations.MutationMaxCount {
-					user.Character.MutationProgress += mutations.MutationProgressGain
-					threshold := mutations.MutationBaseProgress *
-						math.Pow(mutations.MutationProgressScale, float64(len(user.Character.Mutations)))
-					if user.Character.MutationProgress >= threshold {
-						pool := mutations.GetWeightedPool(user.Character.Mutations)
-						if len(pool) > 0 {
-							mutId := mutations.RollAcquisition(pool)
-							user.Character.Mutations[mutId] = 1
+				// Stage 12.2: Mutation progress — accumulates during combat, triggers acquisition or deepening
+				if user.Character.Aggro != nil {
+					canAcquire := len(user.Character.Mutations) < mutations.MutationMaxCount
+					canDeepen := mutations.CanDeepen(user.Character.Mutations)
+					if canAcquire || canDeepen {
+						user.Character.MutationProgress += mutations.MutationProgressGain
+						evts := mutations.TotalMutationEvents(user.Character.Mutations)
+						threshold := mutations.MutationBaseProgress *
+							math.Pow(mutations.MutationProgressScale, float64(evts))
+						if user.Character.MutationProgress >= threshold {
 							user.Character.MutationProgress = 0
-							spec := mutations.GetMutation(mutId)
-							if spec != nil {
-								user.SendText(fmt.Sprintf(
-									`<ansi fg="magenta">Something stirs beneath your skin. A mutation emerges: <ansi fg="yellow">%s</ansi>.</ansi>`,
-									spec.Name))
-								user.SendText(fmt.Sprintf(`<ansi fg="magenta">%s</ansi>`, spec.Description))
+							if canAcquire {
+								pool := mutations.GetWeightedPool(user.Character.Mutations)
+								if len(pool) > 0 {
+									mutId := mutations.RollAcquisition(pool)
+									if user.Character.Mutations == nil {
+										user.Character.Mutations = make(map[string]int)
+									}
+									user.Character.Mutations[mutId] = 1
+									spec := mutations.GetMutation(mutId)
+									if spec != nil {
+										user.SendText(fmt.Sprintf(
+											`<ansi fg="magenta">Something stirs beneath your skin. A mutation emerges: <ansi fg="yellow">%s</ansi>.</ansi>`,
+											spec.Name))
+										user.SendText(fmt.Sprintf(`<ansi fg="magenta">%s</ansi>`, spec.Description))
+									}
+								}
+							} else if canDeepen {
+								mutId := mutations.RollDeepening(user.Character.Mutations)
+								if mutId != "" {
+									user.Character.Mutations[mutId]++
+									newLevel := user.Character.Mutations[mutId]
+									if spec := mutations.GetMutation(mutId); spec != nil {
+										levelTag := fmt.Sprintf("Level %d", newLevel)
+										if newLevel >= mutations.MutationMaxLevel {
+											levelTag = "fully matured"
+										}
+										user.SendText(fmt.Sprintf(
+											`<ansi fg="magenta">The Chrysalis deepens its hold. Your <ansi fg="yellow">%s</ansi> grows stronger (%s).</ansi>`,
+											spec.Name, levelTag))
+									}
+								}
 							}
 						}
 					}

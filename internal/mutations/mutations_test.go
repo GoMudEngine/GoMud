@@ -251,6 +251,119 @@ func TestRollAcquisition(t *testing.T) {
 	}
 }
 
+// ─── Stage 12.2: level scaling & deepening tests ─────────────────────────────
+
+func TestLevelMultiplier(t *testing.T) {
+	cases := []struct {
+		level int
+		want  float64
+	}{
+		{1, 1.0},
+		{2, 1.5},
+		{3, 2.0},
+		{0, 1.0}, // default
+		{4, 1.0}, // beyond max → default
+	}
+	for _, c := range cases {
+		if got := LevelMultiplier(c.level); abs(got-c.want) > 1e-9 {
+			t.Errorf("LevelMultiplier(%d) = %v, want %v", c.level, got, c.want)
+		}
+	}
+}
+
+func TestTotalMutationEvents(t *testing.T) {
+	if got := TotalMutationEvents(map[string]int{}); got != 0 {
+		t.Errorf("empty map: want 0, got %d", got)
+	}
+	owned := buildOwned("fast-reflexes", 1, "tough-skin", 2)
+	if got := TotalMutationEvents(owned); got != 3 {
+		t.Errorf("want 3, got %d", got)
+	}
+}
+
+func TestCanDeepen(t *testing.T) {
+	if CanDeepen(map[string]int{}) {
+		t.Error("empty map: want false")
+	}
+	allMax := buildOwned("fast-reflexes", MutationMaxLevel, "tough-skin", MutationMaxLevel)
+	if CanDeepen(allMax) {
+		t.Error("all at max: want false")
+	}
+	oneBelow := buildOwned("fast-reflexes", MutationMaxLevel, "tough-skin", 1)
+	if !CanDeepen(oneBelow) {
+		t.Error("one below max: want true")
+	}
+}
+
+func TestRollDeepening(t *testing.T) {
+	seedRegistry()
+
+	// Returns "" when map is empty
+	if got := RollDeepening(map[string]int{}); got != "" {
+		t.Errorf("empty map: want \"\", got %q", got)
+	}
+
+	// Returns "" when all mutations are at max level
+	allMax := buildOwned("fast-reflexes", MutationMaxLevel, "tough-skin", MutationMaxLevel)
+	if got := RollDeepening(allMax); got != "" {
+		t.Errorf("all at max: want \"\", got %q", got)
+	}
+
+	// Returns an id < MutationMaxLevel when one exists
+	oneBelow := buildOwned("fast-reflexes", MutationMaxLevel, "tough-skin", 1)
+	got := RollDeepening(oneBelow)
+	if got != "tough-skin" {
+		t.Errorf("only tough-skin is below max: want \"tough-skin\", got %q", got)
+	}
+}
+
+func TestGetNaturalArmorScaled(t *testing.T) {
+	seedRegistry()
+
+	// L2: 25 × 1.5 = 37.5 → int(37)
+	if got := GetNaturalArmor(buildOwned("tough-skin", 2)); got != 37 {
+		t.Errorf("tough-skin L2: want 37, got %d", got)
+	}
+	// L3: 25 × 2.0 = 50
+	if got := GetNaturalArmor(buildOwned("tough-skin", 3)); got != 50 {
+		t.Errorf("tough-skin L3: want 50, got %d", got)
+	}
+}
+
+func TestGetStatMultiplierScaled(t *testing.T) {
+	seedRegistry()
+
+	// fast-reflexes at L3: dex pro 0.10 × 2.0 = 0.20
+	if got := GetStatMultiplier(buildOwned("fast-reflexes", 3), "dexterity"); abs(got-0.20) > 1e-9 {
+		t.Errorf("fast-reflexes L3 dex: want 0.20, got %v", got)
+	}
+	// fast-reflexes at L3: str con -0.05 × 2.0 = -0.10
+	if got := GetStatMultiplier(buildOwned("fast-reflexes", 3), "strength"); abs(got-(-0.10)) > 1e-9 {
+		t.Errorf("fast-reflexes L3 str: want -0.10, got %v", got)
+	}
+}
+
+func TestGetAdrenalSurgeBonus(t *testing.T) {
+	seedRegistry()
+
+	// Not owned → 0
+	if got := GetAdrenalSurgeBonus(map[string]int{}); got != 0.0 {
+		t.Errorf("not owned: want 0, got %v", got)
+	}
+	// L1 → 0.20
+	if got := GetAdrenalSurgeBonus(buildOwned("adrenaline-surge", 1)); abs(got-0.20) > 1e-9 {
+		t.Errorf("L1: want 0.20, got %v", got)
+	}
+	// L2 → 0.30
+	if got := GetAdrenalSurgeBonus(buildOwned("adrenaline-surge", 2)); abs(got-0.30) > 1e-9 {
+		t.Errorf("L2: want 0.30, got %v", got)
+	}
+	// L3 → 0.40
+	if got := GetAdrenalSurgeBonus(buildOwned("adrenaline-surge", 3)); abs(got-0.40) > 1e-9 {
+		t.Errorf("L3: want 0.40, got %v", got)
+	}
+}
+
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
 func abs(x float64) float64 {

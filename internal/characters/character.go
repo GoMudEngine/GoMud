@@ -241,6 +241,27 @@ func (c *Character) GetDescription() string {
 	return descriptionCache[hash]
 }
 
+// GetMutationVisuals returns a space-joined string of all owned mutation visual
+// descriptors, sorted by mutation id for deterministic output. Returns "" if
+// no mutations have a visual field. Used by the description template (Stage 12.2).
+func (c *Character) GetMutationVisuals() string {
+	if len(c.Mutations) == 0 {
+		return ""
+	}
+	ids := make([]string, 0, len(c.Mutations))
+	for id := range c.Mutations {
+		ids = append(ids, id)
+	}
+	slices.Sort(ids)
+	parts := make([]string, 0, len(ids))
+	for _, id := range ids {
+		if spec := mutations.GetMutation(id); spec != nil && spec.Visual != "" {
+			parts = append(parts, spec.Visual)
+		}
+	}
+	return strings.Join(parts, " ")
+}
+
 // returns description unless description is a hash
 // which points to another description location.
 func (c *Character) TrackPlayerDamage(userId int, damageAmt int) {
