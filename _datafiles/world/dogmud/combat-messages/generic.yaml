@@ -49,31 +49,43 @@ options:
       toattacker:
         beginner:
         - 'You prepare to attack <ansi fg="{targettype}">{target}</ansi> from a distance.'
+        - 'You ready yourself for a ranged assault on <ansi fg="{targettype}">{target}</ansi>.'
         expert:
         - 'You prepare to attack from your {stance} position.'
+        - 'From your {stance} stance, you ready a calculated strike from afar.'
         master:
         - '{momentum}, you prepare a perfect attack from afar.'
+        - 'You read the distance and prepare a flawless ranged strike.'
       todefender:
         beginner:
         - 'You sense that someone is preparing to attack you from afar.'
+        - 'A prickling sensation warns you of danger from a distance.'
         expert:
         - 'You detect a threat from the <ansi fg="exit">{entrancename}</ansi>.'
+        - 'Your instincts alert you to danger from the <ansi fg="exit">{entrancename}</ansi> direction.'
         master:
         - 'Your honed senses detect a masterful combatant preparing to strike.'
+        - 'You sense a capable fighter readying a ranged assault on you.'
       toattackerroom:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> prepares to attack towards the <ansi fg="exit">{exitname}</ansi>.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> readies themselves to attack towards the <ansi fg="exit">{exitname}</ansi>.'
         expert:
         - '<ansi fg="{sourcetype}">{source}</ansi> takes a {stance} stance, preparing to strike through the <ansi fg="exit">{exitname}</ansi>.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> prepares a calculated strike towards the <ansi fg="exit">{exitname}</ansi> direction.'
         master:
         - 'With perfect precision, <ansi fg="{sourcetype}">{source}</ansi> prepares to strike.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> assumes perfect form, readying a strike towards the <ansi fg="exit">{exitname}</ansi>.'
       todefenderroom:
         beginner:
         - 'A feeling of unease passes through the room.'
+        - 'The room feels charged with nervous energy.'
         expert:
         - 'The atmosphere shifts as danger approaches.'
+        - 'A tension fills the air, warning of approaching danger.'
         master:
         - 'The air itself seems to anticipate the coming conflict.'
+        - 'An uncanny stillness settles over the room before the storm.'
   wait:
     together:
       toattacker:
@@ -105,31 +117,43 @@ options:
       toattacker:
         beginner:
         - 'You wait for the right moment to attack from afar.'
+        - 'You hold position, watching <ansi fg="{targettype}">{target}</ansi> from a distance.'
         expert:
         - 'From your {stance} position, you wait to strike.'
+        - 'In your {stance} stance, you wait for the right moment to strike from afar.'
         master:
         - '{momentum}, you read the distant battle with perfect clarity.'
+        - '{momentum}, you wait with perfect patience for the ideal opportunity.'
       todefender:
         beginner:
         - 'You sense danger lurking nearby.'
+        - 'You remain wary, sensing a lurking threat from afar.'
         expert:
         - 'Your instincts warn of a distant threat.'
+        - 'Your heightened senses track the distant threat.'
         master:
         - 'Your honed senses track the distant attacker''s every move.'
+        - 'Your masterful awareness keeps perfect track of the distant threat.'
       toattackerroom:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> waits for an opportunity towards the <ansi fg="exit">{exitname}</ansi>.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> holds position, watching towards the <ansi fg="exit">{exitname}</ansi>.'
         expert:
         - '<ansi fg="{sourcetype}">{source}</ansi> maintains a {stance} stance, watching the <ansi fg="exit">{exitname}</ansi>.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> bides their time, focused on the <ansi fg="exit">{exitname}</ansi> direction.'
         master:
         - 'With masterful patience, <ansi fg="{sourcetype}">{source}</ansi> awaits the perfect moment.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> waits with perfect patience, eyes on the <ansi fg="exit">{exitname}</ansi>.'
       todefenderroom:
         beginner:
         - 'The room feels tense.'
+        - 'An eerie quiet settles over the room.'
         expert:
         - 'The atmosphere crackles with potential violence.'
+        - 'The tension in the room builds quietly.'
         master:
         - 'The air itself seems to hold its breath.'
+        - 'A predatory stillness hangs over the room.'
   miss:
     together:
       toattacker:
@@ -161,31 +185,43 @@ options:
       toattacker:
         beginner:
         - 'Your attack misses!'
+        - 'Your attack from afar goes wide!'
         expert:
         - 'Your calculated strike misses!'
+        - 'Your calculated ranged strike fails to connect!'
         master:
         - 'Your flawless attack is countered!'
+        - 'Even your perfect aim fails to connect!'
       todefender:
         beginner:
         - 'An attack from afar misses you!'
+        - 'A distant attack barely misses you!'
         expert:
         - 'You evade an attack from afar!'
+        - 'You sidestep a ranged attack from afar!'
         master:
         - 'Your masterful awareness lets you evade the strike!'
+        - 'Your masterful evasion turns aside the ranged strike!'
       toattackerroom:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> attacks but misses!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> attacks but their shot goes wide!'
         expert:
         - '<ansi fg="{sourcetype}">{source}</ansi>''s calculated strike misses!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s calculated ranged attack misses!'
         master:
         - '<ansi fg="{sourcetype}">{source}</ansi>''s perfect strike is evaded!'
+        - 'Even <ansi fg="{sourcetype}">{source}</ansi>''s perfect aim fails to connect!'
       todefenderroom:
         beginner:
         - 'An attack from afar fails!'
+        - 'A distant attack fails to find its mark!'
         expert:
         - 'A calculated attack is evaded!'
+        - 'A calculated ranged attack is evaded!'
         master:
         - 'A masterful strike is perfectly countered!'
+        - 'A masterful ranged strike is deflected!'
   weak:
     together:
       toattacker:
@@ -217,31 +253,43 @@ options:
       toattacker:
         beginner:
         - 'Your attack grazes <ansi fg="{targettype}">{target}</ansi>!'
+        - 'Your distant attack barely wounds <ansi fg="{targettype}">{target}</ansi>!'
         expert:
         - 'Your calculated strike hits!'
+        - 'Your tactical ranged strike connects lightly!'
         master:
         - 'Your perfect aim scores a light hit!'
+        - 'Your perfect aim lands a light but precise hit!'
       todefender:
         beginner:
         - 'An attack from afar grazes you!'
+        - 'A ranged attack from afar lightly wounds you!'
         expert:
         - 'A calculated strike hits you!'
+        - 'A calculated strike from distance barely scratches you!'
         master:
         - 'A perfect strike grazes you!'
+        - 'A masterfully aimed attack grazes you!'
       toattackerroom:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> attacks, hitting lightly!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> attacks from afar, landing a light hit!'
         expert:
         - '<ansi fg="{sourcetype}">{source}</ansi>''s calculated strike hits!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s ranged attack grazes their target!'
         master:
         - '<ansi fg="{sourcetype}">{source}</ansi>''s perfect aim scores a hit!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s precise aim lands a light wound!'
       todefenderroom:
         beginner:
         - 'An attack from afar strikes!'
+        - 'A distant attack finds its mark, dealing minor damage!'
         expert:
         - 'A calculated attack lands!'
+        - 'A calculated distant attack lands lightly!'
         master:
         - 'A masterful strike finds its mark!'
+        - 'A masterful ranged strike grazes its target!'
   normal:
     together:
       toattacker:
@@ -280,6 +328,7 @@ options:
       toattacker:
         beginner:
         - 'Your attack hits <ansi fg="{targettype}">{target}</ansi>!'
+        - 'Your ranged attack wounds <ansi fg="{targettype}">{target}</ansi>!'
         expert:
         - 'Your calculated strike connects!'
         - 'Your tactical strike wounds <ansi fg="{targettype}">{target}</ansi>!'
@@ -289,24 +338,33 @@ options:
       todefender:
         beginner:
         - 'An attack from afar hits you!'
+        - 'You are struck by a ranged attack from afar!'
         expert:
         - 'A calculated strike wounds you!'
+        - 'A tactical strike from distance wounds you!'
         master:
         - 'A perfect strike hits you!'
+        - 'A masterfully aimed attack strikes you squarely!'
       toattackerroom:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> attacks, hitting solidly!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> attacks from afar, dealing solid damage!'
         expert:
         - '<ansi fg="{sourcetype}">{source}</ansi>''s calculated strike hits!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s calculated strike connects solidly!'
         master:
         - '<ansi fg="{sourcetype}">{source}</ansi>''s perfect aim scores a solid hit!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s perfect aim deals a solid blow!'
       todefenderroom:
         beginner:
         - 'An attack from afar strikes solidly!'
+        - 'A distant attack strikes solidly!'
         expert:
         - 'A calculated attack wounds someone!'
+        - 'A calculated distant attack wounds its target!'
         master:
         - 'A masterful strike delivers a solid hit!'
+        - 'A masterful ranged strike delivers a solid hit!'
   heavy:
     together:
       toattacker:
@@ -343,6 +401,7 @@ options:
       toattacker:
         beginner:
         - 'Your attack hits <ansi fg="{targettype}">{target}</ansi> hard!'
+        - 'Your distant attack hits <ansi fg="{targettype}">{target}</ansi> with tremendous force!'
         expert:
         - 'Your calculated strike hits with tremendous force!'
         - 'From your {stance} position, you deliver a devastating blow!'
@@ -352,24 +411,33 @@ options:
       todefender:
         beginner:
         - 'A powerful attack from afar hits you hard!'
+        - 'A ranged attack from afar strikes you with tremendous force!'
         expert:
         - 'A devastating strike wounds you badly!'
+        - 'A devastating ranged strike wounds you badly!'
         master:
         - 'A perfect strike hits you with overwhelming force!'
+        - 'A masterfully aimed attack hits you with crushing force!'
       toattackerroom:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> attacks, hitting hard!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> attacks powerfully from afar!'
         expert:
         - '<ansi fg="{sourcetype}">{source}</ansi>''s devastating strike hits with force!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s powerful ranged strike hits with force!'
         master:
         - '<ansi fg="{sourcetype}">{source}</ansi>''s perfect aim scores a devastating hit!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s perfect aim delivers a crushing blow!'
       todefenderroom:
         beginner:
         - 'A powerful attack from afar strikes!'
+        - 'A powerful distant attack strikes!'
         expert:
         - 'A devastating attack wounds someone!'
+        - 'A devastating ranged attack wounds someone!'
         master:
         - 'A masterful strike delivers a crushing blow!'
+        - 'A masterful ranged strike delivers a crushing blow!'
   critical:
     together:
       toattacker:
@@ -405,32 +473,43 @@ options:
       toattacker:
         beginner:
         - 'Your attack <ansi fg="cyan-bold">CRITICALLY HITS</ansi> <ansi fg="{targettype}">{target}</ansi>!'
+        - 'From afar, you deliver a <ansi fg="cyan-bold">CRITICAL HIT</ansi> on <ansi fg="{targettype}">{target}</ansi>!'
         expert:
         - 'Your perfect aim <ansi fg="cyan-bold">ANNIHILATES</ansi> <ansi fg="{targettype}">{target}</ansi>!'
+        - 'Your tactical brilliance delivers a <ansi fg="cyan-bold">PERFECT CRITICAL</ansi> from afar!'
         master:
         - 'Your masterful strike <ansi fg="cyan-bold">OBLITERATES</ansi> <ansi fg="{targettype}">{target}</ansi>!'
         - '{momentum}, you <ansi fg="cyan-bold">DEVASTATE</ansi> <ansi fg="{targettype}">{target}</ansi> with perfect precision!'
       todefender:
         beginner:
         - 'An attack from afar <ansi fg="cyan-bold">CRITICALLY HITS</ansi> you!'
+        - 'A <ansi fg="cyan-bold">CRITICAL STRIKE</ansi> from afar hits you!'
         expert:
         - 'A perfect strike <ansi fg="cyan-bold">ANNIHILATES</ansi> you!'
+        - 'A skilled <ansi fg="cyan-bold">CRITICAL</ansi> from afar devastates you!'
         master:
         - 'A masterful strike <ansi fg="cyan-bold">OBLITERATES</ansi> you!'
+        - 'A legendary <ansi fg="cyan-bold">CRITICAL</ansi> from the distance obliterates you!'
       toattackerroom:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> attacks with a <ansi fg="cyan-bold">CRITICAL HIT</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> delivers a <ansi fg="cyan-bold">CRITICAL HIT</ansi> from afar!'
         expert:
         - '<ansi fg="{sourcetype}">{source}''s</ansi> perfect aim <ansi fg="cyan-bold">ANNIHILATES</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}''s</ansi> perfect aim <ansi fg="cyan-bold">ANNIHILATES</ansi> from afar!'
         master:
         - '<ansi fg="{sourcetype}">{source}''s</ansi> masterful strike <ansi fg="cyan-bold">OBLITERATES</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}''s</ansi> masterful strike <ansi fg="cyan-bold">OBLITERATES</ansi> from afar!'
       todefenderroom:
         beginner:
         - 'A <ansi fg="cyan-bold">CRITICAL HIT</ansi> from afar!'
+        - 'A ranged <ansi fg="cyan-bold">CRITICAL HIT</ansi> from afar!'
         expert:
         - 'A perfect strike <ansi fg="cyan-bold">ANNIHILATES</ansi>!'
+        - 'A perfect ranged strike <ansi fg="cyan-bold">ANNIHILATES</ansi>!'
         master:
         - 'A masterful strike <ansi fg="cyan-bold">OBLITERATES</ansi>!'
+        - 'A masterful ranged strike <ansi fg="cyan-bold">OBLITERATES</ansi>!'
   fumble:
     together:
       toattacker:
@@ -462,28 +541,40 @@ options:
       toattacker:
         beginner:
         - 'Your attack <ansi fg="red-bold">FUMBLES</ansi> badly!'
+        - 'Your ranged attack <ansi fg="red-bold">FUMBLES</ansi> completely!'
         expert:
         - 'Your calculated strike <ansi fg="red-bold">FUMBLES</ansi>!'
+        - 'Your precise ranged attack <ansi fg="red-bold">FUMBLES</ansi> horribly!'
         master:
         - 'Despite perfect aim, you <ansi fg="red-bold">FUMBLE</ansi>!'
+        - 'Even your masterful form can''t prevent the <ansi fg="red-bold">FUMBLE</ansi>!'
       todefender:
         beginner:
         - 'An attack from afar <ansi fg="red-bold">FUMBLES</ansi>!'
+        - 'A clumsy attack from afar <ansi fg="red-bold">FUMBLES</ansi> past you!'
         expert:
         - 'A calculated strike <ansi fg="red-bold">FUMBLES</ansi>!'
+        - 'A skilled attack from the distance <ansi fg="red-bold">FUMBLES</ansi>!'
         master:
         - 'The perfect strike <ansi fg="red-bold">FUMBLES</ansi>!'
+        - 'Even a masterful ranged strike <ansi fg="red-bold">FUMBLES</ansi> against you!'
       toattackerroom:
         beginner:
         - '<ansi fg="{sourcetype}">{source}''s</ansi> attack <ansi fg="red-bold">FUMBLES</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}''s</ansi> ranged attack <ansi fg="red-bold">FUMBLES</ansi>!'
         expert:
         - '<ansi fg="{sourcetype}">{source}''s</ansi> calculated strike <ansi fg="red-bold">FUMBLES</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}''s</ansi> precise attack <ansi fg="red-bold">FUMBLES</ansi> badly!'
         master:
         - 'Despite perfect aim, <ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi>!'
+        - 'Despite perfect form, <ansi fg="{sourcetype}">{source}''s</ansi> attack <ansi fg="red-bold">FUMBLES</ansi>!'
       todefenderroom:
         beginner:
         - 'An attack from afar <ansi fg="red-bold">FUMBLES</ansi>!'
+        - 'A distant attack <ansi fg="red-bold">FUMBLES</ansi> harmlessly!'
         expert:
         - 'A calculated attack <ansi fg="red-bold">FUMBLES</ansi>!'
+        - 'A calculated attack from afar <ansi fg="red-bold">FUMBLES</ansi>!'
         master:
         - 'A masterful strike <ansi fg="red-bold">FUMBLES</ansi>!'
+        - 'A masterful ranged strike <ansi fg="red-bold">FUMBLES</ansi>!'
