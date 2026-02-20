@@ -17,6 +17,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/GoMudEngine/GoMud/internal/dice"
+
 	"github.com/GoMudEngine/GoMud/internal/audio"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
@@ -104,6 +106,11 @@ func main() {
 
 	configs.ReloadConfig()
 	c := configs.GetConfig()
+
+	// Apply the global roll-spread factor from config to the dice package.
+	// This is the single knob that scales stdDev for every stat-based roll.
+	// See _datafiles/config.yaml GamePlay.RollSpread for the full explanation.
+	dice.SetRollSpread(float64(configs.GetGamePlayConfig().RollSpread))
 
 	lastKnownVersion, err := version.Parse(string(configs.GetServerConfig().CurrentVersion))
 	if err != nil {

@@ -505,7 +505,6 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 
 				// Get defender's defense sequence based on equipment
 				defenseSequence := targetChar.GetDefenseSequence()
-				combatStdDev := dice.StdDevFor(attackScore)
 				hit := false
 				var lastHitRoll dice.RollResult
 
@@ -572,7 +571,7 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 
 				// Make initial attack roll to detect fumbles BEFORE defense sequence
 				// Fumbles are based on attacker's raw performance, not opposed roll outcomes
-				initialAttackRoll := dice.Roll(attackScore, combatStdDev)
+				initialAttackRoll := dice.RollStat(attackScore)
 
 				// Check for fumble on the initial attack roll
 				if initialAttackRoll.ZScore <= fumbleThreshold {
@@ -623,7 +622,7 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 					}
 
 					// Opposed roll: attack vs this defense
-					defenseSucceeded, _, hitRoll, defenseRoll := dice.OpposedRoll(attackScore, defenseScore, combatStdDev)
+					defenseSucceeded, _, hitRoll, defenseRoll := dice.OpposedRollStat(attackScore, defenseScore)
 					lastHitRoll = hitRoll
 
 					// Store z-scores for crit detection (Stage 8.4)

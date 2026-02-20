@@ -1,334 +1,146 @@
-# Dice Package - Statistical Distribution Roller
+# Dice Package — Statistical Distribution Roller
 
-A statistical dice rolling system for DOGMud based on normal (Gaussian) distributions. This provides smooth, predictable probabilities for combat, skill checks, and stat generation.
+A statistical dice rolling system for DOGMud based on normal (Gaussian)
+distributions. Every attack, defense, spell check, grapple, and skill roll
+in the engine flows through this package.
 
-## Philosophy
+---
 
-Unlike traditional tabletop dice (2d6, 1d20, etc.), this system uses **normal distributions** for more nuanced probability control:
+## The Master Randomness Knob: `RollSpread`
 
-- **Predictable bell curves** around character stats
-- **Configurable randomness** via standard deviation
-- **Statistical analysis** built into every roll (z-scores, percentiles)
-- **Smooth probability curves** rather than discrete outcomes
+**This is the single most impactful balance lever in the game.**
 
-## Core Concepts
+All stat-based rolls compute their standard deviation as:
 
-### Normal Distribution Rolls
-
-Every roll uses a character's stat as the **mean** and a configurable **standard deviation** for variance:
-
-```go
-mean := characterStat    // 50 (character's effective stat)
-stdDev := 10.0           // How much randomness (typically 10-15)
-
-result := dice.Roll(mean, stdDev)
-// Result: 47.75 (mean: 50.00, σ: 10.00, z: -0.23)
+```
+stdDev = stat_value × RollSpread
 ```
 
-The **standard deviation** controls how random results are:
-- **Low (5-10)**: Consistent, skill-based gameplay
-- **Medium (10-15)**: Balanced randomness and skill
-- **High (15-20)**: Very swingy, luck-based gameplay
+`RollSpread` defaults to **0.15** (15%) and is loaded from
+`_datafiles/config.yaml` at server startup via `SetRollSpread`.  Changing it
+re-scales the spread of *every single dice roll in the engine simultaneously*
+— no individual files need to be touched.
 
-### Standard Deviation Helper
+### Effect on Gameplay
 
-```go
-// Calculate stdDev based on your stat range and desired randomness
-statRange := 100.0        // Stats range from 0-100
-randomnessFactor := 0.15  // 15% randomness (moderate)
+At the human baseline of `stat = 100`:
 
-stdDev := dice.StandardDeviation(statRange, randomnessFactor)
-// Result: 15.0
-```
+| RollSpread | stdDev | 120 vs 100 win% | Feel |
+|------------|--------|-----------------|------|
+| 0.05       | 5.0    | ~99%            | Near-deterministic. High stats dominate completely. |
+| 0.10       | 10.0   | ~92%            | Low variance. Skill matters most. |
+| **0.15**   | **15.0** | **~78%**      | **DEFAULT — balanced, recommended.** |
+| 0.20       | 20.0   | ~67%            | Higher variance. Upsets are common. |
+| 0.30       | 30.0   | ~57%            | Chaotic. Luck rivals skill. |
 
-**Recommended randomness factors:**
-- **0.10** (10%): Low randomness, skill matters most
-- **0.15** (15%): Moderate, good balance
-- **0.20** (20%): High randomness, upsets likely
+### Crit / Fumble Rates
 
-## Basic Usage
+**Not affected by `RollSpread`.** Criticals trigger when a roll's z-score
+is ≥ +2.0 (or ≤ −2.0), which is always ~2.3% per roll regardless of the
+absolute standard deviation — the z-score distribution is invariant to
+scaling.
 
-### Simple Roll
-
-```go
-result := dice.Roll(50.0, 10.0)
-
-fmt.Printf("Result: %.2f\n", result.Value)        // 47.75
-fmt.Printf("Z-score: %.2f\n", result.ZScore)      // -0.23 (slightly below average)
-fmt.Printf("Percentile: %.1f%%\n", result.Percentile)  // 40.9% (below average roll)
-```
-
-### Difficulty Check
+### Wiring
 
 ```go
-playerStat := 60.0
-difficulty := 50.0
-stdDev := 10.0
-
-result := dice.DifficultyCheck(playerStat, difficulty, stdDev)
-
-if result.Success {
-    fmt.Printf("Success! Margin: %.2f\n", result.Margin)
-    // Higher margin = better success
-} else {
-    fmt.Printf("Failed by %.2f\n", -result.Margin)
-}
+// main.go — called once at startup after configs.ReloadConfig()
+dice.SetRollSpread(float64(configs.GetGamePlayConfig().RollSpread))
 ```
 
-### Opposed Roll (PvP, Stealth vs Perception, etc.)
+Changing `config.yaml` requires a server restart.
+
+---
+
+## Stat-Based Roll API (use these for all game mechanics)
+
+### `RollStat(mean float64) RollResult`
+
+Single stat-based roll. Standard deviation is derived automatically from
+`StdDevFor(mean)`. Use this for skill checks, damage/heal rolls, and
+knockdown-chance rolls.
 
 ```go
-attackerStat := 60.0
-defenderStat := 50.0
-stdDev := 10.0
-
-success, margin, atkRoll, defRoll := dice.OpposedRoll(attackerStat, defenderStat, stdDev)
-
-if success {
-    fmt.Printf("Attacker wins by %.2f!\n", margin)
-} else {
-    fmt.Printf("Defender wins by %.2f\n", -margin)
-}
+result := dice.RollStat(attackerStat)
+// result.Value    — the actual roll outcome
+// result.ZScore   — >= 2.0 crit, <= -2.0 fumble
 ```
 
-## Probability Analysis
+### `OpposedRollStat(atk, def float64) (bool, float64, RollResult, RollResult)`
 
-### Success Chance Calculation
-
-Before rolling, calculate the probability of success:
+Contested check between two stat-based scores. Both sides roll with the
+attacker's standard deviation (`StdDevFor(atk)`). Use this for every
+attack-vs-defense, spell-vs-resist, and grapple check.
 
 ```go
-playerStat := 60.0
-difficulty := 50.0
-stdDev := 10.0
-
-chance := dice.SuccessChance(playerStat, difficulty, stdDev)
-fmt.Printf("Success probability: %.1f%%\n", chance*100)
-// Result: 84.1%
-
-// For opposed rolls
-attackerStat := 60.0
-defenderStat := 50.0
-winChance := dice.OpposedSuccessChance(attackerStat, defenderStat, stdDev)
-fmt.Printf("Win probability: %.1f%%\n", winChance*100)
-// Result: 76.0%
+success, margin, atkRoll, defRoll := dice.OpposedRollStat(attackScore, defenseScore)
+if !success { /* fizzle / miss */ }
+if atkRoll.ZScore >= 2.0 { /* critical hit */ }
+if atkRoll.ZScore <= -2.0 { /* fumble / backfire */ }
 ```
 
-### Percentile Analysis
+---
 
-Find what value represents a given percentile:
+## Low-Level API (explicit stdDev — use sparingly)
 
-```go
-mean := 50.0
-stdDev := 10.0
+These exist for cases where variance is **not** proportional to a stat, such
+as weapon damage variance derived from dice-notation item specs.
 
-median := dice.GetPercentile(mean, stdDev, 50)  // 50.00
-p75 := dice.GetPercentile(mean, stdDev, 75)     // 56.74
-p95 := dice.GetPercentile(mean, stdDev, 95)     // 66.45
-p99 := dice.GetPercentile(mean, stdDev, 99)     // 73.26
-```
+### `Roll(mean, stdDev float64) RollResult`
+### `OpposedRoll(atk, def, stdDev float64) (bool, float64, RollResult, RollResult)`
+### `StdDevFor(mean float64) float64`
 
-## Critical Hits & Fumbles
+Returns `mean × RollSpread` (floor 1.0).  Prefer calling `RollStat` /
+`OpposedRollStat` directly rather than computing this yourself.
 
-Criticals are based on **z-scores** (standard deviations from mean):
+---
 
-```go
-result := dice.Roll(50.0, 10.0)
-
-// Check if critical or fumble
-isCrit, isFumble := dice.CriticalCheck(result, 2.0, -2.0)
-
-// z-score ≥ 2.0 = critical (2.28% chance)
-// z-score ≤ -2.0 = fumble (2.28% chance)
-```
-
-**Common thresholds:**
-- **±2.0**: ~2.3% chance (rigorous, D&D-like)
-- **±1.5**: ~6.7% chance (moderate)
-- **±1.0**: ~15.9% chance (frequent)
-
-### Roll with Criticals
-
-```go
-result, isCrit, isFumble := dice.RollWithCriticals(50.0, 10.0, 2.0, -2.0)
-
-if isCrit {
-    // Exceptional success!
-} else if isFumble {
-    // Catastrophic failure!
-}
-```
-
-## Character Creation
-
-### Rolling Stat Arrays
-
-```go
-// Generate 6 stats with mean 12, stdDev 2, clamped to 3-18
-stats := dice.RollStatArray(6, 12.0, 2.0, 3.0, 18.0)
-// Result: [12, 13, 12, 14, 7, 13]
-
-// More generous (mean 14, higher variance)
-stats := dice.RollStatArray(6, 14.0, 3.0, 3.0, 18.0)
-
-// Tight distribution (elite character)
-stats := dice.RollStatArray(6, 15.0, 1.5, 10.0, 18.0)
-```
-
-### Clamped Rolls
-
-Ensure rolls stay within logical bounds:
-
-```go
-// Roll with bounds
-result := dice.RollClamped(50.0, 20.0, 30.0, 70.0)
-// Never goes below 30 or above 70
-
-// Integer version
-value := dice.RollIntClamped(50.0, 20.0, 30.0, 70.0)
-```
-
-## Combat & Damage
-
-### Damage Rolls
-
-```go
-baseDamage := 50.0
-variance := 10.0
-minDamage := 10.0
-
-damage := dice.RollDamage(baseDamage, variance, minDamage)
-// Result: 47.32 (can't go below 10)
-
-// Integer version for discrete damage
-damage := dice.RollDamageInt(baseDamage, variance, minDamage)
-// Result: 52
-```
-
-### Combat Example
-
-```go
-// Attacker stats
-attackStat := attacker.Stats.Dexterity.ValueAdj
-attackDamage := attacker.GetAttackDamage()
-
-// Defender stats
-defenseStat := defender.Stats.Dexterity.ValueAdj
-
-stdDev := dice.StandardDeviation(100.0, 0.15)  // 15% randomness
-
-// Check if attack hits
-hits, margin, _, _ := dice.OpposedRoll(attackStat, defenseStat, stdDev)
-
-if hits {
-    // Roll damage with variance based on margin
-    damageVariance := stdDev * 0.5
-    damage := dice.RollDamageInt(attackDamage, damageVariance, 1.0)
-
-    // Check for critical
-    result := dice.Roll(attackStat, stdDev)
-    isCrit, _ := dice.CriticalCheck(result, 2.0, -2.0)
-    if isCrit {
-        damage *= 2
-    }
-}
-```
-
-## Utility Functions
-
-### Simple Percentile Check
-
-```go
-success, roll := dice.Percentile(75.0)  // 75% chance
-// Returns: (true, 68.3) or (false, 82.1)
-```
-
-### Random Range
-
-```go
-value := dice.RollBetween(10.0, 50.0)    // Float
-value := dice.RollBetweenInt(10, 50)     // Integer
-```
-
-### Weighted Table
-
-```go
-// Loot rarity table
-rarities := []int{50, 30, 15, 5}  // Common, Uncommon, Rare, Legendary
-rarity := dice.RollTable(rarities)
-
-items := []string{"Common", "Uncommon", "Rare", "Legendary"}
-fmt.Printf("Found %s item!\n", items[rarity])
-```
-
-## RollResult Structure
-
-All roll functions return detailed information:
+## RollResult Fields
 
 ```go
 type RollResult struct {
-    Value       float64 // The actual roll result
+    Value       float64 // The actual roll outcome
     Mean        float64 // The distribution mean (stat value)
     StdDev      float64 // Standard deviation used
-    Success     bool    // Whether the check succeeded
-    Margin      float64 // Margin of success/failure
-    ZScore      float64 // Standard deviations from mean
-    Percentile  float64 // What percentile this roll represents
+    ZScore      float64 // Standard deviations from mean (crit/fumble detection)
+    Percentile  float64 // 0–100 percentile of this roll
+    Success     bool    // True if the roll beat its check target
+    Margin      float64 // Margin of success (positive) or failure (negative)
     Description string  // Human-readable description
 }
 ```
 
-## Statistical Reference
+---
 
-### Z-Score Interpretation
+## Z-Score Reference
 
 | Z-Score | Percentile | Interpretation |
 |---------|------------|----------------|
-| -3.0    | 0.1%       | Extremely low |
-| -2.0    | 2.3%       | Very low |
-| -1.0    | 15.9%      | Below average |
-| 0.0     | 50.0%      | Average |
-| +1.0    | 84.1%      | Above average |
-| +2.0    | 97.7%      | Very high |
+| −3.0    | 0.1%       | Extremely low  |
+| −2.0    | 2.3%       | **Fumble threshold** |
+| −1.0    | 15.9%      | Below average  |
+|  0.0    | 50.0%      | Average        |
+| +1.0    | 84.1%      | Above average  |
+| +2.0    | 97.7%      | **Crit threshold** |
 | +3.0    | 99.9%      | Extremely high |
 
-### Win Probability (Opposed Rolls)
+---
 
-For two characters with stats A and B, using stdDev σ:
+## Utility Functions
 
-| Stat Diff | Win Chance (A vs B) |
-|-----------|---------------------|
-| +0σ       | 50.0% (even match) |
-| +0.5σ     | 61.8% |
-| +1.0σ     | 76.0% (significant advantage) |
-| +1.5σ     | 86.6% |
-| +2.0σ     | 92.9% (overwhelming advantage) |
-
-Example: If A has stat 60, B has stat 50, and σ=10, then A has a +1σ advantage = 76% win chance.
-
-## Performance
-
-All functions are optimized for high-frequency calls:
-
-```bash
-BenchmarkRoll-8                  5000000    240 ns/op
-BenchmarkOpposedRoll-8           2000000    478 ns/op
-BenchmarkDifficultyCheck-8       2000000    483 ns/op
-BenchmarkSuccessChance-8        10000000    112 ns/op
+```go
+dice.RollDamage(base, variance, min float64) float64   // explicit variance damage
+dice.DiceToDistribution(dCount, dSides, bonus int)     // NdM+bonus → (mean, stdDev)
+dice.Percentile(chance float64) (bool, float64)        // simple % check
+dice.RollBetween(min, max float64) float64
+dice.RollBetweenInt(min, max int) int
+dice.RollTable(weights []int) int                      // weighted loot table
 ```
+
+---
 
 ## Testing
 
-Run comprehensive tests:
-
 ```bash
-go test ./internal/dice -v
-go test ./internal/dice -bench=.
+go test ./internal/dice/... -v
+go test ./internal/dice/... -bench=.
 ```
-
-Tests include:
-- Distribution correctness (10,000 roll statistical validation)
-- Opposed roll win rate verification
-- Success probability accuracy
-- Critical/fumble rate verification
-- Percentile calculation accuracy

@@ -39,11 +39,11 @@ Known issue: The instance save system can silently override template edits, maki
 - Skills (9 total) cap softly at 50 (`skillSoftCap`). They progress via `OnSkillUse()` → `CheckSkillProgression()`, probabilistically, every ~25 uses.
 
 ## Dice & Rolling System
-- All stat-based rolls use `dice.Roll(mean, stdDev)` or `dice.OpposedRoll(atk, def, stdDev)` from `internal/dice/dice.go`
-- **stdDev must always be 15% of the mean**: use `dice.StdDevFor(mean)` — never hardcode `15.0`
-  - `dice.StdDevFor(mean)` returns `mean * 0.15`, with a floor of 1.0
-- Z-score thresholds: `ZScore >= 2.0` = crit success; `ZScore <= -2.0` = fumble/backfire
-- For opposed rolls, use the attacker's score as the mean for `StdDevFor`: `dice.OpposedRoll(atkScore, defScore, dice.StdDevFor(atkScore))`
+- **For all stat-based rolls use `dice.RollStat(mean)` or `dice.OpposedRollStat(atk, def)`** — no stdDev argument needed
+- These wrappers automatically apply the global `RollSpread` factor: `stdDev = mean × RollSpread`
+- `dice.Roll(mean, stdDev)` / `dice.OpposedRoll(atk, def, stdDev)` are low-level; only use them when variance is NOT stat-proportional (e.g., weapon damage variance from item specs)
+- **`RollSpread`** is the single master randomness knob — set in `_datafiles/config.yaml` under `GamePlay.RollSpread` (default **0.15**). Changing it rescales every dice roll in the engine. See `internal/dice/README.md` for win-probability tables.
+- Z-score thresholds: `ZScore >= 2.0` = crit; `ZScore <= -2.0` = fumble/backfire (~2.3% each, unaffected by `RollSpread`)
 - `util.Rand` / `util.LogRoll` are NOT used for hit or attack checks; only `dice.*` functions
 
 ## Physical Armor Model

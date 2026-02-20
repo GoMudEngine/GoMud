@@ -75,7 +75,7 @@ func Kick(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	}
 
 	// Perform opposed roll
-	attackSuccess, _, _, _ := dice.OpposedRoll(attackerScore, defenderScore, dice.StdDevFor(attackerScore))
+	attackSuccess, _, _, _ := dice.OpposedRollStat(attackerScore, defenderScore)
 
 	// Calculate damage (moderate - more than trip, less than bash)
 	baseDamage := int(float64(user.Character.Stats.Strength.ValueAdj) * float64(cfg.KickDamagePercent))
@@ -95,7 +95,7 @@ func Kick(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	knockedDown := false
 	if attackSuccess {
 		// Roll for knockdown chance (moderate - between trip and bash)
-		knockdownRoll := dice.Roll(50, dice.StdDevFor(50)) // Mean of 50
+		knockdownRoll := dice.RollStat(50) // Mean of 50
 		if knockdownRoll.Value < float64(cfg.KickKnockdownChance) {
 			knockedDown = true
 		}

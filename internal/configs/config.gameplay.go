@@ -33,6 +33,11 @@ type GamePlay struct {
 	UseSkillProgression ConfigBool `yaml:"UseSkillProgression"` // Enable skill/stat progression checks on skill/stat use
 	DualProgressionMode ConfigBool `yaml:"DualProgressionMode"` // When true, progression checks grant actual skill/stat increases (requires UseSkillProgression)
 
+	// RollSpread is the master randomness knob. See internal/dice/dice.go for full documentation.
+	// Controls stdDev = stat * RollSpread for every stat-based roll in the game.
+	// Default 0.15 (15%). Valid range 0.05–0.50. Requires server restart.
+	RollSpread ConfigFloat `yaml:"RollSpread"`
+
 	// Spell Cost Scaling
 	SpellConvictionCostMultiplier ConfigFloat `yaml:"SpellConvictionCostMultiplier"` // Global multiplier for spell conviction costs (default 1.0)
 	SpellHealthCostMultiplier     ConfigFloat `yaml:"SpellHealthCostMultiplier"`     // Global multiplier for spell health costs (default 1.0)
@@ -157,6 +162,11 @@ func (g *GamePlay) Validate() {
 		g.MobConverseChance = 0
 	} else if g.MobConverseChance > 100 {
 		g.MobConverseChance = 100
+	}
+
+	// RollSpread: clamp to sensible range; default 0.15
+	if g.RollSpread < 0.05 || g.RollSpread > 0.50 {
+		g.RollSpread = 0.15
 	}
 
 	// Spell cost multipliers - default to 1.0 if not set or invalid

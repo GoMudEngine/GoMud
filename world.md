@@ -195,25 +195,33 @@ Players and NPCs are functionally identical, with 6 primary stats, derived secon
 
 ### Dice Rolling & Action Resolution
 
-**System:** Statistical distribution-based rolling.
+**System:** Statistical distribution-based rolling via `internal/dice`.
 
 **Roll Calculation:**
 1. Determine mean: Relevant Attribute + Skill Level
-2. Standard deviation: 15% of the mean
-3. Roll a number from a distribution with that mean and standard deviation
+2. Standard deviation: `mean × RollSpread` (default 0.15 — see below)
+3. Roll a number from a normal distribution with that mean and standard deviation
+
+**The `RollSpread` Knob:** A single config value in `_datafiles/config.yaml`
+(`GamePlay.RollSpread`) that scales the standard deviation for *every* stat-based
+roll in the game simultaneously.  Default **0.15** (15% of mean).  Lower values
+make skill/stats more deterministic; higher values create more chaos and upsets.
+See `internal/dice/README.md` for the full probability table.
 
 **Critical Success/Failure:**
-- **Critical Hit:** Roll is 2 standard deviations above the mean
-- **Critical Miss:** Roll is 2 standard deviations below the mean
+- **Critical Hit:** Roll's z-score ≥ +2.0 (approximately 2.3% chance per roll)
+- **Critical Miss/Fumble:** Roll's z-score ≤ −2.0 (approximately 2.3% chance per roll)
+- Crit rates are **not** affected by `RollSpread` — they are always ~2.3%
 
 **Opposed Rolls:** Most actions (attacks, social skills, etc.) are contested:
-- Attacker rolls their offensive score
-- Defender rolls their defensive score
-- Higher roll wins
+- Attacker rolls their offensive score via `dice.OpposedRollStat`
+- Defender rolls their defensive score (same standard deviation as attacker)
+- Higher roll wins; margin drives message intensity
 
 **Examples:**
-- **Melee Attack:** Attacker rolls (Dexterity + Melee Combat skill) vs. Defender rolls (Dexterity + Defense skill)
-- **Persuasion:** Persuader rolls (Charisma + Persuasion) vs. Target rolls (Willpower + appropriate resistance)
+- **Melee Attack:** `(Dexterity + CombatSkill)` vs. `(Dexterity + DefenseScore)`
+- **Spell:** `(Willpower + Spellcasting×3)` vs. target's armor or Willpower
+- **Persuasion:** `(Charisma + Persuasion)` vs. `(Willpower + resistance)`
 
 ---
 
