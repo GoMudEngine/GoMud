@@ -2774,6 +2774,11 @@ type CastingState struct {
 
 ---
 
+### ⚠️ Testing Note: New Characters Need Starting Spells
+New characters currently have no spells in their spellbook, making it impossible to test the magic system manually. Before Stage 11.4 testing, grant new characters a small set of starter spells (e.g., `heal`, `throw-stone`, `fire-bolt`) directly in the character creation flow or via the `New()` function in `internal/characters/character.go`. These can be stripped out later — or reframed as spells the player learns during the tutorial area (Stage 16+). Track this as a prerequisite for Stage 11.4 manual verification.
+
+---
+
 ### Stage 11.3: Power Sources & Concentration Mechanics
 **Goal**: Implement the three power sources that affect fold accumulation speed. Add concentration checks when the caster is hit during casting.
 
