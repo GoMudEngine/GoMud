@@ -5,7 +5,7 @@ description: Heals for 2d3
 type: helpsingle
 schools:
   - vital
-cost: 3
+cost: 25
 waitrounds: 2
 difficulty: 0
 primarystat: willpower

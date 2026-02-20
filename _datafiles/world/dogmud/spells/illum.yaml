@@ -5,7 +5,7 @@ description: Grants a light aura
 type: helpsingle
 schools:
   - mental
-cost: 5
+cost: 35
 waitrounds: 3
 difficulty: 0
 primarystat: willpower

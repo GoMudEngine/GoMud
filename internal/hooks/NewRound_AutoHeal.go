@@ -3,6 +3,7 @@ package hooks
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -67,6 +68,15 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 				healthRegen := int(float64(user.Character.HealthPerRound()) * regenMultiplier)
 				user.Character.Heal(healthRegen)
 			}
+
+			// Apply regen condition from heal spell (works in and out of combat)
+			if user.Character.HasCondition(characters.ConditionRegen) {
+				regenAmt := int(float64(user.Character.GetConditionMagnitude(characters.ConditionRegen)) * regenMultiplier)
+				if regenAmt < 1 {
+					regenAmt = 1
+				}
+				user.Character.Heal(regenAmt)
+			}
 		}
 
 		// Regenerate Stamina FIRST - slower during combat (always regenerate, even if health is low)
@@ -121,7 +131,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 
 	}
 
-	// Mob conviction regeneration (same rate as players: base 1 per 3 rounds)
+	// Mob conviction regeneration and regen condition (same tick as players: every 3 rounds)
 	for _, mobInstId := range mobs.GetAllMobInstanceIds() {
 		mob := mobs.GetInstance(mobInstId)
 		if mob == nil || mob.Character.Health < 1 {
@@ -130,6 +140,17 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 		mob.Character.Conviction += mob.Character.ConvictionPerRound()
 		if mob.Character.Conviction > mob.Character.ConvictionMax.Value {
 			mob.Character.Conviction = mob.Character.ConvictionMax.Value
+		}
+		// Apply regen condition from heal spell
+		if mob.Character.HasCondition(characters.ConditionRegen) {
+			regenAmt := int(mob.Character.GetConditionMagnitude(characters.ConditionRegen))
+			if regenAmt < 1 {
+				regenAmt = 1
+			}
+			mob.Character.Health += regenAmt
+			if mob.Character.Health > mob.Character.HealthMax.Value {
+				mob.Character.Health = mob.Character.HealthMax.Value
+			}
 		}
 	}
 

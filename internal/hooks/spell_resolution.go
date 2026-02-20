@@ -214,26 +214,29 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 
 	switch spellData.EffectType {
 	case "heal":
-		healRoll := dice.RollStat(float64(magnitude))
-		heal := int(math.Round(healRoll.Value))
-		if heal < 1 {
-			heal = 1
-		}
+		skillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
+		regenPerTick := 50
 		if isCrit {
-			heal += magnitude
+			regenPerTick = 75
 		}
-		actual := target.Character.Heal(heal)
-		healDesc := combat.GetHealDescription(actual, target.Character.HealthMax.Value)
+		ticks := skillLevel / 10
+		if ticks < 1 {
+			ticks = 1
+		}
+		durationRounds := ticks * 3 // TickConditions runs every combat round; AutoHeal fires every 3
+		target.Character.AddCondition(characters.ConditionRegen, durationRounds, float64(regenPerTick), "heal spell")
 		user.SendText(fmt.Sprintf(
-			`<ansi fg="green">Your <ansi fg="cyan-bold">%s</ansi> heals <ansi fg="username">%s</ansi>! (<ansi fg="green-bold">%s</ansi>)%s</ansi>`,
-			spellData.Name, target.Character.Name, healDesc, critTag))
+			`<ansi fg="green">You weave restorative magic around <ansi fg="username">%s</ansi>.%s</ansi>`,
+			target.Character.Name, critTag))
 		if target.UserId != user.UserId {
 			target.SendText(fmt.Sprintf(
-				`<ansi fg="green"><ansi fg="username">%s</ansi>'s <ansi fg="cyan-bold">%s</ansi> heals you! (<ansi fg="green-bold">%s</ansi>)</ansi>`,
-				user.Character.Name, spellData.Name, healDesc))
+				`<ansi fg="green"><ansi fg="username">%s</ansi>'s <ansi fg="cyan-bold">%s</ansi> envelops you in healing energy. Your wounds begin to mend.</ansi>`,
+				user.Character.Name, spellData.Name))
+		} else {
+			target.SendText(`<ansi fg="green">A warm glow of healing magic envelops you. Your wounds begin to mend.</ansi>`)
 		}
 		room.SendText(fmt.Sprintf(
-			`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> heals <ansi fg="username">%s</ansi>.`,
+			`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> envelops <ansi fg="username">%s</ansi> in healing light.`,
 			user.Character.Name, spellData.Name, target.Character.Name), user.UserId, target.UserId)
 
 	case "buff":
@@ -360,15 +363,13 @@ func resolveMobSpell(mob *mobs.Mob, cs *characters.CastingState, spellData *spel
 func applyMobSelfEffect(mob *mobs.Mob, room *rooms.Room, spellData *spells.SpellData, magnitude int) {
 	switch spellData.EffectType {
 	case "heal":
-		healRoll := dice.RollStat(float64(magnitude))
-		heal := int(math.Round(healRoll.Value))
-		if heal < 1 {
-			heal = 1
+		skillLevel := mob.Character.GetSkillLevel(skills.Spellcasting)
+		ticks := skillLevel / 10
+		if ticks < 1 {
+			ticks = 1
 		}
-		mob.Character.Health += heal
-		if mob.Character.Health > mob.Character.HealthMax.Value {
-			mob.Character.Health = mob.Character.HealthMax.Value
-		}
+		durationRounds := ticks * 3
+		mob.Character.AddCondition(characters.ConditionRegen, durationRounds, 50.0, "heal spell")
 		room.SendText(fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi> channels restorative magic.`, mob.Character.Name))
 	case "shield":

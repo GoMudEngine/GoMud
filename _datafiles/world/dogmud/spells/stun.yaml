@@ -4,7 +4,7 @@ description: Stuns a target, preventing them from attacking.
 type: harmsingle
 schools:
   - mental
-cost: 6
+cost: 50
 waitrounds: 1
 difficulty: 0
 primarystat: willpower

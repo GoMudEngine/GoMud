@@ -5,7 +5,7 @@ description: Cures basic poison status
 type: helpsingle
 schools:
   - vital
-cost: 10
+cost: 75
 waitrounds: 2
 difficulty: 0
 primarystat: willpower

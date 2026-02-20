@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -20,6 +21,12 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	args := util.SplitButRespectQuotes(strings.ToLower(rest))
 
 	if len(args) < 1 {
+		return true, nil
+	}
+
+	// Gate: mobs share the special-move cooldown slot with bash/trip/kick
+	cfg := configs.GetGamePlayConfig()
+	if !mob.Character.TryCooldown(`special-move`, fmt.Sprintf(`%d rounds`, cfg.SpecialMoveCooldown)) {
 		return true, nil
 	}
 

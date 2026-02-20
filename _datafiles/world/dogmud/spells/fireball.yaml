@@ -4,11 +4,11 @@ description: Explodes in a ball of fire, hitting all creatures in the room.
 type: harmarea
 schools:
   - elemental
-cost: 10
+cost: 80
 waitrounds: 2
 difficulty: 0
 primarystat: willpower
 base_folds: 16
 target_defense_type: physical
 effect_type: damage
-effect_magnitude: 45
+effect_magnitude: 450

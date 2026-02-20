@@ -5,7 +5,7 @@ description: Heals party for 2d3 (transfers your life force)
 type: helpmulti
 schools:
   - vital
-cost: 6
+cost: 50
 healthcost: 3
 waitrounds: 2
 difficulty: 10
