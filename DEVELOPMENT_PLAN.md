@@ -2508,51 +2508,987 @@ char.TickConditions() // Called once in round tick, decrements all durations
 
 ---
 
-## Phase 10: Combat Balance Pass
+## Phase 10: Skill System Generalization & Cleanup
 
-> **Note**: This phase deliberately comes after all mechanical combat changes are in place.
-> Tuning numbers before the systems are built leads to rework.
-
-### Stage 10.1: Combat Speed & Balance Tuning
-**Goal**: Speed up combat to reach resolution faster. Currently fights drag on too long. Adjust damage curves, defense rates, and health pools so typical fights against equal opponents resolve in 5-10 rounds, not 20+.
-
-**Changes**:
-1. Audit and tune: base damage values, armor reduction, health pools
-2. Tune avoidance rates (dodge/parry/block) so ~40-60% of attacks land
-3. Tune stamina drain so fighters get winded in ~8-12 rounds
-4. Tune critical hit damage multiplier (crits should meaningfully accelerate combat)
-5. Ensure mob difficulty tiers feel distinct:
-   - Easy mobs: 2-4 rounds
-   - Medium mobs: 5-8 rounds
-   - Hard mobs: 10-15 rounds (and dangerous)
-6. Document the tuning values and rationale
-
-**Files to Modify** (~8 files, ~300 lines):
-1. `internal/combat/calculations.go` — Damage/defense tuning constants
-2. `internal/combat/combat.go` — Round timing
-3. Mob YAML files — Stat adjustments
-4. Weapon/armor YAML files — Damage/defense adjustments
-5. Config files — Tuning constants
-
-**Testing**:
-- [ ] **Manual Test**: Fight all test arena mobs, time the fights
-- [ ] **Manual Test**: Verify easy/medium/hard feel appropriately different
-- [ ] **Balance Test**: Record average rounds to kill for each mob tier
-- [ ] **Balance Test**: Verify player death is possible but not frequent against appropriate mobs
-
-**Acceptance Criteria**:
-- Fights resolve in a satisfying number of rounds
-- Difficulty tiers are distinct and feel right
-- Combat is dangerous enough to be exciting, not a grind
-- All tests pass
-
-**Estimated Changes**: ~300 lines, 8 files
+> **Goal**: Create a clean, generalized foundation where every skill and spell has a
+> single authoritative primary stat governing both rolls and progression. Remove all
+> legacy GoMud skills that have no place in DOG. This is the prerequisite for all
+> subsequent system work.
 
 ---
 
-## Phase 11: LLM Integration & AI NPCs
+### Stage 10.1: Generalize Skill-Stat & Spell-Stat Association
+**Goal**: Add a `PrimaryStat` field to every skill and spell definition. Replace all hardcoded stat references in progression checks and roll calculations with a single lookup. Adding a new skill or spell in the future requires only a YAML entry — no manual wiring in Go.
 
-> **Context**: Enable external LLM agents to interact with the MUD via structured data, and create a tiered AI NPC system that balances quality, performance, and cost. This phase uses a pragmatic approach: enhance existing GMCP for LLM agent access, build rule-based NPCs for most characters, and optionally add LLM-powered NPCs for special cases.
+**Current Problem**:
+- `TrackStatUse("vitality")` and similar calls are manually written per skill in various code paths
+- Adding a new skill requires editing progression.go, stat tracking hooks, and roll calculations individually
+- Spells have no authoritative stat association
+
+**Final Skill Set** (9 DOG core skills):
+
+| Skill | Primary Stat |
+|-------|-------------|
+| weapon-combat | dexterity |
+| unarmed-combat | strength |
+| ranged-combat | perception |
+| spellcasting | willpower |
+| first-aid | perception |
+| stealth | dexterity |
+| tracking | perception |
+| bartering | charisma |
+| foraging | perception |
+
+**Changes**:
+1. Add `PrimaryStat string` field to skill definition struct in `internal/skills/skills.go`
+2. Add `PrimaryStat string` field to spell definition struct in `internal/spells/spells.go`
+3. Update `CheckSkillProgression()` to auto-call `TrackStatUse(skill.PrimaryStat)` — no more manual per-skill stat tracking
+4. Update roll calculations to read `skill.PrimaryStat` rather than hardcoded stat names
+5. Add `primary_stat` field to all skill YAML definitions
+6. Add `primary_stat` field to all spell YAML definitions
+
+**Files to Modify** (~8 files, ~150 lines):
+1. `internal/skills/skills.go` — Add PrimaryStat field, set for all 9 skills
+2. `internal/spells/spells.go` — Add PrimaryStat field
+3. `internal/characters/progression.go` — Auto-track PrimaryStat in CheckSkillProgression
+4. `internal/combat/calculations.go` — Read PrimaryStat from skill definition
+5. `_datafiles/world/dogmud/skills/*.yaml` — Add primary_stat field
+6. `_datafiles/world/dogmud/spells/*.yaml` — Add primary_stat field
+7. Test files
+
+**Testing**:
+- [ ] **Unit Tests**: PrimaryStat loaded correctly for all 9 skills
+- [ ] **Unit Tests**: CheckSkillProgression calls TrackStatUse with correct stat
+- [ ] **Manual Test**: Use each skill, verify its primary stat receives progression calls
+- [ ] **Regression Test**: `go test ./...` passes
+
+**Acceptance Criteria**:
+- Every skill and spell has PrimaryStat set in YAML
+- CheckSkillProgression auto-tracks the correct stat — no hardcoded stat names anywhere
+- Adding a new skill requires only YAML + use-trigger — no changes to progression.go
+- All tests pass
+
+**Estimated Changes**: ~150 lines, 8 files
+
+---
+
+### Stage 10.2: Skill Cleanup — Remove Legacy Skills
+**Goal**: Remove all legacy GoMud skills with no DOG equivalent. Implement backstab as a stealth-triggered combat bonus. Move pickpocket to the stealth skill. Convert map/inspect/search to free stat-check commands.
+
+**Skills Removed**:
+
+| Skill | Action | Absorbed By |
+|-------|--------|-------------|
+| psionics | Remove | spellcasting |
+| brawling | Remove | unarmed-combat |
+| cast | Stub only | New magic system (Phase 11) |
+| enchant | Remove | spellcasting |
+| protection | Remove | spellcasting |
+| trading | Remove | bartering (alias) |
+| track | Remove | tracking (alias) |
+| dual-wield | Remove as skill | Equipment config — weapon-combat governs it |
+| scribe | Remove | No DOG equivalent |
+| portal | Remove | Spellcasting spell if needed later |
+| peep | Remove | Doesn't fit DOG |
+| skulduggery | Remove | backstab → stealth combat; pickpocket → stealth |
+| tame | Remove | Spellcasting spell (Phase 11) |
+
+**Free Commands** (no longer skill-gated):
+
+| Old Skill | New Behavior |
+|-----------|-------------|
+| map | Available to everyone, no skill required |
+| inspect | Perception stat check, no skill gate |
+| search | Perception stat check, no skill gate |
+
+**Backstab — Stealth Combat Bonus**:
+- When a character has active stealth and initiates combat, their first attack is a backstab
+- Applies to weapon-combat, unarmed-combat, or ranged-combat based on equipped weapon
+- Roll: Dexterity + stealth skill vs target Perception
+- On success: +50% damage and +20% hit chance on first strike, then stealth breaks
+- Message: "Striking from the shadows, you catch {target} completely off guard!"
+
+**Pickpocket → Stealth**:
+- `pickpocket <target>` becomes a stealth sub-command
+- Requires active stealth or nearby concealment
+- Roll: Dexterity + stealth vs target Perception
+- Success: steal one small random item from target's inventory
+
+**Brawling Sub-Commands** (retire — covered by newer systems):
+- `brawling disarm` — retire (disarms happen organically via crits, Stage 8.4)
+- `brawling recover` — retire (`stand` command covers this)
+- `brawling tackle` — retire (`grapple` command covers this, Stage 8.2)
+- `brawling throw` — retire (grapple system covers this)
+
+**Changes**:
+1. Delete/stub: `skill.brawling.*.go`, `skill.dualwield.go`, `skill.enchant.go`, `skill.peep.go`, `skill.portal.go`, `skill.protection.*.go`, `skill.scribe.go`, `skill.tame.go`, `skill.skulduggery.bump.go`
+2. Remove skill definitions from `internal/skills/skills.go`
+3. Add backstab check in combat initiation (when stealth was active)
+4. Create `internal/usercommands/skill.stealth.pickpocket.go` (moved from skulduggery)
+5. Remove skill gate from map; convert inspect/search to Perception checks
+6. Remove all legacy skills from YAML data files
+7. Stub `cast` command: "You reach for the folds of reality, but the technique escapes you. [Coming soon]"
+
+**Files to Modify** (~30 files, ~400 lines):
+1. `internal/skills/skills.go` — Remove 13 legacy skill definitions
+2. `internal/usercommands/skill.*.go` — Delete ~12 files, modify ~3
+3. `internal/combat/combat.go` — Add backstab check on combat initiation
+4. `internal/usercommands/skill.stealth.pickpocket.go` — New file
+5. `internal/usercommands/map.go` — Remove skill gate
+6. `internal/usercommands/skill.inspect.go` — Convert to Perception check
+7. `internal/usercommands/skill.search.go` — Convert to Perception check
+8. YAML skill/mob/item data files — Remove legacy skill references
+9. Test files
+
+**Testing**:
+- [ ] **Unit Tests**: Verify exactly 9 DOG skills in skill registry
+- [ ] **Manual Test**: Stealth then initiate combat — backstab bonus applies on first hit only
+- [ ] **Manual Test**: Pickpocket a target while stealthed
+- [ ] **Manual Test**: Map, inspect, search work with no skill requirement
+- [ ] **Manual Test**: Dual-wield two weapons — still functions, governed by weapon-combat
+- [ ] **Grep Test**: `grep -r "brawling\|skulduggery\|psionics\|tame" --include="*.go"` → zero results
+- [ ] **Regression Test**: All combat, movement, and progression still work
+
+**Acceptance Criteria**:
+- Exactly 9 skills remain: weapon-combat, unarmed-combat, ranged-combat, spellcasting, first-aid, stealth, tracking, bartering, foraging
+- No references to removed skills in any .go files
+- Backstab applies for all three combat skill types when entering from stealth
+- Map/inspect/search work for all players regardless of skills
+- Dual-wield functions as equipment configuration
+- All tests pass
+
+**Estimated Changes**: ~400 lines, 30 files
+
+---
+
+## Phase 11: Magic System Rework — Fold-Based Casting
+
+> **Lore**: Magic on Gaius is the physical manifestation of belief. The caster
+> bisects their inner vision of reality — each "fold" doubling the intensity of
+> their intention — until the accumulated conviction reshapes the world.
+>
+> **Design Philosophy**: Casting is slow, interruptible, resource-intensive, and
+> devastatingly powerful when completed. Glass cannon archetype: a completed spell
+> hits harder than 6–10 physical attacks, but the caster is completely vulnerable
+> during preparation. Interrupting a spellcast is a valid and rewarding tactic.
+
+---
+
+### Stage 11.1: Disconnect Old Casting System
+**Goal**: Remove the old mana/cast-skill casting execution flow cleanly. Preserve spell data structures (YAML schemas and loading code) for reuse in Stage 11.4.
+
+**Changes**:
+1. Remove casting execution from `skill.cast.go` — replace with informative stub
+2. Remove old conviction-deduction-on-cast logic (conviction system stays; new casting uses it)
+3. Preserve `internal/spells/spells.go` spell data loading — YAML schemas will be reused
+4. Add placeholder fields to spell struct: `BaseFolds int`, `TargetDefenseType string` (populated in Stage 11.4)
+5. Delete `skill.enchant.go`, `skill.protection.*.go` if not already removed in Stage 10.2
+6. Stub `cast` message: "You reach for the folds of reality, but the technique escapes you."
+
+**Files to Modify** (~5 files, ~100 lines):
+1. `internal/usercommands/cast.go` — Replace with stub
+2. `internal/spells/spells.go` — Add placeholder fields, keep data loading intact
+3. Test files
+
+**Acceptance Criteria**:
+- Old casting system no longer executes
+- Spell data loads cleanly with placeholder fields
+- `cast` gives a meaningful stub message
+- No compilation errors, all tests pass
+
+**Estimated Changes**: ~100 lines, 5 files
+
+---
+
+### Stage 11.2: Fold Engine Core
+**Goal**: Implement the multi-round fold-based casting state machine. Round 1 initiates casting and calculates folds needed. Subsequent rounds accumulate folds until the spell resolves.
+
+**Fold Mechanics**:
+```
+Round 1 (Initiation):
+  - Willpower check (difficulty: base spell difficulty)
+  - Fail: no casting begins, cooldown applied
+  - Pass: calculate folds_needed
+      folds_needed = base_folds × ceil(target_defense / 100)
+      rounded up to next power of 2: 2, 4, 8, 16, 32...
+  - Announce: "You gather your will and form an image of [spell outcome]."
+
+Subsequent Rounds (Folding):
+  - folds_per_round = max(1, round((Perception + spellcasting_skill) / 100))
+  - Announce: "You fold your inner vision X times. You now hold Y folds."
+  - When folds_accumulated >= folds_needed → resolve spell (Stage 11.4)
+
+Cancellation:
+  - Player uses a non-casting command, or types `cancel`
+  - Concentration check fails (Stage 11.3)
+  - Partial conviction cost proportional to folds already completed
+```
+
+**Character State** (not persisted — `yaml:"-"`):
+```go
+type CastingState struct {
+    SpellId          string
+    FoldsNeeded      int
+    FoldsAccumulated int
+    FoldsPerRound    int
+    PowerSource      string  // "sunlight", "flame", "health"
+    TargetId         int
+    ConvictionSpent  int
+}
+```
+
+**Changes**:
+1. Create `internal/combat/casting.go` — CastingState struct, fold calculation, initiation logic
+2. Add `CastingState *CastingState` to Character struct (yaml:"-")
+3. New `cast <spell> [target]` command — initiates casting, sets CastingState
+4. New `cancel` command — cancels active casting with partial conviction cost
+5. Update `NewRound_DoCombat` hook — process one fold step per round for casting characters
+6. Extend combat restriction system (Stage 7.2) to block other commands while casting
+
+**Files to Modify** (~7 files, ~400 lines):
+1. `internal/combat/casting.go` — New file: fold engine
+2. `internal/characters/character.go` — Add CastingState field
+3. `internal/usercommands/cast.go` — Full command (replaces stub)
+4. `internal/usercommands/cancel.go` — New command
+5. `internal/hooks/NewRound_DoCombat.go` — Process folds per round
+6. `internal/usercommands/` — Extend combat restriction for active casting
+7. Test files
+
+**Testing**:
+- [ ] **Unit Tests**: Fold calculation (base × defense multiplier, power-of-2 rounding)
+- [ ] **Unit Tests**: Folds per round at various Perception/skill levels
+- [ ] **Manual Test**: Cast a spell — verify fold progress messages across rounds
+- [ ] **Manual Test**: Cancel mid-cast — verify partial conviction cost
+- [ ] **Manual Test**: Try to move while casting — verify blocked
+- [ ] **Regression Test**: `go test ./...` passes
+
+**Acceptance Criteria**:
+- Multi-round casting works end-to-end
+- Folds needed calculates correctly (power-of-2 rounding)
+- Folds per round scales with Perception and spellcasting skill
+- Cancelling costs partial conviction proportional to progress
+- Other commands blocked during active casting
+- All tests pass
+
+**Estimated Changes**: ~400 lines, 7 files
+
+---
+
+### Stage 11.3: Power Sources & Concentration Mechanics
+**Goal**: Implement the three power sources that affect fold accumulation speed. Add concentration checks when the caster is hit during casting.
+
+**Power Sources**:
+
+| Source | Detection | Folds/Round Multiplier | Cost |
+|--------|-----------|----------------------|------|
+| Sunlight | Outdoors room flag + daytime | 1.0× (baseline) | Conviction per fold |
+| Flame | Torch/lantern equipped, or fire present in room | 1.5× | Conviction per fold |
+| Health | Always available | 2.0× | HP per fold (configurable) |
+
+- Specify via `cast <spell> [target] with <source>` syntax
+- If unspecified, priority: flame > sunlight > health
+
+**Concentration Mechanics**:
+- When caster takes damage while casting: Willpower vs (damage / maxHealth × 100) check
+- Pass: "You maintain your concentration despite the blow."
+- Fail: casting cancelled, partial conviction kept, 1-round casting initiation penalty (`ConditionConcentrationBreak`)
+- Being knocked Prone: automatic concentration failure
+
+**Changes**:
+1. Add `DetectPowerSource(char, room) string` to `casting.go`
+2. Apply source multiplier to fold-per-round calculation
+3. Add HP deduction for health-source casting
+4. Trigger concentration check in combat damage path
+5. Add `ConditionConcentrationBreak` to conditions system
+6. Parse `with <source>` in cast command
+
+**Files to Modify** (~5 files, ~250 lines):
+1. `internal/combat/casting.go` — Source detection and HP cost logic
+2. `internal/combat/conditions.go` — Add ConditionConcentrationBreak
+3. `internal/hooks/NewRound_DoCombat.go` — Trigger concentration check on damage dealt to caster
+4. `internal/usercommands/cast.go` — Parse `with <source>` syntax
+5. Test files
+
+**Testing**:
+- [ ] **Manual Test**: Cast outdoors at midday — verify 1.0× sunlight multiplier
+- [ ] **Manual Test**: Cast holding a torch — verify 1.5× flame multiplier (faster folds)
+- [ ] **Manual Test**: Cast with health source — verify HP deducted each fold
+- [ ] **Manual Test**: Take a hit while casting — verify concentration check fires
+- [ ] **Manual Test**: Get knocked prone while casting — automatic cancellation
+
+**Acceptance Criteria**:
+- All three sources detected and multiplier applied correctly
+- Health source costs HP instead of conviction per fold
+- Concentration checks fire on every hit during casting
+- Prone automatically breaks concentration
+- All tests pass
+
+**Estimated Changes**: ~250 lines, 5 files
+
+---
+
+### Stage 11.4: Core Spells & Components
+**Goal**: Port and rewrite core spells to the fold system. Implement component checking before casting begins. Add spell resolution with critical outcomes.
+
+**Core Spell Set**:
+
+| Spell | School | Base Folds | Target Defense | Component | Effect |
+|-------|--------|-----------|----------------|-----------|--------|
+| Throw Stone | Elemental | 4 | Physical | stone item in inventory | High physical damage |
+| Fire Bolt | Elemental | 8 | Physical | None | High fire damage |
+| Heal | Vital | 4 | None (self/ally) | None | Restore health |
+| Minor Shield | Enhancement | 4 | None (self) | None | +defense for N rounds |
+| Stun | Mental | 8 | Mental (Willpower) | None | Stun condition on target |
+| Blind | Mental | 8 | Mental (Willpower) | None | Blind condition on target |
+| Tame | Vital | 16 | Mental (animal) | None | Animal becomes passive follower |
+| Fireball | Elemental (AOE) | 16 | Highest physical defense in room | None | Area fire damage |
+
+**AOE Rule**: For AOE spells, folds are calculated against the highest defense value in the room.
+
+**Component System**:
+- Components checked at cast initiation, before any folds begin
+- Required item must be in inventory, tagged with matching `component_tag`
+- Consumed on successful spell resolution
+
+**Spell Resolution** (when folds reach target):
+1. Final spellcasting roll vs target defense (physical or mental)
+2. Success: full effect applied
+3. Failure: fizzles, partial conviction cost kept
+4. Crit success (z > 2.0): double effect magnitude
+5. Crit failure (z < -2.0): spell backfires (self-damage or wild effect)
+
+**Changes**:
+1. Update `casting.go` with spell resolution logic
+2. Rewrite all spell YAML files with `base_folds`, `target_defense_type`, `component_tag`, `effect_type`, `effect_magnitude`
+3. Update `internal/spells/spells.go` struct with new fields
+4. Add `ComponentTag []string` to ItemSpec for component items
+5. Implement AOE defense calculation (scan room for highest defense)
+6. Connect spell effects to existing condition/damage/heal systems
+
+**Files to Modify** (~12 files, ~500 lines):
+1. `internal/combat/casting.go` — Spell resolution logic
+2. `_datafiles/world/dogmud/spells/*.yaml` — Full rewrite of all spell definitions
+3. `internal/spells/spells.go` — Update spell struct with new fields
+4. `internal/items/itemspec.go` — Add ComponentTag field
+5. Test files
+
+**Testing**:
+- [ ] **Manual Test**: Throw Stone — requires stone in inventory, multi-round, big damage
+- [ ] **Manual Test**: Heal self and an ally
+- [ ] **Manual Test**: Fireball — AOE hits all targets, folds use highest defense
+- [ ] **Manual Test**: Tame an animal mob — becomes passive
+- [ ] **Manual Test**: Crit success doubles effect; crit failure causes backfire
+- [ ] **Balance Test**: Completed spell hits harder than 6–10 equivalent physical attacks
+
+**Acceptance Criteria**:
+- All 8 core spells functional under the fold system
+- Components checked before casting begins, consumed on resolution
+- AOE uses highest room defense for fold calculation
+- Crit success and failure both trigger correctly
+- Taming spell works on animal-type mobs
+- All tests pass
+
+**Estimated Changes**: ~500 lines, 12 files
+
+---
+
+### Stage 11.5: Combat Integration & NPC Caster AI
+**Goal**: Fully integrate casting into the combat action economy. Update NPC AI with a caster archetype that uses the fold system.
+
+**Changes**:
+1. Casting initiation shares cooldown slot with special attacks (bash/trip/kick) — cannot start casting the same round a special move was used, and vice versa
+2. Add `caster` AI profile to `internal/combat/ai.go`:
+   - Prefers initiating casts over physical attacks when health is high
+   - Evaluates whether folds can plausibly complete before likely death
+   - Prioritizes defensive actions when being hit mid-cast (tries to maintain concentration)
+3. Add `{casting}` prompt tag: shows `Casting: Throw Stone [4/8 folds]` when actively casting
+
+**Files to Modify** (~4 files, ~200 lines):
+1. `internal/hooks/NewRound_DoCombat.go` — Casting shares special move cooldown slot
+2. `internal/combat/ai.go` — Add caster AI profile
+3. `internal/users/userrecord.prompt.go` — Add {casting} prompt tag
+4. Test files
+
+**Acceptance Criteria**:
+- Cannot initiate casting and use a special move in the same round
+- NPC casters use the fold system contextually
+- `{casting}` prompt tag displays fold progress while casting
+- All tests pass
+
+**Estimated Changes**: ~200 lines, 4 files
+
+---
+
+## Phase 12: Mutations
+
+> **Lore**: The Chrysalis infects all humans on Gaius. Over time the symbiosis
+> deepens, and beliefs made physical manifest as mutations. They are not chosen —
+> they emerge. And they always come with a cost.
+>
+> **Design**: Every mutation has a pro and a con. The system is fully data-driven:
+> adding new mutations requires only a YAML file, zero Go code changes.
+
+---
+
+### Stage 12.1: Mutation Framework & First 10 Mutations
+**Goal**: Build the mutation data system, acquisition mechanics, and implement 10 starter mutations with pro/con effects.
+
+**Data Structure**:
+```go
+type Mutation struct {
+    Id          string          // YAML key: "fast-reflexes"
+    Name        string          // Display: "Fast Reflexes"
+    Description string          // Flavor text
+    Pro         MutationEffect
+    Con         MutationEffect
+    Rarity      int             // 1–10, affects acquisition weight (higher = rarer)
+    Visual      string          // Added to character's look description
+}
+
+type MutationEffect struct {
+    Type   string  // "stat_multiplier", "stat_flat", "natural_armor", "natural_weapon", etc.
+    Target string  // Stat name or system target
+    Value  float64
+}
+```
+
+**First 10 Mutations**:
+
+| Mutation | Pro | Con | Visual |
+|----------|-----|-----|--------|
+| Fast Reflexes | +10% Dexterity | -5% Strength | "moves with uncanny speed" |
+| Tough Skin | Natural armor +5 | -5% Dexterity | "skin has a leathery, scaled texture" |
+| Dense Muscles | +15% Strength for damage | +10% stamina cost per action | "unnaturally thick musculature" |
+| Clawed Hands | Natural claw weapon, +10% grapple | -20% Bartering effectiveness | "fingers end in curved claws" |
+| Keen Eyes | +15% Perception | Penalty in bright outdoor light | "eyes catch light in an inhuman way" |
+| Iron Constitution | +20% max health | -15% stamina regen rate | "a dense, heavyset frame" |
+| Hollow Bones | -20% encumbrance penalty | -15% max health | "lighter than expected when touched" |
+| Adrenaline Surge | At <25% health: +20% damage and speed | Post-combat exhaustion (-50% stamina for 5 rounds) | "veins visibly pulse under the skin" |
+| Thermal Regulation | Fire/cold damage reduced 15% | None (minor mutation) | "skin radiates unusual warmth" |
+| Pheromone Glands | +15% Charisma for Bartering | Predatory mobs more likely to aggro you | "a faint musk that most find strangely compelling" |
+
+**Acquisition Mechanics**:
+- `MutationProgress float64` on Character (`yaml:"-"`) — increments each combat round during play
+- When MutationProgress crosses a threshold: roll weighted by Rarity against mutation pool
+- Cannot acquire duplicates; maximum mutations configurable (default 5)
+- On acquisition: announce to player, apply effects permanently to character
+
+**Commands**:
+- `mutations` — list active mutations with descriptions and current level
+- Mutations section added to `score` output
+
+**Files to Create/Modify** (~10 files, ~450 lines):
+1. `internal/mutations/mutations.go` — New package: struct, registry, effect application
+2. `internal/mutations/mutations_test.go`
+3. `internal/characters/character.go` — Add `Mutations map[string]int` (ID→level), `MutationProgress float64`
+4. `internal/hooks/NewRound_UserRoundTick.go` — Tick MutationProgress, trigger acquisition check
+5. `internal/usercommands/mutations.go` — New command
+6. `internal/usercommands/score.go` — Add mutations section
+7. `_datafiles/world/dogmud/mutations/*.yaml` — 10 mutation definition files
+8. Test files
+
+**Testing**:
+- [ ] **Unit Tests**: Effect application for each effect type (stat_multiplier, natural_weapon, etc.)
+- [ ] **Unit Tests**: Acquisition roll weighting by Rarity
+- [ ] **Manual Test**: Play through combat — mutation eventually acquired
+- [ ] **Manual Test**: `mutations` command lists active mutations correctly
+- [ ] **Manual Test**: Clawed Hands gives natural weapon in unarmed combat
+- [ ] **Manual Test**: Adrenaline Surge triggers correctly at low health
+- [ ] **Manual Test**: Tough Skin reduces incoming damage
+
+**Acceptance Criteria**:
+- 10 mutations defined with correct pro/con effects
+- Acquisition fires automatically during normal gameplay
+- Adding a new mutation requires only a YAML file — zero Go code changes
+- `mutations` command and score section display active mutations
+- All tests pass
+
+**Estimated Changes**: ~450 lines, 10 files
+
+---
+
+### Stage 12.2: Mutation Deepening & Visual Integration
+**Goal**: Allow mutations to strengthen over time (Level 1–3). Integrate mutation visuals into character descriptions.
+
+**Mutation Deepening**:
+- Each acquired mutation has a `Level int` (1–3) stored in `Mutations map[string]int`
+- Same MutationProgress mechanic triggers level-up for existing mutations (threshold higher for each level)
+- Level 2 and 3 scale both pro and con effect values proportionally
+- Example: Tough Skin L1: +5 armor / -5% Dex; L3: +15 armor / -15% Dex
+
+**Visual Integration**:
+- `look <player>` includes mutation Visual strings naturally in their description
+- Multiple mutations stack their visual descriptions
+- `score` shows mutation name + current level
+
+**Configuration Preparation** (for Phase 14):
+- `MutationBaseRate` and `MutationMaxCount` surfaced as named constants ready to be wired into balance config
+
+**Files to Modify** (~5 files, ~200 lines):
+1. `internal/mutations/mutations.go` — Add deepening logic using Level field
+2. `internal/characters/character.go` — Level already in map[string]int from Stage 12.1
+3. `internal/hooks/NewRound_UserRoundTick.go` — Add deepening check alongside acquisition
+4. `_datafiles/world/dogmud/mutations/*.yaml` — Add level 2/3 effect values per mutation
+5. Test files
+
+**Acceptance Criteria**:
+- Mutations deepen from Level 1 → 2 → 3 over extended play
+- Level 3 mutations are noticeably more impactful (both pro and con)
+- Mutation visuals appear in `look` descriptions
+- All tests pass
+
+**Estimated Changes**: ~200 lines, 5 files
+
+---
+
+## Phase 13: Basic Crafting
+
+> **Goal**: A crafting system that is functional, extensible, and tutorial-ready.
+> Each crafting skill has at least two working recipes. Adding new recipes later
+> requires only a YAML file — zero Go code changes.
+
+---
+
+### Stage 13.1: Crafting Framework
+**Goal**: Build the core crafting system: new crafting skills, recipe data structure, crafting station support, and the `craft` command.
+
+**New Crafting Skills** (added to the 9 DOG core skills — 11 total):
+
+| Skill | Primary Stat | Covers |
+|-------|-------------|--------|
+| blacksmithing | Strength | Metal weapons, armor, tools |
+| alchemy | Perception | Potions, salves, medicines from gathered herbs |
+
+**Recipe YAML Format** (`_datafiles/world/dogmud/recipes/<skill>/<recipe>.yaml`):
+```yaml
+id: iron-dagger
+name: Iron Dagger
+skill: blacksmithing
+skill_minimum: 10
+station: forge
+time_rounds: 3
+ingredients:
+  - item_tag: iron-ingot
+    quantity: 1
+  - item_tag: leather-strip
+    quantity: 1
+output:
+  item_id: iron-dagger
+  quantity: 1
+success_message: "You hammer the iron into a sharp blade and wrap the handle tightly."
+failure_message: "The metal cracks from uneven heating. The materials are ruined."
+```
+
+**Craft Command**:
+- `craft list` — show all recipes learnable/known at current skill levels
+- `craft <recipe name>` — attempt craft if at correct station with required materials
+- Crafting takes N rounds (interruptible if attacked, like casting)
+
+**Crafting Stations**:
+- Room YAML gets optional `station` flag: `forge`, `alchemy_bench`, `workbench`
+- Recipes requiring a station check the current room's station type
+
+**Files to Create/Modify** (~10 files, ~450 lines):
+1. `internal/crafting/crafting.go` — New package: recipe loading, checks, execution
+2. `internal/crafting/crafting_test.go`
+3. `internal/skills/skills.go` — Add Blacksmithing and Alchemy definitions
+4. `internal/characters/character.go` — Add CraftingState (similar to CastingState)
+5. `internal/usercommands/craft.go` — New command
+6. `internal/rooms/rooms.go` — Add Station field to room struct
+7. `_datafiles/world/dogmud/recipes/` — New directory
+8. Test files
+
+**Acceptance Criteria**:
+- `craft list` shows available recipes for character's current skill levels
+- Crafting executes over multiple rounds, interruptible by combat
+- Recipes require correct station type and materials in inventory
+- Failed crafts consume materials (lower chance at low skill)
+- Adding a new recipe requires only a YAML file — zero Go code changes
+- All tests pass
+
+**Estimated Changes**: ~450 lines, 10 files
+
+---
+
+### Stage 13.2: First Recipes & Foraging Integration
+**Goal**: Implement at least two recipes per crafting skill. Connect Foraging output to crafting as the primary material source. Ensure recipes are tutorial-ready.
+
+**First Recipes**:
+
+| Skill | Recipe | Ingredients | Output |
+|-------|--------|-------------|--------|
+| Blacksmithing | Iron Dagger | 1 iron ingot, 1 leather strip | iron dagger (weapon) |
+| Blacksmithing | Iron Shield | 2 iron ingots, 1 wooden plank | iron shield (off-hand) |
+| Alchemy | Healing Poultice | 2 healer's root, 1 cloth strip | healing poultice (consumable, restores health) |
+| Alchemy | Stamina Draught | 2 bitter thistle, 1 small vial | stamina draught (consumable, restores stamina) |
+
+**Foraging → Materials**:
+- Foraging now yields typed material items tagged for crafting use:
+  - Forest/field: healer's root, bitter thistle, cloth fiber
+  - Rocky terrain: iron ore (smelted at forge into iron ingot)
+  - General drops: leather strip (looted from animals), small vial (purchasable)
+- Each material item has a `component_tag` matching recipe ingredient tags
+
+**Tutorial Integration**:
+- Forge room and alchemy bench rooms flagged in tutorial area plan (Phase 16)
+- Each recipe teachable via NPC `teach <recipe>` interaction
+- New help file: `help crafting`
+
+**Files to Create/Modify** (~12 files, ~300 lines):
+1. `_datafiles/world/dogmud/recipes/blacksmithing/` — 2 recipe YAML files
+2. `_datafiles/world/dogmud/recipes/alchemy/` — 2 recipe YAML files
+3. `_datafiles/world/dogmud/items/materials/` — Material item definitions
+4. `internal/usercommands/forage.go` — Update to yield typed material items
+5. `_datafiles/world/dogmud/templates/help/crafting.template` — New help file
+6. Test files
+
+**Acceptance Criteria**:
+- All 4 recipes work end-to-end (forage → craft → usable item)
+- Foraging yields correctly-tagged materials
+- All recipes teachable by an NPC
+- All tests pass
+
+**Estimated Changes**: ~300 lines, 12 files
+
+---
+
+## Phase 14: Balance Configuration
+
+> **Why here**: All core systems now exist — combat, magic, mutations, crafting,
+> and progression. We know exactly what needs to be tunable. Building this
+> config earlier would have required constant revision as new systems were added.
+>
+> **Design**: One YAML file, well-organized with section headers. Big knobs at
+> the top of each section for broad adjustments; granular per-element knobs
+> below. Heavily commented. New systems add a new section — existing sections
+> are never restructured, keeping the file stable and easy to reason about.
+
+---
+
+### Stage 14.1: Central Balance Configuration File
+**Goal**: Create `balance.yaml` — a single comprehensive config file covering all balance-relevant constants across all systems. Audit the codebase for hardcoded values and surface them as config entries.
+
+**Config File Structure** (`_datafiles/world/dogmud/balance.yaml`):
+```yaml
+# =============================================================================
+# DOGMud Balance Configuration
+# =============================================================================
+# BIG KNOBS: adjust these first — they scale entire systems
+# SMALL KNOBS: per-element tuning after big knobs feel right
+# New systems: add a new section below, do not modify existing sections
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# COMBAT
+# -----------------------------------------------------------------------------
+combat:
+  # Big knobs
+  global_damage_multiplier: 1.0        # Scale all damage up/down
+  global_defense_multiplier: 1.0       # Scale all avoidance rates
+  global_stamina_drain_multiplier: 1.0 # Scale all stamina costs in combat
+  # Defense rates
+  dodge_base_multiplier: 0.9
+  parry_base_multiplier: 0.9
+  block_base_multiplier: 0.9
+  # Critical hits
+  crit_success_threshold: 2.0          # z-score: above = crit success (~2.3%)
+  crit_failure_threshold: -2.0         # z-score: below = crit failure (~2.3%)
+  crit_damage_multiplier: 2.0
+  fumble_self_damage_multiplier: 0.25
+  # Stamina costs per action
+  attack_stamina_cost: 5
+  dodge_stamina_cost: 3
+  parry_stamina_cost: 3
+  block_stamina_cost: 2
+  # Grapple
+  grapple_prone_defense_penalty: 0.3
+  grapple_third_party_penalty: 0.3
+
+# -----------------------------------------------------------------------------
+# PROGRESSION
+# -----------------------------------------------------------------------------
+progression:
+  # Big knobs
+  global_skill_progression_multiplier: 1.0
+  global_stat_progression_multiplier: 1.0
+  # Skill soft cap behaviour
+  skill_uses_per_virtual_rank: 25
+  skill_base_progression_chance: 0.30
+  skill_soft_cap: 50
+  # Per-skill multipliers (override global; higher = progresses faster per use)
+  skill_multipliers:
+    weapon-combat: 0.3      # Fires many times per round — slowed down
+    unarmed-combat: 0.3
+    ranged-combat: 0.3
+    spellcasting: 0.5
+    first-aid: 2.0          # Used rarely — sped up
+    stealth: 1.0
+    tracking: 2.0
+    bartering: 2.0
+    foraging: 2.0
+    blacksmithing: 2.0
+    alchemy: 2.0
+  # Stat progression
+  stat_uses_to_progress: 50
+  stat_natural_max: 200
+  # Per-stat rates (relative to each other)
+  stat_progression_rates:
+    strength: 1.0
+    dexterity: 1.0
+    perception: 1.0
+    vitality: 1.0
+    willpower: 1.0
+    charisma: 1.0
+
+# -----------------------------------------------------------------------------
+# MAGIC
+# -----------------------------------------------------------------------------
+magic:
+  # Big knobs
+  global_spell_damage_multiplier: 1.0
+  global_fold_cost_multiplier: 1.0     # Scale folds needed for all spells
+  # Power source fold-per-round multipliers
+  source_sunlight_multiplier: 1.0
+  source_flame_multiplier: 1.5
+  source_health_multiplier: 2.0
+  source_health_hp_cost_per_fold: 5    # HP cost when using health as source
+  # Concentration
+  concentration_check_base_difficulty: 50
+  concentration_failure_penalty_rounds: 1
+  # Spell resolution
+  spell_crit_damage_multiplier: 2.0
+  spell_backfire_self_damage_pct: 0.25 # Fraction of spell damage on backfire
+
+# -----------------------------------------------------------------------------
+# MUTATIONS
+# -----------------------------------------------------------------------------
+mutations:
+  # Big knobs
+  global_acquisition_rate_multiplier: 1.0   # Scale acquisition speed globally
+  global_deepening_rate_multiplier: 1.0     # Scale how fast mutations level up
+  max_mutations_per_character: 5
+  # Per-mutation rarity weights defined in individual mutation YAML files
+
+# -----------------------------------------------------------------------------
+# CRAFTING
+# -----------------------------------------------------------------------------
+crafting:
+  global_success_rate_multiplier: 1.0
+  consume_materials_on_failure: true        # If false, materials returned on fail
+  output_quality_variance: 0.1             # ±10% variance in crafted item stats
+
+# -----------------------------------------------------------------------------
+# STAMINA
+# -----------------------------------------------------------------------------
+stamina:
+  move_flat_terrain_cost: 2
+  move_rough_terrain_multiplier: 2.5
+  move_encumbrance_multiplier: 1.5
+  out_of_combat_regen_per_round: 5
+  in_combat_regen_per_round: 1
+
+# -----------------------------------------------------------------------------
+# ECONOMY
+# -----------------------------------------------------------------------------
+economy:
+  barter_price_variance: 0.20              # ±20% price swing from bartering
+  shop_markup_multiplier: 1.5              # Shop prices vs base item value
+```
+
+**Implementation**:
+1. Create `_datafiles/world/dogmud/balance.yaml` with the structure above
+2. Create `internal/configs/config.balance.go` — load and expose all balance values
+3. Audit all hardcoded constants across combat, magic, progression, mutations, crafting
+4. Replace each hardcoded value with a reference to the loaded balance config
+5. Verify every key in balance.yaml has an explanatory comment
+
+**Files to Modify** (~18 files, ~350 lines):
+1. `internal/configs/config.balance.go` — New file: BalanceConfig struct + loader
+2. `_datafiles/world/dogmud/balance.yaml` — New file
+3. `internal/combat/calculations.go` — Replace hardcoded constants
+4. `internal/characters/progression.go` — Replace hardcoded constants
+5. `internal/combat/casting.go` — Replace hardcoded constants
+6. `internal/mutations/mutations.go` — Replace hardcoded constants
+7. `internal/crafting/crafting.go` — Replace hardcoded constants
+8. Other files with hardcoded balance values discovered during audit
+
+**Testing**:
+- [ ] **Unit Tests**: Config loads correctly, all fields populate with expected defaults
+- [ ] **Manual Test**: Set `global_damage_multiplier: 2.0` — verify noticeably faster fights
+- [ ] **Manual Test**: Set `global_skill_progression_multiplier: 5.0` — verify faster skill gain
+- [ ] **Grep Test**: Search codebase for remaining hardcoded balance constants
+- [ ] **Regression Test**: Default config values produce identical gameplay behavior as before
+
+**Acceptance Criteria**:
+- All balance constants sourced from `balance.yaml`
+- No hardcoded balance values remain in Go files
+- Every config key has an explanatory comment in the YAML
+- Adding a new configurable value requires only: field in struct + line in YAML
+- Default values produce the same gameplay as before Phase 14
+- All tests pass
+
+**Estimated Changes**: ~350 lines, 18 files
+
+---
+
+## Phase 15: Dev Tools
+
+> **Goal**: Give developers (human and AI) the tools to build zones efficiently.
+> Zone consistency checking catches silent broken-exit bugs before they reach
+> players. The grid generator scaffolds a zone in seconds. The JSON API makes
+> all tools callable by AI agents building zones from prompts.
+
+---
+
+### Stage 15.1: Zone Consistency Checker & Grid Generator
+**Goal**: Admin commands to verify cardinal exit consistency in a zone, and to generate a rectangular grid of rooms with automatic bidirectional exits.
+
+**Zone Consistency Checker** (`devtool check <zone>`):
+- Scans all rooms in the named zone directory
+- For each exit in each room: verifies the destination room has the matching reverse exit
+- Reports: missing reverse exits, orphan rooms (no in/out connections), dead exits (invalid IDs)
+- Example output:
+  ```
+  Zone: merchants-quarter — 20 rooms scanned
+  ✓ Room 100–102: all exits consistent
+  ✗ Room 103 (north → 104): Room 104 missing south exit
+  ✗ Room 107: orphan — no connections in or out
+  2 issues found.
+  ```
+
+**Grid Generator** (`devtool makezone <zone_name> <width> <height>`):
+- Creates `_datafiles/world/dogmud/rooms/<zone_name>/` directory
+- Creates W×H rooms with sequential auto-assigned IDs
+- Room names: `"<zone_name> - Room 1"`, `"<zone_name> - Room 2"`, etc.
+- Default description: `"A room in <zone_name>. This area has not yet been described."`
+- Automatic bidirectional cardinal exits connecting the grid (N/S/E/W)
+- Summary: `"Created 20 rooms in 'merchants-quarter' (4×5 grid). IDs 100–119."`
+
+**Files to Create/Modify** (~6 files, ~350 lines):
+1. `internal/usercommands/devtool.go` — New command with subcommand dispatch
+2. `internal/devtools/consistency.go` — Zone consistency checker
+3. `internal/devtools/gridgen.go` — Grid room generator
+4. `internal/rooms/rooms.go` — Room YAML serializer (write room to file)
+5. Test files
+
+**Acceptance Criteria**:
+- `devtool check <zone>` accurately reports all exit inconsistencies
+- `devtool makezone <name> <W> <H>` creates a working grid zone
+- Generated zones load without errors and pass their own consistency check
+- Dev tools require admin flag — not accessible to regular players
+- All tests pass
+
+**Estimated Changes**: ~350 lines, 6 files
+
+---
+
+### Stage 15.2: Zone Linking & AI-Callable JSON API
+**Goal**: Tool for linking rooms across zones. Expose all dev tools via structured JSON input/output so AI agents can build zones programmatically.
+
+**Zone Linking** (`devtool linkzones <zoneA>/<roomA_id> <direction> <zoneB>/<roomB_id>`):
+- Creates bidirectional exit between a room in zone A and a room in zone B
+- Validates both rooms exist before creating links
+- Runs consistency check on both rooms after linking
+- Example: `devtool linkzones startland/1 east merchants-quarter/100`
+
+**AI-Callable JSON API**:
+All dev tools accept a JSON command via `devtool json <json_string>` for AI agent access:
+```json
+{"action": "makezone", "params": {"name": "merchants-quarter", "width": 4, "height": 5}}
+```
+```json
+{"action": "linkzones", "params": {"zone_a": "startland", "room_a": 1, "direction": "east", "zone_b": "merchants-quarter", "room_b": 100}}
+```
+```json
+{"action": "check", "params": {"zone": "merchants-quarter"}}
+```
+
+Response format:
+```json
+{"success": true, "action": "makezone", "result": {"rooms_created": 20, "first_room_id": 100, "last_room_id": 119}}
+```
+
+Adding a new dev tool requires only registering one action handler in the dispatch table — no API structural changes.
+
+**Files to Create/Modify** (~5 files, ~300 lines):
+1. `internal/devtools/api.go` — New file: JSON dispatch layer
+2. `internal/devtools/linkzones.go` — Zone linking logic
+3. `internal/usercommands/devtool.go` — Add `devtool json <json>` input mode
+4. `docs/DEVTOOLS_API.md` — JSON API reference for AI agent developers
+5. Test files
+
+**Acceptance Criteria**:
+- Zone linking creates correct bidirectional exits between zones with validation
+- All dev tools callable via `devtool json <json>` input
+- JSON responses structured consistently (`success`, `action`, `result`/`error`)
+- New tools require only one handler registration — no API restructuring
+- All tests pass
+
+**Estimated Changes**: ~300 lines, 5 files
+
+---
+
+## Phase 16: Tutorial Area (Sanctum Basin)
+
+> **Goal**: Build the starting area using the Phase 15 dev tools. The tutorial
+> teaches all core mechanics: movement, combat, magic, crafting, mutations.
+> Players leave with a functional character and an understanding of all core
+> systems before entering the open world.
+
+---
+
+### Stage 16.1: Sanctum Basin Zone Layout
+**Goal**: Generate the zone skeleton using dev tools, then flesh out rooms with descriptions, terrain flags, station placements, and NPC/mob definitions.
+
+**Zone Design**:
+- Safe interior: town square, crafting stations (forge room, alchemy bench room), shop
+- Training yard: combat practice against scaled mobs (easy → medium difficulty)
+- Outdoor areas: foraging zones with different terrain/biome types
+- Tutorial boss room: mid-difficulty encounter teaching full combat flow
+- Tutorial NPC at each station teaching the relevant skill and first recipe
+
+**Build Process**:
+1. `devtool makezone sanctum-basin 5 4` — generate 20-room grid skeleton
+2. Customize each room: write descriptions, set terrain flags, add station flags, place mobs
+3. `devtool linkzones sanctum-basin/<exit_room> <dir> startland/<entry_room>` — connect to world
+4. `devtool check sanctum-basin` — verify consistency before shipping
+
+**Estimated Changes**: ~30 room YAML files, ~12 mob/NPC definitions
+
+---
+
+### Stage 16.2: Tutorial Quest Flow & NPC Dialogue
+**Goal**: Wire up a linear tutorial quest flow. Each station NPC demonstrates the relevant system and rewards progression on task completion.
+
+**Tutorial Flow**:
+1. Arrive → Greeter NPC introduces the world and The Chrysalis lore
+2. Combat trainer → teaches weapon-combat and unarmed-combat basics via sparring
+3. Blacksmith trainer → teaches iron dagger recipe (`teach iron-dagger`)
+4. Alchemist trainer → teaches healing poultice recipe (`teach healing-poultice`)
+5. Wilderness guide → teaches foraging (yields tutorial materials) and tracking
+6. Magic elder → teaches fold casting basics via Throw Stone demonstration
+7. Exit gate → unlocks after completing all trainer tasks
+
+**Estimated Changes**: ~15 NPC dialogue YAML files, ~7 quest definition files
+
+---
+
+## Phase 17: LLM Integration & AI NPCs
+
+> **Foundation now in place**: All core systems are stable, the dev tools JSON API
+> provides a programmatic zone-building interface, and the balance config allows
+> external tuning. LLM agents can now interact with a complete, well-structured game.
+
+The stage structure and full design details for Phase 17 carry forward from the original Phase 11 plan, renumbered as Stages 17.1–17.4:
+
+- **Stage 17.1**: GMCP Enhancement for Full State Coverage
+- **Stage 17.2**: Rule-Based NPC Dialogue Framework
+- **Stage 17.3**: Local LLM Integration (Optional — requires separate LLM service)
+- **Stage 17.4**: Cloud API Integration (Optional — requires API budget)
+
+*(See original Stage 11.1–11.4 entries above for full design, file lists, and acceptance criteria.)*
+
+---
 
 ### Stage 11.1: GMCP Enhancement for Full State Coverage
 **Goal**: Expand the existing GMCP (Generic Mud Communication Protocol) support to provide complete, structured game state data. This enables external LLM agents to "play" the MUD programmatically and provides rich context for AI decision-making.
@@ -3023,9 +3959,15 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 7: Defense & Combat | 5 stages (7.1–7.5) | 26 hours | **Complete** |
 | Phase 8: Grappling | 5 stages (8.1–8.5) | 24 hours | **8.1–8.5 Complete** |
 | Phase 9: Combat Presentation | 8 stages (9.1–9.8) | ~40 hours | **9.1–9.8 Complete** |
-| Phase 10: Balance Pass | 1 stage (10.1) | 8 hours | Not Started |
-| Phase 11: LLM Integration | 4 stages (11.1–11.4) | 35 hours | Not Started |
-| **Total** | **43 stages** | **202 hours** | |
+| Phase 10: Skill System Cleanup | 2 stages (10.1–10.2) | 12 hours | Not Started |
+| Phase 11: Magic Rework | 5 stages (11.1–11.5) | 30 hours | Not Started |
+| Phase 12: Mutations | 2 stages (12.1–12.2) | 16 hours | Not Started |
+| Phase 13: Basic Crafting | 2 stages (13.1–13.2) | 16 hours | Not Started |
+| Phase 14: Balance Config | 1 stage (14.1) | 8 hours | Not Started |
+| Phase 15: Dev Tools | 2 stages (15.1–15.2) | 12 hours | Not Started |
+| Phase 16: Tutorial Area | 2 stages (16.1–16.2) | 30 hours | Not Started |
+| Phase 17: LLM Integration | 4 stages (17.1–17.4) | 35 hours | Not Started |
+| **Total** | **~57 stages** | **~361 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
 
@@ -3046,23 +3988,30 @@ Assuming ~4 hours per stage (implement + test):
 - [ ] Documentation updated
 
 ### Overall
-- [ ] All 10 phases complete
+- [ ] All 17 phases complete
 - [ ] Core DOGMud mechanics functional
 - [ ] Combat is descriptive, immersive, and balanced
-- [ ] Migration path from GoMud verified
-- [ ] Ready for world building and content creation
+- [ ] Magic system is distinctive and working
+- [ ] Mutations, crafting, and progression feel cohesive
+- [ ] Tutorial area teaches all core systems
+- [ ] Dev tools enable AI-assisted zone building
+- [ ] Ready for world expansion and content creation
 
 ---
 
 ## Next Steps After Core Mechanics
 
-Once core mechanics (Phases 1-11) are complete:
-1. **Phase 12**: Tutorial Area (Sanctum Basin)
-2. **Phase 13**: Mutation System
-3. **Phase 14**: Economy & Crafting
-4. **Phase 15**: World Building (Cities, NPCs)
+Once all 17 phases are complete, the game is ready for content and world expansion:
 
-These phases will be detailed in a separate plan once core mechanics are stable.
+1. **World expansion** — additional zones, cities, factions, and regional lore
+2. **Economy depth** — markets, supply/demand, trade routes, player economy
+3. **Extended mutation tree** — 50+ mutations with synergies and rare combinations
+4. **Extended spell library** — 30+ spells across all four schools (Elemental, Enhancement, Mental, Vital)
+5. **Extended crafting** — additional skills (tailoring, woodworking), hundreds of recipes
+6. **Faction & reputation system** — NPC factions that remember player actions
+7. **Quest system** — multi-stage quests with choices and consequences
+
+These phases will be detailed in a separate expansion plan.
 
 ---
 
@@ -3076,7 +4025,7 @@ Issues discovered during 2026-02-12 playtest session, mapped to stages:
 | 2 | Attack count formula needs rework | 5.3 |
 | 3 | Skill soft cap not working; need per-skill multipliers | 4.6 |
 | 4 | Unarmed damage doesn't scale; needs grappling | 7.3, 8.1, 8.2 |
-| 5 | Combat takes too long | 10.1 |
+| 5 | Combat takes too long | 14.1 (balance config knobs) |
 | 6 | Crit success/failure rate imbalance or messaging | 4.7 |
 | 7 | Commands like equipping armor should be disabled in combat | 7.2 |
 | 8 | Defense should be dodge/parry/block, not single roll | 7.1 |

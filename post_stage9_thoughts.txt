@@ -1,0 +1,50 @@
+Thoughts on the magic system:
+Ditch psionics as a separate system - magic on Gaius will be somewhat psionic in nature
+Stealing a bit from the book “First Binding", the progression of casting a spell would be:
+Gather your will, clear your thoughts (Willpower check). Visualize the spell’s outcome
+Bisect your mind, doubling your inner vision of the world around you
+Bisect again and again until you reach the requisite number of “folds” necessary to enact a spell -> 2, 4, 8, 16, 32, etc. Each bisection takes more conviction and harder willpower checks
+The number of bisections you can do each round is determined like the number of attacks, but using your perception/spellcasting skill. It is also affected by a multiplier depending on the power source (see below)
+The number of bisections needed is calculated at the start of spell casting based upon the base cost of the skill +  the target’s spell defense (willpower based)
+AOE spells have the number of folds calculated based on the highest defense in the room
+Doing folds requires a power source (sunlight (slow), a flame(faster), the caster’s health(fastest)) in addition to the conviction cost for the folds
+Once the number of folds is achieved, there is a spellcasting check again the target(s) defense (physical defense for something like a earth spear, mental defense for other stuff)
+Spells hit HARD if they can be completed. It is a glass cannon style of play, since your casting can be interrupted by loss of focus, by being attacked/knocked down, etc if the caster fails to maintain concentration
+Some spells like throwing a stone/projectile require a component in addition to the power source 
+Example spellcasting in combat for the spell “Throw Stone”
+From the caster’s perspective:
+Round 1:
+“You gather your will and form an image of the world where the stone in your hand flies into <target> at high speed.”
+Number of folds is calculated:
+Base spell cost: 4
+Target defense is 100 (willpower) + 15 (spellcasting rank) 115. Multiplier is 1.15
+Folds needed: 8 (rounds up to the next bisection)
+Round 2:
+Number of bisections the caster can do this round is calculated
+Perception (100) + spellcasting 25 = 1.25 * source (flame 1.5)  = 1.875, rounded to 2
+“You fold your inner vision of reality 2 times. You now hold 4 folds.”
+<target> attacks and hits. Caster makes a concentration check and passes:
+“You maintain concentration.” added to the end of the attack/damage message
+Round 3:
+Number of bisections was already calculated at 2, but we only need one more fold
+“You fold your inner vision of reality 1 time. You now hold 8 folds.”
+“You impose your will on reality. A small stone flies from your hand towards <target>, devastating them!”
+Attack roll against their physical defense was made, they failed dodge/parry/block. Damage roll was made. This spell would do ~ as much as 6-10 physical attacks to compensate for how hard it is to resolve and the casting time.
+Round 4:
+Caster defaults back over to their normal physical attacks (unarmed/melee weapons/ranged weapons). Initiating casting is on the same cooldown as the special attacks
+Permanent changes to the environment, especially to another unwilling target, should require a lot of folds. Bending reality in opposition to someone else’s will is hard. Creating a permanent anomaly (ex. A magic bag of holding that is bigger inside than out/pocket dimension) is really hard. Alterations to your own body are easier, but still hard. 
+
+Pieces we need in place before we can do the AI agents bit:
+Magic system rework per above
+Full skills/spells rework with progression hooked up. Basic crafting implemented
+Mutations
+Configurable balance knobs in a single file with configs for:
+Progression as a whole
+Stats as a whole
+Individual stats
+Skills as a whole
+Individual skills
+Mutation rate as a whole
+Mutation rate/liklihood per mutation
+Dev tools for building out the mud, with hooks for an AI dev
+A good baseline starting area with tutorials
