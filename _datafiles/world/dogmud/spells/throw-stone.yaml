@@ -1,0 +1,15 @@
+spellid: throw-stone
+name: Throw Stone
+description: Throws a stone at a target with magical force.
+type: harmsingle
+schools:
+  - elemental
+cost: 2
+waitrounds: 1
+difficulty: 0
+primarystat: willpower
+base_folds: 4
+target_defense_type: physical
+component_tag: stone
+effect_type: damage
+effect_magnitude: 30

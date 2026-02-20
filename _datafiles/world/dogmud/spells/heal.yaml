@@ -9,3 +9,6 @@ cost: 3
 waitrounds: 2
 difficulty: 0
 primarystat: willpower
+base_folds: 4
+effect_type: heal
+effect_magnitude: 25

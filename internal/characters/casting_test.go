@@ -92,3 +92,20 @@ func TestCalcConcentrationChance(t *testing.T) {
 		}
 	}
 }
+
+func TestCalcSpellAttack(t *testing.T) {
+	tests := []struct {
+		will, skill int
+		expected    float64
+	}{
+		{100, 0, 100.0},
+		{100, 5, 115.0},
+		{150, 10, 180.0},
+		{0, 0, 0.0},
+	}
+	for _, tt := range tests {
+		if got := CalcSpellAttack(tt.will, tt.skill); got != tt.expected {
+			t.Errorf("CalcSpellAttack(%d,%d)=%v want %v", tt.will, tt.skill, got, tt.expected)
+		}
+	}
+}

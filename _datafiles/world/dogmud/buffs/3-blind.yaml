@@ -1,0 +1,7 @@
+buffid: 3
+name: Blinded
+description: Your vision is obscured, hindering your senses.
+triggerrate: 1 round
+triggercount: 3
+statmods:
+  perception: -40

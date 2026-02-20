@@ -7,6 +7,7 @@ const (
 	ConditionRecoveryPenalty  ConditionType = iota // Limits attacks to 1 this round (prone recovery)
 	ConditionDefensePenalty                        // Reduces defense this round (failed grapple exposure)
 	ConditionGrappleController                     // Is the active grapple controller
+	ConditionShield                                // Magical armor barrier (+physical armor, Stage 11.4)
 )
 
 // CombatCondition represents a single active combat state on a character.
@@ -26,6 +27,8 @@ func (c ConditionType) DisplayName() string {
 		return "Defense Penalty"
 	case ConditionGrappleController:
 		return "Grapple Control"
+	case ConditionShield:
+		return "Minor Shield"
 	default:
 		return "Unknown Condition"
 	}
@@ -40,6 +43,8 @@ func (c ConditionType) Description() string {
 		return "Defense reduced 15% (off-balance, exposed)"
 	case ConditionGrappleController:
 		return "Active grapple controller"
+	case ConditionShield:
+		return "Magical armor barrier (+physical armor)"
 	default:
 		return ""
 	}
@@ -84,6 +89,30 @@ func (c *Character) RemoveCondition(typ ConditionType) {
 			return
 		}
 	}
+}
+
+// DecrementCondition subtracts 1 from the Duration of the matching condition.
+// Does nothing if the condition is absent or permanent (Duration == 0).
+func (c *Character) DecrementCondition(typ ConditionType) {
+	for i, cond := range c.Conditions {
+		if cond.Type == typ {
+			if cond.Duration > 0 {
+				c.Conditions[i].Duration--
+			}
+			return
+		}
+	}
+}
+
+// GetConditionDuration returns the current Duration for the given condition type,
+// or 0 if the condition is absent.
+func (c *Character) GetConditionDuration(typ ConditionType) int {
+	for _, cond := range c.Conditions {
+		if cond.Type == typ {
+			return cond.Duration
+		}
+	}
+	return 0
 }
 
 // TickConditions decrements Duration on all timed conditions and removes any that reach 0.

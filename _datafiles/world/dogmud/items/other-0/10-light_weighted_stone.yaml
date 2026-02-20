@@ -8,3 +8,4 @@ subtype: mundane
 weight: 5.0  # 5 lbs - light encumbrance testing
 uses: 0
 value: 0
+component_tag: stone

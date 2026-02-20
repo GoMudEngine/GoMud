@@ -8,3 +8,7 @@ cost: 10
 waitrounds: 1
 difficulty: 50
 primarystat: willpower
+base_folds: 4
+target_defense_type: physical
+effect_type: damage
+effect_magnitude: 12
