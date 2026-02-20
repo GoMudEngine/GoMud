@@ -9,7 +9,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -29,25 +28,27 @@ Level 4 - You are always aware of hidden players/mobs in the area
 */
 func Search(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
-	skillLevel := user.Character.GetSkillLevel(skills.Search)
-
-	if skillLevel == 0 {
-		user.SendText("You don't know how to search.")
-		return true, fmt.Errorf("you don't know how to search")
+	// Search is a free command — no skill gate.
+	// Depth scales with Perception (skill tiers 1–4).
+	perceptionAdj := user.Character.Stats.Perception.ValueAdj
+	skillLevel := 1
+	if perceptionAdj >= 75 {
+		skillLevel = 4
+	} else if perceptionAdj >= 50 {
+		skillLevel = 3
+	} else if perceptionAdj >= 25 {
+		skillLevel = 2
 	}
 
-	if !user.Character.TryCooldown(skills.Search.String(), "2 rounds") {
+	if !user.Character.TryCooldown(`search`, "2 rounds") {
 		user.SendText(
-			fmt.Sprintf("You need to wait %d more rounds to use that skill again.", user.Character.GetCooldown(skills.Search.String())),
+			fmt.Sprintf("You need to wait %d more rounds to do that again.", user.Character.GetCooldown(`search`)),
 		)
 		return true, fmt.Errorf("you're doing that too often")
 	}
 
-	// Fire an event that a skill has been used
-	events.AddToQueue(events.SkillUsed{user.UserId, skills.Search, ``})
-
-	// 10% + 1% for every 2 charisma
-	searchOddsIn100 := 10 + int(math.Ceil(float64(user.Character.Stats.Charisma.ValueAdj)/2))
+	// Search odds based on Perception stat
+	searchOddsIn100 := 10 + int(math.Ceil(float64(perceptionAdj)/2))
 
 	user.SendText("You snoop around for a bit...\n")
 	room.SendText(

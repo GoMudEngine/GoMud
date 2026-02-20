@@ -19,28 +19,14 @@ func (s SkillTag) Sub(subtag string) SkillTag {
 }
 
 const (
-	Cast        SkillTag = `cast`        // [LVL 1-4] Frostfang Magic Academy - ROOM 879
-	DualWield   SkillTag = `dual-wield`  // [LVL 1-4] Fishermans house - ROOM 758
-	Map         SkillTag = `map`         // [LVL 1-4] Frostwarden Rangers - ROOM 74
-	Enchant     SkillTag = `enchant`     // TODO
-	Peep        SkillTag = `peep`        // TODO
-	Inspect     SkillTag = `inspect`     // TODO
-	Portal      SkillTag = `portal`      // [LVL 1] Touch the obelisk in ROOOM 871
-	Search      SkillTag = `search`      // [LVL 1-4] Frostwarden Rangers - ROOM 74
-	Track       SkillTag = `track`       // [LVL 1-4] Frostwarden Rangers - ROOM 74
-	Skulduggery SkillTag = `skulduggery` // [LVL 1-4] Thieves Den - ROOM 491
-	Brawling    SkillTag = `brawling`    // [LVL 1-4] Soldiers Training Yard - ROOM 829
-	Scribe      SkillTag = `scribe`      // [LVL 1-4] Dark Acolyte's Chamber - ROOM 160
-	Protection  SkillTag = `protection`  // TODO
-	Tame        SkillTag = `tame`        // [LVL 1-4] Give mushroom to fairie in ROOM 558, train in ROOM 830
-	Trading     SkillTag = `trading`     // TODO
+	// Cast is stubbed — full implementation in Phase 11 (fold-based magic system)
+	Cast SkillTag = `cast`
 
 	// DOG combat & magic skills
-	WeaponCombat  SkillTag = `weapon-combat`  // Melee attack & defense with weapons
+	WeaponCombat SkillTag = `weapon-combat`  // Melee attack & defense with weapons
 	UnarmedCombat SkillTag = `unarmed-combat` // Fist/body attacks & defense, grappling
 	RangedCombat  SkillTag = `ranged-combat`  // Bows, crossbows, thrown weapons
 	Spellcasting  SkillTag = `spellcasting`   // All magic — offense & defense
-	Psionics      SkillTag = `psionics`       // Mental powers — offense & defense
 
 	// DOG non-combat skills
 	FirstAid  SkillTag = `first-aid`  // Healing others, treating wounds, stabilizing
@@ -54,52 +40,31 @@ var (
 	allSkillNames = []SkillTag{}
 
 	Professions = map[string][]SkillTag{
-		"treasure hunter": {
-			Map,
-			Search,
-			Peep,
-			Inspect,
-			Trading,
-		},
-		"assassin": {
-			Skulduggery,
-			DualWield,
-			Track,
-		},
-		"explorer": {
-			Map,
-			Portal,
-			Scribe,
-		},
-		"arcane scholar": {
-			Enchant,
-			Scribe,
-			Inspect,
-		},
 		"warrior": {
-			Brawling,
-			DualWield,
-		},
-		"paladin": {
-			Protection,
-			Brawling,
+			WeaponCombat,
+			UnarmedCombat,
 		},
 		"ranger": {
-			Map,
-			Search,
-			Track,
+			RangedCombat,
+			Tracking,
 		},
-		"monster hunter": {
-			Tame,
-			Track,
+		"mage": {
+			Spellcasting,
 		},
-		"sorcerer": {
-			Cast,
-			Enchant,
+		"healer": {
+			Spellcasting,
+			FirstAid,
+		},
+		"rogue": {
+			Stealth,
+			WeaponCombat,
 		},
 		"merchant": {
-			Peep,
-			Trading,
+			Bartering,
+		},
+		"survivalist": {
+			Foraging,
+			Tracking,
 		},
 	}
 )
@@ -164,7 +129,6 @@ func GetProfession(allRanks map[string]int) string {
 	rankData := GetProfessionRanks(allRanks)
 
 	var highestCompletion float64 = 0
-	//var highestSpend float64 = 0
 	chosenProfessions := []string{}
 	experienceName := ``
 
@@ -176,7 +140,6 @@ func GetProfession(allRanks map[string]int) string {
 
 		if pRank.Completion > highestCompletion {
 			highestCompletion = pRank.Completion
-			//highestSpend = pRank.TotalPointsSpent
 			chosenProfessions = []string{}
 		}
 
@@ -257,10 +220,8 @@ var SkillProgressionMultipliers = map[SkillTag]float64{
 	WeaponCombat:  0.3,
 	UnarmedCombat: 0.3,
 	RangedCombat:  0.3,
-	Brawling:      0.3,
 	// Magic skills — moderate frequency
 	Spellcasting: 0.5,
-	Psionics:     0.5,
 	Cast:         0.5,
 	// Utility skills — used infrequently
 	Tracking:  2.0,
@@ -295,9 +256,10 @@ func init() {
 		}
 	}
 
-	// Register DOG combat, magic, and non-combat skills directly
+	// Register all DOG skills directly (ensures cast and any not in professions are included)
 	for _, sk := range []SkillTag{
-		WeaponCombat, UnarmedCombat, RangedCombat, Spellcasting, Psionics,
+		Cast,
+		WeaponCombat, UnarmedCombat, RangedCombat, Spellcasting,
 		FirstAid, Stealth, Tracking, Bartering, Foraging,
 	} {
 		if _, ok := skillNameSet[sk]; !ok {

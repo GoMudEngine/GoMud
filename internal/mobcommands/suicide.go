@@ -139,7 +139,7 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 				mudlog.Debug("Tame Chance", "skillsDelta", skillsDelta, "targetNumber", targetNumber)
 
 				if util.Rand(1000) < targetNumber {
-					if mob.IsTameable() && user.Character.GetSkillLevel(skills.Tame) > 0 {
+					if mob.IsTameable() && user.Character.GetSkillLevel(skills.Spellcasting) > 0 {
 
 						currentSkill := user.Character.MobMastery.GetTame(int(mob.MobId))
 						if currentSkill < 50 {

@@ -13,7 +13,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/pets"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
-	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -286,7 +285,7 @@ func tryPurchase(request string, user *users.UserRecord, room *rooms.Room, shopM
 
 	if matchedShopItem.MobId > 0 {
 
-		maxCharmed := user.Character.GetSkillLevel(skills.Tame) + 1
+		maxCharmed := user.Character.GetMaxCharmedCreatures()
 		if len(user.Character.GetCharmIds()) >= maxCharmed {
 			user.SendText(fmt.Sprintf(`You can only have %d mobs following you at a time.`, maxCharmed))
 			return false

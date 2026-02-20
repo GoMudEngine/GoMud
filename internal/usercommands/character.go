@@ -406,7 +406,7 @@ func Character(rest string, user *users.UserRecord, room *rooms.Room, flags even
 			}
 
 			// Prevent follower overage
-			maxCharmed := user.Character.GetSkillLevel(skills.Tame) + 1
+			maxCharmed := user.Character.GetMaxCharmedCreatures()
 			if len(hiredOutChars) >= maxCharmed {
 				user.SendText(fmt.Sprintf(`You can only have %d mobs following you at a time.`, maxCharmed))
 				user.ClearPrompt()

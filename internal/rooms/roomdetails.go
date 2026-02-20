@@ -12,7 +12,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mutators"
-	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/term"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -230,9 +229,8 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 	}
 
 	nameFlags := []characters.NameRenderFlag{}
-	if user.Character.GetSkillLevel(skills.Peep) > 0 {
-		nameFlags = append(nameFlags, characters.RenderHealth)
-	}
+	// Health display now available to all players (Peep skill removed)
+	nameFlags = append(nameFlags, characters.RenderHealth)
 
 	if useShortAdjectives := user.GetConfigOption(`shortadjectives`); useShortAdjectives != nil && useShortAdjectives.(bool) {
 		nameFlags = append(nameFlags, characters.RenderShortAdjectives)

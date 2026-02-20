@@ -95,30 +95,13 @@ help:
       - unlock
   skill:
     all:
-      - aid
-      - backstab
-      - brawling
-      - bump
-      - dual-wield
-      - tackle
-      - disarm
-      - recover
-      - enchant
+      - cast
       - inspect
       - map
-      - peep
       - pickpocket
-      - portal
-      - pray
-      - rank
-      - scribe
       - search
-      - skulduggery
       - sneak
-      - tame
       - track
-      - unenchant
-      - uncurse
   admin:
     all:
       - badcommands
@@ -148,11 +131,9 @@ help:
 # Aliases for keywords when typing: help <keyword>
 # Key is the target keyword, value is the list of aliases
 help-aliases:
-  brawling:         [tackle, brawl, disarm, recover, throw]
-  enchant:          [unenchant, uncurse]
-  skulduggery:      [sneak, bump, backstab, pickpocket]
+  stealth:          [sneak, pickpocket]
+  bartering:        [barter, haggle, trade]
   bank:             [deposit, withdraw]
-  dual-wield:       [dualwield, dual]
   storage:          [store, unstore]
   strength:         [str]
   vitality:         [vit]
@@ -163,7 +144,6 @@ help-aliases:
   health:           [hp]
   mana:             [mp]
   species:          [race, races]
-  protection:       [rank, backrank, frontrank, aid]
   picklock:         [pick]
   picklock-example: [pick-example]
   keyring:          [key, keys]
@@ -173,7 +153,6 @@ help-aliases:
   set-wimpy:        [wimpy]
   colors:           [color, ansi]
   killstats:        [kills, kd]
-  trading:          [haggle]
   pets:             [pet]
   macros:           [macro]
   history:          ['log']

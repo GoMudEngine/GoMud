@@ -12,7 +12,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/mattn/go-runewidth"
@@ -27,11 +26,16 @@ Level 4 - Map a 17x9 area, and enables the "wide" version.
 */
 func Map(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
-	skillLevel := user.Character.GetSkillLevel(skills.Map)
-
-	if skillLevel == 0 {
-		user.SendText("You don't know how to map.")
-		return true, errors.New(`you don't know how to map`)
+	// Map is a free command — no skill gate.
+	// Detail level scales with Perception (1–4 equivalent tiers).
+	perceptionAdj := user.Character.Stats.Perception.ValueAdj
+	skillLevel := 1
+	if perceptionAdj >= 75 {
+		skillLevel = 4
+	} else if perceptionAdj >= 50 {
+		skillLevel = 3
+	} else if perceptionAdj >= 25 {
+		skillLevel = 2
 	}
 
 	if rest == "sprawl" {
@@ -39,20 +43,12 @@ func Map(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		return true, nil
 	}
 
-	if rest == "wide" && skillLevel < 4 {
-		user.SendText("You don't know how to create a wide map.")
-		return true, errors.New(`you don't know how to create a wide map`)
-	}
-
-	if !user.Character.TryCooldown(skills.Map.String(), "1 round") {
+	if !user.Character.TryCooldown(`map`, "1 round") {
 		user.SendText(
 			`You can only create 1 map per round.`,
 		)
 		return true, errors.New(`you're doing that too often`)
 	}
-
-	// Fire an event that a skill has been used
-	events.AddToQueue(events.SkillUsed{user.UserId, skills.Map, ``})
 
 	// replace any non alpha/numeric characters in "rest"
 	zone := rest

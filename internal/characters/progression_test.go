@@ -92,23 +92,23 @@ func TestCalculateProgressionChance_StatSoftCap(t *testing.T) {
 func TestIncreaseSkill_Basic(t *testing.T) {
 	c := New()
 	// All skills start at rank 1 (Stage 3.5). Should increase from 1 to 2.
-	if !c.IncreaseSkill("brawling") {
+	if !c.IncreaseSkill("unarmed-combat") {
 		t.Error("Expected IncreaseSkill to return true for level 1→2")
 	}
-	if c.Skills["brawling"] != 2 {
-		t.Errorf("Expected skill level 2, got %d", c.Skills["brawling"])
+	if c.Skills["unarmed-combat"] != 2 {
+		t.Errorf("Expected skill level 2, got %d", c.Skills["unarmed-combat"])
 	}
 }
 
 func TestIncreaseSkill_NoCap(t *testing.T) {
 	c := New()
-	c.Skills["brawling"] = 4
+	c.Skills["unarmed-combat"] = 4
 	// No hard cap — should increase past 4
-	if !c.IncreaseSkill("brawling") {
+	if !c.IncreaseSkill("unarmed-combat") {
 		t.Error("Expected IncreaseSkill to return true (no hard cap)")
 	}
-	if c.Skills["brawling"] != 5 {
-		t.Errorf("Expected skill level 5, got %d", c.Skills["brawling"])
+	if c.Skills["unarmed-combat"] != 5 {
+		t.Errorf("Expected skill level 5, got %d", c.Skills["unarmed-combat"])
 	}
 }
 
@@ -178,12 +178,13 @@ func TestGetCombatSkillLevel_UnarmedWithUnarmedCombat(t *testing.T) {
 }
 
 func TestGetCombatSkillLevel_BrawlingFallback(t *testing.T) {
-	// No weapon, no UnarmedCombat → falls back to Brawling
+	// No combat skills → minimum 1 (brawling fallback removed)
 	c := New()
 	delete(c.Skills, "unarmed-combat")
-	c.Skills["brawling"] = 2
-	if got := c.GetCombatSkillLevel(); got != 2 {
-		t.Errorf("Expected combat skill 2 from brawling fallback, got %d", got)
+	delete(c.Skills, "weapon-combat")
+	delete(c.Skills, "ranged-combat")
+	if got := c.GetCombatSkillLevel(); got != 1 {
+		t.Errorf("Expected combat skill minimum 1 with no skills, got %d", got)
 	}
 }
 
@@ -238,16 +239,13 @@ func TestGetProgressionMultiplier(t *testing.T) {
 		{"weapon-combat", 0.3},
 		{"unarmed-combat", 0.3},
 		{"ranged-combat", 0.3},
-		{"brawling", 0.3},
 		{"spellcasting", 0.5},
-		{"psionics", 0.5},
 		{"cast", 0.5},
 		{"tracking", 2.0},
 		{"bartering", 2.0},
 		{"foraging", 2.0},
 		{"first-aid", 2.0},
 		{"stealth", 2.0},
-		{"skulduggery", 1.0}, // default
 		{"unknown-skill", 1.0},
 	}
 
