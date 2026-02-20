@@ -9,7 +9,7 @@ description: >
   it was, before someone let it fall to ruin.
 mapsymbol: F
 maplegend: Forge
-biome: dungeon
+biome: fort
 station: forge
 exits:
   west:
