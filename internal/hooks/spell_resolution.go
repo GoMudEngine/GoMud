@@ -13,8 +13,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
-const spellStdDev = 15.0
-
 // resolveSpell is called when fold accumulation completes.
 // It dispatches to per-target resolution based on spell type and effect.
 func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData *spells.SpellData, room *rooms.Room) {
@@ -62,7 +60,7 @@ func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData
 func resolveAgainstMob(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spellData *spells.SpellData, spellAttack float64, magnitude int) {
 
 	defVal := spellDefenseValue(spellData.TargetDefenseType, &mob.Character)
-	success, _, atkRoll, _ := dice.OpposedRoll(spellAttack, defVal, spellStdDev)
+	success, _, atkRoll, _ := dice.OpposedRoll(spellAttack, defVal, dice.StdDevFor(spellAttack))
 
 	// Backfire on fumble
 	if atkRoll.ZScore <= -2.0 {
@@ -99,7 +97,7 @@ func applyMobEffect(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spe
 
 	switch spellData.EffectType {
 	case "damage":
-		dmgRoll := dice.Roll(float64(magnitude), float64(magnitude)/4)
+		dmgRoll := dice.Roll(float64(magnitude), dice.StdDevFor(float64(magnitude)))
 		dmg := int(math.Round(dmgRoll.Value))
 		if dmg < 1 {
 			dmg = 1
@@ -167,7 +165,7 @@ func applyMobEffect(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spe
 func resolveAgainstPlayer(user *users.UserRecord, target *users.UserRecord, room *rooms.Room, spellData *spells.SpellData, spellAttack float64, magnitude int) {
 
 	defVal := spellDefenseValue(spellData.TargetDefenseType, target.Character)
-	success, _, atkRoll, _ := dice.OpposedRoll(spellAttack, defVal, spellStdDev)
+	success, _, atkRoll, _ := dice.OpposedRoll(spellAttack, defVal, dice.StdDevFor(spellAttack))
 
 	// Backfire on fumble
 	if atkRoll.ZScore <= -2.0 {
@@ -204,7 +202,7 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 
 	switch spellData.EffectType {
 	case "heal":
-		healRoll := dice.Roll(float64(magnitude), float64(magnitude)/4)
+		healRoll := dice.Roll(float64(magnitude), dice.StdDevFor(float64(magnitude)))
 		heal := int(math.Round(healRoll.Value))
 		if heal < 1 {
 			heal = 1
@@ -292,7 +290,7 @@ func spellDefenseValue(defenseType string, target *characters.Character) float64
 		if equip.Offhand.ItemId > 0 {
 			armor += equip.Offhand.GetSpec().DamageReduction
 		}
-		defVal := float64(target.Stats.Vitality.ValueAdj + armor)
+		defVal := float64(armor)
 		// Add Minor Shield bonus if active
 		defVal += target.GetConditionMagnitude(characters.ConditionShield)
 		return defVal

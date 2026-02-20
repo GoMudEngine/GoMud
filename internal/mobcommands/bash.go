@@ -69,7 +69,7 @@ func Bash(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	}
 
 	// Perform opposed roll
-	attackSuccess, _, _, _ := dice.OpposedRoll(attackerScore, defenderScore, 15.0)
+	attackSuccess, _, _, _ := dice.OpposedRoll(attackerScore, defenderScore, dice.StdDevFor(attackerScore))
 
 	// Calculate damage (percentage of normal attack damage)
 	baseDamage := 0
@@ -102,7 +102,7 @@ func Bash(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	knockedDown := false
 	if attackSuccess {
 		// Roll for knockdown chance
-		knockdownRoll := dice.Roll(50, 15.0) // Mean of 50
+		knockdownRoll := dice.Roll(50, dice.StdDevFor(50)) // Mean of 50
 		if knockdownRoll.Value < float64(cfg.BashKnockdownChance) {
 			knockedDown = true
 		}

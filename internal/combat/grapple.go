@@ -30,9 +30,6 @@ type SubmissionResult struct {
 	Choice       string // "yield" or "resist"
 }
 
-const (
-	grappleStdDev = 20.0 // Standard deviation for grapple opposed rolls
-)
 
 // PositionProgressionResult represents the outcome of automatic position checks
 type PositionProgressionResult struct {
@@ -97,7 +94,7 @@ func AttemptGrapple(attacker *characters.Character, defender *characters.Charact
 	}
 
 	// Opposed roll
-	success, margin, attackRoll, defenseRoll := dice.OpposedRoll(result.AttackScore, result.DefenseScore, grappleStdDev)
+	success, margin, attackRoll, defenseRoll := dice.OpposedRoll(result.AttackScore, result.DefenseScore, dice.StdDevFor(result.AttackScore))
 
 	result.Success = success
 	result.Margin = margin
@@ -151,7 +148,7 @@ func CheckClinchProgression(controller *characters.Character, controlled *charac
 	controllerScore := float64(controller.Stats.Strength.ValueAdj) + float64(controller.GetCombatSkillLevel())
 	controlledScore := float64(controlled.Stats.Strength.ValueAdj) + float64(controlled.GetCombatSkillLevel())
 
-	success, margin, _, _ := dice.OpposedRoll(controllerScore, controlledScore, grappleStdDev)
+	success, margin, _, _ := dice.OpposedRoll(controllerScore, controlledScore, dice.StdDevFor(controllerScore))
 
 	result.Changed = true
 	result.Margin = margin
@@ -204,7 +201,7 @@ func CheckGroundedEscape(controller *characters.Character, controlled *character
 
 	controllerScore := float64(controller.Stats.Strength.ValueAdj) + float64(controller.GetCombatSkillLevel())
 
-	success, margin, _, _ := dice.OpposedRoll(controlledScore, controllerScore, grappleStdDev)
+	success, margin, _, _ := dice.OpposedRoll(controlledScore, controllerScore, dice.StdDevFor(controlledScore))
 
 	result.Changed = success
 	result.Margin = margin
@@ -285,7 +282,7 @@ func AttemptSubmission(controller *characters.Character, controlled *characters.
 		(float64(controlled.Stats.Dexterity.ValueAdj) * 0.5) // Half dex bonus for escape attempts
 
 	// Opposed roll
-	success, margin, attackRoll, _ := dice.OpposedRoll(controllerScore, controlledScore, grappleStdDev)
+	success, margin, attackRoll, _ := dice.OpposedRoll(controllerScore, controlledScore, dice.StdDevFor(controllerScore))
 
 	result.Margin = margin
 	result.AttackZScore = attackRoll.ZScore
