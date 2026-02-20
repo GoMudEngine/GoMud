@@ -2572,7 +2572,7 @@ char.TickConditions() // Called once in round tick, decrements all durations
 
 ---
 
-### Stage 10.2: Skill Cleanup — Remove Legacy Skills
+### Stage 10.2: Skill Cleanup — Remove Legacy Skills ✅ COMPLETED (merge e9ebd4c)
 **Goal**: Remove all legacy GoMud skills with no DOG equivalent. Implement backstab as a stealth-triggered combat bonus. Move pickpocket to the stealth skill. Convert map/inspect/search to free stat-check commands.
 
 **Skills Removed**:
@@ -3959,7 +3959,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 7: Defense & Combat | 5 stages (7.1–7.5) | 26 hours | **Complete** |
 | Phase 8: Grappling | 5 stages (8.1–8.5) | 24 hours | **8.1–8.5 Complete** |
 | Phase 9: Combat Presentation | 8 stages (9.1–9.8) | ~40 hours | **9.1–9.8 Complete** |
-| Phase 10: Skill System Cleanup | 2 stages (10.1–10.2) | 12 hours | 10.1 Complete |
+| Phase 10: Skill System Cleanup | 2 stages (10.1–10.2) | 12 hours | 10.1–10.2 Complete |
 | Phase 11: Magic Rework | 5 stages (11.1–11.5) | 30 hours | Not Started |
 | Phase 12: Mutations | 2 stages (12.1–12.2) | 16 hours | Not Started |
 | Phase 13: Basic Crafting | 2 stages (13.1–13.2) | 16 hours | Not Started |
@@ -4070,4 +4070,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-19
 **Status**: In Progress
-**Current Stage**: 10.1 Complete — Skill-Stat & Spell-Stat Generalization (merge ba598e7). Added `SkillPrimaryStats` map and `GetSkillPrimaryStat()` to `internal/skills/skills.go`. Added `PrimaryStat` field to `SpellData` struct. Updated `OnSkillUse` to auto-call `OnStatUse` for the skill's primary stat. Added `primarystat: willpower` to all 8 spell YAML files. Ready for Stage 10.2 (Legacy Skill Cleanup).
+**Current Stage**: 10.2 Complete — Skill Cleanup, Remove Legacy Skills (merge e9ebd4c). Removed 13+ legacy SkillTag constants; deleted 15 legacy skill command files; moved sneak/pickpocket to Stealth skill; converted map/inspect/search to free Perception-based commands; stubbed cast for Phase 11; rebuilt Professions map with 7 DOG professions; cleaned keywords.yaml for all worlds. Ready for Phase 11 (Magic System Rework).
