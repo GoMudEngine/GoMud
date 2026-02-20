@@ -54,7 +54,74 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 			continue
 		}
 
-		if user == nil || user.Character.Aggro == nil {
+		if user == nil {
+			continue
+		}
+
+		/**************************
+		*
+		* START HANDLING FOLD CASTING
+		*
+		**************************/
+
+		if user.Character.CastingState != nil {
+			cs := user.Character.CastingState
+
+			spellData := spells.GetSpell(cs.SpellId)
+			if spellData == nil {
+				// Spell data missing — clear and continue
+				user.Character.CastingState = nil
+				user.SendText(`<ansi fg="red">The spell dissipates — its data cannot be found.</ansi>`)
+				continue
+			}
+
+			// Per-fold conviction cost (paid each round, not upfront)
+			foldCost := 0
+			if cs.TotalConvictionCost > 0 {
+				foldCost = cs.TotalConvictionCost / cs.FoldsNeeded
+				if foldCost < 1 {
+					foldCost = 1
+				}
+			}
+			totalThisRound := foldCost * cs.FoldsPerRound
+
+			if totalThisRound > 0 && user.Character.Conviction < totalThisRound {
+				// Out of conviction — auto-cancel
+				user.Character.CastingState = nil
+				user.SendText(`<ansi fg="red">Your conviction wavers — the fold collapses.</ansi>`)
+				continue
+			}
+
+			cs.FoldsAccumulated += cs.FoldsPerRound
+			user.Character.Conviction -= totalThisRound
+			cs.ConvictionSpent += totalThisRound
+
+			if cs.FoldsAccumulated < cs.FoldsNeeded {
+				// Still folding — report progress
+				user.SendText(fmt.Sprintf(
+					`<ansi fg="cyan">You fold your inner vision %d time(s). You now hold <ansi fg="cyan-bold">%d/%d</ansi> folds.</ansi>`,
+					cs.FoldsPerRound, cs.FoldsAccumulated, cs.FoldsNeeded))
+			} else {
+				// Folds complete — placeholder until Stage 11.4 resolves
+				user.SendText(fmt.Sprintf(
+					`<ansi fg="cyan-bold">Your folds are complete! %s holds in your mind... [Stage 11.4 will resolve this spell]</ansi>`,
+					spellData.Name))
+				user.Character.TrackSpellCast(cs.SpellId)
+				user.Character.OnSkillUse(string(skills.Spellcasting), userId)
+				user.Character.OnStatUse("willpower", userId)
+				user.Character.CastingState = nil
+			}
+
+			continue
+		}
+
+		/**************************
+		*
+		* END HANDLING FOLD CASTING
+		*
+		**************************/
+
+		if user.Character.Aggro == nil {
 			continue
 		}
 
@@ -168,69 +235,6 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 
 			continue
 		}
-
-		/**************************
-		*
-		* START HANDLING FOLD CASTING
-		*
-		**************************/
-
-		if user.Character.CastingState != nil {
-			cs := user.Character.CastingState
-
-			spellData := spells.GetSpell(cs.SpellId)
-			if spellData == nil {
-				// Spell data missing — clear and continue
-				user.Character.CastingState = nil
-				user.SendText(`<ansi fg="red">The spell dissipates — its data cannot be found.</ansi>`)
-				continue
-			}
-
-			// Per-fold conviction cost (paid each round, not upfront)
-			foldCost := 0
-			if cs.TotalConvictionCost > 0 {
-				foldCost = cs.TotalConvictionCost / cs.FoldsNeeded
-				if foldCost < 1 {
-					foldCost = 1
-				}
-			}
-			totalThisRound := foldCost * cs.FoldsPerRound
-
-			if totalThisRound > 0 && user.Character.Conviction < totalThisRound {
-				// Out of conviction — auto-cancel
-				user.Character.CastingState = nil
-				user.SendText(`<ansi fg="red">Your conviction wavers — the fold collapses.</ansi>`)
-				continue
-			}
-
-			cs.FoldsAccumulated += cs.FoldsPerRound
-			user.Character.Conviction -= totalThisRound
-			cs.ConvictionSpent += totalThisRound
-
-			if cs.FoldsAccumulated < cs.FoldsNeeded {
-				// Still folding — report progress
-				user.SendText(fmt.Sprintf(
-					`<ansi fg="cyan">You fold your inner vision %d time(s). You now hold <ansi fg="cyan-bold">%d/%d</ansi> folds.</ansi>`,
-					cs.FoldsPerRound, cs.FoldsAccumulated, cs.FoldsNeeded))
-			} else {
-				// Folds complete — placeholder until Stage 11.4 resolves
-				user.SendText(fmt.Sprintf(
-					`<ansi fg="cyan-bold">Your folds are complete! %s holds in your mind... [Stage 11.4 will resolve this spell]</ansi>`,
-					spellData.Name))
-				user.Character.TrackSpellCast(cs.SpellId)
-				user.Character.OnSkillUse(string(skills.Spellcasting), userId)
-				user.Character.OnStatUse("willpower", userId)
-				user.Character.CastingState = nil
-			}
-
-			continue
-		}
-
-		/**************************
-		*
-		* END HANDLING FOLD CASTING
-		*
-		**************************/
 
 		/**************************
 		*
