@@ -75,21 +75,26 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 				continue
 			}
 
-			// Fold accumulation: seed with FoldsPerRound on the first round,
-			// then DOUBLE each subsequent round (1→2→4→8...).
-			// Expert casters (FoldsPerRound > 1) seed higher and complete faster.
+			// Fold accumulation: loop FoldsPerRound times per combat round,
+			// doubling on each iteration (mirrors the attacks-per-round pattern).
+			// FoldsPerRound=1 → one doubling/round; FoldsPerRound=2 → two doublings/round.
+			// Sequence with FoldsPerRound=1: 0 → 1 → 2 → 4 (3 rounds for a 4-fold spell)
+			// Sequence with FoldsPerRound=2: 0 → 1 → 2, then 2 → 4 (2 rounds)
 			oldFolds := cs.FoldsAccumulated
-			if cs.FoldsAccumulated == 0 {
-				cs.FoldsAccumulated = cs.FoldsPerRound
-			} else {
-				cs.FoldsAccumulated *= 2
-			}
-			if cs.FoldsAccumulated > cs.FoldsNeeded {
-				cs.FoldsAccumulated = cs.FoldsNeeded
+			for i := 0; i < cs.FoldsPerRound; i++ {
+				if cs.FoldsAccumulated == 0 {
+					cs.FoldsAccumulated = 1
+				} else {
+					cs.FoldsAccumulated *= 2
+				}
+				if cs.FoldsAccumulated >= cs.FoldsNeeded {
+					cs.FoldsAccumulated = cs.FoldsNeeded
+					break
+				}
 			}
 			foldDelta := cs.FoldsAccumulated - oldFolds
 
-			// Conviction cost is proportional to folds gained this round.
+			// Conviction cost proportional to folds gained this round.
 			// Early rounds are cheap; the final doubling costs the most.
 			roundCost := 0
 			if cs.TotalConvictionCost > 0 && cs.FoldsNeeded > 0 {
@@ -117,7 +122,7 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 				user.SendText(fmt.Sprintf(
 					`<ansi fg="cyan">You fold your will deeper. You now hold <ansi fg="cyan-bold">%d/%d</ansi> folds.</ansi>`,
 					cs.FoldsAccumulated, cs.FoldsNeeded))
-			} else {
+				} else {
 				// Folds complete — placeholder until Stage 11.4 resolves
 				user.SendText(fmt.Sprintf(
 					`<ansi fg="cyan-bold">Your folds are complete! %s holds in your mind... [Stage 11.4 will resolve this spell]</ansi>`,
