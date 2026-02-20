@@ -1,61 +1,87 @@
-<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">About </ansi><ansi fg="command">GoMud</ansi>
+<ansi fg="black-bold">.:</ansi> <ansi fg="yellow">Delusions of Grandeur</ansi> <ansi fg="magenta">(DOGMud)</ansi>
 
-<ansi fg="command">GoMud</ansi> is an open source <ansi fg="229">MUD</ansi> (Multi-user Dungeon) game world and library.
+<ansi fg="yellow">━━━ The World ━━━</ansi>
 
-The <ansi fg="command">GoMud</ansi> engine ships with a default world to play in, but can be overwritten
-or modified to build your own world using built-in tools.
+You are on <ansi fg="yellow">Gaius</ansi>, a world colonized ten thousand years ago by humans from a distant
+civilization. The colony ships crashed. The technology was lost. Survivors scattered
+across the continent of <ansi fg="yellow">Thera</ansi> and rebuilt from nothing, eventually reaching a world
+that looks, from the outside, like medieval Europe — cities, trade routes, lords and
+peasants, swords and shields.
 
-<ansi fg="black-bold">Join the <ansi fg="command">GoMud</ansi> Discord Server:</ansi>   <ansi fg="51">discord.gg/cjukKvQWyy</ansi>
-<ansi fg="black-bold">Find out more (or get the code):</ansi> <ansi fg="51">github.com/GoMudEngine/GoMud</ansi>
+The truth is more complicated.
 
-<ansi fg="6">  .--.      .-'.      .--.      .--.      .--.      .--.      .`-.      .--.
-<ansi fg="187">:::::.</ansi>\<ansi fg="187">::::::::.</ansi>\<ansi fg="187">::::::::.</ansi>\<ansi fg="187">::::::::.</ansi>\<ansi fg="187">::::::::.</ansi>\<ansi fg="187">::::::::.</ansi>\<ansi fg="187">::::::::.</ansi>\<ansi fg="187">::::::::.</ansi>\<ansi fg="187"></ansi>
-'      `--'      `.-'      `--'      `--'      `--'      `-.'      `--'      `</ansi>
+<ansi fg="yellow">━━━ The Chrysalis ━━━</ansi>
 
-<ansi fg="black-bold">.:</ansi> <ansi fg="magenta"><ansi fg="command">GoMud</ansi> History</ansi>
+Something in the air, water, and soil of Gaius infected the survivors. The dominant
+religion calls it <ansi fg="yellow">The Chrysalis</ansi> — a divine gift, an awakening. What it actually is
+no one fully understands. What it does is undeniable:
 
-<ansi fg="command">GoMud</ansi> development began in <ansi fg="red">late 2023</ansi> by <ansi fg="14">Dylan Squires</ansi> (aka <ansi fg="11">Volte6</ansi>) with 
-several key goals in mind:
+The beliefs and convictions of the infected <ansi fg="white">become physically real</ansi>.
 
-<ansi fg="red-bold">1.</ansi> <ansi fg="11">Offer a new, free code base in a modern language.</ansi> 
-   <ansi fg="command">Go</ansi> was selected as it has a fast build process and excellent OS/CPU 
-   Architecture compatibility (Windows, Linux, ARM, etc.). Additionally being 
-   statically linked it avoids many dependency issues encountered when running
-   engines based languages such as C. Finally, <ansi fg="command">Go</ansi> is able to pull libraries 
-   straight from their repositories (such as git), rather than rely on public
-   registries. 
+Magic is not supernatural. It is the Chrysalis translating will into matter. Mutations
+are not random — they reflect the pressures, fears, and drives of the individual the
+organism inhabits. A soldier who survives a hundred battles finds his body changing to
+match. A healer's hands become steadier than any uninfected surgeon's. The deeply
+faithful shape reality around their faith.
 
-<ansi fg="red-bold">2.</ansi> <ansi fg="11">Commit to a high standard of color and style integration.</ansi> 
-   Legacy <ansi fg="229">MUD</ansi> engines tend to disappoint in terms of consistent and ubiquitous
-   color or visual style. <ansi fg="command">GoMud</ansi> seeks to address this issue directly by
-   fearlessly including color in the <ansi fg="229">MUD</ansi>, and supporting techniques to easily
-   include or adjust color styling as a <ansi fg="229">MUD</ansi> admin.
+Infection manifests at puberty. It grows stronger with age. There is no cure.
 
-<ansi fg="red-bold">3.</ansi> <ansi fg="11">Support a high degree of customization</ansi>
-   <ansi fg="command">GoMud</ansi> doesn't presume to know how you want your <ansi fg="229">MUD</ansi> to play. Do you want 
-   long days and short nights, or the other way around? Do you want PVP, or to 
-   use a specific color palette? Do you want to support permadeath and player 
-   loot drops? Should a round be 3 seconds or 4? <ansi fg="command">GoMud</ansi> seeks to make all of
-   these decisions easily customizable through config files.
+<ansi fg="yellow">━━━ The Three Moons ━━━</ansi>
 
-<ansi fg="6">  .--.      .-'.      .--.      .--.      .--.      .--.      .`-.      .--.
-<ansi fg="187">:::::.</ansi>\<ansi fg="187">::::::::.</ansi>\<ansi fg="187">::::::::.</ansi>\<ansi fg="187">::::::::.</ansi>\<ansi fg="187">::::::::.</ansi>\<ansi fg="187">::::::::.</ansi>\<ansi fg="187">::::::::.</ansi>\<ansi fg="187">::::::::.</ansi>\<ansi fg="187"></ansi>
-'      `--'      `.-'      `--'      `--'      `--'      `-.'      `--'      `</ansi>
+Three moons hang in the sky of Gaius. The people of Thera study them, worship them,
+and build their calendars around them:
 
-<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Special Thanks</ansi>
+  <ansi fg="yellow">Swiftmoon</ansi>    — the large fast moon, linked to dexterity and quick thought
+  <ansi fg="yellow">The Wanderer</ansi> — the middle moon, linked to perception and foresight
+  <ansi fg="yellow">The Eye</ansi>      — the small bright moon, linked to charisma and force of will
 
-<ansi fg="8">Those who contributed to <ansi fg="command">GoMud</ansi> via <ansi fg="15">testing</ansi>, <ansi fg="15">content</ansi>, <ansi fg="15">code</ansi>, and <ansi fg="15">discussion</ansi>
-during its first year of development. In alphabetical order:</ansi>
+What no living person knows: the moons are not moons. They are the other colony ships,
+still in orbit after ten thousand years. Their presence influences the Chrysalis in
+ways that look exactly like astrology and feel exactly like divine favour.
 
-    <ansi fg="14">Andrew Burns</ansi>    aka <ansi fg="11">mister_burns</ansi>
-    <ansi fg="14">Arin Bennett</ansi>    aka <ansi fg="11">Sloan</ansi>
-    <ansi fg="14">Colin Senner</ansi>    aka <ansi fg="11">colinsenner</ansi>
-    <ansi fg="14">Durf Durfleton</ansi>  aka <ansi fg="11">Durf</ansi>
-    <ansi fg="14">Ethan Samuels</ansi>   aka <ansi fg="11">ethaburd</ansi>
-    <ansi fg="14">Jake</ansi>            aka <ansi fg="11">Jake</ansi>
-    <ansi fg="14">Jeff</ansi>            aka <ansi fg="11">Armoredartist</ansi>
-    <ansi fg="14">Jeffrey Edwards</ansi> aka <ansi fg="11">Miphon</ansi>
-    <ansi fg="14">Jeremy Owens</ansi>
-    <ansi fg="14">Michael Myers</ansi>   aka <ansi fg="11">avatus</ansi>
-    <ansi fg="14">Scott</ansi>           aka <ansi fg="11">Neopong</ansi>
-    <ansi fg="14">William L</ansi>       aka <ansi fg="11">1aw123</ansi>
+<ansi fg="yellow">━━━ The Windward Marches ━━━</ansi>
+
+The game begins in <ansi fg="yellow">The Windward Marches</ansi>, a region of varied terrain on the western
+edge of Thera — forests, cliffs, shore, highland passes. The climate runs cool and
+temperate, prone to sudden storms at the seasonal turns. It is a place where old
+power is contested and new factions are rising.
+
+<ansi fg="yellow">Startland</ansi> is the entry point: a rough settlement where newcomers find their
+footing before venturing further into the world.
+
+<ansi fg="yellow">━━━ What Kind of Game Is This? ━━━</ansi>
+
+<ansi fg="white">Skill-based.</ansi>  There are no class restrictions. You become what you practice.
+  Fight with weapons: weapon combat improves. Cast spells: spellcasting improves.
+  Forge iron: blacksmithing improves. Skills advance through use, not through
+  spending points at a trainer.
+
+<ansi fg="white">Stat-based.</ansi>  Six stats govern your character: Strength, Dexterity, Vitality,
+  Perception, Willpower, Charisma. All start near 100 (human baseline) and rise
+  through use. A mage who never lifts a sword will have weak arms. A blacksmith
+  who never trains the mind will struggle with spells.
+
+<ansi fg="white">Mutation-driven.</ansi>  Sustained combat feeds the Chrysalis. Your body changes. Every
+  mutation has a benefit and a cost. You do not choose them — the organism does.
+  You can carry up to five mutations at once.
+
+<ansi fg="white">Crafting.</ansi>  Raw materials become gear through skill and a working station. A forge
+  makes blades. An alchemy bench makes potions. What you can craft depends on
+  your skill and what you can find or gather.
+
+<ansi fg="yellow">━━━ Getting Started ━━━</ansi>
+
+  <ansi fg="command">look</ansi>              See your surroundings.
+  <ansi fg="command">help combat</ansi>       How fighting works.
+  <ansi fg="command">help craft</ansi>        How the crafting system works.
+  <ansi fg="command">help skills</ansi>       Your current skill levels.
+  <ansi fg="command">help status</ansi>       Your stats, health, and condition.
+  <ansi fg="command">help mutations</ansi>    The Chrysalis mutation system.
+  <ansi fg="command">help species</ansi>      Playable species and their traits.
+
+<ansi fg="yellow">━━━ Under the Hood ━━━</ansi>
+
+<ansi fg="8">DOGMud is built on the <ansi fg="white">GoMud</ansi> open source engine by Dylan Squires (Volte6).
+Source: <ansi fg="51">github.com/GoMudEngine/GoMud</ansi>
+DOGMud repository: <ansi fg="51">github.com/pruuk/DOGMud</ansi></ansi>
+

@@ -179,7 +179,7 @@ help-aliases:
   macros:           [macro]
   history:          ['log']
   pvp:              ['pk']
-  about:            ['gomud']
+  about:            ['gomud', 'dogmud', 'dog', 'lore', 'world', 'setting', 'background']
   stat-train:       ['stat train', 'status train', 'stat points']
 # Default aliases for commands
 # For example: inv -> inventory
