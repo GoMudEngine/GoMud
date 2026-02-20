@@ -1,0 +1,9 @@
+itemid: 40007
+name: cloth strip
+namesimple: cloth
+description: A length of rough undyed linen. Useful for bindings and compresses.
+type: object
+subtype: mundane
+component_tag: cloth-strip
+weight: 0.1
+value: 1

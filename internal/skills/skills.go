@@ -33,7 +33,9 @@ const (
 	Stealth   SkillTag = `stealth`    // Sneaking, hiding, avoiding detection
 	Tracking  SkillTag = `tracking`   // Finding creatures/players, reading trails
 	Bartering SkillTag = `bartering`  // Trade prices, negotiation, appraisal
-	Foraging  SkillTag = `foraging`   // Gathering resources — herbs, wood, ore, food
+	Foraging      SkillTag = `foraging`      // Gathering resources — herbs, wood, ore, food
+	Blacksmithing SkillTag = `blacksmithing` // Metal weapons, armor, tools
+	Alchemy       SkillTag = `alchemy`       // Potions, salves, medicines
 )
 
 var (
@@ -65,6 +67,12 @@ var (
 		"survivalist": {
 			Foraging,
 			Tracking,
+		},
+		"smith": {
+			Blacksmithing,
+		},
+		"alchemist": {
+			Alchemy,
 		},
 	}
 )
@@ -204,6 +212,8 @@ var SkillPrimaryStats = map[string]string{
 	"tracking":       "perception",
 	"bartering":      "charisma",
 	"foraging":       "perception",
+	"blacksmithing":  "strength",
+	"alchemy":        "perception",
 }
 
 // GetSkillPrimaryStat returns the primary governing stat for a skill,
@@ -226,9 +236,11 @@ var SkillProgressionMultipliers = map[SkillTag]float64{
 	// Utility skills — used infrequently
 	Tracking:  2.0,
 	Bartering: 2.0,
-	Foraging:  2.0,
-	FirstAid:  2.0,
-	Stealth:   2.0,
+	Foraging:      2.0,
+	FirstAid:      2.0,
+	Stealth:       2.0,
+	Blacksmithing: 2.0,
+	Alchemy:       2.0,
 }
 
 // GetProgressionMultiplier returns the progression speed multiplier for a skill.
@@ -261,6 +273,7 @@ func init() {
 		Cast,
 		WeaponCombat, UnarmedCombat, RangedCombat, Spellcasting,
 		FirstAid, Stealth, Tracking, Bartering, Foraging,
+		Blacksmithing, Alchemy,
 	} {
 		if _, ok := skillNameSet[sk]; !ok {
 			skillNameSet[sk] = struct{}{}

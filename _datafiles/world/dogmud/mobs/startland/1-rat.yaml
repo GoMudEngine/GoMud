@@ -19,3 +19,5 @@ character:
   stats:
     vitality:
       training: -2
+  items:
+    - itemid: 40002

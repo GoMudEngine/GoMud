@@ -1,0 +1,9 @@
+itemid: 40003
+name: wooden plank
+namesimple: plank
+description: A flat board of rough-hewn oak, good for reinforcing metal work.
+type: object
+subtype: mundane
+component_tag: wooden-plank
+weight: 0.1
+value: 1

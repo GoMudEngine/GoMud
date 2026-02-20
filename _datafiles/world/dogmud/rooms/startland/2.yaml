@@ -10,6 +10,8 @@ exits:
     roomid: 1
   north:
     roomid: 3
+  west:
+    roomid: 6
 spawninfo:
 - mobid: 1
   message: A rat crawls out from a garbage pile.

@@ -1,0 +1,9 @@
+itemid: 40005
+name: bitter thistle
+namesimple: thistle
+description: Pale purple flowers with sharp leaves, bitter to the tongue.
+type: object
+subtype: mundane
+component_tag: bitter-thistle
+weight: 0.1
+value: 1
