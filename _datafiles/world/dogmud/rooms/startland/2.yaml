@@ -1,12 +1,15 @@
 roomid: 2
 zone: Startland
-title: End of the Line
-description: You've reached the end of the line in Startland. One day, perhaps more
-  will be built.
+title: Training Grounds
+description: A broad courtyard where new arrivals are put through their paces. Wooden
+  dummies and practice targets line the walls, and the smell of fresh sawdust mingles
+  with the tang of sweat. A passage to the north leads toward the arena complex.
 biome: city
 exits:
   south:
     roomid: 1
+  north:
+    roomid: 3
 spawninfo:
 - mobid: 1
   message: A rat crawls out from a garbage pile.

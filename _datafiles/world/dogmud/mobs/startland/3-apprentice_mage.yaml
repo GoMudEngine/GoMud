@@ -1,0 +1,35 @@
+mobid: 3
+zone: Startland
+hostile: true
+maxwander: 0
+activitylevel: 60
+aiprofile: caster
+specialmovechance: 0
+groups:
+  - startland-npc
+  - humanoid
+character:
+  name: apprentice mage
+  description: >
+    A young human in threadbare robes, fingers perpetually smudged with chalk
+    and soot. Their eyes carry an intense focus that suggests more ambition
+    than wisdom. A faint smell of ozone clings to their clothes.
+  speciesid: 1
+  stats:
+    strength:
+      training: 98
+    dexterity:
+      training: 98
+    vitality:
+      training: 98
+    willpower:
+      training: 98
+    perception:
+      training: 98
+    charisma:
+      training: 98
+  spellbook:
+    minor-shield: 5
+    fire-bolt: 5
+    mm: 3
+    heal: 3

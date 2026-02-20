@@ -1,6 +1,7 @@
 package mobcommands
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
@@ -8,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
+	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -217,8 +219,34 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		}
 
 		if continueCasting {
-			mob.Character.Conviction -= spellInfo.Cost
-			mob.Character.SetCast(spellInfo.WaitRounds, spellAggro)
+			skillLevel := mob.Character.GetSkillLevel(skills.Spellcasting)
+			baseFolds := spellInfo.BaseFolds
+			if baseFolds < 1 {
+				baseFolds = 4
+			}
+			foldsNeeded := characters.NextPowerOfTwo(baseFolds)
+			foldsPerRound := characters.CalcFoldsPerRound(mob.Character.Stats.Perception.ValueAdj, skillLevel)
+
+			// First-round conviction slice
+			firstRoundCost := spellInfo.Cost / foldsNeeded
+			if firstRoundCost < 1 {
+				firstRoundCost = 1
+			}
+			mob.Character.Conviction -= firstRoundCost
+
+			mob.Character.CastingState = &characters.CastingState{
+				SpellId:              spellInfo.SpellId,
+				FoldsNeeded:          foldsNeeded,
+				FoldsAccumulated:     0,
+				FoldsPerRound:        foldsPerRound,
+				TotalConvictionCost:  spellInfo.Cost,
+				ConvictionSpent:      firstRoundCost,
+				TargetUserIds:        spellAggro.TargetUserIds,
+				TargetMobInstanceIds: spellAggro.TargetMobInstanceIds,
+				SpellRest:            spellAggro.SpellRest,
+			}
+			room.SendText(fmt.Sprintf(
+				`<ansi fg="mobname">%s</ansi> begins weaving a spell.`, mob.Character.Name), 0)
 		}
 
 	}

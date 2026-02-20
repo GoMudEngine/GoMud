@@ -4,11 +4,17 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 // AI profile definitions with move preference weights
 var aiProfiles = map[string]map[string]int{
+	"caster": {
+		"kick": 10,
+		"trip": 10,
+		// prefers casting; ChooseCastAction() handles spell selection separately
+	},
 	"default": {
 		"bash":    25,
 		"trip":    20,
@@ -327,6 +333,62 @@ func ScoreGrapple(mob *mobs.Mob, target *characters.Character) int {
 		score = 0
 	}
 	return score
+}
+
+// CanUseCast returns true if the mob has spells, is not already casting, and has conviction.
+func CanUseCast(char *characters.Character) bool {
+	if char.CastingState != nil {
+		return false
+	}
+	if len(char.SpellBook) == 0 {
+		return false
+	}
+	return char.Conviction >= 3
+}
+
+// preferredSpell returns the spell ID the mob should cast this round.
+// Priority: (1) minor-shield if unshielded, (2) heal-self if < 30% HP, (3) harm spells.
+func preferredSpell(mob *mobs.Mob) string {
+	// Shield self if not already shielded
+	if !mob.Character.HasCondition(characters.ConditionShield) {
+		if _, has := mob.Character.SpellBook["minor-shield"]; has {
+			if sd := spells.GetSpell("minor-shield"); sd != nil && mob.Character.Conviction >= sd.Cost {
+				return "minor-shield"
+			}
+		}
+	}
+	// Heal when critically low
+	selfPct := float64(mob.Character.Health) * 100 / float64(mob.Character.HealthMax.Value)
+	if selfPct < 30 {
+		if _, has := mob.Character.SpellBook["heal"]; has {
+			if sd := spells.GetSpell("heal"); sd != nil && mob.Character.Conviction >= sd.Cost {
+				return "heal"
+			}
+		}
+	}
+	// Harm spells by magnitude
+	for _, id := range []string{"fireball", "fire-bolt", "mm", "sparks", "stun", "blind"} {
+		if _, has := mob.Character.SpellBook[id]; has {
+			if sd := spells.GetSpell(id); sd != nil && mob.Character.Conviction >= sd.Cost {
+				return id
+			}
+		}
+	}
+	return ""
+}
+
+// ChooseCastAction returns "cast <spellId>" for caster-profile mobs, or "" otherwise.
+func ChooseCastAction(mob *mobs.Mob) string {
+	if mob.AIProfile != "caster" {
+		return ""
+	}
+	if !CanUseCast(&mob.Character) {
+		return ""
+	}
+	if id := preferredSpell(mob); id != "" {
+		return "cast " + id
+	}
+	return ""
 }
 
 func ScoreSubmit(mob *mobs.Mob, target *characters.Character) int {

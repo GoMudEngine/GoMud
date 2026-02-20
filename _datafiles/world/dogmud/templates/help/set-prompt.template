@@ -76,6 +76,7 @@ in-game prompt. The fight prompt (<ansi fg="command">fprompt</ansi>) appears dur
     <ansi fg="magenta">{g}</ansi>     Gold on hand              <ansi fg="magenta">{h}</ansi>     Hidden/Invisible flag
     <ansi fg="magenta">{t}</ansi>     Day/Night symbol (<ansi fg="night">☾</ansi>/<ansi fg="day">☀️</ansi>)    <ansi fg="magenta">{T}</ansi>     Full time of day
     <ansi fg="magenta">{ap}</ansi>    Action Points             <ansi fg="magenta">{w}</ansi>     Wait rounds (fprompt)
+    <ansi fg="magenta">{casting}</ansi> While casting: spell name and fold progress. Empty when idle.
     <ansi fg="magenta">{\n}</ansi>    New Line
 
 The default prompt is:
