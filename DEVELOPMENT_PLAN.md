@@ -2779,7 +2779,7 @@ New characters currently have no spells in their spellbook, making it impossible
 
 ---
 
-### Stage 11.3: Power Sources & Concentration Mechanics
+### Stage 11.3: Concentration Mechanics ✅ COMPLETED (merge d5bf9d6)
 **Goal**: Implement the three power sources that affect fold accumulation speed. Add concentration checks when the caster is hit during casting.
 
 **Power Sources**:
@@ -3965,7 +3965,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 8: Grappling | 5 stages (8.1–8.5) | 24 hours | **8.1–8.5 Complete** |
 | Phase 9: Combat Presentation | 8 stages (9.1–9.8) | ~40 hours | **9.1–9.8 Complete** |
 | Phase 10: Skill System Cleanup | 2 stages (10.1–10.2) | 12 hours | 10.1–10.2 Complete |
-| Phase 11: Magic Rework | 5 stages (11.1–11.5) | 30 hours | 11.1–11.2 Complete |
+| Phase 11: Magic Rework | 5 stages (11.1–11.5) | 30 hours | 11.1–11.3 Complete |
 | Phase 12: Mutations | 2 stages (12.1–12.2) | 16 hours | Not Started |
 | Phase 13: Basic Crafting | 2 stages (13.1–13.2) | 16 hours | Not Started |
 | Phase 14: Balance Config | 1 stage (14.1) | 8 hours | Not Started |
@@ -4075,4 +4075,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-20
 **Status**: In Progress
-**Current Stage**: 11.2 Complete — Fold Engine Core (merge 6c13581). Stage 11.1+11.2 combined: added BaseFolds/TargetDefenseType to SpellData; created CastingState struct with NextPowerOfTwo/CalcFoldsPerRound/CalcInitiationChance helpers; added CastingState field + IsCasting() to Character; replaced cast stub with full fold initiation (skill/spell/target/initiation-roll/CastingState setup); created cancel command; added casting intercept in TryCommand (blocks action commands, flee clears CastingState); replaced dead player SpellCast block in NewRound_DoCombat with per-round fold accumulation. Post-merge fixes (all manual-test verified): spell lookup now tries ID before display name; fold accumulation moved before aggro nil-check so it runs out-of-combat; fold loop runs FoldsPerRound iterations per round (mirrors attacks-per-round pattern) with one message per doubling; new characters granted heal/mm/sparks as temporary starter spells. Ready for Stage 11.3 (Power Sources & Concentration Mechanics).
+**Current Stage**: 11.3 Complete — Concentration Mechanics (merge d5bf9d6). Added CalcConcentrationChance helper (clamp(50 + willpower/4 - damagePct, 5, 95)); prone CombatPosition auto-cancels casting before conviction is charged; mob damage triggers concentration roll via util.LogRoll with roll >= chance cancelling CastingState; removed Stage 11.3 stub comment from fold loop; 6-case TestCalcConcentrationChance covers clamp boundaries. Power sources (flame/sunlight/health multipliers) deferred to Stage 11.5 or cut as flavor. Ready for Stage 11.4 (Core Spells & Components).
