@@ -2517,7 +2517,7 @@ char.TickConditions() // Called once in round tick, decrements all durations
 
 ---
 
-### Stage 10.1: Generalize Skill-Stat & Spell-Stat Association
+### Stage 10.1: Generalize Skill-Stat & Spell-Stat Association ✅ COMPLETED (merge ba598e7)
 **Goal**: Add a `PrimaryStat` field to every skill and spell definition. Replace all hardcoded stat references in progression checks and roll calculations with a single lookup. Adding a new skill or spell in the future requires only a YAML entry — no manual wiring in Go.
 
 **Current Problem**:
@@ -2530,7 +2530,7 @@ char.TickConditions() // Called once in round tick, decrements all durations
 | Skill | Primary Stat |
 |-------|-------------|
 | weapon-combat | dexterity |
-| unarmed-combat | strength |
+| unarmed-combat | dexterity |
 | ranged-combat | perception |
 | spellcasting | willpower |
 | first-aid | perception |
@@ -3959,7 +3959,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 7: Defense & Combat | 5 stages (7.1–7.5) | 26 hours | **Complete** |
 | Phase 8: Grappling | 5 stages (8.1–8.5) | 24 hours | **8.1–8.5 Complete** |
 | Phase 9: Combat Presentation | 8 stages (9.1–9.8) | ~40 hours | **9.1–9.8 Complete** |
-| Phase 10: Skill System Cleanup | 2 stages (10.1–10.2) | 12 hours | Not Started |
+| Phase 10: Skill System Cleanup | 2 stages (10.1–10.2) | 12 hours | 10.1 Complete |
 | Phase 11: Magic Rework | 5 stages (11.1–11.5) | 30 hours | Not Started |
 | Phase 12: Mutations | 2 stages (12.1–12.2) | 16 hours | Not Started |
 | Phase 13: Basic Crafting | 2 stages (13.1–13.2) | 16 hours | Not Started |
@@ -4070,4 +4070,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-19
 **Status**: In Progress
-**Current Stage**: 9.8 Complete — Combat Conditions System Refactor. Replaced three boolean flags (RecoveryPenaltyThisRound, DefensePenaltyNextRound, IsGrappleController) with a unified `CombatCondition` system in `internal/characters/conditions.go`. Single `TickConditions()` call in each round-tick hook replaces scattered manual clearing. Active conditions are visible via `conditions` command. Phase 9 complete. Ready for Phase 10 (Balance Pass).
+**Current Stage**: 10.1 Complete — Skill-Stat & Spell-Stat Generalization (merge ba598e7). Added `SkillPrimaryStats` map and `GetSkillPrimaryStat()` to `internal/skills/skills.go`. Added `PrimaryStat` field to `SpellData` struct. Updated `OnSkillUse` to auto-call `OnStatUse` for the skill's primary stat. Added `primarystat: willpower` to all 8 spell YAML files. Ready for Stage 10.2 (Legacy Skill Cleanup).
