@@ -136,12 +136,18 @@ func (c *Character) OnStatUse(statName string, userId int) {
 
 // OnSkillUse is called whenever a player uses a skill in gameplay.
 // Tracks usage and, if progression is enabled, rolls for skill advancement.
+// Also auto-tracks and progresses the skill's primary governing stat.
 func (c *Character) OnSkillUse(skillName string, userId int) {
 	c.TrackSkillUse(skillName)
 	mudlog.Debug("Progression", "event", "skill_use", "skill", skillName, "character", c.Name)
 
 	if configs.GetGamePlayConfig().UseSkillProgression {
 		c.CheckSkillProgression(skillName, userId, 1.0)
+	}
+
+	// Auto-track and progress the skill's primary governing stat
+	if primaryStat := skills.GetSkillPrimaryStat(skillName); primaryStat != "" {
+		c.OnStatUse(primaryStat, userId)
 	}
 }
 

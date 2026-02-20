@@ -7,3 +7,4 @@ schools:
 cost: 6
 waitrounds: 1
 difficulty: 75
+primarystat: willpower

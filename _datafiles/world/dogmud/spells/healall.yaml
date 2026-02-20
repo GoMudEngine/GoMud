@@ -9,3 +9,4 @@ cost: 6
 healthcost: 3
 waitrounds: 2
 difficulty: 10
+primarystat: willpower

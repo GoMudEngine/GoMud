@@ -229,6 +229,26 @@ func GetExperienceLevel(percentage float64) string {
 	return `scrub`
 }
 
+// SkillPrimaryStats maps each DOG skill to its primary governing stat.
+// This stat is auto-tracked and progressed whenever the skill is used.
+var SkillPrimaryStats = map[string]string{
+	"weapon-combat":  "dexterity",
+	"unarmed-combat": "dexterity",
+	"ranged-combat":  "perception",
+	"spellcasting":   "willpower",
+	"first-aid":      "perception",
+	"stealth":        "dexterity",
+	"tracking":       "perception",
+	"bartering":      "charisma",
+	"foraging":       "perception",
+}
+
+// GetSkillPrimaryStat returns the primary governing stat for a skill,
+// or an empty string if none is defined.
+func GetSkillPrimaryStat(skillName string) string {
+	return SkillPrimaryStats[skillName]
+}
+
 // SkillProgressionMultipliers controls how fast each skill progresses.
 // Combat skills fire many times per round, so they get a low multiplier.
 // Utility skills are used less often, so they get a high multiplier.
