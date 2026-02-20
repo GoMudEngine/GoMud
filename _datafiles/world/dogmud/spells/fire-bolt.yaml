@@ -1,0 +1,14 @@
+spellid: fire-bolt
+name: Fire Bolt
+description: Launches a bolt of concentrated fire at a target.
+type: harmsingle
+schools:
+  - elemental
+cost: 5
+waitrounds: 1
+difficulty: 0
+primarystat: willpower
+base_folds: 8
+target_defense_type: physical
+effect_type: damage
+effect_magnitude: 35

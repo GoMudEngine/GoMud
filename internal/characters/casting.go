@@ -71,3 +71,15 @@ func CalcConcentrationChance(willpower, damagePct int) int {
 	}
 	return chance
 }
+
+// CalcSpellAttack returns the float64 mean used as the spell attack roll's mean
+// in dice.OpposedRoll. Higher willpower and spellcasting level increase spell offense.
+// Formula: float64(willpower + spellcastingLevel*3)
+// Examples:
+//
+//	will=100, skill=0  → 100.0
+//	will=100, skill=5  → 115.0
+//	will=150, skill=10 → 180.0
+func CalcSpellAttack(willpower, spellcastingLevel int) float64 {
+	return float64(willpower + spellcastingLevel*3)
+}

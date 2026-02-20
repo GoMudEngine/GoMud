@@ -1,0 +1,7 @@
+buffid: 2
+name: Stunned
+description: You are stunned and cannot attack.
+triggerrate: 1 round
+triggercount: 2
+flags:
+  - no-combat

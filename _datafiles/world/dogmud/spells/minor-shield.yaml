@@ -1,0 +1,12 @@
+spellid: minor-shield
+name: Minor Shield
+description: Creates a magical barrier that absorbs physical damage.
+type: helpsingle
+schools:
+  - enhancement
+cost: 4
+waitrounds: 1
+difficulty: 0
+primarystat: willpower
+base_folds: 4
+effect_type: shield

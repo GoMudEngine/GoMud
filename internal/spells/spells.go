@@ -27,6 +27,10 @@ type SpellData struct {
 	PrimaryStat         string `yaml:"primarystat,omitempty"`          // Stat used for spell rolls and progression
 	BaseFolds           int    `yaml:"base_folds,omitempty"`           // 0 = default to 4
 	TargetDefenseType   string `yaml:"target_defense_type,omitempty"`  // "physical", "mental", "" = none
+	ComponentTag        string `yaml:"component_tag,omitempty"`        // Required item component tag (e.g. "stone")
+	EffectType          string `yaml:"effect_type,omitempty"`          // "damage"|"heal"|"buff"|"tame"|"shield"
+	EffectMagnitude     int    `yaml:"effect_magnitude,omitempty"`     // Base damage/heal amount
+	BuffIds             []int  `yaml:"buff_ids,omitempty"`             // Buff IDs to apply (for "buff" effect type)
 }
 
 const (

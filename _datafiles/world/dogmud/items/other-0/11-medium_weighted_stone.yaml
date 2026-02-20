@@ -8,3 +8,4 @@ subtype: mundane
 weight: 10.0  # 10 lbs - medium encumbrance testing
 uses: 0
 value: 0
+component_tag: stone

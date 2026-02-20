@@ -165,6 +165,23 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		spellRest = targetName // pass through for spell script
 	}
 
+	// 8.5. Component check — must have the required item in inventory before committing
+	if spellInfo.ComponentTag != "" {
+		found := false
+		for _, itm := range user.Character.Items {
+			if itm.GetSpec().ComponentTag == spellInfo.ComponentTag {
+				found = true
+				break
+			}
+		}
+		if !found {
+			user.SendText(fmt.Sprintf(
+				`<ansi fg="red">%s requires a %s in your inventory.</ansi>`,
+				spellInfo.Name, spellInfo.ComponentTag))
+			return true, nil
+		}
+	}
+
 	// 9. Set CastingState — folds accumulate each combat round
 	user.Character.CastingState = &characters.CastingState{
 		SpellId:              spellInfo.SpellId,

@@ -3,8 +3,9 @@ zone: Startland
 itemdropchance: 10
 hostile: false
 maxwander: 8
-groups: 
+groups:
   - rats
+  - animal
 idlecommands:
   - 'emote wiggles its nose'
   - 'wander'

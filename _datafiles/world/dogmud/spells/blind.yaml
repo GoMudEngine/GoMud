@@ -1,0 +1,16 @@
+spellid: blind
+name: Blind
+description: Blinds a target, hindering their perception.
+type: harmsingle
+schools:
+  - mental
+cost: 6
+waitrounds: 1
+difficulty: 0
+primarystat: willpower
+base_folds: 8
+target_defense_type: mental
+effect_type: buff
+effect_magnitude: 10
+buff_ids:
+  - 3

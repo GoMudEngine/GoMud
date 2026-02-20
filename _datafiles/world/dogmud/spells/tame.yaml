@@ -1,5 +1,4 @@
-# Only applied by the tame skill
-spellid: tameskill
+spellid: tame
 name: Tame
 description: Attempts to tame a wild creature.
 type: harmsingle
@@ -9,3 +8,6 @@ cost: 0
 waitrounds: 3
 difficulty: 0
 primarystat: willpower
+base_folds: 16
+target_defense_type: mental
+effect_type: tame

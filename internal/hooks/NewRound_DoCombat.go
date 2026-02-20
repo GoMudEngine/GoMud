@@ -58,6 +58,16 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 			continue
 		}
 
+		// Stage 11.4: Minor Shield round expiry
+		if user.Character.HasCondition(characters.ConditionShield) {
+			if user.Character.GetConditionDuration(characters.ConditionShield) <= 1 {
+				user.Character.RemoveCondition(characters.ConditionShield)
+				user.SendText(`<ansi fg="blue">Your Minor Shield dissipates.</ansi>`)
+			} else {
+				user.Character.DecrementCondition(characters.ConditionShield)
+			}
+		}
+
 		/**************************
 		*
 		* START HANDLING FOLD CASTING
@@ -141,10 +151,11 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 				}
 
 				if cs.FoldsAccumulated >= cs.FoldsNeeded {
-					// Folds complete — placeholder until Stage 11.4 resolves
-					user.SendText(fmt.Sprintf(
-						`<ansi fg="cyan-bold">Your folds are complete! %s holds in your mind... [Stage 11.4 will resolve this spell]</ansi>`,
-						spellData.Name))
+					// Folds complete — Stage 11.4: resolve the spell effect
+					resolveRoom := rooms.LoadRoom(user.Character.RoomId)
+					if resolveRoom != nil {
+						resolveSpell(user, cs, spellData, resolveRoom)
+					}
 					user.Character.TrackSpellCast(cs.SpellId)
 					user.Character.OnSkillUse(string(skills.Spellcasting), userId)
 					user.Character.OnStatUse("willpower", userId)
@@ -1073,6 +1084,15 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 			var roundResult combat.AttackResult
 
 			roundResult = combat.AttackMobVsPlayer(mob, defUser)
+
+			// Stage 11.4: Minor Shield reduces physical weapon damage
+			if roundResult.Hit && defUser.Character.HasCondition(characters.ConditionShield) {
+				reduction := int(defUser.Character.GetConditionMagnitude(characters.ConditionShield)) / 2
+				if roundResult.DamageToTarget > reduction+1 {
+					roundResult.DamageToTarget -= reduction
+					roundResult.DamageToTargetReduction += reduction
+				}
+			}
 
 			// Stage 8.4: Process crit effects (parry crit disarm, dodge crit grapple opportunity)
 
