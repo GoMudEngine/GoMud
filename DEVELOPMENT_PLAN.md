@@ -2897,6 +2897,19 @@ New characters currently have no spells in their spellbook, making it impossible
 
 ---
 
+### Hotfix: Proportional stdDev & Physical Armor Formula ✅ COMPLETED (merge 0eb9d38)
+**Goal**: Fix two systematic errors introduced in Stage 11.4 and present throughout existing combat code.
+
+**Fixes**:
+1. All `dice.Roll` / `dice.OpposedRoll` calls used flat `15.0` stdDev — replaced with `dice.StdDevFor(mean)` = `mean * 0.15` (floor 1.0) across 11 files
+2. `spell_resolution.go` physical defense incorrectly included `Vitality.ValueAdj` — removed; physical defense = equipment `DamageReduction` + `ConditionShield` only
+3. Added `dice.StdDevFor()` helper to `internal/dice/dice.go`
+4. Updated `CLAUDE.md` with accurate rules: use-based progression (no levels/XP), proportional stdDev, 3-source armor model, file naming conventions
+
+**Files changed**: `dice.go`, `combat.go`, `grapple.go`, `character.go`, `spell_resolution.go`, `bash/kick/trip.go` (user + mob), `CLAUDE.md`
+
+---
+
 ### Stage 11.5: Combat Integration & NPC Caster AI
 **Goal**: Fully integrate casting into the combat action economy. Update NPC AI with a caster archetype that uses the fold system.
 
@@ -4075,4 +4088,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-20
 **Status**: In Progress
-**Current Stage**: 11.4 Complete — Core Spells & Components (merge 80045f3). Replaced Stage 11.4 placeholder with full spell resolution via dice.OpposedRoll: opposed normal-distribution rolls for hit/miss/crit/fumble; damage, heal, buff, tame, and shield effect types; component consumption (stone items for throw-stone); 8 core spell YAMLs (throw-stone, fire-bolt, minor-shield, stun, blind, fireball, tame, plus updated heal/mm/sparks); 2 new buff YAMLs (stun no-combat, blind perception-40); ConditionShield for Minor Shield (10-round armor bonus, round expiry in handlePlayerCombat, damage reduction in handleMobCombat); CalcSpellAttack helper + 4-case test; component check in skill.cast.go; rat mob gets animal group for tame targeting. Ready for Stage 11.5 (Combat Integration & NPC Caster AI).
+**Current Stage**: Hotfix Complete (merge 0eb9d38) — proportional stdDev (dice.StdDevFor) + physical armor formula. Ready for Stage 11.5 (Combat Integration & NPC Caster AI).
