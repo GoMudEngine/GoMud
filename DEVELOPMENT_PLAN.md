@@ -2364,6 +2364,7 @@ message := messages[tier][perspective][selectedPool].Get(msgSeed)
 
 ### Stage 9.7: Configurable Combat Prompt ✅ COMPLETED
 **Commit**: `c7ec255` - feat: implement Stage 9.7 configurable combat prompt
+**Fix commits**: `7c368a3` (add FightPrompt config field), `6244c25` (fix generic.yaml startup panic)
 
 **Goal**: Let players configure what information appears in their combat prompt via per-element toggles.
 
@@ -2376,11 +2377,15 @@ message := messages[tier][perspective][selectedPool].Get(msgSeed)
 - New prompt tags: `{target}`, `{targethealth}`, `{targetpos}`, `{tank}`, `{tankpos}`, `{tankbar}`
 - `targetHealthDesc`: healthy/bruised/wounded/badly wounded/near death/dead
 - Updated `help/set-prompt.template` with full toggle documentation
+- Added `FightPrompt` field to `TextFormats` config struct and `config.yaml`
+- Fixed `generic.yaml` startup panic: added second message to every single-item tier in all 7 `separate:` sections (yaml.v3 quirk with single-item block sequences in struct context)
 
-**Files Modified** (3 files, 284 lines):
+**Files Modified** (5 files):
 1. `internal/users/userrecord.prompt.go` — helpers + new tags + dynamic fprompt cache
 2. `internal/usercommands/set.go` — `tog` subcommand + improved zero-arg display + `default` clears toggles
 3. `_datafiles/world/dogmud/templates/help/set-prompt.template` — full rewrite
+4. `internal/configs/config.textformats.go` — added `FightPrompt` field
+5. `_datafiles/world/dogmud/combat-messages/generic.yaml` — fixed single-item tier panic
 
 ---
 
