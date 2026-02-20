@@ -39,3 +39,29 @@ func GetDamageDescription(damageAmount int, targetMaxHP int) string {
 		return "devastating wounds"
 	}
 }
+
+// GetHealDescription converts a numeric healing amount into a descriptive phrase,
+// scaled relative to the target's maximum HP. Mirrors GetDamageDescription so that
+// neither function leaks raw numbers into player-facing messages.
+func GetHealDescription(healAmount int, targetMaxHP int) string {
+	if targetMaxHP <= 0 {
+		return "light mending"
+	}
+
+	pct := float64(healAmount) / float64(targetMaxHP) * 100
+
+	switch {
+	case pct < 5:
+		return "negligible mending"
+	case pct < 15:
+		return "light mending"
+	case pct < 30:
+		return "moderate restoration"
+	case pct < 50:
+		return "substantial healing"
+	case pct < 75:
+		return "significant healing"
+	default:
+		return "extraordinary healing"
+	}
+}

@@ -917,6 +917,9 @@ func (c *Character) GetDefense() int {
 		reduction = int(float64(reduction) * 1.5)
 	}
 
+	// Add magical armor from Minor Shield (or any future ConditionShield source)
+	reduction += int(c.GetConditionMagnitude(ConditionShield))
+
 	if reduction > 100 {
 		reduction = 100
 	}

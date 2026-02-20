@@ -62,3 +62,12 @@ Before creating any new data file, verify the expected filename from the loader'
 - Items/mobs follow the same `ConvertForFilename` pattern
 - Always confirm the `.js` stub filename matches the `.yaml` filename (same base, different extension)
 - Mismatch between filesystem path and `Filepath()` output causes a startup panic
+
+## Player-Facing Messages — No Hard Numbers
+Never display raw numeric values (damage, healing, armor points, round counts, etc.) directly to the player in combat or spell messages. Use descriptive language instead:
+- **Damage**: use `combat.GetDamageDescription(amount, targetMaxHP)` → "light wounds", "serious wounds", etc.
+- **Healing**: use `combat.GetHealDescription(amount, targetMaxHP)` → "light mending", "moderate restoration", etc.
+- **Durations / other numbers**: describe the effect, not the mechanics ("A barrier forms around you." not "A barrier forms for 10 rounds.")
+- **Armor / stat bonuses**: describe the feel ("bolsters your defenses" not "+33 armor")
+
+Displaying raw numbers breaks immersion and leaks internal balance values to players. The exception is the `status` command's stat sheet — that is a deliberate mechanical display.

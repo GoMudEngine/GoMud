@@ -5,6 +5,7 @@ import (
 	"math"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -69,8 +70,7 @@ func resolveAgainstMob(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, 
 			backfireDmg = 1
 		}
 		user.Character.Health -= backfireDmg
-		user.SendText(fmt.Sprintf(
-			`<ansi fg="red">Your spell backfires! You take %d damage!</ansi>`, backfireDmg))
+		user.SendText(`<ansi fg="red">Your spell backfires violently, wounding you!</ansi>`)
 		room.SendText(fmt.Sprintf(
 			`<ansi fg="red"><ansi fg="username">%s</ansi>'s spell backfires!</ansi>`, user.Character.Name), user.UserId)
 		return
@@ -112,8 +112,8 @@ func applyMobEffect(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spe
 			mob.Command(fmt.Sprintf("attack @%d", user.UserId))
 		}
 		user.SendText(fmt.Sprintf(
-			`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> strikes <ansi fg="mobname">%s</ansi> for <ansi fg="red">%d</ansi> damage!%s</ansi>`,
-			spellData.Name, mob.Character.Name, dmg, critTag))
+			`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> strikes <ansi fg="mobname">%s</ansi>! (<ansi fg="damage">%s</ansi>)%s</ansi>`,
+			spellData.Name, mob.Character.Name, combat.GetDamageDescription(dmg, mob.Character.HealthMax.Value), critTag))
 		room.SendText(fmt.Sprintf(
 			`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> strikes <ansi fg="mobname">%s</ansi>!`,
 			user.Character.Name, spellData.Name, mob.Character.Name), user.UserId)
@@ -174,8 +174,7 @@ func resolveAgainstPlayer(user *users.UserRecord, target *users.UserRecord, room
 			backfireDmg = 1
 		}
 		user.Character.Health -= backfireDmg
-		user.SendText(fmt.Sprintf(
-			`<ansi fg="red">Your spell backfires! You take %d damage!</ansi>`, backfireDmg))
+		user.SendText(`<ansi fg="red">Your spell backfires violently, wounding you!</ansi>`)
 		room.SendText(fmt.Sprintf(
 			`<ansi fg="red"><ansi fg="username">%s</ansi>'s spell backfires!</ansi>`, user.Character.Name), user.UserId)
 		return
@@ -211,13 +210,14 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 			heal += magnitude
 		}
 		actual := target.Character.Heal(heal)
+		healDesc := combat.GetHealDescription(actual, target.Character.HealthMax.Value)
 		user.SendText(fmt.Sprintf(
-			`<ansi fg="green">Your <ansi fg="cyan-bold">%s</ansi> restores <ansi fg="green-bold">%d</ansi> health to <ansi fg="username">%s</ansi>!%s</ansi>`,
-			spellData.Name, actual, target.Character.Name, critTag))
+			`<ansi fg="green">Your <ansi fg="cyan-bold">%s</ansi> heals <ansi fg="username">%s</ansi>! (<ansi fg="green-bold">%s</ansi>)%s</ansi>`,
+			spellData.Name, target.Character.Name, healDesc, critTag))
 		if target.UserId != user.UserId {
 			target.SendText(fmt.Sprintf(
-				`<ansi fg="green"><ansi fg="username">%s</ansi>'s <ansi fg="cyan-bold">%s</ansi> restores <ansi fg="green-bold">%d</ansi> health!</ansi>`,
-				user.Character.Name, spellData.Name, actual))
+				`<ansi fg="green"><ansi fg="username">%s</ansi>'s <ansi fg="cyan-bold">%s</ansi> heals you! (<ansi fg="green-bold">%s</ansi>)</ansi>`,
+				user.Character.Name, spellData.Name, healDesc))
 		}
 		room.SendText(fmt.Sprintf(
 			`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> heals <ansi fg="username">%s</ansi>.`,
@@ -242,13 +242,13 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 		if shieldBonus < 1 {
 			shieldBonus = 1
 		}
-		target.Character.AddCondition(characters.ConditionShield, 10, float64(shieldBonus), "spell")
-		target.SendText(fmt.Sprintf(
-			`<ansi fg="cyan">A magical barrier forms around you! +%d armor for 10 rounds.</ansi>`, shieldBonus))
+		duration := 10 + int(math.Round(float64(skillLevel)/5))
+		target.Character.AddCondition(characters.ConditionShield, duration, float64(shieldBonus), "spell")
+		target.SendText(`<ansi fg="cyan">A shimmering magical barrier forms around you, bolstering your defenses.</ansi>`)
 		if target.UserId != user.UserId {
 			user.SendText(fmt.Sprintf(
-				`<ansi fg="cyan">A magical barrier forms around <ansi fg="username">%s</ansi>! +%d armor for 10 rounds.</ansi>`,
-				target.Character.Name, shieldBonus))
+				`<ansi fg="cyan">A shimmering magical barrier forms around <ansi fg="username">%s</ansi>, bolstering their defenses.</ansi>`,
+				target.Character.Name))
 		}
 		room.SendText(fmt.Sprintf(
 			`A shimmering barrier surrounds <ansi fg="username">%s</ansi>.`, target.Character.Name), target.UserId)
