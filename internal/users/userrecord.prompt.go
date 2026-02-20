@@ -14,6 +14,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
+	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/term"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -137,6 +138,7 @@ func (u *UserRecord) BuildFightPromptTemplate() string {
 	if u.getPromptToggle(`tank`) {
 		b.WriteString(` {255}{tank}{tankpos}{tankbar}`)
 	}
+	b.WriteString(`{casting}`)
 	b.WriteString(`{239}{h}{8}:`)
 	return b.String()
 }
@@ -461,6 +463,18 @@ func (u *UserRecord) ProcessPromptString(promptStr string) string {
 				if u.Character.CombatPosition != characters.PositionStanding {
 					posColor := u.Character.CombatPosition.GetPositionColor()
 					promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%s</ansi>`, posColor, u.Character.CombatPosition.String()))
+				}
+
+			case `{casting}`:
+				if u.Character.CastingState != nil {
+					cs := u.Character.CastingState
+					spellName := cs.SpellId
+					if sd := spells.GetSpell(cs.SpellId); sd != nil {
+						spellName = sd.Name
+					}
+					promptOut.WriteString(fmt.Sprintf(
+						`<ansi fg="cyan"> [%s %d/%d]</ansi>`,
+						spellName, cs.FoldsAccumulated, cs.FoldsNeeded))
 				}
 
 			case `{a}`:

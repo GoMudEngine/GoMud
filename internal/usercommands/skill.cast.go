@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
@@ -182,7 +183,20 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		}
 	}
 
-	// 9. Set CastingState — folds accumulate each combat round
+	// 9. Cooldown gate — casting shares the special-move slot (prevents cast+bash same round)
+	cfg := configs.GetGamePlayConfig()
+	if !user.Character.TryCooldown(`special-move`, fmt.Sprintf(`%d rounds`, cfg.SpecialMoveCooldown)) {
+		remaining := user.Character.GetCooldown(`special-move`)
+		roundWord := "round"
+		if remaining > 1 {
+			roundWord = "rounds"
+		}
+		user.SendText(fmt.Sprintf(
+			`You need a moment before you can do that! (%d %s remaining)`, remaining, roundWord))
+		return true, nil
+	}
+
+	// 10. Set CastingState — folds accumulate each combat round
 	user.Character.CastingState = &characters.CastingState{
 		SpellId:              spellInfo.SpellId,
 		FoldsNeeded:          foldsNeeded,

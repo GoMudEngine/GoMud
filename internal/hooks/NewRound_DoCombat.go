@@ -691,7 +691,24 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 				defRoom.SendText(msg, user.UserId)
 			}
 
-			// Handle any scripted behavior now.
+			// Stage 11.5: Mob concentration break when hit
+			if defMob.Character.CastingState != nil && roundResult.DamageToTarget > 0 {
+				maxHP := defMob.Character.HealthMax.Value
+				damagePct := roundResult.DamageToTarget * 100 / maxHP
+				if damagePct < 1 {
+					damagePct = 1
+				}
+				chance := characters.CalcConcentrationChance(defMob.Character.Stats.Willpower.ValueAdj, damagePct)
+				rollConc := util.Rand(100)
+				util.LogRoll(`Mob Concentration`, rollConc, chance)
+				if rollConc >= chance {
+					defMob.Character.CastingState = nil
+					uRoom.SendText(fmt.Sprintf(
+						`<ansi fg="mobname">%s</ansi>'s concentration breaks.`, defMob.Character.Name))
+				}
+			}
+
+						// Handle any scripted behavior now.
 			if roundResult.Hit {
 				scripting.TryMobScriptEvent(`onHurt`, defMob.InstanceId, user.UserId, `user`, map[string]any{`damage`: roundResult.DamageToTarget, `crit`: roundResult.Crit})
 			}
@@ -806,74 +823,80 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 
 		/**************************
 		*
-		* START HANDLING MAGIC
+		* START HANDLING FOLD CASTING (MOBS)
 		*
 		**************************/
 
-		if mob.Character.Aggro != nil && mob.Character.Aggro.Type == characters.SpellCast {
-
-			if mob.Character.Aggro.RoundsWaiting > 0 {
-				mob.Character.Aggro.RoundsWaiting--
-
-				scripting.TrySpellScriptEvent(`onWait`, 0, mob.InstanceId, mob.Character.Aggro.SpellInfo)
-
+		if mob.Character.CastingState != nil {
+			if mob.Character.CombatPosition == characters.PositionProne {
+				mob.Character.CastingState = nil
+				mobRoom.SendText(fmt.Sprintf(
+					`<ansi fg="mobname">%s</ansi>'s concentration breaks.`, mob.Character.Name))
 				continue
 			}
 
-			successChance := mob.Character.GetBaseCastSuccessChance(mob.Character.Aggro.SpellInfo.SpellId)
-			if util.RollDice(1, 100) >= successChance {
-
-				// fail
-				mobRoom.SendText(fmt.Sprintf(`<ansi fg="mobnamme">%s</ansi> tries to cast a spell but it <ansi fg="magenta">fizzles</ansi>!`, mob.Character.Name))
-				mob.Character.Aggro = nil
-
+			cs := mob.Character.CastingState
+			spellData := spells.GetSpell(cs.SpellId)
+			if spellData == nil {
+				mob.Character.CastingState = nil
 				continue
-
 			}
 
-			allowRetaliation := true
-			if handled, err := scripting.TrySpellScriptEvent(`onMagic`, 0, mob.InstanceId, mob.Character.Aggro.SpellInfo); err == nil {
-				if handled {
-					allowRetaliation = false
+			// Simulate fold advance to compute this round's conviction cost
+			simFolds := cs.FoldsAccumulated
+			for i := 0; i < cs.FoldsPerRound; i++ {
+				if simFolds == 0 {
+					simFolds = 1
+				} else {
+					simFolds *= 2
+				}
+				if simFolds >= cs.FoldsNeeded {
+					simFolds = cs.FoldsNeeded
+					break
 				}
 			}
+			foldDelta := simFolds - cs.FoldsAccumulated
+			roundCost := 0
+			if cs.TotalConvictionCost > 0 && cs.FoldsNeeded > 0 {
+				roundCost = (cs.TotalConvictionCost * foldDelta) / cs.FoldsNeeded
+				if roundCost < 1 {
+					roundCost = 1
+				}
+			}
+			if roundCost > 0 && mob.Character.Conviction < roundCost {
+				mob.Character.CastingState = nil
+				mobRoom.SendText(fmt.Sprintf(
+					`<ansi fg="mobname">%s</ansi>'s spell falters.`, mob.Character.Name))
+				continue
+			}
+			mob.Character.Conviction -= roundCost
 
-			if allowRetaliation {
-				if spellData := spells.GetSpell(mob.Character.Aggro.SpellInfo.SpellId); spellData != nil {
+			for i := 0; i < cs.FoldsPerRound; i++ {
+				if cs.FoldsAccumulated == 0 {
+					cs.FoldsAccumulated = 1
+				} else {
+					cs.FoldsAccumulated *= 2
+				}
+				if cs.FoldsAccumulated > cs.FoldsNeeded {
+					cs.FoldsAccumulated = cs.FoldsNeeded
+				}
 
-					if spellData.Type == spells.HarmSingle || spellData.Type == spells.HarmMulti || spellData.Type == spells.HarmArea {
-
-						for _, mobId := range mob.Character.Aggro.SpellInfo.TargetMobInstanceIds {
-
-							affectedMobInstanceIds = append(affectedMobInstanceIds, mobId)
-
-							if defMob := mobs.GetInstance(mobId); defMob != nil {
-
-								defMob.Character.CancelBuffsWithFlag(buffs.CancelIfCombat)
-
-								if defMob.Character.Health <= 0 {
-									defMob.Character.EndAggro()
-								} else if defMob.Character.Aggro == nil {
-									defMob.PreventIdle = true
-									defMob.Command(fmt.Sprintf("attack #%d", mob.InstanceId)) // # means mob
-								}
-
-							}
-						}
-
+				if cs.FoldsAccumulated >= cs.FoldsNeeded {
+					if resolveRoom := rooms.LoadRoom(mob.Character.RoomId); resolveRoom != nil {
+						resolveMobSpell(mob, cs, spellData, resolveRoom)
 					}
+					mob.Character.CastingState = nil
+					break
 				}
+				mobRoom.SendText(fmt.Sprintf(
+					`<ansi fg="mobname">%s</ansi> weaves magic with focused intent.`, mob.Character.Name))
 			}
-
-			mob.Character.Aggro = nil
-
 			continue
-
 		}
 
 		/**************************
 		*
-		* END HANDLING MAGIC
+		* END HANDLING FOLD CASTING (MOBS)
 		*
 		**************************/
 
@@ -887,23 +910,24 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 		// H2H is the base level combat, can do combat commands then
 		if mob.Character.Aggro.Type == characters.DefaultAttack {
 
-			// Stage 8.9: AI special move selection
+			// Stage 11.5: Caster AI decision - try spell first, then special move
 			var chosenMove string
 			if util.Rand(100) < mob.ActivityLevel {
-				// Get target for AI evaluation
 				var targetChar *characters.Character
 				if mob.Character.Aggro.UserId > 0 {
-					if user := users.GetByUserId(mob.Character.Aggro.UserId); user != nil {
-						targetChar = user.Character
+					if u := users.GetByUserId(mob.Character.Aggro.UserId); u != nil {
+						targetChar = u.Character
 					}
 				} else if mob.Character.Aggro.MobInstanceId > 0 {
-					if targetMob := mobs.GetInstance(mob.Character.Aggro.MobInstanceId); targetMob != nil {
-						targetChar = &targetMob.Character
+					if tm := mobs.GetInstance(mob.Character.Aggro.MobInstanceId); tm != nil {
+						targetChar = &tm.Character
 					}
 				}
-
 				if targetChar != nil {
-					chosenMove = combat.ChooseSpecialMove(mob, targetChar)
+					chosenMove = combat.ChooseCastAction(mob)
+					if chosenMove == "" {
+						chosenMove = combat.ChooseSpecialMove(mob, targetChar)
+					}
 				}
 			}
 
@@ -912,7 +936,6 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 				mob.Command(chosenMove, 0)
 				continue
 			}
-
 			// If they have idle commands, maybe do one of them?
 			cmdCt := len(mob.CombatCommands)
 			if cmdCt > 0 {

@@ -1,0 +1,15 @@
+roomid: 3
+zone: Startland
+title: Practice Arena
+description: >
+  A wide-open indoor arena with scorch marks on the stone floor and battered
+  training dummies bolted to the walls. The air smells faintly of char and
+  ozone. This is where fighters and casters alike come to hone their craft.
+  A narrow passage leads east to a quieter alcove.
+mapsymbol: A
+biome: city
+exits:
+  south:
+    roomid: 2
+  east:
+    roomid: 4

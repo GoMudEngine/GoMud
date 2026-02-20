@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -118,6 +119,18 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 
 		}
 
+	}
+
+	// Mob conviction regeneration (same rate as players: base 1 per 3 rounds)
+	for _, mobInstId := range mobs.GetAllMobInstanceIds() {
+		mob := mobs.GetInstance(mobInstId)
+		if mob == nil || mob.Character.Health < 1 {
+			continue
+		}
+		mob.Character.Conviction += mob.Character.ConvictionPerRound()
+		if mob.Character.Conviction > mob.Character.ConvictionMax.Value {
+			mob.Character.Conviction = mob.Character.ConvictionMax.Value
+		}
 	}
 
 	return events.Continue
