@@ -349,3 +349,14 @@ func DiceToDistribution(dCount, dSides, bonus int) (mean float64, stdDev float64
 func StandardDeviation(statRange, randomnessFactor float64) float64 {
 	return statRange * randomnessFactor
 }
+
+// StdDevFor returns a standard deviation proportional to the given mean.
+// Uses 15% of the mean (the canonical DOGMud roll spread), with a floor of 1.0
+// to prevent zero or near-zero standard deviations on very low stat values.
+// Use this instead of hardcoded stdDev literals for all stat-based rolls.
+func StdDevFor(mean float64) float64 {
+	if mean < 1.0 {
+		return 1.0
+	}
+	return mean * 0.15
+}

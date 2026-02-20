@@ -1021,7 +1021,7 @@ func (c *Character) AttemptRecovery(statValue int) (bool, bool) {
 	}
 
 	// Roll for success
-	roll := dice.Roll(50, 15.0) // Mean of 50
+	roll := dice.Roll(50, dice.StdDevFor(50)) // Mean of 50
 	success := roll.Value < chance
 
 	if success {

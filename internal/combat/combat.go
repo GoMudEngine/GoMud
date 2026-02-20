@@ -505,7 +505,7 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 
 				// Get defender's defense sequence based on equipment
 				defenseSequence := targetChar.GetDefenseSequence()
-				combatStdDev := 15.0
+				combatStdDev := dice.StdDevFor(attackScore)
 				hit := false
 				var lastHitRoll dice.RollResult
 
