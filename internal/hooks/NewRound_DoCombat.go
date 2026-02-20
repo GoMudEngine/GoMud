@@ -171,104 +171,64 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 
 		/**************************
 		*
-		* START HANDLING MAGIC
+		* START HANDLING FOLD CASTING
 		*
 		**************************/
 
-		if user.Character.Aggro != nil && user.Character.Aggro.Type == characters.SpellCast {
+		if user.Character.CastingState != nil {
+			cs := user.Character.CastingState
 
-			if user.Character.Aggro.RoundsWaiting > 0 {
-				user.Character.Aggro.RoundsWaiting--
-
-				scripting.TrySpellScriptEvent(`onWait`, user.UserId, 0, user.Character.Aggro.SpellInfo)
-
+			spellData := spells.GetSpell(cs.SpellId)
+			if spellData == nil {
+				// Spell data missing — clear and continue
+				user.Character.CastingState = nil
+				user.SendText(`<ansi fg="red">The spell dissipates — its data cannot be found.</ansi>`)
 				continue
 			}
 
-			roll := util.RollDice(1, 100)
-			successChance := user.Character.GetBaseCastSuccessChance(user.Character.Aggro.SpellInfo.SpellId)
-			if roll >= successChance {
+			// Per-fold conviction cost (paid each round, not upfront)
+			foldCost := 0
+			if cs.TotalConvictionCost > 0 {
+				foldCost = cs.TotalConvictionCost / cs.FoldsNeeded
+				if foldCost < 1 {
+					foldCost = 1
+				}
+			}
+			totalThisRound := foldCost * cs.FoldsPerRound
 
-				// fail
-				user.SendText(fmt.Sprintf(`<ansi fg="spell-text"><ansi fg="magenta">***</ansi> Your spell fizzles! <ansi fg="magenta">***</ansi> (Rolled %d on %d%% chance of success)</ansi>`, roll, successChance))
-				uRoom.SendText(fmt.Sprintf(`<ansi fg="spell-text"><ansi fg="username">%s</ansi> tries to cast a spell but it <ansi fg="magenta">fizzles</ansi>!</ansi>`, user.Character.Name), userId)
-				user.Character.OnCriticalFailure("cast", userId)
+			if totalThisRound > 0 && user.Character.Conviction < totalThisRound {
+				// Out of conviction — auto-cancel
+				user.Character.CastingState = nil
+				user.SendText(`<ansi fg="red">Your conviction wavers — the fold collapses.</ansi>`)
+				continue
+			}
+
+			cs.FoldsAccumulated += cs.FoldsPerRound
+			user.Character.Conviction -= totalThisRound
+			cs.ConvictionSpent += totalThisRound
+
+			if cs.FoldsAccumulated < cs.FoldsNeeded {
+				// Still folding — report progress
+				user.SendText(fmt.Sprintf(
+					`<ansi fg="cyan">You fold your inner vision %d time(s). You now hold <ansi fg="cyan-bold">%d/%d</ansi> folds.</ansi>`,
+					cs.FoldsPerRound, cs.FoldsAccumulated, cs.FoldsNeeded))
+			} else {
+				// Folds complete — placeholder until Stage 11.4 resolves
+				user.SendText(fmt.Sprintf(
+					`<ansi fg="cyan-bold">Your folds are complete! %s holds in your mind... [Stage 11.4 will resolve this spell]</ansi>`,
+					spellData.Name))
+				user.Character.TrackSpellCast(cs.SpellId)
+				user.Character.OnSkillUse(string(skills.Spellcasting), userId)
 				user.Character.OnStatUse("willpower", userId)
-				user.Character.Aggro = nil
-
-				continue
-
+				user.Character.CastingState = nil
 			}
-
-			//
-			// Need to track before health to calculate if damage was done post-spell
-			//
-			mobHealthBefore := map[int]int{}
-			for _, mInstId := range user.Character.Aggro.SpellInfo.TargetMobInstanceIds {
-				if defMob := mobs.GetInstance(mInstId); defMob != nil {
-
-					// Remember who has hit him
-					defMob.Character.TrackPlayerDamage(user.UserId, 0)
-					mobHealthBefore[mInstId] = defMob.Character.Health
-
-				}
-			}
-
-			allowRetaliation := true
-			if handled, err := scripting.TrySpellScriptEvent(`onMagic`, user.UserId, 0, user.Character.Aggro.SpellInfo); err == nil {
-				if handled {
-					allowRetaliation = false
-				}
-			}
-
-			user.Character.TrackSpellCast(user.Character.Aggro.SpellInfo.SpellId)
-			user.Character.OnSkillUse(string(skills.Spellcasting), userId)
-			user.Character.OnStatUse("willpower", userId)
-
-			if allowRetaliation {
-				if spellData := spells.GetSpell(user.Character.Aggro.SpellInfo.SpellId); spellData != nil {
-
-					if spellData.Type == spells.HarmSingle || spellData.Type == spells.HarmMulti || spellData.Type == spells.HarmArea {
-
-						for _, mobId := range user.Character.Aggro.SpellInfo.TargetMobInstanceIds {
-
-							affectedMobInstanceIds = append(affectedMobInstanceIds, mobId)
-
-							if defMob := mobs.GetInstance(mobId); defMob != nil {
-
-								// Track damage done
-								if hBefore, ok := mobHealthBefore[mobId]; ok {
-									hDelta := hBefore - defMob.Character.Health
-									if hDelta > 0 {
-										defMob.Character.TrackPlayerDamage(user.UserId, hDelta)
-									}
-								}
-
-								defMob.Character.CancelBuffsWithFlag(buffs.CancelIfCombat)
-
-								if defMob.Character.Health <= 0 {
-									defMob.Character.EndAggro()
-								} else if defMob.Character.Aggro == nil {
-									defMob.PreventIdle = true
-									defMob.Command(fmt.Sprintf("attack @%d", user.UserId)) // @ means player
-								}
-
-							}
-						}
-
-					}
-				}
-			}
-
-			user.Character.Aggro = nil
 
 			continue
-
 		}
 
 		/**************************
 		*
-		* END HANDLING MAGIC
+		* END HANDLING FOLD CASTING
 		*
 		**************************/
 
