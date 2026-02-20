@@ -24,7 +24,9 @@ type SpellData struct {
 	HealthCost  int        `yaml:"healthcost,omitempty"` // Optional Health cost for life-force magic
 	WaitRounds  int        `yaml:"waitrounds,omitempty"`
 	Difficulty  int        `yaml:"difficulty,omitempty"` // Augments final success chance by this %
-	PrimaryStat string     `yaml:"primarystat,omitempty"` // Stat used for spell rolls and progression
+	PrimaryStat         string `yaml:"primarystat,omitempty"`          // Stat used for spell rolls and progression
+	BaseFolds           int    `yaml:"base_folds,omitempty"`           // 0 = default to 4
+	TargetDefenseType   string `yaml:"target_defense_type,omitempty"`  // "physical", "mental", "" = none
 }
 
 const (

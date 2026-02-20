@@ -58,6 +58,7 @@ var (
 		`build`:       {Build, false, true, true}, // Admin only
 		`buff`:        {Buff, false, true, true},  // Admin only
 		`buy`:{Buy, false, true, false},
+		`cancel`:      {Cancel, true, true, false},
 		`cast`:        {Cast, false, true, false},
 		`cooldowns`:   {Cooldowns, true, true, false},
 		`command`:     {Command, false, true, true}, // Admin only
@@ -327,6 +328,32 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 
 	// Cancel any buffs they have that get cancelled based on them doing anything at all
 	user.Character.CancelBuffsWithFlag(buffs.CancelOnAction)
+
+	// Fold-casting intercept: while holding folds, most action commands are blocked.
+	// Informational commands (AllowedWhenDowned=true) pass through.
+	// 'cancel' always allowed (to stop casting).
+	// 'flee' clears the cast and then proceeds.
+	if user.Character.CastingState != nil {
+		if cmd == `flee` {
+			cs := user.Character.CastingState
+			user.Character.CastingState = nil
+			user.SendText(fmt.Sprintf(
+				`<ansi fg="cyan">You lose your concentration as you flee! %d conviction is lost.</ansi>`,
+				cs.ConvictionSpent))
+			room.SendText(fmt.Sprintf(
+				`<ansi fg="username">%s</ansi> breaks their concentration.`,
+				user.Character.Name), user.UserId)
+			// Fall through — let the flee command execute normally
+		} else if cmd != `cancel` {
+			if cmdInfo, hasCmdInfo := userCommands[cmd]; !hasCmdInfo || !cmdInfo.AllowedWhenDowned {
+				user.SendText(fmt.Sprintf(
+					`<ansi fg="cyan">You are holding <ansi fg="cyan-bold">%d/%d</ansi> folds. Type <ansi fg="cyan-bold">cancel</ansi> to stop.</ansi>`,
+					user.Character.CastingState.FoldsAccumulated,
+					user.Character.CastingState.FoldsNeeded))
+				return true, nil
+			}
+		}
+	}
 
 	// Experimental, not sure if will have unexpected consequences.
 	// Turn keywords for targetting self into actual string of self

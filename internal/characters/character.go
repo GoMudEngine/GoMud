@@ -102,6 +102,7 @@ type Character struct {
 	roomHistory      []int                          // A stack FILO of the last X rooms the character has been in
 	PlayerDamage     map[int]int                    `yaml:"-"` // key = who, value = how much
 	LastPlayerDamage uint64                         `yaml:"-"` // last round a player damaged this character
+	CastingState     *CastingState                  `yaml:"-"` // Active fold-based cast in progress (Stage 11.2). Not persisted.
 	permaBuffIds     []int                          // Buff Id's that are always present for this character
 	userId           int                            // User ID of the character if any
 }
@@ -704,6 +705,9 @@ func (c *Character) GetSpells() map[string]int {
 	maps.Copy(ret, c.SpellBook)
 	return ret
 }
+
+// IsCasting returns true if the character has an active fold-based cast in progress.
+func (c *Character) IsCasting() bool { return c.CastingState != nil }
 
 func (c *Character) HasSpell(spellName string) bool {
 	if intVal, ok := c.SpellBook[spellName]; ok {
