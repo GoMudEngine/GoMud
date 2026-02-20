@@ -1383,9 +1383,6 @@ func (c *Character) GetCombatSkillLevel() int {
 	if level := c.GetSkillLevel(c.GetCombatSkillTag()); level > 0 {
 		return level
 	}
-	if level := c.GetSkillLevel(skills.Brawling); level > 0 {
-		return level
-	}
 	return 1
 }
 
@@ -1405,11 +1402,11 @@ func (c *Character) GetModifiedAttackCount(baseAttacks int, weaponSpeed float64,
 	skillMod := 1.0 + (skillLevel / 50.0) * 0.1
 	attacks *= skillMod
 
-	// If offhand, dual wielding skill plays significant role
+	// If offhand, weapon-combat skill governs dual-wield effectiveness
 	if isOffhand {
-		dualWieldLevel := float64(c.GetSkillLevel(skills.DualWield))
+		wcLevel := float64(c.GetSkillLevel(skills.WeaponCombat))
 		// Significant modifier: 0.5 at skill 0, 1.0 at skill 25, 1.2 at skill 50
-		dualWieldMod := 0.5 + (dualWieldLevel / 50.0) * 0.7
+		dualWieldMod := 0.5 + (wcLevel / 50.0) * 0.7
 		attacks *= dualWieldMod
 	}
 
@@ -1571,12 +1568,14 @@ func (c *Character) DeductDefenseStamina(defenseType string) bool {
 }
 
 func (c *Character) GetMaxCharmedCreatures() int {
-	lvl := c.GetSkillLevel(skills.Tame)
+	// Taming is now handled via spellcasting; base charm capacity from spellcasting skill
+	lvl := c.GetSkillLevel(skills.Spellcasting)
 	return lvl + 1
 }
 
 func (c *Character) GetMemoryCapacity() int {
-	memCap := c.GetSkillLevel(skills.Map) * c.Stats.Perception.ValueAdj
+	// Map is now a free command; memory capacity based on Perception
+	memCap := (c.Stats.Perception.ValueAdj >> 1)
 	if memCap < 0 {
 		memCap = 0
 	}
@@ -1584,7 +1583,8 @@ func (c *Character) GetMemoryCapacity() int {
 }
 
 func (c *Character) GetMapSprawlCapacity() int {
-	sprawlCap := c.GetSkillLevel(skills.Map) + (c.Stats.Perception.ValueAdj >> 2)
+	// Map is now a free command; sprawl capacity based on Perception
+	sprawlCap := (c.Stats.Perception.ValueAdj >> 2)
 	if sprawlCap < 0 {
 		sprawlCap = 0
 	}
@@ -2119,7 +2119,8 @@ func (c *Character) AutoTrain() {
 }
 
 func (c *Character) CanDualWield() bool {
-	return c.GetSkillLevel(skills.DualWield) > 0
+	// Dual wielding is now governed by weapon-combat skill
+	return c.GetSkillLevel(skills.WeaponCombat) > 0
 }
 
 // Returns whether a correction was in order

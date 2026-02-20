@@ -44,24 +44,20 @@ var (
 	functionExporters = []FunctionExporter{}
 
 	userCommands map[string]CommandAccess = map[string]CommandAccess{
-		`aid`:         {Aid, false, true, false},
 		`alias`:       {Alias, true, true, false},
 		`appraise`:    {Appraise, false, true, false},
 		`ask`:         {Ask, false, true, false},
 		`attack`:      {Attack, false, true, false},
-		`backstab`:    {Backstab, false, true, false},
-		`badcommands`: {BadCommands, true, true, true}, // Admin only
+		`badcommands`:{BadCommands, true, true, true}, // Admin only
 		`bash`:        {Bash, false, true, false},
 		`biome`:       {Biome, true, true, false},
 		`broadcast`:   {Broadcast, true, true, false},
 		`character`:   {Character, true, true, false},
-		`tackle`:      {Tackle, false, true, false},
-		`bank`:        {Bank, false, true, false},
+		`bank`:{Bank, false, true, false},
 		`break`:       {Break, false, true, false},
 		`build`:       {Build, false, true, true}, // Admin only
 		`buff`:        {Buff, false, true, true},  // Admin only
-		`bump`:        {Bump, false, true, false},
-		`buy`:         {Buy, false, true, false},
+		`buy`:{Buy, false, true, false},
 		`cast`:        {Cast, false, true, false},
 		`cooldowns`:   {Cooldowns, true, true, false},
 		`command`:     {Command, false, true, true}, // Admin only
@@ -69,13 +65,11 @@ var (
 		`consider`:    {Consider, true, true, false},
 		`deafen`:      {Deafen, true, true, true}, // Admin only
 		`default`:     {Default, false, true, false},
-		`disarm`:      {Disarm, false, true, false},
-		`drop`:        {Drop, true, false, false}, // Can't drop items in combat
+		`drop`:{Drop, true, false, false}, // Can't drop items in combat
 		`drink`:       {Drink, false, true, false},
 		`eat`:         {Eat, false, true, false},
 		`emote`:       {Emote, true, true, false},
-		`enchant`:     {Enchant, false, false, false}, // Crafting - can't do in combat
-		`experience`:  {Experience, true, true, false},
+		`experience`:{Experience, true, true, false},
 		`equip`:       {Equip, false, false, false}, // Can't equip in combat
 		`flee`:        {Flee, false, true, false},
 		`gearup`:      {Gearup, false, false, false}, // Can't equip in combat
@@ -111,32 +105,26 @@ var (
 		`party`:       {Party, true, true, false},
 		`password`:    {Password, true, true, false},
 		`paz`:         {Paz, true, true, true}, // Admin only
-		`peep`:        {Peep, false, true, false},
-		`pet`:         {Pet, false, true, false},
+		`pet`:{Pet, false, true, false},
 		`picklock`:    {Picklock, false, true, false},
 		`pickpocket`:  {Pickpocket, false, true, false},
 		`prepare`:     {Prepare, true, true, true}, // Admin only
-		`portal`:      {Portal, false, true, false},
-		`pray`:        {Pray, false, true, false},
-		`print`:       {Print, true, true, false},
+		`print`:{Print, true, true, false},
 		`printline`:   {PrintLine, true, true, false},
 		`put`:         {Put, false, false, false}, // Can't manipulate containers in combat
 		`pvp`:         {Pvp, true, true, false},
 		`quests`:      {Quests, true, true, false},
 		`quit`:        {Quit, true, true, false},
 		`questtoken`:  {QuestToken, false, true, true}, // Admin only
-		`rank`:        {Rank, false, true, false},
-		`read`:        {Read, false, true, false},
-		`recover`:     {Recover, false, false, false}, // Can't rest in combat
-		`reload`:      {Reload, true, true, true},     // Admin only
+		`read`:{Read, false, true, false},
+		`reload`:{Reload, true, true, true},     // Admin only
 		`remove`:      {Remove, false, false, false},  // Can't remove equipment in combat
 		`rename`:      {Rename, false, true, true},    // Admin only
 		`redescribe`:  {Redescribe, false, true, true}, // Admin only
 		`room`:        {Room, false, true, true},       // Admin only
 		`save`:        {Save, true, true, false},
 		`say`:         {Say, true, true, false},
-		`scribe`:      {Scribe, false, false, false}, // Crafting - can't do in combat
-		`search`:      {Search, false, true, false},
+		`search`:{Search, false, true, false},
 		`sell`:        {Sell, false, true, false},
 		`server`:      {Server, false, true, true}, // Admin only
 		`set`:         {Set, true, true, false},
@@ -157,21 +145,16 @@ var (
 		`storage`:     {Storage, false, false, false}, // Can't manipulate storage in combat
 		`suicide`:     {Suicide, true, true, false},
 		`syslogs`:     {SysLogs, true, true, true}, // Admin only
-		`tame`:        {Tame, false, true, false},
-		`target`:      {Target, false, true, false},
+		`target`:{Target, false, true, false},
 		`teleport`:    {Teleport, true, true, true}, // Admin only
-		`throw`:       {Throw, false, true, false},
-		`track`:       {Track, false, true, false},
+		`track`:{Track, false, true, false},
 		`train`:       {Train, false, false, false}, // Can't train in combat
 		`trip`:        {Trip, false, true, false},
-		`unenchant`:   {Unenchant, false, false, false}, // Crafting - can't do in combat
-		`uncurse`:     {Uncurse, false, false, false},   // Crafting - can't do in combat
-		`unlock`:      {Unlock, false, true, false},
+		`unlock`:{Unlock, false, true, false},
 		`undeafen`:    {UnDeafen, true, true, true}, // Admin only
 		`unmute`:      {UnMute, true, true, true},   // Admin only
 		`use`:         {Use, false, true, false},
-		`dual-wield`:  {DualWield, true, false, false}, // Can't change weapons in combat
-		`whisper`:     {Whisper, true, true, false},
+		`whisper`:{Whisper, true, true, false},
 		`who`:         {Who, true, true, false},
 		`zap`:         {Zap, true, true, true},   // Admin only
 		`zone`:        {Zone, false, true, true}, // Admin only

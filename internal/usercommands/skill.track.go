@@ -32,7 +32,7 @@ Level 4 - Specify a mob or username and every room you enter will tell you what 
 */
 func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
-	skillLevel := user.Character.GetSkillLevel(skills.Track)
+	skillLevel := user.Character.GetSkillLevel(skills.Tracking)
 
 	if skillLevel == 0 {
 		user.SendText("You don't know how to track.")
@@ -48,14 +48,14 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	//
 	if rest == `` {
 
-		if !user.Character.TryCooldown(skills.Track.String(), "1 round") {
+		if !user.Character.TryCooldown(skills.Tracking.String(), "1 round") {
 			user.SendText(
-				fmt.Sprintf("You need to wait %d more rounds to use that skill again.", user.Character.GetCooldown(skills.Track.String())))
+				fmt.Sprintf("You need to wait %d more rounds to use that skill again.", user.Character.GetCooldown(skills.Tracking.String())))
 			return true, errors.New(`you're doing that too often`)
 		}
 
 		// Fire an event that a skill has been used
-		events.AddToQueue(events.SkillUsed{user.UserId, skills.Track, ``})
+		events.AddToQueue(events.SkillUsed{user.UserId, skills.Tracking, ``})
 
 		visitorData := make([]trackingInfo, 0)
 
@@ -173,17 +173,17 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	}
 
-	if !user.Character.TryCooldown(skills.Track.String(), "1 round") {
+	if !user.Character.TryCooldown(skills.Tracking.String(), "1 round") {
 
 		user.SendText(
-			fmt.Sprintf("You need to wait %d more rounds to use that skill again.", user.Character.GetCooldown(skills.Track.String())))
+			fmt.Sprintf("You need to wait %d more rounds to use that skill again.", user.Character.GetCooldown(skills.Tracking.String())))
 
 		return true, errors.New(`you're doing that too often`)
 
 	}
 
 	// Fire an event that a skill has been used
-	events.AddToQueue(events.SkillUsed{user.UserId, skills.Track, ``})
+	events.AddToQueue(events.SkillUsed{user.UserId, skills.Tracking, ``})
 
 	//
 	// At skill level 3, search the room and adjacent rooms for quarry

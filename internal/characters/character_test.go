@@ -43,7 +43,7 @@ func TestCharacter_CanDualWield(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := New()
-			c.Skills[string(skills.DualWield)] = tt.skillLevel
+			c.Skills[string(skills.WeaponCombat)] = tt.skillLevel
 			got := c.CanDualWield()
 			assert.Equal(t, tt.want, got)
 		})
@@ -2055,8 +2055,8 @@ func TestCharacter_GetSkillLevel(t *testing.T) {
 		{
 			name: "Skill exists with positive value",
 			args: args{
-				skillsMap: map[string]int{string(skills.DualWield): 3},
-				skillTag:  skills.DualWield,
+				skillsMap: map[string]int{string(skills.WeaponCombat): 3},
+				skillTag:  skills.WeaponCombat,
 			},
 			expected: 3,
 		},
@@ -2071,7 +2071,7 @@ func TestCharacter_GetSkillLevel(t *testing.T) {
 		{
 			name: "Skill does not exist",
 			args: args{
-				skillsMap: map[string]int{string(skills.Tame): 2},
+				skillsMap: map[string]int{string(skills.Spellcasting): 2},
 				skillTag:  skills.Cast,
 			},
 			expected: 0,
@@ -2080,7 +2080,7 @@ func TestCharacter_GetSkillLevel(t *testing.T) {
 			name: "Nil Skills map",
 			args: args{
 				skillsMap: nil,
-				skillTag:  skills.Map,
+				skillTag:  skills.Tracking,
 			},
 			expected: 0,
 		},
@@ -2089,10 +2089,10 @@ func TestCharacter_GetSkillLevel(t *testing.T) {
 			args: args{
 				skillsMap: map[string]int{
 					string(skills.Cast):      2,
-					string(skills.DualWield): 1,
-					string(skills.Map):       4,
+					string(skills.WeaponCombat): 1,
+					string(skills.Tracking):       4,
 				},
-				skillTag: skills.Map,
+				skillTag: skills.Tracking,
 			},
 			expected: 4,
 		},
@@ -2429,7 +2429,7 @@ func TestCharacter_GetModifiedAttackCount(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := New()
 			c.Skills[string(skills.UnarmedCombat)] = tt.combatSkill
-			c.Skills[string(skills.DualWield)] = tt.dualWieldSkill
+			c.Skills[string(skills.WeaponCombat)] = tt.dualWieldSkill
 
 			result := c.GetModifiedAttackCount(tt.baseAttacks, tt.weaponSpeed, tt.isOffhand)
 			assert.Equal(t, tt.expected, result)

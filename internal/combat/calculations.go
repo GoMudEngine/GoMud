@@ -84,8 +84,8 @@ func ChanceToTame(s *users.UserRecord, t *mobs.Mob) int {
 		sizeModifier = MOD_SIZE_MEDIUM
 	}
 
-	// Use Tame skill vs mob's combat skill instead of level difference
-	tamerSkill := s.Character.GetSkillLevel(skills.Tame)
+	// Taming is now handled via spellcasting; use spellcasting skill vs mob combat skill
+	tamerSkill := s.Character.GetSkillLevel(skills.Spellcasting)
 	mobSkill := t.Character.GetCombatSkillLevel()
 	skillDiff := tamerSkill - mobSkill
 	if skillDiff > MOD_SKILLDIFF_MAX {

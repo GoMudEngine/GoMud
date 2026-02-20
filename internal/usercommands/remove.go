@@ -36,7 +36,8 @@ func Remove(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	} else {
 
 		if matchItem.IsCursed() && user.Character.Health > 0 {
-			if user.Character.GetSkillLevel(skills.Enchant) < 4 {
+			// Cursed items can no longer be removed by skill — use an uncurse spell or service
+			if user.Character.GetSkillLevel(skills.Spellcasting) < 4 {
 				user.SendText(
 					fmt.Sprintf(`You can't seem to remove your <ansi fg="item">%s</ansi>... It's <ansi fg="red-bold">CURSED!</ansi>`, matchItem.DisplayName()),
 				)

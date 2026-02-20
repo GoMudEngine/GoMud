@@ -9,21 +9,20 @@ import (
 )
 
 /*
-SkullDuggery Skill
-Level 1 - Sneak
+Stealth Skill
+Level 1 - Sneak: enter a hidden state outside of combat
 */
 func Sneak(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
-	skillLevel := user.Character.GetSkillLevel(skills.Skulduggery)
+	skillLevel := user.Character.GetSkillLevel(skills.Stealth)
 
-	// If they don't have a skill, act like it's not a valid command
+	// If they don't have the skill, act like it's not a valid command
 	if skillLevel < 1 {
 		return false, nil
 	}
 
-	// Must be sneaking
-	isSneaking := user.Character.HasBuffFlag(buffs.Hidden)
-	if isSneaking {
+	// Already hidden
+	if user.Character.HasBuffFlag(buffs.Hidden) {
 		user.SendText("You're already hidden!")
 		return true, nil
 	}
@@ -41,7 +40,7 @@ func Sneak(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	user.AddBuff(9, `skill`)
 
 	// Fire an event that a skill has been used
-	events.AddToQueue(events.SkillUsed{user.UserId, skills.Skulduggery, `sneak`})
+	events.AddToQueue(events.SkillUsed{user.UserId, skills.Stealth, `sneak`})
 
 	return true, nil
 }
