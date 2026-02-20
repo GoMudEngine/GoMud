@@ -2674,7 +2674,7 @@ char.TickConditions() // Called once in round tick, decrements all durations
 
 ---
 
-### Stage 11.1: Disconnect Old Casting System
+### Stage 11.1: Disconnect Old Casting System ✅ COMPLETED (merged with Stage 11.2, merge 6c13581)
 **Goal**: Remove the old mana/cast-skill casting execution flow cleanly. Preserve spell data structures (YAML schemas and loading code) for reuse in Stage 11.4.
 
 **Changes**:
@@ -2700,7 +2700,7 @@ char.TickConditions() // Called once in round tick, decrements all durations
 
 ---
 
-### Stage 11.2: Fold Engine Core
+### Stage 11.2: Fold Engine Core ✅ COMPLETED (merge 6c13581)
 **Goal**: Implement the multi-round fold-based casting state machine. Round 1 initiates casting and calculates folds needed. Subsequent rounds accumulate folds until the spell resolves.
 
 **Fold Mechanics**:
@@ -3960,7 +3960,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 8: Grappling | 5 stages (8.1–8.5) | 24 hours | **8.1–8.5 Complete** |
 | Phase 9: Combat Presentation | 8 stages (9.1–9.8) | ~40 hours | **9.1–9.8 Complete** |
 | Phase 10: Skill System Cleanup | 2 stages (10.1–10.2) | 12 hours | 10.1–10.2 Complete |
-| Phase 11: Magic Rework | 5 stages (11.1–11.5) | 30 hours | Not Started |
+| Phase 11: Magic Rework | 5 stages (11.1–11.5) | 30 hours | 11.1–11.2 Complete |
 | Phase 12: Mutations | 2 stages (12.1–12.2) | 16 hours | Not Started |
 | Phase 13: Basic Crafting | 2 stages (13.1–13.2) | 16 hours | Not Started |
 | Phase 14: Balance Config | 1 stage (14.1) | 8 hours | Not Started |
@@ -4070,4 +4070,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-19
 **Status**: In Progress
-**Current Stage**: 10.2 Complete — Skill Cleanup, Remove Legacy Skills (merge e9ebd4c). Removed 13+ legacy SkillTag constants; deleted 15 legacy skill command files; moved sneak/pickpocket to Stealth skill; converted map/inspect/search to free Perception-based commands; stubbed cast for Phase 11; rebuilt Professions map with 7 DOG professions; cleaned keywords.yaml for all worlds. Ready for Phase 11 (Magic System Rework).
+**Current Stage**: 11.2 Complete — Fold Engine Core (merge 6c13581). Stage 11.1+11.2 combined: added BaseFolds/TargetDefenseType to SpellData; created CastingState struct with NextPowerOfTwo/CalcFoldsPerRound/CalcInitiationChance helpers; added CastingState field + IsCasting() to Character; replaced cast stub with full fold initiation (skill/spell/target/initiation-roll/CastingState setup); created cancel command; added casting intercept in TryCommand (blocks action commands, flee clears CastingState); replaced dead player SpellCast block in NewRound_DoCombat with per-round fold accumulation. Ready for Stage 11.3 (Power Sources & Concentration Mechanics).
