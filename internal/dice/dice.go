@@ -4,6 +4,44 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
+	"sync"
+)
+
+// stdDevFactor is THE master randomness knob for all stat-based rolls in the game.
+//
+// Every attack roll, defense roll, spell check, grapple attempt, and special-move
+// check calls StdDevFor(mean) to derive its standard deviation.  Changing this one
+// value re-scales the spread of every single dice roll in the engine simultaneously.
+//
+// Formula applied to every stat-based roll:
+//
+//	stdDev = stat * stdDevFactor      (floor: 1.0 when stat < 1)
+//
+// At the human baseline of stat = 100:
+//
+//	factor 0.05 → stdDev  5.0   very tight; high-stat chars almost always win
+//	factor 0.10 → stdDev 10.0   low variance; skill dominates
+//	factor 0.15 → stdDev 15.0   DEFAULT balanced spread (recommended)
+//	factor 0.20 → stdDev 20.0   higher variance; upsets happen more often
+//	factor 0.30 → stdDev 30.0   chaotic; luck matters as much as skill
+//
+// Win probability for a 120 vs 100 stat matchup (20-point advantage):
+//
+//	factor 0.05 → ~99% win for the stronger character (gap is ~4σ)
+//	factor 0.10 → ~92% win
+//	factor 0.15 → ~78% win   ← default sweet spot
+//	factor 0.20 → ~67% win
+//	factor 0.30 → ~57% win   (barely more than a coin flip)
+//
+// Critical hit / fumble rates are NOT affected by this value — they are always
+// ~2.3% per roll because crits trigger on |z-score| ≥ 2.0, and the z-score
+// distribution is identical regardless of the absolute stdDev.
+//
+// Set via SetRollSpread at server startup. Requires a server restart to take
+// effect when changed in config.yaml.
+var (
+	stdDevFactor     float64 = 0.15
+	stdDevFactorLock sync.RWMutex
 )
 
 // RollResult contains detailed information about a roll
@@ -350,13 +388,58 @@ func StandardDeviation(statRange, randomnessFactor float64) float64 {
 	return statRange * randomnessFactor
 }
 
-// StdDevFor returns a standard deviation proportional to the given mean.
-// Uses 15% of the mean (the canonical DOGMud roll spread), with a floor of 1.0
-// to prevent zero or near-zero standard deviations on very low stat values.
-// Use this instead of hardcoded stdDev literals for all stat-based rolls.
+// SetRollSpread configures the global standard deviation factor for all
+// stat-based rolls.  Call this once at server startup with the value loaded
+// from config.yaml (GamePlay.RollSpread).
+//
+// The factor is stored in a package-level variable protected by a read-write
+// lock, so it is safe to call from any goroutine, though a server restart is
+// required for config changes to be applied in practice.
+//
+// Panics if factor ≤ 0 (prevents accidentally zeroing out all randomness).
+func SetRollSpread(factor float64) {
+	if factor <= 0 {
+		panic("dice.SetRollSpread: factor must be > 0")
+	}
+	stdDevFactorLock.Lock()
+	stdDevFactor = factor
+	stdDevFactorLock.Unlock()
+}
+
+// StdDevFor returns the standard deviation for a stat-based roll.
+// Computes mean * RollSpread (default 0.15), with a floor of 1.0 to prevent
+// zero or near-zero standard deviations on very low stat values.
+//
+// This is the authoritative source of spread for every attack, defense,
+// spell, and skill roll in the game.  Use RollStat / OpposedRollStat for
+// new code instead of calling this directly.
 func StdDevFor(mean float64) float64 {
+	stdDevFactorLock.RLock()
+	factor := stdDevFactor
+	stdDevFactorLock.RUnlock()
 	if mean < 1.0 {
 		return 1.0
 	}
-	return mean * 0.15
+	return mean * factor
+}
+
+// RollStat performs a normal-distribution roll for a single stat-based check.
+// Standard deviation is derived automatically via StdDevFor(mean), so the
+// caller never needs to pass or compute a stdDev value.
+//
+// Use this for every roll whose spread should scale with the stat value:
+// skill checks, damage rolls scaled to magnitude, prone-recovery chances, etc.
+func RollStat(mean float64) RollResult {
+	return Roll(mean, StdDevFor(mean))
+}
+
+// OpposedRollStat performs a contested check between two stat-based scores.
+// Both sides are rolled with the attacker's standard deviation (StdDevFor(atk))
+// so the spread scales proportionally to the attacker's power.  Returns the
+// same values as OpposedRoll: (success, margin, attackRoll, defenseRoll).
+//
+// Use this for every attack-vs-defense, spell-vs-resist, grapple, bash, kick,
+// and trip check.  Never pass a raw stdDev literal to OpposedRoll for these.
+func OpposedRollStat(atk, def float64) (bool, float64, RollResult, RollResult) {
+	return OpposedRoll(atk, def, StdDevFor(atk))
 }

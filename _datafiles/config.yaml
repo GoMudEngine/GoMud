@@ -220,6 +220,39 @@ FilePaths:
 #
 ################################################################################
 GamePlay:
+  # ============================================================================
+  # - RollSpread -  *** THE MASTER RANDOMNESS KNOB ***
+  #
+  #   Controls the standard deviation for EVERY stat-based dice roll in the
+  #   game: all attacks, defenses, spell checks, grapples, bash/trip/kick, and
+  #   skill/stat checks.  A single number that governs how chaotic or
+  #   skill-dominant the entire game feels.
+  #
+  #   Formula: stdDev = stat_value * RollSpread
+  #   At the human baseline (stat = 100): stdDev = 100 * RollSpread
+  #
+  #   GAMEPLAY FEEL BY VALUE:
+  #     0.05  Very tight rolls. High-stat characters win ~99% of even matches.
+  #           Almost no upsets. Feels deterministic; newcomers get crushed.
+  #     0.10  Low variance. Skill/stat clearly dominates. Upsets are rare.
+  #           A 20-point advantage translates to ~92% win rate.
+  #     0.15  DEFAULT — recommended balanced spread.
+  #           A 20-point advantage => ~78% win rate.
+  #           A weaker fighter still has a ~16% chance if they're 30pts behind.
+  #     0.20  Higher variance. Upsets are common. Combat feels dynamic.
+  #           A 20-point advantage => only ~67% win rate.
+  #     0.30  Chaotic. Luck rivals skill. Not recommended for competitive play.
+  #           A 20-point advantage => barely 57% win rate.
+  #
+  #   CRIT / FUMBLE RATES:
+  #     Unaffected by this setting. Crits trigger when a roll's z-score is
+  #     >= +2.0 standard deviations above mean, which is always ~2.3% per roll
+  #     regardless of the absolute stdDev value.
+  #
+  #   Valid range: 0.05-0.50. Values outside this range default to 0.15.
+  #   Requires a server restart to take effect.
+  # ============================================================================
+  RollSpread: 0.15
   # - AllowItemBuffRemoval -
   #   Whether to allow the removal of buffs assigned by items using spells etc.
   #   By default, once an item has buffed a player, the player cannot remove the

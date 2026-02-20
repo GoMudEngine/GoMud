@@ -94,7 +94,7 @@ func AttemptGrapple(attacker *characters.Character, defender *characters.Charact
 	}
 
 	// Opposed roll
-	success, margin, attackRoll, defenseRoll := dice.OpposedRoll(result.AttackScore, result.DefenseScore, dice.StdDevFor(result.AttackScore))
+	success, margin, attackRoll, defenseRoll := dice.OpposedRollStat(result.AttackScore, result.DefenseScore)
 
 	result.Success = success
 	result.Margin = margin
@@ -148,7 +148,7 @@ func CheckClinchProgression(controller *characters.Character, controlled *charac
 	controllerScore := float64(controller.Stats.Strength.ValueAdj) + float64(controller.GetCombatSkillLevel())
 	controlledScore := float64(controlled.Stats.Strength.ValueAdj) + float64(controlled.GetCombatSkillLevel())
 
-	success, margin, _, _ := dice.OpposedRoll(controllerScore, controlledScore, dice.StdDevFor(controllerScore))
+	success, margin, _, _ := dice.OpposedRollStat(controllerScore, controlledScore)
 
 	result.Changed = true
 	result.Margin = margin
@@ -201,7 +201,7 @@ func CheckGroundedEscape(controller *characters.Character, controlled *character
 
 	controllerScore := float64(controller.Stats.Strength.ValueAdj) + float64(controller.GetCombatSkillLevel())
 
-	success, margin, _, _ := dice.OpposedRoll(controlledScore, controllerScore, dice.StdDevFor(controlledScore))
+	success, margin, _, _ := dice.OpposedRollStat(controlledScore, controllerScore)
 
 	result.Changed = success
 	result.Margin = margin
@@ -282,7 +282,7 @@ func AttemptSubmission(controller *characters.Character, controlled *characters.
 		(float64(controlled.Stats.Dexterity.ValueAdj) * 0.5) // Half dex bonus for escape attempts
 
 	// Opposed roll
-	success, margin, attackRoll, _ := dice.OpposedRoll(controllerScore, controlledScore, dice.StdDevFor(controllerScore))
+	success, margin, attackRoll, _ := dice.OpposedRollStat(controllerScore, controlledScore)
 
 	result.Margin = margin
 	result.AttackZScore = attackRoll.ZScore

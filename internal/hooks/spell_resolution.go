@@ -60,7 +60,7 @@ func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData
 func resolveAgainstMob(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spellData *spells.SpellData, spellAttack float64, magnitude int) {
 
 	defVal := spellDefenseValue(spellData.TargetDefenseType, &mob.Character)
-	success, _, atkRoll, _ := dice.OpposedRoll(spellAttack, defVal, dice.StdDevFor(spellAttack))
+	success, _, atkRoll, _ := dice.OpposedRollStat(spellAttack, defVal)
 
 	// Backfire on fumble
 	if atkRoll.ZScore <= -2.0 {
@@ -97,7 +97,7 @@ func applyMobEffect(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spe
 
 	switch spellData.EffectType {
 	case "damage":
-		dmgRoll := dice.Roll(float64(magnitude), dice.StdDevFor(float64(magnitude)))
+		dmgRoll := dice.RollStat(float64(magnitude))
 		dmg := int(math.Round(dmgRoll.Value))
 		if dmg < 1 {
 			dmg = 1
@@ -165,7 +165,7 @@ func applyMobEffect(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spe
 func resolveAgainstPlayer(user *users.UserRecord, target *users.UserRecord, room *rooms.Room, spellData *spells.SpellData, spellAttack float64, magnitude int) {
 
 	defVal := spellDefenseValue(spellData.TargetDefenseType, target.Character)
-	success, _, atkRoll, _ := dice.OpposedRoll(spellAttack, defVal, dice.StdDevFor(spellAttack))
+	success, _, atkRoll, _ := dice.OpposedRollStat(spellAttack, defVal)
 
 	// Backfire on fumble
 	if atkRoll.ZScore <= -2.0 {
@@ -202,7 +202,7 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 
 	switch spellData.EffectType {
 	case "heal":
-		healRoll := dice.Roll(float64(magnitude), dice.StdDevFor(float64(magnitude)))
+		healRoll := dice.RollStat(float64(magnitude))
 		heal := int(math.Round(healRoll.Value))
 		if heal < 1 {
 			heal = 1
