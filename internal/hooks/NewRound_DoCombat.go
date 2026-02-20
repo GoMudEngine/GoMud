@@ -75,32 +75,48 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 				continue
 			}
 
-			// Per-fold conviction cost (paid each round, not upfront)
-			foldCost := 0
-			if cs.TotalConvictionCost > 0 {
-				foldCost = cs.TotalConvictionCost / cs.FoldsNeeded
-				if foldCost < 1 {
-					foldCost = 1
+			// Fold accumulation: seed with FoldsPerRound on the first round,
+			// then DOUBLE each subsequent round (1→2→4→8...).
+			// Expert casters (FoldsPerRound > 1) seed higher and complete faster.
+			oldFolds := cs.FoldsAccumulated
+			if cs.FoldsAccumulated == 0 {
+				cs.FoldsAccumulated = cs.FoldsPerRound
+			} else {
+				cs.FoldsAccumulated *= 2
+			}
+			if cs.FoldsAccumulated > cs.FoldsNeeded {
+				cs.FoldsAccumulated = cs.FoldsNeeded
+			}
+			foldDelta := cs.FoldsAccumulated - oldFolds
+
+			// Conviction cost is proportional to folds gained this round.
+			// Early rounds are cheap; the final doubling costs the most.
+			roundCost := 0
+			if cs.TotalConvictionCost > 0 && cs.FoldsNeeded > 0 {
+				roundCost = (cs.TotalConvictionCost * foldDelta) / cs.FoldsNeeded
+				if roundCost < 1 {
+					roundCost = 1
 				}
 			}
-			totalThisRound := foldCost * cs.FoldsPerRound
 
-			if totalThisRound > 0 && user.Character.Conviction < totalThisRound {
+			if roundCost > 0 && user.Character.Conviction < roundCost {
 				// Out of conviction — auto-cancel
 				user.Character.CastingState = nil
 				user.SendText(`<ansi fg="red">Your conviction wavers — the fold collapses.</ansi>`)
 				continue
 			}
 
-			cs.FoldsAccumulated += cs.FoldsPerRound
-			user.Character.Conviction -= totalThisRound
-			cs.ConvictionSpent += totalThisRound
+			user.Character.Conviction -= roundCost
+			cs.ConvictionSpent += roundCost
+
+			// Stage 11.3: add a concentration check here that scales with
+			// cs.FoldsAccumulated (harder to hold more folds).
 
 			if cs.FoldsAccumulated < cs.FoldsNeeded {
 				// Still folding — report progress
 				user.SendText(fmt.Sprintf(
-					`<ansi fg="cyan">You fold your inner vision %d time(s). You now hold <ansi fg="cyan-bold">%d/%d</ansi> folds.</ansi>`,
-					cs.FoldsPerRound, cs.FoldsAccumulated, cs.FoldsNeeded))
+					`<ansi fg="cyan">You fold your will deeper. You now hold <ansi fg="cyan-bold">%d/%d</ansi> folds.</ansi>`,
+					cs.FoldsAccumulated, cs.FoldsNeeded))
 			} else {
 				// Folds complete — placeholder until Stage 11.4 resolves
 				user.SendText(fmt.Sprintf(
