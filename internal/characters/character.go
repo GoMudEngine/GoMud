@@ -948,15 +948,6 @@ func (c *Character) GetAdjectives() []string {
 		retAdjectives = append(retAdjectives, `downed`)
 	}
 
-	// Stage 8.1+: Add combat position indicators
-	if c.CombatPosition == PositionProne {
-		retAdjectives = append(retAdjectives, `prone`)
-	} else if c.CombatPosition == PositionClinched {
-		retAdjectives = append(retAdjectives, `clinched`)
-	} else if c.CombatPosition == PositionGrounded {
-		retAdjectives = append(retAdjectives, `grounded`)
-	}
-
 	if len(c.Shop) > 0 {
 		retAdjectives = append(retAdjectives, `shop`)
 	}
