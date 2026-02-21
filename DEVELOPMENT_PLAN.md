@@ -4115,4 +4115,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-20
 **Status**: In Progress
-**Current Stage**: Stage 16 — Phase 15 complete. Stage 15.1 + 15.2 complete: Dev tools package (`internal/devtools`) with zone consistency checker, grid generator, cross-zone room linker, and JSON API dispatcher. Admin command `devtool` registered. All 4 unit tests pass. Merge commit: 55465f3.
+**Current Stage**: Stage 16 — Phase 15 complete. Stage 15.1 + 15.2 complete: Dev tools package (`internal/devtools`) with zone consistency checker, grid generator, cross-zone room linker, and JSON API dispatcher. Admin command `devtool` registered. All 4 unit tests pass. Merge commit: 55465f3. Post-merge fixes (ebc8758): zone-config.yaml creation in GenerateGrid, deterministic reciprocal exit lookup in LinkRooms, multi-word zone name parsing, help files.
