@@ -1,0 +1,19 @@
+mobid: 50
+zone: Sanctum Basin
+hostile: false
+maxwander: 0
+idlecommands:
+  - 'say Welcome, new arrival. The Academy is here to prepare you.'
+  - 'emote reviews a parchment listing the basin facilities'
+  - ''
+  - ''
+activitylevel: 15
+character:
+  name: Chrysalis Greeter
+  description: 'A calm and attentive figure in simple grey robes, the Chrysalis Greeter
+    has the bearing of someone who has answered the same questions a thousand times
+    and found meaning in each answer. Their eyes carry a quiet warmth, and a small
+    Chrysalis sigil -- an unfurling wing -- is embroidered at their collar.'
+  speciesid: 1
+  level: 1
+  gold: 0

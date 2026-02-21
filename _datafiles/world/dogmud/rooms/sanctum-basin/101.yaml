@@ -1,0 +1,19 @@
+roomid: 101
+zone: Sanctum Basin
+title: South Cliffs Overlook
+description: You stand on a narrow basalt ledge overlooking a sheer cliff face. Far
+  below, the canyon floor is lost in haze. The plateau of Sanctum Basin rises behind
+  you to the north, though the cliff face provides no handholds for climbing. The
+  wind carries the faint smell of sage and hot stone.
+biome: desert
+exits:
+  east:
+    roomid: 102
+idlemessages:
+- A gust of wind carries <ansi fg="itemname">dust</ansi> off the cliff edge in swirling spirals.
+- The <ansi fg="mobname">canyon</ansi> below is silent and vast.
+- Far in the distance, a <ansi fg="mobname">hawk</ansi> circles on a thermal.
+spawninfo:
+- mobid: 66
+  message: A valley rat scurries out from beneath a basalt overhang.
+  respawnrate: 5 real minutes

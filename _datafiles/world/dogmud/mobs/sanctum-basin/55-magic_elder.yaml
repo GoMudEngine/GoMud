@@ -1,0 +1,19 @@
+mobid: 55
+zone: Sanctum Basin
+hostile: false
+maxwander: 0
+idlecommands:
+  - 'emote observes the moons through the bronze sighting device'
+  - 'emote makes a small notation in a slim leather-bound journal'
+  - ''
+  - ''
+activitylevel: 10
+character:
+  name: Elder Saris
+  description: 'Elder Saris is old in the way that certain basalt formations are old --
+    weathered to essentials, nothing extraneous remaining. Their eyes carry the particular
+    calm of someone who has spent decades watching the three moons and thinking about
+    what they mean. They speak of the Fold as casually as others speak of the weather.'
+  speciesid: 1
+  level: 5
+  gold: 0

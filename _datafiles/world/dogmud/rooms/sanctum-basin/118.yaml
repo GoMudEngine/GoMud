@@ -1,0 +1,25 @@
+roomid: 118
+zone: Sanctum Basin
+title: Cave Path
+description: A low tunnel of raw basalt opens here in the northern cliff face -- the
+  entrance to a cave system that penetrates the plateau. The air inside is noticeably
+  cooler, carrying the damp mineral smell of deep stone. The distant sound of wing-beats
+  echoes from within. A lamp bracket is fixed to the wall beside the entrance, suggesting
+  this is a known route.
+biome: cave
+exits:
+  west:
+    roomid: 117
+  east:
+    roomid: 119
+  south:
+    roomid: 113
+idlemessages:
+- A <ansi fg="mobname">cool draft</ansi> breathes out from the cave entrance.
+- The sound of wing-beats echoes from deeper in the tunnel.
+- The lamp bracket is empty, but the wall around it is scorched by old flame.
+spawninfo:
+- mobid: 67
+  message: A cave bat swoops out of the darkness toward you.
+  hostile: true
+  respawnrate: 5 real minutes

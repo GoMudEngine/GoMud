@@ -601,7 +601,7 @@ SpecialRooms:
   #   This is the default starting room for the game. It only matters when there
   #   is code that explicitely tries to send the player to the "starting room"
   #   The default of 1 is Town Square
-  StartRoom: 1
+  StartRoom: 107
   # - DeathRecoveryRoom -
   #   This is the room players are sent to when they die.
   #   This should have some way of healing them and (eventually)
@@ -612,7 +612,8 @@ SpecialRooms:
   #   The first one on the list is the room they will be placed in when beginning
   #   Rooms 900-999 are a special range of RoomId's that tell GoMud the user is
   #   in a tutorial.
-  TutorialRooms: [900, 901, 902, 903]
+  #   Sanctum Basin replaces the old tutorial zone; TutorialRooms is intentionally empty.
+  TutorialRooms: []
 
 ################################################################################
 #

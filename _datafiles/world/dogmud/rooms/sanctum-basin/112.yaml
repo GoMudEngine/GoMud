@@ -1,0 +1,21 @@
+roomid: 112
+zone: Sanctum Basin
+title: Chrysalis Well Court
+description: A circular courtyard surrounds a deep well of polished basalt -- one
+  of the basin's primary water sources. Stone benches ring the space, and initiates
+  gather here between training sessions to rest and speak. The sound of the bucket
+  on the windlass echoes across the quiet courtyard. Paths lead in all cardinal directions.
+biome: city
+exits:
+  west:
+    roomid: 111
+  east:
+    roomid: 113
+  south:
+    roomid: 107
+  north:
+    roomid: 117
+idlemessages:
+- An <ansi fg="mobname">initiate</ansi> draws water from the well, bucket clanking.
+- Two <ansi fg="mobname">students</ansi> sit on the benches sharing a meal.
+- The wind creates a faint hollow note from the open mouth of the well.

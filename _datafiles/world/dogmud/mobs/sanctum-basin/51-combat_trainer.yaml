@@ -1,0 +1,19 @@
+mobid: 51
+zone: Sanctum Basin
+hostile: false
+maxwander: 0
+idlecommands:
+  - 'emote practices forms -- a slow, deliberate sequence of strikes and footwork'
+  - 'emote steps through a low guard transition, weight perfectly balanced'
+  - ''
+  - ''
+activitylevel: 20
+character:
+  name: Combat Trainer
+  description: 'The Combat Trainer is lean and unhurried, their body a catalog of old
+    scars worn without pride or shame. They move with the economy of someone who has
+    never wasted a motion in their life. A simple practice blade hangs at their hip,
+    its edge dulled by deliberate use.'
+  speciesid: 1
+  level: 3
+  gold: 0
