@@ -3385,7 +3385,7 @@ economy:
 
 ---
 
-### Stage 15.1: Zone Consistency Checker & Grid Generator
+### ✅ Stage 15.1: Zone Consistency Checker & Grid Generator — COMPLETED (merge: 55465f3)
 **Goal**: Admin commands to verify cardinal exit consistency in a zone, and to generate a rectangular grid of rooms with automatic bidirectional exits.
 
 **Zone Consistency Checker** (`devtool check <zone>`):
@@ -3427,7 +3427,7 @@ economy:
 
 ---
 
-### Stage 15.2: Zone Linking & AI-Callable JSON API
+### ✅ Stage 15.2: Zone Linking & AI-Callable JSON API — COMPLETED (merge: 55465f3)
 **Goal**: Tool for linking rooms across zones. Expose all dev tools via structured JSON input/output so AI agents can build zones programmatically.
 
 **Zone Linking** (`devtool linkzones <zoneA>/<roomA_id> <direction> <zoneB>/<roomB_id>`):
@@ -4009,7 +4009,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 12: Mutations | 2 stages (12.1–12.2) | 16 hours | **12.1–12.2 Complete** |
 | Phase 13: Basic Crafting | 2 stages (13.1–13.2) | 16 hours | **13.1–13.2 Complete** |
 | Phase 14: Balance Config | 1 stage (14.1) | 8 hours | **14.1 Complete** |
-| Phase 15: Dev Tools | 2 stages (15.1–15.2) | 12 hours | Not Started |
+| Phase 15: Dev Tools | 2 stages (15.1–15.2) | 12 hours | **15.1–15.2 Complete** |
 | Phase 16: Tutorial Area | 2 stages (16.1–16.2) | 30 hours | Not Started |
 | Phase 17: LLM Integration | 4 stages (17.1–17.4) | 35 hours | Not Started |
 | **Total** | **~57 stages** | **~361 hours** | |
@@ -4115,4 +4115,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-20
 **Status**: In Progress
-**Current Stage**: Stage 15 — Phase 14 complete. Stage 14.1 complete: Balance config plumbing — all 37 hardcoded numeric balance constants surfaced into a `Balance:` section in `config.yaml` (internal/configs/config.balance.go). No behavior change; constants now configurable via `server set Balance.X Y` or config-overrides.yaml without recompilation. Merge commit: 600ae45.
+**Current Stage**: Stage 16 — Phase 15 complete. Stage 15.1 + 15.2 complete: Dev tools package (`internal/devtools`) with zone consistency checker, grid generator, cross-zone room linker, and JSON API dispatcher. Admin command `devtool` registered. All 4 unit tests pass. Merge commit: 55465f3.
