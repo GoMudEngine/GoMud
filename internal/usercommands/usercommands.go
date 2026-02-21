@@ -66,6 +66,7 @@ var (
 		`conditions`:  {Conditions, true, true, false},
 		`consider`:    {Consider, true, true, false},
 		`deafen`:      {Deafen, true, true, true}, // Admin only
+		`devtool`:     {Devtool, false, true, true}, // Admin only
 		`default`:     {Default, false, true, false},
 		`drop`:{Drop, true, false, false}, // Can't drop items in combat
 		`drink`:       {Drink, false, true, false},
