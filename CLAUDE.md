@@ -56,6 +56,7 @@ Mental defense = `Willpower` stat only. Vitality governs hit points and physical
 
 ## Data File Naming Convention
 Before creating any new data file, verify the expected filename from the loader's `Filepath()` method:
+- **Zone folder names must use underscores, not hyphens.** The engine derives the expected path by calling `ConvertForFilename()` on the zone's display name (e.g., `"Sanctum Basin"` → folder `sanctum_basin/`). A mismatch causes a startup panic: `filesystem path "..." did not end in Filepath() "..."`. This applies to both `rooms/` and `mobs/` subdirectories.
 - Buffs: `{buffid}-{ConvertForFilename(name)}.yaml` — e.g., `name: Stunned` → `2-stunned.yaml`
 - `ConvertForFilename()`: lowercase, keep a-z/0-9, drop apostrophes, all other chars → underscore
 - Spells: use the `spellid` field value directly as the filename base (no conversion needed)
