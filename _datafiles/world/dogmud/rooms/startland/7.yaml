@@ -1,0 +1,14 @@
+roomid: 7
+zone: Startland
+title: The Glade
+description: >
+  A small clearing at the edge of the settlement where the cobblestones give
+  way to soft earth. Scrubby trees press in on three sides, their roots tangled
+  with low-growing plants. The air smells of damp soil and crushed herbs.
+  Something useful probably grows here, for those with eyes to find it.
+mapsymbol: G
+maplegend: Glade
+biome: forest
+exits:
+  east:
+    roomid: 1

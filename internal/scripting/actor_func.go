@@ -294,6 +294,38 @@ func (a ScriptActor) AddHealth(amt int) int {
 	return ret
 }
 
+func (a ScriptActor) AddStamina(amt int) int {
+	old := a.characterRecord.Stamina
+	a.characterRecord.Stamina += amt
+	if a.characterRecord.Stamina > a.characterRecord.StaminaMax.Value {
+		a.characterRecord.Stamina = a.characterRecord.StaminaMax.Value
+	}
+	if a.characterRecord.Stamina < 0 {
+		a.characterRecord.Stamina = 0
+	}
+	actual := a.characterRecord.Stamina - old
+	if actual != 0 && a.userId > 0 {
+		events.AddToQueue(events.CharacterVitalsChanged{UserId: a.userId})
+	}
+	return actual
+}
+
+func (a ScriptActor) AddConviction(amt int) int {
+	old := a.characterRecord.Conviction
+	a.characterRecord.Conviction += amt
+	if a.characterRecord.Conviction > a.characterRecord.ConvictionMax.Value {
+		a.characterRecord.Conviction = a.characterRecord.ConvictionMax.Value
+	}
+	if a.characterRecord.Conviction < 0 {
+		a.characterRecord.Conviction = 0
+	}
+	actual := a.characterRecord.Conviction - old
+	if actual != 0 && a.userId > 0 {
+		events.AddToQueue(events.CharacterVitalsChanged{UserId: a.userId})
+	}
+	return actual
+}
+
 func (a ScriptActor) Sleep(seconds int) {
 	if a.userId == 0 {
 		a.mobRecord.Sleep(seconds)

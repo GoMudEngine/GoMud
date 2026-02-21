@@ -7,5 +7,5 @@ type: potion
 subtype: drinkable
 uses: 1
 buffids:
-  - 5
+  - 6
 value: 8

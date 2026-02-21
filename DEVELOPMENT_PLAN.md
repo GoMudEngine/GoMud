@@ -3155,7 +3155,7 @@ failure_message: "The metal cracks from uneven heating. The materials are ruined
 
 ---
 
-### Stage 13.2: First Recipes & Foraging Integration
+### Stage 13.2: First Recipes & Foraging Integration ✅ COMPLETED (merge: TBD)
 **Goal**: Implement at least two recipes per crafting skill. Connect Foraging output to crafting as the primary material source. Ensure recipes are tutorial-ready.
 
 **First Recipes**:
@@ -4115,4 +4115,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-20
 **Status**: In Progress
-**Current Stage**: Stage 13.2 — First Recipes & Foraging Integration. Stage 13.1 (b04e22e) complete: crafting framework with `craft` command, 2 blacksmithing + 2 alchemy recipes, 7 material items, 4 crafted output items, The Forge and Alchemist's Workshop rooms, cave goblin and feral herbalist mobs with reagent drops.
+**Current Stage**: Stage 14 — TBD. Stage 13.2 complete: `forage` command (biome-based herb gathering), conviction draught (new recipe + item + buff 7), stamina draught fixed to use buff 6 with AddStamina scripting API, healing poultice upgraded to 2d3×3 HP, AddStamina/AddConviction added to scripting API, The Glade outdoor room added, two bug fixes (mage aggro on spellcast, mob death-round last-hit).

@@ -818,7 +818,8 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 		mob := mobs.GetInstance(mobId)
 
 		// Only handling combat functions here, so ditch out if not in combat
-		if mob == nil || mob.Character.Aggro == nil {
+		// Also skip mobs that are already dead this round (prevents death-round last hit)
+		if mob == nil || mob.Character.Aggro == nil || mob.Character.Health <= 0 {
 			continue
 		}
 

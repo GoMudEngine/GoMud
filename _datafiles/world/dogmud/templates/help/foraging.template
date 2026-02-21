@@ -31,13 +31,13 @@ The more you forage, the wider the range of materials you can find.
 
 <ansi fg="yellow">━━━ Material Types ━━━</ansi>
 
-  <ansi fg="yellow">healers-root</ansi>     Used in: Healing Poultice (alchemy)
-  <ansi fg="yellow">bitter-thistle</ansi>   Used in: Stamina Draught (alchemy)
+  <ansi fg="yellow">healers-root</ansi>     Used in: Healing Poultice, Conviction Draught (alchemy)
+  <ansi fg="yellow">bitter-thistle</ansi>   Used in: Stamina Draught, Conviction Draught (alchemy)
   <ansi fg="yellow">cloth-strip</ansi>      Used in: Healing Poultice (alchemy)
   <ansi fg="yellow">iron-ingot</ansi>       Used in: Iron Dagger, Iron Buckler (blacksmithing)
   <ansi fg="yellow">leather-strip</ansi>    Used in: Iron Dagger (blacksmithing)
   <ansi fg="yellow">wooden-plank</ansi>     Used in: Iron Buckler (blacksmithing)
-  <ansi fg="yellow">small-vial</ansi>       Used in: Stamina Draught (alchemy)
+  <ansi fg="yellow">small-vial</ansi>       Used in: Stamina Draught, Conviction Draught (alchemy)
 
 <ansi fg="yellow">See Also:</ansi>
 

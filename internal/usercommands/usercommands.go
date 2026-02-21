@@ -74,6 +74,7 @@ var (
 		`experience`:{Experience, true, true, false},
 		`equip`:       {Equip, false, false, false}, // Can't equip in combat
 		`flee`:        {Flee, false, true, false},
+		`forage`:      {Forage, false, false, false}, // Can't forage in combat
 		`gearup`:      {Gearup, false, false, false}, // Can't equip in combat
 		`get`:         {Get, false, false, false},    // Can't pick up items in combat
 		`give`:        {Give, false, true, false},

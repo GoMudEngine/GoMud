@@ -14,8 +14,9 @@ matter more than brute force.
 
 <ansi fg="yellow">━━━ Known Recipes ━━━</ansi>
 
-  <ansi fg="yellow">Healing Poultice</ansi>   Skill 0   2x healers-root, 1x cloth-strip     2 rounds
-  <ansi fg="yellow">Stamina Draught</ansi>    Skill 0   2x bitter-thistle, 1x small-vial     2 rounds
+  <ansi fg="yellow">Healing Poultice</ansi>    Skill 0   2x healers-root, 1x cloth-strip              2 rounds
+  <ansi fg="yellow">Stamina Draught</ansi>     Skill 0   2x bitter-thistle, 1x small-vial             2 rounds
+  <ansi fg="yellow">Conviction Draught</ansi>  Skill 3   1x healers-root, 1x bitter-thistle, 1x small-vial  2 rounds
 
 <ansi fg="yellow">━━━ Using Consumables ━━━</ansi>
 
