@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/crafting"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
@@ -151,13 +152,14 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 
 				// Stage 12.2: Mutation progress — accumulates during combat, triggers acquisition or deepening
 				if user.Character.Aggro != nil {
-					canAcquire := len(user.Character.Mutations) < mutations.MutationMaxCount
+					mb := configs.GetBalanceConfig()
+					canAcquire := len(user.Character.Mutations) < int(mb.MutationMaxCount)
 					canDeepen := mutations.CanDeepen(user.Character.Mutations)
 					if canAcquire || canDeepen {
-						user.Character.MutationProgress += mutations.MutationProgressGain
+						user.Character.MutationProgress += float64(mb.MutationProgressGainPerRound)
 						evts := mutations.TotalMutationEvents(user.Character.Mutations)
-						threshold := mutations.MutationBaseProgress *
-							math.Pow(mutations.MutationProgressScale, float64(evts))
+						threshold := float64(mb.MutationBaseProgress) *
+							math.Pow(float64(mb.MutationProgressScale), float64(evts))
 						if user.Character.MutationProgress >= threshold {
 							user.Character.MutationProgress = 0
 							if canAcquire {
@@ -183,7 +185,7 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 									newLevel := user.Character.Mutations[mutId]
 									if spec := mutations.GetMutation(mutId); spec != nil {
 										levelTag := fmt.Sprintf("Level %d", newLevel)
-										if newLevel >= mutations.MutationMaxLevel {
+										if newLevel >= int(mb.MutationMaxLevel) {
 											levelTag = "fully matured"
 										}
 										user.SendText(fmt.Sprintf(

@@ -285,11 +285,11 @@ func TestCanDeepen(t *testing.T) {
 	if CanDeepen(map[string]int{}) {
 		t.Error("empty map: want false")
 	}
-	allMax := buildOwned("fast-reflexes", MutationMaxLevel, "tough-skin", MutationMaxLevel)
+	allMax := buildOwned("fast-reflexes", 3, "tough-skin", 3)
 	if CanDeepen(allMax) {
 		t.Error("all at max: want false")
 	}
-	oneBelow := buildOwned("fast-reflexes", MutationMaxLevel, "tough-skin", 1)
+	oneBelow := buildOwned("fast-reflexes", 3, "tough-skin", 1)
 	if !CanDeepen(oneBelow) {
 		t.Error("one below max: want true")
 	}
@@ -304,13 +304,13 @@ func TestRollDeepening(t *testing.T) {
 	}
 
 	// Returns "" when all mutations are at max level
-	allMax := buildOwned("fast-reflexes", MutationMaxLevel, "tough-skin", MutationMaxLevel)
+	allMax := buildOwned("fast-reflexes", 3, "tough-skin", 3)
 	if got := RollDeepening(allMax); got != "" {
 		t.Errorf("all at max: want \"\", got %q", got)
 	}
 
-	// Returns an id < MutationMaxLevel when one exists
-	oneBelow := buildOwned("fast-reflexes", MutationMaxLevel, "tough-skin", 1)
+	// Returns an id < 3 when one exists
+	oneBelow := buildOwned("fast-reflexes", 3, "tough-skin", 1)
 	got := RollDeepening(oneBelow)
 	if got != "tough-skin" {
 		t.Errorf("only tough-skin is below max: want \"tough-skin\", got %q", got)

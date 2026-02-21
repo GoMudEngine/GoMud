@@ -208,15 +208,14 @@ func (c *Character) GetTotalSkillRanks() int {
 	return total
 }
 
-// RollCharacterStats generates a new set of character stats using normal distribution
-// Stats have a mean of 100 and standard deviation of 15, clamped between 70 and 130
+// RollCharacterStats generates a new set of character stats using normal distribution.
+// Parameters are driven by the Balance config (StatRollMean, StatRollStdDev, StatRollMin, StatRollMax).
 func RollCharacterStats() stats.Statistics {
-	const (
-		statMean   = 100.0 // Target average for all stats
-		statStdDev = 15.0  // Standard deviation (moderate randomness)
-		statMin    = 70.0  // Minimum stat value
-		statMax    = 130.0 // Maximum stat value
-	)
+	b := configs.GetBalanceConfig()
+	statMean := float64(b.StatRollMean)
+	statStdDev := float64(b.StatRollStdDev)
+	statMin := float64(b.StatRollMin)
+	statMax := float64(b.StatRollMax)
 
 	// Roll 6 stats
 	rolledStats := dice.RollStatArray(6, statMean, statStdDev, statMin, statMax)
@@ -424,8 +423,9 @@ func (c *Character) DeductStamina(amount int) bool {
 // terrainMultiplier: 1.0 = normal terrain, 2.0 = rough terrain, etc.
 // Returns stamina cost (2-20 stamina range).
 func (c *Character) GetMovementStaminaCost(terrainMultiplier float64) int {
-	// Base cost: 2 stamina for flat terrain, unencumbered
-	baseCost := 2.0
+	b := configs.GetBalanceConfig()
+	baseCost := float64(b.MovementBaseStaminaCost)
+	maxCost := float64(b.MovementMaxStaminaCost)
 
 	// Apply terrain multiplier
 	cost := baseCost * terrainMultiplier
@@ -446,9 +446,9 @@ func (c *Character) GetMovementStaminaCost(terrainMultiplier float64) int {
 	// Apply encumbrance multiplier
 	cost *= encumbranceMultiplier
 
-	// Cap at 20 stamina maximum
-	if cost > 20.0 {
-		cost = 20.0
+	// Cap at maximum stamina cost
+	if cost > maxCost {
+		cost = maxCost
 	}
 
 	// Minimum 1 stamina
@@ -475,7 +475,7 @@ func (c *Character) GetAttackStaminaCost() int {
 	}
 
 	// Unarmed combat costs less stamina
-	return 4
+	return int(configs.GetBalanceConfig().UnarmedAttackStaminaCost)
 }
 
 // DeductAttackStamina deducts stamina for an attack and returns the actual cost deducted.
@@ -681,11 +681,11 @@ func (c *Character) GetDefaultDistributionDamage() (attacks int, baseDamage floa
 //   3. Apply additive bonuses: baseDamage += bonus
 //   4. Modify variance if needed: variance *= varianceMultiplier
 func (c *Character) CalculateUnarmedDamage() (baseDamage float64, variance float64) {
-	// Base values for unarmed damage formula
-	const baseValue float64 = 2.0
-	const strengthDivisor float64 = 25.0
-	const skillDivisor float64 = 10.0
-	const baseVariance float64 = 3.0
+	b := configs.GetBalanceConfig()
+	baseValue := float64(b.UnarmedBaseDamage)
+	strengthDivisor := float64(b.UnarmedStrengthDivisor)
+	skillDivisor := float64(b.UnarmedSkillDivisor)
+	baseVariance := float64(b.UnarmedBaseVariance)
 
 	// Calculate base damage from stats and skill
 	strengthBonus := float64(c.Stats.Strength.ValueAdj) / strengthDivisor
@@ -2001,8 +2001,8 @@ func (c *Character) HealthPerRound() int {
 
 
 func (c *Character) StaminaPerRound() int {
-	// Base 1 stamina per round + any modifiers
-	base := 1 + c.StatMod(string(statmods.StaminaRecovery))
+	b := configs.GetBalanceConfig()
+	base := int(b.StaminaRegenPerRound) + c.StatMod(string(statmods.StaminaRecovery))
 	// Stage 12.1: Apply stamina_regen_multiplier mutations
 	if mult := mutations.GetStaminaRegenMultiplier(c.Mutations); mult != 0 {
 		base = int(float64(base) * (1.0 + mult))
@@ -2014,8 +2014,8 @@ func (c *Character) StaminaPerRound() int {
 }
 
 func (c *Character) ConvictionPerRound() int {
-	// Base 1 conviction per round + any modifiers
-	return 1 + c.StatMod(string(statmods.ConvictionRecovery))
+	b := configs.GetBalanceConfig()
+	return int(b.ConvictionRegenPerRound) + c.StatMod(string(statmods.ConvictionRecovery))
 }
 
 // Where 1000 = a full round
@@ -2114,18 +2114,19 @@ func (c *Character) RecalculateStats() {
 
 	// Set HP/Stamina/Conviction maxes (skill-based, no level dependency)
 	// This relies on the above stats so has to be calculated afterwards
-	c.HealthMax.Mods = 5 +
+	rb := configs.GetBalanceConfig()
+	c.HealthMax.Mods = int(rb.HealthBase) +
 		c.StatMod(string(statmods.HealthMax)) + // Any sort of spell buffs etc. are just direct modifiers
-		c.Stats.Strength.ValueAdj + // Strength contributes to health
-		c.Stats.Vitality.ValueAdj*4 // Vitality is primary health stat
+		c.Stats.Strength.ValueAdj*int(rb.HealthPerStrength) + // Strength contributes to health
+		c.Stats.Vitality.ValueAdj*int(rb.HealthPerVitality) // Vitality is primary health stat
 
-	c.StaminaMax.Mods = 5 +
-		c.Stats.Strength.ValueAdj + // Strength contributes to stamina
-		c.Stats.Willpower.ValueAdj + // Willpower contributes to stamina
-		c.Stats.Vitality.ValueAdj*3 // Vitality is primary stamina stat
+	c.StaminaMax.Mods = int(rb.StaminaBase) +
+		c.Stats.Strength.ValueAdj*int(rb.StaminaPerStrength) + // Strength contributes to stamina
+		c.Stats.Willpower.ValueAdj*int(rb.StaminaPerWillpower) + // Willpower contributes to stamina
+		c.Stats.Vitality.ValueAdj*int(rb.StaminaPerVitality) // Vitality is primary stamina stat
 
-	c.ConvictionMax.Mods = 5 +
-		(c.Stats.Willpower.ValueAdj+c.Stats.Charisma.ValueAdj)*2 // Willpower+Charisma drive conviction
+	c.ConvictionMax.Mods = int(rb.ConvictionBase) +
+		(c.Stats.Willpower.ValueAdj+c.Stats.Charisma.ValueAdj)*int(rb.ConvictionPerWilCha) // Willpower+Charisma drive conviction
 
 	// Set max action points
 	c.ActionPointsMax.Mods = 200 // hard coded for now

@@ -13,15 +13,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
-// Constants governing the mutation acquisition system.
-const (
-	MutationBaseProgress  = 50.0 // progress needed for first acquisition attempt
-	MutationProgressScale = 1.5  // each subsequent mutation needs BaseProgress * Scale^n more
-	MutationMaxCount      = 5    // max mutations per character
-	MutationMaxLevel      = 3    // maximum level a single mutation can reach (Stage 12.2)
-	MutationProgressGain  = 1.0  // progress added per combat round
-)
-
 // MutationEffect describes a single pro or con effect on a mutation.
 type MutationEffect struct {
 	Type   string  `yaml:"type"`   // effect type (see Effect Types in the project docs)
@@ -127,13 +118,15 @@ func RollAcquisition(pool []string) string {
 // All accept the character's mutations map (mutationId → level).
 
 // LevelMultiplier returns the effect scaling factor for a given mutation level.
-// L1 → 1.0×, L2 → 1.5×, L3 → 2.0×. Any other value defaults to 1.0.
+// L1 → 1.0×, L2 → MutationLevel2Multiplier×, L3 → MutationLevel3Multiplier×.
+// Any other value defaults to 1.0.
 func LevelMultiplier(level int) float64 {
+	b := configs.GetBalanceConfig()
 	switch level {
 	case 2:
-		return 1.5
+		return float64(b.MutationLevel2Multiplier)
 	case 3:
-		return 2.0
+		return float64(b.MutationLevel3Multiplier)
 	default:
 		return 1.0
 	}
@@ -151,8 +144,9 @@ func TotalMutationEvents(owned map[string]int) int {
 
 // CanDeepen returns true if any owned mutation is below MutationMaxLevel.
 func CanDeepen(owned map[string]int) bool {
+	maxLevel := int(configs.GetBalanceConfig().MutationMaxLevel)
 	for _, level := range owned {
-		if level < MutationMaxLevel {
+		if level < maxLevel {
 			return true
 		}
 	}
@@ -162,9 +156,10 @@ func CanDeepen(owned map[string]int) bool {
 // RollDeepening picks a random mutation id that is below MutationMaxLevel.
 // Returns "" if all mutations are already at max level or owned is empty.
 func RollDeepening(owned map[string]int) string {
+	maxLevel := int(configs.GetBalanceConfig().MutationMaxLevel)
 	var candidates []string
 	for id, level := range owned {
-		if level < MutationMaxLevel {
+		if level < maxLevel {
 			candidates = append(candidates, id)
 		}
 	}

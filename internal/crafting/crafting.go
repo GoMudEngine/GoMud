@@ -164,15 +164,21 @@ func ConsumeIngredients(inv []items.Item, recipe *RecipeSpec) []items.Item {
 	return result
 }
 
-// CalcSuccessChance returns the crafting success percentage (5–95).
-// Formula: clamp(50 + (skillLevel - skillMinimum) * 5, 5, 95)
+// CalcSuccessChance returns the crafting success percentage clamped to
+// [CraftingMinSuccessChance, CraftingMaxSuccessChance].
+// Formula: clamp(base + (skillLevel - skillMinimum) * bonusPerLevel, min, max)
 func CalcSuccessChance(skillLevel, skillMinimum int) int {
-	chance := 50 + (skillLevel-skillMinimum)*5
-	if chance < 5 {
-		return 5
+	b := configs.GetBalanceConfig()
+	base := int(b.CraftingBaseSuccessChance)
+	bonusPerLevel := int(b.CraftingSkillBonusPerLevel)
+	minChance := int(b.CraftingMinSuccessChance)
+	maxChance := int(b.CraftingMaxSuccessChance)
+	chance := base + (skillLevel-skillMinimum)*bonusPerLevel
+	if chance < minChance {
+		return minChance
 	}
-	if chance > 95 {
-		return 95
+	if chance > maxChance {
+		return maxChance
 	}
 	return chance
 }

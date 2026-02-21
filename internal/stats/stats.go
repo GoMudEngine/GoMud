@@ -1,6 +1,10 @@
 package stats
 
-import "math"
+import (
+	"math"
+
+	"github.com/GoMudEngine/GoMud/internal/configs"
+)
 
 const (
 	BaseModFactor         = 0.3333333334 // How much of a scaling to aply to levels before multiplying by racial stat
@@ -59,11 +63,14 @@ func (si *StatInfo) GainsForLevel(level int) int {
 }
 
 func (si *StatInfo) Recalculate(level int) {
+	b := configs.GetBalanceConfig()
 	si.Racial = si.GainsForLevel(level)
 	si.Value = si.Racial + si.Training + si.Mods
 	si.ValueAdj = si.Value
-	if si.ValueAdj >= 105 {
+	threshold := int(b.StatSoftCapThreshold)
+	multiplier := float64(b.StatSoftCapMultiplier)
+	if si.ValueAdj >= threshold {
 		overage := si.ValueAdj - 100
-		si.ValueAdj = 100 + int(math.Round(math.Sqrt(float64(overage))*2))
+		si.ValueAdj = 100 + int(math.Round(math.Sqrt(float64(overage))*multiplier))
 	}
 }

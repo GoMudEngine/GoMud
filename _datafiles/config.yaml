@@ -391,6 +391,73 @@ GamePlay:
 
 ################################################################################
 #
+#   BALANCE
+#   Every numeric gameplay-balance constant, grouped by subsystem.
+#   All values here are the current defaults — change without recompiling.
+#   Use "server set Balance.FieldName value" to override at runtime.
+#
+################################################################################
+Balance:
+  # ── COMBAT ──────────────────────────────────────────────────────────────────
+  GlobalDamageMultiplier: 1.0    # Scales all damage output (1.0 = no change)
+  GlobalDefenseMultiplier: 1.0   # Scales all avoidance rates (1.0 = no change)
+  UnarmedBaseDamage: 2.0         # Base damage before stat bonuses
+  UnarmedStrengthDivisor: 25.0   # Str / this = damage bonus
+  UnarmedSkillDivisor: 10.0      # UnarmedSkill / this = damage bonus
+  UnarmedBaseVariance: 3.0       # Base randomness of unarmed hits
+
+  # ── STAMINA & CONVICTION ────────────────────────────────────────────────────
+  StaminaRegenPerRound: 1        # Stamina restored each round out of combat
+  ConvictionRegenPerRound: 1     # Conviction restored each round
+  MovementBaseStaminaCost: 2.0   # Flat cost to move on normal terrain
+  MovementMaxStaminaCost: 20.0   # Ceiling for any single move action
+  UnarmedAttackStaminaCost: 4    # Stamina per unarmed attack
+
+  # ── RESOURCE MAXIMUMS ───────────────────────────────────────────────────────
+  HealthBase: 5                  # Flat HP before stat contribution
+  HealthPerStrength: 1           # Strength multiplier toward HealthMax
+  HealthPerVitality: 4           # Vitality multiplier toward HealthMax (primary)
+  StaminaBase: 5                 # Flat stamina before stat contribution
+  StaminaPerStrength: 1          # Strength multiplier toward StaminaMax
+  StaminaPerWillpower: 1         # Willpower multiplier toward StaminaMax
+  StaminaPerVitality: 3          # Vitality multiplier toward StaminaMax (primary)
+  ConvictionBase: 5              # Flat conviction before stat contribution
+  ConvictionPerWilCha: 2         # (Wil+Cha) multiplier toward ConvictionMax
+
+  # ── PROGRESSION ─────────────────────────────────────────────────────────────
+  SkillSoftCap: 50               # Virtual ranks where progression slows sharply
+  StatSoftCap: 150               # Stat value where progression slows sharply
+  UsesPerRank: 25                # Skill/stat uses that equal one virtual rank
+  BaseProgressionChance: 0.30    # Starting chance to progress at rank 0
+  ProgressionDecayBelowCap: 3.0  # Exponential steepness below soft cap
+  ProgressionDecayAboveCap: 2.0  # Exponential steepness above soft cap
+  StatSoftCapThreshold: 105      # Raw stat value where adjusted formula kicks in
+  StatSoftCapMultiplier: 2.0     # Multiplier in: 100 + sqrt(raw-100) * this
+
+  # ── CHARACTER CREATION ──────────────────────────────────────────────────────
+  StatRollMean: 100.0            # Target average for all stats at character creation
+  StatRollStdDev: 15.0           # Standard deviation for stat rolls
+  StatRollMin: 70.0              # Minimum stat value from rolls
+  StatRollMax: 130.0             # Maximum stat value from rolls
+  StartingHealth: 10             # Initial health points assigned at character creation
+
+  # ── CRAFTING ────────────────────────────────────────────────────────────────
+  CraftingBaseSuccessChance: 50  # % chance before skill adjustment
+  CraftingSkillBonusPerLevel: 5  # +% per skill level above recipe minimum
+  CraftingMinSuccessChance: 5    # Floor — never lower than this
+  CraftingMaxSuccessChance: 95   # Ceiling — never higher than this
+
+  # ── MUTATIONS ───────────────────────────────────────────────────────────────
+  MutationBaseProgress: 50.0         # Progress needed for first mutation
+  MutationProgressScale: 1.5         # Each additional mutation costs Scale^n more
+  MutationMaxCount: 5                # Max simultaneous mutations per character
+  MutationMaxLevel: 3                # Max level any single mutation can reach
+  MutationProgressGainPerRound: 1.0  # Progress added per combat round
+  MutationLevel2Multiplier: 1.5      # Effect scaling at mutation level 2
+  MutationLevel3Multiplier: 2.0      # Effect scaling at mutation level 3
+
+################################################################################
+#
 #   INTEGRATIONS
 #   Special settings for third party integrations such as discord messages
 #

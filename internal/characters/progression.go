@@ -11,12 +11,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
-const (
-	SkillSoftCap = 50  // Progression becomes very hard above this virtual rank
-	StatSoftCap  = 150 // Progression becomes very hard above this virtual rank
-	UsesPerRank  = 25  // How many uses of a skill/stat equal one virtual rank
-)
-
 // skillNameMap maps progression context names to actual skill tags.
 // Can be used to alias legacy names to new skill tags.
 var skillNameMap = map[string]string{}
@@ -34,18 +28,23 @@ func resolveSkillName(name string) string {
 // The curve is exponential decay: ~30% at rank 0, ~1.5% near the soft cap,
 // and very small above the soft cap.
 func CalculateProgressionChance(currentRank int, softCap int) float64 {
+	b := configs.GetBalanceConfig()
 	if softCap <= 0 {
 		softCap = 1
 	}
+	base := float64(b.BaseProgressionChance)
+	decayBelow := float64(b.ProgressionDecayBelowCap)
+	decayAbove := float64(b.ProgressionDecayAboveCap)
 	if currentRank <= 0 {
-		return 0.30
+		return base
 	}
 	ratio := float64(currentRank) / float64(softCap)
 	if currentRank <= softCap {
-		return 0.30 * math.Exp(-3.0*ratio)
+		return base * math.Exp(-decayBelow*ratio)
 	}
 	// Above soft cap: very hard, continues exponential decay
-	return 0.015 * math.Exp(-2.0*(ratio-1.0))
+	aboveCapFloor := base * math.Exp(-decayBelow) // value at exactly the cap
+	return aboveCapFloor * math.Exp(-decayAbove*(ratio-1.0))
 }
 
 // CheckSkillProgression rolls against the progression chance for a skill.
@@ -53,8 +52,9 @@ func CalculateProgressionChance(currentRank int, softCap int) float64 {
 // is actually increased (capped at 4). Otherwise, only a notification is sent.
 // bonusMultiplier scales the chance (e.g. 2.0 for critical successes).
 func (c *Character) CheckSkillProgression(skillName string, userId int, bonusMultiplier float64) {
-	virtualRank := c.GetSkillUseCount(skillName) / UsesPerRank
-	chance := CalculateProgressionChance(virtualRank, SkillSoftCap) * bonusMultiplier * skills.GetProgressionMultiplier(skillName)
+	b := configs.GetBalanceConfig()
+	virtualRank := c.GetSkillUseCount(skillName) / int(b.UsesPerRank)
+	chance := CalculateProgressionChance(virtualRank, int(b.SkillSoftCap)) * bonusMultiplier * skills.GetProgressionMultiplier(skillName)
 	if chance > 1.0 {
 		chance = 1.0
 	}
@@ -88,8 +88,9 @@ func (c *Character) CheckSkillProgression(skillName string, userId int, bonusMul
 // If the roll succeeds and DualProgressionMode is enabled, the stat's
 // Training value is increased by 1. Otherwise, only a notification is sent.
 func (c *Character) CheckStatProgression(statName string, userId int, bonusMultiplier float64) {
-	virtualRank := c.GetStatUseCount(statName) / UsesPerRank
-	chance := CalculateProgressionChance(virtualRank, StatSoftCap) * bonusMultiplier
+	b := configs.GetBalanceConfig()
+	virtualRank := c.GetStatUseCount(statName) / int(b.UsesPerRank)
+	chance := CalculateProgressionChance(virtualRank, int(b.StatSoftCap)) * bonusMultiplier
 	if chance > 1.0 {
 		chance = 1.0
 	}
