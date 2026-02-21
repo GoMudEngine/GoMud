@@ -3155,7 +3155,7 @@ failure_message: "The metal cracks from uneven heating. The materials are ruined
 
 ---
 
-### Stage 13.2: First Recipes & Foraging Integration ✅ COMPLETED (merge: TBD)
+### Stage 13.2: First Recipes & Foraging Integration ✅ COMPLETED (merge: 9edb418)
 **Goal**: Implement at least two recipes per crafting skill. Connect Foraging output to crafting as the primary material source. Ensure recipes are tutorial-ready.
 
 **First Recipes**:
