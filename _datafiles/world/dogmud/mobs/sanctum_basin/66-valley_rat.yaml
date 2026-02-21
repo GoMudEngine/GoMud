@@ -2,7 +2,7 @@ mobid: 66
 zone: Sanctum Basin
 itemdropchance: 5
 hostile: true
-maxwander: 3
+maxwander: 0
 groups:
   - rats
   - animal

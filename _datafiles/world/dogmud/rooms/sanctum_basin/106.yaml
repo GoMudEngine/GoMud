@@ -6,7 +6,7 @@ description: A stretch of thin scrubland opens here at the western reach of Sanc
   the soil is pale and cracked. The smell of sage is strong. A wilderness guide studies
   the terrain from a low rock, occasionally pointing out features of interest to passing
   initiates.
-biome: meadow
+biome: land
 exits:
   east:
     roomid: 107

@@ -1,0 +1,20 @@
+mobid: 50
+zone: Sanctum Basin
+hostile: false
+maxwander: 0
+idlecommands:
+  - 'emote traces the Chrysalis sigil in the air with one finger, a faint shimmer following the motion'
+  - 'emote stands quietly, eyes half-closed, listening to something no one else can hear'
+  - ''
+  - ''
+activitylevel: 15
+character:
+  name: Chrysalis Priest
+  description: 'Robed in deep grey with silver trim, the Chrysalis Priest carries the
+    stillness of someone who has witnessed the Awakening many times and still finds
+    it worthy of reverence. The Chrysalis sigil -- an unfurling wing -- is embroidered
+    in silver thread at their collar. Their eyes hold a measured calm, as if they
+    can already see what you are about to become.'
+  speciesid: 1
+  level: 1
+  gold: 0

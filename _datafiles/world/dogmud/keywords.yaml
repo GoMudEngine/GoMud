@@ -209,6 +209,7 @@ command-aliases:
   spells:             ['spellbook']
   backstab:           ['bs']
   killstats:          ['kills', 'kd', 'killstat']
+  mutations:          ['mutation']
   quests:             ['q', 'quest']
   shout:              ['yell', 'scream', 'holler']
   picklock:           ['pick', 'lockpick']

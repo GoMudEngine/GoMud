@@ -1,7 +1,7 @@
 mobid: 54
 zone: Sanctum Basin
 hostile: false
-maxwander: 1
+maxwander: 0
 idlecommands:
   - 'emote scans the horizon with a weathered hand shading their eyes'
   - 'emote crouches to examine a patch of ground, reading signs invisible to others'

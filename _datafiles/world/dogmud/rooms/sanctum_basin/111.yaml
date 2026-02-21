@@ -7,6 +7,7 @@ description: A low building of basalt and clay houses the alchemist's workshop, 
   metallic. Steam curls from a pot on a small iron stove where Alchemist Yenna works
   with quiet focus.
 biome: city
+station: alchemy_bench
 exits:
   east:
     roomid: 112

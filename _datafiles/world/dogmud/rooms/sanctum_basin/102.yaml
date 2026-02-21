@@ -17,7 +17,7 @@ exits:
   south:
     roomid: 103
     lock:
-      difficulty: 999
+      difficulty: 255
 spawninfo:
 - mobid: 56
   message: The Basin Warden steps forward, hand resting on the pommel of a long blade.

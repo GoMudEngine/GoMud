@@ -13,6 +13,10 @@ exits:
     roomid: 109
   north:
     roomid: 113
+spawns:
+- mobid: 63
+  count: 1
+  maxcount: 1
 idlemessages:
 - A <ansi fg="mobname">merchant</ansi> calls out prices for <ansi fg="itemname">trail rations</ansi>.
 - Someone haggles noisily over the price of a <ansi fg="itemname">water skin</ansi>.

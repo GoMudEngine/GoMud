@@ -128,18 +128,15 @@ func New() *Character {
 		Skills:         initAllSkills(),
 		Gold:           25,
 		Bank:           100,
-		// Temporary starter spells for Phase 11 testing — migrate to tutorial area in Stage 16+
+		// Starting spells — core utility set. tame/fire-bolt/fireball earned post-tutorial.
 		SpellBook: map[string]int{
-			"heal":          1, // Minor Heal (helpsingle, vital)
-			"mm":            1, // Magic Missile (harmsingle, elemental)
-			"sparks":        1, // Shower of Sparks (harmmulti, elemental)
-			"throw-stone":   1, // Throw Stone (harmsingle, elemental) — requires stone component
-			"fire-bolt":     1, // Fire Bolt (harmsingle, elemental)
-			"minor-shield":  1, // Minor Shield (helpsingle, enhancement)
-			"stun":          1, // Stun (harmsingle, mental)
-			"blind":         1, // Blind (harmsingle, mental)
-			"tame":          1, // Tame (harmsingle, mental)
-			"fireball":      1, // Fireball (harmarea, elemental)
+			"heal":         1, // Minor Heal (helpsingle, vital)
+			"mm":           1, // Magic Missile (harmsingle, elemental)
+			"sparks":       1, // Shower of Sparks (harmmulti, elemental)
+			"throw-stone":  1, // Throw Stone (harmsingle, elemental) — requires stone component
+			"minor-shield": 1, // Minor Shield (helpsingle, enhancement)
+			"stun":         1, // Stun (harmsingle, mental)
+			"blind":        1, // Blind (harmsingle, mental)
 		},
 		CharmedMobs:    []int{},
 		Items:          []items.Item{},

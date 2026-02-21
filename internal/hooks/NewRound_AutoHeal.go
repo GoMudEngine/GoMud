@@ -42,6 +42,11 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 			regenMultiplier = 10.0 // 10x faster regen for testing
 		}
 
+		// 5x regen in Sanctum Basin tutorial zone (rooms 101–120)
+		if user.Character.RoomId >= 101 && user.Character.RoomId <= 120 {
+			regenMultiplier = 5.0
+		}
+
 		inCombat := user.Character.Aggro != nil
 		healthStart := user.Character.Health
 

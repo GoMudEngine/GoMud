@@ -3507,6 +3507,25 @@ Adding a new dev tool requires only registering one action handler in the dispat
 
 ---
 
+### ✅ Stage 16.3: Tutorial Playtesting Polish — COMPLETED
+**Goal**: Post-playtesting fixes and content polish across the Sanctum Basin tutorial zone.
+
+**Implemented**:
+- **StartRoom 107→113**: New characters now spawn directly in Academy Hall so the Awakening Rite triggers immediately on first login
+- **Ceremony lock system** (`113.js`): Exits lock when a new player enters Academy Hall; Priest intercepts movement commands with "The Rite is not yet complete"; `onIdle` tick counter unlocks after ~30s; `onLoad` guarantees exits open on server restart
+- **Mosaic map item** (`13-mosaic_map.yaml`): Floor mosaic in Academy Hall (item 13); `look mosaic` renders ASCII world map of the Windward Marches; pickup intercepted with flavor message; Priest closing line now mentions mosaic
+- **Cave final trial** (`120.js`, `102.js`): Added `cave` quest step — player must defeat the Aberrant Chrysalis boss before the Basin Warden will open the gate; `onIdle` boss-death detection mirrors the training dummy pattern; `1-cave` token replaces `1-magic` as the graduation check
+- **Fold lore rewrite** (`116.js`): Elder Saris now explains Fold casting via bifurcation model — form an image, split to two, four, eight; each doubling is a fold; harder spells require more folds; Witnesses affect fold-pressure ceiling. Removed premature cave reference. Added `spells` command prompt.
+- **Wilderness Guide** (`106.js`): Fen now explicitly prompts `forage`, `track`, and `sneak` commands with in-line explanations
+- **5× regen in Sanctum Basin** (`NewRound_AutoHeal.go`): Rooms 101–120 grant 5× HP/stamina regen to reduce frustration during tutorial combat
+- **Starter spell cleanup** (`character.go`): Removed `tame`, `fire-bolt`, and `fireball` from default spellbook; `illum` is now earned via Elder Saris during tutorial
+- **`mutation` command alias** (`keywords.yaml`): `mutation` now resolves to `mutations`
+- **Quest file rename**: `1-sanctum_tutorial.yaml` → `1-the_sanctum_trials.yaml`; mob files renamed to match full NPC names (chrysalis_priest, blacksmith_korvath, etc.)
+- **World Road renumber**: Room 201 → 2001 to avoid future ID conflicts
+- **Various NPC dialogue polish**: Korvath forge history, Adela trade gossip, 103.yaml abandoned pack, 105.yaml cookfire smoke/Witnesses idle messages, 120.js Aberrant lore on entry
+
+---
+
 ## Phase 17: LLM Integration & AI NPCs
 
 > **Foundation now in place**: All core systems are stable, the dev tools JSON API
@@ -4104,4 +4123,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-20
 **Status**: In Progress
-**Current Stage**: Stage 17 — Stage 16.1 + 16.2 complete: Sanctum Basin tutorial zone (20 rooms, 12 mobs, 7 NPC JS scripts, Sanctum Trials quest). Old tutorial zone removed. New characters spawn at Town Square (room 107). Basin Gate gate-locks south exit until player completes all 6 trials. Next: Stage 17 LLM Integration & AI NPCs.
+**Current Stage**: Stage 17 — Stages 16.1–16.3 complete: Sanctum Basin tutorial zone fully polished (20 rooms, NPC dialogue, cave final trial, ceremony lock, mosaic map, Fold lore rewrite, playtesting fixes). New characters spawn at Academy Hall (room 113). Basin Gate locks until all 7 trials including Aberrant Chrysalis boss are complete. Next: Stage 17 LLM Integration & AI NPCs.

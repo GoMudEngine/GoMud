@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/pets"
 	"github.com/GoMudEngine/GoMud/internal/species"
@@ -576,6 +577,36 @@ func (a ScriptActor) HasSpell(spellId string) bool {
 
 func (a ScriptActor) LearnSpell(spellId string) bool {
 	return a.characterRecord.LearnSpell(spellId)
+}
+
+// GiveMutation gives the player a specific mutation at level 1.
+// Returns true if the mutation was newly granted, false if already owned or user is a mob.
+func (a ScriptActor) GiveMutation(mutationId string) bool {
+	if a.userRecord == nil {
+		return false
+	}
+	if a.characterRecord.Mutations == nil {
+		a.characterRecord.Mutations = make(map[string]int)
+	}
+	if _, exists := a.characterRecord.Mutations[mutationId]; !exists {
+		a.characterRecord.Mutations[mutationId] = 1
+		a.characterRecord.Validate()
+		return true
+	}
+	return false
+}
+
+// RollMutation randomly selects a mutation ID from the weighted pool that the player doesn't already own.
+// Returns an empty string if no mutations are available (e.g., player owns all mutations).
+func (a ScriptActor) RollMutation() string {
+	if a.userRecord == nil {
+		return ""
+	}
+	pool := mutations.GetWeightedPool(a.characterRecord.Mutations)
+	if len(pool) == 0 {
+		return ""
+	}
+	return mutations.RollAcquisition(pool)
 }
 
 func (a ScriptActor) IsAggro(actor ScriptActor) bool {

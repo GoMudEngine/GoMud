@@ -1,0 +1,40 @@
+mobid: 63
+zone: Sanctum Basin
+hostile: false
+maxwander: 0
+idlecommands:
+  - 'emote straightens a row of items on the display counter'
+  - 'say Looking for something? Type <ansi fg="command">list</ansi> to see what I have.'
+  - ''
+  - ''
+activitylevel: 15
+character:
+  name: Merchant Adela
+  description: 'A sharp-eyed woman with ink-stained fingers and a merchant''s easy smile,
+    Adela runs the only proper goods stall in Sanctum Basin. Her counter holds a tidy
+    arrangement of practical items -- nothing fancy, but everything a new arrival
+    might need. She has a gift for sizing up a customer in two seconds flat.'
+  speciesid: 1
+  level: 1
+  gold: 0
+  shop:
+    - itemid: 10001
+      quantity: 0
+      quantitymax: 0
+      price: 3
+    - itemid: 20008
+      quantity: 0
+      quantitymax: 0
+      price: 3
+    - itemid: 20007
+      quantity: 0
+      quantitymax: 0
+      price: 3
+    - itemid: 30001
+      quantity: 0
+      quantitymax: 0
+      price: 5
+    - itemid: 20004
+      quantity: 0
+      quantitymax: 0
+      price: 8

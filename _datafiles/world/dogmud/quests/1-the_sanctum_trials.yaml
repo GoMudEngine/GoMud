@@ -1,0 +1,29 @@
+questid: 1
+name: The Sanctum Trials
+description: Complete the trials of Sanctum Basin to earn passage to the wider world.
+secret: false
+steps:
+  - id: start
+    description: "Speak with the Chrysalis Priest in the Academy Hall to begin your trials. The Priest will perform your Awakening Rite."
+  - id: mutation
+    description: "Visit the Merchant on Market Street, east of Town Square, to learn how to buy, sell, and equip gear."
+  - id: shopping
+    description: "Visit the Combat Trainer in the Training Yard, northeast of Town Square, and defeat the training dummy."
+  - id: combat
+    description: "Visit Blacksmith Korvath in The Forge, south of the Training Yard, to learn crafting."
+  - id: crafting
+    description: "Visit Alchemist Yenna in the Alchemist's Workshop, west of Well Court, to learn alchemy."
+  - id: alchemy
+    description: "Visit Wilderness Guide Fen in the West Meadow, west of Town Square, to learn foraging, tracking, and stealth."
+  - id: wilderness
+    description: "Visit Elder Saris at the Observatory, north of the Alchemist's Workshop, to learn about the Fold."
+  - id: magic
+    description: "Descend into the cave system beneath the Observatory. Use illuminate to light your way, and defeat the Aberrant Chrysalis at the back of the cave."
+  - id: cave
+    description: "Return to the Basin Warden at Basin Gate, south of Town Square, to claim your passage."
+  - id: end
+    description: "The Sanctum Trials are complete."
+rewards:
+  playermessage: "The Basin Warden nods with quiet satisfaction. The gate swings open. The world of Gaius awaits you."
+  gold: 25
+  skillinfo: "map:1"

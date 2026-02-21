@@ -13,8 +13,9 @@ exits:
   east:
     roomid: 104
   south:
-    roomid: 201
+    roomid: 2001
     zone: World Road
 idlemessages:
 - The <ansi fg="itemname">iron gate</ansi> rattles in the wind.
 - Dust from the trail below drifts up through the gate bars.
+- A traveler's pack sits at the base of the gate, unclaimed. Whoever left it has already gone south.
