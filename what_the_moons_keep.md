@@ -1,6 +1,6 @@
 
 
-**WHAT THE MOONS KEEP**
+# What the Moons Keep
 
 *Prologue: What Was Remembered*
 
@@ -182,8 +182,6 @@ There is a hill shaped wrong.
 
 ⁂ ⁂ ⁂
 
-# What the Moons Keep
-
 ## Chapter One — *[Maren]*
 ### The Ritual of the Second Skin
 
@@ -331,7 +329,7 @@ He had left on a night like this one, windy, late autumn. She had been twelve. S
 
 She had told herself for five years that he had abandoned them. She'd built a whole private architecture of bitterness around it, well-maintained, load-bearing. It had been useful. It had kept her from a different and harder question.
 
-What she remembered of him was small and specific: lamp oil and the sharper bite of something metallic, and his hands by firelight, turning some small bright thing with the patience of a man for whom patience was a tool like any other. A gear, maybe, or a catch-pin — something that wanted coaxing into place, something that would either work or wouldn't and required a kind of faith in the trying. She could not remember what the bright thing was. She remembered the turning.
+What she remembered of him was small and specific: lamp oil and the sharper bite of something metallic, and his hands by firelight, turning some small bright thing with the patience of a man for whom patience was a tool like any other. A gear, maybe, or a catch-pin — something that wanted coaxing into place, something that would either work or wouldn't and required a kind of faith in the trying. SIhe could not remember what the bright thing was. She remembered the turning.
 
 He had also been bloodless. She had always known this and had not let herself think about what it meant. He had also never shown the change. He had also, when she was young, been careful in ways she hadn't understood as careful at the time. The way he sat at the Rite. The way he held his arm.
 
@@ -366,3 +364,256 @@ She thought: I have been hollow my whole life and it has never mattered before. 
 She thought: I want to know why.
 
 She walked. The moons moved in their slow courses. The plateau fell away behind her and the scrubland opened up, and somewhere ahead, past the basalt country and the long descent, was a road.
+
+
+## Chapter Two — [Davan]
+### The Color of Hunger
+
+Three weeks on the road and Davan had stopped counting the blisters.
+He'd made that decision somewhere around day four, when the count had reached a number that felt more like a complaint than information. The blisters were there. They would either harden into something useful or they wouldn't. Counting them every night in the firelight was just a way of feeling sorry for himself without technically doing it, and he'd left Amber Valley precisely because he was tired of that particular kind of dishonesty.
+The road north was well-traveled enough to have a surface — packed earth between shallow drainage ditches, marked at intervals by waystones carved with distances to places he'd never been. He walked in the early morning and the late afternoon, rested in the worst of the midday heat, camped just off the road when he couldn't reach a waypoint inn. He'd done this before, shorter distances, helping his father deliver furniture to the river towns. The rhythm came back faster than expected. Wake, walk, eat when there was something to eat, sleep when it was dark. The body was a practical thing once you stopped arguing with it.
+He was twenty years old and he had never been this far from home, and mostly he felt fine about this, and sometimes, for about an hour after waking, he felt it as an ache he couldn't quite locate.
+He carved while he walked. Not intricate work — he saved that for camp, when the light was steady. On the road he kept his hands moving on a piece of soft pine, shaping it into whatever the grain suggested, which was usually something simple: a bird, a sleeping dog, the curve of a riverbank. His father had taught him that the knife was a conversation, not a command. You didn't force the wood. You asked it what it wanted to be and then you helped it get there. He was not sure this philosophy generalized beyond woodworking but he'd never quite been able to stop applying it.
+The valley he'd left was three weeks behind him and already changing shape in memory. The water-rights dispute had started the previous spring — a drying-out year, the river lower than anyone could remember — and by summer it had stopped being a dispute and started being something else, something that didn't have a clean name but felt like watching a rope pulled from both ends until it didn't matter anymore what it had been holding together. His family was there still. His mother, his father, his two younger sisters who were twelve and nine and already showing the first signs of opening, a warmth behind the eyes, a restlessness at night. He had hugged them and told them he'd write. He had written twice. He didn't know if the letters had arrived.
+He was not running away. He had decided this and he mostly believed it.
+He was just walking north.
+
+The men were around the bend before he heard them.
+He came off a rise in the road — a long uphill stretch through pine scrub that had him looking at his feet — and when he raised his head the road ahead had four people on it. Three of them were mounted. One stood holding the bridle of a farm cart while its driver answered questions from the man on the lead horse.
+Davan stopped.
+He'd stopped without deciding to, some part of him reading the situation before the rest caught up. The mounted men were not soldiers — no uniforms, no militia markings. Their gear was plain and well-kept. The horses were better than merchant horses. The one doing the talking had a quality to his posture that said the questions were not conversational.
+The farmer answered. Shook his head. The man on the horse nodded once, the precise nod of someone filing information, and they moved on up the road without looking back.
+Davan stood in the road until they were past the next rise. Then he breathed.
+He looked down at his chest. The shirt was dark — good, he'd chosen the dark shirt this morning without knowing why, and now he was grateful for the instinct. Even so he could see, just at the collar where the fabric gaped, a faint pulse of amber light against his own skin. Slow, rhythmic. It faded as he stood there, as his heart found its normal pace again.
+He had not chosen to do that. The light came when it wanted, on its own logic, connected to something underneath thought that he was still learning to recognize before it happened. Fear, apparently, was a warm amber. He catalogued this the way he catalogued most things about the change: carefully, without judgment, the way you'd document a new kind of weather.
+He waited another few minutes, then walked on. The farmer's cart was still pulled over, the man sitting on his bench looking at nothing in particular with the expression of someone deciding whether he'd just been inconvenienced or threatened.
+"What was that about?" Davan asked, keeping his voice even.
+The farmer glanced at him. Took him in — young, walking, no obvious trouble about him. "Looking for someone. Young woman, dark hair, wouldn't show the change. Said she'd come north through the valley country." He shrugged. "Haven't seen any such."
+"Neither have I," Davan said, which was true.
+He walked on. The amber under his shirt had gone quiet, but he kept his collar closed.
+
+The waypoint inn at Colter's Crossing was called The Doubled Moon, which Davan had always found a strange name for an inn since there were three of them and they were not particularly notable for doubling anything. The sign was old, the paint cracked, the moon depicted somewhat egg-shaped. He ordered soup and bread and a small beer he couldn't quite afford and settled into a corner bench with his carving.
+The room was half-full. Late afternoon, the light coming in low and yellow through the one window that wasn't shuttered. Two merchants at the bar talking with the easiness of people who knew each other, had been talking since before he arrived, and would be talking after he left. A family in the far corner, parents and three children, the children at the age where eating a meal was a full physical ordeal. An old man asleep near the fire with his hat over his face.
+The soup was thin but hot. He ate slowly, making it last, and worked on the carving, a smooth abstract curve that had started as an attempt at a fish and was becoming something he didn't have a name for.
+He wasn't trying to listen to the merchants. They were just the loudest thing in the room.
+"—quiet word, not an official notice—" one was saying. He was a heavyset man with the prosperous look of someone who traded in things that kept well. Salt, maybe, or cloth.
+"—still means someone's looking," the other said. Thin, with a narrow beard that was trying hard. "The bloodline doesn't put out a quiet word for nothing."
+"Could be nothing. Girl went missing, family's worried, family's connected—"
+"The bloodline," the thin man said again, as if the repetition made the point, and it did.
+A pause. The sound of cups.
+"Gone north, they said." The heavyset man lowered his voice, not very much. "No change showing. Could be she's just young, hadn't opened yet—"
+"At seventeen? That's late, isn't it?"
+"Late. Not impossible."
+"Or," the thin man said, and didn't finish the sentence.
+The heavyset man said nothing for a moment. Then: "There hasn't been one of those in—"
+"Long time."
+"Long time," the heavyset man agreed, and the conversation shifted to road conditions and whether the northern pass would close early this year.
+Davan ate his soup. He turned the carving over in his hands. The word they hadn't said sat in the middle of the room like something that had been put down and not picked up.
+Bloodless.
+He had heard the word a handful of times in his life. Once from his grandmother, who had known someone, a very long time ago. Once from a traveling priest who'd made it sound like a kind of sorrow. Once in a children's song that the older kids sang at the younger ones, not cruelly, just as children carry things they don't understand, preserving the shape without the meaning.
+He thought about what it meant to have no change. He tried to genuinely imagine it: waking at fifteen with nothing different, watching everyone around you open into something new and finding yourself exactly as you'd been. He couldn't quite construct it from the inside. His change had come on slow, just a warmth at first, something he'd mistaken for a fever. He hadn't known what it was until his mother had sat him down and shown him, candlelight against his forearm, the way the light moved.
+He'd cried. He still wasn't entirely sure why. Relief, maybe. Or something about the being chosen that he'd always found faintly uncomfortable to examine.
+He bought a second beer he also couldn't quite afford and took it to the corner and thought about the Chrysalis the way he thought about it when he was alone, which was honestly.
+
+The theology of it, the version he'd grown up with, was simple and warm: the world had recognized the people and the people had recognized the world, and out of that recognition came the change, and the change was the shape your truest self took when the world was watching. His community had celebrated Bloomings with food and song and a complete absence of solemnity. They had treated the change as a natural thing, remarkable without being holy. When old Veth had grown a second set of arms at forty-two, they'd had a party. When the Crane girl's eyes had gone to a compound shimmer that let her read in near-darkness, her mother had wept and called it practical.
+He loved this about where he came from. He did not think he'd understood, until he'd been walking for three weeks, how much of his internal life had been shaped by it.
+The church's version was more layered, more careful. The Chrysalis as divine gift, the change as awakening, the three moons as witnesses to each Blooming, as present and personal as a hand on the shoulder. He had always felt, listening to traveling priests, that the church version was the valley version with all the mess and joy extracted and replaced with something that required more maintenance.
+This was possibly unfair. He knew it was possibly unfair.
+He thought about what the old story said underneath both versions: that the change gave you what you needed to become yourself. He had heard this his whole life. He believed it had been true for Veth and for the Crane girl and for his mother, whose change was a sense of direction so precise she had never been lost, not once, which she claimed was not remarkable and which everyone who knew her found extraordinary.
+He looked at his hands in the lamplight. Turned them over. The bioluminescence was quiet now, just the faint potential of it in his skin, like the difference between a coal that's out and a coal that's banked. When he was calm it was nearly invisible in daylight. In this kind of light, a close observer might notice something.
+The thing was, he wasn't sure the change gave you what you needed. He thought it might give you what you already were, just louder. And those were different things.
+He had always felt things in rooms. Not anything he could name precisely — more like a sense of the weight of the air, the way a space felt used or unused, whether the people in it were at ease. He'd thought this was just attentiveness, something anyone could do if they paid attention, until he'd started paying attention to whether anyone else was doing it and had found that they generally weren't. That they would describe a room as fine when the room did not feel fine to him at all, and he was usually eventually proven right about this.
+The change had taken that unnamed thing and made it louder. The warmth in his skin that corresponded to emotion. The amber light for fear, something bluer for calm, a green-gold shimmer when he was happy that he'd seen once in a mirror and thought looked ridiculous and wonderful in equal measure. It was him, expressed as light. It was him, expressed as something anyone nearby could read if they were paying attention.
+He was not sure how he felt about being legible.
+He finished the beer. Outside, the light had dropped fully dark, and the three moons were coming up through the one unshuttered window, two bright and one dim, their combined light enough to silver the road. He watched them for a while. He had always liked the moons, their slow reliable movement, the way you could track a month by them if you bothered to learn. His grandfather had taught him the names of the old moon-songs, counting rhythms built around the cycles, older than any temple.
+The merchants were still talking, quieter now, or he'd stopped listening. The family in the corner had gotten the children to sleep somehow, all three of them piled together like a litter of dogs. The old man by the fire had begun to snore with great enthusiasm and total unconcern.
+Davan gathered his carving and his coat and went out to the stable, where he'd paid a half-coin to sleep in the hay. The stable was warm and smelled of horse and he lay on his back in the dark and looked at the ceiling and thought about the girl they were looking for, dark-haired, northbound, no change visible.
+He hoped she was walking fast.
+
+In the morning he was on the road before sunrise, the cold blue hour when the ground gives up the last of the previous day's warmth and the sky comes in close. He walked north. The blisters were still there but he'd stopped counting them.
+At some point, between one step and the next, he realized he'd been holding the carving for the last hour without working on it. He looked at it. The abstract curve he'd been making had resolved itself overnight into something he recognized: a face, roughly suggested, turned slightly to one side as if listening for something. He hadn't decided to do that. The grain had led him there, or his hands had, or the conversation with himself in the waypoint inn had worked its way down through his arms into the pine.
+He didn't know whose face it was. He wasn't sure it was anyone's.
+He pocketed it and put his hands in his coat and kept walking. The road stretched out ahead of him, pale and long, and the moons were going down behind him on the left, and ahead the sky was starting, just starting, to show the color that came before light.
+The man on the horse had said: dark hair, no change visible. Had said it the way you say a thing that matters but you're not supposed to say why.
+He thought about the word the merchants hadn't finished.
+He thought about what it would mean to walk through the world with nothing showing. No light when you were afraid. No tell. Just a face, ordinary, offering nothing.
+He thought that might be the loneliest thing he could imagine.
+He walked. The road curved north and the light came up, and the high country ahead was dark green under the new sky, and somewhere past it was the city where he was going, for reasons he had not quite finished explaining to himself.
+
+
+## Chapter Three — *[Aldric]*
+### What Lies Under the Stone
+
+---
+
+The pilgrims came in all conditions, and Aldric had made his peace with this long ago.
+
+He had made his peace with a great many things long ago, which he understood was either a mark of spiritual maturity or a kind of accumulated resignation, and which he privately suspected was both, and did not examine this suspicion too closely. He had made his peace with the cold that came up through the temple floor each winter regardless of how many braziers they lit. He had made his peace with the particular smell of large numbers of unwashed people in an enclosed space seeking comfort, which was the smell of the world's need, and which he took as a reminder that the work was real. He had made his peace with the administrative demands of running a major waypoint temple — the accounts, the correspondence, the management of junior priests who were either too eager or not eager enough — accepting them as the unglamorous armature on which the actual work was built.
+
+He had made his peace, over thirty years, with the specific loneliness of a celibate life, with the knowledge that his name would not be carried forward, with the dreams he'd had in his twenties of doing something historically significant, which had faded without drama into the ordinary satisfactions of a life of service. He was not unhappy. He was not unhappy in the way of a man who has stopped asking whether he is happy, which is a different thing, but it was not a painful difference. It was simply the texture of a life that had been lived mostly correctly, by his own accounting.
+
+He had not made his peace with the dying woman's last words.
+
+---
+
+She had arrived two days before, in the way that the most profoundly changed sometimes arrived: in a cart, because walking was no longer practical, accompanied by a young grandson who had the look of someone managing a grief he hadn't yet been given permission to feel. Her name was Sella. She was somewhere past seventy and what she was past seventy of was difficult to say with certainty, because what remained of her was not precisely a woman of seventy. The Chrysalis had been working on her for decades. Her arms had gone translucent at the wrists, the skin like old paper held up to the light, the bones beneath a blue-white suggestion. Her face had retained its character — she was clearly, even now, the person she had been — but it sat in a body that had been going steadily toward something other than a body for a long time.
+
+This was not unusual. The most devoted, the most deeply changed, sometimes continued to transform beyond what any conventional theology could comfortably describe. The church spoke of it as the Final Chrysalis, the ultimate gift, the complete dissolution of the barrier between self and world. Aldric had held the hands of perhaps a dozen people in this state over his career and had found it, privately, more frightening than transcendent. He had never said this. It would not have been useful.
+
+He had sat with Sella because she had asked for the Keeper of the temple specifically. Not a junior priest. Not a healer. She'd been lucid when they'd settled her, and her eyes, which had gone a uniform pale silver without pupil or iris, had tracked him when he entered the room with the particular attentiveness of someone who has decided that every remaining moment is worth paying attention to.
+
+He had read the passages she requested. He had sat with her while her grandson slept in the chair by the wall. He had thought, as he sometimes thought in these rooms, about what it would mean to believe without remainder — to be so entirely certain of a thing that your body bent toward it, decade by decade, until the certainty was written in your bones.
+
+He had thought this the way he always thought it, which was with respect and a certain wistful distance, as a man might admire a feat of athleticism he knows is beyond him.
+
+She had been quiet for a long time when she took his wrist.
+
+Her grip was still strong. He had not expected that. The translucent hand on his wrist, and then her eyes on him, silver and steady, and she said, with a clarity that did not belong to someone who had been unconscious an hour ago:
+
+"The moons are not moons."
+
+He had held very still.
+
+"They are boats," she said. "Boats with the dead still inside."
+
+He had said, gently, "Rest now, Sella."
+
+She had looked at him for another moment. There was something in the look — not distress, not confusion. Something almost apologetic. As if she knew she was giving him a gift he hadn't asked for and wasn't sure what to do with.
+
+Then she had closed her eyes, and by morning she was gone.
+
+He had stood in the doorway of her room for a moment after the grandson was seen to. The room's lamp was low and guttering. He reached across and pinched it out between his fingers, and then stood there in the sudden dark and did not move for a little while.
+
+---
+
+He had dismissed it. This was the correct response, professionally speaking. People in their final hours said many things. The mind, moving toward its end, sometimes produced fragments of old stories, half-remembered songs, images that had accumulated in a life and were being released without particular order or intention. The Fathers' Boats tradition was old — pre-Chrysalis in origin, the church had long regarded it as colorful superstition from the early settlement days, the kind of story that arose in any community trying to explain how it came to be somewhere. *We came in boats.* Of course they had. Metaphorically. Everyone comes from somewhere.
+
+He had dismissed it and gone to bed and lain awake until the false dawn watching the ceiling and thinking about what it would mean, specifically, if the moons were not moons.
+
+He had slept for perhaps two hours.
+
+Then the morning. The pilgrims' queue, which was long because it was always long at the Confluence, three rivers and four roads meeting in one valley making it the natural center of a very large region. He had heard confessions and granted blessings and settled two disputes about inheritance that had been brought to the temple in the apparently sincere belief that matters of property were appropriately resolved in a house of the Chrysalis, which was not true and which he had explained patiently and which he would explain again to the next three families who arrived with the same sincere misapprehension.
+
+He passed through the side corridor on his way to the queue and pinched the wick of the lamp outside the record room between his thumb and forefinger — already cold, already out, as it had been since the previous night — and walked on without breaking stride. He did this every morning. He had done it so long he would have been unable to say, if asked, whether the lamp was generally lit or unlit when he checked it. The checking was not about the lamp. The tips of his first two fingers on his right hand carried a permanent pale callus from a lifetime of this habit, which he had never noticed, and which two successive physicians had noticed and declined to mention.
+
+He had eaten lunch standing at his desk and written two letters that needed writing and reviewed the accounts for the eastern supply house. He had done all of this with the focused efficiency of a man who has learned to use work as a kind of weather, something you move through rather than experience.
+
+In the afternoon he had gone down to the undercroft.
+
+---
+
+The east undercroft was the oldest part of the temple. The temple itself had been built in stages over several centuries, each generation adding to or reworking what came before, so that the current building was a palimpsest of architectural decisions made by people who were long dead and had not always agreed with each other. The oldest sections were in the east: low stone rooms beneath the main floor, used now for storage, for the keeping of records going back three hundred years, for casks of the communion wine that needed to sit in the cool dark for at least a year before they were fit for use.
+
+He had been meaning to have the east undercroft re-surveyed for some time. Part of the rear wall had shown cracking that concerned him, and he had arranged for two of the younger brothers and a mason named Holst to assess it.
+
+He had not expected them to find anything behind the wall.
+
+He heard Holst's voice from the bottom of the steps, and the tone of it was wrong — not alarmed, exactly, but the voice of a man who has encountered something outside his professional scope and is not sure what the protocol is. Aldric went down.
+
+The crack in the rear wall had opened into something. Not a crack: a seam. The wall at this section, it turned out, was not original stonework but a later addition, built against an older surface and mortared flush so that it looked continuous. Two hundred years of settling had pulled the mortar and the stones apart, and Holst's careful work with a crowbar had done the rest.
+
+Behind it: a room. Low-ceilinged, dry, sealed.
+
+Inside the room: five objects.
+
+---
+
+He sent Holst and the brothers away. He told them the room appeared to be a historical storage space, that he would review its contents and report to the appropriate archival authority, that they had done good work and should say nothing about this until he had had a chance to assess the historical significance of what they'd found. He said all of this in the calm, conclusive voice he had spent thirty years developing for situations that required a calm, conclusive voice, and they went.
+
+Then he stood in the doorway and looked at the five objects for a long time.
+
+The first four were containers. Each perhaps the length of his forearm, smooth, some kind of dull gray material that was neither stone nor metal nor any ceramic he'd encountered, and yet had qualities of all three. They were sealed. He did not try to open them. They were perfectly smooth except for a narrow ridge running around the circumference of each, and a small recessed area on one end that might have been a fixture for something, a handle or a closure mechanism long since lost.
+
+The fifth object was flat. It lay on a low stone shelf at the back of the room. It was dark — not the dark of an unlit surface but something more specific, a darkness that felt deliberate, a surface that absorbed rather than reflected. Perhaps a hand's width thick, perhaps four times that across. The edges were sharp and regular in the way of something made rather than grown or found.
+
+He stood in the doorway for a very long time.
+
+Then he went back upstairs and completed the afternoon's administrative work, and ate a dinner he did not taste, and sat in the chapel for evening prayers with the collected brothers of the temple, and said the correct words, and went to his room.
+
+He lay awake until midnight.
+
+Then he got up, took his lamp, and went back down to the east undercroft.
+
+At the bottom of the steps he stopped. He became aware, in the way you become aware of a thing you have already done, that his right hand was raised and his thumb and forefinger were an inch from the lamp's flame. He had been about to extinguish the only light he had, in a sealed underground room, out of pure habit. He lowered his hand. He stood still for a moment. Then he went in.
+
+---
+
+The flat dark object responded to his touch.
+
+Not immediately. He had reached out because he was the kind of man who, when confronted with a thing he did not understand, eventually had to touch it. He had expected nothing or cold smooth material. He had not expected what happened.
+
+Light. From within the object, or from its surface, or from the relationship between them — he could not determine the source. A cold light, not warm like flame. It moved in the surface, or rather, the surface moved within the light, and what appeared was not a consistent illumination but a shifting series of images.
+
+He stepped back. He stood very still.
+
+The images were small and seemed to recede as if seen from a great distance. Moving points of light against a field of dark. Some of the points were fixed; some moved in slow arcs. He had been enough of a scholar in his youth to have spent time with astronomy texts, and something about the arrangement produced a recognition he could not quite close his hand around — a star map, perhaps, or something that functioned like one, though the specific relationship of the points to each other matched no chart he knew.
+
+He stood and looked at it until the cold began to work through his feet and legs, which was perhaps an hour, and he understood almost nothing, and he could not make himself go back upstairs.
+
+He had been a priest for thirty years. He had a functional theology of mystery — he believed that the Chrysalis was vast and old and that human understanding of it was partial and would always be partial, and he had built a comfortable and honest intellectual life around this belief. He was not a man who expected to understand everything. He had made his peace with not understanding everything.
+
+But there was a particular quality to the thing on the shelf that did not feel like mystery in that sense. It did not feel like the mystery of the deeply sacred, which was a kind of fullness, a sense of something enormous behind a veil. It felt like a different kind of mystery. The mystery of a question that has an answer, and the answer exists somewhere, and you simply do not have it yet.
+
+He had not encountered that feeling in a very long time.
+
+He went back upstairs. He sat at his desk. He reached toward the lamp — caught himself, withdrew his hand — and then sat with the lamp burning as it needed to burn, and wrote in his journal, which he had maintained for twenty years and which he wrote in a careful, oblique shorthand developed for the recording of thoughts not meant for other eyes. He wrote, obliquely, about the sealed room and the objects and the flat dark thing that made light. He wrote, less obliquely than he intended: *What is this and who put it here and how long has it been here and why did they put it here and what are the containers and what is this light.*
+
+He crossed out the last sentence. He wrote it again. He left it.
+
+Then he turned back a page, and found, below the entry he'd written the previous day — a routine accounting of the pilgrims, the services, the correspondence — the brief note he'd made about Sella's last words.
+
+*The moons are not moons. They are boats. Boats with the dead still inside.*
+
+He looked at this for a while.
+
+Below it, in the deliberate shorthand: *Grief-speech. Delirium. Old folk tradition. Irrelevant.*
+
+He looked at this also.
+
+Then he closed the journal and sat in his chair and looked at the lamp, which was burning low, and thought about what it meant that the two things — the old woman's words and the light moving in the dark surface below — had connected themselves in his mind without his permission, like two hands reaching toward each other in the dark.
+
+---
+
+In the morning he sealed the room again as best he could. He moved a storage cask in front of the disturbed section of wall. He told Holst that the room had contained only some damaged record-casks from three centuries back, nothing of historical significance, nothing that required further attention. Holst accepted this without comment, because Holst was a mason and his professional investment in the contents of old rooms was limited.
+
+Aldric went about his day.
+
+He heard confessions. He settled a dispute about the boundary between two families' grazing rights that had been brought to the temple in the apparently sincere belief, et cetera. He ate lunch standing at his desk. He wrote the letters that needed writing.
+
+In the afternoon he went, on the pretext of a pastoral visit to the market district, to the temple's small archive on the upper floor of the east wing. He had full access to this archive, as Keeper of the temple, which meant he also knew its gaps — the sections that had been removed, transferred, restricted over the years, and by whom.
+
+He found the section on pre-Chrysalis settlement traditions. It was thin. It had always been thin, and he had always understood this as a reflection of how little had survived from that period rather than as a deliberate condition. He looked at it again with a different question in mind.
+
+The Fathers' Boats tradition: two pages of notes from a previous Keeper, approximately ninety years ago, summarizing a folk-tradition collected from the river communities. People came from elsewhere, in vessels, in the old time before the Chrysalis. The vessels still watched from above. The translation of the term used in the oldest versions: *sky-boats.* The Keeper's assessment, written in the firm hand of someone disposing of a matter: *Colorful origin-myth. Pastoral. Not inconsistent with the Chrysalis narrative if understood metaphorically. No doctrinal concern.*
+
+Below this, in a different hand, much later, a single line of annotation: *See also: Restricted Collection, NP Archive, shelf 7-eastern. Access: Bloodline approval required.*
+
+Aldric read this several times.
+
+In thirty years, the existence of a Restricted Collection in the New Plymouth archive was not news to him. Various texts had been restricted over the centuries for various reasons — heresy, sedition, material deemed destabilizing to public understanding of the Chrysalis. He had never had occasion to seek access, which required either bloodline approval or a direct petition through the High Keeper's office. He had never had a reason.
+
+He wrote the shelf number in his journal. Then he wrote it on a separate small piece of paper, folded it, and put it in his coat pocket where he would feel it when his hand went in.
+
+He went back to his duties.
+
+That night, sitting in the chapel after evening prayers had ended and the other brothers had gone, he stayed. He sat in the dark with the lamp unlit and looked at the carved symbol above the doorway — the spiraling form that marked every Chrysalis temple, the sign of the change-within-change. He had looked at this symbol, or one like it, every day of his adult life. He knew it the way he knew his own face, which was to say he had long ago stopped seeing it.
+
+He became aware, at some point, that his right thumb and forefinger were pressed together in his lap. The automatic reach, the pinch, the confirmation. Finding nothing. He had been sitting in a dark room with no flame burning and his hand had still gone looking for one to put out.
+
+He uncurled his fingers and set them flat on his knee.
+
+He saw it now.
+
+The inner spiral of the symbol — the oldest part, the part that predated the standard Chrysalis iconography by some margin, which scholars assumed was absorbed from earlier regional traditions — was not quite a spiral. He had always read it as one. Up close, with fresh attention, it was a set of concentric arcs that described an orbit. Something circling something. Over and over, patient, elliptical, going nowhere and going there with great dedication.
+
+He stood under the doorway for a long time, looking up.
+
+Then he went to his room and sat at his desk and wrote, in his journal, in the oblique shorthand, the sentence he had been not-writing for two days:
+
+*I do not know what I am looking at.*
+
+And below it, after a long pause:
+
+*I think I am going to have to find out.*
+
+He slept better than he had in years. He did not know what to make of this.
