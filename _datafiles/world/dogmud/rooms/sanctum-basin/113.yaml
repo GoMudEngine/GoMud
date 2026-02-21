@@ -1,0 +1,28 @@
+roomid: 113
+zone: Sanctum Basin
+title: Academy Hall
+description: The main hall of the Chrysalis Academy is a high-ceilinged building of
+  basalt blocks, its walls hung with maps and hand-drawn diagrams. Long tables fill
+  the interior, and at the far end stands a speaking dais. The Chrysalis Greeter waits
+  near the entrance, ready to welcome new arrivals and explain the trials that await
+  them in Sanctum Basin.
+biome: city
+mapsymbol: A
+maplegend: Academy Hall
+exits:
+  west:
+    roomid: 112
+  east:
+    roomid: 114
+  south:
+    roomid: 108
+  north:
+    roomid: 118
+idlemessages:
+- The maps on the walls depict the known reaches of <ansi fg="itemname">Gaius</ansi> in careful ink.
+- An <ansi fg="mobname">instructor</ansi> gestures at a diagram, explaining something to a small group.
+- The hall smells of parchment, chalk dust, and the faint mineral tang of basalt.
+spawninfo:
+- mobid: 50
+  message: The Chrysalis Greeter steps forward with a warm smile.
+  respawnrate: 1 real minute

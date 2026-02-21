@@ -1,0 +1,28 @@
+roomid: 114
+zone: Sanctum Basin
+title: Training Yard
+description: A wide open yard of packed basalt dust serves as the combat training
+  ground of the Chrysalis Academy. Wooden posts, straw targets, and armored training
+  dummies are arranged around the space. A combat trainer moves through slow practice
+  forms at the center of the yard, pausing to watch for students in need of instruction.
+biome: city
+mapsymbol: Y
+maplegend: Training Yard
+exits:
+  west:
+    roomid: 113
+  east:
+    roomid: 115
+  south:
+    roomid: 109
+idlemessages:
+- The <ansi fg="mobname">combat trainer</ansi> counts strikes under their breath.
+- A <ansi fg="itemname">training dummy</ansi> sways slightly from a recent impact.
+- The sound of practiced footwork on packed basalt fills the air.
+spawninfo:
+- mobid: 51
+  message: The Combat Trainer pauses in their practice forms, turning to face you.
+  respawnrate: 2 real minutes
+- mobid: 65
+  message: A training dummy stands ready at the edge of the yard.
+  respawnrate: 5 real minutes

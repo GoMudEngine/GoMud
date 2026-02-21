@@ -1,0 +1,20 @@
+roomid: 103
+zone: Sanctum Basin
+title: World Gate
+description: The road narrows here to a single flagged causeway of polished basalt,
+  the edge dropping sharply to either side. A tall iron gate stands open but clearly
+  watched, its bars twisted into the shape of unfurling wings -- the Chrysalis sigil.
+  The gate opens south onto a weathered track that descends from the plateau and into
+  the wider world of Gaius. To the east, a trail follows the rim of the plateau.
+biome: desert
+exits:
+  north:
+    roomid: 102
+  east:
+    roomid: 104
+  south:
+    roomid: 201
+    zone: World Road
+idlemessages:
+- The <ansi fg="itemname">iron gate</ansi> rattles in the wind.
+- Dust from the trail below drifts up through the gate bars.

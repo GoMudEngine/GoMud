@@ -1,0 +1,28 @@
+mobid: 67
+zone: Sanctum Basin
+itemdropchance: 5
+hostile: true
+maxwander: 2
+groups:
+  - bats
+  - animal
+idlecommands:
+  - 'emote hangs inverted, watching with one dark eye'
+  - 'wander'
+  - ''
+activitylevel: 25
+character:
+  name: cave bat
+  description: 'A large specimen of the cave bats that colonize the northern plateau,
+    this one has a wingspan broad enough to cast a proper shadow. Its echolocation
+    clicks are audible just at the edge of hearing, and it navigates even in total
+    darkness with unnerving precision. Its bite carries the mineral taste of the deep
+    cave.'
+  speciesid: 1
+  level: 2
+  gold: 0
+  stats:
+    vitality:
+      training: -2
+    dexterity:
+      training: 3

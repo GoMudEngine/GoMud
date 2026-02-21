@@ -1,0 +1,19 @@
+mobid: 53
+zone: Sanctum Basin
+hostile: false
+maxwander: 0
+idlecommands:
+  - 'emote stirs a steaming pot with careful, measured strokes'
+  - 'emote makes notes in a worn ledger, muttering to herself'
+  - ''
+  - ''
+activitylevel: 15
+character:
+  name: Alchemist Yenna
+  description: 'Yenna is a small, precise woman whose fingers are permanently stained
+    with plant compounds and mineral dyes. Her workshop coat is covered in careful
+    pockets, each containing something useful. She has the distracted air of someone
+    who is always running three experiments in her head simultaneously.'
+  speciesid: 1
+  level: 3
+  gold: 0

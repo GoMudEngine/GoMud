@@ -1,0 +1,19 @@
+mobid: 52
+zone: Sanctum Basin
+hostile: false
+maxwander: 0
+idlecommands:
+  - 'emote hammers at the anvil with practiced, rhythmic blows'
+  - 'emote examines a half-finished blade against the forge light'
+  - ''
+  - ''
+activitylevel: 20
+character:
+  name: Blacksmith Korvath
+  description: 'Korvath is a broad figure of indeterminate age, their arms roped with
+    muscle and their forearms patterned with old burn scars from the forge. They speak
+    little and demonstrate much -- a tap of the hammer here, a turn of the tongs there.
+    Their work is excellent and their patience with students, considerable.'
+  speciesid: 1
+  level: 3
+  gold: 0

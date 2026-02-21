@@ -1,0 +1,15 @@
+roomid: 105
+zone: Sanctum Basin
+title: Southeast Vista
+description: The trail ends here at a natural lookout point, a broad shelf of basalt
+  thrusting out over the canyon below. From this vantage, you can see across a vast
+  high desert basin stretching to the distant horizon. There is no path forward from
+  here -- only the long drop south and the trail back to the west.
+biome: desert
+exits:
+  west:
+    roomid: 104
+idlemessages:
+- The view from here is breathtaking. The world of Gaius spreads endlessly below.
+- A faint haze marks where the desert gives way to distant plains.
+- Three pale discs -- the moons of Gaius -- are faintly visible even now against the sky.

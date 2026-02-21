@@ -3482,39 +3482,28 @@ Adding a new dev tool requires only registering one action handler in the dispat
 
 ---
 
-### Stage 16.1: Sanctum Basin Zone Layout
-**Goal**: Generate the zone skeleton using dev tools, then flesh out rooms with descriptions, terrain flags, station placements, and NPC/mob definitions.
+### ✅ Stage 16.1: Sanctum Basin Zone Layout — COMPLETED
+**Goal**: Create the Sanctum Basin zone skeleton, room files, mob definitions, world-road placeholder, and wire up spawn point.
 
-**Zone Design**:
-- Safe interior: town square, crafting stations (forge room, alchemy bench room), shop
-- Training yard: combat practice against scaled mobs (easy → medium difficulty)
-- Outdoor areas: foraging zones with different terrain/biome types
-- Tutorial boss room: mid-difficulty encounter teaching full combat flow
-- Tutorial NPC at each station teaching the relevant skill and first recipe
-
-**Build Process**:
-1. `devtool makezone sanctum-basin 5 4` — generate 20-room grid skeleton
-2. Customize each room: write descriptions, set terrain flags, add station flags, place mobs
-3. `devtool linkzones sanctum-basin/<exit_room> <dir> startland/<entry_room>` — connect to world
-4. `devtool check sanctum-basin` — verify consistency before shipping
-
-**Estimated Changes**: ~30 room YAML files, ~12 mob/NPC definitions
+**Implemented**:
+- 20 room YAMLs (101–120) + 20 JS stubs in `_datafiles/world/dogmud/rooms/sanctum-basin/`
+- `zone-config.yaml`: name=Sanctum Basin, spawn roomid=107
+- World-road placeholder zone (room 201) linked south from World Gate (103)
+- 12 mob YAMLs in `_datafiles/world/dogmud/mobs/sanctum-basin/` (IDs 50–56 trainers, 65–69 combat)
+- Deleted old tutorial zone (`rooms/tutorial/`, `rooms.instances/tutorial/`, `quests/0-tutorial.yaml`)
+- Updated `config.yaml`: `StartRoom: 107`, `TutorialRooms: []`
+- Exit design: Basin Gate (102) south→World Gate (103) locked difficulty 999; World Gate south→201 (world-road)
 
 ---
 
-### Stage 16.2: Tutorial Quest Flow & NPC Dialogue
-**Goal**: Wire up a linear tutorial quest flow. Each station NPC demonstrates the relevant system and rewards progression on task completion.
+### ✅ Stage 16.2: Tutorial Quest Flow & NPC Dialogue — COMPLETED
+**Goal**: Wire up the Sanctum Trials quest flow with 6-station NPC dialogue and Basin Gate lock/unlock.
 
-**Tutorial Flow**:
-1. Arrive → Greeter NPC introduces the world and The Chrysalis lore
-2. Combat trainer → teaches weapon-combat and unarmed-combat basics via sparring
-3. Blacksmith trainer → teaches iron dagger recipe (`teach iron-dagger`)
-4. Alchemist trainer → teaches healing poultice recipe (`teach healing-poultice`)
-5. Wilderness guide → teaches foraging (yields tutorial materials) and tracking
-6. Magic elder → teaches fold casting basics via Throw Stone demonstration
-7. Exit gate → unlocks after completing all trainer tasks
-
-**Estimated Changes**: ~15 NPC dialogue YAML files, ~7 quest definition files
+**Implemented**:
+- Quest YAML: `quests/1-sanctum_tutorial.yaml` (questid 1, steps: arrive/combat/crafting/alchemy/wilderness/magic/graduate)
+- 7 JS room scripts: 113 (Greeter/intro), 114 (Combat Trainer/dummy), 109 (Blacksmith), 111 (Alchemist), 106 (Wilderness Guide), 116 (Elder/LearnSpell), 102 (Basin Warden/gate lock)
+- Basin Gate relocks after each player exits; unlocks per-player on `1-graduate`
+- All trainers deliver world lore consistent with Gaius/Chrysalis/Fold canon
 
 ---
 
@@ -4115,4 +4104,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-20
 **Status**: In Progress
-**Current Stage**: Stage 16 — Phase 15 complete. Stage 15.1 + 15.2 complete: Dev tools package (`internal/devtools`) with zone consistency checker, grid generator, cross-zone room linker, and JSON API dispatcher. Admin command `devtool` registered. All 4 unit tests pass. Merge commit: 55465f3. Post-merge fixes (ebc8758): zone-config.yaml creation in GenerateGrid, deterministic reciprocal exit lookup in LinkRooms, multi-word zone name parsing, help files.
+**Current Stage**: Stage 17 — Stage 16.1 + 16.2 complete: Sanctum Basin tutorial zone (20 rooms, 12 mobs, 7 NPC JS scripts, Sanctum Trials quest). Old tutorial zone removed. New characters spawn at Town Square (room 107). Basin Gate gate-locks south exit until player completes all 6 trials. Next: Stage 17 LLM Integration & AI NPCs.

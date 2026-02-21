@@ -1,0 +1,19 @@
+mobid: 56
+zone: Sanctum Basin
+hostile: false
+maxwander: 0
+idlecommands:
+  - 'emote stands watch at the gate, eyes moving steadily across the road'
+  - 'emote adjusts their grip on the long blade at their hip'
+  - ''
+  - ''
+activitylevel: 10
+character:
+  name: Basin Warden
+  description: 'The Basin Warden is composed and alert, their expression neutral in
+    the way of someone trained to show neither welcome nor threat until the situation
+    demands one. Their armor is plain but well-maintained, and the Chrysalis sigil on
+    their shoulder guard is the only decoration they permit.'
+  speciesid: 1
+  level: 4
+  gold: 0

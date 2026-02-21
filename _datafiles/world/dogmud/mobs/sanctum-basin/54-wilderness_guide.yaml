@@ -1,0 +1,19 @@
+mobid: 54
+zone: Sanctum Basin
+hostile: false
+maxwander: 1
+idlecommands:
+  - 'emote scans the horizon with a weathered hand shading their eyes'
+  - 'emote crouches to examine a patch of ground, reading signs invisible to others'
+  - ''
+  - 'wander'
+activitylevel: 15
+character:
+  name: Wilderness Guide Fen
+  description: 'Fen wears the plateau like a second skin -- sun-darkened, quiet, and
+    deeply at home in open country. Their pack is light and their knowledge is not.
+    They can read weather in the color of a stone, find water from the distribution
+    of plants, and identify every edible thing growing in the high desert.'
+  speciesid: 1
+  level: 3
+  gold: 0
