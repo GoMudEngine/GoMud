@@ -4007,8 +4007,8 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 10: Skill System Cleanup | 2 stages (10.1–10.2) | 12 hours | 10.1–10.2 Complete |
 | Phase 11: Magic Rework | 5 stages (11.1–11.5) | 30 hours | **11.1–11.5 Complete** |
 | Phase 12: Mutations | 2 stages (12.1–12.2) | 16 hours | **12.1–12.2 Complete** |
-| Phase 13: Basic Crafting | 2 stages (13.1–13.2) | 16 hours | Not Started |
-| Phase 14: Balance Config | 1 stage (14.1) | 8 hours | Not Started |
+| Phase 13: Basic Crafting | 2 stages (13.1–13.2) | 16 hours | **13.1–13.2 Complete** |
+| Phase 14: Balance Config | 1 stage (14.1) | 8 hours | **14.1 Complete** |
 | Phase 15: Dev Tools | 2 stages (15.1–15.2) | 12 hours | Not Started |
 | Phase 16: Tutorial Area | 2 stages (16.1–16.2) | 30 hours | Not Started |
 | Phase 17: LLM Integration | 4 stages (17.1–17.4) | 35 hours | Not Started |
@@ -4115,4 +4115,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-20
 **Status**: In Progress
-**Current Stage**: Stage 14 — TBD. Stage 13.2 complete: `forage` command (biome-based herb gathering), conviction draught (new recipe + item + buff 7), stamina draught fixed to use buff 6 with AddStamina scripting API, healing poultice upgraded to 2d3×3 HP, AddStamina/AddConviction added to scripting API, The Glade outdoor room added, two bug fixes (mage aggro on spellcast, mob death-round last-hit).
+**Current Stage**: Stage 15 — Phase 14 complete. Stage 14.1 complete: Balance config plumbing — all 37 hardcoded numeric balance constants surfaced into a `Balance:` section in `config.yaml` (internal/configs/config.balance.go). No behavior change; constants now configurable via `server set Balance.X Y` or config-overrides.yaml without recompilation. Merge commit: 600ae45.
