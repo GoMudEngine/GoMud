@@ -3526,24 +3526,141 @@ Adding a new dev tool requires only registering one action handler in the dispat
 
 ---
 
-## Phase 17: LLM Integration & AI NPCs
+## Phase 17: Moon Phase System
+
+### Stage 17.1: Moon Phase Global Emoter
+
+**Goal**: Broadcast atmospheric messages to all players when any of the three Witnesses cross a phase boundary — mirroring the existing sunrise/sunset mechanism exactly.
+
+**Mechanism** (same two-file hook pattern as `NewRound_CheckNewDay` → `DayNightCycle` → `NotifySunriseSunset`):
+
+1. `NewRound_CheckMoonPhase.go` (new) — listens on `NewRound`; for each moon computes `phaseRound = currentRound % cycleRounds` for the current and previous round; if any moon crossed a full-moon (50%) or new-moon (0%) threshold, fires a `MoonPhase` event.
+2. New `MoonPhase` event type in `eventtypes.go`:
+   ```go
+   type MoonPhase struct {
+       MoonName  string // "Swiftmoon" | "The Wanderer" | "The Eye"
+       PhaseName string // "new" | "full"
+       IsFull    bool
+       IsNew     bool
+   }
+   ```
+3. `MoonPhase_BroadcastEmote.go` (new) — listens on `MoonPhase`; selects the appropriate template by moon+phase; broadcasts via `events.Broadcast` to all players.
+4. `hooks.go` — register both new listeners.
+
+**Phase boundaries announced**: new moon and full moon only (2 events × 3 moons = up to 6 announcements per longest cycle). Quarter moons deferred.
+
+**Moon cycle lengths** (hardcoded constants, match world.md lore):
+```
+Swiftmoon:    4.7  × RoundsPerDay rounds per cycle
+The Wanderer: 10.6 × RoundsPerDay rounds per cycle
+The Eye:      21.1 × RoundsPerDay rounds per cycle
+```
+
+**Timing note**: Round count is persisted to disk (`SaveRoundCount`/`LoadRoundCount`) and reloads on restart. The hook compares round N−1 to round N as normal — no triple-fire risk on reboot and no staggering needed.
+
+**Templates** (6 files, `_datafiles/templates/generic/`):
+
+| File | Text |
+|------|------|
+| `moon_swiftmoon_new` | Swiftmoon dims and vanishes. It will be back before you miss it. |
+| `moon_swiftmoon_full` | Swiftmoon is full tonight — brief and bright. It will not linger. |
+| `moon_wanderer_new` | The Wanderer has gone dark. Its absence is its own kind of presence. |
+| `moon_wanderer_full` | The Wanderer reaches its apex: a pale disc, slow and deliberate overhead. |
+| `moon_eye_new` | The Eye has closed. The old records note these nights without comment. |
+| `moon_eye_full` | The Eye is fully open tonight. Those who study the Fold grow quiet. |
+
+**Files to create/modify** (~5 files, ~120 lines):
+1. `internal/hooks/NewRound_CheckMoonPhase.go` (new)
+2. `internal/hooks/MoonPhase_BroadcastEmote.go` (new)
+3. `internal/events/eventtypes.go` — add `MoonPhase` event type
+4. `internal/hooks/hooks.go` — register listeners
+5. `_datafiles/templates/generic/moon_*.ext` — 6 template files
+
+**Gameplay hook compatibility**: Because `MoonPhase` is a typed event on the bus, any future system registers independently — e.g. a Fold pressure hook does `events.RegisterListener(events.MoonPhase{}, FoldPressureHandler)` and checks `evt.MoonName` / `evt.IsFull`. Zero coupling to the emoter. Planned future hook: The Eye full → raise spell fold ceiling; all three new simultaneously → minimum ceiling (wires into Stage 11.2 Fold engine).
+
+**Testing**:
+- Use `devtool settime` (or equivalent) to advance game time to a known moon boundary; verify broadcast fires with correct text
+- Verify no double-fire when two moons cross a boundary in the same round
+- Verify server restart does not produce spurious phase events
+
+---
+
+### Stage 17.2: Moon Phase Gameplay Effects (Fold Pressure)
+
+**Goal**: Wire the Witnesses into actual gameplay — spell fold ceilings, mutation probability, and Aberrant aggression all shift with the combined moon phase state. This makes the flavor introduced in 17.1 mechanically real.
+
+**Core concept — continuous Fold pressure**:
+Rather than only reacting to phase-transition events, introduce a queryable `GetFoldPressure() float64` (range 0.0–1.0) that is computed from the current phase of all three moons simultaneously. Each moon contributes via a cosine curve:
+
+```
+contribution = (1 - cos(2π × phasePercent)) / 2
+  → 0.0 at new moon, 1.0 at full moon, 0.5 at quarters
+```
+
+Weighted sum (The Eye is the largest and slowest — it dominates):
+```
+FoldPressure = 0.20 × swiftContrib + 0.30 × wandererContrib + 0.50 × eyeContrib
+```
+
+This gives a smooth 0.0–1.0 range with meaningful variation. The function lives in `internal/gametime/` alongside the existing day/night helpers and is cheap to call any time.
+
+**Effect 1 — Spell fold ceiling** (wires into Stage 11.2 Fold engine):
+```
+foldCeiling = 4 + int(FoldPressure × 4)   // range: 4 (all dark) to 8 (Eye full)
+```
+The Fold engine checks `gametime.GetFoldPressure()` when evaluating whether a cast attempt exceeds the caster's coherence limit. Failure message should be flavor, not a number: "The Fold will not hold that many folds tonight."
+
+**Effect 2 — Mutation trigger probability**:
+```
+mutationMult = 0.5 + FoldPressure          // range: 0.5× (all dark) to 1.5× (Eye full)
+```
+Applied as a multiplier to the existing mutation chance roll in `CheckMutationTrigger()` or equivalent. High pressure nights make the body more susceptible to Becoming.
+
+**Effect 3 — Aberrant combat stats** (optional, lower priority):
+When spawning or engaging in combat in cave/dungeon biomes, Aberrant mobs check pressure and apply a scaled stat bonus:
+```
+aberrantBonus = int(FoldPressure × 10)    // 0–10 points on attack/defense
+```
+This is wired in via mob combat hooks or spawn scripts, not hardcoded per mob.
+
+**New files/modifications** (~4 files, ~100 lines):
+1. `internal/gametime/moonphase.go` (new) — `GetFoldPressure()` function; moon cycle constants; phase computation
+2. `internal/scripting/` or relevant casting file — read `GetFoldPressure()` to cap fold ceiling during spell resolution
+3. Mutation trigger location (TBD — wherever `RollMutation` / `CheckMutationTrigger` lives) — apply pressure multiplier
+4. Optional: mob spawn/combat hook for Aberrant bonus
+
+**Design notes**:
+- `GetFoldPressure()` is pure math on round count — no state, no event dependency, always current
+- The `MoonPhase` event from Stage 17.1 is *not* required for this to work — the pressure value is always computable. Stage 17.1 events are for flavor only; 17.2 reads the raw value.
+- No player-visible numbers. Effects described in flavor terms only (see CLAUDE.md player-facing messages rule)
+- Fold pressure is a good candidate for a `devtool` query so admins can check the current value without doing the math manually
+
+**Testing**:
+- `devtool pressure` (or similar) reports current value and each moon's contribution
+- Advance time to Eye-full alignment, attempt a high-fold spell — should succeed where it failed at minimum pressure
+- Advance time to all-new-moon state, verify mutation rate is observably lower over many rolls
+- Verify Aberrant in Boss Cave is measurably harder on high-pressure nights
+
+---
+
+## Phase 18: LLM Integration & AI NPCs
 
 > **Foundation now in place**: All core systems are stable, the dev tools JSON API
 > provides a programmatic zone-building interface, and the balance config allows
 > external tuning. LLM agents can now interact with a complete, well-structured game.
 
-The stage structure and full design details for Phase 17 carry forward from the original Phase 11 plan, renumbered as Stages 17.1–17.4:
+The stage structure and full design details for Phase 18 carry forward from the original Phase 11 plan, renumbered as Stages 18.1–18.4:
 
-- **Stage 17.1**: GMCP Enhancement for Full State Coverage
-- **Stage 17.2**: Rule-Based NPC Dialogue Framework
-- **Stage 17.3**: Local LLM Integration (Optional — requires separate LLM service)
-- **Stage 17.4**: Cloud API Integration (Optional — requires API budget)
+- **Stage 18.1**: GMCP Enhancement for Full State Coverage
+- **Stage 18.2**: Rule-Based NPC Dialogue Framework
+- **Stage 18.3**: Local LLM Integration (Optional — requires separate LLM service)
+- **Stage 18.4**: Cloud API Integration (Optional — requires API budget)
 
 *(See original Stage 11.1–11.4 entries above for full design, file lists, and acceptance criteria.)*
 
 ---
 
-### Stage 11.1: GMCP Enhancement for Full State Coverage
+### Stage 18.1: GMCP Enhancement for Full State Coverage
 **Goal**: Expand the existing GMCP (Generic Mud Communication Protocol) support to provide complete, structured game state data. This enables external LLM agents to "play" the MUD programmatically and provides rich context for AI decision-making.
 
 **Current State**: GoMud already has basic GMCP support. This stage expands it to cover all game state.
@@ -3602,7 +3719,7 @@ The stage structure and full design details for Phase 17 carry forward from the 
 
 ---
 
-### Stage 11.2: Rule-Based NPC Dialogue Framework
+### Stage 18.2: Rule-Based NPC Dialogue Framework
 **Goal**: Create a flexible, fast, zero-cost dialogue system for 99% of NPCs using pattern matching, dialogue trees, and scripted responses. This is the foundation for making NPCs feel alive without any LLM costs or performance overhead.
 
 **Design**:
@@ -3700,7 +3817,7 @@ memory:
 
 ---
 
-### Stage 11.3: Local LLM Integration (Optional)
+### Stage 18.3: Local LLM Integration (Optional)
 **Goal**: Add support for 5-10 special NPCs powered by locally-hosted small language models (Llama 3.2 3B, Phi-3, Mistral 7B). These NPCs provide more dynamic, emergent conversations than rule-based NPCs while avoiding API costs.
 
 **Note**: This stage is **optional** and requires:
@@ -3812,7 +3929,7 @@ fallback:
 
 ---
 
-### Stage 11.4: Cloud API Integration (Optional)
+### Stage 18.4: Cloud API Integration (Optional)
 **Goal**: Add support for 1-2 "legendary" NPCs powered by cloud LLM APIs (OpenAI, Anthropic). These provide the highest quality conversations but have API costs, so they're reserved for critical story NPCs.
 
 **Note**: This stage is **optional** and **costly**. Only use for NPCs where quality is paramount (main quest hub, final boss, etc.). Budget $5-50/month depending on player traffic.
@@ -4123,4 +4240,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-20
 **Status**: In Progress
-**Current Stage**: Stage 17 — Stages 16.1–16.3 complete: Sanctum Basin tutorial zone fully polished (20 rooms, NPC dialogue, cave final trial, ceremony lock, mosaic map, Fold lore rewrite, playtesting fixes). New characters spawn at Academy Hall (room 113). Basin Gate locks until all 7 trials including Aberrant Chrysalis boss are complete. Next: Stage 17 LLM Integration & AI NPCs.
+**Current Stage**: Stage 17 — Stages 16.1–16.3 complete: Sanctum Basin tutorial zone fully polished (20 rooms, NPC dialogue, cave final trial, ceremony lock, mosaic map, Fold lore rewrite, playtesting fixes). New characters spawn at Academy Hall (room 113). Basin Gate locks until all 7 trials including Aberrant Chrysalis boss are complete. Next: Stage 17.1 Moon Phase Global Emoter.
