@@ -1,0 +1,11 @@
+roomid: 1008
+zone: A Dark Forest
+title: A Dark Forest - Room 1008
+description: A room in A Dark Forest. This area has not yet been described.
+exits:
+  east:
+    roomid: 1009
+  south:
+    roomid: 1017
+  west:
+    roomid: 1007

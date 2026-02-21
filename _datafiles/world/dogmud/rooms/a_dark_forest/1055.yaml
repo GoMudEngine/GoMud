@@ -1,0 +1,11 @@
+roomid: 1055
+zone: A Dark Forest
+title: A Dark Forest - Room 1055
+description: A room in A Dark Forest. This area has not yet been described.
+exits:
+  north:
+    roomid: 1046
+  south:
+    roomid: 1064
+  west:
+    roomid: 1054

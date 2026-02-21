@@ -14,7 +14,14 @@ import (
 
 // GenerateGrid creates a width×height grid of interconnected rooms in zoneName.
 // Adjacent rooms are wired with bidirectional north/south/east/west exits.
-// Returns the first and last room IDs allocated, or an error.
+//
+// If the zone does not yet exist it is created via rooms.CreateZone, which
+// writes zone-config.yaml, creates the instances folder, and registers the
+// zone with the running engine — preventing the "No zone-config.yaml" startup
+// panic. CreateZone also places one starter room in the zone; the grid rooms
+// are appended after it.
+//
+// Returns the first and last grid room IDs, or an error.
 func GenerateGrid(zoneName string, width, height int) (firstId, lastId int, err error) {
 
 	if err = rooms.ValidateZoneName(zoneName); err != nil {
@@ -24,13 +31,19 @@ func GenerateGrid(zoneName string, width, height int) (firstId, lastId int, err 
 		return 0, 0, fmt.Errorf("width and height must be at least 1 (got %d×%d)", width, height)
 	}
 
+	// Ensure the zone has a zone-config.yaml and is registered with the engine.
+	// CreateZone returns "zone already exists" when the zone is already set up —
+	// that is fine; we just continue.
+	if _, createErr := rooms.CreateZone(zoneName); createErr != nil {
+		if !strings.Contains(createErr.Error(), "already exists") {
+			return 0, 0, fmt.Errorf("failed to initialise zone %q: %w", zoneName, createErr)
+		}
+	}
+
+	// GetNextRoomId now reflects any room created by CreateZone above.
 	firstId = rooms.GetNextRoomId()
 
-	// Build zone directory if missing
 	dirPath := util.FilePath(configs.GetFilePathsConfig().DataFiles.String(), "/rooms/", rooms.ZoneToFolder(zoneName))
-	if mkErr := os.MkdirAll(dirPath, 0755); mkErr != nil {
-		return 0, 0, fmt.Errorf("cannot create zone directory %q: %w", dirPath, mkErr)
-	}
 
 	grid := buildGrid(zoneName, width, height, firstId)
 

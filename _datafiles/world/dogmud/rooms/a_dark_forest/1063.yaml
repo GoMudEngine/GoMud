@@ -1,0 +1,13 @@
+roomid: 1063
+zone: A Dark Forest
+title: A Dark Forest - Room 1063
+description: A room in A Dark Forest. This area has not yet been described.
+exits:
+  east:
+    roomid: 1064
+  north:
+    roomid: 1054
+  south:
+    roomid: 1072
+  west:
+    roomid: 1062

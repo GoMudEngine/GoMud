@@ -8,15 +8,10 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/devtools"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
-
-const devtoolUsage = `Usage:
-  devtool check <zone>                             - Check zone for consistency issues
-  devtool makezone <name> <width> <height>         - Generate a WxH grid of rooms in zone
-  devtool linkzones <zoneA>/<roomIdA> <dir> <zoneB>/<roomIdB> - Link two rooms with bidirectional exit
-  devtool json <json_string>                        - Execute a JSON API request`
 
 /*
  * Role Permissions:
@@ -27,7 +22,7 @@ func Devtool(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	args := util.SplitButRespectQuotes(rest)
 
 	if len(args) == 0 {
-		user.SendText(devtoolUsage)
+		showDevtoolHelp(user)
 		return true, nil
 	}
 
@@ -37,7 +32,7 @@ func Devtool(rest string, user *users.UserRecord, room *rooms.Room, flags events
 
 	case "check":
 		if len(args) < 2 {
-			user.SendText("Usage: devtool check <zone>")
+			showDevtoolHelp(user)
 			return true, nil
 		}
 		zoneName := strings.Join(args[1:], " ")
@@ -51,16 +46,18 @@ func Devtool(rest string, user *users.UserRecord, room *rooms.Room, flags events
 
 	case "makezone":
 		if len(args) < 4 {
-			user.SendText("Usage: devtool makezone <name> <width> <height>")
+			showDevtoolHelp(user)
 			return true, nil
 		}
-		zoneName := args[1]
-		width, wErr := strconv.Atoi(args[2])
-		height, hErr := strconv.Atoi(args[3])
+		// width and height are always the last two tokens; name is everything between
+		width, wErr := strconv.Atoi(args[len(args)-2])
+		height, hErr := strconv.Atoi(args[len(args)-1])
 		if wErr != nil || hErr != nil {
 			user.SendText("Width and height must be integers.")
+			showDevtoolHelp(user)
 			return true, nil
 		}
+		zoneName := strings.Join(args[1:len(args)-2], " ")
 		firstId, lastId, err := devtools.GenerateGrid(zoneName, width, height)
 		if err != nil {
 			user.SendText(fmt.Sprintf("Error: %s", err.Error()))
@@ -74,7 +71,7 @@ func Devtool(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	case "linkzones":
 		// linkzones <zoneA>/<roomIdA> <dir> <zoneB>/<roomIdB>
 		if len(args) < 4 {
-			user.SendText("Usage: devtool linkzones <zoneA>/<roomIdA> <dir> <zoneB>/<roomIdB>")
+			showDevtoolHelp(user)
 			return true, nil
 		}
 		zoneA, roomIdA, err := parseZoneRoom(args[1])
@@ -99,7 +96,7 @@ func Devtool(rest string, user *users.UserRecord, room *rooms.Room, flags events
 
 	case "json":
 		if len(args) < 2 {
-			user.SendText("Usage: devtool json <json_string>")
+			showDevtoolHelp(user)
 			return true, nil
 		}
 		jsonInput := strings.Join(args[1:], " ")
@@ -107,10 +104,17 @@ func Devtool(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		user.SendText(result)
 
 	default:
-		user.SendText(fmt.Sprintf("Unknown subcommand %q.\n%s", subCmd, devtoolUsage))
+		user.SendText(fmt.Sprintf("Unknown subcommand: %q", subCmd))
+		showDevtoolHelp(user)
 	}
 
 	return true, nil
+}
+
+// showDevtoolHelp renders and sends the devtool help template to the user.
+func showDevtoolHelp(user *users.UserRecord) {
+	infoOutput, _ := templates.Process("admincommands/help/command.devtool", nil, user.UserId)
+	user.SendText(infoOutput)
 }
 
 // parseZoneRoom splits "zoneName/roomId" into its components.

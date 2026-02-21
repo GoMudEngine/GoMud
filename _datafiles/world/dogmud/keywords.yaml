@@ -121,6 +121,7 @@ help:
       - build
       - command
       - deafen
+      - devtool
       - item
       - grant
       - locate

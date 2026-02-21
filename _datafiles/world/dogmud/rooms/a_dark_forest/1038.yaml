@@ -1,0 +1,11 @@
+roomid: 1038
+zone: A Dark Forest
+title: A Dark Forest - Room 1038
+description: A room in A Dark Forest. This area has not yet been described.
+exits:
+  east:
+    roomid: 1039
+  north:
+    roomid: 1029
+  south:
+    roomid: 1047

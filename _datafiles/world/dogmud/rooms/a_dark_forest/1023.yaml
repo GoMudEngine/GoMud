@@ -1,0 +1,13 @@
+roomid: 1023
+zone: A Dark Forest
+title: A Dark Forest - Room 1023
+description: A room in A Dark Forest. This area has not yet been described.
+exits:
+  east:
+    roomid: 1024
+  north:
+    roomid: 1014
+  south:
+    roomid: 1032
+  west:
+    roomid: 1022
