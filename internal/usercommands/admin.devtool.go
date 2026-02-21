@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/devtools"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
@@ -105,21 +106,28 @@ func Devtool(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		user.SendText(result)
 
 	case "pressure":
-		// Stage 17.2: Report current Fold pressure and each moon's contribution.
-		swift, wander, eye := gametime.GetMoonContributions()
-		total := gametime.GetFoldPressure()
-		foldCeiling := 4 + int(total*4)
+		// Stage 17.2: Report current moon phases and their stat effects.
+		swift, wander, eye := gametime.GetAllPhases()
+		moonMod := float64(configs.GetBalanceConfig().MoonStatModMax)
+		swiftPct := (swift - 0.5) * 2 * moonMod * 100
+		wanderPct := (wander - 0.5) * 2 * moonMod * 100
+		eyePct := (eye - 0.5) * 2 * moonMod * 100
+		sign := func(f float64) string {
+			if f >= 0 {
+				return "+"
+			}
+			return ""
+		}
 		user.SendText(fmt.Sprintf(
-			"Fold pressure: <ansi fg=\"cyan\">%.3f</ansi>\n"+
-				"  Swiftmoon : %.3f  (×0.20 = %.3f)\n"+
-				"  Wanderer  : %.3f  (×0.30 = %.3f)\n"+
-				"  The Eye   : %.3f  (×0.50 = %.3f)\n"+
-				"Fold ceiling tonight: <ansi fg=\"cyan\">%d</ansi>",
-			total,
-			swift, 0.20*swift,
-			wander, 0.30*wander,
-			eye, 0.50*eye,
-			foldCeiling,
+			"Moon phases (0.0=new, 0.5=quarter, 1.0=full):\n"+
+				"  Swiftmoon  : %.3f  → DEX/STR %s%.1f%%\n"+
+				"  Wanderer   : %.3f  → VIT/WIL %s%.1f%%\n"+
+				"  The Eye    : %.3f  → PER/CHA %s%.1f%%  |  mutation rate %.2f×\n"+
+				"(requires mutations; MoonStatModMax = %.3f)",
+			swift, sign(swiftPct), swiftPct,
+			wander, sign(wanderPct), wanderPct,
+			eye, sign(eyePct), eyePct, 0.5+eye,
+			moonMod,
 		))
 
 	default:

@@ -152,14 +152,14 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 				user.Character.TickConditions()
 
 				// Stage 12.2: Mutation progress — accumulates during combat, triggers acquisition or deepening
-				// Stage 17.2: Fold pressure modulates the rate (0.5× at all-dark, 1.5× at Eye-full)
+				// Stage 17.2: The Eye modulates how quickly mutations happen (0.5× at new moon, 1.5× at full)
 				if user.Character.Aggro != nil {
 					mb := configs.GetBalanceConfig()
 					canAcquire := len(user.Character.Mutations) < int(mb.MutationMaxCount)
 					canDeepen := mutations.CanDeepen(user.Character.Mutations)
 					if canAcquire || canDeepen {
-						mutMult := 0.5 + gametime.GetFoldPressure()
-						user.Character.MutationProgress += float64(mb.MutationProgressGainPerRound) * mutMult
+						eyeMult := 0.5 + gametime.GetEyePhase()
+						user.Character.MutationProgress += float64(mb.MutationProgressGainPerRound) * eyeMult
 						evts := mutations.TotalMutationEvents(user.Character.Mutations)
 						threshold := float64(mb.MutationBaseProgress) *
 							math.Pow(float64(mb.MutationProgressScale), float64(evts))

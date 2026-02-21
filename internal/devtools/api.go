@@ -103,21 +103,16 @@ func HandleJSON(input string) string {
 		return string(b)
 
 	case "pressure":
-		// Stage 17.2: Return current Fold pressure and per-moon contributions.
-		swift, wander, eye := gametime.GetMoonContributions()
-		total := gametime.GetFoldPressure()
+		// Stage 17.2: Return current moon phases and derived stat modifiers.
+		swift, wander, eye := gametime.GetAllPhases()
 		b, _ := json.Marshal(APIResponse{
 			Success: true,
 			Action:  req.Action,
 			Result: map[string]any{
-				"fold_pressure":     total,
-				"fold_ceiling":      4 + int(total*4),
-				"swiftmoon":         swift,
-				"swiftmoon_weighted": 0.20 * swift,
-				"wanderer":          wander,
-				"wanderer_weighted": 0.30 * wander,
-				"eye":               eye,
-				"eye_weighted":      0.50 * eye,
+				"swiftmoon_phase": swift,  // DEX/STR modifier source
+				"wanderer_phase":  wander, // VIT/WIL modifier source
+				"eye_phase":       eye,    // PER/CHA modifier source; mutation rate = 0.5 + eye
+				"mutation_rate_multiplier": 0.5 + eye,
 			},
 		})
 		return string(b)

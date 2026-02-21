@@ -62,6 +62,9 @@ type Balance struct {
 	MutationProgressGainPerRound ConfigFloat `yaml:"MutationProgressGainPerRound"` // Progress added per combat round (default 1.0)
 	MutationLevel2Multiplier     ConfigFloat `yaml:"MutationLevel2Multiplier"`     // Effect scaling at level 2 (default 1.5)
 	MutationLevel3Multiplier     ConfigFloat `yaml:"MutationLevel3Multiplier"`     // Effect scaling at level 3 (default 2.0)
+
+	// ── MOON PHASES ───────────────────────────────────────────────────────────
+	MoonStatModMax ConfigFloat `yaml:"MoonStatModMax"` // Max fractional stat modifier from moon phases, e.g. 0.05 = ±5% (default 0.05)
 }
 
 func (b *Balance) Validate() {
@@ -209,6 +212,11 @@ func (b *Balance) Validate() {
 	}
 	if b.MutationLevel3Multiplier <= 0 {
 		b.MutationLevel3Multiplier = 2.0
+	}
+
+	// ── MOON PHASES ───────────────────────────────────────────────────────────
+	if b.MoonStatModMax <= 0 {
+		b.MoonStatModMax = 0.05
 	}
 }
 

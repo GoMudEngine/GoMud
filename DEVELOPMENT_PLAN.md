@@ -4244,4 +4244,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-21
 **Status**: In Progress
-**Current Stage**: Stage 17 complete — 17.1 (moon phase emoter) and 17.2 (Fold pressure gameplay) both merged. GetFoldPressure() lives in gametime, wired into spell fold ceiling (4–8), mutation rate (0.5×–1.5×), and Aberrant combat bonus (0–10 Strength). devtool pressure reports live values. Next: Stage 18.1 GMCP Enhancement.
+**Current Stage**: Stage 17 complete — 17.1 (moon phase emoter) and 17.2 (moon phase gameplay) both merged. Per-moon phase getters in gametime: Swiftmoon→DEX/STR, Wanderer→VIT/WIL, Eye→PER/CHA (±MoonStatModMax%, mutated players only via applyMoonMods) + Eye→mutation rate (0.5×–1.5×). Config knob MoonStatModMax (default 0.05). devtool pressure reports live phases. Next: Stage 18.1 GMCP Enhancement.

@@ -456,6 +456,9 @@ Balance:
   MutationLevel2Multiplier: 1.5      # Effect scaling at mutation level 2
   MutationLevel3Multiplier: 2.0      # Effect scaling at mutation level 3
 
+  # ── MOON PHASES ─────────────────────────────────────────────────────────────
+  MoonStatModMax: 0.05  # Max fractional stat modifier from moon phases (±5% at full/new moon)
+
 ################################################################################
 #
 #   INTEGRATIONS

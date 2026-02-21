@@ -45,6 +45,7 @@ func DoCombat(e events.Event) events.ListenerReturn {
 func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobInstanceIds []int) {
 
 	c := configs.GetConfig()
+	moonMod := float64(configs.GetBalanceConfig().MoonStatModMax)
 
 	tStart := time.Now()
 
@@ -637,7 +638,10 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 
 			var roundResult combat.AttackResult
 
+			// Stage 17.2: Moon phase stat modifiers for mutated players (attacker)
+			restore := applyMoonMods(user.Character, moonMod)
 			roundResult = combat.AttackPlayerVsMob(user, defMob)
+			restore()
 
 			// Stage 12.2: Adrenaline Surge — level-scaled bonus damage when HP < 25%
 			if roundResult.Hit && roundResult.DamageToTarget > 0 {
@@ -811,6 +815,7 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 
 func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobInstanceIds []int) {
 
+	moonMod := float64(configs.GetBalanceConfig().MoonStatModMax)
 	tStart := time.Now()
 
 	// Handle mob round of combat
@@ -1124,22 +1129,10 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 
 			var roundResult combat.AttackResult
 
-			// Stage 17.2: Aberrant mobs grow more dangerous as Fold pressure rises.
-			// Temporarily boost Strength for the attack roll (0–10 points at max pressure).
-			aberrantBonus := 0
-			for _, g := range mob.Groups {
-				if g == "aberrant" {
-					aberrantBonus = int(gametime.GetFoldPressure() * 10)
-					mob.Character.Stats.Strength.ValueAdj += aberrantBonus
-					break
-				}
-			}
-
+			// Stage 17.2: Moon phase stat modifiers for mutated players (defender)
+			restore := applyMoonMods(defUser.Character, moonMod)
 			roundResult = combat.AttackMobVsPlayer(mob, defUser)
-
-			if aberrantBonus > 0 {
-				mob.Character.Stats.Strength.ValueAdj -= aberrantBonus
-			}
+			restore()
 
 			// Stage 11.4: Minor Shield reduces physical weapon damage
 			if roundResult.Hit && defUser.Character.HasCondition(characters.ConditionShield) {
@@ -1536,4 +1529,35 @@ func handleAffected(affectedPlayerIds []int, affectedMobInstanceIds []int) {
 
 	}
 
+}
+
+// applyMoonMods temporarily adds moon phase stat deltas to a mutated character's
+// six combat stats (DEX/STR via Swiftmoon, VIT/WIL via Wanderer, PER/CHA via The Eye).
+// Returns a no-op restore function when the character has no mutations or moonMod is zero.
+// Always call the returned function immediately after the combat roll to undo the changes.
+func applyMoonMods(ch *characters.Character, moonMod float64) func() {
+	if len(ch.Mutations) == 0 || moonMod == 0 {
+		return func() {}
+	}
+	swift, wander, eye := gametime.GetAllPhases()
+	dex := gametime.MoonStatDelta(swift, moonMod, ch.Stats.Dexterity.ValueAdj)
+	str := gametime.MoonStatDelta(swift, moonMod, ch.Stats.Strength.ValueAdj)
+	vit := gametime.MoonStatDelta(wander, moonMod, ch.Stats.Vitality.ValueAdj)
+	wil := gametime.MoonStatDelta(wander, moonMod, ch.Stats.Willpower.ValueAdj)
+	per := gametime.MoonStatDelta(eye, moonMod, ch.Stats.Perception.ValueAdj)
+	cha := gametime.MoonStatDelta(eye, moonMod, ch.Stats.Charisma.ValueAdj)
+	ch.Stats.Dexterity.ValueAdj += dex
+	ch.Stats.Strength.ValueAdj += str
+	ch.Stats.Vitality.ValueAdj += vit
+	ch.Stats.Willpower.ValueAdj += wil
+	ch.Stats.Perception.ValueAdj += per
+	ch.Stats.Charisma.ValueAdj += cha
+	return func() {
+		ch.Stats.Dexterity.ValueAdj -= dex
+		ch.Stats.Strength.ValueAdj -= str
+		ch.Stats.Vitality.ValueAdj -= vit
+		ch.Stats.Willpower.ValueAdj -= wil
+		ch.Stats.Perception.ValueAdj -= per
+		ch.Stats.Charisma.ValueAdj -= cha
+	}
 }

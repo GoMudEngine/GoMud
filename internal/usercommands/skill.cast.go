@@ -85,21 +85,6 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
-	// 6.5. Stage 17.2: Fold ceiling — the Witnesses determine how many folds the Fold will bear tonight.
-	// foldCeiling ranges from 4 (all moons dark) to 8 (Eye fully open).
-	{
-		baseFolds := spellInfo.BaseFolds
-		if baseFolds == 0 {
-			baseFolds = 4
-		}
-		foldsRequired := characters.NextPowerOfTwo(baseFolds)
-		foldCeiling := 4 + int(gametime.GetFoldPressure()*4)
-		if foldsRequired > foldCeiling {
-			user.SendText(`<ansi fg="red">The Fold will not hold that many folds tonight.</ansi>`)
-			return true, nil
-		}
-	}
-
 	// Initiation roll
 	initiationChance := characters.CalcInitiationChance(user.Character.Stats.Willpower.ValueAdj, skillLevel)
 	roll := util.Rand(100)
@@ -123,7 +108,14 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		baseFolds = 4
 	}
 	foldsNeeded := characters.NextPowerOfTwo(baseFolds)
-	foldsPerRound := characters.CalcFoldsPerRound(user.Character.Stats.Perception.ValueAdj, skillLevel)
+
+	// Stage 17.2: The Eye modulates Perception → folds-per-round for mutated casters.
+	perForCast := user.Character.Stats.Perception.ValueAdj
+	if len(user.Character.Mutations) > 0 {
+		eyeFrac := (gametime.GetEyePhase() - 0.5) * 2 * float64(configs.GetBalanceConfig().MoonStatModMax)
+		perForCast += int(float64(perForCast) * eyeFrac)
+	}
+	foldsPerRound := characters.CalcFoldsPerRound(perForCast, skillLevel)
 
 	// 8. Resolve targets
 	targetUserIds := []int{}
