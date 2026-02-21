@@ -3528,7 +3528,9 @@ Adding a new dev tool requires only registering one action handler in the dispat
 
 ## Phase 17: Moon Phase System
 
-### Stage 17.1: Moon Phase Global Emoter
+### Stage 17.1: Moon Phase Global Emoter ✅ COMPLETED
+
+**Merge commit**: see `development` branch history
 
 **Goal**: Broadcast atmospheric messages to all players when any of the three Witnesses cross a phase boundary — mirroring the existing sunrise/sunset mechanism exactly.
 
@@ -4238,6 +4240,6 @@ Critical bugs fixed outside of formal stage development:
 
 ---
 
-**Last Updated**: 2026-02-20
+**Last Updated**: 2026-02-21
 **Status**: In Progress
-**Current Stage**: Stage 17 — Stages 16.1–16.3 complete: Sanctum Basin tutorial zone fully polished (20 rooms, NPC dialogue, cave final trial, ceremony lock, mosaic map, Fold lore rewrite, playtesting fixes). New characters spawn at Academy Hall (room 113). Basin Gate locks until all 7 trials including Aberrant Chrysalis boss are complete. Next: Stage 17.1 Moon Phase Global Emoter.
+**Current Stage**: Stage 17 — Stage 17.1 complete: Moon phase global emoter implemented. MoonPhase event type added, CheckMoonPhase and BroadcastMoonPhase hooks wired into event bus, 12 template files created for all three Witnesses × new/full phases. Next: Stage 17.2 Moon Phase Gameplay Effects (Fold Pressure).

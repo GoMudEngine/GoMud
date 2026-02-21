@@ -293,6 +293,16 @@ type DayNightCycle struct {
 
 func (l DayNightCycle) Type() string { return `DayNightCycle` }
 
+// MoonPhase is fired when a Witness crosses a new-moon or full-moon boundary.
+type MoonPhase struct {
+	MoonName  string // "Swiftmoon" | "The Wanderer" | "The Eye"
+	PhaseName string // "new" | "full"
+	IsFull    bool
+	IsNew     bool
+}
+
+func (m MoonPhase) Type() string { return `MoonPhase` }
+
 type Looking struct {
 	UserId int
 	RoomId int
