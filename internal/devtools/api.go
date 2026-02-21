@@ -3,6 +3,8 @@ package devtools
 import (
 	"encoding/json"
 	"fmt"
+
+	"github.com/GoMudEngine/GoMud/internal/gametime"
 )
 
 // APIRequest is the JSON envelope accepted by HandleJSON.
@@ -97,6 +99,26 @@ func HandleJSON(input string) string {
 			Success: true,
 			Action:  req.Action,
 			Result:  map[string]any{"linked": true},
+		})
+		return string(b)
+
+	case "pressure":
+		// Stage 17.2: Return current Fold pressure and per-moon contributions.
+		swift, wander, eye := gametime.GetMoonContributions()
+		total := gametime.GetFoldPressure()
+		b, _ := json.Marshal(APIResponse{
+			Success: true,
+			Action:  req.Action,
+			Result: map[string]any{
+				"fold_pressure":     total,
+				"fold_ceiling":      4 + int(total*4),
+				"swiftmoon":         swift,
+				"swiftmoon_weighted": 0.20 * swift,
+				"wanderer":          wander,
+				"wanderer_weighted": 0.30 * wander,
+				"eye":               eye,
+				"eye_weighted":      0.50 * eye,
+			},
 		})
 		return string(b)
 

@@ -11,6 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
@@ -1123,7 +1124,22 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 
 			var roundResult combat.AttackResult
 
+			// Stage 17.2: Aberrant mobs grow more dangerous as Fold pressure rises.
+			// Temporarily boost Strength for the attack roll (0–10 points at max pressure).
+			aberrantBonus := 0
+			for _, g := range mob.Groups {
+				if g == "aberrant" {
+					aberrantBonus = int(gametime.GetFoldPressure() * 10)
+					mob.Character.Stats.Strength.ValueAdj += aberrantBonus
+					break
+				}
+			}
+
 			roundResult = combat.AttackMobVsPlayer(mob, defUser)
+
+			if aberrantBonus > 0 {
+				mob.Character.Stats.Strength.ValueAdj -= aberrantBonus
+			}
 
 			// Stage 11.4: Minor Shield reduces physical weapon damage
 			if roundResult.Hit && defUser.Character.HasCondition(characters.ConditionShield) {

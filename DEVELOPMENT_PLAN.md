@@ -3587,7 +3587,9 @@ The Eye:      21.1 × RoundsPerDay rounds per cycle
 
 ---
 
-### Stage 17.2: Moon Phase Gameplay Effects (Fold Pressure)
+### Stage 17.2: Moon Phase Gameplay Effects (Fold Pressure) ✅ COMPLETED
+
+**Merge commit**: see `development` branch history
 
 **Goal**: Wire the Witnesses into actual gameplay — spell fold ceilings, mutation probability, and Aberrant aggression all shift with the combined moon phase state. This makes the flavor introduced in 17.1 mechanically real.
 
@@ -4242,4 +4244,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-21
 **Status**: In Progress
-**Current Stage**: Stage 17 — Stage 17.1 complete: Moon phase global emoter implemented. MoonPhase event type added, CheckMoonPhase and BroadcastMoonPhase hooks wired into event bus, 12 template files created for all three Witnesses × new/full phases. Next: Stage 17.2 Moon Phase Gameplay Effects (Fold Pressure).
+**Current Stage**: Stage 17 complete — 17.1 (moon phase emoter) and 17.2 (Fold pressure gameplay) both merged. GetFoldPressure() lives in gametime, wired into spell fold ceiling (4–8), mutation rate (0.5×–1.5×), and Aberrant combat bonus (0–10 Strength). devtool pressure reports live values. Next: Stage 18.1 GMCP Enhancement.

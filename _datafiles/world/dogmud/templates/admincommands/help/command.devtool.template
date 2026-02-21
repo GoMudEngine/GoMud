@@ -69,3 +69,20 @@ Request format:
 Response format:
   { "success": true, "action": "...", "result": { ... } }
   { "success": false, "action": "...", "error": "..." }
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<ansi fg="yellow">FOLD PRESSURE DIAGNOSTICS</ansi>
+
+<ansi fg="command">devtool pressure</ansi>
+Reports the current Fold pressure (0.0–1.0) and each Witness moon's
+contribution to it.  Also shows tonight's fold ceiling.
+
+  e.g. <ansi fg="command">devtool pressure</ansi>
+
+Fold pressure 0.0 = all moons at new moon (minimum spell complexity allowed)
+Fold pressure 1.0 = all moons at full moon (maximum spell complexity allowed)
+Fold ceiling   4  = only spells requiring ≤4 folds can be initiated
+Fold ceiling   8  = spells requiring up to 8 folds can be initiated
+
+JSON API: <ansi fg="command">devtool json {"action":"pressure","params":{}}</ansi>

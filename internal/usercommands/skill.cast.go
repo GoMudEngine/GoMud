@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
@@ -82,6 +83,21 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			`<ansi fg="red">Your mind is still recovering. (%d round(s) remaining)</ansi>`,
 			user.Character.GetCooldown(`cast-init`)))
 		return true, nil
+	}
+
+	// 6.5. Stage 17.2: Fold ceiling — the Witnesses determine how many folds the Fold will bear tonight.
+	// foldCeiling ranges from 4 (all moons dark) to 8 (Eye fully open).
+	{
+		baseFolds := spellInfo.BaseFolds
+		if baseFolds == 0 {
+			baseFolds = 4
+		}
+		foldsRequired := characters.NextPowerOfTwo(baseFolds)
+		foldCeiling := 4 + int(gametime.GetFoldPressure()*4)
+		if foldsRequired > foldCeiling {
+			user.SendText(`<ansi fg="red">The Fold will not hold that many folds tonight.</ansi>`)
+			return true, nil
+		}
 	}
 
 	// Initiation roll

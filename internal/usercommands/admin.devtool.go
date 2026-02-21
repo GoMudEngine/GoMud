@@ -7,6 +7,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/devtools"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -102,6 +103,24 @@ func Devtool(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		jsonInput := strings.Join(args[1:], " ")
 		result := devtools.HandleJSON(jsonInput)
 		user.SendText(result)
+
+	case "pressure":
+		// Stage 17.2: Report current Fold pressure and each moon's contribution.
+		swift, wander, eye := gametime.GetMoonContributions()
+		total := gametime.GetFoldPressure()
+		foldCeiling := 4 + int(total*4)
+		user.SendText(fmt.Sprintf(
+			"Fold pressure: <ansi fg=\"cyan\">%.3f</ansi>\n"+
+				"  Swiftmoon : %.3f  (×0.20 = %.3f)\n"+
+				"  Wanderer  : %.3f  (×0.30 = %.3f)\n"+
+				"  The Eye   : %.3f  (×0.50 = %.3f)\n"+
+				"Fold ceiling tonight: <ansi fg=\"cyan\">%d</ansi>",
+			total,
+			swift, 0.20*swift,
+			wander, 0.30*wander,
+			eye, 0.50*eye,
+			foldCeiling,
+		))
 
 	default:
 		user.SendText(fmt.Sprintf("Unknown subcommand: %q", subCmd))
