@@ -759,7 +759,7 @@ options:
       todefender:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi>''s shot <ansi fg="red-bold">FUMBLES</ansi> awkwardly into the air!'
-        - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> their <ansi fg="item">{itemname}</antml> in a pathetic display of clumsy incompetence!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> their <ansi fg="item">{itemname}</ansi> in a pathetic display of clumsy incompetence!'
         - '<ansi fg="{sourcetype}">{source}</ansi> loses control of their shot and <ansi fg="red-bold">FUMBLES</ansi> badly!'
         expert:
         - '<ansi fg="{sourcetype}">{source}''s</ansi> tactical approach fails and they <ansi fg="red-bold">FUMBLE</ansi>!'

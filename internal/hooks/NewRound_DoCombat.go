@@ -16,6 +16,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
+	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/skills"
@@ -394,13 +395,6 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 
 			// Stage 8.4: Process crit effects (parry crit disarm, dodge crit grapple opportunity)
 
-			// Debug logging for defense crits (player vs player)
-			if roundResult.DefenseZScore > 1.5 && roundResult.DefenseUsed != "" {
-				defUser.SendText(fmt.Sprintf(`<ansi fg="cyan">[DEBUG: %s z-score: %.2f %s]</ansi>`,
-					roundResult.DefenseUsed,
-					roundResult.DefenseZScore,
-					map[bool]string{true: "(CRIT!)", false: "(close)"}[roundResult.DefenseZScore > 2.0]))
-			}
 
 			// Process parry crit disarm (10% chance on parry crit)
 			if roundResult.ParryCritDetected {
@@ -659,13 +653,6 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 
 			// Stage 8.4: Process crit effects (parry crit disarm, dodge crit grapple opportunity)
 
-			// Debug logging for defense crits (player vs mob - mob defending)
-			if roundResult.DefenseZScore > 1.5 && roundResult.DefenseUsed != "" {
-				user.SendText(fmt.Sprintf(`<ansi fg="cyan">[DEBUG: Mob %s z-score: %.2f %s]</ansi>`,
-					roundResult.DefenseUsed,
-					roundResult.DefenseZScore,
-					map[bool]string{true: "(CRIT!)", false: "(close)"}[roundResult.DefenseZScore > 2.0]))
-			}
 
 			// Process parry crit disarm (10% chance on parry crit) - mob defending
 			if roundResult.ParryCritDetected {
@@ -1025,6 +1012,21 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 				defUser.Character.SetAggro(0, mob.InstanceId, characters.DefaultAttack)
 			}
 
+			// Party autoattack: when a mob attacks a party member, trigger autoattack
+			// for other party members who have it enabled and are in the same room.
+			if party := parties.Get(defUser.UserId); party != nil {
+				for _, memberId := range party.GetAutoAttackUserIds() {
+					if memberId == defUser.UserId {
+						continue
+					}
+					if memberUser := users.GetByUserId(memberId); memberUser != nil {
+						if memberUser.Character.RoomId == defUser.Character.RoomId && memberUser.Character.Aggro == nil {
+							memberUser.Command(fmt.Sprintf(`attack #%d`, mob.InstanceId))
+						}
+					}
+				}
+			}
+
 			// Stage 8.3: Process automatic grapple position progression
 			processGrappleProgression(&mob.Character, defUser.Character, mob.Character.Name, defUser.Character.Name, mobRoom, 0, defUser.UserId)
 
@@ -1145,13 +1147,6 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 
 			// Stage 8.4: Process crit effects (parry crit disarm, dodge crit grapple opportunity)
 
-			// Debug logging for defense crits (mob vs player - player defending)
-			if roundResult.DefenseZScore > 1.5 && roundResult.DefenseUsed != "" {
-				defUser.SendText(fmt.Sprintf(`<ansi fg="cyan">[DEBUG: %s z-score: %.2f %s]</ansi>`,
-					roundResult.DefenseUsed,
-					roundResult.DefenseZScore,
-					map[bool]string{true: "(CRIT!)", false: "(close)"}[roundResult.DefenseZScore > 2.0]))
-			}
 
 			// Process parry crit disarm (10% chance on parry crit) - player defending
 			if roundResult.ParryCritDetected {

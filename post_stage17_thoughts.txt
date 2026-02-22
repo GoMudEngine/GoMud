@@ -1,0 +1,14 @@
+When in a party, even with party autoattack on, I don’t get put into combat right away and I can’t autotarget with spells
+There is a text bug in the fumble messages for the sparring archer’s bow
+I’m still seeing debug messages in game for z-scores being close or failing to do a fold in some cases [DEBUG: parry z-score: 1.56 (close)]
+We still need to remove numbers from the status template(s) and replace them with descriptions
+We still see a training point designation in skills
+Spells need to have their text descriptions scrubbed for numerical damage and healing info
+Online command still references player levels
+Killstats race is still showing in the killstats command
+Many help files are missing for admin commands
+We need a help special command to talk about the cooldown skills and how spells share this cooldown.
+We need three player feedback commands:
+bug <text? Allows players to report bugs. Needs to be stored in a file that persists so we can work on bugs over time. Should also solicit for typos here in the help text
+suggest <text> Allows player to provide suggestions on what they’d like to see built
+

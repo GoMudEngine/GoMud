@@ -50,6 +50,7 @@ var (
 		`attack`:      {Attack, false, true, false},
 		`badcommands`:{BadCommands, true, true, true}, // Admin only
 		`bash`:        {Bash, false, true, false},
+	`bug`:         {Bug, true, true, false},
 		`biome`:       {Biome, true, true, false},
 		`broadcast`:   {Broadcast, true, true, false},
 		`character`:   {Character, true, true, false},
@@ -147,6 +148,7 @@ var (
 		`status`:      {Status, true, true, false},
 		`stand`:       {Stand, true, true, false}, // Can stand when downed
 		`submit`:      {Submit, false, true, false},
+	`suggest`:     {Suggest, true, true, false},
 		`storage`:     {Storage, false, false, false}, // Can't manipulate storage in combat
 		`suicide`:     {Suicide, true, true, false},
 		`syslogs`:     {SysLogs, true, true, true}, // Admin only

@@ -1,0 +1,18 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">bug</ansi>
+
+The <ansi fg="command">bug</ansi> command lets you report a bug or typo directly to the admin team.
+Your report is saved with your character name, current location, and a
+timestamp so we can track it down.
+
+<ansi fg="yellow">Usage:</ansi>
+
+  <ansi fg="command">bug <description></ansi>
+
+  Examples:
+    <ansi fg="command">bug The door to the east doesn't open even when I have the key.</ansi>
+    <ansi fg="command">bug Typo: the sign says "welome" instead of "welcome".</ansi>
+
+Reports go into a log reviewed by admins. The more detail you give, the
+easier it is to fix.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help suggest</ansi>

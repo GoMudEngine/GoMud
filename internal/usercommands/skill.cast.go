@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
+	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
@@ -138,6 +139,21 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			targetMobInstanceIds = append(targetMobInstanceIds, user.Character.Aggro.MobInstanceId)
 		} else if user.Character.Aggro != nil && user.Character.Aggro.UserId > 0 {
 			targetUserIds = append(targetUserIds, user.Character.Aggro.UserId)
+		} else if party := parties.Get(user.UserId); party != nil {
+			// Fallback: use party leader's current target if available in this room
+			if leaderUser := users.GetByUserId(party.LeaderUserId); leaderUser != nil {
+				if leaderUser.Character.RoomId == user.Character.RoomId && leaderUser.Character.Aggro != nil {
+					if leaderUser.Character.Aggro.MobInstanceId > 0 {
+						targetMobInstanceIds = append(targetMobInstanceIds, leaderUser.Character.Aggro.MobInstanceId)
+					} else if leaderUser.Character.Aggro.UserId > 0 {
+						targetUserIds = append(targetUserIds, leaderUser.Character.Aggro.UserId)
+					}
+				}
+			}
+			if len(targetMobInstanceIds) == 0 && len(targetUserIds) == 0 {
+				user.SendText(`<ansi fg="red">You need a target to cast that spell.</ansi>`)
+				return true, nil
+			}
 		} else {
 			user.SendText(`<ansi fg="red">You need a target to cast that spell.</ansi>`)
 			return true, nil
@@ -155,6 +171,17 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			targetMobInstanceIds = append(targetMobInstanceIds, user.Character.Aggro.MobInstanceId)
 		} else if user.Character.Aggro != nil && user.Character.Aggro.UserId > 0 {
 			targetUserIds = append(targetUserIds, user.Character.Aggro.UserId)
+		} else if party := parties.Get(user.UserId); party != nil {
+			// Fallback: use party leader's current target if available in this room
+			if leaderUser := users.GetByUserId(party.LeaderUserId); leaderUser != nil {
+				if leaderUser.Character.RoomId == user.Character.RoomId && leaderUser.Character.Aggro != nil {
+					if leaderUser.Character.Aggro.MobInstanceId > 0 {
+						targetMobInstanceIds = append(targetMobInstanceIds, leaderUser.Character.Aggro.MobInstanceId)
+					} else if leaderUser.Character.Aggro.UserId > 0 {
+						targetUserIds = append(targetUserIds, leaderUser.Character.Aggro.UserId)
+					}
+				}
+			}
 		}
 
 	case spells.HelpSingle:
