@@ -4274,4 +4274,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-21
 **Status**: In Progress
-**Current Stage**: Stage 18 (Remove Numerical References) complete. All player-facing messages now use qualitative descriptions instead of raw numbers. New casting message system (YAML-driven). Next: Stage 19 (LLM Integration & AI NPCs, formerly Phase 18).
+**Current Stage**: Stage 18 fully complete (0e5525b + follow-up fixes through 9a86843). All player-facing numbers replaced with qualitative descriptions: stats, vitals, armor, skills, durations, cooldowns, cast messages, spell costs, damage/heal text, and skill rank labels. Cave bat species corrected (speciesid 22, wings and fangs) with balanced vitality. Next: Stage 19 (LLM Integration & AI NPCs).
