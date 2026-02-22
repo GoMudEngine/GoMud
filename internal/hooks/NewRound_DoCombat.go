@@ -167,9 +167,7 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 					user.Character.CastingState = nil
 					break
 				}
-				user.SendText(fmt.Sprintf(
-					`<ansi fg="cyan">You fold your will deeper. You now hold <ansi fg="cyan-bold">%d/%d</ansi> folds.</ansi>`,
-					cs.FoldsAccumulated, cs.FoldsNeeded))
+				user.SendText(`<ansi fg="cyan">` + spells.GetCastMessage("cast_started", cs.SpellId) + `</ansi>`)
 			}
 
 			continue
