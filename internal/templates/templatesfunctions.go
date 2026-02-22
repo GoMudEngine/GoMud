@@ -287,6 +287,25 @@ var (
 				return "unknown"
 			}
 		},
+		// skillRank converts a numeric skill level (1–50) to a qualitative tier name.
+		"skillRank": func(level int) string {
+			switch {
+			case level <= 0:
+				return "unknown"
+			case level <= 1:
+				return "novice"
+			case level <= 9:
+				return "apprentice"
+			case level <= 19:
+				return "journeyman"
+			case level <= 34:
+				return "adept"
+			case level <= 49:
+				return "expert"
+			default:
+				return "master"
+			}
+		},
 		"durationQuality": func(rounds int) string {
 			switch {
 			case rounds <= 0:

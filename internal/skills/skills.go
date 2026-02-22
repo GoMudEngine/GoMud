@@ -243,6 +243,26 @@ var SkillProgressionMultipliers = map[SkillTag]float64{
 	Alchemy:       2.0,
 }
 
+// GetSkillRankDescription converts a numeric skill level (1–50) to a qualitative tier name.
+func GetSkillRankDescription(level int) string {
+	switch {
+	case level <= 0:
+		return "unknown"
+	case level <= 1:
+		return "novice"
+	case level <= 9:
+		return "apprentice"
+	case level <= 19:
+		return "journeyman"
+	case level <= 34:
+		return "adept"
+	case level <= 49:
+		return "expert"
+	default:
+		return "master"
+	}
+}
+
 // GetProgressionMultiplier returns the progression speed multiplier for a skill.
 // Returns 1.0 (default) for any skill not explicitly listed.
 func GetProgressionMultiplier(skillName string) float64 {

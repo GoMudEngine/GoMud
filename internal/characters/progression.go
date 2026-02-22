@@ -71,7 +71,7 @@ func (c *Character) CheckSkillProgression(skillName string, userId int, bonusMul
 		if skills.SkillExists(actualSkill) {
 			if c.IncreaseSkill(actualSkill) {
 				newLevel := c.Skills[actualSkill]
-				msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> Your <ansi fg="yellow">%s</ansi> skill improves to rank <ansi fg="yellow-bold">%d</ansi>! <ansi fg="magenta">***</ansi>`, actualSkill, newLevel)
+				msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> Your <ansi fg="yellow">%s</ansi> skill reaches <ansi fg="yellow-bold">%s</ansi>! <ansi fg="magenta">***</ansi>`, actualSkill, skills.GetSkillRankDescription(newLevel))
 				events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
 			} else {
 				msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> You feel your <ansi fg="yellow">%s</ansi> skills sharpening! <ansi fg="magenta">***</ansi>`, actualSkill)
