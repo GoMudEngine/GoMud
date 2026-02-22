@@ -207,6 +207,100 @@ var (
 		},
 		"map": makeMap,
 		"t":   language.T,
+
+		// Qualitative description helpers (Stage 18)
+		"statQuality": func(value int) string {
+			switch {
+			case value <= 70:
+				return "feeble"
+			case value <= 80:
+				return "poor"
+			case value <= 90:
+				return "below average"
+			case value <= 99:
+				return "average"
+			case value <= 104:
+				return "human baseline"
+			case value <= 119:
+				return "above average"
+			case value <= 134:
+				return "strong"
+			case value <= 149:
+				return "exceptional"
+			case value <= 174:
+				return "extraordinary"
+			default:
+				return "transcendent"
+			}
+		},
+		// vitalQuality(current, max[, padTo]) — returns a colored qualitative label,
+		// optionally right-padded to padTo visual characters (like healthStr does).
+		"vitalQuality": func(current int, max int, padTo ...int) string {
+			if max <= 0 {
+				return "unknown"
+			}
+			pct := float64(current) / float64(max) * 100
+			var label, color string
+			switch {
+			case pct <= 15:
+				label, color = "critical", "red"
+			case pct <= 35:
+				label, color = "low", "red"
+			case pct <= 60:
+				label, color = "moderate", "yellow"
+			case pct <= 85:
+				label, color = "healthy", "green"
+			default:
+				label, color = "full", "green"
+			}
+			result := `<ansi fg="` + color + `">` + label + `</ansi>`
+			if len(padTo) > 0 && padTo[0] > len(label) {
+				result += strings.Repeat(" ", padTo[0]-len(label))
+			}
+			return result
+		},
+		"armorQuality": func(armor int) string {
+			switch {
+			case armor <= 0:
+				return "none"
+			case armor < 10:
+				return "thin"
+			case armor < 25:
+				return "light"
+			case armor < 50:
+				return "medium"
+			case armor < 80:
+				return "heavy"
+			default:
+				return "solid"
+			}
+		},
+		"mutationLevel": func(level int) string {
+			switch level {
+			case 1:
+				return "minor"
+			case 2:
+				return "moderate"
+			case 3:
+				return "major"
+			default:
+				return "unknown"
+			}
+		},
+		"durationQuality": func(rounds int) string {
+			switch {
+			case rounds <= 0:
+				return `<ansi fg="red">fading</ansi>`
+			case rounds <= 3:
+				return `<ansi fg="red">fading fast</ansi>`
+			case rounds <= 10:
+				return `<ansi fg="yellow">briefly active</ansi>`
+			case rounds <= 30:
+				return `<ansi fg="green">active</ansi>`
+			default:
+				return `<ansi fg="green">well established</ansi>`
+			}
+		},
 	}
 )
 

@@ -1,9 +1,9 @@
 package usercommands
 
 import (
-	"fmt"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/spells"
@@ -13,7 +13,7 @@ import (
 
 func Spells(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
-	headers := []string{`SpellId`, `Name`, `Description`, `Schools`, `Target`, `Cost`, `Wait`, `Casts`, `% Chance`}
+	headers := []string{`SpellId`, `Name`, `Description`, `Schools`, `Target`, `Cost`, `Cast time`, `Familiarity`, `Reliability`}
 
 	helpfulRowFormatting := [][]string{}
 	helpfulRows := [][]string{}
@@ -54,10 +54,10 @@ func Spells(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				`<ansi fg="red">%s</ansi>`,
 			}
 
-			// Format cost display - show conviction and optionally health
-			costStr := fmt.Sprintf(`%d conv`, sp.Cost)
+			// Format cost display - show qualitative conviction cost and optionally health
+			costStr := combat.GetConvictionCostDescription(sp.Cost)
 			if sp.HealthCost > 0 {
-				costStr = fmt.Sprintf(`%d conv, %d hp`, sp.Cost, sp.HealthCost)
+				costStr += ", drains health"
 			}
 
 			row := []string{sp.SpellId,
@@ -66,9 +66,9 @@ func Spells(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				sp.GetSchoolsString(),
 				target,
 				costStr,
-				fmt.Sprintf(`%d rnds`, sp.WaitRounds),
-				fmt.Sprintf(`%d`, casts),
-				fmt.Sprintf(`%d%%`, user.Character.GetBaseCastSuccessChance(sp.SpellId)),
+				combat.GetWaitRoundsDescription(sp.WaitRounds),
+				combat.GetCastCountDescription(casts),
+				combat.GetSuccessChanceDescription(user.Character.GetBaseCastSuccessChance(sp.SpellId)),
 			}
 
 			if helpOrHarm == `helpful` {

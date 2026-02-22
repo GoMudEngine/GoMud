@@ -3647,7 +3647,37 @@ This is wired in via mob combat hooks or spawn scripts, not hardcoded per mob.
 
 ---
 
-## Phase 18: LLM Integration & AI NPCs
+## Stage 18: Remove Numerical References — Immersive Descriptions ✅ COMPLETED
+
+**Goal**: Audit every player-visible message surface and replace all raw numbers with qualitative descriptive language. Introduces a data-driven casting message system (YAML file) so future atmosphere can be added without code changes.
+
+### Substage 18.1 — Scripting API + Spell JS Scripts ✅ COMPLETED
+- Added `UtilGetDamageDescription` and `UtilGetHealDescription` to scripting API (`internal/scripting/util_func.go`)
+- Updated `heal.js`, `healall.js`, `mm.js`, `sparks.js` to use qualitative descriptions instead of raw HP numbers
+- Updated spell YAML descriptions (`heal.yaml`, `healall.yaml`, `mm.yaml`, `sparks.yaml`) to remove dice notation
+
+### Substage 18.2 — Casting System Message Cleanup ✅ COMPLETED
+- Created `_datafiles/world/dogmud/casting-messages.yaml` — varied atmospheric casting messages
+- Created `internal/spells/casting_messages.go` — YAML loader + `GetCastMessage()` function
+- Replaced fold counts, conviction numbers, dice rolls, and cooldown rounds in `internal/usercommands/skill.cast.go`
+
+### Substage 18.3 — Special Move Cooldown Cleanup ✅ COMPLETED
+- Removed round-count cooldown messages from `bash.go`, `kick.go`, `trip.go`, `grapple.go`, `submit.go`
+- Removed DEBUG z-score block from `grapple.go`
+
+### Substage 18.4 — Informational Command + Status Screen Cleanup ✅ COMPLETED
+- Added 4 qualitative helpers to `internal/combat/descriptions.go`: `GetConvictionCostDescription`, `GetWaitRoundsDescription`, `GetCastCountDescription`, `GetSuccessChanceDescription`
+- Added 5 template functions to `internal/templates/templatesfunctions.go`: `statQuality`, `vitalQuality`, `armorQuality`, `mutationLevel`, `durationQuality`
+- Updated `internal/usercommands/spells.go` — qualitative cost/wait/familiarity/reliability columns
+- Updated `internal/usercommands/status.go` — stat training feedback shows tier name not numbers
+- Updated `status.template` — stats show tier words, HP/ST/CV show qualitative state, armor shows tier word, mutations show minor/moderate/major
+- Updated `conditions.template` — buff duration shows qualitative phrase
+
+**Deliberate numeric exemptions**: Gold and Bank on status screen; Lives counter (permadeath)
+
+---
+
+## Phase 19: LLM Integration & AI NPCs
 
 > **Foundation now in place**: All core systems are stable, the dev tools JSON API
 > provides a programmatic zone-building interface, and the balance config allows
@@ -4244,4 +4274,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-21
 **Status**: In Progress
-**Current Stage**: Post-Stage17 polish pass complete (733d832). Additional fixes: illuminate spell now applies light buff (missing effect_type/buff_ids in YAML), stale room 113 instance save deleted (map-on-wall text), warden "six instructors" count confirmed correct, stat progression soft cap now respects actual stat value (admin chars at 250-325 no longer get 30% learn chance due to low use count). Next: Stage 18.1 GMCP Enhancement.
+**Current Stage**: Stage 18 (Remove Numerical References) complete. All player-facing messages now use qualitative descriptions instead of raw numbers. New casting message system (YAML-driven). Next: Stage 19 (LLM Integration & AI NPCs, formerly Phase 18).

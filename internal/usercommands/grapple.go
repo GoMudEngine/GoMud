@@ -24,12 +24,7 @@ func Grapple(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	// Check shared special move cooldown (same as bash/trip/kick)
 	cfg := configs.GetGamePlayConfig()
 	if !user.Character.Cooldowns.Try("special-move", fmt.Sprintf("%d rounds", cfg.SpecialMoveCooldown)) {
-		remaining := user.Character.Cooldowns["special-move"]
-		roundWord := "round"
-		if remaining > 1 {
-			roundWord = "rounds"
-		}
-		user.SendText(fmt.Sprintf("You can't use another special move yet! (%d %s remaining)", remaining, roundWord))
+		user.SendText("You need a moment to recover before attempting another special move.")
 		return true, nil
 	}
 
@@ -102,13 +97,6 @@ func Grapple(rest string, user *users.UserRecord, room *rooms.Room, flags events
 
 		// Stage 8.4: Check for grapple crit disarm
 		// Only while in Clinched or Grounded position AND z > 2.0
-
-		// Debug logging for grapple crits
-		if result.AttackZScore > 1.5 {
-			user.SendText(fmt.Sprintf(`<ansi fg="cyan">[DEBUG: Grapple z-score: %.2f %s]</ansi>`,
-				result.AttackZScore,
-				map[bool]string{true: "(CRIT!)", false: "(close)"}[result.AttackZScore > 2.0]))
-		}
 
 		if result.AttackZScore > 2.0 &&
 			(result.NewPosition.String() == "clinched" || result.NewPosition.String() == "grounded") {

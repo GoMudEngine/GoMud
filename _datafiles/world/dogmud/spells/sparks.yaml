@@ -1,6 +1,6 @@
 spellid: sparks
 name: Shower of Sparks
-description: Hurts for 1d3+1
+description: Lashes a target with a shower of crackling sparks.
 type: harmmulti
 schools:
   - elemental

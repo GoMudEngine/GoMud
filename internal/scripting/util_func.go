@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/colorpatterns"
+	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
@@ -43,6 +44,8 @@ func setUtilFunctions(vm *goja.Runtime) {
 	vm.Set(`UtilLocateUser`, UtilLocateUser)
 	vm.Set(`UtilApplyColorPattern`, UtilApplyColorPattern)
 	vm.Set(`UtilGetConfig`, UtilGetConfig)
+	vm.Set(`UtilGetDamageDescription`, UtilGetDamageDescription)
+	vm.Set(`UtilGetHealDescription`, UtilGetHealDescription)
 	vm.Set(`ColorWrap`, ColorWrap)
 	vm.Set(`EventFlags`, EventFlags)
 	vm.Set(`RaiseEvent`, RaiseEvent)
@@ -182,6 +185,14 @@ func ColorWrap(txt string, colorClass ...string) string {
 
 func RaiseEvent(name string, data map[string]any) {
 	events.AddToQueue(events.ScriptedEvent{Name: name, Data: data})
+}
+
+func UtilGetDamageDescription(amount int, targetMaxHP int) string {
+	return combat.GetDamageDescription(amount, targetMaxHP)
+}
+
+func UtilGetHealDescription(amount int, targetMaxHP int) string {
+	return combat.GetHealDescription(amount, targetMaxHP)
 }
 
 func ExpandCommand(cmd string, limit ...int) string {

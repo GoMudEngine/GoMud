@@ -61,9 +61,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	// 4. Already casting?
 	if user.Character.CastingState != nil {
 		cs := user.Character.CastingState
-		user.SendText(fmt.Sprintf(
-			`<ansi fg="cyan">You are already casting %s (%d/%d folds). Type <ansi fg="cyan-bold">cancel</ansi> to stop.</ansi>`,
-			cs.SpellId, cs.FoldsAccumulated, cs.FoldsNeeded))
+		user.SendText(`<ansi fg="cyan">` + spells.GetCastMessage("already_casting", cs.SpellId) + `</ansi>`)
 		return true, nil
 	}
 
@@ -73,16 +71,14 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	totalConvictionCost := spellInfo.GetTotalConvictionCost(convMult)
 	if totalConvictionCost > 0 && user.Character.Conviction < totalConvictionCost {
 		user.SendText(fmt.Sprintf(
-			`<ansi fg="red">You don't have enough conviction to cast %s. (Need %d, have %d)</ansi>`,
-			spellInfo.Name, totalConvictionCost, user.Character.Conviction))
+			`<ansi fg="red">You don't have the conviction to cast %s.</ansi>`,
+			spellInfo.Name))
 		return true, nil
 	}
 
 	// 6. Check initiation cooldown (blocks if a prior attempt failed)
 	if user.Character.GetCooldown(`cast-init`) > 0 {
-		user.SendText(fmt.Sprintf(
-			`<ansi fg="red">Your mind is still recovering. (%d round(s) remaining)</ansi>`,
-			user.Character.GetCooldown(`cast-init`)))
+		user.SendText(`<ansi fg="red">Your mind is still recovering from the effort.</ansi>`)
 		return true, nil
 	}
 
@@ -94,9 +90,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	if roll >= initiationChance {
 		// Failed — apply 2-round cooldown and inform user
 		user.Character.TryCooldown(`cast-init`, `2 rounds`)
-		user.SendText(fmt.Sprintf(
-			`<ansi fg="red">You reach for the folds of %s but your concentration slips. (Rolled %d on %d%% chance)</ansi>`,
-			spellInfo.Name, roll, initiationChance))
+		user.SendText(`<ansi fg="red">` + spells.GetCastMessage("concentration_slipped", spellInfo.Name) + `</ansi>`)
 		room.SendText(fmt.Sprintf(
 			`<ansi fg="username">%s</ansi> <ansi fg="red">loses their concentration.</ansi>`,
 			user.Character.Name), user.UserId)
@@ -224,13 +218,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	// 9. Cooldown gate — casting shares the special-move slot (prevents cast+bash same round)
 	cfg := configs.GetGamePlayConfig()
 	if !user.Character.TryCooldown(`special-move`, fmt.Sprintf(`%d rounds`, cfg.SpecialMoveCooldown)) {
-		remaining := user.Character.GetCooldown(`special-move`)
-		roundWord := "round"
-		if remaining > 1 {
-			roundWord = "rounds"
-		}
-		user.SendText(fmt.Sprintf(
-			`You need a moment before you can do that! (%d %s remaining)`, remaining, roundWord))
+		user.SendText(`You need a moment before you can do that.`)
 		return true, nil
 	}
 
@@ -254,9 +242,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		Details: spellInfo.Name,
 	})
 
-	user.SendText(fmt.Sprintf(
-		`<ansi fg="cyan">You gather your will and form an image of <ansi fg="cyan-bold">%s</ansi>... (0/%d folds)</ansi>`,
-		spellInfo.Name, foldsNeeded))
+	user.SendText(`<ansi fg="cyan">` + spells.GetCastMessage("cast_started", spellInfo.Name) + `</ansi>`)
 	room.SendText(fmt.Sprintf(
 		`<ansi fg="username">%s</ansi> closes their eyes in concentration.`,
 		user.Character.Name), user.UserId)

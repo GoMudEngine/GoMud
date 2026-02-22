@@ -25,12 +25,7 @@ func Kick(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	// Check shared special move cooldown
 	cfg := configs.GetGamePlayConfig()
 	if !user.Character.Cooldowns.Try("special-move", fmt.Sprintf("%d rounds", cfg.SpecialMoveCooldown)) {
-		remaining := user.Character.Cooldowns["special-move"]
-		roundWord := "round"
-		if remaining > 1 {
-			roundWord = "rounds"
-		}
-		user.SendText(fmt.Sprintf("You can't use another special move yet! (%d %s remaining)", remaining, roundWord))
+		user.SendText("You need a moment to recover before attempting another special move.")
 		return true, nil
 	}
 

@@ -1,6 +1,6 @@
 spellid: mm
 name: Magic Missile
-description: Hurts for 1d6+2
+description: Hurls a bolt of pure magical force at a target.
 type: harmsingle
 schools:
   - elemental

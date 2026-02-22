@@ -65,3 +65,67 @@ func GetHealDescription(healAmount int, targetMaxHP int) string {
 		return "extraordinary healing"
 	}
 }
+
+// GetConvictionCostDescription returns a qualitative tier for conviction cost.
+func GetConvictionCostDescription(cost int) string {
+	switch {
+	case cost <= 10:
+		return "trivial"
+	case cost <= 30:
+		return "moderate"
+	case cost <= 60:
+		return "significant"
+	case cost <= 100:
+		return "substantial"
+	default:
+		return "demanding"
+	}
+}
+
+// GetWaitRoundsDescription returns a qualitative label for spell wait rounds.
+func GetWaitRoundsDescription(rounds int) string {
+	switch {
+	case rounds <= 0:
+		return "instant"
+	case rounds <= 1:
+		return "quick"
+	case rounds <= 3:
+		return "moderate"
+	case rounds <= 6:
+		return "slow"
+	default:
+		return "lengthy"
+	}
+}
+
+// GetCastCountDescription returns a qualitative label for cast count (familiarity).
+func GetCastCountDescription(count int) string {
+	switch {
+	case count <= 0:
+		return "untested"
+	case count <= 10:
+		return "novice"
+	case count <= 50:
+		return "practiced"
+	case count <= 200:
+		return "experienced"
+	default:
+		return "mastered"
+	}
+}
+
+// GetSuccessChanceDescription returns a qualitative label for cast success percentage.
+func GetSuccessChanceDescription(pct int) string {
+	switch {
+	case pct < 40:
+		return "unreliable"
+	case pct < 60:
+		return "risky"
+	case pct < 75:
+		return "average"
+	case pct < 90:
+		return "reliable"
+	default:
+		return "near-certain"
+	}
+}

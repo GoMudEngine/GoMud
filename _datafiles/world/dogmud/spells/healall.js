@@ -27,7 +27,6 @@ function onMagic(sourceActor, targetActors) {
 
     for (var i = 0; i < targetActors.length; i++) {
         healAmt = UtilDiceRoll(HEAL_DICE_QTY, HEAL_DICE_SIDES);
-        healAmtStr = String(healAmt);
 
         targetUserId = targetActors[i].UserId();
         targetName = targetActors[i].GetCharacterName(true);
@@ -35,18 +34,18 @@ function onMagic(sourceActor, targetActors) {
         if ( sourceActor.UserId() != targetActors[i].UserId() ) {
 
             // Tell the caster about the action
-            SendUserMessage(sourceUserId, 'You stop chanting and touch '+targetName+' with glowing hands, healing <ansi fg="healing">'+healAmtStr+' hitpoints</ansi>.');
+            SendUserMessage(sourceUserId, 'You stop chanting and touch '+targetName+' with glowing hands, healing ' + ColorWrap(UtilGetHealDescription(healAmt, targetActors[i].GetHealthMax()), 'healing') + '.');
 
             // Tell the room about the heal, except the source and target
             SendRoomMessage(roomId, sourceName+' stops chanting and touches '+targetName+' with glowing hands, providing health.', sourceUserId, targetUserId);
 
             // Tell the target about the heal
-            SendUserMessage(targetUserId, sourceName+' stops chanting and touches you with glowing hands, healing <ansi fg="healing">'+healAmtStr+' hitpoints</ansi>.');
+            SendUserMessage(targetUserId, sourceName+' stops chanting and touches you with glowing hands, healing ' + ColorWrap(UtilGetHealDescription(healAmt, targetActors[i].GetHealthMax()), 'healing') + '.');
 
         } else {
 
-            // Tell the cast they did it to themselves
-            SendUserMessage(sourceUserId, 'You stop chanting and embrace yourself with glowing hands, healing <ansi fg="healing">'+healAmtStr+' hitpoints</ansi>.');
+            // Tell the caster they did it to themselves
+            SendUserMessage(sourceUserId, 'You stop chanting and embrace yourself with glowing hands, healing ' + ColorWrap(UtilGetHealDescription(healAmt, targetActors[i].GetHealthMax()), 'healing') + '.');
 
             // Tell the room about the heal, except the source and target
             SendRoomMessage(roomId, sourceName+' stops chanting and embraces themselves with glowing hands, providing health.', sourceUserId, targetUserId);

@@ -28,7 +28,6 @@ function onMagic(sourceActor, targetActors) {
     for (var i = 0; i < targetActors.length; i++) {
         
         dmgAmt = UtilDiceRoll(DMG_DICE_QTY, DMG_DICE_SIDES) + 1;
-        dmgAmtStr = String(dmgAmt);
 
         targetUserId = targetActors[i].UserId();
         targetName = targetActors[i].GetCharacterName(true);
@@ -36,18 +35,18 @@ function onMagic(sourceActor, targetActors) {
         if ( sourceActor.UserId() != targetActors[i].UserId() ) {
 
             // Tell the caster about the action
-            SendUserMessage(sourceUserId, 'You let loose a shower of sparks that hit '+targetName+', doing <ansi fg="damage">'+dmgAmtStr+' damage</ansi>.');
+            SendUserMessage(sourceUserId, 'You let loose a shower of sparks that hit '+targetName+', dealing ' + ColorWrap(UtilGetDamageDescription(dmgAmt, targetActors[i].GetHealthMax()), 'damage') + '.');
 
             // Tell the room about the dmg, except the source and target
             SendRoomMessage(roomId, sourceName+' stops chanting and lets loose a shower of sparks, hitting '+targetName+'.', sourceUserId, targetUserId);
 
             // Tell the target about the dmg
-            SendUserMessage(targetUserId, sourceName+' stops chanting fires a shower of sparks at you, hitting for <ansi fg="damage">'+dmgAmtStr+' damage</ansi>.');
+            SendUserMessage(targetUserId, sourceName+' stops chanting and fires a shower of sparks at you, dealing ' + ColorWrap(UtilGetDamageDescription(dmgAmt, targetActors[i].GetHealthMax()), 'damage') + '.');
 
         } else {
 
-            // Tell the cast they did it to themselves
-            SendUserMessage(sourceUserId, 'You stop chanting and fires a shower of sparks at yourself, doing <ansi fg="damage">'+dmgAmtStr+' damage</ansi>.');
+            // Tell the caster they did it to themselves
+            SendUserMessage(sourceUserId, 'You stop chanting and fire a shower of sparks at yourself, dealing ' + ColorWrap(UtilGetDamageDescription(dmgAmt, targetActors[i].GetHealthMax()), 'damage') + '.');
 
             // Tell the room about the dmg, except the source and target
             SendRoomMessage(roomId, sourceName+' stops chanting and fires a shower of sparks at themselves, hurting themselves.', sourceUserId, targetUserId);

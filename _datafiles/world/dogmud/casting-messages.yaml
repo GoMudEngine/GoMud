@@ -1,0 +1,14 @@
+already_casting:
+  - "The folds of {spell} already dance in your mind's eye. Type cancel to release them."
+  - "Your thoughts remain bent upon {spell}, each fragment slowly coalescing. Type cancel to release them."
+  - "You are still holding the fractured image of {spell} in your consciousness. Type cancel to release them."
+
+cast_started:
+  - "The mental image of {spell} begins to fracture into its component folds..."
+  - "You feel the threads of reality bend as you reach for {spell}..."
+  - "Your consciousness splinters as the folds of {spell} begin to take shape..."
+
+concentration_slipped:
+  - "You reach for the folds of {spell} but the image shatters before you can grasp it."
+  - "The mental pattern of {spell} dissolves — your focus fractures at the critical moment."
+  - "Your grip on {spell} slips; the folds scatter before the pattern takes hold."

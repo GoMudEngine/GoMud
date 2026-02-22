@@ -56,44 +56,35 @@ func Status(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			selection = closeMatch
 		}
 
-		before := 0
-		after := 0
 		spent := 0
 
 		switch selection {
 		case `strength`:
-			before = user.Character.Stats.Strength.Value - user.Character.Stats.Strength.Mods
 			user.Character.Stats.Strength.Training += 1
 			spent = 1
 		case `dexterity`:
-			before = user.Character.Stats.Dexterity.Value - user.Character.Stats.Dexterity.Mods
 			user.Character.Stats.Dexterity.Training += 1
 			spent = 1
 		case `perception`:
-			before = user.Character.Stats.Perception.Value - user.Character.Stats.Perception.Mods
 			user.Character.Stats.Perception.Training += 1
 			spent = 1
 		case `vitality`:
-			before = user.Character.Stats.Vitality.Value - user.Character.Stats.Vitality.Mods
 			user.Character.Stats.Vitality.Training += 1
 			spent = 1
 		case `willpower`:
-			before = user.Character.Stats.Willpower.Value - user.Character.Stats.Willpower.Mods
 			user.Character.Stats.Willpower.Training += 1
 			spent = 1
 		case `charisma`:
-			before = user.Character.Stats.Charisma.Value - user.Character.Stats.Charisma.Mods
 			user.Character.Stats.Charisma.Training += 1
 			spent = 1
 		}
 
 		if spent > 0 {
-			after = before + 1
 			user.Character.StatPoints -= 1
 
 			user.Character.Validate()
 
-			user.SendText(fmt.Sprintf(term.CRLFStr+`<ansi fg="210">Your <ansi fg="yellow">%s</ansi> training improves from <ansi fg="201">%d</ansi> to <ansi fg="201">%d</ansi>!</ansi>`, selection, before, after))
+			user.SendText(fmt.Sprintf(term.CRLFStr+`<ansi fg="210">Your <ansi fg="yellow">%s</ansi> training grows stronger!</ansi>`, selection))
 
 			events.AddToQueue(events.CharacterTrained{UserId: user.UserId})
 		}

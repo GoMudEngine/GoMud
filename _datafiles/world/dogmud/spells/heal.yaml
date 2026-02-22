@@ -1,7 +1,7 @@
 # Learned at the Sanctuary of the Benevolent Heart (ROOM 18)
 spellid: heal
 name: Minor Heal
-description: Heals for 2d3
+description: Channels healing energy into the target, mending wounds.
 type: helpsingle
 schools:
   - vital

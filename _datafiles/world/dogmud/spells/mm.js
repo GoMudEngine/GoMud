@@ -24,7 +24,6 @@ function onMagic(sourceActor, targetActor) {
     roomId = sourceActor.GetRoomId();
 
     harmAmt = UtilDiceRoll(HARM_DICE_QTY, HARM_DICE_SIDES) + HARM_DICE_MOD;
-    harmAmtStr = String(harmAmt);
 
     sourceUserId = sourceActor.UserId();
     sourceName = sourceActor.GetCharacterName(true);
@@ -33,13 +32,13 @@ function onMagic(sourceActor, targetActor) {
     targetName = targetActor.GetCharacterName(true);
 
     // Tell the caster about the action
-    SendUserMessage(sourceUserId, 'You let loose a magical projectile at '+targetName+', doing <ansi fg="damage">'+harmAmtStr+' hitpoints</ansi> of damage!');
+    SendUserMessage(sourceUserId, 'You let loose a magical projectile at '+targetName+', dealing ' + ColorWrap(UtilGetDamageDescription(harmAmt, targetActor.GetHealthMax()), 'damage') + '!');
 
-    // Tell the room about the heal, except the source and target
+    // Tell the room about the action, except the source and target
     SendRoomMessage(roomId, sourceName+' lets loose a magical projectile at '+targetName+' hurting them!', sourceUserId, targetUserId);
 
-    // Tell the target about the heal
-    SendUserMessage(targetUserId, sourceName+' lets loose a magical projectile at you, doing <ansi fg="damage">'+harmAmtStr+' hitpoints</ansi> of damage!');
+    // Tell the target about the action
+    SendUserMessage(targetUserId, sourceName+' lets loose a magical projectile at you, dealing ' + ColorWrap(UtilGetDamageDescription(harmAmt, targetActor.GetHealthMax()), 'damage') + '!');
 
     // Apply the heal to the target
     targetActor.AddHealth(harmAmt * -1);
