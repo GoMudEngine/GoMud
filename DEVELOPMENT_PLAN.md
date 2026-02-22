@@ -4244,4 +4244,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-21
 **Status**: In Progress
-**Current Stage**: Stage 17 complete — 17.1 (moon phase emoter) and 17.2 (moon phase gameplay) both merged. Per-moon phase getters in gametime: Swiftmoon→DEX/STR, Wanderer→VIT/WIL, Eye→PER/CHA (±MoonStatModMax%, mutated players only via applyMoonMods) + Eye→mutation rate (0.5×–1.5×). Config knob MoonStatModMax (default 0.05). devtool pressure reports live phases. Next: Stage 18.1 GMCP Enhancement.
+**Current Stage**: Post-Stage17 hotfix complete (851d13d). Fixed: debug z-score messages removed, shooting.yaml fumble typo, Level removed from online, race removed from killstats, training points removed from skills template, party autoattack now triggers when mob attacks any party member, spell autotarget falls back to party leader's aggro, added `bug`/`suggest` player commands with persistent file logging, added `help special` template explaining shared cooldown, added mudmail/spell admin help files. Next: Stage 18.1 GMCP Enhancement.
