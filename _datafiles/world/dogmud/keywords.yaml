@@ -39,7 +39,6 @@ help:
     shops:
       - appraise
       - bank
-      - bid
       - buy
       - deposit
       - hire
@@ -87,7 +86,6 @@ help:
       - remove
       - show
       - stash
-      - throw
       - trash
       - use
       - read
