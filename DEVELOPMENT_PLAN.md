@@ -4244,4 +4244,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-21
 **Status**: In Progress
-**Current Stage**: Post-Stage17 hotfix complete (851d13d). Fixed: debug z-score messages removed, shooting.yaml fumble typo, Level removed from online, race removed from killstats, training points removed from skills template, party autoattack now triggers when mob attacks any party member, spell autotarget falls back to party leader's aggro, added `bug`/`suggest` player commands with persistent file logging, added `help special` template explaining shared cooldown, added mudmail/spell admin help files. Next: Stage 18.1 GMCP Enhancement.
+**Current Stage**: Post-Stage17 polish pass complete (733d832). Additional fixes: illuminate spell now applies light buff (missing effect_type/buff_ids in YAML), stale room 113 instance save deleted (map-on-wall text), warden "six instructors" count confirmed correct, stat progression soft cap now respects actual stat value (admin chars at 250-325 no longer get 30% learn chance due to low use count). Next: Stage 18.1 GMCP Enhancement.
