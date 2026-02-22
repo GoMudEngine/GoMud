@@ -23,6 +23,6 @@ character:
   gold: 0
   stats:
     vitality:
-      training: -2
+      training: 2
     dexterity:
       training: 3
