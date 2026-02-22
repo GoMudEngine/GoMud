@@ -1,11 +1,49 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">spells</ansi>
 
-The <ansi fg="command">spells</ansi> command lists spells you have learned, along with some useful information about them.
+The <ansi fg="command">spells</ansi> command lists spells you have learned, along with useful information
+about each one.
 
-<ansi fg="yellow">Usage: </ansi>
+<ansi fg="yellow">Usage:</ansi>
 
   <ansi fg="command">spells</ansi>
+  To get help on a particular spell: <ansi fg="command">help spell [spellId]</ansi>
+  To cast a spell: <ansi fg="command">cast [spellId]</ansi>  (or just type the spell ID directly)
 
-  To get help on a particular spell, try: <ansi fg="command">help spell [spellId]</ansi>
+<ansi fg="yellow">How spellcasting works — folds:</ansi>
 
-<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help cast</ansi>
+Casting a spell is not instantaneous. It is a process of bifurcation: you
+form a precise mental image of what you want to be true, then split that
+image into two identical copies held simultaneously. Then split again.
+Each doubling is called a <ansi fg="white-bold">fold</ansi>.
+
+Different spells require different numbers of folds before they resolve.
+Simple effects resolve quickly. Complex ones take longer.
+
+When you <ansi fg="command">cast</ansi>, you begin accumulating folds each round. You cannot act
+freely while doing so — your concentration is occupied. Once you have
+accumulated enough folds, the spell resolves automatically.
+
+<ansi fg="yellow">What affects casting speed:</ansi>
+
+  <ansi fg="white-bold">Perception</ansi> — determines how many folds you can sustain per round.
+  A sharper mind accumulates folds faster and finishes casting sooner.
+
+  <ansi fg="white-bold">Spellcasting skill</ansi> — improves fold rate and your chance of successfully
+  initiating a cast in the first place.
+
+  <ansi fg="white-bold">Taking damage</ansi> — disrupts concentration. Significant hits during casting
+  may cause you to lose your folds and have to start over.
+
+<ansi fg="yellow">Conviction:</ansi>
+
+Each spell has a <ansi fg="white-bold">conviction cost</ansi> — the sustained belief required to complete
+it. You must have enough conviction to cover the full cost before you can
+begin. Conviction regenerates over time.
+
+<ansi fg="yellow">Cooldown:</ansi>
+
+Initiating a cast uses the shared <ansi fg="white-bold">special-move</ansi> slot. You cannot bash,
+kick, trip, or begin another cast until that cooldown clears. See
+<ansi fg="command">help special</ansi> for details.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help cast</ansi>, <ansi fg="command">help special</ansi>, <ansi fg="command">help cooldowns</ansi>
