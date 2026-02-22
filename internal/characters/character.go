@@ -1411,6 +1411,25 @@ func (c *Character) IncreaseStat(statName string, amount int) bool {
 	return true
 }
 
+// GetStatValue returns the raw computed Value for the named stat, or 0 if unrecognised.
+func (c *Character) GetStatValue(statName string) int {
+	switch statName {
+	case "strength":
+		return c.Stats.Strength.Value
+	case "dexterity":
+		return c.Stats.Dexterity.Value
+	case "perception":
+		return c.Stats.Perception.Value
+	case "vitality":
+		return c.Stats.Vitality.Value
+	case "willpower":
+		return c.Stats.Willpower.Value
+	case "charisma":
+		return c.Stats.Charisma.Value
+	}
+	return 0
+}
+
 // GetCombatSkillTag returns the appropriate combat skill tag based on
 // the character's equipped weapon type.
 func (c *Character) GetCombatSkillTag() skills.SkillTag {

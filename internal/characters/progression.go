@@ -90,6 +90,12 @@ func (c *Character) CheckSkillProgression(skillName string, userId int, bonusMul
 func (c *Character) CheckStatProgression(statName string, userId int, bonusMultiplier float64) {
 	b := configs.GetBalanceConfig()
 	virtualRank := c.GetStatUseCount(statName) / int(b.UsesPerRank)
+	// If the actual stat value exceeds the soft cap, use it as a floor for the virtual rank.
+	// This prevents characters with artificially high stats (e.g. admin accounts) from
+	// exploiting the low use-count portion of the progression curve.
+	if statVal := c.GetStatValue(statName); statVal > int(b.StatSoftCap) && statVal > virtualRank {
+		virtualRank = statVal
+	}
 	chance := CalculateProgressionChance(virtualRank, int(b.StatSoftCap)) * bonusMultiplier
 	if chance > 1.0 {
 		chance = 1.0
