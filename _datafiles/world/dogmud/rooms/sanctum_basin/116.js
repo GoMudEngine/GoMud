@@ -23,6 +23,7 @@ function onEnter(user, room) {
     elder.Command('say More complex effects require more folds. Most people lose coherence past five or six. The Witnesses can affect how many folds the mind will sustain.', 11.5);
     elder.Command('say That pattern is in your mind now. Type <ansi fg="command">spells</ansi> to see what you know. You will find illuminate there.', 13.5);
     elder.Command('say The last thing standing between you and the south gate is the cave system below. Take the light with you -- it is dark in there. The Aberrant at the back does not respond to reason, but it will respond to you.', 15.5);
+    elder.Command('say If you have questions about this world, the Chrysalis, the moons, the Fold -- <ansi fg="command">ask</ansi> me. I have had forty years to think.', 17.5);
 
     // Teach illuminate spell and advance quest to magic step
     user.LearnSpell("illum");
@@ -36,13 +37,13 @@ function onCommand(cmd, rest, user, room) {
         var elder = room.GetMob(elderMobId, true);
         if ( elder != null ) {
             if ( user.HasQuest("1-wilderness") && !user.HasQuest("1-magic") ) {
-                elder.Command('say The moons have been patient. I can afford the same courtesy.');
+                elder.Command('say The moons have been patient. I can afford the same courtesy. If you have questions, <ansi fg="command">ask</ansi> them.');
             } else if ( user.HasQuest("1-cave") ) {
-                elder.Command('say The Warden waits at the south gate. You have earned the road.');
+                elder.Command('say The Warden waits at the south gate. You have earned the road. If anything is still unclear, <ansi fg="command">ask</ansi>.');
             } else if ( user.HasQuest("1-magic") ) {
-                elder.Command('say The cave is below. Light your way with illuminate and find what is waiting at the back.');
+                elder.Command('say The cave is below. Light your way with illuminate and find what is waiting at the back. <ansi fg="command">Ask</ansi> if you need guidance.');
             } else {
-                elder.Command('say Complete the other trials first. The work matters.');
+                elder.Command('say Complete the other trials first. The work matters. <ansi fg="command">Ask</ansi> if you have questions about this place.');
             }
         }
         return false;

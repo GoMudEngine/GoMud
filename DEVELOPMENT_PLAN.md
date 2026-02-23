@@ -3851,7 +3851,7 @@ memory:
 
 ---
 
-### Stage 18.3: Local LLM Integration (Optional) ✅ COMPLETED (86c7e48)
+### Stage 18.3: Local LLM Integration (Optional) ✅ COMPLETED (86c7e48) — post-completion fixes applied
 **Goal**: Add support for 5-10 special NPCs powered by locally-hosted small language models (Llama 3.2 3B, Phi-3, Mistral 7B). These NPCs provide more dynamic, emergent conversations than rule-based NPCs while avoiding API costs.
 
 **Note**: This stage is **optional** and requires:
@@ -4238,4 +4238,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-23
 **Status**: In Progress
-**Current Stage**: Stage 18.3 complete. Local LLM integration (Ollama) implemented: `internal/llm/` package (types, cache, client), `LLMProfile` field on Mob, `LLM` config section, thinking-delay delivery pattern in `ask.go` and `talk.go`, Elder Saris (mob 55) wired with llmprofile + fallback dialogue YAML. LLM disabled by default (`LLM.Enabled: false`). Next: Stage 18.4 (LLM-as-Builder Pipeline, optional).
+**Current Stage**: Stage 18.3 complete. Local LLM integration (Ollama) implemented: `internal/llm/` package (types, cache, client), `LLMProfile` field on Mob, `LLM` config section, thinking-delay delivery pattern in `ask.go` and `talk.go`, Elder Saris (mob 55) wired with llmprofile + fallback dialogue YAML. LLM disabled by default (`LLM.Enabled: false`). Post-completion: fixed upstream `gametime.AddPeriod` slice bounds crash (off-by-one `>=2` vs `>=3`), updated Elder Saris monologue to invite players to `ask` questions, clarified `ask` help template syntax. Next: Stage 18.4 (LLM-as-Builder Pipeline, optional).
