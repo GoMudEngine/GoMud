@@ -467,7 +467,7 @@ Balance:
 #
 ################################################################################
 LLM:
-  Enabled: false
+  Enabled: true
   Endpoint: "http://localhost:11434"
   Timeout: 10
 
