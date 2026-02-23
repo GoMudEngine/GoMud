@@ -3753,7 +3753,7 @@ The stage structure and full design details for Phase 18 carry forward from the 
 
 ---
 
-### Stage 18.2: Rule-Based NPC Dialogue Framework ✅ COMPLETED
+### Stage 18.2: Rule-Based NPC Dialogue Framework ✅ COMPLETED (a1cdc58)
 **Goal**: Create a flexible, fast, zero-cost dialogue system for 99% of NPCs using pattern matching, dialogue trees, and scripted responses. This is the foundation for making NPCs feel alive without any LLM costs or performance overhead.
 
 **Design**:
