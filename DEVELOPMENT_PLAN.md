@@ -3688,13 +3688,13 @@ The stage structure and full design details for Phase 18 carry forward from the 
 - **Stage 18.1**: GMCP Enhancement for Full State Coverage
 - **Stage 18.2**: Rule-Based NPC Dialogue Framework
 - **Stage 18.3**: Local LLM Integration (Optional — requires separate LLM service)
-- **Stage 18.4**: Cloud API Integration (Optional — requires API budget)
+- **Stage 18.4**: LLM-as-Builder Pipeline (Offline Content Generation)
 
 *(See original Stage 11.1–11.4 entries above for full design, file lists, and acceptance criteria.)*
 
 ---
 
-### Stage 18.1: GMCP Enhancement for Full State Coverage
+### Stage 18.1: GMCP Enhancement for Full State Coverage ✅ COMPLETED
 **Goal**: Expand the existing GMCP (Generic Mud Communication Protocol) support to provide complete, structured game state data. This enables external LLM agents to "play" the MUD programmatically and provides rich context for AI decision-making.
 
 **Current State**: GoMud already has basic GMCP support. This stage expands it to cover all game state.
@@ -3963,102 +3963,66 @@ fallback:
 
 ---
 
-### Stage 18.4: Cloud API Integration (Optional)
-**Goal**: Add support for 1-2 "legendary" NPCs powered by cloud LLM APIs (OpenAI, Anthropic). These provide the highest quality conversations but have API costs, so they're reserved for critical story NPCs.
+### Stage 18.4: LLM-as-Builder Pipeline (Offline Content Generation)
+**Goal**: Create a human-in-the-loop pipeline for using an LLM to assist with world building — generating rooms, mobs, items, and other data files in the correct YAML format. The LLM works offline as a content drafting tool; all output is reviewed by the designer before being dropped into the game. No engine changes are required.
 
-**Note**: This stage is **optional** and **costly**. Only use for NPCs where quality is paramount (main quest hub, final boss, etc.). Budget $5-50/month depending on player traffic.
+**Design philosophy**:
+- The LLM is a *drafting assistant*, not an autonomous builder. The designer is always the editor and gatekeeper.
+- `world.md` is mandatory context for every generation prompt — it anchors tone, lore, and aesthetic.
+- Existing data files serve as few-shot examples so the LLM produces correctly-structured output.
+- The pipeline is a set of prompt templates and schema docs, not engine code.
 
-**Design**:
-- Same architecture as Stage 11.3, but calls OpenAI/Anthropic instead of local service
-- **Aggressive cost mitigation**:
-  - Heavy caching (99% cache hit rate target)
-  - Very strict rate limiting (1 response per 30 seconds)
-  - Budget alerts (notify admin if costs exceed threshold)
-  - Automatic shutdown if budget exceeded
-- **Quality over quantity**: 1-2 NPCs total, not more
+**Deliverables**:
+1. **Schema reference documents** — concise human- and LLM-readable descriptions of every data file format the LLM might generate:
+   - `docs/schemas/room.md` — room YAML fields, terrain/biome values, exit format
+   - `docs/schemas/mob.md` — mob YAML fields, species IDs, stat ranges, script hooks
+   - `docs/schemas/item.md` — item YAML fields, slot names, damage types, rarity
+   - `docs/schemas/spell.md` — spell YAML fields + matching `.js` stub contract
+   - `docs/schemas/buff.md` — buff YAML fields, filename convention (`{id}-{name}.yaml`)
+2. **Prompt templates** — reusable system + user prompt pairs for each content type:
+   - `docs/prompts/new_room.md` — generates a room YAML + any connecting exit edits needed
+   - `docs/prompts/new_mob.md` — generates a mob YAML + optional script stub
+   - `docs/prompts/new_item.md` — generates an item YAML
+   - `docs/prompts/zone_sketch.md` — given a zone concept, generates a room list + rough map before generating individual rooms
+3. **Generation checklist** (`docs/CONTENT_GENERATION_GUIDE.md`) — step-by-step workflow:
+   - Load `world.md` + relevant schema doc as system context
+   - Provide 2-3 existing files as few-shot examples
+   - Describe the desired content
+   - Review LLM output against schema and world feel
+   - Verify filename matches `ConvertForFilename()` convention
+   - Check for stale instance saves if editing existing zones
+   - Drop file, restart server, smoke test in-game
 
-**Changes**:
-1. Add cloud API clients:
-   - OpenAI client (using official SDK)
-   - Anthropic client (using official SDK)
-2. Add cost tracking and budget enforcement:
-   - Track API calls and estimated costs
-   - Alert when approaching budget limit
-   - Auto-disable NPCs if budget exceeded
-3. Add even heavier caching than Stage 11.3:
-   - Persistent cache (survives server restart)
-   - Semantic similarity matching for cache hits
-4. Add NPC type: `CloudLLMNPC`
-5. Add configuration for API keys and budgets
+**What this stage explicitly does NOT do**:
+- No engine code changes
+- No live API calls from the MUD server
+- No autonomous generation without human review
 
-**Example NPC Configuration** (YAML):
-```yaml
-npcId: 3001
-name: "The Sanctum Keeper"
-type: "cloud_llm"
-provider: "anthropic"
-model: "claude-3-haiku-20240307"
-
-personality: |
-  You are the Sanctum Keeper, guardian of the last bastion of civilization.
-  You guide newcomers, assign quests, and know the history of the wasteland.
-  You are wise, patient, and slightly melancholic about the old world.
-  Keep responses under 150 words.
-
-context: |
-  The Sanctum is a walled settlement protecting survivors.
-  Outside is a harsh wasteland filled with mutated creatures.
-  The player is a newcomer seeking refuge and purpose.
-
-budget:
-  maxCostPerDay: 5.00    # USD
-  alertThreshold: 4.00
-  autoDisableAt: 5.50
-
-rateLimits:
-  minDelay: 30s           # Very strict for cloud APIs
-  maxPerHour: 10
-  maxPerDay: 50
-
-cache:
-  enabled: true
-  persistent: true
-  ttl: 24h
-  semanticMatching: true
-  similarityThreshold: 0.90
-```
-
-**Files to Modify** (~10 files, ~600 lines):
-1. `internal/npcs/llm/openai.go` — OpenAI client (new file)
-2. `internal/npcs/llm/anthropic.go` — Anthropic client (new file)
-3. `internal/npcs/llm/cost.go` — Cost tracking and budget enforcement (new file)
-4. `internal/npcs/llm/cache.go` — Enhance with persistent storage and semantic matching
-5. `internal/mobs/mobs.go` — Add CloudLLM NPC type
-6. `internal/configs/config.llm.go` — Add cloud API configuration
-7. `_datafiles/config.yaml` — Add API keys and budget settings
-8. `_datafiles/npcs/cloud_npcs/` — Example cloud NPC definitions
-9. Documentation: `docs/CLOUD_LLM_SETUP.md` (new file)
-10. Test files
+**Files to Create** (~8 documentation files, ~0 lines of Go):
+1. `docs/schemas/room.md`
+2. `docs/schemas/mob.md`
+3. `docs/schemas/item.md`
+4. `docs/schemas/spell.md`
+5. `docs/schemas/buff.md`
+6. `docs/prompts/new_room.md`
+7. `docs/prompts/new_mob.md`
+8. `docs/prompts/new_item.md`
+9. `docs/prompts/zone_sketch.md`
+10. `docs/CONTENT_GENERATION_GUIDE.md`
 
 **Testing**:
-- [ ] **Integration Test**: Mock cloud APIs, verify requests/responses
-- [ ] **Manual Test**: Converse with cloud NPC, verify high-quality responses
-- [ ] **Manual Test**: Verify budget tracking and alerts work
-- [ ] **Manual Test**: Verify auto-disable when budget exceeded
-- [ ] **Manual Test**: Verify persistent caching survives server restart
-- [ ] **Cost Test**: Monitor actual API costs over 24 hours with test traffic
+- [ ] **Schema test**: Run each schema doc + `world.md` as context, ask LLM to generate a sample file, verify output is valid YAML that the engine accepts on startup
+- [ ] **Prompt test**: Generate one room, one mob, one item end-to-end using the prompt templates; drop files into a test zone and verify no startup panic
+- [ ] **Filename test**: Verify generated filenames match `ConvertForFilename()` output before every file drop
 
 **Acceptance Criteria**:
-- Cloud NPCs provide very high quality, contextual dialogue
-- Cost tracking accurately estimates API spend
-- Budget enforcement prevents runaway costs
-- Cache hit rate >95%
-- Persistent cache survives restarts
-- Auto-disable protects against cost overruns
-- Clear documentation for API key setup
-- All tests pass
+- Each schema doc covers all required fields with valid value ranges
+- Prompt templates reliably produce engine-loadable YAML in one or two iterations
+- Generation guide covers the full workflow including instance-save gotchas
+- A new zone room can be generated, reviewed, placed, and tested in under 15 minutes
+- No engine startup panics from generated files
 
-**Estimated Changes**: ~600 lines, 10 files
+**Estimated Changes**: ~10 documentation files, minimal Go
 
 ---
 
@@ -4272,6 +4236,6 @@ Critical bugs fixed outside of formal stage development:
 
 ---
 
-**Last Updated**: 2026-02-21
+**Last Updated**: 2026-02-23
 **Status**: In Progress
-**Current Stage**: Stage 18 fully complete (0e5525b + follow-up fixes through 9a86843). All player-facing numbers replaced with qualitative descriptions: stats, vitals, armor, skills, durations, cooldowns, cast messages, spell costs, damage/heal text, and skill rank labels. Cave bat species corrected (speciesid 22, wings and fangs) with balanced vitality. Next: Stage 19 (LLM Integration & AI NPCs).
+**Current Stage**: Stage 18.1 complete. GMCP enhanced with Room.Info description, Char.Skills, Char.Conditions, World.Time, Commands.List, and Commands.State modules. Next: Stage 18.2 (Rule-Based NPC Dialogue Framework).

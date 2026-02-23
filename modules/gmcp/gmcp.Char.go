@@ -97,7 +97,7 @@ func (g *GMCPCharModule) buffTriggeredHandler(e events.Event) events.ListenerRet
 
 	events.AddToQueue(GMCPCharUpdate{
 		UserId:     evt.UserId,
-		Identifier: `Char.Affects`,
+		Identifier: `Char.Affects, Char.Conditions`,
 	})
 
 	return events.Continue
@@ -136,7 +136,7 @@ func (g *GMCPCharModule) vitalsChangedHandler(e events.Event) events.ListenerRet
 	// Changing equipment might affect stats, inventory, maxhp/maxmp etc
 	events.AddToQueue(GMCPCharUpdate{
 		UserId:     evt.UserId,
-		Identifier: `Char.Vitals`,
+		Identifier: `Char.Vitals, Char.Conditions`,
 	})
 
 	return events.Continue
@@ -623,6 +623,34 @@ func (g *GMCPCharModule) GetCharNode(user *users.UserRecord, gmcpModule string) 
 		}
 	}
 
+	if all || g.wantsGMCPPayload(`Char.Skills`, gmcpModule) {
+
+		payload.Skills = map[string]string{}
+		for skillName, rank := range user.Character.Skills {
+			payload.Skills[skillName] = skills.GetSkillRankDescription(rank)
+		}
+
+		if !all {
+			return payload.Skills, `Char.Skills`
+		}
+	}
+
+	if all || g.wantsGMCPPayload(`Char.Conditions`, gmcpModule) {
+
+		payload.Conditions = []GMCPCondition{}
+		for _, cond := range user.Character.Conditions {
+			payload.Conditions = append(payload.Conditions, GMCPCondition{
+				Type:        cond.Type.DisplayName(),
+				Description: cond.Type.Description(),
+				Duration:    conditionDurationLabel(cond.Duration),
+			})
+		}
+
+		if !all {
+			return payload.Conditions, `Char.Conditions`
+		}
+	}
+
 	// If we reached this point and Char wasn't requested, we have a problem.
 	if !all {
 		mudlog.Error(`gmcp.Char`, `error`, `Bad module requested`, `module`, gmcpModule)
@@ -650,15 +678,41 @@ func (g *GMCPCharModule) wantsGMCPPayload(packageToConsider string, packageReque
 }
 
 type GMCPCharModule_Payload struct {
-	Info      *GMCPCharModule_Payload_Info             `json:"Info,omitempty"`
-	Affects   map[string]GMCPCharModule_Payload_Affect `json:"Affects,omitempty"`
-	Enemies   []GMCPCharModule_Enemy                   `json:"Enemies,omitempty"`
-	Inventory *GMCPCharModule_Payload_Inventory        `json:"Inventory,omitempty"`
-	Stats     *GMCPCharModule_Payload_Stats            `json:"Stats,omitempty"`
-	Vitals    *GMCPCharModule_Payload_Vitals           `json:"Vitals,omitempty"`
-	Worth     *GMCPCharModule_Payload_Worth            `json:"Worth,omitempty"`
-	Quests    []GMCPCharModule_Payload_Quest           `json:"Quests,omitempty"`
-	Pets      []GMCPCharModule_Payload_Pet             `json:"Pets,omitempty"`
+	Info       *GMCPCharModule_Payload_Info             `json:"Info,omitempty"`
+	Affects    map[string]GMCPCharModule_Payload_Affect `json:"Affects,omitempty"`
+	Enemies    []GMCPCharModule_Enemy                   `json:"Enemies,omitempty"`
+	Inventory  *GMCPCharModule_Payload_Inventory        `json:"Inventory,omitempty"`
+	Stats      *GMCPCharModule_Payload_Stats            `json:"Stats,omitempty"`
+	Vitals     *GMCPCharModule_Payload_Vitals           `json:"Vitals,omitempty"`
+	Worth      *GMCPCharModule_Payload_Worth            `json:"Worth,omitempty"`
+	Quests     []GMCPCharModule_Payload_Quest           `json:"Quests,omitempty"`
+	Pets       []GMCPCharModule_Payload_Pet             `json:"Pets,omitempty"`
+	Skills     map[string]string                        `json:"Skills,omitempty"`
+	Conditions []GMCPCondition                          `json:"Conditions,omitempty"`
+}
+
+// /////////////////
+// Char.Conditions
+// /////////////////
+type GMCPCondition struct {
+	Type        string `json:"type"`
+	Description string `json:"description"`
+	Duration    string `json:"duration"` // "sustained", "briefly", "for a while", "extended"
+}
+
+// conditionDurationLabel converts rounds remaining to a qualitative label.
+// 0 = permanent/sustained; 1–3 = briefly; 4–10 = for a while; 11+ = extended.
+func conditionDurationLabel(rounds int) string {
+	switch {
+	case rounds == 0:
+		return "sustained"
+	case rounds <= 3:
+		return "briefly"
+	case rounds <= 10:
+		return "for a while"
+	default:
+		return "extended"
+	}
 }
 
 // /////////////////

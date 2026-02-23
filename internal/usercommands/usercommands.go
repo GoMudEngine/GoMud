@@ -446,6 +446,16 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 	return false, nil
 }
 
+// GetCommandRegistry returns a snapshot of all registered commands for external use.
+// Callers should filter AdminOnly entries as appropriate.
+func GetCommandRegistry() map[string]CommandAccess {
+	snapshot := make(map[string]CommandAccess, len(userCommands))
+	for k, v := range userCommands {
+		snapshot[k] = v
+	}
+	return snapshot
+}
+
 // Register mob commands from outside of the package
 func RegisterCommand(command string, handlerFunc UserCommand, disabledWhenDowned bool, allowedInCombat bool, isAdminOnly bool) {
 	userCommands[command] = CommandAccess{
