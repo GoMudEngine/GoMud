@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/dialogue"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/llm"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
@@ -51,6 +53,54 @@ func Talk(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	// Try JS onAsk with empty string first for backward compatibility
 	jsHandled := false
 	if handled, err := scripting.TryMobScriptEvent(`onAsk`, mobId, user.UserId, `user`, map[string]any{"askText": ``}); err == nil && handled {
+		jsHandled = true
+	}
+
+	// LLM greeting path: fires if JS didn't handle it and the mob has an LLM profile.
+	if !jsHandled && mob.LLMProfile != nil && bool(configs.GetLLMConfig().Enabled) {
+		cfg := configs.GetLLMConfig()
+		mem := dialogue.GetMemory(mobId, user.UserId)
+		llmCtx := llm.ConversationContext{
+			MobName:      mob.Character.Name,
+			ZoneName:     mob.Zone,
+			PlayerName:   user.Character.Name,
+			CurrentMood:  string(dialogue.GetMood(mobId, mob.LLMProfile.DefaultMood)),
+			RecentTopics: mem.RecentTopics,
+		}
+		mob.Command(`emote pauses thoughtfully.`)
+		mobIdCopy := mobId
+		llm.AskAsync(mob.LLMProfile, string(cfg.Endpoint), int(cfg.Timeout),
+			mobIdCopy, llmCtx, `greet the player`,
+			func(response string) {
+				m := mobs.GetInstance(mobIdCopy)
+				if m != nil {
+					m.Command(`say ` + response)
+				}
+			},
+			func() {
+				// LLM unavailable — fall through to YAML greeting.
+				m := mobs.GetInstance(mobIdCopy)
+				if m == nil {
+					return
+				}
+				df := dialogue.Load(int(m.MobId), m.Zone)
+				if df != nil {
+					if greetText, hints, ok := dialogue.Greet(df, mobIdCopy, user.UserId); ok {
+						m.Command(`say ` + greetText)
+						if hints != `` {
+							m.Command(`say ` + hints)
+						}
+					} else if response, moodChange, ok := dialogue.Match(df, mobIdCopy, ``); ok {
+						m.Command(`say ` + response)
+						dialogue.ShiftMood(mobIdCopy, moodChange, df.DefaultMood)
+					} else {
+						m.Command(`emote nods.`)
+					}
+				} else {
+					m.Command(`emote nods.`)
+				}
+			},
+		)
 		jsHandled = true
 	}
 

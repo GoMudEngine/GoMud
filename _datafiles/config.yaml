@@ -461,6 +461,18 @@ Balance:
 
 ################################################################################
 #
+#   LLM
+#   Optional local LLM integration via Ollama for NPC dialogue.
+#   Set Enabled to true and point Endpoint at your Ollama instance.
+#
+################################################################################
+LLM:
+  Enabled: false
+  Endpoint: "http://localhost:11434"
+  Timeout: 10
+
+################################################################################
+#
 #   INTEGRATIONS
 #   Special settings for third party integrations such as discord messages
 #
