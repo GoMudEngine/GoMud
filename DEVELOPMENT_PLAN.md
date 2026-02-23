@@ -3851,7 +3851,7 @@ memory:
 
 ---
 
-### Stage 18.3: Local LLM Integration (Optional)
+### Stage 18.3: Local LLM Integration (Optional) ✅ COMPLETED (86c7e48)
 **Goal**: Add support for 5-10 special NPCs powered by locally-hosted small language models (Llama 3.2 3B, Phi-3, Mistral 7B). These NPCs provide more dynamic, emergent conversations than rule-based NPCs while avoiding API costs.
 
 **Note**: This stage is **optional** and requires:
@@ -4238,4 +4238,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-23
 **Status**: In Progress
-**Current Stage**: Stage 18.2 complete. Rule-based NPC dialogue framework implemented: `internal/dialogue/` package (types, loader, memory, mood, engine), new `talk` command, `ask` falls through to dialogue engine after JS hook, example dialogue YAMLs for Korvath and Chrysalis Priest. Next: Stage 18.3 (Local LLM Integration, optional).
+**Current Stage**: Stage 18.3 complete. Local LLM integration (Ollama) implemented: `internal/llm/` package (types, cache, client), `LLMProfile` field on Mob, `LLM` config section, thinking-delay delivery pattern in `ask.go` and `talk.go`, Elder Saris (mob 55) wired with llmprofile + fallback dialogue YAML. LLM disabled by default (`LLM.Enabled: false`). Next: Stage 18.4 (LLM-as-Builder Pipeline, optional).
