@@ -3753,7 +3753,7 @@ The stage structure and full design details for Phase 18 carry forward from the 
 
 ---
 
-### Stage 18.2: Rule-Based NPC Dialogue Framework
+### Stage 18.2: Rule-Based NPC Dialogue Framework ✅ COMPLETED
 **Goal**: Create a flexible, fast, zero-cost dialogue system for 99% of NPCs using pattern matching, dialogue trees, and scripted responses. This is the foundation for making NPCs feel alive without any LLM costs or performance overhead.
 
 **Design**:
@@ -4238,4 +4238,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-23
 **Status**: In Progress
-**Current Stage**: Stage 18.1 complete. GMCP enhanced with Room.Info description, Char.Skills, Char.Conditions, World.Time, Commands.List, and Commands.State modules. Next: Stage 18.2 (Rule-Based NPC Dialogue Framework).
+**Current Stage**: Stage 18.2 complete. Rule-based NPC dialogue framework implemented: `internal/dialogue/` package (types, loader, memory, mood, engine), new `talk` command, `ask` falls through to dialogue engine after JS hook, example dialogue YAMLs for Korvath and Chrysalis Priest. Next: Stage 18.3 (Local LLM Integration, optional).

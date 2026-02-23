@@ -1,0 +1,96 @@
+mobid: 52
+zone: Sanctum Basin
+defaultMood: friendly
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "howdy"]
+    moods: ["friendly", "neutral"]
+    responses:
+      - "Aye, what do ye need? Work keeps me busy."
+      - "Greetings. Name's Korvath. Best smith in the Basin."
+      - "Hm? Oh. Come to talk, have ye? Keep it short — the forge doesn't wait."
+
+  - keywords: ["hello", "hi", "greet"]
+    moods: ["hostile"]
+    responses:
+      - "Get out of my sight. I've no patience for troublemakers."
+      - "Don't waste my time."
+
+  - keywords: ["weapon", "sword", "blade", "axe", "forge", "smith", "craft", "make", "buy"]
+    moods: ["friendly", "neutral"]
+    responses:
+      - "Finest blades in the Basin. What are ye lookin' for?"
+      - "I work iron and steel. Swords, axes, whatever a serious fighter needs."
+    moodChange: friendly
+
+  - keywords: ["yourself", "you", "korvath", "who are", "name"]
+    responses:
+      - "Been forging thirty years. Started as a boy, carrying coal. Don't plan to stop anytime soon."
+      - "Korvath. Smith. That's all ye need to know."
+
+  - keywords: ["sanctum", "basin", "here", "place", "town"]
+    responses:
+      - "Sanctum Basin's a good place if ye stay out of trouble. The Chrysalis lot keeps things orderly, I'll give 'em that."
+      - "Quiet enough. Good stone for building, good ore in the hills. Can't complain."
+
+  - keywords: ["chrysalis", "priest", "religion", "faith", "awakening"]
+    moods: ["friendly", "neutral"]
+    responses:
+      - "Not my business. I make what people need, not what they believe."
+      - "The Chrysalis folk are alright. Bit intense, but they've never tried to take my forge."
+
+  - keywords: ["train", "learn", "teach", "lesson"]
+    responses:
+      - "I can show ye the basics of the anvil if ye've got the patience for it. Come back when ye're ready to work."
+
+  - keywords: [""]
+    responses:
+      - "I'm busy. Ask me about weapons or the forge."
+      - "Got work to do. Make it quick."
+
+tree:
+  root:
+    text: "What can I do for ye, stranger?"
+    hints: "You could ask Korvath about his weapons, the forge, the sanctum, or himself."
+
+  nodes:
+    - id: weapons
+      triggers: ["weapon", "sword", "blade", "axe", "forge", "smith", "craft", "buy"]
+      text: "Finest blades in the Basin. Swords, axes, daggers — ye name it. What catches your eye?"
+      hints: "Ask about swords or axes specifically, or about what he charges."
+      unlocks: ["swords", "axes", "price"]
+      moodChange: friendly
+
+    - id: swords
+      triggers: ["sword", "blade", "cut"]
+      requires: ["weapons"]
+      text: "My swords are balanced and reliable. Good edge, holds it too. A fighter who knows what they're doing won't find better."
+
+    - id: axes
+      triggers: ["axe", "axes", "chop", "hew"]
+      requires: ["weapons"]
+      text: "Axes hit harder, but slower. Good against heavy armor. I favor 'em myself, truth be told."
+      moodChange: friendly
+
+    - id: price
+      triggers: ["price", "cost", "gold", "coin", "afford", "cheap", "expensive", "how much"]
+      requires: ["weapons"]
+      text: "Fair price for fair work. I don't haggle. Come back when ye've got coin worth spending."
+
+    - id: himself
+      triggers: ["you", "yourself", "korvath", "who", "name", "story", "past"]
+      text: "Started at the forge when I was barely taller than the bellows. Thirty years on, I'm still here. Some things ye just don't walk away from."
+
+    - id: sanctum
+      triggers: ["sanctum", "basin", "here", "place", "town", "settlement"]
+      text: "The Basin suits me. Solid rock underfoot, ore in the hills, and the Chrysalis folk keep the peace well enough. I've worked in worse places."
+      hints: "You could ask about the Chrysalis or the hills."
+      unlocks: ["chrysalis_topic"]
+
+    - id: chrysalis_topic
+      triggers: ["chrysalis", "priest", "faith", "awakening", "religion"]
+      requires: ["sanctum"]
+      text: "The Chrysalis don't bother me and I don't bother them. Their business is belief. Mine is iron. Works out fine."
+
+memory:
+  expiryPeriod: "1h"

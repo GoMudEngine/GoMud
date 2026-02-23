@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/dialogue"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/keywords"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -128,8 +129,27 @@ func Ask(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		}
 
 		rest = strings.Join(args, ` `)
-		if handled, err := scripting.TryMobScriptEvent(`onAsk`, mobId, user.UserId, `user`, map[string]any{"askText": rest}); err == nil {
-			if !handled {
+		jsHandled := false
+		if handled, err := scripting.TryMobScriptEvent(`onAsk`, mobId, user.UserId, `user`, map[string]any{"askText": rest}); err == nil && handled {
+			jsHandled = true
+		}
+
+		if !jsHandled {
+			df := dialogue.Load(int(mob.MobId), mob.Zone)
+			if df != nil {
+				if nodeText, hints, moodChange, ok := dialogue.TreeAdvance(df, mobId, user.UserId, rest); ok {
+					mob.Command(`say ` + nodeText)
+					if hints != `` {
+						mob.Command(`say ` + hints)
+					}
+					dialogue.ShiftMood(mobId, moodChange, df.DefaultMood)
+				} else if response, moodChange, ok := dialogue.Match(df, mobId, rest); ok {
+					mob.Command(`say ` + response)
+					dialogue.ShiftMood(mobId, moodChange, df.DefaultMood)
+				} else {
+					mob.Command(`emote shakes their head.`)
+				}
+			} else {
 				mob.Command(`emote shakes their head.`)
 			}
 		}
