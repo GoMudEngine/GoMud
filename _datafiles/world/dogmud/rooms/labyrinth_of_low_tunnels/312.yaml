@@ -1,0 +1,32 @@
+roomid: 312
+zone: Labyrinth of Low Tunnels
+title: Carved Niche
+description: A wider space where crude shelves have been gouged into the walls at
+  various heights, all of them low. Clay pots sit on some shelves, sealed with wax
+  and packed with dried fungus or something that smells like fermented grain. Others
+  hold small totems -- figures twisted from bone and sinew, eyeless faces carved into
+  knucklebones, bundles of teeth wrapped in strips of hide. This is a communal space,
+  a storehouse and shrine both. The ceiling is black with soot, and the floor is worn
+  smooth by the shuffling of many bare feet. The darkness presses in from every side,
+  and the walls feel closer than they should.
+biome: cave
+exits:
+  north:
+    roomid: 308
+  east:
+    roomid: 313
+nouns:
+  pots: Rough clay vessels, pinched and shaped by small fingers. Some are sealed tight
+    with dark wax. Others have been opened and re-sealed many times. The contents
+    smell sharp -- fermented, acrid, deliberately preserved.
+  totems: Small figures made from bone, sinew, and teeth. They have no eyes. Some are
+    arranged in groups, others stand alone on their shelves. A few have been broken
+    and carefully repaired with strips of hide binding.
+  shelves: Gouged directly into the basalt with crude tools, at heights ranging from
+    knee-level to chest-level on a human. For whatever made them, these are at a
+    comfortable reach.
+idlemessages:
+- A clay pot shifts on its shelf with a faint scrape. Nothing visible touched it.
+- The soot on the ceiling is thick enough to flake. A piece falls and dissolves in the dark.
+- The totems on the shelves seem to watch from their empty faces.
+- Something scrabbles in the passage to the east, then goes quiet.

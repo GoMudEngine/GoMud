@@ -10,11 +10,20 @@ biome: desert
 exits:
   north:
     roomid: 102
+    lock:
+      difficulty: 255
   east:
     roomid: 104
+  west:
+    roomid: 121
   south:
     roomid: 2001
     zone: World Road
+spawninfo:
+- mobid: 70
+  message: A massive, stone-crusted shape lumbers out from behind the cliff face, sniffing the air.
+  respawnrate: 5 real minutes
+  maxwander: 3
 idlemessages:
 - The <ansi fg="itemname">iron gate</ansi> rattles in the wind.
 - Dust from the trail below drifts up through the gate bars.

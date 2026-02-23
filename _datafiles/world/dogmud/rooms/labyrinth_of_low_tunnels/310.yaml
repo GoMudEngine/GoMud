@@ -1,0 +1,30 @@
+roomid: 310
+zone: Labyrinth of Low Tunnels
+title: Fungal Hollow
+description: Clusters of pale fungi cover the walls and ceiling of this wider chamber,
+  their caps the size of dinner plates, their gills dripping with a faintly luminescent
+  slime that provides the only light. The glow is a sickly yellow-green, just enough
+  to see by, and it makes everything look bruised and wrong. The soil around the
+  largest clusters has been packed and tended -- mounded into crude beds, cleared of
+  competing growth. This is a garden. Someone cultivates these things. The air is
+  thick with spores, warm and humid and cloying, and every breath tastes of rot and
+  mushroom.
+biome: cave
+exits:
+  west:
+    roomid: 308
+  east:
+    roomid: 311
+  south:
+    roomid: 313
+nouns:
+  fungi: Pale, bloated caps with gills that weep a faintly glowing slime. The smell
+    up close is overpowering -- sweet decay and something sharply chemical. Some caps
+    have been harvested, leaving dark circular scars on the stone where they grew.
+  beds: Mounded soil, carefully shaped and packed. Small finger-marks are visible in the
+    earth. Whatever tends this garden works with bare hands and considerable patience.
+idlemessages:
+- A fat droplet of luminescent slime falls from a fungal cap and splashes on the floor, glowing briefly.
+- The spore-thick air makes your chest tight. Each breath feels heavier than the last.
+- Something in the fungal beds shifts -- a pale grub the length of your finger, burrowing deeper.
+- The yellow-green glow pulses faintly, as though the fungi are breathing.

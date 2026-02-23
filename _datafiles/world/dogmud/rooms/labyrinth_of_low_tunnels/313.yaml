@@ -1,0 +1,23 @@
+roomid: 313
+zone: Labyrinth of Low Tunnels
+title: Narrow Squeeze
+description: The passage contracts here to a gap barely wider than your shoulders.
+  The stone on either side is polished smooth by the passage of bodies, and the ceiling
+  drops low enough that you must turn sideways and shuffle to make progress. The walls
+  press against your chest and back simultaneously. Ahead and behind, you can hear
+  movement -- the scrape and patter of small feet, guttural whispers, the click of
+  crude tools. There is nowhere to turn around. Nowhere to swing a weapon. Nowhere to
+  run. Whatever built these tunnels has the advantage down here, and it knows it.
+biome: cave
+exits:
+  north:
+    roomid: 310
+  west:
+    roomid: 312
+  south:
+    roomid: 314
+idlemessages:
+- The walls press in on both sides. Your own heartbeat seems amplified by the stone.
+- Whispering from ahead. Or behind. The acoustics make it impossible to tell.
+- Your armor scrapes against the passage walls with a sound that announces your position to everything nearby.
+- The air is so close and warm you can taste it -- sweat, stone dust, and something alive.

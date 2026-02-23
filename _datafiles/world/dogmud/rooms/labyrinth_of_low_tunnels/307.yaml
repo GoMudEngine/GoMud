@@ -1,0 +1,27 @@
+roomid: 307
+zone: Labyrinth of Low Tunnels
+title: Refuse Heap
+description: The tunnel widens into a low, stinking pit that serves as the warren's
+  midden. Broken tools, cracked pottery, fouled rags, splintered bones, and rotting
+  scraps of unidentifiable organic matter are heaped against the walls in mounds that
+  nearly reach the ceiling. The stench is extraordinary -- a physical wall of decay
+  that makes your eyes water and your gorge rise. Flies cluster in black clouds over
+  the worst of it. Narrow paths have been stamped through the refuse, connecting the
+  exits, but the footing is treacherous and foul.
+biome: cave
+exits:
+  north:
+    roomid: 304
+  east:
+    roomid: 309
+nouns:
+  midden: Layers of waste packed down over what must be years. The bottom layers have
+    compacted into a dark, putrid sludge. Occasionally a recognizable object protrudes
+    -- a buckle, a broken blade, a cracked bowl. Nothing worth touching.
+  tools: Broken handles, snapped flint blades, a hammer-stone split in two. The tools
+    are crude but show deliberate craftsmanship. Whatever broke them did so through
+    heavy use, not carelessness.
+idlemessages:
+- The buzzing of flies is constant here, a droning undertone to everything.
+- Something shifts in one of the refuse mounds. Settling, probably. Hopefully.
+- The stench intensifies as you disturb the refuse underfoot. Breathing through your mouth does not help.

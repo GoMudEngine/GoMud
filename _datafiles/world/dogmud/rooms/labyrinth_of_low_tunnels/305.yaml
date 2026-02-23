@@ -1,0 +1,26 @@
+roomid: 305
+zone: Labyrinth of Low Tunnels
+title: Collapsed Alcove
+description: The passage south of the rubble choke dead-ends in a partially caved-in
+  alcove. Broken stone and compacted earth fill what was once a larger space, leaving
+  only a shallow recess littered with scraps of hide and gnawed bones arranged into
+  a crude nest. Something slept here, curled tight in the dark. A vertical crack in
+  the floor drops away into blackness, wide enough to squeeze through, its edges worn
+  smooth by the passage of many small bodies. Cold air rises from below, carrying
+  sounds -- distant, guttural, and busy.
+biome: cave
+exits:
+  north:
+    roomid: 302
+  down:
+    roomid: 308
+nouns:
+  nest: A heap of scraps -- torn hide, matted fur, strips of something that might once
+    have been cloth. It stinks of sweat and animal warmth. Whatever sleeps here is
+    small but not concerned about comfort.
+  crack: A vertical fissure dropping straight down into the rock. The edges are polished
+    smooth by constant use. Faint light and guttural sounds rise from below.
+idlemessages:
+- A gust of warm, foul air pushes up from the crack in the floor.
+- Something rustles in the nest of scraps, though nothing visible moves.
+- Faint guttural chattering echoes up from the shaft below.

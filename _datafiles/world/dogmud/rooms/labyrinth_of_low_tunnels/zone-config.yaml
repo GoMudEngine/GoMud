@@ -1,0 +1,6 @@
+name: Labyrinth of Low Tunnels
+roomid: 300
+autoscale:
+  minimum: 1
+  maximum: 8
+defaultbiome: cave

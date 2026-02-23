@@ -1,0 +1,30 @@
+roomid: 316
+zone: Labyrinth of Low Tunnels
+title: Crude Barricade
+description: A wall of stacked stone and sharpened sticks blocks most of the passage
+  here, leaving only a gap at the base barely large enough to crawl through on your
+  belly. The barricade is crude but solid, mortared with packed clay and reinforced
+  with scavenged bones jammed crosswise into the gaps. Sharpened splinters of stone
+  jut outward at face height, angled to punish anyone trying to force their way
+  through. Whatever lies beyond this barricade, they do not want you reaching it. The
+  air that seeps through the gap is warmer still, carrying the strongest concentration
+  of smoke and animal musk yet. You are deep now. Very deep. And very unwelcome.
+biome: cave
+exits:
+  north:
+    roomid: 314
+  south:
+    roomid: 317
+nouns:
+  barricade: Stacked stone and sharpened wood, packed with clay and bone. It is chest
+    height on you, which means it is a full wall for its builders. The gap at the
+    base is deliberate -- sized for them, not for you. Crawling through means exposing
+    your head and back to whatever waits on the other side.
+  splinters: Sharpened fragments of basalt, wedged into the barricade at angles designed
+    to catch skin and cloth. Not lethal, but painful. A deterrent built with malice
+    and experience.
+idlemessages:
+- Something shifts behind the barricade. The sound of small feet on stone, deliberate and unhurried.
+- The sharpened splinters jutting from the barricade glint faintly in the dim light.
+- A low, guttural exchange of words -- if they are words -- filters through the gap in the barricade.
+- The air pushing through the crawlspace is hot and rank, like the breath of something large.

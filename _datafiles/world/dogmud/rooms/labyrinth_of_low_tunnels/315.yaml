@@ -1,0 +1,27 @@
+roomid: 315
+zone: Labyrinth of Low Tunnels
+title: Trophy Alcove
+description: A shallow alcove branching west from the den, its walls lined with mounted
+  trophies. Skulls -- mostly animal, some disturbingly not -- are wedged into cracks
+  and crevices at eye level, staring inward with empty sockets. Scraps of salvaged
+  equipment hang from bone pegs driven into the stone -- a rusted buckle, a torn
+  leather strap, the bent remains of a belt knife, a boot with the sole chewed through.
+  These are not decoration. They are proof. Proof that things wander into these tunnels,
+  and proof that those things do not leave. Some of the trophies look recent. The bone
+  is still white.
+biome: cave
+exits:
+  east:
+    roomid: 314
+nouns:
+  skulls: Animal skulls mostly -- rats, bats, something with a longer jaw that might
+    be a cave lizard. But three of them, mounted highest and most prominently, are
+    unmistakably human. They have been cleaned with care and arranged facing outward,
+    as though on display for visitors.
+  equipment: Scraps of gear taken from the dead or the fled. A bent knife. A torn
+    strap. A boot. Nothing intact, nothing valuable. The useful parts have been
+    stripped and repurposed. These are the leftovers -- mounted as warnings.
+idlemessages:
+- The empty eye sockets of the mounted skulls catch shadows and seem to follow movement.
+- A strip of leather hanging from a bone peg sways gently, though there is no breeze.
+- The white bone of the newest trophies gleams against the soot-blackened walls.

@@ -1,0 +1,20 @@
+roomid: 302
+zone: Labyrinth of Low Tunnels
+title: Rubble Choke
+description: The western passage narrows to a crawlspace choked with loose rubble and
+  shattered stone. The ceiling has partially collapsed here, leaving a gap barely wide
+  enough to drag yourself through on your belly. The rubble is not random -- someone
+  has cleared a path through the worst of it, pushing stones aside to maintain a
+  tunnel just large enough for something small to pass. The air reeks of old urine,
+  sharp and eye-watering. Territorial markings, crudely daubed in something dark and
+  sticky, cover the walls on either side of the squeeze.
+biome: cave
+exits:
+  east:
+    roomid: 301
+  south:
+    roomid: 305
+idlemessages:
+- Loose gravel shifts and settles somewhere in the rubble above. The collapse may not be finished.
+- The ammonia stink of old urine burns your nostrils.
+- Something small scurries through the rubble overhead, dislodging a shower of grit.
