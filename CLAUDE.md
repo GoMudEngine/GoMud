@@ -72,3 +72,18 @@ Never display raw numeric values (damage, healing, armor points, round counts, e
 - **Armor / stat bonuses**: describe the feel ("bolsters your defenses" not "+33 armor")
 
 Displaying raw numbers breaks immersion and leaks internal balance values to players. The exception is the `status` command's stat sheet — that is a deliberate mechanical display.
+
+## Content Generation Commands
+Use slash commands to generate new data files. Claude automatically loads world.md,
+the relevant schema, and existing examples before generating.
+
+- `/new-mob "description"` — generate a mob YAML (+ optional JS stub)
+- `/new-room "description"` — generate a room YAML
+- `/new-item "description"` — generate an item YAML
+- `/zone-sketch "concept"` — plan a new zone (room list + adjacency) before generating rooms
+
+Schema reference: `docs/schemas/` (room, mob, item, spell, buff, dialogue)
+Full workflow: `docs/CONTENT_GENERATION_GUIDE.md`
+
+After generating any file: restart server. If editing an existing zone, check
+`_datafiles/world/dogmud/rooms.instances/` for stale instance saves.

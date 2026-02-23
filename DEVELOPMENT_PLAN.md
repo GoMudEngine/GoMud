@@ -3963,7 +3963,7 @@ fallback:
 
 ---
 
-### Stage 18.4: LLM-as-Builder Pipeline (Offline Content Generation)
+### Stage 18.4: LLM-as-Builder Pipeline (Offline Content Generation) ✅ COMPLETED
 **Goal**: Create a human-in-the-loop pipeline for using an LLM to assist with world building — generating rooms, mobs, items, and other data files in the correct YAML format. The LLM works offline as a content drafting tool; all output is reviewed by the designer before being dropped into the game. No engine changes are required.
 
 **Design philosophy**:
@@ -4238,4 +4238,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-23
 **Status**: In Progress
-**Current Stage**: Stage 18.3 complete. Local LLM integration (Ollama) implemented: `internal/llm/` package (types, cache, client), `LLMProfile` field on Mob, `LLM` config section, thinking-delay delivery pattern in `ask.go` and `talk.go`, Elder Saris (mob 55) wired with llmprofile + fallback dialogue YAML. LLM disabled by default (`LLM.Enabled: false`). Post-completion: fixed upstream `gametime.AddPeriod` slice bounds crash (off-by-one `>=2` vs `>=3`), updated Elder Saris monologue to invite players to `ask` questions, clarified `ask` help template syntax. Next: Stage 18.4 (LLM-as-Builder Pipeline, optional).
+**Current Stage**: Stage 18.4 complete. LLM-as-Builder pipeline implemented via Claude Code integration: 6 schema docs in `docs/schemas/` (room, mob, item, spell, buff, dialogue), 4 custom slash commands in `.claude/commands/` (`/new-mob`, `/new-room`, `/new-item`, `/zone-sketch`), `docs/CONTENT_GENERATION_GUIDE.md` covering full workflow, and `CLAUDE.md` updated with Content Generation section. Chosen Claude Code approach (Option 2) over static prompt templates — commands dynamically load world.md + schema + examples at generation time. Zero Go changes. Next: Phase 19 (TBD).
