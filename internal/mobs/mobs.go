@@ -12,6 +12,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/conversations"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/llm"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"gopkg.in/yaml.v2"
 
@@ -78,6 +79,7 @@ type Mob struct {
 	ScriptTag       string   `yaml:"scripttag"`                 // Script for this mob: mobs/frostfang/scripts/{mobId}-{mobname}-{ScriptTag}.js
 	QuestFlags      []string `yaml:"questflags,omitempty,flow"` // What quest flags are set on this mob?
 	BuffIds         []int    `yaml:"buffids,omitempty"`         // Buff Id's this mob always has upon spawn
+	LLMProfile     *llm.LLMProfile `yaml:"llmprofile,omitempty"` // Optional LLM-driven dialogue profile
 	tempDataStore   map[string]any
 	conversationId  int              // Identifier of conversation currently involved in.
 	Path            PathQueue        `yaml:"-"` // a pre-calculated path the mob is following.

@@ -1,0 +1,105 @@
+mobid: 55
+zone: Sanctum Basin
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "good day"]
+    responses:
+      - "The moons watch all things, child. What brings you to me?"
+      - "I have few words to spare, but I will share them with you."
+      - "Ah. Another who seeks the old knowledge. Ask what you will."
+
+  - keywords: ["chrysalis", "faith", "belief", "awakening", "church", "priest"]
+    responses:
+      - "The Chrysalis is not merely faith. It is the memory of what the world was before the Fold tore it open."
+      - "The priests guard old truths. Whether they guard them well is another matter entirely."
+      - "The Awakening speaks of change — not destruction. Remember that when others tell you otherwise."
+
+  - keywords: ["fold", "disaster", "cataclysm", "before", "history", "past", "old world"]
+    responses:
+      - "I was young when the Fold came. The sky did not fall — it simply... shifted. Nothing has been right since."
+      - "What came before the Fold? Order. Purpose. A world that knew its own shape. That world is gone."
+
+  - keywords: ["mutation", "mutant", "change", "body", "affliction"]
+    responses:
+      - "The mutations are not a curse. They are the world adapting. Whether they adapt toward something better — that I cannot say."
+      - "I have seen mutations that brought strength, and others that brought only suffering. The difference lies in the person, not the change."
+
+  - keywords: ["danger", "outside", "beyond", "walls", "threat", "enemy", "trouble"]
+    responses:
+      - "The Fold left many things wandering beyond these walls. Most are lost. Some are hungry. None are friendly."
+      - "The walls stand because what is outside will not respect your life as readily as I do."
+
+  - keywords: ["you", "yourself", "saris", "elder", "who are", "name"]
+    responses:
+      - "I am Saris. I have been here longer than the walls. I will likely be here after they fall, too."
+      - "Elder is a title others gave me. I simply stayed when everyone else left or died."
+
+  - keywords: ["sanctum", "basin", "here", "settlement", "place", "town"]
+    responses:
+      - "Sanctum Basin endures because its people endure. The stone helps, but it is not the reason."
+      - "I have watched this settlement grow from a handful of survivors to something almost worthy of hope."
+
+  - keywords: ["moons", "moon", "sky", "three moons", "stars"]
+    responses:
+      - "The three moons follow their own counsel. I have watched them long enough to know they keep secrets I will never fully understand."
+      - "When all three are full at once, the old records say the Fold weakens. I have only seen it twice. Both times, strange things walked in from the dark."
+
+  - keywords: [""]
+    responses:
+      - "Ask with care. My time, like yours, is finite."
+      - "I do not speak idly. Bring me a real question."
+      - "Perhaps you seek something I cannot give. Think on what you truly wish to know."
+
+tree:
+  root:
+    text: "You seek the counsel of an old mind. Very well — ask what weighs on you."
+    hints: "You could ask Elder Saris about the Chrysalis, the Fold, mutations, the Basin, or the three moons."
+
+  nodes:
+    - id: fold
+      triggers: ["fold", "disaster", "cataclysm", "old world", "before", "history"]
+      text: "The Fold came like a silence. One moment the world was familiar; the next, it was not. I watched from this very hill. I have watched from it ever since."
+      hints: "You could ask Elder Saris about what survived the Fold, or about the mutations that followed."
+      unlocks: ["mutations_topic", "survivors"]
+
+    - id: mutations_topic
+      triggers: ["mutation", "mutant", "change", "affliction", "body"]
+      requires: ["fold"]
+      text: "The mutations began within a season of the Fold. The world was rewriting itself. Some who changed lost their minds. Others gained something... useful. I have learned not to judge too quickly."
+      unlocks: ["adapt"]
+
+    - id: adapt
+      triggers: ["adapt", "survive", "useful", "benefit", "gain", "power"]
+      requires: ["mutations_topic"]
+      text: "Those who adapted survived. Those who could not... the Basin keeps their names in the stone records, if you care to find them. Survival is not cruelty. It is simply what remains."
+
+    - id: survivors
+      triggers: ["survive", "people", "who", "remain", "left", "stayed"]
+      requires: ["fold"]
+      text: "A few dozen remained after the first year. We dug in here because the stone was sound and the water was clean. That was the whole of our plan. Somehow, it was enough."
+
+    - id: chrysalis
+      triggers: ["chrysalis", "faith", "awakening", "belief", "priest"]
+      text: "The Chrysalis preserves what the old world knew of the Fold. Whether their interpretation is correct, I cannot say with certainty. But their records are real, and their dedication is genuine."
+      hints: "Ask Elder Saris about the Awakening specifically, or what the records contain."
+      unlocks: ["awakening"]
+
+    - id: awakening
+      triggers: ["awakening", "prophecy", "predict", "future", "coming"]
+      requires: ["chrysalis"]
+      text: "The Awakening is not a prophecy of salvation. It is a warning. The Fold may open again. What comes through next time may not stop at mutations. Heed that, whatever else you discard."
+
+    - id: moons
+      triggers: ["moon", "moons", "three", "sky", "phases", "watch"]
+      text: "I have kept records of the moons for forty years. When they align, old wounds in the Fold reopen briefly. I do not think this is coincidence. I have not yet decided what it means."
+      hints: "You could ask Elder Saris what he has seen during alignments."
+      unlocks: ["alignment"]
+
+    - id: alignment
+      triggers: ["align", "alignment", "together", "full", "all three", "what happens", "saw"]
+      requires: ["moons"]
+      text: "The last full alignment brought three nights of unnatural silence, followed by creatures I had no names for. We lost two people. I wrote it all down. I hope no one else has to verify my notes."
+
+memory:
+  expiryPeriod: "1h"
