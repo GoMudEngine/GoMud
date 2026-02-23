@@ -13,8 +13,6 @@ description: Beyond the barricade, the tunnel opens into a chamber that feels al
   is a palpable presence -- the ceiling so low and the walls so close that the chamber
   feels like the inside of a clenched fist.
 biome: cave
-mapsymbol: C
-maplegend: Chieftain
 exits:
   north:
     roomid: 316

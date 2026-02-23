@@ -11,8 +11,6 @@ description: The tunnels open into the largest chamber you have encountered down
   is so thick with smoke, sweat, and the reek of communal habitation that it feels
   like breathing through a damp cloth pressed against your face.
 biome: cave
-mapsymbol: O
-maplegend: Den
 exits:
   north:
     roomid: 313
