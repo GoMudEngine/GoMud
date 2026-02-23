@@ -58,14 +58,14 @@ For each room, provide:
 - Proposed title (2–5 words)
 - One-sentence description of character/feel
 - Biome (if different from zone default)
-- Suggested mapsymbol
+**IMPORTANT — mapsymbol/maplegend gotcha:** Do NOT suggest `mapsymbol` or `maplegend` for rooms unless they are genuine landmarks (town square, bank, shop). The map renderer embeds these values inside ANSI formatting tags, so special characters (`=`, `|`, `-`, `#`, `~`, `>`, `<`, `!`, `?`, `$`, `*`, `\`, `+`, `.`) break the mini-map — raw tag fragments bleed into the room description. Even plain letters cause issues if `maplegend` is not a recognized map class. When in doubt, omit both fields entirely and let the engine use its default room marker. If mapsymbol/maplegend are set or changed, delete any instance saves in `rooms.instances/<zone>/` — cached old values will silently override template changes.
 
 Example format:
 ```
-Room 201 — "Cracked Salt Flat"       [mapsymbol: ~]
+Room 201 — "Cracked Salt Flat"
   Bleached expanse of fractured earth, pooled brine collecting in the lowest seams.
 
-Room 202 — "Sunken Tidal Channel"    [mapsymbol: =]
+Room 202 — "Sunken Tidal Channel"
   A narrow cut where the ancient sea once flowed; the walls are streaked with mineral stains.
 ```
 

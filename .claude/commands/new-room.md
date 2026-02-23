@@ -49,7 +49,7 @@ Using `$ARGUMENTS` as the creative brief:
 - Write a title: short (2–5 words), evocative, matches the world tone
 - Write a description: 3–5 sentences. Ground it in sensory detail (smell, sound, temperature, texture). Reference the zone's established geography and biome. Do not narrate player emotion.
 - Choose `biome` from the valid values in `docs/schemas/room.md`
-- Set `mapsymbol` (one character) and `maplegend` (one word) if the room warrants a map presence
+- **Do NOT set `mapsymbol` or `maplegend`** unless the room is a genuine landmark (town square, bank, shop). The map renderer embeds these values inside ANSI tags — special characters and unrecognized maplegend values break the mini-map, causing raw tag fragments to bleed into the room description. When in doubt, omit both fields. If they are set or changed, delete any instance saves in `rooms.instances/<zone>/` to prevent cached old values from overriding the template.
 - Add `idlemessages` (3–5 entries) that bring the space to life — subtle environmental details, distant sounds, ambient movement
 - Add `nouns` if there are interesting features worth examining
 - Add `spawninfo` only if the user explicitly requested spawns
