@@ -4138,7 +4138,7 @@ that's hard to balance and obscures the intended difficulty curve.
 
 ---
 
-## Phase 22: AI Client Infrastructure ✅ COMPLETED
+## Phase 22: AI Client Infrastructure ✅ COMPLETED (c158eab)
 
 ### Stage 22.1: Dedicated AI Port & Separate Connection Pools ✅ COMPLETED
 
