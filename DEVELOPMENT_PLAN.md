@@ -4114,7 +4114,7 @@ skill rust, and a temporary Death's Shadow debuff in the Shadow Realm.
 
 ## Phase 21: Remove Autoscaling
 
-### Stage 21.1: Remove Zone Autoscaling System ✅ COMPLETED
+### Stage 21.1: Remove Zone Autoscaling System ✅ COMPLETED (0d228ad)
 
 **Goal**: Remove the zone-level mob autoscaling system entirely. Mob difficulty should be set
 explicitly per-mob via `statpool` in the mob YAML or per-spawn via `statpool`/`statpoolmod` in
