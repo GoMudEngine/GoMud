@@ -2,7 +2,7 @@ mutationid: magical-resistance
 name: Magical Resistance
 description: Your body resists the weave of magic. Spells wash over you with diminished force, but your own conviction frays more quickly.
 rarity: 8
-visual: Magic seems to slide off you like water from waxed cloth.
+visual: Magic seems to slide off them like water from waxed cloth.
 pro:
   type: magical_damage_reduction
   target: ""
