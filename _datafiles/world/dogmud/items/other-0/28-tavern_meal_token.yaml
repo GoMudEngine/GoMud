@@ -1,0 +1,11 @@
+itemid: 28
+name: tavern meal token
+namesimple: token
+description: A small wooden disc branded with the sign of the Drowning Post -- a fence
+  post in rising water. Good for one meal and a mug of ale at Marek's tavern. The
+  token is smooth with handling and smells faintly of woodsmoke and cooking. Marek
+  issues these sparingly, usually to people who have done him a favour.
+type: object
+subtype: holdable
+uses: 0
+weight: 0.1

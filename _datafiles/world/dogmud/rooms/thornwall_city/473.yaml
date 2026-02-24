@@ -1,0 +1,34 @@
+roomid: 473
+zone: Thornwall City
+title: Guard Barracks
+description: The city guard barracks is a solid stone building near the western gate,
+  built for function without the slightest concern for aesthetics. The ground floor
+  is a combination of duty room, armoury, and holding cells -- a long wooden table
+  dominates the center, covered with duty rosters, incident reports, and the remains
+  of someone's lunch. Weapon racks line the walls, holding spears, short swords, and
+  a few crossbows. Iron-barred cells occupy the far end, currently empty. The air
+  smells of metal polish and stale bread.
+biome: city
+exits:
+  south:
+    roomid: 460
+nouns:
+  table:
+    look: A heavy oak table scarred by knife marks and ink stains. Duty rosters are
+      pinned under a mug, incident reports are stacked in rough piles, and a half-eaten
+      loaf of bread sits next to an inkwell. This is where the daily business of
+      keeping the peace is organized.
+  racks:
+    look: Wooden weapon racks holding city guard equipment -- spears, short swords,
+      truncheons, and a few crossbows with quarrel pouches. Everything is maintained
+      but well-used. A chalk board above lists equipment checked out and by whom.
+  cells:
+    look: Three iron-barred cells at the back of the room, each barely large enough
+      for a cot and a bucket. They are empty now, their doors standing open. Scratches
+      and stains on the walls suggest they see regular use.
+spawns:
+  - mobid: 94
+idlemessages:
+- A guard sits at the table, laboriously writing an incident report.
+- Keys jingle on a ring at someone's belt.
+- The duty roster on the wall shows names crossed out and reassigned in different ink.

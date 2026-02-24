@@ -1,0 +1,39 @@
+roomid: 472
+zone: Thornwall City
+title: The Drowning Post Tavern
+description: A low-ceilinged tavern tucked into the south end of the Craftsmen's
+  Quarter, its sign depicting a fence post half-submerged in rising water -- a
+  reference to the flooding that plagued this district before the drainage channels
+  were built. The interior is dim, smoky, and comfortable in the way of places that
+  have soaked up decades of conversation and spilled ale. Mismatched tables fill the
+  room, and the bar is a single slab of scarred oak on trestle legs. A staircase
+  leads down to a cellar, and a back door opens onto a narrow alley. The tavern has
+  the feel of a place where people come to talk seriously over cheap drinks.
+biome: city
+exits:
+  north:
+    roomid: 469
+  east:
+    roomid: 475
+nouns:
+  sign:
+    look: A painted wooden sign showing a fence post in brown water, the waterline
+      rising to the crossbar. The paint is fresh -- someone keeps the sign maintained
+      even if the rest of the building could use work. Below the image, in block
+      letters, "The Drowning Post."
+  bar:
+    look: A massive slab of oak, dark with age and stain, resting on heavy trestle
+      legs. The surface is carved with initials, ring-marked by a thousand mugs, and
+      polished smooth in the spots where elbows rest. Behind it, shelves hold bottles,
+      kegs, and an impressive collection of mismatched cups.
+  cellar:
+    look: A narrow staircase descends into darkness. The air rising from below is
+      cool and damp, smelling of old stone and stagnant water. The cellar serves
+      as storage, but the dampness suggests the flooding that gave the tavern its
+      name has not entirely been conquered. The stairs look sturdy but steep.
+spawns:
+  - mobid: 96
+idlemessages:
+- The clink of cups and low murmur of conversation fill the room.
+- Smoke from a pipe drifts across the ceiling in lazy blue layers.
+- The tavern keeper polishes a mug with a rag, listening to everything.

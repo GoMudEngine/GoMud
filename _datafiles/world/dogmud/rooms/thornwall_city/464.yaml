@@ -1,0 +1,33 @@
+roomid: 464
+zone: Thornwall City
+title: Market Square, West
+description: The western edge of Market Square is dominated by food vendors -- stalls
+  selling bread, cheese, dried meat, and seasonal vegetables arranged in rows beneath
+  canvas awnings. The square is paved with broad flagstones, worn concave in the
+  centers from centuries of foot traffic. The noise is constant -- hawkers calling
+  prices, customers haggling, cart wheels grinding on stone. A food vendor has set
+  up a cart with a brazier, selling skewered meat and roasted roots to the market
+  crowd.
+biome: city
+exits:
+  west:
+    roomid: 463
+  east:
+    roomid: 465
+  south:
+    roomid: 470
+nouns:
+  stalls:
+    look: Wooden stalls with canvas roofs, each one displaying goods on planked
+      counters. The food vendors keep their wares fresh under damp cloth, shooing
+      away flies and pigeons with equal vigour.
+  brazier:
+    look: A portable iron brazier on wheels, its coals glowing orange. Skewered
+      meat sizzles over the heat, the fat dripping and hissing. The smell is
+      irresistible.
+spawns:
+  - mobid: 103
+idlemessages:
+- A vendor calls out prices, competing with the stall across the row.
+- The smell of roasting meat and fresh bread mingles in the market air.
+- A child darts between the stalls, clutching a stolen apple.

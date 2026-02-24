@@ -1,0 +1,31 @@
+roomid: 467
+zone: Thornwall City
+title: Temple District
+description: A quieter part of the city, set apart from the market's noise by a low
+  wall and a row of ancient yew trees. The temple dominates the district -- a stone
+  building of considerable age, its spire the tallest structure in Thornwall. Smaller
+  buildings cluster around it -- a hospice, a scriptorium, and residences for the
+  temple staff. The cobblestones here are cleaner than the rest of the city, swept
+  daily by acolytes. The air smells of incense and old stone.
+biome: city
+exits:
+  south:
+    roomid: 462
+  east:
+    roomid: 478
+  north:
+    roomid: 468
+nouns:
+  temple:
+    look: The temple is built of pale limestone that has aged to a warm honey colour.
+      Its architecture is old -- pointed arches, narrow windows, a spire that tapers
+      to a weathervane. The doors are heavy oak, standing open during the day. A
+      carved motto above the entrance has been worn nearly illegible by weather.
+  trees:
+    look: Ancient yew trees, their trunks thick and gnarled, their dark foliage
+      creating pools of shade. They predate the temple and possibly the city itself.
+      Birds nest in their upper branches, their calls oddly peaceful.
+idlemessages:
+- An acolyte sweeps the cobblestones with slow, methodical strokes.
+- The smell of incense drifts from the temple's open doors.
+- A bell in the spire chimes the hour, its tone clear and resonant.

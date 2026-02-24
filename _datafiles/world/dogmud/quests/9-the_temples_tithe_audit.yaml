@@ -1,0 +1,25 @@
+questid: 9
+name: The Temple's Tithe Audit
+description: Temple Priest Olen suspects merchants of under-paying their tithes. The
+  merchants suspect the temple of inflating expenses. Both are right. Retrieve the
+  tithe ledger and decide who sees it.
+secret: false
+
+steps:
+  - id: start
+    description: "Temple Priest Olen has asked you to investigate discrepancies in the tithe records. He suspects merchants in the market are under-reporting their income to avoid full tithes."
+    hint: "Speak with merchants in the market square about their tithe payments."
+  - id: investigate
+    description: "You have spoken with merchants about the tithes. Both sides have grievances. Find the tithe ledger to see the actual numbers."
+    hint: "The tithe ledger may be in the temple or the records office."
+  - id: evidence
+    description: "You have the tithe ledger. It shows both sides are cheating -- merchants under-reporting, and the temple inflating expenses. Decide who to bring it to."
+    hint: "Return the ledger to Priest Olen, or show it to the market merchant, or take it to the records office."
+  - id: end
+    description: "The tithe dispute is in other hands now. Neither side is entirely clean."
+
+rewards:
+  playermessage: "The ledger's contents are damning in both directions. Whoever receives it will use it to their advantage, and the other side will suffer for it. Or perhaps the public airing of both parties' dishonesty will force a more honest arrangement. In Thornwall, optimism is a luxury, but sometimes the truth is enough."
+  roommessage: "The tithe ledger changes hands, and the balance of power shifts."
+  gold: 12
+  itemid: 27

@@ -1,0 +1,32 @@
+mobid: 103
+zone: Thornwall City
+statpool: 12
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - humanoid
+  - merchant
+idlecommands:
+  - 'emote turns a skewer over the brazier coals, basting it with oil'
+  - 'emote wipes hands on an apron and calls out to passing customers'
+  - ''
+  - ''
+activitylevel: 20
+character:
+  name: food vendor
+  description: |
+    A cheerful, round-faced woman in a stained apron, working a portable
+    brazier cart at the edge of the market. She sells skewered meat, roasted
+    roots, and small meat pies wrapped in greased paper. The food is cheap,
+    hot, and surprisingly good -- the kind of cooking that survives on
+    reputation and repeat customers rather than ambience. She knows most
+    of her regulars by name and order.
+  speciesid: 1
+  level: 1
+  gold: 2
+  stats:
+    charisma:
+      training: 8
+    vitality:
+      training: 5

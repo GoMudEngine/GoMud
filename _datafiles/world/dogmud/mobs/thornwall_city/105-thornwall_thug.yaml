@@ -1,0 +1,42 @@
+mobid: 105
+zone: Thornwall City
+statpool: 14
+itemdropchance: 10
+hostile: true
+maxwander: 1
+groups:
+  - humanoid
+  - bandit
+idlecommands:
+  - 'emote leans against the alley wall, watching the street'
+  - 'emote cracks knuckles with deliberate slowness'
+  - ''
+  - ''
+combatcommands:
+  - 'emote swings a heavy fist, aiming for the jaw'
+  - ''
+  - 'emote kicks at your legs, trying to knock you off balance'
+  - ''
+activitylevel: 25
+character:
+  name: thornwall thug
+  description: |
+    A heavyset figure in dark clothing, loitering in the alley with the
+    proprietary air of someone who considers this their territory. The
+    thug carries no visible weapon but does not need one -- the scarred
+    knuckles and broken nose tell their own story. This is the low end
+    of Thornwall's criminal ecosystem -- the muscle that collects
+    protection money, discourages competition, and reminds people why
+    they should pay on time. Not clever, but effective.
+  speciesid: 1
+  level: 1
+  gold: 2
+  stats:
+    strength:
+      training: 10
+    vitality:
+      training: 8
+    dexterity:
+      training: 3
+    perception:
+      training: -5

@@ -1,0 +1,31 @@
+roomid: 476
+zone: Thornwall City
+title: Records Office
+description: A stone building with barred windows and a heavy door, the Records Office
+  is where the city's bureaucracy lives. The interior is lined floor to ceiling with
+  shelves of bound ledgers, rolled parchments, and filing boxes labelled in a cramped,
+  precise hand. A counter separates the public area from the stacks, and a clerk
+  sits behind it with the expression of someone who has answered the same question
+  ten thousand times. The air is dry and dusty, thick with the smell of old paper
+  and sealing wax. This is where tax records, property deeds, citizen rolls, and
+  official correspondence are kept -- the paper skeleton of the city.
+biome: city
+exits:
+  south:
+    roomid: 463
+nouns:
+  shelves:
+    look: Floor-to-ceiling shelves packed with ledgers, each one labelled by year
+      and category. The oldest are leather-bound and crumbling at the spines. The
+      newest are identical in format but the leather is fresh. The system is
+      meticulous, if overwhelming.
+  counter:
+    look: A wooden counter with a brass bell for service, a stack of blank request
+      forms, and an inkwell. A sign reads "All requests must be submitted in writing.
+      Processing time varies. Do not ring bell more than once."
+spawns:
+  - mobid: 99
+idlemessages:
+- A page turns somewhere deep in the stacks, a dry whisper of parchment.
+- The clerk stamps a document with a heavy seal, the sound sharp in the quiet room.
+- Dust motes drift in the thin light from the barred windows.

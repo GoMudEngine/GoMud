@@ -1,0 +1,35 @@
+mobid: 101
+zone: Thornwall City
+statpool: 10
+itemdropchance: 0
+hostile: false
+maxwander: 2
+groups:
+  - humanoid
+idlecommands:
+  - 'emote juggles three coloured balls in a lazy arc'
+  - 'emote plays a jaunty tune on a battered tin whistle'
+  - ''
+  - 'emote takes a dramatic bow to an audience of pigeons'
+  - ''
+  - ''
+activitylevel: 25
+character:
+  name: street performer
+  description: |
+    A wiry figure in a patchwork coat of mismatched fabrics, each patch
+    a different colour and texture. The street performer has a quick grin
+    and quicker hands -- juggling, sleight of hand, music, and a patter
+    of jokes that range from clever to terrible. The performer works the
+    central stretch of Main Street, collecting coins in an upturned hat
+    and trading in the currency of attention. Behind the showmanship,
+    there is a sharpness -- performers survive by reading crowds, and
+    this one reads them very well.
+  speciesid: 1
+  level: 1
+  gold: 1
+  stats:
+    dexterity:
+      training: 10
+    charisma:
+      training: 10

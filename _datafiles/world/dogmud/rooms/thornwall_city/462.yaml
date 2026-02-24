@@ -1,0 +1,32 @@
+roomid: 462
+zone: Thornwall City
+title: Main Street, Central
+description: The center of Main Street is marked by a worn stone fountain that has
+  not held water in years -- its basin is used as an informal message board, with
+  notices and handbills tucked under stones along the rim. The street widens here
+  into a small plaza where the major thoroughfares converge. To the north, the Temple
+  District's spire is visible above the rooftops. To the south, a narrower street
+  leads toward the Craftsmen's Quarter. The buildings here are better maintained --
+  fresh paint, clean windows, the occasional decorative ironwork.
+biome: city
+exits:
+  west:
+    roomid: 461
+  east:
+    roomid: 463
+  north:
+    roomid: 467
+  south:
+    roomid: 469
+nouns:
+  fountain:
+    look: A stone fountain in the classical style -- a central pillar topped with a
+      worn figure too weathered to identify, surrounded by a circular basin. The
+      plumbing failed long ago. The basin is dry, its floor covered in a layer of
+      notices, lost buttons, and pigeon droppings.
+spawns:
+  - mobid: 101
+idlemessages:
+- Someone tucks a notice into the dry fountain basin and hurries away.
+- A pigeon lands on the fountain's central figure, puffing its chest importantly.
+- The noon bell rings from the temple spire, echoing down the street.

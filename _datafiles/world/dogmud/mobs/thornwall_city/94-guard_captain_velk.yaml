@@ -1,0 +1,38 @@
+mobid: 94
+zone: Thornwall City
+statpool: 30
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - humanoid
+  - guard
+idlecommands:
+  - 'emote reviews a duty roster, making corrections with a quill'
+  - 'emote drums fingers on the table, studying an incident report'
+  - ''
+  - 'emote glances toward the cells, then back to the paperwork'
+  - ''
+activitylevel: 15
+character:
+  name: guard captain Velk
+  description: |
+    A weathered man with iron-grey hair cut close to the scalp and a face
+    that looks like it was carved from the same stone as the barracks. Velk
+    wears the city guard uniform with the additions of rank -- a bronze pin
+    on the collar, a better-quality sword at his hip, and the permanently
+    tired expression of someone responsible for too many people and too few
+    resources. He speaks in short, precise sentences and listens with the
+    intensity of a man who has learned that details save lives.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 10
+    perception:
+      training: 10
+    willpower:
+      training: 10
+    vitality:
+      training: 5

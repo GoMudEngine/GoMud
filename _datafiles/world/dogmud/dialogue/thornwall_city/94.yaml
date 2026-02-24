@@ -1,0 +1,71 @@
+mobid: 94
+zone: Thornwall City
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Civilian. State your business. If you are here to file a report, there are forms on the counter."
+      - "What do you need? Make it quick -- I have a shift change in an hour and the rosters are not done."
+
+  - keywords: ["hello", "hi"]
+    moods: ["grateful"]
+    responses:
+      - "Good to see you. The watch owes you one. What do you need?"
+
+  - keywords: ["missing", "person", "elara", "disappear", "find"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "We have a missing person case. Young woman, name of Elara. Family reported it. If you are willing to look into it, I could use the help -- my patrols are stretched thin."
+      - "Elara went missing three days ago. Family is frantic. My guards are covering the gates and market, but the residential wards need someone to knock on doors."
+
+  - keywords: ["crime", "thug", "protection", "racket", "alley"]
+    responses:
+      - "There is always criminal activity in the back alleys. We patrol when we can, but we are understaffed. If you have specific information, I will act on it."
+
+  - keywords: ["guard", "patrol", "watch", "duty"]
+    responses:
+      - "The city watch covers the gates, market, and main streets. We are spread thin. The back alleys and residential wards get patrol coverage when we have bodies to spare, which is not often."
+
+  - keywords: [""]
+    responses:
+      - "Is there something else? The duty log will not write itself."
+      - "If you have nothing to report, I have work to do."
+
+tree:
+  root:
+    text: "Captain Velk looks up from a stack of incident reports, his expression settling into the professionally neutral face of a man who has dealt with a thousand visitors. 'Civilian. If you are here about the noise complaint on Market Street, it is filed. If you are here about something else, take a seat.' He gestures at a wooden chair that looks deeply uncomfortable."
+    hints: "Ask about the missing person case, crime in the city, or the guard's operations."
+
+  nodes:
+    - id: missing_case
+      triggers: ["missing", "person", "elara", "case", "help", "quest", "task"]
+      text: "Velk pulls a report from the stack. 'Elara. Twenty-two years old, daughter of a merchant family in the eastern quarter. Reported missing three days ago by her father. No signs of violence, no ransom demand. She just vanished.' He sets the report down. 'My guards are watching the gates and the market, but I do not have the people to search the residential wards door by door. If you are willing to look into it, I would appreciate the help.'"
+      hints: "Accept the case and search the residential wards for Elara."
+      unlocks: ["family_info", "where_to_look"]
+      moodChange: friendly
+
+    - id: family_info
+      triggers: ["family", "father", "merchant", "who", "why"]
+      requires: ["missing_case"]
+      text: "'The father is Aldric Sevarn, textile merchant. Prominent family, old money, strong opinions about how daughters should conduct themselves.' Velk's tone is carefully neutral. 'He filed the report in person. Very insistent. Very concerned. Draw your own conclusions about what kind of concerned.'"
+
+    - id: where_to_look
+      triggers: ["where", "search", "residential", "look", "find"]
+      requires: ["missing_case"]
+      text: "'If she is still in the city, the residential wards are the most likely place. Cheap rooms, anonymous landlords, people who mind their own business. Start north of the market and work your way through. Ask quietly -- if she is hiding, a loud search will just drive her deeper.'"
+
+    - id: protection_report
+      triggers: ["protection", "racket", "thug", "extortion", "notice", "evidence", "proof"]
+      text: "Velk's expression sharpens. 'You have evidence of a protection racket? Show me.' He examines whatever you provide with careful attention. 'This is enough to act on. I will put a patrol on the back alleys and bring someone in for questioning. You have done the watch a service.'"
+      moodChange: friendly
+
+    - id: case_report
+      triggers: ["found", "report", "elara", "located", "hiding"]
+      requires: ["missing_case"]
+      text: "Velk listens to your report without interruption, making occasional notes. When you finish, he sets down the quill. 'I will close the case based on your account. The family will be notified that she has been located.' He pauses. 'What I tell them beyond that depends on what you have told me. The watch deals in facts, not judgments.'"
+      moodChange: grateful
+
+memory:
+  expiryPeriod: "1h"

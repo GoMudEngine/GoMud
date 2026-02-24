@@ -1,0 +1,36 @@
+mobid: 107
+zone: Thornwall City
+statpool: 14
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote peers around a corner, then pulls back quickly'
+  - 'emote wraps a shawl tighter, keeping to the shadows'
+  - ''
+  - 'emote tenses at the sound of footsteps, then relaxes'
+  - ''
+activitylevel: 10
+character:
+  name: Elara
+  description: |
+    A young woman in plain clothes, doing her best to look like she
+    belongs while clearly being afraid of being noticed. She keeps to
+    the residential ward's quieter streets, avoiding the main
+    thoroughfares and starting at loud noises. Her hands are uncallused
+    and her bearing is too upright for the working class neighbourhood
+    she is hiding in -- small details that suggest she came from
+    somewhere with more comfort and less freedom. Whatever she is
+    running from, she is not very good at running.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    willpower:
+      training: 5
+    perception:
+      training: 5
+    charisma:
+      training: 8

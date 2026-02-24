@@ -1,0 +1,19 @@
+itemid: 10013
+name: thornwall steel dagger
+namesimple: dagger
+description: A well-crafted dagger of Thornwall steel, its blade ground to a fine
+  edge and fitted with a hardwood grip wrapped in oiled leather. The steel has a
+  faint bluish tint -- the result of Kerra's particular tempering process. The
+  balance is excellent, the point keen, and the crossguard just large enough to
+  protect the hand without adding unnecessary weight. A proper weapon, made by
+  someone who understands what a blade is for.
+type: weapon
+hands: 1
+subtype: stabbing
+damage:
+  basedamage: 7
+  variance: 2
+speedmultiplier: 1.15
+parryrating: 5
+weight: 0.7
+value: 30

@@ -1,0 +1,34 @@
+roomid: 460
+zone: Thornwall City
+title: Gate Ward
+description: Beyond the gate tunnel, Thornwall opens up around you. The Gate Ward is
+  a broad cobblestoned space where the traffic of a city begins -- cart handlers
+  shouting directions, porters hauling goods, travellers getting their bearings. The
+  buildings here are functional rather than attractive -- a guard post to the left,
+  a customs office to the right, and the wide avenue of Main Street running east into
+  the city's heart. The city wall looms behind you, massive and reassuring from this
+  side. Ahead, the noise and smell of civilization in all its dense, complicated glory.
+biome: city
+exits:
+  west:
+    roomid: 447
+    zone: Thornwall Outskirts
+  east:
+    roomid: 461
+  north:
+    roomid: 473
+nouns:
+  post:
+    look: A small stone building with an open door, staffed by city guards. A desk
+      inside is covered with paperwork. A board on the wall lists recent incidents
+      and patrol assignments.
+  office:
+    look: The customs office has a counter facing the gate traffic, staffed by a
+      bored-looking clerk. Signs list tariffs for commercial goods. Most travellers
+      walk past without stopping.
+spawns:
+  - mobid: 106
+idlemessages:
+- A porter shoulders past with a crate, muttering about delivery schedules.
+- The clatter of cart wheels on cobblestone echoes off the city wall.
+- A guard checks a merchant's cargo manifest, waving impatiently for the next cart.

@@ -1,0 +1,33 @@
+roomid: 475
+zone: Thornwall City
+title: Back Alley, East
+description: The eastern stretch of the back alley is marginally wider and slightly
+  less squalid than the western end. A fence dealer has set up in a ground-floor room
+  with a reinforced door and a viewing slot -- the kind of establishment that buys
+  things without asking where they came from. Further along, the alley opens into a
+  narrow yard where someone has stacked empty crates and barrels. The yard connects
+  to the market square through a gap between buildings to the north, and the tavern's
+  back door is visible to the west.
+biome: city
+exits:
+  west:
+    roomid: 474
+  north:
+    roomid: 466
+nouns:
+  door:
+    look: A heavy wooden door reinforced with iron bands, fitted with a viewing slot
+      at eye height. The slot is currently closed. A small mark has been scratched
+      into the doorframe -- a circle with a line through it, recognizable to those
+      who know the local thieves' marks as "buyer here."
+  crates:
+    look: A stack of empty crates and barrels, most bearing the marks of legitimate
+      merchants. They have been stacked to create a crude shelter -- someone sleeps
+      here, judging by the flattened straw and the remains of a meal tucked into a
+      corner.
+spawns:
+  - mobid: 104
+idlemessages:
+- The viewing slot in the reinforced door clicks open, then shut.
+- A cat picks its way along the top of the crate stack, tail held high.
+- Footsteps echo from somewhere in the alley, then fade.

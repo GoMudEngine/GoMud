@@ -1,0 +1,25 @@
+questid: 10
+name: The Drowning Post's Debt
+description: Tavern keeper Marek is being squeezed between city taxes and protection
+  money demanded by back-alley thugs. A non-combat quest that opens a future sewer
+  dungeon hook through the tavern's cellar.
+secret: false
+
+steps:
+  - id: start
+    description: "Tavern keeper Marek at the Drowning Post is in trouble -- he owes taxes to the city and protection money to thugs. He needs help finding a way out that does not involve violence."
+    hint: "Talk to Marek about his debts. He may have ideas about who to approach."
+  - id: investigate
+    description: "Marek needs proof of the protection racket to bring to the guard. Find the protection notice and bring it to Guard Captain Velk at the barracks."
+    hint: "Marek should have the protection notice. Take it to the guard barracks."
+  - id: report
+    description: "You have brought evidence of the protection racket to the guard captain. Return to Marek with the news."
+    hint: "Go back to the Drowning Post tavern."
+  - id: end
+    description: "Marek's protection problem is in the hands of the city guard. The tax debt remains, but at least one boot is off his neck. The cellar, however, has its own secrets."
+
+rewards:
+  playermessage: "Marek pours you a drink on the house -- the good stuff, from the bottle he keeps behind the keg. 'The guard cannot fix the taxes, but at least I will not have to pay two masters. That is something.' He glances toward the cellar stairs. 'While you were gone, I heard noises down there again. Something in the old drainage tunnels beneath the city. I have been meaning to look, but...' He trails off. 'Another time, perhaps. For now, drink.'"
+  roommessage: "Marek pours a drink with visible relief, some of the tension leaving his shoulders."
+  gold: 10
+  itemid: 28
