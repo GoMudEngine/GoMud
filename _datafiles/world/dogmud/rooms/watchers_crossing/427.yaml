@@ -1,0 +1,30 @@
+roomid: 427
+zone: Watchers Crossing
+title: Watchers Crossing, East Road
+description: Beyond the bridge the road climbs a low rise and straightens, pointing
+  east toward a horizon softened by distance and haze. The land here is greener than
+  the scrubland to the west -- the river's influence extends into the soil, and
+  farmland begins to appear in patches along the roadside. Low stone walls mark field
+  boundaries, and in the distance the dark line of a city wall is just visible against
+  the sky. A stone marker stands at the roadside, carved with distances and directions.
+biome: plains
+exits:
+  west:
+    roomid: 422
+  east:
+    roomid: 440
+    zone: Thornwall Outskirts
+nouns:
+  marker:
+    look: 'A squared stone pillar, its faces carved with directions and distances.
+      "Thornwall -- 2 leagues East. Watchers Crossing -- here. Dustwalk Road -- 4
+      leagues West. Sanctum Basin -- 6 leagues Northwest." The carving is professional
+      and recent -- someone is maintaining the road markers.'
+  walls:
+    look: Low drystone walls run along the edges of fields, marking boundaries between
+      plots. The fields themselves are a mix of tilled earth and fallow grass. This
+      is the beginning of Thornwall's agricultural belt.
+idlemessages:
+- The road stretches east, straight and well-maintained, toward the distant city walls.
+- A farm cart's tracks are fresh in the road dust, heading toward Thornwall.
+- Wind rustles through the field grass beyond the stone walls.

@@ -1,0 +1,22 @@
+questid: 6
+name: The Collector's Burden
+description: Toll collector Harn claims the bridge toll funds critical repairs to the
+  ancient bridge. He needs someone to carry his maintenance report to Thornwall to
+  prove the toll is necessary before the innkeeper's complaints shut it down.
+secret: false
+
+steps:
+  - id: start
+    description: "Toll collector Harn at the tollhouse has asked for your help. He has written a maintenance report documenting the bridge's structural problems and needs it delivered to the magistrate in Thornwall."
+    hint: "Speak with Harn at the tollhouse to receive the report."
+  - id: report
+    description: "You are carrying Harn's maintenance report. It documents stress cracks, crumbling mortar, and the cost of ongoing repairs. Deliver it to the magistrate in Thornwall."
+    hint: "Travel east through Watchers Crossing and continue toward Thornwall."
+  - id: end
+    description: "The maintenance report has been delivered. Thornwall will review the bridge's condition and decide the toll's fate."
+
+rewards:
+  playermessage: "Harn exhales slowly when you confirm the report is on its way. 'That is all I can do. If they see the numbers -- what the stone costs, what the masons charge, what happens if that crack reaches the keystone -- they will understand. The toll is not greed. It is the only thing keeping that bridge standing.' He produces a stamped receipt. 'For your crossing. You have earned it, and then some.'"
+  roommessage: "Harn nods with quiet relief, adjusting the ledger on his counter."
+  gold: 10
+  itemid: 18

@@ -1,0 +1,11 @@
+itemid: 18
+name: toll receipt
+namesimple: receipt
+description: A small slip of parchment stamped with a warden's seal in red ink. It
+  records the date, the amount paid, and the direction of travel. The handwriting is
+  precise and careful -- Harn's work. The receipt entitles the bearer to one crossing
+  of the bridge at Watchers Crossing without further charge.
+type: object
+subtype: holdable
+uses: 0
+weight: 0.1

@@ -1,0 +1,47 @@
+mobid: 87
+zone: Watchers Crossing
+statpool: 14
+itemdropchance: 10
+hostile: true
+maxwander: 1
+groups:
+  - beast
+  - aquatic
+idlecommands:
+  - 'emote slides through the dark water with barely a ripple'
+  - 'emote scrapes its claws along the stone pilings, leaving pale gouges'
+  - ''
+  - 'emote surfaces briefly, yellow eyes scanning the shadows'
+  - ''
+combatcommands:
+  - 'emote lunges from the water with a spray of foam and snapping jaws'
+  - ''
+  - 'emote drags its claws across stone as it circles for another strike'
+  - ''
+activitylevel: 20
+character:
+  name: river lurker
+  description: |
+    A low-slung creature somewhere between a crocodile and an eel,
+    armoured in overlapping plates of dark, river-slicked hide. Its body is
+    built for ambush -- powerful legs folded beneath it, a flat head dominated
+    by a jaw that can unhinge to swallow things larger than seems possible. Its
+    eyes are a dull yellow, adapted to the murky water beneath the bridge where
+    it lairs. Claw marks on the bridge pilings mark its territory. The river
+    lurker is patient, territorial, and thoroughly dangerous at close range.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 10
+    vitality:
+      training: 10
+    dexterity:
+      training: 5
+    perception:
+      training: -10
+    willpower:
+      training: -15
+    charisma:
+      training: -20

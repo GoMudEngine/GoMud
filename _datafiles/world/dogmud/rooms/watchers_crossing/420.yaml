@@ -1,0 +1,29 @@
+roomid: 420
+zone: Watchers Crossing
+title: Watchers Crossing, West Approach
+description: The dusty road from the west widens as it approaches a cluster of low
+  stone buildings huddled around a river crossing. The air changes here -- drier wind
+  gives way to the smell of water and mud, and the sound of a river running over stones
+  carries from the east. A weathered signpost at the road's edge lists destinations
+  in faded paint. Wagon ruts deepen in the softer ground, and the buildings ahead show
+  the wear of a waystation that has served travellers for longer than anyone remembers.
+biome: river
+exits:
+  west:
+    roomid: 409
+    zone: Dustwalk Road
+  east:
+    roomid: 421
+  north:
+    roomid: 423
+  south:
+    roomid: 425
+nouns:
+  signpost:
+    look: 'The wooden post leans slightly, its arms pointing in three directions. "Dustwalk
+      Road -- West" reads one. "Thornwall -- East" reads another. The third, pointing
+      north, simply says "Inn & Trade." The paint is sun-bleached but legible.'
+idlemessages:
+- A dust devil spins briefly at the crossroads before collapsing.
+- The distant sound of the river is a low, steady murmur beneath the wind.
+- A crow perches on the signpost, turning its head to watch you pass.

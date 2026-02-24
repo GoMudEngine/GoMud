@@ -1,0 +1,36 @@
+mobid: 85
+zone: Watchers Crossing
+statpool: 18
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - humanoid
+  - merchant
+idlecommands:
+  - 'emote slides an abacus bead with a precise click'
+  - 'emote checks a slate tag against a list on the counter'
+  - ''
+  - 'emote rearranges a shelf display with fussy precision'
+  - ''
+activitylevel: 15
+character:
+  name: merchant Brecca
+  description: |
+    A lean, sharp-eyed woman with ink-stained fingers and a merchant's
+    instinct for measuring people as quickly as she measures goods. Brecca wears
+    a practical smock over travelling clothes and keeps her dark hair cut short
+    -- a concession to practicality over vanity. Her trading post is organized
+    with an almost military precision, every item tagged and catalogued. She
+    speaks quickly, quotes prices from memory, and has strong opinions about the
+    toll that is strangling trade at the crossing.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    perception:
+      training: 10
+    charisma:
+      training: 5
+    dexterity:
+      training: 5

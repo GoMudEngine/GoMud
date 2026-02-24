@@ -1,0 +1,31 @@
+roomid: 425
+zone: Watchers Crossing
+title: River Bank
+description: A muddy path leads down from the road to the river's edge, where the
+  water runs wide and shallow over a bed of smooth stones. Reeds grow thick along the
+  bank, and the ground is soft and damp underfoot. This is where the locals draw water
+  and where children come to skip stones on quiet afternoons. The bridge looms to the
+  northeast, its underside dark with moss and river spray. Downstream, the water
+  deepens and the current quickens, pulling at anything that strays too far from shore.
+biome: river
+exits:
+  north:
+    roomid: 420
+  northeast:
+    roomid: 426
+nouns:
+  reeds:
+    look: Tall river reeds grow in dense clumps along the waterline, their tops heavy
+      with seed. Small birds flit between the stalks, chirping. The reeds would provide
+      decent cover for anything lurking at the water's edge.
+  stones:
+    look: The riverbed is carpeted with smooth, flat stones in shades of grey and
+      brown. Some are perfect for skipping. A few larger ones break the surface,
+      creating small eddies where debris collects.
+spawns:
+  - itemid: 19
+    respawnminutes: 15
+idlemessages:
+- Water laps at the stones along the bank with a soft, rhythmic sound.
+- A dragonfly hovers over the shallows, then darts away upstream.
+- Something splashes in the deeper water downstream -- a fish, probably.

@@ -1,0 +1,39 @@
+roomid: 423
+zone: Watchers Crossing
+title: The Crossing Inn
+description: The inn is a long, low building of river stone and timber, its roof
+  sagging comfortably in the middle like a horse that has carried too many loads. A
+  fire burns in a wide hearth despite the season, and the common room smells of bread,
+  woodsmoke, and the faintly sour tang of ale. Rough wooden tables fill the space,
+  most empty at this hour. Pelts and antlers decorate the walls alongside a painted
+  map of the region that is at least a generation out of date. A staircase leads to
+  rooms above, and a doorway behind the bar opens to a kitchen where something is
+  always simmering.
+biome: river
+exits:
+  south:
+    roomid: 420
+  east:
+    roomid: 424
+nouns:
+  map:
+    look: The painted map shows the river, the bridge, and the roads east and west.
+      Thornwall is marked as a much smaller settlement than it is today -- this map
+      predates the city's expansion by decades. Dustwalk Road is labeled simply as
+      "West Track." Someone has penciled corrections in the margins.
+  hearth:
+    look: The fireplace is built of the same river stone as the walls, blackened by
+      years of use. A kettle hangs on an iron hook over the coals. The mantel holds
+      a row of mismatched cups and a jar of dried flowers.
+  pelts:
+    look: Deer and rabbit pelts are stretched on the wall, old enough that the fur
+      has gone flat and dull. Hunting trophies from a time when the crossing saw fewer
+      travellers and more wildlife.
+spawns:
+  - mobid: 84
+  - mobid: 88
+    respawnminutes: 8
+idlemessages:
+- The fire pops and shifts in the hearth, sending up a curl of sparks.
+- A board creaks overhead as someone moves in the rooms above.
+- The smell of stew drifts from the kitchen, thick and savoury.
