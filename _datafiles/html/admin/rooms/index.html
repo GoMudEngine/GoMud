@@ -11,7 +11,7 @@
                         {{$filterType := .FilterType}}
                         {{range $index, $zInfo := .Zones}}
                             <div class="col-md-3 mr-1 mb-1">
-                                <a href="/admin/rooms/?filter-type={{$zInfo.ZoneName}}" class="{{ if eq $filterType $zInfo.ZoneName }}link-dark{{end}}">{{$zInfo.ZoneName}}</a> ({{$zInfo.RoomCount}}) {{ if ne $zInfo.AutoScale "" }} <span class="text-secondary">[AutoScale: {{ $zInfo.AutoScale }}]</span>{{ end }}
+                                <a href="/admin/rooms/?filter-type={{$zInfo.ZoneName}}" class="{{ if eq $filterType $zInfo.ZoneName }}link-dark{{end}}">{{$zInfo.ZoneName}}</a> ({{$zInfo.RoomCount}})
                             </div>
                         {{end}}
                     </div>

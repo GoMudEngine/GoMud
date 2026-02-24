@@ -1,5 +1,6 @@
 mobid: 3
 zone: Startland
+statpool: 4
 hostile: true
 maxwander: 0
 activitylevel: 60

@@ -46,6 +46,7 @@ The mobs system is built around several key components:
 ### 1. **Dynamic Instance Management**
 - Unique instance IDs for each spawned mob
 - Automatic stat calculation and equipment validation
+- Stats come from species base stats + mob YAML `statpool` bonus (no zone-level autoscaling)
 - Stats and skills defined directly in YAML (no level-based scaling)
 - Memory management with automatic cleanup
 
@@ -123,9 +124,10 @@ type Mob struct {
 ```go
 // Create new mob instance from specification
 // NOTE: In DOGMud, mobs no longer use Level for stat initialization.
-// Stats and skills are defined directly in mob YAML files.
-// The forceLevel parameter is deprecated and ignored.
-func NewMobById(mobId MobId, homeRoomId int) *Mob {
+// Stats come from species base stats + the mob's statpool bonus.
+// The forceStatPool parameter overrides the mob YAML statpool if > 0.
+// Zone-level autoscaling was removed in Phase 21.
+func NewMobById(mobId MobId, homeRoomId int, forceStatPool int) *Mob {
     if spec, ok := mobs[int(mobId)]; ok {
         instanceCounter++
 
@@ -737,8 +739,9 @@ type Mob struct {
 
 ### Creating and Managing Mob Instances
 ```go
-// Spawn mob in specific room (stats come from YAML definition)
-mob := mobs.NewMobById(mobs.MobId(123), roomId)
+// Spawn mob in specific room (stats come from species + statpool)
+// forceStatPool=0 means use the mob YAML's statpool value
+mob := mobs.NewMobById(mobs.MobId(123), roomId, 0)
 if mob != nil {
     // Mob spawned successfully
     room.AddMob(mob.InstanceId)

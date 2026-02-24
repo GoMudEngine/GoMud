@@ -1,5 +1,6 @@
 mobid: 65
 zone: Sanctum Basin
+statpool: 1
 hostile: false
 maxwander: 0
 idlecommands:
@@ -12,7 +13,7 @@ character:
     on a weighted post that allows it to swing and pivot when struck. The surface is
     marked with charcoal lines indicating target zones. It has taken a great deal of
     punishment and bears the marks of many training sessions.'
-  speciesid: 1
+  speciesid: 19
   level: 1
   gold: 0
   stats:

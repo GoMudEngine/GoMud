@@ -1,0 +1,26 @@
+speciesid: 21
+name: reptile
+description: A cold-blooded lizard creature, quick and elusive.
+defaultalignment: 0
+size: small
+unarmedname: teeth
+tnlscale: 1
+angrycommands: [emote hisses.]
+tameable: true
+stats:
+  strength:
+    base: 30
+  dexterity:
+    base: 70
+  perception:
+    base: 50
+  vitality:
+    base: 25
+  willpower:
+    base: 10
+  charisma:
+    base: 5
+damage:
+  basedamage: 2
+  variance: 2
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet']

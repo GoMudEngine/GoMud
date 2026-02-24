@@ -83,7 +83,7 @@ The `internal/usercommands` package implements the complete command system for p
 
 #### **World Management**
 - **Room editing**: Comprehensive room modification capabilities
-- **Zone management**: Creating and managing game world zones
+- **Zone management**: Creating and managing game world zones (note: `zone set autoscale` was removed in Phase 21; mob difficulty is now per-mob via `statpool`)
 - **Spawn control**: Managing mob and item spawning
 
 #### **Player Administration**

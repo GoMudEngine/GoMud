@@ -1,5 +1,6 @@
 mobid: 68
 zone: Sanctum Basin
+statpool: 5
 itemdropchance: 15
 hostile: true
 maxwander: 1

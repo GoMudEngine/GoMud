@@ -1,7 +1,6 @@
 package web
 
 import (
-	"fmt"
 	"net/http"
 	"sort"
 	"strconv"
@@ -20,7 +19,6 @@ import (
 type ZoneDetails struct {
 	ZoneName  string
 	RoomCount int
-	AutoScale string
 }
 
 func roomsIndex(w http.ResponseWriter, r *http.Request) {
@@ -56,19 +54,10 @@ func roomsIndex(w http.ResponseWriter, r *http.Request) {
 
 			if _, ok := zoneCounter[room.Zone]; !ok {
 
-				autoScale := ``
-
-				if zoneConfig := rooms.GetZoneConfig(room.Zone); zoneConfig != nil {
-					if zoneConfig.MobAutoScale.Minimum > 0 || zoneConfig.MobAutoScale.Maximum > 0 {
-						autoScale = fmt.Sprintf(`%d to %d`, zoneConfig.MobAutoScale.Minimum, zoneConfig.MobAutoScale.Maximum)
-					}
-				}
-
 				zoneCounter[room.Zone] = 0
 				allZones = append(allZones, ZoneDetails{
 					ZoneName:  room.Zone,
 					RoomCount: 0,
-					AutoScale: autoScale,
 				})
 			}
 			zoneCounter[room.Zone] = zoneCounter[room.Zone] + 1

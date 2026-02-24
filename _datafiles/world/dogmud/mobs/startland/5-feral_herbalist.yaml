@@ -1,5 +1,6 @@
 mobid: 5
 zone: Startland
+statpool: 3
 itemdropchance: 100
 hostile: true
 maxwander: 2

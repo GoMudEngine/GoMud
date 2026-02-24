@@ -1,6 +1,3 @@
 name: Sanctum Basin
 roomid: 107
-autoscale:
-  minimum: 1
-  maximum: 8
 defaultbiome: desert

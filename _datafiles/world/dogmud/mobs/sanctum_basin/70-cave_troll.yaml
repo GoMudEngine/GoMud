@@ -1,5 +1,6 @@
 mobid: 70
 zone: Sanctum Basin
+statpool: 8
 hostile: true
 maxwander: 3
 activitylevel: 25
@@ -29,7 +30,7 @@ combatcommands:
 character:
   name: Cave Troll
   description: 'Whatever this creature once was, little remains to mark it as human. Layers of calcite-gray growths have fused across its hunched frame like plates of living stone, cracking and reforming with each labored breath. Its face is a ruin of overgrown bone and hardened tissue — the jaw distended, the eyes reduced to deep-set glints beneath a shelf of ridged cartilage. It stands half again as tall as a grown man, its limbs thick and uneven, fingers fused into blunt clubs ofite and keratin. A sour, mineral stink clings to it like cave damp.'
-  speciesid: 1
+  speciesid: 4
   gold: 0
   mutations:
     tough-skin: 3

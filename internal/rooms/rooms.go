@@ -601,23 +601,9 @@ func (r *Room) Prepare(checkAdjacentRooms bool) {
 			forceStatPool := 0
 
 			if spawnInfo.StatPool > 0 {
-				forceStatPool = spawnInfo.StatPool
-			} else {
-
-				// Get the zone settings, check for scaling
-				if zConfig := GetZoneConfig(r.Zone); zConfig != nil {
-
-					if zConfig.MobAutoScale.Minimum > 0 {
-						forceStatPool = zConfig.GenerateRandomStatPool()
-					}
-
-					if forceStatPool > 0 {
-						forceStatPool += spawnInfo.StatPoolMod
-						if forceStatPool < 1 {
-							forceStatPool = 1
-						}
-					}
-
+				forceStatPool = spawnInfo.StatPool + spawnInfo.StatPoolMod
+				if forceStatPool < 1 {
+					forceStatPool = 1
 				}
 			}
 

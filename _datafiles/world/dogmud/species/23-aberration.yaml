@@ -1,0 +1,29 @@
+speciesid: 23
+name: aberration
+description: A twisted thing born of a Chrysalis transformation gone catastrophically wrong.
+defaultalignment: -50
+size: medium
+unarmedname: twisted limbs
+tnlscale: 1
+selectable: false
+tameable: false
+angrycommands:
+  - emote shudders and lurches forward, joints bending the wrong way.
+  - emote emits a low, distorted moan that makes the air feel heavy.
+stats:
+  strength:
+    base: 80
+  dexterity:
+    base: 50
+  perception:
+    base: 60
+  vitality:
+    base: 120
+  willpower:
+    base: 90
+  charisma:
+    base: 10
+damage:
+  basedamage: 4
+  variance: 2
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet']

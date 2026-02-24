@@ -11,3 +11,16 @@ damage:
   variance: 1
 disabledslots: ['weapon', 'offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet']
 tameable: false
+stats:
+  strength:
+    base: 15
+  dexterity:
+    base: 80
+  perception:
+    base: 70
+  vitality:
+    base: 10
+  willpower:
+    base: 10
+  charisma:
+    base: 5

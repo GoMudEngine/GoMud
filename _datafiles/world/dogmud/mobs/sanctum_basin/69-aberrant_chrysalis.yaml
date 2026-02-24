@@ -1,5 +1,6 @@
 mobid: 69
 zone: Sanctum Basin
+statpool: 6
 itemdropchance: 50
 hostile: true
 maxwander: 0
@@ -18,7 +19,7 @@ character:
     does not match any creature''s natural blueprint. It moves in lurching surges that
     cover ground faster than they look like they should. The air around it distorts
     like heat haze, and spending time near it makes thought feel slippery.'
-  speciesid: 1
+  speciesid: 23
   level: 6
   gold: 10
   stats:

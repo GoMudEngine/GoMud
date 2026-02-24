@@ -211,26 +211,24 @@ var (
 		// Qualitative description helpers (Stage 18)
 		"statQuality": func(value int) string {
 			switch {
-			case value <= 70:
+			case value <= 60:
 				return "feeble"
-			case value <= 80:
+			case value <= 75:
 				return "poor"
 			case value <= 90:
 				return "below average"
-			case value <= 99:
+			case value <= 110:
 				return "average"
-			case value <= 104:
-				return "human baseline"
-			case value <= 119:
+			case value <= 130:
 				return "above average"
-			case value <= 134:
-				return "strong"
-			case value <= 149:
+			case value <= 150:
 				return "exceptional"
-			case value <= 174:
+			case value <= 200:
 				return "extraordinary"
-			default:
+			case value <= 300:
 				return "transcendent"
+			default:
+				return "godlike"
 			}
 		},
 		// vitalQuality(current, max[, padTo]) — returns a colored qualitative label,

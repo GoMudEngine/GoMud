@@ -4114,7 +4114,7 @@ skill rust, and a temporary Death's Shadow debuff in the Shadow Realm.
 
 ## Phase 21: Remove Autoscaling
 
-### Stage 21.1: Remove Zone Autoscaling System
+### Stage 21.1: Remove Zone Autoscaling System ✅ COMPLETED
 
 **Goal**: Remove the zone-level mob autoscaling system entirely. Mob difficulty should be set
 explicitly per-mob via `statpool` in the mob YAML or per-spawn via `statpool`/`statpoolmod` in
@@ -4122,24 +4122,19 @@ room spawn info. The zone-wide `autoscale` config creates unpredictable difficul
 that's hard to balance and obscures the intended difficulty curve.
 
 **Changes**:
-1. **Remove `MobAutoScale` from `ZoneConfig`** — delete the struct field and `GenerateRandomStatPool()`
-2. **Remove autoscale fallback in room spawn logic** — in `rooms.go`, the spawn code checks
-   `zConfig.MobAutoScale.Minimum > 0` and overrides mob stat pools. Remove this fallback.
-3. **Audit all zone configs** — check each `zone-config.yaml` for `autoscale:` entries and remove them.
-   Ensure every mob that relied on autoscaling has an explicit `statpool` in its mob YAML.
-4. **Update documentation** — remove autoscale references from schemas and content generation docs.
-
-**Files to Modify** (~6 files, ~80 lines):
-1. `internal/rooms/zoneconfig.go` — remove `MobAutoScale` struct and `GenerateRandomStatPool()`
-2. `internal/rooms/rooms.go` — remove autoscale fallback in spawn logic (~lines 601–621)
-3. `_datafiles/world/dogmud/rooms/*/zone-config.yaml` — remove `autoscale:` entries
-4. `docs/schemas/` — update zone config schema if documented
+1. **Remove `MobAutoScale` from `ZoneConfig`** — deleted struct field, `GenerateRandomStatPool()`, and validation
+2. **Remove autoscale fallback in room spawn logic** — removed zone-level autoscale check from `rooms.go`
+3. **Removed `autoscale:` from all DOGMud zone configs** — sanctum_basin, labyrinth_of_low_tunnels, startland
+4. **Added explicit `statpool` to all 20 mobs** in Sanctum Basin (15 mobs) and Startland (5 mobs)
+5. **Fixed mob species assignments** — training dummy→dummy(19), aberrant chrysalis→aberration(23), cave troll→troll(4), meadow lizard→reptile(21)
+6. **Created/updated 6 species files** — added stats to rodent(10) and bat(22); created DOGMud overrides for troll(4), goblin(5), reptile(21) with correct stat names and damage format; created new aberration(23) species
+7. **Removed autoscale from admin UI** — cleaned up web admin, zone command, help template, building guide
 
 **Testing**:
-- [ ] Server starts without errors after removing autoscale configs
-- [ ] Mobs spawn with their YAML-defined `statpool` values
-- [ ] No zone config YAML contains `autoscale:` entries
-- [ ] `go test ./internal/rooms/...` passes
+- [x] `go build ./...` compiles cleanly
+- [x] `go test ./internal/rooms/...` passes
+- [x] No `autoscale:` entries in DOGMud zone configs
+- [x] No `MobAutoScale`/`GenerateRandomStatPool` references in Go code (except upstream migration file)
 
 ---
 
@@ -4604,7 +4599,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 18: Immersive Descriptions | 4 stages (18.1–18.4) | 24 hours | **18.1–18.4 Complete** |
 | Phase 19: Hotfixes & Polish | 1 stage (19.1) | 4 hours | **19.1 Complete** |
 | Phase 20: Death Penalties | 1 stage (20.1) | 6 hours | **20.1 Complete** |
-| Phase 21: Autoscaling Removal | 1 stage (21.1) | 4 hours | Not Started |
+| Phase 21: Autoscaling Removal + Species Tuning | 1 stage (21.1) | 4 hours | **21.1 Complete** |
 | Phase 22: AI Connection Limits | 1 stage (22.1) | 6 hours | Not Started |
 | Phase 23: Content — Major City & Road | 5 stages (23.1–23.5) | 40 hours | Not Started |
 | Phase 24: Expanded Mutations | 2 stages (24.1–24.2) | 16 hours | Not Started |
@@ -4710,6 +4705,6 @@ Critical bugs fixed outside of formal stage development:
 
 ---
 
-**Last Updated**: 2026-02-23
+**Last Updated**: 2026-02-24
 **Status**: In Progress
-**Current Stage**: Phases 1–20 complete. Next: Phase 21 (autoscaling removal), then Phase 22 (AI connection limits) through Phase 28 (LLM tutorial enhancement).
+**Current Stage**: Phases 1–21 complete. Next: Phase 22 (AI connection limits), then Phase 23 (content — major city & road) through Phase 28 (LLM tutorial enhancement).

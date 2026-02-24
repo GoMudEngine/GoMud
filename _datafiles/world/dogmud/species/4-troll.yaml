@@ -1,0 +1,31 @@
+speciesid: 4
+name: troll
+description: A massive creature of raw muscle and calcified growths, driven by hunger and fury.
+defaultalignment: -60
+buffids:
+  - 29 # Night Vision
+  - 30 # Regeneration
+size: large
+unarmedname: massive fists
+tnlscale: 1
+angrycommands:
+  - emote is looking for its next meal.
+  - say me want num nums!
+tameable: true
+stats:
+  strength:
+    base: 160
+  dexterity:
+    base: 40
+  perception:
+    base: 30
+  vitality:
+    base: 180
+  willpower:
+    base: 30
+  charisma:
+    base: 10
+damage:
+  basedamage: 7
+  variance: 3
+disabledslots: ['ring']

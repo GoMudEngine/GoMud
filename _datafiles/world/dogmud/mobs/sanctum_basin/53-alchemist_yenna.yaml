@@ -1,5 +1,6 @@
 mobid: 53
 zone: Sanctum Basin
+statpool: 25
 hostile: false
 maxwander: 0
 idlecommands:
