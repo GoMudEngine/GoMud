@@ -20,6 +20,16 @@ exits:
     roomid: 319
   south:
     roomid: 316
+spawninfo:
+- mobid: 73
+  message: A warren warrior hunches by the hearth, bone club across its knees.
+  respawnrate: 8 real minutes
+- mobid: 73
+  message: A second warrior emerges from one of the branching tunnels, rattling a flint spear.
+  respawnrate: 10 real minutes
+- mobid: 76
+  message: A blind tunnel rat gnaws at a bone near the edge of the bedding.
+  respawnrate: 12 real minutes
 nouns:
   hearth: Blackened stones arranged in a rough circle, the ground around them crusted
     with layers of old ash and charred bone. The fire is out but the stones are still

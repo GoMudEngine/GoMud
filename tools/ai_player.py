@@ -46,7 +46,7 @@ import telnetlib3
 MUD_HOST = os.environ.get("MUD_HOST", "localhost")
 MUD_PORT = int(os.environ.get("MUD_PORT", "55555"))
 OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://localhost:11434/api/chat")
-OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "gemma3:4b")
+OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "gemma3:12b")
 AI_USERNAME = os.environ.get("AI_USERNAME", "aitester")
 AI_PASSWORD = os.environ.get("AI_PASSWORD", "testpass123")
 
@@ -72,6 +72,7 @@ no explanations — just the raw command. If you want to say something in-game, 
 the "say" command.
 
 == CORE COMMANDS ==
+Help:         help, help <command>
 Movement:     north, south, east, west, up, down, northeast, northwest, southeast, southwest
 Look:         look, look <thing>, look <direction>
 Interaction:  talk <npc>, ask <npc> <topic>, say <message>, shout <message>
@@ -83,8 +84,9 @@ Shops:        list, buy <item>, sell <item>
 Info:         status, skills, spells, who, online, conditions, cooldowns, quests
                 help, help <topic>, map, read <sign>
 Crafting:     forage, search, craft
+Quests:       quest
 Reporting:    bug <description>
-                suggest <description>
+              suggest <description>
 
 == TARGETING NPCs AND MOBS ==
 CRITICAL: When you want to interact with an NPC or mob, you must use their EXACT
@@ -106,25 +108,32 @@ used the wrong keyword. Try "look" to re-read the room and find the correct name
 
 == TESTING STRATEGY ==
 1. EXPLORE METHODICALLY: When you enter a zone, try to visit every room. Note exits
-   from "look" output and visit each one. Track where you've been mentally.
+   from "look" output and visit each one. Track where you've been mentally. If the
+   room is dark and you can't see, use the "illuminate" spell. You should get the
+   spell from Saris as part of the questline in the tutorial area. Wait for Saris to
+   teach you the spell.
 2. INTERACT WITH EVERYTHING: Talk to every NPC using their actual name from the room
    description. Try "ask <npc>" about keywords you see in their dialogue. Look at
    items, signs, and objects described in room text.
 3. TRY COMBAT: Attack mobs you encounter using their name from the room. Try different
-   approaches — melee, spells, special moves (bash, trip, kick). Test fleeing and
-   grappling.
-4. EXERCISE SYSTEMS: Check shops (list/buy/sell), try crafting (forage then craft),
-   use items you find, try locking/unlocking doors.
-5. CHECK QUESTS: Run "quests" periodically to see if you have any active quests or
+   approaches — melee, spells, special moves (bash, trip, kick, grapple). Test fleeing
+   and grappling.
+4. READ HELPFILES: Use the "help" command and "help <command name>" to read through
+   helpfiles so you ubnderstand what is available.
+5. EXERCISE SYSTEMS: Check shops (list/buy/sell), try crlafting (forage then craft),
+   use items you find, try locking/unlocking doors. Attempt to complete quests and
+   periodically check your quest progress with the "quests" command.
+6. CHECK QUESTS: Run "quests" periodically to see if you have any active quests or
    can pick up new ones. Ask NPCs about "quest" or "job" or "task" to find work.
-6. MONITOR YOUR STATE: Periodically check "status" and "conditions". If health is
+7. MONITOR YOUR STATE: Periodically check "status" and "conditions". If health is
    low, eat food or rest. Don't suicide-rush into fights.
-7. VARY YOUR ACTIONS: Don't get stuck in a loop. If you've attacked the same mob
+8. VARY YOUR ACTIONS: Don't get stuck in a loop. If you've attacked the same mob
    3 times, move on. If you've been in the same area for a while, explore elsewhere.
-8. READ CAREFULLY: Room descriptions tell you everything — exits, NPC names, items
+9. READ CAREFULLY: Room descriptions tell you everything — exits, NPC names, items
    on the ground, environmental details. Use the EXACT names you see.
-9. STAY ALIVE: Check your HP via "status" before dangerous encounters. If wounded,
-   try to find food, rest, or healing before continuing.
+10.STAY ALIVE: Check your HP via "status" before dangerous encounters. If wounded,
+   try to find food, rest, or healing before continuing. Use the heal and minor-shield
+   spells to heal yourself and protyect yourself.
 
 == WHEN TO USE bug vs suggest ==
 Use "bug" ONLY for things that are clearly BROKEN — the game's behavior contradicts
@@ -149,7 +158,7 @@ DO NOT bug:
   - "not recognized" errors (you used the wrong keyword — try "look" first)
   - Losing a fight (that's normal gameplay)
   - Not understanding a command (try "help <command>" instead)
-
+f
 == WORLD CONTEXT ==
 The world uses a stat system (Strength, Dexterity, Perception, Vitality, Willpower,
 Charisma) centered at 100. Combat uses stamina and conviction (mana). Skills improve

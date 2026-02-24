@@ -16,6 +16,10 @@ exits:
     roomid: 310
   south:
     roomid: 312
+spawninfo:
+- mobid: 73
+  message: A stocky warren warrior steps around the blind turn, bone club raised.
+  respawnrate: 8 real minutes
 nouns:
   gouges: Deep scratches at waist height -- for you. Chest height for whatever made
     them. The stone is polished smooth between the gouges from the sheer volume of

@@ -14,6 +14,10 @@ exits:
     roomid: 302
   down:
     roomid: 308
+spawninfo:
+- mobid: 72
+  message: A warren scout scrambles up from the crack below, clawed hands gripping the worn stone.
+  respawnrate: 10 real minutes
 nouns:
   nest: A heap of scraps -- torn hide, matted fur, strips of something that might once
     have been cloth. It stinks of sweat and animal warmth. Whatever sleeps here is

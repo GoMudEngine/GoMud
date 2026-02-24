@@ -15,6 +15,10 @@ exits:
     roomid: 314
   south:
     roomid: 317
+spawninfo:
+- mobid: 73
+  message: A warren warrior crouches behind the barricade, watching the gap with hard eyes.
+  respawnrate: 8 real minutes
 nouns:
   barricade: Stacked stone and sharpened wood, packed with clay and bone. It is chest
     height on you, which means it is a full wall for its builders. The gap at the

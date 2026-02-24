@@ -16,6 +16,10 @@ exits:
     roomid: 307
   down:
     roomid: 311
+spawninfo:
+- mobid: 73
+  message: A warren warrior stands guard among the bone patterns, milky eyes tracking your movement.
+  respawnrate: 10 real minutes
 nouns:
   bones: Rat bones, bat bones, bird bones -- pressed into the earth in repeating
     geometric shapes. Some patterns are simple lines. Others spiral inward or branch

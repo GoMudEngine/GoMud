@@ -13,6 +13,10 @@ biome: cave
 exits:
   east:
     roomid: 314
+spawninfo:
+- itemid: 10011
+  message: A flint spear leans against the trophy wall, apparently unclaimed.
+  respawnrate: 15 real minutes
 nouns:
   skulls: Animal skulls mostly -- rats, bats, something with a longer jaw that might
     be a cave lizard. But three of them, mounted highest and most prominently, are

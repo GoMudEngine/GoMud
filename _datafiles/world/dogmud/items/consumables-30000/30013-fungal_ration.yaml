@@ -1,0 +1,16 @@
+itemid: 30013
+name: fungal ration
+namesimple: ration
+description: |
+  A dense cake of dried fungus pressed into a flat disc and wrapped in
+  a strip of cured hide. It smells of mushroom and something sharply fermented. The
+  warren dwellers subsist on these -- cultivated from the fungal hollow and dried
+  over their smoky fires. It is not appetizing by surface standards, but it is
+  filling and surprisingly nutritious.
+type: food
+subtype: edible
+uses: 1
+buffids:
+  - 5
+value: 2
+weight: 0.5

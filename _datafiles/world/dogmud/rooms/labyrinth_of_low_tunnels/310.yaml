@@ -17,6 +17,16 @@ exits:
     roomid: 311
   south:
     roomid: 313
+spawninfo:
+- mobid: 77
+  message: A pale fungal grub burrows slowly through the cultivated beds.
+  respawnrate: 5 real minutes
+- mobid: 77
+  message: A fat grub curls among the fungal roots, faintly luminescent.
+  respawnrate: 5 real minutes
+- mobid: 78
+  message: A spore crawler drags itself across the fungal beds, carapace crusted with pale growth.
+  respawnrate: 8 real minutes
 nouns:
   fungi: Pale, bloated caps with gills that weep a faintly glowing slime. The smell
     up close is overpowering -- sweet decay and something sharply chemical. Some caps

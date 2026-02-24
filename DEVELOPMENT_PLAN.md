@@ -4183,87 +4183,145 @@ that's hard to balance and obscures the intended difficulty curve.
 
 ---
 
-## Phase 23: Content — Major City & Road from School
+## Phase 23: Content — Tunnels + Road to Thornwall
 
-### Stage 23.1: Zone Sketch — The Road to Thornwall
+### Stage 23.1: Flesh Out the Labyrinth of Low Tunnels ✅ COMPLETED (merge commit: TBD)
 
-**Goal**: Design the overland route from Sanctum Basin (tutorial area) to the first major city,
-Thornwall. This is a linear-ish path with 2–3 small zones along the way, each with distinct
-biomes and level-appropriate encounters for newly graduated characters.
+**Goal**: Populate the existing 20-room zone with inhabitants, items, dialogue, and two opposing
+quests. This is the first content a newly graduated character encounters after the tutorial.
 
-**Changes**:
-1. Use `/zone-sketch` to plan:
-   - **Dustwalk Road** — 8–12 rooms, open grassland/scrubland connecting the school to the city.
-     Encounters: bandits, wild dogs, scavenger birds. Foraging opportunities (herbs, berries).
-   - **Watcher's Crossing** — 5–8 rooms, a small waystation/bridge area. Friendly NPC merchants,
-     a small inn for resting. Minor quest hooks (missing caravan, bridge troll).
-   - **Thornwall Outskirts** — 6–10 rooms, farmland and outskirts approaching the city walls.
-     Encounters: livestock, farm pests, the occasional highwayman.
-2. Document room adjacency maps and mob/item lists for each zone.
-
-**Deliverables**: Zone sketch documents with room lists, adjacency, mob rosters, item drops.
-
-### Stage 23.2: Build Dustwalk Road Zone
-
-**Goal**: Generate all rooms, mobs, and items for the Dustwalk Road zone using `/new-room`,
-`/new-mob`, and `/new-item` commands.
+**Lore**: The inhabitants are Chrysalis-mutated humanoids who fled surface society generations ago.
+Unguided mutation made them small, fast, and nocturnal. They are not mindless — they remember
+being driven underground.
 
 **Changes**:
-1. Create zone folder `_datafiles/world/dogmud/rooms/dustwalk_road/`
-2. Create zone-config.yaml (no autoscale — explicit stat pools per mob)
-3. Generate 8–12 room YAML files with descriptions, exits, idle messages
-4. Generate 3–5 mob YAML files (wild dogs, scavenger birds, bandits)
-5. Generate 2–3 item YAML files (roadside loot, bandit drops)
-6. Wire exits between rooms and connect to Sanctum Basin exit
+1. Created `_datafiles/world/dogmud/mobs/labyrinth_of_low_tunnels/` with 7 mobs (72–78):
+   - **72 warren_scout** — hostile, statpool 8, dex-boosted, spawns upper tunnels (300–306)
+   - **73 warren_warrior** — hostile, statpool 12, str-boosted, spawns mid-zone (308–316)
+   - **74 tunnel_shaman** — non-hostile, statpool 15, will-boosted, spawns room 312. Gives Quest A.
+   - **75 warren_chieftain** — non-hostile, statpool 25, spawns room 317. Quest A anchor.
+   - **76 blind_tunnel_rat** — passive ambient fauna, statpool 3
+   - **77 fungal_grub** — passive harvestable, statpool 1, spawns room 310
+   - **78 spore_crawler** — hostile cave fauna, statpool 6, spawns fungal area
+2. Added **1 NPC in Sanctum Basin** — **79 basin_scholar** (non-hostile, room 117, gives Quest B)
+3. Created 7 items: crude bone club (10010), flint spear (10011), obsidian knife (10012),
+   bone totem (14), fungal ration (30013), chieftain cache key (15), spore sac (40008)
+4. Edited all 20 room files (300–319) to add spawninfo blocks
+5. Created 3 dialogue files: tunnel shaman (74), warren chieftain (75), basin scholar (79)
+6. Created 2 quest files: The Warren Compact (quest 2), The Scholar's Collection (quest 3)
 
-### Stage 23.3: Build Watcher's Crossing Zone
+**Opposing Quests**:
+- **Quest A — "The Warren Compact"** (quest 2, from tunnel shaman): Bring healing poultices as
+  proof of good intent. Rewards: skill training (skulduggery), gold. Completing locks Quest B.
+- **Quest B — "The Scholar's Collection"** (quest 3, from basin scholar): Retrieve a bone totem
+  and spore sac for academic study. Rewards: gold, Perception buff. Completing locks Quest A.
 
-**Goal**: Generate the waystation zone — a rest stop with merchants, an inn, and minor quest hooks.
+**Moral design**: The shaman's people are treated as specimens by the Sanctuary's scholars. The
+scholar genuinely believes the research could help the warren's mutation crisis. Neither is wrong.
+Neither has asked what the other side wants.
 
-**Changes**:
-1. Create zone folder and zone-config
-2. Generate 5–8 rooms (bridge, inn, merchant stall, crossroads)
-3. Generate 2–3 friendly NPCs (innkeeper, merchant, guard) with dialogue trees
-4. Generate 1–2 hostile mobs for optional encounters (bridge troll, river creature)
-5. Wire exits to Dustwalk Road
+**Files**: 20 room YAMLs edited, 8 mob YAMLs, 7 item YAMLs, 2 quest YAMLs, 3 dialogue YAMLs,
+1 Sanctum Basin room edit (117).
 
-### Stage 23.4: Build Thornwall Outskirts Zone
+### Stage 23.2: Zone Sketch — The Road to Thornwall ✅ COMPLETED
 
-**Goal**: Generate the farmland approach to Thornwall.
-
-**Changes**:
-1. Create zone folder and zone-config
-2. Generate 6–10 rooms (farmhouses, fields, dirt roads, city gate approach)
-3. Generate 3–4 mobs (farm pests, livestock, highwayman)
-4. Wire exits to Watcher's Crossing and Thornwall city entrance
-
-### Stage 23.5: Build Thornwall City (Core)
-
-**Goal**: Generate the core of Thornwall — a walled city with essential services and exploration.
-This is a major content milestone. Focus on the city skeleton; additional city content can be
-added incrementally.
+**Goal**: Design all four remaining road/city zones before building. Planning only — no YAML files.
 
 **Changes**:
-1. Create zone folder `_datafiles/world/dogmud/rooms/thornwall/`
-2. Generate 15–25 rooms:
-   - City gate, main street, market square
-   - Tavern/inn, blacksmith, apothecary, temple
-   - Guard barracks, city hall, residential streets
-   - Back alleys, sewer entrance (future dungeon hook)
-3. Generate 8–12 NPCs:
-   - Merchants (blacksmith, apothecary, general goods)
-   - Quest-givers (guard captain, temple priest, tavern keeper)
-   - Ambient NPCs (townsfolk, beggars, street performers)
-4. Generate city-appropriate items (city goods, quest items)
-5. Wire all exits and connect to Thornwall Outskirts
+1. `/zone-sketch` for **Dustwalk Road** (10 rooms 400–409, scrubland, bandits, wild dogs)
+2. `/zone-sketch` for **Watchers Crossing** (8 rooms 420–427, bridge waystation, toll dispute)
+3. `/zone-sketch` for **Thornwall Outskirts** (9 rooms 440–448, farmland, city approach)
+4. `/zone-sketch` for **Thornwall City Core** (22 rooms 500–524, walled city, services, quests)
+5. Updated World Road room 2001 with south exit to Dustwalk Road 400
+6. Verified: no ID collisions, bidirectional exits correct, quest dependencies achievable
+
+**Deliverables**: 4 zone sketches approved. Room IDs, mob rosters (80–101), item lists (16–25, 10013, 40009–40012), quest outlines, and cross-zone dependencies documented.
+
+**ID Allocation Summary**:
+- Rooms: 400–409 (Dustwalk), 420–427 (Watchers), 440–448 (Outskirts), 500–524 (Thornwall)
+- Mobs: 80–83 (Dustwalk), 84–87 (Watchers), 88–91 (Outskirts), 92–101 (Thornwall)
+- Items: 16–25 (quest/other), 10013 (weapon), 40009–40012 (materials)
+- 7 quests designed across 4 zones with cross-zone evidence chain
+
+### Stage 23.3: Build Dustwalk Road
+
+**Goal**: Build the first overland zone — beaten road through sparse scrubland.
+
+**Changes**:
+1. Create `dustwalk_road/` zone folder + zone-config (biome: grassland)
+2. Generate 8–10 rooms (dusty stretches, cairn, dry creek, abandoned campsite, ridgeline)
+3. Generate 4 mobs: dustwalk bandit (hostile), scrubland dog (hostile), scavenger bird (passive),
+   road warden (friendly NPC, quest giver)
+4. Generate 3 items: dustwalk herb (material), bandit's purse (loot), road token (quest reward)
+5. Wire exits to Sanctum Basin and Watcher's Crossing
+
+**Quest — "The Warden's Report"**: Road Warden asks player to deal with bandits. Environmental
+storytelling reveals they're former farmhands displaced by Thornwall expansion.
+
+### Stage 23.4: Build Watcher's Crossing
+
+**Goal**: Bridge waystation with friendly NPCs, an inn, and opposing quest pair about a toll dispute.
+
+**Changes**:
+1. Create `watchers_crossing/` zone folder + zone-config (biome: river/road)
+2. Generate 6–8 rooms (bridge, tollhouse, inn, trading post, river bank)
+3. Generate 5 mobs: innkeeper Tolva, trading post merchant, bridge toll collector Harn,
+   river lurker (hostile), traveling merchant (ambient)
+4. Generate 4 items: toll receipt, river stone, inn token, crossing ledger (quest item)
+5. Bridge exit costs 5 gold without receipt/road token
+
+**Opposing Quests — The Toll Dispute**:
+- **Quest C — "The Innkeeper's Complaint"** (from Tolva): Unauthorized toll hurting trade.
+  Retrieve crossing ledger as proof. Locks Quest D.
+- **Quest D — "The Collector's Burden"** (from Harn): Bridge has stress cracks. Unauthorized toll
+  funds repairs. Carry maintenance report to Thornwall. Locks Quest C. Cross-zone: requires 23.6.
+
+### Stage 23.5: Build Thornwall Outskirts
+
+**Goal**: Farmland approach to the city walls. Lower combat, higher social complexity.
+
+**Changes**:
+1. Create `thornwall_outskirts/` zone folder + zone-config (biome: farmland)
+2. Generate 7–9 rooms (farm, overgrown plot, pest fields, city road, gate plaza)
+3. Generate 5 mobs: outskirts farmer (friendly, quest giver), thornwall highwayman (hostile),
+   crop pest (hostile swarm), city gate guard, notice board (ambient)
+4. Generate 3 items: eviction notice (lore), thornwall pass (gate entry), pest sample (quest)
+5. Wire to Watcher's Crossing and Thornwall gate
+
+**Quest — "The Fallow Field"**: Farmer's neighbor lost land to city tax seizure. Cross-zone:
+requires Thornwall access (23.6).
+
+### Stage 23.6: Build Thornwall City Core
+
+**Goal**: First major city — walled, with services, 3+ quests, enough rooms to feel real.
+
+**Changes**:
+1. Create `thornwall/` zone folder + zone-config (biome: city)
+2. Generate 20–25 rooms: Gate Ward, Main Street, Market Square, Temple District, Craftsmen's
+   Quarter, Drowning Post Tavern, Guard Barracks, Back Alley, Records Office
+3. Generate 10–14 NPCs: guard captain, temple priest, tavern keeper, blacksmith, apothecary,
+   records clerk, city beggar, street performer, merchants, back alley fence, thornwall thug
+4. Generate 6–8 items: city tax receipt, bridge repair authorization, temple incense, tavern meal
+   token, thornwall steel dagger (first real weapon upgrade)
+5. Complete cross-zone quest chains (Quest D bridge authorization, Fallow Field tax receipt)
+
+**Three Thornwall Quests**:
+- **Quest E — "The City Watch's Missing Person"**: Missing citizen hiding from forced marriage.
+  Multiple resolution paths. No clean answer.
+- **Quest F — "The Temple's Tithe Audit"**: Temple vs. merchant tithe dispute — both cheating.
+- **Quest G — "The Drowning Post's Debt"**: Tavern owes taxes and protection money. Non-combat
+  quest that opens a future sewer dungeon hook.
 
 **Testing** (all of Phase 23):
-- [ ] Server starts with all new zones loaded
-- [ ] Player can walk from Sanctum Basin → Dustwalk Road → Watcher's Crossing → Thornwall Outskirts → Thornwall
-- [ ] All mobs spawn and are fightable
-- [ ] All merchants are functional
+- [ ] Server starts with all new zones, no panics
+- [ ] Full walkthrough: Sanctum Basin → Labyrinth → back → Dustwalk → Watcher's → Outskirts → Thornwall
+- [ ] All opposing quest pairs are mutually exclusive
+- [ ] Cross-zone quests (D, Fallow Field) complete correctly across zone boundaries
+- [ ] All mobs spawn, fight, and respawn correctly
+- [ ] All merchants sell correct items
 - [ ] No broken exits or missing room references
-- [ ] Mini-map renders correctly for all new zones
+- [ ] Mini-map renders correctly
+- [ ] Instance save check on edited Sanctum Basin rooms
 
 ---
 
@@ -4614,8 +4672,8 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 19: Hotfixes & Polish | 1 stage (19.1) | 4 hours | **19.1 Complete** |
 | Phase 20: Death Penalties | 1 stage (20.1) | 6 hours | **20.1 Complete** |
 | Phase 21: Autoscaling Removal + Species Tuning | 1 stage (21.1) | 4 hours | **21.1 Complete** |
-| Phase 22: AI Connection Limits | 1 stage (22.1) | 6 hours | Not Started |
-| Phase 23: Content — Major City & Road | 5 stages (23.1–23.5) | 40 hours | Not Started |
+| Phase 22: AI Connection Limits | 1 stage (22.1) | 6 hours | **22.1 Complete** |
+| Phase 23: Content — Tunnels + Road to Thornwall | 6 stages (23.1–23.6) | ~55 hours | 23.1–23.2 Complete |
 | Phase 24: Expanded Mutations | 2 stages (24.1–24.2) | 16 hours | Not Started |
 | Phase 25: Expanded Spells | 2 stages (25.1–25.2) | 16 hours | Not Started |
 | Phase 26: NPC Species Variety | 2 stages (26.1–26.2) | 12 hours | Not Started |
@@ -4721,4 +4779,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-24
 **Status**: In Progress
-**Current Stage**: Phases 1–22 complete. Next: Phase 23 (content — major city & road) through Phase 28 (LLM tutorial enhancement).
+**Current Stage**: Phases 1–22 complete. Stages 23.1–23.2 complete. Next: Stage 23.3 (build Dustwalk Road).

@@ -1,0 +1,20 @@
+itemid: 10012
+name: obsidian knife
+namesimple: knife
+description: |
+  A blade of knapped obsidian, volcanic glass worked to an edge finer
+  than any steel. The handle is wrapped in layer upon layer of cured hide, shaped
+  to fit a hand smaller than yours but usable nonetheless. This is the finest
+  craftsmanship the warren produces -- a status weapon, a symbol of authority. The
+  glass edge catches light and fractures it into dark rainbows.
+type: weapon
+hands: 1
+subtype: slashing
+weight: 2.0
+speedmultiplier: 0.85
+staminacost: 4
+grapplemodifier: 1.0
+damage:
+  basedamage: 5
+  variance: 1
+parryrating: 8

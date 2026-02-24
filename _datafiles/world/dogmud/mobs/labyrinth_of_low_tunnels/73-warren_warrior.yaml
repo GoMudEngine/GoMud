@@ -1,0 +1,48 @@
+mobid: 73
+zone: Labyrinth of Low Tunnels
+statpool: 12
+itemdropchance: 15
+hostile: true
+maxwander: 1
+groups:
+  - warren
+  - humanoid
+  - mutant
+idlecommands:
+  - 'emote shifts its grip on a crude bone club and scans the darkness'
+  - 'emote pounds a fist against its chest and grunts, a low territorial warning'
+  - 'emote scratches fresh marks into the tunnel wall with a claw tip'
+  - ''
+  - ''
+combatcommands:
+  - 'emote snarls and charges, swinging its weapon in a wide arc'
+  - ''
+  - 'emote lets out a guttural war cry that reverberates off the low ceiling'
+  - ''
+activitylevel: 25
+aiprofile: brawler
+specialmovechance: 15
+character:
+  name: warren warrior
+  description: |
+    Stockier than the scouts and half a head taller, this warren dweller
+    has been bred -- or mutated -- for violence. Thick ridges of calcified tissue
+    armor its shoulders and forearms, and its jaw is heavy and undershot, lined with
+    teeth that look designed for tearing. It carries a crude bone club stained dark
+    with old blood and wears a harness of knotted sinew hung with small trophies --
+    teeth, claws, and a few objects that are unmistakably human in origin. Its milky
+    eyes are hard and watchful.
+  speciesid: 23
+  level: 1
+  gold: 1
+  items:
+    - itemid: 10010
+  stats:
+    strength:
+      training: 10
+    vitality:
+      training: 5
+    dexterity:
+      training: -5
+    charisma:
+      training: -10

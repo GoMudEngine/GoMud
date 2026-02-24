@@ -14,6 +14,10 @@ biome: cave
 exits:
   west:
     roomid: 314
+spawninfo:
+- mobid: 76
+  message: A blind tunnel rat sniffs at the gaps in the rubble, whiskers quivering.
+  respawnrate: 12 real minutes
 nouns:
   rubble: Massive chunks of basalt, fractured and fallen. The break patterns suggest
     the collapse came from below -- something pushed up, and the tunnel could not hold.

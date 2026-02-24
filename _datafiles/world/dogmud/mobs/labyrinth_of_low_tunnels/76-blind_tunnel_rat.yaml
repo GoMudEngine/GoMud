@@ -1,0 +1,36 @@
+mobid: 76
+zone: Labyrinth of Low Tunnels
+statpool: 3
+itemdropchance: 3
+hostile: false
+maxwander: 2
+groups:
+  - rats
+  - animal
+idlecommands:
+  - 'emote snuffles along the base of the wall, nose twitching'
+  - 'emote freezes mid-step, whiskers quivering, then scurries onward'
+  - 'wander'
+  - ''
+  - ''
+  - ''
+activitylevel: 20
+character:
+  name: blind tunnel rat
+  description: |
+    A pale, eyeless rat the size of a small cat. Generations in the
+    lightless tunnels have stripped away its sight entirely -- the eye sockets are
+    sealed over with smooth skin. It navigates by whisker and ear alone, its naked
+    tail dragging behind it as it follows scent trails along the tunnel floor. Its
+    teeth are oversized and faintly luminescent, a minor Chrysalis mutation that
+    serves no obvious purpose.
+  speciesid: 10
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 5
+    perception:
+      training: -5
+    vitality:
+      training: -2

@@ -1,0 +1,12 @@
+itemid: 15
+name: chieftain cache key
+namesimple: key
+description: |
+  A flat piece of shaped bone, notched along one edge in a pattern that
+  matches the stone lid covering the chieftain's hidden cache. It is strung on a
+  loop of sinew, worn smooth from years of handling. The chieftain does not part
+  with this willingly.
+type: key
+subtype: holdable
+uses: 0
+weight: 0.2

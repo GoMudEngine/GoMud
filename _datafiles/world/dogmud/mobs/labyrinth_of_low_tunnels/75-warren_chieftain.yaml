@@ -1,0 +1,52 @@
+mobid: 75
+zone: Labyrinth of Low Tunnels
+statpool: 25
+hostile: false
+maxwander: 0
+groups:
+  - warren
+  - humanoid
+  - mutant
+hates:
+  - animal
+idlecommands:
+  - 'emote turns a polished obsidian knife in its hands, inspecting the edge'
+  - 'emote stares into the fire pit with an expression that, on a human face, would be called grief'
+  - 'emote traces the symbols carved into the stone slab with one elongated finger'
+  - ''
+  - ''
+activitylevel: 10
+aiprofile: brawler
+specialmovechance: 25
+character:
+  name: warren chieftain
+  description: |
+    The largest of the warren dwellers, though still a head shorter than
+    a grown human. The chieftain's mutations are pronounced and old -- calcified
+    plates cover its torso like natural armor, and its hands end in thick, blunt
+    claws worn smooth from decades of use. Its face retains more humanity than any
+    of its kin. The bone structure is recognizably human beneath the ridged brow and
+    elongated jaw. Its milky eyes carry a weight that has nothing to do with the
+    Chrysalis -- the weight of someone who remembers that their people were once
+    something else. It wears a harness of cured hide decorated with polished stones
+    and carries a finely knapped obsidian knife, the best-made object in the warren.
+  speciesid: 23
+  level: 1
+  gold: 5
+  items:
+    - itemid: 10012
+  stats:
+    strength:
+      training: 15
+    vitality:
+      training: 15
+    willpower:
+      training: 10
+    dexterity:
+      training: -5
+    perception:
+      training: 5
+    charisma:
+      training: -10
+  mutations:
+    tough-skin: 2
