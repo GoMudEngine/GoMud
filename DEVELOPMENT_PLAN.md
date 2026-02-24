@@ -4276,7 +4276,7 @@ storytelling reveals they're former farmhands displaced by Thornwall expansion.
 - **Quest D — "The Collector's Burden"** (from Harn): Bridge has stress cracks. Unauthorized toll
   funds repairs. Carry maintenance report to Thornwall. Locks Quest C. Cross-zone: requires 23.6.
 
-### Stage 23.5: Build Thornwall Outskirts
+### Stage 23.5: Build Thornwall Outskirts ✅ COMPLETED (commit: 7095151)
 
 **Goal**: Farmland approach to the city walls. Lower combat, higher social complexity.
 
@@ -4779,4 +4779,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-24
 **Status**: In Progress
-**Current Stage**: Phases 1–22 complete. Stages 23.1–23.4 complete. Next: Stage 23.5 (build Thornwall Outskirts).
+**Current Stage**: Phases 1–22 complete. Stages 23.1–23.5 complete. Next: Stage 23.6 (build Thornwall City Core).
