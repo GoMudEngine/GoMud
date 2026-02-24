@@ -1,0 +1,33 @@
+roomid: 402
+zone: Dustwalk Road
+title: The Cairn
+description: A stack of weathered stones marks the junction where a faint trail splits
+  west from the main road. The cairn is old -- lichen covers the lower stones and the
+  upper ones have been bleached pale by years of sun. Someone has scratched a crude
+  arrow into the topmost rock, pointing south along the road. The scrubland opens up
+  here into a wider vista of dry grassland, and the sky feels enormous overhead. Dark
+  shapes circle lazily in the thermals above, riding the updraft from the warming earth.
+biome: plains
+exits:
+  north:
+    roomid: 401
+  south:
+    roomid: 404
+  west:
+    roomid: 403
+spawninfo:
+- mobid: 82
+  message: A scavenger bird drops from the sky and lands on the cairn, cocking its head to study you.
+  respawnrate: 5 real minutes
+nouns:
+  cairn: A pile of flat stones stacked with deliberate care. The bottommost are large
+    as dinner plates, the topmost no bigger than a fist. Each stone has been chosen
+    for how it sits -- this was built to last. Travellers have added smaller stones
+    over the years, making it lopsided.
+  arrow: A crude directional mark scratched into pale stone. It points south along
+    the road. Beneath it, someone has scratched what might be a word, but time and
+    weather have made it illegible.
+idlemessages:
+- A scavenger bird wheels overhead, riding the thermals in lazy circles.
+- The cairn stones click faintly as the day's heat expands the rock.
+- Wind sweeps across the open ground, flattening the grass in travelling waves.

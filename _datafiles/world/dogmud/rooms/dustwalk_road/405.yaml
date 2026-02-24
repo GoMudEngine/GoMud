@@ -1,0 +1,33 @@
+roomid: 405
+zone: Dustwalk Road
+title: Warden's Post
+description: A small waystation stands beside the road -- a stone-walled shelter with
+  a flat roof and an open front, built to give road wardens a place to rest and watch
+  the traffic. A wooden signpost out front lists distances in faded paint, though most
+  of the destinations are illegible. The shelter is well-maintained despite its remote
+  location. A bedroll, a water skin, and a stack of patrol reports occupy the interior.
+  Someone is stationed here, and takes the posting seriously.
+biome: plains
+exits:
+  north:
+    roomid: 404
+  south:
+    roomid: 406
+spawninfo:
+- mobid: 83
+  message: Road Warden Tessara steps out of the waystation, one hand resting on her belt.
+nouns:
+  signpost: A wooden post with flat boards nailed at angles, each painted with a
+    destination and distance. Most have faded to illegibility. You can make out
+    "Sanctum Basin -- 2 leagues north" and "Watchers Crossing -- 3 leagues east."
+    The rest is sun-bleached guesswork.
+  reports: A stack of papers held down by a smooth stone. The handwriting is neat and
+    precise. Patrol notes, weather observations, and tallies of travellers passed.
+    The most recent entry mentions increased bandit activity to the south.
+  shelter: Solid stone walls on three sides with an open front facing the road. The
+    roof is flat stone slabs. Inside, a bedroll, supplies, and a small writing desk
+    suggest someone lives here semi-permanently.
+idlemessages:
+- The signpost creaks as the wind shifts direction.
+- A patrol report flutters under its stone weight, pages riffling.
+- The waystation smells of dried herbs and boot leather.

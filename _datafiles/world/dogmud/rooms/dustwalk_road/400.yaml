@@ -1,0 +1,20 @@
+roomid: 400
+zone: Dustwalk Road
+title: Dustwalk Road, Northern End
+description: The packed-earth track descends from the World Road into open country,
+  the basalt dust of the plateau giving way to pale, sandy soil that crunches underfoot.
+  Scrub brush and dry grass line both sides of the road, swaying in a wind that carries
+  the smell of sage and sun-baked earth. The road stretches south into a haze of heat
+  shimmer, narrowing as it drops toward the lowlands. Behind you, the plateau of Sanctum
+  Basin rises like a dark wall against the sky.
+biome: plains
+exits:
+  north:
+    roomid: 2001
+    zone: World Road
+  south:
+    roomid: 401
+idlemessages:
+- A hot breeze stirs the scrub grass, sending seeds drifting across the road.
+- The packed earth of the road is scarred with old wheel ruts and boot prints.
+- A faint haze of dust hangs in the air to the south, kicked up by the wind.

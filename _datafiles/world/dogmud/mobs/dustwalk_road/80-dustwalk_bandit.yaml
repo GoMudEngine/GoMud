@@ -1,0 +1,38 @@
+mobid: 80
+zone: Dustwalk Road
+statpool: 10
+itemdropchance: 15
+hostile: true
+maxwander: 1
+groups:
+  - bandit
+  - humanoid
+idlecommands:
+  - 'emote picks at its teeth with the point of a knife'
+  - 'emote scans the road with a predatory squint'
+  - 'emote adjusts the stolen merchant scarf around its neck'
+  - ''
+  - ''
+combatcommands:
+  - 'emote lunges forward with a vicious slash'
+  - ''
+  - 'emote spits and snarls, circling for an opening'
+  - ''
+activitylevel: 25
+character:
+  name: dustwalk bandit
+  description: |
+    A sun-weathered figure in mismatched clothing -- a merchant's dyed
+    scarf over a labourer's rough tunic, boots that do not match, and a belt hung
+    with tools that were clearly not bought. The bandit carries a crude blade and
+    moves with the wary confidence of someone used to taking what they want from
+    people who cannot fight back. There is nothing romantic about this one. Just
+    hunger, opportunity, and a willingness to use violence.
+  speciesid: 1
+  level: 1
+  gold: 2
+  stats:
+    strength:
+      training: 5
+    dexterity:
+      training: 5

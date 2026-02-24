@@ -1,0 +1,27 @@
+roomid: 409
+zone: Dustwalk Road
+title: Dustwalk Road, Eastern End
+description: The eastern fork of Dustwalk Road levels out as it leaves the ridgeline
+  behind and stretches toward a distant line of watchtowers on the horizon. The road
+  is better maintained here -- the ruts are shallower, the brush has been cleared back
+  from the edges, and there are signs of regular patrol. A boundary marker carved with
+  the seal of the Watchers stands beside the road, marking the transition from open
+  country into patrolled territory. The towers ahead grow larger with each step.
+biome: plains
+exits:
+  west:
+    roomid: 406
+  east:
+    roomid: 420
+    zone: Watchers Crossing
+nouns:
+  marker: A squared stone pillar carved with an eye-and-tower emblem -- the seal of
+    the Watchers. Below the seal, text reads "You enter watched ground. Conduct
+    yourselves accordingly." The carving is sharp and recent. Someone maintains this.
+  towers: Squat stone watchtowers on the horizon, spaced at regular intervals along
+    a low ridge. They look functional rather than decorative -- built for observation
+    and defense, not for show.
+idlemessages:
+- The road ahead is well-maintained, the brush cleared back from the edges.
+- The distant watchtowers stand dark against the eastern sky.
+- A patrol marker -- a cairn with a red-painted stone on top -- stands beside the road.

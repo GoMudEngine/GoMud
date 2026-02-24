@@ -1,0 +1,24 @@
+questid: 4
+name: The Warden's Report
+description: Road Warden Tessara needs someone to investigate bandit activity south
+  of her post and bring back evidence of their operations.
+secret: false
+
+steps:
+  - id: start
+    description: "Road Warden Tessara at the Warden's Post on Dustwalk Road has asked you to investigate a bandit camp in the gullies to the south. Search the abandoned campsite and the hollow beyond for evidence of their operations."
+    hint: "Head south from the Warden's Post along Dustwalk Road. The campsite is in a sheltered gully."
+  - id: investigate
+    description: "You have reached the bandit camp. Search the Bandit Hollow for evidence -- a purse containing incriminating documents should prove the scope of their operation."
+    hint: "The bandits have made their base in a dead-end hollow south of the abandoned campsite. Look for a purse among the stolen goods."
+  - id: evidence
+    description: "You found the bandit's purse containing caravan schedules and route information. Return to Road Warden Tessara at the Warden's Post with this evidence."
+    hint: "Head north along Dustwalk Road back to the Warden's Post."
+  - id: end
+    description: "You have delivered the evidence to Warden Tessara. The road wardens will act on this intelligence."
+
+rewards:
+  playermessage: "Tessara examines the letter with a grim expression, then folds it carefully into her report stack. 'This is exactly what I needed. Names, routes, schedules -- the wardens at Watchers Crossing will want to see this.' She reaches into a pouch and produces a clay token, pressing it into your hand. 'You have earned this. Show it at any warden post and you will be treated as a friend.'"
+  roommessage: "Tessara nods to herself as she reads through the confiscated documents, already composing her report."
+  gold: 15
+  itemid: 17

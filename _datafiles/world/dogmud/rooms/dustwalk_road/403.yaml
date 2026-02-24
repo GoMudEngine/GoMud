@@ -1,0 +1,28 @@
+roomid: 403
+zone: Dustwalk Road
+title: Dry Creek Bed
+description: A narrow trail leads from the road to a shallow creek bed that has not
+  seen water in weeks. The bed is lined with smooth, sun-bleached stones and the
+  cracked remnants of dried mud. Hardy herbs have taken root in the damp soil beneath
+  the stones, their leaves grey-green and aromatic. This is the kind of place a
+  traveller might stop to forage or rest out of the wind. The banks of the creek
+  provide modest shelter, and the herbs grow thick where the moisture lingers longest.
+biome: plains
+exits:
+  east:
+    roomid: 402
+spawninfo:
+- itemid: 40009
+  message: A cluster of dustwalk herbs grows between the creek stones, leaves silvery in the light.
+  respawnrate: 10 real minutes
+nouns:
+  herbs: Grey-green plants with narrow, aromatic leaves and tiny white flowers. They
+    grow in the dampest patches of the creek bed where underground moisture seeps up
+    through the gravel. The scent is sharp and clean, like crushed sage with an
+    undertone of something bitter.
+  stones: Smooth river stones, pale and dry. They were tumbled round by water that
+    no longer flows here. Some still hold a faint coolness on their undersides.
+idlemessages:
+- The aromatic scent of wild herbs drifts up from the creek bed.
+- A lizard suns itself on a flat stone, motionless except for the pulse at its throat.
+- The dry creek bed is silent. Whatever water shaped these stones is long gone.

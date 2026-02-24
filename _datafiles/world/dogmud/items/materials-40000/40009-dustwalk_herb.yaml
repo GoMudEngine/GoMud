@@ -1,0 +1,12 @@
+itemid: 40009
+name: dustwalk herb
+namesimple: herb
+description: A sprig of grey-green herbs with narrow, aromatic leaves and tiny white
+  flowers. It grows wild in the dry creek beds along Dustwalk Road, where underground
+  moisture seeps up through the gravel. The scent is sharp and clean, somewhere between
+  sage and bitter camphor. Alchemists and healers prize it as a base for poultices.
+type: object
+subtype: mundane
+component_tag: dustwalk-herb
+weight: 0.2
+value: 3

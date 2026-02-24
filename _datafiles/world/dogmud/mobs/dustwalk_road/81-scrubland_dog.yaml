@@ -1,0 +1,43 @@
+mobid: 81
+zone: Dustwalk Road
+statpool: 6
+itemdropchance: 5
+hostile: true
+maxwander: 2
+groups:
+  - animal
+  - canine
+idlecommands:
+  - 'emote sniffs the ground in quick, nervous movements'
+  - 'emote raises its hackles and growls at nothing visible'
+  - 'wander'
+  - ''
+  - ''
+combatcommands:
+  - 'emote snaps its jaws with a sharp crack'
+  - ''
+  - 'emote circles low to the ground, looking for an opening'
+  - ''
+activitylevel: 30
+character:
+  name: scrubland dog
+  description: |
+    A lean, dust-coloured dog gone feral, all ribs and sinew under a
+    coat of short, bristly fur. Its ears are torn and scarred from fights, and its
+    yellow eyes hold the flat, assessing stare of a predator that has learned to
+    weigh every encounter in terms of risk and reward. It moves in a low crouch,
+    ready to bolt or bite depending on how things go.
+  speciesid: 21
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 10
+    vitality:
+      training: 5
+    perception:
+      training: -15
+    willpower:
+      training: -15
+    charisma:
+      training: -15
