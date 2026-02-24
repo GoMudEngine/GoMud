@@ -18,14 +18,11 @@ Usage:
         AI_USERNAME     default: aitester
         AI_PASSWORD     default: testpass123
 
-Before first run:
-    1. Start the MUD server
-    2. Telnet to the AI port and create the account manually:
-       telnet localhost 55555  ->  type "new"  ->  create aitester / testpass123
-    3. Complete character creation (pick a name, species, etc.)
-    4. Log out
-    5. As admin on the human port, run:  ai-flag aitester
-    6. Now run this script
+First run:
+    1. Start the MUD server with AIPort enabled
+    2. Run this script — it will auto-create the account if it doesn't exist
+    3. After first login, flag the account from an admin session on the human
+       port:  ai-flag aitester
 """
 
 import asyncio
@@ -109,7 +106,7 @@ used the wrong keyword. Try "look" to re-read the room and find the correct name
 == TESTING STRATEGY ==
 1. EXPLORE METHODICALLY: When you enter a zone, try to visit every room. Note exits
    from "look" output and visit each one. Track where you've been mentally. If the
-   room is dark and you can't see, use the "illuminate" spell. You should get the
+   room is dark and you can't see, use the "illum" spell. You should get the
    spell from Saris as part of the questline in the tutorial area. Wait for Saris to
    teach you the spell.
 2. INTERACT WITH EVERYTHING: Talk to every NPC using their actual name from the room
@@ -120,7 +117,7 @@ used the wrong keyword. Try "look" to re-read the room and find the correct name
    and grappling.
 4. READ HELPFILES: Use the "help" command and "help <command name>" to read through
    helpfiles so you ubnderstand what is available.
-5. EXERCISE SYSTEMS: Check shops (list/buy/sell), try crlafting (forage then craft),
+5. EXERCISE SYSTEMS: Check shops (list/buy/sell), try crafting (forage then craft),
    use items you find, try locking/unlocking doors. Attempt to complete quests and
    periodically check your quest progress with the "quests" command.
 6. CHECK QUESTS: Run "quests" periodically to see if you have any active quests or
@@ -255,39 +252,33 @@ async def read_until_pause(reader, timeout: float = 2.0) -> str:
     return "".join(chunks)
 
 
-async def main():
-    print(f"[{timestamp()}] DOGMud AI Player starting")
-    print(f"  Host: {MUD_HOST}:{MUD_PORT}")
-    print(f"  Model: {OLLAMA_MODEL}")
-    print(f"  Account: {AI_USERNAME}")
-    print()
-
-    # Connect
-    print(f"[{timestamp()}] Connecting...")
-    try:
-        reader, writer = await telnetlib3.open_connection(
-            MUD_HOST, MUD_PORT,
-            encoding='utf-8',
-            term='dumb',       # simple terminal — no fancy negotiation
-            cols=120, rows=50,
-        )
-    except Exception as e:
-        print(f"  Connection failed: {e}")
-        print("  Is the MUD server running with AIPort enabled?")
-        sys.exit(1)
-
-    print(f"[{timestamp()}] Connected.")
-
-    # Read splash screen
+async def connect():
+    """Open a telnet connection to the MUD AI port. Returns (reader, writer)."""
+    reader, writer = await telnetlib3.open_connection(
+        MUD_HOST, MUD_PORT,
+        encoding='utf-8',
+        term='dumb',
+        cols=120, rows=50,
+    )
+    # Read and discard splash screen
     await asyncio.sleep(2)
     splash = await read_until_pause(reader, 3.0)
     splash = clean_text(splash)
     if splash:
         print(f"[{timestamp()}] SPLASH:\n{splash[:500]}\n")
+    return reader, writer
 
-    # --- Login flow ---
+
+async def attempt_login():
+    """Try to log in with existing credentials.
+
+    Returns (reader, writer, success). On failure the connection is dead
+    (server disconnects on bad login), so caller must reconnect.
+    """
+    print(f"[{timestamp()}] Attempting login as {AI_USERNAME}...")
+    reader, writer = await connect()
+
     # Send username
-    print(f"[{timestamp()}] Sending username: {AI_USERNAME}")
     writer.write(AI_USERNAME + "\r\n")
     await asyncio.sleep(1.5)
     resp = clean_text(await read_until_pause(reader, 2.0))
@@ -295,18 +286,98 @@ async def main():
         print(f"[{timestamp()}] LOGIN:\n{resp[:300]}\n")
 
     # Send password
-    print(f"[{timestamp()}] Sending password")
     writer.write(AI_PASSWORD + "\r\n")
     await asyncio.sleep(3)
     resp = clean_text(await read_until_pause(reader, 3.0))
     if resp:
         print(f"[{timestamp()}] LOGIN RESPONSE:\n{resp[:500]}\n")
 
-    # Check if login worked (look for common post-login content)
-    if "incorrect" in resp.lower() or "invalid" in resp.lower():
-        print(f"[{timestamp()}] Login appears to have failed. Check credentials.")
-        writer.close()
+    # Check for failure indicators — server sends these then disconnects
+    resp_lower = resp.lower()
+    if any(kw in resp_lower for kw in ("incorrect", "invalid", "nope", "bye")):
+        print(f"[{timestamp()}] Login failed (account may not exist).")
+        try:
+            writer.close()
+        except Exception:
+            pass
+        return None, None, False
+
+    # If we got no response at all the connection probably died
+    if not resp:
+        print(f"[{timestamp()}] No response after password — connection lost.")
+        try:
+            writer.close()
+        except Exception:
+            pass
+        return None, None, False
+
+    return reader, writer, True
+
+
+async def create_account():
+    """Go through the new-account creation flow.
+
+    Returns (reader, writer) logged in and ready to play.
+    """
+    print(f"[{timestamp()}] Creating new account: {AI_USERNAME}")
+    reader, writer = await connect()
+
+    async def send_and_read(text, label, pause=1.5, read_timeout=2.0):
+        writer.write(text + "\r\n")
+        await asyncio.sleep(pause)
+        resp = clean_text(await read_until_pause(reader, read_timeout))
+        if resp:
+            print(f"[{timestamp()}] {label}:\n{resp[:300]}\n")
+        return resp
+
+    # Step 1: send "new" to start account creation
+    await send_and_read("new", "NEW_ACCOUNT")
+
+    # Step 2: choose username
+    await send_and_read(AI_USERNAME, "SET_USERNAME")
+
+    # Step 3: choose password
+    await send_and_read(AI_PASSWORD, "SET_PASSWORD")
+
+    # Step 4: repeat password
+    await send_and_read(AI_PASSWORD, "VERIFY_PASSWORD")
+
+    # Step 5: email (optional — send empty)
+    await send_and_read("", "EMAIL")
+
+    # Step 6: screen reader prompt
+    await send_and_read("n", "SCREEN_READER")
+
+    # Step 7: confirm creation
+    resp = await send_and_read("y", "CONFIRM_CREATE", pause=3, read_timeout=3.0)
+
+    print(f"[{timestamp()}] Account creation complete.")
+    return reader, writer
+
+
+async def main():
+    print(f"[{timestamp()}] DOGMud AI Player starting")
+    print(f"  Host: {MUD_HOST}:{MUD_PORT}")
+    print(f"  Model: {OLLAMA_MODEL}")
+    print(f"  Account: {AI_USERNAME}")
+    print()
+
+    # --- Login / account creation ---
+    try:
+        reader, writer, logged_in = await attempt_login()
+    except Exception as e:
+        print(f"  Connection failed: {e}")
+        print("  Is the MUD server running with AIPort enabled?")
         sys.exit(1)
+
+    if not logged_in:
+        print(f"[{timestamp()}] Account not found — creating from scratch...")
+        try:
+            reader, writer = await create_account()
+        except Exception as e:
+            print(f"  Account creation failed: {e}")
+            traceback.print_exc()
+            sys.exit(1)
 
     print(f"[{timestamp()}] Login complete. Starting game loop.\n")
     print("=" * 70)
