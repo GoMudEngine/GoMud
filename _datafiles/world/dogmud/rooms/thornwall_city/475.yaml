@@ -15,18 +15,16 @@ exits:
   north:
     roomid: 466
 nouns:
-  door:
-    look: A heavy wooden door reinforced with iron bands, fitted with a viewing slot
-      at eye height. The slot is currently closed. A small mark has been scratched
-      into the doorframe -- a circle with a line through it, recognizable to those
-      who know the local thieves' marks as "buyer here."
-  crates:
-    look: A stack of empty crates and barrels, most bearing the marks of legitimate
-      merchants. They have been stacked to create a crude shelter -- someone sleeps
-      here, judging by the flattened straw and the remains of a meal tucked into a
-      corner.
-spawns:
-  - mobid: 104
+  door: A heavy wooden door reinforced with iron bands, fitted with a viewing slot
+    at eye height. The slot is currently closed. A small mark has been scratched
+    into the doorframe -- a circle with a line through it, recognizable to those
+    who know the local thieves' marks as "buyer here."
+  crates: A stack of empty crates and barrels, most bearing the marks of legitimate
+    merchants. They have been stacked to create a crude shelter -- someone sleeps
+    here, judging by the flattened straw and the remains of a meal tucked into a
+    corner.
+spawninfo:
+- mobid: 104
 idlemessages:
 - The viewing slot in the reinforced door clicks open, then shut.
 - A cat picks its way along the top of the crate stack, tail held high.

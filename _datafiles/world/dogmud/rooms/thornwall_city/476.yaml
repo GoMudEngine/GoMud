@@ -14,17 +14,15 @@ exits:
   south:
     roomid: 463
 nouns:
-  shelves:
-    look: Floor-to-ceiling shelves packed with ledgers, each one labelled by year
-      and category. The oldest are leather-bound and crumbling at the spines. The
-      newest are identical in format but the leather is fresh. The system is
-      meticulous, if overwhelming.
-  counter:
-    look: A wooden counter with a brass bell for service, a stack of blank request
-      forms, and an inkwell. A sign reads "All requests must be submitted in writing.
-      Processing time varies. Do not ring bell more than once."
-spawns:
-  - mobid: 99
+  shelves: Floor-to-ceiling shelves packed with ledgers, each one labelled by year
+    and category. The oldest are leather-bound and crumbling at the spines. The
+    newest are identical in format but the leather is fresh. The system is
+    meticulous, if overwhelming.
+  counter: A wooden counter with a brass bell for service, a stack of blank request
+    forms, and an inkwell. A sign reads "All requests must be submitted in writing.
+    Processing time varies. Do not ring bell more than once."
+spawninfo:
+- mobid: 99
 idlemessages:
 - A page turns somewhere deep in the stacks, a dry whisper of parchment.
 - The clerk stamps a document with a heavy seal, the sound sharp in the quiet room.

@@ -18,19 +18,16 @@ exits:
   down:
     roomid: 426
 nouns:
-  crack:
-    look: The crack runs diagonally across the eastern rail for about two paces, deep
-      enough to fit a finger into. It has been packed with mortar at some point, but
-      the mortar is crumbling. Someone has chalked a mark beside it -- a maintenance
-      notation, perhaps.
-  towers:
-    look: The watchtowers are squat, square structures built into the bridge's
-      approach ramps. Their arrow slits stare blankly at the road. Whatever garrison
-      once manned them is long gone, but the stonework endures.
-  rail:
-    look: The bridge rail is waist-high, made of the same dressed stone as the road
-      surface. Years of travellers leaning on it have polished the top smooth. The
-      eastern section shows the stress crack and newer repair stones.
+  crack: The crack runs diagonally across the eastern rail for about two paces, deep
+    enough to fit a finger into. It has been packed with mortar at some point, but
+    the mortar is crumbling. Someone has chalked a mark beside it -- a maintenance
+    notation, perhaps.
+  towers: The watchtowers are squat, square structures built into the bridge's
+    approach ramps. Their arrow slits stare blankly at the road. Whatever garrison
+    once manned them is long gone, but the stonework endures.
+  rail: The bridge rail is waist-high, made of the same dressed stone as the road
+    surface. Years of travellers leaning on it have polished the top smooth. The
+    eastern section shows the stress crack and newer repair stones.
 idlemessages:
 - The river rushes beneath the bridge, its voice a constant low roar.
 - Wind funnels between the watchtowers, tugging at your clothing.

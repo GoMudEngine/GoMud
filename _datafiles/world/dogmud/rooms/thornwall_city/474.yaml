@@ -15,19 +15,17 @@ exits:
   east:
     roomid: 475
 nouns:
-  curtain:
-    look: A heavy canvas curtain, once dyed dark red, now faded to a muddy brown.
-      It covers a doorway that leads into a ground-floor room. The curtain moves
-      slightly in the draft, revealing a glimpse of dim lamplight and the edge of
-      a counter inside. This is not the kind of shop that advertises.
-  walls:
-    look: Damp brick walls streaked with mineral deposits and green with moss in
-      the lower courses. Graffiti has been scratched into the softer mortar --
-      names, crude drawings, and what might be directional marks for those who
-      know how to read them.
-spawns:
-  - mobid: 105
-    respawnminutes: 5
+  curtain: A heavy canvas curtain, once dyed dark red, now faded to a muddy brown.
+    It covers a doorway that leads into a ground-floor room. The curtain moves
+    slightly in the draft, revealing a glimpse of dim lamplight and the edge of
+    a counter inside. This is not the kind of shop that advertises.
+  walls: Damp brick walls streaked with mineral deposits and green with moss in
+    the lower courses. Graffiti has been scratched into the softer mortar --
+    names, crude drawings, and what might be directional marks for those who
+    know how to read them.
+spawninfo:
+- mobid: 105
+  respawnrate: 5 real minutes
 idlemessages:
 - A rat scurries along the base of the wall and vanishes into a crack.
 - Water drips from a drain pipe above, forming a dark puddle on the cobblestones.

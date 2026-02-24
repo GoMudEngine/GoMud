@@ -13,21 +13,18 @@ exits:
   south:
     roomid: 460
 nouns:
-  table:
-    look: A heavy oak table scarred by knife marks and ink stains. Duty rosters are
-      pinned under a mug, incident reports are stacked in rough piles, and a half-eaten
-      loaf of bread sits next to an inkwell. This is where the daily business of
-      keeping the peace is organized.
-  racks:
-    look: Wooden weapon racks holding city guard equipment -- spears, short swords,
-      truncheons, and a few crossbows with quarrel pouches. Everything is maintained
-      but well-used. A chalk board above lists equipment checked out and by whom.
-  cells:
-    look: Three iron-barred cells at the back of the room, each barely large enough
-      for a cot and a bucket. They are empty now, their doors standing open. Scratches
-      and stains on the walls suggest they see regular use.
-spawns:
-  - mobid: 94
+  table: A heavy oak table scarred by knife marks and ink stains. Duty rosters are
+    pinned under a mug, incident reports are stacked in rough piles, and a half-eaten
+    loaf of bread sits next to an inkwell. This is where the daily business of
+    keeping the peace is organized.
+  racks: Wooden weapon racks holding city guard equipment -- spears, short swords,
+    truncheons, and a few crossbows with quarrel pouches. Everything is maintained
+    but well-used. A chalk board above lists equipment checked out and by whom.
+  cells: Three iron-barred cells at the back of the room, each barely large enough
+    for a cot and a bucket. They are empty now, their doors standing open. Scratches
+    and stains on the walls suggest they see regular use.
+spawninfo:
+- mobid: 94
 idlemessages:
 - A guard sits at the table, laboriously writing an incident report.
 - Keys jingle on a ring at someone's belt.

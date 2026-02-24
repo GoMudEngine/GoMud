@@ -17,14 +17,12 @@ exits:
   west:
     roomid: 467
 nouns:
-  well:
-    look: A stone well with a wooden windlass and a bucket on a chain. The water
-      is clean -- Thornwall's wells are fed by a deep aquifer. The low wall around
-      it serves as an informal meeting place, worn smooth by generations of sitting.
-  board:
-    look: A neighbourhood message board, much humbler than the official one at the
-      gate. Lost cats, spare room available, seeking laundress, child minding offered.
-      The small transactions of daily life, pinned up in hope.
+  well: A stone well with a wooden windlass and a bucket on a chain. The water
+    is clean -- Thornwall's wells are fed by a deep aquifer. The low wall around
+    it serves as an informal meeting place, worn smooth by generations of sitting.
+  board: A neighbourhood message board, much humbler than the official one at the
+    gate. Lost cats, spare room available, seeking laundress, child minding offered.
+    The small transactions of daily life, pinned up in hope.
 idlemessages:
 - Two women sit on the well wall, talking quietly over the morning's water drawing.
 - A child drops a pebble down the well and counts the seconds until the splash.

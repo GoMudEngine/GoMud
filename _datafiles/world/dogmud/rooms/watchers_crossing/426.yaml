@@ -16,21 +16,18 @@ exits:
   southwest:
     roomid: 425
 nouns:
-  marks:
-    look: Deep parallel scratches in the stone, each about a handspan apart. Whatever
-      made them has claws like chisels and the strength to gouge dressed stone. The
-      marks are fresh -- the exposed rock beneath is still pale and unweathered.
-  debris:
-    look: A tangle of branches, waterlogged cloth, and less identifiable things caught
-      against the bridge pilings. Among the refuse you spot cracked bones -- too large
-      to be fish, too gnawed to identify. Something has been feeding here.
-  pilings:
-    look: The bridge pilings are massive blocks of fitted stone, green with centuries
-      of moss and river spray. They are solid and square, built to last, but the
-      mortar between the blocks is soft and crumbling in places.
-spawns:
-  - mobid: 87
-    respawnminutes: 6
+  marks: Deep parallel scratches in the stone, each about a handspan apart. Whatever
+    made them has claws like chisels and the strength to gouge dressed stone. The
+    marks are fresh -- the exposed rock beneath is still pale and unweathered.
+  debris: A tangle of branches, waterlogged cloth, and less identifiable things caught
+    against the bridge pilings. Among the refuse you spot cracked bones -- too large
+    to be fish, too gnawed to identify. Something has been feeding here.
+  pilings: The bridge pilings are massive blocks of fitted stone, green with centuries
+    of moss and river spray. They are solid and square, built to last, but the
+    mortar between the blocks is soft and crumbling in places.
+spawninfo:
+- mobid: 87
+  respawnrate: 6 real minutes
 idlemessages:
 - Water echoes off the underside of the bridge in hollow, booming sounds.
 - Something shifts in the dark water downstream -- a ripple, then stillness.

@@ -15,25 +15,21 @@ exits:
   south:
     roomid: 444
 nouns:
-  notice:
-    look: 'An official document on heavy parchment, stamped with the seal of the
-      Thornwall Tax Authority. It reads: "BY ORDER of the Assessor-General, this
-      property is seized for non-payment of municipal land tax, assessment period
-      12-14. The former tenant, Gareth Millward, is hereby dispossessed. Property
-      reverts to the City of Thornwall." The ink is faded but legible. Rain has
-      softened the edges of the parchment.'
-  shed:
-    look: The tool shed has collapsed on one side, its roof timbers snapped by weather
-      or neglect. Inside the wreckage you can see a rusted hoe, a broken basket, and
-      what might have been a seed press. The tools of someone who expected to farm
-      here for years.
-  weeds:
-    look: Thistles, ragwort, and wild grass have claimed every inch of the field.
-      Beneath the weeds, the furrows of the last planting are still barely visible --
-      straight, careful lines now smothered by neglect.
-spawns:
-  - itemid: 22
-    respawnminutes: 0
+  notice: 'An official document on heavy parchment, stamped with the seal of the
+    Thornwall Tax Authority. It reads: "BY ORDER of the Assessor-General, this
+    property is seized for non-payment of municipal land tax, assessment period
+    12-14. The former tenant, Gareth Millward, is hereby dispossessed. Property
+    reverts to the City of Thornwall." The ink is faded but legible. Rain has
+    softened the edges of the parchment.'
+  shed: The tool shed has collapsed on one side, its roof timbers snapped by weather
+    or neglect. Inside the wreckage you can see a rusted hoe, a broken basket, and
+    what might have been a seed press. The tools of someone who expected to farm
+    here for years.
+  weeds: Thistles, ragwort, and wild grass have claimed every inch of the field.
+    Beneath the weeds, the furrows of the last planting are still barely visible --
+    straight, careful lines now smothered by neglect.
+spawninfo:
+- itemid: 22
 idlemessages:
 - The weeds rustle and shift as something small moves through them.
 - The notice on the post flaps in the wind, its seal catching the light.

@@ -18,14 +18,12 @@ exits:
   east:
     roomid: 445
 nouns:
-  walls:
-    look: Low drystone walls built with care, each stone fitted without mortar. The
-      walls are old but well-maintained -- a sign of landowners who take property lines
-      seriously. Iron pins mark survey points at regular intervals.
-  ditches:
-    look: Shallow irrigation channels run parallel to the road, carrying water from
-      somewhere upstream. The engineering is simple but effective. Some channels are
-      dry, suggesting fields that are no longer being worked.
+  walls: Low drystone walls built with care, each stone fitted without mortar. The
+    walls are old but well-maintained -- a sign of landowners who take property lines
+    seriously. Iron pins mark survey points at regular intervals.
+  ditches: Shallow irrigation channels run parallel to the road, carrying water from
+    somewhere upstream. The engineering is simple but effective. Some channels are
+    dry, suggesting fields that are no longer being worked.
 idlemessages:
 - A farm cart creaks along a side track, loaded with bundled straw.
 - Crows wheel over the fields, arguing loudly over territory.

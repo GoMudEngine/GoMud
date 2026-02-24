@@ -14,21 +14,18 @@ exits:
   south:
     roomid: 467
 nouns:
-  altar:
-    look: A plain stone altar, unadorned except for a brass incense bowl and a pair
-      of candlesticks. The altar has been scrubbed so many times that the stone has
-      a faintly soapy texture. It is a place of function, not ostentation.
-  pillars:
-    look: Stone pillars carved with figures in flowing robes -- priests, scholars,
-      workers, farmers. The carvings represent the community the temple serves. Many
-      of the faces have been rubbed smooth by generations of parishioners touching
-      them for luck.
-  candles:
-    look: Iron candle stands line the walls, each holding a thick tallow candle.
-      The wax has dripped and pooled at the bases, building up in layered formations.
-      The light they give is steady and warm.
-spawns:
-  - mobid: 95
+  altar: A plain stone altar, unadorned except for a brass incense bowl and a pair
+    of candlesticks. The altar has been scrubbed so many times that the stone has
+    a faintly soapy texture. It is a place of function, not ostentation.
+  pillars: Stone pillars carved with figures in flowing robes -- priests, scholars,
+    workers, farmers. The carvings represent the community the temple serves. Many
+    of the faces have been rubbed smooth by generations of parishioners touching
+    them for luck.
+  candles: Iron candle stands line the walls, each holding a thick tallow candle.
+    The wax has dripped and pooled at the bases, building up in layered formations.
+    The light they give is steady and warm.
+spawninfo:
+- mobid: 95
 idlemessages:
 - Incense smoke curls upward from the altar bowl, vanishing into the vault above.
 - A candle gutters and steadies, sending shadows dancing across the pillars.

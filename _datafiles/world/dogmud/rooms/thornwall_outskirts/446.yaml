@@ -16,26 +16,23 @@ exits:
   east:
     roomid: 447
 nouns:
-  board:
-    look: 'The notice board is a weathered wooden frame nailed to a post, its surface
-      thick with overlapping papers. A tax assessment schedule, a warning about bandits
-      on the western road, a merchant seeking caravan guards, and a faded poster
-      offering a reward for information about "unlicensed toll collection at Watchers
-      Crossing." Beneath the official notices, someone has scrawled: "LAND TAX IS
-      THEFT."'
-  gate:
-    look: The western gate of Thornwall is an impressive piece of engineering -- a
-      stone arch three stories tall, its keystone carved with the city's crest. The
-      iron-bound doors are ancient oak, scarred by weather and, in places, by weapons.
-      They stand open now, but the hinges are oiled and the mechanism for closing them
-      is clearly maintained.
-  guards:
-    look: City guards in blue-grey surcoats over chainmail, each carrying a spear and
-      a short sword. They check incoming travellers with a mixture of boredom and
-      suspicion, waving through familiar faces and stopping strangers for questions.
-spawns:
-  - mobid: 92
-  - mobid: 93
+  board: 'The notice board is a weathered wooden frame nailed to a post, its surface
+    thick with overlapping papers. A tax assessment schedule, a warning about bandits
+    on the western road, a merchant seeking caravan guards, and a faded poster
+    offering a reward for information about "unlicensed toll collection at Watchers
+    Crossing." Beneath the official notices, someone has scrawled: "LAND TAX IS
+    THEFT."'
+  gate: The western gate of Thornwall is an impressive piece of engineering -- a
+    stone arch three stories tall, its keystone carved with the city's crest. The
+    iron-bound doors are ancient oak, scarred by weather and, in places, by weapons.
+    They stand open now, but the hinges are oiled and the mechanism for closing them
+    is clearly maintained.
+  guards: City guards in blue-grey surcoats over chainmail, each carrying a spear and
+    a short sword. They check incoming travellers with a mixture of boredom and
+    suspicion, waving through familiar faces and stopping strangers for questions.
+spawninfo:
+- mobid: 92
+- mobid: 93
 idlemessages:
 - A guard waves a merchant cart through the gate after a cursory inspection.
 - Someone pins a new notice to the board, reads the others, and shakes their head.

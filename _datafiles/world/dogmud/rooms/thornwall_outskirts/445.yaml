@@ -17,17 +17,15 @@ exits:
   east:
     roomid: 446
 nouns:
-  milestone:
-    look: 'A squared stone pillar inscribed with distances: "Thornwall Gate -- 1/2
-      league. Watchers Crossing -- 3 leagues. Sanctum Basin -- 9 leagues." The stone
-      is well-maintained, the lettering freshly painted.'
-  channels:
-    look: Stone-lined drainage channels run along both sides of the road, carrying
-      rainwater and runoff away from the paved surface. The engineering is solid --
-      Thornwall takes its roads seriously.
-spawns:
-  - mobid: 90
-    respawnminutes: 6
+  milestone: 'A squared stone pillar inscribed with distances: "Thornwall Gate -- 1/2
+    league. Watchers Crossing -- 3 leagues. Sanctum Basin -- 9 leagues." The stone
+    is well-maintained, the lettering freshly painted.'
+  channels: Stone-lined drainage channels run along both sides of the road, carrying
+    rainwater and runoff away from the paved surface. The engineering is solid --
+    Thornwall takes its roads seriously.
+spawninfo:
+- mobid: 90
+  respawnrate: 6 real minutes
 idlemessages:
 - A farm cart rumbles past, its driver nodding a tired greeting.
 - The city walls grow closer, their grey stone catching the light.

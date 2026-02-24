@@ -15,21 +15,18 @@ exits:
   east:
     roomid: 443
 nouns:
-  garden:
-    look: Neat rows of turnips, onions, and herbs, each row weeded and watered with
-      obvious care. The soil is dark and rich -- whoever tends this garden knows what
-      they are doing. A scarecrow made of old clothes and a broom handle watches over
-      the plot with button eyes.
-  barn:
-    look: A small barn with a sagging roofline but sound walls. The door is latched
-      but not locked. Through a gap in the boards you can see stacked tools and a
-      few sacks of seed grain. No livestock -- the stalls are empty.
-  fence:
-    look: A low split-rail fence, its posts straight and its rails tight. On this
-      side, order. On the other side -- the fallow field next door -- chaos. The
-      contrast is stark.
-spawns:
-  - mobid: 89
+  garden: Neat rows of turnips, onions, and herbs, each row weeded and watered with
+    obvious care. The soil is dark and rich -- whoever tends this garden knows what
+    they are doing. A scarecrow made of old clothes and a broom handle watches over
+    the plot with button eyes.
+  barn: A small barn with a sagging roofline but sound walls. The door is latched
+    but not locked. Through a gap in the boards you can see stacked tools and a
+    few sacks of seed grain. No livestock -- the stalls are empty.
+  fence: A low split-rail fence, its posts straight and its rails tight. On this
+    side, order. On the other side -- the fallow field next door -- chaos. The
+    contrast is stark.
+spawninfo:
+- mobid: 89
 idlemessages:
 - The smell of woodsmoke and cooking drifts from the farmhouse chimney.
 - A hen scratches in the dirt near the barn door, clucking softly.

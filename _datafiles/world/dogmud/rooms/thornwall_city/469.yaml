@@ -17,10 +17,9 @@ exits:
   south:
     roomid: 472
 nouns:
-  shops:
-    look: Ground-floor workshops open directly onto the street -- a tanner, a
-      woodworker, a rope-maker. Each one spills its work onto the cobblestones.
-      Apprentices sit on doorsteps, taking breaks they probably should not be taking.
+  shops: Ground-floor workshops open directly onto the street -- a tanner, a
+    woodworker, a rope-maker. Each one spills its work onto the cobblestones.
+    Apprentices sit on doorsteps, taking breaks they probably should not be taking.
 idlemessages:
 - The rhythmic clang of a smith's hammer echoes down the street.
 - Sawdust drifts from a woodworker's shop, catching the light.

@@ -16,23 +16,20 @@ exits:
   east:
     roomid: 424
 nouns:
-  map:
-    look: The painted map shows the river, the bridge, and the roads east and west.
-      Thornwall is marked as a much smaller settlement than it is today -- this map
-      predates the city's expansion by decades. Dustwalk Road is labeled simply as
-      "West Track." Someone has penciled corrections in the margins.
-  hearth:
-    look: The fireplace is built of the same river stone as the walls, blackened by
-      years of use. A kettle hangs on an iron hook over the coals. The mantel holds
-      a row of mismatched cups and a jar of dried flowers.
-  pelts:
-    look: Deer and rabbit pelts are stretched on the wall, old enough that the fur
-      has gone flat and dull. Hunting trophies from a time when the crossing saw fewer
-      travellers and more wildlife.
-spawns:
-  - mobid: 84
-  - mobid: 88
-    respawnminutes: 8
+  map: The painted map shows the river, the bridge, and the roads east and west.
+    Thornwall is marked as a much smaller settlement than it is today -- this map
+    predates the city's expansion by decades. Dustwalk Road is labeled simply as
+    "West Track." Someone has penciled corrections in the margins.
+  hearth: The fireplace is built of the same river stone as the walls, blackened by
+    years of use. A kettle hangs on an iron hook over the coals. The mantel holds
+    a row of mismatched cups and a jar of dried flowers.
+  pelts: Deer and rabbit pelts are stretched on the wall, old enough that the fur
+    has gone flat and dull. Hunting trophies from a time when the crossing saw fewer
+    travellers and more wildlife.
+spawninfo:
+- mobid: 84
+- mobid: 88
+  respawnrate: 8 real minutes
 idlemessages:
 - The fire pops and shifts in the hearth, sending up a curl of sparks.
 - A board creaks overhead as someone moves in the rooms above.

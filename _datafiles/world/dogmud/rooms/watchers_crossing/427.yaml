@@ -15,15 +15,13 @@ exits:
     roomid: 440
     zone: Thornwall Outskirts
 nouns:
-  marker:
-    look: 'A squared stone pillar, its faces carved with directions and distances.
-      "Thornwall -- 2 leagues East. Watchers Crossing -- here. Dustwalk Road -- 4
-      leagues West. Sanctum Basin -- 6 leagues Northwest." The carving is professional
-      and recent -- someone is maintaining the road markers.'
-  walls:
-    look: Low drystone walls run along the edges of fields, marking boundaries between
-      plots. The fields themselves are a mix of tilled earth and fallow grass. This
-      is the beginning of Thornwall's agricultural belt.
+  marker: 'A squared stone pillar, its faces carved with directions and distances.
+    "Thornwall -- 2 leagues East. Watchers Crossing -- here. Dustwalk Road -- 4
+    leagues West. Sanctum Basin -- 6 leagues Northwest." The carving is professional
+    and recent -- someone is maintaining the road markers.'
+  walls: Low drystone walls run along the edges of fields, marking boundaries between
+    plots. The fields themselves are a mix of tilled earth and fallow grass. This
+    is the beginning of Thornwall's agricultural belt.
 idlemessages:
 - The road stretches east, straight and well-maintained, toward the distant city walls.
 - A farm cart's tracks are fresh in the road dust, heading toward Thornwall.

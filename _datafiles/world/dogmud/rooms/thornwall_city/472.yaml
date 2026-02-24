@@ -16,23 +16,20 @@ exits:
   east:
     roomid: 475
 nouns:
-  sign:
-    look: A painted wooden sign showing a fence post in brown water, the waterline
-      rising to the crossbar. The paint is fresh -- someone keeps the sign maintained
-      even if the rest of the building could use work. Below the image, in block
-      letters, "The Drowning Post."
-  bar:
-    look: A massive slab of oak, dark with age and stain, resting on heavy trestle
-      legs. The surface is carved with initials, ring-marked by a thousand mugs, and
-      polished smooth in the spots where elbows rest. Behind it, shelves hold bottles,
-      kegs, and an impressive collection of mismatched cups.
-  cellar:
-    look: A narrow staircase descends into darkness. The air rising from below is
-      cool and damp, smelling of old stone and stagnant water. The cellar serves
-      as storage, but the dampness suggests the flooding that gave the tavern its
-      name has not entirely been conquered. The stairs look sturdy but steep.
-spawns:
-  - mobid: 96
+  sign: A painted wooden sign showing a fence post in brown water, the waterline
+    rising to the crossbar. The paint is fresh -- someone keeps the sign maintained
+    even if the rest of the building could use work. Below the image, in block
+    letters, "The Drowning Post."
+  bar: A massive slab of oak, dark with age and stain, resting on heavy trestle
+    legs. The surface is carved with initials, ring-marked by a thousand mugs, and
+    polished smooth in the spots where elbows rest. Behind it, shelves hold bottles,
+    kegs, and an impressive collection of mismatched cups.
+  cellar: A narrow staircase descends into darkness. The air rising from below is
+    cool and damp, smelling of old stone and stagnant water. The cellar serves
+    as storage, but the dampness suggests the flooding that gave the tavern its
+    name has not entirely been conquered. The stairs look sturdy but steep.
+spawninfo:
+- mobid: 96
 idlemessages:
 - The clink of cups and low murmur of conversation fill the room.
 - Smoke from a pipe drifts across the ceiling in lazy blue layers.

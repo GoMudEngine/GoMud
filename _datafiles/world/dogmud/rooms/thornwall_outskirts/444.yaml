@@ -18,23 +18,20 @@ exits:
   south:
     roomid: 445
 nouns:
-  mounds:
-    look: Low mounds of freshly turned soil, each about the size of a fist. The
-      burrows beneath connect in a network that riddles the field. Whatever is digging
-      them is small, numerous, and very busy.
-  stakes:
-    look: Sharpened wooden stakes driven into the ground around the worst-damaged
-      areas, their tips smeared with a dark paste that smells acrid and chemical. The
-      pests seem to be ignoring them entirely.
-  pots:
-    look: Clay pots filled with smoldering herbs, placed at intervals along the
-      furrows. The smoke is thin and acrid. A local remedy, apparently, and not a
-      very effective one.
-spawns:
-  - mobid: 91
-    respawnminutes: 4
-  - mobid: 91
-    respawnminutes: 4
+  mounds: Low mounds of freshly turned soil, each about the size of a fist. The
+    burrows beneath connect in a network that riddles the field. Whatever is digging
+    them is small, numerous, and very busy.
+  stakes: Sharpened wooden stakes driven into the ground around the worst-damaged
+    areas, their tips smeared with a dark paste that smells acrid and chemical. The
+    pests seem to be ignoring them entirely.
+  pots: Clay pots filled with smoldering herbs, placed at intervals along the
+    furrows. The smoke is thin and acrid. A local remedy, apparently, and not a
+    very effective one.
+spawninfo:
+- mobid: 91
+  respawnrate: 4 real minutes
+- mobid: 91
+  respawnrate: 4 real minutes
 idlemessages:
 - Something rustles beneath the soil, sending a small mound of earth shifting.
 - A thin wisp of smoke rises from one of the pest-control pots.

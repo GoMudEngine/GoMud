@@ -19,13 +19,12 @@ exits:
   south:
     roomid: 469
 nouns:
-  fountain:
-    look: A stone fountain in the classical style -- a central pillar topped with a
-      worn figure too weathered to identify, surrounded by a circular basin. The
-      plumbing failed long ago. The basin is dry, its floor covered in a layer of
-      notices, lost buttons, and pigeon droppings.
-spawns:
-  - mobid: 101
+  fountain: A stone fountain in the classical style -- a central pillar topped with a
+    worn figure too weathered to identify, surrounded by a circular basin. The
+    plumbing failed long ago. The basin is dry, its floor covered in a layer of
+    notices, lost buttons, and pigeon droppings.
+spawninfo:
+- mobid: 101
 idlemessages:
 - Someone tucks a notice into the dry fountain basin and hurries away.
 - A pigeon lands on the fountain's central figure, puffing its chest importantly.

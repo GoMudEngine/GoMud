@@ -16,17 +16,15 @@ exits:
   west:
     roomid: 468
 nouns:
-  houses:
-    look: Narrow-fronted houses with shared walls, each one slightly different from
-      its neighbours -- a different colour of shutter, a window box here, a carved
-      doorframe there. The individuality is small but fierce, the only expression
-      of personality available in such tight quarters.
-  laundry:
-    look: Lines of drying clothes span the street from upper windows -- shirts,
-      sheets, stockings, all fluttering like flags of domesticity. The arrangement
-      suggests an informal system where certain lines belong to certain households.
-spawns:
-  - mobid: 107
+  houses: Narrow-fronted houses with shared walls, each one slightly different from
+    its neighbours -- a different colour of shutter, a window box here, a carved
+    doorframe there. The individuality is small but fierce, the only expression
+    of personality available in such tight quarters.
+  laundry: Lines of drying clothes span the street from upper windows -- shirts,
+    sheets, stockings, all fluttering like flags of domesticity. The arrangement
+    suggests an informal system where certain lines belong to certain households.
+spawninfo:
+- mobid: 107
 idlemessages:
 - A door opens and closes somewhere above, followed by footsteps on stairs.
 - A child's voice calls out from an upper window, answered by a shout from the street.

@@ -13,19 +13,16 @@ exits:
   west:
     roomid: 423
 nouns:
-  shelves:
-    look: The shelves display a practical selection -- rope, candles, flint and steel,
-      dried meat, small clay pots of salve. Nothing fancy, but everything a traveller
-      might need. Prices are chalked on small slate tags.
-  crates:
-    look: The crates bear shipping marks from several settlements. Most are addressed
-      to "M. Brecca, Watchers Crossing" in various hands. Some have been opened and
-      partially unpacked.
-  scale:
-    look: A brass balance scale, well-maintained and true. The weights are stamped
-      with official marks. The abacus beside it shows signs of heavy daily use.
-spawns:
-  - mobid: 85
+  shelves: The shelves display a practical selection -- rope, candles, flint and steel,
+    dried meat, small clay pots of salve. Nothing fancy, but everything a traveller
+    might need. Prices are chalked on small slate tags.
+  crates: The crates bear shipping marks from several settlements. Most are addressed
+    to "M. Brecca, Watchers Crossing" in various hands. Some have been opened and
+    partially unpacked.
+  scale: A brass balance scale, well-maintained and true. The weights are stamped
+    with official marks. The abacus beside it shows signs of heavy daily use.
+spawninfo:
+- mobid: 85
 idlemessages:
 - The merchant shifts a crate behind the counter, reorganizing stock.
 - Dust motes drift in the sunlight streaming through the open shutters.

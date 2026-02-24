@@ -18,10 +18,9 @@ exits:
   south:
     roomid: 471
 nouns:
-  houses:
-    look: The merchant houses on this stretch are well-built -- stone ground floors
-      with timber upper stories, their facades decorated with trade signs and carved
-      window frames. Money lives here, quietly and carefully.
+  houses: The merchant houses on this stretch are well-built -- stone ground floors
+    with timber upper stories, their facades decorated with trade signs and carved
+    window frames. Money lives here, quietly and carefully.
 idlemessages:
 - A money-changer's assistant hurries past with a locked cashbox.
 - The smell of roasting meat grows stronger from the market to the east.

@@ -16,14 +16,12 @@ exits:
     roomid: 460
     zone: Thornwall City
 nouns:
-  holes:
-    look: Narrow openings in the ceiling, arranged in two rows. In times of siege,
-      defenders above could pour boiling oil, drop stones, or fire arrows at anyone
-      caught in the passage. The holes are dark now, their upper chambers empty.
-  alcoves:
-    look: Shallow recesses in the tunnel walls, each large enough for a guard to
-      stand in. They are empty now, but iron brackets for torches and weapon racks
-      remain. The stone is worn smooth where armoured shoulders once leaned.
+  holes: Narrow openings in the ceiling, arranged in two rows. In times of siege,
+    defenders above could pour boiling oil, drop stones, or fire arrows at anyone
+    caught in the passage. The holes are dark now, their upper chambers empty.
+  alcoves: Shallow recesses in the tunnel walls, each large enough for a guard to
+    stand in. They are empty now, but iron brackets for torches and weapon racks
+    remain. The stone is worn smooth where armoured shoulders once leaned.
 idlemessages:
 - Footsteps echo off the stone walls of the gate tunnel.
 - A cool draft flows through the passage, carrying the sounds of the city ahead.

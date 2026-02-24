@@ -19,10 +19,9 @@ exits:
   south:
     roomid: 425
 nouns:
-  signpost:
-    look: 'The wooden post leans slightly, its arms pointing in three directions. "Dustwalk
-      Road -- West" reads one. "Thornwall -- East" reads another. The third, pointing
-      north, simply says "Inn & Trade." The paint is sun-bleached but legible.'
+  signpost: 'The wooden post leans slightly, its arms pointing in three directions. "Dustwalk
+    Road -- West" reads one. "Thornwall -- East" reads another. The third, pointing
+    north, simply says "Inn & Trade." The paint is sun-bleached but legible.'
 idlemessages:
 - A dust devil spins briefly at the crossroads before collapsing.
 - The distant sound of the river is a low, steady murmur beneath the wind.

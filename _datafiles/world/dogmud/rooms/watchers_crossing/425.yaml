@@ -14,17 +14,15 @@ exits:
   northeast:
     roomid: 426
 nouns:
-  reeds:
-    look: Tall river reeds grow in dense clumps along the waterline, their tops heavy
-      with seed. Small birds flit between the stalks, chirping. The reeds would provide
-      decent cover for anything lurking at the water's edge.
-  stones:
-    look: The riverbed is carpeted with smooth, flat stones in shades of grey and
-      brown. Some are perfect for skipping. A few larger ones break the surface,
-      creating small eddies where debris collects.
-spawns:
-  - itemid: 19
-    respawnminutes: 15
+  reeds: Tall river reeds grow in dense clumps along the waterline, their tops heavy
+    with seed. Small birds flit between the stalks, chirping. The reeds would provide
+    decent cover for anything lurking at the water's edge.
+  stones: The riverbed is carpeted with smooth, flat stones in shades of grey and
+    brown. Some are perfect for skipping. A few larger ones break the surface,
+    creating small eddies where debris collects.
+spawninfo:
+- itemid: 19
+  respawnrate: 15 real minutes
 idlemessages:
 - Water laps at the stones along the bank with a soft, rhythmic sound.
 - A dragonfly hovers over the shallows, then darts away upstream.

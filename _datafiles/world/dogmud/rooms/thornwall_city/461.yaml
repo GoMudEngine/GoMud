@@ -17,13 +17,12 @@ exits:
   south:
     roomid: 474
 nouns:
-  shops:
-    look: Small storefronts line the ground floor -- a cobbler, a chandler, a
-      notary. Their signs are hand-painted and their windows are small. These are
-      the businesses that serve the working population of the Gate Ward, not the
-      merchant class.
-spawns:
-  - mobid: 100
+  shops: Small storefronts line the ground floor -- a cobbler, a chandler, a
+    notary. Their signs are hand-painted and their windows are small. These are
+    the businesses that serve the working population of the Gate Ward, not the
+    merchant class.
+spawninfo:
+- mobid: 100
 idlemessages:
 - A shopkeeper sweeps the cobblestones in front of her door.
 - The smell of baking bread drifts from somewhere above.

@@ -17,16 +17,14 @@ exits:
   east:
     roomid: 444
 nouns:
-  farms:
-    look: The working farms have the look of hard-won survival -- patched roofs,
-      mended fences, gardens planted right up to the walls. The abandoned ones are
-      already being reclaimed by weeds and weather. Doors stand ajar, windows are dark.
-  gates:
-    look: Simple wooden gates on iron hinges. The working farms keep theirs closed and
-      latched. The empty ones hang open, their wood starting to warp.
-spawns:
-  - mobid: 90
-    respawnminutes: 5
+  farms: The working farms have the look of hard-won survival -- patched roofs,
+    mended fences, gardens planted right up to the walls. The abandoned ones are
+    already being reclaimed by weeds and weather. Doors stand ajar, windows are dark.
+  gates: Simple wooden gates on iron hinges. The working farms keep theirs closed and
+    latched. The empty ones hang open, their wood starting to warp.
+spawninfo:
+- mobid: 90
+  respawnrate: 5 real minutes
 idlemessages:
 - A dog barks from behind a farmstead wall, then falls quiet.
 - Smoke drifts from a chimney to the north, carrying the smell of cooking.

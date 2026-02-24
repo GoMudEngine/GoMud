@@ -15,19 +15,16 @@ exits:
   east:
     roomid: 422
 nouns:
-  sign:
-    look: 'The sign is neatly painted on a planed board: "BRIDGE TOLL -- 5 GOLD. Payable
-      in coin. Road tokens accepted. Receipts available." Below it, in smaller script:
-      "Proceeds fund bridge maintenance. -- H."'
-  counter:
-    look: The wooden counter is scarred with years of use. Stacks of blank receipts
-      sit in a tray beside an inkwell. A heavy leather-bound ledger lies open, its
-      pages filled with columns of dates, names, and amounts in a precise hand.
-  garden:
-    look: A narrow window box holds rosemary and thyme, their sharp scent cutting
-      through the damp river air. The plants are well-tended, trimmed back neatly.
-spawns:
-  - mobid: 86
+  sign: 'The sign is neatly painted on a planed board: "BRIDGE TOLL -- 5 GOLD. Payable
+    in coin. Road tokens accepted. Receipts available." Below it, in smaller script:
+    "Proceeds fund bridge maintenance. -- H."'
+  counter: The wooden counter is scarred with years of use. Stacks of blank receipts
+    sit in a tray beside an inkwell. A heavy leather-bound ledger lies open, its
+    pages filled with columns of dates, names, and amounts in a precise hand.
+  garden: A narrow window box holds rosemary and thyme, their sharp scent cutting
+    through the damp river air. The plants are well-tended, trimmed back neatly.
+spawninfo:
+- mobid: 86
 idlemessages:
 - The scratch of a quill on paper comes from behind the counter.
 - A breeze through the window carries the smell of rosemary and river water.

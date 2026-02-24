@@ -18,16 +18,14 @@ exits:
   north:
     roomid: 473
 nouns:
-  post:
-    look: A small stone building with an open door, staffed by city guards. A desk
-      inside is covered with paperwork. A board on the wall lists recent incidents
-      and patrol assignments.
-  office:
-    look: The customs office has a counter facing the gate traffic, staffed by a
-      bored-looking clerk. Signs list tariffs for commercial goods. Most travellers
-      walk past without stopping.
-spawns:
-  - mobid: 106
+  post: A small stone building with an open door, staffed by city guards. A desk
+    inside is covered with paperwork. A board on the wall lists recent incidents
+    and patrol assignments.
+  office: The customs office has a counter facing the gate traffic, staffed by a
+    bored-looking clerk. Signs list tariffs for commercial goods. Most travellers
+    walk past without stopping.
+spawninfo:
+- mobid: 106
 idlemessages:
 - A porter shoulders past with a crate, muttering about delivery schedules.
 - The clatter of cart wheels on cobblestone echoes off the city wall.
