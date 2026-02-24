@@ -4243,7 +4243,7 @@ Neither has asked what the other side wants.
 - Items: 16–25 (quest/other), 10013 (weapon), 40009–40012 (materials)
 - 7 quests designed across 4 zones with cross-zone evidence chain
 
-### Stage 23.3: Build Dustwalk Road
+### Stage 23.3: Build Dustwalk Road ✅ COMPLETED (commit: eee673b)
 
 **Goal**: Build the first overland zone — beaten road through sparse scrubland.
 
@@ -4258,7 +4258,7 @@ Neither has asked what the other side wants.
 **Quest — "The Warden's Report"**: Road Warden asks player to deal with bandits. Environmental
 storytelling reveals they're former farmhands displaced by Thornwall expansion.
 
-### Stage 23.4: Build Watcher's Crossing
+### Stage 23.4: Build Watcher's Crossing ✅ COMPLETED (commit: f739d4b)
 
 **Goal**: Bridge waystation with friendly NPCs, an inn, and opposing quest pair about a toll dispute.
 
@@ -4779,4 +4779,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-24
 **Status**: In Progress
-**Current Stage**: Phases 1–22 complete. Stages 23.1–23.2 complete. Next: Stage 23.3 (build Dustwalk Road).
+**Current Stage**: Phases 1–22 complete. Stages 23.1–23.4 complete. Next: Stage 23.5 (build Thornwall Outskirts).
