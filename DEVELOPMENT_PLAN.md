@@ -4070,40 +4070,45 @@ tracking and foraging through a dialogue prompt or arrival message.
 
 ## Phase 20: Death Penalty Tuning
 
-### Stage 20.1: Meaningful Death Consequences for a Level-Free World
+### Stage 20.1: Meaningful Death Consequences for a Level-Free World ✅ COMPLETED
 
 **Goal**: Tune the existing death penalty system for DOGMud's level-free, use-based progression.
-The engine already has death penalty infrastructure (`suicide.go`, `config.gameplay.go`) but the
-XP penalty mode is meaningless since levels/XP were removed. Design penalties that create tension
-without being punishing enough to drive players away.
+No equipment drops, no gold drops, no XP penalties. Instead: permanent stat decay, recency-weighted
+skill rust, and a temporary Death's Shadow debuff in the Shadow Realm.
 
-**Changes**:
-1. **Remove XP-based penalty mode** — `XPPenalty: "level"` and percentage modes reference a system
-   that no longer exists. Remove or replace with stat/skill-based consequences.
-2. **Stat decay on death** — on death, reduce 1–2 random stats by a small amount (e.g., 1–3 points
-   raw value). This fits the use-based model: you lose a bit of hard-earned progress.
-3. **Skill rust on death** — reduce 1–2 random skills by a small amount of virtual ranks.
-   Skills used more recently are less likely to decay (use recency weighting).
-4. **Respawn debuff** — apply a temporary "Death's Shadow" debuff on respawn that reduces all stats
-   by a percentage for N rounds. Creates a recovery period.
-5. **Equipment drop tuning** — `EquipmentDropChance` already exists. Set a reasonable default
-   (e.g., 10–20%) so death has tangible item risk.
-6. **Configurable via balance config** — all death penalty values should be tunable in
-   `_datafiles/config.yaml` under `GamePlay.DeathPenalty`.
+**Design Decisions**:
+- No equipment or gold drops on death (explicitly rejected)
+- `EquipmentDropChance: 0`, `XPPenalty: none` in config
+- Old engine penalty code (equipment drop, gold drop, XP loss) removed from `suicide.go`
 
-**Files to Modify** (~8 files, ~300 lines):
-1. `internal/configs/config.gameplay.go` — add/update death penalty config fields
-2. `internal/usercommands/suicide.go` — implement stat/skill decay logic
-3. `internal/hooks/` — death hook for applying respawn debuff
-4. `_datafiles/config.yaml` — default penalty values
-5. `_datafiles/world/dogmud/buffs/` — new "Death's Shadow" debuff YAML
+**Changes Implemented**:
+1. **Stat decay on death** — 1 random core stat loses 1–2 Training points (configurable).
+   Descriptive message only, no numbers shown to player.
+2. **Skill rust on death** — up to 1 skill (configurable) loses 1 rank. Skills with use count
+   >= `SkillRecencyThreshold` (default 50) are protected. Floor at rank 1.
+3. **Death's Shadow debuff** — buff 25, applied via `death_recovery` mutator when entering
+   Shadow Realm (room 75). -15 to all six stats for 15 rounds (matches Death Recovery duration).
+4. **6 new config fields** in `GameplayDeath` struct: `StatDecayMin`, `StatDecayMax`,
+   `SkillRustCount`, `SkillRustAmount`, `SkillRecencyThreshold`, `DeathsShadowBuffId`.
+
+**Files Modified** (6 files):
+1. `internal/configs/config.gameplay.go` — 6 new config fields + validation defaults
+2. `_datafiles/config.yaml` — `EquipmentDropChance: 0`, new death penalty fields
+3. `internal/usercommands/suicide.go` — removed old penalties, added `applyStatDecay()` + `applySkillRust()`
+4. `_datafiles/world/dogmud/buffs/25-deaths_shadow.yaml` — new buff file
+5. `_datafiles/world/dogmud/mutators/death_recovery.yaml` — added buff 25 to player buff list
+6. `DEVELOPMENT_PLAN.md` — this update
 
 **Testing**:
-- [ ] Die and respawn — verify stat decay message appears
-- [ ] Die and respawn — verify skill rust message appears
-- [ ] Die and respawn — verify Death's Shadow debuff applies
-- [ ] Verify equipment drop chance works at configured rate
-- [ ] Verify all penalty values are configurable and validate correctly
+- [x] Server compiles cleanly
+- [ ] Die to a mob → verify stat decay message (descriptive, no numbers)
+- [ ] Die to a mob → verify skill rust message (if eligible skills exist)
+- [ ] Die to a mob → arrive in Shadow Realm with Death's Shadow buff active
+- [ ] Verify `status` shows reduced stat values while debuff active
+- [ ] Verify debuff expires after ~15 rounds
+- [ ] Verify NO equipment or gold is dropped
+- [ ] Verify character below ProtectionLevels gets no penalties
+- [ ] Die with only recently-used skills → verify they're protected from rust
 
 ---
 
@@ -4598,7 +4603,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 17: LLM Integration | 4 stages (17.1–17.4) | 35 hours | **17.1–17.4 Complete** |
 | Phase 18: Immersive Descriptions | 4 stages (18.1–18.4) | 24 hours | **18.1–18.4 Complete** |
 | Phase 19: Hotfixes & Polish | 1 stage (19.1) | 4 hours | **19.1 Complete** |
-| Phase 20: Death Penalties | 1 stage (20.1) | 6 hours | Not Started |
+| Phase 20: Death Penalties | 1 stage (20.1) | 6 hours | **20.1 Complete** |
 | Phase 21: Autoscaling Removal | 1 stage (21.1) | 4 hours | Not Started |
 | Phase 22: AI Connection Limits | 1 stage (22.1) | 6 hours | Not Started |
 | Phase 23: Content — Major City & Road | 5 stages (23.1–23.5) | 40 hours | Not Started |
@@ -4707,4 +4712,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-23
 **Status**: In Progress
-**Current Stage**: Phases 1–19 complete. Next: Stage 20.1 (death penalty tuning for level-free world), then Phase 21 (autoscaling removal) through Phase 28 (LLM tutorial enhancement).
+**Current Stage**: Phases 1–20 complete. Next: Phase 21 (autoscaling removal), then Phase 22 (AI connection limits) through Phase 28 (LLM tutorial enhancement).

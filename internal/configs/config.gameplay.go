@@ -78,6 +78,13 @@ type GameplayDeath struct {
 	PermaDeath          ConfigBool   `yaml:"PermaDeath"`          // Is permadeath enabled?
 	CorpsesEnabled      ConfigBool   `yaml:"CorpsesEnabled"`      // Whether corpses are left behind after mob/player deaths
 	CorpseDecayTime     ConfigString `yaml:"CorpseDecayTime"`     // How long until corpses decay to dust (go away)
+	// DOGMud death penalties (Stage 20.1)
+	StatDecayMin          ConfigInt `yaml:"StatDecayMin"`          // Min Training loss on death (default 1)
+	StatDecayMax          ConfigInt `yaml:"StatDecayMax"`          // Max Training loss on death (default 2)
+	SkillRustCount        ConfigInt `yaml:"SkillRustCount"`        // Number of skills to decay on death (default 1)
+	SkillRustAmount       ConfigInt `yaml:"SkillRustAmount"`       // Skill ranks lost per decayed skill (default 1)
+	SkillRecencyThreshold ConfigInt `yaml:"SkillRecencyThreshold"` // Use count above which skills are protected (default 50)
+	DeathsShadowBuffId    ConfigInt `yaml:"DeathsShadowBuffId"`    // Buff ID for Death's Shadow debuff (default 25)
 }
 
 func (g *GamePlay) Validate() {
@@ -140,6 +147,26 @@ func (g *GamePlay) Validate() {
 
 	if g.Death.CorpseDecayTime == `` {
 		g.Death.CorpseDecayTime = `1 hour`
+	}
+
+	// DOGMud death penalty defaults (Stage 20.1)
+	if g.Death.StatDecayMin < 1 {
+		g.Death.StatDecayMin = 1
+	}
+	if g.Death.StatDecayMax < g.Death.StatDecayMin {
+		g.Death.StatDecayMax = 2
+	}
+	if g.Death.SkillRustCount < 0 {
+		g.Death.SkillRustCount = 1
+	}
+	if g.Death.SkillRustAmount < 1 {
+		g.Death.SkillRustAmount = 1
+	}
+	if g.Death.SkillRecencyThreshold < 1 {
+		g.Death.SkillRecencyThreshold = 50
+	}
+	if g.Death.DeathsShadowBuffId < 1 {
+		g.Death.DeathsShadowBuffId = 25
 	}
 
 	if g.PVP != PVPEnabled && g.PVP != PVPDisabled && g.PVP != PVPLimited {

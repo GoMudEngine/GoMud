@@ -265,7 +265,7 @@ GamePlay:
     # - EquipmentDropChance -
     #   The chance that a player will drop a piece of worn/backpack equipment when
     #   they die. This is a percentage, so 0.5 is 50% chance.
-    EquipmentDropChance: 0.25
+    EquipmentDropChance: 0
     # - AlwaysDropBackpack -
     #   If true, players will always drop their backpack contents when they die.
     #   If false, it will failover to EquipmentDropChance.
@@ -277,6 +277,13 @@ GamePlay:
     #   10% - lose 10% of XP
     #   50% - lose 50% of XP
     XPPenalty: none
+    # DOGMud death penalties (Stage 20.1)
+    StatDecayMin: 1            # Min Training loss on 1 random stat
+    StatDecayMax: 2            # Max Training loss on 1 random stat
+    SkillRustCount: 1          # Number of skills to decay
+    SkillRustAmount: 1         # Skill ranks lost per decayed skill
+    SkillRecencyThreshold: 50  # Use count above which skills are protected
+    DeathsShadowBuffId: 25     # Buff ID for Death's Shadow debuff
     # - ProtectionLevels -
     #   Players do not incur death penalties up to and including this level.
     ProtectionLevels: 5

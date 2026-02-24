@@ -22,6 +22,12 @@ import (
 // then Stage 11.4 resolves the actual spell effect.
 func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
+	// 0. Can't cast while bleeding out
+	if user.Character.IsDisabled() {
+		user.SendText(`<ansi fg="red">You can't focus enough to cast while bleeding out.</ansi>`)
+		return true, nil
+	}
+
 	// 1. Spellcasting skill required
 	skillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
 	if skillLevel == 0 {

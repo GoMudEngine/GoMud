@@ -81,6 +81,12 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 
 		if user.Character.CastingState != nil {
 
+			// Bleeding out = automatic concentration break
+			if user.Character.IsDisabled() {
+				user.Character.CastingState = nil
+				continue
+			}
+
 			// Stage 11.3: prone = automatic concentration break
 			if user.Character.CombatPosition == characters.PositionProne {
 				user.Character.CastingState = nil

@@ -3,8 +3,6 @@ package usercommands
 import (
 	"errors"
 	"fmt"
-	"math"
-	"strconv"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
@@ -134,77 +132,11 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 
 	// Only apply penalties if they were above the threshold
 	if allowPenalties {
-
-		if config.Death.EquipmentDropChance >= 0 {
-			chanceInt := int(config.Death.EquipmentDropChance * 100)
-			for _, itm := range user.Character.GetAllWornItems() {
-				if util.Rand(100) < chanceInt {
-
-					Remove(itm.Name(), user, room, flags)
-
-					Drop(itm.Name(), user, room, flags)
-
-				}
-			}
-		}
-
-		if user.Character.Gold > 0 {
-			user.EventLog.Add(`death`, fmt.Sprintf(`Dropped <ansi fg="gold">%d gold</ansi> on death`, user.Character.Gold))
-			Drop(fmt.Sprintf(`%d gold`, user.Character.Gold), user, room, flags)
-		}
-
-		if config.Death.AlwaysDropBackpack {
-			Drop("all", user, room, flags)
-
-			user.EventLog.Add(`death`, `Dropped <ansi fg="alert-3">everthing in your backpack</ansi> on death`)
-
-		} else if config.Death.EquipmentDropChance >= 0 {
-			chanceInt := int(config.Death.EquipmentDropChance * 100)
-			for _, itm := range user.Character.GetAllBackpackItems() {
-				if util.Rand(100) < chanceInt {
-					Drop(itm.Name(), user, room, flags)
-					user.EventLog.Add(`death`, fmt.Sprintf(`Dropped your <ansi fg="itemname">%s</ansi> on death`, itm.Name()))
-				}
-			}
-		}
-
-		if user.Character.Level > 1 {
-
-			if config.Death.XPPenalty != `none` {
-
-				if config.Death.XPPenalty == `level` { // are they being brought down to the base of their current level?
-					user.Character.Level--
-					oldExperience := user.Character.Experience
-					user.Character.Experience = user.Character.XPTNL()
-					user.Character.Level++
-
-					user.SendText(fmt.Sprintf(`You lost <ansi fg="yellow">%d experience points</ansi>.`, oldExperience-user.Character.Experience))
-
-					user.EventLog.Add(`death`, fmt.Sprintf(`Lost <ansi fg="yellow">%d experience points</ansi> on death`, oldExperience-user.Character.Experience))
-
-				} else {
-
-					var pct float64 = 0.0
-
-					percent, err := strconv.ParseInt(string(config.Death.XPPenalty)[0:len(config.Death.XPPenalty)-1], 10, 64)
-					if err != nil || percent < 0 || percent > 100 {
-						pct = 0.0
-					}
-
-					pct = float64(percent) / 100.0
-
-					loss := int(math.Floor(float64(user.Character.Experience) * pct))
-					user.Character.Experience -= loss
-
-					user.SendText(fmt.Sprintf(`You lost <ansi fg="yellow">%d experience points</ansi>.`, loss))
-
-					user.EventLog.Add(`death`, fmt.Sprintf(`Lost <ansi fg="yellow">%d experience points</ansi> on death`, loss))
-				}
-			}
-
-		}
-
+		applyStatDecay(user, config)
+		applySkillRust(user, config)
 	}
+
+	user.SendText(`<ansi fg="yellow">You feel weakened by the brush with death. (Type <ansi fg="command">help death</ansi> to learn more.)</ansi>`)
 
 	user.Character.CancelBuffsWithFlag(buffs.All)
 
@@ -225,4 +157,89 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	}
 
 	return true, nil
+}
+
+// applyStatDecay reduces Training on 1 random core stat as a permanent death penalty.
+func applyStatDecay(user *users.UserRecord, config configs.GamePlay) {
+
+	type statEntry struct {
+		name     string
+		desc     string
+		training *int
+	}
+
+	stats := []statEntry{
+		{`Strength`, `physical might`, &user.Character.Stats.Strength.Training},
+		{`Dexterity`, `nimbleness`, &user.Character.Stats.Dexterity.Training},
+		{`Perception`, `keen senses`, &user.Character.Stats.Perception.Training},
+		{`Vitality`, `endurance`, &user.Character.Stats.Vitality.Training},
+		{`Willpower`, `mental fortitude`, &user.Character.Stats.Willpower.Training},
+		{`Charisma`, `force of personality`, &user.Character.Stats.Charisma.Training},
+	}
+
+	pick := stats[util.Rand(len(stats))]
+
+	decayMin := int(config.Death.StatDecayMin)
+	decayMax := int(config.Death.StatDecayMax)
+	amount := decayMin
+	if decayMax > decayMin {
+		amount = decayMin + util.Rand(decayMax-decayMin+1)
+	}
+
+	*pick.training -= amount
+	if *pick.training < 0 {
+		*pick.training = 0
+	}
+
+	user.Character.Validate()
+
+	user.SendText(fmt.Sprintf(`<ansi fg="red">The shadow of death saps your %s.</ansi>`, pick.desc))
+	user.EventLog.Add(`death`, fmt.Sprintf(`Lost some <ansi fg="yellow">%s</ansi> training on death`, pick.name))
+}
+
+// applySkillRust decays ranks on up to SkillRustCount skills that haven't been used recently.
+func applySkillRust(user *users.UserRecord, config configs.GamePlay) {
+
+	recencyThreshold := int(config.Death.SkillRecencyThreshold)
+	rustCount := int(config.Death.SkillRustCount)
+	rustAmount := int(config.Death.SkillRustAmount)
+
+	// Build list of eligible (unprotected) skills
+	eligible := []string{}
+	for skillName, rank := range user.Character.Skills {
+		if rank <= 1 {
+			continue // never reduce below 1
+		}
+		useCount := user.Character.GetSkillUseCount(skillName)
+		if useCount >= recencyThreshold {
+			continue // recently used — protected
+		}
+		eligible = append(eligible, skillName)
+	}
+
+	if len(eligible) == 0 {
+		return
+	}
+
+	// Shuffle and pick up to rustCount
+	for i := len(eligible) - 1; i > 0; i-- {
+		j := util.Rand(i + 1)
+		eligible[i], eligible[j] = eligible[j], eligible[i]
+	}
+
+	if rustCount > len(eligible) {
+		rustCount = len(eligible)
+	}
+
+	for _, skillName := range eligible[:rustCount] {
+		oldRank := user.Character.Skills[skillName]
+		newRank := oldRank - rustAmount
+		if newRank < 1 {
+			newRank = 1
+		}
+		user.Character.Skills[skillName] = newRank
+
+		user.SendText(fmt.Sprintf(`<ansi fg="red">Your %s feels rusty and diminished.</ansi>`, skillName))
+		user.EventLog.Add(`death`, fmt.Sprintf(`Lost some <ansi fg="yellow">%s</ansi> skill on death`, skillName))
+	}
 }

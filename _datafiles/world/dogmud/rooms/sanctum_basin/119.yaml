@@ -20,6 +20,3 @@ spawninfo:
 - mobid: 68
   message: A cave goblin guard snarls and moves to intercept you.
   respawnrate: 8 real minutes
-- mobid: 68
-  message: A second cave goblin guard emerges from behind a stone barricade.
-  respawnrate: 10 real minutes

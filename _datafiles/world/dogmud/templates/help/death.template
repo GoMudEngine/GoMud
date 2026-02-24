@@ -1,15 +1,17 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">death</ansi>
 
 When your hitpoints fall to zero or less, you'll drop to the ground and begin
-to bleed out. While bleeding out, each round you'll fall more and more into 
-the negative range.
+to bleed out. While bleeding out, each round you'll fall more and more into
+the negative range. Any spells you were casting are lost.
 
 Once you reach -10 hitpoints, you will die!
 
-Dying can have many consequences - you can drop some of your gear or lose some 
-of your experience points.
+<ansi fg="yellow-bold">Death Penalties:</ansi>
+  - One of your core attributes will permanently weaken slightly.
+  - Skills you haven't practiced recently may grow rusty and diminish.
+  - You'll be transported to the Shadow Realm with a lingering debuff
+    that dulls all of your attributes until it fades.
 
-You will also be transported to the shadow realm, where you must wait for your
-hitpoints to recover and for the next portal out to appear.
-
-If you lost gear on death, you'll need to go find it and recover it.
+The best defense against death is staying aware of your health and knowing
+when to <ansi fg="command">flee</ansi>. Skills and attributes you use regularly are protected
+from decay -- keep training and they'll endure.
