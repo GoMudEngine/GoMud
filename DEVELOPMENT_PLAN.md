@@ -4024,160 +4024,6 @@ fallback:
 
 **Estimated Changes**: ~10 documentation files, minimal Go
 
----
-
-## Testing Strategy
-
-### Manual Testing Checklist (Run After Each Stage)
-- [ ] MUD starts without errors
-- [ ] Character creation works
-- [ ] Character save/load works
-- [ ] Movement works
-- [ ] Combat works
-- [ ] Skills/spells work (if applicable)
-- [ ] No crashes during 10-minute play session
-
-### Unit Test Requirements
-Each stage must include:
-- Unit tests for new functions
-- Update existing tests that break
-- Aim for 70%+ code coverage on modified files
-
-### Integration Test Requirements
-Each phase (1-10) must include:
-- Full character lifecycle test (create → play → save → load)
-- Combat integration test
-- Progression integration test (where applicable)
-
-### Regression Test Requirements
-Before each git commit:
-- Run full test suite: `go test ./...`
-- No test failures allowed
-- No new compiler warnings
-
----
-
-## Git Workflow (Per Stage)
-
-### Branch Naming
-- `feature/stage-1.1-rename-stats`
-- `feature/stage-2.1-rename-race-to-species`
-- etc.
-
-### Commit Process (Per Stage)
-1. Create feature branch from `development`
-2. Implement stage
-3. Write/update tests
-4. Manual testing
-5. Run full test suite
-6. Commit with conventional commit message:
-   ```
-   feat: [stage X.Y] Brief description
-
-   - Detailed change 1
-   - Detailed change 2
-   - Testing: describe testing done
-
-   Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
-   ```
-7. Merge to `development` with `--no-ff`
-8. Test after merge
-9. Move to next stage
-
----
-
-## Risk Mitigation
-
-### High-Risk Stages (Extra Care Required)
-- **Stage 3.4**: ✅ Decouple Combat from Levels (combat refactor)
-- **Stage 3.5**: ✅ Remove Level System (major breaking change)
-- **Stage 4.2**: ✅ Replace Dice with Distribution (combat refactor) — merge 3892439
-- **Stage 7.1**: ✅ Segmented Avoidance (major combat refactor — dodge/parry/block replaces single defense roll) — merge cd146e5
-- **Stage 8.1**: Grappling System (new combat subsystem, many interaction points)
-- **Stage 9.1**: Descriptive Damage Text (touches all combat output — high regression risk)
-
-### Backup Strategy
-Before each high-risk stage:
-1. Tag current state: `git tag pre-stage-X.Y`
-2. Create backup branch: `git branch backup-YYYY-MM-DD`
-3. Test rollback plan
-
-### Rollback Plan
-If a stage breaks the MUD:
-1. `git rebase --abort` (if in progress)
-2. `git reset --hard origin/development`
-3. Investigate issue
-4. Re-attempt with fixes
-
----
-
-## Estimated Timeline
-
-Assuming ~4 hours per stage (implement + test):
-
-| Phase | Stages | Estimated Hours | Status |
-|-------|--------|-----------------|--------|
-| Phase 1: Stats | 3 stages (1.1–1.3) | 12 hours | **Complete** |
-| Phase 2: Species | 2 stages (2.1–2.2) | 8 hours | **Complete** |
-| Phase 3: Remove Levels | 9 stages (3.1–3.9) | 36 hours | **Complete** |
-| Phase 4: Distribution Combat | 4 stages (4.1–4.4) | 7 hours | **Complete** |
-| Phase 4b: Progression Fixes | 4 stages (4.5–4.8) | 12 hours | **Complete** |
-| Phase 5: Stamina & Attacks | 4 stages (5.1–5.4) | 20 hours | **Complete** |
-| Phase 6: Conviction & Magic | 2 stages (6.1–6.2) | 8 hours | **Complete** |
-| Phase 7: Defense & Combat | 5 stages (7.1–7.5) | 26 hours | **Complete** |
-| Phase 8: Grappling | 5 stages (8.1–8.5) | 24 hours | **8.1–8.5 Complete** |
-| Phase 9: Combat Presentation | 8 stages (9.1–9.8) | ~40 hours | **9.1–9.8 Complete** |
-| Phase 10: Skill System Cleanup | 2 stages (10.1–10.2) | 12 hours | 10.1–10.2 Complete |
-| Phase 11: Magic Rework | 5 stages (11.1–11.5) | 30 hours | **11.1–11.5 Complete** |
-| Phase 12: Mutations | 2 stages (12.1–12.2) | 16 hours | **12.1–12.2 Complete** |
-| Phase 13: Basic Crafting | 2 stages (13.1–13.2) | 16 hours | **13.1–13.2 Complete** |
-| Phase 14: Balance Config | 1 stage (14.1) | 8 hours | **14.1 Complete** |
-| Phase 15: Dev Tools | 2 stages (15.1–15.2) | 12 hours | **15.1–15.2 Complete** |
-| Phase 16: Tutorial Area | 2 stages (16.1–16.2) | 30 hours | **16.1–16.2 Complete** |
-| Phase 17: LLM Integration | 4 stages (17.1–17.4) | 35 hours | **17.1–17.4 Complete** |
-| Phase 18: Immersive Descriptions | 4 stages (18.1–18.4) | 24 hours | **18.1–18.4 Complete** |
-| Phase 19: Hotfixes & Polish | 1 stage (19.1) | 4 hours | **19.1 Complete** |
-| Phase 20: Death Penalties | 1 stage (20.1) | 6 hours | Not Started |
-| Phase 21: Autoscaling Removal | 1 stage (21.1) | 4 hours | Not Started |
-| Phase 22: AI Connection Limits | 1 stage (22.1) | 6 hours | Not Started |
-| Phase 23: Content — Major City & Road | 5 stages (23.1–23.5) | 40 hours | Not Started |
-| Phase 24: Expanded Mutations | 2 stages (24.1–24.2) | 16 hours | Not Started |
-| Phase 25: Expanded Spells | 2 stages (25.1–25.2) | 16 hours | Not Started |
-| Phase 26: NPC Species Variety | 2 stages (26.1–26.2) | 12 hours | Not Started |
-| Phase 27: Dialogue–Quest Integration | 2 stages (27.1–27.2) | 16 hours | Not Started |
-| Phase 28: LLM Tutorial Enhancement | 1 stage (28.1) | 8 hours | Not Started |
-| **Total** | **~77 stages** | **~533 hours** | |
-
-**Note**: Timeline is rough estimate. Adjust based on actual progress.
-
----
-
-## Success Metrics
-
-### Per Stage
-- [ ] All tests pass
-- [ ] MUD runs without errors
-- [ ] Stage features work as designed
-- [ ] No regression in existing features
-
-### Per Phase
-- [ ] Integration tests pass
-- [ ] Manual playtesting confirms features work
-- [ ] Code committed to development branch
-- [ ] Documentation updated
-
-### Overall
-- [ ] All 17 phases complete
-- [ ] Core DOGMud mechanics functional
-- [ ] Combat is descriptive, immersive, and balanced
-- [ ] Magic system is distinctive and working
-- [ ] Mutations, crafting, and progression feel cohesive
-- [ ] Tutorial area teaches all core systems
-- [ ] Dev tools enable AI-assisted zone building
-- [ ] Ready for world expansion and content creation
-
----
-
 ## Phase 19: Post-Stage-18 Hotfixes & Polish
 
 ### Stage 19.1: Bug Fixes from Playtesting ✅ COMPLETED (01f8a18)
@@ -4638,6 +4484,158 @@ to player actions, offer contextual hints, and create a more engaging onboarding
 - [ ] NPCs don't repeat the same advice within a session
 - [ ] Each tutorial NPC has a distinct personality in LLM responses
 - [ ] Tutorial flow feels natural and engaging
+
+---
+
+## Testing Strategy
+
+### Manual Testing Checklist (Run After Each Stage)
+- [ ] MUD starts without errors
+- [ ] Character creation works
+- [ ] Character save/load works
+- [ ] Movement works
+- [ ] Combat works
+- [ ] Skills/spells work (if applicable)
+- [ ] No crashes during 10-minute play session
+
+### Unit Test Requirements
+Each stage must include:
+- Unit tests for new functions
+- Update existing tests that break
+- Aim for 70%+ code coverage on modified files
+
+### Integration Test Requirements
+Each phase (1-10) must include:
+- Full character lifecycle test (create → play → save → load)
+- Combat integration test
+- Progression integration test (where applicable)
+
+### Regression Test Requirements
+Before each git commit:
+- Run full test suite: `go test ./...`
+- No test failures allowed
+- No new compiler warnings
+
+---
+
+## Git Workflow (Per Stage)
+
+### Branch Naming
+- `feature/stage-1.1-rename-stats`
+- `feature/stage-2.1-rename-race-to-species`
+- etc.
+
+### Commit Process (Per Stage)
+1. Create feature branch from `development`
+2. Implement stage
+3. Write/update tests
+4. Manual testing
+5. Run full test suite
+6. Commit with conventional commit message:
+   ```
+   feat: [stage X.Y] Brief description
+
+   - Detailed change 1
+   - Detailed change 2
+   - Testing: describe testing done
+
+   Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+   ```
+7. Merge to `development` with `--no-ff`
+8. Test after merge
+9. Move to next stage
+
+---
+
+## Risk Mitigation
+
+### High-Risk Stages (Extra Care Required)
+- **Stage 3.4**: ✅ Decouple Combat from Levels (combat refactor)
+- **Stage 3.5**: ✅ Remove Level System (major breaking change)
+- **Stage 4.2**: ✅ Replace Dice with Distribution (combat refactor) — merge 3892439
+- **Stage 7.1**: ✅ Segmented Avoidance (major combat refactor — dodge/parry/block replaces single defense roll) — merge cd146e5
+- **Stage 8.1**: Grappling System (new combat subsystem, many interaction points)
+- **Stage 9.1**: Descriptive Damage Text (touches all combat output — high regression risk)
+
+### Backup Strategy
+Before each high-risk stage:
+1. Tag current state: `git tag pre-stage-X.Y`
+2. Create backup branch: `git branch backup-YYYY-MM-DD`
+3. Test rollback plan
+
+### Rollback Plan
+If a stage breaks the MUD:
+1. `git rebase --abort` (if in progress)
+2. `git reset --hard origin/development`
+3. Investigate issue
+4. Re-attempt with fixes
+
+---
+
+## Estimated Timeline
+
+Assuming ~4 hours per stage (implement + test):
+
+| Phase | Stages | Estimated Hours | Status |
+|-------|--------|-----------------|--------|
+| Phase 1: Stats | 3 stages (1.1–1.3) | 12 hours | **Complete** |
+| Phase 2: Species | 2 stages (2.1–2.2) | 8 hours | **Complete** |
+| Phase 3: Remove Levels | 9 stages (3.1–3.9) | 36 hours | **Complete** |
+| Phase 4: Distribution Combat | 4 stages (4.1–4.4) | 7 hours | **Complete** |
+| Phase 4b: Progression Fixes | 4 stages (4.5–4.8) | 12 hours | **Complete** |
+| Phase 5: Stamina & Attacks | 4 stages (5.1–5.4) | 20 hours | **Complete** |
+| Phase 6: Conviction & Magic | 2 stages (6.1–6.2) | 8 hours | **Complete** |
+| Phase 7: Defense & Combat | 5 stages (7.1–7.5) | 26 hours | **Complete** |
+| Phase 8: Grappling | 5 stages (8.1–8.5) | 24 hours | **8.1–8.5 Complete** |
+| Phase 9: Combat Presentation | 8 stages (9.1–9.8) | ~40 hours | **9.1–9.8 Complete** |
+| Phase 10: Skill System Cleanup | 2 stages (10.1–10.2) | 12 hours | 10.1–10.2 Complete |
+| Phase 11: Magic Rework | 5 stages (11.1–11.5) | 30 hours | **11.1–11.5 Complete** |
+| Phase 12: Mutations | 2 stages (12.1–12.2) | 16 hours | **12.1–12.2 Complete** |
+| Phase 13: Basic Crafting | 2 stages (13.1–13.2) | 16 hours | **13.1–13.2 Complete** |
+| Phase 14: Balance Config | 1 stage (14.1) | 8 hours | **14.1 Complete** |
+| Phase 15: Dev Tools | 2 stages (15.1–15.2) | 12 hours | **15.1–15.2 Complete** |
+| Phase 16: Tutorial Area | 2 stages (16.1–16.2) | 30 hours | **16.1–16.2 Complete** |
+| Phase 17: LLM Integration | 4 stages (17.1–17.4) | 35 hours | **17.1–17.4 Complete** |
+| Phase 18: Immersive Descriptions | 4 stages (18.1–18.4) | 24 hours | **18.1–18.4 Complete** |
+| Phase 19: Hotfixes & Polish | 1 stage (19.1) | 4 hours | **19.1 Complete** |
+| Phase 20: Death Penalties | 1 stage (20.1) | 6 hours | Not Started |
+| Phase 21: Autoscaling Removal | 1 stage (21.1) | 4 hours | Not Started |
+| Phase 22: AI Connection Limits | 1 stage (22.1) | 6 hours | Not Started |
+| Phase 23: Content — Major City & Road | 5 stages (23.1–23.5) | 40 hours | Not Started |
+| Phase 24: Expanded Mutations | 2 stages (24.1–24.2) | 16 hours | Not Started |
+| Phase 25: Expanded Spells | 2 stages (25.1–25.2) | 16 hours | Not Started |
+| Phase 26: NPC Species Variety | 2 stages (26.1–26.2) | 12 hours | Not Started |
+| Phase 27: Dialogue–Quest Integration | 2 stages (27.1–27.2) | 16 hours | Not Started |
+| Phase 28: LLM Tutorial Enhancement | 1 stage (28.1) | 8 hours | Not Started |
+| **Total** | **~77 stages** | **~533 hours** | |
+
+**Note**: Timeline is rough estimate. Adjust based on actual progress.
+
+---
+
+## Success Metrics
+
+### Per Stage
+- [ ] All tests pass
+- [ ] MUD runs without errors
+- [ ] Stage features work as designed
+- [ ] No regression in existing features
+
+### Per Phase
+- [ ] Integration tests pass
+- [ ] Manual playtesting confirms features work
+- [ ] Code committed to development branch
+- [ ] Documentation updated
+
+### Overall
+- [ ] All 17 phases complete
+- [ ] Core DOGMud mechanics functional
+- [ ] Combat is descriptive, immersive, and balanced
+- [ ] Magic system is distinctive and working
+- [ ] Mutations, crafting, and progression feel cohesive
+- [ ] Tutorial area teaches all core systems
+- [ ] Dev tools enable AI-assisted zone building
+- [ ] Ready for world expansion and content creation
 
 ---
 
