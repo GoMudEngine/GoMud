@@ -13,6 +13,8 @@ import (
 
 func Online(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
+	isAdmin := user.Role != users.RoleUser
+
 	headers := []string{
 		language.T(`User.Name`),
 		language.T(`Alignment`),
@@ -21,7 +23,7 @@ func Online(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		language.T(`Role`),
 	}
 
-	if user.Role != users.RoleUser {
+	if isAdmin {
 		headers = append([]string{language.T(`UserId`)}, headers...)
 		headers = append(headers, []string{language.T(`Zone`), language.T(`RoomId`)}...)
 	}
@@ -31,6 +33,8 @@ func Online(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	rows := [][]string{}
 
 	userCt := 0
+	aiCt := 0
+	humanCt := 0
 	for _, uid := range users.GetOnlineUserIds() {
 
 		u := users.GetByUserId(uid)
@@ -40,6 +44,11 @@ func Online(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			onlineInfo := u.GetOnlineInfo()
 
 			userCt++
+			if onlineInfo.IsAI {
+				aiCt++
+			} else {
+				humanCt++
+			}
 
 			onlineTime := onlineInfo.OnlineTimeStr
 			if onlineInfo.IsAFK {
@@ -55,8 +64,14 @@ func Online(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				}
 			}
 
+			// For admins, show [AI] tag next to AI-connected player names
+			charName := onlineInfo.CharacterName
+			if isAdmin && onlineInfo.IsAI {
+				charName += ` <ansi fg="8">[AI]</ansi>`
+			}
+
 			row := []string{
-				onlineInfo.CharacterName,
+				charName,
 				onlineInfo.Alignment,
 				onlineInfo.Profession,
 				onlineTime,
@@ -71,7 +86,7 @@ func Online(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				`<ansi fg="role-` + permClass + `-bold">%s</ansi>`,
 			}
 
-			if user.Role != users.RoleUser {
+			if isAdmin {
 				row = append([]string{strconv.Itoa(u.UserId)}, row...)
 				row = append(row, []string{u.Character.Zone, strconv.Itoa(u.Character.RoomId)}...)
 
@@ -88,6 +103,10 @@ func Online(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	tableTitle := fmt.Sprintf(language.T(`%d users online`), userCt)
 	if userCt == 1 {
 		tableTitle = fmt.Sprintf(language.T(`%d user online`), userCt)
+	}
+	// Add AI/human breakdown for admins
+	if isAdmin && aiCt > 0 {
+		tableTitle += fmt.Sprintf(` (%d human, %d AI)`, humanCt, aiCt)
 	}
 
 	onlineResultsTable := templates.GetTable(tableTitle, headers, rows, allFormatting...)

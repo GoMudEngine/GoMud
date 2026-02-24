@@ -4138,34 +4138,48 @@ that's hard to balance and obscures the intended difficulty curve.
 
 ---
 
-## Phase 22: AI vs Human Connection Limits
+## Phase 22: AI Client Infrastructure ✅ COMPLETED
 
-### Stage 22.1: Separate Connection Pools for AI and Human Players
+### Stage 22.1: Dedicated AI Port & Separate Connection Pools ✅ COMPLETED
 
-**Goal**: Prevent AI player connections from consuming slots meant for human players. Currently,
-`MaxTelnetConnections` in `main.go` applies a single cap to all connections. Split this into
-separate pools so AI testing/play can scale independently.
+**Goal**: Add a dedicated AI telnet port. Tag connections by type. Enforce separate pool limits.
 
 **Changes**:
-1. **New config fields** — add `MaxHumanConnections` and `MaxAIConnections` to the server config.
-   Keep `MaxTelnetConnections` as a hard global ceiling.
-2. **Identify AI connections** — AI players connect via the LLM integration pipeline. Tag these
-   connections at handshake time (e.g., via a login flag or a dedicated AI login command).
-3. **Enforce separate limits** — in the connection acceptance loop (`main.go`), check the connection
-   type against its respective pool limit before accepting.
-4. **Status reporting** — update admin `who` or server status to show human vs AI connection counts.
+1. **New config fields** — `AIPort`, `MaxHumanConnections`, `MaxAIConnections`, `AICommandsPerRound` in `config.network.go`
+2. **Connection tagging** — `ConnType` field on `ConnectionDetails` with `ConnHuman`/`ConnAI` constants
+3. **Separate pool limits** — per-type counting (`ActiveHumanConnectionCount()`, `ActiveAIConnectionCount()`)
+4. **AI port listener** — `TelnetListenOnPort` accepts `connType` parameter; AI port on 55555
+5. **Login warnings** — human port warns AI players; AI port warns human players
+6. **Config defaults** — `AIPort: 55555`, `MaxHumanConnections: 80`, `MaxAIConnections: 20`
 
-**Files to Modify** (~5 files, ~150 lines):
-1. `main.go` — split connection limit check
-2. `internal/configs/` — add new config fields
-3. `_datafiles/config.yaml` — default values
-4. `internal/connections/` — tag connection type
+### Stage 22.2: Admin Visibility — `online` Command ✅ COMPLETED
 
-**Testing**:
-- [ ] Human connections are accepted up to `MaxHumanConnections`
-- [ ] AI connections are accepted up to `MaxAIConnections`
-- [ ] Neither pool can exceed the global `MaxTelnetConnections` ceiling
-- [ ] Admin `who` shows connection type breakdown
+**Goal**: Let admins see AI vs human connection breakdown.
+
+**Changes**:
+1. `OnlineInfo` struct gets `IsAI` field, populated from `ConnectionDetails.ConnType()`
+2. Admin `online` command shows `[AI]` tag next to AI-connected players
+3. Table title shows human/AI breakdown for admins (e.g., "5 users online (4 human, 1 AI)")
+
+### Stage 22.3: AI Rate Limiting ✅ COMPLETED
+
+**Goal**: Prevent AI clients from spamming commands faster than game balance allows.
+
+**Changes**:
+1. `AICommandsPerRound` config field (default: 2 commands per 4-second round)
+2. Round-aware counter on `ConnectionDetails` (`AICommandAllowed()` method)
+3. Rate check in `handleTelnetConnection` before processing submitted commands
+
+### Stage 22.4: AI Account Admin Commands & Clean-Text Mode ✅ COMPLETED
+
+**Goal**: Admin tools for AI accounts. Clean-text output for AI connections.
+
+**Changes**:
+1. `IsAI` bool on `UserRecord` (persisted in save file)
+2. `ai-flag <username>` — toggle AI flag (admin only)
+3. `ai-list` — show online AI accounts (admin only)
+4. ANSI stripping for AI connections via `stripAnsi` flag on `ConnectionDetails.Write()`
+5. Port-mismatch warnings on login
 
 ---
 
@@ -4707,4 +4721,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-24
 **Status**: In Progress
-**Current Stage**: Phases 1–21 complete. Next: Phase 22 (AI connection limits), then Phase 23 (content — major city & road) through Phase 28 (LLM tutorial enhancement).
+**Current Stage**: Phases 1–22 complete. Next: Phase 23 (content — major city & road) through Phase 28 (LLM tutorial enhancement).

@@ -1,1 +1,2 @@
+<ansi fg="8">AI players: connect on port 55555. Using this port as an AI risks a ban.</ansi>
 <ansi fg="39">{{ t "Login.username" }}</ansi><ansi fg="black-bold"> (or "new"): </ansi>

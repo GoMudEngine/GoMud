@@ -276,6 +276,13 @@ func main() {
 		}
 	}
 
+	// Start AI port listener if configured
+	if c.Network.AIPort > 0 {
+		if s := TelnetListenOnPort(``, int(c.Network.AIPort), &wg, int(c.Network.MaxTelnetConnections), connections.ConnAI); s != nil {
+			allServerListeners = append(allServerListeners, s)
+		}
+	}
+
 	if c.Network.LocalPort > 0 {
 		TelnetListenOnPort(`127.0.0.1`, int(c.Network.LocalPort), &wg, 0)
 	}
@@ -450,6 +457,11 @@ func handleTelnetConnection(connDetails *connections.ConnectionDetails, wg *sync
 	splashTxt, _ := templates.Process("login/connect-splash", nil)
 	connections.SendTo([]byte(templates.AnsiParse(splashTxt)), connDetails.ConnectionId())
 
+	// Show AI port notice if this is an AI connection
+	if connDetails.ConnType() == connections.ConnAI {
+		connections.SendTo([]byte("\r\nThis port is for AI clients. Human players, please connect on port 33333.\r\n\r\n"), connDetails.ConnectionId())
+	}
+
 	// --- Trigger the Prompt Handler to initialize state and send the FIRST prompt ---
 	// Create a dummy input that signifies "start the process" but has no actual user data/control codes.
 	initialTriggerInput := &connections.ClientInput{
@@ -612,6 +624,13 @@ func handleTelnetConnection(connDetails *connections.ConnectionDetails, wg *sync
 				break                                        // Exit the read loop for this connection
 			}
 
+			// Warn about AI/human port mismatch
+			if connDetails.ConnType() == connections.ConnAI && !userObject.IsAI {
+				connections.SendTo([]byte("\r\nWarning: This account is not flagged as AI but connected on the AI port.\r\n"), connDetails.ConnectionId())
+			} else if connDetails.ConnType() == connections.ConnHuman && userObject.IsAI {
+				connections.SendTo([]byte("\r\nWarning: This AI account is connected on the human port. Please use the AI port.\r\n"), connDetails.ConnectionId())
+			}
+
 			// Remove the prompt handler (it signaled completion by returning true)
 			connDetails.RemoveInputHandler("LoginPromptHandler")
 			// Replace it with a regular echo handler.
@@ -649,6 +668,23 @@ func handleTelnetConnection(connDetails *connections.ConnectionDetails, wg *sync
 
 		// If they have pressed enter (submitted their input), and nothing else has handled/aborted
 		if clientInput.EnterPressed {
+
+			// AI rate limiting: enforce commands-per-round limit
+			if connDetails.ConnType() == connections.ConnAI {
+				netCfg := configs.GetNetworkConfig()
+				currentRound := int64(util.GetRoundCount())
+				if !connDetails.AICommandAllowed(currentRound, int(netCfg.AICommandsPerRound)) {
+					connections.SendTo(
+						[]byte(fmt.Sprintf("Command dropped — AI rate limit (%d/round). Wait for the next round.\r\n", netCfg.AICommandsPerRound)),
+						connDetails.ConnectionId(),
+					)
+					clientInput.Reset()
+					if userObject != nil {
+						userObject.SetUnsentText(``, ``)
+					}
+					continue
+				}
+			}
 
 			// Update config after enter presses
 			// No need to update it every loop
@@ -891,7 +927,12 @@ func HandleWebSocketConnection(conn *websocket.Conn) {
 	}
 }
 
-func TelnetListenOnPort(hostname string, portNum int, wg *sync.WaitGroup, maxConnections int) net.Listener {
+func TelnetListenOnPort(hostname string, portNum int, wg *sync.WaitGroup, maxConnections int, connType ...connections.ConnType) net.Listener {
+
+	cType := connections.ConnHuman
+	if len(connType) > 0 {
+		cType = connType[0]
+	}
 
 	server, err := net.Listen("tcp", fmt.Sprintf("%s:%d", hostname, portNum))
 	if err != nil {
@@ -901,6 +942,8 @@ func TelnetListenOnPort(hostname string, portNum int, wg *sync.WaitGroup, maxCon
 
 	// Start a goroutine to accept incoming connections, so that we can use a signal to stop the server
 	go func() {
+
+		netCfg := configs.GetNetworkConfig()
 
 		// Loop to accept connections
 		for {
@@ -916,6 +959,7 @@ func TelnetListenOnPort(hostname string, portNum int, wg *sync.WaitGroup, maxCon
 				continue
 			}
 
+			// Enforce overall connection limit
 			if maxConnections > 0 {
 				if connections.ActiveConnectionCount() >= maxConnections {
 					conn.Write([]byte(fmt.Sprintf("\n\n\n!!! Server is full (%d connections). Try again later. !!!\n\n\n", connections.ActiveConnectionCount())))
@@ -924,10 +968,32 @@ func TelnetListenOnPort(hostname string, portNum int, wg *sync.WaitGroup, maxCon
 				}
 			}
 
+			// Enforce per-type connection limits
+			if cType == connections.ConnAI {
+				if connections.ActiveAIConnectionCount() >= int(netCfg.MaxAIConnections) {
+					conn.Write([]byte("\n\n\n!!! AI connection pool is full. Try again later. !!!\n\n\n"))
+					conn.Close()
+					continue
+				}
+			} else {
+				if int(netCfg.MaxHumanConnections) > 0 && connections.ActiveHumanConnectionCount() >= int(netCfg.MaxHumanConnections) {
+					conn.Write([]byte("\n\n\n!!! Human connection pool is full. Try again later. !!!\n\n\n"))
+					conn.Close()
+					continue
+				}
+			}
+
+			connDetails := connections.Add(conn, nil, cType)
+
+			// AI connections get ANSI stripping and are tagged
+			if cType == connections.ConnAI {
+				connDetails.SetStripAnsi(true)
+			}
+
 			wg.Add(1)
 			// hand off the connection to a handler goroutine so that we can continue handling new connections
 			go handleTelnetConnection(
-				connections.Add(conn, nil),
+				connDetails,
 				wg,
 			)
 

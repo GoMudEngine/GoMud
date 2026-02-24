@@ -41,6 +41,7 @@ type UserRecord struct {
 	Inbox          Inbox                 `yaml:"inbox,omitempty"`
 	Muted          bool                  `yaml:"muted,omitempty"`        // Cannot SEND custom communications to anyone but admin/mods
 	Deafened       bool                  `yaml:"deafened,omitempty"`     // Cannot HEAR custom communications from anyone but admin/mods
+	IsAI           bool                  `yaml:"isai,omitempty"`         // Flagged as an AI account
 	ScreenReader   bool                  `yaml:"screenreader,omitempty"` // Are they using a screen reader? (We should remove excess symbols)
 	EmailAddress   string                `yaml:"emailaddress,omitempty"` // Email address (if provided)
 	TipsComplete   map[string]bool       `yaml:"tipscomplete,omitempty"` // Tips the user has followed/completed so they can be quiet
@@ -546,16 +547,22 @@ func (u *UserRecord) GetOnlineInfo() OnlineInfo {
 		isAfk = true
 	}
 
+	isAI := false
+	if cd := connections.Get(u.connectionId); cd != nil {
+		isAI = cd.ConnType() == connections.ConnAI
+	}
+
 	return OnlineInfo{
-		u.Username,
-		u.Character.Name,
-		u.Character.Level,
-		u.Character.AlignmentName(),
-		skills.GetProfession(u.Character.GetAllSkillRanks()),
-		int64(oTime.Seconds()),
-		timeStr,
-		isAfk,
-		u.Role,
+		Username:      u.Username,
+		CharacterName: u.Character.Name,
+		Level:         u.Character.Level,
+		Alignment:     u.Character.AlignmentName(),
+		Profession:    skills.GetProfession(u.Character.GetAllSkillRanks()),
+		OnlineTime:    int64(oTime.Seconds()),
+		OnlineTimeStr: timeStr,
+		IsAFK:         isAfk,
+		IsAI:          isAI,
+		Role:          u.Role,
 	}
 }
 

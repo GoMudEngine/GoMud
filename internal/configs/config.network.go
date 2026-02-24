@@ -3,6 +3,10 @@ package configs
 type Network struct {
 	MaxTelnetConnections ConfigInt         `yaml:"MaxTelnetConnections"` // Maximum number of telnet connections to accept
 	TelnetPort           ConfigSliceString `yaml:"TelnetPort"`           // One or more Ports used to accept telnet connections
+	AIPort               ConfigInt         `yaml:"AIPort"`               // Dedicated port for AI clients (0 = disabled)
+	MaxHumanConnections  ConfigInt         `yaml:"MaxHumanConnections"`  // Pool limit for human connections
+	MaxAIConnections     ConfigInt         `yaml:"MaxAIConnections"`     // Pool limit for AI connections
+	AICommandsPerRound   ConfigInt         `yaml:"AICommandsPerRound"`   // Max commands per game round for AI connections
 	LocalPort            ConfigInt         `yaml:"LocalPort"`            // Port used for admin connections, localhost only
 	HttpPort             ConfigInt         `yaml:"HttpPort"`             // Port used for web requests
 	HttpsPort            ConfigInt         `yaml:"HttpsPort"`            // Port used for web https requests
@@ -22,6 +26,22 @@ func (n *Network) Validate() {
 
 	if n.MaxTelnetConnections < 1 {
 		n.MaxTelnetConnections = 50 // default
+	}
+
+	if n.AIPort < 0 {
+		n.AIPort = 0 // disabled by default
+	}
+
+	if n.MaxHumanConnections < 1 {
+		n.MaxHumanConnections = 50 // default
+	}
+
+	if n.MaxAIConnections < 1 {
+		n.MaxAIConnections = 20 // default
+	}
+
+	if n.AICommandsPerRound < 1 {
+		n.AICommandsPerRound = 2 // default
 	}
 
 	if n.HttpPort < 0 {

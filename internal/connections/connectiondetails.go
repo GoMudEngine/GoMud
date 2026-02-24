@@ -3,6 +3,7 @@ package connections
 import (
 	"errors"
 	"net"
+	"regexp"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -13,6 +14,8 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+var ansiRegexp = regexp.MustCompile(`\x1b\[[0-9;]*m`)
+
 type ConnectState uint32
 
 const (
@@ -20,6 +23,13 @@ const (
 	LoggedIn
 	Zombie
 	MaxHistory = 10
+)
+
+type ConnType uint32
+
+const (
+	ConnHuman ConnType = 0
+	ConnAI    ConnType = 1
 )
 
 type InputHistory struct {
@@ -113,6 +123,7 @@ type InputHandler func(ci *ClientInput, handlerState map[string]any) (doNextHand
 
 type ConnectionDetails struct {
 	connectionId      ConnectionId
+	connType          ConnType
 	state             ConnectState
 	lastInputTime     time.Time
 	conn              net.Conn
@@ -124,6 +135,9 @@ type ConnectionDetails struct {
 	inputDisabled     bool
 	clientSettings    ClientSettings
 	heartbeat         *heartbeatManager
+	stripAnsi         bool
+	aiCommandCount    int
+	aiCommandRound    int64
 }
 
 func (cd *ConnectionDetails) IsLocal() bool {
@@ -221,6 +235,14 @@ func (cd *ConnectionDetails) Write(p []byte) (n int, err error) {
 		return 0, nil
 	}
 
+	// Strip ANSI escape codes for AI connections (not telnet IAC commands)
+	if cd.stripAnsi && p[0] != term.TELNET_IAC {
+		p = ansiRegexp.ReplaceAll(p, nil)
+		if len(p) == 0 {
+			return 0, nil
+		}
+	}
+
 	if cd.wsConn != nil {
 		cd.wsLock.Lock()
 		defer cd.wsLock.Unlock()
@@ -297,6 +319,29 @@ func (cd *ConnectionDetails) InputDisabled(setTo ...bool) bool {
 		cd.inputDisabled = setTo[0]
 	}
 	return cd.inputDisabled
+}
+
+func (cd *ConnectionDetails) ConnType() ConnType {
+	return ConnType(atomic.LoadUint32((*uint32)(&cd.connType)))
+}
+
+func (cd *ConnectionDetails) SetConnType(t ConnType) {
+	atomic.StoreUint32((*uint32)(&cd.connType), uint32(t))
+}
+
+func (cd *ConnectionDetails) SetStripAnsi(strip bool) {
+	cd.stripAnsi = strip
+}
+
+// AICommandAllowed checks whether an AI connection is allowed to send another command this round.
+// Returns true if the command is allowed. Resets the counter when a new round begins.
+func (cd *ConnectionDetails) AICommandAllowed(currentRound int64, maxPerRound int) bool {
+	if currentRound != cd.aiCommandRound {
+		cd.aiCommandRound = currentRound
+		cd.aiCommandCount = 0
+	}
+	cd.aiCommandCount++
+	return cd.aiCommandCount <= maxPerRound
 }
 
 func NewConnectionDetails(connId ConnectionId, c net.Conn, wsC *websocket.Conn, config *HeartbeatConfig) *ConnectionDetails {

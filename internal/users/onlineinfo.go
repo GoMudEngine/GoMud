@@ -9,5 +9,6 @@ type OnlineInfo struct {
 	OnlineTime    int64
 	OnlineTimeStr string
 	IsAFK         bool
+	IsAI          bool
 	Role          string
 }

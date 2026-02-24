@@ -572,6 +572,19 @@ Network:
   #   If true, will send all http traffic to https with a redirect
   #   Requires both Http and Https to be working.
   HttpsRedirect: false
+  # - AIPort -
+  #   Dedicated port for AI client connections. Set to 0 to disable.
+  AIPort: 55555
+  # - MaxHumanConnections -
+  #   Maximum number of human (non-AI) telnet connections.
+  MaxHumanConnections: 80
+  # - MaxAIConnections -
+  #   Maximum number of AI client connections.
+  MaxAIConnections: 20
+  # - AICommandsPerRound -
+  #   Maximum commands per game round for AI connections.
+  #   Rounds are 4 seconds (configurable via Timing.RoundSeconds).
+  AICommandsPerRound: 2
   # - AfkSeconds -
   #   If this many seconds pass without player input, they are flagged as afk
   #   Set to zero to never mark anyone as AFK

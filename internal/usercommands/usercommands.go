@@ -48,6 +48,8 @@ var (
 		`appraise`:    {Appraise, false, true, false},
 		`ask`:         {Ask, false, true, false},
 		`attack`:      {Attack, false, true, false},
+		`ai-flag`:    {AiFlag, true, true, true},       // Admin only
+		`ai-list`:    {AiList, true, true, true},       // Admin only
 		`badcommands`:{BadCommands, true, true, true}, // Admin only
 		`bash`:        {Bash, false, true, false},
 	`bug`:         {Bug, true, true, false},
