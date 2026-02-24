@@ -1,0 +1,40 @@
+mobid: 90
+zone: Thornwall Outskirts
+statpool: 12
+itemdropchance: 12
+hostile: true
+maxwander: 2
+groups:
+  - bandit
+  - humanoid
+idlecommands:
+  - 'emote loiters at the roadside, watching passing traffic with calculating eyes'
+  - 'emote flips a coin absently, catching it without looking'
+  - ''
+  - ''
+combatcommands:
+  - 'emote draws a short blade and advances with practiced confidence'
+  - ''
+  - 'emote feints left, then strikes from the right'
+  - ''
+activitylevel: 25
+character:
+  name: thornwall highwayman
+  description: |
+    Better dressed than the bandits further west, this one wears a
+    hooded cloak over decent clothing and carries a proper blade rather than
+    a crude weapon. The highwayman has the look of someone who was once
+    legitimate -- a discharged soldier, perhaps, or a tradesman who fell on
+    hard times. The city's expansion has created a class of displaced people
+    who know the roads well and have few options left. This one has chosen
+    the option that pays.
+  speciesid: 1
+  level: 1
+  gold: 3
+  stats:
+    dexterity:
+      training: 8
+    perception:
+      training: 5
+    strength:
+      training: 3

@@ -1,0 +1,33 @@
+roomid: 441
+zone: Thornwall Outskirts
+title: Farmstead Road
+description: A dirt track winds north between low stone walls, connecting the
+  scattered farmsteads that dot the outskirts. The farms here are modest -- small
+  houses of fieldstone and thatch, with kitchen gardens and tool sheds clustered
+  close. Some are well-kept, with smoke rising from chimneys and livestock in pens.
+  Others sit dark and quiet, their fields untended and their gates hanging open.
+  The contrast tells a story of a community under pressure, some holding on and
+  others giving up.
+biome: farmland
+exits:
+  south:
+    roomid: 440
+  north:
+    roomid: 442
+  east:
+    roomid: 444
+nouns:
+  farms:
+    look: The working farms have the look of hard-won survival -- patched roofs,
+      mended fences, gardens planted right up to the walls. The abandoned ones are
+      already being reclaimed by weeds and weather. Doors stand ajar, windows are dark.
+  gates:
+    look: Simple wooden gates on iron hinges. The working farms keep theirs closed and
+      latched. The empty ones hang open, their wood starting to warp.
+spawns:
+  - mobid: 90
+    respawnminutes: 5
+idlemessages:
+- A dog barks from behind a farmstead wall, then falls quiet.
+- Smoke drifts from a chimney to the north, carrying the smell of cooking.
+- A wooden gate creaks in the wind at an empty farmstead.

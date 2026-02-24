@@ -1,0 +1,85 @@
+mobid: 89
+zone: Thornwall Outskirts
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "good day"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Hm? Oh. Traveller. Watch your step in the garden -- I just planted those."
+      - "You are on my land. But you are welcome, so long as you mean no harm to what grows here."
+
+  - keywords: ["hello", "hi", "greet"]
+    moods: ["grateful"]
+    responses:
+      - "Ah, you came back. The pests are fewer since you cleared them out. My thanks."
+      - "Welcome back. The garden is doing better. Small mercies."
+
+  - keywords: ["pest", "pests", "vermin", "rodent", "field", "crops"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "The pests are breeding in the fallow field next door. Nobody is tending it, so the vermin have taken over, and now they are spreading to my land and the fields to the south."
+      - "Giant rodents, bigger than they should be. They come from the abandoned plot and eat everything. My poisons do nothing. The smoking pots do nothing. I need someone to thin the numbers."
+
+  - keywords: ["help", "quest", "task", "work", "job"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Kill the pests in the fields south of here and bring me one of the bodies. I want to know what is making them grow so large. And while you are at the fallow field, look at the notice on the post. You should know what happened."
+      - "Clear the pest fields for me. Bring back a sample -- one of the dead ones. I need to understand what we are dealing with."
+
+  - keywords: ["gareth", "neighbour", "neighbor", "millward", "eviction", "tax"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Gareth Millward. Farmed the plot next door for thirty years. The city raised the land tax three times in five years, and when he could not pay, they took his land. Drove him off with nothing. I do not know where he went."
+      - "The Tax Authority does not care about farms. They care about revenue. Gareth's land sits fallow, breeding vermin, costing the rest of us -- but the ledger in Thornwall shows a seized asset, and that is all that matters to them."
+
+  - keywords: ["thornwall", "city", "wall", "gate"]
+    responses:
+      - "Thornwall grows and the farms shrink. That is the way of it. The city needs food but despises the people who grow it."
+      - "I have not been inside those walls in years. Nothing there for a farmer but tax collectors and contempt."
+
+  - keywords: ["farm", "garden", "dorn", "yourself"]
+    responses:
+      - "I have farmed this plot my whole life. My father before me. The soil is good here, if you treat it right. I will not be driven off by taxes or vermin."
+
+  - keywords: [""]
+    responses:
+      - "I have work to do. If you need something, say it plain."
+      - "Was there something? These weeds will not pull themselves."
+
+tree:
+  root:
+    text: "Dorn straightens up from his garden, pressing a hand to his lower back, and regards you with the wary appraisal of a man who has learned not to trust strangers. 'Traveller. If you are looking for the gate, it is east along the main road. If you are looking for trouble, the fallow field next door has plenty.' He gestures at the overgrown plot beyond the fence. 'Vermin breeding in there like it is paradise. And it is -- nobody to stop them now that Gareth is gone.'"
+    hints: "Ask Dorn about the pests, Gareth, or whether you can help."
+
+  nodes:
+    - id: pest_problem
+      triggers: ["pest", "pests", "vermin", "rodent", "field", "fallow", "breeding"]
+      text: "Dorn's jaw tightens. 'The fallow field has become a nest. Crop pests -- big ones, bigger than I have ever seen. They have tunneled under the south fields and are eating the roots out from under the crops. I have tried poison, smoke, traps. Nothing works when the source is right next door, breeding unchecked.' He points south. 'The worst of it is in the pest fields below. Mounds everywhere.'"
+      hints: "Ask how you can help, or about Gareth and the fallow field."
+      unlocks: ["help_quest", "about_gareth"]
+
+    - id: about_gareth
+      triggers: ["gareth", "neighbour", "neighbor", "eviction", "notice", "tax", "what happened"]
+      text: "'Gareth Millward. Good man. Good farmer.' Dorn's voice is flat with controlled anger. 'The city raised the land tax. Raised it again. And again. Gareth could not keep up. The Tax Authority seized his plot -- drove him out with nothing but the clothes on his back. Thirty years of work, gone.' He looks at the fallow field. 'And now the land sits empty, breeding vermin, costing all of us. The city does not care. It is an asset on a ledger somewhere.'"
+      unlocks: ["help_quest"]
+
+    - id: help_quest
+      triggers: ["help", "kill", "clear", "quest", "task", "what can i do", "sample"]
+      requires: ["pest_problem"]
+      text: "Dorn nods slowly. 'If you are willing, clear the worst of the pests from the south fields. Kill enough to thin the numbers. And bring me one of the bodies -- I want to see what is making them grow so large. Something in that fallow soil, maybe.' He pauses. 'And look at the notice on the post in Gareth's field, while you are there. Someone should know what happened. Someone who might actually do something about it.'"
+      hints: "Head east to the fallow field, then south to the pest fields. Kill crop pests and collect a sample."
+      moodChange: friendly
+
+    - id: about_thornwall
+      triggers: ["thornwall", "city", "gate", "walls"]
+      text: "'Thornwall.' Dorn says the name like it tastes bad. 'Growing every year. Eating farmland, raising taxes, building walls. The people inside eat what we grow, and the thanks we get is assessors with ledgers and guards who look at us like dirt. I have not been inside those walls in years. Nothing there for me but grief.'"
+
+    - id: sample_return
+      triggers: ["sample", "pest", "killed", "cleared", "done", "back", "body"]
+      requires: ["help_quest"]
+      text: "Dorn takes the pest sample and turns it over in his calloused hands, prodding at its teeth and claws. 'Too big. This is not natural size -- something in the fallow soil is feeding them, making them grow. As long as that field sits empty, this will keep happening.' He sets the sample down. 'You have done what you can. The rest is politics, and politics requires getting inside those walls.'"
+      moodChange: grateful
+
+memory:
+  expiryPeriod: "1h"

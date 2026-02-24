@@ -1,0 +1,37 @@
+mobid: 89
+zone: Thornwall Outskirts
+statpool: 18
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - humanoid
+  - farmer
+idlecommands:
+  - 'emote pulls a weed from the garden bed and tosses it aside'
+  - 'emote straightens up slowly, one hand pressed to the small of his back'
+  - ''
+  - 'emote glances toward the fallow field next door and shakes his head'
+  - ''
+activitylevel: 15
+character:
+  name: farmer Dorn
+  description: |
+    An old man with sun-darkened skin stretched tight over heavy bones,
+    his hands permanently curved from decades of gripping tools. Dorn wears
+    patched work clothes and a wide-brimmed hat that has been repaired so many
+    times it is more thread than straw. His eyes are sharp despite his age,
+    and his expression carries the quiet fury of a man watching his world
+    be dismantled by people who have never turned a furrow. He works his
+    garden with the stubborn precision of someone who refuses to give up,
+    even when giving up might be the sensible thing to do.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    vitality:
+      training: 10
+    willpower:
+      training: 10
+    strength:
+      training: 5

@@ -1,0 +1,37 @@
+mobid: 92
+zone: Thornwall Outskirts
+statpool: 25
+itemdropchance: 0
+hostile: false
+maxwander: 1
+groups:
+  - humanoid
+  - guard
+idlecommands:
+  - 'emote adjusts the spear resting against her shoulder'
+  - 'emote scans the approaching road with a practiced eye'
+  - ''
+  - 'emote waves a merchant cart through the gate with a curt nod'
+  - ''
+activitylevel: 15
+character:
+  name: city gate guard
+  description: |
+    A woman in Thornwall livery -- a blue-grey surcoat over well-maintained
+    chainmail, a spear in hand and a short sword at her hip. She stands with
+    the professional alertness of someone who has done this job long enough to
+    be efficient but not so long as to be careless. Her eyes move constantly,
+    assessing each arrival with a quick, practiced glance that misses nothing.
+    She is polite but firm, and her questions are brief and to the point.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 8
+    perception:
+      training: 8
+    vitality:
+      training: 5
+    willpower:
+      training: 5

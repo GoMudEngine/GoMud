@@ -1,0 +1,41 @@
+roomid: 444
+zone: Thornwall Outskirts
+title: Pest Fields
+description: The fields here have a sickly look -- crops that should be knee-high
+  are stunted and ragged, their leaves chewed to lace by something persistent. Mounds
+  of freshly turned earth dot the furrows where burrowing pests have been at work,
+  and the irrigation ditches are clogged with mud and debris. A farmer's attempts at
+  control are visible -- poison stakes, mesh coverings, even a line of smoking pots
+  meant to drive the creatures out -- but none of it seems to be working. The damage
+  is spreading from the abandoned field to the north, where the pests have established
+  themselves unchecked.
+biome: farmland
+exits:
+  west:
+    roomid: 441
+  north:
+    roomid: 443
+  south:
+    roomid: 445
+nouns:
+  mounds:
+    look: Low mounds of freshly turned soil, each about the size of a fist. The
+      burrows beneath connect in a network that riddles the field. Whatever is digging
+      them is small, numerous, and very busy.
+  stakes:
+    look: Sharpened wooden stakes driven into the ground around the worst-damaged
+      areas, their tips smeared with a dark paste that smells acrid and chemical. The
+      pests seem to be ignoring them entirely.
+  pots:
+    look: Clay pots filled with smoldering herbs, placed at intervals along the
+      furrows. The smoke is thin and acrid. A local remedy, apparently, and not a
+      very effective one.
+spawns:
+  - mobid: 91
+    respawnminutes: 4
+  - mobid: 91
+    respawnminutes: 4
+idlemessages:
+- Something rustles beneath the soil, sending a small mound of earth shifting.
+- A thin wisp of smoke rises from one of the pest-control pots.
+- Damaged crop stalks lean at odd angles, their roots undermined from below.
