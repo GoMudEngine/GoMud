@@ -4291,7 +4291,7 @@ storytelling reveals they're former farmhands displaced by Thornwall expansion.
 **Quest — "The Fallow Field"**: Farmer's neighbor lost land to city tax seizure. Cross-zone:
 requires Thornwall access (23.6).
 
-### Stage 23.6: Build Thornwall City Core
+### Stage 23.6: Build Thornwall City Core ✅ COMPLETED (commit: bb567da)
 
 **Goal**: First major city — walled, with services, 3+ quests, enough rooms to feel real.
 
@@ -4779,4 +4779,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-24
 **Status**: In Progress
-**Current Stage**: Phases 1–22 complete. Stages 23.1–23.5 complete. Next: Stage 23.6 (build Thornwall City Core).
+**Current Stage**: Phases 1–23 complete. Next: Phase 24 (Expanded Mutations).
