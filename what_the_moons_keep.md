@@ -309,7 +309,7 @@ The deacon's voice in response. She caught fragments: "...not certain, but the w
 
 Delia said something sharp. Maren had never heard her speak that way. It lasted only a moment before she modulated back to careful.
 
-The deacon said: "...bloodless."
+The deacon said: "...hollow."
 
 The wind pushed at the shutters.
 
@@ -321,7 +321,7 @@ Then Delia cried. Not loudly. The way she cried when she thought she was alone, 
 
 Maren sat against the wall for a long time after the voices stopped.
 
-*Bloodless.* She had heard the word before, always in the context of a bad thing, a sad thing, said with the slightly lowered voice people used for the afflicted. She had always understood it meant what she was. She had not, until now, understood that someone was supposed to be told.
+*Hollow.* She had heard the word before, always in the context of a bad thing, a sad thing, said with the slightly lowered voice people used for the afflicted. She had always understood it meant what she was. She had not, until now, understood that someone was supposed to be told.
 
 She thought about her father.
 
@@ -331,7 +331,7 @@ She had told herself for five years that he had abandoned them. She'd built a wh
 
 What she remembered of him was small and specific: lamp oil and the sharper bite of something metallic, and his hands by firelight, turning some small bright thing with the patience of a man for whom patience was a tool like any other. A gear, maybe, or a catch-pin — something that wanted coaxing into place, something that would either work or wouldn't and required a kind of faith in the trying. She could not remember what the bright thing was. She remembered the turning.
 
-He had also been bloodless. She had always known this and had not let herself think about what it meant. He had also never shown the change. He had also, when she was young, been careful in ways she hadn't understood as careful at the time. The way he sat at the Rite. The way he held his arm.
+He had also been hollow. She had always known this and had not let herself think about what it meant. He had also never shown the change. He had also, when she was young, been careful in ways she hadn't understood as careful at the time. The way he sat at the Rite. The way he held his arm.
 
 He had left on a windy night. He had left without waking her.
 
@@ -339,9 +339,9 @@ She sat against the wall and she let the different question in.
 
 ---
 
-She got up and began to pack. She did not take very long. Three years of knowing this might happen had made her efficient about it in the abstract, and she found that in practice her hands knew what her mind had planned.
+She got up and began to pack. She did not take very long. Three years of knowing this might happen had made her efficient about it in the abstract, and in practice her hands knew what her mind had planned.
 
-The coin purse. The small knife Delia had given her for cutting herbs, which was good steel and balanced well. Two changes of clothes, rolled tight. The dried herbs she'd been collecting since summer in a leather wrap — things useful on a road, things she knew. Her mother's comb, which she had kept for reasons she'd never examined. The disc, which she'd carried in her coat pocket since her great-aunt pressed it into her hand at thirteen and said *don't lose this* and *don't show anyone* and nothing else.
+The coin purse. The small knife Delia had given her for cutting herbs, which was good steel and balanced well. Two changes of clothes, rolled tight. The dried herbs she'd been collecting since summer in a leather wrap — things useful on a road, things she knew. Her mother's comb, which she had kept for reasons she'd never examined. The disc, which she'd carried in her coat pocket since her great-aunt pressed it into her hand at thirteen and said *don't lose this* and *don't show anyone* and nothing else. She touched it now and it was warm — not body-warm, warmer, with the faintest vibration under her thumb, so slight she might have been imagining it. She wasn't sure she was imagining it. She put it in her coat and kept moving.
 
 She stood at the kitchen shelf for a moment. Delia kept her money in an old crock behind the salt-box. There was more there than Maren had in her purse. She thought about it. She picked up the coin purse and found, under it, the small worn pouch she used to carry the charcoal, emptied now, just leather. She put it in her pocket. It smelled like Delia's kitchen, like drying things, like fennel and coltsfoot and the sharp ghost of last week's pressing.
 
@@ -351,11 +351,13 @@ She went out through the back, through the kitchen garden and the low gate, onto
 
 She walked north.
 
+In her pocket, the disc hummed once — a single brief vibration, there and gone, like a heartbeat that wasn't hers. She pressed her hand flat against it and nothing further. It had done it once before, in the kitchen, while she was packing — a warmth under her thumb that might have been nothing. Now again. Not often, not predictably. She could not tell if the vibration was the road carried through her coat or the disc itself, and she stopped trying to decide.
+
 She did not look at the moons for long. She had always been vaguely unsettled by them without knowing why — her grandmother's grandmother's people had said the moons were not watching but *waiting*, and Maren had never been told what they were waiting for, and the not-knowing had settled into her young enough to feel like instinct rather than information. She did not have time for vague things. She kept her eyes on the path and walked at the pace that could be maintained indefinitely, the long ground-eating step she'd developed doing Delia's herb rounds, and she thought about what she knew and what she was going to need to do with it.
 
 She knew: the deacon had seen. She knew: the bloodline was to be told. She did not know what that meant, not precisely, except that Delia had cried in the way of someone who could not prevent a thing, and Delia was not a woman who cried at things that could be prevented.
 
-She knew her father had been bloodless. She knew he had left quickly and without waking her. She knew he had never come back and no one had heard from him — five years filed under abandonment, now being refiled under something else. Something without a name yet, that sat in her chest like a coal going from warm to hot.
+She knew her father had been hollow. She knew he had left quickly and without waking her. She knew he had never come back and no one had heard from him — five years filed under abandonment, now being refiled under something else. Something without a name yet, that sat in her chest like a coal going from warm to hot.
 
 The path curved east at the top of the ridge. She kept north, off the path, through the high grass. The wind was in her face. The grass bent around her like it was trying to direct her somewhere.
 
@@ -377,7 +379,7 @@ He'd made that decision somewhere around day four, when the count had reached a 
 
 The road north was well-traveled enough to have a surface — packed earth between shallow drainage ditches, marked at intervals by waystones carved with distances to places he'd never been. He walked in the early morning and the late afternoon, rested in the worst of the midday heat, camped just off the road when he couldn't reach a waypoint inn. He'd done this before, shorter distances, helping his father deliver furniture to the river towns. The rhythm came back faster than expected. Wake, walk, eat when there was something to eat, sleep when it was dark. The body was a practical thing once you stopped arguing with it.
 
-He was twenty years old and he had never been this far from home, and mostly he felt fine about this, and sometimes, for about an hour after waking, he felt it as an ache he couldn't quite locate.
+He was twenty years old and he had never been this far from home, and mostly he was fine with this, and sometimes, for about an hour after waking, it arrived as an ache he couldn't quite locate.
 
 He carved while he walked. Not intricate work — he saved that for camp, when the light was steady. On the road he kept his hands moving on a piece of soft pine, shaping it into whatever the grain suggested, which was usually something simple: a bird, a sleeping dog, the curve of a riverbank. His father had taught him that the knife was a conversation, not a command. You didn't force the wood. You asked it what it wanted to be and then you helped it get there. He was not sure this philosophy generalized beyond woodworking but he'd never quite been able to stop applying it.
 
@@ -449,7 +451,7 @@ The heavyset man said nothing for a moment. Then: "There hasn't been one of thos
 
 Davan ate his soup. He turned the carving over in his hands. The word they hadn't said sat in the middle of the room like something that had been put down and not picked up.
 
-*Bloodless.*
+*Hollow.*
 
 He had heard the word a handful of times in his life. Once from his grandmother, who had known someone, a very long time ago. Once from a traveling priest who'd made it sound like a kind of sorrow. Once in a children's song that the older kids sang at the younger ones, not cruelly, just as children carry things they don't understand, preserving the shape without the meaning.
 
@@ -491,7 +493,7 @@ He hoped she was walking fast.
 
 In the morning he was on the road before sunrise, the cold blue hour when the ground gives up the last of the previous day's warmth and the sky comes in close. He walked north. The blisters were still there but he'd stopped counting them.
 
-At some point, between one step and the next, he realized he'd been holding the carving for the last hour without working on it. He looked at it.
+At some point, between one step and the next — the carving. He'd been holding it for the last hour without working on it. He looked at it.
 
 The abstract curve had become a figure. Small, rough, the proportions not quite right in the way of something made by hands moving faster than intention — but recognizably a person, standing, head turned slightly to one side in the listening posture his carvings sometimes arrived at without being asked.
 
@@ -619,7 +621,7 @@ Light. From within the object, or from its surface, or from the relationship bet
 
 He stepped back. He stood very still.
 
-The images were small and seemed to recede as if seen from a great distance. Moving points of light against a field of dark. Some of the points were fixed; some moved in slow arcs. He had been enough of a scholar in his youth to have spent time with astronomy texts, and something about the arrangement produced a recognition he could not quite close his hand around — a star map, perhaps, or something that functioned like one, though the specific relationship of the points to each other matched no chart he knew.
+The images were small and seemed to recede as if seen from a great distance. Moving points of light against a field of dark. Some of the points were fixed; some moved in slow arcs. He had been enough of a scholar in his youth to have spent time with astronomy texts, and something in the arrangement pulled at him — a recognition he could not quite close his hand around — a star map, perhaps, or something that functioned like one, though the specific relationship of the points to each other matched no chart he knew.
 
 He stood and looked at it until the cold began to work through his feet and legs, which was perhaps an hour, and he understood almost nothing, and he could not make himself go back upstairs. The quality of his attention troubled him — not its intensity, which was natural enough given the circumstances, but its steadiness. His mind had settled into the shifting light the way a hand that hasn't held a pen in twenty years still knows the motion. Something in him had been built for this kind of looking, and he had spent a long time arranging his life so that there was nothing to look at.
 
@@ -743,7 +745,7 @@ Her rooms were two: a front room with a table, a chair, a locked chest, a window
 
 She counted the fee. It was correct.
 
-She put the envelope in the locked chest and sat at the table for a while doing nothing in particular, able to sustain this for approximately ten minutes before the shape of the evening's quiet began to press in on her. Not loneliness. She had made her peace with solitude long ago, genuinely rather than nominally. Something else. A specific absence. The sensation of a thing she was about to address.
+She put the envelope in the locked chest and sat at the table for a while doing nothing in particular, able to sustain this for approximately ten minutes before the shape of the evening's quiet pressed in on her. Not loneliness. She had made her peace with solitude long ago, genuinely rather than nominally. Something else. A specific absence. The sensation of a thing she was about to address.
 
 From the back room's chest she took the small tin.
 
@@ -835,7 +837,7 @@ That evening she sat at the table and opened her maps and made notes in her shor
 
 She had not told anyone this. It was not the kind of operational advantage you explained.
 
-At the edges of her attention, the warmth of last night's Bloom was already receding — not a craving, not yet. More like a room you've left that you are becoming aware of having left. She noticed it because she'd had the files open for twenty minutes and the connections between them were coming slowly, one at a time, each link requiring conscious effort. This was how it always went, in the ordinary state: a patience tax, paid in full. She worked through it.
+At the edges of her attention, the warmth of last night's Bloom was already receding — not a craving, not yet. More like a room you've left that you are becoming aware of having left. She caught it because she'd had the files open for twenty minutes and the connections between them were coming slowly, one at a time, each link requiring conscious effort. This was how it always went, in the ordinary state: a patience tax, paid in full. She worked through it.
 
 She had learned, early in her use, that the Bloom did something specific to the work. At the height of it, with the files spread around her, she could feel the whole picture without reading a line — the scent-record of every note rising to meet her at once, weeks or months of observations compositing into something that arrived less like thought than like recognition. Connections her waking mind would take hours to construct, given in a breath. She had broken three contracts open this way. Had walked into a room and known, from the smell of her own old notes, exactly where the gap in her map was.
 
@@ -843,7 +845,7 @@ She had told herself this was a tool like any other. She had been telling hersel
 
 She noted the distance to Sanctum Basin. She noted the road conditions she'd heard about from a carter that morning in the market. She noted that *no visible change* at seventeen was late — late enough to be notable, late enough that someone who understood what it meant would have two possible explanations, and one of those explanations was rare enough to be worth a Noble Quarter fee.
 
-She had heard the word *bloodless* perhaps four times in her life. Once from an old woman in her building who'd had a neighbor, years ago, and spoke of him the way you speak of a storm that passed through — with a kind of awed inconvenience. Once from a client who'd wanted someone found and wouldn't say why, and she'd declined that contract because declined was sometimes the right answer. Once from Cade, obliquely, in a different context she hadn't fully understood — something about the eastern highlands, a place the dockside old-timers called *the hill that moves in the light*, spoken in the particular tone that meant the name was a warning rather than a description.
+She had heard the word *hollow* perhaps four times in her life. Once from an old woman in her building who'd had a neighbor, years ago, and spoke of him the way you speak of a storm that passed through — with a kind of awed inconvenience. Once from a client who'd wanted someone found and wouldn't say why, and she'd declined that contract because declined was sometimes the right answer. Once from Cade, obliquely, in a different context she hadn't fully understood — something about the eastern highlands, a place the dockside old-timers called *the hill that moves in the light*, spoken in the particular tone that meant the name was a warning rather than a description.
 
 Once from herself, in the mirror, at fifteen, the morning after a night that had produced no warmth, no light, no sense of opening — nothing except the ordinary face she'd had the day before, and the day before that, and every day she could remember.
 
@@ -865,7 +867,7 @@ Vane began to work out the math.
 
 On the first day she made two mistakes and one good decision.
 
-The mistakes: she walked the road in the early morning when the light was low and she felt safe in it, which was exactly when she was most visible against the empty pale country; and she stopped at a stream to refill her water skin in a spot with no clear sightlines, which meant she had to make a very undignified scramble into a clump of thorned scrub when a rider came over the rise to the east and she had nowhere better to go. She crouched in the thorns for twenty minutes. The rider passed without slowing. She had scratches on both forearms and her left knee from the scramble, and the water skin was only half full.
+The mistakes: she walked the road in the early morning when the light was low and the dimness looked like safety, which was exactly when she was most visible against the empty pale country; and she stopped at a stream to refill her water skin in a spot with no clear sightlines, which meant she had to make a very undignified scramble into a clump of thorned scrub when a rider came over the rise to the east and she had nowhere better to go. She crouched in the thorns for twenty minutes. The rider passed without slowing. She had scratches on both forearms and her left knee from the scramble, and the water skin was only half full.
 
 The good decision: she threw away the coal pouch at the first crossing.
 
@@ -875,11 +877,11 @@ After that she walked by night and slept in daylight.
 
 The sleeping was not restful. She'd spent her life in a bed, in a room, with walls, and the open ground was a different proposition in every way she hadn't considered. The sounds were unfamiliar. The light came through her eyelids at angles that had nothing to do with windows. She slept in snatches and woke tense and lay very still until she'd catalogued what had woken her, which was usually wind, or a bird, or her own heart going too fast for the level of danger present.
 
-By the third night she was sleeping better. By the fourth she was waking with the false dawn and feeling the particular quality of her own alertness as something close to useful. Her body was adjusting without consulting her. She found she was grateful for this, and then noted that gratitude — her body was adjusting to running. That was not the kind of progress she had planned to be making at seventeen.
+By the third night she was sleeping better. By the fourth she was waking with the false dawn and feeling the particular quality of her own alertness as something close to useful. Her body was adjusting without consulting her. She was grateful for this, and then noted the gratitude — her body was adjusting to running. That was not the kind of progress she had planned to be making at seventeen.
 
 She catalogued what she knew. It was a habit she'd developed in Delia's kitchen — making lists of the available, because Delia said that a healer who didn't know her stock was just a person with good intentions and some herbs. She knew: the road markers were accurate to within about half a day's walk, and she didn't need to be on the road to use them. She knew: watercress grew at the edge of any stream that moved fast enough to stay cold, and it tasted of almost nothing but it kept the hunger from turning sharp. She knew: dew was most reliable on the north-facing side of large stones, and there was always more of it than you expected. She knew the rough names and uses of most plants that grew in plateau country, and several that grew in the scrublands she was moving through now, and a few that grew in the lowland forest she could see in the far distance ahead.
 
-She was, she realized, substantially less helpless than she'd felt when she'd gone out the back gate four nights ago. She had been thinking of herself as helpless for a long time without examining the assumption. Examining it now, running for her life across open country, felt belated.
+She was substantially less helpless than she'd thought four nights ago at the back gate. She had been thinking of herself as helpless for a long time without examining the assumption. Examining it now, running for her life across open country, was belated.
 
 She ate watercress and noted this.
 
@@ -913,7 +915,7 @@ She came up on a rise at dusk on the fourth day and saw them below: three riders
 
 She sat down in the scrub and her hands were shaking.
 
-Not the controlled kind. The real kind — the kind that started in the fingers and went up through the wrists and settled somewhere behind the sternum, where it became a vibration she could feel in her breathing. She pressed her palms flat against the ground, the way she'd seen Delia steady a patient, and told her body to be quiet. Her body did not listen. She was shaking and her vision had gone narrow and bright and she could hear her own pulse and none of this was useful. None of this was the calm assessment of a girl who'd been cataloguing her skills like inventory, and the distance between who she'd thought she was becoming and who she actually was right now — hands in the dirt, heart hammering, everything she'd learned in four days of careful adaptation gone — was the most instructive thing that had happened to her yet.
+Not the controlled kind. The real kind — the kind that started in the fingers and went up through the wrists and settled somewhere behind the sternum, a vibration in her breathing. She pressed her palms flat against the ground, the way she'd seen Delia steady a patient, and told her body to be quiet. Her body did not listen. She was shaking and her vision had gone narrow and bright and her pulse was loud in her ears and none of this was useful. None of this was the calm assessment of a girl who'd been cataloguing her skills like inventory, and the distance between who she'd thought she was becoming and who she actually was right now — hands in the dirt, heart hammering, everything she'd learned in four days of careful adaptation gone — was the most instructive thing that had happened to her yet.
 
 She made herself watch.
 
@@ -995,7 +997,7 @@ It was the most honest conversation she'd had in three years, and it had lasted 
 
 Before she went out to the barn, Corvin found her at the door. He was holding something out to her, palm up, with the slightly aggressive generosity of a child who has decided to give a gift and is not going to be talked out of it.
 
-It was a small wooden bird. Rough, clearly hand-carved — she could see the knife marks where he hadn't quite smoothed the wing joints, the tail a little asymmetrical, the body blocky in the way of something made by hands still learning their strength. But there was genuine care in it. The head was tilted slightly, as though the bird was listening, and he'd taken time with that, gotten it right.
+It was a small wooden bird. Rough, clearly hand-carved — the knife marks showed where he hadn't quite smoothed the wing joints, the tail a little asymmetrical, the body blocky in the way of something made by hands still learning their strength. But there was genuine care in it. The head was tilted slightly, as though the bird was listening, and he'd taken time with that, gotten it right.
 
 "I made it," he said. Unnecessary, but offered as a kind of credential.
 
@@ -1111,7 +1113,7 @@ The market was everything he'd heard markets could be and had not, growing up in
 
 The people were different also. In Amber Valley, the changes were common and visible and mostly familiar — he'd grown up with the same forty or so people's mutations, watched them develop over years, had a personal history with each one. Here he was passing strangers who carried changes he had no reference for. A woman whose fingers ended in small curved hooks, efficient and precise as she counted coins. A man whose skin had gone to a fine pale iridescence that caught the light when he moved and threw small rainbows onto the stall canvas beside him, apparently unaware of this effect, or aware and indifferent. A child, perhaps seven, who was probably pre-change but whose eyes tracked movement with an acuity that suggested otherwise.
 
-He looked at all of it. He was not sure if what he felt was wonder or envy or simply the peculiar emotional weather of being a long way from home — something that arrived as a kind of humidity in the chest, not painful, just present.
+He looked at all of it. Wonder or envy or simply the peculiar emotional weather of being a long way from home — something that arrived as a kind of humidity in the chest, not painful, just present.
 
 Then the woman selling river-eel two stalls down had a brief sharp argument with a customer that produced a spike of anger so specific and so localized that Davan turned without meaning to, looking for the source, as if the anger had been a sound rather than — what? He stood very still for a moment. The argument resolved itself, the customer paid and left, the woman's anger dropped away. The pressure in Davan's chest dropped with it.
 
@@ -1297,7 +1299,7 @@ New Plymouth announced itself the same way the Confluence had, by smell before s
 
 The river widened. Buildings appeared on the banks and didn't stop appearing. The barge captain called instructions and the crew moved with practiced efficiency. Davan stood at the bow and watched New Plymouth come at him.
 
-The skyline was dominated by two things: the temple in the east district, enormous and very old, and the palace on the northern rise — also enormous, considerably newer, considerably more concerned with demonstrating that it was where it was. He had grown up hearing about the palace the way you heard about things that were real but too large to have a personal relationship with, the way you heard about the sea or the high desert. From the river it looked like the kind of building made to be looked at from this distance. He found himself thinking not about the stone but about what three hundred years of unbroken occupation implied — the particular leverage of a bloodline that had never needed to be replaced.
+The skyline was dominated by two things: the temple in the east district, enormous and very old, and the palace on the northern rise — also enormous, considerably newer, considerably more concerned with demonstrating that it was where it was. He had grown up hearing about the palace the way you heard about things that were real but too large to have a personal relationship with, the way you heard about the sea or the high desert. From the river it looked like the kind of building made to be looked at from this distance. He was thinking not about the stone but about what three hundred years of unbroken occupation implied — the particular leverage of a bloodline that had never needed to be replaced.
 
 He thought about the Wound-maker. That was what they called it in Amber Valley — his grandmother's name for it, and she had said it with the weight of someone who believed the thing was real, not story. She had gotten this from her own grandmother, who had heard it from someone who claimed a cousin had been in New Plymouth during the Stilling of the Brace, three hundred years back or more, when a river-lord had marched on the city and the bloodline had brought the thing out onto the palace steps and used it once, just once, and the river-lord's army had stopped and then quietly gone home and the river-lord himself had not been seen again. The story had at least four versions even in Amber Valley. In two of them the weapon sang. In one it wept. In all of them it left a mark on the stone that was still there, black and clean as a burn, and no one who carried the change could look at it directly.
 
@@ -1427,11 +1429,13 @@ A burning point at the center — unmistakably a star, the kind that things move
 
 He counted them several times. Four.
 
-He had grown up, as everyone had grown up, with three moons. The three Witnesses. *The Three Witnesses remain above us still. They do not leave. They have never left.* He had spoken those words at the start of every Blooming ceremony for thirty years, and they had always sounded like the bedrock kind of truth — the kind you don't argue with because it isn't making a claim, it is simply describing the world as it is. Their cycles were in every calendar, every tidal table, every agricultural guide, every set of planting instructions distributed by every temple on Thera. Three was not a question. Three was the number moons were.
+He had grown up, as everyone had grown up, with three moons. The three Witnesses. *The Three Witnesses remain above us still. They do not leave. They have never left.* He had spoken those words at the start of every Blooming ceremony for thirty years, and they had always sounded like the bedrock kind of truth — the kind you don't argue with because it isn't making a claim, it is simply describing the world as it is.
 
 He counted the shapes on the glass again. His lips moved.
 
 Four.
+
+The Recitation surfaced in his mind unbidden, the way liturgy always surfaced — *They do not leave. They have never left.* He had spoken the words ten thousand times. They had always meant faithfulness. The Witnesses, constant, devoted, keeping their vigil over the world they had gifted. He heard them now and the meaning shifted under him like a floor settling — *They do not leave.* Not faithfulness. Grief. The stubborn circling of something that would not abandon what it had lost. *They have never left* — not because they chose to stay, but because they could not bring themselves to go.
 
 He sat back on his heels and looked at the blue-green shape for a long time. The cold worked through his knees. He did not move.
 
@@ -1653,9 +1657,29 @@ She made a note in her shorthand when she stopped for water — three words and 
 
 ---
 
+That night, in the woodcutter's shelter, she took a wafer.
+
+Not because she needed it — she was on schedule, two and a half days, she could have waited. Because the files were spread around her on the floor and the connections between them were coming one at a time, each link requiring the conscious assembly that was, in the ordinary state, the cost of doing the work. She could do it this way. She had done it this way for years before the Bloom. It was simply slower, and she was not in a position where slower was acceptable.
+
+The wafer dissolved. The warmth moved outward from her chest. And then the files opened.
+
+Not the paper — the paper didn't move. But the scent-record of every note rose to meet her at once, weeks of observations compositing into a single layered image that arrived not as thought but as recognition. The kitchen south of Stillwater: alert, watchful, the girl's residue sitting clean and competent in the fat-smoke of the cooking space. The ditch embankment: the stumble, the recovery, the left-side favor she'd been tracking since. The boy on the road: his protectiveness aimed at something behind him and to the south, the direction he hadn't pointed when he'd mentioned the farmstead. The farmwife's held position, the specific chemical signature of a decision already made before Vane had arrived. All of it, simultaneous, every piece in its place, and the picture assembling itself without effort — a girl moving north through a corridor of people who had quietly, without coordination, decided to let her pass.
+
+She saw, with the Bloom's compound clarity, what she would have taken another two days to assemble in the ordinary state: the girl was not alone. Not in the way of having companions — she was traveling solo, that was clear. But the country itself was cooperating. Small acts of shelter, small acts of concealment, the organic network of people who recognized something in her passage and responded to it without being asked. The boy. The farmwife. Probably others she hadn't found yet.
+
+The picture held for perhaps an hour. She wrote during that hour with a fluency that had nothing to do with speed and everything to do with the absence of friction — each note landing in its right place, each connection confirmed and cross-referenced, the whole architecture of the search laid out in her shorthand with a precision she could feel in her hands as rightness rather than effort.
+
+Then the hour ended, and the world stepped back behind the glass, and the files were just paper again, and the connections she'd made were still there but had to be held now rather than simply seen. She sat in the shelter's dark and breathed through the descent — the walls returning, the boundaries re-establishing, the particular flatness of a world experienced through a single register after having been, briefly, experienced through all of them.
+
+She checked her forearms. The bark on the right had advanced perhaps a quarter-inch past the mark she'd been using as a reference — the small scar from a rope-burn two years ago, which the bark had reached last month and was now past. She pressed her thumb against the leading edge. Dense, cool, the texture of old heartwood. Not painful. Just there, the way it was always there, one more thing the Bloom extracted in exchange for what it gave.
+
+She put the files away and lay on her back and did not think about the exchange.
+
+---
+
 Toward evening she came over a rise and saw two of the bloodline's agents on the road below her, heading south at a pace that said destination, not search. They'd been working this section and found nothing. Whatever Betta had decided to tell them would have been less than what she'd told Vane, or nothing at all. She waited on the rise until they were gone, then came down to the road.
 
-She found a woodcutter's shelter at full dark — old, unused for the season, sound enough to keep the wind out. She ate from her pack and checked her maps by lamplight. Two days behind, probably less. The girl's gait had been uneven since the ditch — favoring one side on rough ground, not badly but consistently. It would cost her on anything uneven.
+She found a hay-barn at full dark — old, one wall open to the field, sound enough to keep the wind out. She ate from her pack and checked her maps by lamplight. Two days behind, probably less. The girl's gait had been uneven since the ditch — favoring one side on rough ground, not badly but consistently. It would cost her on anything uneven.
 
 She lay on her back in the shelter and looked at the dark ceiling.
 
@@ -1762,7 +1786,7 @@ She let this sit for a while.
 
 Then she thought about her father, which was where things got complicated.
 
-She had the revision going now, the one that had started at the boundary stone. Not the man who left but the man who ran. Same action, different story. He had been what she was — bloodless, hollow, the thing without the gift. He had been managing this the way she'd been managing it, the careful arm, the performance, the watching of the deacon's eyes to see when they were paying the wrong kind of attention. He had been doing this longer than she had. He had known what it meant when the attention arrived, and he had gotten out in the night without waking her, which was the choice of a man who had very little time and had used what he had to make sure she didn't know he was gone until it was too late to follow.
+She had the revision going now, the one that had started at the boundary stone. Not the man who left but the man who ran. Same action, different story. He had been what she was — hollow, the thing without the gift. He had been managing this the way she'd been managing it, the careful arm, the performance, the watching of the deacon's eyes to see when they were paying the wrong kind of attention. He had been doing this longer than she had. He had known what it meant when the attention arrived, and he had gotten out in the night without waking her, which was the choice of a man who had very little time and had used what he had to make sure she didn't know he was gone until it was too late to follow.
 
 She thought: he left me.
 
@@ -1774,7 +1798,7 @@ The fire went to embers. She didn't have wood left to build it back.
 
 ---
 
-In the afternoon she found herself doing something she hadn't consciously decided to do: she took the disc from her pocket and sat with it in the gray light from the door and looked at it with the focused attention she'd been applying to everything lately, the attention that had recently started producing actual information.
+In the afternoon she did something she hadn't consciously decided to do: she took the disc from her pocket and sat with it in the gray light from the door and looked at it with the focused attention she'd been applying to everything lately, the attention that had recently started producing actual information.
 
 The markings she'd always taken for decoration. Three of them around the edge, and now that she was looking at them rather than past them, they were not decorative in character — too regular, too precisely placed, the lines too clean for ornament. The central indentation she'd taken for damage was not a dent but a recess, shaped too deliberately for anything accidental. It was designed to receive something. A key, maybe. A finger. Something specific.
 
@@ -1786,6 +1810,10 @@ She tried each finger in turn, which felt slightly ridiculous. Nothing happened 
 
 She turned the disc over and looked at the smooth side. Nothing there. She tilted it toward the light and the metal did something she hadn't noticed before — a faint iridescence at certain angles, not random, a pattern that appeared and disappeared as she moved it. Not decoration. Structure, something in the metal itself.
 
+And as she held it tilted, a thin ring of color appeared at the disc's outer edge — faint, bluish, gone when she moved it flat again, back when she tilted it. Not a reflection. The color was coming from inside the metal, or from the edge of it, a luminescence too faint to see in full daylight but visible in the shelter's gray half-light. The vibration was there too — stronger than on the road, a low steady pulse she could feel in her fingertips, like something ticking over very slowly. Not mechanical. Organic, almost. The rhythm of something that was not inert and never had been.
+
+She held it for a long time and the color did not change and the vibration did not increase and she could not determine whether it was responding to her or simply doing what it did regardless, the way a clock ticks whether or not anyone is listening.
+
 She didn't know what any of this meant. She knew how to identify plants and dress wounds and set a bone and make a fire and walk very long distances without complaining. She did not know how to read a metal disc that had been in her family for generations with no explanation except *don't lose this, don't show anyone.*
 
 Her father had known how to fix small precise things. He'd had patience for mechanisms, for the particular coaxing-into-place that small broken things required. If this disc was a mechanism, he would have understood it better than she did.
@@ -1794,7 +1822,7 @@ He wasn't here.
 
 She put the disc back in her pocket. She turned over Corvin's whittled bird in her other hand — he'd pressed it into her palm the same moment he'd refused her coin, and she still wasn't sure if he'd done it deliberately or if it had simply migrated in the transaction. The carving was a small thing, a bird with its wings tucked, smooth where his hands had worked the wood down to the essential shape. She'd been carrying it because it had a quality of intention to it she found, obscurely, reassuring.
 
-She put it away also and sat with the cold and the hunger and the feeling she was starting to recognize as the specific weight of a question she didn't have the tools to answer yet. She'd been carrying it since childhood without knowing that's what it was. Now she knew, and knowing didn't help, but it was better than not knowing. She found she believed this genuinely rather than as a thing she'd decided to believe because the alternative was worse.
+She put it away also and sat with the cold and the hunger and the feeling she was starting to recognize as the specific weight of a question she didn't have the tools to answer yet. She'd been carrying it since childhood without knowing that's what it was. Now she knew, and knowing didn't help, but it was better than not knowing. She believed this genuinely rather than as a thing she'd decided to believe because the alternative was worse.
 
 The light shifted. Outside the road was quiet. No horses, no voices, no indication that anyone was looking through this particular stretch of country. She could not know if this was safety or the absence of evidence.
 
@@ -1802,9 +1830,9 @@ She stood up and tested the ankle. Better. Not good, but better.
 
 She thought: I have been calling myself hollow since I was fourteen, and hollow is a word that means empty, and I don't feel empty. I feel like a person who is cold and hungry and has a bad ankle and does not know what the disc is and cannot answer the most important questions about her own life, and all of that is very full. Hollow is wrong.
 
-The old eastern songs — the Irongate kind, the ones the traveling singers brought through Ashwick every few years — had a different word. *Unblooded.* And the songs said the Unblooded could touch things the changed ones couldn't. The old things. The god's old bones and weapons, the songs said, though they said it casually, the way songs said everything, as if the information were decoration rather than the load-bearing wall it might actually be. She thought about the disc in her pocket — cold metal that had never burned her, that had sat in her father's bloodless hands and his father's before that, patient and inert and *waiting for the right fingers.* The Recitation called her kind servants. The songs called them keepers of old things. The deacon had called her bloodless and the bloodline had asked to be told.
+The old eastern songs — the Irongate kind, the ones the traveling singers brought through Ashwick every few years — had a different word. *Unblooded.* And the songs said the Unblooded could touch things the changed ones couldn't. The old things. The god's old bones and weapons, the songs said, though they said it casually, the way songs said everything, as if the information were decoration rather than the load-bearing wall it might actually be. She thought about the disc in her pocket — cold metal that had never burned her, that had sat in her father's hollow hands and his father's before that, patient and inert and *waiting for the right fingers.* The Recitation called her kind servants. The songs called them keepers of old things. The deacon had called her hollow and the bloodline had asked to be told.
 
-Three words for the same absence, and each one told a different story about what the absence meant, and she was beginning to suspect that the variety was not an accident.
+Two words for the same absence, and each one told a different story about what the absence meant. *Hollow* said empty, broken, a gap where something should have been. *Unblooded* said something else entirely — it said the blood had never been there in the first place, and maybe that was its own kind of completeness. She was beginning to suspect the choice of which word to use was not an accident.
 
 Whoever decided she was hollow was wrong, or lying, or both. And their being wrong or lying about that meant she should be considerably more skeptical about whatever else they'd decided about her.
 
@@ -2051,7 +2079,7 @@ They walked together for a moment without speaking. Maren smelled of road and dr
 
 "No," Maren said. "But I trust that you turned around, and I'm going the same direction, and the road has three of the bloodline's people on it between here and Stillwater." She paused. "So."
 
-Vane considered this. It was, in its way, the most accurate possible assessment of their situation. She found she had no productive response to accuracy.
+Vane considered this. It was, in its way, the most accurate possible assessment of their situation. She had no productive response to accuracy.
 
 They walked.
 
@@ -2111,6 +2139,34 @@ They packed up and walked north.
 
 ---
 
+An hour into the afternoon, walking a half-step behind Maren on a section of road too narrow for two abreast, Vane caught it.
+
+Not something new. Something she'd been smelling since the ditch-grass and hadn't placed, because placing it would have required a comparison she hadn't been willing to make. Maren's trace — the ordinary human smell of her, road-sweat and dried herbs and the angular not-quite-fear — carried underneath it that quality of absence she'd been tracking for days. No baseline warmth. No Chrysalis signature. Just a person, moving through the world with nothing extra in her chemistry, the biological blank that Vane's nose kept returning to because it didn't match any template she'd built in a decade of reading people.
+
+The wafer in her coat pocket had the same absence.
+
+She'd known this. She'd known it the way she knew a great many things about the Bloom's supply chain — abstractly, filed in the category of things that were the supply chain's business rather than hers. She knew where Bloom came from. She knew the production required a specific kind of person. She'd heard the phrase, in Cade's back room, spoken with the flat logistics of inventory management: *if she survives the first month.* She'd heard it and filed it and the filing had held for four years because filing was what she did with things that would interfere with the work if she looked at them directly.
+
+She was looking at one now. Walking a half-step ahead of her, favoring her left ankle, smelling of fennel and road dust and the particular clean absence that Vane had been putting on her tongue every two and a half days for four years.
+
+The wafer's faint floral note — the one that wasn't quite any flower. She understood, with the slow horrible clarity of a connection arriving fully formed, what that note was. Not floral. Residual. The ghost of a person's chemistry, stripped and processed and pressed thin, carried forward into the substance the way a scent-memory clung to a room long after the person had left.
+
+She had been consuming this. She had been tracking a girl whose kind she had been consuming, and her ability to track her — the enhanced nose, the compound attention, the operational edge she'd used to break three contracts open — had been built, wafer by wafer, on exactly this.
+
+The compartment did not hold. It opened the way a sealed room opens when the mortar fails — not dramatically, just a seam widening in the wall she'd built between the knowing and the feeling, and through the seam came everything she'd been filing for four years, arriving all at once, and she stood very still on the road for a moment and breathed through it the way she breathed through everything.
+
+Maren turned back. "Are you all right?"
+
+"Fine," Vane said. Her voice was level. She would not have known, from the voice, that anything had happened. This was a skill she'd been practicing longer than the Bloom. "The road's uneven through here. Watch the ruts."
+
+She walked on. The wafer in her coat pocket had a weight it had not had before — not heavier, just different, the weight of a thing whose cost had been redefined while she was carrying it.
+
+She did not take it out. She did not throw it away.
+
+She kept walking, and the afternoon was long, and the girl ahead of her smelled of nothing that should have been familiar, and was.
+
+---
+
 Stillwater was a lake town, modest and well-organized — a place that had been doing the same things for a long time and had developed a particular efficiency around those things. Fishing boats on the water. A processing district that smelled of it. A market, small but stocked, the goods oriented toward local need rather than trade. Vane's supply contact was a woman named Ori who ran a general goods house near the dock and asked no questions in exchange for a modest premium on her prices, an arrangement Vane had always found reasonable.
 
 While Vane resupplied, Maren went looking for her uncle.
@@ -2163,7 +2219,7 @@ She looked at Maren.
 
 Maren was looking back at her with the expression of someone who has just received, from an unexpected direction, a piece of something they didn't know they'd been looking for, and has not yet decided what to do with it.
 
-She had the disc in her hand. She'd taken it from her pocket without Vane noticing, was turning it over with the automatic gesture of someone who had carried a thing for years and reached for it in moments of significant thought. The metal caught the afternoon light flatly, without drama.
+She had the disc in her hand. She'd taken it from her pocket without Vane noticing, was turning it over with the automatic gesture of someone who had carried a thing for years and reached for it in moments of significant thought. The metal caught the afternoon light flatly, without drama — but at the edge, in the angle between her thumb and the light, the thin blue ring was there again, brighter than it had been in the shelter. Pulsing. She tilted the disc and the ring moved with the tilt, consistent, not a reflection. The vibration in her fingers was steady and warm.
 
 Vane looked at it. She thought about the Noble Quarter address, the bloodline's property arrangements, the two contracts she'd closed and not looked behind. She thought about her supply tin in her pack and the wafer inside it and the ceiling made of stone.
 
@@ -2397,6 +2453,8 @@ The first four pages were what he'd asked for: the Fathers' Boats tradition, its
 
 Aldric set the page down and pressed his fingers to the bridge of his nose. He was hearing, with a clarity that felt almost physical, the voice of every child in every temple yard he'd ever walked through: *four fires in the sky, one came down to die, three stayed up to cry.* A skipping rhyme. Considered by the Temple to be harmless folk tradition. He had considered it harmless himself, for thirty years, the way you consider wallpaper harmless — it was simply there, too familiar to examine. The children had been singing the count the theology had quietly revised, and no one had noticed because no one listens to what children are singing.
 
+And underneath the rhyme, the Recitation: *And the First Light came down from the Witnesses and touched the soil of Gaius.* Came down. He had always read *came down* as a blessing — light descending, the sacred gift. He read it now and the word *down* had a different gravity to it. Things that came down did not always come down on purpose.
+
 He picked the page back up. In several versions, the inhabitants of the fourth boat were the source of the Chrysalis — not as a gift, but as a kind of residue. Something that had been in them, and was now in the world, and had spread.
 
 Something that had been in them.
@@ -2514,9 +2572,21 @@ He took out a clean sheet and began to write a letter to his second, Brother Cae
 
 Then he sat and thought about whether there was anything in his rooms, in his desk, in the undercroft, that he needed to address before he left.
 
+He went to his desk and opened the drawer where he kept the journal. It was there. It was where it always was — left side, spine toward the back, the pencil beside it as a bookmark at the current page. He looked at this for a moment.
+
+The pencil was on the wrong side.
+
+He kept the pencil to the left of the journal's spine, always, the habit of a left-leaning writer who reached for his tools in a specific order established over twenty years. It was on the right. He stood at the open drawer and tried to remember the last time he'd written in it — two nights ago, the entry about Greenford, the oblique shorthand. He had put the pencil back. He always put the pencil back in the same place, because the habit was below the level of decision and did not require his attention.
+
+He picked up the journal and opened it to the current page. The entry was there. Nothing had been added. Nothing had been removed. He turned back several pages and found the oblique shorthand intact, the careful cipher undisturbed. He could not tell whether someone had read it. The shorthand was his own, and reading it required either knowing the cipher or being very patient with the kind of substitution patterns he'd used, and Crane was — he thought about Crane — very patient.
+
+He could not be certain. A pencil on the wrong side of a journal was not evidence. It was a pencil on the wrong side of a journal. He might have moved it himself without noticing. He might have been careless. He might be manufacturing significance in the empty space left by the fact that Crane had not confronted him about anything, which could mean she had nothing to confront him about, or could mean she was accumulating rather than confronting, which was considerably worse.
+
+He stood at the drawer for a long time.
+
 The face could not be moved. The sealed room could be re-sealed, but Holst knew it existed, and Crane was thorough, and a re-sealed room found by a thorough person was considerably more interesting than an unsealed room found before the finding. He thought about this and decided to leave it as it was. If she was going to find it, she would find it, and what she'd find was a room with artifacts she had no more context for than he'd had eight weeks ago.
 
-He thought about Brennan's letter. He could not keep it in his rooms. He could not destroy it, both for the information it contained and because he was not, yet, the kind of man who destroyed correspondence, and he was not entirely sure he wanted to become that man. He would carry it.
+He thought about Brennan's letter. He could not keep it in his rooms — not now, not with a pencil on the wrong side and a question he could not answer. He could not destroy it, both for the information it contained and because he was not, yet, the kind of man who destroyed correspondence, and he was not entirely sure he wanted to become that man. He would carry it.
 
 He opened the journal to the current page and wrote, in his oblique shorthand:
 
@@ -2591,15 +2661,11 @@ They slept in shifts for the first two nights, until Vane had established to her
 
 She thought about the disc. She thought about what her uncle had told Ulla before the fever took him — the one thing her father had said the night he left: *Going to the hill. The disc will open it.* He'd said this once and then kept moving. He'd known about it — had known enough to go looking, had known what the key was. Had known, presumably, what it meant if someone was looking for him.
 
-She thought about what Vane had said on the road: *they've been looking for you specifically, with your name, which means they know about the disc.* They knew about the disc and they'd known for long enough to have anticipated her coming north. Her father had known about the disc too, had gone east with it ten years ago, had presumably not opened whatever it opened or they wouldn't still be looking. Which meant either he hadn't found the hill, or he'd found it and couldn't open it without something else, or he'd opened it and what was inside hadn't given them what they needed.
-
-Or he'd opened it and they'd caught him before he could do anything with it.
-
-She didn't follow that thought to its end. Some thoughts were worth sitting with and some were only useful when you had more information, and this one was the latter.
+She thought about what Vane had said on the road: *they've been looking for you specifically, with your name, which means they know about the disc.* They knew about the disc and they'd known for long enough to have anticipated her coming north. Her father had gone east with it ten years ago. He hadn't come back. She didn't know if that meant he'd failed or succeeded or been caught, and not knowing was the kind of gap she couldn't fill by thinking harder, so she stopped trying to fill it.
 
 She thought about the young man at the docks instead.
 
-She had not mentioned him to Vane. Not quite protectiveness, not quite caution. Something more like not wanting to give something away before she understood its value. He'd had the symbol. He'd been carving it without knowing why, over and over, in the way she'd been carrying the disc without understanding it. Another person circling the same question from a different direction. That seemed significant. What to do with its significance was less clear.
+She had not mentioned him to Vane. Not quite protectiveness, not quite caution. Something more like not wanting to give something away before she understood its value. He'd had a symbol she recognized — the same form as the edge of the disc, or close to it. He'd been carving it. She didn't know what it meant that someone else had found the same shape independently. It could mean anything. It could mean he'd seen it in a temple doorway and it had stuck, the way shapes sometimes stuck, and the resemblance to the disc was coincidence or family. She wasn't sure. She wasn't sure of much lately, and the not-being-sure had stopped feeling like a weakness and started feeling like the only honest position available.
 
 ---
 
@@ -2651,7 +2717,7 @@ Maren turned this over. The logic was sound. Horst's men in their too-plain coat
 
 "Why does the constabulary care about a report from you?"
 
-"Because I know what's in the back room," Vane said. "And I know who uses it. And I know that the Bloom trade and the bloodline are connected." A pause — shorter than the ones she usually allowed herself. "They use bloodless people to produce it. I overheard this. If I make that connection visible to the constabulary, Horst has to manage a contamination problem instead of a search."
+"Because I know what's in the back room," Vane said. "And I know who uses it. And I know that the Bloom trade and the bloodline are connected." A pause — shorter than the ones she usually allowed herself. "They use hollow people to produce it. I overheard this. If I make that connection visible to the constabulary, Horst has to manage a contamination problem instead of a search."
 
 The practical geometry of it was clear. What Maren was looking at was something else.
 
@@ -2713,7 +2779,7 @@ Maren went still.
 
 "I was there." A pause. "I stayed further back than I might have. You seemed to be handling it."
 
-Maren thought about the dock, the fading light, the symbol appearing in soft driftwood. She thought about the way his attention had moved — slowly, gathering, the way someone listened who was used to things telling him things in their own time. She thought about the carving he'd been working on, the hardwood piece, the abstract curve seeming like it had been trying to become something for a long time.
+Maren thought about the dock, the fading light, the symbol appearing in soft driftwood. She thought about the way his attention had moved — slowly, gathering, the way someone listened who was used to things telling him things in their own time.
 
 "He's not with the bloodline," she said. Not a question.
 
@@ -2721,17 +2787,17 @@ Maren thought about the dock, the fading light, the symbol appearing in soft dri
 
 Maren sat with this.
 
-"The symbol," she said. "He found it the same way I found it."
+"He had the symbol," she said. "He might know what it is. Or where it comes from."
 
-"That's what it looked like."
-
-"Which means he has a piece we don't."
+"Or he might know nothing more than you do and be carving it for the same reasons you carry the disc — because it won't leave him alone."
 
 Vane said nothing, which was its own answer.
 
-Maren thought about the disc in her pocket, her father's letter, the hill to the east. She thought about someone else moving north toward the same question by a different road, arriving at the same city, sitting on the same dock without knowing why. She thought about what it meant that two people were circling the same thing independently — whether it meant the thing was important enough to draw people toward it, or whether it meant something was directing them there.
+The disc pulsed in her pocket — the low warm vibration it had been producing with increasing frequency since they'd arrived in the city, as if proximity to something had sharpened whatever was happening inside it. She hadn't told Vane about the blue ring or the pulsing. Not because she was hiding it. Because she didn't know what to say about a piece of metal that seemed to be waking up, and she wasn't sure *waking up* was the right description, and she wasn't sure any description she had was the right one.
 
-She wasn't sure those were different possibilities.
+She thought about her father's letter, the hill to the east. She thought about someone else in the same city who had found a similar shape — or the same shape, she couldn't be certain from one glimpse on a dock in fading light. She was building connections out of thin material and she knew it. A symbol carved in driftwood could mean a dozen things that had nothing to do with a disc passed down through three generations of hollow women.
+
+But it could also mean one thing. And that one thing was worth finding out.
 
 "I should talk to him," she said.
 
@@ -2826,7 +2892,7 @@ He sat against the wall, his back to the cold stone, and felt the room's tempera
 
 ---
 
-The woman who ran the meeting was perhaps fifty, with the aggressive precision of someone who had spent years being the most informed person in a room and had long since stopped apologizing for it. Her name was Renner. She'd been a temple archivist for twenty years before leaving — or being asked to leave, a distinction she seemed to consider a matter of framing rather than fact — after spending too long in the eastern catalog asking the wrong questions about the Restricted Collection.
+The woman who ran the meeting was perhaps fifty, with the aggressive precision of someone who had spent years being the most informed person in a room and had long since stopped apologizing for it. Her name was Renner. She'd been a temple archivist for twenty years before leaving — or being asked to leave, a distinction she considered a matter of framing rather than fact — after spending too long in the eastern catalog asking the wrong questions about the Restricted Collection.
 
 She opened by challenging the cartographer across the table before anyone had fully settled.
 
@@ -2882,11 +2948,11 @@ A small silence fell. Not the silence of agreement — more the silence of peopl
 
 "The bloodline," the cartographer said.
 
-"Or the bloodless," Renner said.
+"Or the hollow," Renner said.
 
-The words landed differently from what Davan had expected — not as a correction, but as a position in an ongoing disagreement. He looked at her. She was watching the container move around the table.
+The word landed differently in this room than it did in the street. In the street it was a slur, or close to one — something said with lowered voice, a condition to be pitied. Renner said it with the flat precision of a term she'd examined from every angle and decided to keep using because the alternatives were worse.
 
-"The Restricted Collection footnotes," she said, in the tone of someone making an argument made before, "refer consistently to a bloodline capacity. The ability to interact with — " she paused, choosing words with the precision of someone who knew how imprecision had cost them before " — objects of the Founding period. Not a bloodless capacity. A bloodline capacity."
+"The Restricted Collection footnotes," she said, in the tone of someone making an argument made before, "refer consistently to a capacity belonging to unchanged hands. The ability to interact with — " she paused, choosing words with the precision of someone who knew how imprecision had cost them before " — objects of the Founding period. The bloodline has always claimed that capacity as theirs. Exclusively theirs. Their authority rests on being the only unchanged people."
 
 "Those are the same bloodline's footnotes," the glassblower said.
 
@@ -2906,19 +2972,31 @@ Renner set her hands flat on the table — deliberately, the gesture of someone 
 
 The glassblower — Asha — was quiet for a moment. She had the container in front of her still, one hand resting on it, and she did not take her hand away. The lamp threw her shadow long against the stone wall behind her.
 
-Then: "The bloodless."
+Then: "The hollow."
 
 "What about them?"
 
-"They're also unchanged," she said. "By definition. If the objects respond to hands unchanged by the Chrysalis — if that's the actual qualification, not bloodline descent, not genealogy, but absence of change — then the bloodless would qualify." She turned the container in her hands one more time — slowly, with the attention of someone who worked with material for a living and understood what it meant to hold something that refused to behave like anything she'd handled before — and set it down in the center of the table, where both lamps caught it equally and it absorbed them equally. "The bloodline's monopoly on operating these objects rests entirely on being the only unchanged people. But they're not. The bloodless are also unchanged."
+"They're also —" She stopped. She turned the container in her hands one more time — slowly, with the attention of someone who worked with material for a living and understood what it meant to hold something that refused to behave like anything she'd handled before. She set it down in the center of the table, where both lamps caught it equally and it absorbed them equally. "If the qualification is absence of change. Not bloodline descent. Not genealogy. Just — unchanged hands."
 
-The room was quiet.
+She didn't finish the sentence. She didn't need to. The shape of it was in the room.
 
-Not the ordinary quiet of people thinking. Something heavier than that — the particular stillness of a group of people who have arrived, collectively, at a question they hadn't fully assembled before this moment, and who are now sitting with what it means. The cold from the stone floor rose through the soles of Davan's boots. The vinegar-oak smell of the cooperage settled around them like the room itself was listening.
+Renner's hands came off the table. "That's a very long reach from a very short piece of evidence."
 
-Davan looked at the container on the table. He thought about the proximity-sense he'd felt when he held it — the warmth that wasn't heat, the reach of something inside toward something outside. He thought about the girl on the dock with her disc. He thought about the eastern foothills and the five or six days between here and whatever was there, and the hands that might or might not be able to open it.
+"I'm not reaching. I'm following the logic you laid out."
 
-He kept his mouth shut. He was new here. But he turned the question over, and it was warm, and it was real.
+"The logic I laid out was about the objects and the bloodline's claim to operate them. You're talking about extending that claim to people we know almost nothing about." Renner's voice had not changed in volume or speed, but it had acquired the particular density of someone who has seen an idea go too far and is pulling it back by the reins. "We have no evidence — none — that a hollow person has ever successfully interacted with a Founding-era object. We have the bloodline's claim, and their demonstration at the Stilling of the Brace, and three hundred years of them being the only unchanged people anyone has thought to test."
+
+"Because no one has tested the hollow," Asha said.
+
+"Because no one has had reason to. And 'no one has disproved it' is not evidence. It's a gap." Renner looked around the table. "I am not going to sit in a basement and build a theory on a gap. That's exactly how the bloodline built theirs."
+
+The silence that followed was not agreement. It was the particular silence of people who have heard something land and are not sure yet whether it hit the ground or went through it.
+
+Davan's skin-light pulsed once under his sleeves — a warm amber flare he felt before he could suppress it, the involuntary register of something important passing through the room. He pressed his forearms against his thighs and turned slightly toward the wall, breathing through it. The light subsided. He did not think anyone had seen, but he checked the shadows on the stone beside him and found them still.
+
+He looked at the container on the table. He thought about the proximity-sense he'd felt when he held it — the warmth that wasn't heat, the reach of something inside toward something outside. He thought about the girl on the dock with her disc, and the eastern foothills, and the five or six days between here and whatever was there.
+
+He kept his mouth shut. He was new here. But the gap Renner had named was sitting in the room like something with weight, and he could feel it, and it was warm.
 
 ---
 
@@ -2942,7 +3020,7 @@ Pip accepted this with the equanimity of someone who had learned to accept half-
 
 "Yes."
 
-"I think they're both right about different parts of it." Davan turned this over. "Renner's right that the Restricted Collection tells us something about the objects even if it lies about the bloodline. Asha's right that the bloodline's account of their own abilities is the least reliable evidence you could use." He paused. "The thing I keep coming back to is the number changing. Four to three. Something happened. Whoever made the old map knew something had changed and recorded it in the margin as a count."
+"I think Renner's right that we can't build on a gap." Davan turned this over. "And I think Asha's right that the gap is there." He paused. His skin-light stirred faintly under his coat — amber again, edged with something bluer, the register of a thought not yet resolved — and he pressed his wrist against his hip until it went quiet. "The thing I keep coming back to is the number changing. Four to three. Something happened. Whoever made the old map knew something had changed and recorded it in the margin as a count."
 
 "That's Renner's position," Pip said. "The number is astronomical. Something changed in the sky."
 
@@ -2996,6 +3074,6 @@ Pip took it and looked at it and looked at Davan and looked at it again. He didn
 
 "Thursday," Davan agreed.
 
-He walked back toward the flophouse with his hands in his empty pockets, and the emptiness of the one pocket felt right — not a loss but a release, like a breath let out after holding it. He thought about the argument he'd sat through, the positions staked out over years, the number changing from four to three — and the one that fell, the one nobody in the room had said out loud but everyone had been thinking around — and the thing in Corvel's container reaching toward him when he held it, and Asha's question sitting in the room's silence like something that had needed asking for three hundred years. He thought about unchanged hands and what they could open.
+He walked back toward the flophouse with his hands in his empty pockets, and the emptiness of the one pocket felt right — not a loss but a release, like a breath let out after holding it. He thought about the argument he'd sat through, the positions staked out over years, the number changing from four to three — and the one that fell, the one nobody in the room had said out loud but everyone had been thinking around — and the thing in Corvel's container reaching toward him when he held it, and the gap Renner had refused to fill and Asha had refused to leave alone.
 
 He didn't know yet. He was beginning to believe that not knowing yet was a condition, not a conclusion. You moved through it. The rest came.
