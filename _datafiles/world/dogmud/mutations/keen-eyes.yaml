@@ -2,7 +2,7 @@ mutationid: keen-eyes
 name: Keen Eyes
 description: Your eyes develop a crystalline clarity. Perception sharpens dramatically, though coordination suffers.
 rarity: 4
-visual: Your irises have taken on an unusual, faceted quality.
+visual: Their irises have an unusual, faceted quality.
 pro:
   type: stat_multiplier
   target: perception

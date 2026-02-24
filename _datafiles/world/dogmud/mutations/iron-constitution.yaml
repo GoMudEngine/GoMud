@@ -2,7 +2,7 @@ mutationid: iron-constitution
 name: Iron Constitution
 description: Your body's resilience grows extraordinary. You can absorb tremendous punishment, but tire more readily.
 rarity: 5
-visual: You carry yourself with an air of unnatural endurance.
+visual: They carry themselves with an air of unnatural endurance.
 pro:
   type: health_multiplier
   target: ""

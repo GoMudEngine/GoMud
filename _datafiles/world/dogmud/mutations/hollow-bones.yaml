@@ -2,7 +2,7 @@ mutationid: hollow-bones
 name: Hollow Bones
 description: Your skeleton lightens and reshapes, freeing muscle potential. Strength improves, but you become more fragile.
 rarity: 5
-visual: You move with an unsettling lightness.
+visual: They move with an unsettling lightness.
 pro:
   type: stat_flat
   target: strength

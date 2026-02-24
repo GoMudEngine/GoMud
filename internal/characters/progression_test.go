@@ -7,6 +7,13 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/skills"
 )
 
+// Test constants matching the default balance config values.
+// These are used instead of pulling from configs to keep tests self-contained.
+const (
+	SkillSoftCap = 50
+	StatSoftCap  = 150
+)
+
 func TestCalculateProgressionChance_RankZero(t *testing.T) {
 	chance := CalculateProgressionChance(0, SkillSoftCap)
 	if chance != 0.30 {

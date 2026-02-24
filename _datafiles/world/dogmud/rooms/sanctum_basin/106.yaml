@@ -3,9 +3,10 @@ zone: Sanctum Basin
 title: West Meadow
 description: A stretch of thin scrubland opens here at the western reach of Sanctum
   Basin. Hardy gray-green brush clusters around crumbling outcrops of basalt, and
-  the soil is pale and cracked. The smell of sage is strong. A wilderness guide studies
-  the terrain from a low rock, occasionally pointing out features of interest to passing
-  initiates.
+  the soil is pale and cracked. The smell of sage is strong. Animal tracks crisscross
+  the dusty ground, and clusters of wild herbs grow between the rocks. A wilderness
+  guide studies the terrain from a low rock, occasionally pointing out features of
+  interest to passing initiates.
 biome: land
 exits:
   east:
@@ -20,3 +21,5 @@ spawninfo:
 - mobid: 54
   message: The Wilderness Guide looks up as you approach, a knowing smile crossing weathered features.
   respawnrate: 2 real minutes
+- mobid: 71
+  respawnrate: 1 real minutes

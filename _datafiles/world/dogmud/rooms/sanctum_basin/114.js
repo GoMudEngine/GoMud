@@ -42,8 +42,8 @@ function onIdle(room) {
 
     var dummy = room.GetMob(dummyMobId, false);
     if ( dummy != null ) {
-        // Dummy is still alive — trainer chuckles once combat is underway
-        if ( !trainerHasCommented ) {
+        // Dummy is still alive — only comment once the player has actually hit it
+        if ( !trainerHasCommented && dummy.GetHealth() < dummy.GetHealthMax() ) {
             trainerHasCommented = true;
             var trainer = room.GetMob(trainerMobId, false);
             if ( trainer != null ) {

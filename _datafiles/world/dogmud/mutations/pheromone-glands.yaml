@@ -2,7 +2,7 @@ mutationid: pheromone-glands
 name: Pheromone Glands
 description: Your body exudes compelling pheromones that charm other people. Predatory beasts, however, find you irresistible prey.
 rarity: 6
-visual: There is something subtly compelling about your presence.
+visual: There is something subtly compelling about their presence.
 pro:
   type: stat_flat
   target: charisma

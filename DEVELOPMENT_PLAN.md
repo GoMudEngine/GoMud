@@ -4133,9 +4133,20 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 13: Basic Crafting | 2 stages (13.1–13.2) | 16 hours | **13.1–13.2 Complete** |
 | Phase 14: Balance Config | 1 stage (14.1) | 8 hours | **14.1 Complete** |
 | Phase 15: Dev Tools | 2 stages (15.1–15.2) | 12 hours | **15.1–15.2 Complete** |
-| Phase 16: Tutorial Area | 2 stages (16.1–16.2) | 30 hours | Not Started |
-| Phase 17: LLM Integration | 4 stages (17.1–17.4) | 35 hours | Not Started |
-| **Total** | **~57 stages** | **~361 hours** | |
+| Phase 16: Tutorial Area | 2 stages (16.1–16.2) | 30 hours | **16.1–16.2 Complete** |
+| Phase 17: LLM Integration | 4 stages (17.1–17.4) | 35 hours | **17.1–17.4 Complete** |
+| Phase 18: Immersive Descriptions | 4 stages (18.1–18.4) | 24 hours | **18.1–18.4 Complete** |
+| Phase 19: Hotfixes & Polish | 1 stage (19.1) | 4 hours | Not Started |
+| Phase 20: Death Penalties | 1 stage (20.1) | 6 hours | Not Started |
+| Phase 21: Autoscaling Removal | 1 stage (21.1) | 4 hours | Not Started |
+| Phase 22: AI Connection Limits | 1 stage (22.1) | 6 hours | Not Started |
+| Phase 23: Content — Major City & Road | 5 stages (23.1–23.5) | 40 hours | Not Started |
+| Phase 24: Expanded Mutations | 2 stages (24.1–24.2) | 16 hours | Not Started |
+| Phase 25: Expanded Spells | 2 stages (25.1–25.2) | 16 hours | Not Started |
+| Phase 26: NPC Species Variety | 2 stages (26.1–26.2) | 12 hours | Not Started |
+| Phase 27: Dialogue–Quest Integration | 2 stages (27.1–27.2) | 16 hours | Not Started |
+| Phase 28: LLM Tutorial Enhancement | 1 stage (28.1) | 8 hours | Not Started |
+| **Total** | **~77 stages** | **~533 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
 
@@ -4167,19 +4178,479 @@ Assuming ~4 hours per stage (implement + test):
 
 ---
 
-## Next Steps After Core Mechanics
+## Phase 19: Post-Stage-18 Hotfixes & Polish
 
-Once all 17 phases are complete, the game is ready for content and world expansion:
+### Stage 19.1: Bug Fixes from Playtesting
 
-1. **World expansion** — additional zones, cities, factions, and regional lore
-2. **Economy depth** — markets, supply/demand, trade routes, player economy
-3. **Extended mutation tree** — 50+ mutations with synergies and rare combinations
-4. **Extended spell library** — 30+ spells across all four schools (Elemental, Enhancement, Mental, Vital)
-5. **Extended crafting** — additional skills (tailoring, woodworking), hundreds of recipes
-6. **Faction & reputation system** — NPC factions that remember player actions
-7. **Quest system** — multi-stage quests with choices and consequences
+**Goal**: Fix small bugs and polish issues discovered after Stage 18 completion.
 
-These phases will be detailed in a separate expansion plan.
+**Bug 1 — `SkillSoftCap` compiler error in `progression_test.go`**:
+The test file references `SkillSoftCap` as a bare package-level identifier, but it was moved to
+`configs.Balance.SkillSoftCap` during the balance config refactor. The test needs a local constant
+or needs to pull the value from the config.
+
+**Files**: `internal/characters/progression_test.go`
+
+**Bug 2 — Mutation visual text uses first-person pronouns**:
+All 10 mutation YAML files have `visual:` fields written in second-person ("Your skin has taken on...",
+"Your fingers end in..."). `GetMutationVisuals()` appends these to the character description template,
+which is shown to *anyone* looking at the character — not just the character themselves. Fix all
+`visual:` fields to use third-person phrasing ("Rough, leathery skin covers their body.").
+
+**Files**: All `_datafiles/world/dogmud/mutations/*.yaml` (10 files)
+
+**Bug 3 — Tutorial trainer dialogue fires before player attacks**:
+In `sanctum_basin/114.js`, the trainer's "I may have understated..." comment fires on the first
+idle tick after the dummy spawns, regardless of whether the player has actually engaged in combat.
+Fix: add a check for dummy HP being lower than max (i.e., the player has actually hit it) before
+triggering the encouraging dialogue.
+
+**Files**: `_datafiles/world/dogmud/rooms/sanctum_basin/114.js`
+
+**Bug 4 — Tutorial wilderness guide room — tracks/forage too subtle**:
+The wilderness guide room (106) hints at foraging and tracking via idle messages, but it's too
+easy to miss. Add clearer room description text and/or have the guide NPC proactively mention
+tracking and foraging through a dialogue prompt or arrival message.
+
+**Files**: `_datafiles/world/dogmud/rooms/sanctum_basin/106.yaml`
+
+**Testing**:
+- [ ] `go test ./internal/characters/...` passes (SkillSoftCap fix)
+- [ ] Look at a mutated mob — description uses third-person ("Their skin..." not "Your skin...")
+- [ ] Enter tutorial combat room without attacking — trainer does NOT comment prematurely
+- [ ] Enter wilderness guide room — tracks/foraging are mentioned prominently
+
+---
+
+## Phase 20: Death Penalty Tuning
+
+### Stage 20.1: Meaningful Death Consequences for a Level-Free World
+
+**Goal**: Tune the existing death penalty system for DOGMud's level-free, use-based progression.
+The engine already has death penalty infrastructure (`suicide.go`, `config.gameplay.go`) but the
+XP penalty mode is meaningless since levels/XP were removed. Design penalties that create tension
+without being punishing enough to drive players away.
+
+**Changes**:
+1. **Remove XP-based penalty mode** — `XPPenalty: "level"` and percentage modes reference a system
+   that no longer exists. Remove or replace with stat/skill-based consequences.
+2. **Stat decay on death** — on death, reduce 1–2 random stats by a small amount (e.g., 1–3 points
+   raw value). This fits the use-based model: you lose a bit of hard-earned progress.
+3. **Skill rust on death** — reduce 1–2 random skills by a small amount of virtual ranks.
+   Skills used more recently are less likely to decay (use recency weighting).
+4. **Respawn debuff** — apply a temporary "Death's Shadow" debuff on respawn that reduces all stats
+   by a percentage for N rounds. Creates a recovery period.
+5. **Equipment drop tuning** — `EquipmentDropChance` already exists. Set a reasonable default
+   (e.g., 10–20%) so death has tangible item risk.
+6. **Configurable via balance config** — all death penalty values should be tunable in
+   `_datafiles/config.yaml` under `GamePlay.DeathPenalty`.
+
+**Files to Modify** (~8 files, ~300 lines):
+1. `internal/configs/config.gameplay.go` — add/update death penalty config fields
+2. `internal/usercommands/suicide.go` — implement stat/skill decay logic
+3. `internal/hooks/` — death hook for applying respawn debuff
+4. `_datafiles/config.yaml` — default penalty values
+5. `_datafiles/world/dogmud/buffs/` — new "Death's Shadow" debuff YAML
+
+**Testing**:
+- [ ] Die and respawn — verify stat decay message appears
+- [ ] Die and respawn — verify skill rust message appears
+- [ ] Die and respawn — verify Death's Shadow debuff applies
+- [ ] Verify equipment drop chance works at configured rate
+- [ ] Verify all penalty values are configurable and validate correctly
+
+---
+
+## Phase 21: Remove Autoscaling
+
+### Stage 21.1: Remove Zone Autoscaling System
+
+**Goal**: Remove the zone-level mob autoscaling system entirely. Mob difficulty should be set
+explicitly per-mob via `statpool` in the mob YAML or per-spawn via `statpool`/`statpoolmod` in
+room spawn info. The zone-wide `autoscale` config creates unpredictable difficulty variance
+that's hard to balance and obscures the intended difficulty curve.
+
+**Changes**:
+1. **Remove `MobAutoScale` from `ZoneConfig`** — delete the struct field and `GenerateRandomStatPool()`
+2. **Remove autoscale fallback in room spawn logic** — in `rooms.go`, the spawn code checks
+   `zConfig.MobAutoScale.Minimum > 0` and overrides mob stat pools. Remove this fallback.
+3. **Audit all zone configs** — check each `zone-config.yaml` for `autoscale:` entries and remove them.
+   Ensure every mob that relied on autoscaling has an explicit `statpool` in its mob YAML.
+4. **Update documentation** — remove autoscale references from schemas and content generation docs.
+
+**Files to Modify** (~6 files, ~80 lines):
+1. `internal/rooms/zoneconfig.go` — remove `MobAutoScale` struct and `GenerateRandomStatPool()`
+2. `internal/rooms/rooms.go` — remove autoscale fallback in spawn logic (~lines 601–621)
+3. `_datafiles/world/dogmud/rooms/*/zone-config.yaml` — remove `autoscale:` entries
+4. `docs/schemas/` — update zone config schema if documented
+
+**Testing**:
+- [ ] Server starts without errors after removing autoscale configs
+- [ ] Mobs spawn with their YAML-defined `statpool` values
+- [ ] No zone config YAML contains `autoscale:` entries
+- [ ] `go test ./internal/rooms/...` passes
+
+---
+
+## Phase 22: AI vs Human Connection Limits
+
+### Stage 22.1: Separate Connection Pools for AI and Human Players
+
+**Goal**: Prevent AI player connections from consuming slots meant for human players. Currently,
+`MaxTelnetConnections` in `main.go` applies a single cap to all connections. Split this into
+separate pools so AI testing/play can scale independently.
+
+**Changes**:
+1. **New config fields** — add `MaxHumanConnections` and `MaxAIConnections` to the server config.
+   Keep `MaxTelnetConnections` as a hard global ceiling.
+2. **Identify AI connections** — AI players connect via the LLM integration pipeline. Tag these
+   connections at handshake time (e.g., via a login flag or a dedicated AI login command).
+3. **Enforce separate limits** — in the connection acceptance loop (`main.go`), check the connection
+   type against its respective pool limit before accepting.
+4. **Status reporting** — update admin `who` or server status to show human vs AI connection counts.
+
+**Files to Modify** (~5 files, ~150 lines):
+1. `main.go` — split connection limit check
+2. `internal/configs/` — add new config fields
+3. `_datafiles/config.yaml` — default values
+4. `internal/connections/` — tag connection type
+
+**Testing**:
+- [ ] Human connections are accepted up to `MaxHumanConnections`
+- [ ] AI connections are accepted up to `MaxAIConnections`
+- [ ] Neither pool can exceed the global `MaxTelnetConnections` ceiling
+- [ ] Admin `who` shows connection type breakdown
+
+---
+
+## Phase 23: Content — Major City & Road from School
+
+### Stage 23.1: Zone Sketch — The Road to Thornwall
+
+**Goal**: Design the overland route from Sanctum Basin (tutorial area) to the first major city,
+Thornwall. This is a linear-ish path with 2–3 small zones along the way, each with distinct
+biomes and level-appropriate encounters for newly graduated characters.
+
+**Changes**:
+1. Use `/zone-sketch` to plan:
+   - **Dustwalk Road** — 8–12 rooms, open grassland/scrubland connecting the school to the city.
+     Encounters: bandits, wild dogs, scavenger birds. Foraging opportunities (herbs, berries).
+   - **Watcher's Crossing** — 5–8 rooms, a small waystation/bridge area. Friendly NPC merchants,
+     a small inn for resting. Minor quest hooks (missing caravan, bridge troll).
+   - **Thornwall Outskirts** — 6–10 rooms, farmland and outskirts approaching the city walls.
+     Encounters: livestock, farm pests, the occasional highwayman.
+2. Document room adjacency maps and mob/item lists for each zone.
+
+**Deliverables**: Zone sketch documents with room lists, adjacency, mob rosters, item drops.
+
+### Stage 23.2: Build Dustwalk Road Zone
+
+**Goal**: Generate all rooms, mobs, and items for the Dustwalk Road zone using `/new-room`,
+`/new-mob`, and `/new-item` commands.
+
+**Changes**:
+1. Create zone folder `_datafiles/world/dogmud/rooms/dustwalk_road/`
+2. Create zone-config.yaml (no autoscale — explicit stat pools per mob)
+3. Generate 8–12 room YAML files with descriptions, exits, idle messages
+4. Generate 3–5 mob YAML files (wild dogs, scavenger birds, bandits)
+5. Generate 2–3 item YAML files (roadside loot, bandit drops)
+6. Wire exits between rooms and connect to Sanctum Basin exit
+
+### Stage 23.3: Build Watcher's Crossing Zone
+
+**Goal**: Generate the waystation zone — a rest stop with merchants, an inn, and minor quest hooks.
+
+**Changes**:
+1. Create zone folder and zone-config
+2. Generate 5–8 rooms (bridge, inn, merchant stall, crossroads)
+3. Generate 2–3 friendly NPCs (innkeeper, merchant, guard) with dialogue trees
+4. Generate 1–2 hostile mobs for optional encounters (bridge troll, river creature)
+5. Wire exits to Dustwalk Road
+
+### Stage 23.4: Build Thornwall Outskirts Zone
+
+**Goal**: Generate the farmland approach to Thornwall.
+
+**Changes**:
+1. Create zone folder and zone-config
+2. Generate 6–10 rooms (farmhouses, fields, dirt roads, city gate approach)
+3. Generate 3–4 mobs (farm pests, livestock, highwayman)
+4. Wire exits to Watcher's Crossing and Thornwall city entrance
+
+### Stage 23.5: Build Thornwall City (Core)
+
+**Goal**: Generate the core of Thornwall — a walled city with essential services and exploration.
+This is a major content milestone. Focus on the city skeleton; additional city content can be
+added incrementally.
+
+**Changes**:
+1. Create zone folder `_datafiles/world/dogmud/rooms/thornwall/`
+2. Generate 15–25 rooms:
+   - City gate, main street, market square
+   - Tavern/inn, blacksmith, apothecary, temple
+   - Guard barracks, city hall, residential streets
+   - Back alleys, sewer entrance (future dungeon hook)
+3. Generate 8–12 NPCs:
+   - Merchants (blacksmith, apothecary, general goods)
+   - Quest-givers (guard captain, temple priest, tavern keeper)
+   - Ambient NPCs (townsfolk, beggars, street performers)
+4. Generate city-appropriate items (city goods, quest items)
+5. Wire all exits and connect to Thornwall Outskirts
+
+**Testing** (all of Phase 23):
+- [ ] Server starts with all new zones loaded
+- [ ] Player can walk from Sanctum Basin → Dustwalk Road → Watcher's Crossing → Thornwall Outskirts → Thornwall
+- [ ] All mobs spawn and are fightable
+- [ ] All merchants are functional
+- [ ] No broken exits or missing room references
+- [ ] Mini-map renders correctly for all new zones
+
+---
+
+## Phase 24: Expanded Mutations
+
+### Stage 24.1: New Mutations & Conflict Resolution
+
+**Goal**: Expand the mutation pool from 10 to 25+ and implement a conflict resolution system
+for diametrically opposed mutations (e.g., Dense Muscles vs Hollow Bones).
+
+**Changes**:
+1. **Mutation conflict system** — add a `conflicts` field to mutation YAML specs. When a character
+   would gain a mutation that conflicts with an existing one, either block it or replace the
+   existing mutation (configurable). Display a message explaining the conflict.
+2. **New mutations** (15+ new entries):
+   - Physical: Elongated Limbs, Thick Hide, Venomous Bite, Regenerative Tissue, Stone Skin
+   - Sensory: Echolocation, Thermal Vision, Tremorsense, Heightened Smell
+   - Mental: Hivemind Echo, Precognitive Flashes, Psychic Resistance
+   - Metabolic: Cold-Blooded, Photosynthetic Skin, Rapid Metabolism
+3. **Fix visual text** — ensure all new mutations use third-person `visual:` fields
+   (this may already be fixed in Stage 19.1)
+
+**Files to Modify** (~20 files, ~500 lines):
+1. `internal/mutations/mutations.go` — add conflict checking logic
+2. `internal/characters/character.go` — call conflict check on mutation gain
+3. `_datafiles/world/dogmud/mutations/` — 15+ new YAML files, update existing 10 with `conflicts:`
+4. Test files
+
+### Stage 24.2: NPC Mutations
+
+**Goal**: Allow NPCs/mobs to spawn with mutations, making encounters more varied and surprising.
+
+**Changes**:
+1. **Mob mutation field** — add `mutations:` list to mob YAML spec. Mobs spawn with these
+   mutations active, gaining their stat bonuses and visual descriptors.
+2. **Random mutation chance** — optionally add a `mutationchance:` field to mob YAML. On spawn,
+   the mob has a percentage chance to gain 1 random mutation from a configured pool.
+3. **Visual integration** — mutated mobs show mutation visuals in their description
+   (already handled by `GetMutationVisuals()` on Character).
+
+**Files to Modify** (~5 files, ~150 lines):
+1. `internal/mobs/mobs.go` — apply mutations on spawn
+2. `_datafiles/world/dogmud/mobs/` — add mutations to select mob YAML files
+3. Mob YAML schema docs
+
+**Testing** (all of Phase 24):
+- [ ] Conflicting mutations are blocked/replaced with a message
+- [ ] All 25+ mutations load without errors
+- [ ] NPCs spawn with configured mutations
+- [ ] Random mutation chance works correctly
+- [ ] Mutated mob descriptions show mutation visuals
+
+---
+
+## Phase 25: Expanded Spells
+
+### Stage 25.1: New Elemental & Enhancement Spells
+
+**Goal**: Expand the spell library from 14 to 25+. Focus on Elemental and Enhancement schools
+first, adding offensive variety and utility.
+
+**Changes**:
+1. **Elemental spells** (4–5 new):
+   - Ice Shard — single-target cold damage, chance to slow
+   - Chain Lightning — hits primary target + 1–2 nearby enemies (reduced damage)
+   - Earth Tremor — area effect, chance to knock prone
+   - Flame Wall — room-area damage over time
+2. **Enhancement spells** (4–5 new):
+   - Iron Skin — temporary natural armor boost (self)
+   - Haste — temporary Dexterity boost (self/other)
+   - Bull's Strength — temporary Strength boost
+   - Cat's Grace — temporary dodge chance boost
+   - Fortify — temporary Vitality boost
+3. Each spell needs a `.yaml` definition and `.js` script stub.
+4. Balance conviction costs against existing spells.
+
+**Files to Create**: 8–10 new spell YAML + JS pairs in `_datafiles/world/dogmud/spells/`
+
+### Stage 25.2: New Mental & Vital Spells
+
+**Goal**: Add Mental and Vital school spells for crowd control, debuffs, and healing variety.
+
+**Changes**:
+1. **Mental spells** (3–4 new):
+   - Confuse — target attacks randomly (friend or foe) for N rounds
+   - Fear — target flees the room (opposed Willpower check)
+   - Mind Spike — mental damage, bypasses physical armor
+   - Dominate — short-duration charm (very high conviction cost)
+2. **Vital spells** (3–4 new):
+   - Regenerate — heal-over-time buff
+   - Purify — remove poison and disease conditions
+   - Life Drain — damage target, heal self for portion of damage
+   - Mass Heal — heal all friendly characters in room (reduced per-target)
+3. Each spell needs `.yaml` + `.js` files.
+4. Ensure conviction costs scale appropriately.
+
+**Testing** (all of Phase 25):
+- [ ] All new spells load without errors
+- [ ] Each spell can be cast and produces expected effects
+- [ ] Conviction costs are balanced (no free infinite casting)
+- [ ] Buff/debuff durations and magnitudes feel right
+- [ ] Spell descriptions use immersive language (no raw numbers)
+
+---
+
+## Phase 26: NPC Species Variety
+
+### Stage 26.1: Animal & Creature Species
+
+**Goal**: Add NPC-only species for animals and creatures to populate the world with diverse
+wildlife. Currently only 6 species exist (human, ghostly spirit, rodent, dummy, bat, orb).
+These are NOT playable — they're for mob variety.
+
+**Changes**:
+1. **New animal species** (8–10):
+   - Wolf, Bear, Boar, Deer, Snake, Eagle/Hawk, Spider, Fish
+   - Each with appropriate stat modifiers (e.g., wolves: high Dexterity/Perception,
+     bears: high Strength/Vitality)
+   - Size categories affecting combat (small creatures are harder to hit, large ones hit harder)
+2. **Creature species** (3–5):
+   - Troll (regeneration trait), Goblin (pack tactics), Elemental (magic resistance),
+     Undead (poison immunity), Insectoid (natural armor)
+3. Each species needs a YAML file in `_datafiles/world/dogmud/species/`
+
+### Stage 26.2: Species Traits & Combat Integration
+
+**Goal**: Make species matter mechanically — species-specific traits that affect combat,
+movement, and interaction.
+
+**Changes**:
+1. **Natural weapons** — some species have built-in attacks (wolf bite, bear claw, snake venom).
+   These override unarmed damage with species-appropriate values.
+2. **Natural armor** — species like trolls, insectoids get innate damage reduction.
+3. **Movement traits** — flying species can access aerial rooms, aquatic species can swim.
+4. **Resistances/vulnerabilities** — undead resist poison but are vulnerable to fire, etc.
+
+**Files to Modify**:
+1. `_datafiles/world/dogmud/species/` — 11–15 new YAML files
+2. `internal/species/` — trait application logic
+3. `internal/combat/` — species trait integration in damage/defense calculations
+
+**Testing** (all of Phase 26):
+- [ ] All new species load without errors
+- [ ] Mobs using new species display correct descriptions
+- [ ] Natural weapons/armor apply correctly in combat
+- [ ] Species traits (resistances, vulnerabilities) work as expected
+
+---
+
+## Phase 27: Dialogue–Quest Integration
+
+### Stage 27.1: Quest-Gated Dialogue Options
+
+**Goal**: Allow dialogue tree options to be conditionally shown/hidden based on quest state.
+Currently the dialogue tree system and quest system operate independently. This stage connects
+them so NPCs can offer different dialogue based on what quests the player has active, completed,
+or not yet started.
+
+**Changes**:
+1. **Quest condition in dialogue nodes** — add `questRequired` and `questExcluded` fields to
+   dialogue option YAML. Options only appear if the player has (or doesn't have) the specified
+   quest flag.
+2. **Quest state checks** — when building the dialogue option list for a player, filter options
+   based on the player's quest flags.
+3. **Quest grant from dialogue** — add a `grantsQuest` field to dialogue options. Selecting the
+   option gives the player a quest flag.
+4. **Quest completion dialogue** — add `requiresItem` field. If the player has the required item,
+   the option appears and selecting it consumes the item and advances the quest.
+
+**Files to Modify** (~6 files, ~200 lines):
+1. `internal/dialogues/` — add quest condition fields to dialogue structs
+2. `internal/hooks/` — filter dialogue options by quest state
+3. `_datafiles/world/dogmud/dialogues/` — update existing NPC dialogues with quest hooks
+4. Test files
+
+### Stage 27.2: NPC Memory & Quest State Responses
+
+**Goal**: NPCs remember player quest progress and respond contextually. A quest-giver who sent
+you on a mission should acknowledge your progress when you return.
+
+**Changes**:
+1. **Greeting variation** — NPC greetings change based on active quest state:
+   - No quest: default greeting
+   - Quest active: "Have you found the missing caravan yet?"
+   - Quest complete: "You've done well. Here is your reward."
+2. **LLM context injection** — when the LLM dialogue system is active, inject quest state into
+   the NPC's context so LLM-generated responses are quest-aware.
+3. **Reward delivery** — NPCs can give items, gold, or stat bonuses as quest rewards through
+   dialogue completion nodes.
+
+**Files to Modify** (~5 files, ~200 lines):
+1. `internal/dialogues/` — greeting variation logic
+2. `internal/llm/` — quest state context injection
+3. `_datafiles/world/dogmud/dialogues/` — example quest dialogues
+
+**Testing** (all of Phase 27):
+- [ ] Dialogue options appear/hide correctly based on quest flags
+- [ ] Selecting a quest-grant dialogue option gives the quest flag
+- [ ] NPC greetings change based on quest state
+- [ ] LLM responses reference quest context when available
+- [ ] Quest rewards are delivered through dialogue
+
+---
+
+## Phase 28: LLM Tutorial Enhancement
+
+### Stage 28.1: Dynamic Tutorial NPC Responses
+
+**Goal**: Enhance tutorial area mobs with deeper LLM integration so they respond dynamically
+to player actions, offer contextual hints, and create a more engaging onboarding experience.
+
+**Changes**:
+1. **Contextual hint system** — tutorial NPCs detect what the player has and hasn't done
+   (attacked dummy, used skills, tried foraging, etc.) and offer LLM-generated hints for
+   things the player hasn't tried yet.
+2. **Adaptive difficulty coaching** — if a player is struggling (dying repeatedly, low HP),
+   tutorial NPCs offer encouragement and tactical advice via LLM.
+3. **Personality depth** — give each tutorial NPC a richer personality prompt so LLM responses
+   feel distinct (the gruff trainer vs the patient wilderness guide vs the mysterious mage).
+4. **Conversation memory** — tutorial NPCs remember what they've already told the player
+   within a session, avoiding repetitive advice.
+
+**Files to Modify** (~8 files, ~300 lines):
+1. `_datafiles/world/dogmud/rooms/sanctum_basin/*.js` — enhanced tutorial room scripts
+2. `_datafiles/world/dogmud/mobs/sanctum_basin/*.yaml` — richer NPC personality prompts
+3. `internal/llm/` — conversation memory for tutorial context
+4. `internal/hooks/` — player action tracking for hint system
+
+**Testing**:
+- [ ] Tutorial NPCs respond differently based on player progress
+- [ ] Struggling players receive helpful hints
+- [ ] NPCs don't repeat the same advice within a session
+- [ ] Each tutorial NPC has a distinct personality in LLM responses
+- [ ] Tutorial flow feels natural and engaging
+
+---
+
+## Future Expansion (Not Yet Scheduled)
+
+These are longer-term goals to be detailed when the above phases are complete:
+
+1. **Economy depth** — markets, supply/demand, trade routes, player economy
+2. **Extended crafting** — additional skills (tailoring, woodworking), hundreds of recipes
+3. **Faction & reputation system** — NPC factions that remember player actions
+4. **Quest system expansion** — multi-stage quests with choices and consequences
+5. **Additional world zones** — more cities, dungeons, wilderness areas
+6. **PvP systems** — arenas, dueling, faction warfare
 
 ---
 
@@ -4238,4 +4709,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-23
 **Status**: In Progress
-**Current Stage**: Stage 18.4 complete. Content creation in progress using LLM-as-Builder pipeline: added Cave Troll mob (mobid 70, Sanctum Basin — hostile mutated human with tough-skin L3), Cramped Tunnel Mouth room (121), and new 20-room zone "Labyrinth of Low Tunnels" (rooms 300–319) with upper tunnels, mid-level maze connected by vertical shafts, and deep lair area. Updated `/zone-sketch` and `/new-room` commands with mapsymbol/maplegend rendering gotcha. Next: populate Labyrinth zone with mobs, then Phase 19 (TBD).
+**Current Stage**: Phases 1–18 complete. Next: Stage 19.1 (post-stage-18 hotfixes — SkillSoftCap test fix, mutation visual text, tutorial dialogue timing, wilderness guide room polish), then Phase 20 (death penalty tuning) through Phase 28 (LLM tutorial enhancement).

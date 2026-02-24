@@ -2,7 +2,7 @@ mutationid: dense-muscles
 name: Dense Muscles
 description: Your muscles condense into cables of extraordinary power. Strength surges, but endurance suffers.
 rarity: 4
-visual: Your musculature is visibly denser and more compact than normal.
+visual: Their musculature is visibly denser and more compact than normal.
 pro:
   type: stat_multiplier
   target: strength
