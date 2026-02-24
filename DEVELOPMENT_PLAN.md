@@ -4136,7 +4136,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 16: Tutorial Area | 2 stages (16.1–16.2) | 30 hours | **16.1–16.2 Complete** |
 | Phase 17: LLM Integration | 4 stages (17.1–17.4) | 35 hours | **17.1–17.4 Complete** |
 | Phase 18: Immersive Descriptions | 4 stages (18.1–18.4) | 24 hours | **18.1–18.4 Complete** |
-| Phase 19: Hotfixes & Polish | 1 stage (19.1) | 4 hours | Not Started |
+| Phase 19: Hotfixes & Polish | 1 stage (19.1) | 4 hours | **19.1 Complete** |
 | Phase 20: Death Penalties | 1 stage (20.1) | 6 hours | Not Started |
 | Phase 21: Autoscaling Removal | 1 stage (21.1) | 4 hours | Not Started |
 | Phase 22: AI Connection Limits | 1 stage (22.1) | 6 hours | Not Started |
@@ -4180,7 +4180,7 @@ Assuming ~4 hours per stage (implement + test):
 
 ## Phase 19: Post-Stage-18 Hotfixes & Polish
 
-### Stage 19.1: Bug Fixes from Playtesting
+### Stage 19.1: Bug Fixes from Playtesting ✅ COMPLETED (01f8a18)
 
 **Goal**: Fix small bugs and polish issues discovered after Stage 18 completion.
 
@@ -4709,4 +4709,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-23
 **Status**: In Progress
-**Current Stage**: Phases 1–18 complete. Next: Stage 19.1 (post-stage-18 hotfixes — SkillSoftCap test fix, mutation visual text, tutorial dialogue timing, wilderness guide room polish), then Phase 20 (death penalty tuning) through Phase 28 (LLM tutorial enhancement).
+**Current Stage**: Phases 1–19 complete. Next: Stage 20.1 (death penalty tuning for level-free world), then Phase 21 (autoscaling removal) through Phase 28 (LLM tutorial enhancement).
