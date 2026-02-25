@@ -3,6 +3,10 @@
 {{ end -}}
 {{- if not .Equipment.Offhand.IsDisabled }}   <ansi fg="yellow">Offhand: </ansi><ansi fg="itemname">{{ .Equipment.Offhand.NameSimple }}</ansi>
 {{ end -}}
+{{- if not .Equipment.ExtraArm1.IsDisabled }}   <ansi fg="yellow">Arm 3:   </ansi><ansi fg="itemname">{{ .Equipment.ExtraArm1.NameSimple }}</ansi>
+{{ end -}}
+{{- if not .Equipment.ExtraArm2.IsDisabled }}   <ansi fg="yellow">Arm 4:   </ansi><ansi fg="itemname">{{ .Equipment.ExtraArm2.NameSimple }}</ansi>
+{{ end -}}
 {{- if not .Equipment.Head.IsDisabled }}   <ansi fg="yellow">Head:    </ansi><ansi fg="itemname">{{ .Equipment.Head.NameSimple    }}</ansi>
 {{ end -}}
 {{- if not .Equipment.Neck.IsDisabled }}   <ansi fg="yellow">Neck:    </ansi><ansi fg="itemname">{{ .Equipment.Neck.NameSimple    }}</ansi>

@@ -4655,7 +4655,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 27: Dialogue–Quest Integration | 2 stages (27.1–27.2) | 16 hours | **27.1–27.2 Complete** |
 | Phase 28: LLM Tutorial Enhancement | 1 stage (28.1) | 8 hours | 28.1 Complete |
 | Phase 29: Regen & Cleanup | 6 stages (29.1–29.6) | 12 hours | **29.1–29.6 Complete** |
-| Phase 30: Combat Analytics | 3 stages (30.1–30.3) | 16 hours | **30.1–30.2 Complete** |
+| Phase 30: Combat Analytics | 3 stages (30.1–30.3) | 16 hours | **30.1–30.3 Complete** |
 | **Total** | **~86 stages** | **~561 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
@@ -4928,7 +4928,7 @@ tuning.
 
 ---
 
-### Stage 30.3: Web Dashboard for Combat Analytics
+### Stage 30.3: Web Dashboard for Combat Analytics ✅ COMPLETED
 
 **Goal**: Visual combat analytics on the admin web portal.
 
@@ -5319,4 +5319,4 @@ Last phase — tests cover the final state of all features.
 
 **Last Updated**: 2026-02-25
 **Status**: In Progress
-**Current Stage**: Stage 30.2 complete. Combat stats admin command in place. Next: Stage 30.3.
+**Current Stage**: Stage 30.3 complete. Combat analytics web dashboard live. Next: Stage 31.1.
