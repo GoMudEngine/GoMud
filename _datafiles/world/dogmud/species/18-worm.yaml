@@ -5,6 +5,7 @@ description: A massive, segmented tunneler that burrows through earth
   rock, and anything unfortunate enough to stand in its
   path.
 defaultalignment: -15
+naturalarmor: 7
 size: large
 unarmedname: maw
 tnlscale: 1

@@ -4,6 +4,8 @@ description: A legless predator that strikes with blinding speed. Serpents
   rely on stealth, patience, and venom to subdue prey far
   larger than themselves.
 defaultalignment: -10
+buffids:
+  - 29 # Night Vision
 size: small
 unarmedname: fangs
 tnlscale: 1
@@ -28,4 +30,6 @@ stats:
 damage:
   basedamage: 4
   variance: 2
+  critbuffids:
+    - 39 # Venom
 disabledslots: ['weapon', 'offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet']

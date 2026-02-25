@@ -43,6 +43,7 @@ type Species struct {
 	AngryCommands    []string         // randomly chosen to queue when they are angry/entering combat.
 	KnowsFirstAid    bool             // Whether they can apply aid to other players.
 	Stats            stats.Statistics // Base stats for this species.
+	NaturalArmor     int              `yaml:"naturalarmor,omitempty"` // Innate damage reduction (chitin, thick hide, etc.)
 	DisabledSlots    []string         `yaml:"disabledslots,omitempty"`
 }
 

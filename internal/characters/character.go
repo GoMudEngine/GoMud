@@ -953,6 +953,11 @@ func (c *Character) GetDefense() int {
 	// Stage 12.1: Add natural armor from mutations (Tough Skin etc.)
 	reduction += mutations.GetNaturalArmor(c.Mutations)
 
+	// Species natural armor (chitin, thick hide, etc.)
+	if speciesInfo := species.GetSpecies(c.SpeciesId); speciesInfo != nil {
+		reduction += speciesInfo.NaturalArmor
+	}
+
 	if reduction > 100 {
 		reduction = 100
 	}

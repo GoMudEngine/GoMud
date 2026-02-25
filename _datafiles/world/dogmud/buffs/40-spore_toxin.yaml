@@ -1,0 +1,7 @@
+buffid: 40
+name: Spore Toxin
+description: Fungal spores clog your lungs and cloud your senses.
+triggerrate: 1 round
+triggercount: 3
+statmods:
+  perception: -10

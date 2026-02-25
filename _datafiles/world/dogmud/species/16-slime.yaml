@@ -5,6 +5,7 @@ description: An amorphous blob of translucent, corrosive gel that oozes
   destroy rigid creatures and dissolve anything organic
   they engulf.
 defaultalignment: -5
+naturalarmor: 12
 size: medium
 unarmedname: pseudopods
 tnlscale: 1

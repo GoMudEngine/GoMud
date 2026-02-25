@@ -4,6 +4,8 @@ description: A keen-eyed bird of prey with razor talons and a hooked
   beak. Raptors circle high above, spotting movement from
   impossible distances before diving to strike.
 defaultalignment: -10
+buffids:
+  - 29 # Night Vision
 size: small
 unarmedname: talons and beak
 tnlscale: 1

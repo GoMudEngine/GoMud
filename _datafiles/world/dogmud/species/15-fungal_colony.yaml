@@ -5,6 +5,7 @@ description: A sprawling mass of interwoven mycelium and fruiting bodies
   releasing clouds of toxic spores and lashing with fibrous
   tendrils.
 defaultalignment: 0
+naturalarmor: 4
 size: medium
 unarmedname: spore tendrils
 tnlscale: 1
@@ -29,4 +30,6 @@ stats:
 damage:
   basedamage: 4
   variance: 2
+  critbuffids:
+    - 40 # Spore Toxin
 disabledslots: ['weapon', 'offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet', 'body']
