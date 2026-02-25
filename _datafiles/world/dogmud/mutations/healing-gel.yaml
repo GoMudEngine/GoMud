@@ -7,9 +7,8 @@ pros:
   - type: flag
     target: active-ability
     value: 1
-  - type: health_regen
-    target: health
-    value: 1
+  - type: health_regen_multiplier
+    value: 0.15
 cons:
   - type: stat_pct
     target: stamina_regen

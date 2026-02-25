@@ -4805,6 +4805,47 @@ the experience/leveling system.
 
 ---
 
+### Stage 29.5: Percentage-Based Regen Overhaul ✅ COMPLETED
+
+**Goal**: Convert all HP/SP/CP regeneration from flat-value-per-tick to
+percentage-of-max, add NPC regen parity, and convert heal spells and
+mutations to use multipliers instead of flat amounts.
+
+**Changes**:
+1. Replace `StaminaRegenPerRound`/`ConvictionRegenPerRound` config fields
+   with six new `ConfigFloat` regen-rate knobs (Player/Mob × HP/SP/CP),
+   each defaulting to 0.01 (1% per tick), clamped 0.0–1.0
+2. Add `GetHealthRegenMultiplier()` and
+   `GetConditionalHealthRegenMultiplier()` mutation helpers
+3. Rewrite `HealthPerRound()`, `StaminaPerRound()`,
+   `ConvictionPerRound()` to compute `floor(poolMax * configPct)` min 1;
+   StatMod recovery values reinterpreted as percentage bonus integers
+4. Full rewrite of `NewRound_AutoHeal.go`:
+   - Players: base %-regen → mutation multipliers → ConditionRegen
+     multiplier → room multiplier (out of combat); ConditionRegen only
+     (in combat)
+   - NPCs: health/stamina/conviction regen with same combat rules as
+     players; ConditionRegen support; poison DoT unchanged
+5. Heal spell `effect_magnitude` reinterpreted as regen multiplier
+   (3x–5x); crit boosts the multiplier portion above 1x by 2x
+6. Mutation YAMLs converted from flat `health_regen` to
+   `health_regen_multiplier` / `health_regen_if_lit_multiplier`
+7. Buff JS scripts (potion, heal spell) converted from flat dice to
+   %-of-max heals; raw numbers removed from messages
+
+**Testing**:
+- `go build ./...` and `go vet ./...` clean
+- Player (HealthMax ~405) regens ~4 HP/tick at default 1%
+- NPCs regen health, stamina, and conviction for the first time
+- Heal spells apply ConditionRegen as a multiplier (3x for Mend Flesh)
+- Mutation carriers regen faster (multiplier verified)
+- Potion/buff heals scale with character HP
+- No raw numbers in any regen/heal player messages
+
+**Estimated Changes**: ~200 lines changed, 15 files
+
+---
+
 ## Phase 30: Combat Analytics & Balance Tools
 
 Instrumentation before content — having metrics in place means better
@@ -5254,4 +5295,4 @@ Last phase — tests cover the final state of all features.
 
 **Last Updated**: 2026-02-25
 **Status**: In Progress
-**Current Stage**: Phase 29 complete. Alignment system and XP/leveling vestiges fully removed. PVP and death penalties now gated by skill ranks. Next: Phase 30.
+**Current Stage**: Stage 29.5 complete. All regen converted to %-of-max; NPCs now regen; heal spells use multipliers. Next: Phase 30.

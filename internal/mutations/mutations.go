@@ -403,6 +403,21 @@ func GetConditionalHealthRegen(owned map[string]int, biomeIsLit bool) int {
 	return int(sumEffects(owned, "health_regen_if_lit", ""))
 }
 
+// GetHealthRegenMultiplier returns the net health_regen_multiplier bonus.
+// Apply as: regen = int(float64(regen) * (1.0 + GetHealthRegenMultiplier(m)))
+func GetHealthRegenMultiplier(owned map[string]int) float64 {
+	return sumEffects(owned, "health_regen_multiplier", "")
+}
+
+// GetConditionalHealthRegenMultiplier returns the health_regen_if_lit_multiplier
+// bonus if the biome is lit, else 0.
+func GetConditionalHealthRegenMultiplier(owned map[string]int, biomeIsLit bool) float64 {
+	if !biomeIsLit {
+		return 0
+	}
+	return sumEffects(owned, "health_regen_if_lit_multiplier", "")
+}
+
 // ─── Stage 24.2: New effect helpers ─────────────────────────────────────────
 
 // GetDodgeModifier returns the flat dodge score bonus/penalty from mutations.

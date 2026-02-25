@@ -13,9 +13,15 @@ type Balance struct {
 	UnarmedSkillDivisor     ConfigFloat `yaml:"UnarmedSkillDivisor"`     // Skill / this = damage bonus (default 10.0)
 	UnarmedBaseVariance     ConfigFloat `yaml:"UnarmedBaseVariance"`     // Base randomness of unarmed hits (default 3.0)
 
+	// ── REGEN RATES ──────────────────────────────────────────────────────────
+	PlayerHealthRegenPct     ConfigFloat `yaml:"PlayerHealthRegenPct"`     // Fraction of HealthMax regen'd per tick — players (default 0.01)
+	PlayerStaminaRegenPct    ConfigFloat `yaml:"PlayerStaminaRegenPct"`    // Fraction of StaminaMax regen'd per tick — players (default 0.01)
+	PlayerConvictionRegenPct ConfigFloat `yaml:"PlayerConvictionRegenPct"` // Fraction of ConvictionMax regen'd per tick — players (default 0.01)
+	MobHealthRegenPct        ConfigFloat `yaml:"MobHealthRegenPct"`        // Fraction of HealthMax regen'd per tick — NPCs (default 0.01)
+	MobStaminaRegenPct       ConfigFloat `yaml:"MobStaminaRegenPct"`       // Fraction of StaminaMax regen'd per tick — NPCs (default 0.01)
+	MobConvictionRegenPct    ConfigFloat `yaml:"MobConvictionRegenPct"`    // Fraction of ConvictionMax regen'd per tick — NPCs (default 0.01)
+
 	// ── STAMINA & CONVICTION ──────────────────────────────────────────────────
-	StaminaRegenPerRound     ConfigInt   `yaml:"StaminaRegenPerRound"`     // Stamina restored each round out of combat (default 1)
-	ConvictionRegenPerRound  ConfigInt   `yaml:"ConvictionRegenPerRound"`  // Conviction restored each round (default 1)
 	MovementBaseStaminaCost  ConfigFloat `yaml:"MovementBaseStaminaCost"`  // Flat cost to move on normal terrain (default 2.0)
 	MovementMaxStaminaCost   ConfigFloat `yaml:"MovementMaxStaminaCost"`   // Ceiling for any single move action (default 20.0)
 	UnarmedAttackStaminaCost ConfigInt   `yaml:"UnarmedAttackStaminaCost"` // Stamina per unarmed attack (default 4)
@@ -99,13 +105,23 @@ func (b *Balance) Validate() {
 		b.UnarmedBaseVariance = 3.0
 	}
 
+	// ── REGEN RATES ──────────────────────────────────────────────────────────
+	clampPct := func(v *ConfigFloat, def ConfigFloat) {
+		if *v <= 0 {
+			*v = def
+		}
+		if *v > 1.0 {
+			*v = 1.0
+		}
+	}
+	clampPct(&b.PlayerHealthRegenPct, 0.01)
+	clampPct(&b.PlayerStaminaRegenPct, 0.01)
+	clampPct(&b.PlayerConvictionRegenPct, 0.01)
+	clampPct(&b.MobHealthRegenPct, 0.01)
+	clampPct(&b.MobStaminaRegenPct, 0.01)
+	clampPct(&b.MobConvictionRegenPct, 0.01)
+
 	// ── STAMINA & CONVICTION ──────────────────────────────────────────────────
-	if b.StaminaRegenPerRound < 1 {
-		b.StaminaRegenPerRound = 1
-	}
-	if b.ConvictionRegenPerRound < 1 {
-		b.ConvictionRegenPerRound = 1
-	}
 	if b.MovementBaseStaminaCost <= 0 {
 		b.MovementBaseStaminaCost = 2.0
 	}

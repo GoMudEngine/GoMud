@@ -400,9 +400,15 @@ Balance:
   UnarmedSkillDivisor: 10.0      # UnarmedSkill / this = damage bonus
   UnarmedBaseVariance: 3.0       # Base randomness of unarmed hits
 
+  # ── REGEN RATES (fraction of pool max per tick; 0.01 = 1%) ────────────────
+  PlayerHealthRegenPct: 0.01     # Player HP regen per tick (1% of HealthMax)
+  PlayerStaminaRegenPct: 0.01    # Player stamina regen per tick
+  PlayerConvictionRegenPct: 0.01 # Player conviction regen per tick
+  MobHealthRegenPct: 0.01        # NPC HP regen per tick (1% of HealthMax)
+  MobStaminaRegenPct: 0.01       # NPC stamina regen per tick
+  MobConvictionRegenPct: 0.01    # NPC conviction regen per tick
+
   # ── STAMINA & CONVICTION ────────────────────────────────────────────────────
-  StaminaRegenPerRound: 1        # Stamina restored each round out of combat
-  ConvictionRegenPerRound: 1     # Conviction restored each round
   MovementBaseStaminaCost: 2.0   # Flat cost to move on normal terrain
   MovementMaxStaminaCost: 20.0   # Ceiling for any single move action
   UnarmedAttackStaminaCost: 4    # Stamina per unarmed attack

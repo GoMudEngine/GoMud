@@ -1957,21 +1957,26 @@ func (c *Character) Heal(hp int) int {
 }
 
 func (c *Character) HealthPerRound() int {
-	return 1 + c.StatMod(string(statmods.HealthRecovery))
-	/*
-		healAmt := math.Round(float64(c.Stats.Vitality.ValueAdj)/8) +
-			math.Round(float64(c.Level)/12) +
-			1.0
-
-		return int(healAmt)
-	*/
+	b := configs.GetBalanceConfig()
+	pct := float64(b.PlayerHealthRegenPct)
+	// StatMod reinterpreted as percentage bonus (e.g. 5 → +5%)
+	pct += float64(c.StatMod(string(statmods.HealthRecovery))) / 100.0
+	base := int(pct * float64(c.HealthMax.Value))
+	if base < 1 {
+		base = 1
+	}
+	return base
 }
-
 
 func (c *Character) StaminaPerRound() int {
 	b := configs.GetBalanceConfig()
-	base := int(b.StaminaRegenPerRound) + c.StatMod(string(statmods.StaminaRecovery))
-	// Stage 12.1: Apply stamina_regen_multiplier mutations
+	pct := float64(b.PlayerStaminaRegenPct)
+	pct += float64(c.StatMod(string(statmods.StaminaRecovery))) / 100.0
+	base := int(pct * float64(c.StaminaMax.Value))
+	if base < 1 {
+		base = 1
+	}
+	// Apply stamina_regen_multiplier mutations
 	if mult := mutations.GetStaminaRegenMultiplier(c.Mutations); mult != 0 {
 		base = int(float64(base) * (1.0 + mult))
 		if base < 1 {
@@ -1983,7 +1988,13 @@ func (c *Character) StaminaPerRound() int {
 
 func (c *Character) ConvictionPerRound() int {
 	b := configs.GetBalanceConfig()
-	return int(b.ConvictionRegenPerRound) + c.StatMod(string(statmods.ConvictionRecovery))
+	pct := float64(b.PlayerConvictionRegenPct)
+	pct += float64(c.StatMod(string(statmods.ConvictionRecovery))) / 100.0
+	base := int(pct * float64(c.ConvictionMax.Value))
+	if base < 1 {
+		base = 1
+	}
+	return base
 }
 
 // Where 1000 = a full round

@@ -6,7 +6,11 @@ function onStart(actor, triggersLeft) {
 
 // Invoked every time the buff is triggered (see roundinterval)
 function onTrigger(actor, triggersLeft) {
-    actor.AddHealth(UtilDiceRoll(2, 3));
+    var maxHP = actor.GetHealthMax();
+    var healAmt = Math.floor(maxHP * 0.04);
+    if (healAmt < 1) { healAmt = 1; }
+    actor.AddHealth(healAmt);
+
     SendUserMessage(actor.UserId(), 'You feel a gentle mending wash over you.');
     SendRoomMessage(actor.GetRoomId(), actor.GetCharacterName(true) + ' is healing from the effects of a poultice.', actor.UserId());
 }
