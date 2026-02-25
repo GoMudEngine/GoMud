@@ -65,21 +65,25 @@ func Talk(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		cfg := configs.GetLLMConfig()
 		mem := dialogue.GetMemory(mobId, user.UserId)
 		llmCtx := llm.ConversationContext{
-			MobName:      mob.Character.Name,
-			ZoneName:     mob.Zone,
-			PlayerName:   user.Character.Name,
-			CurrentMood:  string(dialogue.GetMood(mobId, mob.LLMProfile.DefaultMood)),
-			RecentTopics: mem.RecentTopics,
-			QuestContext: buildQuestContext(user, int(mob.MobId)),
+			MobName:          mob.Character.Name,
+			ZoneName:         mob.Zone,
+			PlayerName:       user.Character.Name,
+			CurrentMood:      string(dialogue.GetMood(mobId, mob.LLMProfile.DefaultMood)),
+			RecentTopics:     mem.RecentTopics,
+			QuestContext:     buildQuestContext(user, int(mob.MobId)),
+			PlayerCondition:  buildPlayerCondition(user),
+			TutorialProgress: buildTutorialContext(user),
 		}
 		mob.Command(`emote pauses thoughtfully.`)
 		mobIdCopy := mobId
+		userIdCopy := user.UserId
 		llm.AskAsync(mob.LLMProfile, string(cfg.Endpoint), int(cfg.Timeout),
 			mobIdCopy, llmCtx, `greet the player`,
 			func(response string) {
 				m := mobs.GetInstance(mobIdCopy)
 				if m != nil {
 					m.Command(`say ` + response)
+					dialogue.UpdateMemory(mobIdCopy, userIdCopy, "", nil, "greet")
 				}
 			},
 			func() {
@@ -165,6 +169,80 @@ func buildPlayerState(user *users.UserRecord) *dialogue.PlayerState {
 			})
 		},
 	}
+}
+
+// buildPlayerCondition returns a short description of the player's health and
+// death history for injection into LLM conversation context.
+func buildPlayerCondition(user *users.UserRecord) string {
+	c := user.Character
+	pct := 100
+	if c.HealthMax.Value > 0 {
+		pct = int(float64(c.Health) / float64(c.HealthMax.Value) * 100)
+	}
+	deaths := c.KD.GetMobDeaths()
+	var cond string
+	switch {
+	case pct <= 15:
+		cond = "near death"
+	case pct <= 50:
+		cond = "seriously wounded"
+	case pct <= 80:
+		cond = "lightly wounded"
+	default:
+		cond = "healthy"
+	}
+	if deaths == 1 {
+		return cond + ", has died once"
+	} else if deaths > 1 {
+		return fmt.Sprintf("%s, has died %d times", cond, deaths)
+	}
+	return cond
+}
+
+// buildTutorialContext checks the player's Sanctum Trials quest progress and
+// returns a structured summary string for LLM context injection.
+func buildTutorialContext(user *users.UserRecord) string {
+	const questId = 1 // The Sanctum Trials
+	steps := []string{
+		"start", "mutation", "shopping", "combat", "crafting",
+		"alchemy", "wilderness", "magic", "cave", "end",
+	}
+
+	progress := user.Character.GetQuestProgress()
+	currentStep, hasQuest := progress[questId]
+	if !hasQuest {
+		return "TUTORIAL PROGRESS: Player has not started the tutorial."
+	}
+	if currentStep == "end" {
+		return "TUTORIAL PROGRESS: Player has completed all tutorial steps."
+	}
+
+	var completed, remaining []string
+	found := false
+	for _, s := range steps {
+		if s == currentStep {
+			found = true
+			continue
+		}
+		if !found {
+			completed = append(completed, s)
+		} else {
+			remaining = append(remaining, s)
+		}
+	}
+
+	compStr := "none"
+	if len(completed) > 0 {
+		compStr = strings.Join(completed, ", ")
+	}
+	remStr := "none"
+	if len(remaining) > 0 {
+		remStr = strings.Join(remaining, ", ")
+	}
+	return fmt.Sprintf(
+		"TUTORIAL PROGRESS: Current step: %s. Completed: %s. Remaining: %s.",
+		currentStep, compStr, remStr,
+	)
 }
 
 // buildQuestContext returns human-readable quest summaries for quests that
