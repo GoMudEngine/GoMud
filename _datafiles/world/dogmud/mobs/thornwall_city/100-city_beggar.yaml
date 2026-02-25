@@ -1,0 +1,38 @@
+mobid: 100
+zone: Thornwall City
+statpool: 8
+itemdropchance: 0
+hostile: false
+maxwander: 3
+groups:
+  - humanoid
+idlecommands:
+  - 'emote holds out a chipped cup, rattling the few coins inside'
+  - 'emote huddles against the wall, pulling a thin blanket tighter'
+  - ''
+  - ''
+  - 'emote watches the street with sharp, knowing eyes'
+  - ''
+activitylevel: 20
+character:
+  name: city beggar
+  description: |
+    A figure of indeterminate age bundled in layers of threadbare clothing,
+    sitting against a wall with a chipped cup for coins. The beggar's eyes
+    are surprisingly alert -- sharp and watchful beneath the grime. Beggars
+    in Thornwall occupy the gaps between the city's systems, seeing
+    everything and being seen by no one. This one knows the streets better
+    than the guard patrols and hears more than the records office files.
+    Whether any of that knowledge is for sale depends on the asking.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    perception:
+      training: 10
+    dexterity:
+      training: 5
+    strength:
+      training: -10
+    vitality:
+      training: -5

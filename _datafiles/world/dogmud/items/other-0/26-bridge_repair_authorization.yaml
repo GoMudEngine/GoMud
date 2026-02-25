@@ -1,0 +1,12 @@
+itemid: 26
+name: bridge repair authorization
+namesimple: authorization
+description: A formal document from the Thornwall Magistrate's office, authorizing
+  the collection of bridge maintenance fees at Watchers Crossing. The authorization
+  validates the toll as a legitimate municipal charge and allocates a budget for
+  ongoing structural repairs. It is the document Harn has been trying to obtain for
+  two years, and its existence means the bridge -- and the toll -- will survive.
+type: object
+subtype: holdable
+uses: 0
+weight: 0.1

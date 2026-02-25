@@ -1,0 +1,55 @@
+mobid: 85
+zone: Watchers Crossing
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "good day"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Buyer or browser? Either way, welcome. Everything is priced on the tags."
+      - "Come in. If I do not have what you need, I can probably get it by next week."
+
+  - keywords: ["toll", "bridge", "harn", "tax"]
+    responses:
+      - "The toll is bleeding this settlement dry. My suppliers are adding five gold to every delivery, and some have stopped coming entirely. I am surviving on stockpile and stubbornness."
+      - "Harn is a good man doing a foolish thing. The bridge may need repairs, but charging travellers without authority is not the answer."
+
+  - keywords: ["buy", "sell", "trade", "goods", "shop", "list", "price"]
+    responses:
+      - "Take a look at the shelves. Prices are on the slate tags. I deal fair -- ask anyone on the road."
+      - "I stock what travellers need. Rope, candles, dried food, basic tools. Nothing fancy, but all reliable."
+
+  - keywords: ["tolva", "inn", "innkeeper"]
+    responses:
+      - "Tolva has been here since before I set up shop. Good woman. She is right about the toll, but I leave the politics to her."
+
+  - keywords: ["road", "travel", "dustwalk", "thornwall"]
+    responses:
+      - "The road west goes to Dustwalk and eventually Sanctum Basin. East across the bridge leads to Thornwall. This used to be a busy waypoint. The toll has made it quiet."
+
+  - keywords: [""]
+    responses:
+      - "Looking for something specific? I keep a tidy inventory."
+      - "Let me know if you need anything. I will be at the counter."
+
+tree:
+  root:
+    text: "Brecca glances up from her abacus, fingers pausing mid-calculation. 'Traveller. Welcome to the only trading post between Dustwalk and Thornwall.' She gestures at the organized shelves. 'Everything is tagged and priced. If you need advice on the road ahead, I can help with that too.'"
+    hints: "Browse the shelves, ask about the toll, or inquire about the roads."
+
+  nodes:
+    - id: toll_opinion
+      triggers: ["toll", "bridge", "harn", "tax", "trade"]
+      text: "Brecca sets down her abacus with a click. 'That toll is costing me a quarter of my business. Suppliers build it into their prices, travellers reroute to avoid it, and my shelves get harder to stock every month. Harn means well -- he is terrified the bridge will collapse -- but meaning well does not make it legal or smart.'"
+      hints: "Ask about Tolva's efforts or Harn's reasons."
+
+    - id: about_settlement
+      triggers: ["crossing", "settlement", "watchers", "history", "here"]
+      text: "'Watchers Crossing has been here for generations. The bridge, the towers, the inn -- all older than anyone remembers. It was a proper garrison once, watching the eastern approaches. Now it is just a waystation. A good one, if people would stop trying to tax it to death.'"
+
+    - id: road_advice
+      triggers: ["road", "travel", "advice", "where", "direction"]
+      text: "'West road is Dustwalk -- scrubland, bandits, not much else until you reach the Sanctum Basin plateau. East across the bridge is Thornwall territory -- farmland first, then the city walls. If you are heading east, watch for the outskirts patrols. They are jumpy about strangers.'"
+
+memory:
+  expiryPeriod: "1h"

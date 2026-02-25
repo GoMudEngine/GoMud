@@ -1,0 +1,46 @@
+mobid: 91
+zone: Thornwall Outskirts
+statpool: 5
+itemdropchance: 20
+hostile: true
+maxwander: 1
+groups:
+  - beast
+  - vermin
+idlecommands:
+  - 'emote burrows furiously, sending dirt spraying behind it'
+  - 'emote pokes its whiskered snout out of a hole, nose twitching'
+  - ''
+  - ''
+  - ''
+combatcommands:
+  - 'emote launches itself at you with surprising speed, teeth bared'
+  - ''
+  - ''
+activitylevel: 30
+character:
+  name: crop pest
+  description: |
+    A fat-bodied rodent the size of a cat, with coarse brown fur and
+    oversized front teeth stained orange from root-chewing. Its claws are
+    built for digging, and it moves in quick, nervous bursts between the
+    mounds of earth that mark its burrows. The crop pest is aggressive when
+    cornered but would rather flee -- it is a destroyer of fields, not a
+    fighter. The damage it does is cumulative and relentless, one root system
+    at a time.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 10
+    strength:
+      training: -10
+    vitality:
+      training: -5
+    perception:
+      training: 5
+    willpower:
+      training: -15
+    charisma:
+      training: -20

@@ -1,0 +1,13 @@
+itemid: 14
+name: bone totem
+namesimple: totem
+description: |
+  A small figure twisted from bone and sinew, no larger than a closed
+  fist. The face is eyeless, the limbs angular and abstract. It is warm to the
+  touch in a way that has nothing to do with body heat. The warren dwellers make
+  these as markers of identity, territory, and remembrance. This one was taken from
+  a communal shelf. Whoever it represents is unlikely to appreciate its absence.
+type: object
+subtype: holdable
+uses: 0
+weight: 0.5

@@ -13,6 +13,10 @@ exits:
     roomid: 301
   south:
     roomid: 306
+spawninfo:
+- mobid: 72
+  message: A warren scout presses flat against the scratched walls, watching you with oversized eyes.
+  respawnrate: 8 real minutes
 nouns:
   maps: Scratched lines that could be tunnel layouts. Some sections have been scraped
     over and redrawn, as though the tunnels change or the mapmaker keeps correcting

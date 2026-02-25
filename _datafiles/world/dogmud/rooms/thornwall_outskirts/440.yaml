@@ -1,0 +1,30 @@
+roomid: 440
+zone: Thornwall Outskirts
+title: Outskirts, West Road
+description: The road from Watchers Crossing climbs a gentle rise and the landscape
+  changes. Scrubland gives way to tilled earth, the wild grass replaced by the
+  stubble of harvested fields and the geometric lines of irrigation ditches. Stone
+  walls run alongside the road, marking property boundaries with the finality of law.
+  The air smells of turned soil and manure -- honest, agricultural smells that speak
+  of a settled land. Ahead, the road forks between the farms to the north and the
+  main city road to the east.
+biome: farmland
+exits:
+  west:
+    roomid: 427
+    zone: Watchers Crossing
+  north:
+    roomid: 441
+  east:
+    roomid: 445
+nouns:
+  walls: Low drystone walls built with care, each stone fitted without mortar. The
+    walls are old but well-maintained -- a sign of landowners who take property lines
+    seriously. Iron pins mark survey points at regular intervals.
+  ditches: Shallow irrigation channels run parallel to the road, carrying water from
+    somewhere upstream. The engineering is simple but effective. Some channels are
+    dry, suggesting fields that are no longer being worked.
+idlemessages:
+- A farm cart creaks along a side track, loaded with bundled straw.
+- Crows wheel over the fields, arguing loudly over territory.
+- The distant city wall is a dark line against the eastern sky.

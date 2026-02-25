@@ -14,6 +14,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/llm"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"gopkg.in/yaml.v2"
 
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
@@ -80,6 +81,8 @@ type Mob struct {
 	QuestFlags      []string `yaml:"questflags,omitempty,flow"` // What quest flags are set on this mob?
 	BuffIds         []int    `yaml:"buffids,omitempty"`         // Buff Id's this mob always has upon spawn
 	LLMProfile     *llm.LLMProfile `yaml:"llmprofile,omitempty"` // Optional LLM-driven dialogue profile
+	SpawnMutations []string        `yaml:"spawnmutations,omitempty,flow"` // Mutations always granted at spawn (Phase 24.3)
+	MutationChance int             `yaml:"mutationchance,omitempty"`      // % chance to gain 1 random bonus mutation on spawn (Phase 24.3)
 	tempDataStore   map[string]any
 	conversationId  int              // Identifier of conversation currently involved in.
 	Path            PathQueue        `yaml:"-"` // a pre-calculated path the mob is following.
@@ -206,6 +209,29 @@ func NewMobById(mobId MobId, homeRoomId int, forceStatPool ...int) *Mob {
 		}
 		if mob.SpecialMoveChance == 0 {
 			mob.SpecialMoveChance = 30 // 30% default chance to use special moves
+		}
+
+		// Phase 24.3: Apply spawn mutations
+		if len(mob.SpawnMutations) > 0 {
+			if mob.Character.Mutations == nil {
+				mob.Character.Mutations = make(map[string]int)
+			}
+			for _, mutId := range mob.SpawnMutations {
+				if mutations.GetMutation(mutId) != nil {
+					mob.Character.Mutations[mutId] = 1
+				}
+			}
+		}
+		// Phase 24.3: Roll for random bonus mutation
+		if mob.MutationChance > 0 && util.Rand(100) < mob.MutationChance {
+			if mob.Character.Mutations == nil {
+				mob.Character.Mutations = make(map[string]int)
+			}
+			pool := mutations.GetWeightedPool(mob.Character.Mutations)
+			if len(pool) > 0 {
+				mutId := mutations.RollAcquisition(pool)
+				mob.Character.Mutations[mutId] = 1
+			}
 		}
 
 		mob.Character.Equipment.Weapon.Validate()

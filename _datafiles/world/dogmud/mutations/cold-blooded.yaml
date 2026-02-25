@@ -1,0 +1,12 @@
+mutationid: cold-blooded
+name: Cold-Blooded
+description: Your metabolism slows and steadies. Endurance improves as your body conserves energy, but your mental resilience dulls with it.
+rarity: 3
+visual: Their skin is cool to the touch, with a faintly reptilian sheen.
+pros:
+  - type: stamina_regen_multiplier
+    value: 0.10
+cons:
+  - type: stat_flat
+    target: willpower
+    value: -10

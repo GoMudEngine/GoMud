@@ -1,0 +1,32 @@
+roomid: 406
+zone: Dustwalk Road
+title: Dustwalk Road, Ridgeline
+description: The road climbs a low ridge that gives a commanding view of the surrounding
+  country. To the north, the grasslands stretch back toward the distant plateau. To
+  the south, the land drops into broken terrain of gullies and dry washes -- good
+  country for ambush. An eastern fork splits from the main road here, marked by a
+  weathered milestone. The ridge itself is windswept and bare, with only short grass
+  clinging to the stony soil.
+biome: plains
+exits:
+  north:
+    roomid: 405
+  south:
+    roomid: 407
+  east:
+    roomid: 409
+spawninfo:
+- mobid: 82
+  message: A scavenger bird perches on the milestone, watching the road with beady patience.
+  respawnrate: 5 real minutes
+nouns:
+  milestone: A squared stone pillar, knee-high, with directions carved into two faces.
+    The south face reads "Bandit Country" in fresh scratches -- someone's unofficial
+    addition. The east face reads "Watchers Crossing" in older, more careful lettering.
+  ridge: The ridge runs roughly east-west, a spine of harder stone that resisted the
+    erosion that carved the gullies to the south. From here you can see for miles in
+    every direction. A good place for a lookout. Or a target.
+idlemessages:
+- Wind gusts along the ridgeline, flattening the short grass against the stone.
+- The view south reveals broken ground -- gullies, dry washes, and scattered boulders.
+- A dust devil spins across the grassland to the north, a pale column against the sky.

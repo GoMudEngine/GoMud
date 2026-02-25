@@ -1,0 +1,12 @@
+itemid: 23
+name: thornwall pass
+namesimple: pass
+description: A folded card of stiff parchment, stamped with the Thornwall city crest
+  and signed by a gate officer. It identifies the bearer as a person with legitimate
+  business within the city walls and permits passage through the gates without
+  further inspection. The pass is dated and will presumably expire, but for now it
+  carries the authority of the city guard.
+type: object
+subtype: holdable
+uses: 0
+weight: 0.1

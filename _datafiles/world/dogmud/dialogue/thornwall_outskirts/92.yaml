@@ -1,0 +1,52 @@
+mobid: 92
+zone: Thornwall Outskirts
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "good day"]
+    responses:
+      - "State your business. Thornwall is open to travellers, but we keep track of who comes and goes."
+      - "Welcome to Thornwall. The gate is open during daylight. Keep your weapons sheathed inside the walls."
+
+  - keywords: ["pass", "enter", "gate", "city", "inside"]
+    responses:
+      - "The gate is open. Walk through. If you cause trouble inside, you will answer for it."
+      - "You are free to enter. Stay on the main roads if you do not know the city. The guard patrols the market district regularly."
+
+  - keywords: ["guard", "patrol", "law", "crime", "trouble"]
+    responses:
+      - "The city guard keeps the peace. We patrol the gates, the market, and the main roads. The back streets are thinner on patrols, so mind yourself there."
+
+  - keywords: ["bandit", "highwayman", "road", "danger"]
+    responses:
+      - "We have had reports of highwaymen on the outskirts roads. If you have been attacked, report it at the guard post inside the gate."
+
+  - keywords: ["toll", "bridge", "watchers", "harn"]
+    responses:
+      - "The toll at Watchers Crossing is a matter for the magistrate. We are aware of it. If you have a complaint, file it at the civic office inside the walls."
+
+  - keywords: ["gareth", "millward", "eviction", "farmer", "tax"]
+    responses:
+      - "Tax matters are handled by the Assessor-General's office inside the city. I am gate security, not a bureaucrat."
+
+  - keywords: [""]
+    responses:
+      - "Move along. The gate is open."
+      - "Is there something else? The road is clear."
+
+tree:
+  root:
+    text: "The guard gives you a brief, appraising look -- checking for weapons, trouble, or both. 'Traveller. The gate is open and you are welcome in Thornwall, provided you keep the peace. If this is your first visit, the market district is straight ahead through the gate.'"
+    hints: "Ask about the city, the guard, or recent troubles."
+
+  nodes:
+    - id: city_info
+      triggers: ["city", "thornwall", "what is", "tell me", "first time"]
+      text: "'Thornwall is the largest settlement east of the mountains. Market district, civic quarter, residential wards, and the old citadel at the center. The magistrate's office handles official business. The market handles everything else.' The guard pauses. 'Stay on the main roads until you know the layout. Some of the back streets are not as well patrolled.'"
+
+    - id: recent_trouble
+      triggers: ["trouble", "danger", "bandit", "highwayman", "safe"]
+      text: "'The roads have been rougher than usual. Highwaymen on the outskirts, bandits further west on Dustwalk Road. We patrol as far as the plaza, but beyond that it is the road wardens' problem.' She frowns. 'If you have information about criminal activity, the guard post is just inside the gate on the left.'"
+
+memory:
+  expiryPeriod: "1h"

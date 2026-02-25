@@ -14,6 +14,10 @@ exits:
     roomid: 301
   south:
     roomid: 307
+spawninfo:
+- mobid: 76
+  message: A blind tunnel rat laps at one of the water bowls, ears twitching.
+  respawnrate: 10 real minutes
 nouns:
   bowls: Rough clay vessels, pinched into shape by small fingers. Some hold water that
     is surprisingly clear. Others are clouded with sediment or something worse. A few

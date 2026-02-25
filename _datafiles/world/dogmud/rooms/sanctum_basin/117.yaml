@@ -13,6 +13,10 @@ exits:
     roomid: 118
   south:
     roomid: 112
+spawninfo:
+- mobid: 79
+  message: A lean, sharp-featured woman sits on a flat rock, journal open across her knees, charcoal pencil in hand.
+  respawnrate: 5 real minutes
 idlemessages:
 - The path switchbacks here, carved directly into the basalt face.
 - You can see the training yard clearly from this height -- small figures moving through forms.

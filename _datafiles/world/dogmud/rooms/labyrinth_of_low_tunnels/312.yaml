@@ -15,6 +15,10 @@ exits:
     roomid: 308
   east:
     roomid: 313
+spawninfo:
+- mobid: 74
+  message: The tunnel shaman crouches among the clay pots, grinding herbs between its elongated fingers.
+  respawnrate: 5 real minutes
 nouns:
   pots: Rough clay vessels, pinched and shaped by small fingers. Some are sealed tight
     with dark wax. Others have been opened and re-sealed many times. The contents

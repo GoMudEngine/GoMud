@@ -1,0 +1,36 @@
+mobid: 84
+zone: Watchers Crossing
+statpool: 20
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - humanoid
+  - innkeeper
+idlecommands:
+  - 'emote wipes the counter with a rag that has seen better days'
+  - 'emote ladles stew from the pot by the hearth into a waiting bowl'
+  - ''
+  - 'emote glances toward the door as if expecting someone'
+  - ''
+activitylevel: 15
+character:
+  name: innkeeper Tolva
+  description: |
+    A broad-shouldered woman with grey-streaked hair pulled back
+    in a practical knot and hands that are never idle. Tolva moves behind the bar
+    with the easy confidence of someone who has run this inn for decades. Her
+    expression is warm but watchful -- she misses nothing that happens in her
+    common room. A ring of keys hangs at her belt, and her apron is stained with
+    the day's cooking. She speaks with the clipped directness of someone who has
+    no patience for nonsense but plenty of patience for honest travellers.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    willpower:
+      training: 10
+    charisma:
+      training: 10
+    perception:
+      training: 5

@@ -10,6 +10,9 @@ exits:
   north:
     roomid: 103
     zone: Sanctum Basin
+  south:
+    roomid: 400
+    zone: Dustwalk Road
 idlemessages:
 - The road south disappears into the haze of the desert below.
 - The <ansi fg="itemname">plateau</ansi> of Sanctum Basin looms high overhead to the north.

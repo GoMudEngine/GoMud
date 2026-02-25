@@ -37,9 +37,12 @@ func Suggest(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	}
 	defer f.Close()
 
-	entry := fmt.Sprintf("[%s] %s: %s\n",
+	entry := fmt.Sprintf("[%s] %s (zone: %s, room: %d %q): %s\n",
 		time.Now().UTC().Format("2006-01-02 15:04:05"),
 		user.Character.Name,
+		user.Character.Zone,
+		user.Character.RoomId,
+		room.Title,
 		rest,
 	)
 

@@ -160,9 +160,10 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 					if canAcquire || canDeepen {
 						eyeMult := 0.5 + gametime.GetEyePhase()
 						user.Character.MutationProgress += float64(mb.MutationProgressGainPerRound) * eyeMult
-						evts := mutations.TotalMutationEvents(user.Character.Mutations)
+						// Phase 24.1: Use rarity-weighted load instead of flat event count
+						load := mutations.GetMutationLoad(user.Character.Mutations)
 						threshold := float64(mb.MutationBaseProgress) *
-							math.Pow(float64(mb.MutationProgressScale), float64(evts))
+							math.Pow(float64(mb.MutationProgressScale), load)
 						if user.Character.MutationProgress >= threshold {
 							user.Character.MutationProgress = 0
 							if canAcquire {

@@ -1,0 +1,30 @@
+roomid: 471
+zone: Thornwall City
+title: Apothecary Lane
+description: A narrow side street connecting Main Street to the Craftsmen's Quarter,
+  lined with the cramped shopfronts of herbalists, healers, and one proper apothecary.
+  The air is thick with competing scents -- dried lavender, camphor, something
+  medicinal and sharp, and underneath it all the mineral smell of ground stone. The
+  apothecary's shop is the largest on the lane, its window crammed with bottles of
+  coloured liquids, bundles of dried herbs, and a mortar and pestle the size of a
+  man's head. A sign reads "Voss — Apothecary & Herbalist."
+biome: city
+exits:
+  north:
+    roomid: 463
+  west:
+    roomid: 470
+nouns:
+  window: 'The apothecary''s window is a cluttered display of the trade: blue bottles
+    of tincture, bundles of dried herbs tied with twine, a row of labelled jars
+    containing powders and pastes, and a brass mortar and pestle. A small card
+    reads "Consultations by appointment. Emergencies at any hour."'
+  sign: '"Voss — Apothecary & Herbalist. Est. Year Unknown." The sign is painted
+    in neat letters on a board shaped like a mortar and pestle. It has been repainted
+    many times, each layer visible at the chipped edges.'
+spawninfo:
+- mobid: 98
+idlemessages:
+- The sharp smell of crushed herbs drifts from the apothecary's door.
+- A customer emerges from the shop clutching a small wrapped parcel.
+- Glass bottles clink softly somewhere inside the apothecary.

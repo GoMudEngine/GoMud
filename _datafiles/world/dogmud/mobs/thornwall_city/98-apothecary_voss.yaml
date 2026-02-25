@@ -1,0 +1,37 @@
+mobid: 98
+zone: Thornwall City
+statpool: 18
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - humanoid
+  - merchant
+idlecommands:
+  - 'emote grinds something in a mortar with small, precise movements'
+  - 'emote holds a bottle up to the light, examining the colour of its contents'
+  - ''
+  - 'emote makes a notation in a leather-bound journal'
+  - ''
+activitylevel: 10
+character:
+  name: apothecary Voss
+  description: |
+    A small, precise person of indeterminate age, with wire-rimmed
+    spectacles and fingers perpetually stained with herbal dyes. Voss
+    speaks softly and deliberately, choosing words with the same care
+    used to measure doses. The apothecary's knowledge is encyclopedic --
+    herbs, minerals, tinctures, poultices -- and is dispensed with a
+    clinical detachment that some find reassuring and others find
+    unsettling. Voss cares about the work more than the patients, but
+    the work is excellent.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    perception:
+      training: 15
+    willpower:
+      training: 10
+    charisma:
+      training: -5

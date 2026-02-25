@@ -9,6 +9,8 @@ const (
 	ConditionGrappleController                     // Is the active grapple controller
 	ConditionShield                                // Magical armor barrier (+physical armor, Stage 11.4)
 	ConditionRegen                                 // Regenerates HP each AutoHeal tick (heal spell, Stage 11.5)
+	ConditionBlinded                               // Reduces perception/dodge/accuracy (Phase 24.5)
+	ConditionPoisoned                              // DoT damage over time (Phase 24.5)
 )
 
 // CombatCondition represents a single active combat state on a character.
@@ -32,6 +34,10 @@ func (c ConditionType) DisplayName() string {
 		return "Minor Shield"
 	case ConditionRegen:
 		return "Regenerating"
+	case ConditionBlinded:
+		return "Blinded"
+	case ConditionPoisoned:
+		return "Poisoned"
 	default:
 		return "Unknown Condition"
 	}
@@ -50,6 +56,10 @@ func (c ConditionType) Description() string {
 		return "Magical armor barrier (+physical armor)"
 	case ConditionRegen:
 		return "Healing magic mending wounds over time"
+	case ConditionBlinded:
+		return "Vision impaired — dodge and accuracy reduced"
+	case ConditionPoisoned:
+		return "Toxins coursing through your body, dealing damage over time"
 	default:
 		return ""
 	}

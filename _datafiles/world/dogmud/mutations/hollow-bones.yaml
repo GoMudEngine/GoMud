@@ -3,6 +3,8 @@ name: Hollow Bones
 description: Your skeleton lightens and reshapes, freeing muscle potential. Strength improves, but you become more fragile.
 rarity: 5
 visual: They move with an unsettling lightness.
+conflicts:
+  - dense-muscles
 pro:
   type: stat_flat
   target: strength

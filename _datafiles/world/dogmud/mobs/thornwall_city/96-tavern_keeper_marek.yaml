@@ -1,0 +1,39 @@
+mobid: 96
+zone: Thornwall City
+statpool: 18
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - humanoid
+  - innkeeper
+idlecommands:
+  - 'emote polishes a mug with a cloth, eyes on the room'
+  - 'emote slides a drink across the bar without being asked'
+  - ''
+  - 'emote leans on the bar, listening to a conversation at a nearby table'
+  - ''
+activitylevel: 15
+character:
+  name: tavern keeper Marek
+  description: |
+    A broad man with a shaved head and a scar that runs from his left ear
+    to his jaw -- a souvenir from a previous career he does not discuss.
+    Marek runs the Drowning Post with a bartender's combination of warmth
+    and wariness. He knows everyone in the Craftsmen's Quarter by name,
+    remembers what they drink, and hears everything that is said in his
+    tavern. His current troubles are etched into the lines around his eyes
+    -- the tavern owes taxes to the city and protection money to someone
+    less official, and the squeeze is slowly killing the business.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 8
+    charisma:
+      training: 8
+    perception:
+      training: 5
+    willpower:
+      training: 5

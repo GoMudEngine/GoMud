@@ -2,13 +2,17 @@
 
 ## Purpose
 
-Implements the Chrysalis mutation system introduced in **Stage 12.1**.
+Implements the Chrysalis mutation system introduced in **Stage 12.1** and
+expanded in **Phase 24** with multi-effect mutations, conflicts, and load-based
+acquisition.
+
 Mutations are the primary character-differentiation mechanic in DOGMud.
 The Chrysalis (a world-spanning plague) reshapes characters who survive sustained
-combat, granting both a benefit and a drawback each time it acts.
+combat, granting both benefits and drawbacks each time it acts.
 
 Adding a new mutation requires **only a YAML file** in
-`_datafiles/world/dogmud/mutations/` — no Go code changes needed.
+`_datafiles/world/dogmud/mutations/` — no Go code changes needed for existing
+effect types.
 
 ---
 
@@ -19,9 +23,15 @@ Each mutation is a `MutationSpec` loaded from a YAML file.  Fields:
 - `mutationid` — filesystem key and registry key (`"tough-skin"`)
 - `name` — display name (`"Tough Skin"`)
 - `description` — player-facing flavor text
-- `rarity` — 1 (common) … 10 (very rare); drives weighted acquisition pool
-- `visual` — appended to character look description (Stage 12.2 hook)
-- `pro` / `con` — `MutationEffect{Type, Target, Value}`
+- `rarity` — 1 (common) … 10 (very rare); drives weighted acquisition pool AND load cost
+- `visual` — appended to character look description
+- `pro` / `con` — legacy single `MutationEffect{Type, Target, Value}` (migrated into lists)
+- `pros` / `cons` — lists of `MutationEffect` (Phase 24+, supports multiple effects)
+- `conflicts` — list of mutation IDs that cannot coexist with this mutation
+
+### Backward Compatibility
+Legacy `pro`/`con` single-effect fields are automatically migrated into the
+`pros`/`cons` slices during `Validate()`. Existing YAML files work without changes.
 
 ### MutationEffect Types
 
@@ -37,24 +47,43 @@ Each mutation is a `MutationSpec` loaded from a YAML file.  Fields:
 | `conviction_cost_multiplier` | `usercommands/skill.cast.go` | Multiplies total conviction cost at cast initiation |
 | `conditional_damage_low_hp` | `hooks/NewRound_DoCombat.go` | +20% physical damage when HP < 25% (Adrenaline Surge) |
 | `aggro_magnet` | `mobcommands/lookfortrouble.go` | Multiplies target-selection weight for predatory mobs |
+| `dodge_modifier` | `combat.calculateCombat()` | Flat dodge score bonus/penalty |
+| `damage_multiplier` | `combat.calculateCombat()` | Multiply all outgoing physical damage |
+| `movement_speed` | `character.GetMovementStaminaCost()` | Modify movement stamina cost (negative = faster) |
+| `health_regen` | `hooks/UserRoundTick` | Passive HP regen per tick |
+| `skill_progression_multiplier` | `character.CheckSkillProgression()` | Scale skill gain chance |
+| `stat_progression_multiplier` | `character.CheckStatProgression()` | Scale stat gain chance |
+| `flag` | various | Grant a permanent flag (nightvision, lightsource, hidden, see-hidden) |
+| `health_regen_if_lit` | `hooks/UserRoundTick` | HP regen only in lit rooms |
 
 ### Acquisition System
 
 Progress accumulates at `MutationProgressGain` (1.0) per combat round
-while `character.Aggro != nil`.
+while `character.Aggro != nil`. The Eye moon modulates rate (0.5x–1.5x).
 
-Threshold for mutation N (0-indexed):
+Threshold formula (Phase 24.1 — load-based):
 ```
-threshold = MutationBaseProgress (50) × MutationProgressScale (1.5) ^ N
+load = sum(rarity × level) for each owned mutation
+threshold = MutationBaseProgress (50) × MutationProgressScale (1.5) ^ load
 ```
 
-So: 1st mutation at 50 progress, 2nd at 75, 3rd at ~113, etc.
+Higher rarity mutations contribute more to load, making subsequent acquisitions
+progressively harder. This replaced the flat event-count formula.
 
 When threshold is reached, `GetWeightedPool()` builds a slice where each
-mutation appears `(11 - Rarity)` times.  `RollAcquisition()` picks uniformly
-at random from that slice.  Already-owned mutations are excluded.
+mutation appears `(11 - Rarity)` times.  Conflicting and already-owned mutations
+are excluded. `RollAcquisition()` picks uniformly at random from that slice.
 
 Maximum mutations per character: `MutationMaxCount` = 5.
+
+### Conflict System (Phase 24.1)
+
+Mutations can declare `conflicts: [id1, id2]` in their YAML. `HasConflict()`
+checks both directions:
+- Candidate's conflicts list vs owned mutations
+- Each owned mutation's conflicts list vs candidate
+
+Conflicting mutations are excluded from `GetWeightedPool()` during acquisition.
 
 ### Registry
 
@@ -62,6 +91,8 @@ Maximum mutations per character: `MutationMaxCount` = 5.
 mutations.LoadMutationFiles()   // called once from main.go at startup
 mutations.GetMutation(id)       // look up a spec by id
 mutations.GetAll()              // the full map
+mutations.GetMutationLoad(m)    // rarity-weighted load for acquisition scaling
+mutations.HasConflict(m, id)    // check if candidate conflicts with owned
 ```
 
 ---
@@ -75,7 +106,6 @@ MutationProgress float64         `yaml:"mutationprogress,omitempty"` // combat p
 ```
 
 `Validate()` ensures `Mutations` is never nil.
-Levels are always 1 for Stage 12.1; Stage 12.2 will use L2/L3 for upgrades.
 
 ---
 
@@ -83,7 +113,7 @@ Levels are always 1 for Stage 12.1; Stage 12.2 will use L2/L3 for upgrades.
 
 | Hook File | What It Does |
 |-----------|-------------|
-| `internal/hooks/NewRound_UserRoundTick.go` | Progress tick + acquisition trigger |
+| `internal/hooks/NewRound_UserRoundTick.go` | Progress tick + acquisition trigger (load-based) |
 | `internal/hooks/NewRound_DoCombat.go` | Adrenaline Surge bonus damage |
 | `internal/hooks/spell_resolution.go` (`resolveMobSpellAgainstPlayer`) | Magical Resistance |
 | `internal/usercommands/skill.cast.go` | Conviction cost multiplier |
@@ -94,10 +124,12 @@ Levels are always 1 for Stage 12.1; Stage 12.2 will use L2/L3 for upgrades.
 ## Adding a New Mutation
 
 1. Create `_datafiles/world/dogmud/mutations/<mutationid>.yaml`
-2. Fill in all fields (see any existing file for reference)
-3. If the effect type is **new**, add a helper function in `mutations.go`
+2. Fill in all fields (see `docs/schemas/mutation.md` for the full schema)
+3. If using multi-effect, use `pros:` / `cons:` lists instead of singular `pro:` / `con:`
+4. Add `conflicts:` if the mutation is incompatible with another
+5. If the effect type is **new**, add a helper function in `mutations.go`
    and a hook call in the appropriate game system file
-4. Restart the server (or `reload` if hot-reload is available)
+6. Restart the server
 
 No Go code changes are required for existing effect types.
 
@@ -107,7 +139,7 @@ No Go code changes are required for existing effect types.
 
 | File | Purpose |
 |------|---------|
-| `mutations.go` | Structs, registry, loader, all effect helpers |
+| `mutations.go` | Structs, registry, loader, conflict/load system, all effect helpers |
 | `mutations_test.go` | Unit tests for helpers, weighted pool, acquisition |
 | `context.md` | This file — package overview for Claude Code |
 
@@ -116,5 +148,10 @@ No Go code changes are required for existing effect types.
 ## Stage Roadmap
 
 - **12.1** (complete) — framework, 10 mutations, all hooks
-- **12.2** (next) — mutation level upgrades (L2/L3), visual integration in `look`,
-  possible mutation-specific skill/ability unlocks
+- **12.2** (complete) — mutation level upgrades (L2/L3), visual integration in `look`
+- **24.1** (complete) — multi-effect schema, conflicts, load-based acquisition
+- **24.2** — 12 new passive mutations with new effect types
+- **24.3** — NPC/mob mutations
+- **24.4** — environmental/conditional mutations with flags
+- **24.5** — active ability mutations (combat commands)
+- **24.6** — extra limbs + quad wielding

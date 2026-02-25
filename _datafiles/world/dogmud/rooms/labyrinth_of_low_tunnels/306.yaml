@@ -14,6 +14,13 @@ exits:
     roomid: 303
   south:
     roomid: 309
+spawninfo:
+- mobid: 72
+  message: A warren scout crouches among the hanging meat strips, gnawing on a bone.
+  respawnrate: 8 real minutes
+- mobid: 76
+  message: A blind tunnel rat noses through the cracked bones on the floor.
+  respawnrate: 12 real minutes
 nouns:
   meat: Strips of something dark and leathery, hung from bone hooks to dry. The cuts
     are rough but deliberate. You cannot identify the source animal, and you are not

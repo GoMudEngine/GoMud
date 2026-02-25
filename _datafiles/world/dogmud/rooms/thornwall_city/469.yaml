@@ -1,0 +1,26 @@
+roomid: 469
+zone: Thornwall City
+title: Craftsmen's Quarter, West
+description: South of Main Street, the city takes on a different character. The
+  Craftsmen's Quarter is a working neighbourhood -- the buildings are functional,
+  the streets are narrower, and the air is thick with the sounds and smells of
+  production. Hammering from smithies, the sharp smell of tanning chemicals, the
+  rasp of saws from a woodworker's shop. The people here have the calloused hands
+  and direct manner of those who make things for a living. An apothecary's shop
+  is visible to the east, its window cluttered with bottles.
+biome: city
+exits:
+  north:
+    roomid: 462
+  east:
+    roomid: 470
+  south:
+    roomid: 472
+nouns:
+  shops: Ground-floor workshops open directly onto the street -- a tanner, a
+    woodworker, a rope-maker. Each one spills its work onto the cobblestones.
+    Apprentices sit on doorsteps, taking breaks they probably should not be taking.
+idlemessages:
+- The rhythmic clang of a smith's hammer echoes down the street.
+- Sawdust drifts from a woodworker's shop, catching the light.
+- An apprentice hurries past with an armload of leather scraps.

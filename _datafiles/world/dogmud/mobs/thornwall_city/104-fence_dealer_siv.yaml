@@ -1,0 +1,36 @@
+mobid: 104
+zone: Thornwall City
+statpool: 16
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - humanoid
+  - merchant
+idlecommands:
+  - 'emote examines an item behind the counter, turning it in the lamplight'
+  - 'emote makes a notation in a small, well-hidden notebook'
+  - ''
+  - 'emote glances toward the door, then the viewing slot, then back'
+  - ''
+activitylevel: 10
+character:
+  name: fence dealer Siv
+  description: |
+    A slight figure with a forgettable face -- the kind of person you
+    could describe to a guard and they would match half the population.
+    Siv operates from a back-alley room with a reinforced door and a
+    viewing slot, buying goods without asking questions about provenance.
+    The prices are lower than legitimate merchants offer, but the
+    transactions are fast and anonymous. Siv is polite, professional,
+    and absolutely disinterested in your reasons for selling.
+  speciesid: 1
+  level: 1
+  gold: 10
+  stats:
+    perception:
+      training: 10
+    dexterity:
+      training: 8
+    charisma:
+      training: 5

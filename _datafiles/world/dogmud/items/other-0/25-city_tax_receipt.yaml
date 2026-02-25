@@ -1,0 +1,12 @@
+itemid: 25
+name: city tax receipt
+namesimple: receipt
+description: An official receipt from the Thornwall Tax Authority, stamped with the
+  city seal and signed by an assessor. It confirms payment of municipal taxes for a
+  specified property and period. The document is printed on heavy parchment with a
+  numbered serial, making it difficult to forge. The bureaucracy of Thornwall is
+  thorough, if nothing else.
+type: object
+subtype: holdable
+uses: 0
+weight: 0.1

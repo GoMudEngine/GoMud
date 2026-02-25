@@ -1,0 +1,31 @@
+roomid: 477
+zone: Thornwall City
+title: Residential Ward, North
+description: North of the market, the city settles into a residential neighbourhood
+  of narrow streets and close-built houses. The buildings are two and three stories
+  tall, their upper floors jutting out over the street on timber brackets until the
+  houses nearly touch across the gap. Laundry lines create a web of drying cloth
+  overhead. The ward houses the city's working population -- labourers, clerks, junior
+  merchants, and families who have lived in the same buildings for generations. It is
+  quiet compared to the market, with the particular hush of a neighbourhood where
+  people are either at work or sleeping.
+biome: city
+exits:
+  south:
+    roomid: 478
+  west:
+    roomid: 468
+nouns:
+  houses: Narrow-fronted houses with shared walls, each one slightly different from
+    its neighbours -- a different colour of shutter, a window box here, a carved
+    doorframe there. The individuality is small but fierce, the only expression
+    of personality available in such tight quarters.
+  laundry: Lines of drying clothes span the street from upper windows -- shirts,
+    sheets, stockings, all fluttering like flags of domesticity. The arrangement
+    suggests an informal system where certain lines belong to certain households.
+spawninfo:
+- mobid: 107
+idlemessages:
+- A door opens and closes somewhere above, followed by footsteps on stairs.
+- A child's voice calls out from an upper window, answered by a shout from the street.
+- The smell of cooking drifts down from the residential floors above.

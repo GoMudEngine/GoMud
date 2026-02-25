@@ -86,6 +86,7 @@ type Character struct {
 	DefensesThisRound        int                            `yaml:"-"`                       // Stage 9.4: Tracks recent defenses for stance calculation. Don't store this.
 	ConsecutiveHits          int                            `yaml:"-"`                       // Stage 9.4: Consecutive successful hits for momentum. Don't store this.
 	ConsecutiveMisses        int                            `yaml:"-"`                       // Stage 9.4: Consecutive misses for momentum. Don't store this.
+	ExtraArms                int                            `yaml:"-"`                       // Derived from extra-arms mutation level (0-2). Don't store this.
 	Skills                   map[string]int                 `yaml:"skills,omitempty"`        // The skills the character has, and what level they are at
 	Mutations        map[string]int                 `yaml:"mutations,omitempty"`     // mutationId → level (Stage 12.1)
 	MutationProgress float64                        `yaml:"mutationprogress,omitempty"` // accumulates toward next mutation (Stage 12.1)
@@ -442,6 +443,11 @@ func (c *Character) GetMovementStaminaCost(terrainMultiplier float64) int {
 
 	// Apply encumbrance multiplier
 	cost *= encumbranceMultiplier
+
+	// Phase 24.2: Apply mutation movement speed modifier (Hasted, Extra Legs, etc.)
+	if moveMod := mutations.GetMovementSpeedModifier(c.Mutations); moveMod != 0 {
+		cost *= (1.0 - moveMod) // positive moveMod = faster = less cost
+	}
 
 	// Cap at maximum stamina cost
 	if cost > maxCost {
@@ -927,6 +933,8 @@ func (c *Character) GetDefense() int {
 
 	reduction := c.Equipment.Weapon.GetDefense() +
 		c.Equipment.Offhand.GetDefense() +
+		c.Equipment.ExtraArm1.GetDefense() +
+		c.Equipment.ExtraArm2.GetDefense() +
 		c.Equipment.Head.GetDefense() +
 		c.Equipment.Neck.GetDefense() +
 		c.Equipment.Body.GetDefense() +
@@ -1002,11 +1010,11 @@ func (c *Character) GetAdjectives() []string {
 		retAdjectives = append(retAdjectives, `shop`)
 	}
 
-	if c.HasBuffFlag(buffs.EmitsLight) {
+	if c.HasFlagFromAnySource(buffs.EmitsLight) {
 		retAdjectives = append(retAdjectives, `lit`)
 	}
 
-	if c.HasBuffFlag(buffs.Hidden) {
+	if c.HasFlagFromAnySource(buffs.Hidden) {
 		retAdjectives = append(retAdjectives, `hidden`)
 	}
 
@@ -1289,6 +1297,8 @@ func (c *Character) FindOnBody(itemName string) (items.Item, bool) {
 	partialMatch, fullMatch := items.FindMatchIn(itemName,
 		c.Equipment.Weapon,
 		c.Equipment.Offhand,
+		c.Equipment.ExtraArm1,
+		c.Equipment.ExtraArm2,
 		c.Equipment.Head,
 		c.Equipment.Neck,
 		c.Equipment.Body,
@@ -1570,9 +1580,14 @@ func (c *Character) GetDefenseScore(defenseType string) float64 {
 
 	switch defenseType {
 	case DefenseDodge:
-		// Dodge: Dexterity + UnarmedCombat skill
+		// Dodge: Dexterity + UnarmedCombat skill + mutation dodge modifier
 		unarmedSkill := float64(c.GetSkillLevel(skills.UnarmedCombat))
-		return dex + unarmedSkill
+		score := dex + unarmedSkill + mutations.GetDodgeModifier(c.Mutations)
+		// Phase 24.5: Blinded condition reduces dodge
+		if c.HasCondition(ConditionBlinded) {
+			score *= c.GetConditionMagnitude(ConditionBlinded) // magnitude is 0.5–0.7 = penalty multiplier
+		}
+		return score
 
 	case DefenseParry:
 		// Parry: Dexterity + WeaponCombat skill + weapon ParryRating
@@ -1853,6 +1868,16 @@ func (c *Character) IsDisabled() bool {
 
 func (c *Character) HasBuffFlag(buffFlag buffs.Flag) bool {
 	return c.Buffs.HasFlag(buffFlag, false)
+}
+
+// HasFlagFromAnySource returns true if the character has the given flag from
+// either active buffs OR permanent mutation effects. Use this instead of
+// HasBuffFlag when the check should also honor mutation-granted flags.
+func (c *Character) HasFlagFromAnySource(buffFlag buffs.Flag) bool {
+	if c.Buffs.HasFlag(buffFlag, false) {
+		return true
+	}
+	return mutations.HasMutationFlag(c.Mutations, string(buffFlag))
 }
 
 func (c *Character) CancelBuffsWithFlag(buffFlag buffs.Flag) bool {
@@ -2264,6 +2289,16 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 		c.Mutations = make(map[string]int)
 	}
 
+	// Derive ExtraArms from mutation level (capped at 2)
+	if lvl, ok := c.Mutations["extra-arms"]; ok && lvl > 0 {
+		c.ExtraArms = lvl
+		if c.ExtraArms > 2 {
+			c.ExtraArms = 2
+		}
+	} else {
+		c.ExtraArms = 0
+	}
+
 	if c.Zone == "" {
 		c.Zone = startingZone
 	}
@@ -2326,6 +2361,8 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 	}
 	c.Equipment.Weapon.Validate()
 	c.Equipment.Offhand.Validate()
+	c.Equipment.ExtraArm1.Validate()
+	c.Equipment.ExtraArm2.Validate()
 	c.Equipment.Head.Validate()
 	c.Equipment.Neck.Validate()
 	c.Equipment.Body.Validate()
@@ -2410,6 +2447,23 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 
 	}
 
+	// Handle extra arm slots based on ExtraArms mutation level
+	// If character lacks enough extra arms, move items back to backpack
+	if c.ExtraArms < 2 {
+		if c.Equipment.ExtraArm2.ItemId > 0 {
+			c.StoreItem(c.Equipment.ExtraArm2)
+			mudlog.Debug("Extra Arms Check", "info", "Item returned from extra arm 2 slot", "name", c.Equipment.ExtraArm2.Name(), "character", c.Name)
+		}
+		c.Equipment.ExtraArm2 = items.ItemDisabledSlot
+	}
+	if c.ExtraArms < 1 {
+		if c.Equipment.ExtraArm1.ItemId > 0 {
+			c.StoreItem(c.Equipment.ExtraArm1)
+			mudlog.Debug("Extra Arms Check", "info", "Item returned from extra arm 1 slot", "name", c.Equipment.ExtraArm1.Name(), "character", c.Name)
+		}
+		c.Equipment.ExtraArm1 = items.ItemDisabledSlot
+	}
+
 	if len(recalcPermaBuffs) > 0 && recalcPermaBuffs[0] {
 		c.reapplyPermabuffs()
 	}
@@ -2450,6 +2504,12 @@ func (c *Character) GetAllWornItems() []items.Item {
 	if c.Equipment.Offhand.ItemId > 0 {
 		wornItems = append(wornItems, c.Equipment.Offhand)
 	}
+	if c.Equipment.ExtraArm1.ItemId > 0 {
+		wornItems = append(wornItems, c.Equipment.ExtraArm1)
+	}
+	if c.Equipment.ExtraArm2.ItemId > 0 {
+		wornItems = append(wornItems, c.Equipment.ExtraArm2)
+	}
 	if c.Equipment.Head.ItemId > 0 {
 		wornItems = append(wornItems, c.Equipment.Head)
 	}
@@ -2484,6 +2544,12 @@ func (c *Character) GetGearValue() int {
 	}
 	if c.Equipment.Offhand.ItemId > 0 {
 		value += c.Equipment.Offhand.GetSpec().Value
+	}
+	if c.Equipment.ExtraArm1.ItemId > 0 {
+		value += c.Equipment.ExtraArm1.GetSpec().Value
+	}
+	if c.Equipment.ExtraArm2.ItemId > 0 {
+		value += c.Equipment.ExtraArm2.GetSpec().Value
 	}
 	if c.Equipment.Head.ItemId > 0 {
 		value += c.Equipment.Head.GetSpec().Value
@@ -2558,6 +2624,22 @@ func (c *Character) Wear(i items.Item) (returnItems []items.Item, newItemWorn bo
 
 		}
 
+	}
+
+	// Extra arms: if main hand and offhand are both occupied, try extra arm slots
+	if spec.Type == items.Weapon && iHandsRequired < 2 && c.ExtraArms > 0 {
+		if c.Equipment.Weapon.ItemId > 0 && c.Equipment.Offhand.ItemId > 0 {
+			if c.ExtraArms >= 1 && !c.Equipment.ExtraArm1.IsDisabled() && c.Equipment.ExtraArm1.ItemId == 0 {
+				c.Equipment.ExtraArm1 = i
+				c.reapplyPermabuffs()
+				return returnItems, true, ``
+			}
+			if c.ExtraArms >= 2 && !c.Equipment.ExtraArm2.IsDisabled() && c.Equipment.ExtraArm2.ItemId == 0 {
+				c.Equipment.ExtraArm2 = i
+				c.reapplyPermabuffs()
+				return returnItems, true, ``
+			}
+		}
 	}
 
 	// First handle weapon/offhand, since they are special cases
@@ -2662,6 +2744,10 @@ func (c *Character) RemoveFromBody(i items.Item) bool {
 		c.Equipment.Weapon = items.Item{}
 	} else if i.Equals(c.Equipment.Offhand) {
 		c.Equipment.Offhand = items.Item{}
+	} else if i.Equals(c.Equipment.ExtraArm1) {
+		c.Equipment.ExtraArm1 = items.Item{}
+	} else if i.Equals(c.Equipment.ExtraArm2) {
+		c.Equipment.ExtraArm2 = items.Item{}
 	} else if i.Equals(c.Equipment.Head) {
 		c.Equipment.Head = items.Item{}
 	} else if i.Equals(c.Equipment.Neck) {

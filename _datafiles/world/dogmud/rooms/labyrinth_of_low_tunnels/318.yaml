@@ -14,6 +14,10 @@ biome: cave
 exits:
   east:
     roomid: 317
+spawninfo:
+- itemid: 30013
+  message: A wrapped fungal ration sits among the hoarded objects.
+  respawnrate: 15 real minutes
 nouns:
   pit: A shallow depression covered with flat stones, its edges lined with dried hide.
     The contents are arranged by some logic you cannot follow -- a bent copper ring

@@ -1,0 +1,40 @@
+mobid: 97
+zone: Thornwall City
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Welcome to the forge. If you need something made or mended, I am your smith. If you are just browsing, try not to touch the hot metal."
+      - "What do you need? I work in steel, iron, and occasionally patience."
+
+  - keywords: ["buy", "sell", "weapon", "dagger", "blade", "sword", "shop"]
+    responses:
+      - "I make blades, tools, and hardware. If you want something specific, tell me what and I will tell you the price. The steel dagger is my best quick work -- proper Thornwall steel."
+
+  - keywords: ["steel", "thornwall", "quality", "craft"]
+    responses:
+      - "Thornwall steel has a particular temper. Blue tint, holds an edge, flexes without breaking. It is the ore and the method both. I learned from my master, who learned from hers. The technique is not written down."
+
+  - keywords: [""]
+    responses:
+      - "Need something? I am at the anvil."
+      - "The forge is open. State your business."
+
+tree:
+  root:
+    text: "Kerra glances up from the anvil, hammer poised mid-stroke, and gives you a brief, appraising look. 'Customer or spectator? If you want something made, tell me what. If you want to watch, stay clear of the sparks.' She sets the hammer down and wipes her hands on the apron."
+    hints: "Ask about her work, buy a weapon, or inquire about Thornwall steel."
+
+  nodes:
+    - id: weapons
+      triggers: ["weapon", "buy", "dagger", "blade", "sword", "steel"]
+      text: "'I make blades to order, but I keep a few pieces ready for travellers who cannot wait. The thornwall steel dagger is my best quick work -- proper temper, good edge, balanced for actual use rather than display.' She produces a dagger from beneath the counter, turning it so the blue-tinted steel catches the forge light."
+      hints: "Consider buying the thornwall steel dagger."
+
+    - id: about_craft
+      triggers: ["smith", "craft", "forge", "technique", "how", "learn"]
+      text: "'I have been at the anvil since I was twelve. My master was Gael, and before her, Tova. The technique goes back generations -- the particular heat, the quench, the temper. You cannot learn Thornwall steel from a book. It lives in the hands.' She flexes her scarred fingers. 'Every burn taught me something.'"
+
+memory:
+  expiryPeriod: "1h"

@@ -1,0 +1,34 @@
+mobid: 106
+zone: Thornwall City
+statpool: 20
+itemdropchance: 0
+hostile: false
+maxwander: 2
+groups:
+  - humanoid
+  - guard
+idlecommands:
+  - 'emote patrols the area with steady, measured steps'
+  - 'emote scans the crowd with a practiced eye'
+  - ''
+  - ''
+activitylevel: 20
+character:
+  name: city guard
+  description: |
+    A guard in Thornwall livery -- blue-grey surcoat over chainmail,
+    spear in hand, short sword at the hip. The city guard are a visible
+    presence in the main streets and market, maintaining order through
+    routine patrol and the occasional pointed question. This one has the
+    alert but bored expression of someone on a long shift, watching for
+    trouble they hope will not come.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 5
+    perception:
+      training: 5
+    vitality:
+      training: 5

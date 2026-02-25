@@ -18,6 +18,10 @@ exits:
     roomid: 303
   south:
     roomid: 304
+spawninfo:
+- mobid: 72
+  message: A pale, wiry figure drops from a ledge and crouches in the junction, milky eyes fixed on you.
+  respawnrate: 8 real minutes
 nouns:
   scratches: The marks are deliberate -- grouped in sets of four or five, slashed through
     with a diagonal. Tally marks. Hundreds of them, layered over each other in the

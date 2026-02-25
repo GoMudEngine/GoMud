@@ -1,0 +1,13 @@
+itemid: 19
+name: river stone
+namesimple: stone
+description: A smooth, flat stone from the riverbed, worn to a perfect oval by
+  centuries of current. It is cool to the touch and fits neatly in the palm. The
+  surface has a faint banding pattern -- layers of sediment compressed over ages
+  into something pleasingly geometric. A good skipping stone, or a decent
+  throwing weapon in a pinch.
+type: object
+subtype: holdable
+uses: 0
+weight: 0.3
+value: 1

@@ -14,6 +14,13 @@ exits:
     roomid: 301
   south:
     roomid: 305
+spawninfo:
+- mobid: 72
+  message: A warren scout emerges from the rubble, hissing softly between sharp teeth.
+  respawnrate: 10 real minutes
+- mobid: 76
+  message: A blind rat squeezes through a gap in the rubble, nose twitching.
+  respawnrate: 12 real minutes
 idlemessages:
 - Loose gravel shifts and settles somewhere in the rubble above. The collapse may not be finished.
 - The ammonia stink of old urine burns your nostrils.

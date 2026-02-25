@@ -1,0 +1,44 @@
+mobid: 78
+zone: Labyrinth of Low Tunnels
+statpool: 6
+itemdropchance: 20
+hostile: true
+maxwander: 1
+groups:
+  - insect
+  - mutant
+idlecommands:
+  - 'emote drags itself across the fungal beds on chitinous legs, leaving a trail of pale slime'
+  - 'emote raises its forelegs and releases a puff of yellowish spores into the air'
+  - ''
+  - ''
+combatcommands:
+  - 'emote rears up and sprays a cloud of stinging spores'
+  - ''
+  - 'emote clacks its mandibles together with a wet, grinding sound'
+  - ''
+activitylevel: 20
+spawnmutations: [thick-hide]
+mutationchance: 15
+character:
+  name: spore crawler
+  description: |
+    A flat, multi-legged creature the size of a large dog, its carapace
+    crusted with the same pale fungus that grows on the hollow walls. It moves low
+    to the ground on a dozen chitinous legs, mandibles working constantly as it
+    grazes on fungal growth. Clusters of spore sacs bulge from its back, swollen
+    and taut, ready to burst when the creature is threatened. The spores are
+    irritants at best and toxic at worst -- the warren dwellers give these things
+    a wide berth despite sharing the same food source.
+  speciesid: 10
+  level: 1
+  gold: 0
+  stats:
+    vitality:
+      training: 10
+    strength:
+      training: -5
+    dexterity:
+      training: -5
+    perception:
+      training: 5

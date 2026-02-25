@@ -1,0 +1,92 @@
+mobid: 86
+zone: Watchers Crossing
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "good day"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Welcome to the crossing. If you are heading east, there is a toll for the bridge. Five gold, or a road token."
+      - "Traveller. The toll is five gold for the bridge crossing. I can issue a receipt if you need one."
+
+  - keywords: ["hello", "hi", "greet"]
+    moods: ["grateful"]
+    responses:
+      - "Ah, you are back. Cross freely -- you have more than earned it."
+      - "Welcome, friend. The bridge stands a little more securely thanks to you."
+
+  - keywords: ["toll", "pay", "gold", "bridge", "cross", "fee", "tax"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Five gold for the crossing. I know it is not popular, but have you seen the cracks in that bridge? Without repairs, it will not last another decade."
+      - "The toll funds bridge maintenance. Masonry, mortar, labour. I keep records of every coin -- it all goes to the bridge."
+
+  - keywords: ["help", "quest", "task", "work", "job", "report"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "There is something you could do for me, actually. I have written a maintenance report -- documents the cracks, the costs, what happens if repairs stop. If someone could carry it to the magistrate in Thornwall, it might save this bridge."
+      - "I need this report delivered to Thornwall. It is everything -- damage assessments, repair costs, projections. The magistrate needs to see it before the innkeeper's complaints shut the toll down."
+
+  - keywords: ["crack", "damage", "repair", "bridge", "stone", "collapse"]
+    responses:
+      - "Go look at the eastern rail. There is a crack running two paces long, deep enough to fit your finger in. The mortar is crumbling between the foundation blocks. This bridge is centuries old and it has not been properly maintained in decades."
+      - "The capstones on the east side have already been replaced once. The stress crack is getting worse. Without the toll, there is no money for masons, and without masons, that bridge will fail."
+
+  - keywords: ["tolva", "inn", "innkeeper", "complaint"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Tolva thinks I am a thief. I understand her frustration -- the toll hurts her business. But she has not stood on that bridge and felt the stone shift under her feet. I have."
+      - "The innkeeper and I disagree. She sees lost customers. I see a bridge that will kill people if it is not repaired. I know which problem is more urgent."
+
+  - keywords: ["ledger", "records", "money", "accounts"]
+    responses:
+      - "Every coin is accounted for. Dates, amounts, what it was spent on. I am not a thief -- I am the only person who cares enough about this bridge to do something about it."
+
+  - keywords: ["authority", "charter", "writ", "legal", "permission"]
+    responses:
+      - "No, I do not have a charter from Thornwall. I applied for one. Twice. They lost the paperwork both times. Meanwhile, the bridge cracks and I watch merchants drive loaded carts over stone that is barely holding together."
+
+  - keywords: [""]
+    responses:
+      - "Five gold for the crossing, or a road token. That is all I ask."
+      - "Is there something else? The toll is five gold."
+
+tree:
+  root:
+    text: "Harn looks up from his ledger, his expression shifting from concentration to the practiced patience of someone who explains the same thing twenty times a day. 'Welcome to the tollhouse. If you are crossing the bridge, the fee is five gold. Road tokens are also accepted.' He pauses, reading your face. 'And before you say it -- yes, I know what Tolva thinks. I have heard it all.'"
+    hints: "Ask Harn about the toll, the bridge damage, or whether he needs help."
+
+  nodes:
+    - id: bridge_damage
+      triggers: ["bridge", "crack", "damage", "repair", "why", "toll", "five gold"]
+      text: "Harn stands and gestures east toward the bridge. 'Come look at it sometime. There is a stress crack along the eastern rail -- two paces long and growing. The mortar between the foundation blocks is turning to powder. I have replaced capstones three times this year alone.' His voice is steady but tired. 'This bridge is the only crossing for leagues. If it fails, people die. The toll pays for masons and materials. Every coin is accounted for.'"
+      hints: "Ask about the maintenance report, the ledger, or Tolva's side of things."
+      unlocks: ["help_quest", "about_tolva", "show_ledger"]
+
+    - id: help_quest
+      triggers: ["help", "report", "quest", "task", "deliver", "thornwall", "magistrate"]
+      requires: ["bridge_damage"]
+      text: "Harn reaches beneath the counter and produces a thick sheaf of papers bound with twine. 'I have documented everything. Damage assessments, repair costs, projected failure timelines. If the magistrate in Thornwall sees this, they will understand why the toll exists -- and maybe, finally, issue the charter I have been asking for.' He holds the report out. 'I cannot leave the tollhouse. Could you carry this to Thornwall for me?'"
+      hints: "Accept the report and travel east toward Thornwall to deliver it."
+      moodChange: friendly
+
+    - id: about_tolva
+      triggers: ["tolva", "innkeeper", "complaint", "against you"]
+      text: "'Tolva is not wrong that the toll hurts business. I know that. I see the empty carts and the merchants who turn back.' Harn sighs. 'But she has not crawled under the bridge and pressed her hand against stone that shifts when the water is high. She sees a number -- five gold. I see the alternative, which is a bridge at the bottom of the river and people with it.'"
+
+    - id: show_ledger
+      triggers: ["ledger", "records", "proof", "accounts", "show me"]
+      text: "Harn opens the heavy ledger and turns it to face you. 'Every coin. Dates, amounts, payees. Stonemason Revik, six gold for capstone replacement. Mortar shipment from Thornwall, eight gold. Labour for crack sealing, four gold.' He taps the page. 'There is no personal enrichment here. I live in the back room of this booth.'"
+
+    - id: no_charter
+      triggers: ["charter", "authority", "legal", "writ", "permission", "unauthorized"]
+      text: "Harn's jaw tightens. 'I applied for a charter. Twice. Thornwall's bureaucracy lost the papers both times. Meanwhile the bridge deteriorates and nobody else is doing anything about it. I made a choice. Maybe it was not the proper one, but the bridge is still standing because of it.'"
+
+    - id: report_delivered
+      triggers: ["delivered", "magistrate", "done", "sent", "carried"]
+      requires: ["help_quest"]
+      text: "Harn's shoulders drop with visible relief. 'You have my thanks. If the magistrate sees those numbers -- really looks at them -- the toll will be formalized or Thornwall will fund the repairs directly. Either way, the bridge survives.' He reaches for a blank receipt and stamps it carefully. 'For your crossings. As many as you need. You have earned that and more.'"
+      moodChange: grateful
+
+memory:
+  expiryPeriod: "1h"

@@ -1,0 +1,15 @@
+itemid: 40008
+name: spore sac
+namesimple: sac
+description: |
+  A swollen, membranous sac harvested from a spore crawler's back,
+  roughly the size of an apple. The membrane is taut and warm, its contents shifting
+  with a faint sloshing sound. A yellowish powder dusts the surface. Handle with
+  care -- the spores inside are irritants at minimum and potentially toxic. The
+  Sanctuary's scholars would find this specimen valuable. So would anyone studying
+  Chrysalis-affected cave fauna.
+type: object
+subtype: holdable
+uses: 0
+weight: 0.3
+value: 5

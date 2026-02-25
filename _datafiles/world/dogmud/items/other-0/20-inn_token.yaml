@@ -1,0 +1,12 @@
+itemid: 20
+name: inn token
+namesimple: token
+description: A wooden disc about the size of a large coin, branded with the mark of
+  the Crossing Inn -- a simple bridge arch over wavy lines. Tolva issues these to
+  travellers who have earned her favour. It is good for a meal and a night's lodging,
+  no questions asked. The wood is darkened with age and handling, suggesting Tolva
+  has been running this system for a long time.
+type: object
+subtype: holdable
+uses: 0
+weight: 0.1

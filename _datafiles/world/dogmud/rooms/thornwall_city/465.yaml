@@ -1,0 +1,31 @@
+roomid: 465
+zone: Thornwall City
+title: Market Square, Center
+description: The center of Market Square is the busiest place in Thornwall. A raised
+  stone platform serves as an auction block, a performance stage, and an occasional
+  soapbox for public announcements. The surrounding stalls sell everything -- cloth,
+  tools, leather goods, pottery, imported luxuries from the eastern trade routes. The
+  crowd is dense and diverse, a cross-section of the city's population jostling for
+  position among the stalls. Pickpockets work the edges, guards patrol in pairs, and
+  above it all the temple spire watches from the northwest.
+biome: city
+exits:
+  west:
+    roomid: 464
+  east:
+    roomid: 466
+  north:
+    roomid: 478
+nouns:
+  platform: A raised stone platform, about waist-high, worn smooth by use. Iron rings
+    set into the corners suggest it once served a darker purpose, but now it is
+    used for auctions and announcements. A merchant is currently showing bolts of
+    dyed cloth to a small crowd.
+spawninfo:
+- mobid: 102
+- mobid: 106
+  respawnrate: 8 real minutes
+idlemessages:
+- A merchant on the platform holds up a bolt of cloth, calling for bids.
+- The crowd shifts and eddies like a slow river, pausing at stalls.
+- A guard patrol pushes through the crowd, eyes scanning for trouble.

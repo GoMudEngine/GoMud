@@ -12,6 +12,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
@@ -360,6 +361,14 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 			attackWeapons = append(attackWeapons, sourceChar.Equipment.Offhand)
 		}
 
+		// Extra arm weapons (from extra-arms mutation)
+		if sourceChar.ExtraArms >= 1 && sourceChar.Equipment.ExtraArm1.ItemId > 0 && sourceChar.Equipment.ExtraArm1.GetSpec().Type == items.Weapon {
+			attackWeapons = append(attackWeapons, sourceChar.Equipment.ExtraArm1)
+		}
+		if sourceChar.ExtraArms >= 2 && sourceChar.Equipment.ExtraArm2.ItemId > 0 && sourceChar.Equipment.ExtraArm2.GetSpec().Type == items.Weapon {
+			attackWeapons = append(attackWeapons, sourceChar.Equipment.ExtraArm2)
+		}
+
 		// Put an empty weapon, so basically hands.
 		if len(attackWeapons) == 0 {
 			attackWeapons = append(attackWeapons, items.Item{
@@ -395,6 +404,12 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 						penalty = 10 // Minimum 10% penalty even at max skill
 					}
 				}
+				// Extra arm weapons get escalating additional penalties
+				if weaponIdx == 2 {
+					penalty += 20 // 3rd weapon: +20% additional penalty
+				} else if weaponIdx >= 3 {
+					penalty += 40 // 4th weapon: +40% additional penalty
+				}
 			}
 
 			// Set the default weapon info
@@ -405,8 +420,8 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 			// Get default unarmed distribution damage
 			attacks, baseDmg, dmgVariance, critBuffs := sourceChar.GetDefaultDistributionDamage()
 
-			// Determine if this is the offhand weapon
-			isOffhand := weaponIdx > 0 && weapon.ItemId == sourceChar.Equipment.Offhand.ItemId
+			// Determine if this is a secondary weapon (offhand or extra arm)
+			isOffhand := weaponIdx > 0
 
 			weaponSpeed := 1.0 // Unarmed baseline
 
@@ -460,6 +475,11 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 			// Stage 7.5: Apply prone damage penalty
 			if sourceChar.CombatPosition == characters.PositionProne {
 				dmgMean *= float64(configs.GetGamePlayConfig().ProneDamagePenalty)
+			}
+
+			// Phase 24.2: Apply mutation damage multiplier (Large, Small, etc.)
+			if dmgMult := mutations.GetDamageMultiplier(sourceChar.Mutations); dmgMult != 0 {
+				dmgMean *= (1.0 + dmgMult)
 			}
 
 			// zero means randomly selected, otherwise use the ItemId to consistently choose a message

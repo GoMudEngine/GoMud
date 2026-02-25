@@ -1,0 +1,19 @@
+itemid: 10010
+name: crude bone club
+namesimple: club
+description: |
+  A femur bone -- too large to be from any tunnel creature -- lashed
+  with strips of sinew at the grip end and darkened with old blood at the striking
+  end. The bone has been crudely shaped, the joint knob left intact as a weighted
+  head. It is brutish and ugly and effective.
+type: weapon
+hands: 1
+subtype: bludgeoning
+weight: 4.0
+speedmultiplier: 0.75
+staminacost: 6
+grapplemodifier: -1.0
+damage:
+  basedamage: 3
+  variance: 2
+parryrating: 6

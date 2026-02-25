@@ -1,0 +1,18 @@
+mutationid: heightened-senses
+name: Heightened Senses
+description: Every nerve ending rewires itself. The world becomes sharper, louder, more vivid — but your body struggles to keep pace with the flood of input.
+rarity: 4
+visual: Their eyes dart constantly, tracking sounds and movements others cannot perceive.
+conflicts:
+  - sixth-sense
+pros:
+  - type: stat_multiplier
+    target: perception
+    value: 0.10
+  - type: stat_multiplier
+    target: willpower
+    value: 0.05
+cons:
+  - type: stat_multiplier
+    target: dexterity
+    value: -0.10

@@ -14,6 +14,10 @@ exits:
     roomid: 304
   east:
     roomid: 309
+spawninfo:
+- mobid: 76
+  message: A blind tunnel rat burrows through the refuse, tail dragging behind it.
+  respawnrate: 10 real minutes
 nouns:
   midden: Layers of waste packed down over what must be years. The bottom layers have
     compacted into a dark, putrid sludge. Occasionally a recognizable object protrudes

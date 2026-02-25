@@ -1,0 +1,36 @@
+roomid: 443
+zone: Thornwall Outskirts
+title: The Fallow Field
+description: What was once a productive farm plot is now a tangled wilderness of
+  waist-high weeds, dead crop stalks, and encroaching scrub. The stone walls that
+  mark its boundaries are still intact, but everything within them has been abandoned.
+  A collapsed tool shed sits in one corner, its timbers grey with weather. Near the
+  road-side wall, a wooden post has been driven into the ground, and a notice has
+  been nailed to it -- official-looking parchment bearing a wax seal. The field has
+  the melancholy feel of something that was cared for once and then simply stopped.
+biome: farmland
+exits:
+  west:
+    roomid: 442
+  south:
+    roomid: 444
+nouns:
+  notice: 'An official document on heavy parchment, stamped with the seal of the
+    Thornwall Tax Authority. It reads: "BY ORDER of the Assessor-General, this
+    property is seized for non-payment of municipal land tax, assessment period
+    12-14. The former tenant, Gareth Millward, is hereby dispossessed. Property
+    reverts to the City of Thornwall." The ink is faded but legible. Rain has
+    softened the edges of the parchment.'
+  shed: The tool shed has collapsed on one side, its roof timbers snapped by weather
+    or neglect. Inside the wreckage you can see a rusted hoe, a broken basket, and
+    what might have been a seed press. The tools of someone who expected to farm
+    here for years.
+  weeds: Thistles, ragwort, and wild grass have claimed every inch of the field.
+    Beneath the weeds, the furrows of the last planting are still barely visible --
+    straight, careful lines now smothered by neglect.
+spawninfo:
+- itemid: 22
+idlemessages:
+- The weeds rustle and shift as something small moves through them.
+- The notice on the post flaps in the wind, its seal catching the light.
+- A crow lands on the collapsed shed, picks at something, then flies away.

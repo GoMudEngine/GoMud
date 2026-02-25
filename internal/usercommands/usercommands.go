@@ -51,7 +51,9 @@ var (
 		`ai-flag`:    {AiFlag, true, true, true},       // Admin only
 		`ai-list`:    {AiList, true, true, true},       // Admin only
 		`badcommands`:{BadCommands, true, true, true}, // Admin only
-		`bash`:        {Bash, false, true, false},
+		`bash`:           {Bash, false, true, false},
+		`blinding-flash`: {BlindingFlash, false, true, false},
+		`blinding-spit`:  {BlindingSpit, false, true, false},
 	`bug`:         {Bug, true, true, false},
 		`biome`:       {Biome, true, true, false},
 		`broadcast`:   {Broadcast, true, true, false},
@@ -85,6 +87,7 @@ var (
 		`go`:          {Go, false, true, false},
 		`grapple`:     {Grapple, false, true, false},
 		`grant`:       {Grant, true, true, true}, // Admin only
+		`healing-gel`: {HealingGel, false, true, false},
 		`help`:        {Help, true, true, false},
 		`keyring`:     {KeyRing, true, true, false},
 		`kick`:        {Kick, false, true, false},
@@ -111,6 +114,7 @@ var (
 		`offer`:       {Offer, false, true, false},
 		`online`:      {Online, true, true, false},
 		`party`:       {Party, true, true, false},
+		`pacifism-aura`: {PacifismAura, false, true, false},
 		`password`:    {Password, true, true, false},
 		`paz`:         {Paz, true, true, true}, // Admin only
 		`pet`:{Pet, false, true, false},
@@ -143,6 +147,7 @@ var (
 		`skills`:      {Skills, true, true, false},
 		`skillset`:    {Skillset, false, true, true}, // Admin only
 		`sneak`:       {Sneak, false, true, false},
+		`sonic-shout`: {SonicShout, false, true, false},
 		`spawn`:       {Spawn, false, true, true}, // Admin only
 		`spell`:       {Spell, true, true, true},  // Admin only
 		`spells`:      {Spells, true, true, false},
@@ -157,6 +162,7 @@ var (
 		`talk`:        {Talk, false, true, false},
 		`target`:{Target, false, true, false},
 		`teleport`:    {Teleport, true, true, true}, // Admin only
+		`toxic-bite`:  {ToxicBite, false, true, false},
 		`track`:{Track, false, true, false},
 		`train`:       {Train, false, false, false}, // Can't train in combat
 		`trip`:        {Trip, false, true, false},

@@ -1,0 +1,27 @@
+roomid: 463
+zone: Thornwall City
+title: Main Street, East
+description: The eastern end of Main Street opens into the approach to Market Square,
+  the city's commercial heart. The buildings here are the most prosperous on the
+  street -- merchant houses with carved lintels, a money-changer with iron bars on
+  the windows, and a wine merchant whose casks line the pavement. The foot traffic
+  thickens as the market draws near, and the air fills with the competing smells of
+  spices, leather, and roasting meat from the square ahead.
+biome: city
+exits:
+  west:
+    roomid: 462
+  east:
+    roomid: 464
+  north:
+    roomid: 476
+  south:
+    roomid: 471
+nouns:
+  houses: The merchant houses on this stretch are well-built -- stone ground floors
+    with timber upper stories, their facades decorated with trade signs and carved
+    window frames. Money lives here, quietly and carefully.
+idlemessages:
+- A money-changer's assistant hurries past with a locked cashbox.
+- The smell of roasting meat grows stronger from the market to the east.
+- A merchant in a fur-trimmed cloak steps out of a doorway, counting coins.

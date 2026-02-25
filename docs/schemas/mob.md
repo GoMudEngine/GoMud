@@ -51,6 +51,8 @@ _datafiles/world/dogmud/mobs/{zone_folder}/scripts/{mobid}-{ConvertForFilename(n
 | `specialmovechance` | int | no | Base % chance to use special moves in combat (0–100). |
 | `idlecommands` | list | no | Commands executed while not in combat. Use `""` for empty (wait) turns. |
 | `combatcommands` | list | no | Commands executed while in combat. |
+| `spawnmutations` | list | no | Mutation IDs always granted at level 1 on spawn (Phase 24.3). |
+| `mutationchance` | int | no | % chance (0–100) to gain 1 random bonus mutation on spawn (Phase 24.3). |
 | `character` | object | **yes** | Character sub-object. See below. |
 | `llmprofile` | object | no | LLM-driven dialogue. See below. |
 

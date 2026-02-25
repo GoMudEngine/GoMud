@@ -1,0 +1,11 @@
+mutationid: rapid-metabolism
+name: Rapid Metabolism
+description: Your body burns through reserves at an alarming rate, recovering stamina quickly but sacrificing durability. You are a sprinter, not a marathon runner.
+rarity: 4
+visual: They are lean and restless, with a perpetual look of hunger about them.
+pros:
+  - type: stamina_regen_multiplier
+    value: 0.20
+cons:
+  - type: health_multiplier
+    value: -0.10

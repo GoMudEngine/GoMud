@@ -1,0 +1,33 @@
+roomid: 407
+zone: Dustwalk Road
+title: Abandoned Campsite
+description: The road descends into a sheltered gully where someone has made camp --
+  and left in a hurry. A fire ring of blackened stones sits cold, surrounded by
+  scattered debris. Torn canvas, broken crate slats, and the stripped bones of a
+  small animal litter the ground. Boot prints churn the dust in every direction,
+  too many for one person. The gully walls rise on either side, cutting off the wind
+  and the view. It would be easy to walk into this place without seeing what waited
+  at the bottom.
+biome: plains
+exits:
+  north:
+    roomid: 406
+  south:
+    roomid: 408
+spawninfo:
+- mobid: 80
+  message: A figure rises from behind the cold fire ring, hand on a crude blade.
+  respawnrate: 5 real minutes
+nouns:
+  firepit: A ring of blackened stones, cold to the touch. The ashes are old but the
+    ground around it is scuffed with fresh boot prints. Whoever camped here last did
+    not bother to clean up.
+  debris: Torn canvas, splintered wood, and the scattered remains of a meal. Among
+    the refuse you notice scraps of cloth that might have come from a merchant's pack
+    -- dyed fabric, not the rough homespun a traveller would carry.
+  bones: Small animal bones, cracked for marrow and stripped clean. Whatever was eaten
+    here was eaten thoroughly and without ceremony.
+idlemessages:
+- The cold fire ring smells of old ash and rancid fat.
+- A scrap of torn canvas flaps in the weak breeze that reaches the gully floor.
+- Boot prints in the dust lead south, toward the deeper gully. Many boots.

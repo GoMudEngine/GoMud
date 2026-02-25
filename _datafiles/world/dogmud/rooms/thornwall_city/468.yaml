@@ -1,0 +1,32 @@
+roomid: 468
+zone: Thornwall City
+title: Temple Interior
+description: The interior of the temple is a single vaulted nave, its ceiling lost
+  in shadows above. Stone pillars line the walls, carved with figures whose features
+  have been softened by centuries of touching hands. The floor is paved with dark
+  slate, worn to a mirror sheen in the aisles. Candles burn in iron stands along the
+  walls, their light warm but insufficient to reach the upper darkness. At the far
+  end, a simple stone altar holds a brass bowl that smokes gently with incense. The
+  temple serves no single deity -- it is a place for contemplation, community, and
+  the management of tithes.
+biome: city
+exits:
+  south:
+    roomid: 467
+nouns:
+  altar: A plain stone altar, unadorned except for a brass incense bowl and a pair
+    of candlesticks. The altar has been scrubbed so many times that the stone has
+    a faintly soapy texture. It is a place of function, not ostentation.
+  pillars: Stone pillars carved with figures in flowing robes -- priests, scholars,
+    workers, farmers. The carvings represent the community the temple serves. Many
+    of the faces have been rubbed smooth by generations of parishioners touching
+    them for luck.
+  candles: Iron candle stands line the walls, each holding a thick tallow candle.
+    The wax has dripped and pooled at the bases, building up in layered formations.
+    The light they give is steady and warm.
+spawninfo:
+- mobid: 95
+idlemessages:
+- Incense smoke curls upward from the altar bowl, vanishing into the vault above.
+- A candle gutters and steadies, sending shadows dancing across the pillars.
+- Somewhere in the temple, a voice murmurs in quiet prayer.

@@ -1,0 +1,37 @@
+mobid: 86
+zone: Watchers Crossing
+statpool: 22
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - humanoid
+  - warden
+idlecommands:
+  - 'emote writes a careful entry in the ledger, blotting the ink dry'
+  - 'emote counts a small stack of coins, lips moving silently'
+  - ''
+  - 'emote peers down the road toward the bridge with a worried frown'
+  - ''
+activitylevel: 15
+character:
+  name: toll collector Harn
+  description: |
+    A heavyset man with a close-cropped beard and the careful, deliberate
+    movements of someone who takes his work seriously. Harn wears a warden's
+    tabard over a patched wool tunic, and his hands are calloused from years of
+    stonework as much as paperwork. He mans the tollbooth with quiet dedication,
+    recording every payment in a heavy ledger with the same meticulous hand. His
+    expression is perpetually apologetic -- he knows the toll is unpopular, but
+    he has seen the cracks in the bridge and knows what will happen if the
+    repairs are not funded.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 5
+    willpower:
+      training: 10
+    perception:
+      training: 5
