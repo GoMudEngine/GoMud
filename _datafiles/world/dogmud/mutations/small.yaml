@@ -1,0 +1,18 @@
+mutationid: small
+name: Small
+description: Your body compacts, shedding mass for agility. You become a difficult target — quick and nimble, though your strikes carry less weight.
+rarity: 7
+visual: They are noticeably smaller than average, with a compact, wiry build.
+conflicts:
+  - large
+pros:
+  - type: dodge_modifier
+    value: 15
+  - type: stat_flat
+    target: dexterity
+    value: 10
+cons:
+  - type: health_multiplier
+    value: -0.15
+  - type: damage_multiplier
+    value: -0.10

@@ -1,0 +1,14 @@
+mutationid: sixth-sense
+name: Sixth Sense
+description: Something beyond your normal senses awakens — a preternatural awareness of danger. You react to threats before you consciously perceive them, but the constant vigilance frays your composure.
+rarity: 7
+visual: They flinch at things no one else can see, their gaze snapping to empty spaces a heartbeat before something happens.
+conflicts:
+  - heightened-senses
+pros:
+  - type: dodge_modifier
+    value: 25
+cons:
+  - type: stat_flat
+    target: willpower
+    value: -20

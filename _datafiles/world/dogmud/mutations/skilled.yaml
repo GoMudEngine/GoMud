@@ -1,0 +1,13 @@
+mutationid: skilled
+name: Skilled
+description: The Chrysalis rewires your learning pathways. Techniques come faster, but raw physical and mental growth stalls.
+rarity: 5
+visual: They move with a practiced precision that seems beyond their experience.
+conflicts:
+  - talented
+pros:
+  - type: skill_progression_multiplier
+    value: 0.30
+cons:
+  - type: stat_progression_multiplier
+    value: -0.20

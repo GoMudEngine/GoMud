@@ -1,0 +1,15 @@
+mutationid: night-vision
+name: Night Vision
+description: Your eyes reshape themselves, pupils dilating impossibly wide. Darkness becomes merely dim, though bright light stings more than it should.
+rarity: 5
+visual: Their pupils are blown wide, filling their irises with pools of black that catch faint light.
+conflicts:
+  - infrared-vision
+pros:
+  - type: flag
+    target: nightvision
+    value: 1
+cons:
+  - type: stat_flat
+    target: perception
+    value: -5

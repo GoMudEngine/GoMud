@@ -3,6 +3,8 @@ name: Dense Muscles
 description: Your muscles condense into cables of extraordinary power. Strength surges, but endurance suffers.
 rarity: 4
 visual: Their musculature is visibly denser and more compact than normal.
+conflicts:
+  - hollow-bones
 pro:
   type: stat_multiplier
   target: strength

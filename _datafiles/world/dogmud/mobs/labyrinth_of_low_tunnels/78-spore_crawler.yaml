@@ -18,6 +18,8 @@ combatcommands:
   - 'emote clacks its mandibles together with a wet, grinding sound'
   - ''
 activitylevel: 20
+spawnmutations: [thick-hide]
+mutationchance: 15
 character:
   name: spore crawler
   description: |

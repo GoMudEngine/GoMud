@@ -4325,54 +4325,52 @@ requires Thornwall access (23.6).
 
 ---
 
-## Phase 24: Expanded Mutations
+## Phase 24: Expanded Mutations ✅ COMPLETED
 
-### Stage 24.1: New Mutations & Conflict Resolution
+### Stage 24.1: Points Budget, Conflict System, Multi-Effect Schema ✅
 
-**Goal**: Expand the mutation pool from 10 to 25+ and implement a conflict resolution system
-for diametrically opposed mutations (e.g., Dense Muscles vs Hollow Bones).
+Refactored mutation engine: multi-effect `pros:`/`cons:` lists, `conflicts:` field,
+backward-compatible migration of legacy single pro/con, load-based acquisition
+(`GetMutationLoad()`), bidirectional conflict checking (`HasConflict()`), weighted pool
+excludes conflicting mutations.
 
-**Changes**:
-1. **Mutation conflict system** — add a `conflicts` field to mutation YAML specs. When a character
-   would gain a mutation that conflicts with an existing one, either block it or replace the
-   existing mutation (configurable). Display a message explaining the conflict.
-2. **New mutations** (15+ new entries):
-   - Physical: Elongated Limbs, Thick Hide, Venomous Bite, Regenerative Tissue, Stone Skin
-   - Sensory: Echolocation, Thermal Vision, Tremorsense, Heightened Smell
-   - Mental: Hivemind Echo, Precognitive Flashes, Psychic Resistance
-   - Metabolic: Cold-Blooded, Photosynthetic Skin, Rapid Metabolism
-3. **Fix visual text** — ensure all new mutations use third-person `visual:` fields
-   (this may already be fixed in Stage 19.1)
+### Stage 24.2: Easy Passive Mutations (12 new) ✅
 
-**Files to Modify** (~20 files, ~500 lines):
-1. `internal/mutations/mutations.go` — add conflict checking logic
-2. `internal/characters/character.go` — call conflict check on mutation gain
-3. `_datafiles/world/dogmud/mutations/` — 15+ new YAML files, update existing 10 with `conflicts:`
-4. Test files
+Added 12 passive mutations: heightened-senses, thick-hide, regenerative-tissue, skilled,
+talented, hasted, large, small, cold-blooded, rapid-metabolism, psychic-resistance,
+elongated-limbs. New effect types: dodge_modifier, damage_multiplier, movement_speed,
+health_regen, skill_progression_multiplier, stat_progression_multiplier. Integrated into
+combat, character, progression, and auto-heal systems.
 
-### Stage 24.2: NPC Mutations
+### Stage 24.3: NPC/Mob Mutations ✅
 
-**Goal**: Allow NPCs/mobs to spawn with mutations, making encounters more varied and surprising.
+Added `spawnmutations` and `mutationchance` fields to mob YAML. Mobs apply mutations at
+spawn before Validate(). Applied to 5 thematic mobs (spore crawler, warren warrior/scout,
+river lurker, scrubland dog).
 
-**Changes**:
-1. **Mob mutation field** — add `mutations:` list to mob YAML spec. Mobs spawn with these
-   mutations active, gaining their stat bonuses and visual descriptors.
-2. **Random mutation chance** — optionally add a `mutationchance:` field to mob YAML. On spawn,
-   the mob has a percentage chance to gain 1 random mutation from a configured pool.
-3. **Visual integration** — mutated mobs show mutation visuals in their description
-   (already handled by `GetMutationVisuals()` on Character).
+### Stage 24.4: Environmental/Conditional Mutations (7 new) ✅
 
-**Files to Modify** (~5 files, ~150 lines):
-1. `internal/mobs/mobs.go` — apply mutations on spawn
-2. `_datafiles/world/dogmud/mobs/` — add mutations to select mob YAML files
-3. Mob YAML schema docs
+Added mutation flags system (`GetMutationFlags()`, `HasMutationFlag()`). Created
+`HasFlagFromAnySource()` on Character to check both buffs and mutations. Replaced
+`HasBuffFlag()` calls for NightVision, EmitsLight, Hidden, SeeHidden. Added conditional
+health regen for lit rooms (photosynthetic skin). 7 new mutations: night-vision,
+infrared-vision, photosynthetic-skin, bioluminescence, camo-skin, tremorsense, sixth-sense.
 
-**Testing** (all of Phase 24):
-- [ ] Conflicting mutations are blocked/replaced with a message
-- [ ] All 25+ mutations load without errors
-- [ ] NPCs spawn with configured mutations
-- [ ] Random mutation chance works correctly
-- [ ] Mutated mob descriptions show mutation visuals
+### Stage 24.5: Active Ability Mutations (6 new) ✅
+
+Added ConditionBlinded and ConditionPoisoned. Created 6 combat commands: sonic-shout,
+blinding-spit, toxic-bite, healing-gel, pacifism-aura, blinding-flash. All share
+special-move cooldown, cost stamina, set RoundsWaiting. 6 corresponding mutation YAMLs.
+
+### Stage 24.6: Extra Limbs + Quad Wielding ✅
+
+Added ExtraArm1/ExtraArm2 slots to Worn struct. ExtraArms derived from mutation level in
+Validate(). Auto-routes weapons to extra arm slots when main/offhand are full. `equip <weapon> arm1/arm2`
+syntax for direct slot targeting. Combat iterates extra arm weapons with escalating penalties
+(+20% for 3rd weapon, +40% for 4th). Disabled slots enforced when mutation absent. 2 new
+mutations: extra-arms (rarity 9), extra-legs (rarity 8).
+
+**Total**: 37 mutations (up from 10), 6 active ability commands, quad-wielding support.
 
 ---
 
@@ -4674,7 +4672,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 21: Autoscaling Removal + Species Tuning | 1 stage (21.1) | 4 hours | **21.1 Complete** |
 | Phase 22: AI Connection Limits | 1 stage (22.1) | 6 hours | **22.1 Complete** |
 | Phase 23: Content — Tunnels + Road to Thornwall | 6 stages (23.1–23.6) | ~55 hours | 23.1–23.2 Complete |
-| Phase 24: Expanded Mutations | 2 stages (24.1–24.2) | 16 hours | Not Started |
+| Phase 24: Expanded Mutations | 6 stages (24.1–24.6) | 24 hours | **24.1–24.6 Complete** |
 | Phase 25: Expanded Spells | 2 stages (25.1–25.2) | 16 hours | Not Started |
 | Phase 26: NPC Species Variety | 2 stages (26.1–26.2) | 12 hours | Not Started |
 | Phase 27: Dialogue–Quest Integration | 2 stages (27.1–27.2) | 16 hours | Not Started |
@@ -4779,4 +4777,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-24
 **Status**: In Progress
-**Current Stage**: Phases 1–23 complete. Next: Phase 24 (Expanded Mutations).
+**Current Stage**: Phases 1–24 complete. Next: Phase 25 (Expanded Spells).

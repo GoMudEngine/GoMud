@@ -1,0 +1,15 @@
+mutationid: toxic-bite
+name: Toxic Bite
+description: Venom sacs have developed in your jaw, connected to elongated canines that can deliver a potent toxin. The mutation warps your face into something bestial and unsettling.
+rarity: 7
+visual: Their canine teeth are elongated and faintly discolored, and their jaw seems to unhinge slightly when they speak.
+conflicts:
+  - clawed-hands
+pros:
+  - type: flag
+    target: active-ability
+    value: 1
+cons:
+  - type: stat_flat
+    target: charisma
+    value: -25

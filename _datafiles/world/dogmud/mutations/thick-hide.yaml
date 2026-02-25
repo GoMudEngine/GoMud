@@ -1,0 +1,15 @@
+mutationid: thick-hide
+name: Thick Hide
+description: Your skin thickens into a leathery integument, tough enough to turn a blade. The cost is a certain gracelessness and an unsettling appearance.
+rarity: 6
+visual: Their skin has a thick, leathery quality with visible ridges along the forearms and shoulders.
+pros:
+  - type: natural_armor
+    value: 40
+cons:
+  - type: stat_multiplier
+    target: dexterity
+    value: -0.10
+  - type: stat_flat
+    target: charisma
+    value: -10

@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -72,6 +73,32 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 			if !inCombat {
 				healthRegen := int(float64(user.Character.HealthPerRound()) * regenMultiplier)
 				user.Character.Heal(healthRegen)
+			}
+
+			// Phase 24.2: Passive mutation health regen (works in and out of combat)
+			if mutRegen := mutations.GetHealthRegen(user.Character.Mutations); mutRegen > 0 {
+				user.Character.Heal(int(float64(mutRegen) * regenMultiplier))
+			}
+
+			// Phase 24.4: Conditional health regen (e.g., photosynthetic skin in lit rooms)
+			if userRoom := rooms.LoadRoom(user.Character.RoomId); userRoom != nil {
+				biome := userRoom.GetBiome()
+				if condRegen := mutations.GetConditionalHealthRegen(user.Character.Mutations, biome.IsLit()); condRegen > 0 {
+					user.Character.Heal(int(float64(condRegen) * regenMultiplier))
+				}
+			}
+
+			// Phase 24.5: Apply poison DoT damage
+			if user.Character.HasCondition(characters.ConditionPoisoned) {
+				poisonDmg := int(user.Character.GetConditionMagnitude(characters.ConditionPoisoned))
+				if poisonDmg < 1 {
+					poisonDmg = 1
+				}
+				user.Character.Health -= poisonDmg
+				if user.Character.Health < -10 {
+					user.Character.Health = -10
+				}
+				user.SendText(`<ansi fg="green">The poison burns through your veins!</ansi>`)
 			}
 
 			// Apply regen condition from heal spell (works in and out of combat)

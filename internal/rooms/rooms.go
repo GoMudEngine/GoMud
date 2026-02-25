@@ -1111,7 +1111,7 @@ func (r *Room) GetMobs(findTypes ...FindFlag) []int {
 			}
 		}
 
-		if typeFlag&FindHasLight == FindHasLight && mob.Character.HasBuffFlag(buffs.EmitsLight) {
+		if typeFlag&FindHasLight == FindHasLight && mob.Character.HasFlagFromAnySource(buffs.EmitsLight) {
 			mobMatches = append(mobMatches, mobId)
 			continue
 		}
@@ -1207,7 +1207,7 @@ func (r *Room) GetPlayers(findTypes ...FindFlag) []int {
 			}
 		}
 
-		if typeFlag&FindHasLight == FindHasLight && user.Character.HasBuffFlag(buffs.EmitsLight) {
+		if typeFlag&FindHasLight == FindHasLight && user.Character.HasFlagFromAnySource(buffs.EmitsLight) {
 			playerMatches = append(playerMatches, userId)
 			continue
 		}

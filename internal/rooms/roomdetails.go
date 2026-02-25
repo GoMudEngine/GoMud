@@ -244,8 +244,8 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 			player := users.GetByUserId(playerId)
 			if player != nil {
 
-				if player.Character.HasBuffFlag(buffs.Hidden) { // Don't show them if they are sneaking
-					if !user.Character.Pet.Exists() || !user.Character.HasBuffFlag(buffs.SeeHidden) {
+				if player.Character.HasFlagFromAnySource(buffs.Hidden) { // Don't show them if sneaking or camo
+					if !user.Character.Pet.Exists() || !user.Character.HasFlagFromAnySource(buffs.SeeHidden) {
 						continue
 					}
 				}
@@ -265,8 +265,8 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 	for idx, mobInstanceId := range r.mobs {
 		if mob := mobs.GetInstance(mobInstanceId); mob != nil {
 
-			if mob.Character.HasBuffFlag(buffs.Hidden) { // Don't show them if they are sneaking
-				if !user.Character.Pet.Exists() || !user.Character.HasBuffFlag(buffs.SeeHidden) {
+			if mob.Character.HasFlagFromAnySource(buffs.Hidden) { // Don't show them if sneaking or camo
+				if !user.Character.Pet.Exists() || !user.Character.HasFlagFromAnySource(buffs.SeeHidden) {
 					continue
 				}
 			}

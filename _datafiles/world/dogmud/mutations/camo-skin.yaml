@@ -1,0 +1,18 @@
+mutationid: camo-skin
+name: Camo Skin
+description: Your skin shifts and blurs, mimicking your surroundings with an unsettling fluidity. You fade from notice — but something about the effect repulses those who see through it.
+rarity: 6
+visual: Their outline seems to shimmer and blur, making it difficult to focus on them directly.
+conflicts:
+  - bioluminescence
+  - pheromone-glands
+pros:
+  - type: flag
+    target: hidden
+    value: 1
+  - type: dodge_modifier
+    value: 15
+cons:
+  - type: stat_flat
+    target: charisma
+    value: -20

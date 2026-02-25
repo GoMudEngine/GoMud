@@ -22,6 +22,8 @@ combatcommands:
 activitylevel: 25
 aiprofile: brawler
 specialmovechance: 15
+spawnmutations: [dense-muscles, tough-skin]
+mutationchance: 20
 character:
   name: warren warrior
   description: |

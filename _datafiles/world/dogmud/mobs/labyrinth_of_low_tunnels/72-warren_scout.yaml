@@ -20,6 +20,7 @@ combatcommands:
   - 'emote lets out a shrill whistle that echoes through the tunnels'
   - ''
 activitylevel: 35
+spawnmutations: [keen-eyes, fast-reflexes]
 character:
   name: warren scout
   description: |

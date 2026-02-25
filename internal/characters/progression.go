@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -54,7 +55,9 @@ func CalculateProgressionChance(currentRank int, softCap int) float64 {
 func (c *Character) CheckSkillProgression(skillName string, userId int, bonusMultiplier float64) {
 	b := configs.GetBalanceConfig()
 	virtualRank := c.GetSkillUseCount(skillName) / int(b.UsesPerRank)
-	chance := CalculateProgressionChance(virtualRank, int(b.SkillSoftCap)) * bonusMultiplier * skills.GetProgressionMultiplier(skillName)
+	// Phase 24.2: Apply mutation skill progression multiplier
+	mutSkillMult := 1.0 + mutations.GetSkillProgressionMultiplier(c.Mutations)
+	chance := CalculateProgressionChance(virtualRank, int(b.SkillSoftCap)) * bonusMultiplier * skills.GetProgressionMultiplier(skillName) * mutSkillMult
 	if chance > 1.0 {
 		chance = 1.0
 	}
@@ -96,7 +99,9 @@ func (c *Character) CheckStatProgression(statName string, userId int, bonusMulti
 	if statVal := c.GetStatValue(statName); statVal > int(b.StatSoftCap) && statVal > virtualRank {
 		virtualRank = statVal
 	}
-	chance := CalculateProgressionChance(virtualRank, int(b.StatSoftCap)) * bonusMultiplier
+	// Phase 24.2: Apply mutation stat progression multiplier
+	mutStatMult := 1.0 + mutations.GetStatProgressionMultiplier(c.Mutations)
+	chance := CalculateProgressionChance(virtualRank, int(b.StatSoftCap)) * bonusMultiplier * mutStatMult
 	if chance > 1.0 {
 		chance = 1.0
 	}

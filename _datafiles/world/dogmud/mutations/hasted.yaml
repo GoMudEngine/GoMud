@@ -1,0 +1,11 @@
+mutationid: hasted
+name: Hasted
+description: Something in your legs shifts — tendons lengthen, muscles redistribute. You cover ground with startling speed, though the constant motion burns through your reserves.
+rarity: 6
+visual: They move with a fluid, loping gait that covers ground unnervingly fast.
+pros:
+  - type: movement_speed
+    value: 0.25
+cons:
+  - type: stamina_regen_multiplier
+    value: -0.20
