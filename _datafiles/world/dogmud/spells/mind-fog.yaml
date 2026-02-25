@@ -12,4 +12,4 @@ base_folds: 6
 target_defense_type: mental
 effect_type: buff
 buff_ids:
-  - 29
+  - 41

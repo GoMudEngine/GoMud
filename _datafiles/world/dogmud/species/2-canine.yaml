@@ -4,6 +4,8 @@ description: A four-legged predator with keen senses and powerful jaws.
   Canines hunt in coordinated packs, using their superior
   speed and endurance to run down prey over long distances.
 defaultalignment: -15
+buffids:
+  - 29 # Night Vision
 size: medium
 unarmedname: jaws
 tnlscale: 1

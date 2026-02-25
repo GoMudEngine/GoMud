@@ -4,6 +4,7 @@ description: A massive apex predator with thick hide and devastating
   strength. Bears are solitary hunters capable of felling
   trees and crushing bone with a single swipe of their paws.
 defaultalignment: -20
+naturalarmor: 8
 size: large
 unarmedname: claws and teeth
 tnlscale: 1

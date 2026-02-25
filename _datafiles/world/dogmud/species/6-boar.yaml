@@ -4,6 +4,7 @@ description: A stocky, bristle-backed beast with curved tusks and a
   foul temper. Boars charge without hesitation and shrug
   off wounds that would fell lesser creatures.
 defaultalignment: -10
+naturalarmor: 5
 size: medium
 unarmedname: tusks
 tnlscale: 1

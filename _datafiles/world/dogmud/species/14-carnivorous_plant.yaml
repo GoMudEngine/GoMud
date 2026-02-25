@@ -4,6 +4,7 @@ description: A grotesque flora with grasping tendrils and a tooth-lined
   maw hidden among deceptively lush foliage. It waits with
   the patience of stone for prey to wander within reach.
 defaultalignment: 0
+naturalarmor: 6
 size: medium
 unarmedname: tendrils and maw
 tnlscale: 1
@@ -28,4 +29,6 @@ stats:
 damage:
   basedamage: 7
   variance: 3
+  critbuffids:
+    - 39 # Venom (digestive toxin)
 disabledslots: ['weapon', 'offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet', 'body']

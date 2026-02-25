@@ -5,6 +5,8 @@ description: A many-legged predator that spins silken webs and waits
   through needle-sharp fangs, then wrap their helpless prey
   in silk.
 defaultalignment: -10
+buffids:
+  - 29 # Night Vision
 size: small
 unarmedname: fangs
 tnlscale: 1
@@ -29,4 +31,6 @@ stats:
 damage:
   basedamage: 4
   variance: 2
+  critbuffids:
+    - 39 # Venom
 disabledslots: ['weapon', 'offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet']
