@@ -4434,7 +4434,7 @@ to populate the world with diverse wildlife. No new humanoid species — anythin
 3. Animals are tameable; plants, fungi, and slimes are not
 4. All are `selectable: false` (NPC-only)
 
-### Stage 26.2: Species Traits & Combat Integration ✅ COMPLETED
+### Stage 26.2: Species Traits & Combat Integration ✅ COMPLETED (8b21d10)
 
 **Goal**: Make species matter mechanically — natural armor, venomous attacks, and
 perma-buff traits for NPC species.
