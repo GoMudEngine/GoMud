@@ -1,0 +1,15 @@
+spellid: sensory-overload
+name: Sensory Overload
+description: Overwhelms the target's senses with a psionic blast, blinding and slowing them.
+type: harmsingle
+schools:
+  - mental
+cost: 80
+waitrounds: 2
+difficulty: 0
+primarystat: willpower
+base_folds: 10
+target_defense_type: mental
+effect_type: buff
+buff_ids:
+  - 37

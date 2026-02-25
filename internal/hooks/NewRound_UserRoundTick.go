@@ -159,7 +159,12 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 					canDeepen := mutations.CanDeepen(user.Character.Mutations)
 					if canAcquire || canDeepen {
 						eyeMult := 0.5 + gametime.GetEyePhase()
-						user.Character.MutationProgress += float64(mb.MutationProgressGainPerRound) * eyeMult
+						// Phase 25.3: Mutation Catalyst buff doubles mutation progress gain
+						mutCatalystMult := 1.0
+						if user.Character.HasBuffFlag(buffs.MutationRate) {
+							mutCatalystMult = 2.0
+						}
+						user.Character.MutationProgress += float64(mb.MutationProgressGainPerRound) * eyeMult * mutCatalystMult
 						// Phase 24.1: Use rarity-weighted load instead of flat event count
 						load := mutations.GetMutationLoad(user.Character.Mutations)
 						threshold := float64(mb.MutationBaseProgress) *

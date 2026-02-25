@@ -129,15 +129,9 @@ func New() *Character {
 		Skills:         initAllSkills(),
 		Gold:           25,
 		Bank:           100,
-		// Starting spells — core utility set. tame/fire-bolt/fireball earned post-tutorial.
+		// Phase 25.1: Starting spell reduced to 1 — everything else discovered through casting.
 		SpellBook: map[string]int{
-			"heal":         1, // Minor Heal (helpsingle, vital)
-			"mm":           1, // Magic Missile (harmsingle, elemental)
-			"sparks":       1, // Shower of Sparks (harmmulti, elemental)
-			"throw-stone":  1, // Throw Stone (harmsingle, elemental) — requires stone component
-			"minor-shield": 1, // Minor Shield (helpsingle, enhancement)
-			"stun":         1, // Stun (harmsingle, mental)
-			"blind":        1, // Blind (harmsingle, mental)
+			"mm": 1, // Conviction Spike — the only starting spell
 		},
 		CharmedMobs:    []int{},
 		Items:          []items.Item{},

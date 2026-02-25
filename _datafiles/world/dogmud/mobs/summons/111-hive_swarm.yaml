@@ -1,0 +1,35 @@
+mobid: 111
+zone: Summons
+statpool: 18
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - swarm
+idlecommands:
+  - 'emote buzzes and swirls in agitated patterns'
+  - ''
+activitylevel: 50
+combatcommands:
+  - ''
+  - ''
+character:
+  name: Hive Swarm
+  description: |
+    A dense cloud of tiny Chrysalis organisms that move as one, their
+    collective intelligence guided by the caster's will. Each individual
+    creature is barely visible, but together they form a roiling mass of
+    iridescent chitin and translucent wings. The swarm shifts and flows
+    like a living storm, occasionally condensing into recognizable shapes
+    before dispersing again into chaos.
+  speciesid: 10
+  level: 1
+  stats:
+    dexterity:
+      training: 15
+    perception:
+      training: 10
+    vitality:
+      training: 5
+    strength:
+      training: -5

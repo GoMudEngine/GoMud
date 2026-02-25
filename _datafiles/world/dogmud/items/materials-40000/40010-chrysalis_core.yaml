@@ -1,0 +1,9 @@
+itemid: 40010
+name: Chrysalis Core
+namesimple: core
+description: A dense, pulsing orb of concentrated Chrysalis energy. It hums with potential, as if something inside yearns to take form.
+type: object
+uses: 0
+weight: 2.0
+component_tag: chrysalis-core
+value: 500

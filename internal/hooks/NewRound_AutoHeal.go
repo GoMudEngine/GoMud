@@ -184,6 +184,17 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 				mob.Character.Health = mob.Character.HealthMax.Value
 			}
 		}
+		// Phase 25.1: Apply poison DoT damage to mobs
+		if mob.Character.HasCondition(characters.ConditionPoisoned) {
+			poisonDmg := int(mob.Character.GetConditionMagnitude(characters.ConditionPoisoned))
+			if poisonDmg < 1 {
+				poisonDmg = 1
+			}
+			mob.Character.Health -= poisonDmg
+			if mob.Character.Health < 1 {
+				mob.Character.Health = 0
+			}
+		}
 	}
 
 	return events.Continue

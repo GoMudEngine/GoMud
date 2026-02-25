@@ -1,6 +1,6 @@
 spellid: stun
-name: Stun
-description: Stuns a target, preventing them from attacking.
+name: Neural Stun
+description: Overloads the target's nervous system with a focused psionic pulse, stunning them.
 type: harmsingle
 schools:
   - mental

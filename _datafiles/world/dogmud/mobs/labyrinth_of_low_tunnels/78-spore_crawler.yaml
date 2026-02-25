@@ -33,6 +33,8 @@ character:
   speciesid: 10
   level: 1
   gold: 0
+  items:
+    - itemid: 40011
   stats:
     vitality:
       training: 10

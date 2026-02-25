@@ -31,6 +31,7 @@ import re
 import sys
 import time
 import traceback
+from collections import deque
 from datetime import datetime
 
 import aiohttp
@@ -54,119 +55,127 @@ COMMAND_INTERVAL = 4.5
 # Max messages kept in the LLM conversation history (older ones are pruned).
 MAX_HISTORY = 30
 
+# Loop detection: if the same command appears this many times in the last N
+# commands, inject a "you are looping" nudge.
+LOOP_WINDOW = 10
+LOOP_THRESHOLD = 3
+
+# How often (in commands) to inject a periodic status/quest check reminder.
+PERIODIC_CHECK_INTERVAL = 25
+
 # ---------------------------------------------------------------------------
 # System prompt
 # ---------------------------------------------------------------------------
 
 SYSTEM_PROMPT = """\
-You are an AI player-tester in DOGMud, a text-based MUD (Multi-User Dungeon) set in a
-dark fantasy world. Your job is to systematically explore the world, interact with
-everything, and report anything broken or surprising.
+You are an AI play-tester in DOGMud, a text MUD set in a dark fantasy world reshaped by the
+Chrysalis plague. Your job is to explore, interact with everything, and report genuine bugs.
 
 == OUTPUT FORMAT ==
-Respond with EXACTLY ONE valid MUD command per message. No commentary, no quotes,
-no explanations — just the raw command. If you want to say something in-game, use
-the "say" command.
+Respond with EXACTLY ONE MUD command per message. No commentary, no quotes, no explanations.
+Just the raw command text. If you want to speak in-game, use "say".
 
-== CORE COMMANDS ==
-Help:         help, help <command>
-Movement:     north, south, east, west, up, down, northeast, northwest, southeast, southwest
+== ESSENTIAL COMMANDS ==
+Movement:     north, south, east, west, up, down  (and ne, nw, se, sw)
 Look:         look, look <thing>, look <direction>
-Interaction:  talk <npc>, ask <npc> <topic>, say <message>, shout <message>
-Combat:       attack <target>, cast <spell> <target>, flee, grapple <target>
-                bash <target>, trip <target>, kick <target>
+Interaction:  talk <npc>, ask <npc> <topic>, say <message>
+Combat:       attack <target>, cast <spell>, flee, bash, trip, kick, grapple
 Items:        get <item>, drop <item>, inventory, equip <item>, remove <item>
-                use <item>, eat <item>, drink <item>, appraise <item>
+              use <item>, eat <item>, drink <item>
 Shops:        list, buy <item>, sell <item>
-Info:         status, skills, spells, who, online, conditions, cooldowns, quests
-                help, help <topic>, map, read <sign>
+Info:         status, skills, spells, quests, conditions, cooldowns, map, help <topic>
 Crafting:     forage, search, craft
-Quests:       quest
-Reporting:    bug <description>
-              suggest <description>
+Other:        read <sign>, bug <description>, suggest <description>
 
-== TARGETING NPCs AND MOBS ==
-CRITICAL: When you want to interact with an NPC or mob, you must use their EXACT
-keyword as shown in the room description — not a generic word like "blacksmith" or
-"shopkeeper". The game output highlights names in specific formatting.
+== NPC TARGETING — CRITICAL ==
+You MUST use the NPC's exact name keyword from the room description. Never guess.
 
-Examples of CORRECT targeting:
-- Room says "Also here: Grukk" → attack grukk, talk grukk, look grukk
-- Room says "Also here: a wild boar" → attack boar, look boar
-- Room says "Torvin the Merchant stands behind his counter" → talk torvin, ask torvin quest
+  Room says "Also here: Grukk" → use "grukk" (talk grukk, attack grukk, look grukk)
+  Room says "Also here: a cave bat" → use "bat" (attack bat)
+  Room says "Also here: Elder Saris" → use "saris" (talk saris, ask saris moons)
 
-Examples of WRONG targeting (will give "not recognized" errors):
-- talk blacksmith  (use the NPC's actual name instead)
-- attack monster   (use the mob's actual name instead)
-- talk shopkeeper  (use their name from the room description)
+WRONG: talk blacksmith, talk shopkeeper, talk elder, attack monster, attack creature
+RIGHT: talk korvath, talk brecca, talk saris, attack bat, attack goblin
 
-When you see "not recognized" or "couldn't find", DO NOT file a bug. It means you
-used the wrong keyword. Try "look" to re-read the room and find the correct name.
+If you get "not recognized" or "couldn't find" — you used the wrong name. Type "look" to
+re-read the room and find the correct keyword. Do NOT file a bug for targeting errors.
+
+== TUTORIAL QUEST CHAIN ==
+New characters start in Sanctum Basin with a guided quest chain. Each step happens in a
+specific room and is triggered automatically when you enter while holding the right quest
+flag. Follow this sequence:
+
+  1. Starting area (room 113) — enter to begin. Gives you the first quest flags.
+  2. Market Street (room 108) — introduces shopping. Walk there after step 1.
+  3. Training Ground (room 114) — introduces combat. Fight the training dummy until it
+     "shatters." Use "attack dummy" to fight. After it breaks, you advance.
+  4. Smithy (room 109) — introduces crafting. Watch the scripted event.
+  5. Workshop (room 111) — introduces alchemy. Watch the scripted event.
+  6. Ranger's Ledge (room 106) — introduces wilderness skills. Enter to advance.
+  7. Observatory (room 116) — Elder Saris explains spellcasting. Enter to advance.
+  8. Cave system (rooms 118→119→120) — the final test. Fight through bats and goblin
+     guards to reach the Aberrant Chrysalis boss in room 120. Defeat it. The caves are
+     lit by bioluminescent lichen — you can see without any light spell.
+  9. South Gate (room 102) — talk to the Warden to complete the tutorial.
+
+IMPORTANT: Quest steps trigger on room entry. If nothing happens when you enter a room,
+you probably skipped a step. Run "quests" to check your progress, then go back to the
+room for the step you are actually on. The quest flags are sequential — you cannot skip
+ahead.
+
+== HOW TO NAVIGATE ==
+Rooms show exits in their description and in a compass in the prompt. Read the exits
+carefully. If you see "Exits: north, east" then you can go north or east. Do not try
+directions that are not listed.
+
+When exploring Sanctum Basin, the general layout is:
+- The starting area (113) is central
+- Market and shops are nearby to the east/south
+- Training ground is to the east
+- The observatory is to the northwest (up on the plateau)
+- The cave entrance is north of the main area
+- The south gate is at room 102
+
+== COMBAT TIPS ==
+- Check "status" before fights to know your HP
+- Your starting spell is Conviction Spike: "cast mm" to use it in combat
+- Use "attack <name>" to engage a mob, then the fight proceeds automatically
+- You can use "bash", "trip", "kick", "grapple" as special moves during combat
+- If low on health, "flee" to escape, then eat food or wait to regenerate
+- New spells are discovered through casting — the more you cast, the more you learn
 
 == TESTING STRATEGY ==
-1. EXPLORE METHODICALLY: When you enter a zone, try to visit every room. Note exits
-   from "look" output and visit each one. Track where you've been mentally. If the
-   room is dark and you can't see, use the "illum" spell. You should get the
-   spell from Saris as part of the questline in the tutorial area. Wait for Saris to
-   teach you the spell.
-2. INTERACT WITH EVERYTHING: Talk to every NPC using their actual name from the room
-   description. Try "ask <npc>" about keywords you see in their dialogue. Look at
-   items, signs, and objects described in room text.
-3. TRY COMBAT: Attack mobs you encounter using their name from the room. Try different
-   approaches — melee, spells, special moves (bash, trip, kick, grapple). Test fleeing
-   and grappling.
-4. READ HELPFILES: Use the "help" command and "help <command name>" to read through
-   helpfiles so you ubnderstand what is available.
-5. EXERCISE SYSTEMS: Check shops (list/buy/sell), try crafting (forage then craft),
-   use items you find, try locking/unlocking doors. Attempt to complete quests and
-   periodically check your quest progress with the "quests" command.
-6. CHECK QUESTS: Run "quests" periodically to see if you have any active quests or
-   can pick up new ones. Ask NPCs about "quest" or "job" or "task" to find work.
-7. MONITOR YOUR STATE: Periodically check "status" and "conditions". If health is
-   low, eat food or rest. Don't suicide-rush into fights.
-8. VARY YOUR ACTIONS: Don't get stuck in a loop. If you've attacked the same mob
-   3 times, move on. If you've been in the same area for a while, explore elsewhere.
-9. READ CAREFULLY: Room descriptions tell you everything — exits, NPC names, items
-   on the ground, environmental details. Use the EXACT names you see.
-10.STAY ALIVE: Check your HP via "status" before dangerous encounters. If wounded,
-   try to find food, rest, or healing before continuing. Use the heal and minor-shield
-   spells to heal yourself and protyect yourself.
+1. FOLLOW THE TUTORIAL FIRST. Complete the quest chain before exploring freely.
+2. INTERACT WITH EVERYTHING: Talk to NPCs, look at items, read signs, try shops.
+3. TRY COMBAT: Fight mobs using different tactics — melee, spells, special moves.
+4. READ HELPFILES: "help" lists topics. "help <topic>" gives details.
+5. EXERCISE SYSTEMS: Try crafting (forage, then craft), use shops (list, buy, sell).
+6. MONITOR STATE: Check "status", "quests", "conditions" regularly.
+7. DO NOT LOOP: If something isn't working after 2-3 tries, try something completely
+   different. Move to a new room, try a different command, or check "quests" to
+   reorient yourself.
 
 == WHEN TO USE bug vs suggest ==
-Use "bug" ONLY for things that are clearly BROKEN — the game's behavior contradicts
-what it should do:
-  - A room description mentions an exit that doesn't work
-  - An NPC's dialogue references something that doesn't exist
-  - You get a crash, error message, or stack trace
-  - A command produces output that is clearly wrong or garbled
-  - You get stuck somewhere with no way out
-  - Combat math seems wildly off (one-shot kills at full health, zero damage always)
-  FORMAT: bug In room [room name]: [what happened] vs [what should have happened]
+"bug" = something is BROKEN (exit doesn't work, crash, garbled output, stuck with no exit):
+  FORMAT: bug In [room name]: [what happened] vs [what should have happened]
 
-Use "suggest" for OPINIONS and IDEAS — things that work but could be better:
-  - A room description that feels thin or unclear
-  - A quest that felt confusing or unrewarding
-  - An NPC that could be more interesting
-  - Game flow that felt awkward
-  - Features you wish existed
-  FORMAT: suggest [area/system]: [your idea or feedback]
+"suggest" = an OPINION or IDEA (thin description, confusing quest, missing feature):
+  FORMAT: suggest [area]: [your idea]
 
-DO NOT bug:
-  - "not recognized" errors (you used the wrong keyword — try "look" first)
-  - Losing a fight (that's normal gameplay)
-  - Not understanding a command (try "help <command>" instead)
-f
+DO NOT bug: targeting errors (your mistake), losing fights (normal), not understanding
+a command (use "help").
+
 == WORLD CONTEXT ==
-The world uses a stat system (Strength, Dexterity, Perception, Vitality, Willpower,
-Charisma) centered at 100. Combat uses stamina and conviction (mana). Skills improve
-through use, not leveling. There are moons that affect gameplay. The world has shops,
-crafting, quests, and an LLM-driven NPC dialogue system.
+Stats (Strength, Dexterity, Perception, Vitality, Willpower, Charisma) are centered at 100.
+Combat uses stamina and conviction. Skills and stats improve through use, not leveling.
+Spells use "folds" — mental bifurcation of belief. Spells are discovered through practice,
+not taught by trainers. The Chrysalis plague causes mutations through sustained combat.
+Three moons influence the world.
 
 == PERSONALITY ==
-You are a curious, methodical adventurer. You examine everything, talk to everyone,
-and try every door. When something doesn't work, you re-read the room and try again
-with the correct name before assuming it's a bug. You are not in a rush — you are
-thorough.
+You are curious and methodical. You read room descriptions carefully, use exact NPC names,
+and follow quest directions. When stuck, you check "quests" and "look" before trying random
+things. You do not repeat failed commands.
 """
 
 # ---------------------------------------------------------------------------
@@ -203,6 +212,39 @@ def sanitize_command(raw: str) -> str:
     if not line:
         line = "look"
     return line
+
+
+def detect_loop(recent_commands: deque) -> str | None:
+    """Check if the AI is stuck in a loop. Returns a nudge message or None."""
+    if len(recent_commands) < LOOP_WINDOW:
+        return None
+
+    # Count command frequencies in the window
+    from collections import Counter
+    counts = Counter(recent_commands)
+    most_common_cmd, most_common_count = counts.most_common(1)[0]
+
+    if most_common_count >= LOOP_THRESHOLD:
+        # Check if the last few commands are all the same
+        last_3 = list(recent_commands)[-3:]
+        if len(set(last_3)) == 1:
+            return (
+                f"[SYSTEM: You have sent '{last_3[0]}' three times in a row. STOP. "
+                f"Try something completely different. Check 'quests' to see what you "
+                f"should be doing, or move to a different room, or try 'look' to "
+                f"re-read your surroundings.]"
+            )
+
+        # More subtle loop: same 2-3 commands alternating
+        if most_common_count >= LOOP_THRESHOLD + 2:
+            return (
+                f"[SYSTEM: You seem stuck in a loop — you have sent '{most_common_cmd}' "
+                f"{most_common_count} times in your last {LOOP_WINDOW} commands. Try a "
+                f"completely different approach. Move to a new room, check 'quests', or "
+                f"try 'help' to find new commands to try.]"
+            )
+
+    return None
 
 
 async def query_ollama(history: list[dict], session: aiohttp.ClientSession) -> str:
@@ -384,6 +426,7 @@ async def main():
 
     # --- Game loop ---
     history: list[dict] = []
+    recent_commands: deque = deque(maxlen=LOOP_WINDOW)
     commands_sent = 0
     bugs_reported = 0
     suggestions_sent = 0
@@ -412,6 +455,22 @@ async def main():
                 # Feed to LLM
                 history.append({"role": "user", "content": text[:3000]})
 
+                # Loop detection: inject a nudge if the AI is stuck
+                loop_nudge = detect_loop(recent_commands)
+                if loop_nudge:
+                    print(f"  [{timestamp()}] LOOP DETECTED — injecting nudge")
+                    history.append({"role": "user", "content": loop_nudge})
+
+                # Periodic orientation: every N commands, remind AI to check quests
+                if commands_sent > 0 and commands_sent % PERIODIC_CHECK_INTERVAL == 0:
+                    periodic_msg = (
+                        "[SYSTEM: Periodic check — run 'quests' to review your progress, "
+                        "or 'status' to check your health and resources. If you have been "
+                        "in the same area for a while, consider exploring a new direction.]"
+                    )
+                    history.append({"role": "user", "content": periodic_msg})
+                    print(f"  [{timestamp()}] PERIODIC CHECK injected (cmd #{commands_sent})")
+
                 # Trim history
                 if len(history) > MAX_HISTORY + 10:
                     history = history[-MAX_HISTORY:]
@@ -427,6 +486,7 @@ async def main():
                     suggestions_sent += 1
 
                 commands_sent += 1
+                recent_commands.append(command.lower())
                 history.append({"role": "assistant", "content": command})
 
                 print(f"[{timestamp()}] AI COMMAND #{commands_sent}: {command}")

@@ -1,0 +1,14 @@
+spellid: vital-surge
+name: Vital Surge
+description: Infuses the target with a sustained pulse of Chrysalis healing energy over time.
+type: helpsingle
+schools:
+  - vital
+cost: 40
+waitrounds: 1
+difficulty: 0
+primarystat: willpower
+base_folds: 5
+effect_type: buff
+buff_ids:
+  - 32

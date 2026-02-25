@@ -1,7 +1,7 @@
 # Learned from Elara, the Frostfang Librarian (ROOM 48)
 spellid: illum
-name: Illuminate
-description: Grants a light aura
+name: Chrysalis Glow
+description: Coaxes Chrysalis spores in the air to luminesce, casting a soft light around the target.
 type: helpsingle
 schools:
   - mental

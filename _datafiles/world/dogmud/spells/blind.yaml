@@ -1,6 +1,6 @@
 spellid: blind
-name: Blind
-description: Blinds a target, hindering their perception.
+name: Sensory Veil
+description: Wraps the target's senses in a Chrysalis shroud, clouding their perception.
 type: harmsingle
 schools:
   - mental

@@ -170,6 +170,25 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 					user.Character.TrackSpellCast(cs.SpellId)
 					user.Character.OnSkillUse(string(skills.Spellcasting), userId)
 					user.Character.OnStatUse("willpower", userId)
+
+					// Phase 25.1: Spell discovery — chance to learn a new spell after successful cast
+					castSkillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
+					knownCount := len(user.Character.SpellBook)
+					discoveryChance := 5.0 / (1.0 + float64(knownCount)*0.1)
+					if util.Rand(100) < int(discoveryChance) {
+						eligible := spells.GetEligibleSpells(user.Character.SpellBook, castSkillLevel)
+						if len(eligible) > 0 {
+							pick := eligible[util.Rand(len(eligible))]
+							if user.Character.LearnSpell(pick) {
+								if newSpell := spells.GetSpell(pick); newSpell != nil {
+									user.SendText(fmt.Sprintf(
+										`<ansi fg="magenta-bold">A new pattern crystallizes in your mind: <ansi fg="cyan-bold">%s</ansi></ansi>`,
+										newSpell.Name))
+								}
+							}
+						}
+					}
+
 					user.Character.CastingState = nil
 					break
 				}
@@ -640,6 +659,16 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 			restore := applyMoonMods(user.Character, moonMod)
 			roundResult = combat.AttackPlayerVsMob(user, defMob)
 			restore()
+
+			// Phase 25.3: Conviction Surge buff — +15% physical damage
+			if roundResult.Hit && roundResult.DamageToTarget > 0 && user.Character.HasBuffFlag(buffs.DamageBonus) {
+				bonusDmg := int(math.Round(float64(roundResult.DamageToTarget) * 0.15))
+				if bonusDmg < 1 {
+					bonusDmg = 1
+				}
+				defMob.Character.Health -= bonusDmg
+				roundResult.DamageToTarget += bonusDmg
+			}
 
 			// Stage 12.2: Adrenaline Surge — level-scaled bonus damage when HP < 25%
 			if roundResult.Hit && roundResult.DamageToTarget > 0 {

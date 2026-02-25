@@ -1,0 +1,12 @@
+spellid: cleansing-wave
+name: Cleansing Wave
+description: Sends a purifying wave of Chrysalis energy through the room, neutralizing poisons and afflictions in all allies.
+type: helparea
+schools:
+  - vital
+cost: 80
+waitrounds: 2
+difficulty: 0
+primarystat: willpower
+base_folds: 10
+effect_type: purge

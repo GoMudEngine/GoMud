@@ -1,0 +1,12 @@
+spellid: chrysalis-cocoon
+name: Chrysalis Cocoon
+description: Encases the target in a protective shell of living Chrysalis, forming a heavy barrier.
+type: helpsingle
+schools:
+  - enhancement
+cost: 60
+waitrounds: 1
+difficulty: 0
+primarystat: willpower
+base_folds: 8
+effect_type: shield

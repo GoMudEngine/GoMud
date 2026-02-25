@@ -1,18 +1,15 @@
+// Chrysalis Glow spell script — flavor only; buff applied by Go (Stage 11.4)
 
-// Called when the casting is initialized (cast command) — only used for mob casts.
-// Player cast initiation messages are handled by skill.cast.go.
 function onCast(sourceActor, targetActor) {
-    SendUserMessage(sourceActor.UserId(), 'You begin focusing a point of light into existence.');
-    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true)+' begins to concentrate, eyes half-closed.', sourceActor.UserId());
+    SendUserMessage(sourceActor.UserId(), 'You coax the Chrysalis spores around you to luminesce.');
+    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true)+' concentrates as faint motes of light gather.', sourceActor.UserId());
     return true;
 }
 
 function onWait(sourceActor, targetActor) {
-    SendUserMessage(sourceActor.UserId(), 'You hold the image steady, splitting it again...');
+    SendUserMessage(sourceActor.UserId(), 'You hold the image steady, coaxing more spores to glow...');
 }
 
-// onMagic: not called by the player-cast resolution system.
-// Buff application is handled by effect_type: buff / buff_ids in illum.yaml.
 function onMagic(sourceActor, targetActor) {
     return true;
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
@@ -57,7 +58,12 @@ func (c *Character) CheckSkillProgression(skillName string, userId int, bonusMul
 	virtualRank := c.GetSkillUseCount(skillName) / int(b.UsesPerRank)
 	// Phase 24.2: Apply mutation skill progression multiplier
 	mutSkillMult := 1.0 + mutations.GetSkillProgressionMultiplier(c.Mutations)
-	chance := CalculateProgressionChance(virtualRank, int(b.SkillSoftCap)) * bonusMultiplier * skills.GetProgressionMultiplier(skillName) * mutSkillMult
+	// Phase 25.3: Skill Attunement buff doubles skill progression chance
+	buffSkillMult := 1.0
+	if c.HasBuffFlag(buffs.SkillProgress) {
+		buffSkillMult = 2.0
+	}
+	chance := CalculateProgressionChance(virtualRank, int(b.SkillSoftCap)) * bonusMultiplier * skills.GetProgressionMultiplier(skillName) * mutSkillMult * buffSkillMult
 	if chance > 1.0 {
 		chance = 1.0
 	}

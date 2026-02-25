@@ -1,59 +1,14 @@
+// Mend All spell script — flavor only; effects resolved in Go (Stage 11.4)
 
-HEAL_DICE_QTY = 2;
-HEAL_DICE_SIDES = 3;
-
-// Called when the casting is initialized (cast command)
-// Return false if the casting should be ignored/aborted
 function onCast(sourceActor, targetActors) {
-
-    SendUserMessage(sourceActor.UserId(), 'You begin to chant softly.');
-    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true)+' begins to chant softly.', sourceActor.UserId());
+    SendUserMessage(sourceActor.UserId(), 'You radiate Chrysalis healing energy outward to all nearby allies.');
+    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true)+' spreads their arms as warm energy radiates outward.', sourceActor.UserId());
     return true;
 }
 
 function onWait(sourceActor, targetActors) {
-
-    SendUserMessage(sourceActor.UserId(), 'You continue chanting...');
-    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true)+' continues chanting...', sourceActor.UserId());
+    SendUserMessage(sourceActor.UserId(), 'You continue channeling healing energy...');
+    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true)+' continues radiating warm energy...', sourceActor.UserId());
 }
 
-// Called when the spell succeeds its cast attempt
-function onMagic(sourceActor, targetActors) {
-
-    roomId = sourceActor.GetRoomId();
-
-    sourceUserId = sourceActor.UserId();
-    sourceName = sourceActor.GetCharacterName(true);
-
-    for (var i = 0; i < targetActors.length; i++) {
-        healAmt = UtilDiceRoll(HEAL_DICE_QTY, HEAL_DICE_SIDES);
-
-        targetUserId = targetActors[i].UserId();
-        targetName = targetActors[i].GetCharacterName(true);
-
-        if ( sourceActor.UserId() != targetActors[i].UserId() ) {
-
-            // Tell the caster about the action
-            SendUserMessage(sourceUserId, 'You stop chanting and touch '+targetName+' with glowing hands, healing ' + ColorWrap(UtilGetHealDescription(healAmt, targetActors[i].GetHealthMax()), 'healing') + '.');
-
-            // Tell the room about the heal, except the source and target
-            SendRoomMessage(roomId, sourceName+' stops chanting and touches '+targetName+' with glowing hands, providing health.', sourceUserId, targetUserId);
-
-            // Tell the target about the heal
-            SendUserMessage(targetUserId, sourceName+' stops chanting and touches you with glowing hands, healing ' + ColorWrap(UtilGetHealDescription(healAmt, targetActors[i].GetHealthMax()), 'healing') + '.');
-
-        } else {
-
-            // Tell the caster they did it to themselves
-            SendUserMessage(sourceUserId, 'You stop chanting and embrace yourself with glowing hands, healing ' + ColorWrap(UtilGetHealDescription(healAmt, targetActors[i].GetHealthMax()), 'healing') + '.');
-
-            // Tell the room about the heal, except the source and target
-            SendRoomMessage(roomId, sourceName+' stops chanting and embraces themselves with glowing hands, providing health.', sourceUserId, targetUserId);
-
-        }
-
-        // Apply the heal to the target
-        targetActors[i].AddHealth(healAmt);
-    }
-    
-}
+function onMagic(sourceActor, targetActors) {}

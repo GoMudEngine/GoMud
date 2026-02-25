@@ -1,53 +1,31 @@
+// Purge Affliction spell script — flavor only; effects resolved in Go (Stage 11.4)
 
-// Called when the casting is initialized (cast command)
-// Return false if the casting should be ignored/aborted
 function onCast(sourceActor, targetActor) {
-
-    SendUserMessage(sourceActor.UserId(), 'You begin to meditate deeply, recalling images of nature.');
-    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true)+' enters a meditative trance.', sourceActor.UserId());
+    SendUserMessage(sourceActor.UserId(), 'You focus Chrysalis energy inward, seeking out foreign agents.');
+    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true)+' enters a meditative focus, Chrysalis energy pulsing softly.', sourceActor.UserId());
     return true;
 }
 
 function onWait(sourceActor, targetActor) {
-
-    SendUserMessage(sourceActor.UserId(), 'You feel at one with the plants around you...');
-    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true)+' sways slightly...', sourceActor.UserId());
+    SendUserMessage(sourceActor.UserId(), 'You feel the Chrysalis isolating the toxins...');
+    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true)+' sways slightly as energy pulses through them...', sourceActor.UserId());
 }
 
-// Called when the spell succeeds its cast attempt
 function onMagic(sourceActor, targetActor) {
-
     roomId = sourceActor.GetRoomId();
-
     sourceUserId = sourceActor.UserId();
     sourceName = sourceActor.GetCharacterName(true);
-
     targetUserId = targetActor.UserId();
     targetName = targetActor.GetCharacterName(true);
 
-
     if ( sourceActor.UserId() != targetActor.UserId() ) {
-
-        // Tell the caster about the action
-        SendUserMessage(sourceUserId, 'You direct a curative energy towards '+targetName+'.');
-
-        // Tell the room about the heal, except the source and target
-        SendRoomMessage(roomId, sourceName+' directs a curative energy towards '+targetName+'.', sourceUserId, targetUserId);
-
-        // Tell the target about the heal
-        SendUserMessage(targetUserId, sourceName+' directs a curative energy towards you.');
-
+        SendUserMessage(sourceUserId, 'You direct purging energy towards '+targetName+'.');
+        SendRoomMessage(roomId, sourceName+' directs purging energy towards '+targetName+'.', sourceUserId, targetUserId);
+        SendUserMessage(targetUserId, sourceName+' purges the afflictions from your body.');
     } else {
-
-        // Tell the cast they did it to themselves
-        SendUserMessage(sourceUserId, 'You bathe in curative energy.');
-
-        // Tell the room about the heal, except the source and target
-        SendRoomMessage(roomId, sourceName+' bathes in curative energy.', sourceUserId);
-
+        SendUserMessage(sourceUserId, 'You purge the afflictions from your body.');
+        SendRoomMessage(roomId, sourceName+' purges their afflictions.', sourceUserId);
     }
 
-    // Apply the heal to the target
     targetActor.CancelBuffWithFlag("poison");
-    
 }

@@ -1,0 +1,9 @@
+buffid: 28
+name: Chrysalis Haste
+description: Chrysalis energy accelerates your movements and reflexes.
+triggerrate: 1 round
+triggercount: 10
+flags:
+  - haste
+statmods:
+  dexterity: 10

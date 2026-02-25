@@ -3,8 +3,8 @@
 ## Purpose
 
 Implements the Chrysalis mutation system introduced in **Stage 12.1** and
-expanded in **Phase 24** with multi-effect mutations, conflicts, and load-based
-acquisition.
+expanded in **Phase 24** with multi-effect mutations, conflicts, load-based
+acquisition, active abilities, and quad-wielding support.
 
 Mutations are the primary character-differentiation mechanic in DOGMud.
 The Chrysalis (a world-spanning plague) reshapes characters who survive sustained
@@ -28,6 +28,7 @@ Each mutation is a `MutationSpec` loaded from a YAML file.  Fields:
 - `pro` / `con` — legacy single `MutationEffect{Type, Target, Value}` (migrated into lists)
 - `pros` / `cons` — lists of `MutationEffect` (Phase 24+, supports multiple effects)
 - `conflicts` — list of mutation IDs that cannot coexist with this mutation
+- `active_ability` — optional active combat ability (Phase 24.5, see below)
 
 ### Backward Compatibility
 Legacy `pro`/`con` single-effect fields are automatically migrated into the
@@ -55,6 +56,23 @@ Legacy `pro`/`con` single-effect fields are automatically migrated into the
 | `stat_progression_multiplier` | `character.CheckStatProgression()` | Scale stat gain chance |
 | `flag` | various | Grant a permanent flag (nightvision, lightsource, hidden, see-hidden) |
 | `health_regen_if_lit` | `hooks/UserRoundTick` | HP regen only in lit rooms |
+
+### Active Abilities (Phase 24.5)
+
+Mutations can grant active combat abilities via the `active_ability` field:
+- `command` — the combat command name (e.g., `"flashblind"`, `"toxicbite"`)
+- `description` — player-facing help text
+- `cooldown` — rounds before the ability can be used again
+- `effect` — what happens when activated (damage, debuff, heal, etc.)
+
+Active ability mutations: Blinding Flash, Toxic Bite, Sonic Shout, Healing Gel, Blinding Spit.
+These share the special-move cooldown slot.
+
+### Quad-Wielding (Phase 24.6)
+
+The `extra-arms` mutation enables wielding weapons in 3rd and 4th hand slots.
+Damage penalties apply (+20% for 3rd weapon, +40% for 4th). Disabled slots are
+enforced when the mutation is absent.
 
 ### Acquisition System
 
@@ -121,6 +139,22 @@ MutationProgress float64         `yaml:"mutationprogress,omitempty"` // combat p
 
 ---
 
+## All Mutations (37 total)
+
+### Passive Mutations (32)
+Fast Reflexes, Tough Skin, Dense Muscles, Clawed Hands, Keen Eyes,
+Iron Constitution, Hollow Bones, Adrenaline Surge, Magical Resistance,
+Pheromone Glands, Thick Hide, Heightened Senses, Rapid Metabolism,
+Cold-Blooded, Elongated Limbs, Psychic Resistance, Regenerative Tissue,
+Night Vision, Infrared Vision, Bioluminescence, Photosynthetic Skin,
+Sixth Sense, Tremorsense, Skilled, Talented, Hasted, Large, Small,
+Camo Skin, Pacifism Aura, Extra Arms, Extra Legs.
+
+### Active Ability Mutations (5)
+Blinding Flash, Toxic Bite, Sonic Shout, Healing Gel, Blinding Spit.
+
+---
+
 ## Adding a New Mutation
 
 1. Create `_datafiles/world/dogmud/mutations/<mutationid>.yaml`
@@ -150,8 +184,8 @@ No Go code changes are required for existing effect types.
 - **12.1** (complete) — framework, 10 mutations, all hooks
 - **12.2** (complete) — mutation level upgrades (L2/L3), visual integration in `look`
 - **24.1** (complete) — multi-effect schema, conflicts, load-based acquisition
-- **24.2** — 12 new passive mutations with new effect types
-- **24.3** — NPC/mob mutations
-- **24.4** — environmental/conditional mutations with flags
-- **24.5** — active ability mutations (combat commands)
-- **24.6** — extra limbs + quad wielding
+- **24.2** (complete) — 12 new passive mutations with new effect types
+- **24.3** (complete) — NPC/mob mutations
+- **24.4** (complete) — environmental/conditional mutations with flags
+- **24.5** (complete) — active ability mutations (combat commands)
+- **24.6** (complete) — extra limbs + quad wielding

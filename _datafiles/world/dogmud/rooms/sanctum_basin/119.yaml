@@ -7,6 +7,8 @@ description: The cave tunnel opens into a broader chamber here, its ceiling lost
   scavenged wood and stone, and they regard newcomers with hostile suspicion. There
   is no way forward or back except through the tunnel to the west.
 biome: cave
+mutators:
+- mutatorid: bioluminescent-caves
 exits:
   west:
     roomid: 118
