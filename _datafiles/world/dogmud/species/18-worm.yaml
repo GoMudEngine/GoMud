@@ -1,0 +1,32 @@
+speciesid: 18
+name: worm
+description: A massive, segmented tunneler that burrows through earth
+  and stone. Its gaping, ring-toothed maw devours soil,
+  rock, and anything unfortunate enough to stand in its
+  path.
+defaultalignment: -15
+size: large
+unarmedname: maw
+tnlscale: 1
+selectable: false
+tameable: true
+angrycommands:
+  - emote erupts from the ground, maw gaping wide.
+  - emote thrashes its massive body, sending tremors through the earth.
+stats:
+  strength:
+    base: 130
+  dexterity:
+    base: 30
+  perception:
+    base: 30
+  vitality:
+    base: 170
+  willpower:
+    base: 10
+  charisma:
+    base: 5
+damage:
+  basedamage: 8
+  variance: 3
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet']

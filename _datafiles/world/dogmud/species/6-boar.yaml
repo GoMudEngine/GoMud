@@ -1,0 +1,31 @@
+speciesid: 6
+name: boar
+description: A stocky, bristle-backed beast with curved tusks and a
+  foul temper. Boars charge without hesitation and shrug
+  off wounds that would fell lesser creatures.
+defaultalignment: -10
+size: medium
+unarmedname: tusks
+tnlscale: 1
+selectable: false
+tameable: true
+angrycommands:
+  - emote stamps the ground and snorts, lowering its tusks.
+  - emote lets out a shrill squeal of rage.
+stats:
+  strength:
+    base: 120
+  dexterity:
+    base: 70
+  perception:
+    base: 60
+  vitality:
+    base: 130
+  willpower:
+    base: 10
+  charisma:
+    base: 5
+damage:
+  basedamage: 6
+  variance: 3
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet']

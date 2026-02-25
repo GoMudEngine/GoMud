@@ -1,0 +1,31 @@
+speciesid: 8
+name: serpent
+description: A legless predator that strikes with blinding speed. Serpents
+  rely on stealth, patience, and venom to subdue prey far
+  larger than themselves.
+defaultalignment: -10
+size: small
+unarmedname: fangs
+tnlscale: 1
+selectable: false
+tameable: true
+angrycommands:
+  - emote coils tightly and hisses, hood flaring wide.
+  - emote flicks its forked tongue and draws back to strike.
+stats:
+  strength:
+    base: 40
+  dexterity:
+    base: 120
+  perception:
+    base: 110
+  vitality:
+    base: 50
+  willpower:
+    base: 10
+  charisma:
+    base: 5
+damage:
+  basedamage: 4
+  variance: 2
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet']

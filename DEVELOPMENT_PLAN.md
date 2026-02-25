@@ -4419,22 +4419,20 @@ in new Summons zone.
 
 ## Phase 26: NPC Species Variety
 
-### Stage 26.1: Animal & Creature Species
+### Stage 26.1: Non-Humanoid NPC Species ✅ COMPLETED
 
-**Goal**: Add NPC-only species for animals and creatures to populate the world with diverse
-wildlife. Currently only 6 species exist (human, ghostly spirit, rodent, dummy, bat, orb).
-These are NOT playable — they're for mob variety.
+**Goal**: Add NPC-only species for animals, plants, fungi, and other non-humanoid creatures
+to populate the world with diverse wildlife. No new humanoid species — anything humanoid
+(troll, goblin, etc.) is treated as a mutated human.
 
 **Changes**:
-1. **New animal species** (8–10):
-   - Wolf, Bear, Boar, Deer, Snake, Eagle/Hawk, Spider, Fish
-   - Each with appropriate stat modifiers (e.g., wolves: high Dexterity/Perception,
-     bears: high Strength/Vitality)
-   - Size categories affecting combat (small creatures are harder to hit, large ones hit harder)
-2. **Creature species** (3–5):
-   - Troll (regeneration trait), Goblin (pack tactics), Elemental (magic resistance),
-     Undead (poison immunity), Insectoid (natural armor)
-3. Each species needs a YAML file in `_datafiles/world/dogmud/species/`
+1. **14 new NPC-only species** added as YAML files in `_datafiles/world/dogmud/species/`:
+   - Canine (2), Bear (3), Boar (6), Deer (7), Serpent (8), Raptor (9), Feline (11)
+   - Insectoid (12), Fish (13), Carnivorous Plant (14), Fungal Colony (15)
+   - Slime (16), Arachnid (17), Worm (18)
+2. Each species has appropriate stat modifiers, size, unarmed attacks, and disabled equipment slots
+3. Animals are tameable; plants, fungi, and slimes are not
+4. All are `selectable: false` (NPC-only)
 
 ### Stage 26.2: Species Traits & Combat Integration
 
@@ -4666,7 +4664,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 23: Content — Tunnels + Road to Thornwall | 6 stages (23.1–23.6) | ~55 hours | 23.1–23.2 Complete |
 | Phase 24: Expanded Mutations | 6 stages (24.1–24.6) | 24 hours | **24.1–24.6 Complete** |
 | Phase 25: Expanded Spells | 4 stages (25.1–25.4) | 24 hours | **25.1–25.4 Complete** |
-| Phase 26: NPC Species Variety | 2 stages (26.1–26.2) | 12 hours | Not Started |
+| Phase 26: NPC Species Variety | 2 stages (26.1–26.2) | 12 hours | **26.1 Complete** |
 | Phase 27: Dialogue–Quest Integration | 2 stages (27.1–27.2) | 16 hours | Not Started |
 | Phase 28: LLM Tutorial Enhancement | 1 stage (28.1) | 8 hours | Not Started |
 | **Total** | **~77 stages** | **~533 hours** | |
@@ -4769,4 +4767,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-24
 **Status**: In Progress
-**Current Stage**: Phases 1–25 complete. Next: Phase 26 (NPC Species Variety).
+**Current Stage**: Phase 26.1 complete. Next: Phase 26.2 (Species Traits & Combat Integration).
