@@ -1,7 +1,6 @@
 speciesid: 21
 name: reptile
 description: A lizard creature.
-defaultalignment: 0
 size: medium
 unarmedname: teeth
 tnlscale: 1

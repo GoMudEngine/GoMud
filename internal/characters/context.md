@@ -40,7 +40,6 @@ The `internal/characters` package is the core character system for DOGMud, handl
 - **Item management**: Worn item tracking and validation
 
 ### Character States and Modifiers
-- **Alignment system** (`alignment.go`): Good/neutral/evil alignment with numeric values (-100 to +100)
 - **Aggro system** (`aggro.go`): Combat targeting and threat management
 - **Buffs integration**: Status effects that modify character capabilities
 - **Cooldowns** (`cooldowns.go`): Time-based ability restrictions

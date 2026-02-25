@@ -3,7 +3,6 @@ name: fish
 description: A streamlined aquatic creature that glides through water
   with effortless grace. Most fish flee from danger, but
   some larger specimens can deliver a surprising bite.
-defaultalignment: 0
 size: small
 unarmedname: fins
 tnlscale: 1

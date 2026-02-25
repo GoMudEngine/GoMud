@@ -1,7 +1,6 @@
 speciesid: 13
 name: tree
 description: A massive wooden lifeform.
-defaultalignment: 60
 size: large
 unarmedname: branches
 tnlscale: 1

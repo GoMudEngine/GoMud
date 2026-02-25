@@ -1,7 +1,6 @@
 speciesid: 10
 name: rodent
 description: A small furry creature with strong teeth.
-defaultalignment: -20
 size: small
 unarmedname: teeth and nails
 tnlscale: 1

@@ -506,13 +506,9 @@ func (f *FollowModule) followUserCommand(rest string, user *users.UserRecord, ro
 
 		targetMob := mobs.GetInstance(followCommandTarget.mobInstanceId)
 
-		if targetMob.HatesAlignment(user.Character.Alignment) {
-			user.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> won't let you follow them.`, targetMob.Character.Name))
-		} else {
-			f.startFollow(followCommandTarget, followCommandSource, followEndRound)
+		f.startFollow(followCommandTarget, followCommandSource, followEndRound)
 
-			user.SendText(fmt.Sprintf(`You start following <ansi fg="mobname">%s</ansi>.`, targetMob.Character.Name))
-		}
+		user.SendText(fmt.Sprintf(`You start following <ansi fg="mobname">%s</ansi>.`, targetMob.Character.Name))
 
 		return true, nil
 	}

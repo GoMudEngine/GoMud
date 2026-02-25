@@ -32,7 +32,6 @@ type Species struct {
 	SpeciesId        int              `yaml:"speciesid"`
 	Name             string
 	Description      string
-	DefaultAlignment int8
 	BuffIds          []int // Permabuffs this species always has
 	Size             Size
 	TNLScale         float32

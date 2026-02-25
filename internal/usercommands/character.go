@@ -455,7 +455,7 @@ func Character(rest string, user *users.UserRecord, room *rooms.Room, flags even
 
 func getAltTable(nameToAlt map[string]characters.Character, charmedChars map[string]characters.Character, viewingUserId int) string {
 
-	headers := []string{"Name", "Level", "Species", "Profession", "Alignment", "Status"}
+	headers := []string{"Name", "Level", "Species", "Profession", "Status"}
 	rows := [][]string{}
 
 	for _, char := range nameToAlt {
@@ -478,7 +478,6 @@ func getAltTable(nameToAlt map[string]characters.Character, charmedChars map[str
 			strconv.Itoa(char.Level),
 			raceName,
 			skills.GetProfession(allRanks),
-			fmt.Sprintf(`<ansi fg="%s">%s</ansi>`, char.AlignmentName(), char.AlignmentName()),
 			mobBusy,
 		})
 

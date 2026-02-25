@@ -559,18 +559,6 @@ func (a ScriptActor) GetBackpackItems() []ScriptItem {
 	return itms
 }
 
-func (a ScriptActor) GetAlignment() int {
-	return int(a.characterRecord.Alignment)
-}
-
-func (a ScriptActor) GetAlignmentName() string {
-	return a.characterRecord.AlignmentName()
-}
-
-func (a ScriptActor) ChangeAlignment(alignmentChange int) {
-	a.characterRecord.UpdateAlignment(alignmentChange)
-}
-
 func (a ScriptActor) HasSpell(spellId string) bool {
 	return a.characterRecord.HasSpell(spellId)
 }

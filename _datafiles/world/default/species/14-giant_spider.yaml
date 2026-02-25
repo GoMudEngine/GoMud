@@ -1,7 +1,6 @@
 speciesid: 14
 name: giant spider
 description: A massive arachnid.
-defaultalignment: -50
 size: large
 unarmedname: fangs
 angrycommands: [emote chitters and stares.]

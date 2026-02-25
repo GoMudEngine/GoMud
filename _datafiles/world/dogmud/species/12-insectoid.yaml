@@ -3,7 +3,6 @@ name: insectoid
 description: A chitinous creature with segmented limbs and compound
   eyes. Insectoids are armored by their exoskeletons and
   attack with powerful mandibles and stinging appendages.
-defaultalignment: -10
 naturalarmor: 10
 size: small
 unarmedname: mandibles
