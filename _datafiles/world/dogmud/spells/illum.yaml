@@ -1,7 +1,7 @@
 # Learned from Elara, the Frostfang Librarian (ROOM 48)
 spellid: illum
 name: Chrysalis Glow
-description: Coaxes Chrysalis spores in the air to luminesce, casting a soft light around the target.
+description: Coaxes Chrysalis spores to luminesce, casting a soft glow.
 type: helpsingle
 schools:
   - mental

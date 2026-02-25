@@ -1,6 +1,6 @@
 spellid: conviction-armor
 name: Conviction Armor
-description: Encases the target in solidified belief, greatly enhancing their physical resilience.
+description: Encases the target in solidified belief for protection.
 type: helpsingle
 schools:
   - enhancement

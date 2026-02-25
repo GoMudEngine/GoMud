@@ -1,7 +1,7 @@
 # Learned at the Sanctuary of the Benevolent Heart (ROOM 18)
 spellid: healall
 name: Mend All
-description: Radiates Chrysalis healing energy outward, mending the wounds of all nearby allies.
+description: Radiates healing energy, mending all nearby allies.
 type: helpmulti
 schools:
   - vital

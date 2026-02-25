@@ -1,6 +1,6 @@
 spellid: chrysalis-construct
 name: Chrysalis Construct
-description: Channels immense conviction through a Chrysalis Core, coalescing raw Chrysalis matter into a hulking combat golem bound to the caster's will. The construct persists until destroyed.
+description: Coalesces a Chrysalis Core into a permanent combat golem.
 type: helpsingle
 schools:
   - mental

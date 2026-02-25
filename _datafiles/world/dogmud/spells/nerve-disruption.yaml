@@ -1,6 +1,6 @@
 spellid: nerve-disruption
 name: Nerve Disruption
-description: Disrupts the target's nerve signals, weakening their dexterity and strength.
+description: Disrupts nerve signals, weakening dexterity and strength.
 type: harmsingle
 schools:
   - mental

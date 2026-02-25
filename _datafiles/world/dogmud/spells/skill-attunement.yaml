@@ -1,6 +1,6 @@
 spellid: skill-attunement
 name: Skill Attunement
-description: Opens the target's mind to accelerated learning, boosting skill progression.
+description: Opens the mind to accelerated learning and skill growth.
 type: helpsingle
 schools:
   - mental

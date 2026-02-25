@@ -64,6 +64,9 @@ Before creating any new data file, verify the expected filename from the loader'
 - Always confirm the `.js` stub filename matches the `.yaml` filename (same base, different extension)
 - Mismatch between filesystem path and `Filepath()` output causes a startup panic
 
+## MUD Line Width
+All player-visible text (descriptions, help files, templates, ANSI-formatted tables) must wrap at **80 characters per line**. MUD clients render in fixed-width columns — long lines get cut off or wrap uglily. When writing multi-line `description:` fields, room descriptions, or help templates, hard-wrap prose at ~78–80 chars.
+
 ## Player-Facing Messages — No Hard Numbers
 Never display raw numeric values (damage, healing, armor points, round counts, etc.) directly to the player in combat or spell messages. Use descriptive language instead:
 - **Damage**: use `combat.GetDamageDescription(amount, targetMaxHP)` → "light wounds", "serious wounds", etc.

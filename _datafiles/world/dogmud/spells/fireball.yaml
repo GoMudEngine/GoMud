@@ -1,6 +1,6 @@
 spellid: fireball
 name: Hemorrhagic Burst
-description: Ruptures blood vessels outward in a devastating area explosion of superheated viscera.
+description: Ruptures blood vessels outward in a devastating explosion.
 type: harmarea
 schools:
   - elemental

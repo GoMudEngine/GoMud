@@ -1,6 +1,6 @@
 spellid: conviction-surge
 name: Conviction Surge
-description: Infuses the target with a surge of conviction, bolstering their attack strength.
+description: Surge of conviction that bolsters the target's attack power.
 type: helpsingle
 schools:
   - enhancement

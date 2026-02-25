@@ -1,6 +1,6 @@
 spellid: kinetic-shove
 name: Kinetic Shove
-description: Slams the target with a wave of telekinetic force, knocking them to the ground.
+description: Telekinetic force slams the target to the ground.
 type: harmsingle
 schools:
   - elemental

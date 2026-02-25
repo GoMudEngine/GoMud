@@ -1,6 +1,6 @@
 spellid: chrysalis-haste
 name: Chrysalis Haste
-description: Infuses the target with Chrysalis energy, accelerating their movements and reflexes.
+description: Accelerates the target's movements and reflexes.
 type: helpsingle
 schools:
   - enhancement

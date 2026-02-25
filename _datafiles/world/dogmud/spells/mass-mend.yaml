@@ -1,6 +1,6 @@
 spellid: mass-mend
 name: Mass Mend
-description: Radiates powerful Chrysalis healing to all nearby allies and grants sustained regeneration.
+description: Heals all nearby allies and grants sustained regeneration.
 type: helparea
 schools:
   - vital
