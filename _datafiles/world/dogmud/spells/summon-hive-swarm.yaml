@@ -1,6 +1,6 @@
 spellid: summon-hive-swarm
 name: Summon Hive Swarm
-description: Shatters a Hive Fragment to release a swarm of tiny Chrysalis organisms, binding them to the caster's will as a roiling cloud of iridescent fury. The swarm persists until destroyed.
+description: Shatters a Hive Fragment into a permanent swarm servant.
 type: helpsingle
 schools:
   - mental

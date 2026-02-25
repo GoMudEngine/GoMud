@@ -1,6 +1,6 @@
 spellid: blood-boil
 name: Blood Boil
-description: Superheats the target's blood from within, causing internal hemorrhage over time.
+description: Superheats the target's blood, causing hemorrhage over time.
 type: harmsingle
 schools:
   - vital

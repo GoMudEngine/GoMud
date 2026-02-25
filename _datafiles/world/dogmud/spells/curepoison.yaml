@@ -1,7 +1,7 @@
 # Learned from book in Mystic Garden Essentials (ROOM 870)
 spellid: curepoison
 name: Purge Affliction
-description: Channels Chrysalis energy to neutralize foreign agents and toxins in the body.
+description: Neutralizes foreign agents and toxins in the target's body.
 type: helpsingle
 schools:
   - vital

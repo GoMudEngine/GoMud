@@ -1,6 +1,6 @@
 spellid: tame
 name: Empathic Bond
-description: Links minds through Chrysalis energy, imposing a rapport that calms the creature.
+description: Links minds through Chrysalis energy, calming the creature.
 type: harmsingle
 schools:
   - mental

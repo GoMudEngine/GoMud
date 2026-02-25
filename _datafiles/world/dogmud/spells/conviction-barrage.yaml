@@ -1,6 +1,6 @@
 spellid: conviction-barrage
 name: Conviction Barrage
-description: Unleashes a devastating barrage of crystallized belief shards across the entire room.
+description: Devastating barrage of crystallized belief shards hits all foes.
 type: harmarea
 schools:
   - elemental

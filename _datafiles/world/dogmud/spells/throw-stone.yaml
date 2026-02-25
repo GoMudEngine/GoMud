@@ -1,6 +1,6 @@
 spellid: throw-stone
 name: Kinetic Hurl
-description: Propels a stone with concentrated willpower, striking the target with devastating force.
+description: Propels a stone with concentrated willpower at the target.
 type: harmsingle
 schools:
   - elemental

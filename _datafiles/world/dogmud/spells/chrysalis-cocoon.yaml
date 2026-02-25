@@ -1,6 +1,6 @@
 spellid: chrysalis-cocoon
 name: Chrysalis Cocoon
-description: Encases the target in a protective shell of living Chrysalis, forming a heavy barrier.
+description: Encases the target in a protective Chrysalis shell.
 type: helpsingle
 schools:
   - enhancement

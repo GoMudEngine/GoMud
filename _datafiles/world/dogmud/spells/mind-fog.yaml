@@ -1,6 +1,6 @@
 spellid: mind-fog
 name: Mind Fog
-description: Wraps the target's consciousness in a psionic fog, dulling perception and willpower.
+description: Psionic fog dulls the target's perception and willpower.
 type: harmsingle
 schools:
   - mental

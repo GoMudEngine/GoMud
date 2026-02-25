@@ -1,6 +1,6 @@
 spellid: synaptic-overload
 name: Synaptic Overload
-description: Floods the target's nervous system with overwhelming psionic energy, dealing massive damage.
+description: Floods the target's nervous system with overwhelming force.
 type: harmsingle
 schools:
   - mental

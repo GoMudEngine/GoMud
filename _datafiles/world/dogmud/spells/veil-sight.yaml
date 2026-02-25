@@ -1,6 +1,6 @@
 spellid: veil-sight
 name: Veil Sight
-description: Opens the target's perception to the Veil, allowing them to see hidden creatures.
+description: Opens the target's perception to see hidden creatures.
 type: helpsingle
 schools:
   - mental

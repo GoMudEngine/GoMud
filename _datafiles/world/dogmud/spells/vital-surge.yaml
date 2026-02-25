@@ -1,6 +1,6 @@
 spellid: vital-surge
 name: Vital Surge
-description: Infuses the target with a sustained pulse of Chrysalis healing energy over time.
+description: Sustained pulse of Chrysalis healing energy over time.
 type: helpsingle
 schools:
   - vital

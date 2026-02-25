@@ -1,6 +1,6 @@
 spellid: sensory-overload
 name: Sensory Overload
-description: Overwhelms the target's senses with a psionic blast, blinding and slowing them.
+description: Overwhelms the target's senses, blinding and slowing them.
 type: harmsingle
 schools:
   - mental

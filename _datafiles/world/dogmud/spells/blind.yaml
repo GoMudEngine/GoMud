@@ -1,6 +1,6 @@
 spellid: blind
 name: Sensory Veil
-description: Wraps the target's senses in a Chrysalis shroud, clouding their perception.
+description: Chrysalis shroud clouds the target's perception.
 type: harmsingle
 schools:
   - mental

@@ -1,6 +1,6 @@
 spellid: fold-recall
 name: Fold Recall
-description: Folds the Veil to teleport back to your previously set Chrysalis anchor location.
+description: Folds the Veil to teleport to your Chrysalis anchor.
 type: helpsingle
 schools:
   - enhancement

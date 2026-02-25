@@ -1,6 +1,6 @@
 spellid: mend-wounds
 name: Mend Wounds
-description: Channels concentrated Chrysalis energy to rapidly mend the target's wounds.
+description: Concentrated Chrysalis energy rapidly mends the target.
 type: helpsingle
 schools:
   - vital

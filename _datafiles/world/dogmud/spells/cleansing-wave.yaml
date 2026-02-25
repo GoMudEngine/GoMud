@@ -1,6 +1,6 @@
 spellid: cleansing-wave
 name: Cleansing Wave
-description: Sends a purifying wave of Chrysalis energy through the room, neutralizing poisons and afflictions in all allies.
+description: Purifying wave that neutralizes poisons in all allies.
 type: helparea
 schools:
   - vital

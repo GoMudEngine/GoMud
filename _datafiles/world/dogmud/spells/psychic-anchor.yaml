@@ -1,6 +1,6 @@
 spellid: psychic-anchor
 name: Psychic Anchor
-description: Plants a psionic anchor in the target's mind, preventing them from moving or teleporting.
+description: Anchors the target's mind, preventing movement or teleport.
 type: harmsingle
 schools:
   - mental

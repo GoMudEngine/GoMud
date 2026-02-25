@@ -1,6 +1,6 @@
 spellid: stun
 name: Neural Stun
-description: Overloads the target's nervous system with a focused psionic pulse, stunning them.
+description: Overloads the target's nervous system, stunning them.
 type: harmsingle
 schools:
   - mental

@@ -1,6 +1,6 @@
 spellid: mind-spike
 name: Mind Spike
-description: Drives a psionic spike into the target's consciousness, dealing willpower-based damage.
+description: Drives a psionic spike into the target's consciousness.
 type: harmsingle
 schools:
   - mental

@@ -1,6 +1,6 @@
 spellid: chrysalis-regeneration
 name: Chrysalis Regeneration
-description: Wraps the target in deep Chrysalis energy that rapidly regenerates their body.
+description: Deep Chrysalis energy that rapidly regenerates the target.
 type: helpsingle
 schools:
   - vital

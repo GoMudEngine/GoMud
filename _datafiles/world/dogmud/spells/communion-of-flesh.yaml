@@ -1,6 +1,6 @@
 spellid: communion-of-flesh
 name: Communion of Flesh
-description: Radiates deep Chrysalis healing energy to mend the wounds of all nearby allies.
+description: Deep Chrysalis energy mends the wounds of all nearby allies.
 type: helparea
 schools:
   - vital

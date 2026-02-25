@@ -1,6 +1,6 @@
 spellid: veil-rend
 name: Veil Rend
-description: Tears open the Veil in a devastating area explosion, unleashing raw Chrysalis energy on all nearby.
+description: Tears open the Veil, unleashing raw energy on all nearby.
 type: harmarea
 schools:
   - elemental

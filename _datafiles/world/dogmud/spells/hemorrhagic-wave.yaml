@@ -1,6 +1,6 @@
 spellid: hemorrhagic-wave
 name: Hemorrhagic Wave
-description: Sends a wave of rupturing force through the room, bursting blood vessels in all nearby foes.
+description: Rupturing wave that bursts blood vessels in all nearby foes.
 type: harmarea
 schools:
   - vital
