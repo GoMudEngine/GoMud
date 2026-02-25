@@ -55,6 +55,8 @@ type Config struct {
 
 	LLM LLM `yaml:"LLM"`
 
+	Analytics Analytics `yaml:"Analytics"`
+
 	// End config subsections
 
 	seedInt int64 `yaml:"-"`
@@ -205,6 +207,7 @@ func (c *Config) Validate() {
 	c.Roles.Validate()
 	c.Balance.Validate()
 	c.LLM.Validate()
+	c.Analytics.Validate()
 
 	// nothing to do with LootGoblinIncludeRecentRooms
 

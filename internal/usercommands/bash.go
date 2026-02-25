@@ -12,6 +12,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 func Bash(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
@@ -172,6 +173,21 @@ func Bash(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			user.UserId, targetPlayerId,
 		)
 	}
+
+	// Stage 30.1: Record combat analytics
+	dmgRecorded := 0
+	if attackSuccess {
+		dmgRecorded = baseDamage
+	}
+	tgtType := combat.Mob
+	var tgtCharPtr *characters.Character
+	if targetMob != nil {
+		tgtCharPtr = &targetMob.Character
+	} else {
+		tgtType = combat.User
+		tgtCharPtr = targetChar.Character
+	}
+	combat.RecordSpecialMove(combat.User, tgtType, "bash", attackSuccess, dmgRecorded, user.Character, tgtCharPtr, util.GetRoundCount())
 
 	// Progress weapon combat skill
 	events.AddToQueue(events.SkillUsed{

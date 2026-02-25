@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 func Grapple(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
@@ -136,6 +137,17 @@ func Grapple(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			room.SendText(critResult.RoomMessage, targetPlayerId)
 		}
 	}
+
+	// Stage 30.1: Record combat analytics
+	grappleTgtType := combat.Mob
+	var grappleTgtChar *characters.Character
+	if targetMob != nil {
+		grappleTgtChar = &targetMob.Character
+	} else {
+		grappleTgtType = combat.User
+		grappleTgtChar = targetChar.Character
+	}
+	combat.RecordSpecialMove(combat.Mob, grappleTgtType, "grapple", result.Success, 0, &mob.Character, grappleTgtChar, util.GetRoundCount())
 
 	// Grapple costs the current combat round
 	if mob.Character.Aggro != nil {
