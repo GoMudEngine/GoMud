@@ -4741,6 +4741,501 @@ Critical bugs fixed outside of formal stage development:
 
 ---
 
+## Phase 29: Legacy System Removal
+
+Remove dead systems before building new features — smaller codebase, no risk of cleaning code that still references alignment or XP.
+
+### Stage 29.1: Remove Alignment System
+
+**Goal**: Strip the alignment system entirely — it adds no meaningful gameplay in a use-based progression world.
+
+**Changes**:
+1. Delete `internal/characters/alignment.go` and its test file
+2. Remove `Alignment` field from Character struct and YAML persistence
+3. Remove `AlignmentAggroThreshold` from mob aggro logic
+4. Remove alignment references from dialogue conditions, title
+   generation, and NPC reactions
+5. Clean `_datafiles/config.yaml` — remove any alignment-related
+   config keys
+6. Update all help files and documents that mention alignment
+   (help templates, player-facing text)
+7. Remove alignment display from `score`, `status`, or any other
+   informational commands
+
+**Testing**:
+- All existing tests pass (alignment tests deleted)
+- MUD starts without errors
+- Mob aggro still works via other triggers (hostile flag, etc.)
+- No player-visible references to alignment remain
+
+**Estimated Changes**: ~200–400 lines removed, 15–25 files
+
+---
+
+### Stage 29.2: Remove XP & Leveling Vestiges
+
+**Goal**: Finish what Phase 3 started — remove every remaining trace of
+the experience/leveling system.
+
+**Changes**:
+1. Remove `Experience` field from Character struct and persistence
+2. Delete disabled `LevelUp()` function and related helpers
+3. Remove `LivesOnLevelUp` and any other level-related config keys
+   from `_datafiles/config.yaml`
+4. Clean any remaining level-gated logic (mob scaling references,
+   encounter difficulty tied to level)
+5. Remove level/XP mentions from help files, templates, and all
+   player-facing documents
+6. Audit `_datafiles/` for any YAML fields referencing level or
+   experience on mobs, items, or quests — remove or migrate
+7. Update `DEVELOPMENT_PLAN.md` stage 3 notes to reflect full removal
+
+**Testing**:
+- All existing tests pass
+- No "level" or "experience" strings appear in player-facing output
+- Character creation, progression, and combat function normally
+- Grep confirms no active (non-comment) level/XP references in Go code
+
+**Estimated Changes**: ~200–400 lines removed, 15–25 files
+
+---
+
+## Phase 30: Combat Analytics & Balance Tools
+
+Instrumentation before content — having metrics in place means better
+balance feedback for everything that follows.
+
+### Stage 30.1: Combat Event Logging Framework
+
+**Goal**: Add structured combat event recording for balance analysis
+without impacting game performance.
+
+**Changes**:
+1. Create `internal/combat/analytics.go` — combat event recorder
+2. Record per-fight stats: hits, misses, crits, fumbles, damage dealt
+   (by type: unarmed/weapon/spell), dodge/parry/block counts
+3. Use a ring buffer or capped in-memory store (configurable max size,
+   e.g., last 10,000 events) to prevent unbounded growth
+4. Write aggregated summaries to a rotating log file on a timer
+   (e.g., every 5 minutes) — not per-event to avoid I/O overhead
+5. Add config keys in `_datafiles/config.yaml` under `Analytics`:
+   `Enabled`, `MaxEvents`, `FlushIntervalSec`, `LogPath`
+6. Hook into existing combat resolution code with minimal overhead
+   (single function call per combat action)
+
+**Testing**:
+- Unit test the ring buffer and aggregation logic
+- Benchmark the per-event recording to confirm negligible overhead
+- Manual test: fight mobs, verify events are captured and flushed
+- Verify log rotation works and files don't grow unbounded
+
+**Estimated Changes**: ~400–600 lines, 5–10 files
+
+---
+
+### Stage 30.2: Combat Stats Aggregation & Admin Commands
+
+**Goal**: Admin commands to query aggregated combat data for balance
+tuning.
+
+**Changes**:
+1. Add `combatstats` admin command — displays aggregated data:
+   win/loss rates, average damage by weapon type, spell effectiveness,
+   avoidance rates (dodge/parry/block percentages)
+2. Support filters: by mob name, zone, time window, weapon type
+3. Add `combatstats reset` to clear the buffer
+4. Add `combatstats export` to dump current data as JSON for offline
+   analysis
+5. Summary view: top-level dashboard (total fights, avg duration,
+   most common outcomes)
+
+**Testing**:
+- Unit test aggregation queries with synthetic data
+- Manual test: run fights, query stats, verify accuracy
+- Verify filters narrow results correctly
+
+**Estimated Changes**: ~300–500 lines, 3–5 files
+
+---
+
+### Stage 30.3: Web Dashboard for Combat Analytics
+
+**Goal**: Visual combat analytics on the admin web portal.
+
+**Changes**:
+1. Add `/admin/combat-stats/` route — admin-auth-gated
+2. Create HTML template with charts: hit rate distributions, damage
+   breakdown by type, avoidance pie charts, DPS over time
+3. Use a lightweight JS charting library (Chart.js or similar, served
+   locally from static assets)
+4. Add JSON API endpoint (`/admin/api/combat-stats`) that the
+   dashboard fetches from
+5. Auto-refresh on a configurable interval
+6. Read-only — no mutations from the dashboard
+
+**Testing**:
+- Manual test: fight mobs, load dashboard, verify charts populate
+- Verify admin auth gate works (non-admin gets 401)
+- Verify dashboard doesn't error with empty data
+
+**Estimated Changes**: ~400–600 lines, 5–8 files
+
+---
+
+## Phase 31: Crafting Expansion
+
+Currently only 2 skills (Blacksmithing, Alchemy) and 5 recipes — this
+phase makes crafting a real progression system.
+
+### Stage 31.1: Crafting Discovery System
+
+**Goal**: Players discover new recipes by practicing their craft, similar
+to spell discovery in Phase 25.
+
+**Changes**:
+1. Add `KnownRecipes` set to Character struct (map of recipe IDs)
+2. On successful craft, roll against skill level to potentially discover
+   a new recipe the player doesn't know yet (if their skill meets the
+   recipe's `skill_minimum`)
+3. Discovery chance scales inversely with skill gap — easier recipes
+   are discovered first
+4. Gate the `craft` command to only show/allow known recipes
+5. Give all players a few starter recipes per skill (skill_minimum 0)
+   as "known by default"
+6. Add `discover` or `experiment` command as an alternative discovery
+   path (craft without a specific recipe, chance to learn something)
+7. Add discovery messages: "You've figured out how to craft [item]!"
+
+**Testing**:
+- Unit test discovery probability formula
+- Manual test: craft repeatedly, verify new recipes are learned
+- Verify unknown recipes don't appear in craft list
+- Verify starter recipes are available immediately
+
+**Estimated Changes**: ~400–600 lines, 8–12 files
+
+---
+
+### Stage 31.2: New Crafting Skill — Tailoring
+
+**Goal**: Add Tailoring for cloth and leather goods.
+
+**Changes**:
+1. Register Tailoring as a new skill (skill definition, stat
+   association — likely Dexterity)
+2. Add crafting station type: `loom` or `workbench`
+3. Create 6–8 recipes: cloth armor (body, legs), leather armor (body,
+   legs), cloak, bag/pouch, bandages, rope
+4. Create ingredient items: cloth scraps, leather strips, thread,
+   needle (some from mob drops, some from foraging)
+5. Place crafting stations in appropriate rooms (Thornwall market,
+   tutorial area)
+
+**Testing**:
+- Verify Tailoring skill appears and progresses
+- Craft each recipe, verify output items are correct
+- Verify station requirement is enforced
+
+**Estimated Changes**: ~300–500 lines, 15–25 files (mostly YAML)
+
+---
+
+### Stage 31.3: New Crafting Skill — Cooking
+
+**Goal**: Add Cooking for consumable food with buff effects.
+
+**Changes**:
+1. Register Cooking as a new skill (stat association — likely
+   Perception)
+2. Add crafting station types: `campfire`, `kitchen`
+3. Create 6–8 recipes: trail rations, stew (stamina regen buff),
+   herbal tea (conviction regen buff), grilled meat (temp HP buff),
+   spiced wine (charisma buff), antidote broth, energy bread
+4. Create ingredient items: raw meat, vegetables, herbs, water flask,
+   spices (from foraging, mob drops, shops)
+5. Place stations: campfire in wilderness areas, kitchen in Thornwall
+
+**Testing**:
+- Verify Cooking skill appears and progresses
+- Craft each recipe, verify output items and buffs work
+- Verify food buffs apply correctly and expire
+
+**Estimated Changes**: ~300–500 lines, 15–25 files (mostly YAML)
+
+---
+
+### Stage 31.4: Expand Existing Recipes
+
+**Goal**: Flesh out Blacksmithing and Alchemy with a full progression
+curve from beginner to expert.
+
+**Changes**:
+1. Blacksmithing: add 6–8 recipes spanning the skill range:
+   - Low: iron short sword, wooden shield reinforcement
+   - Mid: steel longsword, chainmail vest, steel buckler
+   - High: masterwork blade, plate helm, reinforced plate
+2. Alchemy: add 6–8 recipes spanning the skill range:
+   - Low: minor antidote, smoke bomb
+   - Mid: poison coating, fire resistance draught, clarity tonic
+   - High: greater healing poultice, berserker elixir, invisibility
+     draught
+3. Create all required ingredient items and ensure they're obtainable
+   (mob drops, foraging, shops)
+4. Verify the discovery system from 31.1 works across the full recipe
+   set — players gradually unlock harder recipes as skill grows
+
+**Testing**:
+- Craft each new recipe at appropriate skill levels
+- Verify ingredient availability (at least one source per ingredient)
+- Verify discovery progression feels natural (easy recipes first)
+- Check item stats/buffs are balanced
+
+**Estimated Changes**: ~400–600 lines, 25–40 files (mostly YAML)
+
+---
+
+## Phase 32: Moon Phase Splash Screens
+
+### Stage 32.1: Moon Phase Transition Splash Art
+
+**Goal**: Add ASCII art splash screens for major moon phase changes,
+matching the existing sunrise/sunset splash system.
+
+**Changes**:
+1. Create ASCII art for major phases: new moon, waxing crescent,
+   first quarter, waxing gibbous, full moon, waning gibbous, last
+   quarter, waning crescent (or a subset of key transitions)
+2. Hook into the existing moon phase emoter system — when a phase
+   transition occurs, display the splash to all online players
+3. Store splash art in data files (same pattern as sunrise/sunset)
+4. Include brief thematic flavor text with each splash
+5. Respect player preferences if a "brief mode" exists
+
+**Testing**:
+- Manual test: wait for or force a moon phase transition, verify
+  splash displays
+- Verify splash text wraps within 80-char line width
+- Verify no duplicate splashes on rapid transitions
+
+**Estimated Changes**: ~150–300 lines, 5–10 files
+
+---
+
+## Phase 33: Web Portal & Branding
+
+### Stage 33.1: Game Branding — Logo & Art Assets
+
+**Goal**: Create a visual identity for DOGMud.
+
+**Changes**:
+1. Design thematic logo for DOGMud (dark fantasy aesthetic)
+2. Create favicon and browser thumbnail/og:image
+3. Create ASCII art title screen for the MUD client login splash
+4. Store all assets in `_datafiles/` or web static directory
+5. Update the login/MOTD screen to use the new ASCII title art
+
+**Testing**:
+- Verify logo displays on web pages
+- Verify favicon appears in browser tab
+- Verify ASCII title screen displays on telnet/client connect
+- Verify all art fits within 80-char width for terminal art
+
+**Estimated Changes**: ~100–200 lines, 5–10 files (mostly assets)
+
+---
+
+### Stage 33.2: Web Portal Visual Overhaul
+
+**Goal**: Restyle the portal to match DOGMud's identity.
+
+**Changes**:
+1. Design a dark fantasy color palette and CSS theme
+2. Restyle the public landing page — game description, how to connect,
+   logo, screenshots or ASCII art samples
+3. Restyle admin tool pages for consistency (item/mob/room browsers)
+4. Add responsive layout for mobile viewing
+5. Update HTML templates with new branding, navigation, footer
+
+**Testing**:
+- Manual test: browse all portal pages, verify styling is consistent
+- Test on mobile viewport sizes
+- Verify admin auth still works
+- Verify no broken links or missing assets
+
+**Estimated Changes**: ~400–600 lines, 10–15 files (HTML/CSS/assets)
+
+---
+
+## Phase 34: Codebase Quality Pass
+
+After all features are stable — refactor without risk of changing code
+that's still in flux.
+
+### Stage 34.1: Code Readability & Structure Audit
+
+**Goal**: Systematic pass on the worst offenders for readability.
+
+**Changes**:
+1. Identify the top 10 most complex files (longest functions, deepest
+   nesting, most confusing control flow)
+2. Refactor: extract functions, simplify conditionals, improve
+   variable naming, reduce nesting depth
+3. No behavior changes — pure structural improvement
+4. Add comments only where logic is genuinely non-obvious
+
+**Testing**:
+- All existing tests pass before and after each refactor
+- Manual smoke test after each file is refactored
+- Diff review to confirm no behavior changes
+
+**Estimated Changes**: ~500–800 lines changed, 10–15 files
+
+---
+
+### Stage 34.2: Dead Code & Dependency Cleanup
+
+**Goal**: Remove all unreachable code, unused imports, and orphaned data
+files.
+
+**Changes**:
+1. Run static analysis to find unused functions, variables, imports
+2. Remove orphaned data files (YAML/JS with no loader reference)
+3. Remove commented-out code blocks (if clearly obsolete)
+4. Clean up `go.mod` / `go.sum` — remove unused dependencies
+5. Verify nothing breaks after each removal pass
+
+**Testing**:
+- All tests pass
+- MUD starts and runs through a full gameplay loop
+- `go vet` and `go build` clean
+
+**Estimated Changes**: ~200–500 lines removed, 10–20 files
+
+---
+
+### Stage 34.3: Error Handling & Robustness Hardening
+
+**Goal**: Shore up error handling at system boundaries.
+
+**Changes**:
+1. Audit file I/O operations — ensure all reads/writes check errors
+   and fail gracefully (log + continue, not panic)
+2. Audit network operations — connection drops, malformed input,
+   timeout handling
+3. Improve panic recovery in goroutines (combat loop, NPC AI, web
+   server handlers)
+4. Add structured logging where error paths are silent today
+5. Ensure server can recover from any single-player error without
+   affecting other players
+
+**Testing**:
+- Unit tests for error paths (bad file, nil pointer, malformed input)
+- Manual test: kill client mid-combat, verify server stays stable
+- Manual test: corrupt a data file, verify server logs error and
+  continues
+
+**Estimated Changes**: ~300–500 lines, 15–25 files
+
+---
+
+## Phase 35: Test Coverage Pass
+
+Last phase — tests cover the final state of all features.
+
+### Stage 35.1: Unit Test Gaps Audit & Coverage Targets
+
+**Goal**: Map what's tested and what isn't, set targets.
+
+**Changes**:
+1. Run `go test -coverprofile` across all packages
+2. Generate coverage report — identify untested critical paths
+   (combat, crafting, spells, progression, mutations, moon phases)
+3. Prioritize by risk: code that handles player state, combat
+   outcomes, and persistence gets highest priority
+4. Document coverage targets per package (e.g., combat: 80%,
+   crafting: 75%, characters: 80%)
+5. Create a tracking checklist for stages 35.2–35.4
+
+**Testing**:
+- Coverage report generated and reviewed
+- Target checklist created
+
+**Estimated Changes**: ~50–100 lines (test config, docs)
+
+---
+
+### Stage 35.2: Core Systems Unit Tests
+
+**Goal**: Fill the biggest test gaps in high-risk code.
+
+**Changes**:
+1. Combat: test hit/miss/crit/fumble calculations, damage formulas,
+   avoidance (dodge/parry/block), grapple state transitions,
+   multi-combatant scenarios
+2. Crafting: test success/failure formula, discovery probability,
+   ingredient consumption, station requirements
+3. Spells: test fold mechanics, concentration, spell effects,
+   conviction costs, NPC caster AI decisions
+4. Progression: test stat advancement probability, skill soft cap,
+   use-counter thresholds
+5. Mutations: test point budget, conflicts, effect application
+
+**Testing**:
+- Each new test file passes independently
+- Coverage increases toward targets from 35.1
+- No flaky tests (deterministic seeds where randomness is involved)
+
+**Estimated Changes**: ~800–1200 lines, 10–15 test files
+
+---
+
+### Stage 35.3: Integration & Scenario Tests
+
+**Goal**: End-to-end tests covering full gameplay loops.
+
+**Changes**:
+1. Character lifecycle: creation → combat → crafting → spell learning
+   → death → recovery
+2. Zone transitions: move between zones, verify room loading,
+   instance saves, exits
+3. NPC interactions: dialogue trees, quest-gated options, shop
+   transactions
+4. Moon phase effects: verify fold pressure changes, splash screens,
+   gameplay modifiers
+5. Crafting loop: forage ingredients → craft item → use item →
+   discover new recipe
+
+**Testing**:
+- Each scenario runs as a single test function
+- Tests clean up after themselves (no persistent state changes)
+- All scenarios pass on a fresh server state
+
+**Estimated Changes**: ~600–1000 lines, 5–10 test files
+
+---
+
+### Stage 35.4: Regression Test Suite & CI Hardening
+
+**Goal**: Ensure all tests run reliably in CI and past bugs stay fixed.
+
+**Changes**:
+1. Add a regression test for each past bug fix (alignment removal,
+   fumble rate fix, stamina depletion, etc.)
+2. Create a "smoke test" that boots the server, connects a test
+   client, and runs basic commands (look, move, score, craft, cast)
+3. Ensure all tests run in CI pipeline (GitHub Actions or equivalent)
+4. Add test timeout enforcement — no test hangs indefinitely
+5. Add a CI step that fails if coverage drops below targets
+
+**Testing**:
+- Full test suite passes in CI
+- Smoke test passes on clean checkout
+- Coverage gate enforced
+
+**Estimated Changes**: ~400–600 lines, 5–10 files
+
+---
+
 ## Notes
 
 - Each stage is designed to be completable in 1-2 work sessions
