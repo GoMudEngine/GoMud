@@ -4656,7 +4656,8 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 28: LLM Tutorial Enhancement | 1 stage (28.1) | 8 hours | 28.1 Complete |
 | Phase 29: Regen & Cleanup | 6 stages (29.1–29.6) | 12 hours | **29.1–29.6 Complete** |
 | Phase 30: Combat Analytics | 3 stages (30.1–30.3) | 16 hours | **30.1–30.3 Complete** |
-| **Total** | **~86 stages** | **~561 hours** | |
+| Phase 31: Crafting Expansion | 6 stages (31.1–31.6) | 30 hours | Planned |
+| **Total** | **~92 stages** | **~591 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
 
@@ -4955,7 +4956,9 @@ tuning.
 ## Phase 31: Crafting Expansion
 
 Currently only 2 skills (Blacksmithing, Alchemy) and 5 recipes — this
-phase makes crafting a real progression system.
+phase makes crafting a real progression system with 4 new skills
+(Tailoring, Cooking, Jewelcrafting, Enchanting) and a recipe discovery
+mechanic.
 
 ### Stage 31.1: Crafting Discovery System
 
@@ -5061,6 +5064,75 @@ curve from beginner to expert.
 - Check item stats/buffs are balanced
 
 **Estimated Changes**: ~400–600 lines, 25–40 files (mostly YAML)
+
+---
+
+### Stage 31.5: New Crafting Skill — Jewelcrafting
+
+**Goal**: Add Jewelcrafting for rings, necklaces, and gem-set
+accessories. Primary stat: Dexterity. Combined with Enchanting under
+the "artificer" profession.
+
+**Changes**:
+1. Register Jewelcrafting as a new skill (`jewelcrafting`, primary
+   stat: Dexterity, progression multiplier: 2.0)
+2. Add "artificer" profession entry: {Jewelcrafting, Enchanting}
+3. Add crafting station type: `jeweler_bench`
+4. Create 6–8 recipes spanning the skill range:
+   - Low: copper ring, simple pendant, polished stone amulet
+   - Mid: silver ring, gem-set necklace, engraved bracelet
+   - High: gold signet ring, masterwork gem pendant, enchantable
+     setting (blank item for Enchanting input)
+5. Create ingredient items: raw gems, copper/silver/gold wire,
+   gem dust, setting blanks (from mining/foraging, mob drops, shops)
+6. Place crafting stations in appropriate rooms (Thornwall jeweler
+   shop or market stall)
+
+**Testing**:
+- Verify Jewelcrafting skill appears and progresses
+- Craft each recipe, verify output items have correct stat bonuses
+- Verify station requirement is enforced
+- Verify artificer profession shows in `skills` output
+
+**Estimated Changes**: ~300–500 lines, 15–25 files (mostly YAML)
+
+---
+
+### Stage 31.6: New Crafting Skill — Enchanting
+
+**Goal**: Add Enchanting for imbuing items with magical properties.
+Primary stat: Perception. Shares the "artificer" profession with
+Jewelcrafting.
+
+**Changes**:
+1. Register Enchanting as a new skill (`enchanting`, primary stat:
+   Perception, progression multiplier: 2.0)
+2. Add crafting station type: `enchanting_circle` or `arcane_table`
+3. Create 6–8 recipes spanning the skill range:
+   - Low: minor sharpening enchant (weapon damage +1), minor ward
+     (armor +1 damage reduction)
+   - Mid: flame touch (fire damage on weapon), resilience enchant
+     (HP regen buff on armor), glowing enchant (light source)
+   - High: lifesteal enchant (heal on hit), spell resistance enchant,
+     masterwork enhancement (boost existing item quality)
+4. Enchanting consumes the target item + reagents and produces an
+   enhanced version — recipes take an equipment piece as an
+   "ingredient" via a special `target_slot` field
+5. Create reagent items: arcane dust, elemental shards, binding
+   essence, runic ink (from spell component drops, alchemy byproducts,
+   mob drops)
+6. Place enchanting stations in magical areas (Arcane Academy,
+   Thornwall mage tower)
+
+**Testing**:
+- Verify Enchanting skill appears and progresses
+- Craft each enchantment, verify output items gain correct properties
+- Verify enchanted items retain their base stats plus new bonuses
+- Verify station requirement is enforced
+- Test interaction with Jewelcrafting (enchantable settings from 31.5)
+
+**Estimated Changes**: ~400–600 lines, 15–25 files (mostly YAML + Go
+for target_slot mechanic)
 
 ---
 
