@@ -174,7 +174,8 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 					// Phase 25.1: Spell discovery — chance to learn a new spell after successful cast
 					castSkillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
 					knownCount := len(user.Character.SpellBook)
-					discoveryChance := 5.0 / (1.0 + float64(knownCount)*0.1)
+					bal := configs.GetBalanceConfig()
+					discoveryChance := float64(bal.SpellDiscoveryBaseChance) / (1.0 + float64(knownCount)*float64(bal.SpellDiscoveryDecayRate))
 					if util.Rand(100) < int(discoveryChance) {
 						eligible := spells.GetEligibleSpells(user.Character.SpellBook, castSkillLevel)
 						if len(eligible) > 0 {

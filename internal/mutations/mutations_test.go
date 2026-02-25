@@ -14,7 +14,8 @@ func buildOwned(pairs ...any) map[string]int {
 }
 
 // seedRegistry seeds the in-memory registry for unit tests so we don't need
-// disk access.
+// disk access.  It calls Validate() on each spec to migrate legacy Pro/Con
+// fields into the Pros/Cons slices that sumEffects iterates.
 func seedRegistry() {
 	allMutations = map[string]*MutationSpec{
 		"fast-reflexes": {
@@ -59,6 +60,11 @@ func seedRegistry() {
 			Pro:        MutationEffect{Type: "stat_flat", Target: "charisma", Value: 20},
 			Con:        MutationEffect{Type: "aggro_magnet", Value: 2.0},
 		},
+	}
+
+	// Run Validate on each spec to migrate Pro/Con → Pros/Cons slices
+	for _, spec := range allMutations {
+		_ = spec.Validate()
 	}
 }
 

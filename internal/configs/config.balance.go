@@ -63,6 +63,17 @@ type Balance struct {
 	MutationLevel2Multiplier     ConfigFloat `yaml:"MutationLevel2Multiplier"`     // Effect scaling at level 2 (default 1.5)
 	MutationLevel3Multiplier     ConfigFloat `yaml:"MutationLevel3Multiplier"`     // Effect scaling at level 3 (default 2.0)
 
+	// ── SPELLCASTING ─────────────────────────────────────────────────────
+	SpellDiscoveryBaseChance        ConfigFloat `yaml:"SpellDiscoveryBaseChance"`        // Base % to discover a new spell per successful cast (default 5.0)
+	SpellDiscoveryDecayRate         ConfigFloat `yaml:"SpellDiscoveryDecayRate"`         // Decay per known spell: chance = base / (1 + known*this) (default 0.1)
+	SpellInitiationBase             ConfigInt   `yaml:"SpellInitiationBase"`             // Base % chance to initiate a spell (default 60)
+	SpellInitiationWillpowerDivisor ConfigInt   `yaml:"SpellInitiationWillpowerDivisor"` // Willpower / this = initiation bonus (default 4)
+	SpellInitiationSkillFactor      ConfigInt   `yaml:"SpellInitiationSkillFactor"`      // Spellcasting level * this = initiation bonus (default 5)
+	SpellConcentrationBase          ConfigInt   `yaml:"SpellConcentrationBase"`          // Base % concentration chance when struck (default 50)
+	SpellFoldsSkillFactor           ConfigInt   `yaml:"SpellFoldsSkillFactor"`           // Skill * this in folds-per-round calc (default 25)
+	SpellAttackSkillFactor          ConfigInt   `yaml:"SpellAttackSkillFactor"`          // Skill * this in spell attack mean (default 3)
+	SpellProficiencyCastsPerPoint   ConfigInt   `yaml:"SpellProficiencyCastsPerPoint"`   // Casts needed per 1 proficiency point (default 50)
+
 	// ── MOON PHASES ───────────────────────────────────────────────────────────
 	MoonStatModMax ConfigFloat `yaml:"MoonStatModMax"` // Max fractional stat modifier from moon phases, e.g. 0.05 = ±5% (default 0.05)
 }
@@ -212,6 +223,35 @@ func (b *Balance) Validate() {
 	}
 	if b.MutationLevel3Multiplier <= 0 {
 		b.MutationLevel3Multiplier = 2.0
+	}
+
+	// ── SPELLCASTING ─────────────────────────────────────────────────────
+	if b.SpellDiscoveryBaseChance <= 0 {
+		b.SpellDiscoveryBaseChance = 5.0
+	}
+	if b.SpellDiscoveryDecayRate <= 0 {
+		b.SpellDiscoveryDecayRate = 0.1
+	}
+	if b.SpellInitiationBase <= 0 {
+		b.SpellInitiationBase = 60
+	}
+	if b.SpellInitiationWillpowerDivisor < 1 {
+		b.SpellInitiationWillpowerDivisor = 4
+	}
+	if b.SpellInitiationSkillFactor < 1 {
+		b.SpellInitiationSkillFactor = 5
+	}
+	if b.SpellConcentrationBase <= 0 {
+		b.SpellConcentrationBase = 50
+	}
+	if b.SpellFoldsSkillFactor < 1 {
+		b.SpellFoldsSkillFactor = 25
+	}
+	if b.SpellAttackSkillFactor < 1 {
+		b.SpellAttackSkillFactor = 3
+	}
+	if b.SpellProficiencyCastsPerPoint < 1 {
+		b.SpellProficiencyCastsPerPoint = 50
 	}
 
 	// ── MOON PHASES ───────────────────────────────────────────────────────────

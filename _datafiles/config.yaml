@@ -463,6 +463,17 @@ Balance:
   MutationLevel2Multiplier: 1.5      # Effect scaling at mutation level 2
   MutationLevel3Multiplier: 2.0      # Effect scaling at mutation level 3
 
+  # ── SPELLCASTING ──────────────────────────────────────────────────────
+  SpellDiscoveryBaseChance: 5.0        # Base % to discover a new spell per successful cast
+  SpellDiscoveryDecayRate: 0.1         # Decay per known spell: chance = base / (1 + known*this)
+  SpellInitiationBase: 60              # Base % chance to initiate a spell
+  SpellInitiationWillpowerDivisor: 4   # Willpower / this = initiation bonus
+  SpellInitiationSkillFactor: 5        # Spellcasting level * this = initiation bonus
+  SpellConcentrationBase: 50           # Base % concentration chance when struck
+  SpellFoldsSkillFactor: 25            # Skill * this in folds-per-round calculation
+  SpellAttackSkillFactor: 3            # Skill * this in spell attack mean
+  SpellProficiencyCastsPerPoint: 50    # Casts needed per 1 proficiency point
+
   # ── MOON PHASES ─────────────────────────────────────────────────────────────
   MoonStatModMax: 0.05  # Max fractional stat modifier from moon phases (±5% at full/new moon)
 

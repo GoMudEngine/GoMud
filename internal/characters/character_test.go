@@ -140,56 +140,17 @@ func TestCharacter_GetMiscDataKeys(t *testing.T) {
 	}
 }
 func TestCharacter_CarryCapacity(t *testing.T) {
+	// CarryCapacity() = float64(strengthAdj) * 3.0
 	tests := []struct {
 		name        string
 		strengthAdj int
-		expectedCap int
+		expectedCap float64
 	}{
-		{
-			name:        "Strength 0",
-			strengthAdj: 0,
-			expectedCap: 5,
-		},
-		{
-			name:        "Strength 2",
-			strengthAdj: 2,
-			expectedCap: 5,
-		},
-		{
-			name:        "Strength 3",
-			strengthAdj: 3,
-			expectedCap: 6,
-		},
-		{
-			name:        "Strength 6",
-			strengthAdj: 6,
-			expectedCap: 7,
-		},
-		{
-			name:        "Strength 9",
-			strengthAdj: 9,
-			expectedCap: 8,
-		},
-		{
-			name:        "Strength 12",
-			strengthAdj: 12,
-			expectedCap: 9,
-		},
-		{
-			name:        "Strength 30",
-			strengthAdj: 30,
-			expectedCap: 15,
-		},
-		{
-			name:        "Strength 100",
-			strengthAdj: 100,
-			expectedCap: 38,
-		},
-		{
-			name:        "Negative Strength",
-			strengthAdj: -3,
-			expectedCap: 4,
-		},
+		{"Strength 0", 0, 0.0},
+		{"Strength 2", 2, 6.0},
+		{"Strength 10", 10, 30.0},
+		{"Strength 100", 100, 300.0},
+		{"Negative Strength", -3, -9.0},
 	}
 
 	for _, tt := range tests {
@@ -2177,74 +2138,41 @@ func TestCharacter_DeductStamina(t *testing.T) {
 }
 
 func TestCharacter_GetMovementStaminaCost(t *testing.T) {
+	// These tests use characters with no items (zero carried weight),
+	// so only terrain multiplier affects cost. Encumbrance tests require
+	// real item specs and are covered by integration tests.
 	tests := []struct {
 		name              string
 		terrainMultiplier float64
-		itemCount         int
-		capacity          int
 		expectedCost      int
 	}{
 		{
-			name:              "Normal terrain, not encumbered",
+			name:              "Normal terrain, no items",
 			terrainMultiplier: 1.0,
-			itemCount:         5,
-			capacity:          10,
-			expectedCost:      2,
+			expectedCost:      2, // baseCost 2.0 * 1.0 = 2
 		},
 		{
-			name:              "Easy terrain (road), not encumbered",
+			name:              "Easy terrain (road), no items",
 			terrainMultiplier: 0.5,
-			itemCount:         5,
-			capacity:          10,
-			expectedCost:      1,
+			expectedCost:      1, // baseCost 2.0 * 0.5 = 1
 		},
 		{
-			name:              "Rough terrain (mountains), not encumbered",
+			name:              "Rough terrain (mountains), no items",
 			terrainMultiplier: 2.0,
-			itemCount:         5,
-			capacity:          10,
-			expectedCost:      4,
+			expectedCost:      4, // baseCost 2.0 * 2.0 = 4
 		},
 		{
-			name:              "Normal terrain, heavily encumbered",
-			terrainMultiplier: 1.0,
-			itemCount:         20,
-			capacity:          10,
-			expectedCost:      10,
-		},
-		{
-			name:              "Rough terrain, heavily encumbered",
-			terrainMultiplier: 2.0,
-			itemCount:         20,
-			capacity:          10,
-			expectedCost:      20,
-		},
-		{
-			name:              "Very rough terrain, heavily encumbered - capped at 20",
-			terrainMultiplier: 2.5,
-			itemCount:         25,
-			capacity:          10,
-			expectedCost:      20,
-		},
-		{
-			name:              "Slightly encumbered",
-			terrainMultiplier: 1.0,
-			itemCount:         12,
-			capacity:          10,
-			expectedCost:      4, // 2 * 1.0 * 1.8 = 3.6 → ceil(3.6) = 4
+			name:              "Very rough terrain, no items",
+			terrainMultiplier: 3.0,
+			expectedCost:      6, // baseCost 2.0 * 3.0 = 6
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := New()
-			// Create dummy items to simulate encumbrance
-			for i := 0; i < tt.itemCount; i++ {
-				c.Items = append(c.Items, items.Item{ItemId: i + 1})
-			}
-			strengthNeeded := (tt.capacity - 5) * 3
-			c.Stats.Strength.Value = strengthNeeded
-			c.Stats.Strength.ValueAdj = strengthNeeded
+			c.Stats.Strength.Value = 100
+			c.Stats.Strength.ValueAdj = 100
 
 			cost := c.GetMovementStaminaCost(tt.terrainMultiplier)
 			assert.Equal(t, tt.expectedCost, cost, "Movement stamina cost")

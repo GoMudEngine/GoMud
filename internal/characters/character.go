@@ -309,7 +309,8 @@ func (c *Character) GetBaseCastSuccessChance(spellId string) int {
 		profFactor = 2.50 // .75 more than lvl 3
 	}
 	casts := c.SpellBook[spellId]
-	proficiency := int(math.Floor((float64(casts) / 50 * profFactor))) // after 50 casts proficiency is 1
+	castsPerPoint := float64(configs.GetBalanceConfig().SpellProficiencyCastsPerPoint)
+	proficiency := int(math.Floor((float64(casts) / castsPerPoint * profFactor)))
 	if proficiency < 0 {
 		proficiency = 0
 	} else if proficiency > 20 {
