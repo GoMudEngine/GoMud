@@ -288,16 +288,21 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 
 	case "heal":
 		skillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
-		regenPerTick := 50
+		// Magnitude from YAML is the regen multiplier (e.g. 3 = 3x base regen)
+		regenMult := float64(magnitude)
+		if regenMult < 1.0 {
+			regenMult = 1.0
+		}
 		if isCrit {
-			regenPerTick = 75
+			// Crit: boost the multiplier portion above 1x by 2x
+			regenMult = 1.0 + (regenMult-1.0)*2.0
 		}
 		ticks := skillLevel / 10
 		if ticks < 1 {
 			ticks = 1
 		}
 		durationRounds := ticks * 3 // TickConditions runs every combat round; AutoHeal fires every 3
-		target.Character.AddCondition(characters.ConditionRegen, durationRounds, float64(regenPerTick), "heal spell")
+		target.Character.AddCondition(characters.ConditionRegen, durationRounds, regenMult, "heal spell")
 		user.SendText(fmt.Sprintf(
 			`<ansi fg="green">You weave restorative magic around <ansi fg="username">%s</ansi>.%s</ansi>`,
 			target.Character.Name, critTag))
@@ -437,12 +442,16 @@ func applyMobSelfEffect(mob *mobs.Mob, room *rooms.Room, spellData *spells.Spell
 	switch spellData.EffectType {
 	case "heal":
 		skillLevel := mob.Character.GetSkillLevel(skills.Spellcasting)
+		regenMult := float64(magnitude)
+		if regenMult < 1.0 {
+			regenMult = 1.0
+		}
 		ticks := skillLevel / 10
 		if ticks < 1 {
 			ticks = 1
 		}
 		durationRounds := ticks * 3
-		mob.Character.AddCondition(characters.ConditionRegen, durationRounds, 50.0, "heal spell")
+		mob.Character.AddCondition(characters.ConditionRegen, durationRounds, regenMult, "heal spell")
 		room.SendText(fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi> channels restorative magic.`, mob.Character.Name))
 	case "shield":

@@ -11,4 +11,4 @@ difficulty: 0
 primarystat: willpower
 base_folds: 4
 effect_type: heal
-effect_magnitude: 25
+effect_magnitude: 3

@@ -54,6 +54,15 @@ Physical defense comes from exactly **3 sources** — never use Vitality as a pr
 
 Mental defense = `Willpower` stat only. Vitality governs hit points and physical endurance, not armor.
 
+## Regen System (Stage 29.5)
+All HP/SP/CP regeneration is **percentage-of-max** — never flat values.
+- Six config knobs in `Balance`: `PlayerHealthRegenPct`, `PlayerStaminaRegenPct`, `PlayerConvictionRegenPct`, `MobHealthRegenPct`, `MobStaminaRegenPct`, `MobConvictionRegenPct` (default 0.01 = 1% per tick)
+- `HealthPerRound()` / `StaminaPerRound()` / `ConvictionPerRound()` compute `floor(poolMax * pct)`, min 1
+- **Mutations** use multiplier effects (`health_regen_multiplier`, `health_regen_if_lit_multiplier`, `stamina_regen_multiplier`) — never flat `health_regen` effects
+- **Heal spells** store a regen multiplier in `effect_magnitude` (e.g. 3 = 3x base regen); applied via `ConditionRegen`
+- **Buff scripts** that heal should use `Math.floor(actor.GetHealthMax() * fraction)` — never flat dice for healing
+- NPCs regen health (out of combat), stamina (1/4 in combat), and conviction every tick
+
 ## Data File Naming Convention
 Before creating any new data file, verify the expected filename from the loader's `Filepath()` method:
 - **Zone folder names must use underscores, not hyphens.** The engine derives the expected path by calling `ConvertForFilename()` on the zone's display name (e.g., `"Sanctum Basin"` → folder `sanctum_basin/`). A mismatch causes a startup panic: `filesystem path "..." did not end in Filepath() "..."`. This applies to both `rooms/` and `mobs/` subdirectories.

@@ -2,6 +2,7 @@ package hooks
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
@@ -69,22 +70,48 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 
 		// Regeneration (only heal health if health > 0)
 		if user.Character.Health > 0 {
-			// Only heal health when NOT in combat
+
 			if !inCombat {
-				healthRegen := int(float64(user.Character.HealthPerRound()) * regenMultiplier)
-				user.Character.Heal(healthRegen)
-			}
+				// Out of combat: base %-regen, then mutation multipliers, then room multiplier
+				healthRegen := float64(user.Character.HealthPerRound())
 
-			// Phase 24.2: Passive mutation health regen (works in and out of combat)
-			if mutRegen := mutations.GetHealthRegen(user.Character.Mutations); mutRegen > 0 {
-				user.Character.Heal(int(float64(mutRegen) * regenMultiplier))
-			}
+				// Mutation health regen multiplier (e.g. Healing Gel, Regenerative Tissue)
+				if mult := mutations.GetHealthRegenMultiplier(user.Character.Mutations); mult != 0 {
+					healthRegen *= (1.0 + mult)
+				}
 
-			// Phase 24.4: Conditional health regen (e.g., photosynthetic skin in lit rooms)
-			if userRoom := rooms.LoadRoom(user.Character.RoomId); userRoom != nil {
-				biome := userRoom.GetBiome()
-				if condRegen := mutations.GetConditionalHealthRegen(user.Character.Mutations, biome.IsLit()); condRegen > 0 {
-					user.Character.Heal(int(float64(condRegen) * regenMultiplier))
+				// Conditional multiplier (e.g. Photosynthetic Skin in lit rooms)
+				if userRoom := rooms.LoadRoom(user.Character.RoomId); userRoom != nil {
+					biome := userRoom.GetBiome()
+					if condMult := mutations.GetConditionalHealthRegenMultiplier(user.Character.Mutations, biome.IsLit()); condMult != 0 {
+						healthRegen *= (1.0 + condMult)
+					}
+				}
+
+				// ConditionRegen from heal spell — multiplier on base regen
+				if user.Character.HasCondition(characters.ConditionRegen) {
+					regenMult := user.Character.GetConditionMagnitude(characters.ConditionRegen)
+					if regenMult > 1.0 {
+						healthRegen *= regenMult
+					}
+				}
+
+				// Room multiplier applied last
+				healAmt := int(math.Floor(healthRegen * regenMultiplier))
+				if healAmt < 1 {
+					healAmt = 1
+				}
+				user.Character.Heal(healAmt)
+
+			} else {
+				// In combat: no base regen, but ConditionRegen (heal spell) still applies
+				if user.Character.HasCondition(characters.ConditionRegen) {
+					regenMult := user.Character.GetConditionMagnitude(characters.ConditionRegen)
+					healAmt := int(math.Floor(float64(user.Character.HealthPerRound()) * regenMult * regenMultiplier))
+					if healAmt < 1 {
+						healAmt = 1
+					}
+					user.Character.Heal(healAmt)
 				}
 			}
 
@@ -99,15 +126,6 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 					user.Character.Health = -10
 				}
 				user.SendText(`<ansi fg="green">The poison burns through your veins!</ansi>`)
-			}
-
-			// Apply regen condition from heal spell (works in and out of combat)
-			if user.Character.HasCondition(characters.ConditionRegen) {
-				regenAmt := int(float64(user.Character.GetConditionMagnitude(characters.ConditionRegen)) * regenMultiplier)
-				if regenAmt < 1 {
-					regenAmt = 1
-				}
-				user.Character.Heal(regenAmt)
 			}
 		}
 
@@ -163,27 +181,74 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 
 	}
 
-	// Mob conviction regeneration and regen condition (same tick as players: every 3 rounds)
+	// ── NPC / Mob regen ─────────────────────────────────────────────────────
+	b := configs.GetBalanceConfig()
 	for _, mobInstId := range mobs.GetAllMobInstanceIds() {
 		mob := mobs.GetInstance(mobInstId)
 		if mob == nil || mob.Character.Health < 1 {
 			continue
 		}
-		mob.Character.Conviction += mob.Character.ConvictionPerRound()
-		if mob.Character.Conviction > mob.Character.ConvictionMax.Value {
-			mob.Character.Conviction = mob.Character.ConvictionMax.Value
-		}
-		// Apply regen condition from heal spell
-		if mob.Character.HasCondition(characters.ConditionRegen) {
-			regenAmt := int(mob.Character.GetConditionMagnitude(characters.ConditionRegen))
-			if regenAmt < 1 {
-				regenAmt = 1
+
+		mobInCombat := mob.Character.Aggro != nil
+
+		// Health regen (out of combat only, unless heal-spell ConditionRegen)
+		if !mobInCombat {
+			hpRegen := int(float64(b.MobHealthRegenPct) * float64(mob.Character.HealthMax.Value))
+			if hpRegen < 1 {
+				hpRegen = 1
 			}
-			mob.Character.Health += regenAmt
+			// ConditionRegen acts as a multiplier on base regen
+			if mob.Character.HasCondition(characters.ConditionRegen) {
+				regenMult := mob.Character.GetConditionMagnitude(characters.ConditionRegen)
+				if regenMult > 1.0 {
+					hpRegen = int(float64(hpRegen) * regenMult)
+				}
+			}
+			mob.Character.Health += hpRegen
 			if mob.Character.Health > mob.Character.HealthMax.Value {
 				mob.Character.Health = mob.Character.HealthMax.Value
 			}
+		} else {
+			// In combat: only ConditionRegen applies
+			if mob.Character.HasCondition(characters.ConditionRegen) {
+				regenMult := mob.Character.GetConditionMagnitude(characters.ConditionRegen)
+				hpRegen := int(float64(b.MobHealthRegenPct) * float64(mob.Character.HealthMax.Value) * regenMult)
+				if hpRegen < 1 {
+					hpRegen = 1
+				}
+				mob.Character.Health += hpRegen
+				if mob.Character.Health > mob.Character.HealthMax.Value {
+					mob.Character.Health = mob.Character.HealthMax.Value
+				}
+			}
 		}
+
+		// Stamina regen (1/4 rate in combat)
+		spRegen := int(float64(b.MobStaminaRegenPct) * float64(mob.Character.StaminaMax.Value))
+		if spRegen < 1 {
+			spRegen = 1
+		}
+		if mobInCombat {
+			spRegen = spRegen / 4
+			if spRegen < 1 {
+				spRegen = 1
+			}
+		}
+		mob.Character.Stamina += spRegen
+		if mob.Character.Stamina > mob.Character.StaminaMax.Value {
+			mob.Character.Stamina = mob.Character.StaminaMax.Value
+		}
+
+		// Conviction regen
+		cpRegen := int(float64(b.MobConvictionRegenPct) * float64(mob.Character.ConvictionMax.Value))
+		if cpRegen < 1 {
+			cpRegen = 1
+		}
+		mob.Character.Conviction += cpRegen
+		if mob.Character.Conviction > mob.Character.ConvictionMax.Value {
+			mob.Character.Conviction = mob.Character.ConvictionMax.Value
+		}
+
 		// Phase 25.1: Apply poison DoT damage to mobs
 		if mob.Character.HasCondition(characters.ConditionPoisoned) {
 			poisonDmg := int(mob.Character.GetConditionMagnitude(characters.ConditionPoisoned))

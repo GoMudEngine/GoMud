@@ -4,8 +4,8 @@ description: A verdant tinge spreads beneath your skin as chloroplast-like organ
 rarity: 5
 visual: Their skin has a faint greenish undertone, more vivid in sunlight.
 pros:
-  - type: health_regen_if_lit
-    value: 3
+  - type: health_regen_if_lit_multiplier
+    value: 0.25
 cons:
   - type: stat_flat
     target: willpower

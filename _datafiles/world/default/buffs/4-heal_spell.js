@@ -7,9 +7,12 @@ function onStart(actor, triggersLeft) {
 
 // Invoked every time the buff is triggered (see roundinterval)
 function onTrigger(actor, triggersLeft) {
-    healAmt = actor.AddHealth(UtilDiceRoll(1, 10));
+    var maxHP = actor.GetHealthMax();
+    var healAmt = Math.floor(maxHP * 0.05);
+    if (healAmt < 1) { healAmt = 1; }
+    actor.AddHealth(healAmt);
 
-    SendUserMessage(actor.UserId(),     'You heal for <ansi fg="healing">'+String(healAmt)+' damage</ansi>!');
+    SendUserMessage(actor.UserId(),     'The healing aura mends your wounds.');
     SendRoomMessage(actor.GetRoomId(),  actor.GetCharacterName(true)+' is healing from the effects of a heal spell.', actor.UserId());
 }
 
