@@ -4846,6 +4846,24 @@ mutations to use multipliers instead of flat amounts.
 
 ---
 
+### Stage 29.6: Spell Alias Cleanup & Spells Table Fix ✅ COMPLETED (f4fcc4f)
+
+**Goal**: Fix 12 legacy spell aliases left over from GoMud defaults and
+slim the `spells` command table to fit within 80-char MUD line width.
+
+**Changes**:
+1. Renamed spellid + filenames for 12 spells: mm→conviction-spike,
+   blind→sensory-veil, curepoison→purge-affliction, fire-bolt→pyretic-surge,
+   fireball→hemorrhagic-burst, illum→chrysalis-glow, healall→mend-all,
+   minor-shield→conviction-ward, stun→neural-stun, tame→empathic-bond,
+   throw-stone→kinetic-hurl, aidskill→chrysalis-aid
+2. Updated Go code references: starting spell in character.go, mob AI
+   spell priority list in ai.go, apprentice_mage mob spellbook
+3. Removed Description and Schools columns from spells command table
+4. Updated Megalomania save file spellbook (gitignored, local only)
+
+---
+
 ## Phase 30: Combat Analytics & Balance Tools
 
 Instrumentation before content — having metrics in place means better
@@ -5295,4 +5313,4 @@ Last phase — tests cover the final state of all features.
 
 **Last Updated**: 2026-02-25
 **Status**: In Progress
-**Current Stage**: Stage 29.5 complete. All regen converted to %-of-max; NPCs now regen; heal spells use multipliers. Next: Phase 30.
+**Current Stage**: Stage 29.6 complete. Spell aliases fixed, spells table slimmed. Next: Phase 30.
