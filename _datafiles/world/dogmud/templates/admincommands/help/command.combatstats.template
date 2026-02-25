@@ -1,0 +1,27 @@
+The <ansi fg="command">combatstats</ansi> command can be used in the
+following ways:
+
+<ansi fg="command">combatstats summary</ansi>
+Display the combat analytics dashboard.
+
+<ansi fg="command">combatstats summary [type]</ansi>
+  e.g. <ansi fg="command">combatstats summary spell</ansi>
+Filter the dashboard by attack type.
+
+<ansi fg="command">combatstats types</ansi>
+List all attack types in the current buffer.
+
+<ansi fg="command">combatstats matchups</ansi>
+Show PvM / MvP / PvP / MvM event breakdown.
+
+<ansi fg="command">combatstats defense</ansi>
+Show dodge / parry / block success rates.
+
+<ansi fg="command">combatstats position</ansi>
+Show hit rates by target position and grapple status.
+
+<ansi fg="command">combatstats reset</ansi>
+Clear the combat event buffer.
+
+<ansi fg="command">combatstats export</ansi>
+Flush current buffer to the analytics log file.

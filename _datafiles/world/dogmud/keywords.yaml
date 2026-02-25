@@ -116,6 +116,7 @@ help:
       - badcommands
       - buff
       - build
+      - combatstats
       - command
       - deafen
       - devtool

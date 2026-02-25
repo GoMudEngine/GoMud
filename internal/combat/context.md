@@ -233,3 +233,49 @@ Combat assessment weights:
 - `internal/rooms` - Room management for cross-room combat
 - `internal/util` - Dice rolling and random number generation
 - `internal/configs` - Configuration for combat behavior and messaging
+
+## Combat Analytics (Stage 30.1–30.2)
+
+### Architecture
+The analytics subsystem uses a ring buffer (`eventBuffer`) to capture every
+combat action in real time. When the buffer reaches `maxEvents` (configured
+via `Analytics.MaxEvents`), the oldest event is dropped (FIFO). A periodic
+flush cycle (controlled by `Analytics.FlushIntervalSec`) aggregates the
+buffer into an `AnalyticsSummary` and writes it as a single JSONL line to
+the configured log path. The log is rotated by lumberjack (50 MB, 10
+backups, compressed).
+
+### CombatEvent Fields
+- `SourceType` / `TargetType` — `User` or `Mob`
+- `AttackType` — e.g. "unarmed", "weapon", "spell", "bash", "kick", "trip"
+- `Hit`, `Crit`, `Fumble`, `Backfire`, `Fizzle` — outcome booleans
+- `DamageDealt`, `DamageReduced` — integer damage values
+- `DefenseUsed` — "dodge", "parry", "block", or ""
+- `AttackZScore`, `DefenseZScore` — z-scores from opposed rolls
+- `SourcePosition`, `TargetPosition` — "standing", "prone", etc.
+- `SourceIsGrappleController`, `TargetIsGrappleController` — booleans
+- `RoundNumber` — combat round counter
+
+### AnalyticsSummary Fields
+Aggregated totals (hits, misses, crits, fumbles, backfires, fizzles, total
+damage), per-attack-type breakdowns (`ByAttackType`), defense success
+counts (dodge/parry/block), matchup counts (PvM/MvP/PvP/MvM), position
+hit rates, grapple controller hit rates, average z-scores, and round range.
+
+### Recording Functions
+- `RecordAttack()` — standard auto-attacks
+- `RecordSpecialMove()` — bash, kick, trip, grapple, mutations
+- `RecordSpell()` — spell resolution events
+
+### Query Functions (Stage 30.2)
+- `GetSummary()` — full aggregated summary of all buffered events
+- `GetFilteredSummary(attackType)` — summary filtered to one attack type
+- `GetBufferLen()` — current event count in buffer
+- `ResetBuffer()` — clears buffer, returns count cleared
+- `ExportNow()` — immediate flush to log file
+- `GetAttackTypes()` — map of attack type → event count
+
+### Admin Command: `combatstats` (Stage 30.2)
+Subcommands: `summary [type]`, `types`, `matchups`, `defense`, `position`,
+`reset`, `export`. All output uses `templates.GetTable()` for tabular
+display. See `internal/usercommands/admin.combatstats.go`.
