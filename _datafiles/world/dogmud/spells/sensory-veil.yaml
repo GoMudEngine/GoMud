@@ -1,6 +1,6 @@
-spellid: stun
-name: Neural Stun
-description: Overloads the target's nervous system, stunning them.
+spellid: sensory-veil
+name: Sensory Veil
+description: Chrysalis shroud clouds the target's perception.
 type: harmsingle
 schools:
   - mental
@@ -13,4 +13,4 @@ target_defense_type: mental
 effect_type: buff
 effect_magnitude: 10
 buff_ids:
-  - 2
+  - 3

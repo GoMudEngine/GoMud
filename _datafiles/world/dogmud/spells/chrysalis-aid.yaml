@@ -1,5 +1,5 @@
 # Only applied by the aid skill
-spellid: aidskill
+spellid: chrysalis-aid
 name: Chrysalis Aid
 description: Stabilizes a fallen ally, pulling them back from the brink.
 type: helpsingle
