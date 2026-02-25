@@ -4655,7 +4655,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 27: Dialogue–Quest Integration | 2 stages (27.1–27.2) | 16 hours | **27.1–27.2 Complete** |
 | Phase 28: LLM Tutorial Enhancement | 1 stage (28.1) | 8 hours | 28.1 Complete |
 | Phase 29: Regen & Cleanup | 6 stages (29.1–29.6) | 12 hours | **29.1–29.6 Complete** |
-| Phase 30: Combat Analytics | 3 stages (30.1–30.3) | 16 hours | **30.1 Complete** |
+| Phase 30: Combat Analytics | 3 stages (30.1–30.3) | 16 hours | **30.1–30.2 Complete** |
 | **Total** | **~86 stages** | **~561 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
@@ -4899,28 +4899,32 @@ without impacting game performance.
 
 ---
 
-### Stage 30.2: Combat Stats Aggregation & Admin Commands
+### Stage 30.2: Combat Stats Aggregation & Admin Commands ✅ COMPLETED
+
+Merge commit: `e24661e`
 
 **Goal**: Admin commands to query aggregated combat data for balance
 tuning.
 
 **Changes**:
-1. Add `combatstats` admin command — displays aggregated data:
-   win/loss rates, average damage by weapon type, spell effectiveness,
-   avoidance rates (dodge/parry/block percentages)
-2. Support filters: by mob name, zone, time window, weapon type
-3. Add `combatstats reset` to clear the buffer
-4. Add `combatstats export` to dump current data as JSON for offline
-   analysis
-5. Summary view: top-level dashboard (total fights, avg duration,
-   most common outcomes)
+1. Added `combatstats` admin command with subcommands: `summary`,
+   `summary [type]`, `types`, `matchups`, `defense`, `position`,
+   `reset`, `export`
+2. Added public query functions to analytics package: `GetSummary`,
+   `GetFilteredSummary`, `GetBufferLen`, `ResetBuffer`, `ExportNow`,
+   `GetAttackTypes`
+3. Fixed runtime enable: replaced `sync.Once` with lazy init so
+   toggling `Analytics.Enabled` in-game takes effect immediately
+4. Added help templates (dogmud + default/empty stubs)
+5. Registered command in keywords.yaml admin help list
 
 **Testing**:
-- Unit test aggregation queries with synthetic data
-- Manual test: run fights, query stats, verify accuracy
-- Verify filters narrow results correctly
+- Manual test: enabled analytics at runtime, fought mobs, verified
+  all subcommands display correct data
+- Verified lazy init works after runtime config toggle
 
 **Estimated Changes**: ~300–500 lines, 3–5 files
+**Actual**: ~506 lines added, 9 files (4 new + 5 modified)
 
 ---
 
@@ -5315,4 +5319,4 @@ Last phase — tests cover the final state of all features.
 
 **Last Updated**: 2026-02-25
 **Status**: In Progress
-**Current Stage**: Stage 30.1 complete. Combat analytics framework in place. Next: Stage 30.2.
+**Current Stage**: Stage 30.2 complete. Combat stats admin command in place. Next: Stage 30.3.
