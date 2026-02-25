@@ -1,0 +1,31 @@
+speciesid: 9
+name: raptor
+description: A keen-eyed bird of prey with razor talons and a hooked
+  beak. Raptors circle high above, spotting movement from
+  impossible distances before diving to strike.
+defaultalignment: -10
+size: small
+unarmedname: talons and beak
+tnlscale: 1
+selectable: false
+tameable: true
+angrycommands:
+  - emote screeches and spreads its wings wide, talons extended.
+  - emote fixes you with a piercing, unblinking stare.
+stats:
+  strength:
+    base: 50
+  dexterity:
+    base: 140
+  perception:
+    base: 160
+  vitality:
+    base: 40
+  willpower:
+    base: 10
+  charisma:
+    base: 10
+damage:
+  basedamage: 4
+  variance: 2
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet']

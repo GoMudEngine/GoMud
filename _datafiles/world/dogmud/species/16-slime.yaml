@@ -1,0 +1,32 @@
+speciesid: 16
+name: slime
+description: An amorphous blob of translucent, corrosive gel that oozes
+  across the ground. Slimes absorb impacts that would
+  destroy rigid creatures and dissolve anything organic
+  they engulf.
+defaultalignment: -5
+size: medium
+unarmedname: pseudopods
+tnlscale: 1
+selectable: false
+tameable: false
+angrycommands:
+  - emote quivers and extends a glistening pseudopod toward you.
+  - emote bubbles and hisses, its surface roiling with caustic slime.
+stats:
+  strength:
+    base: 70
+  dexterity:
+    base: 30
+  perception:
+    base: 20
+  vitality:
+    base: 140
+  willpower:
+    base: 50
+  charisma:
+    base: 5
+damage:
+  basedamage: 5
+  variance: 3
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet', 'body']
