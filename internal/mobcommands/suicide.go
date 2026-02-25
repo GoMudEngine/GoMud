@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
-	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -86,7 +85,7 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	})
 
 	// Stage 3.5: No XP awarded. Progression is skill-based via combat hooks.
-	// Still track kills, alignment, and taming.
+	// Still track kills and taming.
 
 	if len(mob.Character.PlayerDamage) > 0 {
 
@@ -109,21 +108,6 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 					if user.Character.KD.GetMobKills(int(mob.MobId)) == 1 {
 						user.Character.OnFirstMobKill(user.UserId)
 					}
-				}
-
-				// Apply alignment changes
-				alignmentBefore := user.Character.AlignmentName()
-				alignmentAdj := combat.AlignmentChange(user.Character.Alignment, mob.Character.Alignment)
-				user.Character.UpdateAlignment(alignmentAdj)
-				alignmentAfter := user.Character.AlignmentName()
-
-				mudlog.Debug("Alignment", "user Alignment", user.Character.Alignment, "mob Alignment", mob.Character.Alignment, `alignmentAdj`, alignmentAdj, `alignmentBefore`, alignmentBefore, `alignmentAfter`, alignmentAfter)
-
-				if alignmentBefore != alignmentAfter {
-					alignmentBefore = fmt.Sprintf(`<ansi fg="%s">%s</ansi>`, alignmentBefore, alignmentBefore)
-					alignmentAfter = fmt.Sprintf(`<ansi fg="%s">%s</ansi>`, alignmentAfter, alignmentAfter)
-					updateTxt := fmt.Sprintf(`<ansi fg="231">Your alignment has shifted from %s to %s!</ansi>`, alignmentBefore, alignmentAfter)
-					user.SendText(updateTxt)
 				}
 
 				// Chance to learn to tame the creature (skill-based, no level comparison)
@@ -160,7 +144,7 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	}
 
 	// Stage 3.5: Party members also get kill credit (no XP to split)
-	// Give kill tracking and alignment to party members who didn't directly attack
+	// Give kill tracking to party members who didn't directly attack
 	partyMembersHandled := map[int]bool{}
 	for uId := range mob.Character.PlayerDamage {
 		partyMembersHandled[uId] = true

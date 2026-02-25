@@ -45,9 +45,6 @@ ActorObjects are the basic object that represents Users and NPCs
   - [ActorObject.RemoveBuff(buffId int)](#actorobjectremovebuffbuffid-int)
   - [ActorObject.HasItemId(itemId int, \[excludeWorn bool\]) bool](#actorobjecthasitemiditemid-int-excludeworn-bool-bool)
   - [ActorObject.GetBackpackItems() \[\]ItemObject](#actorobjectgetbackpackitems-itemobject)
-  - [ActorObject.GetAlignment() int](#actorobjectgetalignment-int)
-  - [ActorObject.GetAlignmentName() string](#actorobjectgetalignmentname-string)
-  - [ActorObject.ChangeAlignment(alignmentChange int)](#actorobjectchangealignmentalignmentchange-int)
   - [ActorObject.HasSpell(spellId string)](#actorobjecthasspellspellid-string)
   - [ActorObject.LearnSpell(spellId string) bool](#actorobjectlearnspellspellid-string-bool)
   - [ActorObject.IsAggro(targetActor ActorObject)](#actorobjectisaggrotargetactor-actorobject)
@@ -389,19 +386,6 @@ Check whether an ActorObject has an item id in their backpack
 Get a list of Item objects in the ActorObjects backpack
 
 _Note: See [/scripting/docs/FUNCTIONS_ITEMS.md](FUNCTIONS_ITEMS.md) for details on ItemObject objects._
-
-## [ActorObject.GetAlignment() int](/internal/scripting/actor_func.go)
-Get the numeric representation of a ActorObjects alignment, from -100 to 100
-
-## [ActorObject.GetAlignmentName() string](/internal/scripting/actor_func.go)
-Get the name of an ActorObjects alignment, from Unholy to Holy
-
-## [ActorObject.ChangeAlignment(alignmentChange int)](/internal/scripting/actor_func.go)
-Update the alignment by a relative amount. Caps result at -100 to 100
-
-|  Argument | Explanation |
-| --- | --- |
-| alignmentChange | The alignment adjustment, from -200 to 200 |
 
 ## [ActorObject.HasSpell(spellId string)](/internal/scripting/actor_func.go)
 Returns true if the actor has the spell supplied

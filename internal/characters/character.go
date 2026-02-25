@@ -62,7 +62,6 @@ type Character struct {
 	Stamina          int                            // The stamina of the character (physical energy)
 	Conviction       int                            // The conviction of the character (mental/spiritual energy)
 	ActionPoints     int                            // The resevoir of action points the character has to spend on movement etc.
-	Alignment        int8                           // The alignment of the character
 	Gold             int                            // The gold the character is holding
 	Bank             int                            // The gold the character has in the bank
 	Shop             Shop                           `yaml:"shop,omitempty"`          // Definition of shop services/items this character stocks (or just has at the moment)
@@ -2346,14 +2345,6 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 
 	c.Cooldowns.Prune()
 
-	if c.Alignment < AlignmentMinimum {
-		c.Alignment = AlignmentMinimum
-	}
-
-	if c.Alignment > AlignmentMaximum {
-		c.Alignment = AlignmentMaximum
-	}
-
 	// Validate possessed/worn items
 	// This helps ensure all in-play items have a uid
 	for i := range c.Items {
@@ -2476,20 +2467,6 @@ func (c *Character) Species() string {
 		return r.Name
 	}
 	return `Ghostly Spirit`
-}
-
-func (c *Character) UpdateAlignment(amt int) {
-	newAlignment := int(c.Alignment) + amt
-	if newAlignment < int(AlignmentMinimum) {
-		newAlignment = int(AlignmentMinimum)
-	} else if newAlignment > int(AlignmentMaximum) {
-		newAlignment = int(AlignmentMaximum)
-	}
-	c.Alignment = int8(newAlignment)
-}
-
-func (c *Character) AlignmentName() string {
-	return AlignmentToString(c.Alignment)
 }
 
 func (c *Character) GetAllBackpackItems() []items.Item {

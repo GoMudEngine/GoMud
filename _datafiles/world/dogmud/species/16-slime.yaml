@@ -4,7 +4,6 @@ description: An amorphous blob of translucent, corrosive gel that oozes
   across the ground. Slimes absorb impacts that would
   destroy rigid creatures and dissolve anything organic
   they engulf.
-defaultalignment: -5
 naturalarmor: 12
 size: medium
 unarmedname: pseudopods

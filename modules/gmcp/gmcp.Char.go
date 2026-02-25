@@ -348,7 +348,6 @@ func (g *GMCPCharModule) GetCharNode(user *users.UserRecord, gmcpModule string) 
 			Name:      user.Character.Name,
 			Class:     skills.GetProfession(user.Character.GetAllSkillRanks()),
 			Race:      user.Character.Species(),
-			Alignment: user.Character.AlignmentName(),
 			Level:     user.Character.Level,
 		}
 
@@ -723,7 +722,6 @@ type GMCPCharModule_Payload_Info struct {
 	Name      string `json:"name,omitempty"`
 	Class     string `json:"class,omitempty"`
 	Race      string `json:"race,omitempty"`
-	Alignment string `json:"alignment,omitempty"`
 	Level     int    `json:"level,omitempty"`
 }
 

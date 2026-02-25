@@ -3,7 +3,6 @@ name: carnivorous plant
 description: A grotesque flora with grasping tendrils and a tooth-lined
   maw hidden among deceptively lush foliage. It waits with
   the patience of stone for prey to wander within reach.
-defaultalignment: 0
 naturalarmor: 6
 size: medium
 unarmedname: tendrils and maw

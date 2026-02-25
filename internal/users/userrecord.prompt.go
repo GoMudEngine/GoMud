@@ -477,14 +477,6 @@ func (u *UserRecord) ProcessPromptString(promptStr string) string {
 						spellName, cs.FoldsAccumulated, cs.FoldsNeeded))
 				}
 
-			case `{a}`:
-				alignClass := u.Character.AlignmentName()
-				promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%s</ansi>`, alignClass, alignClass[:1]))
-
-			case `{A}`:
-				alignClass := u.Character.AlignmentName()
-				promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%s</ansi>`, alignClass, alignClass))
-
 			case `{g}`:
 				promptOut.WriteString(strconv.Itoa(u.Character.Gold))
 

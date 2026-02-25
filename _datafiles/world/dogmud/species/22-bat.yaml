@@ -1,7 +1,6 @@
 speciesid: 22
 name: bat
 description: A winged mammal of the deep caves, navigating by echolocation.
-defaultalignment: -10
 size: small
 unarmedname: wings and fangs
 tnlscale: 1

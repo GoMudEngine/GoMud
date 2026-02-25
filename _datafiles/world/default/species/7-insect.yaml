@@ -1,7 +1,6 @@
 speciesid: 7
 name: insect
 description: A multi-legged creature with an armored exterior.
-defaultalignment: 0
 size: small
 unarmedname: mandibles
 tnlscale: 1

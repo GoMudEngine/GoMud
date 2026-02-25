@@ -17,7 +17,6 @@ func Online(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	headers := []string{
 		language.T(`User.Name`),
-		language.T(`Alignment`),
 		language.T(`Profession`),
 		language.T(`Online`),
 		language.T(`Role`),
@@ -72,7 +71,6 @@ func Online(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 			row := []string{
 				charName,
-				onlineInfo.Alignment,
 				onlineInfo.Profession,
 				onlineTime,
 				onlineInfo.Role,
@@ -80,7 +78,6 @@ func Online(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 			formatting := []string{
 				`<ansi fg="username">%s</ansi>`,
-				`<ansi fg="` + onlineInfo.Alignment + `">%s</ansi>`,
 				`<ansi fg="white-bold">%s</ansi>`,
 				`<ansi fg="magenta">%s</ansi>`,
 				`<ansi fg="role-` + permClass + `-bold">%s</ansi>`,

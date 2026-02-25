@@ -36,7 +36,6 @@ func Start(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		// All players are human in Delusions of Grandeur
 		if humanSpecies, ok := species.FindSpecies("human"); ok {
 			user.Character.SpeciesId = humanSpecies.Id()
-			user.Character.Alignment = humanSpecies.DefaultAlignment
 			user.Character.Validate()
 
 			user.SendText(``)

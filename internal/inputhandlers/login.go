@@ -145,7 +145,6 @@ func FinalizeLoginOrCreate(results map[string]string, sharedState map[string]any
 		// All players are human in Delusions of Grandeur
 		if humanSpecies, ok := species.FindSpecies("human"); ok {
 			newUser.Character.SpeciesId = humanSpecies.Id()
-			newUser.Character.Alignment = humanSpecies.DefaultAlignment
 			newUser.Character.Validate()
 		}
 

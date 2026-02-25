@@ -556,7 +556,6 @@ func (u *UserRecord) GetOnlineInfo() OnlineInfo {
 		Username:      u.Username,
 		CharacterName: u.Character.Name,
 		Level:         u.Character.Level,
-		Alignment:     u.Character.AlignmentName(),
 		Profession:    skills.GetProfession(u.Character.GetAllSkillRanks()),
 		OnlineTime:    int64(oTime.Seconds()),
 		OnlineTimeStr: timeStr,

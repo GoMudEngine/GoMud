@@ -1,7 +1,6 @@
 speciesid: 9
 name: eldritch horror
 description: A strange and disgusting being that makes your skin crawl, and confuses your senses.
-defaultalignment: -100
 buffids:
   - 28 # Super hearing
   - 29 # Night Vision

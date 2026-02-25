@@ -1,7 +1,6 @@
 speciesid: 20
 name: orb
 description: A sphere of pure energy
-defaultalignment: 30
 size: medium
 unarmedname: energy
 tnlscale: 1

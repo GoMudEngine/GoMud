@@ -195,14 +195,6 @@ func NewMobById(mobId MobId, homeRoomId int, forceStatPool ...int) *Mob {
 			mob.Character.Items[idx].Validate()
 		}
 
-		if mob.Character.Alignment == 0 {
-			if speciesInfo := species.GetSpecies(mob.Character.SpeciesId); speciesInfo != nil {
-				if speciesInfo.DefaultAlignment != 0 {
-					mob.Character.Alignment = speciesInfo.DefaultAlignment
-				}
-			}
-		}
-
 		// Stage 8.9: Initialize AI defaults
 		if mob.AIProfile == "" {
 			mob.AIProfile = "default"
@@ -538,28 +530,6 @@ func (r *Mob) HatesSpecies(raceName string) bool {
 		}
 	}
 	return false
-}
-
-func (r *Mob) HatesAlignment(otherAlignment int8) bool {
-
-	// If either are neutral, no hatred
-	if characters.AlignmentToString(r.Character.Alignment) == `neutral` || characters.AlignmentToString(otherAlignment) == `neutral` {
-		return false
-	}
-
-	// If both on the good side, no hatred
-	if r.Character.Alignment > 0 && otherAlignment > 0 {
-		return false
-	}
-
-	// If both on the evil side, no hatred
-	if r.Character.Alignment < 0 && otherAlignment < 0 {
-		return false
-	}
-
-	delta := int(math.Abs(float64(r.Character.Alignment) - float64(otherAlignment)))
-
-	return delta > characters.AlignmentAggroThreshold
 }
 
 func (r *Mob) HatesMob(m *Mob) bool {

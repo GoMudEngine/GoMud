@@ -1,7 +1,6 @@
 speciesid: 4
 name: troll
 description: A massive creature of raw muscle and calcified growths, driven by hunger and fury.
-defaultalignment: -60
 buffids:
   - 29 # Night Vision
   - 30 # Regeneration
