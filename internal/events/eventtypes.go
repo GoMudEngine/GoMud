@@ -7,7 +7,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/skills"
-	"github.com/GoMudEngine/GoMud/internal/stats"
 )
 
 // EVENT DEFINITIONS FOLLOW
@@ -231,29 +230,6 @@ type Log struct {
 
 func (l Log) Type() string { return `Log` }
 
-type GainExperience struct {
-	UserId     int
-	Experience int
-	Scale      int
-}
-
-func (l GainExperience) Type() string { return `GainExperience` }
-
-type LevelUp struct {
-	UserId         int
-	RoomId         int
-	Username       string
-	CharacterName  string
-	LevelsGained   int
-	NewLevel       int
-	StatsDelta     stats.Statistics
-	TrainingPoints int
-	StatPoints     int
-	LivesGained    int
-}
-
-func (l LevelUp) Type() string { return `LevelUp` }
-
 type PlayerDrop struct {
 	UserId int
 	RoomId int
@@ -277,7 +253,6 @@ type MobDeath struct {
 	InstanceId    int
 	RoomId        int
 	CharacterName string
-	Level         int
 	PlayerDamage  map[int]int
 }
 

@@ -3,7 +3,6 @@ name: Ascended
 description: Something beyond mortal classification. The Chrysalis did not reshape this one — it answered to them.
 size: medium
 unarmedname: will
-tnlscale: 1
 selectable: false
 knowsfirstaid: true
 angrycommands:

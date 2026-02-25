@@ -5,7 +5,6 @@ buffids:
   - 29 # Night Vision
 size: small
 unarmedname: claws
-tnlscale: 2.0
 angrycommands: [emote cackles maniacally.]
 tameable: true
 stats:

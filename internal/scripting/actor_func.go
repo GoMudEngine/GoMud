@@ -71,7 +71,7 @@ func (a ScriptActor) SendText(msg string) {
 }
 
 func (a ScriptActor) GetLevel() int {
-	return a.characterRecord.Level
+	return 1
 }
 
 func (a ScriptActor) GetStat(statName string) int {
@@ -658,28 +658,6 @@ func (a ScriptActor) GetMaxCharmCount() int {
 	return a.characterRecord.GetMaxCharmedCreatures()
 }
 
-func (a ScriptActor) GetTrainingPoints() int {
-	return a.characterRecord.TrainingPoints
-}
-
-func (a ScriptActor) GiveTrainingPoints(ct int) {
-	if ct < 1 {
-		return
-	}
-	a.characterRecord.TrainingPoints += ct
-}
-
-func (a ScriptActor) GetStatPoints() int {
-	return a.characterRecord.StatPoints
-}
-
-func (a ScriptActor) GiveStatPoints(ct int) {
-	if ct < 1 {
-		return
-	}
-	a.characterRecord.StatPoints += ct
-}
-
 func (a ScriptActor) GiveExtraLife() {
 	c := configs.GetGamePlayConfig()
 	a.characterRecord.ExtraLives += 1
@@ -705,13 +683,6 @@ func (a ScriptActor) GetPet() *pets.Pet {
 		return &a.characterRecord.Pet
 	}
 	return nil
-}
-
-func (a ScriptActor) GrantXP(xpAmt int, reason string) {
-	if a.mobInstanceId > 0 {
-		return
-	}
-	a.userRecord.GrantXP(xpAmt, reason)
 }
 
 func (a ScriptActor) TimerSet(name string, period string) {

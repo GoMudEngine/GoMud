@@ -1,10 +1,5 @@
 package configs
 
-import (
-	"strconv"
-	"strings"
-)
-
 type GamePlay struct {
 	AllowItemBuffRemoval ConfigBool `yaml:"AllowItemBuffRemoval"`
 	// Death related settings
@@ -12,7 +7,6 @@ type GamePlay struct {
 
 	LivesStart     ConfigInt `yaml:"LivesStart"`     // Starting permadeath lives
 	LivesMax       ConfigInt `yaml:"LivesMax"`       // Maximum permadeath lives
-	LivesOnLevelUp ConfigInt `yaml:"LivesOnLevelUp"` // # lives gained on level up
 	PricePerLife   ConfigInt `yaml:"PricePerLife"`   // Price in gold to buy new lives
 	// Shops/Conatiners
 	ShopRestockRate  ConfigString `yaml:"ShopRestockRate"`  // Default time it takes to restock 1 quantity in shops
@@ -24,10 +18,8 @@ type GamePlay struct {
 
 	// PVP Restrictions
 	PVP             ConfigString `yaml:"PVP"`
-	PVPMinimumLevel ConfigInt    `yaml:"PVPMinimumLevel"`
-	// XpScale (difficulty)
-	XPScale           ConfigFloat `yaml:"XPScale"`
-	MobConverseChance ConfigInt `yaml:"MobConverseChance"` // Chance 1-100 of attempting to converse when idle
+	PVPMinimumSkillRanks ConfigInt `yaml:"PVPMinimumSkillRanks"` // Minimum total skill ranks to engage in PVP
+	MobConverseChance    ConfigInt `yaml:"MobConverseChance"` // Chance 1-100 of attempting to converse when idle
 
 	// Skill Progression
 	UseSkillProgression ConfigBool `yaml:"UseSkillProgression"` // Enable skill/stat progression checks on skill/stat use
@@ -73,9 +65,8 @@ type GamePlay struct {
 type GameplayDeath struct {
 	EquipmentDropChance ConfigFloat  `yaml:"EquipmentDropChance"` // Chance a player will drop a given piece of equipment on death
 	AlwaysDropBackpack  ConfigBool   `yaml:"AlwaysDropBackpack"`  // If true, players will always drop their backpack items on death
-	XPPenalty           ConfigString `yaml:"XPPenalty"`           // Possible values are: none, level, 10%, 25%, 50%, 75%, 90%, 100%
-	ProtectionLevels    ConfigInt    `yaml:"ProtectionLevels"`    // How many levels is the user protected from death penalties for?
-	PermaDeath          ConfigBool   `yaml:"PermaDeath"`          // Is permadeath enabled?
+	ProtectionSkillRanks ConfigInt  `yaml:"ProtectionSkillRanks"` // Total skill ranks below which death penalties are waived
+	PermaDeath           ConfigBool `yaml:"PermaDeath"`           // Is permadeath enabled?
 	CorpsesEnabled      ConfigBool   `yaml:"CorpsesEnabled"`      // Whether corpses are left behind after mob/player deaths
 	CorpseDecayTime     ConfigString `yaml:"CorpseDecayTime"`     // How long until corpses decay to dust (go away)
 	// DOGMud death penalties (Stage 20.1)
@@ -98,23 +89,8 @@ func (g *GamePlay) Validate() {
 		g.Death.EquipmentDropChance = 0.0 // default
 	}
 
-	g.Death.XPPenalty.Set(strings.ToLower(string(g.Death.XPPenalty)))
-
-	if g.Death.XPPenalty != `none` && g.Death.XPPenalty != `level` {
-		// If not a valid percent, set to default
-		if !strings.HasSuffix(string(g.Death.XPPenalty), `%`) {
-			g.Death.XPPenalty = `none` // default
-		} else {
-			// If not a valid percent, set to default
-			percent, err := strconv.ParseInt(string(g.Death.XPPenalty)[0:len(g.Death.XPPenalty)-1], 10, 64)
-			if err != nil || percent < 0 || percent > 100 {
-				g.Death.XPPenalty = `none` // default
-			}
-		}
-	}
-
-	if g.Death.ProtectionLevels < 0 {
-		g.Death.ProtectionLevels = 0 // default
+	if g.Death.ProtectionSkillRanks < 0 {
+		g.Death.ProtectionSkillRanks = 10 // default
 	}
 
 	if g.LivesStart < 0 {
@@ -123,10 +99,6 @@ func (g *GamePlay) Validate() {
 
 	if g.LivesMax < 0 {
 		g.LivesMax = 0
-	}
-
-	if g.LivesOnLevelUp < 0 {
-		g.LivesOnLevelUp = 0
 	}
 
 	if g.PricePerLife < 1 {
@@ -177,12 +149,8 @@ func (g *GamePlay) Validate() {
 		}
 	}
 
-	if int(g.PVPMinimumLevel) < 0 {
-		g.PVPMinimumLevel = 0
-	}
-
-	if g.XPScale <= 0 {
-		g.XPScale = 100
+	if int(g.PVPMinimumSkillRanks) < 0 {
+		g.PVPMinimumSkillRanks = 0
 	}
 
 	if g.MobConverseChance < 0 {

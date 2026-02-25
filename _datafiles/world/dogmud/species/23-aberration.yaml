@@ -3,7 +3,6 @@ name: aberration
 description: A twisted thing born of a Chrysalis transformation gone catastrophically wrong.
 size: medium
 unarmedname: twisted limbs
-tnlscale: 1
 selectable: false
 tameable: false
 angrycommands:

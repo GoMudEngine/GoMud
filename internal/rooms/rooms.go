@@ -2277,14 +2277,14 @@ func (r *Room) CanPvp(attUser *users.UserRecord, defUser *users.UserRecord) erro
 
 	// Possible settings are `enabled`, `disabled`, `limited`
 	pvpSetting := string(c.PVP)
-	minLevel := int(c.PVPMinimumLevel)
+	minRanks := int(c.PVPMinimumSkillRanks)
 
 	if pvpSetting == configs.PVPDisabled {
 		return errors.New(`PVP is disabled.`)
 	}
 
-	if attUser.Character.Level < minLevel || defUser.Character.Level < minLevel {
-		return fmt.Errorf(`Players must be at least level %d to PVP.`, minLevel)
+	if attUser.Character.GetTotalSkillRanks() < minRanks || defUser.Character.GetTotalSkillRanks() < minRanks {
+		return errors.New(`You need more experience before engaging in PVP.`)
 	}
 
 	if pvpSetting == configs.PVPLimited {

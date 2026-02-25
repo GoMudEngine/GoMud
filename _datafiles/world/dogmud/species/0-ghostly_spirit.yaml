@@ -5,7 +5,6 @@ description: A non-corporeal entity... mostly.
 size: small
 angrycommands: [emote drifts aggressively.]
 unarmedname: ectoplasm
-tnlscale: 1
 tameable: false
 stats:
   strength:

@@ -5,7 +5,6 @@ buffids:
   - 3 # Cold Tolerant
 size: small
 unarmedname: teeth
-tnlscale: 1
 selectable: false
 knowsfirstaid: false
 angrycommands:

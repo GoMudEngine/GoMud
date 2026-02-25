@@ -86,7 +86,6 @@ var (
 		`give`:        {Give, false, true, false},
 		`go`:          {Go, false, true, false},
 		`grapple`:     {Grapple, false, true, false},
-		`grant`:       {Grant, true, true, true}, // Admin only
 		`healing-gel`: {HealingGel, false, true, false},
 		`help`:        {Help, true, true, false},
 		`keyring`:     {KeyRing, true, true, false},

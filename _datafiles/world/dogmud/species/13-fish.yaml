@@ -5,7 +5,6 @@ description: A streamlined aquatic creature that glides through water
   some larger specimens can deliver a surprising bite.
 size: small
 unarmedname: fins
-tnlscale: 1
 selectable: false
 tameable: true
 angrycommands:

@@ -3,7 +3,6 @@ name: dummy
 description: A wooden target
 size: small
 unarmedname: sticks
-tnlscale: 1
 selectable: false
 knowsfirstaid: false
 tameable: false

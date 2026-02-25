@@ -3,7 +3,6 @@ name: bat
 description: A winged mammal of the deep caves, navigating by echolocation.
 size: small
 unarmedname: wings and fangs
-tnlscale: 1
 angrycommands: [emote shrieks and beats its wings furiously.]
 damage:
   basedamage: 1

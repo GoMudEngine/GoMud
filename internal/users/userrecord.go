@@ -165,13 +165,6 @@ func (u *UserRecord) HasShop() bool {
 	return len(u.Character.Shop) > 0
 }
 
-// GrantXP is kept for backward compatibility but no longer triggers level-ups.
-// Stage 3.5: Progression is now 100% skill-based.
-func (u *UserRecord) GrantXP(amt int, source string) {
-	// Silently accumulate XP for legacy tracking only
-	u.Character.GrantXP(amt)
-}
-
 func (u *UserRecord) DidTip(tipName string, completed ...bool) bool {
 
 	if u.TipsComplete == nil {
@@ -555,7 +548,6 @@ func (u *UserRecord) GetOnlineInfo() OnlineInfo {
 	return OnlineInfo{
 		Username:      u.Username,
 		CharacterName: u.Character.Name,
-		Level:         u.Character.Level,
 		Profession:    skills.GetProfession(u.Character.GetAllSkillRanks()),
 		OnlineTime:    int64(oTime.Seconds()),
 		OnlineTimeStr: timeStr,

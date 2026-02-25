@@ -5,7 +5,6 @@ description: A graceful, fleet-footed herbivore with large, watchful
   danger, but will lash out with sharp hooves when cornered.
 size: medium
 unarmedname: hooves
-tnlscale: 1
 selectable: false
 tameable: true
 angrycommands:

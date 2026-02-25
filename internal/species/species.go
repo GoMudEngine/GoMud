@@ -34,7 +34,6 @@ type Species struct {
 	Description      string
 	BuffIds          []int // Permabuffs this species always has
 	Size             Size
-	TNLScale         float32
 	UnarmedName      string
 	Tameable         bool
 	Damage           items.Damage
@@ -111,11 +110,6 @@ func (s *Species) Validate() error {
 	if s.Damage.DiceRoll != `` {
 		s.Damage.InitDiceRoll(s.Damage.DiceRoll)
 		s.Damage.FormatDiceRoll()
-	}
-
-	// Ensure TNLScale is never 0, default to 1.0
-	if s.TNLScale == 0 {
-		s.TNLScale = 1.0
 	}
 
 	return nil

@@ -7,7 +7,6 @@ buffids:
   - 29 # Night Vision
 size: medium
 unarmedname: claws and fangs
-tnlscale: 1
 selectable: false
 tameable: true
 angrycommands:

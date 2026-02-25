@@ -66,13 +66,7 @@ func Pickpocket(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 
 		if m != nil {
 
-			levelDelta := user.Character.Level - m.Character.Level
-			if levelDelta < 1 {
-				levelDelta = 1
-			}
-
 			chanceIn100 := (user.Character.Stats.Dexterity.ValueAdj+user.Character.Stats.Perception.ValueAdj+user.Character.Stats.Charisma.ValueAdj)/3 - m.Character.Stats.Charisma.ValueAdj
-			chanceIn100 /= levelDelta
 			if chanceIn100 < 0 {
 				chanceIn100 = 1
 			}
@@ -162,13 +156,7 @@ func Pickpocket(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 				return true, nil
 			}
 
-			levelDelta := user.Character.Level - p.Character.Level
-			if levelDelta < 1 {
-				levelDelta = 1
-			}
-
 			chanceIn100 := (user.Character.Stats.Dexterity.ValueAdj+user.Character.Stats.Perception.ValueAdj+user.Character.Stats.Charisma.ValueAdj)/3 - p.Character.Stats.Charisma.ValueAdj
-			chanceIn100 /= levelDelta
 			if chanceIn100 < 0 {
 				chanceIn100 = 1
 			}

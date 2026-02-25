@@ -4,7 +4,6 @@ description: A massive arachnid.
 size: large
 unarmedname: fangs
 angrycommands: [emote chitters and stares.]
-tnlscale: 1
 tameable: true
 stats:
   strength:

@@ -5,7 +5,6 @@ buffids:
   - 28 # Super hearing
 size: medium
 unarmedname: jaws
-tnlscale: 1
 angrycommands:
   - emote growls aggressively.
   - emote howls.

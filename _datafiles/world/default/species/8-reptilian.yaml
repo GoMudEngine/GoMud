@@ -3,7 +3,6 @@ name: reptilian
 description: A creature resembling a lizard somewhat.
 size: medium
 unarmedname: claws
-tnlscale: 1
 knowsfirstaid: true
 angrycommands: [emote hisses and spits.]
 tameable: true

@@ -7,7 +7,6 @@ buffids:
   - 29 # Night Vision
 size: small
 unarmedname: fangs
-tnlscale: 1
 selectable: false
 tameable: true
 angrycommands:

@@ -86,7 +86,7 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		Text: msg,
 	})
 
-	allowPenalties := user.Character.Level > int(config.Death.ProtectionLevels)
+	allowPenalties := user.Character.GetTotalSkillRanks() > int(config.Death.ProtectionSkillRanks)
 
 	events.AddToQueue(events.PlayerDeath{
 		UserId:        user.UserId,

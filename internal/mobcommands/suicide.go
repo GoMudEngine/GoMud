@@ -80,7 +80,6 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		InstanceId:    mob.InstanceId,
 		RoomId:        room.RoomId,
 		CharacterName: mob.Character.Name,
-		Level:         mob.Character.Level,
 		PlayerDamage:  mob.Character.PlayerDamage,
 	})
 

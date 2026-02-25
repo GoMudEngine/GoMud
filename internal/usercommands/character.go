@@ -4,8 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"sort"
-	"strconv"
-
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -455,7 +453,7 @@ func Character(rest string, user *users.UserRecord, room *rooms.Room, flags even
 
 func getAltTable(nameToAlt map[string]characters.Character, charmedChars map[string]characters.Character, viewingUserId int) string {
 
-	headers := []string{"Name", "Level", "Species", "Profession", "Status"}
+	headers := []string{"Name", "Species", "Profession", "Status"}
 	rows := [][]string{}
 
 	for _, char := range nameToAlt {
@@ -475,7 +473,6 @@ func getAltTable(nameToAlt map[string]characters.Character, charmedChars map[str
 
 		rows = append(rows, []string{
 			fmt.Sprintf(`<ansi fg="username">%s</ansi>`, char.Name),
-			strconv.Itoa(char.Level),
 			raceName,
 			skills.GetProfession(allRanks),
 			mobBusy,
@@ -484,9 +481,7 @@ func getAltTable(nameToAlt map[string]characters.Character, charmedChars map[str
 	}
 
 	sort.Slice(rows, func(i, j int) bool {
-		num1, _ := strconv.Atoi(rows[i][1])
-		num2, _ := strconv.Atoi(rows[j][1])
-		return num1 < num2
+		return rows[i][0] < rows[j][0]
 	})
 
 	altTableData := templates.GetTable(fmt.Sprintf(`Your alt characters (%d/%d)`, len(nameToAlt), configs.GetGamePlayConfig().MaxAltCharacters), headers, rows)

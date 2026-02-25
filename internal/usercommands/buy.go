@@ -157,7 +157,7 @@ func tryPurchase(request string, user *users.UserRecord, room *rooms.Room, shopM
 
 			price := saleItem.Price
 			if price == 0 {
-				price = 250 * mobInfo.Character.Level
+				price = 250
 			} else if price < 0 {
 				price = 0
 			}

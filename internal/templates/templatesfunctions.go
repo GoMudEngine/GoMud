@@ -459,12 +459,13 @@ func idsOtherThan(allIds []uint64, excludeId uint64) []uint64 {
 }
 
 func TNL(userId int) string {
-	user := users.GetByUserId(userId)
-	realXPNow, realXPTNL := user.Character.XPTNLActual()
-	return fmt.Sprintf(`%d/%d (%d%%)`, realXPNow, realXPTNL, pct(realXPNow, realXPTNL))
+	return `N/A`
 }
 
 func pct(a, b int) int {
+	if b == 0 {
+		return 0
+	}
 	return (a * 100) / b
 }
 

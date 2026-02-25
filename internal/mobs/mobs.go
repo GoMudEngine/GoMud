@@ -178,12 +178,24 @@ func NewMobById(mobId MobId, homeRoomId int, forceStatPool ...int) *Mob {
 		if len(forceStatPool) > 0 && forceStatPool[0] > 0 {
 			statPool = forceStatPool[0]
 		}
-		mob.Character.StatPoints = statPool
-		mob.Character.Level = 0
-		mob.Character.Experience = 0
-
-		// Apply training for those stats
-		mob.Character.AutoTrain()
+		// Distribute stat pool randomly across training stats
+		for i := 0; i < statPool; i++ {
+			switch util.Rand(6) {
+			case 0:
+				mob.Character.Stats.Strength.Training++
+			case 1:
+				mob.Character.Stats.Dexterity.Training++
+			case 2:
+				mob.Character.Stats.Perception.Training++
+			case 3:
+				mob.Character.Stats.Vitality.Training++
+			case 4:
+				mob.Character.Stats.Willpower.Training++
+			case 5:
+				mob.Character.Stats.Charisma.Training++
+			}
+		}
+		mob.Character.Validate()
 		mob.Character.Health = mob.Character.HealthMax.Value
 		mob.Character.Conviction = mob.Character.ConvictionMax.Value
 

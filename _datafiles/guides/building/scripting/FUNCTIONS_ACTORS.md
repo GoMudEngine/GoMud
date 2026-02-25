@@ -65,15 +65,10 @@ ActorObjects are the basic object that represents Users and NPCs
   - [ActorObject.CharmExpire()](#actorobjectcharmexpire)
   - [ActorObject.GetCharmCount() int](#actorobjectgetcharmcount-int)
   - [ActorObject.GetMaxCharmCount() int](#actorobjectgetmaxcharmcount-int)
-  - [ActorObject.GetTrainingPoints() int](#actorobjectgettrainingpoints-int)
-  - [ActorObject.GiveTrainingPoints(amt int)](#actorobjectgivetrainingpointsamt-int)
-  - [ActorObject.GetStatPoints() int](#actorobjectgetstatpoints-int)
-  - [ActorObject.GiveStatPoints(amt int)](#actorobjectgivestatpointsamt-int)
   - [ActorObject.GiveExtraLife()](#actorobjectgiveextralife)
   - [ActorObject.ShorthandId() string](#actorobjectshorthandid-string)
   - [ActorObject.Uncurse()](#actorobjectuncurse)
   - [ActorObject.GetPet()](#actorobjectgetpet)
-  - [ActorObject.GrantXP(xpAmt int, reason string)](#actorobjectgrantxpxpamt-int-reason-string)
   - [ActorObject.GetLastInputRound() int](#actorobjectgetlastinputround-int)
   - [ActorObject.GetTameMastery() Object](#actorobjectgettamemastery-object)
   - [ActorObject.SetTameMastery(mobId int, newSkillLevel int)](#actorobjectsettamemasterymobid-int-newskilllevel-int)
@@ -151,7 +146,7 @@ Gets the race name of the actor, such as Human, Elf, Rodent, etc.
 Returns `small`, `medium`, or `large`
 
 ## [ActorObject.GetLevel() int](/internal/scripting/actor_func.go)
-Returns the level of the actor
+Returns 1 (levels have been removed; kept for script compatibility)
 
 ## [ActorObject.GetStat(statName string) int](/internal/scripting/actor_func.go)
 Returns the named stat value.
@@ -487,26 +482,6 @@ Returns the number of charmed creatures in the actors control
 ## [ActorObject.GetMaxCharmCount() int](/internal/scripting/actor_func.go)
 Returns the maximum allowed charmed creatures for this actor
 
-## [ActorObject.GetTrainingPoints() int](/internal/scripting/actor_func.go)
-Returns the number of Training Points the actor has.
-
-## [ActorObject.GiveTrainingPoints(amt int)](/internal/scripting/actor_func.go)
-Increases training points for player
-
-|  Argument | Explanation |
-| --- | --- |
-| amt | How many training points to give |
-
-## [ActorObject.GetStatPoints() int](/internal/scripting/actor_func.go)
-Returns the number of Stat Points the actor has.
-
-## [ActorObject.GiveStatPoints(amt int)](/internal/scripting/actor_func.go)
-Increases stat points for player
-
-|  Argument | Explanation |
-| --- | --- |
-| amt | How many stat points to give |
-
 ## [ActorObject.GiveExtraLife()](/internal/scripting/actor_func.go)
 Increases extra lives by 1 for the player/actor
 
@@ -518,14 +493,6 @@ Uncurses any objects the target has equipped
 
 ## [ActorObject.GetPet()](/internal/scripting/actor_func.go)
 Returns the pet object for the actor, or null
-
-## [ActorObject.GrantXP(xpAmt int, reason string)](/internal/scripting/actor_func.go)
-Gives experience points to the actor
-
-|  Argument | Explanation |
-| --- | --- |
-| xpAmt | How much experience to grant |
-| reason | Short reasons such as "combat", "trash cleanup" |
 
 ## [ActorObject.GetLastInputRound() int](/internal/scripting/actor_func.go)
 Returns the last round number the user input anything at all

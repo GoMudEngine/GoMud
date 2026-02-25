@@ -4745,7 +4745,7 @@ Critical bugs fixed outside of formal stage development:
 
 Remove dead systems before building new features — smaller codebase, no risk of cleaning code that still references alignment or XP.
 
-### Stage 29.1: Remove Alignment System
+### Stage 29.1: Remove Alignment System ✅ COMPLETED
 
 **Goal**: Strip the alignment system entirely — it adds no meaningful gameplay in a use-based progression world.
 
@@ -4772,31 +4772,36 @@ Remove dead systems before building new features — smaller codebase, no risk o
 
 ---
 
-### Stage 29.2: Remove XP & Leveling Vestiges
+### Stage 29.2: Remove XP & Leveling Vestiges ✅ COMPLETED
 
 **Goal**: Finish what Phase 3 started — remove every remaining trace of
 the experience/leveling system.
 
 **Changes**:
-1. Remove `Experience` field from Character struct and persistence
-2. Delete disabled `LevelUp()` function and related helpers
-3. Remove `LivesOnLevelUp` and any other level-related config keys
-   from `_datafiles/config.yaml`
-4. Clean any remaining level-gated logic (mob scaling references,
-   encounter difficulty tied to level)
-5. Remove level/XP mentions from help files, templates, and all
-   player-facing documents
-6. Audit `_datafiles/` for any YAML fields referencing level or
-   experience on mobs, items, or quests — remove or migrate
-7. Update `DEVELOPMENT_PLAN.md` stage 3 notes to reflect full removal
+1. Remove `Level`, `Experience`, `TrainingPoints`, `StatPoints`,
+   `TNLScale` fields from Character struct
+2. Delete `GrantXP()`, `XPTNL()`, `XPTL()`, `XPTNLActual()`,
+   `LevelUp()`, `AutoTrain()` functions
+3. Remove config keys: `LivesOnLevelUp`, `XPScale`, `PVPMinimumLevel`,
+   `XPPenalty`, `ProtectionLevels`
+4. Add replacement config keys: `PVPMinimumSkillRanks`,
+   `ProtectionSkillRanks` (skill-rank-based gating)
+5. Remove level/XP from all templates, GMCP payloads, leaderboard
+   displays, party UI, Discord status
+6. Remove `xpscale` statmod, `TNLScale` from species, dead buffs
+7. Delete `admin.grant` command, `status train` subcommand,
+   `LevelUp` hook, levelup templates
+8. Update help files, scripting docs, config.yaml
 
 **Testing**:
 - All existing tests pass
-- No "level" or "experience" strings appear in player-facing output
-- Character creation, progression, and combat function normally
-- Grep confirms no active (non-comment) level/XP references in Go code
+- `go build ./...` and `go vet ./...` clean
+- PVP gating now uses `GetTotalSkillRanks()` instead of Level
+- Death penalty protection uses `ProtectionSkillRanks` instead of
+  `ProtectionLevels`
+- Grep confirms no active Level/XP field references in Go code
 
-**Estimated Changes**: ~200–400 lines removed, 15–25 files
+**Estimated Changes**: ~800 lines removed/changed, 40+ files
 
 ---
 
@@ -5249,4 +5254,4 @@ Last phase — tests cover the final state of all features.
 
 **Last Updated**: 2026-02-25
 **Status**: In Progress
-**Current Stage**: Phase 28.1 complete. Cleanup pass: fixed all failing tests, added 9 spell progression config knobs to Balance. Next: Phase 29.
+**Current Stage**: Phase 29 complete. Alignment system and XP/leveling vestiges fully removed. PVP and death penalties now gated by skill ranks. Next: Phase 30.
