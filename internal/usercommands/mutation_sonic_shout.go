@@ -13,6 +13,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 func SonicShout(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
@@ -77,6 +78,12 @@ func SonicShout(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 			user.SendText(fmt.Sprintf(`The shout staggers <ansi fg="mobname">%s</ansi>! (<ansi fg="damage">%s</ansi>)`,
 				mob.Character.Name, combat.GetDamageDescription(baseDamage, mob.Character.HealthMax.Value)))
 		}
+		// Stage 30.1: Record combat analytics per target
+		shoutDmg := 0
+		if attackSuccess {
+			shoutDmg = baseDamage
+		}
+		combat.RecordSpecialMove(combat.User, combat.Mob, "sonic_shout", attackSuccess, shoutDmg, user.Character, &mob.Character, util.GetRoundCount())
 	}
 
 	// Self-deafen: reduced perception for 3 rounds

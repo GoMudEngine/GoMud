@@ -11,6 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 func Grapple(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
@@ -157,6 +158,17 @@ func Grapple(rest string, user *users.UserRecord, room *rooms.Room, flags events
 			room.SendText(critResult.RoomMessage, user.UserId, targetPlayerId)
 		}
 	}
+
+	// Stage 30.1: Record combat analytics
+	grappleTgtType := combat.Mob
+	var grappleTgtChar *characters.Character
+	if targetMob != nil {
+		grappleTgtChar = &targetMob.Character
+	} else {
+		grappleTgtType = combat.User
+		grappleTgtChar = targetChar.Character
+	}
+	combat.RecordSpecialMove(combat.User, grappleTgtType, "grapple", result.Success, 0, user.Character, grappleTgtChar, util.GetRoundCount())
 
 	// Progress unarmed combat skill
 	events.AddToQueue(events.SkillUsed{

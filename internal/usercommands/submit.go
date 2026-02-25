@@ -11,6 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 func Submit(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
@@ -167,6 +168,17 @@ func Submit(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			user.UserId, targetPlayerId,
 		)
 	}
+
+	// Stage 30.1: Record combat analytics
+	submitTgtType := combat.Mob
+	var submitTgtChar *characters.Character
+	if targetMob != nil {
+		submitTgtChar = &targetMob.Character
+	} else {
+		submitTgtType = combat.User
+		submitTgtChar = targetChar.Character
+	}
+	combat.RecordSpecialMove(combat.User, submitTgtType, "submit", result.Success, 0, user.Character, submitTgtChar, util.GetRoundCount())
 
 	// Progress unarmed combat skill
 	events.AddToQueue(events.SkillUsed{

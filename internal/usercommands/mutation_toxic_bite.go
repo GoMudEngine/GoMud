@@ -13,6 +13,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 func ToxicBite(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
@@ -141,6 +142,21 @@ func ToxicBite(rest string, user *users.UserRecord, room *rooms.Room, flags even
 			user.UserId, targetPlayerId,
 		)
 	}
+
+	// Stage 30.1: Record combat analytics
+	biteTgtType := combat.Mob
+	var biteTgtChar *characters.Character
+	if targetMob != nil {
+		biteTgtChar = &targetMob.Character
+	} else {
+		biteTgtType = combat.User
+		biteTgtChar = targetUser.Character
+	}
+	biteDmgRecorded := 0
+	if attackSuccess {
+		biteDmgRecorded = biteDamage
+	}
+	combat.RecordSpecialMove(combat.User, biteTgtType, "toxic_bite", attackSuccess, biteDmgRecorded, user.Character, biteTgtChar, util.GetRoundCount())
 
 	events.AddToQueue(events.SkillUsed{UserId: user.UserId, Skill: skills.UnarmedCombat, Details: "toxic-bite"})
 

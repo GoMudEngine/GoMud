@@ -417,6 +417,13 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 
 			roundResult := combat.AttackPlayerVsPlayer(user, defUser)
 
+			// Stage 30.1: Record combat analytics
+			atkType := "unarmed"
+			if user.Character.Equipment.Weapon.ItemId > 0 {
+				atkType = "weapon"
+			}
+			combat.RecordAttack(roundResult, combat.User, combat.User, atkType, user.Character, defUser.Character, evt.RoundNumber)
+
 			// Stage 8.4: Process crit effects (parry crit disarm, dodge crit grapple opportunity)
 
 
@@ -684,6 +691,13 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 					}
 				}
 			}
+
+			// Stage 30.1: Record combat analytics
+			pvmAtkType := "unarmed"
+			if user.Character.Equipment.Weapon.ItemId > 0 {
+				pvmAtkType = "weapon"
+			}
+			combat.RecordAttack(roundResult, combat.User, combat.Mob, pvmAtkType, user.Character, &defMob.Character, evt.RoundNumber)
 
 			// Stage 8.4: Process crit effects (parry crit disarm, dodge crit grapple opportunity)
 
@@ -1179,6 +1193,13 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 				}
 			}
 
+			// Stage 30.1: Record combat analytics
+			mvpAtkType := "unarmed"
+			if mob.Character.Equipment.Weapon.ItemId > 0 {
+				mvpAtkType = "weapon"
+			}
+			combat.RecordAttack(roundResult, combat.Mob, combat.User, mvpAtkType, &mob.Character, defUser.Character, evt.RoundNumber)
+
 			// Stage 8.4: Process crit effects (parry crit disarm, dodge crit grapple opportunity)
 
 
@@ -1369,6 +1390,13 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 			var roundResult combat.AttackResult
 
 			roundResult = combat.AttackMobVsMob(mob, defMob)
+
+			// Stage 30.1: Record combat analytics
+			mmAtkType := "unarmed"
+			if mob.Character.Equipment.Weapon.ItemId > 0 {
+				mmAtkType = "weapon"
+			}
+			combat.RecordAttack(roundResult, combat.Mob, combat.Mob, mmAtkType, &mob.Character, &defMob.Character, evt.RoundNumber)
 
 			for _, buffId := range roundResult.BuffSource {
 				mob.AddBuff(buffId, `combat`)

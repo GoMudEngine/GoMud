@@ -14,6 +14,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 // resolveSpell is called when fold accumulation completes.
@@ -70,6 +71,8 @@ func resolveAgainstMob(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, 
 	defVal := spellDefenseValue(spellData.TargetDefenseType, &mob.Character)
 	success, _, atkRoll, _ := dice.OpposedRollStat(spellAttack, defVal)
 
+	round := util.GetRoundCount()
+
 	// Backfire on fumble
 	if atkRoll.ZScore <= -2.0 {
 		backfireDmg := magnitude / 4
@@ -80,6 +83,8 @@ func resolveAgainstMob(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, 
 		user.SendText(`<ansi fg="red">Your spell backfires violently, wounding you!</ansi>`)
 		room.SendText(fmt.Sprintf(
 			`<ansi fg="red"><ansi fg="username">%s</ansi>'s spell backfires!</ansi>`, user.Character.Name), user.UserId)
+		// Stage 30.1: Record backfire
+		combat.RecordSpell(combat.User, combat.Mob, false, false, true, false, 0, atkRoll.ZScore, user.Character, &mob.Character, round)
 		return
 	}
 
@@ -87,10 +92,14 @@ func resolveAgainstMob(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, 
 		user.SendText(fmt.Sprintf(
 			`<ansi fg="yellow">Your %s fizzles against <ansi fg="mobname">%s</ansi>.</ansi>`,
 			spellData.Name, mob.Character.Name))
+		// Stage 30.1: Record fizzle
+		combat.RecordSpell(combat.User, combat.Mob, false, false, false, true, 0, atkRoll.ZScore, user.Character, &mob.Character, round)
 		return
 	}
 
 	isCrit := atkRoll.ZScore >= 2.0
+	// Stage 30.1: Record spell hit (damage recorded as 0; actual damage applied in applyMobEffect)
+	combat.RecordSpell(combat.User, combat.Mob, true, isCrit, false, false, 0, atkRoll.ZScore, user.Character, &mob.Character, round)
 	applyMobEffect(user, mob, room, spellData, magnitude, isCrit)
 }
 
@@ -490,6 +499,7 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 	spellData *spells.SpellData, spellAttack float64, magnitude int) {
 	defVal := spellDefenseValue(spellData.TargetDefenseType, target.Character)
 	success, _, atkRoll, _ := dice.OpposedRollStat(spellAttack, defVal)
+	round := util.GetRoundCount()
 	if atkRoll.ZScore <= -2.0 {
 		dmg := magnitude / 4
 		if dmg < 1 {
@@ -497,14 +507,20 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 		}
 		caster.Character.Health -= dmg
 		room.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s spell backfires!`, caster.Character.Name))
+		// Stage 30.1: Record backfire
+		combat.RecordSpell(combat.Mob, combat.User, false, false, true, false, 0, atkRoll.ZScore, &caster.Character, target.Character, round)
 		return
 	}
 	if !success {
 		room.SendText(fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi>'s %s fizzles.`, caster.Character.Name, spellData.Name))
+		// Stage 30.1: Record fizzle
+		combat.RecordSpell(combat.Mob, combat.User, false, false, false, true, 0, atkRoll.ZScore, &caster.Character, target.Character, round)
 		return
 	}
 	isCrit := atkRoll.ZScore >= 2.0
+	// Stage 30.1: Record spell hit
+	combat.RecordSpell(combat.Mob, combat.User, true, isCrit, false, false, 0, atkRoll.ZScore, &caster.Character, target.Character, round)
 	critTag := ""
 	if isCrit {
 		critTag = ` <ansi fg="yellow">[CRIT!]</ansi>`

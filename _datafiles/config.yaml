@@ -484,6 +484,20 @@ LLM:
 
 ################################################################################
 #
+#   ANALYTICS
+#   Combat analytics subsystem. When enabled, records combat events to a
+#   ring buffer and periodically flushes aggregated summaries to a JSONL log.
+#   Opt-in: set Enabled to true for data-driven balance tuning.
+#
+################################################################################
+Analytics:
+  Enabled: false
+  MaxEvents: 10000
+  FlushIntervalSec: 300
+  LogPath: "_datafiles/logs/combat-analytics.jsonl"
+
+################################################################################
+#
 #   INTEGRATIONS
 #   Special settings for third party integrations such as discord messages
 #

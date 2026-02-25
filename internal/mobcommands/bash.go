@@ -11,6 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 func Bash(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
@@ -159,6 +160,21 @@ func Bash(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			targetPlayerId,
 		)
 	}
+
+	// Stage 30.1: Record combat analytics
+	bashDmgRecorded := 0
+	if attackSuccess {
+		bashDmgRecorded = baseDamage
+	}
+	bashTgtType := combat.Mob
+	var bashTgtChar *characters.Character
+	if targetMob != nil {
+		bashTgtChar = &targetMob.Character
+	} else {
+		bashTgtType = combat.User
+		bashTgtChar = targetChar.Character
+	}
+	combat.RecordSpecialMove(combat.Mob, bashTgtType, "bash", attackSuccess, bashDmgRecorded, &mob.Character, bashTgtChar, util.GetRoundCount())
 
 	// Bash costs the current combat round
 	if mob.Character.Aggro != nil {

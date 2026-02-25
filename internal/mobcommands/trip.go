@@ -11,6 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 func Trip(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
@@ -141,6 +142,21 @@ func Trip(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			targetPlayerId,
 		)
 	}
+
+	// Stage 30.1: Record combat analytics
+	tripDmgRecorded := 0
+	if attackSuccess {
+		tripDmgRecorded = baseDamage
+	}
+	tripTgtType := combat.Mob
+	var tripTgtChar *characters.Character
+	if targetMob != nil {
+		tripTgtChar = &targetMob.Character
+	} else {
+		tripTgtType = combat.User
+		tripTgtChar = targetChar.Character
+	}
+	combat.RecordSpecialMove(combat.Mob, tripTgtType, "trip", attackSuccess, tripDmgRecorded, &mob.Character, tripTgtChar, util.GetRoundCount())
 
 	// Trip costs the current combat round
 	if mob.Character.Aggro != nil {

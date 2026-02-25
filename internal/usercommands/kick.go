@@ -12,6 +12,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 func Kick(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
@@ -153,6 +154,21 @@ func Kick(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			user.UserId, targetPlayerId,
 		)
 	}
+
+	// Stage 30.1: Record combat analytics
+	kickDmgRecorded := 0
+	if attackSuccess {
+		kickDmgRecorded = baseDamage
+	}
+	kickTgtType := combat.Mob
+	var kickTgtChar *characters.Character
+	if targetMob != nil {
+		kickTgtChar = &targetMob.Character
+	} else {
+		kickTgtType = combat.User
+		kickTgtChar = targetChar.Character
+	}
+	combat.RecordSpecialMove(combat.User, kickTgtType, "kick", attackSuccess, kickDmgRecorded, user.Character, kickTgtChar, util.GetRoundCount())
 
 	// Progress unarmed combat skill
 	events.AddToQueue(events.SkillUsed{

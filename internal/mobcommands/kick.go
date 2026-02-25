@@ -11,6 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 func Kick(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
@@ -141,6 +142,21 @@ func Kick(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			targetPlayerId,
 		)
 	}
+
+	// Stage 30.1: Record combat analytics
+	kickDmgRecorded := 0
+	if attackSuccess {
+		kickDmgRecorded = baseDamage
+	}
+	kickTgtType := combat.Mob
+	var kickTgtChar *characters.Character
+	if targetMob != nil {
+		kickTgtChar = &targetMob.Character
+	} else {
+		kickTgtType = combat.User
+		kickTgtChar = targetChar.Character
+	}
+	combat.RecordSpecialMove(combat.Mob, kickTgtType, "kick", attackSuccess, kickDmgRecorded, &mob.Character, kickTgtChar, util.GetRoundCount())
 
 	// Kick costs the current combat round
 	if mob.Character.Aggro != nil {
