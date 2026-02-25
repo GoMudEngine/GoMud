@@ -4470,56 +4470,34 @@ perma-buff traits for NPC species.
 
 ## Phase 27: Dialogue–Quest Integration
 
-### Stage 27.1: Quest-Gated Dialogue Options
+### Stage 27.1: Quest-Gated Dialogue Options ✅ COMPLETED (merge: e245350)
 
 **Goal**: Allow dialogue tree options to be conditionally shown/hidden based on quest state.
-Currently the dialogue tree system and quest system operate independently. This stage connects
-them so NPCs can offer different dialogue based on what quests the player has active, completed,
-or not yet started.
 
-**Changes**:
-1. **Quest condition in dialogue nodes** — add `questRequired` and `questExcluded` fields to
-   dialogue option YAML. Options only appear if the player has (or doesn't have) the specified
-   quest flag.
-2. **Quest state checks** — when building the dialogue option list for a player, filter options
-   based on the player's quest flags.
-3. **Quest grant from dialogue** — add a `grantsQuest` field to dialogue options. Selecting the
-   option gives the player a quest flag.
-4. **Quest completion dialogue** — add `requiresItem` field. If the player has the required item,
-   the option appears and selecting it consumes the item and advances the quest.
+**Implemented**:
+1. `PlayerState` callback struct in `internal/dialogue/types.go` — `HasQuest`, `HasItem`,
+   `RemoveItem`, `GiveQuest` callbacks avoid circular deps with characters/users
+2. `questRequired`/`questExcluded`/`grantsQuest`/`requiresItem` fields on `TreeNode` and `Pattern`
+3. `Match()`, `TreeAdvance()`, `Greet()` accept `*PlayerState` (nil = skip all checks)
+4. `talk.go` and `ask.go` build `PlayerState` from `user.Character` and pass to all dialogue calls
 
-**Files to Modify** (~6 files, ~200 lines):
-1. `internal/dialogues/` — add quest condition fields to dialogue structs
-2. `internal/hooks/` — filter dialogue options by quest state
-3. `_datafiles/world/dogmud/dialogues/` — update existing NPC dialogues with quest hooks
-4. Test files
+### Stage 27.2: NPC Memory & Quest State Responses ✅ COMPLETED (merge: e245350)
 
-### Stage 27.2: NPC Memory & Quest State Responses
+**Goal**: NPCs remember player quest progress and respond contextually.
 
-**Goal**: NPCs remember player quest progress and respond contextually. A quest-giver who sent
-you on a mission should acknowledge your progress when you return.
-
-**Changes**:
-1. **Greeting variation** — NPC greetings change based on active quest state:
-   - No quest: default greeting
-   - Quest active: "Have you found the missing caravan yet?"
-   - Quest complete: "You've done well. Here is your reward."
-2. **LLM context injection** — when the LLM dialogue system is active, inject quest state into
-   the NPC's context so LLM-generated responses are quest-aware.
-3. **Reward delivery** — NPCs can give items, gold, or stat bonuses as quest rewards through
-   dialogue completion nodes.
-
-**Files to Modify** (~5 files, ~200 lines):
-1. `internal/dialogues/` — greeting variation logic
-2. `internal/llm/` — quest state context injection
-3. `_datafiles/world/dogmud/dialogues/` — example quest dialogues
+**Implemented**:
+1. `QuestGreeting` struct and `Variants` list on `TreeRoot` — greeting changes based on quest state
+2. `QuestContext []string` on `llm.ConversationContext` — injected into LLM system prompt
+3. Tolva (84) updated: quest 5 gates, item 21 consumption, greeting variants
+4. Captain Velk (94) updated: quest 8 gates, greeting variants
+5. Schema docs and context.md files updated
 
 **Testing** (all of Phase 27):
-- [ ] Dialogue options appear/hide correctly based on quest flags
-- [ ] Selecting a quest-grant dialogue option gives the quest flag
-- [ ] NPC greetings change based on quest state
-- [ ] LLM responses reference quest context when available
-- [ ] Quest rewards are delivered through dialogue
+- [x] Dialogue options appear/hide correctly based on quest flags
+- [x] Selecting a quest-grant dialogue option gives the quest flag
+- [x] NPC greetings change based on quest state
+- [x] LLM responses reference quest context when available
+- [x] Quest rewards are delivered through dialogue (via grantsQuest → events.Quest)
 
 ---
 
@@ -4674,7 +4652,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 24: Expanded Mutations | 6 stages (24.1–24.6) | 24 hours | **24.1–24.6 Complete** |
 | Phase 25: Expanded Spells | 4 stages (25.1–25.4) | 24 hours | **25.1–25.4 Complete** |
 | Phase 26: NPC Species Variety | 2 stages (26.1–26.2) | 12 hours | **26.1–26.2 Complete** |
-| Phase 27: Dialogue–Quest Integration | 2 stages (27.1–27.2) | 16 hours | Not Started |
+| Phase 27: Dialogue–Quest Integration | 2 stages (27.1–27.2) | 16 hours | **27.1–27.2 Complete** |
 | Phase 28: LLM Tutorial Enhancement | 1 stage (28.1) | 8 hours | Not Started |
 | **Total** | **~77 stages** | **~533 hours** | |
 
@@ -4776,4 +4754,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-25
 **Status**: In Progress
-**Current Stage**: Phase 26 complete. Next: Phase 27.1 (Quest-Gated Dialogue Options).
+**Current Stage**: Phase 27 complete. Next: Phase 28.1 (LLM Tutorial Enhancement).
