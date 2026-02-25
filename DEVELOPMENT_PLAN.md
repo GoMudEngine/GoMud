@@ -4503,7 +4503,7 @@ perma-buff traits for NPC species.
 
 ## Phase 28: LLM Tutorial Enhancement
 
-### Stage 28.1: Dynamic Tutorial NPC Responses
+### Stage 28.1: Dynamic Tutorial NPC Responses ✅ COMPLETED (merge: 9711782)
 
 **Goal**: Enhance tutorial area mobs with deeper LLM integration so they respond dynamically
 to player actions, offer contextual hints, and create a more engaging onboarding experience.
@@ -4653,7 +4653,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 25: Expanded Spells | 4 stages (25.1–25.4) | 24 hours | **25.1–25.4 Complete** |
 | Phase 26: NPC Species Variety | 2 stages (26.1–26.2) | 12 hours | **26.1–26.2 Complete** |
 | Phase 27: Dialogue–Quest Integration | 2 stages (27.1–27.2) | 16 hours | **27.1–27.2 Complete** |
-| Phase 28: LLM Tutorial Enhancement | 1 stage (28.1) | 8 hours | Not Started |
+| Phase 28: LLM Tutorial Enhancement | 1 stage (28.1) | 8 hours | 28.1 Complete |
 | **Total** | **~77 stages** | **~533 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
@@ -4754,4 +4754,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-25
 **Status**: In Progress
-**Current Stage**: Phase 27 complete. Next: Phase 28.1 (LLM Tutorial Enhancement).
+**Current Stage**: Phase 28.1 complete. Cleanup pass: fixed all failing tests, added 9 spell progression config knobs to Balance. Next: Phase 29.
