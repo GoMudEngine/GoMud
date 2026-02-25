@@ -7,7 +7,6 @@ description: An amorphous blob of translucent, corrosive gel that oozes
 naturalarmor: 12
 size: medium
 unarmedname: pseudopods
-tnlscale: 1
 selectable: false
 tameable: false
 angrycommands:

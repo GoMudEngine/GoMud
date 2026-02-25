@@ -215,7 +215,6 @@ func (u *UserRecord) ProcessPromptString(promptStr string) string {
 
 	promptOut := strings.Builder{}
 
-	var currentXP, tnlXP int = -1, -1
 	var hpPct, mpPct int = -1, -1
 	var hpClass, mpClass string
 
@@ -431,26 +430,6 @@ func (u *UserRecord) ProcessPromptString(promptStr string) string {
 			case `{ap}`:
 				promptOut.WriteString(strconv.Itoa(u.Character.ActionPoints))
 
-			case `{xp}`:
-				if currentXP == -1 && tnlXP == -1 {
-					currentXP, tnlXP = u.Character.XPTNLActual()
-				}
-				promptOut.WriteString(strconv.Itoa(currentXP))
-
-			case `{XP}`:
-				if currentXP == -1 && tnlXP == -1 {
-					currentXP, tnlXP = u.Character.XPTNLActual()
-				}
-				promptOut.WriteString(strconv.Itoa(tnlXP))
-
-			case `{xp%}`:
-				if currentXP == -1 && tnlXP == -1 {
-					currentXP, tnlXP = u.Character.XPTNLActual()
-				}
-				tnlPercent := int(math.Floor(float64(currentXP) / float64(tnlXP) * 100))
-				promptOut.WriteString(strconv.Itoa(tnlPercent))
-				promptOut.WriteString(`%`)
-
 			case `{h}`:
 				hiddenFlag := ``
 				if u.Character.HasBuffFlag(buffs.Hidden) {
@@ -480,20 +459,11 @@ func (u *UserRecord) ProcessPromptString(promptStr string) string {
 			case `{g}`:
 				promptOut.WriteString(strconv.Itoa(u.Character.Gold))
 
-			case `{tp}`:
-				promptOut.WriteString(strconv.Itoa(u.Character.TrainingPoints))
-
-			case `{sp}`:
-				promptOut.WriteString(strconv.Itoa(u.Character.StatPoints))
-
 			case `{i}`:
 				promptOut.WriteString(strconv.Itoa(len(u.Character.Items)))
 
 			case `{I}`:
 				promptOut.WriteString(strconv.Itoa(int(u.Character.CarryCapacity())))
-
-			case `{lvl}`:
-				promptOut.WriteString(strconv.Itoa(u.Character.Level))
 
 			case `{w}`:
 				if u.Character.Aggro != nil {

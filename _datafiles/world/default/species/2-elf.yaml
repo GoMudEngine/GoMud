@@ -12,7 +12,6 @@ angrycommands:
   - shout i take no pleasure in your defeat!
 selectable: false
 knowsfirstaid: true
-tnlscale: 1.2
 tameable: false
 stats:
   speed:

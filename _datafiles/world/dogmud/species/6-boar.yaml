@@ -6,7 +6,6 @@ description: A stocky, bristle-backed beast with curved tusks and a
 naturalarmor: 5
 size: medium
 unarmedname: tusks
-tnlscale: 1
 selectable: false
 tameable: true
 angrycommands:

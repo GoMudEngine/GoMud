@@ -6,7 +6,6 @@ description: A chitinous creature with segmented limbs and compound
 naturalarmor: 10
 size: small
 unarmedname: mandibles
-tnlscale: 1
 selectable: false
 tameable: true
 angrycommands:

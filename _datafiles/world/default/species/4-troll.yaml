@@ -6,7 +6,6 @@ buffids:
   - 30 # Regeneration
 size: large
 unarmedname: massive fists
-tnlscale: 1
 angrycommands:
   - emote is looking for its next meal.
   - say me want num nums!

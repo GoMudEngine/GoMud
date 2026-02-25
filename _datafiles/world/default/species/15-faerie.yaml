@@ -9,7 +9,6 @@ angrycommands:
   - shout we are a peaceful people!
 selectable: false
 knowsfirstaid: true
-tnlscale: 1
 tameable: true
 stats:
   speed:

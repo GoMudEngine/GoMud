@@ -6,7 +6,6 @@ description: A massive apex predator with thick hide and devastating
 naturalarmor: 8
 size: large
 unarmedname: claws and teeth
-tnlscale: 1
 selectable: false
 tameable: true
 angrycommands:

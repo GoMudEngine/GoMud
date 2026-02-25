@@ -3,7 +3,6 @@ name: rodent
 description: A small furry creature with strong teeth.
 size: small
 unarmedname: teeth and nails
-tnlscale: 1
 angrycommands: [emote squeeks angrily.]
 damage:
   basedamage: 1

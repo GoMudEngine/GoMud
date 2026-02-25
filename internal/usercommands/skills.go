@@ -11,7 +11,6 @@ import (
 
 type SkillsOptions struct {
 	SkillList      map[string]int
-	TrainingPoints int
 	SkillCooldowns map[string]int
 }
 
@@ -26,7 +25,6 @@ func Skills(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	skillData := SkillsOptions{
 		SkillList:      allSkills, // name to level
 		SkillCooldowns: allCooldowns,
-		TrainingPoints: user.Character.TrainingPoints,
 	}
 
 	skillTxt, _ := templates.Process("character/skills", skillData, user.UserId)

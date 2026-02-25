@@ -51,7 +51,6 @@ func registerListeners() {
 	events.RegisterListener(events.PlayerSpawn{}, HandlePlayerSpawn)
 	events.RegisterListener(events.PlayerDespawn{}, HandlePlayerDespawn)
 	events.RegisterListener(events.Log{}, HandleLogs)
-	events.RegisterListener(events.LevelUp{}, HandleLevelup)
 	events.RegisterListener(events.PlayerDeath{}, HandleDeath)
 	events.RegisterListener(events.Broadcast{}, HandleBroadcast)
 	events.RegisterListener(`AuctionUpdate`, HandleAuctionUpdate)

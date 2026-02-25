@@ -3,7 +3,6 @@ name: reptile
 description: A cold-blooded lizard creature, quick and elusive.
 size: small
 unarmedname: teeth
-tnlscale: 1
 angrycommands: [emote hisses.]
 tameable: true
 stats:

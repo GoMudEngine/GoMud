@@ -40,10 +40,8 @@ func init() {
 
 	events.RegisterListener(events.PlayerSpawn{}, g.playerSpawnHandler)
 	events.RegisterListener(events.CharacterVitalsChanged{}, g.vitalsChangedHandler)
-	events.RegisterListener(events.LevelUp{}, g.levelUpHandler)
 	events.RegisterListener(events.CharacterTrained{}, g.charTrainedHandler)
 	events.RegisterListener(GMCPCharUpdate{}, g.buildAndSendGMCPPayload)
-	events.RegisterListener(events.GainExperience{}, g.xpGainHandler)
 	events.RegisterListener(events.CharacterStatsChanged{}, g.statsChangeHandler)
 	events.RegisterListener(events.CharacterChanged{}, g.charChangeHandler)
 	events.RegisterListener(events.BuffsTriggered{}, g.buffTriggeredHandler)
@@ -142,26 +140,6 @@ func (g *GMCPCharModule) vitalsChangedHandler(e events.Event) events.ListenerRet
 	return events.Continue
 }
 
-func (g *GMCPCharModule) xpGainHandler(e events.Event) events.ListenerReturn {
-
-	evt, typeOk := e.(events.GainExperience)
-	if !typeOk {
-		return events.Continue // Return false to stop halt the event chain for this event
-	}
-
-	if evt.UserId == 0 {
-		return events.Continue
-	}
-
-	// Changing equipment might affect stats, inventory, maxhp/maxmp etc
-	events.AddToQueue(GMCPCharUpdate{
-		UserId:     evt.UserId,
-		Identifier: `Char.Worth`,
-	})
-
-	return events.Continue
-}
-
 func (g *GMCPCharModule) ownershipChangeHandler(e events.Event) events.ListenerReturn {
 
 	evt, typeOk := e.(events.ItemOwnership)
@@ -246,26 +224,6 @@ func (g *GMCPCharModule) charTrainedHandler(e events.Event) events.ListenerRetur
 
 	return events.Continue
 }
-func (g *GMCPCharModule) levelUpHandler(e events.Event) events.ListenerReturn {
-
-	evt, typeOk := e.(events.LevelUp)
-	if !typeOk {
-		return events.Continue // Return false to stop halt the event chain for this event
-	}
-
-	if evt.UserId == 0 {
-		return events.Continue
-	}
-
-	// Changing equipment might affect stats, inventory, maxhp/maxmp etc
-	events.AddToQueue(GMCPCharUpdate{
-		UserId:     evt.UserId,
-		Identifier: `Char`,
-	})
-
-	return events.Continue
-}
-
 func (g *GMCPCharModule) playerSpawnHandler(e events.Event) events.ListenerReturn {
 
 	evt, typeOk := e.(events.PlayerSpawn)
@@ -348,7 +306,6 @@ func (g *GMCPCharModule) GetCharNode(user *users.UserRecord, gmcpModule string) 
 			Name:      user.Character.Name,
 			Class:     skills.GetProfession(user.Character.GetAllSkillRanks()),
 			Race:      user.Character.Species(),
-			Level:     user.Character.Level,
 		}
 
 		if !all {
@@ -398,7 +355,6 @@ func (g *GMCPCharModule) GetCharNode(user *users.UserRecord, gmcpModule string) 
 				e := GMCPCharModule_Enemy{
 					Id:      mob.ShorthandId(),
 					Name:    mob.Character.Name,
-					Level:   mob.Character.Level,
 					Hp:      mob.Character.Health,
 					MaxHp:   mob.Character.HealthMax.Value,
 					Engaged: mob.InstanceId == aggroMobInstanceId,
@@ -506,12 +462,8 @@ func (g *GMCPCharModule) GetCharNode(user *users.UserRecord, gmcpModule string) 
 	if all || g.wantsGMCPPayload(`Char.Worth`, gmcpModule) {
 
 		payload.Worth = &GMCPCharModule_Payload_Worth{
-			Gold:           user.Character.Gold,
-			Bank:           user.Character.Bank,
-			SkillPoints:    user.Character.StatPoints,
-			TrainingPoints: user.Character.TrainingPoints,
-			TNL:            user.Character.XPTL(user.Character.Level),
-			XP:             user.Character.Experience,
+			Gold: user.Character.Gold,
+			Bank: user.Character.Bank,
 		}
 
 		if !all {
@@ -722,7 +674,6 @@ type GMCPCharModule_Payload_Info struct {
 	Name      string `json:"name,omitempty"`
 	Class     string `json:"class,omitempty"`
 	Race      string `json:"race,omitempty"`
-	Level     int    `json:"level,omitempty"`
 }
 
 // /////////////////
@@ -731,7 +682,6 @@ type GMCPCharModule_Payload_Info struct {
 type GMCPCharModule_Enemy struct {
 	Id      string `json:"id"`
 	Name    string `json:"name"`
-	Level   int    `json:"level"`
 	Hp      int    `json:"hp"`
 	MaxHp   int    `json:"hp_max"`
 	Engaged bool   `json:"engaged"`
@@ -828,12 +778,8 @@ type GMCPCharModule_Payload_Vitals struct {
 // Char.Worth
 // /////////////////
 type GMCPCharModule_Payload_Worth struct {
-	Gold           int `json:"gold_carry,omitempty"`
-	Bank           int `json:"gold_bank,omitempty"`
-	SkillPoints    int `json:"skillpoints,omitempty"`
-	TrainingPoints int `json:"trainingpoints,omitempty"`
-	TNL            int `json:"tnl,omitempty"`
-	XP             int `json:"xp,omitempty"`
+	Gold int `json:"gold_carry,omitempty"`
+	Bank int `json:"gold_bank,omitempty"`
 }
 
 // /////////////////

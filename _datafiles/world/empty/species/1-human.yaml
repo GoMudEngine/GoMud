@@ -3,7 +3,6 @@ name: human
 description: A basic human who gains ordinary stats.
 size: medium
 unarmedname: fists
-tnlscale: 1
 selectable: true
 knowsfirstaid: true
 angrycommands:

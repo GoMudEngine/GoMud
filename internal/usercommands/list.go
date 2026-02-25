@@ -184,7 +184,7 @@ func List(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 				price := stockMerc.Price
 				if price == 0 {
-					price = 250 * mobInfo.Character.Level
+					price = 250
 				} else if price < 0 {
 					price = 0
 				}
@@ -192,7 +192,7 @@ func List(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				entryRow := []string{
 					qtyStr,
 					`<ansi fg="mobname">` + mobInfo.Character.Name + `</ansi>`,
-					strconv.Itoa(mobInfo.Character.Level),
+					`-`,
 					raceInfo.Name,
 				}
 
@@ -545,7 +545,7 @@ func List(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 				price := stockMerc.Price
 				if price == 0 {
-					price = 250 * mobInfo.Character.Level
+					price = 250
 				} else if price < 0 {
 					price = 0
 				}
@@ -553,7 +553,7 @@ func List(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				entryRow := []string{
 					qtyStr,
 					`<ansi fg="mobname">` + mobInfo.Character.Name + `</ansi>`,
-					strconv.Itoa(mobInfo.Character.Level),
+					`-`,
 					raceInfo.Name,
 				}
 

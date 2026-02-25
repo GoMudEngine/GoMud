@@ -247,25 +247,11 @@ func (g *GMCPMudletModule) sendDiscordStatus(userId int) {
 	showArea := getUserBoolOption(user, "discord_show_area", true)
 	showParty := getUserBoolOption(user, "discord_show_party", true)
 	showName := getUserBoolOption(user, "discord_show_name", true)
-	showLevel := getUserBoolOption(user, "discord_show_level", true)
 
 	// Build the details string based on preferences
 	detailsStr := g.config.DiscordDetails
-	if showName || showLevel {
-		detailsStr = ""
-		if showName {
-			detailsStr = user.Character.Name
-		}
-		if showLevel {
-			if detailsStr != "" {
-				detailsStr += " "
-			}
-			if showName {
-				detailsStr += fmt.Sprintf("(lvl. %d)", user.Character.Level)
-			} else {
-				detailsStr += fmt.Sprintf("Level %d", user.Character.Level)
-			}
-		}
+	if showName {
+		detailsStr = user.Character.Name
 	}
 
 	// Create Discord Status payload

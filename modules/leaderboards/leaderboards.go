@@ -124,7 +124,7 @@ func (l *LeaderboardModule) leaderboardCommand(rest string, user *users.UserReco
 
 		title := fmt.Sprintf(`%s Leaderboard`, lb.Name)
 
-		headers := []string{`Rank`, `Character`, `Profession`, `Level`, lb.Name}
+		headers := []string{`Rank`, `Character`, `Profession`, lb.Name}
 
 		rows := [][]string{}
 
@@ -137,7 +137,6 @@ func (l *LeaderboardModule) leaderboardCommand(rest string, user *users.UserReco
 			`<ansi fg="red">%s</ansi>`,
 			`<ansi fg="username">%s</ansi>`,
 			`<ansi fg="white-bold">%s</ansi>`,
-			`<ansi fg="157">%s</ansi>`,
 			valueFormatting,
 		}
 
@@ -147,7 +146,7 @@ func (l *LeaderboardModule) leaderboardCommand(rest string, user *users.UserReco
 				continue
 			}
 
-			newRow := []string{`#` + strconv.Itoa(i+1), entry.CharacterName, entry.CharacterClass, strconv.Itoa(entry.Level), util.FormatNumber(entry.ScoreValue)}
+			newRow := []string{`#` + strconv.Itoa(i+1), entry.CharacterName, entry.CharacterClass, util.FormatNumber(entry.ScoreValue)}
 
 			rows = append(rows, newRow)
 		}
@@ -204,9 +203,6 @@ func (l *LeaderboardModule) Update() {
 			l.LB_Gold.Consider(u.UserId, *u.Character, u.Character.Gold+u.Character.Bank)
 		}
 
-		if l.ExperienceEnabled {
-			l.LB_Experience.Consider(u.UserId, *u.Character, u.Character.Experience)
-		}
 
 		if l.KillsEnabled {
 			l.LB_Kills.Consider(u.UserId, *u.Character, u.Character.KD.TotalKills)
@@ -220,9 +216,6 @@ func (l *LeaderboardModule) Update() {
 				l.LB_Gold.Consider(u.UserId, char, char.Gold+char.Bank)
 			}
 
-			if l.ExperienceEnabled {
-				l.LB_Experience.Consider(u.UserId, char, char.Experience)
-			}
 
 			if l.KillsEnabled {
 				l.LB_Kills.Consider(u.UserId, char, char.KD.TotalKills)
@@ -242,9 +235,6 @@ func (l *LeaderboardModule) Update() {
 			l.LB_Gold.Consider(u.UserId, *u.Character, u.Character.Gold+u.Character.Bank)
 		}
 
-		if l.ExperienceEnabled {
-			l.LB_Experience.Consider(u.UserId, *u.Character, u.Character.Experience)
-		}
 
 		if l.KillsEnabled {
 			l.LB_Kills.Consider(u.UserId, *u.Character, u.Character.KD.TotalKills)
@@ -258,9 +248,6 @@ func (l *LeaderboardModule) Update() {
 				l.LB_Gold.Consider(u.UserId, char, char.Gold+char.Bank)
 			}
 
-			if l.ExperienceEnabled {
-				l.LB_Experience.Consider(u.UserId, char, char.Experience)
-			}
 
 			if l.KillsEnabled {
 				l.LB_Kills.Consider(u.UserId, char, char.KD.TotalKills)
@@ -321,7 +308,6 @@ type leaderboardEntry struct {
 	UserId         int    `yaml:"UserId,omitempty"`
 	CharacterName  string `yaml:"CharacterName,omitempty"`
 	CharacterClass string `yaml:"CharacterClass,omitempty"`
-	Level          int    `yaml:"Level,omitempty"`
 	ScoreValue     int    `yaml:"ScoreValue,omitempty"`
 }
 
@@ -374,7 +360,6 @@ func (l *leaderboardData) Consider(userId int, char characters.Character, val in
 			UserId:         userId,
 			CharacterName:  char.Name,
 			CharacterClass: skills.GetProfession(char.GetAllSkillRanks()),
-			Level:          char.Level,
 			ScoreValue:     val,
 		}
 

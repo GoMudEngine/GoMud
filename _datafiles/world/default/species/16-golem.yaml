@@ -5,7 +5,6 @@ buffids:
   - 29 # Night Vision
 size: large
 unarmedname: fists
-tnlscale: 1
 angrycommands: [emote groans and shrieks.]
 tameable: true
 stats:

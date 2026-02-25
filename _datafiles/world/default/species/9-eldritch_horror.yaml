@@ -6,7 +6,6 @@ buffids:
   - 29 # Night Vision
 size: medium
 unarmedname: tentacles
-tnlscale: 1
 angrycommands: [emote gibbers unintelligibly.]
 tameable: true
 stats:

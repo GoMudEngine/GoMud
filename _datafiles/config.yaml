@@ -270,13 +270,6 @@ GamePlay:
     #   If true, players will always drop their backpack contents when they die.
     #   If false, it will failover to EquipmentDropChance.
     AlwaysDropBackpack: false
-    # - XPPenalty -
-    #   What penalty is applies to a players XP when they die.
-    #   none - no penalty
-    #   level - lose all XP gained over their current level.
-    #   10% - lose 10% of XP
-    #   50% - lose 50% of XP
-    XPPenalty: none
     # DOGMud death penalties (Stage 20.1)
     StatDecayMin: 1            # Min Training loss on 1 random stat
     StatDecayMax: 2            # Max Training loss on 1 random stat
@@ -284,9 +277,10 @@ GamePlay:
     SkillRustAmount: 1         # Skill ranks lost per decayed skill
     SkillRecencyThreshold: 50  # Use count above which skills are protected
     DeathsShadowBuffId: 25     # Buff ID for Death's Shadow debuff
-    # - ProtectionLevels -
-    #   Players do not incur death penalties up to and including this level.
-    ProtectionLevels: 5
+    # - ProtectionSkillRanks -
+    #   Players with total skill ranks at or below this value are protected
+    #   from death penalties. Gives new players a grace period.
+    ProtectionSkillRanks: 10
     # - PermaDeath -
     #   If true, players lose their character if they die with zero lives left.
     PermaDeath: false
@@ -303,9 +297,6 @@ GamePlay:
   # - LivesMax -
   #   (Req: PermaDeath) The maximum lives a player can have.
   LivesMax: 3
-  # - LivesOnLevelUp -
-  #   (Req: PermaDeath) If non zero, players gain this many lives per level.
-  LivesOnLevelUp: 1
   # - PricePerLife -
   #   (Req: PermaDeath) If non-zero, players can buy extra lives for this amount.
   PricePerLife: 1000000
@@ -339,13 +330,9 @@ GamePlay:
   #     disabled  - PVP is disabled eveywhere
   #     limited   - PVP is enabled for all players but only in PVP enabled rooms
   PVP: limited
-  # - PVPMinimumLevel -
-  #   Minimum level one must be to be targetted or to target other players in PVP
-  PVPMinimumLevel: 15
-  # - XPScale -
-  #   Scales how much XP is gained when characters gain XP. Number is a percentage
-  #   Example: 100 = 100%
-  XPScale: 100
+  # - PVPMinimumSkillRanks -
+  #   Total skill ranks required to engage in PVP combat.
+  PVPMinimumSkillRanks: 15
   # - MobConverseChance -
   #   Chance in 100 that the mob will attempt to converse when idle.
   MobConverseChance: 3
@@ -354,8 +341,8 @@ GamePlay:
   UseSkillProgression: true
   # - DualProgressionMode -
   #   If true, successful progression checks grant actual skill/stat increases.
-  #   Requires UseSkillProgression to be true. Both the level system and
-  #   skill-based progression run in parallel.
+  #   Requires UseSkillProgression to be true. When enabled, progression
+  #   checks grant actual skill/stat increases.
   DualProgressionMode: true
   # - SpellConvictionCostMultiplier -
   #   Global multiplier for spell conviction costs. Default 1.0 means no scaling.

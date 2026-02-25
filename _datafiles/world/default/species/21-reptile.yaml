@@ -3,7 +3,6 @@ name: reptile
 description: A lizard creature.
 size: medium
 unarmedname: teeth
-tnlscale: 1
 angrycommands: [emote hisses.]
 tameable: true
 stats:

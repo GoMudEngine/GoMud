@@ -85,22 +85,6 @@ func HandleLogs(e events.Event) events.ListenerReturn {
 	return events.Continue
 }
 
-func HandleLevelup(e events.Event) events.ListenerReturn {
-	evt, typeOk := e.(events.LevelUp)
-	if !typeOk {
-		return events.Cancel
-	}
-
-	message := fmt.Sprintf(`:crown: **%s** *has gained a level and reached **level %d**!*`, evt.CharacterName, evt.NewLevel)
-	if evt.LevelsGained > 1 {
-		message = fmt.Sprintf(`:crown: **%s** *has gained **%d levels** and reached **level %d**!*`, evt.CharacterName, evt.LevelsGained, evt.NewLevel)
-	}
-
-	SendRichMessage(message, Gold)
-
-	return events.Continue
-}
-
 func HandleDeath(e events.Event) events.ListenerReturn {
 	evt, typeOk := e.(events.PlayerDeath)
 	if !typeOk {

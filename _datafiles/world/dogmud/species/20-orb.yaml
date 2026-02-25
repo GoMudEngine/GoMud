@@ -3,7 +3,6 @@ name: orb
 description: A sphere of pure energy
 size: medium
 unarmedname: energy
-tnlscale: 1
 damage:
   basedamage: 0
   variance: 0

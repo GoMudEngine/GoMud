@@ -3,7 +3,6 @@ name: monkey
 description: Just a monkey
 size: medium
 unarmedname: fists
-tnlscale: 1
 selectable: false
 knowsfirstaid: false
 angrycommands:

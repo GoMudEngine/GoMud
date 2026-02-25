@@ -4,5 +4,4 @@ description: You feel like you've been training in 100x gravity.
 secret: false
 triggerrate: 1 real minute
 triggercount: 30 # 30 times = 30 minutes
-statmods:
-  xpscale: 200
+statmods: {}

@@ -54,10 +54,6 @@ type Character struct {
 	Zone             string                         // The zone the character is in. The folder the room can be located in too.
 	SpeciesId        int                            // Character species
 	Stats            stats.Statistics               // Character stats
-	Level            int                            // The level of the character
-	Experience       int                            // The experience of the character
-	TrainingPoints   int                            // The number of training points the character has
-	StatPoints       int                            // The number of skill points the character has
 	Health           int                            // The health of the character
 	Stamina          int                            // The stamina of the character (physical energy)
 	Conviction       int                            // The conviction of the character (mental/spiritual energy)
@@ -71,7 +67,6 @@ type Character struct {
 	Items            []items.Item                   `yaml:"items,omitempty"`         // The items the character is holding
 	Buffs            buffs.Buffs                    `yaml:"buffs,omitempty"`         // The buffs the character has active
 	Equipment        Worn                           `yaml:"equipment,omitempty"`     // The equipment the character is wearing
-	TNLScale         float32                        `yaml:"-"`                       // The experience scale of the character. Don't write to yaml since is dynamically calculated.
 	HealthMax        stats.StatInfo                 `yaml:"-"`                       // The maximum health of the character. Don't write to yaml since is dynamically calculated.
 	StaminaMax       stats.StatInfo                 `yaml:"-"`                       // The maximum stamina of the character. Don't write to yaml since is dynamically calculated.
 	ConvictionMax    stats.StatInfo                 `yaml:"-"`                       // The maximum conviction of the character. Don't write to yaml since is dynamically calculated.
@@ -118,11 +113,6 @@ func New() *Character {
 		RoomId:         StartingRoomId,
 		Zone:           startingZone,
 		SpeciesId:      startingRace,
-		Level:          1,
-		Experience:     1,
-		TrainingPoints: 0,
-		StatPoints:     0,
-		TNLScale:       1.0,
 		Health:         startingHealth,
 		HealthMax:      stats.StatInfo{Base: 1},
 		Skills:         initAllSkills(),
@@ -790,33 +780,6 @@ func (c *Character) LearnSpell(spellName string) bool {
 		return true
 	}
 	return false
-}
-
-func (c *Character) GrantXP(xp int) (actualXP int, xpScale int) {
-
-	if xp == 0 {
-		return 0, 100
-	}
-
-	preScale := float64(configs.GetGamePlayConfig().XPScale) / 100
-	xp = int(math.Round(preScale * float64(xp)))
-
-	xpScale = c.StatMod(string(statmods.XPScale)) + 100
-
-	if xpScale == 100 {
-		actualXP = xp
-	} else {
-
-		scaleFloat := max(float64(xpScale)/100, 1)
-
-		actualXP = int(float64(xp) * scaleFloat)
-	}
-
-	c.Experience += actualXP
-
-	mudlog.Debug(`GrantXP()`, `username`, c.Name, `xp`, xp, `xpscale`, xpScale, `actualXP`, actualXP)
-
-	return actualXP, xpScale
 }
 
 func (c *Character) TrackCharmed(mobId int, add bool) {
@@ -1982,41 +1945,6 @@ func (c *Character) BarterPrice(startPrice int) int {
 	return int(factor * float64(startPrice))
 }
 
-func (c *Character) XPTNL() int {
-	return c.XPTL(c.Level)
-}
-
-// Amt TNL for a specific level
-func (c *Character) XPTL(lvl int) int {
-	if lvl < 1 {
-		lvl = 1
-	}
-	fLvl := float64(lvl)
-	return int(float32(1000+(fLvl*(fLvl*.75)*1000)) * c.TNLScale)
-}
-
-// Returns the actual xp in regards to the current level/next level
-func (c *Character) XPTNLActual() (xpPastCurrentLevel int, tnlXP int) {
-
-	xpForCurrentLevel := c.XPTL(c.Level - 1)
-	if c.Level == 1 {
-		xpForCurrentLevel = 0
-	}
-
-	xpForNextLevel := c.XPTL(c.Level)
-	tnlXP = xpForNextLevel - xpForCurrentLevel
-
-	xpPastCurrentLevel = c.Experience - xpForCurrentLevel
-
-	return xpPastCurrentLevel, tnlXP
-}
-
-// LevelUp is disabled in Stage 3.5 — progression is now 100% skill-based.
-// Kept for backward compatibility (callers check return value).
-func (c *Character) LevelUp() (bool, stats.Statistics) {
-	return false, stats.Statistics{}
-}
-
 func (c *Character) Heal(hp int) int {
 	startHP := c.Health
 
@@ -2077,11 +2005,6 @@ func (c *Character) RecalculateStats() {
 	beforeStats := c.Stats
 
 	if speciesInfo := species.GetSpecies(c.SpeciesId); speciesInfo != nil {
-		c.TNLScale = speciesInfo.TNLScale
-		// Safety check: ensure TNLScale is never 0
-		if c.TNLScale == 0 {
-			c.TNLScale = 1.0
-		}
 
 		// Only set base stats from racial if they haven't been rolled yet
 		// (Base values of 0 indicate uninitialized stats)
@@ -2125,12 +2048,12 @@ func (c *Character) RecalculateStats() {
 	// Recalculate stats
 	// Stats are basically:
 	// level*base + training + mods
-	c.Stats.Strength.Recalculate(c.Level)
-	c.Stats.Dexterity.Recalculate(c.Level)
-	c.Stats.Perception.Recalculate(c.Level)
-	c.Stats.Vitality.Recalculate(c.Level)
-	c.Stats.Willpower.Recalculate(c.Level)
-	c.Stats.Charisma.Recalculate(c.Level)
+	c.Stats.Strength.Recalculate(1)
+	c.Stats.Dexterity.Recalculate(1)
+	c.Stats.Perception.Recalculate(1)
+	c.Stats.Vitality.Recalculate(1)
+	c.Stats.Willpower.Recalculate(1)
+	c.Stats.Charisma.Recalculate(1)
 
 	// Stage 12.1: Apply stat_multiplier mutations after Recalculate()
 	if v := mutations.GetStatMultiplier(c.Mutations, "strength"); v != 0 {
@@ -2172,10 +2095,10 @@ func (c *Character) RecalculateStats() {
 	c.ActionPointsMax.Mods = 200 // hard coded for now
 
 	// Recalculate HP/Stamina/Conviction stats
-	c.HealthMax.Recalculate(c.Level)
-	c.StaminaMax.Recalculate(c.Level)
-	c.ConvictionMax.Recalculate(c.Level)
-	c.ActionPointsMax.Recalculate(c.Level)
+	c.HealthMax.Recalculate(1)
+	c.StaminaMax.Recalculate(1)
+	c.ConvictionMax.Recalculate(1)
+	c.ActionPointsMax.Recalculate(1)
 
 	// Stage 12.1: Apply health_multiplier mutations after HealthMax.Recalculate()
 	if hMult := mutations.GetHealthMultiplier(c.Mutations); hMult != 0 {
@@ -2222,37 +2145,6 @@ func (c *Character) RecalculateStats() {
 			events.AddToQueue(events.CharacterStatsChanged{UserId: c.userId})
 		}
 	}
-
-}
-
-// AutoTrain() spends any training points for this character
-func (c *Character) AutoTrain() {
-
-	if c.StatPoints < 0 {
-		return
-	}
-
-	for c.StatPoints > 0 {
-
-		switch util.Rand(6) {
-		case 0:
-			c.Stats.Strength.Training++
-		case 1:
-			c.Stats.Dexterity.Training++
-		case 2:
-			c.Stats.Perception.Training++
-		case 3:
-			c.Stats.Vitality.Training++
-		case 4:
-			c.Stats.Willpower.Training++
-		case 5:
-			c.Stats.Charisma.Training++
-		}
-
-		c.StatPoints--
-	}
-
-	c.Validate()
 
 }
 
@@ -2305,13 +2197,6 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 	if c.Name == "" {
 		c.Name = defaultName
 	}
-	if c.Level < 1 {
-		c.Level = 1
-	}
-	if c.Experience < 1 {
-		c.Experience = 1
-	}
-
 	c.Buffs.Validate()
 
 	// Ensure all known skills exist at rank 1 minimum (retroactive for existing characters)
