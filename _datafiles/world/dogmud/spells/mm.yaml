@@ -1,6 +1,6 @@
 spellid: mm
-name: Magic Missile
-description: Hurls a bolt of pure magical force at a target.
+name: Conviction Spike
+description: Projects raw belief as a kinetic spike of force at a target.
 type: harmsingle
 schools:
   - elemental

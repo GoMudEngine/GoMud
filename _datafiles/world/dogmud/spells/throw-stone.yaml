@@ -1,6 +1,6 @@
 spellid: throw-stone
-name: Throw Stone
-description: Throws a stone at a target with magical force.
+name: Kinetic Hurl
+description: Propels a stone with concentrated willpower, striking the target with devastating force.
 type: harmsingle
 schools:
   - elemental

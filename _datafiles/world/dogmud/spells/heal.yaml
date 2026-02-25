@@ -1,7 +1,7 @@
 # Learned at the Sanctuary of the Benevolent Heart (ROOM 18)
 spellid: heal
-name: Minor Heal
-description: Channels healing energy into the target, mending wounds.
+name: Mend Flesh
+description: Directs Chrysalis energy to accelerate tissue repair in the target.
 type: helpsingle
 schools:
   - vital

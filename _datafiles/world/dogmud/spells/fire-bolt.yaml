@@ -1,6 +1,6 @@
 spellid: fire-bolt
-name: Fire Bolt
-description: Launches a bolt of concentrated fire at a target.
+name: Pyretic Surge
+description: Channels Chrysalis energy to superheat the target's blood to the point of combustion.
 type: harmsingle
 schools:
   - elemental

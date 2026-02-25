@@ -1,0 +1,14 @@
+spellid: summon-hive-swarm
+name: Summon Hive Swarm
+description: Shatters a Hive Fragment to release a swarm of tiny Chrysalis organisms, binding them to the caster's will as a roiling cloud of iridescent fury. The swarm persists until destroyed.
+type: helpsingle
+schools:
+  - mental
+cost: 50
+waitrounds: 3
+difficulty: 0
+primarystat: willpower
+base_folds: 24
+target_defense_type: none
+effect_type: none
+effect_magnitude: 0

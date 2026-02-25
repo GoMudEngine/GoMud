@@ -1,7 +1,7 @@
 # Only applied by the aid skill
 spellid: aidskill
-name: Aid
-description: Revives a fallen ally
+name: Chrysalis Aid
+description: Channels Chrysalis energy to stabilize a fallen ally, pulling them back from the brink.
 type: helpsingle
 schools:
   - vital

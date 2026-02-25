@@ -1,0 +1,5 @@
+mutatorid: bioluminescent-caves
+descriptionmodifier:
+  behavior: append
+  text: ' Bioluminescent lichen clings to the walls, casting a dim blue-green glow.'
+lightmod: 2

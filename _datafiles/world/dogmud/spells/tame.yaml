@@ -1,6 +1,6 @@
 spellid: tame
-name: Tame
-description: Attempts to tame a wild creature.
+name: Empathic Bond
+description: Links minds through Chrysalis energy, imposing a rapport that calms the creature.
 type: harmsingle
 schools:
   - mental

@@ -1,6 +1,6 @@
 spellid: minor-shield
-name: Minor Shield
-description: Creates a magical barrier that absorbs physical damage.
+name: Conviction Ward
+description: Solidifies belief into a shimmering barrier that absorbs physical damage.
 type: helpsingle
 schools:
   - enhancement

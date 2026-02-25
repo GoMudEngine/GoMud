@@ -8,6 +8,8 @@ description: The deepest chamber of the cave system is vast, its ceiling a dome 
   at impossible angles, radiating waves of distorted belief that make the air shimmer
   and the mind ache.
 biome: cave
+mutators:
+- mutatorid: bioluminescent-caves
 mapsymbol: B
 maplegend: Boss Cave
 exits:

@@ -1,0 +1,14 @@
+spellid: conviction-armor
+name: Conviction Armor
+description: Encases the target in solidified belief, greatly enhancing their physical resilience.
+type: helpsingle
+schools:
+  - enhancement
+cost: 50
+waitrounds: 1
+difficulty: 0
+primarystat: willpower
+base_folds: 6
+effect_type: buff
+buff_ids:
+  - 38

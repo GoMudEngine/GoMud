@@ -1,6 +1,6 @@
 spellid: sparks
-name: Shower of Sparks
-description: Lashes a target with a shower of crackling sparks.
+name: Conviction Sparks
+description: Scatters shards of crystallized belief that lash all nearby foes.
 type: harmmulti
 schools:
   - elemental

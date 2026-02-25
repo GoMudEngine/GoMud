@@ -1,0 +1,15 @@
+spellid: neural-toxin
+name: Neural Toxin
+description: Injects psionic venom into the target's nervous system, dealing sustained damage over time.
+type: harmsingle
+schools:
+  - mental
+cost: 45
+waitrounds: 1
+difficulty: 0
+primarystat: willpower
+base_folds: 5
+target_defense_type: mental
+effect_type: dot
+effect_magnitude: 60
+effect_duration: 4

@@ -1,8 +1,8 @@
-// Minor Shield spell script — flavor only; effects resolved in Go (Stage 11.4)
+// Conviction Ward spell script — flavor only; effects resolved in Go (Stage 11.4)
 
 function onCast(sourceActor, targetActor) {
-    SendUserMessage(sourceActor.UserId(), 'You weave arcane energy into a protective barrier.');
-    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true)+' weaves a shimmer of energy around them.', sourceActor.UserId());
+    SendUserMessage(sourceActor.UserId(), 'You solidify your belief into a protective barrier.');
+    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true)+' spreads their arms as conviction shimmers into a ward.', sourceActor.UserId());
     return true;
 }
 

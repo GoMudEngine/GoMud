@@ -1,0 +1,14 @@
+spellid: chrysalis-construct
+name: Chrysalis Construct
+description: Channels immense conviction through a Chrysalis Core, coalescing raw Chrysalis matter into a hulking combat golem bound to the caster's will. The construct persists until destroyed.
+type: helpsingle
+schools:
+  - mental
+cost: 40
+waitrounds: 3
+difficulty: 0
+primarystat: willpower
+base_folds: 20
+target_defense_type: none
+effect_type: none
+effect_magnitude: 0

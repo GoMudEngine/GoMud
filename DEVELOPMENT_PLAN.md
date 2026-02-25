@@ -4374,54 +4374,46 @@ mutations: extra-arms (rarity 9), extra-legs (rarity 8).
 
 ---
 
-## Phase 25: Expanded Spells
+## Phase 25: Expanded Spells ✅ COMPLETED
 
-### Stage 25.1: New Elemental & Enhancement Spells
+Re-themed all 14 existing spells to fit the Chrysalis/belief-powered world, added 31 new spells,
+13 new buff specs, use-based spell discovery system, and permanent summon mechanics. Total spell
+count: 45 (14 re-themed + 31 new). New characters start with only Conviction Spike (mm); all
+other spells discovered through casting practice.
 
-**Goal**: Expand the spell library from 14 to 25+. Focus on Elemental and Enhancement schools
-first, adding offensive variety and utility.
-
-**Changes**:
-1. **Elemental spells** (4–5 new):
-   - Ice Shard — single-target cold damage, chance to slow
-   - Chain Lightning — hits primary target + 1–2 nearby enemies (reduced damage)
-   - Earth Tremor — area effect, chance to knock prone
-   - Flame Wall — room-area damage over time
-2. **Enhancement spells** (4–5 new):
-   - Iron Skin — temporary natural armor boost (self)
-   - Haste — temporary Dexterity boost (self/other)
-   - Bull's Strength — temporary Strength boost
-   - Cat's Grace — temporary dodge chance boost
-   - Fortify — temporary Vitality boost
-3. Each spell needs a `.yaml` definition and `.js` script stub.
-4. Balance conviction costs against existing spells.
-
-**Files to Create**: 8–10 new spell YAML + JS pairs in `_datafiles/world/dogmud/spells/`
-
-### Stage 25.2: New Mental & Vital Spells
-
-**Goal**: Add Mental and Vital school spells for crowd control, debuffs, and healing variety.
+### Stage 25.1: Re-Theme Existing Spells + Go Infrastructure + Spell Discovery ✅ COMPLETED
 
 **Changes**:
-1. **Mental spells** (3–4 new):
-   - Confuse — target attacks randomly (friend or foe) for N rounds
-   - Fear — target flees the room (opposed Willpower check)
-   - Mind Spike — mental damage, bypasses physical armor
-   - Dominate — short-duration charm (very high conviction cost)
-2. **Vital spells** (3–4 new):
-   - Regenerate — heal-over-time buff
-   - Purify — remove poison and disease conditions
-   - Life Drain — damage target, heal self for portion of damage
-   - Mass Heal — heal all friendly characters in room (reduced per-target)
-3. Each spell needs `.yaml` + `.js` files.
-4. Ensure conviction costs scale appropriately.
+1. Re-themed all 14 existing spells (name + description + JS flavor text) to Chrysalis/psionic theme
+2. Added `EffectDuration` field to SpellData struct for DoT support
+3. Added `dot`, `knockdown`, `purge` effect types in spell_resolution.go
+4. Fixed HelpArea target population (was only implemented for HarmArea)
+5. Added mob poison DoT processing in NewRound_AutoHeal.go
+6. Added 5 new buff flag constants: Haste, DamageBonus, Slow, SkillProgress, MutationRate
+7. Implemented spell discovery system: ~5% base chance per cast to learn random eligible spell,
+   gated by casting skill level → fold threshold table (skill 1-4: folds ≤ 4 ... skill 80+: folds ≤ 32)
+8. Reduced starting spells from 7 to 1 (Conviction Spike only)
 
-**Testing** (all of Phase 25):
-- [ ] All new spells load without errors
-- [ ] Each spell can be cast and produces expected effects
-- [ ] Conviction costs are balanced (no free infinite casting)
-- [ ] Buff/debuff durations and magnitudes feel right
-- [ ] Spell descriptions use immersive language (no raw numbers)
+### Stage 25.2: New Damage/Heal/DoT/Shield Spells ✅ COMPLETED
+
+12 new spells (24 files): mind-spike, kinetic-shove, blood-boil, hemorrhagic-wave,
+synaptic-overload, veil-rend, mend-wounds, communion-of-flesh, chrysalis-cocoon,
+neural-toxin, conviction-barrage, cleansing-wave.
+
+### Stage 25.3: Buff/Debuff/Utility Spells + New Buffs ✅ COMPLETED
+
+13 new buff specs (IDs 26–38) + 17 new spells (~60 files). Buffs include damage bonuses,
+stat modifiers, HoT, stealth, skill progression boost, mutation rate boost, anti-teleport.
+Hook integration: DamageBonus (+15% physical damage), SkillProgress (2x skill progression),
+MutationRate (2x mutation progress). Utility spells include fold-anchor/fold-recall teleport
+system, veil-sight, mass-mend.
+
+### Stage 25.4: Summon Spells + Component Items ✅ COMPLETED
+
+2 permanent summon spells (chrysalis-construct at 20 folds, summon-hive-swarm at 24 folds)
+with rare component items (Chrysalis Core from Aberrant Chrysalis, Hive Fragment from Spore
+Crawler). Summons persist until killed, one per type, follow the caster. Summon mob templates
+in new Summons zone.
 
 ---
 
@@ -4673,7 +4665,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 22: AI Connection Limits | 1 stage (22.1) | 6 hours | **22.1 Complete** |
 | Phase 23: Content — Tunnels + Road to Thornwall | 6 stages (23.1–23.6) | ~55 hours | 23.1–23.2 Complete |
 | Phase 24: Expanded Mutations | 6 stages (24.1–24.6) | 24 hours | **24.1–24.6 Complete** |
-| Phase 25: Expanded Spells | 2 stages (25.1–25.2) | 16 hours | Not Started |
+| Phase 25: Expanded Spells | 4 stages (25.1–25.4) | 24 hours | **25.1–25.4 Complete** |
 | Phase 26: NPC Species Variety | 2 stages (26.1–26.2) | 12 hours | Not Started |
 | Phase 27: Dialogue–Quest Integration | 2 stages (27.1–27.2) | 16 hours | Not Started |
 | Phase 28: LLM Tutorial Enhancement | 1 stage (28.1) | 8 hours | Not Started |
@@ -4777,4 +4769,4 @@ Critical bugs fixed outside of formal stage development:
 
 **Last Updated**: 2026-02-24
 **Status**: In Progress
-**Current Stage**: Phases 1–24 complete. Next: Phase 25 (Expanded Spells).
+**Current Stage**: Phases 1–25 complete. Next: Phase 26 (NPC Species Variety).

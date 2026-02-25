@@ -1,0 +1,13 @@
+spellid: mend-wounds
+name: Mend Wounds
+description: Channels concentrated Chrysalis energy to rapidly mend the target's wounds.
+type: helpsingle
+schools:
+  - vital
+cost: 40
+waitrounds: 1
+difficulty: 0
+primarystat: willpower
+base_folds: 4
+effect_type: heal
+effect_magnitude: 50

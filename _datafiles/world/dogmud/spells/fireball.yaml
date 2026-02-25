@@ -1,6 +1,6 @@
 spellid: fireball
-name: Fireball
-description: Explodes in a ball of fire, hitting all creatures in the room.
+name: Hemorrhagic Burst
+description: Ruptures blood vessels outward in a devastating area explosion of superheated viscera.
 type: harmarea
 schools:
   - elemental

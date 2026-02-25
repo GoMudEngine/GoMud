@@ -1,0 +1,8 @@
+buffid: 31
+name: Empathic Shroud
+description: A psionic veil makes you difficult to perceive.
+triggerrate: 1 round
+triggercount: 8
+flags:
+  - hidden
+  - cancel-on-combat

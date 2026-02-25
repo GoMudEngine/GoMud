@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/dice"
@@ -27,6 +28,11 @@ func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData
 	if spellData.Type == spells.HarmArea {
 		cs.TargetMobInstanceIds = room.GetMobs(rooms.FindAll)
 		// HarmArea hits everyone in the room (all mobs); players are excluded in this stage
+	}
+
+	// --- Populate area targets for HelpArea ---
+	if spellData.Type == spells.HelpArea {
+		cs.TargetUserIds = room.GetPlayers(rooms.FindAll)
 	}
 
 	// --- Resolve against mob targets ---
@@ -124,6 +130,55 @@ func applyMobEffect(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spe
 				user.Character.Name, spellData.Name, mob.Character.Name), user.UserId)
 		}
 
+	case "dot":
+		dotDuration := spellData.EffectDuration
+		if dotDuration < 1 {
+			dotDuration = 3
+		}
+		// Duration is in AutoHeal ticks (every 3 rounds), so multiply by 3 for round count
+		mob.Character.AddCondition(characters.ConditionPoisoned, dotDuration*3, float64(magnitude), "spell")
+		if mob.Character.Aggro == nil {
+			mob.PreventIdle = true
+			if user != nil {
+				mob.Command(fmt.Sprintf("attack @%d", user.UserId))
+			}
+		}
+		if user != nil {
+			user.SendText(fmt.Sprintf(
+				`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> afflicts <ansi fg="mobname">%s</ansi>!%s</ansi>`,
+				spellData.Name, mob.Character.Name, critTag))
+			room.SendText(fmt.Sprintf(
+				`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> afflicts <ansi fg="mobname">%s</ansi>!`,
+				user.Character.Name, spellData.Name, mob.Character.Name), user.UserId)
+		}
+
+	case "knockdown":
+		dmgRoll := dice.RollStat(float64(magnitude))
+		dmg := int(math.Round(dmgRoll.Value))
+		if dmg < 1 {
+			dmg = 1
+		}
+		if isCrit {
+			dmg += magnitude
+		}
+		mob.Character.Health -= dmg
+		mob.Character.CombatPosition = characters.PositionProne
+		mob.Character.PositionRoundsMin = 1
+		if mob.Character.Aggro == nil {
+			mob.PreventIdle = true
+			if user != nil {
+				mob.Command(fmt.Sprintf("attack @%d", user.UserId))
+			}
+		}
+		if user != nil {
+			user.SendText(fmt.Sprintf(
+				`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> slams <ansi fg="mobname">%s</ansi> to the ground! (<ansi fg="damage">%s</ansi>)%s</ansi>`,
+				spellData.Name, mob.Character.Name, combat.GetDamageDescription(dmg, mob.Character.HealthMax.Value), critTag))
+			room.SendText(fmt.Sprintf(
+				`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> knocks <ansi fg="mobname">%s</ansi> to the ground!`,
+				user.Character.Name, spellData.Name, mob.Character.Name), user.UserId)
+		}
+
 	case "buff":
 		for _, buffId := range spellData.BuffIds {
 			mob.AddBuff(buffId, "spell")
@@ -214,6 +269,23 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 	}
 
 	switch spellData.EffectType {
+	case "purge":
+		target.Character.CancelBuffsWithFlag(buffs.Poison)
+		target.Character.RemoveCondition(characters.ConditionPoisoned)
+		user.SendText(fmt.Sprintf(
+			`<ansi fg="green">Your <ansi fg="cyan-bold">%s</ansi> cleanses <ansi fg="username">%s</ansi> of afflictions.%s</ansi>`,
+			spellData.Name, target.Character.Name, critTag))
+		if target.UserId != user.UserId {
+			target.SendText(fmt.Sprintf(
+				`<ansi fg="green"><ansi fg="username">%s</ansi>'s <ansi fg="cyan-bold">%s</ansi> purges the toxins from your body.</ansi>`,
+				user.Character.Name, spellData.Name))
+		} else {
+			target.SendText(`<ansi fg="green">You purge the afflictions from your body.</ansi>`)
+		}
+		room.SendText(fmt.Sprintf(
+			`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> cleanses <ansi fg="username">%s</ansi>.`,
+			user.Character.Name, spellData.Name, target.Character.Name), user.UserId, target.UserId)
+
 	case "heal":
 		skillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
 		regenPerTick := 50
@@ -453,6 +525,49 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 			combat.GetDamageDescription(dmg, target.Character.HealthMax.Value), critTag))
 		room.SendText(fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> strikes <ansi fg="username">%s</ansi>!`,
+			caster.Character.Name, spellData.Name, target.Character.Name), target.UserId)
+		if target.Character.Aggro == nil {
+			target.Character.Aggro = &characters.Aggro{MobInstanceId: caster.InstanceId}
+		}
+	case "dot":
+		dotDuration := spellData.EffectDuration
+		if dotDuration < 1 {
+			dotDuration = 3
+		}
+		target.Character.AddCondition(characters.ConditionPoisoned, dotDuration*3, float64(magnitude), "spell")
+		target.SendText(fmt.Sprintf(
+			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> afflicts you!%s`,
+			caster.Character.Name, spellData.Name, critTag))
+		room.SendText(fmt.Sprintf(
+			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> afflicts <ansi fg="username">%s</ansi>!`,
+			caster.Character.Name, spellData.Name, target.Character.Name), target.UserId)
+		if target.Character.Aggro == nil {
+			target.Character.Aggro = &characters.Aggro{MobInstanceId: caster.InstanceId}
+		}
+	case "knockdown":
+		dmgRoll := dice.RollStat(float64(magnitude))
+		dmg := int(math.Round(dmgRoll.Value))
+		if dmg < 1 {
+			dmg = 1
+		}
+		if isCrit {
+			dmg += magnitude
+		}
+		if resist := mutations.GetMagicalResistance(target.Character.Mutations); resist > 0 {
+			dmg = int(float64(dmg) * (1.0 - resist))
+			if dmg < 1 {
+				dmg = 1
+			}
+		}
+		target.Character.Health -= dmg
+		target.Character.CombatPosition = characters.PositionProne
+		target.Character.PositionRoundsMin = 1
+		target.SendText(fmt.Sprintf(
+			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> slams you to the ground! (<ansi fg="damage">%s</ansi>)%s`,
+			caster.Character.Name, spellData.Name,
+			combat.GetDamageDescription(dmg, target.Character.HealthMax.Value), critTag))
+		room.SendText(fmt.Sprintf(
+			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> knocks <ansi fg="username">%s</ansi> to the ground!`,
 			caster.Character.Name, spellData.Name, target.Character.Name), target.UserId)
 		if target.Character.Aggro == nil {
 			target.Character.Aggro = &characters.Aggro{MobInstanceId: caster.InstanceId}

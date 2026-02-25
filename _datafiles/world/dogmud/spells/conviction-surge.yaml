@@ -1,0 +1,14 @@
+spellid: conviction-surge
+name: Conviction Surge
+description: Infuses the target with a surge of conviction, bolstering their attack strength.
+type: helpsingle
+schools:
+  - enhancement
+cost: 35
+waitrounds: 1
+difficulty: 0
+primarystat: willpower
+base_folds: 4
+effect_type: buff
+buff_ids:
+  - 26

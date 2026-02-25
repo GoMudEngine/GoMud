@@ -30,6 +30,7 @@ type SpellData struct {
 	ComponentTag        string `yaml:"component_tag,omitempty"`        // Required item component tag (e.g. "stone")
 	EffectType          string `yaml:"effect_type,omitempty"`          // "damage"|"heal"|"buff"|"tame"|"shield"
 	EffectMagnitude     int    `yaml:"effect_magnitude,omitempty"`     // Base damage/heal amount
+	EffectDuration      int    `yaml:"effect_duration,omitempty"`      // DoT tick count (default 0 = use 3)
 	BuffIds             []int  `yaml:"buff_ids,omitempty"`             // Buff IDs to apply (for "buff" effect type)
 }
 
@@ -214,6 +215,51 @@ func (s *SpellData) GetScript() string {
 func (s *SpellData) GetScriptPath() string {
 	// Load any script for the room
 	return strings.Replace(string(configs.GetFilePathsConfig().DataFiles)+`/spells/`+s.Filepath(), `.yaml`, `.js`, 1)
+}
+
+// MaxFoldsForSkill returns the highest base_folds a player can discover at a given casting skill level.
+func MaxFoldsForSkill(skillLevel int) int {
+	switch {
+	case skillLevel >= 80:
+		return 32
+	case skillLevel >= 70:
+		return 28
+	case skillLevel >= 60:
+		return 24
+	case skillLevel >= 50:
+		return 20
+	case skillLevel >= 40:
+		return 16
+	case skillLevel >= 30:
+		return 12
+	case skillLevel >= 20:
+		return 10
+	case skillLevel >= 10:
+		return 8
+	case skillLevel >= 5:
+		return 6
+	default:
+		return 4
+	}
+}
+
+// GetEligibleSpells returns spell IDs the player could discover (not in spellBook, within fold threshold).
+func GetEligibleSpells(spellBook map[string]int, castingSkillLevel int) []string {
+	maxFolds := MaxFoldsForSkill(castingSkillLevel)
+	var eligible []string
+	for id, sp := range allSpells {
+		if _, known := spellBook[id]; known {
+			continue
+		}
+		folds := sp.BaseFolds
+		if folds == 0 {
+			folds = 4
+		}
+		if folds <= maxFolds {
+			eligible = append(eligible, id)
+		}
+	}
+	return eligible
 }
 
 func LoadSpellFiles() {

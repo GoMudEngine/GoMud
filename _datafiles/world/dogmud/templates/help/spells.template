@@ -34,6 +34,16 @@ accumulated enough folds, the spell resolves automatically.
   <ansi fg="white-bold">Taking damage</ansi> — disrupts concentration. Significant hits during casting
   may cause you to lose your folds and have to start over.
 
+<ansi fg="yellow">Discovering new spells:</ansi>
+
+Spells are not taught by trainers. Each time you successfully cast a spell,
+there is a chance a new pattern crystallizes in your mind — a spell you did
+not know before. The more you cast, the more you learn.
+
+Your <ansi fg="white-bold">spellcasting skill</ansi> determines which spells can emerge. Low-fold
+spells appear early; powerful high-fold spells require significant mastery
+before they reveal themselves.
+
 <ansi fg="yellow">Conviction:</ansi>
 
 Each spell has a <ansi fg="white-bold">conviction cost</ansi> — the sustained belief required to complete
