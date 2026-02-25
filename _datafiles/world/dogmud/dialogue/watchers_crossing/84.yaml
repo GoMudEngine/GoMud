@@ -50,6 +50,13 @@ tree:
   root:
     text: "Tolva looks up from wiping the counter, appraising you with the quick eye of someone who has sized up a thousand travellers. 'Welcome to the Crossing Inn. Sit anywhere -- food is on the hearth and I will not ask your business unless you want to share it.' She pauses. 'Though if you came over the bridge, I expect you have opinions about that toll.'"
     hints: "Ask Tolva about the toll, the inn, or whether she needs any help."
+    variants:
+      - questRequired: ["5-start"]
+        questExcluded: ["5-end"]
+        text: "Tolva glances up as you enter, a question already in her eyes. 'Any luck with that ledger? The sooner I have proof, the sooner I can write to the magistrate.'"
+        hints: "Find the crossing ledger at the tollhouse and bring it back to Tolva."
+      - questRequired: ["5-end"]
+        text: "Tolva gives you a warm nod as you enter. 'Thanks to you, the magistrate will have that ledger before the month is out. This settlement owes you one. Sit down -- stew is on the house.'"
 
   nodes:
     - id: toll_problem
@@ -61,6 +68,8 @@ tree:
     - id: help_quest
       triggers: ["help", "ledger", "proof", "quest", "task", "what can i do"]
       requires: ["toll_problem"]
+      questExcluded: ["5-start"]
+      grantsQuest: "5-start"
       text: "Tolva leans forward, lowering her voice. 'Harn keeps a ledger. Every toll payment, every expense. If there is no commission from Thornwall in those records -- and I wager there is not -- that is proof the toll is unauthorized. Get me that ledger and I will send it to the magistrate myself. I have a contact who will see it reaches the right desk.'"
       hints: "Head to the tollhouse east of the crossroads and find the crossing ledger."
       moodChange: friendly
@@ -80,6 +89,10 @@ tree:
     - id: ledger_return
       triggers: ["ledger", "found", "proof", "evidence", "records", "here"]
       requires: ["help_quest"]
+      questRequired: ["5-evidence"]
+      questExcluded: ["5-end"]
+      requiresItem: 21
+      grantsQuest: "5-end"
       text: "Tolva takes the ledger and opens it with practiced hands, scanning columns of figures. Her jaw sets. 'No commission. No charter number. No authorizing signature. Just Harn's own hand, collecting and spending as he sees fit.' She closes the book with a firm snap. 'This is what I needed. The magistrate in Thornwall will see this before the month is out.'"
       moodChange: grateful
 

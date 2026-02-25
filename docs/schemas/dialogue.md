@@ -60,7 +60,11 @@ patterns:
 | `keywords` | list | Any keyword match triggers this pattern. Case-insensitive. |
 | `responses` | list | One response chosen randomly on each match. |
 | `moods` | list | (optional) Only match if mob's current mood is in this list. |
-| `moodChange` | string | (optional) New mood after responding: `"friendly"`, `"neutral"`, `"cautious"`, `"hostile"`. |
+| `moodChange` | string | (optional) New mood after responding. |
+| `questRequired` | list | (optional) Quest tokens the player must have (e.g. `["5-start"]`). |
+| `questExcluded` | list | (optional) Quest tokens that hide this pattern if present. |
+| `grantsQuest` | string | (optional) Quest token granted on match (e.g. `"5-start"`). |
+| `requiresItem` | int | (optional) Item ID the player must hold; consumed on match. |
 
 ### Tree Root
 
@@ -69,7 +73,19 @@ tree:
   root:
     text: "What brings you here, seeker?"
     hints: "You could ask about the Chrysalis or the Awakening."
+    variants:                           # Quest-based greeting variants
+      - questRequired: ["5-start"]
+        questExcluded: ["5-end"]
+        text: "Have you found the ledger yet?"
+        hints: "Search the tollhouse for the crossing ledger."
+      - questRequired: ["5-end"]
+        text: "You did good work. The magistrate has the evidence now."
 ```
+
+When a player initiates `talk`, the engine checks `variants` first (in order).
+The first variant whose `questRequired`/`questExcluded` conditions are met is
+used instead of the default `text`. If no variant matches, the default root
+text is shown.
 
 ### Tree Nodes
 
@@ -95,6 +111,10 @@ tree:
 | `requires` | list | Node IDs that must have been visited before this one is reachable. |
 | `moodChange` | string | Mood shift when this node is reached. |
 | `moods` | list | Only reachable when mob's current mood is in this list. |
+| `questRequired` | list | (optional) Quest tokens the player must have. |
+| `questExcluded` | list | (optional) Quest tokens that hide this node if present. |
+| `grantsQuest` | string | (optional) Quest token granted when this node is reached. |
+| `requiresItem` | int | (optional) Item ID the player must hold; consumed on activation. |
 
 ### Memory Sub-object
 
@@ -194,3 +214,23 @@ An empty-string keyword acts as a catch-all fallback. Always include one at the 
 
 **mobid in dialogue must match the mob YAML.**
 If mob 50 is named "Chrysalis Priest" in its mob YAML, the dialogue file must be `50.yaml` in the appropriate zone folder. The engine links them by mob ID only.
+
+**Quest tokens use the format `{questId}-{stepId}`.**
+For example, `"5-start"` means quest 5, step "start". The engine checks
+`HasQuest()` which returns true if the player is on that step or any later
+step. Use `questExcluded` to hide options after a quest advances past a
+certain point.
+
+**`requiresItem` consumes the item.**
+When a node or pattern has `requiresItem: 21`, the engine removes item 21
+from the player's backpack on activation. The item check and removal happen
+atomically with the dialogue response.
+
+**`grantsQuest` fires the quest event handler.**
+The quest event handler processes all rewards (gold, items, buffs) defined
+in the quest YAML. You do not need a separate reward mechanism — just point
+`grantsQuest` at the right quest token.
+
+**Greeting `variants` are checked in order.**
+The first variant whose conditions match wins. Put more specific conditions
+(e.g. quest completed) before less specific ones (e.g. quest started).

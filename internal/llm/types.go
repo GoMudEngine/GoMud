@@ -18,6 +18,7 @@ type ConversationContext struct {
 	PlayerName   string
 	CurrentMood  string
 	RecentTopics []string // last 5 topics from dialogue.GetMemory()
+	QuestContext []string // human-readable quest summaries relevant to this NPC
 }
 
 // Ollama /api/chat wire types (stream: false)
