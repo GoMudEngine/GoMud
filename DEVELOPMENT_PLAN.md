@@ -4805,7 +4805,7 @@ the experience/leveling system.
 
 ---
 
-### Stage 29.5: Percentage-Based Regen Overhaul ✅ COMPLETED
+### Stage 29.5: Percentage-Based Regen Overhaul ✅ COMPLETED (74fe8c7)
 
 **Goal**: Convert all HP/SP/CP regeneration from flat-value-per-tick to
 percentage-of-max, add NPC regen parity, and convert heal spells and
