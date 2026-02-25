@@ -30,7 +30,7 @@ character:
     charisma:
       training: 98
   spellbook:
-    minor-shield: 5
-    fire-bolt: 5
-    mm: 3
+    conviction-ward: 5
+    pyretic-surge: 5
+    conviction-spike: 3
     heal: 3

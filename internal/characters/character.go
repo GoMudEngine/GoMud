@@ -120,7 +120,7 @@ func New() *Character {
 		Bank:           100,
 		// Phase 25.1: Starting spell reduced to 1 — everything else discovered through casting.
 		SpellBook: map[string]int{
-			"mm": 1, // Conviction Spike — the only starting spell
+			"conviction-spike": 1, // Conviction Spike — the only starting spell
 		},
 		CharmedMobs:    []int{},
 		Items:          []items.Item{},

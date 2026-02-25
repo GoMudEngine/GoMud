@@ -1,5 +1,5 @@
 # Learned at the Sanctuary of the Benevolent Heart (ROOM 18)
-spellid: healall
+spellid: mend-all
 name: Mend All
 description: Radiates healing energy, mending all nearby allies.
 type: helpmulti

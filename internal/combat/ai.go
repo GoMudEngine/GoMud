@@ -351,9 +351,9 @@ func CanUseCast(char *characters.Character) bool {
 func preferredSpell(mob *mobs.Mob) string {
 	// Shield self if not already shielded
 	if !mob.Character.HasCondition(characters.ConditionShield) {
-		if _, has := mob.Character.SpellBook["minor-shield"]; has {
-			if sd := spells.GetSpell("minor-shield"); sd != nil && mob.Character.Conviction >= sd.Cost {
-				return "minor-shield"
+		if _, has := mob.Character.SpellBook["conviction-ward"]; has {
+			if sd := spells.GetSpell("conviction-ward"); sd != nil && mob.Character.Conviction >= sd.Cost {
+				return "conviction-ward"
 			}
 		}
 	}
@@ -367,7 +367,7 @@ func preferredSpell(mob *mobs.Mob) string {
 		}
 	}
 	// Harm spells by magnitude
-	for _, id := range []string{"fireball", "fire-bolt", "mm", "sparks", "stun", "blind"} {
+	for _, id := range []string{"hemorrhagic-burst", "pyretic-surge", "conviction-spike", "sparks", "neural-stun", "sensory-veil"} {
 		if _, has := mob.Character.SpellBook[id]; has {
 			if sd := spells.GetSpell(id); sd != nil && mob.Character.Conviction >= sd.Cost {
 				return id

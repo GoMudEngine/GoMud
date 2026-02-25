@@ -13,7 +13,7 @@ import (
 
 func Spells(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
-	headers := []string{`SpellId`, `Name`, `Description`, `Schools`, `Target`, `Cost`, `Cast time`, `Familiarity`, `Reliability`}
+	headers := []string{`SpellId`, `Name`, `Target`, `Cost`, `Cast time`, `Familiarity`, `Reliability`}
 
 	helpfulRowFormatting := [][]string{}
 	helpfulRows := [][]string{}
@@ -45,8 +45,6 @@ func Spells(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			formatRow := []string{
 				`<ansi fg="yellow-bold">%s</ansi>`,
 				`<ansi fg="white-bold">%s</ansi>`,
-				`<ansi fg="yellow">%s</ansi>`,
-				`<ansi fg="cyan">%s</ansi>`,
 				`<ansi fg="` + targetColor + `">%s</ansi>`,
 				`<ansi fg="magenta">%s</ansi>`,
 				`<ansi fg="white">%s</ansi>`,
@@ -62,8 +60,6 @@ func Spells(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 			row := []string{sp.SpellId,
 				sp.Name,
-				sp.Description,
-				sp.GetSchoolsString(),
 				target,
 				costStr,
 				combat.GetWaitRoundsDescription(sp.WaitRounds),
