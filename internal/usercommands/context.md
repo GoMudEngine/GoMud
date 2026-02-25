@@ -98,6 +98,19 @@ The `internal/usercommands` package implements the complete command system for p
 - **Context-aware help**: Relevant command suggestions based on situation
 - **Admin filtering**: Different suggestions for admin vs regular users
 
+#### **Dialogue–Quest Integration** (`talk.go`, `ask.go`)
+- **PlayerState construction**: `buildPlayerState(user)` creates a
+  `dialogue.PlayerState` with callbacks for `HasQuest`, `HasItem`,
+  `RemoveItem`, and `GiveQuest` — passed to all dialogue engine calls
+  so NPC dialogue can be gated on quest progress and inventory
+- **Quest context for LLM**: `buildQuestContext(user, mobId)` returns
+  human-readable quest summaries injected into the LLM system prompt
+  via `llm.ConversationContext.QuestContext`
+- **Item consumption**: `requiresItem` on dialogue nodes removes the
+  item from the player's backpack on activation (via `RemoveItem`)
+- **Quest advancement**: `grantsQuest` fires `events.Quest` to
+  advance quest state; the quest event handler processes rewards
+
 #### **Scripting Integration**
 - **JavaScript exposure**: Commands can be called from game scripts
 - **Function export**: Command functions available to scripting system

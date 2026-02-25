@@ -19,15 +19,15 @@ import (
 
 // deliverDialogue executes the YAML dialogue lookup and has the mob respond.
 // It is called both by the normal (non-LLM) path and the LLM-unavailable fallback.
-func deliverDialogue(df *dialogue.DialogueFile, mob *mobs.Mob, mobInstanceId int, userId int, topic string) {
+func deliverDialogue(df *dialogue.DialogueFile, mob *mobs.Mob, mobInstanceId int, userId int, topic string, ps *dialogue.PlayerState) {
 	if df != nil {
-		if nodeText, hints, moodChange, ok := dialogue.TreeAdvance(df, mobInstanceId, userId, topic); ok {
+		if nodeText, hints, moodChange, ok := dialogue.TreeAdvance(df, mobInstanceId, userId, topic, ps); ok {
 			mob.Command(`say ` + nodeText)
 			if hints != `` {
 				mob.Command(`say ` + hints)
 			}
 			dialogue.ShiftMood(mobInstanceId, moodChange, df.DefaultMood)
-		} else if response, moodChange, ok := dialogue.Match(df, mobInstanceId, topic); ok {
+		} else if response, moodChange, ok := dialogue.Match(df, mobInstanceId, topic, ps); ok {
 			mob.Command(`say ` + response)
 			dialogue.ShiftMood(mobInstanceId, moodChange, df.DefaultMood)
 		} else {
@@ -151,6 +151,10 @@ func Ask(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		}
 
 		rest = strings.Join(args, ` `)
+
+		// Build PlayerState for quest/item gating in dialogue
+		ps := buildPlayerState(user)
+
 		jsHandled := false
 		if handled, err := scripting.TryMobScriptEvent(`onAsk`, mobId, user.UserId, `user`, map[string]any{"askText": rest}); err == nil && handled {
 			jsHandled = true
@@ -166,6 +170,7 @@ func Ask(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 				PlayerName:   user.Character.Name,
 				CurrentMood:  string(dialogue.GetMood(mobId, mob.LLMProfile.DefaultMood)),
 				RecentTopics: mem.RecentTopics,
+				QuestContext: buildQuestContext(user, int(mob.MobId)),
 			}
 			mob.Command(`emote pauses thoughtfully.`)
 			mobIdCopy := mobId
@@ -183,7 +188,7 @@ func Ask(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 					m := mobs.GetInstance(mobIdCopy)
 					if m != nil {
 						df := dialogue.Load(int(m.MobId), m.Zone)
-						deliverDialogue(df, m, mobIdCopy, user.UserId, restCopy)
+						deliverDialogue(df, m, mobIdCopy, user.UserId, restCopy, ps)
 					}
 				},
 			)
@@ -192,7 +197,7 @@ func Ask(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 
 		if !jsHandled {
 			df := dialogue.Load(int(mob.MobId), mob.Zone)
-			deliverDialogue(df, mob, mobId, user.UserId, rest)
+			deliverDialogue(df, mob, mobId, user.UserId, rest, ps)
 		}
 
 		// Track charisma use when asking an NPC

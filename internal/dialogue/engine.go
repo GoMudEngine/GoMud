@@ -6,11 +6,51 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
+// checkQuestGate returns true if the player satisfies quest/item conditions.
+// When ps is nil all checks pass (backward compat for mob-to-mob or non-user contexts).
+func checkQuestGate(questRequired, questExcluded []string, requiresItem int, ps *PlayerState) bool {
+	if ps == nil {
+		return true
+	}
+
+	for _, token := range questRequired {
+		if !ps.HasQuest(token) {
+			return false
+		}
+	}
+
+	for _, token := range questExcluded {
+		if ps.HasQuest(token) {
+			return false
+		}
+	}
+
+	if requiresItem > 0 && !ps.HasItem(requiresItem) {
+		return false
+	}
+
+	return true
+}
+
+// applyQuestEffects fires quest grants and item consumption after a node/pattern matches.
+func applyQuestEffects(grantsQuest string, requiresItem int, ps *PlayerState) {
+	if ps == nil {
+		return
+	}
+	if requiresItem > 0 {
+		ps.RemoveItem(requiresItem)
+	}
+	if grantsQuest != "" {
+		ps.GiveQuest(grantsQuest)
+	}
+}
+
 // Match checks patterns against topic text for the given mob instance.
 // It respects the mob's current mood when patterns declare mood filters.
 // Returns (responseText, moodChange, matched).
 // An empty-keyword pattern acts as the fallback when no specific keyword fires.
-func Match(df *DialogueFile, mobInstanceId int, topic string) (string, string, bool) {
+// When ps is nil, quest/item checks are skipped.
+func Match(df *DialogueFile, mobInstanceId int, topic string, ps *PlayerState) (string, string, bool) {
 	topic = strings.ToLower(topic)
 	currentMood := GetMood(mobInstanceId, df.DefaultMood)
 
@@ -32,6 +72,11 @@ func Match(df *DialogueFile, mobInstanceId int, topic string) (string, string, b
 			if !moodMatch {
 				continue
 			}
+		}
+
+		// Apply quest/item gate
+		if !checkQuestGate(p.QuestRequired, p.QuestExcluded, p.RequiresItem, ps) {
+			continue
 		}
 
 		// Single empty-string keyword marks this as the fallback pattern
@@ -62,6 +107,8 @@ func Match(df *DialogueFile, mobInstanceId int, topic string) (string, string, b
 		return "", "", false
 	}
 
+	applyQuestEffects(matched.GrantsQuest, matched.RequiresItem, ps)
+
 	response := matched.Responses[util.Rand(len(matched.Responses))]
 	return response, matched.MoodChange, true
 }
@@ -70,7 +117,8 @@ func Match(df *DialogueFile, mobInstanceId int, topic string) (string, string, b
 // It checks triggers against the topic, enforces node prerequisites, and updates memory.
 // Returns (nodeText, hints, moodChange, advanced).
 // Returns (_, _, _, false) if no tree node matches — caller should fall through to Match().
-func TreeAdvance(df *DialogueFile, mobInstanceId, userId int, topic string) (string, string, string, bool) {
+// When ps is nil, quest/item checks are skipped.
+func TreeAdvance(df *DialogueFile, mobInstanceId, userId int, topic string, ps *PlayerState) (string, string, string, bool) {
 	if df.Tree == nil {
 		return "", "", "", false
 	}
@@ -110,7 +158,13 @@ func TreeAdvance(df *DialogueFile, mobInstanceId, userId int, topic string) (str
 			continue
 		}
 
-		// Node matched — update memory
+		// Enforce quest/item gate
+		if !checkQuestGate(node.QuestRequired, node.QuestExcluded, node.RequiresItem, ps) {
+			continue
+		}
+
+		// Node matched — fire quest effects and update memory
+		applyQuestEffects(node.GrantsQuest, node.RequiresItem, ps)
 		UpdateMemory(mobInstanceId, userId, node.Id, node.Unlocks, topic)
 
 		return node.Text, node.Hints, node.MoodChange, true
@@ -121,13 +175,14 @@ func TreeAdvance(df *DialogueFile, mobInstanceId, userId int, topic string) (str
 
 // Greet returns the tree root greeting for the 'talk' command.
 // Returns ("", "", false) if no tree is defined.
-// The root greeting is delivered each visit regardless of prior state.
-func Greet(df *DialogueFile, mobInstanceId, userId int) (string, string, bool) {
+// When ps is non-nil and the root has Variants, the first matching variant
+// greeting is used instead of the default root text.
+func Greet(df *DialogueFile, mobInstanceId, userId int, ps *PlayerState) (string, string, bool) {
 	if df.Tree == nil {
 		return "", "", false
 	}
 
-	if df.Tree.Root.Text == "" {
+	if df.Tree.Root.Text == "" && len(df.Tree.Root.Variants) == 0 {
 		return "", "", false
 	}
 
@@ -140,6 +195,15 @@ func Greet(df *DialogueFile, mobInstanceId, userId int) (string, string, bool) {
 
 	mem.CurrentRootSeen = true
 	mem.LastVisitRound = util.GetRoundCount()
+
+	// Check quest-variant greetings first
+	if ps != nil {
+		for _, v := range df.Tree.Root.Variants {
+			if checkQuestGate(v.QuestRequired, v.QuestExcluded, 0, ps) {
+				return v.Text, v.Hints, true
+			}
+		}
+	}
 
 	return df.Tree.Root.Text, df.Tree.Root.Hints, true
 }
