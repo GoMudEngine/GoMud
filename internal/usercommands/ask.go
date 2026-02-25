@@ -165,15 +165,18 @@ func Ask(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			cfg := configs.GetLLMConfig()
 			mem := dialogue.GetMemory(mobId, user.UserId)
 			llmCtx := llm.ConversationContext{
-				MobName:      mob.Character.Name,
-				ZoneName:     mob.Zone,
-				PlayerName:   user.Character.Name,
-				CurrentMood:  string(dialogue.GetMood(mobId, mob.LLMProfile.DefaultMood)),
-				RecentTopics: mem.RecentTopics,
-				QuestContext: buildQuestContext(user, int(mob.MobId)),
+				MobName:         mob.Character.Name,
+				ZoneName:        mob.Zone,
+				PlayerName:      user.Character.Name,
+				CurrentMood:     string(dialogue.GetMood(mobId, mob.LLMProfile.DefaultMood)),
+				RecentTopics:    mem.RecentTopics,
+				QuestContext:    buildQuestContext(user, int(mob.MobId)),
+				PlayerCondition:  buildPlayerCondition(user),
+				TutorialProgress: buildTutorialContext(user),
 			}
 			mob.Command(`emote pauses thoughtfully.`)
 			mobIdCopy := mobId
+			userIdCopy := user.UserId
 			restCopy := rest
 			llm.AskAsync(mob.LLMProfile, string(cfg.Endpoint), int(cfg.Timeout),
 				mobIdCopy, llmCtx, restCopy,
@@ -181,6 +184,7 @@ func Ask(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 					m := mobs.GetInstance(mobIdCopy)
 					if m != nil {
 						m.Command(`say ` + response)
+						dialogue.UpdateMemory(mobIdCopy, userIdCopy, "", nil, restCopy)
 					}
 				},
 				func() {

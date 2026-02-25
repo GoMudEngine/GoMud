@@ -60,13 +60,23 @@ func AskAsync(
 		if len(ctx.QuestContext) > 0 {
 			questStr = fmt.Sprintf("\nPlayer's active quests relevant to you: %s.", strings.Join(ctx.QuestContext, "; "))
 		}
+		condStr := ""
+		if ctx.PlayerCondition != "" {
+			condStr = fmt.Sprintf("\nPlayer's current condition: %s.", ctx.PlayerCondition)
+		}
+		tutStr := ""
+		if ctx.TutorialProgress != "" {
+			tutStr = fmt.Sprintf("\n%s", ctx.TutorialProgress)
+		}
 		systemPrompt := fmt.Sprintf(
-			"%s\nYou are %s in %s. Keep responses under %d words. Stay in character.\nCurrent mood: %s.\nRecent topics discussed: %s.%s",
+			"%s\nYou are %s in %s. Keep responses under %d words. Stay in character.\nCurrent mood: %s.\nRecent topics discussed: %s.%s%s%s",
 			profile.SystemPrompt,
 			ctx.MobName, ctx.ZoneName, maxWords,
 			ctx.CurrentMood,
 			recentStr,
 			questStr,
+			condStr,
+			tutStr,
 		)
 
 		reqBody := ollamaRequest{

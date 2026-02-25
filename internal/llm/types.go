@@ -18,7 +18,9 @@ type ConversationContext struct {
 	PlayerName   string
 	CurrentMood  string
 	RecentTopics []string // last 5 topics from dialogue.GetMemory()
-	QuestContext []string // human-readable quest summaries relevant to this NPC
+	QuestContext     []string // human-readable quest summaries relevant to this NPC
+	PlayerCondition  string   // e.g. "healthy", "seriously wounded, has died 2 times"
+	TutorialProgress string   // structured tutorial step summary for Sanctum Trials
 }
 
 // Ollama /api/chat wire types (stream: false)
