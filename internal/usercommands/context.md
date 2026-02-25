@@ -48,6 +48,7 @@ The `internal/usercommands` package implements the complete command system for p
 - **Entity management**: `mob`, `item`, `spawn` - Game object manipulation
 - **Server management**: `server`, `reload`, `teleport` - System administration
 - **Player management**: `grant`, `modify`, `mute`, `deafen` - Player administration
+- **Combat analytics**: `combatstats` - Combat analytics dashboard — view, filter, reset, export combat event data
 
 ### Command Processing Features
 

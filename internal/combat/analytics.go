@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
-	"sync"
+	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
@@ -88,51 +88,61 @@ type AttackTypeStats struct {
 
 var (
 	analyticsReady bool
-	analyticsOnce  sync.Once
 	eventBuffer    []CombatEvent
 	maxEvents      int
 	logWriter      *lumberjack.Logger
 )
 
 // InitAnalytics initializes the analytics subsystem (call once at startup).
+// Also called lazily when a recording function detects analytics is not yet
+// ready, so that toggling the config in-game takes effect immediately.
 func InitAnalytics() {
-	analyticsOnce.Do(func() {
-		cfg := configs.GetAnalyticsConfig()
-		if !bool(cfg.Enabled) {
-			return
-		}
+	cfg := configs.GetAnalyticsConfig()
+	if !bool(cfg.Enabled) {
+		analyticsReady = false
+		return
+	}
 
-		maxEvents = int(cfg.MaxEvents)
-		if maxEvents < 100 {
-			maxEvents = 100
-		}
+	if analyticsReady {
+		return // already initialized
+	}
+
+	maxEvents = int(cfg.MaxEvents)
+	if maxEvents < 100 {
+		maxEvents = 100
+	}
+	if eventBuffer == nil {
 		eventBuffer = make([]CombatEvent, 0, 1024)
+	}
 
-		logPath := string(cfg.LogPath)
-		dir := filepath.Dir(logPath)
-		if err := os.MkdirAll(dir, 0755); err != nil {
-			mudlog.Error("InitAnalytics", "error", "failed to create log directory: "+err.Error())
-			return
-		}
+	logPath := string(cfg.LogPath)
+	dir := filepath.Dir(logPath)
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		mudlog.Error("InitAnalytics", "error", "failed to create log directory: "+err.Error())
+		return
+	}
 
-		logWriter = &lumberjack.Logger{
-			Filename:   logPath,
-			MaxSize:    50,
-			MaxBackups: 10,
-			Compress:   true,
-		}
+	logWriter = &lumberjack.Logger{
+		Filename:   logPath,
+		MaxSize:    50,
+		MaxBackups: 10,
+		Compress:   true,
+	}
 
-		analyticsReady = true
-		mudlog.Info("InitAnalytics", "state", "Combat analytics enabled",
-			"maxEvents", maxEvents, "logPath", logPath)
-	})
+	analyticsReady = true
+	mudlog.Info("InitAnalytics", "state", "Combat analytics enabled",
+		"maxEvents", maxEvents, "logPath", logPath)
 }
 
 // appendEvent adds an event to the ring buffer.
 // Must be called under util.LockMud().
 func appendEvent(evt CombatEvent) {
 	if !analyticsReady {
-		return
+		// Lazy init: config may have been toggled at runtime.
+		InitAnalytics()
+		if !analyticsReady {
+			return
+		}
 	}
 
 	if len(eventBuffer) >= maxEvents {
@@ -160,7 +170,10 @@ func positionFields(char *characters.Character) (string, bool) {
 func RecordAttack(result AttackResult, src, tgt SourceTarget, atkType string,
 	srcChar, tgtChar *characters.Character, round uint64) {
 	if !analyticsReady {
-		return
+		InitAnalytics()
+		if !analyticsReady {
+			return
+		}
 	}
 
 	srcPos, srcCtrl := positionFields(srcChar)
@@ -191,7 +204,10 @@ func RecordAttack(result AttackResult, src, tgt SourceTarget, atkType string,
 func RecordSpecialMove(src, tgt SourceTarget, atkType string, hit bool,
 	dmg int, srcChar, tgtChar *characters.Character, round uint64) {
 	if !analyticsReady {
-		return
+		InitAnalytics()
+		if !analyticsReady {
+			return
+		}
 	}
 
 	srcPos, srcCtrl := positionFields(srcChar)
@@ -216,7 +232,10 @@ func RecordSpecialMove(src, tgt SourceTarget, atkType string, hit bool,
 func RecordSpell(src, tgt SourceTarget, hit, crit, backfire, fizzle bool,
 	dmg int, zScore float64, srcChar, tgtChar *characters.Character, round uint64) {
 	if !analyticsReady {
-		return
+		InitAnalytics()
+		if !analyticsReady {
+			return
+		}
 	}
 
 	srcPos, srcCtrl := positionFields(srcChar)
@@ -239,6 +258,64 @@ func RecordSpell(src, tgt SourceTarget, hit, crit, backfire, fizzle bool,
 		RoundNumber:               round,
 	}
 	appendEvent(evt)
+}
+
+// GetSummary returns an aggregated summary of all events in the buffer.
+// Must be called under util.LockMud().
+func GetSummary() AnalyticsSummary {
+	if !analyticsReady || len(eventBuffer) == 0 {
+		return AnalyticsSummary{ByAttackType: make(map[string]*AttackTypeStats)}
+	}
+	return computeSummary(eventBuffer)
+}
+
+// GetFilteredSummary returns a summary filtered to a single attack type.
+// Must be called under util.LockMud().
+func GetFilteredSummary(attackType string) AnalyticsSummary {
+	if !analyticsReady {
+		return AnalyticsSummary{ByAttackType: make(map[string]*AttackTypeStats)}
+	}
+
+	filtered := make([]CombatEvent, 0, len(eventBuffer)/4)
+	for _, e := range eventBuffer {
+		if strings.EqualFold(e.AttackType, attackType) {
+			filtered = append(filtered, e)
+		}
+	}
+	if len(filtered) == 0 {
+		return AnalyticsSummary{ByAttackType: make(map[string]*AttackTypeStats)}
+	}
+	return computeSummary(filtered)
+}
+
+// GetBufferLen returns the number of events currently in the buffer.
+// Must be called under util.LockMud().
+func GetBufferLen() int {
+	return len(eventBuffer)
+}
+
+// ResetBuffer clears the event buffer and returns the count of events cleared.
+// Must be called under util.LockMud().
+func ResetBuffer() int {
+	ct := len(eventBuffer)
+	eventBuffer = eventBuffer[:0]
+	return ct
+}
+
+// ExportNow flushes the current buffer to the analytics log immediately.
+// Must be called under util.LockMud().
+func ExportNow() {
+	FlushAnalytics()
+}
+
+// GetAttackTypes returns a map of attack type → event count from the buffer.
+// Must be called under util.LockMud().
+func GetAttackTypes() map[string]int {
+	result := make(map[string]int)
+	for _, e := range eventBuffer {
+		result[e.AttackType]++
+	}
+	return result
 }
 
 // FlushAnalytics computes a summary from the current buffer and writes it as JSON.

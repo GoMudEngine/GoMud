@@ -65,6 +65,7 @@ var (
 		`buy`:{Buy, false, true, false},
 		`cancel`:      {Cancel, true, true, false},
 		`cast`:        {Cast, false, true, false},
+		`combatstats`: {CombatStats, true, true, true}, // Admin only
 		`craft`:       {Craft, false, false, false}, // Can't start crafting in combat
 		`cooldowns`:   {Cooldowns, true, true, false},
 		`command`:     {Command, false, true, true}, // Admin only
