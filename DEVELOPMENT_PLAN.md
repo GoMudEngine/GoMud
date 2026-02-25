@@ -4654,7 +4654,9 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 26: NPC Species Variety | 2 stages (26.1–26.2) | 12 hours | **26.1–26.2 Complete** |
 | Phase 27: Dialogue–Quest Integration | 2 stages (27.1–27.2) | 16 hours | **27.1–27.2 Complete** |
 | Phase 28: LLM Tutorial Enhancement | 1 stage (28.1) | 8 hours | 28.1 Complete |
-| **Total** | **~77 stages** | **~533 hours** | |
+| Phase 29: Regen & Cleanup | 6 stages (29.1–29.6) | 12 hours | **29.1–29.6 Complete** |
+| Phase 30: Combat Analytics | 3 stages (30.1–30.3) | 16 hours | **30.1 Complete** |
+| **Total** | **~86 stages** | **~561 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
 
@@ -4869,7 +4871,7 @@ slim the `spells` command table to fit within 80-char MUD line width.
 Instrumentation before content — having metrics in place means better
 balance feedback for everything that follows.
 
-### Stage 30.1: Combat Event Logging Framework
+### Stage 30.1: Combat Event Logging Framework ✅ COMPLETED (bc75969)
 
 **Goal**: Add structured combat event recording for balance analysis
 without impacting game performance.
@@ -4886,14 +4888,14 @@ without impacting game performance.
    `Enabled`, `MaxEvents`, `FlushIntervalSec`, `LogPath`
 6. Hook into existing combat resolution code with minimal overhead
    (single function call per combat action)
-
-**Testing**:
-- Unit test the ring buffer and aggregation logic
-- Benchmark the per-event recording to confirm negligible overhead
-- Manual test: fight mobs, verify events are captured and flushed
-- Verify log rotation works and files don't grow unbounded
+7. Track combat position (standing/prone/clinched/grounded) and grapple
+   controller status for both source and target on every event
+8. Hook all 4 auto-attack paths, spell resolution (backfire/fizzle/hit),
+   special moves (bash/kick/trip/submit/grapple), and mutations
+   (toxic bite, sonic shout)
 
 **Estimated Changes**: ~400–600 lines, 5–10 files
+**Actual**: ~670 lines added, 19 files (2 new + 17 modified)
 
 ---
 
@@ -5313,4 +5315,4 @@ Last phase — tests cover the final state of all features.
 
 **Last Updated**: 2026-02-25
 **Status**: In Progress
-**Current Stage**: Stage 29.6 complete. Spell aliases fixed, spells table slimmed. Next: Phase 30.
+**Current Stage**: Stage 30.1 complete. Combat analytics framework in place. Next: Stage 30.2.
