@@ -4656,7 +4656,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 28: LLM Tutorial Enhancement | 1 stage (28.1) | 8 hours | 28.1 Complete |
 | Phase 29: Regen & Cleanup | 6 stages (29.1–29.6) | 12 hours | **29.1–29.6 Complete** |
 | Phase 30: Combat Analytics | 3 stages (30.1–30.3) | 16 hours | **30.1–30.3 Complete** |
-| Phase 31: Crafting Expansion | 6 stages (31.1–31.6) | 30 hours | Planned |
+| Phase 31: Crafting Expansion | 6 stages (31.1–31.6) | 30 hours | 31.1 Complete |
 | **Total** | **~92 stages** | **~591 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
@@ -4960,32 +4960,32 @@ phase makes crafting a real progression system with 4 new skills
 (Tailoring, Cooking, Jewelcrafting, Enchanting) and a recipe discovery
 mechanic.
 
-### Stage 31.1: Crafting Discovery System
+### Stage 31.1: Crafting Discovery System ✅ COMPLETED (merge 906bb73)
 
 **Goal**: Players discover new recipes by practicing their craft, similar
 to spell discovery in Phase 25.
 
 **Changes**:
-1. Add `KnownRecipes` set to Character struct (map of recipe IDs)
-2. On successful craft, roll against skill level to potentially discover
-   a new recipe the player doesn't know yet (if their skill meets the
-   recipe's `skill_minimum`)
-3. Discovery chance scales inversely with skill gap — easier recipes
-   are discovered first
-4. Gate the `craft` command to only show/allow known recipes
-5. Give all players a few starter recipes per skill (skill_minimum 0)
-   as "known by default"
-6. Add `discover` or `experiment` command as an alternative discovery
-   path (craft without a specific recipe, chance to learn something)
-7. Add discovery messages: "You've figured out how to craft [item]!"
+1. Add `KnownRecipes map[string]int` to Character struct with starter
+   recipes (iron-dagger, healing-poultice) seeded in `New()` and
+   `Validate()` (existing characters get starters via nil-check)
+2. `HasRecipe()` / `LearnRecipe()` methods mirror `HasSpell` / `LearnSpell`
+3. `GetStarterRecipes()` / `GetEligibleRecipes()` in crafting package
+4. `craft list` filtered to known recipes only; `craft <name>` gated
+   behind `HasRecipe()`
+5. Discovery roll on successful craft: 8% base chance decaying by
+   known count (`RecipeDiscoveryBaseChance` / `RecipeDiscoveryDecayRate`
+   balance knobs)
+6. `experiment` command scrapped — discovery through crafting only
+7. Discovery message: "A new idea takes shape in your mind: <name>!"
 
 **Testing**:
-- Unit test discovery probability formula
-- Manual test: craft repeatedly, verify new recipes are learned
-- Verify unknown recipes don't appear in craft list
-- Verify starter recipes are available immediately
+- Unit tests for `GetStarterRecipes()` and `GetEligibleRecipes()`
+- Manual test: craft list shows only known recipes
+- Verify starter recipes available immediately for new characters
+- Verify existing characters get starters via Validate() nil-check
 
-**Estimated Changes**: ~400–600 lines, 8–12 files
+**Estimated Changes**: ~200 lines, 7 files
 
 ---
 
@@ -5391,4 +5391,4 @@ Last phase — tests cover the final state of all features.
 
 **Last Updated**: 2026-02-25
 **Status**: In Progress
-**Current Stage**: Stage 30.3 complete. Combat analytics web dashboard live. Next: Stage 31.1.
+**Current Stage**: Stage 31.1 complete. Crafting discovery system live. Next: Stage 31.2.
