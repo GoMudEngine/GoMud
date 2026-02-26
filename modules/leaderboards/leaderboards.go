@@ -80,14 +80,12 @@ type LeaderboardModule struct {
 
 	lastCalculated time.Time // When the LB's were last generated
 
-	LBSize            int
-	GoldEnabled       bool
-	ExperienceEnabled bool
-	KillsEnabled      bool
+	LBSize      int
+	GoldEnabled bool
+	KillsEnabled bool
 
-	LB_Gold       leaderboardData `yaml:"LB_Gold,omitempty"`
-	LB_Experience leaderboardData `yaml:"LB_Experience,omitempty"`
-	LB_Kills      leaderboardData `yaml:"LB_Kills,omitempty"`
+	LB_Gold  leaderboardData `yaml:"LB_Gold,omitempty"`
+	LB_Kills leaderboardData `yaml:"LB_Kills,omitempty"`
 }
 
 func (l *LeaderboardModule) webLeaderboardData(r *http.Request) map[string]any {
@@ -106,9 +104,6 @@ func (l *LeaderboardModule) loadLBs() {
 
 	l.GoldEnabled = true
 	l.LB_Gold = leaderboardData{Name: `Gold`, ValueColor: `experience`}
-
-	l.ExperienceEnabled = true
-	l.LB_Experience = leaderboardData{Name: `Experience`, ValueColor: `gold`}
 
 	l.KillsEnabled = true
 	l.LB_Kills = leaderboardData{Name: `Kills`, ValueColor: `red-bold`}
@@ -162,7 +157,6 @@ func (l *LeaderboardModule) leaderboardCommand(rest string, user *users.UserReco
 
 func (l *LeaderboardModule) Reset(maxSize int) {
 	l.LB_Gold.Reset(maxSize)
-	l.LB_Experience.Reset(maxSize)
 	l.LB_Kills.Reset(maxSize)
 }
 
@@ -175,10 +169,6 @@ func (l *LeaderboardModule) RefreshConfig() {
 
 	if goldEnabled, ok := l.plug.Config.Get(`GoldEnabled`).(bool); ok {
 		l.GoldEnabled = goldEnabled
-	}
-
-	if xpEnabled, ok := l.plug.Config.Get(`ExperienceEnabled`).(bool); ok {
-		l.ExperienceEnabled = xpEnabled
 	}
 
 	if killsEnabled, ok := l.plug.Config.Get(`KillsEnabled`).(bool); ok {
@@ -291,10 +281,6 @@ func (l *LeaderboardModule) getCurrentLeaderboards() []leaderboardData {
 
 	if l.GoldEnabled {
 		ret = append(ret, l.LB_Gold)
-	}
-
-	if l.ExperienceEnabled {
-		ret = append(ret, l.LB_Experience)
 	}
 
 	if l.KillsEnabled {
