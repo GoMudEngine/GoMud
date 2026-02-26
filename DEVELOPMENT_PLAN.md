@@ -5058,7 +5058,7 @@ curve from beginner to expert.
 5. Added coal-dust to forage tables (cave, mountains, cliffs)
    and to blacksmith shops (Korvath, Kerra)
 
-**Merge**: TBD
+**Merge**: 1d8eb72
 
 **Estimated Changes**: ~400–600 lines, 25–40 files (mostly YAML)
 
