@@ -1930,34 +1930,67 @@ func TestCharacter_GetSetting(t *testing.T) {
 }
 func TestCharacter_IsDisabled(t *testing.T) {
 	tests := []struct {
-		name   string
-		health int
-		want   bool
+		name       string
+		health     int
+		stamina    int
+		conviction int
+		want       bool
 	}{
 		{
-			name:   "Health is positive",
-			health: 10,
-			want:   false,
+			name:       "All pools positive",
+			health:     10,
+			stamina:    10,
+			conviction: 10,
+			want:       false,
 		},
 		{
-			name:   "Health is zero",
-			health: 0,
-			want:   true,
+			name:       "Health is zero",
+			health:     0,
+			stamina:    10,
+			conviction: 10,
+			want:       true,
 		},
 		{
-			name:   "Health is negative",
-			health: -1,
-			want:   true,
+			name:       "Health is negative",
+			health:     -1,
+			stamina:    10,
+			conviction: 10,
+			want:       true,
 		},
 		{
-			name:   "Health is large positive",
-			health: 100,
-			want:   false,
+			name:       "All pools large positive",
+			health:     100,
+			stamina:    100,
+			conviction: 100,
+			want:       false,
 		},
 		{
-			name:   "Health is large negative",
-			health: -100,
-			want:   true,
+			name:       "Health is large negative",
+			health:     -100,
+			stamina:    10,
+			conviction: 10,
+			want:       true,
+		},
+		{
+			name:       "Stamina is zero",
+			health:     10,
+			stamina:    0,
+			conviction: 10,
+			want:       true,
+		},
+		{
+			name:       "Conviction is zero",
+			health:     10,
+			stamina:    10,
+			conviction: 0,
+			want:       true,
+		},
+		{
+			name:       "Multiple pools depleted",
+			health:     -5,
+			stamina:    -3,
+			conviction: 10,
+			want:       true,
 		},
 	}
 
@@ -1965,6 +1998,8 @@ func TestCharacter_IsDisabled(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := New()
 			c.Health = tt.health
+			c.Stamina = tt.stamina
+			c.Conviction = tt.conviction
 			got := c.IsDisabled()
 			assert.Equal(t, tt.want, got)
 		})

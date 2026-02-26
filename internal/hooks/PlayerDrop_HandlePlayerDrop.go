@@ -29,6 +29,8 @@ func HandlePlayerDrop(e events.Event) events.ListenerReturn {
 		return events.Cancel
 	}
 
+	user.Character.DownedRounds = 0
+
 	user.SendText(`<ansi fg="red">you drop to the ground!</ansi>`)
 
 	room := rooms.LoadRoom(evt.RoomId)

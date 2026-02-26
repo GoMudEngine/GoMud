@@ -77,6 +77,7 @@ type Character struct {
 	Aggro                    *Aggro                         `yaml:"-"`                       // Dont' store this. If they leave they break their aggro
 	CombatPosition           CombatPosition                 `yaml:"-"`                       // Current combat position (Standing/Prone/Clinched/Grounded). Don't store this.
 	PositionRoundsMin        int                            `yaml:"-"`                       // Minimum rounds in current position (for Prone bash/trip, etc). Don't store this.
+	DownedRounds             int                            `yaml:"-"`                       // Rounds since downed, for coup de grâce timer. Don't store this.
 	GrappleControllerId      int                            `yaml:"-"`                       // UserId or MobInstanceId of grapple controller (0 = none, Stage 8.2+). Don't store this.
 	Conditions               []CombatCondition              `yaml:"-"`                       // Active temporary combat conditions (Stage 9.8). Don't store this.
 	AttacksThisRound         int                            `yaml:"-"`                       // Stage 9.4: Tracks recent attacks for stance calculation. Don't store this.
@@ -1853,7 +1854,7 @@ func (c *Character) IsAggro(targetUserId int, targetMobInstanceId int) bool {
 }
 
 func (c *Character) IsDisabled() bool {
-	return c.Health <= 0
+	return c.Health <= 0 || c.Stamina <= 0 || c.Conviction <= 0
 }
 
 func (c *Character) HasBuffFlag(buffFlag buffs.Flag) bool {

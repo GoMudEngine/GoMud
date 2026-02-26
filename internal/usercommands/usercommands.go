@@ -76,8 +76,8 @@ var (
 		`default`:     {Default, false, true, false},
 		`disenchant`:  {Disenchant, false, false, false}, // Can't disenchant in combat
 		`drop`:{Drop, true, false, false}, // Can't drop items in combat
-		`drink`:       {Drink, false, true, false},
-		`eat`:         {Eat, false, true, false},
+		`drink`:       {Drink, true, true, false},
+		`eat`:         {Eat, true, true, false},
 		`emote`:       {Emote, true, true, false},
 		`experience`:{Experience, true, true, false},
 		`equip`:       {Equip, false, false, false}, // Can't equip in combat

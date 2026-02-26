@@ -60,6 +60,9 @@ type GamePlay struct {
 	TripKnockdownChance ConfigInt   `yaml:"TripKnockdownChance"` // Default: 60
 	KickDamagePercent   ConfigFloat `yaml:"KickDamagePercent"`   // Default: 0.40
 	KickKnockdownChance ConfigInt   `yaml:"KickKnockdownChance"` // Default: 35
+
+	// Coup de Grâce: rounds a mob waits before finishing a downed player (0 = disabled)
+	CoupDeGraceRounds ConfigInt `yaml:"CoupDeGraceRounds"` // Default: 1
 }
 
 type GameplayDeath struct {
@@ -230,6 +233,11 @@ func (g *GamePlay) Validate() {
 	}
 	if g.KickKnockdownChance < 0 || g.KickKnockdownChance > 100 {
 		g.KickKnockdownChance = 35
+	}
+
+	// Coup de Grâce: default 1 round grace period
+	if g.CoupDeGraceRounds < 0 {
+		g.CoupDeGraceRounds = 1
 	}
 
 }

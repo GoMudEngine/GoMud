@@ -382,6 +382,9 @@ GamePlay:
   TripKnockdownChance: 60        # Base knockdown chance for trip (60%)
   KickDamagePercent: 0.40        # Damage percentage for kick (40%)
   KickKnockdownChance: 35        # Base knockdown chance for kick (35%)
+  # Coup de Grâce: rounds a mob waits before finishing a downed player
+  # (0 = disabled, mob walks away like before)
+  CoupDeGraceRounds: 1
 
 ################################################################################
 #

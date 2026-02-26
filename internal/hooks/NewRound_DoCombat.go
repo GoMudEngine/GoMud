@@ -1043,8 +1043,31 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 
 			defUser.Character.CancelBuffsWithFlag(buffs.CancelIfCombat)
 
-			if defUser.Character.Health < 1 {
-				mob.Character.Aggro = nil
+			if defUser.Character.IsDisabled() {
+				cfg := configs.GetGamePlayConfig()
+				graceRounds := int(cfg.CoupDeGraceRounds)
+				if graceRounds <= 0 {
+					mob.Character.Aggro = nil
+					continue
+				}
+				defUser.Character.DownedRounds++
+				if defUser.Character.DownedRounds <= graceRounds {
+					defRoom.SendText(fmt.Sprintf(
+						`<ansi fg="mobname">%s</ansi> circles <ansi fg="username">%s</ansi>'s fallen body...`,
+						mob.Character.Name, defUser.Character.Name))
+					continue
+				}
+				// Coup de grâce — finishing blow
+				defUser.Character.Health = -10
+				defUser.SendText(fmt.Sprintf(
+					`<ansi fg="red"><ansi fg="mobname">%s</ansi> delivers a final, merciless blow!</ansi>`,
+					mob.Character.Name))
+				defRoom.SendText(fmt.Sprintf(
+					`<ansi fg="red"><ansi fg="mobname">%s</ansi> delivers a finishing blow to <ansi fg="username">%s</ansi>!</ansi>`,
+					mob.Character.Name, defUser.Character.Name), defUser.UserId)
+				mob.Character.EndAggro()
+				defUser.Character.EndAggro()
+				affectedPlayerIds = append(affectedPlayerIds, defUser.UserId)
 				continue
 			}
 
@@ -1556,11 +1579,11 @@ func handleAffected(affectedPlayerIds []int, affectedMobInstanceIds []int) {
 
 		if user := users.GetByUserId(userId); user != nil {
 
-			if user.Character.Health <= -10 {
+			if user.Character.Health <= -10 || user.Character.Stamina <= -10 || user.Character.Conviction <= -10 {
 
 				user.Command(`suicide`) // suicide drops all money/items and transports to land of the dead.
 
-			} else if user.Character.Health < 1 {
+			} else if user.Character.IsDisabled() {
 
 				events.AddToQueue(events.PlayerDrop{UserId: user.UserId, RoomId: user.Character.RoomId})
 
