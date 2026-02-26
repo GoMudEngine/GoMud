@@ -5176,24 +5176,23 @@ matching the existing sunrise/sunset splash system.
 
 ## Phase 33: Web Portal & Branding
 
-### Stage 33.1: Game Branding — Logo & Art Assets
+### Stage 33.1: Web Portal Fixes + Game Branding ✅ COMPLETED (efdffe8)
 
-**Goal**: Create a visual identity for DOGMud.
+**Goal**: Fix broken web portal pages after level/XP removal and Windows routing bugs.
 
 **Changes**:
-1. Design thematic logo for DOGMud (dark fantasy aesthetic)
-2. Create favicon and browser thumbnail/og:image
-3. Create ASCII art title screen for the MUD client login splash
-4. Store all assets in `_datafiles/` or web static directory
-5. Update the login/MOTD screen to use the new ASCII title art
+1. Fixed plugin page 404 on Windows — `embed.FS` uses forward slashes but
+   `dataFilesFolder` constant used `filepath.Separator` (backslash on Windows),
+   so the plugin filePaths map was never populated
+2. Fixed URL path cleaning — use `path.Clean` instead of `filepath.Clean` for
+   URL paths in web.go and plugins.go
+3. Removed stale `Level`/`Alignment` columns from online.html template
+4. Removed `Level` column and `Experience` leaderboard from leaderboards module
+5. Stabilized plugin nav tab ordering with alphabetical sort
 
-**Testing**:
-- Verify logo displays on web pages
-- Verify favicon appears in browser tab
-- Verify ASCII title screen displays on telnet/client connect
-- Verify all art fits within 80-char width for terminal art
+**Deferred to 33.1b**: Logo, favicon, ASCII art title screen, og:image branding
 
-**Estimated Changes**: ~100–200 lines, 5–10 files (mostly assets)
+**Estimated Changes**: ~70 lines, 5 files
 
 ---
 
@@ -5400,6 +5399,6 @@ Last phase — tests cover the final state of all features.
 
 ---
 
-**Last Updated**: 2026-02-25
+**Last Updated**: 2026-02-26
 **Status**: In Progress
-**Current Stage**: Stage 32.1 complete. Moon phase ASCII art splash screens added for all three moons (Swiftmoon, The Wanderer, The Eye) with full and new phase variants plus screenreader accessibility templates. Phase 32 complete. Next: Phase 33.
+**Current Stage**: Stage 33.1 complete. Fixed web portal 404s on Windows (embed.FS path separator mismatch), removed stale Level/XP template references, stabilized nav tab ordering. Branding assets deferred to 33.1b. Next: Stage 33.1b or 33.2.
