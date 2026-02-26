@@ -5093,6 +5093,8 @@ the "artificer" profession.
 
 **Estimated Changes**: ~300–500 lines, 15–25 files (mostly YAML)
 
+**Merge commit**: `3bf2e69`
+
 ---
 
 ### Stage 31.6: New Crafting Skill — Enchanting
