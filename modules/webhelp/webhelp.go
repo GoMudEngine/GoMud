@@ -8,6 +8,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/keywords"
 	"github.com/GoMudEngine/GoMud/internal/plugins"
+	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/usercommands"
 	"github.com/GoMudEngine/ansitags"
 )
@@ -69,6 +70,13 @@ func (w *WebHelpModule) getHelpCategories(r *http.Request) map[string]any {
 	for _, command := range keywords.GetAllHelpTopicInfo() {
 
 		if command.AdminOnly {
+			continue
+		}
+
+		// Skip topics that don't have a help template file,
+		// matching the in-game help command behavior.
+		templateFile := `help/` + keywords.TryHelpAlias(command.Command)
+		if !templates.Exists(templateFile) {
 			continue
 		}
 
