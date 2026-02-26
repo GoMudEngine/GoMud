@@ -1,0 +1,11 @@
+itemid: 30029
+name: clarity tonic
+namesimple: tonic
+description: A pale, shimmering liquid that tingles on the tongue. It sharpens
+  the mind and steadies the will.
+type: potion
+subtype: drinkable
+uses: 1
+buffids:
+  - 48
+value: 10

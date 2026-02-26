@@ -1,0 +1,17 @@
+itemid: 10015
+name: steel longsword
+namesimple: longsword
+description: A finely forged steel longsword with a keen edge and balanced hilt.
+  The blade catches the light with a cold gleam.
+type: weapon
+hands: 1
+subtype: slashing
+weight: 8.0
+speedmultiplier: 0.7
+staminacost: 8
+grapplemodifier: 0.7
+damage:
+  basedamage: 8
+  variance: 2
+parryrating: 14
+value: 35

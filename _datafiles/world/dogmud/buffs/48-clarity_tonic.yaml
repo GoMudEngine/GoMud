@@ -1,0 +1,7 @@
+buffid: 48
+name: Clarity Tonic
+description: Your mind feels sharp and focused.
+triggerrate: 1 round
+triggercount: 30
+statmods:
+  willpower: 8

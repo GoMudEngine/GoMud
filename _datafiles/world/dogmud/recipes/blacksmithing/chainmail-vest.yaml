@@ -1,0 +1,16 @@
+id: chainmail-vest
+name: Chainmail Vest
+skill: blacksmithing
+skill_minimum: 25
+station: forge
+time_rounds: 6
+ingredients:
+  - item_tag: chain-link
+    quantity: 3
+  - item_tag: iron-ingot
+    quantity: 1
+output:
+  item_id: 20027
+  quantity: 1
+success_message: "You weave the chain links together and reinforce the joins with iron rivets. A chainmail vest!"
+failure_message: "The links refuse to seat properly and the weave falls apart. The materials are lost."

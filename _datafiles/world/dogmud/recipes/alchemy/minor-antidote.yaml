@@ -1,0 +1,18 @@
+id: minor-antidote
+name: Minor Antidote
+skill: alchemy
+skill_minimum: 8
+station: alchemy_bench
+time_rounds: 3
+ingredients:
+  - item_tag: bitter-thistle
+    quantity: 1
+  - item_tag: dustwalk-herb
+    quantity: 1
+  - item_tag: small-vial
+    quantity: 1
+output:
+  item_id: 30028
+  quantity: 1
+success_message: "You steep the herbs and decant the murky liquid into a vial. A minor antidote!"
+failure_message: "The mixture curdles into useless sludge. The materials are wasted."

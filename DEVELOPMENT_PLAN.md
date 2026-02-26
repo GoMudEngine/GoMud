@@ -4656,7 +4656,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 28: LLM Tutorial Enhancement | 1 stage (28.1) | 8 hours | 28.1 Complete |
 | Phase 29: Regen & Cleanup | 6 stages (29.1–29.6) | 12 hours | **29.1–29.6 Complete** |
 | Phase 30: Combat Analytics | 3 stages (30.1–30.3) | 16 hours | **30.1–30.3 Complete** |
-| Phase 31: Crafting Expansion | 6 stages (31.1–31.6) | 30 hours | 31.1–31.3 Complete |
+| Phase 31: Crafting Expansion | 6 stages (31.1–31.6) | 30 hours | 31.1–31.4 Complete |
 | **Total** | **~92 stages** | **~591 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
@@ -5035,31 +5035,30 @@ to spell discovery in Phase 25.
 
 ---
 
-### Stage 31.4: Expand Existing Recipes
+### Stage 31.4: Expand Existing Recipes ✅ COMPLETED
 
 **Goal**: Flesh out Blacksmithing and Alchemy with a full progression
 curve from beginner to expert.
 
 **Changes**:
-1. Blacksmithing: add 6–8 recipes spanning the skill range:
-   - Low: iron short sword, wooden shield reinforcement
-   - Mid: steel longsword, chainmail vest, steel buckler
-   - High: masterwork blade, plate helm, reinforced plate
-2. Alchemy: add 6–8 recipes spanning the skill range:
-   - Low: minor antidote, smoke bomb
-   - Mid: poison coating, fire resistance draught, clarity tonic
-   - High: greater healing poultice, berserker elixir, invisibility
-     draught
-3. Create all required ingredient items and ensure they're obtainable
-   (mob drops, foraging, shops)
-4. Verify the discovery system from 31.1 works across the full recipe
-   set — players gradually unlock harder recipes as skill grows
+1. Blacksmithing expanded from 2 to 10 recipes (skill 0–38):
+   - Iron Short Sword (8), Steel Ingot intermediate (10),
+     Reinforced Wooden Shield (12), Chain Links intermediate (15),
+     Steel Longsword (20), Chainmail Vest (25), Steel Buckler (30),
+     Masterwork Plate Helm (38)
+   - Prerequisite chains: iron + coal → steel → steel weapons/armor;
+     iron → chain links → chainmail vest
+2. Alchemy expanded from 3 to 8 recipes (skill 0–38):
+   - Minor Antidote (8), Clarity Tonic (15), Fire Resistance
+     Draught (20), Greater Healing Poultice (30), Berserker
+     Elixir (38)
+3. Created 14 new items: 3 materials (steel ingot, chain link,
+   coal dust), 2 weapons, 4 armor pieces, 5 consumables
+4. Created 5 new buffs (47–51) with YAML + JS pairs
+5. Added coal-dust to forage tables (cave, mountains, cliffs)
+   and to blacksmith shops (Korvath, Kerra)
 
-**Testing**:
-- Craft each new recipe at appropriate skill levels
-- Verify ingredient availability (at least one source per ingredient)
-- Verify discovery progression feels natural (easy recipes first)
-- Check item stats/buffs are balanced
+**Merge**: TBD
 
 **Estimated Changes**: ~400–600 lines, 25–40 files (mostly YAML)
 
@@ -5389,4 +5388,4 @@ Last phase — tests cover the final state of all features.
 
 **Last Updated**: 2026-02-25
 **Status**: In Progress
-**Current Stage**: Stage 31.3 complete. Cooking skill live. Next: Stage 31.4.
+**Current Stage**: Stage 31.4 complete. Blacksmithing & Alchemy expanded. Next: Stage 31.5.

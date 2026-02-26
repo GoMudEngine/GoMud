@@ -15,13 +15,14 @@ import (
 // forageYields maps biome IDs to lists of item IDs that can be found.
 // Duplicate entries increase the probability of that item appearing.
 var forageYields = map[string][]int{
-	"forest":   {40004, 40004, 40005, 40005},
-	"land":     {40004, 40005},
-	"farmland": {40004, 40004, 40005, 40007},
-	"swamp":    {40005, 40005, 40004},
-	"shore":    {40004},
-	"mountains": {40004, 40005},
-	"cliffs":   {40005},
+	"forest":    {40004, 40004, 40005, 40005},
+	"land":      {40004, 40005},
+	"farmland":  {40004, 40004, 40005, 40007},
+	"swamp":     {40005, 40005, 40004},
+	"shore":     {40004},
+	"mountains": {40004, 40005, 40020},
+	"cliffs":    {40005, 40020},
+	"cave":      {40020, 40020, 40005},
 }
 
 func Forage(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
