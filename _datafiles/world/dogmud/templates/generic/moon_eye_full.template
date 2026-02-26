@@ -1,0 +1,12 @@
+<ansi fg="239">┌─────────────────────────────────────────────────────────────────────────┐</ansi>
+
+                   <ansi fg="18">      .    *      .       *    .     </ansi>
+                   <ansi fg="105">              <ansi bg="105">#########</ansi>              </ansi>
+                   <ansi fg="105">          <ansi bg="105">####</ansi><ansi fg="255"><ansi bg="255">###</ansi></ansi><ansi bg="105">####</ansi>          </ansi>
+                   <ansi fg="105">              <ansi bg="105">#########</ansi>              </ansi>
+                   <ansi fg="18">      *    .      *       .    *     </ansi>
+                   <ansi fg="230"> The Eye is fully open tonight.    </ansi>
+                   <ansi fg="147"> Those who study the Fold grow     </ansi>
+                   <ansi fg="105">    quiet and turn from the sky.   </ansi>
+
+<ansi fg="239">└─────────────────────────────────────────────────────────────────────────┘</ansi>

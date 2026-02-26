@@ -1,0 +1,20 @@
+<ansi fg="239">┌─────────────────────────────────────────────────────────────────────────┐</ansi>
+
+                   <ansi fg="19">      .    *      .       *    .     </ansi>
+                   <ansi fg="255">              <ansi bg="255">#########</ansi>              </ansi>
+                   <ansi fg="255">           <ansi bg="255">#################</ansi>           </ansi>
+                   <ansi fg="255">        <ansi bg="255">#######################</ansi>        </ansi>
+                   <ansi fg="255">      <ansi bg="255">###########################</ansi>      </ansi>
+                   <ansi fg="255">    <ansi bg="255">###############################</ansi>    </ansi>
+                   <ansi fg="153"> ─ ─<ansi fg="255"><ansi bg="255">#################################</ansi></ansi>─ ─</ansi>
+                   <ansi fg="153"> ─ ─<ansi fg="255"><ansi bg="255">#################################</ansi></ansi>─ ─</ansi>
+                   <ansi fg="255">    <ansi bg="255">###############################</ansi>    </ansi>
+                   <ansi fg="255">      <ansi bg="255">###########################</ansi>      </ansi>
+                   <ansi fg="255">        <ansi bg="255">#######################</ansi>        </ansi>
+                   <ansi fg="255">           <ansi bg="255">#################</ansi>           </ansi>
+                   <ansi fg="255">              <ansi bg="255">#########</ansi>              </ansi>
+                   <ansi fg="19">      *    .      *       .    *     </ansi>
+                   <ansi fg="230"> Swiftmoon blazes full overhead —  </ansi>
+                   <ansi fg="189">    brief, bright, and fleeting.   </ansi>
+
+<ansi fg="239">└─────────────────────────────────────────────────────────────────────────┘</ansi>

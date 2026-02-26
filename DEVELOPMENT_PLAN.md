@@ -4657,6 +4657,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 29: Regen & Cleanup | 6 stages (29.1–29.6) | 12 hours | **29.1–29.6 Complete** |
 | Phase 30: Combat Analytics | 3 stages (30.1–30.3) | 16 hours | **30.1–30.3 Complete** |
 | Phase 31: Crafting Expansion | 6 stages (31.1–31.6) | 30 hours | 31.1–31.6 Complete |
+| Phase 32: Moon Phase Splash Screens | 1 stage (32.1) | 2 hours | **32.1 Complete** |
 | **Total** | **~92 stages** | **~591 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
@@ -5136,20 +5137,32 @@ Jewelcrafting.
 
 ## Phase 32: Moon Phase Splash Screens
 
-### Stage 32.1: Moon Phase Transition Splash Art
+### Stage 32.1: Moon Phase Transition Splash Art ✅ COMPLETED
+
+**Merge Commit**: (pending merge into development)
 
 **Goal**: Add ASCII art splash screens for major moon phase changes,
 matching the existing sunrise/sunset splash system.
 
-**Changes**:
-1. Create ASCII art for major phases: new moon, waxing crescent,
-   first quarter, waxing gibbous, full moon, waning gibbous, last
-   quarter, waning crescent (or a subset of key transitions)
-2. Hook into the existing moon phase emoter system — when a phase
-   transition occurs, display the splash to all online players
-3. Store splash art in data files (same pattern as sunrise/sunset)
-4. Include brief thematic flavor text with each splash
-5. Respect player preferences if a "brief mode" exists
+**What was done**:
+1. Created 6 ASCII art splash templates for all three moons
+   (Swiftmoon, The Wanderer, The Eye) × 2 phases (full, new)
+2. Each template features themed ASCII art in a bordered box with
+   ANSI color codes matching the sunrise/sunset splash style
+3. Created 6 matching screenreader templates for accessibility
+4. All templates placed in `_datafiles/world/dogmud/templates/generic/`
+   to override the minimal defaults
+5. Art style: Swiftmoon = bright/fast with speed lines,
+   The Wanderer = large/steady/pale, The Eye = eerie eye shape
+6. No Go code changes needed — existing broadcast hook loads templates
+
+**Files Created** (12 total):
+- `moon_swiftmoon_full.template` + `.screenreader.template`
+- `moon_swiftmoon_new.template` + `.screenreader.template`
+- `moon_wanderer_full.template` + `.screenreader.template`
+- `moon_wanderer_new.template` + `.screenreader.template`
+- `moon_eye_full.template` + `.screenreader.template`
+- `moon_eye_new.template` + `.screenreader.template`
 
 **Testing**:
 - Manual test: wait for or force a moon phase transition, verify
@@ -5157,7 +5170,7 @@ matching the existing sunrise/sunset splash system.
 - Verify splash text wraps within 80-char line width
 - Verify no duplicate splashes on rapid transitions
 
-**Estimated Changes**: ~150–300 lines, 5–10 files
+**Estimated Changes**: ~150–300 lines, 12 files
 
 ---
 
@@ -5389,4 +5402,4 @@ Last phase — tests cover the final state of all features.
 
 **Last Updated**: 2026-02-25
 **Status**: In Progress
-**Current Stage**: Stage 31.6 complete. Chrysalis Enchanting added with living growth system, pool reservation, 9 enchantments, disenchant command, and comprehensive crafting help files. Phase 31 (Crafting Expansion) fully complete. Next: Phase 32.
+**Current Stage**: Stage 32.1 complete. Moon phase ASCII art splash screens added for all three moons (Swiftmoon, The Wanderer, The Eye) with full and new phase variants plus screenreader accessibility templates. Phase 32 complete. Next: Phase 33.
