@@ -5010,7 +5010,7 @@ to spell discovery in Phase 25.
 
 ---
 
-### Stage 31.3: New Crafting Skill — Cooking ✅ COMPLETED
+### Stage 31.3: New Crafting Skill — Cooking ✅ COMPLETED (merge 6a73f4a)
 
 **Goal**: Add Cooking for consumable food with buff effects.
 
