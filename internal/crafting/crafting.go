@@ -164,6 +164,33 @@ func ConsumeIngredients(inv []items.Item, recipe *RecipeSpec) []items.Item {
 	return result
 }
 
+// GetStarterRecipes returns a map of all recipes with SkillMinimum == 0,
+// each set to value 1 (known). Used to seed new or existing characters.
+func GetStarterRecipes() map[string]int {
+	result := make(map[string]int)
+	for id, r := range allRecipes {
+		if r.SkillMinimum == 0 {
+			result[id] = 1
+		}
+	}
+	return result
+}
+
+// GetEligibleRecipes returns recipe IDs that the player could discover:
+// not already known, and the player's skill level meets the recipe's SkillMinimum.
+func GetEligibleRecipes(knownRecipes map[string]int, skillLevels map[string]int) []string {
+	var eligible []string
+	for id, r := range allRecipes {
+		if _, known := knownRecipes[id]; known {
+			continue
+		}
+		if skillLevels[r.Skill] >= r.SkillMinimum {
+			eligible = append(eligible, id)
+		}
+	}
+	return eligible
+}
+
 // CalcSuccessChance returns the crafting success percentage clamped to
 // [CraftingMinSuccessChance, CraftingMaxSuccessChance].
 // Formula: clamp(base + (skillLevel - skillMinimum) * bonusPerLevel, min, max)

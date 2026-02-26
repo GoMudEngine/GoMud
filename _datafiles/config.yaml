@@ -447,6 +447,10 @@ Balance:
   CraftingMinSuccessChance: 5    # Floor — never lower than this
   CraftingMaxSuccessChance: 95   # Ceiling — never higher than this
 
+  # ── RECIPE DISCOVERY ──────────────────────────────────────────────────────
+  RecipeDiscoveryBaseChance: 8.0   # Base % to discover a new recipe per successful craft
+  RecipeDiscoveryDecayRate: 0.1    # Decay per known recipe: chance = base / (1 + known*this)
+
   # ── MUTATIONS ───────────────────────────────────────────────────────────────
   MutationBaseProgress: 50.0         # Progress needed for first mutation
   MutationProgressScale: 1.5         # Each additional mutation costs Scale^n more
