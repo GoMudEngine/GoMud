@@ -1,0 +1,16 @@
+id: grilled-meat
+name: Grilled Meat
+skill: cooking
+skill_minimum: 0
+station: cooking_fire
+time_rounds: 2
+ingredients:
+  - item_tag: raw-meat
+    quantity: 1
+  - item_tag: salt-pouch
+    quantity: 1
+output:
+  item_id: 30022
+  quantity: 1
+success_message: "You rub the meat with salt and sear it over the flames. Grilled meat!"
+failure_message: "The meat catches fire and burns to ash. The materials are lost."

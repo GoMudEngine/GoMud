@@ -1,0 +1,15 @@
+itemid: 30024
+name: herbal tea
+namesimple: tea
+description: |
+  A small clay cup of pale green tea brewed from steeped healer's root.
+  The liquid is warm and faintly bitter, with an aftertaste of something
+  floral. Herbalists swear by it for settling the mind after hard work
+  or long travel.
+type: food
+subtype: edible
+uses: 1
+buffids:
+  - 44
+value: 4
+weight: 0.3

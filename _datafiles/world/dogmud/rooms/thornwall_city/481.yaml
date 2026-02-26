@@ -1,0 +1,32 @@
+roomid: 481
+zone: Thornwall City
+title: Tavern Kitchen
+description: >
+  A cramped back kitchen behind the Drowning Post, barely large enough for
+  two people to work without bumping elbows. A brick hearth dominates one
+  wall, its iron cooking grate blackened by years of service. Bundles of
+  dried herbs hang from the low ceiling, and a scarred wooden table holds
+  knives, bowls, and a mortar and pestle. The air is thick with the smell
+  of grease, onions, and wood smoke. A narrow doorway opens east to the
+  main tavern floor.
+biome: city
+station: cooking_fire
+exits:
+  east:
+    roomid: 472
+items:
+  - itemid: 40014
+  - itemid: 40017
+  - itemid: 40015
+  - itemid: 40016
+nouns:
+  hearth: A squat brick hearth built against the outer wall, venting through
+    a hole knocked in the brickwork above. The cooking grate is iron, warped
+    slightly by heat but still sturdy. Grease stains and soot coat the bricks
+    around the firebox.
+  table: A heavy wooden work table, its surface gouged and scored from years
+    of knife work. Bowls, spoons, and a stone mortar sit in a rough cluster
+    at one end.
+idlemessages:
+- Something pops and sizzles on the hearth grate.
+- The smell of roasting meat drifts through the doorway to the tavern.

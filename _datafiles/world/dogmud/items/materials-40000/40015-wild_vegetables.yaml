@@ -1,0 +1,10 @@
+itemid: 40015
+name: wild vegetables
+namesimple: vegetables
+description: A bundle of wild-gathered roots, tubers, and leafy greens. They
+  smell of earth and fresh rain.
+type: object
+subtype: mundane
+component_tag: wild-vegetables
+weight: 0.3
+value: 1

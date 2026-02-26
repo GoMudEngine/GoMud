@@ -1,0 +1,5 @@
+buffid: 43
+name: Stamina Boost
+description: Hearty food restores your endurance and vigor.
+triggerrate: 2 rounds
+triggercount: 3

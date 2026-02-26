@@ -1,0 +1,15 @@
+itemid: 30021
+name: trail rations
+namesimple: rations
+description: |
+  A bundle of salted meat strips wrapped in a scrap of oiled cloth. The
+  salt has drawn the moisture out, leaving the meat tough and chewy but
+  long-lasting. Simple trail food -- enough to keep body and soul together
+  on the road.
+type: food
+subtype: edible
+uses: 1
+buffids:
+  - 42
+value: 3
+weight: 0.5

@@ -1,0 +1,10 @@
+itemid: 40017
+name: salt pouch
+namesimple: salt
+description: A small drawstring pouch of coarse gray salt, harvested from dried
+  lake beds. Essential for preserving and seasoning food.
+type: object
+subtype: mundane
+component_tag: salt-pouch
+weight: 0.1
+value: 1

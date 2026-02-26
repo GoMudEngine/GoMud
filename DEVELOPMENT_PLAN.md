@@ -4656,7 +4656,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 28: LLM Tutorial Enhancement | 1 stage (28.1) | 8 hours | 28.1 Complete |
 | Phase 29: Regen & Cleanup | 6 stages (29.1–29.6) | 12 hours | **29.1–29.6 Complete** |
 | Phase 30: Combat Analytics | 3 stages (30.1–30.3) | 16 hours | **30.1–30.3 Complete** |
-| Phase 31: Crafting Expansion | 6 stages (31.1–31.6) | 30 hours | 31.1–31.2 Complete |
+| Phase 31: Crafting Expansion | 6 stages (31.1–31.6) | 30 hours | 31.1–31.3 Complete |
 | **Total** | **~92 stages** | **~591 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
@@ -5010,27 +5010,28 @@ to spell discovery in Phase 25.
 
 ---
 
-### Stage 31.3: New Crafting Skill — Cooking
+### Stage 31.3: New Crafting Skill — Cooking ✅ COMPLETED
 
 **Goal**: Add Cooking for consumable food with buff effects.
 
 **Changes**:
-1. Register Cooking as a new skill (stat association — likely
-   Perception)
-2. Add crafting station types: `campfire`, `kitchen`
-3. Create 6–8 recipes: trail rations, stew (stamina regen buff),
-   herbal tea (conviction regen buff), grilled meat (temp HP buff),
-   spiced wine (charisma buff), antidote broth, energy bread
-4. Create ingredient items: raw meat, vegetables, herbs, water flask,
-   spices (from foraging, mob drops, shops)
-5. Place stations: campfire in wilderness areas, kitchen in Thornwall
+1. Registered Cooking skill (primary stat: Perception, multiplier 2.0,
+   profession "cook")
+2. Created cooking_fire station type with 3 station rooms:
+   - Startland room 9 (The Cook Fire)
+   - Sanctum Basin room 123 (Desert Cookfire)
+   - Thornwall City room 481 (Tavern Kitchen)
+3. Created 7 recipes: trail rations, grilled meat (skill 0 starters),
+   hearty stew, herbal tea (skill 5), antidote broth (skill 10),
+   spiced wine (skill 15), energy bread (skill 20)
+4. Created 4 ingredient items: raw meat, wild vegetables, water flask,
+   salt pouch (reused healers root for herbal tea)
+5. Created 7 food consumables with buff effects
+6. Created 5 food buffs: Hearty Meal (HP regen), Stamina Boost (SP
+   regen), Clear Mind (CP regen), Well Fed (vitality +10), Liquid
+   Courage (charisma +10)
 
-**Testing**:
-- Verify Cooking skill appears and progresses
-- Craft each recipe, verify output items and buffs work
-- Verify food buffs apply correctly and expire
-
-**Estimated Changes**: ~300–500 lines, 15–25 files (mostly YAML)
+**Files**: 1 Go edit, 26 new YAML, 3 room edits, 1 instance save deleted
 
 ---
 
@@ -5388,4 +5389,4 @@ Last phase — tests cover the final state of all features.
 
 **Last Updated**: 2026-02-25
 **Status**: In Progress
-**Current Stage**: Stage 31.2 complete. Tailoring skill live. Next: Stage 31.3.
+**Current Stage**: Stage 31.3 complete. Cooking skill live. Next: Stage 31.4.
