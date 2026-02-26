@@ -1,0 +1,18 @@
+id: leather-leggings
+name: Leather Leggings
+skill: tailoring
+skill_minimum: 15
+station: loom
+time_rounds: 5
+ingredients:
+  - item_tag: leather-strip
+    quantity: 2
+  - item_tag: thread-spool
+    quantity: 1
+  - item_tag: bone-needle
+    quantity: 1
+output:
+  item_id: 20023
+  quantity: 1
+success_message: "You shape and lace the hide into snug leggings. Leather leggings!"
+failure_message: "The lacing tears through the leather. The materials are ruined."

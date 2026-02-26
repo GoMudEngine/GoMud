@@ -1,0 +1,16 @@
+id: cloth-bandage
+name: Cloth Bandage
+skill: tailoring
+skill_minimum: 5
+station: loom
+time_rounds: 2
+ingredients:
+  - item_tag: cloth-strip
+    quantity: 1
+  - item_tag: thread-spool
+    quantity: 1
+output:
+  item_id: 30020
+  quantity: 1
+success_message: "You fold and roll the cloth into a tight bandage. A cloth bandage!"
+failure_message: "The cloth frays apart as you try to fold it. The materials are lost."

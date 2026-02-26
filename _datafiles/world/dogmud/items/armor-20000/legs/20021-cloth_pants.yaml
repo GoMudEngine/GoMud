@@ -1,0 +1,9 @@
+itemid: 20021
+name: cloth pants
+namesimple: pants
+description: Loose-fitting trousers sewn from plain linen. They breathe well
+  in warm weather and offer modest protection from thorns and rough terrain.
+type: legs
+subtype: wearable
+damagereduction: 2
+escapemodifier: 1.0

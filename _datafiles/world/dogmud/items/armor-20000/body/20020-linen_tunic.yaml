@@ -1,0 +1,10 @@
+itemid: 20020
+name: linen tunic
+namesimple: tunic
+description: A simple tunic stitched from undyed linen panels. The seams are
+  rough but serviceable, offering a thin layer of protection against scrapes
+  and light blows.
+type: body
+subtype: wearable
+damagereduction: 2
+escapemodifier: 1.0

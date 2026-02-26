@@ -1,0 +1,16 @@
+id: wool-cloak
+name: Wool Cloak
+skill: tailoring
+skill_minimum: 10
+station: loom
+time_rounds: 4
+ingredients:
+  - item_tag: cloth-strip
+    quantity: 3
+  - item_tag: thread-spool
+    quantity: 1
+output:
+  item_id: 20024
+  quantity: 1
+success_message: "You layer the cloth and stitch a broad cloak with a bone toggle clasp. A wool cloak!"
+failure_message: "The heavy fabric bunches and the stitching fails. The materials are ruined."

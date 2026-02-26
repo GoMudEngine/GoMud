@@ -1,0 +1,29 @@
+roomid: 122
+zone: Sanctum Basin
+title: Weaver's Alcove
+description: >
+  A shaded alcove tucked behind the smithy, screened from the forge heat by
+  a curtain of heavy canvas. A sturdy wooden loom stands against the back
+  wall, strung with pale thread. Bolts of undyed cloth and strips of cured
+  leather hang from pegs overhead. The clatter of the loom competes with
+  the distant ring of the blacksmith's hammer.
+mapsymbol: L
+maplegend: Loom
+biome: city
+station: loom
+exits:
+  north:
+    roomid: 109
+items:
+  - itemid: 40012
+  - itemid: 40012
+  - itemid: 40012
+  - itemid: 40013
+  - itemid: 40013
+  - itemid: 40007
+  - itemid: 40007
+  - itemid: 40007
+idlemessages:
+- The loom clacks rhythmically as the wind catches a loose thread.
+- Dust motes drift through a shaft of light above the weaving bench.
+- A half-finished bolt of cloth hangs from the loom frame.

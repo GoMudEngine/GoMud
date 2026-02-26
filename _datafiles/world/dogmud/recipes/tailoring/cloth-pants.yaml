@@ -1,0 +1,16 @@
+id: cloth-pants
+name: Cloth Pants
+skill: tailoring
+skill_minimum: 0
+station: loom
+time_rounds: 3
+ingredients:
+  - item_tag: cloth-strip
+    quantity: 2
+  - item_tag: thread-spool
+    quantity: 1
+output:
+  item_id: 20021
+  quantity: 1
+success_message: "You measure, cut, and stitch the cloth into a pair of trousers. Cloth pants!"
+failure_message: "The seams split as you pull them tight. The materials are wasted."

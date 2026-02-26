@@ -1,0 +1,10 @@
+itemid: 40012
+name: thread spool
+namesimple: thread
+description: A small wooden spool wound tight with coarse linen thread. Essential
+  for any sewing work.
+type: object
+subtype: mundane
+component_tag: thread-spool
+weight: 0.1
+value: 1

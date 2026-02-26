@@ -4656,7 +4656,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 28: LLM Tutorial Enhancement | 1 stage (28.1) | 8 hours | 28.1 Complete |
 | Phase 29: Regen & Cleanup | 6 stages (29.1–29.6) | 12 hours | **29.1–29.6 Complete** |
 | Phase 30: Combat Analytics | 3 stages (30.1–30.3) | 16 hours | **30.1–30.3 Complete** |
-| Phase 31: Crafting Expansion | 6 stages (31.1–31.6) | 30 hours | 31.1 Complete |
+| Phase 31: Crafting Expansion | 6 stages (31.1–31.6) | 30 hours | 31.1–31.2 Complete |
 | **Total** | **~92 stages** | **~591 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
@@ -4989,25 +4989,22 @@ to spell discovery in Phase 25.
 
 ---
 
-### Stage 31.2: New Crafting Skill — Tailoring
+### Stage 31.2: New Crafting Skill — Tailoring ✅ COMPLETED (merge PENDING)
 
 **Goal**: Add Tailoring for cloth and leather goods.
 
 **Changes**:
-1. Register Tailoring as a new skill (skill definition, stat
-   association — likely Dexterity)
-2. Add crafting station type: `loom` or `workbench`
-3. Create 6–8 recipes: cloth armor (body, legs), leather armor (body,
-   legs), cloak, bag/pouch, bandages, rope
-4. Create ingredient items: cloth scraps, leather strips, thread,
-   needle (some from mob drops, some from foraging)
-5. Place crafting stations in appropriate rooms (Thornwall market,
-   tutorial area)
-
-**Testing**:
-- Verify Tailoring skill appears and progresses
-- Craft each recipe, verify output items are correct
-- Verify station requirement is enforced
+1. Registered Tailoring skill (`internal/skills/skills.go`) — constant,
+   profession ("tailor"), primary stat (dexterity), progression multiplier (2.0)
+2. Station type: `loom`
+3. Created 7 recipes (linen tunic, cloth pants, cloth bandage, wool cloak,
+   leather vest, leather leggings, leather satchel) spanning skill 0–20
+4. Created 2 new material items (thread spool, bone needle); reused
+   existing cloth-strip and leather-strip
+5. Created 7 output items (6 armor/equipment + 1 consumable bandage)
+6. Created 3 loom rooms: Startland (room 8), Sanctum Basin (room 122),
+   Thornwall City (room 480) — all seeded with ingredients
+7. Connected new rooms via exits from existing rooms
 
 **Estimated Changes**: ~300–500 lines, 15–25 files (mostly YAML)
 
@@ -5391,4 +5388,4 @@ Last phase — tests cover the final state of all features.
 
 **Last Updated**: 2026-02-25
 **Status**: In Progress
-**Current Stage**: Stage 31.1 complete. Crafting discovery system live. Next: Stage 31.2.
+**Current Stage**: Stage 31.2 complete. Tailoring skill live. Next: Stage 31.3.
