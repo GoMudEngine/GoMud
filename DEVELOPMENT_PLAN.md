@@ -4989,7 +4989,7 @@ to spell discovery in Phase 25.
 
 ---
 
-### Stage 31.2: New Crafting Skill — Tailoring ✅ COMPLETED (merge PENDING)
+### Stage 31.2: New Crafting Skill — Tailoring ✅ COMPLETED (merge d1fb378)
 
 **Goal**: Add Tailoring for cloth and leather goods.
 
