@@ -84,6 +84,13 @@ type Balance struct {
 	SpellAttackSkillFactor          ConfigInt   `yaml:"SpellAttackSkillFactor"`          // Skill * this in spell attack mean (default 3)
 	SpellProficiencyCastsPerPoint   ConfigInt   `yaml:"SpellProficiencyCastsPerPoint"`   // Casts needed per 1 proficiency point (default 50)
 
+	// ── ENCHANTMENTS ─────────────────────────────────────────────────────────
+	EnchantTierUpBaseChance     ConfigFloat `yaml:"EnchantTierUpBaseChance"`     // Chance per use (once threshold met) to advance tier (default 0.02)
+	EnchantTierUsesBase         ConfigInt   `yaml:"EnchantTierUsesBase"`         // Uses needed for tier 0→1 (default 25)
+	EnchantTierUsesScale        ConfigFloat `yaml:"EnchantTierUsesScale"`        // Multiplier per tier for uses threshold (default 2.5)
+	EnchantRemovalPenaltyRounds ConfigInt   `yaml:"EnchantRemovalPenaltyRounds"` // Rounds of withdrawal after disenchant (default 50)
+	EnchantMaxTier              ConfigInt   `yaml:"EnchantMaxTier"`              // Maximum tier enchantments can reach (default 4)
+
 	// ── MOON PHASES ───────────────────────────────────────────────────────────
 	MoonStatModMax ConfigFloat `yaml:"MoonStatModMax"` // Max fractional stat modifier from moon phases, e.g. 0.05 = ±5% (default 0.05)
 }
@@ -280,6 +287,23 @@ func (b *Balance) Validate() {
 	}
 	if b.SpellProficiencyCastsPerPoint < 1 {
 		b.SpellProficiencyCastsPerPoint = 50
+	}
+
+	// ── ENCHANTMENTS ─────────────────────────────────────────────────────────
+	if b.EnchantTierUpBaseChance <= 0 {
+		b.EnchantTierUpBaseChance = 0.02
+	}
+	if b.EnchantTierUsesBase < 1 {
+		b.EnchantTierUsesBase = 25
+	}
+	if b.EnchantTierUsesScale <= 0 {
+		b.EnchantTierUsesScale = 2.5
+	}
+	if b.EnchantRemovalPenaltyRounds < 1 {
+		b.EnchantRemovalPenaltyRounds = 50
+	}
+	if b.EnchantMaxTier < 1 {
+		b.EnchantMaxTier = 4
 	}
 
 	// ── MOON PHASES ───────────────────────────────────────────────────────────

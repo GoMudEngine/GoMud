@@ -47,6 +47,10 @@ type Item struct {
 	Uncursed      bool           `yaml:"uncursed,omitempty"`     // Is this item uncursed?
 	Enchantments  uint8          `yaml:"enchantments,omitempty"` // Is this item enchanted?
 	Adjectives    []string       `yaml:"adjectives,omitempty"`   // Decorative text for the name of the item (e.g. "exploding")
+	EnchantTier   int            `yaml:"enchanttier,omitempty"`  // Current enchantment power tier (0+)
+	EnchantUses   int            `yaml:"enchantuses,omitempty"`  // Accumulated uses toward next tier
+	EnchantType   string         `yaml:"enchanttype,omitempty"`  // Enchantment type ID (links to enchantment def)
+	ReservePool   string         `yaml:"reservepool,omitempty"`  // "health", "stamina", or "conviction"
 	StashedBy     int            `yaml:"stashedby,omitempty"`    // userid of whoever stashed this item
 	tempDataStore map[string]any // Temporary data store for this item. Not saved to disk.
 }
@@ -146,6 +150,11 @@ func (i *Item) GetTempData(key string) any {
 		return value
 	}
 	return nil
+}
+
+// HasChrysalisEnchantment returns true if the item has a Chrysalis enchantment bound to it.
+func (i *Item) HasChrysalisEnchantment() bool {
+	return i.EnchantType != ""
 }
 
 func (i Item) IsDisabled() bool {

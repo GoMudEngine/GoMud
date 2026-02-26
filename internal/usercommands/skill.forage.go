@@ -22,7 +22,7 @@ var forageYields = map[string][]int{
 	"shore":     {40004},
 	"mountains": {40004, 40005, 40020, 40024, 40025},
 	"cliffs":    {40005, 40020, 40024},
-	"cave":      {40020, 40020, 40005, 40024, 40025, 40026},
+	"cave":      {40020, 40020, 40005, 40024, 40025, 40026, 40027, 40029},
 }
 
 func Forage(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {

@@ -1,0 +1,10 @@
+itemid: 40027
+name: chrysalis shard
+namesimple: shard
+description: A jagged fragment of something organic yet mineral, warm to the
+  touch and faintly luminescent. It pulses with a slow rhythm, as if breathing.
+type: object
+subtype: mundane
+component_tag: chrysalis-shard
+weight: 0.2
+value: 6

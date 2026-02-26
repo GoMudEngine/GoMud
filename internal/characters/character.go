@@ -11,6 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/crafting"
 	"github.com/GoMudEngine/GoMud/internal/dice"
+	"github.com/GoMudEngine/GoMud/internal/enchantments"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
@@ -2160,6 +2161,75 @@ func (c *Character) RecalculateStats() {
 		c.ActionPointsMax.Value = 50
 	}
 
+	// Chrysalis enchantment pool reservation: clamp current pools to effective max
+	if hpRes := c.GetPoolReservation("health", c.HealthMax.Value); hpRes > 0 {
+		effectiveHP := c.HealthMax.Value - hpRes
+		if effectiveHP < 1 {
+			effectiveHP = 1
+		}
+		if c.Health > effectiveHP {
+			c.Health = effectiveHP
+		}
+	}
+	if spRes := c.GetPoolReservation("stamina", c.StaminaMax.Value); spRes > 0 {
+		effectiveSP := c.StaminaMax.Value - spRes
+		if effectiveSP < 0 {
+			effectiveSP = 0
+		}
+		if c.Stamina > effectiveSP {
+			c.Stamina = effectiveSP
+		}
+	}
+	if cpRes := c.GetPoolReservation("conviction", c.ConvictionMax.Value); cpRes > 0 {
+		effectiveCP := c.ConvictionMax.Value - cpRes
+		if effectiveCP < 0 {
+			effectiveCP = 0
+		}
+		if c.Conviction > effectiveCP {
+			c.Conviction = effectiveCP
+		}
+	}
+
+	// Stage 31.6: Enchant withdrawal condition — temporarily reduces pool max
+	if c.HasCondition(ConditionEnchantWithdrawal) {
+		mag := c.GetConditionMagnitude(ConditionEnchantWithdrawal)
+		// Source stores which pool to penalize
+		for _, cond := range c.Conditions {
+			if cond.Type == ConditionEnchantWithdrawal {
+				penalty := int(math.Floor(float64(c.HealthMax.Value) * mag))
+				switch cond.Source {
+				case "health":
+					c.HealthMax.Value -= penalty
+					if c.HealthMax.Value < 1 {
+						c.HealthMax.Value = 1
+					}
+					if c.Health > c.HealthMax.Value {
+						c.Health = c.HealthMax.Value
+					}
+				case "stamina":
+					penalty = int(math.Floor(float64(c.StaminaMax.Value) * mag))
+					c.StaminaMax.Value -= penalty
+					if c.StaminaMax.Value < 0 {
+						c.StaminaMax.Value = 0
+					}
+					if c.Stamina > c.StaminaMax.Value {
+						c.Stamina = c.StaminaMax.Value
+					}
+				case "conviction":
+					penalty = int(math.Floor(float64(c.ConvictionMax.Value) * mag))
+					c.ConvictionMax.Value -= penalty
+					if c.ConvictionMax.Value < 0 {
+						c.ConvictionMax.Value = 0
+					}
+					if c.Conviction > c.ConvictionMax.Value {
+						c.Conviction = c.ConvictionMax.Value
+					}
+				}
+				break
+			}
+		}
+	}
+
 	if c.userId != 0 {
 		changed := false
 		// return true if something has changed.
@@ -2184,6 +2254,20 @@ func (c *Character) RecalculateStats() {
 		}
 	}
 
+}
+
+// GetPoolReservation returns the total pool max reduction from Chrysalis enchantments
+// on all equipped items that reserve the given pool ("health", "stamina", "conviction").
+func (c *Character) GetPoolReservation(pool string, poolMax int) int {
+	total := 0
+	for _, itm := range c.Equipment.GetAllItems() {
+		if !itm.HasChrysalisEnchantment() || itm.ReservePool != pool {
+			continue
+		}
+		pct := enchantments.GetTierReservePct(itm.EnchantType, itm.EnchantTier)
+		total += int(math.Floor(float64(poolMax) * pct))
+	}
+	return total
 }
 
 func (c *Character) CanDualWield() bool {

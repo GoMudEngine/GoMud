@@ -113,6 +113,49 @@ func (w *Worn) GetAllItems() []items.Item {
 	return iList
 }
 
+// GetAllItemPtrs returns pointers to all equipped item slots with valid items.
+// Used by the enchantment tick system to modify items in-place.
+func (w *Worn) GetAllItemPtrs() []*items.Item {
+	ptrs := make([]*items.Item, 0, 12)
+	if w.Weapon.ItemId > 0 {
+		ptrs = append(ptrs, &w.Weapon)
+	}
+	if w.Offhand.ItemId > 0 {
+		ptrs = append(ptrs, &w.Offhand)
+	}
+	if w.ExtraArm1.ItemId > 0 {
+		ptrs = append(ptrs, &w.ExtraArm1)
+	}
+	if w.ExtraArm2.ItemId > 0 {
+		ptrs = append(ptrs, &w.ExtraArm2)
+	}
+	if w.Head.ItemId > 0 {
+		ptrs = append(ptrs, &w.Head)
+	}
+	if w.Neck.ItemId > 0 {
+		ptrs = append(ptrs, &w.Neck)
+	}
+	if w.Body.ItemId > 0 {
+		ptrs = append(ptrs, &w.Body)
+	}
+	if w.Belt.ItemId > 0 {
+		ptrs = append(ptrs, &w.Belt)
+	}
+	if w.Gloves.ItemId > 0 {
+		ptrs = append(ptrs, &w.Gloves)
+	}
+	if w.Ring.ItemId > 0 {
+		ptrs = append(ptrs, &w.Ring)
+	}
+	if w.Legs.ItemId > 0 {
+		ptrs = append(ptrs, &w.Legs)
+	}
+	if w.Feet.ItemId > 0 {
+		ptrs = append(ptrs, &w.Feet)
+	}
+	return ptrs
+}
+
 func GetAllSlotTypes() []string {
 	return []string{
 		string(items.Weapon),

@@ -38,35 +38,72 @@ var (
 // Color breakpoints match the web client vitals window gradient:
 //
 //	>60% → green (ANSI 82), >30% → yellow (ANSI 226), ≤30% → red (ANSI 196)
-func renderVitalBar(current, max int) string {
+//
+// The reserved parameter adds dark magenta blocks representing pool
+// reservation from Chrysalis enchantments. When reserved=0 the bar
+// renders identically to the original two-arg version.
+func renderVitalBar(current, max, reserved int) string {
 	if max <= 0 {
 		max = 1
 	}
 	if current < 0 {
 		current = 0
 	}
-	pct := float64(current) / float64(max) * 100.0
-	if pct > 100 {
-		pct = 100
+	if reserved < 0 {
+		reserved = 0
 	}
 
-	filled := int(math.Round(pct / 10.0))
-	empty := 10 - filled
+	effectiveMax := max - reserved
+	if effectiveMax < 1 {
+		effectiveMax = 1
+	}
+	if current > effectiveMax {
+		current = effectiveMax
+	}
 
+	// Calculate block counts out of 10
+	reservedBlocks := int(math.Round(float64(reserved) / float64(max) * 10.0))
+	if reservedBlocks > 10 {
+		reservedBlocks = 10
+	}
+
+	usableBlocks := int(math.Round(float64(current) / float64(max) * 10.0))
+	if usableBlocks+reservedBlocks > 10 {
+		usableBlocks = 10 - reservedBlocks
+	}
+
+	emptyBlocks := 10 - usableBlocks - reservedBlocks
+	if emptyBlocks < 0 {
+		emptyBlocks = 0
+	}
+
+	// Color based on current vs effective max
+	effectivePct := float64(current) / float64(effectiveMax) * 100.0
 	var barColor string
 	switch {
-	case pct > 60:
+	case effectivePct > 60:
 		barColor = "82"  // bright green
-	case pct > 30:
+	case effectivePct > 30:
 		barColor = "226" // yellow
 	default:
 		barColor = "196" // red
 	}
 
-	return fmt.Sprintf(`<ansi fg="%s">%s</ansi><ansi fg="238">%s</ansi>`,
+	result := fmt.Sprintf(`<ansi fg="%s">%s</ansi>`,
 		barColor,
-		strings.Repeat("█", filled),
-		strings.Repeat("░", empty))
+		strings.Repeat("█", usableBlocks))
+
+	if reservedBlocks > 0 {
+		result += fmt.Sprintf(`<ansi fg="53">%s</ansi>`,
+			strings.Repeat("▓", reservedBlocks))
+	}
+
+	if emptyBlocks > 0 {
+		result += fmt.Sprintf(`<ansi fg="238">%s</ansi>`,
+			strings.Repeat("░", emptyBlocks))
+	}
+
+	return result
 }
 
 // getPromptToggle returns the toggle state for a fight prompt element.
@@ -327,13 +364,16 @@ func (u *UserRecord) ProcessPromptString(promptStr string) string {
 				promptOut.WriteString(strconv.Itoa(u.Character.ConvictionMax.Value))
 
 			case `{hpbar}`:
-				promptOut.WriteString(renderVitalBar(u.Character.Health, u.Character.HealthMax.Value))
+				promptOut.WriteString(renderVitalBar(u.Character.Health, u.Character.HealthMax.Value,
+					u.Character.GetPoolReservation("health", u.Character.HealthMax.Value)))
 
 			case `{stbar}`:
-				promptOut.WriteString(renderVitalBar(u.Character.Stamina, u.Character.StaminaMax.Value))
+				promptOut.WriteString(renderVitalBar(u.Character.Stamina, u.Character.StaminaMax.Value,
+					u.Character.GetPoolReservation("stamina", u.Character.StaminaMax.Value)))
 
 			case `{cvbar}`:
-				promptOut.WriteString(renderVitalBar(u.Character.Conviction, u.Character.ConvictionMax.Value))
+				promptOut.WriteString(renderVitalBar(u.Character.Conviction, u.Character.ConvictionMax.Value,
+					u.Character.GetPoolReservation("conviction", u.Character.ConvictionMax.Value)))
 
 			case `{target}`:
 				if u.Character.Aggro != nil {
@@ -420,7 +460,8 @@ func (u *UserRecord) ProcessPromptString(promptStr string) string {
 							if tankUser := GetByUserId(memberId); tankUser != nil {
 								promptOut.WriteString(renderVitalBar(
 									tankUser.Character.Health,
-									tankUser.Character.HealthMax.Value))
+									tankUser.Character.HealthMax.Value,
+									tankUser.Character.GetPoolReservation("health", tankUser.Character.HealthMax.Value)))
 							}
 							break
 						}

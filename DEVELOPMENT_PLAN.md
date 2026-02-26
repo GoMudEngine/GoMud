@@ -4656,7 +4656,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 28: LLM Tutorial Enhancement | 1 stage (28.1) | 8 hours | 28.1 Complete |
 | Phase 29: Regen & Cleanup | 6 stages (29.1–29.6) | 12 hours | **29.1–29.6 Complete** |
 | Phase 30: Combat Analytics | 3 stages (30.1–30.3) | 16 hours | **30.1–30.3 Complete** |
-| Phase 31: Crafting Expansion | 6 stages (31.1–31.6) | 30 hours | 31.1–31.5 Complete |
+| Phase 31: Crafting Expansion | 6 stages (31.1–31.6) | 30 hours | 31.1–31.6 Complete |
 | **Total** | **~92 stages** | **~591 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
@@ -5097,41 +5097,40 @@ the "artificer" profession.
 
 ---
 
-### Stage 31.6: New Crafting Skill — Enchanting
+### Stage 31.6: New Crafting Skill — Enchanting ✅ COMPLETED
 
-**Goal**: Add Enchanting for imbuing items with magical properties.
-Primary stat: Perception. Shares the "artificer" profession with
+**Goal**: Add Chrysalis Enchanting — living mutations bound to
+equipment that grow through use, feed on the wearer's life force
+(pool reservation), and visually mutate items over time. Capstone
+crafting skill tying the artificer profession together with
 Jewelcrafting.
 
 **Changes**:
-1. Register Enchanting as a new skill (`enchanting`, primary stat:
-   Perception, progression multiplier: 2.0)
-2. Add crafting station type: `enchanting_circle` or `arcane_table`
-3. Create 6–8 recipes spanning the skill range:
-   - Low: minor sharpening enchant (weapon damage +1), minor ward
-     (armor +1 damage reduction)
-   - Mid: flame touch (fire damage on weapon), resilience enchant
-     (HP regen buff on armor), glowing enchant (light source)
-   - High: lifesteal enchant (heal on hit), spell resistance enchant,
-     masterwork enhancement (boost existing item quality)
-4. Enchanting consumes the target item + reagents and produces an
-   enhanced version — recipes take an equipment piece as an
-   "ingredient" via a special `target_slot` field
-5. Create reagent items: arcane dust, elemental shards, binding
-   essence, runic ink (from spell component drops, alchemy byproducts,
-   mob drops)
-6. Place enchanting stations in magical areas (Arcane Academy,
-   Thornwall mage tower)
+1. New `internal/enchantments/` package — YAML-driven enchantment
+   definitions with tiered growth (tier 0–4, configurable max)
+2. Item struct extended with EnchantTier, EnchantUses, EnchantType,
+   ReservePool fields
+3. Pool reservation system — enchanted items claim a % of HP/SP/CP
+   max, shown as dark magenta blocks in vital bars
+4. Per-round enchantment ticking — uses accumulate, probabilistic
+   tier-up with sinister growth messages and item mutation
+5. Crafting target-type mechanic — enchanting recipes consume an
+   equipment piece + reagents, return enchanted version
+6. `disenchant` command with withdrawal condition (temporary pool
+   penalty after severing a Chrysalis bond)
+7. 9 enchantment definitions (3 HP-reserving, 3 SP-reserving,
+   3 CP-reserving) with biological horror themes
+8. 9 enchanting recipes (skill 0–35), chrysalis-setting bridge
+   recipe for jewelcrafting
+9. 4 new material items (chrysalis shard, binding paste, mutation
+   catalyst, chrysalis setting)
+10. Enchanter's Circle room (483) + Enchanter Vael NPC (mob 109)
+11. Comprehensive help file pass: 5 new templates (enchanting,
+    disenchant, jewelcrafting, tailoring, cooking), craft.template
+    rewrite, blacksmithing/alchemy/foraging updates
+12. 5 balance config knobs for enchantment tuning
 
-**Testing**:
-- Verify Enchanting skill appears and progresses
-- Craft each enchantment, verify output items gain correct properties
-- Verify enchanted items retain their base stats plus new bonuses
-- Verify station requirement is enforced
-- Test interaction with Jewelcrafting (enchantable settings from 31.5)
-
-**Estimated Changes**: ~400–600 lines, 15–25 files (mostly YAML + Go
-for target_slot mechanic)
+**Estimated Changes**: ~1600 lines, ~50 files
 
 ---
 
@@ -5390,4 +5389,4 @@ Last phase — tests cover the final state of all features.
 
 **Last Updated**: 2026-02-25
 **Status**: In Progress
-**Current Stage**: Stage 31.5 complete. Jewelcrafting skill added with 8 recipes and jeweler workshop. Next: Stage 31.6.
+**Current Stage**: Stage 31.6 complete. Chrysalis Enchanting added with living growth system, pool reservation, 9 enchantments, disenchant command, and comprehensive crafting help files. Phase 31 (Crafting Expansion) fully complete. Next: Phase 32.

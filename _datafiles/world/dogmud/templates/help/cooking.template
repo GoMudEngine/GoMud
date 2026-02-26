@@ -1,0 +1,46 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">cooking</ansi> (skill)
+
+Cooking is the art of preparing food and meals. A well-prepared meal can
+restore health, boost stamina, or steady the mind. Adventurers depend on good
+food to sustain them through hardship. The skill is governed by
+<ansi fg="yellow">Perception</ansi>, since proper taste and balance matter more than brute force.
+
+<ansi fg="yellow">━━━ Requirements ━━━</ansi>
+
+  Station:   A <ansi fg="yellow">hearth</ansi> must be in the room with you.
+             The Kitchen is located in Startland.
+  Materials: Fresh ingredients from foraging, hunting, and vendors.
+             Find them on the ground in the Kitchen or loot from mobs.
+
+<ansi fg="yellow">━━━ Known Recipes ━━━</ansi>
+
+The recipe list for cooking is being documented as new recipes are added.
+Check back soon for updates on available meals.
+
+<ansi fg="yellow">━━━ Using Meals ━━━</ansi>
+
+Crafted meals are used with the <ansi fg="command">eat</ansi> command:
+
+  <ansi fg="command">eat meal</ansi>
+
+They apply their effect immediately. Check <ansi fg="command">inventory</ansi> to see what you
+are carrying, and <ansi fg="command">conditions</ansi> to see active effects.
+
+<ansi fg="yellow">━━━ Skill Progression ━━━</ansi>
+
+Cooking improves through use. Each completed cook attempt (success or failure)
+has a chance to advance the skill. Cooking progresses faster per use than
+combat skills because crafting opportunities are less frequent.
+
+There is no trainer for cooking — practice is the only teacher.
+
+<ansi fg="yellow">━━━ Commands ━━━</ansi>
+
+  <ansi fg="command">craft list</ansi>          Show all recipes, including cooking ones, with status.
+  <ansi fg="command">craft <recipe></ansi>      Begin cooking a recipe.
+  <ansi fg="command">eat <item></ansi>         Consume a cooked meal.
+  <ansi fg="command">skills</ansi>              Check your current cooking skill level.
+
+<ansi fg="yellow">See Also:</ansi>
+
+  <ansi fg="command">help craft</ansi>, <ansi fg="command">help eat</ansi>, <ansi fg="command">help skills</ansi>

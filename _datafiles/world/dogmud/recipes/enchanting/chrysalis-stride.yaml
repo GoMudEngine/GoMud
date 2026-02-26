@@ -1,0 +1,20 @@
+id: chrysalis-stride
+name: "Chrysalis Stride"
+skill: enchanting
+skill_minimum: 15
+station: enchanting_circle
+time_rounds: 5
+target_type: legs
+enchant_type: chrysalis-stride
+ingredients:
+  - item_tag: chrysalis-setting
+    quantity: 1
+  - item_tag: mutation-catalyst
+    quantity: 1
+  - item_tag: binding-paste
+    quantity: 2
+output:
+  item_id: 0
+  quantity: 0
+success_message: "Metamorphic energy kindles in the leg coverings, granting them the swift grace of Chrysalis emergence. Your stride quickens with predatory intent."
+failure_message: "The catalyst rejects the binding. The materials crumble to dust, but the legs are unharmed."
