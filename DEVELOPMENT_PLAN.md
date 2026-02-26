@@ -5208,6 +5208,7 @@ matching the existing sunrise/sunset splash system.
 5. Replaced ASCII splash screen with DOGMud banner + starfield
 6. Updated CSS color palette from teal/green to dark blue/purple/silver
 7. Updated help page link colors from green to silver-lilac
+8. Fixed web help page to filter out topics without template files (matching in-game help)
 
 ---
 
