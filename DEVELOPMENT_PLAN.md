@@ -5212,25 +5212,18 @@ matching the existing sunrise/sunset splash system.
 
 ---
 
-### Stage 33.2: Web Portal Visual Overhaul
+### Stage 33.2: Web Portal Visual Overhaul ✅ COMPLETED (8811c1d)
 
 **Goal**: Restyle the portal to match DOGMud's identity.
 
-**Changes**:
-1. Design a dark fantasy color palette and CSS theme
-2. Restyle the public landing page — game description, how to connect,
-   logo, screenshots or ASCII art samples
-3. Restyle admin tool pages for consistency (item/mob/room browsers)
-4. Add responsive layout for mobile viewing
-5. Update HTML templates with new branding, navigation, footer
-
-**Testing**:
-- Manual test: browse all portal pages, verify styling is consistent
-- Test on mobile viewport sizes
-- Verify admin auth still works
-- Verify no broken links or missing assets
-
-**Estimated Changes**: ~400–600 lines, 10–15 files (HTML/CSS/assets)
+**Changes** (most completed in 33.1b; mobile responsiveness added here):
+1. Dark fantasy color palette and CSS theme — done in 33.1b
+2. Landing page restyled with new background, play button, favicon — done in 33.1b
+3. Admin tool pages — deferred (low priority)
+4. Mobile-responsive layout for public portal pages (768px and 480px breakpoints)
+5. HTML templates updated with branding — done in 33.1b
+6. Help page topic grid responsive (2-col → 1-col on small screens)
+7. Search inputs and terminal output scale for mobile
 
 ---
 
@@ -5417,4 +5410,4 @@ Last phase — tests cover the final state of all features.
 
 **Last Updated**: 2026-02-26
 **Status**: In Progress
-**Current Stage**: Stage 33.1b complete. DOGMud branding art assets: favicon, background, play button, splash screen, CSS palette, help page colors. Next: Stage 33.2 (Web Portal Visual Overhaul).
+**Current Stage**: Phase 33 complete. Web portal branded with DOGMud dark fantasy theme, mobile-responsive layout, consistent help pages. Next: Phase 34 (Codebase Quality Pass).
