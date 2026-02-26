@@ -5139,7 +5139,7 @@ Jewelcrafting.
 
 ### Stage 32.1: Moon Phase Transition Splash Art ✅ COMPLETED
 
-**Merge Commit**: (pending merge into development)
+**Merge Commit**: 37490d1
 
 **Goal**: Add ASCII art splash screens for major moon phase changes,
 matching the existing sunrise/sunset splash system.
