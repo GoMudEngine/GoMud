@@ -56,6 +56,13 @@ func CalculateProgressionChance(currentRank int, softCap int) float64 {
 func (c *Character) CheckSkillProgression(skillName string, userId int, bonusMultiplier float64) {
 	b := configs.GetBalanceConfig()
 	virtualRank := c.GetSkillUseCount(skillName) / int(b.UsesPerRank)
+	// If the actual skill level exceeds the soft cap, use it as a floor for the virtual rank.
+	// This prevents characters with artificially high skills (e.g. admin accounts) from
+	// exploiting the low use-count portion of the progression curve.
+	actualSkillName := resolveSkillName(skillName)
+	if skillLevel, ok := c.Skills[actualSkillName]; ok && skillLevel > int(b.SkillSoftCap) && skillLevel > virtualRank {
+		virtualRank = skillLevel
+	}
 	// Phase 24.2: Apply mutation skill progression multiplier
 	mutSkillMult := 1.0 + mutations.GetSkillProgressionMultiplier(c.Mutations)
 	// Phase 25.3: Skill Attunement buff doubles skill progression chance

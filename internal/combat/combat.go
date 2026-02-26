@@ -381,9 +381,10 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 		// No need to remove weapons - let skill determine effectiveness
 
 		attackMessagePrefix := ``
+		backstabCrit := false
 		// If they are backstabbing it's a free crit
 		if sourceChar.Aggro.Type == characters.BackStab {
-			attackResult.Crit = true
+			backstabCrit = true
 			attackMessagePrefix = `<ansi fg="magenta-bold">*[BACKSTAB]*</ansi> `
 			// Failover to the default attack
 			sourceChar.SetAggro(sourceChar.Aggro.UserId, sourceChar.Aggro.MobInstanceId, characters.DefaultAttack)
@@ -456,6 +457,11 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				attacks = 1
 			}
 
+			// Hard cap: max 4 swings per weapon per pass
+			if attacks > 4 {
+				attacks = 4
+			}
+
 			// Add damage bonus due to statmods
 			baseDmg += float64(statModDBonus)
 
@@ -492,6 +498,10 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 
 			// Individual weapons may get multiple attacks
 			for j := 0; j < attacks; j++ {
+
+				// Reset per-swing flags to prevent sticky crit/fumble across swings
+				attackResult.Crit = false
+				attackResult.Fumble = false
 
 				attackTargetDamage := 0
 				attackTargetReduction := 0
@@ -642,15 +652,15 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 					}
 
 					// Opposed roll: attack vs this defense
-					defenseSucceeded, _, hitRoll, defenseRoll := dice.OpposedRollStat(attackScore, defenseScore)
+					attackWon, _, hitRoll, defenseRoll := dice.OpposedRollStat(attackScore, defenseScore)
 					lastHitRoll = hitRoll
 
 					// Store z-scores for crit detection (Stage 8.4)
 					attackResult.AttackZScore = hitRoll.ZScore
 					attackResult.DefenseZScore = defenseRoll.ZScore
 
-					if !defenseSucceeded {
-						// Defense failed, continue to next defense
+					if attackWon {
+						// Attack beat this defense, try next defense layer
 						continue
 					}
 
@@ -762,8 +772,9 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 					damageResult := dice.Roll(dmgMean, dmgVariance)
 					attackTargetDamage = int(math.Round(math.Max(0, damageResult.Value)))
 
-					if lastHitRoll.ZScore >= critThreshold || attackResult.Crit {
+					if lastHitRoll.ZScore >= critThreshold || backstabCrit {
 						attackResult.Crit = true
+						backstabCrit = false // consume — only first hit gets free crit
 						attackResult.BuffTarget = critBuffs
 						attackTargetDamage += int(math.Round(dmgMean))
 						mudlog.Debug("CritDetected", "zScore", fmt.Sprintf("%.2f", lastHitRoll.ZScore), "threshold", fmt.Sprintf("%.2f", critThreshold), "source", sourceChar.Name, "target", targetChar.Name)
