@@ -1,0 +1,18 @@
+id: hearty-stew
+name: Hearty Stew
+skill: cooking
+skill_minimum: 5
+station: cooking_fire
+time_rounds: 3
+ingredients:
+  - item_tag: raw-meat
+    quantity: 1
+  - item_tag: wild-vegetables
+    quantity: 1
+  - item_tag: water-flask
+    quantity: 1
+output:
+  item_id: 30023
+  quantity: 1
+success_message: "You simmer meat and vegetables into a rich stew. Hearty stew!"
+failure_message: "The stew boils over and turns to mush. The materials are lost."

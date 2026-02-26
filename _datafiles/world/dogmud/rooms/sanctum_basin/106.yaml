@@ -13,6 +13,8 @@ exits:
     roomid: 107
   north:
     roomid: 111
+  south:
+    roomid: 123
 idlemessages:
 - A <ansi fg="mobname">lizard</ansi> basks on a sun-warmed rock, utterly untroubled.
 - The <ansi fg="itemname">sage</ansi> here is thick enough to harvest, if one knows how.

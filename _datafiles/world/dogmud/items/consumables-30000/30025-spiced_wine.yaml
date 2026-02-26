@@ -1,0 +1,15 @@
+itemid: 30025
+name: spiced wine
+namesimple: wine
+description: |
+  A small flask of dark wine mulled with wild herbs and a generous pinch
+  of salt. The flavor is warm and complex -- sharp at first, then smooth
+  and lingering. It loosens the tongue and puts color in the cheeks,
+  though too much would be unwise.
+type: food
+subtype: edible
+uses: 1
+buffids:
+  - 46
+value: 6
+weight: 0.3

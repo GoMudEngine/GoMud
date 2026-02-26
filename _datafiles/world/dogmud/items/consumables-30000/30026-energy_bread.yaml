@@ -1,0 +1,16 @@
+itemid: 30026
+name: energy bread
+namesimple: bread
+description: |
+  A dense loaf of flatbread baked from ground wild vegetables, water,
+  and salt. The crust is dark and crisp, the inside chewy and filling.
+  Travelers prize it for the steady energy it provides -- one loaf can
+  sustain a march for hours.
+type: food
+subtype: edible
+uses: 1
+buffids:
+  - 42
+  - 43
+value: 8
+weight: 0.6

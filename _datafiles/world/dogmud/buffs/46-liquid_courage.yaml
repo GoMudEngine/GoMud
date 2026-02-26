@@ -1,0 +1,7 @@
+buffid: 46
+name: Liquid Courage
+description: A stiff drink loosens your tongue and steadies your nerve.
+triggerrate: 1 round
+triggercount: 30
+statmods:
+  charisma: 10

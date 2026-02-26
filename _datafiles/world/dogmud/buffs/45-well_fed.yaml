@@ -1,0 +1,7 @@
+buffid: 45
+name: Well Fed
+description: A filling meal leaves you feeling hale and hearty.
+triggerrate: 1 round
+triggercount: 30
+statmods:
+  vitality: 10

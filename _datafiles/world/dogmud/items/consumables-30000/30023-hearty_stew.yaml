@@ -1,0 +1,15 @@
+itemid: 30023
+name: hearty stew
+namesimple: stew
+description: |
+  A clay bowl of thick stew, chunks of meat and wild vegetables swimming
+  in a rich brown broth. Steam rises from the surface, carrying the smell
+  of roasted root vegetables and herbs. It is the kind of meal that puts
+  warmth back into tired bones.
+type: food
+subtype: edible
+uses: 1
+buffids:
+  - 43
+value: 5
+weight: 0.8

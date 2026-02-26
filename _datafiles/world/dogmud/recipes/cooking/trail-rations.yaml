@@ -1,0 +1,16 @@
+id: trail-rations
+name: Trail Rations
+skill: cooking
+skill_minimum: 0
+station: cooking_fire
+time_rounds: 2
+ingredients:
+  - item_tag: raw-meat
+    quantity: 1
+  - item_tag: salt-pouch
+    quantity: 1
+output:
+  item_id: 30021
+  quantity: 1
+success_message: "You salt the meat and dry it over the fire. Trail rations!"
+failure_message: "The meat chars to a blackened lump. The materials are lost."
