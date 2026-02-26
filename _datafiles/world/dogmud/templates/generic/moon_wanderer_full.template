@@ -1,0 +1,14 @@
+<ansi fg="239">┌─────────────────────────────────────────────────────────────────────────┐</ansi>
+
+                   <ansi fg="18">      .    *      .       *    .     </ansi>
+                   <ansi fg="189">            <ansi bg="189">#############</ansi>            </ansi>
+                   <ansi fg="189">         <ansi bg="189">###################</ansi>         </ansi>
+                   <ansi fg="189">        <ansi bg="189">#####################</ansi>        </ansi>
+                   <ansi fg="189">        <ansi bg="189">#####################</ansi>        </ansi>
+                   <ansi fg="189">         <ansi bg="189">###################</ansi>         </ansi>
+                   <ansi fg="189">            <ansi bg="189">#############</ansi>            </ansi>
+                   <ansi fg="18">      *    .      *       .    *     </ansi>
+                   <ansi fg="230"> The Wanderer hangs full and pale, </ansi>
+                   <ansi fg="189">   slow and deliberate overhead.   </ansi>
+
+<ansi fg="239">└─────────────────────────────────────────────────────────────────────────┘</ansi>
