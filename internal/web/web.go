@@ -256,7 +256,7 @@ func Listen(wg *sync.WaitGroup, webSocketHandler func(*websocket.Conn)) {
 	// Basic homepage
 
 	http.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
-		r.URL.Path = `/static/images/favicon.ico`
+		r.URL.Path = `/static/images/favicon.png`
 		serveTemplate(w, r)
 	})
 
