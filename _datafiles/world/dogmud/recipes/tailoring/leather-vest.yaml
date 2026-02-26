@@ -1,0 +1,18 @@
+id: leather-vest
+name: Leather Vest
+skill: tailoring
+skill_minimum: 15
+station: loom
+time_rounds: 5
+ingredients:
+  - item_tag: leather-strip
+    quantity: 2
+  - item_tag: thread-spool
+    quantity: 1
+  - item_tag: bone-needle
+    quantity: 1
+output:
+  item_id: 20022
+  quantity: 1
+success_message: "You punch holes along the leather panels and stitch them into a fitted vest. A leather vest!"
+failure_message: "The needle snaps and the leather splits. The materials are wasted."

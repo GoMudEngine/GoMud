@@ -1,0 +1,10 @@
+itemid: 40013
+name: bone needle
+namesimple: needle
+description: A slender needle carved from animal bone, polished smooth by long use.
+  Sturdy enough to punch through leather.
+type: object
+subtype: mundane
+component_tag: bone-needle
+weight: 0.1
+value: 2
