@@ -1,0 +1,20 @@
+id: ironblood
+name: "Ironblood"
+skill: enchanting
+skill_minimum: 20
+station: enchanting_circle
+time_rounds: 5
+target_type: neck
+enchant_type: ironblood
+ingredients:
+  - item_tag: chrysalis-setting
+    quantity: 2
+  - item_tag: mutation-catalyst
+    quantity: 1
+  - item_tag: binding-paste
+    quantity: 1
+output:
+  item_id: 0
+  quantity: 0
+success_message: "Twin settings spiral with molten resolve, infusing your essence with Chrysalis fortitude. Your blood runs thick with mutation's promise."
+failure_message: "The catalyst rejects the binding. The materials crumble to dust, but the amulet is unharmed."

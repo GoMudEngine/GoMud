@@ -471,6 +471,13 @@ Balance:
   SpellAttackSkillFactor: 3            # Skill * this in spell attack mean
   SpellProficiencyCastsPerPoint: 50    # Casts needed per 1 proficiency point
 
+  # ── ENCHANTMENTS ────────────────────────────────────────────────────────────
+  EnchantTierUpBaseChance: 0.02     # Chance per use to advance tier once threshold met (2%)
+  EnchantTierUsesBase: 25           # Uses needed for tier 0→1
+  EnchantTierUsesScale: 2.5         # Multiplier per tier for uses threshold
+  EnchantRemovalPenaltyRounds: 50   # Rounds of withdrawal after disenchant
+  EnchantMaxTier: 4                 # Maximum tier enchantments can reach
+
   # ── MOON PHASES ─────────────────────────────────────────────────────────────
   MoonStatModMax: 0.05  # Max fractional stat modifier from moon phases (±5% at full/new moon)
 

@@ -37,6 +37,8 @@ type RecipeSpec struct {
 	TimeRounds     int                `yaml:"time_rounds"`
 	Ingredients    []RecipeIngredient `yaml:"ingredients"`
 	Output         RecipeOutput       `yaml:"output"`
+	TargetType     string             `yaml:"target_type,omitempty"`  // equipment type consumed as enchanting input
+	EnchantType    string             `yaml:"enchant_type,omitempty"` // enchantment ID to apply to target
 	SuccessMessage string             `yaml:"success_message"`
 	FailureMessage string             `yaml:"failure_message"`
 }
@@ -61,8 +63,9 @@ func (r *RecipeSpec) Validate() error {
 	if r.Skill == "" {
 		return fmt.Errorf("recipe %q: skill cannot be empty", r.RecipeId)
 	}
-	if r.Output.ItemId < 1 {
-		return fmt.Errorf("recipe %q: output.item_id must be > 0", r.RecipeId)
+	// Enchanting recipes use target_type instead of output
+	if r.Output.ItemId < 1 && r.EnchantType == "" {
+		return fmt.Errorf("recipe %q: output.item_id must be > 0 (or enchant_type must be set)", r.RecipeId)
 	}
 	return nil
 }
@@ -189,6 +192,27 @@ func GetEligibleRecipes(knownRecipes map[string]int, skillLevels map[string]int)
 		}
 	}
 	return eligible
+}
+
+// FindTargetItem searches the player's inventory for an item matching the recipe's
+// target_type (e.g. "weapon", "body", "head"). Returns the index and true if found.
+func FindTargetItem(inv []items.Item, targetType string) (int, bool) {
+	for i, item := range inv {
+		if item.ItemId < 1 {
+			continue
+		}
+		spec := item.GetSpec()
+		if string(spec.Type) == targetType {
+			return i, true
+		}
+	}
+	return -1, false
+}
+
+// IsEnchantingRecipe returns true if this recipe produces an enchanted item
+// rather than a normal crafted output.
+func IsEnchantingRecipe(recipe *RecipeSpec) bool {
+	return recipe.EnchantType != "" && recipe.TargetType != ""
 }
 
 // CalcSuccessChance returns the crafting success percentage clamped to

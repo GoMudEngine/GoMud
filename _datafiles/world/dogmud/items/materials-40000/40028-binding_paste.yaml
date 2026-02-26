@@ -1,0 +1,11 @@
+itemid: 40028
+name: binding paste
+namesimple: paste
+description: A thick, dark paste that smells of iron and damp earth. When
+  exposed to chrysalis energy it hardens into a living bond between matter and
+  mutation.
+type: object
+subtype: mundane
+component_tag: binding-paste
+weight: 0.1
+value: 3

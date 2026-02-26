@@ -1,0 +1,20 @@
+id: hungering-touch
+name: "Hungering Touch"
+skill: enchanting
+skill_minimum: 30
+station: enchanting_circle
+time_rounds: 6
+target_type: weapon
+enchant_type: hungering-touch
+ingredients:
+  - item_tag: chrysalis-setting
+    quantity: 2
+  - item_tag: mutation-catalyst
+    quantity: 2
+  - item_tag: binding-paste
+    quantity: 1
+output:
+  item_id: 0
+  quantity: 0
+success_message: "Twin catalysts writhe within the settings, fusing into the blade's edge. The weapon trembles with an insatiable hunger for battle."
+failure_message: "The catalyst rejects the binding. The materials crumble to dust, but the weapon is unharmed."

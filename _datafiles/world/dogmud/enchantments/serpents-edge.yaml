@@ -1,0 +1,40 @@
+enchantid: serpents-edge
+name: "Serpent's Edge"
+reserve_pool: health
+target_type: weapon
+tiers:
+  - tier: 0
+    reserve_pct: 0.02
+    effects:
+      damage_bonus: 1
+    adjective: shimmering
+    description_suffix: "A faint iridescent sheen plays across its surface."
+    tier_up_message: ""
+  - tier: 1
+    reserve_pct: 0.04
+    effects:
+      damage_bonus: 2
+    adjective: scaled
+    description_suffix: "Scales begin to form along the blade's edge."
+    tier_up_message: "The weapon writhes subtly, as if alive."
+  - tier: 2
+    reserve_pct: 0.06
+    effects:
+      damage_bonus: 3
+    adjective: writhing
+    description_suffix: "The weapon's surface undulates with serpent-like motion."
+    tier_up_message: "The blade throbs, and you feel it bonding with your flesh."
+  - tier: 3
+    reserve_pct: 0.08
+    effects:
+      damage_bonus: 4
+    adjective: serpent-fang
+    description_suffix: "Fanged protrusions grow from the blade, glistening with venom."
+    tier_up_message: "A hunger pulses through the weapon—it calls for blood."
+  - tier: 4
+    reserve_pct: 0.10
+    effects:
+      damage_bonus: 5
+    adjective: living-chitin
+    description_suffix: "The weapon's form hardens into living chitin, pulsing with malice."
+    tier_up_message: "The Chrysalis consumes you—you are one with the blade now."

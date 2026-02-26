@@ -16,6 +16,8 @@ station: jeweler_bench
 exits:
   west:
     roomid: 480
+  east:
+    roomid: 483
 items:
   - itemid: 40021
   - itemid: 40021

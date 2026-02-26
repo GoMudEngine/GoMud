@@ -11,6 +11,7 @@ const (
 	ConditionRegen                                 // Regenerates HP each AutoHeal tick (heal spell, Stage 11.5)
 	ConditionBlinded                               // Reduces perception/dodge/accuracy (Phase 24.5)
 	ConditionPoisoned                              // DoT damage over time (Phase 24.5)
+	ConditionEnchantWithdrawal                     // Pool max penalty after disenchanting (Stage 31.6)
 )
 
 // CombatCondition represents a single active combat state on a character.
@@ -38,6 +39,8 @@ func (c ConditionType) DisplayName() string {
 		return "Blinded"
 	case ConditionPoisoned:
 		return "Poisoned"
+	case ConditionEnchantWithdrawal:
+		return "Enchant Withdrawal"
 	default:
 		return "Unknown Condition"
 	}
@@ -60,6 +63,8 @@ func (c ConditionType) Description() string {
 		return "Vision impaired — dodge and accuracy reduced"
 	case ConditionPoisoned:
 		return "Toxins coursing through your body, dealing damage over time"
+	case ConditionEnchantWithdrawal:
+		return "Weakened from severing a Chrysalis bond"
 	default:
 		return ""
 	}

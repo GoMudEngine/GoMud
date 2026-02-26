@@ -1,0 +1,65 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">enchanting</ansi> (skill)
+
+Enchantments are not forged — they are grown. In Chrysalis, living mutations dwell
+within carefully crafted settings, binding themselves to your weapons and armor
+through long use and shared struggle. The skill is governed by <ansi fg="yellow">Perception</ansi>,
+since coaxing a mutation to bond with an item requires attunement and patience.
+
+<ansi fg="yellow">━━━ How Enchantments Work ━━━</ansi>
+
+An enchanted item claims a portion of your life force. You will see a dark section
+in your vital bars — that energy belongs to the enchantment now. As you adventure
+with the enchanted item, the bond deepens. You will know when it changes — the
+item itself will tell you.
+
+Removing an enchantment is possible at an enchanting circle, but the separation is
+not clean. Expect to feel weakened for a time.
+
+<ansi fg="yellow">━━━ Requirements ━━━</ansi>
+
+  Station:   An <ansi fg="yellow">enchanting_circle</ansi> must be in the room with you.
+  Materials: Chrysalis settings and the item you wish to enchant.
+             Chrysalis settings are created through jewelcrafting.
+
+<ansi fg="yellow">━━━ Known Recipes ━━━</ansi>
+
+  <ansi fg="yellow">Serpent's Edge</ansi>        Skill 0   1x chrysalis-setting, 1x weapon             4 rounds
+  <ansi fg="yellow">Stone Ward</ansi>            Skill 5   1x chrysalis-setting, 1x armor              4 rounds
+  <ansi fg="yellow">Hawk's Perception</ansi>     Skill 12  1x chrysalis-setting, 1x helmet              5 rounds
+  <ansi fg="yellow">Fortified Stance</ansi>      Skill 18  1x chrysalis-setting, 1x body-armor          5 rounds
+  <ansi fg="yellow">Quickened Reflexes</ansi>    Skill 25  1x chrysalis-setting, 1x light-armor         6 rounds
+  <ansi fg="yellow">Crystalline Form</ansi>      Skill 32  1x chrysalis-setting, 1x heavy-armor         6 rounds
+  <ansi fg="yellow">Apex Predator</ansi>        Skill 40  1x chrysalis-setting, 1x masterwork-weapon   8 rounds
+  <ansi fg="yellow">Unbreakable Bond</ansi>      Skill 48  2x chrysalis-setting, 1x legendary-item     10 rounds
+
+<ansi fg="yellow">━━━ Enchantment Types ━━━</ansi>
+
+Each enchantment brings a different mutation to bear:
+
+  <ansi fg="yellow">Serpent's Edge</ansi>        A reptilian hunger that sharpens your blade.
+  <ansi fg="yellow">Stone Ward</ansi>            The weight and resilience of stone in your defense.
+  <ansi fg="yellow">Hawk's Perception</ansi>     Predator's vision that sees through the veil.
+  <ansi fg="yellow">Fortified Stance</ansi>      Roots that ground you against all shaking.
+  <ansi fg="yellow">Quickened Reflexes</ansi>    Arachnid speed that makes the world slow.
+  <ansi fg="yellow">Crystalline Form</ansi>      Gemstone hardness woven into your being.
+  <ansi fg="yellow">Apex Predator</ansi>        Primal hunting instinct made manifest.
+  <ansi fg="yellow">Unbreakable Bond</ansi>      A fusion of wills — item and bearer as one.
+
+<ansi fg="yellow">━━━ Skill Progression ━━━</ansi>
+
+Enchanting improves through use. Each completed enchantment attempt (success or
+failure) has a chance to advance the skill. Enchanting progresses faster per use
+than combat skills because enchanting opportunities are less frequent.
+
+There is no trainer for enchanting — practice is the only teacher.
+
+<ansi fg="yellow">━━━ Commands ━━━</ansi>
+
+  <ansi fg="command">craft list</ansi>          Show all recipes, including enchanting ones, with status.
+  <ansi fg="command">craft <recipe></ansi>      Begin enchanting an item.
+  <ansi fg="command">disenchant <item></ansi>   Remove an enchantment from an equipped item.
+  <ansi fg="command">skills</ansi>              Check your current enchanting skill level.
+
+<ansi fg="yellow">See Also:</ansi>
+
+  <ansi fg="command">help craft</ansi>, <ansi fg="command">help jewelcrafting</ansi>, <ansi fg="command">help disenchant</ansi>, <ansi fg="command">help skills</ansi>

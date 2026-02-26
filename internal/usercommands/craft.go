@@ -67,6 +67,17 @@ func Craft(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return true, nil
 	}
 
+	// Enchanting: target item check
+	if crafting.IsEnchantingRecipe(recipe) {
+		_, found := crafting.FindTargetItem(user.Character.Items, recipe.TargetType)
+		if !found {
+			user.SendText(fmt.Sprintf(
+				`<ansi fg="red">You need a %s in your inventory to enchant.</ansi>`,
+				strings.ReplaceAll(recipe.TargetType, "_", " ")))
+			return true, nil
+		}
+	}
+
 	// Safety: complete immediately if time_rounds <= 0
 	if recipe.TimeRounds <= 0 {
 		completeCraft(user, recipe)

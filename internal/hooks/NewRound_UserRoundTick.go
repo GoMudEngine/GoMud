@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/crafting"
+	"github.com/GoMudEngine/GoMud/internal/enchantments"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
@@ -227,9 +228,27 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 								util.LogRoll("Craft", roll, chance)
 								if roll < chance {
 									user.Character.Items = crafting.ConsumeIngredients(user.Character.Items, recipe)
-									newItem := items.New(recipe.Output.ItemId)
-									user.Character.StoreItem(newItem)
-									events.AddToQueue(events.ItemOwnership{UserId: user.UserId, Item: newItem, Gained: true})
+
+									if crafting.IsEnchantingRecipe(recipe) {
+										// Enchanting: find target item, apply enchantment
+										targetIdx, found := crafting.FindTargetItem(user.Character.Items, recipe.TargetType)
+										if found {
+											targetItem := &user.Character.Items[targetIdx]
+											eDef := enchantments.GetEnchantment(recipe.EnchantType)
+											if eDef != nil {
+												targetItem.EnchantType = recipe.EnchantType
+												targetItem.EnchantTier = 0
+												targetItem.EnchantUses = 0
+												targetItem.ReservePool = eDef.ReservePool
+												enchantments.ApplyTier(targetItem, eDef, 0)
+											}
+										}
+									} else {
+										// Normal crafting: produce output item
+										newItem := items.New(recipe.Output.ItemId)
+										user.Character.StoreItem(newItem)
+										events.AddToQueue(events.ItemOwnership{UserId: user.UserId, Item: newItem, Gained: true})
+									}
 									user.Character.OnSkillUse(recipe.Skill, user.UserId)
 									user.SendText(fmt.Sprintf(`<ansi fg="green">%s</ansi>`, recipe.SuccessMessage))
 
@@ -256,6 +275,40 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 									user.Character.Items = crafting.ConsumeIngredients(user.Character.Items, recipe)
 									user.SendText(fmt.Sprintf(`<ansi fg="red">%s</ansi>`, recipe.FailureMessage))
 								}
+							}
+						}
+					}
+				}
+
+				// Stage 31.6: Chrysalis enchantment ticking
+				for _, itemPtr := range user.Character.Equipment.GetAllItemPtrs() {
+					if !itemPtr.HasChrysalisEnchantment() {
+						continue
+					}
+					itemPtr.EnchantUses++
+
+					eDef := enchantments.GetEnchantment(itemPtr.EnchantType)
+					if eDef == nil {
+						continue
+					}
+
+					currentTier := itemPtr.EnchantTier
+					maxTier := int(configs.GetBalanceConfig().EnchantMaxTier)
+					if currentTier >= maxTier || currentTier >= len(eDef.Tiers)-1 {
+						continue
+					}
+
+					bal := configs.GetBalanceConfig()
+					threshold := float64(bal.EnchantTierUsesBase) * math.Pow(float64(bal.EnchantTierUsesScale), float64(currentTier))
+					if float64(itemPtr.EnchantUses) >= threshold {
+						if util.Rand(100) < int(float64(bal.EnchantTierUpBaseChance)*100) {
+							itemPtr.EnchantTier++
+							itemPtr.EnchantUses = 0
+							enchantments.ApplyTier(itemPtr, eDef, itemPtr.EnchantTier)
+
+							newTier := itemPtr.EnchantTier
+							if newTier < len(eDef.Tiers) && eDef.Tiers[newTier].TierUpMessage != "" {
+								user.SendText(fmt.Sprintf(`<ansi fg="magenta">%s</ansi>`, eDef.Tiers[newTier].TierUpMessage))
 							}
 						}
 					}

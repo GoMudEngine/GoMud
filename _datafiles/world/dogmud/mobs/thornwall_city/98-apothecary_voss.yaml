@@ -35,3 +35,8 @@ character:
       training: 10
     charisma:
       training: -5
+  shop:
+    - itemid: 40028
+      quantity: 0
+      quantitymax: 0
+      price: 3

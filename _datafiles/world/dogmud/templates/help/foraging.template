@@ -38,8 +38,17 @@ The more you forage, the wider the range of materials you can find.
   <ansi fg="yellow">leather-strip</ansi>    Used in: Iron Dagger (blacksmithing)
   <ansi fg="yellow">wooden-plank</ansi>     Used in: Iron Buckler (blacksmithing)
   <ansi fg="yellow">small-vial</ansi>       Used in: Stamina Draught, Conviction Draught (alchemy)
+  <ansi fg="yellow">polished-stone</ansi>   Found in: mountains, cliffs (jewelcrafting)
+  <ansi fg="yellow">raw-gem</ansi>          Found in: caves (jewelcrafting)
+  <ansi fg="yellow">gem-dust</ansi>         Found in: caves (jewelcrafting)
+  <ansi fg="yellow">chrysalis-shard</ansi>  Found in: caves, rare (enchanting)
+  <ansi fg="yellow">mutation-catalyst</ansi> Found in: caves, very rare (enchanting)
+
+Some rare materials can only be found in dangerous places. The deeper
+you go, the stranger the things you find.
 
 <ansi fg="yellow">See Also:</ansi>
 
-  <ansi fg="command">help craft</ansi>, <ansi fg="command">help alchemy</ansi>, <ansi fg="command">help blacksmithing</ansi>, <ansi fg="command">help skills</ansi>
+  <ansi fg="command">help craft</ansi>, <ansi fg="command">help alchemy</ansi>, <ansi fg="command">help blacksmithing</ansi>,
+  <ansi fg="command">help jewelcrafting</ansi>, <ansi fg="command">help enchanting</ansi>, <ansi fg="command">help skills</ansi>
 

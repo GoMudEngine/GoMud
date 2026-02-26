@@ -111,6 +111,10 @@ help:
       - blacksmithing
       - alchemy
       - foraging
+      - tailoring
+      - cooking
+      - jewelcrafting
+      - enchanting
   admin:
     all:
       - badcommands
@@ -154,6 +158,11 @@ help-aliases:
   blacksmithing:    [blacksmith, smith, smithing, forge, metalwork]
   alchemy:          [alchemist, potion, potions, brewing, brew, herbalism]
   foraging:         [forage, gather, gathering, harvest, harvesting]
+  tailoring:        [tailor, sewing, weaving, clothwork]
+  cooking:          [cook, baking, food, meals]
+  jewelcrafting:    [jeweler, jewelry, gemwork, gemcutting, jewel]
+  enchanting:       [enchant, enchantment, enchantments, imbue]
+  disenchant:       [unenchant, remove-enchant, strip-enchant]
   storage:          [store, unstore]
   strength:         [str]
   vitality:         [vit]

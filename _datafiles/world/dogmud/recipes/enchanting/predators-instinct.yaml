@@ -1,0 +1,20 @@
+id: predators-instinct
+name: "Predator's Instinct"
+skill: enchanting
+skill_minimum: 25
+station: enchanting_circle
+time_rounds: 6
+target_type: ring
+enchant_type: predators-instinct
+ingredients:
+  - item_tag: chrysalis-setting
+    quantity: 1
+  - item_tag: mutation-catalyst
+    quantity: 2
+  - item_tag: binding-paste
+    quantity: 1
+output:
+  item_id: 0
+  quantity: 0
+success_message: "The catalysts merge within the setting, birthing a hunger that sings through your nerves. Your reflexes sharpen to predatory perfection."
+failure_message: "The catalyst rejects the binding. The materials crumble to dust, but the ring is unharmed."

@@ -1,0 +1,41 @@
+mobid: 109
+zone: Thornwall City
+statpool: 18
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - humanoid
+  - merchant
+idlecommands:
+  - 'emote traces a binding sigil in the air with one finger, muttering'
+  - 'emote peers at a chrysalis shard through a magnifying glass'
+  - ''
+  - 'emote makes a notation in a weathered journal, frowning'
+  - ''
+activitylevel: 10
+character:
+  name: enchanter Vael
+  description: |
+    A gaunt figure wrapped in a dark coat stained with luminescent
+    residue. Vael's hands are marked with faint, branching lines —
+    scars or veins, it is hard to tell — that glow faintly when
+    they handle chrysalis materials. The enchanter speaks in clipped,
+    precise sentences and regards visitors with the clinical interest
+    of someone who studies mutations for a living. There is nothing
+    warm about Vael, but the work is meticulous.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    perception:
+      training: 15
+    willpower:
+      training: 10
+    charisma:
+      training: -10
+  shop:
+    - itemid: 40028
+      quantity: 0
+      quantitymax: 0
+      price: 3
