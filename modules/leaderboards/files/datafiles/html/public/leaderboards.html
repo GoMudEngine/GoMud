@@ -1,10 +1,9 @@
 {{template "header" .}}
 
 <style>
-    table.leaderboard th:nth-child(1) { width:30%; }
-    table.leaderboard th:nth-child(2) { width:30%; }
-    table.leaderboard th:nth-child(3) { width:10%; }
-    table.leaderboard th:nth-child(4) { width:30%; }
+    table.leaderboard th:nth-child(1) { width:35%; }
+    table.leaderboard th:nth-child(2) { width:35%; }
+    table.leaderboard th:nth-child(3) { width:30%; }
 </style>
 
 <div class="overlay">
@@ -15,7 +14,6 @@
         <tr>
             <th>Name</th>
             <th>Class</th>
-            <th>Level</th>
             <th>{{ $lb.Name }}</th>
         </tr>
         {{ range $idx, $entry := $lb.Top }}
@@ -25,7 +23,6 @@
             <tr>
                 <td>{{ $entry.CharacterName }}</td>
                 <td>{{ $entry.CharacterClass }}</td>
-                <td>{{ $entry.Level }}</td>
                 <td>{{ $entry.ScoreValue }}</td>
             </tr>
         {{ end }}
