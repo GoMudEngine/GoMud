@@ -5196,6 +5196,21 @@ matching the existing sunrise/sunset splash system.
 
 ---
 
+### Stage 33.1b: Art Assets & Branding ✅ COMPLETED (9348cde)
+
+**Goal**: Replace GoMud default art with DOGMud-branded assets.
+
+**Changes**:
+1. Added `tools/generate_art.py` (Pillow) — generates favicon, background, play button
+2. New `favicon.png` (32x32 crescent moon pixel art), updated favicon route in `web.go`
+3. New `web_bg.png` (800x600 dark fantasy three-moons night sky)
+4. New `btn_play.png` (purple/blue play button matching palette)
+5. Replaced ASCII splash screen with DOGMud banner + starfield
+6. Updated CSS color palette from teal/green to dark blue/purple/silver
+7. Updated help page link colors from green to silver-lilac
+
+---
+
 ### Stage 33.2: Web Portal Visual Overhaul
 
 **Goal**: Restyle the portal to match DOGMud's identity.
@@ -5401,4 +5416,4 @@ Last phase — tests cover the final state of all features.
 
 **Last Updated**: 2026-02-26
 **Status**: In Progress
-**Current Stage**: Stage 33.1 complete. Fixed web portal 404s on Windows (embed.FS path separator mismatch), removed stale Level/XP template references, stabilized nav tab ordering. Branding assets deferred to 33.1b. Next: Stage 33.1b or 33.2.
+**Current Stage**: Stage 33.1b complete. DOGMud branding art assets: favicon, background, play button, splash screen, CSS palette, help page colors. Next: Stage 33.2 (Web Portal Visual Overhaul).
