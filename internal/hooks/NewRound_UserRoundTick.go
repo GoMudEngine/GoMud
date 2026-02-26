@@ -232,6 +232,26 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 									events.AddToQueue(events.ItemOwnership{UserId: user.UserId, Item: newItem, Gained: true})
 									user.Character.OnSkillUse(recipe.Skill, user.UserId)
 									user.SendText(fmt.Sprintf(`<ansi fg="green">%s</ansi>`, recipe.SuccessMessage))
+
+									// Stage 31.1: Recipe discovery roll
+									bal := configs.GetBalanceConfig()
+									knownCount := len(user.Character.KnownRecipes)
+									discChance := float64(bal.RecipeDiscoveryBaseChance) /
+										(1.0 + float64(knownCount)*float64(bal.RecipeDiscoveryDecayRate))
+									if util.Rand(100) < int(discChance) {
+										eligible := crafting.GetEligibleRecipes(
+											user.Character.KnownRecipes,
+											user.Character.Skills)
+										if len(eligible) > 0 {
+											pick := eligible[util.Rand(len(eligible))]
+											if user.Character.LearnRecipe(pick) {
+												if newRecipe := crafting.GetRecipe(pick); newRecipe != nil {
+													user.SendText(fmt.Sprintf(
+														`<ansi fg="yellow-bold">A new idea takes shape in your mind: %s!</ansi>`, newRecipe.Name))
+												}
+											}
+										}
+									}
 								} else {
 									user.Character.Items = crafting.ConsumeIngredients(user.Character.Items, recipe)
 									user.SendText(fmt.Sprintf(`<ansi fg="red">%s</ansi>`, recipe.FailureMessage))

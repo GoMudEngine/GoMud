@@ -203,3 +203,82 @@ func TestFindRecipeByName(t *testing.T) {
 		t.Error("no match: expected nil")
 	}
 }
+
+// ─── GetStarterRecipes ───────────────────────────────────────────────────────
+
+func TestGetStarterRecipes(t *testing.T) {
+	seedRegistry()
+
+	starters := GetStarterRecipes()
+
+	// iron-dagger (SkillMinimum=0) and healing-poultice (SkillMinimum=0) should be starters
+	if _, ok := starters["iron-dagger"]; !ok {
+		t.Error("expected iron-dagger in starter recipes")
+	}
+	if _, ok := starters["healing-poultice"]; !ok {
+		t.Error("expected healing-poultice in starter recipes")
+	}
+	// iron-buckler (SkillMinimum=5) should NOT be a starter
+	if _, ok := starters["iron-buckler"]; ok {
+		t.Error("iron-buckler should not be a starter recipe (SkillMinimum=5)")
+	}
+	// All values should be 1
+	for id, v := range starters {
+		if v != 1 {
+			t.Errorf("starter %q value = %d, want 1", id, v)
+		}
+	}
+}
+
+// ─── GetEligibleRecipes ──────────────────────────────────────────────────────
+
+func TestGetEligibleRecipes(t *testing.T) {
+	seedRegistry()
+
+	// Player knows iron-dagger and healing-poultice, has blacksmithing=5, alchemy=0
+	known := map[string]int{
+		"iron-dagger":      1,
+		"healing-poultice": 1,
+	}
+	skills := map[string]int{
+		"blacksmithing": 5,
+		"alchemy":       0,
+	}
+
+	eligible := GetEligibleRecipes(known, skills)
+
+	// iron-buckler (SkillMinimum=5, blacksmithing) should be eligible
+	found := false
+	for _, id := range eligible {
+		if id == "iron-buckler" {
+			found = true
+		}
+		// Known recipes should never appear
+		if id == "iron-dagger" || id == "healing-poultice" {
+			t.Errorf("known recipe %q should not be eligible", id)
+		}
+	}
+	if !found {
+		t.Error("expected iron-buckler to be eligible")
+	}
+
+	// If skill is too low, nothing should be eligible
+	skills["blacksmithing"] = 3
+	eligible = GetEligibleRecipes(known, skills)
+	for _, id := range eligible {
+		if id == "iron-buckler" {
+			t.Error("iron-buckler should not be eligible with blacksmithing=3")
+		}
+	}
+
+	// If everything is known, nothing eligible
+	allKnown := map[string]int{
+		"iron-dagger":      1,
+		"healing-poultice": 1,
+		"iron-buckler":     1,
+	}
+	eligible = GetEligibleRecipes(allKnown, map[string]int{"blacksmithing": 50, "alchemy": 50})
+	if len(eligible) != 0 {
+		t.Errorf("all known: expected 0 eligible, got %d", len(eligible))
+	}
+}

@@ -60,6 +60,10 @@ type Balance struct {
 	CraftingMinSuccessChance   ConfigInt `yaml:"CraftingMinSuccessChance"`   // Floor (default 5)
 	CraftingMaxSuccessChance   ConfigInt `yaml:"CraftingMaxSuccessChance"`   // Ceiling (default 95)
 
+	// ── RECIPE DISCOVERY ─────────────────────────────────────────────────────
+	RecipeDiscoveryBaseChance ConfigFloat `yaml:"RecipeDiscoveryBaseChance"` // Base % to discover a new recipe per successful craft (default 8.0)
+	RecipeDiscoveryDecayRate  ConfigFloat `yaml:"RecipeDiscoveryDecayRate"`  // Decay per known recipe: chance = base / (1 + known*this) (default 0.1)
+
 	// ── MUTATIONS ─────────────────────────────────────────────────────────────
 	MutationBaseProgress         ConfigFloat `yaml:"MutationBaseProgress"`         // Progress needed for first mutation (default 50.0)
 	MutationProgressScale        ConfigFloat `yaml:"MutationProgressScale"`        // Each additional mutation costs Scale^n more (default 1.5)
@@ -216,6 +220,14 @@ func (b *Balance) Validate() {
 	}
 	if b.CraftingMaxSuccessChance <= 0 || b.CraftingMaxSuccessChance > 100 {
 		b.CraftingMaxSuccessChance = 95
+	}
+
+	// ── RECIPE DISCOVERY ─────────────────────────────────────────────────────
+	if b.RecipeDiscoveryBaseChance <= 0 {
+		b.RecipeDiscoveryBaseChance = 8.0
+	}
+	if b.RecipeDiscoveryDecayRate <= 0 {
+		b.RecipeDiscoveryDecayRate = 0.1
 	}
 
 	// ── MUTATIONS ─────────────────────────────────────────────────────────────

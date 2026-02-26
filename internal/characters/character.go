@@ -9,6 +9,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/crafting"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
@@ -62,6 +63,7 @@ type Character struct {
 	Bank             int                            // The gold the character has in the bank
 	Shop             Shop                           `yaml:"shop,omitempty"`          // Definition of shop services/items this character stocks (or just has at the moment)
 	SpellBook        map[string]int                 `yaml:"spellbook,omitempty"`     // The spells the character has learned
+	KnownRecipes     map[string]int                 `yaml:"knownrecipes,omitempty"`  // The crafting recipes the character has discovered
 	Charmed          *CharmInfo                     `yaml:"-"`                       // If they are charmed, this is the info
 	CharmedMobs      []int                          `yaml:"-"`                       // If they have charmed anyone, this is the list of mob instance ids
 	Items            []items.Item                   `yaml:"items,omitempty"`         // The items the character is holding
@@ -121,6 +123,10 @@ func New() *Character {
 		// Phase 25.1: Starting spell reduced to 1 — everything else discovered through casting.
 		SpellBook: map[string]int{
 			"conviction-spike": 1, // Conviction Spike — the only starting spell
+		},
+		KnownRecipes: map[string]int{
+			"iron-dagger":      1,
+			"healing-poultice": 1,
 		},
 		CharmedMobs:    []int{},
 		Items:          []items.Item{},
@@ -777,6 +783,27 @@ func (c *Character) TrackSpellCast(spellName string) bool {
 func (c *Character) LearnSpell(spellName string) bool {
 	if _, ok := c.SpellBook[spellName]; !ok {
 		c.SpellBook[spellName] = 1
+		return true
+	}
+	return false
+}
+
+func (c *Character) HasRecipe(recipeId string) bool {
+	if c.KnownRecipes == nil {
+		return false
+	}
+	if intVal, ok := c.KnownRecipes[recipeId]; ok {
+		return intVal > 0
+	}
+	return false
+}
+
+func (c *Character) LearnRecipe(recipeId string) bool {
+	if c.KnownRecipes == nil {
+		c.KnownRecipes = crafting.GetStarterRecipes()
+	}
+	if _, ok := c.KnownRecipes[recipeId]; !ok {
+		c.KnownRecipes[recipeId] = 1
 		return true
 	}
 	return false
@@ -2185,6 +2212,10 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 
 	if c.SpellBook == nil {
 		c.SpellBook = make(map[string]int)
+	}
+
+	if c.KnownRecipes == nil {
+		c.KnownRecipes = crafting.GetStarterRecipes()
 	}
 
 	if c.Mutations == nil {

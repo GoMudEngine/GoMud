@@ -31,6 +31,12 @@ func Craft(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return true, nil
 	}
 
+	// Known-recipe gate (Stage 31.1)
+	if !user.Character.HasRecipe(recipe.RecipeId) {
+		user.SendText(`<ansi fg="red">You don't know that recipe yet. Keep crafting to discover new ones!</ansi>`)
+		return true, nil
+	}
+
 	// Already crafting?
 	if user.Character.IsCrafting() {
 		user.SendText(`<ansi fg="red">You are already working on something. Finish or be interrupted first.</ansi>`)
@@ -87,9 +93,22 @@ func craftList(user *users.UserRecord, room *rooms.Room) bool {
 		return true
 	}
 
+	// Filter to only known recipes
+	known := make(map[string]*crafting.RecipeSpec)
+	for id, r := range all {
+		if user.Character.HasRecipe(id) {
+			known[id] = r
+		}
+	}
+
+	if len(known) == 0 {
+		user.SendText(`<ansi fg="yellow">You haven't discovered any crafting recipes yet.</ansi>`)
+		return true
+	}
+
 	// Collect unique skill names sorted alphabetically
 	skillSet := make(map[string]struct{})
-	for _, r := range all {
+	for _, r := range known {
 		skillSet[r.Skill] = struct{}{}
 	}
 	skillNames := make([]string, 0, len(skillSet))
@@ -110,6 +129,9 @@ func craftList(user *users.UserRecord, room *rooms.Room) bool {
 
 		recipes := crafting.GetAllForSkill(skillName)
 		for _, r := range recipes {
+			if !user.Character.HasRecipe(r.RecipeId) {
+				continue
+			}
 			indicator, reason := recipeStatus(user, room, r, skillLevel)
 			ingredientList := ingredientSummary(r)
 			stationStr := ""
