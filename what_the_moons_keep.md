@@ -3077,3 +3077,340 @@ Pip took it and looked at it and looked at Davan and looked at it again. He didn
 He walked back toward the flophouse with his hands in his empty pockets, and the emptiness of the one pocket felt right — not a loss but a release, like a breath let out after holding it. He thought about the argument he'd sat through, the positions staked out over years, the number changing from four to three — and the one that fell, the one nobody in the room had said out loud but everyone had been thinking around — and the thing in Corvel's container reaching toward him when he held it, and the gap Renner had refused to fill and Asha had refused to leave alone.
 
 He didn't know yet. He was beginning to believe that not knowing yet was a condition, not a conclusion. You moved through it. The rest came.
+
+---
+
+## Chapter Sixteen — *[Maren]*
+### Thursday
+
+---
+
+The carving arrived in a cloth bag with no note.
+
+Pip's runner — a boy of perhaps twelve, quick-footed and professionally incurious — brought it to the alley entrance in the early afternoon and gave the signal Vane had established the week before: two knocks, pause, one knock. Maren came down. The boy handed her the bag and was gone before she'd untied the cord.
+
+She brought it upstairs and set it on the table and opened the cloth.
+
+Small. Pine. A figure — a person, not an animal, not a symbol. Head tilted slightly, as if listening to something just past the edge of hearing. The carving had the quality of something arrived at rather than imposed — the knife marks confident but not forced, following the wood's grain rather than fighting it. The kind of work her mother would have called *honest*, meaning it didn't pretend to be more than what it was.
+
+One arm hung naturally. The other was held close to the body. Tucked in, guarded, the elbow drawn toward the ribs in a posture so specific that Maren's hand went to her own arm before she understood why.
+
+She held the carving in both hands and did not say anything for a long time.
+
+She knew the posture. She'd been holding her arm like that for three years — the arm with no coal-dark palm, the arm she'd learned to keep close and angled away, the arm that could end her if a stranger saw the wrong thing at the wrong moment. She'd stopped thinking of it as a conscious choice somewhere in the second year. It had become architecture. The way she stood, the way she sat, the way she moved through rooms — all of it organized around that one arm's proximity to her body.
+
+Someone had carved it. Someone had carved it into pine before meeting her, because the wood had the faded amber of a piece worked weeks ago, not days, and the surface had been handled enough to develop the slight sheen that came from being carried in a pocket and turned over by restless fingers. He'd carved this on the road, before the dock, before the symbol in the driftwood, before any of it.
+
+His hands had known her posture before his eyes had seen it.
+
+She sat with this. She turned the figure slowly, feeling the grain under her thumbs, the slight roughness where the knife had hesitated at the junction of the tucked arm and the body — as if even the blade had paused at that particular gesture and considered what it meant.
+
+The disc pulsed once in her coat pocket. The low warm vibration she'd been feeling with increasing frequency, the metal doing something it had no business doing, responding to proximity or alignment or whatever physics governed ten-thousand-year-old mechanisms that were supposed to be inert. She pressed her hand against the pocket and the pulsing settled.
+
+She looked at the carving again.
+
+She thought: *he knows what I am.* Not the details — not the disc, not the hill, not the letter from a dead uncle about a father who'd walked east and hadn't come back. But the shape of it. The condition of being something you couldn't show. He'd found it in the wood before he'd found it in her, and he'd sent it to her without explanation because the carving was the explanation.
+
+She set it on the table next to the disc.
+
+Two objects. One she'd been given by a father who'd left. One she'd been given by a stranger who'd stayed in the same city. Both asked her to go somewhere.
+
+---
+
+Vane came back twenty minutes later. She read the room the way she read every room — entry, objects, exits, the specific arrangement of Maren's attention — and her eyes found the carving on the table and stayed there.
+
+"Who sent it?" she said.
+
+"The young man from the dock."
+
+Vane picked it up without asking. She held it the way she held everything — with assessment, both hands, testing the weight. She turned it once, twice, brought it close to her face. Smelling it, Maren realized. Reading the carving the way she read everything else: through chemistry.
+
+"Pine. Old cut — four weeks, maybe five. He's been handling it constantly." She turned it again. "The knife work is trained. Not professional, but someone taught him." She set it down. "He sent this as an introduction."
+
+"Yes."
+
+"Bold." Vane's eyes were on the carving but her attention was somewhere past it, in the place where she calculated risk. "He's telling you he's been thinking about you. That's either honest or it's a very good opening move."
+
+Maren looked at the carving on the table, the tucked arm, and said nothing. Vane hadn't mentioned the arm. She'd read the wood and the scent and the sender's intent, and she'd missed the thing that mattered most — or rather, she'd never had reason to notice it, because Vane had never watched Maren the way a carver watches a subject. She knew the smell of Maren's fear and the chemical signature of her alertness. She did not know the specific geometry of how Maren held her body when she was protecting the arm that could get her killed.
+
+This was not a thing Maren was going to explain. Not yet. The carving sat on the table between them and it contained a recognition that belonged to Maren and to the person who'd made it, and sharing it with Vane would turn it into information, and information was what Vane did with everything, and some things should be allowed to stay what they were for a while before they became useful.
+
+"There's a message in the bag," Vane said. She hadn't looked in the bag. She'd smelled it — a faint chemical trace, ink on cloth, the particular sharpness of dock-district lamp oil. "Inside the cord."
+
+Maren untwisted the cord. A strip of paper, folded once. Two words and a time: *Thursday. Afternoon.*
+
+"The cooperage," Maren said.
+
+"Probably." Vane sat down. "I'll walk the building tomorrow morning. The yard, the surrounding streets, whatever exits there are. I need to see it before you go in."
+
+"All right."
+
+"Not *all right* like you're humoring me. All right like you understand that I can't keep you safe in a place I haven't seen."
+
+Maren looked at her. "All right," she said again, differently.
+
+---
+
+Vane came back from the cooperage the next morning with dirt on her boots and the particular expression she wore when a location had met her standards, which was to say: no expression at all, but an absence of the tension that meant *bad.*
+
+"The yard is workable," she said. She sat down and drew on the back of the eastern road map with a stub of charcoal — quick lines, the spatial shorthand of someone who thought in exits and sight lines. "Bounded on three sides by the building and storage sheds. The fourth side is a wooden fence — slat construction, good visibility through. There's a gate on the far side. The gate opens onto a service alley running north to the river road. Three minutes at a walk, less if you run. Low wall at the midpoint, climbable."
+
+Maren looked at the sketch. "You want to be in the alley."
+
+"At the gate. I can see through the slats without being in the yard. If something goes wrong you come to me, not the other way around." She paused. "I want a signal. Something you can do without him noticing."
+
+"Such as."
+
+"You'll have the carving. Set it on the table at the start. If you pick it up and put it in your pocket, I come in."
+
+Maren nodded. The operational architecture of this was familiar now — familiar as the room's dimensions and the alley's geography and the specific cadence of Vane's morning rounds. She'd spent eight days inside the structure of Vane's caution and had learned to read it the way you read weather: not as obstruction but as information about the conditions you were operating in.
+
+"He's not dangerous," Vane said. "His smell is curiosity and something I can't place — a warmth that doesn't match anything in my reference set. Not threat. Not deception." She paused. "But I don't know him, and I don't know who knows him, and someone sending you a portrait of yourself made before you met is not a thing I can file and move on from."
+
+Maren's mouth moved, a brief compression at one corner that she let pass without committing to. "I'm going," she said.
+
+"I know you're going. I knew you were going before you opened the bag." Vane looked at the carving on the table. "That's not the question. The question is whether you go prepared."
+
+"I'm always prepared."
+
+"You carry a knife on your left hip and you've never once adjusted for a draw." Vane said it without emphasis. A fact, laid alongside the other facts, but this one landed differently. "You carry it the way someone carries a tool. Not the way someone carries something they might need in the next three seconds."
+
+Maren said nothing. The knife was her mother's — a good blade, well-balanced, the handle worn smooth by years of kitchen work before it became the thing Maren put on her belt when she left Ashwick. She'd thought of it as a knife. Not as a weapon. The distinction, apparently, was visible to someone who'd spent a decade making the distinction matter.
+
+Vane stood up. "Show me where it sits."
+
+Maren stood. She touched the knife at her hip — the familiar position, riding just behind the bone.
+
+"Too far back," Vane said. "You'd have to reach behind yourself. That's a half-second you don't have if someone's in front of you." She came around the table and stood beside Maren, not touching, and pointed to a spot two inches forward on the belt. "Here. Just ahead of the hip bone. Your hand falls to it without your elbow having to move."
+
+Maren shifted the knife. The new position felt wrong — too prominent, too accessible, too much like a statement about what she expected from the world.
+
+"It feels exposed," she said.
+
+"Good. That means you know it's there." Vane stepped back. "Draw it."
+
+Maren drew. She drew the way she'd always drawn — reaching, gripping, pulling — and by the time the blade cleared the sheath Vane was looking at her with the flat assessment of someone watching a thing done incorrectly.
+
+"Your thumb goes to the pommel first," Vane said. "Contact before you grip. You're finding it, then drawing it. Two motions instead of one." She took the knife from Maren's hand, replaced it in the sheath, and drew it in a single motion that was so fast Maren registered the blade's position before she registered the movement that put it there. "One motion. The hand knows where it is because you've already told it where it is. You set it in the right place on your belt so your hand doesn't have to search."
+
+She handed the knife back.
+
+"Again."
+
+Maren drew. Better — faster — but her wrist turned at the wrong angle and the blade came up pointing inward.
+
+"You're pulling it to yourself. Pull it away. The edge goes out. Your body is behind the blade, not in front of it."
+
+Again. And again. Ten minutes of the same motion, the same correction, Vane adjusting Maren's grip twice and her elbow once, each adjustment delivered with the economy of someone who had been taught this way and saw no reason to teach it differently. No warmth in the instruction, no encouragement. Just the information and the expectation that the information would be used.
+
+Maren's hand began to learn the new position. By the eighth draw, the motion was cleaner — not fast, not graceful, but correct, the blade arriving where it should in the orientation it should, her body behind it.
+
+"Better," Vane said. It was the first word of evaluation she'd offered, and it arrived without inflection, a measurement rather than a compliment.
+
+"I want you to practice that every morning," Vane said. She sat back down at the table and her hands went flat — the thinking-already-done gesture. "Twenty draws. When you can do it without looking at your hand, we'll work on the next thing."
+
+She did not say what the next thing was. Maren suspected this was deliberate.
+
+"Take the disc on Thursday," Vane said, returning to the cooperage as if the knife lesson had been a parenthetical. "If he knows the symbol, show him. If he doesn't, you've lost nothing. But don't show him the letter."
+
+"Why not the letter?"
+
+"Because the letter is the destination. The disc is the question. Give him the question first and see what he does with it." She tapped the charcoal sketch of the cooperage yard. "Anyone can follow a destination. You want to know if he's asking the same question."
+
+---
+
+The cooperage yard was smaller than Maren had expected — a working space, not a public one, bounded on three sides by the cooperage building and its storage sheds and on the fourth by the slatted fence Vane had drawn. Stacked barrel hoops leaned against the near wall. The ground was packed earth, darkened in patches where water had been used and dried unevenly. The smell was oak and vinegar and the faint sweetness of new wood soaking, and underneath it the river, two streets away, doing what rivers did.
+
+She'd come through the front with a purchased hoop-set she had no use for, and the apprentice had nodded her through to the yard with practiced non-attention. She thought about the infrastructure of discretion, the way the cooperage functioned as a kind of lock, the purchase as the key, the apprentice as the mechanism that turned without caring what it let through.
+
+The yard was empty. She was early.
+
+She sat on an upturned barrel near the center and set the hoop-set beside her and waited. The afternoon was cool, the light coming in at the low angle that meant the season was turning toward the shorter days. She could hear the cooperage workers inside — the rhythmic knock of mallets on hoops, the creak of staves being bent, the ordinary sounds of people making things. Above the roofline, the sky was the particular gray-blue of a city afternoon, the color of air that had been breathed by too many people and was making the best of it.
+
+She checked the gate. Closed but not latched. The service alley beyond it was visible through the slats — narrow, running north, the low wall at the midpoint exactly where Vane had sketched it.
+
+Vane was out there. Maren couldn't see her and didn't expect to. She'd watched Vane leave the room an hour before the meeting, and the tremor in her hands had been worse today, and neither of them had said anything about it.
+
+She waited. The knife sat two inches forward on her belt. She'd practiced the draw that morning, twenty times as instructed, and the new position was becoming less foreign — not natural yet, but no longer the wrong place, more like a place she hadn't known was right.
+
+The yard door opened.
+
+---
+
+He was taller than she remembered from the dock. Or she'd been sitting then and the angle had compressed him, or the fading light had done something to scale, or memory had simply stored him at a size that fit the moment rather than the fact. He came into the yard and stopped just past the threshold and looked at her, and then his eyes moved from her to the yard to the gate and back to her, gathering information the way she gathered it, cataloguing without rushing. He was carrying a satchel over one shoulder, and his hands, when he set the satchel down on a barrel, moved with the particular confidence of someone who worked with them for a living. There was a small knife-cut on his left thumb, the kind you got from carving and not minding where the blade went.
+
+He didn't speak immediately. He stood in the doorway and let the yard settle around him — the sound of it, the smell of it, her in it — and Maren recognized the quality because it was one she shared: the need to arrive in a place fully before you did anything in it.
+
+"Maren," he said.
+
+"Davan." She'd remembered his name the way she remembered the symbol on the disc's edge — completely, without effort, filed under *essential* before she'd had the chance to evaluate whether it was.
+
+He sat on the barrel across from her. The space between them was perhaps four feet — close enough for conversation, far enough for a decision. He didn't rush to fill it with words. She'd spent three years around people who talked to cover silence, and the ones who didn't were the ones she'd learned to pay attention to.
+
+"You got the carving," he said.
+
+"Yes." She took it from her pocket and set it on the barrel between them. The pine figure, head tilted, one arm close. "You carved this before we met."
+
+It wasn't a question. He looked at it and then at her and something worked through his expression — not embarrassment, not pride. He was reckoning with the fact that a thing he'd made had been understood, and the understanding was both welcome and slightly disorienting.
+
+"On the road north," he said. "Weeks before the dock. My hands kept making that shape." He paused. "I tried to fix the arm three times. It came back."
+
+Maren looked at the carving's tucked arm. She did not look at her own.
+
+"Why did it come back?" she said.
+
+"I don't know." He said it plainly, without the performance of mystery. "My hands find things before I do sometimes. They found you."
+
+She sat with this. It should have been unsettling — someone carving her gesture into wood before they'd met, the intimacy of being known by a stranger's hands. It wasn't unsettling. It was the same quality she'd felt at the dock when he'd shown her the symbol in the driftwood — a piece fitting against a piece, the satisfying rightness of a joint cut true.
+
+"You have the symbol," she said. "The inner orbit. You've been carving it."
+
+"For months. Before I knew what it was." He leaned forward slightly, his forearms on his knees. "I've been watching the moons. The geometry matches — the path they take, the relationship between them. The symbol is counting something in orbit."
+
+Maren took the disc from her coat. She held it in her palm for a moment — the weight of it, the warmth, the faint pulse she could feel through her skin like a second heartbeat running at a frequency slightly off from her own. Then she set it on the barrel next to the carving.
+
+Davan looked at it. His hands moved toward it and stopped — not hesitation exactly, more like the pause of someone approaching something they've been moving toward for a long time and wanting to be present for the moment of arrival rather than rushing through it.
+
+"May I?" he said.
+
+She nodded.
+
+He picked it up. He turned it slowly in his fingers, the way he'd turned the driftwood at the dock, with the attention of someone who read objects the way other people read faces. His thumb found the symbol on the edge and traced it, and he went still in the way of someone who has just heard something very clearly in a room they thought was silent.
+
+"It's warm," he said. "Not — not temperature. Something else."
+
+"I know."
+
+He looked up at her. "You feel it too?"
+
+"It pulses." She said it matter-of-factly, the way she said most things that mattered — without drama, without invitation to elaborate, just the fact laid down like a stone in a wall. "It's been doing it more since I got to the city. Stronger. More frequent."
+
+He held the disc for another moment, then set it back on the barrel between them with the care of someone returning something borrowed.
+
+"Tell me what you know," he said.
+
+---
+
+She told him.
+
+Not everything. She told him what Vane had coached her to offer: the disc, the symbol, the fact of being hollow, the fact of being hunted. She told him what the disc was — or what she thought it was, which was a key to something in the eastern hills, a thing her father had known about and gone looking for and not come back from. She told him about the hill. She did not tell him about the letter or her father's name or the specific geography of the route east. She gave him the question, as Vane had said. Not the destination.
+
+He listened completely, without interrupting, in the slow thorough way of someone who needed to walk all the way around a thing before he responded to it. When she mentioned being hollow his expression didn't change, but his hands went still on his knees — not pulling away, not reaching forward. Just still, in the way of someone absorbing something large.
+
+When she finished, he was quiet for a while.
+
+"Four," he said.
+
+She waited.
+
+"The maps in the cooperage — the old ones, with the margin notation. One has three beside the symbol. One has four. The one with four is older." He looked at the disc on the barrel. "Something changed from four to three. The symbol is the same geometry as the moons' orbit. Three moons."
+
+"And four is what it was before," Maren said.
+
+"Yes." He met her eyes. "Something fell. Something that was in orbit came down, and after that the count was three."
+
+The disc pulsed once between them on the barrel. A low warm throb she felt through the wood, and from the way Davan's eyes moved to it she knew he'd felt it too.
+
+"There's more," he said. "There's a group. People who've been working on this — the symbol, the margin notation, the question of what changed. A former archivist, a cartographer, a glassblower, a tanner who has a sealed container made of the same kind of material as —" He stopped. He looked at the disc again. "As that. Or close to it. The same refusal to behave like anything anyone's handled before."
+
+"How long has the group been meeting?"
+
+"Years. Before I arrived." He paused on this — a weight in the pause that she read correctly, the weight of someone acknowledging that he was new to a thing he was describing. "They've been circling the same question from different angles. Whether the symbol is astronomical. Whether the number counts something in the sky. Whether the bloodline's account of what they can and can't do is actually what it claims to be." He turned the carving on the barrel, a half-rotation, a habitual gesture — something his hands did while his mind worked. "There's an argument that keeps coming up. The bloodline says only they can interact with Founding-era objects. Only unchanged hands. They've held that position for as long as anyone can remember, and no one's challenged it."
+
+"Because no one would," Maren said. "Who's going to walk up to the bloodline and say *let me try?*"
+
+"That's exactly the argument. Whether no one's challenged it because it's true, or because the conditions for testing it have never existed." He was quiet for a moment. "I sat in the meeting and listened to them go back and forth about it, and the thing that stayed with me afterward wasn't the argument. It was the gap underneath it. This question that nobody can answer because nobody has ever been in a position to try."
+
+He didn't say the rest. He didn't look at her hands. He didn't connect the gap to the girl sitting across from him who had no Chrysalis and a disc that pulsed when she held it. He let the shape of it sit in the yard between them, and Maren felt its weight — the specific gravity of an implication that both of them could see and neither of them was going to push into a conclusion, because conclusions were where things became irrevocable, and they were still sitting on barrels in a cooperage yard getting to know the shape of what they'd found.
+
+The afternoon was turning. The light in the yard had shifted, the cooperage's shadow lengthening across the packed earth, the barrel hoops on the far wall catching the last direct sun and throwing thin curved shadows like the ribs of something opened up. Inside the cooperage, the mallet-sounds had slowed — the workers finishing for the day, the rhythm of making things winding down into the rhythm of putting things away.
+
+"The hill," she said. "My father went east to find it. The disc opens something there. I don't know what."
+
+"There's a mapmaker — Edvar — who's been working the eastern highlands question for twenty years. He has things I haven't been shown yet. I think there's more he's waiting to share." Davan turned the carving again. "The group meets on Thursdays. I could talk to Edvar. Or Pip — he's the one who arranged this. See if they'd be willing to hear what you have."
+
+"You can't promise that."
+
+"No." He said it without defensiveness. "I've been to one meeting. I'm not in a position to bring anyone in. But what you're carrying —" He looked at the disc. "They've been working around the edges of this for years. You have a piece they don't have. That counts for something, with the right people."
+
+Maren thought about this. The honesty of it — the admission that he couldn't deliver what he hadn't earned, that his position in the group was provisional and new — told her more about him than the carving had. Anyone could make a promise. Fewer people could accurately describe the limits of what they could offer.
+
+"Talk to them," she said. "If they're willing, I'll come."
+
+---
+
+The yard was in shadow by the time they finished. They had talked for the better part of two hours — not all of it the question, not all of it the hill. Some of it was simpler. Where he'd come from, where she'd come from. The road north and what it had cost them both. He told her about Amber Valley, and the Chrysalis Rite, and the light that lived under his skin — he said it plainly, the way you'd describe a weather pattern, something that happened to you that you were still learning to read. She told him about Ashwick, and the coal pouch, and the three years of performing a version of herself that had nearly become the only version. They traded these things the way you traded provisions on the road — not generously, not grudgingly, but with the practicality of two people who understood that shared information was shared weight.
+
+He didn't ask about Vane. She appreciated this. It meant he either knew Vane was there and had decided not to make it a thing, or he didn't know and the not-knowing was beside the point.
+
+She stood. He stood.
+
+"The carving," he said.
+
+She took it from her pocket and held it up. The pine figure, head tilted, one arm close. Her arm.
+
+"I'm keeping it," she said.
+
+Something eased in his face — a tension she hadn't known was there releasing, the way a held breath changes a face and only becomes visible in the letting go. "Good," he said.
+
+He picked up his satchel and slung it over his shoulder, and the movement was easy and unhurried, the way everything about him was unhurried — not slow, not passive, but paced, the rhythm of someone who had learned that the things that mattered arrived in their own time and hurrying them only made them smaller.
+
+He went to the yard door and opened it, and the cooperage's interior was dim behind him, the workers gone, the mallets silent. He turned back once, not to say anything, just to look — the yard and the barrels and the woman with the disc and the late afternoon light.
+
+Then he looked past her. Toward the gate.
+
+Maren turned.
+
+Vane was there. Not through the gate — at it, visible through the slats, her shoulder against the fence post in the posture of someone who had been standing still for a long time and was very good at it. She wasn't looking at Maren. She was looking at Davan.
+
+It was not a threat assessment — Maren knew what those looked like from Vane, the compound nose-and-eyes sweep that filed a person under *categories* in the first three seconds. This was something else. Vane looking at someone and taking the time to look, which was a thing she almost never did, because time spent looking was time not spent calculating, and Vane had built her life on the calculation. But she was looking. At the way he stood in the doorway. At his hands, which were still.
+
+Davan looked back. He held the look the way he held everything — steadily, without force, letting it be what it was. Then the faintest warmth moved under the skin of his wrists, visible in the late light, and he didn't hide it. He let it be visible the way he'd let the carving be visible — here is what I am, do with it what you will.
+
+Vane nodded. Once. The smallest possible movement, an acknowledgment that Maren couldn't fully read — not approval, not dismissal, something more private than either, something that belonged to whatever Vane's nose was telling her about the person standing in the doorway.
+
+Davan returned the nod. Then he turned and went through the cooperage door and was gone.
+
+---
+
+Maren stood in the yard for a moment after he left. The disc was warm in her pocket. The carving was warm in her other pocket. She felt, for the first time since leaving Ashwick, like something had been added rather than subtracted — not safety, not certainty, but *company,* the specific weight of someone else carrying a piece of the same question.
+
+She went to the gate. Vane had already started walking, moving north along the service alley with the unhurried gait of someone who had clocked every exit between here and the room and found them acceptable. Maren fell into step beside her.
+
+They walked half a block in silence.
+
+"Well?" Vane said.
+
+"He's going to talk to his people. See if they'll hear me."
+
+"Not certain, then."
+
+"No. He's new to them. He said so."
+
+Vane was quiet for a few strides. Her hands were in her coat pockets — hiding the tremor, or warming them, or both. The bark on her right arm was visible where her sleeve had ridden up, the dark wood-grain texture climbing past the elbow, the edges angrier than yesterday. She'd stood at that fence for two hours without moving, and the cost of that was probably something Maren would not be told about and would notice anyway.
+
+"That's honest," Vane said. It was not a compliment. It was a filed observation — *he described his position accurately rather than inflating it* — entered into whatever ledger she maintained for people whose behavior she was tracking.
+
+"He has pieces I don't have," Maren said. "A mapmaker with something he calls a face — a flat surface that responds to touch, shows an orbital display. Four shapes around a world. One damaged."
+
+Vane's stride didn't change, but she turned her head slightly — the fraction of movement that meant her nose was working, pulling at the air as if the information itself had a scent.
+
+"Four shapes," she said.
+
+"And the old maps count four. And now there are three."
+
+They walked in silence for a while. The evening was turning cool and the city was settling into its nighttime rhythms and the moons were rising over the eastern roofline, one by one, in their slow patient arcs. Three of them. Maren counted, as she'd been counting since the dock, since the road, since the first night she'd left Ashwick and looked up and seen three lights in the sky and felt something she couldn't name pulling at the center of her chest.
+
+Three moons. And the number used to be four.
+
+"The group argues about whether the bloodline's claim to the old objects is real," Maren said. "Whether only unchanged hands can work them, or whether that's just never been tested."
+
+Vane said nothing for several steps. When she spoke, her voice was level and careful in the way it got when she was managing something that had gotten past the professional register and into the personal one. "That's not an academic question for you."
+
+"No."
+
+"No," Vane agreed. She didn't say anything else about it. They turned the corner onto the river road and the smell of the water came up to meet them, and Maren put her hand in her pocket and felt the carving and the disc side by side, pine and metal, and the disc pulsed once — warm, certain, reaching — and the carving sat beside it, wooden and still and carved in the shape of her own guarded arm by hands that had known her before she'd known them.
+
+She did not look up at the moons.
+
+Not yet.
