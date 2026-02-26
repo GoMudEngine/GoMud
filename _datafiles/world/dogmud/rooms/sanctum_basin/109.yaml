@@ -23,5 +23,5 @@ idlemessages:
 - The heat from the forge makes the air shimmer slightly.
 spawninfo:
 - mobid: 52
-  message: Blacksmith Korvath looks up from the anvil, hammer in hand.
+  message: Korvath looks up from the anvil, hammer in hand.
   respawnrate: 2 real minutes
