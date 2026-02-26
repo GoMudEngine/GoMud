@@ -41,6 +41,28 @@
         padding: 0px;
         margin: 0px 0px 0px 3px;
     }
+    @media (max-width: 768px) {
+        div.webhelp-content a.topic {
+            width: 45%;
+            margin-left: 2%;
+        }
+        form.search input[type="text"] {
+            width: 100%;
+            max-width: 300px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        form.search input[type="submit"] {
+            font-size: 16px;
+            margin-top: 5px;
+        }
+    }
+    @media (max-width: 480px) {
+        div.webhelp-content a.topic {
+            width: 100%;
+            margin-left: 0;
+        }
+    }
 </style>
 
 <div class="overlay">
