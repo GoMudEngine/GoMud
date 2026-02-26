@@ -1,0 +1,10 @@
+itemid: 40023
+name: gold wire
+namesimple: wire
+description: A short length of soft gold wire, warm-hued and heavy for its size.
+  It is prized for fine jewelry and decorative inlay.
+type: object
+subtype: mundane
+component_tag: gold-wire
+weight: 0.1
+value: 8

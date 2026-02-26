@@ -1,0 +1,10 @@
+itemid: 40022
+name: silver wire
+namesimple: wire
+description: A fine strand of polished silver wire, bright and supple. It holds
+  shape well and takes a high shine when worked.
+type: object
+subtype: mundane
+component_tag: silver-wire
+weight: 0.1
+value: 3

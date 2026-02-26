@@ -1,0 +1,12 @@
+itemid: 20032
+name: polished stone amulet
+namesimple: amulet
+description: Two polished stones are set in a copper frame, bound together with
+  fine wire into a heavy amulet. The stones pulse with a faint warmth
+  against the skin, lending the wearer a quiet sense of resolve.
+type: neck
+subtype: wearable
+damagereduction: 1
+statmods:
+  willpower: 2
+value: 8

@@ -14,6 +14,8 @@ station: loom
 exits:
   south:
     roomid: 466
+  east:
+    roomid: 482
 items:
   - itemid: 40012
   - itemid: 40012

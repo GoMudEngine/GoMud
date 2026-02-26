@@ -1,0 +1,12 @@
+itemid: 20035
+name: engraved bracelet
+namesimple: bracelet
+description: A wide silver band engraved with flowing geometric patterns and
+  dusted with crushed gemstone. It sits snug against the wrist, and the
+  wearer's hands seem steadier and quicker for wearing it.
+type: ring
+subtype: wearable
+damagereduction: 0
+statmods:
+  dexterity: 3
+value: 15

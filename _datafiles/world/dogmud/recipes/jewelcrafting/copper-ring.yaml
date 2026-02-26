@@ -1,0 +1,16 @@
+id: copper-ring
+name: Copper Ring
+skill: jewelcrafting
+skill_minimum: 0
+station: jeweler_bench
+time_rounds: 2
+ingredients:
+  - item_tag: copper-wire
+    quantity: 1
+  - item_tag: gem-dust
+    quantity: 1
+output:
+  item_id: 20030
+  quantity: 1
+success_message: "You twist the copper wire into a neat band and press gem dust into the setting. A copper band!"
+failure_message: "The wire snaps as you try to close the loop. The materials are ruined."

@@ -1,0 +1,16 @@
+id: simple-pendant
+name: Simple Pendant
+skill: jewelcrafting
+skill_minimum: 3
+station: jeweler_bench
+time_rounds: 3
+ingredients:
+  - item_tag: copper-wire
+    quantity: 1
+  - item_tag: polished-stone
+    quantity: 1
+output:
+  item_id: 20031
+  quantity: 1
+success_message: "You wrap the polished stone in a cradle of copper wire and shape a hanging loop. A simple pendant!"
+failure_message: "The stone slips free of the wire cage and cracks on the bench. The materials are ruined."

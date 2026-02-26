@@ -1,0 +1,11 @@
+itemid: 40026
+name: gem dust
+namesimple: dust
+description: A tiny pouch of sparkling mineral powder, ground from low-grade
+  gemstone fragments. Jewelers mix it with setting paste to add shimmer
+  and strengthen bonds.
+type: object
+subtype: mundane
+component_tag: gem-dust
+weight: 0.1
+value: 1

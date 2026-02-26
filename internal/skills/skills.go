@@ -38,6 +38,8 @@ const (
 	Alchemy       SkillTag = `alchemy`       // Potions, salves, medicines
 	Tailoring     SkillTag = `tailoring`     // Cloth and leather goods
 	Cooking       SkillTag = `cooking`       // Food preparation, buffs from meals
+	Jewelcrafting SkillTag = `jewelcrafting` // Rings, pendants, gemwork
+	Enchanting    SkillTag = `enchanting`   // Imbuing items with magic (31.6)
 )
 
 var (
@@ -81,6 +83,10 @@ var (
 		},
 		"cook": {
 			Cooking,
+		},
+		"artificer": {
+			Jewelcrafting,
+			Enchanting,
 		},
 	}
 )
@@ -224,6 +230,8 @@ var SkillPrimaryStats = map[string]string{
 	"alchemy":        "perception",
 	"tailoring":      "dexterity",
 	"cooking":        "perception",
+	"jewelcrafting":  "dexterity",
+	"enchanting":     "perception",
 }
 
 // GetSkillPrimaryStat returns the primary governing stat for a skill,
@@ -253,6 +261,8 @@ var SkillProgressionMultipliers = map[SkillTag]float64{
 	Alchemy:       2.0,
 	Tailoring:     2.0,
 	Cooking:       2.0,
+	Jewelcrafting: 2.0,
+	Enchanting:    2.0,
 }
 
 // GetSkillRankDescription converts a numeric skill level (1–50) to a qualitative tier name.
@@ -305,7 +315,7 @@ func init() {
 		Cast,
 		WeaponCombat, UnarmedCombat, RangedCombat, Spellcasting,
 		FirstAid, Stealth, Tracking, Bartering, Foraging,
-		Blacksmithing, Alchemy, Tailoring, Cooking,
+		Blacksmithing, Alchemy, Tailoring, Cooking, Jewelcrafting, Enchanting,
 	} {
 		if _, ok := skillNameSet[sk]; !ok {
 			skillNameSet[sk] = struct{}{}
