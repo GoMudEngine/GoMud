@@ -1,0 +1,10 @@
+itemid: 20026
+name: reinforced wooden shield
+namesimple: shield
+description: A sturdy wooden shield banded with iron strips. The reinforcement
+  adds weight but makes it far more durable than bare wood.
+type: offhand
+subtype: wearable
+damagereduction: 6
+blockrating: 12
+value: 12

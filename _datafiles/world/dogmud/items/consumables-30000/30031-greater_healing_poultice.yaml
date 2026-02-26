@@ -1,0 +1,11 @@
+itemid: 30031
+name: greater healing poultice
+namesimple: poultice
+description: A thick compress packed with rare herbs and bound in clean linen.
+  Its potent aroma fills the air with a warm, earthy scent.
+type: potion
+subtype: drinkable
+uses: 1
+buffids:
+  - 50
+value: 15

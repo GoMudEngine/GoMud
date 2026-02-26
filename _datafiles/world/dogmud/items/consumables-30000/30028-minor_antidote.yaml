@@ -1,0 +1,11 @@
+itemid: 30028
+name: minor antidote
+namesimple: antidote
+description: A murky draught that smells of bitter herbs and earth. It purges
+  mild toxins from the body.
+type: potion
+subtype: drinkable
+uses: 1
+buffids:
+  - 47
+value: 6

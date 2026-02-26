@@ -1,0 +1,16 @@
+id: steel-buckler
+name: Steel Buckler
+skill: blacksmithing
+skill_minimum: 30
+station: forge
+time_rounds: 5
+ingredients:
+  - item_tag: steel-ingot
+    quantity: 2
+  - item_tag: wooden-plank
+    quantity: 1
+output:
+  item_id: 20028
+  quantity: 1
+success_message: "You shape the steel into a gleaming buckler and set it on a wooden grip. A steel buckler!"
+failure_message: "The steel dishing is uneven and the buckler warps. The materials are ruined."

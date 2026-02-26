@@ -1,0 +1,10 @@
+itemid: 40018
+name: steel ingot
+namesimple: ingot
+description: A bar of refined steel, harder and lighter than iron. Its surface
+  gleams with a bluish sheen.
+type: object
+subtype: mundane
+component_tag: steel-ingot
+weight: 0.1
+value: 3

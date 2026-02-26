@@ -34,3 +34,20 @@ character:
       training: 10
     perception:
       training: 5
+  shop:
+    - itemid: 40001
+      quantity: 0
+      quantitymax: 0
+      price: 2
+    - itemid: 40020
+      quantity: 0
+      quantitymax: 0
+      price: 2
+    - itemid: 40002
+      quantity: 0
+      quantitymax: 0
+      price: 2
+    - itemid: 40003
+      quantity: 0
+      quantitymax: 0
+      price: 2

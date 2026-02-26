@@ -1,0 +1,10 @@
+itemid: 40020
+name: coal dust
+namesimple: dust
+description: Fine powdered coal used as a smithing flux. It darkens everything
+  it touches.
+type: object
+subtype: mundane
+component_tag: coal-dust
+weight: 0.1
+value: 1

@@ -1,0 +1,16 @@
+id: reinforced-wooden-shield
+name: Reinforced Wooden Shield
+skill: blacksmithing
+skill_minimum: 12
+station: forge
+time_rounds: 4
+ingredients:
+  - item_tag: iron-ingot
+    quantity: 1
+  - item_tag: wooden-plank
+    quantity: 2
+output:
+  item_id: 20026
+  quantity: 1
+success_message: "You hammer iron bands around the planks and rivet them tight. A reinforced wooden shield!"
+failure_message: "The planks split under the rivets. The materials are wasted."

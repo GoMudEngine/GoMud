@@ -85,3 +85,12 @@ character:
   speciesid: 1
   level: 3
   gold: 0
+  shop:
+    - itemid: 40001
+      quantity: 0
+      quantitymax: 0
+      price: 2
+    - itemid: 40020
+      quantity: 0
+      quantitymax: 0
+      price: 2

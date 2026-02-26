@@ -1,0 +1,7 @@
+buffid: 49
+name: Fire Resistance
+description: A protective warmth suffuses your body, warding against flames.
+triggerrate: 1 round
+triggercount: 20
+statmods:
+  vitality: 6
