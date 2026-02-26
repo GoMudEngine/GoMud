@@ -4656,7 +4656,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 28: LLM Tutorial Enhancement | 1 stage (28.1) | 8 hours | 28.1 Complete |
 | Phase 29: Regen & Cleanup | 6 stages (29.1–29.6) | 12 hours | **29.1–29.6 Complete** |
 | Phase 30: Combat Analytics | 3 stages (30.1–30.3) | 16 hours | **30.1–30.3 Complete** |
-| Phase 31: Crafting Expansion | 6 stages (31.1–31.6) | 30 hours | 31.1–31.4 Complete |
+| Phase 31: Crafting Expansion | 6 stages (31.1–31.6) | 30 hours | 31.1–31.5 Complete |
 | **Total** | **~92 stages** | **~591 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
@@ -5064,7 +5064,7 @@ curve from beginner to expert.
 
 ---
 
-### Stage 31.5: New Crafting Skill — Jewelcrafting
+### Stage 31.5: New Crafting Skill — Jewelcrafting ✅ COMPLETED
 
 **Goal**: Add Jewelcrafting for rings, necklaces, and gem-set
 accessories. Primary stat: Dexterity. Combined with Enchanting under
@@ -5388,4 +5388,4 @@ Last phase — tests cover the final state of all features.
 
 **Last Updated**: 2026-02-25
 **Status**: In Progress
-**Current Stage**: Stage 31.4 complete. Blacksmithing & Alchemy expanded. Next: Stage 31.5.
+**Current Stage**: Stage 31.5 complete. Jewelcrafting skill added with 8 recipes and jeweler workshop. Next: Stage 31.6.

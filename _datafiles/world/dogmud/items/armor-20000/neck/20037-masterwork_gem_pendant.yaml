@@ -1,0 +1,14 @@
+itemid: 20037
+name: masterwork gem pendant
+namesimple: pendant
+description: Two large gems are set in an elaborate gold wire frame, their facets
+  cut with exacting precision. The pendant rests heavily against the
+  chest, radiating a quiet warmth that steadies the mind and sharpens
+  the senses. It is clearly the work of a master jeweler.
+type: neck
+subtype: wearable
+damagereduction: 2
+statmods:
+  willpower: 4
+  perception: 2
+value: 35

@@ -1,0 +1,16 @@
+id: gold-signet-ring
+name: Gold Signet Ring
+skill: jewelcrafting
+skill_minimum: 28
+station: jeweler_bench
+time_rounds: 5
+ingredients:
+  - item_tag: gold-wire
+    quantity: 1
+  - item_tag: gem-dust
+    quantity: 1
+output:
+  item_id: 20036
+  quantity: 1
+success_message: "You shape the gold into a heavy band and engrave a crest in gem dust. A gold signet ring!"
+failure_message: "The soft gold deforms under your tool and the engraving is ruined. The materials are wasted."

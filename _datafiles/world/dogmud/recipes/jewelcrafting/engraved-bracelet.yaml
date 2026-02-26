@@ -1,0 +1,16 @@
+id: engraved-bracelet
+name: Engraved Bracelet
+skill: jewelcrafting
+skill_minimum: 22
+station: jeweler_bench
+time_rounds: 4
+ingredients:
+  - item_tag: silver-wire
+    quantity: 1
+  - item_tag: gem-dust
+    quantity: 2
+output:
+  item_id: 20035
+  quantity: 1
+success_message: "You hammer the silver flat, engrave flowing patterns, and dust the grooves with crushed gem. An engraved bracelet!"
+failure_message: "Your engraving tool slips and gouges the silver beyond repair. The materials are ruined."
