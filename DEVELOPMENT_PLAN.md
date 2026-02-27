@@ -1114,6 +1114,15 @@ After Stage 4.7, manual testing revealed that arena mobs were too weak for new p
 
 ---
 
+#### Hotfixes (2026-02-13)
+
+| Commit | Fix | Details |
+|--------|-----|---------|
+| 9b191c2 | Fumble detection bug | Fumbles were based on defender's dodge roll, not attacker performance — high-skill NPCs fumbled 30%+ instead of 2.5% |
+| 2ff9c32 | Fumble threshold scaling | Threshold was positive for high-skill attackers; now fixed at z-score ≤ -2.0 regardless of skill gap |
+
+---
+
 ### Stage 7.3: Unarmed Damage Scaling ✅ COMPLETED
 **Merge commit**: 1794919
 **Goal**: Make unarmed damage scale meaningfully with Unarmed Combat skill and Strength, so training unarmed feels rewarding.
@@ -3647,7 +3656,7 @@ This is wired in via mob combat hooks or spawn scripts, not hardcoded per mob.
 
 ---
 
-## Stage 18: Remove Numerical References — Immersive Descriptions ✅ COMPLETED
+## Phase 18: Remove Numerical References — Immersive Descriptions ✅ COMPLETED
 
 **Goal**: Audit every player-visible message surface and replace all raw numbers with qualitative descriptive language. Introduces a data-driven casting message system (YAML file) so future atmosphere can be added without code changes.
 
@@ -5016,6 +5025,18 @@ matching the existing sunrise/sunset splash system.
 
 ---
 
+#### Hotfixes (2026-02-26, between Phase 33 and Phase 34)
+
+| Commit | Change | Details |
+|--------|--------|---------|
+| 28fb354 | Unified downed state + coup de grâce | Any pool at zero triggers downed; mobs deliver finishing blow after grace period |
+| 5986eaa | Rename Blacksmith Korvath | Dropped title prefix for better name targeting |
+| dd39d3d | Combat defense inversion fix | OpposedRollStat return value was backwards; also fixed sticky crit/fumble, capped attacks at 4, fixed high-skill progression |
+| 5382e3d | Interactive tutorial sub-steps | Reworked tutorial from 10→19 steps requiring actual command execution; fixed shield bash knockdown roll |
+| e24123b | Helpfile audit | Removed deprecated helpfiles, renamed GoMud stats to DOGMud, rewrote number-exposing helpfiles |
+
+---
+
 ## Phase 34: Unified Damage & Mitigation Pipeline ✅ COMPLETED
 
 Replaced the inconsistent damage system with a unified three-channel pipeline
@@ -5067,12 +5088,43 @@ CLAUDE.md with new damage/mitigation model. Renumbered phases.
 
 ---
 
-## Phase 35: Codebase Quality Pass
+## Phase 35: Combat Balance & Mob Equipment ✅ COMPLETED
+
+**Merge Commit**: `d681789`
+
+Resource depletion penalties (smooth curve replacing hard stamina cutoff),
+best-of-all defense resolution (roll dodge/parry/block and pick widest
+margin), caster weapon subtypes (wand/sceptre/staff with spell_damage_multiplier),
+mob equipment system, defense floor config, prone multipliers.
+
+---
+
+## Phase 36: Dialogue System Fix & Quest Wiring ✅ COMPLETED
+
+**Merge Commit**: `d3a914c`
+
+Fixed dialogue loader doubled-path bug (all NPC dialogue was broken).
+Wired quest hooks (grantsQuest, questRequired, questExcluded, requiresItem)
+into 10 dialogue files for quests 2–4 and 6–10. Converted all NPC tree
+text from third-person narration to first-person speech. Removed requires
+gates from quest-granting nodes so players can discover quests directly.
+
+---
+
+#### Hotfixes (2026-02-27, after Phase 36)
+
+| Commit | Change | Details |
+|--------|--------|---------|
+| e629ee3 | Hotfix batch | Notice board mob removal, starter spell/recipe seeding, enchanting recipe tweaks, honed-edge enchantment, character validation fix |
+
+---
+
+## Phase 37: Codebase Quality Pass
 
 After all features are stable — refactor without risk of changing code
 that's still in flux.
 
-### Stage 35.1: Code Readability & Structure Audit
+### Stage 37.1: Code Readability & Structure Audit
 
 **Goal**: Systematic pass on the worst offenders for readability.
 
@@ -5093,7 +5145,7 @@ that's still in flux.
 
 ---
 
-### Stage 35.2: Dead Code & Dependency Cleanup
+### Stage 37.2: Dead Code & Dependency Cleanup
 
 **Goal**: Remove all unreachable code, unused imports, and orphaned data
 files.
@@ -5114,7 +5166,7 @@ files.
 
 ---
 
-### Stage 35.3: Error Handling & Robustness Hardening
+### Stage 37.3: Error Handling & Robustness Hardening
 
 **Goal**: Shore up error handling at system boundaries.
 
@@ -5139,11 +5191,11 @@ files.
 
 ---
 
-## Phase 36: Test Coverage Pass
+## Phase 38: Test Coverage Pass
 
 Last phase — tests cover the final state of all features.
 
-### Stage 36.1: Unit Test Gaps Audit & Coverage Targets
+### Stage 38.1: Unit Test Gaps Audit & Coverage Targets
 
 **Goal**: Map what's tested and what isn't, set targets.
 
@@ -5165,7 +5217,7 @@ Last phase — tests cover the final state of all features.
 
 ---
 
-### Stage 36.2: Core Systems Unit Tests
+### Stage 38.2: Core Systems Unit Tests
 
 **Goal**: Fill the biggest test gaps in high-risk code.
 
@@ -5190,7 +5242,7 @@ Last phase — tests cover the final state of all features.
 
 ---
 
-### Stage 36.3: Integration & Scenario Tests
+### Stage 38.3: Integration & Scenario Tests
 
 **Goal**: End-to-end tests covering full gameplay loops.
 
@@ -5215,7 +5267,7 @@ Last phase — tests cover the final state of all features.
 
 ---
 
-### Stage 36.4: Regression Test Suite & CI Hardening
+### Stage 38.4: Regression Test Suite & CI Hardening
 
 **Goal**: Ensure all tests run reliably in CI and past bugs stay fixed.
 
@@ -5276,11 +5328,13 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 30: Combat Analytics | 3 stages (30.1–30.3) | 16 hours | **30.1–30.3 Complete** |
 | Phase 31: Crafting Expansion | 6 stages (31.1–31.6) | 30 hours | **31.1–31.6 Complete** |
 | Phase 32: Moon Phase Splash Screens | 1 stage (32.1) | 2 hours | **32.1 Complete** |
-| Phase 33: Enchanting System | — | — | Complete |
-| Phase 34: Unified Damage Pipeline | — | — | Complete |
-| Phase 35: Combat Balance & Mob Equipment | — | — | Complete |
+| Phase 33: Web Portal & Branding | 3 stages (33.1–33.2) | 12 hours | **Complete** |
+| Phase 34: Unified Damage Pipeline | 10 stages (34.1–34.10) | 20 hours | **Complete** |
+| Phase 35: Combat Balance & Mob Equipment | 1 stage | 4 hours | **Complete** |
 | Phase 36: Dialogue System Fix & Quest Wiring | 1 stage | 4 hours | **Complete** |
-| **Total** | **~96 stages** | **~600 hours** | |
+| Phase 37: Codebase Quality Pass | 3 stages (37.1–37.3) | 16 hours | Not started |
+| Phase 38: Test Coverage Pass | 4 stages (38.1–38.4) | 20 hours | Not started |
+| **Total** | **~100 stages** | **~650 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
 
@@ -5418,27 +5472,6 @@ Issues discovered during 2026-02-12 playtest session, mapped to stages:
 
 ---
 
-## Hotfixes & Bug Fixes
-
-Critical bugs fixed outside of formal stage development:
-
-### 2026-02-13: Fumble Detection Bug (commits 9b191c2, 2ff9c32)
-**Issue**: Arena Champion and all high-skill NPCs were fumbling 30%+ of attacks instead of the intended 2.5%.
-
-**Root Causes**:
-1. Fumbles were detected based on defender's dodge roll success (opposed roll), not attacker's raw performance
-2. Skill advantage calculation made fumbleThreshold positive for high-skill attackers, causing massive fumble rates
-
-**Fixes**:
-- Added initial attack roll before defense sequence for fumble detection
-- Fumbles now based on attacker's raw z-score (≤ -2.0)
-- Fumble threshold is now fixed at -2.0 (~2.5% chance) regardless of skill difference
-- Only crit threshold scales with skill advantage (as intended)
-
-**Result**: Combat balance restored. High-skill NPCs no longer fumble constantly. Stamina depletion now drives combat dynamics as designed.
-
----
-
 ## Future Expansion (Not Yet Scheduled)
 
 These are longer-term goals to be detailed when the above phases are complete:
@@ -5465,4 +5498,4 @@ These are longer-term goals to be detailed when the above phases are complete:
 
 **Last Updated**: 2026-02-27
 **Status**: In Progress
-**Current Stage**: Phase 36 dialogue system fix & quest wiring complete (merge d3a914c). Fixed dialogue loader doubled-path bug, wired quest hooks into 10 dialogue files for quests 2-4/6-10, converted all NPC tree text to first-person speech, removed requires gates from quest-granting nodes. Next: Phase 37 (Test Coverage Pass).
+**Current Stage**: Phase 36 dialogue system fix & quest wiring complete (merge d3a914c). Fixed dialogue loader doubled-path bug, wired quest hooks into 10 dialogue files for quests 2-4/6-10, converted all NPC tree text to first-person speech, removed requires gates from quest-granting nodes. Next: Phase 37 (Codebase Quality Pass).
