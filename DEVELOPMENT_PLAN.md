@@ -5459,6 +5459,6 @@ Last phase — tests cover the final state of all features.
 
 ---
 
-**Last Updated**: 2026-02-26
+**Last Updated**: 2026-02-27
 **Status**: In Progress
-**Current Stage**: Phase 34 complete (merge 9165d69). Unified damage & mitigation pipeline (physical/magical/conviction), new Rhetoric skill, Taunt command, all weapons/armor/spells migrated, species damage multipliers, crits bypass mitigation, special attacks use pipeline, spell aggro fix, mutation integration fixes, stat soft cap curve reworked. Next: Phase 35 (Codebase Quality Pass).
+**Current Stage**: Phase 35 combat balance + mob equipment complete (merge d681789). Resource depletion penalties, best-of-all defense resolution, defense floor, prone multipliers, caster weapons (wand/sceptre/staff), 12 new items, 26 mobs equipped across 6 zones. Next: Phase 35 (Codebase Quality Pass).
