@@ -122,14 +122,12 @@ func New() *Character {
 		Skills:         initAllSkills(),
 		Gold:           25,
 		Bank:           100,
-		// Phase 25.1: Starting spell reduced to 1 — everything else discovered through casting.
+		// Phase 25.1: Starting spells — attack + utility light for dark zones.
 		SpellBook: map[string]int{
-			"conviction-spike": 1, // Conviction Spike — the only starting spell
+			"conviction-spike": 1, // Conviction Spike — starting attack spell
+			"chrysalis-glow":   1, // Chrysalis Glow — light source for caves
 		},
-		KnownRecipes: map[string]int{
-			"iron-dagger":      1,
-			"healing-poultice": 1,
-		},
+		KnownRecipes: crafting.GetStarterRecipes(), // All recipes with skill_minimum == 0
 		CharmedMobs:    []int{},
 		Items:          []items.Item{},
 		Buffs:          buffs.New(),

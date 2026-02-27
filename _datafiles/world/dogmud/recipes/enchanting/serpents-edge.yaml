@@ -1,7 +1,7 @@
 id: serpents-edge
 name: "Serpent's Edge"
 skill: enchanting
-skill_minimum: 0
+skill_minimum: 8
 station: enchanting_circle
 time_rounds: 4
 target_type: weapon

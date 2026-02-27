@@ -1,0 +1,18 @@
+id: honed-edge
+name: "Honed Edge"
+skill: enchanting
+skill_minimum: 0
+station: enchanting_circle
+time_rounds: 3
+target_type: weapon
+enchant_type: honed-edge
+ingredients:
+  - item_tag: binding-paste
+    quantity: 1
+  - item_tag: healers-root
+    quantity: 1
+output:
+  item_id: 0
+  quantity: 0
+success_message: "The paste bonds to the blade and hardens. When you test the edge, it cuts cleaner than before."
+failure_message: "The paste dries and flakes away without taking hold. The materials are wasted, but the weapon is unharmed."
