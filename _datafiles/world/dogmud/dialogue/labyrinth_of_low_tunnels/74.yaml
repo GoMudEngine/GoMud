@@ -77,14 +77,25 @@ patterns:
 
 tree:
   root:
-    text: "The shaman regards you with milky eyes, one elongated hand resting on a clay pot of dried herbs. Its voice is a hoarse whisper. 'Surface-walker. You breathe our air. You had better have a reason.'"
-    hints: "You could ask the shaman about its people, the chieftain, or how to prove your peaceful intent."
+    text: "Surface-walker. You breathe our air. You had better have a reason."
+    hints: "Ask me about my people, the chieftain, or how to prove your peaceful intent."
+    variants:
+      - questRequired: ["2-start"]
+        questExcluded: ["2-poultices"]
+        text: "Surface-walker. You came back empty-handed. I asked for healing poultices -- the kind your alchemists make. Bring them and the Eldest may listen. Return without them and do not return at all."
+        hints: "Bring healing poultices to the shaman."
+      - questRequired: ["2-poultices"]
+        questExcluded: ["2-end"]
+        text: "The Eldest knows what you did. The medicine is already being used. Go deeper -- the barricade will let you pass. Speak with the Eldest and finish what you started."
+        hints: "Seek the chieftain deeper in the tunnels."
+      - questRequired: ["2-end"]
+        text: "Surface-walker. You are remembered here. The compact holds."
 
   nodes:
     - id: people
       triggers: ["warren", "people", "tribe", "who", "your kind", "dwellers"]
       text: "We are the Discarded. Exiled from the surface three generations past. The Chrysalis took us without guidance and made us what you see. We did not choose this. But we endure."
-      hints: "You could ask about the Chrysalis, the chieftain, or what happened to drive them underground."
+      hints: "Ask me about the Chrysalis, the chieftain, or what drove us underground."
       unlocks: ["chrysalis_talk", "history"]
 
     - id: chrysalis_talk
@@ -109,9 +120,21 @@ tree:
 
     - id: prove_intent
       triggers: ["prove", "how", "help", "trust", "intent", "peace", "poultice", "medicine"]
-      requires: ["chieftain_talk"]
+      questExcluded: ["2-start"]
+      grantsQuest: "2-start"
       text: "Bring healing poultices. The kind your alchemists make. We know the recipe but lack the surface herbs. Bring them here, to me, and I will carry them to the Eldest as proof that a surface-walker chose to help rather than to take."
-      hints: "Obtain two healing poultices from Alchemist Yenna in Sanctum Basin and bring them to the shaman."
+      hints: "Obtain healing poultices from Alchemist Yenna in Sanctum Basin and bring them to the shaman."
+      moodChange: friendly
+
+    - id: poultice_delivery
+      triggers: ["brought", "poultice", "medicine", "healing", "here", "have"]
+      requires: ["prove_intent"]
+      questRequired: ["2-start"]
+      questExcluded: ["2-poultices"]
+      requiresItem: 30010
+      grantsQuest: "2-poultices"
+      text: "These are good. Strong. Our sick will benefit. You have done what I asked. The Eldest will hear of this. Go deeper into the tunnels -- the barricade will open for you now."
+      hints: "Seek the chieftain deeper in the tunnels."
       moodChange: friendly
 
     - id: scholar_topic
