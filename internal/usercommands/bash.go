@@ -79,21 +79,20 @@ func Bash(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	// Perform opposed roll
 	attackSuccess, _, _, _ := dice.OpposedRollStat(attackerScore, defenderScore)
 
-	// Calculate damage (percentage of normal attack damage)
-	baseDamage := 0
-	if user.Character.Equipment.Weapon.ItemId > 0 {
-		weapon := user.Character.Equipment.Weapon
-		attacks, dmg, variance, _ := weapon.GetDistributionDamage()
-		if attacks > 0 {
-			baseDamage = int(float64(dmg) * float64(cfg.BashDamagePercent))
-			// Add some variance
-			baseDamage += int(dice.Roll(0, variance).Value)
-		}
-	} else {
-		// Unarmed bash (less damage)
-		baseDamage = int(float64(user.Character.Stats.Strength.ValueAdj) * float64(cfg.BashDamagePercent))
-	}
+	// Calculate damage via unified pipeline
+	skillRank := user.Character.GetSkillLevel(skills.WeaponCombat)
+	rawDmg := combat.CalcRawDamage(user.Character.Stats.Strength.ValueAdj, skillRank, float64(cfg.BashDamagePercent))
 
+	// Apply target's physical mitigation
+	var targetMitig float64
+	if targetMob != nil {
+		targetMitig = targetMob.Character.GetPhysicalMitigation()
+	} else {
+		targetMitig = targetChar.Character.GetPhysicalMitigation()
+	}
+	dmgMean := combat.ApplyMitigation(rawDmg, targetMitig, combat.MitigationCap(combat.ChannelPhysical))
+	dmgRoll := dice.RollStat(dmgMean)
+	baseDamage := int(dmgRoll.Value)
 	if baseDamage < 1 {
 		baseDamage = 1
 	}

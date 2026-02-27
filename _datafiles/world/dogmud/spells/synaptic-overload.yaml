@@ -12,3 +12,4 @@ base_folds: 16
 target_defense_type: mental
 effect_type: damage
 effect_magnitude: 600
+damage_multiplier: 1.80

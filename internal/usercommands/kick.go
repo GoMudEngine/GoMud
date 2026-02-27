@@ -73,8 +73,20 @@ func Kick(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	// Perform opposed roll
 	attackSuccess, _, _, _ := dice.OpposedRollStat(attackerScore, defenderScore)
 
-	// Calculate damage (moderate - more than trip, less than bash)
-	baseDamage := int(float64(user.Character.Stats.Strength.ValueAdj) * float64(cfg.KickDamagePercent))
+	// Calculate damage via unified pipeline (moderate - more than trip, less than bash)
+	skillRank := user.Character.GetSkillLevel(skills.UnarmedCombat)
+	rawDmg := combat.CalcRawDamage(user.Character.Stats.Strength.ValueAdj, skillRank, float64(cfg.KickDamagePercent))
+
+	// Apply target's physical mitigation
+	var targetMitig float64
+	if targetMob != nil {
+		targetMitig = targetMob.Character.GetPhysicalMitigation()
+	} else {
+		targetMitig = targetChar.Character.GetPhysicalMitigation()
+	}
+	dmgMean := combat.ApplyMitigation(rawDmg, targetMitig, combat.MitigationCap(combat.ChannelPhysical))
+	dmgRoll := dice.RollStat(dmgMean)
+	baseDamage := int(dmgRoll.Value)
 	if baseDamage < 1 {
 		baseDamage = 1
 	}

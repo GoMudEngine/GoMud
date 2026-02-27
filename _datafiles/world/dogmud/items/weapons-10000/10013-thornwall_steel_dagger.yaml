@@ -13,6 +13,7 @@ subtype: stabbing
 damage:
   basedamage: 7
   variance: 2
+damage_multiplier: 0.90
 speedmultiplier: 1.15
 parryrating: 5
 weight: 0.7

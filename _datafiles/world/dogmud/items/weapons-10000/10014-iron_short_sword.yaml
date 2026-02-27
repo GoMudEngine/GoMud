@@ -13,5 +13,6 @@ grapplemodifier: 0.8
 damage:
   basedamage: 5
   variance: 2
+damage_multiplier: 0.70
 parryrating: 6
 value: 18

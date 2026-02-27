@@ -23,4 +23,5 @@ stats:
 damage:
   basedamage: 2
   variance: 1
+damage_multiplier: 0.30
 disabledslots: ['neck']

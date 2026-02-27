@@ -426,6 +426,9 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 
 			weaponSpeed := 1.0 // Unarmed baseline
 
+			// Stage 34: Determine weapon damage multiplier for unified pipeline
+			var weaponDamageMult float64
+
 			if weapon.ItemId > 0 {
 
 				itemSpec := weapon.GetSpec()
@@ -440,6 +443,19 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 
 				// If there is a bonus vs. a specific race, apply it
 				baseDmg += float64(weapon.StatMod(string(statmods.RacialBonusPrefix) + strings.ToLower(targetChar.Species())))
+
+				// Stage 34: Use weapon's damage multiplier (falls back to unarmed if not set)
+				weaponDamageMult = itemSpec.DamageMultiplier
+				if weaponDamageMult <= 0 {
+					weaponDamageMult = float64(configs.GetBalanceConfig().UnarmedDamageMultiplier)
+				}
+			} else {
+				// Unarmed: use species multiplier if set, otherwise config default
+				if speciesInfo := species.GetSpecies(sourceChar.SpeciesId); speciesInfo != nil && speciesInfo.DamageMultiplier > 0 {
+					weaponDamageMult = speciesInfo.DamageMultiplier
+				} else {
+					weaponDamageMult = float64(configs.GetBalanceConfig().UnarmedDamageMultiplier)
+				}
 			}
 
 			// Apply weapon speed multiplier, skill modifiers, and dual wielding bonuses
@@ -462,30 +478,44 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				attacks = 4
 			}
 
-			// Add damage bonus due to statmods
-			baseDmg += float64(statModDBonus)
+			// Stage 34: Unified damage pipeline
+			combatSkillLevel := sourceChar.GetCombatSkillLevel()
+			rawDmg := CalcRawDamage(sourceChar.Stats.Strength.ValueAdj, combatSkillLevel, weaponDamageMult)
 
-			// Percentage-based strength scaling: Str/100 as multiplier
-			strMultiplier := 1.0 + float64(sourceChar.Stats.Strength.ValueAdj)/100.0
-			dmgMean := baseDmg * strMultiplier
+			// Apply target's physical mitigation
+			dmgMean := ApplyMitigation(rawDmg, targetChar.GetPhysicalMitigation(), MitigationCap(ChannelPhysical))
+
+			// Track pre-mitigation damage for crits (crits bypass mitigation entirely)
+			rawDmgForCrit := rawDmg
+
+			// Use RollSpread-derived variance (stat-proportional)
+			if dmgVariance <= 0 {
+				dmgVariance = dmgMean * 0.15
+			}
+
+			// Add statmod damage bonus
+			dmgMean += float64(statModDBonus)
+			rawDmgForCrit += float64(statModDBonus)
 
 			// Apply stamina-based damage penalty
 			if sourceChar.StaminaMax.Value > 0 {
 				staminaRatio := float64(sourceChar.Stamina) / float64(sourceChar.StaminaMax.Value)
 				if staminaRatio < 0.25 {
-					// 25% damage reduction when very low on stamina
 					dmgMean *= 0.75
+					rawDmgForCrit *= 0.75
 				}
 			}
 
 			// Stage 7.5: Apply prone damage penalty
 			if sourceChar.CombatPosition == characters.PositionProne {
 				dmgMean *= float64(configs.GetGamePlayConfig().ProneDamagePenalty)
+				rawDmgForCrit *= float64(configs.GetGamePlayConfig().ProneDamagePenalty)
 			}
 
 			// Phase 24.2: Apply mutation damage multiplier (Large, Small, etc.)
 			if dmgMult := mutations.GetDamageMultiplier(sourceChar.Mutations); dmgMult != 0 {
 				dmgMean *= (1.0 + dmgMult)
+				rawDmgForCrit *= (1.0 + dmgMult)
 			}
 
 			// zero means randomly selected, otherwise use the ItemId to consistently choose a message
@@ -494,7 +524,7 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				msgSeed = weapon.ItemId
 			}
 
-			mudlog.Debug("DistDamage", "attacks", attacks, "baseDmg", baseDmg, "variance", dmgVariance, "strMult", strMultiplier, "dmgMean", dmgMean, "critBuffs", critBuffs)
+			mudlog.Debug("DistDamage", "attacks", attacks, "baseDmg", baseDmg, "variance", dmgVariance, "dmgMean", dmgMean, "weaponMult", weaponDamageMult, "critBuffs", critBuffs)
 
 			// Individual weapons may get multiple attacks
 			for j := 0; j < attacks; j++ {
@@ -768,16 +798,18 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				if hit {
 					attackResult.Hit = true
 
-					// Distribution-based damage
-					damageResult := dice.Roll(dmgMean, dmgVariance)
-					attackTargetDamage = int(math.Round(math.Max(0, damageResult.Value)))
-
 					if lastHitRoll.ZScore >= critThreshold || backstabCrit {
+						// Crit: bypass mitigation entirely — use raw (pre-mitigation) damage
 						attackResult.Crit = true
 						backstabCrit = false // consume — only first hit gets free crit
 						attackResult.BuffTarget = critBuffs
-						attackTargetDamage += int(math.Round(dmgMean))
-						mudlog.Debug("CritDetected", "zScore", fmt.Sprintf("%.2f", lastHitRoll.ZScore), "threshold", fmt.Sprintf("%.2f", critThreshold), "source", sourceChar.Name, "target", targetChar.Name)
+						damageResult := dice.Roll(rawDmgForCrit, dmgVariance)
+						attackTargetDamage = int(math.Round(math.Max(0, damageResult.Value)))
+						mudlog.Debug("CritDetected", "zScore", fmt.Sprintf("%.2f", lastHitRoll.ZScore), "threshold", fmt.Sprintf("%.2f", critThreshold), "source", sourceChar.Name, "target", targetChar.Name, "rawDmg", fmt.Sprintf("%.1f", rawDmgForCrit), "mitigatedDmg", fmt.Sprintf("%.1f", dmgMean))
+					} else {
+						// Normal hit: use mitigated damage
+						damageResult := dice.Roll(dmgMean, dmgVariance)
+						attackTargetDamage = int(math.Round(math.Max(0, damageResult.Value)))
 					}
 				}
 				// Note: Fumble detection now happens earlier based on initial attack roll, not defense rolls

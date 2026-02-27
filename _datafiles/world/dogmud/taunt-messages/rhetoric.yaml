@@ -1,0 +1,106 @@
+# Taunt / rhetoric combat messages
+# Tokens available:
+# {source}     - name of the taunter
+# {target}     - name of the target
+# {sourcetype} - 'user' or 'mob'
+# {targettype} - 'user' or 'mob'
+# {damage}     - conviction damage description text
+
+optionid: rhetoric
+options:
+  hit:
+    toattacker:
+    - 'You sneer at <ansi fg="{targettype}">{target}</ansi>, and your words cut deep! (<ansi fg="damage">{damage}</ansi>)'
+    - 'You mock <ansi fg="{targettype}">{target}</ansi> with a biting remark! (<ansi fg="damage">{damage}</ansi>)'
+    - 'You hurl a scathing insult at <ansi fg="{targettype}">{target}</ansi>! (<ansi fg="damage">{damage}</ansi>)'
+    - 'You question <ansi fg="{targettype}">{target}</ansi>''s courage with venomous words! (<ansi fg="damage">{damage}</ansi>)'
+    - 'You deliver a withering verbal assault on <ansi fg="{targettype}">{target}</ansi>! (<ansi fg="damage">{damage}</ansi>)'
+    - 'You taunt <ansi fg="{targettype}">{target}</ansi> with razor-sharp wit! (<ansi fg="damage">{damage}</ansi>)'
+    - 'Your mocking words find their mark against <ansi fg="{targettype}">{target}</ansi>! (<ansi fg="damage">{damage}</ansi>)'
+    - 'You ridicule <ansi fg="{targettype}">{target}</ansi> mercilessly! (<ansi fg="damage">{damage}</ansi>)'
+    todefender:
+    - '<ansi fg="{sourcetype}">{source}</ansi>''s taunt cuts deep, shaking your resolve! (<ansi fg="damage">{damage}</ansi>)'
+    - '<ansi fg="{sourcetype}">{source}</ansi> sneers at you with a biting remark! (<ansi fg="damage">{damage}</ansi>)'
+    - '<ansi fg="{sourcetype}">{source}</ansi> hurls a scathing insult your way! (<ansi fg="damage">{damage}</ansi>)'
+    - '<ansi fg="{sourcetype}">{source}</ansi> questions your courage with venomous words! (<ansi fg="damage">{damage}</ansi>)'
+    - '<ansi fg="{sourcetype}">{source}</ansi>''s mocking words sting your pride! (<ansi fg="damage">{damage}</ansi>)'
+    - '<ansi fg="{sourcetype}">{source}</ansi> ridicules you mercilessly! (<ansi fg="damage">{damage}</ansi>)'
+    - '<ansi fg="{sourcetype}">{source}</ansi>''s verbal assault rattles your conviction! (<ansi fg="damage">{damage}</ansi>)'
+    - '<ansi fg="{sourcetype}">{source}</ansi> taunts you with razor-sharp wit! (<ansi fg="damage">{damage}</ansi>)'
+    toroom:
+    - '<ansi fg="{sourcetype}">{source}</ansi> hurls a devastating taunt at <ansi fg="{targettype}">{target}</ansi>!'
+    - '<ansi fg="{sourcetype}">{source}</ansi> mocks <ansi fg="{targettype}">{target}</ansi> with a biting remark!'
+    - '<ansi fg="{sourcetype}">{source}</ansi> sneers at <ansi fg="{targettype}">{target}</ansi> with contempt!'
+    - '<ansi fg="{sourcetype}">{source}</ansi> delivers a withering verbal assault on <ansi fg="{targettype}">{target}</ansi>!'
+    - '<ansi fg="{sourcetype}">{source}</ansi> ridicules <ansi fg="{targettype}">{target}</ansi> mercilessly!'
+    - '<ansi fg="{sourcetype}">{source}</ansi> taunts <ansi fg="{targettype}">{target}</ansi> with sharp words!'
+  miss:
+    toattacker:
+    - 'Your taunt falls flat against <ansi fg="{targettype}">{target}</ansi>.'
+    - 'You try to mock <ansi fg="{targettype}">{target}</ansi>, but they seem unimpressed.'
+    - '<ansi fg="{targettype}">{target}</ansi> shrugs off your insult without flinching.'
+    - 'Your words bounce off <ansi fg="{targettype}">{target}</ansi> like pebbles off stone.'
+    - 'You hurl an insult at <ansi fg="{targettype}">{target}</ansi>, but it has no bite.'
+    - '<ansi fg="{targettype}">{target}</ansi> barely acknowledges your verbal jab.'
+    - 'Your mocking words fail to find purchase against <ansi fg="{targettype}">{target}</ansi>.'
+    - 'You taunt <ansi fg="{targettype}">{target}</ansi>, but they remain stoic.'
+    todefender:
+    - '<ansi fg="{sourcetype}">{source}</ansi> tries to taunt you, but it has no effect.'
+    - '<ansi fg="{sourcetype}">{source}</ansi> hurls an insult, but you shrug it off.'
+    - '<ansi fg="{sourcetype}">{source}</ansi>''s mocking words wash over you harmlessly.'
+    - '<ansi fg="{sourcetype}">{source}</ansi> tries to get under your skin, but fails.'
+    - 'You ignore <ansi fg="{sourcetype}">{source}</ansi>''s feeble attempt at mockery.'
+    - '<ansi fg="{sourcetype}">{source}</ansi>''s taunt barely registers.'
+    - '<ansi fg="{sourcetype}">{source}</ansi> tries to rattle you, but you stand firm.'
+    - '<ansi fg="{sourcetype}">{source}</ansi>''s words are meaningless noise to you.'
+    toroom:
+    - '<ansi fg="{sourcetype}">{source}</ansi> tries to taunt <ansi fg="{targettype}">{target}</ansi>, but it falls flat.'
+    - '<ansi fg="{sourcetype}">{source}</ansi> hurls an insult at <ansi fg="{targettype}">{target}</ansi>, who seems unimpressed.'
+    - '<ansi fg="{targettype}">{target}</ansi> shrugs off <ansi fg="{sourcetype}">{source}</ansi>''s mocking words.'
+    - '<ansi fg="{sourcetype}">{source}</ansi>''s attempt to mock <ansi fg="{targettype}">{target}</ansi> falls on deaf ears.'
+    - '<ansi fg="{sourcetype}">{source}</ansi> tries to provoke <ansi fg="{targettype}">{target}</ansi>, but fails.'
+    - '<ansi fg="{sourcetype}">{source}</ansi>''s taunt bounces off <ansi fg="{targettype}">{target}</ansi>.'
+  critical:
+    toattacker:
+    - 'Your words strike like a blade — <ansi fg="{targettype}">{target}</ansi> recoils in shock! (<ansi fg="damage">{damage}</ansi>) <ansi fg="yellow">[CRIT!]</ansi>'
+    - 'You unleash a devastating verbal onslaught on <ansi fg="{targettype}">{target}</ansi>! (<ansi fg="damage">{damage}</ansi>) <ansi fg="yellow">[CRIT!]</ansi>'
+    - 'Your taunt hits <ansi fg="{targettype}">{target}</ansi> right where it hurts! (<ansi fg="damage">{damage}</ansi>) <ansi fg="yellow">[CRIT!]</ansi>'
+    - 'You shatter <ansi fg="{targettype}">{target}</ansi>''s composure with a masterful insult! (<ansi fg="damage">{damage}</ansi>) <ansi fg="yellow">[CRIT!]</ansi>'
+    - 'Your words are devastating — <ansi fg="{targettype}">{target}</ansi> visibly staggers! (<ansi fg="damage">{damage}</ansi>) <ansi fg="yellow">[CRIT!]</ansi>'
+    - 'You deliver a soul-crushing taunt that leaves <ansi fg="{targettype}">{target}</ansi> reeling! (<ansi fg="damage">{damage}</ansi>) <ansi fg="yellow">[CRIT!]</ansi>'
+    todefender:
+    - '<ansi fg="{sourcetype}">{source}</ansi>''s words cut to the bone — you reel in shock! (<ansi fg="damage">{damage}</ansi>) <ansi fg="yellow">[CRIT!]</ansi>'
+    - '<ansi fg="{sourcetype}">{source}</ansi> unleashes a devastating verbal onslaught! (<ansi fg="damage">{damage}</ansi>) <ansi fg="yellow">[CRIT!]</ansi>'
+    - '<ansi fg="{sourcetype}">{source}</ansi>''s taunt hits you right where it hurts! (<ansi fg="damage">{damage}</ansi>) <ansi fg="yellow">[CRIT!]</ansi>'
+    - '<ansi fg="{sourcetype}">{source}</ansi> shatters your composure with a masterful insult! (<ansi fg="damage">{damage}</ansi>) <ansi fg="yellow">[CRIT!]</ansi>'
+    - '<ansi fg="{sourcetype}">{source}</ansi>''s words are devastating — you stagger! (<ansi fg="damage">{damage}</ansi>) <ansi fg="yellow">[CRIT!]</ansi>'
+    - '<ansi fg="{sourcetype}">{source}</ansi> delivers a soul-crushing taunt! (<ansi fg="damage">{damage}</ansi>) <ansi fg="yellow">[CRIT!]</ansi>'
+    toroom:
+    - '<ansi fg="{sourcetype}">{source}</ansi>''s words strike like a blade — <ansi fg="{targettype}">{target}</ansi> recoils!'
+    - '<ansi fg="{sourcetype}">{source}</ansi> unleashes a devastating verbal onslaught on <ansi fg="{targettype}">{target}</ansi>!'
+    - '<ansi fg="{sourcetype}">{source}</ansi> shatters <ansi fg="{targettype}">{target}</ansi>''s composure with a masterful insult!'
+    - '<ansi fg="{sourcetype}">{source}</ansi>''s taunt visibly staggers <ansi fg="{targettype}">{target}</ansi>!'
+    - '<ansi fg="{sourcetype}">{source}</ansi> delivers a soul-crushing taunt to <ansi fg="{targettype}">{target}</ansi>!'
+    - '<ansi fg="{targettype}">{target}</ansi> reels as <ansi fg="{sourcetype}">{source}</ansi> strikes a nerve!'
+  fumble:
+    toattacker:
+    - '<ansi fg="red">You stumble over your words trying to taunt <ansi fg="{targettype}">{target}</ansi> — how embarrassing!</ansi>'
+    - '<ansi fg="red">Your taunt comes out garbled and nonsensical. <ansi fg="{targettype}">{target}</ansi> stares at you.</ansi>'
+    - '<ansi fg="red">You accidentally insult yourself mid-taunt. That... did not go well.</ansi>'
+    - '<ansi fg="red">Your voice cracks as you try to taunt <ansi fg="{targettype}">{target}</ansi>. Mortifying.</ansi>'
+    - '<ansi fg="red">You open your mouth to taunt but only manage an awkward squeak.</ansi>'
+    - '<ansi fg="red">You trip over your own tongue. <ansi fg="{targettype}">{target}</ansi> looks amused.</ansi>'
+    todefender:
+    - '<ansi fg="green"><ansi fg="{sourcetype}">{source}</ansi> tries to taunt you but fumbles their words!</ansi>'
+    - '<ansi fg="green"><ansi fg="{sourcetype}">{source}</ansi>''s taunt comes out as gibberish. Pathetic.</ansi>'
+    - '<ansi fg="green"><ansi fg="{sourcetype}">{source}</ansi> accidentally insults themselves mid-taunt!</ansi>'
+    - '<ansi fg="green"><ansi fg="{sourcetype}">{source}</ansi>''s voice cracks mid-insult. How embarrassing for them.</ansi>'
+    - '<ansi fg="green"><ansi fg="{sourcetype}">{source}</ansi> opens their mouth to taunt, but nothing comes out.</ansi>'
+    - '<ansi fg="green"><ansi fg="{sourcetype}">{source}</ansi> trips over their own words trying to mock you.</ansi>'
+    toroom:
+    - '<ansi fg="{sourcetype}">{source}</ansi> stumbles over their words trying to taunt <ansi fg="{targettype}">{target}</ansi>.'
+    - '<ansi fg="{sourcetype}">{source}</ansi>''s taunt comes out garbled. <ansi fg="{targettype}">{target}</ansi> stares blankly.'
+    - '<ansi fg="{sourcetype}">{source}</ansi> accidentally insults themselves trying to mock <ansi fg="{targettype}">{target}</ansi>.'
+    - '<ansi fg="{sourcetype}">{source}</ansi>''s voice cracks mid-insult. An awkward silence follows.'
+    - '<ansi fg="{sourcetype}">{source}</ansi> opens their mouth to taunt <ansi fg="{targettype}">{target}</ansi>, but nothing comes out.'
+    - '<ansi fg="{sourcetype}">{source}</ansi> trips over their own tongue trying to mock <ansi fg="{targettype}">{target}</ansi>.'

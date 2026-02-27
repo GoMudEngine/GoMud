@@ -957,6 +957,93 @@ func (c *Character) GetDefense() int {
 	return reduction
 }
 
+// GetPhysicalMitigation returns total physical mitigation as a fraction (0.0–1.0).
+// Sources: equipment physical_mitigation (falls back to DamageReduction for
+// unmigrated items), mutations, species natural armor, shield spells.
+func (c *Character) GetPhysicalMitigation() float64 {
+	total := 0
+
+	slots := []items.Item{
+		c.Equipment.Weapon, c.Equipment.Offhand,
+		c.Equipment.ExtraArm1, c.Equipment.ExtraArm2,
+		c.Equipment.Head, c.Equipment.Neck, c.Equipment.Body,
+		c.Equipment.Belt, c.Equipment.Gloves, c.Equipment.Ring,
+		c.Equipment.Legs, c.Equipment.Feet,
+	}
+	for _, slot := range slots {
+		if slot.ItemId <= 0 {
+			continue
+		}
+		spec := slot.GetSpec()
+		total += spec.PhysicalMitigation
+	}
+
+	// Shield condition (Minor Shield spell)
+	total += int(c.GetConditionMagnitude(ConditionShield))
+
+	// Mutation natural armor
+	total += mutations.GetNaturalArmor(c.Mutations)
+
+	// Species natural armor
+	if speciesInfo := species.GetSpecies(c.SpeciesId); speciesInfo != nil {
+		total += speciesInfo.NaturalArmor
+	}
+
+	return float64(total) / 100.0
+}
+
+// GetMagicalMitigation returns total magical mitigation as a fraction (0.0–1.0).
+// Sources: equipment magical_mitigation, mutation magical resistance.
+func (c *Character) GetMagicalMitigation() float64 {
+	total := 0
+
+	slots := []items.Item{
+		c.Equipment.Weapon, c.Equipment.Offhand,
+		c.Equipment.ExtraArm1, c.Equipment.ExtraArm2,
+		c.Equipment.Head, c.Equipment.Neck, c.Equipment.Body,
+		c.Equipment.Belt, c.Equipment.Gloves, c.Equipment.Ring,
+		c.Equipment.Legs, c.Equipment.Feet,
+	}
+	for _, slot := range slots {
+		if slot.ItemId <= 0 {
+			continue
+		}
+		spec := slot.GetSpec()
+		total += spec.MagicalMitigation
+	}
+
+	// Mutation magical resistance (returned as fraction 0.0–1.0, convert to percentage points)
+	total += int(mutations.GetMagicalResistance(c.Mutations) * 100)
+
+	return float64(total) / 100.0
+}
+
+// GetConvictionMitigation returns total conviction mitigation as a fraction (0.0–1.0).
+// Sources: equipment conviction_mitigation, mutation conviction resistance.
+func (c *Character) GetConvictionMitigation() float64 {
+	total := 0
+
+	slots := []items.Item{
+		c.Equipment.Weapon, c.Equipment.Offhand,
+		c.Equipment.ExtraArm1, c.Equipment.ExtraArm2,
+		c.Equipment.Head, c.Equipment.Neck, c.Equipment.Body,
+		c.Equipment.Belt, c.Equipment.Gloves, c.Equipment.Ring,
+		c.Equipment.Legs, c.Equipment.Feet,
+	}
+	for _, slot := range slots {
+		if slot.ItemId <= 0 {
+			continue
+		}
+		spec := slot.GetSpec()
+		total += spec.ConvictionMitigation
+	}
+
+	// Mutation conviction resistance (returned as fraction 0.0–1.0, convert to percentage points)
+	total += int(mutations.GetConvictionResistance(c.Mutations) * 100)
+
+	return float64(total) / 100.0
+}
+
 func (c *Character) GetMobName(viewingUserId int, renderFlags ...NameRenderFlag) FormattedName {
 	return c.getFormattedName(viewingUserId, `mobname`, renderFlags...)
 }

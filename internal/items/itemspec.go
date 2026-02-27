@@ -211,8 +211,12 @@ type ItemSpec struct {
 	Uses            int         `yaml:"uses,omitempty"`            // How many uses it starts with
 	BuffIds         []int       `yaml:"buffids,omitempty"`         // What buffs it can apply (if used)
 	WornBuffIds     []int       `yaml:"wornbuffids,omitempty"`     // BuffId's that are applied while worn, and expired when removed.
-	DamageReduction int         `yaml:"damagereduction,omitempty"` // % of damage it reduces when it blocks attacks
-	ParryRating     int         `yaml:"parryrating,omitempty"`     // Weapon parry bonus (Stage 7.1)
+	DamageReduction      int     `yaml:"damagereduction,omitempty"`      // Legacy: % of damage it reduces when it blocks attacks
+	PhysicalMitigation   int     `yaml:"physical_mitigation,omitempty"` // % physical damage reduction (Stage 34)
+	MagicalMitigation    int     `yaml:"magical_mitigation,omitempty"`  // % magical damage reduction (Stage 34)
+	ConvictionMitigation int     `yaml:"conviction_mitigation,omitempty"` // % conviction damage reduction (Stage 34)
+	DamageMultiplier     float64 `yaml:"damage_multiplier,omitempty"`   // Weapon damage multiplier for new pipeline (Stage 34)
+	ParryRating          int     `yaml:"parryrating,omitempty"`         // Weapon parry bonus (Stage 7.1)
 	BlockRating     int         `yaml:"blockrating,omitempty"`     // Shield block bonus (Stage 7.1)
 	WaitRounds      int         `yaml:"waitrounds,omitempty"`      // How many extra rounds each combat requires
 	StaminaCost     int         `yaml:"staminacost,omitempty"`     // Stamina cost per attack with this weapon

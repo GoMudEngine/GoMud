@@ -135,20 +135,24 @@ type ItemSpec struct {
     Value           int           // Gold value (auto-calculated if 0)
     Type            ItemType
     Subtype         ItemSubType
-    
+
     // Usage Properties
     Uses            int           // Number of uses before consumption
     BuffIds         []int         // Buffs applied when used
     WornBuffIds     []int         // Buffs applied while worn
     QuestToken      string        // Quest progress granted when obtained
-    
+
     // Combat Properties
-    Damage          Damage        // Weapon damage specification
-    DamageReduction int           // Armor damage reduction percentage
-    WaitRounds      int           // Extra combat rounds required
-    Hands           WeaponHands   // 1 or 2 handed weapon
-    Element         Element       // Magical element type
-    
+    Damage              Damage        // Weapon damage specification
+    DamageReduction     int           // Legacy armor field (use mitigation fields instead)
+    DamageMultiplier    float64       // Weapon/spell damage scaling (0.15–2.5)
+    PhysicalMitigation  int           // Physical damage reduction % (armor)
+    MagicalMitigation   int           // Magical damage reduction % (enchanted gear)
+    ConvictionMitigation int          // Conviction damage reduction % (willpower items)
+    WaitRounds          int           // Extra combat rounds required
+    Hands               WeaponHands   // 1 or 2 handed weapon
+    Element             Element       // Magical element type
+
     // Enhancement Properties
     StatMods        statmods.StatMods  // Stat modifications when worn
     BreakChance     uint8              // Chance to break on use (0-100)
@@ -168,6 +172,43 @@ type Damage struct {
     CritBuffIds []int    // Buffs applied on critical hits
 }
 ```
+
+### Unified Damage & Mitigation Pipeline (Phase 34)
+
+All damage in DOGMud flows through three channels. Each channel uses:
+`raw = stat × SkillMultiplier(rank) × item_multiplier`, then
+`final = raw × (1 - min(mitigation%, cap))`, then `dice.RollStat(final)`.
+
+**Weapon `damage_multiplier` (float64):**
+- Fists/unarmed: 0.30 (config `UnarmedDamageMultiplier`)
+- Crude/improvised: 0.40–0.60
+- Basic iron: 0.80–1.00
+- Quality steel: 1.10–1.30
+- Enchanted/rare: 1.40–1.80
+- Legendary: 2.00–2.50
+
+**Armor mitigation fields (integer percentages):**
+- `physical_mitigation` — reduces melee/ranged/physical spell damage
+- `magical_mitigation` — reduces mind-targeting spell damage
+- `conviction_mitigation` — reduces taunt/rhetoric damage
+
+Typical values by armor tier:
+| Tier | Physical | Magical | Conviction |
+|------|----------|---------|------------|
+| Cloth/robes | 1–3% | 5–12% | 2–5% |
+| Leather | 4–8% | 2–4% | 0–2% |
+| Chain/scale | 8–12% | 1–3% | 0% |
+| Plate | 12–18% | 0–2% | 0% |
+| Shield (offhand) | 5–10% | 0–2% | 0% |
+| Amulet/ring | 0–2% | 3–8% | 3–8% |
+
+All three channels cap at 75% by default (configurable).
+
+**Enchantment effects for the new pipeline:**
+- `physical_mitigation_bonus` — adds to physical_mitigation (int)
+- `magical_mitigation_bonus` — adds to magical_mitigation (int)
+- `conviction_mitigation_bonus` — adds to conviction_mitigation (int)
+- `damage_multiplier_bonus` — adds to damage_multiplier (int hundredths: 10 = +0.10)
 
 ## Item Instance Management
 

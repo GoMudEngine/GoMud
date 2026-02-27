@@ -37,6 +37,7 @@ type Species struct {
 	UnarmedName      string
 	Tameable         bool
 	Damage           items.Damage
+	DamageMultiplier float64          `yaml:"damage_multiplier,omitempty"` // Natural weapon power (0=use config default)
 	Selectable       bool
 	AngryCommands    []string         // randomly chosen to queue when they are angry/entering combat.
 	KnowsFirstAid    bool             // Whether they can apply aid to other players.

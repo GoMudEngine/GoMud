@@ -12,4 +12,5 @@ base_folds: 6
 target_defense_type: physical
 effect_type: dot
 effect_magnitude: 80
+damage_multiplier: 0.80
 effect_duration: 3

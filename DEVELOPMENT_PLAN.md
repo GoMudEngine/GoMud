@@ -5227,12 +5227,63 @@ matching the existing sunrise/sunset splash system.
 
 ---
 
-## Phase 34: Codebase Quality Pass
+## Phase 34: Unified Damage & Mitigation Pipeline ✅ COMPLETED
+
+Replaced the inconsistent damage system with a unified three-channel pipeline
+(physical, magical, conviction) where every attack follows the same formula:
+`raw = stat × SkillMultiplier(rank) × item_multiplier`, then mitigation.
+
+### Stage 34.1: Config + Data Model + Rhetoric Skill ✅
+Added Balance config fields (mitigation caps, UnarmedDamageMultiplier,
+SkillMultiplierBase/Max), ItemSpec fields (damage_multiplier,
+physical/magical/conviction_mitigation), SpellData field
+(damage_multiplier), Rhetoric skill + orator profession.
+
+### Stage 34.2: Core Pipeline Functions ✅
+Created `internal/combat/damage_pipeline.go` with DamageChannel type,
+SkillMultiplier(), CalcRawDamage(), ApplyMitigation(), MitigationCap(),
+GetConvictionDamageDescription(). Unit tests for all functions.
+
+### Stage 34.3: Physical Damage + Mitigation ✅
+Wired new formula into calculateCombat(). Added GetPhysicalMitigation()
+to Character (sums equipment + mutations + species + shield conditions).
+Applied mitigation before final HP change.
+
+### Stage 34.4: Spell Damage Rework ✅
+Spell damage uses CalcRawDamage(Willpower, spellcasting, DamageMultiplier)
+with mitigation based on TargetDefenseType. Backward-compat fallback for
+unmigrated spells with warning log.
+
+### Stage 34.5: Conviction Damage + Taunt Command ✅
+New `taunt` command: Charisma + rhetoric vs Willpower + rhetoric. Deals
+conviction damage via CalcRawDamage. GetConvictionMitigation() on
+Character. Help files for taunt and rhetoric.
+
+### Stage 34.6: Weapon YAML Migration ✅
+Added `damage_multiplier` to all 15 weapon YAMLs (0.15–1.50 range).
+
+### Stage 34.7: Armor YAML Migration ✅
+Added physical/magical/conviction_mitigation to all 31 armor YAMLs.
+
+### Stage 34.8: Spell YAML Migration ✅
+Added `damage_multiplier` to all 13 damage-dealing spell YAMLs.
+
+### Stage 34.9: Legacy Cleanup ✅
+Removed backward-compat fallbacks in calculateCombat(). Added warning
+logs for spells still using legacy magnitude-as-damage path.
+
+### Stage 34.10: Help Files + Docs ✅
+Updated help combat/armor/skills. Added help taunt/rhetoric. Updated
+CLAUDE.md with new damage/mitigation model. Renumbered phases.
+
+---
+
+## Phase 35: Codebase Quality Pass
 
 After all features are stable — refactor without risk of changing code
 that's still in flux.
 
-### Stage 34.1: Code Readability & Structure Audit
+### Stage 35.1: Code Readability & Structure Audit
 
 **Goal**: Systematic pass on the worst offenders for readability.
 
@@ -5253,7 +5304,7 @@ that's still in flux.
 
 ---
 
-### Stage 34.2: Dead Code & Dependency Cleanup
+### Stage 35.2: Dead Code & Dependency Cleanup
 
 **Goal**: Remove all unreachable code, unused imports, and orphaned data
 files.
@@ -5274,7 +5325,7 @@ files.
 
 ---
 
-### Stage 34.3: Error Handling & Robustness Hardening
+### Stage 35.3: Error Handling & Robustness Hardening
 
 **Goal**: Shore up error handling at system boundaries.
 
@@ -5299,11 +5350,11 @@ files.
 
 ---
 
-## Phase 35: Test Coverage Pass
+## Phase 36: Test Coverage Pass
 
 Last phase — tests cover the final state of all features.
 
-### Stage 35.1: Unit Test Gaps Audit & Coverage Targets
+### Stage 36.1: Unit Test Gaps Audit & Coverage Targets
 
 **Goal**: Map what's tested and what isn't, set targets.
 
@@ -5325,7 +5376,7 @@ Last phase — tests cover the final state of all features.
 
 ---
 
-### Stage 35.2: Core Systems Unit Tests
+### Stage 36.2: Core Systems Unit Tests
 
 **Goal**: Fill the biggest test gaps in high-risk code.
 
@@ -5343,14 +5394,14 @@ Last phase — tests cover the final state of all features.
 
 **Testing**:
 - Each new test file passes independently
-- Coverage increases toward targets from 35.1
+- Coverage increases toward targets from 36.1
 - No flaky tests (deterministic seeds where randomness is involved)
 
 **Estimated Changes**: ~800–1200 lines, 10–15 test files
 
 ---
 
-### Stage 35.3: Integration & Scenario Tests
+### Stage 36.3: Integration & Scenario Tests
 
 **Goal**: End-to-end tests covering full gameplay loops.
 
@@ -5375,7 +5426,7 @@ Last phase — tests cover the final state of all features.
 
 ---
 
-### Stage 35.4: Regression Test Suite & CI Hardening
+### Stage 36.4: Regression Test Suite & CI Hardening
 
 **Goal**: Ensure all tests run reliably in CI and past bugs stay fixed.
 
@@ -5410,4 +5461,4 @@ Last phase — tests cover the final state of all features.
 
 **Last Updated**: 2026-02-26
 **Status**: In Progress
-**Current Stage**: Phase 33 complete. Web portal branded with DOGMud dark fantasy theme, mobile-responsive layout, consistent help pages. Next: Phase 34 (Codebase Quality Pass).
+**Current Stage**: Phase 34 complete. Unified damage & mitigation pipeline (physical/magical/conviction), new Rhetoric skill, Taunt command, all weapons/armor/spells migrated to new fields. Next: Phase 35 (Codebase Quality Pass).

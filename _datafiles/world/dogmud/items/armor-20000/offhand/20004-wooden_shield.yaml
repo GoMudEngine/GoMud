@@ -5,4 +5,5 @@ description: A simple wooden shield.
 type: offhand
 subtype: wearable
 damagereduction: 5
+physical_mitigation: 5
 blockrating: 12  # Stage 7.1: Block defense bonus

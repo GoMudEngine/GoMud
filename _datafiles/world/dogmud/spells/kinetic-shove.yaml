@@ -12,3 +12,4 @@ base_folds: 3
 target_defense_type: physical
 effect_type: knockdown
 effect_magnitude: 150
+damage_multiplier: 0.55

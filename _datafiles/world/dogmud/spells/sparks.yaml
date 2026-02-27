@@ -12,3 +12,4 @@ base_folds: 4
 target_defense_type: physical
 effect_type: damage
 effect_magnitude: 120
+damage_multiplier: 0.45

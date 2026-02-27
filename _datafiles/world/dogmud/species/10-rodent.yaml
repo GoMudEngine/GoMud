@@ -7,6 +7,7 @@ angrycommands: [emote squeeks angrily.]
 damage:
   basedamage: 1
   variance: 1
+damage_multiplier: 0.15
 disabledslots: ['weapon', 'offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet']
 tameable: true
 stats:

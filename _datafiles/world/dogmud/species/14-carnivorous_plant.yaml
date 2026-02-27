@@ -29,4 +29,5 @@ damage:
   variance: 3
   critbuffids:
     - 39 # Venom (digestive toxin)
+damage_multiplier: 0.85
 disabledslots: ['weapon', 'offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet', 'body']

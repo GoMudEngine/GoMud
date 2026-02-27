@@ -25,4 +25,5 @@ stats:
 damage:
   basedamage: 50
   variance: 10
+damage_multiplier: 3.00
 disabledslots: []

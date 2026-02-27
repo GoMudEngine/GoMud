@@ -396,12 +396,16 @@ GamePlay:
 ################################################################################
 Balance:
   # ── COMBAT ──────────────────────────────────────────────────────────────────
-  GlobalDamageMultiplier: 1.0    # Scales all damage output (1.0 = no change)
-  GlobalDefenseMultiplier: 1.0   # Scales all avoidance rates (1.0 = no change)
   UnarmedBaseDamage: 2.0         # Base damage before stat bonuses
   UnarmedStrengthDivisor: 25.0   # Str / this = damage bonus
   UnarmedSkillDivisor: 10.0      # UnarmedSkill / this = damage bonus
   UnarmedBaseVariance: 3.0       # Base randomness of unarmed hits
+  UnarmedDamageMultiplier: 0.30  # Fist damage multiplier for unified pipeline
+  SkillMultiplierBase: 1.0       # Skill multiplier at rank 0
+  SkillMultiplierMax: 3.0        # Skill multiplier at soft cap (rank 50)
+  PhysicalMitigationCap: 0.75    # Max physical mitigation (75%)
+  MagicalMitigationCap: 0.75     # Max magical mitigation (75%)
+  ConvictionMitigationCap: 0.75  # Max conviction mitigation (75%)
 
   # ── REGEN RATES (fraction of pool max per tick; 0.01 = 1%) ────────────────
   PlayerHealthRegenPct: 0.01     # Player HP regen per tick (1% of HealthMax)
@@ -505,7 +509,7 @@ LLM:
 #
 ################################################################################
 Analytics:
-  Enabled: false
+  Enabled: true
   MaxEvents: 10000
   FlushIntervalSec: 300
   LogPath: "_datafiles/logs/combat-analytics.jsonl"

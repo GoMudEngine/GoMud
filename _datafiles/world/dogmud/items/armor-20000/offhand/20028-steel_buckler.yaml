@@ -6,5 +6,6 @@ description: A compact buckler of polished steel. Lighter and tougher than iron,
 type: offhand
 subtype: wearable
 damagereduction: 10
+physical_mitigation: 10
 blockrating: 18
 value: 22

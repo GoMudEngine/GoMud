@@ -35,7 +35,7 @@ Known issue: The instance save system can silently override template edits, maki
 ## Stat & Progression System
 - All stats (Strength, Dexterity, Perception, Vitality, Willpower, Charisma) are centered at **100 = human baseline**
 - Stats improve via **use-based progression only** — `OnStatUse()` triggers probabilistic advancement. There is NO level-based or XP-based stat gain; levels and XP are being removed from the game entirely.
-- Soft cap: raw stat >= 105 applies `adjusted = 100 + sqrt(raw-100) * 2`; effective ceiling ~116 at raw 150
+- Soft cap: stats are linear up to `StatSoftCap` (default 150), then diminishing returns: `adjusted = softCap + (raw - softCap)^0.75 * multiplier` (default multiplier 2.0). `StatSoftCapThreshold` (105) is the floor below which no adjustment applies.
 - Skills (9 total) cap softly at 50 (`skillSoftCap`). They progress via `OnSkillUse()` → `CheckSkillProgression()`, probabilistically, every ~25 uses.
 
 ## Dice & Rolling System
@@ -46,13 +46,38 @@ Known issue: The instance save system can silently override template edits, maki
 - Z-score thresholds: `ZScore >= 2.0` = crit; `ZScore <= -2.0` = fumble/backfire (~2.3% each, unaffected by `RollSpread`)
 - `util.Rand` / `util.LogRoll` are NOT used for hit or attack checks; only `dice.*` functions
 
-## Physical Armor Model
-Physical defense comes from exactly **3 sources** — never use Vitality as a proxy for armor:
-1. **Worn equipment** — sum of `DamageReduction` across all equipped slots (head, body, legs, feet, hands, neck, ring, offhand)
-2. **Natural armor** — species traits or mutations (e.g., turtle shell, stone skin); stored as a character field or condition (TBD)
-3. **Magical effects** — temporary conditions such as `ConditionShield` (Minor Shield spell)
+## Unified Damage & Mitigation Pipeline (Stage 34)
+All damage flows through a three-channel pipeline in `internal/combat/damage_pipeline.go`:
 
-Mental defense = `Willpower` stat only. Vitality governs hit points and physical endurance, not armor.
+### Damage Formula (all channels)
+```
+raw_damage = stat × SkillMultiplier(rank) × item_multiplier
+final_damage = ApplyMitigation(raw, mitigation%, cap)
+```
+Then `dice.RollStat(final_damage)` for variance.
+
+### Three Channels
+| Channel | Stat | Skills | Item Field | Mitigation Method |
+|---------|------|--------|-----------|------------------|
+| Physical | Strength | weapon/unarmed/ranged-combat | `damage_multiplier` (weapon) | `GetPhysicalMitigation()` |
+| Magical | Willpower | spellcasting | `damage_multiplier` (spell) | `GetMagicalMitigation()` |
+| Conviction | Charisma | rhetoric | 0.5 (taunt base) | `GetConvictionMitigation()` |
+
+### Skill Multiplier Curve
+`mult = base + (max - base) × sqrt(rank / softCap)` — Config: `SkillMultiplierBase` (1.0), `SkillMultiplierMax` (3.0)
+
+### Item Mitigation Fields (replaces old single DamageReduction)
+Items use `physical_mitigation`, `magical_mitigation`, `conviction_mitigation` (integer percentages).
+Old `DamageReduction` field is kept for legacy compatibility but no longer used by the pipeline.
+
+### Mitigation Caps
+Default 75% each: `PhysicalMitigationCap`, `MagicalMitigationCap`, `ConvictionMitigationCap`
+
+### Key Functions
+- `combat.CalcRawDamage(stat, skillRank, itemMult)` — compute raw damage
+- `combat.ApplyMitigation(raw, pct, cap)` — apply percentage reduction
+- `combat.SkillMultiplier(rank)` — sqrt curve from config
+- `character.GetPhysicalMitigation()` / `GetMagicalMitigation()` / `GetConvictionMitigation()` — sum equipment
 
 ## Regen System (Stage 29.5)
 All HP/SP/CP regeneration is **percentage-of-max** — never flat values.

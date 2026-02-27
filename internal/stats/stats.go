@@ -67,10 +67,17 @@ func (si *StatInfo) Recalculate(level int) {
 	si.Racial = si.GainsForLevel(level)
 	si.Value = si.Racial + si.Training + si.Mods
 	si.ValueAdj = si.Value
-	threshold := int(b.StatSoftCapThreshold)
+	softCap := int(b.StatSoftCap)       // 150 — linear growth up to here
+	threshold := int(b.StatSoftCapThreshold) // 105 — below this, no adjustment
 	multiplier := float64(b.StatSoftCapMultiplier)
-	if si.ValueAdj >= threshold {
-		overage := si.ValueAdj - 100
-		si.ValueAdj = 100 + int(math.Round(math.Sqrt(float64(overage))*multiplier))
+
+	if si.ValueAdj >= threshold && si.ValueAdj <= softCap {
+		// Between threshold and soft cap: linear (no compression)
+		// Stats earned are stats kept
+	} else if si.ValueAdj > softCap {
+		// Beyond soft cap: diminishing returns on overage past the cap
+		// adjusted = softCap + (raw - softCap)^0.75 * multiplier
+		overage := float64(si.ValueAdj - softCap)
+		si.ValueAdj = softCap + int(math.Round(math.Pow(overage, 0.75)*multiplier))
 	}
 }
