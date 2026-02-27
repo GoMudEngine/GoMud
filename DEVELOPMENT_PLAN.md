@@ -4658,7 +4658,11 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 30: Combat Analytics | 3 stages (30.1–30.3) | 16 hours | **30.1–30.3 Complete** |
 | Phase 31: Crafting Expansion | 6 stages (31.1–31.6) | 30 hours | 31.1–31.6 Complete |
 | Phase 32: Moon Phase Splash Screens | 1 stage (32.1) | 2 hours | **32.1 Complete** |
-| **Total** | **~92 stages** | **~591 hours** | |
+| Phase 33: Enchanting System | — | — | Complete |
+| Phase 34: Unified Damage Pipeline | — | — | Complete |
+| Phase 35: Combat Balance & Mob Equipment | — | — | Complete |
+| Phase 36: Dialogue System Fix & Quest Wiring | 1 stage | 4 hours | **Complete** |
+| **Total** | **~96 stages** | **~600 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
 
@@ -5461,4 +5465,4 @@ Last phase — tests cover the final state of all features.
 
 **Last Updated**: 2026-02-27
 **Status**: In Progress
-**Current Stage**: Phase 35 combat balance + mob equipment complete (merge d681789). Resource depletion penalties, best-of-all defense resolution, defense floor, prone multipliers, caster weapons (wand/sceptre/staff), 12 new items, 26 mobs equipped across 6 zones. Next: Phase 35 (Codebase Quality Pass).
+**Current Stage**: Phase 36 dialogue system fix & quest wiring complete (merge d3a914c). Fixed dialogue loader doubled-path bug, wired quest hooks into 10 dialogue files for quests 2-4/6-10, converted all NPC tree text to first-person speech, removed requires gates from quest-granting nodes. Next: Phase 37 (Test Coverage Pass).
