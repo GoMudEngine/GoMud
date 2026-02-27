@@ -25,4 +25,4 @@ spawninfo:
   respawnrate: 2 real minutes
 - mobid: 65
   message: A training dummy stands ready at the edge of the yard.
-  respawnrate: 5 real minutes
+  respawnrate: 15 real seconds

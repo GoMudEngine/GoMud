@@ -1,5 +1,6 @@
 // Basin Gate - Room 102
 // Basin Warden checks quest state and responds accordingly.
+// Steps: cave -> warden -> end
 
 const wardenMobId = 56;
 
@@ -16,8 +17,13 @@ function onEnter(user, room) {
         warden.Command('say Gate is open to you. Safe travels out there.', 1.5);
         room.SetLocked("south", false);
 
+    } else if ( user.HasQuest("1-warden") ) {
+        // Already got warden speech but hasn't left yet -- just open gate
+        warden.Command('emote nods toward the open gate.', 0.5);
+        room.SetLocked("south", false);
+
     } else if ( user.HasQuest("1-cave") ) {
-        // First-time graduation -- full ceremony, give rewards
+        // First-time graduation -- warden speech, then end step
         warden.Command('say Your record is complete. Six trials, six instructors -- and the cave.', 1.0);
         warden.Command('say The Basin Warden has one function: to ensure that no one leaves Sanctum Basin unprepared. You are prepared.', 2.5);
         warden.Command('say The gate is open. Whatever you find south of here -- remember what you learned in the basin.', 4.0);
@@ -25,6 +31,7 @@ function onEnter(user, room) {
         warden.Command('say The south road reaches Confluence within a day\'s walk. Follow the river north from there and you will find New Plymouth -- the largest settlement in this part of Gaius. That is where most people head first.', 7.0);
         warden.Command('emote steps aside and unlatches the gate with a single practiced motion.', 9.0);
         room.SetLocked("south", false);
+        user.GiveQuest("1-warden");
         user.GiveQuest("1-end");
 
     } else if ( !user.HasQuest("1-start") ) {

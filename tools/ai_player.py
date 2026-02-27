@@ -70,6 +70,7 @@ PERIODIC_CHECK_INTERVAL = 25
 SYSTEM_PROMPT = """\
 You are an AI play-tester in DOGMud, a text MUD set in a dark fantasy world reshaped by the
 Chrysalis plague. Your job is to explore, interact with everything, and report genuine bugs.
+Your secondary goal is to acquire and wear the best equipment you can find or craft.
 
 == OUTPUT FORMAT ==
 Respond with EXACTLY ONE MUD command per message. No commentary, no quotes, no explanations.
@@ -84,8 +85,8 @@ Items:        get <item>, drop <item>, inventory, equip <item>, remove <item>
               use <item>, eat <item>, drink <item>
 Shops:        list, buy <item>, sell <item>
 Info:         status, skills, spells, quests, conditions, cooldowns, map, help <topic>
-Crafting:     forage, search, craft
-Other:        read <sign>, bug <description>, suggest <description>
+Crafting:     forage, search, craft, help craft
+Other:        look <sign>, bug <description>, suggest <description>
 
 == NPC TARGETING — CRITICAL ==
 You MUST use the NPC's exact name keyword from the room description. Never guess.
@@ -101,27 +102,33 @@ If you get "not recognized" or "couldn't find" — you used the wrong name. Type
 re-read the room and find the correct keyword. Do NOT file a bug for targeting errors.
 
 == TUTORIAL QUEST CHAIN ==
-New characters start in Sanctum Basin with a guided quest chain. Each step happens in a
-specific room and is triggered automatically when you enter while holding the right quest
-flag. Follow this sequence:
+New characters start in Sanctum Basin with a guided quest chain (19 steps). Each step
+requires you to PERFORM A SPECIFIC ACTION — it is not enough to just walk into the room.
+Follow the NPC instructions and use the commands they tell you to use.
 
-  1. Starting area (room 113) — enter to begin. Gives you the first quest flags.
-  2. Market Street (room 108) — introduces shopping. Walk there after step 1.
-  3. Training Ground (room 114) — introduces combat. Fight the training dummy until it
-     "shatters." Use "attack dummy" to fight. After it breaks, you advance.
-  4. Smithy (room 109) — introduces crafting. Watch the scripted event.
-  5. Workshop (room 111) — introduces alchemy. Watch the scripted event.
-  6. Ranger's Ledge (room 106) — introduces wilderness skills. Enter to advance.
-  7. Observatory (room 116) — Elder Saris explains spellcasting. Enter to advance.
-  8. Cave system (rooms 118→119→120) — the final test. Fight through bats and goblin
-     guards to reach the Aberrant Chrysalis boss in room 120. Defeat it. The caves are
-     lit by bioluminescent lichen — you can see without any light spell.
-  9. South Gate (room 102) — talk to the Warden to complete the tutorial.
+  1. Academy Hall (room 113) — enter to begin. Gives you the first quest flags.
+  2. Market Street (room 108) — Merchant Adela teaches shopping:
+     a. Type "list" to see her wares, then "buy <item>" to purchase something.
+     b. Type "wield <weapon>" or "wear <armor>" to equip what you bought.
+     Adela reacts to each action before advancing you.
+  3. Training Yard (room 114) — Combat Trainer teaches fighting:
+     a. Type "attack dummy" to fight the training dummy until it breaks.
+  4. The Forge (room 109) — Korvath teaches crafting:
+     a. Type "craft iron dagger" after he gives you materials.
+  5. Alchemist's Workshop (room 111) — Yenna teaches alchemy:
+     a. Type "craft healing poultice" after she gives you materials.
+  6. West Meadow (room 106) — Wilderness Guide Fen teaches survival:
+     a. Type "forage" when Fen tells you to.
+     b. Type "track" when Fen tells you to.
+  7. Observatory (room 116) — Elder Saris teaches spellcasting:
+     a. Type "cast conviction-spike echo" to practice on the Chrysalis Echo.
+  8. Cave system (rooms 118→119→120) — the final test. Fight through to the
+     Aberrant Chrysalis boss in room 120. Defeat it.
+  9. Basin Gate (room 102) — the Warden grants passage and completes the tutorial.
 
-IMPORTANT: Quest steps trigger on room entry. If nothing happens when you enter a room,
-you probably skipped a step. Run "quests" to check your progress, then go back to the
-room for the step you are actually on. The quest flags are sequential — you cannot skip
-ahead.
+IMPORTANT: Each sub-step requires you to actually USE the command the NPC tells you.
+If nothing happens, run "quests" to check your progress, then do what the quest
+description says. The quest flags are sequential — you cannot skip ahead.
 
 == HOW TO NAVIGATE ==
 Rooms show exits in their description and in a compass in the prompt. Read the exits
@@ -138,7 +145,7 @@ When exploring Sanctum Basin, the general layout is:
 
 == COMBAT TIPS ==
 - Check "status" before fights to know your HP
-- Your starting spell is Conviction Spike: "cast mm" to use it in combat
+- Your starting spell is Conviction Spike: "cast conviction-spike" to use it in combat
 - Use "attack <name>" to engage a mob, then the fight proceeds automatically
 - You can use "bash", "trip", "kick", "grapple" as special moves during combat
 - If low on health, "flee" to escape, then eat food or wait to regenerate
@@ -275,8 +282,42 @@ async def query_ollama(history: list[dict], session: aiohttp.ClientSession) -> s
 
 
 # ---------------------------------------------------------------------------
-# Main loop
+# Prompt-driven I/O helpers
 # ---------------------------------------------------------------------------
+
+async def read_until(reader, marker: str, timeout: float = 10.0) -> str:
+    """Read from the MUD until `marker` appears in the accumulated text, or timeout."""
+    chunks = []
+    deadline = asyncio.get_event_loop().time() + timeout
+    while True:
+        remaining = deadline - asyncio.get_event_loop().time()
+        if remaining <= 0:
+            break
+        try:
+            data = await asyncio.wait_for(reader.read(8192), timeout=min(remaining, 2.0))
+            if not data:
+                break
+            chunks.append(data)
+            combined = "".join(chunks)
+            if marker in combined:
+                # Drain any trailing data that arrives immediately after the marker
+                await asyncio.sleep(0.2)
+                try:
+                    extra = await asyncio.wait_for(reader.read(8192), timeout=0.3)
+                    if extra:
+                        chunks.append(extra)
+                except asyncio.TimeoutError:
+                    pass
+                break
+        except asyncio.TimeoutError:
+            # No data within this read window; check if we already have marker
+            combined = "".join(chunks)
+            if marker in combined:
+                break
+            # If no marker yet but still within overall deadline, keep reading
+            continue
+    return "".join(chunks)
+
 
 async def read_until_pause(reader, timeout: float = 2.0) -> str:
     """Read from the MUD until there's a pause in output."""
@@ -294,21 +335,33 @@ async def read_until_pause(reader, timeout: float = 2.0) -> str:
     return "".join(chunks)
 
 
-async def connect():
-    """Open a telnet connection to the MUD AI port. Returns (reader, writer)."""
-    reader, writer = await telnetlib3.open_connection(
-        MUD_HOST, MUD_PORT,
-        encoding='utf-8',
-        term='dumb',
-        cols=120, rows=50,
-    )
-    # Read and discard splash screen
-    await asyncio.sleep(2)
-    splash = await read_until_pause(reader, 3.0)
+# ---------------------------------------------------------------------------
+# Connection and login
+# ---------------------------------------------------------------------------
+
+async def connect(reader, writer):
+    """Read and discard the splash screen + initial username prompt.
+
+    Returns the text of the splash (for logging).  The reader is left
+    positioned right after the 'Username (or "new"):' prompt, ready
+    for the caller to send a username or "new".
+    """
+    splash = await read_until(reader, ":", timeout=15.0)
     splash = clean_text(splash)
     if splash:
         print(f"[{timestamp()}] SPLASH:\n{splash[:500]}\n")
-    return reader, writer
+    return splash
+
+
+async def send_and_wait(writer, reader, text: str, label: str,
+                        marker: str = ":", timeout: float = 10.0) -> str:
+    """Send a line to the MUD and read until the next prompt marker appears."""
+    writer.write(text + "\r\n")
+    resp = await read_until(reader, marker, timeout=timeout)
+    resp = clean_text(resp)
+    if resp:
+        print(f"[{timestamp()}] {label}:\n{resp[:400]}\n")
+    return resp
 
 
 async def attempt_login():
@@ -318,18 +371,25 @@ async def attempt_login():
     (server disconnects on bad login), so caller must reconnect.
     """
     print(f"[{timestamp()}] Attempting login as {AI_USERNAME}...")
-    reader, writer = await connect()
+    reader, writer = await telnetlib3.open_connection(
+        MUD_HOST, MUD_PORT,
+        encoding='utf-8',
+        term='dumb',
+        cols=120, rows=50,
+    )
 
-    # Send username
-    writer.write(AI_USERNAME + "\r\n")
-    await asyncio.sleep(1.5)
-    resp = clean_text(await read_until_pause(reader, 2.0))
-    if resp:
-        print(f"[{timestamp()}] LOGIN:\n{resp[:300]}\n")
+    # Read splash + username prompt (ends with ":")
+    await connect(reader, writer)
 
-    # Send password
+    # Send username — expect password prompt (also ends with ":")
+    resp = await send_and_wait(writer, reader, AI_USERNAME, "LOGIN_USER",
+                               marker=":", timeout=8.0)
+
+    # Send password — the response is either the game world (success)
+    # or an error message (failure + disconnect).  Game prompts don't
+    # have a single reliable marker so we just read until a pause.
     writer.write(AI_PASSWORD + "\r\n")
-    await asyncio.sleep(3)
+    await asyncio.sleep(2)
     resp = clean_text(await read_until_pause(reader, 3.0))
     if resp:
         print(f"[{timestamp()}] LOGIN RESPONSE:\n{resp[:500]}\n")
@@ -362,40 +422,55 @@ async def create_account():
     Returns (reader, writer) logged in and ready to play.
     """
     print(f"[{timestamp()}] Creating new account: {AI_USERNAME}")
-    reader, writer = await connect()
+    reader, writer = await telnetlib3.open_connection(
+        MUD_HOST, MUD_PORT,
+        encoding='utf-8',
+        term='dumb',
+        cols=120, rows=50,
+    )
 
-    async def send_and_read(text, label, pause=1.5, read_timeout=2.0):
-        writer.write(text + "\r\n")
-        await asyncio.sleep(pause)
-        resp = clean_text(await read_until_pause(reader, read_timeout))
-        if resp:
-            print(f"[{timestamp()}] {label}:\n{resp[:300]}\n")
-        return resp
+    # Read splash + username prompt
+    await connect(reader, writer)
 
-    # Step 1: send "new" to start account creation
-    await send_and_read("new", "NEW_ACCOUNT")
+    # Step 1: send "new" — expect "Choose your username:" prompt
+    await send_and_wait(writer, reader, "new", "NEW_ACCOUNT",
+                        marker=":", timeout=8.0)
 
-    # Step 2: choose username
-    await send_and_read(AI_USERNAME, "SET_USERNAME")
+    # Step 2: choose username — expect "Choose your password:" prompt
+    await send_and_wait(writer, reader, AI_USERNAME, "SET_USERNAME",
+                        marker=":", timeout=8.0)
 
-    # Step 3: choose password
-    await send_and_read(AI_PASSWORD, "SET_PASSWORD")
+    # Step 3: choose password — expect "Repeat your password:" prompt
+    await send_and_wait(writer, reader, AI_PASSWORD, "SET_PASSWORD",
+                        marker=":", timeout=8.0)
 
-    # Step 4: repeat password
-    await send_and_read(AI_PASSWORD, "VERIFY_PASSWORD")
+    # Step 4: repeat password — expect "Email Address" or "screen reader" prompt
+    await send_and_wait(writer, reader, AI_PASSWORD, "VERIFY_PASSWORD",
+                        marker=":", timeout=8.0)
 
-    # Step 5: email (optional — send empty)
-    await send_and_read("", "EMAIL")
+    # Step 5: email (optional — send empty) — expect "screen reader?" prompt
+    await send_and_wait(writer, reader, "", "EMAIL",
+                        marker=":", timeout=8.0)
 
-    # Step 6: screen reader prompt
-    await send_and_read("n", "SCREEN_READER")
+    # Step 6: screen reader prompt — expect "create a new user" confirm prompt
+    await send_and_wait(writer, reader, "n", "SCREEN_READER",
+                        marker=":", timeout=8.0)
 
-    # Step 7: confirm creation
-    resp = await send_and_read("y", "CONFIRM_CREATE", pause=3, read_timeout=3.0)
+    # Step 7: confirm creation — after this the server logs us in.
+    # The response is the game world, not a prompt, so read until pause.
+    writer.write("y\r\n")
+    await asyncio.sleep(3)
+    resp = clean_text(await read_until_pause(reader, 3.0))
+    if resp:
+        print(f"[{timestamp()}] CONFIRM_CREATE:\n{resp[:500]}\n")
 
     print(f"[{timestamp()}] Account creation complete.")
     return reader, writer
 
+
+# ---------------------------------------------------------------------------
+# Main loop
+# ---------------------------------------------------------------------------
 
 async def main():
     print(f"[{timestamp()}] DOGMud AI Player starting")

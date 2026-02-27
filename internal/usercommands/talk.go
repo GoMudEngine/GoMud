@@ -204,8 +204,14 @@ func buildPlayerCondition(user *users.UserRecord) string {
 func buildTutorialContext(user *users.UserRecord) string {
 	const questId = 1 // The Sanctum Trials
 	steps := []string{
-		"start", "mutation", "shopping", "combat", "crafting",
-		"alchemy", "wilderness", "magic", "cave", "end",
+		"start", "mutation",
+		"shopping_arrive", "shopping_buy", "shopping_equip",
+		"combat_arrive", "combat_defeat",
+		"crafting_arrive", "crafting_craft",
+		"alchemy_arrive", "alchemy_craft",
+		"wilderness_arrive", "wilderness_forage", "wilderness_track",
+		"magic_arrive", "magic_cast",
+		"cave", "warden", "end",
 	}
 
 	progress := user.Character.GetQuestProgress()

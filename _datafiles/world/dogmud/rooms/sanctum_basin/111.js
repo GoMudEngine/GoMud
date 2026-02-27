@@ -1,5 +1,6 @@
 // The Alchemist's Workshop - Room 111
 // Alchemist Yenna gives mats, player crafts healing poultice, Yenna reacts to outcome.
+// Sub-steps: alchemy_arrive -> alchemy_craft
 
 const alchemistMobId = 53;
 const healersRootId  = 40004;
@@ -11,8 +12,8 @@ var craftIdleTicks  = 0;
 
 function onEnter(user, room) {
 
-    // Only trigger if player has done crafting but not yet alchemy
-    if ( !user.HasQuest("1-crafting") || user.HasQuest("1-alchemy") ) {
+    // Only trigger if player has done crafting_craft but not yet alchemy_arrive
+    if ( !user.HasQuest("1-crafting_craft") || user.HasQuest("1-alchemy_arrive") ) {
         return true;
     }
 
@@ -32,6 +33,7 @@ function onEnter(user, room) {
     alchemist.Command('say I have put two healer\'s roots and a cloth strip in your pack.', 6.0);
     alchemist.Command('say Type <ansi fg="command">craft</ansi> to see your options. Then type <ansi fg="command">craft healing poultice</ansi>. One attempt.', 7.5);
 
+    user.GiveQuest("1-alchemy_arrive");
     craftStarted   = false;
     craftIdleTicks = 0;
 
@@ -42,7 +44,7 @@ function onCommand(cmd, rest, user, room) {
 
     // Detect when the player actually starts crafting (not just listing recipes)
     if ( cmd == "craft" && rest != "" && rest != "list" ) {
-        if ( user.HasQuest("1-crafting") && !user.HasQuest("1-alchemy") ) {
+        if ( user.HasQuest("1-alchemy_arrive") && !user.HasQuest("1-alchemy_craft") ) {
             craftStarted   = true;
             craftIdleTicks = 0;
         }
@@ -74,7 +76,7 @@ function onIdle(room) {
 
     for ( var i = 0; i < players.length; i++ ) {
         var player = players[i];
-        if ( !player.HasQuest("1-crafting") || player.HasQuest("1-alchemy") ) {
+        if ( !player.HasQuest("1-alchemy_arrive") || player.HasQuest("1-alchemy_craft") ) {
             continue;
         }
 
@@ -100,7 +102,7 @@ function onIdle(room) {
             }
         }
 
-        player.GiveQuest("1-alchemy");
+        player.GiveQuest("1-alchemy_craft");
     }
 }
 

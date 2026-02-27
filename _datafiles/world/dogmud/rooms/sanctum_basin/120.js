@@ -13,7 +13,7 @@ function onEnter(user, room) {
     user.SendText('');
 
     // Track when an eligible player enters so onIdle knows to watch for the kill
-    if ( user.HasQuest("1-magic") && !user.HasQuest("1-cave") ) {
+    if ( user.HasQuest("1-magic_cast") && !user.HasQuest("1-cave") ) {
         bossEngaged = true;
     }
 }
@@ -40,7 +40,7 @@ function onIdle(room) {
     var anyAdvanced = false;
     for ( var i = 0; i < players.length; i++ ) {
         var player = players[i];
-        if ( player.HasQuest("1-magic") && !player.HasQuest("1-cave") ) {
+        if ( player.HasQuest("1-magic_cast") && !player.HasQuest("1-cave") ) {
             player.GiveQuest("1-cave");
             player.SendText('');
             player.SendText('The Aberrant collapses. The pressure in the air releases. Somewhere above, Elder Saris is probably not surprised.');

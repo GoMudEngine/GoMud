@@ -143,7 +143,7 @@ function onCommand(cmd, rest, user, room) {
     if ( cmd == "talk" || cmd == "greet" ) {
         var priest = room.GetMob(priestMobId, true);
         if ( priest != null ) {
-            if ( user.HasQuest("1-shopping") ) {
+            if ( user.HasQuest("1-shopping_arrive") ) {
                 priest.Command('say Your Awakening is behind you. The trials are ahead. Type <ansi fg="command">quest</ansi> to see what remains.');
             } else if ( user.HasQuest("1-mutation") ) {
                 priest.Command('say Visit the Merchant on Market Street -- east to Town Square, then south. She will show you how commerce works here.');

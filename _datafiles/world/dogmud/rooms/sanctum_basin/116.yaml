@@ -23,3 +23,6 @@ spawninfo:
 - mobid: 55
   message: Elder Saris turns from the sighting device, robes shifting in the wind.
   respawnrate: 2 real minutes
+- mobid: 112
+  message: A faint shimmer coalesces into the translucent outline of a Chrysalis Echo.
+  respawnrate: 15 real seconds

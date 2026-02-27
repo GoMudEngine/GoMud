@@ -1,16 +1,16 @@
 // Training Yard - Room 114
 // Combat Trainer gives combat instruction and checks if training dummy is defeated.
+// Sub-steps: combat_arrive -> combat_defeat
 
 const trainerMobId = 51;
 const dummyMobId = 65;
 
-var dummySpawnedForUser = false;
 var trainerHasCommented = false;
 
 function onEnter(user, room) {
 
-    // Only trigger if player has completed shopping step but hasn't done combat yet
-    if ( !user.HasQuest("1-shopping") || user.HasQuest("1-combat") ) {
+    // Only trigger if player has completed shopping_equip but hasn't arrived yet
+    if ( !user.HasQuest("1-shopping_equip") || user.HasQuest("1-combat_arrive") ) {
         return true;
     }
 
@@ -25,24 +25,38 @@ function onEnter(user, room) {
     trainer.Command('say You are here for combat training.', 1.0);
     trainer.Command('say The fundamentals are simple: close distance, maintain balance, apply force. Everything else is variation.', 2.5);
     trainer.Command('say The training dummy is an easy opponent. It will not overwhelm you.', 4.0);
-    trainer.Command('say Strike it. Use the <ansi fg="command">attack dummy</ansi> command. Observe what happens.', 5.5);
+    trainer.Command('say Defeat it. Use <ansi fg="command">attack dummy</ansi> to start the fight. Do not stop until it falls.', 5.5);
     trainer.Command('emote watches with arms folded, the faintest smile on their face.', 6.5);
 
-    dummySpawnedForUser = true;
+    user.GiveQuest("1-combat_arrive");
 
     return true;
 }
 
 function onIdle(room) {
 
-    // Check if dummy has been defeated (no longer present) and player is in progress
-    if ( !dummySpawnedForUser ) {
+    // Check if any player needs to defeat the dummy
+    var players = room.GetPlayers();
+    if ( players == null ) {
+        return;
+    }
+
+    var hasEligiblePlayer = false;
+    for ( var i = 0; i < players.length; i++ ) {
+        if ( players[i].HasQuest("1-combat_arrive") && !players[i].HasQuest("1-combat_defeat") ) {
+            hasEligiblePlayer = true;
+            break;
+        }
+    }
+
+    if ( !hasEligiblePlayer ) {
         return;
     }
 
     var dummy = room.GetMob(dummyMobId, false);
+
     if ( dummy != null ) {
-        // Dummy is still alive — only comment once the player has actually hit it
+        // Dummy is still alive — comment once when player has hit it
         if ( !trainerHasCommented && dummy.GetHealth() < dummy.GetHealthMax() ) {
             trainerHasCommented = true;
             var trainer = room.GetMob(trainerMobId, false);
@@ -56,16 +70,10 @@ function onIdle(room) {
         return;
     }
 
-    // Dummy is gone - find players in room who have the combat quest pending
-    var players = room.GetPlayers();
-    if ( players == null ) {
-        dummySpawnedForUser = false;
-        return;
-    }
-
+    // Dummy is gone - grant combat_defeat to eligible players
     for ( var i = 0; i < players.length; i++ ) {
         var player = players[i];
-        if ( player.HasQuest("1-shopping") && !player.HasQuest("1-combat") ) {
+        if ( player.HasQuest("1-combat_arrive") && !player.HasQuest("1-combat_defeat") ) {
 
             var trainer = room.GetMob(trainerMobId, true);
             if ( trainer != null ) {
@@ -73,11 +81,10 @@ function onIdle(room) {
                 trainer.Command('say The Forge is south of here. Speak with Korvath -- physical mastery and craft mastery are not separate things.', 2.5);
             }
 
-            player.GiveQuest("1-combat");
+            player.GiveQuest("1-combat_defeat");
         }
     }
 
-    dummySpawnedForUser = false;
     trainerHasCommented = false;
 }
 
@@ -85,8 +92,8 @@ function onCommand(cmd, rest, user, room) {
     if ( cmd == "talk" ) {
         var trainer = room.GetMob(trainerMobId, true);
         if ( trainer != null ) {
-            if ( user.HasQuest("1-shopping") && !user.HasQuest("1-combat") ) {
-                trainer.Command('say Attack the training dummy. Type <ansi fg="command">attack dummy</ansi>.');
+            if ( user.HasQuest("1-combat_arrive") && !user.HasQuest("1-combat_defeat") ) {
+                trainer.Command('say Defeat the training dummy. Type <ansi fg="command">attack dummy</ansi> to start the fight.');
             } else {
                 trainer.Command('say Keep practicing. The body learns through repetition, not instruction.');
             }
@@ -97,11 +104,8 @@ function onCommand(cmd, rest, user, room) {
 }
 
 function onExit(user, room) {
-    dummySpawnedForUser = false;
-    trainerHasCommented = false;
 }
 
 function onLoad(room) {
-    dummySpawnedForUser = false;
     trainerHasCommented = false;
 }

@@ -1,5 +1,6 @@
 // The Forge - Room 109
 // Blacksmith Korvath gives mats, player crafts iron dagger, Korvath reacts to outcome.
+// Sub-steps: crafting_arrive -> crafting_craft
 
 const smithMobId   = 52;
 const ironIngotId  = 40001;
@@ -11,8 +12,8 @@ var craftIdleTicks  = 0;
 
 function onEnter(user, room) {
 
-    // Only trigger if player has done combat but not yet crafting
-    if ( !user.HasQuest("1-combat") || user.HasQuest("1-crafting") ) {
+    // Only trigger if player has done combat_defeat but not yet crafting_arrive
+    if ( !user.HasQuest("1-combat_defeat") || user.HasQuest("1-crafting_arrive") ) {
         return true;
     }
 
@@ -32,6 +33,7 @@ function onEnter(user, room) {
     smith.Command('say I have put an iron ingot and a leather strip in your pack.', 6.5);
     smith.Command('say Type <ansi fg="command">craft</ansi> to see your options. Then type <ansi fg="command">craft iron dagger</ansi>. One attempt. Go.', 8.0);
 
+    user.GiveQuest("1-crafting_arrive");
     craftStarted   = false;
     craftIdleTicks = 0;
 
@@ -42,7 +44,7 @@ function onCommand(cmd, rest, user, room) {
 
     // Detect when the player actually starts crafting (not just listing recipes)
     if ( cmd == "craft" && rest != "" && rest != "list" ) {
-        if ( user.HasQuest("1-combat") && !user.HasQuest("1-crafting") ) {
+        if ( user.HasQuest("1-crafting_arrive") && !user.HasQuest("1-crafting_craft") ) {
             craftStarted   = true;
             craftIdleTicks = 0;
         }
@@ -74,7 +76,7 @@ function onIdle(room) {
 
     for ( var i = 0; i < players.length; i++ ) {
         var player = players[i];
-        if ( !player.HasQuest("1-combat") || player.HasQuest("1-crafting") ) {
+        if ( !player.HasQuest("1-crafting_arrive") || player.HasQuest("1-crafting_craft") ) {
             continue;
         }
 
@@ -99,7 +101,7 @@ function onIdle(room) {
             }
         }
 
-        player.GiveQuest("1-crafting");
+        player.GiveQuest("1-crafting_craft");
     }
 }
 
