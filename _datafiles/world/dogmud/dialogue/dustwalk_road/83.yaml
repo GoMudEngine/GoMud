@@ -60,40 +60,52 @@ patterns:
 
 tree:
   root:
-    text: "Tessara looks up from a stack of patrol reports, one hand resting on the hilt of her shortsword. 'Traveller. You have come at an interesting time. The road south has grown dangerous and I could use someone with steady hands. Or you could just be passing through -- either way, you are welcome at the post.'"
-    hints: "You could ask Tessara about the bandits, the road, or how you might help."
+    text: "Traveller. You have come at an interesting time. The road south has grown dangerous and I could use someone with steady hands. Or you could just be passing through -- either way, you are welcome at the post."
+    hints: "Ask me about the bandits, the road, or how you might help."
+    variants:
+      - questRequired: ["4-start"]
+        questExcluded: ["4-end"]
+        text: "Any luck at the bandit camp? I need hard evidence -- documents, a purse with identifying marks, anything. Without proof, the Watchers will not move."
+        hints: "Find evidence at the bandit camp south of the ridgeline and bring it to Tessara."
+      - questRequired: ["4-end"]
+        text: "The report went east this morning. The Watchers will have a patrol out within the week, thanks to you. The road is already safer."
 
   nodes:
     - id: bandits
       triggers: ["bandit", "bandits", "trouble", "danger", "south", "dangerous"]
-      text: "Tessara's expression hardens. 'A group has set up in the gullies south of the ridgeline. They have been hitting merchant caravans for weeks -- small ones, the kind that cannot afford guards. I have sent reports to Watchers Crossing, but the wardens there have their own concerns. By the time they act, the bandits will have moved on and set up somewhere else.'"
+      text: "A group has set up in the gullies south of the ridgeline. They have been hitting merchant caravans for weeks -- small ones, the kind that cannot afford guards. I have sent reports to Watchers Crossing, but the wardens there have their own concerns. By the time they act, the bandits will have moved on and set up somewhere else."
       hints: "Ask how you could help, or about Watchers Crossing."
       unlocks: ["help_quest", "watchers_info"]
 
     - id: help_quest
       triggers: ["help", "investigate", "quest", "task", "what can i do", "willing"]
-      requires: ["bandits"]
-      text: "Tessara studies you for a moment, weighing something behind those steady eyes. 'I cannot leave the post. But if you were willing to scout the camp and bring me evidence -- documents, anything with names or schedules -- I could include it in my next report. Hard evidence is what the Watchers need to justify sending a patrol. It would make a real difference.'"
+      questExcluded: ["4-start"]
+      grantsQuest: "4-start"
+      text: "I cannot leave the post. But if you were willing to scout the camp and bring me evidence -- documents, anything with names or schedules -- I could include it in my next report. Hard evidence is what the Watchers need to justify sending a patrol. It would make a real difference."
       hints: "Accept the task and head south past the ridgeline to find the bandit camp."
       moodChange: friendly
 
     - id: watchers_info
       triggers: ["watchers", "crossing", "east", "towers", "settlement"]
-      text: "Tessara gestures east. 'Watchers Crossing is three leagues that way, give or take. A proper settlement with walls and towers. They patrol the eastern approaches and keep the trade routes open -- when they have the people for it. The eastern fork from the ridgeline will take you there.'"
+      text: "Watchers Crossing is three leagues that way, give or take. A proper settlement with walls and towers. They patrol the eastern approaches and keep the trade routes open -- when they have the people for it. The eastern fork from the ridgeline will take you there."
 
     - id: road_info
       triggers: ["road", "dustwalk", "route", "travel", "where"]
-      text: "'Dustwalk Road runs from Sanctum Basin down through the scrublands to the eastern territories. This post sits roughly in the middle -- north is the plateau, south is open country, east leads to Watchers Crossing. The road is old and well-built, but maintenance has slipped. I do what I can.'"
+      text: "Dustwalk Road runs from Sanctum Basin down through the scrublands to the eastern territories. This post sits roughly in the middle -- north is the plateau, south is open country, east leads to Watchers Crossing. The road is old and well-built, but maintenance has slipped. I do what I can."
 
     - id: about_tessara
       triggers: ["you", "yourself", "warden", "who are you", "your story", "tessara"]
-      text: "'I have been walking roads for longer than I care to count. Started as a caravan guard, moved to the wardens when I got tired of protecting someone else's profits. Out here, you protect the road itself -- and everyone on it. It suits me.'"
+      text: "I have been walking roads for longer than I care to count. Started as a caravan guard, moved to the wardens when I got tired of protecting someone else's profits. Out here, you protect the road itself -- and everyone on it. It suits me."
       moodChange: friendly
 
     - id: evidence_return
       triggers: ["evidence", "purse", "letter", "found", "proof", "report", "documents"]
       requires: ["help_quest"]
-      text: "Tessara takes the purse and unfolds the letter inside. Her eyes scan the contents and her jaw tightens. 'Caravan schedules. Supply routes. This is not petty theft -- someone is feeding them information from inside the trading houses. This changes things.' She folds the letter carefully. 'You have done good work. The Watchers will act on this.'"
+      questRequired: ["4-start"]
+      questExcluded: ["4-end"]
+      requiresItem: 16
+      grantsQuest: "4-end"
+      text: "Caravan schedules. Supply routes. This is not petty theft -- someone is feeding them information from inside the trading houses. This changes things. You have done good work. The Watchers will act on this."
       moodChange: grateful
 
 memory:
