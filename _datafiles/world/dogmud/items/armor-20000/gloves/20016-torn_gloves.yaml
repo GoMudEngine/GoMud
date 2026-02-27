@@ -5,6 +5,7 @@ description: The gloves are in terrible shape.
 type: gloves
 subtype: wearable
 damagereduction: 2
+physical_mitigation: 2
 statmods:
   strength: 1
   perception: -1

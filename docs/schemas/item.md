@@ -51,6 +51,7 @@ _datafiles/world/dogmud/items/{type_folder}/{subtype_folder?}/{itemid}-{ConvertF
 |-------|------|----------|-------|
 | `hands` | WeaponHands | **yes** | `1` or `2`. |
 | `damage` | Damage | **yes** | See Damage sub-fields below. |
+| `damage_multiplier` | float | **yes** | Scaling factor for unified damage pipeline (0.15–2.5). |
 | `parryrating` | int | no | Adds to parry defense. |
 | `speedmultiplier` | float | no | Attack speed modifier. 1.0 = unarmed baseline. <1.0 = slower, >1.0 = faster. |
 | `staminacost` | int | no | Stamina consumed per attack. |
@@ -76,7 +77,10 @@ damage:
 
 | Field | Type | Required | Notes |
 |-------|------|----------|-------|
-| `damagereduction` | int | no | Flat damage reduction when worn. |
+| `physical_mitigation` | int | no | Physical damage reduction % (plate: 12–18, leather: 4–8). |
+| `magical_mitigation` | int | no | Magical damage reduction % (robes: 5–12, amulets: 3–8). |
+| `conviction_mitigation` | int | no | Conviction damage reduction % (willpower items: 3–8). |
+| `damagereduction` | int | no | Legacy field (prefer mitigation fields above). |
 | `blockrating` | int | no | Shield block bonus (offhand only). |
 | `wornbuffids` | list | no | Buff IDs applied while item is worn; removed when unequipped. |
 | `statmods` | map | no | Stat modifiers while worn. See StatMods below. |
@@ -140,6 +144,7 @@ weight: 8.0
 speedmultiplier: 0.7           # Slightly slower than unarmed baseline
 staminacost: 8
 grapplemodifier: 0.7           # Harder to grapple while holding
+damage_multiplier: 1.0         # Standard iron weapon (0.15=fists, 2.5=legendary)
 damage:
   basedamage: 6
   variance: 2                  # Hits for 4–8 damage
@@ -155,7 +160,7 @@ namesimple: belt
 description: Just enough to hold your pants up.
 type: belt
 subtype: wearable
-damagereduction: 1             # Minimal physical protection
+physical_mitigation: 1         # 1% physical damage reduction
 ```
 
 **Consumable:**

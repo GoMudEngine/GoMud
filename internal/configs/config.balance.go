@@ -6,12 +6,19 @@ package configs
 // in config.yaml or config-overrides.yaml.
 type Balance struct {
 	// ── COMBAT ────────────────────────────────────────────────────────────────
-	GlobalDamageMultiplier  ConfigFloat `yaml:"GlobalDamageMultiplier"`  // Scales all damage output (default 1.0)
-	GlobalDefenseMultiplier ConfigFloat `yaml:"GlobalDefenseMultiplier"` // Scales all avoidance rates (default 1.0)
+	// Legacy unarmed knobs — still used by GetDefaultDistributionDamage() for
+	// attack count and crit buff calculation. Damage values are overridden by
+	// the unified pipeline (UnarmedDamageMultiplier + CalcRawDamage).
 	UnarmedBaseDamage       ConfigFloat `yaml:"UnarmedBaseDamage"`       // Base damage before stat bonuses (default 2.0)
 	UnarmedStrengthDivisor  ConfigFloat `yaml:"UnarmedStrengthDivisor"`  // Str / this = damage bonus (default 25.0)
 	UnarmedSkillDivisor     ConfigFloat `yaml:"UnarmedSkillDivisor"`     // Skill / this = damage bonus (default 10.0)
-	UnarmedBaseVariance     ConfigFloat `yaml:"UnarmedBaseVariance"`     // Base randomness of unarmed hits (default 3.0)
+	UnarmedBaseVariance        ConfigFloat `yaml:"UnarmedBaseVariance"`        // Base randomness of unarmed hits (default 3.0)
+	UnarmedDamageMultiplier    ConfigFloat `yaml:"UnarmedDamageMultiplier"`    // Fist damage multiplier for new pipeline (default 0.30)
+	SkillMultiplierBase        ConfigFloat `yaml:"SkillMultiplierBase"`        // Skill multiplier at rank 0 (default 1.0)
+	SkillMultiplierMax         ConfigFloat `yaml:"SkillMultiplierMax"`         // Skill multiplier at soft cap (default 3.0)
+	PhysicalMitigationCap      ConfigFloat `yaml:"PhysicalMitigationCap"`     // Max physical mitigation % (default 0.75)
+	MagicalMitigationCap       ConfigFloat `yaml:"MagicalMitigationCap"`      // Max magical mitigation % (default 0.75)
+	ConvictionMitigationCap    ConfigFloat `yaml:"ConvictionMitigationCap"`   // Max conviction mitigation % (default 0.75)
 
 	// ── REGEN RATES ──────────────────────────────────────────────────────────
 	PlayerHealthRegenPct     ConfigFloat `yaml:"PlayerHealthRegenPct"`     // Fraction of HealthMax regen'd per tick — players (default 0.01)
@@ -97,12 +104,6 @@ type Balance struct {
 
 func (b *Balance) Validate() {
 	// ── COMBAT ────────────────────────────────────────────────────────────────
-	if b.GlobalDamageMultiplier <= 0 {
-		b.GlobalDamageMultiplier = 1.0
-	}
-	if b.GlobalDefenseMultiplier <= 0 {
-		b.GlobalDefenseMultiplier = 1.0
-	}
 	if b.UnarmedBaseDamage <= 0 {
 		b.UnarmedBaseDamage = 2.0
 	}
@@ -114,6 +115,24 @@ func (b *Balance) Validate() {
 	}
 	if b.UnarmedBaseVariance <= 0 {
 		b.UnarmedBaseVariance = 3.0
+	}
+	if b.UnarmedDamageMultiplier <= 0 {
+		b.UnarmedDamageMultiplier = 0.30
+	}
+	if b.SkillMultiplierBase <= 0 {
+		b.SkillMultiplierBase = 1.0
+	}
+	if b.SkillMultiplierMax <= 0 {
+		b.SkillMultiplierMax = 3.0
+	}
+	if b.PhysicalMitigationCap <= 0 || b.PhysicalMitigationCap > 1.0 {
+		b.PhysicalMitigationCap = 0.75
+	}
+	if b.MagicalMitigationCap <= 0 || b.MagicalMitigationCap > 1.0 {
+		b.MagicalMitigationCap = 0.75
+	}
+	if b.ConvictionMitigationCap <= 0 || b.ConvictionMitigationCap > 1.0 {
+		b.ConvictionMitigationCap = 0.75
 	}
 
 	// ── REGEN RATES ──────────────────────────────────────────────────────────

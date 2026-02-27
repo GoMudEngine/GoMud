@@ -13,4 +13,5 @@ grapplemodifier: 0.5  # Stage 8.7: Heavy weapon, harder to grapple with
 damage:
   basedamage: 8
   variance: 2
+damage_multiplier: 1.30
 parryrating: 5

@@ -31,4 +31,5 @@ damage:
   variance: 2
   critbuffids:
     - 39 # Venom
+damage_multiplier: 0.50
 disabledslots: ['weapon', 'offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet']

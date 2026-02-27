@@ -166,6 +166,7 @@ var (
 		`toxic-bite`:  {ToxicBite, false, true, false},
 		`track`:{Track, false, true, false},
 		`train`:       {Train, false, false, false}, // Can't train in combat
+		`taunt`:       {Taunt, false, true, false},
 		`trip`:        {Trip, false, true, false},
 		`unlock`:{Unlock, false, true, false},
 		`undeafen`:    {UnDeafen, true, true, true}, // Admin only

@@ -1,27 +1,32 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">armor</ansi>
 
-<ansi fg="command">Armor</ansi> reduces the physical damage you take from
-attacks. Your total physical defense comes from three
-sources:
+<ansi fg="command">Armor</ansi> provides damage mitigation across three channels.
+Each channel has its own mitigation percentage, capped
+at 75% maximum.
 
-<ansi fg="yellow">1. Equipment</ansi>
-  Worn gear (body armor, helmets, shields, etc.) provides
-  damage reduction. Better equipment absorbs more damage.
-  A shield in your off-hand provides an additional bonus.
+<ansi fg="yellow">Physical Mitigation</ansi>
+  Reduces damage from melee attacks, ranged weapons, and
+  physical spells. Comes from:
+  - Worn equipment (plate armor, shields, helmets)
+  - Natural armor (species traits, mutations)
+  - Magical effects (shield spells, enchantments)
 
-<ansi fg="yellow">2. Natural Armor</ansi>
-  Some creatures possess innate toughness -- thick hides,
-  bony plates, or other natural protection.
+<ansi fg="yellow">Magical Mitigation</ansi>
+  Reduces damage from offensive spells that target the
+  mind. Comes from:
+  - Enchanted equipment (robes, amulets, rings)
+  - Mutation-based magical resistance
 
-<ansi fg="yellow">3. Magical Effects</ansi>
-  Certain spells and enchantments can temporarily bolster
-  your defenses against physical harm.
+<ansi fg="yellow">Conviction Mitigation</ansi>
+  Reduces conviction damage from social attacks like
+  <ansi fg="command">taunt</ansi>. Comes from:
+  - Willpower-themed gear (amulets, pendants)
+  - Mental fortitude items
 
-Mental attacks bypass physical armor entirely. Your
-<ansi fg="command">Willpower</ansi> stat is your defense against those.
+<ansi fg="yellow">Viewing Your Mitigation</ansi>
+  Use <ansi fg="command">status</ansi> to see your current stats and equipment.
+  Your total mitigation stacks from all equipped items.
 
 <ansi fg="yellow">Related: </ansi>
-  <ansi fg="command">help defense</ansi>
-  <ansi fg="command">help equip</ansi>
-  <ansi fg="command">help status</ansi>
-
+  <ansi fg="command">help combat</ansi>, <ansi fg="command">help equip</ansi>, <ansi fg="command">help status</ansi>,
+  <ansi fg="command">help taunt</ansi>

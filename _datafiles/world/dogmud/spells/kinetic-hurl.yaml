@@ -13,3 +13,4 @@ target_defense_type: physical
 component_tag: stone
 effect_type: damage
 effect_magnitude: 300
+damage_multiplier: 1.00

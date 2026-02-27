@@ -67,8 +67,20 @@ func Trip(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	// Perform opposed roll
 	attackSuccess, _, _, _ := dice.OpposedRollStat(attackerScore, defenderScore)
 
-	// Calculate damage (low damage - primarily a setup move)
-	baseDamage := int(float64(mob.Character.Stats.Strength.ValueAdj) * float64(cfg.TripDamagePercent))
+	// Calculate damage via unified pipeline (low damage - primarily a setup move)
+	skillRank := mob.Character.GetSkillLevel(skills.UnarmedCombat)
+	rawDmg := combat.CalcRawDamage(mob.Character.Stats.Strength.ValueAdj, skillRank, float64(cfg.TripDamagePercent))
+
+	// Apply target's physical mitigation
+	var targetMitig float64
+	if targetMob != nil {
+		targetMitig = targetMob.Character.GetPhysicalMitigation()
+	} else {
+		targetMitig = targetChar.Character.GetPhysicalMitigation()
+	}
+	dmgMean := combat.ApplyMitigation(rawDmg, targetMitig, combat.MitigationCap(combat.ChannelPhysical))
+	dmgRoll := dice.RollStat(dmgMean)
+	baseDamage := int(dmgRoll.Value)
 	if baseDamage < 1 {
 		baseDamage = 1
 	}

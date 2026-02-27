@@ -127,11 +127,39 @@
         </div>
     </div>
 
+    <div class="row" data-applies-to-types="weapon">
+        <div class="form-group col-sm">
+            <label for="damagemultiplier">Damage Multiplier</label>
+            <input type="text" class="form-control form-control-sm" id="damagemultiplier" aria-describedby="damagemultiplier-help" value="{{ .itemSpec.DamageMultiplier }}">
+            <small id="damagemultiplier-help" class="form-text text-muted">Scaling factor (0.15=fists, 1.0=iron, 2.5=legendary)</small>
+        </div>
+    </div>
+
+    <div class="row" data-applies-to-types="wearable">
+        <div class="form-group col-sm">
+            <label for="physicalmitigation">Physical Mitigation %</label>
+            <input type="text" class="form-control form-control-sm" id="physicalmitigation" aria-describedby="physicalmitigation-help" value="{{ .itemSpec.PhysicalMitigation }}">
+            <small id="physicalmitigation-help" class="form-text text-muted">Physical damage reduction % (plate:12-18, leather:4-8, cloth:1-3)</small>
+        </div>
+
+        <div class="form-group col-sm">
+            <label for="magicalmitigation">Magical Mitigation %</label>
+            <input type="text" class="form-control form-control-sm" id="magicalmitigation" aria-describedby="magicalmitigation-help" value="{{ .itemSpec.MagicalMitigation }}">
+            <small id="magicalmitigation-help" class="form-text text-muted">Magical damage reduction % (robes:5-12, amulet:3-8)</small>
+        </div>
+
+        <div class="form-group col-sm">
+            <label for="convictionmitigation">Conviction Mitigation %</label>
+            <input type="text" class="form-control form-control-sm" id="convictionmitigation" aria-describedby="convictionmitigation-help" value="{{ .itemSpec.ConvictionMitigation }}">
+            <small id="convictionmitigation-help" class="form-text text-muted">Conviction damage reduction % (willpower items:3-8)</small>
+        </div>
+    </div>
+
     <div class="row" data-applies-to-types="weapon wearable">
         <div class="form-group col-sm">
-            <label for="damagereduction">Damage Reduction</label>
+            <label for="damagereduction">Damage Reduction (Legacy)</label>
             <input type="text" class="form-control form-control-sm" id="damagereduction" aria-describedby="damagereduction-help" value="{{ .itemSpec.DamageReduction }}">
-            <small id="damagereduction-help" class="form-text text-muted">How much damage can this reduce if worn? <small class="alert-danger" data-applies-to-types="offhand">Offhand items with damage reduction are considered shields.</small></small>
+            <small id="damagereduction-help" class="form-text text-muted">Legacy field — prefer mitigation fields above. <small class="alert-danger" data-applies-to-types="offhand">Offhand items with damage reduction are considered shields.</small></small>
         </div>
 
         <div class="form-group col-sm" data-applies-to-types="weapon wearable">

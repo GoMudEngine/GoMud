@@ -336,6 +336,12 @@ func GetMagicalResistance(owned map[string]int) float64 {
 	return sumEffects(owned, "magical_damage_reduction", "")
 }
 
+// GetConvictionResistance returns the total conviction_damage_reduction fraction (0.0–1.0).
+// Used by GetConvictionMitigation() — converted to percentage points (* 100).
+func GetConvictionResistance(owned map[string]int) float64 {
+	return sumEffects(owned, "conviction_damage_reduction", "")
+}
+
 // GetConvictionCostMultiplier returns the net conviction_cost_multiplier.
 // Apply as: cost = int(float64(cost) * (1.0 + GetConvictionCostMultiplier(m)))
 func GetConvictionCostMultiplier(owned map[string]int) float64 {

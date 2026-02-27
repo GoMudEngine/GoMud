@@ -8,7 +8,9 @@
  ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Specifics Stats</ansi> ─────────────────────────────────────────────────────────┐
 {{- if gt $inspectLevel 1 }}
    <ansi fg="yellow">Damage:</ansi>      {{ if ne .ItemSpec.Type.String "weapon" }}{{ padRight 53 "N/A" }}{{ else }}{{ padRight 53 (formatdiceroll $damage.DiceRoll) }}{{ end }}
-   <ansi fg="yellow">Defense:</ansi>     {{ if eq .ItemSpec.DamageReduction 0 }}{{ padRight 53 "N/A" }}{{ else }}{{ .ItemSpec.DamageReduction }} Armor{{ end }}
+   <ansi fg="yellow">Physical:</ansi>    {{ if eq .ItemSpec.PhysicalMitigation 0 }}{{ padRight 53 "N/A" }}{{ else }}{{ padRight 53 (mitigationQuality (divFloat .ItemSpec.PhysicalMitigation 100)) }}{{ end }}
+   <ansi fg="yellow">Magical:</ansi>     {{ if eq .ItemSpec.MagicalMitigation 0 }}{{ padRight 53 "N/A" }}{{ else }}{{ padRight 53 (mitigationQuality (divFloat .ItemSpec.MagicalMitigation 100)) }}{{ end }}
+   <ansi fg="yellow">Conviction:</ansi>  {{ if eq .ItemSpec.ConvictionMitigation 0 }}{{ padRight 53 "N/A" }}{{ else }}{{ padRight 53 (mitigationQuality (divFloat .ItemSpec.ConvictionMitigation 100)) }}{{ end }}
    <ansi fg="yellow">Uses Left:</ansi>   {{ if eq .ItemSpec.Uses 0 }}{{ padRight 53 "N/A" }}{{ else }}{{ padRight 53 (printf "%d/%d" .Item.Uses .ItemSpec.Uses) }}{{ end }}
 {{- else }}
    Unknown...

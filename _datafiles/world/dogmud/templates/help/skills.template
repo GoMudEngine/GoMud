@@ -1,8 +1,32 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">skills</ansi>
 
-The <ansi fg="command">skills</ansi> command lists your current known skills. 
+The <ansi fg="command">skills</ansi> command lists your current known skills.
 
 <ansi fg="yellow">Usage: </ansi>
 
   <ansi fg="command">skills</ansi>
 
+<ansi fg="yellow">Combat Skills:</ansi>
+  <ansi fg="stat">weapon-combat</ansi>  — Melee attack & defense with weapons
+  <ansi fg="stat">unarmed-combat</ansi> — Fist/body attacks, grappling
+  <ansi fg="stat">ranged-combat</ansi>  — Bows, crossbows, thrown weapons
+  <ansi fg="stat">spellcasting</ansi>   — All magic offense & defense
+  <ansi fg="stat">rhetoric</ansi>       — Conviction attacks (taunt)
+
+<ansi fg="yellow">Utility Skills:</ansi>
+  <ansi fg="stat">first-aid</ansi>     — Healing, treating wounds
+  <ansi fg="stat">stealth</ansi>       — Sneaking, hiding
+  <ansi fg="stat">tracking</ansi>      — Finding creatures, reading trails
+  <ansi fg="stat">bartering</ansi>     — Trade prices, negotiation
+  <ansi fg="stat">foraging</ansi>      — Gathering herbs, wood, ore
+
+<ansi fg="yellow">Crafting Skills:</ansi>
+  <ansi fg="stat">blacksmithing</ansi> — Metal weapons, armor, tools
+  <ansi fg="stat">alchemy</ansi>       — Potions, salves, medicines
+  <ansi fg="stat">tailoring</ansi>     — Cloth and leather goods
+  <ansi fg="stat">cooking</ansi>       — Food preparation, buffs
+  <ansi fg="stat">jewelcrafting</ansi> — Rings, pendants, gemwork
+  <ansi fg="stat">enchanting</ansi>    — Imbuing items with magic
+
+All skills progress through use. See <ansi fg="command">help rhetoric</ansi>
+for the new conviction combat skill.

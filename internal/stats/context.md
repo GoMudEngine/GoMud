@@ -78,15 +78,20 @@ type StatInfo struct {
 
 ### Diminishing Returns
 ```
-For stats ≥ 105:
-Adjusted_Value = 100 + sqrt(Value - 100) × 2
+Below StatSoftCapThreshold (105): no adjustment
+105 to StatSoftCap (150): linear (stats earned = stats kept)
+Above StatSoftCap (150):
+  Adjusted = SoftCap + (Raw - SoftCap)^0.75 × Multiplier
 
-Examples:
-- Value 105 → Adjusted 104 (√5 × 2 ≈ 4)
-- Value 125 → Adjusted 110 (√25 × 2 = 10)
-- Value 200 → Adjusted 120 (√100 × 2 = 20)
+Examples (with default multiplier 2.0):
+- Value 120 → Adjusted 120 (below soft cap, linear)
+- Value 150 → Adjusted 150 (at soft cap)
+- Value 160 → Adjusted 161 (10^0.75 × 2 ≈ 11)
+- Value 200 → Adjusted 188 (50^0.75 × 2 ≈ 38)
+- Value 300 → Adjusted 236 (150^0.75 × 2 ≈ 86)
 
-This prevents excessive stat stacking while maintaining progression.
+This allows meaningful progression up to the soft cap while
+preventing runaway scaling beyond it.
 ```
 
 ## Stat Applications

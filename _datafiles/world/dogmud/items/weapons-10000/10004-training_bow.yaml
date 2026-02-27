@@ -12,4 +12,5 @@ grapplemodifier: 0.2  # Stage 8.7: Ranged weapon, awkward for close-quarters gra
 damage:
   basedamage: 5
   variance: 2
+damage_multiplier: 0.30
 parryrating: 0

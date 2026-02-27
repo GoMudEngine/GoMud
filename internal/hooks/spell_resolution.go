@@ -9,7 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
-	"github.com/GoMudEngine/GoMud/internal/mutations"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
@@ -114,21 +114,17 @@ func applyMobEffect(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spe
 
 	switch spellData.EffectType {
 	case "damage":
-		dmgRoll := dice.RollStat(float64(magnitude))
-		dmg := int(math.Round(dmgRoll.Value))
-		if dmg < 1 {
-			dmg = 1
-		}
-		if isCrit {
-			dmg += magnitude
-		}
+		dmg := calcSpellDamage(spellData, user, &mob.Character, magnitude, isCrit)
 		mob.Character.Health -= dmg
-		// Set mob aggro toward the caster if not already fighting
+		// Set aggro on both sides immediately
 		if mob.Character.Aggro == nil {
 			mob.PreventIdle = true
 			if user != nil {
-				mob.Command(fmt.Sprintf("attack @%d", user.UserId))
+				mob.Character.SetAggro(user.UserId, 0, characters.DefaultAttack)
 			}
+		}
+		if user != nil && user.Character.Aggro == nil {
+			user.Character.SetAggro(0, mob.InstanceId, characters.DefaultAttack)
 		}
 		if user != nil {
 			user.SendText(fmt.Sprintf(
@@ -146,11 +142,15 @@ func applyMobEffect(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spe
 		}
 		// Duration is in AutoHeal ticks (every 3 rounds), so multiply by 3 for round count
 		mob.Character.AddCondition(characters.ConditionPoisoned, dotDuration*3, float64(magnitude), "spell")
+		// Set aggro on both sides immediately
 		if mob.Character.Aggro == nil {
 			mob.PreventIdle = true
 			if user != nil {
-				mob.Command(fmt.Sprintf("attack @%d", user.UserId))
+				mob.Character.SetAggro(user.UserId, 0, characters.DefaultAttack)
 			}
+		}
+		if user != nil && user.Character.Aggro == nil {
+			user.Character.SetAggro(0, mob.InstanceId, characters.DefaultAttack)
 		}
 		if user != nil {
 			user.SendText(fmt.Sprintf(
@@ -162,22 +162,19 @@ func applyMobEffect(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spe
 		}
 
 	case "knockdown":
-		dmgRoll := dice.RollStat(float64(magnitude))
-		dmg := int(math.Round(dmgRoll.Value))
-		if dmg < 1 {
-			dmg = 1
-		}
-		if isCrit {
-			dmg += magnitude
-		}
+		dmg := calcSpellDamage(spellData, user, &mob.Character, magnitude, isCrit)
 		mob.Character.Health -= dmg
 		mob.Character.CombatPosition = characters.PositionProne
 		mob.Character.PositionRoundsMin = 1
+		// Set aggro on both sides immediately
 		if mob.Character.Aggro == nil {
 			mob.PreventIdle = true
 			if user != nil {
-				mob.Command(fmt.Sprintf("attack @%d", user.UserId))
+				mob.Character.SetAggro(user.UserId, 0, characters.DefaultAttack)
 			}
+		}
+		if user != nil && user.Character.Aggro == nil {
+			user.Character.SetAggro(0, mob.InstanceId, characters.DefaultAttack)
 		}
 		if user != nil {
 			user.SendText(fmt.Sprintf(
@@ -406,6 +403,114 @@ func spellDefenseValue(defenseType string, target *characters.Character) float64
 	}
 }
 
+// calcSpellDamage computes spell damage using the new pipeline (if spell has
+// DamageMultiplier > 0) or the legacy path. Applies mitigation from the target
+// based on the spell's TargetDefenseType.
+func calcSpellDamage(spellData *spells.SpellData, user *users.UserRecord, target *characters.Character, magnitude int, isCrit bool) int {
+
+	if spellData.DamageMultiplier > 0 && user != nil {
+		// New pipeline: Willpower × SkillMultiplier(spellcasting) × spell.DamageMultiplier
+		skillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
+		rawDmg := combat.CalcRawDamage(user.Character.Stats.Willpower.ValueAdj, skillLevel, spellData.DamageMultiplier)
+
+		// Apply mitigation based on defense type
+		var mitigPct, cap float64
+		switch spellData.TargetDefenseType {
+		case "physical":
+			mitigPct = target.GetPhysicalMitigation()
+			cap = combat.MitigationCap(combat.ChannelPhysical)
+		case "mental":
+			mitigPct = target.GetMagicalMitigation()
+			cap = combat.MitigationCap(combat.ChannelMagical)
+		default:
+			mitigPct = 0
+			cap = 0.75
+		}
+
+		if isCrit {
+			// Crit: bypass mitigation entirely — use raw damage
+			dmgRoll := dice.RollStat(rawDmg)
+			dmg := int(math.Round(dmgRoll.Value))
+			if dmg < 1 {
+				dmg = 1
+			}
+			return dmg
+		}
+
+		dmgMean := combat.ApplyMitigation(rawDmg, mitigPct, cap)
+		dmgRoll := dice.RollStat(dmgMean)
+		dmg := int(math.Round(dmgRoll.Value))
+		if dmg < 1 {
+			dmg = 1
+		}
+		return dmg
+	}
+
+	// Legacy fallback: magnitude-based damage (no mitigation, no stat scaling)
+	mudlog.Warn("calcSpellDamage", "spell", spellData.SpellId, "msg", "using legacy magnitude path — add damage_multiplier to spell YAML")
+	dmgRoll := dice.RollStat(float64(magnitude))
+	dmg := int(math.Round(dmgRoll.Value))
+	if dmg < 1 {
+		dmg = 1
+	}
+	if isCrit {
+		dmg += magnitude
+	}
+	return dmg
+}
+
+// calcMobSpellDamage computes spell damage when the caster is a mob.
+func calcMobSpellDamage(spellData *spells.SpellData, caster *characters.Character, target *characters.Character, magnitude int, isCrit bool) int {
+
+	if spellData.DamageMultiplier > 0 {
+		skillLevel := caster.GetSkillLevel(skills.Spellcasting)
+		rawDmg := combat.CalcRawDamage(caster.Stats.Willpower.ValueAdj, skillLevel, spellData.DamageMultiplier)
+
+		var mitigPct, cap float64
+		switch spellData.TargetDefenseType {
+		case "physical":
+			mitigPct = target.GetPhysicalMitigation()
+			cap = combat.MitigationCap(combat.ChannelPhysical)
+		case "mental":
+			mitigPct = target.GetMagicalMitigation()
+			cap = combat.MitigationCap(combat.ChannelMagical)
+		default:
+			mitigPct = 0
+			cap = 0.75
+		}
+
+		if isCrit {
+			// Crit: bypass mitigation entirely — use raw damage
+			dmgRoll := dice.RollStat(rawDmg)
+			dmg := int(math.Round(dmgRoll.Value))
+			if dmg < 1 {
+				dmg = 1
+			}
+			return dmg
+		}
+
+		dmgMean := combat.ApplyMitigation(rawDmg, mitigPct, cap)
+		dmgRoll := dice.RollStat(dmgMean)
+		dmg := int(math.Round(dmgRoll.Value))
+		if dmg < 1 {
+			dmg = 1
+		}
+		return dmg
+	}
+
+	// Legacy fallback
+	mudlog.Warn("calcMobSpellDamage", "spell", spellData.SpellId, "msg", "using legacy magnitude path — add damage_multiplier to spell YAML")
+	dmgRoll2 := dice.RollStat(float64(magnitude))
+	dmg2 := int(math.Round(dmgRoll2.Value))
+	if dmg2 < 1 {
+		dmg2 = 1
+	}
+	if isCrit {
+		dmg2 += magnitude
+	}
+	return dmg2
+}
+
 // consumeSpellComponent removes the first matching component item from caster's inventory.
 func consumeSpellComponent(user *users.UserRecord, tag string) {
 	for i, itm := range user.Character.Items {
@@ -527,22 +632,7 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 	}
 	switch spellData.EffectType {
 	case "damage":
-		dmgRoll := dice.RollStat(float64(magnitude))
-		dmg := int(math.Round(dmgRoll.Value))
-		if dmg < 1 {
-			dmg = 1
-		}
-		if isCrit {
-			dmg += magnitude
-		}
-		// Stage 12.1: Magical Resistance mutation reduces incoming spell damage
-		if resist := mutations.GetMagicalResistance(target.Character.Mutations); resist > 0 {
-			dmg = int(float64(dmg) * (1.0 - resist))
-			if dmg < 1 {
-				dmg = 1
-			}
-			target.SendText(`<ansi fg="blue">Your magical resistance dampens the blow.</ansi>`)
-		}
+		dmg := calcMobSpellDamage(spellData, &caster.Character, target.Character, magnitude, isCrit)
 		target.Character.Health -= dmg
 		target.SendText(fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> strikes you! (<ansi fg="damage">%s</ansi>)%s`,
@@ -570,20 +660,7 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 			target.Character.Aggro = &characters.Aggro{MobInstanceId: caster.InstanceId}
 		}
 	case "knockdown":
-		dmgRoll := dice.RollStat(float64(magnitude))
-		dmg := int(math.Round(dmgRoll.Value))
-		if dmg < 1 {
-			dmg = 1
-		}
-		if isCrit {
-			dmg += magnitude
-		}
-		if resist := mutations.GetMagicalResistance(target.Character.Mutations); resist > 0 {
-			dmg = int(float64(dmg) * (1.0 - resist))
-			if dmg < 1 {
-				dmg = 1
-			}
-		}
+		dmg := calcMobSpellDamage(spellData, &caster.Character, target.Character, magnitude, isCrit)
 		target.Character.Health -= dmg
 		target.Character.CombatPosition = characters.PositionProne
 		target.Character.PositionRoundsMin = 1

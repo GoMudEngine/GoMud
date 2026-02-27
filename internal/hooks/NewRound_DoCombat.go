@@ -1216,6 +1216,20 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 				}
 			}
 
+			// Stage 12.2: Adrenaline Surge — level-scaled bonus damage when HP < 25% (mob attacker)
+			if roundResult.Hit && roundResult.DamageToTarget > 0 {
+				if mutations.IsAdrenalSurgeActive(mob.Character.Mutations, mob.Character.Health, mob.Character.HealthMax.Value) {
+					if surgeBonus := mutations.GetAdrenalSurgeBonus(mob.Character.Mutations); surgeBonus > 0 {
+						bonusDmg := int(math.Round(float64(roundResult.DamageToTarget) * surgeBonus))
+						if bonusDmg < 1 {
+							bonusDmg = 1
+						}
+						defUser.Character.Health -= bonusDmg
+						roundResult.DamageToTarget += bonusDmg
+					}
+				}
+			}
+
 			// Stage 30.1: Record combat analytics
 			mvpAtkType := "unarmed"
 			if mob.Character.Equipment.Weapon.ItemId > 0 {
@@ -1413,6 +1427,20 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 			var roundResult combat.AttackResult
 
 			roundResult = combat.AttackMobVsMob(mob, defMob)
+
+			// Stage 12.2: Adrenaline Surge — level-scaled bonus damage when HP < 25% (mob vs mob)
+			if roundResult.Hit && roundResult.DamageToTarget > 0 {
+				if mutations.IsAdrenalSurgeActive(mob.Character.Mutations, mob.Character.Health, mob.Character.HealthMax.Value) {
+					if surgeBonus := mutations.GetAdrenalSurgeBonus(mob.Character.Mutations); surgeBonus > 0 {
+						bonusDmg := int(math.Round(float64(roundResult.DamageToTarget) * surgeBonus))
+						if bonusDmg < 1 {
+							bonusDmg = 1
+						}
+						defMob.Character.Health -= bonusDmg
+						roundResult.DamageToTarget += bonusDmg
+					}
+				}
+			}
 
 			// Stage 30.1: Record combat analytics
 			mmAtkType := "unarmed"

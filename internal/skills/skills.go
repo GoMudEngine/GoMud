@@ -27,6 +27,7 @@ const (
 	UnarmedCombat SkillTag = `unarmed-combat` // Fist/body attacks & defense, grappling
 	RangedCombat  SkillTag = `ranged-combat`  // Bows, crossbows, thrown weapons
 	Spellcasting  SkillTag = `spellcasting`   // All magic — offense & defense
+	Rhetoric      SkillTag = `rhetoric`      // Conviction attacks — taunt, demoralize (Stage 34)
 
 	// DOG non-combat skills
 	FirstAid  SkillTag = `first-aid`  // Healing others, treating wounds, stabilizing
@@ -87,6 +88,10 @@ var (
 		"artificer": {
 			Jewelcrafting,
 			Enchanting,
+		},
+		"orator": {
+			Rhetoric,
+			Bartering,
 		},
 	}
 )
@@ -224,6 +229,7 @@ var SkillPrimaryStats = map[string]string{
 	"first-aid":      "perception",
 	"stealth":        "dexterity",
 	"tracking":       "perception",
+	"rhetoric":       "charisma",
 	"bartering":      "charisma",
 	"foraging":       "perception",
 	"blacksmithing":  "strength",
@@ -250,6 +256,8 @@ var SkillProgressionMultipliers = map[SkillTag]float64{
 	RangedCombat:  0.3,
 	// Magic skills — moderate frequency
 	Spellcasting: 0.5,
+	// Social combat — moderate frequency
+	Rhetoric: 0.5,
 	Cast:         0.5,
 	// Utility skills — used infrequently
 	Tracking:  2.0,
@@ -313,7 +321,7 @@ func init() {
 	// Register all DOG skills directly (ensures cast and any not in professions are included)
 	for _, sk := range []SkillTag{
 		Cast,
-		WeaponCombat, UnarmedCombat, RangedCombat, Spellcasting,
+		WeaponCombat, UnarmedCombat, RangedCombat, Spellcasting, Rhetoric,
 		FirstAid, Stealth, Tracking, Bartering, Foraging,
 		Blacksmithing, Alchemy, Tailoring, Cooking, Jewelcrafting, Enchanting,
 	} {

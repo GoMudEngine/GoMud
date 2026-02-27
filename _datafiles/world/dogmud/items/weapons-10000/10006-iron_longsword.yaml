@@ -13,4 +13,5 @@ grapplemodifier: 0.7  # Stage 8.7: Medium sword, slightly harder to grapple with
 damage:
   basedamage: 6
   variance: 2
+damage_multiplier: 1.00
 parryrating: 12

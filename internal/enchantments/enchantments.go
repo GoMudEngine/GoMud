@@ -131,6 +131,10 @@ func ApplyTier(item *items.Item, def *EnchantmentDef, tier int) {
 	if baseSpec != nil {
 		newSpec.Damage = baseSpec.Damage
 		newSpec.DamageReduction = baseSpec.DamageReduction
+		newSpec.DamageMultiplier = baseSpec.DamageMultiplier
+		newSpec.PhysicalMitigation = baseSpec.PhysicalMitigation
+		newSpec.MagicalMitigation = baseSpec.MagicalMitigation
+		newSpec.ConvictionMitigation = baseSpec.ConvictionMitigation
 		newSpec.StatMods = copyStatMods(baseSpec.StatMods)
 	}
 
@@ -143,8 +147,17 @@ func ApplyTier(item *items.Item, def *EnchantmentDef, tier int) {
 			} else {
 				newSpec.Damage.BonusDamage += effectVal
 			}
+		case "damage_multiplier_bonus":
+			// Int value interpreted as hundredths: 10 = +0.10
+			newSpec.DamageMultiplier += float64(effectVal) / 100.0
 		case "dr_bonus":
 			newSpec.DamageReduction += effectVal
+		case "physical_mitigation_bonus":
+			newSpec.PhysicalMitigation += effectVal
+		case "magical_mitigation_bonus":
+			newSpec.MagicalMitigation += effectVal
+		case "conviction_mitigation_bonus":
+			newSpec.ConvictionMitigation += effectVal
 		default:
 			// Treat as a stat mod
 			newSpec.StatMods.Add(effectKey, effectVal)

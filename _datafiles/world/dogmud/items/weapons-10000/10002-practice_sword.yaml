@@ -12,4 +12,5 @@ grapplemodifier: 1.0  # Stage 8.7: Training sword, manageable for grappling
 damage:
   basedamage: 4
   variance: 2
+damage_multiplier: 0.25
 parryrating: 12

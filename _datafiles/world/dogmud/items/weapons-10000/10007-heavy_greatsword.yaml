@@ -13,4 +13,5 @@ grapplemodifier: 0.4  # Stage 8.7: Unwieldy two-handed weapon, harder to grapple
 damage:
   basedamage: 12
   variance: 3
+damage_multiplier: 1.50
 parryrating: 13
