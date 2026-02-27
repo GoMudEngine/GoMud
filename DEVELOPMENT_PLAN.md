@@ -5461,4 +5461,4 @@ Last phase — tests cover the final state of all features.
 
 **Last Updated**: 2026-02-26
 **Status**: In Progress
-**Current Stage**: Phase 34 complete. Unified damage & mitigation pipeline (physical/magical/conviction), new Rhetoric skill, Taunt command, all weapons/armor/spells migrated to new fields. Next: Phase 35 (Codebase Quality Pass).
+**Current Stage**: Phase 34 complete (merge 9165d69). Unified damage & mitigation pipeline (physical/magical/conviction), new Rhetoric skill, Taunt command, all weapons/armor/spells migrated, species damage multipliers, crits bypass mitigation, special attacks use pipeline, spell aggro fix, mutation integration fixes, stat soft cap curve reworked. Next: Phase 35 (Codebase Quality Pass).
