@@ -1,0 +1,15 @@
+itemid: 10004
+name: training bow
+namesimple: bow
+description: A simple recurve bow made from laminated wood. It has a moderate draw weight,
+  suitable for target practice and light combat.
+type: weapon
+hands: 2
+subtype: shooting
+weight: 3.0  # Lightweight bow
+speedmultiplier: 0.5  # Ranged weapon - slower attack rate due to reload/aim time
+grapplemodifier: 0.2  # Stage 8.7: Ranged weapon, awkward for close-quarters grappling
+damage:
+  basedamage: 5
+  variance: 2
+parryrating: 0

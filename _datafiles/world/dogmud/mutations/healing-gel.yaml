@@ -1,0 +1,15 @@
+mutationid: healing-gel
+name: Healing Gel
+description: Your pores secrete a thick, regenerative gel when you concentrate. It knits wounds with remarkable speed but leaves you coated in a viscous residue that slows your movements. Even at rest, you heal slightly faster than normal.
+rarity: 6
+visual: Their skin has a faint, glistening sheen, as if perpetually coated in a thin layer of moisture.
+pros:
+  - type: flag
+    target: active-ability
+    value: 1
+  - type: health_regen_multiplier
+    value: 0.15
+cons:
+  - type: stat_pct
+    target: stamina_regen
+    value: -0.10

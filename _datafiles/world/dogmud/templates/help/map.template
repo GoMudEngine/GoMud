@@ -1,0 +1,22 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">map</ansi> (skill)
+
+The <ansi fg="skill">map</ansi> command displays a map of the area,
+centered on your character.
+
+Not everything is guaranteed to be shown on the map.
+Hidden areas and secret passages may remain concealed.
+
+As your mapping skill improves, you can see farther and
+reveal more of your surroundings. Higher Perception also
+expands what you can discern on the map.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="skill">map</ansi>        Display a map of the nearby area.
+  <ansi fg="skill">map wide</ansi>   Display a zoomed-out overview
+                 (requires advanced mapping skill).
+
+<ansi fg="yellow">Related: </ansi>
+  <ansi fg="command">help map-examples</ansi>
+  <ansi fg="command">help perception</ansi>
+

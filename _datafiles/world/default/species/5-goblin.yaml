@@ -1,0 +1,17 @@
+speciesid: 5
+name: goblin
+description: A small magical being with pointy ears.
+buffids:
+  - 29 # Night Vision
+size: small
+unarmedname: claws
+angrycommands: [emote cackles maniacally.]
+tameable: true
+stats:
+  speed:
+    base: 2
+  mysticism:
+    base: 2
+damage:
+  diceroll: 1d3
+disabledslots: ['neck']

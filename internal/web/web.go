@@ -9,7 +9,9 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"path"
 	"path/filepath"
+	"sort"
 	"strings"
 	"sync"
 	"text/template"
@@ -60,7 +62,8 @@ func serveTemplate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Clean the path to prevent directory traversal.
-	reqPath := filepath.Clean(r.URL.Path) // Example: / or /info/faq
+	// Use path.Clean (not filepath.Clean) so URL paths stay with forward slashes on Windows.
+	reqPath := path.Clean(r.URL.Path) // Example: / or /info/faq
 
 	// Build the full file path.
 	fullPath := filepath.Join(httpRoot, reqPath)
@@ -147,6 +150,7 @@ func serveTemplate(w http.ResponseWriter, r *http.Request) {
 	if webPlugins != nil {
 
 		currentNav := templateData[`NAV`].([]WebNav)
+		coreCount := len(currentNav)
 
 		for name, path := range webPlugins.NavLinks() {
 
@@ -157,6 +161,9 @@ func serveTemplate(w http.ResponseWriter, r *http.Request) {
 					found = true
 					if path == `` {
 						currentNav = append(currentNav[:i], currentNav[i+1:]...)
+						if i < coreCount {
+							coreCount--
+						}
 					} else {
 						currentNav[i].Target = path
 					}
@@ -168,6 +175,15 @@ func serveTemplate(w http.ResponseWriter, r *http.Request) {
 			if !found {
 				currentNav = append(currentNav, WebNav{name, path})
 			}
+		}
+
+		// Sort plugin-added items alphabetically so tab order is stable
+		// (Go map iteration is non-deterministic)
+		if len(currentNav) > coreCount {
+			pluginNav := currentNav[coreCount:]
+			sort.Slice(pluginNav, func(i, j int) bool {
+				return pluginNav[i].Name < pluginNav[j].Name
+			})
 		}
 
 		templateData[`NAV`] = currentNav
@@ -240,7 +256,7 @@ func Listen(wg *sync.WaitGroup, webSocketHandler func(*websocket.Conn)) {
 	// Basic homepage
 
 	http.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
-		r.URL.Path = `/static/images/favicon.ico`
+		r.URL.Path = `/static/images/favicon.png`
 		serveTemplate(w, r)
 	})
 
@@ -280,12 +296,12 @@ func Listen(wg *sync.WaitGroup, webSocketHandler func(*websocket.Conn)) {
 		doBasicAuth(itemData),
 	))
 
-	// Race Admin
-	http.HandleFunc("GET /admin/races/", RunWithMUDLocked(
-		doBasicAuth(racesIndex)),
+	// Species Admin
+	http.HandleFunc("GET /admin/species/", RunWithMUDLocked(
+		doBasicAuth(speciesIndex)),
 	)
-	http.HandleFunc("GET /admin/races/racedata/", RunWithMUDLocked(
-		doBasicAuth(raceData)),
+	http.HandleFunc("GET /admin/species/speciesdata/", RunWithMUDLocked(
+		doBasicAuth(speciesData)),
 	)
 
 	// Mob Admin
@@ -302,6 +318,14 @@ func Listen(wg *sync.WaitGroup, webSocketHandler func(*websocket.Conn)) {
 	))
 	http.HandleFunc("GET /admin/mutators/mutatordata/", RunWithMUDLocked(
 		doBasicAuth(mutatorData),
+	))
+
+	// Combat Stats Admin
+	http.HandleFunc("GET /admin/combat-stats/", RunWithMUDLocked(
+		doBasicAuth(combatStatsIndex),
+	))
+	http.HandleFunc("GET /admin/api/combat-stats/", RunWithMUDLocked(
+		doBasicAuth(combatStatsAPI),
 	))
 
 	// Room Admin

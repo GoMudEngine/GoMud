@@ -1,0 +1,17 @@
+# Chinese
+
+Motd: "欢迎来到泥潭世界!"
+
+Login.username: '用户名'
+Login.password: '密码'
+'Create new user?': '创建新用户?'
+
+Inbox.NewMessage: "          *新邮件*"
+Inbox.Sent: '发送时间: '
+Inbox.From: '发件人:   '
+Inbox.Message: '信息:     '
+Inbox.Note: '备注:     '
+Inbox.NoteGold: >-
+  该信息附有 <ansi fg="gold">{{ .Gold }} 金币</ansi>, 已添加到您的银行余额中.
+Inbox.NoteItem: >-
+  该信息附有一个 <ansi fg="itemname">{{ .Item.DisplayName }}</ansi>, 已添加到您的库存中.

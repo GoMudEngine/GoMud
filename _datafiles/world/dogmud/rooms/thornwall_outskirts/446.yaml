@@ -1,0 +1,39 @@
+roomid: 446
+zone: Thornwall Outskirts
+title: Gate Plaza
+description: The road opens into a wide plaza before the western gate of Thornwall.
+  The space is paved with the same fitted stone as the city road, worn smooth by
+  generations of feet, hooves, and wheels. A wooden notice board stands near the gate
+  approach, its surface covered in layers of pinned parchment -- official decrees,
+  merchant postings, and the occasional wanted notice. The gate itself is a massive
+  stone arch set into the city wall, wide enough for two carts abreast, with iron-bound
+  doors that stand open during daylight hours. Guards in Thornwall livery flank the
+  entrance, checking arrivals with varying degrees of thoroughness.
+biome: farmland
+exits:
+  west:
+    roomid: 445
+  east:
+    roomid: 447
+nouns:
+  board: 'The notice board is a weathered wooden frame nailed to a post, its surface
+    thick with overlapping papers. A tax assessment schedule, a warning about bandits
+    on the western road, a merchant seeking caravan guards, and a faded poster
+    offering a reward for information about "unlicensed toll collection at Watchers
+    Crossing." Beneath the official notices, someone has scrawled: "LAND TAX IS
+    THEFT."'
+  gate: The western gate of Thornwall is an impressive piece of engineering -- a
+    stone arch three stories tall, its keystone carved with the city's crest. The
+    iron-bound doors are ancient oak, scarred by weather and, in places, by weapons.
+    They stand open now, but the hinges are oiled and the mechanism for closing them
+    is clearly maintained.
+  guards: City guards in blue-grey surcoats over chainmail, each carrying a spear and
+    a short sword. They check incoming travellers with a mixture of boredom and
+    suspicion, waving through familiar faces and stopping strangers for questions.
+spawninfo:
+- mobid: 92
+- mobid: 93
+idlemessages:
+- A guard waves a merchant cart through the gate after a cursory inspection.
+- Someone pins a new notice to the board, reads the others, and shakes their head.
+- The shadows of the city wall creep across the plaza as the sun moves.

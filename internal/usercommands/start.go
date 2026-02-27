@@ -3,7 +3,6 @@ package usercommands
 import (
 	"errors"
 	"fmt"
-	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -12,10 +11,9 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
-	"github.com/GoMudEngine/GoMud/internal/races"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
-	"github.com/GoMudEngine/GoMud/internal/templates"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/term"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -34,85 +32,14 @@ func Start(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		user.SendText(fmt.Sprintf(`You'll need to answer some questions.%s`, term.CRLFStr))
 	}
 
-	if user.Character.RaceId == 0 {
+	if user.Character.SpeciesId == 0 {
+		// All players are human in Delusions of Grandeur
+		if humanSpecies, ok := species.FindSpecies("human"); ok {
+			user.Character.SpeciesId = humanSpecies.Id()
+			user.Character.Validate()
 
-		raceOptions := []templates.NameDescription{}
-
-		for _, r := range races.GetRaces() {
-			if r.Selectable {
-				raceOptions = append(raceOptions, templates.NameDescription{
-					Id:          r.RaceId,
-					Name:        r.Name,
-					Description: r.Description,
-				})
-			}
-		}
-		sort.SliceStable(raceOptions, func(i, j int) bool {
-			return raceOptions[i].Name < raceOptions[j].Name
-		})
-
-		question := cmdPrompt.Ask(`Which race will you be?`, []string{})
-		if !question.Done {
-
-			tplTxt, _ := templates.Process("tables/numbered-list", raceOptions, user.UserId)
-			user.SendText(tplTxt)
-			user.SendText(`  Want to know more details? Type <ansi fg="command">help {racename}</ansi> or <ansi fg="command">help {number}</ansi>`)
 			user.SendText(``)
-			return true, nil
-		}
-
-		respLower := strings.ToLower(question.Response)
-		if len(respLower) >= 5 && respLower[0:5] == `help ` {
-			helpCmd := `race`
-			helpRest := respLower[5:]
-
-			if restNum, err := strconv.Atoi(helpRest); err == nil {
-				if restNum > 0 && restNum <= len(raceOptions) {
-					helpRest = raceOptions[restNum-1].Name
-				} else {
-					helpCmd = `races`
-					helpRest = ``
-				}
-			}
-
-			question.RejectResponse()
-			return Help(helpCmd+` `+helpRest, user, room, flags)
-		}
-
-		raceNameSelection := question.Response
-		if restNum, err := strconv.Atoi(raceNameSelection); err == nil {
-			if restNum > 0 && restNum <= len(raceOptions) {
-				raceNameSelection = raceOptions[restNum-1].Name
-			}
-		}
-
-		matchFound := false
-		for _, r := range races.GetRaces() {
-			if strings.EqualFold(r.Name, raceNameSelection) {
-
-				if r.Selectable {
-					matchFound = true
-					user.Character.RaceId = r.Id()
-					user.Character.Alignment = r.DefaultAlignment
-					user.Character.Validate()
-
-					user.SendText(``)
-					user.SendText(fmt.Sprintf(`  <ansi fg="magenta">*** Your ghostly form materializes into that of a %s ***</ansi>%s`, r.Name, term.CRLFStr))
-					break
-				}
-
-			}
-		}
-
-		if !matchFound {
-			question.RejectResponse()
-
-			tplTxt, _ := templates.Process("tables/numbered-list", raceOptions, user.UserId)
-			user.SendText(tplTxt)
-			user.SendText(`  Want to know more details? Type <ansi fg="command">help {racename}</ansi> or <ansi fg="command">help {number}</ansi>`)
-			user.SendText(``)
-
-			return true, nil
+			user.SendText(fmt.Sprintf(`  <ansi fg="magenta">*** Your form takes shape on the world of Gaius ***</ansi>%s`, term.CRLFStr))
 		}
 	}
 

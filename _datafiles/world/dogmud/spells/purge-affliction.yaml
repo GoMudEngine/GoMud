@@ -1,0 +1,11 @@
+# Learned from book in Mystic Garden Essentials (ROOM 870)
+spellid: purge-affliction
+name: Purge Affliction
+description: Neutralizes foreign agents and toxins in the target's body.
+type: helpsingle
+schools:
+  - vital
+cost: 75
+waitrounds: 2
+difficulty: 0
+primarystat: willpower

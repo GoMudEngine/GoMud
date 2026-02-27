@@ -1,0 +1,14 @@
+spellid: sparks
+name: Conviction Sparks
+description: Scatters shards of crystallized belief that lash all nearby foes.
+type: harmmulti
+schools:
+  - elemental
+cost: 75
+waitrounds: 1
+difficulty: 50
+primarystat: willpower
+base_folds: 4
+target_defense_type: physical
+effect_type: damage
+effect_magnitude: 120

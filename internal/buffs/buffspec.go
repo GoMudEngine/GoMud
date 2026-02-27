@@ -61,6 +61,13 @@ const (
 	Hydrated     Flag = `hydrated`
 	Thirsty      Flag = `thirsty`
 
+	// Phase 25 spell buff flags
+	Haste         Flag = `haste`
+	DamageBonus   Flag = `damage-bonus`
+	Slow          Flag = `slow`
+	SkillProgress Flag = `skill-progress`
+	MutationRate  Flag = `mutation-rate`
+
 	// Flags that reveal things
 	SeeHidden Flag = `see-hidden`
 	SeeNouns  Flag = `see-nouns`

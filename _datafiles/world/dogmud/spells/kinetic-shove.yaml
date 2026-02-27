@@ -1,0 +1,14 @@
+spellid: kinetic-shove
+name: Kinetic Shove
+description: Telekinetic force slams the target to the ground.
+type: harmsingle
+schools:
+  - elemental
+cost: 30
+waitrounds: 1
+difficulty: 0
+primarystat: willpower
+base_folds: 3
+target_defense_type: physical
+effect_type: knockdown
+effect_magnitude: 150

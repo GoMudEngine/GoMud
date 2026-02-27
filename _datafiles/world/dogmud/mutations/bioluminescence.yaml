@@ -1,0 +1,15 @@
+mutationid: bioluminescence
+name: Bioluminescence
+description: Light blooms beneath your skin in shifting patterns of pale blue and green. You are a beacon in the dark — beautiful, conspicuous, and impossible to ignore.
+rarity: 4
+visual: Soft patterns of bioluminescent light pulse beneath their skin, casting a faint glow.
+conflicts:
+  - camo-skin
+pros:
+  - type: flag
+    target: lightsource
+    value: 1
+cons:
+  - type: stat_flat
+    target: charisma
+    value: -10

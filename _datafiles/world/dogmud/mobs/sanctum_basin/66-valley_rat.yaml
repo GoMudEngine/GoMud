@@ -1,0 +1,26 @@
+mobid: 66
+zone: Sanctum Basin
+statpool: 2
+itemdropchance: 5
+hostile: true
+maxwander: 0
+groups:
+  - rats
+  - animal
+idlecommands:
+  - 'emote sniffs at the ground, whiskers twitching'
+  - 'wander'
+  - ''
+activitylevel: 20
+character:
+  name: valley rat
+  description: 'Larger than a city rat and considerably meaner, the valley rat of
+    Sanctum Basin has adapted to the high desert with tougher hide and more aggressive
+    temperament. Its coarse grey-brown fur is marked with a pale stripe down the spine.
+    It will bite if cornered, and it is usually cornered because it chose to be.'
+  speciesid: 10
+  level: 1
+  gold: 0
+  stats:
+    vitality:
+      training: -3

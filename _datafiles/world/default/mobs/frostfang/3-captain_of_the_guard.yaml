@@ -15,13 +15,13 @@ idlecommands:
   - 'wander'
   - 'wander'
 activitylevel: 50
+statpool: 15
 character:
   name: captain of the guard
   description: 'With an imposing stature and an air of seasoned authority, the captain of the Frostfang Guard stands out even amidst the city''s most formidable defenders. Draped over their armor is a rich, deep-blue cape, longer and more ornate than those of the regular guards, with gold embroidery tracing the edges and the emblem of Frostfang prominently displayed. Beneath the cape, a suit of intricately designed plate armor, bearing the scars of countless battles, speaks to the captain''s experience in the line of duty. Slung across their back is a masterfully crafted broadsword, its hilt adorned with gemstones. The blade itself is etched with delicate decorations, each one commemorating the momentous occasion of their promotion to captaincy. The captain''s gaze, sharp and discerning, misses no detail, and their perception alone is enough to inspire confidence and respect among both guards and citizens alike.'
   roomid: 0
   zone: Nowhere
-  raceid: 1
-  level: 15
+  speciesid: 1
   alignment: 50
   gold: 25
   equipment:

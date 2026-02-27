@@ -1,0 +1,14 @@
+spellid: conviction-spike
+name: Conviction Spike
+description: Projects raw belief as a kinetic spike of force at a target.
+type: harmsingle
+schools:
+  - elemental
+cost: 50
+waitrounds: 1
+difficulty: 75
+primarystat: willpower
+base_folds: 4
+target_defense_type: physical
+effect_type: damage
+effect_magnitude: 180

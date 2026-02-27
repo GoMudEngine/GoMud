@@ -1,0 +1,32 @@
+roomid: 445
+zone: Thornwall Outskirts
+title: City Road
+description: The main road to Thornwall runs straight and wide here, paved with
+  fitted stone that speaks of civic investment. The farms give way to the city's
+  influence -- a milestone marks the distance to the gate, and the road is flanked
+  by drainage channels and cleared verges. Traffic is heavier on this stretch --
+  cart tracks overlap in the dust, and the occasional patrol marker indicates the
+  city guard's jurisdiction begins here. The walls of Thornwall loom ahead, grey
+  and imposing, growing taller with each step east.
+biome: farmland
+exits:
+  west:
+    roomid: 440
+  north:
+    roomid: 444
+  east:
+    roomid: 446
+nouns:
+  milestone: 'A squared stone pillar inscribed with distances: "Thornwall Gate -- 1/2
+    league. Watchers Crossing -- 3 leagues. Sanctum Basin -- 9 leagues." The stone
+    is well-maintained, the lettering freshly painted.'
+  channels: Stone-lined drainage channels run along both sides of the road, carrying
+    rainwater and runoff away from the paved surface. The engineering is solid --
+    Thornwall takes its roads seriously.
+spawninfo:
+- mobid: 90
+  respawnrate: 6 real minutes
+idlemessages:
+- A farm cart rumbles past, its driver nodding a tired greeting.
+- The city walls grow closer, their grey stone catching the light.
+- A patrol marker -- a post with the Thornwall crest -- stands at the roadside.

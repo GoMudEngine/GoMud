@@ -1,0 +1,7 @@
+itemid: 20007
+name: rusty pot
+namesimple: pot
+description: It just barely works as a helmet.
+type: head
+subtype: wearable
+damagereduction: 1

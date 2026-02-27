@@ -1,0 +1,34 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">devtool</ansi> <ansi fg="red">[Admin]</ansi>
+
+The <ansi fg="command">devtool</ansi> command provides admin utilities for building and verifying world
+content. It is intended for use during zone construction and world maintenance.
+
+<ansi fg="yellow">Subcommands:</ansi>
+
+  <ansi fg="command">devtool check [zone]</ansi>
+  Scan every room in a zone and report broken or missing exits, dead links,
+  and orphaned rooms.
+
+  <ansi fg="command">devtool makezone [name] [width] [height]</ansi>
+  Generate a rectangular grid of rooms wired with bidirectional cardinal exits.
+  The zone name may contain spaces — width and height are always last.
+
+  <ansi fg="command">devtool linkzones [zoneA]/[roomIdA] [direction] [zoneB]/[roomIdB]</ansi>
+  Add a bidirectional exit between any two rooms, including across zone
+  boundaries.
+
+  <ansi fg="command">devtool json [json_string]</ansi>
+  Execute any of the above operations via a structured JSON request. Returns
+  a JSON response suitable for scripting or AI tool calls.
+
+<ansi fg="yellow">Examples:</ansi>
+
+  <ansi fg="command">devtool check dogmud</ansi>
+  <ansi fg="command">devtool makezone cave_system 5 5</ansi>
+  <ansi fg="command">devtool linkzones startland/1 east cave_system/1000</ansi>
+
+Type <ansi fg="command">devtool</ansi> with no arguments to see full usage and JSON API examples.
+
+<ansi fg="yellow">See Also:</ansi>
+
+  <ansi fg="command">help build</ansi>, <ansi fg="command">help room</ansi>, <ansi fg="command">help zone</ansi>

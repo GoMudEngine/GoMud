@@ -1,0 +1,34 @@
+roomid: 306
+zone: Labyrinth of Low Tunnels
+title: Gnawed Chamber
+description: A wider chamber where the ceiling rises just high enough to stand hunched.
+  The walls are riddled with tooth marks -- deep gouges in the basalt where something
+  has been chewing the stone itself, grinding it down in long parallel grooves. Strips
+  of dried meat hang from bone hooks driven into cracks overhead, dark and stiff and
+  crawling with pale cave insects. The floor is sticky with old grease and scattered
+  with cracked bones that have been split lengthwise for the marrow. The smell of
+  cured flesh and rancid fat is thick enough to taste.
+biome: cave
+exits:
+  north:
+    roomid: 303
+  south:
+    roomid: 309
+spawninfo:
+- mobid: 72
+  message: A warren scout crouches among the hanging meat strips, gnawing on a bone.
+  respawnrate: 8 real minutes
+- mobid: 76
+  message: A blind tunnel rat noses through the cracked bones on the floor.
+  respawnrate: 12 real minutes
+nouns:
+  meat: Strips of something dark and leathery, hung from bone hooks to dry. The cuts
+    are rough but deliberate. You cannot identify the source animal, and you are not
+    sure you want to.
+  bones: Split lengthwise with crude tools and scraped clean of marrow. Most are small
+    -- rats, bats, cave creatures. A few are larger and more troubling.
+idlemessages:
+- Pale insects crawl across the hanging meat strips, unbothered by your presence.
+- A bone crunches underfoot. The sound carries further than you would like.
+- The grease on the floor makes every step uncertain.
+- Something in the walls makes a rhythmic grinding sound, then stops.

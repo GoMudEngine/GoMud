@@ -1,0 +1,34 @@
+roomid: 479
+zone: Thornwall City
+title: Old Citadel Plaza
+description: The easternmost point of the city opens into a circular plaza surrounding
+  the base of the Old Citadel -- a massive stone keep that predates the rest of
+  Thornwall by centuries. The citadel's walls are dark basalt, far older and heavier
+  than the limestone of the city buildings. Its gate is sealed with iron doors that
+  have not opened in living memory, and the windows above are dark. The plaza itself
+  is wide and mostly empty, used as an overflow market on busy days and a gathering
+  place for public announcements. The citadel watches over it all with the patience
+  of something that was old when the city was young.
+biome: city
+exits:
+  west:
+    roomid: 466
+nouns:
+  citadel: The Old Citadel is built of dark basalt in a style that predates the
+    current city by centuries. Its walls are thick, its towers squat and heavy, and
+    its iron gate has been sealed shut. No one living claims to know what is inside.
+    The city was built around it, treating the citadel as a landmark rather than
+    a building. Rumour places everything from a treasury to a dungeon to a sealed
+    evil behind those doors.
+  gate: Massive iron doors set into the basalt archway, corroded green with age
+    but still solid. They are sealed with chains and a lock the size of a man's
+    fist. The lock shows no keyhole -- it was designed to be opened by some other
+    mechanism. No one has tried to enter in decades, or so the locals claim.
+  plaza: A circular cobblestoned plaza, its center marked with an ancient mosaic
+    that has been worn nearly flat by foot traffic. The mosaic's pattern might
+    once have depicted a map or a sigil, but now it is just a disc of coloured
+    stone set into grey cobbles.
+idlemessages:
+- Wind whistles around the base of the citadel, carrying a faint chill.
+- A pigeon lands on a citadel windowsill and peers into the darkness beyond the glass.
+- The sealed gate catches the light, its chains glinting dully.

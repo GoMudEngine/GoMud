@@ -1,0 +1,5 @@
+The <ansi fg="command">rename</ansi> command can be used in the following ways:
+
+<ansi fg="command">rename [itemName] "[New Item Name]" "[optional display name or color class]"</ansi> 
+    Rename an item with a new custom name.
+

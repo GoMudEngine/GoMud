@@ -1,0 +1,12 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">protection</ansi> (skill)
+
+The <ansi fg="skill">protection</ansi> skill gives you a way to protect your friends. 
+
+<ansi fg="yellow">Usage: </ansi>
+
+(Lvl 1) <ansi fg="skill">aid [player]</ansi> Revive a downed teammate, back to 1HP. The room must be calm.
+(Lvl 2) <ansi fg="skill">rank [front/back]</ansi> Set your position within a party to increase or decrease your chance of being targetted.
+(Lvl 3) <ansi fg="skill">aid [player]</ansi> Revive a downed teammate, back to 1HP, even if combat is occuring.
+(Lvl 4) <ansi fg="skill">pray [player]</ansi> Pray to the gods for a blessing.
+
+The higher your mysticism, the more blessings you will receive from the gods.

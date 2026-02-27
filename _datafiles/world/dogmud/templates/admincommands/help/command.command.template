@@ -1,0 +1,16 @@
+The <ansi fg="command">command</ansi> command can be used in the following ways:
+
+<ansi fg="command">command [user/mob] [action]</ansi> - e.g. <ansi fg="command">command Bob say hi</ansi>
+This would force Bob to say hi.
+
+<ansi fg="red">Note:</ansi> You can command a mob/player to do anything they could normally do.
+Mobs do not have the full range of commands available to them that
+players do.
+
+Player Commands:
+  Type <ansi fg="command">help</ansi> to get a full list of player commands.
+
+{{ if gt (len .) 0 -}}
+Mob Commands:
+{{ $counter := 0 -}}{{ range $i, $cmd := . }}  <ansi fg="command">{{ padRight 14 $cmd }}</ansi> {{ if eq (mod $counter 4) 3 }}{{ printf "\n" }}{{ end }}{{ $counter = (add $counter 1) }}{{ end }}
+{{ end }}

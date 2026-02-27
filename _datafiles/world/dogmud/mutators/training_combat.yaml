@@ -1,0 +1,18 @@
+mutatorid: training-combat
+#namemodifier:
+#  behavior: append
+#  text: (scorching)
+#  colorpattern: flame
+#descriptionmodifier: 
+#  behavior: append
+#  text: The midday sun beats down on everything in sight relentlessly.
+#  colorpattern: flame
+#alertmodifier: 
+#  # behavior: append # behavior is always "append" to list of alerts. No replace or prepend supported.
+#  text: The floors are very dusty!d
+#decayintoid: another-alert-id
+#respawnrate: noon
+#decayrate: sunset
+playerbuffids: [32] # Extra Attentive
+#mobbuffids: []
+#nativebuffids: []

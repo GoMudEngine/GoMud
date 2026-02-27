@@ -1,0 +1,82 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">attack</ansi>
+
+The <ansi fg="command">attack</ansi> command engages in combat with a player or NPC. Once started, combat
+continues each round until someone flees or dies.
+
+<ansi fg="yellow">━━━ Basic Usage ━━━</ansi>
+
+  <ansi fg="command">attack goblin</ansi>
+  Start combat with the goblin
+
+  <ansi fg="command">attack archer</ansi> (while already fighting)
+  Switch targets to the archer mid-combat
+
+<ansi fg="yellow">━━━ Attack Mechanics ━━━</ansi>
+
+Your success in combat depends on several factors:
+
+  <ansi fg="stat">Hit Chance Formula:</ansi>
+  Base: 30 + (Your Dexterity / (Your Dex + Target Dex)) × 70
+  Clamped between 5% (minimum) and 95% (maximum)
+
+  <ansi fg="stat">Combat Skill:</ansi>
+  - Armed: Uses Weapon Combat skill
+  - Unarmed: Uses Unarmed Combat skill
+  - Ranged: Uses Ranged Combat skill (bows/crossbows)
+
+  <ansi fg="stat">Number of Attacks:</ansi>
+  Based on your Dexterity and weapon speed. Higher Dexterity = more attacks.
+  Dual wielding gives extra attacks from offhand weapon.
+
+  <ansi fg="stat">Critical Hits:</ansi>
+  Skill advantage over opponent increases crit chance. Crits deal extra damage
+  and apply special effects based on your equipped weapon.
+
+<ansi fg="yellow">━━━ Stamina and Penalties ━━━</ansi>
+
+  <ansi fg="red">Low Stamina (<50%):</ansi>
+  - Reduced hit chance
+  - Reduced damage output
+  - Defenses still cost stamina but are less effective
+
+  <ansi fg="red">While Prone:</ansi>
+  - -30 to attack success
+  - -20% damage dealt
+  - Targets attacking you get +20 bonus to hit
+  See <ansi fg="command">help prone</ansi> for details.
+
+<ansi fg="yellow">━━━ Target Switching ━━━</ansi>
+
+When fighting multiple enemies, use <ansi fg="command">attack <target></ansi> to switch targets:
+  - Immediately retargets to the new enemy
+  - Automatic retargeting when your current target dies
+  - Party members can coordinate attacks on the same target
+
+<ansi fg="yellow">━━━ Defense System ━━━</ansi>
+
+When attacked, you get multiple chances to avoid damage (in order):
+  1. <ansi fg="stat">Dodge</ansi> - Unarmed Combat + Dexterity (2 stamina)
+  2. <ansi fg="stat">Parry</ansi> - Weapon Combat + weapon rating (4 stamina, requires weapon)
+  3. <ansi fg="stat">Block</ansi> - Weapon Combat + shield rating (5 stamina, requires shield)
+
+See <ansi fg="command">help defense</ansi> for detailed defense mechanics.
+
+<ansi fg="yellow">━━━ Special Combat Moves ━━━</ansi>
+
+Tactical moves with shared 5-round cooldown:
+  <ansi fg="command">bash</ansi> - Shield bash with knockdown chance (requires shield)
+  <ansi fg="command">trip</ansi> - Leg sweep with high knockdown chance
+  <ansi fg="command">kick</ansi> - Power kick with moderate knockdown and damage
+
+See individual help topics for details on each special move.
+
+<ansi fg="yellow">━━━ Ending Combat ━━━</ansi>
+
+  <ansi fg="command">flee</ansi> - Attempt to escape (costs stamina, may fail)
+  Victory - Kill or down all opponents
+  Defeat - Reach 0 health (enter downed state)
+
+<ansi fg="yellow">See Also:</ansi>
+
+  <ansi fg="command">help combat</ansi>, <ansi fg="command">help defense</ansi>, <ansi fg="command">help flee</ansi>, <ansi fg="command">help bash</ansi>
+  <ansi fg="command">help trip</ansi>, <ansi fg="command">help kick</ansi>, <ansi fg="command">help prone</ansi>, <ansi fg="command">help stamina</ansi>

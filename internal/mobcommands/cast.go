@@ -1,13 +1,16 @@
 package mobcommands
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
+	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -18,6 +21,12 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	args := util.SplitButRespectQuotes(strings.ToLower(rest))
 
 	if len(args) < 1 {
+		return true, nil
+	}
+
+	// Gate: mobs share the special-move cooldown slot with bash/trip/kick
+	cfg := configs.GetGamePlayConfig()
+	if !mob.Character.TryCooldown(`special-move`, fmt.Sprintf(`%d rounds`, cfg.SpecialMoveCooldown)) {
 		return true, nil
 	}
 
@@ -38,7 +47,7 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		return true, nil
 	}
 	/*
-		if mob.Character.Mana < spellInfo.Cost {
+		if mob.Character.Conviction < spellInfo.Cost {
 			return true, nil
 		}
 	*/
@@ -187,7 +196,7 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		mobsFightingMobs := room.GetMobs(rooms.FindFightingMob)
 		for _, mobInstId := range mobsFightingMobs {
 			if m := mobs.GetInstance(mobInstId); m != nil {
-				if m.Character.IsAggro(0, mob.InstanceId) || m.HatesRace(m.Character.Race()) {
+				if m.Character.IsAggro(0, mob.InstanceId) || m.HatesSpecies(m.Character.Species()) {
 					spellAggro.TargetMobInstanceIds = append(spellAggro.TargetMobInstanceIds, mobInstId)
 				}
 			}
@@ -217,8 +226,44 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		}
 
 		if continueCasting {
-			mob.Character.Mana -= spellInfo.Cost
-			mob.Character.SetCast(spellInfo.WaitRounds, spellAggro)
+			skillLevel := mob.Character.GetSkillLevel(skills.Spellcasting)
+			baseFolds := spellInfo.BaseFolds
+			if baseFolds < 1 {
+				baseFolds = 4
+			}
+			foldsNeeded := characters.NextPowerOfTwo(baseFolds)
+			foldsPerRound := characters.CalcFoldsPerRound(mob.Character.Stats.Perception.ValueAdj, skillLevel)
+
+			// First-round conviction slice
+			firstRoundCost := spellInfo.Cost / foldsNeeded
+			if firstRoundCost < 1 {
+				firstRoundCost = 1
+			}
+			mob.Character.Conviction -= firstRoundCost
+
+			mob.Character.CastingState = &characters.CastingState{
+				SpellId:              spellInfo.SpellId,
+				FoldsNeeded:          foldsNeeded,
+				FoldsAccumulated:     0,
+				FoldsPerRound:        foldsPerRound,
+				TotalConvictionCost:  spellInfo.Cost,
+				ConvictionSpent:      firstRoundCost,
+				TargetUserIds:        spellAggro.TargetUserIds,
+				TargetMobInstanceIds: spellAggro.TargetMobInstanceIds,
+				SpellRest:            spellAggro.SpellRest,
+			}
+			room.SendText(fmt.Sprintf(
+				`<ansi fg="mobname">%s</ansi> begins weaving a spell.`, mob.Character.Name), 0)
+
+			// Initiate combat aggro immediately when targeting a player with an offensive spell.
+			// This ensures the mob enters the combat loop so the player is flagged as in combat.
+			// The casting block in the combat tick safely handles CastingState and skips melee.
+			switch spellInfo.Type {
+			case spells.HarmSingle, spells.HarmMulti, spells.HarmArea:
+				if mob.Character.Aggro == nil && len(spellAggro.TargetUserIds) > 0 {
+					mob.Character.SetAggro(spellAggro.TargetUserIds[0], 0, characters.DefaultAttack)
+				}
+			}
 		}
 
 	}

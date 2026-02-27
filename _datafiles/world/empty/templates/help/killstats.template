@@ -2,7 +2,7 @@
 
 The <ansi fg="command">killstats</ansi> tells you your stats for all the different mobs you've killed, and your kill/death ratio.
 
-The <ansi fg="command">killstats race</ansi> tells you the same information, broken down by mob race.
+The <ansi fg="command">killstats species</ansi> tells you the same information, broken down by mob species.
 
 The <ansi fg="command">killstats zone</ansi> tells you the same information, broken down by zone/area.
 

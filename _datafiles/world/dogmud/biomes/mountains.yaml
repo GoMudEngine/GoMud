@@ -1,0 +1,9 @@
+biomeid: mountains
+name: Mountains
+symbol: ⩕
+description: Mountains can be difficult to traverse.
+darkarea: false
+litarea: false
+requireditemid: 0
+usesitem: false
+burns: false

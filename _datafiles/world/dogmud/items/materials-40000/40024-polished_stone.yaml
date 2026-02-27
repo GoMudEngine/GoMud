@@ -1,0 +1,11 @@
+itemid: 40024
+name: polished stone
+namesimple: stone
+description: A smooth, palm-sized stone with a faint natural luster. It has been
+  tumbled by wind and water into a pleasing oval shape, suitable for setting
+  into jewelry.
+type: object
+subtype: mundane
+component_tag: polished-stone
+weight: 0.1
+value: 2

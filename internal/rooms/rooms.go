@@ -91,6 +91,7 @@ type Room struct {
 	LongTermDataStore map[string]any                    `yaml:"longtermdatastore,omitempty"`         // Long term data store for the room
 	Mutators          mutators.MutatorList              `yaml:"mutators,omitempty"`                  // mutators this room spawns with.
 	Pvp               bool                              `yaml:"pvp,omitempty"`                       // if config pvp is set to `limited`, uses this value
+	Station           string                            `yaml:"station,omitempty"`                   // Crafting station type present in this room (Stage 13.1)
 	// Unexported/private
 	players       []int                          // list of user IDs currently in the room
 	mobs          []int                          // list of mob instance IDs currently in the room. Does not get saved.
@@ -597,30 +598,16 @@ func (r *Room) Prepare(checkAdjacentRooms bool) {
 		// New instances needed? Spawn them
 		if spawnInfo.MobId > 0 {
 
-			forceLevel := 0
+			forceStatPool := 0
 
-			if spawnInfo.Level > 0 {
-				forceLevel = spawnInfo.Level
-			} else {
-
-				// Get the zone settings, check for scaling
-				if zConfig := GetZoneConfig(r.Zone); zConfig != nil {
-
-					if zConfig.MobAutoScale.Minimum > 0 {
-						forceLevel = zConfig.GenerateRandomLevel()
-					}
-
-					if forceLevel > 0 {
-						forceLevel += spawnInfo.LevelMod
-						if forceLevel < 1 {
-							forceLevel = 1
-						}
-					}
-
+			if spawnInfo.StatPool > 0 {
+				forceStatPool = spawnInfo.StatPool + spawnInfo.StatPoolMod
+				if forceStatPool < 1 {
+					forceStatPool = 1
 				}
 			}
 
-			if mob := mobs.NewMobById(mobs.MobId(spawnInfo.MobId), r.RoomId, forceLevel); mob != nil {
+			if mob := mobs.NewMobById(mobs.MobId(spawnInfo.MobId), r.RoomId, forceStatPool); mob != nil {
 
 				// If a merchant, fill up stocks on first time being loaded in
 				if mob.HasShop() {
@@ -1124,7 +1111,7 @@ func (r *Room) GetMobs(findTypes ...FindFlag) []int {
 			}
 		}
 
-		if typeFlag&FindHasLight == FindHasLight && mob.Character.HasBuffFlag(buffs.EmitsLight) {
+		if typeFlag&FindHasLight == FindHasLight && mob.Character.HasFlagFromAnySource(buffs.EmitsLight) {
 			mobMatches = append(mobMatches, mobId)
 			continue
 		}
@@ -1220,7 +1207,7 @@ func (r *Room) GetPlayers(findTypes ...FindFlag) []int {
 			}
 		}
 
-		if typeFlag&FindHasLight == FindHasLight && user.Character.HasBuffFlag(buffs.EmitsLight) {
+		if typeFlag&FindHasLight == FindHasLight && user.Character.HasFlagFromAnySource(buffs.EmitsLight) {
 			playerMatches = append(playerMatches, userId)
 			continue
 		}
@@ -2290,14 +2277,14 @@ func (r *Room) CanPvp(attUser *users.UserRecord, defUser *users.UserRecord) erro
 
 	// Possible settings are `enabled`, `disabled`, `limited`
 	pvpSetting := string(c.PVP)
-	minLevel := int(c.PVPMinimumLevel)
+	minRanks := int(c.PVPMinimumSkillRanks)
 
 	if pvpSetting == configs.PVPDisabled {
 		return errors.New(`PVP is disabled.`)
 	}
 
-	if attUser.Character.Level < minLevel || defUser.Character.Level < minLevel {
-		return fmt.Errorf(`Players must be at least level %d to PVP.`, minLevel)
+	if attUser.Character.GetTotalSkillRanks() < minRanks || defUser.Character.GetTotalSkillRanks() < minRanks {
+		return errors.New(`You need more experience before engaging in PVP.`)
 	}
 
 	if pvpSetting == configs.PVPLimited {

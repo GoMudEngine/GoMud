@@ -1,0 +1,21 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">scribe</ansi> (skill)
+
+The <ansi fg="skill">scribe</ansi> skill gives the player the ability to write down things in the 
+world. 
+These will eventually decay into dust and scraps, but can be quite useful for 
+a time.
+
+You can train the <ansi fg="skill">scribe</ansi> skill at a <ansi fg="yellow">bard</ansi> training school.
+With each level of training, the variety of things you can scribe increases.
+
+Beware! Sometimes scribe may need to be used in combination with another skill!
+
+<ansi fg="yellow">Usage: </ansi>
+
+(Lvl 1) <ansi fg="skill">scribe note [txt]</ansi> Write a message to a scrap of paper that can be saved
+                          or shared.
+(Lvl 2) <ansi fg="skill">scribe sign [txt]</ansi> Create/Replace a makeshift sign with a short message 
+                          and place it in the area. Decays in a weeks time.
+(Lvl 3) <ansi fg="skill">scribe rune [txt]</ansi> Create/Replace a short hidden message into the area 
+                          that only you can see. Decays in a months time.
+(Lvl 4) 

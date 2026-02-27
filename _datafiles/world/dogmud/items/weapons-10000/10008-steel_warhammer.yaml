@@ -1,0 +1,16 @@
+itemid: 10008
+name: steel warhammer
+namesimple: warhammer
+description: A one-handed warhammer with a steel head and reinforced haft. The weight
+  of the hammerhead makes it slower but powerful.
+type: weapon
+hands: 1
+subtype: bludgeoning
+weight: 12.0  # Heavy one-handed weapon
+speedmultiplier: 0.6  # Slower one-handed weapon due to weight
+staminacost: 10  # Heavy one-handed weapon cost
+grapplemodifier: 0.5  # Stage 8.7: Heavy weapon, harder to grapple with
+damage:
+  basedamage: 8
+  variance: 2
+parryrating: 5

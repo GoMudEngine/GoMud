@@ -1,0 +1,9 @@
+biomeid: house
+name: House
+symbol: ⌂
+description: Standard domiciles and other dwellings.
+darkarea: false
+litarea: true
+requireditemid: 0
+usesitem: false
+burns: true

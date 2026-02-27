@@ -1,0 +1,25 @@
+speciesid: 0
+name: ghostly spirit
+description: A non-corporeal entity... mostly.
+  world... mostly.
+size: small
+angrycommands: [emote drifts aggressively.]
+unarmedname: ectoplasm
+tameable: false
+stats:
+  strength:
+    base: 0
+  dexterity:
+    base: 0
+  perception:
+    base: 0
+  vitality:
+    base: 0
+  willpower:
+    base: 0
+  charisma:
+    base: 0
+damage:
+  basedamage: 0
+  variance: 0
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'body', 'belt', 'gloves', 'ring', 'legs', 'feet']

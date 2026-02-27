@@ -1,0 +1,24 @@
+roomid: 300
+zone: Labyrinth of Low Tunnels
+title: Narrow Descent
+description: The crack in the cliff face gives way to a steep chute of slick basalt,
+  angled sharply downward into darkness. The walls close in immediately -- shoulders
+  brush stone on both sides, and the ceiling drops low enough to force a stoop. Crude
+  handholds have been gouged into the rock at intervals, but they are small, spaced
+  too close together, as though made for hands much smaller than yours. The air turns
+  cold and damp within a few steps, carrying the faint stink of something animal.
+biome: cave
+exits:
+  east:
+    roomid: 121
+    zone: Sanctum Basin
+  down:
+    roomid: 301
+spawninfo:
+- mobid: 76
+  message: A pale, eyeless rat scurries along the base of the wall, whiskers twitching.
+  respawnrate: 10 real minutes
+idlemessages:
+- The stone is slick with condensation. Every surface feels greasy underfoot.
+- A faint scratching echoes from below -- claws on stone, or stone on stone.
+- Cold air pushes up from the depths, carrying the smell of wet fur and old smoke.

@@ -1,0 +1,12 @@
+itemid: 20034
+name: gem-set necklace
+namesimple: necklace
+description: A raw gem hangs in a cradle of twisted silver wire, facets catching
+  every scrap of light. The stone seems to hum faintly when held close,
+  sharpening the senses of whoever wears it.
+type: neck
+subtype: wearable
+damagereduction: 1
+statmods:
+  perception: 3
+value: 18

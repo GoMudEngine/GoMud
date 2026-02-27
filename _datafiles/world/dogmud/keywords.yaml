@@ -1,0 +1,265 @@
+# Help targets for the help  help <target>
+# Looks for a template file: _datafiles/templates/help/<command>.template 
+
+
+help:
+  command:
+    configuration:
+      - alias
+      - macros
+      - set
+      - password
+    character:
+
+      - conditions
+      - cooldowns
+
+      - inventory
+      - jobs
+      - keyring
+      - skills
+      - spells
+      - status
+      - killstats
+      - encumbrance
+      - death
+      - character
+      - pets
+      - bury
+    communication:
+      - emote
+      - say
+      - shout
+      - broadcast
+      - talk
+      - whisper
+      - inbox
+    shops:
+      - appraise
+      - bank
+      - buy
+      - deposit
+      - hire
+      - list
+      - offer
+      - sell
+      - store
+      - unstore
+      - withdraw
+    quests:
+      - ask
+      - quests
+    combat:
+      - attack
+      - bash
+      - break
+      - cast
+      - consider
+      - cooldowns
+      - defense
+      - flee
+      - kick
+      - shoot
+      - stamina
+      - stand
+      - trip
+    crafting:
+      - craft
+    information:
+      - biome
+      - exits
+      - help
+      - look
+      - online
+      - species
+      - who
+      - history
+    items:
+      - drop
+      - drink
+      - eat
+      - equip
+      - get
+      - give
+      - remove
+      - show
+      - stash
+      - trash
+      - use
+      - read
+      - put
+    general:
+      - online
+      - quit
+    parties:
+      - party
+      - share
+    locks:
+      - lock
+      - picklock
+      - unlock
+  skill:
+    all:
+      - cast
+      - inspect
+      - map
+      - pickpocket
+      - search
+      - sneak
+      - track
+      - blacksmithing
+      - alchemy
+      - foraging
+      - tailoring
+      - cooking
+      - jewelcrafting
+      - enchanting
+  admin:
+    all:
+      - badcommands
+      - buff
+      - build
+      - combatstats
+      - command
+      - deafen
+      - devtool
+      - item
+      - grant
+      - locate
+      - modify
+      - mudmail
+      - mute
+      - paz
+      - prepare
+      - questtoken
+      - redescribe
+      - reload
+      - rename
+      - room
+      - server
+      - skillset
+      - spawn
+      - syslogs
+      - zap
+      - zone
+# Aliases for keywords when typing: help <keyword>
+# Key is the target keyword, value is the list of aliases
+help-aliases:
+  stealth:          [sneak, pickpocket]
+  combat:           [fighting, battle]
+  cooldowns:        [cooldown]
+  defense:          [dodge, parry, block, defenses]
+  prone:            [knockdown, knocked-down, knocked down]
+  stamina:          [endurance, energy]
+  bank:             [deposit, withdraw]
+  mutations:        [mutation, chrysalis, mutate]
+  craft:            [crafting, recipes, recipe, make, create]
+  blacksmithing:    [blacksmith, smith, smithing, forge, metalwork]
+  alchemy:          [alchemist, potion, potions, brewing, brew, herbalism]
+  foraging:         [forage, gather, gathering, harvest, harvesting]
+  tailoring:        [tailor, sewing, weaving, clothwork]
+  cooking:          [cook, baking, food, meals]
+  jewelcrafting:    [jeweler, jewelry, gemwork, gemcutting, jewel]
+  enchanting:       [enchant, enchantment, enchantments, imbue]
+  disenchant:       [unenchant, remove-enchant, strip-enchant]
+  storage:          [store, unstore]
+  strength:         [str]
+  vitality:         [vit]
+  dexterity:        [dex, speed, spd, spe]
+  willpower:        [wil, will, mysticism, mys, myst]
+  charisma:         [cha, smarts, smt, sma]
+  perception:       [per, percep, percept]
+  health:           [hp]
+  species:          [race, races]
+  picklock:         [pick]
+  picklock-example: [pick-example]
+  keyring:          [key, keys]
+  equip:            [wear, wield, hold]
+  status:           [score, info]
+  set-prompt:       [prompt]
+  set-wimpy:        [wimpy]
+  colors:           [color, ansi]
+  killstats:        [kills, kd]
+  bartering:        [barter, haggle, trade]
+  pets:             [pet]
+  macros:           [macro]
+  history:          ['log']
+  pvp:              ['pk']
+  about:            ['gomud', 'dogmud', 'dog', 'lore', 'world', 'setting', 'background']
+
+# Default aliases for commands
+# For example: inv -> inventory
+# They can be command + argument aliases
+# Key is the target command, value is the list of aliases
+command-aliases:
+  say:                ['.']
+  broadcast:          ['`']
+  status:             ['sta', 'stat', 'stats', 'score', 'info']
+  inventory:          ['i', 'inv', 'eq']
+  look:               ['l', 'examine']
+  go:                 ['enter']
+  experience:         ['exp', 'xp', 'tnl']
+  map:                ['m']
+  conditions:         ['c', 'cond', 'conds']
+  skills:             ['sk', 'skill']
+  scribe:             ['scribble', 'write']
+  equip:              ['wear', 'wield', 'hold']
+  remove:             ['rem', 'unequip', 'unwear', 'unwield']
+  throw:              ['toss']
+  attack:             ['a', 'k', 'kill', 'fight']
+  get:                ['g', 'take']
+  command:            ['cmd']
+  macros:             ['=?', 'macro']
+  sneak:              ['sn']
+  spells:             ['spellbook']
+  backstab:           ['bs']
+  killstats:          ['kills', 'kd', 'killstat']
+  mutations:          ['mutation']
+  quests:             ['q', 'quest']
+  shout:              ['yell', 'scream', 'holler']
+  picklock:           ['pick', 'lockpick']
+  keyring:            ['key', 'keys']
+  whisper:            ['/w']
+  unlock:             ['open']
+  buy:                ['hire']
+  trash:              ['junk']
+  put:                ['place']
+  history:            ['log']
+  noop:               ['wake']
+  syslogs:            ['syslog']
+  'party chat':       ['pchat', 'psay']
+  'bank deposit':     ['deposit']
+  'bank withdraw':    ['withdraw']
+  'storage add':      ['store']
+  'storage remove':   ['unstore']
+  'rank back':        ['backrank']
+  'rank front':       ['frontrank']
+  'help about':       ['about']
+  'set screenreader': ['screenreader']
+  
+  # Direction aliases
+direction-aliases:
+  n:  north
+  s:  south
+  e:  east
+  w:  west
+  u:  up
+  d:  down
+  nw: northwest
+  ne: northeast
+  sw: southwest
+  se: southeast
+
+# Special map symbols that will always show this exact text if found on a map.
+# Group under zone names.
+# '*' entries apply everywhere, unless overridden by a zone entry
+legend-overrides:
+  '*':
+    '$': 'Shop'
+    '★': 'Bank'
+    'G': 'Gate'
+    '✗': 'Target'
+    '%': 'Trainer'
+    '?': 'Secret'
+  'Frostfang':
+    '!': 'Throne Room'

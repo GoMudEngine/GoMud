@@ -1,0 +1,4 @@
+The <ansi fg="command">modify</ansi> command modifies player records:
+
+<ansi fg="command">modify role [username] [newrole]</ansi> - Changes a users role.
+Note: Cannot downgrade an admin to a lower role.

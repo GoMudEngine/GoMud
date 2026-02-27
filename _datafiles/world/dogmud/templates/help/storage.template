@@ -1,0 +1,13 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">storage</ansi>
+
+The <ansi fg="command">storage</ansi> command lets you store and unstore items. 
+These items can be retrieved at various locations in the world.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">storage</ansi> - See what you have in storage
+
+  <ansi fg="command">unstore [item]</ansi> - Remove an item from storage
+  
+  <ansi fg="command">store [item]</ansi> - Add an item in storage
+

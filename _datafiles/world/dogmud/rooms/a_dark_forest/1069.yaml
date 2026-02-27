@@ -1,0 +1,13 @@
+roomid: 1069
+zone: A Dark Forest
+title: A Dark Forest - Room 1069
+description: A room in A Dark Forest. This area has not yet been described.
+exits:
+  east:
+    roomid: 1070
+  north:
+    roomid: 1060
+  south:
+    roomid: 1078
+  west:
+    roomid: 1068

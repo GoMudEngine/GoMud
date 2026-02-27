@@ -1,0 +1,6 @@
+itemid: 20002
+name: cape
+description: A plain cape that protects (poorly) from the elements.
+type: neck
+subtype: wearable
+damagereduction: 1

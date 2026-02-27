@@ -1,0 +1,9 @@
+biomeid: dungeon
+name: Dungeon
+symbol: •
+description: These are cave-like underground areas built with a purpose.
+darkarea: true
+litarea: false
+requireditemid: 0
+usesitem: false
+burns: false

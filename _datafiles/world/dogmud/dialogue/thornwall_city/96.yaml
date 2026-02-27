@@ -1,0 +1,75 @@
+mobid: 96
+zone: Thornwall City
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Welcome to the Drowning Post. Sit where you like. What are you drinking?"
+      - "Come in, come in. First drink is at market price, second one is whatever I feel like charging."
+
+  - keywords: ["hello", "hi"]
+    moods: ["grateful"]
+    responses:
+      - "You are back. The good seat by the fire is open. Sit, drink. On the house."
+
+  - keywords: ["debt", "tax", "money", "trouble", "owe", "problem"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "I owe the city taxes I cannot pay, and someone in the back alleys has decided I owe them too. Protection money. Two boots on my neck and not enough air for either."
+      - "The tavern is drowning in more than name. City taxes on one side, thugs on the other. I need help, but the kind of help I need does not come cheap."
+
+  - keywords: ["help", "quest", "task", "work"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "If you want to help, take this protection notice to the guard captain at the barracks. It is proof they are extorting businesses in the quarter. That might get one boot off my neck, at least."
+
+  - keywords: ["protection", "thug", "racket", "alley", "extort"]
+    responses:
+      - "Someone has been leaving notices under doors in the Craftsmen's Quarter. Pay up or bad things happen. I have been paying, but I cannot keep it up. The guard needs to know, but I am afraid to go myself."
+
+  - keywords: ["cellar", "basement", "below", "noise", "tunnel", "sewer"]
+    responses:
+      - "There are noises from the cellar at night. Scraping, sometimes splashing. The old drainage tunnels run under the city, and the cellar connects to them. I have been meaning to investigate, but... one problem at a time."
+
+  - keywords: ["drink", "ale", "food", "menu"]
+    responses:
+      - "Ale is cheap, wine is not. Stew is whatever I had time to make this morning. It is honest food and honest drink. Nothing fancy."
+
+  - keywords: [""]
+    responses:
+      - "Need something? I am behind the bar, as always."
+      - "Speak up. It is hard to hear over the usual noise."
+
+tree:
+  root:
+    text: "Marek polishes a mug with a cloth that is not especially clean, watching you approach with the wary hospitality of someone who needs every customer but trusts none of them. 'Sit. Drink. If you are looking for trouble, the back alleys have plenty. If you are looking for a quiet drink and maybe a favour...' He sets the mug down. 'Well, I could use a favour.'"
+    hints: "Ask Marek about his troubles, the tavern, or the favour he needs."
+
+  nodes:
+    - id: the_squeeze
+      triggers: ["trouble", "favour", "favor", "help", "debt", "problem", "quest"]
+      text: "Marek leans across the bar, lowering his voice. 'The tavern owes taxes to the city. That is my problem and I am working on it. But there is another problem -- someone in the back alleys has been sending protection notices to every business in the quarter. Pay up or get hurt. I have been paying both, and the money is running out.' He reaches under the bar and produces a folded paper. 'This is the latest notice. If the guard captain saw this, he would have to act. But I am afraid to walk into that barracks myself. People who report the racket tend to have accidents.'"
+      hints: "Take the protection notice to Guard Captain Velk at the barracks."
+      unlocks: ["about_thugs", "cellar_hint"]
+      moodChange: friendly
+
+    - id: about_thugs
+      triggers: ["who", "thugs", "behind", "racket", "boss"]
+      requires: ["the_squeeze"]
+      text: "'I do not know who runs it. The notices are unsigned, delivered at night. The thugs in the back alleys collect, but they are just muscle -- someone higher up is pulling strings. The guard might be able to find out, if they care enough to look.'"
+
+    - id: cellar_hint
+      triggers: ["cellar", "noise", "tunnel", "sewer", "below", "basement"]
+      requires: ["the_squeeze"]
+      text: "Marek glances at the cellar stairs and drops his voice further. 'There is something else. At night, I hear noises from the cellar -- scraping, splashing, sometimes what sounds like voices. The old drainage tunnels run under this whole district. The cellar connects to them through a grate that has not been opened in years.' He shakes his head. 'One crisis at a time. But something is down there.'"
+
+    - id: quest_complete
+      triggers: ["guard", "captain", "reported", "told", "evidence", "done"]
+      requires: ["the_squeeze"]
+      text: "Marek exhales slowly, setting down the mug he was polishing. 'You told the captain? And he is going to act?' The relief on his face is visible. 'That is... that is something. The taxes are still a problem, but at least I will not have to feed two mouths that want to eat me alive.' He reaches for a bottle behind the keg. 'The good stuff. You have earned it.'"
+      moodChange: grateful
+
+memory:
+  expiryPeriod: "1h"

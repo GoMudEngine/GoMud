@@ -1,0 +1,9 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">hire</ansi>
+
+The <ansi fg="command">hire</ansi> command hires mercenaries offered by merchants.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">hire guard</ansi>
+  This hires the guard, if you have the gold and the merchant offers a guard.
+

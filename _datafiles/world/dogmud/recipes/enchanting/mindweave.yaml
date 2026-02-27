@@ -1,0 +1,20 @@
+id: mindweave
+name: "Mindweave"
+skill: enchanting
+skill_minimum: 35
+station: enchanting_circle
+time_rounds: 7
+target_type: head
+enchant_type: mindweave
+ingredients:
+  - item_tag: chrysalis-setting
+    quantity: 2
+  - item_tag: mutation-catalyst
+    quantity: 2
+  - item_tag: binding-paste
+    quantity: 2
+output:
+  item_id: 0
+  quantity: 0
+success_message: "All elements converge in a cascade of Chrysalis insight, weaving through the helm's crown. Your thoughts sharpen to crystalline clarity."
+failure_message: "The catalyst rejects the binding. The materials crumble to dust, but the helm is unharmed."

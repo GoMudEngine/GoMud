@@ -1,0 +1,11 @@
+itemid: 40025
+name: raw gem
+namesimple: gem
+description: An uncut gemstone, cloudy and rough on the outside but catching the
+  light with a promising inner fire. A skilled jeweler could shape it into
+  something worth wearing.
+type: object
+subtype: mundane
+component_tag: raw-gem
+weight: 0.1
+value: 5

@@ -10,7 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
-	"github.com/GoMudEngine/GoMud/internal/races"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/term"
@@ -200,34 +200,34 @@ func mob_Create(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 	newMob.Character.Name = question.Response
 
 	//
-	// Race Selection
+	// Species Selection
 	//
-	allRaces := races.GetRaces()
+	allSpecies := species.GetAllSpecies()
 
-	raceOptions := []templates.NameDescription{}
-	for _, r := range allRaces {
-		raceOptions = append(raceOptions, templates.NameDescription{
+	speciesOptions := []templates.NameDescription{}
+	for _, r := range allSpecies {
+		speciesOptions = append(speciesOptions, templates.NameDescription{
 			Name:        r.Name,
 			Description: r.Description,
 		})
 	}
 
-	sort.SliceStable(raceOptions, func(i, j int) bool {
-		return raceOptions[i].Name < raceOptions[j].Name
+	sort.SliceStable(speciesOptions, func(i, j int) bool {
+		return speciesOptions[i].Name < speciesOptions[j].Name
 	})
 
 	raceName := ``
-	if newMob.Character.RaceId > 0 {
-		if r := races.GetRace(newMob.Character.RaceId); r != nil {
+	if newMob.Character.SpeciesId > 0 {
+		if r := species.GetSpecies(newMob.Character.SpeciesId); r != nil {
 			raceName = r.Name
 		}
 	}
 
-	question = cmdPrompt.Ask(`What race will the mob be?`, []string{raceName}, raceName)
+	question = cmdPrompt.Ask(`What species will the mob be?`, []string{raceName}, raceName)
 	if !question.Done {
-		tplTxt, _ := templates.Process("tables/numbered-list", raceOptions, user.UserId)
+		tplTxt, _ := templates.Process("tables/numbered-list", speciesOptions, user.UserId)
 		user.SendText(tplTxt)
-		user.SendText(`  <ansi fg="black-bold">Enter <ansi fg="command">help {racename}</ansi> or <ansi fg="command">help {number}</ansi> for details.</ansi>`)
+		user.SendText(`  <ansi fg="black-bold">Enter <ansi fg="command">help {speciesname}</ansi> or <ansi fg="command">help {number}</ansi> for details.</ansi>`)
 		user.SendText(``)
 		return true, nil
 	}
@@ -244,8 +244,8 @@ func mob_Create(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 		helpRest := respLower[5:]
 
 		if restNum, err := strconv.Atoi(helpRest); err == nil {
-			if restNum > 0 && restNum <= len(raceOptions) {
-				helpRest = raceOptions[restNum-1].Name
+			if restNum > 0 && restNum <= len(speciesOptions) {
+				helpRest = speciesOptions[restNum-1].Name
 			} else {
 				helpCmd = `races`
 				helpRest = ``
@@ -258,24 +258,24 @@ func mob_Create(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 
 	raceNameSelection := question.Response
 	if restNum, err := strconv.Atoi(raceNameSelection); err == nil {
-		if restNum > 0 && restNum <= len(raceOptions) {
-			raceNameSelection = raceOptions[restNum-1].Name
+		if restNum > 0 && restNum <= len(speciesOptions) {
+			raceNameSelection = speciesOptions[restNum-1].Name
 		}
 	}
 
-	for _, r := range allRaces {
+	for _, r := range allSpecies {
 		if strings.EqualFold(r.Name, raceNameSelection) {
-			newMob.Character.RaceId = r.RaceId
+			newMob.Character.SpeciesId = r.SpeciesId
 			break
 		}
 	}
 
-	if newMob.Character.RaceId == 0 {
+	if newMob.Character.SpeciesId == 0 {
 		question.RejectResponse()
 
-		tplTxt, _ := templates.Process("tables/numbered-list", raceOptions, user.UserId)
+		tplTxt, _ := templates.Process("tables/numbered-list", speciesOptions, user.UserId)
 		user.SendText(tplTxt)
-		user.SendText(`  <ansi fg="black-bold">Enter <ansi fg="command">help {racename}</ansi> or <ansi fg="command">help {number}</ansi> for details.</ansi>`)
+		user.SendText(`  <ansi fg="black-bold">Enter <ansi fg="command">help {speciesname}</ansi> or <ansi fg="command">help {number}</ansi> for details.</ansi>`)
 		user.SendText(``)
 
 		return true, nil
@@ -426,7 +426,7 @@ func mob_Create(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 	if !question.Done {
 
 		user.SendText(`  <ansi fg="yellow-bold">Name:</ansi>    <ansi fg="white-bold">` + newMob.Character.Name + `</ansi>`)
-		user.SendText(`  <ansi fg="yellow-bold">Race:</ansi>    <ansi fg="white-bold">` + strconv.Itoa(newMob.Character.RaceId) + ` (` + raceNameSelection + `)</ansi>`)
+		user.SendText(`  <ansi fg="yellow-bold">Species:</ansi> <ansi fg="white-bold">` + strconv.Itoa(newMob.Character.SpeciesId) + ` (` + raceNameSelection + `)</ansi>`)
 		user.SendText(`  <ansi fg="yellow-bold">Zone:</ansi>    <ansi fg="white-bold">` + newMob.Zone + `</ansi>`)
 		user.SendText(`  <ansi fg="yellow-bold">Desc:</ansi>    <ansi fg="white-bold">` + newMob.Character.Description + `</ansi>`)
 		user.SendText(`  <ansi fg="yellow-bold">Wander:</ansi>  <ansi fg="white-bold">` + strconv.Itoa(newMob.MaxWander) + `</ansi>`)

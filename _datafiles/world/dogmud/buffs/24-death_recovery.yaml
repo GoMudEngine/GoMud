@@ -1,0 +1,5 @@
+buffid: 24
+name: Death Recovery
+description: You are recovering from dying
+triggerrate: 1 rounds
+triggercount: 15

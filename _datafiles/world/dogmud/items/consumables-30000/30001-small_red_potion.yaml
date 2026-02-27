@@ -1,0 +1,9 @@
+itemid: 30001
+name: small red potion
+namesimple: bottle
+description: A small red potion... you COULD drink it...
+type: potion
+subtype: drinkable
+uses: 1
+buffids: 
+- 5

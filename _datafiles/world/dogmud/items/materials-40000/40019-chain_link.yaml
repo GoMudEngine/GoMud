@@ -1,0 +1,10 @@
+itemid: 40019
+name: chain link
+namesimple: links
+description: Interlocking iron rings, ready to be woven into mail. They clink
+  softly when handled.
+type: object
+subtype: mundane
+component_tag: chain-link
+weight: 0.1
+value: 2

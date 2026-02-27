@@ -2,7 +2,9 @@
 
 ## Overview
 
-The `internal/statmods` package provides a centralized system for managing character statistic modifications in the GoMud game engine. It defines standardized stat names, modification structures, and provides utilities for applying temporary and permanent stat changes from various sources like items, buffs, racial bonuses, and skills.
+The `internal/statmods` package provides a centralized system for managing character statistic modifications in the DOGMud game engine. It defines standardized stat names, modification structures, and provides utilities for applying temporary and permanent stat changes from various sources like items, buffs, species bonuses, and skills.
+
+**DOGMud note:** The internal stat key strings (e.g., `"speed"`, `"smarts"`, `"mysticism"`) are used as map keys in the engine and may not match the player-facing stat names (Dexterity, Perception, Willpower). The mapping is: speed→Dexterity, smarts→Perception, mysticism→Willpower, perception→Charisma. Mana-related keys are deprecated.
 
 ## Key Components
 
@@ -31,17 +33,17 @@ Type-safe string wrapper for standardized stat name constants, ensuring consiste
 
 ### Core Character Stats
 - **Strength**: `"strength"` - Physical power affecting melee damage and carrying capacity
-- **Speed**: `"speed"` - Agility and reaction time affecting initiative and dodge
-- **Smarts**: `"smarts"` - Intelligence affecting spell power and skill learning
+- **Speed/Dexterity**: `"speed"` - Agility and reaction time affecting initiative and dodge (displayed as "Dexterity")
+- **Smarts/Perception**: `"smarts"` - Awareness affecting detection and observation (displayed as "Perception")
 - **Vitality**: `"vitality"` - Constitution affecting health and resistance
-- **Mysticism**: `"mysticism"` - Magical aptitude affecting mana and spell effectiveness
-- **Perception**: `"perception"` - Awareness affecting detection and ranged accuracy
+- **Mysticism/Willpower**: `"mysticism"` - Mental fortitude affecting conviction and spell effectiveness (displayed as "Willpower")
+- **Perception/Charisma**: `"perception"` - Social influence affecting NPC interactions (displayed as "Charisma")
 
 ### Derived Stats
 - **HealthMax**: `"healthmax"` - Maximum health points
-- **ManaMax**: `"manamax"` - Maximum mana points
+- **ManaMax**: `"manamax"` - DEPRECATED (Mana removed in DOGMud)
 - **HealthRecovery**: `"healthrecovery"` - Health regeneration rate modifier
-- **ManaRecovery**: `"manarecovery"` - Mana regeneration rate modifier
+- **ManaRecovery**: `"manarecovery"` - DEPRECATED (Mana removed in DOGMud)
 
 ### Skill-Specific Stats
 - **Tame**: `"tame"` - Animal taming skill effectiveness

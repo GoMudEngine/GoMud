@@ -1,0 +1,13 @@
+itemid: 21
+name: crossing ledger
+namesimple: ledger
+description: A heavy leather-bound book filled with columns of dates, names, and
+  payment amounts in a meticulous hand. The ledger records every toll collected at
+  the bridge, along with notes about repair expenditures and material costs. A careful
+  reader could piece together exactly where the money has been going -- and whether
+  the toll is justified. Several pages have been marked with ribbon bookmarks at
+  entries that show significant payments to stonemasons.
+type: object
+subtype: holdable
+uses: 0
+weight: 2.0

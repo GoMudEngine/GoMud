@@ -56,12 +56,6 @@ func Zone(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		user.SendText(fmt.Sprintf(`<ansi fg="yellow-bold">Zone Config for:    <ansi fg="red">%s</ansi></ansi>`, room.Zone))
 		user.SendText(fmt.Sprintf(`   <ansi fg="yellow-bold">Root Room Id:</ansi>    <ansi fg="red">%d</ansi>`, zoneConfig.RoomId))
 
-		if zoneConfig.MobAutoScale.Maximum == 0 {
-			user.SendText(`  <ansi fg="yellow-bold">Mob AutoScale:</ansi>    <ansi fg="red">[disabled]</ansi>`)
-		} else {
-			user.SendText(fmt.Sprintf(`  <ansi fg="yellow-bold">Mob AutoScale:</ansi>    <ansi fg="red">%d</ansi> - <ansi fg="red">%d</ansi>`, zoneConfig.MobAutoScale.Minimum, zoneConfig.MobAutoScale.Maximum))
-		}
-
 		user.SendText(``)
 
 		return true, nil
@@ -80,24 +74,7 @@ func Zone(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		args = args[1:]
 
 		if setWhat == `autoscale` {
-			if len(args) < 2 {
-				user.SendText(`Use <ansi fg="command">zone set autoscale 0 0</ansi> to clear autoscaling.`)
-				return true, nil
-			}
-
-			min, _ := strconv.Atoi(args[0])
-			max, _ := strconv.Atoi(args[1])
-
-			if min < 0 || max < 0 {
-				user.SendText(`Min/Max can't be less than zero.`)
-				return true, nil
-			}
-
-			zoneConfig.MobAutoScale.Minimum = min
-			zoneConfig.MobAutoScale.Maximum = max
-			zoneConfig.Validate()
-
-			user.SendText(`Done!`)
+			user.SendText(`Autoscaling has been removed. Use per-mob statpool values instead.`)
 			return true, nil
 		}
 
@@ -222,25 +199,6 @@ func zone_Edit(rest string, user *users.UserRecord, room *rooms.Room, flags even
 		tplTxt, _ := templates.Process("tables/numbered-list-doubled", mutatorOptions, user.UserId)
 		user.SendText(tplTxt)
 		return true, nil
-
-	}
-
-	//
-	// Auto-scaling Options
-	//
-	{
-
-		question := cmdPrompt.Ask(`Mob Autoscaling MINIMUM level?`, []string{strconv.Itoa(editZoneConfig.MobAutoScale.Minimum)}, strconv.Itoa(editZoneConfig.MobAutoScale.Minimum))
-		if !question.Done {
-			return true, nil
-		}
-		editZoneConfig.MobAutoScale.Minimum, _ = strconv.Atoi(question.Response)
-
-		question = cmdPrompt.Ask(`Mob Autoscaling MAXIMUM level?`, []string{strconv.Itoa(editZoneConfig.MobAutoScale.Maximum)}, strconv.Itoa(editZoneConfig.MobAutoScale.Maximum))
-		if !question.Done {
-			return true, nil
-		}
-		editZoneConfig.MobAutoScale.Maximum, _ = strconv.Atoi(question.Response)
 
 	}
 

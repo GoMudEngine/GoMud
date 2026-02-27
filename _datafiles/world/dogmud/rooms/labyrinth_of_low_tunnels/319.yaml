@@ -1,0 +1,33 @@
+roomid: 319
+zone: Labyrinth of Low Tunnels
+title: Collapsed Shaft
+description: The tunnel east of the den ends abruptly where the ceiling has given way,
+  filling the passage with tons of broken stone. But the collapse is not total -- gaps
+  between the rubble let through thin currents of cold air from somewhere far below,
+  carrying a smell unlike anything else in the warren. Cleaner. Older. Mineral and
+  metal and something faintly chemical. The collapse itself looks recent compared to
+  the rest of the tunnels, as though whatever is down there broke through from below
+  and the ceiling gave way to seal it back. Claw marks on the surviving walls suggest
+  the warren's inhabitants have been testing the rubble, probing for a way through.
+  They have not found one yet.
+biome: cave
+exits:
+  west:
+    roomid: 314
+spawninfo:
+- mobid: 76
+  message: A blind tunnel rat sniffs at the gaps in the rubble, whiskers quivering.
+  respawnrate: 12 real minutes
+nouns:
+  rubble: Massive chunks of basalt, fractured and fallen. The break patterns suggest
+    the collapse came from below -- something pushed up, and the tunnel could not hold.
+    Small creatures have been picking at the edges, moving stones one at a time. A
+    project of years, barely begun.
+  air: The draft from below is cold and clean -- nothing like the fetid warren air. It
+    carries a faint metallic tang and something sharper, almost medicinal. Whatever
+    is down there, it is not more tunnel.
+idlemessages:
+- Cold air sighs through the gaps in the rubble, carrying a strange metallic scent.
+- A stone deep in the collapse shifts and settles with a low grinding sound.
+- The claw marks near the rubble are fresh -- pale scratches in dark stone. Something was working here recently.
+- The draft from below is steady and cold, utterly unlike the stale warmth of the rest of the warren.

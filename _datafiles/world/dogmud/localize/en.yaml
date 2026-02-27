@@ -1,0 +1,21 @@
+# English
+#
+# Format: `msgID: translated value`, quotation marks are sometimes required
+# Empty translated value will fallback to it's msgID
+# If the msgID used in the translation function is not in this file, it will also falls back to the msgID.
+
+Motd: "Welcome to the Mud!"
+
+Login.username: 'username'
+Login.password: 'password'
+'Create new user?':
+
+Inbox.NewMessage: "         *NEW MESSAGE*"
+Inbox.Sent: 'Sent:    '
+Inbox.From: 'From:    '
+Inbox.Message: 'Message: '
+Inbox.Note: 'NOTE:    '
+Inbox.NoteGold: >-
+  This message had <ansi fg="gold">{{ .Gold }} gold</ansi> attached, which was added to your bank balance.
+Inbox.NoteItem: >-
+  This message came with one <ansi fg="itemname">{{ .Item.DisplayName }}</ansi> attached, which was added to your inventory.

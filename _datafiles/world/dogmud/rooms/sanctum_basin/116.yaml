@@ -1,0 +1,28 @@
+roomid: 116
+zone: Sanctum Basin
+title: Observatory
+description: An elevated platform of basalt slabs commands the highest point of Sanctum
+  Basin's western plateau. A small circular structure at its center supports a bronze
+  sighting device aimed at the sky. The view from here is unobstructed in all directions --
+  the basin spread below, the desert plateau beyond, and the three moons visible even
+  by day as faint discs against the pale sky. Elder Saris stands at the sighting device,
+  observing.
+biome: desert
+mapsymbol: O
+maplegend: Observatory
+exits:
+  east:
+    roomid: 117
+  south:
+    roomid: 111
+idlemessages:
+- The three moons of <ansi fg="itemname">Gaius</ansi> are faint but visible, even in daylight.
+- A dry wind sweeps across the elevated platform, carrying the smell of heated stone.
+- The bronze sighting device tracks something slow and distant overhead.
+spawninfo:
+- mobid: 55
+  message: Elder Saris turns from the sighting device, robes shifting in the wind.
+  respawnrate: 2 real minutes
+- mobid: 112
+  message: A faint shimmer coalesces into the translucent outline of a Chrysalis Echo.
+  respawnrate: 15 real seconds

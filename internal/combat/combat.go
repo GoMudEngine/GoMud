@@ -3,21 +3,21 @@ package combat
 import (
 	"fmt"
 	"math"
-	"strconv"
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
-	"github.com/GoMudEngine/GoMud/internal/races"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/statmods"
 	"github.com/GoMudEngine/GoMud/internal/users"
-	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 type SourceTarget string
@@ -32,6 +32,9 @@ func AttackPlayerVsMob(user *users.UserRecord, mob *mobs.Mob) AttackResult {
 
 	attackResult := calculateCombat(*user.Character, mob.Character, User, Mob)
 
+	// Deduct stamina for the attack
+	user.Character.DeductAttackStamina()
+
 	if attackResult.DamageToSource != 0 {
 		user.Character.ApplyHealthChange(attackResult.DamageToSource * -1)
 		user.WimpyCheck()
@@ -42,10 +45,26 @@ func AttackPlayerVsMob(user *users.UserRecord, mob *mobs.Mob) AttackResult {
 	// Remember who has hit him
 	mob.Character.TrackPlayerDamage(user.UserId, attackResult.DamageToTarget)
 
+	// Track progression stats for the attacking player
+	user.Character.OnStatUse("strength", user.UserId)
+	user.Character.OnStatUse("dexterity", user.UserId)
 	if attackResult.Hit {
 		user.PlaySound(`hit-other`, `combat`)
+		combatSkill := string(user.Character.GetCombatSkillTag())
+		user.Character.OnSkillUse(combatSkill, user.UserId)
+		if attackResult.Crit {
+			user.Character.OnCriticalSuccess(combatSkill, user.UserId)
+		}
+		// Track weapon-combat when dual wielding (dual wield governed by weapon-combat)
+		if user.Character.Equipment.Weapon.ItemId > 0 && user.Character.Equipment.Offhand.ItemId > 0 && user.Character.Equipment.Offhand.GetSpec().Type == items.Weapon {
+			user.Character.OnSkillUse(string(skills.WeaponCombat), user.UserId)
+		}
 	} else {
 		user.PlaySound(`miss`, `combat`)
+		if attackResult.Fumble {
+			combatSkill := string(user.Character.GetCombatSkillTag())
+			user.Character.OnCriticalFailure(combatSkill, user.UserId)
+		}
 	}
 
 	return attackResult
@@ -55,6 +74,9 @@ func AttackPlayerVsMob(user *users.UserRecord, mob *mobs.Mob) AttackResult {
 func AttackPlayerVsPlayer(userAtk *users.UserRecord, userDef *users.UserRecord) AttackResult {
 
 	attackResult := calculateCombat(*userAtk.Character, *userDef.Character, User, User)
+
+	// Deduct stamina for the attack
+	userAtk.Character.DeductAttackStamina()
 
 	if attackResult.DamageToSource != 0 {
 		userAtk.Character.ApplyHealthChange(attackResult.DamageToSource * -1)
@@ -66,11 +88,27 @@ func AttackPlayerVsPlayer(userAtk *users.UserRecord, userDef *users.UserRecord) 
 		userDef.WimpyCheck()
 	}
 
+	// Track progression stats for the attacking player
+	userAtk.Character.OnStatUse("strength", userAtk.UserId)
+	userAtk.Character.OnStatUse("dexterity", userAtk.UserId)
 	if attackResult.Hit {
 		userAtk.PlaySound(`hit-other`, `combat`)
 		userDef.PlaySound(`hit-self`, `combat`)
+		combatSkill := string(userAtk.Character.GetCombatSkillTag())
+		userAtk.Character.OnSkillUse(combatSkill, userAtk.UserId)
+		if attackResult.Crit {
+			userAtk.Character.OnCriticalSuccess(combatSkill, userAtk.UserId)
+		}
+		// Track weapon-combat when dual wielding (dual wield governed by weapon-combat)
+		if userAtk.Character.Equipment.Weapon.ItemId > 0 && userAtk.Character.Equipment.Offhand.ItemId > 0 && userAtk.Character.Equipment.Offhand.GetSpec().Type == items.Weapon {
+			userAtk.Character.OnSkillUse(string(skills.WeaponCombat), userAtk.UserId)
+		}
 	} else {
 		userAtk.PlaySound(`miss`, `combat`)
+		if attackResult.Fumble {
+			combatSkill := string(userAtk.Character.GetCombatSkillTag())
+			userAtk.Character.OnCriticalFailure(combatSkill, userAtk.UserId)
+		}
 	}
 
 	return attackResult
@@ -81,12 +119,44 @@ func AttackMobVsPlayer(mob *mobs.Mob, user *users.UserRecord) AttackResult {
 
 	attackResult := calculateCombat(mob.Character, *user.Character, Mob, User)
 
+	// Deduct stamina for the attack
+	mob.Character.DeductAttackStamina()
+
 	mob.Character.ApplyHealthChange(attackResult.DamageToSource * -1)
 
 	if attackResult.DamageToTarget != 0 {
 		user.Character.ApplyHealthChange(attackResult.DamageToTarget * -1)
 		user.WimpyCheck()
+
+		// Check for low-health progression trigger
+		if user.Character.HealthMax.Value > 0 {
+			healthPct := float64(user.Character.Health) / float64(user.Character.HealthMax.Value)
+			if healthPct > 0 && healthPct < 0.25 {
+				user.Character.OnLowResource("health", "vitality", user.UserId)
+			}
+		}
+
+		// Check for low-stamina progression trigger
+		if user.Character.StaminaMax.Value > 0 {
+			staminaPct := float64(user.Character.Stamina) / float64(user.Character.StaminaMax.Value)
+			if staminaPct > 0 && staminaPct < 0.25 {
+				user.Character.OnLowResource("stamina", "strength", user.UserId)
+				user.Character.OnLowResource("stamina", "dexterity", user.UserId)
+			}
+		}
+
+		// Check for low-conviction progression trigger
+		if user.Character.ConvictionMax.Value > 0 {
+			convictionPct := float64(user.Character.Conviction) / float64(user.Character.ConvictionMax.Value)
+			if convictionPct > 0 && convictionPct < 0.25 {
+				user.Character.OnLowResource("conviction", "willpower", user.UserId)
+				user.Character.OnLowResource("conviction", "charisma", user.UserId)
+			}
+		}
 	}
+
+	// Track defender's dexterity use (reacting to attacks)
+	user.Character.OnStatUse("dexterity", user.UserId)
 
 	if attackResult.Hit {
 		user.PlaySound(`hit-self`, `combat`)
@@ -99,6 +169,9 @@ func AttackMobVsPlayer(mob *mobs.Mob, user *users.UserRecord) AttackResult {
 func AttackMobVsMob(mobAtk *mobs.Mob, mobDef *mobs.Mob) AttackResult {
 
 	attackResult := calculateCombat(mobAtk.Character, mobDef.Character, Mob, User)
+
+	// Deduct stamina for the attack
+	mobAtk.Character.DeductAttackStamina()
 
 	mobAtk.Character.ApplyHealthChange(attackResult.DamageToSource * -1)
 	mobDef.Character.ApplyHealthChange(attackResult.DamageToTarget * -1)
@@ -126,8 +199,11 @@ func GetWaitMessages(stepType items.Intensity, sourceChar *characters.Character,
 		msgSeed = sourceChar.Equipment.Weapon.ItemId
 	}
 
+	// Stage 9.4: Track attack for stance calculation
+	sourceChar.IncrementAttackCount()
+
 	tokenReplacements := map[items.TokenName]string{
-		items.TokenItemName:     races.GetRace(sourceChar.RaceId).UnarmedName,
+		items.TokenItemName:     species.GetSpecies(sourceChar.SpeciesId).UnarmedName,
 		items.TokenSource:       sourceChar.Name,
 		items.TokenSourceType:   string(sourceType) + `name`,
 		items.TokenTarget:       targetChar.Name,
@@ -136,20 +212,26 @@ func GetWaitMessages(stepType items.Intensity, sourceChar *characters.Character,
 		items.TokenDamage:       `[Invalid]`,
 		items.TokenEntranceName: `unknown`,
 		items.TokenExitName:     `unknown`,
+		items.TokenStance:       sourceChar.CalculateStanceString(),
+		items.TokenPosition:     sourceChar.CalculatePositionString(),
+		items.TokenMomentum:     sourceChar.CalculateMomentumString(),
 	}
 
+	// Get source character's weapon skill level for message selection
+	skillLevel := sourceChar.GetCombatSkillLevel()
+
 	if sourceChar.RoomId == targetChar.RoomId {
-		toAttackerMsg = msgs.Together.ToAttacker.Get(msgSeed)
-		toDefenderMsg = msgs.Together.ToDefender.Get(msgSeed)
-		toAttackerRoomMsg = msgs.Together.ToRoom.Get(msgSeed)
+		toAttackerMsg = msgs.Together.ToAttacker.GetForSkillLevel(skillLevel, msgSeed)
+		toDefenderMsg = msgs.Together.ToDefender.GetForSkillLevel(skillLevel, msgSeed)
+		toAttackerRoomMsg = msgs.Together.ToRoom.GetForSkillLevel(skillLevel, msgSeed)
 		toDefenderRoomMsg = items.ItemMessage("")
 
 	} else {
 
-		toAttackerMsg = msgs.Separate.ToAttacker.Get(msgSeed)
-		toDefenderMsg = msgs.Separate.ToDefender.Get(msgSeed)
-		toAttackerRoomMsg = msgs.Separate.ToAttackerRoom.Get(msgSeed)
-		toDefenderRoomMsg = msgs.Separate.ToDefenderRoom.Get(msgSeed)
+		toAttackerMsg = msgs.Separate.ToAttacker.GetForSkillLevel(skillLevel, msgSeed)
+		toDefenderMsg = msgs.Separate.ToDefender.GetForSkillLevel(skillLevel, msgSeed)
+		toAttackerRoomMsg = msgs.Separate.ToAttackerRoom.GetForSkillLevel(skillLevel, msgSeed)
+		toDefenderRoomMsg = msgs.Separate.ToDefenderRoom.GetForSkillLevel(skillLevel, msgSeed)
 
 		// Find the exit that leads to the target from the source (if any)
 		if atkRoom := rooms.LoadRoom(sourceChar.RoomId); atkRoom != nil {
@@ -223,7 +305,9 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 
 	attackResult := AttackResult{}
 
-	attackCount := int(math.Ceil(float64(sourceChar.Stats.Speed.ValueAdj-targetChar.Stats.Speed.ValueAdj) / 25))
+	// Base attack count from attacker's dexterity only (defender dex affects hit chance, not attack count)
+	// Formula: 1 base attack + 1 per 50 dex (so Dex 100 = 3 attacks, Dex 150 = 4 attacks)
+	attackCount := 1 + int(sourceChar.Stats.Dexterity.ValueAdj/50)
 	if attackCount < 1 {
 		attackCount = 1
 	}
@@ -233,13 +317,41 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 	// Add any additional attacks
 	attackCount += sourceChar.StatMod(`attacks`)
 
+	// Apply stamina-based penalties
+	if sourceChar.StaminaMax.Value > 0 {
+		staminaRatio := float64(sourceChar.Stamina) / float64(sourceChar.StaminaMax.Value)
+
+		// Reduce attack count when stamina is low (< 20%)
+		if staminaRatio < 0.2 {
+			attackCount = int(math.Ceil(float64(attackCount) * 0.5)) // 50% reduction
+			if attackCount < 1 {
+				attackCount = 1 // Always at least 1 attack
+			}
+		}
+	}
+
+	// Apply encumbrance penalty to attack count (weight-based)
+	carriedWeight := sourceChar.GetCarriedWeight()
+	capacity := sourceChar.CarryCapacity()
+	if carriedWeight > capacity {
+		// Overencumbered: reduce attacks based on how much over capacity
+		overAmount := carriedWeight - capacity
+		overRatio := overAmount / capacity
+		// Penalty scales from 0% at capacity to 50% at 2x capacity
+		encumbrancePenalty := math.Min(overRatio * 0.5, 0.5)
+		attackCount = int(math.Ceil(float64(attackCount) * (1.0 - encumbrancePenalty)))
+		if attackCount < 1 {
+			attackCount = 1 // Always at least 1 attack
+		}
+	}
+
 	for i := 0; i < attackCount; i++ {
 
 		mudlog.Debug(`calculateCombat`, `Atk`, fmt.Sprintf(`%d/%d`, i+1, attackCount), `Source`, fmt.Sprintf(`%s (%s)`, sourceChar.Name, sourceType), `Target`, fmt.Sprintf(`%s (%s)`, targetChar.Name, targetType))
 
 		attackWeapons := []items.Item{}
 
-		dualWieldLevel := sourceChar.GetSkillLevel(skills.DualWield)
+		dualWieldLevel := sourceChar.GetSkillLevel(skills.WeaponCombat)
 
 		if sourceChar.Equipment.Weapon.ItemId > 0 {
 			attackWeapons = append(attackWeapons, sourceChar.Equipment.Weapon)
@@ -249,6 +361,14 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 			attackWeapons = append(attackWeapons, sourceChar.Equipment.Offhand)
 		}
 
+		// Extra arm weapons (from extra-arms mutation)
+		if sourceChar.ExtraArms >= 1 && sourceChar.Equipment.ExtraArm1.ItemId > 0 && sourceChar.Equipment.ExtraArm1.GetSpec().Type == items.Weapon {
+			attackWeapons = append(attackWeapons, sourceChar.Equipment.ExtraArm1)
+		}
+		if sourceChar.ExtraArms >= 2 && sourceChar.Equipment.ExtraArm2.ItemId > 0 && sourceChar.Equipment.ExtraArm2.GetSpec().Type == items.Weapon {
+			attackWeapons = append(attackWeapons, sourceChar.Equipment.ExtraArm2)
+		}
+
 		// Put an empty weapon, so basically hands.
 		if len(attackWeapons) == 0 {
 			attackWeapons = append(attackWeapons, items.Item{
@@ -256,71 +376,55 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 			})
 		}
 
-		if len(attackWeapons) > 1 {
-
-			maxWeapons := 1
-			if dualWieldLevel == 1 {
-				maxWeapons = 1
-			}
-
-			if dualWieldLevel == 2 {
-
-				roll := util.Rand(100)
-
-				util.LogRoll(`Both Weapons`, roll, 50)
-
-				if roll < 50 {
-					maxWeapons = 2
-				}
-			}
-
-			if dualWieldLevel >= 3 {
-				maxWeapons = 2
-			}
-
-			// If two martial weapons are equipped, allow dual wielding even without the stat.
-			if sourceChar.Equipment.Weapon.GetSpec().Subtype == items.Claws && sourceChar.Equipment.Offhand.GetSpec().Subtype == items.Claws {
-				maxWeapons = 2
-			}
-
-			for len(attackWeapons) > maxWeapons {
-				// Remove a random position
-				rnd := util.Rand(len(attackWeapons))
-				attackWeapons = append(attackWeapons[:rnd], attackWeapons[rnd+1:]...)
-			}
-
-		}
+		// Dual wielding: If two weapons equipped, always allow dual wielding
+		// Skill affects offhand attack count (via GetModifiedAttackCount) and hit penalty (below)
+		// No need to remove weapons - let skill determine effectiveness
 
 		attackMessagePrefix := ``
+		backstabCrit := false
 		// If they are backstabbing it's a free crit
 		if sourceChar.Aggro.Type == characters.BackStab {
-			attackResult.Crit = true
+			backstabCrit = true
 			attackMessagePrefix = `<ansi fg="magenta-bold">*[BACKSTAB]*</ansi> `
 			// Failover to the default attack
 			sourceChar.SetAggro(sourceChar.Aggro.UserId, sourceChar.Aggro.MobInstanceId, characters.DefaultAttack)
 		}
 
-		for _, weapon := range attackWeapons {
+		for weaponIdx, weapon := range attackWeapons {
 
 			penalty := 0
 			if len(attackWeapons) > 1 {
-				if dualWieldLevel < 4 {
-					penalty = 35 //35% penalty to hit
+				// Dual wield hit penalty scales with skill: 50% at skill 0 → 10% at skill 50
+				// Natural weapons (claws) ignore penalty
+				if sourceChar.Equipment.Weapon.GetSpec().Subtype == items.Claws && sourceChar.Equipment.Offhand.GetSpec().Subtype == items.Claws {
+					penalty = 0 // Natural dual wielding has no penalty
 				} else {
-					penalty = 25 //25% penalty to hit
+					penaltyReduction := float64(dualWieldLevel) / 50.0 // 0.0 to 1.0
+					penalty = int(50.0 - (penaltyReduction * 40.0))    // 50 → 10
+					if penalty < 10 {
+						penalty = 10 // Minimum 10% penalty even at max skill
+					}
+				}
+				// Extra arm weapons get escalating additional penalties
+				if weaponIdx == 2 {
+					penalty += 20 // 3rd weapon: +20% additional penalty
+				} else if weaponIdx >= 3 {
+					penalty += 40 // 4th weapon: +40% additional penalty
 				}
 			}
 
 			// Set the default weapon info
-			raceInfo := races.GetRace(sourceChar.RaceId)
+			raceInfo := species.GetSpecies(sourceChar.SpeciesId)
 			weaponName := raceInfo.UnarmedName
-			weaponSubType := items.Generic
+			weaponSubType := items.Bludgeoning // Use bludgeoning messages for unarmed (Stage 7.4 fix)
 
-			// Get default racial dice rolls
-			attacks, dCount, dSides, dBonus, critBuffs := sourceChar.GetDefaultDiceRoll()
+			// Get default unarmed distribution damage
+			attacks, baseDmg, dmgVariance, critBuffs := sourceChar.GetDefaultDistributionDamage()
 
-			// Add damage bonus due to statmods
-			dBonus += statModDBonus
+			// Determine if this is a secondary weapon (offhand or extra arm)
+			isOffhand := weaponIdx > 0
+
+			weaponSpeed := 1.0 // Unarmed baseline
 
 			if weapon.ItemId > 0 {
 
@@ -329,10 +433,59 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				weaponName = weapon.DisplayName()
 
 				weaponSubType = itemSpec.Subtype
-				attacks, dCount, dSides, dBonus, critBuffs = weapon.GetDiceRoll()
+				attacks, baseDmg, dmgVariance, critBuffs = weapon.GetDistributionDamage()
+
+				// Get weapon speed multiplier
+				weaponSpeed = itemSpec.GetSpeedMultiplier()
 
 				// If there is a bonus vs. a specific race, apply it
-				dBonus += weapon.StatMod(string(statmods.RacialBonusPrefix) + strings.ToLower(targetChar.Race()))
+				baseDmg += float64(weapon.StatMod(string(statmods.RacialBonusPrefix) + strings.ToLower(targetChar.Species())))
+			}
+
+			// Apply weapon speed multiplier, skill modifiers, and dual wielding bonuses
+			attacks = sourceChar.GetModifiedAttackCount(attacks, weaponSpeed, isOffhand)
+
+			// Stage 8.3: Apply position-based speed modifier
+			positionSpeed := sourceChar.CombatPosition.GetSpeedMultiplier()
+			attacks = int(math.Ceil(float64(attacks) * positionSpeed))
+			if attacks < 1 {
+				attacks = 1 // Always at least 1 attack
+			}
+
+			// Stage 7.5: Reduce attacks to 1 if attempting recovery this round
+			if sourceChar.HasCondition(characters.ConditionRecoveryPenalty) {
+				attacks = 1
+			}
+
+			// Hard cap: max 4 swings per weapon per pass
+			if attacks > 4 {
+				attacks = 4
+			}
+
+			// Add damage bonus due to statmods
+			baseDmg += float64(statModDBonus)
+
+			// Percentage-based strength scaling: Str/100 as multiplier
+			strMultiplier := 1.0 + float64(sourceChar.Stats.Strength.ValueAdj)/100.0
+			dmgMean := baseDmg * strMultiplier
+
+			// Apply stamina-based damage penalty
+			if sourceChar.StaminaMax.Value > 0 {
+				staminaRatio := float64(sourceChar.Stamina) / float64(sourceChar.StaminaMax.Value)
+				if staminaRatio < 0.25 {
+					// 25% damage reduction when very low on stamina
+					dmgMean *= 0.75
+				}
+			}
+
+			// Stage 7.5: Apply prone damage penalty
+			if sourceChar.CombatPosition == characters.PositionProne {
+				dmgMean *= float64(configs.GetGamePlayConfig().ProneDamagePenalty)
+			}
+
+			// Phase 24.2: Apply mutation damage multiplier (Large, Small, etc.)
+			if dmgMult := mutations.GetDamageMultiplier(sourceChar.Mutations); dmgMult != 0 {
+				dmgMean *= (1.0 + dmgMult)
 			}
 
 			// zero means randomly selected, otherwise use the ItemId to consistently choose a message
@@ -341,10 +494,14 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				msgSeed = weapon.ItemId
 			}
 
-			mudlog.Debug("DiceRolls", "attacks", attacks, "dCount", dCount, "dSides", dSides, "dBonus", dBonus, "critBuffs", critBuffs)
+			mudlog.Debug("DistDamage", "attacks", attacks, "baseDmg", baseDmg, "variance", dmgVariance, "strMult", strMultiplier, "dmgMean", dmgMean, "critBuffs", critBuffs)
 
 			// Individual weapons may get multiple attacks
 			for j := 0; j < attacks; j++ {
+
+				// Reset per-swing flags to prevent sticky crit/fumble across swings
+				attackResult.Crit = false
+				attackResult.Fumble = false
 
 				attackTargetDamage := 0
 				attackTargetReduction := 0
@@ -352,33 +509,294 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				attackSourceDamage := 0
 				attackSourceReduction := 0
 
-				if Hits(sourceChar.Stats.Speed.ValueAdj, targetChar.Stats.Speed.ValueAdj, penalty) {
-					attackResult.Hit = true
-					attackTargetDamage = util.RollDice(dCount, dSides) + dBonus
+				// Stage 7.1: Layered Defense System
+				// Calculate attack score with penalties
+				attackScore := float64(sourceChar.Stats.Dexterity.ValueAdj) + float64(sourceChar.GetCombatSkillLevel())
+				attackScore -= float64(penalty) // dual wield penalty
 
-					if attackResult.Crit || Crits(sourceChar, targetChar) {
-						attackResult.Crit = true
-						attackResult.BuffTarget = critBuffs
-						attackTargetDamage += dCount*dSides + dBonus
+				// Apply stamina-based hit chance penalty
+				if sourceChar.StaminaMax.Value > 0 {
+					staminaRatio := float64(sourceChar.Stamina) / float64(sourceChar.StaminaMax.Value)
+					if staminaRatio < 0.5 {
+						// Penalty scales from 0 at 50% stamina to 30 at 0% stamina
+						staminaPenalty := (0.5 - staminaRatio) * 60.0
+						attackScore -= staminaPenalty
 					}
 				}
 
-				defenseAmt := util.Rand(targetChar.GetDefense())
-				if defenseAmt > 0 {
-					attackTargetReduction = int(math.Round((float64(defenseAmt) / 100) * float64(attackTargetDamage)))
-					attackTargetDamage -= attackTargetReduction
+				// Stage 7.5: Apply prone attack penalties/bonuses
+				cfg := configs.GetGamePlayConfig()
+				if sourceChar.CombatPosition == characters.PositionProne {
+					attackScore -= float64(cfg.ProneAttackPenalty) // Penalty for attacking while prone
+				}
+				if targetChar.CombatPosition == characters.PositionProne {
+					attackScore += float64(cfg.ProneVulnerabilityBonus) // Bonus when attacking prone targets
 				}
 
-				defenseAmt = util.Rand(sourceChar.GetDefense())
-				if defenseAmt > 0 {
-					attackSourceReduction = int(math.Round((float64(defenseAmt) / 100) * float64(attackSourceDamage)))
-					attackSourceDamage -= attackSourceReduction
+				// Get defender's defense sequence based on equipment
+				defenseSequence := targetChar.GetDefenseSequence()
+				hit := false
+				var lastHitRoll dice.RollResult
+
+				// Stage 8.5: Third-party attack vulnerability
+				// Fighters in grapples cannot dodge/parry attacks from third parties
+				isThirdParty := IsThirdPartyAttack(&sourceChar, &targetChar)
+				if isThirdParty {
+					// Remove active defenses (dodge, parry) - too focused on grapple
+					// Keep only block (passive shield defense)
+					filteredDefenses := []string{}
+					for _, def := range defenseSequence {
+						if def == characters.DefenseBlock {
+							filteredDefenses = append(filteredDefenses, def)
+						}
+					}
+					defenseSequence = filteredDefenses
+
+					// If no defenses remain (e.g., unarmed fighter with no shield),
+					// send vulnerability message and auto-hit
+					if len(defenseSequence) == 0 {
+						attackResult.SendToTarget(fmt.Sprintf(
+							`<ansi fg="red">You're too entangled to defend against %s's attack!</ansi>`,
+							sourceChar.Name))
+						attackResult.SendToSource(fmt.Sprintf(
+							`<ansi fg="attack-good">%s is helpless against your attack!</ansi>`,
+							targetChar.Name))
+						attackResult.SendToSourceRoom(fmt.Sprintf(
+							`<ansi fg="combat">%s is defenseless against %s's attack!</ansi>`,
+							targetChar.Name, sourceChar.Name))
+					}
 				}
 
-				// Calculate actual damage vs. possible damage pct
-				pctDamage := math.Ceil(float64(attackTargetDamage) / float64(dCount*dSides+dBonus) * 100)
+				// Dynamic threshold for crit/fumble detection (moved earlier to check on initial attack)
+				critThreshold := 2.0 // ~2.5% chance
+				if sourceChar.HasBuffFlag(buffs.Accuracy) {
+					critThreshold = 1.5 // ~6.7% with Accuracy buff
+				}
+				if targetChar.HasBuffFlag(buffs.Blink) {
+					critThreshold = 2.5 // ~0.6% against Blink
+				}
+				// Skill advantage shifts crit threshold (better skill = more crits)
+				skillDiff := sourceChar.GetCombatSkillLevel() - targetChar.GetCombatSkillLevel()
+				critThreshold -= float64(skillDiff) * 0.05
 
-				msgs := items.GetAttackMessage(weaponSubType, int(pctDamage))
+				// Stage 8.3: Position-based crit modifiers
+				// Grounded controller gets +10% crit, controlled gets -10%
+				// Clinched controller gets +5% crit
+				if sourceChar.CombatPosition.IsGrapplePosition() && sourceChar.HasCondition(characters.ConditionGrappleController) {
+					// Source is the grapple controller
+					if sourceChar.CombatPosition == characters.PositionGrounded {
+						critThreshold -= 0.4 // ~+10% crit chance (lower threshold = more crits)
+					} else if sourceChar.CombatPosition == characters.PositionClinched {
+						critThreshold -= 0.2 // ~+5% crit chance
+					}
+				}
+				if targetChar.CombatPosition == characters.PositionGrounded && !targetChar.HasCondition(characters.ConditionGrappleController) {
+					// Target is controlled in grounded position
+					critThreshold += 0.4 // Target gets -10% crit chance when controlled on ground
+				}
+
+				// Fumble threshold is FIXED - skill advantage doesn't make you fumble more
+				// A master doesn't fumble more when fighting a novice
+				fumbleThreshold := -2.0 // Always ~2.5% chance regardless of skill
+
+				// Make initial attack roll to detect fumbles BEFORE defense sequence
+				// Fumbles are based on attacker's raw performance, not opposed roll outcomes
+				initialAttackRoll := dice.RollStat(attackScore)
+
+				// Check for fumble on the initial attack roll
+				if initialAttackRoll.ZScore <= fumbleThreshold {
+					// Attacker fumbled - auto-miss, skip defense sequence
+					attackResult.Fumble = true
+					hit = false
+					mudlog.Debug("FumbleDetected", "zScore", fmt.Sprintf("%.2f", initialAttackRoll.ZScore), "threshold", fmt.Sprintf("%.2f", fumbleThreshold), "source", sourceChar.Name, "target", targetChar.Name)
+				} else {
+					// No fumble, proceed with defense sequence
+					// Try each defense in sequence
+				for _, defenseType := range defenseSequence {
+					// Track defense attempt
+					attackResult.DefenseAttempts = append(attackResult.DefenseAttempts, DefenseType(defenseType))
+
+					// Stage 9.4: Track defense for stance calculation
+					targetChar.IncrementDefenseCount()
+
+					// Check if defender has stamina for this defense
+					if !targetChar.DeductDefenseStamina(defenseType) {
+						// Insufficient stamina, skip this defense
+						continue
+					}
+
+					// Calculate defense score for this defense type
+					defenseScore := targetChar.GetDefenseScore(defenseType)
+
+					// Stage 7.5: Apply prone defense penalties
+					if targetChar.CombatPosition == characters.PositionProne {
+						switch defenseType {
+						case "dodge":
+							defenseScore *= float64(cfg.ProneDodgePenalty) // Default: -50% dodge (can't move)
+						case "parry":
+							defenseScore *= float64(cfg.ProneParryPenalty) // Default: -30% parry (compromised stance)
+						case "block":
+							defenseScore *= float64(cfg.ProneBlockPenalty) // Default: -20% block (shield still works from ground)
+						}
+					}
+
+					// Stage 8.5: Apply third-party vulnerability penalty
+					// Even shield defenses are weakened when entangled
+					if isThirdParty {
+						defenseScore *= float64(cfg.ThirdPartyGrapplePenalty) // Default: 0.70 (-30% defense)
+					}
+
+					// Stage 8.6: Apply failed grapple defense penalty
+					if targetChar.HasCondition(characters.ConditionDefensePenalty) {
+						defenseScore *= targetChar.GetConditionMagnitude(characters.ConditionDefensePenalty)
+					}
+
+					// Opposed roll: attack vs this defense
+					attackWon, _, hitRoll, defenseRoll := dice.OpposedRollStat(attackScore, defenseScore)
+					lastHitRoll = hitRoll
+
+					// Store z-scores for crit detection (Stage 8.4)
+					attackResult.AttackZScore = hitRoll.ZScore
+					attackResult.DefenseZScore = defenseRoll.ZScore
+
+					if attackWon {
+						// Attack beat this defense, try next defense layer
+						continue
+					}
+
+					// Defense succeeded! Attack is avoided
+					attackResult.DefenseUsed = DefenseType(defenseType)
+					hit = false
+
+					// Detect defense crits (z > 2.0) for Stage 8.4 crit outcomes
+					if defenseRoll.ZScore > 2.0 {
+						if defenseType == characters.DefenseParry {
+							attackResult.ParryCritDetected = true
+						} else if defenseType == characters.DefenseDodge {
+							attackResult.DodgeCritDetected = true
+						}
+					}
+
+					// Add defense success messages (Stage 9.3: narrative variety)
+					var defenseVerb string
+					var skillToProgress string
+					var itemsDefenseType items.DefenseType
+					switch defenseType {
+					case characters.DefenseDodge:
+						defenseVerb = "dodge"
+						itemsDefenseType = items.DefenseDodge
+						skillToProgress = string(skills.UnarmedCombat)
+					case characters.DefenseParry:
+						defenseVerb = "parry"
+						itemsDefenseType = items.DefenseParry
+						skillToProgress = string(skills.WeaponCombat)
+					case characters.DefenseBlock:
+						defenseVerb = "block"
+						itemsDefenseType = items.DefenseBlock
+						skillToProgress = string(skills.WeaponCombat)
+					}
+
+					// Trigger skill progression for successful defense
+					targetChar.TrackSkillUse(skillToProgress)
+					targetChar.CheckSkillProgression(skillToProgress, targetChar.GetUserId(), 1.0)
+
+					// Get narrative defense messages based on defense z-score
+					defenseMsgs := items.GetDefenseMessage(itemsDefenseType, defenseRoll.ZScore)
+
+					// Prepare token replacements
+					weaponName := species.GetSpecies(sourceChar.SpeciesId).UnarmedName
+					if sourceChar.Equipment.Weapon.ItemId > 0 {
+						weaponName = sourceChar.Equipment.Weapon.GetSpec().Name
+					}
+
+					tokenReplacements := map[items.TokenName]string{
+						items.TokenDefender: targetChar.Name,
+						items.TokenAttacker: sourceChar.Name,
+						items.TokenWeapon:   weaponName,
+						items.TokenStance:   targetChar.CalculateStanceString(),
+						items.TokenPosition: targetChar.CalculatePositionString(),
+						items.TokenMomentum: targetChar.CalculateMomentumString(),
+					}
+
+					// If we have custom defense messages, use them
+					if len(defenseMsgs.Together.ToDefender) > 0 {
+						toDefenderMsg := defenseMsgs.Together.ToDefender.Get()
+						toAttackerMsg := defenseMsgs.Together.ToAttacker.Get()
+						toRoomMsg := defenseMsgs.Together.ToRoom.Get()
+
+						// Replace tokens
+						for token, value := range tokenReplacements {
+							toDefenderMsg = toDefenderMsg.SetTokenValue(token, value)
+							toAttackerMsg = toAttackerMsg.SetTokenValue(token, value)
+							toRoomMsg = toRoomMsg.SetTokenValue(token, value)
+						}
+
+						attackResult.SendToTarget(string(toDefenderMsg))
+						attackResult.SendToSource(string(toAttackerMsg))
+						attackResult.SendToSourceRoom(string(toRoomMsg))
+						if sourceChar.RoomId != targetChar.RoomId {
+							attackResult.SendToTargetRoom(string(toRoomMsg))
+						}
+					} else {
+						// Fallback to generic messages if custom messages not available
+						attackResult.SendToSource(fmt.Sprintf(`<ansi fg="attack-bad">%s %ss your attack!</ansi>`, targetChar.Name, defenseVerb))
+						attackResult.SendToTarget(fmt.Sprintf(`<ansi fg="defense-good">You %s %s's attack!</ansi>`, defenseVerb, sourceChar.Name))
+						attackResult.SendToSourceRoom(fmt.Sprintf(`<ansi fg="combat">%s %ss %s's attack.</ansi>`, targetChar.Name, defenseVerb, sourceChar.Name))
+						if sourceChar.RoomId != targetChar.RoomId {
+							attackResult.SendToTargetRoom(fmt.Sprintf(`<ansi fg="combat">%s %ss an attack.</ansi>`, targetChar.Name, defenseVerb))
+						}
+					}
+
+					// Stage 8.5: Add third-party context if applicable
+					if isThirdParty {
+						attackResult.SendToTarget(fmt.Sprintf(
+							`<ansi fg="yellow">(Despite being entangled in a grapple!)</ansi>`))
+					}
+
+					break
+				}
+
+					// If no defense succeeded (or insufficient stamina for all), attack hits
+					if attackResult.DefenseUsed == DefenseNone {
+						hit = true
+					}
+				} // End else block (no fumble, proceeded with defense sequence)
+
+				// Stage 9.4: Track momentum based on hit/miss outcome
+				sourceChar.UpdateMomentum(hit)
+
+				if hit {
+					attackResult.Hit = true
+
+					// Distribution-based damage
+					damageResult := dice.Roll(dmgMean, dmgVariance)
+					attackTargetDamage = int(math.Round(math.Max(0, damageResult.Value)))
+
+					if lastHitRoll.ZScore >= critThreshold || backstabCrit {
+						attackResult.Crit = true
+						backstabCrit = false // consume — only first hit gets free crit
+						attackResult.BuffTarget = critBuffs
+						attackTargetDamage += int(math.Round(dmgMean))
+						mudlog.Debug("CritDetected", "zScore", fmt.Sprintf("%.2f", lastHitRoll.ZScore), "threshold", fmt.Sprintf("%.2f", critThreshold), "source", sourceChar.Name, "target", targetChar.Name)
+					}
+				}
+				// Note: Fumble detection now happens earlier based on initial attack roll, not defense rolls
+
+				// Stage 7.1: Passive defense removed - defense is now active via stamina-costing dodge/parry/block
+
+				// Calculate actual damage vs. expected damage pct
+				pctDamage := 0.0
+				if dmgMean > 0 {
+					pctDamage = math.Ceil(float64(attackTargetDamage) / dmgMean * 100)
+				}
+
+				// Use fumble messages when a fumble is detected
+				var msgs items.AttackOptions
+				if attackResult.Fumble {
+					msgs = items.GetPreAttackMessage(weaponSubType, items.Fumble)
+				} else {
+					msgs = items.GetAttackMessage(weaponSubType, int(pctDamage))
+				}
 
 				var toAttackerMsg, toDefenderMsg, toAttackerRoomMsg, toDefenderRoomMsg items.ItemMessage
 
@@ -389,24 +807,30 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 					items.TokenTarget:       targetChar.Name,
 					items.TokenTargetType:   string(targetType) + `name`,
 					items.TokenUsesLeft:     `[Invalid]`,
-					items.TokenDamage:       strconv.Itoa(attackTargetDamage),
+					items.TokenDamage:       GetDamageDescription(attackTargetDamage, targetChar.HealthMax.Value),
 					items.TokenEntranceName: `unknown`,
 					items.TokenExitName:     `unknown`,
+					items.TokenStance:       sourceChar.CalculateStanceString(),
+					items.TokenPosition:     sourceChar.CalculatePositionString(),
+					items.TokenMomentum:     sourceChar.CalculateMomentumString(),
 				}
+
+			// Get source character's weapon skill level for message selection
+				skillLevel := sourceChar.GetCombatSkillLevel()
 
 				if sourceChar.RoomId == targetChar.RoomId {
 
-					toAttackerMsg = msgs.Together.ToAttacker.Get(msgSeed)
-					toDefenderMsg = msgs.Together.ToDefender.Get(msgSeed)
-					toAttackerRoomMsg = msgs.Together.ToRoom.Get(msgSeed)
+					toAttackerMsg = msgs.Together.ToAttacker.GetForSkillLevel(skillLevel, msgSeed)
+					toDefenderMsg = msgs.Together.ToDefender.GetForSkillLevel(skillLevel, msgSeed)
+					toAttackerRoomMsg = msgs.Together.ToRoom.GetForSkillLevel(skillLevel, msgSeed)
 					toDefenderRoomMsg = items.ItemMessage("")
 
 				} else {
 
-					toAttackerMsg = msgs.Separate.ToAttacker.Get(msgSeed)
-					toDefenderMsg = msgs.Separate.ToDefender.Get(msgSeed)
-					toAttackerRoomMsg = msgs.Separate.ToAttackerRoom.Get(msgSeed)
-					toDefenderRoomMsg = msgs.Separate.ToDefenderRoom.Get(msgSeed)
+					toAttackerMsg = msgs.Separate.ToAttacker.GetForSkillLevel(skillLevel, msgSeed)
+					toDefenderMsg = msgs.Separate.ToDefender.GetForSkillLevel(skillLevel, msgSeed)
+					toAttackerRoomMsg = msgs.Separate.ToAttackerRoom.GetForSkillLevel(skillLevel, msgSeed)
+					toDefenderRoomMsg = msgs.Separate.ToDefenderRoom.GetForSkillLevel(skillLevel, msgSeed)
 
 					// Find the exit that leads to the target from the source (if any)
 					if atkRoom := rooms.LoadRoom(sourceChar.RoomId); atkRoom != nil {
@@ -458,6 +882,15 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 					}
 				}
 
+				if attackResult.Fumble {
+					toAttackerMsg = items.ItemMessage(`<ansi fg="red-bold">!!!</ansi> ` + string(toAttackerMsg) + ` <ansi fg="red-bold">!!!</ansi>`)
+					toDefenderMsg = items.ItemMessage(`<ansi fg="red-bold">!!!</ansi> ` + string(toDefenderMsg) + ` <ansi fg="red-bold">!!!</ansi>`)
+					toAttackerRoomMsg = items.ItemMessage(`<ansi fg="red-bold">!!!</ansi> ` + string(toAttackerRoomMsg) + ` <ansi fg="red-bold">!!!</ansi>`)
+					if len(string(toDefenderRoomMsg)) > 0 {
+						toDefenderRoomMsg = items.ItemMessage(`<ansi fg="red-bold">!!!</ansi> ` + string(toDefenderRoomMsg) + ` <ansi fg="red-bold">!!!</ansi>`)
+					}
+				}
+
 				if len(attackMessagePrefix) > 0 {
 					toAttackerMsg = items.ItemMessage(attackMessagePrefix + string(toAttackerMsg))
 					toDefenderMsg = items.ItemMessage(attackMessagePrefix + string(toDefenderMsg))
@@ -470,7 +903,7 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				// Send to attacker
 				attackerMsg := string(toAttackerMsg)
 				if attackSourceDamage > 0 && attackSourceReduction > 0 {
-					attackerMsg += fmt.Sprintf(` <ansi fg="white">[%d was blocked]</ansi>`, attackSourceReduction)
+					attackerMsg += fmt.Sprintf(` <ansi fg="white">[%s was blocked]</ansi>`, GetDamageDescription(attackSourceReduction, sourceChar.HealthMax.Value))
 				}
 
 				attackResult.SendToSource(
@@ -480,7 +913,7 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				// Send to victim
 				defenderMsg := string(toDefenderMsg)
 				if attackTargetDamage > 0 && attackTargetReduction > 0 {
-					defenderMsg += fmt.Sprintf(` <ansi fg="red">[you blocked %d]</ansi>`, attackTargetReduction)
+					defenderMsg += fmt.Sprintf(` <ansi fg="red">[you blocked %s]</ansi>`, GetDamageDescription(attackTargetReduction, targetChar.HealthMax.Value))
 				}
 
 				attackResult.SendToTarget(
@@ -507,25 +940,38 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				attackResult.DamageToSourceReduction += attackSourceReduction
 			}
 
-			if util.RollDice(1, 5) == 1 { // 20% chance to join
+			if petJoins, _ := dice.Percentile(20); petJoins { // 20% chance to join
 				if sourceChar.RoomId == targetChar.RoomId {
-					if sourceChar.Pet.Exists() && sourceChar.Pet.Damage.DiceRoll != `` {
+					if sourceChar.Pet.Exists() && (sourceChar.Pet.Damage.BaseDamage > 0 || sourceChar.Pet.Damage.DiceRoll != ``) {
 
-						attacks, dCount, dSides, dBonus, critBuffs = sourceChar.Pet.GetDiceRoll()
+						petDmg := sourceChar.Pet.Damage
+						var petAttacks int
+						var petBaseDmg, petVar float64
+						if petDmg.BaseDamage > 0 {
+							petAttacks = petDmg.Attacks
+							if petAttacks < 1 {
+								petAttacks = 1
+							}
+							petBaseDmg = float64(petDmg.BaseDamage)
+							petVar = float64(petDmg.Variance)
+						} else {
+							petAttacks, _, _, _, _ = sourceChar.Pet.GetDiceRoll()
+							petBaseDmg, petVar = dice.DiceToDistribution(petDmg.DiceCount, petDmg.SideCount, petDmg.BonusDamage)
+						}
 
-						for i := 0; i < attacks; i++ {
+						for i := 0; i < petAttacks; i++ {
 
-							attackTargetDamage := util.RollDice(dCount, dSides) + dBonus
+							attackTargetDamage := int(math.Round(math.Max(0, dice.Roll(petBaseDmg, petVar).Value)))
 
 							attackResult.DamageToTarget += attackTargetDamage
 
-							toAttackerMsg := fmt.Sprintf(`%s jumps into the fray and deals <ansi fg="damage">%d damage</ansi> to <ansi fg="%sname">%s</ansi>!`, sourceChar.Pet.DisplayName(), attackTargetDamage, string(targetType), targetChar.Name)
+							toAttackerMsg := fmt.Sprintf(`%s jumps into the fray and deals <ansi fg="damage">%s</ansi> to <ansi fg="%sname">%s</ansi>!`, sourceChar.Pet.DisplayName(), GetDamageDescription(attackTargetDamage, targetChar.HealthMax.Value), string(targetType), targetChar.Name)
 							attackResult.SendToSource(toAttackerMsg)
 
-							toDefenderMsg := fmt.Sprintf(`%s jumps into the fray and deals <ansi fg="damage">%d damage</ansi> to you!`, sourceChar.Pet.DisplayName(), attackTargetDamage)
+							toDefenderMsg := fmt.Sprintf(`%s jumps into the fray and deals <ansi fg="damage">%s</ansi> to you!`, sourceChar.Pet.DisplayName(), GetDamageDescription(attackTargetDamage, targetChar.HealthMax.Value))
 							attackResult.SendToTarget(toDefenderMsg)
 
-							toAttackerRoomMsg := fmt.Sprintf(`%s jumps into the fray and deals <ansi fg="damage">%d damage</ansi> to <ansi fg="%sname">%s</ansi>!`, sourceChar.Pet.DisplayName(), attackTargetDamage, string(targetType), targetChar.Name)
+							toAttackerRoomMsg := fmt.Sprintf(`%s jumps into the fray and deals <ansi fg="damage">%s</ansi> to <ansi fg="%sname">%s</ansi>!`, sourceChar.Pet.DisplayName(), GetDamageDescription(attackTargetDamage, targetChar.HealthMax.Value), string(targetType), targetChar.Name)
 							attackResult.SendToTargetRoom(toAttackerRoomMsg)
 
 						}
@@ -538,66 +984,4 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 	}
 	return attackResult
 
-}
-
-// hit chance will be between 30 and 100
-func hitChance(attackSpd, defendSpd int) int {
-	atkPlusDef := float64(attackSpd + defendSpd)
-	if atkPlusDef < 1 {
-		atkPlusDef = 1
-	}
-	return 30 + int(float64(attackSpd)/atkPlusDef*70)
-}
-
-// Chance to hit
-func Hits(attackSpd, defendSpd, hitModifier int) bool {
-	// Attack speeds affect 90% of the hit chance
-	toHit := hitChance(attackSpd, defendSpd)
-	if hitModifier != 0 {
-		toHit += hitModifier
-	}
-
-	// Always at leat a 5% chance
-	if toHit < 5 {
-		toHit = 5
-	}
-
-	// Always at most a 95% chance
-	if toHit > 95 {
-		toHit = 95
-	}
-	hitRoll := util.Rand(100)
-
-	util.LogRoll(`Hits`, hitRoll, toHit)
-
-	return hitRoll < toHit
-}
-
-// Whether they crit
-func Crits(sourceChar characters.Character, targetChar characters.Character) bool {
-
-	levelDiff := sourceChar.Level - targetChar.Level
-	if levelDiff < 1 {
-		levelDiff = 1
-	}
-	critChance := 5 + int(math.Round(float64(sourceChar.Stats.Strength.ValueAdj+sourceChar.Stats.Speed.ValueAdj)/float64(levelDiff)))
-
-	if sourceChar.HasBuffFlag(buffs.Accuracy) {
-		critChance *= 2
-	}
-
-	if targetChar.HasBuffFlag(buffs.Blink) {
-		critChance /= 2
-	}
-
-	// Minimum 5% chance
-	if critChance < 5 {
-		critChance = 5
-	}
-
-	critRoll := util.Rand(100)
-
-	util.LogRoll(`Crits`, critRoll, critChance)
-
-	return critRoll < critChance
 }

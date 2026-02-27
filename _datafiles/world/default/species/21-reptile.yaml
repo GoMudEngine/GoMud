@@ -1,0 +1,15 @@
+speciesid: 21
+name: reptile
+description: A lizard creature.
+size: medium
+unarmedname: teeth
+angrycommands: [emote hisses.]
+tameable: true
+stats:
+  vitality:
+    base: 1
+  speed:
+    base: 1
+damage:
+  diceroll: 1d4
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet']

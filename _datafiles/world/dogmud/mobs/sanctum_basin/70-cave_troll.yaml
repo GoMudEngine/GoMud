@@ -1,0 +1,49 @@
+mobid: 70
+zone: Sanctum Basin
+statpool: 8
+hostile: true
+maxwander: 3
+activitylevel: 25
+itemdropchance: 15
+aiprofile: brawler
+specialmovechance: 30
+groups:
+  - humanoid
+  - mutant
+hates:
+  - rats
+  - animal
+idlecommands:
+  - 'emote drags its thick, calcified knuckles along the cave wall, leaving pale grooves in the stone'
+  - 'emote sniffs the damp air with a flattened nose, nostrils flaring wide'
+  - 'emote shifts its massive bulk and grunts, the sound reverberating off the cave walls'
+  - ''
+  - ''
+  - 'wander'
+  - ''
+combatcommands:
+  - 'emote bellows a guttural roar that shakes dust from the ceiling'
+  - ''
+  - 'emote slams its stone-crusted fists together with a crack like splitting rock'
+  - ''
+
+character:
+  name: Cave Troll
+  description: 'Whatever this creature once was, little remains to mark it as human. Layers of calcite-gray growths have fused across its hunched frame like plates of living stone, cracking and reforming with each labored breath. Its face is a ruin of overgrown bone and hardened tissue — the jaw distended, the eyes reduced to deep-set glints beneath a shelf of ridged cartilage. It stands half again as tall as a grown man, its limbs thick and uneven, fingers fused into blunt clubs ofite and keratin. A sour, mineral stink clings to it like cave damp.'
+  speciesid: 4
+  gold: 0
+  mutations:
+    tough-skin: 3
+  stats:
+    strength:
+      training: 25
+    vitality:
+      training: 30
+    dexterity:
+      training: -10
+    perception:
+      training: -15
+    willpower:
+      training: 10
+    charisma:
+      training: -20

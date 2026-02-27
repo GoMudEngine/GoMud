@@ -16,5 +16,5 @@ exits:
 spawninfo:
 - mobid: 1
   message: A rat wanders out from nowhere and looks at you.
-  level: 1
+  statpool: 1
   respawnrate: 1 real minutes

@@ -1,0 +1,16 @@
+mutationid: tremorsense
+name: Tremorsense
+description: Nerve clusters bloom in your feet and palms, reading vibrations through stone and soil. You feel footsteps, heartbeats, the shift of weight before a strike — but the constant noise overwhelms your fine motor control.
+rarity: 6
+visual: Their hands and feet are covered in fine, raised ridges that twitch at the slightest vibration.
+pros:
+  - type: flag
+    target: see-hidden
+    value: 1
+  - type: stat_multiplier
+    target: perception
+    value: 0.10
+cons:
+  - type: stat_flat
+    target: dexterity
+    value: -5

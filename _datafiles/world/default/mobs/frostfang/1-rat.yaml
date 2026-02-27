@@ -11,11 +11,11 @@ idlecommands:
   - 'wander'
   - ''
 activitylevel: 10
+statpool: 1
 character:
   name: rat
   description: 'The rats sleek, mottled fur, a mix of dark browns and grays, allows it to blend seamlessly with the cobblestones and discarded refuse. Beady, black eyes dart around constantly, always on the lookout for both threats and opportunities. Its whiskers, long and sensitive, twitch with every new scent or vibration, guiding it through the labyrinthine backstreets. The rat''s tail, hairless and sinuous, trails behind it like a rudder, balancing its swift and erratic movements.'
-  level: 1
-  raceid: 10
+  speciesid: 10
   stats:
     vitality:
       training: -2

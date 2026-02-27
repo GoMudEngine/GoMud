@@ -1,0 +1,20 @@
+id: sporeweave
+name: "Sporeweave"
+skill: enchanting
+skill_minimum: 10
+station: enchanting_circle
+time_rounds: 5
+target_type: body
+enchant_type: sporeweave
+ingredients:
+  - item_tag: chrysalis-setting
+    quantity: 1
+  - item_tag: mutation-catalyst
+    quantity: 1
+  - item_tag: binding-paste
+    quantity: 2
+output:
+  item_id: 0
+  quantity: 0
+success_message: "Spores bloom and weave through the fibers, creating a web of mutation that pulses with dormant potential. The armor grows organic and supple."
+failure_message: "The catalyst rejects the binding. The materials crumble to dust, but the armor is unharmed."

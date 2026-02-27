@@ -1,0 +1,25 @@
+roomid: 107
+zone: Sanctum Basin
+title: Town Square
+description: You stand in the center of Sanctum Basin's small settlement -- a broad
+  flagged square of dark stone surrounded by low buildings of basalt brick. A carved
+  sign post stands at the center, hung with a painted map of the basin and its facilities.
+  Citizens and initiates move through the square, their voices low in the dry air.
+  Roads lead in all directions from this central hub.
+biome: city
+mapsymbol: T
+maplegend: Town Square
+exits:
+  west:
+    roomid: 106
+  east:
+    roomid: 108
+  south:
+    roomid: 102
+  north:
+    roomid: 112
+idlemessages:
+- A group of <ansi fg="mobname">initiates</ansi> crosses the square, deep in conversation.
+- A <ansi fg="mobname">citizen</ansi> pauses to examine the <ansi fg="itemname">map</ansi> on the sign post.
+- The sound of <ansi fg="mobname">hammer strikes</ansi> echoes faintly from the east.
+- Two <ansi fg="mobname">apprentices</ansi> argue loudly about the correct pronunciation of a Fold invocation.

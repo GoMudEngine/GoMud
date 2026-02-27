@@ -1,0 +1,9 @@
+speciesid: 20
+name: orb
+description: A sphere of pure energy
+size: medium
+unarmedname: energy
+damage:
+  basedamage: 0
+  variance: 0
+disabledslots: ['weapon', 'offhand', 'neck', 'body', 'belt', 'gloves', 'ring', 'legs', 'feet']

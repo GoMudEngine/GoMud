@@ -1,0 +1,11 @@
+# Only applied by the aid skill
+spellid: chrysalis-aid
+name: Chrysalis Aid
+description: Stabilizes a fallen ally, pulling them back from the brink.
+type: helpsingle
+schools:
+  - vital
+cost: 0
+waitrounds: 2
+difficulty: 0
+primarystat: willpower

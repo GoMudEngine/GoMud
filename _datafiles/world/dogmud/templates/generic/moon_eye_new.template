@@ -1,0 +1,12 @@
+<ansi fg="239">┌─────────────────────────────────────────────────────────────────────────┐</ansi>
+
+                   <ansi fg="17">      .           .          *     </ansi>
+                   <ansi fg="17">                                     </ansi>
+                   <ansi fg="53">          <ansi bg="53">#################</ansi>          </ansi>
+                   <ansi fg="17">                                     </ansi>
+                   <ansi fg="17">      *           *          .     </ansi>
+                   <ansi fg="147"> The Eye has closed. The scholars  </ansi>
+                   <ansi fg="105"> note these nights without comment,</ansi>
+                   <ansi fg="53">    though none of them sleep.      </ansi>
+
+<ansi fg="239">└─────────────────────────────────────────────────────────────────────────┘</ansi>

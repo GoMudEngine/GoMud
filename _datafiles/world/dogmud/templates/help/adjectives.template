@@ -1,0 +1,12 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">adjectives</ansi>
+
+Adjectives are text tags and symbols that give information about the state of 
+characters. They can be displayed as normal or short form.
+
+<ansi fg="yellow">Examples: </ansi>
+
+    <ansi fg="yellow">Normal: </ansi> <ansi fg="room-description">Also here: <ansi fg="username">Sam</ansi>, <ansi fg="username">Chuckles</ansi> <ansi fg="black-bold">(<ansi fg="red">☠downed</ansi>|<ansi fg="black-bold">hidden</ansi>|<ansi fg="77">z</ansi><ansi fg="77">O</ansi><ansi fg="113">m</ansi><ansi fg="72">B</ansi><ansi fg="65">i</ansi><ansi fg="78">e</ansi>)</ansi> and <ansi fg="username">Tim</ansi> <ansi fg="black-bold">(<ansi fg="red">☠downed</ansi>)</ansi></ansi>
+    <ansi fg="yellow">Short:  </ansi> <ansi fg="room-description">Also here: <ansi fg="username">Sam</ansi>, <ansi fg="username">Chuckles</ansi> <ansi fg="black-bold">(<ansi fg="red">☠</ansi>|<ansi fg="black-bold">?</ansi>|<ansi fg="77">z</ansi>)</ansi> and <ansi fg="username">Tim</ansi> <ansi fg="black-bold">(<ansi fg="red">☠</ansi>)</ansi></ansi>
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help set</ansi>
+

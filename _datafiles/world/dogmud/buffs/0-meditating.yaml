@@ -1,0 +1,12 @@
+# 
+# buff zero (0) is a special buff that when naturally expires, 
+# will remove the player from the game without zombie status.
+#
+buffid: 0
+name: Meditating
+description: You are meditating before leaving the realm.
+triggerrate: 1 round
+triggercount: 5
+flags:
+- cancel-on-action
+- cancel-on-combat

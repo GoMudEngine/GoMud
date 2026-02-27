@@ -2,10 +2,18 @@
 package hooks
 
 import (
+	"fmt"
+	"math"
 	"strconv"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
+	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/crafting"
+	"github.com/GoMudEngine/GoMud/internal/enchantments"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/gametime"
+	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -17,8 +25,6 @@ import (
 //
 
 func UserRoundTick(e events.Event) events.ListenerReturn {
-
-	evt := e.(events.NewRound)
 
 	roomsWithPlayers := rooms.GetRoomsWithPlayers()
 	for _, roomId := range roomsWithPlayers {
@@ -98,6 +104,21 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 				// Roundtick any cooldowns
 				user.Character.Cooldowns.RoundTick()
 
+				// Stage 7.5: Attempt automatic recovery from prone (uses DEX)
+				if attemptMade, success := user.Character.AttemptRecovery(user.Character.Stats.Dexterity.ValueAdj); attemptMade {
+					if success {
+						user.SendText("You scramble to your feet!")
+						if room := rooms.LoadRoom(user.Character.RoomId); room != nil {
+							room.SendText("<ansi fg=\"username\">"+user.Character.Name+"</ansi> clambers to their feet in a rushed panic.", user.UserId)
+						}
+					} else {
+						user.SendText("You attempt to stand, but slip back down in the chaos of battle!")
+						if room := rooms.LoadRoom(user.Character.RoomId); room != nil {
+							room.SendText("<ansi fg=\"username\">"+user.Character.Name+"</ansi> attempts to stand, but slips and falls in the chaos of battle.", user.UserId)
+						}
+					}
+				}
+
 				if user.Character.Charmed != nil && user.Character.Charmed.RoundsRemaining > 0 {
 					user.Character.Charmed.RoundsRemaining--
 				}
@@ -126,19 +147,177 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 					events.AddToQueue(events.BuffsTriggered{UserId: user.UserId, BuffIds: triggeredBuffIds})
 				}
 
+				// Stage 9.8: Tick all combat conditions (decrements Duration, removes expired)
+				user.Character.TickConditions()
+
+				// Stage 12.2: Mutation progress — accumulates during combat, triggers acquisition or deepening
+				// Stage 17.2: The Eye modulates how quickly mutations happen (0.5× at new moon, 1.5× at full)
+				if user.Character.Aggro != nil {
+					mb := configs.GetBalanceConfig()
+					canAcquire := len(user.Character.Mutations) < int(mb.MutationMaxCount)
+					canDeepen := mutations.CanDeepen(user.Character.Mutations)
+					if canAcquire || canDeepen {
+						eyeMult := 0.5 + gametime.GetEyePhase()
+						// Phase 25.3: Mutation Catalyst buff doubles mutation progress gain
+						mutCatalystMult := 1.0
+						if user.Character.HasBuffFlag(buffs.MutationRate) {
+							mutCatalystMult = 2.0
+						}
+						user.Character.MutationProgress += float64(mb.MutationProgressGainPerRound) * eyeMult * mutCatalystMult
+						// Phase 24.1: Use rarity-weighted load instead of flat event count
+						load := mutations.GetMutationLoad(user.Character.Mutations)
+						threshold := float64(mb.MutationBaseProgress) *
+							math.Pow(float64(mb.MutationProgressScale), load)
+						if user.Character.MutationProgress >= threshold {
+							user.Character.MutationProgress = 0
+							if canAcquire {
+								pool := mutations.GetWeightedPool(user.Character.Mutations)
+								if len(pool) > 0 {
+									mutId := mutations.RollAcquisition(pool)
+									if user.Character.Mutations == nil {
+										user.Character.Mutations = make(map[string]int)
+									}
+									user.Character.Mutations[mutId] = 1
+									spec := mutations.GetMutation(mutId)
+									if spec != nil {
+										user.SendText(fmt.Sprintf(
+											`<ansi fg="magenta">Something stirs beneath your skin. A mutation emerges: <ansi fg="yellow">%s</ansi>.</ansi>`,
+											spec.Name))
+										user.SendText(fmt.Sprintf(`<ansi fg="magenta">%s</ansi>`, spec.Description))
+									}
+								}
+							} else if canDeepen {
+								mutId := mutations.RollDeepening(user.Character.Mutations)
+								if mutId != "" {
+									user.Character.Mutations[mutId]++
+									newLevel := user.Character.Mutations[mutId]
+									if spec := mutations.GetMutation(mutId); spec != nil {
+										levelTag := fmt.Sprintf("Level %d", newLevel)
+										if newLevel >= int(mb.MutationMaxLevel) {
+											levelTag = "fully matured"
+										}
+										user.SendText(fmt.Sprintf(
+											`<ansi fg="magenta">The Chrysalis deepens its hold. Your <ansi fg="yellow">%s</ansi> grows stronger (%s).</ansi>`,
+											spec.Name, levelTag))
+									}
+								}
+							}
+						}
+					}
+				}
+
+				// Stage 13.1: Crafting tick — advance or complete active crafting
+				if user.Character.CraftingState != nil {
+					if user.Character.Aggro != nil {
+						user.Character.CraftingState = nil
+						user.SendText(`<ansi fg="red">Your work is interrupted!</ansi>`)
+					} else {
+						cs := user.Character.CraftingState
+						cs.RoundsComplete++
+						if cs.RoundsComplete < cs.RoundsTotal {
+							user.SendText(fmt.Sprintf(
+								`<ansi fg="yellow">You continue working on %s... (%d/%d)</ansi>`,
+								cs.RecipeId, cs.RoundsComplete, cs.RoundsTotal))
+						} else {
+							recipe := crafting.GetRecipe(cs.RecipeId)
+							user.Character.CraftingState = nil
+							if recipe != nil {
+								sl := user.Character.Skills[recipe.Skill]
+								chance := crafting.CalcSuccessChance(sl, recipe.SkillMinimum)
+								roll := util.Rand(100)
+								util.LogRoll("Craft", roll, chance)
+								if roll < chance {
+									user.Character.Items = crafting.ConsumeIngredients(user.Character.Items, recipe)
+
+									if crafting.IsEnchantingRecipe(recipe) {
+										// Enchanting: find target item, apply enchantment
+										targetIdx, found := crafting.FindTargetItem(user.Character.Items, recipe.TargetType)
+										if found {
+											targetItem := &user.Character.Items[targetIdx]
+											eDef := enchantments.GetEnchantment(recipe.EnchantType)
+											if eDef != nil {
+												targetItem.EnchantType = recipe.EnchantType
+												targetItem.EnchantTier = 0
+												targetItem.EnchantUses = 0
+												targetItem.ReservePool = eDef.ReservePool
+												enchantments.ApplyTier(targetItem, eDef, 0)
+											}
+										}
+									} else {
+										// Normal crafting: produce output item
+										newItem := items.New(recipe.Output.ItemId)
+										user.Character.StoreItem(newItem)
+										events.AddToQueue(events.ItemOwnership{UserId: user.UserId, Item: newItem, Gained: true})
+									}
+									user.Character.OnSkillUse(recipe.Skill, user.UserId)
+									user.SendText(fmt.Sprintf(`<ansi fg="green">%s</ansi>`, recipe.SuccessMessage))
+
+									// Stage 31.1: Recipe discovery roll
+									bal := configs.GetBalanceConfig()
+									knownCount := len(user.Character.KnownRecipes)
+									discChance := float64(bal.RecipeDiscoveryBaseChance) /
+										(1.0 + float64(knownCount)*float64(bal.RecipeDiscoveryDecayRate))
+									if util.Rand(100) < int(discChance) {
+										eligible := crafting.GetEligibleRecipes(
+											user.Character.KnownRecipes,
+											user.Character.Skills)
+										if len(eligible) > 0 {
+											pick := eligible[util.Rand(len(eligible))]
+											if user.Character.LearnRecipe(pick) {
+												if newRecipe := crafting.GetRecipe(pick); newRecipe != nil {
+													user.SendText(fmt.Sprintf(
+														`<ansi fg="yellow-bold">A new idea takes shape in your mind: %s!</ansi>`, newRecipe.Name))
+												}
+											}
+										}
+									}
+								} else {
+									user.Character.Items = crafting.ConsumeIngredients(user.Character.Items, recipe)
+									user.SendText(fmt.Sprintf(`<ansi fg="red">%s</ansi>`, recipe.FailureMessage))
+								}
+							}
+						}
+					}
+				}
+
+				// Stage 31.6: Chrysalis enchantment ticking
+				for _, itemPtr := range user.Character.Equipment.GetAllItemPtrs() {
+					if !itemPtr.HasChrysalisEnchantment() {
+						continue
+					}
+					itemPtr.EnchantUses++
+
+					eDef := enchantments.GetEnchantment(itemPtr.EnchantType)
+					if eDef == nil {
+						continue
+					}
+
+					currentTier := itemPtr.EnchantTier
+					maxTier := int(configs.GetBalanceConfig().EnchantMaxTier)
+					if currentTier >= maxTier || currentTier >= len(eDef.Tiers)-1 {
+						continue
+					}
+
+					bal := configs.GetBalanceConfig()
+					threshold := float64(bal.EnchantTierUsesBase) * math.Pow(float64(bal.EnchantTierUsesScale), float64(currentTier))
+					if float64(itemPtr.EnchantUses) >= threshold {
+						if util.Rand(100) < int(float64(bal.EnchantTierUpBaseChance)*100) {
+							itemPtr.EnchantTier++
+							itemPtr.EnchantUses = 0
+							enchantments.ApplyTier(itemPtr, eDef, itemPtr.EnchantTier)
+
+							newTier := itemPtr.EnchantTier
+							if newTier < len(eDef.Tiers) && eDef.Tiers[newTier].TierUpMessage != "" {
+								user.SendText(fmt.Sprintf(`<ansi fg="magenta">%s</ansi>`, eDef.Tiers[newTier].TierUpMessage))
+							}
+						}
+					}
+				}
+
 				// Recalculate all stats at the end of the round tick
 				user.Character.Validate()
 
-				// Only do this every 15 rounds to keep spam down.
-				if evt.RoundNumber%15 == 0 {
-
-					if !user.DidTip(`status train`) && user.Character.StatPoints > 0 {
-						user.SendText(`<ansi fg="alert-5">TIP:</ansi> <ansi fg="tip-text">Type <ansi fg="command">status train</ansi> to use the status points you've earned through leveling.</ansi>`)
-						user.SendText(``)
-					}
-
-				}
-
+	
 			}
 
 		}

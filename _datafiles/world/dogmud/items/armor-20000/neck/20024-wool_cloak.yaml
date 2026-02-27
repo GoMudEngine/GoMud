@@ -1,0 +1,9 @@
+itemid: 20024
+name: wool cloak
+namesimple: cloak
+description: A heavy cloak of felted wool, clasped at the throat with a bone
+  toggle. It keeps the wind and rain at bay and adds a thin layer of padding
+  against blows to the back and shoulders.
+type: neck
+subtype: wearable
+damagereduction: 2

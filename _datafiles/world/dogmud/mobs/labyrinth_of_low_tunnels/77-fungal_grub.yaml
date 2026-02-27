@@ -1,0 +1,34 @@
+mobid: 77
+zone: Labyrinth of Low Tunnels
+statpool: 1
+itemdropchance: 25
+hostile: false
+maxwander: 0
+groups:
+  - insect
+  - animal
+idlecommands:
+  - 'emote burrows deeper into the fungal bed, pale segments rippling'
+  - 'emote curls into a tight spiral as a shadow passes'
+  - ''
+  - ''
+  - ''
+activitylevel: 10
+character:
+  name: fungal grub
+  description: |
+    A fat, pale grub the length of a forearm, its translucent body
+    segmented and faintly luminescent from the fungal matter it feeds on. It moves
+    through the cultivated beds with a slow, blind persistence, leaving shallow
+    furrows in the packed soil. The warren dwellers tend these grubs as livestock --
+    a protein source that requires no hunting and no light.
+  speciesid: 10
+  level: 1
+  gold: 0
+  stats:
+    vitality:
+      training: -5
+    strength:
+      training: -10
+    dexterity:
+      training: -10

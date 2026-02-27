@@ -1,0 +1,34 @@
+roomid: 422
+zone: Watchers Crossing
+title: The Old Bridge
+description: A stone bridge spans the river here, wide enough for two carts to pass
+  abreast. The construction is old -- centuries old, by the style of the dressed stone
+  and the deep grooves worn into the surface by uncounted wheels and boots. The bridge
+  arches high over the water, and looking down from the rail you can see the river
+  sliding dark and fast beneath, carrying leaves and debris from upstream. The stonework
+  is solid but not without concern -- a crack runs along the eastern rail, and several
+  capstones have been replaced with newer, lighter-coloured stone. Watchtowers stand
+  at each end, their upper windows dark and empty.
+biome: river
+exits:
+  west:
+    roomid: 421
+  east:
+    roomid: 427
+  down:
+    roomid: 426
+nouns:
+  crack: The crack runs diagonally across the eastern rail for about two paces, deep
+    enough to fit a finger into. It has been packed with mortar at some point, but
+    the mortar is crumbling. Someone has chalked a mark beside it -- a maintenance
+    notation, perhaps.
+  towers: The watchtowers are squat, square structures built into the bridge's
+    approach ramps. Their arrow slits stare blankly at the road. Whatever garrison
+    once manned them is long gone, but the stonework endures.
+  rail: The bridge rail is waist-high, made of the same dressed stone as the road
+    surface. Years of travellers leaning on it have polished the top smooth. The
+    eastern section shows the stress crack and newer repair stones.
+idlemessages:
+- The river rushes beneath the bridge, its voice a constant low roar.
+- Wind funnels between the watchtowers, tugging at your clothing.
+- A fish breaks the surface below, a silver flash and gone.

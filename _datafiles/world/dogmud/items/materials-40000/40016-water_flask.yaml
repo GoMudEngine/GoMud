@@ -1,0 +1,10 @@
+itemid: 40016
+name: water flask
+namesimple: flask
+description: A small leather flask stoppered with cork, sloshing with clean
+  water drawn from a spring or well.
+type: object
+subtype: mundane
+component_tag: water-flask
+weight: 0.3
+value: 1

@@ -1,0 +1,118 @@
+mobid: 75
+zone: Labyrinth of Low Tunnels
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "speak"]
+    moods: ["neutral"]
+    responses:
+      - "The shaman says you brought medicine. That is why you still breathe."
+      - "A surface-walker in the Hollow. My warriors wanted to kill you. I am still deciding."
+
+  - keywords: ["hello", "hi", "greet"]
+    moods: ["friendly"]
+    responses:
+      - "You came back. That means something. I have not decided what yet."
+      - "Surface-walker. Sit. The fire is small but it is warm."
+
+  - keywords: ["hello", "hi", "greet"]
+    moods: ["hostile"]
+    responses:
+      - "Get out. Before I change my mind about letting you leave."
+
+  - keywords: ["warren", "people", "tribe", "dwellers", "your kind"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "We are sixty-three. Thirty who can fight. Eleven children. The rest are old or sick. That is what remains of the Discarded."
+      - "My grandmother walked in sunlight. She told my mother what it felt like. My mother told me. I have nothing to tell my children except how the dark sounds."
+
+  - keywords: ["peace", "trust", "friend", "ally"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Peace. A surface word. Down here we have 'not killing each other.' It will have to do."
+      - "Trust is earned in darkness, one breath at a time. You have taken the first breath. Do not waste it."
+    moodChange: friendly
+
+  - keywords: ["surface", "above", "sanctum", "basin", "outside"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "I remember light. From when I was very young and climbed too high. It burned. Everything about the surface burns."
+      - "Your people built a sanctuary up there. A place of learning and peace. We were not invited."
+
+  - keywords: ["scholar", "research", "study", "specimens", "woman"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "The watcher with the jars. She thinks we do not see her. We see everything in the dark. If she enters these tunnels, she will not leave them."
+      - "Your scholars studied us before. They called it research. We called it theft. They took bones from our dead."
+    moodChange: hostile
+
+  - keywords: ["trade", "give", "offer", "gift"]
+    moods: ["friendly"]
+    responses:
+      - "We have little to trade. But we know these tunnels better than anyone alive. That knowledge has value."
+
+  - keywords: ["fight", "attack", "war", "threat"]
+    responses:
+      - "These tunnels are our fortress. Your size is a weakness here, not a strength. Remember that."
+    moodChange: hostile
+
+  - keywords: ["knife", "obsidian", "weapon", "blade"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "This blade was made by my grandmother. She remembered how to work stone from the surface. The skill is almost lost now."
+      - "The obsidian came from the deep places, below even us. It is the sharpest thing in the warren. And it is mine."
+
+  - keywords: ["collapse", "shaft", "below", "deep", "rubble"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Something broke through from below. The tunnel gave way to seal it. My people have been trying to dig through for years. Whatever is down there, the air smells different. Cleaner. Older."
+
+  - keywords: [""]
+    responses:
+      - "Speak or leave. My time is not free."
+      - "You stare. Everyone stares. Say what you came to say."
+
+tree:
+  root:
+    text: "The chieftain sits on the basalt slab, firelight playing across the calcified plates that armor its torso. Its milky eyes find you in the smoke. 'The shaman vouches for you. That is the only reason you are breathing. What do you want here, surface-walker?'"
+    hints: "You could ask about the warren, the chieftain's people, or offer to help."
+
+  nodes:
+    - id: people
+      triggers: ["warren", "people", "tribe", "how many", "your kind", "dwellers", "discarded"]
+      text: "Sixty-three. That is what the surface left us. Sixty-three lives scratching at stone in the dark. We were hundreds once. Disease took many. The change took more. And your kind took the rest."
+      hints: "Ask about what happened, or about the surface."
+      unlocks: ["exile_story", "surface"]
+
+    - id: exile_story
+      triggers: ["what happened", "exile", "driven", "history", "past", "how", "why"]
+      requires: ["people"]
+      text: "Three generations past, the mutations came on too fast. Our ancestors changed in ways the priests could not explain or control. The surface people were afraid. So they drove us into the earth. Not with armies. With silence. Closed doors. Poisoned wells. Until the dark was the only place left."
+      hints: "Ask about the collapse, or what they need from the surface."
+      unlocks: ["needs", "collapse_talk"]
+      moodChange: friendly
+
+    - id: surface
+      triggers: ["surface", "above", "sanctum", "basin", "light", "outside"]
+      requires: ["people"]
+      text: "My grandmother saw sunlight. She said it made everything golden. I do not know what golden means. I know grey stone and firelight and the glow of fungus. That is enough. It has to be enough."
+
+    - id: needs
+      triggers: ["need", "help", "want", "lack", "trade", "offer"]
+      requires: ["exile_story"]
+      text: "Medicine. Surface herbs that do not grow in the dark. Metal tools -- ours break too easily. And to be left alone by those who see us as specimens rather than people. That is all."
+      moodChange: friendly
+
+    - id: collapse_talk
+      triggers: ["collapse", "shaft", "below", "deep", "rubble", "dig", "crack"]
+      requires: ["exile_story"]
+      text: "At the eastern end of the den. Something pushed up from below and the ceiling gave way. The air from down there is cold and clean and smells of metal. My people have been moving stones for years, one at a time. We will break through eventually. What we find there... may change everything. Or nothing."
+      moodChange: friendly
+
+    - id: scholar_topic
+      triggers: ["scholar", "research", "woman", "study", "specimens", "jars"]
+      text: "I know about her. The watcher. She sits near the cave mouth with her jars and her notes. The last time a scholar came this close, they took bones from our burial shelf and called it science. If she enters my tunnels, I will treat her as any other trespasser."
+      moodChange: hostile
+
+memory:
+  expiryPeriod: "1h"

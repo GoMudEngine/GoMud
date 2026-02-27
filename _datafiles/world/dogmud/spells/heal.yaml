@@ -1,0 +1,14 @@
+# Learned at the Sanctuary of the Benevolent Heart (ROOM 18)
+spellid: heal
+name: Mend Flesh
+description: Directs Chrysalis energy to accelerate tissue repair in the target.
+type: helpsingle
+schools:
+  - vital
+cost: 25
+waitrounds: 2
+difficulty: 0
+primarystat: willpower
+base_folds: 4
+effect_type: heal
+effect_magnitude: 3

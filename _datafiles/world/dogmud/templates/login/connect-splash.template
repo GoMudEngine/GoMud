@@ -1,0 +1,22 @@
+<ansi clear="all"></ansi>
+
+<ansi fg="18">      .    *      .       *    .           *      .       *    .     </ansi>
+<ansi fg="18">          *      .                   .          *                    </ansi>
+<ansi fg="18">   .          .       *        .          .            *        .    </ansi>
+<ansi fg="18">        *           .      *         *          .      *            </ansi>
+<ansi fg="18">             .            .      .         .              .     *    </ansi>
+
+<ansi fg="75"> ____   ___   ____ __  __           _ </ansi>
+<ansi fg="75">|  _ \ / _ \ / ___|  \/  |_   _  __| |</ansi>
+<ansi fg="111">| | | | | | | |  _| |\/| | | | |/ _` |</ansi>
+<ansi fg="111">| |_| | |_| | |_| | |  | | |_| | (_| |</ansi>
+<ansi fg="147">|____/ \___/ \____|_|  |_|\__,_|\__,_|</ansi>
+
+<ansi fg="189">        D e l u s i o n s   o f   G r a n d e u r</ansi>
+
+<ansi fg="18">      *    .      *       .    *           .      *       .    *     </ansi>
+
+<ansi fg="black-bold">.:</ansi> Welcome to <ansi fg="45">Delusions of Grandeur</ansi>, a MUD set on the world of <ansi fg="45">Gaius</ansi>.
+                                                      <ansi fg="black-bold">The Chrysalis awaits.</ansi>
+
+<ansi fg="black-bold">{{ repeat "=" 80 }}</ansi>

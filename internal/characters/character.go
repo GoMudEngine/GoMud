@@ -9,13 +9,17 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/crafting"
+	"github.com/GoMudEngine/GoMud/internal/dice"
+	"github.com/GoMudEngine/GoMud/internal/enchantments"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/pets"
 	"github.com/GoMudEngine/GoMud/internal/quests"
-	"github.com/GoMudEngine/GoMud/internal/races"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/statmods"
@@ -28,10 +32,9 @@ import (
 )
 
 var (
-	startingRace     = 0
-	startingHealth   = 10
-	startingMana     = 10
-	StartingRoomId   = -1
+	startingRace   = 0
+	startingHealth = 10
+	StartingRoomId = 0
 	startingZone     = `Nowhere`
 	defaultName      = `nameless`
 	descriptionCache = map[string]string{} // key is a hash, value is the description
@@ -51,31 +54,40 @@ type Character struct {
 	Adjectives       []string                       `yaml:"adjectives,omitempty"` // Decorative text for the name of the character (e.g. "sleeping", "dead", "wounded")
 	RoomId           int                            // The room id the character is in.
 	Zone             string                         // The zone the character is in. The folder the room can be located in too.
-	RaceId           int                            // Character race
+	SpeciesId        int                            // Character species
 	Stats            stats.Statistics               // Character stats
-	Level            int                            // The level of the character
-	Experience       int                            // The experience of the character
-	TrainingPoints   int                            // The number of training points the character has
-	StatPoints       int                            // The number of skill points the character has
 	Health           int                            // The health of the character
-	Mana             int                            // The mana of the character
+	Stamina          int                            // The stamina of the character (physical energy)
+	Conviction       int                            // The conviction of the character (mental/spiritual energy)
 	ActionPoints     int                            // The resevoir of action points the character has to spend on movement etc.
-	Alignment        int8                           // The alignment of the character
 	Gold             int                            // The gold the character is holding
 	Bank             int                            // The gold the character has in the bank
 	Shop             Shop                           `yaml:"shop,omitempty"`          // Definition of shop services/items this character stocks (or just has at the moment)
 	SpellBook        map[string]int                 `yaml:"spellbook,omitempty"`     // The spells the character has learned
+	KnownRecipes     map[string]int                 `yaml:"knownrecipes,omitempty"`  // The crafting recipes the character has discovered
 	Charmed          *CharmInfo                     `yaml:"-"`                       // If they are charmed, this is the info
 	CharmedMobs      []int                          `yaml:"-"`                       // If they have charmed anyone, this is the list of mob instance ids
 	Items            []items.Item                   `yaml:"items,omitempty"`         // The items the character is holding
 	Buffs            buffs.Buffs                    `yaml:"buffs,omitempty"`         // The buffs the character has active
 	Equipment        Worn                           `yaml:"equipment,omitempty"`     // The equipment the character is wearing
-	TNLScale         float32                        `yaml:"-"`                       // The experience scale of the character. Don't write to yaml since is dynamically calculated.
 	HealthMax        stats.StatInfo                 `yaml:"-"`                       // The maximum health of the character. Don't write to yaml since is dynamically calculated.
-	ManaMax          stats.StatInfo                 `yaml:"-"`                       // The maximum mana of the character. Don't write to yaml since is dynamically calculated.
-	ActionPointsMax  stats.StatInfo                 `yaml:"-"`                       // The maximum actions of character. Don't write to yaml since is dynamically calculated.
-	Aggro            *Aggro                         `yaml:"-"`                       // Dont' store this. If they leave they break their aggro
-	Skills           map[string]int                 `yaml:"skills,omitempty"`        // The skills the character has, and what level they are at
+	StaminaMax       stats.StatInfo                 `yaml:"-"`                       // The maximum stamina of the character. Don't write to yaml since is dynamically calculated.
+	ConvictionMax    stats.StatInfo                 `yaml:"-"`                       // The maximum conviction of the character. Don't write to yaml since is dynamically calculated.
+	ActionPointsMax          stats.StatInfo                 `yaml:"-"`                       // The maximum actions of character. Don't write to yaml since is dynamically calculated.
+	Aggro                    *Aggro                         `yaml:"-"`                       // Dont' store this. If they leave they break their aggro
+	CombatPosition           CombatPosition                 `yaml:"-"`                       // Current combat position (Standing/Prone/Clinched/Grounded). Don't store this.
+	PositionRoundsMin        int                            `yaml:"-"`                       // Minimum rounds in current position (for Prone bash/trip, etc). Don't store this.
+	DownedRounds             int                            `yaml:"-"`                       // Rounds since downed, for coup de grâce timer. Don't store this.
+	GrappleControllerId      int                            `yaml:"-"`                       // UserId or MobInstanceId of grapple controller (0 = none, Stage 8.2+). Don't store this.
+	Conditions               []CombatCondition              `yaml:"-"`                       // Active temporary combat conditions (Stage 9.8). Don't store this.
+	AttacksThisRound         int                            `yaml:"-"`                       // Stage 9.4: Tracks recent attacks for stance calculation. Don't store this.
+	DefensesThisRound        int                            `yaml:"-"`                       // Stage 9.4: Tracks recent defenses for stance calculation. Don't store this.
+	ConsecutiveHits          int                            `yaml:"-"`                       // Stage 9.4: Consecutive successful hits for momentum. Don't store this.
+	ConsecutiveMisses        int                            `yaml:"-"`                       // Stage 9.4: Consecutive misses for momentum. Don't store this.
+	ExtraArms                int                            `yaml:"-"`                       // Derived from extra-arms mutation level (0-2). Don't store this.
+	Skills                   map[string]int                 `yaml:"skills,omitempty"`        // The skills the character has, and what level they are at
+	Mutations        map[string]int                 `yaml:"mutations,omitempty"`     // mutationId → level (Stage 12.1)
+	MutationProgress float64                        `yaml:"mutationprogress,omitempty"` // accumulates toward next mutation (Stage 12.1)
 	Cooldowns        Cooldowns                      `yaml:"cooldowns,omitempty"`     // How many rounds until it is cooled down
 	Settings         map[string]string              `yaml:"settings,omitempty"`      // custom setting tracking, used for anything.
 	QuestProgress    map[int]string                 `yaml:"questprogress,omitempty"` // quest progress tracking
@@ -84,54 +96,126 @@ type Character struct {
 	MiscData         map[string]any                 `yaml:"miscdata,omitempty"`      // Any random other data that needs to be stored
 	ExtraLives       int                            `yaml:"extralives,omitempty"`    // How many lives remain. If enabled, players can perma-die if they die at zero
 	MobMastery       MobMasteries                   `yaml:"mobmastery,omitempty"`    // Tracks particular masteries around a given mob
+	SkillUseCount    map[string]int                 `yaml:"skillusecount,omitempty"` // Tracks how many times each skill has been used
+	StatUseCount     map[string]int                 `yaml:"statusecount,omitempty"`  // Tracks how many times each stat has been checked
 	Pet              pets.Pet                       `yaml:"pet,omitempty"`           // Do they have a pet?
 	Created          time.Time                      `yaml:"created"`                 // When this character was created
 	Timers           map[string]gametime.RoundTimer `yaml:"timers,omitempty"`        // any special timers added to this character
 	roomHistory      []int                          // A stack FILO of the last X rooms the character has been in
 	PlayerDamage     map[int]int                    `yaml:"-"` // key = who, value = how much
 	LastPlayerDamage uint64                         `yaml:"-"` // last round a player damaged this character
+	CastingState     *CastingState                  `yaml:"-"` // Active fold-based cast in progress (Stage 11.2). Not persisted.
+	CraftingState    *CraftingState                 `yaml:"-"` // Active crafting in progress (Stage 13.1). Not persisted.
 	permaBuffIds     []int                          // Buff Id's that are always present for this character
 	userId           int                            // User ID of the character if any
 }
 
 func New() *Character {
-	return &Character{
+	c := &Character{
 		//Name:   defaultName,
-		Adjectives: []string{},
-		RoomId:     StartingRoomId,
-		Zone:       startingZone,
-		RaceId:     startingRace,
-		Stats: stats.Statistics{
-			Strength:   stats.StatInfo{Base: 1},
-			Speed:      stats.StatInfo{Base: 1},
-			Smarts:     stats.StatInfo{Base: 1},
-			Vitality:   stats.StatInfo{Base: 1},
-			Mysticism:  stats.StatInfo{Base: 1},
-			Perception: stats.StatInfo{Base: 1},
-		},
-		Level:          1,
-		Experience:     1,
-		TrainingPoints: 0,
-		StatPoints:     0,
-		TNLScale:       1.0,
+		Adjectives:     []string{},
+		RoomId:         StartingRoomId,
+		Zone:           startingZone,
+		SpeciesId:      startingRace,
 		Health:         startingHealth,
 		HealthMax:      stats.StatInfo{Base: 1},
-		Mana:           startingMana,
-		ManaMax:        stats.StatInfo{Base: 1},
-		Skills:         make(map[string]int),
+		Skills:         initAllSkills(),
 		Gold:           25,
 		Bank:           100,
-		SpellBook:      make(map[string]int),
+		// Phase 25.1: Starting spell reduced to 1 — everything else discovered through casting.
+		SpellBook: map[string]int{
+			"conviction-spike": 1, // Conviction Spike — the only starting spell
+		},
+		KnownRecipes: map[string]int{
+			"iron-dagger":      1,
+			"healing-poultice": 1,
+		},
 		CharmedMobs:    []int{},
 		Items:          []items.Item{},
 		Buffs:          buffs.New(),
 		Equipment:      Worn{},
+		CombatPosition: PositionStanding, // Stage 8.1: Default combat position
+		Cooldowns:      make(Cooldowns),  // Initialize cooldowns map
 		MiscData:       make(map[string]any),
+		SkillUseCount:  make(map[string]int),
+		StatUseCount:   make(map[string]int),
 		roomHistory:    make([]int, 0, 10),
 		KeyRing:        make(map[string]string),
-		Created:        time.Now(),
-		PlayerDamage:   map[int]int{},
-		Timers:         map[string]gametime.RoundTimer{},
+		Created:           time.Now(),
+		PlayerDamage:      map[int]int{},
+		Timers:            map[string]gametime.RoundTimer{},
+		AttacksThisRound:  0,
+		DefensesThisRound: 0,
+		ConsecutiveHits:   0,
+		ConsecutiveMisses: 0,
+	}
+
+	// Roll character stats using normal distribution
+	c.Stats = RollCharacterStats()
+
+	// Validate and calculate stats (this calls RecalculateStats internally)
+	c.Validate()
+
+	// Set starting health/stamina/conviction to max values
+	c.Health = c.HealthMax.Value
+	c.Stamina = c.StaminaMax.Value
+	c.Conviction = c.ConvictionMax.Value
+
+	return c
+}
+
+// initAllSkills creates a skill map with all known skills at rank 1.
+func initAllSkills() map[string]int {
+	allSkills := skills.GetAllSkillNames()
+	m := make(map[string]int, len(allSkills))
+	for _, sk := range allSkills {
+		m[string(sk)] = 1
+	}
+	return m
+}
+
+// ensureAllSkills ensures all known skills exist in the map at rank 1 minimum.
+// Used during Validate() to retroactively update existing characters.
+func ensureAllSkills(existing map[string]int) map[string]int {
+	if existing == nil {
+		return initAllSkills()
+	}
+	for _, sk := range skills.GetAllSkillNames() {
+		if existing[string(sk)] < 1 {
+			existing[string(sk)] = 1
+		}
+	}
+	return existing
+}
+
+// GetTotalSkillRanks returns the sum of all skill ranks.
+func (c *Character) GetTotalSkillRanks() int {
+	total := 0
+	for _, rank := range c.Skills {
+		total += rank
+	}
+	return total
+}
+
+// RollCharacterStats generates a new set of character stats using normal distribution.
+// Parameters are driven by the Balance config (StatRollMean, StatRollStdDev, StatRollMin, StatRollMax).
+func RollCharacterStats() stats.Statistics {
+	b := configs.GetBalanceConfig()
+	statMean := float64(b.StatRollMean)
+	statStdDev := float64(b.StatRollStdDev)
+	statMin := float64(b.StatRollMin)
+	statMax := float64(b.StatRollMax)
+
+	// Roll 6 stats
+	rolledStats := dice.RollStatArray(6, statMean, statStdDev, statMin, statMax)
+
+	return stats.Statistics{
+		Strength:   stats.StatInfo{Base: rolledStats[0]},
+		Dexterity:  stats.StatInfo{Base: rolledStats[1]},
+		Perception: stats.StatInfo{Base: rolledStats[2]},
+		Vitality:   stats.StatInfo{Base: rolledStats[3]},
+		Willpower:  stats.StatInfo{Base: rolledStats[4]},
+		Charisma:   stats.StatInfo{Base: rolledStats[5]},
 	}
 }
 
@@ -144,6 +228,27 @@ func (c *Character) GetDescription() string {
 	}
 	hash := strings.TrimPrefix(c.Description, `h:`)
 	return descriptionCache[hash]
+}
+
+// GetMutationVisuals returns a space-joined string of all owned mutation visual
+// descriptors, sorted by mutation id for deterministic output. Returns "" if
+// no mutations have a visual field. Used by the description template (Stage 12.2).
+func (c *Character) GetMutationVisuals() string {
+	if len(c.Mutations) == 0 {
+		return ""
+	}
+	ids := make([]string, 0, len(c.Mutations))
+	for id := range c.Mutations {
+		ids = append(ids, id)
+	}
+	slices.Sort(ids)
+	parts := make([]string, 0, len(ids))
+	for _, id := range ids {
+		if spec := mutations.GetMutation(id); spec != nil && spec.Visual != "" {
+			parts = append(parts, spec.Visual)
+		}
+	}
+	return strings.Join(parts, " ")
 }
 
 // returns description unless description is a hash
@@ -183,7 +288,10 @@ func (c *Character) GetBaseCastSuccessChance(spellId string) int {
 
 	// add spell level bonus
 	// 10-30
-	skillLevel := c.GetSkillLevel(skills.Cast)
+	skillLevel := c.GetSkillLevel(skills.Spellcasting)
+	if skillLevel == 0 {
+		skillLevel = c.GetSkillLevel(skills.Cast) // backward compat with legacy Cast skill
+	}
 	//targetNumber += (skillLevel * 5)
 	//targetNumber -= 5 // cancel out the first level
 
@@ -198,7 +306,8 @@ func (c *Character) GetBaseCastSuccessChance(spellId string) int {
 		profFactor = 2.50 // .75 more than lvl 3
 	}
 	casts := c.SpellBook[spellId]
-	proficiency := int(math.Floor((float64(casts) / 50 * profFactor))) // after 50 casts proficiency is 1
+	castsPerPoint := float64(configs.GetBalanceConfig().SpellProficiencyCastsPerPoint)
+	proficiency := int(math.Floor((float64(casts) / castsPerPoint * profFactor)))
 	if proficiency < 0 {
 		proficiency = 0
 	} else if proficiency > 20 {
@@ -206,11 +315,15 @@ func (c *Character) GetBaseCastSuccessChance(spellId string) int {
 	}
 	targetNumber += proficiency
 
-	targetNumber += int(math.Floor(float64(c.Stats.Mysticism.ValueAdj) / 5))
+	targetNumber += int(math.Floor(float64(c.Stats.Willpower.ValueAdj) / 5))
 
 	// add by any stat mods for casting, or casting school
 	// 0-xx
-	targetNumber += c.StatMod(string(statmods.Casting)) + c.StatMod(string(statmods.CastingPrefix)+string(sp.School))
+	targetNumber += c.StatMod(string(statmods.Casting))
+	// Add stat mods for each school the spell belongs to
+	for _, school := range sp.Schools {
+		targetNumber += c.StatMod(string(statmods.CastingPrefix) + school)
+	}
 
 	if targetNumber < 0 {
 		targetNumber = 0
@@ -221,8 +334,53 @@ func (c *Character) GetBaseCastSuccessChance(spellId string) int {
 	return targetNumber
 }
 
-func (c *Character) CarryCapacity() int {
-	return 5 + c.Stats.Strength.ValueAdj/3
+// CarryCapacity returns weight capacity in pounds (Strength × 3)
+func (c *Character) CarryCapacity() float64 {
+	return float64(c.Stats.Strength.ValueAdj) * 3.0
+}
+
+// GetCarriedWeight returns the total weight of all carried items in pounds
+func (c *Character) GetCarriedWeight() float64 {
+	totalWeight := 0.0
+
+	// Add weight from inventory items
+	for _, item := range c.Items {
+		totalWeight += item.GetSpec().GetWeight()
+	}
+
+	// Add weight from equipped items
+	if c.Equipment.Weapon.ItemId > 0 {
+		totalWeight += c.Equipment.Weapon.GetSpec().GetWeight()
+	}
+	if c.Equipment.Offhand.ItemId > 0 {
+		totalWeight += c.Equipment.Offhand.GetSpec().GetWeight()
+	}
+	if c.Equipment.Head.ItemId > 0 {
+		totalWeight += c.Equipment.Head.GetSpec().GetWeight()
+	}
+	if c.Equipment.Neck.ItemId > 0 {
+		totalWeight += c.Equipment.Neck.GetSpec().GetWeight()
+	}
+	if c.Equipment.Body.ItemId > 0 {
+		totalWeight += c.Equipment.Body.GetSpec().GetWeight()
+	}
+	if c.Equipment.Belt.ItemId > 0 {
+		totalWeight += c.Equipment.Belt.GetSpec().GetWeight()
+	}
+	if c.Equipment.Gloves.ItemId > 0 {
+		totalWeight += c.Equipment.Gloves.GetSpec().GetWeight()
+	}
+	if c.Equipment.Ring.ItemId > 0 {
+		totalWeight += c.Equipment.Ring.GetSpec().GetWeight()
+	}
+	if c.Equipment.Legs.ItemId > 0 {
+		totalWeight += c.Equipment.Legs.GetSpec().GetWeight()
+	}
+	if c.Equipment.Feet.ItemId > 0 {
+		totalWeight += c.Equipment.Feet.GetSpec().GetWeight()
+	}
+
+	return totalWeight
 }
 
 func (c *Character) DeductActionPoints(amount int) bool {
@@ -237,9 +395,107 @@ func (c *Character) DeductActionPoints(amount int) bool {
 	return true
 }
 
+// DeductStamina attempts to deduct the specified amount of stamina.
+// Returns false if the character doesn't have enough stamina.
+func (c *Character) DeductStamina(amount int) bool {
+	if c.Stamina < amount {
+		return false
+	}
+	c.Stamina -= amount
+	if c.Stamina < 0 {
+		c.Stamina = 0
+	}
+	return true
+}
+
+// GetMovementStaminaCost calculates the stamina cost for movement based on
+// terrain difficulty and encumbrance.
+// terrainMultiplier: 1.0 = normal terrain, 2.0 = rough terrain, etc.
+// Returns stamina cost (2-20 stamina range).
+func (c *Character) GetMovementStaminaCost(terrainMultiplier float64) int {
+	b := configs.GetBalanceConfig()
+	baseCost := float64(b.MovementBaseStaminaCost)
+	maxCost := float64(b.MovementMaxStaminaCost)
+
+	// Apply terrain multiplier
+	cost := baseCost * terrainMultiplier
+
+	// Calculate encumbrance multiplier based on weight
+	encumbranceMultiplier := 1.0
+	carriedWeight := c.GetCarriedWeight()
+	capacity := c.CarryCapacity()
+
+	if carriedWeight > capacity {
+		// Overencumbered: scale from 1.0 to 5.0 based on how much over capacity
+		overAmount := carriedWeight - capacity
+		overRatio := overAmount / capacity
+		// Cap at 5x multiplier when carrying 2x capacity
+		encumbranceMultiplier = 1.0 + math.Min(overRatio*4.0, 4.0)
+	}
+
+	// Apply encumbrance multiplier
+	cost *= encumbranceMultiplier
+
+	// Phase 24.2: Apply mutation movement speed modifier (Hasted, Extra Legs, etc.)
+	if moveMod := mutations.GetMovementSpeedModifier(c.Mutations); moveMod != 0 {
+		cost *= (1.0 - moveMod) // positive moveMod = faster = less cost
+	}
+
+	// Cap at maximum stamina cost
+	if cost > maxCost {
+		cost = maxCost
+	}
+
+	// Minimum 1 stamina
+	if cost < 1.0 {
+		cost = 1.0
+	}
+
+	return int(math.Ceil(cost))
+}
+
+// GetAttackStaminaCost calculates the stamina cost for making an attack.
+// Cost is based on weapon type (or unarmed if no weapon).
+func (c *Character) GetAttackStaminaCost() int {
+	// Check main hand weapon
+	if c.Equipment.Weapon.ItemId > 0 {
+		weaponSpec := c.Equipment.Weapon.GetSpec()
+		return weaponSpec.GetAttackStaminaCost()
+	}
+
+	// Check offhand weapon (dual wielding)
+	if c.Equipment.Offhand.ItemId > 0 {
+		offhandSpec := c.Equipment.Offhand.GetSpec()
+		return offhandSpec.GetAttackStaminaCost()
+	}
+
+	// Unarmed combat costs less stamina
+	return int(configs.GetBalanceConfig().UnarmedAttackStaminaCost)
+}
+
+// DeductAttackStamina deducts stamina for an attack and returns the actual cost deducted.
+// If character doesn't have enough stamina, deducts what they have and returns that amount.
+func (c *Character) DeductAttackStamina() int {
+	cost := c.GetAttackStaminaCost()
+
+	if c.Stamina >= cost {
+		c.Stamina -= cost
+		return cost
+	}
+
+	// Insufficient stamina - deduct what we have
+	actualCost := c.Stamina
+	c.Stamina = 0
+	return actualCost
+}
+
 // Sometimes it's useful for a character to know what user it belongs to.
 func (c *Character) SetUserId(userId int) {
 	c.userId = userId
+}
+
+func (c *Character) GetUserId() int {
+	return c.userId
 }
 
 func (c *Character) SetMiscData(key string, value any) {
@@ -359,26 +615,124 @@ func (c *Character) CacheDescription() {
 
 func (c *Character) GetDefaultDiceRoll() (attacks int, dCount int, dSides int, bonus int, buffOnCrit []int) {
 	// default racial
-	raceInfo := races.GetRace(c.RaceId)
+	speciesInfo := species.GetSpecies(c.SpeciesId)
 
-	attacks = raceInfo.Damage.Attacks
-	dCount = raceInfo.Damage.DiceCount
-	dSides = raceInfo.Damage.SideCount
-	bonus = raceInfo.Damage.BonusDamage
-	buffOnCrit = raceInfo.Damage.CritBuffIds
+	attacks = speciesInfo.Damage.Attacks
+	dCount = speciesInfo.Damage.DiceCount
+	dSides = speciesInfo.Damage.SideCount
+	bonus = speciesInfo.Damage.BonusDamage
+	buffOnCrit = speciesInfo.Damage.CritBuffIds
 
-	dCount += int(math.Floor((float64(c.Stats.Speed.ValueAdj) / 50)))
+	dCount += int(math.Floor((float64(c.Stats.Dexterity.ValueAdj) / 50)))
 	dSides += int(math.Floor((float64(c.Stats.Strength.ValueAdj) / 12)))
-	bonus += int(math.Floor((float64(c.Stats.Perception.ValueAdj) / 25)))
+	bonus += int(math.Floor((float64(c.Stats.Charisma.ValueAdj) / 25)))
 
-	if dCount < raceInfo.Damage.DiceCount {
-		dCount = raceInfo.Damage.DiceCount
+	if dCount < speciesInfo.Damage.DiceCount {
+		dCount = speciesInfo.Damage.DiceCount
 	}
-	if dSides < raceInfo.Damage.SideCount {
-		dSides = raceInfo.Damage.SideCount
+	if dSides < speciesInfo.Damage.SideCount {
+		dSides = speciesInfo.Damage.SideCount
 	}
 
 	return attacks, dCount, dSides, bonus, buffOnCrit
+}
+
+// GetDefaultDistributionDamage returns distribution damage parameters for unarmed combat.
+// Uses CalculateUnarmedDamage to scale with Strength and Unarmed Combat skill.
+// This provides meaningful progression for unarmed fighters.
+func (c *Character) GetDefaultDistributionDamage() (attacks int, baseDamage float64, variance float64, buffOnCrit []int) {
+	speciesInfo := species.GetSpecies(c.SpeciesId)
+
+	attacks = speciesInfo.Damage.Attacks
+	if attacks < 1 {
+		attacks = 1
+	}
+	buffOnCrit = speciesInfo.Damage.CritBuffIds
+
+	// Use skill-based unarmed damage calculation (Stage 7.3)
+	baseDamage, variance = c.CalculateUnarmedDamage()
+
+	return attacks, baseDamage, variance, buffOnCrit
+}
+
+// CalculateUnarmedDamage returns the base damage and variance for unarmed attacks.
+// This function is designed to be extensible for future conditions/mutations.
+//
+// Formula: baseDamage = baseValue + (Strength / strengthDivisor) + (UnarmedSkill / skillDivisor)
+//
+// Scaling examples (at 100 Strength):
+//   - Skill 0 (untrained):  2 + 4 + 0  = 6 damage
+//   - Skill 50 (trained):   2 + 4 + 5  = 11 damage
+//   - Skill 100 (master):   2 + 4 + 10 = 16 damage
+//
+// Extension points for future conditions/mutations:
+//   - baseDamage can be modified by multipliers (e.g., "Stone Fists" mutation: baseDamage *= 1.5)
+//   - variance can be modified (e.g., "Precise Strikes" condition: variance *= 0.5)
+//   - Additional additive bonuses (e.g., "Enhanced Strength" buff: +5 damage)
+//
+// To add a buff/condition/mutation that affects unarmed damage:
+//   1. Check for the buff/condition after base calculation
+//   2. Apply multipliers: baseDamage *= multiplier
+//   3. Apply additive bonuses: baseDamage += bonus
+//   4. Modify variance if needed: variance *= varianceMultiplier
+func (c *Character) CalculateUnarmedDamage() (baseDamage float64, variance float64) {
+	b := configs.GetBalanceConfig()
+	baseValue := float64(b.UnarmedBaseDamage)
+	strengthDivisor := float64(b.UnarmedStrengthDivisor)
+	skillDivisor := float64(b.UnarmedSkillDivisor)
+	baseVariance := float64(b.UnarmedBaseVariance)
+
+	// Calculate base damage from stats and skill
+	strengthBonus := float64(c.Stats.Strength.ValueAdj) / strengthDivisor
+	skillBonus := float64(c.GetSkillLevel(skills.UnarmedCombat)) / skillDivisor
+
+	baseDamage = baseValue + strengthBonus + skillBonus
+
+	// Base variance scales slightly with skill (more skill = more consistent)
+	// High skill fighters are more consistent, low skill fighters are erratic
+	skillLevel := c.GetSkillLevel(skills.UnarmedCombat)
+	varianceReduction := float64(skillLevel) / 50.0 // 0 at skill 0, 2 at skill 100
+	variance = math.Max(1.0, baseVariance-varianceReduction)
+
+	// --- FUTURE EXTENSION POINT: Buffs/Conditions/Mutations ---
+	// Example implementations (commented out for now):
+	//
+	// if c.HasBuffFlag(buffs.StoneFists) {
+	//     baseDamage *= 1.5  // Stone Fists: +50% damage
+	//     variance *= 1.2    // But less precise (heavier strikes)
+	// }
+	//
+	// if c.HasBuffFlag(buffs.PreciseStrikes) {
+	//     variance *= 0.5    // Precise Strikes: Half variance (more consistent)
+	// }
+	//
+	// if c.HasBuffFlag(buffs.EnhancedStrength) {
+	//     baseDamage += 5.0  // Flat +5 damage bonus
+	// }
+	//
+	// if c.HasCondition("weakened") {
+	//     baseDamage *= 0.7  // Weakened: -30% damage
+	// }
+	//
+	// if c.HasMutation("razor-claws") {
+	//     baseDamage += 3.0  // Razor Claws: +3 base damage
+	//     variance += 1.0    // Claws add slight variance
+	// }
+	//
+	// if c.HasMutation("padded-fists") {
+	//     baseDamage *= 0.8  // Padded Fists: -20% damage
+	//     variance *= 0.6    // But more consistent
+	// }
+	// --- END EXTENSION POINT ---
+
+	// Stage 12.1: Natural weapon bonus from mutations (Clawed Hands etc.)
+	baseDamage += mutations.GetNaturalWeaponBonus(c.Mutations)
+
+	// Ensure minimums
+	baseDamage = math.Max(1.0, baseDamage)
+	variance = math.Max(0.5, variance)
+
+	return baseDamage, variance
 }
 
 func (c *Character) GetSpells() map[string]int {
@@ -386,6 +740,12 @@ func (c *Character) GetSpells() map[string]int {
 	maps.Copy(ret, c.SpellBook)
 	return ret
 }
+
+// IsCasting returns true if the character has an active fold-based cast in progress.
+func (c *Character) IsCasting() bool { return c.CastingState != nil }
+
+// IsCrafting returns true if the character has an active crafting operation in progress.
+func (c *Character) IsCrafting() bool { return c.CraftingState != nil }
 
 func (c *Character) HasSpell(spellName string) bool {
 	if intVal, ok := c.SpellBook[spellName]; ok {
@@ -430,31 +790,25 @@ func (c *Character) LearnSpell(spellName string) bool {
 	return false
 }
 
-func (c *Character) GrantXP(xp int) (actualXP int, xpScale int) {
-
-	if xp == 0 {
-		return 0, 100
+func (c *Character) HasRecipe(recipeId string) bool {
+	if c.KnownRecipes == nil {
+		return false
 	}
-
-	preScale := float64(configs.GetGamePlayConfig().XPScale) / 100
-	xp = int(math.Round(preScale * float64(xp)))
-
-	xpScale = c.StatMod(string(statmods.XPScale)) + 100
-
-	if xpScale == 100 {
-		actualXP = xp
-	} else {
-
-		scaleFloat := max(float64(xpScale)/100, 1)
-
-		actualXP = int(float64(xp) * scaleFloat)
+	if intVal, ok := c.KnownRecipes[recipeId]; ok {
+		return intVal > 0
 	}
+	return false
+}
 
-	c.Experience += actualXP
-
-	mudlog.Debug(`GrantXP()`, `username`, c.Name, `xp`, xp, `xpscale`, xpScale, `actualXP`, actualXP)
-
-	return actualXP, xpScale
+func (c *Character) LearnRecipe(recipeId string) bool {
+	if c.KnownRecipes == nil {
+		c.KnownRecipes = crafting.GetStarterRecipes()
+	}
+	if _, ok := c.KnownRecipes[recipeId]; !ok {
+		c.KnownRecipes[recipeId] = 1
+		return true
+	}
+	return false
 }
 
 func (c *Character) TrackCharmed(mobId int, add bool) {
@@ -482,7 +836,7 @@ func (c *Character) Charm(userId int, rounds int, expireCommand string) {
 }
 
 func (c *Character) KnowsFirstAid() bool {
-	if r := races.GetRace(c.RaceId); r != nil {
+	if r := species.GetSpecies(c.SpeciesId); r != nil {
 		return r.KnowsFirstAid
 	}
 	return false
@@ -565,6 +919,8 @@ func (c *Character) GetDefense() int {
 
 	reduction := c.Equipment.Weapon.GetDefense() +
 		c.Equipment.Offhand.GetDefense() +
+		c.Equipment.ExtraArm1.GetDefense() +
+		c.Equipment.ExtraArm2.GetDefense() +
 		c.Equipment.Head.GetDefense() +
 		c.Equipment.Neck.GetDefense() +
 		c.Equipment.Body.GetDefense() +
@@ -581,6 +937,17 @@ func (c *Character) GetDefense() int {
 	// Anything held in the offhand that provides a damage reduction is considered a shield.
 	if c.Equipment.Offhand.ItemId != 0 && c.Equipment.Offhand.GetSpec().Type != items.Weapon && c.Equipment.Offhand.GetSpec().DamageReduction > 0 {
 		reduction = int(float64(reduction) * 1.5)
+	}
+
+	// Add magical armor from Minor Shield (or any future ConditionShield source)
+	reduction += int(c.GetConditionMagnitude(ConditionShield))
+
+	// Stage 12.1: Add natural armor from mutations (Tough Skin etc.)
+	reduction += mutations.GetNaturalArmor(c.Mutations)
+
+	// Species natural armor (chitin, thick hide, etc.)
+	if speciesInfo := species.GetSpecies(c.SpeciesId); speciesInfo != nil {
+		reduction += speciesInfo.NaturalArmor
 	}
 
 	if reduction > 100 {
@@ -634,11 +1001,11 @@ func (c *Character) GetAdjectives() []string {
 		retAdjectives = append(retAdjectives, `shop`)
 	}
 
-	if c.HasBuffFlag(buffs.EmitsLight) {
+	if c.HasFlagFromAnySource(buffs.EmitsLight) {
 		retAdjectives = append(retAdjectives, `lit`)
 	}
 
-	if c.HasBuffFlag(buffs.Hidden) {
+	if c.HasFlagFromAnySource(buffs.Hidden) {
 		retAdjectives = append(retAdjectives, `hidden`)
 	}
 
@@ -650,6 +1017,55 @@ func (c *Character) GetAdjectives() []string {
 	retAdjectives = append(retAdjectives, c.Adjectives...)
 
 	return retAdjectives
+}
+
+// AttemptRecovery tries to recover from a condition using a stat-based chance
+// Formula: min(90, 25 + 20 * ln(statValue/25))
+// Returns: (attemptMade, success)
+// - attemptMade: whether the character had a condition to recover from
+// - success: whether the recovery succeeded (only meaningful if attemptMade is true)
+func (c *Character) AttemptRecovery(statValue int) (bool, bool) {
+	// Currently only handles Prone, but future-proofed for grapple/entangle/etc
+	if c.CombatPosition != PositionProne {
+		return false, false // No condition to recover from
+	}
+
+	// Decrement minimum prone duration counter
+	if c.PositionRoundsMin > 0 {
+		c.PositionRoundsMin--
+		// Still in minimum prone period, can't attempt recovery yet
+		// Reduce attacks to 1 this round (struggling to stand)
+		c.AddCondition(ConditionRecoveryPenalty, 1, 1.0, "prone recovery")
+		return false, false // No recovery attempt yet (still in minimum duration)
+	}
+
+	// Minimum duration passed, now roll for recovery based on stat
+	// Calculate recovery chance using logarithmic formula
+	// DEX 25 = 25%, DEX 100 = 50%, DEX 300 = 75%, caps at 90%
+	chance := 25.0
+	if statValue > 0 {
+		chance = 25.0 + 20.0*math.Log(float64(statValue)/25.0)
+		if chance > 90.0 {
+			chance = 90.0
+		}
+		if chance < 0 {
+			chance = 0
+		}
+	}
+
+	// Roll for success
+	roll := dice.RollStat(50) // Mean of 50
+	success := roll.Value < chance
+
+	if success {
+		c.CombatPosition = PositionStanding
+		c.PositionRoundsMin = 0
+	} else {
+		// Failed recovery attempt - reduce attacks to 1 this round
+		c.AddCondition(ConditionRecoveryPenalty, 1, 1.0, "prone recovery")
+	}
+
+	return true, success
 }
 
 func (c *Character) getFormattedName(viewingUserId int, uType string, renderFlags ...NameRenderFlag) FormattedName {
@@ -755,6 +1171,15 @@ func (c *Character) StoreItem(i items.Item) bool {
 
 	i.Validate()
 
+	// Check if adding this item would exceed carry capacity
+	newWeight := c.GetCarriedWeight() + i.GetSpec().GetWeight()
+	capacity := c.CarryCapacity()
+
+	// Allow up to 2x capacity (overloaded, but possible)
+	if newWeight > capacity*2.0 {
+		return false
+	}
+
 	c.Items = append(c.Items, i)
 
 	return true
@@ -784,12 +1209,12 @@ func (c *Character) HandsRequired(i items.Item) int {
 		return iSpec.Hands
 	}
 
-	raceInfo := races.GetRace(c.RaceId)
-	if raceInfo.Size == races.Large {
+	speciesInfo := species.GetSpecies(c.SpeciesId)
+	if speciesInfo.Size == species.Large {
 		return 1
 	}
 
-	if raceInfo.Size == races.Small {
+	if speciesInfo.Size == species.Small {
 		return iSpec.Hands + 1
 	}
 
@@ -863,6 +1288,8 @@ func (c *Character) FindOnBody(itemName string) (items.Item, bool) {
 	partialMatch, fullMatch := items.FindMatchIn(itemName,
 		c.Equipment.Weapon,
 		c.Equipment.Offhand,
+		c.Equipment.ExtraArm1,
+		c.Equipment.ExtraArm2,
 		c.Equipment.Head,
 		c.Equipment.Neck,
 		c.Equipment.Body,
@@ -925,7 +1352,7 @@ func (c *Character) TrainSkill(skillName string, targetLevel ...int) int {
 			skillLevel = targetLevel[0]
 		}
 
-	} else if skillLevel < 4 {
+	} else {
 
 		skillLevel++
 
@@ -952,13 +1379,278 @@ func (c *Character) GetSkillLevelCost(currentLevel int) int {
 	return currentLevel
 }
 
+// IncreaseSkill increments the named skill by 1.
+// No hard cap — progression is governed by the soft cap in CheckSkillProgression.
+func (c *Character) IncreaseSkill(skillName string) bool {
+	if c.Skills == nil {
+		c.Skills = make(map[string]int)
+	}
+	c.Skills[skillName] = c.Skills[skillName] + 1
+	return true
+}
+
+// IncreaseStat increments the Training field of the named stat by the given amount,
+// then recalculates derived values via Validate.
+func (c *Character) IncreaseStat(statName string, amount int) bool {
+	switch statName {
+	case "strength":
+		c.Stats.Strength.Training += amount
+	case "dexterity":
+		c.Stats.Dexterity.Training += amount
+	case "perception":
+		c.Stats.Perception.Training += amount
+	case "vitality":
+		c.Stats.Vitality.Training += amount
+	case "willpower":
+		c.Stats.Willpower.Training += amount
+	case "charisma":
+		c.Stats.Charisma.Training += amount
+	default:
+		return false
+	}
+	c.Validate()
+	return true
+}
+
+// GetStatValue returns the raw computed Value for the named stat, or 0 if unrecognised.
+func (c *Character) GetStatValue(statName string) int {
+	switch statName {
+	case "strength":
+		return c.Stats.Strength.Value
+	case "dexterity":
+		return c.Stats.Dexterity.Value
+	case "perception":
+		return c.Stats.Perception.Value
+	case "vitality":
+		return c.Stats.Vitality.Value
+	case "willpower":
+		return c.Stats.Willpower.Value
+	case "charisma":
+		return c.Stats.Charisma.Value
+	}
+	return 0
+}
+
+// GetCombatSkillTag returns the appropriate combat skill tag based on
+// the character's equipped weapon type.
+func (c *Character) GetCombatSkillTag() skills.SkillTag {
+	if c.Equipment.Weapon.ItemId > 0 {
+		weaponSpec := c.Equipment.Weapon.GetSpec()
+		if weaponSpec.Subtype == items.Shooting {
+			return skills.RangedCombat
+		}
+		if weaponSpec.Subtype != items.Claws {
+			return skills.WeaponCombat
+		}
+	}
+	return skills.UnarmedCombat
+}
+
+// GetCombatSkillLevel returns an effective combat skill value for use in
+// combat formulas. Checks the weapon-appropriate DOG skill first, then
+// falls back to legacy Brawling, then minimum 1.
+func (c *Character) GetCombatSkillLevel() int {
+	if level := c.GetSkillLevel(c.GetCombatSkillTag()); level > 0 {
+		return level
+	}
+	return 1
+}
+
+// GetModifiedAttackCount calculates the number of attacks for a weapon
+// considering speed multiplier, skill, and dual wielding.
+// baseAttacks: The weapon's base attack count
+// weaponSpeed: The weapon's speed multiplier (1.0 = unarmed baseline)
+// isOffhand: Whether this is the offhand weapon
+func (c *Character) GetModifiedAttackCount(baseAttacks int, weaponSpeed float64, isOffhand bool) int {
+	attacks := float64(baseAttacks)
+
+	// Apply weapon speed multiplier
+	attacks *= weaponSpeed
+
+	// Apply skill modifier (small bonus, max ~10% at skill 50)
+	skillLevel := float64(c.GetCombatSkillLevel())
+	skillMod := 1.0 + (skillLevel / 50.0) * 0.1
+	attacks *= skillMod
+
+	// If offhand, weapon-combat skill governs dual-wield effectiveness
+	if isOffhand {
+		wcLevel := float64(c.GetSkillLevel(skills.WeaponCombat))
+		// Significant modifier: 0.5 at skill 0, 1.0 at skill 25, 1.2 at skill 50
+		dualWieldMod := 0.5 + (wcLevel / 50.0) * 0.7
+		attacks *= dualWieldMod
+	}
+
+	// Minimum 1 attack
+	result := int(math.Round(attacks))
+	if result < 1 {
+		result = 1
+	}
+
+	return result
+}
+
+// ===================================================================
+// Stage 7.1: Segmented Defense Helper Methods
+// ===================================================================
+
+const (
+	DefenseNone  string = ""
+	DefenseDodge string = "dodge"
+	DefenseParry string = "parry"
+	DefenseBlock string = "block"
+)
+
+// HasShield returns true if the character is wielding a shield in offhand
+func (c *Character) HasShield() bool {
+	if c.Equipment.Offhand.ItemId <= 0 {
+		return false
+	}
+	spec := c.Equipment.Offhand.GetSpec()
+	// Shield detection: type offhand + has damage reduction or subtype wearable
+	return spec.Type == items.Offhand && (spec.DamageReduction > 0 || spec.Subtype == items.Wearable)
+}
+
+// IsDualWielding returns true if character has weapons in both hands
+func (c *Character) IsDualWielding() bool {
+	if c.Equipment.Weapon.ItemId <= 0 || c.Equipment.Offhand.ItemId <= 0 {
+		return false
+	}
+	// Dual wielding means both are weapons
+	weaponSpec := c.Equipment.Weapon.GetSpec()
+	offhandSpec := c.Equipment.Offhand.GetSpec()
+	return weaponSpec.Type == items.Weapon && offhandSpec.Type == items.Weapon
+}
+
+// IsUnarmed returns true if character has no weapon equipped
+func (c *Character) IsUnarmed() bool {
+	return c.Equipment.Weapon.ItemId <= 0
+}
+
+// GetDefenseSequence returns ordered defenses based on equipment (Stage 7.1)
+func (c *Character) GetDefenseSequence() []string {
+	defenses := []string{}
+
+	// Everyone can dodge
+	defenses = append(defenses, DefenseDodge)
+
+	// If unarmed, only dodge
+	if c.IsUnarmed() {
+		return defenses
+	}
+
+	// If dual wielding (two weapons)
+	if c.IsDualWielding() {
+		// dodge → parry main → parry off
+		defenses = append(defenses, DefenseParry) // main hand parry
+		defenses = append(defenses, DefenseParry) // offhand parry
+		return defenses
+	}
+
+	// If wielding weapon + shield
+	if c.Equipment.Weapon.ItemId > 0 && c.HasShield() {
+		// dodge → parry → block
+		defenses = append(defenses, DefenseParry)
+		defenses = append(defenses, DefenseBlock)
+		return defenses
+	}
+
+	// If wielding single weapon (no offhand or offhand is not shield/weapon)
+	if c.Equipment.Weapon.ItemId > 0 {
+		// dodge → parry
+		defenses = append(defenses, DefenseParry)
+		return defenses
+	}
+
+	// Default: just dodge
+	return defenses
+}
+
+// GetDefenseScore calculates defense score for a given defense type (Stage 7.1)
+func (c *Character) GetDefenseScore(defenseType string) float64 {
+	dex := float64(c.Stats.Dexterity.ValueAdj)
+
+	switch defenseType {
+	case DefenseDodge:
+		// Dodge: Dexterity + UnarmedCombat skill + mutation dodge modifier
+		unarmedSkill := float64(c.GetSkillLevel(skills.UnarmedCombat))
+		score := dex + unarmedSkill + mutations.GetDodgeModifier(c.Mutations)
+		// Phase 24.5: Blinded condition reduces dodge
+		if c.HasCondition(ConditionBlinded) {
+			score *= c.GetConditionMagnitude(ConditionBlinded) // magnitude is 0.5–0.7 = penalty multiplier
+		}
+		return score
+
+	case DefenseParry:
+		// Parry: Dexterity + WeaponCombat skill + weapon ParryRating
+		weaponSkill := float64(c.GetSkillLevel(skills.WeaponCombat))
+		parryRating := 0
+		if c.Equipment.Weapon.ItemId > 0 {
+			parryRating = c.Equipment.Weapon.GetSpec().ParryRating
+		}
+		return dex + weaponSkill + float64(parryRating)
+
+	case DefenseBlock:
+		// Block: (Strength + Dexterity)/2 + WeaponCombat skill + shield BlockRating
+		str := float64(c.Stats.Strength.ValueAdj)
+		weaponSkill := float64(c.GetSkillLevel(skills.WeaponCombat))
+		blockRating := 0
+		if c.HasShield() {
+			blockRating = c.Equipment.Offhand.GetSpec().BlockRating
+		}
+		return (str+dex)/2 + weaponSkill + float64(blockRating)
+
+	default:
+		return 0
+	}
+}
+
+// GetDefenseStaminaCost returns stamina cost for a defense type (Stage 7.1)
+func (c *Character) GetDefenseStaminaCost(defenseType string) int {
+	cfg := configs.GetGamePlayConfig()
+
+	baseCost := 0
+	multiplier := 1.0
+
+	switch defenseType {
+	case DefenseDodge:
+		baseCost = 2
+		multiplier = float64(cfg.DodgeMultiplier)
+	case DefenseParry:
+		baseCost = 4
+		multiplier = float64(cfg.ParryMultiplier)
+	case DefenseBlock:
+		baseCost = 5
+		multiplier = float64(cfg.BlockMultiplier)
+	default:
+		return 0
+	}
+
+	cost := int(float64(baseCost) * multiplier)
+	if cost < 1 {
+		cost = 1 // minimum 1 stamina
+	}
+	return cost
+}
+
+// DeductDefenseStamina deducts stamina for a defense and returns true if successful (Stage 7.1)
+func (c *Character) DeductDefenseStamina(defenseType string) bool {
+	cost := c.GetDefenseStaminaCost(defenseType)
+	if c.Stamina >= cost {
+		c.Stamina -= cost
+		return true
+	}
+	return false
+}
+
 func (c *Character) GetMaxCharmedCreatures() int {
-	lvl := c.GetSkillLevel(skills.Tame)
+	// Taming is now handled via spellcasting; base charm capacity from spellcasting skill
+	lvl := c.GetSkillLevel(skills.Spellcasting)
 	return lvl + 1
 }
 
 func (c *Character) GetMemoryCapacity() int {
-	memCap := c.GetSkillLevel(skills.Map) * c.Stats.Smarts.ValueAdj
+	// Map is now a free command; memory capacity based on Perception
+	memCap := (c.Stats.Perception.ValueAdj >> 1)
 	if memCap < 0 {
 		memCap = 0
 	}
@@ -966,7 +1658,8 @@ func (c *Character) GetMemoryCapacity() int {
 }
 
 func (c *Character) GetMapSprawlCapacity() int {
-	sprawlCap := c.GetSkillLevel(skills.Map) + (c.Stats.Smarts.ValueAdj >> 2)
+	// Map is now a free command; sprawl capacity based on Perception
+	sprawlCap := (c.Stats.Perception.ValueAdj >> 2)
 	if sprawlCap < 0 {
 		sprawlCap = 0
 	}
@@ -1068,6 +1761,13 @@ func (c *Character) SetAggroRemote(exitName string, userId int, mobInstanceId in
 
 func (c *Character) SetAggro(userId int, mobInstanceId int, aggroType AggroType, roundsWaitTime ...int) {
 
+	// Stage 8.3: Clear grapple state if switching targets
+	if c.Aggro != nil {
+		if c.Aggro.UserId != userId || c.Aggro.MobInstanceId != mobInstanceId {
+			c.ClearGrappleState()
+		}
+	}
+
 	var combatAddlWaitRounds int = 0
 
 	if len(roundsWaitTime) > 0 {
@@ -1105,6 +1805,18 @@ func (c *Character) SetCast(roundsWaitTime int, sInfo SpellAggroInfo) {
 
 func (c *Character) EndAggro() {
 	c.Aggro = nil
+	c.ClearGrappleState()
+}
+
+// ClearGrappleState clears all grapple-related state
+// Stage 8.3: Called when combat ends, targets change, or participant dies
+func (c *Character) ClearGrappleState() {
+	c.GrappleControllerId = 0
+	c.RemoveCondition(ConditionGrappleController)
+	// Reset to standing if in a grapple position
+	if c.CombatPosition.IsGrapplePosition() {
+		c.CombatPosition = PositionStanding
+	}
 }
 
 func (c *Character) IsAggro(targetUserId int, targetMobInstanceId int) bool {
@@ -1142,11 +1854,21 @@ func (c *Character) IsAggro(targetUserId int, targetMobInstanceId int) bool {
 }
 
 func (c *Character) IsDisabled() bool {
-	return c.Health <= 0
+	return c.Health <= 0 || c.Stamina <= 0 || c.Conviction <= 0
 }
 
 func (c *Character) HasBuffFlag(buffFlag buffs.Flag) bool {
 	return c.Buffs.HasFlag(buffFlag, false)
+}
+
+// HasFlagFromAnySource returns true if the character has the given flag from
+// either active buffs OR permanent mutation effects. Use this instead of
+// HasBuffFlag when the check should also honor mutation-granted flags.
+func (c *Character) HasFlagFromAnySource(buffFlag buffs.Flag) bool {
+	if c.Buffs.HasFlag(buffFlag, false) {
+		return true
+	}
+	return mutations.HasMutationFlag(c.Mutations, string(buffFlag))
 }
 
 func (c *Character) CancelBuffsWithFlag(buffFlag buffs.Flag) bool {
@@ -1244,126 +1966,70 @@ func (c *Character) ApplyHealthChange(healthChange int) int {
 	return newHealth - oldHealth
 }
 
-func (c *Character) ApplyManaChange(manaChange int) int {
-	oldMana := c.Mana
-	c.Mana += manaChange
-	if c.Mana < 0 {
-		c.Mana = 0
-	} else if c.Mana > c.ManaMax.Value {
-		c.Mana = c.ManaMax.Value
-	}
-	return c.Mana - oldMana
-}
-
 func (c *Character) BarterPrice(startPrice int) int {
-	factor := (float64(c.Stats.Perception.ValueAdj) / 3) / 100 // 100 = 33% discount, 0 = 0% discount, 300 = 100% discount
+	factor := (float64(c.Stats.Charisma.ValueAdj) / 3) / 100 // 100 = 33% discount, 0 = 0% discount, 300 = 100% discount
 	if factor > .75 {
 		factor = .75
 	}
 	return int(factor * float64(startPrice))
 }
 
-func (c *Character) XPTNL() int {
-	return c.XPTL(c.Level)
-}
-
-// Amt TNL for a specific level
-func (c *Character) XPTL(lvl int) int {
-	if lvl < 1 {
-		lvl = 1
-	}
-	fLvl := float64(lvl)
-	return int(float32(1000+(fLvl*(fLvl*.75)*1000)) * c.TNLScale)
-}
-
-// Returns the actual xp in regards to the current level/next level
-func (c *Character) XPTNLActual() (xpPastCurrentLevel int, tnlXP int) {
-
-	xpForCurrentLevel := c.XPTL(c.Level - 1)
-	if c.Level == 1 {
-		xpForCurrentLevel = 0
-	}
-
-	xpForNextLevel := c.XPTL(c.Level)
-	tnlXP = xpForNextLevel - xpForCurrentLevel
-
-	xpPastCurrentLevel = c.Experience - xpForCurrentLevel
-
-	return xpPastCurrentLevel, tnlXP
-}
-
-func (c *Character) LevelUp() (bool, stats.Statistics) {
-
-	if c.XPTNL() > c.Experience {
-		return false, stats.Statistics{}
-	}
-
-	var statsBefore stats.Statistics = c.Stats
-
-	c.Level++
-	c.TrainingPoints++
-	c.StatPoints++
-
-	c.Validate()
-
-	var statsDelta stats.Statistics = c.Stats
-
-	statsDelta.Strength.Value -= statsBefore.Strength.Value
-	statsDelta.Speed.Value -= statsBefore.Speed.Value
-	statsDelta.Smarts.Value -= statsBefore.Smarts.Value
-	statsDelta.Vitality.Value -= statsBefore.Vitality.Value
-	statsDelta.Mysticism.Value -= statsBefore.Mysticism.Value
-	statsDelta.Perception.Value -= statsBefore.Perception.Value
-
-	c.Health = c.HealthMax.Value
-	c.Mana = c.ManaMax.Value
-
-	return true, statsDelta
-}
-
-func (c *Character) Heal(hp int, mana int) (int, int) {
+func (c *Character) Heal(hp int) int {
 	startHP := c.Health
-	startMP := c.Mana
 
 	c.Health += hp
 	if c.Health > c.HealthMax.Value {
 		c.Health = c.HealthMax.Value
 	}
-	c.Mana += hp
-	if c.Mana > c.ManaMax.Value {
-		c.Mana = c.ManaMax.Value
-	}
 
-	return c.Health - startHP, c.Mana - startMP
+	return c.Health - startHP
 }
 
 func (c *Character) HealthPerRound() int {
-	return 1 + c.StatMod(string(statmods.HealthRecovery))
-	/*
-		healAmt := math.Round(float64(c.Stats.Vitality.ValueAdj)/8) +
-			math.Round(float64(c.Level)/12) +
-			1.0
-
-		return int(healAmt)
-	*/
+	b := configs.GetBalanceConfig()
+	pct := float64(b.PlayerHealthRegenPct)
+	// StatMod reinterpreted as percentage bonus (e.g. 5 → +5%)
+	pct += float64(c.StatMod(string(statmods.HealthRecovery))) / 100.0
+	base := int(pct * float64(c.HealthMax.Value))
+	if base < 1 {
+		base = 1
+	}
+	return base
 }
 
-func (c *Character) ManaPerRound() int {
-	return 1 + c.StatMod(string(statmods.ManaRecovery))
-	/*
-		healAmt := math.Round(float64(c.Stats.Mysticism.ValueAdj)/8) +
-			math.Round(float64(c.Level)/12) +
-			1.0
+func (c *Character) StaminaPerRound() int {
+	b := configs.GetBalanceConfig()
+	pct := float64(b.PlayerStaminaRegenPct)
+	pct += float64(c.StatMod(string(statmods.StaminaRecovery))) / 100.0
+	base := int(pct * float64(c.StaminaMax.Value))
+	if base < 1 {
+		base = 1
+	}
+	// Apply stamina_regen_multiplier mutations
+	if mult := mutations.GetStaminaRegenMultiplier(c.Mutations); mult != 0 {
+		base = int(float64(base) * (1.0 + mult))
+		if base < 1 {
+			base = 1
+		}
+	}
+	return base
+}
 
-		return int(healAmt)
-	*/
+func (c *Character) ConvictionPerRound() int {
+	b := configs.GetBalanceConfig()
+	pct := float64(b.PlayerConvictionRegenPct)
+	pct += float64(c.StatMod(string(statmods.ConvictionRecovery))) / 100.0
+	base := int(pct * float64(c.ConvictionMax.Value))
+	if base < 1 {
+		base = 1
+	}
+	return base
 }
 
 // Where 1000 = a full round
 func (c *Character) MovementCost() int {
-	modifier := 3                                // by default they should be able to move 3 times per round.
-	modifier += int(c.Level / 15)                // Every 15 levels, get an extra movement.
-	modifier += int(c.Stats.Speed.ValueAdj / 15) // Every 15 speed, get an extra movement
+	modifier := 3                                    // by default they should be able to move 3 times per round.
+	modifier += int(c.Stats.Dexterity.ValueAdj / 15) // Every 15 dexterity, get an extra movement
 	return int(1000 / modifier)
 }
 
@@ -1376,64 +2042,118 @@ func (c *Character) RecalculateStats() {
 
 	// Make sure racial base stats are set
 	beforeHealthMax := c.HealthMax
-	beforeManaMax := c.ManaMax
 	beforeStats := c.Stats
 
-	if raceInfo := races.GetRace(c.RaceId); raceInfo != nil {
-		c.TNLScale = raceInfo.TNLScale
-		// Safety check: ensure TNLScale is never 0
-		if c.TNLScale == 0 {
-			c.TNLScale = 1.0
+	if speciesInfo := species.GetSpecies(c.SpeciesId); speciesInfo != nil {
+
+		// Only set base stats from racial if they haven't been rolled yet
+		// (Base values of 0 indicate uninitialized stats)
+		// Rolled stats (from RollCharacterStats) will be 70-130, so they won't be overwritten
+		if c.Stats.Strength.Base == 0 {
+			c.Stats.Strength.Base = speciesInfo.Stats.Strength.Base
 		}
-		c.Stats.Strength.Base = raceInfo.Stats.Strength.Base
-		c.Stats.Speed.Base = raceInfo.Stats.Speed.Base
-		c.Stats.Smarts.Base = raceInfo.Stats.Smarts.Base
-		c.Stats.Vitality.Base = raceInfo.Stats.Vitality.Base
-		c.Stats.Mysticism.Base = raceInfo.Stats.Mysticism.Base
-		c.Stats.Perception.Base = raceInfo.Stats.Perception.Base
+		if c.Stats.Dexterity.Base == 0 {
+			c.Stats.Dexterity.Base = speciesInfo.Stats.Dexterity.Base
+		}
+		if c.Stats.Perception.Base == 0 {
+			c.Stats.Perception.Base = speciesInfo.Stats.Perception.Base
+		}
+		if c.Stats.Vitality.Base == 0 {
+			c.Stats.Vitality.Base = speciesInfo.Stats.Vitality.Base
+		}
+		if c.Stats.Willpower.Base == 0 {
+			c.Stats.Willpower.Base = speciesInfo.Stats.Willpower.Base
+		}
+		if c.Stats.Charisma.Base == 0 {
+			c.Stats.Charisma.Base = speciesInfo.Stats.Charisma.Base
+		}
 	}
 
 	// Add any mods for equipment
 	c.Stats.Strength.Mods = c.StatMod(string(statmods.Strength))
-	c.Stats.Speed.Mods = c.StatMod(string(statmods.Speed))
-	c.Stats.Smarts.Mods = c.StatMod(string(statmods.Smarts))
-	c.Stats.Vitality.Mods = c.StatMod(string(statmods.Vitality))
-	c.Stats.Mysticism.Mods = c.StatMod(string(statmods.Mysticism))
+	c.Stats.Dexterity.Mods = c.StatMod(string(statmods.Dexterity))
 	c.Stats.Perception.Mods = c.StatMod(string(statmods.Perception))
+	c.Stats.Vitality.Mods = c.StatMod(string(statmods.Vitality))
+	c.Stats.Willpower.Mods = c.StatMod(string(statmods.Willpower))
+	c.Stats.Charisma.Mods = c.StatMod(string(statmods.Charisma))
+
+	// Stage 12.1: Apply stat_flat mutation bonuses to Mods before Recalculate()
+	c.Stats.Strength.Mods += mutations.GetStatFlat(c.Mutations, "strength")
+	c.Stats.Dexterity.Mods += mutations.GetStatFlat(c.Mutations, "dexterity")
+	c.Stats.Perception.Mods += mutations.GetStatFlat(c.Mutations, "perception")
+	c.Stats.Vitality.Mods += mutations.GetStatFlat(c.Mutations, "vitality")
+	c.Stats.Willpower.Mods += mutations.GetStatFlat(c.Mutations, "willpower")
+	c.Stats.Charisma.Mods += mutations.GetStatFlat(c.Mutations, "charisma")
 
 	// Recalculate stats
 	// Stats are basically:
 	// level*base + training + mods
-	c.Stats.Strength.Recalculate(c.Level)
-	c.Stats.Speed.Recalculate(c.Level)
-	c.Stats.Smarts.Recalculate(c.Level)
-	c.Stats.Vitality.Recalculate(c.Level)
-	c.Stats.Mysticism.Recalculate(c.Level)
-	c.Stats.Perception.Recalculate(c.Level)
+	c.Stats.Strength.Recalculate(1)
+	c.Stats.Dexterity.Recalculate(1)
+	c.Stats.Perception.Recalculate(1)
+	c.Stats.Vitality.Recalculate(1)
+	c.Stats.Willpower.Recalculate(1)
+	c.Stats.Charisma.Recalculate(1)
 
-	// Set HP/MP maxes
+	// Stage 12.1: Apply stat_multiplier mutations after Recalculate()
+	if v := mutations.GetStatMultiplier(c.Mutations, "strength"); v != 0 {
+		c.Stats.Strength.ValueAdj = int(float64(c.Stats.Strength.ValueAdj) * (1.0 + v))
+	}
+	if v := mutations.GetStatMultiplier(c.Mutations, "dexterity"); v != 0 {
+		c.Stats.Dexterity.ValueAdj = int(float64(c.Stats.Dexterity.ValueAdj) * (1.0 + v))
+	}
+	if v := mutations.GetStatMultiplier(c.Mutations, "perception"); v != 0 {
+		c.Stats.Perception.ValueAdj = int(float64(c.Stats.Perception.ValueAdj) * (1.0 + v))
+	}
+	if v := mutations.GetStatMultiplier(c.Mutations, "vitality"); v != 0 {
+		c.Stats.Vitality.ValueAdj = int(float64(c.Stats.Vitality.ValueAdj) * (1.0 + v))
+	}
+	if v := mutations.GetStatMultiplier(c.Mutations, "willpower"); v != 0 {
+		c.Stats.Willpower.ValueAdj = int(float64(c.Stats.Willpower.ValueAdj) * (1.0 + v))
+	}
+	if v := mutations.GetStatMultiplier(c.Mutations, "charisma"); v != 0 {
+		c.Stats.Charisma.ValueAdj = int(float64(c.Stats.Charisma.ValueAdj) * (1.0 + v))
+	}
+
+	// Set HP/Stamina/Conviction maxes (skill-based, no level dependency)
 	// This relies on the above stats so has to be calculated afterwards
-	c.HealthMax.Mods = 5 +
+	rb := configs.GetBalanceConfig()
+	c.HealthMax.Mods = int(rb.HealthBase) +
 		c.StatMod(string(statmods.HealthMax)) + // Any sort of spell buffs etc. are just direct modifiers
-		c.Level + // For every level you get 1 hp
-		c.Stats.Vitality.ValueAdj*4 // for every vitality you get 3hp
+		c.Stats.Strength.ValueAdj*int(rb.HealthPerStrength) + // Strength contributes to health
+		c.Stats.Vitality.ValueAdj*int(rb.HealthPerVitality) // Vitality is primary health stat
 
-	c.ManaMax.Mods = 4 +
-		c.StatMod(string(statmods.ManaMax)) + // Any sort of spell buffs etc. are just direct modifiers
-		c.Level + // For every level you get 1 mp
-		c.Stats.Mysticism.ValueAdj*3 // for every Mysticism you get 2mp
+	c.StaminaMax.Mods = int(rb.StaminaBase) +
+		c.Stats.Strength.ValueAdj*int(rb.StaminaPerStrength) + // Strength contributes to stamina
+		c.Stats.Willpower.ValueAdj*int(rb.StaminaPerWillpower) + // Willpower contributes to stamina
+		c.Stats.Vitality.ValueAdj*int(rb.StaminaPerVitality) // Vitality is primary stamina stat
+
+	c.ConvictionMax.Mods = int(rb.ConvictionBase) +
+		(c.Stats.Willpower.ValueAdj+c.Stats.Charisma.ValueAdj)*int(rb.ConvictionPerWilCha) // Willpower+Charisma drive conviction
 
 	// Set max action points
 	c.ActionPointsMax.Mods = 200 // hard coded for now
 
-	// Recalculate HP/MP stats
-	c.HealthMax.Recalculate(c.Level)
-	c.ManaMax.Recalculate(c.Level)
-	c.ActionPointsMax.Recalculate(c.Level)
+	// Recalculate HP/Stamina/Conviction stats
+	c.HealthMax.Recalculate(1)
+	c.StaminaMax.Recalculate(1)
+	c.ConvictionMax.Recalculate(1)
+	c.ActionPointsMax.Recalculate(1)
 
-	// HP can't max less than 1, MP can't max less than 0
-	if c.ManaMax.Value < 0 {
-		c.ManaMax.Value = 0
+	// Stage 12.1: Apply health_multiplier mutations after HealthMax.Recalculate()
+	if hMult := mutations.GetHealthMultiplier(c.Mutations); hMult != 0 {
+		c.HealthMax.Value = int(float64(c.HealthMax.Value) * (1.0 + hMult))
+		if c.HealthMax.Value < 1 {
+			c.HealthMax.Value = 1
+		}
+	}
+
+	// HP can't max less than 1, Stamina/Conviction can't max less than 0
+	if c.StaminaMax.Value < 0 {
+		c.StaminaMax.Value = 0
+	}
+	if c.ConvictionMax.Value < 0 {
+		c.ConvictionMax.Value = 0
 	}
 	if c.HealthMax.Value < 1 {
 		c.HealthMax.Value = 1
@@ -1442,24 +2162,91 @@ func (c *Character) RecalculateStats() {
 		c.ActionPointsMax.Value = 50
 	}
 
+	// Chrysalis enchantment pool reservation: clamp current pools to effective max
+	if hpRes := c.GetPoolReservation("health", c.HealthMax.Value); hpRes > 0 {
+		effectiveHP := c.HealthMax.Value - hpRes
+		if effectiveHP < 1 {
+			effectiveHP = 1
+		}
+		if c.Health > effectiveHP {
+			c.Health = effectiveHP
+		}
+	}
+	if spRes := c.GetPoolReservation("stamina", c.StaminaMax.Value); spRes > 0 {
+		effectiveSP := c.StaminaMax.Value - spRes
+		if effectiveSP < 0 {
+			effectiveSP = 0
+		}
+		if c.Stamina > effectiveSP {
+			c.Stamina = effectiveSP
+		}
+	}
+	if cpRes := c.GetPoolReservation("conviction", c.ConvictionMax.Value); cpRes > 0 {
+		effectiveCP := c.ConvictionMax.Value - cpRes
+		if effectiveCP < 0 {
+			effectiveCP = 0
+		}
+		if c.Conviction > effectiveCP {
+			c.Conviction = effectiveCP
+		}
+	}
+
+	// Stage 31.6: Enchant withdrawal condition — temporarily reduces pool max
+	if c.HasCondition(ConditionEnchantWithdrawal) {
+		mag := c.GetConditionMagnitude(ConditionEnchantWithdrawal)
+		// Source stores which pool to penalize
+		for _, cond := range c.Conditions {
+			if cond.Type == ConditionEnchantWithdrawal {
+				penalty := int(math.Floor(float64(c.HealthMax.Value) * mag))
+				switch cond.Source {
+				case "health":
+					c.HealthMax.Value -= penalty
+					if c.HealthMax.Value < 1 {
+						c.HealthMax.Value = 1
+					}
+					if c.Health > c.HealthMax.Value {
+						c.Health = c.HealthMax.Value
+					}
+				case "stamina":
+					penalty = int(math.Floor(float64(c.StaminaMax.Value) * mag))
+					c.StaminaMax.Value -= penalty
+					if c.StaminaMax.Value < 0 {
+						c.StaminaMax.Value = 0
+					}
+					if c.Stamina > c.StaminaMax.Value {
+						c.Stamina = c.StaminaMax.Value
+					}
+				case "conviction":
+					penalty = int(math.Floor(float64(c.ConvictionMax.Value) * mag))
+					c.ConvictionMax.Value -= penalty
+					if c.ConvictionMax.Value < 0 {
+						c.ConvictionMax.Value = 0
+					}
+					if c.Conviction > c.ConvictionMax.Value {
+						c.Conviction = c.ConvictionMax.Value
+					}
+				}
+				break
+			}
+		}
+	}
+
 	if c.userId != 0 {
 		changed := false
 		// return true if something has changed.
 		if beforeStats.Strength.ValueAdj != c.Stats.Strength.ValueAdj {
 			changed = true
-		} else if beforeStats.Speed.ValueAdj != c.Stats.Speed.ValueAdj {
-			changed = true
-		} else if beforeStats.Smarts.ValueAdj != c.Stats.Smarts.ValueAdj {
-			changed = true
-		} else if beforeStats.Vitality.ValueAdj != c.Stats.Vitality.ValueAdj {
-			changed = true
-		} else if beforeStats.Mysticism.ValueAdj != c.Stats.Mysticism.ValueAdj {
+		} else if beforeStats.Dexterity.ValueAdj != c.Stats.Dexterity.ValueAdj {
 			changed = true
 		} else if beforeStats.Perception.ValueAdj != c.Stats.Perception.ValueAdj {
 			changed = true
-		} else if beforeHealthMax != c.HealthMax {
+		} else if beforeStats.Vitality.ValueAdj != c.Stats.Vitality.ValueAdj {
 			changed = true
-		} else if beforeManaMax != c.ManaMax {
+		} else if beforeStats.Willpower.ValueAdj != c.Stats.Willpower.ValueAdj {
+			changed = true
+		} else if beforeStats.Charisma.ValueAdj != c.Stats.Charisma.ValueAdj {
+			changed = true
+		} else if beforeHealthMax != c.HealthMax {
 			changed = true
 		}
 
@@ -1470,39 +2257,23 @@ func (c *Character) RecalculateStats() {
 
 }
 
-// AutoTrain() spends any training points for this character
-func (c *Character) AutoTrain() {
-
-	if c.StatPoints < 0 {
-		return
-	}
-
-	for c.StatPoints > 0 {
-
-		switch util.Rand(6) {
-		case 0:
-			c.Stats.Strength.Training++
-		case 1:
-			c.Stats.Speed.Training++
-		case 2:
-			c.Stats.Smarts.Training++
-		case 3:
-			c.Stats.Vitality.Training++
-		case 4:
-			c.Stats.Mysticism.Training++
-		case 5:
-			c.Stats.Perception.Training++
+// GetPoolReservation returns the total pool max reduction from Chrysalis enchantments
+// on all equipped items that reserve the given pool ("health", "stamina", "conviction").
+func (c *Character) GetPoolReservation(pool string, poolMax int) int {
+	total := 0
+	for _, itm := range c.Equipment.GetAllItems() {
+		if !itm.HasChrysalisEnchantment() || itm.ReservePool != pool {
+			continue
 		}
-
-		c.StatPoints--
+		pct := enchantments.GetTierReservePct(itm.EnchantType, itm.EnchantTier)
+		total += int(math.Floor(float64(poolMax) * pct))
 	}
-
-	c.Validate()
-
+	return total
 }
 
 func (c *Character) CanDualWield() bool {
-	return c.GetSkillLevel(skills.DualWield) > 0
+	// Dual wielding is now governed by weapon-combat skill
+	return c.GetSkillLevel(skills.WeaponCombat) > 0
 }
 
 // Returns whether a correction was in order
@@ -1512,8 +2283,8 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 		c.Description = "They seem thoroughly uninteresting."
 	}
 
-	if race := races.GetRace(c.RaceId); race == nil {
-		c.RaceId = 1
+	if sp := species.GetSpecies(c.SpeciesId); sp == nil {
+		c.SpeciesId = 1
 	}
 
 	if c.Created.IsZero() {
@@ -1528,6 +2299,24 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 		c.SpellBook = make(map[string]int)
 	}
 
+	if c.KnownRecipes == nil {
+		c.KnownRecipes = crafting.GetStarterRecipes()
+	}
+
+	if c.Mutations == nil {
+		c.Mutations = make(map[string]int)
+	}
+
+	// Derive ExtraArms from mutation level (capped at 2)
+	if lvl, ok := c.Mutations["extra-arms"]; ok && lvl > 0 {
+		c.ExtraArms = lvl
+		if c.ExtraArms > 2 {
+			c.ExtraArms = 2
+		}
+	} else {
+		c.ExtraArms = 0
+	}
+
 	if c.Zone == "" {
 		c.Zone = startingZone
 	}
@@ -1535,22 +2324,21 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 	if c.Name == "" {
 		c.Name = defaultName
 	}
-	if c.Level < 1 {
-		c.Level = 1
-	}
-	if c.Experience < 1 {
-		c.Experience = 1
-	}
-
 	c.Buffs.Validate()
+
+	// Ensure all known skills exist at rank 1 minimum (retroactive for existing characters)
+	c.Skills = ensureAllSkills(c.Skills)
 
 	// Do a stats recalc based on equipment, race, level, etc.
 	c.RecalculateStats()
 
-	// Recalculate health and mana
+	// Recalculate health, stamina, and conviction
 
-	if c.Mana > c.ManaMax.Value {
-		c.Mana = c.ManaMax.Value
+	if c.Stamina > c.StaminaMax.Value {
+		c.Stamina = c.StaminaMax.Value
+	}
+	if c.Conviction > c.ConvictionMax.Value {
+		c.Conviction = c.ConvictionMax.Value
 	}
 	if c.Health > c.HealthMax.Value {
 		c.Health = c.HealthMax.Value
@@ -1560,19 +2348,14 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 		c.Health = -10
 	}
 
-	if c.Mana < 0 {
-		c.Mana = 0
+	if c.Stamina < 0 {
+		c.Stamina = 0
+	}
+	if c.Conviction < 0 {
+		c.Conviction = 0
 	}
 
 	c.Cooldowns.Prune()
-
-	if c.Alignment < AlignmentMinimum {
-		c.Alignment = AlignmentMinimum
-	}
-
-	if c.Alignment > AlignmentMaximum {
-		c.Alignment = AlignmentMaximum
-	}
 
 	// Validate possessed/worn items
 	// This helps ensure all in-play items have a uid
@@ -1581,6 +2364,8 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 	}
 	c.Equipment.Weapon.Validate()
 	c.Equipment.Offhand.Validate()
+	c.Equipment.ExtraArm1.Validate()
+	c.Equipment.ExtraArm2.Validate()
 	c.Equipment.Head.Validate()
 	c.Equipment.Neck.Validate()
 	c.Equipment.Body.Validate()
@@ -1591,14 +2376,14 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 	c.Equipment.Feet.Validate()
 	// Done with validation
 
-	if raceInfo := races.GetRace(c.RaceId); raceInfo != nil {
+	if speciesInfo := species.GetSpecies(c.SpeciesId); speciesInfo != nil {
 
 		c.Equipment.EnableAll()
 
 		// Are there slots that SHOULD be disabled?
-		if len(raceInfo.DisabledSlots) > 0 {
+		if len(speciesInfo.DisabledSlots) > 0 {
 
-			for _, disabledSlot := range raceInfo.DisabledSlots {
+			for _, disabledSlot := range speciesInfo.DisabledSlots {
 
 				var itemFoundInDisabledSlot items.Item = items.ItemDisabledSlot
 
@@ -1665,6 +2450,23 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 
 	}
 
+	// Handle extra arm slots based on ExtraArms mutation level
+	// If character lacks enough extra arms, move items back to backpack
+	if c.ExtraArms < 2 {
+		if c.Equipment.ExtraArm2.ItemId > 0 {
+			c.StoreItem(c.Equipment.ExtraArm2)
+			mudlog.Debug("Extra Arms Check", "info", "Item returned from extra arm 2 slot", "name", c.Equipment.ExtraArm2.Name(), "character", c.Name)
+		}
+		c.Equipment.ExtraArm2 = items.ItemDisabledSlot
+	}
+	if c.ExtraArms < 1 {
+		if c.Equipment.ExtraArm1.ItemId > 0 {
+			c.StoreItem(c.Equipment.ExtraArm1)
+			mudlog.Debug("Extra Arms Check", "info", "Item returned from extra arm 1 slot", "name", c.Equipment.ExtraArm1.Name(), "character", c.Name)
+		}
+		c.Equipment.ExtraArm1 = items.ItemDisabledSlot
+	}
+
 	if len(recalcPermaBuffs) > 0 && recalcPermaBuffs[0] {
 		c.reapplyPermabuffs()
 	}
@@ -1672,25 +2474,11 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 	return nil
 }
 
-func (c *Character) Race() string {
-	if r := races.GetRace(c.RaceId); r != nil {
+func (c *Character) Species() string {
+	if r := species.GetSpecies(c.SpeciesId); r != nil {
 		return r.Name
 	}
 	return `Ghostly Spirit`
-}
-
-func (c *Character) UpdateAlignment(amt int) {
-	newAlignment := int(c.Alignment) + amt
-	if newAlignment < int(AlignmentMinimum) {
-		newAlignment = int(AlignmentMinimum)
-	} else if newAlignment > int(AlignmentMaximum) {
-		newAlignment = int(AlignmentMaximum)
-	}
-	c.Alignment = int8(newAlignment)
-}
-
-func (c *Character) AlignmentName() string {
-	return AlignmentToString(c.Alignment)
 }
 
 func (c *Character) GetAllBackpackItems() []items.Item {
@@ -1704,6 +2492,12 @@ func (c *Character) GetAllWornItems() []items.Item {
 	}
 	if c.Equipment.Offhand.ItemId > 0 {
 		wornItems = append(wornItems, c.Equipment.Offhand)
+	}
+	if c.Equipment.ExtraArm1.ItemId > 0 {
+		wornItems = append(wornItems, c.Equipment.ExtraArm1)
+	}
+	if c.Equipment.ExtraArm2.ItemId > 0 {
+		wornItems = append(wornItems, c.Equipment.ExtraArm2)
 	}
 	if c.Equipment.Head.ItemId > 0 {
 		wornItems = append(wornItems, c.Equipment.Head)
@@ -1739,6 +2533,12 @@ func (c *Character) GetGearValue() int {
 	}
 	if c.Equipment.Offhand.ItemId > 0 {
 		value += c.Equipment.Offhand.GetSpec().Value
+	}
+	if c.Equipment.ExtraArm1.ItemId > 0 {
+		value += c.Equipment.ExtraArm1.GetSpec().Value
+	}
+	if c.Equipment.ExtraArm2.ItemId > 0 {
+		value += c.Equipment.ExtraArm2.GetSpec().Value
 	}
 	if c.Equipment.Head.ItemId > 0 {
 		value += c.Equipment.Head.GetSpec().Value
@@ -1813,6 +2613,22 @@ func (c *Character) Wear(i items.Item) (returnItems []items.Item, newItemWorn bo
 
 		}
 
+	}
+
+	// Extra arms: if main hand and offhand are both occupied, try extra arm slots
+	if spec.Type == items.Weapon && iHandsRequired < 2 && c.ExtraArms > 0 {
+		if c.Equipment.Weapon.ItemId > 0 && c.Equipment.Offhand.ItemId > 0 {
+			if c.ExtraArms >= 1 && !c.Equipment.ExtraArm1.IsDisabled() && c.Equipment.ExtraArm1.ItemId == 0 {
+				c.Equipment.ExtraArm1 = i
+				c.reapplyPermabuffs()
+				return returnItems, true, ``
+			}
+			if c.ExtraArms >= 2 && !c.Equipment.ExtraArm2.IsDisabled() && c.Equipment.ExtraArm2.ItemId == 0 {
+				c.Equipment.ExtraArm2 = i
+				c.reapplyPermabuffs()
+				return returnItems, true, ``
+			}
+		}
 	}
 
 	// First handle weapon/offhand, since they are special cases
@@ -1917,6 +2733,10 @@ func (c *Character) RemoveFromBody(i items.Item) bool {
 		c.Equipment.Weapon = items.Item{}
 	} else if i.Equals(c.Equipment.Offhand) {
 		c.Equipment.Offhand = items.Item{}
+	} else if i.Equals(c.Equipment.ExtraArm1) {
+		c.Equipment.ExtraArm1 = items.Item{}
+	} else if i.Equals(c.Equipment.ExtraArm2) {
+		c.Equipment.ExtraArm2 = items.Item{}
 	} else if i.Equals(c.Equipment.Head) {
 		c.Equipment.Head = items.Item{}
 	} else if i.Equals(c.Equipment.Neck) {
@@ -1955,10 +2775,10 @@ func (c *Character) reapplyPermabuffs(removedItems ...items.Item) {
 		buffIdCount[buffId] = 100 // Special case permabuffs associated with certain mobs
 	}
 
-	// Apply any buffs that come from a race
-	if rInfo := races.GetRace(c.RaceId); rInfo != nil {
+	// Apply any buffs that come from a species
+	if rInfo := species.GetSpecies(c.SpeciesId); rInfo != nil {
 		for _, buffId := range rInfo.BuffIds {
-			buffIdCount[buffId] = 100 // Don't allow racial buffs to be removed, keep this number high
+			buffIdCount[buffId] = 100 // Don't allow species buffs to be removed, keep this number high
 		}
 	}
 

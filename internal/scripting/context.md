@@ -168,10 +168,10 @@ var mob = GetMob(mobInstanceId);
 // Actor properties and methods
 user.GetName();              // Character name
 user.GetRoomId();           // Current room ID
-user.GetLevel();            // Character level
+user.GetLevel();            // Character level (deprecated in DOGMud — returns 0)
 user.GetGold();             // Gold amount
 user.GetHealth();           // Current health
-user.GetMana();             // Current mana
+user.GetMana();             // DEPRECATED (Mana removed in DOGMud)
 
 // Character manipulation
 user.SetHealth(amount);

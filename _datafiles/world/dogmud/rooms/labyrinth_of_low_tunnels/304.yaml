@@ -1,0 +1,31 @@
+roomid: 304
+zone: Labyrinth of Low Tunnels
+title: Dripping Gallery
+description: The southern passage opens slightly into a low gallery where water seeps
+  steadily down the walls, pooling in shallow depressions worn into the floor. Crude
+  clay bowls and hollowed stones have been placed beneath the heaviest drips to catch
+  the water. Some are full and murky. Others have been knocked over, their contents
+  spread across the stone in dark stains. The wet walls glisten faintly in whatever
+  thin light reaches here, and the constant dripping echoes off the low ceiling in
+  an uneven rhythm that makes it hard to hear anything else.
+biome: cave
+exits:
+  north:
+    roomid: 301
+  south:
+    roomid: 307
+spawninfo:
+- mobid: 76
+  message: A blind tunnel rat laps at one of the water bowls, ears twitching.
+  respawnrate: 10 real minutes
+nouns:
+  bowls: Rough clay vessels, pinched into shape by small fingers. Some hold water that
+    is surprisingly clear. Others are clouded with sediment or something worse. A few
+    have been deliberately cracked and left in place, as though ownership is contested.
+  water: The seepage is mineral-heavy -- the pooled water has a faint metallic taste
+    and leaves pale residue on the stone. It is cold and constant.
+idlemessages:
+- Water drips in an uneven rhythm that almost sounds deliberate, like a signal.
+- One of the clay bowls overflows, sending a thin stream across the passage floor.
+- The wet stone amplifies every sound. Your own breathing seems loud.
+- A distant splash echoes from somewhere deeper, heavier than a drip.

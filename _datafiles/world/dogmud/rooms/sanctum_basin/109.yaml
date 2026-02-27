@@ -1,0 +1,27 @@
+roomid: 109
+zone: Sanctum Basin
+title: The Forge
+description: The clang of hammer on steel rings out from an open-sided smithy built
+  against the eastern wall of the basin. The heat from the forge is intense in the
+  already warm desert air. Basalt columns support a heavy roof of slate, and the walls
+  are hung with tools, half-finished blades, and racks of metal stock. Blacksmith
+  Korvath works here, a figure of soot and muscle.
+biome: city
+station: forge
+exits:
+  west:
+    roomid: 108
+  east:
+    roomid: 110
+  north:
+    roomid: 114
+  south:
+    roomid: 122
+idlemessages:
+- The ring of <ansi fg="itemname">hammer on steel</ansi> fills the air.
+- Sparks scatter as the blacksmith drives a blade into the quench barrel.
+- The heat from the forge makes the air shimmer slightly.
+spawninfo:
+- mobid: 52
+  message: Korvath looks up from the anvil, hammer in hand.
+  respawnrate: 2 real minutes

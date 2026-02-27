@@ -1,0 +1,8 @@
+buffid: 51
+name: Berserker Elixir
+description: Savage strength courses through you, but your movements feel clumsy.
+triggerrate: 1 round
+triggercount: 20
+statmods:
+  strength: 10
+  dexterity: -5

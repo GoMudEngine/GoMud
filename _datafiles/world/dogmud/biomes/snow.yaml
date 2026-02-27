@@ -1,0 +1,9 @@
+biomeid: snow
+name: Snow
+symbol: ❄
+description: Cold and wet.
+darkarea: false
+litarea: false
+requireditemid: 0
+usesitem: false
+burns: false

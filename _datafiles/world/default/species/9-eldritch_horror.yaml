@@ -1,0 +1,27 @@
+speciesid: 9
+name: eldritch horror
+description: A strange and disgusting being that makes your skin crawl, and confuses your senses.
+buffids:
+  - 28 # Super hearing
+  - 29 # Night Vision
+size: medium
+unarmedname: tentacles
+angrycommands: [emote gibbers unintelligibly.]
+tameable: true
+stats:
+  strength:
+    base: 3
+  speed:
+    base: 3
+  smarts:
+    base: 3
+  vitality:
+    base: 2
+  perception:
+    base: 2
+  mysticism:
+    base: 2
+damage:
+  attacks: 2
+  diceroll: 3d3
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet']

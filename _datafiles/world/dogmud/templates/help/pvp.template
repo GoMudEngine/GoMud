@@ -1,0 +1,11 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi> <ansi fg="11" bg="52"> ☠ PVP ☠</ansi>
+
+PVP is short for Player-versus-player. It's when two or more players can or do enter combat with eachother.
+
+You can see whether PVP is enabled on this server by typing: <ansi fg="command">pvp</ansi>
+
+The possible settings are:
+
+    <ansi fg="yellow-bold">disabled</ansi> - PVP is <ansi fg="alert-5">disabled</ansi> on this server. You cannot fight other players.
+    <ansi fg="yellow-bold">enabled</ansi>  - PVP is <ansi fg="green-bold">enabled</ansi> on this server. You can fight other players anywhere.
+    <ansi fg="yellow-bold">limited</ansi>  - PVP is <ansi fg="yellow">limited</ansi> on this server. You can fight other players in places labeled with: <ansi fg="11" bg="52"> ☠ PK Area ☠ </ansi>.

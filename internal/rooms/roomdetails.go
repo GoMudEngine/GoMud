@@ -12,7 +12,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mutators"
-	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/term"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -230,9 +229,8 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 	}
 
 	nameFlags := []characters.NameRenderFlag{}
-	if user.Character.GetSkillLevel(skills.Peep) > 0 {
-		nameFlags = append(nameFlags, characters.RenderHealth)
-	}
+	// Health display now available to all players (Peep skill removed)
+	nameFlags = append(nameFlags, characters.RenderHealth)
 
 	if useShortAdjectives := user.GetConfigOption(`shortadjectives`); useShortAdjectives != nil && useShortAdjectives.(bool) {
 		nameFlags = append(nameFlags, characters.RenderShortAdjectives)
@@ -246,8 +244,8 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 			player := users.GetByUserId(playerId)
 			if player != nil {
 
-				if player.Character.HasBuffFlag(buffs.Hidden) { // Don't show them if they are sneaking
-					if !user.Character.Pet.Exists() || !user.Character.HasBuffFlag(buffs.SeeHidden) {
+				if player.Character.HasFlagFromAnySource(buffs.Hidden) { // Don't show them if sneaking or camo
+					if !user.Character.Pet.Exists() || !user.Character.HasFlagFromAnySource(buffs.SeeHidden) {
 						continue
 					}
 				}
@@ -267,8 +265,8 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 	for idx, mobInstanceId := range r.mobs {
 		if mob := mobs.GetInstance(mobInstanceId); mob != nil {
 
-			if mob.Character.HasBuffFlag(buffs.Hidden) { // Don't show them if they are sneaking
-				if !user.Character.Pet.Exists() || !user.Character.HasBuffFlag(buffs.SeeHidden) {
+			if mob.Character.HasFlagFromAnySource(buffs.Hidden) { // Don't show them if sneaking or camo
+				if !user.Character.Pet.Exists() || !user.Character.HasFlagFromAnySource(buffs.SeeHidden) {
 					continue
 				}
 			}

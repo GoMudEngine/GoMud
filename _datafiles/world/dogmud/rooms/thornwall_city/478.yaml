@@ -1,0 +1,29 @@
+roomid: 478
+zone: Thornwall City
+title: Residential Ward, South
+description: The southern edge of the residential ward borders the market square and
+  the temple district, giving it a slightly more open feel than the cramped streets
+  to the north. A small public well occupies a widening in the street, surrounded
+  by a low wall where residents sit and gossip. The houses here are slightly better
+  maintained -- proximity to the temple and market has kept property values stable
+  even as the outer wards have declined. A message board nailed to a wall post holds
+  neighbourhood notices and lost-and-found postings.
+biome: city
+exits:
+  north:
+    roomid: 477
+  south:
+    roomid: 465
+  west:
+    roomid: 467
+nouns:
+  well: A stone well with a wooden windlass and a bucket on a chain. The water
+    is clean -- Thornwall's wells are fed by a deep aquifer. The low wall around
+    it serves as an informal meeting place, worn smooth by generations of sitting.
+  board: A neighbourhood message board, much humbler than the official one at the
+    gate. Lost cats, spare room available, seeking laundress, child minding offered.
+    The small transactions of daily life, pinned up in hope.
+idlemessages:
+- Two women sit on the well wall, talking quietly over the morning's water drawing.
+- A child drops a pebble down the well and counts the seconds until the splash.
+- The temple bell echoes faintly from the west.

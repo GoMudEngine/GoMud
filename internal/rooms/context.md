@@ -78,7 +78,7 @@ The `internal/rooms` package is the core world management system for GoMud, hand
 - **Flexible spawning**: Mobs, items, and gold with complex configuration
 - **Respawn timing**: Configurable respawn rates and conditions
 - **Population limits**: Preventing overcrowding through spawn management
-- **Dynamic difficulty**: Level scaling and mob customization
+- **Per-mob stat pools**: Mob difficulty set via `statpool` in mob YAML or per-spawn `statpool`/`statpoolmod` in room spawn info (zone-level autoscaling was removed in Phase 21)
 
 ### Performance Optimization
 - **Chunk-based ephemeral rooms**: Efficient temporary room management

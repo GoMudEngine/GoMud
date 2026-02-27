@@ -1,0 +1,24 @@
+speciesid: 22
+name: bat
+description: A winged mammal of the deep caves, navigating by echolocation.
+size: small
+unarmedname: wings and fangs
+angrycommands: [emote shrieks and beats its wings furiously.]
+damage:
+  basedamage: 1
+  variance: 1
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet']
+tameable: false
+stats:
+  strength:
+    base: 15
+  dexterity:
+    base: 80
+  perception:
+    base: 70
+  vitality:
+    base: 10
+  willpower:
+    base: 10
+  charisma:
+    base: 5

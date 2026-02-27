@@ -1,0 +1,21 @@
+speciesid: 6
+name: undead
+description: A dead creature animated by magical means.
+buffids:
+  - 29 # Night Vision
+size: medium
+unarmedname: claws
+angrycommands:
+  - emote is looking dead...ly.
+  - emote lets out a blood curdling scream.
+tameable: true
+stats:
+  mysticism:
+    base: 3
+  perception:
+    base: 1
+  strength:
+    base: 2
+damage:
+  diceroll: 1d3
+disabledslots: []

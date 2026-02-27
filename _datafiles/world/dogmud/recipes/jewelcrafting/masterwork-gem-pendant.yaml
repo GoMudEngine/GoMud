@@ -1,0 +1,16 @@
+id: masterwork-gem-pendant
+name: Masterwork Gem Pendant
+skill: jewelcrafting
+skill_minimum: 35
+station: jeweler_bench
+time_rounds: 6
+ingredients:
+  - item_tag: gold-wire
+    quantity: 2
+  - item_tag: raw-gem
+    quantity: 2
+output:
+  item_id: 20037
+  quantity: 1
+success_message: "You cut both gems to perfection and mount them in an elaborate gold frame. A masterwork gem pendant!"
+failure_message: "A gem fractures along a hidden flaw, ruining the piece. The materials are wasted."

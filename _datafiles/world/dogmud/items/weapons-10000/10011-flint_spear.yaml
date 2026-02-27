@@ -1,0 +1,19 @@
+itemid: 10011
+name: flint spear
+namesimple: spear
+description: |
+  A length of hardwood -- scavenged from the surface, judging by the
+  grain -- tipped with a knapped flint head bound in place with cured sinew. The
+  shaft is short, sized for the tunnel dwellers who made it, but serviceable in
+  larger hands. The flint edge is surprisingly sharp.
+type: weapon
+hands: 1
+subtype: piercing
+weight: 5.0
+speedmultiplier: 0.7
+staminacost: 7
+grapplemodifier: -2.0
+damage:
+  basedamage: 4
+  variance: 2
+parryrating: 10

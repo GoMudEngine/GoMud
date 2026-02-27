@@ -1,0 +1,40 @@
+enchantid: chrysalis-sight
+name: "Chrysalis Sight"
+reserve_pool: conviction
+target_type: head
+tiers:
+  - tier: 0
+    reserve_pct: 0.02
+    effects:
+      perception_statmod: 1
+    adjective: clouded
+    description_suffix: "The helm's visor clouds with prismatic light."
+    tier_up_message: ""
+  - tier: 1
+    reserve_pct: 0.04
+    effects:
+      perception_statmod: 2
+    adjective: multi-faceted
+    description_suffix: "The helm's surface becomes faceted like an insect's eye."
+    tier_up_message: "You see through a thousand lenses—you see everything."
+  - tier: 2
+    reserve_pct: 0.06
+    effects:
+      perception_statmod: 3
+    adjective: crystalline-eyed
+    description_suffix: "Crystalline structures form around the eyes, gleaming."
+    tier_up_message: "The Chrysalis grants you vision beyond mortal comprehension."
+  - tier: 3
+    reserve_pct: 0.08
+    effects:
+      perception_statmod: 4
+    adjective: all-seeing
+    description_suffix: "The helm becomes all-seeing—multiple eyes watching all."
+    tier_up_message: "You see the world's hidden geometry. You are the Chrysalis's eye."
+  - tier: 4
+    reserve_pct: 0.10
+    effects:
+      perception_statmod: 5
+    adjective: eye-clustered
+    description_suffix: "Eyes cluster across the helm—ancient, alien, all-knowing."
+    tier_up_message: "The Chrysalis sees through you forever. You are its vision."

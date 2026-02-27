@@ -1,0 +1,11 @@
+spellid: fold-recall
+name: Fold Recall
+description: Folds the Veil to teleport to your Chrysalis anchor.
+type: helpsingle
+schools:
+  - enhancement
+cost: 40
+waitrounds: 2
+difficulty: 0
+primarystat: willpower
+base_folds: 4

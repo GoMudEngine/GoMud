@@ -1,0 +1,31 @@
+roomid: 311
+zone: Labyrinth of Low Tunnels
+title: Worm-Eaten Shaft
+description: A vertical crack in the rock, widened by something burrowing, connects
+  the upper tunnels to this deeper level. The walls of the shaft are scored with
+  parallel grooves -- claw marks from years of climbing traffic -- and coated with a
+  greasy residue that makes the stone slick to the touch. At the bottom, the shaft
+  opens into a low passage running west. The air down here is noticeably warmer and
+  thicker, heavy with the smell of bodies and smoke. You can hear activity echoing
+  through the stone -- guttural voices, the scrape of tools, the occasional sharp
+  crack of something breaking.
+biome: cave
+exits:
+  up:
+    roomid: 309
+  west:
+    roomid: 310
+spawninfo:
+- mobid: 78
+  message: A spore crawler clings to the greasy shaft wall, mandibles working.
+  respawnrate: 10 real minutes
+nouns:
+  grooves: Parallel claw marks running vertically up the shaft walls, worn deep by
+    years of traffic. The spacing is too narrow for human hands. Small creatures
+    climb this shaft regularly, and fast.
+  residue: A thin, greasy film on every surface -- body oil, accumulated over years
+    of contact. It makes the stone treacherously slick for anyone without claws.
+idlemessages:
+- Guttural chattering echoes from below, distorted by the stone into something almost musical.
+- The greasy walls of the shaft glisten faintly in the dim light.
+- A shower of grit falls from above as something scrambles through the upper tunnels.

@@ -1,0 +1,16 @@
+itemid: 10007
+name: heavy greatsword
+namesimple: greatsword
+description: A massive two-handed sword with a wide, thick blade. It requires both
+  hands to wield but delivers devastating blows.
+type: weapon
+hands: 2
+subtype: slashing
+weight: 20.0  # Heavy two-handed weapon
+speedmultiplier: 0.5  # Slow, heavy two-handed weapon
+staminacost: 12  # Heavy weapon, high stamina cost
+grapplemodifier: 0.4  # Stage 8.7: Unwieldy two-handed weapon, harder to grapple with
+damage:
+  basedamage: 12
+  variance: 3
+parryrating: 13

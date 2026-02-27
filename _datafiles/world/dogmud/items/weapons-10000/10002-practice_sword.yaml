@@ -1,0 +1,15 @@
+itemid: 10002
+name: practice sword
+namesimple: sword
+description: A blunted training sword with a wrapped leather grip. The edge has been
+  deliberately dulled, but it still packs a solid wallop.
+type: weapon
+hands: 1
+subtype: slashing
+weight: 6.0  # Medium sword weight
+speedmultiplier: 0.7  # Standard sword - slower than unarmed but versatile
+grapplemodifier: 1.0  # Stage 8.7: Training sword, manageable for grappling
+damage:
+  basedamage: 4
+  variance: 2
+parryrating: 12

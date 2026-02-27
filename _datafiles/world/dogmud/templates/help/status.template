@@ -1,0 +1,34 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">status</ansi>
+
+The <ansi fg="command">status</ansi> command gives you a summary of your
+character's information, including your stats, resource
+pools, and equipment.
+
+<ansi fg="yellow">Resource Pools: </ansi>
+
+  <ansi fg="red">Health</ansi>     - Physical well-being (based on Vitality)
+  <ansi fg="green">Stamina</ansi>    - Physical energy for combat moves
+  <ansi fg="cyan">Conviction</ansi> - Mental energy for spells and abilities
+
+<ansi fg="yellow">Stats: </ansi>
+
+  <ansi fg="command">Strength</ansi>   - Physical might and carrying capacity
+  <ansi fg="command">Dexterity</ansi>  - Speed, agility, and coordination
+  <ansi fg="command">Perception</ansi> - Awareness and attention to detail
+  <ansi fg="command">Vitality</ansi>   - Physical hardiness and endurance
+  <ansi fg="command">Willpower</ansi>  - Mental fortitude and magical defense
+  <ansi fg="command">Charisma</ansi>   - Personality and social influence
+
+All stats improve through use -- the more you rely on a
+stat in your adventures, the more it grows over time.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">status</ansi> - Show your character status
+
+<ansi fg="yellow">Related: </ansi>
+
+  <ansi fg="command">help experience</ansi>
+  <ansi fg="command">help health</ansi>
+  <ansi fg="command">help armor</ansi>
+

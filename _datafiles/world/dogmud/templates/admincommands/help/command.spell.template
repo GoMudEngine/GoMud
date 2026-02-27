@@ -1,0 +1,26 @@
+The <ansi fg="command">spell</ansi> command is used to create and list spells (admin only).
+
+<ansi fg="command">spell list</ansi>
+List all spells in the game.
+
+<ansi fg="command">spell list [search term]</ansi>
+List spells matching the search term. Wildcards supported, e.g.:
+  <ansi fg="command">spell list *fire*</ansi>
+
+<ansi fg="command">spell create</ansi>
+Launch an interactive prompt to create a new spell. You will be asked for:
+  - Spell name
+  - Unique spell ID (used as the cast alias)
+  - Short description
+  - Spell type (harm-single, help-single, area, etc.)
+  - Conviction cost
+  - Wait rounds
+  - Casting difficulty
+
+<ansi fg="command">spell create [existing spell name or ID]</ansi>
+Start the creation prompt pre-filled with an existing spell's values (for duplication).
+
+Note: After creation, you must write the spell's effect logic in its
+generated script file before it will do anything in-game.
+
+Required permissions: <ansi fg="yellow">spell.create</ansi>, <ansi fg="yellow">spell.list</ansi>

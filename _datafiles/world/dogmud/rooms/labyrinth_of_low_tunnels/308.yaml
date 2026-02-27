@@ -1,0 +1,30 @@
+roomid: 308
+zone: Labyrinth of Low Tunnels
+title: Blind Turn
+description: The shaft from above drops into a sharp dogleg where the tunnel bends
+  hard to the east. The turn is tight enough that you must press flat against the wall
+  to get around it, and the ceiling drops even lower -- the stone scrapes your back
+  if you do not stay bent double. Gouges in the wall at the turn's apex show where
+  countless small bodies have scraped past. This is a chokepoint, and something about
+  the placement feels deliberate. A good spot to wait for something larger and slower
+  to come stumbling through.
+biome: cave
+exits:
+  up:
+    roomid: 305
+  east:
+    roomid: 310
+  south:
+    roomid: 312
+spawninfo:
+- mobid: 73
+  message: A stocky warren warrior steps around the blind turn, bone club raised.
+  respawnrate: 8 real minutes
+nouns:
+  gouges: Deep scratches at waist height -- for you. Chest height for whatever made
+    them. The stone is polished smooth between the gouges from the sheer volume of
+    traffic through this turn.
+idlemessages:
+- The blind turn blocks your sightline in every direction. You can only see a few steps ahead.
+- A faint clicking sound comes from the east, regular and deliberate. It stops when you shift your weight.
+- Your shadow swings wildly across the cramped walls as you move.

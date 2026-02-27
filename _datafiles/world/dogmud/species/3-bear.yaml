@@ -1,0 +1,30 @@
+speciesid: 3
+name: bear
+description: A massive apex predator with thick hide and devastating
+  strength. Bears are solitary hunters capable of felling
+  trees and crushing bone with a single swipe of their paws.
+naturalarmor: 8
+size: large
+unarmedname: claws and teeth
+selectable: false
+tameable: true
+angrycommands:
+  - emote rises onto its hind legs and roars, shaking the ground.
+  - emote swats the air with a massive paw, claws extended.
+stats:
+  strength:
+    base: 200
+  dexterity:
+    base: 60
+  perception:
+    base: 70
+  vitality:
+    base: 190
+  willpower:
+    base: 15
+  charisma:
+    base: 5
+damage:
+  basedamage: 10
+  variance: 4
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet']

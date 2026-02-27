@@ -1,0 +1,21 @@
+speciesid: 17
+name: monkey
+description: Just a monkey
+size: medium
+unarmedname: fists
+selectable: false
+knowsfirstaid: false
+angrycommands:
+  - emote is looking for trouble.
+tameable: false
+stats:
+  speed:
+    base: 2
+  smarts:
+    base: 1
+  perception:
+    base: 1
+damage:
+  diceroll: 1d3
+disabledslots: []
+

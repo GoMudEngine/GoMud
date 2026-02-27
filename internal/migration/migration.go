@@ -21,6 +21,33 @@ func doAllMigrations(lastConfigVersion version.Version) error {
 
 	}
 
+	// 0.9.1 -> 0.10.0
+	if lastConfigVersion.IsOlderThan(version.New(0, 10, 0)) {
+
+		if err := migrate_UserStatsRename(); err != nil {
+			return err
+		}
+
+	}
+
+	// 0.10.0 -> 0.11.0
+	if lastConfigVersion.IsOlderThan(version.New(0, 11, 0)) {
+
+		if err := migrate_RollCharacterStats(); err != nil {
+			return err
+		}
+
+	}
+
+	// 0.11.0 -> 0.12.0
+	if lastConfigVersion.IsOlderThan(version.New(0, 12, 0)) {
+
+		if err := migrate_RaceToSpecies(); err != nil {
+			return err
+		}
+
+	}
+
 	return nil
 }
 

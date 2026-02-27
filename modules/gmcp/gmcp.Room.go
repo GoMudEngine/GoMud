@@ -351,6 +351,7 @@ func (g *GMCPRoomModule) GetRoomNode(user *users.UserRecord, gmcpModule string) 
 		// Basic details
 		payload.Id = room.RoomId
 		payload.Name = room.Title
+		payload.Description = room.Description
 		payload.Area = room.Zone
 		payload.Environment = room.GetBiome().Name
 		payload.Details = []string{}
@@ -477,6 +478,7 @@ func (g *GMCPRoomModule) wantsGMCPPayload(packageToConsider string, packageReque
 type GMCPRoomModule_Payload struct {
 	Id          int                                                 `json:"num"`
 	Name        string                                              `json:"name"`
+	Description string                                              `json:"description"`
 	Area        string                                              `json:"area"`
 	Environment string                                              `json:"environment"`
 	Coordinates string                                              `json:"coords"`

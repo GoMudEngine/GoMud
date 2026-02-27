@@ -1,0 +1,25 @@
+roomid: 111
+zone: Sanctum Basin
+title: The Alchemist's Workshop
+description: A low building of basalt and clay houses the alchemist's workshop, its
+  walls stained with decades of experimental compounds. Shelves of clay pots and glass
+  vessels line every surface. The air smells of herbs, sulfur, and something sweetly
+  metallic. Steam curls from a pot on a small iron stove where Alchemist Yenna works
+  with quiet focus.
+biome: city
+station: alchemy_bench
+exits:
+  east:
+    roomid: 112
+  south:
+    roomid: 106
+  north:
+    roomid: 116
+idlemessages:
+- The <ansi fg="itemname">steaming pot</ansi> on the stove bubbles softly.
+- The smell of <ansi fg="itemname">sulfur</ansi> is briefly overpowering, then fades.
+- Glass vessels clink as the alchemist makes careful notes in a worn ledger.
+spawninfo:
+- mobid: 53
+  message: Alchemist Yenna looks up from a steaming flask, eyebrows raised in welcome.
+  respawnrate: 2 real minutes

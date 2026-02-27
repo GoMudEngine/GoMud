@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/language"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/term"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -130,6 +131,21 @@ func FinalizeLoginOrCreate(results map[string]string, sharedState map[string]any
 			connections.SendTo(term.CRLF, clientInput.ConnectionId)
 			connections.Remove(clientInput.ConnectionId)
 			return false
+		}
+
+		// Character name is the same as the username
+		if err := newUser.SetCharacterName(username); err != nil {
+			mudlog.Error("Internal error setting character name from username", "name", username, "error", err)
+			connections.SendTo([]byte(language.T("Error.UserCreationFailed")), clientInput.ConnectionId)
+			connections.SendTo(term.CRLF, clientInput.ConnectionId)
+			connections.Remove(clientInput.ConnectionId)
+			return false
+		}
+
+		// All players are human in Delusions of Grandeur
+		if humanSpecies, ok := species.FindSpecies("human"); ok {
+			newUser.Character.SpeciesId = humanSpecies.Id()
+			newUser.Character.Validate()
 		}
 
 		if err := users.CreateUser(newUser); err != nil {

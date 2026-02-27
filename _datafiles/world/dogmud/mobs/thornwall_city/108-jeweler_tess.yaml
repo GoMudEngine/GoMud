@@ -1,0 +1,53 @@
+mobid: 108
+zone: Thornwall City
+statpool: 22
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - humanoid
+  - merchant
+idlecommands:
+  - 'emote holds a gem up to the lamplight, turning it slowly between her fingers'
+  - 'emote polishes a silver setting with a soft cloth, working in tiny circles'
+  - ''
+  - 'emote squints through a magnifying lens at a half-finished ring'
+  - ''
+activitylevel: 15
+character:
+  name: jeweler Tess
+  description: |
+    A wiry woman with sharp eyes and steady hands, Tess wears a leather
+    apron fitted with dozens of small pockets holding files, pliers, and
+    setting tools. Her fingers are calloused but nimble, and her nails
+    are permanently stained with metal polish. A magnifying lens on a
+    brass arm hangs from a chain around her neck, ready to be flipped
+    up at a moment's notice. She speaks quietly and precisely -- the
+    habit of someone who works with very small, very expensive things.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 15
+    perception:
+      training: 10
+    charisma:
+      training: 5
+  shop:
+    - itemid: 40021
+      quantity: 0
+      quantitymax: 0
+      price: 2
+    - itemid: 40022
+      quantity: 0
+      quantitymax: 0
+      price: 5
+    - itemid: 40023
+      quantity: 0
+      quantitymax: 0
+      price: 12
+    - itemid: 40026
+      quantity: 0
+      quantitymax: 0
+      price: 2

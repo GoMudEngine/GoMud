@@ -1,0 +1,11 @@
+spellid: fold-anchor
+name: Fold Anchor
+description: Sets a Chrysalis anchor at your location for later recall.
+type: helpsingle
+schools:
+  - enhancement
+cost: 50
+waitrounds: 1
+difficulty: 0
+primarystat: willpower
+base_folds: 6

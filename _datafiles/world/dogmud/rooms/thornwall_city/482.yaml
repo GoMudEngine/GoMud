@@ -1,0 +1,31 @@
+roomid: 482
+zone: Thornwall City
+title: Jeweler's Workshop
+description: >
+  A small workshop tucked behind the tailor's shop, lit by a row of oil
+  lamps angled to throw steady light across a heavy wooden workbench. A
+  jeweler's bench dominates the center of the room, its surface scarred
+  with tiny gouges and burn marks. Magnifying lenses on adjustable arms
+  are clamped to the bench edges, and racks of fine pliers, files, and
+  setting tools hang within easy reach. Trays of wire coils and pouches
+  of mineral dust line the shelves along the back wall.
+mapsymbol: J
+maplegend: Jeweler
+biome: city
+station: jeweler_bench
+exits:
+  west:
+    roomid: 480
+  east:
+    roomid: 483
+items:
+  - itemid: 40021
+  - itemid: 40021
+  - itemid: 40026
+  - itemid: 40026
+spawninfo:
+- mobid: 108
+idlemessages:
+- A lamp flickers, sending shadows dancing across the workbench.
+- The faint smell of metal polish hangs in the air.
+- A magnifying lens catches the lamplight and throws a bright spot on the ceiling.

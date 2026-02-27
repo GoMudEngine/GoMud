@@ -21,5 +21,5 @@ exits:
 spawninfo:
 - mobid: 1
   message: A rat falls from the sky.
-  level: 1
+  statpool: 1
   respawnrate: 3 real minutes

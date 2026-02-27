@@ -1,0 +1,5 @@
+
+<ansi fg="alert-5">NOTE:</ansi> This is the name other players will see in the game world.
+It must be different from your login username.
+
+<ansi fg="39">Choose a name for your character</ansi><ansi fg="black-bold">: </ansi>

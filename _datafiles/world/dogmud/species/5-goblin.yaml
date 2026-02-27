@@ -1,0 +1,26 @@
+speciesid: 5
+name: goblin
+description: A small, cunning creature with pointy ears and sharp instincts.
+buffids:
+  - 29 # Night Vision
+size: small
+unarmedname: claws
+angrycommands: [emote cackles maniacally.]
+tameable: true
+stats:
+  strength:
+    base: 60
+  dexterity:
+    base: 80
+  perception:
+    base: 50
+  vitality:
+    base: 50
+  willpower:
+    base: 70
+  charisma:
+    base: 30
+damage:
+  basedamage: 2
+  variance: 1
+disabledslots: ['neck']

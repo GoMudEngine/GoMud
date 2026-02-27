@@ -1,0 +1,26 @@
+roomid: 2
+zone: Startland
+title: Training Grounds
+description: A broad courtyard where new arrivals are put through their paces. Wooden
+  dummies and practice targets line the walls, and the smell of fresh sawdust mingles
+  with the tang of sweat. A passage to the north leads toward the arena complex.
+biome: city
+exits:
+  south:
+    roomid: 1
+  north:
+    roomid: 3
+  west:
+    roomid: 6
+  east:
+    roomid: 8
+spawninfo:
+- mobid: 1
+  message: A rat crawls out from a garbage pile.
+  respawnrate: 2 real minutes
+- mobid: 1
+  message: A rat crawls out from a garbage pile.
+  respawnrate: 3 real minutes
+- mobid: 1
+  message: A rat crawls out from a garbage pile.
+  respawnrate: 4 real minutes

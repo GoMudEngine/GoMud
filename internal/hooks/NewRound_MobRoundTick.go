@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -29,6 +30,18 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 
 		// Roundtick any cooldowns
 		mob.Character.Cooldowns.RoundTick()
+
+		// Stage 7.5: Attempt automatic recovery from prone (uses DEX)
+		if attemptMade, success := mob.Character.AttemptRecovery(mob.Character.Stats.Dexterity.ValueAdj); attemptMade {
+			// Send messages to the room so players can see NPCs trying to recover
+			if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
+				if success {
+					room.SendText("<ansi fg=\"mobname\">" + mob.Character.Name + "</ansi> clambers to their feet in a rushed panic.")
+				} else {
+					room.SendText("<ansi fg=\"mobname\">" + mob.Character.Name + "</ansi> attempts to stand, but slips and falls in the chaos of battle.")
+				}
+			}
+		}
 
 		if mob.Character.Charmed != nil && mob.Character.Charmed.RoundsRemaining > 0 {
 			mob.Character.Charmed.RoundsRemaining--
@@ -66,6 +79,9 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 				}
 			}
 		}
+
+		// Stage 9.8: Tick all combat conditions (decrements Duration, removes expired)
+		mob.Character.TickConditions()
 
 		// Recalculate all stats at the end of the round tick
 		mob.Character.Validate()

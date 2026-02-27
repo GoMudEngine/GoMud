@@ -1,0 +1,33 @@
+speciesid: 15
+name: fungal colony
+description: A sprawling mass of interwoven mycelium and fruiting bodies
+  that moves with slow, deliberate purpose. It attacks by
+  releasing clouds of toxic spores and lashing with fibrous
+  tendrils.
+naturalarmor: 4
+size: medium
+unarmedname: spore tendrils
+selectable: false
+tameable: false
+angrycommands:
+  - emote pulsates, releasing a thick cloud of acrid spores.
+  - emote stretches its mycelial threads toward you with a wet, tearing sound.
+stats:
+  strength:
+    base: 60
+  dexterity:
+    base: 30
+  perception:
+    base: 40
+  vitality:
+    base: 130
+  willpower:
+    base: 80
+  charisma:
+    base: 5
+damage:
+  basedamage: 4
+  variance: 2
+  critbuffids:
+    - 40 # Spore Toxin
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet', 'body']

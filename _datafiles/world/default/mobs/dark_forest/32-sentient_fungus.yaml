@@ -9,11 +9,11 @@ idlecommands:
   - 'emote bulges a little bit'
   - 'emote releases some spores'
 activitylevel: 10
+statpool: 25
 character:
   name: sentient fungus
   description: 'Its cap, several feet in diameter, emits a soft, eerie glow. Veins of bioluminescence run across its surface, pulsating in a rhythmic pattern. As you approach, a faint, melodic hum emanates from the fungus—a musical language that resonates with the forest.'
-  raceid: 12
-  level: 25
+  speciesid: 12
   gold: 3
   equipment:
     head:

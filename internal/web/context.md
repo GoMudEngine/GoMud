@@ -80,6 +80,7 @@ The web system is built around Go's standard `net/http` package with several key
 - Container and mutator management
 - Map visualization and navigation
 - Bulk operations and zone management
+- Note: Zone-level mob autoscaling was removed in Phase 21; mob difficulty is now per-mob via `statpool`
 
 ### Item Administration (`/admin/items/`)
 - Item type and subtype filtering

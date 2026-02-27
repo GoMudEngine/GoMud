@@ -1,0 +1,123 @@
+mobid: 74
+zone: Labyrinth of Low Tunnels
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "speak"]
+    moods: ["neutral"]
+    responses:
+      - "You... come here. Not fight. Strange. What you want?"
+      - "Surface-walker. You stand where you are not welcome. Speak quick."
+      - "Still alive. Means the scouts let you pass. Or you killed them. Which?"
+
+  - keywords: ["hello", "hi", "greet"]
+    moods: ["friendly"]
+    responses:
+      - "You come back. That takes courage, or foolishness. Either way, you have my attention."
+      - "Surface-walker returns. The warren remembers. Speak."
+
+  - keywords: ["hello", "hi", "greet"]
+    moods: ["hostile"]
+    responses:
+      - "Leave. Now. Before the warriors come."
+      - "Nothing more to say to you."
+
+  - keywords: ["warren", "tunnel", "people", "tribe", "dwellers", "who"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "We are what the surface threw away. Cast out. Driven underground. The change took us and made us something new. We survive."
+      - "Once we were your kind. Generations ago. The Chrysalis changed us because we had no priests, no guides. It changed us anyway."
+
+  - keywords: ["chrysalis", "mutation", "change", "awakening"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Your people call it a gift. A blessing. For us it was a punishment. No one taught us. No one guided us. The change came and we endured it alone."
+      - "The Chrysalis does not care if you understand it. It changes what it changes. We are proof."
+
+  - keywords: ["chieftain", "leader", "chief"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "The Eldest remembers more than any of us. Remembers when we walked in the light. You want to speak with the Eldest, you must prove you come in peace."
+      - "The chieftain does not see surface-walkers. Not since the last ones came with knives and specimen jars."
+
+  - keywords: ["help", "quest", "task", "prove", "peace", "trust"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Prove? Bring medicine. The surface kind. Poultices. We know your healers make them. Bring them here and I will take them to the Eldest as proof of your intent."
+      - "Words mean nothing down here. Bring something that helps. Healing poultices. Then we talk."
+    moodChange: friendly
+
+  - keywords: ["scholar", "research", "study", "specimens", "surface"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Ah. The one who watches the cave mouth. She has been seen. She wants pieces of us to study. We are not specimens."
+      - "Your scholars look at us and see a problem to solve. We are not a problem. We are people."
+    moodChange: hostile
+
+  - keywords: ["totem", "bone", "sacred", "shelf"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "The totems remember our dead. Each one is a name. Take one and you take a piece of someone who lived and died in this dark."
+      - "Touch nothing on the shelves. Those are not yours."
+    moodChange: hostile
+
+  - keywords: ["trade", "buy", "sell"]
+    responses:
+      - "We do not trade with the surface. Not yet. Perhaps not ever."
+
+  - keywords: ["fight", "attack", "kill", "threat"]
+    responses:
+      - "You would not be the first. But you would regret it."
+    moodChange: hostile
+
+  - keywords: [""]
+    responses:
+      - "Speak plainly. My patience is thin."
+      - "You waste breath. Ask what you came to ask."
+
+tree:
+  root:
+    text: "The shaman regards you with milky eyes, one elongated hand resting on a clay pot of dried herbs. Its voice is a hoarse whisper. 'Surface-walker. You breathe our air. You had better have a reason.'"
+    hints: "You could ask the shaman about its people, the chieftain, or how to prove your peaceful intent."
+
+  nodes:
+    - id: people
+      triggers: ["warren", "people", "tribe", "who", "your kind", "dwellers"]
+      text: "We are the Discarded. Exiled from the surface three generations past. The Chrysalis took us without guidance and made us what you see. We did not choose this. But we endure."
+      hints: "You could ask about the Chrysalis, the chieftain, or what happened to drive them underground."
+      unlocks: ["chrysalis_talk", "history"]
+
+    - id: chrysalis_talk
+      triggers: ["chrysalis", "mutation", "change", "awakening", "gift"]
+      requires: ["people"]
+      text: "Your priests call it the Awakening. A gift. For us it was a fever with no healer and no end. It twisted our bones, took our eyes from the light, gave us claws instead of fingers. And still we survived. That is our gift."
+      hints: "Ask about the history of their exile, or about the chieftain."
+      unlocks: ["history"]
+      moodChange: friendly
+
+    - id: history
+      triggers: ["history", "exile", "driven", "underground", "surface", "why", "past"]
+      requires: ["people"]
+      text: "The surface people feared what they could not guide. When the mutations came wrong -- too fast, too visible -- they drove us out. Into the dark. Three generations of children born without sunlight. The Eldest remembers. I do not."
+      unlocks: ["chieftain_talk"]
+
+    - id: chieftain_talk
+      triggers: ["chieftain", "chief", "eldest", "leader", "speak", "meet"]
+      text: "The Eldest sits beyond the barricade. It does not receive surface-walkers. The last ones came with promises and left with pieces of our dead. If you would speak with it, you must prove your intent is different."
+      hints: "Ask how to prove your intent."
+      unlocks: ["prove_intent"]
+
+    - id: prove_intent
+      triggers: ["prove", "how", "help", "trust", "intent", "peace", "poultice", "medicine"]
+      requires: ["chieftain_talk"]
+      text: "Bring healing poultices. The kind your alchemists make. We know the recipe but lack the surface herbs. Bring them here, to me, and I will carry them to the Eldest as proof that a surface-walker chose to help rather than to take."
+      hints: "Obtain two healing poultices from Alchemist Yenna in Sanctum Basin and bring them to the shaman."
+      moodChange: friendly
+
+    - id: scholar_topic
+      triggers: ["scholar", "research", "study", "woman", "specimens"]
+      text: "There is a woman who watches the cave entrance. She carries jars and tools. She wants to study us the way one studies beetles -- pinned and labelled. The Eldest will not tolerate it. Neither will I."
+      moodChange: hostile
+
+memory:
+  expiryPeriod: "1h"

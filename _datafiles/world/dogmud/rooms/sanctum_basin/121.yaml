@@ -1,0 +1,30 @@
+roomid: 121
+zone: Sanctum Basin
+title: Cramped Tunnel Mouth
+description: A jagged crack splits the cliff face here, barely wide enough for a grown
+  person to squeeze through sideways. The air seeping from the opening is cold and
+  damp, carrying a faint mineral reek and something else -- something organic, like
+  old meat left in wet stone. The walls inside are slick with condensation, and the
+  passage drops sharply downward into darkness after only a few steps. Drag marks
+  score the muddy ground at the threshold, as though something large has been hauling
+  itself in and out.
+biome: cave
+mapsymbol: T
+maplegend: Tunnel
+exits:
+  east:
+    roomid: 103
+  west:
+    roomid: 300
+    zone: Labyrinth of Low Tunnels
+nouns:
+  crack: The crack in the basalt is narrow and uneven, widened in places by what looks
+    like deliberate force -- the edges are chipped and fractured, not weathered smooth.
+  marks: Deep grooves in the mud and loose scree, as though something heavy and broad
+    has been dragging itself through. They lead into the darkness and do not come back
+    out the same way.
+idlemessages:
+- A low, wet sound echoes from deep inside the crack -- breathing, or perhaps water dripping onto something soft.
+- The cold draft from the tunnel mouth carries a sour, animal smell.
+- Small stones shift and click somewhere in the darkness below the entrance.
+- Something scrapes against rock far inside the passage. The sound does not repeat.

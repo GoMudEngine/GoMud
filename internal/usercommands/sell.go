@@ -79,6 +79,9 @@ func Sell(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			user.UserId,
 		)
 
+		// Track charisma use on successful sale
+		user.Character.OnStatUse("charisma", user.UserId)
+
 		break
 	}
 

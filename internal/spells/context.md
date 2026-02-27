@@ -1,12 +1,25 @@
-# GoMud Spells System Context
+# DOGMud Spells System Context
 
 ## Overview
 
-The GoMud spells system provides a comprehensive magic framework with support for multiple spell types, schools of magic, difficulty scaling, scripting integration, and flexible targeting systems. It features spell discovery, automatic script template generation, and seamless integration with the character and combat systems.
+The DOGMud spells system provides a comprehensive magic framework with 45 spells across
+multiple types and schools, a fold-based casting mechanic, use-based spell discovery, and
+flexible targeting. Spells use Conviction (not mana) as their resource.
+
+**DOGMud Differences from upstream GoMud:**
+- Mana removed — spells use Conviction resource
+- Optional Health costs for life-force magic (vital school spells may sacrifice health)
+- Spell cost scaling via config multipliers (SpellConvictionCostMultiplier, SpellHealthCostMultiplier)
+- Spellcasting skill (DOG) replaces legacy Cast skill for combat resolution
+- Schools changed from single value to array (can have multiple schools)
+- Four DOG schools: Elemental, Enhancement, Mental, Vital
+- Use-based spell discovery (Phase 25) — no trainers, spells emerge through casting practice
+- New effect types: dot, knockdown, purge (Phase 25)
+- Starting spells reduced to 1 (Conviction Spike only)
+
+---
 
 ## Architecture
-
-The spells system is built around several key components:
 
 ### Core Components
 
@@ -18,7 +31,7 @@ The spells system is built around several key components:
 
 **Spell Classification System:**
 - Type-based targeting (single, multi, area, neutral)
-- School-based categorization (restoration, illusion, conjuration)
+- School-based categorization (elemental, enhancement, mental, vital)
 - Harm/help classification for spell effects
 - Difficulty scaling for success calculations
 
@@ -26,55 +39,34 @@ The spells system is built around several key components:
 - JavaScript implementation for spell effects
 - Automatic script template generation by spell type
 - Custom script path resolution and loading
-- Event-driven spell execution
+- Event-driven spell execution (onCast, onWait, onMagic)
 
-## Key Features
+---
 
-### 1. **Comprehensive Spell Types**
-- **Neutral**: No specific target requirements
-- **HarmSingle**: Single target harmful spells (magic missile)
-- **HarmMulti**: Multi-target harmful spells (chain lightning)
-- **HelpSingle**: Single target beneficial spells (heal)
-- **HelpMulti**: Group beneficial spells (mass heal)
-- **HarmArea**: Area-of-effect harmful spells (fireball)
-- **HelpArea**: Area-of-effect beneficial spells (sanctuary)
+## SpellData Structure
 
-### 2. **Magic Schools System**
-- **Restoration**: Healing and condition curing
-- **Illusion**: Light, darkness, invisibility, blink effects
-- **Conjuration**: Summoning and teleportation magic
-
-### 3. **Flexible Targeting System**
-- Automatic target selection based on spell type
-- Default targeting for harmful spells (current aggro)
-- Default targeting for helpful spells (self or party)
-- Area effects that bypass stealth and allegiance
-
-### 4. **Script Template System**
-- Automatic generation of spell scripts based on type
-- Template copying from sample script library
-- Type-specific script templates for consistent behavior
-
-## Spell Structure
-
-### Spell Data Structure
 ```go
 type SpellData struct {
-    SpellId     string      // Unique spell identifier
-    Name        string      // Display name
-    Description string      // Spell description
-    Type        SpellType   // Targeting and effect type
-    School      SpellSchool // Magic school classification
-    Cost        int         // Mana cost to cast
-    WaitRounds  int         // Casting delay in rounds
-    Difficulty  int         // Success modifier (0-100%)
+    SpellId           string    // Unique spell identifier (also filename base)
+    Name              string    // Display name
+    Description       string    // Spell description
+    Type              SpellType // Targeting and effect type
+    Schools           []string  // Magic school classification (can have multiple)
+    Cost              int       // Conviction cost
+    HealthCost        int       // Optional Health cost for vital school
+    WaitRounds        int       // Casting delay in rounds
+    Difficulty        int       // Success modifier (0-100%)
+    PrimaryStat       string    // Stat used for spell power scaling
+    BaseFolds         int       // Number of folds required to cast
+    TargetDefenseType string    // "physical", "mental", or "none"
+    EffectType        string    // "damage", "heal", "shield", "dot", "knockdown", "purge", "none"
+    EffectMagnitude   int       // Base power of the effect
+    EffectDuration    int       // For DoT: number of tick cycles
 }
 ```
 
-### Spell Type Enumeration
+### Spell Types
 ```go
-type SpellType string
-
 const (
     Neutral    SpellType = "neutral"    // No expected target
     HarmSingle SpellType = "harmsingle" // Single harmful target
@@ -86,460 +78,137 @@ const (
 )
 ```
 
-### Magic School Enumeration
+### Magic Schools
 ```go
-type SpellSchool string
-
 const (
-    SchoolRestoration SpellSchool = "restoration" // Healing and curing
-    SchoolIllusion    SpellSchool = "illusion"    // Light, stealth, vision
-    SchoolConjuration SpellSchool = "conjuration" // Summoning, teleportation
+    SchoolElemental   = "elemental"   // Fire, ice, lightning, earth — offensive elemental magic
+    SchoolEnhancement = "enhancement" // Buffs, shields, enchantments — augmentation magic
+    SchoolMental      = "mental"      // Illusions, charms, telepathy — mind-affecting magic
+    SchoolVital       = "vital"       // Healing, curing, life/death manipulation
 )
 ```
 
-## Spell Discovery and Lookup
+---
 
-### Spell Finding System
-```go
-// Find spell by name or ID with exact and fuzzy matching
-func FindSpell(spellName string) string {
-    // Check for exact ID match first
-    if sd, ok := allSpells[spellName]; ok {
-        return sd.SpellId
-    }
-    
-    // Check for exact name match
-    for _, spellInfo := range allSpells {
-        if strings.ToLower(spellInfo.Name) == spellName {
-            return spellInfo.SpellId
-        }
-    }
-    
-    return ""
-}
+## Effect Types (spell_resolution.go)
 
-// Advanced spell search with prefix matching
-func FindSpellByName(spellName string) *SpellData {
-    var closestMatch *SpellData = nil
-    spellName = strings.ToLower(spellName)
-    
-    for _, spellData := range allSpells {
-        testName := strings.ToLower(spellData.Name)
-        
-        // Exact match takes priority
-        if testName == spellName {
-            return spellData
-        }
-        
-        // Store first prefix match as fallback
-        if closestMatch == nil && strings.HasPrefix(testName, spellName) {
-            closestMatch = spellData
-        }
-    }
-    
-    return closestMatch
-}
+| EffectType | Behavior |
+|------------|----------|
+| `damage` | Direct HP damage to target(s), scaled by EffectMagnitude and PrimaryStat |
+| `heal` | Direct HP restoration to target(s) |
+| `shield` | Applies ConditionShield with magnitude = damage absorbed |
+| `dot` | Applies ConditionPoisoned; ticks for EffectDuration cycles (each cycle = 3 rounds in AutoHeal) |
+| `knockdown` | Deals damage + sets target prone (CombatPosition = PositionProne, 1 round min) |
+| `purge` | Removes poison buffs and ConditionPoisoned from target(s) |
+| `none` | No automatic effect — JS script handles everything (used by buff spells, summons, utility) |
 
-// Get spell by exact ID
-func GetSpell(spellId string) *SpellData {
-    if sd, ok := allSpells[spellId]; ok {
-        return sd
-    }
-    return nil
-}
+---
 
-// Get all available spells (returns copy)
-func GetAllSpells() map[string]*SpellData {
-    retSpellBook := make(map[string]*SpellData)
-    for k, v := range allSpells {
-        retSpellBook[k] = v
-    }
-    return retSpellBook
-}
-```
+## Spell Discovery System (Phase 25)
 
-## Spell Type Classification
+Spells are learned through casting, not trainers. After each successful cast:
 
-### Harm/Help Classification
-```go
-// Determine if spell is harmful, helpful, or neutral
-func (s SpellType) HelpOrHarmString() string {
-    switch s {
-    case Neutral:
-        return "Neutral"
-    case HelpSingle, HelpMulti, HelpArea:
-        return "Helpful"
-    case HarmSingle, HarmMulti, HarmArea:
-        return "Harmful"
-    }
-    return "Unknown"
-}
-```
+1. Base discovery chance: ~5% per cast
+2. Scaled down by known spell count: `chance = baseChance / (1 + knownCount * 0.1)`
+3. `GetEligibleSpells()` returns unlearned spells whose `BaseFolds` ≤ skill-gated threshold
+4. Random selection from eligible pool
+5. Player receives: "A new pattern crystallizes in your mind: <spell name>"
 
-### Target Type Classification
-```go
-// Get targeting description (short or long form)
-func (s SpellType) TargetTypeString(short ...bool) string {
-    // Short form for UI display
-    if len(short) > 0 && short[0] {
-        switch s {
-        case Neutral:
-            return "Unknown"
-        case HelpSingle, HarmSingle:
-            return "Single"
-        case HelpMulti, HarmMulti:
-            return "Group"
-        case HelpArea, HarmArea:
-            return "Area"
-        }
-        return "Unknown"
-    }
-    
-    // Long form for detailed descriptions
-    switch s {
-    case Neutral:
-        return "Unknown"
-    case HelpSingle, HarmSingle:
-        return "Single Target"
-    case HelpMulti, HarmMulti:
-        return "Group Target"
-    case HelpArea, HarmArea:
-        return "Area Target"
-    }
-    return "Unknown"
-}
-```
+### Fold Threshold Table (MaxFoldsForSkill)
+| Skill Level | Max Discoverable Folds |
+|-------------|----------------------|
+| 1–4 | ≤ 4 |
+| 5–9 | ≤ 6 |
+| 10–19 | ≤ 8 |
+| 20–29 | ≤ 10 |
+| 30–39 | ≤ 12 |
+| 40–49 | ≤ 16 |
+| 50–59 | ≤ 20 |
+| 60–69 | ≤ 24 |
+| 70–79 | ≤ 28 |
+| 80+ | ≤ 32 |
 
-## Spell Creation and Management
+### Starting Spells
+New characters begin with only `mm` (Conviction Spike). All other spells are
+discovered through casting practice.
 
-### New Spell Creation
-```go
-// Create new spell with automatic script template
-func CreateNewSpellFile(newSpellInfo SpellData) (string, error) {
-    // Check for existing spell
-    if sp := GetSpell(newSpellInfo.SpellId); sp != nil {
-        return "", errors.New("Spell already exists.")
-    }
-    
-    // Validate spell data
-    if err := newSpellInfo.Validate(); err != nil {
-        return "", err
-    }
-    
-    // Configure save options
-    saveModes := []fileloader.SaveOption{}
-    if configs.GetFilePathsConfig().CarefulSaveFiles {
-        saveModes = append(saveModes, fileloader.SaveCareful)
-    }
-    
-    // Save spell to file system
-    if err := fileloader.SaveFlatFile[*SpellData](
-        string(configs.GetFilePathsConfig().DataFiles)+"/spells", 
-        &newSpellInfo, 
-        saveModes...
-    ); err != nil {
-        return "", err
-    }
-    
-    // Update in-memory cache
-    allSpells[newSpellInfo.Id()] = &newSpellInfo
-    
-    // Create script directory and copy template
-    newScriptPath := newSpellInfo.GetScriptPath()
-    os.MkdirAll(filepath.Dir(newScriptPath), os.ModePerm)
-    
-    // Copy type-specific script template
-    templatePath := util.FilePath("_datafiles/sample-scripts/spells/" + string(newSpellInfo.Type) + ".js")
-    fileloader.CopyFileContents(templatePath, newScriptPath)
-    
-    return newSpellInfo.SpellId, nil
-}
-```
+---
 
-### Spell Validation
-```go
-// Validate spell configuration
-func (s *SpellData) Validate() error {
-    // Clamp difficulty to valid range (0-100%)
-    if s.Difficulty < 0 {
-        s.Difficulty = 0
-    } else if s.Difficulty > 100 {
-        s.Difficulty = 100
-    }
-    
-    return nil
-}
+## Buff Integration (Phase 25.3)
 
-// Get validated difficulty value
-func (s *SpellData) GetDifficulty() int {
-    return s.Difficulty
-}
-```
+Several buff flags affect spell and combat systems:
 
-## Scripting Integration
+| Flag | Effect | Applied In |
+|------|--------|-----------|
+| `damage-bonus` | +15% physical damage | NewRound_DoCombat.go |
+| `haste` | Speed effects | Various |
+| `slow` | Movement penalty | Various |
+| `skill-progress` | 2x skill progression chance | progression.go |
+| `mutation-rate` | 2x mutation progress gain | UserRoundTick.go |
 
-### Script System Support
-```go
-// Load spell script content
-func (s *SpellData) GetScript() string {
-    scriptPath := s.GetScriptPath()
-    
-    if _, err := os.Stat(scriptPath); err == nil {
-        if bytes, err := os.ReadFile(scriptPath); err == nil {
-            return string(bytes)
-        }
-    }
-    
-    return ""
-}
+---
 
-// Generate script file path
-func (s *SpellData) GetScriptPath() string {
-    return strings.Replace(
-        string(configs.GetFilePathsConfig().DataFiles)+"/spells/"+s.Filepath(), 
-        ".yaml", 
-        ".js", 
-        1
-    )
-}
-```
+## Summon Spells (Phase 25.4)
 
-### File Path Management
-```go
-// Generate YAML file path for spell
-func (s *SpellData) Filepath() string {
-    return util.FilePath(fmt.Sprintf("%s.yaml", s.SpellId))
-}
+Two permanent summon spells use components and JS scripting:
+- `chrysalis-construct` (20 folds) — requires Chrysalis Core (item 40010), spawns mob 110
+- `summon-hive-swarm` (24 folds) — requires Hive Fragment (item 40011), spawns mob 111
 
-// Get unique identifier
-func (s *SpellData) Id() string {
-    return s.SpellId
-}
-```
+Summons persist until killed, one per type per caster. JS scripts handle component
+checking/consumption, mob spawning via `room.SpawnMob()`, and permanent charm via
+`CharmSet(userId, 99999)`.
 
-## Summoning System
+---
 
-### Summoning Framework
-```go
-// Summoning spell implementation framework
-func Summon(sourceUserId int, sourceMobId int, details any) (bool, error) {
-    // details contains summoning specifics (creature type, duration, etc.)
-    // Implementation would handle:
-    // - Creature selection based on details
-    // - Summoning location determination
-    // - Duration and control mechanics
-    // - Integration with mob system
-    
-    return false, nil // Placeholder implementation
-}
-```
+## All Spells (45 total)
 
-### Summoning Integration Points
-- **Mob System Integration**: Create temporary mob instances
-- **Duration Management**: Time-limited summons with automatic cleanup
-- **Control Mechanics**: Charmed mob behavior for summoned creatures
-- **Targeting System**: Summoning location and creature selection
+### Re-Themed Original Spells (14)
+mm (Conviction Spike), fire-bolt (Pyretic Surge), heal (Mend Flesh),
+fireball (Hemorrhagic Burst), minor-shield (Conviction Ward),
+curepoison (Purge Affliction), tame (Empathic Bond), sparks (Conviction Sparks),
+stun (Neural Stun), blind (Sensory Veil), throw-stone (Kinetic Hurl),
+illum (Chrysalis Glow), healall (Mend All), aidskill (Chrysalis Aid).
 
-## Spell Type Behavior Patterns
+### Damage/Heal/DoT/Shield Spells (12)
+mind-spike, kinetic-shove, blood-boil, hemorrhagic-wave, synaptic-overload,
+veil-rend, mend-wounds, communion-of-flesh, chrysalis-cocoon, neural-toxin,
+conviction-barrage, cleansing-wave.
 
-### Neutral Spells
-```go
-// Neutral spells have no default targeting
-// Examples: Light, Detect Magic, Identify
-// Usage: cast light, cast detect magic
-// Behavior: Applied to caster or specified target/object
-```
+### Buff/Debuff/Utility Spells (17)
+conviction-surge, iron-will, chrysalis-haste, mind-fog, nerve-disruption,
+empathic-shroud, vital-surge, chrysalis-regeneration, skill-attunement,
+mutation-catalyst, psychic-anchor, sensory-overload, conviction-armor,
+veil-sight, fold-anchor, fold-recall, mass-mend.
 
-### Single Target Spells
-```go
-// HarmSingle: Targets current combat opponent by default
-// Examples: Magic Missile, Lightning Bolt, Charm Person
-// Usage: cast magic missile [target], cast lightning bolt
-// Behavior: Auto-targets aggro mob if in combat, requires target if not
+### Summon Spells (2)
+chrysalis-construct, summon-hive-swarm.
 
-// HelpSingle: Targets self by default
-// Examples: Heal, Shield, Bless
-// Usage: cast heal [target], cast shield
-// Behavior: Self-cast by default, can specify other targets
-```
+---
 
-### Multi-Target Spells
-```go
-// HarmMulti: Targets all current combat opponents
-// Examples: Chain Lightning, Fireball (targeted), Sleep
-// Usage: cast chain lightning, cast sleep
-// Behavior: Affects all mobs player is fighting
+## Hook Integration Points
 
-// HelpMulti: Targets party members
-// Examples: Mass Heal, Group Bless, Party Shield
-// Usage: cast mass heal, cast group bless
-// Behavior: Affects all party members in range
-```
+| Hook File | What It Does |
+|-----------|-------------|
+| `internal/hooks/spell_resolution.go` | Effect dispatch (damage, heal, shield, dot, knockdown, purge), HelpArea targeting |
+| `internal/hooks/NewRound_DoCombat.go` | Spell discovery after cast, DamageBonus buff check |
+| `internal/hooks/NewRound_AutoHeal.go` | Mob poison DoT ticking |
+| `internal/hooks/NewRound_UserRoundTick.go` | MutationRate buff check |
+| `internal/characters/progression.go` | SkillProgress buff check (2x casting skill gain) |
 
-### Area Effect Spells
-```go
-// HarmArea: Affects everyone in room (including friendlies)
-// Examples: Earthquake, Meteor Swarm, Poison Cloud
-// Usage: cast earthquake, cast meteor swarm
-// Behavior: Indiscriminate area damage, bypasses stealth
+---
 
-// HelpArea: Affects everyone in room beneficially
-// Examples: Sanctuary, Mass Blessing, Healing Aura
-// Usage: cast sanctuary, cast mass blessing
-// Behavior: Benefits all present, including hidden entities
-```
+## Files in This Package
 
-## Data Loading and Management
+| File | Purpose |
+|------|---------|
+| `spells.go` | SpellData struct, registry, loader, GetEligibleSpells(), MaxFoldsForSkill() |
+| `context.md` | This file — package overview for Claude Code |
 
-### Spell Data Loading
-```go
-// Load all spell files from data directory
-func LoadSpellFiles() {
-    start := time.Now()
-    
-    tmpAllSpells, err := fileloader.LoadAllFlatFiles[string, *SpellData](
-        string(configs.GetFilePathsConfig().DataFiles) + "/spells"
-    )
-    if err != nil {
-        panic(err)
-    }
-    
-    allSpells = tmpAllSpells
-    
-    mudlog.Info("spells.loadAllSpells()", 
-        "loadedCount", len(allSpells), 
-        "Time Taken", time.Since(start))
-}
-```
+---
 
-## Integration Patterns
+## Stage Roadmap
 
-### Character System Integration
-```go
-// Spells integrate with character magic abilities
-- character.Mana                    // Mana cost deduction
-- character.GetSkillLevel()         // Magic skill levels
-- character.Stats.Intelligence      // Spell success calculation
-- character.Buffs.AddBuff()         // Spell effect application
-```
-
-### Combat System Integration
-```go
-// Spells participate in combat mechanics
-- combat.AttackPlayerVsMob()        // Harmful spell damage
-- character.IsAggro()               // Target selection for harm spells
-- character.Party                   // Target selection for help spells
-- room.GetMobs()                    // Area effect target selection
-```
-
-### Event System Integration
-```go
-// Spells trigger through event system
-events.AddToQueue(events.SpellCast{
-    UserId:      userId,
-    SpellId:     spellId,
-    TargetType:  targetType,
-    TargetId:    targetId,
-    WaitRounds:  spell.WaitRounds,
-})
-```
-
-## Usage Examples
-
-### Basic Spell Casting
-```go
-// Find and cast a spell
-spellId := spells.FindSpell("magic missile")
-if spellId != "" {
-    spell := spells.GetSpell(spellId)
-    if spell != nil {
-        // Check mana cost
-        if user.Character.Mana >= spell.Cost {
-            // Deduct mana
-            user.Character.Mana -= spell.Cost
-            
-            // Queue spell casting event
-            events.AddToQueue(events.SpellCast{
-                UserId:     user.UserId,
-                SpellId:    spellId,
-                WaitRounds: spell.WaitRounds,
-            })
-        }
-    }
-}
-```
-
-### Spell Discovery
-```go
-// Fuzzy spell name matching
-spell := spells.FindSpellByName("mag mis") // Finds "Magic Missile"
-if spell != nil {
-    user.SendText(fmt.Sprintf("Found spell: %s (%s)", spell.Name, spell.SpellId))
-    user.SendText(fmt.Sprintf("Type: %s", spell.Type.TargetTypeString()))
-    user.SendText(fmt.Sprintf("School: %s", spell.School))
-    user.SendText(fmt.Sprintf("Cost: %d mana", spell.Cost))
-}
-```
-
-### Creating New Spells
-```go
-// Create new spell with automatic script template
-newSpell := spells.SpellData{
-    SpellId:     "fireball",
-    Name:        "Fireball",
-    Description: "A blazing sphere of fire that explodes on impact.",
-    Type:        spells.HarmArea,
-    School:      spells.SchoolEvocation,
-    Cost:        25,
-    WaitRounds:  4,
-    Difficulty:  15,
-}
-
-spellId, err := spells.CreateNewSpellFile(newSpell)
-if err != nil {
-    return err
-}
-
-// Script template automatically created at:
-// _datafiles/spells/fireball.js
-```
-
-### Spell Type Behavior
-```go
-// Different targeting behaviors based on spell type
-spell := spells.GetSpell(spellId)
-
-switch spell.Type {
-case spells.HarmSingle:
-    // Target current combat opponent or require explicit target
-    if user.Character.IsInCombat() {
-        target = user.Character.GetAggroTarget()
-    } else {
-        target = parseTargetFromCommand(command)
-    }
-
-case spells.HelpSingle:
-    // Default to self, allow explicit targeting
-    target = user.Character
-    if explicitTarget := parseTargetFromCommand(command); explicitTarget != nil {
-        target = explicitTarget
-    }
-
-case spells.HarmArea:
-    // Affect all entities in room
-    targets = room.GetAllEntities()
-
-case spells.HelpMulti:
-    // Affect party members
-    targets = user.Character.Party.GetMembers()
-}
-```
-
-## Dependencies
-
-- `internal/configs` - Configuration management for file paths and settings
-- `internal/fileloader` - YAML file loading, validation, and template copying
-- `internal/util` - Utility functions for file operations and path management
-- `internal/mudlog` - Logging system for debugging and monitoring
-
-This comprehensive spells system provides a flexible magic framework with sophisticated targeting, type-based behavior, scripting integration, and seamless integration with character and combat systems.
+- **Phase 25.1** (complete) — Re-themed 14 spells, Go infrastructure (dot/knockdown/purge), spell discovery, HelpArea fix
+- **Phase 25.2** (complete) — 12 new damage/heal/DoT/shield spells
+- **Phase 25.3** (complete) — 13 new buffs, 17 new buff/debuff/utility spells, hook integration
+- **Phase 25.4** (complete) — 2 summon spells with component items and permanent charm

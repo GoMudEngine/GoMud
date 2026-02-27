@@ -177,8 +177,7 @@ func Party(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	if partyCommand == `list` {
 
-		//headers := []string{"Name", "Status", "Lvl", "Health", "%", "Location", "Position"}
-		headers := []string{"Name", "Status", "Lvl", "Health", "Location", "Position"}
+		headers := []string{"Name", "Status", "Health", "Location", "Position"}
 		formatting := [][]string{}
 
 		rows := [][]string{}
@@ -196,9 +195,7 @@ func Party(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 				}
 
 				u := users.GetByUserId(uid)
-				uLevel := fmt.Sprintf(`%d`, u.Character.Level)
 				uRoom := rooms.LoadRoom(u.Character.RoomId)
-				//uHealth := fmt.Sprintf(`%d/%d`, u.Character.Health, u.Character.HealthMax.Value)
 				uHealthPct := int(math.Floor((float64(u.Character.Health) / float64(u.Character.HealthMax.Value)) * 100))
 				uHealthPctStr := fmt.Sprintf(`%d%%`, uHealthPct)
 				uLoc := uRoom.Title
@@ -206,8 +203,6 @@ func Party(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 				healthClass := util.HealthClass(u.Character.Health, u.Character.HealthMax.Value)
 
 				if isInvited {
-					uLevel = `-`
-					//uHealth = `-`
 					uLoc = `-`
 					uHealthPctStr = `-`
 					rank = `-`
@@ -217,8 +212,6 @@ func Party(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 				rows = append(rows, []string{
 					u.Character.Name,
 					uStatus,
-					uLevel,
-					//uHealth,
 					uHealthPctStr,
 					uLoc,
 					rank,
@@ -226,8 +219,6 @@ func Party(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 				rowFormat := []string{`<ansi fg="username">%s</ansi>`,
 					`<ansi fg="white-bold">%s</ansi>`,
-					`<ansi fg="yellow">%s</ansi>`,
-					//`<ansi fg="cyan-bold">%s</ansi>`,
 					`<ansi fg="` + healthClass + `">%s</ansi>`,
 					`<ansi fg="magenta-bold">%s</ansi>`,
 					`<ansi fg="white-bold">%s</ansi>`}
@@ -244,8 +235,6 @@ func Party(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 				rows = append(rows, []string{
 					m.Character.Name,
 					`♥friend`,
-					fmt.Sprintf(`%d`, m.Character.Level),
-					//fmt.Sprintf(`%d/%d`, m.Character.Health, m.Character.HealthMax.Value),
 					fmt.Sprintf(`%d%%`, mHealthPct),
 					mRoom.Title,
 					`-`,
@@ -253,8 +242,6 @@ func Party(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 				rowFormat := []string{`<ansi fg="username">%s</ansi>`,
 					`<ansi fg="white-bold">%s</ansi>`,
-					`<ansi fg="yellow">%s</ansi>`,
-					//`<ansi fg="cyan-bold">%s</ansi>`,
 					`<ansi fg="` + util.HealthClass(m.Character.Health, m.Character.HealthMax.Value) + `">%s</ansi>`,
 					`<ansi fg="magenta-bold">%s</ansi>`,
 					`<ansi fg="white-bold">%s</ansi>`}
@@ -269,15 +256,11 @@ func Party(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 					`Invited`,
 					`-`,
 					`-`,
-					//`-`,
-					`-`,
 					`-`,
 				})
 
 				rowFormat := []string{`<ansi fg="username">%s</ansi>`,
 					`<ansi fg="white-bold">%s</ansi>`,
-					`<ansi fg="yellow">%s</ansi>`,
-					//`<ansi fg="cyan-bold">%s</ansi>`,
 					`<ansi fg="black-bold">%s</ansi>`,
 					`<ansi fg="magenta-bold">%s</ansi>`,
 					`<ansi fg="white-bold">%s</ansi>`}

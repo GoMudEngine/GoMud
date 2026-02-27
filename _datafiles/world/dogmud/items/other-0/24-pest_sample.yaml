@@ -1,0 +1,12 @@
+itemid: 24
+name: pest sample
+namesimple: sample
+description: The body of a crop pest, wrapped in a scrap of burlap. The rodent is
+  about the size of a cat, with coarse brown fur and oversized orange-stained teeth.
+  Examining it closely, you notice the creature is unusually large for its kind --
+  whatever is feeding these pests in the fallow field, it is making them bigger and
+  bolder than normal. A farmer or naturalist might find this specimen informative.
+type: object
+subtype: holdable
+uses: 0
+weight: 1.0

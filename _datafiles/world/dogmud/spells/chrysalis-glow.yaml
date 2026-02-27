@@ -1,0 +1,14 @@
+# Learned from Elara, the Frostfang Librarian (ROOM 48)
+spellid: chrysalis-glow
+name: Chrysalis Glow
+description: Coaxes Chrysalis spores to luminesce, casting a soft glow.
+type: helpsingle
+schools:
+  - mental
+cost: 35
+waitrounds: 3
+difficulty: 0
+primarystat: willpower
+effect_type: buff
+buff_ids:
+  - 1

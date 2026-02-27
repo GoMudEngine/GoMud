@@ -1,0 +1,29 @@
+speciesid: 7
+name: deer
+description: A graceful, fleet-footed herbivore with large, watchful
+  eyes. Deer rely on speed and acute senses to escape
+  danger, but will lash out with sharp hooves when cornered.
+size: medium
+unarmedname: hooves
+selectable: false
+tameable: true
+angrycommands:
+  - emote stamps a hoof and snorts nervously.
+  - emote rears up, front hooves slashing the air.
+stats:
+  strength:
+    base: 70
+  dexterity:
+    base: 140
+  perception:
+    base: 150
+  vitality:
+    base: 80
+  willpower:
+    base: 10
+  charisma:
+    base: 15
+damage:
+  basedamage: 3
+  variance: 2
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet']

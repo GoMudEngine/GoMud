@@ -1,0 +1,14 @@
+spellid: communion-of-flesh
+name: Communion of Flesh
+description: Deep Chrysalis energy mends the wounds of all nearby allies.
+type: helparea
+schools:
+  - vital
+cost: 100
+healthcost: 5
+waitrounds: 2
+difficulty: 10
+primarystat: willpower
+base_folds: 12
+effect_type: heal
+effect_magnitude: 4

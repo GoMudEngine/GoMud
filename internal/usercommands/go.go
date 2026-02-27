@@ -46,7 +46,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 
 		actionCost := 10
 		encumbered := false
-		if len(user.Character.Items) > user.Character.CarryCapacity() {
+		if user.Character.GetCarriedWeight() > user.Character.CarryCapacity() {
 			actionCost = 50
 			encumbered = true
 		}
@@ -61,6 +61,34 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 			}
 
 			return true, nil
+		}
+
+		// Calculate stamina cost for movement
+		// Get destination room biome for terrain difficulty
+		destRoom := rooms.LoadRoom(goRoomId)
+		if destRoom == nil {
+			return false, fmt.Errorf(`room %d not found`, goRoomId)
+		}
+
+		// Get biome movement cost
+		biome, _ := rooms.GetBiome(destRoom.Biome)
+		terrainMultiplier := 1.0
+		if biome != nil {
+			terrainMultiplier = biome.GetMovementCost()
+		}
+
+		// Calculate and check stamina cost
+		staminaCost := user.Character.GetMovementStaminaCost(terrainMultiplier)
+		if !user.Character.DeductStamina(staminaCost) {
+			user.SendText("You're too exhausted to move! Rest and recover your stamina.")
+			// Refund the action points since movement failed
+			user.Character.ActionPoints += actionCost
+			return true, nil
+		}
+
+		// Warn if stamina is getting low (< 25% of max)
+		if user.Character.Stamina < user.Character.StaminaMax.Value/4 {
+			user.SendText("<ansi fg=\"yellow\">You're feeling winded. Consider resting to recover your stamina.</ansi>")
 		}
 
 		originRoomId := user.Character.RoomId
@@ -157,12 +185,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 			return true, nil
 		}
 
-		// Load current room details
-		destRoom := rooms.LoadRoom(goRoomId)
-		if destRoom == nil {
-			return false, fmt.Errorf(`room %d not found`, goRoomId)
-		}
-
+		// destRoom already loaded above for stamina calculation
 		// Grab the exit in the target room that leads to this room (if any)
 		enterFromExit := destRoom.FindExitTo(room.RoomId)
 
@@ -288,13 +311,13 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 						continue
 					}
 
-					speedDelta := mob.Character.Stats.Speed.ValueAdj - user.Character.Stats.Speed.ValueAdj
+					speedDelta := mob.Character.Stats.Dexterity.ValueAdj - user.Character.Stats.Dexterity.ValueAdj
 					if speedDelta < 1 {
 						speedDelta = 1
 					}
 
 					// Chance that a mob follows the player
-					targetVal := 20 + mob.Character.Stats.Perception.ValueAdj + speedDelta
+					targetVal := 20 + mob.Character.Stats.Charisma.ValueAdj + speedDelta
 
 					roll := util.Rand(100)
 

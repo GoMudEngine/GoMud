@@ -552,4 +552,91 @@ for _, quest := range allQuests {
 - `internal/util` - Utility functions for file operations and string conversion
 - `internal/mudlog` - Logging system for debugging and monitoring
 
+## Dialogue–Quest Integration (Phase 27)
+
+The dialogue system can gate conversation options on quest state and advance
+quests through NPC dialogue, connecting YAML-driven dialogue trees with the
+token-based quest progression system.
+
+### How It Works
+
+The dialogue engine accepts an optional `PlayerState` callback struct that
+provides quest and inventory checks without importing `characters` or `users`
+(avoids circular deps):
+
+```go
+// internal/dialogue/types.go
+type PlayerState struct {
+    HasQuest   func(token string) bool   // checks character.HasQuest()
+    HasItem    func(itemId int) bool     // checks backpack for item
+    RemoveItem func(itemId int) bool     // removes item from backpack
+    GiveQuest  func(token string)        // fires events.Quest to advance quest
+}
+```
+
+Call sites in `talk.go` and `ask.go` build a `PlayerState` from the user's
+character before calling dialogue engine functions.
+
+### Dialogue YAML Fields for Quest Gating
+
+Both `TreeNode` and `Pattern` structs support:
+
+| Field | Type | Effect |
+|-------|------|--------|
+| `questRequired` | `[]string` | Player must have these quest tokens |
+| `questExcluded` | `[]string` | Player must NOT have these tokens |
+| `grantsQuest` | `string` | Quest token granted on match |
+| `requiresItem` | `int` | Item ID the player must hold (consumed) |
+
+### Greeting Variants
+
+`TreeRoot` has an optional `Variants` list of `QuestGreeting` entries. Each
+variant has `questRequired`/`questExcluded` conditions and alternate `text`/
+`hints`. `Greet()` checks variants first; the first match wins.
+
+### Worked Example: Tolva (Mob 84) — Quest 5
+
+```yaml
+# Quest 5 steps: start → ledger → evidence → end
+
+tree:
+  root:
+    text: "Default greeting..."
+    variants:
+      - questRequired: ["5-start"]
+        questExcluded: ["5-end"]
+        text: "Any luck with that ledger?"
+      - questRequired: ["5-end"]
+        text: "Thanks to you, the magistrate will hear about this."
+
+  nodes:
+    - id: help_quest
+      triggers: ["help", "quest"]
+      requires: ["toll_problem"]
+      questExcluded: ["5-start"]       # only shows before quest is accepted
+      grantsQuest: "5-start"           # accepting starts the quest
+      text: "Get me that ledger..."
+
+    - id: ledger_return
+      triggers: ["ledger", "evidence"]
+      requires: ["help_quest"]
+      questRequired: ["5-evidence"]    # only shows at evidence step
+      questExcluded: ["5-end"]         # hidden after quest is done
+      requiresItem: 21                 # consumes the crossing ledger
+      grantsQuest: "5-end"             # completing fires quest rewards
+      text: "No commission. No charter..."
+```
+
+When `grantsQuest` fires, it calls `events.AddToQueue(events.Quest{...})`
+which is processed by `Quest_HandleQuestUpdate.go`. That handler distributes
+all rewards (gold, items, buffs) defined in the quest YAML — no separate
+reward mechanism is needed in the dialogue system.
+
+### LLM Quest Context
+
+When an NPC has an LLM profile, `talk.go` and `ask.go` populate
+`llm.ConversationContext.QuestContext` with human-readable summaries of the
+player's active quests. These are injected into the LLM system prompt so
+Ollama-powered NPCs can reference quest state naturally.
+
 This comprehensive quests system provides flexible quest management with multi-step progression, diverse reward types, secret quest support, and seamless integration with character progression, item distribution, and skill advancement systems.

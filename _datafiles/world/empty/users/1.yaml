@@ -18,7 +18,7 @@ character:
     to disrupt the balance of the world, swiftly and decisively.
   roomid: 1
   zone: Frostfang
-  raceid: 2
+  speciesid: 2
   stats:
     strength:
       training: 6
@@ -42,7 +42,6 @@ character:
   health: 60
   mana: 32
   actionpoints: 202
-  alignment: -1
   gold: 9950
   bank: 0
   spellbook:

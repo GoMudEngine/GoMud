@@ -48,6 +48,7 @@ The `internal/usercommands` package implements the complete command system for p
 - **Entity management**: `mob`, `item`, `spawn` - Game object manipulation
 - **Server management**: `server`, `reload`, `teleport` - System administration
 - **Player management**: `grant`, `modify`, `mute`, `deafen` - Player administration
+- **Combat analytics**: `combatstats` - Combat analytics dashboard — view, filter, reset, export combat event data
 
 ### Command Processing Features
 
@@ -83,7 +84,7 @@ The `internal/usercommands` package implements the complete command system for p
 
 #### **World Management**
 - **Room editing**: Comprehensive room modification capabilities
-- **Zone management**: Creating and managing game world zones
+- **Zone management**: Creating and managing game world zones (note: `zone set autoscale` was removed in Phase 21; mob difficulty is now per-mob via `statpool`)
 - **Spawn control**: Managing mob and item spawning
 
 #### **Player Administration**
@@ -97,6 +98,19 @@ The `internal/usercommands` package implements the complete command system for p
 - **Fuzzy matching**: Suggesting similar commands for typos
 - **Context-aware help**: Relevant command suggestions based on situation
 - **Admin filtering**: Different suggestions for admin vs regular users
+
+#### **Dialogue–Quest Integration** (`talk.go`, `ask.go`)
+- **PlayerState construction**: `buildPlayerState(user)` creates a
+  `dialogue.PlayerState` with callbacks for `HasQuest`, `HasItem`,
+  `RemoveItem`, and `GiveQuest` — passed to all dialogue engine calls
+  so NPC dialogue can be gated on quest progress and inventory
+- **Quest context for LLM**: `buildQuestContext(user, mobId)` returns
+  human-readable quest summaries injected into the LLM system prompt
+  via `llm.ConversationContext.QuestContext`
+- **Item consumption**: `requiresItem` on dialogue nodes removes the
+  item from the player's backpack on activation (via `RemoveItem`)
+- **Quest advancement**: `grantsQuest` fires `events.Quest` to
+  advance quest state; the quest event handler processes rewards
 
 #### **Scripting Integration**
 - **JavaScript exposure**: Commands can be called from game scripts

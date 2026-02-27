@@ -5,7 +5,7 @@
         text-align:left;
     }
     h3.topic a {
-        color: #6b9d6e;
+        color: #a0a0d0;
     }
     div.webhelp-content {
         color:#fff;
@@ -14,7 +14,7 @@
         padding: 5%;
     }
     div.webhelp-content a.topic {
-        color: #6b9d6e;
+        color: #a0a0d0;
         display: inline-block;
         width: 20%;
         margin-bottom: 1%;
@@ -47,6 +47,21 @@
         border: 0px;
         padding: 0px;
         margin: 0px 0px 0px 3px;
+    }
+    @media (max-width: 768px) {
+        div.webhelp-content pre.terminal-output {
+            font-size: 14px;
+        }
+        form.search input[type="text"] {
+            width: 100%;
+            max-width: 300px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        form.search input[type="submit"] {
+            font-size: 16px;
+            margin-top: 5px;
+        }
     }
 </style>
 

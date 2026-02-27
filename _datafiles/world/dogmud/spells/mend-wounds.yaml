@@ -1,0 +1,13 @@
+spellid: mend-wounds
+name: Mend Wounds
+description: Concentrated Chrysalis energy rapidly mends the target.
+type: helpsingle
+schools:
+  - vital
+cost: 40
+waitrounds: 1
+difficulty: 0
+primarystat: willpower
+base_folds: 4
+effect_type: heal
+effect_magnitude: 5

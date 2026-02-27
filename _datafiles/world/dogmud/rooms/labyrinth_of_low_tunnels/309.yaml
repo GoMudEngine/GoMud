@@ -1,0 +1,33 @@
+roomid: 309
+zone: Labyrinth of Low Tunnels
+title: Bone Passage
+description: Small bones have been pressed into the mud floor of this passage in
+  deliberate patterns -- lines, curves, angular shapes that repeat at regular intervals.
+  A path marked out by the dead. The bones are old and yellowed, sunk deep into the
+  packed earth, and the patterns continue along the walls where finger-bones and teeth
+  have been pushed into cracks in the stone like mosaic tiles. The passage runs north
+  and west, with a vertical crack dropping away to the east. The air here is very still
+  and carries a sweet, rotten undertone beneath the mineral damp.
+biome: cave
+exits:
+  north:
+    roomid: 306
+  west:
+    roomid: 307
+  down:
+    roomid: 311
+spawninfo:
+- mobid: 73
+  message: A warren warrior stands guard among the bone patterns, milky eyes tracking your movement.
+  respawnrate: 10 real minutes
+nouns:
+  bones: Rat bones, bat bones, bird bones -- pressed into the earth in repeating
+    geometric shapes. Some patterns are simple lines. Others spiral inward or branch
+    like lightning. Whether this is decoration, ritual, or wayfinding, you cannot tell.
+  teeth: Small, sharp teeth pressed point-first into the cracks between stones. They
+    form lines that follow the passage like a border. Most are too small to be human.
+    Most.
+idlemessages:
+- The bone patterns on the floor crunch faintly underfoot despite your best efforts.
+- The stillness here feels intentional, as though the passage itself is holding its breath.
+- A sweet, cloying smell drifts up from the crack leading down.

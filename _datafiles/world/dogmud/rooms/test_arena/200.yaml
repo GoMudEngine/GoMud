@@ -1,0 +1,80 @@
+roomid: 200
+zone: Test Arena
+title: Arena Entrance
+description: A wide stone archway opens into a sunlit training compound. The clang of
+  practice weapons and the shouts of sparring combatants echo from within. A wooden
+  sign reads "Combat Training Grounds - All skill levels welcome." A weapons rack
+  displays various training weapons, and a large barrel holds weighted training stones.
+  The Town Square lies to the north, while the training yard beckons further south.
+biome: fort
+exits:
+  north:
+    roomid: 1
+  south:
+    roomid: 201
+items:
+  # Weapons rack - variety of weapons for testing attack speed
+  - itemid: 10005  # Training dagger (fast, 0.9x speed, can dual wield)
+  - itemid: 10005  # Second dagger for dual wielding
+  - itemid: 10006  # Iron longsword (medium, 0.7x speed, can dual wield)
+  - itemid: 10006  # Second longsword for dual wielding
+  - itemid: 10007  # Heavy greatsword (slow, 0.5x speed, two-handed)
+  - itemid: 10008  # Steel warhammer (slow, 0.6x speed, one-handed)
+  # Shields - for testing block defense (Stage 7.1)
+  - itemid: 20004  # Wooden shield (BlockRating: 12, DamageReduction: 5)
+  - itemid: 20010  # Iron buckler (BlockRating: 15, DamageReduction: 8)
+  # Weighted stones barrel - for encumbrance testing
+  # Test character capacity: 47 items
+  # Light load: 5-10 stones (minimal encumbrance)
+  # Medium load: 20-30 stones (moderate encumbrance, ~1.5-2x multiplier)
+  # Heavy load: 40-50 stones (severe encumbrance, ~2-3x multiplier)
+  - itemid: 10  # Light weighted stones (x10)
+  - itemid: 10
+  - itemid: 10
+  - itemid: 10
+  - itemid: 10
+  - itemid: 10
+  - itemid: 10
+  - itemid: 10
+  - itemid: 10
+  - itemid: 10
+  - itemid: 11  # Medium weighted stones (x20)
+  - itemid: 11
+  - itemid: 11
+  - itemid: 11
+  - itemid: 11
+  - itemid: 11
+  - itemid: 11
+  - itemid: 11
+  - itemid: 11
+  - itemid: 11
+  - itemid: 11
+  - itemid: 11
+  - itemid: 11
+  - itemid: 11
+  - itemid: 11
+  - itemid: 11
+  - itemid: 11
+  - itemid: 11
+  - itemid: 11
+  - itemid: 11
+  - itemid: 12  # Heavy weighted stones (x20)
+  - itemid: 12
+  - itemid: 12
+  - itemid: 12
+  - itemid: 12
+  - itemid: 12
+  - itemid: 12
+  - itemid: 12
+  - itemid: 12
+  - itemid: 12
+  - itemid: 12
+  - itemid: 12
+  - itemid: 12
+  - itemid: 12
+  - itemid: 12
+  - itemid: 12
+  - itemid: 12
+  - itemid: 12
+  - itemid: 12
+  - itemid: 12

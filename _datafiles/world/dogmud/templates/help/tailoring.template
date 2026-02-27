@@ -1,0 +1,36 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">tailoring</ansi> (skill)
+
+Tailoring is the craft of working cloth and leather into garments — cloaks,
+armor, bags, and other wearables. A skilled tailor creates light armor that
+values mobility and grace over heavy protection. The skill is governed by
+<ansi fg="yellow">Dexterity</ansi>, since stitching and fitting demand precision.
+
+<ansi fg="yellow">━━━ Requirements ━━━</ansi>
+
+  Station:   A <ansi fg="yellow">loom</ansi> must be in the room with you.
+             The Tailor's Workshop is located in Startland.
+  Materials: Cloth strips, leather strips, and thread.
+             Find them on the ground in the Workshop or loot from foraging.
+
+<ansi fg="yellow">━━━ Known Recipes ━━━</ansi>
+
+The recipe list for tailoring is being documented as new recipes are added.
+Check back soon for updates on available items.
+
+<ansi fg="yellow">━━━ Skill Progression ━━━</ansi>
+
+Tailoring improves through use. Each completed craft attempt (success or
+failure) has a chance to advance the skill. Tailoring progresses faster per use
+than combat skills because crafting opportunities are less frequent.
+
+There is no trainer for tailoring — practice is the only teacher.
+
+<ansi fg="yellow">━━━ Commands ━━━</ansi>
+
+  <ansi fg="command">craft list</ansi>          Show all recipes, including tailoring ones, with status.
+  <ansi fg="command">craft <recipe></ansi>      Begin crafting a tailoring recipe.
+  <ansi fg="command">skills</ansi>              Check your current tailoring skill level.
+
+<ansi fg="yellow">See Also:</ansi>
+
+  <ansi fg="command">help craft</ansi>, <ansi fg="command">help skills</ansi>

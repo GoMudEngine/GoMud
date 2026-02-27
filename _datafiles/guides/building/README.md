@@ -20,12 +20,6 @@ Use the `build zone` command to create a new zone:
    ```
    zone info
    ```
-2. Set auto-scaling for MOBs (optional): MOBs, or "mobile objects," are characters or creatures in the game world that can interact with players. Auto-scaling adjusts their difficulty based on the specified range, making gameplay more balanced and engaging.
-   ```
-   zone set autoscale [lowend] [highend]
-   ```
-   Example: `zone set autoscale 5 10`
-
 ---
 
 ### Creating Rooms, Exits, and Defining Nouns

@@ -1,0 +1,192 @@
+<form>
+
+    <input type="hidden" name="itemid" value="{{ .itemSpec.ItemId }}">
+
+    <hr />
+    <h3>Appearance</h3>
+
+    <div class="row">
+        <div class="form-group col-sm">
+            <label for="name">Name</label>
+            <input type="text" class="form-control form-control-sm" id="name" aria-describedby="name-help" value="{{ .speciesInfo.Name }}">
+            <small id="name-help" class="form-text text-muted">Name of the species?</small>
+        </div>
+
+        <div class="form-group col-sm">
+            <label for="description">Description</label>
+            <textarea class="form-control form-control-sm" id="description" aria-describedby="description-help">{{ .speciesInfo.Description }}</textarea>
+            <small id="description-help" class="form-text text-muted">What players see when looking at this species.</small>
+        </div>
+
+        <div class="form-group col-sm">
+            <label for="type">Size</label>
+            <select class="form-control form-control-sm" name="type" id="type" aria-describedby="size-help"  rows="10">
+                <option value="small" {{ if eq .speciesInfo.Size "small" }}SELECTED{{end}}>small</option>
+                <option value="medium" {{ if eq .speciesInfo.Size "medium" }}SELECTED{{end}}>medium</option>
+                <option value="large" {{ if eq .speciesInfo.Size "large" }}SELECTED{{end}}>large</option>
+            </select>
+            <small id="size-help" class="form-text text-muted">Size of this species?</small>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="form-group col-sm">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="true" name="selectable" id="selectable" {{ if .speciesInfo.Selectable }}checked{{end}}>
+                <label class="form-check-label" for="selectable">
+                    Selectable
+                </label>
+            </div>
+        </div>
+
+        <div class="form-group col-sm">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="true" name="tameable" id="tameable" {{ if .speciesInfo.Tameable }}checked{{end}}>
+                <label class="form-check-label" for="tameable">
+                    Can be tamed
+                </label>
+            </div>
+        </div>
+
+        <div class="form-group col-sm">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="true" name="knowsfirstaid" id="knowsfirstaid" {{ if .speciesInfo.KnowsFirstAid }}checked{{end}}>
+                <label class="form-check-label" for="knowsfirstaid">
+                    Knows First Aid
+                </label>
+            </div>
+        </div>
+    </div>
+
+
+    <hr />
+    <h3>Base Stats</h3>
+
+
+    <div class="row">
+
+        <div class="input-group col">
+            <div class="input-group-prepend w-50">
+                <span class="input-group-text w-100" id="stats-strength">Strength</span>
+            </div>
+            <input type="text" name="stats[strength]" class="form-control" value="{{.speciesInfo.Stats.Strength.Base}}">
+        </div>
+
+        <div class="input-group col">
+            <div class="input-group-prepend w-50">
+                <span class="input-group-text w-100" id="stats-speed">Speed</span>
+            </div>
+            <input type="text" name="stats[speed]" class="form-control" value="{{.speciesInfo.Stats.Speed.Base}}">
+        </div>
+
+        <div class="input-group col">
+            <div class="input-group-prepend w-50">
+                <span class="input-group-text w-100" id="stats-smarts">Smarts</span>
+            </div>
+            <input type="text" name="stats[smarts]" class="form-control" value="{{.speciesInfo.Stats.Smarts.Base}}">
+        </div>
+        <div class="input-group col">
+            <div class="input-group-prepend w-50">
+                <span class="input-group-text w-100" id="stats-vitality">Vitality</span>
+            </div>
+            <input type="text" name="stats[vitality]" class="form-control" value="{{.speciesInfo.Stats.Vitality.Base}}">
+        </div>
+
+        <div class="input-group col">
+            <div class="input-group-prepend w-50">
+                <span class="input-group-text w-100" id="stats-mysticism">Mysticism</span>
+            </div>
+            <input type="text" name="stats[mysticism]" class="form-control" value="{{.speciesInfo.Stats.Mysticism.Base}}">
+        </div>
+
+        <div class="input-group col">
+            <div class="input-group-prepend w-50">
+                <span class="input-group-text w-100" id="stats-perception">Perception</span>
+            </div>
+            <input type="text" name="stats[perception]" class="form-control" value="{{.speciesInfo.Stats.Perception.Base}}">
+        </div>
+
+    </div>
+
+    <hr />
+    <h3>Combat</h3>
+
+    <div class="row">
+        <div class="form-group col-sm">
+            <label for="unarmedname">Unarmed Name</label>
+            <input type="text" class="form-control form-control-sm" id="unarmedname" aria-describedby="unarmedname-help" value="{{ .speciesInfo.UnarmedName }}">
+            <small id="unarmedname-help" class="form-text text-muted">"MobX attacks PlayerY with their *THIS*"</small>
+        </div>
+
+        <div class="form-group col-sm">
+            <label for="damage">Unarmed Damage</label>
+            <input type="text" class="form-control form-control-sm" id="damage" aria-describedby="damage-help" value="{{ .speciesInfo.Damage.DiceRoll }}">
+            <small id="damage-help" class="form-text text-muted">Damage done when unarmed</small>
+        </div>
+
+        <div class="form-group col-sm">
+            <label for="angrycommands">Angry Commands</label>
+            <textarea class="form-control form-control-sm" id="angrycommands" aria-describedby="angrycommands-help">{{ join .speciesInfo.AngryCommands "\r\n" }}</textarea>
+            <small id="angrycommands-help" class="form-text text-muted">One of these are executed at random when the mob enters combat.</small>
+        </div>
+    </div>
+
+
+    <hr />
+    <h3>Natural Buffs This Species Has</h3>
+
+    <div class="form-group row form-check container-fluid">
+        {{ $buffIds := .speciesInfo.BuffIds }}
+        {{range $i, $buffSpec := .buffSpecs}}
+            <label class="form-check-label col-md-2" for="worn-buff-{{$buffSpec.BuffId}}" title="{{ $buffSpec.Description }}"><input
+            class="form-check-input"
+            type="checkbox"
+            name="buffids[]"
+            id="species-buff-{{$buffSpec.BuffId}}"
+            value="{{ $buffSpec.BuffId }}"
+            {{range $j, $buffId := $buffIds}}{{if eq $buffId $buffSpec.BuffId}}CHECKED{{end}}{{end}}>
+            {{ $buffSpec.BuffId }}. {{ $buffSpec.Name }}</label>
+        {{end}}
+    </div>
+
+
+    <hr />
+    <h3>Gear Slots Disabled</h3>
+
+    <div class="form-group row form-check container-fluid">
+        {{ $disabledSlots := .speciesInfo.DisabledSlots }}
+        {{range $i, $slotName := .allSlotTypes}}
+            <label class="form-check-label col-md-2" for="disabled-slot-{{$slotName}}" title="{{ $slotName }}"><input
+            class="form-check-input"
+            type="checkbox"
+            name="disabledslots[]"
+            id="disabled-slot-{{$slotName}}"
+            value="{{ $slotName }}"
+            {{range $j, $disSlotName := $disabledSlots}}{{if eq $disSlotName $slotName}}CHECKED{{end}}{{end}}>
+            {{ $slotName }}</label>
+        {{end}}
+    </div>
+
+
+    <hr />
+    <h3>Miscellaneous</h3>
+
+
+    <div class="row">
+        <div class="form-group col-sm">
+            <label for="defaultalignment">Default Alignment</label>
+            <input type="text" class="form-control form-control-sm" id="unarmedname" aria-describedby="defaultalignment-help" value="{{ .speciesInfo.DefaultAlignment }}">
+            <small id="defaultalignment-help" class="form-text text-muted">-100(evil) to 100(good)</small>
+        </div>
+
+        <div class="form-group col-sm">
+            <label for="tnlscale">Experience Scale</label>
+            <input type="text" class="form-control form-control-sm" id="tnlscale" aria-describedby="tnlscale-help" value="{{ .speciesInfo.TNLScale }}">
+            <small id="tnlscale-help" class="form-text text-muted">Scale applied to each level requirement (1.0 = 100%)</small>
+        </div>
+    </div>
+
+    <!-- <hr />
+    <button type="submit" class="btn btn-primary">Submit</button> -->
+</form>

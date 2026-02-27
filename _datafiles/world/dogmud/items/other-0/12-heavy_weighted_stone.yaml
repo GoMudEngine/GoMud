@@ -1,0 +1,11 @@
+itemid: 12
+name: heavy weighted stone
+namesimple: stone
+description: A large training stone. Carrying a full sack of these will severely
+  test your combat ability while heavily encumbered.
+type: object
+subtype: mundane
+weight: 15.0  # 15 lbs - heavy encumbrance testing
+uses: 0
+value: 0
+component_tag: stone

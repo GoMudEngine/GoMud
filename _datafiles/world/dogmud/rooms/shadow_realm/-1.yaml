@@ -1,0 +1,22 @@
+roomid: -1
+zone: Shadow Realm
+title: The Void
+description: As your senses attune to the stillness around, you find yourself engulfed
+  in an impenetrable void, a realm where darkness reigns supreme. The abyss seems
+  to stretch infinitely in all directions, and you feel a chilling isolation seeping
+  into your very bones. Despite the oppressive blackness, there's an almost palpable
+  density to the void, as if the shadows themselves are a thick, suffocating shroud.
+  There's an eerie silence that pervades, broken only by the faint, distant echo of
+  your own breath that seems to bounce off the unseen boundaries of this desolate
+  expanse. The ground beneath is neither cold nor warm to the touch, and it's unsettlingly
+  intangible, as though you are suspended in a timeless, spaceless vacuum. Yet amidst
+  the disconcerting calm, you sense an ancient, eerie awareness in the void, a watchful
+  consciousness lurking within the velvety darkness. With each passing moment, the
+  boundary between yourself and the infinite abyss seems to blur, leaving you with
+  a haunting sensation of becoming one with the void.
+exits:
+  drift:
+    roomid: -1
+idlemessages:
+- Type <ansi fg="command">look</ansi> to look around.
+- Type <ansi fg="command">help</ansi> to see help topics.

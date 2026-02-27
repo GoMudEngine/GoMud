@@ -1,0 +1,17 @@
+mobid: 9002
+zone: test
+hostile: false
+activitylevel: 80
+aiprofile: "grappler"
+specialmovechance: 70
+movepreferences:
+  grapple: 70
+  submit: 30
+statpool: 50
+combatcommands:
+  - "say Testing grappler AI!"
+character:
+  name: ai_test_grappler
+  description: "A combat training dummy configured with grappler AI behavior."
+  speciesid: 1
+  level: 10

@@ -1,0 +1,28 @@
+roomid: 480
+zone: Thornwall City
+title: Tailor's Workshop
+description: >
+  A tidy workshop occupies the ground floor of a narrow merchant house just
+  off the market square. A heavy loom fills most of the back wall, flanked
+  by shelves stacked with bolts of cloth and rolls of tanned hide. A cutting
+  table stands in the center of the room, its surface scored with thousands
+  of knife marks. The smell of sizing paste and fresh dye hangs in the air.
+mapsymbol: L
+maplegend: Loom
+biome: city
+station: loom
+exits:
+  south:
+    roomid: 466
+  east:
+    roomid: 482
+items:
+  - itemid: 40012
+  - itemid: 40012
+  - itemid: 40012
+  - itemid: 40013
+  - itemid: 40013
+idlemessages:
+- The rhythmic thump of the loom echoes off the stone walls.
+- A measuring cord dangles from a hook, swaying in the draft.
+- Scraps of cloth litter the floor around the cutting table.

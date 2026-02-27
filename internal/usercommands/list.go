@@ -12,7 +12,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/pets"
-	"github.com/GoMudEngine/GoMud/internal/races"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/term"
@@ -172,7 +172,7 @@ func List(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				if mobInfo == nil {
 					continue
 				}
-				raceInfo := races.GetRace(mobInfo.Character.RaceId)
+				raceInfo := species.GetSpecies(mobInfo.Character.SpeciesId)
 				if raceInfo == nil {
 					continue
 				}
@@ -184,7 +184,7 @@ func List(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 				price := stockMerc.Price
 				if price == 0 {
-					price = 250 * mobInfo.Character.Level
+					price = 250
 				} else if price < 0 {
 					price = 0
 				}
@@ -192,7 +192,7 @@ func List(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				entryRow := []string{
 					qtyStr,
 					`<ansi fg="mobname">` + mobInfo.Character.Name + `</ansi>`,
-					strconv.Itoa(mobInfo.Character.Level),
+					`-`,
 					raceInfo.Name,
 				}
 
@@ -533,7 +533,7 @@ func List(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				if mobInfo == nil {
 					continue
 				}
-				raceInfo := races.GetRace(mobInfo.Character.RaceId)
+				raceInfo := species.GetSpecies(mobInfo.Character.SpeciesId)
 				if raceInfo == nil {
 					continue
 				}
@@ -545,7 +545,7 @@ func List(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 				price := stockMerc.Price
 				if price == 0 {
-					price = 250 * mobInfo.Character.Level
+					price = 250
 				} else if price < 0 {
 					price = 0
 				}
@@ -553,7 +553,7 @@ func List(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				entryRow := []string{
 					qtyStr,
 					`<ansi fg="mobname">` + mobInfo.Character.Name + `</ansi>`,
-					strconv.Itoa(mobInfo.Character.Level),
+					`-`,
 					raceInfo.Name,
 				}
 

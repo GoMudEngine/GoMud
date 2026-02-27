@@ -1,0 +1,47 @@
+roomid: 143
+zone: Endless Trashheap
+title: The wasteland
+description: The Endless Trashheap stretches to the horizon, a bizarre landscape of
+  discarded wealth where mountains of forgotten relics rise like the ruins of a once-glorious
+  civilization. Beneath a canopy of rust and jewel-toned refuse, the ground crunches
+  with the detritus of countless treasures, creating dunes that shift with the Loot
+  Goblin's ceaseless scavenging. A miasma of metal and decay fills the air, and hidden
+  paths weave through valleys strewn with the spoils of a thousand conquests, lying
+  in wait for those brave or foolhardy enough to seek the Goblin's hoarded riches.
+  Here, in this paradoxical realm, the line between the precious and the worthless
+  blurs, and treasure-seekers must tread lightly, lest they become yet another forgotten
+  piece of the Goblin's endless collection.
+exits:
+  east:
+    roomid: 144
+  west:
+    roomid: 142
+idlemessages:
+- the mountain of trash shifts slightly.
+- the trash heal trembles, threatening to collapse at any moment.
+- the clinking of discarded coins resounds softly from a nearby pile.
+- a sudden clatter erupts as a stack of ancient armor tumbles down.
+- a glint of something shiny catches your eye before disappearing under a wave of
+  rubbish.
+- the ground gives a noticeable heave as if something below is stirring.
+- the whisper of tattered silk flags flutters above, barely audible over the groans
+  of shifting debris.
+- a muffled giggle emanates from beneath a helmet two sizes too big for a goblin.
+- you hear the faint jingle of keys somewhere beneath your feet.
+- an old, rusted weapon briefly emerges from the trash, before being yanked back into
+  the depths.
+- a sudden silence falls over the trashheap, as if the very goblins themselves are
+  holding their breath.
+- the treasure beneath your feet seems to pulsate, as if the Trashheap itself has
+  a heartbeat.
+- a pungent smell wafts up as a new vent of steam bursts from the refuse.
+- you catch a glimpse of a goblin darting behind a mound of broken crowns and scepters.
+- the sound of something valuable breaking echoes through the trash valleys.
+- the heap groans ominously, and for a moment the glint of a precious gemstone is
+  visible.
+- a sudden rush of wind carries away sheets of ancient parchment from atop the trash
+  dunes.
+- you hear the sound of liquid spilling and glass shattering somewhere in the distance.
+- a soft, sorrowful tune plays from a damaged music box before being crushed underfoot.
+- the treasure-laden ground seems to inhale deeply, and then a quiet pop as a bauble
+  bursts from the pressure.

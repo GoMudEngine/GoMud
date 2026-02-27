@@ -12,12 +12,14 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/conversations"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/llm"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"gopkg.in/yaml.v2"
 
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
 	"github.com/GoMudEngine/GoMud/internal/items"
-	"github.com/GoMudEngine/GoMud/internal/races"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -55,6 +57,7 @@ type MobId int // Creating a custom type to help prevent confusion over MobId an
 type Mob struct {
 	MobId           MobId
 	Zone            string   `yaml:"zone,omitempty"`
+	StatPool        int      `yaml:"statpool,omitempty"`      // Stat points randomly distributed across stats on spawn
 	ItemDropChance  int      // chance in 100
 	ActivityLevel   int      `yaml:"activitylevel,omitempty"` // 1-100%
 	InstanceId      int      `yaml:"-"`
@@ -64,16 +67,22 @@ type Mob struct {
 	BoredomCounter  uint8    `yaml:"-"` // how many rounds have passed since this mob has seen a player
 	Groups          []string // What group do they identify with? Helps with teamwork
 	Hates           []string `yaml:"hates,omitempty"`        // What NPC groups or races do they hate and probably fight if encountered?
-	IdleCommands    []string `yaml:"idlecommands,omitempty"` // Commands they may do while idle (not in combat)
-	AngryCommands   []string // randomly chosen to queue when they are angry/entering combat.
-	CombatCommands  []string `yaml:"combatcommands,omitempty"` // Commands they may do while in combat
-	Character       characters.Character
+	IdleCommands      []string       `yaml:"idlecommands,omitempty"`   // Commands they may do while idle (not in combat)
+	AngryCommands     []string                                         // randomly chosen to queue when they are angry/entering combat.
+	CombatCommands    []string       `yaml:"combatcommands,omitempty"` // Commands they may do while in combat
+	AIProfile         string         `yaml:"aiprofile,omitempty"`      // Combat AI profile: "default", "aggressive", "defensive", "grappler", "brawler", "tactical" (Stage 8.9)
+	SpecialMoveChance int            `yaml:"specialmovechance,omitempty"` // Base % to use special moves (0-100) (Stage 8.9)
+	MovePreferences   map[string]int `yaml:"movepreferences,omitempty"`   // Custom weights per move (Stage 8.9)
+	Character         characters.Character
 	MaxWander       int      `yaml:"maxwander,omitempty"`       // Max rooms to wander from home
 	WanderCount     int      `yaml:"-"`                         // How many times this mob has wandered
 	PreventIdle     bool     `yaml:"-"`                         // Whether they can't possibly be idle
 	ScriptTag       string   `yaml:"scripttag"`                 // Script for this mob: mobs/frostfang/scripts/{mobId}-{mobname}-{ScriptTag}.js
 	QuestFlags      []string `yaml:"questflags,omitempty,flow"` // What quest flags are set on this mob?
 	BuffIds         []int    `yaml:"buffids,omitempty"`         // Buff Id's this mob always has upon spawn
+	LLMProfile     *llm.LLMProfile `yaml:"llmprofile,omitempty"` // Optional LLM-driven dialogue profile
+	SpawnMutations []string        `yaml:"spawnmutations,omitempty,flow"` // Mutations always granted at spawn (Phase 24.3)
+	MutationChance int             `yaml:"mutationchance,omitempty"`      // % chance to gain 1 random bonus mutation on spawn (Phase 24.3)
 	tempDataStore   map[string]any
 	conversationId  int              // Identifier of conversation currently involved in.
 	Path            PathQueue        `yaml:"-"` // a pre-calculated path the mob is following.
@@ -151,7 +160,7 @@ func MobIdByName(mobName string) MobId {
 	return 0
 }
 
-func NewMobById(mobId MobId, homeRoomId int, forceLevel ...int) *Mob {
+func NewMobById(mobId MobId, homeRoomId int, forceStatPool ...int) *Mob {
 
 	if m, ok := mobs[int(mobId)]; ok {
 
@@ -164,19 +173,31 @@ func NewMobById(mobId MobId, homeRoomId int, forceLevel ...int) *Mob {
 		mob.InstanceId = instanceCounter
 		mob.Character.PlayerDamage = make(map[int]int)
 
-		// Level related stuff
-		if len(forceLevel) > 0 && forceLevel[0] > 0 {
-			mob.Character.Level = forceLevel[0]
+		// Determine stat pool: use override if provided, otherwise use mob template's StatPool
+		statPool := mob.StatPool
+		if len(forceStatPool) > 0 && forceStatPool[0] > 0 {
+			statPool = forceStatPool[0]
 		}
-		mob.Character.StatPoints = mob.Character.Level
-		mob.Character.Level--
-		mob.Character.Experience = mob.Character.XPTNL()
-		mob.Character.Level++
-
-		// Apply training for those stats
-		mob.Character.AutoTrain()
+		// Distribute stat pool randomly across training stats
+		for i := 0; i < statPool; i++ {
+			switch util.Rand(6) {
+			case 0:
+				mob.Character.Stats.Strength.Training++
+			case 1:
+				mob.Character.Stats.Dexterity.Training++
+			case 2:
+				mob.Character.Stats.Perception.Training++
+			case 3:
+				mob.Character.Stats.Vitality.Training++
+			case 4:
+				mob.Character.Stats.Willpower.Training++
+			case 5:
+				mob.Character.Stats.Charisma.Training++
+			}
+		}
+		mob.Character.Validate()
 		mob.Character.Health = mob.Character.HealthMax.Value
-		mob.Character.Mana = mob.Character.ManaMax.Value
+		mob.Character.Conviction = mob.Character.ConvictionMax.Value
 
 		mob.Character.SetPermaBuffs(mob.BuffIds)
 
@@ -186,11 +207,34 @@ func NewMobById(mobId MobId, homeRoomId int, forceLevel ...int) *Mob {
 			mob.Character.Items[idx].Validate()
 		}
 
-		if mob.Character.Alignment == 0 {
-			if raceInfo := races.GetRace(mob.Character.RaceId); raceInfo != nil {
-				if raceInfo.DefaultAlignment != 0 {
-					mob.Character.Alignment = raceInfo.DefaultAlignment
+		// Stage 8.9: Initialize AI defaults
+		if mob.AIProfile == "" {
+			mob.AIProfile = "default"
+		}
+		if mob.SpecialMoveChance == 0 {
+			mob.SpecialMoveChance = 30 // 30% default chance to use special moves
+		}
+
+		// Phase 24.3: Apply spawn mutations
+		if len(mob.SpawnMutations) > 0 {
+			if mob.Character.Mutations == nil {
+				mob.Character.Mutations = make(map[string]int)
+			}
+			for _, mutId := range mob.SpawnMutations {
+				if mutations.GetMutation(mutId) != nil {
+					mob.Character.Mutations[mutId] = 1
 				}
+			}
+		}
+		// Phase 24.3: Roll for random bonus mutation
+		if mob.MutationChance > 0 && util.Rand(100) < mob.MutationChance {
+			if mob.Character.Mutations == nil {
+				mob.Character.Mutations = make(map[string]int)
+			}
+			pool := mutations.GetWeightedPool(mob.Character.Mutations)
+			if len(pool) > 0 {
+				mutId := mutations.RollAcquisition(pool)
+				mob.Character.Mutations[mutId] = 1
 			}
 		}
 
@@ -383,7 +427,7 @@ func (m *Mob) IsTameable() bool {
 	if len(m.ScriptTag) > 0 {
 		return false
 	}
-	if r := races.GetRace(m.Character.RaceId); r != nil {
+	if r := species.GetSpecies(m.Character.SpeciesId); r != nil {
 		if !r.Tameable {
 			return false
 		}
@@ -490,7 +534,7 @@ func (m *Mob) GetSellPrice(item items.Item) int {
 	return int(math.Ceil(float64(value) * priceScale))
 }
 
-func (r *Mob) HatesRace(raceName string) bool {
+func (r *Mob) HatesSpecies(raceName string) bool {
 	raceName = strings.ToLower(raceName)
 	for _, hateGroup := range r.Hates {
 		if hateGroup == raceName {
@@ -500,34 +544,12 @@ func (r *Mob) HatesRace(raceName string) bool {
 	return false
 }
 
-func (r *Mob) HatesAlignment(otherAlignment int8) bool {
-
-	// If either are neutral, no hatred
-	if characters.AlignmentToString(r.Character.Alignment) == `neutral` || characters.AlignmentToString(otherAlignment) == `neutral` {
-		return false
-	}
-
-	// If both on the good side, no hatred
-	if r.Character.Alignment > 0 && otherAlignment > 0 {
-		return false
-	}
-
-	// If both on the evil side, no hatred
-	if r.Character.Alignment < 0 && otherAlignment < 0 {
-		return false
-	}
-
-	delta := int(math.Abs(float64(r.Character.Alignment) - float64(otherAlignment)))
-
-	return delta > characters.AlignmentAggroThreshold
-}
-
 func (r *Mob) HatesMob(m *Mob) bool {
 	if r.MobId == m.MobId {
 		return false // Can't hate exact same as self
 	}
 
-	mRace := races.GetRace(m.Character.RaceId)
+	mRace := species.GetSpecies(m.Character.SpeciesId)
 	raceName := strings.ToLower(mRace.Name)
 	for _, rGroup := range r.Groups {
 		if rGroup == raceName {
@@ -561,7 +583,7 @@ func (m *Mob) GetAngryCommand() string {
 	}
 
 	// default to race based actions
-	r := races.GetRace(m.Character.RaceId)
+	r := species.GetSpecies(m.Character.SpeciesId)
 	actionCt := len(r.AngryCommands)
 	if actionCt > 0 {
 		return r.AngryCommands[util.Rand(actionCt)]

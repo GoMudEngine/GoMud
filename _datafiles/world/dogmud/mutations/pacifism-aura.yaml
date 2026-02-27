@@ -1,0 +1,13 @@
+mutationid: pacifism-aura
+name: Pacifism Aura
+description: You emit a subtle psychic field that dampens hostile intent in those around you. Creatures are less likely to attack you unprovoked, but the aura's influence makes it difficult to summon your own aggression when needed.
+rarity: 7
+visual: There is a strange calm about them, an almost imperceptible aura that makes nearby creatures seem less agitated.
+pros:
+  - type: flag
+    target: active-ability
+    value: 1
+cons:
+  - type: aggro_magnet
+    target: aggro
+    value: -1.0

@@ -1,0 +1,18 @@
+id: spiced-wine
+name: Spiced Wine
+skill: cooking
+skill_minimum: 15
+station: cooking_fire
+time_rounds: 4
+ingredients:
+  - item_tag: wild-vegetables
+    quantity: 1
+  - item_tag: water-flask
+    quantity: 1
+  - item_tag: salt-pouch
+    quantity: 1
+output:
+  item_id: 30025
+  quantity: 1
+success_message: "You mull the herbs and salt into a dark, warming wine. Spiced wine!"
+failure_message: "The mixture ferments wrong and turns to vinegar. The materials are lost."

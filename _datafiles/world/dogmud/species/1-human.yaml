@@ -1,0 +1,31 @@
+speciesid: 1
+name: human
+description: A basic human who gains ordinary stats.
+size: medium
+unarmedname: fists
+selectable: true
+knowsfirstaid: true
+angrycommands:
+  - emote is looking for trouble.
+  - shout it's time to die!
+  - shout oh man, it is on now!
+  - shout i've been waiting for this moment.
+tameable: false
+stats:
+  strength:
+    base: 100
+  dexterity:
+    base: 100
+  perception:
+    base: 100
+  vitality:
+    base: 100
+  willpower:
+    base: 100
+  charisma:
+    base: 100
+damage:
+  basedamage: 2
+  variance: 1
+disabledslots: []
+

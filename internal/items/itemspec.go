@@ -163,6 +163,7 @@ const (
 	Normal   Intensity = "normal"
 	Heavy    Intensity = "heavy"
 	Critical Intensity = "critical"
+	Fumble   Intensity = "fumble"
 
 	// Tokens
 	TokenItemName     TokenName = "{itemname}"
@@ -174,6 +175,12 @@ const (
 	TokenDamage       TokenName = "{damage}"
 	TokenEntranceName TokenName = "{entrancename}"
 	TokenExitName     TokenName = "{exitname}"
+	TokenDefender     TokenName = "{defender}" // Stage 9.3: defensive action messages
+	TokenAttacker     TokenName = "{attacker}" // Stage 9.3: defensive action messages
+	TokenWeapon       TokenName = "{weapon}"   // Stage 9.3: defensive action messages
+	TokenStance       TokenName = "{stance}"   // Stage 9.4: combat stance (aggressive/defensive/balanced/reckless)
+	TokenPosition     TokenName = "{position}" // Stage 9.4: combat position (standing/prone/clinched/grounded)
+	TokenMomentum     TokenName = "{momentum}" // Stage 9.4: combat momentum (offensive/defensive/pressured/in control)
 
 	POVUser  = 0
 	POVOther = 1
@@ -181,11 +188,13 @@ const (
 
 type Damage struct {
 	Attacks     int    `yaml:"attacks,omitempty"` // How many attacks this weapon gets (usually 1)
-	DiceRoll    string // 1d6, etc.
+	DiceRoll    string `yaml:"diceroll,omitempty"` // legacy: 1d6, etc.
 	CritBuffIds []int  `yaml:"critbuffids,omitempty"` // If this damage is a crit, what buffs does it apply?
 	DiceCount   int    `yaml:"dicecount,omitempty"`   // how many dice to roll for this weapons damage
 	SideCount   int    `yaml:"sidecount,omitempty"`   // how many sides per dice roll
 	BonusDamage int    `yaml:"bonusdamage,omitempty"` // flat damage bonus, so for example 1d6+1
+	BaseDamage  int    `yaml:"basedamage,omitempty"`  // distribution mode: mean damage
+	Variance    int    `yaml:"variance,omitempty"`    // distribution mode: standard deviation
 }
 
 type ItemMessage string
@@ -203,7 +212,14 @@ type ItemSpec struct {
 	BuffIds         []int       `yaml:"buffids,omitempty"`         // What buffs it can apply (if used)
 	WornBuffIds     []int       `yaml:"wornbuffids,omitempty"`     // BuffId's that are applied while worn, and expired when removed.
 	DamageReduction int         `yaml:"damagereduction,omitempty"` // % of damage it reduces when it blocks attacks
+	ParryRating     int         `yaml:"parryrating,omitempty"`     // Weapon parry bonus (Stage 7.1)
+	BlockRating     int         `yaml:"blockrating,omitempty"`     // Shield block bonus (Stage 7.1)
 	WaitRounds      int         `yaml:"waitrounds,omitempty"`      // How many extra rounds each combat requires
+	StaminaCost     int         `yaml:"staminacost,omitempty"`     // Stamina cost per attack with this weapon
+	SpeedMultiplier float64     `yaml:"speedmultiplier,omitempty"` // Attack speed modifier (1.0 = unarmed baseline, <1.0 slower, >1.0 faster)
+	Weight          float64     `yaml:"weight,omitempty"`          // Weight in pounds (affects encumbrance)
+	GrappleModifier float64     `yaml:"grapplemodifier,omitempty"` // Grapple bonus/penalty (Stage 8.2)
+	EscapeModifier  float64     `yaml:"escapemodifier,omitempty"`  // Armor escape modifier for Grounded position (Stage 8.7)
 	Hands           WeaponHands `yaml:"hands"`                     // How many hands it takes to wield
 	Name            string
 	DisplayName     string `yaml:"displayname,omitempty"` // Name that is typically displayed to the user
@@ -218,6 +234,7 @@ type ItemSpec struct {
 	BreakChance     uint8             `yaml:"breakchance,omitempty"` // Chance in 100 that the item will break when used, or when the character is hit with it equipped, or if it is in the characters inventory during an explosion, etc.
 	Cursed          bool              `yaml:"cursed,omitempty"`      // Can't be removed once equipped
 	KeyLockId       string            `yaml:"keylockid,omitempty"`   // Example: `778-north` - If it's a key, what lock does it open? roomid-exitname etc.
+	ComponentTag    string            `yaml:"component_tag,omitempty"` // Spell component tag (e.g. "stone" for throw-stone)
 }
 
 func (i Element) String() string {
@@ -233,6 +250,9 @@ func (i ItemSubType) String() string {
 }
 
 func (d *Damage) String() string {
+	if d.BaseDamage > 0 {
+		return fmt.Sprintf("~%d ±%d", d.BaseDamage, d.Variance)
+	}
 	if d.DiceRoll == "" {
 		return "N/A"
 	}
@@ -253,6 +273,43 @@ func (d *Damage) InitDiceRoll(dRoll string) {
 	}
 
 	d.Attacks, d.DiceCount, d.SideCount, d.BonusDamage, _ = util.ParseDiceRoll(dRoll)
+}
+
+// GetAttackStaminaCost returns the stamina cost for attacking with this weapon.
+// Returns a default based on weapon type if not explicitly set.
+func (is *ItemSpec) GetAttackStaminaCost() int {
+	if is.StaminaCost > 0 {
+		return is.StaminaCost
+	}
+
+	// Default costs based on weapon type if not specified
+	// Unarmed (no weapon) will be handled separately
+	switch is.Type {
+	case Weapon:
+		// Default to medium weapon cost
+		return 8
+	default:
+		return 0 // Non-weapons don't cost stamina
+	}
+}
+
+// GetSpeedMultiplier returns the attack speed modifier for this weapon.
+// 1.0 = unarmed baseline, <1.0 = slower, >1.0 = faster
+// Most weapons should be <1.0 (fewer attacks than unarmed)
+func (is ItemSpec) GetSpeedMultiplier() float64 {
+	if is.SpeedMultiplier > 0 {
+		return is.SpeedMultiplier
+	}
+
+	// Default to 1.0 (unarmed baseline)
+	// Most weapons will explicitly set values <1.0
+	return 1.0
+}
+
+// GetWeight returns the weight of this item in pounds.
+// Returns 0 for weightless items or if not specified.
+func (is ItemSpec) GetWeight() float64 {
+	return is.Weight
 }
 
 func FindItem(nameOrId string) int {
@@ -338,8 +395,12 @@ func (i *ItemSpec) AutoCalculateValue() {
 	val := 5 // base value of 5
 
 	// Weapon based damage valuation
-	val += (i.Damage.DiceCount * i.Damage.DiceCount) * (i.Damage.SideCount * i.Damage.SideCount * 2)
-	val += i.Damage.BonusDamage * 25
+	if i.Damage.BaseDamage > 0 {
+		val += i.Damage.BaseDamage * i.Damage.BaseDamage * 2
+	} else {
+		val += (i.Damage.DiceCount * i.Damage.DiceCount) * (i.Damage.SideCount * i.Damage.SideCount * 2)
+		val += i.Damage.BonusDamage * 25
+	}
 	// Armor based damage valuation
 	val += (i.DamageReduction * i.DamageReduction) * 17
 
@@ -377,7 +438,9 @@ func (i *ItemSpec) AutoCalculateValue() {
 
 func (i *ItemSpec) ItemFolder(baseonly ...bool) string {
 	folderName := ``
-	if i.ItemId >= 30000 {
+	if i.ItemId >= 40000 {
+		folderName = `materials-40000` // Stage 13.1: crafting material items
+	} else if i.ItemId >= 30000 {
 		folderName = `consumables-30000`
 	} else if i.ItemId >= 20000 {
 
@@ -416,8 +479,10 @@ func (i *ItemSpec) Validate() error {
 		i.DisplayName = util.ConvertColorShortTags(i.DisplayName)
 	}
 
-	i.Damage.InitDiceRoll(i.Damage.DiceRoll)
-	i.Damage.FormatDiceRoll()
+	if i.Damage.BaseDamage == 0 {
+		i.Damage.InitDiceRoll(i.Damage.DiceRoll)
+		i.Damage.FormatDiceRoll()
+	}
 
 	if i.Value < 1 {
 		i.AutoCalculateValue()
@@ -484,6 +549,13 @@ func LoadDataFiles() {
 
 	attackMessages = tmpAttackMessages
 
-	mudlog.Info("itemspec.LoadDataFiles()", "itemLoadedCount", len(items), "attackMessageCount", len(attackMessages), "Time Taken", time.Since(start))
+	tmpDefenseMessages, err := fileloader.LoadAllFlatFiles[DefenseType, *DefenseMessageGroup](string(configs.GetFilePathsConfig().DataFiles) + `/defense-messages`)
+	if err != nil {
+		panic(err)
+	}
+
+	defenseMessages = tmpDefenseMessages
+
+	mudlog.Info("itemspec.LoadDataFiles()", "itemLoadedCount", len(items), "attackMessageCount", len(attackMessages), "defenseMessageCount", len(defenseMessages), "Time Taken", time.Since(start))
 
 }

@@ -1,0 +1,13 @@
+mutationid: blinding-spit
+name: Blinding Spit
+description: Glands beneath your tongue produce a caustic, irritating fluid that you can project with startling accuracy. The constant taste of bile makes social interactions unpleasant.
+rarity: 6
+visual: A faint chemical smell lingers around them, and their lips glisten with an oily sheen.
+pros:
+  - type: flag
+    target: active-ability
+    value: 1
+cons:
+  - type: stat_flat
+    target: charisma
+    value: -20

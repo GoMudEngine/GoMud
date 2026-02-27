@@ -1,9 +1,9 @@
 package usercommands
 
 import (
-	"fmt"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/spells"
@@ -13,7 +13,7 @@ import (
 
 func Spells(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
-	headers := []string{`SpellId`, `Name`, `Description`, `Target`, `MPs`, `Wait`, `Casts`, `% Chance`}
+	headers := []string{`SpellId`, `Name`, `Target`, `Cost`, `Cast time`, `Familiarity`, `Reliability`}
 
 	helpfulRowFormatting := [][]string{}
 	helpfulRows := [][]string{}
@@ -45,7 +45,6 @@ func Spells(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			formatRow := []string{
 				`<ansi fg="yellow-bold">%s</ansi>`,
 				`<ansi fg="white-bold">%s</ansi>`,
-				`<ansi fg="yellow">%s</ansi>`,
 				`<ansi fg="` + targetColor + `">%s</ansi>`,
 				`<ansi fg="magenta">%s</ansi>`,
 				`<ansi fg="white">%s</ansi>`,
@@ -53,14 +52,19 @@ func Spells(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				`<ansi fg="red">%s</ansi>`,
 			}
 
+			// Format cost display - show qualitative conviction cost and optionally health
+			costStr := combat.GetConvictionCostDescription(sp.Cost)
+			if sp.HealthCost > 0 {
+				costStr += ", drains health"
+			}
+
 			row := []string{sp.SpellId,
 				sp.Name,
-				sp.Description,
 				target,
-				fmt.Sprintf(`%d`, sp.Cost),
-				fmt.Sprintf(`%d rnds`, sp.WaitRounds),
-				fmt.Sprintf(`%d`, casts),
-				fmt.Sprintf(`%d%%`, user.Character.GetBaseCastSuccessChance(sp.SpellId)),
+				costStr,
+				combat.GetWaitRoundsDescription(sp.WaitRounds),
+				combat.GetCastCountDescription(casts),
+				combat.GetSuccessChanceDescription(user.Character.GetBaseCastSuccessChance(sp.SpellId)),
 			}
 
 			if helpOrHarm == `helpful` {
@@ -86,12 +90,6 @@ func Spells(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	}
 
 	if len(harmfulRows) > 0 {
-
-		if len(rows) > 0 {
-			rowFormatting = append(rowFormatting, []string{`%s`, `%s`, `%s`, `%s`, `%s`, `%s`, `%s`, `%s`})
-			rows = append(rows, []string{`-`, ``, ``, ``, ``, ``, ``, ``})
-		}
-
 		for i := 0; i < len(harmfulRows); i++ {
 			rowFormatting = append(rowFormatting, harmfulRowFormatting[i])
 			rows = append(rows, harmfulRows[i])
@@ -99,12 +97,6 @@ func Spells(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	}
 
 	if len(neutralRows) > 0 {
-
-		if len(rows) > 0 {
-			rowFormatting = append(rowFormatting, []string{`%s`, `%s`, `%s`, `%s`, `%s`, `%s`, `%s`, `%s`})
-			rows = append(rows, []string{`-`, ``, ``, ``, ``, ``, ``, ``})
-		}
-
 		for i := 0; i < len(neutralRows); i++ {
 			rowFormatting = append(rowFormatting, neutralRowFormatting[i])
 			rows = append(rows, neutralRows[i])

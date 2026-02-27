@@ -1,0 +1,81 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">mutations</ansi>
+
+The Chrysalis — a plague that swept across Gaius — does not merely sicken. Over time, it
+reshapes those it infects. Through sustained combat, your body is pushed beyond its limits
+and the Chrysalis seizes the opportunity to rewrite you.
+
+<ansi fg="yellow">━━━ Acquiring Mutations ━━━</ansi>
+
+Mutations emerge on their own — you cannot choose or train for them. Each combat round you
+spend in active battle builds internal pressure. When that pressure reaches a threshold, the
+Chrysalis forces a change. You will see a message:
+
+  <ansi fg="magenta">Something stirs beneath your skin. A mutation emerges: <ansi fg="yellow">Tough Skin</ansi>.</ansi>
+
+Each subsequent mutation requires significantly more combat to trigger. Rarer mutations
+contribute more weight, making the next one even harder to earn. You can carry up to five
+mutations at once.
+
+<ansi fg="yellow">━━━ Pros and Cons ━━━</ansi>
+
+Every mutation has both benefits and drawbacks. The Chrysalis does not improve you cleanly —
+it trades one capability for another. Some mutations conflict with each other and cannot
+coexist in the same body.
+
+<ansi fg="yellow">━━━ Active Abilities ━━━</ansi>
+
+Some mutations grant active abilities you can use in combat. These appear as commands you
+can type during a fight. Active abilities share the special-move cooldown slot.
+
+<ansi fg="yellow">━━━ Commands ━━━</ansi>
+
+  <ansi fg="command">mutations</ansi>           List your current mutations with descriptions.
+  <ansi fg="command">status</ansi>              Shows active mutations (IDs and level) in your stat panel.
+
+<ansi fg="yellow">━━━ Known Mutations ━━━</ansi>
+
+<ansi fg="white-bold">  Passive Mutations:</ansi>
+  <ansi fg="yellow">Fast Reflexes</ansi>        Quicker reactions; slightly reduced raw strength.
+  <ansi fg="yellow">Tough Skin</ansi>           Natural physical armor; slightly reduced agility.
+  <ansi fg="yellow">Dense Muscles</ansi>        Exceptional strength; stamina recovers more slowly.
+  <ansi fg="yellow">Clawed Hands</ansi>         Deadly unarmed attacks; unsettling to others.
+  <ansi fg="yellow">Keen Eyes</ansi>            Sharpened perception; coordination suffers.
+  <ansi fg="yellow">Iron Constitution</ansi>    Greater maximum health; stamina recovers more slowly.
+  <ansi fg="yellow">Hollow Bones</ansi>         Freed muscle potential; more fragile under punishment.
+  <ansi fg="yellow">Adrenaline Surge</ansi>     Devastating power near death; stamina drains faster.
+  <ansi fg="yellow">Magical Resistance</ansi>   Incoming spells diminished; casting costs more conviction.
+  <ansi fg="yellow">Pheromone Glands</ansi>     Compelling presence; predatory beasts fixate on you.
+  <ansi fg="yellow">Thick Hide</ansi>           Heavy natural armor; slower movement.
+  <ansi fg="yellow">Heightened Senses</ansi>    Keen awareness; overwhelmed by loud sounds.
+  <ansi fg="yellow">Rapid Metabolism</ansi>     Faster stamina recovery; burns through health faster.
+  <ansi fg="yellow">Cold-Blooded</ansi>         Natural stealth; sluggish in dark places.
+  <ansi fg="yellow">Elongated Limbs</ansi>      Greater reach and damage; reduced coordination.
+  <ansi fg="yellow">Psychic Resistance</ansi>   Mental resilience; less aware of surroundings.
+  <ansi fg="yellow">Regenerative Tissue</ansi>  Passive health regeneration; slightly reduced strength.
+  <ansi fg="yellow">Night Vision</ansi>         See in darkness; sensitive to bright light.
+  <ansi fg="yellow">Infrared Vision</ansi>      Detect hidden beings; conventional sight weakened.
+  <ansi fg="yellow">Bioluminescence</ansi>      Emit natural light; impossible to hide.
+  <ansi fg="yellow">Photosynthetic Skin</ansi>  Regenerate in light; weaker in darkness.
+  <ansi fg="yellow">Sixth Sense</ansi>          Detect danger; easily startled.
+  <ansi fg="yellow">Tremorsense</ansi>          Sense movement through ground; reduced hearing.
+  <ansi fg="yellow">Skilled</ansi>              Learn skills faster; stats advance more slowly.
+  <ansi fg="yellow">Talented</ansi>             Stats advance faster; skills progress more slowly.
+  <ansi fg="yellow">Hasted</ansi>               Faster attacks; takes more damage.
+  <ansi fg="yellow">Large</ansi>                More health and damage; easier to hit.
+  <ansi fg="yellow">Small</ansi>                Harder to hit; less damage and health.
+  <ansi fg="yellow">Camo Skin</ansi>            Natural camouflage; weakened conviction.
+  <ansi fg="yellow">Pacifism Aura</ansi>        Calming presence deters aggression; weakens your attacks.
+  <ansi fg="yellow">Extra Arms</ansi>           Wield additional weapons; reduced coordination.
+  <ansi fg="yellow">Extra Legs</ansi>           Faster movement and better stability; larger target.
+
+<ansi fg="white-bold">  Active Ability Mutations:</ansi>
+  <ansi fg="yellow">Blinding Flash</ansi>       Emit a burst of light to blind nearby foes.
+  <ansi fg="yellow">Toxic Bite</ansi>           Deliver a venomous bite that poisons the target.
+  <ansi fg="yellow">Sonic Shout</ansi>          Unleash a deafening shout that stuns nearby enemies.
+  <ansi fg="yellow">Healing Gel</ansi>          Secrete regenerative gel to mend your wounds.
+  <ansi fg="yellow">Blinding Spit</ansi>        Spit caustic fluid to blind a single target.
+
+<ansi fg="yellow">See Also:</ansi>
+
+  <ansi fg="command">help status</ansi>, <ansi fg="command">help combat</ansi>
+

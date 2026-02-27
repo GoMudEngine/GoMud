@@ -1,0 +1,9 @@
+itemid: 40004
+name: healer's root
+namesimple: root
+description: A gnarled root with a faint herbal smell and a faintly bitter taste.
+type: object
+subtype: mundane
+component_tag: healers-root
+weight: 0.1
+value: 1

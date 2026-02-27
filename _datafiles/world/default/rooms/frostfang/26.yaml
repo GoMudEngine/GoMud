@@ -27,13 +27,13 @@ nouns:
 spawninfo:
 - mobid: 1
   message: A rat scurries out from a dark hole and wiggles its whiskers.
-  level: 1
+  statpool: 1
   respawnrate: 1 real minutes
 - mobid: 12
   message: A massive rat saunters out from the shadows.
-  level: 4
+  statpool: 4
   respawnrate: 2 real minutes
 - mobid: 1
   message: A rat falls from the sky.
-  level: 1
+  statpool: 1
   respawnrate: 1 real minutes

@@ -1,0 +1,37 @@
+mobid: 60
+zone: Test Arena
+itemdropchance: 0
+hostile: true
+maxwander: 0
+activitylevel: 70
+statpool: 0
+aiprofile: "brawler"
+specialmovechance: 55
+character:
+  name: sparring partner
+  description: A seasoned fighter wearing light training gear. They move with practiced
+    ease, weapon held in a balanced guard stance. Their eyes track your movements
+    carefully, ready to exploit any opening.
+  speciesid: 1
+  stats:
+    strength:
+      training: 20
+    dexterity:
+      training: 15
+    perception:
+      training: 10
+    vitality:
+      training: 15
+    willpower:
+      training: 10
+    charisma:
+      training: 5
+  skills:
+    weapon-combat: 40
+    unarmed-combat: 40
+    ranged-combat: 10
+  equipment:
+    weapon:
+      itemid: 10002
+    body:
+      itemid: 20008

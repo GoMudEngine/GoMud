@@ -1,0 +1,16 @@
+itemid: 10006
+name: iron longsword
+namesimple: longsword
+description: A sturdy iron longsword with a leather-wrapped hilt. The blade shows
+  signs of use but remains sharp and serviceable.
+type: weapon
+hands: 1
+subtype: slashing
+weight: 8.0  # Medium sword
+speedmultiplier: 0.7  # Standard one-handed sword speed
+staminacost: 8  # Medium weapon cost
+grapplemodifier: 0.7  # Stage 8.7: Medium sword, slightly harder to grapple with
+damage:
+  basedamage: 6
+  variance: 2
+parryrating: 12

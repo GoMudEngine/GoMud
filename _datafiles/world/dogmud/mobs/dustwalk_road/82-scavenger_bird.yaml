@@ -1,0 +1,40 @@
+mobid: 82
+zone: Dustwalk Road
+statpool: 5
+itemdropchance: 5
+hostile: true
+maxwander: 3
+groups:
+  - animal
+  - avian
+idlecommands:
+  - 'emote tilts its head and fixes you with one beady eye'
+  - 'emote ruffles its ragged feathers and resettles on its perch'
+  - 'wander'
+  - ''
+  - ''
+combatcommands:
+  - 'emote dives with talons extended, screeching'
+  - ''
+  - 'emote beats its wings in your face, trying to blind you'
+  - ''
+activitylevel: 30
+character:
+  name: scavenger bird
+  description: |
+    A large, ugly bird with a wingspan wider than a man's arms. Its
+    feathers are a mottled brown-black, patchy where old injuries have left bare
+    skin. The hooked beak is built for tearing, not cracking, and the talons are
+    long and yellowed. It watches the road with the patient, calculating stare of
+    something that has learned to associate travellers with easy meals -- dropped
+    food, abandoned packs, or occasionally, something that stops moving.
+  speciesid: 22
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 15
+    strength:
+      training: -10
+    vitality:
+      training: -10

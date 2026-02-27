@@ -4,15 +4,13 @@ import (
 	"errors"
 	"fmt"
 	"sort"
-	"strconv"
-
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
-	"github.com/GoMudEngine/GoMud/internal/races"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/templates"
@@ -51,9 +49,9 @@ func Character(rest string, user *users.UserRecord, room *rooms.Room, flags even
 		return true, errors.New(`alt characters disabled`)
 	}
 
-	if user.Character.Level < 5 && len(nameToAlt) < 1 {
-		user.SendText(`<ansi fg="203">You must reach level 5 with this character to access character alts.</ansi>`)
-		return true, errors.New(`level 5 minimum`)
+	if user.Character.GetTotalSkillRanks() < 20 && len(nameToAlt) < 1 {
+		user.SendText(`<ansi fg="203">You must gain at least 20 total skill ranks to access character alts.</ansi>`)
+		return true, errors.New(`20 skill ranks minimum`)
 	}
 
 	// Form a set of all mobs currently charmed (and possibly hired)
@@ -385,9 +383,9 @@ func Character(rest string, user *users.UserRecord, room *rooms.Room, flags even
 
 			gearValue := char.GetGearValue()
 
-			charValue := gearValue + (250 * char.Level)
+			charValue := gearValue + (250 * char.GetTotalSkillRanks())
 
-			mudlog.Debug(`Hire Alt`, `UserId`, user.UserId, `alt-name`, char.Name, `gear-value`, gearValue, `level`, char.Level, `total`, charValue)
+			mudlog.Debug(`Hire Alt`, `UserId`, user.UserId, `alt-name`, char.Name, `gear-value`, gearValue, `skill-ranks`, char.GetTotalSkillRanks(), `total`, charValue)
 
 			question := cmdPrompt.Ask(fmt.Sprintf(`<ansi fg="51">The price to hire <ansi fg="username">%s</ansi> is <ansi fg="gold">%d gold</ansi>. Are you sure?</ansi>`, char.Name, charValue), []string{`yes`, `no`}, `no`)
 			if !question.Done {
@@ -406,7 +404,7 @@ func Character(rest string, user *users.UserRecord, room *rooms.Room, flags even
 			}
 
 			// Prevent follower overage
-			maxCharmed := user.Character.GetSkillLevel(skills.Tame) + 1
+			maxCharmed := user.Character.GetMaxCharmedCreatures()
 			if len(hiredOutChars) >= maxCharmed {
 				user.SendText(fmt.Sprintf(`You can only have %d mobs following you at a time.`, maxCharmed))
 				user.ClearPrompt()
@@ -455,15 +453,15 @@ func Character(rest string, user *users.UserRecord, room *rooms.Room, flags even
 
 func getAltTable(nameToAlt map[string]characters.Character, charmedChars map[string]characters.Character, viewingUserId int) string {
 
-	headers := []string{"Name", "Level", "Race", "Profession", "Alignment", "Status"}
+	headers := []string{"Name", "Species", "Profession", "Status"}
 	rows := [][]string{}
 
 	for _, char := range nameToAlt {
 
 		allRanks := char.GetAllSkillRanks()
 		raceName := `Unknown`
-		if raceInfo := races.GetRace(char.RaceId); raceInfo != nil {
-			raceName = raceInfo.Name
+		if speciesInfo := species.GetSpecies(char.SpeciesId); speciesInfo != nil {
+			raceName = speciesInfo.Name
 		}
 
 		mobBusy := ``
@@ -475,19 +473,15 @@ func getAltTable(nameToAlt map[string]characters.Character, charmedChars map[str
 
 		rows = append(rows, []string{
 			fmt.Sprintf(`<ansi fg="username">%s</ansi>`, char.Name),
-			strconv.Itoa(char.Level),
 			raceName,
 			skills.GetProfession(allRanks),
-			fmt.Sprintf(`<ansi fg="%s">%s</ansi>`, char.AlignmentName(), char.AlignmentName()),
 			mobBusy,
 		})
 
 	}
 
 	sort.Slice(rows, func(i, j int) bool {
-		num1, _ := strconv.Atoi(rows[i][1])
-		num2, _ := strconv.Atoi(rows[j][1])
-		return num1 < num2
+		return rows[i][0] < rows[j][0]
 	})
 
 	altTableData := templates.GetTable(fmt.Sprintf(`Your alt characters (%d/%d)`, len(nameToAlt), configs.GetGamePlayConfig().MaxAltCharacters), headers, rows)

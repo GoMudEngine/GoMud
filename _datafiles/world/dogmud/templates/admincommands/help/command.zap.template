@@ -1,0 +1,4 @@
+The <ansi fg="command">zap</ansi> command can be used in the following ways:
+
+<ansi fg="command">zap</ansi> - Brings your currently aggrod mob to 1hp/1mp.
+<ansi fg="command">zap [target]</ansi> - Brings the target to 1hp/1mp.

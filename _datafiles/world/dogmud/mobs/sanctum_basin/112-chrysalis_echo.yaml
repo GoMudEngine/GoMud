@@ -1,0 +1,27 @@
+mobid: 112
+zone: Sanctum Basin
+statpool: 1
+hostile: false
+maxwander: 0
+idlecommands:
+  - 'emote flickers faintly, its outline shifting like heat distortion'
+  - ''
+  - ''
+activitylevel: 5
+character:
+  name: Chrysalis Echo
+  description: 'A translucent, vaguely humanoid shape that hovers just above the
+    ground. It pulses with a faint, pearlescent light -- the residual energy of
+    a Chrysalis Awakening that never fully resolved. It does not speak or react
+    to voices, but it shimmers when struck by channeled force. Elder Saris keeps
+    it here as a harmless practice target for new students.'
+  speciesid: 19
+  level: 1
+  gold: 0
+  stats:
+    vitality:
+      training: -5
+    strength:
+      training: -5
+    dexterity:
+      training: -5

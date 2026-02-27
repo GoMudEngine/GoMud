@@ -1,0 +1,23 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">look</ansi>
+
+The <ansi fg="command">look</ansi> command looks at things in the room around 
+you.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">look</ansi>
+  This looks at the room you are in and tells you about it.
+
+  <ansi fg="command">look north</ansi>
+  This tries to peer into the room to the north exit.
+
+  <ansi fg="command">look dave</ansi>
+  This looks at the user <ansi fg="username">dave</ansi> and tells you what you
+  can see about him.
+
+  <ansi fg="command">look sword#2</ansi>
+  This looks at the second <ansi fg="item">sword</ansi> in your backpack and gives you a description.
+
+  Sometimes there is text in a room description that warrants a closer look.
+  You can often look at these for more information about them.
+

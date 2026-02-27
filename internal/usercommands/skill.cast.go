@@ -1,300 +1,257 @@
 package usercommands
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
-	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/gametime"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
-/*
-Cast Skill
-Level 1 - You can cast spells
-Level 2 - Become proficient in a spell at 125% rate
-Level 3 - Become proficient in a spell at 175% rate
-Level 4 - Become proficient in a spell at 250% rate
-*/
+// Cast initiates fold-based spellcasting (Stage 11.2).
+// Each round the combat hook adds folds until FoldsNeeded is reached,
+// then Stage 11.4 resolves the actual spell effect.
 func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
-	skillLevel := user.Character.GetSkillLevel(skills.Cast)
+	// 0. Can't cast while bleeding out
+	if user.Character.IsDisabled() {
+		user.SendText(`<ansi fg="red">You can't focus enough to cast while bleeding out.</ansi>`)
+		return true, nil
+	}
 
+	// 1. Spellcasting skill required
+	skillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
 	if skillLevel == 0 {
-		user.SendText("You don't know how to cast spells yet.")
-		return true, errors.New(`you don't know how to cast spells yet`)
-	}
-
-	args := util.SplitButRespectQuotes(strings.ToLower(rest))
-
-	if len(args) < 1 {
-		user.SendText("Cast What? At Whom?")
+		user.SendText(`<ansi fg="red">You have no spellcasting skill.</ansi>`)
 		return true, nil
 	}
 
-	spellName := args[0]
-	args = args[1:]
-
-	if len(args) > 1 {
-		if args[0] == `on` {
-			args = args[1:]
-		}
+	// 2. Parse spell name and optional target from rest
+	rest = strings.TrimSpace(rest)
+	if rest == `` {
+		user.SendText(`<ansi fg="red">Cast what? (Usage: cast <spell> [target])</ansi>`)
+		return true, nil
 	}
-	spellArg := strings.Join(args, ` `)
 
+	parts := strings.SplitN(rest, ` `, 2)
+	spellName := strings.ToLower(parts[0])
+	targetName := ``
+	if len(parts) > 1 {
+		targetName = strings.TrimSpace(parts[1])
+	}
+
+	// 3. Verify spell exists and user knows it
+	// Try spell ID first (e.g. "mm"), then fall back to display-name prefix match (e.g. "magic missile")
 	spellInfo := spells.GetSpell(spellName)
-
-	if spellInfo == nil || !user.Character.HasSpell(spellName) {
-		user.SendText(fmt.Sprintf(`You don't know a spell called <ansi fg="spellname">%s</ansi>.`, spellName))
+	if spellInfo == nil {
+		spellInfo = spells.FindSpellByName(spellName)
+	}
+	if spellInfo == nil {
+		user.SendText(fmt.Sprintf(`<ansi fg="red">No spell found for "%s". Use the spell ID (e.g. <ansi fg="cyan-bold">mm</ansi>, <ansi fg="cyan-bold">heal</ansi>). Type <ansi fg="cyan-bold">spells</ansi> to list what you know.</ansi>`, spellName))
+		return true, nil
+	}
+	if !user.Character.HasSpell(spellInfo.SpellId) {
+		user.SendText(fmt.Sprintf(`<ansi fg="red">You haven't learned the spell "%s".</ansi>`, spellInfo.Name))
 		return true, nil
 	}
 
-	if user.Character.Mana < spellInfo.Cost {
-		user.SendText(fmt.Sprintf(`You don't have enough mana to cast <ansi fg="spellname">%s</ansi>.`, spellName))
+	// 4. Already casting?
+	if user.Character.CastingState != nil {
+		cs := user.Character.CastingState
+		user.SendText(`<ansi fg="cyan">` + spells.GetCastMessage("already_casting", cs.SpellId) + `</ansi>`)
 		return true, nil
 	}
 
-	targetPlayerId := 0
-	targetMobInstanceId := 0
-
-	if spellArg != `` {
-		targetPlayerId, targetMobInstanceId = room.FindByName(spellArg)
+	// 5. Conviction check — must have enough for the full cast
+	// Stage 12.1: Apply conviction_cost_multiplier from Magical Resistance mutation
+	convMult := 1.0 + mutations.GetConvictionCostMultiplier(user.Character.Mutations)
+	totalConvictionCost := spellInfo.GetTotalConvictionCost(convMult)
+	if totalConvictionCost > 0 && user.Character.Conviction < totalConvictionCost {
+		user.SendText(fmt.Sprintf(
+			`<ansi fg="red">You don't have the conviction to cast %s.</ansi>`,
+			spellInfo.Name))
+		return true, nil
 	}
 
-	spellAggro := characters.SpellAggroInfo{
-		SpellId:              spellInfo.SpellId,
-		SpellRest:            ``,
-		TargetUserIds:        make([]int, 0),
-		TargetMobInstanceIds: make([]int, 0),
+	// 6. Check initiation cooldown (blocks if a prior attempt failed)
+	if user.Character.GetCooldown(`cast-init`) > 0 {
+		user.SendText(`<ansi fg="red">Your mind is still recovering from the effort.</ansi>`)
+		return true, nil
 	}
 
-	if spellInfo.Type == spells.Neutral {
+	// Initiation roll
+	initiationChance := characters.CalcInitiationChance(user.Character.Stats.Willpower.ValueAdj, skillLevel)
+	roll := util.Rand(100)
+	util.LogRoll(`Spell Initiation`, roll, initiationChance)
 
-		spellAggro.SpellRest = spellArg
+	if roll >= initiationChance {
+		// Failed — apply 2-round cooldown and inform user
+		user.Character.TryCooldown(`cast-init`, `2 rounds`)
+		user.SendText(`<ansi fg="red">` + spells.GetCastMessage("concentration_slipped", spellInfo.Name) + `</ansi>`)
+		room.SendText(fmt.Sprintf(
+			`<ansi fg="username">%s</ansi> <ansi fg="red">loses their concentration.</ansi>`,
+			user.Character.Name), user.UserId)
+		return true, nil
+	}
 
-	} else if spellInfo.Type == spells.HelpSingle {
+	// 7. Resolve folds needed and rate
+	baseFolds := spellInfo.BaseFolds
+	if baseFolds == 0 {
+		baseFolds = 4
+	}
+	foldsNeeded := characters.NextPowerOfTwo(baseFolds)
 
-		if spellArg == `` {
+	// Stage 17.2: The Eye modulates Perception → folds-per-round for mutated casters.
+	perForCast := user.Character.Stats.Perception.ValueAdj
+	if len(user.Character.Mutations) > 0 {
+		eyeFrac := (gametime.GetEyePhase() - 0.5) * 2 * float64(configs.GetBalanceConfig().MoonStatModMax)
+		perForCast += int(float64(perForCast) * eyeFrac)
+	}
+	foldsPerRound := characters.CalcFoldsPerRound(perForCast, skillLevel)
 
-			// No target specified? Default to self
-			spellAggro.TargetUserIds = append(spellAggro.TargetUserIds, user.UserId)
+	// 8. Resolve targets
+	targetUserIds := []int{}
+	targetMobInstanceIds := []int{}
+	spellRest := ``
 
-		} else {
-
-			if targetPlayerId > 0 {
-				spellAggro.TargetUserIds = append(spellAggro.TargetUserIds, targetPlayerId)
-			} else if targetMobInstanceId > 0 {
-				spellAggro.TargetMobInstanceIds = append(spellAggro.TargetMobInstanceIds, targetMobInstanceId)
-			}
-
-		}
-
-	} else if spellInfo.Type == spells.HarmSingle {
-
-		if targetPlayerId > 0 {
-			if u := users.GetByUserId(targetPlayerId); u != nil {
-				if pvpErr := room.CanPvp(user, u); pvpErr != nil {
-					user.SendText(pvpErr.Error())
-					return true, nil
-				}
-			}
-		}
-
-		if spellArg == `` {
-
-			if user.Character.Aggro != nil {
-				// No target specified? Default to aggro target
-				if user.Character.Aggro.UserId > 0 {
-					spellAggro.TargetUserIds = append(spellAggro.TargetUserIds, user.Character.Aggro.UserId)
-				} else if user.Character.Aggro.MobInstanceId > 0 {
-					spellAggro.TargetMobInstanceIds = append(spellAggro.TargetMobInstanceIds, user.Character.Aggro.MobInstanceId)
-				}
+	switch spellInfo.Type {
+	case spells.HarmSingle:
+		if targetName != `` {
+			pId, mId := room.FindByName(targetName)
+			if mId > 0 {
+				targetMobInstanceIds = append(targetMobInstanceIds, mId)
+			} else if pId > 0 {
+				targetUserIds = append(targetUserIds, pId)
 			} else {
-
-				fightingMobs := room.GetMobs(rooms.FindFightingPlayer)
-				if len(fightingMobs) > 0 {
-
-					for _, mobInstId := range fightingMobs {
-
-						if mob := mobs.GetInstance(mobInstId); mob != nil {
-							if mob.Character.IsAggro(user.UserId, 0) {
-								spellAggro.TargetMobInstanceIds = append(spellAggro.TargetMobInstanceIds, mobInstId)
-								break
-							}
-						}
-
-					}
-
-				}
-
-				// If no mobs found, try finding an aggro player
-				if len(spellAggro.TargetMobInstanceIds) < 1 {
-					fightingPlayers := room.GetPlayers(rooms.FindFightingPlayer)
-					if len(fightingPlayers) > 0 {
-
-						for _, fUserId := range fightingPlayers {
-
-							if u := users.GetByUserId(fUserId); u != nil {
-								if u.Character.IsAggro(user.UserId, 0) {
-									spellAggro.TargetUserIds = append(spellAggro.TargetUserIds, fUserId)
-									break
-								}
-							}
-
-						}
-
-					}
-				}
-
+				user.SendText(fmt.Sprintf(`<ansi fg="red">You don't see "%s" here.</ansi>`, targetName))
+				return true, nil
 			}
-
+		} else if user.Character.Aggro != nil && user.Character.Aggro.MobInstanceId > 0 {
+			targetMobInstanceIds = append(targetMobInstanceIds, user.Character.Aggro.MobInstanceId)
+		} else if user.Character.Aggro != nil && user.Character.Aggro.UserId > 0 {
+			targetUserIds = append(targetUserIds, user.Character.Aggro.UserId)
+		} else if party := parties.Get(user.UserId); party != nil {
+			// Fallback: use party leader's current target if available in this room
+			if leaderUser := users.GetByUserId(party.LeaderUserId); leaderUser != nil {
+				if leaderUser.Character.RoomId == user.Character.RoomId && leaderUser.Character.Aggro != nil {
+					if leaderUser.Character.Aggro.MobInstanceId > 0 {
+						targetMobInstanceIds = append(targetMobInstanceIds, leaderUser.Character.Aggro.MobInstanceId)
+					} else if leaderUser.Character.Aggro.UserId > 0 {
+						targetUserIds = append(targetUserIds, leaderUser.Character.Aggro.UserId)
+					}
+				}
+			}
+			if len(targetMobInstanceIds) == 0 && len(targetUserIds) == 0 {
+				user.SendText(`<ansi fg="red">You need a target to cast that spell.</ansi>`)
+				return true, nil
+			}
 		} else {
-
-			if targetPlayerId > 0 {
-				spellAggro.TargetUserIds = append(spellAggro.TargetUserIds, targetPlayerId)
-			} else if targetMobInstanceId > 0 {
-				spellAggro.TargetMobInstanceIds = append(spellAggro.TargetMobInstanceIds, targetMobInstanceId)
-			}
-
+			user.SendText(`<ansi fg="red">You need a target to cast that spell.</ansi>`)
+			return true, nil
 		}
 
-	} else if spellInfo.Type == spells.HelpMulti {
-
-		spellAggro.TargetUserIds = append(spellAggro.TargetUserIds, user.UserId)
-
-		// Targets self and all in party
-		if p := parties.Get(user.UserId); p != nil {
-
-			for _, partyUserId := range p.GetMembers() {
-
-				if partyUserId == user.UserId {
-					continue
-				}
-
-				if partyUser := users.GetByUserId(partyUserId); partyUser != nil {
-					spellAggro.TargetUserIds = append(spellAggro.TargetUserIds, partyUserId)
-					spellAggro.TargetMobInstanceIds = append(spellAggro.TargetMobInstanceIds, partyUser.Character.GetCharmIds()...)
-				}
-
+	case spells.HarmMulti:
+		if targetName != `` {
+			pId, mId := room.FindByName(targetName)
+			if mId > 0 {
+				targetMobInstanceIds = append(targetMobInstanceIds, mId)
+			} else if pId > 0 {
+				targetUserIds = append(targetUserIds, pId)
 			}
-
-		}
-
-	} else if spellInfo.Type == spells.HarmMulti {
-
-		// Targets all mobs aggro towards player
-		// Targets all players aggro towards player and their parties
-
-		// If not currently aggro, only targets all mobs in the room
-
-		if targetMobInstanceId > 0 {
-
-			// target all mobs
-			for _, mobInstId := range room.GetMobs() {
-				if m := mobs.GetInstance(mobInstId); m != nil {
-					spellAggro.TargetMobInstanceIds = append(spellAggro.TargetMobInstanceIds, mobInstId)
-				}
-			}
-
-		} else if targetPlayerId > 0 {
-
-			// make sure they can Pvp the player being targetted
-			if u := users.GetByUserId(targetPlayerId); u != nil {
-				if pvpErr := room.CanPvp(user, u); pvpErr != nil {
-					user.SendText(pvpErr.Error())
-					return true, nil
-				}
-			}
-
-			for _, uId := range room.GetPlayers() {
-				if uId == user.UserId {
-					continue
-				}
-				if u := users.GetByUserId(uId); u != nil {
-					if pvpErr := room.CanPvp(user, u); pvpErr != nil {
-						spellAggro.TargetUserIds = append(spellAggro.TargetUserIds, uId)
+		} else if user.Character.Aggro != nil && user.Character.Aggro.MobInstanceId > 0 {
+			targetMobInstanceIds = append(targetMobInstanceIds, user.Character.Aggro.MobInstanceId)
+		} else if user.Character.Aggro != nil && user.Character.Aggro.UserId > 0 {
+			targetUserIds = append(targetUserIds, user.Character.Aggro.UserId)
+		} else if party := parties.Get(user.UserId); party != nil {
+			// Fallback: use party leader's current target if available in this room
+			if leaderUser := users.GetByUserId(party.LeaderUserId); leaderUser != nil {
+				if leaderUser.Character.RoomId == user.Character.RoomId && leaderUser.Character.Aggro != nil {
+					if leaderUser.Character.Aggro.MobInstanceId > 0 {
+						targetMobInstanceIds = append(targetMobInstanceIds, leaderUser.Character.Aggro.MobInstanceId)
+					} else if leaderUser.Character.Aggro.UserId > 0 {
+						targetUserIds = append(targetUserIds, leaderUser.Character.Aggro.UserId)
 					}
 				}
 			}
+		}
 
+	case spells.HelpSingle:
+		if targetName != `` && targetName != user.Character.Name {
+			pId, _ := room.FindByName(targetName)
+			if pId > 0 {
+				targetUserIds = append(targetUserIds, pId)
+			} else {
+				user.SendText(fmt.Sprintf(`<ansi fg="red">You don't see "%s" here.</ansi>`, targetName))
+				return true, nil
+			}
 		} else {
-
-			fightingMobs := room.GetMobs(rooms.FindFightingPlayer)
-			for _, mobInstId := range fightingMobs {
-				if m := mobs.GetInstance(mobInstId); m != nil {
-					if m.Character.IsAggro(user.UserId, 0) || m.HatesRace(user.Character.Race()) {
-						spellAggro.TargetMobInstanceIds = append(spellAggro.TargetMobInstanceIds, mobInstId)
-					}
-				}
-			}
-
-			fightingPlayers := room.GetPlayers(rooms.FindFightingPlayer)
-			for _, uId := range fightingPlayers {
-				if u := users.GetByUserId(uId); u != nil {
-					if u.Character.IsAggro(user.UserId, 0) {
-						spellAggro.TargetUserIds = append(spellAggro.TargetUserIds, uId)
-					}
-				}
-			}
-
+			targetUserIds = append(targetUserIds, user.UserId) // default to self
 		}
 
-		if len(spellAggro.TargetUserIds) < 1 && len(spellAggro.TargetMobInstanceIds) < 1 {
-			// No targets found, default to all mobs in the room
-			spellAggro.TargetMobInstanceIds = room.GetMobs(rooms.FindFightingPlayer)
-		}
+	case spells.HelpMulti:
+		targetUserIds = append(targetUserIds, user.UserId) // self; spell script expands to party
 
-	} else if spellInfo.Type == spells.HelpArea {
-
-		spellAggro.TargetUserIds = room.GetPlayers()
-		spellAggro.TargetMobInstanceIds = room.GetMobs()
-
-	} else if spellInfo.Type == spells.HarmArea {
-
-		// make sure they can Pvp the player being hit
-		for _, uId := range room.GetPlayers() {
-			if u := users.GetByUserId(uId); u != nil {
-				if err := room.CanPvp(user, u); err == nil {
-					spellAggro.TargetUserIds = append(spellAggro.TargetUserIds, uId)
-				}
-
-			}
-		}
-
-		spellAggro.TargetMobInstanceIds = room.GetMobs()
-
+	case spells.HarmArea, spells.HelpArea, spells.Neutral:
+		spellRest = targetName // pass through for spell script
 	}
 
-	if len(spellAggro.TargetUserIds) > 0 || len(spellAggro.TargetMobInstanceIds) > 0 || len(spellAggro.SpellRest) > 0 {
-
-		continueCasting := true
-		if handled, err := scripting.TrySpellScriptEvent(`onCast`, user.UserId, 0, spellAggro); err == nil {
-			continueCasting = handled
+	// 8.5. Component check — must have the required item in inventory before committing
+	if spellInfo.ComponentTag != "" {
+		found := false
+		for _, itm := range user.Character.Items {
+			if itm.GetSpec().ComponentTag == spellInfo.ComponentTag {
+				found = true
+				break
+			}
 		}
-
-		if continueCasting {
-
-			// Fire an event that a skill has been used
-			events.AddToQueue(events.SkillUsed{user.UserId, skills.Cast, spellInfo.SpellId})
-
-			user.Character.Mana -= spellInfo.Cost
-			events.AddToQueue(events.CharacterVitalsChanged{UserId: user.UserId})
-			user.Character.SetCast(spellInfo.WaitRounds, spellAggro)
+		if !found {
+			user.SendText(fmt.Sprintf(
+				`<ansi fg="red">%s requires a %s in your inventory.</ansi>`,
+				spellInfo.Name, spellInfo.ComponentTag))
+			return true, nil
 		}
-
-	} else {
-
-		user.SendText(`Couldn't find a target for the spell.`)
-
 	}
+
+	// 9. Cooldown gate — casting shares the special-move slot (prevents cast+bash same round)
+	cfg := configs.GetGamePlayConfig()
+	if !user.Character.TryCooldown(`special-move`, fmt.Sprintf(`%d rounds`, cfg.SpecialMoveCooldown)) {
+		user.SendText(`You need a moment before you can do that.`)
+		return true, nil
+	}
+
+	// 10. Set CastingState — folds accumulate each combat round
+	user.Character.CastingState = &characters.CastingState{
+		SpellId:              spellInfo.SpellId,
+		FoldsNeeded:          foldsNeeded,
+		FoldsAccumulated:     0,
+		FoldsPerRound:        foldsPerRound,
+		TotalConvictionCost:  totalConvictionCost,
+		ConvictionSpent:      0,
+		TargetUserIds:        targetUserIds,
+		TargetMobInstanceIds: targetMobInstanceIds,
+		SpellRest:            spellRest,
+	}
+
+	// 10. Announce and fire skill-used event
+	events.AddToQueue(events.SkillUsed{
+		UserId:  user.UserId,
+		Skill:   skills.Spellcasting,
+		Details: spellInfo.Name,
+	})
+
+	user.SendText(`<ansi fg="cyan">` + spells.GetCastMessage("cast_started", spellInfo.Name) + `</ansi>`)
+	room.SendText(fmt.Sprintf(
+		`<ansi fg="username">%s</ansi> closes their eyes in concentration.`,
+		user.Character.Name), user.UserId)
 
 	return true, nil
 }

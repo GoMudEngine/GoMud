@@ -1,0 +1,10 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">lock</ansi>
+
+The <ansi fg="command">lock</ansi> command attempts to re-lock any exit or container.
+You'll need an appropriate <ansi fg="item">key</ansi> in your backpack or on your keyring.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">lock [exit name/container name]</ansi> - This locks it if it is unlocked.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help unlock</ansi>, <ansi fg="command">help keyring</ansi>, <ansi fg="command">help picklock</ansi>

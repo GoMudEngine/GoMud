@@ -1,0 +1,21 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">heal</ansi> spell
+
+The <ansi fg="command">Minor Heal</ansi> spell weaves restorative energy through a target's body,
+mending wounds and restoring vitality. Cast it on yourself or a nearby ally.
+The healing resolves the moment folds are completed — there is no delay.
+
+Healing power scales with your willpower and spellcasting skill. A critical
+success (unusually high opposed roll) roughly doubles the amount healed.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">cast heal</ansi>              Heals yourself.
+  <ansi fg="command">cast heal [target]</ansi>     Heals a nearby ally.
+
+<ansi fg="yellow">Base Folds:  </ansi> <ansi fg="white-bold">4</ansi>
+<ansi fg="yellow">Target:      </ansi> <ansi fg="white-bold">Single ally (or self)</ansi>
+<ansi fg="yellow">Defense:     </ansi> <ansi fg="white-bold">None — help spells always apply</ansi>
+<ansi fg="yellow">Conv. Cost:  </ansi> <ansi fg="white-bold">3</ansi>
+<ansi fg="yellow">School:      </ansi> <ansi fg="white-bold">Vital</ansi>
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help cast</ansi>, <ansi fg="command">help spells</ansi>, <ansi fg="command">help minor-shield</ansi>

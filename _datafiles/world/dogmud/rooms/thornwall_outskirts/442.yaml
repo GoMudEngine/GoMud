@@ -1,0 +1,33 @@
+roomid: 442
+zone: Thornwall Outskirts
+title: Old Dorn's Farm
+description: A small but stubbornly well-kept farmstead sits at the end of the track,
+  its fieldstone walls recently whitewashed and its thatch roof in good repair. A
+  vegetable garden fills the yard between the house and a weathered barn, and a
+  thin column of smoke rises from the chimney. The farm has the feel of a place that
+  is tended by habit as much as hope -- everything in its place, nothing wasted. A
+  low fence separates the yard from the overgrown plot next door, where waist-high
+  weeds have swallowed what was once a cultivated field.
+biome: farmland
+exits:
+  south:
+    roomid: 441
+  east:
+    roomid: 443
+nouns:
+  garden: Neat rows of turnips, onions, and herbs, each row weeded and watered with
+    obvious care. The soil is dark and rich -- whoever tends this garden knows what
+    they are doing. A scarecrow made of old clothes and a broom handle watches over
+    the plot with button eyes.
+  barn: A small barn with a sagging roofline but sound walls. The door is latched
+    but not locked. Through a gap in the boards you can see stacked tools and a
+    few sacks of seed grain. No livestock -- the stalls are empty.
+  fence: A low split-rail fence, its posts straight and its rails tight. On this
+    side, order. On the other side -- the fallow field next door -- chaos. The
+    contrast is stark.
+spawninfo:
+- mobid: 89
+idlemessages:
+- The smell of woodsmoke and cooking drifts from the farmhouse chimney.
+- A hen scratches in the dirt near the barn door, clucking softly.
+- The weeds in the field next door sway and rustle, thick as a living wall.

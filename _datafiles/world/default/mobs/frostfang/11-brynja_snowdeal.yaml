@@ -13,11 +13,11 @@ idlecommands:
   - emote is counting her coins
   - emote is watching you
 activitylevel: 10
+statpool: 20
 character:
   name: brynja snowdeal
   description: 'With a reputation for fair dealings and an uncanny ability to procure the rarest of items, Brynja is well-regarded among the Emporium''s patrons. Her quick wit and sharp tongue are as legendary as her bargaining skills, ensuring that negotiations with Brynja are always an interesting affair. Despite her tough exterior, she possesses a keen sense of her customers'' needs, often pointing them towards the item they didn''t even realize they were looking for.'
-  raceid: 1
-  level: 20
+  speciesid: 1
   alignment: 30
   gold: 50
   shop:

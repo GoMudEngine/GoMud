@@ -1,0 +1,11 @@
+The <ansi fg="command">mute</ansi>/<ansi fg="command">unmute</ansi> is for child safety or punishment of noisy players.
+
+When a player is muted, they cannot send cusotm communcations via:
+<ansi fg="command">say</ansi>, <ansi fg="command">broadcast</ansi>, <ansi fg="command">whisper</ansi>, <ansi fg="command">emote</ansi>
+
+The only exception is that they can still whisper to admins or moderators.
+
+<ansi fg="command">mute [username]</ansi> - Mute a player
+<ansi fg="command">unmute [username]</ansi> - Un-Mute a player
+
+Note: This will apply to the user account, not just the character.

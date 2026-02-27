@@ -8,8 +8,6 @@
             <tr>
                 <th>#</th>
                 <th>Character</th>
-                <th>Level</th>
-                <th>Alignment</th>
                 <th>Profession</th>
                 <th>Time Online</th>
                 <th>Role</th>
@@ -18,8 +16,6 @@
             <tr>
                 <td align="right">{{ add $index 1 }}.</td>
                 <td align="center"><b>{{ $uInfo.CharacterName }}</b></td>
-                <td align="center">{{ $uInfo.Level }}</td>
-                <td align="center">{{ $uInfo.Alignment }}</td>
                 <td align="center">{{ $uInfo.Profession }}</td>
                 <td align="center">{{ $uInfo.OnlineTimeStr }}{{ if $uInfo.IsAFK }} (AFK){{end}}</td>
                 <td align="center">{{ $uInfo.Role }}</td>

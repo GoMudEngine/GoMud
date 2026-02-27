@@ -1,0 +1,27 @@
+roomid: 106
+zone: Sanctum Basin
+title: West Meadow
+description: A stretch of thin scrubland opens here at the western reach of Sanctum
+  Basin. Hardy gray-green brush clusters around crumbling outcrops of basalt, and
+  the soil is pale and cracked. The smell of sage is strong. Animal tracks crisscross
+  the dusty ground, and clusters of wild herbs grow between the rocks. A wilderness
+  guide studies the terrain from a low rock, occasionally pointing out features of
+  interest to passing initiates.
+biome: land
+exits:
+  east:
+    roomid: 107
+  north:
+    roomid: 111
+  south:
+    roomid: 123
+idlemessages:
+- A <ansi fg="mobname">lizard</ansi> basks on a sun-warmed rock, utterly untroubled.
+- The <ansi fg="itemname">sage</ansi> here is thick enough to harvest, if one knows how.
+- Something small moves through the brush with a dry rustle.
+spawninfo:
+- mobid: 54
+  message: The Wilderness Guide looks up as you approach, a knowing smile crossing weathered features.
+  respawnrate: 2 real minutes
+- mobid: 71
+  respawnrate: 1 real minutes

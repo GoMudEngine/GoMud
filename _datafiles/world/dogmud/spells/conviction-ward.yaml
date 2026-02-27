@@ -1,0 +1,12 @@
+spellid: conviction-ward
+name: Conviction Ward
+description: Solidifies belief into a barrier that absorbs damage.
+type: helpsingle
+schools:
+  - enhancement
+cost: 30
+waitrounds: 1
+difficulty: 0
+primarystat: willpower
+base_folds: 4
+effect_type: shield

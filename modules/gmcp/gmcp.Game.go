@@ -1,8 +1,6 @@
 package gmcp
 
 import (
-	"strconv"
-
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/plugins"
@@ -56,7 +54,7 @@ func (g *GMCPGameModule) onJoinLeave(e events.Event) events.ListenerReturn {
 		}
 		pCt++
 
-		whoPayload += `{ "level": ` + strconv.Itoa(user.Character.Level) + `, "name": "` + user.Character.Name + `", "title": "` + user.Role + `"}`
+		whoPayload += `{ "name": "` + user.Character.Name + `", "title": "` + user.Role + `"}`
 	}
 	whoPayload += `] }`
 

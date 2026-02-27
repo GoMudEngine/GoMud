@@ -1,0 +1,5 @@
+The <ansi fg="command">spawn</ansi> command can be used in the following ways:
+
+<ansi fg="yellow">Gold</ansi> - Spawns a pile of gold in the room.
+    <ansi fg="command">spawn gold [amount]</ansi> - e.g. <ansi fg="command">spawn gold 100</ansi>
+

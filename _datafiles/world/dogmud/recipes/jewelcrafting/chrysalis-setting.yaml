@@ -1,0 +1,16 @@
+id: chrysalis-setting
+name: Chrysalis Setting
+skill: jewelcrafting
+skill_minimum: 15
+station: jeweler_bench
+time_rounds: 4
+ingredients:
+  - item_tag: copper-wire
+    quantity: 1
+  - item_tag: chrysalis-shard
+    quantity: 1
+output:
+  item_id: 40030
+  quantity: 1
+success_message: "You coax the chrysalis shard into the copper frame. It settles with a faint hum, alive and waiting."
+failure_message: "The shard resists the frame and splits apart. The materials are wasted."

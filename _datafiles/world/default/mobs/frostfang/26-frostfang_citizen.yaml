@@ -10,11 +10,11 @@ activitylevel: 30
 maxwander: 5
 idlecommands:
   - 'wander'
+statpool: 5
 character:
   name: frostfang citizen
   description: Clad in thick, fur-lined garments that offer protection against the unforgiving cold, this citizen's attire is practical and well-worn. Their boots bear the marks of countless journeys through snow and ice, and their gloves are sturdy, designed to withstand the harshest winter winds. Their face, weathered by the elements, bears the unmistakable signs of resilience. Their eyes, though weary, hold a glimmer of determination, and their skin, touched by the frost, carries a rosy flush. A scarf is wrapped snugly around their neck, leaving only their eyes and nose exposed to the chill.
-  raceid: 1
-  level: 5
+  speciesid: 1
   gold: 1
   equipment:
     weapon: 

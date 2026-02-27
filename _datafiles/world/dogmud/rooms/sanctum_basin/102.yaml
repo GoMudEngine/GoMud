@@ -1,0 +1,24 @@
+roomid: 102
+zone: Sanctum Basin
+title: Basin Gate
+description: A massive archway of black basalt spans the path here, carved with warding
+  glyphs that glow faintly in the desert sun. The Basin Warden stands at attention
+  beneath the arch, eyes sweeping the road. To the north lies the basin proper; to
+  the south, a gated road leads down toward the wider world. A sign reads -- By order
+  of the Chrysalis Council, no citizen may pass south without demonstrating readiness.
+biome: desert
+mapsymbol: G
+maplegend: Basin Gate
+exits:
+  west:
+    roomid: 101
+  north:
+    roomid: 107
+  south:
+    roomid: 103
+    lock:
+      difficulty: 255
+spawninfo:
+- mobid: 56
+  message: The Basin Warden steps forward, hand resting on the pommel of a long blade.
+  respawnrate: 1 real minute

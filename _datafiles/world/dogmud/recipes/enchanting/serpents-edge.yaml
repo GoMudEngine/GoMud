@@ -1,0 +1,20 @@
+id: serpents-edge
+name: "Serpent's Edge"
+skill: enchanting
+skill_minimum: 0
+station: enchanting_circle
+time_rounds: 4
+target_type: weapon
+enchant_type: serpents-edge
+ingredients:
+  - item_tag: chrysalis-setting
+    quantity: 1
+  - item_tag: mutation-catalyst
+    quantity: 1
+  - item_tag: binding-paste
+    quantity: 1
+output:
+  item_id: 0
+  quantity: 0
+success_message: "Chrysalis energy flows through the setting and into the blade. The metal shimmers with an iridescent sheen."
+failure_message: "The catalyst rejects the binding. The materials crumble to dust, but the weapon is unharmed."

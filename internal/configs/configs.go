@@ -51,6 +51,12 @@ type Config struct {
 	// Plugins is a special case
 	Modules Modules `yaml:"Modules"`
 
+	Balance Balance `yaml:"Balance"`
+
+	LLM LLM `yaml:"LLM"`
+
+	Analytics Analytics `yaml:"Analytics"`
+
 	// End config subsections
 
 	seedInt int64 `yaml:"-"`
@@ -199,6 +205,9 @@ func (c *Config) Validate() {
 	c.Validation.Validate()
 	c.Modules.Validate()
 	c.Roles.Validate()
+	c.Balance.Validate()
+	c.LLM.Validate()
+	c.Analytics.Validate()
 
 	// nothing to do with LootGoblinIncludeRecentRooms
 

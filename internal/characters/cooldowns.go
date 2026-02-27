@@ -6,23 +6,34 @@ import (
 
 type Cooldowns map[string]int
 
-func (cd Cooldowns) RoundTick() {
-	for trackingTag := range cd {
-		cd[trackingTag] = cd[trackingTag] - 1
+func (cd *Cooldowns) RoundTick() {
+	if cd == nil || *cd == nil {
+		return
+	}
+	for trackingTag := range *cd {
+		(*cd)[trackingTag] = (*cd)[trackingTag] - 1
 	}
 }
 
-func (cd Cooldowns) Prune() {
-	for trackingTag, cooldownRounds := range cd {
+func (cd *Cooldowns) Prune() {
+	if cd == nil || *cd == nil {
+		return
+	}
+	for trackingTag, cooldownRounds := range *cd {
 		if cooldownRounds <= 0 {
-			delete(cd, trackingTag)
+			delete(*cd, trackingTag)
 		}
 	}
 }
 
-func (cd Cooldowns) Try(trackingTag string, cooldownPeriod string) bool {
-	if cd == nil {
-		cd = make(Cooldowns)
+func (cd *Cooldowns) Try(trackingTag string, cooldownPeriod string) bool {
+	if cd == nil || *cd == nil {
+		if cd != nil {
+			*cd = make(Cooldowns)
+		} else {
+			// If cd is nil pointer, can't initialize - this shouldn't happen
+			return true
+		}
 	}
 
 	cd.Prune()
@@ -33,12 +44,12 @@ func (cd Cooldowns) Try(trackingTag string, cooldownPeriod string) bool {
 		return true
 	}
 
-	if _, ok := cd[trackingTag]; ok {
-		if cd[trackingTag] > 0 {
+	if _, ok := (*cd)[trackingTag]; ok {
+		if (*cd)[trackingTag] > 0 {
 			return false
 		}
 	}
 
-	cd[trackingTag] = cooldownRounds
+	(*cd)[trackingTag] = cooldownRounds
 	return true
 }

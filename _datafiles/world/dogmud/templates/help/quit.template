@@ -1,0 +1,7 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">quit</ansi>
+
+The <ansi fg="command">quit</ansi> command initiates a meditation which must be undisturbed for several 
+rounds, after which you will be logged out of the game.
+
+If you drop a connection without doing this, you will become a zombie in game for a while, where you 
+will remain vulnerable even while disconnected.

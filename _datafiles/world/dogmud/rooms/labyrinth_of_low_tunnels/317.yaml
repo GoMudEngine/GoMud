@@ -1,0 +1,41 @@
+roomid: 317
+zone: Labyrinth of Low Tunnels
+title: Chieftain's Hollow
+description: Beyond the barricade, the tunnel opens into a chamber that feels almost
+  deliberate in its construction -- walls squared off with crude tools, the floor
+  scraped level, the ceiling reinforced with wedged stones. A raised slab of basalt
+  dominates the far wall, serving as a seat or an altar or both. Better-made tools
+  are arranged around it with obvious care -- a hammer with a bound handle, a knife
+  of knapped obsidian, a collection of polished stones that might be currency or might
+  be ritual objects. The air is dense with smoke from a small fire that burns in a
+  stone-lined pit, fed with dried fungus and animal fat. The light it casts is greasy
+  and orange. This is the deepest point in the warren, and the weight of stone above
+  is a palpable presence -- the ceiling so low and the walls so close that the chamber
+  feels like the inside of a clenched fist.
+biome: cave
+exits:
+  north:
+    roomid: 316
+  west:
+    roomid: 318
+spawninfo:
+- mobid: 75
+  message: The warren chieftain sits on the basalt slab, firelight glinting off the calcified plates across its torso.
+  respawnrate: 5 real minutes
+nouns:
+  slab: A flat piece of basalt, roughly squared and positioned against the back wall.
+    The surface is worn smooth from use and stained dark. Scratched symbols ring its
+    edges -- the same angular script found throughout the tunnels, but here executed
+    with more care and precision.
+  tools: Better craftsmanship than anything else in the warren. The hammer is properly
+    hafted. The obsidian knife has a wrapped grip. These are possessions, not salvage.
+    Whoever owns them has status.
+  fire: A small pit lined with flat stones, burning dried fungus and rendered fat. The
+    flame is low and steady and smells terrible. It has been carefully maintained --
+    the fuel is stacked neatly beside the pit.
+idlemessages:
+- The fire pit crackles and spits a shower of sparks against the low ceiling.
+- Greasy orange light crawls across the walls, making the scratched symbols seem to writhe.
+- The weight of the stone above seems to press down. The ceiling is very low and very close.
+- Smoke pools against the ceiling in a thick, undulating layer that barely clears your head.
+- Something in the shadows behind the stone slab shifts. A glint of eyes, watching.

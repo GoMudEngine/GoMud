@@ -1,0 +1,26 @@
+speciesid: 16
+name: golem
+description: Animated material
+buffids:
+  - 29 # Night Vision
+size: large
+unarmedname: fists
+angrycommands: [emote groans and shrieks.]
+tameable: true
+stats:
+  strength:
+    base: 3
+  speed:
+    base: 0
+  smarts:
+    base: 0
+  vitality:
+    base: 3
+  perception:
+    base: 0
+  mysticism:
+    base: 0
+damage:
+  attacks: 1
+  diceroll: 2d5
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet']

@@ -1,0 +1,11 @@
+itemid: 30030
+name: fire resistance draught
+namesimple: draught
+description: A thick, reddish draught that coats the throat with a cooling
+  sensation. It fortifies the body against searing heat.
+type: potion
+subtype: drinkable
+uses: 1
+buffids:
+  - 49
+value: 12

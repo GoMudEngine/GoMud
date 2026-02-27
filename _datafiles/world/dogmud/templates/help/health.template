@@ -1,0 +1,34 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">health</ansi>
+
+<ansi fg="command">Health</ansi> (HP) represents how much physical punishment
+your character can endure. Your maximum Health is based
+primarily on your Vitality stat.
+
+Health will change color to reflect your condition:
+
+<ansi fg="health-100">100%</ansi>
+<ansi fg="health-90">90%-99%</ansi>
+<ansi fg="health-80">80%-89%</ansi>
+<ansi fg="health-70">70%-79%</ansi>
+<ansi fg="health-60">60%-69%</ansi>
+<ansi fg="health-50">50%-59%</ansi>
+<ansi fg="health-40">40%-49%</ansi>
+<ansi fg="health-30">30%-39%</ansi>
+<ansi fg="health-20">20%-29%</ansi>
+<ansi fg="health-10">10%-19%</ansi>
+<ansi fg="health-0">0%-9%</ansi>
+<ansi fg="health-dead">dead</ansi>
+
+When your Health drops to zero, you collapse and begin
+bleeding out. If you are not aided in time, you will die.
+When you die, your gear drops to the ground.
+
+Health regenerates slowly over time, recovering faster
+when you are out of combat. Certain spells and items can
+speed the healing process.
+
+<ansi fg="yellow">Related: </ansi>
+  <ansi fg="command">help vitality</ansi>
+  <ansi fg="command">help status</ansi>
+  <ansi fg="command">help armor</ansi>
+

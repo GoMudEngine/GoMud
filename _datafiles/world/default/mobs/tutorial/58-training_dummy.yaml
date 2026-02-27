@@ -4,8 +4,8 @@ itemdropchance: 0
 hostile: false
 maxwander: 0
 activitylevel: 10
+statpool: 1
 character:
   name: training dummy
   description: 'A wooden dummy to practice hitting.'
-  raceid: 19
-  level: 1
+  speciesid: 19

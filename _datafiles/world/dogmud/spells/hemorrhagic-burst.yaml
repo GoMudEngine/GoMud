@@ -1,0 +1,14 @@
+spellid: hemorrhagic-burst
+name: Hemorrhagic Burst
+description: Ruptures blood vessels outward in a devastating explosion.
+type: harmarea
+schools:
+  - elemental
+cost: 80
+waitrounds: 2
+difficulty: 0
+primarystat: willpower
+base_folds: 16
+target_defense_type: physical
+effect_type: damage
+effect_magnitude: 450

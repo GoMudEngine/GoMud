@@ -1,0 +1,25 @@
+questid: 5
+name: The Innkeeper's Complaint
+description: Innkeeper Tolva believes the bridge toll at Watchers Crossing is unauthorized
+  and is strangling trade through the settlement. She wants proof from the toll
+  collector's own records.
+secret: false
+
+steps:
+  - id: start
+    description: "Innkeeper Tolva at the Crossing Inn has asked you to investigate the bridge toll. She believes it is unauthorized and wants proof. Find the crossing ledger at the tollhouse."
+    hint: "The tollhouse is east of the crossroads. The ledger should be on the counter."
+  - id: ledger
+    description: "You need to get your hands on the crossing ledger from the tollhouse. It should contain records that prove whether the toll is legitimate or not."
+    hint: "Visit the tollhouse and look for the ledger. You may need to talk to Harn first."
+  - id: evidence
+    description: "You have the crossing ledger. Bring it back to Tolva at the Crossing Inn so she can review the records."
+    hint: "Return to the inn north of the crossroads and speak with Tolva."
+  - id: end
+    description: "You delivered the ledger to Tolva. She will use the records to petition Thornwall for an official review of the toll."
+
+rewards:
+  playermessage: "Tolva pages through the ledger with practiced speed, her lips pressed thin. 'Just as I thought. No writ of authority, no commission from Thornwall, no charter. He set this toll up himself.' She closes the book firmly. 'I will send this to the magistrate with my next supply order. You have done this settlement a service.' She slides a wooden token across the counter."
+  roommessage: "Tolva examines the ledger with grim satisfaction, already composing a letter in her head."
+  gold: 12
+  itemid: 20

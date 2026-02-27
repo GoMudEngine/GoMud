@@ -1,0 +1,6 @@
+<ansi fg="day">The sun rises.</ansi>
+
+It is <ansi fg="230">day {{ .Day }}</ansi> of <ansi fg="230">year {{ .Year }}</ansi>. 
+The month is <ansi fg="230">{{ month .Month }}</ansi>.
+It is the year of the <ansi fg="230">{{ zodiac .Year }}</ansi>
+ 

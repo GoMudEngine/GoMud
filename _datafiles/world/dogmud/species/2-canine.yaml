@@ -1,0 +1,31 @@
+speciesid: 2
+name: canine
+description: A four-legged predator with keen senses and powerful jaws.
+  Canines hunt in coordinated packs, using their superior
+  speed and endurance to run down prey over long distances.
+buffids:
+  - 29 # Night Vision
+size: medium
+unarmedname: jaws
+selectable: false
+tameable: true
+angrycommands:
+  - emote snarls, lips curling back to reveal sharp teeth.
+  - emote lowers its head and growls deep in its chest.
+stats:
+  strength:
+    base: 90
+  dexterity:
+    base: 130
+  perception:
+    base: 140
+  vitality:
+    base: 80
+  willpower:
+    base: 15
+  charisma:
+    base: 10
+damage:
+  basedamage: 5
+  variance: 2
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet']

@@ -1,0 +1,11 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">use</ansi>
+
+The <ansi fg="command">use</ansi> command uses items (if they are usable). For example, a sleeping bag.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">use sleeping bag</ansi>
+  This would sleep in your sleepping bag.
+
+Find out more about referring to items by name by typing <ansi fg="command">help item-names</ansi>.
+

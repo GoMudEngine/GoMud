@@ -14,11 +14,11 @@ exits:
 spawninfo:
 - mobid: 30
   message: A sneaky fellow enters from a back room.
-  levelmod: 15
+  statpoolmod: 15
   respawnrate: 2 real minutes
 - mobid: 41
   message: A student of the guild enters the room.
-  levelmod: 5
+  statpoolmod: 5
   respawnrate: 2 real minutes
 skilltraining:
   skulduggery:

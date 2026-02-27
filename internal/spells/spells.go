@@ -13,17 +13,25 @@ import (
 )
 
 type SpellType string
-type SpellSchool string
 
 type SpellData struct {
-	SpellId     string      `yaml:"spellid,omitempty"`
-	Name        string      `yaml:"name,omitempty"`
-	Description string      `yaml:"description,omitempty"`
-	Type        SpellType   `yaml:"type,omitempty"`
-	School      SpellSchool `yaml:"school,omitempty"`
-	Cost        int         `yaml:"cost,omitempty"`
-	WaitRounds  int         `yaml:"waitrounds,omitempty"`
-	Difficulty  int         `yaml:"difficulty,omitempty"` // Augments final success chance by this %
+	SpellId     string     `yaml:"spellid,omitempty"`
+	Name        string     `yaml:"name,omitempty"`
+	Description string     `yaml:"description,omitempty"`
+	Type        SpellType  `yaml:"type,omitempty"`
+	Schools     []string   `yaml:"schools,omitempty"` // Can have multiple school tags
+	Cost        int        `yaml:"cost,omitempty"`    // Conviction cost
+	HealthCost  int        `yaml:"healthcost,omitempty"` // Optional Health cost for life-force magic
+	WaitRounds  int        `yaml:"waitrounds,omitempty"`
+	Difficulty  int        `yaml:"difficulty,omitempty"` // Augments final success chance by this %
+	PrimaryStat         string `yaml:"primarystat,omitempty"`          // Stat used for spell rolls and progression
+	BaseFolds           int    `yaml:"base_folds,omitempty"`           // 0 = default to 4
+	TargetDefenseType   string `yaml:"target_defense_type,omitempty"`  // "physical", "mental", "" = none
+	ComponentTag        string `yaml:"component_tag,omitempty"`        // Required item component tag (e.g. "stone")
+	EffectType          string `yaml:"effect_type,omitempty"`          // "damage"|"heal"|"buff"|"tame"|"shield"
+	EffectMagnitude     int    `yaml:"effect_magnitude,omitempty"`     // Base damage/heal amount
+	EffectDuration      int    `yaml:"effect_duration,omitempty"`      // DoT tick count (default 0 = use 3)
+	BuffIds             []int  `yaml:"buff_ids,omitempty"`             // Buff IDs to apply (for "buff" effect type)
 }
 
 const (
@@ -37,9 +45,11 @@ const (
 	HarmArea   SpellType = "harmarea"   // Hits everyone in the room, even if hidden or friendly
 	HelpArea   SpellType = "helparea"   // Hits everyone in the room, even if hidden
 
-	SchoolRestoration SpellSchool = "restoration" // Healing, curing conditions, etc.
-	SchoolIllusion    SpellSchool = "illusion"    // Light, darkness, invisibility, blink, etc.
-	SchoolConjuration SpellSchool = "conjuration" // Summoning, teleportation, etc.
+	// DOG Spell Schools
+	SchoolElemental   = "elemental"   // Fire, ice, lightning, earth, wind - offensive elemental magic
+	SchoolEnhancement = "enhancement" // Buffs, shields, enchantments - augmentation magic
+	SchoolMental      = "mental"      // Illusions, charms, telepathy - mind-affecting magic (Psionics skill)
+	SchoolVital       = "vital"       // Healing, curing, life/death manipulation - vital force magic
 )
 
 var (
@@ -164,6 +174,30 @@ func (s *SpellData) GetDifficulty() int {
 	return s.Difficulty
 }
 
+// GetSchoolsString returns a comma-separated string of spell schools
+func (s *SpellData) GetSchoolsString() string {
+	if len(s.Schools) == 0 {
+		return "Unknown"
+	}
+	return strings.Join(s.Schools, ", ")
+}
+
+// GetTotalConvictionCost returns the conviction cost, optionally scaled by a multiplier
+func (s *SpellData) GetTotalConvictionCost(multiplier float64) int {
+	if multiplier <= 0 {
+		multiplier = 1.0
+	}
+	return int(float64(s.Cost) * multiplier)
+}
+
+// GetTotalHealthCost returns the health cost, optionally scaled by a multiplier
+func (s *SpellData) GetTotalHealthCost(multiplier float64) int {
+	if multiplier <= 0 {
+		multiplier = 1.0
+	}
+	return int(float64(s.HealthCost) * multiplier)
+}
+
 func (s *SpellData) GetScript() string {
 
 	scriptPath := s.GetScriptPath()
@@ -181,6 +215,51 @@ func (s *SpellData) GetScript() string {
 func (s *SpellData) GetScriptPath() string {
 	// Load any script for the room
 	return strings.Replace(string(configs.GetFilePathsConfig().DataFiles)+`/spells/`+s.Filepath(), `.yaml`, `.js`, 1)
+}
+
+// MaxFoldsForSkill returns the highest base_folds a player can discover at a given casting skill level.
+func MaxFoldsForSkill(skillLevel int) int {
+	switch {
+	case skillLevel >= 80:
+		return 32
+	case skillLevel >= 70:
+		return 28
+	case skillLevel >= 60:
+		return 24
+	case skillLevel >= 50:
+		return 20
+	case skillLevel >= 40:
+		return 16
+	case skillLevel >= 30:
+		return 12
+	case skillLevel >= 20:
+		return 10
+	case skillLevel >= 10:
+		return 8
+	case skillLevel >= 5:
+		return 6
+	default:
+		return 4
+	}
+}
+
+// GetEligibleSpells returns spell IDs the player could discover (not in spellBook, within fold threshold).
+func GetEligibleSpells(spellBook map[string]int, castingSkillLevel int) []string {
+	maxFolds := MaxFoldsForSkill(castingSkillLevel)
+	var eligible []string
+	for id, sp := range allSpells {
+		if _, known := spellBook[id]; known {
+			continue
+		}
+		folds := sp.BaseFolds
+		if folds == 0 {
+			folds = 4
+		}
+		if folds <= maxFolds {
+			eligible = append(eligible, id)
+		}
+	}
+	return eligible
 }
 
 func LoadSpellFiles() {

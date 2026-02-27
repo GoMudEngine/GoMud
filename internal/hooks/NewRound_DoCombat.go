@@ -2,6 +2,7 @@ package hooks
 
 import (
 	"fmt"
+	"math"
 	"strings"
 	"time"
 
@@ -10,11 +11,15 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
+	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
+	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/usercommands"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -41,6 +46,7 @@ func DoCombat(e events.Event) events.ListenerReturn {
 func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobInstanceIds []int) {
 
 	c := configs.GetConfig()
+	moonMod := float64(configs.GetBalanceConfig().MoonStatModMax)
 
 	tStart := time.Now()
 
@@ -53,7 +59,153 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 			continue
 		}
 
-		if user == nil || user.Character.Aggro == nil {
+		if user == nil {
+			continue
+		}
+
+		// Stage 11.4: Minor Shield round expiry
+		if user.Character.HasCondition(characters.ConditionShield) {
+			if user.Character.GetConditionDuration(characters.ConditionShield) <= 1 {
+				user.Character.RemoveCondition(characters.ConditionShield)
+				user.SendText(`<ansi fg="blue">Your Minor Shield dissipates.</ansi>`)
+			} else {
+				user.Character.DecrementCondition(characters.ConditionShield)
+			}
+		}
+
+		/**************************
+		*
+		* START HANDLING FOLD CASTING
+		*
+		**************************/
+
+		if user.Character.CastingState != nil {
+
+			// Bleeding out = automatic concentration break
+			if user.Character.IsDisabled() {
+				user.Character.CastingState = nil
+				continue
+			}
+
+			// Stage 11.3: prone = automatic concentration break
+			if user.Character.CombatPosition == characters.PositionProne {
+				user.Character.CastingState = nil
+				user.SendText(`<ansi fg="red">You lose your concentration as you hit the ground!</ansi>`)
+				room := rooms.LoadRoom(user.Character.RoomId)
+				if room != nil {
+					room.SendText(fmt.Sprintf(
+						`<ansi fg="username">%s</ansi>'s concentration breaks.`, user.Character.Name), user.UserId)
+				}
+				continue
+			}
+
+			cs := user.Character.CastingState
+
+			spellData := spells.GetSpell(cs.SpellId)
+			if spellData == nil {
+				// Spell data missing — clear and continue
+				user.Character.CastingState = nil
+				user.SendText(`<ansi fg="red">The spell dissipates — its data cannot be found.</ansi>`)
+				continue
+			}
+
+			// Fold accumulation: loop FoldsPerRound times per combat round,
+			// doubling on each iteration (mirrors the attacks-per-round pattern).
+			// Each iteration emits its own message, like each attack in combat.
+			// FoldsPerRound=1: 0→1, 1→2, 2→4  (one message per round)
+			// FoldsPerRound=2: 0→1→2 in round 1 (two messages), 2→4 in round 2 (one message)
+
+			// Pre-flight: simulate the loop to calculate foldDelta for the conviction check.
+			simFolds := cs.FoldsAccumulated
+			for i := 0; i < cs.FoldsPerRound; i++ {
+				if simFolds == 0 {
+					simFolds = 1
+				} else {
+					simFolds *= 2
+				}
+				if simFolds >= cs.FoldsNeeded {
+					simFolds = cs.FoldsNeeded
+					break
+				}
+			}
+			foldDelta := simFolds - cs.FoldsAccumulated
+
+			// Conviction cost proportional to folds gained this round.
+			// Early rounds are cheap; the final doubling costs the most.
+			roundCost := 0
+			if cs.TotalConvictionCost > 0 && cs.FoldsNeeded > 0 {
+				roundCost = (cs.TotalConvictionCost * foldDelta) / cs.FoldsNeeded
+				if roundCost < 1 {
+					roundCost = 1
+				}
+			}
+
+			if roundCost > 0 && user.Character.Conviction < roundCost {
+				// Out of conviction — auto-cancel
+				user.Character.CastingState = nil
+				user.SendText(`<ansi fg="red">Your conviction wavers — the fold collapses.</ansi>`)
+				continue
+			}
+
+			user.Character.Conviction -= roundCost
+			cs.ConvictionSpent += roundCost
+
+			// Real loop: advance folds and emit a message per iteration.
+			for i := 0; i < cs.FoldsPerRound; i++ {
+				if cs.FoldsAccumulated == 0 {
+					cs.FoldsAccumulated = 1
+				} else {
+					cs.FoldsAccumulated *= 2
+				}
+				if cs.FoldsAccumulated > cs.FoldsNeeded {
+					cs.FoldsAccumulated = cs.FoldsNeeded
+				}
+
+				if cs.FoldsAccumulated >= cs.FoldsNeeded {
+					// Folds complete — Stage 11.4: resolve the spell effect
+					resolveRoom := rooms.LoadRoom(user.Character.RoomId)
+					if resolveRoom != nil {
+						resolveSpell(user, cs, spellData, resolveRoom)
+					}
+					user.Character.TrackSpellCast(cs.SpellId)
+					user.Character.OnSkillUse(string(skills.Spellcasting), userId)
+					user.Character.OnStatUse("willpower", userId)
+
+					// Phase 25.1: Spell discovery — chance to learn a new spell after successful cast
+					castSkillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
+					knownCount := len(user.Character.SpellBook)
+					bal := configs.GetBalanceConfig()
+					discoveryChance := float64(bal.SpellDiscoveryBaseChance) / (1.0 + float64(knownCount)*float64(bal.SpellDiscoveryDecayRate))
+					if util.Rand(100) < int(discoveryChance) {
+						eligible := spells.GetEligibleSpells(user.Character.SpellBook, castSkillLevel)
+						if len(eligible) > 0 {
+							pick := eligible[util.Rand(len(eligible))]
+							if user.Character.LearnSpell(pick) {
+								if newSpell := spells.GetSpell(pick); newSpell != nil {
+									user.SendText(fmt.Sprintf(
+										`<ansi fg="magenta-bold">A new pattern crystallizes in your mind: <ansi fg="cyan-bold">%s</ansi></ansi>`,
+										newSpell.Name))
+								}
+							}
+						}
+					}
+
+					user.Character.CastingState = nil
+					break
+				}
+				user.SendText(`<ansi fg="cyan">` + spells.GetCastMessage("cast_started", cs.SpellId) + `</ansi>`)
+			}
+
+			continue
+		}
+
+		/**************************
+		*
+		* END HANDLING FOLD CASTING
+		*
+		**************************/
+
+		if user.Character.Aggro == nil {
 			continue
 		}
 
@@ -80,7 +232,7 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 					}
 
 					// Stat comparison accounts for up to 70% of chance to flee.
-					chanceIn100 := int(float64(user.Character.Stats.Speed.ValueAdj) / (float64(user.Character.Stats.Speed.ValueAdj) + float64(mob.Character.Stats.Speed.ValueAdj)) * 70)
+					chanceIn100 := int(float64(user.Character.Stats.Dexterity.ValueAdj) / (float64(user.Character.Stats.Dexterity.ValueAdj) + float64(mob.Character.Stats.Dexterity.ValueAdj)) * 70)
 					chanceIn100 += 30
 
 					roll := util.Rand(100)
@@ -103,7 +255,7 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 					}
 
 					// if equal, 25% chance of fleeing... at best, 50% chance. Then add 50% on top.
-					chanceIn100 := int(float64(user.Character.Stats.Speed.ValueAdj) / (float64(user.Character.Stats.Speed.ValueAdj) + float64(u.Character.Stats.Speed.ValueAdj)) * 70)
+					chanceIn100 := int(float64(user.Character.Stats.Dexterity.ValueAdj) / (float64(user.Character.Stats.Dexterity.ValueAdj) + float64(u.Character.Stats.Dexterity.ValueAdj)) * 70)
 					chanceIn100 += 30
 
 					roll := util.Rand(100)
@@ -167,105 +319,6 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 
 			continue
 		}
-
-		/**************************
-		*
-		* START HANDLING MAGIC
-		*
-		**************************/
-
-		if user.Character.Aggro != nil && user.Character.Aggro.Type == characters.SpellCast {
-
-			if user.Character.Aggro.RoundsWaiting > 0 {
-				user.Character.Aggro.RoundsWaiting--
-
-				scripting.TrySpellScriptEvent(`onWait`, user.UserId, 0, user.Character.Aggro.SpellInfo)
-
-				continue
-			}
-
-			roll := util.RollDice(1, 100)
-			successChance := user.Character.GetBaseCastSuccessChance(user.Character.Aggro.SpellInfo.SpellId)
-			if roll >= successChance {
-
-				// fail
-				user.SendText(fmt.Sprintf(`<ansi fg="spell-text"><ansi fg="magenta">***</ansi> Your spell fizzles! <ansi fg="magenta">***</ansi> (Rolled %d on %d%% chance of success)</ansi>`, roll, successChance))
-				uRoom.SendText(fmt.Sprintf(`<ansi fg="spell-text"><ansi fg="username">%s</ansi> tries to cast a spell but it <ansi fg="magenta">fizzles</ansi>!</ansi>`, user.Character.Name), userId)
-				user.Character.Aggro = nil
-
-				continue
-
-			}
-
-			//
-			// Need to track before health to calculate if damage was done post-spell
-			//
-			mobHealthBefore := map[int]int{}
-			for _, mInstId := range user.Character.Aggro.SpellInfo.TargetMobInstanceIds {
-				if defMob := mobs.GetInstance(mInstId); defMob != nil {
-
-					// Remember who has hit him
-					defMob.Character.TrackPlayerDamage(user.UserId, 0)
-					mobHealthBefore[mInstId] = defMob.Character.Health
-
-				}
-			}
-
-			allowRetaliation := true
-			if handled, err := scripting.TrySpellScriptEvent(`onMagic`, user.UserId, 0, user.Character.Aggro.SpellInfo); err == nil {
-				if handled {
-					allowRetaliation = false
-				}
-			}
-
-			user.Character.TrackSpellCast(user.Character.Aggro.SpellInfo.SpellId)
-
-			if allowRetaliation {
-				if spellData := spells.GetSpell(user.Character.Aggro.SpellInfo.SpellId); spellData != nil {
-
-					if spellData.Type == spells.HarmSingle || spellData.Type == spells.HarmMulti || spellData.Type == spells.HarmArea {
-
-						for _, mobId := range user.Character.Aggro.SpellInfo.TargetMobInstanceIds {
-
-							affectedMobInstanceIds = append(affectedMobInstanceIds, mobId)
-
-							if defMob := mobs.GetInstance(mobId); defMob != nil {
-
-								// Track damage done
-								if hBefore, ok := mobHealthBefore[mobId]; ok {
-									hDelta := hBefore - defMob.Character.Health
-									if hDelta > 0 {
-										defMob.Character.TrackPlayerDamage(user.UserId, hDelta)
-									}
-								}
-
-								defMob.Character.CancelBuffsWithFlag(buffs.CancelIfCombat)
-
-								if defMob.Character.Health <= 0 {
-									defMob.Character.EndAggro()
-								} else if defMob.Character.Aggro == nil {
-									defMob.PreventIdle = true
-									defMob.Command(fmt.Sprintf("attack @%d", user.UserId)) // @ means player
-								}
-
-							}
-						}
-
-					}
-				}
-			}
-
-			user.Character.Aggro = nil
-
-			continue
-
-		}
-
-		/**************************
-		*
-		* END HANDLING MAGIC
-		*
-		**************************/
 
 		/**************************
 		*
@@ -359,7 +412,52 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 
 			affectedPlayerIds = append(affectedPlayerIds, user.Character.Aggro.UserId)
 
+			// Stage 8.3: Process automatic grapple position progression
+			processGrappleProgression(user.Character, defUser.Character, user.Character.Name, defUser.Character.Name, uRoom, user.UserId, defUser.UserId)
+
 			roundResult := combat.AttackPlayerVsPlayer(user, defUser)
+
+			// Stage 30.1: Record combat analytics
+			atkType := "unarmed"
+			if user.Character.Equipment.Weapon.ItemId > 0 {
+				atkType = "weapon"
+			}
+			combat.RecordAttack(roundResult, combat.User, combat.User, atkType, user.Character, defUser.Character, evt.RoundNumber)
+
+			// Stage 8.4: Process crit effects (parry crit disarm, dodge crit grapple opportunity)
+
+
+			// Process parry crit disarm (10% chance on parry crit)
+			if roundResult.ParryCritDetected {
+				disarmResult := combat.AttemptCritDisarm(defUser.Character, user.Character, 10.0)
+				if disarmResult.Success {
+					// Drop weapon to room
+					uRoom.AddItem(disarmResult.Weapon, false)
+
+					// Send messages to all parties
+					defUser.SendText(disarmResult.Message)
+					user.SendText(disarmResult.TargetMsg)
+					uRoom.SendText(disarmResult.RoomMessage, user.UserId, defUser.UserId)
+				}
+			}
+
+			// Process dodge crit grapple opportunity
+			if roundResult.DodgeCritDetected {
+				// Only set opportunity if grapple cooldown is available
+				// Check by examining the cooldown without consuming it
+				if defUser.Character.Cooldowns["special-move"] <= 0 {
+					combat.SetGrappleOpportunity(defUser.Character)
+
+					// Message
+					defUser.SendText(fmt.Sprintf(
+						`<ansi fg="yellow">You slip inside %s's guard! [Grapple opportunity]</ansi>`,
+						user.Character.Name))
+					uRoom.SendText(fmt.Sprintf(
+						`<ansi fg="combat">%s slips inside %s's guard!</ansi>`,
+						defUser.Character.Name, user.Character.Name),
+						user.UserId, defUser.UserId)
+				}
+			}
 
 			// If a mob attacks a player, check whether player has a charmed mob helping them, and if so, they will move to attack back
 			room := rooms.LoadRoom(roomId)
@@ -449,6 +547,33 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 			if user.Character.Health <= 0 || defUser.Character.Health <= 0 {
 				defUser.Character.EndAggro()
 				user.Character.EndAggro()
+
+				// Auto-retarget: If target died but player is still alive and being attacked, auto-target attacker
+				if user.Character.Health > 0 && defUser.Character.Health <= 0 {
+					// Check for mobs attacking this player
+					for _, mobInstId := range uRoom.GetMobs(rooms.FindFighting) {
+						if attackingMob := mobs.GetInstance(mobInstId); attackingMob != nil {
+							if attackingMob.Character.Aggro != nil && attackingMob.Character.Aggro.UserId == user.UserId {
+								user.Character.SetAggro(0, attackingMob.InstanceId, characters.DefaultAttack)
+								user.SendText(fmt.Sprintf("You turn your attention to <ansi fg=\"mobname\">%s</ansi>!", attackingMob.Character.Name))
+								break
+							}
+						}
+					}
+
+					// If no mobs attacking, check for players attacking
+					if user.Character.Aggro == nil {
+						for _, playerId := range uRoom.GetPlayers(rooms.FindFighting) {
+							if attackingPlayer := users.GetByUserId(playerId); attackingPlayer != nil {
+								if attackingPlayer.Character.Aggro != nil && attackingPlayer.Character.Aggro.UserId == user.UserId {
+									user.Character.SetAggro(attackingPlayer.UserId, 0, characters.DefaultAttack)
+									user.SendText(fmt.Sprintf("You turn your attention to <ansi fg=\"username\">%s</ansi>!", attackingPlayer.Character.Name))
+									break
+								}
+							}
+						}
+					}
+				}
 			} else {
 				user.Character.SetAggro(defUser.UserId, 0, characters.DefaultAttack)
 			}
@@ -533,9 +658,74 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 
 			affectedPlayerIds = append(affectedPlayerIds, user.Character.Aggro.UserId)
 
+			// Stage 8.3: Process automatic grapple position progression
+			processGrappleProgression(user.Character, &defMob.Character, user.Character.Name, defMob.Character.Name, uRoom, user.UserId, 0)
+
 			var roundResult combat.AttackResult
 
+			// Stage 17.2: Moon phase stat modifiers for mutated players (attacker)
+			restore := applyMoonMods(user.Character, moonMod)
 			roundResult = combat.AttackPlayerVsMob(user, defMob)
+			restore()
+
+			// Phase 25.3: Conviction Surge buff — +15% physical damage
+			if roundResult.Hit && roundResult.DamageToTarget > 0 && user.Character.HasBuffFlag(buffs.DamageBonus) {
+				bonusDmg := int(math.Round(float64(roundResult.DamageToTarget) * 0.15))
+				if bonusDmg < 1 {
+					bonusDmg = 1
+				}
+				defMob.Character.Health -= bonusDmg
+				roundResult.DamageToTarget += bonusDmg
+			}
+
+			// Stage 12.2: Adrenaline Surge — level-scaled bonus damage when HP < 25%
+			if roundResult.Hit && roundResult.DamageToTarget > 0 {
+				if mutations.IsAdrenalSurgeActive(user.Character.Mutations, user.Character.Health, user.Character.HealthMax.Value) {
+					if surgeBonus := mutations.GetAdrenalSurgeBonus(user.Character.Mutations); surgeBonus > 0 {
+						bonusDmg := int(math.Round(float64(roundResult.DamageToTarget) * surgeBonus))
+						if bonusDmg < 1 {
+							bonusDmg = 1
+						}
+						defMob.Character.Health -= bonusDmg
+						roundResult.DamageToTarget += bonusDmg
+					}
+				}
+			}
+
+			// Stage 30.1: Record combat analytics
+			pvmAtkType := "unarmed"
+			if user.Character.Equipment.Weapon.ItemId > 0 {
+				pvmAtkType = "weapon"
+			}
+			combat.RecordAttack(roundResult, combat.User, combat.Mob, pvmAtkType, user.Character, &defMob.Character, evt.RoundNumber)
+
+			// Stage 8.4: Process crit effects (parry crit disarm, dodge crit grapple opportunity)
+
+
+			// Process parry crit disarm (10% chance on parry crit) - mob defending
+			if roundResult.ParryCritDetected {
+				disarmResult := combat.AttemptCritDisarm(&defMob.Character, user.Character, 10.0)
+				if disarmResult.Success {
+					// Drop weapon to room
+					uRoom.AddItem(disarmResult.Weapon, false)
+
+					// Send messages (mob defending, so mob gets credit for disarm)
+					user.SendText(disarmResult.TargetMsg)
+					uRoom.SendText(disarmResult.RoomMessage, user.UserId)
+				}
+			}
+
+			// Process dodge crit grapple opportunity - mob defending
+			if roundResult.DodgeCritDetected {
+				// Mobs don't have cooldown restrictions for grapple opportunity
+				combat.SetGrappleOpportunity(&defMob.Character)
+
+				// Message
+				uRoom.SendText(fmt.Sprintf(
+					`<ansi fg="combat"><ansi fg="mobname">%s</ansi> slips inside %s's guard!</ansi>`,
+					defMob.Character.Name, user.Character.Name),
+					user.UserId)
+			}
 
 			for _, buffId := range roundResult.BuffSource {
 				user.AddBuff(buffId, `combat`)
@@ -557,7 +747,24 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 				defRoom.SendText(msg, user.UserId)
 			}
 
-			// Handle any scripted behavior now.
+			// Stage 11.5: Mob concentration break when hit
+			if defMob.Character.CastingState != nil && roundResult.DamageToTarget > 0 {
+				maxHP := defMob.Character.HealthMax.Value
+				damagePct := roundResult.DamageToTarget * 100 / maxHP
+				if damagePct < 1 {
+					damagePct = 1
+				}
+				chance := characters.CalcConcentrationChance(defMob.Character.Stats.Willpower.ValueAdj, damagePct)
+				rollConc := util.Rand(100)
+				util.LogRoll(`Mob Concentration`, rollConc, chance)
+				if rollConc >= chance {
+					defMob.Character.CastingState = nil
+					uRoom.SendText(fmt.Sprintf(
+						`<ansi fg="mobname">%s</ansi>'s concentration breaks.`, defMob.Character.Name))
+				}
+			}
+
+						// Handle any scripted behavior now.
 			if roundResult.Hit {
 				scripting.TryMobScriptEvent(`onHurt`, defMob.InstanceId, user.UserId, `user`, map[string]any{`damage`: roundResult.DamageToTarget, `crit`: roundResult.Crit})
 			}
@@ -567,7 +774,7 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 			//
 			// Hostility default to 5 minutes
 			for _, groupName := range defMob.Groups {
-				mobs.MakeHostile(groupName, user.UserId, c.Timing.MinutesToRounds(2)-user.Character.Stats.Perception.ValueAdj)
+				mobs.MakeHostile(groupName, user.UserId, c.Timing.MinutesToRounds(2)-user.Character.Stats.Charisma.ValueAdj)
 			}
 
 			// Mobs get aggro when attacked
@@ -595,6 +802,33 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 			if user.Character.Health <= 0 || defMob.Character.Health <= 0 {
 				defMob.Character.EndAggro()
 				user.Character.EndAggro()
+
+				// Auto-retarget: If target died but player is still alive and being attacked, auto-target attacker
+				if user.Character.Health > 0 && defMob.Character.Health <= 0 {
+					// Check for mobs attacking this player
+					for _, mobInstId := range uRoom.GetMobs(rooms.FindFighting) {
+						if attackingMob := mobs.GetInstance(mobInstId); attackingMob != nil {
+							if attackingMob.Character.Aggro != nil && attackingMob.Character.Aggro.UserId == user.UserId {
+								user.Character.SetAggro(0, attackingMob.InstanceId, characters.DefaultAttack)
+								user.SendText(fmt.Sprintf("You turn your attention to <ansi fg=\"mobname\">%s</ansi>!", attackingMob.Character.Name))
+								break
+							}
+						}
+					}
+
+					// If no mobs attacking, check for players attacking
+					if user.Character.Aggro == nil {
+						for _, playerId := range uRoom.GetPlayers(rooms.FindFighting) {
+							if attackingPlayer := users.GetByUserId(playerId); attackingPlayer != nil {
+								if attackingPlayer.Character.Aggro != nil && attackingPlayer.Character.Aggro.UserId == user.UserId {
+									user.Character.SetAggro(attackingPlayer.UserId, 0, characters.DefaultAttack)
+									user.SendText(fmt.Sprintf("You turn your attention to <ansi fg=\"username\">%s</ansi>!", attackingPlayer.Character.Name))
+									break
+								}
+							}
+						}
+					}
+				}
 			} else {
 				user.Character.SetAggro(0, defMob.InstanceId, characters.DefaultAttack)
 			}
@@ -616,6 +850,7 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 
 func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobInstanceIds []int) {
 
+	moonMod := float64(configs.GetBalanceConfig().MoonStatModMax)
 	tStart := time.Now()
 
 	// Handle mob round of combat
@@ -624,7 +859,8 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 		mob := mobs.GetInstance(mobId)
 
 		// Only handling combat functions here, so ditch out if not in combat
-		if mob == nil || mob.Character.Aggro == nil {
+		// Also skip mobs that are already dead this round (prevents death-round last hit)
+		if mob == nil || mob.Character.Aggro == nil || mob.Character.Health <= 0 {
 			continue
 		}
 
@@ -645,74 +881,80 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 
 		/**************************
 		*
-		* START HANDLING MAGIC
+		* START HANDLING FOLD CASTING (MOBS)
 		*
 		**************************/
 
-		if mob.Character.Aggro != nil && mob.Character.Aggro.Type == characters.SpellCast {
-
-			if mob.Character.Aggro.RoundsWaiting > 0 {
-				mob.Character.Aggro.RoundsWaiting--
-
-				scripting.TrySpellScriptEvent(`onWait`, 0, mob.InstanceId, mob.Character.Aggro.SpellInfo)
-
+		if mob.Character.CastingState != nil {
+			if mob.Character.CombatPosition == characters.PositionProne {
+				mob.Character.CastingState = nil
+				mobRoom.SendText(fmt.Sprintf(
+					`<ansi fg="mobname">%s</ansi>'s concentration breaks.`, mob.Character.Name))
 				continue
 			}
 
-			successChance := mob.Character.GetBaseCastSuccessChance(mob.Character.Aggro.SpellInfo.SpellId)
-			if util.RollDice(1, 100) >= successChance {
-
-				// fail
-				mobRoom.SendText(fmt.Sprintf(`<ansi fg="mobnamme">%s</ansi> tries to cast a spell but it <ansi fg="magenta">fizzles</ansi>!`, mob.Character.Name))
-				mob.Character.Aggro = nil
-
+			cs := mob.Character.CastingState
+			spellData := spells.GetSpell(cs.SpellId)
+			if spellData == nil {
+				mob.Character.CastingState = nil
 				continue
-
 			}
 
-			allowRetaliation := true
-			if handled, err := scripting.TrySpellScriptEvent(`onMagic`, 0, mob.InstanceId, mob.Character.Aggro.SpellInfo); err == nil {
-				if handled {
-					allowRetaliation = false
+			// Simulate fold advance to compute this round's conviction cost
+			simFolds := cs.FoldsAccumulated
+			for i := 0; i < cs.FoldsPerRound; i++ {
+				if simFolds == 0 {
+					simFolds = 1
+				} else {
+					simFolds *= 2
+				}
+				if simFolds >= cs.FoldsNeeded {
+					simFolds = cs.FoldsNeeded
+					break
 				}
 			}
+			foldDelta := simFolds - cs.FoldsAccumulated
+			roundCost := 0
+			if cs.TotalConvictionCost > 0 && cs.FoldsNeeded > 0 {
+				roundCost = (cs.TotalConvictionCost * foldDelta) / cs.FoldsNeeded
+				if roundCost < 1 {
+					roundCost = 1
+				}
+			}
+			if roundCost > 0 && mob.Character.Conviction < roundCost {
+				mob.Character.CastingState = nil
+				mobRoom.SendText(fmt.Sprintf(
+					`<ansi fg="mobname">%s</ansi>'s spell falters.`, mob.Character.Name))
+				continue
+			}
+			mob.Character.Conviction -= roundCost
 
-			if allowRetaliation {
-				if spellData := spells.GetSpell(mob.Character.Aggro.SpellInfo.SpellId); spellData != nil {
+			for i := 0; i < cs.FoldsPerRound; i++ {
+				if cs.FoldsAccumulated == 0 {
+					cs.FoldsAccumulated = 1
+				} else {
+					cs.FoldsAccumulated *= 2
+				}
+				if cs.FoldsAccumulated > cs.FoldsNeeded {
+					cs.FoldsAccumulated = cs.FoldsNeeded
+				}
 
-					if spellData.Type == spells.HarmSingle || spellData.Type == spells.HarmMulti || spellData.Type == spells.HarmArea {
-
-						for _, mobId := range mob.Character.Aggro.SpellInfo.TargetMobInstanceIds {
-
-							affectedMobInstanceIds = append(affectedMobInstanceIds, mobId)
-
-							if defMob := mobs.GetInstance(mobId); defMob != nil {
-
-								defMob.Character.CancelBuffsWithFlag(buffs.CancelIfCombat)
-
-								if defMob.Character.Health <= 0 {
-									defMob.Character.EndAggro()
-								} else if defMob.Character.Aggro == nil {
-									defMob.PreventIdle = true
-									defMob.Command(fmt.Sprintf("attack #%d", mob.InstanceId)) // # means mob
-								}
-
-							}
-						}
-
+				if cs.FoldsAccumulated >= cs.FoldsNeeded {
+					if resolveRoom := rooms.LoadRoom(mob.Character.RoomId); resolveRoom != nil {
+						resolveMobSpell(mob, cs, spellData, resolveRoom)
 					}
+					mob.Character.CastingState = nil
+					break
 				}
+				mobRoom.SendText(fmt.Sprintf(
+					`<ansi fg="mobname">%s</ansi> weaves magic with focused intent.`, mob.Character.Name))
 			}
-
-			mob.Character.Aggro = nil
-
 			continue
-
 		}
 
 		/**************************
 		*
-		* END HANDLING MAGIC
+		* END HANDLING FOLD CASTING (MOBS)
 		*
 		**************************/
 
@@ -726,6 +968,32 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 		// H2H is the base level combat, can do combat commands then
 		if mob.Character.Aggro.Type == characters.DefaultAttack {
 
+			// Stage 11.5: Caster AI decision - try spell first, then special move
+			var chosenMove string
+			if util.Rand(100) < mob.ActivityLevel {
+				var targetChar *characters.Character
+				if mob.Character.Aggro.UserId > 0 {
+					if u := users.GetByUserId(mob.Character.Aggro.UserId); u != nil {
+						targetChar = u.Character
+					}
+				} else if mob.Character.Aggro.MobInstanceId > 0 {
+					if tm := mobs.GetInstance(mob.Character.Aggro.MobInstanceId); tm != nil {
+						targetChar = &tm.Character
+					}
+				}
+				if targetChar != nil {
+					chosenMove = combat.ChooseCastAction(mob)
+					if chosenMove == "" {
+						chosenMove = combat.ChooseSpecialMove(mob, targetChar)
+					}
+				}
+			}
+
+			// Execute AI-chosen move or fall back to CombatCommands
+			if chosenMove != "" {
+				mob.Command(chosenMove, 0)
+				continue
+			}
 			// If they have idle commands, maybe do one of them?
 			cmdCt := len(mob.CombatCommands)
 			if cmdCt > 0 {
@@ -775,8 +1043,31 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 
 			defUser.Character.CancelBuffsWithFlag(buffs.CancelIfCombat)
 
-			if defUser.Character.Health < 1 {
-				mob.Character.Aggro = nil
+			if defUser.Character.IsDisabled() {
+				cfg := configs.GetGamePlayConfig()
+				graceRounds := int(cfg.CoupDeGraceRounds)
+				if graceRounds <= 0 {
+					mob.Character.Aggro = nil
+					continue
+				}
+				defUser.Character.DownedRounds++
+				if defUser.Character.DownedRounds <= graceRounds {
+					defRoom.SendText(fmt.Sprintf(
+						`<ansi fg="mobname">%s</ansi> circles <ansi fg="username">%s</ansi>'s fallen body...`,
+						mob.Character.Name, defUser.Character.Name))
+					continue
+				}
+				// Coup de grâce — finishing blow
+				defUser.Character.Health = -10
+				defUser.SendText(fmt.Sprintf(
+					`<ansi fg="red"><ansi fg="mobname">%s</ansi> delivers a final, merciless blow!</ansi>`,
+					mob.Character.Name))
+				defRoom.SendText(fmt.Sprintf(
+					`<ansi fg="red"><ansi fg="mobname">%s</ansi> delivers a finishing blow to <ansi fg="username">%s</ansi>!</ansi>`,
+					mob.Character.Name, defUser.Character.Name), defUser.UserId)
+				mob.Character.EndAggro()
+				defUser.Character.EndAggro()
+				affectedPlayerIds = append(affectedPlayerIds, defUser.UserId)
 				continue
 			}
 
@@ -787,15 +1078,91 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 
 			affectedPlayerIds = append(affectedPlayerIds, mob.Character.Aggro.UserId)
 
+			// Stage 8.8: Players get aggro when attacked by mobs (reciprocal aggro)
+			if defUser.Character.Aggro == nil {
+				defUser.Character.SetAggro(0, mob.InstanceId, characters.DefaultAttack)
+			}
+
+			// Party autoattack: when a mob attacks a party member, trigger autoattack
+			// for other party members who have it enabled and are in the same room.
+			if party := parties.Get(defUser.UserId); party != nil {
+				for _, memberId := range party.GetAutoAttackUserIds() {
+					if memberId == defUser.UserId {
+						continue
+					}
+					if memberUser := users.GetByUserId(memberId); memberUser != nil {
+						if memberUser.Character.RoomId == defUser.Character.RoomId && memberUser.Character.Aggro == nil {
+							memberUser.Command(fmt.Sprintf(`attack #%d`, mob.InstanceId))
+						}
+					}
+				}
+			}
+
+			// Stage 8.3: Process automatic grapple position progression
+			processGrappleProgression(&mob.Character, defUser.Character, mob.Character.Name, defUser.Character.Name, mobRoom, 0, defUser.UserId)
+
+			// --- BEGIN MOB TARGET SWITCHING AI (Stage 7.4) ---
+			// Mobs with higher combat skill may intelligently switch targets
+			// Only consider switching occasionally (10% of rounds)
+			if util.Rand(100) < 10 && mob.Character.Aggro.Type == characters.DefaultAttack {
+
+				combatSkill := mob.Character.GetCombatSkillLevel()
+
+				// Only mobs with decent combat skill (30+) can switch targets strategically
+				if combatSkill >= 30 {
+
+					// Find all players in the room who are fighting
+					potentialTargets := []int{}
+					for _, userId := range mobRoom.GetPlayers() {
+						if userId == mob.Character.Aggro.UserId {
+							continue // Skip current target
+						}
+						if u := users.GetByUserId(userId); u != nil {
+							if u.Character.Health > 0 && !u.Character.HasBuffFlag(buffs.Hidden) {
+								// Prefer switching to someone who's attacking this mob
+								if u.Character.Aggro != nil && u.Character.Aggro.MobInstanceId == mob.InstanceId {
+									potentialTargets = append(potentialTargets, userId)
+								}
+							}
+						}
+					}
+
+					// If we found someone attacking us, consider switching to them
+					if len(potentialTargets) > 0 {
+						switchChance := combat.ChanceToSwitchTarget(&mob.Character)
+						roll := util.Rand(100)
+
+						util.LogRoll("Mob Target Switch", roll, switchChance)
+
+						if roll < switchChance {
+							// Pick a random attacker to switch to
+							newTargetId := potentialTargets[util.Rand(len(potentialTargets))]
+
+							// Switch target with 1 round cost
+							mob.Character.SetAggro(newTargetId, 0, mob.Character.Aggro.Type, 1)
+
+							if newTarget := users.GetByUserId(newTargetId); newTarget != nil {
+								mobRoom.SendText(
+									fmt.Sprintf("<ansi fg=\"mobname\">%s</ansi> shifts focus to <ansi fg=\"username\">%s</ansi>!", mob.Character.Name, newTarget.Character.Name),
+								)
+							}
+
+							continue // Skip this round due to repositioning
+						}
+					}
+				}
+			}
+			// --- END MOB TARGET SWITCHING AI ---
+
 			// If no weapon but has stuff in the backpack, look for a weapon
 			// Especially useful for when they get disarmed
 			if mob.Character.Equipment.Weapon.ItemId == 0 && len(mob.Character.Items) > 0 {
 
 				roll := util.Rand(100)
 
-				util.LogRoll(`Look for weapon`, roll, mob.Character.Stats.Perception.ValueAdj)
+				util.LogRoll(`Look for weapon`, roll, mob.Character.Stats.Charisma.ValueAdj)
 
-				if roll < mob.Character.Stats.Perception.ValueAdj {
+				if roll < mob.Character.Stats.Charisma.ValueAdj {
 					possibleWeapons := []string{}
 					for _, itm := range mob.Character.Items {
 						iSpec := itm.GetSpec()
@@ -835,7 +1202,59 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 
 			var roundResult combat.AttackResult
 
+			// Stage 17.2: Moon phase stat modifiers for mutated players (defender)
+			restore := applyMoonMods(defUser.Character, moonMod)
 			roundResult = combat.AttackMobVsPlayer(mob, defUser)
+			restore()
+
+			// Stage 11.4: Minor Shield reduces physical weapon damage
+			if roundResult.Hit && defUser.Character.HasCondition(characters.ConditionShield) {
+				reduction := int(defUser.Character.GetConditionMagnitude(characters.ConditionShield)) / 2
+				if roundResult.DamageToTarget > reduction+1 {
+					roundResult.DamageToTarget -= reduction
+					roundResult.DamageToTargetReduction += reduction
+				}
+			}
+
+			// Stage 30.1: Record combat analytics
+			mvpAtkType := "unarmed"
+			if mob.Character.Equipment.Weapon.ItemId > 0 {
+				mvpAtkType = "weapon"
+			}
+			combat.RecordAttack(roundResult, combat.Mob, combat.User, mvpAtkType, &mob.Character, defUser.Character, evt.RoundNumber)
+
+			// Stage 8.4: Process crit effects (parry crit disarm, dodge crit grapple opportunity)
+
+
+			// Process parry crit disarm (10% chance on parry crit) - player defending
+			if roundResult.ParryCritDetected {
+				disarmResult := combat.AttemptCritDisarm(defUser.Character, &mob.Character, 10.0)
+				if disarmResult.Success {
+					// Drop weapon to room
+					mobRoom.AddItem(disarmResult.Weapon, false)
+
+					// Send messages to all parties
+					defUser.SendText(disarmResult.Message)
+					mobRoom.SendText(disarmResult.RoomMessage, defUser.UserId)
+				}
+			}
+
+			// Process dodge crit grapple opportunity - player defending
+			if roundResult.DodgeCritDetected {
+				// Only set opportunity if grapple cooldown is available
+				if defUser.Character.Cooldowns["special-move"] <= 0 {
+					combat.SetGrappleOpportunity(defUser.Character)
+
+					// Message
+					defUser.SendText(fmt.Sprintf(
+						`<ansi fg="yellow">You slip inside %s's guard! [Grapple opportunity]</ansi>`,
+						mob.Character.Name))
+					mobRoom.SendText(fmt.Sprintf(
+						`<ansi fg="combat">%s slips inside %s's guard!</ansi>`,
+						defUser.Character.Name, mob.Character.Name),
+						defUser.UserId)
+				}
+			}
 
 			// If a mob attacks a player, check whether player has a charmed mob helping them, and if so, they will move to attack back
 			room := rooms.LoadRoom(roomId)
@@ -871,6 +1290,26 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 
 			for _, msg := range roundResult.MessagesToTargetRoom {
 				defRoom.SendText(msg, defUser.UserId)
+			}
+
+			// Stage 11.3: concentration check when caster takes damage
+			if defUser.Character.CastingState != nil && roundResult.DamageToTarget > 0 {
+				maxHealth := defUser.Character.HealthMax.Value
+				damagePct := roundResult.DamageToTarget * 100 / maxHealth
+				if damagePct < 1 {
+					damagePct = 1
+				}
+				chance := characters.CalcConcentrationChance(
+					defUser.Character.Stats.Willpower.ValueAdj, damagePct)
+				roll := util.Rand(100)
+				util.LogRoll(`Concentration`, roll, chance)
+				if roll >= chance {
+					defUser.Character.CastingState = nil
+					defUser.SendText(`<ansi fg="red">The pain shatters your concentration!</ansi>`)
+					defRoom.SendText(fmt.Sprintf(
+						`<ansi fg="username">%s</ansi>'s concentration breaks.`,
+						defUser.Character.Name), defUser.UserId)
+				}
 			}
 
 			// If the attack connected, check for damage to equipment.
@@ -968,9 +1407,19 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 				continue
 			}
 
+			// Stage 8.3: Process automatic grapple position progression
+			processGrappleProgression(&mob.Character, &defMob.Character, mob.Character.Name, defMob.Character.Name, mobRoom, 0, 0)
+
 			var roundResult combat.AttackResult
 
 			roundResult = combat.AttackMobVsMob(mob, defMob)
+
+			// Stage 30.1: Record combat analytics
+			mmAtkType := "unarmed"
+			if mob.Character.Equipment.Weapon.ItemId > 0 {
+				mmAtkType = "weapon"
+			}
+			combat.RecordAttack(roundResult, combat.Mob, combat.Mob, mmAtkType, &mob.Character, &defMob.Character, evt.RoundNumber)
 
 			for _, buffId := range roundResult.BuffSource {
 				mob.AddBuff(buffId, `combat`)
@@ -1063,6 +1512,62 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 	return affectedPlayerIds, affectedMobInstanceIds
 }
 
+// processGrappleProgression handles automatic position changes for grappled fighters
+// Stage 8.3: Clinched → attempts to advance to Grounded or break free
+// Grounded → controlled fighter attempts to escape
+func processGrappleProgression(char1 *characters.Character, char2 *characters.Character, char1Name string, char2Name string, room *rooms.Room, user1Id int, user2Id int) {
+	// Only process if both are in a grapple position
+	if !char1.CombatPosition.IsGrapplePosition() || !char2.CombatPosition.IsGrapplePosition() {
+		return
+	}
+
+	// Determine who is controller and who is controlled
+	var controller, controlled *characters.Character
+	var controllerName, controlledName string
+
+	if char1.HasCondition(characters.ConditionGrappleController) {
+		controller = char1
+		controlled = char2
+		controllerName = char1Name
+		controlledName = char2Name
+	} else {
+		controller = char2
+		controlled = char1
+		controllerName = char2Name
+		controlledName = char1Name
+	}
+
+	var result combat.PositionProgressionResult
+
+	// Check position and perform appropriate progression
+	if char1.CombatPosition == characters.PositionClinched {
+		result = combat.CheckClinchProgression(controller, controlled)
+	} else if char1.CombatPosition == characters.PositionGrounded {
+		result = combat.CheckGroundedEscape(controller, controlled)
+	} else {
+		return // Not in a grapple position that needs processing
+	}
+
+	// Apply the result
+	combat.ApplyPositionProgression(char1, char2, result)
+
+	// Send messages if position changed
+	if result.Changed {
+		if result.NewPosition == characters.PositionStanding {
+			// Both broke apart
+			room.SendText(
+				fmt.Sprintf(`<ansi fg="combat">%s</ansi>`, result.RoomMessage),
+			)
+		} else if result.NewPosition == characters.PositionGrounded {
+			// Advanced to grounded
+			room.SendText(
+				fmt.Sprintf(`<ansi fg="combat"><ansi fg="username">%s</ansi> takes <ansi fg="mobname">%s</ansi> to the ground!</ansi>`,
+					controllerName, controlledName),
+			)
+		}
+	}
+}
+
 func handleAffected(affectedPlayerIds []int, affectedMobInstanceIds []int) {
 
 	playersHandled := map[int]struct{}{}
@@ -1074,11 +1579,11 @@ func handleAffected(affectedPlayerIds []int, affectedMobInstanceIds []int) {
 
 		if user := users.GetByUserId(userId); user != nil {
 
-			if user.Character.Health <= -10 {
+			if user.Character.Health <= -10 || user.Character.Stamina <= -10 || user.Character.Conviction <= -10 {
 
 				user.Command(`suicide`) // suicide drops all money/items and transports to land of the dead.
 
-			} else if user.Character.Health < 1 {
+			} else if user.Character.IsDisabled() {
 
 				events.AddToQueue(events.PlayerDrop{UserId: user.UserId, RoomId: user.Character.RoomId})
 
@@ -1104,4 +1609,35 @@ func handleAffected(affectedPlayerIds []int, affectedMobInstanceIds []int) {
 
 	}
 
+}
+
+// applyMoonMods temporarily adds moon phase stat deltas to a mutated character's
+// six combat stats (DEX/STR via Swiftmoon, VIT/WIL via Wanderer, PER/CHA via The Eye).
+// Returns a no-op restore function when the character has no mutations or moonMod is zero.
+// Always call the returned function immediately after the combat roll to undo the changes.
+func applyMoonMods(ch *characters.Character, moonMod float64) func() {
+	if len(ch.Mutations) == 0 || moonMod == 0 {
+		return func() {}
+	}
+	swift, wander, eye := gametime.GetAllPhases()
+	dex := gametime.MoonStatDelta(swift, moonMod, ch.Stats.Dexterity.ValueAdj)
+	str := gametime.MoonStatDelta(swift, moonMod, ch.Stats.Strength.ValueAdj)
+	vit := gametime.MoonStatDelta(wander, moonMod, ch.Stats.Vitality.ValueAdj)
+	wil := gametime.MoonStatDelta(wander, moonMod, ch.Stats.Willpower.ValueAdj)
+	per := gametime.MoonStatDelta(eye, moonMod, ch.Stats.Perception.ValueAdj)
+	cha := gametime.MoonStatDelta(eye, moonMod, ch.Stats.Charisma.ValueAdj)
+	ch.Stats.Dexterity.ValueAdj += dex
+	ch.Stats.Strength.ValueAdj += str
+	ch.Stats.Vitality.ValueAdj += vit
+	ch.Stats.Willpower.ValueAdj += wil
+	ch.Stats.Perception.ValueAdj += per
+	ch.Stats.Charisma.ValueAdj += cha
+	return func() {
+		ch.Stats.Dexterity.ValueAdj -= dex
+		ch.Stats.Strength.ValueAdj -= str
+		ch.Stats.Vitality.ValueAdj -= vit
+		ch.Stats.Willpower.ValueAdj -= wil
+		ch.Stats.Perception.ValueAdj -= per
+		ch.Stats.Charisma.ValueAdj -= cha
+	}
 }

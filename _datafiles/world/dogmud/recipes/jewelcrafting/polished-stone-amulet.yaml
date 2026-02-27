@@ -1,0 +1,16 @@
+id: polished-stone-amulet
+name: Polished Stone Amulet
+skill: jewelcrafting
+skill_minimum: 8
+station: jeweler_bench
+time_rounds: 3
+ingredients:
+  - item_tag: polished-stone
+    quantity: 2
+  - item_tag: copper-wire
+    quantity: 1
+output:
+  item_id: 20032
+  quantity: 1
+success_message: "You set both stones in a copper frame and bind them tight. A polished stone amulet!"
+failure_message: "One of the stones splits while you tighten the frame. The materials are ruined."

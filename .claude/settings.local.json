@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(go build:*)",
+      "Bash(python3:*)",
+      "Bash(echo:*)"
+    ]
+  },
+  "defaultMode": "bypassPermissions"
+}

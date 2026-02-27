@@ -1,0 +1,21 @@
+mobid: 71
+zone: Sanctum Basin
+statpool: 2
+hostile: false
+maxwander: 3
+groups:
+  - animal
+idlecommands:
+  - 'emote flicks its tongue, tasting the air'
+  - 'wander'
+  - 'wander'
+  - ''
+activitylevel: 30
+character:
+  name: meadow lizard
+  description: 'A small desert lizard with mottled grey-brown scales that blend
+    perfectly with the basalt and dust. It darts between rocks with sudden bursts
+    of speed, pausing to bask in patches of sunlight. Harmless, but quick.'
+  speciesid: 21
+  level: 0
+  gold: 0

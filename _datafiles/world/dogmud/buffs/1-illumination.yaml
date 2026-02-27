@@ -1,0 +1,8 @@
+buffid: 1
+name: Illumination
+description: Light surrounds you.
+secret: false
+triggerrate: 5 real minutes
+triggercount: 1
+flags:
+  - lightsource

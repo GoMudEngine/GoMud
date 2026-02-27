@@ -113,18 +113,7 @@ func (c *CleanupModule) userTrashCommand(rest string, user *users.UserRecord, ro
 				user.UserId)
 		}
 
-		if c.TrashExperienceEnabled {
-
-			// Grant experience equal to a tenth of the item value
-			iSpec := matchItem.GetSpec()
-
-			xpGrant := int(float64(iSpec.Value) / 10)
-			if xpGrant < c.DefaultTrashExperienceValue {
-				xpGrant = c.DefaultTrashExperienceValue
-			}
-			user.GrantXP(xpGrant, `trash cleanup`)
-
-		}
+		// XP granting removed — trash cleanup no longer rewards experience
 
 	}
 

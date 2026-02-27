@@ -1,0 +1,18 @@
+id: fire-resistance-draught
+name: Fire Resistance Draught
+skill: alchemy
+skill_minimum: 20
+station: alchemy_bench
+time_rounds: 4
+ingredients:
+  - item_tag: dustwalk-herb
+    quantity: 2
+  - item_tag: healers-root
+    quantity: 1
+  - item_tag: small-vial
+    quantity: 1
+output:
+  item_id: 30030
+  quantity: 1
+success_message: "The herbs dissolve into a thick reddish liquid that radiates faint warmth. A fire resistance draught!"
+failure_message: "The mixture boils over and evaporates. The materials are ruined."

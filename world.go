@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/badinputtracker"
+	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -727,6 +728,16 @@ func (w *World) MainWorker(shutdown chan bool, wg *sync.WaitGroup) {
 	turnTimer := time.NewTimer(time.Duration(c.Timing.TurnMs) * time.Millisecond)
 	statsTimer := time.NewTimer(time.Duration(10) * time.Second)
 
+	// Stage 30.1: Combat analytics flush timer (nil-channel pattern when disabled)
+	var analyticsChan <-chan time.Time
+	analyticsConfig := configs.GetAnalyticsConfig()
+	if bool(analyticsConfig.Enabled) {
+		combat.InitAnalytics()
+		analyticsTimer := time.NewTicker(time.Duration(int(analyticsConfig.FlushIntervalSec)) * time.Second)
+		analyticsChan = analyticsTimer.C
+		defer analyticsTimer.Stop()
+	}
+
 loop:
 	for {
 
@@ -746,6 +757,7 @@ loop:
 				mudlog.Error("rooms.SaveAllRooms()", "error", err.Error())
 			}
 			users.SaveAllUsers() // Save all user data too.
+			combat.FlushAnalytics() // Stage 30.1: Final flush on shutdown
 			util.UnlockMud()
 
 			break loop
@@ -806,6 +818,12 @@ loop:
 				events.AddToQueue(events.NewRound{RoundNumber: roundNumber, TimeNow: time.Now()})
 			}
 
+			util.UnlockMud()
+
+		case <-analyticsChan:
+			// Stage 30.1: Periodic combat analytics flush
+			util.LockMud()
+			combat.FlushAnalytics()
 			util.UnlockMud()
 
 		case enterWorldUserId := <-w.enterWorldUserId: // [2]int

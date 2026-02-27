@@ -1,0 +1,16 @@
+The <ansi fg="command">locate</ansi> command finds the room another player or mob is in:
+
+<ansi fg="command">locate [charactername]</ansi> - Finds the player that matches [charactername]
+
+<ansi fg="command">locate [mobname]</ansi>       - List all mobs that match [mobname] exactly.
+<ansi fg="command">locate *</ansi>               - List all mobs
+<ansi fg="command">locate *[mobname]</ansi>      - List all mobs who's names end in [mobname]
+<ansi fg="command">locate [mobname]*</ansi>      - List all mobs who's names start with [mobname]
+<ansi fg="command">locate *[mobname]*</ansi>     - List all mobs who's names contain [mobname]
+
+<ansi fg="red">NOTE</ansi> - Mobs that have not been loaded into memory will 
+not be listed. 
+
+Mobs are only loaded into memory if they don't exist and a player visits/looks
+into their spawn room.
+

@@ -1,0 +1,10 @@
+itemid: 20016
+name: torn gloves
+namesimple: gloves
+description: The gloves are in terrible shape.
+type: gloves
+subtype: wearable
+damagereduction: 2
+statmods:
+  strength: 1
+  perception: -1

@@ -1,0 +1,17 @@
+roomid: 75
+zone: Shadow Realm
+title: Waiting room
+description: You find yourself in the heart of the Shadow Realm, a place suspended
+  between the corporeal and the ethereal. The air is heavy with a palpable stillness,
+  and the landscape is a haunting, ever-changing tapestry of shifting shadows and
+  muted hues. As far as the eye can see, ghostly wisps of forgotten souls drift aimlessly,
+  their spectral forms casting faint, flickering glows in the perpetual twilight.
+  Eerie, winding paths of obsidian stone lead you deeper into this enigmatic realm,
+  revealing strange, gravestone-like markers that bear inscriptions in a language
+  only half-remembered by the departed. The hushed whispers of lost spirits echo through
+  the obscurity, and the distant, mournful wails of phantom creatures send shivers
+  down your spine. The Shadow Realm is a place of transition, where the boundary between
+  life and the beyond blurs, and the mysteries of the afterlife begin to unravel.
+exits: {}
+mutators:
+- mutatorid: death-recovery

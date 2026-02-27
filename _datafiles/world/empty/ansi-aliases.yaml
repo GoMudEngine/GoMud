@@ -105,17 +105,17 @@ colors:
   health-10: 202
   health-0: 196
   health-dead: 8
-  mana-100: 195
-  mana-90: 159
-  mana-80: 123
-  mana-70: 87
-  mana-60: 51
-  mana-50: 44
-  mana-40: 37
-  mana-30: 30
-  mana-20: 23
-  mana-10: 245
-  mana-0: 8
+  mana-100: 46
+  mana-90: 82
+  mana-80: 118
+  mana-70: 154
+  mana-60: 190
+  mana-50: 226
+  mana-40: 220
+  mana-30: 214
+  mana-20: 208
+  mana-10: 202
+  mana-0: 196
   suggested-text: 8
   night: 19
   day: 228

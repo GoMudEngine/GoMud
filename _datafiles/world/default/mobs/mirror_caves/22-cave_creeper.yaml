@@ -9,8 +9,8 @@ idlecommands:
   - 'emote writhes in the darkness.'
   - 'wander'
 activitylevel: 10
+statpool: 25
 character:
   name: cave creeper
   description: 'Dwelling in the deepest parts of the caves, these tentacled horrors can extend their limbs great distances to ensnare prey. They are sensitive to light and often retreat into the abyssal cracks and crevices of the cave.'
-  raceid: 9
-  level: 25
+  speciesid: 9

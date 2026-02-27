@@ -1,8 +1,15 @@
-# GoMud NPC Management System Context
+# DOGMud NPC Management System Context
 
 ## Overview
 
-The GoMud mobs system provides comprehensive NPC (Non-Player Character) management with support for AI behaviors, scripting integration, conversation systems, pathfinding, shop management, and complex social dynamics. It features a dual-layer architecture with immutable mob specifications and mutable mob instances, supporting dynamic spawning, behavioral patterns, and sophisticated interaction systems.
+The DOGMud mobs system provides comprehensive NPC (Non-Player Character) management with support for AI behaviors, scripting integration, conversation systems, pathfinding, shop management, and complex social dynamics. It features a dual-layer architecture with immutable mob specifications and mutable mob instances, supporting dynamic spawning, behavioral patterns, and sophisticated interaction systems.
+
+**DOGMud Differences from upstream GoMud:**
+- Mobs no longer use Level for stat initialization — stats and skills defined directly in YAML
+- No `AutoTrain()` or `StatPoints = Level` in mob creation
+- Mana removed — mobs use the same three resource pools as players (Health, Stamina, Conviction)
+- Species system replaces races for NPC types
+- Mobs and players are mechanically identical (same stat/skill resolution)
 
 ## Architecture
 
@@ -39,7 +46,8 @@ The mobs system is built around several key components:
 ### 1. **Dynamic Instance Management**
 - Unique instance IDs for each spawned mob
 - Automatic stat calculation and equipment validation
-- Level scaling and stat point distribution
+- Stats come from species base stats + mob YAML `statpool` bonus (no zone-level autoscaling)
+- Stats and skills defined directly in YAML (no level-based scaling)
 - Memory management with automatic cleanup
 
 ### 2. **Behavioral AI System**
@@ -115,33 +123,32 @@ type Mob struct {
 ### Mob Creation and Spawning
 ```go
 // Create new mob instance from specification
-func NewMobById(mobId MobId, homeRoomId int, forceLevel ...int) *Mob {
+// NOTE: In DOGMud, mobs no longer use Level for stat initialization.
+// Stats come from species base stats + the mob's statpool bonus.
+// The forceStatPool parameter overrides the mob YAML statpool if > 0.
+// Zone-level autoscaling was removed in Phase 21.
+func NewMobById(mobId MobId, homeRoomId int, forceStatPool int) *Mob {
     if spec, ok := mobs[int(mobId)]; ok {
         instanceCounter++
-        
+
         // Create copy of mob specification
         mob := *spec
         mob.HomeRoomId = homeRoomId
         mob.Character.RoomId = homeRoomId
         mob.InstanceId = instanceCounter
         mob.Character.PlayerDamage = make(map[int]int)
-        
-        // Level scaling
-        if len(forceLevel) > 0 && forceLevel[0] > 0 {
-            mob.Character.Level = forceLevel[0]
-        }
-        
-        // Apply training and initialize stats
-        mob.Character.AutoTrain()
+
+        // Initialize resource pools from stats
         mob.Character.Health = mob.Character.HealthMax.Value
-        mob.Character.Mana = mob.Character.ManaMax.Value
-        
+        mob.Character.Stamina = mob.Character.StaminaMax.Value
+        mob.Character.Conviction = mob.Character.ConvictionMax.Value
+
         // Apply permanent buffs
         mob.Character.SetPermaBuffs(mob.BuffIds)
-        
+
         // Validate all equipment
         mob.validateEquipment()
-        
+
         // Store instance
         mobInstances[mob.InstanceId] = &mob
         return &mob
@@ -723,24 +730,22 @@ type Mob struct {
     Character characters.Character  // Full character integration
 }
 
-// Automatic stat training and equipment validation
-// Level scaling and experience calculation
+// Stats and skills defined directly in YAML — no level-based scaling
 // Equipment bonuses and stat modifications
+// Same skill/stat resolution as players (no special cases)
 ```
 
 ## Usage Examples
 
 ### Creating and Managing Mob Instances
 ```go
-// Spawn mob in specific room
-mob := mobs.NewMobById(mobs.MobId(123), roomId)
+// Spawn mob in specific room (stats come from species + statpool)
+// forceStatPool=0 means use the mob YAML's statpool value
+mob := mobs.NewMobById(mobs.MobId(123), roomId, 0)
 if mob != nil {
     // Mob spawned successfully
     room.AddMob(mob.InstanceId)
 }
-
-// Force specific level
-highLevelMob := mobs.NewMobById(mobs.MobId(123), roomId, 25)
 
 // Schedule mob commands
 mob.Command("say Hello there!")
@@ -790,7 +795,7 @@ func shouldAttack(attacker *Mob, target *Mob) bool {
 - `internal/events` - Event system for command scheduling and buff application
 - `internal/conversations` - Multi-mob conversation system
 - `internal/items` - Item system for equipment and inventory management
-- `internal/races` - Race system for default behaviors and restrictions
+- `internal/species` - Species system for default behaviors and restrictions
 - `internal/buffs` - Status effect system for permanent and temporary effects
 - `internal/configs` - Configuration management for file paths and timing
 - `internal/util` - Utility functions for randomization, file operations, and validation

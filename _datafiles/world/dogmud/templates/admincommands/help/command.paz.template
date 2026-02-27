@@ -1,0 +1,4 @@
+The <ansi fg="command">paz</ansi> command can be used in the following ways:
+
+<ansi fg="command">paz</ansi> - Brings yourself to maximum hp/mp.
+<ansi fg="command">pax [target]</ansi> - Brings the target to maximum hp/mp.

@@ -6,7 +6,6 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
-	"github.com/GoMudEngine/GoMud/internal/races"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -33,7 +32,6 @@ func Killstats(rest string, user *users.UserRecord, room *rooms.Room, flags even
 	//totalPVPDeaths := 0
 
 	mobKills := map[string]int{}
-	raceKills := map[string]int{}
 	areaKills := map[string]int{}
 	charKills := map[string]int{}
 
@@ -45,11 +43,6 @@ func Killstats(rest string, user *users.UserRecord, room *rooms.Room, flags even
 
 			// Populate mob kills
 			mobKills[mobSpec.Character.Name] = mobKills[mobSpec.Character.Name] + kCt
-
-			// Populate race kills
-			if raceInfo := races.GetRace(mobSpec.Character.RaceId); raceInfo != nil {
-				raceKills[raceInfo.Name] = raceKills[raceInfo.Name] + kCt
-			}
 
 			// Populate area kills
 			areaKills[mobSpec.Zone] = areaKills[mobSpec.Zone] + kCt
@@ -75,19 +68,11 @@ func Killstats(rest string, user *users.UserRecord, room *rooms.Room, flags even
 		totalDeaths = user.Character.KD.GetPvpDeaths()
 
 		otherSuggestions = append(otherSuggestions, `<ansi fg="command">killstats area</ansi>`)
-		otherSuggestions = append(otherSuggestions, `<ansi fg="command">killstats race</ansi>`)
-
-	} else if rest == `race` || rest == `races` {
-
-		renderStats = raceKills
-		otherSuggestions = append(otherSuggestions, `<ansi fg="command">killstats pvp</ansi>`)
-		otherSuggestions = append(otherSuggestions, `<ansi fg="command">killstats area</ansi>`)
 
 	} else if rest == `zone` || rest == `zones` || rest == `area` || rest == `areas` {
 
 		renderStats = areaKills
 		otherSuggestions = append(otherSuggestions, `<ansi fg="command">killstats pvp</ansi>`)
-		otherSuggestions = append(otherSuggestions, `<ansi fg="command">killstats race</ansi>`)
 
 	} else {
 
@@ -96,7 +81,6 @@ func Killstats(rest string, user *users.UserRecord, room *rooms.Room, flags even
 		renderStats = mobKills
 		otherSuggestions = append(otherSuggestions, `<ansi fg="command">killstats pvp</ansi>`)
 		otherSuggestions = append(otherSuggestions, `<ansi fg="command">killstats area</ansi>`)
-		otherSuggestions = append(otherSuggestions, `<ansi fg="command">killstats race</ansi>`)
 	}
 
 	headers = []string{strings.Title(rest), `Quantity`, `%`}

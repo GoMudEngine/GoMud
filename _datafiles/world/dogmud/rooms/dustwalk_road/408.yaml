@@ -1,0 +1,35 @@
+roomid: 408
+zone: Dustwalk Road
+title: Bandit Hollow
+description: The gully dead-ends at a shallow overhang of eroded sandstone where the
+  bandits have made their base. Stolen goods are stacked against the back wall --
+  crates, bundles, and a few items that are clearly too fine for their current owners.
+  The overhang provides shade and shelter from above, and the narrow approach means
+  only one or two people can enter at a time. It is a defensible position, chosen by
+  someone who knows how to pick ground. The smell of unwashed bodies and stale cook
+  smoke hangs in the still air.
+biome: plains
+exits:
+  north:
+    roomid: 407
+spawninfo:
+- mobid: 80
+  message: A bandit scrambles to its feet, grabbing a weapon from the pile of stolen goods.
+  respawnrate: 5 real minutes
+- mobid: 80
+  message: A second bandit steps out from under the overhang, blocking the path.
+  respawnrate: 5 real minutes
+- itemid: 16
+  message: A leather purse lies among the scattered stolen goods, its contents spilling out.
+  respawnrate: 10 real minutes
+nouns:
+  goods: Crates and bundles bearing merchant marks from at least three different
+    trading houses. Bolts of dyed cloth, sealed jars of preserved food, and a few
+    small lockboxes that have been pried open and emptied. Someone has been busy.
+  overhang: Eroded sandstone forming a natural shelter perhaps ten feet deep. The
+    ceiling is blackened with cook smoke and the floor is packed hard from use. This
+    has been a hideout for weeks, at least.
+idlemessages:
+- The overhang traps the smell of stale smoke and sweat.
+- Something clinks among the stolen goods as the breeze shifts a loose tarp.
+- A fly buzzes lazily around the remains of a meal left on a flat stone.

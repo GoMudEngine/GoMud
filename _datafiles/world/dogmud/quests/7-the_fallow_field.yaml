@@ -1,0 +1,26 @@
+questid: 7
+name: The Fallow Field
+description: Farmer Dorn's neighbour Gareth was evicted by the Thornwall Tax Authority,
+  and the abandoned field next door is now breeding pests that threaten the remaining
+  farms. Dorn wants someone to deal with the pest problem and find out what happened
+  to Gareth.
+secret: false
+
+steps:
+  - id: start
+    description: "Farmer Dorn has asked you to help with the pest infestation spreading from the fallow field next to his farm. Kill the crop pests in the pest fields and bring back a sample."
+    hint: "Head east from Dorn's farm to the fallow field, then south to the pest fields."
+  - id: pests
+    description: "You need to clear the crop pests from the pest fields south of the fallow field and collect a pest sample to bring back to Dorn."
+    hint: "Fight the crop pests in the pest fields. One should drop a sample you can bring back."
+  - id: evidence
+    description: "You have a pest sample. You also found an eviction notice on the fallow field. Return to Dorn with what you have learned."
+    hint: "Go back to Dorn's farm north of the farmstead road."
+  - id: end
+    description: "You reported back to Dorn. The pest problem is under control for now, but the root cause -- Thornwall's tax seizures leaving fields abandoned -- remains."
+
+rewards:
+  playermessage: "Dorn examines the pest sample with a grim expression, then sets it down carefully. 'Bigger than they should be. The fallow field is feeding them -- all that untended root growth, it is a paradise for vermin.' He looks toward Thornwall's walls. 'Gareth was a good farmer. The tax took everything. And now the rest of us pay for it in different coin.' He reaches into a pouch. 'This is not much, but it is honest. And if you get inside those walls, see if you can find what happened to Gareth. I owe him that.'"
+  roommessage: "Dorn nods slowly, the weight of the situation evident in his weathered face."
+  gold: 8
+  itemid: 23

@@ -1,0 +1,11 @@
+mutationid: regenerative-tissue
+name: Regenerative Tissue
+description: Your flesh knits itself back together with unnatural speed. Wounds close before your eyes, though the constant rebuilding drains your reserves.
+rarity: 6
+visual: Faint scars appear and vanish across their skin in a slow, living pattern.
+pros:
+  - type: health_regen_multiplier
+    value: 0.30
+cons:
+  - type: stamina_regen_multiplier
+    value: -0.10

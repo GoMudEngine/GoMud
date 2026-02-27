@@ -2,6 +2,7 @@ package usercommands
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -22,6 +23,17 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return true, nil
 	}
 
+	// Check for "arm1" / "arm2" suffix for extra arm slot targeting
+	targetArmSlot := 0
+	restLower := strings.ToLower(rest)
+	if strings.HasSuffix(restLower, " arm1") {
+		targetArmSlot = 1
+		rest = strings.TrimSpace(rest[:len(rest)-5])
+	} else if strings.HasSuffix(restLower, " arm2") {
+		targetArmSlot = 2
+		rest = strings.TrimSpace(rest[:len(rest)-5])
+	}
+
 	// Check whether the user has an item in their inventory that matches
 	matchItem, found := user.Character.FindInBackpack(rest)
 
@@ -34,6 +46,54 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			user.SendText(
 				fmt.Sprintf(`Your <ansi fg="item">%s</ansi> doesn't look very fashionable.`, matchItem.DisplayName()),
 			)
+			return true, nil
+		}
+
+		// Handle direct extra arm slot equip
+		if targetArmSlot > 0 {
+			if iSpec.Type != items.Weapon {
+				user.SendText(`You can only wield weapons in extra arms.`)
+				return true, nil
+			}
+			if user.Character.ExtraArms < targetArmSlot {
+				user.SendText(fmt.Sprintf(`You don't have enough extra arms for arm slot %d.`, targetArmSlot))
+				return true, nil
+			}
+			handsReq := user.Character.HandsRequired(matchItem)
+			if handsReq > 1 {
+				user.SendText(`You can only wield one-handed weapons in extra arms.`)
+				return true, nil
+			}
+
+			var oldItem items.Item
+			if targetArmSlot == 1 {
+				oldItem = user.Character.Equipment.ExtraArm1
+				user.Character.Equipment.ExtraArm1 = matchItem
+			} else {
+				oldItem = user.Character.Equipment.ExtraArm2
+				user.Character.Equipment.ExtraArm2 = matchItem
+			}
+
+			user.Character.CancelBuffsWithFlag(buffs.Hidden)
+			user.Character.RemoveItem(matchItem)
+
+			if oldItem.ItemId > 0 {
+				user.SendText(fmt.Sprintf(`You remove your <ansi fg="item">%s</ansi> from extra arm %d and return it to your backpack.`, oldItem.DisplayName(), targetArmSlot))
+				user.Character.StoreItem(oldItem)
+			}
+
+			user.SendText(fmt.Sprintf(`You wield your <ansi fg="item">%s</ansi> in extra arm %d.`, matchItem.DisplayName(), targetArmSlot))
+			room.SendText(
+				fmt.Sprintf(`<ansi fg="username">%s</ansi> wields their <ansi fg="item">%s</ansi> in an extra arm.`, user.Character.Name, matchItem.DisplayName()),
+				user.UserId,
+			)
+
+			user.Character.Validate(true)
+			events.AddToQueue(events.EquipmentChange{
+				UserId:       user.UserId,
+				ItemsWorn:    []items.Item{matchItem},
+				ItemsRemoved: []items.Item{oldItem},
+			})
 			return true, nil
 		}
 

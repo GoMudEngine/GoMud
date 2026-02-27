@@ -81,7 +81,7 @@ Represents a player party with the following features:
 ### Combat Coordination
 - **Auto-Attack System**: Members can automatically join combat when party engages
 - **Targeting Logic**: Position-based targeting system for balanced combat
-- **Group Combat**: Coordinated combat actions and shared experience
+- **Group Combat**: Coordinated combat actions
 - **Protection Mechanics**: Back position provides protection from direct targeting
 
 ## Dependencies
@@ -92,7 +92,7 @@ Represents a player party with the following features:
 ### Integration Points
 - **Combat System**: Position-based targeting and auto-attack coordination
 - **User System**: Integration with user management for member validation
-- **Experience System**: Shared experience distribution among party members
+- **Progression System**: Skill progression through group combat
 - **Command System**: Party-related commands for management and coordination
 
 ## Usage Patterns

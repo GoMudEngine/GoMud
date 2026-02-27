@@ -1,0 +1,87 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="yellow">Delusions of Grandeur</ansi> <ansi fg="magenta">(DOGMud)</ansi>
+
+<ansi fg="yellow">━━━ The World ━━━</ansi>
+
+You are on <ansi fg="yellow">Gaius</ansi>, a world colonized ten thousand years ago by humans from a distant
+civilization. The colony ships crashed. The technology was lost. Survivors scattered
+across the continent of <ansi fg="yellow">Thera</ansi> and rebuilt from nothing, eventually reaching a world
+that looks, from the outside, like medieval Europe — cities, trade routes, lords and
+peasants, swords and shields.
+
+The truth is more complicated.
+
+<ansi fg="yellow">━━━ The Chrysalis ━━━</ansi>
+
+Something in the air, water, and soil of Gaius infected the survivors. The dominant
+religion calls it <ansi fg="yellow">The Chrysalis</ansi> — a divine gift, an awakening. What it actually is
+no one fully understands. What it does is undeniable:
+
+The beliefs and convictions of the infected <ansi fg="white">become physically real</ansi>.
+
+Magic is not supernatural. It is the Chrysalis translating will into matter. Mutations
+are not random — they reflect the pressures, fears, and drives of the individual the
+organism inhabits. A soldier who survives a hundred battles finds his body changing to
+match. A healer's hands become steadier than any uninfected surgeon's. The deeply
+faithful shape reality around their faith.
+
+Infection manifests at puberty. It grows stronger with age. There is no cure.
+
+<ansi fg="yellow">━━━ The Three Moons ━━━</ansi>
+
+Three moons hang in the sky of Gaius. The people of Thera study them, worship them,
+and build their calendars around them:
+
+  <ansi fg="yellow">Swiftmoon</ansi>    — the large fast moon, linked to dexterity and quick thought
+  <ansi fg="yellow">The Wanderer</ansi> — the middle moon, linked to perception and foresight
+  <ansi fg="yellow">The Eye</ansi>      — the small bright moon, linked to charisma and force of will
+
+What no living person knows: the moons are not moons. They are the other colony ships,
+still in orbit after ten thousand years. Their presence influences the Chrysalis in
+ways that look exactly like astrology and feel exactly like divine favour.
+
+<ansi fg="yellow">━━━ The Windward Marches ━━━</ansi>
+
+The game begins in <ansi fg="yellow">The Windward Marches</ansi>, a region of varied terrain on the western
+edge of Thera — forests, cliffs, shore, highland passes. The climate runs cool and
+temperate, prone to sudden storms at the seasonal turns. It is a place where old
+power is contested and new factions are rising.
+
+<ansi fg="yellow">Startland</ansi> is the entry point: a rough settlement where newcomers find their
+footing before venturing further into the world.
+
+<ansi fg="yellow">━━━ What Kind of Game Is This? ━━━</ansi>
+
+<ansi fg="white">Skill-based.</ansi>  There are no class restrictions. You become what you practice.
+  Fight with weapons: weapon combat improves. Cast spells: spellcasting improves.
+  Forge iron: blacksmithing improves. Skills advance through use, not through
+  spending points at a trainer.
+
+<ansi fg="white">Stat-based.</ansi>  Six stats govern your character: Strength, Dexterity, Vitality,
+  Perception, Willpower, Charisma. All start near 100 (human baseline) and rise
+  through use. A mage who never lifts a sword will have weak arms. A blacksmith
+  who never trains the mind will struggle with spells.
+
+<ansi fg="white">Mutation-driven.</ansi>  Sustained combat feeds the Chrysalis. Your body changes. Every
+  mutation has a benefit and a cost. You do not choose them — the organism does.
+  You can carry up to five mutations at once.
+
+<ansi fg="white">Crafting.</ansi>  Raw materials become gear through skill and a working station. A forge
+  makes blades. An alchemy bench makes potions. What you can craft depends on
+  your skill and what you can find or gather.
+
+<ansi fg="yellow">━━━ Getting Started ━━━</ansi>
+
+  <ansi fg="command">look</ansi>              See your surroundings.
+  <ansi fg="command">help combat</ansi>       How fighting works.
+  <ansi fg="command">help craft</ansi>        How the crafting system works.
+  <ansi fg="command">help skills</ansi>       Your current skill levels.
+  <ansi fg="command">help status</ansi>       Your stats, health, and condition.
+  <ansi fg="command">help mutations</ansi>    The Chrysalis mutation system.
+  <ansi fg="command">help species</ansi>      Playable species and their traits.
+
+<ansi fg="yellow">━━━ Under the Hood ━━━</ansi>
+
+<ansi fg="8">DOGMud is built on the <ansi fg="white">GoMud</ansi> open source engine by Dylan Squires (Volte6).
+Source: <ansi fg="51">github.com/GoMudEngine/GoMud</ansi>
+DOGMud repository: <ansi fg="51">github.com/pruuk/DOGMud</ansi></ansi>
+

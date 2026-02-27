@@ -1,0 +1,13 @@
+mutationid: fast-reflexes
+name: Fast Reflexes
+description: Your nervous system rewires for speed. Reflexes quicken at the cost of raw power.
+rarity: 3
+visual: Their movements have an uncanny, fluid quality.
+pro:
+  type: stat_multiplier
+  target: dexterity
+  value: 0.10
+con:
+  type: stat_multiplier
+  target: strength
+  value: -0.05

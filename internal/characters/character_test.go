@@ -7,6 +7,7 @@ import (
 
 	"maps"
 
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/stretchr/testify/assert"
 )
@@ -42,7 +43,7 @@ func TestCharacter_CanDualWield(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := New()
-			c.Skills[string(skills.DualWield)] = tt.skillLevel
+			c.Skills[string(skills.WeaponCombat)] = tt.skillLevel
 			got := c.CanDualWield()
 			assert.Equal(t, tt.want, got)
 		})
@@ -139,56 +140,17 @@ func TestCharacter_GetMiscDataKeys(t *testing.T) {
 	}
 }
 func TestCharacter_CarryCapacity(t *testing.T) {
+	// CarryCapacity() = float64(strengthAdj) * 3.0
 	tests := []struct {
 		name        string
 		strengthAdj int
-		expectedCap int
+		expectedCap float64
 	}{
-		{
-			name:        "Strength 0",
-			strengthAdj: 0,
-			expectedCap: 5,
-		},
-		{
-			name:        "Strength 2",
-			strengthAdj: 2,
-			expectedCap: 5,
-		},
-		{
-			name:        "Strength 3",
-			strengthAdj: 3,
-			expectedCap: 6,
-		},
-		{
-			name:        "Strength 6",
-			strengthAdj: 6,
-			expectedCap: 7,
-		},
-		{
-			name:        "Strength 9",
-			strengthAdj: 9,
-			expectedCap: 8,
-		},
-		{
-			name:        "Strength 12",
-			strengthAdj: 12,
-			expectedCap: 9,
-		},
-		{
-			name:        "Strength 30",
-			strengthAdj: 30,
-			expectedCap: 15,
-		},
-		{
-			name:        "Strength 100",
-			strengthAdj: 100,
-			expectedCap: 38,
-		},
-		{
-			name:        "Negative Strength",
-			strengthAdj: -3,
-			expectedCap: 4,
-		},
+		{"Strength 0", 0, 0.0},
+		{"Strength 2", 2, 6.0},
+		{"Strength 10", 10, 30.0},
+		{"Strength 100", 100, 300.0},
+		{"Negative Strength", -3, -9.0},
 	}
 
 	for _, tt := range tests {
@@ -1968,34 +1930,67 @@ func TestCharacter_GetSetting(t *testing.T) {
 }
 func TestCharacter_IsDisabled(t *testing.T) {
 	tests := []struct {
-		name   string
-		health int
-		want   bool
+		name       string
+		health     int
+		stamina    int
+		conviction int
+		want       bool
 	}{
 		{
-			name:   "Health is positive",
-			health: 10,
-			want:   false,
+			name:       "All pools positive",
+			health:     10,
+			stamina:    10,
+			conviction: 10,
+			want:       false,
 		},
 		{
-			name:   "Health is zero",
-			health: 0,
-			want:   true,
+			name:       "Health is zero",
+			health:     0,
+			stamina:    10,
+			conviction: 10,
+			want:       true,
 		},
 		{
-			name:   "Health is negative",
-			health: -1,
-			want:   true,
+			name:       "Health is negative",
+			health:     -1,
+			stamina:    10,
+			conviction: 10,
+			want:       true,
 		},
 		{
-			name:   "Health is large positive",
-			health: 100,
-			want:   false,
+			name:       "All pools large positive",
+			health:     100,
+			stamina:    100,
+			conviction: 100,
+			want:       false,
 		},
 		{
-			name:   "Health is large negative",
-			health: -100,
-			want:   true,
+			name:       "Health is large negative",
+			health:     -100,
+			stamina:    10,
+			conviction: 10,
+			want:       true,
+		},
+		{
+			name:       "Stamina is zero",
+			health:     10,
+			stamina:    0,
+			conviction: 10,
+			want:       true,
+		},
+		{
+			name:       "Conviction is zero",
+			health:     10,
+			stamina:    10,
+			conviction: 0,
+			want:       true,
+		},
+		{
+			name:       "Multiple pools depleted",
+			health:     -5,
+			stamina:    -3,
+			conviction: 10,
+			want:       true,
 		},
 	}
 
@@ -2003,6 +1998,8 @@ func TestCharacter_IsDisabled(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := New()
 			c.Health = tt.health
+			c.Stamina = tt.stamina
+			c.Conviction = tt.conviction
 			got := c.IsDisabled()
 			assert.Equal(t, tt.want, got)
 		})
@@ -2054,8 +2051,8 @@ func TestCharacter_GetSkillLevel(t *testing.T) {
 		{
 			name: "Skill exists with positive value",
 			args: args{
-				skillsMap: map[string]int{string(skills.DualWield): 3},
-				skillTag:  skills.DualWield,
+				skillsMap: map[string]int{string(skills.WeaponCombat): 3},
+				skillTag:  skills.WeaponCombat,
 			},
 			expected: 3,
 		},
@@ -2070,7 +2067,7 @@ func TestCharacter_GetSkillLevel(t *testing.T) {
 		{
 			name: "Skill does not exist",
 			args: args{
-				skillsMap: map[string]int{string(skills.Tame): 2},
+				skillsMap: map[string]int{string(skills.Spellcasting): 2},
 				skillTag:  skills.Cast,
 			},
 			expected: 0,
@@ -2079,7 +2076,7 @@ func TestCharacter_GetSkillLevel(t *testing.T) {
 			name: "Nil Skills map",
 			args: args{
 				skillsMap: nil,
-				skillTag:  skills.Map,
+				skillTag:  skills.Tracking,
 			},
 			expected: 0,
 		},
@@ -2088,10 +2085,10 @@ func TestCharacter_GetSkillLevel(t *testing.T) {
 			args: args{
 				skillsMap: map[string]int{
 					string(skills.Cast):      2,
-					string(skills.DualWield): 1,
-					string(skills.Map):       4,
+					string(skills.WeaponCombat): 1,
+					string(skills.Tracking):       4,
 				},
-				skillTag: skills.Map,
+				skillTag: skills.Tracking,
 			},
 			expected: 4,
 		},
@@ -2115,6 +2112,290 @@ func TestCharacter_GetSkillLevel(t *testing.T) {
 			}
 			got := c.GetSkillLevel(tt.args.skillTag)
 			assert.Equal(t, tt.expected, got)
+		})
+	}
+}
+
+func TestCharacter_DeductStamina(t *testing.T) {
+	tests := []struct {
+		name            string
+		initialStamina  int
+		deductAmount    int
+		expectedSuccess bool
+		expectedStamina int
+	}{
+		{
+			name:            "Sufficient stamina",
+			initialStamina:  100,
+			deductAmount:    20,
+			expectedSuccess: true,
+			expectedStamina: 80,
+		},
+		{
+			name:            "Exactly enough stamina",
+			initialStamina:  50,
+			deductAmount:    50,
+			expectedSuccess: true,
+			expectedStamina: 0,
+		},
+		{
+			name:            "Insufficient stamina",
+			initialStamina:  10,
+			deductAmount:    20,
+			expectedSuccess: false,
+			expectedStamina: 10,
+		},
+		{
+			name:            "Zero stamina deduction",
+			initialStamina:  50,
+			deductAmount:    0,
+			expectedSuccess: true,
+			expectedStamina: 50,
+		},
+		{
+			name:            "Deduct from zero stamina",
+			initialStamina:  0,
+			deductAmount:    10,
+			expectedSuccess: false,
+			expectedStamina: 0,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := New()
+			c.Stamina = tt.initialStamina
+			success := c.DeductStamina(tt.deductAmount)
+			assert.Equal(t, tt.expectedSuccess, success, "DeductStamina return value")
+			assert.Equal(t, tt.expectedStamina, c.Stamina, "Final stamina value")
+		})
+	}
+}
+
+func TestCharacter_GetMovementStaminaCost(t *testing.T) {
+	// These tests use characters with no items (zero carried weight),
+	// so only terrain multiplier affects cost. Encumbrance tests require
+	// real item specs and are covered by integration tests.
+	tests := []struct {
+		name              string
+		terrainMultiplier float64
+		expectedCost      int
+	}{
+		{
+			name:              "Normal terrain, no items",
+			terrainMultiplier: 1.0,
+			expectedCost:      2, // baseCost 2.0 * 1.0 = 2
+		},
+		{
+			name:              "Easy terrain (road), no items",
+			terrainMultiplier: 0.5,
+			expectedCost:      1, // baseCost 2.0 * 0.5 = 1
+		},
+		{
+			name:              "Rough terrain (mountains), no items",
+			terrainMultiplier: 2.0,
+			expectedCost:      4, // baseCost 2.0 * 2.0 = 4
+		},
+		{
+			name:              "Very rough terrain, no items",
+			terrainMultiplier: 3.0,
+			expectedCost:      6, // baseCost 2.0 * 3.0 = 6
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := New()
+			c.Stats.Strength.Value = 100
+			c.Stats.Strength.ValueAdj = 100
+
+			cost := c.GetMovementStaminaCost(tt.terrainMultiplier)
+			assert.Equal(t, tt.expectedCost, cost, "Movement stamina cost")
+		})
+	}
+}
+
+func TestCharacter_GetAttackStaminaCost(t *testing.T) {
+	tests := []struct {
+		name         string
+		weaponId     int
+		offhandId    int
+		expectedCost int
+	}{
+		{
+			name:         "Unarmed combat",
+			weaponId:     0,
+			offhandId:    0,
+			expectedCost: 4,
+		},
+		// Note: Testing with actual weapons requires loading weapon data
+		// which depends on item loading infrastructure. The weapon cost
+		// logic is tested via integration tests with real weapons.
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := New()
+			if tt.weaponId > 0 {
+				c.Equipment.Weapon = items.Item{ItemId: tt.weaponId}
+			}
+			if tt.offhandId > 0 {
+				c.Equipment.Offhand = items.Item{ItemId: tt.offhandId}
+			}
+
+			cost := c.GetAttackStaminaCost()
+			assert.Equal(t, tt.expectedCost, cost, "Attack stamina cost")
+		})
+	}
+}
+
+func TestCharacter_DeductAttackStamina(t *testing.T) {
+	tests := []struct {
+		name            string
+		initialStamina  int
+		weaponId        int
+		expectedDeducted int
+		expectedRemaining int
+	}{
+		{
+			name:            "Sufficient stamina - unarmed",
+			initialStamina:  100,
+			weaponId:        0,
+			expectedDeducted: 4,
+			expectedRemaining: 96,
+		},
+		{
+			name:            "Insufficient stamina",
+			initialStamina:  2,
+			weaponId:        0,
+			expectedDeducted: 2, // Deducts what's available
+			expectedRemaining: 0,
+		},
+		{
+			name:            "Zero stamina",
+			initialStamina:  0,
+			weaponId:        0,
+			expectedDeducted: 0,
+			expectedRemaining: 0,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := New()
+			c.Stamina = tt.initialStamina
+			if tt.weaponId > 0 {
+				c.Equipment.Weapon = items.Item{ItemId: tt.weaponId}
+			}
+
+			deducted := c.DeductAttackStamina()
+			assert.Equal(t, tt.expectedDeducted, deducted, "Stamina deducted")
+			assert.Equal(t, tt.expectedRemaining, c.Stamina, "Remaining stamina")
+		})
+	}
+}
+
+func TestCharacter_GetModifiedAttackCount(t *testing.T) {
+	tests := []struct {
+		name           string
+		baseAttacks    int
+		weaponSpeed    float64
+		isOffhand      bool
+		combatSkill    int
+		dualWieldSkill int
+		expected       int
+	}{
+		{
+			name:           "Unarmed, no skills",
+			baseAttacks:    3,
+			weaponSpeed:    1.0,
+			isOffhand:      false,
+			combatSkill:    1,
+			dualWieldSkill: 0,
+			expected:       3, // 3 * 1.0 * 1.02 ≈ 3
+		},
+		{
+			name:           "Unarmed, high combat skill",
+			baseAttacks:    3,
+			weaponSpeed:    1.0,
+			isOffhand:      false,
+			combatSkill:    50,
+			dualWieldSkill: 0,
+			expected:       3, // 3 * 1.0 * 1.1 = 3.3 ≈ 3
+		},
+		{
+			name:           "Slow weapon (0.6x), no skills",
+			baseAttacks:    3,
+			weaponSpeed:    0.6,
+			isOffhand:      false,
+			combatSkill:    1,
+			dualWieldSkill: 0,
+			expected:       2, // 3 * 0.6 * 1.02 ≈ 1.8 ≈ 2
+		},
+		{
+			name:           "Slow weapon (0.6x), high combat skill",
+			baseAttacks:    3,
+			weaponSpeed:    0.6,
+			isOffhand:      false,
+			combatSkill:    50,
+			dualWieldSkill: 0,
+			expected:       2, // 3 * 0.6 * 1.1 = 1.98 ≈ 2
+		},
+		{
+			name:           "Fast weapon (1.2x), no skills",
+			baseAttacks:    3,
+			weaponSpeed:    1.2,
+			isOffhand:      false,
+			combatSkill:    1,
+			dualWieldSkill: 0,
+			expected:       4, // 3 * 1.2 * 1.02 ≈ 3.7 ≈ 4
+		},
+		{
+			name:           "Offhand weapon, no dual wield skill",
+			baseAttacks:    3,
+			weaponSpeed:    0.8,
+			isOffhand:      true,
+			combatSkill:    1,
+			dualWieldSkill: 0,
+			expected:       1, // 3 * 0.8 * 1.02 * 0.5 ≈ 1.2 ≈ 1
+		},
+		{
+			name:           "Offhand weapon, moderate dual wield skill",
+			baseAttacks:    3,
+			weaponSpeed:    0.8,
+			isOffhand:      true,
+			combatSkill:    1,
+			dualWieldSkill: 25,
+			expected:       2, // 3 * 0.8 * 1.02 * 0.85 ≈ 2.1 ≈ 2
+		},
+		{
+			name:           "Offhand weapon, high dual wield skill",
+			baseAttacks:    3,
+			weaponSpeed:    0.8,
+			isOffhand:      true,
+			combatSkill:    1,
+			dualWieldSkill: 50,
+			expected:       3, // 3 * 0.8 * 1.02 * 1.2 ≈ 2.9 ≈ 3
+		},
+		{
+			name:           "Minimum 1 attack",
+			baseAttacks:    1,
+			weaponSpeed:    0.3,
+			isOffhand:      true,
+			combatSkill:    1,
+			dualWieldSkill: 0,
+			expected:       1, // 1 * 0.3 * 1.02 * 0.5 < 1, min is 1
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := New()
+			c.Skills[string(skills.UnarmedCombat)] = tt.combatSkill
+			c.Skills[string(skills.WeaponCombat)] = tt.dualWieldSkill
+
+			result := c.GetModifiedAttackCount(tt.baseAttacks, tt.weaponSpeed, tt.isOffhand)
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }

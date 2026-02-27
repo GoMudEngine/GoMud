@@ -1,0 +1,17 @@
+speciesid: 14
+name: giant spider
+description: A massive arachnid.
+size: large
+unarmedname: fangs
+angrycommands: [emote chitters and stares.]
+tameable: true
+stats:
+  strength:
+    base: 2
+  speed:
+    base: 2
+damage:
+  diceroll: 2d4
+  critbuffids:
+  - 13
+disabledslots: ['offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet']

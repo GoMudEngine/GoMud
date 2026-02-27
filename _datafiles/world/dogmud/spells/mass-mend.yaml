@@ -1,0 +1,16 @@
+spellid: mass-mend
+name: Mass Mend
+description: Heals all nearby allies and grants sustained regeneration.
+type: helparea
+schools:
+  - vital
+cost: 120
+healthcost: 8
+waitrounds: 2
+difficulty: 10
+primarystat: willpower
+base_folds: 16
+effect_type: heal
+effect_magnitude: 5
+buff_ids:
+  - 33

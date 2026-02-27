@@ -1,0 +1,35 @@
+roomid: 301
+zone: Labyrinth of Low Tunnels
+title: Low Junction
+description: The descent levels out into a cramped junction where the tunnel splits
+  in three directions. The ceiling is barely chest height -- standing upright is
+  impossible. Every surface is covered in scratches, claw marks, and crude symbols
+  gouged into the basalt with something sharp. A faint, greasy light flickers from
+  somewhere down the southern passage, and the air is thick with the smell of unwashed
+  bodies and rancid fat. This is not a natural cave. Something lives here, and has
+  for a long time.
+biome: cave
+exits:
+  up:
+    roomid: 300
+  west:
+    roomid: 302
+  east:
+    roomid: 303
+  south:
+    roomid: 304
+spawninfo:
+- mobid: 72
+  message: A pale, wiry figure drops from a ledge and crouches in the junction, milky eyes fixed on you.
+  respawnrate: 8 real minutes
+nouns:
+  scratches: The marks are deliberate -- grouped in sets of four or five, slashed through
+    with a diagonal. Tally marks. Hundreds of them, layered over each other in the
+    dim light.
+  symbols: Crude pictograms scratched into the stone. Shapes that might be figures,
+    crude circles, angular slashes. A language, or something trying to become one.
+idlemessages:
+- The scratching sound is louder here, coming from more than one direction.
+- Greasy smoke drifts through the junction from somewhere deeper in the tunnels.
+- A pebble clatters in a side passage. Something small just moved out of sight.
+- The air is close and warm despite the stone. Too many things breathing down here.

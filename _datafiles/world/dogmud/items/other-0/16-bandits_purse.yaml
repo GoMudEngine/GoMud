@@ -1,0 +1,12 @@
+itemid: 16
+name: bandit's purse
+namesimple: purse
+description: A battered leather purse stuffed with coins and a folded letter. The coins
+  are a mix of denominations from several different settlements, and the letter is
+  written in a hurried hand on cheap paper. It details supply routes and caravan
+  schedules -- the kind of information that would be very useful to someone planning
+  ambushes, and very incriminating if found by a road warden.
+type: object
+subtype: holdable
+uses: 0
+weight: 0.5

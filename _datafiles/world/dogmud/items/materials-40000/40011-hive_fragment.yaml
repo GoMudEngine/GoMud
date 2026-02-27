@@ -1,0 +1,9 @@
+itemid: 40011
+name: Hive Fragment
+namesimple: fragment
+description: A jagged shard of crystallized hive matter, crawling with microscopic Chrysalis organisms. It vibrates faintly in your grasp.
+type: object
+uses: 0
+weight: 1.5
+component_tag: hive-fragment
+value: 500

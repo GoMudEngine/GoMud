@@ -68,7 +68,7 @@ func Set(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 
 		currentPrompt = user.GetConfigOption(`fprompt`)
 		if currentPrompt == nil {
-			currentPrompt = c.Prompt.String()
+			currentPrompt = c.FightPrompt.String()
 		}
 		user.SendText(`<ansi fg="yellow-bold">fprompt:</ansi> `)
 		user.SendText(currentPrompt.(string))
@@ -222,21 +222,81 @@ func Set(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	if setTarget == `fprompt` {
 
 		if len(args) < 1 {
-			currentPrompt := user.GetConfigOption(`fprompt`)
-			if currentPrompt == nil {
-				currentPrompt = c.Prompt.String()
+			customPrompt := user.GetConfigOption(`fprompt`)
+			user.SendText(`<ansi fg="yellow-bold">Fight Prompt:</ansi>`)
+			if customPrompt == nil {
+				user.SendText(`  <ansi fg="8">[system default - toggle-driven]</ansi>`)
+			} else {
+				user.SendText(`  ` + customPrompt.(string))
 			}
-			user.SendText("Your current fprompt:\n")
-			user.SendText(currentPrompt.(string))
-			user.SendText("\n" + `Type <ansi fg="command">help set-prompt</ansi> for more info on customizing prompts.` + "\n")
+			user.SendText(``)
+			user.SendText(`<ansi fg="yellow">Toggle Settings</ansi> <ansi fg="8">(set fprompt tog <name> to change):</ansi>`)
+			toggleList := []struct{ name, desc string }{
+				{"bars", "HP/SP/CP vital bars"},
+				{"pos", "Your combat position"},
+				{"target", "Target name"},
+				{"targethealth", "Target health description"},
+				{"targetpos", "Target position"},
+				{"tank", "Party tank info"},
+			}
+			for _, t := range toggleList {
+				val := user.GetConfigOption(`fprompt-tog-` + t.name)
+				on := val == nil || val.(bool)
+				state := `<ansi fg="green">[ON] </ansi>`
+				if !on {
+					state = `<ansi fg="red">[OFF]</ansi>`
+				}
+				user.SendText(fmt.Sprintf(`  <ansi fg="magenta">%-14s</ansi> %s %s`, t.name, state, t.desc))
+			}
+			user.SendText(``)
+			user.SendText(`Type <ansi fg="command">help set-prompt</ansi> for more info on customizing prompts.`)
 			return true, nil
 		}
 
 		promptStr := rest[len(setTarget)+1:]
 
+		// Toggle subcommand: set fprompt tog <element>
+		if strings.HasPrefix(promptStr, `tog `) {
+			element := strings.TrimSpace(promptStr[4:])
+			validToggles := map[string]string{
+				"bars":         "HP/SP/CP vital bars",
+				"pos":          "Your combat position",
+				"target":       "Target name",
+				"targethealth": "Target health description",
+				"targetpos":    "Target position",
+				"tank":         "Party tank info",
+			}
+			desc, valid := validToggles[element]
+			if !valid {
+				user.SendText(`Unknown toggle. Valid options: bars, pos, target, targethealth, targetpos, tank`)
+				return true, nil
+			}
+			key := `fprompt-tog-` + element
+			currentVal := user.GetConfigOption(key)
+			current := true // default on
+			if currentVal != nil {
+				if b, ok := currentVal.(bool); ok {
+					current = b
+				}
+			}
+			user.SetConfigOption(key, !current)
+			// Rebuild and cache the toggle-driven template immediately
+			user.SetConfigOption(`fprompt-default-compiled`, util.ConvertColorShortTags(user.BuildFightPromptTemplate()))
+			if !current {
+				user.SendText(fmt.Sprintf(`Fight prompt: %s <ansi fg="green">[ON]</ansi>`, desc))
+			} else {
+				user.SendText(fmt.Sprintf(`Fight prompt: %s <ansi fg="red">[OFF]</ansi>`, desc))
+			}
+			return true, nil
+		}
+
 		if promptStr == `default` {
 			user.SetConfigOption(`fprompt`, nil)
 			user.SetConfigOption(`fprompt-compiled`, nil)
+			user.SetConfigOption(`fprompt-default-compiled`, nil)
+			for _, key := range []string{`bars`, `pos`, `target`, `targethealth`, `targetpos`, `tank`} {
+				user.SetConfigOption(`fprompt-tog-`+key, nil)
+			}
 		} else if promptStr == `none` {
 			user.SetConfigOption(`fprompt`, ``)
 			user.SetConfigOption(`fprompt-compiled`, ``)

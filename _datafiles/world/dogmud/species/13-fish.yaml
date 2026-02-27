@@ -1,0 +1,29 @@
+speciesid: 13
+name: fish
+description: A streamlined aquatic creature that glides through water
+  with effortless grace. Most fish flee from danger, but
+  some larger specimens can deliver a surprising bite.
+size: small
+unarmedname: fins
+selectable: false
+tameable: true
+angrycommands:
+  - emote thrashes its tail and snaps its jaws.
+  - emote circles aggressively, fins flared wide.
+stats:
+  strength:
+    base: 30
+  dexterity:
+    base: 80
+  perception:
+    base: 70
+  vitality:
+    base: 40
+  willpower:
+    base: 5
+  charisma:
+    base: 5
+damage:
+  basedamage: 2
+  variance: 1
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet']

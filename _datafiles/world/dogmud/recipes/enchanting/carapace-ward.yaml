@@ -1,0 +1,20 @@
+id: carapace-ward
+name: "Carapace Ward"
+skill: enchanting
+skill_minimum: 3
+station: enchanting_circle
+time_rounds: 4
+target_type: body
+enchant_type: carapace-ward
+ingredients:
+  - item_tag: chrysalis-setting
+    quantity: 1
+  - item_tag: mutation-catalyst
+    quantity: 1
+  - item_tag: binding-paste
+    quantity: 1
+output:
+  item_id: 0
+  quantity: 0
+success_message: "Chitinous patterns spiral across the fabric, hardening it with Chrysalis resilience. The armor gleams with natural protection."
+failure_message: "The catalyst rejects the binding. The materials crumble to dust, but the armor is unharmed."

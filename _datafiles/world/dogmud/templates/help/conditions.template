@@ -1,0 +1,4 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">conditions</ansi>
+
+The <ansi fg="command">conditions</ansi> command lists current afflictions.
+

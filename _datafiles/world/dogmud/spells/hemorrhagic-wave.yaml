@@ -1,0 +1,14 @@
+spellid: hemorrhagic-wave
+name: Hemorrhagic Wave
+description: Rupturing wave that bursts blood vessels in all nearby foes.
+type: harmarea
+schools:
+  - vital
+cost: 80
+waitrounds: 2
+difficulty: 0
+primarystat: willpower
+base_folds: 10
+target_defense_type: physical
+effect_type: damage
+effect_magnitude: 300

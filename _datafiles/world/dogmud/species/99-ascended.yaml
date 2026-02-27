@@ -1,0 +1,28 @@
+speciesid: 99
+name: Ascended
+description: Something beyond mortal classification. The Chrysalis did not reshape this one — it answered to them.
+size: medium
+unarmedname: will
+selectable: false
+knowsfirstaid: true
+angrycommands:
+  - emote fixes their gaze on you. The air stops moving.
+  - emote tilts their head. Reality tilts with it.
+tameable: false
+stats:
+  strength:
+    base: 1000
+  dexterity:
+    base: 1000
+  perception:
+    base: 1000
+  vitality:
+    base: 1000
+  willpower:
+    base: 1000
+  charisma:
+    base: 1000
+damage:
+  basedamage: 50
+  variance: 10
+disabledslots: []

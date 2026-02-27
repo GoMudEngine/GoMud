@@ -1,0 +1,12 @@
+mutationid: photosynthetic-skin
+name: Photosynthetic Skin
+description: A verdant tinge spreads beneath your skin as chloroplast-like organelles take root. In sunlight you heal; in darkness, the hunger gnaws.
+rarity: 5
+visual: Their skin has a faint greenish undertone, more vivid in sunlight.
+pros:
+  - type: health_regen_if_lit_multiplier
+    value: 0.25
+cons:
+  - type: stat_flat
+    target: willpower
+    value: -10

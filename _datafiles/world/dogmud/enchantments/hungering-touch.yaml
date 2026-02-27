@@ -1,0 +1,40 @@
+enchantid: hungering-touch
+name: "Hungering Touch"
+reserve_pool: health
+target_type: weapon
+tiers:
+  - tier: 0
+    reserve_pct: 0.02
+    effects:
+      damage_bonus: 1
+    adjective: veined
+    description_suffix: "Dark veins pulse beneath the surface, hungry for blood."
+    tier_up_message: ""
+  - tier: 1
+    reserve_pct: 0.04
+    effects:
+      damage_bonus: 2
+    adjective: tendril-wrapped
+    description_suffix: "Writhing tendrils extend from the weapon, seeking warmth."
+    tier_up_message: "The weapon's hunger deepens—you taste metal and rot."
+  - tier: 2
+    reserve_pct: 0.06
+    effects:
+      damage_bonus: 3
+    adjective: hungering
+    description_suffix: "A pulsing mass coats the blade, breathing in rhythm with you."
+    tier_up_message: "The tendrils sink into your arm, and you become the hunger."
+  - tier: 3
+    reserve_pct: 0.08
+    effects:
+      damage_bonus: 4
+    adjective: parasitic
+    description_suffix: "Parasitic growths infect the weapon, fused with your blood."
+    tier_up_message: "Your essence feeds the Chrysalis; resistance is futile."
+  - tier: 4
+    reserve_pct: 0.10
+    effects:
+      damage_bonus: 5
+    adjective: devouring
+    description_suffix: "The weapon becomes a devouring maw of chitin and hunger."
+    tier_up_message: "The Chrysalis has devoured you entirely. You are eternal hunger."

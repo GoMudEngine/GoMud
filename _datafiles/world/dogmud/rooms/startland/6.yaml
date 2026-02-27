@@ -1,0 +1,31 @@
+roomid: 6
+zone: Startland
+title: The Alchemist's Workshop
+description: >
+  A cramped side room that reeks of crushed herbs and old glass. Shelves sag under
+  the weight of cracked vials, bundles of dried plants, and leather-bound notes
+  scrawled in a cramped hand. A long workbench dominates one wall, its surface
+  stained in a dozen colors. Whoever worked here clearly valued results over
+  tidiness.
+mapsymbol: W
+maplegend: Workshop
+biome: house
+station: alchemy_bench
+exits:
+  east:
+    roomid: 2
+items:
+  - itemid: 40004
+  - itemid: 40004
+  - itemid: 40004
+  - itemid: 40005
+  - itemid: 40005
+  - itemid: 40005
+  - itemid: 40006
+  - itemid: 40006
+  - itemid: 40007
+  - itemid: 40007
+spawninfo:
+  - mobid: 5
+    message: A feral herbalist steps out from behind a shelf.
+    respawnrate: 3 real minutes

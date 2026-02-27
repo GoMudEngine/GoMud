@@ -1,0 +1,110 @@
+mobid: 79
+zone: Sanctum Basin
+defaultMood: friendly
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "good day"]
+    moods: ["friendly", "neutral"]
+    responses:
+      - "Oh! Hello. Sorry, I was distracted. Fieldwork, you know. What can I do for you?"
+      - "Ah, a fellow traveler. You look like someone who has been underground recently. Am I wrong?"
+      - "Welcome, welcome. Always happy to meet someone who has been outside the walls."
+
+  - keywords: ["hello", "hi", "greet"]
+    moods: ["hostile"]
+    responses:
+      - "I have nothing more to say to you. Please leave me to my work."
+
+  - keywords: ["research", "study", "work", "what do you do", "purpose", "here"]
+    moods: ["friendly", "neutral"]
+    responses:
+      - "I study Chrysalis mutation patterns in isolated populations. The creatures in the tunnels below are a perfect case study -- unguided mutation across multiple generations. Fascinating."
+      - "I am cataloguing the biological adaptations of cave-dwelling humanoids. The warren beneath us is a living laboratory, if only I could get proper specimens."
+
+  - keywords: ["warren", "tunnel", "dwellers", "people", "creatures", "mutants"]
+    moods: ["friendly", "neutral"]
+    responses:
+      - "The tunnel inhabitants are descended from human exiles. Three generations of unguided Chrysalis mutation. The divergence from baseline humanity is remarkable. I could write a dozen papers."
+      - "They are not monsters. They are a mutation case study. Every feature serves a function -- the enlarged eyes, the clawed digits, the reduced stature. Evolution under pressure. Beautiful, in a way."
+
+  - keywords: ["specimens", "collect", "sample", "totem", "spore", "bone"]
+    moods: ["friendly", "neutral"]
+    responses:
+      - "I need physical specimens to advance the research. A bone totem from their communal shelves would tell us about their social structure. A spore sac from the cave fauna would help map the mutation ecology."
+      - "If I could just get a few samples -- a totem, a spore sac -- the guild would fund a full expedition. This research could genuinely help understand mutation drift."
+    moodChange: friendly
+
+  - keywords: ["help", "quest", "task", "job", "need"]
+    moods: ["friendly", "neutral"]
+    responses:
+      - "Actually, yes. I cannot go into the tunnels myself. Too dangerous, and the inhabitants are territorial. But someone with combat skills could retrieve what I need."
+      - "I need someone brave -- or reckless -- enough to enter the tunnels and bring back specimens. A bone totem and a spore sac. I would compensate you well."
+    moodChange: friendly
+
+  - keywords: ["ethics", "consent", "wrong", "right", "moral", "steal", "theft"]
+    moods: ["friendly", "neutral"]
+    responses:
+      - "The research serves a greater purpose. If we understand how unguided mutation diverges, we can potentially help future populations avoid the same fate. Sometimes science requires difficult choices."
+      - "I understand the concern. Truly. But these specimens are the only way to advance our understanding. The alternative is ignorance, and ignorance helps no one."
+
+  - keywords: ["chrysalis", "mutation", "awakening", "change"]
+    moods: ["friendly", "neutral"]
+    responses:
+      - "The Chrysalis does not discriminate. It transforms whatever it inhabits. The difference between a guided Awakening and an unguided one is the difference between a garden and a wildfire."
+      - "Unguided mutation is the great tragedy of the Chrysalis age. These people had no priests, no framework. The change happened to them, not for them."
+
+  - keywords: ["thornwall", "guild", "fund", "patron"]
+    moods: ["friendly", "neutral"]
+    responses:
+      - "The Natural Philosophy Guild in Thornwall funds my fieldwork. They are interested in practical applications -- understanding mutation to control it. Noble aims, I believe."
+
+  - keywords: ["shaman", "chieftain", "leader", "talk to them"]
+    moods: ["friendly", "neutral"]
+    responses:
+      - "Talk to them? They would not welcome me. The last researcher who entered those tunnels was... well, it did not end well for her. Direct study is not an option."
+
+  - keywords: [""]
+    responses:
+      - "Is there something else? I should get back to my notes."
+      - "Hmm? Oh, sorry. I was thinking about mutation drift patterns. What did you need?"
+
+tree:
+  root:
+    text: "A sharp-featured woman with ink-stained fingers looks up from a battered journal, charcoal pencil still in hand. 'Oh! Hello. Forgive me, I was sketching the cave entrance from up here. Wonderful view. Are you familiar with the tunnels below?'"
+    hints: "You could ask about her research, the tunnels, or whether she needs help."
+
+  nodes:
+    - id: research
+      triggers: ["research", "study", "work", "what", "purpose", "doing", "journal", "notes"]
+      text: "I study Chrysalis mutation in isolated populations. The warren beneath us is extraordinary -- three generations of unguided transformation. The adaptations they have developed are unlike anything in the literature. If I could just get proper specimens, the guild would fund a full expedition."
+      hints: "Ask about what specimens she needs, or about the warren inhabitants."
+      unlocks: ["specimens_need", "warren_talk"]
+      moodChange: friendly
+
+    - id: warren_talk
+      triggers: ["warren", "tunnel", "dwellers", "people", "creatures", "inhabitants", "them"]
+      requires: ["research"]
+      text: "Descended from human exiles. Driven underground three generations ago when their mutations diverged too far from the Sanctuary's expectations. No priests to guide the Chrysalis. No framework. Just survival. The result is a parallel branch of human development. Remarkable."
+      hints: "Ask about specimens, or about why she cannot go herself."
+      unlocks: ["specimens_need", "why_not_go"]
+
+    - id: specimens_need
+      triggers: ["specimen", "sample", "need", "help", "what do you need", "collect", "quest", "task", "job"]
+      requires: ["research"]
+      text: "Two things. A bone totem -- the figurines they keep on communal shelves. It would tell us about social bonding and symbolic thought in mutated populations. And a spore sac from the cave crawlers -- to map the mutation ecology of the tunnel biome. Bring me both and I will compensate you generously."
+      hints: "Accept the task to retrieve a bone totem from the Carved Niche and a spore sac from a spore crawler."
+      moodChange: friendly
+
+    - id: why_not_go
+      triggers: ["yourself", "why not", "go yourself", "dangerous", "cannot", "afraid"]
+      requires: ["warren_talk"]
+      text: "I tried. Once. A scout spotted me before I reached the second junction and I barely made it back to the surface. They are territorial and they are fast. And... the last researcher the guild sent did not come back. Her skull is on one of their trophy walls, I suspect."
+      unlocks: ["specimens_need"]
+
+    - id: ethics_talk
+      triggers: ["ethics", "consent", "wrong", "right", "moral", "steal", "theft", "people"]
+      text: "I take the concern seriously, I do. But consider -- if we understand how unguided mutation works, we might be able to help future populations. Prevent the suffering, not just study it. Sometimes the uncomfortable choice is the compassionate one."
+      moodChange: friendly
+
+memory:
+  expiryPeriod: "1h"

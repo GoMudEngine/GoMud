@@ -207,6 +207,117 @@ var (
 		},
 		"map": makeMap,
 		"t":   language.T,
+
+		// Qualitative description helpers (Stage 18)
+		"statQuality": func(value int) string {
+			switch {
+			case value <= 60:
+				return "feeble"
+			case value <= 75:
+				return "poor"
+			case value <= 90:
+				return "below average"
+			case value <= 110:
+				return "average"
+			case value <= 130:
+				return "above average"
+			case value <= 150:
+				return "exceptional"
+			case value <= 200:
+				return "extraordinary"
+			case value <= 300:
+				return "transcendent"
+			default:
+				return "godlike"
+			}
+		},
+		// vitalQuality(current, max[, padTo]) — returns a colored qualitative label,
+		// optionally right-padded to padTo visual characters (like healthStr does).
+		"vitalQuality": func(current int, max int, padTo ...int) string {
+			if max <= 0 {
+				return "unknown"
+			}
+			pct := float64(current) / float64(max) * 100
+			var label, color string
+			switch {
+			case pct <= 15:
+				label, color = "critical", "red"
+			case pct <= 35:
+				label, color = "low", "red"
+			case pct <= 60:
+				label, color = "moderate", "yellow"
+			case pct <= 85:
+				label, color = "healthy", "green"
+			default:
+				label, color = "full", "green"
+			}
+			result := `<ansi fg="` + color + `">` + label + `</ansi>`
+			if len(padTo) > 0 && padTo[0] > len(label) {
+				result += strings.Repeat(" ", padTo[0]-len(label))
+			}
+			return result
+		},
+		"armorQuality": func(armor int) string {
+			switch {
+			case armor <= 0:
+				return "none"
+			case armor < 10:
+				return "thin"
+			case armor < 25:
+				return "light"
+			case armor < 50:
+				return "medium"
+			case armor < 80:
+				return "heavy"
+			default:
+				return "solid"
+			}
+		},
+		"mutationLevel": func(level int) string {
+			switch level {
+			case 1:
+				return "minor"
+			case 2:
+				return "moderate"
+			case 3:
+				return "major"
+			default:
+				return "unknown"
+			}
+		},
+		// skillRank converts a numeric skill level (1–50) to a qualitative tier name.
+		"skillRank": func(level int) string {
+			switch {
+			case level <= 0:
+				return "unknown"
+			case level <= 1:
+				return "novice"
+			case level <= 9:
+				return "apprentice"
+			case level <= 19:
+				return "journeyman"
+			case level <= 34:
+				return "adept"
+			case level <= 49:
+				return "expert"
+			default:
+				return "master"
+			}
+		},
+		"durationQuality": func(rounds int) string {
+			switch {
+			case rounds <= 0:
+				return `<ansi fg="red">fading</ansi>`
+			case rounds <= 3:
+				return `<ansi fg="red">fading fast</ansi>`
+			case rounds <= 10:
+				return `<ansi fg="yellow">briefly active</ansi>`
+			case rounds <= 30:
+				return `<ansi fg="green">active</ansi>`
+			default:
+				return `<ansi fg="green">well established</ansi>`
+			}
+		},
 	}
 )
 
@@ -348,12 +459,13 @@ func idsOtherThan(allIds []uint64, excludeId uint64) []uint64 {
 }
 
 func TNL(userId int) string {
-	user := users.GetByUserId(userId)
-	realXPNow, realXPTNL := user.Character.XPTNLActual()
-	return fmt.Sprintf(`%d/%d (%d%%)`, realXPNow, realXPTNL, pct(realXPNow, realXPTNL))
+	return `N/A`
 }
 
 func pct(a, b int) int {
+	if b == 0 {
+		return 0
+	}
 	return (a * 100) / b
 }
 

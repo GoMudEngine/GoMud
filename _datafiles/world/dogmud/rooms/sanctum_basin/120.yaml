@@ -1,0 +1,25 @@
+roomid: 120
+zone: Sanctum Basin
+title: Boss Cave
+description: The deepest chamber of the cave system is vast, its ceiling a dome of
+  black basalt hung with mineral formations that catch the faint light. At the center
+  crouches the Aberrant Chrysalis -- a creature that was once on the path to transformation
+  but was overtaken by something wrong. It is larger than a person, its limbs jointed
+  at impossible angles, radiating waves of distorted belief that make the air shimmer
+  and the mind ache.
+biome: cave
+mutators:
+- mutatorid: bioluminescent-caves
+mapsymbol: B
+maplegend: Boss Cave
+exits:
+  west:
+    roomid: 119
+idlemessages:
+- The air here shimmers with <ansi fg="itemname">distorted belief</ansi> -- a physical sensation on the skin.
+- The mineral formations above catch the faint light and scatter it in wrong directions.
+- The Aberrant Chrysalis shifts its weight, and the floor vibrates.
+spawninfo:
+- mobid: 69
+  message: The Aberrant Chrysalis turns toward you with a grinding screech.
+  respawnrate: 30 real minutes

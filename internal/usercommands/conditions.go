@@ -37,6 +37,16 @@ func Conditions(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 		afflictions = append(afflictions, newAffliction)
 	}
 
+	// Stage 9.8: Append active combat conditions
+	for _, cond := range user.Character.Conditions {
+		afflictions = append(afflictions, buffInfo{
+			Name:        cond.Type.DisplayName(),
+			Description: cond.Type.Description(),
+			RoundsLeft:  cond.Duration,
+			PermaBuff:   cond.Duration == 0,
+		})
+	}
+
 	tplTxt, _ := templates.Process("character/conditions", afflictions, user.UserId)
 	user.SendText(tplTxt)
 

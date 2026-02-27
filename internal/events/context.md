@@ -309,11 +309,11 @@ func handlePlayerDeath(e events.Event) events.ListenerReturn {
     return events.Continue
 }
 
-// Level up notification
+// Level up notification (NOTE: Level-up is disabled in DOGMud — this handler is legacy)
 func broadcastLevelUp(e events.Event) events.ListenerReturn {
     levelUp := e.(events.LevelUp)
-    
-    message := fmt.Sprintf("%s has reached level %d!", 
+
+    message := fmt.Sprintf("%s has reached level %d!",
         levelUp.CharacterName, levelUp.NewLevel)
     
     events.AddToQueue(events.Broadcast{

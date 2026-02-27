@@ -1,0 +1,47 @@
+questid: 1
+name: The Sanctum Trials
+description: Complete the trials of Sanctum Basin to earn passage to the wider world.
+secret: false
+steps:
+  - id: start
+    description: "Speak with the Chrysalis Priest in the Academy Hall to begin your trials. The Priest will perform your Awakening Rite."
+  - id: mutation
+    description: "Visit the Merchant on Market Street, east of Town Square, to learn how to buy and equip gear."
+  - id: shopping_arrive
+    description: "Browse Merchant Adela's wares. Type list to see what she carries, then buy something."
+  - id: shopping_buy
+    description: "Equip what you bought. Type wield or wear to put your new gear on."
+  - id: shopping_equip
+    description: "Visit the Combat Trainer in the Training Yard, northeast of Town Square, and defeat the training dummy."
+  - id: combat_arrive
+    description: "Defeat the training dummy. Type attack dummy to start the fight, then keep fighting until it falls."
+  - id: combat_defeat
+    description: "Visit Korvath in The Forge, south of the Training Yard, to learn crafting."
+  - id: crafting_arrive
+    description: "Craft the iron dagger Korvath described. Type craft iron dagger."
+  - id: crafting_craft
+    description: "Visit Alchemist Yenna in the Alchemist's Workshop, west of Well Court, to learn alchemy."
+  - id: alchemy_arrive
+    description: "Craft the healing poultice Yenna described. Type craft healing poultice."
+  - id: alchemy_craft
+    description: "Visit Wilderness Guide Fen in the West Meadow, west of Town Square, to learn survival skills."
+  - id: wilderness_arrive
+    description: "Forage for supplies. Type forage to search the area."
+  - id: wilderness_forage
+    description: "Read the tracks in the area. Type track to look for signs of passage."
+  - id: wilderness_track
+    description: "Visit Elder Saris at the Observatory, north of the Alchemist's Workshop, to learn about the Fold."
+  - id: magic_arrive
+    description: "Cast a spell on the Chrysalis Echo. Type cast conviction-spike echo."
+  - id: magic_cast
+    description: "Go east from the Observatory into the cave system and defeat the Aberrant Chrysalis."
+  - id: cave
+    description: "Return to the Basin Warden at Basin Gate, south of Town Square, to claim your passage."
+  - id: warden
+    description: "The Basin Warden is opening the gate. Listen to the final words."
+  - id: end
+    description: "The Sanctum Trials are complete."
+rewards:
+  playermessage: "The Basin Warden nods with quiet satisfaction. The gate swings open. The world of Gaius awaits you."
+  gold: 25
+  skillinfo: "map:1"

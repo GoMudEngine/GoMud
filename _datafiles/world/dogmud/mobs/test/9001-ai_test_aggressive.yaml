@@ -1,0 +1,14 @@
+mobid: 9001
+zone: test
+hostile: false
+activitylevel: 80
+aiprofile: "aggressive"
+specialmovechance: 60
+statpool: 50
+combatcommands:
+  - "say Testing aggressive AI!"
+character:
+  name: ai_test_aggressive
+  description: "A combat training dummy configured with aggressive AI behavior."
+  speciesid: 1
+  level: 10

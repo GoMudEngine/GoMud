@@ -1,0 +1,11 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">drop</ansi>
+
+The <ansi fg="command">drop</ansi> command drops an item you carry onto the ground.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">drop stick</ansi>
+  This would drop a stick if you had it in your backpack.
+
+Find out more about referring to items by name by typing <ansi fg="command">help item-names</ansi>.
+

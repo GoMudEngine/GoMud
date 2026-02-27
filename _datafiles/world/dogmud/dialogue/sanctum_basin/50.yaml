@@ -1,0 +1,95 @@
+mobid: 50
+zone: Sanctum Basin
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "good day"]
+    moods: ["neutral", "friendly", "grateful"]
+    responses:
+      - "Peace be upon you, seeker. Have you come with questions, or simply to observe?"
+      - "Welcome. The Chrysalis watches over all who pass through the Basin."
+      - "Ah. Another who finds their way here. That is rarely an accident."
+
+  - keywords: ["chrysalis", "cult", "faith", "belief", "follow", "order", "organization"]
+    responses:
+      - "The Chrysalis is not a faith of dogma, but of transformation. We witness the change in all living things and we hold it sacred."
+      - "We do not demand belief. We offer witness. The Awakening happens whether or not you understand it."
+
+  - keywords: ["awakening", "transform", "change", "become", "evolve"]
+    responses:
+      - "The Awakening is what stirs within all creatures — the drive to shed what was and become what must be. You feel it too, even if you have no name for it yet."
+      - "Every wound that heals, every skill sharpened, every fear faced — these are the Awakening at work. We simply pay attention."
+    moodChange: friendly
+
+  - keywords: ["sanctum", "basin", "place", "here", "home", "history"]
+    responses:
+      - "Sanctum Basin was chosen for its stillness. The stone here holds memory. We came to listen."
+      - "The Basin has been inhabited since long before the Chrysalis arrived. We are simply the latest to recognize its significance."
+
+  - keywords: ["yourself", "you", "priest", "who", "name", "your story", "your past"]
+    responses:
+      - "I am a keeper of witness. My personal history matters little beside the patterns I have been privileged to observe."
+      - "I came to the Chrysalis as many do — uncertain, searching. I remained because what I found here was worth keeping."
+
+  - keywords: ["help", "need", "request", "ask", "favor"]
+    responses:
+      - "If I can assist a seeker, I will. Tell me what you carry."
+
+  - keywords: ["danger", "threat", "enemy", "attack", "fight", "war"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "The Basin has its tensions. The Chrysalis does not take sides in conflicts of steel. We tend to those caught in the aftermath."
+      - "Violence is a kind of change, too — though rarely the kind we would choose. We do what we can."
+
+  - keywords: [""]
+    responses:
+      - "Speak your question clearly. I am listening."
+      - "You seem uncertain what to ask. Take your time."
+
+tree:
+  root:
+    text: "Seeker. You have come to the right place at the right time, I think. What weighs on you?"
+    hints: "You could ask the Priest about the Chrysalis, the Awakening, the sanctum, or themselves."
+
+  nodes:
+    - id: chrysalis
+      triggers: ["chrysalis", "cult", "order", "faith", "follow", "believe", "join"]
+      text: "The Chrysalis does not recruit. Those who are drawn here arrive because something in them is already changing. We provide witness, and occasionally, guidance."
+      hints: "You could ask about the Awakening, or what the Chrysalis actually does here."
+      unlocks: ["awakening", "role"]
+
+    - id: awakening
+      triggers: ["awakening", "transform", "change", "become", "shed", "evolve", "grow"]
+      text: "The Awakening is the deep current in all living things — the pull toward what you could be rather than what you are. It cannot be forced. It can only be recognized and honored."
+      hints: "Ask about how the Awakening manifests, or what the Priest has witnessed."
+      unlocks: ["awakening_manifest"]
+      moodChange: friendly
+
+    - id: awakening_manifest
+      triggers: ["manifest", "how", "what does", "example", "witness", "see", "observe"]
+      requires: ["awakening"]
+      text: "I have seen a frightened child become a capable guardian. A broken fighter rediscover purpose. A creature of pure instinct learn deliberate thought. Each is the Awakening. Each is worth everything."
+
+    - id: role
+      triggers: ["what do you do", "your role", "purpose", "function", "why are you", "what is your job"]
+      requires: ["chrysalis"]
+      text: "We tend the wounded, welcome the lost, record what we observe. We do not rule or judge. We witness, and in witnessing, we hold space for change."
+
+    - id: sanctum
+      triggers: ["sanctum", "basin", "this place", "here", "stone", "history", "old", "ancient"]
+      text: "The stone of this basin has absorbed a great deal. It is unusually quiet — the kind of quiet that invites introspection. We chose it carefully."
+      hints: "You could ask about the history of the stone, or what the Chrysalis found here."
+      unlocks: ["sanctum_history"]
+
+    - id: sanctum_history
+      triggers: ["history", "found", "discover", "old", "ancient", "before", "past"]
+      requires: ["sanctum"]
+      text: "Before us there were others. Settlers, scholars, those fleeing something. The Basin sheltered all of them. It tends to do that. Something in the stone, perhaps."
+
+    - id: himself
+      triggers: ["you", "yourself", "priest", "who are you", "your story", "your past", "your name"]
+      text: "I came here carrying grief I did not know how to set down. The Chrysalis did not take it from me. They showed me how to carry it differently. That was enough."
+      moodChange: friendly
+
+memory:
+  expiryPeriod: "1h"

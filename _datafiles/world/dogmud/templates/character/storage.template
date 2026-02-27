@@ -1,0 +1,7 @@
+ ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">In Storage</ansi> ───────────────────────────────────────────────────────────┐
+ {{ range $idx, $itemName := . }}  {{ add $idx 1 }}. <ansi fg="itemname">{{ $itemName }}</ansi>
+ {{ end }}{{ if eq (len .) 0 }}  Nothing
+ {{ end -}}
+ └──────────────────────────────────────────────────────────────────────────┘
+ <ansi fg="command">unstore [itemname]</ansi> or <ansi fg="command">unstore [#]</ansi> to remove items from storage.
+

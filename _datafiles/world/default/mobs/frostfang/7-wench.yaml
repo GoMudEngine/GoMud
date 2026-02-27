@@ -9,11 +9,11 @@ combatcommands:
 idlecommands:
   - 'say If you''re hungry check the <ansi fg="command">list</ansi> of food and services for sale.'
 activitylevel: 10
+statpool: 5
 character:
   name: wench
   description: 'In the lively atmosphere of the inn, a serving wench navigates through the bustling crowd with grace and efficiency. Her attire is simple yet practical, consisting of a sturdy bodice and a flowing skirt that allows her to move freely as she attends to the patrons. Her hair is pulled back into a neat bun, with a few stray curls framing her cheerful face. With a tray balanced expertly in one hand, she deftly maneuvers around tables and chairs, delivering frothing mugs of ale and plates of hearty food with a warm smile and a kind word. Her laughter is infectious, brightening the mood of the room as she shares a quick joke or a playful tease. Despite the demanding nature of her work, she maintains a positive and resilient demeanor, ensuring that every guest feels welcome and well-cared for. Her keen eye and attentive nature make her quick to notice when a patron''s mug is empty or when a new arrival is in need of service, making her an invaluable perception in the bustling inn.'
-  raceid: 1
-  level: 5
+  speciesid: 1
   alignment: -20
   spellbook:
     curepoison: 50

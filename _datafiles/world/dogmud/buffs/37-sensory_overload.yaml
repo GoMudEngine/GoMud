@@ -1,0 +1,8 @@
+buffid: 37
+name: Sensory Overload
+description: Your senses are overwhelmed, blinding you and slowing your reactions.
+triggerrate: 1 round
+triggercount: 4
+statmods:
+  perception: -25
+  dexterity: -15

@@ -1,0 +1,7 @@
+The <ansi fg="command">zone</ansi> command can be used in the following ways:
+
+<ansi fg="command">zone info</ansi>
+Get the zone config info
+
+You can interactively modify zone properties to the room using the command:
+<ansi fg="command">zone edit</ansi>

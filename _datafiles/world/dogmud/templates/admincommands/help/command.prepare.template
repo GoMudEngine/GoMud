@@ -1,0 +1,11 @@
+The <ansi fg="command">prepare</ansi> command can be used in the following ways:
+
+<ansi fg="command">prepare all</ansi> - Load every room into memory and spawn their mobs.
+
+This is a general testing tool for:
+  1. Load testing
+  2. Putting NPC into motion without having to visit all of the rooms.
+
+<ansi fg="red-bold">WARNING!</ansi> - This may be cpu/memory intensive. 
+Consider using <ansi fg="command">server stats</ansi> before and after to compare the impact.
+

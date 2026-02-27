@@ -1,0 +1,11 @@
+roomid: 1080
+zone: A Dark Forest
+title: A Dark Forest - Room 1080
+description: A room in A Dark Forest. This area has not yet been described.
+exits:
+  east:
+    roomid: 1081
+  north:
+    roomid: 1071
+  west:
+    roomid: 1079

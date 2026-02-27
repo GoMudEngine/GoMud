@@ -1,0 +1,37 @@
+mobid: 95
+zone: Thornwall City
+statpool: 22
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - humanoid
+  - priest
+idlecommands:
+  - 'emote adjusts a candle on the altar, centering it precisely'
+  - 'emote turns the pages of a heavy ledger, lips moving silently'
+  - ''
+  - 'emote folds hands and stares at the altar with a contemplative expression'
+  - ''
+activitylevel: 10
+character:
+  name: temple priest Olen
+  description: |
+    A tall, thin man in simple robes, his hands perpetually stained with
+    ink from the tithe ledgers he maintains. Priest Olen has the distracted
+    air of someone whose mind is always on three things at once -- the
+    spiritual needs of his congregation, the financial needs of the temple,
+    and the uncomfortable place where those two concerns intersect. His
+    smile is genuine but brief, and his eyes have the calculating quality
+    of an accountant more than the serenity of a holy man. He means well,
+    but the temple's debts weigh on him visibly.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    willpower:
+      training: 15
+    charisma:
+      training: 10
+    perception:
+      training: 5

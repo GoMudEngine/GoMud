@@ -1,0 +1,8 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">skills</ansi>
+
+The <ansi fg="command">skills</ansi> command lists your current known skills. 
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">skills</ansi>
+

@@ -1,0 +1,5 @@
+ ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Jobs</ansi> ─────────────────────────────────────────────────────────────────┐
+ {{ range $idx, $jobInfo := . }}  <ansi fg="yellow-bold">{{ padRight 15 $jobInfo.Name }}</ansi> <ansi fg="white-bold">{{ padRight 11 $jobInfo.Experience }}</ansi> <ansi fg="green">{{ $jobInfo.BarFull }}</ansi><ansi fg="black-bold">{{ $jobInfo.BarEmpty }}</ansi> <ansi fg="cyan-bold">{{ padRight 4 $jobInfo.Completion }}</ansi>
+ {{ end -}}
+ └──────────────────────────────────────────────────────────────────────────┘
+ 

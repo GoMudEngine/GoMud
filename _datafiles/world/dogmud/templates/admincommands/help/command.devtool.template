@@ -1,0 +1,88 @@
+The <ansi fg="command">devtool</ansi> command provides admin utilities for building and verifying world content.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<ansi fg="yellow">ZONE CONSISTENCY CHECKER</ansi>
+
+<ansi fg="command">devtool check [zone]</ansi>
+Scans every room YAML in a zone and reports structural problems:
+  - Missing reverse exits (e.g. north→2 but room 2 has no south exit)
+  - Exits with invalid destination IDs
+  - Orphan rooms that nothing else connects to
+
+  e.g. <ansi fg="command">devtool check dogmud</ansi>
+  e.g. <ansi fg="command">devtool check The Arctic</ansi>
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<ansi fg="yellow">GRID GENERATOR</ansi>
+
+<ansi fg="command">devtool makezone [name] [width] [height]</ansi>
+Creates a rectangular grid of rooms in the named zone.  Every adjacent pair
+of rooms is automatically connected with bidirectional cardinal exits.
+
+The zone name may contain spaces — width and height are always the last two
+arguments.
+
+  e.g. <ansi fg="command">devtool makezone test_grid 3 3</ansi>     → 9 rooms (3 wide × 3 tall)
+  e.g. <ansi fg="command">devtool makezone The Dark Forest 5 10</ansi> → 50 rooms
+
+<ansi fg="red">Note:</ansi> this writes YAML files on disk.  The server must be restarted (or the
+zone reloaded) before the new rooms are accessible in-game.  Run
+<ansi fg="command">devtool check [name]</ansi> afterwards to confirm the grid is clean.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<ansi fg="yellow">CROSS-ZONE ROOM LINKER</ansi>
+
+<ansi fg="command">devtool linkzones [zoneA]/[roomIdA] [direction] [zoneB]/[roomIdB]</ansi>
+Adds a bidirectional exit between two rooms that may live in different zones.
+Both room template files are updated on disk immediately.
+
+  e.g. <ansi fg="command">devtool linkzones startland/1 east test_grid/1000</ansi>
+       Adds east→1000 on room 1, and west→1 on room 1000.
+
+  e.g. <ansi fg="command">devtool linkzones dungeon_level_1/50 down dungeon_level_2/51</ansi>
+
+Valid directions: north, south, east, west, northeast, northwest,
+                 southeast, southwest, up, down
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<ansi fg="yellow">JSON API  (for scripting / LLM tool calls)</ansi>
+
+<ansi fg="command">devtool json [json_string]</ansi>
+Executes any of the above operations via a JSON request envelope and returns
+a JSON response.  Useful for scripting or AI-driven world generation.
+
+Request format:
+  { "action": "<ansi fg="command">check</ansi>|<ansi fg="command">makezone</ansi>|<ansi fg="command">linkzones</ansi>", "params": { ... } }
+
+<ansi fg="command">check</ansi>     params: zone
+<ansi fg="command">makezone</ansi>  params: name, width, height
+<ansi fg="command">linkzones</ansi> params: zone_a, room_a, direction, zone_b, room_b
+
+  e.g. <ansi fg="command">devtool json {"action":"check","params":{"zone":"test_grid"}}</ansi>
+  e.g. <ansi fg="command">devtool json {"action":"makezone","params":{"name":"cave_system","width":4,"height":4}}</ansi>
+  e.g. <ansi fg="command">devtool json {"action":"linkzones","params":{"zone_a":"startland","room_a":1,"direction":"east","zone_b":"test_grid","room_b":1000}}</ansi>
+
+Response format:
+  { "success": true, "action": "...", "result": { ... } }
+  { "success": false, "action": "...", "error": "..." }
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<ansi fg="yellow">FOLD PRESSURE DIAGNOSTICS</ansi>
+
+<ansi fg="command">devtool pressure</ansi>
+Reports the current Fold pressure (0.0–1.0) and each Witness moon's
+contribution to it.  Also shows tonight's fold ceiling.
+
+  e.g. <ansi fg="command">devtool pressure</ansi>
+
+Fold pressure 0.0 = all moons at new moon (minimum spell complexity allowed)
+Fold pressure 1.0 = all moons at full moon (maximum spell complexity allowed)
+Fold ceiling   4  = only spells requiring ≤4 folds can be initiated
+Fold ceiling   8  = spells requiring up to 8 folds can be initiated
+
+JSON API: <ansi fg="command">devtool json {"action":"pressure","params":{}}</ansi>

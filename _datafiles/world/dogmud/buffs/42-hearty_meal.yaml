@@ -1,0 +1,5 @@
+buffid: 42
+name: Hearty Meal
+description: A warm meal fills your belly, mending aches and pains.
+triggerrate: 2 rounds
+triggercount: 3

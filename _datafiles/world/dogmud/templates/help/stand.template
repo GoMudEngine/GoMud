@@ -1,0 +1,42 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">stand</ansi>
+
+The <ansi fg="command">stand</ansi> command allows you to forcefully stand up when you've been knocked
+to the ground (<ansi fg="red">prone</ansi>), guaranteed to succeed but at a significant stamina cost.
+
+<ansi fg="yellow">Requirements:</ansi>
+
+  - Must be prone (knocked down)
+  - Must have at least 15% of maximum stamina
+
+<ansi fg="yellow">Usage:</ansi>
+
+  <ansi fg="command">stand</ansi>
+  Stand up immediately, bypassing automatic recovery
+
+<ansi fg="yellow">Mechanics:</ansi>
+
+  <ansi fg="stat">Stamina Cost:</ansi> 15% of your maximum stamina
+  <ansi fg="stat">Success Rate:</ansi> 100% (guaranteed, unlike automatic recovery)
+  <ansi fg="stat">Action Cost:</ansi> Uses your action for the current round
+
+<ansi fg="yellow">Automatic Recovery:</ansi>
+
+If you don't manually stand, you will <ansi fg="yellow">automatically attempt</ansi> to recover each round
+after the minimum prone duration expires:
+
+  - <ansi fg="stat">Minimum Duration:</ansi> Must remain prone for 1 full round
+  - <ansi fg="stat">Recovery Chance:</ansi> Based on your Dexterity stat
+    - 25 Dexterity = 25% chance per round
+    - 100 Dexterity = 53% chance per round
+    - 300 Dexterity = 75% chance per round
+  - <ansi fg="stat">Recovery Penalty:</ansi> Only 1 attack that round (struggling to stand)
+
+<ansi fg="yellow">Strategy:</ansi>
+
+Use <ansi fg="command">stand</ansi> when you MUST get up immediately and have stamina to spare.
+Otherwise, save stamina and let automatic recovery handle it - you'll still get 1 attack
+while trying to stand.
+
+<ansi fg="yellow">See Also:</ansi>
+
+  <ansi fg="command">help prone</ansi>, <ansi fg="command">help bash</ansi>, <ansi fg="command">help trip</ansi>, <ansi fg="command">help kick</ansi>, <ansi fg="command">help combat</ansi>

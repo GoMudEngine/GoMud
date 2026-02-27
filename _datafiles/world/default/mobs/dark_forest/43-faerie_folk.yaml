@@ -13,11 +13,11 @@ idlecommands:
 combatcommands:
   - 'emote draws a foreign symbol in the air, and suddenly vanishes in a shower of sparks;suicide vanish'
 activitylevel: 30
+statpool: 25
 character:
   name: faerie folk
   description: 'The faerie is a delicate, ethereal being, no taller than a human hand, with iridescent wings that shimmer like dew-kissed spider silk in the dappled forest light. Their luminous skin glows softly, casting a gentle light on their surroundings as they flit gracefully among the trees and flowers. With eyes that sparkle like tiny gemstones, they move with a quick, darting motion, tending to the forest''s flora and fauna with a tender touch and a whisper of ancient magic. Faeries are intensely shy and easily startled; at the slightest hint of danger or a sudden noise, they vanish in a blink, leaving behind only a faint trail of sparkling dust and the lingering scent of wildflowers. Despite their elusiveness, the forest thrives under their care, each leaf and creature subtly blessed by their gentle, nurturing presence.'
-  raceid: 15
-  level: 25
+  speciesid: 15
   equipment:
     weapon:
       itemid: 10017

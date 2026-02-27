@@ -1,0 +1,29 @@
+roomid: 5
+zone: Startland
+title: The Forge
+description: >
+  A low-ceilinged stone chamber thick with the smell of hot metal and coal smoke.
+  A massive iron anvil dominates the center of the room, its surface pitted from
+  years of hammer work. A cold forge sits against the far wall, its bellows still.
+  Ore scraps and metal shavings litter the floor. This is a working smithy, or
+  it was, before someone let it fall to ruin.
+mapsymbol: F
+maplegend: Forge
+biome: fort
+station: forge
+exits:
+  west:
+    roomid: 1
+  south:
+    roomid: 9
+items:
+  - itemid: 40001
+  - itemid: 40001
+  - itemid: 40001
+  - itemid: 40002
+  - itemid: 40002
+  - itemid: 40003
+spawninfo:
+  - mobid: 4
+    message: A cave goblin scrambles out from behind the forge.
+    respawnrate: 3 real minutes

@@ -1,0 +1,20 @@
+id: chrysalis-sight
+name: "Chrysalis Sight"
+skill: enchanting
+skill_minimum: 6
+station: enchanting_circle
+time_rounds: 4
+target_type: head
+enchant_type: chrysalis-sight
+ingredients:
+  - item_tag: chrysalis-setting
+    quantity: 1
+  - item_tag: mutation-catalyst
+    quantity: 1
+  - item_tag: binding-paste
+    quantity: 1
+output:
+  item_id: 0
+  quantity: 0
+success_message: "The setting fuses with the helm, its surface rippling with multifaceted awareness. Your perception sharpens in all directions."
+failure_message: "The catalyst rejects the binding. The materials crumble to dust, but the helm is unharmed."

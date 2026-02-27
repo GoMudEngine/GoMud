@@ -41,7 +41,7 @@ func SignalShutdown(s os.Signal) {
 	}
 }
 
-func Add(conn net.Conn, wsConn *websocket.Conn) *ConnectionDetails {
+func Add(conn net.Conn, wsConn *websocket.Conn, cType ...ConnType) *ConnectionDetails {
 
 	lock.Lock()
 	defer lock.Unlock()
@@ -54,6 +54,10 @@ func Add(conn net.Conn, wsConn *websocket.Conn) *ConnectionDetails {
 		wsConn,
 		nil, // use default settings for now TODO: add into overall config pattern?
 	)
+
+	if len(cType) > 0 {
+		connDetails.connType = cType[0]
+	}
 
 	netConnections[connDetails.ConnectionId()] = connDetails
 
@@ -233,6 +237,32 @@ func ActiveConnectionCount() int {
 	defer lock.RUnlock()
 
 	return len(netConnections)
+}
+
+func ActiveHumanConnectionCount() int {
+	lock.RLock()
+	defer lock.RUnlock()
+
+	ct := 0
+	for _, cd := range netConnections {
+		if cd.ConnType() == ConnHuman {
+			ct++
+		}
+	}
+	return ct
+}
+
+func ActiveAIConnectionCount() int {
+	lock.RLock()
+	defer lock.RUnlock()
+
+	ct := 0
+	for _, cd := range netConnections {
+		if cd.ConnType() == ConnAI {
+			ct++
+		}
+	}
+	return ct
 }
 
 // make this more efficient later

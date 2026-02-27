@@ -1,0 +1,16 @@
+id: steel-longsword
+name: Steel Longsword
+skill: blacksmithing
+skill_minimum: 20
+station: forge
+time_rounds: 5
+ingredients:
+  - item_tag: steel-ingot
+    quantity: 2
+  - item_tag: leather-strip
+    quantity: 1
+output:
+  item_id: 10015
+  quantity: 1
+success_message: "You forge the steel into a long, keen blade and wrap the hilt in leather. A steel longsword!"
+failure_message: "The steel cracks along a hidden flaw. The materials are ruined."

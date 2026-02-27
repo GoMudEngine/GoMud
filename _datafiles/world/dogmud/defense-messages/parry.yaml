@@ -1,0 +1,142 @@
+# Parry defense messages
+# Tokens available:
+# {defender} - name of the defending character
+# {attacker} - name of the attacking character
+# {weapon}   - name of attacker's weapon
+
+optionid: parry
+options:
+  weak:
+    # Narrow parries - defender barely deflected the attack (z-score < 0.5)
+    together:
+      todefender:
+      - '<ansi fg="defense-good">You barely parry <ansi fg="user">{attacker}</ansi>''s attack!</ansi>'
+      - '<ansi fg="defense-good">You deflect the strike at the last moment!</ansi>'
+      - '<ansi fg="defense-good">You desperately catch the blow on your weapon!</ansi>'
+      - '<ansi fg="defense-good">You awkwardly intercept <ansi fg="user">{attacker}</ansi>''s <ansi fg="item">{weapon}</ansi>!</ansi>'
+      - '<ansi fg="defense-good">You scramble to block, barely turning aside the strike!</ansi>'
+      - '<ansi fg="defense-good">Your guard almost fails, but you manage to deflect!</ansi>'
+      - '<ansi fg="defense-good">You clumsily bat the attack away!</ansi>'
+      - '<ansi fg="defense-good">You frantically raise your defense, just catching the blow!</ansi>'
+      - '<ansi fg="defense-good">You narrowly redirect the strike with your weapon!</ansi>'
+      - '<ansi fg="defense-good">You twist your blade at the last second, deflecting awkwardly!</ansi>'
+      toattacker:
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> barely parries your attack!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> deflects your strike at the last moment!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> desperately catches your blow!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> awkwardly intercepts your <ansi fg="item">{weapon}</ansi>!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> scrambles to block, barely turning aside your strike!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi>''s guard almost fails, but manages to deflect!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> clumsily bats your attack away!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> frantically raises their defense, just catching the blow!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> narrowly redirects your strike!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> twists their blade at the last second, deflecting awkwardly!</ansi>'
+      toroom:
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> barely parries <ansi fg="user">{attacker}</ansi>''s attack.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> deflects the strike at the last moment.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> desperately catches the blow.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> awkwardly intercepts the attack.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> scrambles to block.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi>''s guard almost fails, but deflects.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> clumsily bats the attack away.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> frantically raises their defense.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> narrowly redirects the strike.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> deflects awkwardly at the last second.</ansi>'
+
+  normal:
+    # Standard parries - defender successfully deflected the attack (z-score 0.5-2.0)
+    together:
+      todefender:
+      - '<ansi fg="defense-good">You parry <ansi fg="user">{attacker}</ansi>''s attack!</ansi>'
+      - '<ansi fg="defense-good">You deflect the strike with your weapon!</ansi>'
+      - '<ansi fg="defense-good">You catch the blow on your guard!</ansi>'
+      - '<ansi fg="defense-good">You redirect <ansi fg="user">{attacker}</ansi>''s <ansi fg="item">{weapon}</ansi>!</ansi>'
+      - '<ansi fg="defense-good">You intercept the attack cleanly!</ansi>'
+      - '<ansi fg="defense-good">You turn aside the blow with a solid parry!</ansi>'
+      - '<ansi fg="defense-good">You meet the strike weapon-to-weapon!</ansi>'
+      - '<ansi fg="defense-good">You knock the attack aside!</ansi>'
+      - '<ansi fg="defense-good">You sweep the strike away with your blade!</ansi>'
+      - '<ansi fg="defense-good">You deflect high, turning the attack away!</ansi>'
+      - '<ansi fg="defense-good">You angle your weapon, redirecting the force!</ansi>'
+      - '<ansi fg="defense-good">You counter the strike with a firm parry!</ansi>'
+      - '<ansi fg="defense-good">You bat away the attack with your weapon!</ansi>'
+      - '<ansi fg="defense-good">You guide the blow aside with practiced skill!</ansi>'
+      toattacker:
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> parries your attack!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> deflects your strike!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> catches your blow on their guard!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> redirects your <ansi fg="item">{weapon}</ansi>!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> intercepts your attack cleanly!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> turns aside your blow with a solid parry!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> meets your strike weapon-to-weapon!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> knocks your attack aside!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> sweeps your strike away!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> deflects high, turning your attack away!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> angles their weapon, redirecting the force!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> counters your strike with a firm parry!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> bats away your attack!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> guides your blow aside with skill!</ansi>'
+      toroom:
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> parries <ansi fg="user">{attacker}</ansi>''s attack.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> deflects the strike.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> catches the blow on their guard.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> redirects the attack.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> intercepts the attack cleanly.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> turns aside the blow.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> meets the strike weapon-to-weapon.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> knocks the attack aside.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> sweeps the strike away.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> deflects high.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> redirects the force.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> counters with a firm parry.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> bats away the attack.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> guides the blow aside.</ansi>'
+
+  heavy:
+    # Easy/decisive parries - defender easily deflected a poor attack (z-score >= 2.0)
+    together:
+      todefender:
+      - '<ansi fg="defense-good">You effortlessly parry <ansi fg="user">{attacker}</ansi>''s clumsy attack!</ansi>'
+      - '<ansi fg="defense-good">You casually deflect the telegraphed strike!</ansi>'
+      - '<ansi fg="defense-good">You brush aside the obvious attack with ease!</ansi>'
+      - '<ansi fg="defense-good">You contemptuously turn away the wild swing!</ansi>'
+      - '<ansi fg="defense-good">You lazily redirect the slow strike!</ansi>'
+      - '<ansi fg="defense-good">You barely need to move your weapon to parry!</ansi>'
+      - '<ansi fg="defense-good">You dismissively knock away the predictable blow!</ansi>'
+      - '<ansi fg="defense-good">You smoothly sweep aside the fumbled attack!</ansi>'
+      - '<ansi fg="defense-good">You expertly redirect the clumsy strike with minimal effort!</ansi>'
+      - '<ansi fg="defense-good">You flick your weapon, easily deflecting the wild blow!</ansi>'
+      - '<ansi fg="defense-good">You meet the sluggish attack with a perfect parry!</ansi>'
+      - '<ansi fg="defense-good">You contemptuously bat away the sloppy strike!</ansi>'
+      - '<ansi fg="defense-good">You effortlessly guide the poor attack aside!</ansi>'
+      - '<ansi fg="defense-good">You turn the clumsy blow with contemptuous ease!</ansi>'
+      toattacker:
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> effortlessly parries your clumsy attack!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> casually deflects your telegraphed strike!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> brushes aside your obvious attack with ease!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> contemptuously turns away your wild swing!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> lazily redirects your slow strike!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> barely needs to move to parry!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> dismissively knocks away your predictable blow!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> smoothly sweeps aside your fumbled attack!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> expertly redirects your clumsy strike!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> flicks their weapon, easily deflecting!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> meets your sluggish attack with a perfect parry!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> contemptuously bats away your sloppy strike!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> effortlessly guides your poor attack aside!</ansi>'
+      - '<ansi fg="attack-bad"><ansi fg="mob">{defender}</ansi> turns your clumsy blow with ease!</ansi>'
+      toroom:
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> effortlessly parries the clumsy attack.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> casually deflects the telegraphed strike.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> brushes aside the attack with ease.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> contemptuously turns away the wild swing.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> lazily redirects the slow strike.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> barely moves to parry.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> dismissively knocks away the blow.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> smoothly sweeps aside the fumbled attack.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> expertly redirects the clumsy strike.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> flicks their weapon, easily deflecting.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> perfectly parries the sluggish attack.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> contemptuously bats away the sloppy strike.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> effortlessly guides the poor attack aside.</ansi>'
+      - '<ansi fg="combat"><ansi fg="mob">{defender}</ansi> turns the clumsy blow with ease.</ansi>'

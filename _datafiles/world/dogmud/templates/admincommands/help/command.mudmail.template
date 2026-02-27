@@ -1,0 +1,15 @@
+The <ansi fg="command">mudmail</ansi> command sends a mass in-game mail message to all players
+(both online and offline). It is useful for announcements, patch notes,
+or lore dispatches.
+
+Usage: <ansi fg="command">mudmail</ansi> (launches an interactive prompt)
+
+The prompt will ask for:
+  <ansi fg="yellow">From name</ansi>  - The sender name displayed in the player's inbox (can be fictional)
+  <ansi fg="yellow">Message</ansi>    - The body of the message
+  <ansi fg="yellow">Gold</ansi>       - Optional gold amount to attach (0 for none)
+  <ansi fg="yellow">Item</ansi>       - Optional item from your backpack to attach (or "none")
+  <ansi fg="yellow">Confirm</ansi>    - Preview and confirm before sending
+
+The mail is delivered to every player's inbox immediately and is also
+queued for players who log in later.

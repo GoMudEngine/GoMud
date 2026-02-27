@@ -1,0 +1,8 @@
+speciesid: 20
+name: orb
+description: A sphere of pure energy
+size: medium
+unarmedname: energy
+damage:
+  diceroll: 0d0
+disabledslots: ['weapon', 'offhand', 'neck', 'body', 'belt', 'gloves', 'ring', 'legs', 'feet']

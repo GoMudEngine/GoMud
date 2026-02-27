@@ -8,13 +8,13 @@ idlecommands:
 activitylevel: 10
 groups: 
   - slum-ruffians
+statpool: 25
 character:
   name: dangerous ruffian
   description: 'The ruffian looms in the dimly lit alleyway of the slums, a menacing figure carved out of the shadows. His rough, weather-beaten face is partly obscured by a tattered hood, but his eyes gleam with a predatory sharpness, scanning the surroundings with a mix of suspicion and brazen confidence. Broad-shouldered and solidly built, his presence is intimidating, the result of a life hardened by the unforgiving streets of the slums. His clothes are a patchwork of leather and cloth, well-worn and stained, telling a silent tale of numerous brawls and escapades.'
   roomid: 0
   zone: Nowhere
-  raceid: 1
-  level: 25
+  speciesid: 1
   alignment: -55
   gold: 20
   equipment:

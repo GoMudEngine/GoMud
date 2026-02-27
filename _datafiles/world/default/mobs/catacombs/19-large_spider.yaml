@@ -8,11 +8,11 @@ groups:
 idlecommands:
   - 'wander'
 activitylevel: 10
+statpool: 20
 character:
   name: large spider
   description: 'Its massive body is covered in a chitinous armor, glossy and black as obsidian, with hints of a deep, iridescent purple when caught by the flicker of torchlight. The arachnid''s legs span wide, each segment a testament to its predatory prowess, ending in sharp points that click ominously against the stone floor. Its eyes, a cluster of glistening orbs, reflect a malevolent intelligence, surveying its domain for any disturbance. The creature''s fangs glisten with venom, capable of paralyzing its unsuspecting prey with a single bite. Silent as a whisper, it waits in the gloom, its web a masterpiece of deadly beauty, strung between the bones of the less fortunate who now serve as a warning to those who traverse the spider''s lair.'
-  raceid: 7
-  level: 20
+  speciesid: 7
   equipment:
     weapon: 
       itemid: 10011

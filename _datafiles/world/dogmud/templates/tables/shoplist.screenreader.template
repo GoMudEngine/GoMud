@@ -1,0 +1,9 @@
+
+{{ .Title }}
+{{- range $rowIndex, $row := .Rows }}
+{{- $name := $.GetCell $rowIndex 1 }}
+{{- $qty := $.GetCell $rowIndex 0 }}
+{{- $type := $.GetCell $rowIndex 2 }}
+{{- $price := $.GetCell $rowIndex 3 }}
+{{ $name }} x{{ $qty }} type {{ $type }} costs {{ $price }}
+{{- end }}

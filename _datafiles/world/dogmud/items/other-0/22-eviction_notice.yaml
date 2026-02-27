@@ -1,0 +1,12 @@
+itemid: 22
+name: eviction notice
+namesimple: notice
+description: An official document on heavy parchment, stamped with the seal of the
+  Thornwall Tax Authority. It orders the dispossession of one Gareth Millward for
+  non-payment of municipal land tax. The language is bureaucratic and impersonal,
+  reducing a man's livelihood to a line item in a ledger. The ink is faded by weather,
+  but the seal is unmistakable.
+type: object
+subtype: holdable
+uses: 0
+weight: 0.1

@@ -1,0 +1,14 @@
+spellid: veil-sight
+name: Veil Sight
+description: Opens the target's perception to see hidden creatures.
+type: helpsingle
+schools:
+  - mental
+cost: 35
+waitrounds: 1
+difficulty: 0
+primarystat: willpower
+base_folds: 4
+effect_type: buff
+buff_ids:
+  - 1

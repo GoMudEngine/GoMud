@@ -1,0 +1,49 @@
+roomid: 314
+zone: Labyrinth of Low Tunnels
+title: Stinking Den
+description: The tunnels open into the largest chamber you have encountered down here,
+  though the ceiling is still oppressively low and blackened with decades of soot.
+  This is the heart of the warren. A crude hearth of fire-blackened stones dominates
+  the center, ringed with gnawed bones and ash. The walls are covered in the densest
+  concentration of scratched symbols yet -- overlapping, frantic, territorial. Crude
+  bedding of matted hide and dried fungus lines the edges of the chamber in distinct
+  clusters, each marked with crude totems. Tunnels branch in every direction. The air
+  is so thick with smoke, sweat, and the reek of communal habitation that it feels
+  like breathing through a damp cloth pressed against your face.
+biome: cave
+exits:
+  north:
+    roomid: 313
+  west:
+    roomid: 315
+  east:
+    roomid: 319
+  south:
+    roomid: 316
+spawninfo:
+- mobid: 73
+  message: A warren warrior hunches by the hearth, bone club across its knees.
+  respawnrate: 8 real minutes
+- mobid: 73
+  message: A second warrior emerges from one of the branching tunnels, rattling a flint spear.
+  respawnrate: 10 real minutes
+- mobid: 76
+  message: A blind tunnel rat gnaws at a bone near the edge of the bedding.
+  respawnrate: 12 real minutes
+nouns:
+  hearth: Blackened stones arranged in a rough circle, the ground around them crusted
+    with layers of old ash and charred bone. The fire is out but the stones are still
+    warm. This hearth has not been cold in a very long time.
+  bedding: Distinct sleeping clusters separated by small cairns of stacked stone -- territorial
+    markers. Each cluster has its own collection of crude possessions piled nearby. The
+    bedding reeks.
+  symbols: The scratched symbols here are denser and more complex than anywhere else in
+    the tunnels. Some are repeated obsessively. Others have been scratched out and
+    replaced. This is the record of something -- disputes, history, claims. You cannot
+    read it.
+idlemessages:
+- Embers in the hearth stones glow faintly orange beneath the ash. The fire was recent.
+- The territorial symbols on the walls seem to shift in the dim light, though nothing has moved.
+- A low, keening sound drifts from one of the branching tunnels -- mourning, or a warning.
+- The smoke-thickened air stings your eyes and coats the back of your throat.
+- Something watches from a shadow near the bedding. Eyes catch the light, then vanish.

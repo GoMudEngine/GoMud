@@ -13,7 +13,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/pets"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
-	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -74,6 +73,7 @@ func Buy(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		}
 
 		if success = tryPurchase(itemname, user, room, nil, shopUser); success {
+			user.Character.OnStatUse("charisma", user.UserId)
 			return true, nil
 		}
 	}
@@ -91,6 +91,7 @@ func Buy(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		shopMob.Character.Shop.Restock()
 
 		if success = tryPurchase(itemname, user, room, shopMob, nil); success {
+			user.Character.OnStatUse("charisma", user.UserId)
 			return true, nil
 		}
 	}
@@ -156,7 +157,7 @@ func tryPurchase(request string, user *users.UserRecord, room *rooms.Room, shopM
 
 			price := saleItem.Price
 			if price == 0 {
-				price = 250 * mobInfo.Character.Level
+				price = 250
 			} else if price < 0 {
 				price = 0
 			}
@@ -284,7 +285,7 @@ func tryPurchase(request string, user *users.UserRecord, room *rooms.Room, shopM
 
 	if matchedShopItem.MobId > 0 {
 
-		maxCharmed := user.Character.GetSkillLevel(skills.Tame) + 1
+		maxCharmed := user.Character.GetMaxCharmedCreatures()
 		if len(user.Character.GetCharmIds()) >= maxCharmed {
 			user.SendText(fmt.Sprintf(`You can only have %d mobs following you at a time.`, maxCharmed))
 			return false

@@ -1,0 +1,29 @@
+roomid: 461
+zone: Thornwall City
+title: Main Street, West
+description: Main Street runs east through the city, wide enough for two carts and
+  a stream of pedestrians between them. The buildings rise two and three stories on
+  either side, their ground floors given over to shops and businesses while laundry
+  lines crisscross the upper stories. The cobblestones are worn smooth by generations
+  of traffic, and drainage channels run along the gutters. The western end has a
+  rougher character than the city center -- the shops are smaller, the paint is
+  peeling, and the people move with the hurried purpose of those who work for a living.
+biome: city
+exits:
+  west:
+    roomid: 460
+  east:
+    roomid: 462
+  south:
+    roomid: 474
+nouns:
+  shops: Small storefronts line the ground floor -- a cobbler, a chandler, a
+    notary. Their signs are hand-painted and their windows are small. These are
+    the businesses that serve the working population of the Gate Ward, not the
+    merchant class.
+spawninfo:
+- mobid: 100
+idlemessages:
+- A shopkeeper sweeps the cobblestones in front of her door.
+- The smell of baking bread drifts from somewhere above.
+- Two women lean out of upper windows on opposite sides of the street, shouting a conversation.

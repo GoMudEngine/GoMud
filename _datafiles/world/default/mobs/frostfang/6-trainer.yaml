@@ -10,11 +10,11 @@ idlecommands:
   - 'say I can help you <ansi fg="command">train</ansi> new skills!'
   - 'say There are other trainers to be found in the world, with other skills to teach you.'
 activitylevel: 10
+statpool: 5
 character:
   name: trainer
   description: 'Standing amidst the hustle and bustle of the training grounds, the trainer showcases seasoned expertise and unwavering patience. Their attire is practical and well-worn, with reinforced padding at key points to endure the rigors of demonstrating combat techniques and survival skills. A myriad of tools and weapons are slung across their belt and back, each one showcasing their wide-ranging knowledge and ability to adapt to any teaching scenario. Their eyes, sharp and observant, miss no detail as they guide adventurers through complex drills and exercises, offering constructive feedback and encouragement with a firm yet kind voice. The trainer’s hands, calloused and steady, deftly demonstrate each skill with precision and ease, ensuring that even the greenest of adventurers can grasp the fundamentals. With a deep well of patience and a genuine passion for helping others grow, the trainer stands as a pillar of support and guidance in the adventurers'' journey towards mastery.'
-  raceid: 1
-  level: 5
+  speciesid: 1
   alignment: 30
   equipment:
     weapon: 

@@ -29,5 +29,5 @@ spawninfo:
   - ""
   - ""
   - emote watches you carefully.
-  levelmod: 10
+  statpoolmod: 10
   respawnrate: 10 real minutes

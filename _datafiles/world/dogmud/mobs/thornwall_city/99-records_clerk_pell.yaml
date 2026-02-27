@@ -1,0 +1,37 @@
+mobid: 99
+zone: Thornwall City
+statpool: 15
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - humanoid
+  - clerk
+idlecommands:
+  - 'emote stamps a document with a heavy seal, the sound sharp in the quiet room'
+  - 'emote retrieves a ledger from the shelves, blowing dust from its spine'
+  - ''
+  - 'emote writes a notation in a margin, squinting at the page'
+  - ''
+activitylevel: 10
+character:
+  name: records clerk Pell
+  description: |
+    A thin man with stooped shoulders and ink-stained cuffs, his eyes
+    magnified behind thick spectacles. Pell has worked in the Records
+    Office for longer than most people have lived in Thornwall. He knows
+    where every document is filed, which ledger contains which records,
+    and exactly how long it will take to find anything -- which is always
+    longer than the person asking would like. He is helpful in a plodding,
+    methodical way, and his memory for names, dates, and filing numbers
+    is uncanny.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    perception:
+      training: 10
+    willpower:
+      training: 5
+    strength:
+      training: -10

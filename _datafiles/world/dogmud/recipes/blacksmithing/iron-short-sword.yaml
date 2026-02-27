@@ -1,0 +1,16 @@
+id: iron-short-sword
+name: Iron Short Sword
+skill: blacksmithing
+skill_minimum: 8
+station: forge
+time_rounds: 3
+ingredients:
+  - item_tag: iron-ingot
+    quantity: 2
+  - item_tag: leather-strip
+    quantity: 1
+output:
+  item_id: 10014
+  quantity: 1
+success_message: "You fold and hammer the iron into a broad, compact blade. An iron short sword!"
+failure_message: "The blade warps during quenching and snaps. The materials are ruined."

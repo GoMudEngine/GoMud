@@ -474,13 +474,19 @@
                 var fill = document.querySelector('#health-bar .health-fill');
                 var txt  = document.querySelector('#health-bar .health-text');
                 fill.style.width       = 100-p + '%';
-                txt.textContent       = obj.Vitals.hp + '/' + obj.Vitals.hp_max + ' hp'; 
+                txt.textContent       = 'HP';
 
-                p    = Math.max(0, Math.min(100, Math.floor(obj.Vitals.sp/obj.Vitals.sp_max*100)));  // clamp 0–100
-                fill = document.querySelector('#mana-bar .mana-fill');
-                txt  = document.querySelector('#mana-bar .mana-text');
+                p    = Math.max(0, Math.min(100, Math.floor(obj.Vitals.stamina/obj.Vitals.stamina_max*100)));  // clamp 0–100
+                fill = document.querySelector('#stamina-bar .stamina-fill');
+                txt  = document.querySelector('#stamina-bar .stamina-text');
                 fill.style.width       = 100-p + '%';
-                txt.textContent       = obj.Vitals.sp + '/' + obj.Vitals.sp_max + ' mp'; 
+                txt.textContent       = 'SP';
+
+                p    = Math.max(0, Math.min(100, Math.floor(obj.Vitals.conviction/obj.Vitals.conviction_max*100)));  // clamp 0–100
+                fill = document.querySelector('#conviction-bar .conviction-fill');
+                txt  = document.querySelector('#conviction-bar .conviction-text');
+                fill.style.width       = 100-p + '%';
+                txt.textContent       = 'CP'; 
                 
             },
         };
@@ -1046,7 +1052,7 @@
         #health-bar {
             position: relative;
             width: 100%;         /* or fixed px width */
-            height: 50%;
+            height: 33.33%;
             background: linear-gradient(
                 to right,
                 #f44336 0%,   /* red */
@@ -1084,7 +1090,7 @@
         #mana-bar {
             position: relative;
             width: 100%;         /* or fixed px width */
-            height: 50%;
+            height: 25%;
             background: linear-gradient(
                 to right,
                 #1e108b 0%,
@@ -1093,7 +1099,7 @@
             border-radius: 12px;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
             overflow: hidden;
-            margin: 0;
+            margin: 0 2px;
         }
 
         #mana-bar .mana-fill {
@@ -1114,6 +1120,80 @@
             font-size: 0.85em;
             color: white;
             text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+            pointer-events: none;
+        }
+
+        #stamina-bar {
+            position: relative;
+            width: 100%;
+            height: 33.33%;
+            background: linear-gradient(
+                to right,
+                #8b4513 0%,   /* brown */
+                #d2691e 50%,  /* chocolate */
+                #daa520 100%  /* goldenrod */
+            );
+            border-radius: 12px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
+            overflow: hidden;
+            margin: 0 2px;
+        }
+
+        #stamina-bar .stamina-fill {
+            height: 100%;
+            width: 0%;
+            background: #333;
+            float:right;
+            transition: width 0.4s ease-out;
+        }
+
+        #stamina-bar .stamina-text {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: monospace;
+            font-size: 0.85em;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+            pointer-events: none;
+        }
+
+        #conviction-bar {
+            position: relative;
+            width: 100%;
+            height: 33.33%;
+            background: linear-gradient(
+                to right,
+                #ffd700 0%,   /* gold */
+                #ffeb8a 50%,  /* light gold */
+                #ffffff 100%  /* white */
+            );
+            border-radius: 12px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
+            overflow: hidden;
+            margin: 0 2px;
+        }
+
+        #conviction-bar .conviction-fill {
+            height: 100%;
+            width: 0%;
+            background: #333;
+            float:right;
+            transition: width 0.4s ease-out;
+        }
+
+        #conviction-bar .conviction-text {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: monospace;
+            font-size: 0.85em;
+            color: #333;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.8);
             pointer-events: none;
         }
         #vitals-bars {
@@ -1224,9 +1304,13 @@
                 <div class="health-fill" style="width: 100%;"></div>
                 <span class="health-text">100%</span>
             </div>
-            <div id="mana-bar">
-                <div class="mana-fill" style="width: 100%;"></div>
-                <span class="mana-text">100%</span>
+            <div id="stamina-bar">
+                <div class="stamina-fill" style="width: 100%;"></div>
+                <span class="stamina-text">100%</span>
+            </div>
+            <div id="conviction-bar">
+                <div class="conviction-fill" style="width: 100%;"></div>
+                <span class="conviction-text">100%</span>
             </div>
         </div>
 

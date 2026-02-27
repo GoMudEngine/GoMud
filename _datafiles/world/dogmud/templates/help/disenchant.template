@@ -1,0 +1,24 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">disenchant</ansi>
+
+The <ansi fg="command">disenchant</ansi> command removes a Chrysalis enchantment from an
+item, severing the bond between the mutation and your gear.
+
+<ansi fg="yellow">━━━ Requirements ━━━</ansi>
+
+  Station:   An <ansi fg="yellow">enchanting_circle</ansi> must be in the room with you.
+  Item:      The enchanted item must be in your inventory, not equipped.
+             Once disenchanted, the item returns to its original state.
+
+<ansi fg="yellow">━━━ Usage ━━━</ansi>
+
+  <ansi fg="command">disenchant <item></ansi>    Remove the enchantment from the named item.
+
+<ansi fg="yellow">━━━ Warning ━━━</ansi>
+
+The separation between a mutation and its host item is not clean. When you sever
+the bond, expect to feel temporarily weakened. The feeling will pass, but it may
+take time.
+
+<ansi fg="yellow">See Also:</ansi>
+
+  <ansi fg="command">help enchanting</ansi>, <ansi fg="command">help craft</ansi>, <ansi fg="command">help skills</ansi>

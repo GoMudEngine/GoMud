@@ -13,7 +13,7 @@ stats base value.
 
 <ansi fg="yellow">Related Help: </ansi>
 
-  <ansi fg="command">race</ansi>
+  <ansi fg="command">species</ansi>
   <ansi fg="command">level</ansi>
   <ansi fg="command">experience</ansi>
   <ansi fg="command">health</ansi>

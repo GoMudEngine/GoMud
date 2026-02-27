@@ -1,0 +1,23 @@
+roomid: 108
+zone: Sanctum Basin
+title: Market Street
+description: A short cobbled street runs through the market district of Sanctum Basin.
+  Open-fronted stalls display basic supplies -- trail rations, rope, lanterns, water
+  skins. The merchants are a mix of gruff locals and traveling traders who supply
+  the Chrysalis academy. The smells of spiced food and tanned leather mix in the dry air.
+biome: city
+exits:
+  west:
+    roomid: 107
+  east:
+    roomid: 109
+  north:
+    roomid: 113
+spawns:
+- mobid: 63
+  count: 1
+  maxcount: 1
+idlemessages:
+- A <ansi fg="mobname">merchant</ansi> calls out prices for <ansi fg="itemname">trail rations</ansi>.
+- Someone haggles noisily over the price of a <ansi fg="itemname">water skin</ansi>.
+- The smell of roasting desert <ansi fg="itemname">root vegetable</ansi> drifts from a nearby brazier.

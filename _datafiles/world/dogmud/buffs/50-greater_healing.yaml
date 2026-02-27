@@ -1,0 +1,5 @@
+buffid: 50
+name: Greater Healing
+description: A potent healing effect is mending your wounds.
+triggerrate: 2 rounds
+triggercount: 5

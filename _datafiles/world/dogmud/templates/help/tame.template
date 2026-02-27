@@ -1,0 +1,28 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">tame</ansi> spell
+
+The <ansi fg="command">Tame</ansi> spell channels mental force to pacify a wild creature, binding it
+to your will as a companion. Once tamed, the creature will follow you and
+fight at your side for a full day.
+
+Success is determined by an opposed mental roll — your willpower and
+spellcasting skill against the creature's willpower. A stronger mind and
+higher spellcasting skill greatly improve your odds.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">cast tame</ansi>              Attempts to tame your current combat target.
+  <ansi fg="command">cast tame [target]</ansi>     Targets a specific creature by name.
+
+<ansi fg="yellow">Base Folds:  </ansi> <ansi fg="white-bold">16</ansi>
+<ansi fg="yellow">Target:      </ansi> <ansi fg="white-bold">Single creature</ansi>
+<ansi fg="yellow">Defense:     </ansi> <ansi fg="white-bold">Mental (opposed by target's willpower)</ansi>
+<ansi fg="yellow">Duration:    </ansi> <ansi fg="white-bold">24 hours</ansi>
+<ansi fg="yellow">Conv. Cost:  </ansi> <ansi fg="white-bold">0</ansi>
+<ansi fg="yellow">School:      </ansi> <ansi fg="white-bold">Mental</ansi>
+
+<ansi fg="white-bold">Notes:</ansi>
+  - Only wild animals can be tamed. Other creature types are immune.
+  - The creature's aggro is cleared on a successful tame.
+  - A fumble (very poor roll) will backfire and wound the caster.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help cast</ansi>, <ansi fg="command">help spells</ansi>

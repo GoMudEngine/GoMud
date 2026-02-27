@@ -80,14 +80,12 @@ type LeaderboardModule struct {
 
 	lastCalculated time.Time // When the LB's were last generated
 
-	LBSize            int
-	GoldEnabled       bool
-	ExperienceEnabled bool
-	KillsEnabled      bool
+	LBSize      int
+	GoldEnabled bool
+	KillsEnabled bool
 
-	LB_Gold       leaderboardData `yaml:"LB_Gold,omitempty"`
-	LB_Experience leaderboardData `yaml:"LB_Experience,omitempty"`
-	LB_Kills      leaderboardData `yaml:"LB_Kills,omitempty"`
+	LB_Gold  leaderboardData `yaml:"LB_Gold,omitempty"`
+	LB_Kills leaderboardData `yaml:"LB_Kills,omitempty"`
 }
 
 func (l *LeaderboardModule) webLeaderboardData(r *http.Request) map[string]any {
@@ -107,9 +105,6 @@ func (l *LeaderboardModule) loadLBs() {
 	l.GoldEnabled = true
 	l.LB_Gold = leaderboardData{Name: `Gold`, ValueColor: `experience`}
 
-	l.ExperienceEnabled = true
-	l.LB_Experience = leaderboardData{Name: `Experience`, ValueColor: `gold`}
-
 	l.KillsEnabled = true
 	l.LB_Kills = leaderboardData{Name: `Kills`, ValueColor: `red-bold`}
 }
@@ -124,7 +119,7 @@ func (l *LeaderboardModule) leaderboardCommand(rest string, user *users.UserReco
 
 		title := fmt.Sprintf(`%s Leaderboard`, lb.Name)
 
-		headers := []string{`Rank`, `Character`, `Profession`, `Level`, lb.Name}
+		headers := []string{`Rank`, `Character`, `Profession`, lb.Name}
 
 		rows := [][]string{}
 
@@ -137,7 +132,6 @@ func (l *LeaderboardModule) leaderboardCommand(rest string, user *users.UserReco
 			`<ansi fg="red">%s</ansi>`,
 			`<ansi fg="username">%s</ansi>`,
 			`<ansi fg="white-bold">%s</ansi>`,
-			`<ansi fg="157">%s</ansi>`,
 			valueFormatting,
 		}
 
@@ -147,7 +141,7 @@ func (l *LeaderboardModule) leaderboardCommand(rest string, user *users.UserReco
 				continue
 			}
 
-			newRow := []string{`#` + strconv.Itoa(i+1), entry.CharacterName, entry.CharacterClass, strconv.Itoa(entry.Level), util.FormatNumber(entry.ScoreValue)}
+			newRow := []string{`#` + strconv.Itoa(i+1), entry.CharacterName, entry.CharacterClass, util.FormatNumber(entry.ScoreValue)}
 
 			rows = append(rows, newRow)
 		}
@@ -163,7 +157,6 @@ func (l *LeaderboardModule) leaderboardCommand(rest string, user *users.UserReco
 
 func (l *LeaderboardModule) Reset(maxSize int) {
 	l.LB_Gold.Reset(maxSize)
-	l.LB_Experience.Reset(maxSize)
 	l.LB_Kills.Reset(maxSize)
 }
 
@@ -176,10 +169,6 @@ func (l *LeaderboardModule) RefreshConfig() {
 
 	if goldEnabled, ok := l.plug.Config.Get(`GoldEnabled`).(bool); ok {
 		l.GoldEnabled = goldEnabled
-	}
-
-	if xpEnabled, ok := l.plug.Config.Get(`ExperienceEnabled`).(bool); ok {
-		l.ExperienceEnabled = xpEnabled
 	}
 
 	if killsEnabled, ok := l.plug.Config.Get(`KillsEnabled`).(bool); ok {
@@ -204,9 +193,6 @@ func (l *LeaderboardModule) Update() {
 			l.LB_Gold.Consider(u.UserId, *u.Character, u.Character.Gold+u.Character.Bank)
 		}
 
-		if l.ExperienceEnabled {
-			l.LB_Experience.Consider(u.UserId, *u.Character, u.Character.Experience)
-		}
 
 		if l.KillsEnabled {
 			l.LB_Kills.Consider(u.UserId, *u.Character, u.Character.KD.TotalKills)
@@ -220,9 +206,6 @@ func (l *LeaderboardModule) Update() {
 				l.LB_Gold.Consider(u.UserId, char, char.Gold+char.Bank)
 			}
 
-			if l.ExperienceEnabled {
-				l.LB_Experience.Consider(u.UserId, char, char.Experience)
-			}
 
 			if l.KillsEnabled {
 				l.LB_Kills.Consider(u.UserId, char, char.KD.TotalKills)
@@ -242,9 +225,6 @@ func (l *LeaderboardModule) Update() {
 			l.LB_Gold.Consider(u.UserId, *u.Character, u.Character.Gold+u.Character.Bank)
 		}
 
-		if l.ExperienceEnabled {
-			l.LB_Experience.Consider(u.UserId, *u.Character, u.Character.Experience)
-		}
 
 		if l.KillsEnabled {
 			l.LB_Kills.Consider(u.UserId, *u.Character, u.Character.KD.TotalKills)
@@ -258,9 +238,6 @@ func (l *LeaderboardModule) Update() {
 				l.LB_Gold.Consider(u.UserId, char, char.Gold+char.Bank)
 			}
 
-			if l.ExperienceEnabled {
-				l.LB_Experience.Consider(u.UserId, char, char.Experience)
-			}
 
 			if l.KillsEnabled {
 				l.LB_Kills.Consider(u.UserId, char, char.KD.TotalKills)
@@ -306,10 +283,6 @@ func (l *LeaderboardModule) getCurrentLeaderboards() []leaderboardData {
 		ret = append(ret, l.LB_Gold)
 	}
 
-	if l.ExperienceEnabled {
-		ret = append(ret, l.LB_Experience)
-	}
-
 	if l.KillsEnabled {
 		ret = append(ret, l.LB_Kills)
 	}
@@ -321,7 +294,6 @@ type leaderboardEntry struct {
 	UserId         int    `yaml:"UserId,omitempty"`
 	CharacterName  string `yaml:"CharacterName,omitempty"`
 	CharacterClass string `yaml:"CharacterClass,omitempty"`
-	Level          int    `yaml:"Level,omitempty"`
 	ScoreValue     int    `yaml:"ScoreValue,omitempty"`
 }
 
@@ -374,7 +346,6 @@ func (l *leaderboardData) Consider(userId int, char characters.Character, val in
 			UserId:         userId,
 			CharacterName:  char.Name,
 			CharacterClass: skills.GetProfession(char.GetAllSkillRanks()),
-			Level:          char.Level,
 			ScoreValue:     val,
 		}
 

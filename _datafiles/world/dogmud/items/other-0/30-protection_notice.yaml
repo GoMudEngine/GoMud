@@ -1,0 +1,12 @@
+itemid: 30
+name: protection notice
+namesimple: notice
+description: A folded piece of cheap paper, unsigned, delivered under a door. The
+  message is brief and unambiguous -- a demand for regular payment in exchange for
+  "ensuring the continued safety of your establishment." The handwriting is
+  deliberately crude, probably disguised. The amount demanded is not ruinous but
+  is enough to squeeze a business that is already struggling with legitimate taxes.
+type: object
+subtype: holdable
+uses: 0
+weight: 0.1

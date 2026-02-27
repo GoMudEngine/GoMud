@@ -1,0 +1,13 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="petname">pets</ansi> 
+
+<ansi fg="petname">pets</ansi> are familiars that follow you and assist you.
+
+They may provide you with stat bonuses, special powers, help you in combat, or 
+carry objects for you.
+
+When you first get a <ansi fg="petname">pet</ansi>, you can give it a name:
+
+  <ansi fg="command">pet name {newname}</ansi> - This will name your pet.
+
+<ansi fg="alert-4">Beware</ansi>, you can only name a pet once. Try looking at your pet to get some quick
+information about their wellbeing.

@@ -1,0 +1,20 @@
+The <ansi fg="command">item</ansi> command can be used in the following ways:
+
+<ansi fg="command">item create</ansi>
+Asks a series of questions and then creates a new item type and writes the file
+to the appropriate folder.
+
+<ansi fg="command">item create [ItemName/ItemId]</ansi>
+Same as above, but starts with a copy of the item named.
+
+<ansi fg="command">item spawn [ItemName/ItemId]</ansi>
+    <ansi fg="command">item spawn [ItemId]</ansi> - e.g. <ansi fg="command">item spawn 1</ansi>
+    <ansi fg="command">item spawn [ItemName]</ansi> - e.g. <ansi fg="command">item spawn dagger</ansi>
+
+<ansi fg="command">item list</ansi>
+List all item names.
+
+<ansi fg="command">item list [name-to-search]</ansi>
+List items that match a provided search term. You can use a wildcard on either
+or both sides of the search term, such as <ansi fg="command">item list *leather*</ansi>.
+

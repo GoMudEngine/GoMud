@@ -1,0 +1,14 @@
+spellid: mutation-catalyst
+name: Mutation Catalyst
+description: Accelerates the target's mutagenic processes.
+type: helpsingle
+schools:
+  - vital
+cost: 90
+waitrounds: 2
+difficulty: 0
+primarystat: willpower
+base_folds: 12
+effect_type: buff
+buff_ids:
+  - 35

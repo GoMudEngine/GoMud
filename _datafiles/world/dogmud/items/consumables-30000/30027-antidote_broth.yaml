@@ -1,0 +1,15 @@
+itemid: 30027
+name: antidote broth
+namesimple: broth
+description: |
+  A thin greenish broth simmered from wild vegetables and healer's root.
+  The taste is sharp and medicinal, with an earthy bitterness that lingers
+  on the tongue. Herbalists use it to settle stomachs and cleanse the
+  blood after exposure to toxins.
+type: food
+subtype: edible
+uses: 1
+buffids:
+  - 42
+value: 6
+weight: 0.4

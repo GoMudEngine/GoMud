@@ -25,7 +25,6 @@ type QuestReward struct {
 	Gold          int    // zero or more gold to give.
 	ItemId        int    // itemId to give
 	BuffId        int    // buffId to apply
-	Experience    int    // experience to give
 	SkillInfo     string // skill to give, format: skillId:skillLevel such as "map:1"
 	PlayerMessage string // string to display to player
 	RoomMessage   string // string to display to room

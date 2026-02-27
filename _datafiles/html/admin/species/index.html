@@ -1,0 +1,25 @@
+{{template "header" .}}
+
+                <div class="container-fluid">
+
+                    <div class="w-50 form-group mt-5">
+                        <h3>Select a Species <small>({{ len .Species }} found)</small></h3>
+
+                        <select class="form-control selectpicker"
+                            name="speciesid" id="speciesid"
+                            data-live-search="true"
+                            hx-get="/admin/species/speciesdata"
+                            hx-target="#speciesdata-edit"
+                            hx-trigger="change" >
+                            <option value="">Select a Species to View</option>
+                            <option value="0">Add New Species</option>
+                            {{range $index, $speciesInfo := .Species}}
+                                <option value="{{ $speciesInfo.SpeciesId }}">{{ rpad 7 $speciesInfo.SpeciesId "&nbsp;&nbsp;" }} {{ $speciesInfo.Name }}</option>
+                            {{end}}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="container-fluid" id="speciesdata-edit"></div>
+
+{{template "footer" .}}

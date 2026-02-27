@@ -1,0 +1,16 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi>Item Names
+
+When referring to items by name, to <ansi fg="command">use</ansi>, <ansi fg="command">get</ansi>, <ansi fg="command">drop</ansi>, <ansi fg="command">read</ansi>, etc you may use
+partial names to refer to items. For example, "<ansi fg="item">a heavy sword</ansi>" can be referred
+to as "<ansi fg="item">sword</ansi>", or "<ansi fg="item">heavy</ansi>". You can also refer to it by its full name:
+"<ansi fg="item">heavy sword</ansi>".
+
+Sometimes you may find yourself referring to items that share common naming.
+For example, imagine these three items in your backpack, or on the ground:
+
+   <ansi fg="item">a heavy axe</ansi>, <ansi fg="item">a heavy sword</ansi>, <ansi fg="item">a heavy car axel</ansi>
+
+Referring to "axe" or "heavy" is ambiguous. However you can refer to a specific
+item that matches by adding a <ansi fg="yellow">#[item_number]</ansi> to the end of the name. For 
+example: <ansi fg="command">get heavy#2</ansi> would get the second match: the <ansi fg="item">heavy sword</ansi>.
+

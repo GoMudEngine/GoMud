@@ -10,11 +10,11 @@ idlecommands:
   - 'say Have you taken the time to help the poor today?'
   - ''
 activitylevel: 10
+statpool: 5
 character:
   name: clergyman
   description: 'Cloaked in robes of pristine white, interwoven with threads of silver that shimmer softly in the ambient light, stands the clergyman of the Sanctuary of the Benevolent Heart. The robe, cinched at the waist with a braided belt of deep blue, cascades down to the ground, its hem just brushing the floor. Around their neck, a pendant bearing the emblem of the Sanctuary—a heart cradled by two outstretched hands—rests as a testament to their sacred vows. Their hands, often clasped in prayer or offering aid, show signs of wear from years of service to the needy. The clergyman''s face, framed by a hood that casts a gentle shadow over their eyes, carries an expression of serene compassion, their gaze always filled with understanding and empathy. Their very perception emanates an aura of solace and hope, offering refuge to all who seek the Sanctuary''s embrace.'
-  raceid: 1
-  level: 5
+  speciesid: 1
   alignment: 100
   items: []
   shop:

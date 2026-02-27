@@ -1,0 +1,14 @@
+spellid: mind-spike
+name: Mind Spike
+description: Drives a psionic spike into the target's consciousness.
+type: harmsingle
+schools:
+  - mental
+cost: 20
+waitrounds: 1
+difficulty: 0
+primarystat: willpower
+base_folds: 2
+target_defense_type: mental
+effect_type: damage
+effect_magnitude: 100

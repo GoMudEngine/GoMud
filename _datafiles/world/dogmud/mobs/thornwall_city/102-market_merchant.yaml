@@ -1,0 +1,34 @@
+mobid: 102
+zone: Thornwall City
+statpool: 16
+itemdropchance: 0
+hostile: false
+maxwander: 1
+groups:
+  - humanoid
+  - merchant
+idlecommands:
+  - 'emote rearranges goods on the stall counter, frowning at the display'
+  - 'emote calls out to a passing customer, gesturing at the merchandise'
+  - ''
+  - 'emote counts coins from the cashbox, lips moving silently'
+  - ''
+activitylevel: 20
+character:
+  name: market merchant
+  description: |
+    A stout man in a merchant's apron, his stall one of the busier spots
+    in the market square. He sells cloth, leather goods, and small
+    hardware -- the mid-range merchandise that keeps a city running. His
+    manner is professionally friendly, his prices fair if not generous,
+    and his knowledge of the market's politics encyclopedic. He pays his
+    tithes to the temple and his taxes to the city, and has opinions
+    about both.
+  speciesid: 1
+  level: 1
+  gold: 5
+  stats:
+    charisma:
+      training: 10
+    perception:
+      training: 5

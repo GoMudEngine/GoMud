@@ -1,0 +1,18 @@
+id: antidote-broth
+name: Antidote Broth
+skill: cooking
+skill_minimum: 10
+station: cooking_fire
+time_rounds: 3
+ingredients:
+  - item_tag: wild-vegetables
+    quantity: 1
+  - item_tag: healers-root
+    quantity: 1
+  - item_tag: water-flask
+    quantity: 1
+output:
+  item_id: 30027
+  quantity: 1
+success_message: "You boil the vegetables and root into a sharp medicinal broth. Antidote broth!"
+failure_message: "The mixture turns foul and you dump it out. The materials are lost."

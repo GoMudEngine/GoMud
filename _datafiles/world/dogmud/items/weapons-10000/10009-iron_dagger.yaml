@@ -1,0 +1,15 @@
+itemid: 10009
+name: iron dagger
+namesimple: dagger
+description: A short blade of rough-hammered iron with a leather-wrapped grip. Simple
+  work, but effective.
+type: weapon
+hands: 1
+subtype: stabbing
+damage:
+  basedamage: 5
+  variance: 2
+speedmultiplier: 1.1
+parryrating: 4
+weight: 0.8
+value: 15

@@ -1,0 +1,417 @@
+{{template "header" .}}
+
+<script src="/admin/static/js/chart.js"></script>
+
+<div class="container-fluid">
+    <h1 class="mt-4">Combat Analytics Dashboard</h1>
+
+    <!-- Summary Cards -->
+    <div id="summary-cards" class="row mb-3" style="display:none;">
+        <div class="col-md-2">
+            <div class="card text-center">
+                <div class="card-body p-2">
+                    <h6 class="card-subtitle text-muted">Total Events</h6>
+                    <h4 id="stat-total" class="card-title mb-0">0</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-center">
+                <div class="card-body p-2">
+                    <h6 class="card-subtitle text-muted">Hit Rate</h6>
+                    <h4 id="stat-hitrate" class="card-title mb-0">0%</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-center">
+                <div class="card-body p-2">
+                    <h6 class="card-subtitle text-muted">Crit Rate</h6>
+                    <h4 id="stat-critrate" class="card-title mb-0">0%</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-center">
+                <div class="card-body p-2">
+                    <h6 class="card-subtitle text-muted">Avg Dmg/Hit</h6>
+                    <h4 id="stat-avgdmg" class="card-title mb-0">0</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-center">
+                <div class="card-body p-2">
+                    <h6 class="card-subtitle text-muted">Total Damage</h6>
+                    <h4 id="stat-totaldmg" class="card-title mb-0">0</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-center">
+                <div class="card-body p-2">
+                    <h6 class="card-subtitle text-muted">Rounds</h6>
+                    <h4 id="stat-rounds" class="card-title mb-0">-</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auto-refresh controls -->
+    <div class="row mb-3">
+        <div class="col-auto">
+            <button id="btn-refresh" class="btn btn-sm btn-primary"
+                    onclick="fetchData()">Refresh Now</button>
+            <button id="btn-auto" class="btn btn-sm btn-outline-secondary ml-2"
+                    onclick="toggleAuto()">Auto-Refresh: OFF</button>
+            <select id="sel-interval" class="custom-select custom-select-sm ml-2"
+                    style="width:auto;display:inline-block;"
+                    onchange="updateInterval()">
+                <option value="10">10s</option>
+                <option value="30" selected>30s</option>
+                <option value="60">60s</option>
+                <option value="120">2m</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="empty-state" class="alert alert-info">
+        No combat data recorded yet. Analytics will appear here once
+        combat events are captured with analytics enabled.
+    </div>
+
+    <!-- Charts row 1 -->
+    <div id="charts-area" style="display:none;">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">Hit Rate by Attack Type</div>
+                    <div class="card-body">
+                        <canvas id="chart-hitrate"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">Damage Breakdown by Type</div>
+                    <div class="card-body">
+                        <canvas id="chart-damage"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts row 2 -->
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">Defense Avoidance</div>
+                    <div class="card-body">
+                        <canvas id="chart-defense"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">Matchup Distribution</div>
+                    <div class="card-body">
+                        <canvas id="chart-matchup"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Position hit-rate table -->
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        Position Hit Rates (target position)
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-sm table-striped mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Position</th>
+                                    <th>Hit Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbl-position">
+                                <tr><td>Standing</td>
+                                    <td id="pos-standing">-</td></tr>
+                                <tr><td>Prone</td>
+                                    <td id="pos-prone">-</td></tr>
+                                <tr><td>Clinched</td>
+                                    <td id="pos-clinched">-</td></tr>
+                                <tr><td>Grounded</td>
+                                    <td id="pos-grounded">-</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        Grapple Controller Hit Rates
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-sm table-striped mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Role</th>
+                                    <th>Hit Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Controller</td>
+                                    <td id="grap-ctrl">-</td></tr>
+                                <tr><td>Non-Controller</td>
+                                    <td id="grap-non">-</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Extra stats row -->
+        <div class="row mt-3 mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">Z-Score Averages</div>
+                    <div class="card-body">
+                        <p class="mb-1">
+                            Avg Attack Z-Score:
+                            <strong id="stat-atkz">0</strong>
+                        </p>
+                        <p class="mb-1">
+                            Avg Defense Z-Score:
+                            <strong id="stat-defz">0</strong>
+                        </p>
+                        <p class="mb-0">
+                            Fumbles: <strong id="stat-fumbles">0</strong>
+                            &nbsp;|&nbsp;
+                            Backfires: <strong id="stat-backfires">0</strong>
+                            &nbsp;|&nbsp;
+                            Fizzles: <strong id="stat-fizzles">0</strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    // Chart instances — created once, updated in place.
+    var chartHitRate = null;
+    var chartDamage  = null;
+    var chartDefense = null;
+    var chartMatchup = null;
+
+    var autoTimer = null;
+    var autoOn    = false;
+
+    // Color palette
+    var COLORS = [
+        '#4e79a7','#f28e2b','#e15759','#76b7b2',
+        '#59a14f','#edc948','#b07aa1','#ff9da7',
+        '#9c755f','#bab0ac'
+    ];
+
+    function pct(n, d) {
+        if (!d) return '0.0%';
+        return (n / d * 100).toFixed(1) + '%';
+    }
+
+    function fmtRate(v) {
+        return (v * 100).toFixed(1) + '%';
+    }
+
+    function createCharts() {
+        chartHitRate = new Chart(
+            document.getElementById('chart-hitrate'), {
+            type: 'bar',
+            data: { labels: [], datasets: [
+                { label: 'Hits',   data: [], backgroundColor: '#59a14f' },
+                { label: 'Misses', data: [], backgroundColor: '#e15759' }
+            ]},
+            options: {
+                responsive: true,
+                scales: { x: { stacked: true }, y: { stacked: true } }
+            }
+        });
+
+        chartDamage = new Chart(
+            document.getElementById('chart-damage'), {
+            type: 'bar',
+            data: { labels: [], datasets: [{
+                label: 'Total Damage',
+                data: [],
+                backgroundColor: COLORS
+            }]},
+            options: { responsive: true }
+        });
+
+        chartDefense = new Chart(
+            document.getElementById('chart-defense'), {
+            type: 'pie',
+            data: {
+                labels: ['Dodge', 'Parry', 'Block'],
+                datasets: [{ data: [0,0,0],
+                    backgroundColor: ['#4e79a7','#f28e2b','#76b7b2'] }]
+            },
+            options: { responsive: true }
+        });
+
+        chartMatchup = new Chart(
+            document.getElementById('chart-matchup'), {
+            type: 'pie',
+            data: {
+                labels: ['Player vs Mob','Mob vs Player',
+                         'Player vs Player','Mob vs Mob'],
+                datasets: [{ data: [0,0,0,0],
+                    backgroundColor: ['#4e79a7','#e15759',
+                                      '#f28e2b','#76b7b2'] }]
+            },
+            options: { responsive: true }
+        });
+    }
+
+    function updateCharts(d) {
+        // Hit-rate bar chart
+        var types = Object.keys(d.byAttackType).sort();
+        var hits   = types.map(function(t){ return d.byAttackType[t].hits; });
+        var misses = types.map(function(t){
+            return d.byAttackType[t].events - d.byAttackType[t].hits;
+        });
+        chartHitRate.data.labels = types;
+        chartHitRate.data.datasets[0].data = hits;
+        chartHitRate.data.datasets[1].data = misses;
+        chartHitRate.update();
+
+        // Damage bar chart
+        var dmg = types.map(function(t){
+            return d.byAttackType[t].totalDamage;
+        });
+        chartDamage.data.labels = types;
+        chartDamage.data.datasets[0].data = dmg;
+        chartDamage.data.datasets[0].backgroundColor =
+            types.map(function(_,i){ return COLORS[i % COLORS.length]; });
+        chartDamage.update();
+
+        // Defense pie
+        chartDefense.data.datasets[0].data = [
+            d.defense.dodge, d.defense.parry, d.defense.block
+        ];
+        chartDefense.update();
+
+        // Matchup pie
+        chartMatchup.data.datasets[0].data = [
+            d.matchups.pvm, d.matchups.mvp,
+            d.matchups.pvp, d.matchups.mvm
+        ];
+        chartMatchup.update();
+    }
+
+    function updateSummary(d) {
+        document.getElementById('stat-total').textContent = d.totalEvents;
+        document.getElementById('stat-hitrate').textContent =
+            pct(d.hits, d.totalEvents);
+        document.getElementById('stat-critrate').textContent =
+            pct(d.crits, d.totalEvents);
+        document.getElementById('stat-avgdmg').textContent =
+            d.avgDamagePerHit.toFixed(1);
+        document.getElementById('stat-totaldmg').textContent = d.totalDamage;
+        document.getElementById('stat-rounds').textContent =
+            d.earliestRound + ' - ' + d.latestRound;
+
+        // Position hit rates
+        document.getElementById('pos-standing').textContent =
+            fmtRate(d.positionHitRates.standing);
+        document.getElementById('pos-prone').textContent =
+            fmtRate(d.positionHitRates.prone);
+        document.getElementById('pos-clinched').textContent =
+            fmtRate(d.positionHitRates.clinched);
+        document.getElementById('pos-grounded').textContent =
+            fmtRate(d.positionHitRates.grounded);
+
+        // Grapple hit rates
+        document.getElementById('grap-ctrl').textContent =
+            fmtRate(d.grappleHitRates.controller);
+        document.getElementById('grap-non').textContent =
+            fmtRate(d.grappleHitRates.nonController);
+
+        // Z-scores and extras
+        document.getElementById('stat-atkz').textContent =
+            d.avgAttackZScore.toFixed(3);
+        document.getElementById('stat-defz').textContent =
+            d.avgDefenseZScore.toFixed(3);
+        document.getElementById('stat-fumbles').textContent = d.fumbles;
+        document.getElementById('stat-backfires').textContent = d.backfires;
+        document.getElementById('stat-fizzles').textContent = d.fizzles;
+    }
+
+    window.fetchData = function() {
+        fetch('/admin/api/combat-stats/')
+            .then(function(r){ return r.json(); })
+            .then(function(d){
+                if (d.totalEvents === 0) {
+                    document.getElementById('empty-state').style.display = '';
+                    document.getElementById('charts-area').style.display = 'none';
+                    document.getElementById('summary-cards').style.display =
+                        'none';
+                    return;
+                }
+                document.getElementById('empty-state').style.display = 'none';
+                document.getElementById('charts-area').style.display = '';
+                document.getElementById('summary-cards').style.display = '';
+
+                if (!chartHitRate) createCharts();
+                updateCharts(d);
+                updateSummary(d);
+            })
+            .catch(function(err){
+                console.error('combat-stats fetch error:', err);
+            });
+    };
+
+    window.toggleAuto = function() {
+        autoOn = !autoOn;
+        var btn = document.getElementById('btn-auto');
+        if (autoOn) {
+            btn.textContent = 'Auto-Refresh: ON';
+            btn.classList.remove('btn-outline-secondary');
+            btn.classList.add('btn-success');
+            startTimer();
+        } else {
+            btn.textContent = 'Auto-Refresh: OFF';
+            btn.classList.remove('btn-success');
+            btn.classList.add('btn-outline-secondary');
+            stopTimer();
+        }
+    };
+
+    window.updateInterval = function() {
+        if (autoOn) { stopTimer(); startTimer(); }
+    };
+
+    function startTimer() {
+        var secs = parseInt(
+            document.getElementById('sel-interval').value, 10);
+        autoTimer = setInterval(fetchData, secs * 1000);
+    }
+
+    function stopTimer() {
+        if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+    }
+
+    // Initial load
+    fetchData();
+})();
+</script>
+
+{{template "footer" .}}

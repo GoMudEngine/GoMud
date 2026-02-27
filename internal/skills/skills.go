@@ -19,73 +19,74 @@ func (s SkillTag) Sub(subtag string) SkillTag {
 }
 
 const (
-	Cast        SkillTag = `cast`        // [LVL 1-4] Frostfang Magic Academy - ROOM 879
-	DualWield   SkillTag = `dual-wield`  // [LVL 1-4] Fishermans house - ROOM 758
-	Map         SkillTag = `map`         // [LVL 1-4] Frostwarden Rangers - ROOM 74
-	Enchant     SkillTag = `enchant`     // TODO
-	Peep        SkillTag = `peep`        // TODO
-	Inspect     SkillTag = `inspect`     // TODO
-	Portal      SkillTag = `portal`      // [LVL 1] Touch the obelisk in ROOOM 871
-	Search      SkillTag = `search`      // [LVL 1-4] Frostwarden Rangers - ROOM 74
-	Track       SkillTag = `track`       // [LVL 1-4] Frostwarden Rangers - ROOM 74
-	Skulduggery SkillTag = `skulduggery` // [LVL 1-4] Thieves Den - ROOM 491
-	Brawling    SkillTag = `brawling`    // [LVL 1-4] Soldiers Training Yard - ROOM 829
-	Scribe      SkillTag = `scribe`      // [LVL 1-4] Dark Acolyte's Chamber - ROOM 160
-	Protection  SkillTag = `protection`  // TODO
-	Tame        SkillTag = `tame`        // [LVL 1-4] Give mushroom to fairie in ROOM 558, train in ROOM 830
-	Trading     SkillTag = `trading`     // TODO
+	// Cast is stubbed — full implementation in Phase 11 (fold-based magic system)
+	Cast SkillTag = `cast`
+
+	// DOG combat & magic skills
+	WeaponCombat SkillTag = `weapon-combat`  // Melee attack & defense with weapons
+	UnarmedCombat SkillTag = `unarmed-combat` // Fist/body attacks & defense, grappling
+	RangedCombat  SkillTag = `ranged-combat`  // Bows, crossbows, thrown weapons
+	Spellcasting  SkillTag = `spellcasting`   // All magic — offense & defense
+
+	// DOG non-combat skills
+	FirstAid  SkillTag = `first-aid`  // Healing others, treating wounds, stabilizing
+	Stealth   SkillTag = `stealth`    // Sneaking, hiding, avoiding detection
+	Tracking  SkillTag = `tracking`   // Finding creatures/players, reading trails
+	Bartering SkillTag = `bartering`  // Trade prices, negotiation, appraisal
+	Foraging      SkillTag = `foraging`      // Gathering resources — herbs, wood, ore, food
+	Blacksmithing SkillTag = `blacksmithing` // Metal weapons, armor, tools
+	Alchemy       SkillTag = `alchemy`       // Potions, salves, medicines
+	Tailoring     SkillTag = `tailoring`     // Cloth and leather goods
+	Cooking       SkillTag = `cooking`       // Food preparation, buffs from meals
+	Jewelcrafting SkillTag = `jewelcrafting` // Rings, pendants, gemwork
+	Enchanting    SkillTag = `enchanting`   // Imbuing items with magic (31.6)
 )
 
 var (
 	allSkillNames = []SkillTag{}
 
 	Professions = map[string][]SkillTag{
-		"treasure hunter": {
-			Map,
-			Search,
-			Peep,
-			Inspect,
-			Trading,
-		},
-		"assassin": {
-			Skulduggery,
-			DualWield,
-			Track,
-		},
-		"explorer": {
-			Map,
-			Portal,
-			Scribe,
-		},
-		"arcane scholar": {
-			Enchant,
-			Scribe,
-			Inspect,
-		},
 		"warrior": {
-			Brawling,
-			DualWield,
-		},
-		"paladin": {
-			Protection,
-			Brawling,
+			WeaponCombat,
+			UnarmedCombat,
 		},
 		"ranger": {
-			Map,
-			Search,
-			Track,
+			RangedCombat,
+			Tracking,
 		},
-		"monster hunter": {
-			Tame,
-			Track,
+		"mage": {
+			Spellcasting,
 		},
-		"sorcerer": {
-			Cast,
-			Enchant,
+		"healer": {
+			Spellcasting,
+			FirstAid,
+		},
+		"rogue": {
+			Stealth,
+			WeaponCombat,
 		},
 		"merchant": {
-			Peep,
-			Trading,
+			Bartering,
+		},
+		"survivalist": {
+			Foraging,
+			Tracking,
+		},
+		"smith": {
+			Blacksmithing,
+		},
+		"alchemist": {
+			Alchemy,
+		},
+		"tailor": {
+			Tailoring,
+		},
+		"cook": {
+			Cooking,
+		},
+		"artificer": {
+			Jewelcrafting,
+			Enchanting,
 		},
 	}
 )
@@ -126,13 +127,13 @@ func GetProfessionRanks(allRanks map[string]int) []ProfessionRank {
 			if rankVal, ok := allRanks[string(skillName)]; ok {
 				skillLevel = rankVal
 			}
-			if skillLevel > 4 {
-				skillLevel = 4
-			}
-			totalSkill := (skillLevel * (skillLevel + 1)) / 2
 
-			ranking.PointsToMax += 10.0 // Each skill has 4 levels, so possible 10 points per skill
-			ranking.TotalPointsSpent += float64(totalSkill)
+			// DOG skill system: Skills can progress to ~50 (soft cap)
+			// Profession completion is based on progress toward soft cap
+			const skillSoftCap = 50.0
+
+			ranking.PointsToMax += skillSoftCap // Each skill can reach ~50
+			ranking.TotalPointsSpent += float64(skillLevel)
 			ranking.Skills = append(ranking.Skills, string(skillName))
 		}
 
@@ -150,7 +151,6 @@ func GetProfession(allRanks map[string]int) string {
 	rankData := GetProfessionRanks(allRanks)
 
 	var highestCompletion float64 = 0
-	//var highestSpend float64 = 0
 	chosenProfessions := []string{}
 	experienceName := ``
 
@@ -162,7 +162,6 @@ func GetProfession(allRanks map[string]int) string {
 
 		if pRank.Completion > highestCompletion {
 			highestCompletion = pRank.Completion
-			//highestSpend = pRank.TotalPointsSpent
 			chosenProfessions = []string{}
 		}
 
@@ -215,6 +214,86 @@ func GetExperienceLevel(percentage float64) string {
 	return `scrub`
 }
 
+// SkillPrimaryStats maps each DOG skill to its primary governing stat.
+// This stat is auto-tracked and progressed whenever the skill is used.
+var SkillPrimaryStats = map[string]string{
+	"weapon-combat":  "dexterity",
+	"unarmed-combat": "dexterity",
+	"ranged-combat":  "perception",
+	"spellcasting":   "willpower",
+	"first-aid":      "perception",
+	"stealth":        "dexterity",
+	"tracking":       "perception",
+	"bartering":      "charisma",
+	"foraging":       "perception",
+	"blacksmithing":  "strength",
+	"alchemy":        "perception",
+	"tailoring":      "dexterity",
+	"cooking":        "perception",
+	"jewelcrafting":  "dexterity",
+	"enchanting":     "perception",
+}
+
+// GetSkillPrimaryStat returns the primary governing stat for a skill,
+// or an empty string if none is defined.
+func GetSkillPrimaryStat(skillName string) string {
+	return SkillPrimaryStats[skillName]
+}
+
+// SkillProgressionMultipliers controls how fast each skill progresses.
+// Combat skills fire many times per round, so they get a low multiplier.
+// Utility skills are used less often, so they get a high multiplier.
+var SkillProgressionMultipliers = map[SkillTag]float64{
+	// Combat skills — fire multiple times per round
+	WeaponCombat:  0.3,
+	UnarmedCombat: 0.3,
+	RangedCombat:  0.3,
+	// Magic skills — moderate frequency
+	Spellcasting: 0.5,
+	Cast:         0.5,
+	// Utility skills — used infrequently
+	Tracking:  2.0,
+	Bartering: 2.0,
+	Foraging:      2.0,
+	FirstAid:      2.0,
+	Stealth:       2.0,
+	Blacksmithing: 2.0,
+	Alchemy:       2.0,
+	Tailoring:     2.0,
+	Cooking:       2.0,
+	Jewelcrafting: 2.0,
+	Enchanting:    2.0,
+}
+
+// GetSkillRankDescription converts a numeric skill level (1–50) to a qualitative tier name.
+func GetSkillRankDescription(level int) string {
+	switch {
+	case level <= 0:
+		return "unknown"
+	case level <= 1:
+		return "novice"
+	case level <= 9:
+		return "apprentice"
+	case level <= 19:
+		return "journeyman"
+	case level <= 34:
+		return "adept"
+	case level <= 49:
+		return "expert"
+	default:
+		return "master"
+	}
+}
+
+// GetProgressionMultiplier returns the progression speed multiplier for a skill.
+// Returns 1.0 (default) for any skill not explicitly listed.
+func GetProgressionMultiplier(skillName string) float64 {
+	if mult, ok := SkillProgressionMultipliers[SkillTag(skillName)]; ok {
+		return mult
+	}
+	return 1.0
+}
+
 func init() {
 
 	skillNameSet := map[SkillTag]struct{}{}
@@ -228,6 +307,19 @@ func init() {
 
 			skillNameSet[skillName] = struct{}{}
 			allSkillNames = append(allSkillNames, skillName)
+		}
+	}
+
+	// Register all DOG skills directly (ensures cast and any not in professions are included)
+	for _, sk := range []SkillTag{
+		Cast,
+		WeaponCombat, UnarmedCombat, RangedCombat, Spellcasting,
+		FirstAid, Stealth, Tracking, Bartering, Foraging,
+		Blacksmithing, Alchemy, Tailoring, Cooking, Jewelcrafting, Enchanting,
+	} {
+		if _, ok := skillNameSet[sk]; !ok {
+			skillNameSet[sk] = struct{}{}
+			allSkillNames = append(allSkillNames, sk)
 		}
 	}
 

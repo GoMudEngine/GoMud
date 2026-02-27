@@ -20,5 +20,5 @@ exits:
 spawninfo:
 - mobid: 7
   message: A serving wench enters from a back room.
-  levelmod: 10
+  statpoolmod: 10
   respawnrate: 2 real minutes

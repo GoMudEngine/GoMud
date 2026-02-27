@@ -1,0 +1,3 @@
+
+{{ range $idx, $itemInfo := . }}  <ansi fg="red-bold">{{ printf "%2d." (add $idx 1) }}</ansi> {{ if $itemInfo.Marked }}<ansi fg="white-bold" bg="2">{{else}}<ansi fg="yellow-bold">{{end}}{{ if $itemInfo.Marked }}*{{ printf "%-16s" $itemInfo.Name }}{{else}}{{ printf "%-17s" $itemInfo.Name }}{{end}}</ansi>{{ if ne $itemInfo.Description "" }} - <ansi fg="black-bold">{{ splitstring $itemInfo.Description 54 "                           " }}</ansi>{{ end }}
+{{ end }}

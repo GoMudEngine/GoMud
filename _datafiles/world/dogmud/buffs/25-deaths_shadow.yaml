@@ -1,0 +1,12 @@
+buffid: 25
+name: Death's Shadow
+description: A dark shadow clings to you, dulling your senses and weakening your body.
+triggerrate: 1 round
+triggercount: 15
+statmods:
+  strength: -15
+  dexterity: -15
+  perception: -15
+  vitality: -15
+  willpower: -15
+  charisma: -15

@@ -1,0 +1,30 @@
+speciesid: 12
+name: insectoid
+description: A chitinous creature with segmented limbs and compound
+  eyes. Insectoids are armored by their exoskeletons and
+  attack with powerful mandibles and stinging appendages.
+naturalarmor: 10
+size: small
+unarmedname: mandibles
+selectable: false
+tameable: true
+angrycommands:
+  - emote clicks its mandibles together in rapid staccato.
+  - emote rears up on its hind legs, antennae twitching furiously.
+stats:
+  strength:
+    base: 70
+  dexterity:
+    base: 100
+  perception:
+    base: 80
+  vitality:
+    base: 60
+  willpower:
+    base: 5
+  charisma:
+    base: 5
+damage:
+  basedamage: 4
+  variance: 2
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet']

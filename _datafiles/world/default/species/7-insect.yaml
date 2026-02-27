@@ -1,0 +1,15 @@
+speciesid: 7
+name: insect
+description: A multi-legged creature with an armored exterior.
+size: small
+unarmedname: mandibles
+angrycommands: [emote chitters.]
+tameable: true
+stats:
+  strength:
+    base: 3
+  speed:
+    base: 3
+damage:
+  diceroll: 2d2
+disabledslots: ['offhand', 'head', 'neck',  'belt', 'gloves', 'ring', 'legs', 'feet']

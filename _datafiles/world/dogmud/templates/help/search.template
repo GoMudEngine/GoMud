@@ -1,0 +1,17 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">search</ansi> (skill)
+
+The <ansi fg="skill">search</ansi> skill searches the area for hidden objects. 
+
+You can only search once every so often, and it relies on your Smarts for success.
+
+As you level up the <ansi fg="skill">search</ansi> skill, new things can become revealed.
+
+<ansi fg="yellow">Usage: </ansi>
+
+(Lvl 1) <ansi fg="skill">search</ansi> Search for secret exits or hidden players/mobs.
+(Lvl 2) <ansi fg="skill">search</ansi> Finds objects that may be hidden in the area.
+(Lvl 3) <ansi fg="skill">search</ansi> Finds special/unknown "things of interest" in the area.
+(Lvl 4) <ansi fg="skill">search</ansi> Doubles your chance of success when searching.
+
+Your chances of success when searching are calculated as follows: <ansi fg="red">Smarts/4 + Perception/2 + 5</ansi>
+

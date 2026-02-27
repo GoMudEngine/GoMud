@@ -21,5 +21,5 @@ spawninfo:
 - mobid: 12
   message: A massive rat saunters out from the shadows.
   forcehostile: true
-  level: 4
+  statpool: 4
   respawnrate: 2 real minutes

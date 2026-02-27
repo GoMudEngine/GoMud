@@ -1,0 +1,34 @@
+speciesid: 17
+name: arachnid
+description: A many-legged predator that spins silken webs and waits
+  with eerie stillness. Arachnids inject paralyzing venom
+  through needle-sharp fangs, then wrap their helpless prey
+  in silk.
+buffids:
+  - 29 # Night Vision
+size: small
+unarmedname: fangs
+selectable: false
+tameable: true
+angrycommands:
+  - emote rears up on its hind legs, fangs glistening with venom.
+  - emote skitters sideways, legs clicking on the ground.
+stats:
+  strength:
+    base: 50
+  dexterity:
+    base: 110
+  perception:
+    base: 100
+  vitality:
+    base: 45
+  willpower:
+    base: 10
+  charisma:
+    base: 5
+damage:
+  basedamage: 4
+  variance: 2
+  critbuffids:
+    - 39 # Venom
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet']

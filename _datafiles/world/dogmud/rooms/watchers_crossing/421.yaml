@@ -1,0 +1,31 @@
+roomid: 421
+zone: Watchers Crossing
+title: The Tollhouse
+description: A squat stone building sits beside the road, its single door facing the
+  bridge approach to the east. A wooden counter extends from one wall, creating a booth
+  where travellers must stop before crossing. The building is well-maintained despite
+  its age -- the mortar is fresh, the shutters oiled, and a small herb garden grows
+  in a box beneath the window. A hand-lettered sign above the counter reads "BRIDGE
+  TOLL -- 5 GOLD" in careful block letters. Stacks of paper and a heavy ledger sit
+  on the counter behind the booth.
+biome: river
+exits:
+  west:
+    roomid: 420
+  east:
+    roomid: 422
+nouns:
+  sign: 'The sign is neatly painted on a planed board: "BRIDGE TOLL -- 5 GOLD. Payable
+    in coin. Road tokens accepted. Receipts available." Below it, in smaller script:
+    "Proceeds fund bridge maintenance. -- H."'
+  counter: The wooden counter is scarred with years of use. Stacks of blank receipts
+    sit in a tray beside an inkwell. A heavy leather-bound ledger lies open, its
+    pages filled with columns of dates, names, and amounts in a precise hand.
+  garden: A narrow window box holds rosemary and thyme, their sharp scent cutting
+    through the damp river air. The plants are well-tended, trimmed back neatly.
+spawninfo:
+- mobid: 86
+idlemessages:
+- The scratch of a quill on paper comes from behind the counter.
+- A breeze through the window carries the smell of rosemary and river water.
+- Coins clink as the toll collector counts the day's take.

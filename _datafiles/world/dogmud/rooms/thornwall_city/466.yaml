@@ -1,0 +1,23 @@
+roomid: 466
+zone: Thornwall City
+title: Market Square, East
+description: The eastern edge of the market thins into a row of permanent shops built
+  into the ground floors of merchant houses. These are the established traders --
+  the ones who can afford rent on the square rather than a temporary stall. Their
+  windows display quality goods, and their prices are correspondingly higher. A narrow
+  alley runs south between the buildings, leading to the less respectable parts of
+  the city. To the east, a gated archway leads to the Old Citadel Plaza.
+biome: city
+exits:
+  west:
+    roomid: 465
+  east:
+    roomid: 479
+  south:
+    roomid: 475
+  north:
+    roomid: 480
+idlemessages:
+- A well-dressed customer emerges from a shop, packages under both arms.
+- The sounds of the market fade slightly on this quieter eastern edge.
+- A shop assistant polishes a window display, arranging goods with care.

@@ -7,7 +7,7 @@ import (
 	"maps"
 	"net/http"
 	"os"
-	"path/filepath"
+	"path"
 	"reflect"
 	"regexp"
 	"strings"
@@ -36,8 +36,9 @@ var (
 )
 
 const (
-	dataFilesFolder         = `datafiles` + string(filepath.Separator)
-	dataOverlaysFilesFolder = `data-overlays` + string(filepath.Separator)
+	// Use forward slashes: embed.FS always uses forward slashes, even on Windows.
+	dataFilesFolder         = `datafiles/`
+	dataOverlaysFilesFolder = `data-overlays/`
 )
 
 type pluginRegistry []*Plugin
@@ -143,7 +144,8 @@ func (p pluginRegistry) HandleIAC(connectionId uint64, iacCmd []byte) bool {
 
 func (p pluginRegistry) WebRequest(r *http.Request) (html string, templateData map[string]any, ok bool) {
 
-	reqPath := filepath.Clean(r.URL.Path) // Example: / or /info/faq
+	// Use path.Clean (not filepath.Clean) so URL paths stay with forward slashes on Windows.
+	reqPath := path.Clean(r.URL.Path) // Example: / or /info/faq
 
 	rootFilePath := `html/public/`
 	for _, pItem := range p {
@@ -153,7 +155,8 @@ func (p pluginRegistry) WebRequest(r *http.Request) (html string, templateData m
 			continue
 		}
 
-		b, err := pItem.files.ReadFile(util.FilePath(rootFilePath, pageData.Filepath))
+		// Use forward-slash concatenation (not util.FilePath) because embed.FS keys use forward slashes.
+		b, err := pItem.files.ReadFile(rootFilePath + pageData.Filepath)
 
 		if err != nil {
 			continue
@@ -441,7 +444,7 @@ func Load(dataFilesPath string) {
 		pluginCt++
 
 		for cmd, info := range p.Callbacks.userCommands {
-			usercommands.RegisterCommand(cmd, info.Func, info.AllowedWhenDowned, info.AdminOnly)
+			usercommands.RegisterCommand(cmd, info.Func, info.AllowedWhenDowned, info.AllowedInCombat, info.AdminOnly)
 		}
 
 		for cmd, info := range p.Callbacks.mobCommands {

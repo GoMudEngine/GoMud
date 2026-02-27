@@ -1,0 +1,25 @@
+speciesid: 2
+name: elf
+description: A magical being with pointy ears.
+buffids:
+  - 28 # Super hearing
+  - 29 # Night Vision
+size: medium
+unarmedname: fists
+angrycommands:
+  - emote narrows their eyes, looking for trouble.
+  - emote looks around, suspiciously.
+  - shout i take no pleasure in your defeat!
+selectable: false
+knowsfirstaid: true
+tameable: false
+stats:
+  speed:
+    base: 1
+  smarts:
+    base: 1
+  mysticism:
+    base: 2
+damage:
+  diceroll: 1d3
+disabledslots: []

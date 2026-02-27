@@ -1,0 +1,22 @@
+{{- $mapWidth := .Width -}}
+{{- $legendWidth := .LegendWidth -}}
+{{- $leftBorder := .LeftBorder -}}
+{{- $midBorder := .MidBorder -}}
+{{- $rightBorder := .RightBorder -}}
+<ansi fg="black-bold">{{ $leftBorder.Top }}</ansi><ansi fg="black-bold">  .:</ansi><ansi fg="20">{{ printf ( printf "%%-%ds" ( sub $mapWidth 4 ) ) .Title }}</ansi><ansi fg="black-bold">{{ $rightBorder.Top }}</ansi>
+<ansi fg="black-bold">{{ index $leftBorder.Mid 0 }}{{ padRightX "" $midBorder.Top $mapWidth }}{{ index $rightBorder.Mid 0 }}</ansi>
+{{ range $index, $line := .DisplayLines }}
+{{- $mod := mod $index 2 -}}
+<ansi fg="black-bold">{{ index $leftBorder.Mid $mod }}</ansi><ansi fg="map-default">{{ $line }}</ansi><ansi fg="black-bold">{{ index $rightBorder.Mid $mod }}</ansi>
+{{ end -}}
+<ansi fg="black-bold">{{ $leftBorder.Bottom }}{{ padRightX "" $midBorder.Bottom $mapWidth }}{{ $rightBorder.Bottom }}</ansi>
+ <ansi fg="map-legend">Legend</ansi>
+ 
+{{- $counter := 0 -}}
+{{- $strlen := 0 -}}
+{{ range $symbol, $name := .Legend -}}
+{{- $proposedLength := add $strlen 3 (len $name) 1 -}}
+{{- if gt $proposedLength $legendWidth -}}{{- $strlen = 0 -}}{{ "\n       " }}{{- end -}}
+<ansi fg="map-legend"> [</ansi><ansi fg="map-room"><ansi fg="map-{{lowercase $name}}" bg="mapbg-{{lowercase $name}}">{{ printf "%c" $symbol }}</ansi></ansi> {{$name}}
+{{- $strlen = add $strlen 3 (len $name) 1 -}}
+{{- end }}

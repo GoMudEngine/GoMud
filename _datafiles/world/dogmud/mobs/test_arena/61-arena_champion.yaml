@@ -1,0 +1,40 @@
+mobid: 61
+zone: Test Arena
+itemdropchance: 5
+hostile: true
+maxwander: 0
+activitylevel: 80
+statpool: 0
+aiprofile: "aggressive"
+specialmovechance: 60
+character:
+  name: arena champion
+  description: A towering warrior clad in gleaming chain armor, wielding a razor-sharp
+    blade with the confidence of someone who has never lost. An iron buckler is
+    strapped to their off-hand. Scars crisscross their exposed forearms, each one
+    a testament to battles survived. Their stance is impeccable, their gaze
+    unwavering.
+  speciesid: 1
+  stats:
+    strength:
+      training: 50
+    dexterity:
+      training: 50
+    perception:
+      training: 40
+    vitality:
+      training: 50
+    willpower:
+      training: 40
+    charisma:
+      training: 30
+  skills:
+    weapon-combat: 100
+    unarmed-combat: 100
+  equipment:
+    weapon:
+      itemid: 10003
+    body:
+      itemid: 20011
+    offhand:
+      itemid: 20010

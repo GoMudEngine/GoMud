@@ -1,0 +1,14 @@
+itemid: 30022
+name: grilled meat
+namesimple: meat
+description: |
+  A thick cut of game meat seared over open flame and rubbed with coarse
+  salt. The outside is charred and crisp while the inside stays pink and
+  juicy. The smell alone is enough to set your mouth watering.
+type: food
+subtype: edible
+uses: 1
+buffids:
+  - 45
+value: 4
+weight: 0.5

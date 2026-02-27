@@ -1,0 +1,5 @@
+{{ $mapSymbol := "" -}}
+{{ if ne .RoomSymbol "" -}}
+   {{ $mapSymbol = printf `<ansi fg="black-bold">[</ansi><ansi fg="map-%s">%s</ansi><ansi fg="black-bold">]</ansi> ` (lowercase .RoomLegend) .RoomSymbol }}
+{{- end }}
+<ansi fg="black-bold">.:</ansi> {{ $mapSymbol }}<ansi fg="room-title">{{ .Title }}</ansi>{{ if ne .Zone ""}} <ansi fg="room-zone">[{{ .Zone }}]</ansi>{{ end }}{{ if .ShowPvp }} <ansi fg="11" bg="52"> ☠ PK Area ☠ </ansi>{{ end }}

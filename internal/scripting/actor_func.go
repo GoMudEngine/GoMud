@@ -9,9 +9,10 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/pets"
-	"github.com/GoMudEngine/GoMud/internal/races"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/templates"
@@ -49,14 +50,14 @@ func (a ScriptActor) MobTypeId() int {
 }
 
 func (a ScriptActor) GetRace() string {
-	return a.characterRecord.Race()
+	return a.characterRecord.Species()
 }
 
 func (a ScriptActor) GetSize() string {
-	if r := races.GetRace(a.characterRecord.RaceId); r != nil {
+	if r := species.GetSpecies(a.characterRecord.SpeciesId); r != nil {
 		return string(r.Size)
 	}
-	return string(races.Medium)
+	return string(species.Medium)
 }
 
 func (a ScriptActor) SendText(msg string) {
@@ -70,7 +71,7 @@ func (a ScriptActor) SendText(msg string) {
 }
 
 func (a ScriptActor) GetLevel() int {
-	return a.characterRecord.Level
+	return 1
 }
 
 func (a ScriptActor) GetStat(statName string) int {
@@ -81,24 +82,24 @@ func (a ScriptActor) GetStat(statName string) int {
 		return a.characterRecord.Stats.Strength.ValueAdj
 	}
 
-	if strings.HasPrefix(statName, "sp") {
-		return a.characterRecord.Stats.Speed.ValueAdj
+	if strings.HasPrefix(statName, "de") {
+		return a.characterRecord.Stats.Dexterity.ValueAdj
 	}
 
-	if strings.HasPrefix(statName, "sm") {
-		return a.characterRecord.Stats.Smarts.ValueAdj
+	if strings.HasPrefix(statName, "pe") {
+		return a.characterRecord.Stats.Perception.ValueAdj
 	}
 
 	if strings.HasPrefix(statName, "vi") {
 		return a.characterRecord.Stats.Vitality.ValueAdj
 	}
 
-	if strings.HasPrefix(statName, "my") {
-		return a.characterRecord.Stats.Mysticism.ValueAdj
+	if strings.HasPrefix(statName, "wi") {
+		return a.characterRecord.Stats.Willpower.ValueAdj
 	}
 
-	if strings.HasPrefix(statName, "pe") {
-		return a.characterRecord.Stats.Perception.ValueAdj
+	if strings.HasPrefix(statName, "ch") {
+		return a.characterRecord.Stats.Charisma.ValueAdj
 	}
 
 	return 0
@@ -294,14 +295,36 @@ func (a ScriptActor) AddHealth(amt int) int {
 	return ret
 }
 
-func (a ScriptActor) AddMana(amt int) int {
-	ret := a.characterRecord.ApplyManaChange(amt)
-
-	if ret != 0 && a.userId > 0 {
+func (a ScriptActor) AddStamina(amt int) int {
+	old := a.characterRecord.Stamina
+	a.characterRecord.Stamina += amt
+	if a.characterRecord.Stamina > a.characterRecord.StaminaMax.Value {
+		a.characterRecord.Stamina = a.characterRecord.StaminaMax.Value
+	}
+	if a.characterRecord.Stamina < 0 {
+		a.characterRecord.Stamina = 0
+	}
+	actual := a.characterRecord.Stamina - old
+	if actual != 0 && a.userId > 0 {
 		events.AddToQueue(events.CharacterVitalsChanged{UserId: a.userId})
 	}
+	return actual
+}
 
-	return ret
+func (a ScriptActor) AddConviction(amt int) int {
+	old := a.characterRecord.Conviction
+	a.characterRecord.Conviction += amt
+	if a.characterRecord.Conviction > a.characterRecord.ConvictionMax.Value {
+		a.characterRecord.Conviction = a.characterRecord.ConvictionMax.Value
+	}
+	if a.characterRecord.Conviction < 0 {
+		a.characterRecord.Conviction = 0
+	}
+	actual := a.characterRecord.Conviction - old
+	if actual != 0 && a.userId > 0 {
+		events.AddToQueue(events.CharacterVitalsChanged{UserId: a.userId})
+	}
+	return actual
 }
 
 func (a ScriptActor) Sleep(seconds int) {
@@ -536,24 +559,42 @@ func (a ScriptActor) GetBackpackItems() []ScriptItem {
 	return itms
 }
 
-func (a ScriptActor) GetAlignment() int {
-	return int(a.characterRecord.Alignment)
-}
-
-func (a ScriptActor) GetAlignmentName() string {
-	return a.characterRecord.AlignmentName()
-}
-
-func (a ScriptActor) ChangeAlignment(alignmentChange int) {
-	a.characterRecord.UpdateAlignment(alignmentChange)
-}
-
 func (a ScriptActor) HasSpell(spellId string) bool {
 	return a.characterRecord.HasSpell(spellId)
 }
 
 func (a ScriptActor) LearnSpell(spellId string) bool {
 	return a.characterRecord.LearnSpell(spellId)
+}
+
+// GiveMutation gives the player a specific mutation at level 1.
+// Returns true if the mutation was newly granted, false if already owned or user is a mob.
+func (a ScriptActor) GiveMutation(mutationId string) bool {
+	if a.userRecord == nil {
+		return false
+	}
+	if a.characterRecord.Mutations == nil {
+		a.characterRecord.Mutations = make(map[string]int)
+	}
+	if _, exists := a.characterRecord.Mutations[mutationId]; !exists {
+		a.characterRecord.Mutations[mutationId] = 1
+		a.characterRecord.Validate()
+		return true
+	}
+	return false
+}
+
+// RollMutation randomly selects a mutation ID from the weighted pool that the player doesn't already own.
+// Returns an empty string if no mutations are available (e.g., player owns all mutations).
+func (a ScriptActor) RollMutation() string {
+	if a.userRecord == nil {
+		return ""
+	}
+	pool := mutations.GetWeightedPool(a.characterRecord.Mutations)
+	if len(pool) == 0 {
+		return ""
+	}
+	return mutations.RollAcquisition(pool)
 }
 
 func (a ScriptActor) IsAggro(actor ScriptActor) bool {
@@ -570,7 +611,7 @@ func (a ScriptActor) GetRaceKills(race string) int {
 
 	for mid, kCt := range a.characterRecord.KD.Kills {
 		if mobSpec := mobs.GetMobSpec(mobs.MobId(mid)); mobSpec != nil {
-			if raceInfo := races.GetRace(mobSpec.Character.RaceId); raceInfo != nil {
+			if raceInfo := species.GetSpecies(mobSpec.Character.SpeciesId); raceInfo != nil {
 				raceKills[raceInfo.Name] = raceKills[raceInfo.Name] + kCt
 			}
 		}
@@ -598,18 +639,6 @@ func (a ScriptActor) GetHealthPct() float64 {
 	return float64(a.characterRecord.Health) / float64(a.characterRecord.HealthMax.Value)
 }
 
-func (a ScriptActor) GetMana() int {
-	return a.characterRecord.Mana
-}
-
-func (a ScriptActor) GetManaMax() int {
-	return a.characterRecord.ManaMax.Value
-}
-
-func (a ScriptActor) GetManaPct() float64 {
-	return float64(a.characterRecord.Mana) / float64(a.characterRecord.ManaMax.Value)
-}
-
 func (a ScriptActor) SetAdjective(adj string, addIt bool) {
 	a.characterRecord.SetAdjective(adj, addIt)
 }
@@ -627,28 +656,6 @@ func (a ScriptActor) GetCharmCount() int {
 
 func (a ScriptActor) GetMaxCharmCount() int {
 	return a.characterRecord.GetMaxCharmedCreatures()
-}
-
-func (a ScriptActor) GetTrainingPoints() int {
-	return a.characterRecord.TrainingPoints
-}
-
-func (a ScriptActor) GiveTrainingPoints(ct int) {
-	if ct < 1 {
-		return
-	}
-	a.characterRecord.TrainingPoints += ct
-}
-
-func (a ScriptActor) GetStatPoints() int {
-	return a.characterRecord.StatPoints
-}
-
-func (a ScriptActor) GiveStatPoints(ct int) {
-	if ct < 1 {
-		return
-	}
-	a.characterRecord.StatPoints += ct
 }
 
 func (a ScriptActor) GiveExtraLife() {
@@ -676,13 +683,6 @@ func (a ScriptActor) GetPet() *pets.Pet {
 		return &a.characterRecord.Pet
 	}
 	return nil
-}
-
-func (a ScriptActor) GrantXP(xpAmt int, reason string) {
-	if a.mobInstanceId > 0 {
-		return
-	}
-	a.userRecord.GrantXP(xpAmt, reason)
 }
 
 func (a ScriptActor) TimerSet(name string, period string) {

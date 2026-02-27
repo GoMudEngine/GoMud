@@ -1,0 +1,14 @@
+The <ansi fg="command">teleport</ansi> command can be used in the following ways:
+
+<ansi fg="command">teleport [room_id]</ansi> - e.g. <ansi fg="command">teleport 1</ansi>
+Move to a specific room id
+
+<ansi fg="command">teleport [direction]</ansi> - e.g. <ansi fg="command">teleport east</ansi>
+Move through walls, across gaps, etc. to the first room found to the direction specified (if any).
+
+<ansi fg="command">teleport [name]</ansi> - e.g. <ansi fg="command">teleport davey</ansi>
+Move to the room of a player matching the specified name.
+
+You can optionally target an online user instead of yourself by putting their name first.
+
+Example: <ansi fg="command">teleport [name] east</ansi>

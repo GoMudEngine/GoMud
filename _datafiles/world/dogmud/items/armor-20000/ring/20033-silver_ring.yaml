@@ -1,0 +1,12 @@
+itemid: 20033
+name: silver ring
+namesimple: ring
+description: A slender silver band with a mirror-bright finish. Tiny gem dust
+  particles are fused along the outer edge, giving it a subtle sparkle
+  that draws the eye and lends the wearer an air of refinement.
+type: ring
+subtype: wearable
+damagereduction: 0
+statmods:
+  charisma: 2
+value: 12

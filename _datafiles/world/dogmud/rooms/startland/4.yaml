@@ -1,0 +1,17 @@
+roomid: 4
+zone: Startland
+title: Caster's Alcove
+description: >
+  A small side chamber lined with smoke-stained bookshelves and a worn
+  practice circle chalked onto the stone floor. The air crackles faintly
+  with residual energy. An apprentice mage paces here, occasionally
+  hurling bolts of fire at the far wall.
+mapsymbol: C
+biome: city
+exits:
+  west:
+    roomid: 3
+spawninfo:
+- mobid: 3
+  message: An apprentice mage steps into the practice circle, eyes alight with focus.
+  respawnrate: 5 real minutes

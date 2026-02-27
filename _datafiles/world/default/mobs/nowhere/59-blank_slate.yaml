@@ -4,8 +4,8 @@ itemdropchance: 0
 hostile: false
 maxwander: 0
 activitylevel: 10
+statpool: 1
 character:
   name: blank slate
   description: 'A blank slate.'
-  raceid: 0
-  level: 1
+  speciesid: 0

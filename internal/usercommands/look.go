@@ -24,7 +24,7 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	visibility := room.GetVisibility()
 
 	if visibility < 1 {
-		if !user.Character.HasBuffFlag(buffs.NightVision) {
+		if !user.Character.HasFlagFromAnySource(buffs.NightVision) {
 			user.SendText(`You can't see anything!`)
 			return true, nil
 		}
@@ -76,6 +76,9 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	playerId, mobId := room.FindByName(lookAt)
 
 	if playerId > 0 || mobId > 0 {
+
+		// Track perception use when examining a target
+		user.Character.OnStatUse("perception", user.UserId)
 
 		statusTxt := ""
 		invTxt := ""
@@ -243,7 +246,7 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 		if visibility < 2 {
 
-			if !user.Character.HasBuffFlag(buffs.NightVision) {
+			if !user.Character.HasFlagFromAnySource(buffs.NightVision) {
 				biome := room.GetBiome()
 				if !biome.IsLit() {
 					user.SendText(`It's too dark to see anything in that direction.`)

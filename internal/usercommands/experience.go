@@ -2,199 +2,114 @@ package usercommands
 
 import (
 	"fmt"
-	"strconv"
+	"sort"
 	"strings"
 
-	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/events"
-	"github.com/GoMudEngine/GoMud/internal/races"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
+// Experience now shows skill progression info instead of XP/Level.
+// Stage 3.5: Progression is 100% skill-based.
 func Experience(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	args := util.SplitButRespectQuotes(strings.ToLower(rest))
 
-	if len(args) > 0 && args[0] == `chart` {
-
-		args = args[1:]
-
-		startLevel := 1
-		endLevel := 25
-
-		chartRace := user.Character.RaceId
-
-		// xp chart elf 50
-		if len(args) > 1 {
-
-			if lvl, err := strconv.Atoi(args[len(args)-1]); err == nil {
-				endLevel = lvl
-				args = args[:len(args)-1]
-			} else if lvl, err := strconv.Atoi(args[0]); err == nil {
-				endLevel = lvl
-				args = args[1:]
-			}
-
-			raceName := strings.Join(args, ` `)
-			if raceInfo, found := races.FindRace(raceName); found {
-				chartRace = raceInfo.RaceId
-			}
-		} else if len(args) == 1 {
-
-			if lvl, err := strconv.Atoi(args[0]); err == nil {
-				endLevel = lvl
-			} else {
-				if raceInfo, found := races.FindRace(args[0]); found {
-					chartRace = raceInfo.RaceId
-				}
-			}
-
+	if len(args) > 0 && args[0] == `skills` {
+		// Show detailed skill use counts
+		type SkillDetail struct {
+			Name  string
+			Rank  int
+			Uses  int
 		}
 
-		if endLevel < 2 {
-			endLevel = 2
-		}
-		if endLevel > 200 {
-			endLevel = 200
-		}
-		if endLevel-startLevel > 25 {
-			startLevel = endLevel - 25
-		}
-		if startLevel < 1 {
-			startLevel = 1
+		allSkills := skills.GetAllSkillNames()
+		details := []SkillDetail{}
+		for _, sk := range allSkills {
+			skStr := string(sk)
+			rank := user.Character.GetSkillLevel(sk)
+			uses := user.Character.GetSkillUseCount(skStr)
+			details = append(details, SkillDetail{Name: skStr, Rank: rank, Uses: uses})
 		}
 
-		mockChar := characters.New()
-		mockChar.RaceId = chartRace
-		mockChar.Validate()
-
-		headers := []string{`Level`, `Experience`, `Str`, `Spd`, `Smt`, `Vit`, `Mys`, `Per`, `ALL`}
+		headers := []string{`Skill`, `Rank`, `Uses`}
 		rows := [][]string{}
-
 		formatting := []string{
+			`<ansi fg="yellow">%s</ansi>`,
 			`<ansi fg="white-bold">%s</ansi>`,
-			`<ansi fg="red">%s</ansi>`,
-			`<ansi fg="yellow">%s</ansi>`,
-			`<ansi fg="yellow">%s</ansi>`,
-			`<ansi fg="yellow">%s</ansi>`,
-			`<ansi fg="yellow">%s</ansi>`,
-			`<ansi fg="yellow">%s</ansi>`,
-			`<ansi fg="yellow">%s</ansi>`,
-			`<ansi fg="white">%s</ansi>`,
+			`<ansi fg="cyan">%s</ansi>`,
 		}
 
-		zeroStr := ``
-
-		stats := []string{`str`, `spd`, `smt`, `vit`, `mys`, `per`}
-
-		oldG := map[string]int{
-			`str`: mockChar.Stats.Strength.GainsForLevel(startLevel - 1),
-			`spd`: mockChar.Stats.Speed.GainsForLevel(startLevel - 1),
-			`smt`: mockChar.Stats.Smarts.GainsForLevel(startLevel - 1),
-			`vit`: mockChar.Stats.Vitality.GainsForLevel(startLevel - 1),
-			`mys`: mockChar.Stats.Mysticism.GainsForLevel(startLevel - 1),
-			`per`: mockChar.Stats.Perception.GainsForLevel(startLevel - 1),
+		for _, d := range details {
+			rankStr := fmt.Sprintf(`%d`, d.Rank)
+			rows = append(rows, []string{d.Name, rankStr, fmt.Sprintf(`%d`, d.Uses)})
 		}
 
-		newG := map[string]int{}
-		totalG := map[string]int{}
-		for _, stat := range stats {
-			totalG[stat] = oldG[stat]
-		}
-
-		for i := startLevel; i <= endLevel; i++ {
-
-			newG = map[string]int{
-				`str`: mockChar.Stats.Strength.GainsForLevel(i),
-				`spd`: mockChar.Stats.Speed.GainsForLevel(i),
-				`smt`: mockChar.Stats.Smarts.GainsForLevel(i),
-				`vit`: mockChar.Stats.Vitality.GainsForLevel(i),
-				`mys`: mockChar.Stats.Mysticism.GainsForLevel(i),
-				`per`: mockChar.Stats.Perception.GainsForLevel(i),
-			}
-
-			tnlXP := mockChar.XPTL(i) - mockChar.XPTL(i-1)
-
-			if i == 1 {
-				tnlXP = 0
-			}
-
-			if i > 1 {
-
-				row := []string{fmt.Sprintf(`%d`, i), fmt.Sprintf(`%d`, tnlXP)}
-				gainStr := zeroStr
-				all := 0
-				for _, stat := range stats {
-					gain := newG[stat] - oldG[stat]
-					all += gain
-					totalG[stat] += gain
-
-					if gain > 0 {
-						gainStr = fmt.Sprintf(`%d`, gain)
-					} else {
-						gainStr = zeroStr
-					}
-
-					row = append(row, gainStr)
-				}
-
-				if all > 0 {
-					row = append(row, fmt.Sprintf(`%d`, all))
-				} else {
-					row = append(row, zeroStr)
-				}
-
-				rows = append(rows, row)
-			}
-
-			for _, stat := range stats {
-				oldG[stat] = newG[stat]
-			}
-		}
-
-		row := []string{`Total`, fmt.Sprintf(`%d`, mockChar.XPTL(endLevel)-1500)}
-		all := 0
-		for _, stat := range stats {
-			gain := totalG[stat]
-			all += gain
-			gainStr := ``
-			if gain > 0 {
-				gainStr = fmt.Sprintf(`%d`, gain)
-			}
-
-			row = append(row, gainStr)
-		}
-
-		if all > 0 {
-			row = append(row, fmt.Sprintf(`%d`, all))
-		} else {
-			row = append(row, zeroStr)
-		}
-
-		rows = append(rows, row)
-
-		raceInfo := races.GetRace(mockChar.RaceId)
-		searchResultsTable := templates.GetTable(fmt.Sprintf(`Experience Chart for %s`, raceInfo.Name), headers, rows, formatting)
+		searchResultsTable := templates.GetTable(`Skill Progression`, headers, rows, formatting)
 		tplTxt, _ := templates.Process("tables/generic", searchResultsTable, user.UserId)
 		user.SendText(tplTxt)
 
 		return true, nil
 	}
 
-	realXPNow, realXPTNL := user.Character.XPTNLActual()
-	xpInfo := map[string]int{
-		"Level": user.Character.Level,
-		"Exp":   realXPNow,
-		"Tnl":   realXPTNL,
-		"Tp":    user.Character.TrainingPoints,
-		"Sp":    user.Character.StatPoints,
+	if len(args) > 0 && args[0] == `stats` {
+		// Show stat use counts
+		statNames := []string{"strength", "dexterity", "perception", "vitality", "willpower", "charisma"}
+
+		headers := []string{`Stat`, `Uses`}
+		rows := [][]string{}
+		formatting := []string{
+			`<ansi fg="yellow">%s</ansi>`,
+			`<ansi fg="cyan">%s</ansi>`,
+		}
+
+		for _, s := range statNames {
+			uses := user.Character.GetStatUseCount(s)
+			rows = append(rows, []string{s, fmt.Sprintf(`%d`, uses)})
+		}
+
+		searchResultsTable := templates.GetTable(`Stat Usage`, headers, rows, formatting)
+		tplTxt, _ := templates.Process("tables/generic", searchResultsTable, user.UserId)
+		user.SendText(tplTxt)
+
+		return true, nil
 	}
 
-	tplTxt, _ := templates.Process("character/experience", xpInfo, user.UserId)
-	user.SendText(tplTxt)
+	// Default: show skill summary
+	allRanks := user.Character.GetAllSkillRanks()
+	totalRanks := user.Character.GetTotalSkillRanks()
+
+	// Sort skill names
+	skillNames := make([]string, 0, len(allRanks))
+	for name := range allRanks {
+		skillNames = append(skillNames, name)
+	}
+	sort.Strings(skillNames)
+
+	user.SendText(``)
+	user.SendText(fmt.Sprintf(`<ansi fg="white-bold">  Skill Progression</ansi> <ansi fg="8">(total ranks: %d)</ansi>`, totalRanks))
+	user.SendText(`<ansi fg="8">  ───────────────────────────────────</ansi>`)
+
+	for _, name := range skillNames {
+		rank := allRanks[name]
+		rankDisplay := fmt.Sprintf(`Rank %d`, rank)
+		color := "cyan"
+		if rank >= 10 {
+			color = "yellow-bold"
+		} else if rank >= 5 {
+			color = "green"
+		}
+		user.SendText(fmt.Sprintf(`  <ansi fg="yellow">%-15s</ansi> <ansi fg="%s">[%s]</ansi>`, name, color, rankDisplay))
+	}
+
+	user.SendText(``)
+	user.SendText(`<ansi fg="8">  Type </ansi><ansi fg="command">experience skills</ansi><ansi fg="8"> for detailed use counts.</ansi>`)
+	user.SendText(`<ansi fg="8">  Type </ansi><ansi fg="command">experience stats</ansi><ansi fg="8"> for stat usage.</ansi>`)
+	user.SendText(``)
 
 	return true, nil
 }

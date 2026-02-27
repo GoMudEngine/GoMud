@@ -1,0 +1,16 @@
+id: silver-ring
+name: Silver Ring
+skill: jewelcrafting
+skill_minimum: 12
+station: jeweler_bench
+time_rounds: 3
+ingredients:
+  - item_tag: silver-wire
+    quantity: 1
+  - item_tag: gem-dust
+    quantity: 1
+output:
+  item_id: 20033
+  quantity: 1
+success_message: "You shape the silver into a gleaming band and fuse gem dust along the edge. A silver ring!"
+failure_message: "The silver warps under uneven pressure and the band buckles. The materials are ruined."

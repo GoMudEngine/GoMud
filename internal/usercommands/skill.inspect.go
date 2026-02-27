@@ -1,54 +1,42 @@
 package usercommands
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
 /*
-Peep Skill
-Level 1 - Reveals the type and value of items.
-Level 2 - Reveals weapon damage or uses an item has left.
-Level 3 - Reveals any stat modifiers an item has.
-Level 4 - Reveals special magical properties like elemental effects.
+Inspect — free command (no skill gate).
+Reveals item details; depth scales with Perception stat.
 */
 func Inspect(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
-	if user.Character.GetSkillLevel(skills.Inspect) == 0 {
-		user.SendText("You don't know how to inspect.")
-		return true, fmt.Errorf("you don't know how to inspect")
-	}
-
 	if len(rest) == 0 {
-		user.SendText("Type `help inspect` for more information on the inspect skill.")
+		user.SendText("Type `help inspect` for more information on inspect.")
 		return true, nil
 	}
 
-	skillLevel := user.Character.GetSkillLevel(skills.Inspect)
+	// Inspect depth scales with Perception (1–4 equivalent tiers)
+	perceptionAdj := user.Character.Stats.Perception.ValueAdj
+	inspectLevel := 1
+	if perceptionAdj >= 75 {
+		inspectLevel = 4
+	} else if perceptionAdj >= 50 {
+		inspectLevel = 3
+	} else if perceptionAdj >= 25 {
+		inspectLevel = 2
+	}
 
-	// Check whether the user has an item in their inventory that matches
 	matchItem, found := user.Character.FindInBackpack(rest)
 
 	if !found {
 		user.SendText(fmt.Sprintf("You don't have a %s to inspect. Is it still worn, perhaps?", rest))
 	} else {
-
-		if !user.Character.TryCooldown(skills.Inspect.String(), "3 rounds") {
-			user.SendText(
-				fmt.Sprintf("You need to wait %d more rounds to use that skill again.", user.Character.GetCooldown(skills.Inspect.String())),
-			)
-			return true, errors.New(`you're doing that too often`)
-		}
-
-		// Fire an event that a skill has been used
-		events.AddToQueue(events.SkillUsed{user.UserId, skills.Inspect, ``})
 
 		user.SendText(
 			fmt.Sprintf(`You inspect the <ansi fg="item">%s</ansi>.`, matchItem.DisplayName()),
@@ -67,7 +55,7 @@ func Inspect(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		iSpec := matchItem.GetSpec()
 
 		details := inspectDetails{
-			InspectLevel: skillLevel,
+			InspectLevel: inspectLevel,
 			Item:         &matchItem,
 			ItemSpec:     &iSpec,
 		}
@@ -75,6 +63,8 @@ func Inspect(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		inspectTxt, _ := templates.Process("descriptions/inspect", details, user.UserId)
 		user.SendText(inspectTxt)
 
+		// Exercising perception via inspect
+		events.AddToQueue(events.SkillUsed{UserId: user.UserId})
 	}
 
 	return true, nil

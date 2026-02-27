@@ -1,0 +1,30 @@
+roomid: 303
+zone: Labyrinth of Low Tunnels
+title: Scratched Passage
+description: The eastern tunnel stretches ahead in a low, straight line -- unusual
+  for this warren. Every hand-span of wall is covered in scratches. Not random claw
+  marks but deliberate etchings, layered over each other until the stone looks almost
+  furred with grooves. Tally marks, crude maps, angular figures that might be warnings
+  or boasts. The passage is narrow enough that you must turn sideways in places, and
+  the scratches continue at a height that suggests their makers barely reach your waist.
+biome: cave
+exits:
+  west:
+    roomid: 301
+  south:
+    roomid: 306
+spawninfo:
+- mobid: 72
+  message: A warren scout presses flat against the scratched walls, watching you with oversized eyes.
+  respawnrate: 8 real minutes
+nouns:
+  maps: Scratched lines that could be tunnel layouts. Some sections have been scraped
+    over and redrawn, as though the tunnels change or the mapmaker keeps correcting
+    old work. You cannot tell if they are accurate.
+  figures: Angular stick figures. Some carry what might be weapons. Others are shown
+    lying flat. A few larger figures are scratched with heavy, angry strokes and
+    surrounded by smaller ones.
+idlemessages:
+- Your shoulder scrapes the wall and dislodges a flake of stone from the scratched surface.
+- The passage ahead is perfectly silent. That feels worse than noise.
+- A faint breeze pushes through from the south, carrying the smell of old meat.

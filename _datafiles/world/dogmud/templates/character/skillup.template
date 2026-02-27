@@ -1,0 +1,9 @@
+
+<ansi fg="yellow-bold">*******************************************************************************</ansi>
+<ansi fg="yellow-bold">*******************************************************************************</ansi>
+
+<ansi fg="yellow"> Your mastery of <ansi fg="skill">{{ .SkillName }}</ansi> has grown — you are now <ansi fg="yellow-bold">{{ skillRank .SkillLevel }}</ansi>!
+<ansi fg="yellow"> type <ansi fg="command">help {{ .SkillName }}</ansi> to learn more about using this skill.</ansi>
+
+<ansi fg="yellow-bold">*******************************************************************************</ansi>
+<ansi fg="yellow-bold">*******************************************************************************</ansi>

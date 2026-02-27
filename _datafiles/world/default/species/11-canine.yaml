@@ -1,0 +1,24 @@
+speciesid: 11
+name: canine
+description: A canine.
+buffids:
+  - 28 # Super hearing
+size: medium
+unarmedname: jaws
+angrycommands:
+  - emote growls aggressively.
+  - emote howls.
+knowsfirstaid: false
+tameable: true
+stats:
+  strength:
+    base: 1
+  smarts:
+    base: 1
+  vitality:
+    base: 1
+  perception:
+    base: 1
+damage:
+  diceroll: 2@1d4
+disabledslots: ['weapon', 'offhand', 'head', 'belt', 'gloves', 'ring', 'legs', 'feet']

@@ -1,0 +1,15 @@
+roomid: 105
+zone: Sanctum Basin
+title: Southeast Vista
+description: The trail ends here at a natural lookout point, a broad shelf of basalt
+  thrusting out over the canyon below. From this vantage, you can see across a vast
+  high desert basin stretching to the distant horizon. There is no path forward from
+  here -- only the long drop south and the trail back to the west.
+biome: desert
+exits:
+  west:
+    roomid: 104
+idlemessages:
+- Thin threads of cookfire smoke mark where the junction towns sit in the valley below -- too far to reach in a day's walk, but visible from here.
+- A faint haze marks where the desert gives way to distant plains.
+- The three moons -- the Witnesses -- are faintly visible even in daylight from this height. Their combined position shifts the Fold pressure throughout Gaius.
