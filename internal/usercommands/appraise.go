@@ -13,7 +13,13 @@ import (
 
 func Appraise(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
-	for _, mobId := range room.GetMobs(rooms.FindMerchant) {
+	merchantMobs := room.GetMobs(rooms.FindMerchant)
+	if len(merchantMobs) == 0 {
+		user.SendText(`You need to be at a merchant to appraise items.`)
+		return true, nil
+	}
+
+	for _, mobId := range merchantMobs {
 
 		mob := mobs.GetInstance(mobId)
 		if mob == nil {

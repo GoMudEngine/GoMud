@@ -1,11 +1,20 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">vitality</ansi>
 
-The <ansi fg="command">vitality</ansi> stat measures your physical hardiness.
+The <ansi fg="command">vitality</ansi> stat measures your physical hardiness
+and endurance.
 
-<ansi fg="yellow">Usage: </ansi>
+<ansi fg="yellow">Effects: </ansi>
 
-Besides various skils that use vitality, here are some other general uses for it:
+Vitality is the primary stat behind your maximum Health
+pool. Hardier characters can withstand more punishment
+before falling. It also influences how quickly you
+recover from injuries over time.
 
-* Healing per round is affected by vitality 
-* You get 4HP per point of Vitality
+Vitality improves through use -- the more you endure
+hardship and push through physical challenges, the more
+it grows.
+
+<ansi fg="yellow">Related: </ansi>
+  <ansi fg="command">help health</ansi>
+  <ansi fg="command">help status</ansi>
 

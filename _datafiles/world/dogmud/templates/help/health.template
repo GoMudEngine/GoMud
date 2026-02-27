@@ -1,8 +1,10 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">health</ansi>
 
-The <ansi fg="command">health</ansi> (Hitpoints/HP) stat represents how much damage you can take.
+<ansi fg="command">Health</ansi> (HP) represents how much physical punishment
+your character can endure. Your maximum Health is based
+primarily on your Vitality stat.
 
-Health will change color to reflect how good/bad your health state is:
+Health will change color to reflect your condition:
 
 <ansi fg="health-100">100%</ansi>
 <ansi fg="health-90">90%-99%</ansi>
@@ -17,13 +19,16 @@ Health will change color to reflect how good/bad your health state is:
 <ansi fg="health-0">0%-9%</ansi>
 <ansi fg="health-dead">dead</ansi>
 
-At <ansi fg="red">0 HP</ansi>, you will drop to the floor and slowly bleed out.
+When your Health drops to zero, you collapse and begin
+bleeding out. If you are not aided in time, you will die.
+When you die, your gear drops to the ground.
 
-At <ansi fg="red">-10 HP</ansi>, you will die. When you die, all gear you posess drops to the ground.
+Health regenerates slowly over time, recovering faster
+when you are out of combat. Certain spells and items can
+speed the healing process.
 
-Health is calculated based on: 
- - Level
- - Vitality * 4
- 
-Plus some bonuses every so many levels.
+<ansi fg="yellow">Related: </ansi>
+  <ansi fg="command">help vitality</ansi>
+  <ansi fg="command">help status</ansi>
+  <ansi fg="command">help armor</ansi>
 

@@ -1,51 +1,25 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">cooldowns</ansi>
 
-Cooldowns prevent spamming powerful abilities by enforcing waiting periods between uses.
+Some abilities are powerful enough that they cannot be
+used every round. After using such an ability, it enters
+a cooldown period. You must wait for the cooldown to
+expire before using that ability again.
 
-<ansi fg="yellow">━━━ What Are Cooldowns? ━━━</ansi>
+<ansi fg="yellow">Special Combat Moves: </ansi>
 
-Some abilities are powerful enough that they can't be used every round. After using
-such an ability, it enters a cooldown period measured in combat rounds. You must wait
-for the cooldown to expire before using that ability again.
+The special combat moves (<ansi fg="command">bash</ansi>, <ansi fg="command">trip</ansi>,
+<ansi fg="command">kick</ansi>) share a single cooldown. Using any one of
+them prevents you from using any of the three until the
+cooldown expires. This encourages tactical timing rather
+than chaining knockdown attempts.
 
-<ansi fg="yellow">━━━ Special Combat Move Cooldowns ━━━</ansi>
+<ansi fg="yellow">Usage: </ansi>
 
-The special combat moves (<ansi fg="command">bash</ansi>, <ansi fg="command">trip</ansi>, <ansi fg="command">kick</ansi>) share a single cooldown:
+  <ansi fg="command">cooldowns</ansi> - Display your active cooldowns
 
-  <ansi fg="stat">Shared Cooldown:</ansi> 5 rounds
-  Using any special move triggers the cooldown for all three moves.
+<ansi fg="yellow">See Also: </ansi>
+  <ansi fg="command">help bash</ansi>
+  <ansi fg="command">help trip</ansi>
+  <ansi fg="command">help kick</ansi>
+  <ansi fg="command">help combat</ansi>
 
-  <ansi fg="red">Example:</ansi>
-  - Round 1: You use <ansi fg="command">bash</ansi> (starts 5-round cooldown)
-  - Round 2-6: Cannot use bash, trip, or kick (cooldown active)
-  - Round 7: Special moves available again
-
-This prevents chaining knockdown attempts and encourages tactical timing.
-
-<ansi fg="yellow">━━━ Viewing Your Cooldowns ━━━</ansi>
-
-  <ansi fg="command">cooldowns</ansi>
-  Display all active cooldowns and remaining rounds
-
-The command shows which abilities are on cooldown and how many rounds remain before
-each becomes available again.
-
-<ansi fg="yellow">━━━ Abilities with Cooldowns ━━━</ansi>
-
-Currently cooldowns apply to:
-  - <ansi fg="command">bash</ansi> - Shield bash (5-round shared cooldown)
-  - <ansi fg="command">trip</ansi> - Leg sweep (5-round shared cooldown)
-  - <ansi fg="command">kick</ansi> - Power kick (5-round shared cooldown)
-
-More abilities with cooldowns may be added in the future.
-
-<ansi fg="yellow">━━━ Cooldown Mechanics ━━━</ansi>
-
-  <ansi fg="stat">Round-Based:</ansi> Cooldowns tick down once per combat round
-  <ansi fg="stat">Combat Only:</ansi> Cooldowns only matter during active combat
-  <ansi fg="stat">Shared Cooldowns:</ansi> Some abilities share cooldown timers
-  <ansi fg="stat">Prevented Actions:</ansi> Attempting to use a cooldown ability shows remaining time
-
-<ansi fg="yellow">See Also:</ansi>
-
-  <ansi fg="command">help bash</ansi>, <ansi fg="command">help trip</ansi>, <ansi fg="command">help kick</ansi>, <ansi fg="command">help combat</ansi>

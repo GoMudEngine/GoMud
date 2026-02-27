@@ -2,11 +2,19 @@
 
 The <ansi fg="command">strength</ansi> stat measures your physical might.
 
-<ansi fg="yellow">Usage: </ansi>
+<ansi fg="yellow">Effects: </ansi>
 
-Besides various skils that use strength, here are some other general uses for it:
+Greater Strength lets you hit harder in combat, increasing
+the damage you deal with both armed and unarmed attacks.
+It also determines how much you can carry before becoming
+encumbered, and influences your ability to overpower foes
+in grapples and disarm attempts.
 
-* Unarmed combat gains 1 extra D-side for every 4 strength
-* Crit chance is <ansi fg="red">5 + (AttackStrength+AttackSpeed) / levelDifference</ansi>
-* You can carry <ansi fg="red">8 + (Strength/6)</ansi> objects without emcumbering your movement.
+Strength improves through use -- the more you rely on raw
+power in your adventures, the more it grows.
+
+<ansi fg="yellow">Related: </ansi>
+  <ansi fg="command">help status</ansi>
+  <ansi fg="command">help combat</ansi>
+  <ansi fg="command">help encumbrance</ansi>
 

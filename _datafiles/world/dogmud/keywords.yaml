@@ -10,10 +10,10 @@ help:
       - set
       - password
     character:
-      - actionpoints
+
       - conditions
       - cooldowns
-      - experience
+
       - inventory
       - jobs
       - keyring
@@ -25,14 +25,13 @@ help:
       - death
       - character
       - pets
-      - train
-      - stat-train
       - bury
     communication:
       - emote
       - say
       - shout
       - broadcast
+      - talk
       - whisper
       - inbox
     shops:
@@ -166,12 +165,11 @@ help-aliases:
   storage:          [store, unstore]
   strength:         [str]
   vitality:         [vit]
-  speed:            [spd, spe]
-  mysticism:        [mys, myst]
-  smarts:           [smt, sma]
+  dexterity:        [dex, speed, spd, spe]
+  willpower:        [wil, will, mysticism, mys, myst]
+  charisma:         [cha, smarts, smt, sma]
   perception:       [per, percep, percept]
   health:           [hp]
-  mana:             [mp]
   species:          [race, races]
   picklock:         [pick]
   picklock-example: [pick-example]
@@ -188,7 +186,7 @@ help-aliases:
   history:          ['log']
   pvp:              ['pk']
   about:            ['gomud', 'dogmud', 'dog', 'lore', 'world', 'setting', 'background']
-  stat-train:       ['stat train', 'status train', 'stat points']
+
 # Default aliases for commands
 # For example: inv -> inventory
 # They can be command + argument aliases
