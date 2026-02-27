@@ -1,6 +1,7 @@
 mobid: 79
 zone: Sanctum Basin
-statpool: 12
+archetype: casting
+statpool: 36
 hostile: false
 maxwander: 0
 groups:
@@ -16,16 +17,18 @@ character:
   name: basin scholar
   description: |
     A lean, sharp-featured woman in practical traveling clothes, her
-    fingers stained with charcoal and ink. A leather satchel at her hip bulges with
-    rolled papers, specimen jars, and small tools of academic inquiry. She carries
-    herself with the particular restlessness of someone who would rather be in the
-    field than at a desk. Her eyes are quick and cataloguing -- the eyes of someone
-    who looks at living things and sees specimens first and people second. She is
-    attached to the Chrysalis research initiative but operates independently, funded
-    by Thornwall's natural philosophy guild.
+    fingers stained with charcoal and ink. She carries herself with the particular
+    restlessness of someone who would rather be in the field than at a desk. Her eyes
+    are quick and cataloguing -- the eyes of someone who looks at living things and
+    sees specimens first and people second. She is attached to the Chrysalis research
+    initiative but operates independently, funded by Thornwall's natural philosophy
+    guild.
   speciesid: 1
   level: 1
   gold: 10
+  equipment:
+    belt:
+      itemid: 20025
   stats:
     perception:
       training: 10

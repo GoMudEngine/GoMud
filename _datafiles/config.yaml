@@ -352,38 +352,89 @@ GamePlay:
   #   Global multiplier for spell health costs (life-force magic). Default 1.0.
   #   Increase to make life-force magic more risky, decrease to make it safer.
   SpellHealthCostMultiplier: 1.0
-  # - Stage 7.1: Segmented Avoidance -
-  #   Stamina cost multipliers for layered defense system
-  #   Base costs: dodge (2), parry (4), block (5)
-  #   Lower values make defense cheaper, higher values make it more expensive
-  DodgeMultiplier: 0.9
-  ParryMultiplier: 0.9
-  BlockMultiplier: 0.9
-  # - Stage 7.5: Prone Condition Effects -
-  #   Modifiers applied when a character is knocked prone
-  ProneAttackPenalty: 30.0       # Penalty to attack score when attacking while prone
-  ProneDodgePenalty: 0.50        # Multiplier for dodge effectiveness while prone (-50%)
-  ProneParryPenalty: 0.70        # Multiplier for parry effectiveness while prone (-30%)
-  ProneBlockPenalty: 0.80        # Multiplier for block effectiveness while prone (-20%)
-  ProneDamagePenalty: 0.80       # Damage multiplier when attacking while prone (-20%)
-  ProneVulnerabilityBonus: 20.0  # Bonus to attack score when attacking prone targets
-  StandStaminaCost: 0.15         # Stamina cost to stand (15% of max stamina)
-  StandMinStamina: 0.15          # Minimum stamina required to stand (15% of max)
-  # - Stage 8.5: Third-Party Grapple Vulnerability -
-  #   When fighters are locked in a grapple, they're vulnerable to attacks from others
-  ThirdPartyGrapplePenalty: 0.70 # Defense multiplier against third-party attacks (-30%)
-  # - Stage 7.5: Special Combat Moves -
-  #   Parameters for bash, trip, and kick commands
-  #   All three share a common cooldown to prevent knockdown spam
-  SpecialMoveCooldown: 5         # Shared cooldown for all special moves (5 rounds)
-  BashDamagePercent: 0.50        # Damage percentage for bash (50%)
-  BashKnockdownChance: 40        # Base knockdown chance for bash (40%)
-  TripDamagePercent: 0.25        # Damage percentage for trip (25%)
-  TripKnockdownChance: 60        # Base knockdown chance for trip (60%)
-  KickDamagePercent: 0.40        # Damage percentage for kick (40%)
-  KickKnockdownChance: 35        # Base knockdown chance for kick (35%)
-  # Coup de Grâce: rounds a mob waits before finishing a downed player
-  # (0 = disabled, mob walks away like before)
+  # ── Defense Stamina Costs ──
+  # These ONLY affect how much stamina each defense costs. They do NOT
+  # change how effective the defense is at avoiding hits.
+  # Formula: cost = baseCost × multiplier  (dodge base=2, parry=4, block=5)
+  # Example: DodgeMultiplier 0.9 → dodge costs floor(2×0.9) = 1 stamina
+  # Example: BlockMultiplier 1.5 → block costs floor(5×1.5) = 7 stamina
+  # To change defense EFFECTIVENESS, see Prone penalties below or add
+  # equipment with higher ParryRating / BlockRating.
+  DodgeMultiplier: 0.9           # Stamina cost multiplier for dodge (base: 2 SP)
+  ParryMultiplier: 0.9           # Stamina cost multiplier for parry (base: 4 SP)
+  BlockMultiplier: 0.9           # Stamina cost multiplier for block (base: 5 SP)
+  #
+  # ── Defense Effectiveness ──
+  # MULTIPLIER on the defense score BEFORE the opposed roll. Applied in
+  # all situations (standing, prone, grappled) — stacks with prone penalties.
+  # Defense scores: Dodge = Dex + UnarmedSkill, Parry = Dex + WeaponSkill
+  #   + ParryRating, Block = (Str+Dex)/2 + WeaponSkill + BlockRating.
+  # 1.0 = no change. 1.2 = 20% stronger. 0.8 = 20% weaker.
+  # Example: defender Dex 100, skill 10, DodgeEffectiveness 1.2:
+  #   dodge score = (100 + 10) × 1.2 = 132 (vs attacker's ~110)
+  DodgeEffectiveness: 0.97
+  ParryEffectiveness: 1.0
+  BlockEffectiveness: 1.02
+  #
+  # MinDefenseChance: Minimum probability that any defense succeeds, even
+  #   when the attacker's score vastly outclasses the defender's. Acts as a
+  #   floor so fights never feel like guaranteed hits. 0.15 = 15% minimum.
+  #   Range: 0.0–0.50. Set to 0 to disable the floor entirely.
+  MinDefenseChance: 0.15
+  #
+  # ── Prone Condition Effects ──
+  # When a character is knocked prone, these modify combat scores.
+  # Defense scores are: Dodge = Dex + UnarmedSkill, Parry = Dex + WeaponSkill
+  #   + weapon ParryRating, Block = (Str+Dex)/2 + WeaponSkill + BlockRating.
+  #
+  # ProneAttackMultiplier: MULTIPLIER on the attack score of a character
+  #   attacking WHILE prone. Lower = harder to hit from the ground.
+  #   Example: attacker score 110, multiplier 0.80 → score 88.
+  ProneAttackMultiplier: 0.80
+  #
+  # ProneDodge/Parry/BlockPenalty: MULTIPLIER on the defense score of a
+  #   prone DEFENDER. This is how much of their defense they keep.
+  #   1.0 = full defense (no penalty). 0.50 = half defense. 0.0 = no defense.
+  #   Example: defender has dodge score 100. At 0.90 → score 90. At 0.50 → 50.
+  ProneDodgePenalty: 0.9        # Prone defender keeps 90% of dodge score
+  ProneParryPenalty: 0.9        # Prone defender keeps 90% of parry score
+  ProneBlockPenalty: 0.9        # Prone defender keeps 90% of block score
+  #
+  # ProneDamagePenalty: MULTIPLIER on damage dealt by a character attacking
+  #   WHILE prone. 0.80 = deals 80% of normal damage from the ground.
+  ProneDamagePenalty: 0.80
+  #
+  # ProneVulnerabilityMultiplier: MULTIPLIER on attack score when the
+  #   TARGET is prone. Stacks with the defense penalties above.
+  #   Example: attacker score 110, multiplier 1.15 → score 126.5.
+  ProneVulnerabilityMultiplier: 1.15
+  #
+  StandStaminaCost: 0.15         # Fraction of max stamina to stand up (0.15 = 15%)
+  StandMinStamina: 0.15          # Must have this fraction of max SP to stand
+  #
+  # ── Grapple Vulnerability ──
+  # MULTIPLIER on defense score when attacked by a third party while
+  # grappling. 0.70 = defender keeps 70% of defense. Only shield (block)
+  # defenses are available; dodge/parry are stripped entirely.
+  ThirdPartyGrapplePenalty: 0.70
+  #
+  # ── Special Combat Moves (bash, trip, kick) ──
+  # All three share a cooldown so players can't spam knockdowns.
+  SpecialMoveCooldown: 4         # Rounds between special moves
+  #
+  # DamagePercent: fraction of a normal melee hit's damage this move does.
+  #   0.50 = deals half a normal swing's damage. 1.0 = full damage.
+  # KnockdownChance: base % chance to knock the target prone on hit.
+  #   Modified by attacker Str vs defender Str in the actual roll.
+  BashDamagePercent: 0.50        # Bash: 50% of normal swing damage
+  BashKnockdownChance: 50        # Bash: 50% base knockdown chance
+  TripDamagePercent: 0.25        # Trip: 25% of normal swing damage
+  TripKnockdownChance: 60        # Trip: 60% base knockdown chance
+  KickDamagePercent: 0.40        # Kick: 40% of normal swing damage
+  KickKnockdownChance: 35        # Kick: 35% base knockdown chance
+  #
+  # Coup de Grâce: rounds a mob waits before finishing a downed player.
+  # 0 = disabled (mob walks away like before).
   CoupDeGraceRounds: 1
 
 ################################################################################
@@ -396,20 +447,93 @@ GamePlay:
 ################################################################################
 Balance:
   # ── COMBAT ──────────────────────────────────────────────────────────────────
-  UnarmedBaseDamage: 2.0         # Base damage before stat bonuses
-  UnarmedStrengthDivisor: 25.0   # Str / this = damage bonus
-  UnarmedSkillDivisor: 10.0      # UnarmedSkill / this = damage bonus
-  UnarmedBaseVariance: 3.0       # Base randomness of unarmed hits
-  UnarmedDamageMultiplier: 0.30  # Fist damage multiplier for unified pipeline
-  SkillMultiplierBase: 1.0       # Skill multiplier at rank 0
-  SkillMultiplierMax: 3.0        # Skill multiplier at soft cap (rank 50)
-  PhysicalMitigationCap: 0.75    # Max physical mitigation (75%)
-  MagicalMitigationCap: 0.75     # Max magical mitigation (75%)
-  ConvictionMitigationCap: 0.75  # Max conviction mitigation (75%)
+  # These two are global panic buttons. 1.0 = no change. Not yet wired
+  # into code — reserved for future "server set" runtime tuning.
+  GlobalDamageMultiplier: 1.0
+  GlobalDefenseMultiplier: 1.0
+  #
+  # Legacy unarmed knobs — still used by GetDefaultDistributionDamage()
+  # for attack count and crit buff calculation. Actual unarmed damage is
+  # controlled by UnarmedDamageMultiplier below.
+  UnarmedBaseDamage: 2.0         # Legacy: base damage for attack count calc
+  UnarmedStrengthDivisor: 25.0   # Legacy: Str / this = damage bonus
+  UnarmedSkillDivisor: 10.0      # Legacy: UnarmedSkill / this = damage bonus
+  UnarmedBaseVariance: 3.0       # Legacy: randomness of unarmed hits
+  #
+  # UnarmedDamageMultiplier: the "weapon multiplier" used when fighting
+  # with bare fists. Works like a weapon's damage_multiplier field.
+  # Also used as the fallback when a weapon has no multiplier set.
+  # Example: Str 100, skill 0, MeleeDamageScale 0.05:
+  #   raw = 100 × 1.0 × 0.30 × 0.05 = 1.5 (fists are weak)
+  # A weapon with damage_multiplier 1.0 would do:
+  #   raw = 100 × 1.0 × 1.0 × 0.05 = 5.0
+  UnarmedDamageMultiplier: 0.30
+  #
+  # ── Per-Channel Damage Scales ──
+  # All channels use the same formula:
+  #   raw = stat × SkillMultiplier(rank) × itemMult × ChannelScale
+  #
+  # MeleeDamageScale: master knob for ALL physical (melee/ranged) damage
+  #   for both players AND NPCs. Stats are ~100, so this directly sets
+  #   the per-swing baseline at skill 0 with a 1.0x weapon.
+  #   Examples at Str 100, skill 0, weapon 1.0x:
+  #     0.05 →   5 raw damage per swing (current — low, needs MobDamageMultiplier)
+  #     0.15 →  15 raw damage per swing
+  #     0.30 →  30 raw damage per swing (original default)
+  MeleeDamageScale: 0.05
+  #
+  # MobDamageMultiplier: extra multiplier applied ONLY to NPC melee
+  #   damage. Lets you keep player damage low while making NPCs threatening.
+  #   Example: MeleeDamageScale 0.05, MobDamageMultiplier 4.0:
+  #     Player Str 100 → 100 × 1.0 × 1.0 × 0.05 = 5 raw (unchanged)
+  #     Mob Str 100    → 100 × 1.0 × 1.0 × 0.05 × 4.0 = 20 raw
+  MobDamageMultiplier: 4.0
+  #
+  # SpellDamageScale: multiplier on ALL spell damage output (players + NPCs).
+  #   1.0 = no scaling. Example at Wil 100, skill 0, spell mult 1.0:
+  #     1.0 → 100 raw,  1.5 → 150 raw,  0.5 → 50 raw
+  SpellDamageScale: 1.5
+  #
+  # RhetoricDamageScale: multiplier on taunt/conviction damage output.
+  #   Taunt uses itemMult 0.5 as base. Example at Cha 100, skill 0:
+  #     1.0 → 50 raw,  2.0 → 100 raw
+  RhetoricDamageScale: 2.0
+  #
+  # SkillMultiplierBase/Max: controls how much skill rank affects damage.
+  #   At rank 0 the multiplier is Base, at soft cap (50) it's Max.
+  #   Curve: mult = Base + (Max - Base) × sqrt(rank / 50)
+  #   Example: rank 0 → 1.0x, rank 12 → 1.98x, rank 25 → 2.41x, rank 50 → 3.0x
+  SkillMultiplierBase: 1.0
+  SkillMultiplierMax: 3.0
+  #
+  # Mitigation caps: maximum % damage reduction from armor for each channel.
+  # 0.75 = armor can block at most 75% of incoming damage in that channel.
+  PhysicalMitigationCap: 0.75
+  MagicalMitigationCap: 0.75
+  ConvictionMitigationCap: 0.75
+  #
+  # ── Resource Depletion Penalties ──
+  # As HP/SP/CP drain, combat effectiveness gradually decreases.
+  # Formula: mult = 1 - maxPenalty × (1 - ratio)^curve
+  #
+  # ResourcePenaltyCurve: exponent controlling curve shape. Higher values
+  #   make the penalty kick in later (closer to empty). At 2.0:
+  #     100% resource → 0% penalty      50% → 7% penalty
+  #      25% resource → 16% penalty      5% → 25% penalty
+  #       0% resource → 28% penalty (= maxPenalty)
+  ResourcePenaltyCurve: 2.0
+  #
+  # Per-pool max penalty (at 0% resource). Each pool affects different things:
+  #   Health    → melee damage output (wounded = weaker swings)
+  #   Stamina   → attack count + melee hit rate (exhausted = slower/sloppier)
+  #   Conviction → taunt hit/damage + spell damage (demoralized = weaker magic)
+  HealthPenaltyMax: 0.28         # At 0% HP: melee damage reduced by 28%
+  StaminaPenaltyMax: 0.28        # At 0% SP: attacks/hit rate reduced by 28%
+  ConvictionPenaltyMax: 0.28     # At 0% CP: taunt/spell reduced by 28%
 
   # ── REGEN RATES (fraction of pool max per tick; 0.01 = 1%) ────────────────
   PlayerHealthRegenPct: 0.01     # Player HP regen per tick (1% of HealthMax)
-  PlayerStaminaRegenPct: 0.01    # Player stamina regen per tick
+  PlayerStaminaRegenPct: 0.02    # Player stamina regen per tick
   PlayerConvictionRegenPct: 0.01 # Player conviction regen per tick
   MobHealthRegenPct: 0.01        # NPC HP regen per tick (1% of HealthMax)
   MobStaminaRegenPct: 0.01       # NPC stamina regen per tick
@@ -455,7 +579,7 @@ Balance:
   CraftingMaxSuccessChance: 95   # Ceiling — never higher than this
 
   # ── RECIPE DISCOVERY ──────────────────────────────────────────────────────
-  RecipeDiscoveryBaseChance: 8.0   # Base % to discover a new recipe per successful craft
+  RecipeDiscoveryBaseChance: 10.0   # Base % to discover a new recipe per successful craft
   RecipeDiscoveryDecayRate: 0.1    # Decay per known recipe: chance = base / (1 + known*this)
 
   # ── MUTATIONS ───────────────────────────────────────────────────────────────
@@ -468,7 +592,7 @@ Balance:
   MutationLevel3Multiplier: 2.0      # Effect scaling at mutation level 3
 
   # ── SPELLCASTING ──────────────────────────────────────────────────────
-  SpellDiscoveryBaseChance: 5.0        # Base % to discover a new spell per successful cast
+  SpellDiscoveryBaseChance: 10.0        # Base % to discover a new spell per successful cast
   SpellDiscoveryDecayRate: 0.1         # Decay per known spell: chance = base / (1 + known*this)
   SpellInitiationBase: 60              # Base % chance to initiate a spell
   SpellInitiationWillpowerDivisor: 4   # Willpower / this = initiation bonus
@@ -502,6 +626,7 @@ LLM:
 
 ################################################################################
 #
+
 #   ANALYTICS
 #   Combat analytics subsystem. When enabled, records combat events to a
 #   ring buffer and periodically flushes aggregated summaries to a JSONL log.

@@ -1,6 +1,7 @@
 mobid: 94
 zone: Thornwall City
-statpool: 30
+archetype: fighting
+statpool: 120
 itemdropchance: 0
 hostile: false
 maxwander: 0
@@ -20,13 +21,32 @@ character:
     A weathered man with iron-grey hair cut close to the scalp and a face
     that looks like it was carved from the same stone as the barracks. Velk
     wears the city guard uniform with the additions of rank -- a bronze pin
-    on the collar, a better-quality sword at his hip, and the permanently
+    on the collar and the permanently
     tired expression of someone responsible for too many people and too few
     resources. He speaks in short, precise sentences and listens with the
     intensity of a man who has learned that details save lives.
   speciesid: 1
   level: 1
   gold: 0
+  equipment:
+    weapon:
+      itemid: 10015
+    offhand:
+      itemid: 20028
+    body:
+      itemid: 20027
+    head:
+      itemid: 20029
+    legs:
+      itemid: 20050
+    feet:
+      itemid: 20052
+    gloves:
+      itemid: 20051
+    neck:
+      itemid: 20024
+  items:
+    - itemid: 10014
   stats:
     strength:
       training: 10

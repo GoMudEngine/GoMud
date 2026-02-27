@@ -75,7 +75,7 @@ func Trip(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 	// Calculate damage via unified pipeline (low damage - primarily a setup move)
 	skillRank := user.Character.GetSkillLevel(skills.UnarmedCombat)
-	rawDmg := combat.CalcRawDamage(user.Character.Stats.Strength.ValueAdj, skillRank, float64(cfg.TripDamagePercent))
+	rawDmg := combat.CalcRawDamage(user.Character.Stats.Strength.ValueAdj, skillRank, float64(cfg.TripDamagePercent), combat.ChannelPhysical)
 
 	// Apply target's physical mitigation
 	var targetMitig float64

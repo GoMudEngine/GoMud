@@ -1,5 +1,6 @@
 mobid: 110
 zone: Summons
+archetype: fighting
 statpool: 20
 itemdropchance: 0
 hostile: false

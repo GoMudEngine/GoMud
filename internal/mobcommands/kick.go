@@ -69,7 +69,7 @@ func Kick(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	// Calculate damage via unified pipeline (moderate - more than trip, less than bash)
 	skillRank := mob.Character.GetSkillLevel(skills.UnarmedCombat)
-	rawDmg := combat.CalcRawDamage(mob.Character.Stats.Strength.ValueAdj, skillRank, float64(cfg.KickDamagePercent))
+	rawDmg := combat.CalcRawDamage(mob.Character.Stats.Strength.ValueAdj, skillRank, float64(cfg.KickDamagePercent), combat.ChannelPhysical)
 
 	// Apply target's physical mitigation
 	var targetMitig float64

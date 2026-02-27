@@ -1,5 +1,6 @@
 mobid: 69
 zone: Sanctum Basin
+archetype: fighting
 statpool: 6
 itemdropchance: 50
 hostile: true

@@ -1,5 +1,6 @@
 mobid: 70
 zone: Sanctum Basin
+archetype: fighting
 statpool: 8
 hostile: true
 maxwander: 3

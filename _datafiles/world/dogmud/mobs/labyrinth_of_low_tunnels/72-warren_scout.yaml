@@ -1,5 +1,6 @@
 mobid: 72
 zone: Labyrinth of Low Tunnels
+archetype: fighting
 statpool: 8
 itemdropchance: 10
 hostile: true
@@ -29,11 +30,15 @@ character:
     Its eyes are enormous -- milky grey orbs adapted to total darkness -- and its
     ears are elongated and constantly twitching. What was once a human frame has been
     reshaped by generations of unguided Chrysalis mutation into something built for
-    speed and silence in tight spaces. It wears scraps of cured hide and carries a
-    sharpened bone in one clawed hand.
+    speed and silence in tight spaces.
   speciesid: 23
   level: 1
   gold: 0
+  equipment:
+    weapon:
+      itemid: 10022
+    body:
+      itemid: 20048
   stats:
     dexterity:
       training: 15

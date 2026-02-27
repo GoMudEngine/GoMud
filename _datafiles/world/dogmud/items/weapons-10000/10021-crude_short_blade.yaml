@@ -1,0 +1,19 @@
+itemid: 10021
+name: crude short blade
+namesimple: blade
+description: A short length of scavenged metal, crudely ground to an edge and
+  wrapped in strips of cloth at the tang. It cuts well enough but will not last
+  long against proper steel.
+type: weapon
+hands: 1
+subtype: slashing
+weight: 2.0
+speedmultiplier: 0.9
+staminacost: 4
+grapplemodifier: 0.5
+damage:
+  basedamage: 4
+  variance: 2
+damage_multiplier: 0.45
+parryrating: 4
+value: 4

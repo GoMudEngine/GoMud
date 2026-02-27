@@ -1,0 +1,12 @@
+itemid: 20045
+name: leather apron
+namesimple: apron
+description: A thick leather apron, scarred and darkened by sparks and heat.
+  It covers the chest and thighs and turns aside the odd flying ember or
+  glancing blow.
+type: body
+subtype: wearable
+damagereduction: 3
+physical_mitigation: 3
+escapemodifier: 0.0
+value: 5

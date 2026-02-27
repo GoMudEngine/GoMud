@@ -39,15 +39,24 @@ type GamePlay struct {
 	ParryMultiplier ConfigFloat `yaml:"ParryMultiplier"` // Default 0.9 (base cost: 4 stamina)
 	BlockMultiplier ConfigFloat `yaml:"BlockMultiplier"` // Default 0.9 (base cost: 5 stamina)
 
+	// Defense effectiveness multipliers — applied to the defense score before
+	// the opposed roll, independent of prone/grapple modifiers.
+	DodgeEffectiveness ConfigFloat `yaml:"DodgeEffectiveness"` // Default 1.0 (1.0 = no change)
+	ParryEffectiveness ConfigFloat `yaml:"ParryEffectiveness"` // Default 1.0
+	BlockEffectiveness ConfigFloat `yaml:"BlockEffectiveness"` // Default 1.0
+
 	// Stage 7.5: Prone condition effects
-	ProneAttackPenalty      ConfigFloat `yaml:"ProneAttackPenalty"`      // Default: 30.0 (penalty to attack score)
-	ProneDodgePenalty       ConfigFloat `yaml:"ProneDodgePenalty"`       // Default: 0.50 (multiplier for dodge)
-	ProneParryPenalty       ConfigFloat `yaml:"ProneParryPenalty"`       // Default: 0.70 (multiplier for parry)
-	ProneBlockPenalty       ConfigFloat `yaml:"ProneBlockPenalty"`       // Default: 0.80 (multiplier for block)
+	ProneAttackMultiplier   ConfigFloat `yaml:"ProneAttackMultiplier"`   // Default: 0.80 (multiplier on attack score while prone)
+	ProneDodgePenalty       ConfigFloat `yaml:"ProneDodgePenalty"`       // Default: 0.70 (multiplier: 0.70 = keep 70% of dodge)
+	ProneParryPenalty       ConfigFloat `yaml:"ProneParryPenalty"`       // Default: 0.80 (multiplier: 0.80 = keep 80% of parry)
+	ProneBlockPenalty       ConfigFloat `yaml:"ProneBlockPenalty"`       // Default: 0.90 (multiplier: 0.90 = keep 90% of block)
 	ProneDamagePenalty      ConfigFloat `yaml:"ProneDamagePenalty"`      // Default: 0.80 (damage multiplier)
-	ProneVulnerabilityBonus ConfigFloat `yaml:"ProneVulnerabilityBonus"` // Default: 20.0 (bonus to hit prone targets)
+	ProneVulnerabilityMultiplier ConfigFloat `yaml:"ProneVulnerabilityMultiplier"` // Default: 1.15 (multiplier on attack score vs prone target)
 	StandStaminaCost        ConfigFloat `yaml:"StandStaminaCost"`        // Default: 0.15 (15% of max stamina)
 	StandMinStamina         ConfigFloat `yaml:"StandMinStamina"`         // Default: 0.15 (minimum 15% stamina)
+
+	// Defense floor: minimum probability any defense succeeds
+	MinDefenseChance ConfigFloat `yaml:"MinDefenseChance"` // Default: 0.15 (15% floor even when massively outclassed)
 
 	// Stage 8.5: Third-party grapple vulnerability
 	ThirdPartyGrapplePenalty ConfigFloat `yaml:"ThirdPartyGrapplePenalty"` // Default: 0.70 (-30% defense when entangled)
@@ -185,31 +194,45 @@ func (g *GamePlay) Validate() {
 	if g.BlockMultiplier <= 0 {
 		g.BlockMultiplier = 0.9
 	}
+	if g.DodgeEffectiveness <= 0 {
+		g.DodgeEffectiveness = 1.0
+	}
+	if g.ParryEffectiveness <= 0 {
+		g.ParryEffectiveness = 1.0
+	}
+	if g.BlockEffectiveness <= 0 {
+		g.BlockEffectiveness = 1.0
+	}
 
 	// Stage 7.5: Prone condition effects - set defaults if invalid
-	if g.ProneAttackPenalty < 0 {
-		g.ProneAttackPenalty = 30.0
+	if g.ProneAttackMultiplier <= 0 {
+		g.ProneAttackMultiplier = 0.80
 	}
 	if g.ProneDodgePenalty <= 0 || g.ProneDodgePenalty > 1.0 {
-		g.ProneDodgePenalty = 0.50
+		g.ProneDodgePenalty = 0.70
 	}
 	if g.ProneParryPenalty <= 0 || g.ProneParryPenalty > 1.0 {
-		g.ProneParryPenalty = 0.70
+		g.ProneParryPenalty = 0.80
 	}
 	if g.ProneBlockPenalty <= 0 || g.ProneBlockPenalty > 1.0 {
-		g.ProneBlockPenalty = 0.80
+		g.ProneBlockPenalty = 0.90
 	}
 	if g.ProneDamagePenalty <= 0 || g.ProneDamagePenalty > 1.0 {
 		g.ProneDamagePenalty = 0.80
 	}
-	if g.ProneVulnerabilityBonus < 0 {
-		g.ProneVulnerabilityBonus = 20.0
+	if g.ProneVulnerabilityMultiplier <= 0 {
+		g.ProneVulnerabilityMultiplier = 1.15
 	}
 	if g.StandStaminaCost <= 0 || g.StandStaminaCost > 1.0 {
 		g.StandStaminaCost = 0.15
 	}
 	if g.StandMinStamina <= 0 || g.StandMinStamina > 1.0 {
 		g.StandMinStamina = 0.15
+	}
+
+	// Defense floor
+	if g.MinDefenseChance < 0 || g.MinDefenseChance > 0.50 {
+		g.MinDefenseChance = 0.15
 	}
 
 	// Stage 7.5: Special move parameters - set defaults if invalid

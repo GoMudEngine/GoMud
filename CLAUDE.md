@@ -49,12 +49,20 @@ Known issue: The instance save system can silently override template edits, maki
 ## Unified Damage & Mitigation Pipeline (Stage 34)
 All damage flows through a three-channel pipeline in `internal/combat/damage_pipeline.go`:
 
-### Damage Formula (all channels)
+### Damage Formula
+All channels use the same unified formula:
 ```
-raw_damage = stat × SkillMultiplier(rank) × item_multiplier
-final_damage = ApplyMitigation(raw, mitigation%, cap)
+raw = stat × SkillMultiplier(rank) × itemMult × ChannelScale
 ```
-Then `dice.RollStat(final_damage)` for variance.
+The per-channel scale absorbs any normalization:
+
+| Channel    | ChannelScale | Math at stat=100, rank=0, itemMult=1.0 |
+|------------|-------------|----------------------------------------|
+| Physical   | **0.30**    | 100 × 1.0 × 1.0 × 0.30 = **30**      |
+| Magical    | **1.00**    | 100 × 1.0 × 1.0 × 1.00 = **100**     |
+| Conviction | **1.00**    | 100 × 1.0 × 0.5 × 1.00 = **50**      |
+
+Then `ApplyMitigation(raw, mitigation%, cap)` and `dice.RollStat(final)` for variance.
 
 ### Three Channels
 | Channel | Stat | Skills | Item Field | Mitigation Method |
@@ -74,10 +82,49 @@ Old `DamageReduction` field is kept for legacy compatibility but no longer used 
 Default 75% each: `PhysicalMitigationCap`, `MagicalMitigationCap`, `ConvictionMitigationCap`
 
 ### Key Functions
-- `combat.CalcRawDamage(stat, skillRank, itemMult)` — compute raw damage
+- `combat.CalcRawDamage(stat, skillRank, itemMult, channel)` — compute raw damage
 - `combat.ApplyMitigation(raw, pct, cap)` — apply percentage reduction
 - `combat.SkillMultiplier(rank)` — sqrt curve from config
+- `combat.ResourceMultiplier(current, max, penaltyMax)` — smooth resource depletion penalty
 - `character.GetPhysicalMitigation()` / `GetMagicalMitigation()` / `GetConvictionMitigation()` — sum equipment
+
+## Resource Depletion Penalties (Stage 35)
+Smooth curve replaces old hard-cutoff stamina penalties. As any resource pool
+drains, a multiplier reduces combat effectiveness gradually:
+```
+mult = 1 - maxPenalty × (1 - ratio)^curve
+```
+Config knobs: `ResourcePenaltyCurve` (default 2.0), per-pool `HealthPenaltyMax`,
+`StaminaPenaltyMax`, `ConvictionPenaltyMax` (all default 0.28).
+
+| Resource % | Multiplier | Penalty |
+|-----------|------------|---------|
+| 100%      | 1.000      | 0%      |
+| 50%       | 0.930      | 7.0%    |
+| 25%       | 0.843      | 15.7%   |
+| 5%        | 0.747      | ~25%    |
+| 0%        | 0.720      | 28%     |
+
+Mapping: Stamina → attack count + hit rate, Health → melee damage,
+Conviction → taunt hit/damage + spell damage.
+
+## Defense Resolution: Best-of-All (Stage 35)
+Defense is resolved by rolling **all** available defenses (dodge, parry, block)
+and picking the one that won by the widest margin. This replaces the old
+sequential short-circuit approach where dodge was always checked first.
+Benefits: every defense type gets fair representation in combat text, and
+having multiple defense types is always better (wider net).
+
+**Defense Floor**: `MinDefenseChance` (default 0.15) ensures even massively
+outclassed defenders have a 15% chance to avoid any swing. This prevents
+fights from feeling like guaranteed hits when stat gaps are large.
+
+## Combat Design Conventions
+- **Prefer multipliers over flat bonuses/penalties.** Multipliers scale with
+  character power and are easier to tune. Flat values create balance problems
+  at different power levels (too strong at low stats, irrelevant at high stats).
+- Prone effects use multipliers: `ProneAttackMultiplier` (default 0.80),
+  `ProneVulnerabilityMultiplier` (default 1.15), `ProneDodge/Parry/BlockPenalty`.
 
 ## Regen System (Stage 29.5)
 All HP/SP/CP regeneration is **percentage-of-max** — never flat values.
@@ -124,3 +171,26 @@ Full workflow: `docs/CONTENT_GENERATION_GUIDE.md`
 
 After generating any file: restart server. If editing an existing zone, check
 `_datafiles/world/dogmud/rooms.instances/` for stale instance saves.
+
+## Mob Stat Archetypes
+Mobs have an optional `archetype` field that controls stat pool distribution:
+- `"fighting"` — 80% physical (Str/Dex/Vit), 20% mental (Per/Wil/Cha)
+- `"casting"` — 20% physical (Str/Dex/Vit), 80% mental (Per/Wil/Cha)
+- `""` (default) — uniform random across all 6 stats
+
+Set in mob YAML: `archetype: fighting` or `archetype: casting`.
+
+## Caster Weapon Types
+Three weapon subtypes designed for spellcasters: `wand`, `sceptre`, `staff`.
+Each has a `spell_damage_multiplier` field on ItemSpec that multiplies spell
+damage when the weapon is equipped. This is independent of `damage_multiplier`
+(melee). Caster weapons use `weapon-combat` skill for melee (same as swords).
+
+| Subtype  | Hands | Melee Mult | Spell Mult | Speed | Parry | Notes |
+|----------|-------|-----------|------------|-------|-------|-------|
+| wand     | 1     | 0.40      | 1.30       | 1.2   | 2     | Light, fast |
+| sceptre  | 1     | 0.55      | 1.25       | 0.9   | 4     | Moderate |
+| staff    | 2     | 0.80      | 1.60       | 0.7   | 12    | Defensive, high spell boost |
+
+`spell_damage_multiplier` is applied in `calcSpellDamage()` and
+`calcMobSpellDamage()` in `internal/hooks/spell_resolution.go`.

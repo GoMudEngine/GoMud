@@ -1,6 +1,7 @@
 mobid: 106
 zone: Thornwall City
-statpool: 20
+archetype: fighting
+statpool: 60
 itemdropchance: 0
 hostile: false
 maxwander: 2
@@ -16,8 +17,7 @@ activitylevel: 20
 character:
   name: city guard
   description: |
-    A guard in Thornwall livery -- blue-grey surcoat over chainmail,
-    spear in hand, short sword at the hip. The city guard are a visible
+    A guard in Thornwall livery. The city guard are a visible
     presence in the main streets and market, maintaining order through
     routine patrol and the occasional pointed question. This one has the
     alert but bored expression of someone on a long shift, watching for
@@ -25,6 +25,23 @@ character:
   speciesid: 1
   level: 1
   gold: 0
+  equipment:
+    weapon:
+      itemid: 10019
+    offhand:
+      itemid: 20010
+    body:
+      itemid: 20011
+    head:
+      itemid: 20047
+    legs:
+      itemid: 20050
+    feet:
+      itemid: 20052
+    gloves:
+      itemid: 20051
+  items:
+    - itemid: 10014
   stats:
     strength:
       training: 5

@@ -39,13 +39,60 @@ func SkillMultiplier(rank int) float64 {
 	return base + (max-base)*math.Sqrt(r/softCap)
 }
 
+// DamageScale returns the configured damage scale for a given channel.
+// All channels use the same formula: stat × SkillMult × itemMult × scale.
+// Physical default is 0.30 (stats ~100, so 100×1.0×1.0×0.30 = 30 raw).
+// Magical / Conviction defaults are 1.0 (flat multipliers).
+func DamageScale(channel DamageChannel) float64 {
+	bal := configs.GetBalanceConfig()
+	switch channel {
+	case ChannelPhysical:
+		return float64(bal.MeleeDamageScale)
+	case ChannelMagical:
+		return float64(bal.SpellDamageScale)
+	case ChannelConviction:
+		return float64(bal.RhetoricDamageScale)
+	default:
+		return 1.0
+	}
+}
+
 // CalcRawDamage computes raw damage before mitigation and variance.
-// raw = stat × SkillMultiplier(rank) × itemMult
-func CalcRawDamage(stat int, skillRank int, itemMult float64) float64 {
+// All channels use the same unified formula:
+//
+//	raw = stat × SkillMultiplier(rank) × itemMult × ChannelScale
+//
+// The per-channel scale absorbs any normalization:
+//   - Physical: 0.30 (stats ~100, so 100×1.0×1.0×0.30 = 30 raw per swing)
+//   - Magical:  1.00 (100×1.0×1.0×1.00 = 100 raw)
+//   - Conviction: 1.00 (100×1.0×0.5×1.00 = 50 raw for taunt)
+func CalcRawDamage(stat int, skillRank int, itemMult float64, channel DamageChannel) float64 {
 	if itemMult <= 0 {
 		itemMult = 0.30 // fallback to unarmed-level multiplier
 	}
-	return float64(stat) * SkillMultiplier(skillRank) * itemMult
+	scale := DamageScale(channel)
+	statFactor := float64(stat)
+
+	return statFactor * SkillMultiplier(skillRank) * itemMult * scale
+}
+
+// ResourceMultiplier returns a smooth penalty multiplier based on how depleted
+// a resource pool is. Returns 1.0 at full, decreasing to (1 - penaltyMax) at 0%.
+// Uses a quadratic curve (configurable exponent) so penalties are barely
+// noticeable above 50% but ramp up as the pool empties.
+func ResourceMultiplier(current, max int, penaltyMax float64) float64 {
+	if max <= 0 {
+		return 1.0
+	}
+	ratio := float64(current) / float64(max)
+	if ratio >= 1.0 {
+		return 1.0
+	}
+	if ratio < 0.0 {
+		ratio = 0.0
+	}
+	curve := float64(configs.GetBalanceConfig().ResourcePenaltyCurve)
+	return 1.0 - penaltyMax*math.Pow(1.0-ratio, curve)
 }
 
 // ApplyMitigation reduces raw damage by a mitigation percentage, capped.

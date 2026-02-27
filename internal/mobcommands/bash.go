@@ -74,7 +74,7 @@ func Bash(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	// Calculate damage via unified pipeline
 	skillRank := mob.Character.GetSkillLevel(skills.WeaponCombat)
-	rawDmg := combat.CalcRawDamage(mob.Character.Stats.Strength.ValueAdj, skillRank, float64(cfg.BashDamagePercent))
+	rawDmg := combat.CalcRawDamage(mob.Character.Stats.Strength.ValueAdj, skillRank, float64(cfg.BashDamagePercent), combat.ChannelPhysical)
 
 	// Apply target's physical mitigation
 	var targetMitig float64

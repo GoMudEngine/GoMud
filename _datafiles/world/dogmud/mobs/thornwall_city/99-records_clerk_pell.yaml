@@ -1,6 +1,6 @@
 mobid: 99
 zone: Thornwall City
-statpool: 15
+statpool: 45
 itemdropchance: 0
 hostile: false
 maxwander: 0

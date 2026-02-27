@@ -1,6 +1,7 @@
 mobid: 95
 zone: Thornwall City
-statpool: 22
+archetype: casting
+statpool: 88
 itemdropchance: 0
 hostile: false
 maxwander: 0
@@ -17,7 +18,7 @@ activitylevel: 10
 character:
   name: temple priest Olen
   description: |
-    A tall, thin man in simple robes, his hands perpetually stained with
+    A tall, thin man with hands perpetually stained with
     ink from the tithe ledgers he maintains. Priest Olen has the distracted
     air of someone whose mind is always on three things at once -- the
     spiritual needs of his congregation, the financial needs of the temple,
@@ -28,6 +29,11 @@ character:
   speciesid: 1
   level: 1
   gold: 0
+  equipment:
+    weapon:
+      itemid: 10017
+    body:
+      itemid: 20046
   stats:
     willpower:
       training: 15

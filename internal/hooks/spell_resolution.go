@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
@@ -98,14 +99,16 @@ func resolveAgainstMob(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, 
 	}
 
 	isCrit := atkRoll.ZScore >= 2.0
-	// Stage 30.1: Record spell hit (damage recorded as 0; actual damage applied in applyMobEffect)
-	combat.RecordSpell(combat.User, combat.Mob, true, isCrit, false, false, 0, atkRoll.ZScore, user.Character, &mob.Character, round)
-	applyMobEffect(user, mob, room, spellData, magnitude, isCrit)
+	dmgDealt := applyMobEffect(user, mob, room, spellData, magnitude, isCrit)
+	// Stage 30.1: Record spell hit with actual damage
+	combat.RecordSpell(combat.User, combat.Mob, true, isCrit, false, false, dmgDealt, atkRoll.ZScore, user.Character, &mob.Character, round)
 }
 
-// applyMobEffect applies the spell effect to a mob.
+// applyMobEffect applies the spell effect to a mob and returns damage dealt (0 for non-damage effects).
 // user may be nil when the caster is a mob (guards all user.* references).
-func applyMobEffect(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spellData *spells.SpellData, magnitude int, isCrit bool) {
+func applyMobEffect(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spellData *spells.SpellData, magnitude int, isCrit bool) int {
+
+	dmgDealt := 0
 
 	critTag := ""
 	if isCrit {
@@ -115,6 +118,7 @@ func applyMobEffect(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spe
 	switch spellData.EffectType {
 	case "damage":
 		dmg := calcSpellDamage(spellData, user, &mob.Character, magnitude, isCrit)
+		dmgDealt = dmg
 		mob.Character.Health -= dmg
 		// Set aggro on both sides immediately
 		if mob.Character.Aggro == nil {
@@ -163,6 +167,7 @@ func applyMobEffect(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spe
 
 	case "knockdown":
 		dmg := calcSpellDamage(spellData, user, &mob.Character, magnitude, isCrit)
+		dmgDealt = dmg
 		mob.Character.Health -= dmg
 		mob.Character.CombatPosition = characters.PositionProne
 		mob.Character.PositionRoundsMin = 1
@@ -213,7 +218,7 @@ func applyMobEffect(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spe
 					`<ansi fg="red"><ansi fg="mobname">%s</ansi> cannot be tamed — it is not a wild animal.</ansi>`,
 					mob.Character.Name))
 			}
-			return
+			return 0
 		}
 		if user != nil {
 			mob.Character.Charm(user.UserId, 24, "")
@@ -234,6 +239,7 @@ func applyMobEffect(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spe
 				spellData.Name, mob.Character.Name))
 		}
 	}
+	return dmgDealt
 }
 
 // resolveAgainstPlayer performs the opposed roll and applies the effect to a player.
@@ -411,7 +417,19 @@ func calcSpellDamage(spellData *spells.SpellData, user *users.UserRecord, target
 	if spellData.DamageMultiplier > 0 && user != nil {
 		// New pipeline: Willpower × SkillMultiplier(spellcasting) × spell.DamageMultiplier
 		skillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
-		rawDmg := combat.CalcRawDamage(user.Character.Stats.Willpower.ValueAdj, skillLevel, spellData.DamageMultiplier)
+		rawDmg := combat.CalcRawDamage(user.Character.Stats.Willpower.ValueAdj, skillLevel, spellData.DamageMultiplier, combat.ChannelMagical)
+
+		// Apply weapon spell damage multiplier (caster weapons)
+		if user.Character.Equipment.Weapon.ItemId > 0 {
+			if sdm := user.Character.Equipment.Weapon.GetSpec().SpellDamageMultiplier; sdm > 0 {
+				rawDmg *= sdm
+			}
+		}
+
+		// Apply smooth conviction-based spell damage penalty
+		cpPenalty := float64(configs.GetBalanceConfig().ConvictionPenaltyMax)
+		rawDmg *= combat.ResourceMultiplier(user.Character.Conviction,
+			user.Character.ConvictionMax.Value, cpPenalty)
 
 		// Apply mitigation based on defense type
 		var mitigPct, cap float64
@@ -464,7 +482,19 @@ func calcMobSpellDamage(spellData *spells.SpellData, caster *characters.Characte
 
 	if spellData.DamageMultiplier > 0 {
 		skillLevel := caster.GetSkillLevel(skills.Spellcasting)
-		rawDmg := combat.CalcRawDamage(caster.Stats.Willpower.ValueAdj, skillLevel, spellData.DamageMultiplier)
+		rawDmg := combat.CalcRawDamage(caster.Stats.Willpower.ValueAdj, skillLevel, spellData.DamageMultiplier, combat.ChannelMagical)
+
+		// Apply weapon spell damage multiplier (caster weapons)
+		if caster.Equipment.Weapon.ItemId > 0 {
+			if sdm := caster.Equipment.Weapon.GetSpec().SpellDamageMultiplier; sdm > 0 {
+				rawDmg *= sdm
+			}
+		}
+
+		// Apply smooth conviction-based spell damage penalty
+		cpPenalty := float64(configs.GetBalanceConfig().ConvictionPenaltyMax)
+		rawDmg *= combat.ResourceMultiplier(caster.Conviction,
+			caster.ConvictionMax.Value, cpPenalty)
 
 		var mitigPct, cap float64
 		switch spellData.TargetDefenseType {
@@ -624,8 +654,7 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 		return
 	}
 	isCrit := atkRoll.ZScore >= 2.0
-	// Stage 30.1: Record spell hit
-	combat.RecordSpell(combat.Mob, combat.User, true, isCrit, false, false, 0, atkRoll.ZScore, &caster.Character, target.Character, round)
+	mobSpellDmg := 0
 	critTag := ""
 	if isCrit {
 		critTag = ` <ansi fg="yellow">[CRIT!]</ansi>`
@@ -633,6 +662,7 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 	switch spellData.EffectType {
 	case "damage":
 		dmg := calcMobSpellDamage(spellData, &caster.Character, target.Character, magnitude, isCrit)
+		mobSpellDmg = dmg
 		target.Character.Health -= dmg
 		target.SendText(fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> strikes you! (<ansi fg="damage">%s</ansi>)%s`,
@@ -661,6 +691,7 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 		}
 	case "knockdown":
 		dmg := calcMobSpellDamage(spellData, &caster.Character, target.Character, magnitude, isCrit)
+		mobSpellDmg = dmg
 		target.Character.Health -= dmg
 		target.Character.CombatPosition = characters.PositionProne
 		target.Character.PositionRoundsMin = 1
@@ -689,4 +720,6 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> takes effect on you.`,
 			caster.Character.Name, spellData.Name))
 	}
+	// Stage 30.1: Record spell hit with actual damage
+	combat.RecordSpell(combat.Mob, combat.User, true, isCrit, false, false, mobSpellDmg, atkRoll.ZScore, &caster.Character, target.Character, round)
 }

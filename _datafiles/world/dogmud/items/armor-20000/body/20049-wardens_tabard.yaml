@@ -1,0 +1,12 @@
+itemid: 20049
+name: warden's tabard
+namesimple: tabard
+description: A sleeveless surcoat of thick canvas worn over light armor,
+  dyed in muted earth tones and marked with the local warden's sigil. It adds
+  a modest layer of padding across the torso.
+type: body
+subtype: wearable
+damagereduction: 3
+physical_mitigation: 3
+escapemodifier: 0.0
+value: 8

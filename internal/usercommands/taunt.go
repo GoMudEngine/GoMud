@@ -73,6 +73,12 @@ func Taunt(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	defenderRhetoric := float64(targetChar.GetSkillLevel(skills.Rhetoric))
 	defenseScore := float64(targetChar.Stats.Willpower.ValueAdj) + defenderRhetoric
 
+	// Apply smooth conviction-based penalty to taunt hit chance
+	cpPenalty := float64(configs.GetBalanceConfig().ConvictionPenaltyMax)
+	convMult := combat.ResourceMultiplier(user.Character.Conviction,
+		user.Character.ConvictionMax.Value, cpPenalty)
+	attackScore *= convMult
+
 	// Opposed roll for hit check
 	attackSuccess, _, atkRoll, _ := dice.OpposedRollStat(attackScore, defenseScore)
 
@@ -107,7 +113,11 @@ func Taunt(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			user.Character.Stats.Charisma.ValueAdj,
 			int(attackerRhetoric),
 			0.5, // taunt base multiplier
+			combat.ChannelConviction,
 		)
+
+		// Apply smooth conviction-based damage penalty
+		rawDmg *= convMult
 
 		// Crit check
 		isCrit := atkRoll.ZScore >= 2.0

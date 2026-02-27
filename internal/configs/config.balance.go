@@ -16,9 +16,17 @@ type Balance struct {
 	UnarmedDamageMultiplier    ConfigFloat `yaml:"UnarmedDamageMultiplier"`    // Fist damage multiplier for new pipeline (default 0.30)
 	SkillMultiplierBase        ConfigFloat `yaml:"SkillMultiplierBase"`        // Skill multiplier at rank 0 (default 1.0)
 	SkillMultiplierMax         ConfigFloat `yaml:"SkillMultiplierMax"`         // Skill multiplier at soft cap (default 3.0)
+	MeleeDamageScale           ConfigFloat `yaml:"MeleeDamageScale"`            // Physical damage scale. Stats ~100, so 0.30 yields ~30 raw per swing (default 0.30)
+	SpellDamageScale           ConfigFloat `yaml:"SpellDamageScale"`            // Flat multiplier on spell damage output (default 1.0 = no change)
+	RhetoricDamageScale        ConfigFloat `yaml:"RhetoricDamageScale"`         // Flat multiplier on conviction/taunt damage output (default 1.0 = no change)
+	MobDamageMultiplier        ConfigFloat `yaml:"MobDamageMultiplier"`         // Extra multiplier applied to NPC melee damage only (default 1.0 = same as players)
 	PhysicalMitigationCap      ConfigFloat `yaml:"PhysicalMitigationCap"`     // Max physical mitigation % (default 0.75)
 	MagicalMitigationCap       ConfigFloat `yaml:"MagicalMitigationCap"`      // Max magical mitigation % (default 0.75)
 	ConvictionMitigationCap    ConfigFloat `yaml:"ConvictionMitigationCap"`   // Max conviction mitigation % (default 0.75)
+	ResourcePenaltyCurve       ConfigFloat `yaml:"ResourcePenaltyCurve"`     // Exponent for resource depletion penalty curve (default 2.0)
+	HealthPenaltyMax           ConfigFloat `yaml:"HealthPenaltyMax"`         // Max melee damage penalty at 0% HP (default 0.28)
+	StaminaPenaltyMax          ConfigFloat `yaml:"StaminaPenaltyMax"`        // Max attack count + hit rate penalty at 0% SP (default 0.28)
+	ConvictionPenaltyMax       ConfigFloat `yaml:"ConvictionPenaltyMax"`     // Max taunt/spell penalty at 0% CP (default 0.28)
 
 	// ── REGEN RATES ──────────────────────────────────────────────────────────
 	PlayerHealthRegenPct     ConfigFloat `yaml:"PlayerHealthRegenPct"`     // Fraction of HealthMax regen'd per tick — players (default 0.01)
@@ -125,6 +133,18 @@ func (b *Balance) Validate() {
 	if b.SkillMultiplierMax <= 0 {
 		b.SkillMultiplierMax = 3.0
 	}
+	if b.MeleeDamageScale <= 0 {
+		b.MeleeDamageScale = 0.30
+	}
+	if b.SpellDamageScale <= 0 {
+		b.SpellDamageScale = 1.0
+	}
+	if b.RhetoricDamageScale <= 0 {
+		b.RhetoricDamageScale = 1.0
+	}
+	if b.MobDamageMultiplier <= 0 {
+		b.MobDamageMultiplier = 1.0
+	}
 	if b.PhysicalMitigationCap <= 0 || b.PhysicalMitigationCap > 1.0 {
 		b.PhysicalMitigationCap = 0.75
 	}
@@ -133,6 +153,18 @@ func (b *Balance) Validate() {
 	}
 	if b.ConvictionMitigationCap <= 0 || b.ConvictionMitigationCap > 1.0 {
 		b.ConvictionMitigationCap = 0.75
+	}
+	if b.ResourcePenaltyCurve <= 0 {
+		b.ResourcePenaltyCurve = 2.0
+	}
+	if b.HealthPenaltyMax <= 0 || b.HealthPenaltyMax > 1.0 {
+		b.HealthPenaltyMax = 0.28
+	}
+	if b.StaminaPenaltyMax <= 0 || b.StaminaPenaltyMax > 1.0 {
+		b.StaminaPenaltyMax = 0.28
+	}
+	if b.ConvictionPenaltyMax <= 0 || b.ConvictionPenaltyMax > 1.0 {
+		b.ConvictionPenaltyMax = 0.28
 	}
 
 	// ── REGEN RATES ──────────────────────────────────────────────────────────
