@@ -1,5 +1,6 @@
 mobid: 68
 zone: Sanctum Basin
+archetype: fighting
 statpool: 5
 itemdropchance: 15
 hostile: true
@@ -15,12 +16,16 @@ character:
   name: cave goblin guard
   description: 'The cave goblins that inhabit the depths of the Sanctum Basin plateau
     are a territorial and belligerent clan, their skin the blue-grey of deep cave stone.
-    This one serves as a guard, armed with a spear of lashed flint and wearing a patchwork
-    of scavenged leather armor. Its yellow eyes are adapted to the dark and it sees
-    poorly in bright light.'
+    This one serves as a guard, its yellow eyes adapted to the dark. It sees poorly in
+    bright light.'
   speciesid: 5
   level: 4
   gold: 3
+  equipment:
+    weapon:
+      itemid: 10011
+    body:
+      itemid: 20048
   stats:
     vitality:
       training: -1

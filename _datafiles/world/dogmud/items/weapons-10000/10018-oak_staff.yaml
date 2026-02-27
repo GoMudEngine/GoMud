@@ -1,0 +1,18 @@
+itemid: 10018
+name: oak staff
+namesimple: staff
+description: A sturdy length of gnarled oak, iron-shod at both ends and
+  carved with faded sigils along its shaft. Two-handed and heavy, it makes
+  a formidable defensive weapon and a powerful conduit for spellcraft.
+type: weapon
+hands: 2
+subtype: staff
+damage:
+  basedamage: 7
+  variance: 2
+damage_multiplier: 0.80
+spell_damage_multiplier: 1.60
+speedmultiplier: 0.7
+parryrating: 12
+weight: 6.0
+value: 70

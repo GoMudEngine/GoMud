@@ -52,6 +52,7 @@ _datafiles/world/dogmud/items/{type_folder}/{subtype_folder?}/{itemid}-{ConvertF
 | `hands` | WeaponHands | **yes** | `1` or `2`. |
 | `damage` | Damage | **yes** | See Damage sub-fields below. |
 | `damage_multiplier` | float | **yes** | Scaling factor for unified damage pipeline (0.15–2.5). |
+| `spell_damage_multiplier` | float | no | Multiplier for spell damage when equipped (caster weapons: wand/sceptre/staff). |
 | `parryrating` | int | no | Adds to parry defense. |
 | `speedmultiplier` | float | no | Attack speed modifier. 1.0 = unarmed baseline. <1.0 = slower, >1.0 = faster. |
 | `staminacost` | int | no | Stamina consumed per attack. |
@@ -107,9 +108,12 @@ Valid stat names: `strength`, `dexterity`, `perception`, `vitality`, `willpower`
 
 **Weapons (`type: weapon`):**
 - `subtype: slashing` — swords, axes
-- `subtype: blunt` — hammers, clubs, staves
+- `subtype: blunt` — hammers, clubs
 - `subtype: piercing` — daggers, spears, bows
 - `subtype: ranged` — bows, crossbows
+- `subtype: wand` — caster weapon, light, 1-handed (uses `spell_damage_multiplier`)
+- `subtype: sceptre` — caster weapon, moderate, 1-handed (uses `spell_damage_multiplier`)
+- `subtype: staff` — caster weapon, defensive, 2-handed (uses `spell_damage_multiplier`)
 
 **Armor (type IS the slot):**
 - `type: head`, `type: body`, `type: legs`, `type: feet`, `type: hands`

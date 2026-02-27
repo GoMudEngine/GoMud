@@ -1,5 +1,6 @@
 mobid: 78
 zone: Labyrinth of Low Tunnels
+archetype: fighting
 statpool: 6
 itemdropchance: 20
 hostile: true

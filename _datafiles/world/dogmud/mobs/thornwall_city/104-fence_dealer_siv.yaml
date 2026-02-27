@@ -1,6 +1,6 @@
 mobid: 104
 zone: Thornwall City
-statpool: 16
+statpool: 48
 itemdropchance: 0
 hostile: false
 maxwander: 0
@@ -27,6 +27,9 @@ character:
   speciesid: 1
   level: 1
   gold: 10
+  equipment:
+    weapon:
+      itemid: 10009
   stats:
     perception:
       training: 10

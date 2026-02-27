@@ -1,6 +1,7 @@
 mobid: 50
 zone: Sanctum Basin
-statpool: 30
+archetype: casting
+statpool: 90
 hostile: false
 maxwander: 0
 idlecommands:
@@ -92,3 +93,8 @@ character:
   speciesid: 1
   level: 1
   gold: 0
+  equipment:
+    weapon:
+      itemid: 10017
+    body:
+      itemid: 20046

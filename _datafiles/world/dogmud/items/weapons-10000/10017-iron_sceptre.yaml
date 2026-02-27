@@ -1,0 +1,18 @@
+itemid: 10017
+name: iron sceptre
+namesimple: sceptre
+description: A short rod of black iron crowned with a faceted crystal that
+  pulses with a dull inner light. Heavier than a wand, it serves adequately
+  as both a bludgeon and a focus for channeling spells.
+type: weapon
+hands: 1
+subtype: sceptre
+damage:
+  basedamage: 5
+  variance: 2
+damage_multiplier: 0.55
+spell_damage_multiplier: 1.25
+speedmultiplier: 0.9
+parryrating: 4
+weight: 4.0
+value: 55

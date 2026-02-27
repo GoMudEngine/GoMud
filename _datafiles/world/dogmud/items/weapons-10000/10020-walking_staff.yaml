@@ -1,0 +1,18 @@
+itemid: 10020
+name: walking staff
+namesimple: staff
+description: A tall hardwood staff, worn smooth by years of use on the road.
+  It serves well as a walking aid and can deliver a solid crack in a pinch,
+  though it was never meant for real combat.
+type: weapon
+hands: 2
+subtype: bludgeoning
+weight: 4.0
+speedmultiplier: 0.75
+staminacost: 5
+damage:
+  basedamage: 4
+  variance: 2
+damage_multiplier: 0.30
+parryrating: 8
+value: 3

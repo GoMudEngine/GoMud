@@ -88,6 +88,9 @@ func ItemSubtypes() []ItemTypeInfo {
 		{string(Shooting), `A ranged weapon.`, 0, 0, 0},
 		{string(Claws), `A slashing weapon worn on the hands.`, 0, 0, 0},
 		{string(Whipping), `A whipping weapon.`, 0, 0, 0},
+		{string(Wand), `A caster weapon that boosts spell damage.`, 0, 0, 0},
+		{string(Sceptre), `A caster weapon that boosts spell damage.`, 0, 0, 0},
+		{string(Staff), `A two-handed caster weapon with high spell damage boost.`, 0, 0, 0},
 		// Miscellaneous data
 		{string(BlobContent), `Can store blob content in the item data.`, 0, 0, 0},
 	}
@@ -141,6 +144,9 @@ const (
 	Shooting    ItemSubType = "shooting" // bows, crossbows, guns, etc.
 	Claws       ItemSubType = "claws"
 	Whipping    ItemSubType = "whipping"
+	Wand        ItemSubType = "wand"
+	Sceptre     ItemSubType = "sceptre"
+	Staff       ItemSubType = "staff"
 
 	BlobContent ItemSubType = "blobcontent"
 
@@ -216,6 +222,7 @@ type ItemSpec struct {
 	MagicalMitigation    int     `yaml:"magical_mitigation,omitempty"`  // % magical damage reduction (Stage 34)
 	ConvictionMitigation int     `yaml:"conviction_mitigation,omitempty"` // % conviction damage reduction (Stage 34)
 	DamageMultiplier     float64 `yaml:"damage_multiplier,omitempty"`   // Weapon damage multiplier for new pipeline (Stage 34)
+	SpellDamageMultiplier float64 `yaml:"spell_damage_multiplier,omitempty"` // Spell damage multiplier for caster weapons (wand/sceptre/staff)
 	ParryRating          int     `yaml:"parryrating,omitempty"`         // Weapon parry bonus (Stage 7.1)
 	BlockRating     int         `yaml:"blockrating,omitempty"`     // Shield block bonus (Stage 7.1)
 	WaitRounds      int         `yaml:"waitrounds,omitempty"`      // How many extra rounds each combat requires

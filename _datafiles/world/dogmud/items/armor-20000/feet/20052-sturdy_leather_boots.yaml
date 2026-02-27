@@ -1,0 +1,11 @@
+itemid: 20052
+name: sturdy leather boots
+namesimple: boots
+description: Well-made boots of thick cowhide, double-stitched at the seams
+  and soled with layered leather. They protect the feet and lower shins and
+  hold up well to hard daily use.
+type: feet
+subtype: wearable
+damagereduction: 2
+physical_mitigation: 2
+value: 6

@@ -1,5 +1,6 @@
 mobid: 73
 zone: Labyrinth of Low Tunnels
+archetype: fighting
 statpool: 12
 itemdropchance: 15
 hostile: true
@@ -30,13 +31,18 @@ character:
     Stockier than the scouts and half a head taller, this warren dweller
     has been bred -- or mutated -- for violence. Thick ridges of calcified tissue
     armor its shoulders and forearms, and its jaw is heavy and undershot, lined with
-    teeth that look designed for tearing. It carries a crude bone club stained dark
-    with old blood and wears a harness of knotted sinew hung with small trophies --
+    teeth that look designed for tearing. It wears a harness of knotted sinew hung
+    with small trophies --
     teeth, claws, and a few objects that are unmistakably human in origin. Its milky
     eyes are hard and watchful.
   speciesid: 23
   level: 1
   gold: 1
+  equipment:
+    weapon:
+      itemid: 10010
+    body:
+      itemid: 20048
   items:
     - itemid: 10010
   stats:

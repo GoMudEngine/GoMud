@@ -1,5 +1,6 @@
 mobid: 74
 zone: Labyrinth of Low Tunnels
+archetype: casting
 statpool: 15
 hostile: false
 maxwander: 0
@@ -23,12 +24,17 @@ character:
     that move with unnerving precision. Pale fungal growths cluster along its scalp
     like a crown, pulsing faintly with bioluminescence. Its eyes are the same milky
     grey as its kin, but there is something behind them -- a calculating awareness
-    that the warriors lack. It wears a vest of woven sinew hung with clay pots of
-    dried herbs and bundles of cave-grown medicinals. When it speaks, its voice is
-    a hoarse whisper, halting but deliberate.
+    that the warriors lack. Clay pots of dried herbs and bundles of cave-grown
+    medicinals hang from its harness. When it speaks, its voice is a hoarse whisper,
+    halting but deliberate.
   speciesid: 23
   level: 1
   gold: 0
+  equipment:
+    weapon:
+      itemid: 10016
+    body:
+      itemid: 20048
   stats:
     willpower:
       training: 20

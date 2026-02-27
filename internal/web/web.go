@@ -327,6 +327,12 @@ func Listen(wg *sync.WaitGroup, webSocketHandler func(*websocket.Conn)) {
 	http.HandleFunc("GET /admin/api/combat-stats/", RunWithMUDLocked(
 		doBasicAuth(combatStatsAPI),
 	))
+	http.HandleFunc("POST /admin/api/combat-stats/reset", RunWithMUDLocked(
+		doBasicAuth(combatStatsResetAPI),
+	))
+	http.HandleFunc("POST /admin/api/combat-stats/export", RunWithMUDLocked(
+		doBasicAuth(combatStatsExportAPI),
+	))
 
 	// Room Admin
 	http.HandleFunc("GET /admin/rooms/", RunWithMUDLocked(

@@ -1,6 +1,7 @@
 mobid: 98
 zone: Thornwall City
-statpool: 18
+archetype: casting
+statpool: 54
 itemdropchance: 0
 hostile: false
 maxwander: 0

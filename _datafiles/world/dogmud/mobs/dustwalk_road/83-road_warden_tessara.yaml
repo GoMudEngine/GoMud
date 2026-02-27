@@ -1,6 +1,7 @@
 mobid: 83
 zone: Dustwalk Road
-statpool: 20
+archetype: fighting
+statpool: 60
 hostile: false
 maxwander: 0
 groups:
@@ -17,14 +18,24 @@ character:
   name: Road Warden Tessara
   description: |
     A tall woman with close-cropped grey hair and the weathered skin of
-    someone who has spent most of her life outdoors. She wears a warden's surcoat
-    over practical travelling leathers, and carries a well-maintained shortsword
-    at her hip with the ease of long habit. Her eyes are sharp and steady, the eyes
+    someone who has spent most of her life outdoors. Her eyes are sharp and steady,
+    the eyes
     of someone accustomed to watching roads and reading the people who walk them.
     There is an authority to her bearing that comes from competence rather than rank.
   speciesid: 1
   level: 1
   gold: 0
+  equipment:
+    weapon:
+      itemid: 10014
+    offhand:
+      itemid: 20004
+    body:
+      itemid: 20049
+    legs:
+      itemid: 20023
+    feet:
+      itemid: 20052
   stats:
     strength:
       training: 5

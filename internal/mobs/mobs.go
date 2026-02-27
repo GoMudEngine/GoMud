@@ -81,6 +81,7 @@ type Mob struct {
 	QuestFlags      []string `yaml:"questflags,omitempty,flow"` // What quest flags are set on this mob?
 	BuffIds         []int    `yaml:"buffids,omitempty"`         // Buff Id's this mob always has upon spawn
 	LLMProfile     *llm.LLMProfile `yaml:"llmprofile,omitempty"` // Optional LLM-driven dialogue profile
+	Archetype      string          `yaml:"archetype,omitempty"`           // "fighting", "casting", or "" (default even distribution)
 	SpawnMutations []string        `yaml:"spawnmutations,omitempty,flow"` // Mutations always granted at spawn (Phase 24.3)
 	MutationChance int             `yaml:"mutationchance,omitempty"`      // % chance to gain 1 random bonus mutation on spawn (Phase 24.3)
 	tempDataStore   map[string]any
@@ -178,17 +179,37 @@ func NewMobById(mobId MobId, homeRoomId int, forceStatPool ...int) *Mob {
 		if len(forceStatPool) > 0 && forceStatPool[0] > 0 {
 			statPool = forceStatPool[0]
 		}
-		// Distribute stat pool randomly across training stats
+		// Distribute stat pool across training stats using archetype weighting
 		for i := 0; i < statPool; i++ {
-			switch util.Rand(6) {
+			var statIdx int
+			switch mob.Archetype {
+			case "fighting":
+				// 80% physical (Str/Dex/Vit), 20% mental (Per/Wil/Cha)
+				if util.Rand(100) < 80 {
+					statIdx = util.Rand(3) // 0=Str, 1=Dex, 2=Vit
+				} else {
+					statIdx = 3 + util.Rand(3) // 3=Per, 4=Wil, 5=Cha
+				}
+			case "casting":
+				// 20% physical (Str/Dex/Vit), 80% mental (Per/Wil/Cha)
+				if util.Rand(100) < 20 {
+					statIdx = util.Rand(3)
+				} else {
+					statIdx = 3 + util.Rand(3)
+				}
+			default:
+				// Even distribution across all 6 stats
+				statIdx = util.Rand(6)
+			}
+			switch statIdx {
 			case 0:
 				mob.Character.Stats.Strength.Training++
 			case 1:
 				mob.Character.Stats.Dexterity.Training++
 			case 2:
-				mob.Character.Stats.Perception.Training++
-			case 3:
 				mob.Character.Stats.Vitality.Training++
+			case 3:
+				mob.Character.Stats.Perception.Training++
 			case 4:
 				mob.Character.Stats.Willpower.Training++
 			case 5:

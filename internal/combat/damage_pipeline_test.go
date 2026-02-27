@@ -48,23 +48,44 @@ func TestSkillMultiplier(t *testing.T) {
 	}
 }
 
-func TestCalcRawDamage(t *testing.T) {
-	// Stat 100, rank 0, multiplier 1.0 → 100 * 1.0 * 1.0 = 100
-	raw := CalcRawDamage(100, 0, 1.0)
-	if math.Abs(raw-100.0) > 0.01 {
-		t.Errorf("CalcRawDamage(100, 0, 1.0) = %f, want 100.0", raw)
+func TestCalcRawDamage_Physical(t *testing.T) {
+	// Physical: stat * SkillMult * itemMult * MeleeDamageScale(0.30)
+	// Stat 100, rank 0, mult 1.0 → 100 * 1.0 * 1.0 * 0.30 = 30
+	raw := CalcRawDamage(100, 0, 1.0, ChannelPhysical)
+	if math.Abs(raw-30.0) > 0.01 {
+		t.Errorf("CalcRawDamage physical(100, 0, 1.0) = %f, want 30.0", raw)
 	}
 
-	// Stat 100, rank 50, multiplier 1.0 → 100 * 3.0 * 1.0 = 300
-	raw2 := CalcRawDamage(100, 50, 1.0)
-	if math.Abs(raw2-300.0) > 0.01 {
-		t.Errorf("CalcRawDamage(100, 50, 1.0) = %f, want 300.0", raw2)
+	// Stat 100, rank 50, mult 1.0 → 100 * 3.0 * 1.0 * 0.30 = 90
+	raw2 := CalcRawDamage(100, 50, 1.0, ChannelPhysical)
+	if math.Abs(raw2-90.0) > 0.01 {
+		t.Errorf("CalcRawDamage physical(100, 50, 1.0) = %f, want 90.0", raw2)
 	}
 
 	// Zero item multiplier should fallback to 0.30
-	raw3 := CalcRawDamage(100, 0, 0)
-	if math.Abs(raw3-30.0) > 0.01 {
-		t.Errorf("CalcRawDamage(100, 0, 0) = %f, want 30.0 (fallback)", raw3)
+	// 100 * 1.0 * 0.30 * 0.30 = 9.0
+	raw3 := CalcRawDamage(100, 0, 0, ChannelPhysical)
+	if math.Abs(raw3-9.0) > 0.01 {
+		t.Errorf("CalcRawDamage physical(100, 0, 0) = %f, want 9.0 (fallback)", raw3)
+	}
+}
+
+func TestCalcRawDamage_Magical(t *testing.T) {
+	// Magical: stat * SkillMult * itemMult * SpellDamageScale(1.0)
+	// No stat normalization — flat multiplier
+	// Stat 100, rank 0, mult 1.0 → 100 * 1.0 * 1.0 * 1.0 = 100
+	raw := CalcRawDamage(100, 0, 1.0, ChannelMagical)
+	if math.Abs(raw-100.0) > 0.01 {
+		t.Errorf("CalcRawDamage magical(100, 0, 1.0) = %f, want 100.0", raw)
+	}
+}
+
+func TestCalcRawDamage_Conviction(t *testing.T) {
+	// Conviction: stat * SkillMult * itemMult * RhetoricDamageScale(1.0)
+	// Stat 100, rank 0, mult 0.5 → 100 * 1.0 * 0.5 * 1.0 = 50
+	raw := CalcRawDamage(100, 0, 0.5, ChannelConviction)
+	if math.Abs(raw-50.0) > 0.01 {
+		t.Errorf("CalcRawDamage conviction(100, 0, 0.5) = %f, want 50.0", raw)
 	}
 }
 
@@ -91,6 +112,48 @@ func TestApplyMitigation(t *testing.T) {
 	result4 := ApplyMitigation(100, -0.5, 0.75)
 	if math.Abs(result4-100.0) > 0.01 {
 		t.Errorf("ApplyMitigation(100, -0.5, 0.75) = %f, want 100.0", result4)
+	}
+}
+
+func TestResourceMultiplier(t *testing.T) {
+	// 100% resource → 1.0 (no penalty)
+	m100 := ResourceMultiplier(100, 100, 0.28)
+	if math.Abs(m100-1.0) > 0.001 {
+		t.Errorf("ResourceMultiplier(100, 100, 0.28) = %f, want 1.0", m100)
+	}
+
+	// 0% resource → 1 - penaltyMax = 0.72
+	m0 := ResourceMultiplier(0, 100, 0.28)
+	if math.Abs(m0-0.72) > 0.01 {
+		t.Errorf("ResourceMultiplier(0, 100, 0.28) = %f, want ~0.72", m0)
+	}
+
+	// 5% resource → ~0.747 (penalty ~25%)
+	m5 := ResourceMultiplier(5, 100, 0.28)
+	if m5 < 0.73 || m5 > 0.76 {
+		t.Errorf("ResourceMultiplier(5, 100, 0.28) = %f, want ~0.747", m5)
+	}
+
+	// 50% resource → ~0.93 (barely noticeable)
+	m50 := ResourceMultiplier(50, 100, 0.28)
+	if m50 < 0.92 || m50 > 0.94 {
+		t.Errorf("ResourceMultiplier(50, 100, 0.28) = %f, want ~0.93", m50)
+	}
+
+	// Monotonically decreasing as resource drops
+	prev := ResourceMultiplier(100, 100, 0.28)
+	for pct := 99; pct >= 0; pct-- {
+		cur := ResourceMultiplier(pct, 100, 0.28)
+		if cur > prev+0.001 { // small tolerance for float
+			t.Errorf("ResourceMultiplier(%d, 100, 0.28) = %f > prev %f — not monotonic", pct, cur, prev)
+		}
+		prev = cur
+	}
+
+	// Edge case: max <= 0 → 1.0
+	mZeroMax := ResourceMultiplier(50, 0, 0.28)
+	if mZeroMax != 1.0 {
+		t.Errorf("ResourceMultiplier(50, 0, 0.28) = %f, want 1.0", mZeroMax)
 	}
 }
 

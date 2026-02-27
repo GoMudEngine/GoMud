@@ -1,6 +1,6 @@
 mobid: 96
 zone: Thornwall City
-statpool: 18
+statpool: 54
 itemdropchance: 0
 hostile: false
 maxwander: 0
@@ -28,6 +28,9 @@ character:
   speciesid: 1
   level: 1
   gold: 0
+  equipment:
+    weapon:
+      itemid: 10009
   stats:
     strength:
       training: 8

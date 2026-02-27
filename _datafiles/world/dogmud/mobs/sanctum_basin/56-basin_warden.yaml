@@ -1,6 +1,7 @@
 mobid: 56
 zone: Sanctum Basin
-statpool: 40
+archetype: fighting
+statpool: 120
 hostile: false
 maxwander: 0
 idlecommands:
@@ -86,8 +87,19 @@ character:
   name: Basin Warden
   description: 'The Basin Warden is composed and alert, their expression neutral in
     the way of someone trained to show neither welcome nor threat until the situation
-    demands one. Their armor is plain but well-maintained, and the Chrysalis sigil on
-    their shoulder guard is the only decoration they permit.'
+    demands one. The Chrysalis sigil on their shoulder guard is the only decoration
+    they permit.'
   speciesid: 1
   level: 4
   gold: 0
+  equipment:
+    weapon:
+      itemid: 10014
+    offhand:
+      itemid: 20004
+    body:
+      itemid: 20049
+    legs:
+      itemid: 20023
+    feet:
+      itemid: 20052
