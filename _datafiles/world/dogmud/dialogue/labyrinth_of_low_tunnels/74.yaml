@@ -119,7 +119,7 @@ tree:
       unlocks: ["prove_intent"]
 
     - id: prove_intent
-      triggers: ["prove", "how", "help", "trust", "intent", "peace", "poultice", "medicine"]
+      triggers: ["prove", "how", "help", "trust", "intent", "peace", "poultice", "medicine", "quest", "task"]
       questExcluded: ["2-start"]
       grantsQuest: "2-start"
       text: "Bring healing poultices. The kind your alchemists make. We know the recipe but lack the surface herbs. Bring them here, to me, and I will carry them to the Eldest as proof that a surface-walker chose to help rather than to take."

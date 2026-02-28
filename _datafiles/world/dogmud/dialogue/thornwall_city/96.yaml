@@ -60,7 +60,7 @@ tree:
 
   nodes:
     - id: the_squeeze
-      triggers: ["trouble", "favour", "favor", "help", "debt", "problem", "quest"]
+      triggers: ["trouble", "favour", "favor", "help", "debt", "problem", "quest", "task"]
       questExcluded: ["10-start"]
       grantsQuest: "10-start"
       text: "The tavern owes taxes to the city. That is my problem and I am working on it. But there is another problem -- someone in the back alleys has been sending protection notices to every business in the quarter. Pay up or get hurt. I have been paying both, and the money is running out. This is the latest notice. If the guard captain saw this, he would have to act. But I am afraid to walk into that barracks myself. People who report the racket tend to have accidents."
