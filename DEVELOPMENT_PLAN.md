@@ -5173,7 +5173,7 @@ eliminate duplication between player and mob combat.
 
 ---
 
-### Stage 37.1b: Command God-Functions Refactor
+### Stage 37.1b: Command God-Functions Refactor ✅ COMPLETED (241a5ac)
 
 **Goal**: Break up the next tier of oversized command handlers (400–600
 lines each). Extract subcommand dispatchers, separate validation from
@@ -5602,7 +5602,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 34: Unified Damage Pipeline | 10 stages (34.1–34.10) | 20 hours | **Complete** |
 | Phase 35: Combat Balance & Mob Equipment | 1 stage | 4 hours | **Complete** |
 | Phase 36: Dialogue System Fix & Quest Wiring | 1 stage | 4 hours | **Complete** |
-| Phase 37: Codebase Quality Pass | 6 stages (37.1a–37.3b) | 24 hours | **37.1a Complete** |
+| Phase 37: Codebase Quality Pass | 6 stages (37.1a–37.3b) | 24 hours | **37.1a–37.1b Complete** |
 | Phase 38: Test Coverage Pass | 4 stages (38.1–38.4) | 20 hours | Not started |
 | **Total** | **~100 stages** | **~650 hours** | |
 
@@ -5768,4 +5768,4 @@ These are longer-term goals to be detailed when the above phases are complete:
 
 **Last Updated**: 2026-02-27
 **Status**: In Progress
-**Current Stage**: Stage 37.1a complete. Next: Stage 37.1b (Dead Code & Unused Export Audit).
+**Current Stage**: Stage 37.1b complete. Next: Stage 37.2a (Dead Code & Unused Export Audit).
