@@ -333,6 +333,15 @@ func main() {
 
 	// Just a goroutine that spins its wheels until the program shuts down")
 	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				mudlog.Error("PANIC", "error", r)
+				s := string(debug.Stack())
+				for _, str := range strings.Split(s, "\n") {
+					mudlog.Error("PANIC", "stack", str)
+				}
+			}
+		}()
 		for {
 			mudlog.Warn("Waiting on workers")
 			// sleep for 3 seconds

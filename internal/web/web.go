@@ -11,6 +11,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"runtime/debug"
 	"sort"
 	"strings"
 	"sync"
@@ -382,6 +383,15 @@ func Listen(wg *sync.WaitGroup, webSocketHandler func(*websocket.Conn)) {
 					mudlog.Info("HTTPS", "stage", "Starting https server", "port", networkConfig.HttpsPort)
 					go func() {
 						defer wg.Done()
+						defer func() {
+							if r := recover(); r != nil {
+								mudlog.Error("PANIC", "error", r)
+								s := string(debug.Stack())
+								for _, str := range strings.Split(s, "\n") {
+									mudlog.Error("PANIC", "stack", str)
+								}
+							}
+						}()
 						if err := httpsServer.ListenAndServeTLS("", ""); err != nil && err != http.ErrServerClosed {
 							mudlog.Error("HTTPS", "error", fmt.Errorf("Error starting HTTPS web server: %w", err))
 						}
@@ -435,6 +445,15 @@ func Listen(wg *sync.WaitGroup, webSocketHandler func(*websocket.Conn)) {
 		mudlog.Info("HTTP", "stage", "Starting http server", "port", networkConfig.HttpPort)
 		go func() {
 			defer wg.Done()
+			defer func() {
+				if r := recover(); r != nil {
+					mudlog.Error("PANIC", "error", r)
+					s := string(debug.Stack())
+					for _, str := range strings.Split(s, "\n") {
+						mudlog.Error("PANIC", "stack", str)
+					}
+				}
+			}()
 
 			if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 				mudlog.Error("HTTP", "error", fmt.Errorf("Error starting web server: %w", err))

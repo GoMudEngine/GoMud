@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"runtime/debug"
 	"strings"
 	"time"
 
@@ -27,6 +28,16 @@ func AskAsync(
 	onUnavailable func(),
 ) {
 	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				mudlog.Error("PANIC", "error", r)
+				s := string(debug.Stack())
+				for _, str := range strings.Split(s, "\n") {
+					mudlog.Error("PANIC", "stack", str)
+				}
+			}
+		}()
+
 		// 1. If another request is already in-flight for this mob, fall back immediately.
 		if isPending(mobInstanceId) {
 			mudlog.Info(`llm`, `status`, fmt.Sprintf("mob %d already pending, falling back to YAML", mobInstanceId))
