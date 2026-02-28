@@ -10,6 +10,9 @@ func Despawn(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	mudlog.Info("despawn", "mobname", mob.Character.Name, "reason", rest)
 
+	// Stage 38.4: Delete saved instance so respawn starts fresh from template
+	mobs.DeleteMobInstance(mob.MobId, mob.Zone, mob.Character.Name, mob.HomeRoomId)
+
 	// Destroy any record of this mob.
 	mobs.DestroyInstance(mob.InstanceId)
 

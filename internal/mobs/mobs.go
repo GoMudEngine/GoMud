@@ -176,46 +176,72 @@ func NewMobById(mobId MobId, homeRoomId int, forceStatPool ...int) *Mob {
 		mob.Character.IsMob = true
 		mob.Character.PlayerDamage = make(map[int]int)
 
-		// Determine stat pool: use override if provided, otherwise use mob template's StatPool
-		statPool := mob.StatPool
-		if len(forceStatPool) > 0 && forceStatPool[0] > 0 {
-			statPool = forceStatPool[0]
-		}
-		// Distribute stat pool across training stats using archetype weighting
-		for i := 0; i < statPool; i++ {
-			var statIdx int
-			switch mob.Archetype {
-			case "fighting":
-				// 80% physical (Str/Dex/Vit), 20% mental (Per/Wil/Cha)
-				if util.Rand(100) < 80 {
-					statIdx = util.Rand(3) // 0=Str, 1=Dex, 2=Vit
-				} else {
-					statIdx = 3 + util.Rand(3) // 3=Per, 4=Wil, 5=Cha
-				}
-			case "casting":
-				// 20% physical (Str/Dex/Vit), 80% mental (Per/Wil/Cha)
-				if util.Rand(100) < 20 {
-					statIdx = util.Rand(3)
-				} else {
-					statIdx = 3 + util.Rand(3)
-				}
-			default:
-				// Even distribution across all 6 stats
-				statIdx = util.Rand(6)
+		// Stage 38.4: Try to load a saved instance (progression data from disk).
+		// If found, apply saved training values instead of randomizing.
+		savedInstance := LoadMobInstance(mob.MobId, mob.Zone, mob.Character.Name, homeRoomId)
+		if savedInstance != nil {
+			// Restore saved progression
+			mob.Character.Stats.Strength.Training = savedInstance.StrengthTraining
+			mob.Character.Stats.Dexterity.Training = savedInstance.DexterityTraining
+			mob.Character.Stats.Perception.Training = savedInstance.PerceptionTraining
+			mob.Character.Stats.Vitality.Training = savedInstance.VitalityTraining
+			mob.Character.Stats.Willpower.Training = savedInstance.WillpowerTraining
+			mob.Character.Stats.Charisma.Training = savedInstance.CharismaTraining
+			if savedInstance.Skills != nil {
+				mob.Character.Skills = savedInstance.Skills
 			}
-			switch statIdx {
-			case 0:
-				mob.Character.Stats.Strength.Training++
-			case 1:
-				mob.Character.Stats.Dexterity.Training++
-			case 2:
-				mob.Character.Stats.Vitality.Training++
-			case 3:
-				mob.Character.Stats.Perception.Training++
-			case 4:
-				mob.Character.Stats.Willpower.Training++
-			case 5:
-				mob.Character.Stats.Charisma.Training++
+			if savedInstance.SkillUseCount != nil {
+				mob.Character.SkillUseCount = savedInstance.SkillUseCount
+			}
+			if savedInstance.StatUseCount != nil {
+				mob.Character.StatUseCount = savedInstance.StatUseCount
+			}
+			if savedInstance.Mutations != nil {
+				mob.Character.Mutations = savedInstance.Mutations
+			}
+			mob.Character.MutationProgress = savedInstance.MutationProgress
+		} else {
+			// No saved instance — randomize stat pool as usual
+			statPool := mob.StatPool
+			if len(forceStatPool) > 0 && forceStatPool[0] > 0 {
+				statPool = forceStatPool[0]
+			}
+			// Distribute stat pool across training stats using archetype weighting
+			for i := 0; i < statPool; i++ {
+				var statIdx int
+				switch mob.Archetype {
+				case "fighting":
+					// 80% physical (Str/Dex/Vit), 20% mental (Per/Wil/Cha)
+					if util.Rand(100) < 80 {
+						statIdx = util.Rand(3) // 0=Str, 1=Dex, 2=Vit
+					} else {
+						statIdx = 3 + util.Rand(3) // 3=Per, 4=Wil, 5=Cha
+					}
+				case "casting":
+					// 20% physical (Str/Dex/Vit), 80% mental (Per/Wil/Cha)
+					if util.Rand(100) < 20 {
+						statIdx = util.Rand(3)
+					} else {
+						statIdx = 3 + util.Rand(3)
+					}
+				default:
+					// Even distribution across all 6 stats
+					statIdx = util.Rand(6)
+				}
+				switch statIdx {
+				case 0:
+					mob.Character.Stats.Strength.Training++
+				case 1:
+					mob.Character.Stats.Dexterity.Training++
+				case 2:
+					mob.Character.Stats.Vitality.Training++
+				case 3:
+					mob.Character.Stats.Perception.Training++
+				case 4:
+					mob.Character.Stats.Willpower.Training++
+				case 5:
+					mob.Character.Stats.Charisma.Training++
+				}
 			}
 		}
 		mob.Character.Validate()

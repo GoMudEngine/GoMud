@@ -65,6 +65,8 @@ type Balance struct {
 	MobProgressionRate       ConfigFloat `yaml:"MobProgressionRate"`       // Multiplier on progression chance vs players (default 0.5)
 	MobStatCap               ConfigInt   `yaml:"MobStatCap"`               // Hard cap on mob stats from progression (default 200)
 	MobSkillCap              ConfigInt   `yaml:"MobSkillCap"`              // Hard cap on mob skill level from progression (default 3)
+	MobSaveIntervalRounds    ConfigInt   `yaml:"MobSaveIntervalRounds"`    // Rounds between periodic mob instance saves (default 100)
+	MobInstanceMaxAgeDays    ConfigInt   `yaml:"MobInstanceMaxAgeDays"`    // Max age in days before stale instance files are pruned (default 7)
 
 	// ── CHARACTER CREATION ────────────────────────────────────────────────────
 	StatRollMean      ConfigFloat `yaml:"StatRollMean"`      // Mean for stat rolls at character creation (default 100.0)
@@ -260,6 +262,12 @@ func (b *Balance) Validate() {
 	}
 	if b.MobSkillCap < 1 {
 		b.MobSkillCap = 3
+	}
+	if b.MobSaveIntervalRounds < 1 {
+		b.MobSaveIntervalRounds = 100
+	}
+	if b.MobInstanceMaxAgeDays < 1 {
+		b.MobInstanceMaxAgeDays = 7
 	}
 
 	// ── CHARACTER CREATION ────────────────────────────────────────────────────

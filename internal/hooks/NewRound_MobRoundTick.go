@@ -3,14 +3,30 @@ package hooks
 import (
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 func MobRoundTick(e events.Event) events.ListenerReturn {
+
+	// Stage 38.4: Periodic mob instance saves
+	roundCount := util.GetRoundCount()
+	saveInterval := uint64(configs.GetBalanceConfig().MobSaveIntervalRounds)
+	if saveInterval > 0 && roundCount%saveInterval == 0 {
+		for _, mobInstanceId := range mobs.GetAllMobInstanceIds() {
+			if mob := mobs.GetInstance(mobInstanceId); mob != nil {
+				if err := mobs.SaveMobInstance(mob); err != nil {
+					mudlog.Error("MobRoundTick.SaveMobInstance", "mob", mob.Character.Name, "error", err)
+				}
+			}
+		}
+	}
 
 	//
 	// Reduce existing hostility (if any)
