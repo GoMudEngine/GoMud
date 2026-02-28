@@ -112,6 +112,25 @@ type Balance struct {
 	EnchantRemovalPenaltyRounds ConfigInt   `yaml:"EnchantRemovalPenaltyRounds"` // Rounds of withdrawal after disenchant (default 50)
 	EnchantMaxTier              ConfigInt   `yaml:"EnchantMaxTier"`              // Maximum tier enchantments can reach (default 4)
 
+	// ── WORLD EVENTS ─────────────────────────────────────────────────────────
+	WorldEventBufferSize ConfigInt `yaml:"WorldEventBufferSize"` // Max events in the ring buffer (default 200)
+
+	// ── MOB MUTATIONS ────────────────────────────────────────────────────────
+	MobMutationEnabled ConfigBool  `yaml:"MobMutationEnabled"` // Enable mob mutation acquisition in combat (default false)
+	MobMutationRate    ConfigFloat `yaml:"MobMutationRate"`    // Multiplier on mutation progress vs players (default 0.3)
+
+	// ── PACK SCALING ─────────────────────────────────────────────────────────
+	PackScalingEnabled   ConfigBool `yaml:"PackScalingEnabled"`   // Enable pack survival bonuses (default true)
+	PackSurvivalRounds   ConfigInt  `yaml:"PackSurvivalRounds"`   // Consecutive rounds together before bonus (default 10)
+	PackBonusTrainingPts ConfigInt  `yaml:"PackBonusTrainingPts"` // Training points awarded per pack bonus (default 1)
+	PackMaxBonus         ConfigInt  `yaml:"PackMaxBonus"`         // Max total pack bonus training points (default 5)
+
+	// ── CRAFTER MOBS ─────────────────────────────────────────────────────────
+	CrafterEnabled              ConfigBool `yaml:"CrafterEnabled"`              // Enable mob autonomous crafting (default true)
+	CrafterMaterialRestockRate  ConfigInt  `yaml:"CrafterMaterialRestockRate"`  // Rounds between material restocks (default 200)
+	CrafterIdleChance           ConfigInt  `yaml:"CrafterIdleChance"`           // % chance per idle tick to start a recipe (default 30)
+	CrafterRareThreshold        ConfigInt  `yaml:"CrafterRareThreshold"`        // SkillMinimum at or above which a craft is considered rare (default 3)
+
 	// ── MOON PHASES ───────────────────────────────────────────────────────────
 	MoonStatModMax ConfigFloat `yaml:"MoonStatModMax"` // Max fractional stat modifier from moon phases, e.g. 0.05 = ±5% (default 0.05)
 }
@@ -376,6 +395,38 @@ func (b *Balance) Validate() {
 	}
 	if b.EnchantMaxTier < 1 {
 		b.EnchantMaxTier = 4
+	}
+
+	// ── WORLD EVENTS ─────────────────────────────────────────────────────────
+	if b.WorldEventBufferSize < 10 {
+		b.WorldEventBufferSize = 200
+	}
+
+	// ── MOB MUTATIONS ────────────────────────────────────────────────────────
+	if b.MobMutationRate <= 0 || b.MobMutationRate > 1.0 {
+		b.MobMutationRate = 0.3
+	}
+
+	// ── PACK SCALING ─────────────────────────────────────────────────────────
+	if b.PackSurvivalRounds < 1 {
+		b.PackSurvivalRounds = 10
+	}
+	if b.PackBonusTrainingPts < 1 {
+		b.PackBonusTrainingPts = 1
+	}
+	if b.PackMaxBonus < 1 {
+		b.PackMaxBonus = 5
+	}
+
+	// ── CRAFTER MOBS ─────────────────────────────────────────────────────────
+	if b.CrafterMaterialRestockRate < 1 {
+		b.CrafterMaterialRestockRate = 200
+	}
+	if b.CrafterIdleChance <= 0 || b.CrafterIdleChance > 100 {
+		b.CrafterIdleChance = 30
+	}
+	if b.CrafterRareThreshold < 1 {
+		b.CrafterRareThreshold = 3
 	}
 
 	// ── MOON PHASES ───────────────────────────────────────────────────────────

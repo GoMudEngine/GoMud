@@ -12,6 +12,7 @@ type ZoneConfig struct {
 	IdleMessages []string             `yaml:"idlemessages,omitempty"` // list of messages that can be displayed to players in the zone, assuming a room has none defined
 	MusicFile    string               `yaml:"musicfile,omitempty"`    // background music to play when in this zone
 	DefaultBiome string               `yaml:"defaultbiome,omitempty"` // city, swamp etc. see biomes.go
+	Region       string               `yaml:"region,omitempty"`       // Geographic region for world event filtering (e.g. "Thornwall Region")
 	RoomIds      map[int]struct{}     `yaml:"-"`                      // Does not get written. Built dyanmically when rooms are loaded.
 }
 
