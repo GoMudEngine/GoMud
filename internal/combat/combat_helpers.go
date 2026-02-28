@@ -528,14 +528,19 @@ func resolveDefenseOutcome(result *AttackResult, best bestDefenseResult, sourceC
 	}
 
 	// No defense succeeded on the roll — check defense floor
-	if best.defenseType != "" {
+	{
+		// Default to dodge when no defense was attempted (e.g. no stamina)
+		defType := best.defenseType
+		if defType == "" {
+			defType = characters.DefenseDodge
+		}
 		floor := float64(cfg.MinDefenseChance)
 		if floor > 0 && util.Rand(100) < int(floor*100) {
 			// Floor save — defense succeeds despite losing the roll
-			result.DefenseUsed = DefenseType(best.defenseType)
+			result.DefenseUsed = DefenseType(defType)
 
 			var defenseVerb string
-			switch best.defenseType {
+			switch defType {
 			case characters.DefenseDodge:
 				defenseVerb = "dodge"
 			case characters.DefenseParry:
