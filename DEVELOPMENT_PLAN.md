@@ -5125,7 +5125,7 @@ After all features are stable — refactor without risk of changing code
 that's still in flux. **No behavior changes in any substage** — pure
 structural improvement, dead code removal, and error handling hardening.
 
-### Stage 37.1a: Combat God-Functions Refactor ✅ COMPLETED
+### Stage 37.1a: Combat God-Functions Refactor ✅ COMPLETED (eab2406)
 
 **Goal**: Break up the 4 largest functions in the codebase (each 700–800+
 lines with 9–11 levels of nesting). Extract helpers, reduce nesting,
