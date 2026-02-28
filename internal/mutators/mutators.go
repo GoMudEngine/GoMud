@@ -12,6 +12,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/util"
+	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
 )
 
@@ -323,9 +324,10 @@ func LoadDataFiles() {
 
 	start := time.Now()
 
-	tmpMutators, err := fileloader.LoadAllFlatFiles[string, *MutatorSpec](configs.GetFilePathsConfig().DataFiles.String() + `/mutators`)
+	dataPath := configs.GetFilePathsConfig().DataFiles.String() + `/mutators`
+	tmpMutators, err := fileloader.LoadAllFlatFiles[string, *MutatorSpec](dataPath)
 	if err != nil {
-		panic(err)
+		panic(errors.Wrap(err, `filepath: `+dataPath))
 	}
 
 	allMutators = tmpMutators

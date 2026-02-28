@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/util"
+	"github.com/pkg/errors"
 )
 
 const (
@@ -187,9 +188,10 @@ func LoadDataFiles() {
 
 	start := time.Now()
 
-	tmpQuests, err := fileloader.LoadAllFlatFiles[int, *Quest](configs.GetFilePathsConfig().DataFiles.String() + `/quests`)
+	dataPath := configs.GetFilePathsConfig().DataFiles.String() + `/quests`
+	tmpQuests, err := fileloader.LoadAllFlatFiles[int, *Quest](dataPath)
 	if err != nil {
-		panic(err)
+		panic(errors.Wrap(err, `filepath: `+dataPath))
 	}
 
 	quests = tmpQuests

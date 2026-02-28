@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/util"
+	"github.com/pkg/errors"
 )
 
 type SpellType string
@@ -267,9 +268,10 @@ func LoadSpellFiles() {
 
 	start := time.Now()
 
-	tmpAllSpells, err := fileloader.LoadAllFlatFiles[string, *SpellData](string(configs.GetFilePathsConfig().DataFiles) + `/spells`)
+	dataPath := string(configs.GetFilePathsConfig().DataFiles) + `/spells`
+	tmpAllSpells, err := fileloader.LoadAllFlatFiles[string, *SpellData](dataPath)
 	if err != nil {
-		panic(err)
+		panic(errors.Wrap(err, `filepath: `+dataPath))
 	}
 
 	allSpells = tmpAllSpells

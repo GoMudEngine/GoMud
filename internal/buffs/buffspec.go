@@ -13,6 +13,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/statmods"
 	"github.com/GoMudEngine/GoMud/internal/util"
+	"github.com/pkg/errors"
 )
 
 // Something temporarily attached to a character
@@ -237,9 +238,10 @@ func LoadDataFiles() {
 
 	start := time.Now()
 
-	tmpBuffs, err := fileloader.LoadAllFlatFiles[int, *BuffSpec](string(configs.GetFilePathsConfig().DataFiles) + `/buffs`)
+	dataPath := string(configs.GetFilePathsConfig().DataFiles) + `/buffs`
+	tmpBuffs, err := fileloader.LoadAllFlatFiles[int, *BuffSpec](dataPath)
 	if err != nil {
-		panic(err)
+		panic(errors.Wrap(err, `filepath: `+dataPath))
 	}
 
 	buffs = tmpBuffs

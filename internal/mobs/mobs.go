@@ -21,6 +21,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/util"
+	"github.com/pkg/errors"
 )
 
 var (
@@ -808,9 +809,10 @@ func LoadDataFiles() {
 
 	start := time.Now()
 
-	tmpMobs, err := fileloader.LoadAllFlatFiles[int, *Mob](configs.GetFilePathsConfig().DataFiles.String() + `/mobs`)
+	dataPath := configs.GetFilePathsConfig().DataFiles.String() + `/mobs`
+	tmpMobs, err := fileloader.LoadAllFlatFiles[int, *Mob](dataPath)
 	if err != nil {
-		panic(err)
+		panic(errors.Wrap(err, `filepath: `+dataPath))
 	}
 
 	mobs = tmpMobs
