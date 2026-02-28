@@ -571,6 +571,27 @@ Balance:
   StatSoftCapThreshold: 105      # Raw stat value where adjusted formula kicks in
   StatSoftCapMultiplier: 2.0     # Multiplier in: 100 + sqrt(raw-100) * this
 
+  # ── MOB PROGRESSION ──────────────────────────────────────────────────────────
+  # When enabled, mobs gain stats and skills through combat just like players.
+  # Mobs that survive longer become more dangerous. Progression resets when
+  # the mob dies and respawns from its template.
+  MobProgressionEnabled: true
+  # How fast mobs progress relative to players. This multiplies the base
+  # progression chance. At 0.5, mobs have half the chance per combat action
+  # to gain a stat or skill point compared to a player doing the same action.
+  # Range: 0.01-1.0. Lower = slower mob growth. 1.0 = same rate as players.
+  MobProgressionRate: 0.5
+  # Hard ceiling on any single stat a mob can reach through progression.
+  # Prevents runaway growth if a mob survives many fights. The mob's base
+  # stat from its template StatPool is NOT counted against this cap -- only
+  # the final computed stat value matters. Default 200 (double human baseline).
+  MobStatCap: 200
+  # Maximum skill level a mob can reach through use-based progression.
+  # Player soft cap is 50; mobs are intentionally much lower since they
+  # fight constantly. At rank 3, the SkillMultiplier curve gives ~1.77x
+  # damage -- meaningful but not overwhelming. Range: 1-50.
+  MobSkillCap: 3
+
   # ── CHARACTER CREATION ──────────────────────────────────────────────────────
   StatRollMean: 100.0            # Target average for all stats at character creation
   StatRollStdDev: 15.0           # Standard deviation for stat rolls

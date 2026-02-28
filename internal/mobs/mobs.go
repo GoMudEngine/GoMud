@@ -173,6 +173,7 @@ func NewMobById(mobId MobId, homeRoomId int, forceStatPool ...int) *Mob {
 		mob.HomeRoomId = homeRoomId
 		mob.Character.RoomId = homeRoomId
 		mob.InstanceId = instanceCounter
+		mob.Character.IsMob = true
 		mob.Character.PlayerDamage = make(map[int]int)
 
 		// Determine stat pool: use override if provided, otherwise use mob template's StatPool

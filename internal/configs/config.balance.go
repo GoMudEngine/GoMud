@@ -61,6 +61,10 @@ type Balance struct {
 	ProgressionDecayAboveCap  ConfigFloat `yaml:"ProgressionDecayAboveCap"`  // Exponential steepness above soft cap (default 2.0)
 	StatSoftCapThreshold      ConfigInt   `yaml:"StatSoftCapThreshold"`      // Raw stat value where adjusted formula kicks in (default 105)
 	StatSoftCapMultiplier     ConfigFloat `yaml:"StatSoftCapMultiplier"`     // Multiplier in: 100 + sqrt(raw-100) * this (default 2.0)
+	MobProgressionEnabled    ConfigBool  `yaml:"MobProgressionEnabled"`    // Enable mob stat/skill progression (default true)
+	MobProgressionRate       ConfigFloat `yaml:"MobProgressionRate"`       // Multiplier on progression chance vs players (default 0.5)
+	MobStatCap               ConfigInt   `yaml:"MobStatCap"`               // Hard cap on mob stats from progression (default 200)
+	MobSkillCap              ConfigInt   `yaml:"MobSkillCap"`              // Hard cap on mob skill level from progression (default 3)
 
 	// ── CHARACTER CREATION ────────────────────────────────────────────────────
 	StatRollMean      ConfigFloat `yaml:"StatRollMean"`      // Mean for stat rolls at character creation (default 100.0)
@@ -247,6 +251,15 @@ func (b *Balance) Validate() {
 	}
 	if b.StatSoftCapMultiplier <= 0 {
 		b.StatSoftCapMultiplier = 2.0
+	}
+	if b.MobProgressionRate <= 0 || b.MobProgressionRate > 1.0 {
+		b.MobProgressionRate = 0.5
+	}
+	if b.MobStatCap < 1 {
+		b.MobStatCap = 200
+	}
+	if b.MobSkillCap < 1 {
+		b.MobSkillCap = 3
 	}
 
 	// ── CHARACTER CREATION ────────────────────────────────────────────────────
