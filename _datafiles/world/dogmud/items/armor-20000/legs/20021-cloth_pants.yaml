@@ -5,6 +5,7 @@ description: Loose-fitting trousers sewn from plain linen. They breathe well
   in warm weather and offer modest protection from thorns and rough terrain.
 type: legs
 subtype: wearable
+value: 4
 damagereduction: 2
 physical_mitigation: 2
 escapemodifier: 1.0
