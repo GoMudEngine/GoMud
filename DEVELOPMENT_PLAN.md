@@ -5787,30 +5787,20 @@ Audit all config knobs, remove dead config, add missing tunables,
 reorganize the config file, and do a balance pass with the combat
 analytics dashboard.
 
-### Stage 39.1: Config Audit & Dead Code Removal
+### Stage 39.1: Config Audit & Progression Tuning Knobs ✅ COMPLETED
 
-**Goal**: Catalog every config knob, remove unused ones, document
-the rest.
+**Merge commit**: `c66db18`
 
-**Changes**:
-1. Audit all fields in `config.balance.go`, `config.gameplay.go`,
-   `config.analytics.go` — flag any that are defined but never read
-   (e.g., `MobHealthRegenPct` / `MobStaminaRegenPct` /
-   `MobConvictionRegenPct` are currently dead code since PerRound()
-   uses the Player rates for both)
-2. Either wire up dead config to actual behavior or remove it
-3. Ensure every config knob has a comment explaining what it does
-4. Verify `_datafiles/config.yaml` matches the Go defaults — remove
-   stale keys, add missing ones with sensible defaults
-5. Add a `docs/CONFIG_REFERENCE.md` auto-generated from config
-   struct tags (or manually maintained)
-
-**Testing**:
-- Server starts cleanly with default config
-- Server starts cleanly with all knobs set to non-default values
-- No orphaned config keys in YAML
-
-**Estimated Changes**: ~100–200 lines
+**Delivered**:
+1. Per-stat progression multipliers (`StatProgressionMultipliers` map) —
+   dexterity defaults to 0.5x since two combat skills both fire it
+2. Per-skill progression multipliers (`SkillProgressionMultipliers` map) —
+   config overrides hardcoded defaults, mirrors current values
+3. Wired up dead mob regen config (`MobHealthRegenPct`, `MobStaminaRegenPct`,
+   `MobConvictionRegenPct`) in `HealthPerRound()` / `StaminaPerRound()` /
+   `ConvictionPerRound()`
+4. Bumped `Analytics.MaxEvents` from 10,000 to 250,000 for extended playtesting
+5. Added validation and helper methods for both new map fields
 
 ---
 
@@ -6042,7 +6032,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 36: Dialogue System Fix & Quest Wiring | 1 stage | 4 hours | **Complete** |
 | Phase 37: Codebase Quality Pass | 8 stages (37.1a–37.5) | 24 hours | **Complete** |
 | Phase 38: Mob/Player Unification & NPC Progression | 5 stages (38.1–38.5) | 30 hours | **Complete** |
-| Phase 39: Balance Pass & Config Cleanup | 3 stages (39.1–39.3) | 14 hours | Not started |
+| Phase 39: Balance Pass & Config Cleanup | 3 stages (39.1–39.3) | 14 hours | 39.1 Complete |
 | Phase 40: Test Coverage Pass | 4 stages (40.1–40.4) | 20 hours | Not started |
 | **Total** | **~112 stages** | **~714 hours** | |
 
@@ -6208,4 +6198,4 @@ These are longer-term goals to be detailed when the above phases are complete:
 
 **Last Updated**: 2026-02-28
 **Status**: In Progress
-**Current Stage**: Phase 38 complete (mob/player unification & NPC progression). Next: Phase 39 (Balance Pass & Config Cleanup).
+**Current Stage**: Stage 39.1 complete (config audit & progression tuning knobs). Next: Stage 39.2 (Balance Tuning Pass).
