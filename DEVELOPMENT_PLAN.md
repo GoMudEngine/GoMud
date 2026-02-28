@@ -5410,6 +5410,27 @@ run (~3,568 combat events).
 
 ---
 
+### Stage 37.5: Admin Cleanup & Combat Stats Filtering ✅ COMPLETED (merge: 57f89bf)
+
+**Goal**: Remove outdated level/alignment/XP fields from admin pages and add
+multi-axis filtering to the combat analytics dashboard.
+
+**Part 1 — Admin Template Cleanup:**
+- `mob.data.html`: Removed Level and Alignment input fields
+- `species.data.html`: Removed DefaultAlignment and TNLScale (Experience Scale)
+- `room.data.html`: Removed spawninfo.level and spawninfo.levelmod fields
+
+**Part 2 — Combat Analytics Filtering:**
+- Added `FilterParams` struct and `DamageChannelForType()` helper to
+  `internal/combat/analytics.go`
+- `GetFilteredSummary(FilterParams)` supports filtering by source type
+  (user/mob), target type (user/mob), and damage channel (melee/magic/rhetoric)
+- API endpoint parses `?source=`, `?target=`, `?channel=` query params
+- Frontend filter bar with three dropdowns above the controls
+- Filters combine and refresh data on every change
+
+---
+
 ### Stage 37.3b: Error Handling Sweep ✅ COMPLETED (merge: 5280681)
 
 **Goal**: Systematic pass on ignored error returns, unsafe type
@@ -5609,7 +5630,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 34: Unified Damage Pipeline | 10 stages (34.1–34.10) | 20 hours | **Complete** |
 | Phase 35: Combat Balance & Mob Equipment | 1 stage | 4 hours | **Complete** |
 | Phase 36: Dialogue System Fix & Quest Wiring | 1 stage | 4 hours | **Complete** |
-| Phase 37: Codebase Quality Pass | 7 stages (37.1a–37.4) | 24 hours | **Complete** |
+| Phase 37: Codebase Quality Pass | 8 stages (37.1a–37.5) | 24 hours | **Complete** |
 | Phase 38: Test Coverage Pass | 4 stages (38.1–38.4) | 20 hours | Not started |
 | **Total** | **~100 stages** | **~650 hours** | |
 
@@ -5775,4 +5796,4 @@ These are longer-term goals to be detailed when the above phases are complete:
 
 **Last Updated**: 2026-02-28
 **Status**: In Progress
-**Current Stage**: Phase 37 complete (incl. 37.4 analytics fixes). Next: Phase 38 (Test Coverage Pass).
+**Current Stage**: Phase 37 complete (incl. 37.5 admin cleanup & combat filters). Next: Phase 38 (Test Coverage Pass).
