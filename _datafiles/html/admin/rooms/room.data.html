@@ -358,18 +358,6 @@
                             </div>
 
                             <div class="col-md">
-                                <label for="name">Level</label>
-                                <input type="text" class="form-control form-control-sm col-md-10" id="spawninfo[{{$index}}].level" aria-describedby="spawninfo[{{$index}}].level-help" value="{{ $spawnInfo.Level }}">
-                                <small id="name-help" class="form-text text-muted">Force mob to a specific level.</small>
-                            </div>
-
-                            <div class="col-md">
-                                <label for="name">Level Adjust</label>
-                                <input type="text" class="form-control form-control-sm col-md-10" id="spawninfo[{{$index}}].levelmod" aria-describedby="spawninfo[{{$index}}].levelmod-help" value="{{ $spawnInfo.LevelMod }}">
-                                <small id="name-help" class="form-text text-muted">Modify mobs level by this amount (+/-).</small>
-                            </div>
-
-                            <div class="col-md">
                                 <label for="name">Wander</label>
                                 {{$mobMaxWander := $spawnInfo.MaxWander}}
                                 <select class="form-control form-control-sm" name="spawninfo[{{$index}}].maxwander" id="spawninfo[{{$index}}].maxwander" aria-describedby="spawninfo[{{$index}}].maxwander-help"  rows="10">
