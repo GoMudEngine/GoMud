@@ -5651,7 +5651,7 @@ restarts and respawns.
 
 ---
 
-### Stage 38.5: Emergent NPC Behaviors & World Event Hooks
+### Stage 38.5: Emergent NPC Behaviors & World Event Hooks ✅ COMPLETED (b965ffb)
 
 **Goal**: Use the progression system to create mobs that exhibit
 interesting long-term behavior, and install event-recording hooks
@@ -5995,7 +5995,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 35: Combat Balance & Mob Equipment | 1 stage | 4 hours | **Complete** |
 | Phase 36: Dialogue System Fix & Quest Wiring | 1 stage | 4 hours | **Complete** |
 | Phase 37: Codebase Quality Pass | 8 stages (37.1a–37.5) | 24 hours | **Complete** |
-| Phase 38: Mob/Player Unification & NPC Progression | 5 stages (38.1–38.5) | 30 hours | 38.1–38.4 Complete |
+| Phase 38: Mob/Player Unification & NPC Progression | 5 stages (38.1–38.5) | 30 hours | **Complete** |
 | Phase 39: Balance Pass & Config Cleanup | 3 stages (39.1–39.3) | 14 hours | Not started |
 | Phase 40: Test Coverage Pass | 4 stages (40.1–40.4) | 20 hours | Not started |
 | **Total** | **~112 stages** | **~714 hours** | |
@@ -6162,4 +6162,4 @@ These are longer-term goals to be detailed when the above phases are complete:
 
 **Last Updated**: 2026-02-28
 **Status**: In Progress
-**Current Stage**: Stage 38.4 complete (mob instance persistence). Next: Stage 38.5 (Mob Personality & Memory).
+**Current Stage**: Phase 38 complete (mob/player unification & NPC progression). Next: Phase 39 (Balance Pass & Config Cleanup).
