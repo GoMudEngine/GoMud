@@ -92,6 +92,8 @@ func Buy(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 
 		if success = tryPurchase(itemname, user, room, shopMob, nil); success {
 			user.Character.OnStatUse("charisma", user.UserId)
+			// Stage 38.5.5: Merchant mob gains charisma from trade interactions
+			shopMob.Character.OnStatUse("charisma", 0)
 			return true, nil
 		}
 	}
