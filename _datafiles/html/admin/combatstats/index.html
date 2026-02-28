@@ -57,6 +57,38 @@
         </div>
     </div>
 
+    <!-- Filters -->
+    <div class="row mb-2">
+        <div class="col-auto d-flex align-items-center">
+            <strong class="mr-2">Filters:</strong>
+            <label class="mr-1 mb-0" for="filter-source">Source</label>
+            <select id="filter-source"
+                    class="custom-select custom-select-sm mr-3"
+                    style="width:auto;" onchange="fetchData()">
+                <option value="">All</option>
+                <option value="user">Player</option>
+                <option value="mob">Mob</option>
+            </select>
+            <label class="mr-1 mb-0" for="filter-target">Target</label>
+            <select id="filter-target"
+                    class="custom-select custom-select-sm mr-3"
+                    style="width:auto;" onchange="fetchData()">
+                <option value="">All</option>
+                <option value="user">Player</option>
+                <option value="mob">Mob</option>
+            </select>
+            <label class="mr-1 mb-0" for="filter-channel">Channel</label>
+            <select id="filter-channel"
+                    class="custom-select custom-select-sm"
+                    style="width:auto;" onchange="fetchData()">
+                <option value="">All</option>
+                <option value="melee">Melee</option>
+                <option value="magic">Magic</option>
+                <option value="rhetoric">Rhetoric</option>
+            </select>
+        </div>
+    </div>
+
     <!-- Controls -->
     <div class="row mb-3">
         <div class="col-auto">
@@ -361,7 +393,15 @@
     }
 
     window.fetchData = function() {
-        fetch('/admin/api/combat-stats/')
+        var params = [];
+        var src = document.getElementById('filter-source').value;
+        var tgt = document.getElementById('filter-target').value;
+        var ch  = document.getElementById('filter-channel').value;
+        if (src) params.push('source=' + src);
+        if (tgt) params.push('target=' + tgt);
+        if (ch)  params.push('channel=' + ch);
+        var qs = params.length ? '?' + params.join('&') : '';
+        fetch('/admin/api/combat-stats/' + qs)
             .then(function(r){ return r.json(); })
             .then(function(d){
                 if (d.totalEvents === 0) {

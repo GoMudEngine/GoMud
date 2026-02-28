@@ -57,7 +57,7 @@ func combatStats_Summary(args []string, user *users.UserRecord) (bool, error) {
 
 	if len(args) > 0 {
 		filterLabel = strings.ToLower(args[0])
-		s = combat.GetFilteredSummary(filterLabel)
+		s = combat.GetFilteredSummaryByAttackType(filterLabel)
 	} else {
 		s = combat.GetSummary()
 	}
