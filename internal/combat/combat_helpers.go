@@ -292,6 +292,11 @@ func calcCritThreshold(sourceChar *characters.Character, targetChar *characters.
 	skillDiff := sourceChar.GetCombatSkillLevel() - targetChar.GetCombatSkillLevel()
 	critThreshold -= float64(skillDiff) * 0.05
 
+	// Floor after skill adjustment: never easier than Accuracy buff level (~6.7% crit)
+	if critThreshold < 1.5 {
+		critThreshold = 1.5
+	}
+
 	// Stage 8.3: Position-based crit modifiers
 	if sourceChar.CombatPosition.IsGrapplePosition() && sourceChar.HasCondition(characters.ConditionGrappleController) {
 		if sourceChar.CombatPosition == characters.PositionGrounded {
@@ -302,6 +307,11 @@ func calcCritThreshold(sourceChar *characters.Character, targetChar *characters.
 	}
 	if targetChar.CombatPosition == characters.PositionGrounded && !targetChar.HasCondition(characters.ConditionGrappleController) {
 		critThreshold += 0.4
+	}
+
+	// Absolute floor after all modifiers: ~15.9% max crit (skilled + grapple controller)
+	if critThreshold < 1.0 {
+		critThreshold = 1.0
 	}
 
 	return critThreshold
