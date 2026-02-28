@@ -557,6 +557,165 @@ func (m *Mob) GetTempData(key string) any {
 }
 ```
 
+## Crafter Mob System
+
+Mobs with `crafter: true` autonomously craft items into their shop inventory.
+Crafting fires once per material restock cycle (every `CrafterMaterialRestockRate`
+rounds, default 200 ≈ 13 minutes real time). On each restock tick, materials arrive
+and the mob immediately attempts one craft.
+
+### Crafter Mob Fields
+```go
+// YAML-configured fields on Mob struct
+Crafter                 bool     `yaml:"crafter,omitempty"`
+CrafterSkill            string   `yaml:"crafterskill,omitempty"`
+CrafterRecipeIds        []string `yaml:"crafterrecipeids,omitempty"`
+CrafterRestockMaterials []int    `yaml:"crafterrestockmaterials,omitempty"`
+
+// Transient runtime fields (not persisted)
+crafterLastRestockRound uint64   `yaml:"-"`
+```
+
+### Crafting Algorithm (`crafter.go`)
+```go
+func TickMobCraft(mob *Mob) *CraftResult
+```
+1. Guard: skip if `!Crafter`, `!CrafterEnabled` config, or mob is in combat
+2. Wait for restock tick: `roundCount - lastRestock >= CrafterMaterialRestockRate`
+3. Restock materials: add items from `CrafterRestockMaterials` to mob's backpack
+4. Pick eligible recipe: filter `CrafterRecipeIds` by skill match, skill minimum,
+   and available ingredients; pick one at random
+5. Roll success via `crafting.CalcSuccessChance(skillLevel, recipe.SkillMinimum)`
+6. Consume ingredients regardless of outcome
+7. On success: `Shop.StockItem(output.ItemId)` + `OnSkillUse()` for progression
+8. Return `CraftResult` struct for the caller (hook) to emit room messages and
+   world events
+
+### CraftResult Struct
+```go
+type CraftResult struct {
+    Success      bool
+    RecipeName   string
+    OutputItemId int
+    SkillMinimum int
+    MobName      string
+    Zone         string
+}
+```
+
+The caller (`MobIdle_HandleIdleMobs.go`) handles room flavor text and emits
+`MobCraftedRare` world events when `SkillMinimum >= CrafterRareThreshold`.
+
+### Config (in `config.balance.go`)
+- `CrafterEnabled` (default true) — master toggle
+- `CrafterMaterialRestockRate` (default 200 rounds) — restock/craft interval
+- `CrafterRareThreshold` (default 3) — skill minimum for rare craft events
+
+### Example Crafter Mob YAML
+```yaml
+crafter: true
+crafterskill: blacksmithing
+crafterrecipeids:
+  - iron-dagger
+  - iron-short-sword
+  - iron-buckler
+crafterrestockmaterials:
+  - 40001  # iron ingot
+  - 40002  # leather strip
+  - 40003  # wooden plank
+character:
+  skills:
+    blacksmithing: 10
+  shop:
+    - itemid: 40001
+      quantity: 0
+      quantitymax: 0
+      price: 1
+```
+
+Active crafter mobs: Blacksmith Kerra (97), Apothecary Voss (98), Jeweler Tess (108),
+Weaver Maren (110) — all in Thornwall City.
+
+---
+
+## Pack Scaling System
+
+Mobs sharing a group tag gain Training bonuses when they survive consecutive
+rounds together. Death of any member resets the counter.
+
+### Pack Scaling Fields
+```go
+// On Mob struct (transient, not persisted in YAML)
+PackBonusTotal int `yaml:"-"`
+```
+
+### Algorithm (`pack_scaling.go`)
+```go
+func TickPackSurvival() []PackBonus
+```
+1. Build `map[groupTag][]instanceId` for all live mobs with groups
+2. Only count groups with >= 2 members
+3. If member count dropped since last tick → reset survival counter
+4. Else increment counter; if >= `PackSurvivalRounds` (default 10):
+   - Reset counter
+   - Add `PackBonusTrainingPts` (default 1) to a stat based on archetype
+   - Cap at `PackMaxBonus` (default 5) total
+   - Return `PackBonus` struct for caller to emit room message + world event
+
+### PackBonus Struct
+```go
+type PackBonus struct {
+    GroupTag  string
+    MemberIds []int
+    ReachedMax bool
+}
+```
+
+### Stat Selection by Archetype
+- `"fighting"` archetype → strength Training
+- `"casting"` archetype → willpower Training
+- Default → vitality Training
+
+### Config (in `config.balance.go`)
+- `PackScalingEnabled` (default true)
+- `PackSurvivalRounds` (default 10) — rounds together before bonus
+- `PackBonusTrainingPts` (default 1) — Training points per bonus
+- `PackMaxBonus` (default 5) — max total bonus per mob
+
+Called from `NewRound_MobRoundTick.go` before the per-mob loop. The hook handles
+room messaging and world event emission (avoids import cycle with `rooms` package).
+
+---
+
+## Mob Mutation Acquisition
+
+Mobs accumulate `MutationProgress` during combat, using the same threshold system
+as players but at a reduced rate (`MobMutationRate`, default 0.3 = 30% of player rate).
+
+### How It Works
+- Processed in `NewRound_MobRoundTick.go` inside the per-mob loop (after buff
+  triggers, before `Validate()`)
+- Guard: `MobMutationEnabled` config + mob must be in combat (`Aggro != nil`)
+- Progress: `+= MutationProgressGainPerRound * MobMutationRate`
+- Threshold: same `MutationBaseProgress * MutationProgressScale^load` formula
+- On acquire: uses `mutations.GetWeightedPool()` and `RollAcquisition()`
+- On deepen: uses `mutations.RollDeepening()`
+- Room flavor text emitted for mutation events
+- World events emitted with significance based on mutation rarity:
+  - Rarity >= 8 → Global
+  - Rarity >= 5 → Regional
+  - Rarity < 5 → Local
+  - Deepening to level 3 → bump one tier
+
+### Config (in `config.balance.go`)
+- `MobMutationEnabled` (default false — opt-in)
+- `MobMutationRate` (default 0.3)
+
+Persistence handled automatically — `MobInstanceData` saves `Mutations` and
+`MutationProgress` fields.
+
+---
+
 ## Special Mob Types and Behaviors
 
 ### Tameable Mobs
@@ -798,6 +957,8 @@ func shouldAttack(attacker *Mob, target *Mob) bool {
 - `internal/species` - Species system for default behaviors and restrictions
 - `internal/buffs` - Status effect system for permanent and temporary effects
 - `internal/configs` - Configuration management for file paths and timing
+- `internal/crafting` - Recipe lookup and ingredient management for crafter mobs
+- `internal/skills` - Skill tag types for crafter recipe filtering
 - `internal/util` - Utility functions for randomization, file operations, and validation
 - `internal/fileloader` - YAML file loading and validation system
 

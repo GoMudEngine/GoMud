@@ -340,19 +340,58 @@ func LocationMusicChange(e events.Event) events.ListenerReturn {
 }
 ```
 
+## Mob Round Tick (`NewRound_MobRoundTick.go`)
+
+The MobRoundTick handler runs every round and processes per-mob updates including
+buff triggers, stat/skill progression, pack scaling, and mutation acquisition.
+
+### Pack Scaling (before per-mob loop)
+```go
+// TickPackSurvival returns []PackBonus — data structs to avoid import cycle
+// with the rooms package. The hook handles room messaging and world events.
+if b.PackScalingEnabled {
+    for _, bonus := range mobs.TickPackSurvival() {
+        // Emit room message: "The <group> pack moves with renewed coordination."
+        // Emit WorldEvent{Type: PackStrengthened}
+        // Significance: first bonus → Local, reaching max → Regional
+    }
+}
+```
+
+### Mob Mutation Acquisition (inside per-mob loop)
+After buff triggers and before `Validate()`:
+```go
+// Guard: MobMutationEnabled && mob.Character.Aggro != nil
+// Progress: += MutationProgressGainPerRound * MobMutationRate
+// Threshold: MutationBaseProgress * MutationProgressScale^mutationLoad
+// On acquire/deepen:
+//   - Room flavor text
+//   - EmitWorldEvent(MobMutationGained/Advanced)
+//   - Significance based on mutation rarity (>=8 Global, >=5 Regional, else Local)
+//   - Deepening to level 3 bumps significance one tier
+```
+
+### Per-Mob Loop Order
+1. Buff trigger checks
+2. Stat/skill progression (`MobProgressionEnabled`)
+3. **Mutation acquisition** (`MobMutationEnabled`)
+4. `Character.Validate()`
+
+---
+
 ## Mob AI and Behavior
 
 ### Idle Mob Processing
 ```go
 func IdleMobs(e events.Event) events.ListenerReturn {
     evt := e.(events.NewRound)
-    
+
     for _, mobInstanceId := range mobs.GetAllMobInstanceIds() {
         mob := mobs.GetInstance(mobInstanceId)
         if mob == nil || mob.Character.IsAggro() {
             continue
         }
-        
+
         // Check activity level for idle behavior
         if util.Rand(100) < mob.ActivityLevel {
             events.AddToQueue(events.MobIdle{
@@ -360,24 +399,33 @@ func IdleMobs(e events.Event) events.ListenerReturn {
             })
         }
     }
-    
+
     return events.Continue
 }
 
 func HandleIdleMobs(e events.Event) events.ListenerReturn {
     evt := e.(events.MobIdle)
-    
+
     mob := mobs.GetInstance(evt.MobInstanceId)
     if mob == nil {
         return events.Continue
     }
-    
-    // Execute idle command
+
+    // --- Crafter tick (fires on restock cycle, not every idle tick) ---
+    // TickMobCraft returns a CraftResult only when a craft is attempted.
+    // The hook handles room messaging and world event emission to avoid
+    // import cycles in the mobs package.
+    if result := mobs.TickMobCraft(mob); result != nil {
+        // Emit room flavor text (success/failure)
+        // Emit MobCraftedRare world event if SkillMinimum >= CrafterRareThreshold
+    }
+
+    // Execute idle command (runs alongside crafting)
     idleCommand := mob.GetIdleCommand()
     if idleCommand != "" {
         mob.Command(idleCommand)
     }
-    
+
     return events.Continue
 }
 ```
@@ -478,6 +526,8 @@ func SystemMaintenance(e events.Event) events.ListenerReturn {
 - `internal/scripting` - JavaScript runtime for script execution
 - `internal/buffs` - Status effects for buff management
 - `internal/configs` - Configuration management for system settings
+- `internal/mutations` - Mutation system for mob mutation acquisition
+- `internal/worldevents` - World event recording for emergent behavior milestones
 - `internal/mudlog` - Logging system for debugging and monitoring
 
 This comprehensive hooks system provides the core game logic implementation through event-driven architecture, handling everything from basic gameplay mechanics to complex system maintenance tasks while maintaining clean separation of concerns and extensible design patterns.

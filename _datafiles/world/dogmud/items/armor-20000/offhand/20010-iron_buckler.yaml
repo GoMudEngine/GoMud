@@ -5,6 +5,7 @@ description: A small, round shield of hammered iron. Its face is dented from blo
   countless blows, but the metal holds firm.
 type: offhand
 subtype: wearable
+value: 12
 damagereduction: 8
 physical_mitigation: 8
 blockrating: 15  # Stage 7.1: Block defense bonus
