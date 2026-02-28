@@ -113,6 +113,18 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 
 		mob.Character.CancelBuffsWithFlag(buffs.CancelIfCombat)
 
+		// Mob shield decay (symmetric with handlePlayerShieldDecay)
+		if mob.Character.HasCondition(characters.ConditionShield) {
+			if mob.Character.GetConditionDuration(characters.ConditionShield) <= 1 {
+				mob.Character.RemoveCondition(characters.ConditionShield)
+				mobRoom.SendText(fmt.Sprintf(
+					`<ansi fg="blue"><ansi fg="mobname">%s</ansi>'s Minor Shield dissipates.</ansi>`,
+					mob.Character.Name))
+			} else {
+				mob.Character.DecrementCondition(characters.ConditionShield)
+			}
+		}
+
 		if handleMobFoldCasting(mob, mobRoom) {
 			continue
 		}
