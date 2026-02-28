@@ -23,7 +23,7 @@ items:
   - itemid: 40013
   - itemid: 40013
 spawninfo:
-- mobid: 110
+- mobid: 113
 idlemessages:
 - The rhythmic thump of the loom echoes off the stone walls.
 - A measuring cord dangles from a hook, swaying in the draft.
