@@ -163,7 +163,9 @@ func migrate_RoomZoneConfig() error {
 			if zoneName, ok := filedata[`zone`].(string); ok {
 				zoneDataStruct.Name = zoneName
 			} else {
-				zoneDataStruct.Name = filedata[`title`].(string)
+				if title, ok := filedata[`title`].(string); ok {
+					zoneDataStruct.Name = title
+				}
 			}
 
 			if defaultBiome, ok := filedata[`biome`].(string); ok {

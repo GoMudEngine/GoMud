@@ -147,14 +147,18 @@ func zone_Edit(rest string, user *users.UserRecord, room *rooms.Room, flags even
 
 		if restNum, err := strconv.Atoi(question.Response); err == nil {
 			if restNum > 0 && restNum <= len(mutatorOptions) {
-				mutatorSelected = mutatorOptions[restNum-1].Id.(string)
+				if id, ok := mutatorOptions[restNum-1].Id.(string); ok {
+					mutatorSelected = id
+				}
 			}
 		}
 
 		if mutatorSelected == `` {
 			for _, b := range mutatorOptions {
 				if strings.EqualFold(b.Name, question.Response) {
-					mutatorSelected = b.Id.(string)
+					if id, ok := b.Id.(string); ok {
+						mutatorSelected = id
+					}
 					break
 				}
 			}

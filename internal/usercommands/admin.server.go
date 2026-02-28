@@ -376,7 +376,9 @@ func server_Config(_ string, user *users.UserRecord, room *rooms.Room, flags eve
 	} else {
 
 		if len(menuOptions) == 1 {
-			fullPath = menuOptions[0].Id.(string)
+			if id, ok := menuOptions[0].Id.(string); ok {
+				fullPath = id
+			}
 
 			cmdPrompt.Store("config-selected", fullPath)
 
