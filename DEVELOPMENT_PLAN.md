@@ -5294,59 +5294,46 @@ individual wins but broad improvement.
 
 ---
 
-### Stage 37.2: Dead Code & Dependency Cleanup
+### Stage 37.2a: Dead Code & Unused Export Audit ✅ COMPLETED
 
-**Goal**: Remove all unreachable code, unused functions, orphaned data
-files, and vestigial level-system scaffolding.
+**Goal**: Remove verified dead code left behind by mana/level system
+removal and simplify the level-system scaffolding in stats.
 
-**Unused Functions to Delete:**
+**Corrections to Original 37.2 Spec** (verified during investigation):
+
+| Originally Claimed Dead | Actual Status | Action Taken |
+|------------------------|---------------|-------------|
+| `MemoryUsage()` / `sizeOf()` | **Active** — called by items, mobs, rooms, users | KEPT |
+| `migrate_RaceToSpecies()` | **Active** — called from `migration.go:45` | KEPT |
+| `GetExperienceLevel()` | **Active** — used for skill proficiency titles | KEPT |
+| Buff YAML 25, 42–46 | **Not orphaned** — pure-YAML buffs don't need JS | KEPT |
+| Alignment comment `keywords.go:34` | Just a doc comment showing map structure | KEPT |
+| `_datafiles/feedback/` directory | Does not exist | N/A |
+
+**Verified Dead Code Removed:**
 
 | Function | File | Why Dead |
 |----------|------|----------|
-| `ManaClass()` | `internal/util/util.go` | Mana system removed |
+| `ManaClass()` | `internal/util/util.go` | Mana system removed; 0 callers |
 | `TestManaClass()` | `internal/util/util_test.go` | Test for dead func |
-| `MemoryUsage()` | `internal/util/memory.go:133` | Never called |
-| `sizeOf()` | `internal/util/memory.go:85` | Helper for above |
-| `ServerStats()` | `internal/util/memory.go:41` | Never called |
-| `migrate_RaceToSpecies()` | `internal/migration/0.12.0.go` | Migration completed |
-| `GetRace()` | `internal/scripting/actor_func.go` | Wrapper, never called |
-| `GainsForLevel()` | `internal/stats/stats.go:45` | Always called with 1 |
-| `GetExperienceLevel()` | `internal/skills/skills.go` | Deprecated field only |
-| `GetLevel()` | `internal/scripting/actor_func.go` | Hardcoded return 1 |
+| `ServerStats()` | `internal/util/memory.go` | 0 callers |
+| `GetRace()` | `internal/scripting/actor_func.go` | 0 callers from Go or JS |
+| `GetLevel()` | `internal/scripting/actor_func.go` | Hardcoded return 1; only upstream dead-branch callers |
+| `GainsForLevel()` | `internal/stats/stats.go` | Always called with level=1 |
+| `BaseModFactor` | `internal/stats/stats.go` | Only used by GainsForLevel |
+| `NaturalGainsModFactor` | `internal/stats/stats.go` | Only used by GainsForLevel |
 
 **Level System Simplification:**
-- All 10 `Recalculate(1)` calls in `internal/characters/character.go`
-  pass hardcoded `1` — the level parameter is dead
-- Remove `level` parameter from `Recalculate()` entirely
-- Simplify `GainsForLevel` logic inline (always level=1)
-- Remove any remaining level-scaling branches in `stats.go`
+- Removed `GainsForLevel()` — at level=1 it always returned `si.Base`
+- Changed `Recalculate(level int)` → `Recalculate()` (no parameter)
+- Inlined `si.Racial = si.Base` directly in `Recalculate()`
+- Updated all 16 call sites (10 in character.go, 6 in species.go)
+- Updated FUNCTIONS_ACTORS.md: removed GetRace/GetLevel entries
 
-**Orphaned Data Files to Delete:**
+**Testing**: `go build ./...`, `go vet ./...` (pre-existing warnings
+only), `go test ./internal/util/...` — all pass.
 
-| File | Why Orphaned |
-|------|-------------|
-| `_datafiles/world/dogmud/buffs/25-deaths_shadow.yaml` | No JS script |
-| `_datafiles/world/dogmud/buffs/42-hearty_meal.yaml` | No JS script |
-| `_datafiles/world/dogmud/buffs/43-stamina_boost.yaml` | No JS script |
-| `_datafiles/world/dogmud/buffs/44-clear_mind.yaml` | No JS script |
-| `_datafiles/world/dogmud/buffs/45-well_fed.yaml` | No JS script |
-| `_datafiles/world/dogmud/buffs/46-liquid_courage.yaml` | No JS script |
-
-**Other Cleanup:**
-- Delete commented-out alignment help topic in
-  `internal/keywords/keywords.go:34`
-- Remove empty `_datafilesfeedbackbugs.txt` and
-  `_datafilesfeedbacksuggestions.txt`
-- Remove empty `_datafilesfeedback/` directory
-- Run `go mod tidy` to clean up go.sum (go.mod deps are all used)
-
-**Testing**:
-- `go build` and `go vet` clean
-- All existing tests pass
-- MUD starts and runs — verify no missing-file panics
-- Manual smoke test: combat, casting, crafting, score display
-
-**Estimated Changes**: ~300–500 lines removed, 10–15 files
+**Merge commit**: <!-- MERGE_HASH -->
 
 ---
 
@@ -5602,7 +5589,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 34: Unified Damage Pipeline | 10 stages (34.1–34.10) | 20 hours | **Complete** |
 | Phase 35: Combat Balance & Mob Equipment | 1 stage | 4 hours | **Complete** |
 | Phase 36: Dialogue System Fix & Quest Wiring | 1 stage | 4 hours | **Complete** |
-| Phase 37: Codebase Quality Pass | 6 stages (37.1a–37.3b) | 24 hours | **37.1a–37.1b Complete** |
+| Phase 37: Codebase Quality Pass | 6 stages (37.1a–37.3b) | 24 hours | **37.1a–37.2a Complete** |
 | Phase 38: Test Coverage Pass | 4 stages (38.1–38.4) | 20 hours | Not started |
 | **Total** | **~100 stages** | **~650 hours** | |
 
@@ -5768,4 +5755,4 @@ These are longer-term goals to be detailed when the above phases are complete:
 
 **Last Updated**: 2026-02-27
 **Status**: In Progress
-**Current Stage**: Stage 37.1b complete. Next: Stage 37.2a (Dead Code & Unused Export Audit).
+**Current Stage**: Stage 37.2a complete. Next: Stage 37.3a (Critical Robustness Hardening).
