@@ -5390,6 +5390,26 @@ Add nil guards: `if mob == nil { continue }` / `if room == nil { return }`.
 
 ---
 
+### Stage 37.4: Combat Analytics Bug Fixes ✅ COMPLETED (merge: d94e219)
+
+**Goal**: Fix four combat balance issues discovered by AI tester overnight
+run (~3,568 combat events).
+
+**Fixes:**
+1. **Unbounded crit threshold** (49% observed → ~2-7% expected): Added floor
+   clamps of 1.5 after skill diff and 1.0 absolute after grapple mods.
+2. **Defense stamina drain** (11+ SP/swing → 2-5 SP/swing): Changed
+   `runBestOfAllDefense()` to check affordability without deducting, then
+   charge only for the winning defense.
+3. **Defense floor bypass**: Removed `defenseType != ""` gate so floor applies
+   even when defender has no stamina. Defaults to dodge.
+4. **No attacker hit floor** (0% mob hit rate): Added `MinAttackHitChance`
+   config (default 0.15) symmetric to `MinDefenseChance`.
+5. **Mob regen alignment**: Replaced raw `MobXxxRegenPct * PoolMax` with
+   `PerRound()` calls so equipped mobs get gear regen bonuses.
+
+---
+
 ### Stage 37.3b: Error Handling Sweep ✅ COMPLETED (merge: 5280681)
 
 **Goal**: Systematic pass on ignored error returns, unsafe type
@@ -5589,7 +5609,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 34: Unified Damage Pipeline | 10 stages (34.1–34.10) | 20 hours | **Complete** |
 | Phase 35: Combat Balance & Mob Equipment | 1 stage | 4 hours | **Complete** |
 | Phase 36: Dialogue System Fix & Quest Wiring | 1 stage | 4 hours | **Complete** |
-| Phase 37: Codebase Quality Pass | 6 stages (37.1a–37.3b) | 24 hours | **Complete** |
+| Phase 37: Codebase Quality Pass | 7 stages (37.1a–37.4) | 24 hours | **Complete** |
 | Phase 38: Test Coverage Pass | 4 stages (38.1–38.4) | 20 hours | Not started |
 | **Total** | **~100 stages** | **~650 hours** | |
 
@@ -5753,6 +5773,6 @@ These are longer-term goals to be detailed when the above phases are complete:
 
 ---
 
-**Last Updated**: 2026-02-27
+**Last Updated**: 2026-02-28
 **Status**: In Progress
-**Current Stage**: Phase 37 complete. Next: Phase 38 (Test Coverage Pass).
+**Current Stage**: Phase 37 complete (incl. 37.4 analytics fixes). Next: Phase 38 (Test Coverage Pass).
