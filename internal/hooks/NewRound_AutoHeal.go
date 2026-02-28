@@ -211,7 +211,6 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 	}
 
 	// ── NPC / Mob regen ─────────────────────────────────────────────────────
-	b := configs.GetBalanceConfig()
 	for _, mobInstId := range mobs.GetAllMobInstanceIds() {
 		mob := mobs.GetInstance(mobInstId)
 		if mob == nil || mob.Character.Health < 1 {
@@ -222,10 +221,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 
 		// Health regen (out of combat only, unless heal-spell ConditionRegen)
 		if !mobInCombat {
-			hpRegen := int(float64(b.MobHealthRegenPct) * float64(mob.Character.HealthMax.Value))
-			if hpRegen < 1 {
-				hpRegen = 1
-			}
+			hpRegen := mob.Character.HealthPerRound()
 			// ConditionRegen acts as a multiplier on base regen
 			if mob.Character.HasCondition(characters.ConditionRegen) {
 				regenMult := mob.Character.GetConditionMagnitude(characters.ConditionRegen)
@@ -241,7 +237,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 			// In combat: only ConditionRegen applies
 			if mob.Character.HasCondition(characters.ConditionRegen) {
 				regenMult := mob.Character.GetConditionMagnitude(characters.ConditionRegen)
-				hpRegen := int(float64(b.MobHealthRegenPct) * float64(mob.Character.HealthMax.Value) * regenMult)
+				hpRegen := int(float64(mob.Character.HealthPerRound()) * regenMult)
 				if hpRegen < 1 {
 					hpRegen = 1
 				}
@@ -253,10 +249,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 		}
 
 		// Stamina regen (1/4 rate in combat)
-		spRegen := int(float64(b.MobStaminaRegenPct) * float64(mob.Character.StaminaMax.Value))
-		if spRegen < 1 {
-			spRegen = 1
-		}
+		spRegen := mob.Character.StaminaPerRound()
 		if mobInCombat {
 			spRegen = spRegen / 4
 			if spRegen < 1 {
@@ -269,10 +262,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 		}
 
 		// Conviction regen
-		cpRegen := int(float64(b.MobConvictionRegenPct) * float64(mob.Character.ConvictionMax.Value))
-		if cpRegen < 1 {
-			cpRegen = 1
-		}
+		cpRegen := mob.Character.ConvictionPerRound()
 		mob.Character.Conviction += cpRegen
 		if mob.Character.Conviction > mob.Character.ConvictionMax.Value {
 			mob.Character.Conviction = mob.Character.ConvictionMax.Value
