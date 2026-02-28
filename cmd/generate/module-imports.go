@@ -36,7 +36,11 @@ func main() {
 		dir := filepath.Join(root, d.Name())
 
 		// scan that one sub‐dir for a .go file
-		files, _ := os.ReadDir(dir)
+		files, err := os.ReadDir(dir)
+		if err != nil {
+			log.Printf("warning: could not read module dir %s: %v", dir, err)
+			continue
+		}
 		for _, f := range files {
 			if !f.IsDir() && strings.HasSuffix(f.Name(), ".go") {
 				pkgPath := filepath.ToSlash(dir) // e.g. "modules/foo"

@@ -129,7 +129,11 @@ func PartsToToken(questId int, questStep string) string {
 
 func TokenToParts(questToken string) (questId int, questStep string) {
 	parts := strings.Split(questToken, QuestTokenSeparator)
-	questId, _ = strconv.Atoi(parts[0])
+	var err error
+	questId, err = strconv.Atoi(parts[0])
+	if err != nil {
+		mudlog.Warn("TokenToParts", "token", questToken, "error", err)
+	}
 	if len(parts) > 1 {
 		questStep = parts[1]
 	} else {

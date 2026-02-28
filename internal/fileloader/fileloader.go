@@ -112,7 +112,11 @@ func LoadAllFlatFilesSimple[T LoadableSimple](basePath string, filePattern ...st
 
 		if len(filePattern) > 0 {
 			fileName := filepath.Base(path)
-			if ok, _ := filepath.Match(filePattern[0], fileName); !ok {
+			ok, matchErr := filepath.Match(filePattern[0], fileName)
+			if matchErr != nil {
+				mudlog.Warn("LoadAllFlatFilesSlice", "pattern", filePattern[0], "file", fileName, "error", matchErr)
+			}
+			if !ok {
 				return nil
 			}
 		}
@@ -160,7 +164,11 @@ func LoadAllFlatFiles[K comparable, T Loadable[K]](basePath string, filePattern 
 
 		if len(filePattern) > 0 {
 			fileName := filepath.Base(path)
-			if ok, _ := filepath.Match(filePattern[0], fileName); !ok {
+			ok, matchErr := filepath.Match(filePattern[0], fileName)
+			if matchErr != nil {
+				mudlog.Warn("LoadAllFlatFiles", "pattern", filePattern[0], "file", fileName, "error", matchErr)
+			}
+			if !ok {
 				return nil
 			}
 		}
