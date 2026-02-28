@@ -164,7 +164,7 @@ func AttackMobVsPlayer(mob *mobs.Mob, user *users.UserRecord) AttackResult {
 // Performs a combat round from a mob to a mob
 func AttackMobVsMob(mobAtk *mobs.Mob, mobDef *mobs.Mob) AttackResult {
 
-	attackResult := calculateCombat(mobAtk.Character, mobDef.Character, Mob, User)
+	attackResult := calculateCombat(mobAtk.Character, mobDef.Character, Mob, Mob)
 
 	// Deduct stamina for the attack
 	mobAtk.Character.DeductAttackStamina()
