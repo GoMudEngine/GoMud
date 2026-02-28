@@ -8,6 +8,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/prompt"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/exit"
 	"github.com/GoMudEngine/GoMud/internal/gamelock"
@@ -562,181 +563,10 @@ func room_Edit_Containers(rest string, user *users.UserRecord, room *rooms.Room,
 	// Lock Options
 	//
 	{
-		question := cmdPrompt.Ask(`Will this container be locked?`, []string{`yes`, `no`}, util.BoolYN(currentlyEditing.Container.Lock.Difficulty > 0))
-		if !question.Done {
+		var pending bool
+		currentlyEditing.Container.Lock, pending = editLockAndTrap(cmdPrompt, user, currentlyEditing.Container.Lock, `container`)
+		if pending {
 			return true, nil
-		}
-
-		if question.Response == `yes` {
-
-			defaultDifficultyAnswer := ``
-			if currentlyEditing.Container.Lock.Difficulty > 0 {
-				defaultDifficultyAnswer = strconv.Itoa(int(currentlyEditing.Container.Lock.Difficulty))
-			}
-
-			question := cmdPrompt.Ask(`What difficulty will the lock be (2-32)?`, []string{defaultDifficultyAnswer}, defaultDifficultyAnswer)
-			if !question.Done {
-				return true, nil
-			}
-
-			difficultyInt, _ := strconv.Atoi(question.Response)
-
-			// Make sure the provided difficulty is within acceptable range.
-			if difficultyInt < 2 || difficultyInt > 32 {
-				user.SendText("Difficulty must between 2 and 32, inclusive.")
-				question.RejectResponse()
-				return true, nil
-			}
-
-			currentlyEditing.Container.Lock.Difficulty = uint8(difficultyInt)
-
-		} else {
-			// reset the lock state if there is no lock.
-			currentlyEditing.Container.Lock = gamelock.Lock{}
-		}
-
-		if currentlyEditing.Container.Lock.Difficulty > 0 {
-			//
-			// Lock Trap Options
-			//
-			question = cmdPrompt.Ask(`Will this lock have a trap?`, []string{`yes`, `no`}, util.BoolYN(len(currentlyEditing.Container.Lock.TrapBuffIds) > 0))
-			if !question.Done {
-				return true, nil
-			}
-
-			if question.Response == `yes` {
-
-				selectedBuffList := []int{}
-				if cb, ok := cmdPrompt.Recall(`trapBuffs`); ok {
-					selectedBuffList = cb.([]int)
-				}
-
-				if len(selectedBuffList) == 0 {
-					selectedBuffList = append(selectedBuffList, currentlyEditing.Container.Lock.TrapBuffIds...)
-				}
-
-				// Keep track of the state
-				cmdPrompt.Store(`trapBuffs`, selectedBuffList)
-
-				selectedBuffLookup := map[int]bool{}
-				for _, bId := range selectedBuffList {
-					selectedBuffLookup[bId] = true
-				}
-
-				buffOptions := []templates.NameDescription{}
-
-				for _, buffId := range buffs.GetAllBuffIds() {
-					if b := buffs.GetBuffSpec(buffId); b != nil {
-
-						if b.Name == `empty` {
-							continue
-						}
-
-						marked := false
-						if _, ok := selectedBuffLookup[buffId]; ok {
-							marked = true
-						}
-
-						buffOptions = append(buffOptions, templates.NameDescription{Id: buffId, Marked: marked, Name: b.Name})
-					}
-				}
-
-				sort.SliceStable(buffOptions, func(i, j int) bool {
-					return buffOptions[i].Name < buffOptions[j].Name
-				})
-
-				question := cmdPrompt.Ask(`Select a buff to add to the trap, or nothing to continue:`, []string{}, `0`)
-				if !question.Done {
-					tplTxt, _ := templates.Process("tables/numbered-list-doubled", buffOptions, user.UserId)
-					user.SendText(tplTxt)
-					return true, nil
-				}
-
-				buffSelected := question.Response
-
-				if buffSelected != `0` {
-
-					buffSelectedInt := 0
-
-					if restNum, err := strconv.Atoi(buffSelected); err == nil {
-						if restNum > 0 && restNum <= len(buffOptions) {
-							buffSelectedInt = buffOptions[restNum-1].Id.(int)
-						}
-					}
-
-					if buffSelectedInt == 0 {
-						for _, b := range buffOptions {
-							if strings.EqualFold(b.Name, buffSelected) {
-								buffSelectedInt = b.Id.(int)
-								break
-							}
-						}
-					}
-
-					if buffSelectedInt == 0 {
-
-						user.SendText("Invalid selection.")
-						question.RejectResponse()
-
-						tplTxt, _ := templates.Process("tables/numbered-list-doubled", buffOptions, user.UserId)
-						user.SendText(tplTxt)
-						return true, nil
-					}
-
-					if _, ok := selectedBuffLookup[buffSelectedInt]; ok {
-
-						delete(selectedBuffLookup, buffSelectedInt)
-						for idx, buffId := range selectedBuffList {
-							if buffId == buffSelectedInt {
-								selectedBuffList = append(selectedBuffList[0:idx], selectedBuffList[idx+1:]...)
-								break
-							}
-						}
-
-					} else {
-
-						selectedBuffList = append(selectedBuffList, buffSelectedInt)
-						selectedBuffLookup[buffSelectedInt] = true
-
-					}
-
-					cmdPrompt.Store(`trapBuffs`, selectedBuffList)
-
-					question.RejectResponse()
-
-					for idx, data := range buffOptions {
-						_, data.Marked = selectedBuffLookup[data.Id.(int)]
-						buffOptions[idx] = data
-					}
-
-					tplTxt, _ := templates.Process("tables/numbered-list-doubled", buffOptions, user.UserId)
-					user.SendText(tplTxt)
-					return true, nil
-
-				}
-
-			}
-
-			if cb, ok := cmdPrompt.Recall(`trapBuffs`); ok {
-				currentlyEditing.Container.Lock.TrapBuffIds = cb.([]int)
-			}
-
-			if currentlyEditing.Container.Lock.RelockInterval == `` {
-				currentlyEditing.Container.Lock.RelockInterval = gamelock.DefaultRelockTime
-			}
-
-			question = cmdPrompt.Ask(`How long until it automatically relocks?`, []string{currentlyEditing.Container.Lock.RelockInterval}, currentlyEditing.Container.Lock.RelockInterval)
-			if !question.Done {
-				return true, nil
-			}
-
-			currentlyEditing.Container.Lock.RelockInterval = question.Response
-
-			// If the default time is chosen, can just leave it blank.
-			if currentlyEditing.Container.Lock.RelockInterval == gamelock.DefaultRelockTime {
-				currentlyEditing.Container.Lock.RelockInterval = ``
-			}
-
 		}
 	}
 
@@ -744,218 +574,11 @@ func room_Edit_Containers(rest string, user *users.UserRecord, room *rooms.Room,
 	// Recipe Options
 	//
 	{
-		question := cmdPrompt.Ask(`Will this container have recipes?`, []string{`yes`, `no`}, util.BoolYN(len(currentlyEditing.Container.Recipes) > 0))
-		if !question.Done {
+		var pending bool
+		currentlyEditing.Container.Recipes, pending = editContainerRecipes(cmdPrompt, user, currentlyEditing.Container.Recipes)
+		if pending {
 			return true, nil
 		}
-
-		if question.Response == `yes` {
-
-			currentRecipes := map[int][]int{}
-			if cr, ok := cmdPrompt.Recall(`recipes`); ok {
-				currentRecipes = cr.(map[int][]int)
-			}
-
-			if len(currentRecipes) == 0 {
-				for k, v := range currentlyEditing.Container.Recipes {
-					currentRecipes[k] = append([]int{}, v...)
-				}
-			}
-
-			recipeNow := 0
-			if rNow, ok := cmdPrompt.Recall(`recipeNow`); ok {
-				recipeNow = rNow.(int)
-			}
-
-			if recipeNow != 0 && items.GetItemSpec(recipeNow) == nil {
-				user.SendText(`<ansi fg="red">Invalid selection.</ansi>`)
-				question.RejectResponse()
-				return true, nil
-			}
-
-			// Keep track of the state
-			cmdPrompt.Store(`recipes`, currentRecipes)
-			cmdPrompt.Store(`recipeNow`, recipeNow)
-
-			// Select recipe to modify
-			if _, ok := currentRecipes[recipeNow]; !ok {
-				recipeOptions := []templates.NameDescription{}
-				for productItemId, recipeItemList := range currentRecipes {
-
-					itm := items.New(productItemId)
-					productName := fmt.Sprintf(`%d (%s)`, productItemId, itm.DisplayName())
-
-					allRequiredItems := []string{}
-					for _, iId := range recipeItemList {
-						itm := items.New(iId)
-						allRequiredItems = append(allRequiredItems, fmt.Sprintf(`%d (%s)`, iId, itm.DisplayName()))
-					}
-
-					recipeOptions = append(recipeOptions,
-						templates.NameDescription{
-							Id:          productItemId,
-							Marked:      recipeNow == productItemId,
-							Name:        productName,
-							Description: strings.Join(allRequiredItems, `, `),
-						})
-
-				}
-
-				recipeOptions = append(recipeOptions,
-					templates.NameDescription{
-						Id:          0,
-						Marked:      false,
-						Name:        `new`,
-						Description: `create a new recipe`,
-					})
-
-				recipeOptions = append(recipeOptions,
-					templates.NameDescription{
-						Id:          -1,
-						Marked:      false,
-						Name:        `skip`,
-						Description: `skip this step`,
-					})
-
-				question := cmdPrompt.Ask(`Modify which (or new)?`, []string{`skip`}, `skip`)
-				if !question.Done {
-					tplTxt, _ := templates.Process("tables/numbered-list", recipeOptions, user.UserId)
-					user.SendText(tplTxt)
-					return true, nil
-				}
-
-				recipeSelected := question.Response
-				if restNum, err := strconv.Atoi(recipeSelected); err == nil {
-					if restNum > 0 && restNum <= len(recipeOptions) {
-						recipeNow = recipeOptions[restNum-1].Id.(int)
-					}
-				}
-
-				if recipeNow == 0 {
-					for _, b := range recipeOptions {
-						if strings.EqualFold(b.Name, recipeSelected) {
-							recipeNow = b.Id.(int)
-							break
-						}
-					}
-				}
-
-				if question.Response == `new` {
-
-					question := cmdPrompt.Ask(`What itemId will be created?`, []string{})
-					if !question.Done {
-						return true, nil
-					}
-
-					itemIdInt, _ := strconv.Atoi(question.Response)
-					if items.GetItemSpec(itemIdInt) == nil {
-
-						user.SendText("Invalid itemId.")
-						question.RejectResponse()
-
-						return true, nil
-					}
-
-					if _, ok := currentRecipes[itemIdInt]; !ok {
-						currentRecipes[itemIdInt] = []int{}
-					}
-
-					recipeNow = itemIdInt
-
-					// Keep track of the state
-					cmdPrompt.Store(`recipes`, currentRecipes)
-					cmdPrompt.Store(`recipeNow`, recipeNow)
-				}
-			}
-
-			// If they're editing a recipe, lets add ingredients
-			if recipeNow != -1 {
-
-				neededItems := map[int]int{}
-				for _, inputItemId := range currentRecipes[recipeNow] {
-					neededItems[inputItemId] = neededItems[inputItemId] + 1
-				}
-
-				question = cmdPrompt.Ask(`Enter an itemId to add to the recipe, or nothing to continue:`, []string{``}, `skip`)
-				if !question.Done {
-					// They have a recipe to modify, ask for item id's
-					user.SendText(``)
-					user.SendText(`<ansi fg="cyan">Positive numbers add items, negative numbers remove items.</ansi>`)
-
-					room_Edit_Containers_SendRecipes(user, recipeNow, neededItems)
-
-					return true, nil
-				}
-
-				if question.Response != `skip` {
-
-					removeItem := false
-					if question.Response[0] == '-' {
-						removeItem = true
-						question.Response = question.Response[1:]
-					}
-
-					recipeAdjustment := items.FindItem(question.Response)
-
-					if itemSpec := items.GetItemSpec(recipeAdjustment); itemSpec == nil {
-						user.SendText(`<ansi fg="red">Invalid ItemId provided.</ansi>`)
-
-						room_Edit_Containers_SendRecipes(user, recipeNow, neededItems)
-
-						question.RejectResponse()
-						return true, nil
-					}
-
-					if removeItem {
-
-						for idx, itemId := range currentRecipes[recipeNow] {
-
-							if itemId == recipeAdjustment {
-								currentRecipes[recipeNow] = append(currentRecipes[recipeNow][0:idx], currentRecipes[recipeNow][idx+1:]...)
-
-								neededItems[recipeAdjustment] -= 1
-
-								if neededItems[recipeAdjustment] == 0 {
-									delete(neededItems, recipeAdjustment)
-								}
-
-								break
-							}
-
-						}
-
-					} else {
-						currentRecipes[recipeNow] = append(currentRecipes[recipeNow], recipeAdjustment)
-						neededItems[recipeAdjustment] += 1
-					}
-
-					// Keep track of the state
-					cmdPrompt.Store(`recipes`, currentRecipes)
-					cmdPrompt.Store(`recipeNow`, recipeNow)
-
-					room_Edit_Containers_SendRecipes(user, recipeNow, neededItems)
-
-					question.RejectResponse()
-					return true, nil
-
-				}
-
-			}
-
-			if allRecipes, ok := cmdPrompt.Recall(`recipes`); ok {
-				currentlyEditing.Container.Recipes = allRecipes.(map[int][]int)
-
-				for i, itms := range currentlyEditing.Container.Recipes {
-					if len(itms) == 0 {
-						delete(currentlyEditing.Container.Recipes, i)
-					}
-				}
-			}
-
-		} else {
-			clear(currentlyEditing.Container.Recipes)
-		}
-
 	}
 
 	//
@@ -1235,181 +858,10 @@ func room_Edit_Exits(rest string, user *users.UserRecord, room *rooms.Room, flag
 	// Lock Options
 	//
 	{
-		question := cmdPrompt.Ask(`Will this exit be locked?`, []string{`yes`, `no`}, util.BoolYN(currentlyEditing.Exit.Lock.Difficulty > 0))
-		if !question.Done {
+		var pending bool
+		currentlyEditing.Exit.Lock, pending = editLockAndTrap(cmdPrompt, user, currentlyEditing.Exit.Lock, `exit`)
+		if pending {
 			return true, nil
-		}
-
-		if question.Response == `yes` {
-
-			defaultDifficultyAnswer := ``
-			if currentlyEditing.Exit.Lock.Difficulty > 0 {
-				defaultDifficultyAnswer = strconv.Itoa(int(currentlyEditing.Exit.Lock.Difficulty))
-			}
-
-			question := cmdPrompt.Ask(`What difficulty will the lock be (2-32)?`, []string{defaultDifficultyAnswer}, defaultDifficultyAnswer)
-			if !question.Done {
-				return true, nil
-			}
-
-			difficultyInt, _ := strconv.Atoi(question.Response)
-
-			// Make sure the provided difficulty is within acceptable range.
-			if difficultyInt < 2 || difficultyInt > 32 {
-				user.SendText("Difficulty must between 2 and 32, inclusive.")
-				question.RejectResponse()
-				return true, nil
-			}
-
-			currentlyEditing.Exit.Lock.Difficulty = uint8(difficultyInt)
-
-		} else {
-			// reset the lock state if there is no lock.
-			currentlyEditing.Exit.Lock = gamelock.Lock{}
-		}
-
-		if currentlyEditing.Exit.Lock.Difficulty > 0 {
-			//
-			// Lock Trap Options
-			//
-			question = cmdPrompt.Ask(`Will this lock have a trap?`, []string{`yes`, `no`}, util.BoolYN(len(currentlyEditing.Exit.Lock.TrapBuffIds) > 0))
-			if !question.Done {
-				return true, nil
-			}
-
-			if question.Response == `yes` {
-
-				selectedBuffList := []int{}
-				if cb, ok := cmdPrompt.Recall(`trapBuffs`); ok {
-					selectedBuffList = cb.([]int)
-				}
-
-				if len(selectedBuffList) == 0 {
-					selectedBuffList = append(selectedBuffList, currentlyEditing.Exit.Lock.TrapBuffIds...)
-				}
-
-				// Keep track of the state
-				cmdPrompt.Store(`trapBuffs`, selectedBuffList)
-
-				selectedBuffLookup := map[int]bool{}
-				for _, bId := range selectedBuffList {
-					selectedBuffLookup[bId] = true
-				}
-
-				buffOptions := []templates.NameDescription{}
-
-				for _, buffId := range buffs.GetAllBuffIds() {
-					if b := buffs.GetBuffSpec(buffId); b != nil {
-
-						if b.Name == `empty` {
-							continue
-						}
-
-						marked := false
-						if _, ok := selectedBuffLookup[buffId]; ok {
-							marked = true
-						}
-
-						buffOptions = append(buffOptions, templates.NameDescription{Id: buffId, Marked: marked, Name: b.Name})
-					}
-				}
-
-				sort.SliceStable(buffOptions, func(i, j int) bool {
-					return buffOptions[i].Name < buffOptions[j].Name
-				})
-
-				question := cmdPrompt.Ask(`Select a buff to add to the trap, or nothing to continue:`, []string{}, `0`)
-				if !question.Done {
-					tplTxt, _ := templates.Process("tables/numbered-list-doubled", buffOptions, user.UserId)
-					user.SendText(tplTxt)
-					return true, nil
-				}
-
-				buffSelected := question.Response
-
-				if buffSelected != `0` {
-
-					buffSelectedInt := 0
-
-					if restNum, err := strconv.Atoi(buffSelected); err == nil {
-						if restNum > 0 && restNum <= len(buffOptions) {
-							buffSelectedInt = buffOptions[restNum-1].Id.(int)
-						}
-					}
-
-					if buffSelectedInt == 0 {
-						for _, b := range buffOptions {
-							if strings.EqualFold(b.Name, buffSelected) {
-								buffSelectedInt = b.Id.(int)
-								break
-							}
-						}
-					}
-
-					if buffSelectedInt == 0 {
-
-						user.SendText("Invalid selection.")
-						question.RejectResponse()
-
-						tplTxt, _ := templates.Process("tables/numbered-list-doubled", buffOptions, user.UserId)
-						user.SendText(tplTxt)
-						return true, nil
-					}
-
-					if _, ok := selectedBuffLookup[buffSelectedInt]; ok {
-
-						delete(selectedBuffLookup, buffSelectedInt)
-						for idx, buffId := range selectedBuffList {
-							if buffId == buffSelectedInt {
-								selectedBuffList = append(selectedBuffList[0:idx], selectedBuffList[idx+1:]...)
-								break
-							}
-						}
-
-					} else {
-
-						selectedBuffList = append(selectedBuffList, buffSelectedInt)
-						selectedBuffLookup[buffSelectedInt] = true
-
-					}
-
-					cmdPrompt.Store(`trapBuffs`, selectedBuffList)
-
-					question.RejectResponse()
-
-					for idx, data := range buffOptions {
-						_, data.Marked = selectedBuffLookup[data.Id.(int)]
-						buffOptions[idx] = data
-					}
-
-					tplTxt, _ := templates.Process("tables/numbered-list-doubled", buffOptions, user.UserId)
-					user.SendText(tplTxt)
-					return true, nil
-
-				}
-
-			}
-
-			if cb, ok := cmdPrompt.Recall(`trapBuffs`); ok {
-				currentlyEditing.Exit.Lock.TrapBuffIds = cb.([]int)
-			}
-
-			if currentlyEditing.Exit.Lock.RelockInterval == `` {
-				currentlyEditing.Exit.Lock.RelockInterval = gamelock.DefaultRelockTime
-			}
-
-			question = cmdPrompt.Ask(`How long until it automatically relocks?`, []string{currentlyEditing.Exit.Lock.RelockInterval}, currentlyEditing.Exit.Lock.RelockInterval)
-			if !question.Done {
-				return true, nil
-			}
-
-			currentlyEditing.Exit.Lock.RelockInterval = question.Response
-
-			// If the default time is chosen, can just leave it blank.
-			if currentlyEditing.Exit.Lock.RelockInterval == gamelock.DefaultRelockTime {
-				currentlyEditing.Exit.Lock.RelockInterval = ``
-			}
-
 		}
 	}
 
@@ -1443,6 +895,409 @@ func room_Edit_Exits(rest string, user *users.UserRecord, room *rooms.Room, flag
 	user.ClearPrompt()
 
 	return true, nil
+}
+
+// editLockAndTrap handles the lock/trap questionnaire shared by containers and exits.
+// Returns the updated lock and whether the caller should early-return (pending=true means a question is still in progress).
+func editLockAndTrap(cmdPrompt *prompt.Prompt, user *users.UserRecord, lock gamelock.Lock, itemType string) (gamelock.Lock, bool) {
+
+	question := cmdPrompt.Ask(`Will this `+itemType+` be locked?`, []string{`yes`, `no`}, util.BoolYN(lock.Difficulty > 0))
+	if !question.Done {
+		return lock, true
+	}
+
+	if question.Response == `yes` {
+
+		defaultDifficultyAnswer := ``
+		if lock.Difficulty > 0 {
+			defaultDifficultyAnswer = strconv.Itoa(int(lock.Difficulty))
+		}
+
+		question := cmdPrompt.Ask(`What difficulty will the lock be (2-32)?`, []string{defaultDifficultyAnswer}, defaultDifficultyAnswer)
+		if !question.Done {
+			return lock, true
+		}
+
+		difficultyInt, _ := strconv.Atoi(question.Response)
+
+		// Make sure the provided difficulty is within acceptable range.
+		if difficultyInt < 2 || difficultyInt > 32 {
+			user.SendText("Difficulty must between 2 and 32, inclusive.")
+			question.RejectResponse()
+			return lock, true
+		}
+
+		lock.Difficulty = uint8(difficultyInt)
+
+	} else {
+		// reset the lock state if there is no lock.
+		lock = gamelock.Lock{}
+	}
+
+	if lock.Difficulty > 0 {
+		//
+		// Lock Trap Options
+		//
+		question = cmdPrompt.Ask(`Will this lock have a trap?`, []string{`yes`, `no`}, util.BoolYN(len(lock.TrapBuffIds) > 0))
+		if !question.Done {
+			return lock, true
+		}
+
+		if question.Response == `yes` {
+
+			selectedBuffList := []int{}
+			if cb, ok := cmdPrompt.Recall(`trapBuffs`); ok {
+				selectedBuffList = cb.([]int)
+			}
+
+			if len(selectedBuffList) == 0 {
+				selectedBuffList = append(selectedBuffList, lock.TrapBuffIds...)
+			}
+
+			// Keep track of the state
+			cmdPrompt.Store(`trapBuffs`, selectedBuffList)
+
+			selectedBuffLookup := map[int]bool{}
+			for _, bId := range selectedBuffList {
+				selectedBuffLookup[bId] = true
+			}
+
+			buffOptions := []templates.NameDescription{}
+
+			for _, buffId := range buffs.GetAllBuffIds() {
+				if b := buffs.GetBuffSpec(buffId); b != nil {
+
+					if b.Name == `empty` {
+						continue
+					}
+
+					marked := false
+					if _, ok := selectedBuffLookup[buffId]; ok {
+						marked = true
+					}
+
+					buffOptions = append(buffOptions, templates.NameDescription{Id: buffId, Marked: marked, Name: b.Name})
+				}
+			}
+
+			sort.SliceStable(buffOptions, func(i, j int) bool {
+				return buffOptions[i].Name < buffOptions[j].Name
+			})
+
+			question := cmdPrompt.Ask(`Select a buff to add to the trap, or nothing to continue:`, []string{}, `0`)
+			if !question.Done {
+				tplTxt, _ := templates.Process("tables/numbered-list-doubled", buffOptions, user.UserId)
+				user.SendText(tplTxt)
+				return lock, true
+			}
+
+			buffSelected := question.Response
+
+			if buffSelected != `0` {
+
+				buffSelectedInt := 0
+
+				if restNum, err := strconv.Atoi(buffSelected); err == nil {
+					if restNum > 0 && restNum <= len(buffOptions) {
+						buffSelectedInt = buffOptions[restNum-1].Id.(int)
+					}
+				}
+
+				if buffSelectedInt == 0 {
+					for _, b := range buffOptions {
+						if strings.EqualFold(b.Name, buffSelected) {
+							buffSelectedInt = b.Id.(int)
+							break
+						}
+					}
+				}
+
+				if buffSelectedInt == 0 {
+
+					user.SendText("Invalid selection.")
+					question.RejectResponse()
+
+					tplTxt, _ := templates.Process("tables/numbered-list-doubled", buffOptions, user.UserId)
+					user.SendText(tplTxt)
+					return lock, true
+				}
+
+				if _, ok := selectedBuffLookup[buffSelectedInt]; ok {
+
+					delete(selectedBuffLookup, buffSelectedInt)
+					for idx, buffId := range selectedBuffList {
+						if buffId == buffSelectedInt {
+							selectedBuffList = append(selectedBuffList[0:idx], selectedBuffList[idx+1:]...)
+							break
+						}
+					}
+
+				} else {
+
+					selectedBuffList = append(selectedBuffList, buffSelectedInt)
+					selectedBuffLookup[buffSelectedInt] = true
+
+				}
+
+				cmdPrompt.Store(`trapBuffs`, selectedBuffList)
+
+				question.RejectResponse()
+
+				for idx, data := range buffOptions {
+					_, data.Marked = selectedBuffLookup[data.Id.(int)]
+					buffOptions[idx] = data
+				}
+
+				tplTxt, _ := templates.Process("tables/numbered-list-doubled", buffOptions, user.UserId)
+				user.SendText(tplTxt)
+				return lock, true
+
+			}
+
+		}
+
+		if cb, ok := cmdPrompt.Recall(`trapBuffs`); ok {
+			lock.TrapBuffIds = cb.([]int)
+		}
+
+		if lock.RelockInterval == `` {
+			lock.RelockInterval = gamelock.DefaultRelockTime
+		}
+
+		question = cmdPrompt.Ask(`How long until it automatically relocks?`, []string{lock.RelockInterval}, lock.RelockInterval)
+		if !question.Done {
+			return lock, true
+		}
+
+		lock.RelockInterval = question.Response
+
+		// If the default time is chosen, can just leave it blank.
+		if lock.RelockInterval == gamelock.DefaultRelockTime {
+			lock.RelockInterval = ``
+		}
+
+	}
+
+	return lock, false
+}
+
+// editContainerRecipes handles the recipe questionnaire for containers.
+// Returns the updated recipes and whether the caller should early-return.
+func editContainerRecipes(cmdPrompt *prompt.Prompt, user *users.UserRecord, recipes map[int][]int) (map[int][]int, bool) {
+
+	question := cmdPrompt.Ask(`Will this container have recipes?`, []string{`yes`, `no`}, util.BoolYN(len(recipes) > 0))
+	if !question.Done {
+		return recipes, true
+	}
+
+	if question.Response == `yes` {
+
+		currentRecipes := map[int][]int{}
+		if cr, ok := cmdPrompt.Recall(`recipes`); ok {
+			currentRecipes = cr.(map[int][]int)
+		}
+
+		if len(currentRecipes) == 0 {
+			for k, v := range recipes {
+				currentRecipes[k] = append([]int{}, v...)
+			}
+		}
+
+		recipeNow := 0
+		if rNow, ok := cmdPrompt.Recall(`recipeNow`); ok {
+			recipeNow = rNow.(int)
+		}
+
+		if recipeNow != 0 && items.GetItemSpec(recipeNow) == nil {
+			user.SendText(`<ansi fg="red">Invalid selection.</ansi>`)
+			question.RejectResponse()
+			return recipes, true
+		}
+
+		// Keep track of the state
+		cmdPrompt.Store(`recipes`, currentRecipes)
+		cmdPrompt.Store(`recipeNow`, recipeNow)
+
+		// Select recipe to modify
+		if _, ok := currentRecipes[recipeNow]; !ok {
+			recipeOptions := []templates.NameDescription{}
+			for productItemId, recipeItemList := range currentRecipes {
+
+				itm := items.New(productItemId)
+				productName := fmt.Sprintf(`%d (%s)`, productItemId, itm.DisplayName())
+
+				allRequiredItems := []string{}
+				for _, iId := range recipeItemList {
+					itm := items.New(iId)
+					allRequiredItems = append(allRequiredItems, fmt.Sprintf(`%d (%s)`, iId, itm.DisplayName()))
+				}
+
+				recipeOptions = append(recipeOptions,
+					templates.NameDescription{
+						Id:          productItemId,
+						Marked:      recipeNow == productItemId,
+						Name:        productName,
+						Description: strings.Join(allRequiredItems, `, `),
+					})
+
+			}
+
+			recipeOptions = append(recipeOptions,
+				templates.NameDescription{
+					Id:          0,
+					Marked:      false,
+					Name:        `new`,
+					Description: `create a new recipe`,
+				})
+
+			recipeOptions = append(recipeOptions,
+				templates.NameDescription{
+					Id:          -1,
+					Marked:      false,
+					Name:        `skip`,
+					Description: `skip this step`,
+				})
+
+			question := cmdPrompt.Ask(`Modify which (or new)?`, []string{`skip`}, `skip`)
+			if !question.Done {
+				tplTxt, _ := templates.Process("tables/numbered-list", recipeOptions, user.UserId)
+				user.SendText(tplTxt)
+				return recipes, true
+			}
+
+			recipeSelected := question.Response
+			if restNum, err := strconv.Atoi(recipeSelected); err == nil {
+				if restNum > 0 && restNum <= len(recipeOptions) {
+					recipeNow = recipeOptions[restNum-1].Id.(int)
+				}
+			}
+
+			if recipeNow == 0 {
+				for _, b := range recipeOptions {
+					if strings.EqualFold(b.Name, recipeSelected) {
+						recipeNow = b.Id.(int)
+						break
+					}
+				}
+			}
+
+			if question.Response == `new` {
+
+				question := cmdPrompt.Ask(`What itemId will be created?`, []string{})
+				if !question.Done {
+					return recipes, true
+				}
+
+				itemIdInt, _ := strconv.Atoi(question.Response)
+				if items.GetItemSpec(itemIdInt) == nil {
+
+					user.SendText("Invalid itemId.")
+					question.RejectResponse()
+
+					return recipes, true
+				}
+
+				if _, ok := currentRecipes[itemIdInt]; !ok {
+					currentRecipes[itemIdInt] = []int{}
+				}
+
+				recipeNow = itemIdInt
+
+				// Keep track of the state
+				cmdPrompt.Store(`recipes`, currentRecipes)
+				cmdPrompt.Store(`recipeNow`, recipeNow)
+			}
+		}
+
+		// If they're editing a recipe, lets add ingredients
+		if recipeNow != -1 {
+
+			neededItems := map[int]int{}
+			for _, inputItemId := range currentRecipes[recipeNow] {
+				neededItems[inputItemId] = neededItems[inputItemId] + 1
+			}
+
+			question = cmdPrompt.Ask(`Enter an itemId to add to the recipe, or nothing to continue:`, []string{``}, `skip`)
+			if !question.Done {
+				// They have a recipe to modify, ask for item id's
+				user.SendText(``)
+				user.SendText(`<ansi fg="cyan">Positive numbers add items, negative numbers remove items.</ansi>`)
+
+				room_Edit_Containers_SendRecipes(user, recipeNow, neededItems)
+
+				return recipes, true
+			}
+
+			if question.Response != `skip` {
+
+				removeItem := false
+				if question.Response[0] == '-' {
+					removeItem = true
+					question.Response = question.Response[1:]
+				}
+
+				recipeAdjustment := items.FindItem(question.Response)
+
+				if itemSpec := items.GetItemSpec(recipeAdjustment); itemSpec == nil {
+					user.SendText(`<ansi fg="red">Invalid ItemId provided.</ansi>`)
+
+					room_Edit_Containers_SendRecipes(user, recipeNow, neededItems)
+
+					question.RejectResponse()
+					return recipes, true
+				}
+
+				if removeItem {
+
+					for idx, itemId := range currentRecipes[recipeNow] {
+
+						if itemId == recipeAdjustment {
+							currentRecipes[recipeNow] = append(currentRecipes[recipeNow][0:idx], currentRecipes[recipeNow][idx+1:]...)
+
+							neededItems[recipeAdjustment] -= 1
+
+							if neededItems[recipeAdjustment] == 0 {
+								delete(neededItems, recipeAdjustment)
+							}
+
+							break
+						}
+
+					}
+
+				} else {
+					currentRecipes[recipeNow] = append(currentRecipes[recipeNow], recipeAdjustment)
+					neededItems[recipeAdjustment] += 1
+				}
+
+				// Keep track of the state
+				cmdPrompt.Store(`recipes`, currentRecipes)
+				cmdPrompt.Store(`recipeNow`, recipeNow)
+
+				room_Edit_Containers_SendRecipes(user, recipeNow, neededItems)
+
+				question.RejectResponse()
+				return recipes, true
+
+			}
+
+		}
+
+		if allRecipes, ok := cmdPrompt.Recall(`recipes`); ok {
+			recipes = allRecipes.(map[int][]int)
+
+			for i, itms := range recipes {
+				if len(itms) == 0 {
+					delete(recipes, i)
+				}
+			}
+		}
+
+	} else {
+		clear(recipes)
+	}
+
+	return recipes, false
 }
 
 func room_Edit_Mutators(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
