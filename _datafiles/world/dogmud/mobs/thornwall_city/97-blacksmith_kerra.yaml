@@ -15,6 +15,16 @@ idlecommands:
   - 'emote thrusts a piece of metal into the forge coals, working the bellows'
   - ''
 activitylevel: 15
+crafter: true
+crafterskill: blacksmithing
+crafterrecipeids:
+  - iron-dagger
+  - iron-buckler
+  - iron-short-sword
+crafterrestockmaterials:
+  - 40001
+  - 40002
+  - 40003
 character:
   name: blacksmith Kerra
   description: |
@@ -34,6 +44,8 @@ character:
       itemid: 20045
     feet:
       itemid: 20052
+  skills:
+    blacksmithing: 10
   stats:
     strength:
       training: 15
