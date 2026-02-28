@@ -85,8 +85,15 @@ type Mob struct {
 	Archetype      string          `yaml:"archetype,omitempty"`           // "fighting", "casting", or "" (default even distribution)
 	SpawnMutations []string        `yaml:"spawnmutations,omitempty,flow"` // Mutations always granted at spawn (Phase 24.3)
 	MutationChance int             `yaml:"mutationchance,omitempty"`      // % chance to gain 1 random bonus mutation on spawn (Phase 24.3)
-	PackBonusTotal  int            `yaml:"-"` // Total training points from pack scaling (Stage 38.5.3)
-	tempDataStore   map[string]any
+	Crafter                 bool     `yaml:"crafter,omitempty"`                 // Whether this mob crafts autonomously (Stage 38.5.4)
+	CrafterSkill            string   `yaml:"crafterskill,omitempty"`            // Craft skill used (e.g. "blacksmithing")
+	CrafterRecipeIds        []string `yaml:"crafterrecipeids,omitempty"`        // Recipe IDs this mob can craft
+	CrafterRestockMaterials []int    `yaml:"crafterrestockmaterials,omitempty"` // Item IDs restocked periodically
+	PackBonusTotal          int      `yaml:"-"`                                 // Total training points from pack scaling (Stage 38.5.3)
+	crafterActiveRecipeId   string                                              // Currently active recipe (transient)
+	crafterCraftProgress    int                                                 // Rounds elapsed on current recipe (transient)
+	crafterLastRestockRound uint64                                              // Last round materials were restocked (transient)
+	tempDataStore           map[string]any
 	conversationId  int              // Identifier of conversation currently involved in.
 	Path            PathQueue        `yaml:"-"` // a pre-calculated path the mob is following.
 	lastCommandTurn uint64           // The last turn a command was scheduled for
