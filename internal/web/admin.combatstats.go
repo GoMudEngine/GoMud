@@ -100,7 +100,13 @@ func combatStatsExportAPI(w http.ResponseWriter, r *http.Request) {
 
 func combatStatsAPI(w http.ResponseWriter, r *http.Request) {
 
-	summary := combat.GetSummary()
+	filters := combat.FilterParams{
+		SourceType: r.URL.Query().Get("source"),
+		TargetType: r.URL.Query().Get("target"),
+		Channel:    r.URL.Query().Get("channel"),
+	}
+
+	summary := combat.GetFilteredSummary(filters)
 
 	resp := combatStatsAPIResponse{
 		TotalEvents:      summary.TotalEvents,
