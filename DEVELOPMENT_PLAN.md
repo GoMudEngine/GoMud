@@ -5337,7 +5337,7 @@ only), `go test ./internal/util/...` — all pass.
 
 ---
 
-### Stage 37.3a: Critical Robustness Hardening
+### Stage 37.3a: Critical Robustness Hardening ✅ COMPLETED (merge: adaf9fb)
 
 **Goal**: Fix the highest-risk error handling gaps — goroutine panics
 that crash the server and nil pointer dereferences in the combat loop.
@@ -5589,7 +5589,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 34: Unified Damage Pipeline | 10 stages (34.1–34.10) | 20 hours | **Complete** |
 | Phase 35: Combat Balance & Mob Equipment | 1 stage | 4 hours | **Complete** |
 | Phase 36: Dialogue System Fix & Quest Wiring | 1 stage | 4 hours | **Complete** |
-| Phase 37: Codebase Quality Pass | 6 stages (37.1a–37.3b) | 24 hours | **37.1a–37.2a Complete** |
+| Phase 37: Codebase Quality Pass | 6 stages (37.1a–37.3b) | 24 hours | **37.1a–37.3a Complete** |
 | Phase 38: Test Coverage Pass | 4 stages (38.1–38.4) | 20 hours | Not started |
 | **Total** | **~100 stages** | **~650 hours** | |
 
@@ -5755,4 +5755,4 @@ These are longer-term goals to be detailed when the above phases are complete:
 
 **Last Updated**: 2026-02-27
 **Status**: In Progress
-**Current Stage**: Stage 37.2a complete. Next: Stage 37.3a (Critical Robustness Hardening).
+**Current Stage**: Stage 37.3a complete. Next: Stage 37.3b (Error Handling Sweep).
