@@ -3,6 +3,7 @@ package util
 import (
 	"fmt"
 	"math"
+	"reflect"
 	"runtime"
 )
 
@@ -50,6 +51,54 @@ func ServerGetMemoryUsage() map[string]MemoryResult {
 	ret[`Goroutines Count`] = MemoryResult{uint64(runtime.NumGoroutine()), 0}  // How many goroutines are currently running
 
 	return ret
+}
+
+func sizeOf(v reflect.Value) uintptr {
+	switch v.Kind() {
+	case reflect.Ptr:
+		if v.IsNil() {
+			return 0
+		}
+		return sizeOf(v.Elem())
+
+	case reflect.Slice:
+		if v.IsNil() {
+			return 0
+		}
+		length := v.Len()
+		elemSize := sizeOf(reflect.New(v.Type().Elem()).Elem())
+		return uintptr(length) * elemSize
+
+	case reflect.Struct:
+		var size uintptr
+		for i := 0; i < v.NumField(); i++ {
+			size += sizeOf(v.Field(i))
+		}
+		return size
+
+	case reflect.Array:
+		length := v.Len()
+		elemSize := sizeOf(reflect.New(v.Type().Elem()).Elem())
+		return uintptr(length) * elemSize
+
+	case reflect.String:
+		return uintptr(len(v.String()))
+
+	case reflect.Map:
+		var size uintptr
+		keys := v.MapKeys()
+		for _, key := range keys {
+			size += sizeOf(key) + sizeOf(v.MapIndex(key))
+		}
+		return size
+
+	default:
+		return v.Type().Size()
+	}
+}
+
+func MemoryUsage(i interface{}) uint64 {
+	return uint64(sizeOf(reflect.ValueOf(i)))
 }
 
 func FormatBytes(bytes uint64) string {
