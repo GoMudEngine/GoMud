@@ -15,6 +15,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"runtime/debug"
 	"strconv"
 	"strings"
 	"sync"
@@ -126,7 +127,21 @@ func send(marshalled []byte) {
 	}
 
 	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				mudlog.Error("PANIC", "error", r)
+				s := string(debug.Stack())
+				for _, str := range strings.Split(s, "\n") {
+					mudlog.Error("PANIC", "stack", str)
+				}
+			}
+		}()
+
 		request, err := http.NewRequest("POST", WebhookUrl, bytes.NewReader(marshalled))
+		if err != nil {
+			mudlog.Error("discord", "error", fmt.Sprintf("failed to create request: %v", err))
+			return
+		}
 		request.Header.Set("Content-Type", "application/json; charset=UTF-8")
 
 		client := &http.Client{
@@ -148,6 +163,7 @@ func send(marshalled []byte) {
 			mudlog.Error(`discord`, `error`, err)
 			return
 		}
+		defer response.Body.Close()
 
 		// Expect 204 No Content reply
 		if response.StatusCode != 204 {
