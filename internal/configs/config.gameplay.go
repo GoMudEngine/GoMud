@@ -58,6 +58,9 @@ type GamePlay struct {
 	// Defense floor: minimum probability any defense succeeds
 	MinDefenseChance ConfigFloat `yaml:"MinDefenseChance"` // Default: 0.15 (15% floor even when massively outclassed)
 
+	// Attack hit floor: minimum probability any attack hits
+	MinAttackHitChance ConfigFloat `yaml:"MinAttackHitChance"` // Default: 0.15 (15% floor even when massively outclassed)
+
 	// Stage 8.5: Third-party grapple vulnerability
 	ThirdPartyGrapplePenalty ConfigFloat `yaml:"ThirdPartyGrapplePenalty"` // Default: 0.70 (-30% defense when entangled)
 
@@ -233,6 +236,11 @@ func (g *GamePlay) Validate() {
 	// Defense floor
 	if g.MinDefenseChance < 0 || g.MinDefenseChance > 0.50 {
 		g.MinDefenseChance = 0.15
+	}
+
+	// Attack hit floor
+	if g.MinAttackHitChance < 0 || g.MinAttackHitChance > 0.50 {
+		g.MinAttackHitChance = 0.15
 	}
 
 	// Stage 7.5: Special move parameters - set defaults if invalid

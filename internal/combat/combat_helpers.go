@@ -292,6 +292,11 @@ func calcCritThreshold(sourceChar *characters.Character, targetChar *characters.
 	skillDiff := sourceChar.GetCombatSkillLevel() - targetChar.GetCombatSkillLevel()
 	critThreshold -= float64(skillDiff) * 0.05
 
+	// Floor after skill adjustment: never easier than Accuracy buff level (~6.7% crit)
+	if critThreshold < 1.5 {
+		critThreshold = 1.5
+	}
+
 	// Stage 8.3: Position-based crit modifiers
 	if sourceChar.CombatPosition.IsGrapplePosition() && sourceChar.HasCondition(characters.ConditionGrappleController) {
 		if sourceChar.CombatPosition == characters.PositionGrounded {
@@ -302,6 +307,11 @@ func calcCritThreshold(sourceChar *characters.Character, targetChar *characters.
 	}
 	if targetChar.CombatPosition == characters.PositionGrounded && !targetChar.HasCondition(characters.ConditionGrappleController) {
 		critThreshold += 0.4
+	}
+
+	// Absolute floor after all modifiers: ~15.9% max crit (skilled + grapple controller)
+	if critThreshold < 1.0 {
+		critThreshold = 1.0
 	}
 
 	return critThreshold
@@ -354,8 +364,9 @@ func runBestOfAllDefense(result *AttackResult, sourceChar *characters.Character,
 		// Stage 9.4: Track defense for stance calculation
 		targetChar.IncrementDefenseCount()
 
-		// Check if defender has stamina for this defense
-		if !targetChar.DeductDefenseStamina(defenseType) {
+		// Check if defender can afford this defense (don't deduct yet)
+		cost := targetChar.GetDefenseStaminaCost(defenseType)
+		if targetChar.Stamina < cost {
 			continue
 		}
 
@@ -407,6 +418,11 @@ func runBestOfAllDefense(result *AttackResult, sourceChar *characters.Character,
 		}
 	}
 
+	// Deduct stamina only for the winning defense
+	if best.defenseType != "" {
+		targetChar.DeductDefenseStamina(best.defenseType)
+	}
+
 	return best
 }
 
@@ -422,6 +438,13 @@ func resolveDefenseOutcome(result *AttackResult, best bestDefenseResult, sourceC
 	}
 
 	if best.margin > 0 {
+		// Attack hit floor: even outclassed attackers have a minimum chance
+		attackFloor := float64(cfg.MinAttackHitChance)
+		if attackFloor > 0 && util.Rand(100) < int(attackFloor*100) {
+			// Floor save — attack hits despite defense winning the roll
+			return true, best.hitRoll
+		}
+
 		// Best defense succeeded — attack is avoided
 		result.DefenseUsed = DefenseType(best.defenseType)
 
@@ -512,14 +535,19 @@ func resolveDefenseOutcome(result *AttackResult, best bestDefenseResult, sourceC
 	}
 
 	// No defense succeeded on the roll — check defense floor
-	if best.defenseType != "" {
+	{
+		// Default to dodge when no defense was attempted (e.g. no stamina)
+		defType := best.defenseType
+		if defType == "" {
+			defType = characters.DefenseDodge
+		}
 		floor := float64(cfg.MinDefenseChance)
 		if floor > 0 && util.Rand(100) < int(floor*100) {
 			// Floor save — defense succeeds despite losing the roll
-			result.DefenseUsed = DefenseType(best.defenseType)
+			result.DefenseUsed = DefenseType(defType)
 
 			var defenseVerb string
-			switch best.defenseType {
+			switch defType {
 			case characters.DefenseDodge:
 				defenseVerb = "dodge"
 			case characters.DefenseParry:
