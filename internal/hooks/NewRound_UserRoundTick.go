@@ -81,7 +81,7 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 
 							msg := idleMsgs[idleMsgIndex]
 							if msg != `` {
-								room.SendText(msg)
+								room.SendText(util.NormalizeAndWrap(msg, 65))
 							}
 
 						}
