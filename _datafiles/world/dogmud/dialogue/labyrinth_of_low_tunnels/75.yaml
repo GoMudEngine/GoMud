@@ -117,7 +117,7 @@ tree:
       moodChange: friendly
 
     - id: audience
-      triggers: ["compact", "peace", "alliance", "shaman", "sent", "poultice", "medicine", "treaty"]
+      triggers: ["compact", "peace", "alliance", "shaman", "sent", "poultice", "medicine", "treaty", "quest", "task"]
       questRequired: ["2-poultices"]
       questExcluded: ["2-end"]
       grantsQuest: "2-end"
