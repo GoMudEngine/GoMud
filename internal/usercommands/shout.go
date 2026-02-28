@@ -28,9 +28,8 @@ func Shout(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		rest = drunkify(rest)
 	}
 
-	// Wrap long shout text to 55 chars to account for "Name shouts, ..."
-	// prefix keeping total line width under 80 for most speaker names
-	rest = util.NormalizeAndWrap(rest, 55)
+	// Wrap long shout text to 65 chars to account for "Name shouts, ..."
+	rest = util.NormalizeAndWrap(rest, 65)
 
 	if isSneaking {
 		room.SendTextCommunication(fmt.Sprintf(`someone shouts, "<ansi fg="yellow">%s</ansi>"`, rest), user.UserId)

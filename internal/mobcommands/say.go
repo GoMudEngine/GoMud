@@ -18,9 +18,8 @@ func Say(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		return true, nil
 	}
 
-	// Wrap long dialogue text to 55 chars to account for "Name says, ..."
-	// prefix keeping total line width under 80 for most mob names
-	rest = util.NormalizeAndWrap(rest, 55)
+	// Wrap long dialogue text to 65 chars to account for "Name says, ..."
+	rest = util.NormalizeAndWrap(rest, 65)
 
 	isSneaking := mob.Character.HasBuffFlag(buffs.Hidden)
 
