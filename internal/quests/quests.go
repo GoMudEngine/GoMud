@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/util"
+	"github.com/pkg/errors"
 )
 
 const (
@@ -129,7 +130,11 @@ func PartsToToken(questId int, questStep string) string {
 
 func TokenToParts(questToken string) (questId int, questStep string) {
 	parts := strings.Split(questToken, QuestTokenSeparator)
-	questId, _ = strconv.Atoi(parts[0])
+	var err error
+	questId, err = strconv.Atoi(parts[0])
+	if err != nil {
+		mudlog.Warn("TokenToParts", "token", questToken, "error", err)
+	}
 	if len(parts) > 1 {
 		questStep = parts[1]
 	} else {
@@ -183,9 +188,10 @@ func LoadDataFiles() {
 
 	start := time.Now()
 
-	tmpQuests, err := fileloader.LoadAllFlatFiles[int, *Quest](configs.GetFilePathsConfig().DataFiles.String() + `/quests`)
+	dataPath := configs.GetFilePathsConfig().DataFiles.String() + `/quests`
+	tmpQuests, err := fileloader.LoadAllFlatFiles[int, *Quest](dataPath)
 	if err != nil {
-		panic(err)
+		panic(errors.Wrap(err, `filepath: `+dataPath))
 	}
 
 	quests = tmpQuests

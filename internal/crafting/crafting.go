@@ -13,6 +13,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/util"
+	"github.com/pkg/errors"
 )
 
 // RecipeIngredient describes a single ingredient requirement for a recipe.
@@ -78,11 +79,10 @@ var allRecipes map[string]*RecipeSpec
 func LoadRecipeFiles() {
 	start := time.Now()
 
-	tmpAll, err := fileloader.LoadAllFlatFiles[string, *RecipeSpec](
-		string(configs.GetFilePathsConfig().DataFiles) + `/recipes`,
-	)
+	dataPath := string(configs.GetFilePathsConfig().DataFiles) + `/recipes`
+	tmpAll, err := fileloader.LoadAllFlatFiles[string, *RecipeSpec](dataPath)
 	if err != nil {
-		panic(err)
+		panic(errors.Wrap(err, `filepath: `+dataPath))
 	}
 
 	allRecipes = tmpAll

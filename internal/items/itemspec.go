@@ -14,6 +14,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/statmods"
 	"github.com/GoMudEngine/GoMud/internal/util"
+	"github.com/pkg/errors"
 )
 
 type ItemType string
@@ -546,23 +547,24 @@ func LoadDataFiles() {
 
 	start := time.Now()
 
-	tmpItems, err := fileloader.LoadAllFlatFiles[int, *ItemSpec](string(configs.GetFilePathsConfig().DataFiles) + `/items`)
+	dataPath := string(configs.GetFilePathsConfig().DataFiles)
+	tmpItems, err := fileloader.LoadAllFlatFiles[int, *ItemSpec](dataPath + `/items`)
 	if err != nil {
-		panic(err)
+		panic(errors.Wrap(err, `filepath: `+dataPath+`/items`))
 	}
 
 	items = tmpItems
 
-	tmpAttackMessages, err := fileloader.LoadAllFlatFiles[ItemSubType, *WeaponAttackMessageGroup](string(configs.GetFilePathsConfig().DataFiles) + `/combat-messages`)
+	tmpAttackMessages, err := fileloader.LoadAllFlatFiles[ItemSubType, *WeaponAttackMessageGroup](dataPath + `/combat-messages`)
 	if err != nil {
-		panic(err)
+		panic(errors.Wrap(err, `filepath: `+dataPath+`/combat-messages`))
 	}
 
 	attackMessages = tmpAttackMessages
 
-	tmpDefenseMessages, err := fileloader.LoadAllFlatFiles[DefenseType, *DefenseMessageGroup](string(configs.GetFilePathsConfig().DataFiles) + `/defense-messages`)
+	tmpDefenseMessages, err := fileloader.LoadAllFlatFiles[DefenseType, *DefenseMessageGroup](dataPath + `/defense-messages`)
 	if err != nil {
-		panic(err)
+		panic(errors.Wrap(err, `filepath: `+dataPath+`/defense-messages`))
 	}
 
 	defenseMessages = tmpDefenseMessages

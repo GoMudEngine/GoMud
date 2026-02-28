@@ -190,6 +190,7 @@ func Process(fname string, data any, receivingUserId ...int) (string, error) {
 
 			tpl, err := template.New(tplInfo.name).Funcs(funcMap).Parse(string(fileBytes))
 			if err != nil {
+				mudlog.Error("template parse error", "module", true, "filepath", tplInfo.path, "error", err)
 				return string(fileBytes), err
 			}
 
@@ -225,6 +226,7 @@ func Process(fname string, data any, receivingUserId ...int) (string, error) {
 		// parse the file contents as a template
 		tpl, err := template.New(tplInfo.name).Funcs(funcMap).Parse(string(fileContents))
 		if err != nil {
+			mudlog.Error("template parse error", "module", false, "filepath", fullPath, "error", err)
 			return string(fileContents), err
 		}
 
@@ -264,6 +266,7 @@ func Process(fname string, data any, receivingUserId ...int) (string, error) {
 	for _, tplInfo := range filesToAttempt {
 		allFiles = append(allFiles, tplInfo.path)
 	}
+	mudlog.Error("template files not found", "files", strings.Join(allFiles, `, `))
 	return fmt.Sprintf(`[TEMPLATE READ ERROR: FNF (%s) `, strings.Join(allFiles, `, `)), fmt.Errorf(`Files not found: %s`, strings.Join(allFiles, `, `))
 }
 

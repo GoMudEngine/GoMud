@@ -150,7 +150,7 @@ func serveTemplate(w http.ResponseWriter, r *http.Request) {
 	// Copy any plugin navigation
 	if webPlugins != nil {
 
-		currentNav := templateData[`NAV`].([]WebNav)
+		currentNav, _ := templateData[`NAV`].([]WebNav)
 		coreCount := len(currentNav)
 
 		for name, path := range webPlugins.NavLinks() {

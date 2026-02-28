@@ -13,6 +13,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/stats"
 	"github.com/GoMudEngine/GoMud/internal/util"
+	pkgerrors "github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
 )
 
@@ -179,9 +180,10 @@ func LoadDataFiles() {
 
 	start := time.Now()
 
-	tmpSpecies, err := fileloader.LoadAllFlatFiles[int, *Species](configs.GetFilePathsConfig().DataFiles.String() + `/species`)
+	dataPath := configs.GetFilePathsConfig().DataFiles.String() + `/species`
+	tmpSpecies, err := fileloader.LoadAllFlatFiles[int, *Species](dataPath)
 	if err != nil {
-		panic(err)
+		panic(pkgerrors.Wrap(err, `filepath: `+dataPath))
 	}
 
 	allSpecies = tmpSpecies

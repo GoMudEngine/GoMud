@@ -19,6 +19,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
+	pkgerrors "github.com/pkg/errors"
 )
 
 var (
@@ -806,7 +807,7 @@ func LoadDataFiles() {
 	}
 
 	if err := loadAllRoomZones(); err != nil {
-		panic(err)
+		panic(pkgerrors.Wrap(err, `filepath: rooms`))
 	}
 
 }

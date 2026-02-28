@@ -14,6 +14,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/statmods"
 	"github.com/GoMudEngine/GoMud/internal/util"
+	"github.com/pkg/errors"
 )
 
 // TierDef describes a single enchantment tier's effects and appearance.
@@ -68,11 +69,10 @@ var allEnchantments map[string]*EnchantmentDef
 func LoadEnchantmentFiles() {
 	start := time.Now()
 
-	tmpAll, err := fileloader.LoadAllFlatFiles[string, *EnchantmentDef](
-		string(configs.GetFilePathsConfig().DataFiles) + `/enchantments`,
-	)
+	dataPath := string(configs.GetFilePathsConfig().DataFiles) + `/enchantments`
+	tmpAll, err := fileloader.LoadAllFlatFiles[string, *EnchantmentDef](dataPath)
 	if err != nil {
-		panic(err)
+		panic(errors.Wrap(err, `filepath: `+dataPath))
 	}
 
 	allEnchantments = tmpAll
