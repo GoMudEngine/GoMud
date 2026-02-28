@@ -5495,7 +5495,7 @@ Reduce code duplication between mob and player combat paths, enable
 use-based progression for NPCs, and lay groundwork for a living world
 where mobs grow stronger over time.
 
-### Stage 38.1: Extract Shared Combat Helpers
+### Stage 38.1: Extract Shared Combat Helpers ✅ COMPLETED (23a3487)
 
 **Goal**: Pull duplicated combat logic out of mob-specific and
 player-specific functions into shared helpers that operate on
@@ -5550,7 +5550,7 @@ player-specific functions into shared helpers that operate on
 
 ---
 
-### Stage 38.2: Extract Shared Skill Move Logic
+### Stage 38.2: Extract Shared Skill Move Logic ✅ COMPLETED (merge 84946f0)
 
 **Goal**: Deduplicate `bash`, `kick`, `trip`, and `grapple` between
 `mobcommands/` and `usercommands/`.
@@ -5586,24 +5586,21 @@ removed from duplicated mob/user command files (net reduction ~200)
 
 ---
 
-### Stage 38.3: Mob Progression Foundation
+### Stage 38.3: Mob Progression Foundation ✅ COMPLETED (merge 8219763)
 
 **Goal**: Wire up use-based progression for mobs so they gain stats
 and skills through combat, just like players.
 
 **Changes**:
-1. **Decouple progression from userId**: Refactor `OnStatUse()` and
-   `OnSkillUse()` to accept an optional `userId` (0 = mob, skip
-   player message dispatch). Alternatively, split into internal
-   `trackAndProgress()` + public wrappers.
+1. **Decouple progression from userId**: Refactored `OnStatUse()` and
+   `OnSkillUse()` to return `bool`, guarded player messages with
+   `if userId > 0`. Added `IsMob` field on Character struct.
 2. **Add progression calls to mob combat paths**:
-   - `AttackMobVsPlayer` / `AttackMobVsMob`: call
-     `mob.Character.OnStatUse("strength")` and
+   - `handleMobVsPlayer` / `handleMobVsMob`: call
+     `mob.Character.OnStatUse("strength"/"dexterity")` and
      `OnSkillUse(combatSkill)` for the attacking mob
-   - Mob spellcasting: call `OnSkillUse("spellcasting")` and
-     `OnStatUse("willpower")`
-   - Mob special moves (bash/kick/trip): call appropriate
-     `OnSkillUse()` via the shared skill-move functions
+   - `handleMobFoldCasting`: call `OnSkillUse("spellcasting")` and
+     `OnStatUse("willpower")` after spell resolves
 3. **Mob progression config knobs** (in `config.balance.go`):
    - `MobProgressionEnabled` (bool, default true)
    - `MobProgressionRate` (float64, default 0.5 — mobs progress at
@@ -5611,19 +5608,11 @@ and skills through combat, just like players.
    - `MobStatCap` (int, default 200 — hard cap to prevent runaway)
    - `MobSkillCap` (int, default 3 — max skill level mobs can reach
      via progression, vs player soft cap of 50)
-4. **Room-visible progression cues**: When a mob gains a stat point,
-   emit a room message ("The alpha wolf seems to grow stronger.")
-   using a small pool of thematic templates keyed to stat name.
+4. **Room-visible progression cues**: When a mob gains a stat point
+   during MvP combat, emit a room message using `MobStatGainMessages`
+   map (e.g. "X seems to grow more powerful."). MvM skips messages.
 
-**Testing**:
-- Spawn a mob, engage it in extended combat, verify stat/skill use
-  counts increment
-- Verify progression rolls occur at the configured rate
-- Verify `MobStatCap` prevents infinite growth
-- Verify room messages appear on stat gain
-- Verify `MobProgressionEnabled = false` disables all mob progression
-
-**Estimated Changes**: ~200–300 lines across 4–5 files
+**Estimated Changes**: ~150 lines across 6 files
 
 ---
 
@@ -6006,7 +5995,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 35: Combat Balance & Mob Equipment | 1 stage | 4 hours | **Complete** |
 | Phase 36: Dialogue System Fix & Quest Wiring | 1 stage | 4 hours | **Complete** |
 | Phase 37: Codebase Quality Pass | 8 stages (37.1a–37.5) | 24 hours | **Complete** |
-| Phase 38: Mob/Player Unification & NPC Progression | 5 stages (38.1–38.5) | 30 hours | Not started |
+| Phase 38: Mob/Player Unification & NPC Progression | 5 stages (38.1–38.5) | 30 hours | 38.1–38.3 Complete |
 | Phase 39: Balance Pass & Config Cleanup | 3 stages (39.1–39.3) | 14 hours | Not started |
 | Phase 40: Test Coverage Pass | 4 stages (40.1–40.4) | 20 hours | Not started |
 | **Total** | **~112 stages** | **~714 hours** | |
@@ -6173,4 +6162,4 @@ These are longer-term goals to be detailed when the above phases are complete:
 
 **Last Updated**: 2026-02-28
 **Status**: In Progress
-**Current Stage**: Phase 37 complete (incl. 37.5 admin cleanup & combat filters). Next: Phase 38 (Mob/Player Unification & NPC Progression).
+**Current Stage**: Stage 38.3 complete (mob use-based progression wired). Next: Stage 38.4 (Mob Instance Persistence).
