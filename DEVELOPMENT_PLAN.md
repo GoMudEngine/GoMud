@@ -5333,7 +5333,7 @@ removal and simplify the level-system scaffolding in stats.
 **Testing**: `go build ./...`, `go vet ./...` (pre-existing warnings
 only), `go test ./internal/util/...` — all pass.
 
-**Merge commit**: <!-- MERGE_HASH -->
+**Merge commit**: `b4aeb05`
 
 ---
 
