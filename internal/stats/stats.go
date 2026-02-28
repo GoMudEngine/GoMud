@@ -6,11 +6,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 )
 
-const (
-	BaseModFactor         = 0.3333333334 // How much of a scaling to aply to levels before multiplying by racial stat
-	NaturalGainsModFactor = 0.5          // Free stats gained per level modded by this.
-)
-
 type Statistics struct {
 	Strength   StatInfo `yaml:"strength,omitempty"`   // Muscular strength (damage)
 	Dexterity  StatInfo `yaml:"dexterity,omitempty"`  // Speed and agility (dodging)
@@ -42,29 +37,9 @@ func (si *StatInfo) SetMod(mod ...int) {
 	}
 }
 
-func (si *StatInfo) GainsForLevel(level int) int {
-	if level < 1 {
-		level = 1
-	}
-
-	// Start with the racial base stat value
-	// This ensures level 1 characters have functional stats
-	// For future: si.Base can be set to randomly rolled values during character creation
-	racialBase := si.Base
-
-	// Add level-based scaling (starts at level 2+)
-	levelScale := float64(level-1) * BaseModFactor
-	levelPoints := int(levelScale * float64(si.Base))
-
-	// Every x levels we get natural gains
-	freeStatPoints := int(float64(level) * NaturalGainsModFactor)
-
-	return racialBase + levelPoints + freeStatPoints
-}
-
-func (si *StatInfo) Recalculate(level int) {
+func (si *StatInfo) Recalculate() {
 	b := configs.GetBalanceConfig()
-	si.Racial = si.GainsForLevel(level)
+	si.Racial = si.Base
 	si.Value = si.Racial + si.Training + si.Mods
 	si.ValueAdj = si.Value
 	softCap := int(b.StatSoftCap)       // 150 — linear growth up to here
