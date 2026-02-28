@@ -9,7 +9,9 @@ var ceremonyTicks    = 0;
 function onEnter(user, room) {
 
     // Only trigger intro if player hasn't received the Awakening Rite yet
-    if ( user.HasQuest("1-mutation") ) {
+    // Check both quest progress AND whether they already have any mutations
+    // (belt-and-suspenders: protects against corrupted quest state)
+    if ( user.HasQuest("1-mutation") || user.GetMutationCount() > 0 ) {
         return true;
     }
 
