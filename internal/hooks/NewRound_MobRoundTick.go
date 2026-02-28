@@ -1,16 +1,20 @@
 package hooks
 
 import (
+	"fmt"
+	"math"
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
+	"github.com/GoMudEngine/GoMud/internal/worldevents"
 )
 
 func MobRoundTick(e events.Event) events.ListenerReturn {
@@ -36,6 +40,7 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 	//
 	// Do mob round maintenance
 	//
+	mb := configs.GetBalanceConfig()
 	for _, mobInstanceId := range mobs.GetAllMobInstanceIds() {
 
 		mob := mobs.GetInstance(mobInstanceId)
@@ -75,6 +80,94 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 			}
 
 			events.AddToQueue(events.BuffsTriggered{MobInstanceId: mobInstanceId, BuffIds: triggeredBuffIds})
+		}
+
+		// Stage 38.5.2: Mob mutation acquisition during combat
+		if bool(mb.MobMutationEnabled) && mob.Character.Aggro != nil {
+			canAcquire := len(mob.Character.Mutations) < int(mb.MutationMaxCount)
+			canDeepen := mutations.CanDeepen(mob.Character.Mutations)
+			if canAcquire || canDeepen {
+				mob.Character.MutationProgress += float64(mb.MutationProgressGainPerRound) * float64(mb.MobMutationRate)
+				load := mutations.GetMutationLoad(mob.Character.Mutations)
+				threshold := float64(mb.MutationBaseProgress) *
+					math.Pow(float64(mb.MutationProgressScale), load)
+				if mob.Character.MutationProgress >= threshold {
+					mob.Character.MutationProgress = 0
+					if canAcquire {
+						pool := mutations.GetWeightedPool(mob.Character.Mutations)
+						if mutId := mutations.RollAcquisition(pool); mutId != "" {
+							if mob.Character.Mutations == nil {
+								mob.Character.Mutations = make(map[string]int)
+							}
+							mob.Character.Mutations[mutId] = 1
+							if spec := mutations.GetMutation(mutId); spec != nil {
+								if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
+									room.SendText(fmt.Sprintf(
+										`<ansi fg="magenta">Something shifts in <ansi fg="mobname">%s</ansi>. %s</ansi>`,
+										mob.Character.Name, spec.Visual))
+								}
+								// Emit world event with significance based on rarity
+								sig := worldevents.Local
+								if spec.Rarity >= 8 {
+									sig = worldevents.Global
+								} else if spec.Rarity >= 5 {
+									sig = worldevents.Regional
+								}
+								zone := mob.Character.Zone
+								region := ""
+								if zCfg := rooms.GetZoneConfig(zone); zCfg != nil {
+									region = zCfg.Region
+								}
+								worldevents.EmitWorldEvent(worldevents.WorldEvent{
+									Type:         worldevents.MobMutationGained,
+									Significance: sig,
+									ZoneName:     zone,
+									RegionName:   region,
+									MobName:      mob.Character.Name,
+									Description: fmt.Sprintf("%s has manifested a mutation: %s",
+										mob.Character.Name, spec.Name),
+								})
+							}
+						}
+					} else if canDeepen {
+						if mutId := mutations.RollDeepening(mob.Character.Mutations); mutId != "" {
+							mob.Character.Mutations[mutId]++
+							newLevel := mob.Character.Mutations[mutId]
+							if spec := mutations.GetMutation(mutId); spec != nil {
+								if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
+									room.SendText(fmt.Sprintf(
+										`<ansi fg="magenta">The mutation in <ansi fg="mobname">%s</ansi> intensifies.</ansi>`,
+										mob.Character.Name))
+								}
+								// Deepening significance: bump one tier if level 3
+								sig := worldevents.Local
+								if spec.Rarity >= 5 {
+									sig = worldevents.Regional
+								}
+								if newLevel >= int(mb.MutationMaxLevel) {
+									if sig < worldevents.Global {
+										sig++
+									}
+								}
+								zone := mob.Character.Zone
+								region := ""
+								if zCfg := rooms.GetZoneConfig(zone); zCfg != nil {
+									region = zCfg.Region
+								}
+								worldevents.EmitWorldEvent(worldevents.WorldEvent{
+									Type:         worldevents.MobMutationAdvanced,
+									Significance: sig,
+									ZoneName:     zone,
+									RegionName:   region,
+									MobName:      mob.Character.Name,
+									Description: fmt.Sprintf("%s's %s deepens to level %d",
+										mob.Character.Name, spec.Name, newLevel),
+								})
+							}
+						}
+					}
+				}
+			}
 		}
 
 		// Do charm cleanup
