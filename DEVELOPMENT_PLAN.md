@@ -5489,11 +5489,386 @@ log the specific file path that failed before panicking:
 
 ---
 
-## Phase 38: Test Coverage Pass
+## Phase 38: Mob/Player Unification & NPC Progression
+
+Reduce code duplication between mob and player combat paths, enable
+use-based progression for NPCs, and lay groundwork for a living world
+where mobs grow stronger over time.
+
+### Stage 38.1: Extract Shared Combat Helpers
+
+**Goal**: Pull duplicated combat logic out of mob-specific and
+player-specific functions into shared helpers that operate on
+`*characters.Character`.
+
+**Changes**:
+1. **Spell damage**: Merge `calcSpellDamage()` and
+   `calcMobSpellDamage()` into a single
+   `calcSpellDamageForCharacter(caster *characters.Character, ...)`
+   in `spell_resolution.go`. Player and mob call sites pass
+   `user.Character` or `mob.Character` respectively.
+2. **Concentration break**: Extract the damage-percent +
+   `CalcConcentrationChance()` logic from
+   `handlePlayerConcentrationBreak()` and the inline mob version
+   into a shared `checkConcentrationBreak(caster *Character, dmg int)`
+   helper. Callers handle messaging.
+3. **Weapon break (all arms)**: Extract the break-test and
+   item-storage logic from `handleOffhandBreakUserDef()` /
+   `handleOffhandBreakMobDef()` into a shared
+   `tryWeaponBreak(defender *Character, room *Room, slot EquipSlot)
+   (broke bool, itemName string)` helper that works for **any**
+   weapon slot — offhand, ExtraArm1, ExtraArm2, and future extra
+   arm slots. The current code only checks offhand; the new version
+   should iterate all non-main-hand weapon slots. Use a slice of
+   slot descriptors rather than hardcoded slot names so adding more
+   arms later requires only adding to the slice.
+4. **Crit effects**: Unify `applyPvPCritEffects()`,
+   `applyPvMCritEffects()`, and the inline MvP crit block into one
+   `applyCritEffects(attacker, defender *Character, defenseUsed string,
+   room *Room)`. Fix the missing cooldown check in PvM path.
+5. **Fold casting core**: Extract the shared fold-simulation loop
+   (round cost, conviction check, fizzle roll, damage accumulation)
+   from `handlePlayerFoldCasting()` / `handleMobFoldCasting()` into
+   a `simulateFoldRound(caster *Character, spell, ...)` helper.
+   Player wrapper adds spell-discovery logic; mob wrapper is thin.
+
+**Bug fixes included**:
+- Fix moon-phase modifier asymmetry (apply consistently to attacker
+  in both PvM and MvP)
+- Fix PvM crit effects missing cooldown check
+- Add mob Minor Shield decay (symmetric with player)
+
+**Testing**:
+- Existing combat behavior unchanged (refactor only)
+- Run combat analytics session, compare summary before/after
+- Verify moon-phase mods are symmetric in analytics output
+- Verify weapon break can trigger on ExtraArm1/ExtraArm2, not just
+  offhand
+
+**Estimated Changes**: ~400–600 lines touched across 2–3 files
+(net reduction ~150–200 lines of duplication)
+
+---
+
+### Stage 38.2: Extract Shared Skill Move Logic
+
+**Goal**: Deduplicate `bash`, `kick`, `trip`, and `grapple` between
+`mobcommands/` and `usercommands/`.
+
+**Changes**:
+1. Create `internal/combat/skill_moves.go` with shared execution
+   functions:
+   - `ExecuteBash(attacker, defender *Character, room *Room) SkillMoveResult`
+   - `ExecuteKick(...)`, `ExecuteTrip(...)`, `ExecuteGrapple(...)`
+   - Each returns a result struct (hit bool, damage int, knockdown
+     bool, messages []string)
+2. Refactor `usercommands/skill.bash.go` to call
+   `combat.ExecuteBash()`, then handle messaging + progression
+3. Refactor `mobcommands/bash.go` to call `combat.ExecuteBash()`,
+   then handle analytics recording
+4. Repeat for kick, trip, grapple
+5. Fix knockdown inconsistency: standardize on `dice.RollStat()`
+   for knockdown checks in all skill moves (mobs and players)
+
+**Note**: Mobs and players already share the same cooldown config
+(`SpecialMoveCooldown`) and the same `"special-move"` cooldown key.
+All four moves share one cooldown — using bash puts kick/trip/grapple
+on cooldown too. This is correct and doesn't need changing.
+
+**Testing**:
+- Each skill move produces same combat outcomes as before
+- Mob bash/kick/trip/grapple work identically
+- Analytics recording still fires for all skill moves
+- Cooldown behavior unchanged (shared `SpecialMoveCooldown` knob)
+
+**Estimated Changes**: ~300–500 lines new shared code, ~400 lines
+removed from duplicated mob/user command files (net reduction ~200)
+
+---
+
+### Stage 38.3: Mob Progression Foundation
+
+**Goal**: Wire up use-based progression for mobs so they gain stats
+and skills through combat, just like players.
+
+**Changes**:
+1. **Decouple progression from userId**: Refactor `OnStatUse()` and
+   `OnSkillUse()` to accept an optional `userId` (0 = mob, skip
+   player message dispatch). Alternatively, split into internal
+   `trackAndProgress()` + public wrappers.
+2. **Add progression calls to mob combat paths**:
+   - `AttackMobVsPlayer` / `AttackMobVsMob`: call
+     `mob.Character.OnStatUse("strength")` and
+     `OnSkillUse(combatSkill)` for the attacking mob
+   - Mob spellcasting: call `OnSkillUse("spellcasting")` and
+     `OnStatUse("willpower")`
+   - Mob special moves (bash/kick/trip): call appropriate
+     `OnSkillUse()` via the shared skill-move functions
+3. **Mob progression config knobs** (in `config.balance.go`):
+   - `MobProgressionEnabled` (bool, default true)
+   - `MobProgressionRate` (float64, default 0.5 — mobs progress at
+     half the player rate)
+   - `MobStatCap` (int, default 200 — hard cap to prevent runaway)
+   - `MobSkillCap` (int, default 3 — max skill level mobs can reach
+     via progression, vs player soft cap of 50)
+4. **Room-visible progression cues**: When a mob gains a stat point,
+   emit a room message ("The alpha wolf seems to grow stronger.")
+   using a small pool of thematic templates keyed to stat name.
+
+**Testing**:
+- Spawn a mob, engage it in extended combat, verify stat/skill use
+  counts increment
+- Verify progression rolls occur at the configured rate
+- Verify `MobStatCap` prevents infinite growth
+- Verify room messages appear on stat gain
+- Verify `MobProgressionEnabled = false` disables all mob progression
+
+**Estimated Changes**: ~200–300 lines across 4–5 files
+
+---
+
+### Stage 38.4: Mob Instance Persistence
+
+**Goal**: Long-lived mobs retain their progression across server
+restarts and respawns.
+
+**Changes**:
+1. **Mob state serialization**: Add a `SaveInstance(mob *Mob)` method
+   that writes the mob's current Character state (stats, skills,
+   use counts, mutations, equipment) to a YAML file in
+   `_datafiles/world/<world>/mobs.instances/<zone>/<instanceId>.yaml`
+2. **Mob state loading**: On room load / mob respawn, check for a
+   saved instance file matching the spawn slot. If found, apply
+   the saved Character state on top of the template instead of
+   randomizing from StatPool.
+3. **Periodic auto-save**: Hook into the existing round-tick system
+   to save progressed mob instances every N rounds (configurable:
+   `MobSaveIntervalRounds`, default 100).
+4. **Death & respawn policy**: When a mob dies, its instance save
+   is deleted — it respawns fresh from template. This makes killing
+   a powerful mob meaningful (resets its progression).
+5. **Stale instance cleanup**: On server startup, prune instance
+   files older than a configurable age (`MobInstanceMaxAge`,
+   default "7d") to prevent unbounded disk growth.
+
+**Testing**:
+- Spawn mob, let it progress, restart server — mob retains stats
+- Kill progressed mob, wait for respawn — mob is fresh from template
+- Verify instance files are created in correct directory structure
+- Verify stale cleanup runs on startup
+- Verify `MobSaveIntervalRounds` controls save frequency
+
+**Estimated Changes**: ~300–500 lines across 3–4 files
+
+---
+
+### Stage 38.5: Emergent NPC Behaviors & World Event Hooks
+
+**Goal**: Use the progression system to create mobs that exhibit
+interesting long-term behavior, and install event-recording hooks
+that a future rumor/news system can consume.
+
+**Changes**:
+1. **Mob mutation acquisition**: During extended combat, mobs
+   accumulate mutation progress (same system as players, via
+   `NewRound_UserRoundTick` logic ported to a shared helper).
+   Config: `MobMutationEnabled` (bool), `MobMutationRate` (float64).
+2. **Crafting mobs**: Mobs with a `crafter: true` YAML flag and
+   appropriate skill levels periodically execute craft actions during
+   idle ticks. Their crafting skill progresses, producing better
+   items over time. Crafted items go into their shop inventory.
+   **Material supply**: When the shop restock timer fires (default
+   6 hours), crafter mobs also receive a configurable set of raw
+   materials (`CrafterRestockMaterials` list in mob YAML, or a
+   default set based on zone biome). Separate config knob
+   `CrafterMaterialRestockRate` (default "6h", tied to shop restock
+   by default but independently tunable).
+3. **Social progression**: Merchant mobs that interact with players
+   gain Charisma over time (via `OnStatUse` on buy/sell). Higher
+   Charisma could influence prices or unlock new dialogue.
+4. **Pack scaling**: When all mobs in a `group` have survived for
+   N rounds, the group collectively gains a small stat bonus
+   (pack synergy). Groups that lose members reset.
+5. **World event recording system**: Add a lightweight event
+   recording layer that captures noteworthy progression milestones
+   for later consumption by a rumor/news system.
+   - **`WorldEvent` struct**: `{Type, ZoneName, MobName, PlayerName,
+     Description, Timestamp, Round}` in a new
+     `internal/events/worldevents.go`
+   - **Ring buffer**: Fixed-size buffer (configurable
+     `WorldEventBufferSize`, default 200) storing recent events,
+     similar to combat analytics
+   - **Event types**:
+     - `MobStatMilestone` — mob stat crosses a threshold (every 25
+       points past species base)
+     - `MobMutationGained` — mob acquires a new mutation
+     - `MobMutationAdvanced` — mob mutation reaches level 2+
+     - `MobCraftedRare` — crafter mob produces a rare-quality item
+     - `PackStrengthened` — pack synergy milestone reached
+     - `PlayerMutationMilestone` — player mutation reaches high
+       level (3+)
+     - `PlayerCraftedRare` — player crafts a rare item
+   - **`EmitWorldEvent(evt WorldEvent)`**: Appends to buffer; called
+     from the code we're already modifying in 38.3–38.5:
+     - `OnStatUse` progression success → emit `MobStatMilestone`
+       when crossing threshold
+     - Mutation acquisition hook → emit `MobMutationGained`
+     - Crafting completion → emit `MobCraftedRare` /
+       `PlayerCraftedRare`
+     - Pack scaling trigger → emit `PackStrengthened`
+   - **`GetRecentWorldEvents(n int) []WorldEvent`**: Read the last N
+     events (for future tavern NPC / town crier queries)
+   - **No display logic in this stage** — the tavern/town crier
+     system will read from this buffer in a future phase. The data
+     pipeline is installed now so the future effort is purely a
+     UI/content exercise.
+
+**Future possibilities** (not in this stage, noted for reference):
+- News/rumor system centered around tavern NPCs and town criers
+  that queries the world event buffer and renders rumors as NPC
+  dialogue ("Travelers speak of a fearsome wolf pack in the
+  northern forests..."). Could tie into bulletin boards, bard NPCs,
+  or an in-game newspaper mechanic. The hook infrastructure from
+  item 5 above makes this a content-layer task, not a plumbing task.
+
+**Testing**:
+- Place a crafter mob, verify it crafts and improves over time
+- Verify crafter mobs receive materials on restock timer
+- Verify `CrafterMaterialRestockRate` controls material delivery
+- Let a wolf pack survive, verify group scaling applies
+- Kill one wolf, verify pack bonus resets
+- Verify `EmitWorldEvent` fires for each event type
+- Verify `GetRecentWorldEvents(n)` returns correct events in order
+- Verify world event buffer respects `WorldEventBufferSize` cap
+- Verify all features respect their config toggles
+
+**Estimated Changes**: ~550–900 lines across 6–9 files
+
+---
+
+## Phase 39: Balance Pass & Config Cleanup
+
+Audit all config knobs, remove dead config, add missing tunables,
+reorganize the config file, and do a balance pass with the combat
+analytics dashboard.
+
+### Stage 39.1: Config Audit & Dead Code Removal
+
+**Goal**: Catalog every config knob, remove unused ones, document
+the rest.
+
+**Changes**:
+1. Audit all fields in `config.balance.go`, `config.gameplay.go`,
+   `config.analytics.go` — flag any that are defined but never read
+   (e.g., `MobHealthRegenPct` / `MobStaminaRegenPct` /
+   `MobConvictionRegenPct` are currently dead code since PerRound()
+   uses the Player rates for both)
+2. Either wire up dead config to actual behavior or remove it
+3. Ensure every config knob has a comment explaining what it does
+4. Verify `_datafiles/config.yaml` matches the Go defaults — remove
+   stale keys, add missing ones with sensible defaults
+5. Add a `docs/CONFIG_REFERENCE.md` auto-generated from config
+   struct tags (or manually maintained)
+
+**Testing**:
+- Server starts cleanly with default config
+- Server starts cleanly with all knobs set to non-default values
+- No orphaned config keys in YAML
+
+**Estimated Changes**: ~100–200 lines
+
+---
+
+### Stage 39.2: Balance Tuning Pass
+
+**Goal**: Use the combat analytics dashboard (with new filters) to
+identify and fix balance outliers.
+
+**Changes**:
+1. Run extended AI combat sessions (~5,000+ events) with filters:
+   - Melee channel: tune physical damage / mitigation curves
+   - Magic channel: tune spell damage / conviction costs
+   - Rhetoric channel: tune taunt effectiveness
+   - Player-vs-Mob and Mob-vs-Player separately
+2. Adjust config knobs based on analytics:
+   - Hit rate targets: 60–70% for equal-stat combatants
+   - Crit rate targets: 2–5% of all attacks
+   - Defense avoidance split: dodge/parry/block roughly balanced
+   - Resource depletion: fights should last 8–15 rounds on average
+3. Document final tuning values and rationale in config comments
+4. Verify mob progression rates produce interesting but not
+   game-breaking growth over realistic play sessions
+
+**Testing**:
+- Analytics dashboard shows rates within target ranges
+- Extended combat sessions don't produce degenerate outcomes
+- Progressed mobs are challenging but beatable
+
+**Estimated Changes**: ~50–100 lines (config values only)
+
+---
+
+### Stage 39.3: Config File Reorganization
+
+**Goal**: Restructure `_datafiles/config.yaml` into well-organized,
+commented sections with a logical layout that's easy to navigate.
+
+**Changes**:
+1. **Group config into logical sections** with clear comment headers:
+   - `# === Server & Networking ===` (ports, TLS, timeouts)
+   - `# === Timing & Rounds ===` (round seconds, tick rates, save
+     intervals)
+   - `# === Player Progression ===` (stat/skill progression rates,
+     soft caps, use-count thresholds)
+   - `# === Mob Progression ===` (mob-specific progression knobs
+     from 38.3, mob save intervals, instance max age)
+   - `# === Combat: Hit & Defense ===` (hit chance, defense floor,
+     attack floor, roll spread)
+   - `# === Combat: Damage & Mitigation ===` (channel scales,
+     mitigation caps, skill multiplier curve)
+   - `# === Combat: Special Moves ===` (bash/kick/trip config,
+     cooldowns, knockdown chances)
+   - `# === Combat: Grapple & Position ===` (prone multipliers,
+     grapple thresholds)
+   - `# === Combat: Resource Depletion ===` (penalty curves, per-pool
+     max penalties)
+   - `# === Spellcasting ===` (fold costs, fizzle rates,
+     concentration, conviction)
+   - `# === Regeneration ===` (player/mob regen percentages, regen
+     multipliers)
+   - `# === Crafting ===` (station types, recipe discovery,
+     crafter mob restock)
+   - `# === Economy ===` (gold drops, shop restock, vendor prices)
+   - `# === World & Zones ===` (moon phases, biomes, spawn rates)
+   - `# === Analytics ===` (buffer size, log path, enabled flag)
+   - `# === Admin & Debug ===` (dev tools, logging levels)
+2. **Add inline comments** for every knob explaining what it does,
+   its valid range, and its default value
+3. **Sort keys within each section** alphabetically or by logical
+   dependency (related knobs adjacent)
+4. **Ensure Go config structs match** the new YAML layout — reorder
+   struct fields to mirror the YAML sections where practical (not
+   strictly required, but helps maintainability)
+5. **Add new config knobs** identified during Phase 38 that don't
+   exist yet (mob progression, crafter restock, etc.) in their
+   proper sections
+
+**Testing**:
+- Server starts cleanly with reorganized config
+- All existing config values preserved (no regressions)
+- Every knob has an inline comment
+- Config file is easy to navigate by section
+
+**Estimated Changes**: ~200–400 lines (mostly reordering and
+comments in config.yaml, minor struct reordering in Go)
+
+---
+
+## Phase 40: Test Coverage Pass
 
 Last phase — tests cover the final state of all features.
 
-### Stage 38.1: Unit Test Gaps Audit & Coverage Targets
+### Stage 40.1: Unit Test Gaps Audit & Coverage Targets
 
 **Goal**: Map what's tested and what isn't, set targets.
 
@@ -5505,7 +5880,7 @@ Last phase — tests cover the final state of all features.
    outcomes, and persistence gets highest priority
 4. Document coverage targets per package (e.g., combat: 80%,
    crafting: 75%, characters: 80%)
-5. Create a tracking checklist for stages 35.2–35.4
+5. Create a tracking checklist for stages 40.2–40.4
 
 **Testing**:
 - Coverage report generated and reviewed
@@ -5515,7 +5890,7 @@ Last phase — tests cover the final state of all features.
 
 ---
 
-### Stage 38.2: Core Systems Unit Tests
+### Stage 40.2: Core Systems Unit Tests
 
 **Goal**: Fill the biggest test gaps in high-risk code.
 
@@ -5533,14 +5908,14 @@ Last phase — tests cover the final state of all features.
 
 **Testing**:
 - Each new test file passes independently
-- Coverage increases toward targets from 36.1
+- Coverage increases toward targets from 40.1
 - No flaky tests (deterministic seeds where randomness is involved)
 
 **Estimated Changes**: ~800–1200 lines, 10–15 test files
 
 ---
 
-### Stage 38.3: Integration & Scenario Tests
+### Stage 40.3: Integration & Scenario Tests
 
 **Goal**: End-to-end tests covering full gameplay loops.
 
@@ -5565,7 +5940,7 @@ Last phase — tests cover the final state of all features.
 
 ---
 
-### Stage 38.4: Regression Test Suite & CI Hardening
+### Stage 40.4: Regression Test Suite & CI Hardening
 
 **Goal**: Ensure all tests run reliably in CI and past bugs stay fixed.
 
@@ -5631,8 +6006,10 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 35: Combat Balance & Mob Equipment | 1 stage | 4 hours | **Complete** |
 | Phase 36: Dialogue System Fix & Quest Wiring | 1 stage | 4 hours | **Complete** |
 | Phase 37: Codebase Quality Pass | 8 stages (37.1a–37.5) | 24 hours | **Complete** |
-| Phase 38: Test Coverage Pass | 4 stages (38.1–38.4) | 20 hours | Not started |
-| **Total** | **~100 stages** | **~650 hours** | |
+| Phase 38: Mob/Player Unification & NPC Progression | 5 stages (38.1–38.5) | 30 hours | Not started |
+| Phase 39: Balance Pass & Config Cleanup | 3 stages (39.1–39.3) | 14 hours | Not started |
+| Phase 40: Test Coverage Pass | 4 stages (40.1–40.4) | 20 hours | Not started |
+| **Total** | **~112 stages** | **~714 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
 
@@ -5796,4 +6173,4 @@ These are longer-term goals to be detailed when the above phases are complete:
 
 **Last Updated**: 2026-02-28
 **Status**: In Progress
-**Current Stage**: Phase 37 complete (incl. 37.5 admin cleanup & combat filters). Next: Phase 38 (Test Coverage Pass).
+**Current Stage**: Phase 37 complete (incl. 37.5 admin cleanup & combat filters). Next: Phase 38 (Mob/Player Unification & NPC Progression).
