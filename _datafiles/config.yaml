@@ -382,6 +382,12 @@ GamePlay:
   #   Range: 0.0–0.50. Set to 0 to disable the floor entirely.
   MinDefenseChance: 0.15
   #
+  # MinAttackHitChance: Minimum probability that any attack hits, even
+  #   when the defender's score vastly outclasses the attacker's. Symmetric
+  #   counterpart to MinDefenseChance. 0.15 = 15% minimum hit rate.
+  #   Range: 0.0–0.50. Set to 0 to disable the floor entirely.
+  MinAttackHitChance: 0.15
+  #
   # ── Prone Condition Effects ──
   # When a character is knocked prone, these modify combat scores.
   # Defense scores are: Dodge = Dex + UnarmedSkill, Parry = Dex + WeaponSkill

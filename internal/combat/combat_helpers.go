@@ -438,6 +438,13 @@ func resolveDefenseOutcome(result *AttackResult, best bestDefenseResult, sourceC
 	}
 
 	if best.margin > 0 {
+		// Attack hit floor: even outclassed attackers have a minimum chance
+		attackFloor := float64(cfg.MinAttackHitChance)
+		if attackFloor > 0 && util.Rand(100) < int(attackFloor*100) {
+			// Floor save — attack hits despite defense winning the roll
+			return true, best.hitRoll
+		}
+
 		// Best defense succeeded — attack is avoided
 		result.DefenseUsed = DefenseType(best.defenseType)
 
