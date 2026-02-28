@@ -12,8 +12,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/pets"
-	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/term"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -37,348 +37,8 @@ func List(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 		listedSomething = true
 
-		itemsAvailable := characters.Shop{}
-		mercsAvailable := characters.Shop{}
-		buffsAvailable := characters.Shop{}
-		petsAvailable := characters.Shop{}
-
-		for _, saleItem := range mob.Character.Shop.GetInstock() {
-
-			if saleItem.ItemId > 0 {
-				itemsAvailable = append(itemsAvailable, saleItem)
-				continue
-			}
-
-			if saleItem.MobId > 0 {
-				mercsAvailable = append(mercsAvailable, saleItem)
-				continue
-			}
-
-			if saleItem.BuffId > 0 {
-				buffsAvailable = append(buffsAvailable, saleItem)
-			}
-
-			if saleItem.PetType != `` {
-				petsAvailable = append(petsAvailable, saleItem)
-			}
-
-		}
-
-		if len(itemsAvailable) == 0 && len(mercsAvailable) == 0 && len(buffsAvailable) == 0 && len(petsAvailable) == 0 {
+		if !renderMobMerchantListing(user, mob.Character.Shop.GetInstock(), mob.Character.Name) {
 			mob.Command(`say I have nothing to sell right now, but check again later.`)
-			continue
-		}
-
-		if len(itemsAvailable) > 0 {
-
-			hasGoldItems := false
-			hasTradeItems := false
-			for _, stockItm := range itemsAvailable {
-				if stockItm.TradeItemId > 0 {
-					hasTradeItems = true
-				}
-				if stockItm.Price >= 0 {
-					hasGoldItems = true
-				}
-			}
-
-			headers := []string{"Qty", "Name", "Type"}
-			if hasGoldItems {
-				headers = append(headers, "Price")
-			}
-			if hasTradeItems {
-				headers = append(headers, "Trade")
-			}
-
-			rows := [][]string{}
-
-			for _, stockItm := range itemsAvailable {
-				item := items.New(stockItm.ItemId)
-
-				qtyStr := `N/A`
-				if stockItm.QuantityMax != 0 {
-					qtyStr = strconv.Itoa(stockItm.Quantity)
-				}
-
-				price := stockItm.Price
-				if price == 0 {
-					price = item.GetSpec().Value
-				} else if price < 0 {
-					price = 0
-				}
-
-				entryRow := []string{
-					qtyStr,
-					item.DisplayName(),
-					string(item.GetSpec().Type),
-				}
-
-				if hasGoldItems {
-					if price > 0 {
-						entryRow = append(entryRow, strconv.Itoa(price))
-					} else {
-						entryRow = append(entryRow, ``)
-					}
-				}
-
-				if hasTradeItems {
-					if stockItm.TradeItemId > 0 {
-						tradeItm := items.New(stockItm.TradeItemId)
-						entryRow = append(entryRow, tradeItm.DisplayName())
-					} else {
-						entryRow = append(entryRow, ``)
-					}
-				}
-
-				rows = append(rows, entryRow)
-			}
-
-			sort.Slice(rows, func(i, j int) bool {
-				return rows[i][0] < rows[j][0]
-			})
-
-			saleItemsData := templates.GetTable(fmt.Sprintf(`%s by <ansi fg="mobname">%s</ansi>`, colorpatterns.ApplyColorPattern(`Items available`, `cyan`), mob.Character.Name), headers, rows)
-			tplTxt, _ := templates.Process("tables/shoplist", saleItemsData, user.UserId, user.UserId)
-			user.SendText(tplTxt)
-			user.SendText(fmt.Sprintf(`To buy something, type: <ansi fg="command">buy [name]</ansi>%s`, term.CRLFStr))
-		}
-
-		if len(mercsAvailable) > 0 {
-
-			hasGoldItems := false
-			hasTradeItems := false
-			for _, stockItm := range mercsAvailable {
-				if stockItm.TradeItemId > 0 {
-					hasTradeItems = true
-				}
-				if stockItm.Price >= 0 {
-					hasGoldItems = true
-				}
-			}
-
-			headers := []string{"Qty", "Name", "Level", "Race"}
-			if hasGoldItems {
-				headers = append(headers, "Price")
-			}
-			if hasTradeItems {
-				headers = append(headers, "Trade")
-			}
-
-			rows := [][]string{}
-
-			for _, stockMerc := range mercsAvailable {
-
-				mobInfo := mobs.GetMobSpec(mobs.MobId(stockMerc.MobId))
-				if mobInfo == nil {
-					continue
-				}
-				raceInfo := species.GetSpecies(mobInfo.Character.SpeciesId)
-				if raceInfo == nil {
-					continue
-				}
-
-				qtyStr := `N/A`
-				if stockMerc.QuantityMax != 0 {
-					qtyStr = strconv.Itoa(stockMerc.Quantity)
-				}
-
-				price := stockMerc.Price
-				if price == 0 {
-					price = 250
-				} else if price < 0 {
-					price = 0
-				}
-
-				entryRow := []string{
-					qtyStr,
-					`<ansi fg="mobname">` + mobInfo.Character.Name + `</ansi>`,
-					`-`,
-					raceInfo.Name,
-				}
-
-				if hasGoldItems {
-					if price > 0 {
-						entryRow = append(entryRow, strconv.Itoa(price))
-					} else {
-						entryRow = append(entryRow, ``)
-					}
-				}
-
-				if hasTradeItems {
-					if stockMerc.TradeItemId > 0 {
-						tradeItm := items.New(stockMerc.TradeItemId)
-						entryRow = append(entryRow, tradeItm.DisplayName())
-					} else {
-						entryRow = append(entryRow, ``)
-					}
-				}
-
-				rows = append(rows, entryRow)
-
-			}
-
-			sort.Slice(rows, func(i, j int) bool {
-				num1, _ := strconv.Atoi(rows[i][4])
-				num2, _ := strconv.Atoi(rows[j][4])
-				return num1 < num2
-			})
-
-			saleItemsData := templates.GetTable(fmt.Sprintf(`%s by <ansi fg="mobname">%s</ansi>`, colorpatterns.ApplyColorPattern(`Mercenaries for hire`, `flame`), mob.Character.Name), headers, rows)
-			tplTxt, _ := templates.Process("tables/shoplist", saleItemsData, user.UserId, user.UserId)
-			user.SendText(tplTxt)
-			user.SendText(fmt.Sprintf(`To Hire a merc, type: <ansi fg="command">hire [name]</ansi>%s`, term.CRLFStr))
-		}
-
-		if len(buffsAvailable) > 0 {
-
-			hasGoldItems := false
-			hasTradeItems := false
-			for _, stockItm := range buffsAvailable {
-				if stockItm.TradeItemId > 0 {
-					hasTradeItems = true
-				}
-				if stockItm.Price >= 0 {
-					hasGoldItems = true
-				}
-			}
-
-			headers := []string{"Qty", "Enchantment"}
-			if hasGoldItems {
-				headers = append(headers, "Price")
-			}
-			if hasTradeItems {
-				headers = append(headers, "Trade")
-			}
-
-			rows := [][]string{}
-
-			for _, stockBuff := range buffsAvailable {
-
-				buffInfo := buffs.GetBuffSpec(stockBuff.BuffId)
-				if buffInfo == nil {
-					continue
-				}
-
-				qtyStr := `N/A`
-				if stockBuff.QuantityMax != 0 {
-					qtyStr = strconv.Itoa(stockBuff.Quantity)
-				}
-
-				entryRow := []string{
-					qtyStr,
-					buffInfo.Name,
-				}
-
-				if hasGoldItems {
-					if stockBuff.Price > 0 {
-						entryRow = append(entryRow, strconv.Itoa(stockBuff.Price))
-					} else {
-						entryRow = append(entryRow, ``)
-					}
-				}
-
-				if hasTradeItems {
-					if stockBuff.TradeItemId > 0 {
-						tradeItm := items.New(stockBuff.TradeItemId)
-						entryRow = append(entryRow, tradeItm.DisplayName())
-					} else {
-						entryRow = append(entryRow, ``)
-					}
-				}
-
-				rows = append(rows, entryRow)
-
-			}
-
-			sort.Slice(rows, func(i, j int) bool {
-				num1, _ := strconv.Atoi(rows[i][2])
-				num2, _ := strconv.Atoi(rows[j][2])
-				return num1 < num2
-			})
-
-			saleItemsData := templates.GetTable(fmt.Sprintf(`%s by <ansi fg="mobname">%s</ansi>`, colorpatterns.ApplyColorPattern(`Enchantments`, `rainbow`), mob.Character.Name), headers, rows)
-			tplTxt, _ := templates.Process("tables/shoplist", saleItemsData, user.UserId, user.UserId)
-			user.SendText(tplTxt)
-			user.SendText(fmt.Sprintf(`To buy an enchantment, type: <ansi fg="command">buy [name]</ansi>%s`, term.CRLFStr))
-		}
-
-		if len(petsAvailable) > 0 {
-
-			hasGoldItems := false
-			hasTradeItems := false
-			for _, stockItm := range petsAvailable {
-				if stockItm.TradeItemId > 0 {
-					hasTradeItems = true
-				}
-				if stockItm.Price >= 0 {
-					hasGoldItems = true
-				}
-			}
-
-			headers := []string{"Qty", "Pet-Type"}
-			if hasGoldItems {
-				headers = append(headers, "Price")
-			}
-			if hasTradeItems {
-				headers = append(headers, "Trade")
-			}
-
-			rows := [][]string{}
-
-			for _, stockPet := range petsAvailable {
-
-				petInfo := pets.GetPetCopy(stockPet.PetType)
-				if !petInfo.Exists() {
-					continue
-				}
-
-				qtyStr := `N/A`
-				if stockPet.QuantityMax != 0 {
-					qtyStr = strconv.Itoa(stockPet.Quantity)
-				}
-
-				price := stockPet.Price
-				if price == 0 {
-					price = 10000
-				} else if price < 0 {
-					price = 0
-				}
-
-				entryRow := []string{
-					qtyStr,
-					petInfo.Type,
-				}
-
-				if hasGoldItems {
-					if price > 0 {
-						entryRow = append(entryRow, strconv.Itoa(price))
-					} else {
-						entryRow = append(entryRow, ``)
-					}
-				}
-
-				if hasTradeItems {
-					if stockPet.TradeItemId > 0 {
-						tradeItm := items.New(stockPet.TradeItemId)
-						entryRow = append(entryRow, tradeItm.DisplayName())
-					} else {
-						entryRow = append(entryRow, ``)
-					}
-				}
-
-				rows = append(rows, entryRow)
-			}
-
-			sort.Slice(rows, func(i, j int) bool {
-				num1, _ := strconv.Atoi(rows[i][2])
-				num2, _ := strconv.Atoi(rows[j][2])
-				return num1 < num2
-			})
-
-			saleItemsData := templates.GetTable(fmt.Sprintf(`%s by <ansi fg="mobname">%s</ansi>`, colorpatterns.ApplyColorPattern(`Pets`, `turquoise`), mob.Character.Name), headers, rows)
-			tplTxt, _ := templates.Process("tables/shoplist", saleItemsData, user.UserId, user.UserId)
-			user.SendText(tplTxt)
-			user.SendText(fmt.Sprintf(`To buy a pet, type: <ansi fg="command">buy [name]</ansi>%s`, term.CRLFStr))
 		}
 	}
 
@@ -395,354 +55,7 @@ func List(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 		listedSomething = true
 
-		itemsAvailable := characters.Shop{}
-		mercsAvailable := characters.Shop{}
-		buffsAvailable := characters.Shop{}
-		petsAvailable := characters.Shop{}
-
-		for _, saleItem := range shopUser.Character.Shop.GetInstock() {
-
-			if saleItem.ItemId > 0 {
-				itemsAvailable = append(itemsAvailable, saleItem)
-				continue
-			}
-
-			if saleItem.MobId > 0 {
-				mercsAvailable = append(mercsAvailable, saleItem)
-				continue
-			}
-
-			if saleItem.BuffId > 0 {
-				buffsAvailable = append(buffsAvailable, saleItem)
-			}
-
-			if saleItem.PetType != `` {
-				petsAvailable = append(petsAvailable, saleItem)
-			}
-		}
-
-		if len(itemsAvailable) == 0 && len(mercsAvailable) == 0 && len(buffsAvailable) == 0 && len(petsAvailable) == 0 {
-			continue
-		}
-
-		if len(itemsAvailable) > 0 {
-
-			hasGoldItems := false
-			hasTradeItems := false
-			for _, stockItm := range itemsAvailable {
-				if stockItm.TradeItemId > 0 {
-					hasTradeItems = true
-				}
-				if stockItm.Price >= 0 { // 0 means use specified item value
-					hasGoldItems = true
-				}
-			}
-
-			headers := []string{"Qty", "Name", "Type"}
-
-			if hasGoldItems {
-				headers = append(headers, `Price`)
-			}
-			if hasTradeItems {
-				headers = append(headers, `Trade`)
-			}
-
-			rows := [][]string{}
-
-			for _, stockItm := range itemsAvailable {
-				item := items.New(stockItm.ItemId)
-
-				qtyStr := `N/A`
-				if stockItm.QuantityMax != 0 {
-					qtyStr = strconv.Itoa(stockItm.Quantity)
-				}
-
-				price := stockItm.Price
-				if price == 0 {
-					price = item.GetSpec().Value
-				} else if price < 0 {
-					price = 0
-				}
-
-				entryRow := []string{
-					qtyStr,
-					item.DisplayName(),
-					string(item.GetSpec().Type),
-				}
-
-				if hasGoldItems {
-					if price > 0 {
-						entryRow = append(entryRow, strconv.Itoa(price))
-					} else {
-						entryRow = append(entryRow, ``)
-					}
-				}
-
-				if hasTradeItems {
-					if stockItm.TradeItemId > 0 {
-						tradeItm := items.New(stockItm.TradeItemId)
-						entryRow = append(entryRow, tradeItm.DisplayName())
-					} else {
-						entryRow = append(entryRow, ``)
-					}
-				}
-
-				rows = append(rows, entryRow)
-
-			}
-
-			sort.Slice(rows, func(i, j int) bool {
-				num1, _ := strconv.Atoi(rows[i][3])
-				num2, _ := strconv.Atoi(rows[j][3])
-				return num1 < num2
-			})
-
-			saleItemsData := templates.GetTable(fmt.Sprintf(`%s by <ansi fg="username">%s</ansi>`, colorpatterns.ApplyColorPattern(`Items available`, `cyan`), shopUser.Character.Name), headers, rows)
-			tplTxt, _ := templates.Process("tables/shoplist", saleItemsData, user.UserId, user.UserId)
-			user.SendText(tplTxt)
-			user.SendText(fmt.Sprintf(`To buy something, type: <ansi fg="command">buy [name]</ansi>%s`, term.CRLFStr))
-		}
-
-		if len(mercsAvailable) > 0 {
-
-			hasGoldItems := false
-			hasTradeItems := false
-			for _, stockMerc := range itemsAvailable {
-				if stockMerc.TradeItemId > 0 {
-					hasTradeItems = true
-				}
-				if stockMerc.Price >= 0 { // 0 means auto-calculate a value
-					hasGoldItems = true
-				}
-			}
-
-			headers := []string{"Qty", "Name", "Level", "Race"}
-
-			if hasGoldItems {
-				headers = append(headers, `Price`)
-			}
-			if hasTradeItems {
-				headers = append(headers, `Trade`)
-			}
-
-			rows := [][]string{}
-
-			for _, stockMerc := range mercsAvailable {
-
-				mobInfo := mobs.GetMobSpec(mobs.MobId(stockMerc.MobId))
-				if mobInfo == nil {
-					continue
-				}
-				raceInfo := species.GetSpecies(mobInfo.Character.SpeciesId)
-				if raceInfo == nil {
-					continue
-				}
-
-				qtyStr := `N/A`
-				if stockMerc.QuantityMax != 0 {
-					qtyStr = strconv.Itoa(stockMerc.Quantity)
-				}
-
-				price := stockMerc.Price
-				if price == 0 {
-					price = 250
-				} else if price < 0 {
-					price = 0
-				}
-
-				entryRow := []string{
-					qtyStr,
-					`<ansi fg="mobname">` + mobInfo.Character.Name + `</ansi>`,
-					`-`,
-					raceInfo.Name,
-				}
-
-				if hasGoldItems {
-					if price > 0 {
-						entryRow = append(entryRow, strconv.Itoa(price))
-					} else {
-						entryRow = append(entryRow, ``)
-					}
-				}
-
-				if hasTradeItems {
-					if stockMerc.TradeItemId > 0 {
-						tradeItm := items.New(stockMerc.TradeItemId)
-						entryRow = append(entryRow, tradeItm.DisplayName())
-					} else {
-						entryRow = append(entryRow, ``)
-					}
-				}
-
-				rows = append(rows, entryRow)
-
-			}
-
-			sort.Slice(rows, func(i, j int) bool {
-				num1, _ := strconv.Atoi(rows[i][4])
-				num2, _ := strconv.Atoi(rows[j][4])
-				return num1 < num2
-			})
-
-			saleItemsData := templates.GetTable(fmt.Sprintf(`%s by <ansi fg="username">%s</ansi>`, colorpatterns.ApplyColorPattern(`Mercenaries for hire`, `flame`), shopUser.Character.Name), headers, rows)
-			tplTxt, _ := templates.Process("tables/shoplist", saleItemsData, user.UserId, user.UserId)
-			user.SendText(tplTxt)
-			user.SendText(fmt.Sprintf(`To Hire a merc, type: <ansi fg="command">hire [name]</ansi>%s`, term.CRLFStr))
-		}
-
-		if len(buffsAvailable) > 0 {
-
-			hasGoldItems := false
-			hasTradeItems := false
-			for _, stockBuff := range itemsAvailable {
-				if stockBuff.TradeItemId > 0 {
-					hasTradeItems = true
-				}
-				if stockBuff.Price > 0 {
-					hasGoldItems = true
-				}
-			}
-
-			headers := []string{"Qty", "Enchantment"}
-
-			if hasGoldItems {
-				headers = append(headers, `Price`)
-			}
-			if hasTradeItems {
-				headers = append(headers, `Trade`)
-			}
-
-			rows := [][]string{}
-
-			for _, stockBuff := range buffsAvailable {
-
-				buffInfo := buffs.GetBuffSpec(stockBuff.BuffId)
-				if buffInfo == nil {
-					continue
-				}
-
-				qtyStr := `N/A`
-				if stockBuff.QuantityMax != 0 {
-					qtyStr = strconv.Itoa(stockBuff.Quantity)
-				}
-
-				entryRow := []string{
-					qtyStr,
-					buffInfo.Name,
-				}
-
-				if hasGoldItems {
-					if stockBuff.Price > 0 {
-						entryRow = append(entryRow, strconv.Itoa(stockBuff.Price))
-					} else {
-						entryRow = append(entryRow, ``)
-					}
-				}
-
-				if hasTradeItems {
-					if stockBuff.TradeItemId > 0 {
-						tradeItm := items.New(stockBuff.TradeItemId)
-						entryRow = append(entryRow, tradeItm.DisplayName())
-					} else {
-						entryRow = append(entryRow, ``)
-					}
-				}
-
-				rows = append(rows, entryRow)
-			}
-
-			sort.Slice(rows, func(i, j int) bool {
-				num1, _ := strconv.Atoi(rows[i][2])
-				num2, _ := strconv.Atoi(rows[j][2])
-				return num1 < num2
-			})
-
-			saleItemsData := templates.GetTable(fmt.Sprintf(`%s by <ansi fg="username">%s</ansi>`, colorpatterns.ApplyColorPattern(`Enchantments`, `rainbow`), shopUser.Character.Name), headers, rows)
-			tplTxt, _ := templates.Process("tables/shoplist", saleItemsData, user.UserId, user.UserId)
-			user.SendText(tplTxt)
-			user.SendText(fmt.Sprintf(`To buy an enchantment, type: <ansi fg="command">buy [name]</ansi>%s`, term.CRLFStr))
-		}
-
-		if len(petsAvailable) > 0 {
-
-			hasGoldItems := false
-			hasTradeItems := false
-			for _, stockPet := range itemsAvailable {
-				if stockPet.TradeItemId > 0 {
-					hasTradeItems = true
-				}
-				if stockPet.Price >= 0 { // zero means assign a flat price
-					hasGoldItems = true
-				}
-			}
-
-			headers := []string{"Qty", "Pet-Type"}
-
-			if hasGoldItems {
-				headers = append(headers, `Price`)
-			}
-			if hasTradeItems {
-				headers = append(headers, `Trade`)
-			}
-
-			rows := [][]string{}
-
-			for _, stockPet := range petsAvailable {
-
-				petInfo := pets.GetPetCopy(stockPet.PetType)
-				if !petInfo.Exists() {
-					continue
-				}
-
-				qtyStr := `N/A`
-				if stockPet.QuantityMax != 0 {
-					qtyStr = strconv.Itoa(stockPet.Quantity)
-				}
-
-				price := stockPet.Price
-				if price == 0 {
-					price = 10000
-				} else if price < 0 {
-					price = 0
-				}
-
-				entryRow := []string{
-					qtyStr,
-					petInfo.Type,
-				}
-
-				if hasGoldItems {
-					if price > 0 {
-						entryRow = append(entryRow, strconv.Itoa(price))
-					} else {
-						entryRow = append(entryRow, ``)
-					}
-				}
-
-				if hasTradeItems {
-					if stockPet.TradeItemId > 0 {
-						tradeItm := items.New(stockPet.TradeItemId)
-						entryRow = append(entryRow, tradeItm.DisplayName())
-					} else {
-						entryRow = append(entryRow, ``)
-					}
-				}
-
-				rows = append(rows, entryRow)
-			}
-
-			sort.Slice(rows, func(i, j int) bool {
-				num1, _ := strconv.Atoi(rows[i][2])
-				num2, _ := strconv.Atoi(rows[j][2])
-				return num1 < num2
-			})
-
-			saleItemsData := templates.GetTable(fmt.Sprintf(`%s by <ansi fg="username">%s</ansi>`, colorpatterns.ApplyColorPattern(`Pets`, `turquoise`), user.Character.Name), headers, rows)
-			tplTxt, _ := templates.Process("tables/shoplist", saleItemsData, user.UserId, user.UserId)
-			user.SendText(tplTxt)
-			user.SendText(fmt.Sprintf(`To buy a pet, type: <ansi fg="command">buy [name]</ansi>%s`, term.CRLFStr))
-		}
-
+		renderPlayerMerchantListing(user, shopUser.Character.Shop.GetInstock(), shopUser.Character.Name, user.Character.Name)
 	}
 
 	if !listedSomething {
@@ -750,4 +63,389 @@ func List(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	}
 
 	return true, nil
+}
+
+// partitionShopStock splits shop stock into four categories: items, mercs, buffs, pets.
+func partitionShopStock(stock characters.Shop) (itemStock, mercStock, buffStock, petStock characters.Shop) {
+	for _, saleItem := range stock {
+
+		if saleItem.ItemId > 0 {
+			itemStock = append(itemStock, saleItem)
+			continue
+		}
+
+		if saleItem.MobId > 0 {
+			mercStock = append(mercStock, saleItem)
+			continue
+		}
+
+		if saleItem.BuffId > 0 {
+			buffStock = append(buffStock, saleItem)
+		}
+
+		if saleItem.PetType != `` {
+			petStock = append(petStock, saleItem)
+		}
+
+	}
+	return
+}
+
+// checkGoldTrade scans a stock list to determine whether gold prices and/or trade items exist.
+// goldGte0 controls whether Price >= 0 (true) or Price > 0 (false) counts as having gold.
+func checkGoldTrade(stock characters.Shop, goldGte0 bool) (hasGold, hasTrade bool) {
+	for _, stockItm := range stock {
+		if stockItm.TradeItemId > 0 {
+			hasTrade = true
+		}
+		if goldGte0 && stockItm.Price >= 0 {
+			hasGold = true
+		}
+		if !goldGte0 && stockItm.Price > 0 {
+			hasGold = true
+		}
+	}
+	return
+}
+
+// buildItemRows constructs table headers and rows for an items shop section.
+func buildItemRows(stock characters.Shop, hasGold, hasTrade bool) ([]string, [][]string) {
+	headers := []string{"Qty", "Name", "Type"}
+	if hasGold {
+		headers = append(headers, "Price")
+	}
+	if hasTrade {
+		headers = append(headers, "Trade")
+	}
+
+	rows := [][]string{}
+
+	for _, stockItm := range stock {
+		item := items.New(stockItm.ItemId)
+
+		qtyStr := `N/A`
+		if stockItm.QuantityMax != 0 {
+			qtyStr = strconv.Itoa(stockItm.Quantity)
+		}
+
+		price := stockItm.Price
+		if price == 0 {
+			price = item.GetSpec().Value
+		} else if price < 0 {
+			price = 0
+		}
+
+		entryRow := []string{
+			qtyStr,
+			item.DisplayName(),
+			string(item.GetSpec().Type),
+		}
+
+		if hasGold {
+			if price > 0 {
+				entryRow = append(entryRow, strconv.Itoa(price))
+			} else {
+				entryRow = append(entryRow, ``)
+			}
+		}
+
+		if hasTrade {
+			if stockItm.TradeItemId > 0 {
+				tradeItm := items.New(stockItm.TradeItemId)
+				entryRow = append(entryRow, tradeItm.DisplayName())
+			} else {
+				entryRow = append(entryRow, ``)
+			}
+		}
+
+		rows = append(rows, entryRow)
+	}
+	return headers, rows
+}
+
+// buildMercRows constructs table headers and rows for a mercenaries shop section.
+func buildMercRows(stock characters.Shop, hasGold, hasTrade bool) ([]string, [][]string) {
+	headers := []string{"Qty", "Name", "Level", "Race"}
+	if hasGold {
+		headers = append(headers, "Price")
+	}
+	if hasTrade {
+		headers = append(headers, "Trade")
+	}
+
+	rows := [][]string{}
+
+	for _, stockMerc := range stock {
+
+		mobInfo := mobs.GetMobSpec(mobs.MobId(stockMerc.MobId))
+		if mobInfo == nil {
+			continue
+		}
+		raceInfo := species.GetSpecies(mobInfo.Character.SpeciesId)
+		if raceInfo == nil {
+			continue
+		}
+
+		qtyStr := `N/A`
+		if stockMerc.QuantityMax != 0 {
+			qtyStr = strconv.Itoa(stockMerc.Quantity)
+		}
+
+		price := stockMerc.Price
+		if price == 0 {
+			price = 250
+		} else if price < 0 {
+			price = 0
+		}
+
+		entryRow := []string{
+			qtyStr,
+			`<ansi fg="mobname">` + mobInfo.Character.Name + `</ansi>`,
+			`-`,
+			raceInfo.Name,
+		}
+
+		if hasGold {
+			if price > 0 {
+				entryRow = append(entryRow, strconv.Itoa(price))
+			} else {
+				entryRow = append(entryRow, ``)
+			}
+		}
+
+		if hasTrade {
+			if stockMerc.TradeItemId > 0 {
+				tradeItm := items.New(stockMerc.TradeItemId)
+				entryRow = append(entryRow, tradeItm.DisplayName())
+			} else {
+				entryRow = append(entryRow, ``)
+			}
+		}
+
+		rows = append(rows, entryRow)
+
+	}
+	return headers, rows
+}
+
+// buildBuffRows constructs table headers and rows for a buffs/enchantments shop section.
+func buildBuffRows(stock characters.Shop, hasGold, hasTrade bool) ([]string, [][]string) {
+	headers := []string{"Qty", "Enchantment"}
+	if hasGold {
+		headers = append(headers, "Price")
+	}
+	if hasTrade {
+		headers = append(headers, "Trade")
+	}
+
+	rows := [][]string{}
+
+	for _, stockBuff := range stock {
+
+		buffInfo := buffs.GetBuffSpec(stockBuff.BuffId)
+		if buffInfo == nil {
+			continue
+		}
+
+		qtyStr := `N/A`
+		if stockBuff.QuantityMax != 0 {
+			qtyStr = strconv.Itoa(stockBuff.Quantity)
+		}
+
+		entryRow := []string{
+			qtyStr,
+			buffInfo.Name,
+		}
+
+		if hasGold {
+			if stockBuff.Price > 0 {
+				entryRow = append(entryRow, strconv.Itoa(stockBuff.Price))
+			} else {
+				entryRow = append(entryRow, ``)
+			}
+		}
+
+		if hasTrade {
+			if stockBuff.TradeItemId > 0 {
+				tradeItm := items.New(stockBuff.TradeItemId)
+				entryRow = append(entryRow, tradeItm.DisplayName())
+			} else {
+				entryRow = append(entryRow, ``)
+			}
+		}
+
+		rows = append(rows, entryRow)
+
+	}
+	return headers, rows
+}
+
+// buildPetRows constructs table headers and rows for a pets shop section.
+func buildPetRows(stock characters.Shop, hasGold, hasTrade bool) ([]string, [][]string) {
+	headers := []string{"Qty", "Pet-Type"}
+	if hasGold {
+		headers = append(headers, "Price")
+	}
+	if hasTrade {
+		headers = append(headers, "Trade")
+	}
+
+	rows := [][]string{}
+
+	for _, stockPet := range stock {
+
+		petInfo := pets.GetPetCopy(stockPet.PetType)
+		if !petInfo.Exists() {
+			continue
+		}
+
+		qtyStr := `N/A`
+		if stockPet.QuantityMax != 0 {
+			qtyStr = strconv.Itoa(stockPet.Quantity)
+		}
+
+		price := stockPet.Price
+		if price == 0 {
+			price = 10000
+		} else if price < 0 {
+			price = 0
+		}
+
+		entryRow := []string{
+			qtyStr,
+			petInfo.Type,
+		}
+
+		if hasGold {
+			if price > 0 {
+				entryRow = append(entryRow, strconv.Itoa(price))
+			} else {
+				entryRow = append(entryRow, ``)
+			}
+		}
+
+		if hasTrade {
+			if stockPet.TradeItemId > 0 {
+				tradeItm := items.New(stockPet.TradeItemId)
+				entryRow = append(entryRow, tradeItm.DisplayName())
+			} else {
+				entryRow = append(entryRow, ``)
+			}
+		}
+
+		rows = append(rows, entryRow)
+	}
+	return headers, rows
+}
+
+// sortRowsByCol sorts rows by numeric value at the given column index.
+func sortRowsByCol(rows [][]string, col int) {
+	sort.Slice(rows, func(i, j int) bool {
+		num1, _ := strconv.Atoi(rows[i][col])
+		num2, _ := strconv.Atoi(rows[j][col])
+		return num1 < num2
+	})
+}
+
+// renderShopTable renders a sorted shop section table and sends it to the user.
+func renderShopTable(user *users.UserRecord, title, colorPattern, sellerName, sellerTag string, headers []string, rows [][]string, helpText string) {
+	saleItemsData := templates.GetTable(fmt.Sprintf(`%s by <ansi fg="%s">%s</ansi>`, colorpatterns.ApplyColorPattern(title, colorPattern), sellerTag, sellerName), headers, rows)
+	tplTxt, _ := templates.Process("tables/shoplist", saleItemsData, user.UserId, user.UserId)
+	user.SendText(tplTxt)
+	user.SendText(fmt.Sprintf(`%s%s`, helpText, term.CRLFStr))
+}
+
+// renderMobMerchantListing renders all shop sections for a mob merchant.
+// Returns false if the merchant has nothing in stock.
+func renderMobMerchantListing(user *users.UserRecord, stock characters.Shop, sellerName string) bool {
+	itemStock, mercStock, buffStock, petStock := partitionShopStock(stock)
+
+	if len(itemStock) == 0 && len(mercStock) == 0 && len(buffStock) == 0 && len(petStock) == 0 {
+		return false
+	}
+
+	sellerTag := `mobname`
+
+	if len(itemStock) > 0 {
+		hasGold, hasTrade := checkGoldTrade(itemStock, true)
+		headers, rows := buildItemRows(itemStock, hasGold, hasTrade)
+		sort.Slice(rows, func(i, j int) bool {
+			return rows[i][0] < rows[j][0]
+		})
+		renderShopTable(user, `Items available`, `cyan`, sellerName, sellerTag, headers, rows,
+			`To buy something, type: <ansi fg="command">buy [name]</ansi>`)
+	}
+
+	if len(mercStock) > 0 {
+		hasGold, hasTrade := checkGoldTrade(mercStock, true)
+		headers, rows := buildMercRows(mercStock, hasGold, hasTrade)
+		sortRowsByCol(rows, 4)
+		renderShopTable(user, `Mercenaries for hire`, `flame`, sellerName, sellerTag, headers, rows,
+			`To Hire a merc, type: <ansi fg="command">hire [name]</ansi>`)
+	}
+
+	if len(buffStock) > 0 {
+		hasGold, hasTrade := checkGoldTrade(buffStock, true)
+		headers, rows := buildBuffRows(buffStock, hasGold, hasTrade)
+		sortRowsByCol(rows, 2)
+		renderShopTable(user, `Enchantments`, `rainbow`, sellerName, sellerTag, headers, rows,
+			`To buy an enchantment, type: <ansi fg="command">buy [name]</ansi>`)
+	}
+
+	if len(petStock) > 0 {
+		hasGold, hasTrade := checkGoldTrade(petStock, true)
+		headers, rows := buildPetRows(petStock, hasGold, hasTrade)
+		sortRowsByCol(rows, 2)
+		renderShopTable(user, `Pets`, `turquoise`, sellerName, sellerTag, headers, rows,
+			`To buy a pet, type: <ansi fg="command">buy [name]</ansi>`)
+	}
+
+	return true
+}
+
+// renderPlayerMerchantListing renders all shop sections for a player merchant.
+// browsingUserName is passed for the pet section title (pre-existing behavior preserved).
+func renderPlayerMerchantListing(user *users.UserRecord, stock characters.Shop, sellerName, browsingUserName string) {
+	itemStock, mercStock, buffStock, petStock := partitionShopStock(stock)
+
+	if len(itemStock) == 0 && len(mercStock) == 0 && len(buffStock) == 0 && len(petStock) == 0 {
+		return
+	}
+
+	sellerTag := `username`
+
+	if len(itemStock) > 0 {
+		hasGold, hasTrade := checkGoldTrade(itemStock, true)
+		headers, rows := buildItemRows(itemStock, hasGold, hasTrade)
+		sortRowsByCol(rows, 3)
+		renderShopTable(user, `Items available`, `cyan`, sellerName, sellerTag, headers, rows,
+			`To buy something, type: <ansi fg="command">buy [name]</ansi>`)
+	}
+
+	if len(mercStock) > 0 {
+		// Pre-existing behavior preserved: checks itemStock instead of mercStock for hasGold/hasTrade
+		hasGold, hasTrade := checkGoldTrade(itemStock, true)
+		headers, rows := buildMercRows(mercStock, hasGold, hasTrade)
+		sortRowsByCol(rows, 4)
+		renderShopTable(user, `Mercenaries for hire`, `flame`, sellerName, sellerTag, headers, rows,
+			`To Hire a merc, type: <ansi fg="command">hire [name]</ansi>`)
+	}
+
+	if len(buffStock) > 0 {
+		// Pre-existing behavior preserved: checks itemStock instead of buffStock, uses Price > 0 instead of >= 0
+		hasGold, hasTrade := checkGoldTrade(itemStock, false)
+		headers, rows := buildBuffRows(buffStock, hasGold, hasTrade)
+		sortRowsByCol(rows, 2)
+		renderShopTable(user, `Enchantments`, `rainbow`, sellerName, sellerTag, headers, rows,
+			`To buy an enchantment, type: <ansi fg="command">buy [name]</ansi>`)
+	}
+
+	if len(petStock) > 0 {
+		// Pre-existing behavior preserved: checks itemStock instead of petStock, uses browsingUserName
+		hasGold, hasTrade := checkGoldTrade(itemStock, true)
+		headers, rows := buildPetRows(petStock, hasGold, hasTrade)
+		sortRowsByCol(rows, 2)
+		renderShopTable(user, `Pets`, `turquoise`, browsingUserName, sellerTag, headers, rows,
+			`To buy a pet, type: <ansi fg="command">buy [name]</ansi>`)
+	}
 }
