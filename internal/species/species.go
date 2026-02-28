@@ -96,12 +96,12 @@ func (s *Species) Validate() error {
 	s.Size = Size(strings.ToLower(string(s.Size))) // Sometimes a mismatching CaSe value is provided.
 
 	// Recalculate stats, based on level one because this is actually the baseline for the species
-	s.Stats.Strength.Recalculate(1)
-	s.Stats.Dexterity.Recalculate(1)
-	s.Stats.Perception.Recalculate(1)
-	s.Stats.Vitality.Recalculate(1)
-	s.Stats.Willpower.Recalculate(1)
-	s.Stats.Charisma.Recalculate(1)
+	s.Stats.Strength.Recalculate()
+	s.Stats.Dexterity.Recalculate()
+	s.Stats.Perception.Recalculate()
+	s.Stats.Vitality.Recalculate()
+	s.Stats.Willpower.Recalculate()
+	s.Stats.Charisma.Recalculate()
 
 	if s.Damage.Attacks < 1 && s.Damage.DiceCount > 0 && s.Damage.SideCount > 0 {
 		s.Damage.Attacks = 1

@@ -11,9 +11,7 @@ ActorObjects are the basic object that represents Users and NPCs
   - [ActorObject.MobTypeId() int](#actorobjectmobtypeid-int)
   - [ActorObject.SendText(msg string)](#actorobjectsendtextmsg-string)
   - [RoomObject.SendText(msg string)](#roomobjectsendtextmsg-string)
-  - [ActorObject.GetRace() string](#actorobjectgetrace-string)
   - [ActorObject.GetSize() string](#actorobjectgetsize-string)
-  - [ActorObject.GetLevel() int](#actorobjectgetlevel-int)
   - [ActorObject.GetStat(statName string) int](#actorobjectgetstatstatname-string-int)
   - [ActorObject.SetTempData(key string, value any)](#actorobjectsettempdatakey-string-value-any)
   - [ActorObject.GetTempData(key string) any](#actorobjectgettempdatakey-string-any)
@@ -139,14 +137,8 @@ Sends a message to everyone in the room.
 | --- | --- |
 | msg | the message to send |
 
-## [ActorObject.GetRace() string](/internal/scripting/actor_func.go)
-Gets the race name of the actor, such as Human, Elf, Rodent, etc.
-
 ## [ActorObject.GetSize() string](/internal/scripting/actor_func.go)
 Returns `small`, `medium`, or `large`
-
-## [ActorObject.GetLevel() int](/internal/scripting/actor_func.go)
-Returns 1 (levels have been removed; kept for script compatibility)
 
 ## [ActorObject.GetStat(statName string) int](/internal/scripting/actor_func.go)
 Returns the named stat value.

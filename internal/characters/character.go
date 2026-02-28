@@ -2173,12 +2173,12 @@ func (c *Character) RecalculateStats() {
 	// Recalculate stats
 	// Stats are basically:
 	// level*base + training + mods
-	c.Stats.Strength.Recalculate(1)
-	c.Stats.Dexterity.Recalculate(1)
-	c.Stats.Perception.Recalculate(1)
-	c.Stats.Vitality.Recalculate(1)
-	c.Stats.Willpower.Recalculate(1)
-	c.Stats.Charisma.Recalculate(1)
+	c.Stats.Strength.Recalculate()
+	c.Stats.Dexterity.Recalculate()
+	c.Stats.Perception.Recalculate()
+	c.Stats.Vitality.Recalculate()
+	c.Stats.Willpower.Recalculate()
+	c.Stats.Charisma.Recalculate()
 
 	// Stage 12.1: Apply stat_multiplier mutations after Recalculate()
 	if v := mutations.GetStatMultiplier(c.Mutations, "strength"); v != 0 {
@@ -2220,10 +2220,10 @@ func (c *Character) RecalculateStats() {
 	c.ActionPointsMax.Mods = 200 // hard coded for now
 
 	// Recalculate HP/Stamina/Conviction stats
-	c.HealthMax.Recalculate(1)
-	c.StaminaMax.Recalculate(1)
-	c.ConvictionMax.Recalculate(1)
-	c.ActionPointsMax.Recalculate(1)
+	c.HealthMax.Recalculate()
+	c.StaminaMax.Recalculate()
+	c.ConvictionMax.Recalculate()
+	c.ActionPointsMax.Recalculate()
 
 	// Stage 12.1: Apply health_multiplier mutations after HealthMax.Recalculate()
 	if hMult := mutations.GetHealthMultiplier(c.Mutations); hMult != 0 {

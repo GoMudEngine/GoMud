@@ -723,14 +723,6 @@ func HealthClass(health int, maxHealth int) string {
 	return fmt.Sprintf(`health-%d`, healthPercent)
 }
 
-func ManaClass(mana int, maxMana int) string {
-
-	// quantize to 10s
-	manaPercent := int(math.Floor(float64(mana)/float64(maxMana)*10)) * 10
-
-	return fmt.Sprintf(`mana-%d`, manaPercent)
-}
-
 // Creates a percentage and quantizes it to the nearest 10
 func QuantizeTens(value int, max int) int {
 	return int(math.Floor(float64(value)/float64(max)*10)) * 10
