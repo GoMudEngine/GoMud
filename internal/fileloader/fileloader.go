@@ -12,6 +12,7 @@ import (
 
 	"sync/atomic"
 
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
 )
@@ -293,12 +294,14 @@ func SaveAllFlatFiles[K comparable, T Loadable[K]](basePath string, data map[K]T
 
 				// Use filepath to determine file marshal type
 				if fExt != `.yaml` {
-					panic(fmt.Sprint(`SaveAllFlatFiles`, `basePath`, basePath, `type`, fmt.Sprintf(`%T`, *new(T)), `path`, path, `err`, `unsupported file type`))
+					mudlog.Error(`SaveAllFlatFiles`, `basePath`, basePath, `type`, fmt.Sprintf(`%T`, *new(T)), `path`, path, `err`, `unsupported file type`)
+					continue
 				}
 
 				bytes, err = yaml.Marshal(dataUnit)
 				if err != nil {
-					panic(fmt.Sprint(`SaveAllFlatFiles`, `basePath`, basePath, `type`, fmt.Sprintf(`%T`, *new(T)), `path`, path, `err`, err))
+					mudlog.Error(`SaveAllFlatFiles`, `basePath`, basePath, `type`, fmt.Sprintf(`%T`, *new(T)), `path`, path, `err`, err)
+					continue
 				}
 
 				saveFilePath := path
@@ -310,7 +313,8 @@ func SaveAllFlatFiles[K comparable, T Loadable[K]](basePath string, data map[K]T
 				// write to .new suffix in case of power loss etc.
 				//
 				if err := os.WriteFile(saveFilePath, bytes, 0777); err != nil {
-					panic(fmt.Sprint(`SaveAllFlatFiles`, `basePath`, basePath, `type`, fmt.Sprintf(`%T`, *new(T)), `path`, path, `err`, err))
+					mudlog.Error(`SaveAllFlatFiles`, `basePath`, basePath, `type`, fmt.Sprintf(`%T`, *new(T)), `path`, path, `err`, err)
+					continue
 				}
 
 				if carefulSave {
@@ -318,7 +322,8 @@ func SaveAllFlatFiles[K comparable, T Loadable[K]](basePath string, data map[K]T
 					// Once the file is written, rename it to remove the .new suffix and overwrite the old file
 					//
 					if err := os.Rename(saveFilePath, path); err != nil {
-						panic(fmt.Sprint(`SaveAllFlatFiles`, `basePath`, basePath, `type`, fmt.Sprintf(`%T`, *new(T)), `path`, path, `err`, err))
+						mudlog.Error(`SaveAllFlatFiles`, `basePath`, basePath, `type`, fmt.Sprintf(`%T`, *new(T)), `path`, path, `err`, err)
+						continue
 					}
 				}
 
