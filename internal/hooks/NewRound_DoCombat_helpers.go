@@ -70,29 +70,9 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 		return true
 	}
 
-	// Pre-flight: simulate the loop to calculate foldDelta for the conviction check.
-	simFolds := cs.FoldsAccumulated
-	for i := 0; i < cs.FoldsPerRound; i++ {
-		if simFolds == 0 {
-			simFolds = 1
-		} else {
-			simFolds *= 2
-		}
-		if simFolds >= cs.FoldsNeeded {
-			simFolds = cs.FoldsNeeded
-			break
-		}
-	}
-	foldDelta := simFolds - cs.FoldsAccumulated
-
-	// Conviction cost proportional to folds gained this round.
-	roundCost := 0
-	if cs.TotalConvictionCost > 0 && cs.FoldsNeeded > 0 {
-		roundCost = (cs.TotalConvictionCost * foldDelta) / cs.FoldsNeeded
-		if roundCost < 1 {
-			roundCost = 1
-		}
-	}
+	// Pre-flight: simulate fold advance to compute conviction cost
+	foldDelta := simulateFoldRound(cs)
+	roundCost := calcFoldConvictionCost(cs, foldDelta)
 
 	if roundCost > 0 && user.Character.Conviction < roundCost {
 		user.Character.CastingState = nil
@@ -103,49 +83,37 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 	user.Character.Conviction -= roundCost
 	cs.ConvictionSpent += roundCost
 
-	// Real loop: advance folds and emit a message per iteration.
-	for i := 0; i < cs.FoldsPerRound; i++ {
-		if cs.FoldsAccumulated == 0 {
-			cs.FoldsAccumulated = 1
-		} else {
-			cs.FoldsAccumulated *= 2
+	// Advance folds — resolve spell if complete
+	if advanceFolds(cs) {
+		resolveRoom := rooms.LoadRoom(user.Character.RoomId)
+		if resolveRoom != nil {
+			resolveSpell(user, cs, spellData, resolveRoom)
 		}
-		if cs.FoldsAccumulated > cs.FoldsNeeded {
-			cs.FoldsAccumulated = cs.FoldsNeeded
-		}
+		user.Character.TrackSpellCast(cs.SpellId)
+		user.Character.OnSkillUse(string(skills.Spellcasting), userId)
+		user.Character.OnStatUse("willpower", userId)
 
-		if cs.FoldsAccumulated >= cs.FoldsNeeded {
-			// Folds complete — resolve the spell effect
-			resolveRoom := rooms.LoadRoom(user.Character.RoomId)
-			if resolveRoom != nil {
-				resolveSpell(user, cs, spellData, resolveRoom)
-			}
-			user.Character.TrackSpellCast(cs.SpellId)
-			user.Character.OnSkillUse(string(skills.Spellcasting), userId)
-			user.Character.OnStatUse("willpower", userId)
-
-			// Phase 25.1: Spell discovery
-			castSkillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
-			knownCount := len(user.Character.SpellBook)
-			bal := configs.GetBalanceConfig()
-			discoveryChance := float64(bal.SpellDiscoveryBaseChance) / (1.0 + float64(knownCount)*float64(bal.SpellDiscoveryDecayRate))
-			if util.Rand(100) < int(discoveryChance) {
-				eligible := spells.GetEligibleSpells(user.Character.SpellBook, castSkillLevel)
-				if len(eligible) > 0 {
-					pick := eligible[util.Rand(len(eligible))]
-					if user.Character.LearnSpell(pick) {
-						if newSpell := spells.GetSpell(pick); newSpell != nil {
-							user.SendText(fmt.Sprintf(
-								`<ansi fg="magenta-bold">A new pattern crystallizes in your mind: <ansi fg="cyan-bold">%s</ansi></ansi>`,
-								newSpell.Name))
-						}
+		// Phase 25.1: Spell discovery
+		castSkillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
+		knownCount := len(user.Character.SpellBook)
+		bal := configs.GetBalanceConfig()
+		discoveryChance := float64(bal.SpellDiscoveryBaseChance) / (1.0 + float64(knownCount)*float64(bal.SpellDiscoveryDecayRate))
+		if util.Rand(100) < int(discoveryChance) {
+			eligible := spells.GetEligibleSpells(user.Character.SpellBook, castSkillLevel)
+			if len(eligible) > 0 {
+				pick := eligible[util.Rand(len(eligible))]
+				if user.Character.LearnSpell(pick) {
+					if newSpell := spells.GetSpell(pick); newSpell != nil {
+						user.SendText(fmt.Sprintf(
+							`<ansi fg="magenta-bold">A new pattern crystallizes in your mind: <ansi fg="cyan-bold">%s</ansi></ansi>`,
+							newSpell.Name))
 					}
 				}
 			}
-
-			user.Character.CastingState = nil
-			break
 		}
+
+		user.Character.CastingState = nil
+	} else {
 		user.SendText(`<ansi fg="cyan">` + spells.GetCastMessage("cast_started", cs.SpellId) + `</ansi>`)
 	}
 
@@ -173,27 +141,10 @@ func handleMobFoldCasting(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 		return true
 	}
 
-	// Simulate fold advance to compute this round's conviction cost
-	simFolds := cs.FoldsAccumulated
-	for i := 0; i < cs.FoldsPerRound; i++ {
-		if simFolds == 0 {
-			simFolds = 1
-		} else {
-			simFolds *= 2
-		}
-		if simFolds >= cs.FoldsNeeded {
-			simFolds = cs.FoldsNeeded
-			break
-		}
-	}
-	foldDelta := simFolds - cs.FoldsAccumulated
-	roundCost := 0
-	if cs.TotalConvictionCost > 0 && cs.FoldsNeeded > 0 {
-		roundCost = (cs.TotalConvictionCost * foldDelta) / cs.FoldsNeeded
-		if roundCost < 1 {
-			roundCost = 1
-		}
-	}
+	// Pre-flight: simulate fold advance to compute conviction cost
+	foldDelta := simulateFoldRound(cs)
+	roundCost := calcFoldConvictionCost(cs, foldDelta)
+
 	if roundCost > 0 && mob.Character.Conviction < roundCost {
 		mob.Character.CastingState = nil
 		mobRoom.SendText(fmt.Sprintf(
@@ -202,23 +153,13 @@ func handleMobFoldCasting(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 	}
 	mob.Character.Conviction -= roundCost
 
-	for i := 0; i < cs.FoldsPerRound; i++ {
-		if cs.FoldsAccumulated == 0 {
-			cs.FoldsAccumulated = 1
-		} else {
-			cs.FoldsAccumulated *= 2
+	// Advance folds — resolve spell if complete
+	if advanceFolds(cs) {
+		if resolveRoom := rooms.LoadRoom(mob.Character.RoomId); resolveRoom != nil {
+			resolveMobSpell(mob, cs, spellData, resolveRoom)
 		}
-		if cs.FoldsAccumulated > cs.FoldsNeeded {
-			cs.FoldsAccumulated = cs.FoldsNeeded
-		}
-
-		if cs.FoldsAccumulated >= cs.FoldsNeeded {
-			if resolveRoom := rooms.LoadRoom(mob.Character.RoomId); resolveRoom != nil {
-				resolveMobSpell(mob, cs, spellData, resolveRoom)
-			}
-			mob.Character.CastingState = nil
-			break
-		}
+		mob.Character.CastingState = nil
+	} else {
 		mobRoom.SendText(fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi> weaves magic with focused intent.`, mob.Character.Name))
 	}
@@ -325,49 +266,31 @@ func handlePlayerFlee(user *users.UserRecord, uRoom *rooms.Room, userId int) boo
 	return true
 }
 
-// applyPvPCritEffects processes parry/dodge crit effects for PvP combat.
-func applyPvPCritEffects(roundResult combat.AttackResult, atkUser *users.UserRecord, defUser *users.UserRecord, uRoom *rooms.Room) {
-	// Process parry crit disarm (10% chance on parry crit)
-	if roundResult.ParryCritDetected {
-		disarmResult := combat.AttemptCritDisarm(defUser.Character, atkUser.Character, 10.0)
-		if disarmResult.Success {
-			uRoom.AddItem(disarmResult.Weapon, false)
-			defUser.SendText(disarmResult.Message)
-			atkUser.SendText(disarmResult.TargetMsg)
-			uRoom.SendText(disarmResult.RoomMessage, atkUser.UserId, defUser.UserId)
-		}
+// dispatchCritEffectsPvP routes crit effect messages for PvP combat.
+func dispatchCritEffectsPvP(result CritEffectResult, atkUser *users.UserRecord, defUser *users.UserRecord, uRoom *rooms.Room) {
+	if result.Disarmed {
+		defUser.SendText(result.DisarmItem.Message)
+		atkUser.SendText(result.DisarmItem.TargetMsg)
+		uRoom.SendText(result.DisarmItem.RoomMessage, atkUser.UserId, defUser.UserId)
 	}
-
-	// Process dodge crit grapple opportunity
-	if roundResult.DodgeCritDetected {
-		if defUser.Character.Cooldowns["special-move"] <= 0 {
-			combat.SetGrappleOpportunity(defUser.Character)
-			defUser.SendText(fmt.Sprintf(
-				`<ansi fg="yellow">You slip inside %s's guard! [Grapple opportunity]</ansi>`,
-				atkUser.Character.Name))
-			uRoom.SendText(fmt.Sprintf(
-				`<ansi fg="combat">%s slips inside %s's guard!</ansi>`,
-				defUser.Character.Name, atkUser.Character.Name),
-				atkUser.UserId, defUser.UserId)
-		}
+	if result.GrappleSet {
+		defUser.SendText(fmt.Sprintf(
+			`<ansi fg="yellow">You slip inside %s's guard! [Grapple opportunity]</ansi>`,
+			atkUser.Character.Name))
+		uRoom.SendText(fmt.Sprintf(
+			`<ansi fg="combat">%s slips inside %s's guard!</ansi>`,
+			defUser.Character.Name, atkUser.Character.Name),
+			atkUser.UserId, defUser.UserId)
 	}
 }
 
-// applyPvMCritEffects processes parry/dodge crit effects for PvM combat (player attacking mob).
-func applyPvMCritEffects(roundResult combat.AttackResult, atkUser *users.UserRecord, defMob *mobs.Mob, uRoom *rooms.Room) {
-	// Process parry crit disarm (10% chance on parry crit) - mob defending
-	if roundResult.ParryCritDetected {
-		disarmResult := combat.AttemptCritDisarm(&defMob.Character, atkUser.Character, 10.0)
-		if disarmResult.Success {
-			uRoom.AddItem(disarmResult.Weapon, false)
-			atkUser.SendText(disarmResult.TargetMsg)
-			uRoom.SendText(disarmResult.RoomMessage, atkUser.UserId)
-		}
+// dispatchCritEffectsPvM routes crit effect messages for PvM combat (player attacking mob).
+func dispatchCritEffectsPvM(result CritEffectResult, atkUser *users.UserRecord, defMob *mobs.Mob, uRoom *rooms.Room) {
+	if result.Disarmed {
+		atkUser.SendText(result.DisarmItem.TargetMsg)
+		uRoom.SendText(result.DisarmItem.RoomMessage, atkUser.UserId)
 	}
-
-	// Process dodge crit grapple opportunity - mob defending
-	if roundResult.DodgeCritDetected {
-		combat.SetGrappleOpportunity(&defMob.Character)
+	if result.GrappleSet {
 		uRoom.SendText(fmt.Sprintf(
 			`<ansi fg="combat"><ansi fg="mobname">%s</ansi> slips inside %s's guard!</ansi>`,
 			defMob.Character.Name, atkUser.Character.Name),
@@ -391,83 +314,53 @@ func handleCharmedMobAssist(room *rooms.Room, defId int, targetDesc string) {
 
 // handleOffhandBreakUserDef handles offhand item breakage when a player defender is hit.
 func handleOffhandBreakUserDef(roundResult combat.AttackResult, defUser *users.UserRecord, defRoom *rooms.Room) {
-	if !roundResult.Hit {
+	br := tryWeaponBreak(defUser.Character, roundResult, defRoom)
+	if !br.Broke {
 		return
 	}
-	if defUser.Character.Equipment.Offhand.ItemId <= 0 {
-		return
-	}
 
-	modifier := 0
-	if roundResult.Crit {
-		modifier = int(defUser.Character.Equipment.Offhand.GetSpec().BreakChance)
-	}
+	defUser.SendText(`<ansi fg="202">***</ansi>`)
+	defUser.SendText(fmt.Sprintf(`<ansi fg="214"><ansi fg="202">***</ansi> Your <ansi fg="item">%s</ansi> breaks! <ansi fg="202">***</ansi></ansi>`, br.BrokenItemName))
+	defUser.SendText(`<ansi fg="202">***</ansi>`)
 
-	if defUser.Character.Equipment.Offhand.BreakTest(modifier) {
-		defUser.SendText(`<ansi fg="202">***</ansi>`)
-		defUser.SendText(fmt.Sprintf(`<ansi fg="214"><ansi fg="202">***</ansi> Your <ansi fg="item">%s</ansi> breaks! <ansi fg="202">***</ansi></ansi>`, defUser.Character.Equipment.Offhand.NameSimple()))
-		defUser.SendText(`<ansi fg="202">***</ansi>`)
+	defRoom.SendText(fmt.Sprintf(`<ansi fg="214"><ansi fg="202">***</ansi> The <ansi fg="item">%s</ansi> <ansi fg="username">%s</ansi> was carrying breaks! <ansi fg="202">***</ansi></ansi>`, br.BrokenItemName, defUser.Character.Name), defUser.UserId)
 
-		defRoom.SendText(fmt.Sprintf(`<ansi fg="214"><ansi fg="202">***</ansi> The <ansi fg="item">%s</ansi> <ansi fg="username">%s</ansi> was carrying breaks! <ansi fg="202">***</ansi></ansi>`, defUser.Character.Equipment.Offhand.NameSimple(), defUser.Character.Name), defUser.UserId)
+	events.AddToQueue(events.ItemOwnership{
+		UserId: defUser.UserId,
+		Item:   br.BrokenItem,
+		Gained: false,
+	})
 
-		events.AddToQueue(events.ItemOwnership{
-			UserId: defUser.UserId,
-			Item:   defUser.Character.Equipment.Offhand,
-			Gained: false,
-		})
-
-		defUser.Character.RemoveFromBody(defUser.Character.Equipment.Offhand)
-
-		itm := items.New(20) // Broken item
-		if !defUser.Character.StoreItem(itm) {
-			defRoom.AddItem(itm, false)
-
-			events.AddToQueue(events.ItemOwnership{
-				UserId: defUser.UserId,
-				Item:   itm,
-				Gained: true,
-			})
-		}
-	}
+	events.AddToQueue(events.ItemOwnership{
+		UserId: defUser.UserId,
+		Item:   br.ReplacementItem,
+		Gained: true,
+	})
 }
 
 // handleOffhandBreakMobDef handles offhand item breakage when a mob defender is hit.
 func handleOffhandBreakMobDef(roundResult combat.AttackResult, defMob *mobs.Mob) {
-	if !roundResult.Hit {
+	defRoom := rooms.LoadRoom(defMob.Character.RoomId)
+	br := tryWeaponBreak(&defMob.Character, roundResult, defRoom)
+	if !br.Broke {
 		return
 	}
-	if defMob.Character.Equipment.Offhand.ItemId <= 0 {
-		return
+
+	if defRoom != nil {
+		defRoom.SendText(fmt.Sprintf(`<ansi fg="214"><ansi fg="202">***</ansi> The <ansi fg="item">%s</ansi> <ansi fg="mobname">%s</ansi> was carrying breaks! <ansi fg="202">***</ansi></ansi>`, br.BrokenItemName, defMob.Character.Name))
 	}
 
-	modifier := 0
-	if roundResult.Crit {
-		modifier = int(defMob.Character.Equipment.Offhand.GetSpec().BreakChance)
-	}
+	events.AddToQueue(events.ItemOwnership{
+		MobInstanceId: defMob.InstanceId,
+		Item:          br.BrokenItem,
+		Gained:        false,
+	})
 
-	if defMob.Character.Equipment.Offhand.BreakTest(modifier) {
-		if defRoom := rooms.LoadRoom(defMob.Character.RoomId); defRoom != nil {
-			defRoom.SendText(fmt.Sprintf(`<ansi fg="214"><ansi fg="202">***</ansi> The <ansi fg="item">%s</ansi> <ansi fg="mobname">%s</ansi> was carrying breaks! <ansi fg="202">***</ansi></ansi>`, defMob.Character.Equipment.Offhand.NameSimple(), defMob.Character.Name))
-
-			events.AddToQueue(events.ItemOwnership{
-				MobInstanceId: defMob.InstanceId,
-				Item:          defMob.Character.Equipment.Offhand,
-				Gained:        false,
-			})
-
-			defMob.Character.RemoveFromBody(defMob.Character.Equipment.Offhand)
-			itm := items.New(20) // Broken item
-			if !defMob.Character.StoreItem(itm) {
-				defRoom.AddItem(itm, false)
-
-				events.AddToQueue(events.ItemOwnership{
-					MobInstanceId: defMob.InstanceId,
-					Item:          itm,
-					Gained:        true,
-				})
-			}
-		}
-	}
+	events.AddToQueue(events.ItemOwnership{
+		MobInstanceId: defMob.InstanceId,
+		Item:          br.ReplacementItem,
+		Gained:        true,
+	})
 }
 
 // handleAutoRetargetPlayer auto-targets a new attacker when the current target dies.
@@ -497,19 +390,7 @@ func handleAutoRetargetPlayer(user *users.UserRecord, uRoom *rooms.Room) {
 
 // handlePlayerConcentrationBreak checks if a caster's concentration breaks when hit.
 func handlePlayerConcentrationBreak(defUser *users.UserRecord, roundResult combat.AttackResult, defRoom *rooms.Room) {
-	if defUser.Character.CastingState == nil || roundResult.DamageToTarget <= 0 {
-		return
-	}
-	maxHealth := defUser.Character.HealthMax.Value
-	damagePct := roundResult.DamageToTarget * 100 / maxHealth
-	if damagePct < 1 {
-		damagePct = 1
-	}
-	chance := characters.CalcConcentrationChance(
-		defUser.Character.Stats.Willpower.ValueAdj, damagePct)
-	roll := util.Rand(100)
-	util.LogRoll(`Concentration`, roll, chance)
-	if roll >= chance {
+	if checkConcentrationBreak(defUser.Character, roundResult.DamageToTarget) {
 		defUser.Character.CastingState = nil
 		defUser.SendText(`<ansi fg="red">The pain shatters your concentration!</ansi>`)
 		defRoom.SendText(fmt.Sprintf(
@@ -814,7 +695,8 @@ func handlePlayerVsPlayer(user *users.UserRecord, uRoom *rooms.Room, evt events.
 	}
 	combat.RecordAttack(roundResult, combat.User, combat.User, atkType, user.Character, defUser.Character, evt.RoundNumber)
 
-	applyPvPCritEffects(roundResult, user, defUser, uRoom)
+	critResult := applyCritEffects(user.Character, defUser.Character, roundResult, uRoom)
+	dispatchCritEffectsPvP(critResult, user, defUser, uRoom)
 
 	// Charmed mob assist
 	room := rooms.LoadRoom(user.Character.RoomId)
@@ -950,7 +832,8 @@ func handlePlayerVsMob(user *users.UserRecord, uRoom *rooms.Room, evt events.New
 	}
 	combat.RecordAttack(roundResult, combat.User, combat.Mob, pvmAtkType, user.Character, &defMob.Character, evt.RoundNumber)
 
-	applyPvMCritEffects(roundResult, user, defMob, uRoom)
+	pvmCritResult := applyCritEffects(user.Character, &defMob.Character, roundResult, uRoom)
+	dispatchCritEffectsPvM(pvmCritResult, user, defMob, uRoom)
 
 	for _, buffId := range roundResult.BuffSource {
 		user.AddBuff(buffId, `combat`)
@@ -969,20 +852,10 @@ func handlePlayerVsMob(user *users.UserRecord, uRoom *rooms.Room, evt events.New
 	}
 
 	// Stage 11.5: Mob concentration break when hit
-	if defMob.Character.CastingState != nil && roundResult.DamageToTarget > 0 {
-		maxHP := defMob.Character.HealthMax.Value
-		damagePct := roundResult.DamageToTarget * 100 / maxHP
-		if damagePct < 1 {
-			damagePct = 1
-		}
-		chance := characters.CalcConcentrationChance(defMob.Character.Stats.Willpower.ValueAdj, damagePct)
-		rollConc := util.Rand(100)
-		util.LogRoll(`Mob Concentration`, rollConc, chance)
-		if rollConc >= chance {
-			defMob.Character.CastingState = nil
-			uRoom.SendText(fmt.Sprintf(
-				`<ansi fg="mobname">%s</ansi>'s concentration breaks.`, defMob.Character.Name))
-		}
+	if checkConcentrationBreak(&defMob.Character, roundResult.DamageToTarget) {
+		defMob.Character.CastingState = nil
+		uRoom.SendText(fmt.Sprintf(
+			`<ansi fg="mobname">%s</ansi>'s concentration breaks.`, defMob.Character.Name))
 	}
 
 	// Handle any scripted behavior now.
@@ -1091,8 +964,8 @@ func handleMobVsPlayer(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, 
 
 	var roundResult combat.AttackResult
 
-	// Stage 17.2: Moon phase stat modifiers
-	restore := applyMoonMods(defUser.Character, moonMod)
+	// Stage 17.2: Moon phase stat modifiers (apply to mob attacker, symmetric with PvM)
+	restore := applyMoonMods(&mob.Character, moonMod)
 	roundResult = combat.AttackMobVsPlayer(mob, defUser)
 	restore()
 
@@ -1127,25 +1000,19 @@ func handleMobVsPlayer(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, 
 	combat.RecordAttack(roundResult, combat.Mob, combat.User, mvpAtkType, &mob.Character, defUser.Character, evt.RoundNumber)
 
 	// Crit effects (player defending)
-	if roundResult.ParryCritDetected {
-		disarmResult := combat.AttemptCritDisarm(defUser.Character, &mob.Character, 10.0)
-		if disarmResult.Success {
-			mobRoom.AddItem(disarmResult.Weapon, false)
-			defUser.SendText(disarmResult.Message)
-			mobRoom.SendText(disarmResult.RoomMessage, defUser.UserId)
-		}
+	mvpCritResult := applyCritEffects(&mob.Character, defUser.Character, roundResult, mobRoom)
+	if mvpCritResult.Disarmed {
+		defUser.SendText(mvpCritResult.DisarmItem.Message)
+		mobRoom.SendText(mvpCritResult.DisarmItem.RoomMessage, defUser.UserId)
 	}
-	if roundResult.DodgeCritDetected {
-		if defUser.Character.Cooldowns["special-move"] <= 0 {
-			combat.SetGrappleOpportunity(defUser.Character)
-			defUser.SendText(fmt.Sprintf(
-				`<ansi fg="yellow">You slip inside %s's guard! [Grapple opportunity]</ansi>`,
-				mob.Character.Name))
-			mobRoom.SendText(fmt.Sprintf(
-				`<ansi fg="combat">%s slips inside %s's guard!</ansi>`,
-				defUser.Character.Name, mob.Character.Name),
-				defUser.UserId)
-		}
+	if mvpCritResult.GrappleSet {
+		defUser.SendText(fmt.Sprintf(
+			`<ansi fg="yellow">You slip inside %s's guard! [Grapple opportunity]</ansi>`,
+			mob.Character.Name))
+		mobRoom.SendText(fmt.Sprintf(
+			`<ansi fg="combat">%s slips inside %s's guard!</ansi>`,
+			defUser.Character.Name, mob.Character.Name),
+			defUser.UserId)
 	}
 
 	// Charmed mob assist
