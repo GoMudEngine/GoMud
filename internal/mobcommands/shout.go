@@ -6,9 +6,13 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 func Shout(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
+
+	// Wrap long shout text to 55 chars to account for "Name shouts, ..."
+	rest = util.NormalizeAndWrap(rest, 55)
 
 	isSneaking := mob.Character.HasBuffFlag(buffs.Hidden)
 
