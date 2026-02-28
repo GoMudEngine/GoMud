@@ -63,7 +63,7 @@ Server:
   - checkclient
   # - Motd -
   #   Message of the day. This is displayed when the motd command is run.
-  Motd: '{{ t "Motd" }}'
+  Motd: '{{ t "Please report bugs using the bug command!" }}'
   # - NextRoomID -
   # This number is auto-updated to the highest number of rooms in the game.
   #   If creating your own rooms but don't want to risk an update conflicting,
@@ -571,6 +571,41 @@ Balance:
   StatSoftCapThreshold: 105      # Raw stat value where adjusted formula kicks in
   StatSoftCapMultiplier: 2.0     # Multiplier in: 100 + sqrt(raw-100) * this
 
+  # ── PER-STAT PROGRESSION MULTIPLIERS ────────────────────────────────────────
+  # Scales the progression chance for each stat independently.
+  # 1.0 = normal rate. Dexterity is 0.5 because weapon-combat and
+  # unarmed-combat both map dexterity as their primary stat, firing
+  # OnStatUse("dexterity") multiple times per combat round.
+  StatProgressionMultipliers:
+    strength: 1.0
+    dexterity: 0.5
+    perception: 1.0
+    vitality: 1.0
+    willpower: 1.0
+    charisma: 1.0
+
+  # ── PER-SKILL PROGRESSION MULTIPLIERS ───────────────────────────────────────
+  # Overrides the hardcoded skill progression multipliers in skills.go.
+  # Combat skills fire many times per round (low mult), utility skills
+  # fire rarely (high mult). Only skills listed here override the defaults.
+  SkillProgressionMultipliers:
+    weapon-combat: 0.3
+    unarmed-combat: 0.3
+    ranged-combat: 0.3
+    spellcasting: 0.5
+    rhetoric: 0.5
+    tracking: 2.0
+    bartering: 2.0
+    foraging: 2.0
+    first-aid: 2.0
+    stealth: 2.0
+    blacksmithing: 2.0
+    alchemy: 2.0
+    tailoring: 2.0
+    cooking: 2.0
+    jewelcrafting: 2.0
+    enchanting: 2.0
+
   # ── MOB PROGRESSION ──────────────────────────────────────────────────────────
   # When enabled, mobs gain stats and skills through combat just like players.
   # Mobs that survive longer become more dangerous. Progression resets when
@@ -662,7 +697,7 @@ LLM:
 ################################################################################
 Analytics:
   Enabled: true
-  MaxEvents: 10000
+  MaxEvents: 250000
   FlushIntervalSec: 300
   LogPath: "_datafiles/logs/combat-analytics.jsonl"
 

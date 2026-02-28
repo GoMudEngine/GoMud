@@ -2,6 +2,8 @@ package skills
 
 import (
 	"strings"
+
+	"github.com/GoMudEngine/GoMud/internal/configs"
 )
 
 type SkillTag string
@@ -294,8 +296,13 @@ func GetSkillRankDescription(level int) string {
 }
 
 // GetProgressionMultiplier returns the progression speed multiplier for a skill.
-// Returns 1.0 (default) for any skill not explicitly listed.
+// Config overrides take priority; falls back to the hardcoded SkillProgressionMultipliers map.
+// Returns 1.0 for any skill not in either source.
 func GetProgressionMultiplier(skillName string) float64 {
+	b := configs.GetBalanceConfig()
+	if mult, ok := b.GetSkillProgressionMultiplier(skillName); ok {
+		return mult
+	}
 	if mult, ok := SkillProgressionMultipliers[SkillTag(skillName)]; ok {
 		return mult
 	}
