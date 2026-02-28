@@ -5735,6 +5735,52 @@ that a future rumor/news system can consume.
 
 ---
 
+### Post-Phase 38 Polish & Bug Fixes ✅ COMPLETED
+
+**Misc fixes applied after Phase 38 completion:**
+
+1. **Text wrapping system** (feature/text-wrapping-fixes + follow-ups):
+   - Added `NormalizeAndWrap()` / `NormalizeAndWrapNL()` to `internal/util/util.go`
+     — collapses pre-existing single newlines into spaces (preserving paragraph
+     breaks), then word-wraps at specified width. Prevents ugly orphan-word lines
+     when YAML text is hard-wrapped at a different width than the display width.
+   - Added `normalizewrap` template function for use in `.template` files.
+   - Applied 65-char wrapping to: mob say, mob shout, mob emote, player say,
+     player shout, player whisper, party chat, room idle messages, item
+     descriptions (look), room noun descriptions (look).
+   - Character description and mutation visuals templates switched from
+     `splitstring` to `normalizewrap` to fix orphan-word rendering.
+   - Item inspect template updated similarly.
+
+2. **Duplicate mob ID 110** (fix/duplicate-mob-id-110):
+   - Weaver Maren (Thornwall City) collided with Chrysalis Construct (summons).
+   - Reassigned Weaver Maren to mob ID 113, updated room 480 spawn reference.
+
+3. **AttackMobVsMob target type bug** (fix/mob-vs-mob-target-type):
+   - `calculateCombat()` was called with `Mob, User` instead of `Mob, Mob`,
+     causing wrong message token formatting in mob-vs-mob combat.
+
+4. **Awakening Rite repeat mutation exploit** (fix/awakening-rite-repeat-mutation):
+   - Corrupted quest state (`"shopping"` instead of `"shopping_arrive"`) caused
+     `HasQuest("1-mutation")` to always return false, re-granting a mutation on
+     every login.
+   - Added belt-and-suspenders guard: script now checks both `HasQuest("1-mutation")`
+     AND `GetMutationCount() > 0`.
+   - Added `GetMutationCount()` to scripting actor API.
+
+5. **Quest NPC dialogue SOP** (fix/quest-dialogue-triggers):
+   - Established SOP: all quest-granting dialogue nodes must include `"quest"`
+     and `"task"` in their triggers list.
+   - Fixed 3 dialogue files (Shaman 74, Chieftain 75, Marek 96).
+   - Documented in `docs/schemas/dialogue.md` and `CLAUDE.md`.
+
+6. **Combat context.md audit** (fix/combat-context-audit):
+   - Fixed ~10 discrepancies between documentation and actual code after the
+     Stage 34-38 refactors (dual wield formula, defense stamina, missing files,
+     grapple details, etc.).
+
+---
+
 ## Phase 39: Balance Pass & Config Cleanup
 
 Audit all config knobs, remove dead config, add missing tunables,
