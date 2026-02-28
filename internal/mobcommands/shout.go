@@ -11,8 +11,8 @@ import (
 
 func Shout(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
-	// Wrap long shout text to 55 chars to account for "Name shouts, ..."
-	rest = util.NormalizeAndWrap(rest, 55)
+	// Wrap long shout text to 65 chars to account for "Name shouts, ..."
+	rest = util.NormalizeAndWrap(rest, 65)
 
 	isSneaking := mob.Character.HasBuffFlag(buffs.Hidden)
 
