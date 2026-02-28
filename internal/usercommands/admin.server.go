@@ -276,7 +276,7 @@ func Server(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			}
 		}
 
-		memoryReportCache[name] = util.MemoryResult{memRepTotalTotal, 0} // Cache the new val
+		memoryReportCache[name] = util.MemoryResult{Memory: memRepTotalTotal, Count: 0} // Cache the new val
 
 		bFormatted := util.FormatBytes(memRepTotalTotal)
 		if strings.Contains(bFormatted, `KB`) {

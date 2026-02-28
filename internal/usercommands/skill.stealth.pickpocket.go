@@ -60,7 +60,7 @@ func Pickpocket(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 	if pickMobInstanceId > 0 {
 
 		// Fire an event that a skill has been used
-		events.AddToQueue(events.SkillUsed{user.UserId, skills.Stealth, `pickpocket`})
+		events.AddToQueue(events.SkillUsed{UserId: user.UserId, Skill: skills.Stealth, Details: `pickpocket`})
 
 		m := mobs.GetInstance(pickMobInstanceId)
 
@@ -147,7 +147,7 @@ func Pickpocket(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 	} else if pickPlayerId > 0 {
 
 		// Fire an event that a skill has been used
-		events.AddToQueue(events.SkillUsed{user.UserId, skills.Stealth, `pickpocket`})
+		events.AddToQueue(events.SkillUsed{UserId: user.UserId, Skill: skills.Stealth, Details: `pickpocket`})
 
 		if p := users.GetByUserId(pickPlayerId); p != nil {
 
