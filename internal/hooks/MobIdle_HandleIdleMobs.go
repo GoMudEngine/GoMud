@@ -1,6 +1,8 @@
 package hooks
 
 import (
+	"fmt"
+
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/conversations"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -9,6 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/util"
+	"github.com/GoMudEngine/GoMud/internal/worldevents"
 )
 
 //
@@ -38,6 +41,46 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 	if conversations.HasConverseFile(int(mob.MobId), mob.Character.Zone) && util.Rand(100) < int(configs.GetGamePlayConfig().MobConverseChance) {
 		if mobRoom := rooms.LoadRoom(mob.Character.RoomId); mobRoom != nil {
 			mobcommands.Converse(``, mob, mobRoom) // Execute this directly so that target mob doesn't leave the room before this command executes
+		}
+	}
+
+	// Stage 38.5.4: Crafter mob tick — background activity alongside normal idle
+	if result := mobs.TickMobCraft(mob); result != nil {
+		if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
+			if result.Success {
+				room.SendText(fmt.Sprintf(
+					`<ansi fg="mobname">%s</ansi> finishes crafting and sets a new item on the shelf.`,
+					mob.Character.Name))
+			} else {
+				room.SendText(fmt.Sprintf(
+					`<ansi fg="mobname">%s</ansi> frowns at a failed attempt and discards the ruined materials.`,
+					mob.Character.Name))
+			}
+		}
+		// Emit world event for rare crafts
+		if result.Success {
+			b := configs.GetBalanceConfig()
+			rareThreshold := int(b.CrafterRareThreshold)
+			if result.SkillMinimum >= rareThreshold {
+				sig := worldevents.Regional
+				if result.SkillMinimum >= rareThreshold*2 {
+					sig = worldevents.Global
+				}
+				zone := result.Zone
+				region := ""
+				if zCfg := rooms.GetZoneConfig(zone); zCfg != nil {
+					region = zCfg.Region
+				}
+				worldevents.EmitWorldEvent(worldevents.WorldEvent{
+					Type:         worldevents.MobCraftedRare,
+					Significance: sig,
+					ZoneName:     zone,
+					RegionName:   region,
+					MobName:      result.MobName,
+					Description: fmt.Sprintf("%s has crafted a rare %s.",
+						result.MobName, result.RecipeName),
+				})
+			}
 		}
 	}
 
