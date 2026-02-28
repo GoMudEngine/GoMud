@@ -157,6 +157,12 @@ Never display raw numeric values (damage, healing, armor points, round counts, e
 
 Displaying raw numbers breaks immersion and leaks internal balance values to players. The exception is the `status` command's stat sheet — that is a deliberate mechanical display.
 
+## Quest NPC Dialogue SOP
+Every quest-granting dialogue node (any tree node with `grantsQuest`) MUST include
+`"quest"` and `"task"` in its `triggers` list. Similarly, quest-introducing
+`patterns` entries must include `"quest"` and `"task"` in `keywords`. This ensures
+`ask <npcname> quest` always works for discovering available quests.
+
 ## Content Generation Commands
 Use slash commands to generate new data files. Claude automatically loads world.md,
 the relevant schema, and existing examples before generating.
