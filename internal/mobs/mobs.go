@@ -85,6 +85,7 @@ type Mob struct {
 	Archetype      string          `yaml:"archetype,omitempty"`           // "fighting", "casting", or "" (default even distribution)
 	SpawnMutations []string        `yaml:"spawnmutations,omitempty,flow"` // Mutations always granted at spawn (Phase 24.3)
 	MutationChance int             `yaml:"mutationchance,omitempty"`      // % chance to gain 1 random bonus mutation on spawn (Phase 24.3)
+	PackBonusTotal  int            `yaml:"-"` // Total training points from pack scaling (Stage 38.5.3)
 	tempDataStore   map[string]any
 	conversationId  int              // Identifier of conversation currently involved in.
 	Path            PathQueue        `yaml:"-"` // a pre-calculated path the mob is following.
