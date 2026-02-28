@@ -278,6 +278,35 @@ func NormalizeAndWrap(input string, lineWidth int) string {
 	return strings.Join(wrapped, term.CRLFStr+term.CRLFStr)
 }
 
+// NormalizeAndWrapNL is like NormalizeAndWrap but accepts an optional newline
+// prefix (same signature as SplitStringNL) for use as a template function.
+func NormalizeAndWrapNL(input string, lineWidth int, nlPrefix ...string) string {
+	if input == "" {
+		return ""
+	}
+
+	linePrefix := ""
+	if len(nlPrefix) > 0 {
+		linePrefix = nlPrefix[0]
+	}
+
+	// Split on double-newlines to preserve paragraph breaks
+	paragraphs := paragraphBreak.Split(input, -1)
+
+	var wrapped []string
+	for _, para := range paragraphs {
+		// Collapse single newlines and surrounding whitespace into a single space
+		normalized := strings.Join(strings.Fields(para), " ")
+		if normalized == "" {
+			wrapped = append(wrapped, "")
+			continue
+		}
+		wrapped = append(wrapped, SplitStringNL(normalized, lineWidth, linePrefix))
+	}
+
+	return strings.Join(wrapped, term.CRLFStr+linePrefix+term.CRLFStr+linePrefix)
+}
+
 func SplitButRespectQuotes(s string) []string {
 
 	// This regex matches either a quoted string (with either single or double quotes) or a non-space sequence.

@@ -113,7 +113,8 @@ var (
 		"mod":          func(a, b int) int { return a % b },
 		"divFloat":     func(a int, b int) float64 { return float64(a) / float64(b) },
 		"stringor":     stringOr,
-		"splitstring":  util.SplitStringNL,
+		"splitstring":    util.SplitStringNL,
+		"normalizewrap": util.NormalizeAndWrapNL,
 		"ansiparse":    TplAnsiParse,
 		"buffname": func(buffId int) string {
 			buffSpec := buffs.GetBuffSpec(buffId)

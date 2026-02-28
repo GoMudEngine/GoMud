@@ -1,7 +1,7 @@
 {{ $inspectLevel := .InspectLevel }}{{ $damage := .Item.GetDamage }}
  ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Basic Info</ansi> ──────────────────────────────────────────────────────────────┐
    <ansi fg="yellow">Name:</ansi>        {{ padRight 53 (uc .Item.Name) }}
-   <ansi fg="yellow">Description:</ansi> {{ splitstring .ItemSpec.Description 61 "                " }}
+   <ansi fg="yellow">Description:</ansi> {{ normalizewrap .ItemSpec.Description 61 "                " }}
    <ansi fg="yellow">Type:</ansi>        {{ uc .ItemSpec.Type.String }} ({{ uc .ItemSpec.Subtype.String }})
    <ansi fg="yellow">Value:</ansi>       {{ padRight 53 ( printf "%d gold" .ItemSpec.Value ) }}
  └─────────────────────────────────────────────────────────────────────────────┘
