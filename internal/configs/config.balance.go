@@ -127,8 +127,7 @@ type Balance struct {
 
 	// ── CRAFTER MOBS ─────────────────────────────────────────────────────────
 	CrafterEnabled              ConfigBool `yaml:"CrafterEnabled"`              // Enable mob autonomous crafting (default true)
-	CrafterMaterialRestockRate  ConfigInt  `yaml:"CrafterMaterialRestockRate"`  // Rounds between material restocks (default 200)
-	CrafterIdleChance           ConfigInt  `yaml:"CrafterIdleChance"`           // % chance per idle tick to start a recipe (default 30)
+	CrafterMaterialRestockRate  ConfigInt  `yaml:"CrafterMaterialRestockRate"`  // Rounds between material restocks and craft attempts (default 200)
 	CrafterRareThreshold        ConfigInt  `yaml:"CrafterRareThreshold"`        // SkillMinimum at or above which a craft is considered rare (default 3)
 
 	// ── MOON PHASES ───────────────────────────────────────────────────────────
@@ -421,9 +420,6 @@ func (b *Balance) Validate() {
 	// ── CRAFTER MOBS ─────────────────────────────────────────────────────────
 	if b.CrafterMaterialRestockRate < 1 {
 		b.CrafterMaterialRestockRate = 200
-	}
-	if b.CrafterIdleChance <= 0 || b.CrafterIdleChance > 100 {
-		b.CrafterIdleChance = 30
 	}
 	if b.CrafterRareThreshold < 1 {
 		b.CrafterRareThreshold = 3

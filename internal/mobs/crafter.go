@@ -11,16 +11,18 @@ import (
 // CraftResult describes the outcome of a crafter mob's tick, so the calling
 // hook can emit room messages and world events without import cycles.
 type CraftResult struct {
-	Success       bool
-	RecipeName    string
-	OutputItemId  int
-	SkillMinimum  int
-	MobName       string
-	Zone          string
+	Success      bool
+	RecipeName   string
+	OutputItemId int
+	SkillMinimum int
+	MobName      string
+	Zone         string
 }
 
-// TickMobCraft advances a crafter mob's autonomous crafting each idle tick.
-// Returns a non-nil CraftResult only when a recipe completes (success or fail).
+// TickMobCraft handles autonomous crafting for crafter mobs. Crafting only
+// fires on the material restock tick (every CrafterMaterialRestockRate rounds):
+// materials arrive, and the mob immediately attempts one craft from them.
+// Returns a non-nil CraftResult only when a craft is attempted.
 func TickMobCraft(mob *Mob) *CraftResult {
 	if !mob.Crafter {
 		return nil
@@ -35,55 +37,33 @@ func TickMobCraft(mob *Mob) *CraftResult {
 
 	roundCount := util.GetRoundCount()
 
-	// Material restock
+	// Initialize restock timer on first call
 	restockRate := uint64(b.CrafterMaterialRestockRate)
-	if restockRate > 0 && mob.crafterLastRestockRound == 0 {
-		mob.crafterLastRestockRound = roundCount
+	if restockRate == 0 {
+		return nil
 	}
-	if restockRate > 0 && roundCount-mob.crafterLastRestockRound >= restockRate {
+	if mob.crafterLastRestockRound == 0 {
 		mob.crafterLastRestockRound = roundCount
-		for _, itemId := range mob.CrafterRestockMaterials {
-			itm := items.New(itemId)
-			if itm.ItemId > 0 {
-				mob.Character.StoreItem(itm)
-			}
-		}
-	}
-
-	// If no active recipe, maybe start one
-	if mob.crafterActiveRecipeId == "" {
-		if util.Rand(100) >= int(b.CrafterIdleChance) {
-			return nil
-		}
-		recipe := pickEligibleRecipe(mob)
-		if recipe == nil {
-			return nil
-		}
-		mob.crafterActiveRecipeId = recipe.RecipeId
-		mob.crafterCraftProgress = 0
 		return nil
 	}
 
-	// Advance active recipe
-	recipe := crafting.GetRecipe(mob.crafterActiveRecipeId)
+	// Only act on the restock tick
+	if roundCount-mob.crafterLastRestockRound < restockRate {
+		return nil
+	}
+	mob.crafterLastRestockRound = roundCount
+
+	// Restock materials
+	for _, itemId := range mob.CrafterRestockMaterials {
+		itm := items.New(itemId)
+		if itm.ItemId > 0 {
+			mob.Character.StoreItem(itm)
+		}
+	}
+
+	// Pick a recipe and attempt it immediately
+	recipe := pickEligibleRecipe(mob)
 	if recipe == nil {
-		mob.crafterActiveRecipeId = ""
-		return nil
-	}
-
-	mob.crafterCraftProgress++
-	if mob.crafterCraftProgress < recipe.TimeRounds {
-		return nil
-	}
-
-	// Recipe complete — reset state
-	mob.crafterActiveRecipeId = ""
-	mob.crafterCraftProgress = 0
-
-	// Check ingredients are still available
-	backpack := mob.Character.GetAllBackpackItems()
-	ok, _ := crafting.HasIngredients(backpack, recipe)
-	if !ok {
 		return nil
 	}
 
@@ -100,6 +80,7 @@ func TickMobCraft(mob *Mob) *CraftResult {
 	}
 
 	// Consume ingredients regardless of success
+	backpack := mob.Character.GetAllBackpackItems()
 	remaining := crafting.ConsumeIngredients(backpack, recipe)
 	mob.Character.Items = remaining
 

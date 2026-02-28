@@ -90,8 +90,6 @@ type Mob struct {
 	CrafterRecipeIds        []string `yaml:"crafterrecipeids,omitempty"`        // Recipe IDs this mob can craft
 	CrafterRestockMaterials []int    `yaml:"crafterrestockmaterials,omitempty"` // Item IDs restocked periodically
 	PackBonusTotal          int      `yaml:"-"`                                 // Total training points from pack scaling (Stage 38.5.3)
-	crafterActiveRecipeId   string                                              // Currently active recipe (transient)
-	crafterCraftProgress    int                                                 // Rounds elapsed on current recipe (transient)
 	crafterLastRestockRound uint64                                              // Last round materials were restocked (transient)
 	tempDataStore           map[string]any
 	conversationId  int              // Identifier of conversation currently involved in.
