@@ -872,6 +872,10 @@ func handlePlayerVsMob(user *users.UserRecord, uRoom *rooms.Room, evt events.New
 	}
 
 	defRoom := rooms.LoadRoom(defMob.Character.RoomId)
+	if defRoom == nil {
+		user.Character.Aggro = nil
+		return
+	}
 
 	defMob.Character.CancelBuffsWithFlag(buffs.CancelIfCombat)
 
@@ -1188,6 +1192,10 @@ func handleMobVsMob(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, aff
 	}
 
 	defRoom := rooms.LoadRoom(defMob.Character.RoomId)
+	if defRoom == nil {
+		mob.Character.Aggro = nil
+		return
+	}
 
 	defMob.Character.CancelBuffsWithFlag(buffs.CancelIfCombat)
 
