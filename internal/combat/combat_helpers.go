@@ -364,8 +364,9 @@ func runBestOfAllDefense(result *AttackResult, sourceChar *characters.Character,
 		// Stage 9.4: Track defense for stance calculation
 		targetChar.IncrementDefenseCount()
 
-		// Check if defender has stamina for this defense
-		if !targetChar.DeductDefenseStamina(defenseType) {
+		// Check if defender can afford this defense (don't deduct yet)
+		cost := targetChar.GetDefenseStaminaCost(defenseType)
+		if targetChar.Stamina < cost {
 			continue
 		}
 
@@ -415,6 +416,11 @@ func runBestOfAllDefense(result *AttackResult, sourceChar *characters.Character,
 			best.hitRoll = hitRoll
 			best.defRoll = defenseRoll
 		}
+	}
+
+	// Deduct stamina only for the winning defense
+	if best.defenseType != "" {
+		targetChar.DeductDefenseStamina(best.defenseType)
 	}
 
 	return best
