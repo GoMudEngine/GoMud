@@ -15,6 +15,16 @@ idlecommands:
   - 'emote makes a notation in a leather-bound journal'
   - ''
 activitylevel: 10
+crafter: true
+crafterskill: alchemy
+crafterrecipeids:
+  - healing-poultice
+  - stamina-draught
+crafterrestockmaterials:
+  - 40004
+  - 40005
+  - 40006
+  - 40007
 character:
   name: apothecary Voss
   description: |
@@ -29,6 +39,8 @@ character:
   speciesid: 1
   level: 1
   gold: 0
+  skills:
+    alchemy: 8
   stats:
     perception:
       training: 15
