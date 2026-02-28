@@ -5122,72 +5122,342 @@ gates from quest-granting nodes so players can discover quests directly.
 ## Phase 37: Codebase Quality Pass
 
 After all features are stable — refactor without risk of changing code
-that's still in flux.
+that's still in flux. **No behavior changes in any substage** — pure
+structural improvement, dead code removal, and error handling hardening.
 
-### Stage 37.1: Code Readability & Structure Audit
+### Stage 37.1a: Combat God-Functions Refactor ✅ COMPLETED
 
-**Goal**: Systematic pass on the worst offenders for readability.
+**Goal**: Break up the 4 largest functions in the codebase (each 700–800+
+lines with 9–11 levels of nesting). Extract helpers, reduce nesting,
+eliminate duplication between player and mob combat.
 
-**Changes**:
-1. Identify the top 10 most complex files (longest functions, deepest
-   nesting, most confusing control flow)
-2. Refactor: extract functions, simplify conditionals, improve
-   variable naming, reduce nesting depth
-3. No behavior changes — pure structural improvement
-4. Add comments only where logic is genuinely non-obvious
+**Target Functions** (refactor in this order):
+
+1. `handlePlayerCombat()` — `internal/hooks/NewRound_DoCombat.go:46`
+   (~805 lines, 11+ nesting levels)
+   - Extract: spell fold accumulation, stamina deduction, condition
+     management, combat position changes, grapple mechanics, aggro
+     management, buff application into separate helper functions
+   - Goal: main function becomes a dispatcher calling clearly named
+     helpers, each under ~80 lines
+
+2. `handleMobCombat()` — `internal/hooks/NewRound_DoCombat.go:851`
+   (~695 lines, 10+ nesting levels)
+   - Mirrors handlePlayerCombat — extract same helpers where possible
+   - Identify shared logic between player/mob combat and extract to
+     common functions to eliminate duplication (~1500 combined lines
+     of similar code)
+   - Mob-specific AI decision logic should be its own function
+
+3. `calculateCombat()` — `internal/combat/combat.go:305` (~763 lines,
+   9+ nesting levels)
+   - Extract: attack count calculation, weapon selection (dual-wield,
+     extra arms), damage computation per channel, defense resolution
+     (dodge/parry/block best-of-all), crit/fumble determination
+   - Each extracted function should handle one concern
+
+4. `List()` — `internal/usercommands/list.go:22` (~731 lines)
+   - Has 4 nearly identical table-building blocks for items, mercs,
+     buffs, pets — classic DRY violation
+   - Extract a generic `buildShopTable()` helper parameterized by
+     category, then call it 4 times
 
 **Testing**:
-- All existing tests pass before and after each refactor
-- Manual smoke test after each file is refactored
-- Diff review to confirm no behavior changes
+- `go build` and `go vet` clean after each function refactor
+- All existing tests pass
+- Manual smoke test: enter combat, cast spells, use shop — verify
+  identical behavior
+- Diff review to confirm no logic changes
 
-**Estimated Changes**: ~500–800 lines changed, 10–15 files
+**Estimated Changes**: ~800–1200 lines refactored, 3–5 files
+
+---
+
+### Stage 37.1b: Command God-Functions Refactor
+
+**Goal**: Break up the next tier of oversized command handlers (400–600
+lines each). Extract subcommand dispatchers, separate validation from
+execution.
+
+**Target Functions** (refactor in this order):
+
+1. `room_Edit_Containers()` — `admin.room.go:421` (~576 lines)
+   - Implicit prompt state machine with 6+ nesting levels
+   - Extract: container CRUD, recipe management, lock config, trap
+     config into separate prompt handler functions
+
+2. `Party()` — `party.go:17` (~570 lines)
+   - Large if/else cascade for subcommands (create/join/leave/invite/
+     kick/disband/promote)
+   - Extract each subcommand into its own function, main function
+     becomes a simple dispatcher
+
+3. `tryPurchase()` — `buy.go:104` (~460 lines)
+   - 4 parallel purchase flows (items/mercs/buffs/pets) with subtle
+     differences
+   - Extract a generic purchase helper, parameterize the differences
+
+4. `Character()` — `character.go:22` (~432 lines)
+   - Creation, deletion, swapping, hiring all in one function
+   - Extract: createCharacter(), deleteCharacter(), swapCharacter(),
+     hireMercenary()
+
+5. `room_Edit_Exits()` — `admin.room.go:1022` (~426 lines)
+   - Another implicit prompt state machine
+   - Extract: exit CRUD, destination mapping, lock management
+
+6. `Set()` — `set.go:15` (~417 lines)
+   - Handles 5+ unrelated setting domains in one switch
+   - Extract each domain (mood, wimpy, channels, activity, terminal)
+     into its own handler function
+
+**Testing**:
+- `go build` and `go vet` clean after each function refactor
+- All existing tests pass
+- Manual smoke test: party commands, buy from shop, character
+  management, room editing, settings — verify identical behavior
+
+**Estimated Changes**: ~600–1000 lines refactored, 6–8 files
+
+---
+
+### Stage 37.1c: Remaining Complex Functions Cleanup
+
+**Goal**: Clean up the remaining Tier 3–5 complex functions. Smaller
+individual wins but broad improvement.
+
+**Target Functions** (grouped by theme):
+
+**User commands (display/interaction):**
+1. `Look()` — `look.go:20` (~409 lines) — extract look-at-item,
+   look-at-mob, look-at-exit, look-at-container into helpers
+2. `Go()` — `go.go:19` (~391 lines) — separate terrain cost calc,
+   encumbrance check, lock check, aggro validation
+3. `Get()` — `get.go:15` (~331 lines) — separate weight/encumbrance
+   logic from pickup logic
+4. `Give()` — `give.go:18` (~247 lines) — separate trading from
+   item transfer
+5. `Attack()` — `attack.go:16` (~292 lines) — separate PvP
+   validation, move selection, execution phases
+
+**Admin commands:**
+6. `Room()` — `admin.room.go:34` (~387 lines) — 10+ subcommands
+   in one dispatcher; extract each to own function
+7. `item_Create()` — `admin.item.go:146` (~371 lines) — extract
+   type-specific branches (weapon/armor/consumable)
+8. `mob_Create()` — `admin.mob.go:163` (~303 lines) — same pattern
+9. `Server()` — `admin.server.go:33` (~268 lines) — extract
+   subcommands
+
+**Skill commands:**
+10. `Track()` — `skill.track.go:33` (~379 lines) — separate skill
+    filtering, display, state transitions
+11. `Cast()` (player) — `skill.cast.go:23` (~234 lines) — extract
+    target type handlers (self/area/targeted)
+12. `Picklock()` — `picklock.go:17` (~246 lines) — separate skill
+    check from action execution
+13. `Pickpocket()` — `skill.stealth.pickpocket.go:20` (~228 lines)
+    — same pattern
+
+**Hooks / core:**
+14. `UserRoundTick()` — `NewRound_UserRoundTick.go:27` (~301 lines)
+    — separate regen phases (HP/SP/CP), condition updates, cooldowns
+15. `AutoHeal()` — `NewRound_AutoHeal.go:21` (~274 lines) — separate
+    DOT ticks, condition recovery, death checks
+16. `Cast()` (mob) — `mobcommands/cast.go:19` (~253 lines) — separate
+    AI selection from spell execution
+
+**Character/data:**
+17. `RecalculateStats()` — `character.go:2126` (~221 lines) — 6
+    identical stat blocks; refactor to loop over stat array/slice
+18. `Validate()` — `character.go:2365` (~197 lines) — extract
+    subsystem validators (skills, spells, equipment)
+19. `Wear()` — `character.go:2655` (~160 lines) — extract slot
+    selection logic
+20. `GetDetails()` — `rooms/roomdetails.go:41` (~409 lines) — extract
+    per-element rendering (items, mobs, exits, signs)
+
+**Other:**
+21. `applyMobEffect()` — `spell_resolution.go:109` (~137 lines) —
+    large switch; consider table-driven dispatch
+22. `TryCommand()` — `usercommands.go:249` (~213 lines) — separate
+    permission checks from routing
+23. `GetFullMap()` — `mapper/mapper.go:707` (~150 lines) — clarify
+    coordinate math with named helpers
+
+**Testing**:
+- `go build` and `go vet` clean after each batch
+- All existing tests pass
+- Manual smoke test per theme (combat, admin, skills, movement)
+
+**Estimated Changes**: ~1000–1500 lines refactored, 20–25 files
 
 ---
 
 ### Stage 37.2: Dead Code & Dependency Cleanup
 
-**Goal**: Remove all unreachable code, unused imports, and orphaned data
-files.
+**Goal**: Remove all unreachable code, unused functions, orphaned data
+files, and vestigial level-system scaffolding.
 
-**Changes**:
-1. Run static analysis to find unused functions, variables, imports
-2. Remove orphaned data files (YAML/JS with no loader reference)
-3. Remove commented-out code blocks (if clearly obsolete)
-4. Clean up `go.mod` / `go.sum` — remove unused dependencies
-5. Verify nothing breaks after each removal pass
+**Unused Functions to Delete:**
+
+| Function | File | Why Dead |
+|----------|------|----------|
+| `ManaClass()` | `internal/util/util.go` | Mana system removed |
+| `TestManaClass()` | `internal/util/util_test.go` | Test for dead func |
+| `MemoryUsage()` | `internal/util/memory.go:133` | Never called |
+| `sizeOf()` | `internal/util/memory.go:85` | Helper for above |
+| `ServerStats()` | `internal/util/memory.go:41` | Never called |
+| `migrate_RaceToSpecies()` | `internal/migration/0.12.0.go` | Migration completed |
+| `GetRace()` | `internal/scripting/actor_func.go` | Wrapper, never called |
+| `GainsForLevel()` | `internal/stats/stats.go:45` | Always called with 1 |
+| `GetExperienceLevel()` | `internal/skills/skills.go` | Deprecated field only |
+| `GetLevel()` | `internal/scripting/actor_func.go` | Hardcoded return 1 |
+
+**Level System Simplification:**
+- All 10 `Recalculate(1)` calls in `internal/characters/character.go`
+  pass hardcoded `1` — the level parameter is dead
+- Remove `level` parameter from `Recalculate()` entirely
+- Simplify `GainsForLevel` logic inline (always level=1)
+- Remove any remaining level-scaling branches in `stats.go`
+
+**Orphaned Data Files to Delete:**
+
+| File | Why Orphaned |
+|------|-------------|
+| `_datafiles/world/dogmud/buffs/25-deaths_shadow.yaml` | No JS script |
+| `_datafiles/world/dogmud/buffs/42-hearty_meal.yaml` | No JS script |
+| `_datafiles/world/dogmud/buffs/43-stamina_boost.yaml` | No JS script |
+| `_datafiles/world/dogmud/buffs/44-clear_mind.yaml` | No JS script |
+| `_datafiles/world/dogmud/buffs/45-well_fed.yaml` | No JS script |
+| `_datafiles/world/dogmud/buffs/46-liquid_courage.yaml` | No JS script |
+
+**Other Cleanup:**
+- Delete commented-out alignment help topic in
+  `internal/keywords/keywords.go:34`
+- Remove empty `_datafilesfeedbackbugs.txt` and
+  `_datafilesfeedbacksuggestions.txt`
+- Remove empty `_datafilesfeedback/` directory
+- Run `go mod tidy` to clean up go.sum (go.mod deps are all used)
 
 **Testing**:
-- All tests pass
-- MUD starts and runs through a full gameplay loop
-- `go vet` and `go build` clean
+- `go build` and `go vet` clean
+- All existing tests pass
+- MUD starts and runs — verify no missing-file panics
+- Manual smoke test: combat, casting, crafting, score display
 
-**Estimated Changes**: ~200–500 lines removed, 10–20 files
+**Estimated Changes**: ~300–500 lines removed, 10–15 files
 
 ---
 
-### Stage 37.3: Error Handling & Robustness Hardening
+### Stage 37.3a: Critical Robustness Hardening
 
-**Goal**: Shore up error handling at system boundaries.
+**Goal**: Fix the highest-risk error handling gaps — goroutine panics
+that crash the server and nil pointer dereferences in the combat loop.
 
-**Changes**:
-1. Audit file I/O operations — ensure all reads/writes check errors
-   and fail gracefully (log + continue, not panic)
-2. Audit network operations — connection drops, malformed input,
-   timeout handling
-3. Improve panic recovery in goroutines (combat loop, NPC AI, web
-   server handlers)
-4. Add structured logging where error paths are silent today
-5. Ensure server can recover from any single-player error without
-   affecting other players
+**Missing Panic Recovery in Goroutines (6 locations):**
+
+| File | Line | Context |
+|------|------|---------|
+| `internal/integrations/discord/client.go` | 128 | Discord webhook — also fix unchecked `http.NewRequest` error (line 129) and response body leak (line 143) |
+| `internal/llm/client.go` | 29 | LLM async call |
+| `internal/web/web.go` | 383 | HTTPS server |
+| `internal/web/web.go` | 436 | HTTP server |
+| `main.go` | 335 | Shutdown wait loop |
+| `internal/inputhandlers/systemcommands.go` | 138 | Command processing |
+
+Add `defer func() { if r := recover(); r != nil { mudlog.Error(...) } }()`
+to each goroutine.
+
+**Bare Panics in Worker Goroutines:**
+- `internal/fileloader/fileloader.go` lines 296, 301, 313, 321 —
+  worker goroutines `panic()` on file errors, crashing all workers.
+  Convert to `log.Error()` + `continue` so one bad file doesn't
+  take down the loader.
+
+**Nil Pointer Dereference Risks in Combat Loop:**
+
+| File | Line | Pattern |
+|------|------|---------|
+| `internal/hooks/NewRound_DoCombat.go` | 588 | `mobs.GetInstance()` used without nil check |
+| `internal/hooks/NewRound_DoCombat.go` | 859 | `mob.Character.Health` on possibly nil mob |
+| `internal/hooks/NewRound_DoCombat.go` | 1385 | Same nil mob dereference |
+| `internal/hooks/NewRound_DoCombat.go` | 464 | `rooms.LoadRoom()` used without nil check |
+| `internal/hooks/PlayerDespawn_HandleLeave.go` | 71 | Same room nil risk |
+
+Add nil guards: `if mob == nil { continue }` / `if room == nil { return }`.
+
+**Discord Client Resource Leak:**
+- `internal/integrations/discord/client.go` lines 143–160 — HTTP
+  response body is never closed. Add `defer response.Body.Close()`
+  after the nil/error check.
 
 **Testing**:
-- Unit tests for error paths (bad file, nil pointer, malformed input)
+- `go build` and `go vet` clean
+- All existing tests pass
 - Manual test: kill client mid-combat, verify server stays stable
-- Manual test: corrupt a data file, verify server logs error and
-  continues
+- Manual test: corrupt a single mob YAML file, verify server logs
+  error and continues loading other files
 
-**Estimated Changes**: ~300–500 lines, 15–25 files
+**Estimated Changes**: ~150–250 lines, 8–10 files
+
+---
+
+### Stage 37.3b: Error Handling Sweep
+
+**Goal**: Systematic pass on ignored error returns, unsafe type
+assertions, and silent failures across the codebase.
+
+**Ignored Error Returns to Fix (40+ locations):**
+
+| File | Lines | Pattern |
+|------|-------|---------|
+| `internal/devtools/api.go` | 30,50,73,98,108 | `json.Marshal` errors discarded — log + return 500 |
+| `internal/devtools/api.go` | 42,61,85–87 | Type assertions without ok check — validate params |
+| `internal/rooms/save_and_load.go` | 118 | `yaml.Unmarshal` error unchecked — room corruption risk |
+| `cmd/generate/module-imports.go` | 39 | `os.ReadDir` error discarded — log warning |
+| `internal/characters/character.go` | 1765, 1837 | Quest token parse errors discarded — log warning |
+| `internal/flags/flags.go` | 74–75 | `strconv.Atoi` errors ignored — validate port range |
+| `internal/fileloader/fileloader.go` | 114, 162 | `filepath.Match` errors ignored — log warning |
+| `internal/usercommands/admin.server.go` | 374, 405 | Config/template errors silently dropped |
+
+**Unsafe Type Assertions to Fix (20+ locations):**
+
+| File | Lines | Context |
+|------|-------|---------|
+| `internal/usercommands/admin.room.go` | 611,663,670,721,756,830,837,946,1284,1336,1343,1394,1459,1503,1510 | Admin prompt Recall() assertions — add ok checks |
+| `internal/web/web.go` | 152 | NAV template data assertion |
+| `internal/migration/0.9.1.go` | 166 | Migration data assertion |
+| `internal/usercommands/admin.zone.go` | 106, 150, 157 | Mutator assertions |
+
+**Silent Failures to Add Logging:**
+- Template processing errors in admin commands (admin.buff.go,
+  admin.server.go, and others) — log warning when template fails
+- Scripting event errors in `MobIdle_HandleIdleMobs.go:22` and
+  `NewRound_IdleMobs.go:27–28` — log script failures
+- Moon phase / day-night template errors in
+  `DayNightCycle_NotifySunriseSunset.go` and
+  `MoonPhase_BroadcastEmote.go` — log failures
+
+**Startup Panics to Improve (14 files):**
+These are acceptable (server can't run with bad data), but should
+log the specific file path that failed before panicking:
+- `buffs/buffspec.go:242`, `items/itemspec.go:551,558,565`
+- `audio/audio.go:37,44`, `colorpatterns/colorpatterns.go:259,268`
+- `crafting/crafting.go:85`, `enchantments/enchantments.go:75`
+- `keywords/keywords.go:239`, `mobs/mobs.go:813`
+- `mutations/mutations.go:111`, `mutators/mutators.go:328`
+- `pets/pets.go:182`, `quests/quests.go:188`
+- `rooms/biomes.go:99`, `rooms/roommanager.go:809`
+- `species/species.go:184`, `spells/spells.go:272`
+
+**Testing**:
+- `go build` and `go vet` clean
+- All existing tests pass
+- Manual test: trigger error paths where possible (bad API params,
+  corrupt data) — verify errors are logged, not silent
+
+**Estimated Changes**: ~400–600 lines, 20–30 files
 
 ---
 
@@ -5332,7 +5602,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 34: Unified Damage Pipeline | 10 stages (34.1–34.10) | 20 hours | **Complete** |
 | Phase 35: Combat Balance & Mob Equipment | 1 stage | 4 hours | **Complete** |
 | Phase 36: Dialogue System Fix & Quest Wiring | 1 stage | 4 hours | **Complete** |
-| Phase 37: Codebase Quality Pass | 3 stages (37.1–37.3) | 16 hours | Not started |
+| Phase 37: Codebase Quality Pass | 6 stages (37.1a–37.3b) | 24 hours | **37.1a Complete** |
 | Phase 38: Test Coverage Pass | 4 stages (38.1–38.4) | 20 hours | Not started |
 | **Total** | **~100 stages** | **~650 hours** | |
 
@@ -5498,4 +5768,4 @@ These are longer-term goals to be detailed when the above phases are complete:
 
 **Last Updated**: 2026-02-27
 **Status**: In Progress
-**Current Stage**: Phase 36 dialogue system fix & quest wiring complete (merge d3a914c). Fixed dialogue loader doubled-path bug, wired quest hooks into 10 dialogue files for quests 2-4/6-10, converted all NPC tree text to first-person speech, removed requires gates from quest-granting nodes. Next: Phase 37 (Codebase Quality Pass).
+**Current Stage**: Stage 37.1a complete. Next: Stage 37.1b (Dead Code & Unused Export Audit).
