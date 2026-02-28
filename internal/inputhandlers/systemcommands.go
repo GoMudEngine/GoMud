@@ -2,6 +2,7 @@ package inputhandlers
 
 import (
 	"fmt"
+	"runtime/debug"
 	"strconv"
 	"strings"
 	"syscall"
@@ -136,6 +137,15 @@ func trySystemCommand(cmd string, connectionId connections.ConnectionId) bool {
 		}
 
 		go func() {
+			defer func() {
+				if r := recover(); r != nil {
+					mudlog.Error("PANIC", "error", r)
+					s := string(debug.Stack())
+					for _, str := range strings.Split(s, "\n") {
+						mudlog.Error("PANIC", "stack", str)
+					}
+				}
+			}()
 
 			// Not building complex output, so just preparse the ansi in the template and cache that
 			tplTxt, _ := templates.Process("admincommands/shutdown-countdown", nil)
