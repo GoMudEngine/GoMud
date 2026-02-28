@@ -576,6 +576,14 @@ func (a ScriptActor) GiveMutation(mutationId string) bool {
 	return false
 }
 
+// GetMutationCount returns the number of mutations the character currently has.
+func (a ScriptActor) GetMutationCount() int {
+	if a.characterRecord.Mutations == nil {
+		return 0
+	}
+	return len(a.characterRecord.Mutations)
+}
+
 // RollMutation randomly selects a mutation ID from the weighted pool that the player doesn't already own.
 // Returns an empty string if no mutations are available (e.g., player owns all mutations).
 func (a ScriptActor) RollMutation() string {
