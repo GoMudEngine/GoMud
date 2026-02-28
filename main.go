@@ -172,6 +172,10 @@ func main() {
 	// Older versions of GoMud may not have this folder present.
 	// Also deleting the folder is a quick way to reset instance state, so this corrects that if it happens.
 	os.Mkdir(util.FilePath(configs.GetFilePathsConfig().DataFiles.String(), `/`, `rooms.instances`), os.ModeDir|0755)
+	os.Mkdir(util.FilePath(configs.GetFilePathsConfig().DataFiles.String(), `/`, `mobs.instances`), os.ModeDir|0755)
+
+	// Prune stale mob instance saves
+	mobs.PruneStaleInstances(int(configs.GetBalanceConfig().MobInstanceMaxAgeDays))
 
 	// Register the plugin filesystem with the template system
 	templates.RegisterFS(plugins.GetPluginRegistry())

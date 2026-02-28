@@ -46,6 +46,9 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	// vanish is meant to remove the mob without any rewards/drops/etc.
 	if rest == `vanish` {
 
+		// Stage 38.4: Delete saved instance on vanish too
+		mobs.DeleteMobInstance(mob.MobId, mob.Zone, mob.Character.Name, mob.HomeRoomId)
+
 		// Destroy any record of this mob.
 		mobs.DestroyInstance(mob.InstanceId)
 
@@ -198,6 +201,9 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		}
 
 	}
+
+	// Stage 38.4: Delete saved instance so respawn starts fresh from template
+	mobs.DeleteMobInstance(mob.MobId, mob.Zone, mob.Character.Name, mob.HomeRoomId)
 
 	// Destroy any record of this mob.
 	mobs.DestroyInstance(mob.InstanceId)
