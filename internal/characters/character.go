@@ -2074,6 +2074,9 @@ func (c *Character) Heal(hp int) int {
 func (c *Character) HealthPerRound() int {
 	b := configs.GetBalanceConfig()
 	pct := float64(b.PlayerHealthRegenPct)
+	if c.IsMob {
+		pct = float64(b.MobHealthRegenPct)
+	}
 	// StatMod reinterpreted as percentage bonus (e.g. 5 → +5%)
 	pct += float64(c.StatMod(string(statmods.HealthRecovery))) / 100.0
 	base := int(pct * float64(c.HealthMax.Value))
@@ -2086,6 +2089,9 @@ func (c *Character) HealthPerRound() int {
 func (c *Character) StaminaPerRound() int {
 	b := configs.GetBalanceConfig()
 	pct := float64(b.PlayerStaminaRegenPct)
+	if c.IsMob {
+		pct = float64(b.MobStaminaRegenPct)
+	}
 	pct += float64(c.StatMod(string(statmods.StaminaRecovery))) / 100.0
 	base := int(pct * float64(c.StaminaMax.Value))
 	if base < 1 {
@@ -2104,6 +2110,9 @@ func (c *Character) StaminaPerRound() int {
 func (c *Character) ConvictionPerRound() int {
 	b := configs.GetBalanceConfig()
 	pct := float64(b.PlayerConvictionRegenPct)
+	if c.IsMob {
+		pct = float64(b.MobConvictionRegenPct)
+	}
 	pct += float64(c.StatMod(string(statmods.ConvictionRecovery))) / 100.0
 	base := int(pct * float64(c.ConvictionMax.Value))
 	if base < 1 {

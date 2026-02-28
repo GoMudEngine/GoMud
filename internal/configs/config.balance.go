@@ -68,6 +68,12 @@ type Balance struct {
 	MobSaveIntervalRounds    ConfigInt   `yaml:"MobSaveIntervalRounds"`    // Rounds between periodic mob instance saves (default 100)
 	MobInstanceMaxAgeDays    ConfigInt   `yaml:"MobInstanceMaxAgeDays"`    // Max age in days before stale instance files are pruned (default 7)
 
+	// ── PROGRESSION MULTIPLIERS ──────────────────────────────────────────────
+	// Per-stat and per-skill multipliers on progression chance.
+	// Use plain float64 maps (not ConfigFloat) for native YAML unmarshaling.
+	StatProgressionMultipliers  map[string]float64 `yaml:"StatProgressionMultipliers"`  // Per-stat multiplier on progression chance (default 1.0; dex 0.5)
+	SkillProgressionMultipliers map[string]float64 `yaml:"SkillProgressionMultipliers"` // Per-skill multiplier on progression chance — overrides hardcoded defaults
+
 	// ── CHARACTER CREATION ────────────────────────────────────────────────────
 	StatRollMean      ConfigFloat `yaml:"StatRollMean"`      // Mean for stat rolls at character creation (default 100.0)
 	StatRollStdDev    ConfigFloat `yaml:"StatRollStdDev"`    // Std dev for stat rolls (default 15.0)
@@ -288,6 +294,24 @@ func (b *Balance) Validate() {
 		b.MobInstanceMaxAgeDays = 7
 	}
 
+	// ── PROGRESSION MULTIPLIERS ──────────────────────────────────────────────
+	if b.StatProgressionMultipliers == nil {
+		b.StatProgressionMultipliers = map[string]float64{}
+	}
+	for k, v := range b.StatProgressionMultipliers {
+		if v <= 0 {
+			delete(b.StatProgressionMultipliers, k)
+		}
+	}
+	if b.SkillProgressionMultipliers == nil {
+		b.SkillProgressionMultipliers = map[string]float64{}
+	}
+	for k, v := range b.SkillProgressionMultipliers {
+		if v <= 0 {
+			delete(b.SkillProgressionMultipliers, k)
+		}
+	}
+
 	// ── CHARACTER CREATION ────────────────────────────────────────────────────
 	if b.StatRollMean <= 0 {
 		b.StatRollMean = 100.0
@@ -439,4 +463,26 @@ func GetBalanceConfig() Balance {
 		configData.Validate()
 	}
 	return configData.Balance
+}
+
+// GetStatProgressionMultiplier returns the per-stat progression multiplier
+// from config, or 1.0 if the stat has no override.
+func (b *Balance) GetStatProgressionMultiplier(statName string) float64 {
+	if b.StatProgressionMultipliers != nil {
+		if mult, ok := b.StatProgressionMultipliers[statName]; ok {
+			return mult
+		}
+	}
+	return 1.0
+}
+
+// GetSkillProgressionMultiplier returns the per-skill progression multiplier
+// from config, or 0 to signal "use hardcoded default".
+func (b *Balance) GetSkillProgressionMultiplier(skillName string) (float64, bool) {
+	if b.SkillProgressionMultipliers != nil {
+		if mult, ok := b.SkillProgressionMultipliers[skillName]; ok {
+			return mult, true
+		}
+	}
+	return 0, false
 }
