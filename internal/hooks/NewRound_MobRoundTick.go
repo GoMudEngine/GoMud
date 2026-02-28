@@ -37,6 +37,37 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 	//
 	mobs.ReduceHostility()
 
+	// Stage 38.5.3: Pack scaling — award bonuses and emit events
+	for _, bonus := range mobs.TickPackSurvival() {
+		sig := worldevents.Local
+		if bonus.ReachedMax {
+			sig = worldevents.Regional
+		}
+		if len(bonus.MemberIds) > 0 {
+			if firstMob := mobs.GetInstance(bonus.MemberIds[0]); firstMob != nil {
+				zone := firstMob.Character.Zone
+				region := ""
+				if zCfg := rooms.GetZoneConfig(zone); zCfg != nil {
+					region = zCfg.Region
+				}
+				if room := rooms.LoadRoom(firstMob.Character.RoomId); room != nil {
+					room.SendText(fmt.Sprintf(
+						`The <ansi fg="mobname">%s</ansi> pack moves with renewed coordination.`,
+						bonus.GroupTag))
+				}
+				worldevents.EmitWorldEvent(worldevents.WorldEvent{
+					Type:         worldevents.PackStrengthened,
+					Significance: sig,
+					ZoneName:     zone,
+					RegionName:   region,
+					MobName:      bonus.GroupTag,
+					Description: fmt.Sprintf("The %s pack grows stronger through coordinated survival.",
+						bonus.GroupTag),
+				})
+			}
+		}
+	}
+
 	//
 	// Do mob round maintenance
 	//
