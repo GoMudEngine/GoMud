@@ -85,13 +85,18 @@ The combat system is built around several key components:
 // - Combat skill rank differential
 // - Accuracy buff (doubles crit chance)
 // - Blink buff on target (halves crit chance)
+// - Grapple position: controller in clinch -0.2, grounded -0.4
+// - Backstab: guaranteed crit on first pass
 ```
 
 ### Dual Wielding
 - Skill level 2: 50% chance to use both weapons
 - Skill level 3+: Always dual wield
 - Claws (natural weapons): Always dual wield
-- Hit penalty: 35% (25% at mastery level 4)
+- Hit penalty: continuous scale from 50 (skill 0) to 10 (skill 50)
+  - Formula: `penalty = 50 - (dualWieldLevel / 50.0) * 40`
+  - Floor: minimum 10% penalty
+- Extra arms (mutation): `+20` penalty for 3rd weapon, `+40` for 4th
 
 ## Stage 7.5: Tactical Combat Enhancements
 
@@ -118,13 +123,15 @@ always better (wider net).
 outclassed defenders have a 15% chance to avoid any swing.
 
 **Stamina Costs:**
-- All defense attempts cost stamina even on failure
+- Only the winning defense (best margin) costs stamina — losing defenses are free
 - Low stamina drains smooth penalty via `ResourceMultiplier`
 - Defense costs configured in `config.gameplay.yaml`
 
 **Implementation:**
 - `runBestOfAllDefense()` in `combat_helpers.go` rolls every defense
 - `resolveDefenseOutcome()` processes the best result and floor saves
+- Two floors: `MinDefenseChance` (defender saves when attack wins) AND
+  `MinAttackHitChance` (attacker hits when defense wins)
 - Defense crit detection (z > 2.0): parry crit → disarm, dodge crit → grapple opportunity
 
 ### Prone Condition System
@@ -153,7 +160,7 @@ Characters can be knocked to the ground by special combat moves (bash/trip/kick)
    - Implemented in `Character.AttemptRecovery(statValue int)`
    - Called automatically each round via `NewRound_UserRoundTick` and `NewRound_MobRoundTick` hooks
    - Recovery attempts only after minimum prone duration expires
-   - Failed recovery attempts set `RecoveryPenaltyThisRound = true` (limits attacks to 1)
+   - Failed recovery attempts set `ConditionRecoveryPenalty` condition (limits attacks to 1)
    - Success rate examples: 25 DEX = 25%, 100 DEX = 53%, 300 DEX = 75%, capped at 90%
 
 2. **Manual Recovery** - Stand command
@@ -310,11 +317,15 @@ DoCombat(evt)
 `hooks/NewRound_DoCombat.go` — Loops every online user. For each player
 in combat:
 
-#### 2a. Shield Decay
+#### 2a. NoCombat Buff Check
+If the player has a `NoCombat` buff flag, skip the entire combat turn
+(including shield decay). This check happens before anything else.
+
+#### 2b. Shield Decay
 `handlePlayerShieldDecay(user)` — If the player has a `ConditionShield`
 (from Minor Shield spell), its duration ticks down. At 0, removed.
 
-#### 2b. Fold Casting Check
+#### 2c. Fold Casting Check
 `handlePlayerFoldCasting(user, userId)` — If the player typed
 `cast fireball` last round, `CastingState` is non-nil:
 
@@ -337,17 +348,17 @@ in combat:
 
 If the player is NOT casting, flow continues to melee.
 
-#### 2c. Aggro Check
+#### 2d. Aggro Check
 If `user.Character.Aggro == nil`, skip (player not in combat).
 
-#### 2d. Cancel Combat-Incompatible Buffs
+#### 2e. Cancel Combat-Incompatible Buffs
 `CancelBuffsWithFlag(buffs.CancelIfCombat)` — strips buffs like stealth.
 
-#### 2e. Flee Check
+#### 2f. Flee Check
 `handlePlayerFlee(user, uRoom, userId)` — if the player typed `flee`,
 attempts escape. On success, player leaves combat.
 
-#### 2f. PvM Dispatch: `handlePlayerVsMob()`
+#### 2g. PvM Dispatch: `handlePlayerVsMob()`
 
 `hooks/NewRound_DoCombat_helpers.go` — The main player attack sequence:
 
@@ -392,16 +403,27 @@ mob.Character.TrackPlayerDamage(userId, dmg)  // loot attribution
 user.Character.OnStatUse("strength")          // progression
 user.Character.OnStatUse("dexterity")         // progression
 if hit: user.Character.OnSkillUse(combatSkill)
+if crit: user.Character.OnCriticalSuccess(combatSkill)
+if fumble: user.Character.OnCriticalFailure(combatSkill)
+if dualWield: extra OnSkillUse(WeaponCombat)
+user.PlaySound("hit-other"/"miss", "combat")  // MSP sound events
 ```
 
 ### 3a. Inside `calculateCombat()` — Step by Step
 
 `combat/combat.go` — Orchestrator calling helpers in `combat_helpers.go`:
 
+**Step 0: StatMod Bonuses**
+```
+statModDBonus = sourceChar.StatMod("damage")   // flat bonus to damage
+extraAttacks  = sourceChar.StatMod("attacks")  // extra attack passes
+backstabCrit  = (Aggro.Type == BackStab)        // first pass auto-crits
+```
+
 **Step 1: Attack Count** — `calcAttackCount()`
 ```
-attackCount = 1 + floor(Dexterity / 50)
-  e.g., DEX 120: 1 + 2 = 3 attack passes
+attackCount = 1 + floor(Dexterity / 50) + extraAttacks
+  e.g., DEX 120: 1 + 2 + 0 = 3 attack passes
 
 Then multiplied by:
   ResourceMultiplier(stamina)    // smooth penalty as stamina drains
@@ -412,6 +434,7 @@ Then multiplied by:
 **Step 2: Collect Weapons** — `collectAttackWeapons()`
 - Main hand: sword (ItemId > 0) — added.
 - Offhand: shield (Type = Shield, NOT Weapon) — not added.
+- Extra arms (mutation): `ExtraArm1`/`ExtraArm2` added as additional weapons.
 - Result: 1 weapon (the sword). No dual-wield penalty applies.
 
 **Step 3: Per-pass loop** (3 passes for DEX 120):
@@ -425,6 +448,9 @@ ws.baseDmg     = weapon base damage
 ws.weaponDmgMult = item's damage_multiplier (e.g. 1.2)
 ws.weaponSpeed = item's speed multiplier (e.g. 1.0)
 ws.attacks     = GetModifiedAttackCount(attacks, speed)  // skill-modified
+ws.attacks    *= CombatPosition.GetSpeedMultiplier()    // position modifier
+// ConditionRecoveryPenalty: forces attacks = 1
+// Racial bonus: weapon.StatMod(RacialBonusPrefix + targetSpecies)
 // Hard cap: max 4 swings per weapon per pass
 ```
 
@@ -494,7 +520,10 @@ For each defense in [dodge, parry, block]:
 **iv. Resolve Defense** — `resolveDefenseOutcome()`
 ```
 if best.margin > 0:
-  Defense succeeded. Attack avoided.
+  Defense succeeded — but check attack floor first:
+    MinAttackHitChance: attacker still has a small chance to hit anyway.
+    If attack floor triggers: HIT despite defense winning.
+  Otherwise: Attack avoided.
   Send defense message ("The goblin blocks your attack!")
   Check for defense crits (defRoll.ZScore > 2.0):
     Parry crit -> disarm opportunity
@@ -544,7 +573,8 @@ adds up in `AttackResult.DamageToTarget`.
 
 #### 4a. Pre-checks
 Mob alive? Has aggro? Not in NoCombat buff? Load room. Cancel
-combat-incompatible buffs.
+combat-incompatible buffs. Shield decay (symmetric with player —
+inline in `handleMobCombat`, not extracted to a helper).
 
 #### 4b. Fold Casting Check
 `handleMobFoldCasting(mob, mobRoom)` — Same fold system as players. If
@@ -599,6 +629,11 @@ scripted combat command.
     defense sequence: dodge (DEX), parry (weapon), block (shield) —
     the shield is critical here, it provides `DefenseBlock` with a
     high effectiveness.
+    - **Defender progression:** Player gets `OnStatUse("dexterity")`
+      for reacting to attacks.
+    - **Low-resource triggers:** If HP/STA/CONV < 25%, fires
+      `OnLowResource()` for associated stats (health→vitality,
+      stamina→strength+dexterity, conviction→willpower+charisma).
 12. **Minor Shield reduction** — if player has `ConditionShield`, flat
     damage reduction.
 13. **Adrenaline Surge** — mutation check for bonus damage.
@@ -610,7 +645,12 @@ scripted combat command.
 17. **Concentration break** — if player was casting and got hit,
     Willpower vs damage% check to see if concentration holds.
 18. **Offhand break** — chance the player's shield gets damaged.
-19. **End check** — if either at 0 HP, end aggro.
+19. **Mob attacker progression** (Stage 38.3) — if `MobProgressionEnabled`:
+    - `mob.Character.OnStatUse("strength")` / `OnStatUse("dexterity")`
+    - If hit: `mob.Character.OnSkillUse(combatSkill)`
+    - If crit: `mob.Character.OnCriticalSuccess(combatSkill)`
+    - If fumble: `mob.Character.OnCriticalFailure(combatSkill)`
+20. **End check** — if either at 0 HP, end aggro.
 
 ### 5. Resolution: `handleAffected()`
 
@@ -654,14 +694,24 @@ if Health < 1:
   - Mob attack gets `ProneAttackMultiplier` (0.80x) and
     `ProneDamagePenalty`.
 
-### 7. File Map After Refactor (Stage 37.1a)
+### 7. File Map After Refactor (Stage 37.1a+)
 
 | File | Contents |
 |------|----------|
 | `combat/combat.go` | `calculateCombat()` orchestrator (~80 lines), `AttackPlayerVsMob`, `AttackPlayerVsPlayer`, `AttackMobVsPlayer`, `AttackMobVsMob`, `GetWaitMessages` |
-| `combat/combat_helpers.go` | Extracted helpers: `calcAttackCount`, `collectAttackWeapons`, `buildWeaponSetup`, `buildDamageParams`, `calcAttackScore`, `calcCritThreshold`, `filterDefensesForThirdParty`, `runBestOfAllDefense`, `resolveDefenseOutcome`, `calcHitDamage`, `buildAttackMessages`, `applyPetDamage` |
+| `combat/combat_helpers.go` | Extracted helpers: `calcAttackCount`, `collectAttackWeapons`, `buildWeaponSetup`, `buildDamageParams`, `calcAttackScore`, `calcCritThreshold`, `calcDualWieldPenalty`, `filterDefensesForThirdParty`, `runBestOfAllDefense`, `resolveDefenseOutcome`, `calcHitDamage`, `buildAttackMessages`, `applyPetDamage` |
 | `combat/damage_pipeline.go` | `CalcRawDamage`, `ApplyMitigation`, `SkillMultiplier`, `ResourceMultiplier`, `MitigationCap`, `DamageScale` |
-| `combat/attackresult.go` | `AttackResult` struct and message helpers |
+| `combat/attackresult.go` | `AttackResult` struct (includes `DefenseAttempts`, `AttackZScore`, `DefenseZScore`, `ParryCritDetected`, `DodgeCritDetected`) and message helpers |
+| `combat/ai.go` | `ChooseSpecialMove`, `ChooseCastAction`, `GetAIProfile`, AI profiles, viability checks (`CanUseBash`, `CanUseKick`, etc.), scoring functions |
+| `combat/criteffects.go` | `AttemptCritDisarm`, `SetGrappleOpportunity`, `HasGrappleOpportunity`, `GetGrappleOpportunityBonus`, `ClearGrappleOpportunity` |
+| `combat/grapple.go` | `AttemptGrapple`, `ApplyGrappleResult`, `CheckClinchProgression`, `CheckGroundedEscape`, `ApplyPositionProgression`, `IsThirdPartyAttack`, `AttemptSubmission` |
+| `combat/grapple_move.go` | `ExecuteGrappleMove`, `GrappleMoveResult`, `GrappleMoveDisarmWeapon` |
+| `combat/skill_moves.go` | `ExecuteSkillMove`, `SkillMoveResult`, `SkillMoveParams` |
+| `combat/calculations.go` | Hit chance, crit probability, power ranking, alignment calculations |
+| `combat/descriptions.go` | Damage/heal description helpers |
+| `combat/taunt_messages.go` | Taunt/conviction combat messages |
+| `combat/analytics.go` | Ring buffer, `CombatEvent`, `AnalyticsSummary`, recording + query functions |
 | `hooks/NewRound_DoCombat.go` | `DoCombat`, `handlePlayerCombat` (~50 lines), `handleMobCombat` (~50 lines), `processGrappleProgression`, `handleAffected`, `applyMoonMods` |
-| `hooks/NewRound_DoCombat_helpers.go` | All extracted helpers: `handlePlayerShieldDecay`, `handlePlayerFoldCasting`, `handleMobFoldCasting`, `handlePlayerFlee`, `handlePlayerVsPlayer`, `handlePlayerVsMob`, `handleMobVsPlayer`, `handleMobVsMob`, `handleMobAIDecision`, `handleMobTargetSwitch`, `handleMobWeaponPickup`, `handleMobDownedGrace`, `handlePartyAutoAttack`, `applyPvPCritEffects`, `applyPvMCritEffects`, `handleCharmedMobAssist`, `handleAutoRetargetPlayer`, `handlePlayerConcentrationBreak`, `dispatchCombatMessages`, `handleOffhandBreakUserDef`, `handleOffhandBreakMobDef` |
+| `hooks/NewRound_DoCombat_helpers.go` | All extracted helpers: `handlePlayerShieldDecay`, `handlePlayerFoldCasting`, `handleMobFoldCasting`, `handlePlayerFlee`, `handlePlayerVsPlayer`, `handlePlayerVsMob`, `handleMobVsPlayer`, `handleMobVsMob`, `handleMobAIDecision`, `handleMobTargetSwitch`, `handleMobWeaponPickup`, `handleMobDownedGrace`, `handlePartyAutoAttack`, `handleCharmedMobAssist`, `handleAutoRetargetPlayer`, `handlePlayerConcentrationBreak`, `dispatchCombatMessages`, `handleOffhandBreakUserDef`, `handleOffhandBreakMobDef` |
+| `hooks/combat_shared_helpers.go` | `simulateFoldRound`, `calcFoldConvictionCost`, `advanceFolds`, `checkConcentrationBreak`, `tryWeaponBreak`, `applyCritEffects`, `CritEffectResult`, `calcSpellDamageForCharacter` |
 | `hooks/spell_resolution.go` | `resolveSpell`, `resolveAgainstMob`, `resolveAgainstPlayer`, `applyPlayerEffect` |
