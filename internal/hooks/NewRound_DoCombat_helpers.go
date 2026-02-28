@@ -159,6 +159,9 @@ func handleMobFoldCasting(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 			resolveMobSpell(mob, cs, spellData, resolveRoom)
 		}
 		mob.Character.CastingState = nil
+		// Stage 38.3: Mob spellcasting progression
+		mob.Character.OnSkillUse(string(skills.Spellcasting), 0)
+		mob.Character.OnStatUse("willpower", 0)
 	} else {
 		mobRoom.SendText(fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi> weaves magic with focused intent.`, mob.Character.Name))
@@ -1039,6 +1042,28 @@ func handleMobVsPlayer(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, 
 	handlePlayerConcentrationBreak(defUser, roundResult, defRoom)
 	handleOffhandBreakUserDef(roundResult, defUser, defRoom)
 
+	// Stage 38.3: Mob attacker progression
+	if gained := mob.Character.OnStatUse("strength", 0); gained {
+		if tmpl, ok := characters.MobStatGainMessages["strength"]; ok {
+			mobRoom.SendText(fmt.Sprintf(tmpl, mob.Character.Name))
+		}
+	}
+	if gained := mob.Character.OnStatUse("dexterity", 0); gained {
+		if tmpl, ok := characters.MobStatGainMessages["dexterity"]; ok {
+			mobRoom.SendText(fmt.Sprintf(tmpl, mob.Character.Name))
+		}
+	}
+	if roundResult.Hit {
+		combatSkill := string(mob.Character.GetCombatSkillTag())
+		mob.Character.OnSkillUse(combatSkill, 0)
+		if roundResult.Crit {
+			mob.Character.OnCriticalSuccess(combatSkill, 0)
+		}
+	} else if roundResult.Fumble {
+		combatSkill := string(mob.Character.GetCombatSkillTag())
+		mob.Character.OnCriticalFailure(combatSkill, 0)
+	}
+
 	if mob.Character.Health <= 0 || defUser.Character.Health <= 0 {
 		mob.Character.EndAggro()
 		defUser.Character.EndAggro()
@@ -1144,6 +1169,14 @@ func handleMobVsMob(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, aff
 	}
 
 	handleOffhandBreakMobDef(roundResult, defMob)
+
+	// Stage 38.3: Mob attacker progression (skip room messages for MvM)
+	mob.Character.OnStatUse("strength", 0)
+	mob.Character.OnStatUse("dexterity", 0)
+	if roundResult.Hit {
+		combatSkill := string(mob.Character.GetCombatSkillTag())
+		mob.Character.OnSkillUse(combatSkill, 0)
+	}
 
 	if mob.Character.Health <= 0 || defMob.Character.Health <= 0 {
 		mob.Character.EndAggro()
