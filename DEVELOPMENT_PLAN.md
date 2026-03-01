@@ -6556,7 +6556,7 @@ YAML + idle script)
 
 ---
 
-### Stage 42.6: Ironwind Steppe — Wilderness Zone ✅ COMPLETED (merge: see development branch)
+### Stage 42.6: Ironwind Steppe — Wilderness Zone ✅ COMPLETED (merge: b138ddc)
 
 **Goal**: Build a large wilderness zone east of Thornwall showcasing pack scaling
 and mob mutation systems. 115 rooms across 9 subregions, 40 mob types across 4
