@@ -6231,7 +6231,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 39: Balance Pass & Config Cleanup | 3 stages (39.1–39.3) | 14 hours | **Complete** |
 | Phase 40: Test Coverage Pass | 4 stages (40.1–40.4) | 20 hours | **Complete** |
 | Phase 41: seedRegistry Coverage Push | 5 stages (41.1–41.5) | 48 hours | **Complete** |
-| Phase 42: Pre-Launch Polish & Wilderness | 8 stages (42.1–42.8) | ~60 hours | **42.1–42.5 Complete** |
+| Phase 42: Pre-Launch Polish & Wilderness | 8 stages (42.1–42.8) | ~60 hours | **42.1–42.8 Complete** |
 | **Total** | **~116 stages** | **~754 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
@@ -6616,7 +6616,7 @@ predators consume corpses, and packs scatter when a member dies.
 
 ---
 
-### Stage 42.8: Pack Roaming — Alpha-Follow Movement System
+### Stage 42.8: Pack Roaming — Alpha-Follow Movement System ✅ COMPLETED (merge: 6bcec97)
 
 **Goal**: Add coordinated pack movement so mobs sharing a group tag move
 together as a unit, following a designated alpha, rather than wandering
@@ -6727,4 +6727,4 @@ These are longer-term goals to be detailed when the above phases are complete:
 
 **Last Updated**: 2026-03-01
 **Status**: In Progress
-**Current Stage**: Stage 42.7 complete. Next: Stage 42.8 — Pack Roaming — Alpha-Follow Movement System.
+**Current Stage**: Stage 42.8 complete. Next: Stage 42.9 — Wilderness Zone — Morally Ambiguous Quest Chain.
