@@ -77,6 +77,16 @@ colors:
   statmod: 6 # Bright cyan
   damage: 9 # Bright red
   healing: 157
+  # Combat presentation colors (Stage 42.4)
+  attack-good: 34          # Forest green — your attack lands
+  attack-bad: 173          # Dusty rose — your attack was defended
+  defense-good: 79         # Steel blue — you defended successfully
+  combat: 248              # Neutral gray — room observer combat text
+  defense-dodge: 75        # Teal — dodge-specific defense
+  defense-parry: 137       # Slate purple — parry-specific defense
+  defense-block: 136       # Dark cyan — block-specific defense
+  crit-text: 220           # Gold — critical hit decoration
+  fumble-text: 167         # Burnt orange — fumble decoration
   shop-qty: 15 # Bright white
   shop-name: 2
   shop-price: 220

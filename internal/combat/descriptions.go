@@ -1,5 +1,9 @@
 package combat
 
+import (
+	"github.com/GoMudEngine/GoMud/internal/util"
+)
+
 // GetDamageDescription converts numeric damage into a descriptive phrase based on
 // the damage as a percentage of the target's maximum HP.
 //
@@ -128,4 +132,21 @@ func GetSuccessChanceDescription(pct int) string {
 	default:
 		return "near-certain"
 	}
+}
+
+// bodyParts lists humanoid body locations for hit flavor text.
+var bodyParts = []string{
+	"head", "face", "neck", "throat",
+	"chest", "ribs", "stomach", "back",
+	"left shoulder", "right shoulder",
+	"left arm", "right arm",
+	"left hand", "right hand",
+	"left leg", "right leg",
+	"left knee", "right knee",
+	"left side", "right side",
+}
+
+// GetRandomBodyPart returns a random body part string for combat flavor.
+func GetRandomBodyPart() string {
+	return bodyParts[util.Rand(len(bodyParts))]
 }

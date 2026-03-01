@@ -220,6 +220,8 @@ options:
         - 'Your <ansi fg="item">{itemname}</ansi> flashes as you maintain the pressure!'
         - 'You are {momentum} as your blade cuts into <ansi fg="{targettype}">{target}</ansi>!'
         - 'While {momentum}, you slash decisively at <ansi fg="{targettype}">{target}</ansi>!'
+        - 'Your blade catches <ansi fg="{targettype}">{target}</ansi> across the {bodypart}!'
+        - 'You slash <ansi fg="{targettype}">{target}</ansi> across the {bodypart} with a precise cut!'
       todefender:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> connects with their <ansi fg="item">{itemname}</ansi>, wounding you!'
@@ -232,6 +234,7 @@ options:
         - '<ansi fg="{sourcetype}">{source}</ansi> pivots and slices through your guard!'
         - '<ansi fg="{sourcetype}">{source}</ansi> feints and brings their blade down in a swift arc!'
         - '<ansi fg="{sourcetype}">{source}</ansi> draws your defense and slashes low!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> catches you across the {bodypart}!'
         master:
         - '<ansi fg="{sourcetype}">{source}</ansi> reads your stance and strikes with precision!'
         - '<ansi fg="{sourcetype}">{source}</ansi> presses their advantage with a sweeping slash!'
@@ -240,6 +243,7 @@ options:
         - '<ansi fg="{sourcetype}">{source}</ansi> follows through with a solid slash!'
         - '<ansi fg="{sourcetype}">{source}</ansi> capitalizes on their momentum and strikes true!'
         - '<ansi fg="{sourcetype}">{source}</ansi>''s blade flashes as they maintain pressure!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> slashes you across the {bodypart} with a precise cut!'
       toroom:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> connects with their <ansi fg="item">{itemname}</ansi>, wounding <ansi fg="{targettype}">{target}</ansi>!'
@@ -289,6 +293,8 @@ options:
         - 'You surge forward on the offensive, your blade cutting deep!'
         - 'Maintaining your assault, you deliver a powerful sweeping cut!'
         - 'From your {stance} stance, {momentum}, you deliver a devastating slash while {position}!'
+        - 'Your blade bites deep into <ansi fg="{targettype}">{target}</ansi>''s {bodypart}!'
+        - 'You carve a vicious wound across <ansi fg="{targettype}">{target}</ansi>''s {bodypart}!'
       todefender:
         beginner:
         - 'In a sweeping motion, <ansi fg="{sourcetype}">{source}</ansi> slashes you with their <ansi fg="item">{itemname}</ansi>!'

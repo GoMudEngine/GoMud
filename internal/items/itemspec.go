@@ -137,6 +137,7 @@ const (
 	Mundane   ItemSubType = "mundane"
 
 	// Subtypes for weapons, chooses attack messages.
+	Unarmed     ItemSubType = "unarmed"
 	Generic     ItemSubType = "generic"
 	Bludgeoning ItemSubType = "bludgeoning"
 	Cleaving    ItemSubType = "cleaving"
@@ -144,6 +145,10 @@ const (
 	Slashing    ItemSubType = "slashing"
 	Shooting    ItemSubType = "shooting" // bows, crossbows, guns, etc.
 	Claws       ItemSubType = "claws"
+	Bite        ItemSubType = "bite"
+	Sting       ItemSubType = "sting"
+	Gore        ItemSubType = "gore"
+	Slam        ItemSubType = "slam"
 	Whipping    ItemSubType = "whipping"
 	Wand        ItemSubType = "wand"
 	Sceptre     ItemSubType = "sceptre"
@@ -188,6 +193,7 @@ const (
 	TokenStance       TokenName = "{stance}"   // Stage 9.4: combat stance (aggressive/defensive/balanced/reckless)
 	TokenPosition     TokenName = "{position}" // Stage 9.4: combat position (standing/prone/clinched/grounded)
 	TokenMomentum     TokenName = "{momentum}" // Stage 9.4: combat momentum (offensive/defensive/pressured/in control)
+	TokenBodyPart     TokenName = "{bodypart}" // Stage 42.4: random body part for hit location flavor
 
 	POVUser  = 0
 	POVOther = 1

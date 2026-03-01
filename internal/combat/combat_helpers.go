@@ -149,7 +149,7 @@ func buildWeaponSetup(sourceChar *characters.Character, targetChar *characters.C
 	ws := weaponSetup{
 		weapon:        weapon,
 		weaponName:    raceInfo.UnarmedName,
-		weaponSubType: items.Bludgeoning,
+		weaponSubType: items.Unarmed,
 		weaponSpeed:   1.0,
 		isOffhand:     idx > 0,
 		penalty:       calcDualWieldPenalty(sourceChar, idx, total),
@@ -605,10 +605,15 @@ func buildAttackMessages(result *AttackResult, sourceChar *characters.Character,
 
 	// Use fumble messages when a fumble is detected
 	var msgs items.AttackOptions
+	isFeint := false
 	if result.Fumble {
 		msgs = items.GetPreAttackMessage(ws.weaponSubType, items.Fumble)
 	} else {
 		msgs = items.GetAttackMessage(ws.weaponSubType, int(pctDamage))
+		// Feint check: skilled attackers can turn misses into deliberate-looking feints
+		if int(pctDamage) == 0 && !result.Fumble {
+			isFeint = checkFeint(sourceChar.GetCombatSkillLevel())
+		}
 	}
 
 	var toAttackerMsg, toDefenderMsg, toAttackerRoomMsg, toDefenderRoomMsg items.ItemMessage
@@ -626,6 +631,7 @@ func buildAttackMessages(result *AttackResult, sourceChar *characters.Character,
 		items.TokenStance:       sourceChar.CalculateStanceString(),
 		items.TokenPosition:     sourceChar.CalculatePositionString(),
 		items.TokenMomentum:     sourceChar.CalculateMomentumString(),
+		items.TokenBodyPart:     GetRandomBodyPart(),
 	}
 
 	// Get source character's weapon skill level for message selection
@@ -683,21 +689,38 @@ func buildAttackMessages(result *AttackResult, sourceChar *characters.Character,
 		}
 	}
 
+	// Feint: replace miss messages with feint-flavored text for skilled attackers
+	if isFeint {
+		feintMsg := getFeintMessage()
+		toAttackerMsg = items.ItemMessage(feintMsg.toAttacker)
+		toDefenderMsg = items.ItemMessage(feintMsg.toDefender)
+		toAttackerRoomMsg = items.ItemMessage(feintMsg.toRoom)
+		// Apply name tokens to feint messages
+		toAttackerMsg = toAttackerMsg.SetTokenValue(items.TokenTarget, tokenReplacements[items.TokenTarget])
+		toAttackerMsg = toAttackerMsg.SetTokenValue(items.TokenTargetType, tokenReplacements[items.TokenTargetType])
+		toDefenderMsg = toDefenderMsg.SetTokenValue(items.TokenSource, tokenReplacements[items.TokenSource])
+		toDefenderMsg = toDefenderMsg.SetTokenValue(items.TokenSourceType, tokenReplacements[items.TokenSourceType])
+		toAttackerRoomMsg = toAttackerRoomMsg.SetTokenValue(items.TokenSource, tokenReplacements[items.TokenSource])
+		toAttackerRoomMsg = toAttackerRoomMsg.SetTokenValue(items.TokenSourceType, tokenReplacements[items.TokenSourceType])
+		toAttackerRoomMsg = toAttackerRoomMsg.SetTokenValue(items.TokenTarget, tokenReplacements[items.TokenTarget])
+		toAttackerRoomMsg = toAttackerRoomMsg.SetTokenValue(items.TokenTargetType, tokenReplacements[items.TokenTargetType])
+	}
+
 	if result.Crit {
-		toAttackerMsg = items.ItemMessage(`<ansi fg="yellow-bold">***</ansi> ` + string(toAttackerMsg) + ` <ansi fg="yellow-bold">***</ansi>`)
-		toDefenderMsg = items.ItemMessage(`<ansi fg="yellow-bold">***</ansi> ` + string(toDefenderMsg) + ` <ansi fg="yellow-bold">***</ansi>`)
-		toAttackerRoomMsg = items.ItemMessage(`<ansi fg="yellow-bold">***</ansi> ` + string(toAttackerRoomMsg) + ` <ansi fg="yellow-bold">***</ansi>`)
+		toAttackerMsg = items.ItemMessage(`<ansi fg="crit-text">***</ansi> ` + string(toAttackerMsg) + ` <ansi fg="crit-text">***</ansi>`)
+		toDefenderMsg = items.ItemMessage(`<ansi fg="crit-text">***</ansi> ` + string(toDefenderMsg) + ` <ansi fg="crit-text">***</ansi>`)
+		toAttackerRoomMsg = items.ItemMessage(`<ansi fg="crit-text">***</ansi> ` + string(toAttackerRoomMsg) + ` <ansi fg="crit-text">***</ansi>`)
 		if len(string(toDefenderRoomMsg)) > 0 {
-			toDefenderRoomMsg = items.ItemMessage(`<ansi fg="yellow-bold">***</ansi> ` + string(toDefenderRoomMsg) + ` <ansi fg="yellow-bold">***</ansi>`)
+			toDefenderRoomMsg = items.ItemMessage(`<ansi fg="crit-text">***</ansi> ` + string(toDefenderRoomMsg) + ` <ansi fg="crit-text">***</ansi>`)
 		}
 	}
 
 	if result.Fumble {
-		toAttackerMsg = items.ItemMessage(`<ansi fg="red-bold">!!!</ansi> ` + string(toAttackerMsg) + ` <ansi fg="red-bold">!!!</ansi>`)
-		toDefenderMsg = items.ItemMessage(`<ansi fg="red-bold">!!!</ansi> ` + string(toDefenderMsg) + ` <ansi fg="red-bold">!!!</ansi>`)
-		toAttackerRoomMsg = items.ItemMessage(`<ansi fg="red-bold">!!!</ansi> ` + string(toAttackerRoomMsg) + ` <ansi fg="red-bold">!!!</ansi>`)
+		toAttackerMsg = items.ItemMessage(`<ansi fg="fumble-text">!!!</ansi> ` + string(toAttackerMsg) + ` <ansi fg="fumble-text">!!!</ansi>`)
+		toDefenderMsg = items.ItemMessage(`<ansi fg="fumble-text">!!!</ansi> ` + string(toDefenderMsg) + ` <ansi fg="fumble-text">!!!</ansi>`)
+		toAttackerRoomMsg = items.ItemMessage(`<ansi fg="fumble-text">!!!</ansi> ` + string(toAttackerRoomMsg) + ` <ansi fg="fumble-text">!!!</ansi>`)
 		if len(string(toDefenderRoomMsg)) > 0 {
-			toDefenderRoomMsg = items.ItemMessage(`<ansi fg="red-bold">!!!</ansi> ` + string(toDefenderRoomMsg) + ` <ansi fg="red-bold">!!!</ansi>`)
+			toDefenderRoomMsg = items.ItemMessage(`<ansi fg="fumble-text">!!!</ansi> ` + string(toDefenderRoomMsg) + ` <ansi fg="fumble-text">!!!</ansi>`)
 		}
 	}
 
@@ -781,4 +804,77 @@ func applyPetDamage(result *AttackResult, sourceChar *characters.Character, targ
 		toAttackerRoomMsg := fmt.Sprintf(`%s jumps into the fray and deals <ansi fg="damage">%s</ansi> to <ansi fg="%sname">%s</ansi>!`, sourceChar.Pet.DisplayName(), GetDamageDescription(attackTargetDamage, targetChar.HealthMax.Value), string(tgtType), targetChar.Name)
 		result.SendToTargetRoom(toAttackerRoomMsg)
 	}
+}
+
+// feintMessage holds the three message variants for a feint.
+type feintMessage struct {
+	toAttacker string
+	toDefender string
+	toRoom     string
+}
+
+// feintMessages are weapon-agnostic feint flavor messages.
+// Tokens: {target}/{targettype} for attacker POV, {source}/{sourcetype} for defender POV.
+var feintMessages = []feintMessage{
+	{
+		toAttacker: `You feint at <ansi fg="{targettype}">{target}</ansi>, testing their defenses.`,
+		toDefender: `<ansi fg="{sourcetype}">{source}</ansi> feints at you, probing for weakness.`,
+		toRoom:     `<ansi fg="{sourcetype}">{source}</ansi> feints toward <ansi fg="{targettype}">{target}</ansi>, testing for openings.`,
+	},
+	{
+		toAttacker: `You make a deliberate feint, drawing <ansi fg="{targettype}">{target}</ansi>'s guard wide.`,
+		toDefender: `<ansi fg="{sourcetype}">{source}</ansi> feints deliberately, drawing your guard.`,
+		toRoom:     `<ansi fg="{sourcetype}">{source}</ansi> makes a deliberate feint at <ansi fg="{targettype}">{target}</ansi>.`,
+	},
+	{
+		toAttacker: `You throw a calculated misdirection at <ansi fg="{targettype}">{target}</ansi>.`,
+		toDefender: `<ansi fg="{sourcetype}">{source}</ansi> throws a calculated misdirection your way.`,
+		toRoom:     `<ansi fg="{sourcetype}">{source}</ansi> throws a misdirection at <ansi fg="{targettype}">{target}</ansi>.`,
+	},
+	{
+		toAttacker: `You probe <ansi fg="{targettype}">{target}</ansi>'s defenses with a quick false strike.`,
+		toDefender: `<ansi fg="{sourcetype}">{source}</ansi> probes your defenses with a quick false strike.`,
+		toRoom:     `<ansi fg="{sourcetype}">{source}</ansi> probes <ansi fg="{targettype}">{target}</ansi>'s defenses with a quick feint.`,
+	},
+	{
+		toAttacker: `You shift your weight and feint low, reading <ansi fg="{targettype}">{target}</ansi>'s reaction.`,
+		toDefender: `<ansi fg="{sourcetype}">{source}</ansi> feints low, reading your reaction intently.`,
+		toRoom:     `<ansi fg="{sourcetype}">{source}</ansi> feints low toward <ansi fg="{targettype}">{target}</ansi>, studying their stance.`,
+	},
+	{
+		toAttacker: `You commit to a false opening, watching how <ansi fg="{targettype}">{target}</ansi> responds.`,
+		toDefender: `<ansi fg="{sourcetype}">{source}</ansi> opens up deliberately, watching your response.`,
+		toRoom:     `<ansi fg="{sourcetype}">{source}</ansi> makes a calculated false opening toward <ansi fg="{targettype}">{target}</ansi>.`,
+	},
+	{
+		toAttacker: `You disguise a measuring strike as a real attack toward <ansi fg="{targettype}">{target}</ansi>.`,
+		toDefender: `<ansi fg="{sourcetype}">{source}</ansi> disguises a measuring strike as a real attack.`,
+		toRoom:     `<ansi fg="{sourcetype}">{source}</ansi> throws a measured feint toward <ansi fg="{targettype}">{target}</ansi>.`,
+	},
+	{
+		toAttacker: `You draw <ansi fg="{targettype}">{target}</ansi>'s attention high with a deceptive flourish.`,
+		toDefender: `<ansi fg="{sourcetype}">{source}</ansi> draws your attention with a deceptive flourish.`,
+		toRoom:     `<ansi fg="{sourcetype}">{source}</ansi> flourishes deceptively toward <ansi fg="{targettype}">{target}</ansi>.`,
+	},
+}
+
+// checkFeint returns true if a miss should be presented as an intentional feint.
+// Probability scales smoothly from near-zero at rank 1 to ~33% at soft cap, capped at 75%.
+func checkFeint(skillRank int) bool {
+	if skillRank <= 0 {
+		return false
+	}
+	bal := configs.GetBalanceConfig()
+	softCap := float64(bal.SkillSoftCap)
+	if softCap <= 0 {
+		softCap = 50
+	}
+	ratio := float64(skillRank) / softCap
+	feintChance := math.Min(0.75, 0.33*math.Pow(ratio, 1.5))
+	return util.Rand(1000) < int(feintChance*1000)
+}
+
+// getFeintMessage returns a random feint message set.
+func getFeintMessage() feintMessage {
+	return feintMessages[util.Rand(len(feintMessages))]
 }

@@ -169,6 +169,8 @@ options:
         - 'You exploit an opening and swing decisively at <ansi fg="{targettype}">{target}</ansi>!'
         - 'Your <ansi fg="item">{itemname}</ansi> flares as you deliver a commanding strike!'
         - '{momentum}, your weapon crashes into <ansi fg="{targettype}">{target}</ansi>!'
+        - 'You channel arcane force and crack your <ansi fg="item">{itemname}</ansi> into <ansi fg="{targettype}">{target}</ansi>''s {bodypart}!'
+        - 'Your <ansi fg="item">{itemname}</ansi> flares bright as it strikes <ansi fg="{targettype}">{target}</ansi> in the {bodypart}!'
       todefender:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> swings their <ansi fg="item">{itemname}</ansi> into you, crystal flaring!'
@@ -179,6 +181,7 @@ options:
         master:
         - '<ansi fg="{sourcetype}">{source}</ansi> presses their advantage with a channeled swing!'
         - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> flares as it strikes you!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> channels force and cracks their sceptre into your {bodypart}!'
       toroom:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> swings their <ansi fg="item">{itemname}</ansi> into <ansi fg="{targettype}">{target}</ansi>, crystal flaring!'
@@ -206,6 +209,7 @@ options:
         - 'Reading their weakness, you channel devastating force through the crystal!'
         - 'Your {stance} approach pays off as you deliver a commanding smash!'
         - 'Seizing the advantage, you slam your <ansi fg="item">{itemname}</ansi> into <ansi fg="{targettype}">{target}</ansi> with authority!'
+        - 'You channel a surge of power and smash <ansi fg="{targettype}">{target}</ansi> square in the {bodypart}!'
       todefender:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> slams their <ansi fg="item">{itemname}</ansi> into you with a burst of power!'
@@ -216,6 +220,7 @@ options:
         master:
         - '<ansi fg="{sourcetype}">{source}</ansi> draws your guard and unleashes a punishing blow!'
         - '<ansi fg="{sourcetype}">{source}</ansi> reads your weakness and channels devastating force!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> channels power and smashes their sceptre into your {bodypart}!'
       toroom:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> slams their <ansi fg="item">{itemname}</ansi> into <ansi fg="{targettype}">{target}</ansi> with a burst of power!'

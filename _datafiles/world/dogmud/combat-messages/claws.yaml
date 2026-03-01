@@ -223,6 +223,8 @@ options:
         - 'Your <ansi fg="item">{itemname}</ansi> flashes as you maintain the pressure with masterful control!'
         - '{position}, you rake decisively at <ansi fg="{targettype}">{target}</ansi>!'
         - '{momentum}, you lacerate with overwhelming apex predator skill!'
+        - 'Your claws rake across <ansi fg="{targettype}">{target}</ansi>''s {bodypart}!'
+        - 'You gouge <ansi fg="{targettype}">{target}</ansi>''s {bodypart} with a vicious swipe!'
       todefender:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> rends you with their <ansi fg="item">{itemname}</ansi>!'
@@ -243,6 +245,7 @@ options:
         - '<ansi fg="{sourcetype}">{source}</ansi> follows through with a solid rake!'
         - '<ansi fg="{sourcetype}">{source}</ansi> capitalizes on their momentum with perfect timing!'
         - '<ansi fg="{sourcetype}">{source}''s claws flash as they maintain pressure with control!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> rakes their claws across your {bodypart}!'
       toroom:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> rends <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>!'
@@ -288,6 +291,7 @@ options:
         - 'You surge forward on the offensive, your claws tearing deep and viciously!'
         - 'Maintaining your assault, you deliver a powerful sweeping rend with apex predator fury!'
         - 'From your {stance} stance, {momentum}, you deliver a devastating rake while {position}!'
+        - 'Your claws sink deep into <ansi fg="{targettype}">{target}</ansi>''s {bodypart}, tearing viciously!'
       todefender:
         beginner:
         - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> bites into you!'
@@ -309,6 +313,7 @@ options:
         - '<ansi fg="{sourcetype}">{source}</ansi> surges forward on the offensive, claws tearing deep!'
         - '<ansi fg="{sourcetype}">{source}</ansi> maintains their assault with a powerful rend!'
         - '<ansi fg="{sourcetype}">{source}</ansi> overwhelms you with devastating brutality!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s claws sink deep into your {bodypart}!'
       toroom:
         beginner:
         - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> bites into <ansi fg="{targettype}">{target}</ansi>!'

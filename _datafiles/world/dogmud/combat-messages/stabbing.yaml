@@ -220,6 +220,8 @@ options:
         - 'Your <ansi fg="item">{itemname}</ansi> flashes as you maintain the pressure!'
         - 'You are {momentum} as your blade pierces <ansi fg="{targettype}">{target}</ansi>!'
         - 'While {momentum}, you thrust decisively at <ansi fg="{targettype}">{target}</ansi>!'
+        - 'Your <ansi fg="item">{itemname}</ansi> sinks into <ansi fg="{targettype}">{target}</ansi>''s {bodypart}!'
+        - 'You drive your blade into <ansi fg="{targettype}">{target}</ansi>''s {bodypart}!'
       todefender:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> stabs you with their <ansi fg="item">{itemname}</ansi>!'
@@ -232,6 +234,7 @@ options:
         - '<ansi fg="{sourcetype}">{source}</ansi> pivots and thrusts through your guard!'
         - '<ansi fg="{sourcetype}">{source}</ansi> feints and brings their blade forward in a swift thrust!'
         - '<ansi fg="{sourcetype}">{source}</ansi> draws your defense and stabs low!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s blade pierces your {bodypart}!'
         master:
         - '<ansi fg="{sourcetype}">{source}</ansi> reads your stance and strikes with precision!'
         - '<ansi fg="{sourcetype}">{source}</ansi> presses their advantage with a powerful thrust!'
@@ -240,6 +243,7 @@ options:
         - '<ansi fg="{sourcetype}">{source}</ansi> follows through with a solid thrust!'
         - '<ansi fg="{sourcetype}">{source}</ansi> capitalizes on their momentum and strikes true!'
         - '<ansi fg="{sourcetype}">{source}</ansi>''s blade flashes as they maintain pressure!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> drives their blade into your {bodypart}!'
       toroom:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> stabs <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>!'

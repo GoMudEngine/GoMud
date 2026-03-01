@@ -407,6 +407,7 @@ options:
         - 'Your {stance} marksmanship flashes as you maintain the pressure!'
         - 'You are {momentum} as your shot strikes into <ansi fg="{targettype}">{target}</ansi>!'
         - 'While {momentum}, you fire decisively at <ansi fg="{targettype}">{target}</ansi>!'
+        - 'Your shot strikes <ansi fg="{targettype}">{target}</ansi> in the {bodypart}!'
       todefender:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> fires their <ansi fg="item">{itemname}</ansi>, wounding you!'
@@ -426,6 +427,7 @@ options:
         - '<ansi fg="{sourcetype}">{source}</ansi> follows through with a solid shot!'
         - '<ansi fg="{sourcetype}">{source}</ansi> capitalizes on their {momentum} and strikes true!'
         - '<ansi fg="{sourcetype}">{source}</ansi>''s shot flashes as they maintain pressure!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s shot catches you in the {bodypart}!'
       toroom:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> fires their <ansi fg="item">{itemname}</ansi>, wounding <ansi fg="{targettype}">{target}</ansi>!'
@@ -529,6 +531,7 @@ options:
         - 'You surge forward on the offensive, your shot striking deep!'
         - 'Maintaining your assault, you deliver a powerful shot!'
         - 'From your {stance} stance, {momentum}, you deliver a devastating shot while {position}!'
+        - 'Your shot punches into <ansi fg="{targettype}">{target}</ansi>''s {bodypart} with brutal force!'
       todefender:
         beginner:
         - 'In a sweeping motion, <ansi fg="{sourcetype}">{source}</ansi> fires at you with their <ansi fg="item">{itemname}</ansi>!'
