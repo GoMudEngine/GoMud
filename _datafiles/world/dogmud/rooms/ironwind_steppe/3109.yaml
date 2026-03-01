@@ -1,0 +1,36 @@
+roomid: 3109
+zone: Ironwind Steppe
+title: Fungal Garden
+description: A damp, warm cave chamber where pale fungi grow in
+  profuse clusters on every surface. Shelf mushrooms line the
+  walls in overlapping tiers, and delicate thread-like mycelium
+  covers the floor in a white mat. Some of the larger fungi
+  glow with a faint bioluminescence -- a ghostly blue-green
+  light that provides just enough illumination to see shapes
+  and movement. The air is thick with spores and smells of
+  damp earth and decay.
+biome: cave
+exits:
+  south:
+    roomid: 3106
+  west:
+    roomid: 3108
+  north:
+    roomid: 3112
+nouns:
+  fungi: An extraordinary variety of cave fungi -- pale shelf
+    mushrooms, delicate thread-like growths, and bulbous caps
+    in shades of white, grey, and sickly yellow. Several
+    species glow faintly blue-green, providing dim natural
+    light.
+  mycelium: A white mat of fungal threads covering the cave
+    floor, soft and slightly springy underfoot. The mycelium
+    connects all the visible fungi in an underground network.
+spawninfo:
+- mobid: 225
+- mobid: 226
+- mobid: 227
+idlemessages:
+- Bioluminescent fungi pulse with a faint, ghostly light.
+- Spores drift in the still air like tiny motes of dust.
+- The fungal garden glows in shades of blue and green.

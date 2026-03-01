@@ -1,0 +1,39 @@
+mobid: 226
+zone: Ironwind Steppe
+statpool: 180
+itemdropchance: 15
+hostile: true
+maxwander: 2
+groups:
+  - cave-pack
+  - animal
+archetype: fighting
+mutationchance: 45
+idlecommands:
+  - 'emote gnaws at the cave wall, teeth scraping stone with a grating sound'
+  - ''
+  - 'emote raises its blind head, nostrils flaring wide'
+  - ''
+  - ''
+  - 'emote scratches furiously at the stone, sending chips flying'
+activitylevel: 15
+character:
+  name: deep gnawer
+  description: |
+    A large, powerful rodent adapted to life in the deepest caves.
+    The deep gnawer is the size of a large dog, with massive
+    incisors that can chew through stone. Its eyes are vestigial
+    -- tiny, sightless nubs beneath thick skin. It navigates by
+    smell, hearing, and whiskers that can detect air currents
+    and vibrations. Its fur is thin and grey, its body muscular
+    and compact. The deep gnawer carves its own tunnels through
+    the cave system, and its teeth never stop growing.
+  speciesid: 10
+  level: 1
+  stats:
+    strength:
+      training: 12
+    vitality:
+      training: 10
+    perception:
+      training: 5

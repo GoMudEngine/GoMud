@@ -1,0 +1,36 @@
+roomid: 3105
+zone: Ironwind Steppe
+title: Echo Chamber
+description: A large, dome-shaped chamber where every sound is
+  amplified and reflected by the curved walls. Your footsteps
+  return as a cascade of echoes, and even breathing sounds loud
+  and strange. The chamber is perhaps thirty paces across, its
+  ceiling lost in darkness above. The floor is smooth stone worn
+  by water, and a natural pillar of rock stands in the center
+  where a stalactite and stalagmite have joined. The acoustics
+  make it impossible to judge the direction of any sound.
+biome: cave
+exits:
+  south:
+    roomid: 3102
+  east:
+    roomid: 3106
+  north:
+    roomid: 3108
+nouns:
+  pillar: A natural stone pillar where a ceiling stalactite and
+    floor stalagmite have grown together over millennia. The
+    joined column is about as thick as a person's torso and
+    veined with mineral deposits in shades of cream and orange.
+  dome: The chamber ceiling curves into a natural dome, its
+    surface smooth and concave. The dome shape is what creates
+    the remarkable acoustics, focusing and reflecting sound in
+    unpredictable ways.
+spawninfo:
+- mobid: 225
+- mobid: 226
+- mobid: 224
+idlemessages:
+- Your own breathing returns as a whispered echo from every direction.
+- A distant drip becomes a cascade of overlapping echoes.
+- The echo chamber distorts every sound into something unrecognizable.

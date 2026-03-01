@@ -1,0 +1,50 @@
+mobid: 229
+zone: Ironwind Steppe
+statpool: 250
+itemdropchance: 40
+hostile: true
+maxwander: 1
+groups:
+  - cave-pack
+archetype: fighting
+mutationchance: 80
+spawnmutations:
+  - regenerative-tissue
+  - thick-hide
+idlecommands:
+  - 'emote coils its massive body, scales rasping against stone'
+  - ''
+  - 'emote exhales a slow, rumbling breath that shakes loose dust'
+  - ''
+  - ''
+  - 'emote opens one enormous eye, its slit pupil focusing on you'
+  - ''
+  - 'emote shifts its bulk with a grinding of stone and scale'
+activitylevel: 10
+character:
+  name: windscour wyrm
+  description: |
+    The undisputed lord of the Windscour Caves -- a serpentine
+    creature of enormous size, its body thick as a tree trunk and
+    covered in scales as hard as armor plate. The windscour wyrm
+    has dwelt in the deepest chamber for longer than anyone can
+    say, growing slowly in the darkness, feeding on whatever
+    wanders too deep. Its scales are dark grey with an iridescent
+    sheen, and its eyes -- when open -- are molten gold with
+    vertical slit pupils. Deep scars cross its hide, testament
+    to battles with challengers long dead. The wyrm regenerates
+    damage with unsettling speed, wounds closing before your
+    eyes. It is ancient, patient, and supremely dangerous.
+  speciesid: 23
+  level: 1
+  stats:
+    strength:
+      training: 20
+    vitality:
+      training: 20
+    dexterity:
+      training: -5
+    perception:
+      training: 10
+    willpower:
+      training: 10

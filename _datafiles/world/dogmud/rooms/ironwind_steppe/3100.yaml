@@ -1,0 +1,37 @@
+roomid: 3100
+zone: Ironwind Steppe
+title: Cliff Base
+description: The northern cliffs rise abruptly from the steppe here,
+  a wall of pale sandstone streaked with dark mineral stains. The
+  cliff face is pocked with wind-carved hollows and overhangs, the
+  stone eroded into smooth, flowing shapes. At the base, fallen
+  rocks have piled into a natural ramp leading up to several dark
+  openings in the cliff face -- cave mouths, exhaling cool air that
+  smells of stone and damp. Wind howls across the cliff face,
+  creating an eerie, fluctuating moan.
+biome: cliffs
+exits:
+  south:
+    roomid: 3029
+  east:
+    roomid: 3101
+  north:
+    roomid: 3102
+nouns:
+  cliffs: Pale sandstone cliffs rising several stories above you,
+    their faces sculpted by wind into smooth, organic shapes. Dark
+    streaks of mineral staining run vertically down the face like
+    tear tracks. The stone is layered, each stratum a different
+    shade.
+  openings: Dark cave mouths in the cliff face, ranging from
+    narrow slits to openings wide enough for two people abreast.
+    Cool air flows from each one, carrying the smell of deep
+    stone and moisture.
+spawninfo:
+- mobid: 221
+- mobid: 224
+- mobid: 232
+idlemessages:
+- The wind moans across the cave mouths like breath over bottle tops.
+- Cool air washes from the cave openings, a relief from the steppe heat.
+- Something skitters in the shadows of a cave mouth.

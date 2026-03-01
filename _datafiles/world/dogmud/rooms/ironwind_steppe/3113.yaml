@@ -1,0 +1,36 @@
+roomid: 3113
+zone: Ironwind Steppe
+title: Deep Cistern
+description: A natural cistern fills the center of this cave chamber
+  -- a deep pool of still, black water that reflects nothing. The
+  water is ice-cold and impossibly clear despite its dark appearance.
+  The depth is unknown; dropping a stone in produces a long, echoing
+  plunk that suggests considerable depth. The chamber walls are wet
+  and smooth, and the air is cold and heavy with moisture. Something
+  moves in the deep water -- slow, patient ripples that have no
+  visible source.
+biome: cave
+exits:
+  south:
+    roomid: 3110
+  west:
+    roomid: 3112
+  north:
+    roomid: 3114
+nouns:
+  cistern: A natural pool of dark, still water filling the cave
+    floor. The water is cold enough to numb exposed skin in
+    seconds and so clear that the dark color comes from the
+    depth rather than turbidity. The edges drop off steeply
+    into blackness.
+  ripples: Slow, deliberate ripples that cross the pool's surface
+    with no visible cause. Something large moves in the deep
+    water, disturbing the surface at irregular intervals.
+spawninfo:
+- mobid: 227
+- mobid: 225
+- mobid: 226
+idlemessages:
+- A ripple crosses the black water with no visible source.
+- The cold radiating from the cistern makes your breath visible.
+- Something shifts in the deep water, a slow, massive displacement.

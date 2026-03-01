@@ -1,0 +1,38 @@
+roomid: 3112
+zone: Ironwind Steppe
+title: Beetle Queen's Chamber
+description: A large cave chamber with unusually smooth walls and a
+  high, domed ceiling. The floor is covered with a crust of dried
+  secretions and shed exoskeletons, some alarmingly large. A thick
+  column of minerite in the chamber's center has been partially
+  hollowed by insect activity, creating a structure that resembles
+  a massive, organic throne. The air is hot and humid, heated by
+  the metabolic activity of the beetle colony that nests in the
+  walls. This is the heart of the stone beetle colony.
+biome: cave
+exits:
+  west:
+    roomid: 3111
+  south:
+    roomid: 3109
+  east:
+    roomid: 3113
+nouns:
+  throne: A natural stone column partially hollowed and sculpted
+    by beetle secretions into a bulbous, throne-like structure.
+    The surface is coated in hardened amber secretion and embedded
+    with fragments of crystal and shell. The stone beetle queen
+    uses this as her central nest.
+  exoskeletons: Shed exoskeletons of stone beetles littering the
+    chamber floor, some as large as a person's torso. The
+    chitinous shells are dark and hard, with a metallic sheen.
+    They crunch underfoot like thin armor.
+spawninfo:
+- mobid: 228
+- mobid: 224
+- mobid: 224
+- mobid: 226
+idlemessages:
+- The chamber thrums with the vibration of countless insect bodies.
+- Heat radiates from the walls, warmed by the beetle colony within.
+- A massive exoskeleton crunches under your weight.

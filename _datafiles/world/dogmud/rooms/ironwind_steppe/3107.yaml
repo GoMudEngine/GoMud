@@ -1,0 +1,36 @@
+roomid: 3107
+zone: Ironwind Steppe
+title: Gnawer Warren
+description: The cave walls here are riddled with small tunnels and
+  chambers gnawed into the softer stone by generations of deep
+  gnawers. The tunnels are too small for a person but large enough
+  for the rat-sized creatures that made them. Gnaw marks score
+  every surface -- the stone chipped and scraped by persistent
+  teeth. The air smells of animal musk and stone dust. Scratching
+  sounds come from the walls in every direction, an unsettling
+  reminder that you are surrounded by unseen inhabitants.
+biome: cave
+exits:
+  south:
+    roomid: 3104
+  west:
+    roomid: 3103
+  north:
+    roomid: 3110
+nouns:
+  tunnels: Small tunnels gnawed into the cave walls by deep
+    gnawers, each about the width of two fists. The edges are
+    smooth, worn by the passage of many small bodies. Some
+    tunnels show fresh gnaw marks where the creatures are
+    expanding their network.
+  marks: Deep scratches and gouge marks in the stone, made by
+    gnawer teeth over many generations. The gnawers seem able
+    to chew through even hard stone given enough time.
+spawninfo:
+- mobid: 226
+- mobid: 226
+- mobid: 226
+idlemessages:
+- Scratching comes from inside the walls -- gnawers at work.
+- Stone dust trickles from a gnawed tunnel as something shifts inside.
+- The warren is alive with unseen movement on every side.
