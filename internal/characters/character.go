@@ -1940,7 +1940,7 @@ func (c *Character) IsAggro(targetUserId int, targetMobInstanceId int) bool {
 }
 
 func (c *Character) IsDisabled() bool {
-	return c.Health <= 0 || c.Stamina <= 0 || c.Conviction <= 0
+	return c.Health <= 0
 }
 
 func (c *Character) HasBuffFlag(buffFlag buffs.Flag) bool {

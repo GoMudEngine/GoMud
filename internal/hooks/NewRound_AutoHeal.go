@@ -52,52 +52,22 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 		inCombat := user.Character.Aggro != nil
 		healthStart := user.Character.Health
 
-		// ── Downed state: bleedout on all depleted pools, no regen ──
-		if user.Character.IsDisabled() {
+		// ── Downed state: health bleedout only ───────────────────────
+		// Only health causes death. Stamina and conviction bottom out at
+		// 0 and recover via normal regen — the resource depletion penalties
+		// already provide meaningful gameplay consequences for low pools.
+		if user.Character.Health < 1 {
 
-			// Health bleedout
-			if user.Character.Health < 1 {
-				if user.Character.Health <= -10 {
-					user.Command(`suicide`)
-					continue
-				}
-				user.Character.Health--
-				user.SendText(`<ansi fg="red">you are bleeding out!</ansi>`)
-				if room := rooms.LoadRoom(user.Character.RoomId); room != nil {
-					room.SendText(fmt.Sprintf(
-						`<ansi fg="username">%s</ansi> is <ansi fg="red">bleeding out</ansi>!`,
-						user.Character.Name), user.UserId)
-				}
+			if user.Character.Health <= -10 {
+				user.Command(`suicide`)
+				continue
 			}
-
-			// Stamina bleedout
-			if user.Character.Stamina < 1 {
-				if user.Character.Stamina <= -10 {
-					user.Command(`suicide`)
-					continue
-				}
-				user.Character.Stamina--
-				user.SendText(`<ansi fg="yellow">your body is giving out from exhaustion!</ansi>`)
-				if room := rooms.LoadRoom(user.Character.RoomId); room != nil {
-					room.SendText(fmt.Sprintf(
-						`<ansi fg="username">%s</ansi> is <ansi fg="yellow">collapsing from exhaustion</ansi>!`,
-						user.Character.Name), user.UserId)
-				}
-			}
-
-			// Conviction bleedout
-			if user.Character.Conviction < 1 {
-				if user.Character.Conviction <= -10 {
-					user.Command(`suicide`)
-					continue
-				}
-				user.Character.Conviction--
-				user.SendText(`<ansi fg="magenta">your will to go on is fading!</ansi>`)
-				if room := rooms.LoadRoom(user.Character.RoomId); room != nil {
-					room.SendText(fmt.Sprintf(
-						`<ansi fg="username">%s</ansi> is <ansi fg="magenta">losing the will to go on</ansi>!`,
-						user.Character.Name), user.UserId)
-				}
+			user.Character.Health--
+			user.SendText(`<ansi fg="red">you are bleeding out!</ansi>`)
+			if room := rooms.LoadRoom(user.Character.RoomId); room != nil {
+				room.SendText(fmt.Sprintf(
+					`<ansi fg="username">%s</ansi> is <ansi fg="red">bleeding out</ansi>!`,
+					user.Character.Name), user.UserId)
 			}
 
 			// If it has changed, send an update
@@ -106,7 +76,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 				events.AddToQueue(events.CharacterVitalsChanged{UserId: user.UserId})
 			}
 
-			continue // Skip all regen while downed
+			continue // Skip all regen while health is depleted
 		}
 
 		// ── Not downed: reset downed counter, normal regen ──────────
