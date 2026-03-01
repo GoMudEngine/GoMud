@@ -12,6 +12,7 @@ const (
 	ConditionBlinded                               // Reduces perception/dodge/accuracy (Phase 24.5)
 	ConditionPoisoned                              // DoT damage over time (Phase 24.5)
 	ConditionEnchantWithdrawal                     // Pool max penalty after disenchanting (Stage 31.6)
+	ConditionBleeding                              // Wounds seeping blood, taking damage over time (Stage 42.7)
 )
 
 // CombatCondition represents a single active combat state on a character.
@@ -41,6 +42,8 @@ func (c ConditionType) DisplayName() string {
 		return "Poisoned"
 	case ConditionEnchantWithdrawal:
 		return "Enchant Withdrawal"
+	case ConditionBleeding:
+		return "Bleeding"
 	default:
 		return "Unknown Condition"
 	}
@@ -65,6 +68,8 @@ func (c ConditionType) Description() string {
 		return "Toxins coursing through your body, dealing damage over time"
 	case ConditionEnchantWithdrawal:
 		return "Weakened from severing a Chrysalis bond"
+	case ConditionBleeding:
+		return "Wounds seeping blood, taking damage over time"
 	default:
 		return ""
 	}

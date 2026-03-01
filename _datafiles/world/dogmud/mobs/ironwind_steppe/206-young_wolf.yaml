@@ -10,12 +10,15 @@ groups:
   - canine
 archetype: fighting
 mutationchance: 15
+combatcommands:
+  - howl
+  - hamstring
 idlecommands:
   - 'emote sniffs eagerly at the ground, tail low'
   - ''
   - ''
   - 'emote yips once, a sharp, questioning sound'
-  - ''
+  - consume
   - 'emote pounces at a rustling in the grass and comes up empty'
 activitylevel: 30
 character:

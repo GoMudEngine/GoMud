@@ -141,6 +141,19 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 				}
 				user.SendText(`<ansi fg="green">The poison burns through your veins!</ansi>`)
 			}
+
+			// Stage 42.7: Apply bleed DoT damage
+			if user.Character.HasCondition(characters.ConditionBleeding) {
+				bleedDmg := int(user.Character.GetConditionMagnitude(characters.ConditionBleeding))
+				if bleedDmg < 1 {
+					bleedDmg = 1
+				}
+				user.Character.Health -= bleedDmg
+				if user.Character.Health < -10 {
+					user.Character.Health = -10
+				}
+				user.SendText(`<ansi fg="red">Blood seeps from your wounds!</ansi>`)
+			}
 		}
 
 		// Regenerate Stamina - slower during combat
@@ -267,6 +280,18 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 				poisonDmg = 1
 			}
 			mob.Character.Health -= poisonDmg
+			if mob.Character.Health < 1 {
+				mob.Character.Health = 0
+			}
+		}
+
+		// Stage 42.7: Apply bleed DoT damage to mobs
+		if mob.Character.HasCondition(characters.ConditionBleeding) {
+			bleedDmg := int(mob.Character.GetConditionMagnitude(characters.ConditionBleeding))
+			if bleedDmg < 1 {
+				bleedDmg = 1
+			}
+			mob.Character.Health -= bleedDmg
 			if mob.Character.Health < 1 {
 				mob.Character.Health = 0
 			}

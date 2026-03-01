@@ -9,6 +9,8 @@ groups:
   - animal
 archetype: fighting
 mutationchance: 30
+combatcommands:
+  - charge
 idlecommands:
   - 'emote sharpens its tusks against a stone with a grating rasp'
   - ''

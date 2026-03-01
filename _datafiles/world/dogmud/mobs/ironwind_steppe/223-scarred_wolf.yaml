@@ -12,12 +12,15 @@ archetype: fighting
 mutationchance: 50
 spawnmutations:
   - dense-muscles
+combatcommands:
+  - howl
+  - hamstring
 idlecommands:
   - 'emote limps slightly on an old injury but moves with deadly purpose'
   - ''
   - 'emote bares its fangs in a silent snarl, scars twisting its muzzle'
   - ''
-  - ''
+  - consume
   - 'emote watches with one good eye, the other clouded by an old wound'
 activitylevel: 20
 character:
