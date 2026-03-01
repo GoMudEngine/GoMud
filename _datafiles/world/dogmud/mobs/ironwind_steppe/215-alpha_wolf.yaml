@@ -10,12 +10,15 @@ groups:
   - canine
 archetype: fighting
 mutationchance: 40
+combatcommands:
+  - howl
+  - hamstring
 idlecommands:
   - 'emote stands rigid, ears forward, surveying its territory'
   - ''
   - 'emote growls low and deep, a rumble felt more than heard'
   - ''
-  - ''
+  - consume
   - 'emote raises its muzzle and lets out a long, commanding howl'
 activitylevel: 25
 character:

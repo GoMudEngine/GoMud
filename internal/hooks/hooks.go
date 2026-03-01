@@ -80,6 +80,9 @@ func RegisterListeners() {
 
 	events.RegisterListener(events.RebuildMap{}, HandleMapRebuild)
 
+	// Mob death: pack flee behavior (Stage 42.7)
+	events.RegisterListener(events.MobDeath{}, PackFlee)
+
 	// Log tee to users
 	events.RegisterListener(events.Log{}, FollowLogs)
 
