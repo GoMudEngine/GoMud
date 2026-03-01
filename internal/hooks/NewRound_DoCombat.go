@@ -219,11 +219,11 @@ func handleAffected(affectedPlayerIds []int, affectedMobInstanceIds []int) {
 
 		if user := users.GetByUserId(userId); user != nil {
 
-			if user.Character.Health <= -10 || user.Character.Stamina <= -10 || user.Character.Conviction <= -10 {
+			if user.Character.Health <= -10 {
 
 				user.Command(`suicide`) // suicide drops all money/items and transports to land of the dead.
 
-			} else if user.Character.IsDisabled() {
+			} else if user.Character.Health < 1 {
 
 				events.AddToQueue(events.PlayerDrop{UserId: user.UserId, RoomId: user.Character.RoomId})
 

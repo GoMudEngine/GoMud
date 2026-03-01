@@ -598,14 +598,17 @@ func handleMobDownedGrace(mob *mobs.Mob, defUser *users.UserRecord, defRoom *roo
 }
 
 // handlePartyAutoAttack triggers auto-attack for party members when one is attacked by a mob.
+// Uses the persistent per-character "autoattack" setting instead of the party-level list.
 func handlePartyAutoAttack(mob *mobs.Mob, defUser *users.UserRecord) {
 	if party := parties.Get(defUser.UserId); party != nil {
-		for _, memberId := range party.GetAutoAttackUserIds() {
+		for _, memberId := range party.UserIds {
 			if memberId == defUser.UserId {
 				continue
 			}
 			if memberUser := users.GetByUserId(memberId); memberUser != nil {
-				if memberUser.Character.RoomId == defUser.Character.RoomId && memberUser.Character.Aggro == nil {
+				if memberUser.Character.RoomId == defUser.Character.RoomId &&
+					memberUser.Character.GetSetting("autoattack") != "off" &&
+					memberUser.Character.Aggro == nil {
 					memberUser.Command(fmt.Sprintf(`attack #%d`, mob.InstanceId))
 				}
 			}

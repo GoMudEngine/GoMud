@@ -200,19 +200,16 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			}
 
 			if party := parties.Get(user.UserId); party != nil {
-				if party.IsLeader(user.UserId) {
-					for _, id := range party.GetAutoAttackUserIds() {
-						if id == user.UserId {
-							continue
+				for _, id := range party.UserIds {
+					if id == user.UserId {
+						continue
+					}
+					if partyUser := users.GetByUserId(id); partyUser != nil {
+						if partyUser.Character.RoomId == user.Character.RoomId &&
+							partyUser.Character.GetSetting("autoattack") != "off" &&
+							partyUser.Character.Aggro == nil {
+							partyUser.Command(fmt.Sprintf(`attack #%d`, attackMobInstanceId))
 						}
-						if partyUser := users.GetByUserId(id); partyUser != nil {
-							if partyUser.Character.RoomId == user.Character.RoomId {
-
-								partyUser.Command(fmt.Sprintf(`attack #%d`, attackMobInstanceId)) // # denotes a specific mob instanceId
-
-							}
-						}
-
 					}
 				}
 			}

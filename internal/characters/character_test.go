@@ -1972,18 +1972,18 @@ func TestCharacter_IsDisabled(t *testing.T) {
 			want:       true,
 		},
 		{
-			name:       "Stamina is zero",
+			name:       "Stamina is zero but health positive",
 			health:     10,
 			stamina:    0,
 			conviction: 10,
-			want:       true,
+			want:       false,
 		},
 		{
-			name:       "Conviction is zero",
+			name:       "Conviction is zero but health positive",
 			health:     10,
 			stamina:    10,
 			conviction: 0,
-			want:       true,
+			want:       false,
 		},
 		{
 			name:       "Multiple pools depleted",
