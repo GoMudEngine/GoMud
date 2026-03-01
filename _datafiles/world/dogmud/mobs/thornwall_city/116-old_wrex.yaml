@@ -1,0 +1,37 @@
+mobid: 116
+zone: Thornwall City
+statpool: 36
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - humanoid
+  - gossiper
+idlecommands:
+  - 'emote sits perfectly still, watching the room with pale, unblinking eyes'
+  - ''
+  - 'emote traces a finger slowly along an old scar on the back of his hand'
+  - ''
+  - 'emote tilts his head slightly, as if listening to something no one else hears'
+  - ''
+  - 'emote lifts his cup, considers it, and sets it back down without drinking'
+activitylevel: 7
+character:
+  name: old Wrex
+  description: A compact, broad-shouldered man who takes up less space than
+    he should. He sits with the coiled stillness of someone who was once
+    dangerous and has not entirely forgotten how. His hair is cropped close
+    to a scarred scalp, and his hands are thick with old calluses. He wears
+    plain, dark clothing that reveals nothing about him. Wrex rarely
+    volunteers information, but his memory stretches back further than most
+    written records, and what he does say tends to be precisely correct.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    perception:
+      training: 14
+    willpower:
+      training: 10
+    vitality:
+      training: 6

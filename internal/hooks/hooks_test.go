@@ -2732,6 +2732,95 @@ func TestHandleIdleMobs_ValidMob(t *testing.T) {
 	assert.Equal(t, events.Continue, result)
 }
 
+// ─── Gossiper helpers ─────────────────────────────────────────────────────────
+
+func TestMobHasGroup_Found(t *testing.T) {
+	mob := &mobs.Mob{Groups: []string{"humanoid", "gossiper", "merchant"}}
+	assert.True(t, mobHasGroup(mob, "gossiper"))
+}
+
+func TestMobHasGroup_NotFound(t *testing.T) {
+	mob := &mobs.Mob{Groups: []string{"humanoid", "merchant"}}
+	assert.False(t, mobHasGroup(mob, "gossiper"))
+}
+
+func TestMobHasGroup_EmptyGroups(t *testing.T) {
+	mob := &mobs.Mob{Groups: nil}
+	assert.False(t, mobHasGroup(mob, "gossiper"))
+}
+
+func TestBuildGossipLine_FallbackWhenNoEvents(t *testing.T) {
+	// Force sync.Once to complete, then override templates
+	gossipTemplatesOnce.Do(func() {})
+	gossipTemplates = map[string][]string{
+		"fallback": {"Nothing to report.", "Quiet day."},
+	}
+	defer func() { gossipTemplates = nil }()
+
+	mob := &mobs.Mob{
+		MobId: 114,
+		Character: characters.Character{
+			Zone: "TestZone",
+		},
+	}
+
+	line := buildGossipLine(mob)
+	assert.Contains(t, []string{"Nothing to report.", "Quiet day."}, line)
+}
+
+func TestBuildGossipLine_EmptyTemplatesEmptyEvents(t *testing.T) {
+	gossipTemplatesOnce.Do(func() {})
+	gossipTemplates = map[string][]string{}
+	defer func() { gossipTemplates = nil }()
+
+	mob := &mobs.Mob{
+		MobId: 114,
+		Character: characters.Character{
+			Zone: "TestZone",
+		},
+	}
+
+	line := buildGossipLine(mob)
+	assert.Equal(t, "", line)
+}
+
+func TestHandleIdleMobs_GossiperMob(t *testing.T) {
+	cleanup := seedAllRegistries()
+	defer cleanup()
+
+	// Add a gossiper mob instance
+	gossiperMob := &mobs.Mob{
+		MobId:         114,
+		InstanceId:    200,
+		HomeRoomId:    1,
+		Hostile:       false,
+		ActivityLevel: 7,
+		Groups:        []string{"humanoid", "gossiper"},
+		Character: characters.Character{
+			Name:      "old Fen",
+			Zone:      "TestZone",
+			RoomId:    1,
+			Health:    50,
+			Buffs:     buffs.New(),
+			Cooldowns: map[string]int{},
+		},
+	}
+	gossiperMob.Character.HealthMax.Value = 100
+
+	cleanupGossiper := mobs.SeedMobsForTest(nil, map[int]*mobs.Mob{200: gossiperMob})
+	defer cleanupGossiper()
+
+	// Pre-seed gossip templates so it doesn't try to load from disk
+	gossipTemplatesOnce.Do(func() {})
+	gossipTemplates = map[string][]string{
+		"fallback": {"Quiet day."},
+	}
+	defer func() { gossipTemplates = nil }()
+
+	result := HandleIdleMobs(events.MobIdle{MobInstanceId: 200})
+	assert.Equal(t, events.Continue, result)
+}
+
 // ─── PlaySound ────────────────────────────────────────────────────────────────
 
 func TestPlaySound_WrongEvent(t *testing.T) {

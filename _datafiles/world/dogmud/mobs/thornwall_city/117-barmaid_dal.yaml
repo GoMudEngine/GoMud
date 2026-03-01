@@ -1,0 +1,37 @@
+mobid: 117
+zone: Thornwall City
+statpool: 30
+itemdropchance: 0
+hostile: false
+maxwander: 1
+groups:
+  - humanoid
+  - barmaid
+idlecommands:
+  - 'emote wipes down a table with a rag that has seen better days'
+  - ''
+  - 'emote gathers empty cups onto a tray balanced on one hip'
+  - ''
+  - 'emote pushes a strand of hair from her face and glances toward the back corner'
+  - ''
+  - 'emote sets a fresh cup on the bar without being asked'
+activitylevel: 12
+character:
+  name: barmaid Dal
+  description: A young woman with quick hands and a guarded expression, moving
+    through the tavern with the practiced efficiency of someone who learned
+    early that standing still invites trouble. Her dark hair is tied back with
+    a strip of leather, and her apron is stained with the evidence of a long
+    shift. She handles the old regulars in the back corner with a mix of
+    patience and sharp comebacks that suggests she has heard every line they
+    have to offer and stopped being impressed years ago.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 10
+    charisma:
+      training: 8
+    perception:
+      training: 6
