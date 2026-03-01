@@ -41,6 +41,9 @@ func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData
 		if mob == nil || mob.Character.Health < 1 {
 			continue
 		}
+		if mob.Character.RoomId != room.RoomId {
+			continue // target left the room before spell resolved
+		}
 		resolveAgainstMob(user, mob, room, spellData, spellAttack, magnitude)
 	}
 
@@ -49,6 +52,10 @@ func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData
 		targetUser := users.GetByUserId(targetUserId)
 		if targetUser == nil {
 			continue
+		}
+		if targetUser.Character.RoomId != room.RoomId {
+			user.SendText(fmt.Sprintf(`Your spell fizzles — <ansi fg="username">%s</ansi> is no longer here.`, targetUser.Character.Name))
+			continue // target left the room before spell resolved
 		}
 		if spellData.TargetDefenseType == "" {
 			// Help spell with no defense — always applies
@@ -447,12 +454,12 @@ func resolveMobSpell(mob *mobs.Mob, cs *characters.CastingState, spellData *spel
 			applyMobSelfEffect(mob, room, spellData, magnitude)
 			continue
 		}
-		if target := mobs.GetInstance(mobInstId); target != nil && target.Character.Health > 0 {
+		if target := mobs.GetInstance(mobInstId); target != nil && target.Character.Health > 0 && target.Character.RoomId == room.RoomId {
 			resolveMobSpellAgainstMob(mob, target, room, spellData, spellAttack, magnitude)
 		}
 	}
 	for _, userId := range cs.TargetUserIds {
-		if target := users.GetByUserId(userId); target != nil {
+		if target := users.GetByUserId(userId); target != nil && target.Character.RoomId == room.RoomId {
 			resolveMobSpellAgainstPlayer(mob, target, room, spellData, spellAttack, magnitude)
 		}
 	}

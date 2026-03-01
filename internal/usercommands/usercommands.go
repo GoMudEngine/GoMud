@@ -47,6 +47,7 @@ var (
 		`alias`:       {Alias, true, true, false},
 		`appraise`:    {Appraise, false, true, false},
 		`ask`:         {Ask, false, true, false},
+		`assist`:      {Assist, false, true, false},
 		`attack`:      {Attack, false, true, false},
 		`ai-flag`:    {AiFlag, true, true, true},       // Admin only
 		`ai-list`:    {AiList, true, true, true},       // Admin only
