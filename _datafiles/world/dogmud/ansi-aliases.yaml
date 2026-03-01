@@ -9,6 +9,15 @@ colors:
   mobname: 51
   mobname-aggro: 9 # Bright red
   mobname-downed: 124
+  mobname-dup2: 45        # magenta-cyan
+  mobname-dup2-aggro: 197 # bright magenta-red
+  mobname-dup2-downed: 125
+  mobname-dup3: 48        # teal-cyan
+  mobname-dup3-aggro: 203 # salmon-red
+  mobname-dup3-downed: 130
+  mobname-dup4: 39        # blue-cyan
+  mobname-dup4-aggro: 167 # dusky red
+  mobname-dup4-downed: 131
   petname: 215
   spellname: magenta
   spell-text: 183

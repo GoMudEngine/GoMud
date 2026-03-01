@@ -40,16 +40,28 @@ type FormattedName struct {
 	UseShortAdjectives bool   // Whether to failover to short adjectives
 	QuestAlert         bool   // Whether this mob is relevant to a current quest
 	PetName            string // Name of pet (if any)
+	DuplicateIndex     int    // When > 0, appends #N to name and shifts color for duplicates
 }
 
 func (f FormattedName) String() string {
 
+	name := f.Name
 	ansiAlias := f.Type
+
+	if f.DuplicateIndex > 0 {
+		name = fmt.Sprintf(`%s #%d`, f.Name, f.DuplicateIndex)
+		// Indices 2-4 get shifted colors; index 1 keeps base color; 5+ wraps
+		idx := ((f.DuplicateIndex - 1) % 4) + 1
+		if idx >= 2 {
+			ansiAlias = fmt.Sprintf(`%s-dup%d`, f.Type, idx)
+		}
+	}
+
 	if f.Suffix != `` {
 		ansiAlias = fmt.Sprintf(`%s-%s`, ansiAlias, f.Suffix)
 	}
 
-	output := fmt.Sprintf(`<ansi fg="%s">%s</ansi>`, ansiAlias, f.Name)
+	output := fmt.Sprintf(`<ansi fg="%s">%s</ansi>`, ansiAlias, name)
 
 	adjectives := f.Adjectives
 

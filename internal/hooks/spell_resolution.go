@@ -96,8 +96,8 @@ func resolveAgainstMob(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, 
 
 	if !success {
 		user.SendText(fmt.Sprintf(
-			`<ansi fg="yellow">Your %s fizzles against <ansi fg="mobname">%s</ansi>.</ansi>`,
-			spellData.Name, mob.Character.Name))
+			`<ansi fg="yellow">Your %s fizzles against %s.</ansi>`,
+			spellData.Name, mobDisplayName(mob, room, user.UserId)))
 		// Stage 30.1: Record fizzle
 		combat.RecordSpell(combat.User, combat.Mob, false, false, false, true, 0, atkRoll.ZScore, user.Character, &mob.Character, round)
 		return
@@ -120,6 +120,12 @@ func applyMobEffect(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spe
 		critTag = ` <ansi fg="yellow">[CRIT!]</ansi>`
 	}
 
+	viewerId := 0
+	if user != nil {
+		viewerId = user.UserId
+	}
+	mName := mobDisplayName(mob, room, viewerId)
+
 	switch spellData.EffectType {
 	case "damage":
 		var casterChar *characters.Character
@@ -141,11 +147,11 @@ func applyMobEffect(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spe
 		}
 		if user != nil {
 			user.SendText(fmt.Sprintf(
-				`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> strikes <ansi fg="mobname">%s</ansi>! (<ansi fg="damage">%s</ansi>)%s</ansi>`,
-				spellData.Name, mob.Character.Name, combat.GetDamageDescription(dmg, mob.Character.HealthMax.Value), critTag))
+				`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> strikes %s! (<ansi fg="damage">%s</ansi>)%s</ansi>`,
+				spellData.Name, mName, combat.GetDamageDescription(dmg, mob.Character.HealthMax.Value), critTag))
 			room.SendText(fmt.Sprintf(
-				`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> strikes <ansi fg="mobname">%s</ansi>!`,
-				user.Character.Name, spellData.Name, mob.Character.Name), user.UserId)
+				`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> strikes %s!`,
+				user.Character.Name, spellData.Name, mName), user.UserId)
 		}
 
 	case "dot":
@@ -167,11 +173,11 @@ func applyMobEffect(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spe
 		}
 		if user != nil {
 			user.SendText(fmt.Sprintf(
-				`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> afflicts <ansi fg="mobname">%s</ansi>!%s</ansi>`,
-				spellData.Name, mob.Character.Name, critTag))
+				`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> afflicts %s!%s</ansi>`,
+				spellData.Name, mName, critTag))
 			room.SendText(fmt.Sprintf(
-				`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> afflicts <ansi fg="mobname">%s</ansi>!`,
-				user.Character.Name, spellData.Name, mob.Character.Name), user.UserId)
+				`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> afflicts %s!`,
+				user.Character.Name, spellData.Name, mName), user.UserId)
 		}
 
 	case "knockdown":
@@ -196,11 +202,11 @@ func applyMobEffect(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spe
 		}
 		if user != nil {
 			user.SendText(fmt.Sprintf(
-				`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> slams <ansi fg="mobname">%s</ansi> to the ground! (<ansi fg="damage">%s</ansi>)%s</ansi>`,
-				spellData.Name, mob.Character.Name, combat.GetDamageDescription(dmg, mob.Character.HealthMax.Value), critTag))
+				`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> slams %s to the ground! (<ansi fg="damage">%s</ansi>)%s</ansi>`,
+				spellData.Name, mName, combat.GetDamageDescription(dmg, mob.Character.HealthMax.Value), critTag))
 			room.SendText(fmt.Sprintf(
-				`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> knocks <ansi fg="mobname">%s</ansi> to the ground!`,
-				user.Character.Name, spellData.Name, mob.Character.Name), user.UserId)
+				`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> knocks %s to the ground!`,
+				user.Character.Name, spellData.Name, mName), user.UserId)
 		}
 
 	case "buff":
@@ -209,11 +215,11 @@ func applyMobEffect(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spe
 		}
 		if user != nil {
 			user.SendText(fmt.Sprintf(
-				`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> takes effect on <ansi fg="mobname">%s</ansi>!%s</ansi>`,
-				spellData.Name, mob.Character.Name, critTag))
+				`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> takes effect on %s!%s</ansi>`,
+				spellData.Name, mName, critTag))
 			room.SendText(fmt.Sprintf(
-				`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> affects <ansi fg="mobname">%s</ansi>!`,
-				user.Character.Name, spellData.Name, mob.Character.Name), user.UserId)
+				`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> affects %s!`,
+				user.Character.Name, spellData.Name, mName), user.UserId)
 		}
 
 	case "tame":
@@ -228,8 +234,8 @@ func applyMobEffect(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spe
 		if !isAnimal {
 			if user != nil {
 				user.SendText(fmt.Sprintf(
-					`<ansi fg="red"><ansi fg="mobname">%s</ansi> cannot be tamed — it is not a wild animal.</ansi>`,
-					mob.Character.Name))
+					`<ansi fg="red">%s cannot be tamed — it is not a wild animal.</ansi>`,
+					mName))
 			}
 			return 0
 		}
@@ -238,18 +244,18 @@ func applyMobEffect(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spe
 			mob.Character.Aggro = nil
 			user.Character.TrackCharmed(mob.InstanceId, true)
 			user.SendText(fmt.Sprintf(
-				`<ansi fg="cyan"><ansi fg="mobname">%s</ansi> calms and becomes your companion!</ansi>`,
-				mob.Character.Name))
+				`<ansi fg="cyan">%s calms and becomes your companion!</ansi>`,
+				mName))
 			room.SendText(fmt.Sprintf(
-				`<ansi fg="mobname">%s</ansi> becomes docile and follows <ansi fg="username">%s</ansi>.`,
-				mob.Character.Name, user.Character.Name), user.UserId)
+				`%s becomes docile and follows <ansi fg="username">%s</ansi>.`,
+				mName, user.Character.Name), user.UserId)
 		}
 
 	default:
 		if user != nil {
 			user.SendText(fmt.Sprintf(
-				`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> takes effect on <ansi fg="mobname">%s</ansi>.</ansi>`,
-				spellData.Name, mob.Character.Name))
+				`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> takes effect on %s.</ansi>`,
+				spellData.Name, mName))
 		}
 	}
 	return dmgDealt
@@ -481,7 +487,7 @@ func applyMobSelfEffect(mob *mobs.Mob, room *rooms.Room, spellData *spells.Spell
 		durationRounds := ticks * 3
 		mob.Character.AddCondition(characters.ConditionRegen, durationRounds, regenMult, "heal spell")
 		room.SendText(fmt.Sprintf(
-			`<ansi fg="mobname">%s</ansi> channels restorative magic.`, mob.Character.Name))
+			`%s channels restorative magic.`, mobDisplayName(mob, room, 0)))
 	case "shield":
 		skillLevel := mob.Character.GetSkillLevel(skills.Spellcasting)
 		shieldBonus := (mob.Character.Stats.Willpower.ValueAdj + skillLevel) / 3
@@ -491,7 +497,7 @@ func applyMobSelfEffect(mob *mobs.Mob, room *rooms.Room, spellData *spells.Spell
 		duration := 10 + int(math.Round(float64(skillLevel)/5))
 		mob.Character.AddCondition(characters.ConditionShield, duration, float64(shieldBonus), "spell")
 		room.SendText(fmt.Sprintf(
-			`A shimmering barrier forms around <ansi fg="mobname">%s</ansi>.`, mob.Character.Name))
+			`A shimmering barrier forms around %s.`, mobDisplayName(mob, room, 0)))
 	}
 }
 

@@ -87,10 +87,11 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 		if attemptMade, success := mob.Character.AttemptRecovery(mob.Character.Stats.Dexterity.ValueAdj); attemptMade {
 			// Send messages to the room so players can see NPCs trying to recover
 			if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
+				mName := mobDisplayName(mob, room, 0)
 				if success {
-					room.SendText("<ansi fg=\"mobname\">" + mob.Character.Name + "</ansi> clambers to their feet in a rushed panic.")
+					room.SendText(mName + " clambers to their feet in a rushed panic.")
 				} else {
-					room.SendText("<ansi fg=\"mobname\">" + mob.Character.Name + "</ansi> attempts to stand, but slips and falls in the chaos of battle.")
+					room.SendText(mName + " attempts to stand, but slips and falls in the chaos of battle.")
 				}
 			}
 		}
