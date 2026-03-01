@@ -6039,27 +6039,30 @@ pass, no regressions.
 
 ---
 
-### Stage 41.2: Mobs & Users — Standalone Logic
+### Stage 41.2: Mobs & Users — Standalone Logic ✅ COMPLETED (merge: e852dc8)
 
 **Goal**: Apply seedRegistry to mobs and users, testing the portions that
 don't require cross-package state (pure logic, relationships, stat
 distribution).
 
 **Changes**:
-1. `internal/mobs/mobs_test.go` — Create `seedMobRegistry()` populating
-   `mobInstances` and mob templates. Write tests for: mob relationships
-   (hate/ally tracking), idle behavior selection, stat distribution by
-   archetype (`fighting`/`casting`/default), spawn logic, AI profile
-   selection. Target: **mobs 40%+**
-2. `internal/users/users_test.go` — Extend with `seedUserRegistry()`
-   populating `userManager.Users`. Write tests for: `GetByUserId()`,
-   `GetByCharacterName()`, `GetByConnectionId()`, user state transitions,
-   zombie connection cleanup. Target: **users 30%+**
+1. `internal/mobs/mobs_test.go` — Created `seedRegistry()` populating all 7
+   global maps. Tests cover: instance lookup, relationships (hate/ally),
+   hostility tracking, idle/angry commands, player attack tracking, death
+   tracking, name lookup, Validate, NewMobById archetype distribution,
+   hasProgression, instanceFilename, PathQueue, GetSellPrice, IsTameable,
+   GetMemoryUsage, and more. **mobs: 0% → 50%**
+2. `internal/users/users_test.go` — Created `seedRegistry()` replacing
+   userManager singleton. Tests cover: GetByUserId, GetByCharacterName,
+   GetByConnectionId, GetAllActiveUsers, zombie management, LoginUser
+   (fresh/double/reconnect), LogOutUserByConnectionId, UserRecord methods
+   (TempData, ConfigOption, aliases, prompts, vital bars, password),
+   Storage, Inbox, UserLog, renderVitalBar, targetHealthDesc. **users: 12% → 45.6%**
 
 **Completion criteria**: Both packages have seedRegistry, all new tests pass,
 mob archetype distribution verified statistically.
 
-**Estimated Changes**: ~600–1000 lines across 2 test files
+**Actual Changes**: ~2510 lines across 2 test files
 
 ---
 
@@ -6122,8 +6125,8 @@ regressions. Raise CI coverage gate from 40% to **55%**.
 | items | 6.2% | 40%+ | 41.1 |
 | buffs | 25.7% | 60%+ | 41.1 |
 | rooms | 7.8% | 30%+ | 41.1 |
-| mobs | 0.0% | 40%+ | 41.2 |
-| users | 12.3% | 30%+ | 41.2 |
+| mobs | 50.0% | 40%+ | 41.2 ✅ |
+| users | 45.6% | 30%+ | 41.2 ✅ |
 | hooks | 0.0% | 30%+ | 41.3 |
 | usercommands | 0.0% | 25%+ | 41.4 |
 | mobcommands | 0.0% | 25%+ | 41.4 |
@@ -6346,4 +6349,4 @@ These are longer-term goals to be detailed when the above phases are complete:
 
 **Last Updated**: 2026-03-01
 **Status**: In Progress
-**Current Stage**: Stage 41.1 complete. Next: Stage 41.2 (seedRegistry — mobs, users).
+**Current Stage**: Stage 41.2 complete. Next: Stage 41.3 (hooks — multi-registry seeding infrastructure).
