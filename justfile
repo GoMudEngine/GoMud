@@ -2,8 +2,9 @@
 # Quick commands for common development tasks
 # Install just: https://github.com/casey/just
 
-# Use sh shell for all commands (works on Windows Git Bash, WSL, and Unix)
+# Use sh for all commands. On Windows (PowerShell/CMD), use Git's sh.exe.
 set shell := ["sh", "-cu"]
+set windows-shell := ["C:/Program Files/Git/bin/sh.exe", "-cu"]
 
 # List all available commands
 default:
