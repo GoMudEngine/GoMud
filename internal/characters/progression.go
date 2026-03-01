@@ -277,11 +277,101 @@ func (c *Character) OnFirstMobKill(userId int) {
 // OnLowResource is called when a resource (health, stamina, conviction)
 // drops below 25% of its maximum. Triggers a stat progression check
 // for the related stat (e.g. low health → vitality progression).
+// Deprecated: replaced by OnRegenTick smooth curve, kept for potential reuse.
 func (c *Character) OnLowResource(resourceName string, relatedStat string, userId int) {
 	mudlog.Debug("Progression", "event", "low_resource", "resource", resourceName, "stat", relatedStat, "character", c.Name)
 
 	if configs.GetGamePlayConfig().UseSkillProgression {
 		c.CheckStatProgression(relatedStat, userId, 1.5)
+	}
+}
+
+// CheckRegenProgression rolls against a given chance for stat progression,
+// applying mob gating, per-stat multipliers, and mutation bonuses.
+// Used by OnRegenTick for regen-based stat progression.
+func (c *Character) CheckRegenProgression(statName string, userId int, chance float64) {
+	b := configs.GetBalanceConfig()
+
+	// Mob-specific gating
+	if c.IsMob {
+		if !bool(b.MobProgressionEnabled) {
+			return
+		}
+		if c.GetStatValue(statName) >= int(b.MobStatCap) {
+			return
+		}
+		chance *= float64(b.MobProgressionRate)
+	}
+
+	// Per-stat multiplier from config
+	chance *= b.GetStatProgressionMultiplier(statName)
+
+	// Mutation stat progression multiplier
+	mutStatMult := 1.0 + mutations.GetStatProgressionMultiplier(c.Mutations)
+	chance *= mutStatMult
+
+	if chance <= 0 {
+		return
+	}
+	if chance > 1.0 {
+		chance = 1.0
+	}
+
+	// Roll: chance is 0.0–1.0, convert to 0–10000 for integer roll
+	threshold := int(chance * 10000)
+	roll := util.Rand(10000)
+
+	mudlog.Debug("Progression", "check", "regen_stat", "stat", statName,
+		"chance", fmt.Sprintf("%.4f%%", chance*100),
+		"roll", roll, "threshold", threshold, "character", c.Name)
+
+	if roll < threshold {
+		if c.IncreaseStat(statName, 1) {
+			if userId > 0 {
+				msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> Your <ansi fg="yellow">%s</ansi> grows stronger! <ansi fg="magenta">***</ansi>`, statName)
+				events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+			}
+		}
+	}
+}
+
+// OnRegenTick is called every regen tick (every 3 rounds) for each resource
+// pool. It computes a smooth chance based on how depleted the pool is and
+// rolls for stat progression on each related stat.
+//
+// Formula: chance = RegenProgressionBase × (1 - current/max) ^ RegenProgressionCurve
+//
+// Resource→stat mappings:
+//   Health    → vitality, willpower
+//   Stamina   → strength, vitality
+//   Conviction→ willpower, charisma
+func (c *Character) OnRegenTick(current, max int, relatedStats []string, userId int) {
+	if !configs.GetGamePlayConfig().UseSkillProgression {
+		return
+	}
+	if max <= 0 {
+		return
+	}
+
+	ratio := float64(current) / float64(max)
+	if ratio >= 1.0 {
+		return // Pool is full, no progression chance
+	}
+	if ratio < 0 {
+		ratio = 0
+	}
+
+	b := configs.GetBalanceConfig()
+	base := float64(b.RegenProgressionBase)
+	curve := float64(b.RegenProgressionCurve)
+
+	chance := base * math.Pow(1.0-ratio, curve)
+	if chance <= 0 {
+		return
+	}
+
+	for _, statName := range relatedStats {
+		c.CheckRegenProgression(statName, userId, chance)
 	}
 }
 

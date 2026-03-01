@@ -168,6 +168,17 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 			user.Character.Conviction = user.Character.ConvictionMax.Value
 		}
 
+		// Regen-based stat progression: smooth chance based on pool depletion
+		user.Character.OnRegenTick(
+			user.Character.Health, user.Character.HealthMax.Value,
+			[]string{"vitality", "willpower"}, user.UserId)
+		user.Character.OnRegenTick(
+			user.Character.Stamina, user.Character.StaminaMax.Value,
+			[]string{"strength", "vitality"}, user.UserId)
+		user.Character.OnRegenTick(
+			user.Character.Conviction, user.Character.ConvictionMax.Value,
+			[]string{"willpower", "charisma"}, user.UserId)
+
 		// If it has changed, send an update
 		if user.Character.Health-healthStart != 0 {
 
@@ -237,6 +248,17 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 		if mob.Character.Conviction > mob.Character.ConvictionMax.Value {
 			mob.Character.Conviction = mob.Character.ConvictionMax.Value
 		}
+
+		// Regen-based stat progression for mobs (gated inside OnRegenTick)
+		mob.Character.OnRegenTick(
+			mob.Character.Health, mob.Character.HealthMax.Value,
+			[]string{"vitality", "willpower"}, 0)
+		mob.Character.OnRegenTick(
+			mob.Character.Stamina, mob.Character.StaminaMax.Value,
+			[]string{"strength", "vitality"}, 0)
+		mob.Character.OnRegenTick(
+			mob.Character.Conviction, mob.Character.ConvictionMax.Value,
+			[]string{"willpower", "charisma"}, 0)
 
 		// Phase 25.1: Apply poison DoT damage to mobs
 		if mob.Character.HasCondition(characters.ConditionPoisoned) {

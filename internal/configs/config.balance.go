@@ -67,6 +67,8 @@ type Balance struct {
 	MobSkillCap              ConfigInt   `yaml:"MobSkillCap"`              // Hard cap on mob skill level from progression (default 3)
 	MobSaveIntervalRounds    ConfigInt   `yaml:"MobSaveIntervalRounds"`    // Rounds between periodic mob instance saves (default 100)
 	MobInstanceMaxAgeDays    ConfigInt   `yaml:"MobInstanceMaxAgeDays"`    // Max age in days before stale instance files are pruned (default 7)
+	RegenProgressionBase     ConfigFloat `yaml:"RegenProgressionBase"`     // Max chance at 0% resource per stat per tick (default 0.005)
+	RegenProgressionCurve    ConfigFloat `yaml:"RegenProgressionCurve"`    // Exponent shaping the depletion→chance curve (default 3.0)
 
 	// ── PROGRESSION MULTIPLIERS ──────────────────────────────────────────────
 	// Per-stat and per-skill multipliers on progression chance.
@@ -292,6 +294,15 @@ func (b *Balance) Validate() {
 	}
 	if b.MobInstanceMaxAgeDays < 1 {
 		b.MobInstanceMaxAgeDays = 7
+	}
+	if b.RegenProgressionBase <= 0 {
+		b.RegenProgressionBase = 0.005
+	}
+	if b.RegenProgressionBase > 1.0 {
+		b.RegenProgressionBase = 1.0
+	}
+	if b.RegenProgressionCurve <= 0 {
+		b.RegenProgressionCurve = 3.0
 	}
 
 	// ── PROGRESSION MULTIPLIERS ──────────────────────────────────────────────
