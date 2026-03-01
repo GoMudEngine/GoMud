@@ -5873,23 +5873,25 @@ so `GamePlay` = pure gameplay flags and `Balance` = every numeric tuning knob.
 
 Last phase — tests cover the final state of all features.
 
-### Stage 40.1: Unit Test Gaps Audit & Coverage Targets
+### Stage 40.1: Unit Test Gaps Audit & Coverage Targets ✅ COMPLETED
+
+**Merge Commit**: (pending merge into development)
 
 **Goal**: Map what's tested and what isn't, set targets.
 
-**Changes**:
-1. Run `go test -coverprofile` across all packages
-2. Generate coverage report — identify untested critical paths
-   (combat, crafting, spells, progression, mutations, moon phases)
-3. Prioritize by risk: code that handles player state, combat
-   outcomes, and persistence gets highest priority
-4. Document coverage targets per package (e.g., combat: 80%,
-   crafting: 75%, characters: 80%)
-5. Create a tracking checklist for stages 40.2–40.4
+**Key Findings**:
+- Tier 1 (critical) weighted average: ~24% coverage — significant gap
+- 5 packages at 0% coverage: hooks, items, mobs, spells, dialogue
+- 75+ critical functions inventoried across 10 packages
+- 4 testability barriers identified with concrete refactoring options
+- Proven patterns (seedRegistry, table-driven, statistical) ready to reuse
 
-**Testing**:
-- Coverage report generated and reviewed
-- Target checklist created
+**Deliverable**: `docs/TEST_COVERAGE_AUDIT.md` — full audit with:
+- Coverage baseline table (all 50+ packages)
+- Tier classification and per-package targets (95/85/60%)
+- Testability barriers analysis with refactoring options
+- Critical functions inventory (~75 functions)
+- Stage 40.2–40.4 checklist (55 unit tests + 12 scenarios + 10 CI items)
 
 **Estimated Changes**: ~50–100 lines (test config, docs)
 
@@ -6013,7 +6015,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 37: Codebase Quality Pass | 8 stages (37.1a–37.5) | 24 hours | **Complete** |
 | Phase 38: Mob/Player Unification & NPC Progression | 5 stages (38.1–38.5) | 30 hours | **Complete** |
 | Phase 39: Balance Pass & Config Cleanup | 3 stages (39.1–39.3) | 14 hours | **Complete** |
-| Phase 40: Test Coverage Pass | 4 stages (40.1–40.4) | 20 hours | Not started |
+| Phase 40: Test Coverage Pass | 4 stages (40.1–40.4) | 20 hours | 40.1 Complete |
 | **Total** | **~112 stages** | **~714 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
@@ -6178,4 +6180,4 @@ These are longer-term goals to be detailed when the above phases are complete:
 
 **Last Updated**: 2026-02-28
 **Status**: In Progress
-**Current Stage**: Stage 39.3 complete (config reorganization — 28 combat fields migrated from GamePlay to Balance, config.yaml reorganized with section headers). Next: Stage 40.1 (Unit Test Gaps Audit).
+**Current Stage**: Stage 40.1 complete (test coverage audit — Tier 1 at ~24%, 75+ critical functions inventoried, 4 testability barriers documented). Next: Stage 40.2 (Core Systems Unit Tests).
