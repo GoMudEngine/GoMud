@@ -6011,7 +6011,7 @@ This phase applies the pattern systematically to every undertested package,
 starting with the easy wins and progressing to the harder multi-registry
 packages. **All substages are required for the phase to be complete.**
 
-### Stage 41.1: Easy Wins — items, buffs, rooms
+### Stage 41.1: Easy Wins — items, buffs, rooms ✅ COMPLETED (eef337f)
 
 **Goal**: Apply seedRegistry to the three packages where the pattern maps
 directly onto existing globals with minimal fixture complexity.
@@ -6028,6 +6028,9 @@ directly onto existing globals with minimal fixture complexity.
    `seedRoomRegistry()` populating the internal room cache. Write tests
    for: room property accessors, exit linking, container logic, spawn
    points. Target: **rooms 30%+**
+
+**Results**: items 64.7%, buffs 75.9%, rooms 30.1% — all targets exceeded.
+3,505 lines of test code added across 3 files. No production code changes.
 
 **Completion criteria**: All three packages have seedRegistry, all new tests
 pass, no regressions.
@@ -6178,7 +6181,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 38: Mob/Player Unification & NPC Progression | 5 stages (38.1–38.5) | 30 hours | **Complete** |
 | Phase 39: Balance Pass & Config Cleanup | 3 stages (39.1–39.3) | 14 hours | **Complete** |
 | Phase 40: Test Coverage Pass | 4 stages (40.1–40.4) | 20 hours | **Complete** |
-| Phase 41: seedRegistry Coverage Push | 4 stages (41.1–41.4) | 40 hours | Pending |
+| Phase 41: seedRegistry Coverage Push | 4 stages (41.1–41.4) | 40 hours | 41.1 Complete |
 | **Total** | **~116 stages** | **~754 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
@@ -6343,4 +6346,4 @@ These are longer-term goals to be detailed when the above phases are complete:
 
 **Last Updated**: 2026-03-01
 **Status**: In Progress
-**Current Stage**: Phase 40 complete. Next: Stage 41.1 (seedRegistry — items, buffs, rooms).
+**Current Stage**: Stage 41.1 complete. Next: Stage 41.2 (seedRegistry — mobs, users).
