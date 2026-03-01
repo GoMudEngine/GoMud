@@ -6231,7 +6231,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 39: Balance Pass & Config Cleanup | 3 stages (39.1–39.3) | 14 hours | **Complete** |
 | Phase 40: Test Coverage Pass | 4 stages (40.1–40.4) | 20 hours | **Complete** |
 | Phase 41: seedRegistry Coverage Push | 5 stages (41.1–41.5) | 48 hours | **Complete** |
-| Phase 42: Pre-Launch Polish & Wilderness | 8 stages (42.1–42.8) | ~60 hours | **42.1–42.4 Complete** |
+| Phase 42: Pre-Launch Polish & Wilderness | 8 stages (42.1–42.8) | ~60 hours | **42.1–42.5 Complete** |
 | **Total** | **~116 stages** | **~754 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
@@ -6520,7 +6520,7 @@ ansi-aliases)
 
 ---
 
-### Stage 42.5: Town Crier — Tavern Gossip System
+### Stage 42.5: Town Crier — Tavern Gossip System ✅ COMPLETED (merge: bbfadd5)
 
 **Goal**: Give players a way to learn about world events through NPC gossip in the
 tavern.
@@ -6694,4 +6694,4 @@ These are longer-term goals to be detailed when the above phases are complete:
 
 **Last Updated**: 2026-03-01
 **Status**: In Progress
-**Current Stage**: Stage 42.4 complete. Next: Stage 42.5 — Town Crier — Tavern Gossip System.
+**Current Stage**: Stage 42.5 complete. Next: Stage 42.6 — Wilderness Zone — Zone Sketch & Room Build.
