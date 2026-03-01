@@ -6600,6 +6600,51 @@ difficulty tiers, 5 distinct pack groups.
 
 ---
 
+### Stage 42.7: Pack Roaming — Alpha-Follow Movement System
+
+**Goal**: Add coordinated pack movement so mobs sharing a group tag move
+together as a unit, following a designated alpha, rather than wandering
+independently.
+
+**Design**:
+- **Alpha selection**: When 2+ mobs with the same group tag coexist in a room,
+  the one with the highest `statpool` (or explicit `alpha: true` field) becomes
+  the pack leader. If the alpha dies, the next strongest member assumes the role.
+- **Follow behavior**: Non-alpha pack members follow the alpha when it wanders.
+  They move to the same room on the same tick (or 1 tick delayed for a trailing
+  effect). Members that fall behind (MaxWander limit, blocked exit) break off
+  and resume independent wandering until they encounter the pack again.
+- **Rejoin logic**: A lone mob that wanders into a room with same-group members
+  joins the pack and begins following the alpha.
+- **Pack size limits**: Optional `PackMaxSize` config to cap how many mobs
+  follow a single alpha (prevents absurd swarms).
+- **Combat implications**: When a player attacks any pack member, all pack
+  members in the same room assist (this may already work via group allegiance —
+  verify). Alpha death could trigger a morale/scatter effect (pack members
+  skip 1-2 wander ticks while a new alpha is chosen).
+
+**Changes**:
+1. Add `PackLeader` / `PackFollowing` fields to mob instance state
+2. Extend `TickPackSurvival()` or add new `TickPackMovement()` function
+3. Hook into mob wander logic to check pack membership before moving
+4. Add alpha selection logic (highest statpool in room with same group)
+5. Add rejoin logic when lone mob meets pack
+6. Config knobs: `PackRoamingEnabled`, `PackMaxSize`, `PackScatterRounds`
+7. Test with Ironwind Steppe wolf and goblin packs
+
+**Testing**:
+- [ ] **Manual Test**: Wolves in Wolf Run move together as a pack
+- [ ] **Manual Test**: Killing alpha causes new alpha selection
+- [ ] **Manual Test**: Lone wolf rejoins pack when entering same room
+- [ ] **Manual Test**: Pack respects MaxWander limits
+- [ ] **Manual Test**: Goblins in Basalt Coulees roam as coordinated patrol
+- [ ] `go build ./...` passes
+- [ ] Unit tests for alpha selection and follow logic
+
+**Estimated Changes**: ~300–500 lines, 5–10 files (mobs package + config)
+
+---
+
 ### Stage 42.8: Wilderness Zone — Morally Ambiguous Quest Chain
 
 **Goal**: Build a branching quest chain with two mutually exclusive endings that
@@ -6666,4 +6711,4 @@ These are longer-term goals to be detailed when the above phases are complete:
 
 **Last Updated**: 2026-03-01
 **Status**: In Progress
-**Current Stage**: Stage 42.6 complete. Next: Stage 42.8 — Wilderness Zone — Morally Ambiguous Quest Chain.
+**Current Stage**: Stage 42.6 complete. Next: Stage 42.7 — Pack Roaming — Alpha-Follow Movement System.
