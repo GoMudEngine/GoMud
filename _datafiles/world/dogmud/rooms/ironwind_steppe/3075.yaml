@@ -1,0 +1,36 @@
+roomid: 3075
+zone: Ironwind Steppe
+title: Wolf Run Entrance
+description: A narrow ravine opens in the steppe here, its walls of
+  packed earth and exposed stone descending steeply into shadow.
+  Dense brush grows along the ravine lip, and the game trail
+  leading down is worn deep and smooth by heavy canine traffic.
+  Wolf scent marks saturate the entrance -- this is clearly
+  claimed territory. From below comes the sound of running water,
+  a rarity on the dry steppe.
+biome: land
+exits:
+  west:
+    roomid: 3052
+  north:
+    roomid: 3054
+  south:
+    roomid: 3076
+  east:
+    roomid: 3081
+nouns:
+  ravine: A steep-walled ravine cutting into the steppe, about
+    twice a person's depth and narrow enough to jump across at
+    its widest. The walls are layered earth and stone, the
+    exposed roots of steppe grass dangling from the upper edges.
+  brush: Dense, thorny brush growing along the ravine lip,
+    providing cover and concealment. The branches are scored
+    with claw marks and draped with tufts of grey wolf fur.
+spawninfo:
+- mobid: 205
+- mobid: 206
+- mobid: 206
+idlemessages:
+- A wolf howl echoes up from the ravine depths, answered by another.
+- The scent of wolf musk is heavy at the ravine entrance.
+- Something crashes through the brush deeper in the ravine.

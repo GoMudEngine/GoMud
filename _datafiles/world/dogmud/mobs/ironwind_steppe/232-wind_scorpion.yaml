@@ -1,0 +1,30 @@
+mobid: 232
+zone: Ironwind Steppe
+statpool: 45
+itemdropchance: 5
+hostile: true
+maxwander: 2
+groups:
+  - vermin
+idlecommands:
+  - 'emote raises its pincers defensively, tail curling overhead'
+  - ''
+  - ''
+  - 'emote scuttles sideways across the ground'
+  - ''
+activitylevel: 10
+character:
+  name: wind scorpion
+  description: |
+    A large scorpion with a pale, sand-colored carapace and a
+    wickedly curved stinger. The wind scorpion hunts at night and
+    shelters under rocks during the day, emerging to defend its
+    territory with aggressive displays. Its pincers are large
+    enough to break skin, and its sting delivers a painful venom
+    that causes swelling and numbness. It moves with alarming
+    speed when provoked.
+  speciesid: 17
+  level: 1
+  stats:
+    dexterity:
+      training: 5

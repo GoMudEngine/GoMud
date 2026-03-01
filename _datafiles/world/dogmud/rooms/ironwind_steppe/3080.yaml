@@ -1,0 +1,36 @@
+roomid: 3080
+zone: Ironwind Steppe
+title: Ravine Fork
+description: The ravine splits here into two branches -- one
+  continuing south deeper into wolf territory, the other
+  angling southwest toward muddier, lower ground. The fork
+  is marked by a massive boulder wedged between the ravine
+  walls, its surface scored with claw marks from generations
+  of wolves using it as a scratching post. The stream surfaces
+  briefly here before vanishing underground again.
+biome: land
+exits:
+  east:
+    roomid: 3079
+  north:
+    roomid: 3058
+  south:
+    roomid: 3086
+  southwest:
+    roomid: 3091
+nouns:
+  boulder: A huge boulder jammed between the ravine walls,
+    forming a natural bridge overhead. Its surface is deeply
+    scored with claw marks -- wolves have used it for
+    generations to mark territory and sharpen their claws.
+  fork: The point where the ravine divides into two channels.
+    The left branch descends toward wetter ground; the right
+    continues straight and narrow deeper into wolf country.
+spawninfo:
+- mobid: 205
+- mobid: 206
+- mobid: 236
+idlemessages:
+- Water trickles briefly across exposed stone before vanishing again.
+- Claw marks on the boulder are worn deep by years of sharpening.
+- The ravine fork creates a natural crossroads for wildlife.

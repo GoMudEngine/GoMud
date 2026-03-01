@@ -1,0 +1,30 @@
+roomid: 3090
+zone: Ironwind Steppe
+title: Wallow Approach
+description: The terrain descends into a broad, muddy lowland that
+  reeks of boar musk and standing water. The grass is trampled
+  flat and the ground is soft, squelching with every step. Deep
+  hoofprints mark the muddy earth in every direction, and the
+  vegetation is battered and broken where boars have pushed
+  through. This is the northern approach to the main wallowing
+  grounds -- boar territory proper.
+biome: land
+exits:
+  north:
+    roomid: 3056
+  south:
+    roomid: 3091
+  east:
+    roomid: 3093
+nouns:
+  mud: Thick, churned mud mixed with standing water, torn up
+    by heavy boar hooves. The mud extends in every direction,
+    making the footing treacherous. Dark and organic-smelling.
+spawninfo:
+- mobid: 207
+- mobid: 208
+- mobid: 208
+idlemessages:
+- The stench of boar musk hits you like a wall.
+- Mud sucks at your feet with every step.
+- A boar grunts from somewhere in the lowland ahead.

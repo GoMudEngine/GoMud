@@ -1,0 +1,28 @@
+mobid: 234
+zone: Ironwind Steppe
+statpool: 20
+itemdropchance: 0
+hostile: false
+maxwander: 2
+groups:
+  - animal
+idlecommands:
+  - 'emote pops up from a burrow, surveying the area with bright eyes'
+  - ''
+  - ''
+  - 'emote chirps a sharp alarm call'
+  - ''
+  - 'emote stuffs its cheek pouches with seeds'
+activitylevel: 25
+character:
+  name: ground squirrel
+  description: |
+    A small, alert rodent with tawny fur and a fluffy tail held
+    upright like a flag. The ground squirrel lives in burrow
+    colonies across the steppe, popping up to survey for danger
+    with an almost comical frequency. Its sharp alarm bark alerts
+    not just its colony-mates but every prey animal within
+    earshot. Quick, nervous, and always one leap from its
+    burrow entrance.
+  speciesid: 10
+  level: 1

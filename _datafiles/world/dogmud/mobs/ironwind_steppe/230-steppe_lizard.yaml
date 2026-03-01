@@ -1,0 +1,27 @@
+mobid: 230
+zone: Ironwind Steppe
+statpool: 25
+itemdropchance: 0
+hostile: false
+maxwander: 2
+groups:
+  - vermin
+  - animal
+idlecommands:
+  - 'emote basks on a warm stone, throat pulsing'
+  - ''
+  - ''
+  - 'emote does a series of rapid push-ups, displaying its pale belly'
+  - ''
+activitylevel: 10
+character:
+  name: steppe lizard
+  description: |
+    A small, quick lizard with mottled brown and grey scales that
+    blend with the steppe stones. It basks on warm rocks during the
+    day, absorbing heat, and darts for cover at the first sign of
+    danger. Its bright black eyes track movement with mechanical
+    precision, and it can sprint short distances faster than the
+    eye can follow.
+  speciesid: 21
+  level: 1

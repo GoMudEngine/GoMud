@@ -1,0 +1,28 @@
+roomid: 3099
+zone: Ironwind Steppe
+title: Southern Wallow Edge
+description: The wallowing grounds peter out here at the southern
+  edge of the lowland. The ground rises slightly, becoming drier
+  and firmer. The last muddy wallows are small and shallow, barely
+  used. Beyond, the steppe grass reclaims the terrain in tufts
+  and patches, gradually thickening into full coverage. This is
+  the boundary of boar territory -- their tracks thin out and
+  disappear to the south.
+biome: land
+exits:
+  north:
+    roomid: 3097
+  west:
+    roomid: 3098
+nouns:
+  wallows: Small, shallow wallows at the territory's edge,
+    barely used and half-dried. The mud is thin and cracked,
+    evidence that the boars rarely venture this far south.
+spawninfo:
+- mobid: 208
+- mobid: 231
+- mobid: 235
+idlemessages:
+- The mud thins and the grass returns -- the wallow edge.
+- A beetle trundles across the drying mud.
+- The boar smell fades as the territory ends.

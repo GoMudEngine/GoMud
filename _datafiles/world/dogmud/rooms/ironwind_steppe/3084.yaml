@@ -1,0 +1,31 @@
+roomid: 3084
+zone: Ironwind Steppe
+title: Wolf Lookout
+description: A rocky ledge projects from the ravine wall here,
+  forming a natural lookout point where wolves can survey the
+  approaches below. The ledge is worn smooth by years of use,
+  and piles of wolf droppings mark the edges. From here a wolf
+  can see and scent anything approaching through the ravine for
+  a considerable distance. The ledge is about shoulder-height
+  above the ravine floor, accessible by a worn scramble.
+biome: land
+exits:
+  north:
+    roomid: 3083
+  south:
+    roomid: 3085
+  west:
+    roomid: 3078
+nouns:
+  ledge: A flat stone ledge jutting from the ravine wall, about
+    six feet above the ravine floor. The surface is worn smooth
+    from wolves lying on it, and the edges command views up and
+    down the ravine. A natural sentry post.
+spawninfo:
+- mobid: 215
+- mobid: 223
+- mobid: 205
+idlemessages:
+- A wolf stands on the ledge, silhouetted against the sky, watching.
+- The lookout point commands a clear view of the ravine approaches.
+- A low warning growl drifts down from the ledge.

@@ -1,0 +1,35 @@
+roomid: 3078
+zone: Ironwind Steppe
+title: Wolf Den Approach
+description: The ravine widens slightly here, and the earth banks
+  are riddled with dark openings -- the entrance tunnels to wolf
+  dens. The ground is worn to bare earth, packed hard by constant
+  traffic. The air is heavy with wolf musk and the warmth of
+  animal bodies. Tufts of fur and gnawed bones surround each
+  den entrance. This is the heart of wolf territory, and
+  multiple pairs of pale eyes watch from the shadows.
+biome: land
+exits:
+  north:
+    roomid: 3077
+  south:
+    roomid: 3079
+  east:
+    roomid: 3084
+  west:
+    roomid: 3054
+nouns:
+  dens: Dark openings in the ravine walls, each about two feet
+    across -- wide enough for a wolf to enter and exit. The
+    tunnels angle downward and back, leading to underground
+    chambers where the wolves sleep and raise pups. Claw marks
+    score the earth around each entrance.
+spawninfo:
+- mobid: 215
+- mobid: 205
+- mobid: 205
+- mobid: 223
+idlemessages:
+- Pale eyes gleam from a den entrance, watching you.
+- A low growl rumbles from the darkness of a den tunnel.
+- Wolf pups yip from somewhere underground, high-pitched and playful.

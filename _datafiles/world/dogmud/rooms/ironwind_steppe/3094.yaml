@@ -1,0 +1,36 @@
+roomid: 3094
+zone: Ironwind Steppe
+title: Mudflat
+description: A broad, flat expanse of cracked mud stretching between
+  the wallows and the higher ground. The surface is a mosaic of
+  drying cracks, each section curling slightly at the edges. When
+  wet, this is a shallow lake; now it is a hardpan flat baked by
+  the sun. Boar and wolf tracks cross the flat in all directions,
+  the hoofprints and pawprints preserved in the dried mud like
+  fossils.
+biome: land
+exits:
+  west:
+    roomid: 3091
+  north:
+    roomid: 3089
+  south:
+    roomid: 3088
+  east:
+    roomid: 3095
+nouns:
+  cracks: The mud surface is divided into hundreds of irregular
+    polygons by deep drying cracks. Each section is slightly
+    concave, its edges curling up. The pattern extends across
+    the entire flat.
+  tracks: Perfectly preserved animal tracks in the dried mud --
+    cloven boar hoofprints, wolf pawprints, bird feet, and
+    the dragging belly-marks of a large snake.
+spawninfo:
+- mobid: 213
+- mobid: 231
+- mobid: 235
+idlemessages:
+- The dried mudflat crunches underfoot like thin pottery.
+- Heat shimmers rise from the baked mud surface.
+- Preserved tracks tell stories of animals that passed weeks ago.
