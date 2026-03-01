@@ -13,7 +13,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
-	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/term"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -173,7 +172,7 @@ func (u *UserRecord) BuildFightPromptTemplate() string {
 		b.WriteString(`{8}]`)
 	}
 	if u.getPromptToggle(`tank`) {
-		b.WriteString(` {255}{tank}{tankpos}{tankbar}`)
+		b.WriteString(`{tank}`)
 	}
 	b.WriteString(`{casting}`)
 	b.WriteString(`{239}{h}{8}:`)
@@ -425,45 +424,20 @@ func (u *UserRecord) ProcessPromptString(promptStr string) string {
 				}
 
 			case `{tank}`:
-				if p := parties.Get(u.UserId); p != nil {
-					for _, memberId := range p.GetMembers() {
-						if memberId != u.UserId && p.GetRank(memberId) == `front` {
-							if tankUser := GetByUserId(memberId); tankUser != nil {
-								promptOut.WriteString(fmt.Sprintf(`<ansi fg="username">%s</ansi>`,
-									tankUser.Character.Name))
-							}
-							break
-						}
-					}
-				}
-
-			case `{tankpos}`:
-				if p := parties.Get(u.UserId); p != nil {
-					for _, memberId := range p.GetMembers() {
-						if memberId != u.UserId && p.GetRank(memberId) == `front` {
-							if tankUser := GetByUserId(memberId); tankUser != nil {
-								tPos := tankUser.Character.CombatPosition
-								if tPos != `` {
-									promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%s</ansi>`,
-										tPos.GetPositionColor(), tPos.String()))
-								}
-							}
-							break
-						}
-					}
-				}
-
-			case `{tankbar}`:
-				if p := parties.Get(u.UserId); p != nil {
-					for _, memberId := range p.GetMembers() {
-						if memberId != u.UserId && p.GetRank(memberId) == `front` {
-							if tankUser := GetByUserId(memberId); tankUser != nil {
-								promptOut.WriteString(renderVitalBar(
+				if u.Character.Aggro != nil && u.Character.Aggro.MobInstanceId > 0 {
+					if m := mobs.GetInstance(u.Character.Aggro.MobInstanceId); m != nil {
+						if m.Character.Aggro != nil && m.Character.Aggro.UserId > 0 &&
+							m.Character.Aggro.UserId != u.UserId {
+							if tankUser := GetByUserId(m.Character.Aggro.UserId); tankUser != nil {
+								tankBar := renderVitalBar(
 									tankUser.Character.Health,
 									tankUser.Character.HealthMax.Value,
-									tankUser.Character.GetPoolReservation("health", tankUser.Character.HealthMax.Value)))
+									tankUser.Character.GetPoolReservation("health",
+										tankUser.Character.HealthMax.Value))
+								promptOut.WriteString(fmt.Sprintf(
+									` <ansi fg="255">T:</ansi><ansi fg="username">%s</ansi> <ansi fg="255">Thp:</ansi>%s`,
+									tankUser.Character.Name, tankBar))
 							}
-							break
 						}
 					}
 				}
