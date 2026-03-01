@@ -383,9 +383,10 @@ func TestScoreGrapple(t *testing.T) {
 
 	t.Run("mob low health → penalized", func(t *testing.T) {
 		target := characters.New()
+		target.Stats.Strength.ValueAdj = 200 // stronger than mob
 		target.HealthMax.Value = 100
 		target.Health = 100
 		score := ScoreGrapple(makeMob(100, 0, 10, 100), target)
-		assert.Equal(t, 0, score) // 50 - 50 = 0
+		assert.Equal(t, 0, score) // 50 (base) - 50 (low hp) = 0, no str bonus since target stronger
 	})
 }
