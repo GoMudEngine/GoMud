@@ -5957,7 +5957,7 @@ Last phase — tests cover the final state of all features.
 
 ### Stage 40.4: Regression Test Suite & CI Hardening ✅ COMPLETED
 
-**Merge Commit**: (pending merge to development)
+**Merge Commit**: 0b3ef63
 
 **Goal**: Ensure all tests run reliably in CI and past bugs stay fixed.
 
