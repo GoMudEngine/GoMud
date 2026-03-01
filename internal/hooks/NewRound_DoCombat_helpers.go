@@ -24,6 +24,13 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
+// mobDisplayName returns the formatted display name for a mob in combat text,
+// including duplicate index coloring when multiple mobs share the same name.
+func mobDisplayName(mob *mobs.Mob, room *rooms.Room, viewingUserId int) string {
+	dupIdx := room.GetMobDuplicateIndex(mob.InstanceId)
+	return mob.Character.GetMobNameIndexed(viewingUserId, dupIdx).String()
+}
+
 // handlePlayerShieldDecay processes Minor Shield round expiry for a player.
 func handlePlayerShieldDecay(user *users.UserRecord) {
 	if user.Character.HasCondition(characters.ConditionShield) {
@@ -130,7 +137,7 @@ func handleMobFoldCasting(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 	if mob.Character.CombatPosition == characters.PositionProne {
 		mob.Character.CastingState = nil
 		mobRoom.SendText(fmt.Sprintf(
-			`<ansi fg="mobname">%s</ansi>'s concentration breaks.`, mob.Character.Name))
+			`%s's concentration breaks.`, mobDisplayName(mob, mobRoom, 0)))
 		return true
 	}
 
@@ -148,7 +155,7 @@ func handleMobFoldCasting(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 	if roundCost > 0 && mob.Character.Conviction < roundCost {
 		mob.Character.CastingState = nil
 		mobRoom.SendText(fmt.Sprintf(
-			`<ansi fg="mobname">%s</ansi>'s spell falters.`, mob.Character.Name))
+			`%s's spell falters.`, mobDisplayName(mob, mobRoom, 0)))
 		return true
 	}
 	mob.Character.Conviction -= roundCost
@@ -164,7 +171,7 @@ func handleMobFoldCasting(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 		mob.Character.OnStatUse("willpower", 0)
 	} else {
 		mobRoom.SendText(fmt.Sprintf(
-			`<ansi fg="mobname">%s</ansi> weaves magic with focused intent.`, mob.Character.Name))
+			`%s weaves magic with focused intent.`, mobDisplayName(mob, mobRoom, 0)))
 	}
 	return true
 }
@@ -530,7 +537,7 @@ func handleMobTargetSwitch(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 
 		if newTarget := users.GetByUserId(newTargetId); newTarget != nil {
 			mobRoom.SendText(
-				fmt.Sprintf("<ansi fg=\"mobname\">%s</ansi> shifts focus to <ansi fg=\"username\">%s</ansi>!", mob.Character.Name, newTarget.Character.Name),
+				fmt.Sprintf("%s shifts focus to <ansi fg=\"username\">%s</ansi>!", mobDisplayName(mob, mobRoom, 0), newTarget.Character.Name),
 			)
 		}
 		return true
@@ -577,20 +584,21 @@ func handleMobDownedGrace(mob *mobs.Mob, defUser *users.UserRecord, defRoom *roo
 		return true
 	}
 	defUser.Character.DownedRounds++
+	mobName := mobDisplayName(mob, defRoom, 0)
 	if defUser.Character.DownedRounds <= graceRounds {
 		defRoom.SendText(fmt.Sprintf(
-			`<ansi fg="mobname">%s</ansi> circles <ansi fg="username">%s</ansi>'s fallen body...`,
-			mob.Character.Name, defUser.Character.Name))
+			`%s circles <ansi fg="username">%s</ansi>'s fallen body...`,
+			mobName, defUser.Character.Name))
 		return true
 	}
 	// Coup de grâce — finishing blow
 	defUser.Character.Health = -10
 	defUser.SendText(fmt.Sprintf(
-		`<ansi fg="red"><ansi fg="mobname">%s</ansi> delivers a final, merciless blow!</ansi>`,
-		mob.Character.Name))
+		`<ansi fg="red">%s delivers a final, merciless blow!</ansi>`,
+		mobName))
 	defRoom.SendText(fmt.Sprintf(
-		`<ansi fg="red"><ansi fg="mobname">%s</ansi> delivers a finishing blow to <ansi fg="username">%s</ansi>!</ansi>`,
-		mob.Character.Name, defUser.Character.Name), defUser.UserId)
+		`<ansi fg="red">%s delivers a finishing blow to <ansi fg="username">%s</ansi>!</ansi>`,
+		mobName, defUser.Character.Name), defUser.UserId)
 	mob.Character.EndAggro()
 	defUser.Character.EndAggro()
 	*affectedPlayerIds = append(*affectedPlayerIds, defUser.UserId)
@@ -1012,12 +1020,13 @@ func handleMobVsPlayer(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, 
 		mobRoom.SendText(mvpCritResult.DisarmItem.RoomMessage, defUser.UserId)
 	}
 	if mvpCritResult.GrappleSet {
+		mvpMobName := mobDisplayName(mob, mobRoom, defUser.UserId)
 		defUser.SendText(fmt.Sprintf(
 			`<ansi fg="yellow">You slip inside %s's guard! [Grapple opportunity]</ansi>`,
 			mob.Character.Name))
 		mobRoom.SendText(fmt.Sprintf(
 			`<ansi fg="combat">%s slips inside %s's guard!</ansi>`,
-			defUser.Character.Name, mob.Character.Name),
+			defUser.Character.Name, mvpMobName),
 			defUser.UserId)
 	}
 
@@ -1046,14 +1055,15 @@ func handleMobVsPlayer(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, 
 	handleOffhandBreakUserDef(roundResult, defUser, defRoom)
 
 	// Stage 38.3: Mob attacker progression
+	statMobName := mobDisplayName(mob, mobRoom, 0)
 	if gained := mob.Character.OnStatUse("strength", 0); gained {
 		if tmpl, ok := characters.MobStatGainMessages["strength"]; ok {
-			mobRoom.SendText(fmt.Sprintf(tmpl, mob.Character.Name))
+			mobRoom.SendText(fmt.Sprintf(tmpl, statMobName))
 		}
 	}
 	if gained := mob.Character.OnStatUse("dexterity", 0); gained {
 		if tmpl, ok := characters.MobStatGainMessages["dexterity"]; ok {
-			mobRoom.SendText(fmt.Sprintf(tmpl, mob.Character.Name))
+			mobRoom.SendText(fmt.Sprintf(tmpl, statMobName))
 		}
 	}
 	if roundResult.Hit {

@@ -1519,6 +1519,61 @@ func (r *Room) findMobByName(searchName string, findTypes ...FindFlag) (int, err
 
 }
 
+// GetMobDuplicateIndex returns the 1-based duplicate index for a mob in this
+// room, or 0 if no other mob shares the same name. The ordering matches
+// findMobByName() so that the visual index corresponds to the #N targeting.
+func (r *Room) GetMobDuplicateIndex(mobInstanceId int) int {
+	nameCount := map[string]int{}
+	type entry struct {
+		instanceId int
+		name       string
+	}
+	var ordered []entry
+
+	// First collect all mobs in room order (non-charmed first, then charmed)
+	for _, mId := range r.GetMobs() {
+		if m := mobs.GetInstance(mId); m != nil {
+			if m.Character.IsCharmed() {
+				continue // handle below
+			}
+			ordered = append(ordered, entry{mId, m.Character.Name})
+			nameCount[m.Character.Name]++
+		}
+	}
+	for _, mId := range r.GetMobs() {
+		if m := mobs.GetInstance(mId); m != nil {
+			if m.Character.IsCharmed() {
+				ordered = append(ordered, entry{mId, m.Character.Name})
+				nameCount[m.Character.Name]++
+			}
+		}
+	}
+
+	// If the target mob's name is unique, return 0
+	targetName := ""
+	for _, e := range ordered {
+		if e.instanceId == mobInstanceId {
+			targetName = e.name
+			break
+		}
+	}
+	if targetName == "" || nameCount[targetName] <= 1 {
+		return 0
+	}
+
+	// Assign sequential index among mobs with the same name
+	idx := 0
+	for _, e := range ordered {
+		if e.name == targetName {
+			idx++
+			if e.instanceId == mobInstanceId {
+				return idx
+			}
+		}
+	}
+	return 0
+}
+
 // Returns exitName, RoomExit
 func (r *Room) FindExitTo(roomId int) string {
 

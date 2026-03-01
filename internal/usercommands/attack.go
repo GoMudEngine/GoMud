@@ -194,8 +194,11 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		m := mobs.GetInstance(attackMobInstanceId)
 
 		if m != nil {
+			dupIdx := room.GetMobDuplicateIndex(m.InstanceId)
+			mName := m.Character.GetMobNameIndexed(user.UserId, dupIdx).String()
+
 			if m.Character.IsCharmed(user.UserId) {
-				user.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> is your friend!`, m.Character.Name))
+				user.SendText(fmt.Sprintf(`%s is your friend!`, mName))
 				return true, nil
 			}
 
@@ -217,12 +220,12 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			user.Character.SetAggro(0, attackMobInstanceId, characters.DefaultAttack)
 
 			user.SendText(
-				fmt.Sprintf(`You prepare to enter into mortal combat with <ansi fg="mobname">%s</ansi>.`, m.Character.Name),
+				fmt.Sprintf(`You prepare to enter into mortal combat with %s.`, mName),
 			)
 
 			if !isSneaking {
 				room.SendText(
-					fmt.Sprintf(`<ansi fg="username">%s</ansi> prepares to fight <ansi fg="mobname">%s</ansi>.`, user.Character.Name, m.Character.Name),
+					fmt.Sprintf(`<ansi fg="username">%s</ansi> prepares to fight %s.`, user.Character.Name, mName),
 					user.UserId,
 				)
 			}

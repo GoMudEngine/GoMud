@@ -1047,6 +1047,15 @@ func (c *Character) GetMobName(viewingUserId int, renderFlags ...NameRenderFlag)
 	return c.getFormattedName(viewingUserId, `mobname`, renderFlags...)
 }
 
+// GetMobNameIndexed returns a formatted mob name with a duplicate index marker.
+// When dupIndex > 0, the name displays as "name #N" with shifted colors for
+// indices 2+. Use this when multiple mobs share the same name in a room.
+func (c *Character) GetMobNameIndexed(viewingUserId int, dupIndex int, renderFlags ...NameRenderFlag) FormattedName {
+	f := c.getFormattedName(viewingUserId, `mobname`, renderFlags...)
+	f.DuplicateIndex = dupIndex
+	return f
+}
+
 func (c *Character) GetPlayerName(viewingUserId int, renderFlags ...NameRenderFlag) FormattedName {
 	return c.getFormattedName(viewingUserId, `username`, renderFlags...)
 }
