@@ -6600,7 +6600,23 @@ difficulty tiers, 5 distinct pack groups.
 
 ---
 
-### Stage 42.7: Pack Roaming — Alpha-Follow Movement System
+### Stage 42.7: Predator Mob Behaviors ✅ COMPLETED (merge 4188404)
+
+**Goal**: Extend Ironwind Steppe predator mobs with species-specific combat
+abilities and pack behavior — wolves howl and hamstring, boars charge, all
+predators consume corpses, and packs scatter when a member dies.
+
+**Implemented**:
+- ConditionBleeding with DoT processing in AutoHeal (players and mobs)
+- 6 new mob commands: charge, consume, flee, hamstring, howl, roar
+- MobDeath_PackFlee event listener for group-based scatter on death
+- Wolf YAMLs updated with combatcommands: [howl, hamstring] + consume idle
+- Boar YAMLs updated with combatcommands: [charge]
+- 37 new tests across characters, mobcommands, and hooks packages
+
+---
+
+### Stage 42.8: Pack Roaming — Alpha-Follow Movement System
 
 **Goal**: Add coordinated pack movement so mobs sharing a group tag move
 together as a unit, following a designated alpha, rather than wandering
@@ -6645,7 +6661,7 @@ independently.
 
 ---
 
-### Stage 42.8: Wilderness Zone — Morally Ambiguous Quest Chain
+### Stage 42.9: Wilderness Zone — Morally Ambiguous Quest Chain
 
 **Goal**: Build a branching quest chain with two mutually exclusive endings that
 forces a meaningful choice.
@@ -6711,4 +6727,4 @@ These are longer-term goals to be detailed when the above phases are complete:
 
 **Last Updated**: 2026-03-01
 **Status**: In Progress
-**Current Stage**: Stage 42.6 complete. Next: Stage 42.7 — Pack Roaming — Alpha-Follow Movement System.
+**Current Stage**: Stage 42.7 complete. Next: Stage 42.8 — Pack Roaming — Alpha-Follow Movement System.
