@@ -266,8 +266,8 @@
 
                     GMCPWindows['Comm'] = new WinBox({ title: "Communications",
                                             mount: document.getElementById("comm-output"),
-                                            background: "#1c6b60", border: 1,
-                                            x: "right", y: 450,
+                                            background: "#1a1a3e", border: 1,
+                                            x: "right", y: 390,
                                             width:363,  height:20+290,
                                             header: 20,
                                             bottom: 60, // Limit how far down it can go. This affects docking the minimized window.
@@ -329,10 +329,10 @@
 
                     GMCPWindows['Map'] = new WinBox({ title: "Map",
                                             mount: document.getElementById("map-render"),
-                                            background: "#1c6b60",
+                                            background: "#1a1a3e",
                                             border: 1,
                                             x: "right",
-                                            y: 66,
+                                            y: 0,
                                             width:363,
                                             height:20+363,
                                             header: 20,
@@ -436,7 +436,7 @@
 
             },
             "Char":function() {
-                
+
                 var obj = GMCPStructs["Char"];
 
                 if ( obj.Vitals ) {
@@ -444,53 +444,240 @@
                 }
             },
             "Char.Vitals": function() {
-                
-                var obj = GMCPStructs["Char"];
-                if ( !obj.Vitals ) {
-                    return;
-                }
-                
-                if ( !GMCPWindows['Char.Vitals'] && GMCPWindows['Char.Vitals'] !== false ) {
-
-                    GMCPWindows['Char.Vitals'] = new WinBox({ title: "Vitals",
-                                                              mount: document.getElementById("vitals-bars"),
-                                                              background: "#1c6b60",
-                                                              border: 1,
-                                                              x: window.innerWidth-300-63,//"right",
-                                                              y: 0,
-                                                              width:300,
-                                                              height:20+40,
-                                                              header: 20,
-                                                              bottom: 60, // Limit how far down it can go. This affects docking the minimized window.
-                                                              onclose: force => { GMCPWindows['Char.Vitals'] = false; return false; },
-                                                            });
-                }
-
-                if ( GMCPWindows['Char.Vitals'] === false ) {
-                    return;
-                }
-
-                var p    = Math.max(0, Math.min(100, Math.floor(obj.Vitals.hp/obj.Vitals.hp_max*100)));  // clamp 0–100
-                var fill = document.querySelector('#health-bar .health-fill');
-                var txt  = document.querySelector('#health-bar .health-text');
-                fill.style.width       = 100-p + '%';
-                txt.textContent       = 'HP';
-
-                p    = Math.max(0, Math.min(100, Math.floor(obj.Vitals.stamina/obj.Vitals.stamina_max*100)));  // clamp 0–100
-                fill = document.querySelector('#stamina-bar .stamina-fill');
-                txt  = document.querySelector('#stamina-bar .stamina-text');
-                fill.style.width       = 100-p + '%';
-                txt.textContent       = 'SP';
-
-                p    = Math.max(0, Math.min(100, Math.floor(obj.Vitals.conviction/obj.Vitals.conviction_max*100)));  // clamp 0–100
-                fill = document.querySelector('#conviction-bar .conviction-fill');
-                txt  = document.querySelector('#conviction-bar .conviction-text');
-                fill.style.width       = 100-p + '%';
-                txt.textContent       = 'CP'; 
-                
+                updateVitalsWindow();
+            },
+            "Party": function() {
+                updateVitalsWindow();
+            },
+            "Party.Vitals": function() {
+                updateVitalsWindow();
             },
         };
         let GMCPWindows = {};
+
+        // Build a single vitals row DOM element
+        function createVitalsRow(name, hp, sp, cp, isSelf, isRemote) {
+            var row = document.createElement('div');
+            row.className = 'vitals-row' + (isRemote ? ' remote' : '');
+            row.dataset.name = name;
+
+            var nameEl = document.createElement('div');
+            nameEl.className = 'vitals-name' + (isSelf ? ' self' : '');
+            nameEl.textContent = name;
+            row.appendChild(nameEl);
+
+            var composite = document.createElement('div');
+            composite.className = 'vitals-composite';
+
+            // HP segment (50% width)
+            var hpSeg = document.createElement('div');
+            hpSeg.className = 'vitals-segment hp';
+            var hpFill = document.createElement('div');
+            hpFill.className = 'vitals-fill';
+            hpFill.style.width = (100 - hp) + '%';
+            var hpLabel = document.createElement('span');
+            hpLabel.className = 'vitals-label';
+            hpLabel.textContent = 'HP';
+            hpSeg.appendChild(hpFill);
+            hpSeg.appendChild(hpLabel);
+            composite.appendChild(hpSeg);
+
+            // SP segment (25% width)
+            var spSeg = document.createElement('div');
+            spSeg.className = 'vitals-segment sp';
+            var spFill = document.createElement('div');
+            spFill.className = 'vitals-fill';
+            spFill.style.width = (100 - sp) + '%';
+            var spLabel = document.createElement('span');
+            spLabel.className = 'vitals-label';
+            spLabel.textContent = 'SP';
+            spSeg.appendChild(spFill);
+            spSeg.appendChild(spLabel);
+            composite.appendChild(spSeg);
+
+            // CP segment (25% width)
+            var cpSeg = document.createElement('div');
+            cpSeg.className = 'vitals-segment cp';
+            var cpFill = document.createElement('div');
+            cpFill.className = 'vitals-fill';
+            cpFill.style.width = (100 - cp) + '%';
+            var cpLabel = document.createElement('span');
+            cpLabel.className = 'vitals-label';
+            cpLabel.textContent = 'CP';
+            cpSeg.appendChild(cpFill);
+            cpSeg.appendChild(cpLabel);
+            composite.appendChild(cpSeg);
+
+            row.appendChild(composite);
+            return row;
+        }
+
+        // Update an existing vitals row in-place (animate fills)
+        function updateVitalsRow(row, hp, sp, cp, isRemote) {
+            row.className = 'vitals-row' + (isRemote ? ' remote' : '');
+            var fills = row.querySelectorAll('.vitals-fill');
+            if (fills[0]) fills[0].style.width = (100 - hp) + '%';
+            if (fills[1]) fills[1].style.width = (100 - sp) + '%';
+            if (fills[2]) fills[2].style.width = (100 - cp) + '%';
+        }
+
+        function updateVitalsWindow() {
+            var charObj = GMCPStructs["Char"];
+            if ( !charObj || !charObj.Vitals ) return;
+
+            // Ensure window exists
+            if ( !GMCPWindows['Char.Vitals'] && GMCPWindows['Char.Vitals'] !== false ) {
+                GMCPWindows['Char.Vitals'] = new WinBox({
+                    title: "Vitals",
+                    mount: document.getElementById("vitals-bars"),
+                    background: "#1a1a3e",
+                    border: 1,
+                    x: "right",
+                    y: 710,
+                    width: 363,
+                    height: 20 + 22,
+                    header: 20,
+                    bottom: 60,
+                    onclose: force => {
+                        GMCPWindows['Char.Vitals'] = false;
+                        return false;
+                    },
+                });
+            }
+
+            if ( GMCPWindows['Char.Vitals'] === false ) return;
+
+            // Compute self vitals from exact Char.Vitals data
+            var v = charObj.Vitals;
+            var selfName = charObj.Name || 'You';
+            var selfHp = Math.max(0, Math.min(100,
+                Math.floor(v.hp / v.hp_max * 100)));
+            var selfSp = Math.max(0, Math.min(100,
+                Math.floor(v.stamina / v.stamina_max * 100)));
+            var selfCp = Math.max(0, Math.min(100,
+                Math.floor(v.conviction / v.conviction_max * 100)));
+
+            // Current room title for same-room detection
+            var selfRoom = '';
+            if (GMCPStructs.Room && GMCPStructs.Room.Info) {
+                selfRoom = GMCPStructs.Room.Info.name || '';
+            }
+
+            // Build ordered member list
+            var members = []; // {name, hp, sp, cp, isSelf, isRemote}
+            var partyObj = GMCPStructs["Party"];
+
+            if (partyObj && partyObj.Members && partyObj.Members.length > 0) {
+                // Party exists — build ordered list (leader first)
+                var leader = partyObj.Leader || '';
+                var vitals = partyObj.Vitals || {};
+
+                // Leader first
+                var ordered = [];
+                if (leader) ordered.push(leader);
+                for (var i = 0; i < partyObj.Members.length; i++) {
+                    var mName = partyObj.Members[i].name;
+                    if (mName !== leader) ordered.push(mName);
+                }
+
+                for (var i = 0; i < ordered.length; i++) {
+                    var mName = ordered[i];
+                    var isSelf = (mName === selfName);
+                    var mVitals = vitals[mName];
+
+                    var mHp, mSp, mCp, mRemote;
+                    if (isSelf) {
+                        // Use exact local data for self
+                        mHp = selfHp;
+                        mSp = selfSp;
+                        mCp = selfCp;
+                        mRemote = false;
+                    } else if (mVitals) {
+                        mHp = Math.max(0, Math.min(100,
+                            mVitals.health || 0));
+                        mSp = Math.max(0, Math.min(100,
+                            mVitals.stamina || 0));
+                        mCp = Math.max(0, Math.min(100,
+                            mVitals.conviction || 0));
+                        mRemote = (mVitals.location !== selfRoom);
+                    } else {
+                        mHp = 0; mSp = 0; mCp = 0;
+                        mRemote = true;
+                    }
+
+                    members.push({
+                        name: mName, hp: mHp, sp: mSp,
+                        cp: mCp, isSelf: isSelf,
+                        isRemote: mRemote
+                    });
+                }
+            } else {
+                // Solo — just self
+                members.push({
+                    name: selfName, hp: selfHp, sp: selfSp,
+                    cp: selfCp, isSelf: true, isRemote: false
+                });
+            }
+
+            // Update DOM
+            var container = document.getElementById('vitals-bars');
+            var existingRows = container.querySelectorAll('.vitals-row');
+            var existingByName = {};
+            for (var i = 0; i < existingRows.length; i++) {
+                existingByName[existingRows[i].dataset.name] = existingRows[i];
+            }
+
+            // Track which names are still valid
+            var activeNames = {};
+            for (var i = 0; i < members.length; i++) {
+                var m = members[i];
+                activeNames[m.name] = true;
+                var existing = existingByName[m.name];
+                if (existing) {
+                    updateVitalsRow(existing, m.hp, m.sp, m.cp, m.isRemote);
+                    // Update name class
+                    var nameEl = existing.querySelector('.vitals-name');
+                    if (nameEl) {
+                        nameEl.className = 'vitals-name' +
+                            (m.isSelf ? ' self' : '');
+                    }
+                } else {
+                    var newRow = createVitalsRow(
+                        m.name, m.hp, m.sp, m.cp,
+                        m.isSelf, m.isRemote);
+                    container.appendChild(newRow);
+                }
+            }
+
+            // Remove rows for members no longer present
+            for (var i = 0; i < existingRows.length; i++) {
+                if (!activeNames[existingRows[i].dataset.name]) {
+                    existingRows[i].remove();
+                }
+            }
+
+            // Re-order rows to match members array
+            var currentRows = container.querySelectorAll('.vitals-row');
+            for (var i = 0; i < members.length; i++) {
+                var expectedName = members[i].name;
+                if (currentRows[i] &&
+                    currentRows[i].dataset.name !== expectedName) {
+                    var correctRow = container.querySelector(
+                        '.vitals-row[data-name="' + expectedName + '"]');
+                    if (correctRow) {
+                        container.insertBefore(correctRow, currentRows[i]);
+                        currentRows =
+                            container.querySelectorAll('.vitals-row');
+                    }
+                }
+            }
+
+            // Resize window height to fit
+            var rowCount = members.length;
+            var newHeight = 20 + (rowCount * 22) + 4;
+            GMCPWindows['Char.Vitals'].resize(363, newHeight);
+        }
+
         function handleGMCP(objNamespace, objBody) {
 
 
@@ -1047,157 +1234,100 @@
     </script>
 
     <style>
-        /* add these styles once (e.g. in your global <style> block) */
+        /* Party Vitals Window Styles */
 
-        #health-bar {
-            position: relative;
-            width: 100%;         /* or fixed px width */
-            height: 33.33%;
-            background: linear-gradient(
-                to right,
-                #f44336 0%,   /* red */
-                #ffeb3b 50%,   /* yellow */
-                #4caf50 100%    /* green */
-            );
-            border-radius: 12px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
-            overflow: hidden;
-            margin: 0 2px;
-        }
-
-        #health-bar .health-fill {
-            height: 100%;
-            width: 0%;
-            background: #333;
-            float:right;
-            transition: width 0.4s ease-out;
-        }
-
-        #health-bar .health-text {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: monospace;
-            font-size: 0.85em;
-            color: white;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
-            pointer-events: none;
-        }
-
-
-        #mana-bar {
-            position: relative;
-            width: 100%;         /* or fixed px width */
-            height: 25%;
-            background: linear-gradient(
-                to right,
-                #1e108b 0%,
-                #3a20fe 100%
-            );
-            border-radius: 12px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
-            overflow: hidden;
-            margin: 0 2px;
-        }
-
-        #mana-bar .mana-fill {
-            height: 100%;
-            width: 0%;
-            background: #333;
-            float:right;
-            transition: width 0.4s ease-out;
-        }
-
-        #mana-bar .mana-text {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: monospace;
-            font-size: 0.85em;
-            color: white;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
-            pointer-events: none;
-        }
-
-        #stamina-bar {
-            position: relative;
-            width: 100%;
-            height: 33.33%;
-            background: linear-gradient(
-                to right,
-                #8b4513 0%,   /* brown */
-                #d2691e 50%,  /* chocolate */
-                #daa520 100%  /* goldenrod */
-            );
-            border-radius: 12px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
-            overflow: hidden;
-            margin: 0 2px;
-        }
-
-        #stamina-bar .stamina-fill {
-            height: 100%;
-            width: 0%;
-            background: #333;
-            float:right;
-            transition: width 0.4s ease-out;
-        }
-
-        #stamina-bar .stamina-text {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: monospace;
-            font-size: 0.85em;
-            color: white;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
-            pointer-events: none;
-        }
-
-        #conviction-bar {
-            position: relative;
-            width: 100%;
-            height: 33.33%;
-            background: linear-gradient(
-                to right,
-                #ffd700 0%,   /* gold */
-                #ffeb8a 50%,  /* light gold */
-                #ffffff 100%  /* white */
-            );
-            border-radius: 12px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
-            overflow: hidden;
-            margin: 0 2px;
-        }
-
-        #conviction-bar .conviction-fill {
-            height: 100%;
-            width: 0%;
-            background: #333;
-            float:right;
-            transition: width 0.4s ease-out;
-        }
-
-        #conviction-bar .conviction-text {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: monospace;
-            font-size: 0.85em;
-            color: #333;
-            text-shadow: 0 1px 2px rgba(255,255,255,0.8);
-            pointer-events: none;
-        }
         #vitals-bars {
-            height:100%;
+            height: 100%;
+            padding: 2px;
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+
+        .vitals-row {
+            display: flex;
+            align-items: center;
+            height: 20px;
+            gap: 2px;
+        }
+
+        .vitals-row.remote {
+            opacity: 0.4;
+        }
+
+        .vitals-name {
+            width: 70px;
+            min-width: 70px;
+            font-family: monospace;
+            font-size: 0.75em;
+            color: #ccc;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-align: left;
+            padding-left: 2px;
+        }
+
+        .vitals-name.self {
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .vitals-composite {
+            flex: 1;
+            display: flex;
+            height: 14px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .vitals-segment {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vitals-segment.hp {
+            flex: 2;
+            background: linear-gradient(to right, #f44336, #ffeb3b, #4caf50);
+        }
+
+        .vitals-segment.sp {
+            flex: 1;
+            background: linear-gradient(to right, #8b4513, #d2691e, #daa520);
+        }
+
+        .vitals-segment.cp {
+            flex: 1;
+            background: linear-gradient(to right, #ffd700, #ffeb8a, #ffffff);
+        }
+
+        .vitals-segment .vitals-fill {
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100%;
+            width: 0%;
+            background: #222;
+            transition: width 0.4s ease-out;
+        }
+
+        .vitals-segment .vitals-label {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: monospace;
+            font-size: 0.65em;
+            color: white;
+            text-shadow: 0 1px 1px rgba(0,0,0,0.9);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .vitals-segment.cp .vitals-label {
+            color: #333;
+            text-shadow: 0 1px 1px rgba(255,255,255,0.6);
         }
         .wb-body { background:#000; overflow:hidden; }
         .wb-max { display:none; }
@@ -1212,13 +1342,13 @@
 
         .tab-buttons {
             display: flex;
-            border-bottom: 1px solid #0f3333;
+            border-bottom: 1px solid #0e0e20;
         }
 
         .tab-button {
             flex: 1;
             padding: 0.75em;
-            background: #279888;
+            background: #3b3b78;
             border: none;
             cursor: pointer;
             font: inherit;
@@ -1227,13 +1357,13 @@
         }
 
         .tab-button:not(.active):hover {
-            background: #0f3333;
-            color:#dffbd1;
+            background: #1a1a3e;
+            color:#d0d0e8;
         }
 
         .tab-button.active {
-            background: #dffbd1;
-            border-bottom: 2px solid #0f3333;
+            background: #d0d0e8;
+            border-bottom: 2px solid #3b3b78;
         }
 
         .tab-contents {
@@ -1298,21 +1428,8 @@
     
     <div style="display:none;">
 
-        <!-- VITALS window -->
-        <div id="vitals-bars">
-            <div id="health-bar">
-                <div class="health-fill" style="width: 100%;"></div>
-                <span class="health-text">100%</span>
-            </div>
-            <div id="stamina-bar">
-                <div class="stamina-fill" style="width: 100%;"></div>
-                <span class="stamina-text">100%</span>
-            </div>
-            <div id="conviction-bar">
-                <div class="conviction-fill" style="width: 100%;"></div>
-                <span class="conviction-text">100%</span>
-            </div>
-        </div>
+        <!-- VITALS window (party-aware, dynamically populated by JS) -->
+        <div id="vitals-bars"></div>
 
         <!-- MAP window -->
         <div id="map-render" style="width:100%; height:100%;"></div>
