@@ -50,7 +50,8 @@ func Drop(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		}
 
 		if dropAmt > user.Character.Gold {
-			user.SendText(fmt.Sprintf("You don't have a %d gold to drop.", dropAmt))
+			user.SendText(fmt.Sprintf("You don't have %d gold to drop.", dropAmt))
+			return true, nil
 		}
 
 		user.Character.CancelBuffsWithFlag(buffs.Hidden)
