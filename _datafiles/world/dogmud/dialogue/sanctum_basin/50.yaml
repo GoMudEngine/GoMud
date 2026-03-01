@@ -49,7 +49,7 @@ patterns:
 tree:
   root:
     text: "Seeker. You have come to the right place at the right time, I think. What weighs on you?"
-    hints: "You could ask the Priest about the Chrysalis, the Awakening, the sanctum, or themselves."
+    hints: "Try: ask priest chrysalis, ask priest awakening, or ask priest quest."
 
   nodes:
     - id: chrysalis

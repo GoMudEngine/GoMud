@@ -32,6 +32,7 @@ func RegisterListeners() {
 	// Done with combat
 	//
 	events.RegisterListener(events.NewRound{}, AutoHeal)
+	events.RegisterListener(events.NewRound{}, BroadcastHints)
 	events.RegisterListener(events.NewRound{}, IdleMobs)
 	events.RegisterListener(events.MobIdle{}, HandleIdleMobs)
 
