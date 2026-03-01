@@ -1,0 +1,40 @@
+roomid: 3009
+zone: Ironwind Steppe
+title: Steppe Margin
+description: The last of the city's detritus -- broken pottery, a
+  rotting fence rail, a sun-bleached animal skull -- lies scattered
+  in the grass here, marking the final edge of civilization's reach.
+  Beyond this point the steppe is untouched, rolling eastward in
+  long swells of silver-green grass under a vast sky. The ground
+  is firm and dry, the soil thin over hardpan clay. A faint game
+  trail threads southeast through the grass, worn by animals moving
+  between the city fringe and the open plains.
+biome: land
+exits:
+  north:
+    roomid: 3006
+  west:
+    roomid: 3007
+  northwest:
+    roomid: 3008
+  east:
+    roomid: 3011
+  southeast:
+    roomid: 3013
+nouns:
+  skull: A sun-bleached animal skull, probably a dog or large fox.
+    The bone is white and dry, half-buried in the grass. One eye
+    socket stares skyward.
+  trail: A narrow game trail beaten into the grass by the passage
+    of small animals. It winds southeast, disappearing into the
+    taller grass of the open steppe.
+  pottery: Fragments of broken clay pottery, the glazed kind used
+    in Thornwall kitchens. Tossed out with the refuse, they have
+    been scattered by weather and animals.
+spawninfo:
+- mobid: 202
+- mobid: 233
+idlemessages:
+- The wind carries a distant howl -- a dog, or perhaps a wolf.
+- Grass seeds drift past on the breeze like tiny parachutes.
+- A ground squirrel pops up from a hole, looks around, and vanishes.

@@ -1,0 +1,33 @@
+roomid: 3008
+zone: Ironwind Steppe
+title: Dry Gully
+description: A narrow gully cuts through the ground here, carved by
+  seasonal rainwater running off toward the drainage ditch to the
+  west. The gully is about waist-deep, with crumbling earth walls
+  and exposed roots. The bottom is sandy and dry except after rain.
+  Small animals have burrowed into the gully walls, leaving a
+  network of holes. The surrounding steppe grass grows tall along
+  the gully's lip, providing cover for anything hiding below.
+biome: land
+exits:
+  west:
+    roomid: 3004
+  south:
+    roomid: 3009
+  east:
+    roomid: 3010
+nouns:
+  gully: A natural drainage channel about four feet deep, with walls
+    of packed earth. Tree roots poke from the sides in places. The
+    bottom is a mix of sand and gravel, dry now but clearly a
+    watercourse during heavy rains.
+  holes: Small burrow entrances dot the gully walls -- round, clean-
+    edged holes the width of a fist. Scratch marks around some of
+    them suggest active use.
+spawninfo:
+- mobid: 200
+- mobid: 232
+idlemessages:
+- Loose earth crumbles from the gully wall and patters to the bottom.
+- A lizard basks on a warm stone at the gully's edge.
+- The wind whistles over the gully's lip with a low moan.

@@ -1,0 +1,39 @@
+roomid: 3000
+zone: Ironwind Steppe
+title: Eastern Gate Approach
+description: The cobblestones of Thornwall give way to hard-packed dirt as
+  the eastern gate opens onto the frontier. A rutted wagon track leads east
+  into open grassland, flanked by refuse piles where the city's waste
+  meets the wild. The city wall rises behind you, its battlements casting
+  long shadows across the trampled ground. Ahead, the steppe stretches to
+  the horizon under an enormous sky. The wind carries the smell of dry
+  grass and dust, a sharp contrast to the close city air.
+biome: land
+exits:
+  west:
+    roomid: 479
+    zone: Thornwall City
+  east:
+    roomid: 3001
+  northeast:
+    roomid: 3002
+nouns:
+  track: A pair of wagon ruts worn deep into the earth, running east from
+    the gate. The track sees regular use by merchants and supply wagons,
+    though the ruts suggest the road has not been properly maintained in
+    some time. Grass grows between the wheel marks.
+  wall: The eastern face of Thornwall's city wall, built of heavy limestone
+    blocks fitted without mortar. From this side the wall looks even more
+    imposing -- a sheer face of pale stone rising three stories above the
+    trampled ground. Arrow slits punctuate the upper levels.
+  refuse: Piles of broken crates, spoiled food, and general refuse dumped
+    outside the gate. The city keeps its interior clean by pushing waste
+    out here, where scavenger birds and feral animals pick through it.
+spawninfo:
+- mobid: 200
+- mobid: 201
+idlemessages:
+- A gust of wind rattles a loose shutter on the gate tower.
+- Dust swirls across the wagon track in a lazy spiral.
+- A crow hops along the top of a refuse pile, tearing at something.
+- The distant sound of the city fades behind you as the wind picks up.

@@ -1,0 +1,28 @@
+mobid: 201
+zone: Ironwind Steppe
+statpool: 35
+itemdropchance: 5
+hostile: true
+maxwander: 3
+groups:
+  - vermin
+  - animal
+idlecommands:
+  - 'emote hops sideways along the ground, head cocked'
+  - ''
+  - 'emote caws harshly at nothing in particular'
+  - ''
+  - ''
+  - 'emote picks at something on the ground with a sharp beak'
+activitylevel: 20
+character:
+  name: dust crow
+  description: |
+    A large crow with dusty black plumage and a heavy, scarred beak.
+    Dust crows are the steppe's most common scavengers -- bold,
+    intelligent, and willing to mob anything that looks edible or
+    vulnerable. This one watches you with one bright eye, calculating
+    whether you are a threat or a meal. Its feathers are ragged from
+    wind and dust, giving it a perpetually disheveled look.
+  speciesid: 9
+  level: 1

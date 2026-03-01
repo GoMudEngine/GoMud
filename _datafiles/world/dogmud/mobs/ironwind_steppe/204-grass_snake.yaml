@@ -1,0 +1,30 @@
+mobid: 204
+zone: Ironwind Steppe
+statpool: 35
+itemdropchance: 5
+hostile: true
+maxwander: 2
+groups:
+  - vermin
+  - animal
+idlecommands:
+  - 'emote coils tighter, tongue flickering'
+  - ''
+  - ''
+  - ''
+  - 'emote slides through the grass with a dry rustle'
+activitylevel: 10
+character:
+  name: grass snake
+  description: |
+    A slender snake about three feet long, its scales patterned in
+    mottled green and brown that blends perfectly with the steppe
+    grass. It is not venomous but makes up for it with speed and a
+    willingness to strike at anything that disturbs it. The snake
+    lies coiled in the grass, nearly invisible until you are
+    practically standing on it.
+  speciesid: 8
+  level: 1
+  stats:
+    dexterity:
+      training: 5

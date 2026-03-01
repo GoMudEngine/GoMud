@@ -1,0 +1,34 @@
+roomid: 3003
+zone: Ironwind Steppe
+title: Overgrown Track
+description: The wagon track narrows here as grass encroaches from both
+  sides. Wildflowers -- small yellow and white blossoms -- dot the
+  verge where the soil is less trampled. The ground is still firm
+  underfoot but the transition from city outskirts to open steppe is
+  nearly complete. A collapsed stone cairn sits beside the track,
+  perhaps an old waymarker or boundary stone half-swallowed by weeds.
+biome: land
+exits:
+  west:
+    roomid: 3001
+  north:
+    roomid: 3002
+  east:
+    roomid: 3006
+  south:
+    roomid: 3007
+nouns:
+  cairn: A tumbled pile of stones that once stood waist-high, now mostly
+    collapsed and overgrown. One flat stone near the base might bear
+    faded carved letters, but erosion has made them illegible. It
+    could be an old boundary marker for the city's jurisdiction.
+  flowers: Small hardy wildflowers growing along the track edges --
+    yellow buttercups and white clover, the kind that thrives in
+    poor soil and full sun.
+spawninfo:
+- mobid: 203
+- mobid: 204
+idlemessages:
+- A butterfly drifts across the track, buffeted by the wind.
+- The grass whispers and hisses as the wind combs through it.
+- A scavenger dog trots past with something clamped in its jaws.

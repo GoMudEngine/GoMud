@@ -1,0 +1,34 @@
+mobid: 202
+zone: Ironwind Steppe
+statpool: 40
+itemdropchance: 5
+hostile: true
+maxwander: 3
+groups:
+  - animal
+archetype: fighting
+idlecommands:
+  - 'emote crouches low in the grass, tail twitching'
+  - ''
+  - ''
+  - 'emote licks a paw with studied indifference'
+  - ''
+  - 'emote ears flatten as it tracks something unseen'
+activitylevel: 15
+character:
+  name: feral cat
+  description: |
+    A lean, wiry cat gone completely wild. Its fur is patchy and
+    scarred, one ear torn to a ragged edge. Unlike the pampered
+    cats of the city, this one has survived on the steppe by being
+    fast, vicious, and paranoid. It moves in quick, low dashes
+    between cover, and its eyes hold none of the lazy domesticity
+    of its tame relatives. This is a small predator that has
+    remembered what it means to hunt.
+  speciesid: 11
+  level: 1
+  stats:
+    dexterity:
+      training: 5
+    perception:
+      training: 3
