@@ -5990,6 +5990,147 @@ Last phase — tests cover the final state of all features.
 
 ---
 
+## Phase 41: seedRegistry Test Coverage Push
+
+### Motivation
+
+After Phase 40, overall test coverage sits at **10.6%**. The Stage 40.1 audit
+set aspirational per-package targets (Tier 1: 95%, Tier 2: 85%) that remain
+far off. The primary barrier is **global singleton registries** — packages like
+hooks, mobs, usercommands, and mobcommands call `users.GetByUserId()`,
+`mobs.GetInstance()`, and `rooms.LoadRoom()` directly, making their functions
+untestable without the full game state.
+
+The `seedRegistry()` pattern (proven in mutations, crafting, and spells)
+solves this **without modifying any production code**. Test files directly
+populate the package-level maps that production code reads from, bypassing
+file I/O entirely. Risk is low: no mutexes, no `init()` side effects, no
+production changes.
+
+This phase applies the pattern systematically to every undertested package,
+starting with the easy wins and progressing to the harder multi-registry
+packages. **All substages are required for the phase to be complete.**
+
+### Stage 41.1: Easy Wins — items, buffs, rooms
+
+**Goal**: Apply seedRegistry to the three packages where the pattern maps
+directly onto existing globals with minimal fixture complexity.
+
+**Changes**:
+1. `internal/items/items_test.go` — Create `seedRegistry()` populating
+   `allItemSpecs` (or equivalent global). Write tests for: `HasAdjective`,
+   `IsBetterThan`, `Equals`, `GetDiceRoll`, `GetDistributionDamage`,
+   `GetDamage`, `GetSpec`, enchantment lookups. Target: **items 40%+**
+2. `internal/buffs/buffs_test.go` — Create `seedRegistry()` populating
+   buff specs. Write tests for: spec lookup, stacking logic, duration
+   calculation, buff validation. Target: **buffs 60%+**
+3. `internal/rooms/rooms_test.go` — Extend existing tests with
+   `seedRoomRegistry()` populating the internal room cache. Write tests
+   for: room property accessors, exit linking, container logic, spawn
+   points. Target: **rooms 30%+**
+
+**Completion criteria**: All three packages have seedRegistry, all new tests
+pass, no regressions.
+
+**Estimated Changes**: ~800–1200 lines across 3 test files
+
+---
+
+### Stage 41.2: Mobs & Users — Standalone Logic
+
+**Goal**: Apply seedRegistry to mobs and users, testing the portions that
+don't require cross-package state (pure logic, relationships, stat
+distribution).
+
+**Changes**:
+1. `internal/mobs/mobs_test.go` — Create `seedMobRegistry()` populating
+   `mobInstances` and mob templates. Write tests for: mob relationships
+   (hate/ally tracking), idle behavior selection, stat distribution by
+   archetype (`fighting`/`casting`/default), spawn logic, AI profile
+   selection. Target: **mobs 40%+**
+2. `internal/users/users_test.go` — Extend with `seedUserRegistry()`
+   populating `userManager.Users`. Write tests for: `GetByUserId()`,
+   `GetByCharacterName()`, `GetByConnectionId()`, user state transitions,
+   zombie connection cleanup. Target: **users 30%+**
+
+**Completion criteria**: Both packages have seedRegistry, all new tests pass,
+mob archetype distribution verified statistically.
+
+**Estimated Changes**: ~600–1000 lines across 2 test files
+
+---
+
+### Stage 41.3: Hooks — Multi-Registry Seeding Infrastructure
+
+**Goal**: Build the shared test infrastructure for hooks and write tests for
+the most critical hook functions. This is the hardest substage because each
+hook function requires **users + mobs + rooms + buffs + items** registries
+seeded in concert.
+
+**Changes**:
+1. `internal/hooks/hooks_test_helpers.go` — Create shared seeding functions:
+   - `seedTestUser(userId int, opts ...UserOpt)` — populate userManager
+   - `seedTestMob(instanceId int, opts ...MobOpt)` — populate mobInstances
+   - `seedTestRoom(roomId int, opts ...RoomOpt)` — populate room cache
+   - `seedTestBuff(buffId int, spec)` — populate buff specs
+   - `seedAllRegistries()` — convenience wrapper for common test scenarios
+   - `cleanupRegistries()` — reset all globals between tests
+2. `internal/hooks/hooks_test.go` — Write tests for highest-priority hooks:
+   - Buff application (`ApplyBuffs`)
+   - Spell resolution (`spell_resolution.go` — damage calc, cost deduction)
+   - Combat round helpers (attack resolution, defense dispatch)
+   - Message dispatch (`SendMessages`)
+   Target: **hooks 30%+**
+
+**Completion criteria**: Shared seeding infrastructure works, at least 15
+hook tests pass covering buff/spell/combat/message paths.
+
+**Estimated Changes**: ~1200–1800 lines across 2–3 test files
+
+---
+
+### Stage 41.4: Commands — usercommands & mobcommands
+
+**Goal**: Apply seedRegistry to the command routing packages. These are
+structurally similar to hooks — each command handler needs user + room +
+mob context — but the individual functions are simpler (parse input →
+look up state → produce output).
+
+**Changes**:
+1. `internal/usercommands/usercommands_test.go` — Reuse seeding helpers
+   from Stage 41.3. Write tests for: movement commands, look/examine,
+   inventory/equipment, combat initiation, skill/spell usage, crafting
+   commands, social commands. Target: **usercommands 25%+**
+2. `internal/mobcommands/mobcommands_test.go` — Reuse seeding helpers.
+   Write tests for: mob movement, mob attack selection, mob idle actions,
+   mob speech/emote. Target: **mobcommands 25%+**
+
+**Completion criteria**: Both command packages have tests, all pass, no
+regressions. Raise CI coverage gate from 40% to **55%**.
+
+**Estimated Changes**: ~1000–1500 lines across 2 test files
+
+---
+
+### Phase 41 Coverage Targets (Cumulative)
+
+| Package | Pre-41 | Post-41 Target | Stage |
+|---------|--------|----------------|-------|
+| items | 6.2% | 40%+ | 41.1 |
+| buffs | 25.7% | 60%+ | 41.1 |
+| rooms | 7.8% | 30%+ | 41.1 |
+| mobs | 0.0% | 40%+ | 41.2 |
+| users | 12.3% | 30%+ | 41.2 |
+| hooks | 0.0% | 30%+ | 41.3 |
+| usercommands | 0.0% | 25%+ | 41.4 |
+| mobcommands | 0.0% | 25%+ | 41.4 |
+| **CI gate** | 40% | **55%** | 41.4 |
+
+These are **minimum acceptance thresholds**, not aspirational ceilings.
+Every substage target must be met for the stage to be marked complete.
+
+---
+
 ## Estimated Timeline
 
 Assuming ~4 hours per stage (implement + test):
@@ -6037,7 +6178,8 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 38: Mob/Player Unification & NPC Progression | 5 stages (38.1–38.5) | 30 hours | **Complete** |
 | Phase 39: Balance Pass & Config Cleanup | 3 stages (39.1–39.3) | 14 hours | **Complete** |
 | Phase 40: Test Coverage Pass | 4 stages (40.1–40.4) | 20 hours | **Complete** |
-| **Total** | **~112 stages** | **~714 hours** | |
+| Phase 41: seedRegistry Coverage Push | 4 stages (41.1–41.4) | 40 hours | Pending |
+| **Total** | **~116 stages** | **~754 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
 
@@ -6200,5 +6342,5 @@ These are longer-term goals to be detailed when the above phases are complete:
 ---
 
 **Last Updated**: 2026-03-01
-**Status**: Complete
-**Current Stage**: Stage 40.4 complete — all 40 stages finished. Regression tests, smoke tests, and CI hardening in place. Development plan fully executed.
+**Status**: In Progress
+**Current Stage**: Phase 40 complete. Next: Stage 41.1 (seedRegistry — items, buffs, rooms).
