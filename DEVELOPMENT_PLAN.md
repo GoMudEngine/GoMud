@@ -6231,6 +6231,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 39: Balance Pass & Config Cleanup | 3 stages (39.1–39.3) | 14 hours | **Complete** |
 | Phase 40: Test Coverage Pass | 4 stages (40.1–40.4) | 20 hours | **Complete** |
 | Phase 41: seedRegistry Coverage Push | 5 stages (41.1–41.5) | 48 hours | **Complete** |
+| Phase 42: Pre-Launch Polish & Wilderness | 8 stages (42.1–42.8) | ~60 hours | **Planned** |
 | **Total** | **~116 stages** | **~754 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
@@ -6369,6 +6370,304 @@ Issues discovered during 2026-02-12 playtest session, mapped to stages:
 
 ---
 
+## Phase 42: Pre-Launch Polish & Wilderness Content
+
+**Goal**: Fix remaining bugs, polish combat presentation, add dev tooling, create a
+newbie-friendly help channel, build a gossip/town-crier system, and create a large
+wilderness zone east of Thornwall with a morally ambiguous quest chain. This phase
+takes DOGMud from "feature-complete" to "ready for outside players."
+
+---
+
+### Stage 42.1: Bug Fixes & Quick Wins
+
+**Goal**: Fix known bugs and small QoL issues before bigger work.
+
+**Changes**:
+1. **Fix `drop` command bugs** (`internal/usercommands/drop.go`):
+   - Add missing `return` after gold validation failure (gold is deducted even when
+     the player doesn't have enough)
+   - Add nil guard on `iSpec := matchItem.GetSpec()` before checking `iSpec.Type`
+   - Also fix same gold validation bug in `internal/mobcommands/drop.go`
+2. **Capitalize mob names in display**:
+   - Add title-casing to `FormattedName.String()` in
+     `internal/characters/formattedname.go` (every word capitalized)
+   - Mob YAML names stay lowercase; display is transformed at render time
+   - Ensure duplicate indices still render correctly ("Skeleton #2")
+
+**Testing**:
+- [ ] **Manual Test**: Drop gold when you have less than the amount — should show
+      error and NOT deduct gold
+- [ ] **Manual Test**: Drop an item, verify no panic
+- [ ] **Manual Test**: Look at room with mobs — names should be title-cased
+- [ ] **Manual Test**: Multiple mobs of same type — "Valley Rat #1", "Valley Rat #2"
+- [ ] **Unit Tests**: Update any affected tests for new display format
+
+**Estimated Changes**: ~50–100 lines, 3–4 files
+
+---
+
+### Stage 42.2: Dev Tooling — Justfile & Helpfile Coverage
+
+**Goal**: Add development convenience commands and a helpfile coverage audit tool.
+
+**Changes**:
+1. **Justfile commands for AI player**:
+   - `just ai-player` — launch `tools/ai_player.py` with combatstats enabled and
+     increased buffer size
+   - `just ai-player-fresh` — delete AI player's save file, then launch fresh
+   - Both commands should set `combatstats` to true and temporarily increase the
+     combat analytics buffer for recording
+   - Ensure commands work from a regular Windows terminal (no WSL dependency)
+2. **Helpfile coverage tool**:
+   - Build a Go or Python script that cross-references registered keywords/commands
+     against `_datafiles/world/dogmud/templates/help/*.template` files
+   - Output: list of commands/topics that lack help files, and orphan help files
+     that don't match any registered keyword
+   - `just help-coverage` command to run it
+3. **Windows terminal compatibility pass** for existing just commands if needed
+
+**Testing**:
+- [ ] **Manual Test**: `just ai-player` launches AI player successfully on Windows
+- [ ] **Manual Test**: `just ai-player-fresh` clears old save and creates fresh player
+- [ ] **Manual Test**: `just help-coverage` outputs a meaningful coverage report
+- [ ] Verify no just commands fail on Windows due to Unix-only syntax
+
+**Estimated Changes**: ~200–400 lines, 3–5 files (justfile + coverage tool script)
+
+---
+
+### Stage 42.3: Tutorial Polish & Newbie Help Channel
+
+**Goal**: Make it easier for new players to discover game mechanics and quests.
+
+**Changes**:
+1. **Tutorial quest nudges**:
+   - Update tutorial NPC dialogue to more explicitly encourage using `tell` and
+     `ask` commands to find quests
+   - Add hints like "Try `ask <npc-name> quest` — many folk need help around here"
+   - Ensure the tutorial flow naturally teaches conversation mechanics
+2. **Newbie help/hints channel**:
+   - Create a periodic broadcast channel (opt-out: on by default, can be muted)
+   - Broadcasts rotate through a pool of helpful tips at a configurable interval
+   - Tips cover: `ask` command, `help` command, crafting discovery, spell learning,
+     mutations, combat mechanics, foraging, etc.
+   - Color-highlight any command or topic that has a help file (e.g.,
+     `<ansi fg="command">ask</ansi>`)
+   - Wire into webclient communications subwindow
+3. **Tip message pool** — write 20+ tip messages covering all major systems
+
+**Example tips**:
+- "Having trouble finding quests? Use `ask <npc-name> quest` at any quest giver."
+- "Recipes and new spells are discovered by using spellcasting and crafting skills."
+- "Check the `help` command — you may learn about mechanics you didn't know about."
+- "Your stats improve through use. Swing a sword enough and your Strength grows."
+- "The moons affect your abilities. Watch for moon phase announcements."
+- "Crafting materials can be found by `foraging` in the wilderness."
+
+**Testing**:
+- [ ] **Manual Test**: Play through tutorial, verify nudges toward tell/ask
+- [ ] **Manual Test**: Create new character, verify help channel messages appear
+- [ ] **Manual Test**: Mute the help channel, verify messages stop
+- [ ] **Manual Test**: Verify tips appear in webclient comms subwindow
+- [ ] Verify tip messages wrap within 80 chars and display correct colors
+
+**Estimated Changes**: ~300–500 lines, 8–12 files (hook + channel + tip YAML + dialogue edits)
+
+---
+
+### Stage 42.4: Combat Presentation Polish — Colors & Flavor Text
+
+**Goal**: Make combat more visually appealing with color differentiation and richer
+flavor text.
+
+**Changes**:
+1. **Define combat color palette** in `ansi-aliases.yaml`:
+   - **Offensive palette**: attack hits, crits, fumbles each get distinct colors
+   - **Defensive palette**: dodge/parry/block each get a slightly different shade,
+     with player-defense vs NPC-defense having visual distinction
+   - **Crit palette**: bright/bold for crits, distinct warning tone for fumbles
+   - Fill in currently undefined aliases: `attack-good`, `attack-bad`,
+     `defense-good`
+2. **Body-part hit text**:
+   - Add occasional body-part references to attack messages (arm, leg, torso,
+     shoulder, flank, head)
+   - Implement as a random token `{bodypart}` that sometimes inserts and sometimes
+     is empty, keeping most hits generic
+   - Logic should be sensible (no "you stab them in the head" with a bludgeon)
+3. **Feint/misdirection text for skilled players**:
+   - When a miss occurs, skilled combatants sometimes see feint text instead of
+     miss text ("You feint low before redirecting your strike" / "Your opponent
+     reads your feint but hesitates")
+   - Probability curve: very low at rank 1, ~33% at skill soft cap (50),
+     never above 75%
+   - Formula: `feintChance = 0.75 * (rank / softCap)^1.5` (capped at 0.75)
+   - Mechanically identical to a miss — purely narrative enhancement
+   - Add feint message pools to weapon-type YAML files
+
+**Testing**:
+- [ ] **Manual Test**: Enter combat, verify color differentiation between attack
+      types and defense types
+- [ ] **Manual Test**: Fight long enough to see body-part references in attack text
+- [ ] **Manual Test**: With a high-skill character, verify feint text appears on
+      some misses
+- [ ] **Manual Test**: With a low-skill character, verify feints are very rare
+- [ ] Verify all combat text stays within 80-char line width
+- [ ] Verify color aliases render correctly in both terminal and webclient
+
+**Estimated Changes**: ~400–700 lines, 12–18 files (YAML combat messages + Go logic +
+ansi-aliases)
+
+---
+
+### Stage 42.5: Town Crier — Tavern Gossip System
+
+**Goal**: Give players a way to learn about world events through NPC gossip in the
+tavern.
+
+**Changes**:
+1. **Add tavern back room** — a new room off the Drowning Post (Thornwall) with
+   seating, dim lighting, and 2-3 patron NPCs
+2. **Gossip NPCs**:
+   - Patron mobs with idle behavior that periodically pull from
+     `worldevents.GetRecentWorldEvents()` and broadcast gossip to the room
+   - Gossip format: "I heard that..." / "Word is..." / "They say..." + event desc
+   - Filter by significance tier: patrons mostly share Regional/Global events,
+     occasionally Local events from the current zone
+3. **Dialogue triggers**: `ask <patron> news/gossip/rumors/heard` returns 1-3
+   recent events formatted as conversation
+4. **Variety**: Multiple gossip templates so repeated events don't feel stale
+
+**Infrastructure already exists**:
+- World events buffer (`internal/worldevents/`)
+- Broadcast system (`internal/events/`)
+- NPC idle hooks (`MobIdle_HandleIdleMobs`)
+- Dialogue system with pattern matching
+
+**Testing**:
+- [ ] **Manual Test**: Visit back room, wait for idle gossip broadcasts
+- [ ] **Manual Test**: `ask patron gossip` returns recent world events
+- [ ] **Manual Test**: Cause a world event (e.g., mob mutation), verify it appears
+      in gossip within a few ticks
+- [ ] Verify gossip text wraps within 80 chars
+
+**Estimated Changes**: ~200–400 lines, 6–10 files (room YAML + mob YAML + dialogue
+YAML + idle script)
+
+---
+
+### Stage 42.6: Wilderness Zone — Zone Sketch & Room Build
+
+**Goal**: Design and build a large wilderness zone east of Thornwall. Terrain inspired
+by the channeled scablands of eastern Washington — arid steppe with basalt coulees,
+sagebrush flats, dry grasslands, scattered rocky outcrops, and seasonal creek beds.
+NOT referencing real-world place names.
+
+**Changes**:
+1. **Zone sketch**: Plan room layout, adjacency, and terrain types
+   - 25-40 rooms covering varied terrain: open steppe, rocky coulees, creek beds,
+     dense scrub thickets, a cave system, an abandoned camp, basalt cliff overlooks
+   - Logical crafting material placement:
+     - Herbs/plants near creek beds and sheltered valleys
+     - Ore deposits in rocky outcrops and cave walls
+     - Leather from animal hunting zones
+     - Cloth from humanoid NPC camps
+   - Clear navigation landmarks (distinctive rock formations, a dead tree, a
+     seasonal waterfall)
+2. **Build rooms**: Write all room YAML files with descriptions, exits, idle
+   messages, and foraging nodes
+3. **Connect to Thornwall**: Eastern gate or trail exit from Thornwall leads into
+   the wilderness
+
+**Testing**:
+- [ ] **Manual Test**: Walk from Thornwall into the wilderness zone
+- [ ] **Manual Test**: Navigate the full zone, verify all exits work
+- [ ] **Manual Test**: Forage in appropriate locations, verify materials drop
+- [ ] Verify all room descriptions wrap at 80 chars
+- [ ] Server starts without panic (no filepath mismatches)
+
+**Estimated Changes**: ~2000–3000 lines, 25–40 YAML files
+
+---
+
+### Stage 42.7: Wilderness Zone — Mobs & Ecosystem
+
+**Goal**: Populate the wilderness with a living ecosystem of predators, prey, and
+humanoid NPCs.
+
+**Changes**:
+1. **Wolf pack** (using pack AI from Stage 38.5):
+   - Alpha wolf (higher stats, `archetype: fighting`)
+   - 3-4 pack wolves that coordinate with the alpha
+   - Pack roams a territory of 6-8 rooms
+   - Wolves hunt prey animals (existing emergent behavior hooks)
+2. **Prey animals**:
+   - Deer, hares, ground squirrels — low-stat, flighty mobs that flee combat
+   - Drop leather, meat, bone crafting materials
+3. **Boss bear** ("Stonescar" or similar):
+   - High-stat solo mob in a cave/lair room
+   - Significantly dangerous — intended as an aspirational fight
+   - Unique loot drop (crafting material or trophy)
+4. **Humanoid NPCs**:
+   - Small bandit camp (2-3 bandits, a leader) — drop cloth, coin
+   - Hermit/ranger NPC — quest giver, not hostile
+   - Wandering trader or prospector — flavor NPC
+5. **Small fetch quests**: 2-3 simple quests from the hermit/ranger NPC
+   (deliver item, clear area, gather materials)
+
+**Testing**:
+- [ ] **Manual Test**: Find and fight wolf pack, verify pack coordination
+- [ ] **Manual Test**: Hunt prey animals, verify drops
+- [ ] **Manual Test**: Fight boss bear, verify difficulty is high
+- [ ] **Manual Test**: Interact with hermit NPC, verify quest dialogue
+- [ ] **Manual Test**: Complete fetch quests, verify rewards
+- [ ] Server starts without panic
+
+**Estimated Changes**: ~1500–2500 lines, 15–25 files (mob YAML + dialogue YAML +
+quest YAML + scripts)
+
+---
+
+### Stage 42.8: Wilderness Zone — Morally Ambiguous Quest Chain
+
+**Goal**: Build a branching quest chain with two mutually exclusive endings that
+forces a meaningful choice.
+
+**Design**:
+- **Setup**: The hermit/ranger NPC reveals a conflict between two factions or
+  principles in the wilderness (e.g., a druid protecting a sacred grove vs. a
+  prospector who found something powerful in the rock). Neither side is clearly
+  right or wrong.
+- **Middle**: Player investigates both sides, completes tasks for both, learns
+  the full picture. Dialogue and quest nodes should make both sides sympathetic.
+- **Choice point**: Player must commit to one side, locking out the other reward.
+- **Path A reward**: A summoning/minion spell (new spell YAML + component item)
+- **Path B reward**: A powerful unique shield (new item YAML with strong defensive
+  stats)
+- **Consequences**: NPCs in the zone remember your choice and react accordingly
+  (using existing quest-state dialogue from Phase 27)
+
+**Changes**:
+1. Design the full quest chain (5-8 quest nodes with branching)
+2. Write dialogue trees for both faction NPCs
+3. Create reward items: summon spell + shield
+4. Wire quest state checks so the choice is permanent and remembered
+5. Add post-quest dialogue variants for both outcomes
+
+**Testing**:
+- [ ] **Manual Test**: Play through Path A completely, verify spell reward
+- [ ] **Manual Test**: Play through Path B completely, verify shield reward
+- [ ] **Manual Test**: Verify choosing one path locks out the other
+- [ ] **Manual Test**: After completing quest, NPCs react to your choice
+- [ ] **Manual Test**: Verify summon spell works in combat
+- [ ] **Manual Test**: Verify shield has correct defensive stats and equips properly
+- [ ] Verify all dialogue wraps at 80 chars, no raw numbers shown
+
+**Estimated Changes**: ~1000–1500 lines, 10–15 files (quest YAML + dialogue YAML +
+spell YAML + item YAML + scripts)
+
+---
+
 ## Future Expansion (Not Yet Scheduled)
 
 These are longer-term goals to be detailed when the above phases are complete:
@@ -6395,4 +6694,4 @@ These are longer-term goals to be detailed when the above phases are complete:
 
 **Last Updated**: 2026-03-01
 **Status**: In Progress
-**Current Stage**: Phase 41 complete. Next: Phase 42 or new development phase.
+**Current Stage**: Phase 42 planned. Next: Stage 42.1 — Bug Fixes & Quick Wins.
