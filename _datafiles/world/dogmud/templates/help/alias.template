@@ -1,11 +1,30 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">alias</ansi>
 
-The <ansi fg="command">alias</ansi> command lists and sets aliases
+The <ansi fg="command">alias</ansi> command lets you create shortcuts for
+commands you use often. The name goes left of the equals
+sign, the replacement goes right.
 
 <ansi fg="yellow">Usage: </ansi>
 
-  <ansi fg="command">alias</ansi> - List all aliases, including system defaults
+  <ansi fg="command">alias</ansi>              List all aliases, including defaults.
+  <ansi fg="command">alias name=value</ansi>   Create a custom alias.
+  <ansi fg="command">alias name=</ansi>        Clear an alias.
 
-  <ansi fg="command">alias [name]=[value]</ansi> - Create a custom alias. Left of the '=' is the command, right of the '=' is the replacement.
-  
-  <ansi fg="command">alias [name]=</ansi> - Clear an alias (value of [name])
+<ansi fg="yellow">Examples:</ansi>
+
+  <ansi fg="command">alias ms=cast mind-spike</ansi>
+    Now typing <ansi fg="command">ms</ansi> will cast mind-spike.
+
+  <ansi fg="command">alias aa=attack</ansi>
+    Now typing <ansi fg="command">aa</ansi> will attack your current target.
+
+  <ansi fg="command">alias hw=cast heal warrior</ansi>
+    Now typing <ansi fg="command">hw</ansi> will heal a player named warrior.
+
+  <ansi fg="command">alias ms=</ansi>
+    Clears the <ansi fg="command">ms</ansi> alias.
+
+Aliases persist across sessions. Do not use brackets or
+quotes around the name or value — just plain text.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help macros</ansi>, <ansi fg="command">help set</ansi>

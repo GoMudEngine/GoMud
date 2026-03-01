@@ -65,6 +65,7 @@ function onIdle(room) {
                 trainer.Command('say I may have understated what the dummy is capable of. Keep going.', 1.5);
                 trainer.Command('say While you are at it -- combat is not just striking. Try <ansi fg="command">kick</ansi>, <ansi fg="command">grapple</ansi>, or <ansi fg="command">trip</ansi> to mix it up.', 3.5);
                 trainer.Command('say If you had a shield, <ansi fg="command">bash</ansi> is also available -- shield work comes later. For now, get it on the ground.', 5.0);
+                trainer.Command('say One more thing. Not every fight is won with a blade. Try <ansi fg="command">taunt</ansi> -- a sharp tongue can break an opponent as surely as a sharp edge.', 7.0);
             }
         }
         return;
