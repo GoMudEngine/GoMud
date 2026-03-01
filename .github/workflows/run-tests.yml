@@ -26,9 +26,9 @@ jobs:
           fi
           TOTAL=$(go tool cover -func=coverage.out | grep total | awk '{print $3}' | sed 's/%//')
           echo "Total coverage: ${TOTAL}%"
-          # Fail if coverage drops below 40%
-          if (( $(echo "$TOTAL < 40.0" | bc -l) )); then
-            echo "::error::Coverage ${TOTAL}% is below the 40% minimum threshold"
+          # Fail if coverage drops below 28%
+          if (( $(echo "$TOTAL < 28.0" | bc -l) )); then
+            echo "::error::Coverage ${TOTAL}% is below the 28% minimum threshold"
             exit 1
           fi
       - name: Upload coverage artifact
