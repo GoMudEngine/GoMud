@@ -631,9 +631,9 @@ scripted combat command.
     high effectiveness.
     - **Defender progression:** Player gets `OnStatUse("dexterity")`
       for reacting to attacks.
-    - **Low-resource triggers:** If HP/STA/CONV < 25%, fires
-      `OnLowResource()` for associated stats (health→vitality,
-      stamina→strength+dexterity, conviction→willpower+charisma).
+    - **Resource depletion progression:** Moved to regen tick in
+      `NewRound_AutoHeal.go` — smooth curve replaces old 25% threshold.
+      See `characters/context.md` for details.
 12. **Minor Shield reduction** — if player has `ConditionShield`, flat
     damage reduction.
 13. **Adrenaline Surge** — mutation check for bonus damage.

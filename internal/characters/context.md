@@ -34,6 +34,27 @@ The `internal/characters` package is the core character system for DOGMud, handl
 - **15 legacy GoMud skills**: Still functional alongside DOG skills
 - **Combat skill routing**: `GetCombatSkillTag()` selects weapon-appropriate skill
 
+### Regen-Based Stat Progression
+Every regen tick (every 3 rounds), each resource pool has a small chance to
+trigger stat progression based on how depleted it is. This replaced the old
+hard 25%-threshold `OnLowResource` system.
+
+**Formula:** `chance = RegenProgressionBase × (1 - current/max) ^ RegenProgressionCurve`
+
+**Config knobs:** `RegenProgressionBase` (default 0.005), `RegenProgressionCurve` (default 3.0)
+
+**Resource → Stat Mappings:**
+- Health → Vitality, Willpower (enduring injury toughens body + mind)
+- Stamina → Strength, Vitality (exertion builds power + endurance)
+- Conviction → Willpower, Charisma (mental strain sharpens will + presence)
+
+The existing `StatProgressionMultipliers` still apply on top.
+Mob progression uses `MobProgressionRate` as a multiplier.
+
+**Key methods:**
+- `OnRegenTick(current, max, relatedStats, userId)` — computes chance, calls CheckRegenProgression per stat
+- `CheckRegenProgression(statName, userId, chance)` — applies mob gating, multipliers, rolls
+
 ### Equipment System (`worn.go`)
 - **Equipment slots**: Weapon, Offhand, Head, Neck, Body, Belt, Gloves, Ring, Legs, Feet
 - **Stat modifications**: Equipment provides stat bonuses aggregated across all slots

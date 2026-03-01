@@ -123,32 +123,6 @@ func AttackMobVsPlayer(mob *mobs.Mob, user *users.UserRecord) AttackResult {
 	if attackResult.DamageToTarget != 0 {
 		user.Character.ApplyHealthChange(attackResult.DamageToTarget * -1)
 		user.WimpyCheck()
-
-		// Check for low-health progression trigger
-		if user.Character.HealthMax.Value > 0 {
-			healthPct := float64(user.Character.Health) / float64(user.Character.HealthMax.Value)
-			if healthPct > 0 && healthPct < 0.25 {
-				user.Character.OnLowResource("health", "vitality", user.UserId)
-			}
-		}
-
-		// Check for low-stamina progression trigger
-		if user.Character.StaminaMax.Value > 0 {
-			staminaPct := float64(user.Character.Stamina) / float64(user.Character.StaminaMax.Value)
-			if staminaPct > 0 && staminaPct < 0.25 {
-				user.Character.OnLowResource("stamina", "strength", user.UserId)
-				user.Character.OnLowResource("stamina", "dexterity", user.UserId)
-			}
-		}
-
-		// Check for low-conviction progression trigger
-		if user.Character.ConvictionMax.Value > 0 {
-			convictionPct := float64(user.Character.Conviction) / float64(user.Character.ConvictionMax.Value)
-			if convictionPct > 0 && convictionPct < 0.25 {
-				user.Character.OnLowResource("conviction", "willpower", user.UserId)
-				user.Character.OnLowResource("conviction", "charisma", user.UserId)
-			}
-		}
 	}
 
 	// Track defender's dexterity use (reacting to attacks)

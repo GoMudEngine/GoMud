@@ -627,6 +627,39 @@ Balance:
   # damage -- meaningful but not overwhelming. Range: 1-50.
   MobSkillCap: 3
 
+  # ── REGEN-BASED STAT PROGRESSION ──────────────────────────────────────────
+  # Every regen tick (every 3 rounds), each resource pool (HP, SP, CP) has
+  # a small chance to trigger stat progression based on how depleted it is.
+  # This replaces the old hard 25%-threshold system. The chance follows a
+  # smooth curve: nearly zero when the pool is full, rising as it empties.
+  #
+  # Formula: chance = RegenProgressionBase × (1 - currentPct) ^ RegenProgressionCurve
+  #
+  # Each pool maps to two stats:
+  #   Health    → Vitality, Willpower   (enduring injury toughens body + mind)
+  #   Stamina   → Strength, Vitality    (exertion builds power + endurance)
+  #   Conviction→ Willpower, Charisma   (mental strain sharpens will + presence)
+  #
+  # The existing StatProgressionMultipliers (above) apply on top of this,
+  # so per-stat tuning is still available. Mob progression uses MobProgressionRate.
+  #
+  # RegenProgressionBase: Maximum chance per stat per tick when the pool is
+  #   at 0%. At the default 0.005 (0.5%), a character sitting at 0% HP would
+  #   have a 0.5% chance per tick (every 3 rounds) to gain Vitality and a
+  #   separate 0.5% chance to gain Willpower. Higher = faster stat gains from
+  #   resource depletion. Range: 0.001 to 1.0.
+  RegenProgressionBase: 0.005
+  # RegenProgressionCurve: Controls how steeply the chance ramps up as the
+  #   pool empties. Higher values mean the chance stays near zero until the
+  #   pool is very low, then spikes. Lower values spread the chance more
+  #   evenly across the depletion range.
+  #   - 1.0 = linear (50% pool = 50% of max chance)
+  #   - 2.0 = quadratic (50% pool = 25% of max chance)
+  #   - 3.0 = cubic (50% pool = 12.5% of max chance)  ← default
+  #   - 5.0 = very steep (almost nothing above 50% pool)
+  #   Range: 0.5 to 10.0.
+  RegenProgressionCurve: 3.0
+
   # ── CHARACTER CREATION ──────────────────────────────────────────────────────
   StatRollMean: 100.0            # Target average for all stats at character creation
   StatRollStdDev: 15.0           # Standard deviation for stat rolls
