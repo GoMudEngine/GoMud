@@ -332,7 +332,7 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 		if ticks < 1 {
 			ticks = 1
 		}
-		durationRounds := ticks * 3 // TickConditions runs every combat round; AutoHeal fires every 3
+		durationRounds := ticks * 6 // TickConditions runs every combat round; AutoHeal fires every 3
 		target.Character.AddCondition(characters.ConditionRegen, durationRounds, regenMult, "heal spell")
 		user.SendText(fmt.Sprintf(
 			`<ansi fg="green">You weave restorative magic around <ansi fg="username">%s</ansi>.%s</ansi>`,
@@ -367,7 +367,7 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 		if shieldBonus < 1 {
 			shieldBonus = 1
 		}
-		duration := 10 + int(math.Round(float64(skillLevel)/5))
+		duration := 20 + int(math.Round(float64(skillLevel)*2/5))
 		target.Character.AddCondition(characters.ConditionShield, duration, float64(shieldBonus), "spell")
 		target.SendText(`<ansi fg="cyan">A shimmering magical barrier forms around you, bolstering your defenses.</ansi>`)
 		if target.UserId != user.UserId {
@@ -484,7 +484,7 @@ func applyMobSelfEffect(mob *mobs.Mob, room *rooms.Room, spellData *spells.Spell
 		if ticks < 1 {
 			ticks = 1
 		}
-		durationRounds := ticks * 3
+		durationRounds := ticks * 6
 		mob.Character.AddCondition(characters.ConditionRegen, durationRounds, regenMult, "heal spell")
 		room.SendText(fmt.Sprintf(
 			`%s channels restorative magic.`, mobDisplayName(mob, room, 0)))
@@ -494,7 +494,7 @@ func applyMobSelfEffect(mob *mobs.Mob, room *rooms.Room, spellData *spells.Spell
 		if shieldBonus < 1 {
 			shieldBonus = 1
 		}
-		duration := 10 + int(math.Round(float64(skillLevel)/5))
+		duration := 20 + int(math.Round(float64(skillLevel)*2/5))
 		mob.Character.AddCondition(characters.ConditionShield, duration, float64(shieldBonus), "spell")
 		room.SendText(fmt.Sprintf(
 			`A shimmering barrier forms around %s.`, mobDisplayName(mob, room, 0)))

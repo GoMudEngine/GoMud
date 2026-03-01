@@ -2,6 +2,6 @@ buffid: 38
 name: Conviction Armor
 description: Solidified belief fortifies your body, greatly enhancing your resilience.
 triggerrate: 1 round
-triggercount: 10
+triggercount: 20
 statmods:
   vitality: 30
