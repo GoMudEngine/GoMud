@@ -5899,7 +5899,7 @@ Last phase — tests cover the final state of all features.
 
 ### Stage 40.2: Core Systems Unit Tests ✅ COMPLETED
 
-**Merge commit**: (feature branch, will merge into development)
+**Merge commit**: 6b2dbad
 
 **Goal**: Fill the biggest test gaps in high-risk code.
 
