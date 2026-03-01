@@ -2399,3 +2399,161 @@ func TestCharacter_GetModifiedAttackCount(t *testing.T) {
 		})
 	}
 }
+
+// ─── Stage 40.2: Mitigation & Defense tests ─────────────────────────────────
+
+func TestGetPhysicalMitigation(t *testing.T) {
+	tests := []struct {
+		name string
+		body int // PhysicalMitigation on body armor
+		legs int // PhysicalMitigation on legs armor
+		want float64
+	}{
+		{"no equipment", 0, 0, 0.0},
+		{"body only (10%)", 10, 0, 0.10},
+		{"body + legs", 15, 10, 0.25},
+		{"high values", 40, 35, 0.75},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := New()
+			if tt.body > 0 {
+				c.Equipment.Body = items.Item{ItemId: 1, Spec: &items.ItemSpec{
+					PhysicalMitigation: tt.body,
+				}}
+			}
+			if tt.legs > 0 {
+				c.Equipment.Legs = items.Item{ItemId: 2, Spec: &items.ItemSpec{
+					PhysicalMitigation: tt.legs,
+				}}
+			}
+			got := c.GetPhysicalMitigation()
+			assert.InDelta(t, tt.want, got, 0.01)
+		})
+	}
+}
+
+func TestGetMagicalMitigation(t *testing.T) {
+	tests := []struct {
+		name string
+		neck int // MagicalMitigation on neck item
+		ring int // MagicalMitigation on ring item
+		want float64
+	}{
+		{"no equipment", 0, 0, 0.0},
+		{"neck only (20%)", 20, 0, 0.20},
+		{"neck + ring", 15, 10, 0.25},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := New()
+			if tt.neck > 0 {
+				c.Equipment.Neck = items.Item{ItemId: 1, Spec: &items.ItemSpec{
+					MagicalMitigation: tt.neck,
+				}}
+			}
+			if tt.ring > 0 {
+				c.Equipment.Ring = items.Item{ItemId: 2, Spec: &items.ItemSpec{
+					MagicalMitigation: tt.ring,
+				}}
+			}
+			got := c.GetMagicalMitigation()
+			assert.InDelta(t, tt.want, got, 0.01)
+		})
+	}
+}
+
+func TestGetConvictionMitigation(t *testing.T) {
+	tests := []struct {
+		name  string
+		glove int // ConvictionMitigation on gloves
+		belt  int // ConvictionMitigation on belt
+		want  float64
+	}{
+		{"no equipment", 0, 0, 0.0},
+		{"gloves only (12%)", 12, 0, 0.12},
+		{"gloves + belt", 12, 8, 0.20},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := New()
+			if tt.glove > 0 {
+				c.Equipment.Gloves = items.Item{ItemId: 1, Spec: &items.ItemSpec{
+					ConvictionMitigation: tt.glove,
+				}}
+			}
+			if tt.belt > 0 {
+				c.Equipment.Belt = items.Item{ItemId: 2, Spec: &items.ItemSpec{
+					ConvictionMitigation: tt.belt,
+				}}
+			}
+			got := c.GetConvictionMitigation()
+			assert.InDelta(t, tt.want, got, 0.01)
+		})
+	}
+}
+
+func TestGetDefenseScore(t *testing.T) {
+	t.Run("dodge — dex + unarmed skill", func(t *testing.T) {
+		c := New()
+		c.Stats.Dexterity.ValueAdj = 100
+		c.Skills[string(skills.UnarmedCombat)] = 20
+		score := c.GetDefenseScore(DefenseDodge)
+		assert.InDelta(t, 120.0, score, 1.0) // 100 + 20
+	})
+
+	t.Run("parry — dex + weapon skill + weapon parry", func(t *testing.T) {
+		c := New()
+		c.Stats.Dexterity.ValueAdj = 80
+		c.Skills[string(skills.WeaponCombat)] = 15
+		c.Equipment.Weapon = items.Item{ItemId: 1, Spec: &items.ItemSpec{
+			ParryRating: 10,
+		}}
+		score := c.GetDefenseScore(DefenseParry)
+		assert.InDelta(t, 105.0, score, 1.0) // 80 + 15 + 10
+	})
+
+	t.Run("block — (str+dex)/2 + weapon skill + shield block", func(t *testing.T) {
+		c := New()
+		c.Stats.Strength.ValueAdj = 120
+		c.Stats.Dexterity.ValueAdj = 80
+		c.Skills[string(skills.WeaponCombat)] = 10
+		c.Equipment.Offhand = items.Item{ItemId: 1, Spec: &items.ItemSpec{
+			Type:            items.Offhand,
+			DamageReduction: 5,
+			BlockRating:     15,
+		}}
+		score := c.GetDefenseScore(DefenseBlock)
+		assert.InDelta(t, 125.0, score, 1.0) // (120+80)/2 + 10 + 15
+	})
+
+	t.Run("unknown defense type → 0", func(t *testing.T) {
+		c := New()
+		assert.Equal(t, 0.0, c.GetDefenseScore("unknown"))
+	})
+}
+
+func TestGetDefenseStaminaCost(t *testing.T) {
+	// Default multipliers are 0.9 for all three
+	tests := []struct {
+		name string
+		def  string
+		want int // base * 0.9 truncated to int
+	}{
+		{"dodge: 2 * 0.9 = 1", DefenseDodge, 1},
+		{"parry: 4 * 0.9 = 3", DefenseParry, 3},
+		{"block: 5 * 0.9 = 4", DefenseBlock, 4},
+		{"unknown → 0", "unknown", 0},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := New()
+			got := c.GetDefenseStaminaCost(tt.def)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}

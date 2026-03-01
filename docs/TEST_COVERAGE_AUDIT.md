@@ -450,61 +450,61 @@ without knowing exact values. Catches formula bugs.
 
 | # | Function | Package | Tier | Type | Status |
 |---|----------|---------|------|------|--------|
-| 1 | RollStat | dice | 1 | unit | TODO |
-| 2 | OpposedRollStat | dice | 1 | unit | TODO |
-| 3 | StdDevFor | dice | 1 | unit | TODO |
-| 4 | SuccessChance | dice | 1 | unit | TODO |
-| 5 | OpposedSuccessChance | dice | 1 | unit | TODO |
-| 6 | PowerRanking | combat | 1 | unit | TODO |
-| 7 | ChanceToTame | combat | 1 | unit | TODO |
-| 8 | ChanceToSwitchTarget | combat | 1 | unit | TODO |
-| 9 | SkillMultiplier | combat | 1 | unit | TODO |
-| 10 | DamageScale | combat | 1 | unit | TODO |
-| 11 | CalcRawDamage | combat | 1 | unit | TODO |
-| 12 | ApplyMitigation | combat | 1 | unit | TODO |
-| 13 | MitigationCap | combat | 1 | unit | TODO |
-| 14 | ResourceMultiplier | combat | 1 | unit | TODO |
-| 15 | IsThirdPartyAttack | combat | 1 | unit | TODO |
-| 16 | CanUseBash | combat | 1 | unit | TODO |
-| 17 | CanUseTrip | combat | 1 | unit | TODO |
-| 18 | CanUseKick | combat | 1 | unit | TODO |
-| 19 | CanUseGrapple | combat | 1 | unit | TODO |
-| 20 | CanUseCast | combat | 1 | unit | TODO |
-| 21 | ScoreBash | combat | 1 | unit | TODO |
-| 22 | ScoreTrip | combat | 1 | unit | TODO |
-| 23 | ScoreGrapple | combat | 1 | unit | TODO |
-| 24 | GetPhysicalMitigation | characters | 1 | unit | TODO |
-| 25 | GetMagicalMitigation | characters | 1 | unit | TODO |
-| 26 | GetConvictionMitigation | characters | 1 | unit | TODO |
-| 27 | GetDefenseScore | characters | 1 | unit | TODO |
-| 28 | GetDefenseStaminaCost | characters | 1 | unit | TODO |
-| 29 | CalculateProgressionChance | characters | 1 | unit | TODO |
-| 30 | GetMutationLoad | mutations | 1 | unit | TODO |
-| 31 | HasConflict | mutations | 1 | unit | TODO |
-| 32 | GetStaminaRegenMultiplier | mutations | 1 | unit | TODO |
-| 33 | GetNaturalWeaponBonus | mutations | 1 | unit | TODO |
-| 34 | GetConvictionResistance | mutations | 1 | unit | TODO |
-| 35 | HasMutationFlag | mutations | 1 | unit | TODO |
-| 36 | GetConditionalHealthRegen | mutations | 1 | unit | TODO |
-| 37 | GetHealthRegenMultiplier | mutations | 1 | unit | TODO |
-| 38 | GetDodgeModifier | mutations | 1 | unit | TODO |
-| 39 | GetDamageMultiplier | mutations | 1 | unit | TODO |
-| 40 | GetMovementSpeedModifier | mutations | 1 | unit | TODO |
-| 41 | GetHealthRegen | mutations | 1 | unit | TODO |
-| 42 | GetSkillProgressionMult | mutations | 1 | unit | TODO |
-| 43 | GetStatProgressionMult | mutations | 1 | unit | TODO |
-| 44 | HasMutation | mutations | 1 | unit | TODO |
-| 45 | GetMutationLevel | mutations | 1 | unit | TODO |
-| 46 | FindTargetItem | crafting | 1 | unit | TODO |
-| 47 | CalcSuccessChance | crafting | 1 | unit | TODO |
-| 48 | FindSpell / GetSpell | spells | 1 | unit | TODO |
-| 49 | MaxFoldsForSkill | spells | 1 | unit | TODO |
-| 50 | GetTotalConvictionCost | spells | 1 | unit | TODO |
-| 51 | IsBetterThan | items | 1 | unit | TODO |
-| 52 | GetDiceRoll | items | 1 | unit | TODO |
-| 53 | GetDistributionDamage | items | 1 | unit | TODO |
-| 54 | Equals | items | 1 | unit | TODO |
-| 55 | HasAdjective | items | 1 | unit | TODO |
+| 1 | RollStat | dice | 1 | unit | DONE (40.2) |
+| 2 | OpposedRollStat | dice | 1 | unit | DONE (40.2) |
+| 3 | StdDevFor | dice | 1 | unit | DONE (40.2) |
+| 4 | SuccessChance | dice | 1 | unit | DONE (pre-existing) |
+| 5 | OpposedSuccessChance | dice | 1 | unit | DONE (pre-existing) |
+| 6 | PowerRanking | combat | 1 | unit | DONE (40.2) |
+| 7 | ChanceToTame | combat | 1 | unit | DEFERRED (integration-heavy) |
+| 8 | ChanceToSwitchTarget | combat | 1 | unit | DONE (40.2) |
+| 9 | SkillMultiplier | combat | 1 | unit | DONE (pre-existing) |
+| 10 | DamageScale | combat | 1 | unit | DONE (40.2) |
+| 11 | CalcRawDamage | combat | 1 | unit | DONE (40.2) |
+| 12 | ApplyMitigation | combat | 1 | unit | DONE (40.2) |
+| 13 | MitigationCap | combat | 1 | unit | DONE (40.2) |
+| 14 | ResourceMultiplier | combat | 1 | unit | DONE (pre-existing) |
+| 15 | IsThirdPartyAttack | combat | 1 | unit | DONE (40.2) |
+| 16 | CanUseBash | combat | 1 | unit | DONE (40.2) |
+| 17 | CanUseTrip | combat | 1 | unit | DONE (40.2) |
+| 18 | CanUseKick | combat | 1 | unit | DONE (40.2) |
+| 19 | CanUseGrapple | combat | 1 | unit | DONE (40.2) |
+| 20 | CanUseCast | combat | 1 | unit | DONE (40.2) |
+| 21 | ScoreBash | combat | 1 | unit | DONE (40.2) |
+| 22 | ScoreTrip | combat | 1 | unit | DONE (40.2) |
+| 23 | ScoreGrapple | combat | 1 | unit | DONE (40.2) |
+| 24 | GetPhysicalMitigation | characters | 1 | unit | DONE (40.2) |
+| 25 | GetMagicalMitigation | characters | 1 | unit | DONE (40.2) |
+| 26 | GetConvictionMitigation | characters | 1 | unit | DONE (40.2) |
+| 27 | GetDefenseScore | characters | 1 | unit | DONE (40.2) |
+| 28 | GetDefenseStaminaCost | characters | 1 | unit | DONE (40.2) |
+| 29 | CalculateProgressionChance | characters | 1 | unit | DONE (pre-existing) |
+| 30 | GetMutationLoad | mutations | 1 | unit | DONE (40.2) |
+| 31 | HasConflict | mutations | 1 | unit | DONE (40.2) |
+| 32 | GetStaminaRegenMultiplier | mutations | 1 | unit | DONE (40.2) |
+| 33 | GetNaturalWeaponBonus | mutations | 1 | unit | DONE (40.2) |
+| 34 | GetConvictionResistance | mutations | 1 | unit | DONE (40.2) |
+| 35 | HasMutationFlag | mutations | 1 | unit | DONE (40.2) |
+| 36 | GetConditionalHealthRegen | mutations | 1 | unit | DONE (40.2) |
+| 37 | GetHealthRegenMultiplier | mutations | 1 | unit | DONE (40.2) |
+| 38 | GetDodgeModifier | mutations | 1 | unit | DONE (40.2) |
+| 39 | GetDamageMultiplier | mutations | 1 | unit | DONE (40.2) |
+| 40 | GetMovementSpeedModifier | mutations | 1 | unit | DONE (40.2) |
+| 41 | GetHealthRegen | mutations | 1 | unit | DONE (40.2) |
+| 42 | GetSkillProgressionMult | mutations | 1 | unit | DONE (40.2) |
+| 43 | GetStatProgressionMult | mutations | 1 | unit | DONE (40.2) |
+| 44 | HasMutation | mutations | 1 | unit | DONE (40.2) |
+| 45 | GetMutationLevel | mutations | 1 | unit | DONE (40.2) |
+| 46 | FindTargetItem | crafting | 1 | unit | DONE (40.2) |
+| 47 | CalcSuccessChance | crafting | 1 | unit | DONE (pre-existing) |
+| 48 | FindSpell / GetSpell | spells | 1 | unit | DONE (40.2) |
+| 49 | MaxFoldsForSkill | spells | 1 | unit | DONE (40.2) |
+| 50 | GetTotalConvictionCost | spells | 1 | unit | DONE (40.2) |
+| 51 | IsBetterThan | items | 1 | unit | DONE (40.2) |
+| 52 | GetDiceRoll | items | 1 | unit | DONE (40.2) |
+| 53 | GetDistributionDamage | items | 1 | unit | DONE (40.2) |
+| 54 | Equals | items | 1 | unit | DONE (40.2) |
+| 55 | HasAdjective | items | 1 | unit | DONE (40.2) |
 
 ### Stage 40.3 — Integration & Scenario Tests (~12 scenarios)
 
@@ -529,11 +529,11 @@ without knowing exact values. Catches formula bugs.
 |---|------|------|--------|
 | 1 | Extract pure helpers from hooks (Barrier 2 Option A) | refactor | TODO |
 | 2 | Add hooks unit tests for extracted helpers | test | TODO |
-| 3 | seedRegistry for spells package | test infra | TODO |
-| 4 | seedRegistry for items package | test infra | TODO |
+| 3 | seedRegistry for spells package | test infra | DONE (40.2) |
+| 4 | seedRegistry for items package | test infra | N/A (inline Spec) |
 | 5 | seedRegistry for mobs package | test infra | TODO |
-| 6 | Regression test: damage pipeline edge cases | test | TODO |
-| 7 | Regression test: mitigation cap enforcement | test | TODO |
+| 6 | Regression test: damage pipeline edge cases | test | DONE (40.2) |
+| 7 | Regression test: mitigation cap enforcement | test | DONE (40.2) |
 | 8 | Regression test: defense floor (MinDefenseChance) | test | TODO |
 | 9 | CI coverage gate (fail if Tier 1 < 90%) | CI | TODO |
 | 10 | Smoke test: `go build && go test ./...` in CI | CI | TODO |

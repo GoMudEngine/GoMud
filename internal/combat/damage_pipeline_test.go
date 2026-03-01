@@ -175,3 +175,76 @@ func TestGetConvictionDamageDescription(t *testing.T) {
 		t.Errorf("expected devastating attack, got: %s", desc2)
 	}
 }
+
+// ─── Stage 40.2: DamageScale and MitigationCap edge cases ──────────────────
+
+func TestDamageScale(t *testing.T) {
+	tests := []struct {
+		name    string
+		channel DamageChannel
+		want    float64
+	}{
+		{"Physical", ChannelPhysical, 0.30},
+		{"Magical", ChannelMagical, 1.0},
+		{"Conviction", ChannelConviction, 1.0},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := DamageScale(tt.channel)
+			if math.Abs(got-tt.want) > 0.01 {
+				t.Errorf("DamageScale(%v) = %f, want %f", tt.channel, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestMitigationCap(t *testing.T) {
+	tests := []struct {
+		name    string
+		channel DamageChannel
+	}{
+		{"Physical", ChannelPhysical},
+		{"Magical", ChannelMagical},
+		{"Conviction", ChannelConviction},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := MitigationCap(tt.channel)
+			// All should return the configured cap (default 0.75)
+			if got <= 0 || got > 1.0 {
+				t.Errorf("MitigationCap(%v) = %f, want 0 < cap <= 1.0", tt.channel, got)
+			}
+		})
+	}
+}
+
+func TestCalcRawDamage_EdgeCases(t *testing.T) {
+	// Zero stat → zero damage
+	got := CalcRawDamage(0, 0, 1.0, ChannelPhysical)
+	if got != 0 {
+		t.Errorf("CalcRawDamage(0, 0, 1.0, Physical) = %f, want 0", got)
+	}
+
+	// Zero itemMult → fallback to 0.30 (unarmed level), NOT zero
+	got = CalcRawDamage(100, 10, 0.0, ChannelMagical)
+	if got <= 0 {
+		t.Errorf("CalcRawDamage(100, 10, 0.0, Magical) = %f, want > 0 (fallback)", got)
+	}
+}
+
+func TestApplyMitigation_EdgeCases(t *testing.T) {
+	// 100% mitigation should be capped
+	got := ApplyMitigation(100.0, 1.0, 0.75)
+	expected := 25.0 // 100 * (1 - 0.75)
+	if math.Abs(got-expected) > 0.01 {
+		t.Errorf("ApplyMitigation(100, 1.0, 0.75) = %f, want %f", got, expected)
+	}
+
+	// Zero raw → zero result
+	got = ApplyMitigation(0, 0.5, 0.75)
+	if got != 0 {
+		t.Errorf("ApplyMitigation(0, 0.5, 0.75) = %f, want 0", got)
+	}
+}

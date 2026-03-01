@@ -524,3 +524,195 @@ func ExampleRollStatArray() {
 	stats := RollStatArray(6, 12.0, 2.0, 3.0, 18.0)
 	fmt.Printf("Character stats: %v\n", stats)
 }
+
+// ─── Stage 40.2: Additional unit tests ──────────────────────────────────────
+
+func TestStdDevFor(t *testing.T) {
+	// Save and restore original spread
+	origSpread := stdDevFactor
+	defer func() {
+		stdDevFactorLock.Lock()
+		stdDevFactor = origSpread
+		stdDevFactorLock.Unlock()
+	}()
+
+	SetRollSpread(0.15) // ensure default
+
+	tests := []struct {
+		name     string
+		mean     float64
+		expected float64
+	}{
+		{"standard stat 100", 100.0, 15.0},
+		{"zero mean → floor of 1", 0.0, 1.0},
+		{"negative mean → floor of 1", -5.0, 1.0},
+		{"high stat 200", 200.0, 30.0},
+		{"low stat 10", 10.0, 1.5},
+		{"fractional mean 0.5 → floor of 1", 0.5, 1.0},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := StdDevFor(tt.mean)
+			if math.Abs(got-tt.expected) > 0.01 {
+				t.Errorf("StdDevFor(%.1f) = %.4f, want %.4f", tt.mean, got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestSetRollSpread(t *testing.T) {
+	// Save and restore original spread
+	origSpread := stdDevFactor
+	defer func() {
+		stdDevFactorLock.Lock()
+		stdDevFactor = origSpread
+		stdDevFactorLock.Unlock()
+	}()
+
+	// Setting a valid spread should change StdDevFor output
+	SetRollSpread(0.20)
+	got := StdDevFor(100.0)
+	if math.Abs(got-20.0) > 0.01 {
+		t.Errorf("After SetRollSpread(0.20): StdDevFor(100) = %.4f, want 20.0", got)
+	}
+
+	SetRollSpread(0.10)
+	got = StdDevFor(100.0)
+	if math.Abs(got-10.0) > 0.01 {
+		t.Errorf("After SetRollSpread(0.10): StdDevFor(100) = %.4f, want 10.0", got)
+	}
+
+	// Setting <= 0 should panic
+	defer func() {
+		if r := recover(); r == nil {
+			t.Error("SetRollSpread(0) should panic, but did not")
+		}
+	}()
+	SetRollSpread(0)
+}
+
+func TestSetRollSpread_Negative(t *testing.T) {
+	origSpread := stdDevFactor
+	defer func() {
+		stdDevFactorLock.Lock()
+		stdDevFactor = origSpread
+		stdDevFactorLock.Unlock()
+	}()
+
+	defer func() {
+		if r := recover(); r == nil {
+			t.Error("SetRollSpread(-1) should panic, but did not")
+		}
+	}()
+	SetRollSpread(-1)
+}
+
+func TestRollStat(t *testing.T) {
+	iterations := 10000
+	mean := 100.0
+	expectedStdDev := StdDevFor(mean)
+
+	sum := 0.0
+	for i := 0; i < iterations; i++ {
+		result := RollStat(mean)
+		sum += result.Value
+		// Verify structural fields
+		if i == 0 {
+			if math.Abs(result.Mean-mean) > 0.01 {
+				t.Errorf("RollStat Mean field: got %.2f, want %.2f", result.Mean, mean)
+			}
+			if math.Abs(result.StdDev-expectedStdDev) > 0.01 {
+				t.Errorf("RollStat StdDev field: got %.2f, want %.2f", result.StdDev, expectedStdDev)
+			}
+		}
+	}
+
+	empiricalMean := sum / float64(iterations)
+	tolerance := mean * 0.05 // 5%
+	if math.Abs(empiricalMean-mean) > tolerance {
+		t.Errorf("RollStat empirical mean = %.2f, want %.2f ±%.2f", empiricalMean, mean, tolerance)
+	}
+}
+
+func TestOpposedRollStat(t *testing.T) {
+	iterations := 10000
+
+	// Higher attacker should win more often
+	atkHigh := 120.0
+	defLow := 80.0
+	wins := 0
+	for i := 0; i < iterations; i++ {
+		success, _, _, _ := OpposedRollStat(atkHigh, defLow)
+		if success {
+			wins++
+		}
+	}
+	winRate := float64(wins) / float64(iterations)
+	if winRate < 0.55 {
+		t.Errorf("Higher atk (%.0f vs %.0f): win rate %.2f%%, expected > 55%%", atkHigh, defLow, winRate*100)
+	}
+
+	// Equal stats should be ~50/50
+	wins = 0
+	for i := 0; i < iterations; i++ {
+		success, _, _, _ := OpposedRollStat(100.0, 100.0)
+		if success {
+			wins++
+		}
+	}
+	winRate = float64(wins) / float64(iterations)
+	if winRate < 0.40 || winRate > 0.60 {
+		t.Errorf("Equal stats: win rate %.2f%%, expected 40-60%%", winRate*100)
+	}
+
+	// Lower attacker should win less often
+	wins = 0
+	for i := 0; i < iterations; i++ {
+		success, _, _, _ := OpposedRollStat(80.0, 120.0)
+		if success {
+			wins++
+		}
+	}
+	winRate = float64(wins) / float64(iterations)
+	if winRate > 0.45 {
+		t.Errorf("Lower atk (80 vs 120): win rate %.2f%%, expected < 45%%", winRate*100)
+	}
+}
+
+func TestCompareRolls(t *testing.T) {
+	tests := []struct {
+		name string
+		r1   RollResult
+		r2   RollResult
+		want int
+	}{
+		{
+			name: "r1 higher",
+			r1:   RollResult{Value: 60.0},
+			r2:   RollResult{Value: 40.0},
+			want: 1,
+		},
+		{
+			name: "r2 higher",
+			r1:   RollResult{Value: 30.0},
+			r2:   RollResult{Value: 50.0},
+			want: -1,
+		},
+		{
+			name: "equal",
+			r1:   RollResult{Value: 42.0},
+			r2:   RollResult{Value: 42.0},
+			want: 0,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := CompareRolls(tt.r1, tt.r2)
+			if got != tt.want {
+				t.Errorf("CompareRolls(%v, %v) = %d, want %d", tt.r1.Value, tt.r2.Value, got, tt.want)
+			}
+		})
+	}
+}
