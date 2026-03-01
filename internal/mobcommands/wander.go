@@ -14,6 +14,16 @@ func Wander(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		return true, errors.New("friendly mobs don't wander")
 	}
 
+	// Stage 42.8: Pack roaming — scattered mobs skip wander
+	if mob.ScatterRounds > 0 {
+		return true, nil
+	}
+
+	// Stage 42.8: Pack roaming — non-alpha follows alpha's movement
+	if mob.PackAlphaId > 0 && !mob.IsPackAlpha {
+		return true, nil
+	}
+
 	// If they aren't home and need to go home, do it.
 	if mob.Character.RoomId != mob.HomeRoomId {
 		if mob.MaxWander > -1 { // -1 means they can wander forever and never go home. 0 means they never wander.
@@ -58,8 +68,19 @@ func Wander(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		if r := rooms.LoadRoom(roomId); r != nil {
 			if !restrictZone || r.Zone == mob.Character.Zone {
 
+				// Stage 42.8: Capture mob list before alpha moves (for follower movement)
+				var preMoveRoomMobs []int
+				if mob.IsPackAlpha && mobs.PackRoamingEnabled() {
+					preMoveRoomMobs = room.GetMobs(rooms.FindAll)
+				}
+
 				mob.WanderCount++
 				mob.Command(fmt.Sprintf("go %s", exitName))
+
+				// Stage 42.8: Move pack followers through the same exit
+				if mob.IsPackAlpha && len(preMoveRoomMobs) > 0 {
+					mobs.MovePackFollowers(mob, exitName, preMoveRoomMobs)
+				}
 
 			}
 		}

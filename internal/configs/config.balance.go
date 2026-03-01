@@ -178,6 +178,11 @@ type Balance struct {
 	PackBonusTrainingPts ConfigInt  `yaml:"PackBonusTrainingPts"` // Training points awarded per pack bonus (default 1)
 	PackMaxBonus         ConfigInt  `yaml:"PackMaxBonus"`         // Max total pack bonus training points (default 5)
 
+	// ── PACK ROAMING ────────────────────────────────────────────────────────
+	PackRoamingEnabled ConfigBool `yaml:"PackRoamingEnabled"` // Enable alpha-follow pack movement (default true)
+	PackMaxSize        ConfigInt  `yaml:"PackMaxSize"`        // Max followers per alpha (-1 = unlimited, default -1)
+	PackScatterRounds  ConfigInt  `yaml:"PackScatterRounds"`  // Rounds mobs skip wandering after alpha death (default 2)
+
 	// ── CRAFTER MOBS ─────────────────────────────────────────────────────────
 	CrafterEnabled              ConfigBool `yaml:"CrafterEnabled"`              // Enable mob autonomous crafting (default true)
 	CrafterMaterialRestockRate  ConfigInt  `yaml:"CrafterMaterialRestockRate"`  // Rounds between material restocks and craft attempts (default 200)
@@ -594,6 +599,14 @@ func (b *Balance) Validate() {
 	}
 	if b.PackMaxBonus < 1 {
 		b.PackMaxBonus = 5
+	}
+
+	// ── PACK ROAMING ────────────────────────────────────────────────────────
+	if b.PackMaxSize == 0 {
+		b.PackMaxSize = -1
+	}
+	if b.PackScatterRounds < 0 {
+		b.PackScatterRounds = 2
 	}
 
 	// ── CRAFTER MOBS ─────────────────────────────────────────────────────────

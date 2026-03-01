@@ -90,6 +90,9 @@ type Mob struct {
 	CrafterRecipeIds        []string `yaml:"crafterrecipeids,omitempty"`        // Recipe IDs this mob can craft
 	CrafterRestockMaterials []int    `yaml:"crafterrestockmaterials,omitempty"` // Item IDs restocked periodically
 	PackBonusTotal          int      `yaml:"-"`                                 // Total training points from pack scaling (Stage 38.5.3)
+	PackAlphaId             int      `yaml:"-"`                                 // InstanceId of alpha this mob follows (0 = none)
+	IsPackAlpha             bool     `yaml:"-"`                                 // Whether this mob is currently the pack alpha
+	ScatterRounds           int      `yaml:"-"`                                 // Rounds remaining where mob skips wander (after alpha death)
 	crafterLastRestockRound uint64                                              // Last round materials were restocked (transient)
 	tempDataStore           map[string]any
 	conversationId  int              // Identifier of conversation currently involved in.

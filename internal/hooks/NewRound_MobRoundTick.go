@@ -68,6 +68,11 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 		}
 	}
 
+	// Stage 42.8: Pack roaming — coordinate alpha election and pack state
+	if mobs.PackRoamingEnabled() {
+		mobs.TickPackRoaming()
+	}
+
 	//
 	// Do mob round maintenance
 	//
