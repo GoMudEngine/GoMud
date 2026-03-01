@@ -60,6 +60,49 @@ func seedRegistry() {
 			Pro:        MutationEffect{Type: "stat_flat", Target: "charisma", Value: 20},
 			Con:        MutationEffect{Type: "aggro_magnet", Value: 2.0},
 		},
+		// Multi-effect mutation for testing new getters
+		"bio-adaptation": {
+			MutationId: "bio-adaptation",
+			Name:       "Bio-Adaptation",
+			Rarity:     4,
+			Pros: []MutationEffect{
+				{Type: "stamina_regen_multiplier", Value: 0.15},
+				{Type: "health_regen_multiplier", Value: 0.10},
+				{Type: "dodge_modifier", Value: 5.0},
+				{Type: "damage_multiplier", Value: 0.08},
+				{Type: "movement_speed", Value: 0.05},
+				{Type: "health_regen", Value: 2.0},
+				{Type: "skill_progression_multiplier", Value: 0.10},
+				{Type: "stat_progression_multiplier", Value: 0.05},
+			},
+			Cons: []MutationEffect{
+				{Type: "conviction_damage_reduction", Value: -0.05},
+			},
+		},
+		"natural-claws": {
+			MutationId: "natural-claws",
+			Name:       "Natural Claws",
+			Rarity:     5,
+			Pro:        MutationEffect{Type: "natural_weapon", Value: 8.0},
+			Con:        MutationEffect{Type: "stat_multiplier", Target: "charisma", Value: -0.05},
+		},
+		"sunblessed": {
+			MutationId: "sunblessed",
+			Name:       "Sunblessed",
+			Rarity:     6,
+			Pros: []MutationEffect{
+				{Type: "health_regen_if_lit", Value: 3.0},
+				{Type: "flag", Target: "sunblessed"},
+			},
+		},
+		"thick-hide": {
+			MutationId:  "thick-hide",
+			Name:        "Thick Hide",
+			Rarity:      4,
+			Pro:         MutationEffect{Type: "natural_armor", Value: 15},
+			Con:         MutationEffect{Type: "movement_speed", Value: -0.10},
+			Conflicts:   []string{"fast-reflexes"},
+		},
 	}
 
 	// Run Validate on each spec to migrate Pro/Con → Pros/Cons slices
@@ -367,6 +410,255 @@ func TestGetAdrenalSurgeBonus(t *testing.T) {
 	// L3 → 0.40
 	if got := GetAdrenalSurgeBonus(buildOwned("adrenaline-surge", 3)); abs(got-0.40) > 1e-9 {
 		t.Errorf("L3: want 0.40, got %v", got)
+	}
+}
+
+// ─── Stage 40.2: Additional getter tests ─────────────────────────────────────
+
+func TestGetMutationLoad(t *testing.T) {
+	seedRegistry()
+
+	tests := []struct {
+		name  string
+		owned map[string]int
+		want  float64
+	}{
+		{"empty", map[string]int{}, 0.0},
+		{"single L1", buildOwned("fast-reflexes", 1), 3.0},        // rarity 3 × level 1
+		{"single L2", buildOwned("fast-reflexes", 2), 6.0},        // rarity 3 × level 2
+		{"two mutations", buildOwned("fast-reflexes", 1, "iron-constitution", 1), 8.0}, // 3+5
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := GetMutationLoad(tt.owned)
+			if abs(got-tt.want) > 1e-9 {
+				t.Errorf("GetMutationLoad = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestHasConflict(t *testing.T) {
+	seedRegistry()
+
+	tests := []struct {
+		name        string
+		owned       map[string]int
+		candidateId string
+		want        bool
+	}{
+		{"no conflict", buildOwned("tough-skin", 1), "iron-constitution", false},
+		{"direct conflict (thick-hide conflicts with fast-reflexes)", buildOwned("fast-reflexes", 1), "thick-hide", true},
+		{"reverse conflict", buildOwned("thick-hide", 1), "fast-reflexes", true},
+		{"candidate not found", map[string]int{}, "nonexistent", false},
+		{"empty owned", map[string]int{}, "fast-reflexes", false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := HasConflict(tt.owned, tt.candidateId)
+			if got != tt.want {
+				t.Errorf("HasConflict = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestHasMutation(t *testing.T) {
+	owned := buildOwned("fast-reflexes", 1, "tough-skin", 2)
+
+	if !HasMutation(owned, "fast-reflexes") {
+		t.Error("expected HasMutation to return true for fast-reflexes")
+	}
+	if HasMutation(owned, "iron-constitution") {
+		t.Error("expected HasMutation to return false for iron-constitution")
+	}
+}
+
+func TestGetMutationLevel(t *testing.T) {
+	owned := buildOwned("fast-reflexes", 2, "tough-skin", 3)
+
+	if got := GetMutationLevel(owned, "fast-reflexes"); got != 2 {
+		t.Errorf("GetMutationLevel(fast-reflexes) = %d, want 2", got)
+	}
+	if got := GetMutationLevel(owned, "nonexistent"); got != 0 {
+		t.Errorf("GetMutationLevel(nonexistent) = %d, want 0", got)
+	}
+}
+
+func TestGetStaminaRegenMultiplier(t *testing.T) {
+	seedRegistry()
+
+	// iron-constitution has stamina_regen_multiplier con = -0.15
+	got := GetStaminaRegenMultiplier(buildOwned("iron-constitution", 1))
+	if abs(got-(-0.15)) > 1e-9 {
+		t.Errorf("iron-constitution: want -0.15, got %v", got)
+	}
+
+	// bio-adaptation has stamina_regen_multiplier pro = 0.15
+	got = GetStaminaRegenMultiplier(buildOwned("bio-adaptation", 1))
+	if abs(got-0.15) > 1e-9 {
+		t.Errorf("bio-adaptation: want 0.15, got %v", got)
+	}
+
+	// combined: -0.15 + 0.15 = 0
+	got = GetStaminaRegenMultiplier(buildOwned("iron-constitution", 1, "bio-adaptation", 1))
+	if abs(got) > 1e-9 {
+		t.Errorf("combined: want 0, got %v", got)
+	}
+}
+
+func TestGetNaturalWeaponBonus(t *testing.T) {
+	seedRegistry()
+
+	if got := GetNaturalWeaponBonus(map[string]int{}); got != 0 {
+		t.Errorf("empty: want 0, got %v", got)
+	}
+	if got := GetNaturalWeaponBonus(buildOwned("natural-claws", 1)); abs(got-8.0) > 1e-9 {
+		t.Errorf("natural-claws L1: want 8, got %v", got)
+	}
+}
+
+func TestGetConvictionResistance(t *testing.T) {
+	seedRegistry()
+
+	if got := GetConvictionResistance(map[string]int{}); got != 0 {
+		t.Errorf("empty: want 0, got %v", got)
+	}
+	// bio-adaptation has conviction_damage_reduction con = -0.05
+	got := GetConvictionResistance(buildOwned("bio-adaptation", 1))
+	if abs(got-(-0.05)) > 1e-9 {
+		t.Errorf("bio-adaptation: want -0.05, got %v", got)
+	}
+}
+
+func TestHasMutationFlag(t *testing.T) {
+	seedRegistry()
+
+	if HasMutationFlag(map[string]int{}, "sunblessed") {
+		t.Error("empty owned should not have flag")
+	}
+	if !HasMutationFlag(buildOwned("sunblessed", 1), "sunblessed") {
+		t.Error("sunblessed should grant sunblessed flag")
+	}
+	if HasMutationFlag(buildOwned("fast-reflexes", 1), "sunblessed") {
+		t.Error("fast-reflexes should not grant sunblessed flag")
+	}
+}
+
+func TestGetConditionalHealthRegen(t *testing.T) {
+	seedRegistry()
+
+	// sunblessed has health_regen_if_lit = 3.0
+	if got := GetConditionalHealthRegen(buildOwned("sunblessed", 1), true); got != 3 {
+		t.Errorf("sunblessed + lit: want 3, got %d", got)
+	}
+	if got := GetConditionalHealthRegen(buildOwned("sunblessed", 1), false); got != 0 {
+		t.Errorf("sunblessed + dark: want 0, got %d", got)
+	}
+	if got := GetConditionalHealthRegen(map[string]int{}, true); got != 0 {
+		t.Errorf("no mutations + lit: want 0, got %d", got)
+	}
+}
+
+func TestGetHealthRegenMultiplier(t *testing.T) {
+	seedRegistry()
+
+	if got := GetHealthRegenMultiplier(map[string]int{}); got != 0 {
+		t.Errorf("empty: want 0, got %v", got)
+	}
+	// bio-adaptation has health_regen_multiplier = 0.10
+	got := GetHealthRegenMultiplier(buildOwned("bio-adaptation", 1))
+	if abs(got-0.10) > 1e-9 {
+		t.Errorf("bio-adaptation: want 0.10, got %v", got)
+	}
+}
+
+func TestGetDodgeModifier(t *testing.T) {
+	seedRegistry()
+
+	if got := GetDodgeModifier(map[string]int{}); got != 0 {
+		t.Errorf("empty: want 0, got %v", got)
+	}
+	// bio-adaptation has dodge_modifier = 5.0
+	got := GetDodgeModifier(buildOwned("bio-adaptation", 1))
+	if abs(got-5.0) > 1e-9 {
+		t.Errorf("bio-adaptation: want 5, got %v", got)
+	}
+}
+
+func TestGetDamageMultiplier(t *testing.T) {
+	seedRegistry()
+
+	if got := GetDamageMultiplier(map[string]int{}); got != 0 {
+		t.Errorf("empty: want 0, got %v", got)
+	}
+	// bio-adaptation has damage_multiplier = 0.08
+	got := GetDamageMultiplier(buildOwned("bio-adaptation", 1))
+	if abs(got-0.08) > 1e-9 {
+		t.Errorf("bio-adaptation: want 0.08, got %v", got)
+	}
+}
+
+func TestGetMovementSpeedModifier(t *testing.T) {
+	seedRegistry()
+
+	if got := GetMovementSpeedModifier(map[string]int{}); got != 0 {
+		t.Errorf("empty: want 0, got %v", got)
+	}
+	// bio-adaptation has movement_speed pro = 0.05
+	got := GetMovementSpeedModifier(buildOwned("bio-adaptation", 1))
+	if abs(got-0.05) > 1e-9 {
+		t.Errorf("bio-adaptation: want 0.05, got %v", got)
+	}
+	// thick-hide has movement_speed con = -0.10
+	got = GetMovementSpeedModifier(buildOwned("thick-hide", 1))
+	if abs(got-(-0.10)) > 1e-9 {
+		t.Errorf("thick-hide: want -0.10, got %v", got)
+	}
+	// combined
+	got = GetMovementSpeedModifier(buildOwned("bio-adaptation", 1, "thick-hide", 1))
+	if abs(got-(-0.05)) > 1e-9 {
+		t.Errorf("combined: want -0.05, got %v", got)
+	}
+}
+
+func TestGetHealthRegen(t *testing.T) {
+	seedRegistry()
+
+	if got := GetHealthRegen(map[string]int{}); got != 0 {
+		t.Errorf("empty: want 0, got %d", got)
+	}
+	// bio-adaptation has health_regen = 2.0
+	if got := GetHealthRegen(buildOwned("bio-adaptation", 1)); got != 2 {
+		t.Errorf("bio-adaptation: want 2, got %d", got)
+	}
+}
+
+func TestGetSkillProgressionMultiplier(t *testing.T) {
+	seedRegistry()
+
+	if got := GetSkillProgressionMultiplier(map[string]int{}); got != 0 {
+		t.Errorf("empty: want 0, got %v", got)
+	}
+	// bio-adaptation has skill_progression_multiplier = 0.10
+	got := GetSkillProgressionMultiplier(buildOwned("bio-adaptation", 1))
+	if abs(got-0.10) > 1e-9 {
+		t.Errorf("bio-adaptation: want 0.10, got %v", got)
+	}
+}
+
+func TestGetStatProgressionMultiplier(t *testing.T) {
+	seedRegistry()
+
+	if got := GetStatProgressionMultiplier(map[string]int{}); got != 0 {
+		t.Errorf("empty: want 0, got %v", got)
+	}
+	// bio-adaptation has stat_progression_multiplier = 0.05
+	got := GetStatProgressionMultiplier(buildOwned("bio-adaptation", 1))
+	if abs(got-0.05) > 1e-9 {
+		t.Errorf("bio-adaptation: want 0.05, got %v", got)
 	}
 }
 
