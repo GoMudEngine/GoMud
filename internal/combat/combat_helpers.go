@@ -219,7 +219,7 @@ func buildDamageParams(sourceChar *characters.Character, targetChar *characters.
 	rawDmgForCrit := rawDmg
 
 	// Pipeline-proportional variance
-	dmgVariance := dmgMean * float64(configs.GetGamePlayConfig().RollSpread)
+	dmgVariance := dmgMean * float64(configs.GetBalanceConfig().RollSpread)
 
 	// Add statmod damage bonus
 	dmgMean += float64(statModBonus)
@@ -233,8 +233,8 @@ func buildDamageParams(sourceChar *characters.Character, targetChar *characters.
 
 	// Stage 7.5: Apply prone damage penalty
 	if sourceChar.CombatPosition == characters.PositionProne {
-		dmgMean *= float64(configs.GetGamePlayConfig().ProneDamagePenalty)
-		rawDmgForCrit *= float64(configs.GetGamePlayConfig().ProneDamagePenalty)
+		dmgMean *= float64(configs.GetBalanceConfig().ProneDamagePenalty)
+		rawDmgForCrit *= float64(configs.GetBalanceConfig().ProneDamagePenalty)
 	}
 
 	// Phase 24.2: Apply mutation damage multiplier
@@ -245,7 +245,7 @@ func buildDamageParams(sourceChar *characters.Character, targetChar *characters.
 
 	// Message seed
 	msgSeed := 0
-	if configs.GetGamePlayConfig().ConsistentAttackMessages {
+	if configs.GetBalanceConfig().ConsistentAttackMessages {
 		msgSeed = ws.weapon.ItemId
 	}
 
@@ -268,12 +268,12 @@ func calcAttackScore(sourceChar *characters.Character, targetChar *characters.Ch
 	attackScore *= staminaMult
 
 	// Stage 7.5: Apply prone attack multipliers
-	cfg := configs.GetGamePlayConfig()
+	bal := configs.GetBalanceConfig()
 	if sourceChar.CombatPosition == characters.PositionProne {
-		attackScore *= float64(cfg.ProneAttackMultiplier)
+		attackScore *= float64(bal.ProneAttackMultiplier)
 	}
 	if targetChar.CombatPosition == characters.PositionProne {
-		attackScore *= float64(cfg.ProneVulnerabilityMultiplier)
+		attackScore *= float64(bal.ProneVulnerabilityMultiplier)
 	}
 
 	return attackScore
@@ -351,7 +351,7 @@ func filterDefensesForThirdParty(result *AttackResult, sourceChar *characters.Ch
 // runBestOfAllDefense rolls every available defense and picks the one that won
 // by the widest margin. Returns the best result.
 func runBestOfAllDefense(result *AttackResult, sourceChar *characters.Character, targetChar *characters.Character, defSeq []string, atkScore float64, isThirdParty bool) bestDefenseResult {
-	cfg := configs.GetGamePlayConfig()
+	bal := configs.GetBalanceConfig()
 
 	best := bestDefenseResult{
 		margin: math.Inf(-1),
@@ -376,28 +376,28 @@ func runBestOfAllDefense(result *AttackResult, sourceChar *characters.Character,
 		// Apply base effectiveness multipliers
 		switch defenseType {
 		case characters.DefenseDodge:
-			defenseScore *= float64(cfg.DodgeEffectiveness)
+			defenseScore *= float64(bal.DodgeEffectiveness)
 		case characters.DefenseParry:
-			defenseScore *= float64(cfg.ParryEffectiveness)
+			defenseScore *= float64(bal.ParryEffectiveness)
 		case characters.DefenseBlock:
-			defenseScore *= float64(cfg.BlockEffectiveness)
+			defenseScore *= float64(bal.BlockEffectiveness)
 		}
 
 		// Stage 7.5: Apply prone defense penalties
 		if targetChar.CombatPosition == characters.PositionProne {
 			switch defenseType {
 			case "dodge":
-				defenseScore *= float64(cfg.ProneDodgePenalty)
+				defenseScore *= float64(bal.ProneDodgePenalty)
 			case "parry":
-				defenseScore *= float64(cfg.ProneParryPenalty)
+				defenseScore *= float64(bal.ProneParryPenalty)
 			case "block":
-				defenseScore *= float64(cfg.ProneBlockPenalty)
+				defenseScore *= float64(bal.ProneBlockPenalty)
 			}
 		}
 
 		// Stage 8.5: Apply third-party vulnerability penalty
 		if isThirdParty {
-			defenseScore *= float64(cfg.ThirdPartyGrapplePenalty)
+			defenseScore *= float64(bal.ThirdPartyGrapplePenalty)
 		}
 
 		// Stage 8.6: Apply failed grapple defense penalty
@@ -429,7 +429,7 @@ func runBestOfAllDefense(result *AttackResult, sourceChar *characters.Character,
 // resolveDefenseOutcome processes the best defense result and sends appropriate messages.
 // Returns whether the attack hit and the relevant roll result.
 func resolveDefenseOutcome(result *AttackResult, best bestDefenseResult, sourceChar *characters.Character, targetChar *characters.Character, isThirdParty bool) (bool, dice.RollResult) {
-	cfg := configs.GetGamePlayConfig()
+	bal := configs.GetBalanceConfig()
 
 	// Store z-scores from the best defense attempt
 	if best.defenseType != "" {
@@ -439,7 +439,7 @@ func resolveDefenseOutcome(result *AttackResult, best bestDefenseResult, sourceC
 
 	if best.margin > 0 {
 		// Attack hit floor: even outclassed attackers have a minimum chance
-		attackFloor := float64(cfg.MinAttackHitChance)
+		attackFloor := float64(bal.MinAttackHitChance)
 		if attackFloor > 0 && util.Rand(100) < int(attackFloor*100) {
 			// Floor save — attack hits despite defense winning the roll
 			return true, best.hitRoll
@@ -541,7 +541,7 @@ func resolveDefenseOutcome(result *AttackResult, best bestDefenseResult, sourceC
 		if defType == "" {
 			defType = characters.DefenseDodge
 		}
-		floor := float64(cfg.MinDefenseChance)
+		floor := float64(bal.MinDefenseChance)
 		if floor > 0 && util.Rand(100) < int(floor*100) {
 			// Floor save — defense succeeds despite losing the roll
 			result.DefenseUsed = DefenseType(defType)

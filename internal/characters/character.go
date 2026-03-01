@@ -1701,7 +1701,7 @@ func (c *Character) GetDefenseScore(defenseType string) float64 {
 
 // GetDefenseStaminaCost returns stamina cost for a defense type (Stage 7.1)
 func (c *Character) GetDefenseStaminaCost(defenseType string) int {
-	cfg := configs.GetGamePlayConfig()
+	bal := configs.GetBalanceConfig()
 
 	baseCost := 0
 	multiplier := 1.0
@@ -1709,13 +1709,13 @@ func (c *Character) GetDefenseStaminaCost(defenseType string) int {
 	switch defenseType {
 	case DefenseDodge:
 		baseCost = 2
-		multiplier = float64(cfg.DodgeMultiplier)
+		multiplier = float64(bal.DodgeMultiplier)
 	case DefenseParry:
 		baseCost = 4
-		multiplier = float64(cfg.ParryMultiplier)
+		multiplier = float64(bal.ParryMultiplier)
 	case DefenseBlock:
 		baseCost = 5
-		multiplier = float64(cfg.BlockMultiplier)
+		multiplier = float64(bal.BlockMultiplier)
 	default:
 		return 0
 	}

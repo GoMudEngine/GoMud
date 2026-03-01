@@ -25,7 +25,7 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	}
 
 	// Gate: mobs share the special-move cooldown slot with bash/trip/kick
-	cfg := configs.GetGamePlayConfig()
+	cfg := configs.GetBalanceConfig()
 	if !mob.Character.TryCooldown(`special-move`, fmt.Sprintf(`%d rounds`, cfg.SpecialMoveCooldown)) {
 		return true, nil
 	}

@@ -165,7 +165,7 @@ func GetWaitMessages(stepType items.Intensity, sourceChar *characters.Character,
 
 	// zero means randomly selected, otherwise use the ItemId to consistently choose a message
 	msgSeed := 0
-	if configs.GetGamePlayConfig().ConsistentAttackMessages {
+	if configs.GetBalanceConfig().ConsistentAttackMessages {
 		msgSeed = sourceChar.Equipment.Weapon.ItemId
 	}
 

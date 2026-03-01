@@ -20,7 +20,7 @@ func Grapple(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	}
 
 	// Check shared special move cooldown
-	cfg := configs.GetGamePlayConfig()
+	cfg := configs.GetBalanceConfig()
 	if !mob.Character.Cooldowns.Try("special-move", fmt.Sprintf("%d rounds", cfg.SpecialMoveCooldown)) {
 		return true, nil
 	}
