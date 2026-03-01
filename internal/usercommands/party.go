@@ -332,30 +332,26 @@ func cmdPartyList(user *users.UserRecord, currentParty *parties.Party) {
 }
 
 func cmdPartyAutoattack(user *users.UserRecord, currentParty *parties.Party, rest string) {
-	autoAttackOn := false
+	// Default is on — only "off" disables it
+	wasOn := user.Character.GetSetting("autoattack") != "off"
+
 	if rest == `on` {
-		autoAttackOn = true
-	} else if rest == `off` {
-		autoAttackOn = false
-	} else {
-		user.SendText(`Usage: <ansi fg="command">party autoattack [on/off]</ansi>`)
-		return
-	}
-
-	wasOnBefore := currentParty.SetAutoAttack(user.UserId, autoAttackOn)
-
-	if autoAttackOn {
-		if wasOnBefore {
+		user.Character.SetSetting("autoattack", "")
+		if wasOn {
 			user.SendText(`You already have auto-attack enabled.`)
 		} else {
 			user.SendText(`You are now auto-attacking with your party.`)
 		}
-	} else {
-		if wasOnBefore {
+	} else if rest == `off` {
+		user.Character.SetSetting("autoattack", "off")
+		if wasOn {
 			user.SendText(`You are no longer auto-attacking with your party.`)
 		} else {
 			user.SendText(`You already have auto-attacking disabled.`)
 		}
+	} else {
+		user.SendText(`Usage: <ansi fg="command">party autoattack [on/off]</ansi>`)
+		return
 	}
 
 	dispatchPartyEvent(currentParty, `behavior`)
