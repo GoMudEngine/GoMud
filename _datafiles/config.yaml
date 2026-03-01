@@ -372,9 +372,9 @@ GamePlay:
   # 1.0 = no change. 1.2 = 20% stronger. 0.8 = 20% weaker.
   # Example: defender Dex 100, skill 10, DodgeEffectiveness 1.2:
   #   dodge score = (100 + 10) × 1.2 = 132 (vs attacker's ~110)
-  DodgeEffectiveness: 0.97
+  DodgeEffectiveness: 0.97      # Tuned 39.2: slight nerf to dodge (most common defense) to keep parry/block competitive
   ParryEffectiveness: 1.0
-  BlockEffectiveness: 1.02
+  BlockEffectiveness: 1.02      # Tuned 39.2: slight buff; requires shield, sacrifices 2h/dual-wield damage
   #
   # MinDefenseChance: Minimum probability that any defense succeeds, even
   #   when the attacker's score vastly outclasses the defender's. Acts as a
@@ -402,9 +402,9 @@ GamePlay:
   #   prone DEFENDER. This is how much of their defense they keep.
   #   1.0 = full defense (no penalty). 0.50 = half defense. 0.0 = no defense.
   #   Example: defender has dodge score 100. At 0.90 → score 90. At 0.50 → 50.
-  ProneDodgePenalty: 0.95       # Prone defender keeps 95% of dodge score
-  ProneParryPenalty: 0.95       # Prone defender keeps 95% of parry score
-  ProneBlockPenalty: 0.95       # Prone defender keeps 95% of block score
+  ProneDodgePenalty: 0.95       # Tuned 39.2: raised from harsher values; prone already punishing via attack/damage mults
+  ProneParryPenalty: 0.95       # Tuned 39.2: raised from harsher values; prone already punishing via attack/damage mults
+  ProneBlockPenalty: 0.95       # Tuned 39.2: raised from harsher values; prone already punishing via attack/damage mults
   #
   # ProneDamagePenalty: MULTIPLIER on damage dealt by a character attacking
   #   WHILE prone. 0.80 = deals 80% of normal damage from the ground.
@@ -413,7 +413,7 @@ GamePlay:
   # ProneVulnerabilityMultiplier: MULTIPLIER on attack score when the
   #   TARGET is prone. Stacks with the defense penalties above.
   #   Example: attacker score 110, multiplier 1.15 → score 126.5.
-  ProneVulnerabilityMultiplier: 1.05
+  ProneVulnerabilityMultiplier: 1.05  # Tuned 39.2: lowered from 1.15; 5% is enough when defense penalties also stack
   #
   StandStaminaCost: 0.15         # Fraction of max stamina to stand up (0.15 = 15%)
   StandMinStamina: 0.15          # Must have this fraction of max SP to stand
@@ -473,7 +473,7 @@ Balance:
   #   raw = 100 × 1.0 × 0.30 × 0.05 = 1.5 (fists are weak)
   # A weapon with damage_multiplier 1.0 would do:
   #   raw = 100 × 1.0 × 1.0 × 0.05 = 5.0
-  UnarmedDamageMultiplier: 0.30
+  UnarmedDamageMultiplier: 0.30 # Tuned 39.2: fists are a last resort; 0.30 = ~1/3 of a basic weapon
   #
   # ── Per-Channel Damage Scales ──
   # All channels use the same formula:
@@ -486,24 +486,24 @@ Balance:
   #     0.05 →   5 raw damage per swing (current — low, needs MobDamageMultiplier)
   #     0.15 →  15 raw damage per swing
   #     0.30 →  30 raw damage per swing (original default)
-  MeleeDamageScale: 0.15
+  MeleeDamageScale: 0.15       # Tuned 39.2: lowered from 0.30; keeps player melee modest, MobDamageMultiplier compensates for NPCs
   #
   # MobDamageMultiplier: extra multiplier applied ONLY to NPC melee
   #   damage. Lets you keep player damage low while making NPCs threatening.
   #   Example: MeleeDamageScale 0.05, MobDamageMultiplier 4.0:
   #     Player Str 100 → 100 × 1.0 × 1.0 × 0.05 = 5 raw (unchanged)
   #     Mob Str 100    → 100 × 1.0 × 1.0 × 0.05 × 4.0 = 20 raw
-  MobDamageMultiplier: 3.75
+  MobDamageMultiplier: 3.75     # Tuned 39.2: compensates for low MeleeDamageScale; mob swings hit ~56 raw at Str 100
   #
   # SpellDamageScale: multiplier on ALL spell damage output (players + NPCs).
   #   1.0 = no scaling. Example at Wil 100, skill 0, spell mult 1.0:
   #     1.0 → 100 raw,  1.5 → 150 raw,  0.5 → 50 raw
-  SpellDamageScale: 3.5
+  SpellDamageScale: 3.5         # Tuned 39.2: primary damage channel; 3.5x makes spells worth conviction cost + cast time
   #
   # RhetoricDamageScale: multiplier on taunt/conviction damage output.
   #   Taunt uses itemMult 0.5 as base. Example at Cha 100, skill 0:
   #     1.0 → 50 raw,  2.0 → 100 raw
-  RhetoricDamageScale: 2.0
+  RhetoricDamageScale: 2.0      # Tuned 39.2: taunts are utility/CC, not primary damage; 2x keeps conviction damage meaningful but secondary
   #
   # SkillMultiplierBase/Max: controls how much skill rank affects damage.
   #   At rank 0 the multiplier is Base, at soft cap (50) it's Max.
@@ -539,7 +539,7 @@ Balance:
 
   # ── REGEN RATES (fraction of pool max per tick; 0.01 = 1%) ────────────────
   PlayerHealthRegenPct: 0.01     # Player HP regen per tick (1% of HealthMax)
-  PlayerStaminaRegenPct: 0.02    # Player stamina regen per tick
+  PlayerStaminaRegenPct: 0.02    # Tuned 39.2: doubled from 0.01; fights felt too exhausting at 1%
   PlayerConvictionRegenPct: 0.01 # Player conviction regen per tick
   MobHealthRegenPct: 0.01        # NPC HP regen per tick (1% of HealthMax)
   MobStaminaRegenPct: 0.01       # NPC stamina regen per tick
@@ -577,20 +577,20 @@ Balance:
   # unarmed-combat both map dexterity as their primary stat, firing
   # OnStatUse("dexterity") multiple times per combat round.
   StatProgressionMultipliers:
-    strength: 0.20
-    dexterity: 0.10
+    strength: 0.20     # Tuned 39.2: combat stats fire many times/round; low mult prevents runaway growth
+    dexterity: 0.10    # Tuned 39.2: weapon + unarmed both fire dex; lowest mult to compensate
     perception: 1.0
     vitality: 1.0
     willpower: 1.0
-    charisma: 0.20
+    charisma: 0.20     # Tuned 39.2: rhetoric fires often in group fights; low mult prevents runaway growth
 
   # ── PER-SKILL PROGRESSION MULTIPLIERS ───────────────────────────────────────
   # Overrides the hardcoded skill progression multipliers in skills.go.
   # Combat skills fire many times per round (low mult), utility skills
   # fire rarely (high mult). Only skills listed here override the defaults.
   SkillProgressionMultipliers:
-    weapon-combat: 0.12
-    unarmed-combat: 0.12
+    weapon-combat: 0.12   # Tuned 39.2: ~8 attacks/round × 0.12 ≈ 1 effective check/round, matches non-combat pacing
+    unarmed-combat: 0.12  # Tuned 39.2: same rationale as weapon-combat
     ranged-combat: 0.3
     spellcasting: 0.5
     rhetoric: 0.5
@@ -730,7 +730,7 @@ LLM:
 ################################################################################
 Analytics:
   Enabled: true
-  MaxEvents: 250000
+  MaxEvents: 50000   # Reduced from 250k; tuning pass complete, 50k sufficient for monitoring
   FlushIntervalSec: 300
   LogPath: "_datafiles/logs/combat-analytics.jsonl"
 

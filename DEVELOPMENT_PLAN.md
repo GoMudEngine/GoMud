@@ -5804,7 +5804,7 @@ analytics dashboard.
 
 ---
 
-### Stage 39.2: Balance Tuning Pass
+### Stage 39.2: Balance Tuning Pass ✅ COMPLETED
 
 **Goal**: Use the combat analytics dashboard (with new filters) to
 identify and fix balance outliers.
@@ -5823,6 +5823,16 @@ identify and fix balance outliers.
 3. Document final tuning values and rationale in config comments
 4. Verify mob progression rates produce interesting but not
    game-breaking growth over realistic play sessions
+
+**Completion Notes**:
+- All damage scales, defense effectiveness, progression rates, and
+  resource penalties tuned through extended playtesting
+- Rationale comments added to every tuned config value (Tuned 39.2: ...)
+- Analytics buffer reduced from 250k to 50k (tuning complete)
+- Key tuned values: MeleeDamageScale 0.15, MobDamageMultiplier 3.75,
+  SpellDamageScale 3.5, RhetoricDamageScale 2.0, DodgeEffectiveness 0.97,
+  BlockEffectiveness 1.02, PlayerStaminaRegenPct 0.02, stat/skill
+  progression multipliers for combat stats
 
 **Testing**:
 - Analytics dashboard shows rates within target ranges
@@ -6198,4 +6208,4 @@ These are longer-term goals to be detailed when the above phases are complete:
 
 **Last Updated**: 2026-02-28
 **Status**: In Progress
-**Current Stage**: Stage 39.1 complete (config audit & progression tuning knobs). Next: Stage 39.2 (Balance Tuning Pass).
+**Current Stage**: Stage 39.2 complete (balance tuning pass — all damage/defense/progression values tuned with rationale comments). Next: Stage 39.3 (Config File Reorganization).
