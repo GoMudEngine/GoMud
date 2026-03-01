@@ -1,0 +1,34 @@
+roomid: 3015
+zone: Ironwind Steppe
+title: Northern Sagebrush Flats
+description: The flats extend north here, the sagebrush growing denser
+  and taller as if the soil is richer on this side. A few twisted
+  juniper trees stand alone on the plain, their trunks gnarled by
+  decades of wind. The ground is scattered with animal bones --
+  small skulls, leg bones, vertebrae -- the remains of prey
+  animals discarded by predators. Wolf territory, by the signs.
+biome: land
+exits:
+  south:
+    roomid: 3011
+  east:
+    roomid: 3016
+  northeast:
+    roomid: 3031
+  north:
+    roomid: 3019
+nouns:
+  junipers: Stunted, wind-twisted juniper trees with shaggy bark
+    and dense blue-green foliage. They provide the only real
+    shade on the flats. Birds nest in their branches.
+  bones: Scattered animal bones, bleached white by sun and wind.
+    Small skulls, rib cages, leg bones -- the leavings of
+    predators who hunt the flats. Most are old and dry.
+spawninfo:
+- mobid: 205
+- mobid: 206
+- mobid: 233
+idlemessages:
+- A crow picks at something among the scattered bones.
+- Wind sighs through the juniper branches with a low moan.
+- Fresh wolf tracks lead north through the tall sagebrush.

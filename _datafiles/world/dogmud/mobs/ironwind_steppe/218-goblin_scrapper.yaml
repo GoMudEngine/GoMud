@@ -1,0 +1,38 @@
+mobid: 218
+zone: Ironwind Steppe
+statpool: 120
+itemdropchance: 20
+hostile: true
+maxwander: 2
+groups:
+  - steppe-goblin
+  - humanoid
+archetype: fighting
+mutationchance: 30
+idlecommands:
+  - 'emote swings a crude club in practice arcs, grunting with effort'
+  - ''
+  - 'emote bares yellowed teeth in a snarl'
+  - ''
+  - ''
+  - 'emote picks at something between its teeth with a dirty claw'
+activitylevel: 25
+character:
+  name: goblin scrapper
+  description: |
+    A stockier goblin than the scouts, this one is built for
+    fighting. Crude armor of salvaged metal plates and hardened
+    leather covers its torso, and it carries a club made from a
+    heavy stone lashed to a stick. The goblin scrapper is the
+    front-line fighter of the steppe-goblin band -- not clever,
+    but aggressive and surprisingly tough. Its green skin is
+    covered in ritual scars and crude tattoos.
+  speciesid: 5
+  level: 1
+  stats:
+    strength:
+      training: 8
+    vitality:
+      training: 5
+    dexterity:
+      training: 3

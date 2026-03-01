@@ -1,0 +1,41 @@
+roomid: 3103
+zone: Ironwind Steppe
+title: Drip Chamber
+description: A medium-sized cave chamber where water seeps through
+  the ceiling in a constant slow drip. Mineral-laden water has
+  built up small stalagmites on the floor and painted the walls
+  with flowstone in shades of cream and rust. The dripping echoes
+  in the enclosed space, creating a rhythmic, almost hypnotic
+  sound. Pools of clear water collect in natural depressions,
+  their surfaces rippling with each drop.
+biome: cave
+exits:
+  south:
+    roomid: 3101
+  west:
+    roomid: 3102
+  north:
+    roomid: 3106
+  east:
+    roomid: 3107
+nouns:
+  stalagmites: Small mineral formations rising from the cave floor,
+    none taller than a foot. They are built grain by grain from
+    mineral-laden water, their surfaces ridged in concentric
+    growth rings. Some are white as bone, others stained orange
+    by iron.
+  pools: Shallow pools of clear, cold water collected in natural
+    stone basins. The water is almost perfectly transparent,
+    tinted faintly by minerals. Each drop from above sends tiny
+    ripples across the surface.
+  flowstone: Smooth mineral deposits coating the walls in flowing
+    sheets, built up over centuries by thin films of water. The
+    flowstone is cream-colored with bands of rust and orange.
+spawninfo:
+- mobid: 224
+- mobid: 225
+- mobid: 226
+idlemessages:
+- Water drips with metronomic regularity, echoing in the chamber.
+- Mineral deposits glisten in the dim light, wet and gleaming.
+- Ripples spread across a pool as a drop strikes the surface.

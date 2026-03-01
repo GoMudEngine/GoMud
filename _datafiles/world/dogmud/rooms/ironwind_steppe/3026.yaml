@@ -1,0 +1,34 @@
+roomid: 3026
+zone: Ironwind Steppe
+title: Boar Wallow Path
+description: A muddy, trampled path winds south through the sagebrush
+  here, clearly made by heavy animals. The ground is torn up by
+  hooves and the sagebrush along the path is broken and crushed.
+  The mud is pocked with deep hoofprints and the air has a rank,
+  musky smell. This is a regular route for boars moving between
+  the wallows to the south and grazing grounds to the north.
+biome: land
+exits:
+  south:
+    roomid: 3025
+  east:
+    roomid: 3024
+  north:
+    roomid: 3027
+  west:
+    roomid: 3036
+nouns:
+  path: A broad track of churned mud and crushed vegetation made
+    by the passage of large animals. The hoofprints are deep
+    and cloven -- boar tracks, each the size of a palm.
+  sagebrush: Sagebrush along the path has been broken, trampled,
+    and rubbed against by passing animals. Some bushes have been
+    uprooted entirely, leaving bare dirt.
+spawninfo:
+- mobid: 207
+- mobid: 208
+- mobid: 212
+idlemessages:
+- The rank smell of boar musk hangs heavy in the still air.
+- Mud squelches underfoot where hooves have churned the ground.
+- A beetle picks its way across a massive hoofprint.

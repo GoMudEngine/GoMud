@@ -1,0 +1,33 @@
+mobid: 213
+zone: Ironwind Steppe
+statpool: 40
+itemdropchance: 5
+hostile: false
+maxwander: 4
+groups:
+  - animal
+idlecommands:
+  - 'emote nibbles at a tuft of grass, ears swiveling'
+  - ''
+  - ''
+  - 'emote thumps a hind foot twice in rapid succession'
+  - ''
+  - 'emote freezes in place, becoming nearly invisible in the grass'
+activitylevel: 25
+character:
+  name: dust hare
+  description: |
+    A large hare with long, powerful hind legs and oversized ears
+    that swivel independently, scanning for danger. Its coat is
+    the exact color of dry steppe grass -- a dusty tawny-brown
+    that provides excellent camouflage. The dust hare survives by
+    being fast, alert, and very, very cautious. It can accelerate
+    from a standing start to a flat sprint in an instant, zig-
+    zagging across the flats faster than most predators can follow.
+  speciesid: 10
+  level: 1
+  stats:
+    dexterity:
+      training: 8
+    perception:
+      training: 5

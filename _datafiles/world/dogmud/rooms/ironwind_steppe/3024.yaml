@@ -1,0 +1,32 @@
+roomid: 3024
+zone: Ironwind Steppe
+title: Dry Grass Expanse
+description: The grass grows tall here, reaching waist-height in thick
+  golden-brown stands that rustle and whisper with every breath of
+  wind. The terrain is gently rolling, the swells just high enough
+  to hide what lies in the next hollow. It would be easy to walk
+  past a wolf or boar bedded down in this tall grass without ever
+  seeing it. The air smells of dry hay and sun-warmed earth.
+biome: land
+exits:
+  east:
+    roomid: 3023
+  south:
+    roomid: 3022
+  north:
+    roomid: 3026
+  west:
+    roomid: 3025
+nouns:
+  grass: Tall, dense steppe grass in shades of gold and brown,
+    swaying in continuous waves. The stems are tough and wiry,
+    difficult to push through. Seeds cluster at the tips in
+    heavy heads that nod in the breeze.
+spawninfo:
+- mobid: 205
+- mobid: 213
+- mobid: 237
+idlemessages:
+- The grass parts and closes again -- something passed through nearby.
+- Seeds rattle against each other in dry, whispering cascades.
+- A moth flutters erratically above the grass tops.

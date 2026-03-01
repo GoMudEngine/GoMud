@@ -1,0 +1,36 @@
+mobid: 207
+zone: Ironwind Steppe
+statpool: 80
+itemdropchance: 10
+hostile: true
+maxwander: 3
+groups:
+  - steppe-boar
+  - animal
+archetype: fighting
+mutationchance: 20
+idlecommands:
+  - 'emote roots through the dirt with its broad snout, snorting'
+  - ''
+  - ''
+  - 'emote shakes its bristly hide, sending dust flying'
+  - ''
+  - 'emote stamps a hoof and grunts a warning'
+activitylevel: 20
+character:
+  name: steppe boar
+  description: |
+    A heavy, barrel-chested boar covered in coarse, dark bristles.
+    Its small eyes are set deep in a massive skull, and two curved
+    tusks jut from its lower jaw -- yellowed, chipped, and very
+    sharp. The steppe boar is built like a battering ram and has
+    the temperament to match. It roots through the steppe soil
+    for grubs and tubers, and will charge anything it perceives
+    as a threat with surprising speed for its bulk.
+  speciesid: 6
+  level: 1
+  stats:
+    strength:
+      training: 8
+    vitality:
+      training: 5

@@ -1,0 +1,39 @@
+roomid: 3091
+zone: Ironwind Steppe
+title: Outer Wallows
+description: Broad, shallow pits of churned mud mark the outer
+  wallowing grounds where boars coat themselves in earth. Some
+  wallows are occupied, the boars lying half-submerged in the
+  cooling mud with only their backs and ears visible. Others
+  are empty, their surfaces drying and cracking in the sun.
+  Trampled reeds and flattened grass surround each wallow in
+  a ring of destruction.
+biome: land
+exits:
+  north:
+    roomid: 3090
+  south:
+    roomid: 3092
+  east:
+    roomid: 3094
+  west:
+    roomid: 3058
+  northeast:
+    roomid: 3080
+nouns:
+  wallows: Broad, shallow pits scooped in the muddy earth by
+    boar bodies, each large enough for a single animal. The
+    mud inside is churned smooth and dark, mixed with bristly
+    hair and the strong scent of musk.
+  reeds: Flattened cattails and rushes, crushed by rolling
+    boar bodies. The vegetation is battered into a muddy
+    pulp around each wallow.
+spawninfo:
+- mobid: 207
+- mobid: 207
+- mobid: 208
+- mobid: 216
+idlemessages:
+- A boar wallows contentedly, mud oozing over its broad back.
+- Flies buzz in thick clouds over the muddy wallows.
+- A deep grunt of satisfaction rumbles from a mud-filled pit.

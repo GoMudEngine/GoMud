@@ -1,0 +1,44 @@
+mobid: 227
+zone: Ironwind Steppe
+statpool: 200
+itemdropchance: 20
+hostile: true
+maxwander: 2
+groups:
+  - cave-pack
+  - animal
+archetype: fighting
+mutationchance: 60
+spawnmutations:
+  - heightened-senses
+idlecommands:
+  - 'emote tilts its eyeless head, listening with preternatural focus'
+  - ''
+  - 'emote moves in absolute silence, each step precisely placed'
+  - ''
+  - ''
+  - 'emote opens its jaws impossibly wide, tasting the air'
+activitylevel: 15
+character:
+  name: blind stalker
+  description: |
+    An apex cave predator that hunts in perfect darkness. The blind
+    stalker has no eyes -- its skull is smooth where eye sockets
+    would be, sealed over by evolution. In their place it has
+    developed other senses to a supernatural degree: hearing acute
+    enough to track a heartbeat, smell that can follow a trail
+    hours old, and skin sensitive to the faintest air current.
+    Its body is lean and powerful, covered in smooth, pale skin,
+    and it moves with a fluid, terrifying silence. It is patient,
+    intelligent, and very, very dangerous.
+  speciesid: 23
+  level: 1
+  stats:
+    strength:
+      training: 12
+    dexterity:
+      training: 10
+    perception:
+      training: 10
+    vitality:
+      training: 8

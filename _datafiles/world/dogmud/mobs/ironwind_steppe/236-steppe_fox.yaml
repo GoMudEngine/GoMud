@@ -1,0 +1,35 @@
+mobid: 236
+zone: Ironwind Steppe
+statpool: 50
+itemdropchance: 5
+hostile: true
+maxwander: 4
+groups:
+  - animal
+  - canine
+archetype: fighting
+idlecommands:
+  - 'emote watches from a distance, ears pricked forward'
+  - ''
+  - 'emote trots in a wide circle, nose to the ground'
+  - ''
+  - ''
+  - 'emote pounces at a movement in the grass'
+activitylevel: 20
+character:
+  name: steppe fox
+  description: |
+    A slender fox with oversized ears and a bushy tail tipped
+    with white. Its coat is tawny-red above and creamy beneath,
+    blending with the dry grass. The steppe fox is a solitary
+    hunter, quick and clever, preying on ground squirrels, hares,
+    and insects. It avoids the wolf packs and gives the boars a
+    wide berth, surviving by cunning rather than strength. Its
+    large ears can detect a mouse moving underground.
+  speciesid: 2
+  level: 1
+  stats:
+    dexterity:
+      training: 8
+    perception:
+      training: 5

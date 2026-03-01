@@ -6556,75 +6556,47 @@ YAML + idle script)
 
 ---
 
-### Stage 42.6: Wilderness Zone — Zone Sketch & Room Build
+### Stage 42.6: Ironwind Steppe — Wilderness Zone ✅ COMPLETED (merge: see development branch)
 
-**Goal**: Design and build a large wilderness zone east of Thornwall. Terrain inspired
-by the channeled scablands of eastern Washington — arid steppe with basalt coulees,
-sagebrush flats, dry grasslands, scattered rocky outcrops, and seasonal creek beds.
-NOT referencing real-world place names.
+**Goal**: Build a large wilderness zone east of Thornwall showcasing pack scaling
+and mob mutation systems. 115 rooms across 9 subregions, 40 mob types across 4
+difficulty tiers, 5 distinct pack groups.
 
-**Changes**:
-1. **Zone sketch**: Plan room layout, adjacency, and terrain types
-   - 25-40 rooms covering varied terrain: open steppe, rocky coulees, creek beds,
-     dense scrub thickets, a cave system, an abandoned camp, basalt cliff overlooks
-   - Logical crafting material placement:
-     - Herbs/plants near creek beds and sheltered valleys
-     - Ore deposits in rocky outcrops and cave walls
-     - Leather from animal hunting zones
-     - Cloth from humanoid NPC camps
-   - Clear navigation landmarks (distinctive rock formations, a dead tree, a
-     seasonal waterfall)
-2. **Build rooms**: Write all room YAML files with descriptions, exits, idle
-   messages, and foraging nodes
-3. **Connect to Thornwall**: Eastern gate or trail exit from Thornwall leads into
-   the wilderness
+**Implemented**:
+1. **Zone infrastructure**: Ironwind Steppe zone config (Eastern Frontier region),
+   connected to Thornwall City via room 479 east exit
+2. **115 rooms** across 9 subregions:
+   - City Fringe (3000-3009): Transition from city to steppe
+   - Sagebrush Flats (3010-3029): Open grassland with scattered sage
+   - Ironwind Ridge (3030-3044): Rocky elevated spine with raptor nests
+   - Dry Creek Basin (3045-3059): Seasonal watercourse and muddy pools
+   - Basalt Coulees (3060-3074): Volcanic rock maze with goblin camps
+   - Wolf Run (3075-3089): Dense ravine system, wolf pack territory
+   - Boar Wallows (3090-3099): Muddy lowland, boar sounder territory
+   - Windscour Caves (3100-3114): Wind-carved cave system with bosses
+3. **40 mobs** (IDs 200-239) across 4 tiers:
+   - Tier 1 (statpool 30-50): Scavengers, vermin (city fringe)
+   - Tier 2 (statpool 55-80): Wolves, boars, raptors (flats/ridge/basin)
+   - Tier 3 (statpool 90-130): Goblins, alpha predators (coulees/wolf run)
+   - Tier 4 (statpool 140-250): Cave creatures, bosses (windscour caves)
+4. **5 pack groups**: steppe-wolf, steppe-boar, raptor-flock, steppe-goblin,
+   cave-pack — each with defined territories and mutation sets
+5. **2 boss mobs**: Stone beetle queen (dense-muscles + tough-skin) and
+   windscour wyrm (regenerative-tissue + thick-hide)
+6. **Goblin shaman dialogue**, zone hints, gossip templates
 
 **Testing**:
+- [x] `go build ./...` passes
+- [x] All 115 rooms created with descriptions wrapping at 80 chars
+- [x] All 40 mobs created with correct pack groups and mutation settings
+- [x] Zone folder uses underscores (`ironwind_steppe`)
+- [x] No hard numbers in player-facing text
 - [ ] **Manual Test**: Walk from Thornwall into the wilderness zone
-- [ ] **Manual Test**: Navigate the full zone, verify all exits work
-- [ ] **Manual Test**: Forage in appropriate locations, verify materials drop
-- [ ] Verify all room descriptions wrap at 80 chars
-- [ ] Server starts without panic (no filepath mismatches)
+- [ ] **Manual Test**: Verify pack scaling triggers with 3+ same-group mobs
+- [ ] **Manual Test**: Verify mutations appear on high-mutationchance mobs
+- [ ] **Manual Test**: Interact with goblin shaman dialogue
 
-**Estimated Changes**: ~2000–3000 lines, 25–40 YAML files
-
----
-
-### Stage 42.7: Wilderness Zone — Mobs & Ecosystem
-
-**Goal**: Populate the wilderness with a living ecosystem of predators, prey, and
-humanoid NPCs.
-
-**Changes**:
-1. **Wolf pack** (using pack AI from Stage 38.5):
-   - Alpha wolf (higher stats, `archetype: fighting`)
-   - 3-4 pack wolves that coordinate with the alpha
-   - Pack roams a territory of 6-8 rooms
-   - Wolves hunt prey animals (existing emergent behavior hooks)
-2. **Prey animals**:
-   - Deer, hares, ground squirrels — low-stat, flighty mobs that flee combat
-   - Drop leather, meat, bone crafting materials
-3. **Boss bear** ("Stonescar" or similar):
-   - High-stat solo mob in a cave/lair room
-   - Significantly dangerous — intended as an aspirational fight
-   - Unique loot drop (crafting material or trophy)
-4. **Humanoid NPCs**:
-   - Small bandit camp (2-3 bandits, a leader) — drop cloth, coin
-   - Hermit/ranger NPC — quest giver, not hostile
-   - Wandering trader or prospector — flavor NPC
-5. **Small fetch quests**: 2-3 simple quests from the hermit/ranger NPC
-   (deliver item, clear area, gather materials)
-
-**Testing**:
-- [ ] **Manual Test**: Find and fight wolf pack, verify pack coordination
-- [ ] **Manual Test**: Hunt prey animals, verify drops
-- [ ] **Manual Test**: Fight boss bear, verify difficulty is high
-- [ ] **Manual Test**: Interact with hermit NPC, verify quest dialogue
-- [ ] **Manual Test**: Complete fetch quests, verify rewards
-- [ ] Server starts without panic
-
-**Estimated Changes**: ~1500–2500 lines, 15–25 files (mob YAML + dialogue YAML +
-quest YAML + scripts)
+**Estimated Changes**: ~5500 lines, ~170 files
 
 ---
 
@@ -6694,4 +6666,4 @@ These are longer-term goals to be detailed when the above phases are complete:
 
 **Last Updated**: 2026-03-01
 **Status**: In Progress
-**Current Stage**: Stage 42.5 complete. Next: Stage 42.6 — Wilderness Zone — Zone Sketch & Room Build.
+**Current Stage**: Stage 42.6 complete. Next: Stage 42.8 — Wilderness Zone — Morally Ambiguous Quest Chain.

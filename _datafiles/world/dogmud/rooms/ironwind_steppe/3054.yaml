@@ -1,0 +1,38 @@
+roomid: 3054
+zone: Ironwind Steppe
+title: Creek Junction
+description: Two dry creek beds converge here, their sandy floors
+  meeting at a broad, flat junction littered with flood debris.
+  Piles of driftwood, tangled brush, and smooth stones have
+  accumulated where the currents once met. The combined channel
+  continues south, wider and deeper than either tributary. The
+  junction is a natural crossroads for the basin's wildlife,
+  with trails leading in every direction.
+biome: land
+exits:
+  north:
+    roomid: 3051
+  west:
+    roomid: 3052
+  south:
+    roomid: 3057
+  east:
+    roomid: 3055
+  southwest:
+    roomid: 3078
+nouns:
+  debris: Tangled piles of driftwood, brush, and flood refuse
+    wedged into the junction. Some pieces are large -- whole
+    tree trunks stripped of bark and polished by water. The
+    piles provide shelter for small animals.
+  junction: The meeting point of two dry creek channels, marked
+    by a wider, flatter floor and deeper banks. The erosion
+    patterns show where water once swirled and eddied.
+spawninfo:
+- mobid: 205
+- mobid: 208
+- mobid: 234
+idlemessages:
+- A ground squirrel perches on a driftwood pile, chirping alarm.
+- The wide junction feels exposed -- nowhere to hide.
+- Wind funnels down both creek channels, meeting here in a swirl of dust.

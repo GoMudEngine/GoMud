@@ -1,0 +1,38 @@
+roomid: 3061
+zone: Ironwind Steppe
+title: Narrow Coulee
+description: A tight channel between basalt walls, barely shoulder-
+  width in places. The walls lean inward overhead, nearly meeting
+  above and reducing the sky to a thin strip of light. The floor
+  is uneven stone with pools of shadow in every depression. Spider
+  webs stretch between the walls at head height, catching dust
+  and small insects. The passage twists and turns, making it
+  impossible to see more than a few paces in any direction.
+biome: cliffs
+exits:
+  north:
+    roomid: 3060
+  west:
+    roomid: 3057
+  south:
+    roomid: 3062
+  east:
+    roomid: 3063
+  northwest:
+    roomid: 3036
+nouns:
+  webs: Thick spider webs spanning the narrow gap between the
+    walls, dusty and old. Dead insects hang in the silk like
+    tiny mummies. The webs suggest this passage sees little
+    large-animal traffic.
+  walls: The coulee walls lean inward, creating a claustrophobic
+    sense of enclosure. The stone is dark and cool to the touch,
+    striped with mineral deposits in shades of white and rust.
+spawninfo:
+- mobid: 220
+- mobid: 217
+- mobid: 232
+idlemessages:
+- A spider retreats into a crack as you brush through a web.
+- The narrow walls amplify every sound into echoing whispers.
+- Dust motes drift in the thin shaft of light from above.

@@ -1,0 +1,33 @@
+roomid: 3027
+zone: Ironwind Steppe
+title: Windbreak Hollow
+description: A shallow depression in the steppe, sheltered on three
+  sides by low earthen banks and a thick stand of sagebrush. The
+  hollow is out of the worst of the wind, and the temperature is
+  noticeably warmer. Flattened grass shows where animals bed down
+  regularly, and the sheltered banks are riddled with burrow
+  entrances. A natural gathering spot for wildlife seeking respite
+  from the relentless steppe wind.
+biome: land
+exits:
+  south:
+    roomid: 3026
+  east:
+    roomid: 3037
+  north:
+    roomid: 3028
+nouns:
+  hollow: A natural depression about knee-deep, protected from the
+    wind by earthen banks. The grass on the bottom is thick and
+    matted from use as a bedding area.
+  burrows: Small holes in the earthen banks, leading to underground
+    dens. The entrances are worn smooth by frequent use and the
+    soil around them is packed hard.
+spawninfo:
+- mobid: 208
+- mobid: 213
+- mobid: 234
+idlemessages:
+- The wind howls overhead but the hollow is calm and still.
+- A hare peers from a burrow entrance, nose twitching.
+- Flattened grass holds the impression of a large animal's body.

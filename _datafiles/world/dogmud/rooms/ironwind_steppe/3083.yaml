@@ -1,0 +1,31 @@
+roomid: 3083
+zone: Ironwind Steppe
+title: Brush Tunnel
+description: The ravine narrows drastically here, the vegetation
+  closing in overhead to form a living tunnel of interlocking
+  branches. The light is dim and green-filtered, and the air is
+  cool and damp. The game trail threads through the tunnel like
+  a vein through tissue, the only clear path through the dense
+  growth. Wolf scent is everywhere -- this is a heavily traveled
+  corridor between different parts of their territory.
+biome: land
+exits:
+  north:
+    roomid: 3082
+  west:
+    roomid: 3077
+  south:
+    roomid: 3084
+nouns:
+  tunnel: A natural tunnel formed by dense vegetation growing
+    over the narrow ravine. The interlocking branches block
+    most of the sky, creating a dim, enclosed passage. The
+    ground is damp and cool in the perpetual shade.
+spawninfo:
+- mobid: 206
+- mobid: 206
+- mobid: 205
+idlemessages:
+- The brush tunnel filters the light to a dim, green glow.
+- Branches creak and shift as something moves through the canopy.
+- Damp earth muffles every sound in the enclosed passage.

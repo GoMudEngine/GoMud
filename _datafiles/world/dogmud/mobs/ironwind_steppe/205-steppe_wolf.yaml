@@ -1,0 +1,39 @@
+mobid: 205
+zone: Ironwind Steppe
+statpool: 70
+itemdropchance: 10
+hostile: true
+maxwander: 3
+groups:
+  - steppe-wolf
+  - animal
+  - canine
+archetype: fighting
+mutationchance: 20
+idlecommands:
+  - 'emote paces in a slow circle, scanning the surroundings'
+  - ''
+  - 'emote raises its muzzle and tests the wind'
+  - ''
+  - ''
+  - 'emote watches you with pale, calculating eyes'
+activitylevel: 25
+character:
+  name: steppe wolf
+  description: |
+    A lean, grey-furred wolf with long legs built for endurance
+    running across open terrain. Larger than a city dog and far
+    more dangerous, the steppe wolf hunts in loose packs that
+    coordinate with eerie intelligence. Its coat is mottled grey
+    and brown, perfect camouflage in the sagebrush. Pale yellow
+    eyes track your movements with the focused attention of a
+    born predator.
+  speciesid: 2
+  level: 1
+  stats:
+    strength:
+      training: 5
+    dexterity:
+      training: 5
+    perception:
+      training: 3

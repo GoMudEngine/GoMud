@@ -1,0 +1,34 @@
+roomid: 3086
+zone: Ironwind Steppe
+title: Wolf Run South End
+description: The ravine shallows and widens here as it approaches
+  its southern terminus. The walls diminish to low banks, and
+  the dense brush thins to scattered clumps. The game trails
+  fan out, heading in multiple directions across the lower
+  steppe. This is the boundary of active wolf territory --
+  beyond here their patrols are less frequent. The terrain
+  opens into rolling grassland.
+biome: land
+exits:
+  north:
+    roomid: 3085
+  west:
+    roomid: 3080
+  east:
+    roomid: 3081
+  south:
+    roomid: 3088
+  southwest:
+    roomid: 3093
+nouns:
+  banks: Low earthen banks, barely waist-high, marking the last
+    traces of the ravine system. They diminish southward until
+    the ravine disappears into level ground.
+spawninfo:
+- mobid: 206
+- mobid: 205
+- mobid: 236
+idlemessages:
+- The ravine opens up, the banks falling away.
+- Game trails fan out across the grassland ahead.
+- A young wolf trots south before turning back at the territory edge.

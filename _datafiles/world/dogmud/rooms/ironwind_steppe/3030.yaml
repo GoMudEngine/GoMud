@@ -1,0 +1,36 @@
+roomid: 3030
+zone: Ironwind Steppe
+title: Ridge Approach
+description: The ground tilts upward sharply as the sagebrush flats
+  give way to the rocky base of Ironwind Ridge. Loose scree and
+  broken stone replace the grass, and the footing becomes
+  treacherous. Scrubby pines grow from cracks in the rock,
+  their roots gripping the stone like clawed fingers. The wind
+  is stronger here, funneled and accelerated by the ridge's
+  bulk. Above, the dark spine of the ridge crest cuts across
+  the sky.
+biome: cliffs
+exits:
+  southwest:
+    roomid: 3012
+  south:
+    roomid: 3032
+  north:
+    roomid: 3031
+  east:
+    roomid: 3033
+nouns:
+  scree: Loose, broken stone covering the slope in a treacherous
+    layer. Each step sends small rocks clattering downhill.
+    The fragments are sharp-edged and dark, freshly broken
+    from the ridge face above.
+  pines: Wind-tortured pines clinging to rock cracks, their
+    trunks twisted into corkscrews by years of relentless wind.
+    Few are taller than a person.
+spawninfo:
+- mobid: 210
+- mobid: 212
+idlemessages:
+- Loose stones clatter downslope as the wind dislodges them.
+- A raptor screams from somewhere above on the ridge.
+- Pine branches creak and snap in the gusting wind.

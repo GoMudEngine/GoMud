@@ -1,0 +1,30 @@
+roomid: 3087
+zone: Ironwind Steppe
+title: Bone Yard
+description: A stretch of ravine floor covered in a carpet of bones --
+  the accumulated leavings of years of wolf kills. The bones are
+  piled in places to knee-depth, a grim testament to the pack's
+  hunting efficiency. Skulls of various prey animals stare from
+  the heap with empty sockets. The bone field extends for several
+  paces along the ravine, and the ground beneath is rich and dark,
+  fertilized by the decomposition.
+biome: land
+exits:
+  west:
+    roomid: 3085
+  south:
+    roomid: 3088
+nouns:
+  bones: An extensive field of animal bones in various states
+    of decay -- fresh bones still red, older ones bleached
+    white, ancient ones crumbling to powder. Rabbit skulls,
+    boar ribs, deer leg bones, and countless smaller fragments
+    form a grim carpet.
+spawninfo:
+- mobid: 215
+- mobid: 223
+- mobid: 233
+idlemessages:
+- Bones crunch and shift underfoot with every step.
+- A crow hops among the bones, turning skulls with its beak.
+- The bone yard is silent except for the wind and the crows.

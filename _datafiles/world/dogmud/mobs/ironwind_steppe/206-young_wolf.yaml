@@ -1,0 +1,36 @@
+mobid: 206
+zone: Ironwind Steppe
+statpool: 55
+itemdropchance: 10
+hostile: true
+maxwander: 3
+groups:
+  - steppe-wolf
+  - animal
+  - canine
+archetype: fighting
+mutationchance: 15
+idlecommands:
+  - 'emote sniffs eagerly at the ground, tail low'
+  - ''
+  - ''
+  - 'emote yips once, a sharp, questioning sound'
+  - ''
+  - 'emote pounces at a rustling in the grass and comes up empty'
+activitylevel: 30
+character:
+  name: young wolf
+  description: |
+    A juvenile steppe wolf, still gangly with oversized paws and
+    ears it has not quite grown into. Its fur is softer and lighter
+    than an adult's, and its movements are less controlled -- more
+    eager, less calculated. Still, even a young wolf has sharp teeth
+    and the instinct to use them. It stays close to the pack,
+    learning the rhythms of the hunt.
+  speciesid: 2
+  level: 1
+  stats:
+    dexterity:
+      training: 5
+    strength:
+      training: 3

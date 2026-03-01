@@ -1,0 +1,36 @@
+roomid: 3082
+zone: Ironwind Steppe
+title: Kill Ground
+description: A clearing in the ravine where the wolves bring their
+  kills to feed. The ground is dark-stained and littered with
+  bones in various states of decay -- fresh kills still red,
+  older ones bleached and scattered. The earth has been dug up
+  in places where wolves have buried surplus meat. The smell
+  is strong and primal. Crows and other scavengers hop around
+  the edges, waiting for the wolves to finish.
+biome: land
+exits:
+  north:
+    roomid: 3081
+  west:
+    roomid: 3076
+  south:
+    roomid: 3083
+  east:
+    roomid: 3074
+nouns:
+  bones: A grim scatter of prey animal remains in varying
+    states of decay. Fresh bones with scraps of meat still
+    attached lie near older, sun-bleached specimens. Skulls,
+    leg bones, and rib cages predominate.
+  ground: Dark-stained earth, the soil saturated with old blood.
+    Shallow scrapes where wolves have buried meat for later
+    are visible as disturbed patches of earth.
+spawninfo:
+- mobid: 205
+- mobid: 215
+- mobid: 233
+idlemessages:
+- Crows squabble at the clearing's edge over a gnawed bone.
+- The kill ground reeks of old blood and decay.
+- A wolf drags something into the clearing and begins to feed.

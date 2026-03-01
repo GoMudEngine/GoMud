@@ -1,0 +1,36 @@
+roomid: 3079
+zone: Ironwind Steppe
+title: Deep Wolf Run
+description: The ravine cuts deeper here, the walls rising high
+  above your head and blocking most of the sky. The vegetation
+  is thick and tangled -- vines, thorny bushes, and small trees
+  growing in the sheltered depths. The stream from upstream has
+  gone underground, leaving damp earth and the occasional muddy
+  seep. Wolf trails branch in every direction through the
+  undergrowth. The sense of being watched is constant.
+biome: land
+exits:
+  north:
+    roomid: 3078
+  east:
+    roomid: 3056
+  south:
+    roomid: 3085
+  west:
+    roomid: 3080
+nouns:
+  undergrowth: Dense, tangled vegetation filling the ravine
+    floor -- thorny bushes, climbing vines, and saplings
+    competing for the limited light. The growth provides
+    excellent cover for wolves stalking through the ravine.
+  seep: A muddy spot where groundwater oozes to the surface,
+    keeping the earth perpetually damp. Moss grows on the
+    wet stones and the air smells of wet earth.
+spawninfo:
+- mobid: 205
+- mobid: 215
+- mobid: 223
+idlemessages:
+- The deep ravine is dim and close, the sky a narrow strip above.
+- Undergrowth rustles continuously as unseen animals move through it.
+- The damp earth muffles your footsteps to near-silence.

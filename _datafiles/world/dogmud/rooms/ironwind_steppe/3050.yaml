@@ -1,0 +1,37 @@
+roomid: 3050
+zone: Ironwind Steppe
+title: Root Tangle
+description: A massive, ancient tree once grew here on the creek bank.
+  It has long since fallen, but its root system remains -- a wall
+  of twisted, interlocking roots rising from the bank like a
+  wooden cliff. Earth has washed away from between the roots,
+  creating a maze of gaps and hollows that animals use as dens
+  and shelters. The fallen trunk has been reduced to a long mound
+  of rotting wood colonized by fungi.
+biome: land
+exits:
+  north:
+    roomid: 3044
+  west:
+    roomid: 3047
+  south:
+    roomid: 3053
+  east:
+    roomid: 3063
+nouns:
+  roots: An enormous tangle of dead tree roots, still firmly
+    anchored in the bank. The individual roots are as thick as
+    a person's arm, twisted and interlocking. The gaps between
+    them serve as shelters for small animals.
+  trunk: A long mound of rotting wood, the remains of a massive
+    tree. Bracket fungi grow in overlapping shelves along its
+    length, and the wood is soft and spongy, crumbling at a
+    touch.
+spawninfo:
+- mobid: 212
+- mobid: 220
+- mobid: 232
+idlemessages:
+- Something rustles in the root tangle -- small and quick.
+- Fungal spores puff from a bracket fungus as the wind jostles it.
+- Beetles crawl across the rotting trunk in busy lines.

@@ -1,0 +1,33 @@
+roomid: 3040
+zone: Ironwind Steppe
+title: Sheltered Ridge Alcove
+description: A natural alcove in the ridge's eastern face, sheltered
+  from the wind by overhanging rock. The alcove is about ten paces
+  deep, with a sandy floor and walls blackened by old campfire
+  smoke. Someone has camped here before -- there are the remains
+  of a fire ring, a few scattered bones from cooked meals, and
+  scratched marks on the wall that might be tallies or crude maps.
+  The space is dry, sheltered, and defensible.
+biome: cliffs
+exits:
+  west:
+    roomid: 3035
+  south:
+    roomid: 3041
+nouns:
+  alcove: A natural hollow in the rock face, deep enough to provide
+    real shelter from wind and rain. The overhang extends several
+    feet out, keeping the interior dry. The sand floor is packed
+    hard by use.
+  marks: Scratches in the rock wall, some clearly tallies (groups
+    of five with a cross-stroke), others more ambiguous. One set
+    might be a crude map showing the ridge and surrounding terrain.
+    The marks are old, the edges softened by time.
+  ring: A circle of fire-blackened stones, the ashes cold and old.
+    Charred bone fragments and a few rusty nail heads lie in the
+    debris. Whoever camped here was here long enough to eat
+    several meals.
+idlemessages:
+- The wind moans past the alcove entrance but the interior is still.
+- Sand trickles from a crack in the ceiling, pattering softly.
+- Old smoke stains on the walls speak of past shelter-seekers.

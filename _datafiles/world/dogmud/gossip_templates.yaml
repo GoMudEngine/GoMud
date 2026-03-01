@@ -61,6 +61,15 @@ PlayerMutationMilestone-Global:
   - "You hear about this? {desc}"
   - "This is the kind of thing people remember. {desc}"
 
+IronwindEvent-Regional:
+  - "Something stirring on the steppe east of town. {desc}"
+  - "Word from the frontier -- {desc} The steppe is restless."
+  - "Traders coming in from the east say {desc}"
+
+IronwindEvent-Global:
+  - "The whole steppe is talking about this. {desc}"
+  - "This one came from the Ironwind frontier. {desc}"
+
 fallback:
   - "Quiet day. Nothing worth repeating."
   - "Mm. No news is... well, it is just no news."

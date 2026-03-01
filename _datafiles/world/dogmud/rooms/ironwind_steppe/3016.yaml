@@ -1,0 +1,37 @@
+roomid: 3016
+zone: Ironwind Steppe
+title: Central Sagebrush Flats
+description: A broad, open stretch of the sagebrush flats where the
+  terrain is almost perfectly level. The horizon is a clean line in
+  every direction except northeast, where the dark mass of Ironwind
+  Ridge breaks the skyline. The wind is steady and warm, bending
+  the grass in continuous rolling waves. A large boulder sits
+  incongruously in the middle of the flats, dropped here by some
+  ancient glacial force.
+biome: land
+exits:
+  west:
+    roomid: 3014
+  northwest:
+    roomid: 3015
+  north:
+    roomid: 3012
+  south:
+    roomid: 3013
+  east:
+    roomid: 3017
+  northeast:
+    roomid: 3032
+nouns:
+  boulder: An enormous grey boulder, taller than a person, sitting
+    alone on the flat steppe. Its surface is covered with pale
+    lichen and the scratches of sharpening claws. The wind has
+    carved shallow grooves into the softer stone.
+spawninfo:
+- mobid: 205
+- mobid: 206
+- mobid: 209
+idlemessages:
+- The boulder casts a shifting shadow across the flattened grass.
+- Two wolves trot across the distant flats, grey shapes against grey grass.
+- The wind carries a faint, eerie whistle from the ridge to the east.

@@ -1,0 +1,38 @@
+roomid: 3101
+zone: Ironwind Steppe
+title: Cave Mouth
+description: A broad cave entrance opens in the cliff face, wide
+  enough for three people abreast and tall enough to walk upright.
+  The stone archway is wind-polished smooth, and the transition
+  from daylight to darkness is abrupt. Just inside the entrance,
+  the cave floor is covered with windblown sand and debris --
+  leaves, feathers, small bones. The walls are pale sandstone,
+  cool to the touch, and the ceiling curves overhead in a natural
+  vault. The passage leads deeper into darkness.
+biome: cave
+exits:
+  south:
+    roomid: 3039
+  west:
+    roomid: 3100
+  north:
+    roomid: 3103
+  east:
+    roomid: 3104
+nouns:
+  archway: A natural stone archway framing the cave entrance,
+    worn smooth by millennia of wind. The stone is pale cream,
+    veined with darker mineral deposits. It frames a view of
+    the steppe that seems impossibly bright from inside.
+  debris: A drift of windblown material just inside the cave
+    entrance -- dry leaves, feathers, sand, and small animal
+    bones. The wind pushes it in but the cave's sheltered
+    interior traps it here.
+spawninfo:
+- mobid: 224
+- mobid: 224
+- mobid: 232
+idlemessages:
+- Wind howls past the cave mouth, distorting into a resonant moan.
+- Daylight from the entrance casts long shadows down the passage.
+- Something scratches at the stone deeper in the cave.

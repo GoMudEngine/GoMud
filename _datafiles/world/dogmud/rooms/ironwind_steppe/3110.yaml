@@ -1,0 +1,31 @@
+roomid: 3110
+zone: Ironwind Steppe
+title: Deep Passage
+description: A narrow passage descending steeply into the earth. The
+  walls are rough and natural, the stone changing from pale sandstone
+  to darker, harder rock as you go deeper. The air is cold and damp,
+  and condensation beads on the stone surfaces. The passage is barely
+  wide enough for one person, and the ceiling is uncomfortably low.
+  Claw marks on the walls show that larger creatures use this route
+  regularly.
+biome: cave
+exits:
+  south:
+    roomid: 3107
+  west:
+    roomid: 3106
+  north:
+    roomid: 3113
+nouns:
+  marks: Deep claw marks gouged into the passage walls, running
+    along both sides at about knee-height. Whatever makes them
+    is low-slung and powerful. The marks are fresh in places,
+    the stone still pale where newly scratched.
+spawninfo:
+- mobid: 226
+- mobid: 227
+- mobid: 224
+idlemessages:
+- The passage descends steeply, the air growing colder.
+- Condensation drips from the low ceiling onto your neck.
+- Claw marks on the walls look disturbingly fresh.

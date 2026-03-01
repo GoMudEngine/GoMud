@@ -1,0 +1,34 @@
+roomid: 3073
+zone: Ironwind Steppe
+title: Coulee South Exit
+description: The basalt coulees end here as the volcanic rock gives
+  way to softer earth and grass. The dark stone walls diminish to
+  low outcrops and finally submerge beneath the steppe soil. The
+  transition is gradual -- dark stone fingers reaching into the
+  grassland like the roots of some buried structure. To the south,
+  the terrain descends into the ravine system of Wolf Run. The
+  air feels fresher here, the wind returning after the sheltered
+  coulee passages.
+biome: land
+exits:
+  north:
+    roomid: 3067
+  west:
+    roomid: 3066
+  south:
+    roomid: 3081
+  east:
+    roomid: 3074
+nouns:
+  outcrops: Low basalt outcrops emerging from the steppe soil,
+    the last traces of the coulee system. They diminish in
+    size toward the south, the volcanic rock giving way to
+    the softer earth of the lower steppe.
+spawninfo:
+- mobid: 217
+- mobid: 221
+- mobid: 232
+idlemessages:
+- The wind returns as the coulee walls fall away.
+- Dark stone fingers reach from the earth like buried claws.
+- The terrain ahead drops toward the ravine country.

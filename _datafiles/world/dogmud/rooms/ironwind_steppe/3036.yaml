@@ -1,0 +1,36 @@
+roomid: 3036
+zone: Ironwind Steppe
+title: Southern Ridge Slope
+description: The ridge's southern slope is gentler than the western
+  face, descending through loose rock and scrubby vegetation toward
+  the dry creek basin below. The footing is unstable -- gravel and
+  small stones slide underfoot with every step. A few larger
+  boulders provide anchoring points where soil has accumulated
+  and grass has taken hold. The wind is blocked by the ridge
+  crest above, making this slope relatively sheltered.
+biome: cliffs
+exits:
+  north:
+    roomid: 3035
+  west:
+    roomid: 3026
+  northwest:
+    roomid: 3033
+  south:
+    roomid: 3048
+  east:
+    roomid: 3061
+nouns:
+  slope: A gravel-covered slope descending southward, steep enough
+    to require careful footwork. The loose stone shifts and slides,
+    making the descent treacherous but the climb exhausting.
+  boulders: Large stones embedded in the slope, providing stable
+    footing and small sheltered spots where grass and wildflowers
+    grow in the accumulated soil.
+spawninfo:
+- mobid: 212
+- mobid: 232
+idlemessages:
+- Gravel slides downslope in a small cascade, triggered by nothing visible.
+- A beetle crawls across a sun-warmed boulder.
+- The sheltered slope feels almost peaceful after the ridge wind.

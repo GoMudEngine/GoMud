@@ -1,0 +1,34 @@
+roomid: 3019
+zone: Ironwind Steppe
+title: Wolf-Marked Flats
+description: The sagebrush here is scarred with claw marks and the
+  ground is pockmarked with shallow scrapes where wolves have dug
+  at rodent burrows. Tufts of grey fur cling to low branches.
+  This stretch of flats sits between the open grassland and a
+  line of scrubby trees to the north -- a transition zone where
+  predators patrol regularly. The air smells of dust and musk.
+biome: land
+exits:
+  south:
+    roomid: 3015
+  west:
+    roomid: 3018
+  north:
+    roomid: 3020
+  east:
+    roomid: 3021
+nouns:
+  scrapes: Shallow depressions dug in the earth by canine paws,
+    the dirt thrown back in sprays. Some are fresh, the soil still
+    dark with moisture. Wolves digging for burrowing rodents.
+  marks: Parallel claw marks gouged into the bark of sagebrush
+    trunks, at about wolf shoulder-height. Territory markers,
+    refreshed regularly.
+spawninfo:
+- mobid: 205
+- mobid: 205
+- mobid: 206
+idlemessages:
+- A wolf howl drifts from somewhere to the north, low and sustained.
+- Fresh paw prints press deep into the soft soil.
+- The musky scent of wolf territory is strong here.

@@ -1,0 +1,35 @@
+roomid: 3104
+zone: Ironwind Steppe
+title: Crawler Nest
+description: A low-ceilinged side chamber infested with cave crawlers.
+  The walls and ceiling are covered with a thin layer of organic
+  residue -- the crawlers' secretions, used to mark territory and
+  trap small prey. The floor is littered with the hollow shells of
+  consumed insects and the shed exoskeletons of growing crawlers.
+  The air is thick with a sour, chemical smell. Multiple crawlers
+  cling to the walls and ceiling, their segmented bodies pressed
+  flat against the stone.
+biome: cave
+exits:
+  west:
+    roomid: 3101
+  north:
+    roomid: 3107
+nouns:
+  residue: A thin, glistening layer of organic secretion coating
+    the cave surfaces. It is slightly sticky to the touch and
+    has a sharp, sour smell. The secretion hardens over time into
+    a brittle, amber-like crust.
+  shells: Hollow insect shells and shed exoskeletons scattered
+    across the cave floor -- the remains of crawler meals and
+    growth cycles. Some are surprisingly large, suggesting the
+    crawlers can grow to considerable size.
+spawninfo:
+- mobid: 224
+- mobid: 224
+- mobid: 224
+- mobid: 226
+idlemessages:
+- A crawler shifts on the ceiling, its many legs rippling.
+- The sour chemical smell is nearly overpowering.
+- Hollow shells crunch underfoot in the dim passage.

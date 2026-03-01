@@ -1,0 +1,38 @@
+roomid: 3038
+zone: Ironwind Steppe
+title: Ridge Summit
+description: The highest point of Ironwind Ridge, a broad dome of
+  wind-scoured basalt where nothing grows. The rock is polished
+  smooth by centuries of wind-driven grit and scored with shallow
+  grooves that follow the prevailing wind direction. From here
+  the entire steppe is visible -- every subregion laid out like
+  a map. The wind at the summit is relentless and cold, driving
+  tears from your eyes and stealing your breath. This is the
+  place that gives the ridge its name.
+biome: cliffs
+exits:
+  south:
+    roomid: 3035
+  west:
+    roomid: 3034
+  down:
+    roomid: 3033
+  north:
+    roomid: 3039
+  east:
+    roomid: 3063
+nouns:
+  dome: A broad dome of dark basalt, perhaps thirty paces across,
+    worn glassy-smooth by the constant abrasion of wind-carried
+    grit. The surface is warm from the sun but the wind steals
+    the heat instantly.
+  grooves: Shallow channels carved into the stone by prevailing
+    winds over uncountable years, running east to west. They
+    are barely a finger's width deep but unmistakably deliberate
+    in their alignment.
+spawninfo:
+- mobid: 239
+idlemessages:
+- The ironwind screams across the summit, constant and savage.
+- You can see for what feels like forever from this height.
+- A hawk rides the wind past the summit, motionless on the gale.

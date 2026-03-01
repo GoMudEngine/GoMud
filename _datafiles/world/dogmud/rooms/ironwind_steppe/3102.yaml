@@ -1,0 +1,34 @@
+roomid: 3102
+zone: Ironwind Steppe
+title: Wind Gallery
+description: A long, narrow passage where the wind is channeled to
+  tremendous speed. The constant airflow has polished the walls to
+  a glassy smoothness and carved fluting patterns into the stone
+  that produce an eerie, harmonious sound -- multiple tones
+  overlapping as the wind velocity changes. Fine grit carried by
+  the wind stings exposed skin. The passage curves gently, and
+  the light from outside is reduced to a dim glow.
+biome: cave
+exits:
+  south:
+    roomid: 3100
+  north:
+    roomid: 3105
+  east:
+    roomid: 3103
+nouns:
+  fluting: Narrow channels carved into the cave walls by wind
+    erosion, each a slightly different depth and angle. When
+    wind passes over them they produce musical tones -- deep
+    rumbles, high whistles, and everything between. The effect
+    is otherworldly.
+  walls: Glass-smooth cave walls polished by centuries of wind-
+    driven grit. The surface reflects what little light reaches
+    here, giving the passage a faint, pearl-like sheen.
+spawninfo:
+- mobid: 224
+- mobid: 225
+idlemessages:
+- The wind gallery sings in shifting, haunting harmonics.
+- Grit stings your face as the wind gusts through the passage.
+- The polished walls gleam faintly in the dim light.

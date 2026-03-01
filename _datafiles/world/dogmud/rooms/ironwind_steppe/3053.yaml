@@ -1,0 +1,36 @@
+roomid: 3053
+zone: Ironwind Steppe
+title: Boar Wallow Approach
+description: The creek basin floor is churned to deep mud here where
+  boars have been wallowing. The ground is torn up by heavy hooves,
+  and pools of stagnant water sit in the deepest ruts. The stench
+  of boar musk is thick and rank. Broken reeds and flattened
+  vegetation mark where the animals have rolled and scraped,
+  coating themselves in the dark mud. Boar tracks lead south
+  toward the main wallowing grounds.
+biome: land
+exits:
+  west:
+    roomid: 3051
+  north:
+    roomid: 3050
+  south:
+    roomid: 3056
+  east:
+    roomid: 3055
+nouns:
+  wallows: Broad, shallow depressions churned into thick mud by
+    boar wallowing. The mud is dark, rich, and stinking. Some
+    wallows still hold water; others have dried to cracked earth
+    rimmed with a crust of dried mud and bristly hair.
+  tracks: Deep, cloven hoofprints in the mud, each as wide as a
+    hand. The tracks overlap in dense layers -- this area sees
+    heavy and regular boar traffic.
+spawninfo:
+- mobid: 207
+- mobid: 208
+- mobid: 216
+idlemessages:
+- The mud squelches as something heavy shifts just out of sight.
+- The rank smell of boar musk is nearly overwhelming.
+- Flies buzz in thick clouds above the churned wallows.

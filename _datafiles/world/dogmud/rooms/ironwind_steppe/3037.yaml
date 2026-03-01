@@ -1,0 +1,37 @@
+roomid: 3037
+zone: Ironwind Steppe
+title: Ridge East Face
+description: The eastern face of the ridge drops away in a series of
+  broken terraces and steep rock walls. The dark basalt is cracked
+  and fractured, creating ledges and overhangs where tough plants
+  cling to accumulated dirt. Below, the basalt coulees spread out
+  in a maze of dark channels and gullies. The descent looks
+  possible but would require picking a careful route through the
+  broken terrain.
+biome: cliffs
+exits:
+  west:
+    roomid: 3027
+  northwest:
+    roomid: 3033
+  south:
+    roomid: 3034
+  north:
+    roomid: 3039
+  east:
+    roomid: 3062
+nouns:
+  terraces: Broken stone terraces stepping down the ridge's east
+    face, each a few feet wide. Soil has accumulated on the flat
+    surfaces, supporting scraggly grass and hardy wildflowers.
+  coulees: The maze of dark volcanic rock channels spread below,
+    their floors in shadow. The coulees look like the land was
+    cracked and pulled apart by some ancient force, leaving
+    deep, narrow channels between walls of black stone.
+spawninfo:
+- mobid: 210
+- mobid: 232
+idlemessages:
+- Loose rock clatters down the terraced face, echoing off the stone.
+- A spider web stretches between two rocks, glittering with dew.
+- The coulees below look dark and maze-like from this height.

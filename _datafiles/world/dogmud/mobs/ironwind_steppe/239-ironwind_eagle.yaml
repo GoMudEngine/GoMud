@@ -1,0 +1,39 @@
+mobid: 239
+zone: Ironwind Steppe
+statpool: 55
+itemdropchance: 5
+hostile: true
+maxwander: 5
+groups:
+  - raptor-flock
+  - animal
+archetype: fighting
+mutationchance: 10
+idlecommands:
+  - 'emote soars on outstretched wings, riding the thermal currents'
+  - ''
+  - ''
+  - 'emote screams a piercing cry that echoes across the steppe'
+  - ''
+  - 'emote banks sharply and dives toward the ground'
+activitylevel: 15
+character:
+  name: ironwind eagle
+  description: |
+    A magnificent eagle with dark brown plumage and a wingspan
+    that dwarfs the other raptors of the steppe. The ironwind
+    eagle is the apex predator of the skies here, soaring on the
+    fierce winds that give the ridge its name. Its golden eyes
+    can spot prey from extraordinary distances, and its talons
+    are strong enough to carry off a young hare. It is a solitary
+    hunter but joins the raptor flock for defense of the nesting
+    grounds.
+  speciesid: 9
+  level: 1
+  stats:
+    strength:
+      training: 5
+    dexterity:
+      training: 5
+    perception:
+      training: 8

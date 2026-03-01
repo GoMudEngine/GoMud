@@ -1,0 +1,38 @@
+roomid: 3060
+zone: Ironwind Steppe
+title: Coulee Entrance
+description: A narrow gap between two walls of dark basalt opens into
+  the coulee system. The walls rise twice a person's height on
+  either side, their surfaces rough and pitted with gas bubbles
+  frozen in the ancient lava flow. The floor is flat stone, worn
+  smooth by water and wind. The passage is barely wide enough for
+  two people abreast, and the walls block the steppe wind, creating
+  a sudden, oppressive stillness. Shadows pool in the narrow
+  channel.
+biome: cliffs
+exits:
+  west:
+    roomid: 3055
+  northwest:
+    roomid: 3059
+  south:
+    roomid: 3061
+  east:
+    roomid: 3062
+  north:
+    roomid: 3035
+nouns:
+  walls: Dark basalt walls rising on either side, their surfaces
+    pocked with small holes where gas bubbles were trapped as
+    the lava cooled. The stone is rough enough to provide
+    handholds but too hard to scratch.
+  gap: The entrance to the coulee system -- a narrow split in
+    the volcanic rock that could easily be defended by a single
+    person. The edges are worn smooth by wind and water.
+spawninfo:
+- mobid: 217
+- mobid: 220
+idlemessages:
+- The sudden stillness between the basalt walls is unsettling.
+- Shadows shift in the narrow passage as clouds pass overhead.
+- Something skitters across the stone floor ahead -- too fast to see.

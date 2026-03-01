@@ -1,0 +1,38 @@
+mobid: 224
+zone: Ironwind Steppe
+statpool: 140
+itemdropchance: 15
+hostile: true
+maxwander: 2
+groups:
+  - cave-pack
+  - animal
+archetype: fighting
+mutationchance: 40
+idlecommands:
+  - 'emote clings to the wall, its many legs gripping the stone'
+  - ''
+  - 'emote clicks its mandibles together in a rapid, chittering rhythm'
+  - ''
+  - ''
+  - 'emote scuttles across the ceiling, legs moving in a rippling wave'
+activitylevel: 15
+character:
+  name: cave crawler
+  description: |
+    A segmented, multi-legged creature adapted to life in total
+    darkness. The cave crawler has a flattened body about two feet
+    long, covered in a hard, dark carapace. Its legs -- too many
+    to count -- grip any surface, allowing it to move across walls
+    and ceilings as easily as floors. Sensitive antennae replace
+    eyes, and powerful mandibles can crack bone. It hunts by
+    vibration, detecting footsteps through the stone itself.
+  speciesid: 12
+  level: 1
+  stats:
+    dexterity:
+      training: 10
+    vitality:
+      training: 8
+    perception:
+      training: 5

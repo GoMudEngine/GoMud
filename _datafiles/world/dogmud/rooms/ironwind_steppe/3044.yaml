@@ -1,0 +1,34 @@
+roomid: 3044
+zone: Ironwind Steppe
+title: Ridge Southeast Descent
+description: The ridge drops away to the southeast here in a series of
+  steep, broken steps of dark stone. The descent is passable but
+  rough, each step a scramble down fractured rock faces. Scrubby
+  vegetation clings to ledges and cracks, and loose gravel makes
+  the footing unreliable. The terrain below transitions from ridge
+  rock to the dark volcanic stone of the basalt coulees, the
+  landscape becoming increasingly broken and maze-like.
+biome: cliffs
+exits:
+  west:
+    roomid: 3042
+  north:
+    roomid: 3043
+  south:
+    roomid: 3050
+  east:
+    roomid: 3065
+nouns:
+  steps: Natural steps in the rock face, each a drop of a foot or
+    two. The basalt has fractured in columnar patterns, creating
+    blocky, stair-like formations that are rough but climbable.
+  vegetation: Tough plants growing from every crack -- wiry grass,
+    stunted sage, and a few determined wildflowers with yellow
+    blooms. Life finds a way even on bare rock.
+spawninfo:
+- mobid: 212
+- mobid: 221
+idlemessages:
+- Loose gravel shifts and slides beneath your feet.
+- The transition from ridge stone to volcanic rock is visible in the layers.
+- A beetle trundles across the warm stone, oblivious to the drop.

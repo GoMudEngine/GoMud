@@ -1,0 +1,35 @@
+roomid: 3057
+zone: Ironwind Steppe
+title: Deep Creek Bed
+description: The dry creek bed cuts deep here, its banks rising well
+  above head height. The floor is a jumble of rounded boulders and
+  packed gravel, the leavings of powerful floods. The walls show
+  distinct flood lines -- dark stains at various heights marking
+  past water levels. It feels like walking through a narrow canyon.
+  The sky is a ribbon of blue above the steep banks.
+biome: land
+exits:
+  north:
+    roomid: 3054
+  west:
+    roomid: 3056
+  south:
+    roomid: 3058
+  east:
+    roomid: 3061
+nouns:
+  boulders: Large, smooth boulders in the creek bed, rounded by
+    years of tumbling in floodwater. They are wedged tightly
+    together, creating an uneven floor. Some are large enough
+    to sit on.
+  lines: Dark stains on the creek banks marking past flood
+    levels. The highest lines are above your head -- testimony
+    to the violence of the seasonal floods that carved this
+    channel.
+spawninfo:
+- mobid: 221
+- mobid: 211
+idlemessages:
+- The steep banks muffle the wind, creating an eerie silence.
+- Water stains on the walls remind you this place floods.
+- A rock viper slides between boulders with a rasping sound.

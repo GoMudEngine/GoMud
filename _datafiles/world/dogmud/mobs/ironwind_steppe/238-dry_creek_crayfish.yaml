@@ -1,0 +1,27 @@
+mobid: 238
+zone: Ironwind Steppe
+statpool: 20
+itemdropchance: 0
+hostile: false
+maxwander: 2
+groups:
+  - animal
+idlecommands:
+  - 'emote waves its small pincers at nothing in particular'
+  - ''
+  - ''
+  - 'emote scoots backward into a muddy crevice'
+  - ''
+activitylevel: 10
+character:
+  name: dry creek crayfish
+  description: |
+    A small, reddish-brown crayfish that survives in the muddy
+    pools and seeps of the dry creek system. It burrows into wet
+    mud during dry spells, waiting out droughts in underground
+    chambers. When water is available, it emerges to scavenge
+    the creek bed for organic matter. Its pincers are small but
+    surprisingly strong, and it waves them defensively at anything
+    that disturbs its pool.
+  speciesid: 12
+  level: 1

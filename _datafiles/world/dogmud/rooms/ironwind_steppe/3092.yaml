@@ -1,0 +1,34 @@
+roomid: 3092
+zone: Ironwind Steppe
+title: Central Wallows
+description: The heart of the boar wallowing grounds -- a sprawling
+  area of churned mud, standing water, and battered vegetation.
+  The wallows here are the largest and deepest, some filled with
+  enough water for a boar to submerge almost entirely. The mud is
+  dark, rich, and ankle-deep even between the wallows. The stench
+  is tremendous. This is where the biggest boars gather, the
+  tusked patriarchs who have first claim on the best mud.
+biome: land
+exits:
+  north:
+    roomid: 3091
+  south:
+    roomid: 3096
+  east:
+    roomid: 3095
+  west:
+    roomid: 3093
+nouns:
+  wallows: The deepest wallows on the steppe, some nearly three
+    feet deep and filled with dark, silty water. The mud at the
+    bottom is thick as clay. These prime wallows are contested
+    by the largest boars.
+spawninfo:
+- mobid: 216
+- mobid: 207
+- mobid: 207
+- mobid: 208
+idlemessages:
+- A tusked boar rises from a wallow, mud cascading off its flanks.
+- The wallows bubble and squelch as boars shift in the mud.
+- The stench here is strong enough to taste.

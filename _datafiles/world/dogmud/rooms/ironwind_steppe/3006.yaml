@@ -1,0 +1,36 @@
+roomid: 3006
+zone: Ironwind Steppe
+title: Steppe Threshold
+description: The last traces of the city's influence end here. The wagon
+  track fades to a pair of faint ruts in the grass, and the ground
+  becomes soft steppe soil -- dark and loamy, carpeted with short
+  grass that stretches away in every direction. To the west, the
+  city wall is still visible as a pale line on the horizon. To the
+  east, the open steppe rolls onward, broken only by distant shapes
+  that might be boulders or bushes. The wind is constant here,
+  pressing against you with dry, warm gusts.
+biome: land
+exits:
+  west:
+    roomid: 3003
+  north:
+    roomid: 3005
+  east:
+    roomid: 3010
+  south:
+    roomid: 3009
+nouns:
+  ruts: The wagon ruts are barely visible here, little more than
+    shallow depressions where the grass grows slightly thinner. A
+    few more seasons without traffic and the steppe will erase them
+    entirely.
+  grass: Short, tough steppe grass with a silvery sheen when the
+    wind bends it. It grows in dense mats that cushion your steps
+    and whisper constantly in the breeze.
+spawninfo:
+- mobid: 203
+- mobid: 204
+idlemessages:
+- The wind pushes steadily from the east, carrying the scent of dust.
+- A hawk circles high overhead, riding a thermal.
+- The grass ripples like water as a gust sweeps across the steppe.
