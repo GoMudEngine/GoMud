@@ -175,5 +175,16 @@ func GetHelpContents(input string) (string, error) {
 		}
 	}
 
-	return templates.Process("help/"+helpName, helpVars, 0)
+	result, err := templates.Process("help/"+helpName, helpVars, 0)
+	if err != nil {
+		// If no dedicated help template exists, check if the name matches a spell
+		// and fall back to the generic spell template.
+		if sData := spells.GetSpell(helpName); sData != nil {
+			return templates.Process("help/spell", *sData, 0)
+		}
+		if sData := spells.FindSpellByName(helpName); sData != nil {
+			return templates.Process("help/spell", *sData, 0)
+		}
+	}
+	return result, err
 }

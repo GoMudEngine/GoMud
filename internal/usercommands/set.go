@@ -239,17 +239,22 @@ func cmdSetFprompt(user *users.UserRecord, rest string, setTarget string, args [
 
 	promptStr := rest[len(setTarget)+1:]
 
-	// Toggle subcommand: set fprompt tog <element>
+	// Toggle subcommand: set fprompt tog <element>  (or just: set fprompt <element>)
+	validToggles := map[string]string{
+		"bars":         "HP/SP/CP vital bars",
+		"pos":          "Your combat position",
+		"target":       "Target name",
+		"targethealth": "Target health description",
+		"targetpos":    "Target position",
+		"tank":         "Party tank info",
+	}
+	var element string
 	if strings.HasPrefix(promptStr, `tog `) {
-		element := strings.TrimSpace(promptStr[4:])
-		validToggles := map[string]string{
-			"bars":         "HP/SP/CP vital bars",
-			"pos":          "Your combat position",
-			"target":       "Target name",
-			"targethealth": "Target health description",
-			"targetpos":    "Target position",
-			"tank":         "Party tank info",
-		}
+		element = strings.TrimSpace(promptStr[4:])
+	} else if _, ok := validToggles[promptStr]; ok {
+		element = promptStr
+	}
+	if element != `` {
 		desc, valid := validToggles[element]
 		if !valid {
 			user.SendText(`Unknown toggle. Valid options: bars, pos, target, targethealth, targetpos, tank`)
@@ -313,12 +318,12 @@ func cmdSetWimpy(user *users.UserRecord, rest string, setTarget string, args []s
 	}
 
 	wimpyStr := rest[len(setTarget)+1:]
-	wimipyInt, _ := strconv.Atoi(wimpyStr)
+	wimpyInt, _ := strconv.Atoi(wimpyStr)
 
-	if wimipyInt == 0 {
+	if wimpyInt == 0 {
 		user.SetConfigOption(`wimpy`, nil)
 	} else {
-		user.SetConfigOption(`wimpy`, wimipyInt)
+		user.SetConfigOption(`wimpy`, wimpyInt)
 	}
 
 	user.SendText("wimpy set.")

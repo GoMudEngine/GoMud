@@ -61,6 +61,7 @@ var (
 	wordRegex        = regexp.MustCompile(`([\p{Han}\p{Hiragana}\p{Katakana}\p{Hangul}]|\w+|[\p{P}\p{S}\s]+)`)
 	punctuationRegex = regexp.MustCompile(`[\p{P}]+`)
 	paragraphBreak   = regexp.MustCompile(`\n\s*\n`)
+	ansiTagRegex     = regexp.MustCompile(`</?ansi[^>]*>`)
 
 	mudLock = sync.RWMutex{}
 )
@@ -183,6 +184,11 @@ func LogRoll(name string, rollResult int, targetNumber int) {
 	mudlog.Debug(`Rand Result`, `Name`, name, `Result`, fmt.Sprintf(`%d < %d`, rollResult, targetNumber), `Success`, success)
 }
 
+// visibleWidth returns the display width of a string, ignoring <ansi> markup tags.
+func visibleWidth(s string) int {
+	return runewidth.StringWidth(ansiTagRegex.ReplaceAllString(s, ``))
+}
+
 func SplitString(input string, lineWidth int) []string {
 	var result []string
 	var currentLine string
@@ -202,10 +208,10 @@ func SplitString(input string, lineWidth int) []string {
 				continue
 			}
 
-			wordLen := runewidth.StringWidth(word)
+			wordLen := visibleWidth(word)
 
 			if idx < l-1 && punctuationRegex.MatchString(words[idx+1]) {
-				wordLen += runewidth.StringWidth(words[idx+1])
+				wordLen += visibleWidth(words[idx+1])
 				word += words[idx+1]
 				skip = true
 			} else {
@@ -223,7 +229,7 @@ func SplitString(input string, lineWidth int) []string {
 				}
 				// clear spaces at the beginning of the line
 				currentLine = strings.TrimLeft(word, " ")
-				currentLen = runewidth.StringWidth(currentLine)
+				currentLen = visibleWidth(currentLine)
 			} else {
 				currentLine += word
 				currentLen += wordLen

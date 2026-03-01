@@ -1,6 +1,6 @@
 spellid: kinetic-hurl
 name: Kinetic Hurl
-description: Propels a stone with concentrated willpower at the target.
+description: Propels a telekinetic bolt of force at the target.
 type: harmsingle
 schools:
   - elemental
@@ -10,7 +10,6 @@ difficulty: 0
 primarystat: willpower
 base_folds: 4
 target_defense_type: physical
-component_tag: stone
 effect_type: damage
 effect_magnitude: 300
 damage_multiplier: 1.00

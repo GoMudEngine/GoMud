@@ -1,0 +1,42 @@
+[2026-02-28 05:22:42] aitester (zone: Sanctum Basin, room: 109 "The Forge"): I can't get the blacksmith's warhammer.
+[2026-02-28 05:24:26] aitester (zone: Sanctum Basin, room: 109 "The Forge"): I can't get the warhammer that Korvath is wearing.
+[2026-02-28 05:38:40] aitester (zone: Sanctum Basin, room: 109 "The Forge"): Korvath says he gave me scrap iron but I can't get it.
+[2026-02-28 05:40:18] aitester (zone: Sanctum Basin, room: 109 "The Forge"): "look pile of iron" doesn't work.
+[2026-02-28 05:42:19] aitester (zone: Sanctum Basin, room: 109 "The Forge"): "get iron" doesn't work.
+[2026-02-28 07:16:36] aitester (zone: Sanctum Basin, room: 109 "The Forge"): Repeatedly failing to pick up an item that is listed in inventory.
+[2026-02-28 07:18:11] aitester (zone: Sanctum Basin, room: 109 "The Forge"): I can see an iron ingot in my inventory, but I cannot pick it up.
+[2026-02-28 07:40:39] aitester (zone: Sanctum Basin, room: 109 "The Forge"): I am unable to pick up the iron ingot from my inventory.
+[2026-02-28 07:42:48] aitester (zone: Sanctum Basin, room: 109 "The Forge"): I should be able to get a cloth strip from Korvath after attempting to craft the iron dagger.
+[2026-02-28 08:24:21] aitester (zone: Sanctum Basin, room: 109 "The Forge"): I cannot get the tongs that korvath says are right there.
+[2026-02-28 08:25:25] aitester (zone: Sanctum Basin, room: 109 "The Forge"): I still cannot get the tongs, and korvath insists they are right in front of me.
+[2026-02-28 08:26:32] aitester (zone: Sanctum Basin, room: 109 "The Forge"): I still cannot get the tongs, despite korvath insisting they are in front of me and repeatedly telling me to "use my eyes.
+[2026-02-28 08:53:20] aitester (zone: Sanctum Basin, room: 109 "The Forge"): I am unable to acquire a leather strip despite it being a crafting component.
+[2026-02-28 09:17:58] aitester (zone: Sanctum Basin, room: 109 "The Forge"): I cannot obtain the leather strip to craft the iron dagger.
+[2026-02-28 09:19:37] aitester (zone: Sanctum Basin, room: 109 "The Forge"): I am unable to obtain the copper ingot despite multiple attempts and NPC instructions.
+[2026-02-28 09:28:25] aitester (zone: Sanctum Basin, room: 119 "Cave Depths"): chrysalis priest was not recognized
+[2026-02-28 11:20:47] aitester (zone: Sanctum Basin, room: 112 "Chrysalis Well Court"): I am unable to target basin scholar despite the room description stating "Also here: basin scholar (100%)
+[2026-02-28 11:41:31] aitester (zone: Sanctum Basin, room: 109 "The Forge"): I attempted to get materials from Korvath but was told they were not present. Korvath indicated they were set aside for me on the workbench.
+[2026-02-28 11:42:39] aitester (zone: Sanctum Basin, room: 109 "The Forge"): I was given a piece of metal by Korvath but cannot pick it up.
+[2026-02-28 11:53:38] aitester (zone: Sanctum Basin, room: 109 "The Forge"): I cannot get the coal that Korvath mentioned.
+[2026-02-28 11:54:19] aitester (zone: Sanctum Basin, room: 109 "The Forge"): I cannot get the coal dust that Korvath mentioned.
+[2026-02-28 12:38:17] aitester (zone: Sanctum Basin, room: 108 "Market Street"): Merchant Adela says, "You don't have enough gold for that." despite starting with 10 gold.
+[2026-02-28 12:40:07] aitester (zone: Sanctum Basin, room: 108 "Market Street"): Merchant Adela says, "You don't have enough gold for that.
+[2026-02-28 12:43:17] aitester (zone: Sanctum Basin, room: 118 "Cave Path"): I cannot get the cave bat remains even though the look command indicates it is on the ground.
+[2026-02-28 13:46:26] aitester (zone: Sanctum Basin, room: 115 "East Copse"): You can't pick up corpses, but corpses are lootable.
+[2026-02-28 13:46:51] aitester (zone: Sanctum Basin, room: 110 "East Meadow"): The game states corpses are not pickable, but they should be lootable.
+[2026-02-28 14:04:57] aitester (zone: Sanctum Basin, room: 119 "Cave Depths"): I can't pick up the gold that is visible on the ground.
+[2026-02-28 21:53:49] aitester (zone: Sanctum Basin, room: 122 "Weaver's Alcove"): I am unable to interact with the weaver, Yenna. The room description states she is present, but the game does not recognize the command to talk to her.
+[2026-02-28 22:49:51] Meirok (zone: Sanctum Basin, room: 113 "Academy Hall"): no helpfile for sonic-shout mutation
+[2026-02-28 23:06:30] Meirok (zone: Sanctum Basin, room: 111 "The Alchemist's Workshop"): typo in yenna's dialogue after making the potion, the text for drinking poultice has a typo
+[2026-02-28 23:15:27] Meirok (zone: Sanctum Basin, room: 120 "Boss Cave"): typo in the room flavor chatter
+[2026-02-28 23:18:59] Meirok (zone: Sanctum Basin, room: 102 "Basin Gate"): I was party'd with malia and when she went south after we completed the tutorial quest, the door locked behind her and I did not follow. Now I'm locked inside the tutorial area
+[2026-02-28 23:24:40] Meirok (zone: Labyrinth of Low Tunnels, room: 301 "Low Junction"): no help text or tutorial about using taunt
+[2026-02-28 23:33:17] Meirok (zone: Shadow Realm, room: 1000000250 "Waiting room"): kinetic-hurl's stone requirement needs to be removed
+[2026-02-28 23:34:39] Meirok (zone: Shadow Realm, room: 1000000250 "Waiting room"): regen for stamina and conviction post death needs to be buffed significantly. I'm bleeding out or the equivolent for stamina and conviction after death
+[2026-03-01 00:12:58] Meirok (zone: Labyrinth of Low Tunnels, room: 300 "Narrow Descent"): I started casting conviction-ward on party leader, they moved out of the room 2 rooms west, spell still completed and shielded them, I had to manually move to find them
+[2026-03-01 00:13:14] Meirok (zone: Labyrinth of Low Tunnels, room: 300 "Narrow Descent"): assist command missing
+[2026-03-01 00:16:22] Meirok (zone: Labyrinth of Low Tunnels, room: 309 "Bone Passage"): I set an alias for mind-spike by doing alias [ms]=[mind-spike] but when i use ms command, it says You cant do that in combat
+[2026-03-01 00:30:58] Meirok (zone: Sanctum Basin, room: 107 "Town Square"): no help for conviction-surge
+[2026-03-01 00:31:18] Meirok (zone: Sanctum Basin, room: 107 "Town Square"): no help for veil sight
+[2026-03-01 00:35:13] Meirok (zone: Thornwall Outskirts, room: 441 "Farmstead Road"): set fprompt tank doesnt work
+[2026-03-01 00:37:53] Meirok (zone: Thornwall Outskirts, room: 444 "Pest Fields"): would a crop pest actually have fists as a weapon?

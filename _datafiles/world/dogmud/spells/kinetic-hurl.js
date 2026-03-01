@@ -1,8 +1,8 @@
 // Kinetic Hurl spell script — flavor only; effects resolved in Go (Stage 11.4)
 
 function onCast(sourceActor, targetActor) {
-    SendUserMessage(sourceActor.UserId(), 'You grasp a stone and channel your willpower into it.');
-    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true)+' focuses their will on a stone, which begins to vibrate.', sourceActor.UserId());
+    SendUserMessage(sourceActor.UserId(), 'You gather telekinetic force, the air between your hands distorting.');
+    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true)+' gathers telekinetic force, the air distorting around their hands.', sourceActor.UserId());
     return true;
 }
 
