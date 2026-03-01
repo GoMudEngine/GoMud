@@ -5924,7 +5924,7 @@ Last phase — tests cover the final state of all features.
 
 ### Stage 40.3: Integration & Scenario Tests ✅ COMPLETED
 
-**Merge Commit**: (pending merge into development)
+**Merge Commit**: 7528365
 
 **Goal**: End-to-end tests covering full gameplay loops.
 
