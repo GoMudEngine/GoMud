@@ -72,5 +72,10 @@ func PackFlee(e events.Event) events.ListenerReturn {
 		)
 	}
 
+	// Stage 42.8: If dead mob was pack alpha or member, scatter the pack
+	if mobs.PackRoamingEnabled() {
+		mobs.HandleAlphaDeath(deadSpec, mobIds)
+	}
+
 	return events.Continue
 }
