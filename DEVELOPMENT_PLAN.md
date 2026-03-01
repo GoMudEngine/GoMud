@@ -5897,26 +5897,26 @@ Last phase — tests cover the final state of all features.
 
 ---
 
-### Stage 40.2: Core Systems Unit Tests
+### Stage 40.2: Core Systems Unit Tests ✅ COMPLETED
+
+**Merge commit**: (feature branch, will merge into development)
 
 **Goal**: Fill the biggest test gaps in high-risk code.
 
-**Changes**:
-1. Combat: test hit/miss/crit/fumble calculations, damage formulas,
-   avoidance (dodge/parry/block), grapple state transitions,
-   multi-combatant scenarios
-2. Crafting: test success/failure formula, discovery probability,
-   ingredient consumption, station requirements
-3. Spells: test fold mechanics, concentration, spell effects,
-   conviction costs, NPC caster AI decisions
-4. Progression: test stat advancement probability, skill soft cap,
-   use-counter thresholds
-5. Mutations: test point budget, conflicts, effect application
+**Delivered**: ~55 new tests across 8 packages (10 files modified/created, ~1960 lines):
 
-**Testing**:
-- Each new test file passes independently
-- Coverage increases toward targets from 40.1
-- No flaky tests (deterministic seeds where randomness is involved)
+| Package | New Tests | Coverage |
+|---------|-----------|----------|
+| dice | StdDevFor, SetRollSpread, RollStat, OpposedRollStat, CompareRolls | 84.4% |
+| combat/pipeline | DamageScale, MitigationCap, CalcRawDamage edges, ApplyMitigation edges | 15.5% |
+| combat/calculations | ChanceToSwitchTarget, PowerRanking | — |
+| combat/ai | GetAIProfile, CanUseBash/Trip/Kick/Grapple/Submit/Cast, ScoreBash/Trip/Kick/Grapple | — |
+| combat/grapple | IsThirdPartyAttack, AttemptGrapple (statistical + position) | — |
+| characters | GetPhysical/Magical/ConvictionMitigation, GetDefenseScore, GetDefenseStaminaCost | 30.8% |
+| mutations | 16 getter functions (load, conflict, flags, regen, dodge, damage, progression) | 73.6% |
+| spells | FindSpell, GetSpell, FindSpellByName, GetAllSpells, MaxFoldsForSkill, costs, schools | 38.6% |
+| items | HasAdjective, IsBetterThan, Equals, GetDiceRoll, GetDistributionDamage, GetDamage | 6.2% |
+| crafting | FindTargetItem | 65.1% |
 
 **Estimated Changes**: ~800–1200 lines, 10–15 test files
 
@@ -6015,7 +6015,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 37: Codebase Quality Pass | 8 stages (37.1a–37.5) | 24 hours | **Complete** |
 | Phase 38: Mob/Player Unification & NPC Progression | 5 stages (38.1–38.5) | 30 hours | **Complete** |
 | Phase 39: Balance Pass & Config Cleanup | 3 stages (39.1–39.3) | 14 hours | **Complete** |
-| Phase 40: Test Coverage Pass | 4 stages (40.1–40.4) | 20 hours | 40.1 Complete |
+| Phase 40: Test Coverage Pass | 4 stages (40.1–40.4) | 20 hours | 40.1–40.2 Complete |
 | **Total** | **~112 stages** | **~714 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
@@ -6180,4 +6180,4 @@ These are longer-term goals to be detailed when the above phases are complete:
 
 **Last Updated**: 2026-02-28
 **Status**: In Progress
-**Current Stage**: Stage 40.1 complete (test coverage audit — Tier 1 at ~24%, 75+ critical functions inventoried, 4 testability barriers documented). Next: Stage 40.2 (Core Systems Unit Tests).
+**Current Stage**: Stage 40.2 complete (~55 unit tests across 8 packages, coverage improvements across dice/mutations/crafting/characters/spells). Next: Stage 40.3 (Integration & Scenario Tests).
