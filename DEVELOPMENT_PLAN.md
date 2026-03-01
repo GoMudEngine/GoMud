@@ -6111,7 +6111,7 @@ regressions. ✅
 
 ---
 
-### Stage 41.5: Template Rendering Validation
+### Stage 41.5: Template Rendering Validation ✅ COMPLETED (merge: d1721ba)
 
 **Goal**: Ensure all player-facing templates render without errors. Currently
 `templates.Process()` is never tested with real template files — a syntax
@@ -6175,7 +6175,7 @@ Target: **templates package 40%+**
 | hooks | 42.6% | 30%+ | 41.3 ✅ |
 | usercommands | **35.1%** ✅ | 35%+ | 41.4 |
 | mobcommands | **37.5%** ✅ | 35%+ | 41.4 |
-| templates | ~15% | 40%+ | 41.5 |
+| templates | **44.3%** ✅ | 40%+ | 41.5 |
 | **CI gate** | **28%** ✅ | 28% | 41.4 |
 
 These are **minimum acceptance thresholds**, not aspirational ceilings.
@@ -6230,7 +6230,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 38: Mob/Player Unification & NPC Progression | 5 stages (38.1–38.5) | 30 hours | **Complete** |
 | Phase 39: Balance Pass & Config Cleanup | 3 stages (39.1–39.3) | 14 hours | **Complete** |
 | Phase 40: Test Coverage Pass | 4 stages (40.1–40.4) | 20 hours | **Complete** |
-| Phase 41: seedRegistry Coverage Push | 5 stages (41.1–41.5) | 48 hours | 41.1–41.3 Complete |
+| Phase 41: seedRegistry Coverage Push | 5 stages (41.1–41.5) | 48 hours | **Complete** |
 | **Total** | **~116 stages** | **~754 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
@@ -6395,4 +6395,4 @@ These are longer-term goals to be detailed when the above phases are complete:
 
 **Last Updated**: 2026-03-01
 **Status**: In Progress
-**Current Stage**: Stage 41.4 complete. Next: Stage 41.5 (Template Rendering Validation).
+**Current Stage**: Phase 41 complete. Next: Phase 42 or new development phase.
