@@ -6066,32 +6066,19 @@ mob archetype distribution verified statistically.
 
 ---
 
-### Stage 41.3: Hooks — Multi-Registry Seeding Infrastructure
+### Stage 41.3: Hooks — Multi-Registry Seeding Infrastructure ✅ COMPLETED (merge: 18810c5)
 
 **Goal**: Build the shared test infrastructure for hooks and write tests for
 the most critical hook functions. This is the hardest substage because each
 hook function requires **users + mobs + rooms + buffs + items** registries
 seeded in concert.
 
-**Changes**:
-1. `internal/hooks/hooks_test_helpers.go` — Create shared seeding functions:
-   - `seedTestUser(userId int, opts ...UserOpt)` — populate userManager
-   - `seedTestMob(instanceId int, opts ...MobOpt)` — populate mobInstances
-   - `seedTestRoom(roomId int, opts ...RoomOpt)` — populate room cache
-   - `seedTestBuff(buffId int, spec)` — populate buff specs
-   - `seedAllRegistries()` — convenience wrapper for common test scenarios
-   - `cleanupRegistries()` — reset all globals between tests
-2. `internal/hooks/hooks_test.go` — Write tests for highest-priority hooks:
-   - Buff application (`ApplyBuffs`)
-   - Spell resolution (`spell_resolution.go` — damage calc, cost deduction)
-   - Combat round helpers (attack resolution, defense dispatch)
-   - Message dispatch (`SendMessages`)
-   Target: **hooks 30%+**
-
-**Completion criteria**: Shared seeding infrastructure works, at least 15
-hook tests pass covering buff/spell/combat/message paths.
-
-**Estimated Changes**: ~1200–1800 lines across 2–3 test files
+**Achieved**: 42.6% hooks coverage (target was 40%). Created exported
+`SeedForTest` helpers in 5 dependency packages (buffs, mobs, rooms, spells,
+users) plus `MarkRoomOccupancy` and `SeedBiomesForTest`. Wrote 100+ test
+functions in `hooks_test.go` (2900+ lines) covering spell resolution, combat
+helpers, buff application, message dispatch, lifecycle events, and round
+tick processing.
 
 ---
 
@@ -6127,7 +6114,7 @@ regressions. Raise CI coverage gate from 40% to **55%**.
 | rooms | 7.8% | 30%+ | 41.1 |
 | mobs | 50.0% | 40%+ | 41.2 ✅ |
 | users | 45.6% | 30%+ | 41.2 ✅ |
-| hooks | 0.0% | 30%+ | 41.3 |
+| hooks | 42.6% | 30%+ | 41.3 ✅ |
 | usercommands | 0.0% | 25%+ | 41.4 |
 | mobcommands | 0.0% | 25%+ | 41.4 |
 | **CI gate** | 40% | **55%** | 41.4 |
@@ -6184,7 +6171,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 38: Mob/Player Unification & NPC Progression | 5 stages (38.1–38.5) | 30 hours | **Complete** |
 | Phase 39: Balance Pass & Config Cleanup | 3 stages (39.1–39.3) | 14 hours | **Complete** |
 | Phase 40: Test Coverage Pass | 4 stages (40.1–40.4) | 20 hours | **Complete** |
-| Phase 41: seedRegistry Coverage Push | 4 stages (41.1–41.4) | 40 hours | 41.1 Complete |
+| Phase 41: seedRegistry Coverage Push | 4 stages (41.1–41.4) | 40 hours | 41.1–41.3 Complete |
 | **Total** | **~116 stages** | **~754 hours** | |
 
 **Note**: Timeline is rough estimate. Adjust based on actual progress.
@@ -6349,4 +6336,4 @@ These are longer-term goals to be detailed when the above phases are complete:
 
 **Last Updated**: 2026-03-01
 **Status**: In Progress
-**Current Stage**: Stage 41.2 complete. Next: Stage 41.3 (hooks — multi-registry seeding infrastructure).
+**Current Stage**: Stage 41.3 complete. Next: Stage 41.4 (commands — usercommands & mobcommands).
