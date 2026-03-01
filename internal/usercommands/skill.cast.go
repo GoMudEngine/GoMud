@@ -222,7 +222,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	}
 
 	// 9. Cooldown gate — casting shares the special-move slot (prevents cast+bash same round)
-	cfg := configs.GetGamePlayConfig()
+	cfg := configs.GetBalanceConfig()
 	if !user.Character.TryCooldown(`special-move`, fmt.Sprintf(`%d rounds`, cfg.SpecialMoveCooldown)) {
 		user.SendText(`You need a moment before you can do that.`)
 		return true, nil

@@ -113,8 +113,8 @@ func main() {
 
 	// Apply the global roll-spread factor from config to the dice package.
 	// This is the single knob that scales stdDev for every stat-based roll.
-	// See _datafiles/config.yaml GamePlay.RollSpread for the full explanation.
-	dice.SetRollSpread(float64(configs.GetGamePlayConfig().RollSpread))
+	// See _datafiles/config.yaml Balance.RollSpread for the full explanation.
+	dice.SetRollSpread(float64(configs.GetBalanceConfig().RollSpread))
 
 	lastKnownVersion, err := version.Parse(string(configs.GetServerConfig().CurrentVersion))
 	if err != nil {

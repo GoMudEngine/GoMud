@@ -577,8 +577,8 @@ func handleMobDownedGrace(mob *mobs.Mob, defUser *users.UserRecord, defRoom *roo
 		return false
 	}
 
-	cfg := configs.GetGamePlayConfig()
-	graceRounds := int(cfg.CoupDeGraceRounds)
+	bal := configs.GetBalanceConfig()
+	graceRounds := int(bal.CoupDeGraceRounds)
 	if graceRounds <= 0 {
 		mob.Character.Aggro = nil
 		return true

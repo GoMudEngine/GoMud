@@ -5843,59 +5843,29 @@ identify and fix balance outliers.
 
 ---
 
-### Stage 39.3: Config File Reorganization
+### Stage 39.3: Config File Reorganization ✅ COMPLETED
 
-**Goal**: Restructure `_datafiles/config.yaml` into well-organized,
-commented sections with a logical layout that's easy to navigate.
+**Goal**: Move all combat/balance fields from `GamePlay` into `Balance`,
+so `GamePlay` = pure gameplay flags and `Balance` = every numeric tuning knob.
 
 **Changes**:
-1. **Group config into logical sections** with clear comment headers:
-   - `# === Server & Networking ===` (ports, TLS, timeouts)
-   - `# === Timing & Rounds ===` (round seconds, tick rates, save
-     intervals)
-   - `# === Player Progression ===` (stat/skill progression rates,
-     soft caps, use-count thresholds)
-   - `# === Mob Progression ===` (mob-specific progression knobs
-     from 38.3, mob save intervals, instance max age)
-   - `# === Combat: Hit & Defense ===` (hit chance, defense floor,
-     attack floor, roll spread)
-   - `# === Combat: Damage & Mitigation ===` (channel scales,
-     mitigation caps, skill multiplier curve)
-   - `# === Combat: Special Moves ===` (bash/kick/trip config,
-     cooldowns, knockdown chances)
-   - `# === Combat: Grapple & Position ===` (prone multipliers,
-     grapple thresholds)
-   - `# === Combat: Resource Depletion ===` (penalty curves, per-pool
-     max penalties)
-   - `# === Spellcasting ===` (fold costs, fizzle rates,
-     concentration, conviction)
-   - `# === Regeneration ===` (player/mob regen percentages, regen
-     multipliers)
-   - `# === Crafting ===` (station types, recipe discovery,
-     crafter mob restock)
-   - `# === Economy ===` (gold drops, shop restock, vendor prices)
-   - `# === World & Zones ===` (moon phases, biomes, spawn rates)
-   - `# === Analytics ===` (buffer size, log path, enabled flag)
-   - `# === Admin & Debug ===` (dev tools, logging levels)
-2. **Add inline comments** for every knob explaining what it does,
-   its valid range, and its default value
-3. **Sort keys within each section** alphabetically or by logical
-   dependency (related knobs adjacent)
-4. **Ensure Go config structs match** the new YAML layout — reorder
-   struct fields to mirror the YAML sections where practical (not
-   strictly required, but helps maintainability)
-5. **Add new config knobs** identified during Phase 38 that don't
-   exist yet (mob progression, crafter restock, etc.) in their
-   proper sections
+1. **Migrated 28 combat fields** from `GamePlay` struct to `Balance` struct:
+   RollSpread, defense costs/effectiveness, prone/grapple multipliers,
+   special move parameters, spell costs, ConsistentAttackMessages,
+   CoupDeGraceRounds
+2. **Updated ~25 call sites** across 22 files from `GetGamePlayConfig()`
+   to `GetBalanceConfig()` for all migrated fields
+3. **Reorganized config.yaml** with clear subsection headers in Balance:
+   Roll Spread, Defense Costs, Defense Effectiveness, Prone & Grapple,
+   Special Moves, Spell Costs, Messages, Damage, etc.
+4. **GamePlay section** now contains only non-combat flags: death settings,
+   PVP, shops, containers, alt characters, progression toggles
 
 **Testing**:
-- Server starts cleanly with reorganized config
-- All existing config values preserved (no regressions)
-- Every knob has an inline comment
-- Config file is easy to navigate by section
-
-**Estimated Changes**: ~200–400 lines (mostly reordering and
-comments in config.yaml, minor struct reordering in Go)
+- `go build ./...` — zero errors
+- `go vet ./...` — zero warnings
+- Grep confirms no remaining references to migrated fields via GamePlay
+- All numeric values preserved at same values
 
 ---
 
@@ -6042,7 +6012,7 @@ Assuming ~4 hours per stage (implement + test):
 | Phase 36: Dialogue System Fix & Quest Wiring | 1 stage | 4 hours | **Complete** |
 | Phase 37: Codebase Quality Pass | 8 stages (37.1a–37.5) | 24 hours | **Complete** |
 | Phase 38: Mob/Player Unification & NPC Progression | 5 stages (38.1–38.5) | 30 hours | **Complete** |
-| Phase 39: Balance Pass & Config Cleanup | 3 stages (39.1–39.3) | 14 hours | 39.1 Complete |
+| Phase 39: Balance Pass & Config Cleanup | 3 stages (39.1–39.3) | 14 hours | **Complete** |
 | Phase 40: Test Coverage Pass | 4 stages (40.1–40.4) | 20 hours | Not started |
 | **Total** | **~112 stages** | **~714 hours** | |
 
@@ -6208,4 +6178,4 @@ These are longer-term goals to be detailed when the above phases are complete:
 
 **Last Updated**: 2026-02-28
 **Status**: In Progress
-**Current Stage**: Stage 39.2 complete (balance tuning pass — all damage/defense/progression values tuned with rationale comments). Next: Stage 39.3 (Config File Reorganization).
+**Current Stage**: Stage 39.3 complete (config reorganization — 28 combat fields migrated from GamePlay to Balance, config.yaml reorganized with section headers). Next: Stage 40.1 (Unit Test Gaps Audit).

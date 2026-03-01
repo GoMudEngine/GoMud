@@ -220,39 +220,6 @@ FilePaths:
 #
 ################################################################################
 GamePlay:
-  # ============================================================================
-  # - RollSpread -  *** THE MASTER RANDOMNESS KNOB ***
-  #
-  #   Controls the standard deviation for EVERY stat-based dice roll in the
-  #   game: all attacks, defenses, spell checks, grapples, bash/trip/kick, and
-  #   skill/stat checks.  A single number that governs how chaotic or
-  #   skill-dominant the entire game feels.
-  #
-  #   Formula: stdDev = stat_value * RollSpread
-  #   At the human baseline (stat = 100): stdDev = 100 * RollSpread
-  #
-  #   GAMEPLAY FEEL BY VALUE:
-  #     0.05  Very tight rolls. High-stat characters win ~99% of even matches.
-  #           Almost no upsets. Feels deterministic; newcomers get crushed.
-  #     0.10  Low variance. Skill/stat clearly dominates. Upsets are rare.
-  #           A 20-point advantage translates to ~92% win rate.
-  #     0.15  DEFAULT — recommended balanced spread.
-  #           A 20-point advantage => ~78% win rate.
-  #           A weaker fighter still has a ~16% chance if they're 30pts behind.
-  #     0.20  Higher variance. Upsets are common. Combat feels dynamic.
-  #           A 20-point advantage => only ~67% win rate.
-  #     0.30  Chaotic. Luck rivals skill. Not recommended for competitive play.
-  #           A 20-point advantage => barely 57% win rate.
-  #
-  #   CRIT / FUMBLE RATES:
-  #     Unaffected by this setting. Crits trigger when a roll's z-score is
-  #     >= +2.0 standard deviations above mean, which is always ~2.3% per roll
-  #     regardless of the absolute stdDev value.
-  #
-  #   Valid range: 0.05-0.50. Values outside this range default to 0.15.
-  #   Requires a server restart to take effect.
-  # ============================================================================
-  RollSpread: 0.15
   # - AllowItemBuffRemoval -
   #   Whether to allow the removal of buffs assigned by items using spells etc.
   #   By default, once an item has buffed a player, the player cannot remove the
@@ -317,13 +284,6 @@ GamePlay:
   #   greater than 0. Otherwise they are locked to a signle character and have to
   #   sign up with a new user login if they intend to create a new character.
   MaxAltCharacters: 3
-  # - ConsistentAttackMessages -
-  #   If true, each weapon ID will consistently use the same message for each type
-  #   of attack. If false, it will randomize messages. Setting this to true gives
-  #   each weapon a more consistent feel in battle, though combat may feel less
-  #   varied.
-  #   Note: see _datafiles/combat-messages/*
-  ConsistentAttackMessages: false
   # - PVP -
   #   Possible Values:
   #     enabled   - PVP is enabled everywhere
@@ -344,104 +304,6 @@ GamePlay:
   #   Requires UseSkillProgression to be true. When enabled, progression
   #   checks grant actual skill/stat increases.
   DualProgressionMode: true
-  # - SpellConvictionCostMultiplier -
-  #   Global multiplier for spell conviction costs. Default 1.0 means no scaling.
-  #   Set to 0.5 for half cost, 2.0 for double cost, etc.
-  SpellConvictionCostMultiplier: 1.0
-  # - SpellHealthCostMultiplier -
-  #   Global multiplier for spell health costs (life-force magic). Default 1.0.
-  #   Increase to make life-force magic more risky, decrease to make it safer.
-  SpellHealthCostMultiplier: 1.0
-  # ── Defense Stamina Costs ──
-  # These ONLY affect how much stamina each defense costs. They do NOT
-  # change how effective the defense is at avoiding hits.
-  # Formula: cost = baseCost × multiplier  (dodge base=2, parry=4, block=5)
-  # Example: DodgeMultiplier 0.9 → dodge costs floor(2×0.9) = 1 stamina
-  # Example: BlockMultiplier 1.5 → block costs floor(5×1.5) = 7 stamina
-  # To change defense EFFECTIVENESS, see Prone penalties below or add
-  # equipment with higher ParryRating / BlockRating.
-  DodgeMultiplier: 0.9           # Stamina cost multiplier for dodge (base: 2 SP)
-  ParryMultiplier: 0.9           # Stamina cost multiplier for parry (base: 4 SP)
-  BlockMultiplier: 0.9           # Stamina cost multiplier for block (base: 5 SP)
-  #
-  # ── Defense Effectiveness ──
-  # MULTIPLIER on the defense score BEFORE the opposed roll. Applied in
-  # all situations (standing, prone, grappled) — stacks with prone penalties.
-  # Defense scores: Dodge = Dex + UnarmedSkill, Parry = Dex + WeaponSkill
-  #   + ParryRating, Block = (Str+Dex)/2 + WeaponSkill + BlockRating.
-  # 1.0 = no change. 1.2 = 20% stronger. 0.8 = 20% weaker.
-  # Example: defender Dex 100, skill 10, DodgeEffectiveness 1.2:
-  #   dodge score = (100 + 10) × 1.2 = 132 (vs attacker's ~110)
-  DodgeEffectiveness: 0.97      # Tuned 39.2: slight nerf to dodge (most common defense) to keep parry/block competitive
-  ParryEffectiveness: 1.0
-  BlockEffectiveness: 1.02      # Tuned 39.2: slight buff; requires shield, sacrifices 2h/dual-wield damage
-  #
-  # MinDefenseChance: Minimum probability that any defense succeeds, even
-  #   when the attacker's score vastly outclasses the defender's. Acts as a
-  #   floor so fights never feel like guaranteed hits. 0.15 = 15% minimum.
-  #   Range: 0.0–0.50. Set to 0 to disable the floor entirely.
-  MinDefenseChance: 0.15
-  #
-  # MinAttackHitChance: Minimum probability that any attack hits, even
-  #   when the defender's score vastly outclasses the attacker's. Symmetric
-  #   counterpart to MinDefenseChance. 0.15 = 15% minimum hit rate.
-  #   Range: 0.0–0.50. Set to 0 to disable the floor entirely.
-  MinAttackHitChance: 0.15
-  #
-  # ── Prone Condition Effects ──
-  # When a character is knocked prone, these modify combat scores.
-  # Defense scores are: Dodge = Dex + UnarmedSkill, Parry = Dex + WeaponSkill
-  #   + weapon ParryRating, Block = (Str+Dex)/2 + WeaponSkill + BlockRating.
-  #
-  # ProneAttackMultiplier: MULTIPLIER on the attack score of a character
-  #   attacking WHILE prone. Lower = harder to hit from the ground.
-  #   Example: attacker score 110, multiplier 0.80 → score 88.
-  ProneAttackMultiplier: 0.80
-  #
-  # ProneDodge/Parry/BlockPenalty: MULTIPLIER on the defense score of a
-  #   prone DEFENDER. This is how much of their defense they keep.
-  #   1.0 = full defense (no penalty). 0.50 = half defense. 0.0 = no defense.
-  #   Example: defender has dodge score 100. At 0.90 → score 90. At 0.50 → 50.
-  ProneDodgePenalty: 0.95       # Tuned 39.2: raised from harsher values; prone already punishing via attack/damage mults
-  ProneParryPenalty: 0.95       # Tuned 39.2: raised from harsher values; prone already punishing via attack/damage mults
-  ProneBlockPenalty: 0.95       # Tuned 39.2: raised from harsher values; prone already punishing via attack/damage mults
-  #
-  # ProneDamagePenalty: MULTIPLIER on damage dealt by a character attacking
-  #   WHILE prone. 0.80 = deals 80% of normal damage from the ground.
-  ProneDamagePenalty: 0.80
-  #
-  # ProneVulnerabilityMultiplier: MULTIPLIER on attack score when the
-  #   TARGET is prone. Stacks with the defense penalties above.
-  #   Example: attacker score 110, multiplier 1.15 → score 126.5.
-  ProneVulnerabilityMultiplier: 1.05  # Tuned 39.2: lowered from 1.15; 5% is enough when defense penalties also stack
-  #
-  StandStaminaCost: 0.15         # Fraction of max stamina to stand up (0.15 = 15%)
-  StandMinStamina: 0.15          # Must have this fraction of max SP to stand
-  #
-  # ── Grapple Vulnerability ──
-  # MULTIPLIER on defense score when attacked by a third party while
-  # grappling. 0.70 = defender keeps 70% of defense. Only shield (block)
-  # defenses are available; dodge/parry are stripped entirely.
-  ThirdPartyGrapplePenalty: 0.70
-  #
-  # ── Special Combat Moves (bash, trip, kick) ──
-  # All three share a cooldown so players can't spam knockdowns.
-  SpecialMoveCooldown: 4         # Rounds between special moves
-  #
-  # DamagePercent: fraction of a normal melee hit's damage this move does.
-  #   0.50 = deals half a normal swing's damage. 1.0 = full damage.
-  # KnockdownChance: base % chance to knock the target prone on hit.
-  #   Modified by attacker Str vs defender Str in the actual roll.
-  BashDamagePercent: 0.50        # Bash: 50% of normal swing damage
-  BashKnockdownChance: 50        # Bash: 50% base knockdown chance
-  TripDamagePercent: 0.25        # Trip: 25% of normal swing damage
-  TripKnockdownChance: 60        # Trip: 60% base knockdown chance
-  KickDamagePercent: 0.40        # Kick: 40% of normal swing damage
-  KickKnockdownChance: 35        # Kick: 35% base knockdown chance
-  #
-  # Coup de Grâce: rounds a mob waits before finishing a downed player.
-  # 0 = disabled (mob walks away like before).
-  CoupDeGraceRounds: 1
 
 ################################################################################
 #
@@ -452,7 +314,78 @@ GamePlay:
 #
 ################################################################################
 Balance:
-  # ── COMBAT ──────────────────────────────────────────────────────────────────
+  # ============================================================================
+  # ── ROLL SPREAD ── *** THE MASTER RANDOMNESS KNOB ***
+  #
+  #   Controls the standard deviation for EVERY stat-based dice roll in the
+  #   game: all attacks, defenses, spell checks, grapples, bash/trip/kick, and
+  #   skill/stat checks.  A single number that governs how chaotic or
+  #   skill-dominant the entire game feels.
+  #
+  #   Formula: stdDev = stat_value * RollSpread
+  #   At the human baseline (stat = 100): stdDev = 100 * RollSpread
+  #
+  #   GAMEPLAY FEEL BY VALUE:
+  #     0.05  Very tight rolls. High-stat characters win ~99% of even matches.
+  #     0.10  Low variance. Skill/stat clearly dominates. Upsets are rare.
+  #     0.15  DEFAULT — recommended balanced spread.
+  #     0.20  Higher variance. Upsets are common. Combat feels dynamic.
+  #     0.30  Chaotic. Luck rivals skill. Not recommended for competitive play.
+  #
+  #   Crits/fumbles unaffected (always ~2.3% each at z-score ±2.0).
+  #   Valid range: 0.05-0.50. Requires server restart.
+  # ============================================================================
+  RollSpread: 0.15
+
+  # ── COMBAT: DEFENSE COSTS ──────────────────────────────────────────────────
+  # These ONLY affect how much stamina each defense costs. They do NOT
+  # change how effective the defense is at avoiding hits.
+  # Formula: cost = baseCost × multiplier  (dodge base=2, parry=4, block=5)
+  DodgeMultiplier: 0.9           # Stamina cost multiplier for dodge (base: 2 SP)
+  ParryMultiplier: 0.9           # Stamina cost multiplier for parry (base: 4 SP)
+  BlockMultiplier: 0.9           # Stamina cost multiplier for block (base: 5 SP)
+
+  # ── COMBAT: DEFENSE EFFECTIVENESS ─────────────────────────────────────────
+  # MULTIPLIER on the defense score BEFORE the opposed roll. Stacks with
+  # prone penalties. 1.0 = no change.
+  DodgeEffectiveness: 0.97      # Tuned 39.2: slight nerf to dodge
+  ParryEffectiveness: 1.0
+  BlockEffectiveness: 1.02      # Tuned 39.2: slight buff; requires shield
+  MinDefenseChance: 0.15         # Floor: 15% defense even when outclassed
+  MinAttackHitChance: 0.15       # Floor: 15% hit rate even when outclassed
+
+  # ── COMBAT: PRONE & GRAPPLE ───────────────────────────────────────────────
+  ProneAttackMultiplier: 0.80    # Attack score multiplier while prone
+  ProneDodgePenalty: 0.95        # Tuned 39.2: defense kept while prone
+  ProneParryPenalty: 0.95        # Tuned 39.2: defense kept while prone
+  ProneBlockPenalty: 0.95        # Tuned 39.2: defense kept while prone
+  ProneDamagePenalty: 0.80       # Damage multiplier while prone
+  ProneVulnerabilityMultiplier: 1.05  # Tuned 39.2: attack bonus vs prone
+  StandStaminaCost: 0.15         # Fraction of max stamina to stand up
+  StandMinStamina: 0.15          # Must have this fraction of max SP to stand
+  ThirdPartyGrapplePenalty: 0.70 # Defense multiplier when grappled vs 3rd party
+
+  # ── COMBAT: SPECIAL MOVES ─────────────────────────────────────────────────
+  # All three share a cooldown so players can't spam knockdowns.
+  SpecialMoveCooldown: 4         # Rounds between special moves
+  BashDamagePercent: 0.50        # Bash: 50% of normal swing damage
+  BashKnockdownChance: 50        # Bash: 50% base knockdown chance
+  TripDamagePercent: 0.25        # Trip: 25% of normal swing damage
+  TripKnockdownChance: 60        # Trip: 60% base knockdown chance
+  KickDamagePercent: 0.40        # Kick: 40% of normal swing damage
+  KickKnockdownChance: 35        # Kick: 35% base knockdown chance
+  CoupDeGraceRounds: 1           # Rounds before mob finishes downed player
+
+  # ── COMBAT: SPELL COSTS ───────────────────────────────────────────────────
+  SpellConvictionCostMultiplier: 1.0  # Global multiplier for spell conviction costs
+  SpellHealthCostMultiplier: 1.0      # Global multiplier for spell health costs
+
+  # ── COMBAT: MESSAGES ──────────────────────────────────────────────────────
+  # If true, each weapon ID consistently uses the same attack message.
+  # If false, messages are randomized. See _datafiles/combat-messages/*
+  ConsistentAttackMessages: false
+
+  # ── COMBAT: DAMAGE ────────────────────────────────────────────────────────
   # These two are global panic buttons. 1.0 = no change. Not yet wired
   # into code — reserved for future "server set" runtime tuning.
   GlobalDamageMultiplier: 1.0

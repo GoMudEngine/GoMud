@@ -5,7 +5,52 @@ package configs
 // hardcoded values, so behaviour is unchanged unless a field is overridden
 // in config.yaml or config-overrides.yaml.
 type Balance struct {
-	// ── COMBAT ────────────────────────────────────────────────────────────────
+	// ── ROLL SPREAD ──────────────────────────────────────────────────────────
+	// Master randomness knob. Controls stdDev = stat * RollSpread for every
+	// stat-based roll. Default 0.15 (15%). Valid range 0.05–0.50.
+	RollSpread ConfigFloat `yaml:"RollSpread"`
+
+	// ── COMBAT: DEFENSE COSTS ────────────────────────────────────────────────
+	DodgeMultiplier ConfigFloat `yaml:"DodgeMultiplier"` // Stamina cost multiplier for dodge (default 0.9)
+	ParryMultiplier ConfigFloat `yaml:"ParryMultiplier"` // Stamina cost multiplier for parry (default 0.9)
+	BlockMultiplier ConfigFloat `yaml:"BlockMultiplier"` // Stamina cost multiplier for block (default 0.9)
+
+	// ── COMBAT: DEFENSE EFFECTIVENESS ────────────────────────────────────────
+	DodgeEffectiveness ConfigFloat `yaml:"DodgeEffectiveness"` // Multiplier on dodge score before opposed roll (default 1.0)
+	ParryEffectiveness ConfigFloat `yaml:"ParryEffectiveness"` // Multiplier on parry score before opposed roll (default 1.0)
+	BlockEffectiveness ConfigFloat `yaml:"BlockEffectiveness"` // Multiplier on block score before opposed roll (default 1.0)
+	MinDefenseChance   ConfigFloat `yaml:"MinDefenseChance"`   // Floor probability any defense succeeds (default 0.15)
+	MinAttackHitChance ConfigFloat `yaml:"MinAttackHitChance"` // Floor probability any attack hits (default 0.15)
+
+	// ── COMBAT: PRONE & GRAPPLE ──────────────────────────────────────────────
+	ProneAttackMultiplier        ConfigFloat `yaml:"ProneAttackMultiplier"`        // Multiplier on attack score while prone (default 0.80)
+	ProneDodgePenalty            ConfigFloat `yaml:"ProneDodgePenalty"`            // Multiplier on dodge score while prone (default 0.70)
+	ProneParryPenalty            ConfigFloat `yaml:"ProneParryPenalty"`            // Multiplier on parry score while prone (default 0.80)
+	ProneBlockPenalty            ConfigFloat `yaml:"ProneBlockPenalty"`            // Multiplier on block score while prone (default 0.90)
+	ProneDamagePenalty           ConfigFloat `yaml:"ProneDamagePenalty"`           // Damage multiplier while prone (default 0.80)
+	ProneVulnerabilityMultiplier ConfigFloat `yaml:"ProneVulnerabilityMultiplier"` // Multiplier on attack score vs prone target (default 1.15)
+	StandStaminaCost             ConfigFloat `yaml:"StandStaminaCost"`             // Fraction of max stamina to stand up (default 0.15)
+	StandMinStamina              ConfigFloat `yaml:"StandMinStamina"`              // Minimum fraction of max SP to stand (default 0.15)
+	ThirdPartyGrapplePenalty     ConfigFloat `yaml:"ThirdPartyGrapplePenalty"`     // Defense multiplier when grappled vs third party (default 0.70)
+
+	// ── COMBAT: SPECIAL MOVES ────────────────────────────────────────────────
+	SpecialMoveCooldown ConfigInt   `yaml:"SpecialMoveCooldown"` // Shared cooldown rounds for bash/trip/kick (default 5)
+	BashDamagePercent   ConfigFloat `yaml:"BashDamagePercent"`   // Fraction of normal melee damage (default 0.50)
+	BashKnockdownChance ConfigInt   `yaml:"BashKnockdownChance"` // Base % knockdown chance (default 40)
+	TripDamagePercent   ConfigFloat `yaml:"TripDamagePercent"`   // Fraction of normal melee damage (default 0.25)
+	TripKnockdownChance ConfigInt   `yaml:"TripKnockdownChance"` // Base % knockdown chance (default 60)
+	KickDamagePercent   ConfigFloat `yaml:"KickDamagePercent"`   // Fraction of normal melee damage (default 0.40)
+	KickKnockdownChance ConfigInt   `yaml:"KickKnockdownChance"` // Base % knockdown chance (default 35)
+	CoupDeGraceRounds   ConfigInt   `yaml:"CoupDeGraceRounds"`   // Rounds before mob finishes downed player (default 1; 0=disabled)
+
+	// ── COMBAT: SPELL COSTS ──────────────────────────────────────────────────
+	SpellConvictionCostMultiplier ConfigFloat `yaml:"SpellConvictionCostMultiplier"` // Global multiplier for spell conviction costs (default 1.0)
+	SpellHealthCostMultiplier     ConfigFloat `yaml:"SpellHealthCostMultiplier"`     // Global multiplier for spell health costs (default 1.0)
+
+	// ── COMBAT: MESSAGES ─────────────────────────────────────────────────────
+	ConsistentAttackMessages ConfigBool `yaml:"ConsistentAttackMessages"` // Whether each weapon has consistent attack messages
+
+	// ── COMBAT: DAMAGE ───────────────────────────────────────────────────────
 	// Legacy unarmed knobs — still used by GetDefaultDistributionDamage() for
 	// attack count and crit buff calculation. Damage values are overridden by
 	// the unified pipeline (UnarmedDamageMultiplier + CalcRawDamage).
@@ -143,7 +188,103 @@ type Balance struct {
 }
 
 func (b *Balance) Validate() {
-	// ── COMBAT ────────────────────────────────────────────────────────────────
+	// ── ROLL SPREAD ──────────────────────────────────────────────────────────
+	if b.RollSpread < 0.05 || b.RollSpread > 0.50 {
+		b.RollSpread = 0.15
+	}
+
+	// ── COMBAT: DEFENSE COSTS ────────────────────────────────────────────────
+	if b.DodgeMultiplier <= 0 {
+		b.DodgeMultiplier = 0.9
+	}
+	if b.ParryMultiplier <= 0 {
+		b.ParryMultiplier = 0.9
+	}
+	if b.BlockMultiplier <= 0 {
+		b.BlockMultiplier = 0.9
+	}
+
+	// ── COMBAT: DEFENSE EFFECTIVENESS ────────────────────────────────────────
+	if b.DodgeEffectiveness <= 0 {
+		b.DodgeEffectiveness = 1.0
+	}
+	if b.ParryEffectiveness <= 0 {
+		b.ParryEffectiveness = 1.0
+	}
+	if b.BlockEffectiveness <= 0 {
+		b.BlockEffectiveness = 1.0
+	}
+	if b.MinDefenseChance < 0 || b.MinDefenseChance > 0.50 {
+		b.MinDefenseChance = 0.15
+	}
+	if b.MinAttackHitChance < 0 || b.MinAttackHitChance > 0.50 {
+		b.MinAttackHitChance = 0.15
+	}
+
+	// ── COMBAT: PRONE & GRAPPLE ──────────────────────────────────────────────
+	if b.ProneAttackMultiplier <= 0 {
+		b.ProneAttackMultiplier = 0.80
+	}
+	if b.ProneDodgePenalty <= 0 || b.ProneDodgePenalty > 1.0 {
+		b.ProneDodgePenalty = 0.70
+	}
+	if b.ProneParryPenalty <= 0 || b.ProneParryPenalty > 1.0 {
+		b.ProneParryPenalty = 0.80
+	}
+	if b.ProneBlockPenalty <= 0 || b.ProneBlockPenalty > 1.0 {
+		b.ProneBlockPenalty = 0.90
+	}
+	if b.ProneDamagePenalty <= 0 || b.ProneDamagePenalty > 1.0 {
+		b.ProneDamagePenalty = 0.80
+	}
+	if b.ProneVulnerabilityMultiplier <= 0 {
+		b.ProneVulnerabilityMultiplier = 1.15
+	}
+	if b.StandStaminaCost <= 0 || b.StandStaminaCost > 1.0 {
+		b.StandStaminaCost = 0.15
+	}
+	if b.StandMinStamina <= 0 || b.StandMinStamina > 1.0 {
+		b.StandMinStamina = 0.15
+	}
+	if b.ThirdPartyGrapplePenalty <= 0 || b.ThirdPartyGrapplePenalty > 1.0 {
+		b.ThirdPartyGrapplePenalty = 0.70
+	}
+
+	// ── COMBAT: SPECIAL MOVES ────────────────────────────────────────────────
+	if b.SpecialMoveCooldown < 1 {
+		b.SpecialMoveCooldown = 5
+	}
+	if b.BashDamagePercent <= 0 || b.BashDamagePercent > 1.0 {
+		b.BashDamagePercent = 0.50
+	}
+	if b.BashKnockdownChance < 0 || b.BashKnockdownChance > 100 {
+		b.BashKnockdownChance = 40
+	}
+	if b.TripDamagePercent <= 0 || b.TripDamagePercent > 1.0 {
+		b.TripDamagePercent = 0.25
+	}
+	if b.TripKnockdownChance < 0 || b.TripKnockdownChance > 100 {
+		b.TripKnockdownChance = 60
+	}
+	if b.KickDamagePercent <= 0 || b.KickDamagePercent > 1.0 {
+		b.KickDamagePercent = 0.40
+	}
+	if b.KickKnockdownChance < 0 || b.KickKnockdownChance > 100 {
+		b.KickKnockdownChance = 35
+	}
+	if b.CoupDeGraceRounds < 0 {
+		b.CoupDeGraceRounds = 1
+	}
+
+	// ── COMBAT: SPELL COSTS ──────────────────────────────────────────────────
+	if b.SpellConvictionCostMultiplier <= 0 {
+		b.SpellConvictionCostMultiplier = 1.0
+	}
+	if b.SpellHealthCostMultiplier <= 0 {
+		b.SpellHealthCostMultiplier = 1.0
+	}
+
+	// ── COMBAT: DAMAGE ───────────────────────────────────────────────────────
 	if b.UnarmedBaseDamage <= 0 {
 		b.UnarmedBaseDamage = 2.0
 	}
