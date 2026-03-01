@@ -762,6 +762,9 @@ Balance:
   EnchantRemovalPenaltyRounds: 50   # Rounds of withdrawal debuff after disenchant
   EnchantMaxTier: 4                 # Maximum tier (tiers 0–4 = 5 levels total)
 
+  # ── GOSSIP SYSTEM ───────────────────────────────────────────────────────────
+  GossipIntervalRounds: 75  # Rounds between gossip broadcasts for "gossiper" mobs (min 20)
+
   # ── MOON PHASES ─────────────────────────────────────────────────────────────
   MoonStatModMax: 0.05  # Max fractional stat modifier from moon phases (±5% at full/new moon)
 

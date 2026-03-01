@@ -1,0 +1,38 @@
+roomid: 484
+zone: Thornwall City
+title: The Back Corner
+description: A cramped alcove tucked behind the main bar, separated from the
+  tavern proper by a half-wall of stacked crates and a moth-eaten curtain that
+  no one bothers to pull shut. Three battered chairs crowd around a table so
+  scarred with knife marks it looks like a cutting board. The air back here is
+  thicker -- pipe smoke pools against the low ceiling, and the light from the
+  main room barely reaches. This is where the old regulars sit, the ones who
+  have been drinking here longer than most people have been alive. They nurse
+  their cups slowly and watch the door with the careful disinterest of men who
+  have seen everything at least twice.
+biome: city
+exits:
+  west:
+    roomid: 472
+nouns:
+  table: A round table made from what might once have been a barrel lid, its
+    surface crosshatched with decades of idle knife work. Rings from wet cups
+    overlap like chain mail. Someone has carved a crude crown into one edge --
+    whether as a joke or a claim is unclear.
+  chairs: Three mismatched chairs, each one sagging or listing in its own
+    direction. They have the look of furniture that has been broken and
+    repaired so many times that none of the original wood remains. Comfortable
+    in the way that old boots are comfortable -- shaped by long use.
+  curtain: A heavy curtain of faded brown cloth, riddled with moth holes and
+    stained with smoke. It hangs from a sagging rope strung between two nails.
+    Nobody bothers to close it -- it is more of a suggestion of privacy than
+    an actual barrier.
+spawninfo:
+- mobid: 114
+- mobid: 115
+- mobid: 116
+idlemessages:
+- The murmur of low voices drifts from the back corner, too quiet to make out.
+- A cup scrapes against the scarred table as someone shifts in their chair.
+- Pipe smoke curls up from behind the curtain in lazy grey ribbons.
+- One of the old men coughs quietly, then resumes his silence.

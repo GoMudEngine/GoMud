@@ -1,0 +1,39 @@
+mobid: 115
+zone: Thornwall City
+defaultMood: friendly
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Well now! Pull up a chair, if you can find one that won't collapse."
+      - "Another fresh face! Sit, sit. Gobb knows everyone worth knowing."
+
+  - keywords: ["gossip", "news", "rumor", "rumors", "talk", "word", "quest", "task"]
+    responses:
+      - "My cousin's wife's brother heard something interesting the other day..."
+      - "You want the latest? I have got stories that would curl your toes."
+      - "Word travels fast when you know the right people. And I know ALL the right people."
+
+  - keywords: ["gobb", "name", "who"]
+    responses:
+      - "Gobb! The one and only. Been drinking here since before Marek owned the place."
+      - "Everyone knows Gobb. Ask anyone in Thornwall."
+
+  - keywords: [""]
+    responses:
+      - "Ha! That reminds me of a story..."
+      - "Now where was I? Ah, never mind. Have a drink."
+
+tree:
+  root:
+    text: "Ha! Fresh blood! Come to hear old Gobb tell it like it is, have you? Smart. Very smart."
+    hints: "Ask about gossip, news, or rumors."
+
+  nodes:
+    - id: gossip_prompt
+      triggers: ["gossip", "news", "rumor", "rumors", "talk", "word", "quest", "task"]
+      text: "Oh, I hear things. I hear EVERYTHING. My cousin's wife's brother works the docks, and her sister married a caravan guard, and their uncle -- well, point is, nothing happens in the region without it reaching old Gobb eventually. You just sit here and listen. The good stuff comes around sooner or later."
+      hints: "Gobb shares what he hears, embellished or otherwise."
+
+memory:
+  expiryPeriod: "30m"

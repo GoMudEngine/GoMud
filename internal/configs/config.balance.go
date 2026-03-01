@@ -183,6 +183,9 @@ type Balance struct {
 	CrafterMaterialRestockRate  ConfigInt  `yaml:"CrafterMaterialRestockRate"`  // Rounds between material restocks and craft attempts (default 200)
 	CrafterRareThreshold        ConfigInt  `yaml:"CrafterRareThreshold"`        // SkillMinimum at or above which a craft is considered rare (default 3)
 
+	// ── GOSSIP SYSTEM ────────────────────────────────────────────────────────
+	GossipIntervalRounds ConfigInt `yaml:"GossipIntervalRounds"` // Rounds between gossip broadcasts for "gossiper" group mobs (default 75)
+
 	// ── MOON PHASES ───────────────────────────────────────────────────────────
 	MoonStatModMax ConfigFloat `yaml:"MoonStatModMax"` // Max fractional stat modifier from moon phases, e.g. 0.05 = ±5% (default 0.05)
 }
@@ -599,6 +602,11 @@ func (b *Balance) Validate() {
 	}
 	if b.CrafterRareThreshold < 1 {
 		b.CrafterRareThreshold = 3
+	}
+
+	// ── GOSSIP SYSTEM ────────────────────────────────────────────────────────
+	if b.GossipIntervalRounds < 20 {
+		b.GossipIntervalRounds = 75
 	}
 
 	// ── MOON PHASES ───────────────────────────────────────────────────────────

@@ -1,0 +1,37 @@
+mobid: 114
+zone: Thornwall City
+statpool: 36
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - humanoid
+  - gossiper
+idlecommands:
+  - 'emote turns his cup slowly on the table, watching the dregs settle'
+  - ''
+  - 'emote leans back in his chair and stares at the ceiling through half-closed eyes'
+  - ''
+  - 'emote picks at a splinter on the table edge with one cracked fingernail'
+  - ''
+  - 'emote exhales a thin stream of pipe smoke and watches it curl away'
+activitylevel: 7
+character:
+  name: old Fen
+  description: A thin, leather-faced man with the kind of stillness that comes
+    from decades of sitting in the same chair. His skin is dark and creased
+    like a well-folded map, and his eyes are sharp despite the rest of him
+    looking half-asleep. He wears a shapeless coat that might have been green
+    once, and he holds his cup with both hands as though warming himself,
+    even in summer. He speaks rarely, but when he does, people tend to
+    remember what he said.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    perception:
+      training: 12
+    willpower:
+      training: 8
+    charisma:
+      training: 4

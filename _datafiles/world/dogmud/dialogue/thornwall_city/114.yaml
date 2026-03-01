@@ -1,0 +1,39 @@
+mobid: 114
+zone: Thornwall City
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "..."
+      - "Mm."
+
+  - keywords: ["gossip", "news", "rumor", "rumors", "talk", "word", "quest", "task"]
+    responses:
+      - "Things happen. Sit long enough, you see patterns."
+      - "I watch. I listen. Sometimes I mention what I notice. That is all."
+      - "You want news? Sit down, shut up, and wait. It comes to you."
+
+  - keywords: ["fen", "name", "who"]
+    responses:
+      - "Fen. Just Fen."
+      - "Does it matter?"
+
+  - keywords: [""]
+    responses:
+      - "Mm."
+      - "..."
+
+tree:
+  root:
+    text: "..."
+    hints: "Ask about gossip, news, or rumors."
+
+  nodes:
+    - id: gossip_prompt
+      triggers: ["gossip", "news", "rumor", "rumors", "talk", "word", "quest", "task"]
+      text: "I do not trade in gossip. I observe. Sometimes, if you are sitting here long enough, you overhear things worth knowing. That is the difference between gossip and intelligence."
+      hints: "Sit and listen. Fen shares what he notices, in his own time."
+
+memory:
+  expiryPeriod: "30m"
