@@ -1,0 +1,32 @@
+roomid: 3028
+zone: Ironwind Steppe
+title: Viper Stones
+description: A tumble of flat stones lies half-buried in the steppe
+  here, their dark surfaces absorbing the sun's heat. This is
+  prime basking territory for vipers and other cold-blooded
+  creatures -- the stones retain warmth well into the evening.
+  The grass around the stones has been worn away by the sliding
+  of scaled bodies, leaving bare patches of sandy earth. Step
+  carefully here.
+biome: land
+exits:
+  south:
+    roomid: 3027
+  east:
+    roomid: 3038
+  north:
+    roomid: 3029
+nouns:
+  stones: Flat, dark stones arranged in a natural tumble, their
+    surfaces smooth and warm to the touch. Faint grooves in the
+    dust around them show where snakes have slithered between
+    the gaps. Several stones overlap, creating narrow crevices
+    perfect for a serpent's den.
+spawninfo:
+- mobid: 211
+- mobid: 211
+- mobid: 235
+idlemessages:
+- A viper raises its head from a warm stone, tongue flickering.
+- Scales rasp against stone as something shifts in the crevices.
+- The stones radiate heat that you can feel from paces away.

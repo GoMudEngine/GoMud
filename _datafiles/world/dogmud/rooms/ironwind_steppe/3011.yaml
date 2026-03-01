@@ -1,0 +1,36 @@
+roomid: 3011
+zone: Ironwind Steppe
+title: Sagebrush Flats
+description: Endless sagebrush flats stretch in every direction, the
+  grey-green bushes standing in scattered rows like a neglected
+  orchard. The grass between them is short and dry, crunching
+  underfoot. A few large stones break the flat terrain, their
+  surfaces pale and wind-worn. Animal tracks crisscross the
+  bare soil -- the prints of rabbits, foxes, and something
+  larger with padded paws.
+biome: land
+exits:
+  west:
+    roomid: 3010
+  south:
+    roomid: 3009
+  east:
+    roomid: 3012
+  north:
+    roomid: 3015
+nouns:
+  stones: Large, rounded stones half-buried in the soil, their
+    exposed surfaces worn smooth by centuries of wind and grit.
+    Lizards bask on them during the warmest hours.
+  tracks: A confusion of animal tracks in the dusty soil. Small
+    round prints from hares, the delicate lines of bird feet,
+    and the unmistakable four-toed pads of a canine -- probably
+    wolf.
+spawninfo:
+- mobid: 213
+- mobid: 230
+- mobid: 236
+idlemessages:
+- A dust hare freezes in place, ears flat, then bolts for cover.
+- The constant wind makes the sagebrush sway in hypnotic waves.
+- A lizard does push-ups on a warm stone, displaying its pale belly.

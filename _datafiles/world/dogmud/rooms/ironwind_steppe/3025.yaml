@@ -1,0 +1,38 @@
+roomid: 3025
+zone: Ironwind Steppe
+title: Northern Sagebrush Margin
+description: The sagebrush flats end here at a gradual rise where the
+  soil becomes rockier and the vegetation changes. To the north the
+  ground climbs toward the tree line and distant ridges. The last
+  sagebrush bushes are scattered thinly among exposed stones, and
+  the grass is shorter and tougher, clinging to cracks in the
+  increasingly rocky ground. A well-worn animal trail leads north
+  into the rising terrain.
+biome: land
+exits:
+  south:
+    roomid: 3023
+  east:
+    roomid: 3024
+  west:
+    roomid: 3022
+  north:
+    roomid: 3026
+  northeast:
+    roomid: 3035
+nouns:
+  trail: A broad animal trail heading north, the ground beaten
+    bare by regular traffic. Multiple sets of tracks overlay
+    each other -- wolves, boars, and smaller creatures all use
+    this route between the flats and higher ground.
+  stones: Pale, weathered stones emerging from the thinning soil
+    as the terrain begins to rise. The bedrock is closer to the
+    surface here.
+spawninfo:
+- mobid: 207
+- mobid: 206
+- mobid: 236
+idlemessages:
+- A fox watches from behind a stone, then trots away unhurried.
+- The trail shows fresh tracks heading in both directions.
+- Wind gusts carry the scent of pine from the higher ground ahead.

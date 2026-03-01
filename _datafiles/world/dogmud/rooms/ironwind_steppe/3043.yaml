@@ -1,0 +1,34 @@
+roomid: 3043
+zone: Ironwind Steppe
+title: South Ridge Overlook
+description: A broad, flat outcrop on the ridge's south face provides
+  a natural viewpoint overlooking the dry creek basin and the land
+  beyond. The basin is visible below as a winding line of greenery
+  in the otherwise dry landscape -- the banks of the seasonal creek
+  supporting denser vegetation. Further south, the terrain breaks
+  into the boar wallows and wolf ravines. The wind is steady but
+  not violent here, blocked partially by the ridge above.
+biome: cliffs
+exits:
+  north:
+    roomid: 3042
+  east:
+    roomid: 3044
+  south:
+    roomid: 3049
+nouns:
+  outcrop: A flat slab of basalt jutting from the ridge face,
+    about ten paces across and remarkably level. The stone is
+    warm from the sun and the surface is etched with natural
+    fracture patterns that look almost like a road map.
+  basin: The dry creek basin spread out below, a winding channel
+    of sandy banks and occasional green patches where water
+    collects. Even from here you can see animal tracks along
+    the banks.
+spawninfo:
+- mobid: 209
+- mobid: 230
+idlemessages:
+- The basin below shimmers in the heat, distance blurring the details.
+- A hawk launches from the outcrop edge and plummets toward the basin.
+- The warm stone radiates comfortable heat.

@@ -1,0 +1,31 @@
+mobid: 212
+zone: Ironwind Steppe
+statpool: 50
+itemdropchance: 5
+hostile: true
+maxwander: 2
+groups:
+  - vermin
+idlecommands:
+  - 'emote digs furiously at the soil with armored forelegs'
+  - ''
+  - ''
+  - 'emote clicks its mandibles together with a dry snap'
+  - ''
+activitylevel: 15
+character:
+  name: burrowing beetle
+  description: |
+    A beetle the size of a clenched fist, with a glossy black
+    carapace and powerful digging forelegs edged with serrated
+    ridges. The burrowing beetle excavates tunnels in the steppe
+    soil, feeding on roots and grubs. Its mandibles are strong
+    enough to clip through leather, and when threatened it curls
+    into its armored shell or lashes out with surprising speed.
+    Not individually dangerous, but they tend to cluster near
+    their burrow networks.
+  speciesid: 12
+  level: 1
+  stats:
+    vitality:
+      training: 5

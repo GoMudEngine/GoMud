@@ -1,0 +1,36 @@
+roomid: 3034
+zone: Ironwind Steppe
+title: Raptor Nesting Ledge
+description: A series of narrow ledges on the ridge's east face where
+  raptors have built their nests. Large nests of woven sticks and
+  grass perch on precarious shelves of stone, cemented with mud
+  and droppings. The adult birds are territorial and aggressive,
+  circling overhead with sharp cries whenever anything approaches.
+  Bones, feathers, and prey remains litter the ground below the
+  nests. The stench is considerable.
+biome: cliffs
+exits:
+  south:
+    roomid: 3031
+  west:
+    roomid: 3021
+  east:
+    roomid: 3037
+  north:
+    roomid: 3038
+nouns:
+  nests: Large nests of woven sticks, each as wide as a person's
+    arm-span, perched on narrow stone ledges. The construction
+    is rough but sturdy, built up over multiple seasons. White
+    droppings streak the stone below each nest.
+  bones: Scattered remains of prey animals beneath the nesting
+    ledge -- rabbit skulls, rodent bones, snake vertebrae, and
+    the occasional larger bone from something more ambitious.
+spawninfo:
+- mobid: 210
+- mobid: 210
+- mobid: 209
+idlemessages:
+- A raptor circles tightly, screaming a warning at your presence.
+- Sticks and debris fall from a nest as a bird settles.
+- The rank smell of accumulated droppings is nearly overpowering.

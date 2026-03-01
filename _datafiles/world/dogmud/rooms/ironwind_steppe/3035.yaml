@@ -1,0 +1,42 @@
+roomid: 3035
+zone: Ironwind Steppe
+title: Ridge Spine
+description: You stand on the narrow crest of Ironwind Ridge, the
+  spine of dark basalt barely wide enough for two people abreast.
+  The wind is savage here, a constant gale that tears at clothing
+  and makes speech difficult. The view is spectacular -- to the
+  west, the sagebrush flats stretch to the distant walls of
+  Thornwall; to the east, the land drops away into broken coulees
+  and ravines. The ridge runs north-south, its crest a jagged
+  line of dark stone against the sky.
+biome: cliffs
+exits:
+  southwest:
+    roomid: 3025
+  west:
+    roomid: 3031
+  northwest:
+    roomid: 3032
+  south:
+    roomid: 3036
+  north:
+    roomid: 3038
+  east:
+    roomid: 3060
+nouns:
+  crest: The narrow spine of the ridge, a blade of dark basalt
+    worn smooth on top by wind and weather. The rock is warm
+    underfoot from absorbed sunlight. On either side the slope
+    drops away steeply.
+  view: From the ridge crest, the entire Ironwind Steppe is laid
+    out before you. To the west, the grey-green flats and the
+    distant city. To the east, dark volcanic coulees and deep
+    ravines. To the north, cliff faces hiding caves. The scale
+    is humbling.
+spawninfo:
+- mobid: 239
+- mobid: 209
+idlemessages:
+- The wind nearly takes you off your feet with a sudden gust.
+- An eagle soars past below you, riding the updraft from the ridge face.
+- You can see for miles in every direction from this vantage point.

@@ -1,0 +1,36 @@
+mobid: 209
+zone: Ironwind Steppe
+statpool: 60
+itemdropchance: 5
+hostile: true
+maxwander: 4
+groups:
+  - raptor-flock
+  - animal
+archetype: fighting
+mutationchance: 15
+idlecommands:
+  - 'emote circles overhead on outstretched wings'
+  - ''
+  - ''
+  - 'emote tilts a wing and shifts to a new thermal'
+  - ''
+  - 'emote lets out a piercing shriek'
+activitylevel: 20
+character:
+  name: steppe hawk
+  description: |
+    A broad-winged hawk with tawny feathers and a hooked beak
+    designed for tearing. It rides the thermals above the steppe
+    with effortless grace, scanning the ground below with keen
+    golden eyes that can spot a mouse at a hundred paces. The
+    steppe hawk is a solitary hunter but nests in loose colonies
+    on the ridge, and groups of them sometimes mob larger prey
+    or threats cooperatively.
+  speciesid: 9
+  level: 1
+  stats:
+    dexterity:
+      training: 8
+    perception:
+      training: 5

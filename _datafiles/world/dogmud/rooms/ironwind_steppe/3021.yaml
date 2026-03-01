@@ -1,0 +1,35 @@
+roomid: 3021
+zone: Ironwind Steppe
+title: Scattered Boulders
+description: Several large boulders are scattered across the flats here,
+  dark basalt stones rising from the grass like the backs of buried
+  animals. Grass grows tall in the sheltered spaces between them,
+  creating pockets of cover. Lichen paints the north-facing surfaces
+  in pale green and orange. The boulders provide welcome windbreaks
+  and the air in their lee is noticeably calmer.
+biome: land
+exits:
+  west:
+    roomid: 3019
+  south:
+    roomid: 3020
+  east:
+    roomid: 3023
+  north:
+    roomid: 3034
+nouns:
+  boulders: Dark basalt boulders, each the size of a wagon or larger.
+    Their surfaces are rough and pitted, colonized by lichen and
+    moss. The stone absorbs heat during the day and radiates it
+    at night, making these popular resting spots for wildlife.
+  lichen: Patches of crusty lichen in shades of green, orange, and
+    grey, covering the north faces of the boulders where moisture
+    lingers longest.
+spawninfo:
+- mobid: 206
+- mobid: 230
+- mobid: 232
+idlemessages:
+- A lizard scrambles up the side of a boulder and flattens itself.
+- Wind eddies between the boulders, swirling dust in tight spirals.
+- A scorpion emerges from beneath a stone, pincers raised.

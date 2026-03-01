@@ -1,0 +1,37 @@
+roomid: 3020
+zone: Ironwind Steppe
+title: Scrub Tree Line
+description: A ragged line of scrubby trees -- wind-stunted oaks and
+  twisted hawthorns -- marks a natural boundary across the flats.
+  The trees are barely taller than a person, their trunks thick
+  and gnarled, branches reaching mostly sideways. Between them
+  the ground is sheltered enough for taller grass to grow, and
+  the shade supports patches of moss and lichen. Birds flit
+  between the branches, and the trees creak constantly in the
+  wind.
+biome: land
+exits:
+  south:
+    roomid: 3019
+  east:
+    roomid: 3021
+  north:
+    roomid: 3022
+  west:
+    roomid: 3017
+nouns:
+  oaks: Stunted oaks with massive trunks relative to their modest
+    height. The bark is deeply furrowed and covered in lichen.
+    They have survived decades of wind by growing wide rather
+    than tall.
+  hawthorns: Twisted hawthorn trees with dense, thorny branches.
+    Small red berries cluster among the thorns in season. The
+    branches are so tangled that even the wind cannot penetrate.
+spawninfo:
+- mobid: 214
+- mobid: 239
+- mobid: 234
+idlemessages:
+- Small birds twitter and fuss in the hawthorn branches.
+- The trees creak and groan as the wind leans against them.
+- An eagle circles high above the tree line, riding the thermals.

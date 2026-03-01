@@ -1,0 +1,37 @@
+roomid: 3017
+zone: Ironwind Steppe
+title: Eastern Sagebrush Flats
+description: The sagebrush flats begin to rise gently toward the east,
+  the first sign of the elevated terrain ahead. The grass grows
+  sparser as rocky outcrops start to break through the soil --
+  dark stone poking through the earth like bones through skin. A
+  few scrubby pines cling to the lee side of the larger outcrops,
+  their needles dark green against the pale grass. The ridge is
+  close now, its rocky crest visible as a jagged line.
+biome: land
+exits:
+  west:
+    roomid: 3016
+  south:
+    roomid: 3013
+  east:
+    roomid: 3033
+  north:
+    roomid: 3020
+  southeast:
+    roomid: 3018
+nouns:
+  outcrops: Dark, angular stone breaking through the steppe soil --
+    the first exposed bedrock of the ridge system. The rock is
+    basalt, dark and dense, veined with pale mineral deposits.
+  pines: Stunted, wind-bent pines growing in the shelter of rock
+    outcrops. Their trunks lean away from the prevailing wind
+    and their branches grow only on the sheltered side.
+spawninfo:
+- mobid: 209
+- mobid: 212
+- mobid: 214
+idlemessages:
+- Pine needles hiss in the wind, a sound like distant rain.
+- A hawk perches on a rocky outcrop, surveying the flats below.
+- Small stones clatter down a rock face, dislodged by the wind.

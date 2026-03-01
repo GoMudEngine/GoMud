@@ -1,0 +1,37 @@
+roomid: 3039
+zone: Ironwind Steppe
+title: Northern Ridge Descent
+description: The ridge descends northward here, the spine of rock
+  breaking into a tumble of broken boulders and gravel slopes.
+  The terrain is rough and uneven, requiring careful navigation
+  between house-sized rocks. The wind is channeled between the
+  boulders, creating eddies that whip dust and debris in
+  unpredictable directions. A faint trail picks its way through
+  the gaps, heading down toward the cliff country to the north.
+biome: cliffs
+exits:
+  south:
+    roomid: 3038
+  southwest:
+    roomid: 3028
+  west:
+    roomid: 3037
+  north:
+    roomid: 3101
+  east:
+    roomid: 3064
+nouns:
+  boulders: Massive blocks of broken basalt, tumbled from the
+    ridge crest and piled in chaotic heaps. Some are taller
+    than a person, leaning against each other at precarious
+    angles. The gaps between them form narrow passages.
+  trail: A faint trail threading between the boulders, marked
+    by scuff marks on the rock and the occasional cairn of
+    small stones. It descends northward toward the cave country.
+spawninfo:
+- mobid: 210
+- mobid: 221
+idlemessages:
+- Wind howls between the boulders like breath through clenched teeth.
+- A rock viper slithers across the trail and disappears into a crevice.
+- Dust devils spin in the narrow gaps between boulders.
