@@ -402,9 +402,9 @@ GamePlay:
   #   prone DEFENDER. This is how much of their defense they keep.
   #   1.0 = full defense (no penalty). 0.50 = half defense. 0.0 = no defense.
   #   Example: defender has dodge score 100. At 0.90 → score 90. At 0.50 → 50.
-  ProneDodgePenalty: 0.9        # Prone defender keeps 90% of dodge score
-  ProneParryPenalty: 0.9        # Prone defender keeps 90% of parry score
-  ProneBlockPenalty: 0.9        # Prone defender keeps 90% of block score
+  ProneDodgePenalty: 0.95       # Prone defender keeps 95% of dodge score
+  ProneParryPenalty: 0.95       # Prone defender keeps 95% of parry score
+  ProneBlockPenalty: 0.95       # Prone defender keeps 95% of block score
   #
   # ProneDamagePenalty: MULTIPLIER on damage dealt by a character attacking
   #   WHILE prone. 0.80 = deals 80% of normal damage from the ground.
@@ -413,7 +413,7 @@ GamePlay:
   # ProneVulnerabilityMultiplier: MULTIPLIER on attack score when the
   #   TARGET is prone. Stacks with the defense penalties above.
   #   Example: attacker score 110, multiplier 1.15 → score 126.5.
-  ProneVulnerabilityMultiplier: 1.15
+  ProneVulnerabilityMultiplier: 1.05
   #
   StandStaminaCost: 0.15         # Fraction of max stamina to stand up (0.15 = 15%)
   StandMinStamina: 0.15          # Must have this fraction of max SP to stand
@@ -486,19 +486,19 @@ Balance:
   #     0.05 →   5 raw damage per swing (current — low, needs MobDamageMultiplier)
   #     0.15 →  15 raw damage per swing
   #     0.30 →  30 raw damage per swing (original default)
-  MeleeDamageScale: 0.05
+  MeleeDamageScale: 0.15
   #
   # MobDamageMultiplier: extra multiplier applied ONLY to NPC melee
   #   damage. Lets you keep player damage low while making NPCs threatening.
   #   Example: MeleeDamageScale 0.05, MobDamageMultiplier 4.0:
   #     Player Str 100 → 100 × 1.0 × 1.0 × 0.05 = 5 raw (unchanged)
   #     Mob Str 100    → 100 × 1.0 × 1.0 × 0.05 × 4.0 = 20 raw
-  MobDamageMultiplier: 4.0
+  MobDamageMultiplier: 3.75
   #
   # SpellDamageScale: multiplier on ALL spell damage output (players + NPCs).
   #   1.0 = no scaling. Example at Wil 100, skill 0, spell mult 1.0:
   #     1.0 → 100 raw,  1.5 → 150 raw,  0.5 → 50 raw
-  SpellDamageScale: 1.5
+  SpellDamageScale: 3.5
   #
   # RhetoricDamageScale: multiplier on taunt/conviction damage output.
   #   Taunt uses itemMult 0.5 as base. Example at Cha 100, skill 0:
@@ -565,7 +565,7 @@ Balance:
   SkillSoftCap: 50               # Virtual ranks where progression slows sharply
   StatSoftCap: 150               # Stat value where progression slows sharply
   UsesPerRank: 25                # Skill/stat uses that equal one virtual rank
-  BaseProgressionChance: 0.30    # Starting chance to progress at rank 0
+  BaseProgressionChance: 0.12    # Starting chance to progress at rank 0
   ProgressionDecayBelowCap: 3.0  # Exponential steepness below soft cap
   ProgressionDecayAboveCap: 2.0  # Exponential steepness above soft cap
   StatSoftCapThreshold: 105      # Raw stat value where adjusted formula kicks in
@@ -577,20 +577,20 @@ Balance:
   # unarmed-combat both map dexterity as their primary stat, firing
   # OnStatUse("dexterity") multiple times per combat round.
   StatProgressionMultipliers:
-    strength: 1.0
-    dexterity: 0.5
+    strength: 0.20
+    dexterity: 0.10
     perception: 1.0
     vitality: 1.0
     willpower: 1.0
-    charisma: 1.0
+    charisma: 0.20
 
   # ── PER-SKILL PROGRESSION MULTIPLIERS ───────────────────────────────────────
   # Overrides the hardcoded skill progression multipliers in skills.go.
   # Combat skills fire many times per round (low mult), utility skills
   # fire rarely (high mult). Only skills listed here override the defaults.
   SkillProgressionMultipliers:
-    weapon-combat: 0.3
-    unarmed-combat: 0.3
+    weapon-combat: 0.12
+    unarmed-combat: 0.12
     ranged-combat: 0.3
     spellcasting: 0.5
     rhetoric: 0.5
@@ -654,7 +654,7 @@ Balance:
   MutationLevel3Multiplier: 2.0      # Effect scaling at mutation level 3
 
   # ── SPELLCASTING ──────────────────────────────────────────────────────
-  SpellDiscoveryBaseChance: 10.0        # Base % to discover a new spell per successful cast
+  SpellDiscoveryBaseChance: 5.0         # Base % to discover a new spell per successful cast
   SpellDiscoveryDecayRate: 0.1         # Decay per known spell: chance = base / (1 + known*this)
   SpellInitiationBase: 60              # Base % chance to initiate a spell
   SpellInitiationWillpowerDivisor: 4   # Willpower / this = initiation bonus

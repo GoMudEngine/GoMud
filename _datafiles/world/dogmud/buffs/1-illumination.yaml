@@ -3,6 +3,6 @@ name: Illumination
 description: Light surrounds you.
 secret: false
 triggerrate: 5 real minutes
-triggercount: 1
+triggercount: 4
 flags:
   - lightsource
