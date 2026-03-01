@@ -71,7 +71,7 @@ patterns:
 tree:
   root:
     text: "Oh! Hello. Forgive me, I was sketching the cave entrance from up here. Wonderful view. Are you familiar with the tunnels below?"
-    hints: "Ask me about my research, the tunnels, or whether I need any help."
+    hints: "Try: ask scholar research, ask scholar tunnels, or ask scholar quest."
     variants:
       - questRequired: ["3-start"]
         questExcluded: ["3-totem"]

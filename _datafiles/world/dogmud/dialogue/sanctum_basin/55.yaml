@@ -54,7 +54,7 @@ patterns:
 tree:
   root:
     text: "You seek the counsel of an old mind. Very well — ask what weighs on you."
-    hints: "You could ask Elder Saris about the Chrysalis, the Fold, mutations, the Basin, or the three moons."
+    hints: "Try: ask saris fold, ask saris moons, or ask saris quest."
 
   nodes:
     - id: fold

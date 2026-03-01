@@ -1,0 +1,85 @@
+# Periodic hints broadcast to all players.
+# Each hint should fit within 80 characters (including ANSI tags).
+# Use <ansi fg="command">command</ansi> to highlight commands.
+# Hints are rotated in order, one per interval.
+
+hints:
+  - >-
+    Having trouble finding quests? Try
+    <ansi fg="command">ask</ansi> <ansi fg="yellow">&lt;npc-name&gt;</ansi>
+    <ansi fg="command">quest</ansi> at any quest giver.
+  - >-
+    Check the <ansi fg="command">help</ansi> command for a full list of
+    topics. You might learn about mechanics you didn't know about.
+  - >-
+    Your stats improve through use. Swing a sword enough and your
+    Strength grows over time.
+  - >-
+    Recipes and new spells are discovered by using crafting skills
+    and spellcasting in the game world.
+  - >-
+    The three moons affect your abilities. Watch for moon phase
+    announcements and plan accordingly.
+  - >-
+    Use <ansi fg="command">consider</ansi>
+    <ansi fg="yellow">&lt;target&gt;</ansi> before a fight to gauge
+    how dangerous an opponent is.
+  - >-
+    Crafting materials can be found by using the
+    <ansi fg="command">forage</ansi> command in wilderness areas.
+  - >-
+    You can <ansi fg="command">equip</ansi> weapons and armor from
+    your <ansi fg="command">inventory</ansi>. Better gear helps a lot.
+  - >-
+    Running low on health? Rest outside of combat to regenerate.
+    Your Vitality stat affects how fast you recover.
+  - >-
+    Use <ansi fg="command">skills</ansi> to see your skill ranks.
+    Skills improve the more you use them.
+  - >-
+    Try <ansi fg="command">look</ansi> at items, NPCs, and room
+    features. Descriptions often contain useful clues.
+  - >-
+    The <ansi fg="command">map</ansi> command shows your surroundings.
+    Explore to discover new areas and resources.
+  - >-
+    Use <ansi fg="command">cast</ansi> to see available spells.
+    Spellcasting costs Conviction and requires concentration.
+  - >-
+    <ansi fg="command">Talk</ansi> to NPCs! Many have useful
+    information, quests, or items to trade.
+  - >-
+    You can <ansi fg="command">flee</ansi> from combat if things get
+    dangerous. Living to fight another day is wise.
+  - >-
+    The <ansi fg="command">status</ansi> command shows your full
+    character sheet: stats, pools, and equipment.
+  - >-
+    Mutations are permanent changes to your body. They develop
+    naturally as you adventure and grow.
+  - >-
+    Use <ansi fg="command">defense</ansi> to adjust your combat
+    stance. Dodge, parry, and block each have strengths.
+  - >-
+    NPCs remember your actions. Completing quests and making
+    choices shapes how the world treats you.
+  - >-
+    Shops buy and sell goods. Use <ansi fg="command">list</ansi> to
+    see what's for sale and <ansi fg="command">buy</ansi> to purchase.
+  - >-
+    Encumbered? Use <ansi fg="command">drop</ansi> or
+    <ansi fg="command">stash</ansi> to lighten your load. Heavy
+    packs slow you down.
+  - >-
+    Use <ansi fg="command">set hints</ansi> to toggle these tips on
+    or off.
+  - >-
+    Grappling is powerful in combat. Use
+    <ansi fg="command">grapple</ansi> to close distance and control
+    your opponent.
+  - >-
+    You can <ansi fg="command">give</ansi> items to other players
+    and NPCs. Some quests require delivering items.
+  - >-
+    The <ansi fg="command">track</ansi> command helps you find
+    creatures and players in nearby rooms.
