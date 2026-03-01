@@ -340,49 +340,111 @@ Balance:
   # ── COMBAT: DEFENSE COSTS ──────────────────────────────────────────────────
   # These ONLY affect how much stamina each defense costs. They do NOT
   # change how effective the defense is at avoiding hits.
-  # Formula: cost = baseCost × multiplier  (dodge base=2, parry=4, block=5)
+  # Formula: cost = floor(baseCost × multiplier)
+  # Base costs: dodge = 2 SP, parry = 4 SP, block = 5 SP
+  # Examples:
+  #   DodgeMultiplier 0.9 → floor(2 × 0.9) = 1 stamina per dodge
+  #   BlockMultiplier 1.5 → floor(5 × 1.5) = 7 stamina per block
   DodgeMultiplier: 0.9           # Stamina cost multiplier for dodge (base: 2 SP)
   ParryMultiplier: 0.9           # Stamina cost multiplier for parry (base: 4 SP)
   BlockMultiplier: 0.9           # Stamina cost multiplier for block (base: 5 SP)
 
   # ── COMBAT: DEFENSE EFFECTIVENESS ─────────────────────────────────────────
-  # MULTIPLIER on the defense score BEFORE the opposed roll. Stacks with
-  # prone penalties. 1.0 = no change.
-  DodgeEffectiveness: 0.97      # Tuned 39.2: slight nerf to dodge
+  # MULTIPLIER on the defense score BEFORE the opposed roll. Applied in
+  # all situations (standing, prone, grappled) — stacks with prone penalties.
+  # 1.0 = no change. 1.2 = 20% stronger. 0.8 = 20% weaker.
+  # Defense scores:
+  #   Dodge = Dex + UnarmedSkill
+  #   Parry = Dex + WeaponSkill + weapon ParryRating
+  #   Block = (Str+Dex)/2 + WeaponSkill + shield BlockRating
+  # Example: defender Dex 100, skill 10, DodgeEffectiveness 0.97:
+  #   dodge score = (100 + 10) × 0.97 = 106.7 (vs attacker's ~110)
+  DodgeEffectiveness: 0.97      # Tuned 39.2: slight nerf to dodge (most common defense)
   ParryEffectiveness: 1.0
-  BlockEffectiveness: 1.02      # Tuned 39.2: slight buff; requires shield
-  MinDefenseChance: 0.15         # Floor: 15% defense even when outclassed
-  MinAttackHitChance: 0.15       # Floor: 15% hit rate even when outclassed
+  BlockEffectiveness: 1.02      # Tuned 39.2: slight buff; requires shield investment
+  #
+  # MinDefenseChance: even when the attacker's score vastly outclasses the
+  #   defender's, this floor ensures fights never feel like guaranteed hits.
+  #   Range: 0.0–0.50. Set to 0 to disable the floor entirely.
+  #   Example: 0.15 = even a stat-50 defender vs stat-200 attacker has a 15%
+  #   chance to dodge/parry/block any given swing.
+  MinDefenseChance: 0.15
+  #
+  # MinAttackHitChance: symmetric counterpart — even a massively outclassed
+  #   attacker has this minimum chance to land a hit.
+  #   Range: 0.0–0.50. Set to 0 to disable.
+  MinAttackHitChance: 0.15
 
   # ── COMBAT: PRONE & GRAPPLE ───────────────────────────────────────────────
-  ProneAttackMultiplier: 0.80    # Attack score multiplier while prone
-  ProneDodgePenalty: 0.95        # Tuned 39.2: defense kept while prone
-  ProneParryPenalty: 0.95        # Tuned 39.2: defense kept while prone
-  ProneBlockPenalty: 0.95        # Tuned 39.2: defense kept while prone
-  ProneDamagePenalty: 0.80       # Damage multiplier while prone
-  ProneVulnerabilityMultiplier: 1.05  # Tuned 39.2: attack bonus vs prone
-  StandStaminaCost: 0.15         # Fraction of max stamina to stand up
-  StandMinStamina: 0.15          # Must have this fraction of max SP to stand
-  ThirdPartyGrapplePenalty: 0.70 # Defense multiplier when grappled vs 3rd party
+  # When a character is knocked prone, these multipliers modify combat scores.
+  #
+  # ProneAttackMultiplier: attack score when attacking WHILE prone.
+  #   Example: attacker score 110, multiplier 0.80 → score 88.
+  ProneAttackMultiplier: 0.80
+  #
+  # ProneDodge/Parry/BlockPenalty: fraction of defense score kept while prone.
+  #   1.0 = full defense (no penalty). 0.50 = half defense. 0 = no defense.
+  #   Example: dodge score 100, penalty 0.95 → score 95.
+  ProneDodgePenalty: 0.95        # Tuned 39.2: mild; prone already punishes via attack + damage mults
+  ProneParryPenalty: 0.95
+  ProneBlockPenalty: 0.95
+  #
+  # ProneDamagePenalty: damage dealt while attacking from prone.
+  #   Example: 15 raw damage × 0.80 = 12 damage from the ground.
+  ProneDamagePenalty: 0.80
+  #
+  # ProneVulnerabilityMultiplier: attack score bonus when the TARGET is prone.
+  #   Stacks with the defense penalties above.
+  #   Example: attacker score 110 × 1.05 = 115.5 vs prone target.
+  ProneVulnerabilityMultiplier: 1.05  # Tuned 39.2: lowered from 1.15; defense penalties already stack
+  #
+  # StandStaminaCost: fraction of StaminaMax required to stand up from prone.
+  #   Example: StaminaMax 400, cost 0.15 → must spend 60 SP to stand.
+  StandStaminaCost: 0.15
+  # StandMinStamina: must have at least this fraction of max SP to attempt standing.
+  #   Example: StaminaMax 400, min 0.15 → need at least 60 SP.
+  StandMinStamina: 0.15
+  #
+  # ThirdPartyGrapplePenalty: defense score multiplier when attacked by a third
+  #   party while grappling. Only block is available; dodge/parry stripped.
+  #   Example: block score 80 × 0.70 = 56 vs third-party attacker.
+  ThirdPartyGrapplePenalty: 0.70
 
   # ── COMBAT: SPECIAL MOVES ─────────────────────────────────────────────────
-  # All three share a cooldown so players can't spam knockdowns.
-  SpecialMoveCooldown: 4         # Rounds between special moves
-  BashDamagePercent: 0.50        # Bash: 50% of normal swing damage
+  # Bash, trip, and kick all share a cooldown so players can't chain knockdowns.
+  # Spellcasting also shares this cooldown slot.
+  #
+  # SpecialMoveCooldown: rounds before another special move can be used.
+  #   Example: 4 = after a bash, must wait 4 rounds before bash/trip/kick/cast.
+  SpecialMoveCooldown: 4
+  #
+  # DamagePercent: fraction of a normal melee swing's damage this move deals.
+  # KnockdownChance: base % chance to knock the target prone on hit.
+  #   The actual roll is modified by attacker Str vs defender Str.
+  BashDamagePercent: 0.50        # Bash deals 50% of a normal swing
   BashKnockdownChance: 50        # Bash: 50% base knockdown chance
-  TripDamagePercent: 0.25        # Trip: 25% of normal swing damage
+  TripDamagePercent: 0.25        # Trip deals 25% of a normal swing (low damage, high knockdown)
   TripKnockdownChance: 60        # Trip: 60% base knockdown chance
-  KickDamagePercent: 0.40        # Kick: 40% of normal swing damage
+  KickDamagePercent: 0.40        # Kick deals 40% of a normal swing
   KickKnockdownChance: 35        # Kick: 35% base knockdown chance
-  CoupDeGraceRounds: 1           # Rounds before mob finishes downed player
+  #
+  # CoupDeGraceRounds: rounds a mob waits before finishing a downed player.
+  #   0 = disabled (mob disengages when player is downed).
+  #   1 = mob finishes the player after 1 grace round of lying helpless.
+  CoupDeGraceRounds: 1
 
   # ── COMBAT: SPELL COSTS ───────────────────────────────────────────────────
-  SpellConvictionCostMultiplier: 1.0  # Global multiplier for spell conviction costs
-  SpellHealthCostMultiplier: 1.0      # Global multiplier for spell health costs
+  # Global multipliers for spell resource costs. Applied to ALL spells.
+  #   1.0 = no scaling. 0.5 = half cost. 2.0 = double cost.
+  # Example: a spell costs 30 conviction base, multiplier 1.5 → 45 conviction.
+  SpellConvictionCostMultiplier: 1.0
+  SpellHealthCostMultiplier: 1.0      # For life-force magic (health-cost spells)
 
   # ── COMBAT: MESSAGES ──────────────────────────────────────────────────────
-  # If true, each weapon ID consistently uses the same attack message.
-  # If false, messages are randomized. See _datafiles/combat-messages/*
+  # If true, each weapon ID consistently uses the same attack message
+  #   (gives each weapon a unique feel). If false, messages are randomized
+  #   (more variety but weapons feel generic).
+  # See _datafiles/combat-messages/* for message definitions.
   ConsistentAttackMessages: false
 
   # ── COMBAT: DAMAGE ────────────────────────────────────────────────────────
@@ -479,30 +541,53 @@ Balance:
   MobConvictionRegenPct: 0.01    # NPC conviction regen per tick
 
   # ── STAMINA & CONVICTION ────────────────────────────────────────────────────
-  MovementBaseStaminaCost: 2.0   # Flat cost to move on normal terrain
-  MovementMaxStaminaCost: 20.0   # Ceiling for any single move action
-  UnarmedAttackStaminaCost: 4    # Stamina per unarmed attack
+  # MovementBaseStaminaCost: stamina spent per room move on normal terrain.
+  #   Difficult terrain multiplies this (e.g. swamp 2x → 4 SP per move).
+  MovementBaseStaminaCost: 2.0
+  # MovementMaxStaminaCost: ceiling for any single move, regardless of terrain.
+  MovementMaxStaminaCost: 20.0
+  # UnarmedAttackStaminaCost: stamina per unarmed attack (weapons use their
+  #   own stamina_cost field from the item spec).
+  UnarmedAttackStaminaCost: 4
 
   # ── RESOURCE MAXIMUMS ───────────────────────────────────────────────────────
+  # Formulas:
+  #   HealthMax   = HealthBase + Str × HealthPerStrength + Vit × HealthPerVitality
+  #   StaminaMax  = StaminaBase + Str × StaminaPerStrength + Wil × StaminaPerWillpower + Vit × StaminaPerVitality
+  #   ConvictionMax = ConvictionBase + (Wil + Cha) × ConvictionPerWilCha
+  # Example at human baseline (all stats 100):
+  #   HealthMax   = 5 + 100×1 + 100×4 = 505 HP
+  #   StaminaMax  = 5 + 100×1 + 100×1 + 100×3 = 505 SP
+  #   ConvictionMax = 5 + (100+100)×2 = 405 CP
   HealthBase: 5                  # Flat HP before stat contribution
-  HealthPerStrength: 1           # Strength multiplier toward HealthMax
-  HealthPerVitality: 4           # Vitality multiplier toward HealthMax (primary)
+  HealthPerStrength: 1           # + Str × this toward HealthMax
+  HealthPerVitality: 4           # + Vit × this toward HealthMax (primary)
   StaminaBase: 5                 # Flat stamina before stat contribution
-  StaminaPerStrength: 1          # Strength multiplier toward StaminaMax
-  StaminaPerWillpower: 1         # Willpower multiplier toward StaminaMax
-  StaminaPerVitality: 3          # Vitality multiplier toward StaminaMax (primary)
+  StaminaPerStrength: 1          # + Str × this toward StaminaMax
+  StaminaPerWillpower: 1         # + Wil × this toward StaminaMax
+  StaminaPerVitality: 3          # + Vit × this toward StaminaMax (primary)
   ConvictionBase: 5              # Flat conviction before stat contribution
-  ConvictionPerWilCha: 2         # (Wil+Cha) multiplier toward ConvictionMax
+  ConvictionPerWilCha: 2         # + (Wil+Cha) × this toward ConvictionMax
 
   # ── PROGRESSION ─────────────────────────────────────────────────────────────
+  # Skills and stats improve via use-based progression. Every UsesPerRank
+  # uses count as 1 "virtual rank" for the progression chance formula.
+  # Chance decays exponentially as rank approaches the soft cap.
+  # Example: skill with 50 uses (= rank 2), BaseProgressionChance 0.12:
+  #   chance ≈ 0.12 × e^(-3.0 × 2/50) ≈ 10.6% per check
   SkillSoftCap: 50               # Virtual ranks where progression slows sharply
   StatSoftCap: 150               # Stat value where progression slows sharply
   UsesPerRank: 25                # Skill/stat uses that equal one virtual rank
-  BaseProgressionChance: 0.12    # Starting chance to progress at rank 0
-  ProgressionDecayBelowCap: 3.0  # Exponential steepness below soft cap
+  BaseProgressionChance: 0.12    # Chance to progress per check at rank 0 (12%)
+  ProgressionDecayBelowCap: 3.0  # Exponential steepness below soft cap (higher = faster decay)
   ProgressionDecayAboveCap: 2.0  # Exponential steepness above soft cap
-  StatSoftCapThreshold: 105      # Raw stat value where adjusted formula kicks in
-  StatSoftCapMultiplier: 2.0     # Multiplier in: 100 + sqrt(raw-100) * this
+  #
+  # Stat soft cap: raw stat values above this are diminished.
+  # Formula: adjusted = SoftCap + (raw - SoftCap)^0.75 × Multiplier
+  # Example: raw stat 160, threshold 105, cap 150, multiplier 2.0:
+  #   adjusted = 150 + (160-150)^0.75 × 2.0 = 150 + 11.2 = 161.2
+  StatSoftCapThreshold: 105      # Raw stat below which no adjustment applies
+  StatSoftCapMultiplier: 2.0     # Scaling factor above the soft cap
 
   # ── PER-STAT PROGRESSION MULTIPLIERS ────────────────────────────────────────
   # Scales the progression chance for each stat independently.
@@ -594,48 +679,88 @@ Balance:
   RegenProgressionCurve: 3.0
 
   # ── CHARACTER CREATION ──────────────────────────────────────────────────────
-  StatRollMean: 100.0            # Target average for all stats at character creation
-  StatRollStdDev: 15.0           # Standard deviation for stat rolls
-  StatRollMin: 70.0              # Minimum stat value from rolls
-  StatRollMax: 130.0             # Maximum stat value from rolls
-  StartingHealth: 10             # Initial health points assigned at character creation
+  # Stats are rolled as a normal distribution, clamped to [Min, Max].
+  # Example: mean 100, stddev 15 → ~68% of rolls land in 85–115,
+  #   ~95% in 70–130. Min/Max hard-clamp outliers.
+  StatRollMean: 100.0            # Center of the bell curve
+  StatRollStdDev: 15.0           # Width of the bell curve
+  StatRollMin: 70.0              # Hard floor (no stat below this)
+  StatRollMax: 130.0             # Hard ceiling (no stat above this)
+  StartingHealth: 10             # HP assigned at creation (before stat-based HealthMax)
 
   # ── CRAFTING ────────────────────────────────────────────────────────────────
+  # Formula: chance = clamp(Base + (skillLevel - recipeMinimum) × BonusPerLevel, Min, Max)
+  # Example: skill 5, recipe min 3, base 50, bonus 5:
+  #   chance = clamp(50 + (5-3)×5, 5, 95) = 60%
   CraftingBaseSuccessChance: 50  # % chance before skill adjustment
   CraftingSkillBonusPerLevel: 5  # +% per skill level above recipe minimum
-  CraftingMinSuccessChance: 5    # Floor — never lower than this
-  CraftingMaxSuccessChance: 95   # Ceiling — never higher than this
+  CraftingMinSuccessChance: 5    # Floor — never below this %
+  CraftingMaxSuccessChance: 95   # Ceiling — never above this %
 
   # ── RECIPE DISCOVERY ──────────────────────────────────────────────────────
-  RecipeDiscoveryBaseChance: 10.0   # Base % to discover a new recipe per successful craft
-  RecipeDiscoveryDecayRate: 0.1    # Decay per known recipe: chance = base / (1 + known*this)
+  # Chance to learn a new recipe on a successful craft.
+  # Formula: chance = BaseChance / (1 + knownRecipes × DecayRate)
+  # Example: base 10%, decay 0.1, 5 recipes known:
+  #   chance = 10 / (1 + 5×0.1) = 6.7%
+  RecipeDiscoveryBaseChance: 10.0
+  RecipeDiscoveryDecayRate: 0.1
 
   # ── MUTATIONS ───────────────────────────────────────────────────────────────
+  # Mutations are combat-earned abilities that grow through fighting.
+  # Progress needed for the Nth mutation: BaseProgress × ProgressScale^(N-1)
+  #   Example: base 50, scale 1.5:
+  #     1st mutation: 50 progress,  2nd: 75,  3rd: 112.5,  4th: 168.75
   MutationBaseProgress: 50.0         # Progress needed for first mutation
   MutationProgressScale: 1.5         # Each additional mutation costs Scale^n more
   MutationMaxCount: 5                # Max simultaneous mutations per character
-  MutationMaxLevel: 3                # Max level any single mutation can reach
+  MutationMaxLevel: 3                # Max level any single mutation can reach (1–3)
   MutationProgressGainPerRound: 1.0  # Progress added per combat round
-  MutationLevel2Multiplier: 1.5      # Effect scaling at mutation level 2
-  MutationLevel3Multiplier: 2.0      # Effect scaling at mutation level 3
+  MutationLevel2Multiplier: 1.5      # Effect magnitude at level 2 (1.5× level 1)
+  MutationLevel3Multiplier: 2.0      # Effect magnitude at level 3 (2.0× level 1)
 
   # ── SPELLCASTING ──────────────────────────────────────────────────────
-  SpellDiscoveryBaseChance: 5.0         # Base % to discover a new spell per successful cast
-  SpellDiscoveryDecayRate: 0.1         # Decay per known spell: chance = base / (1 + known*this)
-  SpellInitiationBase: 60              # Base % chance to initiate a spell
-  SpellInitiationWillpowerDivisor: 4   # Willpower / this = initiation bonus
-  SpellInitiationSkillFactor: 5        # Spellcasting level * this = initiation bonus
-  SpellConcentrationBase: 50           # Base % concentration chance when struck
-  SpellFoldsSkillFactor: 25            # Skill * this in folds-per-round calculation
-  SpellAttackSkillFactor: 3            # Skill * this in spell attack mean
-  SpellProficiencyCastsPerPoint: 50    # Casts needed per 1 proficiency point
+  # Spell discovery: chance to learn a new spell on a successful cast.
+  # Formula: chance = BaseChance / (1 + knownSpells × DecayRate)
+  # Example: base 5%, decay 0.1, 3 spells known:
+  #   chance = 5 / (1 + 3×0.1) = 3.8%
+  SpellDiscoveryBaseChance: 5.0
+  SpellDiscoveryDecayRate: 0.1
+  #
+  # Initiation: chance to successfully begin casting.
+  # Formula: chance = Base + Willpower/WillpowerDivisor + SpellcastingLevel × SkillFactor
+  # Example: base 60, Wil 100, skill 3:
+  #   chance = 60 + 100/4 + 3×5 = 60 + 25 + 15 = 100% (clamped)
+  SpellInitiationBase: 60
+  SpellInitiationWillpowerDivisor: 4   # Wil / this = initiation bonus
+  SpellInitiationSkillFactor: 5        # SpellcastingLevel × this = initiation bonus
+  #
+  # Concentration: % chance to maintain casting when struck mid-cast.
+  SpellConcentrationBase: 50
+  #
+  # Folds per round: how fast a spell charges each combat round.
+  # Formula includes: SpellcastingLevel × SpellFoldsSkillFactor
+  SpellFoldsSkillFactor: 25
+  #
+  # Spell attack: mean for the spell's opposed hit roll.
+  # Formula includes: SpellcastingLevel × SpellAttackSkillFactor
+  SpellAttackSkillFactor: 3
+  #
+  # Proficiency: successful casts needed to gain 1 proficiency point
+  #   with a specific spell. Higher proficiency reduces fizzle chance.
+  SpellProficiencyCastsPerPoint: 50
 
   # ── ENCHANTMENTS ────────────────────────────────────────────────────────────
-  EnchantTierUpBaseChance: 0.02     # Chance per use to advance tier once threshold met (2%)
+  # Enchanted items grow stronger with use. Each tier requires more uses.
+  # Uses threshold per tier: UsesBase × UsesScale^tier
+  #   Example: base 25, scale 2.5:
+  #     Tier 0→1: 25 uses,  Tier 1→2: 63 uses,  Tier 2→3: 156 uses
+  # Once the uses threshold is met, each additional use has BaseChance to
+  #   advance the tier.
+  EnchantTierUpBaseChance: 0.02     # 2% chance per use to tier up (once threshold met)
   EnchantTierUsesBase: 25           # Uses needed for tier 0→1
   EnchantTierUsesScale: 2.5         # Multiplier per tier for uses threshold
-  EnchantRemovalPenaltyRounds: 50   # Rounds of withdrawal after disenchant
-  EnchantMaxTier: 4                 # Maximum tier enchantments can reach
+  EnchantRemovalPenaltyRounds: 50   # Rounds of withdrawal debuff after disenchant
+  EnchantMaxTier: 4                 # Maximum tier (tiers 0–4 = 5 levels total)
 
   # ── MOON PHASES ─────────────────────────────────────────────────────────────
   MoonStatModMax: 0.05  # Max fractional stat modifier from moon phases (±5% at full/new moon)
