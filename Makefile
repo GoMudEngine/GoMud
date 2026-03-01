@@ -111,7 +111,15 @@ validate: fmtcheck vet
 
 .PHONY: test
 test: js-lint
-	@go test ./...
+	@go test -timeout 300s -race ./...
+
+.PHONY: test-regression
+test-regression: ### Run regression test suite
+	@go test -run "TestRegression_" -v ./...
+
+.PHONY: test-smoke
+test-smoke: ### Run smoke test suite
+	@go test -run "TestSmoke_" -v ./...
 
 .PHONY: coverage
 coverage: 
