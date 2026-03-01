@@ -231,3 +231,34 @@ help-workflow:
     @echo "  just branch NAME  # Create feature branch"
     @echo "  just commit MSG   # Commit with message"
     @echo "  just merge BRANCH # Merge to development"
+    @echo ""
+    @echo "AI Testing:"
+    @echo "  just ai-player       # Launch AI player"
+    @echo "  just ai-player-fresh # Nuke AI save & relaunch"
+    @echo ""
+    @echo "Coverage:"
+    @echo "  just help-coverage   # Check helpfile coverage"
+
+# Launch the AI player bot (requires server running with AIPort enabled)
+ai-player:
+    @echo "Launching AI player..."
+    @echo "  Ensure the MUD server is running with AIPort enabled (port 55555)"
+    @echo ""
+    python tools/ai_player.py
+
+# Delete AI player's save file and launch a fresh AI player
+ai-player-fresh:
+    @echo "Nuking AI player save file..."
+    @for f in _datafiles/world/dogmud/users/*.yaml; do \
+        if grep -q "^username: aitester$$" "$$f" 2>/dev/null; then \
+            echo "  Removing $$f"; \
+            rm -f "$$f"; \
+        fi; \
+    done
+    @echo "AI player save deleted. Launching fresh AI player..."
+    @echo ""
+    python tools/ai_player.py
+
+# Check helpfile coverage (which commands lack help files)
+help-coverage:
+    @python tools/help_coverage.py
