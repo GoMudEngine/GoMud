@@ -207,6 +207,7 @@ options:
         - 'Your {stance} approach pays off as you deliver a searing blow!'
         - 'Seizing the advantage, you slam your <ansi fg="item">{itemname}</ansi> into <ansi fg="{targettype}">{target}</ansi> with arcane fury!'
         - 'While {position} and {momentum}, you strike with channeled precision!'
+        - 'Arcane energy from your <ansi fg="item">{itemname}</ansi> sears <ansi fg="{targettype}">{target}</ansi>''s {bodypart}!'
       todefender:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> drives their <ansi fg="item">{itemname}</ansi> into you with a burst of energy!'
@@ -218,6 +219,7 @@ options:
         - '<ansi fg="{sourcetype}">{source}</ansi> draws your guard and unleashes a punishing arcane strike!'
         - '<ansi fg="{sourcetype}">{source}</ansi> reads your weakness and channels devastating force!'
         - '<ansi fg="{sourcetype}">{source}</ansi> seizes advantage and slams you with arcane fury!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s arcane energy sears your {bodypart}!'
       toroom:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> drives their <ansi fg="item">{itemname}</ansi> into <ansi fg="{targettype}">{target}</ansi> with a burst of energy!'

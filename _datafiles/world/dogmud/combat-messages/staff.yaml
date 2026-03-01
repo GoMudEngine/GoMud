@@ -169,6 +169,8 @@ options:
         - 'You exploit an opening and thrust decisively at <ansi fg="{targettype}">{target}</ansi>!'
         - 'Your <ansi fg="item">{itemname}</ansi> hums as you deliver a commanding strike!'
         - '{momentum}, your staff cracks solidly into <ansi fg="{targettype}">{target}</ansi>!'
+        - 'You whip your <ansi fg="item">{itemname}</ansi> around and crack it into <ansi fg="{targettype}">{target}</ansi>''s {bodypart}!'
+        - 'Your staff connects with <ansi fg="{targettype}">{target}</ansi>''s {bodypart} with a resonant thud!'
       todefender:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> sweeps their <ansi fg="item">{itemname}</ansi> into you with a crack!'
@@ -179,6 +181,7 @@ options:
         master:
         - '<ansi fg="{sourcetype}">{source}</ansi> presses their advantage with a two-handed sweep!'
         - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> hums as it strikes you!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> cracks their staff into your {bodypart}!'
       toroom:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> sweeps their <ansi fg="item">{itemname}</ansi> into <ansi fg="{targettype}">{target}</ansi> with a crack!'
@@ -207,6 +210,7 @@ options:
         - 'Your {stance} approach pays off as you deliver a bone-rattling blow!'
         - 'Seizing the advantage, you slam both iron-shod ends into <ansi fg="{targettype}">{target}</ansi>!'
         - 'While {position} and {momentum}, you deliver a crushing sweep!'
+        - 'You drive the iron-shod end of your staff into <ansi fg="{targettype}">{target}</ansi>''s {bodypart} with bone-rattling force!'
       todefender:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> slams their <ansi fg="item">{itemname}</ansi> into you with both hands!'
@@ -218,6 +222,7 @@ options:
         - '<ansi fg="{sourcetype}">{source}</ansi> draws your guard and unleashes a punishing strike!'
         - '<ansi fg="{sourcetype}">{source}</ansi> channels devastating force through their staff!'
         - '<ansi fg="{sourcetype}">{source}</ansi> seizes advantage and delivers a bone-rattling blow!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> drives the iron-shod end into your {bodypart} with devastating force!'
       toroom:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> slams their <ansi fg="item">{itemname}</ansi> into <ansi fg="{targettype}">{target}</ansi> with both hands!'

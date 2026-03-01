@@ -304,6 +304,8 @@ options:
         - 'You press your advantage with a sweeping strike!'
         - 'You exploit an opening and hit decisively!'
         - 'You are {momentum} as your weapon hits <ansi fg="{targettype}">{target}</ansi>!'
+        - 'You strike <ansi fg="{targettype}">{target}</ansi> squarely in the {bodypart}!'
+        - 'Your <ansi fg="item">{itemname}</ansi> connects with <ansi fg="{targettype}">{target}</ansi>''s {bodypart}!'
       todefender:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> connects, wounding you!'
@@ -311,9 +313,11 @@ options:
         expert:
         - '<ansi fg="{sourcetype}">{source}</ansi> circles and strikes you decisively!'
         - '<ansi fg="{sourcetype}">{source}</ansi> steps in and delivers a clean hit!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> strikes you in the {bodypart}!'
         master:
         - '<ansi fg="{sourcetype}">{source}</ansi> reads your stance and strikes with precision!'
         - '<ansi fg="{sourcetype}">{source}</ansi> exploits an opening and hits decisively!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> strikes you squarely in the {bodypart}!'
       toroom:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> connects, wounding <ansi fg="{targettype}">{target}</ansi>!'

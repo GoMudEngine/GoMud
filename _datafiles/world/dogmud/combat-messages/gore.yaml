@@ -1,0 +1,438 @@
+# Possible tokens:
+# {itemname}    - name of weapon/object e.g. 'horns'
+# {source}      - name of mob or user e.g. 'goblin'
+# {sourcetype}  - 'user' or 'mob'
+# {target}      - name of mob or user e.g. 'goblin'
+# {targettype}  - 'user' or 'mob'
+# {damage}      - damage dealt as an integer e.g. '5'
+# {exitname}    - name of exit for attack e.g. 'north'
+# {entrancename}- name of entrance for attack e.g. 'south'
+# {stance}      - combat stance: 'aggressive', 'defensive', 'balanced', 'reckless' (Stage 9.4)
+# {position}    - combat position: 'standing', 'prone', 'locked in close combat', 'grappling on the ground' (Stage 9.4)
+# {momentum}    - combat momentum: 'on the offensive', 'on the defensive', 'in control', 'pressured' (Stage 9.4)
+optionid: gore
+options:
+  prepare:
+    # messages for when they are in the same room
+    together:
+      toattacker:
+        beginner:
+        - 'You lower your head, leveling your <ansi fg="item">{itemname}</ansi> at <ansi fg="{targettype}">{target}</ansi>.'
+        - 'You paw the ground and snort, preparing to charge <ansi fg="{targettype}">{target}</ansi>.'
+        - 'You eye <ansi fg="{targettype}">{target}</ansi> and toss your <ansi fg="item">{itemname}</ansi> with menace.'
+        - 'You lower your <ansi fg="item">{itemname}</ansi> and brace to charge.'
+        expert:
+        - 'You take a {stance} stance, dipping your <ansi fg="item">{itemname}</ansi> low at <ansi fg="{targettype}">{target}</ansi>.'
+        - 'While {position}, you plant your hooves and prepare a calculated charge.'
+        - 'You circle <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi> leveled, reading their posture.'
+        - '{stance}, you angle your <ansi fg="item">{itemname}</ansi> for the perfect hooking strike!'
+        master:
+        - 'With predatory calm, you adopt a {stance} stance, {momentum}, horns primed.'
+        - 'You read <ansi fg="{targettype}">{target}</ansi>''s every shift, {momentum}, your {itemname} perfectly angled.'
+        - 'You flow into a masterful charge stance while {position}, waiting for the moment.'
+        - '{momentum}, you lower your <ansi fg="item">{itemname}</ansi> with the precision of a seasoned gorer.'
+      todefender:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi> lowers their <ansi fg="item">{itemname}</ansi> at you menacingly.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> paws the ground and snorts, preparing to charge you.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> tosses their <ansi fg="item">{itemname}</ansi> and eyes you with fury.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> braces, <ansi fg="item">{itemname}</ansi> leveled squarely at you.'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> takes a {stance} stance, dipping their <ansi fg="item">{itemname}</ansi> toward you.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> plants their hooves and prepares a calculated charge.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> circles you with their <ansi fg="item">{itemname}</ansi> leveled low.'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi> reads your posture and angles their <ansi fg="item">{itemname}</ansi> perfectly.'
+        - 'With unsettling calm, <ansi fg="{sourcetype}">{source}</ansi> lowers their <ansi fg="item">{itemname}</ansi> to strike.'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> settle into position — a clear and lethal threat.'
+      toroom:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi> lowers their <ansi fg="item">{itemname}</ansi> at <ansi fg="{targettype}">{target}</ansi>.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> paws the ground, preparing to charge <ansi fg="{targettype}">{target}</ansi>.'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> takes a {stance} stance, <ansi fg="item">{itemname}</ansi> aimed at <ansi fg="{targettype}">{target}</ansi>.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> circles <ansi fg="{targettype}">{target}</ansi> with lowered head and deadly intent.'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi> reads <ansi fg="{targettype}">{target}</ansi>''s position and angles their <ansi fg="item">{itemname}</ansi>.'
+        - 'With masterful calm, <ansi fg="{sourcetype}">{source}</ansi> prepares a devastating charge.'
+  wait:
+    # messages for when they are in the same room
+    together:
+      toattacker:
+        beginner:
+        - 'You snort and paw the ground, watching <ansi fg="{targettype}">{target}</ansi> warily.'
+        - 'You circle <ansi fg="{targettype}">{target}</ansi>, <ansi fg="item">{itemname}</ansi> ready to hook.'
+        - 'You watch <ansi fg="{targettype}">{target}</ansi> closely, waiting to charge.'
+        - 'You stamp and toss your <ansi fg="item">{itemname}</ansi>, biding your time.'
+        expert:
+        - 'From your {stance} stance, you hold {position}, tracking <ansi fg="{targettype}">{target}</ansi>''s footwork.'
+        - 'While {position}, you feign a charge, probing <ansi fg="{targettype}">{target}</ansi>''s reactions.'
+        - 'You pace with lowered head, looking for the perfect angle to gore.'
+        - 'You probe <ansi fg="{targettype}">{target}</ansi>''s guard with a short threatening lunge.'
+        master:
+        - '{momentum}, you read every subtle shift in <ansi fg="{targettype}">{target}</ansi>''s footwork.'
+        - 'While {position}, you anticipate <ansi fg="{targettype}">{target}</ansi>''s next step with terrifying clarity.'
+        - 'Your {stance} patience lets you analyze <ansi fg="{targettype}">{target}</ansi> like a charging beast in wait.'
+        - 'Like a beast before a fatal charge, you assess every weakness in <ansi fg="{targettype}">{target}</ansi>''s stance.'
+      todefender:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi> snorts and circles you dangerously.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> watches you intently, <ansi fg="item">{itemname}</ansi> ready to hook.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> stamps and waits for an opening.'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> holds their <ansi fg="item">{itemname}</ansi> low, eyes fixed on you.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> feigns a charge, probing your reactions.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> paces with a lowered head, studying your guard.'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi> reads your every movement with predatory patience.'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s eyes track your footwork like a beast before it charges.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> analyzes your guard with masterful, terrible clarity.'
+      toroom:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi> circles <ansi fg="{targettype}">{target}</ansi> with lowered head and dark intent.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> snorts and paws the ground, watching <ansi fg="{targettype}">{target}</ansi>.'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> eyes <ansi fg="{targettype}">{target}</ansi>, <ansi fg="item">{itemname}</ansi> leveled and ready.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> feigns a charge, probing <ansi fg="{targettype}">{target}</ansi>''s guard.'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi> reads <ansi fg="{targettype}">{target}</ansi> like a beast before a killing charge.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> analyzes <ansi fg="{targettype}">{target}</ansi>''s stance with terrifying stillness.'
+  miss:
+    # messages for when they are in the same room
+    together:
+      toattacker:
+        beginner:
+        - 'You charge at <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>, but miss!'
+        - 'Your <ansi fg="item">{itemname}</ansi> hook through empty air as <ansi fg="{targettype}">{target}</ansi> sidesteps!'
+        - 'You lunge forward but fail to connect with <ansi fg="{targettype}">{target}</ansi>!'
+        - 'You charge wildly and your <ansi fg="item">{itemname}</ansi> find nothing!'
+        expert:
+        - 'Your calculated charge falls short as <ansi fg="{targettype}">{target}</ansi> evades!'
+        - 'You feint and lunge, but <ansi fg="{targettype}">{target}</ansi> reads your approach!'
+        - 'Despite your {stance} approach, your <ansi fg="item">{itemname}</ansi> hook only air!'
+        - 'Your tactical charge is neatly sidestepped by <ansi fg="{targettype}">{target}</ansi>!'
+        master:
+        - '<ansi fg="{targettype}">{target}</ansi>''s unexpected footwork forces your perfect charge wide!'
+        - 'Despite flawless timing, <ansi fg="{targettype}">{target}</ansi> reads your line and dodges!'
+        - 'Your masterful hook finds an equally masterful sidestep!'
+        - '{momentum}, your sweeping charge is barely turned aside!'
+      todefender:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi> charges at you with their <ansi fg="item">{itemname}</ansi> but misses.'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> slash through the air as you dodge!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> lunges at you but fails to connect!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> charges wildly and misses entirely!'
+        expert:
+        - 'You sidestep <ansi fg="{sourcetype}">{source}</ansi>''s calculated charge!'
+        - 'You anticipate <ansi fg="{sourcetype}">{source}</ansi>''s lunge and slip aside!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s tactical charge is foiled as you evade!'
+        master:
+        - 'Your footwork forces <ansi fg="{sourcetype}">{source}</ansi>''s perfect charge wide!'
+        - 'You read <ansi fg="{sourcetype}">{source}</ansi>''s line and slip the hook with grace!'
+        - 'Your superior technique turns <ansi fg="{sourcetype}">{source}</ansi>''s masterful gore aside!'
+      toroom:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi> charges at <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>, but misses.'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> cut through empty air!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> lunges at <ansi fg="{targettype}">{target}</ansi> but fails to connect!'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s calculated charge is evaded by <ansi fg="{targettype}">{target}</ansi>!'
+        - '<ansi fg="{targettype}">{target}</ansi> anticipates the lunge and sidesteps neatly!'
+        - '<ansi fg="{targettype}">{target}</ansi> counters <ansi fg="{sourcetype}">{source}</ansi>''s charge with clean footwork!'
+        master:
+        - '<ansi fg="{targettype}">{target}</ansi>''s footwork forces the perfect charge wide!'
+        - '<ansi fg="{targettype}">{target}</ansi> reads the line and slips aside with flowing grace!'
+        - 'A masterful clash of beast and defender results in no contact!'
+  weak:
+    # messages for when they are in the same room
+    together:
+      toattacker:
+        beginner:
+        - 'Your <ansi fg="item">{itemname}</ansi> graze <ansi fg="{targettype}">{target}</ansi>.'
+        - 'You catch <ansi fg="{targettype}">{target}</ansi> with a glancing hook of your <ansi fg="item">{itemname}</ansi>.'
+        - 'Your <ansi fg="item">{itemname}</ansi> barely nick <ansi fg="{targettype}">{target}</ansi>.'
+        - 'You lunge awkwardly, barely catching <ansi fg="{targettype}">{target}</ansi>.'
+        expert:
+        - 'You dart in and hook <ansi fg="{targettype}">{target}</ansi> lightly with your <ansi fg="item">{itemname}</ansi>.'
+        - 'Angling from your {stance} approach, you score a shallow jab.'
+        - 'You feint high and drive low, grazing <ansi fg="{targettype}">{target}</ansi> {position}.'
+        - 'You probe their guard with a quick toss of your <ansi fg="item">{itemname}</ansi>.'
+        - 'Testing their defense, you deliver a glancing hook to <ansi fg="{targettype}">{target}</ansi>.'
+        master:
+        - 'You draw their guard and catch the <ansi fg="item">{bodypart}</ansi> with a light hook, {momentum}.'
+        - 'You press forward and nick <ansi fg="{targettype}">{target}</ansi> from your {stance} stance.'
+        - 'Stepping aside, you flick a short hook at <ansi fg="{targettype}">{target}</ansi> with precision.'
+        - 'You find a small opening and deliver a shallow jab to the <ansi fg="item">{bodypart}</ansi>.'
+        - 'With patient precision, you score a calculated glancing gore.'
+      todefender:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi> grazes you with their <ansi fg="item">{itemname}</ansi>.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> catches you with a glancing hook.'
+        - 'You feel a shallow nick as <ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> barely catch you.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> lunges awkwardly, barely catching you.'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> darts in and hooks you lightly.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> angles in from a {stance} approach and scores a shallow jab.'
+        - 'You feel a graze as <ansi fg="{sourcetype}">{source}</ansi> feints and drives low.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> tests your guard with a probing hook.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> flicks a glancing hook at you.'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi> draws your guard and catches your <ansi fg="item">{bodypart}</ansi> lightly.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> presses forward and nicks you from their {stance} stance.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> steps aside and flicks a short hook with precision.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> finds a small opening and delivers a shallow jab.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> scores a calculated glancing gore with patient precision.'
+      toroom:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi> grazes <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> catches <ansi fg="{targettype}">{target}</ansi> with a glancing hook.'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> barely nick <ansi fg="{targettype}">{target}</ansi>.'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> darts in and hooks <ansi fg="{targettype}">{target}</ansi> lightly.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> angles in and scores a shallow jab.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> feints and drives a glancing hook low.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> tests <ansi fg="{targettype}">{target}</ansi>''s guard with a probing hook.'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi> draws the guard and lands a glancing hook.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> presses forward with a quick nick from their {stance} stance.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> steps aside and flicks a short hook at <ansi fg="{targettype}">{target}</ansi>.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> finds a small opening and scores a shallow jab.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> delivers a calculated glancing gore with patient precision.'
+  normal:
+    # messages for when they are in the same room
+    together:
+      toattacker:
+        beginner:
+        - 'Your <ansi fg="item">{itemname}</ansi> hook into <ansi fg="{targettype}">{target}</ansi>!'
+        - 'You gore <ansi fg="{targettype}">{target}</ansi> with your <ansi fg="item">{itemname}</ansi>!'
+        - 'Your <ansi fg="item">{itemname}</ansi> tear through <ansi fg="{targettype}">{target}</ansi>!'
+        - 'You charge and drive your <ansi fg="item">{itemname}</ansi> into <ansi fg="{targettype}">{target}</ansi>!'
+        expert:
+        - 'You lower and charge, hooking <ansi fg="{targettype}">{target}</ansi> cleanly from your {stance} stance!'
+        - 'Stepping into the charge, you drive your <ansi fg="item">{itemname}</ansi> through <ansi fg="{targettype}">{target}</ansi>''s guard!'
+        - 'You pivot and hook decisively, {momentum}!'
+        - 'Feinting {position}, you bring your <ansi fg="item">{itemname}</ansi> up in a sharp sweeping arc!'
+        - 'You draw their defense {momentum} and drive your <ansi fg="item">{itemname}</ansi> low!'
+        - 'Reading their stance, you charge with practiced, beast-like precision!'
+        master:
+        - 'You press your advantage with a sweeping hook while {momentum}!'
+        - 'Charging into <ansi fg="{targettype}">{target}</ansi>, you toss them with apex power!'
+        - 'From your {stance} stance, you exploit the gap and gore decisively!'
+        - 'You hook the <ansi fg="item">{bodypart}</ansi> cleanly and drive forward with full force!'
+        - 'You capitalize on momentum and strike with perfect timing!'
+        - 'Your <ansi fg="item">{itemname}</ansi> flash as you maintain the charge with masterful control!'
+        - '{position}, you hook decisively at <ansi fg="{targettype}">{target}</ansi>!'
+        - '{momentum}, you gore with overwhelming beast-like power!'
+      todefender:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi> hooks into you with their <ansi fg="item">{itemname}</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> gores you with their <ansi fg="item">{itemname}</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> tear through you!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> charges and drives their <ansi fg="item">{itemname}</ansi> into you!'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> lowers and charges, hooking you cleanly!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> drives their <ansi fg="item">{itemname}</ansi> through your guard!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> pivots and hooks you decisively!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> feints and sweeps their <ansi fg="item">{itemname}</ansi> up sharply!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> draws your defense and drives their <ansi fg="item">{itemname}</ansi> low!'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi> reads your stance and charges with predator precision!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> presses in with a sweeping hook!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> charges into you and tosses you with apex power!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> exploits the opening and gores you decisively!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> hooks your <ansi fg="item">{bodypart}</ansi> and drives forward!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> capitalizes on their momentum with perfect timing!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> flash as they maintain the charge!'
+      toroom:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi> hooks into <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> gores <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> tear through <ansi fg="{targettype}">{target}</ansi>!'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> lowers and charges, hooking <ansi fg="{targettype}">{target}</ansi> cleanly!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> drives their <ansi fg="item">{itemname}</ansi> through the guard!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> pivots and hooks decisively!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> feints and sweeps their <ansi fg="item">{itemname}</ansi> up sharply!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> draws the defense high and drives the <ansi fg="item">{itemname}</ansi> low!'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi> reads the stance and charges with predator precision!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> presses forward with a sweeping hook!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> charges into <ansi fg="{targettype}">{target}</ansi> and tosses them with apex power!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> exploits the opening and gores decisively!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> hooks the <ansi fg="item">{bodypart}</ansi> and drives forward!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> capitalizes on momentum with perfect timing!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> flash as the charge continues!'
+  heavy:
+    # messages for when they are in the same room
+    together:
+      toattacker:
+        beginner:
+        - 'Your <ansi fg="item">{itemname}</ansi> plunge into <ansi fg="{targettype}">{target}</ansi>!'
+        - 'You deliver a brutal charge to <ansi fg="{targettype}">{target}</ansi>!'
+        - 'Your <ansi fg="item">{itemname}</ansi> sink deep into <ansi fg="{targettype}">{target}</ansi>!'
+        - 'You charge with overwhelming, bestial fury!'
+        expert:
+        - 'You lower and drive forward, impaling <ansi fg="{targettype}">{target}</ansi> from your {stance} position!'
+        - 'Pivoting hard, you slam your <ansi fg="item">{itemname}</ansi> deep into <ansi fg="{targettype}">{target}</ansi> with {momentum}!'
+        - 'You advance with thunderous force and hook viciously!'
+        - 'Feinting a retreat, you surge forward with a devastating impale!'
+        - 'You draw their guard and drive your <ansi fg="item">{itemname}</ansi> in with punishing force!'
+        - 'Reading their weakness, you charge with overwhelming, crushing power!'
+        master:
+        - 'While {position} and {momentum}, you drive your <ansi fg="item">{itemname}</ansi> deep and hoist!'
+        - 'Seizing advantage from your {stance} stance, you deliver a savage gore to <ansi fg="{targettype}">{target}</ansi>!'
+        - 'You exploit their position and impale with brutal beast-like efficiency!'
+        - 'Even while {position}, {momentum}, you hook with overwhelming force!'
+        - 'Your {stance} charge overwhelms <ansi fg="{targettype}">{target}</ansi> with devastating brutality!'
+        - 'Following your momentum, you hook the <ansi fg="item">{bodypart}</ansi> and toss with great force!'
+        - 'You surge forward on the offensive, your <ansi fg="item">{itemname}</ansi> plunging deep!'
+        - 'Maintaining your charge, you sweep a powerful hooking toss at <ansi fg="{targettype}">{target}</ansi>!'
+        - 'From your {stance} stance, {momentum}, you impale savagely while {position}!'
+      todefender:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> plunge into you!'
+        - 'You are struck hard as <ansi fg="{sourcetype}">{source}</ansi> delivers a brutal charge!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> sink deep into you!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> charges with overwhelming, bestial fury!'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> drives forward and impales you brutally!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> pivots and slams their <ansi fg="item">{itemname}</ansi> deep into your flank!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> advances with thunderous force and hooks viciously!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> feints retreat then surges with a devastating impale!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> draws your guard and drives their <ansi fg="item">{itemname}</ansi> in with punishing force!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> reads your weakness and charges with crushing power!'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi> drives their <ansi fg="item">{itemname}</ansi> deep and hoists you!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> seizes advantage and delivers a savage gore!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> exploits your position and impales with brutal efficiency!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> hooks you viciously and tosses with great force!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> surges forward, their <ansi fg="item">{itemname}</ansi> plunging deep!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> maintains their charge with a powerful sweeping hook!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> overwhelms you with devastating, beast-like brutality!'
+      toroom:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> plunge into <ansi fg="{targettype}">{target}</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> delivers a brutal charge to <ansi fg="{targettype}">{target}</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> sinks their <ansi fg="item">{itemname}</ansi> deep into <ansi fg="{targettype}">{target}</ansi>!'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> drives forward and impales <ansi fg="{targettype}">{target}</ansi> brutally!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> pivots and slams their <ansi fg="item">{itemname}</ansi> into <ansi fg="{targettype}">{target}</ansi>''s flank!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> advances with thunderous force and hooks viciously!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> feints retreat then surges with a devastating impale!'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi> draws the guard and drives their <ansi fg="item">{itemname}</ansi> deep!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> reads the weakness and charges with crushing power!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> drives their <ansi fg="item">{itemname}</ansi> deep and hoists <ansi fg="{targettype}">{target}</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> seizes advantage and delivers a savage gore!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> hooks the <ansi fg="item">{bodypart}</ansi> and tosses with brutal force!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> surges forward on the offensive, <ansi fg="item">{itemname}</ansi> plunging deep!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> maintains the charge with a powerful sweeping hook!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> overwhelms <ansi fg="{targettype}">{target}</ansi> with devastating beast-like brutality!'
+  critical:
+    # messages for when they are in the same room
+    together:
+      toattacker:
+        beginner:
+        - 'Your <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRITICALLY IMPALE</ansi> <ansi fg="{targettype}">{target}</ansi>!'
+        - 'You deliver a <ansi fg="cyan-bold">CRITICAL GORE</ansi> to <ansi fg="{targettype}">{target}</ansi>!'
+        - 'Your <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">DEVASTATE</ansi> <ansi fg="{targettype}">{target}</ansi>!'
+        - 'You land a <ansi fg="cyan-bold">DEVASTATING CHARGE</ansi> on <ansi fg="{targettype}">{target}</ansi>!'
+        expert:
+        - 'You charge and your <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">IMPALE</ansi> <ansi fg="{targettype}">{target}</ansi> clean through!'
+        - 'Lunging {momentum}, you deliver a <ansi fg="cyan-bold">PERFECT GORE</ansi> to <ansi fg="{targettype}">{target}</ansi>!'
+        - 'You flow like a charging beast and your <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">SKEWER</ansi> <ansi fg="{targettype}">{target}</ansi>!'
+        - 'Your masterful feint opens <ansi fg="{targettype}">{target}</ansi> completely - you <ansi fg="cyan-bold">ANNIHILATE</ansi> them from your {stance} stance!'
+        - 'Reading every move, you deliver a <ansi fg="cyan-bold">FLAWLESS IMPALE</ansi> through <ansi fg="{targettype}">{target}</ansi>!'
+        master:
+        - 'Your tactical charge creates the perfect opening - you <ansi fg="cyan-bold">GORE</ansi> <ansi fg="{targettype}">{target}</ansi> with apex fury!'
+        - 'Your {stance} approach culminates in a <ansi fg="cyan-bold">DEVASTATING CRITICAL</ansi> impale!'
+        - 'While {position}, {momentum}, you deliver a <ansi fg="cyan-bold">PERFECT EXECUTION</ansi>!'
+        - 'You execute a <ansi fg="cyan-bold">DEVASTATING CHARGE</ansi> from the perfect angle!'
+        - 'Exploiting total advantage, you <ansi fg="cyan-bold">TOSS</ansi> <ansi fg="{targettype}">{target}</ansi> with masterful, brutal precision!'
+        - 'Your positioning is flawless - your <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">OBLITERATE</ansi> <ansi fg="{targettype}">{target}</ansi>!'
+        - 'Your unstoppable charge culminates in a <ansi fg="cyan-bold">CRITICAL IMPALEMENT</ansi>!'
+        - 'Channeling all momentum, you <ansi fg="cyan-bold">DRIVE THROUGH</ansi> <ansi fg="{targettype}">{target}</ansi> with devastating force!'
+        - 'The tide of battle favors you - your <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">DECIMATE</ansi> <ansi fg="{targettype}">{target}</ansi>!'
+      todefender:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRITICALLY IMPALE</ansi> you!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> deliver a <ansi fg="cyan-bold">CRITICAL GORE</ansi>!'
+        - 'You are <ansi fg="cyan-bold">DEVASTATED</ansi> by <ansi fg="{sourcetype}">{source}</ansi>''s charge!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> lands a <ansi fg="cyan-bold">DEVASTATING CHARGE</ansi> on you!'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> charges and their <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">IMPALE</ansi> you clean through!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> lunges and delivers a <ansi fg="cyan-bold">PERFECT GORE</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> flows like a charging beast and <ansi fg="cyan-bold">SKEWERS</ansi> you!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s masterful feint opens you completely - they <ansi fg="cyan-bold">ANNIHILATE</ansi> you!'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi> reads every move and delivers a <ansi fg="cyan-bold">FLAWLESS IMPALE</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s tactical charge creates the opening - you are <ansi fg="cyan-bold">GORED</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> executes a <ansi fg="cyan-bold">DEVASTATING CHARGE</ansi> from the perfect angle!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> exploits total advantage and <ansi fg="cyan-bold">TOSSES</ansi> you with brutality!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s positioning is flawless - you are <ansi fg="cyan-bold">OBLITERATED</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s unstoppable charge ends in a <ansi fg="cyan-bold">CRITICAL IMPALEMENT</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> channels all momentum and <ansi fg="cyan-bold">DRIVES THROUGH</ansi> you utterly!'
+        - 'The tide favors <ansi fg="{sourcetype}">{source}</ansi> - their <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">DECIMATE</ansi> you!'
+      toroom:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRITICALLY IMPALE</ansi> <ansi fg="{targettype}">{target}</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> deliver a <ansi fg="cyan-bold">CRITICAL GORE</ansi> to <ansi fg="{targettype}">{target}</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="cyan-bold">DEVASTATES</ansi> <ansi fg="{targettype}">{target}</ansi> with a brutal charge!'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> charges and their <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">IMPALE</ansi> <ansi fg="{targettype}">{target}</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> lunges forward with a <ansi fg="cyan-bold">PERFECT GORE</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> flows like a beast and <ansi fg="cyan-bold">SKEWERS</ansi> <ansi fg="{targettype}">{target}</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s masterful feint opens <ansi fg="{targettype}">{target}</ansi> - <ansi fg="cyan-bold">ANNIHILATION</ansi>!'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi> reads every move and delivers a <ansi fg="cyan-bold">FLAWLESS IMPALE</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s tactical charge creates the opening - <ansi fg="cyan-bold">EVISCERATION</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> executes a <ansi fg="cyan-bold">DEVASTATING CHARGE</ansi> from the perfect angle!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> exploits total advantage and <ansi fg="cyan-bold">TOSSES</ansi> <ansi fg="{targettype}">{target}</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s positioning is flawless - <ansi fg="cyan-bold">OBLITERATION</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s charge culminates in a <ansi fg="cyan-bold">CRITICAL IMPALEMENT</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> channels all momentum and <ansi fg="cyan-bold">DRIVES THROUGH</ansi> <ansi fg="{targettype}">{target}</ansi>!'
+        - 'The tide favors <ansi fg="{sourcetype}">{source}</ansi> - their <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">DECIMATE</ansi> <ansi fg="{targettype}">{target}</ansi>!'
+  fumble:
+    # messages for when they are in the same room
+    together:
+      toattacker:
+        beginner:
+        - 'Your charge <ansi fg="red-bold">FUMBLES</ansi> as your <ansi fg="item">{itemname}</ansi> hook nothing!'
+        - 'You <ansi fg="red-bold">FUMBLE</ansi> and stumble past your target off-balance!'
+        - 'Your <ansi fg="item">{itemname}</ansi> <ansi fg="red-bold">FUMBLE</ansi> awkwardly, leaving you wide open!'
+        - 'You lose your footing and your charge <ansi fg="red-bold">FUMBLES</ansi> pathetically!'
+        expert:
+        - 'Your tactical charge fails catastrophically - you <ansi fg="red-bold">FUMBLE</ansi>!'
+        - 'You misjudge the angle and <ansi fg="red-bold">FUMBLE</ansi> your gore!'
+        - 'Your feint backfires and you <ansi fg="red-bold">FUMBLE</ansi> the charge badly!'
+        master:
+        - '<ansi fg="{targettype}">{target}</ansi>''s unexpected sidestep forces you to <ansi fg="red-bold">FUMBLE</ansi>!'
+        - 'Despite perfect form, a misstep causes you to <ansi fg="red-bold">FUMBLE</ansi>!'
+        - 'Your masterful charge is disrupted - you <ansi fg="red-bold">FUMBLE</ansi> the execution!'
+      todefender:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s charge <ansi fg="red-bold">FUMBLES</ansi> as their <ansi fg="item">{itemname}</ansi> hook nothing!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> their charge in an embarrassing stumble!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s attack <ansi fg="red-bold">FUMBLES</ansi> badly as they lose their footing!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> loses their footing and their charge <ansi fg="red-bold">FUMBLES</ansi>!'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s tactical approach fails and they <ansi fg="red-bold">FUMBLE</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> misjudges the angle and <ansi fg="red-bold">FUMBLES</ansi> their gore!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s feint backfires into a <ansi fg="red-bold">FUMBLE</ansi>!'
+        master:
+        - 'Your sidestep forces <ansi fg="{sourcetype}">{source}</ansi> to <ansi fg="red-bold">FUMBLE</ansi>!'
+        - 'Despite their skill, <ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> the charge!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s masterful charge is disrupted - they <ansi fg="red-bold">FUMBLE</ansi>!'
+      toroom:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> <ansi fg="red-bold">FUMBLE</ansi> wildly at <ansi fg="{targettype}">{target}</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> their charge at <ansi fg="{targettype}">{target}</ansi> and stumbles past!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> their gore in a clumsy, lurching stumble!'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s tactical approach fails - they <ansi fg="red-bold">FUMBLE</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> misjudges the angle and <ansi fg="red-bold">FUMBLES</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s feint backfires catastrophically!'
+        master:
+        - '<ansi fg="{targettype}">{target}</ansi>''s sidestep forces <ansi fg="{sourcetype}">{source}</ansi> to <ansi fg="red-bold">FUMBLE</ansi>!'
+        - 'Despite masterful form, <ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s perfect charge is disrupted - a <ansi fg="red-bold">FUMBLE</ansi>!'

@@ -220,6 +220,8 @@ options:
         - 'You capitalize on {position} and strike true with perfect whip control!'
         - 'Your <ansi fg="item">{itemname}</ansi> flows as you maintain pressure with masterful grace!'
         - 'While {momentum} and {position}, you snap decisively at <ansi fg="{targettype}">{target}</ansi>!'
+        - 'Your <ansi fg="item">{itemname}</ansi> cracks across <ansi fg="{targettype}">{target}</ansi>''s {bodypart}!'
+        - 'You lash <ansi fg="{targettype}">{target}</ansi> across the {bodypart} with a precise snap!'
       todefender:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> whips you with their <ansi fg="item">{itemname}</ansi>!'
@@ -240,6 +242,7 @@ options:
         - '<ansi fg="{sourcetype}">{source}</ansi> follows through with a flawless snap!'
         - '<ansi fg="{sourcetype}">{source}</ansi> capitalizes on their momentum and strikes true!'
         - '<ansi fg="{sourcetype}">{source}''s</ansi> whip flows as they maintain pressure with mastery!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> cracks their whip across your {bodypart}!'
       toroom:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> whips <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>!'
@@ -285,6 +288,7 @@ options:
         - 'You exploit their position and snap with brutal efficiency and legendary control!'
         - 'Even while {position}, {momentum}, you snap with overwhelming mastered force!'
         - 'Your {stance} whipping style overwhelms <ansi fg="{targettype}">{target}</ansi> completely!'
+        - 'Your whip wraps around and bites into <ansi fg="{targettype}">{target}</ansi>''s {bodypart}!'
       todefender:
         beginner:
         - 'In a sweeping motion, <ansi fg="{sourcetype}">{source}</ansi> lashes you with their <ansi fg="item">{itemname}</ansi>!'
@@ -305,6 +309,7 @@ options:
         - '<ansi fg="{sourcetype}">{source}</ansi> spins and lashes with great force and precision!'
         - '<ansi fg="{sourcetype}">{source}</ansi> surges forward on the offensive, their whip cracking devastatingly!'
         - '<ansi fg="{sourcetype}">{source}</ansi> maintains their assault with a powerful sweeping snap!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s whip wraps around and bites into your {bodypart}!'
       toroom:
         beginner:
         - 'In a sweeping motion, <ansi fg="{sourcetype}">{source}</ansi> lashes <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>!'
