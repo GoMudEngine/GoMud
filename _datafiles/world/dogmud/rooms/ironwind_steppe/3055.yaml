@@ -1,0 +1,37 @@
+roomid: 3055
+zone: Ironwind Steppe
+title: Basin Overlook
+description: A low rise on the eastern bank of the creek basin provides
+  a vantage point overlooking the drainage below. From here you can
+  see the winding course of the dry creek, the muddy boar wallows,
+  and the dark line of volcanic rock where the basalt coulees begin
+  to the east. The transition between terrain types is stark -- soft
+  earth and sand giving way abruptly to hard, dark volcanic stone.
+biome: land
+exits:
+  west:
+    roomid: 3052
+  northwest:
+    roomid: 3054
+  north:
+    roomid: 3053
+  east:
+    roomid: 3060
+  south:
+    roomid: 3058
+nouns:
+  rise: A gentle hill on the basin's eastern edge, high enough
+    to see over the creek banks. The grass on top is short and
+    wind-cropped, and a few stones provide natural seats.
+  coulees: The basalt coulees are visible to the east -- a dark,
+    broken landscape of volcanic rock channels and overhangs,
+    looking like the earth cracked and split apart. The
+    contrast with the soft creek basin is dramatic.
+spawninfo:
+- mobid: 209
+- mobid: 232
+- mobid: 230
+idlemessages:
+- The view from the rise shows the creek winding below like a scar.
+- Dark volcanic rock gleams in the eastern distance.
+- A hawk wheels over the basin, its shadow racing across the sand.

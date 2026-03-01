@@ -1,0 +1,40 @@
+mobid: 222
+zone: Ironwind Steppe
+statpool: 115
+itemdropchance: 20
+hostile: true
+maxwander: 2
+groups:
+  - steppe-goblin
+  - humanoid
+archetype: fighting
+mutationchance: 25
+idlecommands:
+  - 'emote stands rigidly at its post, scanning the approaches'
+  - ''
+  - 'emote stamps a foot and adjusts its grip on a jagged spear'
+  - ''
+  - ''
+  - 'emote clicks its tongue against its teeth in a rapid pattern'
+activitylevel: 20
+character:
+  name: goblin sentry
+  description: |
+    A goblin equipped with better gear than the scouts and scrappers --
+    a crude but functional spear of fire-hardened wood and a shield
+    of lashed sticks reinforced with scavenged metal. The sentry
+    stands guard at the camp perimeter with a discipline unusual for
+    goblins, suggesting that the shaman or some stronger authority
+    enforces order. Its yellow eyes are watchful and suspicious,
+    and it challenges anything that approaches with a raised spear.
+  speciesid: 5
+  level: 1
+  stats:
+    strength:
+      training: 5
+    vitality:
+      training: 5
+    perception:
+      training: 5
+    dexterity:
+      training: 3

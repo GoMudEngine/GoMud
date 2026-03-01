@@ -1,0 +1,36 @@
+roomid: 3059
+zone: Ironwind Steppe
+title: Coulee Approach
+description: The terrain changes abruptly here as soft earth gives
+  way to dark volcanic stone. The basalt rises in broken slabs and
+  low walls, the first outcroppings of the coulee system that
+  dominates the eastern steppe. Cracks in the stone glow with
+  lichen, and tough grass grows from every fissure. The rock
+  absorbs heat, making the air shimmer above its dark surface.
+  The way east leads into the maze of volcanic channels.
+biome: land
+exits:
+  west:
+    roomid: 3055
+  east:
+    roomid: 3060
+  south:
+    roomid: 3062
+  north:
+    roomid: 3050
+nouns:
+  basalt: Dark volcanic stone, dense and heavy, breaking through
+    the steppe soil in angular slabs. The surface is rough and
+    pitted, dark grey to black, and noticeably warmer than the
+    surrounding earth.
+  lichen: Pale green and orange lichen colonizing the cracks and
+    north-facing surfaces of the basalt outcrops. The lichen
+    grows in slow, circular patches.
+spawninfo:
+- mobid: 217
+- mobid: 212
+- mobid: 232
+idlemessages:
+- Heat radiates from the dark stone, distorting the air above it.
+- A scorpion emerges from a crack in the basalt, pincers testing the air.
+- The transition from earth to stone is abrupt and absolute.

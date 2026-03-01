@@ -1,0 +1,35 @@
+roomid: 3068
+zone: Ironwind Steppe
+title: Goblin Camp Perimeter
+description: The coulee widens into a defended space ringed with crude
+  barricades of piled stone and sharpened stakes. This is the outer
+  perimeter of a goblin encampment. The barricades are chest-high
+  and leave only narrow gaps to pass through. Goblin sentries patrol
+  the perimeter, and the ground is littered with refuse -- bones,
+  broken tools, and scraps of leather. Smoke rises from fires
+  deeper in the camp.
+biome: cliffs
+exits:
+  north:
+    roomid: 3066
+  south:
+    roomid: 3069
+  east:
+    roomid: 3070
+nouns:
+  barricades: Crude walls of stacked basalt blocks and sharpened
+    wooden stakes, forming a rough defensive perimeter. The
+    construction is haphazard but functional -- high enough to
+    crouch behind and solid enough to stop a charge.
+  stakes: Sharpened wooden stakes jammed between the barricade
+    stones, angled outward. Some are decorated with animal
+    skulls or bundles of feathers -- territorial warnings.
+spawninfo:
+- mobid: 222
+- mobid: 222
+- mobid: 217
+- mobid: 218
+idlemessages:
+- A goblin sentry peers over the barricade, then ducks back.
+- Harsh, guttural voices bark orders deeper in the camp.
+- Smoke from goblin cooking fires drifts through the coulee.

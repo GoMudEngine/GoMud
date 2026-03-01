@@ -1,0 +1,35 @@
+roomid: 3067
+zone: Ironwind Steppe
+title: Ambush Coulee
+description: This stretch of coulee is perfect ambush territory --
+  narrow enough to block, with overhanging walls that provide
+  cover above and blind corners at both ends. The walls are
+  scored with claw marks and the stone floor is scuffed by many
+  feet. Goblin scouts have clearly identified this as a tactical
+  chokepoint. Crude tripwires of braided grass stretch across
+  the floor at ankle height, and small piles of throwable stones
+  sit on ledges overhead.
+biome: cliffs
+exits:
+  west:
+    roomid: 3064
+  south:
+    roomid: 3069
+  east:
+    roomid: 3070
+nouns:
+  tripwires: Braided grass cords stretched across the coulee
+    floor at ankle height, tied to stones wedged in cracks.
+    They are crude but effective -- anyone moving quickly
+    through here would stumble.
+  stones: Small piles of fist-sized rocks placed on wall ledges
+    overhead, positioned for dropping on anyone below. Crude
+    but the coulees make natural murder holes.
+spawninfo:
+- mobid: 218
+- mobid: 218
+- mobid: 222
+idlemessages:
+- A pebble drops from above and bounces off the stone floor.
+- The narrow walls feel like they are closing in.
+- Quiet chittering echoes from around a blind corner.

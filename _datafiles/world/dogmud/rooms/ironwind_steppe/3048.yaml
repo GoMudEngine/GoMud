@@ -1,0 +1,36 @@
+roomid: 3048
+zone: Ironwind Steppe
+title: Creek Basin Crossing
+description: The dry creek bed widens here into a broad, flat expanse
+  of cracked clay and scattered stones. In wet season this would
+  be a shallow ford; now it is just a dry crossing where the
+  banks are low enough to walk across without climbing. Game
+  trails converge from north and south, crossing the basin at
+  this natural low point. The clay is tessellated with drying
+  cracks and dusted with salt deposits.
+biome: land
+exits:
+  west:
+    roomid: 3045
+  north:
+    roomid: 3036
+  south:
+    roomid: 3049
+  east:
+    roomid: 3051
+nouns:
+  clay: Hard-packed clay scored with a network of drying cracks,
+    each crack an inch or more wide. White salt crusts line
+    some of the cracks, left by evaporating water. The surface
+    is flat and firm underfoot.
+  trails: Multiple game trails converging on this crossing point,
+    worn smooth by generations of animals. The trails fan out
+    in both directions on the far sides.
+spawninfo:
+- mobid: 207
+- mobid: 206
+- mobid: 233
+idlemessages:
+- The cracked clay crunches underfoot like thin ice.
+- A crow picks at something wedged in a clay crack.
+- Salt crystals glitter in the sunlight along the dry clay surface.

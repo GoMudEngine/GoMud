@@ -1,0 +1,38 @@
+roomid: 3064
+zone: Ironwind Steppe
+title: Winding Coulee
+description: The coulee twists through the volcanic rock in a
+  serpentine course, the walls closing in and pulling back in
+  an irregular rhythm. The floor is mostly smooth stone with
+  patches of windblown sand collected in low spots. Rust-colored
+  mineral stains streak the walls in vertical lines where water
+  seeps during rains. The confined space amplifies every sound --
+  footsteps echo off the walls and the wind above moans across
+  the gap like breath over a bottle.
+biome: cliffs
+exits:
+  north:
+    roomid: 3062
+  south:
+    roomid: 3066
+  east:
+    roomid: 3067
+  west:
+    roomid: 3039
+nouns:
+  stains: Rust-red and orange mineral stains running down the
+    coulee walls in vertical streaks. Iron deposits in the
+    basalt leach out when wet, painting the stone in vivid
+    colors that contrast sharply with the dark rock.
+  sand: Patches of windblown sand trapped in depressions on
+    the coulee floor. The sand is fine and pale, a stark
+    contrast to the dark stone. Animal tracks show clearly
+    in these sand patches.
+spawninfo:
+- mobid: 220
+- mobid: 221
+- mobid: 217
+idlemessages:
+- Your footsteps echo off the close walls in overlapping rhythms.
+- Wind moans across the coulee top, a hollow, resonant sound.
+- A spider clings to the wall, legs spread wide on the dark stone.

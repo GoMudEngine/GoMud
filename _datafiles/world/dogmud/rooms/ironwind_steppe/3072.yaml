@@ -1,0 +1,31 @@
+roomid: 3072
+zone: Ironwind Steppe
+title: Goblin Loot Cache
+description: The deepest point of the goblin encampment, a narrow
+  coulee dead end used as a storage area and treasure room. Stolen
+  goods are piled against the walls -- crates, sacks, and bundles
+  of scavenged material. A crude cage of lashed sticks sits in one
+  corner, empty now but clearly used for holding captured animals
+  or worse. The goblins guard this area more aggressively than the
+  rest of the camp, viewing it as their collective wealth.
+biome: cave
+exits:
+  north:
+    roomid: 3071
+nouns:
+  goods: Piles of stolen goods in varying states of decay and
+    disrepair. Dented pots, torn clothing, broken tools, a few
+    intact weapons, sacks of grain going moldy, and an eclectic
+    assortment of objects that goblins apparently found valuable.
+  cage: A crude cage of sticks lashed together with sinew and
+    strips of leather, about the size of a large dog crate.
+    Scratch marks on the inside show something was once held
+    here. The door is a stick frame tied shut with cord.
+spawninfo:
+- mobid: 218
+- mobid: 222
+- mobid: 219
+idlemessages:
+- A goblin sorts through the loot pile, chittering to itself.
+- The crude cage creaks in a draft from somewhere.
+- Stolen goods are piled high -- the goblins have been busy.

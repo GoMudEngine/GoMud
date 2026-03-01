@@ -1,0 +1,36 @@
+roomid: 3052
+zone: Ironwind Steppe
+title: Eroded Bluffs
+description: The creek banks rise sharply here into low bluffs of
+  layered sandstone and clay. The erosion has carved the soft stone
+  into sculpted forms -- pillars, arches, and hollowed alcoves that
+  catch the light and shadow. The creek bed below is narrow and
+  stony, squeezed between the bluff walls. Small caves and overhangs
+  in the bluff faces show signs of animal habitation.
+biome: land
+exits:
+  north:
+    roomid: 3049
+  south:
+    roomid: 3055
+  east:
+    roomid: 3054
+  west:
+    roomid: 3075
+nouns:
+  bluffs: Sandstone bluffs sculpted by water erosion into smooth,
+    flowing shapes. The pale stone is streaked with darker bands
+    of iron-rich clay. Small alcoves and wind-carved hollows dot
+    the faces.
+  alcoves: Shallow hollows carved into the bluff faces by wind
+    and water. Some are barely deeper than an arm's reach; others
+    extend several feet into the stone. Animal droppings and
+    scratch marks show regular use.
+spawninfo:
+- mobid: 215
+- mobid: 211
+- mobid: 221
+idlemessages:
+- Wind resonates in the hollowed bluffs with an eerie, fluting sound.
+- Loose sandstone crumbles and patters down the bluff face.
+- A viper basks on a ledge, perfectly still.

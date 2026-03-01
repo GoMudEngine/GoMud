@@ -1,0 +1,38 @@
+mobid: 217
+zone: Ironwind Steppe
+statpool: 100
+itemdropchance: 20
+hostile: true
+maxwander: 4
+groups:
+  - steppe-goblin
+  - humanoid
+archetype: fighting
+mutationchance: 25
+idlecommands:
+  - 'emote peers around a corner, eyes darting nervously'
+  - ''
+  - ''
+  - 'emote scratches a tally mark on the wall with a sharp stone'
+  - ''
+  - 'emote sniffs the air and mutters something in guttural goblin-speak'
+activitylevel: 30
+character:
+  name: goblin scout
+  description: |
+    A wiry, green-skinned goblin barely three feet tall, dressed in
+    scraps of stolen leather and carrying a crude stone knife. The
+    goblin scout is the eyes and ears of the steppe-goblin band --
+    quick, cautious, and surprisingly sneaky for something that
+    smells this bad. Its oversized ears swivel independently, and
+    its yellow eyes see well in the dim coulee passages. It will
+    flee from a fair fight and try to lead you into an ambush.
+  speciesid: 5
+  level: 1
+  stats:
+    dexterity:
+      training: 8
+    perception:
+      training: 5
+    strength:
+      training: -3

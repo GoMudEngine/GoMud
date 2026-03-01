@@ -1,0 +1,37 @@
+roomid: 3056
+zone: Ironwind Steppe
+title: Reed Marsh
+description: The creek basin dips into a marshy depression where
+  water collects year-round, supporting thick stands of cattails
+  and rushes. The ground is soft and treacherous -- what looks
+  like solid earth may be a thin crust over ankle-deep muck.
+  Frogs croak from hidden pools, and dragonflies patrol the
+  reeds. The marsh is a vital oasis on the dry steppe, drawing
+  wildlife from all directions.
+biome: land
+exits:
+  north:
+    roomid: 3053
+  south:
+    roomid: 3090
+  east:
+    roomid: 3057
+  west:
+    roomid: 3079
+nouns:
+  cattails: Tall cattails rising above the marsh, their brown
+    seed heads bobbing in the breeze. The stems are thick and
+    spongy, growing in dense stands that block sight in every
+    direction.
+  marsh: A waterlogged depression thick with aquatic vegetation.
+    Standing water glints between the reed clumps, and the
+    ground quakes underfoot. The air is humid and warm,
+    buzzing with insect life.
+spawninfo:
+- mobid: 208
+- mobid: 238
+- mobid: 204
+idlemessages:
+- Frogs chorus from the hidden pools, a rhythmic croaking.
+- A dragonfly hovers motionless, then darts away in a blue flash.
+- The ground squishes and yields underfoot -- uncertain footing.

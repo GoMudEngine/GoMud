@@ -1,0 +1,36 @@
+roomid: 3066
+zone: Ironwind Steppe
+title: Coulee Dead End
+description: The coulee narrows to a dead end where the basalt walls
+  close in and meet. The floor is thick with accumulated sand and
+  debris washed in by rain. Against the back wall, a crude lean-to
+  of stacked stone slabs and scavenged wood forms a rough shelter.
+  Goblin clan marks are scratched into every surface, and the smell
+  of unwashed bodies and old cooking fires lingers. This is the
+  outer edge of a goblin encampment.
+biome: cliffs
+exits:
+  north:
+    roomid: 3064
+  west:
+    roomid: 3063
+  south:
+    roomid: 3068
+nouns:
+  shelter: A crude lean-to built against the dead-end wall from
+    flat stone slabs and salvaged planks. The interior is just
+    large enough for two or three goblins to crouch inside.
+    Dirty bedding and gnawed bones litter the floor.
+  marks: Goblin clan markings scratched into the basalt with
+    sharp stones -- angular symbols that might represent
+    territorial boundaries, warnings, or boasts. They are
+    refreshed regularly, the newer scratches bright against
+    the dark stone.
+spawninfo:
+- mobid: 217
+- mobid: 218
+- mobid: 222
+idlemessages:
+- The stink of goblin habitation hangs in the confined space.
+- A crude goblin totem of stacked stones watches the approach.
+- Scratching sounds come from behind the lean-to walls.

@@ -1,0 +1,35 @@
+roomid: 3051
+zone: Ironwind Steppe
+title: Creek Basin Floor
+description: The dry creek basin broadens here into a wide, flat floor
+  of packed sand and gravel. The banks on either side are head-height,
+  creating a sheltered corridor out of the wind. The basin floor is
+  crisscrossed with animal trails and scattered with sun-bleached
+  driftwood -- branches and logs deposited by past floods. The air
+  is warmer and stiller here, trapped in the basin's channel.
+biome: land
+exits:
+  north:
+    roomid: 3048
+  west:
+    roomid: 3047
+  south:
+    roomid: 3054
+  east:
+    roomid: 3053
+nouns:
+  driftwood: Sun-bleached branches and log sections, polished
+    smooth by water and deposited along the basin floor by past
+    floods. Some are wedged between boulders, others lie in
+    loose piles against the banks.
+  banks: Steep earthen banks rising on both sides, cut clean by
+    water erosion. Layers of soil, clay, and gravel are visible
+    in cross-section, each layer a different color and texture.
+spawninfo:
+- mobid: 208
+- mobid: 235
+- mobid: 231
+idlemessages:
+- Driftwood creaks as it settles in the heat.
+- The basin traps warmth, making the air noticeably hotter.
+- A toad hops across the sand and disappears under a log.

@@ -1,0 +1,44 @@
+roomid: 3070
+zone: Ironwind Steppe
+title: Goblin Shaman's Alcove
+description: A natural alcove in the coulee wall has been claimed by
+  the goblin shaman. The walls are painted with crude symbols in
+  red and black pigment -- stylized animals, spirals, and angular
+  marks that might represent spells or spirits. Bundles of dried
+  herbs hang from pegs driven into rock cracks, and a circle of
+  small bones is arranged on the floor around a flat stone that
+  serves as an altar. The air is thick with the smell of burning
+  herbs and something sharper, chemical.
+biome: cliffs
+exits:
+  west:
+    roomid: 3069
+  north:
+    roomid: 3068
+  south:
+    roomid: 3071
+  northwest:
+    roomid: 3067
+nouns:
+  symbols: Crude paintings on the alcove walls in red ochre and
+    charcoal -- spiraling patterns, stylized predator shapes,
+    and angular marks that look like a written language but
+    probably are not. The paint is thick and layered, older
+    marks showing through newer ones.
+  altar: A flat basalt stone on the floor, roughly circular
+    and polished smooth by use. Small bones, feathers, and
+    dried flower petals are arranged around it in a precise
+    pattern. Dark stains on the stone suggest offerings that
+    were not all botanical.
+  herbs: Bundles of dried herbs hanging from wooden pegs,
+    filling the alcove with a pungent, complex smell. Some
+    are recognizable -- sage, yarrow -- but others are
+    unfamiliar and faintly unsettling.
+spawninfo:
+- mobid: 219
+- mobid: 219
+- mobid: 218
+idlemessages:
+- Herb smoke curls in thick spirals, refusing to dissipate.
+- The bone circle on the floor seems undisturbed despite the breeze.
+- A low, rhythmic chanting drifts from deeper in the alcove.

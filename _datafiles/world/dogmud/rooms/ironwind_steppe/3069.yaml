@@ -1,0 +1,42 @@
+roomid: 3069
+zone: Ironwind Steppe
+title: Goblin Cooking Fire
+description: A large cooking fire burns in the center of a cleared
+  space between the coulee walls. A spit of green wood spans the
+  fire, and something unidentifiable is roasting over the coals.
+  The smoke rises into the narrow sky above, drawn upward by the
+  coulee's chimney effect. Crude clay pots and stolen metal
+  cookware are piled near the fire, and goblins squat around
+  the flames, arguing over portions with sharp gestures and
+  sharper words.
+biome: cliffs
+exits:
+  north:
+    roomid: 3068
+  west:
+    roomid: 3067
+  south:
+    roomid: 3071
+  east:
+    roomid: 3070
+nouns:
+  fire: A large campfire of scavenged wood, burning hot in a
+    ring of blackened stones. The coals are deep and well-
+    maintained, suggesting this fire is kept burning constantly.
+    Grease drips from the spit and sizzles in the flames.
+  spit: A green wood pole spanning the fire, supporting
+    something that might once have been a large animal. The
+    meat is charred on the outside and glistening with fat.
+  pots: A jumble of crude clay pots mixed with dented metal
+    cookware clearly stolen from travelers or settlements.
+    The clay pots are blackened from use; the metal ones are
+    battered and bent.
+spawninfo:
+- mobid: 218
+- mobid: 218
+- mobid: 217
+- mobid: 219
+idlemessages:
+- Goblins squabble over scraps, shoving and snarling.
+- The cooking fire pops and crackles, sending up sparks.
+- Grease sizzles as it drips into the coals.

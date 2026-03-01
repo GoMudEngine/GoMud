@@ -1,0 +1,37 @@
+roomid: 3047
+zone: Ironwind Steppe
+title: Muddy Pool
+description: A shallow pool of murky water persists here where the
+  creek bed deepens into a natural basin. The water is brown and
+  still, fed by underground seepage rather than surface flow. The
+  banks are trampled to slick mud by the constant traffic of
+  animals coming to drink. Insect larvae wriggle in the shallows,
+  and water striders skate across the surface. This is the most
+  reliable water source on the steppe.
+biome: land
+exits:
+  north:
+    roomid: 3046
+  northwest:
+    roomid: 3018
+  south:
+    roomid: 3051
+  east:
+    roomid: 3050
+nouns:
+  pool: A shallow pool of muddy water, perhaps ten paces across
+    and no deeper than knee-height at its center. The water is
+    warm, still, and not particularly clean, but it is wet --
+    which is what matters on the steppe.
+  mud: Thick, dark mud churned by countless hooves and paws.
+    The banks are so trampled that the mud extends several
+    paces from the water's edge. It sucks at your boots with
+    every step.
+spawninfo:
+- mobid: 208
+- mobid: 208
+- mobid: 238
+idlemessages:
+- Bubbles rise from the muddy pool and pop lazily.
+- A water strider skates across the pool's surface, legs dimpling the film.
+- The trampled mud squelches as the banks settle.
