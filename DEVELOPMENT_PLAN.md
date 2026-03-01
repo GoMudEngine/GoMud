@@ -5875,7 +5875,7 @@ Last phase — tests cover the final state of all features.
 
 ### Stage 40.1: Unit Test Gaps Audit & Coverage Targets ✅ COMPLETED
 
-**Merge Commit**: (pending merge into development)
+**Merge Commit**: 5c72f2c
 
 **Goal**: Map what's tested and what isn't, set targets.
 
