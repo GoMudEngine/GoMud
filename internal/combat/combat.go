@@ -344,6 +344,18 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 					attackTargetDamage, backstabCrit = calcHitDamage(&attackResult, lastHitRoll, critThreshold, backstabCrit, sdp)
 				}
 
+				// Record per-swing analytics
+				attackResult.SwingEvents = append(attackResult.SwingEvents, SwingEvent{
+					Hit:           hit,
+					Crit:          attackResult.Crit,
+					Fumble:        attackResult.Fumble,
+					Damage:        attackTargetDamage,
+					DamageReduced: attackTargetReduction,
+					DefenseUsed:   attackResult.DefenseUsed,
+					AttackZScore:  attackResult.AttackZScore,
+					DefenseZScore: attackResult.DefenseZScore,
+				})
+
 				buildAttackMessages(&attackResult, &sourceChar, &targetChar, ws, sdp,
 					attackTargetDamage, attackTargetReduction, attackSourceDamage, attackSourceReduction,
 					sourceType, targetType, attackMessagePrefix)

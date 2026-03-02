@@ -166,9 +166,16 @@ func positionFields(char *characters.Character) (string, bool) {
 	return pos, isController
 }
 
-// RecordAttack records a standard auto-attack event.
+// RecordAttack records a standard auto-attack event (legacy: one event per round).
+// Prefer RecordSwings for accurate per-swing analytics.
 func RecordAttack(result AttackResult, src, tgt SourceTarget, atkType string,
 	srcChar, tgtChar *characters.Character, round uint64) {
+	// If per-swing data is available, record each swing individually.
+	if len(result.SwingEvents) > 0 {
+		RecordSwings(result, src, tgt, atkType, srcChar, tgtChar, round)
+		return
+	}
+
 	if !analyticsReady {
 		InitAnalytics()
 		if !analyticsReady {
@@ -198,6 +205,42 @@ func RecordAttack(result AttackResult, src, tgt SourceTarget, atkType string,
 		RoundNumber:               round,
 	}
 	appendEvent(evt)
+}
+
+// RecordSwings records one analytics event per swing from AttackResult.SwingEvents.
+func RecordSwings(result AttackResult, src, tgt SourceTarget, atkType string,
+	srcChar, tgtChar *characters.Character, round uint64) {
+	if !analyticsReady {
+		InitAnalytics()
+		if !analyticsReady {
+			return
+		}
+	}
+
+	srcPos, srcCtrl := positionFields(srcChar)
+	tgtPos, tgtCtrl := positionFields(tgtChar)
+
+	for _, swing := range result.SwingEvents {
+		evt := CombatEvent{
+			SourceType:                src,
+			TargetType:                tgt,
+			AttackType:                atkType,
+			Hit:                       swing.Hit,
+			Crit:                      swing.Crit,
+			Fumble:                    swing.Fumble,
+			DamageDealt:               swing.Damage,
+			DamageReduced:             swing.DamageReduced,
+			DefenseUsed:               string(swing.DefenseUsed),
+			AttackZScore:              swing.AttackZScore,
+			DefenseZScore:             swing.DefenseZScore,
+			SourcePosition:            srcPos,
+			TargetPosition:            tgtPos,
+			SourceIsGrappleController: srcCtrl,
+			TargetIsGrappleController: tgtCtrl,
+			RoundNumber:               round,
+		}
+		appendEvent(evt)
+	}
 }
 
 // RecordSpecialMove records a special combat move (bash, kick, trip, submit, grapple, mutations).
