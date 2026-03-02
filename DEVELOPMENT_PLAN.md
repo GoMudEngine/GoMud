@@ -6661,7 +6661,7 @@ independently.
 
 ---
 
-### Stage 42.9: Wilderness Zone — Morally Ambiguous Quest Chain ✅ COMPLETED (merge: pending)
+### Stage 42.9: Wilderness Zone — Morally Ambiguous Quest Chain ✅ COMPLETED (merge: fc92e40)
 
 **Goal**: Build a branching quest chain with two mutually exclusive endings that
 forces a meaningful choice.
