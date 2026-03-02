@@ -10,9 +10,9 @@ groups:
   - humanoid
   - mutant
 idlecommands:
-  - 'emote arranges bone totems on a shelf with careful, precise movements'
-  - 'emote murmurs softly in a guttural language, eyes half-closed'
-  - 'emote grinds dried fungus between its palms, releasing a sharp, medicinal scent'
+  - 'emote crouches at the edge of the junction, watching the passage above with cautious eyes'
+  - 'emote grinds dried herbs between its palms, releasing a sharp medicinal scent'
+  - 'emote holds up an open palm toward you -- a gesture that needs no translation'
   - ''
   - ''
 activitylevel: 15

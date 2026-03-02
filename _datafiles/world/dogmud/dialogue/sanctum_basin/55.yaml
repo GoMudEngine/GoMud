@@ -54,7 +54,7 @@ patterns:
 tree:
   root:
     text: "You seek the counsel of an old mind. Very well — ask what weighs on you."
-    hints: "Try: ask saris fold, ask saris moons, or ask saris quest."
+    hints: "Try: ask saris fold, ask saris moons, ask saris tunnels, or ask saris quest."
 
   nodes:
     - id: fold
@@ -100,6 +100,11 @@ tree:
       triggers: ["align", "alignment", "together", "full", "all three", "what happens", "saw"]
       requires: ["moons"]
       text: "The last full alignment brought three nights of unnatural silence, followed by creatures I had no names for. We lost two people. I wrote it all down. I hope no one else has to verify my notes."
+
+    - id: tunnels
+      triggers: ["tunnel", "tunnels", "cave", "below", "underground", "warren", "labyrinth", "quest", "task"]
+      text: "Below the basin, tunnels wind through the stone. Things live down there -- things that were human, once. A scholar on the Observatory Path studies them from afar. And the dwellers themselves... they are not all hostile, if you know how to approach them. Both paths have merit. Both have cost."
+      hints: "Seek the basin scholar on the Observatory Path, or descend into the tunnels yourself to find what waits below."
 
 memory:
   expiryPeriod: "1h"

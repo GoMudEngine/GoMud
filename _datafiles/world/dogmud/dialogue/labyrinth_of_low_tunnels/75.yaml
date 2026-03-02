@@ -74,8 +74,8 @@ patterns:
 
 tree:
   root:
-    text: "The shaman vouches for you. That is the only reason you are breathing. What do you want here, surface-walker?"
-    hints: "Ask me about the warren, my people, or what we need."
+    text: "A surface-walker in the Hollow. My warriors wanted to kill you. I am still deciding. Leave before I decide wrong."
+    hints: "The chieftain does not seem interested in talking to someone who has not earned the warren's trust."
     variants:
       - questRequired: ["2-poultices"]
         questExcluded: ["2-end"]
