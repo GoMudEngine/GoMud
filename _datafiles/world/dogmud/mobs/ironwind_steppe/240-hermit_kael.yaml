@@ -1,0 +1,36 @@
+mobid: 240
+zone: Ironwind Steppe
+statpool: 100
+itemdropchance: 0
+hostile: false
+maxwander: 0
+archetype: fighting
+groups:
+  - humanoid
+idlecommands:
+  - 'emote stares out across the steppe, expression distant'
+  - ''
+  - 'emote whittles a piece of cedar with a small knife'
+  - ''
+  - 'emote scratches a mark on the alcove wall'
+activitylevel: 10
+character:
+  name: Hermit Kael
+  description: |
+    A lean, weathered man in patched leather and a faded cloak the
+    colour of dried grass. Kael's face is deeply lined from years
+    of wind and sun, and his dark eyes have the steady, watchful
+    quality of someone accustomed to solitude. A hunting bow rests
+    within reach, and a collection of small carved figures lines a
+    natural shelf in the rock beside him. He moves with quiet
+    economy, every gesture deliberate and unhurried.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    perception:
+      training: 15
+    dexterity:
+      training: 10
+    vitality:
+      training: 5

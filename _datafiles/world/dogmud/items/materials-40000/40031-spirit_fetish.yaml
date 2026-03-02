@@ -1,0 +1,11 @@
+itemid: 40031
+name: spirit fetish
+namesimple: fetish
+description: A small bundle of steppe grass, wolf fur, and windstone dust
+  bound with sinew. It thrums with spiritual energy when held, warm
+  despite its modest appearance.
+type: object
+subtype: mundane
+component_tag: steppe-spirit
+weight: 0.5
+value: 50

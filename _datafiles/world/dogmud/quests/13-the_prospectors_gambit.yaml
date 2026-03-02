@@ -1,0 +1,25 @@
+questid: 13
+name: The Prospector's Gambit
+description: You have chosen to help Geomancer Rhett extract windstone
+  from the ridge. The crystal could advance healing magic and protect
+  Thornwall. Completing this quest locks The Warden's Covenant.
+secret: false
+steps:
+  - id: start
+    description: "Travel to Geomancer Rhett at the rocky shelf and
+      help him begin the windstone extraction."
+  - id: extraction
+    description: "Assist Rhett with the delicate extraction process.
+      The crystal must be removed without shattering."
+  - id: end
+    description: "The extraction is complete. Rhett has the windstone
+      he needs."
+rewards:
+  playermessage: "Rhett grins broadly, cradling the extracted crystal
+    like a newborn. He disappears into his work for hours, and when
+    he emerges, he holds a shield of pale blue crystal -- the
+    Windstone Aegis, forged in gratitude."
+  roommessage: "Rhett emerges from his camp, grinning, and presents
+    a shield of pale blue crystal to his companion."
+  gold: 15
+  itemid: 20029

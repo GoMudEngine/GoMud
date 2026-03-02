@@ -26,6 +26,14 @@ nouns:
   overhang: Dark basalt overhanging the shelf, providing shelter
     from rain and sun. The underside is smooth, carved by
     centuries of wind-driven grit.
+  crystal: Among the white quartz veins, a streak of pale blue
+    crystal catches the light. It hums faintly and feels warm
+    to the touch -- distinctly different from the surrounding
+    stone. A geomancer would recognize this as windstone.
+  windstone: Among the white quartz veins, a streak of pale blue
+    crystal catches the light. It hums faintly and feels warm
+    to the touch -- distinctly different from the surrounding
+    stone. A geomancer would recognize this as windstone.
 spawninfo:
 - mobid: 210
 - mobid: 210

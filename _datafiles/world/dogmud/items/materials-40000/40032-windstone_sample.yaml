@@ -1,0 +1,10 @@
+itemid: 40032
+name: windstone sample
+namesimple: sample
+description: A chunk of pale blue crystal veined with white. It hums
+  faintly when held, warm to the touch despite its glassy surface.
+  A geomancer would want to study this.
+type: object
+subtype: mundane
+weight: 1.0
+value: 0

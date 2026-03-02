@@ -1,0 +1,120 @@
+mobid: 240
+zone: Ironwind Steppe
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Kael nods without looking up from his whittling. 'Not many come this way on purpose. What brings you to the steppe?'"
+      - "The hermit studies you with quiet, assessing eyes. 'You look like someone who has been walking a while. Sit, if you like.'"
+
+  - keywords: ["help", "quest", "task", "work"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "'There is something troubling the steppe. Two people I respect are about to destroy each other over a disagreement neither will back down from. I could use someone with fresh eyes.'"
+
+  - keywords: ["steppe", "land", "home", "live"]
+    responses:
+      - "'I have lived on the steppe for longer than most people stay anywhere. It is a hard place but an honest one. The wind does not lie and the land does not pretend.'"
+
+  - keywords: ["sylara", "windwarden", "druid"]
+    responses:
+      - "'Sylara is the Windwarden. She watches over the sacred places -- the stone circle, the old cairns, the wind-paths. She has guarded the steppe's balance since before I came here.'"
+
+  - keywords: ["rhett", "geomancer", "scholar", "thornwall"]
+    responses:
+      - "'Rhett is a scholar from Thornwall. Enthusiastic young man. He has been studying the rock formations on the ridge and found something he says could change everything. I believe him, which is the problem.'"
+
+  - keywords: [""]
+    responses:
+      - "Kael grunts and returns to his whittling."
+      - "The hermit stares out at the steppe in silence."
+
+tree:
+  root:
+    text: "A weathered man in patched leather looks up from a piece of cedar he is carving. 'Hm. A visitor. Rare enough out here.' He sets down his knife. 'You have the look of someone who solves problems. I have one that needs solving.'"
+    hints: "Ask about the problem, the steppe, or who lives here."
+    variants:
+      - questRequired: ["11-start"]
+        questExcluded: ["11-sylara"]
+        text: "Kael looks up. 'Have you spoken with Sylara yet? She camps near the stone circle, southeast of the goblin coulees. Start with her -- she has been here longer and deserves to be heard first.'"
+        hints: "Visit Windwarden Sylara near the stone circle."
+      - questRequired: ["11-sylara"]
+        questExcluded: ["11-rhett"]
+        text: "'You have met Sylara. Good. Now visit Rhett at the rocky shelf on the ridge's western face. Hear his side before you judge.'"
+        hints: "Visit Geomancer Rhett at the rocky shelf."
+      - questRequired: ["11-rhett"]
+        questExcluded: ["11-totem"]
+        text: "'You have heard them both. They each asked you for something, yes? Do what they ask. Understanding comes through action, not just words.'"
+        hints: "Complete both tasks -- retrieve Sylara's totem and collect Rhett's windstone samples."
+      - questRequired: ["11-totem"]
+        questExcluded: ["11-samples"]
+        text: "'Sylara has her totem back. Good. Now finish Rhett's task -- collect windstone samples from the rocky shelf. Then come back to me.'"
+        hints: "Collect windstone samples for Rhett."
+      - questRequired: ["11-samples"]
+        questExcluded: ["11-end"]
+        text: "Kael sets down his carving and meets your eyes. 'You have done what they asked. You have seen both sides. Now it falls to you. Whose cause will you champion? I will not choose for you.'"
+        hints: "Tell Kael whose side you choose -- Sylara or Rhett."
+      - questRequired: ["12-start"]
+        questExcluded: ["12-end"]
+        text: "'You chose the Windwarden's path. Go to Sylara. She will teach you what the steppe has to offer.'"
+      - questRequired: ["12-end"]
+        text: "'The spirits walk with you now. The steppe recognises its own. Sylara chose well.' Kael smiles -- a rare thing."
+      - questRequired: ["13-start"]
+        questExcluded: ["13-end"]
+        text: "'You chose the scholar's path. Go to Rhett. He will need your help with the extraction.'"
+      - questRequired: ["13-end"]
+        text: "'Rhett got his crystal and Thornwall will benefit. Whether the steppe forgives is another matter.' Kael shrugs. 'Time will tell.'"
+
+  nodes:
+    - id: the_problem
+      triggers: ["problem", "trouble", "conflict", "help", "quest", "task", "solve"]
+      questExcluded: ["11-start"]
+      grantsQuest: "11-start"
+      text: "'Two people I care about are on a collision course. Windwarden Sylara guards the sacred stone circle southeast of here -- it is the spiritual heart of the steppe. Geomancer Rhett, a Thornwall scholar, has found veins of rare windstone crystal in the ridge near the circle. He says extracting it could advance healing magic. Sylara says it would crack the circle's foundation and unravel the steppe's balance.' Kael sighs. 'Neither is wrong. Neither will back down. Go talk to them both -- Sylara first. She camps near the stone circle. Then find Rhett on the rocky shelf. Come back when you understand.'"
+      hints: "Visit Windwarden Sylara near the stone circle first."
+      moodChange: friendly
+
+    - id: choose_sylara
+      triggers: ["sylara", "windwarden", "druid", "protect", "circle", "nature", "spirits", "warden"]
+      requires: ["the_problem"]
+      questRequired: ["11-samples"]
+      questExcluded: ["11-end", "12-start", "13-start"]
+      grantsQuest: "11-end"
+      text: "'Sylara, then.' Kael nods slowly. 'The steppe's balance is not something to gamble with. Rhett will be disappointed, but the crystal will still be there in a hundred years. The circle will not survive the extraction.' He pauses. 'Go to Sylara. She has something to teach you -- something only the steppe can give.'"
+      unlocks: ["path_a_granted"]
+
+    - id: path_a_granted
+      triggers: ["ready", "go", "yes", "covenant", "ritual"]
+      requires: ["choose_sylara"]
+      questRequired: ["11-end"]
+      questExcluded: ["12-start"]
+      grantsQuest: "12-start"
+      text: "'Sylara will be expecting you. The stone circle is her domain -- treat it with respect and she will open doors you did not know existed.'"
+      moodChange: friendly
+
+    - id: choose_rhett
+      triggers: ["rhett", "geomancer", "scholar", "extract", "windstone", "crystal", "thornwall", "science", "healing"]
+      requires: ["the_problem"]
+      questRequired: ["11-samples"]
+      questExcluded: ["11-end", "12-start", "13-start"]
+      grantsQuest: "11-end"
+      text: "'Rhett, then.' Kael's expression is unreadable. 'The crystal could do real good for Thornwall. Sylara will grieve, but she has survived worse. The steppe is resilient -- perhaps more resilient than she gives it credit for.' He straightens. 'Go to Rhett. He will need help with the extraction.'"
+      unlocks: ["path_b_granted"]
+
+    - id: path_b_granted
+      triggers: ["ready", "go", "yes", "gambit", "extraction"]
+      requires: ["choose_rhett"]
+      questRequired: ["11-end"]
+      questExcluded: ["13-start"]
+      grantsQuest: "13-start"
+      text: "'Rhett is at the rocky shelf. He has been preparing for this. Just make sure he is careful -- the ridge does not forgive clumsy hands.'"
+      moodChange: friendly
+
+    - id: about_steppe
+      triggers: ["steppe", "land", "home", "live", "here", "long"]
+      text: "'Fifteen years. Maybe more. I stopped counting when the seasons started blending together.' Kael gestures at the vast grasslands. 'The steppe strips away everything that does not matter. What is left is either strong or gone. I find that honest.'"
+
+memory:
+  expiryPeriod: "1h"

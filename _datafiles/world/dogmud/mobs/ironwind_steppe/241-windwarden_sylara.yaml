@@ -1,0 +1,37 @@
+mobid: 241
+zone: Ironwind Steppe
+statpool: 110
+itemdropchance: 0
+hostile: false
+maxwander: 0
+archetype: casting
+groups:
+  - humanoid
+idlecommands:
+  - 'emote traces a circle in the air with one finger, murmuring softly'
+  - ''
+  - 'emote kneels to press a palm against the bare earth'
+  - ''
+  - 'emote gazes toward the stone circle with reverent attention'
+activitylevel: 10
+character:
+  name: Windwarden Sylara
+  description: |
+    A tall woman wrapped in layers of undyed wool and cured hide,
+    adorned with feathers, bone beads, and bundles of dried herbs.
+    Sylara's hair is silver-streaked and wild, woven with grass
+    and small stones. Her eyes are pale green and unnervingly
+    steady, as if she can see things others cannot. Tattoos of
+    wind spirals mark her hands and throat. She carries a gnarled
+    staff of steppe cedar topped with a wolf skull bleached white
+    by sun and weather.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    willpower:
+      training: 20
+    charisma:
+      training: 15
+    perception:
+      training: 10

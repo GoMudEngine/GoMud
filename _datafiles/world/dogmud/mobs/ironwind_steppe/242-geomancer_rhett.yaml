@@ -1,0 +1,37 @@
+mobid: 242
+zone: Ironwind Steppe
+statpool: 90
+itemdropchance: 0
+hostile: false
+maxwander: 0
+archetype: casting
+groups:
+  - humanoid
+idlecommands:
+  - 'emote holds a crystal shard up to the light, squinting at it'
+  - ''
+  - 'emote scribbles notes in a battered leather journal'
+  - ''
+  - 'emote taps a rock with a small hammer, listening intently'
+activitylevel: 15
+character:
+  name: Geomancer Rhett
+  description: |
+    A young man with wire-rimmed spectacles perched on a sunburned
+    nose and ink-stained fingers that are never still. Rhett wears
+    a Thornwall scholar's coat over practical field clothes, both
+    liberally dusted with rock powder. His pack bristles with tools
+    -- hammers, chisels, sample vials, and rolled charts. Despite
+    the dust and disarray, his eyes are bright with an infectious
+    enthusiasm. A bandolier of crystal samples crosses his chest,
+    each fragment carefully labelled.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    willpower:
+      training: 10
+    perception:
+      training: 15
+    charisma:
+      training: 5
