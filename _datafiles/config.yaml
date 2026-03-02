@@ -489,19 +489,19 @@ Balance:
   #     0.05 →   5 raw damage per swing (current — low, needs MobDamageMultiplier)
   #     0.15 →  15 raw damage per swing
   #     0.30 →  30 raw damage per swing (original default)
-  MeleeDamageScale: 0.30       # Tuned hitroll rework: doubled from 0.15; swing count halved so per-swing damage needs to compensate
+  MeleeDamageScale: 0.45       # Bumped +50% from 0.30; fights were too slow
   #
   # MobDamageMultiplier: extra multiplier applied ONLY to NPC melee
   #   damage. Lets you keep player damage low while making NPCs threatening.
   #   Example: MeleeDamageScale 0.05, MobDamageMultiplier 4.0:
   #     Player Str 100 → 100 × 1.0 × 1.0 × 0.05 = 5 raw (unchanged)
   #     Mob Str 100    → 100 × 1.0 × 1.0 × 0.05 × 4.0 = 20 raw
-  MobDamageMultiplier: 2.5      # Tuned hitroll rework: reduced from 3.75; MeleeDamageScale doubled so less compensation needed
+  MobDamageMultiplier: 2.0      # Reduced from 2.5; MeleeDamageScale bumped to 0.45 so mobs need less boost
   #
   # SpellDamageScale: multiplier on ALL spell damage output (players + NPCs).
   #   1.0 = no scaling. Example at Wil 100, skill 0, spell mult 1.0:
   #     1.0 → 100 raw,  1.5 → 150 raw,  0.5 → 50 raw
-  SpellDamageScale: 2.75        # Tuned hitroll rework: reduced from 3.5; melee got per-swing buff so spells need less boost to stay competitive
+  SpellDamageScale: 1.85        # Detuned -33% from 2.75; spells were hitting too hard relative to melee
   #
   # RhetoricDamageScale: multiplier on taunt/conviction damage output.
   #   Taunt uses itemMult 0.5 as base. Example at Cha 100, skill 0:
@@ -625,12 +625,12 @@ Balance:
     foraging: 2.0
     first-aid: 2.0
     stealth: 2.0
-    blacksmithing: 2.0
-    alchemy: 2.0
-    tailoring: 2.0
-    cooking: 2.0
-    jewelcrafting: 2.0
-    enchanting: 2.0
+    blacksmithing: 3.5  # Crafting skills fire rarely (once per craft); boosted for feel
+    alchemy: 3.5
+    tailoring: 3.5
+    cooking: 3.5
+    jewelcrafting: 3.5
+    enchanting: 3.5
 
   # ── MOB PROGRESSION ──────────────────────────────────────────────────────────
   # When enabled, mobs gain stats and skills through combat just like players.
