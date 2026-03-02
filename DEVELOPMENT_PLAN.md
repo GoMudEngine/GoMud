@@ -6725,6 +6725,32 @@ These are longer-term goals to be detailed when the above phases are complete:
 
 ---
 
-**Last Updated**: 2026-03-01
+**Last Updated**: 2026-03-02
 **Status**: In Progress
-**Current Stage**: Stage 42.9 complete. Phase 42 finished. Next: Future Expansion planning.
+**Current Stage**: Phase 42 complete. Playtest bug-fix pass complete (c581a0a). Next: Future Expansion planning.
+
+### Post-Phase 42: Playtest Bug-Fix Pass (2026-03-02)
+
+Addressed all bugs and suggestions from first multiplayer playtest session:
+
+**Bug Fixes:**
+- Basin Gate lock stuck after tutorial — stale instance save + missing SetLocked (ad68c50)
+- ANSI tags broken by word wrapper — regex fix for tag tokenization (a763b02)
+- Combat: best-of-all defense re-rolling attack per defense type — roll once (2965665)
+- Combat: folds continuing after target dies — added alive checks (2965665)
+- Combat: "in combat" persisting after death — clear Aggro/CastingState (2965665)
+- Conviction Surge too short — triggercount 8→16 (2965665)
+- Aberrant Chrysalis empty idle command causing combat loop (2965665)
+- Charisma exploit via talk/ask spam — removed OnStatUse calls (e778892)
+- Warden Tessa quest not resolving on item give — new onGive script (e778892)
+- Rhett third-person dialogue + missing quest keywords (e778892)
+- Blacksmith room missing forge station (e778892)
+- Temple exit miswired from Elara's room 477→468, fixed to 467 (7332e0b)
+- Web client vitals panel off-screen on laptops — shrunk map/comms (69247a4)
+- Combat analytics recording per-round instead of per-swing — inflated hit rates (91d49d0)
+- Mob movement messages visible in dark rooms — now sound-based (c581a0a)
+
+**New Features:**
+- Food vendor (mob 103) now has shop inventory (8fe065b)
+- New `scan` command — peek into all adjacent rooms (8fe065b)
+- Tavern "back corner" exit renamed to cardinal direction (8fe065b)
