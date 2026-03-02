@@ -386,6 +386,10 @@ func runBestOfAllDefense(result *AttackResult, sourceChar *characters.Character,
 	atkStdDev := dice.StdDevFor(atkScore)
 	attackRoll := dice.Roll(atkScore, atkStdDev)
 
+	// Always record the attack roll so crit/fumble z-scores are available
+	// even when no defense is attempted (empty sequence or all skipped).
+	best.hitRoll = attackRoll
+
 	for _, defenseType := range defSeq {
 		// Track defense attempt
 		result.DefenseAttempts = append(result.DefenseAttempts, DefenseType(defenseType))

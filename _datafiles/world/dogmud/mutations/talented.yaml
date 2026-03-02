@@ -7,7 +7,7 @@ conflicts:
   - skilled
 pros:
   - type: stat_progression_multiplier
-    value: 0.20
+    value: 0.10
 cons:
   - type: skill_progression_multiplier
-    value: -0.30
+    value: -0.15

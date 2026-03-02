@@ -7,7 +7,7 @@ conflicts:
   - talented
 pros:
   - type: skill_progression_multiplier
-    value: 0.30
+    value: 0.15
 cons:
   - type: stat_progression_multiplier
-    value: -0.20
+    value: -0.10
