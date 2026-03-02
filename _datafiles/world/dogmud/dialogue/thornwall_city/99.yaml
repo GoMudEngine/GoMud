@@ -1,0 +1,90 @@
+mobid: 99
+zone: Thornwall City
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Yes? Do you have an appointment? No? Then state your
+        business. Briefly."
+      - "The Records Office is open. I am Pell. What do you need
+        filed, found, or verified?"
+
+  - keywords: ["records", "file", "document", "find"]
+    responses:
+      - "Everything is filed. Everything. The question is where.
+        Give me a name or a date and I will locate it. Eventually."
+      - "I maintain the municipal records for the eastern
+        districts. Permits, charters, complaints, tax rolls. If
+        it was written down, I have it."
+
+  - keywords: ["help", "quest", "task", "work", "job"]
+    moods: ["neutral"]
+    responses:
+      - "I do not need help. I need people to stop losing their
+        paperwork. But if you have something to file, I will take
+        it."
+
+  - keywords: ["bridge", "toll", "harn", "crossing", "report",
+      "maintenance"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "The Watchers Crossing toll situation? I am aware. If you
+        have documentation, I can file it with the magistrate's
+        pending reviews."
+
+  - keywords: ["magistrate", "thornwall", "government", "city"]
+    responses:
+      - "The magistrate reviews pending items on her own schedule.
+        I file. She decides. That is how the system works."
+
+  - keywords: [""]
+    responses:
+      - "If you have no business here, the door is behind you."
+      - "Is there something else? I have filing to do."
+
+tree:
+  root:
+    text: "You are in the Records Office. I am Pell. State your
+      business or take a number. There are no numbers. That was
+      a joke. State your business."
+    hints: "Ask about filing a report, records, or bridge matters."
+    variants:
+      - questRequired: ["6-report"]
+        text: "Ah, you again. The bridge report has been filed.
+          Reference number 4-7-12-B. Tell Harn the magistrate
+          will review it in due course."
+
+  nodes:
+    - id: bridge_report
+      triggers: ["bridge", "harn", "toll", "maintenance", "report",
+        "crossing", "quest", "task"]
+      questRequired: ["6-start"]
+      questExcluded: ["6-report"]
+      grantsQuest: "6-report"
+      text: "A maintenance report from the bridge keeper at
+        Watchers Crossing? Yes, I know about the toll situation.
+        Give me the details and I will file it with the
+        magistrate's pending reviews. It will be seen. Eventually.
+        That is how things work here."
+      hints: "Return to Harn at Watchers Crossing and tell him
+        the report has been filed."
+      moodChange: friendly
+
+    - id: already_filed
+      triggers: ["bridge", "report", "toll", "harn"]
+      questRequired: ["6-report"]
+      text: "Already filed. Reference number 4-7-12-B. The
+        magistrate will review it in due course. Now if you will
+        excuse me, I have a backlog that predates you."
+
+    - id: about_records
+      triggers: ["records", "system", "file", "how", "find"]
+      text: "Every document that passes through this office
+        receives a reference number, a date stamp, and a
+        classification code. Cross-referenced by subject, origin,
+        and urgency. The system is perfect. The people who use it
+        are not."
+
+memory:
+  expiryPeriod: "1h"
