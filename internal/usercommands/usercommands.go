@@ -138,6 +138,7 @@ var (
 		`room`:        {Room, false, true, true},       // Admin only
 		`save`:        {Save, true, true, false},
 		`say`:         {Say, true, true, false},
+		`scan`:        {Scan, false, true, false},
 		`search`:{Search, false, true, false},
 		`sell`:        {Sell, false, true, false},
 		`server`:      {Server, false, true, true}, // Admin only

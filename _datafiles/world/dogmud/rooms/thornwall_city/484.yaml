@@ -12,7 +12,7 @@ description: A cramped alcove tucked behind the main bar, separated from the
   have seen everything at least twice.
 biome: city
 exits:
-  west:
+  north:
     roomid: 472
 nouns:
   table: A round table made from what might once have been a barrel lid, its

@@ -19,7 +19,7 @@ exits:
     roomid: 475
   west:
     roomid: 481
-  back corner:
+  south:
     roomid: 484
 nouns:
   sign: A painted wooden sign showing a fence post in brown water, the waterline
