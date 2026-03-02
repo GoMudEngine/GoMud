@@ -6,7 +6,7 @@
 hints:
   - >-
     Having trouble finding quests? Try
-    <ansi fg="command">ask</ansi> <ansi fg="yellow">&lt;npc-name&gt;</ansi>
+    <ansi fg="command">ask</ansi> <ansi fg="yellow">[npc-name]</ansi>
     <ansi fg="command">quest</ansi> at any quest giver.
   - >-
     Check the <ansi fg="command">help</ansi> command for a full list of
@@ -22,7 +22,7 @@ hints:
     announcements and plan accordingly.
   - >-
     Use <ansi fg="command">consider</ansi>
-    <ansi fg="yellow">&lt;target&gt;</ansi> before a fight to gauge
+    <ansi fg="yellow">[target]</ansi> before a fight to gauge
     how dangerous an opponent is.
   - >-
     Crafting materials can be found by using the

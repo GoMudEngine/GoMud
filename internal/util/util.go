@@ -58,7 +58,7 @@ var (
 	// \w: alphanumeric
 	// \p{P}: punctuation
 	// \p{S}: symbol
-	wordRegex        = regexp.MustCompile(`([\p{Han}\p{Hiragana}\p{Katakana}\p{Hangul}]|\w+|[\p{P}\p{S}\s]+)`)
+	wordRegex        = regexp.MustCompile(`(</?ansi[^>]*>|[\p{Han}\p{Hiragana}\p{Katakana}\p{Hangul}]|\w+|[\p{P}\p{S}\s]+)`)
 	punctuationRegex = regexp.MustCompile(`[\p{P}]+`)
 	paragraphBreak   = regexp.MustCompile(`\n\s*\n`)
 	ansiTagRegex     = regexp.MustCompile(`</?ansi[^>]*>`)
