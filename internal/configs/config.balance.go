@@ -59,6 +59,7 @@ type Balance struct {
 	UnarmedSkillDivisor     ConfigFloat `yaml:"UnarmedSkillDivisor"`     // Skill / this = damage bonus (default 10.0)
 	UnarmedBaseVariance        ConfigFloat `yaml:"UnarmedBaseVariance"`        // Base randomness of unarmed hits (default 3.0)
 	UnarmedDamageMultiplier    ConfigFloat `yaml:"UnarmedDamageMultiplier"`    // Fist damage multiplier for new pipeline (default 0.30)
+	UnarmedSpeedMultiplier     ConfigFloat `yaml:"UnarmedSpeedMultiplier"`     // Unarmed attack speed — slightly faster than light weapons (default 1.4)
 	SkillMultiplierBase        ConfigFloat `yaml:"SkillMultiplierBase"`        // Skill multiplier at rank 0 (default 1.0)
 	SkillMultiplierMax         ConfigFloat `yaml:"SkillMultiplierMax"`         // Skill multiplier at soft cap (default 3.0)
 	MeleeDamageScale           ConfigFloat `yaml:"MeleeDamageScale"`            // Physical damage scale. Stats ~100, so 0.30 yields ~30 raw per swing (default 0.30)
@@ -307,6 +308,9 @@ func (b *Balance) Validate() {
 	}
 	if b.UnarmedDamageMultiplier <= 0 {
 		b.UnarmedDamageMultiplier = 0.30
+	}
+	if b.UnarmedSpeedMultiplier <= 0 {
+		b.UnarmedSpeedMultiplier = 1.4
 	}
 	if b.SkillMultiplierBase <= 0 {
 		b.SkillMultiplierBase = 1.0

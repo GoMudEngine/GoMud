@@ -6,7 +6,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
-	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
@@ -279,95 +278,95 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 	statModDBonus := sourceChar.StatMod(`damage`)
 	extraAttacks := sourceChar.StatMod(`attacks`)
 
-	attackCount := calcAttackCount(&sourceChar, extraAttacks)
+	attackWeapons := collectAttackWeapons(&sourceChar)
 
-	for i := 0; i < attackCount; i++ {
+	attackMessagePrefix := ``
+	backstabCrit := false
+	if sourceChar.Aggro.Type == characters.BackStab {
+		backstabCrit = true
+		attackMessagePrefix = `<ansi fg="magenta-bold">*[BACKSTAB]*</ansi> `
+		sourceChar.SetAggro(sourceChar.Aggro.UserId, sourceChar.Aggro.MobInstanceId, characters.DefaultAttack)
+	}
 
-		mudlog.Debug(`calculateCombat`, `Atk`, fmt.Sprintf(`%d/%d`, i+1, attackCount), `Source`, fmt.Sprintf(`%s (%s)`, sourceChar.Name, sourceType), `Target`, fmt.Sprintf(`%s (%s)`, targetChar.Name, targetType))
+	for weaponIdx, weapon := range attackWeapons {
 
-		attackWeapons := collectAttackWeapons(&sourceChar)
+		ws := buildWeaponSetup(&sourceChar, &targetChar, weapon, weaponIdx, len(attackWeapons))
+		sdp := buildDamageParams(&sourceChar, &targetChar, ws, statModDBonus, sourceType)
+		sdp.critBuffs = ws.critBuffs
 
-		attackMessagePrefix := ``
-		backstabCrit := false
-		if sourceChar.Aggro.Type == characters.BackStab {
-			backstabCrit = true
-			attackMessagePrefix = `<ansi fg="magenta-bold">*[BACKSTAB]*</ansi> `
-			sourceChar.SetAggro(sourceChar.Aggro.UserId, sourceChar.Aggro.MobInstanceId, characters.DefaultAttack)
-		}
+		// Single merged swing count per weapon
+		swingCount := calcSwingCount(&sourceChar, ws.weaponSpeed, extraAttacks, ws.isOffhand)
 
-		for weaponIdx, weapon := range attackWeapons {
+		mudlog.Debug("DistDamage", "swings", swingCount, "baseDmg", ws.baseDmg, "variance", sdp.dmgVariance, "dmgMean", sdp.dmgMean, "weaponMult", ws.weaponDmgMult, "critBuffs", ws.critBuffs)
 
-			ws := buildWeaponSetup(&sourceChar, &targetChar, weapon, weaponIdx, len(attackWeapons))
-			sdp := buildDamageParams(&sourceChar, &targetChar, ws, statModDBonus, sourceType)
-			sdp.critBuffs = ws.critBuffs
+		critThreshold := calcCritThreshold(&sourceChar, &targetChar)
 
-			mudlog.Debug("DistDamage", "attacks", ws.attacks, "baseDmg", ws.baseDmg, "variance", sdp.dmgVariance, "dmgMean", sdp.dmgMean, "weaponMult", ws.weaponDmgMult, "critBuffs", ws.critBuffs)
+		for j := 0; j < swingCount; j++ {
 
-			critThreshold := calcCritThreshold(&sourceChar, &targetChar)
-			fumbleThreshold := -2.0
+			mudlog.Debug(`calculateCombat`, `Swing`, fmt.Sprintf(`%d/%d`, j+1, swingCount), `Weapon`, ws.weaponName, `Source`, fmt.Sprintf(`%s (%s)`, sourceChar.Name, sourceType), `Target`, fmt.Sprintf(`%s (%s)`, targetChar.Name, targetType))
 
-			for j := 0; j < ws.attacks; j++ {
+			// Reset per-swing flags
+			attackResult.Crit = false
+			attackResult.Fumble = false
+			attackResult.DoubleFumble = false
 
-				// Reset per-swing flags
-				attackResult.Crit = false
-				attackResult.Fumble = false
+			attackTargetDamage := 0
+			attackTargetReduction := 0
+			attackSourceDamage := 0
+			attackSourceReduction := 0
 
-				attackTargetDamage := 0
-				attackTargetReduction := 0
-				attackSourceDamage := 0
-				attackSourceReduction := 0
+			attackScore := calcAttackScore(&sourceChar, &targetChar, ws.penalty)
 
-				attackScore := calcAttackScore(&sourceChar, &targetChar, ws.penalty)
+			defenseSequence := targetChar.GetDefenseSequence()
 
-				defenseSequence := targetChar.GetDefenseSequence()
-				hit := false
-				var lastHitRoll dice.RollResult
+			// Third-party grapple vulnerability
+			defenseSequence, isThirdParty := filterDefensesForThirdParty(&attackResult, &sourceChar, &targetChar, defenseSequence)
 
-				// Third-party grapple vulnerability
-				defenseSequence, isThirdParty := filterDefensesForThirdParty(&attackResult, &sourceChar, &targetChar, defenseSequence)
+			// Roll attack once via best-of-all defense
+			best := runBestOfAllDefense(&attackResult, &sourceChar, &targetChar, defenseSequence, attackScore, isThirdParty)
 
-				// Fumble check
-				initialAttackRoll := dice.RollStat(attackScore)
-				if initialAttackRoll.ZScore <= fumbleThreshold {
-					attackResult.Fumble = true
-					hit = false
-					mudlog.Debug("FumbleDetected", "zScore", fmt.Sprintf("%.2f", initialAttackRoll.ZScore), "threshold", fmt.Sprintf("%.2f", fumbleThreshold), "source", sourceChar.Name, "target", targetChar.Name)
-				} else {
-					best := runBestOfAllDefense(&attackResult, &sourceChar, &targetChar, defenseSequence, attackScore, isThirdParty)
-					hit, lastHitRoll = resolveDefenseOutcome(&attackResult, best, &sourceChar, &targetChar, isThirdParty)
-				}
+			// New resolution order: fumbles → crits → normal → floors
+			res := resolveDefenseOutcome(&attackResult, best, &sourceChar, &targetChar, critThreshold, isThirdParty)
 
-				sourceChar.UpdateMomentum(hit)
+			sourceChar.UpdateMomentum(res.hit)
 
-				if hit {
-					attackResult.Hit = true
-					attackTargetDamage, backstabCrit = calcHitDamage(&attackResult, lastHitRoll, critThreshold, backstabCrit, sdp)
-				}
+			if res.hit {
+				attackResult.Hit = true
+				attackTargetDamage, backstabCrit = calcHitDamage(&attackResult, res.crit, backstabCrit, sdp)
+			}
 
-				// Record per-swing analytics
-				attackResult.SwingEvents = append(attackResult.SwingEvents, SwingEvent{
-					Hit:           hit,
-					Crit:          attackResult.Crit,
-					Fumble:        attackResult.Fumble,
-					Damage:        attackTargetDamage,
-					DamageReduced: attackTargetReduction,
-					DefenseUsed:   attackResult.DefenseUsed,
-					AttackZScore:  attackResult.AttackZScore,
-					DefenseZScore: attackResult.DefenseZScore,
-				})
+			if res.fumble {
+				attackResult.Fumble = true
+			}
 
+			// Record per-swing analytics
+			attackResult.SwingEvents = append(attackResult.SwingEvents, SwingEvent{
+				Hit:           res.hit,
+				Crit:          res.crit,
+				Fumble:        res.fumble,
+				DoubleFumble:  res.doubleFumble,
+				DefenseCrit:   res.defenseCrit,
+				Damage:        attackTargetDamage,
+				DamageReduced: attackTargetReduction,
+				DefenseUsed:   attackResult.DefenseUsed,
+				AttackZScore:  attackResult.AttackZScore,
+				DefenseZScore: attackResult.DefenseZScore,
+			})
+
+			// Only build attack messages for non-double-fumble (double fumble already sent)
+			if !res.doubleFumble {
 				buildAttackMessages(&attackResult, &sourceChar, &targetChar, ws, sdp,
 					attackTargetDamage, attackTargetReduction, attackSourceDamage, attackSourceReduction,
 					sourceType, targetType, attackMessagePrefix)
-
-				attackResult.DamageToTarget += attackTargetDamage
-				attackResult.DamageToTargetReduction += attackTargetReduction
-				attackResult.DamageToSource += attackSourceDamage
-				attackResult.DamageToSourceReduction += attackSourceReduction
 			}
 
-			applyPetDamage(&attackResult, &sourceChar, &targetChar, targetType)
+			attackResult.DamageToTarget += attackTargetDamage
+			attackResult.DamageToTargetReduction += attackTargetReduction
+			attackResult.DamageToSource += attackSourceDamage
+			attackResult.DamageToSourceReduction += attackSourceReduction
 		}
+
+		applyPetDamage(&attackResult, &sourceChar, &targetChar, targetType)
 	}
 	return attackResult
 

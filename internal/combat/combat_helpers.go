@@ -52,37 +52,69 @@ type bestDefenseResult struct {
 	defenseFloor bool // true if defense succeeded via floor save
 }
 
-// calcAttackCount computes the number of attack passes for a combat round.
-func calcAttackCount(sourceChar *characters.Character, extraAttacks int) int {
-	attackCount := 1 + int(sourceChar.Stats.Dexterity.ValueAdj/50)
-	if attackCount < 1 {
-		attackCount = 1
+// calcSwingCount computes the number of swings for a single weapon per round.
+// Merges dex + weapon speed + skill into one formula, replacing the old
+// outer-loop calcAttackCount × inner-loop ws.attacks double multiplication.
+//
+// Formula: swings = max(1, round(1 + (dex - 50) / 100 × weaponSpeed × (1 + skill / softCap)))
+// Then apply stamina, encumbrance, position, and recovery modifiers.
+// Hard cap: 4 per weapon.
+func calcSwingCount(sourceChar *characters.Character, weaponSpeed float64, extraAttacks int, isOffhand bool) int {
+	bal := configs.GetBalanceConfig()
+	softCap := float64(bal.SkillSoftCap)
+	if softCap <= 0 {
+		softCap = 50
 	}
 
-	attackCount += extraAttacks
+	dex := float64(sourceChar.Stats.Dexterity.ValueAdj)
+	skillLevel := float64(sourceChar.GetCombatSkillLevel())
 
-	// Apply smooth stamina-based attack count penalty
-	spPenalty := float64(configs.GetBalanceConfig().StaminaPenaltyMax)
-	attackCount = int(math.Ceil(float64(attackCount) *
-		ResourceMultiplier(sourceChar.Stamina, sourceChar.StaminaMax.Value, spPenalty)))
-	if attackCount < 1 {
-		attackCount = 1
+	// Core swing count formula
+	swings := 1.0 + (dex-50.0)/100.0*weaponSpeed*(1.0+skillLevel/softCap)
+	swings += float64(extraAttacks)
+
+	// Offhand penalty: weapon-combat skill governs dual-wield speed
+	if isOffhand {
+		wcLevel := float64(sourceChar.GetSkillLevel(skills.WeaponCombat))
+		dualWieldMod := 0.5 + (wcLevel/50.0)*0.5
+		swings *= dualWieldMod
 	}
 
-	// Apply encumbrance penalty to attack count (weight-based)
+	// Apply smooth stamina-based swing count penalty
+	spPenalty := float64(bal.StaminaPenaltyMax)
+	swings *= ResourceMultiplier(sourceChar.Stamina, sourceChar.StaminaMax.Value, spPenalty)
+
+	// Apply encumbrance penalty (weight-based)
 	carriedWeight := sourceChar.GetCarriedWeight()
 	capacity := sourceChar.CarryCapacity()
 	if carriedWeight > capacity {
 		overAmount := carriedWeight - capacity
 		overRatio := overAmount / capacity
 		encumbrancePenalty := math.Min(overRatio*0.5, 0.5)
-		attackCount = int(math.Ceil(float64(attackCount) * (1.0 - encumbrancePenalty)))
-		if attackCount < 1 {
-			attackCount = 1
-		}
+		swings *= (1.0 - encumbrancePenalty)
 	}
 
-	return attackCount
+	// Position-based speed modifier
+	positionSpeed := sourceChar.CombatPosition.GetSpeedMultiplier()
+	swings *= positionSpeed
+
+	// Round to nearest int, minimum 1
+	result := int(math.Round(swings))
+	if result < 1 {
+		result = 1
+	}
+
+	// Recovery penalty: force to 1
+	if sourceChar.HasCondition(characters.ConditionRecoveryPenalty) {
+		result = 1
+	}
+
+	// Hard cap: max 4 swings per weapon
+	if result > 4 {
+		result = 4
+	}
+
+	return result
 }
 
 // collectAttackWeapons gathers all weapons the character can attack with.
@@ -144,13 +176,15 @@ func calcDualWieldPenalty(sourceChar *characters.Character, weapIdx, totalWeaps 
 }
 
 // buildWeaponSetup pre-computes weapon info for a single weapon in the attack sequence.
+// Note: swing count is now computed separately by calcSwingCount, not here.
 func buildWeaponSetup(sourceChar *characters.Character, targetChar *characters.Character, weapon items.Item, idx, total int) weaponSetup {
+	bal := configs.GetBalanceConfig()
 	raceInfo := species.GetSpecies(sourceChar.SpeciesId)
 	ws := weaponSetup{
 		weapon:        weapon,
 		weaponName:    raceInfo.UnarmedName,
 		weaponSubType: items.Unarmed,
-		weaponSpeed:   1.0,
+		weaponSpeed:   float64(bal.UnarmedSpeedMultiplier),
 		isOffhand:     idx > 0,
 		penalty:       calcDualWieldPenalty(sourceChar, idx, total),
 	}
@@ -169,34 +203,14 @@ func buildWeaponSetup(sourceChar *characters.Character, targetChar *characters.C
 
 		ws.weaponDmgMult = itemSpec.DamageMultiplier
 		if ws.weaponDmgMult <= 0 {
-			ws.weaponDmgMult = float64(configs.GetBalanceConfig().UnarmedDamageMultiplier)
+			ws.weaponDmgMult = float64(bal.UnarmedDamageMultiplier)
 		}
 	} else {
 		if speciesInfo := species.GetSpecies(sourceChar.SpeciesId); speciesInfo != nil && speciesInfo.DamageMultiplier > 0 {
 			ws.weaponDmgMult = speciesInfo.DamageMultiplier
 		} else {
-			ws.weaponDmgMult = float64(configs.GetBalanceConfig().UnarmedDamageMultiplier)
+			ws.weaponDmgMult = float64(bal.UnarmedDamageMultiplier)
 		}
-	}
-
-	// Apply weapon speed multiplier, skill modifiers, and dual wielding bonuses
-	ws.attacks = sourceChar.GetModifiedAttackCount(ws.attacks, ws.weaponSpeed, ws.isOffhand)
-
-	// Stage 8.3: Apply position-based speed modifier
-	positionSpeed := sourceChar.CombatPosition.GetSpeedMultiplier()
-	ws.attacks = int(math.Ceil(float64(ws.attacks) * positionSpeed))
-	if ws.attacks < 1 {
-		ws.attacks = 1
-	}
-
-	// Stage 7.5: Reduce attacks to 1 if attempting recovery this round
-	if sourceChar.HasCondition(characters.ConditionRecoveryPenalty) {
-		ws.attacks = 1
-	}
-
-	// Hard cap: max 4 swings per weapon per pass
-	if ws.attacks > 4 {
-		ws.attacks = 4
 	}
 
 	return ws
@@ -430,10 +444,80 @@ func runBestOfAllDefense(result *AttackResult, sourceChar *characters.Character,
 	return best
 }
 
-// resolveDefenseOutcome processes the best defense result and sends appropriate messages.
-// Returns whether the attack hit and the relevant roll result.
-func resolveDefenseOutcome(result *AttackResult, best bestDefenseResult, sourceChar *characters.Character, targetChar *characters.Character, isThirdParty bool) (bool, dice.RollResult) {
+// hitResolution holds the outcome of the full hitroll pipeline.
+type hitResolution struct {
+	hit          bool
+	crit         bool
+	fumble       bool
+	doubleFumble bool
+	defenseCrit  bool
+	hitRoll      dice.RollResult
+}
+
+// doubleFumbleMessages are comedy flavor text for when both combatants fumble.
+var doubleFumbleMessages = []struct {
+	toAttacker string
+	toDefender string
+	toRoom     string
+}{
+	{
+		toAttacker: `You trip over your own feet and %s stumbles trying to capitalize!`,
+		toDefender: `%s trips over their own feet and you stumble trying to capitalize!`,
+		toRoom:     `%s and %s both stumble in a spectacular display of ineptitude.`,
+	},
+	{
+		toAttacker: `You swing wildly and lose your balance — %s flails just as badly!`,
+		toDefender: `%s swings wildly and loses balance — and you flail just as badly!`,
+		toRoom:     `%s and %s both flail about in an embarrassing tangle of limbs.`,
+	},
+	{
+		toAttacker: `Your weapon slips at the exact moment %s trips over their own guard!`,
+		toDefender: `Your guard tangles at the exact moment %s's weapon slips free!`,
+		toRoom:     `%s's weapon slips and %s's guard tangles — both stumble to the ground!`,
+	},
+	{
+		toAttacker: `You overcommit and tumble forward — %s overreacts and falls too!`,
+		toDefender: `%s overcommits and tumbles forward — you overreact and fall too!`,
+		toRoom:     `%s overcommits and %s overreacts — both crash to the ground!`,
+	},
+	{
+		toAttacker: `You slip on something and %s panics into a heap beside you!`,
+		toDefender: `%s slips on something and you panic into a heap beside them!`,
+		toRoom:     `%s slips and %s panics — both end up in a heap on the ground!`,
+	},
+}
+
+// handleDoubleFumble applies prone to both combatants and sends comedy text.
+func handleDoubleFumble(result *AttackResult, sourceChar *characters.Character, targetChar *characters.Character) {
+	// Both go prone
+	sourceChar.CombatPosition = characters.PositionProne
+	targetChar.CombatPosition = characters.PositionProne
+
+	// Pick a random comedy message
+	msg := doubleFumbleMessages[util.Rand(len(doubleFumbleMessages))]
+
+	result.SendToSource(fmt.Sprintf(`<ansi fg="fumble-text">!!!</ansi> `+
+		`<ansi fg="yellow">`+msg.toAttacker+`</ansi>`+
+		` <ansi fg="fumble-text">!!!</ansi>`, targetChar.Name))
+	result.SendToTarget(fmt.Sprintf(`<ansi fg="fumble-text">!!!</ansi> `+
+		`<ansi fg="yellow">`+msg.toDefender+`</ansi>`+
+		` <ansi fg="fumble-text">!!!</ansi>`, sourceChar.Name))
+	result.SendToSourceRoom(fmt.Sprintf(`<ansi fg="fumble-text">!!!</ansi> `+
+		`<ansi fg="yellow">`+msg.toRoom+`</ansi>`+
+		` <ansi fg="fumble-text">!!!</ansi>`, sourceChar.Name, targetChar.Name))
+}
+
+// resolveDefenseOutcome processes the best defense result with the new
+// crit/fumble priority: fumbles → crits → normal → floors.
+// Returns the full hitResolution including crit/fumble flags.
+func resolveDefenseOutcome(result *AttackResult, best bestDefenseResult, sourceChar *characters.Character, targetChar *characters.Character, critThreshold float64, isThirdParty bool) hitResolution {
 	bal := configs.GetBalanceConfig()
+	fumbleThreshold := -2.0
+	defCritThreshold := 2.0
+
+	res := hitResolution{
+		hitRoll: best.hitRoll,
+	}
 
 	// Store z-scores from the best defense attempt
 	if best.defenseType != "" {
@@ -441,150 +525,251 @@ func resolveDefenseOutcome(result *AttackResult, best bestDefenseResult, sourceC
 		result.DefenseZScore = best.defRoll.ZScore
 	}
 
+	attackFumble := best.hitRoll.ZScore <= fumbleThreshold
+	defenseFumble := best.defenseType != "" && best.defRoll.ZScore <= fumbleThreshold
+	attackCrit := best.hitRoll.ZScore >= critThreshold
+	defenseCrit := best.defenseType != "" && best.defRoll.ZScore >= defCritThreshold
+
+	// ── Step 1: Fumble resolution (absolute) ────────────────────────────────
+
+	if attackFumble && defenseFumble {
+		// Double fumble: miss, both go prone, comedy text
+		res.fumble = true
+		res.doubleFumble = true
+		res.hit = false
+		result.Fumble = true
+		result.DoubleFumble = true
+		handleDoubleFumble(result, sourceChar, targetChar)
+		mudlog.Debug("DoubleFumble", "atkZ", fmt.Sprintf("%.2f", best.hitRoll.ZScore),
+			"defZ", fmt.Sprintf("%.2f", best.defRoll.ZScore),
+			"source", sourceChar.Name, "target", targetChar.Name)
+		return res
+	}
+
+	if attackFumble {
+		// Attack fumble: always miss, no exceptions
+		res.fumble = true
+		res.hit = false
+		result.Fumble = true
+		mudlog.Debug("AttackFumble", "zScore", fmt.Sprintf("%.2f", best.hitRoll.ZScore),
+			"source", sourceChar.Name, "target", targetChar.Name)
+		return res
+	}
+
+	if defenseFumble {
+		// Defense fumble: guarantees a hit (but NOT auto-crit)
+		res.hit = true
+		mudlog.Debug("DefenseFumble", "defZ", fmt.Sprintf("%.2f", best.defRoll.ZScore),
+			"source", sourceChar.Name, "target", targetChar.Name)
+		// Still check if the attack roll was also a crit
+		if attackCrit {
+			res.crit = true
+		}
+		return res
+	}
+
+	// ── Step 2: Crit resolution (trumps normal rolls) ───────────────────────
+
+	if attackCrit && defenseCrit {
+		// Both crit: compare raw values, higher wins
+		if best.hitRoll.Value >= best.defRoll.Value {
+			res.hit = true
+			res.crit = true
+			mudlog.Debug("CritVsCrit-AtkWins", "atkVal", fmt.Sprintf("%.1f", best.hitRoll.Value),
+				"defVal", fmt.Sprintf("%.1f", best.defRoll.Value),
+				"source", sourceChar.Name, "target", targetChar.Name)
+		} else {
+			res.hit = false
+			res.defenseCrit = true
+			setDefenseCritFlags(result, best)
+			sendDefenseMessages(result, best, sourceChar, targetChar, isThirdParty)
+			mudlog.Debug("CritVsCrit-DefWins", "atkVal", fmt.Sprintf("%.1f", best.hitRoll.Value),
+				"defVal", fmt.Sprintf("%.1f", best.defRoll.Value),
+				"source", sourceChar.Name, "target", targetChar.Name)
+		}
+		return res
+	}
+
+	if attackCrit {
+		// Attack crit vs normal defense: always hits
+		res.hit = true
+		res.crit = true
+		mudlog.Debug("AttackCrit", "zScore", fmt.Sprintf("%.2f", best.hitRoll.ZScore),
+			"threshold", fmt.Sprintf("%.2f", critThreshold),
+			"source", sourceChar.Name, "target", targetChar.Name)
+		return res
+	}
+
+	if defenseCrit {
+		// Defense crit vs normal attack: always avoids
+		res.hit = false
+		res.defenseCrit = true
+		setDefenseCritFlags(result, best)
+		sendDefenseMessages(result, best, sourceChar, targetChar, isThirdParty)
+		mudlog.Debug("DefenseCrit", "defZ", fmt.Sprintf("%.2f", best.defRoll.ZScore),
+			"source", sourceChar.Name, "target", targetChar.Name)
+		return res
+	}
+
+	// ── Step 3: Normal resolution ───────────────────────────────────────────
+
 	if best.margin > 0 {
-		// Attack hit floor: even outclassed attackers have a minimum chance
+		// Defense won the roll normally — check attack floor (last resort)
 		attackFloor := float64(bal.MinAttackHitChance)
 		if attackFloor > 0 && util.Rand(100) < int(attackFloor*100) {
-			// Floor save — attack hits despite defense winning the roll
-			return true, best.hitRoll
+			res.hit = true
+			return res
 		}
 
-		// Best defense succeeded — attack is avoided
-		result.DefenseUsed = DefenseType(best.defenseType)
-
-		// Detect defense crits (z > 2.0) for Stage 8.4 crit outcomes
-		if best.defRoll.ZScore > 2.0 {
-			if best.defenseType == characters.DefenseParry {
-				result.ParryCritDetected = true
-			} else if best.defenseType == characters.DefenseDodge {
-				result.DodgeCritDetected = true
-			}
-		}
-
-		// Add defense success messages (Stage 9.3: narrative variety)
-		var defenseVerb string
-		var skillToProgress string
-		var itemsDefenseType items.DefenseType
-		switch best.defenseType {
-		case characters.DefenseDodge:
-			defenseVerb = "dodge"
-			itemsDefenseType = items.DefenseDodge
-			skillToProgress = string(skills.UnarmedCombat)
-		case characters.DefenseParry:
-			defenseVerb = "parry"
-			itemsDefenseType = items.DefenseParry
-			skillToProgress = string(skills.WeaponCombat)
-		case characters.DefenseBlock:
-			defenseVerb = "block"
-			itemsDefenseType = items.DefenseBlock
-			skillToProgress = string(skills.WeaponCombat)
-		}
-
-		// Trigger skill progression for successful defense
-		targetChar.TrackSkillUse(skillToProgress)
-		targetChar.CheckSkillProgression(skillToProgress, targetChar.GetUserId(), 1.0)
-
-		// Get narrative defense messages based on defense z-score
-		defenseMsgs := items.GetDefenseMessage(itemsDefenseType, best.defRoll.ZScore)
-
-		// Prepare token replacements
-		weaponName := species.GetSpecies(sourceChar.SpeciesId).UnarmedName
-		if sourceChar.Equipment.Weapon.ItemId > 0 {
-			weaponName = sourceChar.Equipment.Weapon.GetSpec().Name
-		}
-
-		tokenReplacements := map[items.TokenName]string{
-			items.TokenDefender: targetChar.Name,
-			items.TokenAttacker: sourceChar.Name,
-			items.TokenWeapon:   weaponName,
-			items.TokenStance:   targetChar.CalculateStanceString(),
-			items.TokenPosition: targetChar.CalculatePositionString(),
-			items.TokenMomentum: targetChar.CalculateMomentumString(),
-		}
-
-		// If we have custom defense messages, use them
-		if len(defenseMsgs.Together.ToDefender) > 0 {
-			toDefenderMsg := defenseMsgs.Together.ToDefender.Get()
-			toAttackerMsg := defenseMsgs.Together.ToAttacker.Get()
-			toRoomMsg := defenseMsgs.Together.ToRoom.Get()
-
-			for token, value := range tokenReplacements {
-				toDefenderMsg = toDefenderMsg.SetTokenValue(token, value)
-				toAttackerMsg = toAttackerMsg.SetTokenValue(token, value)
-				toRoomMsg = toRoomMsg.SetTokenValue(token, value)
-			}
-
-			result.SendToTarget(string(toDefenderMsg))
-			result.SendToSource(string(toAttackerMsg))
-			result.SendToSourceRoom(string(toRoomMsg))
-			if sourceChar.RoomId != targetChar.RoomId {
-				result.SendToTargetRoom(string(toRoomMsg))
-			}
-		} else {
-			result.SendToSource(fmt.Sprintf(`<ansi fg="attack-bad">%s %ss your attack!</ansi>`, targetChar.Name, defenseVerb))
-			result.SendToTarget(fmt.Sprintf(`<ansi fg="defense-good">You %s %s's attack!</ansi>`, defenseVerb, sourceChar.Name))
-			result.SendToSourceRoom(fmt.Sprintf(`<ansi fg="combat">%s %ss %s's attack.</ansi>`, targetChar.Name, defenseVerb, sourceChar.Name))
-			if sourceChar.RoomId != targetChar.RoomId {
-				result.SendToTargetRoom(fmt.Sprintf(`<ansi fg="combat">%s %ss an attack.</ansi>`, targetChar.Name, defenseVerb))
-			}
-		}
-
-		// Stage 8.5: Add third-party context if applicable
-		if isThirdParty {
-			result.SendToTarget(fmt.Sprintf(
-				`<ansi fg="yellow">(Despite being entangled in a grapple!)</ansi>`))
-		}
-
-		return false, best.hitRoll
+		// Defense succeeded
+		res.hit = false
+		sendDefenseMessages(result, best, sourceChar, targetChar, isThirdParty)
+		return res
 	}
 
-	// No defense succeeded on the roll — check defense floor
+	// Attack won the roll normally — check defense floor (last resort)
 	{
-		// Default to dodge when no defense was attempted (e.g. no stamina)
-		defType := best.defenseType
-		if defType == "" {
-			defType = characters.DefenseDodge
-		}
 		floor := float64(bal.MinDefenseChance)
 		if floor > 0 && util.Rand(100) < int(floor*100) {
-			// Floor save — defense succeeds despite losing the roll
-			result.DefenseUsed = DefenseType(defType)
-
-			var defenseVerb string
-			switch defType {
-			case characters.DefenseDodge:
-				defenseVerb = "dodge"
-			case characters.DefenseParry:
-				defenseVerb = "parry"
-			case characters.DefenseBlock:
-				defenseVerb = "block"
-			default:
-				defenseVerb = "avoid"
+			res.hit = false
+			// Floor save — defense succeeds via last resort
+			defType := best.defenseType
+			if defType == "" {
+				defType = characters.DefenseDodge
 			}
-
-			result.SendToSource(fmt.Sprintf(`<ansi fg="attack-bad">%s %ss your attack!</ansi>`, targetChar.Name, defenseVerb))
-			result.SendToTarget(fmt.Sprintf(`<ansi fg="defense-good">You %s %s's attack!</ansi>`, defenseVerb, sourceChar.Name))
-			result.SendToSourceRoom(fmt.Sprintf(`<ansi fg="combat">%s %ss %s's attack.</ansi>`, targetChar.Name, defenseVerb, sourceChar.Name))
-			if sourceChar.RoomId != targetChar.RoomId {
-				result.SendToTargetRoom(fmt.Sprintf(`<ansi fg="combat">%s %ss an attack.</ansi>`, targetChar.Name, defenseVerb))
-			}
-
-			return false, best.hitRoll
+			sendFloorDefenseMessages(result, defType, sourceChar, targetChar)
+			return res
 		}
 	}
 
-	// Attack hits
-	return true, best.hitRoll
+	// Normal hit
+	res.hit = true
+	return res
+}
+
+// setDefenseCritFlags marks parry/dodge crit flags on the result.
+func setDefenseCritFlags(result *AttackResult, best bestDefenseResult) {
+	if best.defenseType == characters.DefenseParry {
+		result.ParryCritDetected = true
+	} else if best.defenseType == characters.DefenseDodge {
+		result.DodgeCritDetected = true
+	}
+}
+
+// sendDefenseMessages sends narrative messages for a successful defense.
+func sendDefenseMessages(result *AttackResult, best bestDefenseResult, sourceChar *characters.Character, targetChar *characters.Character, isThirdParty bool) {
+	result.DefenseUsed = DefenseType(best.defenseType)
+
+	var defenseVerb string
+	var skillToProgress string
+	var itemsDefenseType items.DefenseType
+	switch best.defenseType {
+	case characters.DefenseDodge:
+		defenseVerb = "dodge"
+		itemsDefenseType = items.DefenseDodge
+		skillToProgress = string(skills.UnarmedCombat)
+	case characters.DefenseParry:
+		defenseVerb = "parry"
+		itemsDefenseType = items.DefenseParry
+		skillToProgress = string(skills.WeaponCombat)
+	case characters.DefenseBlock:
+		defenseVerb = "block"
+		itemsDefenseType = items.DefenseBlock
+		skillToProgress = string(skills.WeaponCombat)
+	}
+
+	// Trigger skill progression for successful defense
+	targetChar.TrackSkillUse(skillToProgress)
+	targetChar.CheckSkillProgression(skillToProgress, targetChar.GetUserId(), 1.0)
+
+	// Get narrative defense messages based on defense z-score
+	defenseMsgs := items.GetDefenseMessage(itemsDefenseType, best.defRoll.ZScore)
+
+	// Prepare token replacements
+	weaponName := "fists"
+	if raceInfo := species.GetSpecies(sourceChar.SpeciesId); raceInfo != nil {
+		weaponName = raceInfo.UnarmedName
+	}
+	if sourceChar.Equipment.Weapon.ItemId > 0 {
+		weaponName = sourceChar.Equipment.Weapon.GetSpec().Name
+	}
+
+	tokenReplacements := map[items.TokenName]string{
+		items.TokenDefender: targetChar.Name,
+		items.TokenAttacker: sourceChar.Name,
+		items.TokenWeapon:   weaponName,
+		items.TokenStance:   targetChar.CalculateStanceString(),
+		items.TokenPosition: targetChar.CalculatePositionString(),
+		items.TokenMomentum: targetChar.CalculateMomentumString(),
+	}
+
+	// If we have custom defense messages, use them
+	if len(defenseMsgs.Together.ToDefender) > 0 {
+		toDefenderMsg := defenseMsgs.Together.ToDefender.Get()
+		toAttackerMsg := defenseMsgs.Together.ToAttacker.Get()
+		toRoomMsg := defenseMsgs.Together.ToRoom.Get()
+
+		for token, value := range tokenReplacements {
+			toDefenderMsg = toDefenderMsg.SetTokenValue(token, value)
+			toAttackerMsg = toAttackerMsg.SetTokenValue(token, value)
+			toRoomMsg = toRoomMsg.SetTokenValue(token, value)
+		}
+
+		result.SendToTarget(string(toDefenderMsg))
+		result.SendToSource(string(toAttackerMsg))
+		result.SendToSourceRoom(string(toRoomMsg))
+		if sourceChar.RoomId != targetChar.RoomId {
+			result.SendToTargetRoom(string(toRoomMsg))
+		}
+	} else {
+		result.SendToSource(fmt.Sprintf(`<ansi fg="attack-bad">%s %ss your attack!</ansi>`, targetChar.Name, defenseVerb))
+		result.SendToTarget(fmt.Sprintf(`<ansi fg="defense-good">You %s %s's attack!</ansi>`, defenseVerb, sourceChar.Name))
+		result.SendToSourceRoom(fmt.Sprintf(`<ansi fg="combat">%s %ss %s's attack.</ansi>`, targetChar.Name, defenseVerb, sourceChar.Name))
+		if sourceChar.RoomId != targetChar.RoomId {
+			result.SendToTargetRoom(fmt.Sprintf(`<ansi fg="combat">%s %ss an attack.</ansi>`, targetChar.Name, defenseVerb))
+		}
+	}
+
+	// Stage 8.5: Add third-party context if applicable
+	if isThirdParty {
+		result.SendToTarget(fmt.Sprintf(
+			`<ansi fg="yellow">(Despite being entangled in a grapple!)</ansi>`))
+	}
+}
+
+// sendFloorDefenseMessages sends messages for a defense floor save.
+func sendFloorDefenseMessages(result *AttackResult, defType string, sourceChar *characters.Character, targetChar *characters.Character) {
+	result.DefenseUsed = DefenseType(defType)
+
+	var defenseVerb string
+	switch defType {
+	case characters.DefenseDodge:
+		defenseVerb = "dodge"
+	case characters.DefenseParry:
+		defenseVerb = "parry"
+	case characters.DefenseBlock:
+		defenseVerb = "block"
+	default:
+		defenseVerb = "avoid"
+	}
+
+	result.SendToSource(fmt.Sprintf(`<ansi fg="attack-bad">%s %ss your attack!</ansi>`, targetChar.Name, defenseVerb))
+	result.SendToTarget(fmt.Sprintf(`<ansi fg="defense-good">You %s %s's attack!</ansi>`, defenseVerb, sourceChar.Name))
+	result.SendToSourceRoom(fmt.Sprintf(`<ansi fg="combat">%s %ss %s's attack.</ansi>`, targetChar.Name, defenseVerb, sourceChar.Name))
+	if sourceChar.RoomId != targetChar.RoomId {
+		result.SendToTargetRoom(fmt.Sprintf(`<ansi fg="combat">%s %ss an attack.</ansi>`, targetChar.Name, defenseVerb))
+	}
 }
 
 // calcHitDamage computes the damage for a successful hit, handling crits.
-func calcHitDamage(result *AttackResult, lastHitRoll dice.RollResult, critThresh float64, backstab bool, sdp swingDamageParams) (int, bool) {
-	if lastHitRoll.ZScore >= critThresh || backstab {
+// The isCrit flag is determined during hitroll resolution, not re-derived here.
+func calcHitDamage(result *AttackResult, isCrit bool, backstab bool, sdp swingDamageParams) (int, bool) {
+	if isCrit || backstab {
 		result.Crit = true
 		result.BuffTarget = sdp.critBuffs
 		damageResult := dice.Roll(sdp.rawDmgForCrit, sdp.dmgVariance)
 		dmg := int(math.Round(math.Max(0, damageResult.Value)))
-		mudlog.Debug("CritDetected", "zScore", fmt.Sprintf("%.2f", lastHitRoll.ZScore), "threshold", fmt.Sprintf("%.2f", critThresh), "source", "attacker", "target", "defender", "rawDmg", fmt.Sprintf("%.1f", sdp.rawDmgForCrit), "mitigatedDmg", fmt.Sprintf("%.1f", sdp.dmgMean))
+		mudlog.Debug("CritDamage", "rawDmg", fmt.Sprintf("%.1f", sdp.rawDmgForCrit), "mitigatedDmg", fmt.Sprintf("%.1f", sdp.dmgMean))
 		return dmg, false // consume backstab
 	}
 	// Normal hit: use mitigated damage
