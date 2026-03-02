@@ -1,9 +1,41 @@
 // Windwarden Sylara — mob script
-// Handles giving Spirit Fetishes after quest 12 completion
-// Also gives 4 extra fetishes on first ask after quest completion
+// Handles:
+//   onGive: wolf totem delivery for Q11
+//   onAsk:  spirit fetish dispensing after Q12 completion
 
+var TOTEM_ITEM_ID = 40033;
 var FETISH_ITEM_ID = 40031;
 var BONUS_KEY = 'sylara-bonus-fetishes-given';
+
+function onGive(mob, room, eventDetails) {
+
+    if ( eventDetails.sourceType == "mob" ) { return false; }
+
+    var user = GetUser(eventDetails.sourceId);
+    if ( user == null ) { return false; }
+
+    if ( !eventDetails.item || !eventDetails.item.ItemId ) {
+        return false;
+    }
+
+    // Wolf totem delivery for Q11
+    if ( eventDetails.item.ItemId == TOTEM_ITEM_ID ) {
+        if ( user.HasQuest("11-sylara") && !user.HasQuest("11-totem") ) {
+            mob.Command('say You found it.', 1.0);
+            mob.Command('say The wolf spirit\'s voice -- I can hear it again.', 2.5);
+            mob.Command('say Thank you. Now go -- finish what Kael asked. Hear the scholar\'s side. Then choose.', 4.0);
+            user.GiveQuest("11-totem");
+            return true;
+        }
+        mob.Command('say The totem is where it belongs. Thank you.');
+        return true;
+    }
+
+    // Not the right item
+    mob.Command('say The steppe provides what I need. I have no use for this.');
+    mob.Command('give !' + String(eventDetails.item.ItemId) + ' ' + user.ShorthandId());
+    return true;
+}
 
 function onAsk(mob, room, eventDetails) {
 

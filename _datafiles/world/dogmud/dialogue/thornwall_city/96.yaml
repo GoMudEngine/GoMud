@@ -79,7 +79,7 @@ tree:
       text: "There is something else. At night, I hear noises from the cellar -- scraping, splashing, sometimes what sounds like voices. The old drainage tunnels run under this whole district. The cellar connects to them through a grate that has not been opened in years. One crisis at a time. But something is down there."
 
     - id: quest_complete
-      triggers: ["guard", "captain", "reported", "told", "evidence", "done"]
+      triggers: ["guard", "captain", "reported", "told", "evidence", "done", "quest", "task"]
       requires: ["the_squeeze"]
       questRequired: ["10-report"]
       questExcluded: ["10-end"]

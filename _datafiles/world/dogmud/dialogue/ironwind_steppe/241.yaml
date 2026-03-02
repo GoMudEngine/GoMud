@@ -82,7 +82,7 @@ tree:
       moodChange: neutral
 
     - id: totem_return
-      triggers: ["totem", "found", "here", "brought", "return", "have"]
+      triggers: ["totem", "found", "here", "brought", "return", "have", "quest", "task"]
       requires: ["totem_task"]
       questRequired: ["11-sylara"]
       questExcluded: ["11-totem"]

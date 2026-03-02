@@ -62,7 +62,7 @@ tree:
       text: "The merchants claim the temple inflates its expenses to justify higher tithes. They may not be entirely wrong. The temple has costs -- maintenance, charity, staff. Whether every coin is accounted for as precisely as it should be... that is part of what I need you to find out."
 
     - id: ledger_return
-      triggers: ["ledger", "found", "evidence", "records", "numbers"]
+      triggers: ["ledger", "found", "evidence", "records", "numbers", "quest", "task"]
       requires: ["tithe_problem"]
       questRequired: ["9-start"]
       questExcluded: ["9-end"]

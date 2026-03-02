@@ -66,15 +66,16 @@ tree:
       text: "If she is still in the city, the residential wards are the most likely place. Cheap rooms, anonymous landlords, people who mind their own business. Start north of the market and work your way through. Ask quietly -- if she is hiding, a loud search will just drive her deeper."
 
     - id: protection_report
-      triggers: ["protection", "racket", "thug", "extortion", "notice", "evidence", "proof"]
+      triggers: ["protection", "racket", "thug", "extortion", "notice", "evidence", "proof", "quest", "task"]
       questRequired: ["10-start"]
       questExcluded: ["10-report"]
+      requiresItem: 30
       grantsQuest: "10-report"
       text: "You have evidence of a protection racket? Show me. This is enough to act on. I will put a patrol on the back alleys and bring someone in for questioning. Tell the tavern keeper he can stop paying -- the watch will handle this now."
       moodChange: friendly
 
     - id: case_report
-      triggers: ["found", "report", "elara", "located", "hiding"]
+      triggers: ["found", "report", "elara", "located", "hiding", "quest", "task"]
       requires: ["missing_case"]
       questRequired: ["8-found"]
       questExcluded: ["8-end"]
