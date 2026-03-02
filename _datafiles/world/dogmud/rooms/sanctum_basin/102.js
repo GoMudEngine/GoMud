@@ -1,8 +1,8 @@
 // Basin Gate - Room 102
 // Basin Warden checks quest state and gives appropriate dialogue.
 // Steps: cave -> warden -> end
-// No lock -- the gate is always passable, but the warden reacts to
-// the player's quest state and grants completion quests when earned.
+// Gate starts locked (difficulty 255). Unlocked via room.SetLocked()
+// when the player reaches quest step 1-cave or has already graduated.
 
 const wardenMobId = 56;
 
@@ -15,11 +15,13 @@ function onEnter(user, room) {
 
     if ( user.HasQuest("1-end") ) {
         // Already graduated -- brief acknowledgment
+        room.SetLocked("south", false);
         warden.Command('emote gives a brief nod of recognition.', 0.5);
         warden.Command('say Safe travels out there.', 1.5);
 
     } else if ( user.HasQuest("1-warden") ) {
         // Already got warden speech but hasn't left yet
+        room.SetLocked("south", false);
         warden.Command('emote nods toward the open gate.', 0.5);
 
     } else if ( user.HasQuest("1-cave") ) {
@@ -30,6 +32,7 @@ function onEnter(user, room) {
         warden.Command('say One last thing: the world is larger than what six instructors can cover. Type <ansi fg="command">help</ansi> to see what documentation is available -- there is more to learn out there than what we teach here.', 5.5);
         warden.Command('say The south road reaches Confluence within a day\'s walk. Follow the river north from there and you will find New Plymouth -- the largest settlement in this part of Gaius. That is where most people head first.', 7.0);
         warden.Command('emote steps aside and gestures toward the road south.', 9.0);
+        room.SetLocked("south", false);
         user.GiveQuest("1-warden");
         user.GiveQuest("1-end");
 
