@@ -10,7 +10,7 @@ groups:
 idlecommands:
   - 'emote shifts its weight with a sound like grinding stone, limbs moving in wrong sequence'
   - 'emote pulses with distorted energy, the air around it shimmering with wrongness'
-  - ''
+  - 'emote twitches violently, a wet cracking sound echoing from somewhere inside it'
 activitylevel: 35
 character:
   name: Aberrant Chrysalis

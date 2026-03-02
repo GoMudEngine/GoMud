@@ -70,6 +70,27 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 
 	cs := user.Character.CastingState
 
+	// Check if the spell target is still alive
+	targetGone := false
+	for _, mobInstId := range cs.TargetMobInstanceIds {
+		mob := mobs.GetInstance(mobInstId)
+		if mob == nil || mob.Character.Health < 1 {
+			targetGone = true
+			break
+		}
+	}
+	for _, targetUserId := range cs.TargetUserIds {
+		if u := users.GetByUserId(targetUserId); u == nil || u.Character.Health < 1 {
+			targetGone = true
+			break
+		}
+	}
+	if targetGone {
+		user.Character.CastingState = nil
+		user.SendText(`<ansi fg="red">Your spell fizzles — the target is gone.</ansi>`)
+		return true
+	}
+
 	spellData := spells.GetSpell(cs.SpellId)
 	if spellData == nil {
 		user.Character.CastingState = nil
@@ -142,6 +163,29 @@ func handleMobFoldCasting(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 	}
 
 	cs := mob.Character.CastingState
+
+	// Check if the spell target is still alive
+	mobTargetGone := false
+	for _, targetUserId := range cs.TargetUserIds {
+		if u := users.GetByUserId(targetUserId); u == nil || u.Character.Health < 1 {
+			mobTargetGone = true
+			break
+		}
+	}
+	for _, mobInstId := range cs.TargetMobInstanceIds {
+		tm := mobs.GetInstance(mobInstId)
+		if tm == nil || tm.Character.Health < 1 {
+			mobTargetGone = true
+			break
+		}
+	}
+	if mobTargetGone {
+		mob.Character.CastingState = nil
+		mobRoom.SendText(fmt.Sprintf(
+			`%s's spell fizzles.`, mobDisplayName(mob, mobRoom, 0)))
+		return true
+	}
+
 	spellData := spells.GetSpell(cs.SpellId)
 	if spellData == nil {
 		mob.Character.CastingState = nil

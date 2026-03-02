@@ -139,6 +139,8 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	user.SendText(`<ansi fg="yellow">You feel weakened by the brush with death. (Type <ansi fg="command">help death</ansi> to learn more.)</ansi>`)
 
 	user.Character.CancelBuffsWithFlag(buffs.All)
+	user.Character.Aggro = nil
+	user.Character.CastingState = nil
 
 	// Set all pools to 5% of max so the player can regen up in the shadow realm
 	// instead of arriving deep in the negatives and getting stuck.

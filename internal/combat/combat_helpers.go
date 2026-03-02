@@ -357,6 +357,10 @@ func runBestOfAllDefense(result *AttackResult, sourceChar *characters.Character,
 		margin: math.Inf(-1),
 	}
 
+	// Roll the attack ONCE — all defense types contest the same swing.
+	atkStdDev := dice.StdDevFor(atkScore)
+	attackRoll := dice.Roll(atkScore, atkStdDev)
+
 	for _, defenseType := range defSeq {
 		// Track defense attempt
 		result.DefenseAttempts = append(result.DefenseAttempts, DefenseType(defenseType))
@@ -405,15 +409,15 @@ func runBestOfAllDefense(result *AttackResult, sourceChar *characters.Character,
 			defenseScore *= targetChar.GetConditionMagnitude(characters.ConditionDefensePenalty)
 		}
 
-		// Opposed roll: attack vs this defense
-		_, _, hitRoll, defenseRoll := dice.OpposedRollStat(atkScore, defenseScore)
+		// Roll this defense against the single attack roll
+		defenseRoll := dice.Roll(defenseScore, atkStdDev)
 
 		// margin > 0 means defense won
-		margin := defenseRoll.Value - hitRoll.Value
+		margin := defenseRoll.Value - attackRoll.Value
 		if margin > best.margin {
 			best.margin = margin
 			best.defenseType = defenseType
-			best.hitRoll = hitRoll
+			best.hitRoll = attackRoll
 			best.defRoll = defenseRoll
 		}
 	}
