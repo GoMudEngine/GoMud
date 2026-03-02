@@ -43,6 +43,29 @@ func handlePlayerShieldDecay(user *users.UserRecord) {
 	}
 }
 
+// castingTargetChar returns the first target character from a CastingState, or nil.
+func castingTargetChar(cs *characters.CastingState) *characters.Character {
+	if cs == nil {
+		return nil
+	}
+	for _, mobInstId := range cs.TargetMobInstanceIds {
+		if m := mobs.GetInstance(mobInstId); m != nil {
+			return &m.Character
+		}
+	}
+	for _, uid := range cs.TargetUserIds {
+		if u := users.GetByUserId(uid); u != nil {
+			return u.Character
+		}
+	}
+	return nil
+}
+
+// recordConcentrationFailure records a fizzle event for a broken spell.
+func recordConcentrationFailure(src, tgt combat.SourceTarget, srcChar *characters.Character, tgtChar *characters.Character) {
+	combat.RecordSpell(src, tgt, false, false, false, true, 0, 0, srcChar, tgtChar, util.GetRoundCount())
+}
+
 // handlePlayerFoldCasting processes fold spell casting for a player.
 // Returns true if the player is casting and should skip combat.
 func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
@@ -52,12 +75,14 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 
 	// Bleeding out = automatic concentration break
 	if user.Character.IsDisabled() {
+		recordConcentrationFailure(combat.User, combat.Mob, user.Character, castingTargetChar(user.Character.CastingState))
 		user.Character.CastingState = nil
 		return true
 	}
 
 	// Stage 11.3: prone = automatic concentration break
 	if user.Character.CombatPosition == characters.PositionProne {
+		recordConcentrationFailure(combat.User, combat.Mob, user.Character, castingTargetChar(user.Character.CastingState))
 		user.Character.CastingState = nil
 		user.SendText(`<ansi fg="red">You lose your concentration as you hit the ground!</ansi>`)
 		room := rooms.LoadRoom(user.Character.RoomId)
@@ -86,6 +111,7 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 		}
 	}
 	if targetGone {
+		recordConcentrationFailure(combat.User, combat.Mob, user.Character, castingTargetChar(user.Character.CastingState))
 		user.Character.CastingState = nil
 		user.SendText(`<ansi fg="red">Your spell fizzles — the target is gone.</ansi>`)
 		return true
@@ -103,6 +129,7 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 	roundCost := calcFoldConvictionCost(cs, foldDelta)
 
 	if roundCost > 0 && user.Character.Conviction < roundCost {
+		recordConcentrationFailure(combat.User, combat.Mob, user.Character, castingTargetChar(user.Character.CastingState))
 		user.Character.CastingState = nil
 		user.SendText(`<ansi fg="red">Your conviction wavers — the fold collapses.</ansi>`)
 		return true
@@ -156,6 +183,7 @@ func handleMobFoldCasting(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 	}
 
 	if mob.Character.CombatPosition == characters.PositionProne {
+		recordConcentrationFailure(combat.Mob, combat.User, &mob.Character, castingTargetChar(mob.Character.CastingState))
 		mob.Character.CastingState = nil
 		mobRoom.SendText(fmt.Sprintf(
 			`%s's concentration breaks.`, mobDisplayName(mob, mobRoom, 0)))
@@ -180,6 +208,7 @@ func handleMobFoldCasting(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 		}
 	}
 	if mobTargetGone {
+		recordConcentrationFailure(combat.Mob, combat.User, &mob.Character, castingTargetChar(mob.Character.CastingState))
 		mob.Character.CastingState = nil
 		mobRoom.SendText(fmt.Sprintf(
 			`%s's spell fizzles.`, mobDisplayName(mob, mobRoom, 0)))
@@ -197,6 +226,7 @@ func handleMobFoldCasting(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 	roundCost := calcFoldConvictionCost(cs, foldDelta)
 
 	if roundCost > 0 && mob.Character.Conviction < roundCost {
+		recordConcentrationFailure(combat.Mob, combat.User, &mob.Character, castingTargetChar(mob.Character.CastingState))
 		mob.Character.CastingState = nil
 		mobRoom.SendText(fmt.Sprintf(
 			`%s's spell falters.`, mobDisplayName(mob, mobRoom, 0)))
@@ -445,6 +475,7 @@ func handleAutoRetargetPlayer(user *users.UserRecord, uRoom *rooms.Room) {
 // handlePlayerConcentrationBreak checks if a caster's concentration breaks when hit.
 func handlePlayerConcentrationBreak(defUser *users.UserRecord, roundResult combat.AttackResult, defRoom *rooms.Room) {
 	if checkConcentrationBreak(defUser.Character, roundResult.DamageToTarget) {
+		recordConcentrationFailure(combat.User, combat.Mob, defUser.Character, castingTargetChar(defUser.Character.CastingState))
 		defUser.Character.CastingState = nil
 		defUser.SendText(`<ansi fg="red">The pain shatters your concentration!</ansi>`)
 		defRoom.SendText(fmt.Sprintf(
@@ -911,6 +942,7 @@ func handlePlayerVsMob(user *users.UserRecord, uRoom *rooms.Room, evt events.New
 
 	// Stage 11.5: Mob concentration break when hit
 	if checkConcentrationBreak(&defMob.Character, roundResult.DamageToTarget) {
+		recordConcentrationFailure(combat.Mob, combat.User, &defMob.Character, castingTargetChar(defMob.Character.CastingState))
 		defMob.Character.CastingState = nil
 		uRoom.SendText(fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi>'s concentration breaks.`, defMob.Character.Name))
