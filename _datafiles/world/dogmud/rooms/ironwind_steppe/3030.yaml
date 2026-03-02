@@ -30,6 +30,7 @@ nouns:
 spawninfo:
 - mobid: 210
 - mobid: 212
+- mobid: 242
 idlemessages:
 - Loose stones clatter downslope as the wind dislodges them.
 - A raptor screams from somewhere above on the ridge.

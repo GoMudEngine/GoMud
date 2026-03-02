@@ -27,6 +27,8 @@ nouns:
     Charred bone fragments and a few rusty nail heads lie in the
     debris. Whoever camped here was here long enough to eat
     several meals.
+spawninfo:
+- mobid: 240
 idlemessages:
 - The wind moans past the alcove entrance but the interior is still.
 - Sand trickles from a crack in the ceiling, pattering softly.

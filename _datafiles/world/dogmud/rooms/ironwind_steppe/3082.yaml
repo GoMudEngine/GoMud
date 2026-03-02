@@ -26,6 +26,10 @@ nouns:
   ground: Dark-stained earth, the soil saturated with old blood.
     Shallow scrapes where wolves have buried meat for later
     are visible as disturbed patches of earth.
+  totem: Half-buried among the bones and debris, a small wooden
+    carving juts from the stained earth. It depicts a wolf mid-howl,
+    carved from steppe cedar with a leather cord at the base. It
+    looks out of place among the carnage -- clearly not prey remains.
 spawninfo:
 - mobid: 205
 - mobid: 215

@@ -1,0 +1,39 @@
+mobid: 243
+zone: Summons
+archetype: fighting
+statpool: 120
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - summon
+idlecommands:
+  - 'emote raises its spectral muzzle and sniffs the wind'
+  - ''
+  - 'emote paces silently, translucent paws leaving no prints'
+  - ''
+activitylevel: 40
+combatcommands:
+  - ''
+  - ''
+character:
+  name: steppe spirit wolf
+  description: |
+    A wolf wrought from pale blue light and steppe wind, its form
+    flickering between solid and translucent. The spirit wolf is
+    larger than any living wolf, with eyes like chips of windstone
+    that burn with cold intelligence. Grass and dust swirl through
+    its ghostly body as it moves, and the air around it carries
+    the scent of sage and open sky. It makes no sound when it
+    walks.
+  speciesid: 10
+  level: 1
+  stats:
+    strength:
+      training: 15
+    dexterity:
+      training: 15
+    vitality:
+      training: 10
+    perception:
+      training: 10
