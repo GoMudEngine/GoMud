@@ -84,10 +84,11 @@ tree:
       text: "Thornwall. Growing every year. Eating farmland, raising taxes, building walls. The people inside eat what we grow, and the thanks we get is assessors with ledgers and guards who look at us like dirt. I have not been inside those walls in years. Nothing there for me but grief."
 
     - id: sample_return
-      triggers: ["sample", "pest", "killed", "cleared", "done", "back", "body"]
+      triggers: ["sample", "pest", "killed", "cleared", "done", "back", "body", "quest", "task"]
       requires: ["help_quest"]
       questRequired: ["7-start"]
       questExcluded: ["7-end"]
+      requiresItem: 24
       grantsQuest: "7-end"
       text: "Too big. This is not natural size -- something in the fallow soil is feeding them, making them grow. As long as that field sits empty, this will keep happening. You have done what you can. The rest is politics, and politics requires getting inside those walls."
       moodChange: grateful

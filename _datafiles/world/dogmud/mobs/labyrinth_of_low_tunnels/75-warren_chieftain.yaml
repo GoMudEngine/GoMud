@@ -4,6 +4,7 @@ archetype: fighting
 statpool: 25
 hostile: false
 maxwander: 0
+buffids: [29]
 groups:
   - warren
   - humanoid

@@ -5,6 +5,7 @@ statpool: 6
 itemdropchance: 20
 hostile: true
 maxwander: 1
+buffids: [29]
 groups:
   - insect
   - mutant
@@ -35,7 +36,7 @@ character:
   level: 1
   gold: 0
   items:
-    - itemid: 40011
+    - itemid: 40008
   stats:
     vitality:
       training: 10

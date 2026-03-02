@@ -15,6 +15,8 @@ type SwingEvent struct {
 	Hit           bool
 	Crit          bool
 	Fumble        bool
+	DoubleFumble  bool
+	DefenseCrit   bool
 	Damage        int
 	DamageReduced int
 	DefenseUsed   DefenseType
@@ -26,6 +28,7 @@ type AttackResult struct {
 	Hit                     bool  // defaults false
 	Crit                    bool  // defaults false
 	Fumble                  bool  // defaults false
+	DoubleFumble            bool  // defaults false
 	BuffSource              []int // defaults 0
 	BuffTarget              []int // defaults 0
 	DamageToTarget          int   // defaults 0

@@ -6,7 +6,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
-	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
@@ -23,10 +22,23 @@ const (
 	Mob  SourceTarget = "mob"
 )
 
+// canSeeInRoom returns true if the character has nightvision or the room is lit.
+func canSeeInRoom(char *characters.Character, room *rooms.Room) bool {
+	if room == nil {
+		return true
+	}
+	return room.GetVisibility() >= 1 || char.HasFlagFromAnySource(buffs.NightVision)
+}
+
 // Performs a combat round from a player to a mob
 func AttackPlayerVsMob(user *users.UserRecord, mob *mobs.Mob) AttackResult {
 
-	attackResult := calculateCombat(*user.Character, mob.Character, User, Mob)
+	room := rooms.LoadRoom(user.Character.RoomId)
+	ctx := combatContext{
+		sourceCanSee: canSeeInRoom(user.Character, room),
+		targetCanSee: canSeeInRoom(&mob.Character, room),
+	}
+	attackResult := calculateCombat(*user.Character, mob.Character, User, Mob, ctx)
 
 	// Deduct stamina for the attack
 	user.Character.DeductAttackStamina()
@@ -69,7 +81,12 @@ func AttackPlayerVsMob(user *users.UserRecord, mob *mobs.Mob) AttackResult {
 // Performs a combat round from a player to a player
 func AttackPlayerVsPlayer(userAtk *users.UserRecord, userDef *users.UserRecord) AttackResult {
 
-	attackResult := calculateCombat(*userAtk.Character, *userDef.Character, User, User)
+	room := rooms.LoadRoom(userAtk.Character.RoomId)
+	ctx := combatContext{
+		sourceCanSee: canSeeInRoom(userAtk.Character, room),
+		targetCanSee: canSeeInRoom(userDef.Character, room),
+	}
+	attackResult := calculateCombat(*userAtk.Character, *userDef.Character, User, User, ctx)
 
 	// Deduct stamina for the attack
 	userAtk.Character.DeductAttackStamina()
@@ -113,7 +130,12 @@ func AttackPlayerVsPlayer(userAtk *users.UserRecord, userDef *users.UserRecord) 
 // Performs a combat round from a mob to a player
 func AttackMobVsPlayer(mob *mobs.Mob, user *users.UserRecord) AttackResult {
 
-	attackResult := calculateCombat(mob.Character, *user.Character, Mob, User)
+	room := rooms.LoadRoom(mob.Character.RoomId)
+	ctx := combatContext{
+		sourceCanSee: canSeeInRoom(&mob.Character, room),
+		targetCanSee: canSeeInRoom(user.Character, room),
+	}
+	attackResult := calculateCombat(mob.Character, *user.Character, Mob, User, ctx)
 
 	// Deduct stamina for the attack
 	mob.Character.DeductAttackStamina()
@@ -138,7 +160,12 @@ func AttackMobVsPlayer(mob *mobs.Mob, user *users.UserRecord) AttackResult {
 // Performs a combat round from a mob to a mob
 func AttackMobVsMob(mobAtk *mobs.Mob, mobDef *mobs.Mob) AttackResult {
 
-	attackResult := calculateCombat(mobAtk.Character, mobDef.Character, Mob, Mob)
+	room := rooms.LoadRoom(mobAtk.Character.RoomId)
+	ctx := combatContext{
+		sourceCanSee: canSeeInRoom(&mobAtk.Character, room),
+		targetCanSee: canSeeInRoom(&mobDef.Character, room),
+	}
+	attackResult := calculateCombat(mobAtk.Character, mobDef.Character, Mob, Mob, ctx)
 
 	// Deduct stamina for the attack
 	mobAtk.Character.DeductAttackStamina()
@@ -271,7 +298,7 @@ func GetWaitMessages(stepType items.Intensity, sourceChar *characters.Character,
 	return attackResult
 }
 
-func calculateCombat(sourceChar characters.Character, targetChar characters.Character, sourceType SourceTarget, targetType SourceTarget) AttackResult {
+func calculateCombat(sourceChar characters.Character, targetChar characters.Character, sourceType SourceTarget, targetType SourceTarget, ctx combatContext) AttackResult {
 
 	attackResult := AttackResult{}
 
@@ -279,95 +306,95 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 	statModDBonus := sourceChar.StatMod(`damage`)
 	extraAttacks := sourceChar.StatMod(`attacks`)
 
-	attackCount := calcAttackCount(&sourceChar, extraAttacks)
+	attackWeapons := collectAttackWeapons(&sourceChar)
 
-	for i := 0; i < attackCount; i++ {
+	attackMessagePrefix := ``
+	backstabCrit := false
+	if sourceChar.Aggro.Type == characters.BackStab {
+		backstabCrit = true
+		attackMessagePrefix = `<ansi fg="magenta-bold">*[BACKSTAB]*</ansi> `
+		sourceChar.SetAggro(sourceChar.Aggro.UserId, sourceChar.Aggro.MobInstanceId, characters.DefaultAttack)
+	}
 
-		mudlog.Debug(`calculateCombat`, `Atk`, fmt.Sprintf(`%d/%d`, i+1, attackCount), `Source`, fmt.Sprintf(`%s (%s)`, sourceChar.Name, sourceType), `Target`, fmt.Sprintf(`%s (%s)`, targetChar.Name, targetType))
+	for weaponIdx, weapon := range attackWeapons {
 
-		attackWeapons := collectAttackWeapons(&sourceChar)
+		ws := buildWeaponSetup(&sourceChar, &targetChar, weapon, weaponIdx, len(attackWeapons))
+		sdp := buildDamageParams(&sourceChar, &targetChar, ws, statModDBonus, sourceType)
+		sdp.critBuffs = ws.critBuffs
 
-		attackMessagePrefix := ``
-		backstabCrit := false
-		if sourceChar.Aggro.Type == characters.BackStab {
-			backstabCrit = true
-			attackMessagePrefix = `<ansi fg="magenta-bold">*[BACKSTAB]*</ansi> `
-			sourceChar.SetAggro(sourceChar.Aggro.UserId, sourceChar.Aggro.MobInstanceId, characters.DefaultAttack)
-		}
+		// Single merged swing count per weapon
+		swingCount := calcSwingCount(&sourceChar, ws.weaponSpeed, extraAttacks, ws.isOffhand)
 
-		for weaponIdx, weapon := range attackWeapons {
+		mudlog.Debug("DistDamage", "swings", swingCount, "baseDmg", ws.baseDmg, "variance", sdp.dmgVariance, "dmgMean", sdp.dmgMean, "weaponMult", ws.weaponDmgMult, "critBuffs", ws.critBuffs)
 
-			ws := buildWeaponSetup(&sourceChar, &targetChar, weapon, weaponIdx, len(attackWeapons))
-			sdp := buildDamageParams(&sourceChar, &targetChar, ws, statModDBonus, sourceType)
-			sdp.critBuffs = ws.critBuffs
+		critThreshold := calcCritThreshold(&sourceChar, &targetChar)
 
-			mudlog.Debug("DistDamage", "attacks", ws.attacks, "baseDmg", ws.baseDmg, "variance", sdp.dmgVariance, "dmgMean", sdp.dmgMean, "weaponMult", ws.weaponDmgMult, "critBuffs", ws.critBuffs)
+		for j := 0; j < swingCount; j++ {
 
-			critThreshold := calcCritThreshold(&sourceChar, &targetChar)
-			fumbleThreshold := -2.0
+			mudlog.Debug(`calculateCombat`, `Swing`, fmt.Sprintf(`%d/%d`, j+1, swingCount), `Weapon`, ws.weaponName, `Source`, fmt.Sprintf(`%s (%s)`, sourceChar.Name, sourceType), `Target`, fmt.Sprintf(`%s (%s)`, targetChar.Name, targetType))
 
-			for j := 0; j < ws.attacks; j++ {
+			// Reset per-swing flags
+			attackResult.Crit = false
+			attackResult.Fumble = false
+			attackResult.DoubleFumble = false
 
-				// Reset per-swing flags
-				attackResult.Crit = false
-				attackResult.Fumble = false
+			attackTargetDamage := 0
+			attackTargetReduction := 0
+			attackSourceDamage := 0
+			attackSourceReduction := 0
 
-				attackTargetDamage := 0
-				attackTargetReduction := 0
-				attackSourceDamage := 0
-				attackSourceReduction := 0
+			attackScore := calcAttackScore(&sourceChar, &targetChar, ws.penalty, ctx)
 
-				attackScore := calcAttackScore(&sourceChar, &targetChar, ws.penalty)
+			defenseSequence := targetChar.GetDefenseSequence()
 
-				defenseSequence := targetChar.GetDefenseSequence()
-				hit := false
-				var lastHitRoll dice.RollResult
+			// Third-party grapple vulnerability
+			defenseSequence, isThirdParty := filterDefensesForThirdParty(&attackResult, &sourceChar, &targetChar, defenseSequence)
 
-				// Third-party grapple vulnerability
-				defenseSequence, isThirdParty := filterDefensesForThirdParty(&attackResult, &sourceChar, &targetChar, defenseSequence)
+			// Roll attack once via best-of-all defense
+			best := runBestOfAllDefense(&attackResult, &sourceChar, &targetChar, defenseSequence, attackScore, isThirdParty, ctx)
 
-				// Fumble check
-				initialAttackRoll := dice.RollStat(attackScore)
-				if initialAttackRoll.ZScore <= fumbleThreshold {
-					attackResult.Fumble = true
-					hit = false
-					mudlog.Debug("FumbleDetected", "zScore", fmt.Sprintf("%.2f", initialAttackRoll.ZScore), "threshold", fmt.Sprintf("%.2f", fumbleThreshold), "source", sourceChar.Name, "target", targetChar.Name)
-				} else {
-					best := runBestOfAllDefense(&attackResult, &sourceChar, &targetChar, defenseSequence, attackScore, isThirdParty)
-					hit, lastHitRoll = resolveDefenseOutcome(&attackResult, best, &sourceChar, &targetChar, isThirdParty)
-				}
+			// New resolution order: fumbles → crits → normal → floors
+			res := resolveDefenseOutcome(&attackResult, best, &sourceChar, &targetChar, critThreshold, isThirdParty)
 
-				sourceChar.UpdateMomentum(hit)
+			sourceChar.UpdateMomentum(res.hit)
 
-				if hit {
-					attackResult.Hit = true
-					attackTargetDamage, backstabCrit = calcHitDamage(&attackResult, lastHitRoll, critThreshold, backstabCrit, sdp)
-				}
+			if res.hit {
+				attackResult.Hit = true
+				attackTargetDamage, backstabCrit = calcHitDamage(&attackResult, res.crit, backstabCrit, sdp)
+			}
 
-				// Record per-swing analytics
-				attackResult.SwingEvents = append(attackResult.SwingEvents, SwingEvent{
-					Hit:           hit,
-					Crit:          attackResult.Crit,
-					Fumble:        attackResult.Fumble,
-					Damage:        attackTargetDamage,
-					DamageReduced: attackTargetReduction,
-					DefenseUsed:   attackResult.DefenseUsed,
-					AttackZScore:  attackResult.AttackZScore,
-					DefenseZScore: attackResult.DefenseZScore,
-				})
+			if res.fumble {
+				attackResult.Fumble = true
+			}
 
+			// Record per-swing analytics
+			attackResult.SwingEvents = append(attackResult.SwingEvents, SwingEvent{
+				Hit:           res.hit,
+				Crit:          res.crit,
+				Fumble:        res.fumble,
+				DoubleFumble:  res.doubleFumble,
+				DefenseCrit:   res.defenseCrit,
+				Damage:        attackTargetDamage,
+				DamageReduced: attackTargetReduction,
+				DefenseUsed:   attackResult.DefenseUsed,
+				AttackZScore:  attackResult.AttackZScore,
+				DefenseZScore: attackResult.DefenseZScore,
+			})
+
+			// Only build attack messages for non-double-fumble (double fumble already sent)
+			if !res.doubleFumble {
 				buildAttackMessages(&attackResult, &sourceChar, &targetChar, ws, sdp,
 					attackTargetDamage, attackTargetReduction, attackSourceDamage, attackSourceReduction,
 					sourceType, targetType, attackMessagePrefix)
-
-				attackResult.DamageToTarget += attackTargetDamage
-				attackResult.DamageToTargetReduction += attackTargetReduction
-				attackResult.DamageToSource += attackSourceDamage
-				attackResult.DamageToSourceReduction += attackSourceReduction
 			}
 
-			applyPetDamage(&attackResult, &sourceChar, &targetChar, targetType)
+			attackResult.DamageToTarget += attackTargetDamage
+			attackResult.DamageToTargetReduction += attackTargetReduction
+			attackResult.DamageToSource += attackSourceDamage
+			attackResult.DamageToSourceReduction += attackSourceReduction
 		}
+
+		applyPetDamage(&attackResult, &sourceChar, &targetChar, targetType)
 	}
 	return attackResult
 

@@ -43,8 +43,8 @@ patterns:
   - keywords: ["help", "quest", "task", "prove", "peace", "trust"]
     moods: ["neutral", "friendly"]
     responses:
-      - "Prove? Bring medicine. The surface kind. Poultices. We know your healers make them. Bring them here and I will take them to the Eldest as proof of your intent."
-      - "Words mean nothing down here. Bring something that helps. Healing poultices. Then we talk."
+      - "Prove? Bring medicine. The surface kind. A healing poultice. We know your healers make them. Bring one here and I will take it to the Eldest as proof of your intent."
+      - "Words mean nothing down here. Bring something that helps. A healing poultice. Then we talk."
     moodChange: friendly
 
   - keywords: ["scholar", "research", "study", "specimens", "surface"]
@@ -82,11 +82,11 @@ tree:
     variants:
       - questRequired: ["2-start"]
         questExcluded: ["2-poultices"]
-        text: "Surface-walker. You came back empty-handed. I asked for healing poultices -- the kind your alchemists make. Bring them and the Eldest may listen. Return without them and do not return at all."
-        hints: "Bring healing poultices to the shaman."
+        text: "Surface-walker. You came back empty-handed. I asked for a healing poultice -- the kind your alchemists make. Bring one and the Eldest may listen. Return without it and do not return at all."
+        hints: "Bring a healing poultice to the shaman."
       - questRequired: ["2-poultices"]
         questExcluded: ["2-end"]
-        text: "The Eldest knows what you did. The medicine is already being used. Go deeper -- the barricade will let you pass. Speak with the Eldest and finish what you started."
+        text: "The Eldest knows what you did. The medicine is already being used. Go deeper -- the warriors will not stop you now. Speak with the Eldest and finish what you started."
         hints: "Seek the chieftain deeper in the tunnels."
       - questRequired: ["2-end"]
         text: "Surface-walker. You are remembered here. The compact holds."
@@ -122,8 +122,8 @@ tree:
       triggers: ["prove", "how", "help", "trust", "intent", "peace", "poultice", "medicine", "quest", "task"]
       questExcluded: ["2-start"]
       grantsQuest: "2-start"
-      text: "Bring healing poultices. The kind your alchemists make. We know the recipe but lack the surface herbs. Bring them here, to me, and I will carry them to the Eldest as proof that a surface-walker chose to help rather than to take."
-      hints: "Obtain healing poultices from Alchemist Yenna in Sanctum Basin and bring them to the shaman."
+      text: "Bring a healing poultice. The kind your alchemists make. We know the recipe but lack the surface herbs. Bring one here, to me, and I will carry it to the Eldest as proof that a surface-walker chose to help rather than to take."
+      hints: "Obtain a healing poultice from Alchemist Yenna in Sanctum Basin and bring it to the shaman."
       moodChange: friendly
 
     - id: poultice_delivery
@@ -133,7 +133,7 @@ tree:
       questExcluded: ["2-poultices"]
       requiresItem: 30010
       grantsQuest: "2-poultices"
-      text: "These are good. Strong. Our sick will benefit. You have done what I asked. The Eldest will hear of this. Go deeper into the tunnels -- the barricade will open for you now."
+      text: "These are good. Strong. Our sick will benefit. You have done what I asked. The Eldest will hear of this. Go deeper into the tunnels -- the warriors will not stop you now."
       hints: "Seek the chieftain deeper in the tunnels."
       moodChange: friendly
 

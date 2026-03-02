@@ -5,6 +5,7 @@ statpool: 12
 itemdropchance: 15
 hostile: true
 maxwander: 1
+buffids: [29]
 groups:
   - warren
   - humanoid

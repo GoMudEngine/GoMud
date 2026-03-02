@@ -32,6 +32,8 @@ character:
   speciesid: 10
   level: 1
   gold: 0
+  items:
+    - itemid: 24
   stats:
     dexterity:
       training: 10

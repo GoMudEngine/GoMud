@@ -96,7 +96,8 @@ func TestRegression_DefenseFloorAlwaysApplies(t *testing.T) {
 	result := &AttackResult{}
 	defSeq := []string{characters.DefenseDodge, characters.DefenseParry}
 
-	best := runBestOfAllDefense(result, attacker, defender, defSeq, 150.0, false)
+	ctx := combatContext{sourceCanSee: true, targetCanSee: true}
+	best := runBestOfAllDefense(result, attacker, defender, defSeq, 150.0, false, ctx)
 
 	// With 0 stamina, no defense should be affordable — margin stays -Inf
 	assert.True(t, math.IsInf(best.margin, -1),

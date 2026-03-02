@@ -47,6 +47,9 @@ type Balance struct {
 	SpellConvictionCostMultiplier ConfigFloat `yaml:"SpellConvictionCostMultiplier"` // Global multiplier for spell conviction costs (default 1.0)
 	SpellHealthCostMultiplier     ConfigFloat `yaml:"SpellHealthCostMultiplier"`     // Global multiplier for spell health costs (default 1.0)
 
+	// ── COMBAT: DARKNESS ─────────────────────────────────────────────────────
+	DarknessCombatPenalty ConfigFloat `yaml:"DarknessCombatPenalty"` // Multiplier on attack AND defense scores when fighting blind (default 0.80)
+
 	// ── COMBAT: MESSAGES ─────────────────────────────────────────────────────
 	ConsistentAttackMessages ConfigBool `yaml:"ConsistentAttackMessages"` // Whether each weapon has consistent attack messages
 
@@ -59,6 +62,7 @@ type Balance struct {
 	UnarmedSkillDivisor     ConfigFloat `yaml:"UnarmedSkillDivisor"`     // Skill / this = damage bonus (default 10.0)
 	UnarmedBaseVariance        ConfigFloat `yaml:"UnarmedBaseVariance"`        // Base randomness of unarmed hits (default 3.0)
 	UnarmedDamageMultiplier    ConfigFloat `yaml:"UnarmedDamageMultiplier"`    // Fist damage multiplier for new pipeline (default 0.30)
+	UnarmedSpeedMultiplier     ConfigFloat `yaml:"UnarmedSpeedMultiplier"`     // Unarmed attack speed — slightly faster than light weapons (default 1.4)
 	SkillMultiplierBase        ConfigFloat `yaml:"SkillMultiplierBase"`        // Skill multiplier at rank 0 (default 1.0)
 	SkillMultiplierMax         ConfigFloat `yaml:"SkillMultiplierMax"`         // Skill multiplier at soft cap (default 3.0)
 	MeleeDamageScale           ConfigFloat `yaml:"MeleeDamageScale"`            // Physical damage scale. Stats ~100, so 0.30 yields ~30 raw per swing (default 0.30)
@@ -284,6 +288,11 @@ func (b *Balance) Validate() {
 		b.CoupDeGraceRounds = 1
 	}
 
+	// ── COMBAT: DARKNESS ─────────────────────────────────────────────────────
+	if b.DarknessCombatPenalty <= 0 || b.DarknessCombatPenalty > 1.0 {
+		b.DarknessCombatPenalty = 0.80
+	}
+
 	// ── COMBAT: SPELL COSTS ──────────────────────────────────────────────────
 	if b.SpellConvictionCostMultiplier <= 0 {
 		b.SpellConvictionCostMultiplier = 1.0
@@ -307,6 +316,9 @@ func (b *Balance) Validate() {
 	}
 	if b.UnarmedDamageMultiplier <= 0 {
 		b.UnarmedDamageMultiplier = 0.30
+	}
+	if b.UnarmedSpeedMultiplier <= 0 {
+		b.UnarmedSpeedMultiplier = 1.4
 	}
 	if b.SkillMultiplierBase <= 0 {
 		b.SkillMultiplierBase = 1.0

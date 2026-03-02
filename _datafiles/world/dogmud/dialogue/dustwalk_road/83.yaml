@@ -101,7 +101,7 @@ tree:
     - id: evidence_return
       triggers: ["evidence", "purse", "letter", "found", "proof", "report", "documents"]
       requires: ["help_quest"]
-      questRequired: ["4-start"]
+      questRequired: ["4-evidence"]
       questExcluded: ["4-end"]
       requiresItem: 16
       grantsQuest: "4-end"

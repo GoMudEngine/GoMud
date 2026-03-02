@@ -67,7 +67,7 @@ tree:
 
   nodes:
     - id: reassure
-      triggers: ["help", "safe", "not here to hurt", "friendly", "trust", "calm"]
+      triggers: ["help", "safe", "not here to hurt", "friendly", "trust", "calm", "quest", "task"]
       questRequired: ["8-start"]
       questExcluded: ["8-found"]
       grantsQuest: "8-found"

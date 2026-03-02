@@ -77,7 +77,7 @@ tree:
       moodChange: friendly
 
     - id: sample_return
-      triggers: ["sample", "found", "here", "brought", "return", "have", "windstone"]
+      triggers: ["sample", "found", "here", "brought", "return", "have", "windstone", "quest", "task"]
       requires: ["sample_task"]
       questRequired: ["11-rhett"]
       questExcluded: ["11-samples"]

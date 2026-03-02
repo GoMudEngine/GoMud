@@ -360,7 +360,11 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 						}
 					}
 
-					user.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> notices you as you enter!`, mob.Character.Name))
+					if destRoom.GetVisibility() >= 1 || user.Character.HasFlagFromAnySource(buffs.NightVision) {
+						user.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> notices you as you enter!`, mob.Character.Name))
+					} else {
+						user.SendText(`<ansi fg="yellow">Something notices you in the darkness!</ansi>`)
+					}
 
 					mob.Command(`lookfortrouble`, 4)
 

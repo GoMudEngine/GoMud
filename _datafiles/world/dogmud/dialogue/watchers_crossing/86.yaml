@@ -91,9 +91,10 @@ tree:
       text: "I applied for a charter. Twice. Thornwall's bureaucracy lost the papers both times. Meanwhile the bridge deteriorates and nobody else is doing anything about it. I made a choice. Maybe it was not the proper one, but the bridge is still standing because of it."
 
     - id: report_delivered
-      triggers: ["delivered", "magistrate", "done", "sent", "carried"]
+      triggers: ["delivered", "magistrate", "done", "sent", "carried",
+        "quest", "task"]
       requires: ["help_quest"]
-      questRequired: ["6-start"]
+      questRequired: ["6-report"]
       questExcluded: ["6-end"]
       grantsQuest: "6-end"
       text: "You have my thanks. If the magistrate sees those numbers -- really looks at them -- the toll will be formalized or Thornwall will fund the repairs directly. Either way, the bridge survives. Here -- a receipt for your crossings. As many as you need. You have earned that and more."

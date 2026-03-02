@@ -86,7 +86,8 @@ tree:
       text: "Stew is lamb and root vegetables today. Ale is from the last barrel, so it is a bit strong, but that is not a complaint from most. Rooms upstairs are two gold a night, clean bedding, and I lock the doors at midnight. Help yourself."
 
     - id: ledger_return
-      triggers: ["ledger", "found", "proof", "evidence", "records", "here"]
+      triggers: ["ledger", "found", "proof", "evidence", "records", "here",
+        "quest", "task"]
       requires: ["help_quest"]
       questRequired: ["5-evidence"]
       questExcluded: ["5-end"]
