@@ -9,7 +9,31 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
+	"github.com/GoMudEngine/GoMud/internal/users"
 )
+
+// sendMovementMessage sends a visual movement message to players who can see
+// and a sound-based fallback to players in darkness without night vision.
+func sendMovementMessage(room *rooms.Room, visualMsg string, soundMsg string) {
+	vis := room.GetVisibility()
+	if vis >= 1 {
+		// Room is lit enough — everyone sees the message
+		room.SendText(visualMsg)
+		return
+	}
+	// Room is dark — send per-player based on night vision
+	for _, uid := range room.GetPlayers() {
+		u := users.GetByUserId(uid)
+		if u == nil {
+			continue
+		}
+		if u.Character.HasFlagFromAnySource(buffs.NightVision) {
+			u.SendText(visualMsg)
+		} else if soundMsg != "" {
+			u.SendText(soundMsg)
+		}
+	}
+}
 
 func Go(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
@@ -45,17 +69,18 @@ func Go(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			destRoom.AddMob(mob.InstanceId)
 
 			// Tell the old room they are leaving
-			room.SendText(
+			sendMovementMessage(room,
 				fmt.Sprintf(string(c.ExitRoomMessageWrapper),
 					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> runs off suddenly.`, mob.Character.Name),
-				))
+				),
+				`You hear hurried footsteps receding.`)
 
 			// Tell the new room they have arrived
-
-			destRoom.SendText(
+			sendMovementMessage(destRoom,
 				fmt.Sprintf(string(c.EnterRoomMessageWrapper),
 					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> enters from nearby.`, mob.Character.Name),
-				))
+				),
+				`You hear footsteps approaching.`)
 
 			return true, nil
 
@@ -115,17 +140,18 @@ func Go(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		c := configs.GetTextFormatsConfig()
 
 		// Tell the old room they are leaving
-		room.SendText(
+		sendMovementMessage(room,
 			fmt.Sprintf(string(c.ExitRoomMessageWrapper),
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> leaves towards the <ansi fg="exit">%s</ansi> exit.`, mob.Character.Name, exitName),
-			))
+			),
+			`You hear footsteps moving away.`)
 
 		// Tell the new room they have arrived
-
-		destRoom.SendText(
+		sendMovementMessage(destRoom,
 			fmt.Sprintf(string(c.EnterRoomMessageWrapper),
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> enters from %s.`, mob.Character.Name, enterFromExit),
-			))
+			),
+			`You hear footsteps approaching.`)
 
 		destRoom.SendTextToExits(`You hear someone moving around.`, true, room.GetPlayers(rooms.FindAll)...)
 
