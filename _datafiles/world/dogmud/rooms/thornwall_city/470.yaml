@@ -8,6 +8,7 @@ description: The eastern end of the Craftsmen's Quarter is dominated by a blacks
   and weapons are made and repaired. The smithy also serves as an informal gathering
   place for the quarter's workers, who stop by to warm their hands and exchange news.
 biome: city
+station: forge
 exits:
   west:
     roomid: 469

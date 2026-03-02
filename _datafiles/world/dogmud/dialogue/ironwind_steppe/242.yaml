@@ -14,7 +14,7 @@ patterns:
     responses:
       - "Rhett beams. 'My favourite collaborator! What brings you back?'"
 
-  - keywords: ["help", "quest", "task"]
+  - keywords: ["help", "quest", "task", "work", "job"]
     moods: ["friendly", "neutral"]
     responses:
       - "'Actually, yes. I could use someone with strong hands and a willingness to crawl around rock outcroppings. The work is fascinating, I promise. Well, I find it fascinating.'"
@@ -33,8 +33,8 @@ patterns:
 
   - keywords: [""]
     responses:
-      - "Rhett adjusts his spectacles and peers at a rock sample."
-      - "The geomancer scribbles something in his journal, muttering about crystal lattice structures."
+      - "'Hmm? Sorry, I was thinking about crystal lattice structures. What was the question?'"
+      - "'I am not sure I follow. Ask me about the windstone, or whether I need help with anything.'"
 
 tree:
   root:

@@ -11,8 +11,8 @@ idlecommands:
   - 'emote studies the road to the south with a worried expression'
   - 'emote makes a note on a scrap of paper, frowning'
   - 'emote checks the edge of her blade with a thumbnail and nods'
-  - ''
-  - ''
+  - 'emote scans the horizon, eyes narrowing at something in the distance'
+  - 'emote shifts her weight and rolls one shoulder, loosening stiff muscles'
 activitylevel: 15
 character:
   name: Road Warden Tessara
