@@ -171,6 +171,8 @@ the relevant schema, and existing examples before generating.
 - `/new-room "description"` — generate a room YAML
 - `/new-item "description"` — generate an item YAML
 - `/zone-sketch "concept"` — plan a new zone (room list + adjacency) before generating rooms
+- `/sketch-quest "concept"` — plan a new quest (step chain, gating, files needed) for review
+- `/new-quest <plan-file>` — generate all files from an approved `/sketch-quest` plan
 
 Schema reference: `docs/schemas/` (room, mob, item, spell, buff, dialogue)
 Full workflow: `docs/CONTENT_GENERATION_GUIDE.md`
