@@ -92,3 +92,24 @@ character:
   speciesid: 1
   level: 3
   gold: 0
+  shop:
+    - itemid: 40004
+      quantity: 0
+      quantitymax: 0
+      price: 2
+    - itemid: 40005
+      quantity: 0
+      quantitymax: 0
+      price: 2
+    - itemid: 40006
+      quantity: 0
+      quantitymax: 0
+      price: 2
+    - itemid: 40007
+      quantity: 0
+      quantitymax: 0
+      price: 2
+    - itemid: 30010
+      quantity: 0
+      quantitymax: 0
+      price: 10

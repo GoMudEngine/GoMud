@@ -20,9 +20,13 @@ items:
   - itemid: 40012
   - itemid: 40013
   - itemid: 40013
-  - itemid: 40007
-  - itemid: 40007
-  - itemid: 40007
+spawninfo:
+- itemid: 40007
+  message: A cloth strip lies folded on the weaving bench.
+  respawnrate: 8 real minutes
+- itemid: 40007
+  message: A length of linen hangs from a peg, ready to be cut.
+  respawnrate: 10 real minutes
 idlemessages:
 - The loom clacks rhythmically as the wind catches a loose thread.
 - Dust motes drift through a shaft of light above the weaving bench.
