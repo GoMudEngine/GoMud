@@ -64,9 +64,9 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	}
 
 	// Send a death msg to everyone in the room.
-	room.SendText(
+	sendMovementMessage(room,
 		fmt.Sprintf(`<ansi fg="mobname">%s</ansi> has died.`, mob.Character.Name),
-	)
+		`You hear something collapse to the ground.`)
 
 	// Special handling of "The Guide"
 	// Mark this moment to prevent an immediate respawn
@@ -170,11 +170,14 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	if !mob.Character.HasBuffFlag(buffs.PermaGear) {
 
+		lootDropped := false
+
 		// Check for any dropped loot...
 		for _, item := range mob.Character.Items {
 			msg := fmt.Sprintf(`<ansi fg="item">%s</ansi> drops to the ground.`, item.DisplayName())
-			room.SendText(msg)
+			sendMovementMessage(room, msg, ``)
 			room.AddItem(item, false)
+			lootDropped = true
 		}
 
 		allWornItems := mob.Character.Equipment.GetAllItems()
@@ -190,14 +193,21 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			}
 
 			msg := fmt.Sprintf(`<ansi fg="item">%s</ansi> drops to the ground.`, item.DisplayName())
-			room.SendText(msg)
+			sendMovementMessage(room, msg, ``)
 			room.AddItem(item, false)
+			lootDropped = true
 		}
 
 		if mob.Character.Gold > 0 {
 			msg := fmt.Sprintf(`<ansi fg="yellow-bold">%d gold</ansi> drops to the ground.`, mob.Character.Gold)
-			room.SendText(msg)
+			sendMovementMessage(room, msg, ``)
 			room.Gold += mob.Character.Gold
+			lootDropped = true
+		}
+
+		// One-time sound fallback for loot drops in dark rooms
+		if lootDropped && room.GetVisibility() < 1 {
+			sendMovementMessage(room, ``, `You hear something clatter to the ground.`)
 		}
 
 	}

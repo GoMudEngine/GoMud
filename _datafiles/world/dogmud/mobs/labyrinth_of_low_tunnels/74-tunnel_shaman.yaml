@@ -4,6 +4,7 @@ archetype: casting
 statpool: 15
 hostile: false
 maxwander: 0
+buffids: [29]
 groups:
   - warren
   - humanoid

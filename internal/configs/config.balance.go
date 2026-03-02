@@ -47,6 +47,9 @@ type Balance struct {
 	SpellConvictionCostMultiplier ConfigFloat `yaml:"SpellConvictionCostMultiplier"` // Global multiplier for spell conviction costs (default 1.0)
 	SpellHealthCostMultiplier     ConfigFloat `yaml:"SpellHealthCostMultiplier"`     // Global multiplier for spell health costs (default 1.0)
 
+	// ── COMBAT: DARKNESS ─────────────────────────────────────────────────────
+	DarknessCombatPenalty ConfigFloat `yaml:"DarknessCombatPenalty"` // Multiplier on attack AND defense scores when fighting blind (default 0.80)
+
 	// ── COMBAT: MESSAGES ─────────────────────────────────────────────────────
 	ConsistentAttackMessages ConfigBool `yaml:"ConsistentAttackMessages"` // Whether each weapon has consistent attack messages
 
@@ -283,6 +286,11 @@ func (b *Balance) Validate() {
 	}
 	if b.CoupDeGraceRounds < 0 {
 		b.CoupDeGraceRounds = 1
+	}
+
+	// ── COMBAT: DARKNESS ─────────────────────────────────────────────────────
+	if b.DarknessCombatPenalty <= 0 || b.DarknessCombatPenalty > 1.0 {
+		b.DarknessCombatPenalty = 0.80
 	}
 
 	// ── COMBAT: SPELL COSTS ──────────────────────────────────────────────────

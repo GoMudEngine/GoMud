@@ -31,6 +31,122 @@ func mobDisplayName(mob *mobs.Mob, room *rooms.Room, viewingUserId int) string {
 	return mob.Character.GetMobNameIndexed(viewingUserId, dupIdx).String()
 }
 
+// sendCombatRoomText sends a visual combat message to room observers.
+// In lit rooms, all players see the message. In dark rooms, only players
+// with nightvision see the visual text; others receive nothing here
+// (a one-time sound fallback is sent per round instead).
+func sendCombatRoomText(room *rooms.Room, visualMsg string, excludeUserIds ...int) {
+	if room == nil {
+		return
+	}
+	if room.GetVisibility() >= 1 {
+		room.SendText(visualMsg, excludeUserIds...)
+		return
+	}
+	for _, uid := range room.GetPlayers() {
+		if isExcludedUser(uid, excludeUserIds) {
+			continue
+		}
+		u := users.GetByUserId(uid)
+		if u != nil && u.Character.HasFlagFromAnySource(buffs.NightVision) {
+			u.SendText(visualMsg)
+		}
+	}
+}
+
+// isExcludedUser checks if a userId is in the exclusion list.
+func isExcludedUser(uid int, excludeIds []int) bool {
+	for _, id := range excludeIds {
+		if uid == id {
+			return true
+		}
+	}
+	return false
+}
+
+// sendDarkRoomCombatFallback sends a one-time "sounds of fighting" message
+// to non-nightvision players in dark rooms.
+func sendDarkRoomCombatFallback(room *rooms.Room, excludeUserIds ...int) {
+	if room == nil || room.GetVisibility() >= 1 {
+		return
+	}
+	for _, uid := range room.GetPlayers() {
+		if isExcludedUser(uid, excludeUserIds) {
+			continue
+		}
+		u := users.GetByUserId(uid)
+		if u != nil && !u.Character.HasFlagFromAnySource(buffs.NightVision) {
+			u.SendText(`<ansi fg="yellow">You hear the sounds of fighting nearby.</ansi>`)
+		}
+	}
+}
+
+// canSeeInRoom returns true if the character has nightvision or the room
+// has enough visibility for sight.
+func canSeeInRoom(char *characters.Character, room *rooms.Room) bool {
+	if room == nil {
+		return true
+	}
+	return room.GetVisibility() >= 1 || char.HasFlagFromAnySource(buffs.NightVision)
+}
+
+// replaceDarknessMessages replaces detailed combat messages with generic
+// darkness text for combatants who cannot see.
+func replaceDarknessMessages(result *combat.AttackResult, sourceCanSee bool, targetCanSee bool) {
+	if sourceCanSee && targetCanSee {
+		return
+	}
+
+	// Build replacement messages based on swing events
+	if !sourceCanSee {
+		newMsgs := make([]string, 0, len(result.SwingEvents))
+		for _, se := range result.SwingEvents {
+			if se.DoubleFumble {
+				// Keep comedy double fumble text
+				continue
+			}
+			if se.Fumble {
+				newMsgs = append(newMsgs, `<ansi fg="fumble-text">!!!</ansi> <ansi fg="yellow">You stumble badly in the darkness!</ansi> <ansi fg="fumble-text">!!!</ansi>`)
+			} else if se.Crit {
+				newMsgs = append(newMsgs, `<ansi fg="crit-text">***</ansi> <ansi fg="attack-good">You land a devastating blow in the dark!</ansi> <ansi fg="crit-text">***</ansi>`)
+			} else if se.DefenseCrit || se.DefenseUsed != "" {
+				newMsgs = append(newMsgs, `<ansi fg="attack-bad">Your attack is deflected by something!</ansi>`)
+			} else if se.Hit {
+				newMsgs = append(newMsgs, `<ansi fg="attack-good">You strike blindly and connect!</ansi>`)
+			} else {
+				newMsgs = append(newMsgs, `<ansi fg="yellow">You swing wildly in the darkness!</ansi>`)
+			}
+		}
+		if len(newMsgs) > 0 {
+			result.MessagesToSource = newMsgs
+		}
+	}
+
+	if !targetCanSee {
+		newMsgs := make([]string, 0, len(result.SwingEvents))
+		for _, se := range result.SwingEvents {
+			if se.DoubleFumble {
+				// Keep comedy double fumble text
+				continue
+			}
+			if se.Fumble {
+				newMsgs = append(newMsgs, `<ansi fg="yellow">You hear your attacker stumble!</ansi>`)
+			} else if se.Crit {
+				newMsgs = append(newMsgs, `<ansi fg="crit-text">***</ansi> <ansi fg="red">Something hits you hard in the dark!</ansi> <ansi fg="crit-text">***</ansi>`)
+			} else if se.DefenseCrit || se.DefenseUsed != "" {
+				newMsgs = append(newMsgs, `<ansi fg="defense-good">You fend off something in the dark!</ansi>`)
+			} else if se.Hit {
+				newMsgs = append(newMsgs, `<ansi fg="red">Something strikes you in the dark!</ansi>`)
+			} else {
+				newMsgs = append(newMsgs, `<ansi fg="yellow">You hear something whoosh past!</ansi>`)
+			}
+		}
+		if len(newMsgs) > 0 {
+			result.MessagesToTarget = newMsgs
+		}
+	}
+}
+
 // handlePlayerShieldDecay processes Minor Shield round expiry for a player.
 func handlePlayerShieldDecay(user *users.UserRecord) {
 	if user.Character.HasCondition(characters.ConditionShield) {
@@ -486,6 +602,11 @@ func handlePlayerConcentrationBreak(defUser *users.UserRecord, roundResult comba
 
 // dispatchCombatMessages sends buffs and combat messages to the appropriate targets.
 func dispatchCombatMessages(roundResult combat.AttackResult, atkUser *users.UserRecord, defUser *users.UserRecord, atkRoom *rooms.Room, defRoom *rooms.Room) {
+	// Apply darkness message replacement for blind combatants
+	srcCanSee := canSeeInRoom(atkUser.Character, atkRoom)
+	tgtCanSee := canSeeInRoom(defUser.Character, defRoom)
+	replaceDarknessMessages(&roundResult, srcCanSee, tgtCanSee)
+
 	for _, buffId := range roundResult.BuffSource {
 		atkUser.AddBuff(buffId, `combat`)
 	}
@@ -503,11 +624,17 @@ func dispatchCombatMessages(roundResult combat.AttackResult, atkUser *users.User
 	}
 
 	for _, msg := range roundResult.MessagesToSourceRoom {
-		atkRoom.SendText(msg, atkUser.UserId, defUser.UserId)
+		sendCombatRoomText(atkRoom, msg, atkUser.UserId, defUser.UserId)
 	}
 
 	for _, msg := range roundResult.MessagesToTargetRoom {
-		defRoom.SendText(msg, atkUser.UserId, defUser.UserId)
+		sendCombatRoomText(defRoom, msg, atkUser.UserId, defUser.UserId)
+	}
+
+	// One-time sound fallback for dark rooms
+	sendDarkRoomCombatFallback(atkRoom, atkUser.UserId, defUser.UserId)
+	if defRoom != atkRoom {
+		sendDarkRoomCombatFallback(defRoom, atkUser.UserId, defUser.UserId)
 	}
 }
 
@@ -755,13 +882,17 @@ func handlePlayerVsPlayer(user *users.UserRecord, uRoom *rooms.Room, evt events.
 		}
 		if len(roundResult.MessagesToSourceRoom) > 0 {
 			for _, msg := range roundResult.MessagesToSourceRoom {
-				uRoom.SendText(msg, user.UserId, defUser.UserId)
+				sendCombatRoomText(uRoom, msg, user.UserId, defUser.UserId)
 			}
 		}
 		if len(roundResult.MessagesToTargetRoom) > 0 {
 			for _, msg := range roundResult.MessagesToTargetRoom {
-				defRoom.SendText(msg, user.UserId, defUser.UserId)
+				sendCombatRoomText(defRoom, msg, user.UserId, defUser.UserId)
 			}
+		}
+		sendDarkRoomCombatFallback(uRoom, user.UserId, defUser.UserId)
+		if defRoom != uRoom {
+			sendDarkRoomCombatFallback(defRoom, user.UserId, defUser.UserId)
 		}
 		return
 	}
@@ -866,10 +997,14 @@ func handlePlayerVsMob(user *users.UserRecord, uRoom *rooms.Room, evt events.New
 			user.SendText(msg)
 		}
 		for _, msg := range roundResult.MessagesToSourceRoom {
-			uRoom.SendText(msg, user.UserId)
+			sendCombatRoomText(uRoom, msg, user.UserId)
 		}
 		for _, msg := range roundResult.MessagesToTargetRoom {
-			defRoom.SendText(msg, user.UserId)
+			sendCombatRoomText(defRoom, msg, user.UserId)
+		}
+		sendDarkRoomCombatFallback(uRoom, user.UserId)
+		if defRoom != uRoom {
+			sendDarkRoomCombatFallback(defRoom, user.UserId)
 		}
 		return
 	}
@@ -924,6 +1059,10 @@ func handlePlayerVsMob(user *users.UserRecord, uRoom *rooms.Room, evt events.New
 	pvmCritResult := applyCritEffects(user.Character, &defMob.Character, roundResult, uRoom)
 	dispatchCritEffectsPvM(pvmCritResult, user, defMob, uRoom)
 
+	// Apply darkness message replacement for blind attacker
+	pvmSrcCanSee := canSeeInRoom(user.Character, uRoom)
+	replaceDarknessMessages(&roundResult, pvmSrcCanSee, true) // mobs don't receive text messages
+
 	for _, buffId := range roundResult.BuffSource {
 		user.AddBuff(buffId, `combat`)
 	}
@@ -934,10 +1073,14 @@ func handlePlayerVsMob(user *users.UserRecord, uRoom *rooms.Room, evt events.New
 		user.SendText(msg)
 	}
 	for _, msg := range roundResult.MessagesToSourceRoom {
-		uRoom.SendText(msg, user.UserId)
+		sendCombatRoomText(uRoom, msg, user.UserId)
 	}
 	for _, msg := range roundResult.MessagesToTargetRoom {
-		defRoom.SendText(msg, user.UserId)
+		sendCombatRoomText(defRoom, msg, user.UserId)
+	}
+	sendDarkRoomCombatFallback(uRoom, user.UserId)
+	if defRoom != uRoom {
+		sendDarkRoomCombatFallback(defRoom, user.UserId)
 	}
 
 	// Stage 11.5: Mob concentration break when hit
@@ -1044,10 +1187,14 @@ func handleMobVsPlayer(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, 
 			defUser.SendText(msg)
 		}
 		for _, msg := range roundResult.MessagesToSourceRoom {
-			mobRoom.SendText(msg, defUser.UserId)
+			sendCombatRoomText(mobRoom, msg, defUser.UserId)
 		}
 		for _, msg := range roundResult.MessagesToTargetRoom {
-			defRoom.SendText(msg, defUser.UserId)
+			sendCombatRoomText(defRoom, msg, defUser.UserId)
+		}
+		sendDarkRoomCombatFallback(mobRoom, defUser.UserId)
+		if defRoom != mobRoom {
+			sendDarkRoomCombatFallback(defRoom, defUser.UserId)
 		}
 		return
 	}
@@ -1111,6 +1258,10 @@ func handleMobVsPlayer(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, 
 	room := rooms.LoadRoom(roomId)
 	handleCharmedMobAssist(room, defUser.UserId, fmt.Sprintf("#%d", mob.InstanceId))
 
+	// Apply darkness message replacement for blind defender
+	mvpTgtCanSee := canSeeInRoom(defUser.Character, defRoom)
+	replaceDarknessMessages(&roundResult, true, mvpTgtCanSee) // mob source doesn't need text replacement
+
 	for _, buffId := range roundResult.BuffSource {
 		mob.AddBuff(buffId, `combat`)
 	}
@@ -1121,10 +1272,14 @@ func handleMobVsPlayer(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, 
 		defUser.SendText(msg)
 	}
 	for _, msg := range roundResult.MessagesToSourceRoom {
-		mobRoom.SendText(msg, defUser.UserId)
+		sendCombatRoomText(mobRoom, msg, defUser.UserId)
 	}
 	for _, msg := range roundResult.MessagesToTargetRoom {
-		defRoom.SendText(msg, defUser.UserId)
+		sendCombatRoomText(defRoom, msg, defUser.UserId)
+	}
+	sendDarkRoomCombatFallback(mobRoom, defUser.UserId)
+	if defRoom != mobRoom {
+		sendDarkRoomCombatFallback(defRoom, defUser.UserId)
 	}
 
 	handlePlayerConcentrationBreak(defUser, roundResult, defRoom)
@@ -1192,10 +1347,14 @@ func handleMobVsMob(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, aff
 		roundResult := combat.GetWaitMessages(items.Wait, &mob.Character, &defMob.Character, combat.Mob, combat.Mob)
 
 		for _, msg := range roundResult.MessagesToSourceRoom {
-			mobRoom.SendText(msg)
+			sendCombatRoomText(mobRoom, msg)
 		}
 		for _, msg := range roundResult.MessagesToTargetRoom {
-			defRoom.SendText(msg)
+			sendCombatRoomText(defRoom, msg)
+		}
+		sendDarkRoomCombatFallback(mobRoom)
+		if defRoom != mobRoom {
+			sendDarkRoomCombatFallback(defRoom)
 		}
 		return
 	}
@@ -1237,10 +1396,14 @@ func handleMobVsMob(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, aff
 		defMob.AddBuff(buffId, `combat`)
 	}
 	for _, msg := range roundResult.MessagesToSourceRoom {
-		mobRoom.SendText(msg)
+		sendCombatRoomText(mobRoom, msg)
 	}
 	for _, msg := range roundResult.MessagesToTargetRoom {
-		defRoom.SendText(msg)
+		sendCombatRoomText(defRoom, msg)
+	}
+	sendDarkRoomCombatFallback(mobRoom)
+	if defRoom != mobRoom {
+		sendDarkRoomCombatFallback(defRoom)
 	}
 
 	// Handle any scripted behavior now.

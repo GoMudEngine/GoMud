@@ -14,6 +14,12 @@ import (
 
 func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
+	// Can't pick things up if you can't see
+	if room.GetVisibility() < 1 && !user.Character.HasFlagFromAnySource(buffs.NightVision) {
+		user.SendText("You can't see anything to pick up!")
+		return true, nil
+	}
+
 	args := util.SplitButRespectQuotes(strings.ToLower(rest))
 
 	if len(args) == 0 {

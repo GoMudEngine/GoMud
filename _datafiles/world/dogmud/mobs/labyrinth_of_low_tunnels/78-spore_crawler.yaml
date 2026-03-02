@@ -5,6 +5,7 @@ statpool: 6
 itemdropchance: 20
 hostile: true
 maxwander: 1
+buffids: [29]
 groups:
   - insect
   - mutant

@@ -19,6 +19,12 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
+// combatContext carries per-round environmental info into the combat engine.
+type combatContext struct {
+	sourceCanSee bool // source has nightvision OR room visibility >= 1
+	targetCanSee bool // target has nightvision OR room visibility >= 1
+}
+
 // weaponSetup holds pre-computed weapon info for a single weapon swing.
 type weaponSetup struct {
 	weapon        items.Item
@@ -272,7 +278,7 @@ func buildDamageParams(sourceChar *characters.Character, targetChar *characters.
 }
 
 // calcAttackScore computes the attack roll score with all modifiers.
-func calcAttackScore(sourceChar *characters.Character, targetChar *characters.Character, penalty int) float64 {
+func calcAttackScore(sourceChar *characters.Character, targetChar *characters.Character, penalty int, ctx combatContext) float64 {
 	attackScore := float64(sourceChar.Stats.Dexterity.ValueAdj) + float64(sourceChar.GetCombatSkillLevel())
 	attackScore -= float64(penalty)
 
@@ -288,6 +294,11 @@ func calcAttackScore(sourceChar *characters.Character, targetChar *characters.Ch
 	}
 	if targetChar.CombatPosition == characters.PositionProne {
 		attackScore *= float64(bal.ProneVulnerabilityMultiplier)
+	}
+
+	// Darkness penalty: attacker can't see
+	if !ctx.sourceCanSee {
+		attackScore *= float64(bal.DarknessCombatPenalty)
 	}
 
 	return attackScore
@@ -364,7 +375,7 @@ func filterDefensesForThirdParty(result *AttackResult, sourceChar *characters.Ch
 
 // runBestOfAllDefense rolls every available defense and picks the one that won
 // by the widest margin. Returns the best result.
-func runBestOfAllDefense(result *AttackResult, sourceChar *characters.Character, targetChar *characters.Character, defSeq []string, atkScore float64, isThirdParty bool) bestDefenseResult {
+func runBestOfAllDefense(result *AttackResult, sourceChar *characters.Character, targetChar *characters.Character, defSeq []string, atkScore float64, isThirdParty bool, ctx combatContext) bestDefenseResult {
 	bal := configs.GetBalanceConfig()
 
 	best := bestDefenseResult{
@@ -421,6 +432,11 @@ func runBestOfAllDefense(result *AttackResult, sourceChar *characters.Character,
 		// Stage 8.6: Apply failed grapple defense penalty
 		if targetChar.HasCondition(characters.ConditionDefensePenalty) {
 			defenseScore *= targetChar.GetConditionMagnitude(characters.ConditionDefensePenalty)
+		}
+
+		// Darkness penalty: defender can't see
+		if !ctx.targetCanSee {
+			defenseScore *= float64(bal.DarknessCombatPenalty)
 		}
 
 		// Roll this defense against the single attack roll

@@ -22,10 +22,23 @@ const (
 	Mob  SourceTarget = "mob"
 )
 
+// canSeeInRoom returns true if the character has nightvision or the room is lit.
+func canSeeInRoom(char *characters.Character, room *rooms.Room) bool {
+	if room == nil {
+		return true
+	}
+	return room.GetVisibility() >= 1 || char.HasFlagFromAnySource(buffs.NightVision)
+}
+
 // Performs a combat round from a player to a mob
 func AttackPlayerVsMob(user *users.UserRecord, mob *mobs.Mob) AttackResult {
 
-	attackResult := calculateCombat(*user.Character, mob.Character, User, Mob)
+	room := rooms.LoadRoom(user.Character.RoomId)
+	ctx := combatContext{
+		sourceCanSee: canSeeInRoom(user.Character, room),
+		targetCanSee: canSeeInRoom(&mob.Character, room),
+	}
+	attackResult := calculateCombat(*user.Character, mob.Character, User, Mob, ctx)
 
 	// Deduct stamina for the attack
 	user.Character.DeductAttackStamina()
@@ -68,7 +81,12 @@ func AttackPlayerVsMob(user *users.UserRecord, mob *mobs.Mob) AttackResult {
 // Performs a combat round from a player to a player
 func AttackPlayerVsPlayer(userAtk *users.UserRecord, userDef *users.UserRecord) AttackResult {
 
-	attackResult := calculateCombat(*userAtk.Character, *userDef.Character, User, User)
+	room := rooms.LoadRoom(userAtk.Character.RoomId)
+	ctx := combatContext{
+		sourceCanSee: canSeeInRoom(userAtk.Character, room),
+		targetCanSee: canSeeInRoom(userDef.Character, room),
+	}
+	attackResult := calculateCombat(*userAtk.Character, *userDef.Character, User, User, ctx)
 
 	// Deduct stamina for the attack
 	userAtk.Character.DeductAttackStamina()
@@ -112,7 +130,12 @@ func AttackPlayerVsPlayer(userAtk *users.UserRecord, userDef *users.UserRecord) 
 // Performs a combat round from a mob to a player
 func AttackMobVsPlayer(mob *mobs.Mob, user *users.UserRecord) AttackResult {
 
-	attackResult := calculateCombat(mob.Character, *user.Character, Mob, User)
+	room := rooms.LoadRoom(mob.Character.RoomId)
+	ctx := combatContext{
+		sourceCanSee: canSeeInRoom(&mob.Character, room),
+		targetCanSee: canSeeInRoom(user.Character, room),
+	}
+	attackResult := calculateCombat(mob.Character, *user.Character, Mob, User, ctx)
 
 	// Deduct stamina for the attack
 	mob.Character.DeductAttackStamina()
@@ -137,7 +160,12 @@ func AttackMobVsPlayer(mob *mobs.Mob, user *users.UserRecord) AttackResult {
 // Performs a combat round from a mob to a mob
 func AttackMobVsMob(mobAtk *mobs.Mob, mobDef *mobs.Mob) AttackResult {
 
-	attackResult := calculateCombat(mobAtk.Character, mobDef.Character, Mob, Mob)
+	room := rooms.LoadRoom(mobAtk.Character.RoomId)
+	ctx := combatContext{
+		sourceCanSee: canSeeInRoom(&mobAtk.Character, room),
+		targetCanSee: canSeeInRoom(&mobDef.Character, room),
+	}
+	attackResult := calculateCombat(mobAtk.Character, mobDef.Character, Mob, Mob, ctx)
 
 	// Deduct stamina for the attack
 	mobAtk.Character.DeductAttackStamina()
@@ -270,7 +298,7 @@ func GetWaitMessages(stepType items.Intensity, sourceChar *characters.Character,
 	return attackResult
 }
 
-func calculateCombat(sourceChar characters.Character, targetChar characters.Character, sourceType SourceTarget, targetType SourceTarget) AttackResult {
+func calculateCombat(sourceChar characters.Character, targetChar characters.Character, sourceType SourceTarget, targetType SourceTarget, ctx combatContext) AttackResult {
 
 	attackResult := AttackResult{}
 
@@ -315,7 +343,7 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 			attackSourceDamage := 0
 			attackSourceReduction := 0
 
-			attackScore := calcAttackScore(&sourceChar, &targetChar, ws.penalty)
+			attackScore := calcAttackScore(&sourceChar, &targetChar, ws.penalty, ctx)
 
 			defenseSequence := targetChar.GetDefenseSequence()
 
@@ -323,7 +351,7 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 			defenseSequence, isThirdParty := filterDefensesForThirdParty(&attackResult, &sourceChar, &targetChar, defenseSequence)
 
 			// Roll attack once via best-of-all defense
-			best := runBestOfAllDefense(&attackResult, &sourceChar, &targetChar, defenseSequence, attackScore, isThirdParty)
+			best := runBestOfAllDefense(&attackResult, &sourceChar, &targetChar, defenseSequence, attackScore, isThirdParty, ctx)
 
 			// New resolution order: fumbles → crits → normal → floors
 			res := resolveDefenseOutcome(&attackResult, best, &sourceChar, &targetChar, critThreshold, isThirdParty)

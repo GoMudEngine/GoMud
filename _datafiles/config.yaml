@@ -447,6 +447,11 @@ Balance:
   # See _datafiles/combat-messages/* for message definitions.
   ConsistentAttackMessages: false
 
+  # ── COMBAT: DARKNESS ───────────────────────────────────────────────────────
+  # Multiplier on attack AND defense scores when fighting in a dark room
+  # without nightvision. 0.80 = 20% penalty to hit and defend while blind.
+  DarknessCombatPenalty: 0.80
+
   # ── COMBAT: DAMAGE ────────────────────────────────────────────────────────
   # These two are global panic buttons. 1.0 = no change. Not yet wired
   # into code — reserved for future "server set" runtime tuning.
@@ -484,19 +489,19 @@ Balance:
   #     0.05 →   5 raw damage per swing (current — low, needs MobDamageMultiplier)
   #     0.15 →  15 raw damage per swing
   #     0.30 →  30 raw damage per swing (original default)
-  MeleeDamageScale: 0.15       # Tuned 39.2: lowered from 0.30; keeps player melee modest, MobDamageMultiplier compensates for NPCs
+  MeleeDamageScale: 0.30       # Tuned hitroll rework: doubled from 0.15; swing count halved so per-swing damage needs to compensate
   #
   # MobDamageMultiplier: extra multiplier applied ONLY to NPC melee
   #   damage. Lets you keep player damage low while making NPCs threatening.
   #   Example: MeleeDamageScale 0.05, MobDamageMultiplier 4.0:
   #     Player Str 100 → 100 × 1.0 × 1.0 × 0.05 = 5 raw (unchanged)
   #     Mob Str 100    → 100 × 1.0 × 1.0 × 0.05 × 4.0 = 20 raw
-  MobDamageMultiplier: 3.75     # Tuned 39.2: compensates for low MeleeDamageScale; mob swings hit ~56 raw at Str 100
+  MobDamageMultiplier: 2.5      # Tuned hitroll rework: reduced from 3.75; MeleeDamageScale doubled so less compensation needed
   #
   # SpellDamageScale: multiplier on ALL spell damage output (players + NPCs).
   #   1.0 = no scaling. Example at Wil 100, skill 0, spell mult 1.0:
   #     1.0 → 100 raw,  1.5 → 150 raw,  0.5 → 50 raw
-  SpellDamageScale: 3.5         # Tuned 39.2: primary damage channel; 3.5x makes spells worth conviction cost + cast time
+  SpellDamageScale: 2.75        # Tuned hitroll rework: reduced from 3.5; melee got per-swing buff so spells need less boost to stay competitive
   #
   # RhetoricDamageScale: multiplier on taunt/conviction damage output.
   #   Taunt uses itemMult 0.5 as base. Example at Cha 100, skill 0:
