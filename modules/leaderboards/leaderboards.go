@@ -189,6 +189,7 @@ func (l *LeaderboardModule) Update() {
 			characterCount++
 
 			if l.PowerEnabled {
+				char.RecalculateStats()
 				l.LB_Power.Consider(u.UserId, char, int(combat.PowerScore(char)))
 			}
 
@@ -203,6 +204,7 @@ func (l *LeaderboardModule) Update() {
 		characterCount++
 
 		if l.PowerEnabled {
+			u.Character.RecalculateStats()
 			l.LB_Power.Consider(u.UserId, *u.Character, int(combat.PowerScore(*u.Character)))
 		}
 
@@ -211,6 +213,7 @@ func (l *LeaderboardModule) Update() {
 			characterCount++
 
 			if l.PowerEnabled {
+				char.RecalculateStats()
 				l.LB_Power.Consider(u.UserId, char, int(combat.PowerScore(char)))
 			}
 
