@@ -68,32 +68,44 @@ func Trip(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	})
 
 	// Send messages
+	mobName := mob.Character.Name
+	canSee := targetChar == nil || canSeeInDark(targetChar, room)
+	dmgDesc := combat.GetDamageDescription(result.Damage, result.TargetMaxHP)
 	if result.Hit {
 		if result.KnockedDown {
 			if targetChar != nil {
-				targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> sweeps your legs, sending you crashing to the ground! (<ansi fg="damage">%s</ansi> damage)`, mob.Character.Name, combat.GetDamageDescription(result.Damage, result.TargetMaxHP)))
+				if canSee {
+					targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> sweeps your legs, sending you crashing to the ground! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
+				} else {
+					targetChar.SendText(fmt.Sprintf(`Something sweeps your legs, sending you crashing to the ground! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
+				}
 			}
-			room.SendText(
-				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> trips <ansi fg="username">%s</ansi>, sending them crashing to the ground!`, mob.Character.Name, targetName),
-				targetPlayerId,
-			)
+			sendRoomText(room,
+				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> trips <ansi fg="username">%s</ansi>, sending them crashing to the ground!`, mobName, targetName),
+				targetPlayerId)
 		} else {
 			if targetChar != nil {
-				targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts to trip you, but you keep your footing! (<ansi fg="damage">%s</ansi> damage)`, mob.Character.Name, combat.GetDamageDescription(result.Damage, result.TargetMaxHP)))
+				if canSee {
+					targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts to trip you, but you keep your footing! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
+				} else {
+					targetChar.SendText(fmt.Sprintf(`Something attempts to trip you, but you keep your footing! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
+				}
 			}
-			room.SendText(
-				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts to trip <ansi fg="username">%s</ansi>, but they keep their footing!`, mob.Character.Name, targetName),
-				targetPlayerId,
-			)
+			sendRoomText(room,
+				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts to trip <ansi fg="username">%s</ansi>, but they keep their footing!`, mobName, targetName),
+				targetPlayerId)
 		}
 	} else {
 		if targetChar != nil {
-			targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts to trip you, but you avoid it!`, mob.Character.Name))
+			if canSee {
+				targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts to trip you, but you avoid it!`, mobName))
+			} else {
+				targetChar.SendText(`Something attempts to trip you, but you avoid it!`)
+			}
 		}
-		room.SendText(
-			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts to trip <ansi fg="username">%s</ansi>, but misses!`, mob.Character.Name, targetName),
-			targetPlayerId,
-		)
+		sendRoomText(room,
+			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts to trip <ansi fg="username">%s</ansi>, but misses!`, mobName, targetName),
+			targetPlayerId)
 	}
 
 	// Record combat analytics

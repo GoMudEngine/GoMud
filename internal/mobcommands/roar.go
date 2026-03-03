@@ -81,9 +81,9 @@ func Roar(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			mob.Character.Conviction = 0
 		}
 
-		room.SendText(
-			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> opens its jaws to roar, but only manages a weak grunt.`, mob.Character.Name),
-		)
+		sendAudioRoomText(room, mob,
+			`Something opens its jaws to roar, but only manages a weak grunt.`,
+			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> opens its jaws to roar, but only manages a weak grunt.`, mob.Character.Name))
 
 		combat.RecordSpecialMove(combat.Mob, combat.User, "roar", false, 0,
 			&mob.Character, defender, util.GetRoundCount())
@@ -132,15 +132,15 @@ func Roar(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		dmgDesc := combat.GetConvictionDamageDescription(dmg, convMaxRef)
 
 		if targetPlayer != nil {
-			targetPlayer.SendText(
-				fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s thunderous roar rattles your confidence! (<ansi fg="damage">%s</ansi>)`,
-					mob.Character.Name, dmgDesc))
+			if canSeeInDark(targetPlayer, room) {
+				targetPlayer.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s thunderous roar rattles your confidence! (<ansi fg="damage">%s</ansi>)`, mob.Character.Name, dmgDesc))
+			} else {
+				targetPlayer.SendText(fmt.Sprintf(`A thunderous roar rattles your confidence! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
+			}
 		}
-		room.SendText(
-			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> rears up and unleashes a thunderous roar at <ansi fg="username">%s</ansi>!`,
-				mob.Character.Name, targetName),
-			targetPlayerId,
-		)
+		sendAudioRoomText(room, mob,
+			fmt.Sprintf(`Something unleashes a thunderous roar at <ansi fg="username">%s</ansi>!`, targetName),
+			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> rears up and unleashes a thunderous roar at <ansi fg="username">%s</ansi>!`, mob.Character.Name, targetName))
 
 		tgtType := combat.Mob
 		if targetMob == nil {
@@ -152,15 +152,15 @@ func Roar(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	} else {
 		// Miss
 		if targetPlayer != nil {
-			targetPlayer.SendText(
-				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> roars, but you hold firm.`,
-					mob.Character.Name))
+			if canSeeInDark(targetPlayer, room) {
+				targetPlayer.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> roars, but you hold firm.`, mob.Character.Name))
+			} else {
+				targetPlayer.SendText(`Something roars, but you hold firm.`)
+			}
 		}
-		room.SendText(
-			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> roars at <ansi fg="username">%s</ansi>, but it has no effect.`,
-				mob.Character.Name, targetName),
-			targetPlayerId,
-		)
+		sendAudioRoomText(room, mob,
+			fmt.Sprintf(`Something roars at <ansi fg="username">%s</ansi>, but it has no effect.`, targetName),
+			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> roars at <ansi fg="username">%s</ansi>, but it has no effect.`, mob.Character.Name, targetName))
 
 		tgtType := combat.Mob
 		if targetMob == nil {

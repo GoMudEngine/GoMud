@@ -1371,6 +1371,8 @@
             flex: 1;
             padding: 0.25em;
             background: #000;
+            overflow: hidden;
+            position: relative;
         }
 
         .tab-content {
@@ -1389,7 +1391,8 @@
             color: #fce94f;
         }
         .chat-window {
-            overflow:scroll;
+            overflow-y:auto;
+            height:100%;
             background-color:#000;
             color:#fff;
         }

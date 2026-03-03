@@ -56,37 +56,45 @@ func Grapple(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	result := combat.ExecuteGrappleMove(&mob.Character, defender, 0, room)
 
 	// Send messages based on result
+	mobName := mob.Character.Name
+	canSee := targetChar == nil || canSeeInDark(targetChar, room)
 	if result.Success {
 		if targetChar != nil {
-			targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> <ansi fg="yellow-bold">grapples</ansi> you, transitioning to <ansi fg="cyan">%s</ansi> position!`, mob.Character.Name, result.PositionDesc))
+			if canSee {
+				targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> <ansi fg="yellow-bold">grapples</ansi> you, transitioning to <ansi fg="cyan">%s</ansi> position!`, mobName, result.PositionDesc))
+			} else {
+				targetChar.SendText(fmt.Sprintf(`Something <ansi fg="yellow-bold">grapples</ansi> you, transitioning to <ansi fg="cyan">%s</ansi> position!`, result.PositionDesc))
+			}
 		}
-		room.SendText(
-			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> <ansi fg="yellow-bold">grapples</ansi> <ansi fg="username">%s</ansi> into <ansi fg="cyan">%s</ansi> position!`, mob.Character.Name, targetName, result.PositionDesc),
-			targetPlayerId,
-		)
+		sendRoomText(room,
+			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> <ansi fg="yellow-bold">grapples</ansi> <ansi fg="username">%s</ansi> into <ansi fg="cyan">%s</ansi> position!`, mobName, targetName, result.PositionDesc),
+			targetPlayerId)
 
 		// Disarm messaging
 		if result.DisarmResult != nil {
 			if targetChar != nil {
 				targetChar.SendText(result.DisarmResult.TargetMsg)
 			}
-			room.SendText(result.DisarmResult.RoomMessage, targetPlayerId)
+			sendRoomText(room, result.DisarmResult.RoomMessage, targetPlayerId)
 		}
 	} else {
 		if targetChar != nil {
-			targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> tries to grapple you, but you slip away!`, mob.Character.Name))
+			if canSee {
+				targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> tries to grapple you, but you slip away!`, mobName))
+			} else {
+				targetChar.SendText(`Something tries to grapple you, but you slip away!`)
+			}
 		}
-		room.SendText(
-			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> tries to grapple <ansi fg="username">%s</ansi>, but fails!`, mob.Character.Name, targetName),
-			targetPlayerId,
-		)
+		sendRoomText(room,
+			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> tries to grapple <ansi fg="username">%s</ansi>, but fails!`, mobName, targetName),
+			targetPlayerId)
 
 		// Critical failure messaging
 		if result.CritFailure != nil {
 			if targetChar != nil {
 				targetChar.SendText(result.CritFailure.TargetMessage)
 			}
-			room.SendText(result.CritFailure.RoomMessage, targetPlayerId)
+			sendRoomText(room, result.CritFailure.RoomMessage, targetPlayerId)
 		}
 	}
 

@@ -117,9 +117,13 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 			if !isSneaking {
 
-				u.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> prepares to fight you!`, mob.Character.Name))
+				if canSeeInDark(u, room) {
+					u.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> prepares to fight you!`, mob.Character.Name))
+				} else {
+					u.SendText(`Something prepares to fight you!`)
+				}
 
-				room.SendText(
+				sendRoomText(room,
 					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> prepares to fight <ansi fg="username">%s</ansi>`, mob.Character.Name, u.Character.Name),
 					u.UserId)
 
@@ -137,10 +141,8 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			mob.Character.SetAggro(0, attackMobInstanceId, characters.DefaultAttack)
 
 			if !isSneaking {
-
-				room.SendText(
+				sendRoomText(room,
 					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> prepares to fight <ansi fg="mobname">%s</ansi>`, mob.Character.Name, m.Character.Name))
-
 			}
 
 		}
@@ -149,7 +151,7 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	}
 
 	if !isSneaking {
-		room.SendText(
+		sendRoomText(room,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> looks confused and upset.`, mob.Character.Name))
 	}
 

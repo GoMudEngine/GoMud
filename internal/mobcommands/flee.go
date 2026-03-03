@@ -23,9 +23,8 @@ func Flee(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	}
 
 	// Send flee message before moving
-	room.SendText(
-		fmt.Sprintf(`<ansi fg="mobname">%s</ansi> flees!`, mob.Character.Name),
-	)
+	sendRoomText(room,
+		fmt.Sprintf(`<ansi fg="mobname">%s</ansi> flees!`, mob.Character.Name))
 
 	// Move via the existing Go command
 	Go(exitName, mob, room)

@@ -77,9 +77,8 @@ func Shoot(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			mob.Character.SetAggroRemote(exitName, 0, attackMobInstanceId, characters.Shooting)
 
 			if !isSneaking {
-				room.SendText(
-					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> prepares to shoot at <ansi fg="mobname">%s</ansi> through the <ansi fg="exit">%s</ansi> exit.`, mob.Character.Name, m.Character.Name, exitName),
-				)
+				sendRoomText(room,
+					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> prepares to shoot at <ansi fg="mobname">%s</ansi> through the <ansi fg="exit">%s</ansi> exit.`, mob.Character.Name, m.Character.Name, exitName))
 			}
 
 		}
@@ -93,11 +92,8 @@ func Shoot(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			mob.Character.SetAggroRemote(exitName, attackPlayerId, 0, characters.Shooting)
 
 			if !isSneaking {
-
-				room.SendText(
-					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> prepares to shoot at <ansi fg="username">%s</ansi> through the <ansi fg="exit">%s</ansi> exit.`, mob.Character.Name, p.Character.Name, exitName),
-				)
-
+				sendRoomText(room,
+					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> prepares to shoot at <ansi fg="username">%s</ansi> through the <ansi fg="exit">%s</ansi> exit.`, mob.Character.Name, p.Character.Name, exitName))
 			}
 
 		}

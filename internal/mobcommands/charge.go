@@ -67,32 +67,44 @@ func Charge(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	})
 
 	// Send messages
+	mobName := mob.Character.Name
+	canSee := targetChar == nil || canSeeInDark(targetChar, room)
+	dmgDesc := combat.GetDamageDescription(result.Damage, result.TargetMaxHP)
 	if result.Hit {
 		if result.KnockedDown {
 			if targetChar != nil {
-				targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges and slams into you, sending you sprawling! (<ansi fg="damage">%s</ansi> damage)`, mob.Character.Name, combat.GetDamageDescription(result.Damage, result.TargetMaxHP)))
+				if canSee {
+					targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges and slams into you, sending you sprawling! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
+				} else {
+					targetChar.SendText(fmt.Sprintf(`Something charges and slams into you, sending you sprawling! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
+				}
 			}
-			room.SendText(
-				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges and slams into <ansi fg="username">%s</ansi>, sending them sprawling!`, mob.Character.Name, targetName),
-				targetPlayerId,
-			)
+			sendRoomText(room,
+				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges and slams into <ansi fg="username">%s</ansi>, sending them sprawling!`, mobName, targetName),
+				targetPlayerId)
 		} else {
 			if targetChar != nil {
-				targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges at you, but you keep your footing! (<ansi fg="damage">%s</ansi> damage)`, mob.Character.Name, combat.GetDamageDescription(result.Damage, result.TargetMaxHP)))
+				if canSee {
+					targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges at you, but you keep your footing! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
+				} else {
+					targetChar.SendText(fmt.Sprintf(`Something charges at you, but you keep your footing! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
+				}
 			}
-			room.SendText(
-				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges at <ansi fg="username">%s</ansi>, but they keep their footing!`, mob.Character.Name, targetName),
-				targetPlayerId,
-			)
+			sendRoomText(room,
+				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges at <ansi fg="username">%s</ansi>, but they keep their footing!`, mobName, targetName),
+				targetPlayerId)
 		}
 	} else {
 		if targetChar != nil {
-			targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges past you, missing entirely!`, mob.Character.Name))
+			if canSee {
+				targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges past you, missing entirely!`, mobName))
+			} else {
+				targetChar.SendText(`Something charges past you, missing entirely!`)
+			}
 		}
-		room.SendText(
-			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges past <ansi fg="username">%s</ansi>, missing entirely!`, mob.Character.Name, targetName),
-			targetPlayerId,
-		)
+		sendRoomText(room,
+			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges past <ansi fg="username">%s</ansi>, missing entirely!`, mobName, targetName),
+			targetPlayerId)
 	}
 
 	// Record combat analytics

@@ -68,32 +68,44 @@ func Kick(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	})
 
 	// Send messages
+	mobName := mob.Character.Name
+	canSee := targetChar == nil || canSeeInDark(targetChar, room)
+	dmgDesc := combat.GetDamageDescription(result.Damage, result.TargetMaxHP)
 	if result.Hit {
 		if result.KnockedDown {
 			if targetChar != nil {
-				targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s powerful <ansi fg="yellow-bold">kick</ansi> knocks you to the ground! (<ansi fg="damage">%s</ansi> damage)`, mob.Character.Name, combat.GetDamageDescription(result.Damage, result.TargetMaxHP)))
+				if canSee {
+					targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s powerful <ansi fg="yellow-bold">kick</ansi> knocks you to the ground! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
+				} else {
+					targetChar.SendText(fmt.Sprintf(`Something's powerful <ansi fg="yellow-bold">kick</ansi> knocks you to the ground! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
+				}
 			}
-			room.SendText(
-				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> kicks <ansi fg="username">%s</ansi>, knocking them to the ground!`, mob.Character.Name, targetName),
-				targetPlayerId,
-			)
+			sendRoomText(room,
+				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> kicks <ansi fg="username">%s</ansi>, knocking them to the ground!`, mobName, targetName),
+				targetPlayerId)
 		} else {
 			if targetChar != nil {
-				targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> kicks you hard! (<ansi fg="damage">%s</ansi> damage)`, mob.Character.Name, combat.GetDamageDescription(result.Damage, result.TargetMaxHP)))
+				if canSee {
+					targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> kicks you hard! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
+				} else {
+					targetChar.SendText(fmt.Sprintf(`Something kicks you hard! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
+				}
 			}
-			room.SendText(
-				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> kicks <ansi fg="username">%s</ansi>!`, mob.Character.Name, targetName),
-				targetPlayerId,
-			)
+			sendRoomText(room,
+				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> kicks <ansi fg="username">%s</ansi>!`, mobName, targetName),
+				targetPlayerId)
 		}
 	} else {
 		if targetChar != nil {
-			targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts to kick you, but misses!`, mob.Character.Name))
+			if canSee {
+				targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts to kick you, but misses!`, mobName))
+			} else {
+				targetChar.SendText(`Something attempts to kick you, but misses!`)
+			}
 		}
-		room.SendText(
-			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts to kick <ansi fg="username">%s</ansi>, but misses!`, mob.Character.Name, targetName),
-			targetPlayerId,
-		)
+		sendRoomText(room,
+			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts to kick <ansi fg="username">%s</ansi>, but misses!`, mobName, targetName),
+			targetPlayerId)
 	}
 
 	// Record combat analytics

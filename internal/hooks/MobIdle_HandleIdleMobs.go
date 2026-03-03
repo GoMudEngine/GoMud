@@ -6,6 +6,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/conversations"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -14,6 +15,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
+	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/GoMudEngine/GoMud/internal/worldevents"
 	"gopkg.in/yaml.v2"
@@ -52,14 +54,26 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 	// Stage 38.5.4: Crafter mob tick — background activity alongside normal idle
 	if result := mobs.TickMobCraft(mob); result != nil {
 		if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
+			var msg string
 			if result.Success {
-				room.SendText(fmt.Sprintf(
+				msg = fmt.Sprintf(
 					`<ansi fg="mobname">%s</ansi> finishes crafting and sets a new item on the shelf.`,
-					mob.Character.Name))
+					mob.Character.Name)
 			} else {
-				room.SendText(fmt.Sprintf(
+				msg = fmt.Sprintf(
 					`<ansi fg="mobname">%s</ansi> frowns at a failed attempt and discards the ruined materials.`,
-					mob.Character.Name))
+					mob.Character.Name)
+			}
+			// Visual text — suppress in dark rooms except for nightvision
+			if room.GetVisibility() < 1 {
+				for _, uid := range room.GetPlayers() {
+					u := users.GetByUserId(uid)
+					if u != nil && u.Character.HasFlagFromAnySource(buffs.NightVision) {
+						u.SendText(msg)
+					}
+				}
+			} else {
+				room.SendText(msg)
 			}
 		}
 		// Emit world event for rare crafts

@@ -26,7 +26,9 @@ func Say(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	if isSneaking {
 		room.SendText(fmt.Sprintf(`someone says, "<ansi fg="saytext-mob">%s</ansi>"`, rest))
 	} else {
-		room.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> says, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, rest))
+		sendAudioRoomText(room, mob,
+			fmt.Sprintf(`someone says, "<ansi fg="saytext-mob">%s</ansi>"`, rest),
+			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> says, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, rest))
 	}
 
 	events.AddToQueue(events.Communication{

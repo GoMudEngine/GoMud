@@ -252,8 +252,8 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 				TargetMobInstanceIds: spellAggro.TargetMobInstanceIds,
 				SpellRest:            spellAggro.SpellRest,
 			}
-			room.SendText(fmt.Sprintf(
-				`<ansi fg="mobname">%s</ansi> begins weaving a spell.`, mob.Character.Name), 0)
+			sendRoomText(room, fmt.Sprintf(
+				`<ansi fg="mobname">%s</ansi> begins weaving a spell.`, mob.Character.Name))
 
 			// Initiate combat aggro immediately when targeting a player with an offensive spell.
 			// This ensures the mob enters the combat loop so the player is flagged as in combat.

@@ -66,6 +66,8 @@ func Hamstring(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		DamageStat:      mob.Character.Stats.Strength.ValueAdj,
 	})
 
+	mobName := mob.Character.Name
+	canSee := targetChar == nil || canSeeInDark(targetChar, room)
 	if result.Hit {
 		// Apply bleed condition: duration 5, magnitude = Strength/10 (min 2)
 		bleedDmg := mob.Character.Stats.Strength.ValueAdj / 10
@@ -74,27 +76,28 @@ func Hamstring(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		}
 		defender.AddCondition(characters.ConditionBleeding, 5, float64(bleedDmg), "hamstring")
 
+		dmgDesc := combat.GetDamageDescription(result.Damage, result.TargetMaxHP)
 		if targetChar != nil {
-			targetChar.SendText(
-				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> rakes its fangs across your legs, opening deep wounds! (<ansi fg="damage">%s</ansi> damage)`,
-					mob.Character.Name, combat.GetDamageDescription(result.Damage, result.TargetMaxHP)))
+			if canSee {
+				targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> rakes its fangs across your legs, opening deep wounds! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
+			} else {
+				targetChar.SendText(fmt.Sprintf(`Something rakes its fangs across your legs, opening deep wounds! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
+			}
 		}
-		room.SendText(
-			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> lunges low and rakes its fangs across <ansi fg="username">%s</ansi>'s legs!`,
-				mob.Character.Name, targetName),
-			targetPlayerId,
-		)
+		sendRoomText(room,
+			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> lunges low and rakes its fangs across <ansi fg="username">%s</ansi>'s legs!`, mobName, targetName),
+			targetPlayerId)
 	} else {
 		if targetChar != nil {
-			targetChar.SendText(
-				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> lunges at your legs, but you sidestep the attack!`,
-					mob.Character.Name))
+			if canSee {
+				targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> lunges at your legs, but you sidestep the attack!`, mobName))
+			} else {
+				targetChar.SendText(`Something lunges at your legs, but you sidestep the attack!`)
+			}
 		}
-		room.SendText(
-			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> lunges at <ansi fg="username">%s</ansi>'s legs, but misses!`,
-				mob.Character.Name, targetName),
-			targetPlayerId,
-		)
+		sendRoomText(room,
+			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> lunges at <ansi fg="username">%s</ansi>'s legs, but misses!`, mobName, targetName),
+			targetPlayerId)
 	}
 
 	// Record combat analytics

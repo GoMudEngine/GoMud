@@ -73,32 +73,44 @@ func Bash(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	})
 
 	// Send messages
+	mobName := mob.Character.Name
+	canSee := targetChar == nil || canSeeInDark(targetChar, room)
+	dmgDesc := combat.GetDamageDescription(result.Damage, result.TargetMaxHP)
 	if result.Hit {
 		if result.KnockedDown {
 			if targetChar != nil {
-				targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s <ansi fg="yellow-bold">shield bash</ansi> knocks you to the ground! (<ansi fg="damage">%s</ansi> damage)`, mob.Character.Name, combat.GetDamageDescription(result.Damage, result.TargetMaxHP)))
+				if canSee {
+					targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s <ansi fg="yellow-bold">shield bash</ansi> knocks you to the ground! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
+				} else {
+					targetChar.SendText(fmt.Sprintf(`Something's <ansi fg="yellow-bold">shield bash</ansi> knocks you to the ground! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
+				}
 			}
-			room.SendText(
-				fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s <ansi fg="yellow-bold">shield bash</ansi> knocks <ansi fg="username">%s</ansi> to the ground!`, mob.Character.Name, targetName),
-				targetPlayerId,
-			)
+			sendRoomText(room,
+				fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s <ansi fg="yellow-bold">shield bash</ansi> knocks <ansi fg="username">%s</ansi> to the ground!`, mobName, targetName),
+				targetPlayerId)
 		} else {
 			if targetChar != nil {
-				targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s <ansi fg="yellow-bold">shield bash</ansi> strikes you! (<ansi fg="damage">%s</ansi> damage)`, mob.Character.Name, combat.GetDamageDescription(result.Damage, result.TargetMaxHP)))
+				if canSee {
+					targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s <ansi fg="yellow-bold">shield bash</ansi> strikes you! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
+				} else {
+					targetChar.SendText(fmt.Sprintf(`Something's <ansi fg="yellow-bold">shield bash</ansi> strikes you! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
+				}
 			}
-			room.SendText(
-				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> bashes <ansi fg="username">%s</ansi> with their shield!`, mob.Character.Name, targetName),
-				targetPlayerId,
-			)
+			sendRoomText(room,
+				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> bashes <ansi fg="username">%s</ansi> with their shield!`, mobName, targetName),
+				targetPlayerId)
 		}
 	} else {
 		if targetChar != nil {
-			targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts to bash you with their shield, but misses!`, mob.Character.Name))
+			if canSee {
+				targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts to bash you with their shield, but misses!`, mobName))
+			} else {
+				targetChar.SendText(`Something attempts to bash you with a shield, but misses!`)
+			}
 		}
-		room.SendText(
-			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts to bash <ansi fg="username">%s</ansi>, but misses!`, mob.Character.Name, targetName),
-			targetPlayerId,
-		)
+		sendRoomText(room,
+			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts to bash <ansi fg="username">%s</ansi>, but misses!`, mobName, targetName),
+			targetPlayerId)
 	}
 
 	// Record combat analytics

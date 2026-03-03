@@ -101,7 +101,7 @@ func Emote(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	}
 
 	if len(rest) == 0 {
-		room.SendText(
+		sendRoomText(room,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> emotes.`, mob.Character.Name))
 		return true, nil
 	}
@@ -109,7 +109,7 @@ func Emote(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	// Wrap long emote text to 65 chars to account for mob name prefix
 	rest = util.SplitStringNL(rest, 65)
 
-	room.SendText(
+	sendRoomText(room,
 		fmt.Sprintf(`<ansi fg="mobname">%s</ansi> <ansi fg="20">%s</ansi>`, mob.Character.Name, rest))
 
 	return true, nil

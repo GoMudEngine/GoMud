@@ -36,7 +36,7 @@ func Befriend(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			charmedUser.Character.TrackCharmed(mob.InstanceId, true)
 		}
 
-		room.SendText(
+		sendRoomText(room,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> looks very friendly.`, mob.Character.Name))
 
 	}

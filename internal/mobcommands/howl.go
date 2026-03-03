@@ -81,9 +81,9 @@ func Howl(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			mob.Character.Conviction = 0
 		}
 
-		room.SendText(
-			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> lets out a pitiful howl that trails off weakly.`, mob.Character.Name),
-		)
+		sendAudioRoomText(room, mob,
+			`Something lets out a pitiful howl that trails off weakly.`,
+			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> lets out a pitiful howl that trails off weakly.`, mob.Character.Name))
 
 		combat.RecordSpecialMove(combat.Mob, combat.User, "howl", false, 0,
 			&mob.Character, defender, util.GetRoundCount())
@@ -132,15 +132,15 @@ func Howl(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		dmgDesc := combat.GetConvictionDamageDescription(dmg, convMaxRef)
 
 		if targetPlayer != nil {
-			targetPlayer.SendText(
-				fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s menacing howl shakes your resolve! (<ansi fg="damage">%s</ansi>)`,
-					mob.Character.Name, dmgDesc))
+			if canSeeInDark(targetPlayer, room) {
+				targetPlayer.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s menacing howl shakes your resolve! (<ansi fg="damage">%s</ansi>)`, mob.Character.Name, dmgDesc))
+			} else {
+				targetPlayer.SendText(fmt.Sprintf(`A menacing howl shakes your resolve! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
+			}
 		}
-		room.SendText(
-			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> throws back its head and lets out a bone-chilling howl at <ansi fg="username">%s</ansi>!`,
-				mob.Character.Name, targetName),
-			targetPlayerId,
-		)
+		sendAudioRoomText(room, mob,
+			fmt.Sprintf(`Something lets out a bone-chilling howl at <ansi fg="username">%s</ansi>!`, targetName),
+			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> throws back its head and lets out a bone-chilling howl at <ansi fg="username">%s</ansi>!`, mob.Character.Name, targetName))
 
 		tgtType := combat.Mob
 		if targetMob == nil {
@@ -152,15 +152,15 @@ func Howl(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	} else {
 		// Miss
 		if targetPlayer != nil {
-			targetPlayer.SendText(
-				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> howls, but you steel yourself against the sound.`,
-					mob.Character.Name))
+			if canSeeInDark(targetPlayer, room) {
+				targetPlayer.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> howls, but you steel yourself against the sound.`, mob.Character.Name))
+			} else {
+				targetPlayer.SendText(`Something howls, but you steel yourself against the sound.`)
+			}
 		}
-		room.SendText(
-			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> howls menacingly at <ansi fg="username">%s</ansi>, but it has no effect.`,
-				mob.Character.Name, targetName),
-			targetPlayerId,
-		)
+		sendAudioRoomText(room, mob,
+			fmt.Sprintf(`Something howls menacingly at <ansi fg="username">%s</ansi>, but it has no effect.`, targetName),
+			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> howls menacingly at <ansi fg="username">%s</ansi>, but it has no effect.`, mob.Character.Name, targetName))
 
 		tgtType := combat.Mob
 		if targetMob == nil {

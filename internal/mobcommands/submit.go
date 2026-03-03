@@ -67,6 +67,7 @@ func Submit(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	}
 
 	// Apply result and send messages
+	canSee := targetChar == nil || canSeeInDark(targetChar, room)
 	if result.Success {
 		// Determine opponent choice (MVP: auto-decision based on health/type)
 		// NPCs always resist, players yield if health < 25%
@@ -89,14 +90,17 @@ func Submit(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		if choice == "yield" {
 			// Target yields - combat ends
 			if targetChar != nil {
-				targetChar.SendText(fmt.Sprintf(`<ansi fg="red-bold">%s forces you into submission! You have no choice but to yield!</ansi>`, mob.Character.Name))
+				if canSee {
+					targetChar.SendText(fmt.Sprintf(`<ansi fg="red-bold">%s forces you into submission! You have no choice but to yield!</ansi>`, mob.Character.Name))
+				} else {
+					targetChar.SendText(`<ansi fg="red-bold">Something forces you into submission! You have no choice but to yield!</ansi>`)
+				}
 				targetChar.SendText(`<ansi fg="red">You are helpless on the ground.</ansi>`)
 			}
 
-			room.SendText(
+			sendRoomText(room,
 				fmt.Sprintf(`<ansi fg="combat">%s forces %s into submission! %s yields!</ansi>`, mob.Character.Name, targetName, targetName),
-				targetPlayerId,
-			)
+				targetPlayerId)
 
 			// End combat for both
 			mob.Character.Aggro = nil
@@ -122,14 +126,17 @@ func Submit(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			}
 
 			if targetChar != nil {
-				targetChar.SendText(fmt.Sprintf(`<ansi fg="red">%s attempts to force you into submission!</ansi>`, mob.Character.Name))
+				if canSee {
+					targetChar.SendText(fmt.Sprintf(`<ansi fg="red">%s attempts to force you into submission!</ansi>`, mob.Character.Name))
+				} else {
+					targetChar.SendText(`<ansi fg="red">Something attempts to force you into submission!</ansi>`)
+				}
 				targetChar.SendText(fmt.Sprintf(`<ansi fg="red-bold">You resist, but take %s damage from the brutal hold!</ansi>`, combat.GetDamageDescription(damage, targetMaxHP)))
 			}
 
-			room.SendText(
+			sendRoomText(room,
 				fmt.Sprintf(`<ansi fg="combat">%s attempts to force %s into submission! %s resists through the pain!</ansi>`, mob.Character.Name, targetName, targetName),
-				targetPlayerId,
-			)
+				targetPlayerId)
 		}
 	} else {
 		// Submission failed - dramatic reversal
@@ -140,14 +147,17 @@ func Submit(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		}
 
 		if targetChar != nil {
-			targetChar.SendText(fmt.Sprintf(`<ansi fg="yellow">%s tries to force you into submission, but you escape!`, mob.Character.Name))
+			if canSee {
+				targetChar.SendText(fmt.Sprintf(`<ansi fg="yellow">%s tries to force you into submission, but you escape!</ansi>`, mob.Character.Name))
+			} else {
+				targetChar.SendText(`<ansi fg="yellow">Something tries to force you into submission, but you escape!</ansi>`)
+			}
 			targetChar.SendText(`<ansi fg="green">They fall to the ground from overcommitting!</ansi>`)
 		}
 
-		room.SendText(
+		sendRoomText(room,
 			fmt.Sprintf(`<ansi fg="combat">%s attempts a submission, but %s escapes and %s falls to the ground!</ansi>`, mob.Character.Name, targetName, mob.Character.Name),
-			targetPlayerId,
-		)
+			targetPlayerId)
 	}
 
 	// Submit costs the current combat round
