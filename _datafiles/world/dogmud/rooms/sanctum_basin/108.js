@@ -4,10 +4,9 @@
 
 const merchantMobId = 63;
 
-var buyAttempted = false;
-var buyTicks = 0;
-var equipAttempted = false;
-var equipTicks = 0;
+// Track per-player attempts by userId so multiple players don't cross-contaminate
+var buyPending = {};   // { usedId: tickCount }
+var equipPending = {}; // { userId: tickCount }
 
 function onEnter(user, room) {
 
@@ -35,19 +34,19 @@ function onEnter(user, room) {
 
 function onCommand(cmd, rest, user, room) {
 
-    // Detect buy command
+    var uid = user.UserId();
+
+    // Detect buy command — track which specific player attempted it
     if ( cmd == "buy" ) {
         if ( user.HasQuest("1-shopping_arrive") && !user.HasQuest("1-shopping_buy") ) {
-            buyAttempted = true;
-            buyTicks = 0;
+            buyPending[uid] = 0;
         }
     }
 
     // Detect wield or wear command (aliases resolve to "equip")
     if ( cmd == "equip" ) {
         if ( user.HasQuest("1-shopping_buy") && !user.HasQuest("1-shopping_equip") ) {
-            equipAttempted = true;
-            equipTicks = 0;
+            equipPending[uid] = 0;
         }
     }
 
@@ -71,19 +70,20 @@ function onCommand(cmd, rest, user, room) {
 
 function onIdle(room) {
 
-    // Handle buy detection
-    if ( buyAttempted ) {
-        buyTicks++;
-        if ( buyTicks >= 2 ) {
-            buyAttempted = false;
-            buyTicks = 0;
+    var merchant = room.GetMob(merchantMobId, true);
+
+    // Handle buy detection — per-player
+    for ( var uid in buyPending ) {
+        buyPending[uid]++;
+        if ( buyPending[uid] >= 2 ) {
+            delete buyPending[uid];
 
             var players = room.GetPlayers();
             if ( players != null ) {
                 for ( var i = 0; i < players.length; i++ ) {
                     var player = players[i];
-                    if ( player.HasQuest("1-shopping_arrive") && !player.HasQuest("1-shopping_buy") ) {
-                        var merchant = room.GetMob(merchantMobId, true);
+                    // Only grant to the specific player who bought
+                    if ( player.UserId() == uid && player.HasQuest("1-shopping_arrive") && !player.HasQuest("1-shopping_buy") ) {
                         if ( merchant != null ) {
                             merchant.Command('say Good choice. Now put it to use.', 0.5);
                             merchant.Command('say Type <ansi fg="command">inventory</ansi> -- or just <ansi fg="command">i</ansi> -- to see what you are carrying.', 2.0);
@@ -97,19 +97,18 @@ function onIdle(room) {
         }
     }
 
-    // Handle equip detection
-    if ( equipAttempted ) {
-        equipTicks++;
-        if ( equipTicks >= 2 ) {
-            equipAttempted = false;
-            equipTicks = 0;
+    // Handle equip detection — per-player
+    for ( var uid in equipPending ) {
+        equipPending[uid]++;
+        if ( equipPending[uid] >= 2 ) {
+            delete equipPending[uid];
 
             var players = room.GetPlayers();
             if ( players != null ) {
                 for ( var i = 0; i < players.length; i++ ) {
                     var player = players[i];
-                    if ( player.HasQuest("1-shopping_buy") && !player.HasQuest("1-shopping_equip") ) {
-                        var merchant = room.GetMob(merchantMobId, true);
+                    // Only grant to the specific player who equipped
+                    if ( player.UserId() == uid && player.HasQuest("1-shopping_buy") && !player.HasQuest("1-shopping_equip") ) {
                         if ( merchant != null ) {
                             merchant.Command('say That is commerce. Simple enough.', 0.5);
                             merchant.Command('say I also buy things. If you have something you do not need, type <ansi fg="command">sell [item]</ansi> while you are here.', 2.0);
@@ -125,6 +124,10 @@ function onIdle(room) {
 }
 
 function onExit(user, room) {
+    // Clean up any pending tracking for the departing player
+    var uid = user.UserId();
+    delete buyPending[uid];
+    delete equipPending[uid];
 }
 
 function onLoad(room) {

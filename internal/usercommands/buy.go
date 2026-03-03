@@ -58,6 +58,7 @@ func Buy(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	merchantMobs := room.GetMobs(rooms.FindMerchant)
 
 	if len(merchantPlayers) == 0 && len(merchantMobs) == 0 {
+		mudlog.Debug("PURCHASE", "msg", "no merchants in room", "roomId", room.RoomId, "user", user.Character.Name)
 		user.SendText("Visit a merchant to purchase objects or services.")
 		return true, nil
 	}
@@ -78,6 +79,10 @@ func Buy(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		}
 	}
 
+	mudlog.Debug("PURCHASE", "msg", "merchant scan",
+		"merchantMobCount", len(merchantMobs), "merchantPlayerCount", len(merchantPlayers),
+		"roomId", room.RoomId, "user", user.Character.Name)
+
 	for _, miid := range merchantMobs {
 		if targetMobInstanceId > 0 && miid != targetMobInstanceId {
 			continue
@@ -85,6 +90,7 @@ func Buy(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 
 		shopMob := mobs.GetInstance(miid)
 		if shopMob == nil {
+			mudlog.Debug("PURCHASE", "msg", "mob instance nil", "instanceId", miid)
 			continue
 		}
 
@@ -238,6 +244,10 @@ func tryPurchase(request string, user *users.UserRecord, room *rooms.Room, shopM
 
 	if match == `` {
 
+		mudlog.Debug("PURCHASE", "msg", "no item match found",
+			"request", request, "availableItems", allNames,
+			"user", user.Character.Name)
+
 		if shopMob != nil {
 			extraSay := ``
 
@@ -260,6 +270,10 @@ func tryPurchase(request string, user *users.UserRecord, room *rooms.Room, shopM
 
 		return false
 	}
+
+	mudlog.Debug("PURCHASE", "msg", "item matched",
+		"request", request, "match", match, "user", user.Character.Name,
+		"userGold", user.Character.Gold)
 
 	ctx, ok := validatePurchase(user, shopMob, shopUser, nameToShopItem[match], itemPrices, mercPrices, buffPrices, petPrices)
 	if !ok {
@@ -293,6 +307,10 @@ func validatePurchase(user *users.UserRecord, shopMob *mobs.Mob, shopUser *users
 ) (purchaseContext, bool) {
 
 	if !matchedShopItem.Available() {
+		mudlog.Debug("PURCHASE", "msg", "item not available (stock depleted)",
+			"itemId", matchedShopItem.ItemId, "mobId", matchedShopItem.MobId,
+			"quantity", matchedShopItem.Quantity, "quantityMax", matchedShopItem.QuantityMax,
+			"user", user.Character.Name)
 		if shopMob != nil {
 			shopMob.Command(`say I don't have that for sale right now.`)
 		} else if shopUser != nil {
@@ -313,6 +331,9 @@ func validatePurchase(user *users.UserRecord, shopMob *mobs.Mob, shopUser *users
 	}
 
 	if user.Character.Gold < price {
+		mudlog.Debug("PURCHASE", "msg", "insufficient gold",
+			"userGold", user.Character.Gold, "price", price,
+			"itemId", matchedShopItem.ItemId, "user", user.Character.Name)
 		sendMerchantMessage(user, shopMob, shopUser,
 			`say You don't have enough gold for that.`,
 			`You don't have enough gold for that.`)
