@@ -19,4 +19,4 @@ rewards:
   playermessage: "The chieftain inclines its heavy head -- the closest thing to a bow its mutated frame allows. You are not welcome here. But you are tolerated. That is more than any surface-dweller has been given in living memory."
   roommessage: "A low, guttural exchange passes between the shaman and the chieftain. Something has shifted."
   gold: 15
-  skillinfo: "skulduggery:1"
+  skillinfo: "rhetoric:1"

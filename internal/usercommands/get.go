@@ -28,6 +28,29 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	}
 
 	if args[0] == "all" {
+
+		// get all <container> — grab everything from a specific container
+		if len(args) >= 2 {
+			cName := room.FindContainerByName(args[len(args)-1])
+			if cName != `` {
+				container := room.Containers[cName]
+				if container.Gold > 0 {
+					Get(fmt.Sprintf("gold %s", cName), user, room, flags)
+				}
+				if len(container.Items) > 0 {
+					iCopies := append([]items.Item{}, container.Items...)
+					for _, item := range iCopies {
+						Get(fmt.Sprintf("%s %s", item.Name(), cName), user, room, flags)
+					}
+				}
+				if container.Gold < 1 && len(container.Items) < 1 {
+					user.SendText(fmt.Sprintf(`There's nothing in the <ansi fg="container">%s</ansi>.`, cName))
+				}
+				return true, nil
+			}
+		}
+
+		// get all — grab everything from the floor
 		if room.Gold > 0 {
 			Get(`gold`, user, room, flags)
 		}
