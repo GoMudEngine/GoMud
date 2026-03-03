@@ -453,9 +453,9 @@ Balance:
   DarknessCombatPenalty: 0.80
 
   # ── COMBAT: DAMAGE ────────────────────────────────────────────────────────
-  # These two are global panic buttons. 1.0 = no change. Not yet wired
-  # into code — reserved for future "server set" runtime tuning.
-  GlobalDamageMultiplier: 1.0
+  # Global panic buttons. 1.0 = no change. GlobalDamageMultiplier is
+  # applied to ALL damage channels in CalcRawDamage().
+  GlobalDamageMultiplier: 1.75
   GlobalDefenseMultiplier: 1.0
   #
   # Legacy unarmed knobs — still used by GetDefaultDistributionDamage()

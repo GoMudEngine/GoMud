@@ -69,6 +69,7 @@ type Balance struct {
 	SpellDamageScale           ConfigFloat `yaml:"SpellDamageScale"`            // Flat multiplier on spell damage output (default 1.0 = no change)
 	RhetoricDamageScale        ConfigFloat `yaml:"RhetoricDamageScale"`         // Flat multiplier on conviction/taunt damage output (default 1.0 = no change)
 	MobDamageMultiplier        ConfigFloat `yaml:"MobDamageMultiplier"`         // Extra multiplier applied to NPC melee damage only (default 1.0 = same as players)
+	GlobalDamageMultiplier     ConfigFloat `yaml:"GlobalDamageMultiplier"`      // Master multiplier applied to ALL damage channels (default 1.0)
 	PhysicalMitigationCap      ConfigFloat `yaml:"PhysicalMitigationCap"`     // Max physical mitigation % (default 0.75)
 	MagicalMitigationCap       ConfigFloat `yaml:"MagicalMitigationCap"`      // Max magical mitigation % (default 0.75)
 	ConvictionMitigationCap    ConfigFloat `yaml:"ConvictionMitigationCap"`   // Max conviction mitigation % (default 0.75)
@@ -337,6 +338,9 @@ func (b *Balance) Validate() {
 	}
 	if b.MobDamageMultiplier <= 0 {
 		b.MobDamageMultiplier = 1.0
+	}
+	if b.GlobalDamageMultiplier <= 0 {
+		b.GlobalDamageMultiplier = 1.0
 	}
 	if b.PhysicalMitigationCap <= 0 || b.PhysicalMitigationCap > 1.0 {
 		b.PhysicalMitigationCap = 0.75
