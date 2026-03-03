@@ -90,8 +90,8 @@ func Craft(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		RoundsTotal: recipe.TimeRounds,
 	}
 	user.SendText(fmt.Sprintf(
-		`<ansi fg="yellow">You begin crafting %s... (%d rounds)</ansi>`,
-		recipe.Name, recipe.TimeRounds))
+		`<ansi fg="yellow">You begin crafting %s... (%s)</ansi>`,
+		recipe.Name, craftTimeDesc(recipe.TimeRounds)))
 
 	return true, nil
 }
@@ -135,8 +135,8 @@ func craftList(user *users.UserRecord, room *rooms.Room) bool {
 		skillLevel := user.Character.GetSkillLevel(skills.SkillTag(skillName))
 		user.SendText(``)
 		user.SendText(fmt.Sprintf(
-			`<ansi fg="yellow">%s</ansi> <ansi fg="white">(skill: %d)</ansi>`,
-			titleCase(strings.ReplaceAll(skillName, "-", " ")), skillLevel))
+			`<ansi fg="yellow">%s</ansi> <ansi fg="white">(%s)</ansi>`,
+			titleCase(strings.ReplaceAll(skillName, "-", " ")), skills.GetSkillRankDescription(skillLevel)))
 
 		recipes := crafting.GetAllForSkill(skillName)
 		for _, r := range recipes {
@@ -151,12 +151,12 @@ func craftList(user *users.UserRecord, room *rooms.Room) bool {
 			}
 			if reason != "" {
 				user.SendText(fmt.Sprintf(
-					`  <ansi fg="red">[%s]</ansi> <ansi fg="white">%-22s</ansi> — %s  <ansi fg="red">%s</ansi><ansi fg="dark-cyan">%s, %d rounds</ansi>`,
-					indicator, r.Name, ingredientList, reason, stationStr, r.TimeRounds))
+					`  <ansi fg="red">[%s]</ansi> <ansi fg="white">%-22s</ansi> — %s  <ansi fg="red">%s</ansi><ansi fg="dark-cyan">%s, %s</ansi>`,
+					indicator, r.Name, ingredientList, reason, stationStr, craftTimeDesc(r.TimeRounds)))
 			} else {
 				user.SendText(fmt.Sprintf(
-					`  <ansi fg="green">[%s]</ansi> <ansi fg="white">%-22s</ansi> — %s  <ansi fg="dark-cyan">%s, %d rounds</ansi>`,
-					indicator, r.Name, ingredientList, stationStr, r.TimeRounds))
+					`  <ansi fg="green">[%s]</ansi> <ansi fg="white">%-22s</ansi> — %s  <ansi fg="dark-cyan">%s, %s</ansi>`,
+					indicator, r.Name, ingredientList, stationStr, craftTimeDesc(r.TimeRounds)))
 			}
 		}
 	}
@@ -169,7 +169,7 @@ func craftList(user *users.UserRecord, room *rooms.Room) bool {
 // indicator is "✓" if craftable, "✗" otherwise. reason is "" if craftable.
 func recipeStatus(user *users.UserRecord, room *rooms.Room, r *crafting.RecipeSpec, skillLevel int) (string, string) {
 	if skillLevel < r.SkillMinimum {
-		return "X", fmt.Sprintf("skill %d required", r.SkillMinimum)
+		return "X", fmt.Sprintf("%s skill required", skills.GetSkillRankDescription(r.SkillMinimum))
 	}
 	if r.Station != "" && room.Station != r.Station {
 		return "X", fmt.Sprintf("need %s", strings.ReplaceAll(r.Station, "_", " "))
@@ -207,4 +207,20 @@ func titleCase(s string) string {
 		}
 	}
 	return strings.Join(words, " ")
+}
+
+// craftTimeDesc returns a qualitative description for crafting duration.
+func craftTimeDesc(rounds int) string {
+	switch {
+	case rounds <= 1:
+		return "instant"
+	case rounds <= 3:
+		return "quick"
+	case rounds <= 6:
+		return "moderate"
+	case rounds <= 10:
+		return "lengthy"
+	default:
+		return "prolonged"
+	}
 }
