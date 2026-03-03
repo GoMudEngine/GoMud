@@ -114,7 +114,6 @@ var (
 		"divFloat":     func(a int, b int) float64 { return float64(a) / float64(b) },
 		"stringor":     stringOr,
 		"splitstring":    util.SplitStringNL,
-		"normalizewrap": util.NormalizeAndWrapNL,
 		"ansiparse":    TplAnsiParse,
 		"buffname": func(buffId int) string {
 			buffSpec := buffs.GetBuffSpec(buffId)
@@ -219,15 +218,15 @@ var (
 			case value <= 75:
 				return "poor"
 			case value <= 90:
-				return "below average"
+				return "modest"
 			case value <= 110:
 				return "average"
 			case value <= 130:
-				return "above average"
+				return "keen"
 			case value <= 150:
 				return "exceptional"
 			case value <= 200:
-				return "extraordinary"
+				return "remarkable"
 			case value <= 300:
 				return "transcendent"
 			default:

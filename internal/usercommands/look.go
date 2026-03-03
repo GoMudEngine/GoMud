@@ -303,7 +303,7 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		}
 
 		user.SendText(
-			util.NormalizeAndWrap(lookItem.GetLongDescription(), 80),
+			util.SplitStringNL(lookItem.GetLongDescription(), 80),
 		)
 
 		user.SendText(``)
@@ -344,7 +344,7 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			)
 		}
 
-		user.SendText(util.NormalizeAndWrap(foundDesc, 80))
+		user.SendText(util.SplitStringNL(foundDesc, 80))
 
 		user.SendText(``)
 

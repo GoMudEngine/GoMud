@@ -523,7 +523,7 @@ func cmdPartyChat(user *users.UserRecord, currentParty *parties.Party, rest stri
 		return
 	}
 
-	rest = util.NormalizeAndWrap(rest, 65)
+	rest = util.SplitStringNL(rest, 65)
 
 	for _, uId := range currentParty.GetMembers() {
 		if uId == user.UserId {

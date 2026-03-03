@@ -29,7 +29,7 @@ func Shout(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	}
 
 	// Wrap long shout text to 65 chars to account for "Name shouts, ..."
-	rest = util.NormalizeAndWrap(rest, 65)
+	rest = util.SplitStringNL(rest, 65)
 
 	if isSneaking {
 		room.SendTextCommunication(fmt.Sprintf(`someone shouts, "<ansi fg="yellow">%s</ansi>"`, rest), user.UserId)
