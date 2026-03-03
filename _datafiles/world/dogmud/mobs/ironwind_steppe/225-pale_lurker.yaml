@@ -1,0 +1,42 @@
+mobid: 225
+zone: Ironwind Steppe
+statpool: 160
+itemdropchance: 20
+hostile: true
+maxwander: 2
+groups:
+  - cave-pack
+  - animal
+archetype: fighting
+mutationchance: 50
+idlecommands:
+  - 'emote hangs motionless in the darkness, barely visible'
+  - ''
+  - ''
+  - 'emote shifts position with a wet, sliding sound'
+  - ''
+  - 'emote opens a wide, pale mouth in a silent yawn'
+activitylevel: 10
+character:
+  name: pale lurker
+  description: |
+    A pallid, elongated creature that clings to cave ceilings and
+    drops on unsuspecting prey. The pale lurker has lost all
+    pigment, its skin a translucent white that shows the dark
+    tracery of veins beneath. Its body is flexible and boneless-
+    seeming, allowing it to squeeze through impossibly narrow
+    gaps. Long, grasping limbs end in adhesive pads, and its
+    wide mouth is lined with backward-curving teeth. It hunts
+    by patience, remaining motionless for hours until prey
+    passes beneath.
+  speciesid: 23
+  level: 1
+  stats:
+    strength:
+      training: 10
+    dexterity:
+      training: 8
+    perception:
+      training: 5
+    vitality:
+      training: 5

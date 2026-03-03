@@ -32,7 +32,6 @@ nouns:
     suspicion, waving through familiar faces and stopping strangers for questions.
 spawninfo:
 - mobid: 92
-- mobid: 93
 idlemessages:
 - A guard waves a merchant cart through the gate after a cursory inspection.
 - Someone pins a new notice to the board, reads the others, and shakes their head.

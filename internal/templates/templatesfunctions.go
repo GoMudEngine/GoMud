@@ -111,8 +111,10 @@ var (
 		"pct":          pct,
 		"numberFormat": numberFormat,
 		"mod":          func(a, b int) int { return a % b },
+		"divFloat":     func(a int, b int) float64 { return float64(a) / float64(b) },
 		"stringor":     stringOr,
-		"splitstring":  util.SplitStringNL,
+		"splitstring":    util.SplitStringNL,
+		"normalizewrap": util.NormalizeAndWrapNL,
 		"ansiparse":    TplAnsiParse,
 		"buffname": func(buffId int) string {
 			buffSpec := buffs.GetBuffSpec(buffId)
@@ -271,6 +273,25 @@ var (
 				return "heavy"
 			default:
 				return "solid"
+			}
+		},
+		"mitigationQuality": func(pct float64) string {
+			percent := pct * 100
+			switch {
+			case percent <= 0:
+				return "none"
+			case percent < 10:
+				return "thin"
+			case percent < 25:
+				return "light"
+			case percent < 40:
+				return "moderate"
+			case percent < 55:
+				return "strong"
+			case percent < 70:
+				return "heavy"
+			default:
+				return "fortified"
 			}
 		},
 		"mutationLevel": func(level int) string {

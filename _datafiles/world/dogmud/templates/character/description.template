@@ -1,9 +1,9 @@
 
 <ansi fg="black-bold">.:</ansi> <ansi fg="username">{{ .Name }}</ansi>
  ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Description</ansi> ────────────────────────────────────────────────────────────┐
-   {{ splitstring .GetDescription 72 "   "}}
+   {{ normalizewrap .GetDescription 72 "   "}}
 {{- if .GetMutationVisuals }}
-   <ansi fg="magenta">{{ splitstring .GetMutationVisuals 72 "   " }}</ansi>
+   <ansi fg="magenta">{{ normalizewrap .GetMutationVisuals 72 "   " }}</ansi>
 {{- end }}
    {{ .GetHealthAppearance }}
  └────────────────────────────────────────────────────────────────────────────┘

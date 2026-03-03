@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/util"
+	"github.com/pkg/errors"
 )
 
 type SpellType string
@@ -28,8 +29,9 @@ type SpellData struct {
 	BaseFolds           int    `yaml:"base_folds,omitempty"`           // 0 = default to 4
 	TargetDefenseType   string `yaml:"target_defense_type,omitempty"`  // "physical", "mental", "" = none
 	ComponentTag        string `yaml:"component_tag,omitempty"`        // Required item component tag (e.g. "stone")
-	EffectType          string `yaml:"effect_type,omitempty"`          // "damage"|"heal"|"buff"|"tame"|"shield"
-	EffectMagnitude     int    `yaml:"effect_magnitude,omitempty"`     // Base damage/heal amount
+	EffectType          string  `yaml:"effect_type,omitempty"`          // "damage"|"heal"|"buff"|"tame"|"shield"
+	EffectMagnitude     int     `yaml:"effect_magnitude,omitempty"`     // Legacy: base damage/heal amount
+	DamageMultiplier    float64 `yaml:"damage_multiplier,omitempty"`   // Spell damage multiplier for new pipeline (Stage 34)
 	EffectDuration      int    `yaml:"effect_duration,omitempty"`      // DoT tick count (default 0 = use 3)
 	BuffIds             []int  `yaml:"buff_ids,omitempty"`             // Buff IDs to apply (for "buff" effect type)
 }
@@ -266,9 +268,10 @@ func LoadSpellFiles() {
 
 	start := time.Now()
 
-	tmpAllSpells, err := fileloader.LoadAllFlatFiles[string, *SpellData](string(configs.GetFilePathsConfig().DataFiles) + `/spells`)
+	dataPath := string(configs.GetFilePathsConfig().DataFiles) + `/spells`
+	tmpAllSpells, err := fileloader.LoadAllFlatFiles[string, *SpellData](dataPath)
 	if err != nil {
-		panic(err)
+		panic(errors.Wrap(err, `filepath: `+dataPath))
 	}
 
 	allSpells = tmpAllSpells

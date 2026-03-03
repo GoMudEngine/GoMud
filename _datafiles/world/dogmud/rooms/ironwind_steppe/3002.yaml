@@ -1,0 +1,36 @@
+roomid: 3002
+zone: Ironwind Steppe
+title: Refuse Heap
+description: A sprawling mound of refuse and broken goods from the city
+  rises here like a small hill. The stench is considerable. Crows and
+  other scavenger birds circle overhead or perch atop the heap, picking
+  through the debris with sharp beaks. Rat holes riddle the base of the
+  mound, and the ground around it is stained dark with runoff. Despite
+  the squalor, the heap clearly supports an entire ecosystem of vermin
+  and scavengers who thrive on the city's waste.
+biome: land
+exits:
+  southwest:
+    roomid: 3000
+  east:
+    roomid: 3005
+  south:
+    roomid: 3003
+nouns:
+  heap: A mound of refuse standing twice the height of a person, composed
+    of broken crates, spoiled food, worn-out clothing, and miscellaneous
+    city waste. The layers have compacted into something almost solid at
+    the base, while fresher refuse sits loosely on top.
+  holes: Dozens of small tunnels burrowed into the base of the refuse
+    heap by rats. The entrances are worn smooth by constant traffic.
+    Droppings and gnawed scraps litter the ground nearby.
+spawninfo:
+- mobid: 200
+- mobid: 200
+- mobid: 201
+- mobid: 233
+idlemessages:
+- A rat scurries from one hole to another, clutching something in its teeth.
+- Crows squabble over a scrap, their harsh cries cutting through the wind.
+- The refuse heap settles with a faint creak and shift.
+- The smell is enough to make your eyes water.

@@ -1,0 +1,35 @@
+roomid: 3077
+zone: Ironwind Steppe
+title: Wolf Run Stream
+description: A thin stream of clear water runs along the ravine floor
+  here, fed by an underground spring. The water is cold and clean,
+  a precious resource on the steppe. The banks are worn smooth by
+  the paws of wolves coming to drink, and the mud holds dozens of
+  overlapping canine prints. The vegetation along the stream is
+  greener and lusher than anything above, fed by the reliable
+  moisture.
+biome: land
+exits:
+  north:
+    roomid: 3076
+  south:
+    roomid: 3078
+  east:
+    roomid: 3083
+nouns:
+  stream: A narrow stream of clear water, barely a foot wide and
+    only a few inches deep, running over a bed of smooth stones.
+    Despite its small size, this stream is the lifeblood of the
+    Wolf Run ecosystem.
+  prints: Dozens of wolf pawprints in the soft mud along the
+    stream banks, ranging from the small prints of juveniles
+    to the massive pads of the alpha. The prints overlap in
+    dense layers.
+spawninfo:
+- mobid: 205
+- mobid: 206
+- mobid: 215
+idlemessages:
+- The stream gurgles quietly over its bed of smooth stones.
+- A wolf laps at the stream, watchful even while drinking.
+- Dragonflies hover over the running water.

@@ -2,8 +2,9 @@
 # Quick commands for common development tasks
 # Install just: https://github.com/casey/just
 
-# Use sh shell for all commands (works on Windows Git Bash, WSL, and Unix)
+# Use sh for all commands. On Windows (PowerShell/CMD), use Git's sh.exe.
 set shell := ["sh", "-cu"]
+set windows-shell := ["C:/Program Files/Git/bin/sh.exe", "-cu"]
 
 # List all available commands
 default:
@@ -28,22 +29,66 @@ run-fresh:
     go generate
     go run .
 
-# Run all tests
+# Run all tests with pass/fail summary
 test:
     @echo "Running all tests..."
-    go test ./...
+    @go test ./... 2>&1 | tee /tmp/dogmud-test.out; \
+    echo ""; \
+    echo "══════════════════════════════════════════"; \
+    echo "  Test Summary"; \
+    echo "══════════════════════════════════════════"; \
+    PASS=$(grep -c "^ok" /tmp/dogmud-test.out || true); \
+    FAIL=$(grep -c "^FAIL" /tmp/dogmud-test.out || true); \
+    SKIP=$(grep -c "\\[no test" /tmp/dogmud-test.out || true); \
+    echo "  Passed:  $PASS"; \
+    echo "  Failed:  $FAIL"; \
+    echo "  No tests: $SKIP"; \
+    echo "══════════════════════════════════════════"; \
+    [ "$FAIL" = "0" ] && echo "  ✓ All tests passed!" || echo "  ✗ Some tests FAILED"
 
-# Run tests with verbose output
+# Run tests with verbose output and summary
 test-verbose:
     @echo "Running tests (verbose)..."
-    go test -v ./...
+    @go test -v ./... 2>&1 | tee /tmp/dogmud-test-v.out; \
+    echo ""; \
+    echo "══════════════════════════════════════════"; \
+    echo "  Test Summary"; \
+    echo "══════════════════════════════════════════"; \
+    TOTAL=$(grep -c "^--- " /tmp/dogmud-test-v.out || true); \
+    PASS=$(grep -c "^--- PASS" /tmp/dogmud-test-v.out || true); \
+    FAIL=$(grep -c "^--- FAIL" /tmp/dogmud-test-v.out || true); \
+    SKIP=$(grep -c "^--- SKIP" /tmp/dogmud-test-v.out || true); \
+    echo "  Total:   $TOTAL"; \
+    echo "  Passed:  $PASS"; \
+    echo "  Failed:  $FAIL"; \
+    echo "  Skipped: $SKIP"; \
+    echo "══════════════════════════════════════════"; \
+    [ "$FAIL" = "0" ] && echo "  ✓ All tests passed!" || echo "  ✗ Some tests FAILED"
 
-# Run tests with coverage report
+# Run tests with coverage summary table
 test-coverage:
     @echo "Running tests with coverage..."
-    mkdir -p bin/covdatafiles
-    go test ./... -coverprofile=bin/covdatafiles/cover.out
-    go tool cover -html=bin/covdatafiles/cover.out
+    @go test ./... -coverprofile=/tmp/dogmud-cover.out 2>&1 | tee /tmp/dogmud-cov-run.out; \
+    echo ""; \
+    echo "══════════════════════════════════════════════════════════════════"; \
+    echo "  Coverage Summary"; \
+    echo "══════════════════════════════════════════════════════════════════"; \
+    echo ""; \
+    printf "  %-45s %s\n" "Package" "Coverage"; \
+    echo "  ─────────────────────────────────────────────── ────────"; \
+    grep "coverage:" /tmp/dogmud-cov-run.out | sed 's/^ok\s*//' | \
+    while read -r line; do \
+        pkg=$(echo "$line" | awk '{print $1}' | sed 's|github.com/GoMudEngine/GoMud/||'); \
+        cov=$(echo "$line" | grep -o '[0-9]*\.[0-9]*%' || echo "0.0%"); \
+        printf "  %-45s %s\n" "$pkg" "$cov"; \
+    done; \
+    echo ""; \
+    echo "══════════════════════════════════════════════════════════════════"; \
+    PKGS=$(grep -c "coverage:" /tmp/dogmud-cov-run.out || true); \
+    ZERO=$(grep "coverage: 0.0%" /tmp/dogmud-cov-run.out | wc -l | tr -d ' '); \
+    NOTEST=$(grep -c "\[no test" /tmp/dogmud-cov-run.out || true); \
+    echo "  Packages with tests: $PKGS  (0% coverage: $ZERO)"; \
+    echo "  Packages without tests: $NOTEST"
 
 # Run only specific package tests (usage: just test-package internal/characters)
 test-package PKG:
@@ -231,3 +276,34 @@ help-workflow:
     @echo "  just branch NAME  # Create feature branch"
     @echo "  just commit MSG   # Commit with message"
     @echo "  just merge BRANCH # Merge to development"
+    @echo ""
+    @echo "AI Testing:"
+    @echo "  just ai-player       # Launch AI player"
+    @echo "  just ai-player-fresh # Nuke AI save & relaunch"
+    @echo ""
+    @echo "Coverage:"
+    @echo "  just help-coverage   # Check helpfile coverage"
+
+# Launch the AI player bot (requires server running with AIPort enabled)
+ai-player:
+    @echo "Launching AI player..."
+    @echo "  Ensure the MUD server is running with AIPort enabled (port 55555)"
+    @echo ""
+    python tools/ai_player.py
+
+# Delete AI player's save file and launch a fresh AI player
+ai-player-fresh:
+    @echo "Nuking AI player save file..."
+    @for f in _datafiles/world/dogmud/users/*.yaml; do \
+        if grep -q "^username: aitester$$" "$$f" 2>/dev/null; then \
+            echo "  Removing $$f"; \
+            rm -f "$$f"; \
+        fi; \
+    done
+    @echo "AI player save deleted. Launching fresh AI player..."
+    @echo ""
+    python tools/ai_player.py
+
+# Check helpfile coverage (which commands lack help files)
+help-coverage:
+    @python tools/help_coverage.py

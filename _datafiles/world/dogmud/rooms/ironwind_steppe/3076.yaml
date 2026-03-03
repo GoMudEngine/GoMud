@@ -1,0 +1,35 @@
+roomid: 3076
+zone: Ironwind Steppe
+title: Upper Wolf Run
+description: The ravine descends through dense scrub and exposed rock.
+  The walls are close, barely three paces apart, and the brush
+  crowds in from both sides, creating a tunnel of vegetation.
+  Game trails thread through the undergrowth -- narrow paths worn
+  by wolf paws, too low for comfortable human passage. The ground
+  is soft earth littered with bones, fur, and wolf droppings. The
+  sound of water is closer now, a thin trickle.
+biome: land
+exits:
+  north:
+    roomid: 3075
+  south:
+    roomid: 3077
+  east:
+    roomid: 3082
+nouns:
+  trails: Narrow paths through the dense brush, worn by wolf
+    traffic to smooth, packed earth. They twist and branch,
+    connecting different parts of the ravine system. Most
+    are too low for a person to walk upright.
+  bones: Scattered remains of prey animals -- rabbit bones,
+    bird skeletons, and the occasional larger specimen.
+    These are the leavings of wolf kills, gnawed clean
+    and left to bleach.
+spawninfo:
+- mobid: 205
+- mobid: 205
+- mobid: 206
+idlemessages:
+- Branches snap as something large moves through the brush ahead.
+- The narrow ravine amplifies every sound into eerie echoes.
+- Wolf fur clings to the thorny brush on both sides.

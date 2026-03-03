@@ -12,4 +12,5 @@ grapplemodifier: -2.0  # Improvised weapon - not ideal for grappling
 damage:
   basedamage: 2
   variance: 1
+damage_multiplier: 0.15
 parryrating: 6

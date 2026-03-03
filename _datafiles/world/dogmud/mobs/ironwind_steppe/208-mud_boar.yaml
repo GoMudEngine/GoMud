@@ -1,0 +1,37 @@
+mobid: 208
+zone: Ironwind Steppe
+statpool: 65
+itemdropchance: 10
+hostile: true
+maxwander: 3
+groups:
+  - steppe-boar
+  - animal
+archetype: fighting
+mutationchance: 15
+combatcommands:
+  - charge
+idlecommands:
+  - 'emote wallows in the dirt, coating itself in a layer of dust'
+  - ''
+  - ''
+  - 'emote grunts contentedly while rooting through debris'
+  - ''
+activitylevel: 20
+character:
+  name: mud boar
+  description: |
+    A smaller boar caked in a thick layer of dried mud that armors
+    its flanks like crude plating. The mud boar spends much of its
+    time wallowing, coating itself in earth that hardens into a
+    protective crust. Beneath the mud it is a lean, tough animal
+    with sharp hooves and a vicious bite. It is less aggressive
+    than the larger steppe boars but no less dangerous when
+    cornered.
+  speciesid: 6
+  level: 1
+  stats:
+    vitality:
+      training: 5
+    strength:
+      training: 5

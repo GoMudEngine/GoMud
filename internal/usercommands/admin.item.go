@@ -234,6 +234,49 @@ func item_Create(rest string, user *users.UserRecord, room *rooms.Room, flags ev
 			newItemSpec.Damage.DiceRoll = newItemSpec.Damage.FormatDiceRoll()
 		}
 
+		// Damage multiplier for unified pipeline
+		dmDefault := fmt.Sprintf(`%.2f`, newItemSpec.DamageMultiplier)
+		if newItemSpec.DamageMultiplier <= 0 {
+			dmDefault = `1.00`
+		}
+		dmQuestion := cmdPrompt.Ask(`Damage multiplier (0.15=fists, 1.0=iron, 2.5=legendary)?`, []string{dmDefault}, dmDefault)
+		if !dmQuestion.Done {
+			return true, nil
+		}
+		if val, err := strconv.ParseFloat(dmQuestion.Response, 64); err == nil && val > 0 {
+			newItemSpec.DamageMultiplier = val
+		}
+	}
+
+	//
+	// Mitigation (if armor/equipment)
+	//
+	isArmorType := newItemSpec.Type == items.Head || newItemSpec.Type == items.Body ||
+		newItemSpec.Type == items.Legs || newItemSpec.Type == items.Feet ||
+		newItemSpec.Type == items.Gloves || newItemSpec.Type == items.Neck ||
+		newItemSpec.Type == items.Ring || newItemSpec.Type == items.Belt ||
+		newItemSpec.Type == items.Offhand
+	if isArmorType {
+		pmDefault := strconv.Itoa(newItemSpec.PhysicalMitigation)
+		pmQ := cmdPrompt.Ask(`Physical mitigation % (plate:12-18, leather:4-8, cloth:1-3)?`, []string{pmDefault}, pmDefault)
+		if !pmQ.Done {
+			return true, nil
+		}
+		newItemSpec.PhysicalMitigation, _ = strconv.Atoi(pmQ.Response)
+
+		mmDefault := strconv.Itoa(newItemSpec.MagicalMitigation)
+		mmQ := cmdPrompt.Ask(`Magical mitigation % (robes:5-12, amulet:3-8, plate:0-2)?`, []string{mmDefault}, mmDefault)
+		if !mmQ.Done {
+			return true, nil
+		}
+		newItemSpec.MagicalMitigation, _ = strconv.Atoi(mmQ.Response)
+
+		cmDefault := strconv.Itoa(newItemSpec.ConvictionMitigation)
+		cmQ := cmdPrompt.Ask(`Conviction mitigation % (willpower items:3-8, most armor:0)?`, []string{cmDefault}, cmDefault)
+		if !cmQ.Done {
+			return true, nil
+		}
+		newItemSpec.ConvictionMitigation, _ = strconv.Atoi(cmQ.Response)
 	}
 
 	//
@@ -421,6 +464,12 @@ func item_Create(rest string, user *users.UserRecord, room *rooms.Room, flags ev
 			}
 			if newItemSpec.Type == items.Weapon {
 				user.SendText(`  <ansi fg="yellow-bold">Damage:</ansi>      <ansi fg="white-bold">` + newItemSpec.Damage.DiceRoll + `</ansi>`)
+				user.SendText(`  <ansi fg="yellow-bold">DmgMult:</ansi>     <ansi fg="white-bold">` + fmt.Sprintf(`%.2f`, newItemSpec.DamageMultiplier) + `</ansi>`)
+			}
+			if newItemSpec.PhysicalMitigation > 0 || newItemSpec.MagicalMitigation > 0 || newItemSpec.ConvictionMitigation > 0 {
+				user.SendText(`  <ansi fg="yellow-bold">Physical:</ansi>    <ansi fg="white-bold">` + strconv.Itoa(newItemSpec.PhysicalMitigation) + `%</ansi>`)
+				user.SendText(`  <ansi fg="yellow-bold">Magical:</ansi>     <ansi fg="white-bold">` + strconv.Itoa(newItemSpec.MagicalMitigation) + `%</ansi>`)
+				user.SendText(`  <ansi fg="yellow-bold">Conviction:</ansi>  <ansi fg="white-bold">` + strconv.Itoa(newItemSpec.ConvictionMitigation) + `%</ansi>`)
 			}
 
 			if newItemSpec.Uses > 0 {

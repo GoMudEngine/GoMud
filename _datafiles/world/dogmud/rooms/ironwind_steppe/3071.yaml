@@ -1,0 +1,35 @@
+roomid: 3071
+zone: Ironwind Steppe
+title: Goblin Sleeping Den
+description: A low-ceilinged cave hollowed from the base of the coulee
+  wall serves as a communal sleeping den for the goblin band. The
+  floor is covered in heaped grass, stolen cloth, and animal hides
+  arranged in rough nests. The ceiling is blackened with soot and
+  the air is thick with the smell of unwashed goblins. Personal
+  possessions -- weapons, trinkets, stolen goods -- are piled
+  beside each nest with obsessive territorial precision.
+biome: cave
+exits:
+  north:
+    roomid: 3069
+  west:
+    roomid: 3070
+  south:
+    roomid: 3072
+nouns:
+  nests: Heaps of grass, rags, and animal hides arranged in
+    roughly circular nests, each sized for a goblin. They are
+    pushed against the walls, leaving a narrow central aisle.
+    Each nest has a small pile of belongings beside it.
+  possessions: Crude weapons, animal bones carved into tools,
+    stolen trinkets, bits of metal, and colorful stones --
+    each goblin's personal hoard, arranged with surprising
+    care beside their sleeping nest.
+spawninfo:
+- mobid: 217
+- mobid: 218
+- mobid: 218
+idlemessages:
+- The den smells like a wet dog rolled in compost.
+- A goblin snarls at another for getting too close to its nest.
+- Something gleams in one of the personal hoards -- metal or glass.

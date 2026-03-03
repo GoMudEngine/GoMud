@@ -58,8 +58,10 @@ var (
 	// \w: alphanumeric
 	// \p{P}: punctuation
 	// \p{S}: symbol
-	wordRegex        = regexp.MustCompile(`([\p{Han}\p{Hiragana}\p{Katakana}\p{Hangul}]|\w+|[\p{P}\p{S}\s]+)`)
+	wordRegex        = regexp.MustCompile(`(</?ansi[^>]*>|[\p{Han}\p{Hiragana}\p{Katakana}\p{Hangul}]|\w+|[\p{P}\p{S}\s]+)`)
 	punctuationRegex = regexp.MustCompile(`[\p{P}]+`)
+	paragraphBreak   = regexp.MustCompile(`\n\s*\n`)
+	ansiTagRegex     = regexp.MustCompile(`</?ansi[^>]*>`)
 
 	mudLock = sync.RWMutex{}
 )
@@ -182,6 +184,11 @@ func LogRoll(name string, rollResult int, targetNumber int) {
 	mudlog.Debug(`Rand Result`, `Name`, name, `Result`, fmt.Sprintf(`%d < %d`, rollResult, targetNumber), `Success`, success)
 }
 
+// visibleWidth returns the display width of a string, ignoring <ansi> markup tags.
+func visibleWidth(s string) int {
+	return runewidth.StringWidth(ansiTagRegex.ReplaceAllString(s, ``))
+}
+
 func SplitString(input string, lineWidth int) []string {
 	var result []string
 	var currentLine string
@@ -201,10 +208,10 @@ func SplitString(input string, lineWidth int) []string {
 				continue
 			}
 
-			wordLen := runewidth.StringWidth(word)
+			wordLen := visibleWidth(word)
 
 			if idx < l-1 && punctuationRegex.MatchString(words[idx+1]) {
-				wordLen += runewidth.StringWidth(words[idx+1])
+				wordLen += visibleWidth(words[idx+1])
 				word += words[idx+1]
 				skip = true
 			} else {
@@ -222,7 +229,7 @@ func SplitString(input string, lineWidth int) []string {
 				}
 				// clear spaces at the beginning of the line
 				currentLine = strings.TrimLeft(word, " ")
-				currentLen = runewidth.StringWidth(currentLine)
+				currentLen = visibleWidth(currentLine)
 			} else {
 				currentLine += word
 				currentLen += wordLen
@@ -249,6 +256,61 @@ func SplitStringNL(input string, lineWidth int, nlPrefix ...string) string {
 	}
 
 	return strings.Join(lines, term.CRLFStr+linePrefix)
+}
+
+// NormalizeAndWrap collapses single newlines into spaces (preserving paragraph
+// breaks denoted by double-newlines), then word-wraps to lineWidth.
+// This prevents the ugly short-line problem when YAML text is pre-wrapped at a
+// different width than the display width.
+func NormalizeAndWrap(input string, lineWidth int) string {
+	if input == "" {
+		return ""
+	}
+
+	// Split on double-newlines to preserve paragraph breaks
+	paragraphs := paragraphBreak.Split(input, -1)
+
+	var wrapped []string
+	for _, para := range paragraphs {
+		// Collapse single newlines and surrounding whitespace into a single space
+		normalized := strings.Join(strings.Fields(para), " ")
+		if normalized == "" {
+			wrapped = append(wrapped, "")
+			continue
+		}
+		wrapped = append(wrapped, SplitStringNL(normalized, lineWidth))
+	}
+
+	return strings.Join(wrapped, term.CRLFStr+term.CRLFStr)
+}
+
+// NormalizeAndWrapNL is like NormalizeAndWrap but accepts an optional newline
+// prefix (same signature as SplitStringNL) for use as a template function.
+func NormalizeAndWrapNL(input string, lineWidth int, nlPrefix ...string) string {
+	if input == "" {
+		return ""
+	}
+
+	linePrefix := ""
+	if len(nlPrefix) > 0 {
+		linePrefix = nlPrefix[0]
+	}
+
+	// Split on double-newlines to preserve paragraph breaks
+	paragraphs := paragraphBreak.Split(input, -1)
+
+	var wrapped []string
+	for _, para := range paragraphs {
+		// Collapse single newlines and surrounding whitespace into a single space
+		normalized := strings.Join(strings.Fields(para), " ")
+		if normalized == "" {
+			wrapped = append(wrapped, "")
+			continue
+		}
+		wrapped = append(wrapped, SplitStringNL(normalized, lineWidth, linePrefix))
+	}
+
+	return strings.Join(wrapped, term.CRLFStr+linePrefix+term.CRLFStr+linePrefix)
 }
 
 func SplitButRespectQuotes(s string) []string {
@@ -721,14 +783,6 @@ func HealthClass(health int, maxHealth int) string {
 	healthPercent := int(math.Floor(float64(health)/float64(maxHealth)*10)) * 10
 
 	return fmt.Sprintf(`health-%d`, healthPercent)
-}
-
-func ManaClass(mana int, maxMana int) string {
-
-	// quantize to 10s
-	manaPercent := int(math.Floor(float64(mana)/float64(maxMana)*10)) * 10
-
-	return fmt.Sprintf(`mana-%d`, manaPercent)
 }
 
 // Creates a percentage and quantizes it to the nearest 10

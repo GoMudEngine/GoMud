@@ -1,5 +1,6 @@
 mobid: 90
 zone: Thornwall Outskirts
+archetype: fighting
 statpool: 12
 itemdropchance: 12
 hostile: true
@@ -22,8 +23,8 @@ character:
   name: thornwall highwayman
   description: |
     Better dressed than the bandits further west, this one wears a
-    hooded cloak over decent clothing and carries a proper blade rather than
-    a crude weapon. The highwayman has the look of someone who was once
+    hooded cloak over decent clothing. The highwayman has the look of someone
+    who was once
     legitimate -- a discharged soldier, perhaps, or a tradesman who fell on
     hard times. The city's expansion has created a class of displaced people
     who know the roads well and have few options left. This one has chosen
@@ -31,6 +32,11 @@ character:
   speciesid: 1
   level: 1
   gold: 3
+  equipment:
+    weapon:
+      itemid: 10014
+    neck:
+      itemid: 20024
   stats:
     dexterity:
       training: 8

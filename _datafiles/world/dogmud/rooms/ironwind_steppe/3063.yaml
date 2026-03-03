@@ -1,0 +1,39 @@
+roomid: 3063
+zone: Ironwind Steppe
+title: Basalt Overhang
+description: A massive slab of basalt juts from the coulee wall,
+  forming a natural overhang that shelters a broad area of flat
+  stone. The ceiling is low -- barely above head height -- and
+  the underside is blackened with old fire soot. This sheltered
+  spot has clearly been used as a camp by goblin scouts. Bones,
+  crude scratches, and the remains of small fires litter the
+  ground. The overhang faces south, catching the warmth of the
+  sun while blocking the northern wind.
+biome: cliffs
+exits:
+  west:
+    roomid: 3061
+  north:
+    roomid: 3050
+  south:
+    roomid: 3065
+  east:
+    roomid: 3066
+  northwest:
+    roomid: 3038
+nouns:
+  overhang: A thick slab of basalt extending from the wall like
+    a shelf, providing about ten paces of covered floor space.
+    The underside is smoke-blackened and scratched with crude
+    graffiti -- goblin clan marks, by the look of them.
+  fires: The remains of several small campfires, each a ring
+    of smoke-blackened stones surrounding a pile of cold ash.
+    Gnawed bones and charred scraps are scattered around them.
+spawninfo:
+- mobid: 217
+- mobid: 218
+- mobid: 222
+idlemessages:
+- Old ash stirs in a gust, revealing gnawed bones beneath.
+- Crude marks on the overhang ceiling suggest goblin territory.
+- The shelter feels watched -- alcoves and shadows everywhere.

@@ -1,0 +1,26 @@
+mobid: 200
+zone: Ironwind Steppe
+statpool: 30
+itemdropchance: 5
+hostile: true
+maxwander: 2
+groups:
+  - vermin
+  - animal
+idlecommands:
+  - 'emote sniffs at the ground, whiskers twitching'
+  - ''
+  - ''
+  - 'emote gnaws on something small and unidentifiable'
+  - ''
+activitylevel: 15
+character:
+  name: steppe rat
+  description: |
+    A large brown rat with coarse fur and a thick, scaly tail. Bigger
+    than its city cousins and bolder, too -- the steppe rat has adapted
+    to life on the frontier where food is scarce and competition fierce.
+    Its teeth are stained yellow and look sharp enough to gnaw through
+    leather. Beady black eyes watch everything with calculating hunger.
+  speciesid: 10
+  level: 1

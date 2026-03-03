@@ -27,7 +27,10 @@ func HandleJSON(input string) string {
 
 	errResp := func(action, msg string) string {
 		resp := APIResponse{Success: false, Action: action, Error: msg}
-		b, _ := json.Marshal(resp)
+		b, err := json.Marshal(resp)
+		if err != nil {
+			return fmt.Sprintf(`{"success":false,"action":%q,"error":%q}`, action, msg)
+		}
 		return string(b)
 	}
 
@@ -39,7 +42,7 @@ func HandleJSON(input string) string {
 	switch req.Action {
 
 	case "check":
-		zone, _ := req.Params["zone"].(string)
+		zone, _ := req.Params["zone"].(string) // comma-ok not needed: empty string caught below
 		if zone == "" {
 			return errResp(req.Action, "params.zone is required")
 		}
@@ -47,7 +50,7 @@ func HandleJSON(input string) string {
 		if err != nil {
 			return errResp(req.Action, err.Error())
 		}
-		b, _ := json.Marshal(APIResponse{
+		b, err := json.Marshal(APIResponse{
 			Success: true,
 			Action:  req.Action,
 			Result: map[string]any{
@@ -55,10 +58,13 @@ func HandleJSON(input string) string {
 				"report": report,
 			},
 		})
+		if err != nil {
+			return errResp(req.Action, fmt.Sprintf("marshal error: %s", err.Error()))
+		}
 		return string(b)
 
 	case "makezone":
-		name, _ := req.Params["name"].(string)
+		name, _ := req.Params["name"].(string) // comma-ok not needed: empty string caught below
 		if name == "" {
 			return errResp(req.Action, "params.name is required")
 		}
@@ -70,7 +76,7 @@ func HandleJSON(input string) string {
 		if err != nil {
 			return errResp(req.Action, err.Error())
 		}
-		b, _ := json.Marshal(APIResponse{
+		b, err := json.Marshal(APIResponse{
 			Success: true,
 			Action:  req.Action,
 			Result: map[string]any{
@@ -79,12 +85,15 @@ func HandleJSON(input string) string {
 				"last_room_id":  lastId,
 			},
 		})
+		if err != nil {
+			return errResp(req.Action, fmt.Sprintf("marshal error: %s", err.Error()))
+		}
 		return string(b)
 
 	case "linkzones":
-		zoneA, _ := req.Params["zone_a"].(string)
-		zoneB, _ := req.Params["zone_b"].(string)
-		direction, _ := req.Params["direction"].(string)
+		zoneA, _ := req.Params["zone_a"].(string)   // comma-ok not needed: empty string caught below
+		zoneB, _ := req.Params["zone_b"].(string)    // comma-ok not needed: empty string caught below
+		direction, _ := req.Params["direction"].(string) // comma-ok not needed: empty string caught below
 		roomA := jsonInt(req.Params["room_a"])
 		roomB := jsonInt(req.Params["room_b"])
 
@@ -95,17 +104,20 @@ func HandleJSON(input string) string {
 		if err := LinkRooms(zoneA, roomA, direction, zoneB, roomB); err != nil {
 			return errResp(req.Action, err.Error())
 		}
-		b, _ := json.Marshal(APIResponse{
+		b, err := json.Marshal(APIResponse{
 			Success: true,
 			Action:  req.Action,
 			Result:  map[string]any{"linked": true},
 		})
+		if err != nil {
+			return errResp(req.Action, fmt.Sprintf("marshal error: %s", err.Error()))
+		}
 		return string(b)
 
 	case "pressure":
 		// Stage 17.2: Return current moon phases and derived stat modifiers.
 		swift, wander, eye := gametime.GetAllPhases()
-		b, _ := json.Marshal(APIResponse{
+		b, err := json.Marshal(APIResponse{
 			Success: true,
 			Action:  req.Action,
 			Result: map[string]any{
@@ -115,6 +127,9 @@ func HandleJSON(input string) string {
 				"mutation_rate_multiplier": 0.5 + eye,
 			},
 		})
+		if err != nil {
+			return errResp(req.Action, fmt.Sprintf("marshal error: %s", err.Error()))
+		}
 		return string(b)
 
 	default:

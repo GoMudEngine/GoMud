@@ -1,0 +1,302 @@
+# Possible tokens:
+# {itemname}    - name of weapon/object e.g. 'wand'
+# {source}      - name of mob or user e.g. 'goblin'
+# {sourcetype}  - 'user' or 'mob'
+# {target}      - name of mob or user e.g. 'goblin'
+# {targettype}  - 'user' or 'mob'
+# {damage}      - damage dealt as an integer e.g. '5'
+# {exitname}    - name of exit for attack e.g. 'north'
+# {entrancename}- name of entrance for attack e.g. 'south'
+# {stance}      - combat stance (Stage 9.4)
+# {position}    - combat position (Stage 9.4)
+# {momentum}    - combat momentum (Stage 9.4)
+optionid: wand
+options:
+  prepare:
+    together:
+      toattacker:
+        beginner:
+        - 'You raise your <ansi fg="item">{itemname}</ansi>, arcane energy crackling at its tip.'
+        - 'You point your <ansi fg="item">{itemname}</ansi> toward <ansi fg="{targettype}">{target}</ansi>, gathering your focus.'
+        - 'You grip your <ansi fg="item">{itemname}</ansi> tightly, preparing to channel against <ansi fg="{targettype}">{target}</ansi>.'
+        expert:
+        - 'You settle into a {stance} stance, your <ansi fg="item">{itemname}</ansi> tracing a ward in the air.'
+        - 'While {position}, you level your <ansi fg="item">{itemname}</ansi> at <ansi fg="{targettype}">{target}</ansi> with practiced precision.'
+        - 'You focus your will through your <ansi fg="item">{itemname}</ansi>, sizing up <ansi fg="{targettype}">{target}</ansi>.'
+        master:
+        - 'With fluid grace, you bring your <ansi fg="item">{itemname}</ansi> to bear, arcane threads already forming.'
+        - 'Your <ansi fg="item">{itemname}</ansi> hums with anticipation as you read <ansi fg="{targettype}">{target}</ansi>''s aura.'
+        - '{momentum}, you align your <ansi fg="item">{itemname}</ansi> with deadly focus.'
+      todefender:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi> raises their <ansi fg="item">{itemname}</ansi> toward you, energy crackling.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> points their <ansi fg="item">{itemname}</ansi> in your direction menacingly.'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> traces a ward in the air with their <ansi fg="item">{itemname}</ansi>, eyeing you.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> levels their <ansi fg="item">{itemname}</ansi> at you with calm precision.'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> hums with gathering power aimed your way.'
+        - 'Arcane threads form around <ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> as they focus on you.'
+      toroom:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi> raises their <ansi fg="item">{itemname}</ansi> toward <ansi fg="{targettype}">{target}</ansi>.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> points their <ansi fg="item">{itemname}</ansi> at <ansi fg="{targettype}">{target}</ansi>, energy crackling.'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> traces a ward with their <ansi fg="item">{itemname}</ansi>, facing <ansi fg="{targettype}">{target}</ansi>.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> levels their <ansi fg="item">{itemname}</ansi> at <ansi fg="{targettype}">{target}</ansi> with precision.'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> hums as arcane threads form around it.'
+        - 'With practiced grace, <ansi fg="{sourcetype}">{source}</ansi> brings their <ansi fg="item">{itemname}</ansi> to bear.'
+  wait:
+    together:
+      toattacker:
+        beginner:
+        - 'You wave your <ansi fg="item">{itemname}</ansi> slowly, searching for an opening.'
+        - 'You hold your <ansi fg="item">{itemname}</ansi> steady, watching <ansi fg="{targettype}">{target}</ansi> carefully.'
+        - 'You circle <ansi fg="{targettype}">{target}</ansi>, your <ansi fg="item">{itemname}</ansi> tracing idle patterns.'
+        expert:
+        - 'From your {stance} stance, you study <ansi fg="{targettype}">{target}</ansi> through channeled senses.'
+        - 'While {position}, you probe <ansi fg="{targettype}">{target}</ansi>''s defenses with subtle arcane feints.'
+        - 'You draw arcane focus through your <ansi fg="item">{itemname}</ansi>, seeking weakness.'
+        master:
+        - '{momentum}, you read every flicker of <ansi fg="{targettype}">{target}</ansi>''s aura with clarity.'
+        - 'Your <ansi fg="item">{itemname}</ansi> pulses faintly as you anticipate <ansi fg="{targettype}">{target}</ansi>''s next move.'
+        - 'Like a hawk, you track <ansi fg="{targettype}">{target}</ansi>''s energy through your attuned focus.'
+      todefender:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi> waves their <ansi fg="item">{itemname}</ansi> slowly, watching you.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> holds their <ansi fg="item">{itemname}</ansi> steady, studying you.'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> probes your defenses with subtle arcane feints.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> studies you through their channeled senses.'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi> reads your aura with unsettling precision.'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> pulses as they track your every move.'
+      toroom:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi> waves their <ansi fg="item">{itemname}</ansi>, circling <ansi fg="{targettype}">{target}</ansi>.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> holds their <ansi fg="item">{itemname}</ansi> steady, watching <ansi fg="{targettype}">{target}</ansi>.'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> probes <ansi fg="{targettype}">{target}</ansi>''s defenses with arcane feints.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> studies <ansi fg="{targettype}">{target}</ansi> through channeled senses.'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi> reads <ansi fg="{targettype}">{target}</ansi>''s aura with predatory precision.'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s focus pulses as they track <ansi fg="{targettype}">{target}</ansi>''s every shift.'
+  miss:
+    together:
+      toattacker:
+        beginner:
+        - 'You flick your <ansi fg="item">{itemname}</ansi> at <ansi fg="{targettype}">{target}</ansi>, but the strike goes wide!'
+        - 'Your arcane jab misses <ansi fg="{targettype}">{target}</ansi> completely!'
+        - 'You thrust your <ansi fg="item">{itemname}</ansi> forward, but <ansi fg="{targettype}">{target}</ansi> evades!'
+        expert:
+        - 'Your calculated strike with the <ansi fg="item">{itemname}</ansi> finds only air!'
+        - 'Despite your {stance} approach, <ansi fg="{targettype}">{target}</ansi> sidesteps your channeled blow!'
+        - 'You lunge forward but <ansi fg="{targettype}">{target}</ansi> anticipates and dodges!'
+        master:
+        - '<ansi fg="{targettype}">{target}</ansi>''s unexpected agility sends your perfect strike wide!'
+        - 'Despite flawless form, <ansi fg="{targettype}">{target}</ansi> reads your intent and evades!'
+        - 'Your masterful thrust meets an equally masterful defense!'
+      todefender:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi> flicks their <ansi fg="item">{itemname}</ansi> at you, but misses!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> thrusts their <ansi fg="item">{itemname}</ansi> your way, missing entirely!'
+        expert:
+        - 'You sidestep <ansi fg="{sourcetype}">{source}</ansi>''s channeled strike!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s calculated jab finds only empty air!'
+        master:
+        - 'Your agility sends <ansi fg="{sourcetype}">{source}</ansi>''s perfect strike wide!'
+        - 'You read <ansi fg="{sourcetype}">{source}</ansi>''s intent and evade their masterful thrust!'
+      toroom:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi> flicks their <ansi fg="item">{itemname}</ansi> at <ansi fg="{targettype}">{target}</ansi>, but misses!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> thrusts at <ansi fg="{targettype}">{target}</ansi> but fails to connect!'
+        expert:
+        - '<ansi fg="{targettype}">{target}</ansi> sidesteps <ansi fg="{sourcetype}">{source}</ansi>''s channeled strike!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s calculated jab finds only air!'
+        master:
+        - '<ansi fg="{targettype}">{target}</ansi>''s defense forces <ansi fg="{sourcetype}">{source}</ansi>''s perfect strike wide!'
+        - 'A clash of arcane will results in no contact!'
+  weak:
+    together:
+      toattacker:
+        beginner:
+        - 'You tap <ansi fg="{targettype}">{target}</ansi> with the tip of your <ansi fg="item">{itemname}</ansi>.'
+        - 'Your <ansi fg="item">{itemname}</ansi> grazes <ansi fg="{targettype}">{target}</ansi> with a faint crackle.'
+        - 'You poke <ansi fg="{targettype}">{target}</ansi> lightly with your <ansi fg="item">{itemname}</ansi>.'
+        expert:
+        - 'You flick a quick jab at <ansi fg="{targettype}">{target}</ansi>, barely connecting.'
+        - 'Circling left, you graze <ansi fg="{targettype}">{target}</ansi> with a channeled tap.'
+        - 'You feint high and prod low, landing a light touch on <ansi fg="{targettype}">{target}</ansi>.'
+        master:
+        - 'You probe <ansi fg="{targettype}">{target}</ansi>''s guard with a measured arcane tap.'
+        - 'Dancing back, you flick your <ansi fg="item">{itemname}</ansi> across <ansi fg="{targettype}">{target}</ansi>.'
+        - 'You find a small opening and deliver a precise but light strike.'
+      todefender:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi> taps you with the tip of their <ansi fg="item">{itemname}</ansi>.'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> grazes you with a faint crackle.'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> flicks a quick jab at you, barely connecting.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> feints and prods you with a light channeled touch.'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi> probes your guard with a measured arcane tap.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> dances back while flicking their <ansi fg="item">{itemname}</ansi> across you.'
+      toroom:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi> taps <ansi fg="{targettype}">{target}</ansi> with the tip of their <ansi fg="item">{itemname}</ansi>.'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> grazes <ansi fg="{targettype}">{target}</ansi> with a crackle.'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> flicks a quick jab at <ansi fg="{targettype}">{target}</ansi>, barely connecting.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> feints and prods <ansi fg="{targettype}">{target}</ansi> with a light touch.'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi> probes <ansi fg="{targettype}">{target}</ansi>''s guard with a measured strike.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> dances back while flicking their <ansi fg="item">{itemname}</ansi> across <ansi fg="{targettype}">{target}</ansi>.'
+  normal:
+    together:
+      toattacker:
+        beginner:
+        - 'You jab <ansi fg="{targettype}">{target}</ansi> sharply with your <ansi fg="item">{itemname}</ansi>!'
+        - 'Your <ansi fg="item">{itemname}</ansi> connects with <ansi fg="{targettype}">{target}</ansi>, energy crackling on impact!'
+        - 'You thrust your <ansi fg="item">{itemname}</ansi> into <ansi fg="{targettype}">{target}</ansi> with a flash of light!'
+        expert:
+        - 'You step forward and drive your <ansi fg="item">{itemname}</ansi> into <ansi fg="{targettype}">{target}</ansi>!'
+        - 'Feinting left, you channel a solid strike through your <ansi fg="item">{itemname}</ansi>!'
+        - 'Reading their stance, you jab with channeled precision!'
+        - 'You draw their defense and strike cleanly with your <ansi fg="item">{itemname}</ansi>!'
+        master:
+        - 'You press your advantage with a channeled thrust!'
+        - 'You exploit an opening and jab decisively at <ansi fg="{targettype}">{target}</ansi>!'
+        - 'Your <ansi fg="item">{itemname}</ansi> flares as you deliver a solid arcane strike!'
+        - '{momentum}, your channeled strike finds its mark!'
+      todefender:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi> jabs you sharply with their <ansi fg="item">{itemname}</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> connects, energy crackling on impact!'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> steps in and drives their <ansi fg="item">{itemname}</ansi> into you!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> channels a solid strike through their focus!'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi> presses their advantage with a channeled thrust!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> flares as it strikes you solidly!'
+      toroom:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi> jabs <ansi fg="{targettype}">{target}</ansi> sharply with their <ansi fg="item">{itemname}</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> connects with <ansi fg="{targettype}">{target}</ansi>, energy crackling!'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> steps forward and channels a solid strike!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> drives their <ansi fg="item">{itemname}</ansi> into <ansi fg="{targettype}">{target}</ansi>!'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi> presses forward with a channeled thrust at <ansi fg="{targettype}">{target}</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> flares as it strikes <ansi fg="{targettype}">{target}</ansi>!'
+  heavy:
+    together:
+      toattacker:
+        beginner:
+        - 'You drive your <ansi fg="item">{itemname}</ansi> into <ansi fg="{targettype}">{target}</ansi> with a burst of energy!'
+        - 'Your <ansi fg="item">{itemname}</ansi> slams into <ansi fg="{targettype}">{target}</ansi>, discharging a flash of power!'
+        - 'You channel a powerful strike through your <ansi fg="item">{itemname}</ansi>!'
+        expert:
+        - 'You step in close and unleash a devastating channeled blow on <ansi fg="{targettype}">{target}</ansi>!'
+        - 'From your {stance} stance, you drive arcane force through your <ansi fg="item">{itemname}</ansi>!'
+        - '{momentum}, you press forward and slam your focus into <ansi fg="{targettype}">{target}</ansi>!'
+        - 'Feinting a retreat, you surge forward with a powerful channeled thrust!'
+        master:
+        - 'You draw their guard aside and unleash a punishing arcane strike!'
+        - 'Reading their weakness, you channel devastating force through your <ansi fg="item">{itemname}</ansi>!'
+        - 'Your {stance} approach pays off as you deliver a searing blow!'
+        - 'Seizing the advantage, you slam your <ansi fg="item">{itemname}</ansi> into <ansi fg="{targettype}">{target}</ansi> with arcane fury!'
+        - 'While {position} and {momentum}, you strike with channeled precision!'
+        - 'Arcane energy from your <ansi fg="item">{itemname}</ansi> sears <ansi fg="{targettype}">{target}</ansi>''s {bodypart}!'
+      todefender:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi> drives their <ansi fg="item">{itemname}</ansi> into you with a burst of energy!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> slams into you, discharging power!'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> steps in and unleashes a devastating channeled blow!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> surges forward with a powerful arcane thrust!'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi> draws your guard and unleashes a punishing arcane strike!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> reads your weakness and channels devastating force!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> seizes advantage and slams you with arcane fury!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s arcane energy sears your {bodypart}!'
+      toroom:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi> drives their <ansi fg="item">{itemname}</ansi> into <ansi fg="{targettype}">{target}</ansi> with a burst of energy!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> slams into <ansi fg="{targettype}">{target}</ansi>, discharging power!'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> steps in and unleashes a devastating channeled blow!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> surges forward with a powerful arcane thrust at <ansi fg="{targettype}">{target}</ansi>!'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi> draws the guard and unleashes a punishing arcane strike!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> channels devastating force through their <ansi fg="item">{itemname}</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> seizes advantage and slams <ansi fg="{targettype}">{target}</ansi> with arcane fury!'
+  critical:
+    together:
+      toattacker:
+        beginner:
+        - 'Your <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">ERUPTS WITH POWER</ansi> as it strikes <ansi fg="{targettype}">{target}</ansi>!'
+        - 'You deliver a <ansi fg="cyan-bold">CRITICAL ARCANE STRIKE</ansi> to <ansi fg="{targettype}">{target}</ansi>!'
+        - 'Your <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">BLAZES WITH ENERGY</ansi> on impact!'
+        expert:
+        - 'You channel overwhelming force and your <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">DEVASTATES</ansi> <ansi fg="{targettype}">{target}</ansi>!'
+        - 'Your masterful feint opens <ansi fg="{targettype}">{target}</ansi> - you <ansi fg="cyan-bold">ANNIHILATE</ansi> them with arcane fury!'
+        - 'Reading every move, you deliver a <ansi fg="cyan-bold">FLAWLESS CHANNELED STRIKE</ansi>!'
+        master:
+        - 'Your tactical brilliance creates the perfect opening - you <ansi fg="cyan-bold">OBLITERATE</ansi> <ansi fg="{targettype}">{target}</ansi>!'
+        - 'Your {stance} approach culminates in a <ansi fg="cyan-bold">DEVASTATING CRITICAL</ansi> strike!'
+        - 'While {position}, {momentum}, you deliver a <ansi fg="cyan-bold">PERFECT EXECUTION</ansi>!'
+        - 'Channeling all momentum, you <ansi fg="cyan-bold">SEAR THROUGH</ansi> <ansi fg="{targettype}">{target}</ansi> utterly!'
+      todefender:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">ERUPTS WITH POWER</ansi> as it strikes you!'
+        - 'You are hit by a <ansi fg="cyan-bold">CRITICAL ARCANE STRIKE</ansi> from <ansi fg="{sourcetype}">{source}</ansi>!'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> channels overwhelming force and <ansi fg="cyan-bold">DEVASTATES</ansi> you!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> opens your guard and <ansi fg="cyan-bold">ANNIHILATES</ansi> you with arcane fury!'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s tactical brilliance creates the perfect opening - you are <ansi fg="cyan-bold">OBLITERATED</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> channels all momentum and <ansi fg="cyan-bold">SEARS THROUGH</ansi> you utterly!'
+      toroom:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">ERUPTS WITH POWER</ansi> striking <ansi fg="{targettype}">{target}</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> delivers a <ansi fg="cyan-bold">CRITICAL ARCANE STRIKE</ansi> to <ansi fg="{targettype}">{target}</ansi>!'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> channels overwhelming force and <ansi fg="cyan-bold">DEVASTATES</ansi> <ansi fg="{targettype}">{target}</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> opens the guard and <ansi fg="cyan-bold">ANNIHILATES</ansi> <ansi fg="{targettype}">{target}</ansi>!'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s tactical brilliance - <ansi fg="cyan-bold">OBLITERATION</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> channels all momentum and <ansi fg="cyan-bold">SEARS THROUGH</ansi> <ansi fg="{targettype}">{target}</ansi>!'
+  fumble:
+    together:
+      toattacker:
+        beginner:
+        - 'Your <ansi fg="item">{itemname}</ansi> <ansi fg="red-bold">FUMBLES</ansi> as the energy fizzles out!'
+        - 'You <ansi fg="red-bold">FUMBLE</ansi> and nearly drop your <ansi fg="item">{itemname}</ansi>!'
+        - 'You overextend your thrust and <ansi fg="red-bold">FUMBLE</ansi>, stumbling forward!'
+        expert:
+        - 'Your channeled strike misfires - you <ansi fg="red-bold">FUMBLE</ansi>!'
+        - 'You misjudge the distance and <ansi fg="red-bold">FUMBLE</ansi> your arcane jab!'
+        master:
+        - '<ansi fg="{targettype}">{target}</ansi>''s unexpected counter disrupts your channel - you <ansi fg="red-bold">FUMBLE</ansi>!'
+        - 'Despite perfect form, a surge of wild magic causes you to <ansi fg="red-bold">FUMBLE</ansi>!'
+      todefender:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> <ansi fg="red-bold">FUMBLES</ansi> as its energy fizzles!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> their <ansi fg="item">{itemname}</ansi> in a clumsy display!'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}''s</ansi> channeled strike misfires - they <ansi fg="red-bold">FUMBLE</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> misjudges and <ansi fg="red-bold">FUMBLES</ansi> their arcane jab!'
+        master:
+        - 'Your defense disrupts <ansi fg="{sourcetype}">{source}</ansi>''s channel - they <ansi fg="red-bold">FUMBLE</ansi>!'
+        - 'Despite their skill, <ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> their strike!'
+      toroom:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> <ansi fg="red-bold">FUMBLES</ansi> as its energy fizzles!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> their arcane strike against <ansi fg="{targettype}">{target}</ansi>!'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}''s</ansi> channeled strike misfires - they <ansi fg="red-bold">FUMBLE</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> misjudges the distance and <ansi fg="red-bold">FUMBLES</ansi>!'
+        master:
+        - '<ansi fg="{targettype}">{target}''s</ansi> defense disrupts <ansi fg="{sourcetype}">{source}</ansi>''s channel - a <ansi fg="red-bold">FUMBLE</ansi>!'
+        - 'Despite masterful form, <ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi>!'

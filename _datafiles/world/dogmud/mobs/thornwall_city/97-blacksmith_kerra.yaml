@@ -1,6 +1,7 @@
 mobid: 97
 zone: Thornwall City
-statpool: 22
+archetype: fighting
+statpool: 66
 itemdropchance: 0
 hostile: false
 maxwander: 0
@@ -14,12 +15,21 @@ idlecommands:
   - 'emote thrusts a piece of metal into the forge coals, working the bellows'
   - ''
 activitylevel: 15
+crafter: true
+crafterskill: blacksmithing
+crafterrecipeids:
+  - iron-dagger
+  - iron-buckler
+  - iron-short-sword
+crafterrestockmaterials:
+  - 40001
+  - 40002
+  - 40003
 character:
   name: blacksmith Kerra
   description: |
     A muscular woman with forearms like cable and a face permanently flushed
-    from the forge heat. Kerra wears a heavy leather apron over simple
-    clothing, and her hands are mapped with small burn scars -- the marks
+    from the forge heat. Her hands are mapped with small burn scars -- the marks
     of a trade learned the hard way. She is one of the best smiths in
     Thornwall, capable of everything from horseshoes to blade work. Her
     manner is blunt and professional -- she respects good steel, honest
@@ -27,6 +37,15 @@ character:
   speciesid: 1
   level: 1
   gold: 0
+  equipment:
+    weapon:
+      itemid: 10008
+    body:
+      itemid: 20045
+    feet:
+      itemid: 20052
+  skills:
+    blacksmithing: 10
   stats:
     strength:
       training: 15

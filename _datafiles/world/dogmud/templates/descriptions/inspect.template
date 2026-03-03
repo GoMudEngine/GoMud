@@ -1,14 +1,16 @@
 {{ $inspectLevel := .InspectLevel }}{{ $damage := .Item.GetDamage }}
  ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Basic Info</ansi> ──────────────────────────────────────────────────────────────┐
    <ansi fg="yellow">Name:</ansi>        {{ padRight 53 (uc .Item.Name) }}
-   <ansi fg="yellow">Description:</ansi> {{ splitstring .ItemSpec.Description 61 "                " }}
+   <ansi fg="yellow">Description:</ansi> {{ normalizewrap .ItemSpec.Description 61 "                " }}
    <ansi fg="yellow">Type:</ansi>        {{ uc .ItemSpec.Type.String }} ({{ uc .ItemSpec.Subtype.String }})
    <ansi fg="yellow">Value:</ansi>       {{ padRight 53 ( printf "%d gold" .ItemSpec.Value ) }}
  └─────────────────────────────────────────────────────────────────────────────┘
  ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Specifics Stats</ansi> ─────────────────────────────────────────────────────────┐
 {{- if gt $inspectLevel 1 }}
    <ansi fg="yellow">Damage:</ansi>      {{ if ne .ItemSpec.Type.String "weapon" }}{{ padRight 53 "N/A" }}{{ else }}{{ padRight 53 (formatdiceroll $damage.DiceRoll) }}{{ end }}
-   <ansi fg="yellow">Defense:</ansi>     {{ if eq .ItemSpec.DamageReduction 0 }}{{ padRight 53 "N/A" }}{{ else }}{{ .ItemSpec.DamageReduction }} Armor{{ end }}
+   <ansi fg="yellow">Physical:</ansi>    {{ if eq .ItemSpec.PhysicalMitigation 0 }}{{ padRight 53 "N/A" }}{{ else }}{{ padRight 53 (mitigationQuality (divFloat .ItemSpec.PhysicalMitigation 100)) }}{{ end }}
+   <ansi fg="yellow">Magical:</ansi>     {{ if eq .ItemSpec.MagicalMitigation 0 }}{{ padRight 53 "N/A" }}{{ else }}{{ padRight 53 (mitigationQuality (divFloat .ItemSpec.MagicalMitigation 100)) }}{{ end }}
+   <ansi fg="yellow">Conviction:</ansi>  {{ if eq .ItemSpec.ConvictionMitigation 0 }}{{ padRight 53 "N/A" }}{{ else }}{{ padRight 53 (mitigationQuality (divFloat .ItemSpec.ConvictionMitigation 100)) }}{{ end }}
    <ansi fg="yellow">Uses Left:</ansi>   {{ if eq .ItemSpec.Uses 0 }}{{ padRight 53 "N/A" }}{{ else }}{{ padRight 53 (printf "%d/%d" .Item.Uses .ItemSpec.Uses) }}{{ end }}
 {{- else }}
    Unknown...

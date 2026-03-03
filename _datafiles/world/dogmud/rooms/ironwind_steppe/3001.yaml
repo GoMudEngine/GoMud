@@ -1,0 +1,34 @@
+roomid: 3001
+zone: Ironwind Steppe
+title: Trampled Outskirts
+description: The wagon track continues east through a stretch of flattened
+  grass and bare earth where foot traffic from the city has beaten the
+  ground hard. Broken fence posts mark where someone once tried to
+  establish a garden or animal pen -- the effort clearly abandoned. A
+  few scraggly bushes cling to life along the track's edges. To the
+  south, a shallow drainage ditch carries runoff from the city wall.
+biome: land
+exits:
+  west:
+    roomid: 3000
+  east:
+    roomid: 3003
+  south:
+    roomid: 3004
+nouns:
+  posts: Weathered fence posts, most of them leaning or broken off at
+    ground level. Whatever enclosure they once formed has long since
+    collapsed. The wood is grey and cracked from exposure.
+  ditch: A shallow ditch running roughly east-west, carrying a trickle
+    of murky water from the city drainage system. The banks are muddy
+    and trampled with animal tracks -- small paws and bird feet.
+  bushes: Hardy scrub bushes with small grey-green leaves, growing in
+    the poor soil alongside the track. They have been browsed by
+    animals into low, rounded shapes.
+spawninfo:
+- mobid: 200
+- mobid: 202
+idlemessages:
+- A feral cat watches from beneath a bush, eyes gleaming.
+- The wind bends the grass in long, rolling waves.
+- Something rustles in the drainage ditch -- a rat, probably.

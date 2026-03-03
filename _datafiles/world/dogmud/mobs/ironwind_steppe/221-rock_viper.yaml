@@ -1,0 +1,37 @@
+mobid: 221
+zone: Ironwind Steppe
+statpool: 95
+itemdropchance: 10
+hostile: true
+maxwander: 2
+groups:
+  - animal
+archetype: fighting
+mutationchance: 20
+idlecommands:
+  - 'emote lies coiled on sun-warmed stone, barely distinguishable from rock'
+  - ''
+  - ''
+  - 'emote raises its head, hood flaring slightly'
+  - ''
+activitylevel: 10
+character:
+  name: rock viper
+  description: |
+    A thick, muscular viper adapted to life among the basalt coulees.
+    Its scales are dark grey-brown with a zigzag pattern of black
+    diamonds, blending perfectly with the volcanic stone. The rock
+    viper is more venomous than its prairie cousin -- its bite
+    delivers a potent hemotoxin that causes severe pain and tissue
+    damage. It hunts by ambush, lying motionless on warm stone until
+    prey passes within striking distance. Larger and more aggressive
+    than the prairie viper.
+  speciesid: 8
+  level: 1
+  stats:
+    strength:
+      training: 5
+    dexterity:
+      training: 8
+    perception:
+      training: 3

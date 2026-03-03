@@ -1,0 +1,31 @@
+roomid: 3007
+zone: Ironwind Steppe
+title: Muddy Depression
+description: A low spot in the terrain collects rainwater and city runoff
+  into a broad, shallow depression of dark mud. The edges are trampled
+  heavily with animal tracks, and the surrounding grass is cropped short
+  by grazing. A few flat stones break the surface of the mud, used as
+  stepping stones by whatever creatures frequent this place. The air
+  is thick with the smell of wet earth and the buzz of insects.
+biome: land
+exits:
+  north:
+    roomid: 3003
+  northwest:
+    roomid: 3004
+  east:
+    roomid: 3009
+nouns:
+  mud: Dark, sticky mud that sucks at your boots. The surface is
+    pockmarked with hoofprints, pawprints, and the drag marks of
+    something heavy. A few bubbles rise and pop lazily.
+  stones: Flat stones half-sunk in the mud, their tops worn smooth
+    by use as stepping points. They form a rough path across the
+    widest part of the depression.
+spawninfo:
+- mobid: 202
+- mobid: 204
+idlemessages:
+- Something shifts beneath the mud with a wet sucking sound.
+- Insects buzz in thick clouds above the standing water.
+- A snake slides through the mud, leaving a sinuous trail.

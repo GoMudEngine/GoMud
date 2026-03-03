@@ -1,0 +1,34 @@
+roomid: 3088
+zone: Ironwind Steppe
+title: Contested Ground
+description: This stretch of open ground between Wolf Run and the
+  Boar Wallows is disputed territory, traveled by both predator
+  packs but claimed by neither. The grass is trampled and torn
+  by frequent conflict, and dark stains on the earth speak of
+  past encounters. Both wolf and boar tracks crisscross the
+  area, and the tension in the air is palpable. Neither species
+  has established dominance here.
+biome: land
+exits:
+  north:
+    roomid: 3086
+  west:
+    roomid: 3087
+  south:
+    roomid: 3094
+  east:
+    roomid: 3089
+nouns:
+  ground: Torn-up earth and trampled grass marking past
+    territorial disputes. Cloven hoofprints and wolf
+    pawprints overlap, neither clearly dominant. Tufts
+    of bristly boar hair and grey wolf fur lie scattered
+    among the damaged grass.
+spawninfo:
+- mobid: 205
+- mobid: 207
+- mobid: 233
+idlemessages:
+- The contested ground feels tense, like a held breath.
+- Wolf and boar tracks crisscross in territorial confusion.
+- A distant grunt and a distant howl answer each other.

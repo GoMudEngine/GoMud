@@ -8,10 +8,10 @@ func GetMemoryUsage() map[string]util.MemoryResult {
 
 	ret := map[string]util.MemoryResult{}
 
-	ret["mobs"] = util.MemoryResult{util.MemoryUsage(mobs), len(mobs)}
-	ret["allMobNames"] = util.MemoryResult{util.MemoryUsage(allMobNames), len(allMobNames)}
-	ret["mobInstances"] = util.MemoryResult{util.MemoryUsage(mobInstances), len(mobInstances)}
-	ret["mobsHatePlayers"] = util.MemoryResult{util.MemoryUsage(mobsHatePlayers), len(mobsHatePlayers)}
+	ret["mobs"] = util.MemoryResult{Memory: util.MemoryUsage(mobs), Count: len(mobs)}
+	ret["allMobNames"] = util.MemoryResult{Memory: util.MemoryUsage(allMobNames), Count: len(allMobNames)}
+	ret["mobInstances"] = util.MemoryResult{Memory: util.MemoryUsage(mobInstances), Count: len(mobInstances)}
+	ret["mobsHatePlayers"] = util.MemoryResult{Memory: util.MemoryUsage(mobsHatePlayers), Count: len(mobsHatePlayers)}
 
 	return ret
 }

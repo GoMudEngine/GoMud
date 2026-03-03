@@ -2,4 +2,4 @@ buffid: 33
 name: Chrysalis Regeneration
 description: Deep Chrysalis energy rapidly regenerates your body.
 triggerrate: 2 rounds
-triggercount: 4
+triggercount: 8

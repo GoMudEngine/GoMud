@@ -74,8 +74,15 @@ patterns:
 
 tree:
   root:
-    text: "The chieftain sits on the basalt slab, firelight playing across the calcified plates that armor its torso. Its milky eyes find you in the smoke. 'The shaman vouches for you. That is the only reason you are breathing. What do you want here, surface-walker?'"
-    hints: "You could ask about the warren, the chieftain's people, or offer to help."
+    text: "A surface-walker in the Hollow. My warriors wanted to kill you. I am still deciding. Leave before I decide wrong."
+    hints: "The chieftain does not seem interested in talking to someone who has not earned the warren's trust."
+    variants:
+      - questRequired: ["2-poultices"]
+        questExcluded: ["2-end"]
+        text: "The shaman tells me you brought medicine. Surface herbs. For our sick. You want something in return. They always do. Speak."
+        hints: "The chieftain is willing to hear you. Ask about the compact."
+      - questRequired: ["2-end"]
+        text: "The compact-bringer. You are remembered. Sit, if you wish."
 
   nodes:
     - id: people
@@ -107,6 +114,14 @@ tree:
       triggers: ["collapse", "shaft", "below", "deep", "rubble", "dig", "crack"]
       requires: ["exile_story"]
       text: "At the eastern end of the den. Something pushed up from below and the ceiling gave way. The air from down there is cold and clean and smells of metal. My people have been moving stones for years, one at a time. We will break through eventually. What we find there... may change everything. Or nothing."
+      moodChange: friendly
+
+    - id: audience
+      triggers: ["compact", "peace", "alliance", "shaman", "sent", "poultice", "medicine", "treaty", "quest", "task"]
+      questRequired: ["2-poultices"]
+      questExcluded: ["2-end"]
+      grantsQuest: "2-end"
+      text: "You brought medicine when you could have brought blades. That is... not what we expected. Very well. We will not attack surface-walkers who come in peace. We will not raid the cave entrance. In return, the surface leaves our dead alone and sends no more specimen collectors. That is the compact. Break it and there will be no second chance."
       moodChange: friendly
 
     - id: scholar_topic

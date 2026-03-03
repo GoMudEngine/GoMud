@@ -2,6 +2,8 @@ package skills
 
 import (
 	"strings"
+
+	"github.com/GoMudEngine/GoMud/internal/configs"
 )
 
 type SkillTag string
@@ -27,6 +29,7 @@ const (
 	UnarmedCombat SkillTag = `unarmed-combat` // Fist/body attacks & defense, grappling
 	RangedCombat  SkillTag = `ranged-combat`  // Bows, crossbows, thrown weapons
 	Spellcasting  SkillTag = `spellcasting`   // All magic — offense & defense
+	Rhetoric      SkillTag = `rhetoric`      // Conviction attacks — taunt, demoralize (Stage 34)
 
 	// DOG non-combat skills
 	FirstAid  SkillTag = `first-aid`  // Healing others, treating wounds, stabilizing
@@ -87,6 +90,10 @@ var (
 		"artificer": {
 			Jewelcrafting,
 			Enchanting,
+		},
+		"orator": {
+			Rhetoric,
+			Bartering,
 		},
 	}
 )
@@ -224,6 +231,7 @@ var SkillPrimaryStats = map[string]string{
 	"first-aid":      "perception",
 	"stealth":        "dexterity",
 	"tracking":       "perception",
+	"rhetoric":       "charisma",
 	"bartering":      "charisma",
 	"foraging":       "perception",
 	"blacksmithing":  "strength",
@@ -250,6 +258,8 @@ var SkillProgressionMultipliers = map[SkillTag]float64{
 	RangedCombat:  0.3,
 	// Magic skills — moderate frequency
 	Spellcasting: 0.5,
+	// Social combat — moderate frequency
+	Rhetoric: 0.5,
 	Cast:         0.5,
 	// Utility skills — used infrequently
 	Tracking:  2.0,
@@ -286,8 +296,13 @@ func GetSkillRankDescription(level int) string {
 }
 
 // GetProgressionMultiplier returns the progression speed multiplier for a skill.
-// Returns 1.0 (default) for any skill not explicitly listed.
+// Config overrides take priority; falls back to the hardcoded SkillProgressionMultipliers map.
+// Returns 1.0 for any skill not in either source.
 func GetProgressionMultiplier(skillName string) float64 {
+	b := configs.GetBalanceConfig()
+	if mult, ok := b.GetSkillProgressionMultiplier(skillName); ok {
+		return mult
+	}
 	if mult, ok := SkillProgressionMultipliers[SkillTag(skillName)]; ok {
 		return mult
 	}
@@ -313,7 +328,7 @@ func init() {
 	// Register all DOG skills directly (ensures cast and any not in professions are included)
 	for _, sk := range []SkillTag{
 		Cast,
-		WeaponCombat, UnarmedCombat, RangedCombat, Spellcasting,
+		WeaponCombat, UnarmedCombat, RangedCombat, Spellcasting, Rhetoric,
 		FirstAid, Stealth, Tracking, Bartering, Foraging,
 		Blacksmithing, Alchemy, Tailoring, Cooking, Jewelcrafting, Enchanting,
 	} {

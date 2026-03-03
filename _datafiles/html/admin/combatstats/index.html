@@ -57,7 +57,39 @@
         </div>
     </div>
 
-    <!-- Auto-refresh controls -->
+    <!-- Filters -->
+    <div class="row mb-2">
+        <div class="col-auto d-flex align-items-center">
+            <strong class="mr-2">Filters:</strong>
+            <label class="mr-1 mb-0" for="filter-source">Source</label>
+            <select id="filter-source"
+                    class="custom-select custom-select-sm mr-3"
+                    style="width:auto;" onchange="fetchData()">
+                <option value="">All</option>
+                <option value="user">Player</option>
+                <option value="mob">Mob</option>
+            </select>
+            <label class="mr-1 mb-0" for="filter-target">Target</label>
+            <select id="filter-target"
+                    class="custom-select custom-select-sm mr-3"
+                    style="width:auto;" onchange="fetchData()">
+                <option value="">All</option>
+                <option value="user">Player</option>
+                <option value="mob">Mob</option>
+            </select>
+            <label class="mr-1 mb-0" for="filter-channel">Channel</label>
+            <select id="filter-channel"
+                    class="custom-select custom-select-sm"
+                    style="width:auto;" onchange="fetchData()">
+                <option value="">All</option>
+                <option value="melee">Melee</option>
+                <option value="magic">Magic</option>
+                <option value="rhetoric">Rhetoric</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Controls -->
     <div class="row mb-3">
         <div class="col-auto">
             <button id="btn-refresh" class="btn btn-sm btn-primary"
@@ -72,6 +104,11 @@
                 <option value="60">60s</option>
                 <option value="120">2m</option>
             </select>
+            <span class="ml-3 mr-1" style="border-left:1px solid #ccc;"></span>
+            <button id="btn-export" class="btn btn-sm btn-outline-info ml-2"
+                    onclick="doExport()">Export to Log</button>
+            <button id="btn-reset" class="btn btn-sm btn-outline-danger ml-2"
+                    onclick="doReset()">Reset Buffer</button>
         </div>
     </div>
 
@@ -356,7 +393,15 @@
     }
 
     window.fetchData = function() {
-        fetch('/admin/api/combat-stats/')
+        var params = [];
+        var src = document.getElementById('filter-source').value;
+        var tgt = document.getElementById('filter-target').value;
+        var ch  = document.getElementById('filter-channel').value;
+        if (src) params.push('source=' + src);
+        if (tgt) params.push('target=' + tgt);
+        if (ch)  params.push('channel=' + ch);
+        var qs = params.length ? '?' + params.join('&') : '';
+        fetch('/admin/api/combat-stats/' + qs)
             .then(function(r){ return r.json(); })
             .then(function(d){
                 if (d.totalEvents === 0) {
@@ -408,6 +453,27 @@
     function stopTimer() {
         if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
     }
+
+    window.doReset = function() {
+        if (!confirm('Clear the combat analytics buffer? This cannot be undone.'))
+            return;
+        fetch('/admin/api/combat-stats/reset', { method: 'POST' })
+            .then(function(r){ return r.json(); })
+            .then(function(d){
+                alert('Cleared ' + d.cleared + ' events.');
+                fetchData();
+            })
+            .catch(function(err){ alert('Reset failed: ' + err); });
+    };
+
+    window.doExport = function() {
+        fetch('/admin/api/combat-stats/export', { method: 'POST' })
+            .then(function(r){ return r.json(); })
+            .then(function(d){
+                alert('Exported ' + d.flushed + ' events to log.');
+            })
+            .catch(function(err){ alert('Export failed: ' + err); });
+    };
 
     // Initial load
     fetchData();

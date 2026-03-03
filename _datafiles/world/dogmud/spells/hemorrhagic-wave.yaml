@@ -12,3 +12,4 @@ base_folds: 10
 target_defense_type: physical
 effect_type: damage
 effect_magnitude: 300
+damage_multiplier: 1.00

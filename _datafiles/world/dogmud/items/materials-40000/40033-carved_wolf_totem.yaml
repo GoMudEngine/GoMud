@@ -1,0 +1,10 @@
+itemid: 40033
+name: carved wolf totem
+namesimple: totem
+description: A small totem carved from steppe cedar, depicting a wolf
+  mid-howl. Leather cord wraps the base. It smells of sage and old
+  smoke -- clearly important to someone.
+type: object
+subtype: mundane
+weight: 0.5
+value: 0

@@ -133,9 +133,6 @@ func Talk(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		}
 	}
 
-	// Track charisma use when initiating a conversation
-	user.Character.OnStatUse("charisma", user.UserId)
-
 	room.SendTextToExits(`You hear someone talking.`, true)
 
 	return true, nil

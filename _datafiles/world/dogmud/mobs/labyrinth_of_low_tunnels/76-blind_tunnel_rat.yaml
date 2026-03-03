@@ -4,6 +4,7 @@ statpool: 3
 itemdropchance: 3
 hostile: false
 maxwander: 2
+buffids: [29]
 groups:
   - rats
   - animal

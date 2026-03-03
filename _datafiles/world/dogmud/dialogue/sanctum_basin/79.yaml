@@ -70,14 +70,25 @@ patterns:
 
 tree:
   root:
-    text: "A sharp-featured woman with ink-stained fingers looks up from a battered journal, charcoal pencil still in hand. 'Oh! Hello. Forgive me, I was sketching the cave entrance from up here. Wonderful view. Are you familiar with the tunnels below?'"
-    hints: "You could ask about her research, the tunnels, or whether she needs help."
+    text: "Oh! Hello. Forgive me, I was sketching the cave entrance from up here. Wonderful view. Are you familiar with the tunnels below?"
+    hints: "Try: ask scholar research, ask scholar tunnels, or ask scholar quest."
+    variants:
+      - questRequired: ["3-start"]
+        questExcluded: ["3-totem"]
+        text: "You are back! Any luck with the specimens? I need a bone totem from the carved niche and a spore sac from the cave crawlers. Either one would be a breakthrough."
+        hints: "Bring me a bone totem or a spore sac from the tunnels."
+      - questRequired: ["3-totem"]
+        questExcluded: ["3-end"]
+        text: "Wonderful timing! The totem is extraordinary -- but I still need that spore sac to complete the ecological survey. The cave crawlers carry them deeper in the tunnels."
+        hints: "Find a spore sac from a cave crawler and bring it to me."
+      - questRequired: ["3-end"]
+        text: "I have been writing for hours. The data you brought is remarkable. The guild will be publishing for years. Thank you, truly."
 
   nodes:
     - id: research
       triggers: ["research", "study", "work", "what", "purpose", "doing", "journal", "notes"]
       text: "I study Chrysalis mutation in isolated populations. The warren beneath us is extraordinary -- three generations of unguided transformation. The adaptations they have developed are unlike anything in the literature. If I could just get proper specimens, the guild would fund a full expedition."
-      hints: "Ask about what specimens she needs, or about the warren inhabitants."
+      hints: "Ask me what specimens I need, or about the warren inhabitants."
       unlocks: ["specimens_need", "warren_talk"]
       moodChange: friendly
 
@@ -85,14 +96,15 @@ tree:
       triggers: ["warren", "tunnel", "dwellers", "people", "creatures", "inhabitants", "them"]
       requires: ["research"]
       text: "Descended from human exiles. Driven underground three generations ago when their mutations diverged too far from the Sanctuary's expectations. No priests to guide the Chrysalis. No framework. Just survival. The result is a parallel branch of human development. Remarkable."
-      hints: "Ask about specimens, or about why she cannot go herself."
+      hints: "Ask me about the specimens I need, or why I cannot go myself."
       unlocks: ["specimens_need", "why_not_go"]
 
     - id: specimens_need
       triggers: ["specimen", "sample", "need", "help", "what do you need", "collect", "quest", "task", "job"]
-      requires: ["research"]
+      questExcluded: ["3-start"]
+      grantsQuest: "3-start"
       text: "Two things. A bone totem -- the figurines they keep on communal shelves. It would tell us about social bonding and symbolic thought in mutated populations. And a spore sac from the cave crawlers -- to map the mutation ecology of the tunnel biome. Bring me both and I will compensate you generously."
-      hints: "Accept the task to retrieve a bone totem from the Carved Niche and a spore sac from a spore crawler."
+      hints: "Head into the tunnels and bring me a bone totem from the Carved Niche and a spore sac from a cave crawler."
       moodChange: friendly
 
     - id: why_not_go
@@ -100,6 +112,27 @@ tree:
       requires: ["warren_talk"]
       text: "I tried. Once. A scout spotted me before I reached the second junction and I barely made it back to the surface. They are territorial and they are fast. And... the last researcher the guild sent did not come back. Her skull is on one of their trophy walls, I suspect."
       unlocks: ["specimens_need"]
+
+    - id: totem_delivery
+      triggers: ["totem", "bone", "figurine", "brought", "here", "have"]
+      requires: ["specimens_need"]
+      questRequired: ["3-start"]
+      questExcluded: ["3-totem"]
+      requiresItem: 14
+      grantsQuest: "3-totem"
+      text: "Exquisite. The carving technique is post-mutation -- look at how the finger grooves accommodate clawed digits. And the material... this is wonderful. Now I need the spore sac -- from the cave crawlers deeper in the tunnels. It will complete the ecological picture."
+      hints: "Find a spore sac from a cave crawler deeper in the tunnels and bring it to me."
+      moodChange: friendly
+
+    - id: specimens_complete
+      triggers: ["spore", "sac", "sample", "specimen", "brought", "done", "second"]
+      requires: ["specimens_need"]
+      questRequired: ["3-totem"]
+      questExcluded: ["3-end"]
+      requiresItem: 40008
+      grantsQuest: "3-end"
+      text: "A spore sac! And intact! The spore density is extraordinary. This will tell us everything about the tunnel biome's mutation ecology. You have given the guild more data than a decade of field expeditions. I am... deeply grateful. And perhaps a little uncomfortable with how it was obtained. But grateful."
+      moodChange: grateful
 
     - id: ethics_talk
       triggers: ["ethics", "consent", "wrong", "right", "moral", "steal", "theft", "people"]

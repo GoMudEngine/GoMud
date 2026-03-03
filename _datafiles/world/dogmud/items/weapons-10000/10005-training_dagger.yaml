@@ -13,4 +13,5 @@ grapplemodifier: 1.2  # Stage 8.7: Agile weapon, easier to grapple with
 damage:
   basedamage: 3
   variance: 1
+damage_multiplier: 0.20
 parryrating: 10

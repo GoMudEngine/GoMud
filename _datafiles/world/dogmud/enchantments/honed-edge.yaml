@@ -1,0 +1,19 @@
+enchantid: honed-edge
+name: "Honed Edge"
+reserve_pool: health
+target_type: weapon
+tiers:
+  - tier: 0
+    reserve_pct: 0.01
+    effects:
+      damage_multiplier_bonus: 2
+    adjective: keen
+    description_suffix: "The edge holds an unusually sharp line."
+    tier_up_message: ""
+  - tier: 1
+    reserve_pct: 0.02
+    effects:
+      damage_multiplier_bonus: 4
+    adjective: razor-edged
+    description_suffix: "The blade's edge gleams with unnatural sharpness."
+    tier_up_message: "The weapon hums faintly as the edge bites deeper."

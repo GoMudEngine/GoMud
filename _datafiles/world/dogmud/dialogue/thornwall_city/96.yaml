@@ -44,13 +44,26 @@ patterns:
 
 tree:
   root:
-    text: "Marek polishes a mug with a cloth that is not especially clean, watching you approach with the wary hospitality of someone who needs every customer but trusts none of them. 'Sit. Drink. If you are looking for trouble, the back alleys have plenty. If you are looking for a quiet drink and maybe a favour...' He sets the mug down. 'Well, I could use a favour.'"
-    hints: "Ask Marek about his troubles, the tavern, or the favour he needs."
+    text: "Sit. Drink. If you are looking for trouble, the back alleys have plenty. If you are looking for a quiet drink and maybe a favour... well, I could use a favour."
+    hints: "Ask me about my troubles, the tavern, or the favour I need."
+    variants:
+      - questRequired: ["10-start"]
+        questExcluded: ["10-report"]
+        text: "Have you shown that notice to the guard captain yet? Every day I wait is another day those thugs think I am still paying. Please -- the barracks is in the city centre."
+        hints: "Take the protection notice to Guard Captain Velk at the barracks."
+      - questRequired: ["10-report"]
+        questExcluded: ["10-end"]
+        text: "Did the captain say anything? Is the guard going to act? I need to know if it is safe to stop paying."
+        hints: "Tell Marek what Guard Captain Velk said."
+      - questRequired: ["10-end"]
+        text: "The patrols have already started. First quiet night in months. Sit -- this one is on me."
 
   nodes:
     - id: the_squeeze
-      triggers: ["trouble", "favour", "favor", "help", "debt", "problem", "quest"]
-      text: "Marek leans across the bar, lowering his voice. 'The tavern owes taxes to the city. That is my problem and I am working on it. But there is another problem -- someone in the back alleys has been sending protection notices to every business in the quarter. Pay up or get hurt. I have been paying both, and the money is running out.' He reaches under the bar and produces a folded paper. 'This is the latest notice. If the guard captain saw this, he would have to act. But I am afraid to walk into that barracks myself. People who report the racket tend to have accidents.'"
+      triggers: ["trouble", "favour", "favor", "help", "debt", "problem", "quest", "task"]
+      questExcluded: ["10-start"]
+      grantsQuest: "10-start"
+      text: "The tavern owes taxes to the city. That is my problem and I am working on it. But there is another problem -- someone in the back alleys has been sending protection notices to every business in the quarter. Pay up or get hurt. I have been paying both, and the money is running out. This is the latest notice. If the guard captain saw this, he would have to act. But I am afraid to walk into that barracks myself. People who report the racket tend to have accidents."
       hints: "Take the protection notice to Guard Captain Velk at the barracks."
       unlocks: ["about_thugs", "cellar_hint"]
       moodChange: friendly
@@ -58,17 +71,20 @@ tree:
     - id: about_thugs
       triggers: ["who", "thugs", "behind", "racket", "boss"]
       requires: ["the_squeeze"]
-      text: "'I do not know who runs it. The notices are unsigned, delivered at night. The thugs in the back alleys collect, but they are just muscle -- someone higher up is pulling strings. The guard might be able to find out, if they care enough to look.'"
+      text: "I do not know who runs it. The notices are unsigned, delivered at night. The thugs in the back alleys collect, but they are just muscle -- someone higher up is pulling strings. The guard might be able to find out, if they care enough to look."
 
     - id: cellar_hint
       triggers: ["cellar", "noise", "tunnel", "sewer", "below", "basement"]
       requires: ["the_squeeze"]
-      text: "Marek glances at the cellar stairs and drops his voice further. 'There is something else. At night, I hear noises from the cellar -- scraping, splashing, sometimes what sounds like voices. The old drainage tunnels run under this whole district. The cellar connects to them through a grate that has not been opened in years.' He shakes his head. 'One crisis at a time. But something is down there.'"
+      text: "There is something else. At night, I hear noises from the cellar -- scraping, splashing, sometimes what sounds like voices. The old drainage tunnels run under this whole district. The cellar connects to them through a grate that has not been opened in years. One crisis at a time. But something is down there."
 
     - id: quest_complete
-      triggers: ["guard", "captain", "reported", "told", "evidence", "done"]
+      triggers: ["guard", "captain", "reported", "told", "evidence", "done", "quest", "task"]
       requires: ["the_squeeze"]
-      text: "Marek exhales slowly, setting down the mug he was polishing. 'You told the captain? And he is going to act?' The relief on his face is visible. 'That is... that is something. The taxes are still a problem, but at least I will not have to feed two mouths that want to eat me alive.' He reaches for a bottle behind the keg. 'The good stuff. You have earned it.'"
+      questRequired: ["10-report"]
+      questExcluded: ["10-end"]
+      grantsQuest: "10-end"
+      text: "You told the captain? And he is going to act? That is... that is something. The taxes are still a problem, but at least I will not have to feed two mouths that want to eat me alive. Here -- the good stuff. You have earned it."
       moodChange: grateful
 
 memory:

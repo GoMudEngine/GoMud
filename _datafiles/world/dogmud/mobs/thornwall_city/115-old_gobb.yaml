@@ -1,0 +1,37 @@
+mobid: 115
+zone: Thornwall City
+statpool: 36
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - humanoid
+  - gossiper
+idlecommands:
+  - 'emote slaps the table and barks a short laugh at something only he finds funny'
+  - ''
+  - 'emote leans forward and gestures broadly, sloshing ale from his cup'
+  - ''
+  - 'emote scratches his thick beard and squints at the curtain as if expecting someone'
+  - ''
+  - 'emote takes a long pull from his cup and wipes his mouth with the back of his hand'
+activitylevel: 9
+character:
+  name: old Gobb
+  description: A barrel-chested man with a booming voice he makes no effort
+    to control. His beard is a wild tangle of grey and ginger, and his nose
+    has been broken so many times it points in no particular direction. He
+    wears a stained leather vest over a shirt that was white in a previous
+    decade. Gobb knows everyone and everything that happens in Thornwall --
+    or claims to. His stories grow with each telling, and he has never let
+    accuracy get in the way of a good yarn.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    charisma:
+      training: 14
+    perception:
+      training: 6
+    strength:
+      training: 8

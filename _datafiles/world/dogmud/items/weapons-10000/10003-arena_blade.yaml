@@ -12,4 +12,5 @@ grapplemodifier: 0.7  # Stage 8.7: Quality longsword, slightly harder to grapple
 damage:
   basedamage: 9
   variance: 2
+damage_multiplier: 0.80
 parryrating: 15

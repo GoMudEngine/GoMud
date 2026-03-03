@@ -41,6 +41,10 @@ func HandleLeave(e events.Event) events.ListenerReturn {
 	}
 
 	room := rooms.LoadRoom(user.Character.RoomId)
+	if room == nil {
+		mudlog.Error("HandleLeave", "error", fmt.Sprintf("room %d not found for user %d", user.Character.RoomId, evt.UserId))
+		return events.Cancel
+	}
 
 	if currentParty := parties.Get(evt.UserId); currentParty != nil {
 		currentParty.Leave(evt.UserId)

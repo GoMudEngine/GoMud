@@ -14,6 +14,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/util"
+	"github.com/pkg/errors"
 )
 
 // MutationEffect describes a single pro or con effect on a mutation.
@@ -104,11 +105,10 @@ var allMutations map[string]*MutationSpec
 func LoadMutationFiles() {
 	start := time.Now()
 
-	tmpAll, err := fileloader.LoadAllFlatFiles[string, *MutationSpec](
-		string(configs.GetFilePathsConfig().DataFiles) + `/mutations`,
-	)
+	dataPath := string(configs.GetFilePathsConfig().DataFiles) + `/mutations`
+	tmpAll, err := fileloader.LoadAllFlatFiles[string, *MutationSpec](dataPath)
 	if err != nil {
-		panic(err)
+		panic(errors.Wrap(err, `filepath: `+dataPath))
 	}
 
 	allMutations = tmpAll
@@ -334,6 +334,12 @@ func GetNaturalWeaponBonus(owned map[string]int) float64 {
 // Apply as: dmg = int(float64(dmg) * (1.0 - GetMagicalResistance(m)))
 func GetMagicalResistance(owned map[string]int) float64 {
 	return sumEffects(owned, "magical_damage_reduction", "")
+}
+
+// GetConvictionResistance returns the total conviction_damage_reduction fraction (0.0–1.0).
+// Used by GetConvictionMitigation() — converted to percentage points (* 100).
+func GetConvictionResistance(owned map[string]int) float64 {
+	return sumEffects(owned, "conviction_damage_reduction", "")
 }
 
 // GetConvictionCostMultiplier returns the net conviction_cost_multiplier.

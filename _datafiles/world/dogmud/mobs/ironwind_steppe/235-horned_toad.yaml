@@ -1,0 +1,28 @@
+mobid: 235
+zone: Ironwind Steppe
+statpool: 25
+itemdropchance: 0
+hostile: false
+maxwander: 2
+groups:
+  - vermin
+  - animal
+idlecommands:
+  - 'emote sits motionless, perfectly camouflaged against the earth'
+  - ''
+  - ''
+  - ''
+  - 'emote inflates its throat pouch briefly'
+activitylevel: 5
+character:
+  name: horned toad
+  description: |
+    A flat, spiny toad-like reptile with a crown of small horns
+    around its head and a body covered in knobby scales. The
+    horned toad relies on camouflage rather than speed, pressing
+    itself flat against the ground and becoming nearly invisible.
+    Its coloring matches the steppe soil so perfectly that you
+    could step on one without noticing. Harmless and slow, it
+    feeds on ants and small insects.
+  speciesid: 21
+  level: 1

@@ -1,0 +1,41 @@
+roomid: 3062
+zone: Ironwind Steppe
+title: Coulee Crossroads
+description: Several coulees intersect here in a wider space where
+  the basalt walls pull back to form a rough chamber open to the
+  sky. The floor is littered with broken stone and gravel washed
+  in from the surrounding channels. Passages lead in multiple
+  directions, each disappearing into shadow between dark stone
+  walls. Scratches and crude markings on the wall suggest someone
+  or something uses this junction regularly.
+biome: cliffs
+exits:
+  west:
+    roomid: 3060
+  north:
+    roomid: 3061
+  south:
+    roomid: 3064
+  east:
+    roomid: 3065
+  northwest:
+    roomid: 3037
+  southwest:
+    roomid: 3059
+nouns:
+  markings: Crude scratches on the basalt wall -- directional
+    arrows, tally marks, and what might be a rough map of the
+    coulee system. The marks are made with a lighter stone
+    on the dark basalt. They look deliberately placed.
+  chamber: An open area perhaps fifteen paces across, where
+    multiple coulee channels converge. The walls pull back
+    enough to let sunlight reach the floor. Gravel and debris
+    have accumulated in drifts against the walls.
+spawninfo:
+- mobid: 217
+- mobid: 218
+- mobid: 222
+idlemessages:
+- The crude markings on the wall look freshly scratched.
+- A pebble clatters down one of the passages -- thrown or dislodged?
+- Movement flickers at the edge of a passage, then is gone.

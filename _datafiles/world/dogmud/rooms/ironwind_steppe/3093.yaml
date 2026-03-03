@@ -1,0 +1,35 @@
+roomid: 3093
+zone: Ironwind Steppe
+title: Reed Bed
+description: Thick stands of tall reeds grow from the waterlogged
+  ground here, rising above head height and blocking sight in
+  every direction. The ground is soft mud and standing water,
+  impossible to cross without getting soaked to the knees. The
+  reeds rustle and click in the wind, and the air is humid and
+  warm, buzzing with mosquitoes. Boar trails cut through the
+  reeds like tunnels, their floors churned to deep muck.
+biome: land
+exits:
+  east:
+    roomid: 3092
+  north:
+    roomid: 3090
+  south:
+    roomid: 3096
+  southwest:
+    roomid: 3086
+  west:
+    roomid: 3091
+nouns:
+  reeds: Tall reeds growing in dense stands from the waterlogged
+    soil, their stems as thick as fingers. They tower above your
+    head and block sight completely. The rustling is constant and
+    disorienting.
+spawninfo:
+- mobid: 208
+- mobid: 208
+- mobid: 238
+idlemessages:
+- The reeds click and rattle, obscuring every other sound.
+- Mosquitoes whine around your head in maddening circles.
+- Something splashes heavily in the water somewhere nearby.

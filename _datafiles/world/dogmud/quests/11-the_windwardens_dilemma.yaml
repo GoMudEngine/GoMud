@@ -1,0 +1,32 @@
+questid: 11
+name: The Windwarden's Dilemma
+description: Hermit Kael has asked you to investigate a growing conflict
+  between a steppe druid and a Thornwall scholar. Both claim to have
+  the steppe's best interests at heart.
+secret: false
+steps:
+  - id: start
+    description: "Investigate the conflict Kael described. Visit
+      Windwarden Sylara first -- she camps near the stone circle
+      southeast of the goblin coulees."
+  - id: sylara
+    description: "You have spoken with Windwarden Sylara and heard
+      her side. Now visit Geomancer Rhett at his camp on the rocky
+      shelf to the northwest."
+  - id: rhett
+    description: "You have spoken with both sides. Sylara has asked
+      you to retrieve a stolen totem from the wolf kill ground.
+      Find the carved wolf totem and bring it to her."
+  - id: totem
+    description: "You returned Sylara's totem. Now collect windstone
+      samples from the rocky shelf for Geomancer Rhett."
+  - id: samples
+    description: "Both tasks are complete. Return to Hermit Kael at
+      the sheltered ridge alcove and make your choice."
+  - id: end
+    description: "You have heard both sides and completed their tasks.
+      Choose whose cause you will support."
+rewards:
+  playermessage: "You have walked both paths and seen the truth each
+    side holds. Now you must choose -- and live with the consequences."
+  gold: 10

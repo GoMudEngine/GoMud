@@ -1,0 +1,36 @@
+roomid: 3049
+zone: Ironwind Steppe
+title: Undercut Bank
+description: The creek has carved a deep undercut into the bank here,
+  creating a shallow cave beneath an overhang of earth and roots.
+  The hollow is large enough for an animal to shelter in, and the
+  smooth floor shows signs of regular use -- packed earth, scattered
+  fur, and gnawed bones. The creek bed below is narrow and rocky,
+  the stones larger here where the current was once strongest.
+biome: land
+exits:
+  north:
+    roomid: 3046
+  west:
+    roomid: 3048
+  south:
+    roomid: 3052
+  northwest:
+    roomid: 3043
+nouns:
+  undercut: A hollow carved beneath the creek bank by flowing
+    water, about four feet deep and wide enough for a large
+    animal. Roots dangle from the ceiling and the earth walls
+    are smooth and damp. Animal hair and droppings show
+    regular occupation.
+  bones: Gnawed bones scattered on the floor of the hollow --
+    leg bones cracked for marrow, vertebrae, and a few skulls.
+    Whatever uses this shelter is a predator.
+spawninfo:
+- mobid: 205
+- mobid: 216
+- mobid: 211
+idlemessages:
+- Something shifts in the hollow beneath the bank.
+- Loose earth trickles from the undercut ceiling.
+- The creek stones are smooth and warm in the afternoon sun.

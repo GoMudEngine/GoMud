@@ -17,6 +17,17 @@ import (
 // Can be used to alias legacy names to new skill tags.
 var skillNameMap = map[string]string{}
 
+// MobStatGainMessages contains room-visible messages when a mob gains a stat
+// through use-based progression. Format verbs: %s = mob name (pre-wrapped in ansi).
+var MobStatGainMessages = map[string]string{
+	"strength":   `<ansi fg="mobname">%s</ansi> seems to grow more powerful.`,
+	"dexterity":  `<ansi fg="mobname">%s</ansi> moves with increasing swiftness.`,
+	"perception": `<ansi fg="mobname">%s</ansi>'s eyes sharpen with awareness.`,
+	"vitality":   `<ansi fg="mobname">%s</ansi> looks tougher than before.`,
+	"willpower":  `<ansi fg="mobname">%s</ansi> radiates a more focused presence.`,
+	"charisma":   `<ansi fg="mobname">%s</ansi> projects a more commanding aura.`,
+}
+
 // resolveSkillName maps a progression context name to the actual skill tag.
 func resolveSkillName(name string) string {
 	if mapped, ok := skillNameMap[name]; ok {
@@ -50,11 +61,24 @@ func CalculateProgressionChance(currentRank int, softCap int) float64 {
 }
 
 // CheckSkillProgression rolls against the progression chance for a skill.
-// If the roll succeeds and DualProgressionMode is enabled, the skill level
-// is actually increased (capped at 4). Otherwise, only a notification is sent.
+// If the roll succeeds, the skill level is increased. Returns true if
+// progression fired (skill actually gained), false otherwise.
 // bonusMultiplier scales the chance (e.g. 2.0 for critical successes).
-func (c *Character) CheckSkillProgression(skillName string, userId int, bonusMultiplier float64) {
+func (c *Character) CheckSkillProgression(skillName string, userId int, bonusMultiplier float64) bool {
 	b := configs.GetBalanceConfig()
+
+	// Mob-specific gating
+	if c.IsMob {
+		if !bool(b.MobProgressionEnabled) {
+			return false
+		}
+		actualSkill := resolveSkillName(skillName)
+		if lvl, ok := c.Skills[actualSkill]; ok && lvl >= int(b.MobSkillCap) {
+			return false // hard cap
+		}
+		bonusMultiplier *= float64(b.MobProgressionRate)
+	}
+
 	virtualRank := c.GetSkillUseCount(skillName) / int(b.UsesPerRank)
 	// If the actual skill level exceeds the soft cap, use it as a floor for the virtual rank.
 	// This prevents characters with artificially high skills (e.g. admin accounts) from
@@ -86,25 +110,45 @@ func (c *Character) CheckSkillProgression(skillName string, userId int, bonusMul
 
 		if skills.SkillExists(actualSkill) {
 			if c.IncreaseSkill(actualSkill) {
-				newLevel := c.Skills[actualSkill]
-				msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> Your <ansi fg="yellow">%s</ansi> skill reaches <ansi fg="yellow-bold">%s</ansi>! <ansi fg="magenta">***</ansi>`, actualSkill, skills.GetSkillRankDescription(newLevel))
-				events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+				if userId > 0 {
+					newLevel := c.Skills[actualSkill]
+					msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> Your <ansi fg="yellow">%s</ansi> skill reaches <ansi fg="yellow-bold">%s</ansi>! <ansi fg="magenta">***</ansi>`, actualSkill, skills.GetSkillRankDescription(newLevel))
+					events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+				}
 			} else {
-				msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> You feel your <ansi fg="yellow">%s</ansi> skills sharpening! <ansi fg="magenta">***</ansi>`, actualSkill)
-				events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+				if userId > 0 {
+					msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> You feel your <ansi fg="yellow">%s</ansi> skills sharpening! <ansi fg="magenta">***</ansi>`, actualSkill)
+					events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+				}
 			}
 		} else {
-			msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> You feel your <ansi fg="yellow">%s</ansi> skills sharpening! <ansi fg="magenta">***</ansi>`, skillName)
-			events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+			if userId > 0 {
+				msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> You feel your <ansi fg="yellow">%s</ansi> skills sharpening! <ansi fg="magenta">***</ansi>`, skillName)
+				events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+			}
 		}
+		return true
 	}
+	return false
 }
 
 // CheckStatProgression rolls against the progression chance for a stat.
-// If the roll succeeds and DualProgressionMode is enabled, the stat's
-// Training value is increased by 1. Otherwise, only a notification is sent.
-func (c *Character) CheckStatProgression(statName string, userId int, bonusMultiplier float64) {
+// If the roll succeeds, the stat's Training value is increased by 1.
+// Returns true if progression fired (stat actually gained), false otherwise.
+func (c *Character) CheckStatProgression(statName string, userId int, bonusMultiplier float64) bool {
 	b := configs.GetBalanceConfig()
+
+	// Mob-specific gating
+	if c.IsMob {
+		if !bool(b.MobProgressionEnabled) {
+			return false
+		}
+		if c.GetStatValue(statName) >= int(b.MobStatCap) {
+			return false // hard cap
+		}
+		bonusMultiplier *= float64(b.MobProgressionRate)
+	}
+
 	virtualRank := c.GetStatUseCount(statName) / int(b.UsesPerRank)
 	// If the actual stat value exceeds the soft cap, use it as a floor for the virtual rank.
 	// This prevents characters with artificially high stats (e.g. admin accounts) from
@@ -114,7 +158,9 @@ func (c *Character) CheckStatProgression(statName string, userId int, bonusMulti
 	}
 	// Phase 24.2: Apply mutation stat progression multiplier
 	mutStatMult := 1.0 + mutations.GetStatProgressionMultiplier(c.Mutations)
-	chance := CalculateProgressionChance(virtualRank, int(b.StatSoftCap)) * bonusMultiplier * mutStatMult
+	// Phase 39.1: Per-stat progression multiplier from config
+	statMult := b.GetStatProgressionMultiplier(statName)
+	chance := CalculateProgressionChance(virtualRank, int(b.StatSoftCap)) * bonusMultiplier * mutStatMult * statMult
 	if chance > 1.0 {
 		chance = 1.0
 	}
@@ -126,10 +172,14 @@ func (c *Character) CheckStatProgression(statName string, userId int, bonusMulti
 
 	if roll < threshold {
 		if c.IncreaseStat(statName, 1) {
-			msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> Your <ansi fg="yellow">%s</ansi> grows stronger! <ansi fg="magenta">***</ansi>`, statName)
-			events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+			if userId > 0 {
+				msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> Your <ansi fg="yellow">%s</ansi> grows stronger! <ansi fg="magenta">***</ansi>`, statName)
+				events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+			}
+			return true
 		}
 	}
+	return false
 }
 
 // TrackSkillUse increments the usage counter for a specific skill.
@@ -148,35 +198,40 @@ func (c *Character) TrackStatUse(statName string) {
 	c.StatUseCount[statName]++
 }
 
-// OnStatUse is called whenever a player uses a stat in gameplay.
+// OnStatUse is called whenever a character uses a stat in gameplay.
 // Tracks usage and, if progression is enabled, rolls for stat advancement.
-func (c *Character) OnStatUse(statName string, userId int) {
+// Returns true if the stat actually increased.
+func (c *Character) OnStatUse(statName string, userId int) bool {
 	c.TrackStatUse(statName)
 	mudlog.Debug("Progression", "event", "stat_use", "stat", statName, "character", c.Name)
 
 	if configs.GetGamePlayConfig().UseSkillProgression {
-		c.CheckStatProgression(statName, userId, 1.0)
+		return c.CheckStatProgression(statName, userId, 1.0)
 	}
+	return false
 }
 
-// OnSkillUse is called whenever a player uses a skill in gameplay.
+// OnSkillUse is called whenever a character uses a skill in gameplay.
 // Tracks usage and, if progression is enabled, rolls for skill advancement.
 // Also auto-tracks and progresses the skill's primary governing stat.
-func (c *Character) OnSkillUse(skillName string, userId int) {
+// Returns true if the skill actually increased.
+func (c *Character) OnSkillUse(skillName string, userId int) bool {
 	c.TrackSkillUse(skillName)
 	mudlog.Debug("Progression", "event", "skill_use", "skill", skillName, "character", c.Name)
 
+	gained := false
 	if configs.GetGamePlayConfig().UseSkillProgression {
-		c.CheckSkillProgression(skillName, userId, 1.0)
+		gained = c.CheckSkillProgression(skillName, userId, 1.0)
 	}
 
 	// Auto-track and progress the skill's primary governing stat
 	if primaryStat := skills.GetSkillPrimaryStat(skillName); primaryStat != "" {
 		c.OnStatUse(primaryStat, userId)
 	}
+	return gained
 }
 
-// OnCriticalSuccess is called when a player lands a critical hit or
+// OnCriticalSuccess is called when a character lands a critical hit or
 // achieves a critical success. Triggers progression checks with a
 // 2x bonus multiplier for both the skill and related stats.
 func (c *Character) OnCriticalSuccess(context string, userId int) {
@@ -184,21 +239,25 @@ func (c *Character) OnCriticalSuccess(context string, userId int) {
 	mudlog.Debug("Progression", "event", "critical_success", "context", context, "character", c.Name)
 
 	if configs.GetGamePlayConfig().UseSkillProgression {
-		msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> A moment of brilliance! Your <ansi fg="yellow">%s</ansi> technique improves! <ansi fg="magenta">***</ansi>`, context)
-		events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+		if userId > 0 {
+			msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> A moment of brilliance! Your <ansi fg="yellow">%s</ansi> technique improves! <ansi fg="magenta">***</ansi>`, context)
+			events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+		}
 		c.CheckSkillProgression(context, userId, 2.0)
 	}
 }
 
-// OnCriticalFailure is called when a player critically fails a skill
+// OnCriticalFailure is called when a character critically fails a skill
 // check or combat action. Learning from mistakes — standard progression chance.
 func (c *Character) OnCriticalFailure(context string, userId int) {
 	c.TrackSkillUse("critical_failure")
 	mudlog.Debug("Progression", "event", "critical_failure", "context", context, "character", c.Name)
 
 	if configs.GetGamePlayConfig().UseSkillProgression {
-		msg := fmt.Sprintf(`<ansi fg="red">!!!</ansi> You learn from your mistake! Your <ansi fg="yellow">%s</ansi> understanding deepens. <ansi fg="red">!!!</ansi>`, context)
-		events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+		if userId > 0 {
+			msg := fmt.Sprintf(`<ansi fg="red">!!!</ansi> You learn from your mistake! Your <ansi fg="yellow">%s</ansi> understanding deepens. <ansi fg="red">!!!</ansi>`, context)
+			events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+		}
 		c.CheckSkillProgression(context, userId, 1.0)
 	}
 }
@@ -218,11 +277,101 @@ func (c *Character) OnFirstMobKill(userId int) {
 // OnLowResource is called when a resource (health, stamina, conviction)
 // drops below 25% of its maximum. Triggers a stat progression check
 // for the related stat (e.g. low health → vitality progression).
+// Deprecated: replaced by OnRegenTick smooth curve, kept for potential reuse.
 func (c *Character) OnLowResource(resourceName string, relatedStat string, userId int) {
 	mudlog.Debug("Progression", "event", "low_resource", "resource", resourceName, "stat", relatedStat, "character", c.Name)
 
 	if configs.GetGamePlayConfig().UseSkillProgression {
 		c.CheckStatProgression(relatedStat, userId, 1.5)
+	}
+}
+
+// CheckRegenProgression rolls against a given chance for stat progression,
+// applying mob gating, per-stat multipliers, and mutation bonuses.
+// Used by OnRegenTick for regen-based stat progression.
+func (c *Character) CheckRegenProgression(statName string, userId int, chance float64) {
+	b := configs.GetBalanceConfig()
+
+	// Mob-specific gating
+	if c.IsMob {
+		if !bool(b.MobProgressionEnabled) {
+			return
+		}
+		if c.GetStatValue(statName) >= int(b.MobStatCap) {
+			return
+		}
+		chance *= float64(b.MobProgressionRate)
+	}
+
+	// Per-stat multiplier from config
+	chance *= b.GetStatProgressionMultiplier(statName)
+
+	// Mutation stat progression multiplier
+	mutStatMult := 1.0 + mutations.GetStatProgressionMultiplier(c.Mutations)
+	chance *= mutStatMult
+
+	if chance <= 0 {
+		return
+	}
+	if chance > 1.0 {
+		chance = 1.0
+	}
+
+	// Roll: chance is 0.0–1.0, convert to 0–10000 for integer roll
+	threshold := int(chance * 10000)
+	roll := util.Rand(10000)
+
+	mudlog.Debug("Progression", "check", "regen_stat", "stat", statName,
+		"chance", fmt.Sprintf("%.4f%%", chance*100),
+		"roll", roll, "threshold", threshold, "character", c.Name)
+
+	if roll < threshold {
+		if c.IncreaseStat(statName, 1) {
+			if userId > 0 {
+				msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> Your <ansi fg="yellow">%s</ansi> grows stronger! <ansi fg="magenta">***</ansi>`, statName)
+				events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+			}
+		}
+	}
+}
+
+// OnRegenTick is called every regen tick (every 3 rounds) for each resource
+// pool. It computes a smooth chance based on how depleted the pool is and
+// rolls for stat progression on each related stat.
+//
+// Formula: chance = RegenProgressionBase × (1 - current/max) ^ RegenProgressionCurve
+//
+// Resource→stat mappings:
+//   Health    → vitality, willpower
+//   Stamina   → strength, vitality
+//   Conviction→ willpower, charisma
+func (c *Character) OnRegenTick(current, max int, relatedStats []string, userId int) {
+	if !configs.GetGamePlayConfig().UseSkillProgression {
+		return
+	}
+	if max <= 0 {
+		return
+	}
+
+	ratio := float64(current) / float64(max)
+	if ratio >= 1.0 {
+		return // Pool is full, no progression chance
+	}
+	if ratio < 0 {
+		ratio = 0
+	}
+
+	b := configs.GetBalanceConfig()
+	base := float64(b.RegenProgressionBase)
+	curve := float64(b.RegenProgressionCurve)
+
+	chance := base * math.Pow(1.0-ratio, curve)
+	if chance <= 0 {
+		return
+	}
+
+	for _, statName := range relatedStats {
+		c.CheckRegenProgression(statName, userId, chance)
 	}
 }
 

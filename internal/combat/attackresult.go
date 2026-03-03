@@ -10,10 +10,25 @@ const (
 	DefenseBlock DefenseType = "block"
 )
 
+// SwingEvent captures per-swing analytics data for accurate hit rate tracking.
+type SwingEvent struct {
+	Hit           bool
+	Crit          bool
+	Fumble        bool
+	DoubleFumble  bool
+	DefenseCrit   bool
+	Damage        int
+	DamageReduced int
+	DefenseUsed   DefenseType
+	AttackZScore  float64
+	DefenseZScore float64
+}
+
 type AttackResult struct {
 	Hit                     bool  // defaults false
 	Crit                    bool  // defaults false
 	Fumble                  bool  // defaults false
+	DoubleFumble            bool  // defaults false
 	BuffSource              []int // defaults 0
 	BuffTarget              []int // defaults 0
 	DamageToTarget          int   // defaults 0
@@ -26,6 +41,7 @@ type AttackResult struct {
 	AttackZScore            float64      // Attack roll z-score (Stage 8.4)
 	ParryCritDetected       bool         // Flag for parry crit (Stage 8.4)
 	DodgeCritDetected       bool         // Flag for dodge crit (Stage 8.4)
+	SwingEvents             []SwingEvent // Per-swing analytics (Stage 30.2)
 	MessagesToSource        []string
 	MessagesToTarget        []string
 	MessagesToSourceRoom    []string

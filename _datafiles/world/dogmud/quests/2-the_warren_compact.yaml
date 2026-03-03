@@ -1,15 +1,15 @@
 questid: 2
 name: The Warren Compact
-description: The tunnel shaman has asked you to prove your good intent by bringing healing poultices to the warren. Completing this quest will lock The Scholar's Collection.
+description: The tunnel shaman has asked you to prove your good intent by bringing a healing poultice to the warren. Completing this quest will lock The Scholar's Collection.
 secret: false
 
 steps:
   - id: start
-    description: "The tunnel shaman in the Carved Niche has asked you to bring healing poultices as proof of good intent. Obtain two healing poultices and return to the shaman."
+    description: "The tunnel shaman has asked you to bring a healing poultice as proof of good intent. Obtain a healing poultice and return to the shaman."
     hint: "Healing poultices can be purchased from Alchemist Yenna in Sanctum Basin, or crafted if you have the materials."
   - id: poultices
-    description: "The shaman accepted your gift. It will take the poultices to the chieftain as proof that surface-dwellers can be trusted. Follow the shaman's directions deeper into the warren and speak with the warren chieftain in the Chieftain's Hollow."
-    hint: "The chieftain's chamber is past the Crude Barricade, deep in the southern tunnels."
+    description: "The shaman accepted your gift. Follow the shaman's directions deeper into the warren and speak with the chieftain."
+    hint: "The chieftain's chamber is deep in the southern tunnels."
   - id: audience
     description: "The chieftain has agreed to speak with you. It watches you with the wariness of a leader whose people have been hunted. Listen to what it has to say."
   - id: end

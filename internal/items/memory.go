@@ -5,7 +5,7 @@ import "github.com/GoMudEngine/GoMud/internal/util"
 func GetMemoryUsage() map[string]util.MemoryResult {
 	ret := map[string]util.MemoryResult{}
 
-	ret["items"] = util.MemoryResult{util.MemoryUsage(items), len(items)}
+	ret["items"] = util.MemoryResult{Memory: util.MemoryUsage(items), Count: len(items)}
 
 	return ret
 }

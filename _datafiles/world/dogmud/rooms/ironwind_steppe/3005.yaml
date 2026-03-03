@@ -1,0 +1,32 @@
+roomid: 3005
+zone: Ironwind Steppe
+title: Scavenger's Camp
+description: A ring of charred stones marks where someone has been
+  burning refuse from the heap to the west. The ground is blackened
+  and bare in a rough circle, littered with ash and bits of half-
+  melted metal. A lean-to of salvaged planks stands nearby, its
+  interior dark and uninviting. This looks like the seasonal camp
+  of someone who picks through the city's waste for anything of
+  value. The camp is currently unoccupied, but recent footprints
+  suggest it sees regular use.
+biome: land
+exits:
+  west:
+    roomid: 3002
+  south:
+    roomid: 3006
+nouns:
+  stones: A ring of fire-blackened stones arranged in a rough circle,
+    large enough for a decent cooking fire. Ash and charcoal fill the
+    center. Some of the stones are cracked from repeated heating.
+  lean-to: A crude shelter made from salvaged planks and a piece of
+    oiled canvas. Inside there is a bedroll, a pile of rags, and
+    a collection of bent nails and scrap metal sorted into piles.
+    Whoever uses this camp is methodical about their scavenging.
+spawninfo:
+- mobid: 201
+- mobid: 203
+idlemessages:
+- Ash swirls up from the fire ring as the wind gusts.
+- A crow lands on the lean-to's roof and caws once, sharply.
+- The canvas flap of the lean-to snaps in the breeze.

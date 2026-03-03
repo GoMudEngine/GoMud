@@ -166,9 +166,16 @@ func positionFields(char *characters.Character) (string, bool) {
 	return pos, isController
 }
 
-// RecordAttack records a standard auto-attack event.
+// RecordAttack records a standard auto-attack event (legacy: one event per round).
+// Prefer RecordSwings for accurate per-swing analytics.
 func RecordAttack(result AttackResult, src, tgt SourceTarget, atkType string,
 	srcChar, tgtChar *characters.Character, round uint64) {
+	// If per-swing data is available, record each swing individually.
+	if len(result.SwingEvents) > 0 {
+		RecordSwings(result, src, tgt, atkType, srcChar, tgtChar, round)
+		return
+	}
+
 	if !analyticsReady {
 		InitAnalytics()
 		if !analyticsReady {
@@ -198,6 +205,42 @@ func RecordAttack(result AttackResult, src, tgt SourceTarget, atkType string,
 		RoundNumber:               round,
 	}
 	appendEvent(evt)
+}
+
+// RecordSwings records one analytics event per swing from AttackResult.SwingEvents.
+func RecordSwings(result AttackResult, src, tgt SourceTarget, atkType string,
+	srcChar, tgtChar *characters.Character, round uint64) {
+	if !analyticsReady {
+		InitAnalytics()
+		if !analyticsReady {
+			return
+		}
+	}
+
+	srcPos, srcCtrl := positionFields(srcChar)
+	tgtPos, tgtCtrl := positionFields(tgtChar)
+
+	for _, swing := range result.SwingEvents {
+		evt := CombatEvent{
+			SourceType:                src,
+			TargetType:                tgt,
+			AttackType:                atkType,
+			Hit:                       swing.Hit,
+			Crit:                      swing.Crit,
+			Fumble:                    swing.Fumble,
+			DamageDealt:               swing.Damage,
+			DamageReduced:             swing.DamageReduced,
+			DefenseUsed:               string(swing.DefenseUsed),
+			AttackZScore:              swing.AttackZScore,
+			DefenseZScore:             swing.DefenseZScore,
+			SourcePosition:            srcPos,
+			TargetPosition:            tgtPos,
+			SourceIsGrappleController: srcCtrl,
+			TargetIsGrappleController: tgtCtrl,
+			RoundNumber:               round,
+		}
+		appendEvent(evt)
+	}
 }
 
 // RecordSpecialMove records a special combat move (bash, kick, trip, submit, grapple, mutations).
@@ -269,9 +312,61 @@ func GetSummary() AnalyticsSummary {
 	return computeSummary(eventBuffer)
 }
 
-// GetFilteredSummary returns a summary filtered to a single attack type.
+// FilterParams controls which events are included in a filtered summary.
+type FilterParams struct {
+	SourceType string // "user", "mob", or "" (all)
+	TargetType string // "user", "mob", or "" (all)
+	Channel    string // "melee", "magic", "rhetoric", or "" (all)
+}
+
+// DamageChannelForType maps an attack type string to a damage channel name.
+func DamageChannelForType(attackType string) string {
+	switch strings.ToLower(attackType) {
+	case "spell", "sonic_shout":
+		return "magic"
+	case "taunt":
+		return "rhetoric"
+	default:
+		// unarmed, weapon, bash, kick, trip, grapple, submit, toxic_bite, etc.
+		return "melee"
+	}
+}
+
+// GetFilteredSummary returns a summary filtered by the given params.
+// Any empty field means "all" (no filter on that axis).
 // Must be called under util.LockMud().
-func GetFilteredSummary(attackType string) AnalyticsSummary {
+func GetFilteredSummary(filters FilterParams) AnalyticsSummary {
+	if !analyticsReady {
+		return AnalyticsSummary{ByAttackType: make(map[string]*AttackTypeStats)}
+	}
+
+	// If no filters are set, just return the full summary.
+	if filters.SourceType == "" && filters.TargetType == "" && filters.Channel == "" {
+		return computeSummary(eventBuffer)
+	}
+
+	filtered := make([]CombatEvent, 0, len(eventBuffer)/4)
+	for _, e := range eventBuffer {
+		if filters.SourceType != "" && !strings.EqualFold(string(e.SourceType), filters.SourceType) {
+			continue
+		}
+		if filters.TargetType != "" && !strings.EqualFold(string(e.TargetType), filters.TargetType) {
+			continue
+		}
+		if filters.Channel != "" && !strings.EqualFold(DamageChannelForType(e.AttackType), filters.Channel) {
+			continue
+		}
+		filtered = append(filtered, e)
+	}
+	if len(filtered) == 0 {
+		return AnalyticsSummary{ByAttackType: make(map[string]*AttackTypeStats)}
+	}
+	return computeSummary(filtered)
+}
+
+// GetFilteredSummaryByAttackType returns a summary filtered to a single attack type.
+// Must be called under util.LockMud().
+func GetFilteredSummaryByAttackType(attackType string) AnalyticsSummary {
 	if !analyticsReady {
 		return AnalyticsSummary{ByAttackType: make(map[string]*AttackTypeStats)}
 	}

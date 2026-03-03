@@ -35,22 +35,22 @@ patterns:
 
 tree:
   root:
-    text: "Captain Velk looks up from a stack of incident reports, his expression settling into the professionally neutral face of a man who has dealt with a thousand visitors. 'Civilian. If you are here about the noise complaint on Market Street, it is filed. If you are here about something else, take a seat.' He gestures at a wooden chair that looks deeply uncomfortable."
-    hints: "Ask about the missing person case, crime in the city, or the guard's operations."
+    text: "Civilian. If you are here about the noise complaint on Market Street, it is filed. If you are here about something else, take a seat."
+    hints: "Ask me about the missing person case, crime in the city, or the guard's operations."
     variants:
       - questRequired: ["8-start"]
         questExcluded: ["8-end"]
-        text: "Velk looks up from his reports. 'Any news on the missing girl? The father has been by twice today. If you have found something, I need to hear it.'"
+        text: "Any news on the missing girl? The father has been by twice today. If you have found something, I need to hear it."
         hints: "Report what you have found about Elara."
       - questRequired: ["8-end"]
-        text: "Velk gives you a brief nod of recognition. 'You did the watch a service with that missing person case. If you hear of anything else, my door is open.'"
+        text: "You did the watch a service with that missing person case. If you hear of anything else, my door is open."
 
   nodes:
     - id: missing_case
       triggers: ["missing", "person", "elara", "case", "help", "quest", "task"]
       questExcluded: ["8-start"]
       grantsQuest: "8-start"
-      text: "Velk pulls a report from the stack. 'Elara. Twenty-two years old, daughter of a merchant family in the eastern quarter. Reported missing three days ago by her father. No signs of violence, no ransom demand. She just vanished.' He sets the report down. 'My guards are watching the gates and the market, but I do not have the people to search the residential wards door by door. If you are willing to look into it, I would appreciate the help.'"
+      text: "Elara. Twenty-two years old, daughter of a merchant family in the eastern quarter. Reported missing three days ago by her father. No signs of violence, no ransom demand. She just vanished. My guards are watching the gates and the market, but I do not have the people to search the residential wards door by door. If you are willing to look into it, I would appreciate the help."
       hints: "Accept the case and search the residential wards for Elara."
       unlocks: ["family_info", "where_to_look"]
       moodChange: friendly
@@ -58,25 +58,29 @@ tree:
     - id: family_info
       triggers: ["family", "father", "merchant", "who", "why"]
       requires: ["missing_case"]
-      text: "'The father is Aldric Sevarn, textile merchant. Prominent family, old money, strong opinions about how daughters should conduct themselves.' Velk's tone is carefully neutral. 'He filed the report in person. Very insistent. Very concerned. Draw your own conclusions about what kind of concerned.'"
+      text: "The father is Aldric Sevarn, textile merchant. Prominent family, old money, strong opinions about how daughters should conduct themselves. He filed the report in person. Very insistent. Very concerned. Draw your own conclusions about what kind of concerned."
 
     - id: where_to_look
       triggers: ["where", "search", "residential", "look", "find"]
       requires: ["missing_case"]
-      text: "'If she is still in the city, the residential wards are the most likely place. Cheap rooms, anonymous landlords, people who mind their own business. Start north of the market and work your way through. Ask quietly -- if she is hiding, a loud search will just drive her deeper.'"
+      text: "If she is still in the city, the residential wards are the most likely place. Cheap rooms, anonymous landlords, people who mind their own business. Start north of the market and work your way through. Ask quietly -- if she is hiding, a loud search will just drive her deeper."
 
     - id: protection_report
-      triggers: ["protection", "racket", "thug", "extortion", "notice", "evidence", "proof"]
-      text: "Velk's expression sharpens. 'You have evidence of a protection racket? Show me.' He examines whatever you provide with careful attention. 'This is enough to act on. I will put a patrol on the back alleys and bring someone in for questioning. You have done the watch a service.'"
+      triggers: ["protection", "racket", "thug", "extortion", "notice", "evidence", "proof", "quest", "task"]
+      questRequired: ["10-start"]
+      questExcluded: ["10-report"]
+      requiresItem: 30
+      grantsQuest: "10-report"
+      text: "You have evidence of a protection racket? Show me. This is enough to act on. I will put a patrol on the back alleys and bring someone in for questioning. Tell the tavern keeper he can stop paying -- the watch will handle this now."
       moodChange: friendly
 
     - id: case_report
-      triggers: ["found", "report", "elara", "located", "hiding"]
+      triggers: ["found", "report", "elara", "located", "hiding", "quest", "task"]
       requires: ["missing_case"]
       questRequired: ["8-found"]
       questExcluded: ["8-end"]
       grantsQuest: "8-end"
-      text: "Velk listens to your report without interruption, making occasional notes. When you finish, he sets down the quill. 'I will close the case based on your account. The family will be notified that she has been located.' He pauses. 'What I tell them beyond that depends on what you have told me. The watch deals in facts, not judgments.'"
+      text: "I will close the case based on your account. The family will be notified that she has been located. What I tell them beyond that depends on what you have told me. The watch deals in facts, not judgments."
       moodChange: grateful
 
 memory:

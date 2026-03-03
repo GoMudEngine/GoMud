@@ -26,7 +26,7 @@ func BlindingFlash(rest string, user *users.UserRecord, room *rooms.Room, flags 
 		return true, nil
 	}
 
-	cfg := configs.GetGamePlayConfig()
+	cfg := configs.GetBalanceConfig()
 	if !user.Character.Cooldowns.Try("special-move", fmt.Sprintf("%d rounds", cfg.SpecialMoveCooldown)) {
 		user.SendText("You need a moment to recover before attempting another special move.")
 		return true, nil

@@ -17,3 +17,24 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-go
       - uses: ./.github/actions/codegen-and-test
+      - name: Check coverage gate
+        shell: bash
+        run: |
+          if [ ! -f coverage.out ]; then
+            echo "No coverage.out found, skipping coverage gate"
+            exit 0
+          fi
+          TOTAL=$(go tool cover -func=coverage.out | grep total | awk '{print $3}' | sed 's/%//')
+          echo "Total coverage: ${TOTAL}%"
+          # Fail if coverage drops below 28%
+          if (( $(echo "$TOTAL < 28.0" | bc -l) )); then
+            echo "::error::Coverage ${TOTAL}% is below the 28% minimum threshold"
+            exit 1
+          fi
+      - name: Upload coverage artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.out
+          retention-days: 14

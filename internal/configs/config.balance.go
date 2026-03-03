@@ -5,13 +5,77 @@ package configs
 // hardcoded values, so behaviour is unchanged unless a field is overridden
 // in config.yaml or config-overrides.yaml.
 type Balance struct {
-	// ── COMBAT ────────────────────────────────────────────────────────────────
-	GlobalDamageMultiplier  ConfigFloat `yaml:"GlobalDamageMultiplier"`  // Scales all damage output (default 1.0)
-	GlobalDefenseMultiplier ConfigFloat `yaml:"GlobalDefenseMultiplier"` // Scales all avoidance rates (default 1.0)
+	// ── ROLL SPREAD ──────────────────────────────────────────────────────────
+	// Master randomness knob. Controls stdDev = stat * RollSpread for every
+	// stat-based roll. Default 0.15 (15%). Valid range 0.05–0.50.
+	RollSpread ConfigFloat `yaml:"RollSpread"`
+
+	// ── COMBAT: DEFENSE COSTS ────────────────────────────────────────────────
+	DodgeMultiplier ConfigFloat `yaml:"DodgeMultiplier"` // Stamina cost multiplier for dodge (default 0.9)
+	ParryMultiplier ConfigFloat `yaml:"ParryMultiplier"` // Stamina cost multiplier for parry (default 0.9)
+	BlockMultiplier ConfigFloat `yaml:"BlockMultiplier"` // Stamina cost multiplier for block (default 0.9)
+
+	// ── COMBAT: DEFENSE EFFECTIVENESS ────────────────────────────────────────
+	DodgeEffectiveness ConfigFloat `yaml:"DodgeEffectiveness"` // Multiplier on dodge score before opposed roll (default 1.0)
+	ParryEffectiveness ConfigFloat `yaml:"ParryEffectiveness"` // Multiplier on parry score before opposed roll (default 1.0)
+	BlockEffectiveness ConfigFloat `yaml:"BlockEffectiveness"` // Multiplier on block score before opposed roll (default 1.0)
+	MinDefenseChance   ConfigFloat `yaml:"MinDefenseChance"`   // Floor probability any defense succeeds (default 0.15)
+	MinAttackHitChance ConfigFloat `yaml:"MinAttackHitChance"` // Floor probability any attack hits (default 0.15)
+
+	// ── COMBAT: PRONE & GRAPPLE ──────────────────────────────────────────────
+	ProneAttackMultiplier        ConfigFloat `yaml:"ProneAttackMultiplier"`        // Multiplier on attack score while prone (default 0.80)
+	ProneDodgePenalty            ConfigFloat `yaml:"ProneDodgePenalty"`            // Multiplier on dodge score while prone (default 0.70)
+	ProneParryPenalty            ConfigFloat `yaml:"ProneParryPenalty"`            // Multiplier on parry score while prone (default 0.80)
+	ProneBlockPenalty            ConfigFloat `yaml:"ProneBlockPenalty"`            // Multiplier on block score while prone (default 0.90)
+	ProneDamagePenalty           ConfigFloat `yaml:"ProneDamagePenalty"`           // Damage multiplier while prone (default 0.80)
+	ProneVulnerabilityMultiplier ConfigFloat `yaml:"ProneVulnerabilityMultiplier"` // Multiplier on attack score vs prone target (default 1.15)
+	StandStaminaCost             ConfigFloat `yaml:"StandStaminaCost"`             // Fraction of max stamina to stand up (default 0.15)
+	StandMinStamina              ConfigFloat `yaml:"StandMinStamina"`              // Minimum fraction of max SP to stand (default 0.15)
+	ThirdPartyGrapplePenalty     ConfigFloat `yaml:"ThirdPartyGrapplePenalty"`     // Defense multiplier when grappled vs third party (default 0.70)
+
+	// ── COMBAT: SPECIAL MOVES ────────────────────────────────────────────────
+	SpecialMoveCooldown ConfigInt   `yaml:"SpecialMoveCooldown"` // Shared cooldown rounds for bash/trip/kick (default 5)
+	BashDamagePercent   ConfigFloat `yaml:"BashDamagePercent"`   // Fraction of normal melee damage (default 0.50)
+	BashKnockdownChance ConfigInt   `yaml:"BashKnockdownChance"` // Base % knockdown chance (default 40)
+	TripDamagePercent   ConfigFloat `yaml:"TripDamagePercent"`   // Fraction of normal melee damage (default 0.25)
+	TripKnockdownChance ConfigInt   `yaml:"TripKnockdownChance"` // Base % knockdown chance (default 60)
+	KickDamagePercent   ConfigFloat `yaml:"KickDamagePercent"`   // Fraction of normal melee damage (default 0.40)
+	KickKnockdownChance ConfigInt   `yaml:"KickKnockdownChance"` // Base % knockdown chance (default 35)
+	CoupDeGraceRounds   ConfigInt   `yaml:"CoupDeGraceRounds"`   // Rounds before mob finishes downed player (default 1; 0=disabled)
+
+	// ── COMBAT: SPELL COSTS ──────────────────────────────────────────────────
+	SpellConvictionCostMultiplier ConfigFloat `yaml:"SpellConvictionCostMultiplier"` // Global multiplier for spell conviction costs (default 1.0)
+	SpellHealthCostMultiplier     ConfigFloat `yaml:"SpellHealthCostMultiplier"`     // Global multiplier for spell health costs (default 1.0)
+
+	// ── COMBAT: DARKNESS ─────────────────────────────────────────────────────
+	DarknessCombatPenalty ConfigFloat `yaml:"DarknessCombatPenalty"` // Multiplier on attack AND defense scores when fighting blind (default 0.80)
+
+	// ── COMBAT: MESSAGES ─────────────────────────────────────────────────────
+	ConsistentAttackMessages ConfigBool `yaml:"ConsistentAttackMessages"` // Whether each weapon has consistent attack messages
+
+	// ── COMBAT: DAMAGE ───────────────────────────────────────────────────────
+	// Legacy unarmed knobs — still used by GetDefaultDistributionDamage() for
+	// attack count and crit buff calculation. Damage values are overridden by
+	// the unified pipeline (UnarmedDamageMultiplier + CalcRawDamage).
 	UnarmedBaseDamage       ConfigFloat `yaml:"UnarmedBaseDamage"`       // Base damage before stat bonuses (default 2.0)
 	UnarmedStrengthDivisor  ConfigFloat `yaml:"UnarmedStrengthDivisor"`  // Str / this = damage bonus (default 25.0)
 	UnarmedSkillDivisor     ConfigFloat `yaml:"UnarmedSkillDivisor"`     // Skill / this = damage bonus (default 10.0)
-	UnarmedBaseVariance     ConfigFloat `yaml:"UnarmedBaseVariance"`     // Base randomness of unarmed hits (default 3.0)
+	UnarmedBaseVariance        ConfigFloat `yaml:"UnarmedBaseVariance"`        // Base randomness of unarmed hits (default 3.0)
+	UnarmedDamageMultiplier    ConfigFloat `yaml:"UnarmedDamageMultiplier"`    // Fist damage multiplier for new pipeline (default 0.30)
+	UnarmedSpeedMultiplier     ConfigFloat `yaml:"UnarmedSpeedMultiplier"`     // Unarmed attack speed — slightly faster than light weapons (default 1.4)
+	SkillMultiplierBase        ConfigFloat `yaml:"SkillMultiplierBase"`        // Skill multiplier at rank 0 (default 1.0)
+	SkillMultiplierMax         ConfigFloat `yaml:"SkillMultiplierMax"`         // Skill multiplier at soft cap (default 3.0)
+	MeleeDamageScale           ConfigFloat `yaml:"MeleeDamageScale"`            // Physical damage scale. Stats ~100, so 0.30 yields ~30 raw per swing (default 0.30)
+	SpellDamageScale           ConfigFloat `yaml:"SpellDamageScale"`            // Flat multiplier on spell damage output (default 1.0 = no change)
+	RhetoricDamageScale        ConfigFloat `yaml:"RhetoricDamageScale"`         // Flat multiplier on conviction/taunt damage output (default 1.0 = no change)
+	MobDamageMultiplier        ConfigFloat `yaml:"MobDamageMultiplier"`         // Extra multiplier applied to NPC melee damage only (default 1.0 = same as players)
+	PhysicalMitigationCap      ConfigFloat `yaml:"PhysicalMitigationCap"`     // Max physical mitigation % (default 0.75)
+	MagicalMitigationCap       ConfigFloat `yaml:"MagicalMitigationCap"`      // Max magical mitigation % (default 0.75)
+	ConvictionMitigationCap    ConfigFloat `yaml:"ConvictionMitigationCap"`   // Max conviction mitigation % (default 0.75)
+	ResourcePenaltyCurve       ConfigFloat `yaml:"ResourcePenaltyCurve"`     // Exponent for resource depletion penalty curve (default 2.0)
+	HealthPenaltyMax           ConfigFloat `yaml:"HealthPenaltyMax"`         // Max melee damage penalty at 0% HP (default 0.28)
+	StaminaPenaltyMax          ConfigFloat `yaml:"StaminaPenaltyMax"`        // Max attack count + hit rate penalty at 0% SP (default 0.28)
+	ConvictionPenaltyMax       ConfigFloat `yaml:"ConvictionPenaltyMax"`     // Max taunt/spell penalty at 0% CP (default 0.28)
 
 	// ── REGEN RATES ──────────────────────────────────────────────────────────
 	PlayerHealthRegenPct     ConfigFloat `yaml:"PlayerHealthRegenPct"`     // Fraction of HealthMax regen'd per tick — players (default 0.01)
@@ -46,6 +110,20 @@ type Balance struct {
 	ProgressionDecayAboveCap  ConfigFloat `yaml:"ProgressionDecayAboveCap"`  // Exponential steepness above soft cap (default 2.0)
 	StatSoftCapThreshold      ConfigInt   `yaml:"StatSoftCapThreshold"`      // Raw stat value where adjusted formula kicks in (default 105)
 	StatSoftCapMultiplier     ConfigFloat `yaml:"StatSoftCapMultiplier"`     // Multiplier in: 100 + sqrt(raw-100) * this (default 2.0)
+	MobProgressionEnabled    ConfigBool  `yaml:"MobProgressionEnabled"`    // Enable mob stat/skill progression (default true)
+	MobProgressionRate       ConfigFloat `yaml:"MobProgressionRate"`       // Multiplier on progression chance vs players (default 0.5)
+	MobStatCap               ConfigInt   `yaml:"MobStatCap"`               // Hard cap on mob stats from progression (default 200)
+	MobSkillCap              ConfigInt   `yaml:"MobSkillCap"`              // Hard cap on mob skill level from progression (default 3)
+	MobSaveIntervalRounds    ConfigInt   `yaml:"MobSaveIntervalRounds"`    // Rounds between periodic mob instance saves (default 100)
+	MobInstanceMaxAgeDays    ConfigInt   `yaml:"MobInstanceMaxAgeDays"`    // Max age in days before stale instance files are pruned (default 7)
+	RegenProgressionBase     ConfigFloat `yaml:"RegenProgressionBase"`     // Max chance at 0% resource per stat per tick (default 0.005)
+	RegenProgressionCurve    ConfigFloat `yaml:"RegenProgressionCurve"`    // Exponent shaping the depletion→chance curve (default 3.0)
+
+	// ── PROGRESSION MULTIPLIERS ──────────────────────────────────────────────
+	// Per-stat and per-skill multipliers on progression chance.
+	// Use plain float64 maps (not ConfigFloat) for native YAML unmarshaling.
+	StatProgressionMultipliers  map[string]float64 `yaml:"StatProgressionMultipliers"`  // Per-stat multiplier on progression chance (default 1.0; dex 0.5)
+	SkillProgressionMultipliers map[string]float64 `yaml:"SkillProgressionMultipliers"` // Per-skill multiplier on progression chance — overrides hardcoded defaults
 
 	// ── CHARACTER CREATION ────────────────────────────────────────────────────
 	StatRollMean      ConfigFloat `yaml:"StatRollMean"`      // Mean for stat rolls at character creation (default 100.0)
@@ -91,18 +169,139 @@ type Balance struct {
 	EnchantRemovalPenaltyRounds ConfigInt   `yaml:"EnchantRemovalPenaltyRounds"` // Rounds of withdrawal after disenchant (default 50)
 	EnchantMaxTier              ConfigInt   `yaml:"EnchantMaxTier"`              // Maximum tier enchantments can reach (default 4)
 
+	// ── WORLD EVENTS ─────────────────────────────────────────────────────────
+	WorldEventBufferSize ConfigInt `yaml:"WorldEventBufferSize"` // Max events in the ring buffer (default 200)
+
+	// ── MOB MUTATIONS ────────────────────────────────────────────────────────
+	MobMutationEnabled ConfigBool  `yaml:"MobMutationEnabled"` // Enable mob mutation acquisition in combat (default false)
+	MobMutationRate    ConfigFloat `yaml:"MobMutationRate"`    // Multiplier on mutation progress vs players (default 0.3)
+
+	// ── PACK SCALING ─────────────────────────────────────────────────────────
+	PackScalingEnabled   ConfigBool `yaml:"PackScalingEnabled"`   // Enable pack survival bonuses (default true)
+	PackSurvivalRounds   ConfigInt  `yaml:"PackSurvivalRounds"`   // Consecutive rounds together before bonus (default 10)
+	PackBonusTrainingPts ConfigInt  `yaml:"PackBonusTrainingPts"` // Training points awarded per pack bonus (default 1)
+	PackMaxBonus         ConfigInt  `yaml:"PackMaxBonus"`         // Max total pack bonus training points (default 5)
+
+	// ── PACK ROAMING ────────────────────────────────────────────────────────
+	PackRoamingEnabled ConfigBool `yaml:"PackRoamingEnabled"` // Enable alpha-follow pack movement (default true)
+	PackMaxSize        ConfigInt  `yaml:"PackMaxSize"`        // Max followers per alpha (-1 = unlimited, default -1)
+	PackScatterRounds  ConfigInt  `yaml:"PackScatterRounds"`  // Rounds mobs skip wandering after alpha death (default 2)
+
+	// ── CRAFTER MOBS ─────────────────────────────────────────────────────────
+	CrafterEnabled              ConfigBool `yaml:"CrafterEnabled"`              // Enable mob autonomous crafting (default true)
+	CrafterMaterialRestockRate  ConfigInt  `yaml:"CrafterMaterialRestockRate"`  // Rounds between material restocks and craft attempts (default 200)
+	CrafterRareThreshold        ConfigInt  `yaml:"CrafterRareThreshold"`        // SkillMinimum at or above which a craft is considered rare (default 3)
+
+	// ── GOSSIP SYSTEM ────────────────────────────────────────────────────────
+	GossipIntervalRounds ConfigInt `yaml:"GossipIntervalRounds"` // Rounds between gossip broadcasts for "gossiper" group mobs (default 75)
+
 	// ── MOON PHASES ───────────────────────────────────────────────────────────
 	MoonStatModMax ConfigFloat `yaml:"MoonStatModMax"` // Max fractional stat modifier from moon phases, e.g. 0.05 = ±5% (default 0.05)
 }
 
 func (b *Balance) Validate() {
-	// ── COMBAT ────────────────────────────────────────────────────────────────
-	if b.GlobalDamageMultiplier <= 0 {
-		b.GlobalDamageMultiplier = 1.0
+	// ── ROLL SPREAD ──────────────────────────────────────────────────────────
+	if b.RollSpread < 0.05 || b.RollSpread > 0.50 {
+		b.RollSpread = 0.15
 	}
-	if b.GlobalDefenseMultiplier <= 0 {
-		b.GlobalDefenseMultiplier = 1.0
+
+	// ── COMBAT: DEFENSE COSTS ────────────────────────────────────────────────
+	if b.DodgeMultiplier <= 0 {
+		b.DodgeMultiplier = 0.9
 	}
+	if b.ParryMultiplier <= 0 {
+		b.ParryMultiplier = 0.9
+	}
+	if b.BlockMultiplier <= 0 {
+		b.BlockMultiplier = 0.9
+	}
+
+	// ── COMBAT: DEFENSE EFFECTIVENESS ────────────────────────────────────────
+	if b.DodgeEffectiveness <= 0 {
+		b.DodgeEffectiveness = 1.0
+	}
+	if b.ParryEffectiveness <= 0 {
+		b.ParryEffectiveness = 1.0
+	}
+	if b.BlockEffectiveness <= 0 {
+		b.BlockEffectiveness = 1.0
+	}
+	if b.MinDefenseChance < 0 || b.MinDefenseChance > 0.50 {
+		b.MinDefenseChance = 0.15
+	}
+	if b.MinAttackHitChance < 0 || b.MinAttackHitChance > 0.50 {
+		b.MinAttackHitChance = 0.15
+	}
+
+	// ── COMBAT: PRONE & GRAPPLE ──────────────────────────────────────────────
+	if b.ProneAttackMultiplier <= 0 {
+		b.ProneAttackMultiplier = 0.80
+	}
+	if b.ProneDodgePenalty <= 0 || b.ProneDodgePenalty > 1.0 {
+		b.ProneDodgePenalty = 0.70
+	}
+	if b.ProneParryPenalty <= 0 || b.ProneParryPenalty > 1.0 {
+		b.ProneParryPenalty = 0.80
+	}
+	if b.ProneBlockPenalty <= 0 || b.ProneBlockPenalty > 1.0 {
+		b.ProneBlockPenalty = 0.90
+	}
+	if b.ProneDamagePenalty <= 0 || b.ProneDamagePenalty > 1.0 {
+		b.ProneDamagePenalty = 0.80
+	}
+	if b.ProneVulnerabilityMultiplier <= 0 {
+		b.ProneVulnerabilityMultiplier = 1.15
+	}
+	if b.StandStaminaCost <= 0 || b.StandStaminaCost > 1.0 {
+		b.StandStaminaCost = 0.15
+	}
+	if b.StandMinStamina <= 0 || b.StandMinStamina > 1.0 {
+		b.StandMinStamina = 0.15
+	}
+	if b.ThirdPartyGrapplePenalty <= 0 || b.ThirdPartyGrapplePenalty > 1.0 {
+		b.ThirdPartyGrapplePenalty = 0.70
+	}
+
+	// ── COMBAT: SPECIAL MOVES ────────────────────────────────────────────────
+	if b.SpecialMoveCooldown < 1 {
+		b.SpecialMoveCooldown = 5
+	}
+	if b.BashDamagePercent <= 0 || b.BashDamagePercent > 1.0 {
+		b.BashDamagePercent = 0.50
+	}
+	if b.BashKnockdownChance < 0 || b.BashKnockdownChance > 100 {
+		b.BashKnockdownChance = 40
+	}
+	if b.TripDamagePercent <= 0 || b.TripDamagePercent > 1.0 {
+		b.TripDamagePercent = 0.25
+	}
+	if b.TripKnockdownChance < 0 || b.TripKnockdownChance > 100 {
+		b.TripKnockdownChance = 60
+	}
+	if b.KickDamagePercent <= 0 || b.KickDamagePercent > 1.0 {
+		b.KickDamagePercent = 0.40
+	}
+	if b.KickKnockdownChance < 0 || b.KickKnockdownChance > 100 {
+		b.KickKnockdownChance = 35
+	}
+	if b.CoupDeGraceRounds < 0 {
+		b.CoupDeGraceRounds = 1
+	}
+
+	// ── COMBAT: DARKNESS ─────────────────────────────────────────────────────
+	if b.DarknessCombatPenalty <= 0 || b.DarknessCombatPenalty > 1.0 {
+		b.DarknessCombatPenalty = 0.80
+	}
+
+	// ── COMBAT: SPELL COSTS ──────────────────────────────────────────────────
+	if b.SpellConvictionCostMultiplier <= 0 {
+		b.SpellConvictionCostMultiplier = 1.0
+	}
+	if b.SpellHealthCostMultiplier <= 0 {
+		b.SpellHealthCostMultiplier = 1.0
+	}
+
+	// ── COMBAT: DAMAGE ───────────────────────────────────────────────────────
 	if b.UnarmedBaseDamage <= 0 {
 		b.UnarmedBaseDamage = 2.0
 	}
@@ -114,6 +313,51 @@ func (b *Balance) Validate() {
 	}
 	if b.UnarmedBaseVariance <= 0 {
 		b.UnarmedBaseVariance = 3.0
+	}
+	if b.UnarmedDamageMultiplier <= 0 {
+		b.UnarmedDamageMultiplier = 0.30
+	}
+	if b.UnarmedSpeedMultiplier <= 0 {
+		b.UnarmedSpeedMultiplier = 1.4
+	}
+	if b.SkillMultiplierBase <= 0 {
+		b.SkillMultiplierBase = 1.0
+	}
+	if b.SkillMultiplierMax <= 0 {
+		b.SkillMultiplierMax = 3.0
+	}
+	if b.MeleeDamageScale <= 0 {
+		b.MeleeDamageScale = 0.30
+	}
+	if b.SpellDamageScale <= 0 {
+		b.SpellDamageScale = 1.0
+	}
+	if b.RhetoricDamageScale <= 0 {
+		b.RhetoricDamageScale = 1.0
+	}
+	if b.MobDamageMultiplier <= 0 {
+		b.MobDamageMultiplier = 1.0
+	}
+	if b.PhysicalMitigationCap <= 0 || b.PhysicalMitigationCap > 1.0 {
+		b.PhysicalMitigationCap = 0.75
+	}
+	if b.MagicalMitigationCap <= 0 || b.MagicalMitigationCap > 1.0 {
+		b.MagicalMitigationCap = 0.75
+	}
+	if b.ConvictionMitigationCap <= 0 || b.ConvictionMitigationCap > 1.0 {
+		b.ConvictionMitigationCap = 0.75
+	}
+	if b.ResourcePenaltyCurve <= 0 {
+		b.ResourcePenaltyCurve = 2.0
+	}
+	if b.HealthPenaltyMax <= 0 || b.HealthPenaltyMax > 1.0 {
+		b.HealthPenaltyMax = 0.28
+	}
+	if b.StaminaPenaltyMax <= 0 || b.StaminaPenaltyMax > 1.0 {
+		b.StaminaPenaltyMax = 0.28
+	}
+	if b.ConvictionPenaltyMax <= 0 || b.ConvictionPenaltyMax > 1.0 {
+		b.ConvictionPenaltyMax = 0.28
 	}
 
 	// ── REGEN RATES ──────────────────────────────────────────────────────────
@@ -196,6 +440,48 @@ func (b *Balance) Validate() {
 	}
 	if b.StatSoftCapMultiplier <= 0 {
 		b.StatSoftCapMultiplier = 2.0
+	}
+	if b.MobProgressionRate <= 0 || b.MobProgressionRate > 1.0 {
+		b.MobProgressionRate = 0.5
+	}
+	if b.MobStatCap < 1 {
+		b.MobStatCap = 200
+	}
+	if b.MobSkillCap < 1 {
+		b.MobSkillCap = 3
+	}
+	if b.MobSaveIntervalRounds < 1 {
+		b.MobSaveIntervalRounds = 100
+	}
+	if b.MobInstanceMaxAgeDays < 1 {
+		b.MobInstanceMaxAgeDays = 7
+	}
+	if b.RegenProgressionBase <= 0 {
+		b.RegenProgressionBase = 0.005
+	}
+	if b.RegenProgressionBase > 1.0 {
+		b.RegenProgressionBase = 1.0
+	}
+	if b.RegenProgressionCurve <= 0 {
+		b.RegenProgressionCurve = 3.0
+	}
+
+	// ── PROGRESSION MULTIPLIERS ──────────────────────────────────────────────
+	if b.StatProgressionMultipliers == nil {
+		b.StatProgressionMultipliers = map[string]float64{}
+	}
+	for k, v := range b.StatProgressionMultipliers {
+		if v <= 0 {
+			delete(b.StatProgressionMultipliers, k)
+		}
+	}
+	if b.SkillProgressionMultipliers == nil {
+		b.SkillProgressionMultipliers = map[string]float64{}
+	}
+	for k, v := range b.SkillProgressionMultipliers {
+		if v <= 0 {
+			delete(b.SkillProgressionMultipliers, k)
+		}
 	}
 
 	// ── CHARACTER CREATION ────────────────────────────────────────────────────
@@ -306,6 +592,48 @@ func (b *Balance) Validate() {
 		b.EnchantMaxTier = 4
 	}
 
+	// ── WORLD EVENTS ─────────────────────────────────────────────────────────
+	if b.WorldEventBufferSize < 10 {
+		b.WorldEventBufferSize = 200
+	}
+
+	// ── MOB MUTATIONS ────────────────────────────────────────────────────────
+	if b.MobMutationRate <= 0 || b.MobMutationRate > 1.0 {
+		b.MobMutationRate = 0.3
+	}
+
+	// ── PACK SCALING ─────────────────────────────────────────────────────────
+	if b.PackSurvivalRounds < 1 {
+		b.PackSurvivalRounds = 10
+	}
+	if b.PackBonusTrainingPts < 1 {
+		b.PackBonusTrainingPts = 1
+	}
+	if b.PackMaxBonus < 1 {
+		b.PackMaxBonus = 5
+	}
+
+	// ── PACK ROAMING ────────────────────────────────────────────────────────
+	if b.PackMaxSize == 0 {
+		b.PackMaxSize = -1
+	}
+	if b.PackScatterRounds < 0 {
+		b.PackScatterRounds = 2
+	}
+
+	// ── CRAFTER MOBS ─────────────────────────────────────────────────────────
+	if b.CrafterMaterialRestockRate < 1 {
+		b.CrafterMaterialRestockRate = 200
+	}
+	if b.CrafterRareThreshold < 1 {
+		b.CrafterRareThreshold = 3
+	}
+
+	// ── GOSSIP SYSTEM ────────────────────────────────────────────────────────
+	if b.GossipIntervalRounds < 20 {
+		b.GossipIntervalRounds = 75
+	}
+
 	// ── MOON PHASES ───────────────────────────────────────────────────────────
 	if b.MoonStatModMax <= 0 {
 		b.MoonStatModMax = 0.05
@@ -320,4 +648,26 @@ func GetBalanceConfig() Balance {
 		configData.Validate()
 	}
 	return configData.Balance
+}
+
+// GetStatProgressionMultiplier returns the per-stat progression multiplier
+// from config, or 1.0 if the stat has no override.
+func (b *Balance) GetStatProgressionMultiplier(statName string) float64 {
+	if b.StatProgressionMultipliers != nil {
+		if mult, ok := b.StatProgressionMultipliers[statName]; ok {
+			return mult
+		}
+	}
+	return 1.0
+}
+
+// GetSkillProgressionMultiplier returns the per-skill progression multiplier
+// from config, or 0 to signal "use hardcoded default".
+func (b *Balance) GetSkillProgressionMultiplier(skillName string) (float64, bool) {
+	if b.SkillProgressionMultipliers != nil {
+		if mult, ok := b.SkillProgressionMultipliers[skillName]; ok {
+			return mult, true
+		}
+	}
+	return 0, false
 }

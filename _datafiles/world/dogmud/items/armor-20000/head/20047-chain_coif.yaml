@@ -1,0 +1,11 @@
+itemid: 20047
+name: chain coif
+namesimple: coif
+description: A hood of interlocking iron rings that drapes over the head and
+  shoulders, protecting the skull and neck from slashing blows. Standard issue
+  for garrison soldiers.
+type: head
+subtype: wearable
+damagereduction: 3
+physical_mitigation: 3
+value: 10

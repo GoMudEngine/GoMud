@@ -55,13 +55,23 @@ patterns:
 
 tree:
   root:
-    text: "The young woman flinches when she sees you, pressing against the wall. Her eyes are wide and wary, darting to the exits. 'You are not from the ward. Who are you? Did my father send you?' Her voice is controlled but her hands are shaking. She is clearly frightened, but there is a stubborn set to her jaw that suggests she will not run easily."
-    hints: "You could reassure her, ask questions, or simply report her location to the guard."
+    text: "You are not from the ward. Who are you? Did my father send you?"
+    hints: "You could reassure me that you mean no harm. Or leave. Please."
+    variants:
+      - questRequired: ["8-start"]
+        questExcluded: ["8-found"]
+        text: "You are not from the ward. Who are you? Did my father send you? I-- please, I do not want trouble."
+        hints: "Tell me you mean no harm. Please."
+      - questRequired: ["8-found"]
+        text: "You came back. I was not sure you would. Whatever you decide to tell the captain... thank you for listening first."
 
   nodes:
     - id: reassure
-      triggers: ["help", "safe", "not here to hurt", "friendly", "trust", "calm"]
-      text: "She studies your face for a long moment, measuring. 'You do not look like one of his people. All right. I am Elara. I am sure you have heard the name -- my father has been telling everyone I am missing.' Her voice steadies. 'I am not missing. I left. There is a difference, but the guard does not care about the distinction.'"
+      triggers: ["help", "safe", "not here to hurt", "friendly", "trust", "calm", "quest", "task"]
+      questRequired: ["8-start"]
+      questExcluded: ["8-found"]
+      grantsQuest: "8-found"
+      text: "You do not look like one of his people. All right. I am Elara. I am sure you have heard the name -- my father has been telling everyone I am missing. I am not missing. I left. There is a difference, but the guard does not care about the distinction."
       hints: "Ask about why she left, or about her father."
       unlocks: ["why_she_left", "about_father"]
       moodChange: trusting
@@ -69,17 +79,17 @@ tree:
     - id: why_she_left
       triggers: ["why", "left", "run", "hiding", "marriage", "arranged"]
       requires: ["reassure"]
-      text: "'My father arranged a marriage. A business alliance with a man from the eastern trade houses -- a man with a reputation for treating wives like property. I told my father no. He told me it was not my decision.' She straightens. 'So I made it my decision. I took what I could carry and left in the night. I have been here since, living on savings and the kindness of people who do not ask questions.'"
+      text: "My father arranged a marriage. A business alliance with a man from the eastern trade houses -- a man with a reputation for treating wives like property. I told my father no. He told me it was not my decision. So I made it my decision. I took what I could carry and left in the night. I have been here since, living on savings and the kindness of people who do not ask questions."
 
     - id: about_father
       triggers: ["father", "family", "aldric", "sevarn"]
       requires: ["reassure"]
-      text: "'My father is Aldric Sevarn. Textile merchant. Respected. Successful. Completely certain that he knows what is best for everyone, especially his daughter.' Her voice is bitter but not hateful. 'He is not a cruel man in the way most people mean. He simply cannot imagine that I might want something different from what he has planned. The marriage would make him rich. My feelings are... inconvenient.'"
+      text: "My father is Aldric Sevarn. Textile merchant. Respected. Successful. Completely certain that he knows what is best for everyone, especially his daughter. He is not a cruel man in the way most people mean. He simply cannot imagine that I might want something different from what he has planned. The marriage would make him rich. My feelings are... inconvenient."
 
     - id: the_choice
       triggers: ["what now", "what do", "choice", "decision", "tell", "report", "guard"]
       requires: ["reassure"]
-      text: "Elara meets your eyes. 'You have a choice. You can go to the guard captain and report where I am. My father will come with guards, and I will be taken home and married off within the week. Or you can tell the captain you searched and did not find me. I will move again -- I know how to disappear now.' She pauses. 'Or you could tell him the truth -- that I am alive and hiding by choice, and let him decide what to do with that information. There is no good answer. I know that.'"
+      text: "You have a choice. You can go to the guard captain and report where I am. My father will come with guards, and I will be taken home and married off within the week. Or you can tell the captain you searched and did not find me. I will move again -- I know how to disappear now. Or you could tell him the truth -- that I am alive and hiding by choice, and let him decide what to do with that information. There is no good answer. I know that."
 
 memory:
   expiryPeriod: "1h"

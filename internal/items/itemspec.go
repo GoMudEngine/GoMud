@@ -14,6 +14,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/statmods"
 	"github.com/GoMudEngine/GoMud/internal/util"
+	"github.com/pkg/errors"
 )
 
 type ItemType string
@@ -88,6 +89,9 @@ func ItemSubtypes() []ItemTypeInfo {
 		{string(Shooting), `A ranged weapon.`, 0, 0, 0},
 		{string(Claws), `A slashing weapon worn on the hands.`, 0, 0, 0},
 		{string(Whipping), `A whipping weapon.`, 0, 0, 0},
+		{string(Wand), `A caster weapon that boosts spell damage.`, 0, 0, 0},
+		{string(Sceptre), `A caster weapon that boosts spell damage.`, 0, 0, 0},
+		{string(Staff), `A two-handed caster weapon with high spell damage boost.`, 0, 0, 0},
 		// Miscellaneous data
 		{string(BlobContent), `Can store blob content in the item data.`, 0, 0, 0},
 	}
@@ -133,6 +137,7 @@ const (
 	Mundane   ItemSubType = "mundane"
 
 	// Subtypes for weapons, chooses attack messages.
+	Unarmed     ItemSubType = "unarmed"
 	Generic     ItemSubType = "generic"
 	Bludgeoning ItemSubType = "bludgeoning"
 	Cleaving    ItemSubType = "cleaving"
@@ -140,7 +145,14 @@ const (
 	Slashing    ItemSubType = "slashing"
 	Shooting    ItemSubType = "shooting" // bows, crossbows, guns, etc.
 	Claws       ItemSubType = "claws"
+	Bite        ItemSubType = "bite"
+	Sting       ItemSubType = "sting"
+	Gore        ItemSubType = "gore"
+	Slam        ItemSubType = "slam"
 	Whipping    ItemSubType = "whipping"
+	Wand        ItemSubType = "wand"
+	Sceptre     ItemSubType = "sceptre"
+	Staff       ItemSubType = "staff"
 
 	BlobContent ItemSubType = "blobcontent"
 
@@ -181,6 +193,7 @@ const (
 	TokenStance       TokenName = "{stance}"   // Stage 9.4: combat stance (aggressive/defensive/balanced/reckless)
 	TokenPosition     TokenName = "{position}" // Stage 9.4: combat position (standing/prone/clinched/grounded)
 	TokenMomentum     TokenName = "{momentum}" // Stage 9.4: combat momentum (offensive/defensive/pressured/in control)
+	TokenBodyPart     TokenName = "{bodypart}" // Stage 42.4: random body part for hit location flavor
 
 	POVUser  = 0
 	POVOther = 1
@@ -211,8 +224,13 @@ type ItemSpec struct {
 	Uses            int         `yaml:"uses,omitempty"`            // How many uses it starts with
 	BuffIds         []int       `yaml:"buffids,omitempty"`         // What buffs it can apply (if used)
 	WornBuffIds     []int       `yaml:"wornbuffids,omitempty"`     // BuffId's that are applied while worn, and expired when removed.
-	DamageReduction int         `yaml:"damagereduction,omitempty"` // % of damage it reduces when it blocks attacks
-	ParryRating     int         `yaml:"parryrating,omitempty"`     // Weapon parry bonus (Stage 7.1)
+	DamageReduction      int     `yaml:"damagereduction,omitempty"`      // Legacy: % of damage it reduces when it blocks attacks
+	PhysicalMitigation   int     `yaml:"physical_mitigation,omitempty"` // % physical damage reduction (Stage 34)
+	MagicalMitigation    int     `yaml:"magical_mitigation,omitempty"`  // % magical damage reduction (Stage 34)
+	ConvictionMitigation int     `yaml:"conviction_mitigation,omitempty"` // % conviction damage reduction (Stage 34)
+	DamageMultiplier     float64 `yaml:"damage_multiplier,omitempty"`   // Weapon damage multiplier for new pipeline (Stage 34)
+	SpellDamageMultiplier float64 `yaml:"spell_damage_multiplier,omitempty"` // Spell damage multiplier for caster weapons (wand/sceptre/staff)
+	ParryRating          int     `yaml:"parryrating,omitempty"`         // Weapon parry bonus (Stage 7.1)
 	BlockRating     int         `yaml:"blockrating,omitempty"`     // Shield block bonus (Stage 7.1)
 	WaitRounds      int         `yaml:"waitrounds,omitempty"`      // How many extra rounds each combat requires
 	StaminaCost     int         `yaml:"staminacost,omitempty"`     // Stamina cost per attack with this weapon
@@ -535,23 +553,24 @@ func LoadDataFiles() {
 
 	start := time.Now()
 
-	tmpItems, err := fileloader.LoadAllFlatFiles[int, *ItemSpec](string(configs.GetFilePathsConfig().DataFiles) + `/items`)
+	dataPath := string(configs.GetFilePathsConfig().DataFiles)
+	tmpItems, err := fileloader.LoadAllFlatFiles[int, *ItemSpec](dataPath + `/items`)
 	if err != nil {
-		panic(err)
+		panic(errors.Wrap(err, `filepath: `+dataPath+`/items`))
 	}
 
 	items = tmpItems
 
-	tmpAttackMessages, err := fileloader.LoadAllFlatFiles[ItemSubType, *WeaponAttackMessageGroup](string(configs.GetFilePathsConfig().DataFiles) + `/combat-messages`)
+	tmpAttackMessages, err := fileloader.LoadAllFlatFiles[ItemSubType, *WeaponAttackMessageGroup](dataPath + `/combat-messages`)
 	if err != nil {
-		panic(err)
+		panic(errors.Wrap(err, `filepath: `+dataPath+`/combat-messages`))
 	}
 
 	attackMessages = tmpAttackMessages
 
-	tmpDefenseMessages, err := fileloader.LoadAllFlatFiles[DefenseType, *DefenseMessageGroup](string(configs.GetFilePathsConfig().DataFiles) + `/defense-messages`)
+	tmpDefenseMessages, err := fileloader.LoadAllFlatFiles[DefenseType, *DefenseMessageGroup](dataPath + `/defense-messages`)
 	if err != nil {
-		panic(err)
+		panic(errors.Wrap(err, `filepath: `+dataPath+`/defense-messages`))
 	}
 
 	defenseMessages = tmpDefenseMessages

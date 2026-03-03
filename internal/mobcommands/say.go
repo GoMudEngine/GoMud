@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 func Say(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
@@ -16,6 +17,9 @@ func Say(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 		return true, nil
 	}
+
+	// Wrap long dialogue text to 65 chars to account for "Name says, ..."
+	rest = util.NormalizeAndWrap(rest, 65)
 
 	isSneaking := mob.Character.HasBuffFlag(buffs.Hidden)
 

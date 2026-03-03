@@ -1,0 +1,35 @@
+roomid: 3004
+zone: Ironwind Steppe
+title: Drainage Ditch
+description: The shallow drainage ditch from the city wall widens here
+  into a muddy depression where water collects in stagnant pools. Reeds
+  and cattails grow in thick clumps around the standing water, and the
+  ground squelches underfoot. The air smells of mud and rot. Animal
+  tracks crisscross the soft earth -- rats, birds, and what might be
+  a dog or fox. The ditch continues southeast, gradually blending into
+  the natural drainage of the steppe.
+biome: land
+exits:
+  north:
+    roomid: 3001
+  southeast:
+    roomid: 3007
+  east:
+    roomid: 3008
+nouns:
+  pools: Shallow pools of brackish water, dark and still. Insects skim
+    the surface. The water is a mix of city runoff and rainwater, not
+    something you would want to drink.
+  reeds: Thick stands of cattails and reeds growing wherever the ground
+    stays wet. They rattle in the wind with a dry, papery sound.
+  tracks: A confusion of animal prints in the soft mud -- tiny rat
+    feet, three-toed bird tracks, and the larger oval pads of a dog
+    or fox. This is a popular watering spot for the local wildlife.
+spawninfo:
+- mobid: 200
+- mobid: 204
+- mobid: 238
+idlemessages:
+- A frog croaks from somewhere in the reeds, then falls silent.
+- Bubbles rise slowly from the stagnant water and pop.
+- A dragonfly hovers over one of the muddy pools.

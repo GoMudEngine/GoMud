@@ -1,0 +1,23 @@
+questid: 12
+name: The Warden's Covenant
+description: You have chosen to support Windwarden Sylara and protect
+  the sacred stone circle. She will teach you to call upon the spirits
+  of the steppe. Completing this quest locks The Prospector's Gambit.
+secret: false
+steps:
+  - id: start
+    description: "Travel to Windwarden Sylara near the stone circle
+      and attend her spirit binding ritual."
+  - id: ritual
+    description: "Sylara has begun the ritual. Open yourself to the
+      spirits of the steppe and complete the binding."
+  - id: end
+    description: "The spirits of the steppe answer your call. You
+      have earned the Windwarden's trust."
+rewards:
+  playermessage: "Sylara's eyes shine with quiet pride. The steppe
+    wind swirls around you like a greeting, and you feel a new
+    connection to the land -- ancient, vast, and watchful. She
+    presses a bundle of spirit fetishes into your hands."
+  gold: 15
+  itemid: 40031

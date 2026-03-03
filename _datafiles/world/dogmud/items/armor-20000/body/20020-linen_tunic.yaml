@@ -6,5 +6,7 @@ description: A simple tunic stitched from undyed linen panels. The seams are
   and light blows.
 type: body
 subtype: wearable
+value: 4
 damagereduction: 2
+physical_mitigation: 2
 escapemodifier: 1.0

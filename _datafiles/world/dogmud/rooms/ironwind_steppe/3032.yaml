@@ -1,0 +1,45 @@
+roomid: 3032
+zone: Ironwind Steppe
+title: Rocky Shelf
+description: A broad shelf of exposed rock juts from the ridge's western
+  face, forming a natural platform about twenty paces across. Wind-
+  polished stone underfoot is streaked with veins of white quartz
+  and pale blue <ansi fg="itemname">crystal</ansi>.
+  The shelf offers commanding views of the flats below and is
+  sheltered from above by an overhang of darker stone. Raptor
+  droppings and scraps of prey streak the rock, and deep scratches
+  from talons score the surface near the edge.
+biome: cliffs
+exits:
+  northwest:
+    roomid: 3016
+  north:
+    roomid: 3030
+  south:
+    roomid: 3033
+  east:
+    roomid: 3035
+nouns:
+  shelf: A flat expanse of wind-polished stone, naturally formed
+    and remarkably level. The quartz veins catch the light and
+    glitter. This is clearly a popular raptor perch and feeding
+    station.
+  overhang: Dark basalt overhanging the shelf, providing shelter
+    from rain and sun. The underside is smooth, carved by
+    centuries of wind-driven grit.
+  crystal: Among the white quartz veins, a streak of pale blue
+    crystal catches the light. It hums faintly and feels warm
+    to the touch -- distinctly different from the surrounding
+    stone. A geomancer would recognize this as windstone.
+  windstone: Among the white quartz veins, a streak of pale blue
+    crystal catches the light. It hums faintly and feels warm
+    to the touch -- distinctly different from the surrounding
+    stone. A geomancer would recognize this as windstone.
+spawninfo:
+- mobid: 210
+- mobid: 210
+- mobid: 239
+idlemessages:
+- A raptor glides past at eye level, close enough to see its talons.
+- Quartz veins in the rock flash and glitter in the sunlight.
+- The wind moans under the overhang with a hollow, resonant sound.

@@ -49,10 +49,6 @@ func (a ScriptActor) MobTypeId() int {
 	return 0
 }
 
-func (a ScriptActor) GetRace() string {
-	return a.characterRecord.Species()
-}
-
 func (a ScriptActor) GetSize() string {
 	if r := species.GetSpecies(a.characterRecord.SpeciesId); r != nil {
 		return string(r.Size)
@@ -68,10 +64,6 @@ func (a ScriptActor) SendText(msg string) {
 	msg = userTextWrap.Wrap(msg)
 
 	a.userRecord.SendText(msg)
-}
-
-func (a ScriptActor) GetLevel() int {
-	return 1
 }
 
 func (a ScriptActor) GetStat(statName string) int {
@@ -582,6 +574,14 @@ func (a ScriptActor) GiveMutation(mutationId string) bool {
 		return true
 	}
 	return false
+}
+
+// GetMutationCount returns the number of mutations the character currently has.
+func (a ScriptActor) GetMutationCount() int {
+	if a.characterRecord.Mutations == nil {
+		return 0
+	}
+	return len(a.characterRecord.Mutations)
 }
 
 // RollMutation randomly selects a mutation ID from the weighted pool that the player doesn't already own.

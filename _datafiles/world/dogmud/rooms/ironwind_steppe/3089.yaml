@@ -1,0 +1,31 @@
+roomid: 3089
+zone: Ironwind Steppe
+title: Eastern Grassland
+description: Open grassland stretches east beyond the ravine and
+  wallow systems, the terrain gradually rising toward distant
+  hills. The grass is tall and golden, swaying in endless waves
+  under the wide sky. This borderland sees occasional wolf and
+  boar traffic but neither species holds territory here. It
+  feels wild and empty, the steppe at its most primal -- just
+  grass, wind, and sky.
+biome: land
+exits:
+  west:
+    roomid: 3088
+  north:
+    roomid: 3094
+  south:
+    roomid: 3095
+nouns:
+  grass: Tall golden-brown grass stretching to the horizon,
+    undulating in continuous waves as the wind combs through
+    it. The grass is thick and tough, reaching above waist
+    height in places.
+spawninfo:
+- mobid: 213
+- mobid: 214
+- mobid: 237
+idlemessages:
+- The wind moves through the grass in long, hypnotic waves.
+- A dust hare bolts from cover and vanishes into the tall grass.
+- The empty steppe stretches endlessly under the enormous sky.

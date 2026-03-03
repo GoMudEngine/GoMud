@@ -903,26 +903,6 @@ func TestHealthClass(t *testing.T) {
 	}
 }
 
-// TestManaClass ensures the correct mana class string.
-func TestManaClass(t *testing.T) {
-	tests := []struct {
-		mana    int
-		maxMana int
-		want    string
-	}{
-		{10, 100, "mana-10"},
-		{50, 100, "mana-50"},
-		{0, 100, "mana-0"},
-		{100, 100, "mana-100"},
-	}
-	for _, tt := range tests {
-		got := ManaClass(tt.mana, tt.maxMana)
-		if got != tt.want {
-			t.Errorf("ManaClass(%d,%d) = %q, want %q", tt.mana, tt.maxMana, got, tt.want)
-		}
-	}
-}
-
 // TestQuantizeTens checks numeric bucketing.
 func TestQuantizeTens(t *testing.T) {
 	tests := []struct {

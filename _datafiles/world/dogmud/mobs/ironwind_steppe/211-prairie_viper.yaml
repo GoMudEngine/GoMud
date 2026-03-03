@@ -1,0 +1,33 @@
+mobid: 211
+zone: Ironwind Steppe
+statpool: 65
+itemdropchance: 5
+hostile: true
+maxwander: 2
+groups:
+  - animal
+archetype: fighting
+idlecommands:
+  - 'emote coils tighter, rattling the tip of its tail in warning'
+  - ''
+  - ''
+  - ''
+  - 'emote flicks its forked tongue, tasting the air'
+activitylevel: 10
+character:
+  name: prairie viper
+  description: |
+    A thick-bodied viper with triangular head and vertical-slit
+    pupils, its scales patterned in bands of dusty brown and dull
+    gold. The prairie viper is venomous -- not fatally so, but
+    enough to cause considerable pain and swelling. It hunts by
+    ambush, lying motionless in the grass until prey wanders close
+    enough to strike. The rattle at the tip of its tail buzzes
+    when threatened, a warning that should be heeded.
+  speciesid: 8
+  level: 1
+  stats:
+    dexterity:
+      training: 8
+    perception:
+      training: 3

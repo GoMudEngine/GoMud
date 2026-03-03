@@ -27,4 +27,5 @@ stats:
 damage:
   basedamage: 10
   variance: 4
+damage_multiplier: 1.25
 disabledslots: ['weapon', 'offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet']

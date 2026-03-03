@@ -7,6 +7,8 @@ description: A slender silver band with a mirror-bright finish. Tiny gem dust
 type: ring
 subtype: wearable
 damagereduction: 0
+magical_mitigation: 1
+conviction_mitigation: 1
 statmods:
   charisma: 2
 value: 12

@@ -115,7 +115,9 @@ func LoadRoomInstance(roomId int) *Room {
 
 	if bytes, err := os.ReadFile(filepath); err == nil {
 		// Unmarshal onto the default template data, overwriting any set fields in the instance save file
-		yaml.Unmarshal(bytes, room)
+		if err := yaml.Unmarshal(bytes, room); err != nil {
+			mudlog.Warn("LoadRoom", "roomId", roomId, "filepath", filepath, "error", err)
+		}
 	}
 
 	return room

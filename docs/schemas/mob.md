@@ -41,7 +41,8 @@ _datafiles/world/dogmud/mobs/{zone_folder}/scripts/{mobid}-{ConvertForFilename(n
 | `maxwander` | int | no | Max rooms the mob will wander from its home room. 0 = stationary. |
 | `activitylevel` | int | no | 1–100. How often the mob executes idle commands. Higher = more active. |
 | `itemdropchance` | int | no | Percent chance (0–100) to drop carried items on death. |
-| `statpool` | int | no | Stat points randomly distributed across stats on spawn. |
+| `statpool` | int | no | Stat points distributed across stats on spawn (weighted by archetype). |
+| `archetype` | string | no | Stat distribution archetype: `"fighting"` (80% physical), `"casting"` (80% mental), or `""` (even). |
 | `groups` | list | no | Group membership (e.g. `[rats, animal]`). Used for teamwork and hates logic. |
 | `hates` | list | no | Group names or species this mob will attack on sight. |
 | `buffids` | list | no | Buff IDs always applied when mob spawns. |
@@ -167,8 +168,8 @@ If `scripttag: patrol`, the JS file must be named `{mobid}-{name}-patrol.js`. Mi
 **LLMProfile is optional — dialogue file is the fallback.**
 If Ollama is unreachable, the engine falls back to the mob's dialogue YAML (if one exists). Always provide at minimum a dialogue file for important NPCs. See `docs/schemas/dialogue.md`.
 
-**`statpool` distributes randomly.**
-Stats in `statpool` are distributed at spawn, so identical mob templates will vary. Use explicit `stats:` overrides when a specific stat spread matters.
+**`statpool` distributes by archetype.**
+Stats in `statpool` are weighted by `archetype` at spawn: `"fighting"` favors Str/Dex/Vit (80/20 split), `"casting"` favors Per/Wil/Cha (20/80 split), and default is uniform. Identical mob templates will still vary. Use explicit `stats:` overrides when a specific stat spread matters.
 
 **`level` in `character:` sets baseline — statpool modifies it.**
 The engine calls `AutoTrain()` after distributing statpool points. Do not set both a high level and a large statpool expecting them to stack cleanly.

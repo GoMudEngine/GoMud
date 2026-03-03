@@ -1,6 +1,6 @@
 mobid: 108
 zone: Thornwall City
-statpool: 22
+statpool: 66
 itemdropchance: 0
 hostile: false
 maxwander: 0
@@ -14,6 +14,17 @@ idlecommands:
   - 'emote squints through a magnifying lens at a half-finished ring'
   - ''
 activitylevel: 15
+crafter: true
+crafterskill: jewelcrafting
+crafterrecipeids:
+  - copper-ring
+  - simple-pendant
+  - polished-stone-amulet
+crafterrestockmaterials:
+  - 40021
+  - 40022
+  - 40024
+  - 40026
 character:
   name: jeweler Tess
   description: |
@@ -27,6 +38,8 @@ character:
   speciesid: 1
   level: 1
   gold: 0
+  skills:
+    jewelcrafting: 10
   stats:
     dexterity:
       training: 15

@@ -5,3 +5,4 @@ description: A pair of poorly held together pants.
 type: legs
 subtype: wearable
 damagereduction: 1
+physical_mitigation: 1

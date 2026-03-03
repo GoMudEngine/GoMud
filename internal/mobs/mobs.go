@@ -21,6 +21,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/util"
+	"github.com/pkg/errors"
 )
 
 var (
@@ -81,9 +82,19 @@ type Mob struct {
 	QuestFlags      []string `yaml:"questflags,omitempty,flow"` // What quest flags are set on this mob?
 	BuffIds         []int    `yaml:"buffids,omitempty"`         // Buff Id's this mob always has upon spawn
 	LLMProfile     *llm.LLMProfile `yaml:"llmprofile,omitempty"` // Optional LLM-driven dialogue profile
+	Archetype      string          `yaml:"archetype,omitempty"`           // "fighting", "casting", or "" (default even distribution)
 	SpawnMutations []string        `yaml:"spawnmutations,omitempty,flow"` // Mutations always granted at spawn (Phase 24.3)
 	MutationChance int             `yaml:"mutationchance,omitempty"`      // % chance to gain 1 random bonus mutation on spawn (Phase 24.3)
-	tempDataStore   map[string]any
+	Crafter                 bool     `yaml:"crafter,omitempty"`                 // Whether this mob crafts autonomously (Stage 38.5.4)
+	CrafterSkill            string   `yaml:"crafterskill,omitempty"`            // Craft skill used (e.g. "blacksmithing")
+	CrafterRecipeIds        []string `yaml:"crafterrecipeids,omitempty"`        // Recipe IDs this mob can craft
+	CrafterRestockMaterials []int    `yaml:"crafterrestockmaterials,omitempty"` // Item IDs restocked periodically
+	PackBonusTotal          int      `yaml:"-"`                                 // Total training points from pack scaling (Stage 38.5.3)
+	PackAlphaId             int      `yaml:"-"`                                 // InstanceId of alpha this mob follows (0 = none)
+	IsPackAlpha             bool     `yaml:"-"`                                 // Whether this mob is currently the pack alpha
+	ScatterRounds           int      `yaml:"-"`                                 // Rounds remaining where mob skips wander (after alpha death)
+	crafterLastRestockRound uint64                                              // Last round materials were restocked (transient)
+	tempDataStore           map[string]any
 	conversationId  int              // Identifier of conversation currently involved in.
 	Path            PathQueue        `yaml:"-"` // a pre-calculated path the mob is following.
 	lastCommandTurn uint64           // The last turn a command was scheduled for
@@ -171,28 +182,75 @@ func NewMobById(mobId MobId, homeRoomId int, forceStatPool ...int) *Mob {
 		mob.HomeRoomId = homeRoomId
 		mob.Character.RoomId = homeRoomId
 		mob.InstanceId = instanceCounter
+		mob.Character.IsMob = true
 		mob.Character.PlayerDamage = make(map[int]int)
 
-		// Determine stat pool: use override if provided, otherwise use mob template's StatPool
-		statPool := mob.StatPool
-		if len(forceStatPool) > 0 && forceStatPool[0] > 0 {
-			statPool = forceStatPool[0]
-		}
-		// Distribute stat pool randomly across training stats
-		for i := 0; i < statPool; i++ {
-			switch util.Rand(6) {
-			case 0:
-				mob.Character.Stats.Strength.Training++
-			case 1:
-				mob.Character.Stats.Dexterity.Training++
-			case 2:
-				mob.Character.Stats.Perception.Training++
-			case 3:
-				mob.Character.Stats.Vitality.Training++
-			case 4:
-				mob.Character.Stats.Willpower.Training++
-			case 5:
-				mob.Character.Stats.Charisma.Training++
+		// Stage 38.4: Try to load a saved instance (progression data from disk).
+		// If found, apply saved training values instead of randomizing.
+		savedInstance := LoadMobInstance(mob.MobId, mob.Zone, mob.Character.Name, homeRoomId)
+		if savedInstance != nil {
+			// Restore saved progression
+			mob.Character.Stats.Strength.Training = savedInstance.StrengthTraining
+			mob.Character.Stats.Dexterity.Training = savedInstance.DexterityTraining
+			mob.Character.Stats.Perception.Training = savedInstance.PerceptionTraining
+			mob.Character.Stats.Vitality.Training = savedInstance.VitalityTraining
+			mob.Character.Stats.Willpower.Training = savedInstance.WillpowerTraining
+			mob.Character.Stats.Charisma.Training = savedInstance.CharismaTraining
+			if savedInstance.Skills != nil {
+				mob.Character.Skills = savedInstance.Skills
+			}
+			if savedInstance.SkillUseCount != nil {
+				mob.Character.SkillUseCount = savedInstance.SkillUseCount
+			}
+			if savedInstance.StatUseCount != nil {
+				mob.Character.StatUseCount = savedInstance.StatUseCount
+			}
+			if savedInstance.Mutations != nil {
+				mob.Character.Mutations = savedInstance.Mutations
+			}
+			mob.Character.MutationProgress = savedInstance.MutationProgress
+		} else {
+			// No saved instance — randomize stat pool as usual
+			statPool := mob.StatPool
+			if len(forceStatPool) > 0 && forceStatPool[0] > 0 {
+				statPool = forceStatPool[0]
+			}
+			// Distribute stat pool across training stats using archetype weighting
+			for i := 0; i < statPool; i++ {
+				var statIdx int
+				switch mob.Archetype {
+				case "fighting":
+					// 80% physical (Str/Dex/Vit), 20% mental (Per/Wil/Cha)
+					if util.Rand(100) < 80 {
+						statIdx = util.Rand(3) // 0=Str, 1=Dex, 2=Vit
+					} else {
+						statIdx = 3 + util.Rand(3) // 3=Per, 4=Wil, 5=Cha
+					}
+				case "casting":
+					// 20% physical (Str/Dex/Vit), 80% mental (Per/Wil/Cha)
+					if util.Rand(100) < 20 {
+						statIdx = util.Rand(3)
+					} else {
+						statIdx = 3 + util.Rand(3)
+					}
+				default:
+					// Even distribution across all 6 stats
+					statIdx = util.Rand(6)
+				}
+				switch statIdx {
+				case 0:
+					mob.Character.Stats.Strength.Training++
+				case 1:
+					mob.Character.Stats.Dexterity.Training++
+				case 2:
+					mob.Character.Stats.Vitality.Training++
+				case 3:
+					mob.Character.Stats.Perception.Training++
+				case 4:
+					mob.Character.Stats.Willpower.Training++
+				case 5:
+					mob.Character.Stats.Charisma.Training++
+				}
 			}
 		}
 		mob.Character.Validate()
@@ -787,9 +845,10 @@ func LoadDataFiles() {
 
 	start := time.Now()
 
-	tmpMobs, err := fileloader.LoadAllFlatFiles[int, *Mob](configs.GetFilePathsConfig().DataFiles.String() + `/mobs`)
+	dataPath := configs.GetFilePathsConfig().DataFiles.String() + `/mobs`
+	tmpMobs, err := fileloader.LoadAllFlatFiles[int, *Mob](dataPath)
 	if err != nil {
-		panic(err)
+		panic(errors.Wrap(err, `filepath: `+dataPath))
 	}
 
 	mobs = tmpMobs

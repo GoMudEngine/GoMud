@@ -17,3 +17,11 @@ __debug*
 .claude/settings.local.json
 startup.log
 GoMud.exe~
+_datafiles/logs/
+_datafilesfeedbackbugs.txt
+_datafilesfeedbacksuggestions.txt
+bug_log.txt
+moons_feedback.md
+post_stage18_thoughts.txt
+what_the_moons_keep_outline.md
+wtmk_cover_concept.png

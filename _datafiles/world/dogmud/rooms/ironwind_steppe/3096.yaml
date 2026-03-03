@@ -1,0 +1,38 @@
+roomid: 3096
+zone: Ironwind Steppe
+title: Trampled Clearing
+description: A wide clearing where the boars have destroyed all
+  vegetation. The ground is bare, packed earth scarred by
+  countless hooves. Boar droppings are thick on the ground
+  and the smell is overwhelming. This is a gathering area
+  where the sounder rests between wallowing sessions. Rubbing
+  posts -- sturdy tree trunks worn smooth by bristly hides --
+  stand at the clearing's edges, and deep ruts in the earth
+  mark where boars have been rooting.
+biome: land
+exits:
+  north:
+    roomid: 3092
+  west:
+    roomid: 3093
+  south:
+    roomid: 3097
+  east:
+    roomid: 3098
+nouns:
+  posts: Sturdy tree trunks -- the last survivors of whatever
+    grew here before the boars moved in. The bark has been
+    rubbed completely off at boar shoulder-height, leaving
+    the wood smooth and polished by bristly hides.
+  ruts: Deep furrows in the earth where boars have been
+    rooting for grubs and tubers, their snouts plowing
+    through the soil like organic plows.
+spawninfo:
+- mobid: 207
+- mobid: 207
+- mobid: 216
+- mobid: 208
+idlemessages:
+- A boar rubs against a smooth post with evident satisfaction.
+- The clearing stinks of boar -- a thick, musky, organic smell.
+- Deep ruts show where boars have been rooting for hours.

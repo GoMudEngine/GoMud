@@ -1,8 +1,10 @@
 mobid: 75
 zone: Labyrinth of Low Tunnels
+archetype: fighting
 statpool: 25
 hostile: false
 maxwander: 0
+buffids: [29]
 groups:
   - warren
   - humanoid
@@ -28,11 +30,15 @@ character:
     of its kin. The bone structure is recognizably human beneath the ridged brow and
     elongated jaw. Its milky eyes carry a weight that has nothing to do with the
     Chrysalis -- the weight of someone who remembers that their people were once
-    something else. It wears a harness of cured hide decorated with polished stones
-    and carries a finely knapped obsidian knife, the best-made object in the warren.
+    something else. Polished stones decorate the harness across its chest.
   speciesid: 23
   level: 1
   gold: 5
+  equipment:
+    weapon:
+      itemid: 10012
+    body:
+      itemid: 20048
   items:
     - itemid: 10012
   stats:

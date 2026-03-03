@@ -8,6 +8,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 func Shout(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
@@ -26,6 +27,9 @@ func Shout(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		// modify the text to look like it's the speech of a drunk person
 		rest = drunkify(rest)
 	}
+
+	// Wrap long shout text to 65 chars to account for "Name shouts, ..."
+	rest = util.NormalizeAndWrap(rest, 65)
 
 	if isSneaking {
 		room.SendTextCommunication(fmt.Sprintf(`someone shouts, "<ansi fg="yellow">%s</ansi>"`, rest), user.UserId)

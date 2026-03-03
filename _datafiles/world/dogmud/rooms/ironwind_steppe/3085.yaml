@@ -1,0 +1,36 @@
+roomid: 3085
+zone: Ironwind Steppe
+title: Lower Wolf Run
+description: The ravine deepens into a narrow, shadowed corridor
+  where the walls are sheer packed earth and exposed stone. The
+  air is cool and still, sheltered from the steppe wind. Dense
+  moss grows on the damp lower walls, and the ground is soft
+  with accumulated leaf litter and decomposing vegetation. This
+  is the deepest part of Wolf Run, where the pack retreats
+  during storms or extreme heat.
+biome: land
+exits:
+  north:
+    roomid: 3084
+  west:
+    roomid: 3079
+  south:
+    roomid: 3086
+  east:
+    roomid: 3087
+nouns:
+  walls: Sheer ravine walls of packed earth and exposed stone,
+    rising well above head height. The lower sections are damp
+    and moss-covered, while the upper portions are dry and
+    crumbling.
+  moss: Thick green moss carpeting the damp lower walls, soft
+    and spongy to the touch. It holds moisture and contributes
+    to the cool, damp air of the deep ravine.
+spawninfo:
+- mobid: 205
+- mobid: 205
+- mobid: 223
+idlemessages:
+- The deep ravine is cool and silent, sounds absorbed by moss and earth.
+- Moss squelches underfoot, releasing the smell of damp earth.
+- The still air feels heavy and watchful.

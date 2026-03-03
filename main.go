@@ -23,6 +23,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/colorpatterns"
+	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -112,8 +113,8 @@ func main() {
 
 	// Apply the global roll-spread factor from config to the dice package.
 	// This is the single knob that scales stdDev for every stat-based roll.
-	// See _datafiles/config.yaml GamePlay.RollSpread for the full explanation.
-	dice.SetRollSpread(float64(configs.GetGamePlayConfig().RollSpread))
+	// See _datafiles/config.yaml Balance.RollSpread for the full explanation.
+	dice.SetRollSpread(float64(configs.GetBalanceConfig().RollSpread))
 
 	lastKnownVersion, err := version.Parse(string(configs.GetServerConfig().CurrentVersion))
 	if err != nil {
@@ -171,6 +172,10 @@ func main() {
 	// Older versions of GoMud may not have this folder present.
 	// Also deleting the folder is a quick way to reset instance state, so this corrects that if it happens.
 	os.Mkdir(util.FilePath(configs.GetFilePathsConfig().DataFiles.String(), `/`, `rooms.instances`), os.ModeDir|0755)
+	os.Mkdir(util.FilePath(configs.GetFilePathsConfig().DataFiles.String(), `/`, `mobs.instances`), os.ModeDir|0755)
+
+	// Prune stale mob instance saves
+	mobs.PruneStaleInstances(int(configs.GetBalanceConfig().MobInstanceMaxAgeDays))
 
 	// Register the plugin filesystem with the template system
 	templates.RegisterFS(plugins.GetPluginRegistry())
@@ -332,6 +337,15 @@ func main() {
 
 	// Just a goroutine that spins its wheels until the program shuts down")
 	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				mudlog.Error("PANIC", "error", r)
+				s := string(debug.Stack())
+				for _, str := range strings.Split(s, "\n") {
+					mudlog.Error("PANIC", "stack", str)
+				}
+			}
+		}()
 		for {
 			mudlog.Warn("Waiting on workers")
 			// sleep for 3 seconds
@@ -1036,6 +1050,7 @@ func loadAllDataFiles(isReload bool) {
 	keywords.LoadAliases(plugins.GetPluginRegistry())
 	mutators.LoadDataFiles()
 	colorpatterns.LoadColorPatterns()
+	combat.LoadTauntMessageFiles()
 	audio.LoadAudioConfig()
 	characters.CompileAdjectiveSwaps() // This should come after loading color patterns.
 }

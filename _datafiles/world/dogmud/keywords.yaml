@@ -50,6 +50,7 @@ help:
       - ask
       - quests
     combat:
+      - assist
       - attack
       - bash
       - break

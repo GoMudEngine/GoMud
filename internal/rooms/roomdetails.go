@@ -262,6 +262,20 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 
 	visibleFriendlyMobs := []string{}
 
+	// Count visible mob names for duplicate detection
+	mobNameCount := map[string]int{}
+	for _, mobInstanceId := range r.mobs {
+		if mob := mobs.GetInstance(mobInstanceId); mob != nil {
+			if mob.Character.HasFlagFromAnySource(buffs.Hidden) {
+				if !user.Character.Pet.Exists() || !user.Character.HasFlagFromAnySource(buffs.SeeHidden) {
+					continue
+				}
+			}
+			mobNameCount[mob.Character.Name]++
+		}
+	}
+	mobNameIndex := map[string]int{}
+
 	for idx, mobInstanceId := range r.mobs {
 		if mob := mobs.GetInstance(mobInstanceId); mob != nil {
 
@@ -274,6 +288,12 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 			tmpNameFlags := nameFlags
 
 			mobName := mob.Character.GetMobName(user.UserId, tmpNameFlags...)
+
+			// Assign duplicate index when multiple mobs share the same name
+			if mobNameCount[mob.Character.Name] > 1 {
+				mobNameIndex[mob.Character.Name]++
+				mobName.DuplicateIndex = mobNameIndex[mob.Character.Name]
+			}
 
 			for _, qFlag := range mob.QuestFlags {
 				if user.Character.HasQuest(qFlag) || (len(qFlag) >= 5 && qFlag[len(qFlag)-5:] == `start`) {

@@ -32,6 +32,7 @@ func init() {
 	events.RegisterListener(events.RoomChange{}, g.roomChangeHandler)
 	events.RegisterListener(events.PartyUpdated{}, g.onPartyChange)
 	events.RegisterListener(PartyUpdateVitals{}, g.onUpdateVitals)
+	events.RegisterListener(events.CharacterVitalsChanged{}, g.vitalsChangedHandler)
 
 }
 
@@ -47,6 +48,26 @@ type PartyUpdateVitals struct {
 
 func (g PartyUpdateVitals) Type() string     { return `PartyUpdateVitals` }
 func (g PartyUpdateVitals) UniqueID() string { return `PartyVitals-` + strconv.Itoa(g.LeaderId) }
+
+func (g *GMCPPartyModule) vitalsChangedHandler(e events.Event) events.ListenerReturn {
+
+	evt, typeOk := e.(events.CharacterVitalsChanged)
+	if !typeOk {
+		mudlog.Error("Event", "Expected Type", "CharacterVitalsChanged", "Actual Type", e.Type())
+		return events.Cancel
+	}
+
+	party := parties.Get(evt.UserId)
+	if party == nil {
+		return events.Continue
+	}
+
+	events.AddToQueue(PartyUpdateVitals{
+		LeaderId: party.LeaderUserId,
+	})
+
+	return events.Continue
+}
 
 func (g *GMCPPartyModule) roomChangeHandler(e events.Event) events.ListenerReturn {
 
@@ -180,6 +201,28 @@ func (g *GMCPPartyModule) GetPartyNode(party *parties.Party, gmcpModule string) 
 			hPct := int(math.Floor((float64(user.Character.Health) / float64(user.Character.HealthMax.Value)) * 100))
 			if hPct < 0 {
 				hPct = 0
+			} else if hPct > 100 {
+				hPct = 100
+			}
+
+			sPct := 0
+			if user.Character.StaminaMax.Value > 0 {
+				sPct = int(math.Floor((float64(user.Character.Stamina) / float64(user.Character.StaminaMax.Value)) * 100))
+				if sPct < 0 {
+					sPct = 0
+				} else if sPct > 100 {
+					sPct = 100
+				}
+			}
+
+			cPct := 0
+			if user.Character.ConvictionMax.Value > 0 {
+				cPct = int(math.Floor((float64(user.Character.Conviction) / float64(user.Character.ConvictionMax.Value)) * 100))
+				if cPct < 0 {
+					cPct = 0
+				} else if cPct > 100 {
+					cPct = 100
+				}
 			}
 
 			roomTitle, ok := roomTitles[user.Character.RoomId]
@@ -191,8 +234,10 @@ func (g *GMCPPartyModule) GetPartyNode(party *parties.Party, gmcpModule string) 
 			}
 
 			partyPayload.Vitals[user.Character.Name] = GMCPPartyModule_Payload_Vitals{
-				HealthPercent: hPct,
-				Location:      roomTitle,
+				HealthPercent:     hPct,
+				StaminaPercent:    sPct,
+				ConvictionPercent: cPct,
+				Location:          roomTitle,
 			}
 
 			if gmcpModule == `Party.Vitals` {
@@ -267,6 +312,8 @@ type GMCPPartyModule_Payload_User struct {
 }
 
 type GMCPPartyModule_Payload_Vitals struct {
-	HealthPercent int    `json:"health"`   // 1 = 1%, 23 = 23% etc.
-	Location      string `json:"location"` // Title of room they are in
+	HealthPercent     int    `json:"health"`     // 1 = 1%, 23 = 23% etc.
+	StaminaPercent    int    `json:"stamina"`    // 1 = 1%, 23 = 23% etc.
+	ConvictionPercent int    `json:"conviction"` // 1 = 1%, 23 = 23% etc.
+	Location          string `json:"location"`   // Title of room they are in
 }

@@ -1,0 +1,36 @@
+roomid: 3045
+zone: Ironwind Steppe
+title: Dry Creek Headwaters
+description: A shallow ravine opens here where seasonal rains once
+  fed a stream. The creek bed is dry now -- sun-bleached sand and
+  smooth river stones baking in the heat. The banks are low but
+  steep, cut into the steppe soil by years of water flow. Exposed
+  tree roots reach across the banks like grasping fingers, and
+  clumps of coarse grass grow wherever moisture lingers in the
+  sand. The ravine winds south, deepening as it goes.
+biome: land
+exits:
+  north:
+    roomid: 3014
+  northeast:
+    roomid: 3016
+  south:
+    roomid: 3046
+  east:
+    roomid: 3048
+nouns:
+  bed: A dry creek bed of pale sand and smooth, rounded stones.
+    The stones range from pebble-sized to fist-sized, all worn
+    smooth by water that no longer flows here. Dark watermarks
+    stain the bank walls at various heights.
+  roots: Exposed tree roots reaching across the eroded bank,
+    their bark worn smooth by seasonal flooding. Some form
+    natural handholds for climbing in and out of the ravine.
+spawninfo:
+- mobid: 208
+- mobid: 235
+- mobid: 238
+idlemessages:
+- Sand shifts in the dry creek bed as a breeze funnels down the ravine.
+- A crayfish shell lies bleached and empty on the sand.
+- Tree roots creak as the wind sways the trunks above.

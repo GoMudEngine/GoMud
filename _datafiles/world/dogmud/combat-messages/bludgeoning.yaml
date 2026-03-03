@@ -220,6 +220,8 @@ options:
         - 'Your <ansi fg="item">{itemname}</ansi> swings as you maintain the pressure!'
         - 'You are {momentum} as your weapon pounds into <ansi fg="{targettype}">{target}</ansi>!'
         - 'While {momentum}, you bash decisively at <ansi fg="{targettype}">{target}</ansi>!'
+        - 'Your <ansi fg="item">{itemname}</ansi> crashes into <ansi fg="{targettype}">{target}</ansi>''s {bodypart}!'
+        - 'You smash <ansi fg="{targettype}">{target}</ansi> square in the {bodypart}!'
       todefender:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> connects with their <ansi fg="item">{itemname}</ansi>, hitting you!'
@@ -232,6 +234,7 @@ options:
         - '<ansi fg="{sourcetype}">{source}</ansi> pivots and smashes through your guard!'
         - '<ansi fg="{sourcetype}">{source}</ansi> feints and brings their weapon down in a swift arc!'
         - '<ansi fg="{sourcetype}">{source}</ansi> draws your defense and strikes low!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> smashes you in the {bodypart}!'
         master:
         - '<ansi fg="{sourcetype}">{source}</ansi> reads your stance and smashes with precision!'
         - '<ansi fg="{sourcetype}">{source}</ansi> presses their advantage with a powerful bash!'
@@ -240,6 +243,7 @@ options:
         - '<ansi fg="{sourcetype}">{source}</ansi> follows through with a solid crush!'
         - '<ansi fg="{sourcetype}">{source}</ansi> capitalizes on their momentum and strikes true!'
         - '<ansi fg="{sourcetype}">{source}</ansi>''s weapon swings as they maintain pressure!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> crashes into your {bodypart}!'
       toroom:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> connects with their <ansi fg="item">{itemname}</ansi>, hitting <ansi fg="{targettype}">{target}</ansi>!'

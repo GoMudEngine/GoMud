@@ -1,0 +1,45 @@
+mobid: 228
+zone: Ironwind Steppe
+statpool: 220
+itemdropchance: 30
+hostile: true
+maxwander: 1
+groups:
+  - cave-pack
+archetype: fighting
+mutationchance: 70
+spawnmutations:
+  - dense-muscles
+  - tough-skin
+idlecommands:
+  - 'emote shifts its massive bulk, carapace scraping against stone'
+  - ''
+  - 'emote clicks its mandibles in a deep, resonant pattern'
+  - ''
+  - ''
+  - 'emote raises its armored head, antennae sweeping the air'
+  - ''
+activitylevel: 10
+character:
+  name: stone beetle queen
+  description: |
+    An enormous beetle the size of a pony, her carapace thick
+    and ridged like castle fortifications. The stone beetle queen
+    is the matriarch of the cave beetle colony, her body encased
+    in layers of hardened chitin reinforced with mineral deposits
+    absorbed from the cave stone itself. Her mandibles can shear
+    through solid rock, and her legs are powerful enough to crush
+    stone to gravel. She is slow but incredibly tough, her armored
+    body shrugging off blows that would fell lesser creatures. The
+    colony defends her with fanatical devotion.
+  speciesid: 12
+  level: 1
+  stats:
+    strength:
+      training: 15
+    vitality:
+      training: 15
+    dexterity:
+      training: -5
+    perception:
+      training: 5

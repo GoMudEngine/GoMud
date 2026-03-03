@@ -3,7 +3,7 @@ zone: Thornwall City
 title: Records Office
 description: A stone building with barred windows and a heavy door, the Records Office
   is where the city's bureaucracy lives. The interior is lined floor to ceiling with
-  shelves of bound ledgers, rolled parchments, and filing boxes labelled in a cramped,
+  <ansi fg="itemname">shelves</ansi> of bound ledgers, rolled parchments, and filing boxes labelled in a cramped,
   precise hand. A counter separates the public area from the stacks, and a clerk
   sits behind it with the expression of someone who has answered the same question
   ten thousand times. The air is dry and dusty, thick with the smell of old paper

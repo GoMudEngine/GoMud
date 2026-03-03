@@ -1,0 +1,38 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">taunt</ansi>
+
+The <ansi fg="command">taunt</ansi> command launches a verbal assault against your
+opponent, dealing <ansi fg="stat">conviction damage</ansi> instead of physical
+damage. It attacks their will to fight rather than their body.
+
+<ansi fg="yellow">Requirements:</ansi>
+
+  - Must be in active combat
+  - Cannot be used if special move cooldown is active
+
+<ansi fg="yellow">Usage:</ansi>
+
+  <ansi fg="command">taunt</ansi>
+  Hurl a scathing verbal attack at your current combat target
+
+<ansi fg="yellow">Mechanics:</ansi>
+
+  <ansi fg="stat">Hit Check:</ansi> Opposed roll
+    - Attacker: Charisma + Rhetoric skill
+    - Defender: Willpower + Rhetoric skill
+  <ansi fg="stat">Damage:</ansi> Based on Charisma, Rhetoric rank, and target's
+    conviction mitigation
+  <ansi fg="stat">Damage Type:</ansi> Conviction (mental/social)
+  <ansi fg="stat">Cooldown:</ansi> 5 rounds (shared with bash, trip, and kick)
+  <ansi fg="stat">Skill:</ansi> Progresses Rhetoric
+
+When a target's conviction reaches zero, they enter a
+<ansi fg="red">downed</ansi> state — overwhelmed and unable to fight. Conviction
+recovers over time like health and stamina.
+
+Armor with <ansi fg="stat">conviction mitigation</ansi> reduces taunt damage.
+Items like willpower amulets or enchanted robes may provide
+this protection.
+
+<ansi fg="yellow">See Also:</ansi>
+
+  <ansi fg="command">help rhetoric</ansi>, <ansi fg="command">help combat</ansi>, <ansi fg="command">help skills</ansi>

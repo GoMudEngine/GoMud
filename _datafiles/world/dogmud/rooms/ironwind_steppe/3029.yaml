@@ -1,0 +1,34 @@
+roomid: 3029
+zone: Ironwind Steppe
+title: Northern Steppe Edge
+description: The sagebrush flats reach their northern extent here,
+  the terrain rising into broken ground where grass gives way to
+  scrub and exposed rock. To the north, the land climbs steadily
+  toward distant cliff faces carved by wind and water. The soil
+  is thin and stony, and the vegetation clings to whatever
+  pockets of earth it can find. Animal trails converge here
+  before branching into the rougher terrain ahead.
+biome: land
+exits:
+  south:
+    roomid: 3028
+  east:
+    roomid: 3039
+  north:
+    roomid: 3100
+nouns:
+  cliffs: Distant cliff faces of pale stone, streaked with dark
+    mineral stains. Wind-carved hollows and overhangs are visible
+    even from this distance. The caves of the northern reaches
+    begin somewhere in those cliffs.
+  trails: Multiple animal trails converging from the flats to the
+    south, merging into a few well-worn paths heading north into
+    the broken ground. The traffic is considerable.
+spawninfo:
+- mobid: 207
+- mobid: 211
+- mobid: 232
+idlemessages:
+- The wind funnels between the rising rock formations with a low moan.
+- Pebbles skitter downslope, dislodged by some unseen animal.
+- The air grows cooler as the terrain rises toward the northern cliffs.

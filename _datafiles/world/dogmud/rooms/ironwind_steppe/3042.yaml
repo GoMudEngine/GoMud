@@ -1,0 +1,36 @@
+roomid: 3042
+zone: Ironwind Steppe
+title: Ridge Pine Grove
+description: A rare cluster of pines has found purchase on a broad
+  shelf on the ridge's southern face, sheltered from the worst
+  of the wind by an overhang above. The trees are small but
+  healthy, their dark green canopy providing actual shade -- a
+  luxury on the exposed ridge. The ground beneath them is
+  carpeted with dry needles that crunch underfoot. Bird nests
+  dot the upper branches and the air smells of warm pine resin.
+biome: cliffs
+exits:
+  north:
+    roomid: 3041
+  south:
+    roomid: 3043
+  east:
+    roomid: 3044
+nouns:
+  pines: A grove of perhaps a dozen pines, the tallest barely
+    fifteen feet high but healthy and dense. Their roots have
+    spread through cracks in the rock, slowly splitting the
+    stone. Sap beads on the bark in golden drops.
+  needles: A thick carpet of dry pine needles covering the rocky
+    shelf, soft and springy underfoot. The layer is inches deep
+    in places, accumulated over many seasons.
+  nests: Small bird nests woven into the pine branches, made of
+    grass, hair, and spider silk. Some hold tiny speckled eggs.
+spawninfo:
+- mobid: 214
+- mobid: 237
+- mobid: 234
+idlemessages:
+- Pine needles whisper overhead in a sound like gentle rain.
+- A bird hops between branches, chirping territorial warnings.
+- The scent of warm pine resin is thick and pleasant.

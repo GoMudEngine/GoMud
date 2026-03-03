@@ -1,0 +1,47 @@
+mobid: 223
+zone: Ironwind Steppe
+statpool: 130
+itemdropchance: 15
+hostile: true
+maxwander: 2
+groups:
+  - steppe-wolf
+  - animal
+  - canine
+archetype: fighting
+mutationchance: 50
+spawnmutations:
+  - dense-muscles
+combatcommands:
+  - howl
+  - hamstring
+idlecommands:
+  - 'emote limps slightly on an old injury but moves with deadly purpose'
+  - ''
+  - 'emote bares its fangs in a silent snarl, scars twisting its muzzle'
+  - ''
+  - consume
+  - 'emote watches with one good eye, the other clouded by an old wound'
+activitylevel: 20
+character:
+  name: scarred wolf
+  description: |
+    A battle-hardened wolf covered in old wounds -- a torn ear, a
+    clouded eye, deep scars crossing its muzzle and flanks. Despite
+    its injuries, the scarred wolf is more dangerous than the
+    younger pack members. Its muscles are dense and powerful,
+    hardened by years of survival on the steppe. It moves with
+    a slight limp but strikes with devastating force. The other
+    wolves give it respectful space, recognizing a veteran
+    fighter who has earned its scars.
+  speciesid: 2
+  level: 1
+  stats:
+    strength:
+      training: 12
+    vitality:
+      training: 8
+    dexterity:
+      training: 3
+    perception:
+      training: -3

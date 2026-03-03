@@ -235,6 +235,8 @@ options:
         - 'Your <ansi fg="item">{itemname}</ansi> arcs as you maintain the pressure while {momentum}!'
         - 'While {position}, you chop decisively at <ansi fg="{targettype}">{target}</ansi>!'
         - 'Your {stance} approach pays off as you land a solid cleave!'
+        - 'Your <ansi fg="item">{itemname}</ansi> bites into <ansi fg="{targettype}">{target}</ansi>''s {bodypart}!'
+        - 'You chop into <ansi fg="{targettype}">{target}</ansi>''s {bodypart} with a precise swing!'
       todefender:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> connects with their <ansi fg="item">{itemname}</ansi>, wounding you!'
@@ -247,6 +249,7 @@ options:
         - '<ansi fg="{sourcetype}">{source}</ansi> pivots and cleaves through your guard!'
         - '<ansi fg="{sourcetype}">{source}</ansi> feints and brings their blade down in a swift arc!'
         - '<ansi fg="{sourcetype}">{source}</ansi> draws your defense and hacks low!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> chops into your {bodypart}!'
         master:
         - '<ansi fg="{sourcetype}">{source}</ansi> reads your stance and chops with precision while {momentum}!'
         - '<ansi fg="{sourcetype}">{source}</ansi> presses their advantage with a sweeping hack, {position}!'
@@ -255,6 +258,7 @@ options:
         - '<ansi fg="{sourcetype}">{source}</ansi> follows through with a solid hack while {momentum}!'
         - '<ansi fg="{sourcetype}">{source}</ansi> capitalizes on their {stance} positioning and hacks true!'
         - '<ansi fg="{sourcetype}">{source}''s</ansi> blade arcs as they maintain pressure, {position}!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> cleaves into your {bodypart} with a brutal swing!'
       toroom:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> connects with their <ansi fg="item">{itemname}</ansi>, wounding <ansi fg="{targettype}">{target}</ansi>!'
@@ -303,6 +307,7 @@ options:
         - 'Following your momentum, you spin and cleave with great force!'
         - 'You surge forward on the offensive, your blade hacking deep!'
         - 'Maintaining your assault, you deliver a powerful cleaving blow!'
+        - 'Your <ansi fg="item">{itemname}</ansi> hacks deep into <ansi fg="{targettype}">{target}</ansi>''s {bodypart}!'
       todefender:
         beginner:
         - 'In a sweeping motion, <ansi fg="{sourcetype}">{source}</ansi> cleaves you with their <ansi fg="item">{itemname}</ansi>!'
@@ -323,6 +328,7 @@ options:
         - '<ansi fg="{sourcetype}">{source}</ansi> spins and cleaves with great force while {momentum}!'
         - '<ansi fg="{sourcetype}">{source}</ansi> surges forward on the offensive, blade hacking deep, {position}!'
         - '<ansi fg="{sourcetype}">{source}</ansi> maintains their assault with a powerful hack!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> hacks deep into your {bodypart}!'
       toroom:
         beginner:
         - 'In a sweeping motion, <ansi fg="{sourcetype}">{source}</ansi> cleaves <ansi fg="{targettype}">{target}</ansi> with their <ansi fg="item">{itemname}</ansi>!'

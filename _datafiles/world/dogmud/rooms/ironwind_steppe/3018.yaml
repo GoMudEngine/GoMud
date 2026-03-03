@@ -1,0 +1,37 @@
+roomid: 3018
+zone: Ironwind Steppe
+title: Sage Thicket
+description: The sagebrush grows unusually dense here, the bushes
+  crowding together into a thicket that reaches chest-height. The
+  narrow paths between the bushes are game trails, worn by animals
+  pushing through the growth. Visibility is limited to a few paces
+  in any direction. The sage scent is overwhelming, thick and
+  medicinal, and the buzzing of insects fills the air. Feathers
+  and tufts of fur caught on branches show this is heavily
+  trafficked by wildlife.
+biome: land
+exits:
+  north:
+    roomid: 3013
+  northwest:
+    roomid: 3017
+  south:
+    roomid: 3047
+  east:
+    roomid: 3019
+nouns:
+  thicket: A dense tangle of mature sagebrush, the oldest and
+    tallest on the flats. The bushes have grown together into
+    a near-impenetrable mass that provides excellent cover for
+    small and medium-sized animals.
+  feathers: Scattered feathers caught on sagebrush twigs --
+    brown and grey, probably from grouse or hawks. Mixed with
+    tufts of grey and brown fur from rabbits and rodents.
+spawninfo:
+- mobid: 211
+- mobid: 213
+- mobid: 214
+idlemessages:
+- Something crashes through the thicket ahead of you, unseen.
+- A grouse explodes from cover with a thunderous wingbeat.
+- The sage-heavy air catches in your throat.

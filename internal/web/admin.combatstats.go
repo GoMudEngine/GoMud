@@ -85,9 +85,28 @@ func combatStatsIndex(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func combatStatsResetAPI(w http.ResponseWriter, r *http.Request) {
+	cleared := combat.ResetBuffer()
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]int{"cleared": cleared})
+}
+
+func combatStatsExportAPI(w http.ResponseWriter, r *http.Request) {
+	count := combat.GetBufferLen()
+	combat.ExportNow()
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]int{"flushed": count})
+}
+
 func combatStatsAPI(w http.ResponseWriter, r *http.Request) {
 
-	summary := combat.GetSummary()
+	filters := combat.FilterParams{
+		SourceType: r.URL.Query().Get("source"),
+		TargetType: r.URL.Query().Get("target"),
+		Channel:    r.URL.Query().Get("channel"),
+	}
+
+	summary := combat.GetFilteredSummary(filters)
 
 	resp := combatStatsAPIResponse{
 		TotalEvents:      summary.TotalEvents,

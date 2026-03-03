@@ -81,6 +81,8 @@ func Sell(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 		// Track charisma use on successful sale
 		user.Character.OnStatUse("charisma", user.UserId)
+		// Stage 38.5.5: Merchant mob gains charisma from trade interactions
+		mob.Character.OnStatUse("charisma", 0)
 
 		break
 	}

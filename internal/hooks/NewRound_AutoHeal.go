@@ -52,52 +52,22 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 		inCombat := user.Character.Aggro != nil
 		healthStart := user.Character.Health
 
-		// ── Downed state: bleedout on all depleted pools, no regen ──
-		if user.Character.IsDisabled() {
+		// ── Downed state: health bleedout only ───────────────────────
+		// Only health causes death. Stamina and conviction bottom out at
+		// 0 and recover via normal regen — the resource depletion penalties
+		// already provide meaningful gameplay consequences for low pools.
+		if user.Character.Health < 1 {
 
-			// Health bleedout
-			if user.Character.Health < 1 {
-				if user.Character.Health <= -10 {
-					user.Command(`suicide`)
-					continue
-				}
-				user.Character.Health--
-				user.SendText(`<ansi fg="red">you are bleeding out!</ansi>`)
-				if room := rooms.LoadRoom(user.Character.RoomId); room != nil {
-					room.SendText(fmt.Sprintf(
-						`<ansi fg="username">%s</ansi> is <ansi fg="red">bleeding out</ansi>!`,
-						user.Character.Name), user.UserId)
-				}
+			if user.Character.Health <= -10 {
+				user.Command(`suicide`)
+				continue
 			}
-
-			// Stamina bleedout
-			if user.Character.Stamina < 1 {
-				if user.Character.Stamina <= -10 {
-					user.Command(`suicide`)
-					continue
-				}
-				user.Character.Stamina--
-				user.SendText(`<ansi fg="yellow">your body is giving out from exhaustion!</ansi>`)
-				if room := rooms.LoadRoom(user.Character.RoomId); room != nil {
-					room.SendText(fmt.Sprintf(
-						`<ansi fg="username">%s</ansi> is <ansi fg="yellow">collapsing from exhaustion</ansi>!`,
-						user.Character.Name), user.UserId)
-				}
-			}
-
-			// Conviction bleedout
-			if user.Character.Conviction < 1 {
-				if user.Character.Conviction <= -10 {
-					user.Command(`suicide`)
-					continue
-				}
-				user.Character.Conviction--
-				user.SendText(`<ansi fg="magenta">your will to go on is fading!</ansi>`)
-				if room := rooms.LoadRoom(user.Character.RoomId); room != nil {
-					room.SendText(fmt.Sprintf(
-						`<ansi fg="username">%s</ansi> is <ansi fg="magenta">losing the will to go on</ansi>!`,
-						user.Character.Name), user.UserId)
-				}
+			user.Character.Health--
+			user.SendText(`<ansi fg="red">you are bleeding out!</ansi>`)
+			if room := rooms.LoadRoom(user.Character.RoomId); room != nil {
+				room.SendText(fmt.Sprintf(
+					`<ansi fg="username">%s</ansi> is <ansi fg="red">bleeding out</ansi>!`,
+					user.Character.Name), user.UserId)
 			}
 
 			// If it has changed, send an update
@@ -106,7 +76,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 				events.AddToQueue(events.CharacterVitalsChanged{UserId: user.UserId})
 			}
 
-			continue // Skip all regen while downed
+			continue // Skip all regen while health is depleted
 		}
 
 		// ── Not downed: reset downed counter, normal regen ──────────
@@ -171,6 +141,19 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 				}
 				user.SendText(`<ansi fg="green">The poison burns through your veins!</ansi>`)
 			}
+
+			// Stage 42.7: Apply bleed DoT damage
+			if user.Character.HasCondition(characters.ConditionBleeding) {
+				bleedDmg := int(user.Character.GetConditionMagnitude(characters.ConditionBleeding))
+				if bleedDmg < 1 {
+					bleedDmg = 1
+				}
+				user.Character.Health -= bleedDmg
+				if user.Character.Health < -10 {
+					user.Character.Health = -10
+				}
+				user.SendText(`<ansi fg="red">Blood seeps from your wounds!</ansi>`)
+			}
 		}
 
 		// Regenerate Stamina - slower during combat
@@ -198,6 +181,17 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 			user.Character.Conviction = user.Character.ConvictionMax.Value
 		}
 
+		// Regen-based stat progression: smooth chance based on pool depletion
+		user.Character.OnRegenTick(
+			user.Character.Health, user.Character.HealthMax.Value,
+			[]string{"vitality", "willpower"}, user.UserId)
+		user.Character.OnRegenTick(
+			user.Character.Stamina, user.Character.StaminaMax.Value,
+			[]string{"strength", "vitality"}, user.UserId)
+		user.Character.OnRegenTick(
+			user.Character.Conviction, user.Character.ConvictionMax.Value,
+			[]string{"willpower", "charisma"}, user.UserId)
+
 		// If it has changed, send an update
 		if user.Character.Health-healthStart != 0 {
 
@@ -211,7 +205,6 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 	}
 
 	// ── NPC / Mob regen ─────────────────────────────────────────────────────
-	b := configs.GetBalanceConfig()
 	for _, mobInstId := range mobs.GetAllMobInstanceIds() {
 		mob := mobs.GetInstance(mobInstId)
 		if mob == nil || mob.Character.Health < 1 {
@@ -222,10 +215,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 
 		// Health regen (out of combat only, unless heal-spell ConditionRegen)
 		if !mobInCombat {
-			hpRegen := int(float64(b.MobHealthRegenPct) * float64(mob.Character.HealthMax.Value))
-			if hpRegen < 1 {
-				hpRegen = 1
-			}
+			hpRegen := mob.Character.HealthPerRound()
 			// ConditionRegen acts as a multiplier on base regen
 			if mob.Character.HasCondition(characters.ConditionRegen) {
 				regenMult := mob.Character.GetConditionMagnitude(characters.ConditionRegen)
@@ -241,7 +231,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 			// In combat: only ConditionRegen applies
 			if mob.Character.HasCondition(characters.ConditionRegen) {
 				regenMult := mob.Character.GetConditionMagnitude(characters.ConditionRegen)
-				hpRegen := int(float64(b.MobHealthRegenPct) * float64(mob.Character.HealthMax.Value) * regenMult)
+				hpRegen := int(float64(mob.Character.HealthPerRound()) * regenMult)
 				if hpRegen < 1 {
 					hpRegen = 1
 				}
@@ -253,10 +243,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 		}
 
 		// Stamina regen (1/4 rate in combat)
-		spRegen := int(float64(b.MobStaminaRegenPct) * float64(mob.Character.StaminaMax.Value))
-		if spRegen < 1 {
-			spRegen = 1
-		}
+		spRegen := mob.Character.StaminaPerRound()
 		if mobInCombat {
 			spRegen = spRegen / 4
 			if spRegen < 1 {
@@ -269,14 +256,22 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 		}
 
 		// Conviction regen
-		cpRegen := int(float64(b.MobConvictionRegenPct) * float64(mob.Character.ConvictionMax.Value))
-		if cpRegen < 1 {
-			cpRegen = 1
-		}
+		cpRegen := mob.Character.ConvictionPerRound()
 		mob.Character.Conviction += cpRegen
 		if mob.Character.Conviction > mob.Character.ConvictionMax.Value {
 			mob.Character.Conviction = mob.Character.ConvictionMax.Value
 		}
+
+		// Regen-based stat progression for mobs (gated inside OnRegenTick)
+		mob.Character.OnRegenTick(
+			mob.Character.Health, mob.Character.HealthMax.Value,
+			[]string{"vitality", "willpower"}, 0)
+		mob.Character.OnRegenTick(
+			mob.Character.Stamina, mob.Character.StaminaMax.Value,
+			[]string{"strength", "vitality"}, 0)
+		mob.Character.OnRegenTick(
+			mob.Character.Conviction, mob.Character.ConvictionMax.Value,
+			[]string{"willpower", "charisma"}, 0)
 
 		// Phase 25.1: Apply poison DoT damage to mobs
 		if mob.Character.HasCondition(characters.ConditionPoisoned) {
@@ -285,6 +280,18 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 				poisonDmg = 1
 			}
 			mob.Character.Health -= poisonDmg
+			if mob.Character.Health < 1 {
+				mob.Character.Health = 0
+			}
+		}
+
+		// Stage 42.7: Apply bleed DoT damage to mobs
+		if mob.Character.HasCondition(characters.ConditionBleeding) {
+			bleedDmg := int(mob.Character.GetConditionMagnitude(characters.ConditionBleeding))
+			if bleedDmg < 1 {
+				bleedDmg = 1
+			}
+			mob.Character.Health -= bleedDmg
 			if mob.Character.Health < 1 {
 				mob.Character.Health = 0
 			}

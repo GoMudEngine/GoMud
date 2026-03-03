@@ -1,0 +1,54 @@
+mobid: 219
+zone: Ironwind Steppe
+defaultMood: hostile
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "The goblin shaman hisses through sharp teeth and waves a gnarled hand. 'Go away, tall-thing. This place not yours.'"
+      - "Yellow eyes narrow with suspicion. 'Why you come here? Leave or bones join the pile.'"
+
+  - keywords: ["quest", "task", "help", "work"]
+    responses:
+      - "The shaman cackles. 'You want task? Here is task -- leave goblin lands and not come back. Simple task for simple mind.'"
+
+  - keywords: ["clan", "tribe", "goblin", "camp"]
+    responses:
+      - "'We are the Ironwind clan. Born in stone, raised in shadow. The coulees are ours -- always were, always will be. Your city is the intruder, not us.'"
+
+  - keywords: ["shaman", "magic", "spell", "hex"]
+    responses:
+      - "The shaman rattles its charm-hung staff and grins. 'The old ways are strong here. Stone speaks to those who listen. You hear nothing -- too much noise in tall-thing heads.'"
+
+  - keywords: ["wolf", "boar", "steppe", "pack"]
+    responses:
+      - "'The wolves know their place. The boars know theirs. Only tall-things wander where they should not.' The shaman gestures east. 'The caves are worse. Old things live there. Even goblins know to stay away.'"
+
+  - keywords: ["cave", "wyrm", "deep"]
+    responses:
+      - "The shaman's bravado falters. 'The deep caves are forbidden. Something lives there that was old when the world was young. Even the spirits warn us away.'"
+
+  - keywords: [""]
+    responses:
+      - "The goblin shaman watches you with suspicious yellow eyes."
+      - "A low growl rises from the shaman's throat."
+
+tree:
+  root:
+    text: "The goblin shaman draws itself up to its full -- if unimpressive -- height and fixes you with a glare. Charms rattle on its staff as it plants the butt on the stone floor. 'Tall-thing comes to goblin home. Brave or stupid -- same thing, usually.' The other goblins watch to see what the shaman will do."
+    hints: "Ask about the clan, the steppe dangers, or the caves to the north."
+
+  nodes:
+    - id: clan_history
+      triggers: ["clan", "tribe", "goblin", "history", "ironwind"]
+      text: "'The Ironwind clan has lived in these coulees since before the tall-things built their stone nest to the west.' The shaman's voice takes on a rhythmic, almost chanting quality. 'We were here when the wolves first came. We were here when the boars claimed the mud. We will be here when your city is dust.'"
+      hints: "Ask about the caves or the dangers of the steppe."
+      unlocks: ["cave_warning"]
+
+    - id: cave_warning
+      triggers: ["cave", "wyrm", "deep", "north", "danger"]
+      requires: ["clan_history"]
+      text: "The shaman lowers its voice, and for the first time its hostility gives way to genuine unease. 'The caves to the north -- the Windscour, the tall-things call them. Something lives in the deep. Old. Patient. Even goblins will not go there. The stone itself remembers what it is.' The shaman shudders. 'You want to die, go north. You want to live, go west.'"
+
+memory:
+  expiryPeriod: "1h"

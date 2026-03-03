@@ -1,0 +1,31 @@
+mobid: 214
+zone: Ironwind Steppe
+statpool: 35
+itemdropchance: 5
+hostile: false
+maxwander: 3
+groups:
+  - animal
+idlecommands:
+  - 'emote pecks at seeds on the ground, bobbing its head'
+  - ''
+  - ''
+  - 'emote puffs out its chest feathers in a brief display'
+  - ''
+  - 'emote clucks softly and scratches at the dirt'
+activitylevel: 20
+character:
+  name: sage grouse
+  description: |
+    A plump ground-dwelling bird with mottled brown and white
+    plumage that blends into the sagebrush. The sage grouse
+    spends most of its time on foot, walking through the brush
+    and pecking at seeds, insects, and sage leaves. It can fly
+    in short, explosive bursts when startled, but prefers to
+    crouch and hide. The male has a distinctive white chest ruff
+    that it inflates during mating displays.
+  speciesid: 9
+  level: 1
+  stats:
+    perception:
+      training: 5

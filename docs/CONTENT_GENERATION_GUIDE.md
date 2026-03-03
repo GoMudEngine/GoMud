@@ -12,6 +12,8 @@ This guide explains how to use Claude Code's slash commands to generate new worl
 | A single room | `/new-room` |
 | A weapon, armor piece, or consumable | `/new-item` |
 | A full new zone (planning only) | `/zone-sketch` |
+| A new quest (planning)  | `/sketch-quest` |
+| A new quest (execution) | `/new-quest <plan-file>` |
 
 For spells and buffs, use the schema docs as reference and write the YAML manually for now — the `/new-mob` and `/new-item` commands will reference buff IDs as needed.
 
@@ -172,7 +174,48 @@ After generating content, verify it in-game:
 
 ---
 
-## 6. ConvertForFilename Reference
+## 6. Building a Quest: `/sketch-quest` → `/new-quest`
+
+The recommended workflow for adding a new quest:
+
+### Step 1: Plan with `/sketch-quest`
+
+```
+/sketch-quest "delivery quest where player carries a report from Harn to a clerk in Thornwall"
+```
+
+The command reads `world.md`, existing quests, and dialogue examples, then
+produces a structured planning document covering:
+- Quest ID, steps, and gating diagram
+- Alternative paths (e.g. `give` vs `ask` for item delivery)
+- Every file that must be created or modified
+- A gotchas checklist (triggers, item consumption, mob groups, etc.)
+- A verification plan for in-game testing
+
+**No game files are written.** Review the output in
+`_datafiles/quest_plans/`, adjust as needed, then proceed to step 2.
+
+### Step 2: Generate with `/new-quest`
+
+```
+/new-quest 14-the_lost_caravan.md
+```
+
+The command reads the approved plan and generates all files in order:
+quest YAML, items, dialogue, room scripts, mob scripts, and YAML
+modifications. It runs the gotchas checklist on each file before writing,
+then builds the project to catch errors.
+
+### Step 3: Clean up and test
+
+After generation:
+1. Delete any stale instance saves listed in the output
+2. Restart the server
+3. Follow the verification plan from the sketch document
+
+---
+
+## 7. ConvertForFilename Reference
 
 The engine derives expected filenames using `ConvertForFilename()`. The rules:
 

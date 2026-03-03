@@ -1,6 +1,8 @@
 // Basin Gate - Room 102
-// Basin Warden checks quest state and responds accordingly.
+// Basin Warden checks quest state and gives appropriate dialogue.
 // Steps: cave -> warden -> end
+// Gate starts locked (difficulty 255). Unlocked via room.SetLocked()
+// when the player reaches quest step 1-cave or has already graduated.
 
 const wardenMobId = 56;
 
@@ -12,15 +14,15 @@ function onEnter(user, room) {
     }
 
     if ( user.HasQuest("1-end") ) {
-        // Already graduated -- brief acknowledgment, open gate quietly
-        warden.Command('emote gives a brief nod of recognition.', 0.5);
-        warden.Command('say Gate is open to you. Safe travels out there.', 1.5);
+        // Already graduated -- brief acknowledgment
         room.SetLocked("south", false);
+        warden.Command('emote gives a brief nod of recognition.', 0.5);
+        warden.Command('say Safe travels out there.', 1.5);
 
     } else if ( user.HasQuest("1-warden") ) {
-        // Already got warden speech but hasn't left yet -- just open gate
-        warden.Command('emote nods toward the open gate.', 0.5);
+        // Already got warden speech but hasn't left yet
         room.SetLocked("south", false);
+        warden.Command('emote nods toward the open gate.', 0.5);
 
     } else if ( user.HasQuest("1-cave") ) {
         // First-time graduation -- warden speech, then end step
@@ -29,7 +31,7 @@ function onEnter(user, room) {
         warden.Command('say The gate is open. Whatever you find south of here -- remember what you learned in the basin.', 4.0);
         warden.Command('say One last thing: the world is larger than what six instructors can cover. Type <ansi fg="command">help</ansi> to see what documentation is available -- there is more to learn out there than what we teach here.', 5.5);
         warden.Command('say The south road reaches Confluence within a day\'s walk. Follow the river north from there and you will find New Plymouth -- the largest settlement in this part of Gaius. That is where most people head first.', 7.0);
-        warden.Command('emote steps aside and unlatches the gate with a single practiced motion.', 9.0);
+        warden.Command('emote steps aside and gestures toward the road south.', 9.0);
         room.SetLocked("south", false);
         user.GiveQuest("1-warden");
         user.GiveQuest("1-end");
@@ -38,22 +40,18 @@ function onEnter(user, room) {
         // Hasn't started trials at all
         warden.Command('say Hold.', 1.0);
         warden.Command('say You have not begun the Sanctum Trials. Speak with the Chrysalis Priest in the Academy Hall -- north to Town Square, then north and east.', 2.0);
-        room.SetLocked("south", true);
 
     } else {
-        // In progress -- short check-in, no lecture
+        // In progress -- short check-in
         warden.Command('emote glances at you and returns their gaze to the road.', 0.5);
         warden.Command('say Not yet. Finish your trials and come back.', 1.5);
         warden.Command('say Type <ansi fg="command">quest</ansi> if you have lost your way.', 2.5);
-        room.SetLocked("south", true);
     }
 
     return true;
 }
 
 function onExit(user, room) {
-    // Relock the gate after the player passes through -- each player earns their own exit
-    room.SetLocked("south", true);
 }
 
 function onCommand(cmd, rest, user, room) {
@@ -76,6 +74,4 @@ function onCommand(cmd, rest, user, room) {
 }
 
 function onLoad(room) {
-    // Gate starts locked
-    room.SetLocked("south", true);
 }

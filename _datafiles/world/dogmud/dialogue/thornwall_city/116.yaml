@@ -1,0 +1,39 @@
+mobid: 116
+zone: Thornwall City
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Sit, if you like. Do not touch my cup."
+      - "Hm."
+
+  - keywords: ["gossip", "news", "rumor", "rumors", "talk", "word", "quest", "task"]
+    responses:
+      - "Seen it before. Different names."
+      - "History repeats. I just remember which parts."
+      - "The world turns. Sometimes I mention which direction."
+
+  - keywords: ["wrex", "name", "who"]
+    responses:
+      - "Wrex."
+      - "A man who has been here a long time. That is enough."
+
+  - keywords: [""]
+    responses:
+      - "Hm."
+      - "..."
+
+tree:
+  root:
+    text: "..."
+    hints: "Ask about gossip, news, or rumors."
+
+  nodes:
+    - id: gossip_prompt
+      triggers: ["gossip", "news", "rumor", "rumors", "talk", "word", "quest", "task"]
+      text: "I have watched this city for longer than most of its buildings have stood. The names change, the patterns do not. When something happens that breaks the pattern -- that is when I take notice. Sit here long enough, and you will hear me say something worth remembering."
+      hints: "Wrex shares observations when the world does something unexpected."
+
+memory:
+  expiryPeriod: "30m"

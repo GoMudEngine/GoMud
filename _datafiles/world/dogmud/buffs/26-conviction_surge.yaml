@@ -2,7 +2,7 @@ buffid: 26
 name: Conviction Surge
 description: Your conviction bolsters your strength, empowering your attacks.
 triggerrate: 1 round
-triggercount: 8
+triggercount: 16
 flags:
   - damage-bonus
 statmods:

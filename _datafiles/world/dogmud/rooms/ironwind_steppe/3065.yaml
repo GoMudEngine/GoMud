@@ -1,0 +1,35 @@
+roomid: 3065
+zone: Ironwind Steppe
+title: Spider Den
+description: This dead-end coulee is draped in thick spider webs that
+  stretch from wall to wall in overlapping layers. The silk is old
+  and dusty in places, fresh and sticky in others. Husks of trapped
+  insects and small animals dangle in the webs like grim ornaments.
+  The coulee walls are pocked with small caves and crevices where
+  the spiders nest. The air is still and heavy, and visibility
+  through the web layers is limited.
+biome: cliffs
+exits:
+  north:
+    roomid: 3063
+  west:
+    roomid: 3062
+  northwest:
+    roomid: 3044
+nouns:
+  webs: Layer upon layer of spider silk spanning the coulee,
+    from fresh and glistening to old and dust-caked. The
+    construction is not random -- the webs form a deliberate
+    three-dimensional trap, funneling prey toward the center.
+  husks: Dried husks of prey animals wrapped in silk and
+    suspended in the web. Most are insects, but a few are
+    disturbingly large -- a rat, what might have been a bird,
+    and something bigger wrapped too thoroughly to identify.
+spawninfo:
+- mobid: 220
+- mobid: 220
+- mobid: 220
+idlemessages:
+- A web strand vibrates with a low hum as something moves in it.
+- Silk brushes your face -- sticky and strong.
+- Something large shifts in a dark crevice, multiple legs folding.

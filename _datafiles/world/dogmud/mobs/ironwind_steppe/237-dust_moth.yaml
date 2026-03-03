@@ -1,0 +1,27 @@
+mobid: 237
+zone: Ironwind Steppe
+statpool: 15
+itemdropchance: 0
+hostile: false
+maxwander: 3
+groups:
+  - vermin
+idlecommands:
+  - 'emote flutters erratically, wings catching the light'
+  - ''
+  - ''
+  - 'emote settles on a grass stem, wings folding closed'
+  - ''
+activitylevel: 15
+character:
+  name: dust moth
+  description: |
+    A large moth with powdery wings in shades of tan and grey,
+    patterned with eye-spots that flash when the wings open. The
+    dust moth flutters through the steppe grass on warm evenings,
+    drawn to flowers and the warmth of stones. Its flight is
+    erratic and seemingly random, but there is a pattern to its
+    movements -- it follows scent trails invisible to larger
+    creatures. Harmless and fragile.
+  speciesid: 12
+  level: 1

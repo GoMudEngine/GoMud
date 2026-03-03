@@ -5,5 +5,7 @@ description: Snug leggings of tanned hide, laced tight along the outer seam.
   They protect the thighs and shins without restricting movement too badly.
 type: legs
 subtype: wearable
+value: 10
 damagereduction: 4
+physical_mitigation: 4
 escapemodifier: 0.5

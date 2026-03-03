@@ -1,0 +1,35 @@
+mobid: 220
+zone: Ironwind Steppe
+statpool: 90
+itemdropchance: 10
+hostile: true
+maxwander: 2
+groups:
+  - animal
+archetype: fighting
+mutationchance: 15
+idlecommands:
+  - 'emote hangs motionless in a web, legs spread wide'
+  - ''
+  - ''
+  - 'emote shifts position with sudden, liquid speed'
+  - ''
+activitylevel: 10
+character:
+  name: coulee spider
+  description: |
+    A large spider with a body the size of a clenched fist and
+    legs that span nearly a foot. Its carapace is dark and glossy,
+    patterned with pale markings that resemble the basalt's mineral
+    veins -- natural camouflage for its rocky habitat. The coulee
+    spider builds thick, funnel-shaped webs in rock crevices and
+    waits motionless for vibrations. Its bite is not deadly but
+    causes painful swelling and numbness. Multiple spiders often
+    inhabit the same stretch of coulee.
+  speciesid: 17
+  level: 1
+  stats:
+    dexterity:
+      training: 8
+    perception:
+      training: 5

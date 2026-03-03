@@ -1,0 +1,39 @@
+mobid: 210
+zone: Ironwind Steppe
+statpool: 75
+itemdropchance: 10
+hostile: true
+maxwander: 3
+groups:
+  - raptor-flock
+  - animal
+archetype: fighting
+mutationchance: 20
+idlecommands:
+  - 'emote mantles its wings over something on the ground'
+  - ''
+  - 'emote tears at a scrap of meat with its hooked beak'
+  - ''
+  - ''
+  - 'emote fixes you with a fierce, golden stare'
+activitylevel: 20
+character:
+  name: ridge raptor
+  description: |
+    A large raptor with dark plumage and a wingspan wider than a
+    person is tall. The ridge raptor nests on the high ledges of
+    Ironwind Ridge and hunts the surrounding steppe with ruthless
+    efficiency. Its talons are thick and curved, built for
+    gripping struggling prey, and its beak can crack bone. More
+    aggressive than the common steppe hawk, the ridge raptor will
+    defend its territory against anything that comes too close to
+    its nesting grounds.
+  speciesid: 9
+  level: 1
+  stats:
+    strength:
+      training: 5
+    dexterity:
+      training: 5
+    perception:
+      training: 3

@@ -1,0 +1,19 @@
+itemid: 10019
+name: iron spear
+namesimple: spear
+description: A regulation spear issued to city garrison troops. The iron head
+  is leaf-shaped and well-honed, mounted on an ash shaft wrapped in leather at
+  the grip. Practical and reliable rather than elegant.
+type: weapon
+hands: 1
+subtype: piercing
+weight: 5.5
+speedmultiplier: 0.65
+staminacost: 7
+grapplemodifier: -2.5
+damage:
+  basedamage: 6
+  variance: 2
+damage_multiplier: 0.80
+parryrating: 8
+value: 15

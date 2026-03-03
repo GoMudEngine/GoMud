@@ -85,6 +85,7 @@ type Character struct {
 	ConsecutiveHits          int                            `yaml:"-"`                       // Stage 9.4: Consecutive successful hits for momentum. Don't store this.
 	ConsecutiveMisses        int                            `yaml:"-"`                       // Stage 9.4: Consecutive misses for momentum. Don't store this.
 	ExtraArms                int                            `yaml:"-"`                       // Derived from extra-arms mutation level (0-2). Don't store this.
+	IsMob                    bool                           `yaml:"-"`                       // True for mob characters; used for progression caps. Don't store this.
 	Skills                   map[string]int                 `yaml:"skills,omitempty"`        // The skills the character has, and what level they are at
 	Mutations        map[string]int                 `yaml:"mutations,omitempty"`     // mutationId → level (Stage 12.1)
 	MutationProgress float64                        `yaml:"mutationprogress,omitempty"` // accumulates toward next mutation (Stage 12.1)
@@ -122,14 +123,12 @@ func New() *Character {
 		Skills:         initAllSkills(),
 		Gold:           25,
 		Bank:           100,
-		// Phase 25.1: Starting spell reduced to 1 — everything else discovered through casting.
+		// Phase 25.1: Starting spells — attack + utility light for dark zones.
 		SpellBook: map[string]int{
-			"conviction-spike": 1, // Conviction Spike — the only starting spell
+			"conviction-spike": 1, // Conviction Spike — starting attack spell
+			"chrysalis-glow":   1, // Chrysalis Glow — light source for caves
 		},
-		KnownRecipes: map[string]int{
-			"iron-dagger":      1,
-			"healing-poultice": 1,
-		},
+		KnownRecipes: crafting.GetStarterRecipes(), // All recipes with skill_minimum == 0
 		CharmedMobs:    []int{},
 		Items:          []items.Item{},
 		Buffs:          buffs.New(),
@@ -957,8 +956,104 @@ func (c *Character) GetDefense() int {
 	return reduction
 }
 
+// GetPhysicalMitigation returns total physical mitigation as a fraction (0.0–1.0).
+// Sources: equipment physical_mitigation (falls back to DamageReduction for
+// unmigrated items), mutations, species natural armor, shield spells.
+func (c *Character) GetPhysicalMitigation() float64 {
+	total := 0
+
+	slots := []items.Item{
+		c.Equipment.Weapon, c.Equipment.Offhand,
+		c.Equipment.ExtraArm1, c.Equipment.ExtraArm2,
+		c.Equipment.Head, c.Equipment.Neck, c.Equipment.Body,
+		c.Equipment.Belt, c.Equipment.Gloves, c.Equipment.Ring,
+		c.Equipment.Legs, c.Equipment.Feet,
+	}
+	for _, slot := range slots {
+		if slot.ItemId <= 0 {
+			continue
+		}
+		spec := slot.GetSpec()
+		total += spec.PhysicalMitigation
+	}
+
+	// Shield condition (Minor Shield spell)
+	total += int(c.GetConditionMagnitude(ConditionShield))
+
+	// Mutation natural armor
+	total += mutations.GetNaturalArmor(c.Mutations)
+
+	// Species natural armor
+	if speciesInfo := species.GetSpecies(c.SpeciesId); speciesInfo != nil {
+		total += speciesInfo.NaturalArmor
+	}
+
+	return float64(total) / 100.0
+}
+
+// GetMagicalMitigation returns total magical mitigation as a fraction (0.0–1.0).
+// Sources: equipment magical_mitigation, mutation magical resistance.
+func (c *Character) GetMagicalMitigation() float64 {
+	total := 0
+
+	slots := []items.Item{
+		c.Equipment.Weapon, c.Equipment.Offhand,
+		c.Equipment.ExtraArm1, c.Equipment.ExtraArm2,
+		c.Equipment.Head, c.Equipment.Neck, c.Equipment.Body,
+		c.Equipment.Belt, c.Equipment.Gloves, c.Equipment.Ring,
+		c.Equipment.Legs, c.Equipment.Feet,
+	}
+	for _, slot := range slots {
+		if slot.ItemId <= 0 {
+			continue
+		}
+		spec := slot.GetSpec()
+		total += spec.MagicalMitigation
+	}
+
+	// Mutation magical resistance (returned as fraction 0.0–1.0, convert to percentage points)
+	total += int(mutations.GetMagicalResistance(c.Mutations) * 100)
+
+	return float64(total) / 100.0
+}
+
+// GetConvictionMitigation returns total conviction mitigation as a fraction (0.0–1.0).
+// Sources: equipment conviction_mitigation, mutation conviction resistance.
+func (c *Character) GetConvictionMitigation() float64 {
+	total := 0
+
+	slots := []items.Item{
+		c.Equipment.Weapon, c.Equipment.Offhand,
+		c.Equipment.ExtraArm1, c.Equipment.ExtraArm2,
+		c.Equipment.Head, c.Equipment.Neck, c.Equipment.Body,
+		c.Equipment.Belt, c.Equipment.Gloves, c.Equipment.Ring,
+		c.Equipment.Legs, c.Equipment.Feet,
+	}
+	for _, slot := range slots {
+		if slot.ItemId <= 0 {
+			continue
+		}
+		spec := slot.GetSpec()
+		total += spec.ConvictionMitigation
+	}
+
+	// Mutation conviction resistance (returned as fraction 0.0–1.0, convert to percentage points)
+	total += int(mutations.GetConvictionResistance(c.Mutations) * 100)
+
+	return float64(total) / 100.0
+}
+
 func (c *Character) GetMobName(viewingUserId int, renderFlags ...NameRenderFlag) FormattedName {
 	return c.getFormattedName(viewingUserId, `mobname`, renderFlags...)
+}
+
+// GetMobNameIndexed returns a formatted mob name with a duplicate index marker.
+// When dupIndex > 0, the name displays as "name #N" with shifted colors for
+// indices 2+. Use this when multiple mobs share the same name in a room.
+func (c *Character) GetMobNameIndexed(viewingUserId int, dupIndex int, renderFlags ...NameRenderFlag) FormattedName {
+	f := c.getFormattedName(viewingUserId, `mobname`, renderFlags...)
+	f.DuplicateIndex = dupIndex
+	return f
 }
 
 func (c *Character) GetPlayerName(viewingUserId int, renderFlags ...NameRenderFlag) FormattedName {
@@ -1606,7 +1701,7 @@ func (c *Character) GetDefenseScore(defenseType string) float64 {
 
 // GetDefenseStaminaCost returns stamina cost for a defense type (Stage 7.1)
 func (c *Character) GetDefenseStaminaCost(defenseType string) int {
-	cfg := configs.GetGamePlayConfig()
+	bal := configs.GetBalanceConfig()
 
 	baseCost := 0
 	multiplier := 1.0
@@ -1614,13 +1709,13 @@ func (c *Character) GetDefenseStaminaCost(defenseType string) int {
 	switch defenseType {
 	case DefenseDodge:
 		baseCost = 2
-		multiplier = float64(cfg.DodgeMultiplier)
+		multiplier = float64(bal.DodgeMultiplier)
 	case DefenseParry:
 		baseCost = 4
-		multiplier = float64(cfg.ParryMultiplier)
+		multiplier = float64(bal.ParryMultiplier)
 	case DefenseBlock:
 		baseCost = 5
-		multiplier = float64(cfg.BlockMultiplier)
+		multiplier = float64(bal.BlockMultiplier)
 	default:
 		return 0
 	}
@@ -1854,7 +1949,7 @@ func (c *Character) IsAggro(targetUserId int, targetMobInstanceId int) bool {
 }
 
 func (c *Character) IsDisabled() bool {
-	return c.Health <= 0 || c.Stamina <= 0 || c.Conviction <= 0
+	return c.Health <= 0
 }
 
 func (c *Character) HasBuffFlag(buffFlag buffs.Flag) bool {
@@ -1988,6 +2083,9 @@ func (c *Character) Heal(hp int) int {
 func (c *Character) HealthPerRound() int {
 	b := configs.GetBalanceConfig()
 	pct := float64(b.PlayerHealthRegenPct)
+	if c.IsMob {
+		pct = float64(b.MobHealthRegenPct)
+	}
 	// StatMod reinterpreted as percentage bonus (e.g. 5 → +5%)
 	pct += float64(c.StatMod(string(statmods.HealthRecovery))) / 100.0
 	base := int(pct * float64(c.HealthMax.Value))
@@ -2000,6 +2098,9 @@ func (c *Character) HealthPerRound() int {
 func (c *Character) StaminaPerRound() int {
 	b := configs.GetBalanceConfig()
 	pct := float64(b.PlayerStaminaRegenPct)
+	if c.IsMob {
+		pct = float64(b.MobStaminaRegenPct)
+	}
 	pct += float64(c.StatMod(string(statmods.StaminaRecovery))) / 100.0
 	base := int(pct * float64(c.StaminaMax.Value))
 	if base < 1 {
@@ -2018,6 +2119,9 @@ func (c *Character) StaminaPerRound() int {
 func (c *Character) ConvictionPerRound() int {
 	b := configs.GetBalanceConfig()
 	pct := float64(b.PlayerConvictionRegenPct)
+	if c.IsMob {
+		pct = float64(b.MobConvictionRegenPct)
+	}
 	pct += float64(c.StatMod(string(statmods.ConvictionRecovery))) / 100.0
 	base := int(pct * float64(c.ConvictionMax.Value))
 	if base < 1 {
@@ -2088,12 +2192,12 @@ func (c *Character) RecalculateStats() {
 	// Recalculate stats
 	// Stats are basically:
 	// level*base + training + mods
-	c.Stats.Strength.Recalculate(1)
-	c.Stats.Dexterity.Recalculate(1)
-	c.Stats.Perception.Recalculate(1)
-	c.Stats.Vitality.Recalculate(1)
-	c.Stats.Willpower.Recalculate(1)
-	c.Stats.Charisma.Recalculate(1)
+	c.Stats.Strength.Recalculate()
+	c.Stats.Dexterity.Recalculate()
+	c.Stats.Perception.Recalculate()
+	c.Stats.Vitality.Recalculate()
+	c.Stats.Willpower.Recalculate()
+	c.Stats.Charisma.Recalculate()
 
 	// Stage 12.1: Apply stat_multiplier mutations after Recalculate()
 	if v := mutations.GetStatMultiplier(c.Mutations, "strength"); v != 0 {
@@ -2135,10 +2239,10 @@ func (c *Character) RecalculateStats() {
 	c.ActionPointsMax.Mods = 200 // hard coded for now
 
 	// Recalculate HP/Stamina/Conviction stats
-	c.HealthMax.Recalculate(1)
-	c.StaminaMax.Recalculate(1)
-	c.ConvictionMax.Recalculate(1)
-	c.ActionPointsMax.Recalculate(1)
+	c.HealthMax.Recalculate()
+	c.StaminaMax.Recalculate()
+	c.ConvictionMax.Recalculate()
+	c.ActionPointsMax.Recalculate()
 
 	// Stage 12.1: Apply health_multiplier mutations after HealthMax.Recalculate()
 	if hMult := mutations.GetHealthMultiplier(c.Mutations); hMult != 0 {

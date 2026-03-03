@@ -1,0 +1,66 @@
+mobid: 113
+zone: Thornwall City
+statpool: 58
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - humanoid
+  - merchant
+idlecommands:
+  - 'emote feeds cloth through the loom with practiced, rhythmic strokes'
+  - 'emote holds a length of fabric taut and examines its weave against the light'
+  - ''
+  - 'emote snips a trailing thread and tucks the end back into the seam'
+  - ''
+activitylevel: 12
+crafter: true
+crafterskill: tailoring
+crafterrecipeids:
+  - linen-tunic
+  - cloth-pants
+  - cloth-bandage
+  - wool-cloak
+crafterrestockmaterials:
+  - 40007
+  - 40012
+  - 40002
+character:
+  name: weaver Maren
+  description: |
+    A quiet woman with calloused fingers and a measuring cord draped
+    permanently around her neck. Her sleeves are rolled past the elbow,
+    revealing forearms flecked with dye stains in a dozen fading colors.
+    She moves between loom and cutting table with an economy of motion
+    that speaks of decades at the craft. She sells cloth, thread, and
+    the garments she makes -- nothing fancy, but everything stitched to
+    last.
+  speciesid: 1
+  level: 1
+  gold: 0
+  skills:
+    tailoring: 12
+  stats:
+    dexterity:
+      training: 12
+    perception:
+      training: 8
+    willpower:
+      training: 5
+  shop:
+    - itemid: 40007
+      quantity: 0
+      quantitymax: 0
+      price: 1
+    - itemid: 40012
+      quantity: 0
+      quantitymax: 0
+      price: 1
+    - itemid: 40002
+      quantity: 0
+      quantitymax: 0
+      price: 2
+    - itemid: 40013
+      quantity: 0
+      quantitymax: 0
+      price: 3

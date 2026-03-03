@@ -1,7 +1,7 @@
 // Boss Cave - Room 120
 // Aberrant Chrysalis -- environmental lore on entry; gives 1-cave quest on boss defeat.
 
-const aberrantMobId = 64;
+const aberrantMobId = 69;
 
 var bossEngaged = false;
 

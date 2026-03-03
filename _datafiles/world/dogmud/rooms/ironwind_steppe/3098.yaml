@@ -1,0 +1,32 @@
+roomid: 3098
+zone: Ironwind Steppe
+title: Boar Thicket
+description: A dense thicket of thorny bushes that the boars have
+  partially demolished but also use as shelter. The branches are
+  broken and bent at boar-height, creating low tunnels through
+  the vegetation. The interior is littered with bristly hair and
+  boar bedding -- piles of crushed grass where the animals sleep.
+  The thicket provides shade, shelter from wind, and a measure
+  of security from the wolves that patrol nearby.
+biome: land
+exits:
+  north:
+    roomid: 3097
+  west:
+    roomid: 3096
+nouns:
+  thicket: A dense tangle of thorny bushes, partially destroyed
+    by boar traffic but still providing shelter. The branches
+    form a canopy at about waist height, creating a cave-like
+    space beneath.
+  bedding: Piles of crushed grass and broken branches where
+    boars have bedded down. The grass is matted flat and
+    mixed with coarse bristly hair.
+spawninfo:
+- mobid: 216
+- mobid: 208
+- mobid: 208
+idlemessages:
+- Heavy breathing comes from somewhere in the thicket.
+- A boar snores from a pile of crushed grass, oblivious.
+- Bristly hair catches on thorns in thick tufts.

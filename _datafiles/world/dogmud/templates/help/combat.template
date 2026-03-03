@@ -62,8 +62,9 @@ Tactical moves with cooldowns that can turn the tide of battle:
   <ansi fg="command">bash</ansi>   - Shield bash (50% damage, 40% knockdown, requires shield)
   <ansi fg="command">trip</ansi>   - Leg sweep (25% damage, 60% knockdown, tactical)
   <ansi fg="command">kick</ansi>   - Power kick (40% damage, 35% knockdown, balanced)
+  <ansi fg="command">taunt</ansi>  - Verbal assault (conviction damage, Charisma-based)
 
-All three share a <ansi fg="red">5-round cooldown</ansi>. Choose wisely! Successful knockdowns
+All four share a <ansi fg="red">5-round cooldown</ansi>. Choose wisely! Successful knockdowns
 apply the <ansi fg="red">prone</ansi> condition. See <ansi fg="command">help prone</ansi> for details.
 
 <ansi fg="yellow">━━━ Target Switching ━━━</ansi>
@@ -82,10 +83,11 @@ In combat with multiple enemies, you can switch targets:
     - Manage carefully in long fights!
 
   <ansi fg="stat">Conviction:</ansi>
-    - Used for: Casting spells and psionic abilities
-    - Required for magical attacks and support
+    - Used for: Casting spells, psionic abilities
+    - Can be attacked directly via <ansi fg="command">taunt</ansi>
+    - Reach 0 conviction and you're downed
     - Regenerates over time
-    - See <ansi fg="command">help cast</ansi> and <ansi fg="command">help spells</ansi> for details
+    - See <ansi fg="command">help cast</ansi> and <ansi fg="command">help taunt</ansi>
 
   <ansi fg="stat">Health:</ansi>
     - Reach 0 health and you're downed (unconscious)
@@ -101,4 +103,4 @@ In combat with multiple enemies, you can switch targets:
 <ansi fg="yellow">See Also:</ansi>
 
   <ansi fg="command">help attack</ansi>, <ansi fg="command">help flee</ansi>, <ansi fg="command">help bash</ansi>, <ansi fg="command">help trip</ansi>, <ansi fg="command">help kick</ansi>
-  <ansi fg="command">help prone</ansi>, <ansi fg="command">help dual-wield</ansi>, <ansi fg="command">help skills</ansi>
+  <ansi fg="command">help taunt</ansi>, <ansi fg="command">help prone</ansi>, <ansi fg="command">help dual-wield</ansi>, <ansi fg="command">help skills</ansi>

@@ -1,6 +1,7 @@
 mobid: 92
 zone: Thornwall Outskirts
-statpool: 25
+archetype: fighting
+statpool: 75
 itemdropchance: 0
 hostile: false
 maxwander: 1
@@ -17,8 +18,7 @@ activitylevel: 15
 character:
   name: city gate guard
   description: |
-    A woman in Thornwall livery -- a blue-grey surcoat over well-maintained
-    chainmail, a spear in hand and a short sword at her hip. She stands with
+    A woman in Thornwall livery. She stands with
     the professional alertness of someone who has done this job long enough to
     be efficient but not so long as to be careless. Her eyes move constantly,
     assessing each arrival with a quick, practiced glance that misses nothing.
@@ -26,6 +26,23 @@ character:
   speciesid: 1
   level: 1
   gold: 0
+  equipment:
+    weapon:
+      itemid: 10019
+    offhand:
+      itemid: 20010
+    body:
+      itemid: 20011
+    head:
+      itemid: 20047
+    legs:
+      itemid: 20050
+    feet:
+      itemid: 20052
+    gloves:
+      itemid: 20051
+  items:
+    - itemid: 10014
   stats:
     strength:
       training: 8

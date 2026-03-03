@@ -1,0 +1,28 @@
+mobid: 233
+zone: Ironwind Steppe
+statpool: 30
+itemdropchance: 5
+hostile: true
+maxwander: 4
+groups:
+  - vermin
+  - animal
+idlecommands:
+  - 'emote hops along the ground, pecking at scraps'
+  - ''
+  - 'emote caws loudly, head tilted to one side'
+  - ''
+  - ''
+  - 'emote ruffles its ragged black feathers'
+activitylevel: 20
+character:
+  name: carrion crow
+  description: |
+    A large, ragged crow with glossy black plumage and a heavy
+    beak. The carrion crow follows predators and scavengers alike,
+    waiting for leftovers. It is bolder than most birds, willing
+    to approach within arm's reach for a meal. Its black eyes are
+    bright and intelligent, and it remembers faces -- creatures
+    that have chased it before get a wider berth than newcomers.
+  speciesid: 9
+  level: 1

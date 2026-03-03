@@ -1,0 +1,77 @@
+# Gossip templates for tavern patron NPCs (gossiper group).
+# Keyed by "EventType-Significance". {desc} is replaced with the event description.
+# Each key has 2-4 variants picked at random.
+
+MobCraftedRare-Regional:
+  - "Word from the market is that {desc}"
+  - "I heard something interesting -- {desc}"
+  - "They say {desc} Rare work, if true."
+
+MobCraftedRare-Global:
+  - "Now THIS is worth mentioning. {desc}"
+  - "Everyone is talking about it. {desc}"
+  - "I have not heard of work like this in years. {desc}"
+
+MobMutationGained-Regional:
+  - "Something strange out there. {desc}"
+  - "I heard {desc} The wilds are changing."
+  - "Word is {desc} Keep your eyes open."
+
+MobMutationGained-Global:
+  - "You are not going to believe this. {desc}"
+  - "This changes things. {desc}"
+
+MobMutationAdvanced-Regional:
+  - "That thing out there is getting worse. {desc}"
+  - "I heard {desc} Whatever it is, it is growing stronger."
+
+MobMutationAdvanced-Global:
+  - "Listen to this. {desc} That is not natural."
+  - "Something is very wrong out there. {desc}"
+
+MobStatMilestone-Regional:
+  - "There is something tougher out there now. {desc}"
+  - "I heard {desc} Watch yourself."
+
+MobStatMilestone-Global:
+  - "This one is serious. {desc}"
+  - "Everyone should hear this. {desc}"
+
+PackStrengthened-Regional:
+  - "The packs are getting organized. {desc}"
+  - "I heard {desc} They are banding together."
+
+PackStrengthened-Global:
+  - "This is trouble. {desc} A proper pack, that is."
+  - "You do not see this often. {desc}"
+
+PlayerCraftedRare-Regional:
+  - "Someone made something impressive. {desc}"
+  - "I heard {desc} Decent work."
+
+PlayerCraftedRare-Global:
+  - "Now that is craftsmanship. {desc}"
+  - "Everyone is talking about {desc}"
+
+PlayerMutationMilestone-Regional:
+  - "Someone out there is changing. {desc}"
+  - "I heard {desc} Strange times."
+
+PlayerMutationMilestone-Global:
+  - "You hear about this? {desc}"
+  - "This is the kind of thing people remember. {desc}"
+
+IronwindEvent-Regional:
+  - "Something stirring on the steppe east of town. {desc}"
+  - "Word from the frontier -- {desc} The steppe is restless."
+  - "Traders coming in from the east say {desc}"
+
+IronwindEvent-Global:
+  - "The whole steppe is talking about this. {desc}"
+  - "This one came from the Ironwind frontier. {desc}"
+
+fallback:
+  - "Quiet day. Nothing worth repeating."
+  - "Mm. No news is... well, it is just no news."
+  - "Ask me later. Nothing interesting right now."
+  - "The world keeps turning, but it has not done anything worth mentioning."

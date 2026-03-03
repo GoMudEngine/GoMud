@@ -51,7 +51,7 @@ patterns:
 tree:
   root:
     text: "What can I do for ye, stranger?"
-    hints: "You could ask Korvath about his weapons, the forge, the sanctum, or himself."
+    hints: "Try: ask korvath weapons, ask korvath sanctum, or ask korvath quest."
 
   nodes:
     - id: weapons

@@ -15,6 +15,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
@@ -302,7 +303,7 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		}
 
 		user.SendText(
-			lookItem.GetLongDescription(),
+			util.NormalizeAndWrap(lookItem.GetLongDescription(), 80),
 		)
 
 		user.SendText(``)
@@ -343,7 +344,7 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			)
 		}
 
-		user.SendText(foundDesc)
+		user.SendText(util.NormalizeAndWrap(foundDesc, 80))
 
 		user.SendText(``)
 

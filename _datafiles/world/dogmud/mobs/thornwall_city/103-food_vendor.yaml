@@ -1,6 +1,6 @@
 mobid: 103
 zone: Thornwall City
-statpool: 12
+statpool: 36
 itemdropchance: 0
 hostile: false
 maxwander: 0
@@ -10,8 +10,8 @@ groups:
 idlecommands:
   - 'emote turns a skewer over the brazier coals, basting it with oil'
   - 'emote wipes hands on an apron and calls out to passing customers'
-  - ''
-  - ''
+  - 'emote wraps a steaming meat pie in greased paper for a waiting customer'
+  - 'say Hot food! Skewers, stew, tea -- come eat before it gets cold!'
 activitylevel: 20
 character:
   name: food vendor
@@ -25,6 +25,23 @@ character:
   speciesid: 1
   level: 1
   gold: 2
+  shop:
+    - itemid: 30022
+      quantity: 0
+      quantitymax: 0
+      price: 4
+    - itemid: 30023
+      quantity: 0
+      quantitymax: 0
+      price: 5
+    - itemid: 30024
+      quantity: 0
+      quantitymax: 0
+      price: 4
+    - itemid: 30021
+      quantity: 0
+      quantitymax: 0
+      price: 3
   stats:
     charisma:
       training: 8

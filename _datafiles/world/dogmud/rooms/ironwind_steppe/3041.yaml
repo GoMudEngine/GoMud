@@ -1,0 +1,33 @@
+roomid: 3041
+zone: Ironwind Steppe
+title: Crumbling Ledge
+description: A narrow ledge runs along the ridge's south face, the
+  rock crumbling and unreliable underfoot. Parts of the ledge have
+  broken away entirely, leaving gaps that require careful jumping.
+  Below, the slope drops steeply toward the dry creek basin. The
+  exposed rock face beside you is layered -- dark basalt over pale
+  sandstone, the geological history of the region written in stone.
+biome: cliffs
+exits:
+  north:
+    roomid: 3040
+  south:
+    roomid: 3042
+  west:
+    roomid: 3036
+nouns:
+  ledge: A narrow shelf of stone, barely wide enough for a person,
+    running along the ridge face. Chunks have broken off and lie
+    in the scree below. The remaining stone feels solid but the
+    edges are crumbling.
+  layers: The exposed rock face shows distinct layers -- dark
+    basalt on top, then a thin band of red clay, then pale
+    sandstone below. The layers tell of volcanic activity over
+    older sedimentary stone.
+spawninfo:
+- mobid: 232
+- mobid: 230
+idlemessages:
+- A chunk of rock breaks from the ledge edge and tumbles down the slope.
+- Wind whistles past the exposed rock face.
+- A scorpion clings to the rock face, motionless.

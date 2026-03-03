@@ -48,52 +48,52 @@ patterns:
 
 tree:
   root:
-    text: "Tolva looks up from wiping the counter, appraising you with the quick eye of someone who has sized up a thousand travellers. 'Welcome to the Crossing Inn. Sit anywhere -- food is on the hearth and I will not ask your business unless you want to share it.' She pauses. 'Though if you came over the bridge, I expect you have opinions about that toll.'"
-    hints: "Ask Tolva about the toll, the inn, or whether she needs any help."
+    text: "Welcome to the Crossing Inn. Sit anywhere -- food is on the hearth and I will not ask your business unless you want to share it. Though if you came over the bridge, I expect you have opinions about that toll."
+    hints: "Ask me about the toll, the inn, or whether I need any help."
     variants:
       - questRequired: ["5-start"]
         questExcluded: ["5-end"]
-        text: "Tolva glances up as you enter, a question already in her eyes. 'Any luck with that ledger? The sooner I have proof, the sooner I can write to the magistrate.'"
-        hints: "Find the crossing ledger at the tollhouse and bring it back to Tolva."
+        text: "Any luck with that ledger? The sooner I have proof, the sooner I can write to the magistrate."
+        hints: "Find the crossing ledger at the tollhouse and bring it back to me."
       - questRequired: ["5-end"]
-        text: "Tolva gives you a warm nod as you enter. 'Thanks to you, the magistrate will have that ledger before the month is out. This settlement owes you one. Sit down -- stew is on the house.'"
+        text: "Thanks to you, the magistrate will have that ledger before the month is out. This settlement owes you one. Sit down -- stew is on the house."
 
   nodes:
     - id: toll_problem
       triggers: ["toll", "bridge", "harn", "tax", "five gold", "crossing"]
-      text: "Tolva's expression sours. 'Harn set up that toll two years ago. Says the bridge needs repairs, and maybe it does, but he has no charter from Thornwall, no writ of authority. He just started charging people and nobody stopped him. Merchants are rerouting to avoid the fee, and every one that does is a customer I lose. This settlement is withering.'"
+      text: "Harn set up that toll two years ago. Says the bridge needs repairs, and maybe it does, but he has no charter from Thornwall, no writ of authority. He just started charging people and nobody stopped him. Merchants are rerouting to avoid the fee, and every one that does is a customer I lose. This settlement is withering."
       hints: "Ask how you could help, or about the ledger."
       unlocks: ["help_quest", "about_harn"]
 
     - id: help_quest
       triggers: ["help", "ledger", "proof", "quest", "task", "what can i do"]
-      requires: ["toll_problem"]
       questExcluded: ["5-start"]
       grantsQuest: "5-start"
-      text: "Tolva leans forward, lowering her voice. 'Harn keeps a ledger. Every toll payment, every expense. If there is no commission from Thornwall in those records -- and I wager there is not -- that is proof the toll is unauthorized. Get me that ledger and I will send it to the magistrate myself. I have a contact who will see it reaches the right desk.'"
+      text: "Harn keeps a ledger. Every toll payment, every expense. If there is no commission from Thornwall in those records -- and I wager there is not -- that is proof the toll is unauthorized. Get me that ledger and I will send it to the magistrate myself. I have a contact who will see it reaches the right desk."
       hints: "Head to the tollhouse east of the crossroads and find the crossing ledger."
       moodChange: friendly
 
     - id: about_harn
       triggers: ["harn", "collector", "who is he", "tollhouse"]
-      text: "'Harn is not a bad man. That is what makes this difficult. He genuinely believes the bridge will collapse without repairs, and maybe he is right. But you do not get to tax people on your own authority. There are processes. He should have gone to Thornwall first.' She shakes her head. 'Instead he put up a booth and started collecting. Stubborn as the bridge itself.'"
+      text: "Harn is not a bad man. That is what makes this difficult. He genuinely believes the bridge will collapse without repairs, and maybe he is right. But you do not get to tax people on your own authority. There are processes. He should have gone to Thornwall first. Instead he put up a booth and started collecting. Stubborn as the bridge itself."
 
     - id: about_brecca
       triggers: ["brecca", "merchant", "trading post", "trade"]
-      text: "'Brecca has been here almost as long as I have. Good head for numbers, fair dealer. She is hurting from the toll as much as I am -- her suppliers are adding the cost to their prices or just finding other routes. Talk to her if you need supplies.'"
+      text: "Brecca has been here almost as long as I have. Good head for numbers, fair dealer. She is hurting from the toll as much as I am -- her suppliers are adding the cost to their prices or just finding other routes. Talk to her if you need supplies."
 
     - id: inn_services
       triggers: ["food", "drink", "room", "stay", "rest", "stew"]
-      text: "'Stew is lamb and root vegetables today. Ale is from the last barrel, so it is a bit strong, but that is not a complaint from most. Rooms upstairs are two gold a night, clean bedding, and I lock the doors at midnight.' She gestures at the hearth. 'Help yourself.'"
+      text: "Stew is lamb and root vegetables today. Ale is from the last barrel, so it is a bit strong, but that is not a complaint from most. Rooms upstairs are two gold a night, clean bedding, and I lock the doors at midnight. Help yourself."
 
     - id: ledger_return
-      triggers: ["ledger", "found", "proof", "evidence", "records", "here"]
+      triggers: ["ledger", "found", "proof", "evidence", "records", "here",
+        "quest", "task"]
       requires: ["help_quest"]
       questRequired: ["5-evidence"]
       questExcluded: ["5-end"]
       requiresItem: 21
       grantsQuest: "5-end"
-      text: "Tolva takes the ledger and opens it with practiced hands, scanning columns of figures. Her jaw sets. 'No commission. No charter number. No authorizing signature. Just Harn's own hand, collecting and spending as he sees fit.' She closes the book with a firm snap. 'This is what I needed. The magistrate in Thornwall will see this before the month is out.'"
+      text: "No commission. No charter number. No authorizing signature. Just Harn's own hand, collecting and spending as he sees fit. This is what I needed. The magistrate in Thornwall will see this before the month is out."
       moodChange: grateful
 
 memory:

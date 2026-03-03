@@ -1,5 +1,6 @@
 mobid: 91
 zone: Thornwall Outskirts
+archetype: fighting
 statpool: 5
 itemdropchance: 20
 hostile: true
@@ -28,9 +29,11 @@ character:
     cornered but would rather flee -- it is a destroyer of fields, not a
     fighter. The damage it does is cumulative and relentless, one root system
     at a time.
-  speciesid: 1
+  speciesid: 10
   level: 1
   gold: 0
+  items:
+    - itemid: 24
   stats:
     dexterity:
       training: 10

@@ -28,6 +28,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/GoMudEngine/GoMud/internal/web"
+	"github.com/GoMudEngine/GoMud/internal/worldevents"
 )
 
 type WorldInput struct {
@@ -727,6 +728,9 @@ func (w *World) MainWorker(shutdown chan bool, wg *sync.WaitGroup) {
 	eventLoopTimer := time.NewTimer(time.Millisecond)
 	turnTimer := time.NewTimer(time.Duration(c.Timing.TurnMs) * time.Millisecond)
 	statsTimer := time.NewTimer(time.Duration(10) * time.Second)
+
+	// Stage 38.5.1: World event recording system
+	worldevents.InitWorldEvents()
 
 	// Stage 30.1: Combat analytics flush timer (nil-channel pattern when disabled)
 	var analyticsChan <-chan time.Time

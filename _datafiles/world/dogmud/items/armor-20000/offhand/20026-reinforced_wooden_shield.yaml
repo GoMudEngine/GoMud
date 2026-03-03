@@ -6,5 +6,6 @@ description: A sturdy wooden shield banded with iron strips. The reinforcement
 type: offhand
 subtype: wearable
 damagereduction: 6
+physical_mitigation: 6
 blockrating: 12
 value: 12

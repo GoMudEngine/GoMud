@@ -29,5 +29,12 @@ There are a handful of settings you can adjust with this command, including:
   <ansi fg="command">set tinymap</ansi>
   This toggles the automatic tinymap on or off. It shows when looking at rooms.
 
+  <ansi fg="command">set fprompt</ansi>
+  Configure your fight prompt. Toggle elements on or off:
+  <ansi fg="command">set fprompt bars</ansi>  <ansi fg="command">set fprompt target</ansi>  <ansi fg="command">set fprompt tank</ansi>
+  Type <ansi fg="command">set fprompt</ansi> alone to see all toggle options.
+
   <ansi fg="command">set wimpy</ansi>
   Set your wimpy percentage (See <ansi fg="command">help wimpy</ansi>)
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help alias</ansi>, <ansi fg="command">help macros</ansi>, <ansi fg="command">help prompt</ansi>

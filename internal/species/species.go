@@ -13,6 +13,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/stats"
 	"github.com/GoMudEngine/GoMud/internal/util"
+	pkgerrors "github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
 )
 
@@ -37,6 +38,7 @@ type Species struct {
 	UnarmedName      string
 	Tameable         bool
 	Damage           items.Damage
+	DamageMultiplier float64          `yaml:"damage_multiplier,omitempty"` // Natural weapon power (0=use config default)
 	Selectable       bool
 	AngryCommands    []string         // randomly chosen to queue when they are angry/entering combat.
 	KnowsFirstAid    bool             // Whether they can apply aid to other players.
@@ -95,12 +97,12 @@ func (s *Species) Validate() error {
 	s.Size = Size(strings.ToLower(string(s.Size))) // Sometimes a mismatching CaSe value is provided.
 
 	// Recalculate stats, based on level one because this is actually the baseline for the species
-	s.Stats.Strength.Recalculate(1)
-	s.Stats.Dexterity.Recalculate(1)
-	s.Stats.Perception.Recalculate(1)
-	s.Stats.Vitality.Recalculate(1)
-	s.Stats.Willpower.Recalculate(1)
-	s.Stats.Charisma.Recalculate(1)
+	s.Stats.Strength.Recalculate()
+	s.Stats.Dexterity.Recalculate()
+	s.Stats.Perception.Recalculate()
+	s.Stats.Vitality.Recalculate()
+	s.Stats.Willpower.Recalculate()
+	s.Stats.Charisma.Recalculate()
 
 	if s.Damage.Attacks < 1 && s.Damage.DiceCount > 0 && s.Damage.SideCount > 0 {
 		s.Damage.Attacks = 1
@@ -178,9 +180,10 @@ func LoadDataFiles() {
 
 	start := time.Now()
 
-	tmpSpecies, err := fileloader.LoadAllFlatFiles[int, *Species](configs.GetFilePathsConfig().DataFiles.String() + `/species`)
+	dataPath := configs.GetFilePathsConfig().DataFiles.String() + `/species`
+	tmpSpecies, err := fileloader.LoadAllFlatFiles[int, *Species](dataPath)
 	if err != nil {
-		panic(err)
+		panic(pkgerrors.Wrap(err, `filepath: `+dataPath))
 	}
 
 	allSpecies = tmpSpecies

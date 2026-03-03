@@ -1,0 +1,26 @@
+mobid: 231
+zone: Ironwind Steppe
+statpool: 20
+itemdropchance: 0
+hostile: false
+maxwander: 3
+groups:
+  - vermin
+idlecommands:
+  - 'emote rolls a ball of dung across the ground with single-minded determination'
+  - ''
+  - ''
+  - 'emote pauses, antennae waving, then resumes pushing'
+  - ''
+activitylevel: 15
+character:
+  name: tumble beetle
+  description: |
+    A round, glossy-black beetle the size of a walnut, endlessly
+    rolling a ball of dung across the steppe. The tumble beetle is
+    utterly focused on its task, ignoring everything around it as
+    it pushes its prize toward a suitable burial site. Its legs
+    are powerful for its size, and the ball it rolls is often
+    larger than itself.
+  speciesid: 12
+  level: 1

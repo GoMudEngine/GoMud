@@ -1,6 +1,7 @@
 mobid: 52
 zone: Sanctum Basin
-statpool: 30
+archetype: fighting
+statpool: 90
 hostile: false
 maxwander: 0
 idlecommands:
@@ -87,6 +88,13 @@ character:
   speciesid: 1
   level: 3
   gold: 0
+  equipment:
+    weapon:
+      itemid: 10008
+    body:
+      itemid: 20045
+    feet:
+      itemid: 20052
   shop:
     - itemid: 40001
       quantity: 0

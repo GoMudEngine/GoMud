@@ -1,0 +1,111 @@
+mobid: 242
+zone: Ironwind Steppe
+defaultMood: friendly
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["friendly", "neutral"]
+    responses:
+      - "Rhett looks up from his notes, spectacles askew. 'Oh! Hello! Sorry, I was mid-calculation. What can I do for you?'"
+      - "'A visitor! Excellent. I have been talking to rocks for a week and they are terrible conversationalists.'"
+
+  - keywords: ["hello", "hi"]
+    moods: ["grateful"]
+    responses:
+      - "Rhett beams. 'My favourite collaborator! What brings you back?'"
+
+  - keywords: ["help", "quest", "task", "work", "job"]
+    moods: ["friendly", "neutral"]
+    responses:
+      - "'Actually, yes. I could use someone with strong hands and a willingness to crawl around rock outcroppings. The work is fascinating, I promise. Well, I find it fascinating.'"
+
+  - keywords: ["windstone", "crystal", "sample", "rock"]
+    responses:
+      - "'Windstone is remarkable. It resonates with magical frequencies -- healing magic especially. A single refined shard could power a ward that protects an entire district. Thornwall needs this.'"
+
+  - keywords: ["sylara", "windwarden", "druid", "circle"]
+    responses:
+      - "Rhett's enthusiasm dims slightly. 'The Windwarden means well. She does. But she is confusing spiritual tradition with ecological necessity. The stone circle is impressive, yes, but the wind-paths she describes are not measurable by any instrument I have. The crystal, on the other hand, is very real and very useful.'"
+
+  - keywords: ["thornwall", "city", "guild", "healing"]
+    responses:
+      - "'Thornwall's ward-stones are failing. The old ones are cracked and losing potency. Windstone could replace them -- stronger, more efficient, self-sustaining. People would be safer. That is not abstract. That is lives.'"
+
+  - keywords: [""]
+    responses:
+      - "'Hmm? Sorry, I was thinking about crystal lattice structures. What was the question?'"
+      - "'I am not sure I follow. Ask me about the windstone, or whether I need help with anything.'"
+
+tree:
+  root:
+    text: "A young man in a dusty scholar's coat looks up from a spread of rock samples and charts, his face lighting up. 'Oh, wonderful -- someone who is not a bird or a lizard! Are you here about the windstone? Please say you are here about the windstone.'"
+    hints: "Ask about windstone, the conflict, or what he needs."
+    variants:
+      - questRequired: ["11-rhett"]
+        questExcluded: ["11-samples"]
+        text: "Rhett waves excitedly. 'You came back! Have you had a chance to look at the rock shelf? The veins of crystal there -- I need samples. Just a few chunks would tell me everything I need to know about extraction feasibility.'"
+        hints: "Collect windstone samples from the rocky shelf."
+      - questRequired: ["11-samples"]
+        questExcluded: ["11-end"]
+        text: "Rhett examines the samples with barely contained glee. 'These are perfect. The crystalline structure is even better than I hoped. Now go talk to Kael -- he will want to know what you have learned.'"
+      - questRequired: ["13-start"]
+        questExcluded: ["13-extraction"]
+        text: "Rhett is practically vibrating with excitement. 'You chose to help! Excellent! The extraction site is prepared. I just need someone steady to help with the final phase. Are you ready?'"
+        hints: "Tell Rhett you are ready to help with the extraction."
+      - questRequired: ["13-end"]
+        text: "Rhett adjusts his spectacles and grins. 'The aegis turned out better than I dared hope. Windstone is remarkable -- it practically shaped itself. Thornwall will hear about what you did here.'"
+      - questRequired: ["12-end"]
+        text: "Rhett's smile is tinged with disappointment. 'You chose the Windwarden. I understand. The crystal will wait -- it has waited this long.' He sighs. 'Perhaps someday someone will find a way that does not require choosing.'"
+
+  nodes:
+    - id: his_cause
+      triggers: ["windstone", "crystal", "conflict", "cause", "why", "problem", "quest", "task"]
+      questRequired: ["11-start"]
+      questExcluded: ["11-rhett"]
+      grantsQuest: "11-rhett"
+      text: "'Windstone. That is what this is about.' Rhett holds up a pale blue crystal shard that catches the light. 'I found veins of it running through the ridge -- thick veins, high quality. This crystal resonates with healing frequencies. A refined shard could power protective wards for an entire city block. Thornwall needs this. Our ward-stones are failing and people are getting hurt.' He pauses. 'The problem is the veins run under the Windwarden's stone circle. Extracting them would crack the bedrock. She says it would destroy the wind-paths -- spiritual currents she believes sustain the steppe. I cannot measure wind-paths. I can measure crystal. And crystal saves lives.'"
+      hints: "Go complete Sylara's totem task, then collect windstone samples for Rhett."
+      moodChange: friendly
+
+    - id: sample_task
+      triggers: ["sample", "collect", "help", "need", "what", "task", "quest"]
+      requires: ["his_cause"]
+      questRequired: ["11-rhett"]
+      questExcluded: ["11-samples"]
+      text: "'I need windstone samples from the exposed veins on the rocky shelf -- the broad ledge on the ridge's western face. The quartz veins there have windstone running through them. Just chip off a few chunks. Look for the pale blue crystal among the white quartz. Be careful on the shelf -- the footing is treacherous.'"
+      hints: "Go to the rocky shelf and examine the crystal veins to collect windstone samples."
+      moodChange: friendly
+
+    - id: sample_return
+      triggers: ["sample", "found", "here", "brought", "return", "have", "windstone", "quest", "task"]
+      requires: ["sample_task"]
+      questRequired: ["11-rhett"]
+      questExcluded: ["11-samples"]
+      requiresItem: 40032
+      grantsQuest: "11-samples"
+      text: "Rhett snatches the samples with eager hands, immediately holding one up to the light. 'Look at that lattice structure! The resonance potential is even higher than my estimates. This could power wards twice as strong as our current ones.' He catches himself and grins sheepishly. 'Sorry. I get excited. These are perfect. Thank you. Now -- go back to Kael. He wanted you to see both sides. You have. The choice is yours.'"
+      moodChange: friendly
+
+    - id: extraction_begin
+      triggers: ["ready", "extract", "begin", "help", "yes", "gambit"]
+      questRequired: ["13-start"]
+      questExcluded: ["13-extraction"]
+      grantsQuest: "13-extraction"
+      text: "Rhett leads you to a carefully prepared site where pale blue crystal veins are exposed in the rock. Tools are laid out with scholarly precision. 'The key is controlled fracture -- we follow the crystal's natural grain, not against it. Like splitting wood, but with more math.' He positions his chisels. 'Hold this brace steady while I work the seam. If the crystal shatters, we lose everything.'"
+      unlocks: ["extraction_complete"]
+
+    - id: extraction_complete
+      triggers: ["hold", "steady", "brace", "done", "complete", "yes"]
+      requires: ["extraction_begin"]
+      questRequired: ["13-extraction"]
+      questExcluded: ["13-end"]
+      grantsQuest: "13-end"
+      text: "The chisel rings against crystal and a perfect slab of windstone separates from the ridge face, humming with captured energy. Rhett catches it reverently. 'Beautiful. Absolutely beautiful.' He turns the slab in his hands, already calculating. 'Give me a few hours with this and my tools. I am going to make you something special -- a shield of pure windstone. It is the least I can do.' True to his word, when he emerges from his camp hours later, he carries a round shield of pale blue crystal that hums with quiet power."
+      moodChange: grateful
+
+    - id: about_healing
+      triggers: ["healing", "ward", "thornwall", "protect", "safe"]
+      text: "'The ward-stones that protect Thornwall's districts are old. Cracked. Losing potency every year. Last winter a ward failed in the Craftsmen's Quarter and three people were hurt before anyone noticed. Windstone could replace every failing ward in the city. That is not ambition -- that is necessity.'"
+
+memory:
+  expiryPeriod: "1h"

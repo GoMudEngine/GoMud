@@ -36,13 +36,22 @@ patterns:
 
 tree:
   root:
-    text: "Priest Olen looks up from a ledger, his ink-stained fingers marking his place. 'Welcome to the temple. If you are here for contemplation, the nave is open. If you are here for something else...' He glances at the ledger with a troubled expression. 'Well, there is a matter I could use help with, if you are the helping sort.'"
-    hints: "Ask about the tithe problem, the temple, or how you could help."
+    text: "Welcome to the temple. If you are here for contemplation, the nave is open. If you are here for something else... well, there is a matter I could use help with, if you are the helping sort."
+    hints: "Ask me about the tithe problem, the temple, or how you could help."
+    variants:
+      - questRequired: ["9-start"]
+        questExcluded: ["9-end"]
+        text: "Have you found anything? The tithe ledger from the market should show the discrepancies. I need to see those numbers before I can act."
+        hints: "Find the tithe ledger and bring it to Priest Olen."
+      - questRequired: ["9-end"]
+        text: "The audit is underway. Both sides are unhappy, which means we are probably close to the truth. Thank you for bringing it to light."
 
   nodes:
     - id: tithe_problem
       triggers: ["tithe", "problem", "help", "quest", "task", "ledger", "matter"]
-      text: "Olen closes the ledger and folds his hands over it. 'The temple collects tithes from the market merchants -- it has for generations. Recently, the payments have dropped. Significantly. Either the merchants have all suddenly become poorer, or they are under-reporting their income.' He pauses. 'I need someone outside the temple to look into it. Talk to the merchants, find the tithe ledger, compare the numbers. I want the truth, even if it is uncomfortable.'"
+      questExcluded: ["9-start"]
+      grantsQuest: "9-start"
+      text: "The temple collects tithes from the market merchants -- it has for generations. Recently, the payments have dropped. Significantly. Either the merchants have all suddenly become poorer, or they are under-reporting their income. I need someone outside the temple to look into it. Talk to the merchants, find the tithe ledger, compare the numbers. I want the truth, even if it is uncomfortable."
       hints: "Talk to merchants in the market about their tithes, then find the tithe ledger."
       unlocks: ["merchant_side"]
       moodChange: friendly
@@ -50,12 +59,16 @@ tree:
     - id: merchant_side
       triggers: ["merchant", "market", "their side", "what do they say"]
       requires: ["tithe_problem"]
-      text: "'The merchants claim the temple inflates its expenses to justify higher tithes. They may not be entirely wrong.' Olen's honesty is reluctant but genuine. 'The temple has costs -- maintenance, charity, staff. Whether every coin is accounted for as precisely as it should be... that is part of what I need you to find out.'"
+      text: "The merchants claim the temple inflates its expenses to justify higher tithes. They may not be entirely wrong. The temple has costs -- maintenance, charity, staff. Whether every coin is accounted for as precisely as it should be... that is part of what I need you to find out."
 
     - id: ledger_return
-      triggers: ["ledger", "found", "evidence", "records", "numbers"]
+      triggers: ["ledger", "found", "evidence", "records", "numbers", "quest", "task"]
       requires: ["tithe_problem"]
-      text: "Olen takes the tithe ledger and reviews it in silence. His expression shifts from concern to resignation. 'Both sides. The merchants are under-paying, and our own expense records are... generous.' He closes the book. 'Thank you for your honesty. This will not be pleasant, but it needed to come to light.'"
+      questRequired: ["9-start"]
+      questExcluded: ["9-end"]
+      requiresItem: 29
+      grantsQuest: "9-end"
+      text: "Both sides. The merchants are under-paying, and our own expense records are... generous. Thank you for your honesty. This will not be pleasant, but it needed to come to light."
       moodChange: grateful
 
 memory:

@@ -234,3 +234,11 @@ in the quest YAML. You do not need a separate reward mechanism — just point
 **Greeting `variants` are checked in order.**
 The first variant whose conditions match wins. Put more specific conditions
 (e.g. quest completed) before less specific ones (e.g. quest started).
+
+**Quest-granting nodes MUST include `"quest"` and `"task"` triggers.**
+Every tree node with a `grantsQuest` field must include `"quest"` and `"task"`
+in its `triggers` list. This ensures players can always type
+`ask <npcname> quest` or `ask <npcname> task` to discover available quests.
+The same applies to `patterns` entries that introduce quests — include
+`"quest"` and `"task"` in the `keywords` list. This is an SOP for all quest
+NPCs.

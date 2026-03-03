@@ -18,7 +18,7 @@ func Stand(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return true, nil
 	}
 
-	cfg := configs.GetGamePlayConfig()
+	cfg := configs.GetBalanceConfig()
 
 	// Calculate stamina cost and requirement
 	staminaCost := int(float64(user.Character.StaminaMax.Value) * float64(cfg.StandStaminaCost))

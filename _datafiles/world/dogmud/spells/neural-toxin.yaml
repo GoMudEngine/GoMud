@@ -12,4 +12,5 @@ base_folds: 5
 target_defense_type: mental
 effect_type: dot
 effect_magnitude: 60
+damage_multiplier: 0.60
 effect_duration: 4

@@ -1,0 +1,37 @@
+roomid: 3081
+zone: Ironwind Steppe
+title: Thornbrush Ravine
+description: Dense thornbrush chokes this section of the ravine,
+  forming nearly impenetrable walls of tangled, barbed vegetation.
+  The only clear path is a single game trail beaten through the
+  thorns by wolf traffic. Thorns catch at clothing and skin,
+  leaving scratches. The brush is alive with small birds and
+  rodents that shelter in the protective tangle, and the wolves
+  use this natural barrier as a defensive perimeter.
+biome: land
+exits:
+  west:
+    roomid: 3075
+  north:
+    roomid: 3073
+  south:
+    roomid: 3082
+  east:
+    roomid: 3086
+nouns:
+  thornbrush: A nearly solid wall of thorny vegetation, its
+    branches interlocked and bristling with inch-long spines.
+    The thorns are sharp enough to draw blood. Small birds
+    nest deep in the tangle, safe from larger predators.
+  trail: A narrow path through the thornbrush, barely wide
+    enough to walk single-file. The ground is packed smooth
+    by wolf paws. Tufts of grey fur hang from thorns on
+    both sides.
+spawninfo:
+- mobid: 206
+- mobid: 205
+- mobid: 234
+idlemessages:
+- Thorns catch at your clothing as you push through the brush.
+- Small birds chitter an alarm from deep within the thornbrush.
+- A wolf slips through the narrow trail with practiced ease.

@@ -1,0 +1,18 @@
+itemid: 10016
+name: willow wand
+namesimple: wand
+description: A slender wand carved from pale willow wood, its tip faintly
+  humming with residual magical energy. It feels almost weightless in hand,
+  though poor for anything beyond a desperate poke in melee.
+type: weapon
+hands: 1
+subtype: wand
+damage:
+  basedamage: 3
+  variance: 1
+damage_multiplier: 0.40
+spell_damage_multiplier: 1.30
+speedmultiplier: 1.2
+parryrating: 2
+weight: 1.0
+value: 40

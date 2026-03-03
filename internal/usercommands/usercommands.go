@@ -47,6 +47,7 @@ var (
 		`alias`:       {Alias, true, true, false},
 		`appraise`:    {Appraise, false, true, false},
 		`ask`:         {Ask, false, true, false},
+		`assist`:      {Assist, false, true, false},
 		`attack`:      {Attack, false, true, false},
 		`ai-flag`:    {AiFlag, true, true, true},       // Admin only
 		`ai-list`:    {AiList, true, true, true},       // Admin only
@@ -137,6 +138,7 @@ var (
 		`room`:        {Room, false, true, true},       // Admin only
 		`save`:        {Save, true, true, false},
 		`say`:         {Say, true, true, false},
+		`scan`:        {Scan, false, true, false},
 		`search`:{Search, false, true, false},
 		`sell`:        {Sell, false, true, false},
 		`server`:      {Server, false, true, true}, // Admin only
@@ -166,6 +168,7 @@ var (
 		`toxic-bite`:  {ToxicBite, false, true, false},
 		`track`:{Track, false, true, false},
 		`train`:       {Train, false, false, false}, // Can't train in combat
+		`taunt`:       {Taunt, false, true, false},
 		`trip`:        {Trip, false, true, false},
 		`unlock`:{Unlock, false, true, false},
 		`undeafen`:    {UnDeafen, true, true, true}, // Admin only

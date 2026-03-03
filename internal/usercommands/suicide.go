@@ -139,9 +139,23 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	user.SendText(`<ansi fg="yellow">You feel weakened by the brush with death. (Type <ansi fg="command">help death</ansi> to learn more.)</ansi>`)
 
 	user.Character.CancelBuffsWithFlag(buffs.All)
+	user.Character.Aggro = nil
+	user.Character.CastingState = nil
 
-	user.Character.Health = -10
-	user.Character.Conviction = 0
+	// Set all pools to 5% of max so the player can regen up in the shadow realm
+	// instead of arriving deep in the negatives and getting stuck.
+	user.Character.Health = user.Character.HealthMax.Value / 20
+	if user.Character.Health < 1 {
+		user.Character.Health = 1
+	}
+	user.Character.Stamina = user.Character.StaminaMax.Value / 20
+	if user.Character.Stamina < 1 {
+		user.Character.Stamina = 1
+	}
+	user.Character.Conviction = user.Character.ConvictionMax.Value / 20
+	if user.Character.Conviction < 1 {
+		user.Character.Conviction = 1
+	}
 	events.AddToQueue(events.CharacterVitalsChanged{UserId: user.UserId})
 
 	clear(user.Character.PlayerDamage)

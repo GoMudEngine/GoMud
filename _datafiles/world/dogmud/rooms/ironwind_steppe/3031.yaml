@@ -1,0 +1,35 @@
+roomid: 3031
+zone: Ironwind Steppe
+title: Lower Ridge Trail
+description: A narrow trail switchbacks up the western face of the
+  ridge, carved by generations of animal traffic. The trail is
+  barely a foot wide, with loose rock on one side and a steep
+  drop on the other. Tough, low-growing plants cling to the
+  rocky soil, and the occasional pine offers a handhold. The
+  view to the west is already impressive -- the sagebrush flats
+  spread out below like a rumpled grey-green carpet.
+biome: cliffs
+exits:
+  southwest:
+    roomid: 3015
+  south:
+    roomid: 3030
+  north:
+    roomid: 3034
+  east:
+    roomid: 3035
+nouns:
+  trail: A narrow switchback trail worn into the ridge face by
+    the passage of animals over many years. The surface is a mix
+    of packed earth and exposed stone, worn smooth in places.
+  view: The western view reveals the full expanse of the sagebrush
+    flats, stretching back toward the distant pale line of
+    Thornwall's city walls. The scale of the steppe is immense
+    from this vantage.
+spawninfo:
+- mobid: 210
+- mobid: 209
+idlemessages:
+- Wind buffets you against the rock face as it gusts up the slope.
+- Small stones bounce down the trail, dislodged from above.
+- The view of the steppe below is dizzying in its vastness.

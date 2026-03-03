@@ -1,0 +1,32 @@
+roomid: 3097
+zone: Ironwind Steppe
+title: Boar Rooting Ground
+description: The earth here has been thoroughly excavated by boar
+  snouts, turned over in deep furrows that expose dark, rich
+  subsoil. The boars root here for beetle grubs, tubers, and
+  worms, their powerful snouts tearing through the ground with
+  mechanical efficiency. The overturned earth smells fresh and
+  loamy, and insects swarm the exposed soil. Small birds hop
+  along the furrows, picking up easy meals disturbed by the
+  digging.
+biome: land
+exits:
+  north:
+    roomid: 3096
+  east:
+    roomid: 3099
+  south:
+    roomid: 3098
+nouns:
+  furrows: Deep channels torn in the earth by boar snouts,
+    each a foot or more deep and running for several paces.
+    The soil is dark and damp where freshly turned. Grubs
+    and worms squirm in the exposed earth.
+spawninfo:
+- mobid: 207
+- mobid: 208
+- mobid: 231
+idlemessages:
+- A boar roots through the earth, snout working like a plow.
+- Small birds hop along the fresh furrows, pecking at exposed grubs.
+- The newly turned earth smells rich and alive.

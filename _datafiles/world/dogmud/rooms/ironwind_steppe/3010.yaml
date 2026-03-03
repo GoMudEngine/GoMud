@@ -1,0 +1,39 @@
+roomid: 3010
+zone: Ironwind Steppe
+title: Western Sagebrush Flats
+description: The steppe opens up into a vast expanse of flat grassland
+  dotted with knee-high sagebrush. The bushes are silvery-green, their
+  pungent scent sharp on the wind. Visibility is excellent in every
+  direction -- the land is so flat you can see for miles. The sky
+  overhead is enormous, dwarfing everything beneath it. Dust devils
+  occasionally spin up from the dry soil, dancing across the flats
+  before collapsing. The wagon track from the city has vanished
+  completely, replaced by open, unmarked terrain.
+biome: land
+exits:
+  west:
+    roomid: 3006
+  northwest:
+    roomid: 3008
+  east:
+    roomid: 3011
+  south:
+    roomid: 3014
+  northeast:
+    roomid: 3012
+nouns:
+  sagebrush: Low, woody bushes with silvery-green leaves and a strong
+    aromatic scent. They grow in scattered clusters across the flats,
+    providing the only cover for small animals in this open landscape.
+  dust: Fine, pale dust that covers the hard-packed soil between the
+    grass clumps. It rises in clouds with every gust of wind and
+    coats everything in a thin gritty layer.
+spawninfo:
+- mobid: 206
+- mobid: 230
+- mobid: 234
+idlemessages:
+- A dust devil spins up from the flats and dances away to the east.
+- The sagebrush rustles as something small moves through it.
+- The wind carries the sharp, medicinal scent of sage.
+- A hawk's shadow glides across the ground ahead of you.

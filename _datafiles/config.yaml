@@ -63,7 +63,7 @@ Server:
   - checkclient
   # - Motd -
   #   Message of the day. This is displayed when the motd command is run.
-  Motd: '{{ t "Motd" }}'
+  Motd: '{{ t "Please report bugs using the bug command!" }}'
   # - NextRoomID -
   # This number is auto-updated to the highest number of rooms in the game.
   #   If creating your own rooms but don't want to risk an update conflicting,
@@ -220,39 +220,6 @@ FilePaths:
 #
 ################################################################################
 GamePlay:
-  # ============================================================================
-  # - RollSpread -  *** THE MASTER RANDOMNESS KNOB ***
-  #
-  #   Controls the standard deviation for EVERY stat-based dice roll in the
-  #   game: all attacks, defenses, spell checks, grapples, bash/trip/kick, and
-  #   skill/stat checks.  A single number that governs how chaotic or
-  #   skill-dominant the entire game feels.
-  #
-  #   Formula: stdDev = stat_value * RollSpread
-  #   At the human baseline (stat = 100): stdDev = 100 * RollSpread
-  #
-  #   GAMEPLAY FEEL BY VALUE:
-  #     0.05  Very tight rolls. High-stat characters win ~99% of even matches.
-  #           Almost no upsets. Feels deterministic; newcomers get crushed.
-  #     0.10  Low variance. Skill/stat clearly dominates. Upsets are rare.
-  #           A 20-point advantage translates to ~92% win rate.
-  #     0.15  DEFAULT — recommended balanced spread.
-  #           A 20-point advantage => ~78% win rate.
-  #           A weaker fighter still has a ~16% chance if they're 30pts behind.
-  #     0.20  Higher variance. Upsets are common. Combat feels dynamic.
-  #           A 20-point advantage => only ~67% win rate.
-  #     0.30  Chaotic. Luck rivals skill. Not recommended for competitive play.
-  #           A 20-point advantage => barely 57% win rate.
-  #
-  #   CRIT / FUMBLE RATES:
-  #     Unaffected by this setting. Crits trigger when a roll's z-score is
-  #     >= +2.0 standard deviations above mean, which is always ~2.3% per roll
-  #     regardless of the absolute stdDev value.
-  #
-  #   Valid range: 0.05-0.50. Values outside this range default to 0.15.
-  #   Requires a server restart to take effect.
-  # ============================================================================
-  RollSpread: 0.15
   # - AllowItemBuffRemoval -
   #   Whether to allow the removal of buffs assigned by items using spells etc.
   #   By default, once an item has buffed a player, the player cannot remove the
@@ -317,13 +284,6 @@ GamePlay:
   #   greater than 0. Otherwise they are locked to a signle character and have to
   #   sign up with a new user login if they intend to create a new character.
   MaxAltCharacters: 3
-  # - ConsistentAttackMessages -
-  #   If true, each weapon ID will consistently use the same message for each type
-  #   of attack. If false, it will randomize messages. Setting this to true gives
-  #   each weapon a more consistent feel in battle, though combat may feel less
-  #   varied.
-  #   Note: see _datafiles/combat-messages/*
-  ConsistentAttackMessages: false
   # - PVP -
   #   Possible Values:
   #     enabled   - PVP is enabled everywhere
@@ -344,47 +304,6 @@ GamePlay:
   #   Requires UseSkillProgression to be true. When enabled, progression
   #   checks grant actual skill/stat increases.
   DualProgressionMode: true
-  # - SpellConvictionCostMultiplier -
-  #   Global multiplier for spell conviction costs. Default 1.0 means no scaling.
-  #   Set to 0.5 for half cost, 2.0 for double cost, etc.
-  SpellConvictionCostMultiplier: 1.0
-  # - SpellHealthCostMultiplier -
-  #   Global multiplier for spell health costs (life-force magic). Default 1.0.
-  #   Increase to make life-force magic more risky, decrease to make it safer.
-  SpellHealthCostMultiplier: 1.0
-  # - Stage 7.1: Segmented Avoidance -
-  #   Stamina cost multipliers for layered defense system
-  #   Base costs: dodge (2), parry (4), block (5)
-  #   Lower values make defense cheaper, higher values make it more expensive
-  DodgeMultiplier: 0.9
-  ParryMultiplier: 0.9
-  BlockMultiplier: 0.9
-  # - Stage 7.5: Prone Condition Effects -
-  #   Modifiers applied when a character is knocked prone
-  ProneAttackPenalty: 30.0       # Penalty to attack score when attacking while prone
-  ProneDodgePenalty: 0.50        # Multiplier for dodge effectiveness while prone (-50%)
-  ProneParryPenalty: 0.70        # Multiplier for parry effectiveness while prone (-30%)
-  ProneBlockPenalty: 0.80        # Multiplier for block effectiveness while prone (-20%)
-  ProneDamagePenalty: 0.80       # Damage multiplier when attacking while prone (-20%)
-  ProneVulnerabilityBonus: 20.0  # Bonus to attack score when attacking prone targets
-  StandStaminaCost: 0.15         # Stamina cost to stand (15% of max stamina)
-  StandMinStamina: 0.15          # Minimum stamina required to stand (15% of max)
-  # - Stage 8.5: Third-Party Grapple Vulnerability -
-  #   When fighters are locked in a grapple, they're vulnerable to attacks from others
-  ThirdPartyGrapplePenalty: 0.70 # Defense multiplier against third-party attacks (-30%)
-  # - Stage 7.5: Special Combat Moves -
-  #   Parameters for bash, trip, and kick commands
-  #   All three share a common cooldown to prevent knockdown spam
-  SpecialMoveCooldown: 5         # Shared cooldown for all special moves (5 rounds)
-  BashDamagePercent: 0.50        # Damage percentage for bash (50%)
-  BashKnockdownChance: 40        # Base knockdown chance for bash (40%)
-  TripDamagePercent: 0.25        # Damage percentage for trip (25%)
-  TripKnockdownChance: 60        # Base knockdown chance for trip (60%)
-  KickDamagePercent: 0.40        # Damage percentage for kick (40%)
-  KickKnockdownChance: 35        # Base knockdown chance for kick (35%)
-  # Coup de Grâce: rounds a mob waits before finishing a downed player
-  # (0 = disabled, mob walks away like before)
-  CoupDeGraceRounds: 1
 
 ################################################################################
 #
@@ -395,91 +314,464 @@ GamePlay:
 #
 ################################################################################
 Balance:
-  # ── COMBAT ──────────────────────────────────────────────────────────────────
-  GlobalDamageMultiplier: 1.0    # Scales all damage output (1.0 = no change)
-  GlobalDefenseMultiplier: 1.0   # Scales all avoidance rates (1.0 = no change)
-  UnarmedBaseDamage: 2.0         # Base damage before stat bonuses
-  UnarmedStrengthDivisor: 25.0   # Str / this = damage bonus
-  UnarmedSkillDivisor: 10.0      # UnarmedSkill / this = damage bonus
-  UnarmedBaseVariance: 3.0       # Base randomness of unarmed hits
+  # ============================================================================
+  # ── ROLL SPREAD ── *** THE MASTER RANDOMNESS KNOB ***
+  #
+  #   Controls the standard deviation for EVERY stat-based dice roll in the
+  #   game: all attacks, defenses, spell checks, grapples, bash/trip/kick, and
+  #   skill/stat checks.  A single number that governs how chaotic or
+  #   skill-dominant the entire game feels.
+  #
+  #   Formula: stdDev = stat_value * RollSpread
+  #   At the human baseline (stat = 100): stdDev = 100 * RollSpread
+  #
+  #   GAMEPLAY FEEL BY VALUE:
+  #     0.05  Very tight rolls. High-stat characters win ~99% of even matches.
+  #     0.10  Low variance. Skill/stat clearly dominates. Upsets are rare.
+  #     0.15  DEFAULT — recommended balanced spread.
+  #     0.20  Higher variance. Upsets are common. Combat feels dynamic.
+  #     0.30  Chaotic. Luck rivals skill. Not recommended for competitive play.
+  #
+  #   Crits/fumbles unaffected (always ~2.3% each at z-score ±2.0).
+  #   Valid range: 0.05-0.50. Requires server restart.
+  # ============================================================================
+  RollSpread: 0.15
+
+  # ── COMBAT: DEFENSE COSTS ──────────────────────────────────────────────────
+  # These ONLY affect how much stamina each defense costs. They do NOT
+  # change how effective the defense is at avoiding hits.
+  # Formula: cost = floor(baseCost × multiplier)
+  # Base costs: dodge = 2 SP, parry = 4 SP, block = 5 SP
+  # Examples:
+  #   DodgeMultiplier 0.9 → floor(2 × 0.9) = 1 stamina per dodge
+  #   BlockMultiplier 1.5 → floor(5 × 1.5) = 7 stamina per block
+  DodgeMultiplier: 0.9           # Stamina cost multiplier for dodge (base: 2 SP)
+  ParryMultiplier: 0.9           # Stamina cost multiplier for parry (base: 4 SP)
+  BlockMultiplier: 0.9           # Stamina cost multiplier for block (base: 5 SP)
+
+  # ── COMBAT: DEFENSE EFFECTIVENESS ─────────────────────────────────────────
+  # MULTIPLIER on the defense score BEFORE the opposed roll. Applied in
+  # all situations (standing, prone, grappled) — stacks with prone penalties.
+  # 1.0 = no change. 1.2 = 20% stronger. 0.8 = 20% weaker.
+  # Defense scores:
+  #   Dodge = Dex + UnarmedSkill
+  #   Parry = Dex + WeaponSkill + weapon ParryRating
+  #   Block = (Str+Dex)/2 + WeaponSkill + shield BlockRating
+  # Example: defender Dex 100, skill 10, DodgeEffectiveness 0.97:
+  #   dodge score = (100 + 10) × 0.97 = 106.7 (vs attacker's ~110)
+  DodgeEffectiveness: 0.97      # Tuned 39.2: slight nerf to dodge (most common defense)
+  ParryEffectiveness: 1.0
+  BlockEffectiveness: 1.02      # Tuned 39.2: slight buff; requires shield investment
+  #
+  # MinDefenseChance: even when the attacker's score vastly outclasses the
+  #   defender's, this floor ensures fights never feel like guaranteed hits.
+  #   Range: 0.0–0.50. Set to 0 to disable the floor entirely.
+  #   Example: 0.15 = even a stat-50 defender vs stat-200 attacker has a 15%
+  #   chance to dodge/parry/block any given swing.
+  MinDefenseChance: 0.15
+  #
+  # MinAttackHitChance: symmetric counterpart — even a massively outclassed
+  #   attacker has this minimum chance to land a hit.
+  #   Range: 0.0–0.50. Set to 0 to disable.
+  MinAttackHitChance: 0.15
+
+  # ── COMBAT: PRONE & GRAPPLE ───────────────────────────────────────────────
+  # When a character is knocked prone, these multipliers modify combat scores.
+  #
+  # ProneAttackMultiplier: attack score when attacking WHILE prone.
+  #   Example: attacker score 110, multiplier 0.80 → score 88.
+  ProneAttackMultiplier: 0.80
+  #
+  # ProneDodge/Parry/BlockPenalty: fraction of defense score kept while prone.
+  #   1.0 = full defense (no penalty). 0.50 = half defense. 0 = no defense.
+  #   Example: dodge score 100, penalty 0.95 → score 95.
+  ProneDodgePenalty: 0.95        # Tuned 39.2: mild; prone already punishes via attack + damage mults
+  ProneParryPenalty: 0.95
+  ProneBlockPenalty: 0.95
+  #
+  # ProneDamagePenalty: damage dealt while attacking from prone.
+  #   Example: 15 raw damage × 0.80 = 12 damage from the ground.
+  ProneDamagePenalty: 0.80
+  #
+  # ProneVulnerabilityMultiplier: attack score bonus when the TARGET is prone.
+  #   Stacks with the defense penalties above.
+  #   Example: attacker score 110 × 1.05 = 115.5 vs prone target.
+  ProneVulnerabilityMultiplier: 1.05  # Tuned 39.2: lowered from 1.15; defense penalties already stack
+  #
+  # StandStaminaCost: fraction of StaminaMax required to stand up from prone.
+  #   Example: StaminaMax 400, cost 0.15 → must spend 60 SP to stand.
+  StandStaminaCost: 0.15
+  # StandMinStamina: must have at least this fraction of max SP to attempt standing.
+  #   Example: StaminaMax 400, min 0.15 → need at least 60 SP.
+  StandMinStamina: 0.15
+  #
+  # ThirdPartyGrapplePenalty: defense score multiplier when attacked by a third
+  #   party while grappling. Only block is available; dodge/parry stripped.
+  #   Example: block score 80 × 0.70 = 56 vs third-party attacker.
+  ThirdPartyGrapplePenalty: 0.70
+
+  # ── COMBAT: SPECIAL MOVES ─────────────────────────────────────────────────
+  # Bash, trip, and kick all share a cooldown so players can't chain knockdowns.
+  # Spellcasting also shares this cooldown slot.
+  #
+  # SpecialMoveCooldown: rounds before another special move can be used.
+  #   Example: 4 = after a bash, must wait 4 rounds before bash/trip/kick/cast.
+  SpecialMoveCooldown: 4
+  #
+  # DamagePercent: fraction of a normal melee swing's damage this move deals.
+  # KnockdownChance: base % chance to knock the target prone on hit.
+  #   The actual roll is modified by attacker Str vs defender Str.
+  BashDamagePercent: 0.50        # Bash deals 50% of a normal swing
+  BashKnockdownChance: 50        # Bash: 50% base knockdown chance
+  TripDamagePercent: 0.25        # Trip deals 25% of a normal swing (low damage, high knockdown)
+  TripKnockdownChance: 60        # Trip: 60% base knockdown chance
+  KickDamagePercent: 0.40        # Kick deals 40% of a normal swing
+  KickKnockdownChance: 35        # Kick: 35% base knockdown chance
+  #
+  # CoupDeGraceRounds: rounds a mob waits before finishing a downed player.
+  #   0 = disabled (mob disengages when player is downed).
+  #   1 = mob finishes the player after 1 grace round of lying helpless.
+  CoupDeGraceRounds: 1
+
+  # ── COMBAT: SPELL COSTS ───────────────────────────────────────────────────
+  # Global multipliers for spell resource costs. Applied to ALL spells.
+  #   1.0 = no scaling. 0.5 = half cost. 2.0 = double cost.
+  # Example: a spell costs 30 conviction base, multiplier 1.5 → 45 conviction.
+  SpellConvictionCostMultiplier: 1.0
+  SpellHealthCostMultiplier: 1.0      # For life-force magic (health-cost spells)
+
+  # ── COMBAT: MESSAGES ──────────────────────────────────────────────────────
+  # If true, each weapon ID consistently uses the same attack message
+  #   (gives each weapon a unique feel). If false, messages are randomized
+  #   (more variety but weapons feel generic).
+  # See _datafiles/combat-messages/* for message definitions.
+  ConsistentAttackMessages: false
+
+  # ── COMBAT: DARKNESS ───────────────────────────────────────────────────────
+  # Multiplier on attack AND defense scores when fighting in a dark room
+  # without nightvision. 0.80 = 20% penalty to hit and defend while blind.
+  DarknessCombatPenalty: 0.80
+
+  # ── COMBAT: DAMAGE ────────────────────────────────────────────────────────
+  # These two are global panic buttons. 1.0 = no change. Not yet wired
+  # into code — reserved for future "server set" runtime tuning.
+  GlobalDamageMultiplier: 1.0
+  GlobalDefenseMultiplier: 1.0
+  #
+  # Legacy unarmed knobs — still used by GetDefaultDistributionDamage()
+  # for attack count and crit buff calculation. Actual unarmed damage is
+  # controlled by UnarmedDamageMultiplier below.
+  UnarmedBaseDamage: 2.0         # Legacy: base damage for attack count calc
+  UnarmedStrengthDivisor: 25.0   # Legacy: Str / this = damage bonus
+  UnarmedSkillDivisor: 10.0      # Legacy: UnarmedSkill / this = damage bonus
+  UnarmedBaseVariance: 3.0       # Legacy: randomness of unarmed hits
+  #
+  # UnarmedDamageMultiplier: the "weapon multiplier" used when fighting
+  # with bare fists. Works like a weapon's damage_multiplier field.
+  # Also used as the fallback when a weapon has no multiplier set.
+  # Example: Str 100, skill 0, MeleeDamageScale 0.05:
+  #   raw = 100 × 1.0 × 0.30 × 0.05 = 1.5 (fists are weak)
+  # A weapon with damage_multiplier 1.0 would do:
+  #   raw = 100 × 1.0 × 1.0 × 0.05 = 5.0
+  UnarmedDamageMultiplier: 0.30 # Tuned 39.2: fists are a last resort; 0.30 = ~1/3 of a basic weapon
+  # UnarmedSpeedMultiplier: attack speed for unarmed combat.
+  # Slightly faster than light weapons (1.2) to keep fists viable.
+  UnarmedSpeedMultiplier: 1.4
+  #
+  # ── Per-Channel Damage Scales ──
+  # All channels use the same formula:
+  #   raw = stat × SkillMultiplier(rank) × itemMult × ChannelScale
+  #
+  # MeleeDamageScale: master knob for ALL physical (melee/ranged) damage
+  #   for both players AND NPCs. Stats are ~100, so this directly sets
+  #   the per-swing baseline at skill 0 with a 1.0x weapon.
+  #   Examples at Str 100, skill 0, weapon 1.0x:
+  #     0.05 →   5 raw damage per swing (current — low, needs MobDamageMultiplier)
+  #     0.15 →  15 raw damage per swing
+  #     0.30 →  30 raw damage per swing (original default)
+  MeleeDamageScale: 0.45       # Bumped +50% from 0.30; fights were too slow
+  #
+  # MobDamageMultiplier: extra multiplier applied ONLY to NPC melee
+  #   damage. Lets you keep player damage low while making NPCs threatening.
+  #   Example: MeleeDamageScale 0.05, MobDamageMultiplier 4.0:
+  #     Player Str 100 → 100 × 1.0 × 1.0 × 0.05 = 5 raw (unchanged)
+  #     Mob Str 100    → 100 × 1.0 × 1.0 × 0.05 × 4.0 = 20 raw
+  MobDamageMultiplier: 2.0      # Reduced from 2.5; MeleeDamageScale bumped to 0.45 so mobs need less boost
+  #
+  # SpellDamageScale: multiplier on ALL spell damage output (players + NPCs).
+  #   1.0 = no scaling. Example at Wil 100, skill 0, spell mult 1.0:
+  #     1.0 → 100 raw,  1.5 → 150 raw,  0.5 → 50 raw
+  SpellDamageScale: 1.85        # Detuned -33% from 2.75; spells were hitting too hard relative to melee
+  #
+  # RhetoricDamageScale: multiplier on taunt/conviction damage output.
+  #   Taunt uses itemMult 0.5 as base. Example at Cha 100, skill 0:
+  #     1.0 → 50 raw,  2.0 → 100 raw
+  RhetoricDamageScale: 2.0      # Tuned 39.2: taunts are utility/CC, not primary damage; 2x keeps conviction damage meaningful but secondary
+  #
+  # SkillMultiplierBase/Max: controls how much skill rank affects damage.
+  #   At rank 0 the multiplier is Base, at soft cap (50) it's Max.
+  #   Curve: mult = Base + (Max - Base) × sqrt(rank / 50)
+  #   Example: rank 0 → 1.0x, rank 12 → 1.98x, rank 25 → 2.41x, rank 50 → 3.0x
+  SkillMultiplierBase: 1.0
+  SkillMultiplierMax: 3.0
+  #
+  # Mitigation caps: maximum % damage reduction from armor for each channel.
+  # 0.75 = armor can block at most 75% of incoming damage in that channel.
+  PhysicalMitigationCap: 0.75
+  MagicalMitigationCap: 0.75
+  ConvictionMitigationCap: 0.75
+  #
+  # ── Resource Depletion Penalties ──
+  # As HP/SP/CP drain, combat effectiveness gradually decreases.
+  # Formula: mult = 1 - maxPenalty × (1 - ratio)^curve
+  #
+  # ResourcePenaltyCurve: exponent controlling curve shape. Higher values
+  #   make the penalty kick in later (closer to empty). At 2.0:
+  #     100% resource → 0% penalty      50% → 7% penalty
+  #      25% resource → 16% penalty      5% → 25% penalty
+  #       0% resource → 28% penalty (= maxPenalty)
+  ResourcePenaltyCurve: 2.0
+  #
+  # Per-pool max penalty (at 0% resource). Each pool affects different things:
+  #   Health    → melee damage output (wounded = weaker swings)
+  #   Stamina   → attack count + melee hit rate (exhausted = slower/sloppier)
+  #   Conviction → taunt hit/damage + spell damage (demoralized = weaker magic)
+  HealthPenaltyMax: 0.28         # At 0% HP: melee damage reduced by 28%
+  StaminaPenaltyMax: 0.28        # At 0% SP: attacks/hit rate reduced by 28%
+  ConvictionPenaltyMax: 0.28     # At 0% CP: taunt/spell reduced by 28%
 
   # ── REGEN RATES (fraction of pool max per tick; 0.01 = 1%) ────────────────
   PlayerHealthRegenPct: 0.01     # Player HP regen per tick (1% of HealthMax)
-  PlayerStaminaRegenPct: 0.01    # Player stamina regen per tick
+  PlayerStaminaRegenPct: 0.02    # Tuned 39.2: doubled from 0.01; fights felt too exhausting at 1%
   PlayerConvictionRegenPct: 0.01 # Player conviction regen per tick
   MobHealthRegenPct: 0.01        # NPC HP regen per tick (1% of HealthMax)
   MobStaminaRegenPct: 0.01       # NPC stamina regen per tick
   MobConvictionRegenPct: 0.01    # NPC conviction regen per tick
 
   # ── STAMINA & CONVICTION ────────────────────────────────────────────────────
-  MovementBaseStaminaCost: 2.0   # Flat cost to move on normal terrain
-  MovementMaxStaminaCost: 20.0   # Ceiling for any single move action
-  UnarmedAttackStaminaCost: 4    # Stamina per unarmed attack
+  # MovementBaseStaminaCost: stamina spent per room move on normal terrain.
+  #   Difficult terrain multiplies this (e.g. swamp 2x → 4 SP per move).
+  MovementBaseStaminaCost: 2.0
+  # MovementMaxStaminaCost: ceiling for any single move, regardless of terrain.
+  MovementMaxStaminaCost: 20.0
+  # UnarmedAttackStaminaCost: stamina per unarmed attack (weapons use their
+  #   own stamina_cost field from the item spec).
+  UnarmedAttackStaminaCost: 4
 
   # ── RESOURCE MAXIMUMS ───────────────────────────────────────────────────────
+  # Formulas:
+  #   HealthMax   = HealthBase + Str × HealthPerStrength + Vit × HealthPerVitality
+  #   StaminaMax  = StaminaBase + Str × StaminaPerStrength + Wil × StaminaPerWillpower + Vit × StaminaPerVitality
+  #   ConvictionMax = ConvictionBase + (Wil + Cha) × ConvictionPerWilCha
+  # Example at human baseline (all stats 100):
+  #   HealthMax   = 5 + 100×1 + 100×4 = 505 HP
+  #   StaminaMax  = 5 + 100×1 + 100×1 + 100×3 = 505 SP
+  #   ConvictionMax = 5 + (100+100)×2 = 405 CP
   HealthBase: 5                  # Flat HP before stat contribution
-  HealthPerStrength: 1           # Strength multiplier toward HealthMax
-  HealthPerVitality: 4           # Vitality multiplier toward HealthMax (primary)
+  HealthPerStrength: 1           # + Str × this toward HealthMax
+  HealthPerVitality: 4           # + Vit × this toward HealthMax (primary)
   StaminaBase: 5                 # Flat stamina before stat contribution
-  StaminaPerStrength: 1          # Strength multiplier toward StaminaMax
-  StaminaPerWillpower: 1         # Willpower multiplier toward StaminaMax
-  StaminaPerVitality: 3          # Vitality multiplier toward StaminaMax (primary)
+  StaminaPerStrength: 1          # + Str × this toward StaminaMax
+  StaminaPerWillpower: 1         # + Wil × this toward StaminaMax
+  StaminaPerVitality: 3          # + Vit × this toward StaminaMax (primary)
   ConvictionBase: 5              # Flat conviction before stat contribution
-  ConvictionPerWilCha: 2         # (Wil+Cha) multiplier toward ConvictionMax
+  ConvictionPerWilCha: 2         # + (Wil+Cha) × this toward ConvictionMax
 
   # ── PROGRESSION ─────────────────────────────────────────────────────────────
+  # Skills and stats improve via use-based progression. Every UsesPerRank
+  # uses count as 1 "virtual rank" for the progression chance formula.
+  # Chance decays exponentially as rank approaches the soft cap.
+  # Example: skill with 50 uses (= rank 2), BaseProgressionChance 0.12:
+  #   chance ≈ 0.12 × e^(-3.0 × 2/50) ≈ 10.6% per check
   SkillSoftCap: 50               # Virtual ranks where progression slows sharply
   StatSoftCap: 150               # Stat value where progression slows sharply
   UsesPerRank: 25                # Skill/stat uses that equal one virtual rank
-  BaseProgressionChance: 0.30    # Starting chance to progress at rank 0
-  ProgressionDecayBelowCap: 3.0  # Exponential steepness below soft cap
+  BaseProgressionChance: 0.12    # Chance to progress per check at rank 0 (12%)
+  ProgressionDecayBelowCap: 3.0  # Exponential steepness below soft cap (higher = faster decay)
   ProgressionDecayAboveCap: 2.0  # Exponential steepness above soft cap
-  StatSoftCapThreshold: 105      # Raw stat value where adjusted formula kicks in
-  StatSoftCapMultiplier: 2.0     # Multiplier in: 100 + sqrt(raw-100) * this
+  #
+  # Stat soft cap: raw stat values above this are diminished.
+  # Formula: adjusted = SoftCap + (raw - SoftCap)^0.75 × Multiplier
+  # Example: raw stat 160, threshold 105, cap 150, multiplier 2.0:
+  #   adjusted = 150 + (160-150)^0.75 × 2.0 = 150 + 11.2 = 161.2
+  StatSoftCapThreshold: 105      # Raw stat below which no adjustment applies
+  StatSoftCapMultiplier: 2.0     # Scaling factor above the soft cap
+
+  # ── PER-STAT PROGRESSION MULTIPLIERS ────────────────────────────────────────
+  # Scales the progression chance for each stat independently.
+  # 1.0 = normal rate. Dexterity is 0.5 because weapon-combat and
+  # unarmed-combat both map dexterity as their primary stat, firing
+  # OnStatUse("dexterity") multiple times per combat round.
+  StatProgressionMultipliers:
+    strength: 0.20     # Tuned 39.2: combat stats fire many times/round; low mult prevents runaway growth
+    dexterity: 0.10    # Tuned 39.2: weapon + unarmed both fire dex; lowest mult to compensate
+    perception: 1.0
+    vitality: 1.0
+    willpower: 1.0
+    charisma: 0.20     # Tuned 39.2: rhetoric fires often in group fights; low mult prevents runaway growth
+
+  # ── PER-SKILL PROGRESSION MULTIPLIERS ───────────────────────────────────────
+  # Overrides the hardcoded skill progression multipliers in skills.go.
+  # Combat skills fire many times per round (low mult), utility skills
+  # fire rarely (high mult). Only skills listed here override the defaults.
+  SkillProgressionMultipliers:
+    weapon-combat: 0.12   # Tuned 39.2: ~8 attacks/round × 0.12 ≈ 1 effective check/round, matches non-combat pacing
+    unarmed-combat: 0.12  # Tuned 39.2: same rationale as weapon-combat
+    ranged-combat: 0.3
+    spellcasting: 0.5
+    rhetoric: 0.5
+    tracking: 2.0
+    bartering: 2.0
+    foraging: 2.0
+    first-aid: 2.0
+    stealth: 2.0
+    blacksmithing: 3.5  # Crafting skills fire rarely (once per craft); boosted for feel
+    alchemy: 3.5
+    tailoring: 3.5
+    cooking: 3.5
+    jewelcrafting: 3.5
+    enchanting: 3.5
+
+  # ── MOB PROGRESSION ──────────────────────────────────────────────────────────
+  # When enabled, mobs gain stats and skills through combat just like players.
+  # Mobs that survive longer become more dangerous. Progression resets when
+  # the mob dies and respawns from its template.
+  MobProgressionEnabled: true
+  # How fast mobs progress relative to players. This multiplies the base
+  # progression chance. At 0.5, mobs have half the chance per combat action
+  # to gain a stat or skill point compared to a player doing the same action.
+  # Range: 0.01-1.0. Lower = slower mob growth. 1.0 = same rate as players.
+  MobProgressionRate: 0.5
+  # Hard ceiling on any single stat a mob can reach through progression.
+  # Prevents runaway growth if a mob survives many fights. The mob's base
+  # stat from its template StatPool is NOT counted against this cap -- only
+  # the final computed stat value matters. Default 200 (double human baseline).
+  MobStatCap: 200
+  # Maximum skill level a mob can reach through use-based progression.
+  # Player soft cap is 50; mobs are intentionally much lower since they
+  # fight constantly. At rank 3, the SkillMultiplier curve gives ~1.77x
+  # damage -- meaningful but not overwhelming. Range: 1-50.
+  MobSkillCap: 3
+
+  # ── REGEN-BASED STAT PROGRESSION ──────────────────────────────────────────
+  # Every regen tick (every 3 rounds), each resource pool (HP, SP, CP) has
+  # a small chance to trigger stat progression based on how depleted it is.
+  # This replaces the old hard 25%-threshold system. The chance follows a
+  # smooth curve: nearly zero when the pool is full, rising as it empties.
+  #
+  # Formula: chance = RegenProgressionBase × (1 - currentPct) ^ RegenProgressionCurve
+  #
+  # Each pool maps to two stats:
+  #   Health    → Vitality, Willpower   (enduring injury toughens body + mind)
+  #   Stamina   → Strength, Vitality    (exertion builds power + endurance)
+  #   Conviction→ Willpower, Charisma   (mental strain sharpens will + presence)
+  #
+  # The existing StatProgressionMultipliers (above) apply on top of this,
+  # so per-stat tuning is still available. Mob progression uses MobProgressionRate.
+  #
+  # RegenProgressionBase: Maximum chance per stat per tick when the pool is
+  #   at 0%. At the default 0.005 (0.5%), a character sitting at 0% HP would
+  #   have a 0.5% chance per tick (every 3 rounds) to gain Vitality and a
+  #   separate 0.5% chance to gain Willpower. Higher = faster stat gains from
+  #   resource depletion. Range: 0.001 to 1.0.
+  RegenProgressionBase: 0.005
+  # RegenProgressionCurve: Controls how steeply the chance ramps up as the
+  #   pool empties. Higher values mean the chance stays near zero until the
+  #   pool is very low, then spikes. Lower values spread the chance more
+  #   evenly across the depletion range.
+  #   - 1.0 = linear (50% pool = 50% of max chance)
+  #   - 2.0 = quadratic (50% pool = 25% of max chance)
+  #   - 3.0 = cubic (50% pool = 12.5% of max chance)  ← default
+  #   - 5.0 = very steep (almost nothing above 50% pool)
+  #   Range: 0.5 to 10.0.
+  RegenProgressionCurve: 3.0
 
   # ── CHARACTER CREATION ──────────────────────────────────────────────────────
-  StatRollMean: 100.0            # Target average for all stats at character creation
-  StatRollStdDev: 15.0           # Standard deviation for stat rolls
-  StatRollMin: 70.0              # Minimum stat value from rolls
-  StatRollMax: 130.0             # Maximum stat value from rolls
-  StartingHealth: 10             # Initial health points assigned at character creation
+  # Stats are rolled as a normal distribution, clamped to [Min, Max].
+  # Example: mean 100, stddev 15 → ~68% of rolls land in 85–115,
+  #   ~95% in 70–130. Min/Max hard-clamp outliers.
+  StatRollMean: 100.0            # Center of the bell curve
+  StatRollStdDev: 15.0           # Width of the bell curve
+  StatRollMin: 70.0              # Hard floor (no stat below this)
+  StatRollMax: 130.0             # Hard ceiling (no stat above this)
+  StartingHealth: 10             # HP assigned at creation (before stat-based HealthMax)
 
   # ── CRAFTING ────────────────────────────────────────────────────────────────
+  # Formula: chance = clamp(Base + (skillLevel - recipeMinimum) × BonusPerLevel, Min, Max)
+  # Example: skill 5, recipe min 3, base 50, bonus 5:
+  #   chance = clamp(50 + (5-3)×5, 5, 95) = 60%
   CraftingBaseSuccessChance: 50  # % chance before skill adjustment
   CraftingSkillBonusPerLevel: 5  # +% per skill level above recipe minimum
-  CraftingMinSuccessChance: 5    # Floor — never lower than this
-  CraftingMaxSuccessChance: 95   # Ceiling — never higher than this
+  CraftingMinSuccessChance: 5    # Floor — never below this %
+  CraftingMaxSuccessChance: 95   # Ceiling — never above this %
 
   # ── RECIPE DISCOVERY ──────────────────────────────────────────────────────
-  RecipeDiscoveryBaseChance: 8.0   # Base % to discover a new recipe per successful craft
-  RecipeDiscoveryDecayRate: 0.1    # Decay per known recipe: chance = base / (1 + known*this)
+  # Chance to learn a new recipe on a successful craft.
+  # Formula: chance = BaseChance / (1 + knownRecipes × DecayRate)
+  # Example: base 10%, decay 0.1, 5 recipes known:
+  #   chance = 10 / (1 + 5×0.1) = 6.7%
+  RecipeDiscoveryBaseChance: 10.0
+  RecipeDiscoveryDecayRate: 0.1
 
   # ── MUTATIONS ───────────────────────────────────────────────────────────────
+  # Mutations are combat-earned abilities that grow through fighting.
+  # Progress needed for the Nth mutation: BaseProgress × ProgressScale^(N-1)
+  #   Example: base 50, scale 1.5:
+  #     1st mutation: 50 progress,  2nd: 75,  3rd: 112.5,  4th: 168.75
   MutationBaseProgress: 50.0         # Progress needed for first mutation
   MutationProgressScale: 1.5         # Each additional mutation costs Scale^n more
   MutationMaxCount: 5                # Max simultaneous mutations per character
-  MutationMaxLevel: 3                # Max level any single mutation can reach
+  MutationMaxLevel: 3                # Max level any single mutation can reach (1–3)
   MutationProgressGainPerRound: 1.0  # Progress added per combat round
-  MutationLevel2Multiplier: 1.5      # Effect scaling at mutation level 2
-  MutationLevel3Multiplier: 2.0      # Effect scaling at mutation level 3
+  MutationLevel2Multiplier: 1.5      # Effect magnitude at level 2 (1.5× level 1)
+  MutationLevel3Multiplier: 2.0      # Effect magnitude at level 3 (2.0× level 1)
 
   # ── SPELLCASTING ──────────────────────────────────────────────────────
-  SpellDiscoveryBaseChance: 5.0        # Base % to discover a new spell per successful cast
-  SpellDiscoveryDecayRate: 0.1         # Decay per known spell: chance = base / (1 + known*this)
-  SpellInitiationBase: 60              # Base % chance to initiate a spell
-  SpellInitiationWillpowerDivisor: 4   # Willpower / this = initiation bonus
-  SpellInitiationSkillFactor: 5        # Spellcasting level * this = initiation bonus
-  SpellConcentrationBase: 50           # Base % concentration chance when struck
-  SpellFoldsSkillFactor: 25            # Skill * this in folds-per-round calculation
-  SpellAttackSkillFactor: 3            # Skill * this in spell attack mean
-  SpellProficiencyCastsPerPoint: 50    # Casts needed per 1 proficiency point
+  # Spell discovery: chance to learn a new spell on a successful cast.
+  # Formula: chance = BaseChance / (1 + knownSpells × DecayRate)
+  # Example: base 5%, decay 0.1, 3 spells known:
+  #   chance = 5 / (1 + 3×0.1) = 3.8%
+  SpellDiscoveryBaseChance: 5.0
+  SpellDiscoveryDecayRate: 0.1
+  #
+  # Initiation: chance to successfully begin casting.
+  # Formula: chance = Base + Willpower/WillpowerDivisor + SpellcastingLevel × SkillFactor
+  # Example: base 60, Wil 100, skill 3:
+  #   chance = 60 + 100/4 + 3×5 = 60 + 25 + 15 = 100% (clamped)
+  SpellInitiationBase: 60
+  SpellInitiationWillpowerDivisor: 4   # Wil / this = initiation bonus
+  SpellInitiationSkillFactor: 5        # SpellcastingLevel × this = initiation bonus
+  #
+  # Concentration: % chance to maintain casting when struck mid-cast.
+  SpellConcentrationBase: 50
+  #
+  # Folds per round: how fast a spell charges each combat round.
+  # Formula includes: SpellcastingLevel × SpellFoldsSkillFactor
+  SpellFoldsSkillFactor: 25
+  #
+  # Spell attack: mean for the spell's opposed hit roll.
+  # Formula includes: SpellcastingLevel × SpellAttackSkillFactor
+  SpellAttackSkillFactor: 3
+  #
+  # Proficiency: successful casts needed to gain 1 proficiency point
+  #   with a specific spell. Higher proficiency reduces fizzle chance.
+  SpellProficiencyCastsPerPoint: 50
 
   # ── ENCHANTMENTS ────────────────────────────────────────────────────────────
-  EnchantTierUpBaseChance: 0.02     # Chance per use to advance tier once threshold met (2%)
+  # Enchanted items grow stronger with use. Each tier requires more uses.
+  # Uses threshold per tier: UsesBase × UsesScale^tier
+  #   Example: base 25, scale 2.5:
+  #     Tier 0→1: 25 uses,  Tier 1→2: 63 uses,  Tier 2→3: 156 uses
+  # Once the uses threshold is met, each additional use has BaseChance to
+  #   advance the tier.
+  EnchantTierUpBaseChance: 0.02     # 2% chance per use to tier up (once threshold met)
   EnchantTierUsesBase: 25           # Uses needed for tier 0→1
   EnchantTierUsesScale: 2.5         # Multiplier per tier for uses threshold
-  EnchantRemovalPenaltyRounds: 50   # Rounds of withdrawal after disenchant
-  EnchantMaxTier: 4                 # Maximum tier enchantments can reach
+  EnchantRemovalPenaltyRounds: 50   # Rounds of withdrawal debuff after disenchant
+  EnchantMaxTier: 4                 # Maximum tier (tiers 0–4 = 5 levels total)
+
+  # ── GOSSIP SYSTEM ───────────────────────────────────────────────────────────
+  GossipIntervalRounds: 75  # Rounds between gossip broadcasts for "gossiper" mobs (min 20)
 
   # ── MOON PHASES ─────────────────────────────────────────────────────────────
   MoonStatModMax: 0.05  # Max fractional stat modifier from moon phases (±5% at full/new moon)
@@ -498,6 +790,7 @@ LLM:
 
 ################################################################################
 #
+
 #   ANALYTICS
 #   Combat analytics subsystem. When enabled, records combat events to a
 #   ring buffer and periodically flushes aggregated summaries to a JSONL log.
@@ -505,8 +798,8 @@ LLM:
 #
 ################################################################################
 Analytics:
-  Enabled: false
-  MaxEvents: 10000
+  Enabled: true
+  MaxEvents: 500000   # Reduced from 250k; tuning pass complete, 50k sufficient for monitoring
   FlushIntervalSec: 300
   LogPath: "_datafiles/logs/combat-analytics.jsonl"
 

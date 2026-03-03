@@ -32,6 +32,7 @@ func RegisterListeners() {
 	// Done with combat
 	//
 	events.RegisterListener(events.NewRound{}, AutoHeal)
+	events.RegisterListener(events.NewRound{}, BroadcastHints)
 	events.RegisterListener(events.NewRound{}, IdleMobs)
 	events.RegisterListener(events.MobIdle{}, HandleIdleMobs)
 
@@ -78,6 +79,9 @@ func RegisterListeners() {
 	events.RegisterListener(events.Broadcast{}, Broadcast_SendToAll)
 
 	events.RegisterListener(events.RebuildMap{}, HandleMapRebuild)
+
+	// Mob death: pack flee behavior (Stage 42.7)
+	events.RegisterListener(events.MobDeath{}, PackFlee)
 
 	// Log tee to users
 	events.RegisterListener(events.Log{}, FollowLogs)

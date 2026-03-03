@@ -1,0 +1,32 @@
+roomid: 3095
+zone: Ironwind Steppe
+title: Drinking Pool
+description: A broad, shallow pool of brownish water persists here
+  year-round, fed by underground seepage. The banks are trampled
+  bare by the constant traffic of animals coming to drink. Boar
+  tracks dominate, but wolf, fox, hare, and bird tracks all
+  overlap in the soft mud. The water is not clean but it is wet,
+  and on the dry steppe that is enough to draw every creature
+  for miles. Watchful eyes observe from the surrounding cover.
+biome: land
+exits:
+  west:
+    roomid: 3094
+  north:
+    roomid: 3089
+  south:
+    roomid: 3092
+nouns:
+  pool: A shallow pool of warm, murky water about twenty paces
+    across. The water is brown and slightly silty, disturbed by
+    the constant traffic of drinking animals. Insects skim the
+    surface.
+spawninfo:
+- mobid: 207
+- mobid: 208
+- mobid: 213
+- mobid: 236
+idlemessages:
+- Animals eye each other warily across the shared water source.
+- Ripples spread across the pool as something drinks at the far edge.
+- A fox laps quickly at the water's edge, alert and ready to bolt.

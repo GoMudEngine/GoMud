@@ -18,6 +18,9 @@ spawninfo:
 - mobid: 72
   message: A warren scout emerges from the rubble, hissing softly between sharp teeth.
   respawnrate: 10 real minutes
+- mobid: 72
+  message: A second scout drops from an overhead crack, landing in a crouch with bared teeth.
+  respawnrate: 12 real minutes
 - mobid: 76
   message: A blind rat squeezes through a gap in the rubble, nose twitching.
   respawnrate: 12 real minutes

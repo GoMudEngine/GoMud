@@ -7,6 +7,7 @@ description: A wide silver band engraved with flowing geometric patterns and
 type: ring
 subtype: wearable
 damagereduction: 0
+magical_mitigation: 1
 statmods:
   dexterity: 3
 value: 15

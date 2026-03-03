@@ -31,7 +31,7 @@ func Load(mobId int, zone string) *DialogueFile {
 
 	sanitizedZone := conversations.ZoneNameSanitize(zone)
 	dataFiles := string(configs.GetFilePathsConfig().DataFiles)
-	path := util.FilePath(dataFiles + `/world/dogmud/dialogue/` + sanitizedZone + `/` + fmt.Sprintf("%d", mobId) + `.yaml`)
+	path := util.FilePath(dataFiles + `/dialogue/` + sanitizedZone + `/` + fmt.Sprintf("%d", mobId) + `.yaml`)
 
 	if _, err := os.Stat(path); err != nil {
 		nilSentinel[key] = true

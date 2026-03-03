@@ -10,7 +10,7 @@ pros:
   - type: flag
     target: active-ability
     value: 1
-  - type: stat_pct
+  - type: stat_multiplier
     target: dexterity
     value: 0.05
 cons:
