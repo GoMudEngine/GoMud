@@ -2152,7 +2152,7 @@ func (c *Character) RecalculateStats() {
 
 		// Only set base stats from racial if they haven't been rolled yet
 		// (Base values of 0 indicate uninitialized stats)
-		// Rolled stats (from RollCharacterStats) will be 70-130, so they won't be overwritten
+		// Rolled stats (from RollCharacterStats) will be 85-115, so they won't be overwritten
 		if c.Stats.Strength.Base == 0 {
 			c.Stats.Strength.Base = speciesInfo.Stats.Strength.Base
 		}

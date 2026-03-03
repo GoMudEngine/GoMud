@@ -692,8 +692,8 @@ Balance:
   #   ~95% in 70–130. Min/Max hard-clamp outliers.
   StatRollMean: 100.0            # Center of the bell curve
   StatRollStdDev: 15.0           # Width of the bell curve
-  StatRollMin: 70.0              # Hard floor (no stat below this)
-  StatRollMax: 130.0             # Hard ceiling (no stat above this)
+  StatRollMin: 85.0              # Hard floor (no stat below this)
+  StatRollMax: 115.0             # Hard ceiling (no stat above this)
   StartingHealth: 10             # HP assigned at creation (before stat-based HealthMax)
 
   # ── CRAFTING ────────────────────────────────────────────────────────────────
