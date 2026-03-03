@@ -429,7 +429,7 @@ func cmdCharacterHire(user *users.UserRecord, room *rooms.Room, cmdPrompt *promp
 
 func getAltTable(nameToAlt map[string]characters.Character, charmedChars map[string]characters.Character, viewingUserId int) string {
 
-	headers := []string{"Name", "Species", "Profession", "Status"}
+	headers := []string{"Name", "Species", "Title", "Status"}
 	rows := [][]string{}
 
 	for _, char := range nameToAlt {
@@ -450,7 +450,7 @@ func getAltTable(nameToAlt map[string]characters.Character, charmedChars map[str
 		rows = append(rows, []string{
 			fmt.Sprintf(`<ansi fg="username">%s</ansi>`, char.Name),
 			raceName,
-			skills.GetProfession(allRanks),
+			skills.GetTitle(char.Mutations, allRanks, char.Stats),
 			mobBusy,
 		})
 

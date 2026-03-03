@@ -1,9 +1,19 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">consider</ansi>
 
-The <ansi fg="command">consider</ansi> command tries to determine if an enemy is a good match.
+The <ansi fg="command">consider</ansi> command sizes up a target and gives
+you a gut-feeling estimate of how a fight might go.
 
 <ansi fg="yellow">Usage: </ansi>
 
   <ansi fg="command">consider goblin</ansi>
-  You will receive a range of results, from YOU WILL DIE! to Very Favorable.
+
+<ansi fg="yellow">Possible outcomes:</ansi>
+
+  <ansi fg="blue-bold">They pose no threat to you</ansi>
+  <ansi fg="green">You hold a clear advantage</ansi>
+  <ansi fg="green">The odds favor you</ansi>
+  <ansi fg="yellow">An even contest — tread carefully</ansi>
+  <ansi fg="red-bold">They have the upper hand</ansi>
+  <ansi fg="red-bold">You are severely outmatched</ansi>
+  <ansi fg="red-bold">You will not survive this fight</ansi>
 

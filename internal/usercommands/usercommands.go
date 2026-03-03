@@ -80,7 +80,6 @@ var (
 		`drink`:       {Drink, true, true, false},
 		`eat`:         {Eat, true, true, false},
 		`emote`:       {Emote, true, true, false},
-		`experience`:{Experience, true, true, false},
 		`equip`:       {Equip, false, false, false}, // Can't equip in combat
 		`flee`:        {Flee, false, true, false},
 		`forage`:      {Forage, false, false, false}, // Can't forage in combat
@@ -99,7 +98,7 @@ var (
 		`inspect`:     {Inspect, false, true, false},
 		`inventory`:   {Inventory, true, true, false},
 		`item`:        {Item, true, true, true}, // Admin only
-		`jobs`:        {Jobs, true, true, false},
+		`title`:       {Title, true, true, false},
 		`list`:        {List, false, true, false},
 		`locate`:      {Locate, true, true, true}, // Admin only
 		`lock`:        {Lock, false, true, false},
@@ -250,10 +249,52 @@ func GetHelpSuggestions(text string, includeAdmin bool) []string {
 
 func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bool, error) {
 
+	// Load user early so we can resolve user aliases before room scripts
+	user := users.GetByUserId(userId)
+	if user == nil {
+		return false, fmt.Errorf(`user %d not found`, userId)
+	}
+
 	// Do not allow scripts to intercept server commands
 	if cmd != `server` {
 
+		// Resolve system aliases (e.g., n→north)
 		alias := keywords.TryCommandAlias(cmd)
+
+		// Resolve user aliases (e.g., cs→cast conviction-spike)
+		// so room scripts see the actual command, not the alias
+		if userAlias := user.TryCommandAlias(cmd); userAlias != cmd {
+			if strings.Contains(userAlias, ` `) {
+				parts := strings.Split(userAlias, ` `)
+				cmd = parts[0]
+				if len(rest) > 0 {
+					rest = strings.TrimPrefix(userAlias, cmd+` `) + ` ` + rest
+				} else {
+					rest = strings.TrimPrefix(userAlias, cmd+` `)
+				}
+			} else {
+				cmd = userAlias
+			}
+			// Re-resolve system aliases after user alias expansion
+			alias = keywords.TryCommandAlias(cmd)
+		}
+
+		// Re-resolve system aliases on the (possibly user-alias-expanded) cmd
+		if sysAlias := keywords.TryCommandAlias(cmd); sysAlias != cmd {
+			if strings.Contains(sysAlias, ` `) {
+				parts := strings.Split(sysAlias, ` `)
+				cmd = parts[0]
+				if len(rest) > 0 {
+					rest = strings.TrimPrefix(sysAlias, cmd+` `) + ` ` + rest
+				} else {
+					rest = strings.TrimPrefix(sysAlias, cmd+` `)
+				}
+			} else {
+				cmd = sysAlias
+			}
+			alias = keywords.TryCommandAlias(cmd)
+		}
+
 		skipScript := flags.Has(events.CmdSkipScripts)
 		if info, ok := userCommands[alias]; ok && info.AdminOnly {
 			skipScript = true
@@ -271,10 +312,6 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 	}
 
 	userDisabled := false
-	user := users.GetByUserId(userId)
-	if user == nil {
-		return false, fmt.Errorf(`user %d not found`, userId)
-	}
 
 	room := rooms.LoadRoom(user.Character.RoomId)
 	if room == nil {
@@ -289,42 +326,6 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 		rest = cmd
 		cmd = "go"
 	} else {
-
-		if alias := user.TryCommandAlias(cmd); alias != cmd {
-			// If it's a multi-word aliase, we need to extract the first word to replace the command
-			// The rest will be combined with any "rest" the player provided.
-			if strings.Contains(alias, ` `) {
-				parts := strings.Split(alias, ` `)
-				// grab the first word as the new cmd
-				cmd = parts[0]
-				// Add the "rest" to the end if any
-				if len(rest) > 0 {
-					rest = strings.TrimPrefix(alias, cmd+` `) + ` ` + rest
-				} else {
-					rest = strings.TrimPrefix(alias, cmd+` `)
-				}
-			} else {
-				cmd = alias
-			}
-		}
-
-		if alias := keywords.TryCommandAlias(cmd); alias != cmd {
-			// If it's a multi-word aliase, we need to extract the first word to replace the command
-			// The rest will be combined with any "rest" the player provided.
-			if strings.Contains(alias, ` `) {
-				parts := strings.Split(alias, ` `)
-				// grab the first word as the new cmd
-				cmd = parts[0]
-				// Add the "rest" to the end if any
-				if len(rest) > 0 {
-					rest = strings.TrimPrefix(alias, cmd+` `) + ` ` + rest
-				} else {
-					rest = strings.TrimPrefix(alias, cmd+` `)
-				}
-			} else {
-				cmd = alias
-			}
-		}
 
 		userDisabled = user.Character.IsDisabled()
 

@@ -114,7 +114,6 @@ var (
 		"divFloat":     func(a int, b int) float64 { return float64(a) / float64(b) },
 		"stringor":     stringOr,
 		"splitstring":    util.SplitStringNL,
-		"normalizewrap": util.NormalizeAndWrapNL,
 		"ansiparse":    TplAnsiParse,
 		"buffname": func(buffId int) string {
 			buffSpec := buffs.GetBuffSpec(buffId)
@@ -146,9 +145,10 @@ var (
 			return util.FormatDiceRoll(a, d, s, b, []int{})
 		},
 		"profession": func(char characters.Character) string {
-
-			allRanks := char.GetAllSkillRanks()
-			return skills.GetProfession(allRanks)
+			return skills.GetTitle(char.Mutations, char.GetAllSkillRanks(), char.Stats)
+		},
+		"title": func(char characters.Character) string {
+			return skills.GetTitle(char.Mutations, char.GetAllSkillRanks(), char.Stats)
 		},
 		"roundstotime": func(rounds int) string {
 			if rounds >= buffs.TriggersLeftUnlimited {
@@ -218,15 +218,15 @@ var (
 			case value <= 75:
 				return "poor"
 			case value <= 90:
-				return "below average"
+				return "modest"
 			case value <= 110:
 				return "average"
 			case value <= 130:
-				return "above average"
+				return "keen"
 			case value <= 150:
 				return "exceptional"
 			case value <= 200:
-				return "extraordinary"
+				return "remarkable"
 			case value <= 300:
 				return "transcendent"
 			default:
@@ -306,25 +306,7 @@ var (
 				return "unknown"
 			}
 		},
-		// skillRank converts a numeric skill level (1–50) to a qualitative tier name.
-		"skillRank": func(level int) string {
-			switch {
-			case level <= 0:
-				return "unknown"
-			case level <= 1:
-				return "novice"
-			case level <= 9:
-				return "apprentice"
-			case level <= 19:
-				return "journeyman"
-			case level <= 34:
-				return "adept"
-			case level <= 49:
-				return "expert"
-			default:
-				return "master"
-			}
-		},
+		"skillRank": skills.GetSkillRankDescription,
 		"durationQuality": func(rounds int) string {
 			switch {
 			case rounds <= 0:

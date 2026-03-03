@@ -80,9 +80,26 @@ function onIdle(room) {
             continue;
         }
 
+        var hasPoultice = player.HasItemId(poulticeId);
+        var hasRoot     = player.HasItemId(healersRootId);
+        var hasCloth    = player.HasItemId(clothStripId);
+
+        // Only grant quest if crafting actually happened:
+        // Success: player has the poultice
+        // Failure: materials were consumed (missing root or cloth)
+        // If they still have all materials, the craft was rejected (wrong recipe/station)
+        if ( hasRoot && hasCloth && !hasPoultice ) {
+            // Craft was rejected — don't grant quest, let them try again
+            var npc = room.GetMob(alchemistMobId, true);
+            if ( npc != null ) {
+                npc.Command('say That didn\'t take. Check the recipe and try again. Type <ansi fg="command">craft healing poultice</ansi>.', 0.5);
+            }
+            continue;
+        }
+
         var alchemist = room.GetMob(alchemistMobId, true);
 
-        if ( player.HasItemId(poulticeId) ) {
+        if ( hasPoultice ) {
             // Success
             if ( alchemist != null ) {
                 alchemist.Command('emote examines the poultice with a brief, approving look.', 0.5);

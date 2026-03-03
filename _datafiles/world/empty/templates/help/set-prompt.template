@@ -36,9 +36,6 @@ The <ansi fg="command">set prompt</ansi> command allows you to customize your in
     <ansi fg="magenta">{mp%:-}</ansi> Percent of Conviction left
 
   <ansi fg="8">Other:</ansi>
-    <ansi fg="magenta">{xp}</ansi>    Current XP                <ansi fg="magenta">{XP}</ansi>    XP remaining for next level
-    <ansi fg="magenta">{xp%}</ansi>   % of level complete       <ansi fg="magenta">{lvl}</ansi>   Character Level
-    <ansi fg="magenta">{a}</ansi>     First letter alignment    <ansi fg="magenta">{A}</ansi>     Full alignment text
     <ansi fg="magenta">{tp}</ansi>    Unspent Training Points   <ansi fg="magenta">{sp}</ansi>    Unspent Stat Points
     <ansi fg="magenta">{i}</ansi>     Items carried count       <ansi fg="magenta">{I}</ansi>     Maximum carry capacity
     <ansi fg="magenta">{g}</ansi>     Gold on hand              <ansi fg="magenta">{h}</ansi>     Hidden/Invisible flag

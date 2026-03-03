@@ -2,8 +2,7 @@
 
 The <ansi fg="command">status</ansi> command gives you a summary of your characters information.
 
-When you level up, you gain <ansi>Stat Points</ansi> which you can spend to upgrade your 
-stats base value.
+Use <ansi>Stat Points</ansi> to upgrade your stats base value.
 
 <ansi fg="yellow">Usage: </ansi>
 

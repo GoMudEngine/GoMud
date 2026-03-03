@@ -13,9 +13,9 @@ help:
       - actionpoints
       - conditions
       - cooldowns
-      - experience
+      - skills
       - inventory
-      - jobs
+      - title
       - keyring
       - skills
       - spells
@@ -158,6 +158,7 @@ help-aliases:
   pvp:              ['pk']
   about:            ['gomud']
   stat-train:       ['stat train', 'status train', 'stat points']
+  title:            [jobs, job, profession, class, titles, archetypes, archetype]
 # Default aliases for commands
 # For example: inv -> inventory
 # They can be command + argument aliases
@@ -169,10 +170,9 @@ command-aliases:
   inventory:          ['i', 'inv', 'eq']
   look:               ['l', 'examine']
   go:                 ['enter']
-  experience:         ['exp', 'xp', 'tnl']
   map:                ['m']
   conditions:         ['c', 'cond', 'conds']
-  skills:             ['sk', 'skill']
+  skills:             ['sk', 'skill', 'exp', 'xp', 'progression']
   scribe:             ['scribble', 'write']
   equip:              ['wear', 'wield', 'hold']
   remove:             ['rem', 'unequip', 'unwear', 'unwield']
@@ -206,7 +206,8 @@ command-aliases:
   'rank front':       ['frontrank']
   'help about':       ['about']
   'set screenreader': ['screenreader']
-  
+  title:              ['jobs', 'job', 'profession', 'class', 'titles']
+
   # Direction aliases
 direction-aliases:
   n:  north

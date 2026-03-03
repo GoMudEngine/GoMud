@@ -27,7 +27,7 @@ func Say(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	}
 
 	// Wrap long dialogue text to 65 chars to account for "Name says, ..."
-	rest = util.NormalizeAndWrap(rest, 65)
+	rest = util.SplitStringNL(rest, 65)
 
 	if isSneaking {
 		room.SendTextCommunication(fmt.Sprintf(`someone says, "<ansi fg="saytext">%s</ansi>"`, rest), user.UserId)

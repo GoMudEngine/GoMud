@@ -37,7 +37,8 @@ func NextPowerOfTwo(n int) int {
 func CalcFoldsPerRound(perception, spellcastingLevel int) int {
 	b := configs.GetBalanceConfig()
 	skillFactor := int(b.SpellFoldsSkillFactor)
-	result := int(math.Round(float64(perception+spellcastingLevel*skillFactor) / 100.0))
+	weightedSkill := int(math.Round(float64(spellcastingLevel) * float64(b.SkillWeight)))
+	result := int(math.Round(float64(perception+weightedSkill*skillFactor) / 100.0))
 	if result < 1 {
 		return 1
 	}
@@ -51,7 +52,8 @@ func CalcInitiationChance(willpower, spellcastingLevel int) int {
 	base := int(b.SpellInitiationBase)
 	divisor := int(b.SpellInitiationWillpowerDivisor)
 	factor := int(b.SpellInitiationSkillFactor)
-	chance := base + willpower/divisor + spellcastingLevel*factor
+	weightedSkill := int(math.Round(float64(spellcastingLevel) * float64(b.SkillWeight)))
+	chance := base + willpower/divisor + weightedSkill*factor
 	if chance < 10 {
 		return 10
 	}
@@ -84,5 +86,6 @@ func CalcConcentrationChance(willpower, damagePct int) int {
 func CalcSpellAttack(willpower, spellcastingLevel int) float64 {
 	b := configs.GetBalanceConfig()
 	factor := int(b.SpellAttackSkillFactor)
-	return float64(willpower + spellcastingLevel*factor)
+	weightedSkill := int(math.Round(float64(spellcastingLevel) * float64(b.SkillWeight)))
+	return float64(willpower + weightedSkill*factor)
 }

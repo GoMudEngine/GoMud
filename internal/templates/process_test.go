@@ -179,7 +179,8 @@ func TestProcess_CharacterSkillsTemplate(t *testing.T) {
 	assert.NotContains(t, result, "[TEMPLATE ERROR]")
 	assert.Contains(t, result, "Skills")
 	assert.Contains(t, result, "melee")
-	assert.Contains(t, result, "MAXIMUM") // stealth at level 4
+	// DOG skills soft-cap at 50; level 4 = apprentice, not MAXIMUM
+	assert.Contains(t, result, "apprentice")
 }
 
 func TestProcess_CharacterConditionsTemplate(t *testing.T) {

@@ -73,7 +73,8 @@ func CalcRawDamage(stat int, skillRank int, itemMult float64, channel DamageChan
 	scale := DamageScale(channel)
 	statFactor := float64(stat)
 
-	return statFactor * SkillMultiplier(skillRank) * itemMult * scale
+	globalMult := float64(configs.GetBalanceConfig().GlobalDamageMultiplier)
+	return statFactor * SkillMultiplier(skillRank) * itemMult * scale * globalMult
 }
 
 // ResourceMultiplier returns a smooth penalty multiplier based on how depleted

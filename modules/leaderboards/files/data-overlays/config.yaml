@@ -1,23 +1,15 @@
 ################################################################################
-# If modified, these settings will be copied into your config overrides 
+# If modified, these settings will be copied into your config overrides
 # folder under `Modules.leaderboards`:
 #
 # Modules:
 #   leaderboards:
 #     Size: 10
-#     ExperienceEnabled: true
-#     GoldEnabled: true
-#     KillsEnabled: true
+#     PowerEnabled: true
 ################################################################################
 # - Size -
 #   Maximum size of each leaderboard. 0 to disable.
 Size: 10
-# - ExperienceEnabled -
-# Enable leaderboard for character with the most experience points
-ExperienceEnabled: true
-# - GoldEnabled -
-# Enable leaderboard for character with the most gold in-bank+on-hand
-GoldEnabled: true
-# - KillsEnabled -
-# Enable leaderboard for character with the most total kills
-KillsEnabled: true
+# - PowerEnabled -
+# Enable leaderboard for character with the highest Power Score
+PowerEnabled: true

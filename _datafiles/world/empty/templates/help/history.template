@@ -8,5 +8,5 @@ The <ansi fg="command">history</ansi> shows a list of logged events for your cha
   Show all history for all categories.
 
   <ansi fg="command">history [category name]</ansi>
-  Show all history for the category name supplied, such as "experience".
+  Show all history for the category name supplied, such as "combat".
 

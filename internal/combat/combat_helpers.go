@@ -73,7 +73,7 @@ func calcSwingCount(sourceChar *characters.Character, weaponSpeed float64, extra
 	}
 
 	dex := float64(sourceChar.Stats.Dexterity.ValueAdj)
-	skillLevel := float64(sourceChar.GetCombatSkillLevel())
+	skillLevel := float64(sourceChar.GetCombatSkillLevel()) * float64(bal.SkillWeight)
 
 	// Core swing count formula
 	swings := 1.0 + (dex-50.0)/100.0*weaponSpeed*(1.0+skillLevel/softCap)
@@ -81,7 +81,7 @@ func calcSwingCount(sourceChar *characters.Character, weaponSpeed float64, extra
 
 	// Offhand penalty: weapon-combat skill governs dual-wield speed
 	if isOffhand {
-		wcLevel := float64(sourceChar.GetSkillLevel(skills.WeaponCombat))
+		wcLevel := float64(sourceChar.GetSkillLevel(skills.WeaponCombat)) * float64(bal.SkillWeight)
 		dualWieldMod := 0.5 + (wcLevel/50.0)*0.5
 		swings *= dualWieldMod
 	}
@@ -279,16 +279,16 @@ func buildDamageParams(sourceChar *characters.Character, targetChar *characters.
 
 // calcAttackScore computes the attack roll score with all modifiers.
 func calcAttackScore(sourceChar *characters.Character, targetChar *characters.Character, penalty int, ctx combatContext) float64 {
-	attackScore := float64(sourceChar.Stats.Dexterity.ValueAdj) + float64(sourceChar.GetCombatSkillLevel())
+	bal := configs.GetBalanceConfig()
+	attackScore := float64(sourceChar.Stats.Dexterity.ValueAdj) + float64(sourceChar.GetCombatSkillLevel())*float64(bal.SkillWeight)
 	attackScore -= float64(penalty)
 
 	// Apply smooth stamina-based hit chance penalty
-	spPenalty := float64(configs.GetBalanceConfig().StaminaPenaltyMax)
+	spPenalty := float64(bal.StaminaPenaltyMax)
 	staminaMult := ResourceMultiplier(sourceChar.Stamina, sourceChar.StaminaMax.Value, spPenalty)
 	attackScore *= staminaMult
 
 	// Stage 7.5: Apply prone attack multipliers
-	bal := configs.GetBalanceConfig()
 	if sourceChar.CombatPosition == characters.PositionProne {
 		attackScore *= float64(bal.ProneAttackMultiplier)
 	}

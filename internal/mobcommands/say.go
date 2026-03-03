@@ -19,7 +19,7 @@ func Say(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	}
 
 	// Wrap long dialogue text to 65 chars to account for "Name says, ..."
-	rest = util.NormalizeAndWrap(rest, 65)
+	rest = util.SplitStringNL(rest, 65)
 
 	isSneaking := mob.Character.HasBuffFlag(buffs.Hidden)
 

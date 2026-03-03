@@ -17,7 +17,7 @@ func Online(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	headers := []string{
 		language.T(`User.Name`),
-		language.T(`Profession`),
+		language.T(`Title`),
 		language.T(`Online`),
 		language.T(`Role`),
 	}
@@ -71,7 +71,7 @@ func Online(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 			row := []string{
 				charName,
-				onlineInfo.Profession,
+				onlineInfo.Title,
 				onlineTime,
 				onlineInfo.Role,
 			}

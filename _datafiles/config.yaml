@@ -453,9 +453,9 @@ Balance:
   DarknessCombatPenalty: 0.80
 
   # ── COMBAT: DAMAGE ────────────────────────────────────────────────────────
-  # These two are global panic buttons. 1.0 = no change. Not yet wired
-  # into code — reserved for future "server set" runtime tuning.
-  GlobalDamageMultiplier: 1.0
+  # Global panic buttons. 1.0 = no change. GlobalDamageMultiplier is
+  # applied to ALL damage channels in CalcRawDamage().
+  GlobalDamageMultiplier: 1.75
   GlobalDefenseMultiplier: 1.0
   #
   # Legacy unarmed knobs — still used by GetDefaultDistributionDamage()
@@ -514,6 +514,9 @@ Balance:
   #   Example: rank 0 → 1.0x, rank 12 → 1.98x, rank 25 → 2.41x, rank 50 → 3.0x
   SkillMultiplierBase: 1.0
   SkillMultiplierMax: 3.0
+  # SkillWeight: Global multiplier on skill contributions in additive formulas
+  # (hit rolls, defense scores, spell attack, etc.). Higher = skills matter more.
+  SkillWeight: 2.0
   #
   # Mitigation caps: maximum % damage reduction from armor for each channel.
   # 0.75 = armor can block at most 75% of incoming damage in that channel.
@@ -692,8 +695,8 @@ Balance:
   #   ~95% in 70–130. Min/Max hard-clamp outliers.
   StatRollMean: 100.0            # Center of the bell curve
   StatRollStdDev: 15.0           # Width of the bell curve
-  StatRollMin: 70.0              # Hard floor (no stat below this)
-  StatRollMax: 130.0             # Hard ceiling (no stat above this)
+  StatRollMin: 85.0              # Hard floor (no stat below this)
+  StatRollMax: 115.0             # Hard ceiling (no stat above this)
   StartingHealth: 10             # HP assigned at creation (before stat-based HealthMax)
 
   # ── CRAFTING ────────────────────────────────────────────────────────────────

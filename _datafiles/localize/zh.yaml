@@ -5,9 +5,7 @@
 
 UserId: '用户ID'
 User.Name: '姓名'
-Level: '等级'
-Alignment: '阵营'
-Profession: '职业'
+Title: '称号'
 Online: '在线'
 Role: '角色'
 Zone: '区域'

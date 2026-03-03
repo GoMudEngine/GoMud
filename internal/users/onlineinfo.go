@@ -3,7 +3,7 @@ package users
 type OnlineInfo struct {
 	Username      string
 	CharacterName string
-	Profession    string
+	Title         string
 	OnlineTime    int64
 	OnlineTimeStr string
 	IsAFK         bool

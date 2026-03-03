@@ -65,10 +65,12 @@ type Balance struct {
 	UnarmedSpeedMultiplier     ConfigFloat `yaml:"UnarmedSpeedMultiplier"`     // Unarmed attack speed — slightly faster than light weapons (default 1.4)
 	SkillMultiplierBase        ConfigFloat `yaml:"SkillMultiplierBase"`        // Skill multiplier at rank 0 (default 1.0)
 	SkillMultiplierMax         ConfigFloat `yaml:"SkillMultiplierMax"`         // Skill multiplier at soft cap (default 3.0)
+	SkillWeight                ConfigFloat `yaml:"SkillWeight"`                // Global multiplier on skill contributions in additive formulas (default 2.0)
 	MeleeDamageScale           ConfigFloat `yaml:"MeleeDamageScale"`            // Physical damage scale. Stats ~100, so 0.30 yields ~30 raw per swing (default 0.30)
 	SpellDamageScale           ConfigFloat `yaml:"SpellDamageScale"`            // Flat multiplier on spell damage output (default 1.0 = no change)
 	RhetoricDamageScale        ConfigFloat `yaml:"RhetoricDamageScale"`         // Flat multiplier on conviction/taunt damage output (default 1.0 = no change)
 	MobDamageMultiplier        ConfigFloat `yaml:"MobDamageMultiplier"`         // Extra multiplier applied to NPC melee damage only (default 1.0 = same as players)
+	GlobalDamageMultiplier     ConfigFloat `yaml:"GlobalDamageMultiplier"`      // Master multiplier applied to ALL damage channels (default 1.0)
 	PhysicalMitigationCap      ConfigFloat `yaml:"PhysicalMitigationCap"`     // Max physical mitigation % (default 0.75)
 	MagicalMitigationCap       ConfigFloat `yaml:"MagicalMitigationCap"`      // Max magical mitigation % (default 0.75)
 	ConvictionMitigationCap    ConfigFloat `yaml:"ConvictionMitigationCap"`   // Max conviction mitigation % (default 0.75)
@@ -326,6 +328,9 @@ func (b *Balance) Validate() {
 	if b.SkillMultiplierMax <= 0 {
 		b.SkillMultiplierMax = 3.0
 	}
+	if b.SkillWeight <= 0 {
+		b.SkillWeight = 2.0
+	}
 	if b.MeleeDamageScale <= 0 {
 		b.MeleeDamageScale = 0.30
 	}
@@ -337,6 +342,9 @@ func (b *Balance) Validate() {
 	}
 	if b.MobDamageMultiplier <= 0 {
 		b.MobDamageMultiplier = 1.0
+	}
+	if b.GlobalDamageMultiplier <= 0 {
+		b.GlobalDamageMultiplier = 1.0
 	}
 	if b.PhysicalMitigationCap <= 0 || b.PhysicalMitigationCap > 1.0 {
 		b.PhysicalMitigationCap = 0.75

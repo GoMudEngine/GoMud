@@ -1663,11 +1663,12 @@ func (c *Character) GetDefenseSequence() []string {
 // GetDefenseScore calculates defense score for a given defense type (Stage 7.1)
 func (c *Character) GetDefenseScore(defenseType string) float64 {
 	dex := float64(c.Stats.Dexterity.ValueAdj)
+	skillWeight := float64(configs.GetBalanceConfig().SkillWeight)
 
 	switch defenseType {
 	case DefenseDodge:
 		// Dodge: Dexterity + UnarmedCombat skill + mutation dodge modifier
-		unarmedSkill := float64(c.GetSkillLevel(skills.UnarmedCombat))
+		unarmedSkill := float64(c.GetSkillLevel(skills.UnarmedCombat)) * skillWeight
 		score := dex + unarmedSkill + mutations.GetDodgeModifier(c.Mutations)
 		// Phase 24.5: Blinded condition reduces dodge
 		if c.HasCondition(ConditionBlinded) {
@@ -1677,7 +1678,7 @@ func (c *Character) GetDefenseScore(defenseType string) float64 {
 
 	case DefenseParry:
 		// Parry: Dexterity + WeaponCombat skill + weapon ParryRating
-		weaponSkill := float64(c.GetSkillLevel(skills.WeaponCombat))
+		weaponSkill := float64(c.GetSkillLevel(skills.WeaponCombat)) * skillWeight
 		parryRating := 0
 		if c.Equipment.Weapon.ItemId > 0 {
 			parryRating = c.Equipment.Weapon.GetSpec().ParryRating
@@ -1687,7 +1688,7 @@ func (c *Character) GetDefenseScore(defenseType string) float64 {
 	case DefenseBlock:
 		// Block: (Strength + Dexterity)/2 + WeaponCombat skill + shield BlockRating
 		str := float64(c.Stats.Strength.ValueAdj)
-		weaponSkill := float64(c.GetSkillLevel(skills.WeaponCombat))
+		weaponSkill := float64(c.GetSkillLevel(skills.WeaponCombat)) * skillWeight
 		blockRating := 0
 		if c.HasShield() {
 			blockRating = c.Equipment.Offhand.GetSpec().BlockRating
@@ -2152,7 +2153,7 @@ func (c *Character) RecalculateStats() {
 
 		// Only set base stats from racial if they haven't been rolled yet
 		// (Base values of 0 indicate uninitialized stats)
-		// Rolled stats (from RollCharacterStats) will be 70-130, so they won't be overwritten
+		// Rolled stats (from RollCharacterStats) will be 85-115, so they won't be overwritten
 		if c.Stats.Strength.Base == 0 {
 			c.Stats.Strength.Base = speciesInfo.Stats.Strength.Base
 		}
@@ -2405,6 +2406,13 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 
 	if c.KnownRecipes == nil {
 		c.KnownRecipes = crafting.GetStarterRecipes()
+	} else {
+		// Backfill any new starter recipes added since character creation
+		for id, val := range crafting.GetStarterRecipes() {
+			if _, ok := c.KnownRecipes[id]; !ok {
+				c.KnownRecipes[id] = val
+			}
+		}
 	}
 
 	if c.Mutations == nil {

@@ -1,9 +1,12 @@
 package skills
 
 import (
+	"sort"
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
+	"github.com/GoMudEngine/GoMud/internal/stats"
 )
 
 type SkillTag string
@@ -98,15 +101,6 @@ var (
 	}
 )
 
-type ProfessionRank struct {
-	Profession       string
-	ExperienceTitle  string
-	TotalPointsSpent float64
-	PointsToMax      float64
-	Completion       float64
-	Skills           []string
-}
-
 func SkillExists(sk string) bool {
 	for _, skTag := range allSkillNames {
 		if sk == string(skTag) {
@@ -120,105 +114,152 @@ func GetAllSkillNames() []SkillTag {
 	return append([]SkillTag{}, allSkillNames...)
 }
 
-func GetProfessionRanks(allRanks map[string]int) []ProfessionRank {
-
-	professionList := []ProfessionRank{}
-
-	for professionName, skills := range Professions {
-
-		ranking := ProfessionRank{Profession: professionName}
-
-		for _, skillName := range skills {
-
-			skillLevel := 0
-			if rankVal, ok := allRanks[string(skillName)]; ok {
-				skillLevel = rankVal
-			}
-
-			// DOG skill system: Skills can progress to ~50 (soft cap)
-			// Profession completion is based on progress toward soft cap
-			const skillSoftCap = 50.0
-
-			ranking.PointsToMax += skillSoftCap // Each skill can reach ~50
-			ranking.TotalPointsSpent += float64(skillLevel)
-			ranking.Skills = append(ranking.Skills, string(skillName))
-		}
-
-		ranking.Completion = ranking.TotalPointsSpent / ranking.PointsToMax
-		ranking.ExperienceTitle = GetExperienceLevel(ranking.Completion)
-
-		professionList = append(professionList, ranking)
+// GetMutationTier returns the mutation tier prefix based on total mutation load.
+func GetMutationTier(owned map[string]int) string {
+	load := mutations.GetMutationLoad(owned)
+	switch {
+	case load >= 50:
+		return "Exalted"
+	case load >= 30:
+		return "Ascendant"
+	case load >= 15:
+		return "Evolved"
+	case load >= 1:
+		return "Awakened"
+	default:
+		return ""
 	}
-
-	return professionList
 }
 
-func GetProfession(allRanks map[string]int) string {
+// GetSkillTier returns the skill tier based on aggregate completion across all skills.
+func GetSkillTier(allRanks map[string]int) string {
+	const totalSkills = 17
+	const softCap = 50.0
+	maxTotal := totalSkills * softCap
 
-	rankData := GetProfessionRanks(allRanks)
-
-	var highestCompletion float64 = 0
-	chosenProfessions := []string{}
-	experienceName := ``
-
-	for _, pRank := range rankData {
-
-		if pRank.Completion == 0 {
-			continue
-		}
-
-		if pRank.Completion > highestCompletion {
-			highestCompletion = pRank.Completion
-			chosenProfessions = []string{}
-		}
-
-		if pRank.Completion == highestCompletion {
-			experienceName = pRank.ExperienceTitle
-			chosenProfessions = append(chosenProfessions, pRank.Profession)
-		}
+	total := 0.0
+	for _, rank := range allRanks {
+		total += float64(rank)
 	}
 
-	if len(chosenProfessions) < 1 {
-		return `scrub`
+	pct := total / maxTotal
+	switch {
+	case pct >= 0.56:
+		return "master"
+	case pct >= 0.31:
+		return "expert"
+	case pct >= 0.16:
+		return "journeyman"
+	case pct >= 0.06:
+		return "apprentice"
+	case pct >= 0.01:
+		return "novice"
+	default:
+		return "scrub"
 	}
-
-	if len(experienceName) > 0 {
-		experienceName = experienceName + ` `
-	}
-
-	if len(chosenProfessions) == len(Professions) {
-		return experienceName + `demigod`
-	}
-
-	extra := ``
-	if len(chosenProfessions) > 3 {
-		chosenProfessions = chosenProfessions[0:3]
-		extra = ` (and more)`
-	}
-
-	return experienceName + strings.Join(chosenProfessions, `/`) + extra
 }
 
-// Possible value is something like 1-10
-func GetExperienceLevel(percentage float64) string {
+// statEntry is used for sorting stats by value.
+type statEntry struct {
+	name  string
+	value int
+}
 
-	if percentage >= .9 { // avg level ~4
-		return `expert`
+// GetStatArchetype determines the character's archetype based on stat distribution.
+func GetStatArchetype(s stats.Statistics) string {
+	entries := []statEntry{
+		{"Strength", s.Strength.Value},
+		{"Dexterity", s.Dexterity.Value},
+		{"Perception", s.Perception.Value},
+		{"Vitality", s.Vitality.Value},
+		{"Willpower", s.Willpower.Value},
+		{"Charisma", s.Charisma.Value},
 	}
 
-	if percentage >= .6 { // avg level 3
-		return `journeyman`
+	sort.Slice(entries, func(i, j int) bool {
+		return entries[i].value > entries[j].value
+	})
+
+	top := entries[0]
+	second := entries[1]
+	third := entries[2]
+
+	// Check if top stat is >10% above second → pure archetype
+	threshold := 0.10
+	if top.value > 0 && float64(top.value-second.value)/float64(top.value) > threshold {
+		return pureArchetype(top.name)
 	}
 
-	if percentage >= .3 { // avg level 2
-		return `apprentice`
+	// Check if top 2 are within 10% of each other AND both >10% above third → hybrid
+	if top.value > 0 && float64(top.value-second.value)/float64(top.value) <= threshold {
+		if third.value == 0 || float64(second.value-third.value)/float64(second.value) > threshold {
+			return hybridArchetype(top.name, second.name)
+		}
 	}
 
-	if percentage >= .1 { // avg level 1
-		return `novice`
+	return "generalist"
+}
+
+func pureArchetype(stat string) string {
+	switch stat {
+	case "Strength":
+		return "warrior"
+	case "Dexterity":
+		return "rogue"
+	case "Perception":
+		return "scout"
+	case "Vitality":
+		return "guardian"
+	case "Willpower":
+		return "channeler"
+	case "Charisma":
+		return "orator"
+	default:
+		return "generalist"
+	}
+}
+
+func hybridArchetype(stat1, stat2 string) string {
+	// Create a pair key that works regardless of order
+	pair := stat1 + "+" + stat2
+	// Also check reversed
+	pairRev := stat2 + "+" + stat1
+
+	hybrids := map[string]string{
+		"Strength+Willpower":  "paladin",
+		"Strength+Vitality":   "juggernaut",
+		"Strength+Dexterity":  "duelist",
+		"Dexterity+Perception": "ranger",
+		"Willpower+Charisma":  "sage",
+		"Perception+Willpower": "seer",
+		"Vitality+Willpower":  "stoic",
 	}
 
-	return `scrub`
+	if name, ok := hybrids[pair]; ok {
+		return name
+	}
+	if name, ok := hybrids[pairRev]; ok {
+		return name
+	}
+	// Unmapped hybrid pair → use pure archetype of the top stat
+	return pureArchetype(stat1)
+}
+
+// GetTitle returns the three-part title: "<MutationTier> <SkillTier> <StatArchetype>".
+// E.g., "Awakened expert paladin" or "scrub warrior".
+func GetTitle(owned map[string]int, allRanks map[string]int, s stats.Statistics) string {
+	mutTier := GetMutationTier(owned)
+	skillTier := GetSkillTier(allRanks)
+	archetype := GetStatArchetype(s)
+
+	parts := []string{}
+	if mutTier != "" {
+		parts = append(parts, mutTier)
+	}
+	parts = append(parts, skillTier)
+	parts = append(parts, archetype)
+
+	return strings.Join(parts, " ")
 }
 
 // SkillPrimaryStats maps each DOG skill to its primary governing stat.
