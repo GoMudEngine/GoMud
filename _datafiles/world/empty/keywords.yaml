@@ -13,7 +13,7 @@ help:
       - actionpoints
       - conditions
       - cooldowns
-      - experience
+      - skills
       - inventory
       - jobs
       - keyring
@@ -169,10 +169,9 @@ command-aliases:
   inventory:          ['i', 'inv', 'eq']
   look:               ['l', 'examine']
   go:                 ['enter']
-  experience:         ['exp', 'xp', 'tnl']
   map:                ['m']
   conditions:         ['c', 'cond', 'conds']
-  skills:             ['sk', 'skill']
+  skills:             ['sk', 'skill', 'exp', 'xp', 'progression']
   scribe:             ['scribble', 'write']
   equip:              ['wear', 'wield', 'hold']
   remove:             ['rem', 'unequip', 'unwear', 'unwield']

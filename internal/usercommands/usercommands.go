@@ -80,7 +80,6 @@ var (
 		`drink`:       {Drink, true, true, false},
 		`eat`:         {Eat, true, true, false},
 		`emote`:       {Emote, true, true, false},
-		`experience`:{Experience, true, true, false},
 		`equip`:       {Equip, false, false, false}, // Can't equip in combat
 		`flee`:        {Flee, false, true, false},
 		`forage`:      {Forage, false, false, false}, // Can't forage in combat

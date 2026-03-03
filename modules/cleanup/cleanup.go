@@ -63,24 +63,6 @@ func init() {
 type CleanupModule struct {
 	// Keep a reference to the plugin when we create it so that we can call ReadBytes() and WriteBytes() on it.
 	plug *plugins.Plugin
-
-	TrashExperienceEnabled      bool
-	DefaultTrashExperienceValue int
-}
-
-func (c *CleanupModule) loadConfig() {
-
-	if trashExperienceEnabled, ok := c.plug.Config.Get("TrashExperienceEnabled").(bool); ok {
-		c.TrashExperienceEnabled = trashExperienceEnabled
-	}
-
-	if experienceValue, ok := c.plug.Config.Get("ExperienceValue").(int); ok {
-		if experienceValue < 1 {
-			experienceValue = 1
-		}
-		c.DefaultTrashExperienceValue = experienceValue
-	}
-
 }
 
 func (c *CleanupModule) userTrashCommand(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
@@ -91,8 +73,6 @@ func (c *CleanupModule) userTrashCommand(rest string, user *users.UserRecord, ro
 	if !found {
 		user.SendText(fmt.Sprintf(`You don't have a "%s" to trash.`, rest))
 	} else {
-
-		c.loadConfig()
 
 		isSneaking := user.Character.HasBuffFlag(buffs.Hidden)
 
@@ -112,8 +92,6 @@ func (c *CleanupModule) userTrashCommand(rest string, user *users.UserRecord, ro
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> destroys <ansi fg="item">%s</ansi>...`, user.Character.Name, matchItem.DisplayName()),
 				user.UserId)
 		}
-
-		// XP granting removed — trash cleanup no longer rewards experience
 
 	}
 

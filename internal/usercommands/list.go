@@ -165,7 +165,7 @@ func buildItemRows(stock characters.Shop, hasGold, hasTrade bool) ([]string, [][
 
 // buildMercRows constructs table headers and rows for a mercenaries shop section.
 func buildMercRows(stock characters.Shop, hasGold, hasTrade bool) ([]string, [][]string) {
-	headers := []string{"Qty", "Name", "Level", "Race"}
+	headers := []string{"Qty", "Name", "Race"}
 	if hasGold {
 		headers = append(headers, "Price")
 	}
@@ -201,7 +201,6 @@ func buildMercRows(stock characters.Shop, hasGold, hasTrade bool) ([]string, [][
 		entryRow := []string{
 			qtyStr,
 			`<ansi fg="mobname">` + mobInfo.Character.Name + `</ansi>`,
-			`-`,
 			raceInfo.Name,
 		}
 

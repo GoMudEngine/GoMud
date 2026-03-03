@@ -16,7 +16,6 @@ Here is some useful species detail:
 
   <ansi fg="yellow">Species Name:</ansi>   <ansi fg="yellow-bold">{{ $speciesInfo.Name }}</ansi>
   <ansi fg="yellow">Description:</ansi> <ansi fg="white">{{ splitstring $speciesInfo.Description 65 "               " }}</ansi>
-  <ansi fg="yellow">XP Scale:</ansi>    <ansi fg="{{if gt $speciesInfo.TNLScale 1.0 }}red-bold{{else if eq $speciesInfo.TNLScale 1.0 }}white{{else}}blue-bold{{end}}">{{ printf "%3.0f%%" (multfloat $speciesInfo.TNLScale 100) }}</ansi>
   <ansi fg="yellow">Size:</ansi>        {{ $speciesInfo.Size }}
   <ansi fg="yellow">Unarmed:</ansi>     <ansi fg="white-bold">{{ $speciesInfo.UnarmedName }}</ansi> (<ansi fg="red">{{ $speciesInfo.Damage.DiceRoll }}</ansi>)
   <ansi fg="yellow">First Aid:</ansi>   {{ if $speciesInfo.KnowsFirstAid }}<ansi fg="123">Yes</ansi>{{ else }}<ansi fg="210">No</ansi>{{ end }}

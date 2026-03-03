@@ -7,7 +7,7 @@ Type "<ansi fg="command">help [skill_name]</ansi>" to find out more
  {{ range $skillName, $optionDetails := .Options }}  {{ if eq $optionDetails.Cost 0 }}<ansi fg="white">{{else}}<ansi fg="yellow-bold">{{ end }}{{ padRight 12 $optionDetails.Name }}</ansi> <ansi fg="white">[{{ pad 7 $optionDetails.CurrentStatus }}]</ansi> <ansi fg="white">{{ $optionDetails.Message }}</ansi>
  {{ end -}}
  └─────────────────────────────────────────────────────────────────────────┘
-  You have <ansi fg="{{ if eq .TrainingPoints 0 }}red{{ else }}yellow{{ end }}-bold">{{ .TrainingPoints }} Training Points</ansi> to spend. Level up to earn more.
+  You have <ansi fg="{{ if eq .TrainingPoints 0 }}red{{ else }}yellow{{ end }}-bold">{{ .TrainingPoints }} Training Points</ansi> to spend.
 
 To train a skill, type "<ansi fg="command">train [skill_name]</ansi>"
 
