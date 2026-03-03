@@ -2405,6 +2405,13 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 
 	if c.KnownRecipes == nil {
 		c.KnownRecipes = crafting.GetStarterRecipes()
+	} else {
+		// Backfill any new starter recipes added since character creation
+		for id, val := range crafting.GetStarterRecipes() {
+			if _, ok := c.KnownRecipes[id]; !ok {
+				c.KnownRecipes[id] = val
+			}
+		}
 	}
 
 	if c.Mutations == nil {

@@ -41,8 +41,8 @@ function onEnter(user, room) {
 
 function onCommand(cmd, rest, user, room) {
 
-    // Detect cast command
-    if ( cmd == "cast" ) {
+    // Detect cast command (require a target/spell name in rest)
+    if ( cmd == "cast" && rest != "" ) {
         if ( user.HasQuest("1-magic_arrive") && !user.HasQuest("1-magic_cast") ) {
             castAttempted = true;
             castTicks = 0;
