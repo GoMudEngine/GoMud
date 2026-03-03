@@ -768,8 +768,9 @@
                 return;
             }
 
-            debugLog("Connecting to: " + 'ws://'+location.host +'/ws');
-            socket = new WebSocket('ws://'+location.host +'/ws');
+            var wsProto = location.protocol === 'https:' ? 'wss://' : 'ws://';
+            debugLog("Connecting to: " + wsProto+location.host +'/ws');
+            socket = new WebSocket(wsProto+location.host +'/ws');
 
             socket.onopen = function() {
                 term.writeln("Connected to the server!");
