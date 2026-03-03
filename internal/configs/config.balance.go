@@ -65,6 +65,7 @@ type Balance struct {
 	UnarmedSpeedMultiplier     ConfigFloat `yaml:"UnarmedSpeedMultiplier"`     // Unarmed attack speed — slightly faster than light weapons (default 1.4)
 	SkillMultiplierBase        ConfigFloat `yaml:"SkillMultiplierBase"`        // Skill multiplier at rank 0 (default 1.0)
 	SkillMultiplierMax         ConfigFloat `yaml:"SkillMultiplierMax"`         // Skill multiplier at soft cap (default 3.0)
+	SkillWeight                ConfigFloat `yaml:"SkillWeight"`                // Global multiplier on skill contributions in additive formulas (default 2.0)
 	MeleeDamageScale           ConfigFloat `yaml:"MeleeDamageScale"`            // Physical damage scale. Stats ~100, so 0.30 yields ~30 raw per swing (default 0.30)
 	SpellDamageScale           ConfigFloat `yaml:"SpellDamageScale"`            // Flat multiplier on spell damage output (default 1.0 = no change)
 	RhetoricDamageScale        ConfigFloat `yaml:"RhetoricDamageScale"`         // Flat multiplier on conviction/taunt damage output (default 1.0 = no change)
@@ -326,6 +327,9 @@ func (b *Balance) Validate() {
 	}
 	if b.SkillMultiplierMax <= 0 {
 		b.SkillMultiplierMax = 3.0
+	}
+	if b.SkillWeight <= 0 {
+		b.SkillWeight = 2.0
 	}
 	if b.MeleeDamageScale <= 0 {
 		b.MeleeDamageScale = 0.30

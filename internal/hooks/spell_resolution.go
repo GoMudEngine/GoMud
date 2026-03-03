@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -363,7 +364,8 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 
 	case "shield":
 		skillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
-		shieldBonus := (user.Character.Stats.Willpower.ValueAdj + skillLevel) / 3
+		weightedSkill := int(math.Round(float64(skillLevel) * float64(configs.GetBalanceConfig().SkillWeight)))
+		shieldBonus := (user.Character.Stats.Willpower.ValueAdj + weightedSkill) / 3
 		if shieldBonus < 1 {
 			shieldBonus = 1
 		}
@@ -490,7 +492,8 @@ func applyMobSelfEffect(mob *mobs.Mob, room *rooms.Room, spellData *spells.Spell
 			`%s channels restorative magic.`, mobDisplayName(mob, room, 0)))
 	case "shield":
 		skillLevel := mob.Character.GetSkillLevel(skills.Spellcasting)
-		shieldBonus := (mob.Character.Stats.Willpower.ValueAdj + skillLevel) / 3
+		weightedSkill := int(math.Round(float64(skillLevel) * float64(configs.GetBalanceConfig().SkillWeight)))
+		shieldBonus := (mob.Character.Stats.Willpower.ValueAdj + weightedSkill) / 3
 		if shieldBonus < 1 {
 			shieldBonus = 1
 		}

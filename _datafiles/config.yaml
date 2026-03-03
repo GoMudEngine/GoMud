@@ -514,6 +514,9 @@ Balance:
   #   Example: rank 0 → 1.0x, rank 12 → 1.98x, rank 25 → 2.41x, rank 50 → 3.0x
   SkillMultiplierBase: 1.0
   SkillMultiplierMax: 3.0
+  # SkillWeight: Global multiplier on skill contributions in additive formulas
+  # (hit rolls, defense scores, spell attack, etc.). Higher = skills matter more.
+  SkillWeight: 2.0
   #
   # Mitigation caps: maximum % damage reduction from armor for each channel.
   # 0.75 = armor can block at most 75% of incoming damage in that channel.

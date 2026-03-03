@@ -67,10 +67,11 @@ func Taunt(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	sourceName := user.Character.Name
 
 	// Conviction attack: Charisma + rhetoric vs target Willpower + rhetoric
-	attackerRhetoric := float64(user.Character.GetSkillLevel(skills.Rhetoric))
+	skillWeight := float64(configs.GetBalanceConfig().SkillWeight)
+	attackerRhetoric := float64(user.Character.GetSkillLevel(skills.Rhetoric)) * skillWeight
 	attackScore := float64(user.Character.Stats.Charisma.ValueAdj) + attackerRhetoric
 
-	defenderRhetoric := float64(targetChar.GetSkillLevel(skills.Rhetoric))
+	defenderRhetoric := float64(targetChar.GetSkillLevel(skills.Rhetoric)) * skillWeight
 	defenseScore := float64(targetChar.Stats.Willpower.ValueAdj) + defenderRhetoric
 
 	// Apply smooth conviction-based penalty to taunt hit chance

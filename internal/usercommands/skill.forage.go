@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -41,7 +42,7 @@ func Forage(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		return true, fmt.Errorf("you're doing that too often")
 	}
 
-	forageSkill := int(user.Character.GetSkillLevel(skills.Foraging))
+	forageSkill := int(math.Round(float64(user.Character.GetSkillLevel(skills.Foraging)) * float64(configs.GetBalanceConfig().SkillWeight)))
 	perceptionAdj := user.Character.Stats.Perception.ValueAdj
 	successOdds := 20 + (forageSkill * 5) + int(math.Ceil(float64(perceptionAdj)/10))
 	if successOdds > 90 {

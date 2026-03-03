@@ -2502,7 +2502,7 @@ func TestGetDefenseScore(t *testing.T) {
 		c.Stats.Dexterity.ValueAdj = 100
 		c.Skills[string(skills.UnarmedCombat)] = 20
 		score := c.GetDefenseScore(DefenseDodge)
-		assert.InDelta(t, 120.0, score, 1.0) // 100 + 20
+		assert.InDelta(t, 140.0, score, 1.0) // 100 + 20*2 (SkillWeight=2.0)
 	})
 
 	t.Run("parry — dex + weapon skill + weapon parry", func(t *testing.T) {
@@ -2513,7 +2513,7 @@ func TestGetDefenseScore(t *testing.T) {
 			ParryRating: 10,
 		}}
 		score := c.GetDefenseScore(DefenseParry)
-		assert.InDelta(t, 105.0, score, 1.0) // 80 + 15 + 10
+		assert.InDelta(t, 120.0, score, 1.0) // 80 + 15*2 + 10 (SkillWeight=2.0)
 	})
 
 	t.Run("block — (str+dex)/2 + weapon skill + shield block", func(t *testing.T) {
@@ -2527,7 +2527,7 @@ func TestGetDefenseScore(t *testing.T) {
 			BlockRating:     15,
 		}}
 		score := c.GetDefenseScore(DefenseBlock)
-		assert.InDelta(t, 125.0, score, 1.0) // (120+80)/2 + 10 + 15
+		assert.InDelta(t, 135.0, score, 1.0) // (120+80)/2 + 10*2 + 15 (SkillWeight=2.0)
 	})
 
 	t.Run("unknown defense type → 0", func(t *testing.T) {
