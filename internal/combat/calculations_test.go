@@ -79,56 +79,123 @@ func TestChanceToSwitchTarget_Clamping(t *testing.T) {
 	assert.LessOrEqual(t, got2, 95, "cap should be 95")
 }
 
-// ─── PowerRanking ───────────────────────────────────────────────────────────
+// ─── PowerScore ─────────────────────────────────────────────────────────────
 
-func TestPowerRanking(t *testing.T) {
-	// Create two identical characters
-	makeChar := func(dex, health int, weaponDmg int) characters.Character {
+func TestPowerScore_Baseline(t *testing.T) {
+	c := *characters.New()
+	c.Stats.Strength.ValueAdj = 100
+	c.Stats.Dexterity.ValueAdj = 100
+	c.Stats.Perception.ValueAdj = 100
+	c.Stats.Vitality.ValueAdj = 100
+	c.Stats.Willpower.ValueAdj = 100
+	c.Stats.Charisma.ValueAdj = 100
+	c.HealthMax.Value = 100
+
+	score := PowerScore(c)
+	assert.Greater(t, score, 0.0, "baseline character should have positive score")
+}
+
+func TestPowerScore_HigherStatsHigherScore(t *testing.T) {
+	makeChar := func(statVal int) characters.Character {
 		c := *characters.New()
-		c.Stats.Dexterity.ValueAdj = dex
-		c.HealthMax.Value = health
-		c.Equipment.Weapon = items.Item{ItemId: 1, Spec: &items.ItemSpec{
-			Damage: items.Damage{
-				Attacks:    1,
-				BaseDamage: weaponDmg,
-				Variance:   2,
-			},
-		}}
+		c.Stats.Strength.ValueAdj = statVal
+		c.Stats.Dexterity.ValueAdj = statVal
+		c.Stats.Perception.ValueAdj = statVal
+		c.Stats.Vitality.ValueAdj = statVal
+		c.Stats.Willpower.ValueAdj = statVal
+		c.Stats.Charisma.ValueAdj = statVal
+		c.HealthMax.Value = statVal
 		return c
 	}
 
-	t.Run("identical characters → ~1.0", func(t *testing.T) {
-		c1 := makeChar(100, 100, 20)
-		c2 := makeChar(100, 100, 20)
-		pct := PowerRanking(c1, c2)
-		assert.InDelta(t, 1.0, pct, 0.05, "identical chars should be near 1.0")
-	})
+	weak := makeChar(50)
+	strong := makeChar(150)
+	assert.Greater(t, PowerScore(strong), PowerScore(weak), "higher stats → higher score")
+}
 
-	t.Run("stronger attacker → > 1.0", func(t *testing.T) {
-		atk := makeChar(150, 200, 40)
-		def := makeChar(100, 100, 20)
-		pct := PowerRanking(atk, def)
-		assert.Greater(t, pct, 1.0, "stronger attacker should score > 1.0")
-	})
+func TestPowerScore_HigherSkillsHigherScore(t *testing.T) {
+	makeChar := func(skillLvl int) characters.Character {
+		c := *characters.New()
+		c.Stats.Strength.ValueAdj = 100
+		c.Stats.Dexterity.ValueAdj = 100
+		c.Stats.Willpower.ValueAdj = 100
+		c.Stats.Charisma.ValueAdj = 100
+		c.HealthMax.Value = 100
+		c.Skills["weapon-combat"] = skillLvl
+		c.Skills["spellcasting"] = skillLvl
+		c.Skills["rhetoric"] = skillLvl
+		return c
+	}
 
-	t.Run("weaker attacker → < 1.0", func(t *testing.T) {
-		atk := makeChar(50, 50, 10)
-		def := makeChar(100, 100, 20)
-		pct := PowerRanking(atk, def)
-		assert.Less(t, pct, 1.0, "weaker attacker should score < 1.0")
-	})
+	noSkill := makeChar(0)
+	skilled := makeChar(30)
+	assert.Greater(t, PowerScore(skilled), PowerScore(noSkill), "higher skills → higher score")
+}
 
-	t.Run("defender zero dex → no division by zero", func(t *testing.T) {
-		atk := makeChar(100, 100, 20)
-		def := makeChar(0, 100, 20)
-		pct := PowerRanking(atk, def)
-		assert.Greater(t, pct, 0.0, "should handle zero dex without panic")
-	})
+func TestPowerScore_MitigationIncreasesScore(t *testing.T) {
+	c1 := *characters.New()
+	c1.Stats.Strength.ValueAdj = 100
+	c1.Stats.Dexterity.ValueAdj = 100
+	c1.Stats.Willpower.ValueAdj = 100
+	c1.Stats.Charisma.ValueAdj = 100
+	c1.HealthMax.Value = 100
 
-	t.Run("defender zero health → no division by zero", func(t *testing.T) {
-		atk := makeChar(100, 100, 20)
-		def := makeChar(100, 0, 20)
-		pct := PowerRanking(atk, def)
-		assert.Greater(t, pct, 0.0, "should handle zero health without panic")
+	c2 := c1
+	// Add armor with physical mitigation
+	c2.Equipment.Body = items.Item{ItemId: 1, Spec: &items.ItemSpec{
+		PhysicalMitigation:   20,
+		MagicalMitigation:    10,
+		ConvictionMitigation: 10,
+	}}
+
+	assert.Greater(t, PowerScore(c2), PowerScore(c1), "mitigation → higher score")
+}
+
+func TestPowerScore_KillsAddBump(t *testing.T) {
+	c1 := *characters.New()
+	c1.Stats.Strength.ValueAdj = 100
+	c1.Stats.Dexterity.ValueAdj = 100
+	c1.Stats.Willpower.ValueAdj = 100
+	c1.Stats.Charisma.ValueAdj = 100
+	c1.HealthMax.Value = 100
+
+	c2 := c1
+	c2.KD.TotalKills = 100
+
+	assert.Greater(t, PowerScore(c2), PowerScore(c1), "kills add small bump")
+}
+
+func TestPowerScore_MultiWieldHigherScore(t *testing.T) {
+	makeWeapon := func() items.Item {
+		return items.Item{ItemId: 1, Spec: &items.ItemSpec{
+			DamageMultiplier: 1.0,
+			SpeedMultiplier:  1.0,
+		}}
+	}
+
+	c1 := *characters.New()
+	c1.Stats.Strength.ValueAdj = 100
+	c1.Stats.Dexterity.ValueAdj = 100
+	c1.Stats.Willpower.ValueAdj = 100
+	c1.Stats.Charisma.ValueAdj = 100
+	c1.HealthMax.Value = 100
+	c1.Equipment.Weapon = makeWeapon()
+
+	c2 := c1
+	c2.ExtraArms = 2
+	c2.Equipment.Offhand = makeWeapon()
+	c2.Equipment.ExtraArm1 = makeWeapon()
+	c2.Equipment.ExtraArm2 = makeWeapon()
+
+	assert.Greater(t, PowerScore(c2), PowerScore(c1), "multi-wield → higher score")
+}
+
+func TestPowerScore_ZeroValueNoPanic(t *testing.T) {
+	c := *characters.New()
+	// Everything zero/nil — should not panic
+	assert.NotPanics(t, func() {
+		score := PowerScore(c)
+		assert.GreaterOrEqual(t, score, 0.0)
 	})
 }
+

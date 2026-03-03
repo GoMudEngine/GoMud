@@ -98,7 +98,7 @@ var (
 		`inspect`:     {Inspect, false, true, false},
 		`inventory`:   {Inventory, true, true, false},
 		`item`:        {Item, true, true, true}, // Admin only
-		`jobs`:        {Jobs, true, true, false},
+		`title`:       {Title, true, true, false},
 		`list`:        {List, false, true, false},
 		`locate`:      {Locate, true, true, true}, // Admin only
 		`lock`:        {Lock, false, true, false},

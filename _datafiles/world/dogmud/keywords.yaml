@@ -15,7 +15,7 @@ help:
       - cooldowns
 
       - inventory
-      - jobs
+      - title
       - keyring
       - skills
       - spells
@@ -186,6 +186,7 @@ help-aliases:
   macros:           [macro]
   history:          ['log']
   pvp:              ['pk']
+  title:            [jobs, job, profession, class, titles, archetypes, archetype]
   about:            ['gomud', 'dogmud', 'dog', 'lore', 'world', 'setting', 'background']
 
 # Default aliases for commands
@@ -214,6 +215,7 @@ command-aliases:
   spells:             ['spellbook']
   backstab:           ['bs']
   killstats:          ['kills', 'kd', 'killstat']
+  title:              ['jobs', 'job', 'profession', 'class', 'titles']
   mutations:          ['mutation']
   quests:             ['q', 'quest']
   shout:              ['yell', 'scream', 'holler']

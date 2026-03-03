@@ -1310,14 +1310,14 @@ func TestUse(t *testing.T) {
 	})
 }
 
-// ─── Jobs ───────────────────────────────────────────────────────────────────
+// ─── Title ──────────────────────────────────────────────────────────────────
 
-func TestJobs(t *testing.T) {
+func TestTitle(t *testing.T) {
 	cleanup := seedAllRegistries()
 	defer cleanup()
 
 	user, room := getTestUserAndRoom(t)
-	handled, err := Jobs("", user, room, 0)
+	handled, err := Title("", user, room, 0)
 	assert.True(t, handled)
 	assert.NoError(t, err)
 }
@@ -6989,9 +6989,9 @@ func TestCommandsBranchCoverage(t *testing.T) {
 		_ = err
 	})
 
-	// Jobs
-	t.Run("jobs_command", func(t *testing.T) {
-		handled, err := Jobs("", user, room, 0)
+	// Title
+	t.Run("title_command", func(t *testing.T) {
+		handled, err := Title("", user, room, 0)
 		assert.True(t, handled)
 		_ = err
 	})

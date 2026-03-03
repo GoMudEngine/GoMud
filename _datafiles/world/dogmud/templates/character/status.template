@@ -1,5 +1,5 @@
 
- <ansi fg="black-bold">.:</ansi> <ansi fg="username">{{ .Character.Name }}</ansi> the {{ profession .Character }}
+ <ansi fg="black-bold">.:</ansi> <ansi fg="username">{{ .Character.Name }}</ansi> the {{ title .Character }}
  ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Info</ansi> ──────────────────────┐ ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Attributes</ansi> ───────────────────────────┐
  │ <ansi fg="yellow">Area:   </ansi>{{ printf "%-22s" .Character.Zone              }}│ │ <ansi fg="yellow">Strength:  </ansi>{{ padRight 14 (statQuality .Character.Stats.Strength.Value) }} <ansi fg="yellow">Vitality:  </ansi>{{ padRight 14 (statQuality .Character.Stats.Vitality.Value) }} │
  │ <ansi fg="yellow">Species:</ansi>{{ printf "%-22s" .Character.Species           }}│ │ <ansi fg="yellow">Dexterity: </ansi>{{ padRight 14 (statQuality .Character.Stats.Dexterity.Value) }} <ansi fg="yellow">Willpower: </ansi>{{ padRight 14 (statQuality .Character.Stats.Willpower.Value) }} │

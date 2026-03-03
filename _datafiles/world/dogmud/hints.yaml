@@ -92,3 +92,11 @@ hints:
   - >-
     Wolves and goblins form packs on the steppe. The longer a
     pack survives together, the stronger its members become.
+  - >-
+    Use <ansi fg="command">title</ansi> to see your three-part title:
+    mutation tier, skill tier, and stat archetype. It evolves
+    as you grow.
+  - >-
+    Use <ansi fg="command">consider</ansi> before picking fights.
+    Your instincts will tell you whether a foe is a real
+    threat or easy prey.

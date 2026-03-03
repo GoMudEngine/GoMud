@@ -146,9 +146,10 @@ var (
 			return util.FormatDiceRoll(a, d, s, b, []int{})
 		},
 		"profession": func(char characters.Character) string {
-
-			allRanks := char.GetAllSkillRanks()
-			return skills.GetProfession(allRanks)
+			return skills.GetTitle(char.Mutations, char.GetAllSkillRanks(), char.Stats)
+		},
+		"title": func(char characters.Character) string {
+			return skills.GetTitle(char.Mutations, char.GetAllSkillRanks(), char.Stats)
 		},
 		"roundstotime": func(rounds int) string {
 			if rounds >= buffs.TriggersLeftUnlimited {
