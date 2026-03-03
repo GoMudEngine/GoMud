@@ -6,9 +6,12 @@
  └─────────────────────────────────────────────────────────────────────────────┘
  ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Vitals</ansi> ──────────────────────────────────────────────────────────────────┐
  │ <ansi fg="yellow">Health:    </ansi>{{ vitalQuality .Character.Health .Character.HealthMax.Value 14 }}<ansi fg="yellow">Stamina:   </ansi>{{ vitalQuality .Character.Stamina .Character.StaminaMax.Value 14 }}<ansi fg="yellow">Conviction:</ansi>{{ vitalQuality .Character.Conviction .Character.ConvictionMax.Value 14 }} │
+ └─────────────────────────────────────────────────────────────────────────────┘
+ ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Defenses</ansi> ────────────────────────────────────────────────────────────────┐
  │ <ansi fg="yellow">Physical:  </ansi>{{ padRight 14 (mitigationQuality (.Character.GetPhysicalMitigation)) }}<ansi fg="yellow">Magical:   </ansi>{{ padRight 14 (mitigationQuality (.Character.GetMagicalMitigation)) }}<ansi fg="yellow">Conviction:</ansi>{{ padRight 14 (mitigationQuality (.Character.GetConvictionMitigation)) }} │
- │ <ansi fg="yellow">Area:      </ansi>{{ padRight 14 .Character.Zone }}<ansi fg="yellow">Species:   </ansi>{{ padRight 14 .Character.Species }}<ansi fg="yellow">Gold:      </ansi>{{ padRight 14 (numberFormat .Character.Gold) }} │
- │ {{ if permadeath }}<ansi fg="yellow">Lives:     </ansi>{{ printf "%-64d" .Character.ExtraLives }} │{{ else }}                                                                            │{{ end }}
+ └─────────────────────────────────────────────────────────────────────────────┘
+ ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Info</ansi> ────────────────────────────────────────────────────────────────────┐
+ │ <ansi fg="yellow">Area:      </ansi>{{ padRight 14 .Character.Zone }}<ansi fg="yellow">Species:   </ansi>{{ padRight 14 .Character.Species }}<ansi fg="yellow">Gold:</ansi> {{ padRight 8 (numberFormat .Character.Gold) }}<ansi fg="yellow">Bank:</ansi> {{ padRight 5 (numberFormat .Character.Bank) }} │
  └─────────────────────────────────────────────────────────────────────────────┘
 {{- if .Character.Mutations }}
  <ansi fg="black-bold">.:</ansi><ansi fg="20">Mutations</ansi><ansi fg="black-bold">:.</ansi>
