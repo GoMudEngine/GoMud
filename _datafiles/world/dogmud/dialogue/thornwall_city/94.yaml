@@ -50,19 +50,18 @@ tree:
       triggers: ["missing", "person", "elara", "case", "help", "quest", "task"]
       questExcluded: ["8-start"]
       grantsQuest: "8-start"
-      text: "Elara. Twenty-two years old, daughter of a merchant family in the eastern quarter. Reported missing three days ago by her father. No signs of violence, no ransom demand. She just vanished. My guards are watching the gates and the market, but I do not have the people to search the residential wards door by door. If you are willing to look into it, I would appreciate the help."
-      hints: "Accept the case and search the residential wards for Elara."
-      unlocks: ["family_info", "where_to_look"]
+      text: "Elara. Twenty-two years old, daughter of a merchant family in the eastern quarter. Reported missing three days ago by her father. No signs of violence, no ransom demand. She just vanished. My guards are watching the gates and the market, but I do not have the people to search the residential wards door by door. If you are willing to look into it, I would appreciate the help. Her father is Aldric Sevarn -- ask me about the family if you want background. Otherwise, start searching the residential wards north of the market."
+      hints: "Search the residential wards north of the market for Elara. You could also ask Velk about her family."
       moodChange: friendly
 
     - id: family_info
-      triggers: ["family", "father", "merchant", "who", "why"]
-      requires: ["missing_case"]
+      triggers: ["family", "father", "merchant", "who", "why", "aldric", "sevarn"]
+      questRequired: ["8-start"]
       text: "The father is Aldric Sevarn, textile merchant. Prominent family, old money, strong opinions about how daughters should conduct themselves. He filed the report in person. Very insistent. Very concerned. Draw your own conclusions about what kind of concerned."
 
     - id: where_to_look
       triggers: ["where", "search", "residential", "look", "find"]
-      requires: ["missing_case"]
+      questRequired: ["8-start"]
       text: "If she is still in the city, the residential wards are the most likely place. Cheap rooms, anonymous landlords, people who mind their own business. Start north of the market and work your way through. Ask quietly -- if she is hiding, a loud search will just drive her deeper."
 
     - id: protection_report
@@ -76,7 +75,6 @@ tree:
 
     - id: case_report
       triggers: ["found", "report", "elara", "located", "hiding", "quest", "task"]
-      requires: ["missing_case"]
       questRequired: ["8-found"]
       questExcluded: ["8-end"]
       grantsQuest: "8-end"
@@ -84,4 +82,4 @@ tree:
       moodChange: grateful
 
 memory:
-  expiryPeriod: "1h"
+  expiryPeriod: ""

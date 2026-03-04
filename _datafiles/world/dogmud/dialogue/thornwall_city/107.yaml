@@ -55,41 +55,41 @@ patterns:
 
 tree:
   root:
-    text: "You are not from the ward. Who are you? Did my father send you?"
-    hints: "You could reassure me that you mean no harm. Or leave. Please."
+    text: "You are not from the ward. Who are you? Did my father send you? I do not want any trouble. Please, just leave me be."
+    hints: "She seems frightened and unwilling to talk. Perhaps someone in the city knows more about her."
     variants:
       - questRequired: ["8-start"]
         questExcluded: ["8-found"]
         text: "You are not from the ward. Who are you? Did my father send you? I-- please, I do not want trouble."
-        hints: "Tell me you mean no harm. Please."
+        hints: "She looks frightened. You could try to calm her, or tell her you mean no harm."
       - questRequired: ["8-found"]
         text: "You came back. I was not sure you would. Whatever you decide to tell the captain... thank you for listening first."
 
   nodes:
     - id: reassure
-      triggers: ["help", "safe", "not here to hurt", "friendly", "trust", "calm", "quest", "task"]
+      triggers: ["help", "safe", "harm", "friendly", "trust", "calm", "peace", "quest", "task"]
       questRequired: ["8-start"]
       questExcluded: ["8-found"]
       grantsQuest: "8-found"
       text: "You do not look like one of his people. All right. I am Elara. I am sure you have heard the name -- my father has been telling everyone I am missing. I am not missing. I left. There is a difference, but the guard does not care about the distinction."
-      hints: "Ask about why she left, or about her father."
-      unlocks: ["why_she_left", "about_father"]
+      hints: "You could ask why I left, or about my father. Or ask what happens now."
       moodChange: trusting
 
     - id: why_she_left
       triggers: ["why", "left", "run", "hiding", "marriage", "arranged"]
-      requires: ["reassure"]
+      questRequired: ["8-found"]
       text: "My father arranged a marriage. A business alliance with a man from the eastern trade houses -- a man with a reputation for treating wives like property. I told my father no. He told me it was not my decision. So I made it my decision. I took what I could carry and left in the night. I have been here since, living on savings and the kindness of people who do not ask questions."
 
     - id: about_father
       triggers: ["father", "family", "aldric", "sevarn"]
-      requires: ["reassure"]
+      questRequired: ["8-found"]
       text: "My father is Aldric Sevarn. Textile merchant. Respected. Successful. Completely certain that he knows what is best for everyone, especially his daughter. He is not a cruel man in the way most people mean. He simply cannot imagine that I might want something different from what he has planned. The marriage would make him rich. My feelings are... inconvenient."
 
     - id: the_choice
-      triggers: ["what now", "what do", "choice", "decision", "tell", "report", "guard"]
-      requires: ["reassure"]
+      triggers: ["what now", "what do", "choice", "decision", "tell", "report", "guard", "velk", "captain"]
+      questRequired: ["8-found"]
       text: "You have a choice. You can go to the guard captain and report where I am. My father will come with guards, and I will be taken home and married off within the week. Or you can tell the captain you searched and did not find me. I will move again -- I know how to disappear now. Or you could tell him the truth -- that I am alive and hiding by choice, and let him decide what to do with that information. There is no good answer. I know that."
+      hints: "Return to Guard Captain Velk and report what you have found."
 
 memory:
-  expiryPeriod: "1h"
+  expiryPeriod: ""

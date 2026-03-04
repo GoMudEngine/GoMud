@@ -157,6 +157,15 @@ complete:
 
 - [ ] Every `grantsQuest` dialogue node has `"quest"` and `"task"` in triggers
 - [ ] Every `grantsQuest` pattern entry has `"quest"` and `"task"` in keywords
+- [ ] **Narrative voice:** NPC `text` uses first person ("I", "my"). Hints
+      describe player options from the player's perspective. Never write
+      3rd-person self-references like "Ask about why she left" — write
+      "You could ask why she left" or "You could ask about the marriage."
+- [ ] **Trigger discoverability:** every trigger word appears in a hint,
+      NPC dialogue, room description, or quest log entry. If the player
+      has to guess a keyword, the quest is broken.
+- [ ] **Prefer `questRequired` over `requires`** for quest-gated nodes.
+      `requires` depends on memory that can expire. Quest tokens are permanent.
 - [ ] Item delivery steps have BOTH dialogue path AND `onGive` script path
 - [ ] **give.go gotcha:** `give.go` transfers the item to the mob BEFORE
       `onGive` fires. The script cannot undo the transfer. Every NPC that

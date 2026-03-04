@@ -242,3 +242,33 @@ in its `triggers` list. This ensures players can always type
 The same applies to `patterns` entries that introduce quests — include
 `"quest"` and `"task"` in the `keywords` list. This is an SOP for all quest
 NPCs.
+
+**All dialogue must use correct narrative voice — never 3rd-person self-reference.**
+NPC `text` fields are spoken by the NPC — they must use first person ("I",
+"my", "me"). NPC `hints` fields are narrator text shown to the player — they
+must describe what the player sees or can do, never refer to the NPC in first
+person. **Never write hints like "Ask about why she left" where "she" is the
+NPC speaking.** Instead: "You could ask why I left" (if the hint is meant as
+NPC speech) or "You could ask her why she left" (if the hint is narrator
+text). Preferred pattern for hints: describe the player's options from the
+player's perspective — e.g., "You could ask about the marriage, or about her
+father."
+
+**Triggers must match what hints suggest.**
+If a hint tells the player to "calm her down" or "tell her you mean no harm",
+the triggers list MUST include words from those phrases ("calm", "harm",
+"peace"). If a player reads the hint and types the obvious keyword, it must
+work. Undiscoverable triggers are broken triggers.
+
+**Prefer `questRequired` over `requires` for quest-gated nodes.**
+`requires` depends on per-player memory of visited nodes, which can expire
+via `expiryPeriod` and brick quests. If a node should only appear after a
+quest step, use `questRequired` — quest tokens are permanent and reliable.
+Only use `requires` for non-quest conversational branching within a single
+sitting (e.g., "ask about X before Y becomes available").
+
+**Do not set short `expiryPeriod` on quest NPCs.**
+If a dialogue file has quest-granting nodes, do not set `expiryPeriod` to
+a short duration (e.g., "1h"). Memory expiry can cause `requires`-gated
+nodes to become unreachable, bricking quests mid-progress. Leave
+`expiryPeriod` empty or omit the `memory` section entirely for quest NPCs.

@@ -163,6 +163,19 @@ Every quest-granting dialogue node (any tree node with `grantsQuest`) MUST inclu
 `patterns` entries must include `"quest"` and `"task"` in `keywords`. This ensures
 `ask <npcname> quest` always works for discovering available quests.
 
+## Dialogue Voice & Trigger Discoverability
+- NPC `text` fields are spoken by the NPC — always first person ("I", "my", "me").
+- `hints` are narrator text for the player — describe options from the player's
+  perspective. **NEVER** write 3rd-person self-references like "Ask about why she
+  left" when "she" is the speaking NPC. Write "You could ask why she left" or
+  "You could ask about the marriage."
+- Every trigger word MUST be discoverable — it must appear in a hint, NPC text,
+  room description, or quest log. Undiscoverable triggers are broken triggers.
+- Prefer `questRequired` over `requires` for quest-gated nodes. `requires` depends
+  on per-player memory that can expire and brick quests.
+- Do not set short `expiryPeriod` on quest NPCs — memory expiry can make
+  `requires`-gated nodes unreachable mid-quest.
+
 ## Quest Item Delivery — give.go Gotcha
 **CRITICAL:** `give.go` transfers the item from the player to the mob BEFORE the
 `onGive` script fires. The script cannot prevent or undo the transfer. Consequences:

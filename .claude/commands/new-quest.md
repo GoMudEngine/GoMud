@@ -60,6 +60,16 @@ quest nodes with proper gating. For each dialogue file:
   `keywords`
 - Use `questRequired` and `questExcluded` for proper step gating
 - Item delivery steps need BOTH a dialogue path AND an `onGive` script
+- **Narrative voice:** NPC `text` must use first person ("I", "my"). Hints
+  must describe player options from the player's perspective. Never write
+  3rd-person self-references like "Ask about why she left" — write "You
+  could ask why she left" or "You could ask about the marriage."
+- **Trigger discoverability:** Every trigger word must appear in a hint,
+  NPC dialogue text, room description, or quest log. If a hint says "calm
+  her down", the triggers MUST include "calm". Undiscoverable = broken.
+- **Prefer `questRequired` over `requires`** for quest-gated dialogue
+  nodes. `requires` depends on per-player memory that can expire and brick
+  quests. Only use `requires` for non-quest conversational branching.
 
 **4d. Room scripts** — create `.js` files for item pickups / command
 intercepts. Confirm the noun appears in the room's `description` or `nouns`
