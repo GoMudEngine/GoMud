@@ -267,8 +267,10 @@ quest step, use `questRequired` — quest tokens are permanent and reliable.
 Only use `requires` for non-quest conversational branching within a single
 sitting (e.g., "ask about X before Y becomes available").
 
-**Do not set short `expiryPeriod` on quest NPCs.**
-If a dialogue file has quest-granting nodes, do not set `expiryPeriod` to
-a short duration (e.g., "1h"). Memory expiry can cause `requires`-gated
-nodes to become unreachable, bricking quests mid-progress. Leave
-`expiryPeriod` empty or omit the `memory` section entirely for quest NPCs.
+**`expiryPeriod` should almost never be set.**
+Memory expiry causes `requires`-gated nodes to become unreachable,
+bricking quests mid-progress. The ONLY valid use case for `expiryPeriod`
+is a quest where urgency is the explicit design intent — e.g., "deliver
+this letter before the trolls attack the city!" where failing the timer
+is a designed outcome. For all other NPCs, leave `expiryPeriod` empty
+or omit the `memory` section entirely.

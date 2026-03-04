@@ -166,6 +166,11 @@ complete:
       has to guess a keyword, the quest is broken.
 - [ ] **Prefer `questRequired` over `requires`** for quest-gated nodes.
       `requires` depends on memory that can expire. Quest tokens are permanent.
+- [ ] **`expiryPeriod` should almost never be set.** Memory expiry bricks
+      quests when `requires`-gated nodes become unreachable. Only use
+      `expiryPeriod` for quests where urgency is the explicit design
+      intent (e.g., "deliver this before the trolls attack"). Default:
+      leave empty or omit entirely.
 - [ ] Item delivery steps have BOTH dialogue path AND `onGive` script path
 - [ ] **give.go gotcha:** `give.go` transfers the item to the mob BEFORE
       `onGive` fires. The script cannot undo the transfer. Every NPC that

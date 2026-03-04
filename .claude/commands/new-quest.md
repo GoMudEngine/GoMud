@@ -70,6 +70,10 @@ quest nodes with proper gating. For each dialogue file:
 - **Prefer `questRequired` over `requires`** for quest-gated dialogue
   nodes. `requires` depends on per-player memory that can expire and brick
   quests. Only use `requires` for non-quest conversational branching.
+- **`expiryPeriod` should almost never be set.** Memory expiry bricks
+  quests when `requires`-gated nodes become unreachable. Only use it
+  for quests where urgency is the explicit design intent (e.g., "deliver
+  this before the trolls attack"). Default: leave empty or omit.
 
 **4d. Room scripts** — create `.js` files for item pickups / command
 intercepts. Confirm the noun appears in the room's `description` or `nouns`

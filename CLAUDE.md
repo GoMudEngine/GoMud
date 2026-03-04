@@ -173,8 +173,9 @@ Every quest-granting dialogue node (any tree node with `grantsQuest`) MUST inclu
   room description, or quest log. Undiscoverable triggers are broken triggers.
 - Prefer `questRequired` over `requires` for quest-gated nodes. `requires` depends
   on per-player memory that can expire and brick quests.
-- Do not set short `expiryPeriod` on quest NPCs — memory expiry can make
-  `requires`-gated nodes unreachable mid-quest.
+- `expiryPeriod` should almost never be set. The ONLY valid use is quests
+  where urgency is the design intent (e.g., timed delivery before an attack).
+  For all other NPCs, leave it empty or omit entirely.
 
 ## Quest Item Delivery — give.go Gotcha
 **CRITICAL:** `give.go` transfers the item from the player to the mob BEFORE the
