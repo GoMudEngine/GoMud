@@ -51,9 +51,12 @@ tree:
     hints: "Ask about filing a report, records, or bridge matters."
     variants:
       - questRequired: ["6-report"]
+        questExcluded: ["6-end"]
         text: "Ah, you again. The bridge report has been filed.
           Reference number 4-7-12-B. Tell Harn the magistrate
           will review it in due course."
+        hints: "Return to Harn at Watchers Crossing and tell him
+          the report has been filed."
 
   nodes:
     - id: bridge_report
@@ -87,10 +90,9 @@ tree:
       text: "The tithe ledger? That is a temple document, not a
         municipal one. But yes, I have a copy -- the temple files
         duplicates here as a matter of public record. Section
-        twelve, subsection three, shelf nine." He points toward a
-        shelf along the back wall. "Help yourself. And whatever
-        you find in there, remember -- I only file the documents.
-        I do not judge the contents."
+        twelve, subsection three, shelf nine. Help yourself. And
+        whatever you find in there, remember -- I only file the
+        documents. I do not judge the contents."
       hints: "Check the shelf Pell pointed out. Try 'get ledger'."
       moodChange: friendly
 
@@ -103,4 +105,4 @@ tree:
         are not."
 
 memory:
-  expiryPeriod: "1h"
+  expiryPeriod: ""
