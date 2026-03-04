@@ -6,7 +6,7 @@ description: A clearing in the ravine where the wolves bring their
   bones in various states of decay -- fresh kills still red,
   older ones bleached and scattered. The earth has been dug up
   in places where wolves have buried surplus meat. A small
-  totem juts from the stained earth nearby. The smell
+  <ansi fg="itemname">totem</ansi> juts from the stained earth nearby. The smell
   is strong and primal. Crows and other scavengers hop around
   the edges, waiting for the wolves to finish.
 biome: land

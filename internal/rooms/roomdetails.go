@@ -127,6 +127,10 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 		if renderNouns && len(r.Nouns) > 0 {
 			for i := range description {
 				for noun, _ := range r.Nouns {
+					// Skip if noun is already inside an ANSI tag to avoid nested tags
+					if strings.Contains(description[i], `>`+noun+`</ansi>`) {
+						continue
+					}
 					description[i] = strings.Replace(description[i], noun, `<ansi fg="noun">`+noun+`</ansi>`, 1)
 				}
 			}
@@ -140,6 +144,10 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 		if renderNouns && len(r.Nouns) > 0 {
 			for i := range roomDesc {
 				for noun, _ := range r.Nouns {
+					// Skip if noun is already inside an ANSI tag to avoid nested tags
+					if strings.Contains(roomDesc[i], `>`+noun+`</ansi>`) {
+						continue
+					}
 					roomDesc[i] = strings.Replace(roomDesc[i], noun, `<ansi fg="noun">`+noun+`</ansi>`, 1)
 				}
 			}

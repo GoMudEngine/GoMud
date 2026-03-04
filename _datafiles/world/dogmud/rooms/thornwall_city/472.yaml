@@ -6,7 +6,7 @@ description: A low-ceilinged tavern tucked into the south end of the Craftsmen's
   reference to the flooding that plagued this district before the drainage channels
   were built. The interior is dim, smoky, and comfortable in the way of places that
   have soaked up decades of conversation and spilled ale. Mismatched tables fill the
-  room, and the bar is a single slab of scarred oak on trestle legs. A staircase
+  room, and the <ansi fg="itemname">bar</ansi> is a single slab of scarred oak on trestle legs. A staircase
   leads down to a cellar. Past the far
   end of the bar, a moth-eaten curtain half-hides a back corner where the old
   regulars hold court. The tavern has the feel of a place where people come to

@@ -4,7 +4,7 @@ title: Rocky Shelf
 description: A broad shelf of exposed rock juts from the ridge's western
   face, forming a natural platform about twenty paces across. Wind-
   polished stone underfoot is streaked with veins of white quartz
-  and pale blue crystal.
+  and pale blue <ansi fg="itemname">crystal</ansi>.
   The shelf offers commanding views of the flats below and is
   sheltered from above by an overhang of darker stone. Raptor
   droppings and scraps of prey streak the rock, and deep scratches
