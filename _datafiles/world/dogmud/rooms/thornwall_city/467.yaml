@@ -11,8 +11,6 @@ biome: city
 exits:
   south:
     roomid: 462
-  east:
-    roomid: 478
   north:
     roomid: 468
 nouns:

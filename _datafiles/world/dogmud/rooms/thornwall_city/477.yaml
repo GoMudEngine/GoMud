@@ -13,8 +13,6 @@ biome: city
 exits:
   south:
     roomid: 478
-  west:
-    roomid: 467
 nouns:
   houses: Narrow-fronted houses with shared walls, each one slightly different from
     its neighbours -- a different colour of shutter, a window box here, a carved

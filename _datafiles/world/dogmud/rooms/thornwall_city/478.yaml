@@ -14,8 +14,6 @@ exits:
     roomid: 477
   south:
     roomid: 465
-  west:
-    roomid: 467
 nouns:
   well: A stone well with a wooden windlass and a bucket on a chain. The water
     is clean -- Thornwall's wells are fed by a deep aquifer. The low wall around
