@@ -1,0 +1,12 @@
+itemid: 31
+name: maintenance report
+namesimple: report
+description: A thick sheaf of papers bound with twine, covered in precise handwriting.
+  Detailed sketches of stress cracks, measurements of mortar degradation, and
+  estimates of repair costs fill every page. The final section projects catastrophic
+  bridge failure within five years without continued maintenance. It is addressed
+  to the Thornwall magistrate's office.
+type: object
+subtype: holdable
+uses: 0
+weight: 0.5

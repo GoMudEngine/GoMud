@@ -66,6 +66,16 @@ intercepts. Confirm the noun appears in the room's `description` or `nouns`
 section so `get <noun>` feels natural.
 
 **4e. Mob scripts** — create `.js` files for `onGive` handlers.
+**CRITICAL: give.go transfers the item to the mob BEFORE onGive fires.** This
+means:
+- Quest-accepting NPCs: `onGive` just grants the quest token (item is already
+  consumed by the transfer)
+- "Wrong NPC" handlers (quest giver who should NOT keep the item): `onGive`
+  must call `user.GiveItem(itemId)` to return a copy to the player
+- Every NPC involved in item-delivery quests needs an `onGive` script, or the
+  player loses the item to the default "considers the item" behavior
+- Quest givers who hand out items via `givesItem` need a recovery dialogue node
+  (fires when player has the quest but not the item) that gives a replacement
 
 **4f. Mob YAML modifications** — group changes, spawninfo additions. Verify
 quest NPCs are NOT in hostile mob groups.

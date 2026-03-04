@@ -19,8 +19,9 @@ nouns:
     in coin. Road tokens accepted. Receipts available." Below it, in smaller script:
     "Proceeds fund bridge maintenance. -- H."'
   counter: The wooden counter is scarred with years of use. Stacks of blank receipts
-    sit in a tray beside an inkwell. A heavy leather-bound ledger lies open, its
-    pages filled with columns of dates, names, and amounts in a precise hand.
+    sit in a tray beside an inkwell. A heavy leather-bound <ansi fg="itemname">ledger</ansi>
+    lies open, its pages filled with columns of dates, names, and amounts in a
+    precise hand.
   garden: A narrow window box holds rosemary and thyme, their sharp scent cutting
     through the damp river air. The plants are well-tended, trimmed back neatly.
 spawninfo:

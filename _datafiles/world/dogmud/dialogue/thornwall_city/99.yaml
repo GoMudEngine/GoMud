@@ -61,12 +61,14 @@ tree:
         "crossing", "quest", "task"]
       questRequired: ["6-start"]
       questExcluded: ["6-report"]
+      requiresItem: 31
       grantsQuest: "6-report"
       text: "A maintenance report from the bridge keeper at
         Watchers Crossing? Yes, I know about the toll situation.
-        Give me the details and I will file it with the
-        magistrate's pending reviews. It will be seen. Eventually.
-        That is how things work here."
+        Let me see that. Damage assessments, repair projections...
+        this is thorough. I will file it with the magistrate's
+        pending reviews. It will be seen. Eventually. That is
+        how things work here."
       hints: "Return to Harn at Watchers Crossing and tell him
         the report has been filed."
       moodChange: friendly

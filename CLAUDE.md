@@ -163,6 +163,21 @@ Every quest-granting dialogue node (any tree node with `grantsQuest`) MUST inclu
 `patterns` entries must include `"quest"` and `"task"` in `keywords`. This ensures
 `ask <npcname> quest` always works for discovering available quests.
 
+## Quest Item Delivery — give.go Gotcha
+**CRITICAL:** `give.go` transfers the item from the player to the mob BEFORE the
+`onGive` script fires. The script cannot prevent or undo the transfer. Consequences:
+- Every NPC that should accept a quest item needs an `onGive` script (otherwise
+  the mob does the default "considers the item" emote and the quest doesn't advance)
+- NPCs that should NOT keep the item (e.g., the quest giver who handed it out)
+  need an `onGive` script that calls `user.GiveItem(itemId)` to return a copy
+- Quest givers who hand out physical items via `givesItem` must also have a
+  recovery dialogue node that gives a replacement if the player lost the item
+
+## Dialogue Engine: givesItem
+Tree nodes and patterns support `givesItem: <itemId>`. When a node fires with
+`givesItem` set, the player receives the item and sees "You receive a <itemname>."
+Use this for NPCs handing quest items to the player during dialogue.
+
 ## Content Generation Commands
 Use slash commands to generate new data files. Claude automatically loads world.md,
 the relevant schema, and existing examples before generating.

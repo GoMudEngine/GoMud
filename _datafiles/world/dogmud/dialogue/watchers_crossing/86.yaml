@@ -24,8 +24,8 @@ patterns:
   - keywords: ["help", "quest", "task", "work", "job", "report"]
     moods: ["neutral", "friendly"]
     responses:
-      - "There is something you could do for me, actually. I have written a maintenance report -- documents the cracks, the costs, what happens if repairs stop. If someone could carry it to the magistrate in Thornwall, it might save this bridge."
-      - "I need this report delivered to Thornwall. It is everything -- damage assessments, repair costs, projections. The magistrate needs to see it before the innkeeper's complaints shut the toll down."
+      - "There is something you could do for me, actually. I have written a maintenance report -- documents the cracks, the costs, what happens if repairs stop. If someone could carry it to the Records Office in Thornwall -- Clerk Pell handles filings for the magistrate."
+      - "I need this report delivered to Thornwall. It is everything -- damage assessments, repair costs, projections. Clerk Pell in the Records Office can file it with the magistrate before the innkeeper's complaints shut the toll down."
 
   - keywords: ["crack", "damage", "repair", "bridge", "stone", "collapse"]
     responses:
@@ -58,8 +58,8 @@ tree:
     variants:
       - questRequired: ["6-start"]
         questExcluded: ["6-end"]
-        text: "Have you delivered the report to the magistrate in Thornwall? Every day without that charter is another day the bridge gets worse. Please -- it is the only thing that can save the crossing."
-        hints: "Deliver Harn's maintenance report to someone in Thornwall."
+        text: "Have you delivered the report yet? Clerk Pell in the Records Office in Thornwall -- he is the one who can file it with the magistrate. Every day without that charter is another day the bridge gets worse."
+        hints: "Find Clerk Pell in the Records Office in Thornwall. Ask him about the report."
       - questRequired: ["6-end"]
         text: "The bridge stands a little more securely thanks to you. Cross anytime -- no charge, ever."
 
@@ -74,9 +74,18 @@ tree:
       triggers: ["help", "report", "quest", "task", "deliver", "thornwall", "magistrate"]
       questExcluded: ["6-start"]
       grantsQuest: "6-start"
-      text: "I have documented everything. Damage assessments, repair costs, projected failure timelines. If the magistrate in Thornwall sees this, they will understand why the toll exists -- and maybe, finally, issue the charter I have been asking for. I cannot leave the tollhouse. Could you carry this to Thornwall for me?"
-      hints: "Accept the report and travel east toward Thornwall to deliver it."
+      givesItem: 31
+      text: "I have documented everything. Damage assessments, repair costs, projected failure timelines. Here -- take this. If Thornwall sees it, they will understand why the toll exists. Take it to the Records Office in Thornwall -- ask for Clerk Pell. He handles filings for the magistrate."
+      hints: "Travel east to Thornwall and find Clerk Pell in the Records Office. Ask him about the report."
       moodChange: friendly
+
+    - id: lost_report
+      triggers: ["report", "lost", "another", "copy", "quest", "task", "help"]
+      questRequired: ["6-start"]
+      questExcluded: ["6-report"]
+      givesItem: 31
+      text: "You lost the report? I have a second copy -- I always keep duplicates. Here. Clerk Pell, Records Office, Thornwall. Please do not lose this one."
+      hints: "Take the report to Clerk Pell in the Records Office in Thornwall."
 
     - id: about_tolva
       triggers: ["tolva", "innkeeper", "complaint", "against you"]

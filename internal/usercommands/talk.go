@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/dialogue"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/llm"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/quests"
@@ -164,6 +165,18 @@ func buildPlayerState(user *users.UserRecord) *dialogue.PlayerState {
 				UserId:     user.UserId,
 				QuestToken: token,
 			})
+		},
+		GiveItem: func(itemId int) {
+			newItem := items.New(itemId)
+			if newItem.ItemId > 0 {
+				user.Character.StoreItem(newItem)
+				user.SendText(fmt.Sprintf(`You receive a <ansi fg="itemname">%s</ansi>.`, newItem.DisplayName()))
+				events.AddToQueue(events.ItemOwnership{
+					UserId: user.UserId,
+					Item:   newItem,
+					Gained: true,
+				})
+			}
 		},
 	}
 }

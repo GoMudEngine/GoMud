@@ -32,8 +32,8 @@ func checkQuestGate(questRequired, questExcluded []string, requiresItem int, ps 
 	return true
 }
 
-// applyQuestEffects fires quest grants and item consumption after a node/pattern matches.
-func applyQuestEffects(grantsQuest string, requiresItem int, ps *PlayerState) {
+// applyQuestEffects fires quest grants, item consumption, and item giving after a node/pattern matches.
+func applyQuestEffects(grantsQuest string, requiresItem int, givesItem int, ps *PlayerState) {
 	if ps == nil {
 		return
 	}
@@ -42,6 +42,9 @@ func applyQuestEffects(grantsQuest string, requiresItem int, ps *PlayerState) {
 	}
 	if grantsQuest != "" {
 		ps.GiveQuest(grantsQuest)
+	}
+	if givesItem > 0 && ps.GiveItem != nil {
+		ps.GiveItem(givesItem)
 	}
 }
 
@@ -107,7 +110,7 @@ func Match(df *DialogueFile, mobInstanceId int, topic string, ps *PlayerState) (
 		return "", "", false
 	}
 
-	applyQuestEffects(matched.GrantsQuest, matched.RequiresItem, ps)
+	applyQuestEffects(matched.GrantsQuest, matched.RequiresItem, matched.GivesItem, ps)
 
 	response := matched.Responses[util.Rand(len(matched.Responses))]
 	return response, matched.MoodChange, true
@@ -164,7 +167,7 @@ func TreeAdvance(df *DialogueFile, mobInstanceId, userId int, topic string, ps *
 		}
 
 		// Node matched — fire quest effects and update memory
-		applyQuestEffects(node.GrantsQuest, node.RequiresItem, ps)
+		applyQuestEffects(node.GrantsQuest, node.RequiresItem, node.GivesItem, ps)
 		UpdateMemory(mobInstanceId, userId, node.Id, node.Unlocks, topic)
 
 		return node.Text, node.Hints, node.MoodChange, true

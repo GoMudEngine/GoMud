@@ -158,6 +158,17 @@ complete:
 - [ ] Every `grantsQuest` dialogue node has `"quest"` and `"task"` in triggers
 - [ ] Every `grantsQuest` pattern entry has `"quest"` and `"task"` in keywords
 - [ ] Item delivery steps have BOTH dialogue path AND `onGive` script path
+- [ ] **give.go gotcha:** `give.go` transfers the item to the mob BEFORE
+      `onGive` fires. The script cannot undo the transfer. Every NPC that
+      should accept a quest item needs an `onGive` script. NPCs that should
+      NOT accept a quest item (e.g., the quest giver who handed it out) need
+      an `onGive` that calls `user.GiveItem(itemId)` to return it.
+- [ ] **Lost item recovery:** Every quest giver who hands out a physical item
+      must have a recovery dialogue node (e.g., `lost_report`) that gives a
+      replacement copy if the player has the quest but lost the item.
+- [ ] **NPC item handoff via dialogue:** Use `givesItem: <itemId>` on dialogue
+      tree nodes to hand quest items to the player. This is preferred over JS
+      scripts for simple handoffs. The player sees "You receive a <itemname>."
 - [ ] `requiresItem` nodes — confirm item exists, is obtainable, and is in the
       player's inventory at that point (not consumed earlier)
 - [ ] Room scripts that give items — confirm the noun appears in room

@@ -8,6 +8,7 @@ type PlayerState struct {
 	HasItem    func(itemId int) bool
 	RemoveItem func(itemId int) bool
 	GiveQuest  func(token string)
+	GiveItem   func(itemId int)
 }
 
 // Mood represents the current emotional state of an NPC instance.
@@ -31,6 +32,7 @@ type Pattern struct {
 	QuestExcluded []string `yaml:"questExcluded,omitempty"`
 	GrantsQuest   string   `yaml:"grantsQuest,omitempty"`
 	RequiresItem  int      `yaml:"requiresItem,omitempty"`
+	GivesItem     int      `yaml:"givesItem,omitempty"`
 }
 
 // TreeNode is a stateful conversation node gated by triggers and unlock requirements.
@@ -46,6 +48,7 @@ type TreeNode struct {
 	QuestExcluded []string `yaml:"questExcluded,omitempty"`
 	GrantsQuest   string   `yaml:"grantsQuest,omitempty"`
 	RequiresItem  int      `yaml:"requiresItem,omitempty"`
+	GivesItem     int      `yaml:"givesItem,omitempty"`
 }
 
 // QuestGreeting is an alternative greeting shown when the player matches quest conditions.
