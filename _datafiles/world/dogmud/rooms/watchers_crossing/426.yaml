@@ -11,10 +11,8 @@ description: Beneath the old bridge the river narrows and deepens, channeled bet
   the water.
 biome: river
 exits:
-  up:
+  north:
     roomid: 422
-  southwest:
-    roomid: 425
 nouns:
   marks: Deep parallel scratches in the stone, each about a handspan apart. Whatever
     made them has claws like chisels and the strength to gouge dressed stone. The

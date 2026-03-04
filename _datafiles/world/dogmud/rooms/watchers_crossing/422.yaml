@@ -4,7 +4,7 @@ title: The Old Bridge
 description: A stone bridge spans the river here, wide enough for two carts to pass
   abreast. The construction is old -- centuries old, by the style of the dressed stone
   and the deep grooves worn into the surface by uncounted wheels and boots. The bridge
-  arches high over the water, and looking down from the rail you can see the river
+  arches high over the water, and looking over the southern rail you can see the river
   sliding dark and fast beneath, carrying leaves and debris from upstream. The stonework
   is solid but not without concern -- a crack runs along the eastern rail, and several
   capstones have been replaced with newer, lighter-coloured stone. Watchtowers stand
@@ -15,7 +15,7 @@ exits:
     roomid: 421
   east:
     roomid: 427
-  down:
+  south:
     roomid: 426
 nouns:
   crack: The crack runs diagonally across the eastern rail for about two paces, deep
