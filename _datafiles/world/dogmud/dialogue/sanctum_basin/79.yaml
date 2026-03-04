@@ -74,13 +74,17 @@ tree:
     hints: "Try: ask scholar research, ask scholar tunnels, or ask scholar quest."
     variants:
       - questRequired: ["3-start"]
-        questExcluded: ["3-totem"]
+        questExcluded: ["3-totem", "3-sac"]
         text: "You are back! Any luck with the specimens? I need a bone totem from the carved niche and a spore sac from the cave crawlers. Either one would be a breakthrough."
         hints: "Bring me a bone totem or a spore sac from the tunnels."
       - questRequired: ["3-totem"]
         questExcluded: ["3-end"]
         text: "Wonderful timing! The totem is extraordinary -- but I still need that spore sac to complete the ecological survey. The cave crawlers carry them deeper in the tunnels."
         hints: "Find a spore sac from a cave crawler and bring it to me."
+      - questRequired: ["3-sac"]
+        questExcluded: ["3-end"]
+        text: "The spore data is remarkable! But I still need a bone totem to complete the cultural survey. The carved figurines on their communal shelves deeper in the warren."
+        hints: "Find a bone totem from the Carved Niche in the tunnels and bring it to me."
       - questRequired: ["3-end"]
         text: "I have been writing for hours. The data you brought is remarkable. The guild will be publishing for years. Thank you, truly."
 
@@ -117,14 +121,35 @@ tree:
       triggers: ["totem", "bone", "figurine", "brought", "here", "have"]
       requires: ["specimens_need"]
       questRequired: ["3-start"]
-      questExcluded: ["3-totem"]
+      questExcluded: ["3-totem", "3-sac"]
       requiresItem: 14
       grantsQuest: "3-totem"
       text: "Exquisite. The carving technique is post-mutation -- look at how the finger grooves accommodate clawed digits. And the material... this is wonderful. Now I need the spore sac -- from the cave crawlers deeper in the tunnels. It will complete the ecological picture."
       hints: "Find a spore sac from a cave crawler deeper in the tunnels and bring it to me."
       moodChange: friendly
 
-    - id: specimens_complete
+    - id: sac_delivery
+      triggers: ["spore", "sac", "sample", "specimen", "brought", "here", "have"]
+      requires: ["specimens_need"]
+      questRequired: ["3-start"]
+      questExcluded: ["3-totem", "3-sac"]
+      requiresItem: 40008
+      grantsQuest: "3-sac"
+      text: "A spore sac! And intact! The spore density is extraordinary. This tells us so much about the tunnel biome's mutation ecology. Now I need a bone totem -- the carved figurines from the communal shelves deeper in the warren."
+      hints: "Find a bone totem from the Carved Niche in the tunnels and bring it to me."
+      moodChange: friendly
+
+    - id: totem_completes
+      triggers: ["totem", "bone", "figurine", "brought", "here", "have"]
+      requires: ["specimens_need"]
+      questRequired: ["3-sac"]
+      questExcluded: ["3-end"]
+      requiresItem: 14
+      grantsQuest: "3-end"
+      text: "Exquisite! The carving technique is post-mutation -- look at how the finger grooves accommodate clawed digits. That completes the set. You have given the guild more data than a decade of field expeditions. I am... deeply grateful. And perhaps a little uncomfortable with how it was obtained. But grateful."
+      moodChange: grateful
+
+    - id: sac_completes
       triggers: ["spore", "sac", "sample", "specimen", "brought", "done", "second"]
       requires: ["specimens_need"]
       questRequired: ["3-totem"]
