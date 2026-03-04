@@ -13,6 +13,8 @@ groups:
   - mutant
 hates:
   - rats
+  - canine
+  - steppe-boar
   - animal
 idlecommands:
   - 'emote drags its thick, calcified knuckles along the cave wall, leaving pale grooves in the stone'

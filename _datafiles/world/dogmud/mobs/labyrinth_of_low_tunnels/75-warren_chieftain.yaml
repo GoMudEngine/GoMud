@@ -11,6 +11,8 @@ groups:
   - mutant
 hates:
   - animal
+  - canine
+  - steppe-boar
 idlecommands:
   - 'emote turns a polished obsidian knife in its hands, inspecting the edge'
   - 'emote stares into the fire pit with an expression that, on a human face, would be called grief'
