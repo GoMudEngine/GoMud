@@ -121,7 +121,11 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 				description = append(description, strings.Repeat(` `, desclineWidth))
 			}
 
-			description[i] += strings.Repeat(` `, desclineWidth-len(description[i])) + tinymap[0][i]
+			padWidth := desclineWidth - util.VisibleWidth(description[i])
+			if padWidth < 0 {
+				padWidth = 0
+			}
+			description[i] += strings.Repeat(` `, padWidth) + tinymap[0][i]
 		}
 
 		if renderNouns && len(r.Nouns) > 0 {

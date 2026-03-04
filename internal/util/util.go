@@ -183,8 +183,8 @@ func LogRoll(name string, rollResult int, targetNumber int) {
 	mudlog.Debug(`Rand Result`, `Name`, name, `Result`, fmt.Sprintf(`%d < %d`, rollResult, targetNumber), `Success`, success)
 }
 
-// visibleWidth returns the display width of a string, ignoring <ansi> markup tags.
-func visibleWidth(s string) int {
+// VisibleWidth returns the display width of a string, ignoring <ansi> markup tags.
+func VisibleWidth(s string) int {
 	return runewidth.StringWidth(ansiTagRegex.ReplaceAllString(s, ``))
 }
 
@@ -207,10 +207,10 @@ func SplitString(input string, lineWidth int) []string {
 				continue
 			}
 
-			wordLen := visibleWidth(word)
+			wordLen := VisibleWidth(word)
 
 			if idx < l-1 && punctuationRegex.MatchString(words[idx+1]) {
-				wordLen += visibleWidth(words[idx+1])
+				wordLen += VisibleWidth(words[idx+1])
 				word += words[idx+1]
 				skip = true
 			} else {
@@ -228,7 +228,7 @@ func SplitString(input string, lineWidth int) []string {
 				}
 				// clear spaces at the beginning of the line
 				currentLine = strings.TrimLeft(word, " ")
-				currentLen = visibleWidth(currentLine)
+				currentLen = VisibleWidth(currentLine)
 			} else {
 				currentLine += word
 				currentLen += wordLen
