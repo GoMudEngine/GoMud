@@ -80,7 +80,6 @@ tree:
 
     - id: quest_complete
       triggers: ["guard", "captain", "reported", "told", "evidence", "done", "quest", "task"]
-      requires: ["the_squeeze"]
       questRequired: ["10-report"]
       questExcluded: ["10-end"]
       grantsQuest: "10-end"
@@ -88,4 +87,4 @@ tree:
       moodChange: grateful
 
 memory:
-  expiryPeriod: "1h"
+  expiryPeriod: ""

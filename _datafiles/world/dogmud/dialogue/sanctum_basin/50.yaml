@@ -92,4 +92,4 @@ tree:
       moodChange: friendly
 
 memory:
-  expiryPeriod: "1h"
+  expiryPeriod: ""

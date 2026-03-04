@@ -83,7 +83,6 @@ tree:
 
     - id: totem_return
       triggers: ["totem", "found", "here", "brought", "return", "have", "quest", "task"]
-      requires: ["totem_task"]
       questRequired: ["11-sylara"]
       questExcluded: ["11-totem"]
       requiresItem: 40033
@@ -101,7 +100,6 @@ tree:
 
     - id: ritual_complete
       triggers: ["hear", "listen", "accept", "yes", "wolf", "spirit", "complete"]
-      requires: ["ritual_begin"]
       questRequired: ["12-ritual"]
       questExcluded: ["12-end"]
       grantsQuest: "12-end"
@@ -115,4 +113,4 @@ tree:
       moodChange: friendly
 
 memory:
-  expiryPeriod: "1h"
+  expiryPeriod: ""

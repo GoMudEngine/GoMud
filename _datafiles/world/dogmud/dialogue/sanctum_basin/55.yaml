@@ -107,4 +107,4 @@ tree:
       hints: "Seek the basin scholar on the Observatory Path, or descend into the tunnels yourself to find what waits below."
 
 memory:
-  expiryPeriod: "1h"
+  expiryPeriod: ""

@@ -78,7 +78,6 @@ tree:
 
     - id: choose_sylara
       triggers: ["sylara", "windwarden", "druid", "protect", "circle", "nature", "spirits", "warden"]
-      requires: ["the_problem"]
       questRequired: ["11-samples"]
       questExcluded: ["11-end", "12-start", "13-start"]
       grantsQuest: "11-end"
@@ -87,7 +86,6 @@ tree:
 
     - id: path_a_granted
       triggers: ["ready", "go", "yes", "covenant", "ritual"]
-      requires: ["choose_sylara"]
       questRequired: ["11-end"]
       questExcluded: ["12-start"]
       grantsQuest: "12-start"
@@ -96,7 +94,6 @@ tree:
 
     - id: choose_rhett
       triggers: ["rhett", "geomancer", "scholar", "extract", "windstone", "crystal", "thornwall", "science", "healing"]
-      requires: ["the_problem"]
       questRequired: ["11-samples"]
       questExcluded: ["11-end", "12-start", "13-start"]
       grantsQuest: "11-end"
@@ -105,7 +102,6 @@ tree:
 
     - id: path_b_granted
       triggers: ["ready", "go", "yes", "gambit", "extraction"]
-      requires: ["choose_rhett"]
       questRequired: ["11-end"]
       questExcluded: ["13-start"]
       grantsQuest: "13-start"
@@ -117,4 +113,4 @@ tree:
       text: "'Fifteen years. Maybe more. I stopped counting when the seasons started blending together.' Kael gestures at the vast grasslands. 'The steppe strips away everything that does not matter. What is left is either strong or gone. I find that honest.'"
 
 memory:
-  expiryPeriod: "1h"
+  expiryPeriod: ""

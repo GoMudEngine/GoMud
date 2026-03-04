@@ -52,4 +52,4 @@ tree:
       text: "'West road is Dustwalk -- scrubland, bandits, not much else until you reach the Sanctum Basin plateau. East across the bridge is Thornwall territory -- farmland first, then the city walls. If you are heading east, watch for the outskirts patrols. They are jumpy about strangers.'"
 
 memory:
-  expiryPeriod: "1h"
+  expiryPeriod: ""

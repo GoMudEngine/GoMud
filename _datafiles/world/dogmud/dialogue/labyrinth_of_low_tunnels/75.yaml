@@ -130,4 +130,4 @@ tree:
       moodChange: hostile
 
 memory:
-  expiryPeriod: "1h"
+  expiryPeriod: ""

@@ -85,7 +85,6 @@ tree:
 
     - id: sample_return
       triggers: ["sample", "pest", "killed", "cleared", "done", "back", "body", "quest", "task"]
-      requires: ["help_quest"]
       questRequired: ["7-start"]
       questExcluded: ["7-end"]
       requiresItem: 24
@@ -94,4 +93,4 @@ tree:
       moodChange: grateful
 
 memory:
-  expiryPeriod: "1h"
+  expiryPeriod: ""

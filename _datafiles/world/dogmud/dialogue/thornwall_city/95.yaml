@@ -63,7 +63,6 @@ tree:
 
     - id: ledger_return
       triggers: ["ledger", "found", "evidence", "records", "numbers", "quest", "task"]
-      requires: ["tithe_problem"]
       questRequired: ["9-start"]
       questExcluded: ["9-end"]
       requiresItem: 29
@@ -72,4 +71,4 @@ tree:
       moodChange: grateful
 
 memory:
-  expiryPeriod: "1h"
+  expiryPeriod: ""

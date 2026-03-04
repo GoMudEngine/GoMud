@@ -36,4 +36,4 @@ tree:
       hints: "Sit and listen. Fen shares what he notices, in his own time."
 
 memory:
-  expiryPeriod: "30m"
+  expiryPeriod: ""

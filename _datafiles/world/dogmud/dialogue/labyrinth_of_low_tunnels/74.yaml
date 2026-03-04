@@ -128,7 +128,6 @@ tree:
 
     - id: poultice_delivery
       triggers: ["brought", "poultice", "medicine", "healing", "here", "have"]
-      requires: ["prove_intent"]
       questRequired: ["2-start"]
       questExcluded: ["2-poultices"]
       requiresItem: 30010
@@ -143,4 +142,4 @@ tree:
       moodChange: hostile
 
 memory:
-  expiryPeriod: "1h"
+  expiryPeriod: ""

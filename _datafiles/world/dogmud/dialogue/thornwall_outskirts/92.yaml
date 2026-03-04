@@ -49,4 +49,4 @@ tree:
       text: "'The roads have been rougher than usual. Highwaymen on the outskirts, bandits further west on Dustwalk Road. We patrol as far as the plaza, but beyond that it is the road wardens' problem.' She frowns. 'If you have information about criminal activity, the guard post is just inside the gate on the left.'"
 
 memory:
-  expiryPeriod: "1h"
+  expiryPeriod: ""

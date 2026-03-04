@@ -78,7 +78,6 @@ tree:
 
     - id: sample_return
       triggers: ["sample", "found", "here", "brought", "return", "have", "windstone", "quest", "task"]
-      requires: ["sample_task"]
       questRequired: ["11-rhett"]
       questExcluded: ["11-samples"]
       requiresItem: 40032
@@ -96,7 +95,6 @@ tree:
 
     - id: extraction_complete
       triggers: ["hold", "steady", "brace", "done", "complete", "yes"]
-      requires: ["extraction_begin"]
       questRequired: ["13-extraction"]
       questExcluded: ["13-end"]
       grantsQuest: "13-end"
@@ -108,4 +106,4 @@ tree:
       text: "'The ward-stones that protect Thornwall's districts are old. Cracked. Losing potency every year. Last winter a ward failed in the Craftsmen's Quarter and three people were hurt before anyone noticed. Windstone could replace every failing ward in the city. That is not ambition -- that is necessity.'"
 
 memory:
-  expiryPeriod: "1h"
+  expiryPeriod: ""
