@@ -16,6 +16,8 @@ exits:
     roomid: 470
   south:
     roomid: 472
+  west:
+    roomid: 474
 nouns:
   shops: Ground-floor workshops open directly onto the street -- a tanner, a
     woodworker, a rope-maker. Each one spills its work onto the cobblestones.

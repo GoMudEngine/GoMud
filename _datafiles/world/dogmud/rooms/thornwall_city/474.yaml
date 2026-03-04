@@ -13,7 +13,7 @@ exits:
   north:
     roomid: 461
   east:
-    roomid: 475
+    roomid: 469
 nouns:
   curtain: A heavy canvas curtain, once dyed dark red, now faded to a muddy brown.
     It covers a doorway that leads into a ground-floor room. The curtain moves

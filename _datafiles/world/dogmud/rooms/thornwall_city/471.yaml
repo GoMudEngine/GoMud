@@ -11,7 +11,7 @@ description: A narrow side street connecting Main Street to the Craftsmen's Quar
 biome: city
 exits:
   north:
-    roomid: 463
+    roomid: 464
   west:
     roomid: 470
 nouns:

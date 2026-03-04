@@ -12,5 +12,5 @@ ingredients:
 output:
   item_id: 20030
   quantity: 1
-success_message: "You twist the copper wire into a neat band and press gem dust into the setting. A copper band!"
+success_message: "You twist the copper wire into a neat ring and press gem dust into the setting. A copper ring!"
 failure_message: "The wire snaps as you try to close the loop. The materials are ruined."

@@ -27,6 +27,47 @@ character:
   speciesid: 1
   level: 1
   gold: 0
+  shop:
+    - itemid: 30001
+      quantity: 0
+      quantitymax: 0
+      price: 5
+    - itemid: 30021
+      quantity: 0
+      quantitymax: 0
+      price: 3
+    - itemid: 30030
+      quantity: 0
+      quantitymax: 0
+      price: 3
+    - itemid: 10002
+      quantity: 0
+      quantitymax: 0
+      price: 8
+    - itemid: 10005
+      quantity: 0
+      quantitymax: 0
+      price: 6
+    - itemid: 20008
+      quantity: 0
+      quantitymax: 0
+      price: 5
+    - itemid: 20003
+      quantity: 0
+      quantitymax: 0
+      price: 4
+    - itemid: 40001
+      quantity: 0
+      quantitymax: 0
+      price: 3
+    - itemid: 40002
+      quantity: 0
+      quantitymax: 0
+      price: 2
+    - itemid: 40006
+      quantity: 0
+      quantitymax: 0
+      price: 2
   stats:
     perception:
       training: 10

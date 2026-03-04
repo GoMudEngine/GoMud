@@ -6,12 +6,9 @@ description: The eastern stretch of the back alley is marginally wider and sligh
   with a reinforced door and a viewing slot -- the kind of establishment that buys
   things without asking where they came from. Further along, the alley opens into a
   narrow yard where someone has stacked empty crates and barrels. The yard connects
-  to the market square through a gap between buildings to the north, and the tavern's
-  back door is visible to the west.
+  to the market square through a gap between buildings to the north.
 biome: city
 exits:
-  west:
-    roomid: 474
   north:
     roomid: 466
 nouns:

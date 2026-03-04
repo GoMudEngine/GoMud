@@ -16,7 +16,7 @@ exits:
   north:
     roomid: 476
   south:
-    roomid: 471
+    roomid: 470
 nouns:
   houses: The merchant houses on this stretch are well-built -- stone ground floors
     with timber upper stories, their facades decorated with trade signs and carved

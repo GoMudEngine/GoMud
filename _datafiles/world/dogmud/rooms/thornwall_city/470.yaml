@@ -13,7 +13,9 @@ exits:
   west:
     roomid: 469
   north:
-    roomid: 464
+    roomid: 463
+  east:
+    roomid: 471
 nouns:
   forge: A proper blacksmith's forge with a stone hearth, a bellows worked by a
     lever, and an anvil that has been beaten into a slight dish by years of use.
