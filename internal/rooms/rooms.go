@@ -64,34 +64,34 @@ const (
 
 type Room struct {
 	//mutex
-	RoomId            int                               `yaml:"roomid"`                              // a unique numeric index of the room. Also the filename.
-	Zone              string                            `yaml:"zone"`                                // zone is a way to partition rooms into groups. Also into folders.
-	MusicFile         string                            `yaml:"musicfile,omitempty"`                 // background music to play when in this room
-	IsBank            bool                              `yaml:"isbank,omitempty"`                    // Is this a bank room? If so, players can deposit/withdraw gold here.
-	IsStorage         bool                              `yaml:"isstorage,omitempty"`                 // Is this a storage room? If so, players can add/remove objects here.
-	IsCharacterRoom   bool                              `yaml:"ischaracterroom,omitempty"`           // Is this a room where characters can create new characters to swap between them?
-	Title             string                            `yaml:"title"`                               // Title shown to the user
-	Description       string                            `yaml:"description"`                         // Description shown to the user
-	MapSymbol         string                            `yaml:"mapsymbol,omitempty"`                 // The symbol to use when generating a map of the zone
-	MapLegend         string                            `yaml:"maplegend,omitempty"`                 // The text to display in the legend for this room. Should be one word.
-	Biome             string                            `yaml:"biome,omitempty"`                     // The biome of the room. Used for weather generation.
+	RoomId            int                               `yaml:"roomid" instance:"skip"`              // a unique numeric index of the room. Also the filename.
+	Zone              string                            `yaml:"zone" instance:"skip"`                // zone is a way to partition rooms into groups. Also into folders.
+	MusicFile         string                            `yaml:"musicfile,omitempty" instance:"skip"` // background music to play when in this room
+	IsBank            bool                              `yaml:"isbank,omitempty" instance:"skip"`    // Is this a bank room? If so, players can deposit/withdraw gold here.
+	IsStorage         bool                              `yaml:"isstorage,omitempty" instance:"skip"` // Is this a storage room? If so, players can add/remove objects here.
+	IsCharacterRoom   bool                              `yaml:"ischaracterroom,omitempty" instance:"skip"` // Is this a room where characters can create new characters to swap between them?
+	Title             string                            `yaml:"title" instance:"skip"`               // Title shown to the user
+	Description       string                            `yaml:"description" instance:"skip"`         // Description shown to the user
+	MapSymbol         string                            `yaml:"mapsymbol,omitempty" instance:"skip"` // The symbol to use when generating a map of the zone
+	MapLegend         string                            `yaml:"maplegend,omitempty" instance:"skip"` // The text to display in the legend for this room. Should be one word.
+	Biome             string                            `yaml:"biome,omitempty" instance:"skip"`     // The biome of the room. Used for weather generation.
 	Containers        map[string]Container              `yaml:"containers,omitempty"`                // If this room has a chest, what is in it?
-	Exits             map[string]exit.RoomExit          `yaml:"exits"`                               // Exits to other rooms
+	Exits             map[string]exit.RoomExit          `yaml:"exits" instance:"skip"`               // Exits to other rooms
 	ExitsTemp         map[string]exit.TemporaryRoomExit `yaml:"-"`                                   // Temporary exits that will be removed after a certain time. Don't bother saving on sever shutting down.
-	Nouns             map[string]string                 `yaml:"nouns,omitempty"`                     // Interesting nouns to highlight in the room or reveal on succesful searches.
+	Nouns             map[string]string                 `yaml:"nouns,omitempty" instance:"skip"`     // Interesting nouns to highlight in the room or reveal on succesful searches.
 	Items             []items.Item                      `yaml:"items,omitempty"`                     // Items on the floor
 	Stash             []items.Item                      `yaml:"stash,omitempty"`                     // list of items in the room that are not visible to players
 	Corpses           []Corpse                          `yaml:"-"`                                   // Any corpses laying around from recent deaths
 	Gold              int                               `yaml:"gold,omitempty"`                      // How much gold is on the ground?
 	SpawnInfo         []SpawnInfo                       `yaml:"spawninfo,omitempty" instance:"skip"` // key is creature ID, value is spawn chance
-	SkillTraining     map[string]TrainingRange          `yaml:"skilltraining,omitempty"`             // list of skills that can be trained in this room
+	SkillTraining     map[string]TrainingRange          `yaml:"skilltraining,omitempty" instance:"skip"` // list of skills that can be trained in this room
 	Signs             []Sign                            `yaml:"sign,omitempty"`                      // list of scribbles in the room
-	IdleMessages      []string                          `yaml:"idlemessages,omitempty" `             // list of messages that can be displayed to players in the room
+	IdleMessages      []string                          `yaml:"idlemessages,omitempty" instance:"skip"` // list of messages that can be displayed to players in the room
 	LastIdleMessage   uint8                             `yaml:"-"`                                   // index of the last idle message displayed
 	LongTermDataStore map[string]any                    `yaml:"longtermdatastore,omitempty"`         // Long term data store for the room
 	Mutators          mutators.MutatorList              `yaml:"mutators,omitempty"`                  // mutators this room spawns with.
-	Pvp               bool                              `yaml:"pvp,omitempty"`                       // if config pvp is set to `limited`, uses this value
-	Station           string                            `yaml:"station,omitempty"`                   // Crafting station type present in this room (Stage 13.1)
+	Pvp               bool                              `yaml:"pvp,omitempty" instance:"skip"`       // if config pvp is set to `limited`, uses this value
+	Station           string                            `yaml:"station,omitempty" instance:"skip"`   // Crafting station type present in this room (Stage 13.1)
 	// Unexported/private
 	players       []int                          // list of user IDs currently in the room
 	mobs          []int                          // list of mob instance IDs currently in the room. Does not get saved.
