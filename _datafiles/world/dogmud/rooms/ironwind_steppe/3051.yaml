@@ -13,6 +13,10 @@ exits:
     roomid: 3049
   east:
     roomid: 3053
+  west:
+    roomid: 3054
+  south:
+    roomid: 3057
 nouns:
   driftwood: Sun-bleached branches and log sections, polished
     smooth by water and deposited along the basin floor by past

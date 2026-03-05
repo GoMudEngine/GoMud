@@ -9,8 +9,6 @@ description: A low rise on the eastern bank of the creek basin provides
   earth and sand giving way abruptly to hard, dark volcanic stone.
 biome: land
 exits:
-  east:
-    roomid: 3060
   west:
     roomid: 3053
 nouns:

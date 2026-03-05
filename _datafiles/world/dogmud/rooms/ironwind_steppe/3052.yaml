@@ -13,6 +13,8 @@ exits:
     roomid: 3046
   east:
     roomid: 3049
+  south:
+    roomid: 3054
 nouns:
   bluffs: Sandstone bluffs sculpted by water erosion into smooth,
     flowing shapes. The pale stone is streaked with darker bands

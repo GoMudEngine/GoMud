@@ -14,6 +14,10 @@ exits:
     roomid: 3051
   north:
     roomid: 3050
+  east:
+    roomid: 3055
+  south:
+    roomid: 3056
 nouns:
   wallows: Broad, shallow depressions churned into thick mud by
     boar wallowing. The mud is dark, rich, and stinking. Some

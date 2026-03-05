@@ -11,13 +11,9 @@ description: Two dry creek beds converge here, their sandy floors
 biome: land
 exits:
   north:
-    roomid: 3051
-  west:
     roomid: 3052
-  south:
-    roomid: 3057
-  southwest:
-    roomid: 3078
+  east:
+    roomid: 3051
 nouns:
   debris: Tangled piles of driftwood, brush, and flood refuse
     wedged into the junction. Some pieces are large -- whole
