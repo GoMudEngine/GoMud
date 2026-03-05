@@ -10,6 +10,8 @@ description: A stretch of ravine floor covered in a carpet of bones --
   fertilized by the decomposition.
 biome: land
 exits:
+  east:
+    roomid: 3098
   west:
     roomid: 3085
   south:

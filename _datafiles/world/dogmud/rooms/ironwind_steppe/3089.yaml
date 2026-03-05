@@ -10,6 +10,10 @@ description: Open grassland stretches east beyond the ravine and
   grass, wind, and sky.
 biome: land
 exits:
+  east:
+    roomid: 3095
+  south:
+    roomid: 3094
   west:
     roomid: 3091
 nouns:

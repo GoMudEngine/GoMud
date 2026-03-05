@@ -11,8 +11,6 @@ description: A broad, shallow pool of brownish water persists here
 biome: land
 exits:
   west:
-    roomid: 3094
-  north:
     roomid: 3089
 nouns:
   pool: A shallow pool of warm, murky water about twenty paces
