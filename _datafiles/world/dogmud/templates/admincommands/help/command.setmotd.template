@@ -1,0 +1,7 @@
+The <ansi fg="command">setmotd</ansi> command sets the Message of the Day.
+
+<ansi fg="command">setmotd <message></ansi>
+Sets the MOTD that players see when they log in. The message is saved
+to the server config and takes effect immediately.
+
+Use <ansi fg="command">motd</ansi> to view the current message.

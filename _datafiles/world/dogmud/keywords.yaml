@@ -142,6 +142,7 @@ help:
       - rename
       - room
       - server
+      - setmotd
       - skillset
       - spawn
       - spell

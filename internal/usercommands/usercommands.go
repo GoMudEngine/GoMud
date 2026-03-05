@@ -142,6 +142,7 @@ var (
 		`sell`:        {Sell, false, true, false},
 		`server`:      {Server, false, true, true}, // Admin only
 		`set`:         {Set, true, true, false},
+		`setmotd`:     {SetMotd, true, true, true}, // Admin only
 		`share`:       {Share, false, true, false},
 		`shoot`:       {Shoot, false, true, false},
 		`shout`:       {Shout, true, true, false},
