@@ -14,8 +14,6 @@ exits:
     roomid: 3056
   south:
     roomid: 3091
-  east:
-    roomid: 3093
 nouns:
   mud: Thick, churned mud mixed with standing water, torn up
     by heavy boar hooves. The mud extends in every direction,

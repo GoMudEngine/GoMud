@@ -14,8 +14,6 @@ exits:
     roomid: 3078
   east:
     roomid: 3056
-  south:
-    roomid: 3085
   west:
     roomid: 3080
 nouns:

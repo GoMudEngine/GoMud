@@ -16,8 +16,6 @@ exits:
     roomid: 3073
   south:
     roomid: 3082
-  east:
-    roomid: 3086
 nouns:
   thornbrush: A nearly solid wall of thorny vegetation, its
     branches interlocked and bristling with inch-long spines.

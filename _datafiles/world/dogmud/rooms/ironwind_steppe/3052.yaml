@@ -11,12 +11,8 @@ biome: land
 exits:
   north:
     roomid: 3049
-  south:
-    roomid: 3055
   east:
     roomid: 3054
-  west:
-    roomid: 3075
 nouns:
   bluffs: Sandstone bluffs sculpted by water erosion into smooth,
     flowing shapes. The pale stone is streaked with darker bands

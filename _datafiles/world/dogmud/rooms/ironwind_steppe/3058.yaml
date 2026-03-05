@@ -11,12 +11,8 @@ biome: land
 exits:
   north:
     roomid: 3057
-  west:
-    roomid: 3055
   south:
     roomid: 3080
-  southwest:
-    roomid: 3091
 nouns:
   wash: A broad fan of deposited sand and gravel where the creek
     basin opens out. The material is sorted by past floods --

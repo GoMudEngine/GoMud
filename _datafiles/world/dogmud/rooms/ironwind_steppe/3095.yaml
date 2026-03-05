@@ -14,8 +14,6 @@ exits:
     roomid: 3094
   north:
     roomid: 3089
-  south:
-    roomid: 3092
 nouns:
   pool: A shallow pool of warm, murky water about twenty paces
     across. The water is brown and slightly silty, disturbed by

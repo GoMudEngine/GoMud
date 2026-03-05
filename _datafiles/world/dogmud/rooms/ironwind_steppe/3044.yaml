@@ -12,11 +12,9 @@ biome: cliffs
 exits:
   west:
     roomid: 3042
-  north:
-    roomid: 3043
   south:
     roomid: 3050
-  east:
+  southeast:
     roomid: 3065
 nouns:
   steps: Natural steps in the rock face, each a drop of a foot or

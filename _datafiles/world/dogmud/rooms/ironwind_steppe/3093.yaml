@@ -12,14 +12,8 @@ biome: land
 exits:
   east:
     roomid: 3092
-  north:
-    roomid: 3090
-  south:
-    roomid: 3096
-  southwest:
+  northeast:
     roomid: 3086
-  west:
-    roomid: 3091
 nouns:
   reeds: Tall reeds growing in dense stands from the waterlogged
     soil, their stems as thick as fingers. They tower above your

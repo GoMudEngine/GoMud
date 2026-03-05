@@ -13,12 +13,10 @@ exits:
     roomid: 3009
   west:
     roomid: 3012
-  east:
-    roomid: 3017
-  south:
-    roomid: 3018
   north:
     roomid: 3016
+  east:
+    roomid: 3018
 nouns:
   clearing: A patch of unusually lush grass in the midst of the dry
     flats. Some underground seep must feed the roots here. The grass

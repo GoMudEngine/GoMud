@@ -10,10 +10,6 @@ description: A narrow ravine opens in the steppe here, its walls of
   a rarity on the dry steppe.
 biome: land
 exits:
-  west:
-    roomid: 3052
-  north:
-    roomid: 3054
   south:
     roomid: 3076
   east:

@@ -18,8 +18,6 @@ exits:
     roomid: 3062
   east:
     roomid: 3063
-  northwest:
-    roomid: 3036
 nouns:
   webs: Thick spider webs spanning the narrow gap between the
     walls, dusty and old. Dead insects hang in the silk like

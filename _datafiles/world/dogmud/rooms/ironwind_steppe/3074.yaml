@@ -14,8 +14,6 @@ exits:
     roomid: 3073
   north:
     roomid: 3070
-  south:
-    roomid: 3082
 nouns:
   slope: A broad slope of mixed stone and earth, descending
     southeast toward lower terrain. The footing is uncertain,

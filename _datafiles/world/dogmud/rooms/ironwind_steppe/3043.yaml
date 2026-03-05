@@ -12,9 +12,7 @@ biome: cliffs
 exits:
   north:
     roomid: 3042
-  east:
-    roomid: 3044
-  south:
+  southeast:
     roomid: 3049
 nouns:
   outcrop: A flat slab of basalt jutting from the ridge face,

@@ -13,10 +13,10 @@ biome: cliffs
 exits:
   west:
     roomid: 3064
-  south:
-    roomid: 3069
-  east:
+  southeast:
     roomid: 3070
+  south:
+    roomid: 3073
 nouns:
   tripwires: Braided grass cords stretched across the coulee
     floor at ankle height, tied to stones wedged in cracks.

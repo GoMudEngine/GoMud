@@ -14,8 +14,6 @@ exits:
     roomid: 3066
   south:
     roomid: 3069
-  east:
-    roomid: 3070
 nouns:
   barricades: Crude walls of stacked basalt blocks and sharpened
     wooden stakes, forming a rough defensive perimeter. The

@@ -11,15 +11,15 @@ description: A narrow gap between two walls of dark basalt opens into
   channel.
 biome: cliffs
 exits:
+  north:
+    roomid: 3059
   west:
     roomid: 3055
-  northwest:
-    roomid: 3059
   south:
     roomid: 3061
   east:
     roomid: 3062
-  north:
+  southwest:
     roomid: 3035
 nouns:
   walls: Dark basalt walls rising on either side, their surfaces

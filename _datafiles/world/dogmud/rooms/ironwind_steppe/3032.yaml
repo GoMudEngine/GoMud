@@ -11,14 +11,12 @@ description: A broad shelf of exposed rock juts from the ridge's western
   from talons score the surface near the edge.
 biome: cliffs
 exits:
-  northwest:
-    roomid: 3016
   north:
     roomid: 3030
   south:
     roomid: 3033
-  east:
-    roomid: 3035
+  southwest:
+    roomid: 3016
 nouns:
   shelf: A flat expanse of wind-polished stone, naturally formed
     and remarkably level. The quartz veins catch the light and

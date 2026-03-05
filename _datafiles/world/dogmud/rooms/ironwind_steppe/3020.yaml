@@ -13,12 +13,8 @@ biome: land
 exits:
   south:
     roomid: 3019
-  east:
-    roomid: 3021
   north:
     roomid: 3022
-  west:
-    roomid: 3017
 nouns:
   oaks: Stunted oaks with massive trunks relative to their modest
     height. The bark is deeply furrowed and covered in lichen.

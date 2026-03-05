@@ -10,14 +10,10 @@ description: The terrain changes abruptly here as soft earth gives
   The way east leads into the maze of volcanic channels.
 biome: land
 exits:
-  west:
-    roomid: 3055
-  east:
-    roomid: 3060
   south:
+    roomid: 3060
+  northeast:
     roomid: 3062
-  north:
-    roomid: 3050
 nouns:
   basalt: Dark volcanic stone, dense and heavy, breaking through
     the steppe soil in angular slabs. The surface is rough and

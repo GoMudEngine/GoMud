@@ -13,8 +13,6 @@ description: The deepest chamber of the Windscour Caves -- a vast,
 biome: cave
 exits:
   south:
-    roomid: 3111
-  west:
     roomid: 3113
 nouns:
   marks: Massive claw marks gouged into the cave walls, each as

@@ -9,14 +9,12 @@ description: The dry creek basin broadens here into a wide, flat floor
   is warmer and stiller here, trapped in the basin's channel.
 biome: land
 exits:
-  north:
-    roomid: 3048
-  west:
-    roomid: 3047
   south:
     roomid: 3054
   east:
     roomid: 3053
+  west:
+    roomid: 3048
 nouns:
   driftwood: Sun-bleached branches and log sections, polished
     smooth by water and deposited along the basin floor by past

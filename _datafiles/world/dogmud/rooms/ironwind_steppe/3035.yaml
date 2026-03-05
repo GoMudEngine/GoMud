@@ -15,14 +15,14 @@ exits:
     roomid: 3025
   west:
     roomid: 3031
-  northwest:
-    roomid: 3032
   south:
     roomid: 3036
   north:
     roomid: 3038
-  east:
+  northeast:
     roomid: 3060
+  east:
+    roomid: 3040
 nouns:
   crest: The narrow spine of the ridge, a blade of dark basalt
     worn smooth on top by wind and weather. The rock is warm

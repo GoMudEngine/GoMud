@@ -14,6 +14,8 @@ exits:
     roomid: 3097
   west:
     roomid: 3096
+  east:
+    roomid: 3099
 nouns:
   thicket: A dense tangle of thorny bushes, partially destroyed
     by boar traffic but still providing shelter. The branches

@@ -13,12 +13,6 @@ exits:
   west:
     roomid: 3016
   south:
-    roomid: 3013
-  east:
-    roomid: 3033
-  north:
-    roomid: 3020
-  southeast:
     roomid: 3018
 nouns:
   outcrops: Dark, angular stone breaking through the steppe soil --

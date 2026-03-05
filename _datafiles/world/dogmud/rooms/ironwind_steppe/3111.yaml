@@ -15,8 +15,6 @@ exits:
     roomid: 3108
   east:
     roomid: 3112
-  north:
-    roomid: 3114
 nouns:
   bones: Large animal bones -- boar ribs, deer leg bones, and
     skulls too large to be rodents. Many are cracked and

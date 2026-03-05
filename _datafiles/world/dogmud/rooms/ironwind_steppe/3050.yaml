@@ -16,7 +16,7 @@ exits:
     roomid: 3047
   south:
     roomid: 3053
-  east:
+  northeast:
     roomid: 3063
 nouns:
   roots: An enormous tangle of dead tree roots, still firmly

@@ -13,14 +13,10 @@ biome: land
 exits:
   west:
     roomid: 3006
-  northwest:
-    roomid: 3008
   east:
     roomid: 3011
   south:
     roomid: 3014
-  northeast:
-    roomid: 3012
 nouns:
   sagebrush: Low, woody bushes with silvery-green leaves and a strong
     aromatic scent. They grow in scattered clusters across the flats,

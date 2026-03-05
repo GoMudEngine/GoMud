@@ -11,12 +11,8 @@ biome: land
 exits:
   south:
     roomid: 3025
-  east:
-    roomid: 3024
   north:
     roomid: 3027
-  west:
-    roomid: 3036
 nouns:
   path: A broad track of churned mud and crushed vegetation made
     by the passage of large animals. The hoofprints are deep

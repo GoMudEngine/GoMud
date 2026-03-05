@@ -13,12 +13,10 @@ biome: cliffs
 exits:
   west:
     roomid: 3069
-  north:
-    roomid: 3068
-  south:
-    roomid: 3071
   northwest:
     roomid: 3067
+  south:
+    roomid: 3074
 nouns:
   symbols: Crude paintings on the alcove walls in red ochre and
     charcoal -- spiraling patterns, stylized predator shapes,

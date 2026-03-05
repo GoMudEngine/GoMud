@@ -12,12 +12,8 @@ biome: cliffs
 exits:
   south:
     roomid: 3031
-  west:
-    roomid: 3021
-  east:
-    roomid: 3037
   north:
-    roomid: 3038
+    roomid: 3037
 nouns:
   nests: Large nests of woven sticks, each as wide as a person's
     arm-span, perched on narrow stone ledges. The construction

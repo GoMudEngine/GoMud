@@ -10,16 +10,12 @@ description: Two trails meet here on the ridge's western face -- one
   past with enough force to stagger the unwary.
 biome: cliffs
 exits:
-  northwest:
-    roomid: 3017
   north:
     roomid: 3032
-  south:
-    roomid: 3036
-  east:
-    roomid: 3037
   up:
     roomid: 3038
+  west:
+    roomid: 3030
 nouns:
   cairn: A neat stack of flat stones, waist-high, clearly built
     by a person. A few pebbles have been wedged between the

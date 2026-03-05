@@ -12,8 +12,6 @@ biome: land
 exits:
   south:
     roomid: 3027
-  east:
-    roomid: 3038
   north:
     roomid: 3029
 nouns:

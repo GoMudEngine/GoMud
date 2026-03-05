@@ -10,8 +10,6 @@ description: The wallowing grounds peter out here at the southern
   disappear to the south.
 biome: land
 exits:
-  north:
-    roomid: 3097
   west:
     roomid: 3098
 nouns:

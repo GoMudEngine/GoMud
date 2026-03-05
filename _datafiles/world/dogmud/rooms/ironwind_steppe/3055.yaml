@@ -9,16 +9,10 @@ description: A low rise on the eastern bank of the creek basin provides
   earth and sand giving way abruptly to hard, dark volcanic stone.
 biome: land
 exits:
-  west:
-    roomid: 3052
-  northwest:
-    roomid: 3054
-  north:
-    roomid: 3053
   east:
     roomid: 3060
-  south:
-    roomid: 3058
+  west:
+    roomid: 3053
 nouns:
   rise: A gentle hill on the basin's eastern edge, high enough
     to see over the creek banks. The grass on top is short and

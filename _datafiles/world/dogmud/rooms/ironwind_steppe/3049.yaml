@@ -10,8 +10,6 @@ description: The creek has carved a deep undercut into the bank here,
 biome: land
 exits:
   north:
-    roomid: 3046
-  west:
     roomid: 3048
   south:
     roomid: 3052

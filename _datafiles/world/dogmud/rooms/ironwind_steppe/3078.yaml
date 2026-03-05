@@ -16,7 +16,7 @@ exits:
     roomid: 3079
   east:
     roomid: 3084
-  west:
+  northeast:
     roomid: 3054
 nouns:
   dens: Dark openings in the ravine walls, each about two feet

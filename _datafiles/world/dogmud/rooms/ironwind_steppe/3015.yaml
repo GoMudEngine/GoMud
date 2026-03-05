@@ -11,8 +11,6 @@ biome: land
 exits:
   south:
     roomid: 3011
-  east:
-    roomid: 3016
   northeast:
     roomid: 3031
   north:

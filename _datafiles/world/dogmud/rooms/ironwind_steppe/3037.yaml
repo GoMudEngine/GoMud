@@ -12,14 +12,10 @@ biome: cliffs
 exits:
   west:
     roomid: 3027
-  northwest:
-    roomid: 3033
   south:
     roomid: 3034
-  north:
-    roomid: 3039
   east:
-    roomid: 3062
+    roomid: 3039
 nouns:
   terraces: Broken stone terraces stepping down the ridge's east
     face, each a few feet wide. Soil has accumulated on the flat

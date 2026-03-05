@@ -17,8 +17,6 @@ exits:
     roomid: 3076
   south:
     roomid: 3083
-  east:
-    roomid: 3074
 nouns:
   bones: A grim scatter of prey animal remains in varying
     states of decay. Fresh bones with scraps of meat still

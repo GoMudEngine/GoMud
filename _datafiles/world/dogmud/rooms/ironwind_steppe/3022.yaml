@@ -12,12 +12,10 @@ biome: land
 exits:
   south:
     roomid: 3020
-  east:
-    roomid: 3024
-  north:
-    roomid: 3025
   west:
     roomid: 3023
+  east:
+    roomid: 3025
 nouns:
   tree: A dead tree, bleached white by the elements, its bare
     branches spread like skeletal fingers. Hawks use it as a

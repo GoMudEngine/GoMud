@@ -13,14 +13,10 @@ biome: cliffs
 exits:
   south:
     roomid: 3035
-  west:
-    roomid: 3034
   down:
     roomid: 3033
   north:
     roomid: 3039
-  east:
-    roomid: 3063
 nouns:
   dome: A broad dome of dark basalt, perhaps thirty paces across,
     worn glassy-smooth by the constant abrasion of wind-carried
