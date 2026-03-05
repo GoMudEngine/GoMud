@@ -102,10 +102,19 @@ func GetAll() map[string]*RecipeSpec {
 	return allRecipes
 }
 
-// FindRecipeByName does a case-insensitive substring search across recipe names.
-// Returns the first match, or nil if none found.
+// FindRecipeByName does a case-insensitive search across recipe names.
+// Prefers exact matches over substring matches.
 func FindRecipeByName(name string) *RecipeSpec {
 	lower := strings.ToLower(name)
+
+	// First pass: exact match
+	for _, r := range allRecipes {
+		if strings.ToLower(r.Name) == lower {
+			return r
+		}
+	}
+
+	// Second pass: substring match
 	for _, r := range allRecipes {
 		if strings.Contains(strings.ToLower(r.Name), lower) {
 			return r
