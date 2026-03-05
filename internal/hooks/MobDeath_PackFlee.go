@@ -8,7 +8,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
 
-// PackFlee triggers remaining pack members to flee when one of their group dies.
+// PackFlee triggers remaining pack members to flee when one of their species dies.
 func PackFlee(e events.Event) events.ListenerReturn {
 
 	evt, ok := e.(events.MobDeath)
@@ -16,9 +16,9 @@ func PackFlee(e events.Event) events.ListenerReturn {
 		return events.Continue
 	}
 
-	// Load the dead mob's spec to get its groups
+	// Load the dead mob's spec to get its species
 	deadSpec := mobs.GetMobSpec(mobs.MobId(evt.MobId))
-	if deadSpec == nil || len(deadSpec.Groups) == 0 {
+	if deadSpec == nil || deadSpec.Character.SpeciesId == 0 {
 		return events.Continue
 	}
 
@@ -26,15 +26,6 @@ func PackFlee(e events.Event) events.ListenerReturn {
 	if room == nil {
 		return events.Continue
 	}
-
-	// Build a set of the dead mob's groups for fast lookup
-	deadGroups := make(map[string]bool, len(deadSpec.Groups))
-	for _, g := range deadSpec.Groups {
-		deadGroups[g] = true
-	}
-
-	// Find the first overlapping group name for the scatter message
-	scatterGroup := deadSpec.Groups[0]
 
 	// Check all living mobs in the room
 	mobIds := room.GetMobs(rooms.FindAll)
@@ -49,16 +40,12 @@ func PackFlee(e events.Event) events.ListenerReturn {
 			continue
 		}
 
-		// Check if any groups overlap
-		hasOverlap := false
-		for _, g := range mob.Groups {
-			if deadGroups[g] {
-				hasOverlap = true
-				break
+		// Check alliance: same MobId or same species
+		if mob.MobId != mobs.MobId(evt.MobId) {
+			if mob.Character.SpeciesId == 0 ||
+				deadSpec.Character.SpeciesId != mob.Character.SpeciesId {
+				continue
 			}
-		}
-		if !hasOverlap {
-			continue
 		}
 
 		// Queue flee command on this mob
@@ -67,8 +54,12 @@ func PackFlee(e events.Event) events.ListenerReturn {
 	}
 
 	if fleeCount > 0 {
+		speciesName := deadSpec.Character.Species()
+		if speciesName == "" {
+			speciesName = "creatures"
+		}
 		room.SendText(
-			fmt.Sprintf(`<ansi fg="yellow">Sensing the death of their packmate, the remaining %s scatter!</ansi>`, scatterGroup),
+			fmt.Sprintf(`<ansi fg="yellow">Sensing the death of their packmate, the remaining %s scatter!</ansi>`, speciesName),
 		)
 	}
 

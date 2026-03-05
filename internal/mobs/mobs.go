@@ -669,26 +669,15 @@ func (m *Mob) GetIdleCommand() string {
 
 func (r *Mob) ConsidersAnAlly(m *Mob) bool {
 
+	// Same mob type always allies
 	if m.MobId == r.MobId {
-		return true // Auto ally with own kind
+		return true
 	}
 
-	if len(m.Groups) == 0 && len(r.Groups) == 0 {
-		return true // No allegiance on either side, consider an ally for now
-	}
-
-	// If they both belong to factions/groups, check for matches
-	// Could conver tthis to a look up map.
-	// Only a couple entries likely, so maybe not worth it.
-	if len(r.Groups) > 0 {
-		// Look for a group match
-		for _, targetGroup := range r.Groups {
-			for _, testGroup := range m.Groups {
-				if testGroup == targetGroup {
-					return true
-				}
-			}
-		}
+	// Same species = allies (SpeciesId 0 is unset/ghostly spirit, skip)
+	if r.Character.SpeciesId > 0 &&
+		r.Character.SpeciesId == m.Character.SpeciesId {
+		return true
 	}
 
 	return false
