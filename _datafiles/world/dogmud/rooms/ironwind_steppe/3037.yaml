@@ -10,12 +10,10 @@ description: The eastern face of the ridge drops away in a series of
   broken terrain.
 biome: cliffs
 exits:
-  west:
-    roomid: 3027
   south:
-    roomid: 3034
-  east:
-    roomid: 3039
+    roomid: 3035
+  north:
+    roomid: 3038
 nouns:
   terraces: Broken stone terraces stepping down the ridge's east
     face, each a few feet wide. Soil has accumulated on the flat

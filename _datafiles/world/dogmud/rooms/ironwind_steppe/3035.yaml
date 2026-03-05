@@ -11,18 +11,12 @@ description: You stand on the narrow crest of Ironwind Ridge, the
   line of dark stone against the sky.
 biome: cliffs
 exits:
-  southwest:
-    roomid: 3025
   west:
-    roomid: 3031
+    roomid: 3034
   south:
     roomid: 3036
   north:
-    roomid: 3038
-  northeast:
-    roomid: 3060
-  east:
-    roomid: 3040
+    roomid: 3037
 nouns:
   crest: The narrow spine of the ridge, a blade of dark basalt
     worn smooth on top by wind and weather. The rock is warm

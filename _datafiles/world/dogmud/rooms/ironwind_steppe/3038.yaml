@@ -12,11 +12,7 @@ description: The highest point of Ironwind Ridge, a broad dome of
 biome: cliffs
 exits:
   south:
-    roomid: 3035
-  down:
-    roomid: 3033
-  north:
-    roomid: 3039
+    roomid: 3037
 nouns:
   dome: A broad dome of dark basalt, perhaps thirty paces across,
     worn glassy-smooth by the constant abrasion of wind-carried

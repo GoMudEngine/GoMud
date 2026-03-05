@@ -12,10 +12,8 @@ biome: cliffs
 exits:
   north:
     roomid: 3035
-  south:
-    roomid: 3048
-  east:
-    roomid: 3041
+  west:
+    roomid: 3031
 nouns:
   slope: A gravel-covered slope descending southward, steep enough
     to require careful footwork. The loose stone shifts and slides,

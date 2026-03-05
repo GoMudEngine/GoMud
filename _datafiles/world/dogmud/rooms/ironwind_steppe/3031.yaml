@@ -14,6 +14,10 @@ exits:
     roomid: 3020
   south:
     roomid: 3030
+  north:
+    roomid: 3034
+  east:
+    roomid: 3036
 nouns:
   trail: A narrow switchback trail worn into the ridge face by
     the passage of animals over many years. The surface is a mix
