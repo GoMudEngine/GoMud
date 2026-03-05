@@ -13,9 +13,7 @@ biome: city
 exits:
   west:
     roomid: 466
-  east:
-    roomid: 3000
-    zone: Ironwind Steppe
+  # east exit to Ironwind Steppe (3000) temporarily removed — zone under construction
 nouns:
   citadel: The Old Citadel is built of dark basalt in a style that predates the
     current city by centuries. Its walls are thick, its towers squat and heavy, and

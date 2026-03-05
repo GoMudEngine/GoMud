@@ -10,9 +10,7 @@ description: The cobblestones of Thornwall give way to hard-packed dirt as
   grass and dust, a sharp contrast to the close city air.
 biome: land
 exits:
-  west:
-    roomid: 479
-    zone: Thornwall City
+  # west exit to Thornwall City (479) temporarily removed — zone under construction
   east:
     roomid: 3001
   northeast:
