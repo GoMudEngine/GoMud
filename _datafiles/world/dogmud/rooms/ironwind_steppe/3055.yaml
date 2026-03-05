@@ -11,6 +11,8 @@ biome: land
 exits:
   west:
     roomid: 3053
+  east:
+    roomid: 3060
 nouns:
   rise: A gentle hill on the basin's eastern edge, high enough
     to see over the creek banks. The grass on top is short and

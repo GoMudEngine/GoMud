@@ -10,16 +10,8 @@ description: Several coulees intersect here in a wider space where
   or something uses this junction regularly.
 biome: cliffs
 exits:
-  west:
-    roomid: 3060
   north:
     roomid: 3061
-  south:
-    roomid: 3064
-  east:
-    roomid: 3065
-  southwest:
-    roomid: 3059
 nouns:
   markings: Crude scratches on the basalt wall -- directional
     arrows, tally marks, and what might be a rough map of the

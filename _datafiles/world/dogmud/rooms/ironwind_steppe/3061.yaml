@@ -12,8 +12,6 @@ biome: cliffs
 exits:
   north:
     roomid: 3060
-  west:
-    roomid: 3057
   south:
     roomid: 3062
   east:

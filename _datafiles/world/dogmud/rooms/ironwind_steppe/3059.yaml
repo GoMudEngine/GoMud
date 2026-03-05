@@ -12,8 +12,6 @@ biome: land
 exits:
   south:
     roomid: 3060
-  northeast:
-    roomid: 3062
 nouns:
   basalt: Dark volcanic stone, dense and heavy, breaking through
     the steppe soil in angular slabs. The surface is rough and
