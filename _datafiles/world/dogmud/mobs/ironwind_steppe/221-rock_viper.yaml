@@ -6,6 +6,8 @@ hostile: true
 maxwander: 2
 groups:
   - animal
+hates:
+  - rodent
 archetype: fighting
 mutationchance: 20
 idlecommands:

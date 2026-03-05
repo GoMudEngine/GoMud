@@ -10,9 +10,10 @@ groups:
   - humanoid
   - mutant
 hates:
-  - animal
   - canine
-  - steppe-boar
+  - boar
+  - feline
+  - rodent
 idlecommands:
   - 'emote turns a polished obsidian knife in its hands, inspecting the edge'
   - 'emote stares into the fire pit with an expression that, on a human face, would be called grief'

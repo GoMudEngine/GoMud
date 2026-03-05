@@ -8,7 +8,8 @@ groups:
   - steppe-wolf
   - canine
 hates:
-  - steppe-boar
+  - boar
+  - rodent
 archetype: fighting
 mutationchance: 15
 combatcommands:

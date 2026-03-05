@@ -607,27 +607,21 @@ func (r *Mob) HatesMob(m *Mob) bool {
 		return false // Can't hate exact same as self
 	}
 
+	// Same species = ally, never hate
+	if r.Character.SpeciesId > 0 &&
+		r.Character.SpeciesId == m.Character.SpeciesId {
+		return false
+	}
+
+	// Check hates list against target's species name
 	mRace := species.GetSpecies(m.Character.SpeciesId)
 	raceName := strings.ToLower(mRace.Name)
-	for _, rGroup := range r.Groups {
-		if rGroup == raceName {
+	for _, hateName := range r.Hates {
+		if hateName == `*` {
 			return true
 		}
-		for _, mGroup := range m.Groups {
-			if rGroup == mGroup {
-				return false // Can't hate groups its part of.
-			}
-		}
-	}
-	// Loop through groups it hates and if it finds a match, return true
-	for _, groupName := range r.Hates {
-		if groupName == `*` { // If * it hates all groups
+		if hateName == raceName {
 			return true
-		}
-		for _, mGroup := range m.Groups {
-			if groupName == mGroup {
-				return true
-			}
 		}
 	}
 	return false

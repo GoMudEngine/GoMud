@@ -6,6 +6,9 @@ hostile: true
 maxwander: 3
 groups:
   - animal
+hates:
+  - rodent
+  - insectoid
 archetype: fighting
 idlecommands:
   - 'emote crouches low in the grass, tail twitching'

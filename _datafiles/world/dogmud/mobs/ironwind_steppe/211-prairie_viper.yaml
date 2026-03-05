@@ -6,6 +6,8 @@ hostile: true
 maxwander: 2
 groups:
   - animal
+hates:
+  - rodent
 archetype: fighting
 idlecommands:
   - 'emote coils tighter, rattling the tip of its tail in warning'

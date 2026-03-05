@@ -7,6 +7,8 @@ maxwander: 4
 groups:
   - animal
   - canine
+hates:
+  - rodent
 archetype: fighting
 idlecommands:
   - 'emote sniffs the air, hackles half-raised'
