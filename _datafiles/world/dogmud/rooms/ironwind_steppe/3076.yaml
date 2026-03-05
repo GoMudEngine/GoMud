@@ -14,8 +14,6 @@ exits:
     roomid: 3075
   south:
     roomid: 3077
-  east:
-    roomid: 3082
 nouns:
   trails: Narrow paths through the dense brush, worn by wolf
     traffic to smooth, packed earth. They twist and branch,

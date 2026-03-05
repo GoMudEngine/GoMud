@@ -12,8 +12,6 @@ biome: cliffs
 exits:
   west:
     roomid: 3073
-  north:
-    roomid: 3070
 nouns:
   slope: A broad slope of mixed stone and earth, descending
     southeast toward lower terrain. The footing is uncertain,

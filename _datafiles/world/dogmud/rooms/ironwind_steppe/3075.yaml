@@ -10,10 +10,12 @@ description: A narrow ravine opens in the steppe here, its walls of
   a rarity on the dry steppe.
 biome: land
 exits:
+  north:
+    roomid: 3054
+  east:
+    roomid: 3057
   south:
     roomid: 3076
-  east:
-    roomid: 3081
 nouns:
   ravine: A steep-walled ravine cutting into the steppe, about
     twice a person's depth and narrow enough to jump across at

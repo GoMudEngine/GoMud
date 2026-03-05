@@ -15,6 +15,8 @@ exits:
     roomid: 3056
   south:
     roomid: 3058
+  west:
+    roomid: 3075
 nouns:
   boulders: Large, smooth boulders in the creek bed, rounded by
     years of tumbling in floodwater. They are wedged tightly

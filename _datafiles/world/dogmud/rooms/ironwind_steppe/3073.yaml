@@ -15,6 +15,8 @@ exits:
     roomid: 3067
   west:
     roomid: 3066
+  east:
+    roomid: 3074
 nouns:
   outcrops: Low basalt outcrops emerging from the steppe soil,
     the last traces of the coulee system. They diminish in

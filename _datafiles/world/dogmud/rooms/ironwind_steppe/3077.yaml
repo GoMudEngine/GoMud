@@ -14,8 +14,6 @@ exits:
     roomid: 3076
   south:
     roomid: 3078
-  east:
-    roomid: 3083
 nouns:
   stream: A narrow stream of clear water, barely a foot wide and
     only a few inches deep, running over a bed of smooth stones.
