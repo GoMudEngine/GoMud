@@ -11,12 +11,12 @@ description: The northern cliffs rise abruptly from the steppe here,
   creating an eerie, fluctuating moan.
 biome: cliffs
 exits:
-  south:
-    roomid: 3029
-  east:
-    roomid: 3101
   north:
     roomid: 3102
+  east:
+    roomid: 3101
+  south:
+    roomid: 3029
 nouns:
   cliffs: Pale sandstone cliffs rising several stories above you,
     their faces sculpted by wind into smooth, organic shapes. Dark

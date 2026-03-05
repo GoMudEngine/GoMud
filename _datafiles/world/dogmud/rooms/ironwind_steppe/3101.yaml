@@ -11,14 +11,10 @@ description: A broad cave entrance opens in the cliff face, wide
   vault. The passage leads deeper into darkness.
 biome: cave
 exits:
-  south:
-    roomid: 3039
-  west:
-    roomid: 3100
   north:
     roomid: 3103
-  east:
-    roomid: 3104
+  west:
+    roomid: 3100
 nouns:
   archway: A natural stone archway framing the cave entrance,
     worn smooth by millennia of wind. The stone is pale cream,

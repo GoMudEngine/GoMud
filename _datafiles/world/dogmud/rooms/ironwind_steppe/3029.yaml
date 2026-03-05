@@ -10,6 +10,8 @@ description: The sagebrush flats reach their northern extent here,
   before branching into the rougher terrain ahead.
 biome: land
 exits:
+  north:
+    roomid: 3100
   south:
     roomid: 3028
 nouns:

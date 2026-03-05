@@ -10,12 +10,10 @@ description: A long, narrow passage where the wind is channeled to
   the light from outside is reduced to a dim glow.
 biome: cave
 exits:
-  south:
-    roomid: 3100
-  north:
-    roomid: 3105
   east:
     roomid: 3103
+  south:
+    roomid: 3100
 nouns:
   fluting: Narrow channels carved into the cave walls by wind
     erosion, each a slightly different depth and angle. When
