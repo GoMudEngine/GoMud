@@ -1,0 +1,9 @@
+The <ansi fg="command">badcommands</ansi> command shows unrecognized player input.
+
+<ansi fg="command">badcommands</ansi>
+Displays a table of all unrecognized commands players have typed
+and how many times each was attempted. Useful for finding missing
+commands or common typos.
+
+<ansi fg="command">badcommands clear</ansi>
+Clears the bad command tracker and resets all counts.

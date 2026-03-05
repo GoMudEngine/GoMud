@@ -90,8 +90,10 @@ help:
       - read
       - put
     general:
+      - motd
       - online
       - quit
+      - scan
     parties:
       - party
       - share
@@ -117,6 +119,8 @@ help:
       - enchanting
   admin:
     all:
+      - ai-flag
+      - ai-list
       - badcommands
       - buff
       - build
@@ -125,8 +129,8 @@ help:
       - deafen
       - devtool
       - item
-      - grant
       - locate
+      - mob
       - modify
       - mudmail
       - mute
@@ -140,7 +144,9 @@ help:
       - server
       - skillset
       - spawn
+      - spell
       - syslogs
+      - teleport
       - zap
       - zone
 # Aliases for keywords when typing: help <keyword>

@@ -1,0 +1,9 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">motd</ansi>
+
+The <ansi fg="command">motd</ansi> command displays the Message of the Day.
+This is the same message shown when you first log in.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">motd</ansi>
+  Display the current message of the day.

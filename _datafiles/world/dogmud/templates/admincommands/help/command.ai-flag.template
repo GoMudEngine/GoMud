@@ -1,0 +1,5 @@
+The <ansi fg="command">ai-flag</ansi> command toggles the AI flag on a user account.
+
+<ansi fg="command">ai-flag <username></ansi>
+Toggle whether a player account is marked as AI-controlled.
+Flagged accounts show an [AI] indicator to admins.
