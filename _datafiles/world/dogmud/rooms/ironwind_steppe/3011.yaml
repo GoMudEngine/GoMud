@@ -12,10 +12,8 @@ biome: land
 exits:
   west:
     roomid: 3010
-  east:
+  south:
     roomid: 3012
-  north:
-    roomid: 3015
 nouns:
   stones: Large, rounded stones half-buried in the soil, their
     exposed surfaces worn smooth by centuries of wind and grit.

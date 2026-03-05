@@ -11,13 +11,9 @@ description: The sagebrush thins here as the soil becomes sandier and
 biome: land
 exits:
   north:
-    roomid: 3010
+    roomid: 3013
   east:
-    roomid: 3016
-  south:
-    roomid: 3045
-  southeast:
-    roomid: 3046
+    roomid: 3018
 nouns:
   anthills: Conical mounds of fine, sorted earth, each about the
     size of a dinner plate. Red ants stream in and out of the

@@ -10,11 +10,7 @@ description: The flats extend north here, the sagebrush growing denser
 biome: land
 exits:
   south:
-    roomid: 3011
-  northeast:
-    roomid: 3031
-  north:
-    roomid: 3019
+    roomid: 3010
 nouns:
   junipers: Stunted, wind-twisted juniper trees with shaggy bark
     and dense blue-green foliage. They provide the only real

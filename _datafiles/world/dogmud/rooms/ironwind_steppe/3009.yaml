@@ -15,6 +15,8 @@ exits:
     roomid: 3006
   west:
     roomid: 3007
+  east:
+    roomid: 3013
 nouns:
   skull: A sun-bleached animal skull, probably a dog or large fox.
     The bone is white and dry, half-buried in the grass. One eye

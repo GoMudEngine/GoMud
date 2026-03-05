@@ -15,6 +15,8 @@ exits:
     roomid: 3003
   south:
     roomid: 3009
+  east:
+    roomid: 3010
 nouns:
   ruts: The wagon ruts are barely visible here, little more than
     shallow depressions where the grass grows slightly thinner. A

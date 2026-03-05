@@ -10,11 +10,13 @@ description: A natural clearing in the sagebrush where the grass grows
 biome: land
 exits:
   west:
-    roomid: 3012
+    roomid: 3009
   north:
-    roomid: 3016
+    roomid: 3010
   east:
-    roomid: 3018
+    roomid: 3012
+  south:
+    roomid: 3014
 nouns:
   clearing: A patch of unusually lush grass in the midst of the dry
     flats. Some underground seep must feed the roots here. The grass

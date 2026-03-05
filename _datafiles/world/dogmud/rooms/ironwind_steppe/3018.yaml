@@ -11,14 +11,10 @@ description: The sagebrush grows unusually dense here, the bushes
   trafficked by wildlife.
 biome: land
 exits:
-  east:
-    roomid: 3019
   west:
-    roomid: 3013
+    roomid: 3014
   north:
-    roomid: 3017
-  southeast:
-    roomid: 3047
+    roomid: 3012
 nouns:
   thicket: A dense tangle of mature sagebrush, the oldest and
     tallest on the flats. The bushes have grown together into

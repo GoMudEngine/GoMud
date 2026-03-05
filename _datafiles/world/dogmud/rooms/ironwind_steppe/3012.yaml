@@ -11,14 +11,12 @@ description: The wind is particularly fierce here, channeled across the
   spine of rock rising above the flat terrain.
 biome: land
 exits:
-  west:
+  north:
     roomid: 3011
-  east:
+  west:
     roomid: 3013
-  northeast:
-    roomid: 3030
   south:
-    roomid: 3016
+    roomid: 3018
 nouns:
   clay: Pale, cracked hardpan clay exposed where the topsoil has
     blown away. The surface is tessellated with drying cracks in
