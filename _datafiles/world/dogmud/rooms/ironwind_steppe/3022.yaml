@@ -14,6 +14,8 @@ exits:
     roomid: 3019
   east:
     roomid: 3023
+  north:
+    roomid: 3027
 nouns:
   tree: A dead tree, bleached white by the elements, its bare
     branches spread like skeletal fingers. Hawks use it as a

@@ -12,8 +12,8 @@ biome: land
 exits:
   south:
     roomid: 3027
-  north:
-    roomid: 3029
+  east:
+    roomid: 3026
 nouns:
   stones: Flat, dark stones arranged in a natural tumble, their
     surfaces smooth and warm to the touch. Faint grooves in the

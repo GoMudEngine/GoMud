@@ -11,9 +11,9 @@ description: A shallow depression in the steppe, sheltered on three
 biome: land
 exits:
   south:
-    roomid: 3026
+    roomid: 3022
   east:
-    roomid: 3037
+    roomid: 3025
   north:
     roomid: 3028
 nouns:

@@ -9,10 +9,8 @@ description: The grass grows tall here, reaching waist-height in thick
   seeing it. The air smells of dry hay and sun-warmed earth.
 biome: land
 exits:
-  east:
-    roomid: 3023
   west:
-    roomid: 3025
+    roomid: 3023
 nouns:
   grass: Tall, dense steppe grass in shades of gold and brown,
     swaying in continuous waves. The stems are tough and wiry,

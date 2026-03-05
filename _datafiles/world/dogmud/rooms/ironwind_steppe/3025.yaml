@@ -12,14 +12,10 @@ biome: land
 exits:
   south:
     roomid: 3023
-  east:
-    roomid: 3024
   west:
-    roomid: 3022
+    roomid: 3027
   north:
     roomid: 3026
-  northeast:
-    roomid: 3035
 nouns:
   trail: A broad animal trail heading north, the ground beaten
     bare by regular traffic. Multiple sets of tracks overlay
