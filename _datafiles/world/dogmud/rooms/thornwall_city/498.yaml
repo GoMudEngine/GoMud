@@ -1,0 +1,34 @@
+roomid: 498
+zone: Thornwall City
+title: Operations Room
+description: >
+  The heart of the smuggling operation. A large chamber carved from bedrock,
+  well-lit by multiple oil lamps and furnished with a proper table, chairs,
+  and shelving. Maps of the city and its tunnel system are pinned to a
+  wooden frame against the north wall, annotated with routes, timings, and
+  gate patrol schedules. A heavy iron <ansi fg="itemname">strongbox</ansi>
+  sits beneath the table, secured with a brass lock. This is not a hideout
+  -- it is an office, run with the efficiency of a legitimate business.
+biome: cave
+mapsymbol: T
+maplegend: Torvan
+exits:
+  north:
+    roomid: 497
+  east:
+    roomid: 499
+spawninfo:
+  - mobid: 249
+nouns:
+  maps: City maps annotated in a careful hand. Tunnel routes are traced in
+    red ink, gate patrol schedules noted in the margins. Every approach to
+    the city is mapped and timed. Whoever made these had access to official
+    city surveyor records.
+  strongbox: A heavy iron strongbox beneath the table, secured with a brass
+    padlock. It is solidly built -- breaking it open without a key would
+    take considerable effort and make a great deal of noise.
+  table: A proper wooden table, out of place this far underground. Its
+    surface is covered in papers, ink pots, and weighted-down maps.
+idlemessages:
+- Lamp light plays across the annotated maps on the wall.
+- Papers rustle on the table, stirred by a faint draught.

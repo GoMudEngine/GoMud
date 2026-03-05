@@ -1,0 +1,30 @@
+roomid: 492
+zone: Thornwall City
+title: Stash Room
+description: >
+  A small chamber carved out of the tunnel wall, roughly rectangular and
+  stacked floor to ceiling with goods. Wooden <ansi fg="itemname">crates</ansi>
+  hold bolts of cloth, ceramic jars sealed with wax, and bundles wrapped
+  in oilskin. None of it bears customs stamps or merchant seals -- these
+  goods entered the city without passing through any gate. A rough shelf
+  against the back wall holds smaller items: pouches, tally records, and
+  what looks like a set of signal flags.
+biome: cave
+exits:
+  east:
+    roomid: 491
+containers:
+  crates:
+    items:
+      - itemid: 40035
+nouns:
+  shelf: A rough plank shelf holding pouches of dried herbs, coils of thin
+    rope, and folded signal flags in dark colours. The herbs smell medicinal
+    rather than culinary.
+  goods: Bolts of undyed cloth, ceramic jars of oil or spirits, bundles
+    wrapped tightly in oilskin. All of it is good quality -- this is not
+    salvage or stolen goods but legitimate trade merchandise smuggled past
+    the city tariffs.
+idlemessages:
+- The smell of oilskin and dried herbs hangs thick in the stale air.
+- A crate lid sits slightly askew, as if recently opened and replaced.

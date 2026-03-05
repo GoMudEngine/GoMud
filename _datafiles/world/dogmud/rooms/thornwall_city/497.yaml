@@ -1,0 +1,27 @@
+roomid: 497
+zone: Thornwall City
+title: Torvan's Anteroom
+description: >
+  The tunnel opens into a low-ceilinged anteroom lit by a pair of oil
+  lamps set into wall niches. A heavy curtain of oiled canvas hangs across
+  the southern exit, muffling sound from beyond. A small desk against the
+  east wall holds a stack of shipping manifests and a pot of ink. This is
+  the outer office of whoever runs the operation -- a place for receiving
+  reports and issuing orders before visitors are allowed further in.
+biome: cave
+exits:
+  north:
+    roomid: 496
+  south:
+    roomid: 498
+spawninfo:
+  - mobid: 247
+nouns:
+  desk: A small writing desk, its surface stained with ink. Shipping
+    manifests are stacked neatly -- dates, quantities, destinations.
+    The handwriting is precise and educated.
+  curtain: A heavy curtain of oiled canvas, hung from iron rings on a rod.
+    It blocks both light and sound from the room beyond.
+idlemessages:
+- Oil lamps flicker in their wall niches, casting steady light.
+- The curtain sways faintly, disturbed by a draught from below.

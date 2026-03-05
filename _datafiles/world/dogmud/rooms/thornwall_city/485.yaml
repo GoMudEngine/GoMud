@@ -1,0 +1,31 @@
+roomid: 485
+zone: Thornwall City
+title: Tavern Cellar
+description: >
+  A low-ceilinged cellar beneath the Drowning Post's kitchen, smelling of
+  damp stone and stale beer. Barrels and crates line the walls, some covered
+  in dust, others showing recent use. The floor is flagstone, cracked and
+  uneven, with dark water pooled in the low spots. Against the far wall, an
+  iron grate has been pulled aside, revealing a rough-hewn opening that
+  descends into darkness. Scratch marks on the stone around the grate show
+  it has been moved recently -- and often.
+biome: cave
+mapsymbol: C
+maplegend: Cellar
+exits:
+  up:
+    roomid: 481
+  down:
+    roomid: 486
+nouns:
+  grate: A heavy iron grate set into the floor, designed to drain water into
+    the old tunnels below. The bolts that once held it in place have been
+    pried out and the grate swings freely on improvised hinges. Fresh
+    scratches on the flagstone show regular use.
+  barrels: Old ale barrels, mostly empty. A few still hold dregs that have
+    gone vinegary. The dust on them is undisturbed -- Marek has not been
+    down here in a while.
+idlemessages:
+- Water drips somewhere below the grate, echoing off stone.
+- A faint draught rises from the opening, carrying the smell of wet earth.
+- Something scrapes in the darkness below -- probably rats.

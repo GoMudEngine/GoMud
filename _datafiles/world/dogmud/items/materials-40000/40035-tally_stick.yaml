@@ -1,0 +1,13 @@
+itemid: 40035
+name: tally stick
+namesimple: stick
+description: A notched hardwood stick about a hand-span long, each notch
+  representing a shipment. The marks are fresh -- this tally is current.
+  Someone is counting goods moving through these tunnels regularly. The
+  latest notch has a chalk arrow scratched beside it, pointing south --
+  the same direction as the arrows on the tunnel walls.
+type: object
+subtype: mundane
+questtoken: "14-explore"
+weight: 0.1
+value: 0

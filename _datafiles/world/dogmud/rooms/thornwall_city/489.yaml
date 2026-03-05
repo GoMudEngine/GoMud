@@ -1,0 +1,23 @@
+roomid: 489
+zone: Thornwall City
+title: Narrow Crawlway
+description: >
+  The tunnel narrows sharply, forcing passage in a low crouch. The walls
+  are raw stone here, rougher than the dressed blocks of the drainage
+  system -- this section was carved out by hand, and recently. Tool marks
+  score the rock in parallel grooves. The floor is dry, the drainage
+  channel left behind in the overflow chamber. A narrow passage continues
+  east to a vertical shaft, and the main tunnel runs south.
+biome: cave
+exits:
+  west:
+    roomid: 488
+  east:
+    roomid: 490
+  south:
+    roomid: 491
+spawninfo:
+  - mobid: 247
+idlemessages:
+- The sound of your own breathing echoes off the close walls.
+- Tool marks in the stone catch the light -- someone carved this by hand.

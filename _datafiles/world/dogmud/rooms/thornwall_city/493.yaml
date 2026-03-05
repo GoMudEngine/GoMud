@@ -1,0 +1,27 @@
+roomid: 493
+zone: Thornwall City
+title: Guard Post
+description: >
+  A widened section of tunnel fitted out as a checkpoint. A heavy plank
+  table blocks half the passage, and a stool sits behind it. A shuttered
+  lantern hangs from a nail driven into the mortar between stones. The
+  walls are marked with tally scratches -- boredom marks from someone
+  counting hours on watch. A narrow passage opens east into a storage
+  alcove, and the main tunnel continues south.
+biome: cave
+exits:
+  north:
+    roomid: 491
+  east:
+    roomid: 494
+  south:
+    roomid: 495
+spawninfo:
+  - mobid: 245
+  - mobid: 246
+nouns:
+  table: A rough plank table, scarred with knife marks. A tin cup sits on
+    it, half-full of something that might once have been ale.
+idlemessages:
+- The shuttered lantern flickers, throwing jumping shadows on the walls.
+- Tally marks scored into the wall count the hours of countless watches.

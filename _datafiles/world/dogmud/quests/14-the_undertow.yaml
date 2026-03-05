@@ -1,0 +1,32 @@
+questid: 14
+name: The Undertow
+description: The protection racket was only the surface. Beneath the Drowning
+  Post, old drainage tunnels have been converted into a smuggling pipeline
+  that bypasses the city gates entirely. Marek needs someone to investigate
+  the noises from his cellar.
+secret: false
+
+steps:
+  - id: start
+    description: "Marek at the Drowning Post has been hearing noises from his cellar -- scraping, voices, the sound of things being moved. The old drainage tunnels run beneath the tavern. He has given you a lantern and asked you to investigate."
+    hint: "Go to the tavern kitchen and descend into the cellar."
+  - id: explore
+    description: "You found a tally stick in the smugglers' stash room -- proof of regular shipments moving through these tunnels. The chalk arrows on the walls point south, deeper into the tunnel system. Whoever is running this operation is further in."
+    hint: "Follow the tunnels south. The chalk arrows point toward whoever is in charge."
+  - id: confront
+    description: "You have reached the operations room at the heart of the smuggling tunnels. A man named Torvan Cresk runs the whole operation from here. A locked strongbox beneath his table likely holds the real evidence -- but Torvan has the key, and he is not going to hand it over willingly."
+    hint: "Torvan Cresk has the key to the strongbox. Fight him, take the key, and open the strongbox."
+  - id: evidence
+    description: "You have obtained a bribe ledger from the strongbox -- it names corrupt city officials taking payments to look the other way. Guard Captain Velk needs to see this."
+    hint: "Bring the bribe ledger to Guard Captain Velk at the barracks."
+  - id: report
+    description: "Guard Captain Velk has the bribe ledger and is reviewing the names. He looks ready to act -- speak with him to close the case."
+    hint: "Ask Velk about finishing the case. You are already with him."
+  - id: end
+    description: "The smuggling tunnels have been exposed and the bribe ledger is in the hands of the city watch. Thornwall's underground corruption runs deeper than anyone knew."
+
+rewards:
+  playermessage: "Guard Captain Velk nods with grim satisfaction. 'This ledger changes everything. Names, dates, amounts -- enough to end careers and start trials. You have done Thornwall a real service.' He hands you a folded parchment bearing the Watch seal. 'A commendation. It may not buy you a drink, but it buys you goodwill with the guard.'"
+  roommessage: "Velk hands over a sealed document with a look of grudging respect."
+  gold: 25
+  itemid: 40037

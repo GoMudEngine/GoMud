@@ -1,0 +1,39 @@
+mobid: 247
+zone: Thornwall City
+archetype: fighting
+statpool: 22
+itemdropchance: 10
+hostile: true
+maxwander: 1
+groups:
+  - humanoid
+  - smuggler
+idlecommands:
+  - 'emote peers into the darkness, listening intently'
+  - 'emote adjusts a signal lantern, shielding the flame'
+  - ''
+  - ''
+combatcommands:
+  - 'emote stabs quickly with a short blade'
+  - ''
+  - 'emote darts back and strikes again'
+  - ''
+activitylevel: 20
+character:
+  name: tunnel lookout
+  description: |
+    A lean, sharp-eyed figure crouched in the shadows, watching the
+    tunnel with the alert stillness of a cat at a mouse hole. The
+    lookout carries a short blade and a shuttered signal lantern -- the
+    job is to see trouble coming and raise the alarm before it arrives.
+    Quick, quiet, and trained to notice things that do not belong.
+  speciesid: 1
+  level: 1
+  gold: 2
+  stats:
+    perception:
+      training: 8
+    dexterity:
+      training: 5
+  items:
+    - itemid: 10021

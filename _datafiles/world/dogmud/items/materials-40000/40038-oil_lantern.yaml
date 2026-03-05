@@ -1,0 +1,10 @@
+itemid: 40038
+name: oil lantern
+namesimple: lantern
+description: A battered tin lantern with a wire bail handle, half-full of
+  rendered tallow. The glass is cracked but intact. It throws enough light
+  to see by in a pinch, though the flame gutters in any draft.
+type: object
+subtype: mundane
+weight: 0.1
+value: 1

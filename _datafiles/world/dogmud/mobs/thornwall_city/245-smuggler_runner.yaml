@@ -1,0 +1,40 @@
+mobid: 245
+zone: Thornwall City
+archetype: fighting
+statpool: 18
+itemdropchance: 15
+hostile: true
+maxwander: 1
+groups:
+  - humanoid
+  - smuggler
+idlecommands:
+  - 'emote shifts a crate against the wall, grunting with effort'
+  - 'emote checks a mark on the wall and nods to himself'
+  - ''
+  - ''
+combatcommands:
+  - 'emote lunges forward with a short blade'
+  - ''
+  - 'emote feints left and strikes from the right'
+  - ''
+activitylevel: 15
+character:
+  name: smuggler runner
+  description: |
+    A wiry figure in dark, mud-stained clothing, built for speed rather
+    than strength. The runner carries a short blade at the hip and moves
+    with the nervous energy of someone accustomed to tight spaces and
+    quick escapes. These are the tunnel operation's foot soldiers --
+    they carry goods, relay messages, and guard the passages. Not
+    hardened fighters, but desperate enough to be dangerous.
+  speciesid: 1
+  level: 1
+  gold: 3
+  stats:
+    dexterity:
+      training: 5
+    strength:
+      training: 2
+  items:
+    - itemid: 10021

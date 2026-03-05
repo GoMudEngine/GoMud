@@ -2,24 +2,33 @@ roomid: 481
 zone: Thornwall City
 title: Tavern Kitchen
 description: >
-  A cramped back kitchen behind the Drowning Post, barely large enough for
-  two people to work without bumping elbows. A brick hearth dominates one
-  wall, its iron cooking grate blackened by years of service. Bundles of
-  dried herbs hang from the low ceiling, and a scarred wooden table holds
-  knives, bowls, and a mortar and pestle. The air is thick with the smell
-  of grease, onions, and wood smoke. A narrow doorway opens east to the
-  main tavern floor.
+  A cramped back kitchen behind the Drowning Post, fitted out as a proper
+  cooking workshop. A brick hearth dominates one wall, its iron cooking grate
+  blackened by years of service. Bundles of dried herbs hang from the low
+  ceiling, and a scarred wooden table holds knives, bowls, and a mortar and
+  pestle. Shelves along the opposite wall hold jars of salt, rendered fat,
+  and dried spices -- the raw materials of a working kitchen. The air is thick
+  with the smell of grease, onions, and wood smoke. A narrow doorway opens
+  east to the main tavern floor. A trapdoor in the floor leads down to the
+  cellar.
 biome: city
 station: cooking_fire
 exits:
   east:
     roomid: 472
+  down:
+    roomid: 485
 items:
   - itemid: 40014
   - itemid: 40017
   - itemid: 40015
   - itemid: 40016
+spawninfo:
+  - mobid: 248
 nouns:
+  trapdoor: A heavy wooden trapdoor set into the kitchen floor, worn smooth
+    around the edges from years of use. It lifts on leather hinges to reveal
+    stone steps descending into the cellar beneath the tavern.
   hearth: A squat brick hearth built against the outer wall, venting through
     a hole knocked in the brickwork above. The cooking grate is iron, warped
     slightly by heat but still sturdy. Grease stains and soot coat the bricks

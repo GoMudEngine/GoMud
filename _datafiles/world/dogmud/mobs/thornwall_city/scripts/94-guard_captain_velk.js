@@ -1,8 +1,10 @@
 // Guard Captain Velk - Mob 94
-// Handles quest item delivery for Q10 (The Drowning Post's Debt).
-// When a player gives the protection notice (item 30), auto-advance the quest.
+// Handles quest item delivery for Q10 and Q14.
+// Q10: protection notice (item 30) → 10-report
+// Q14: bribe ledger (item 40036) → 14-report
 
 const PROTECTION_NOTICE_ID = 30;
+const BRIBE_LEDGER_ID = 40036;
 
 function onGive(mob, room, eventDetails) {
 
@@ -25,6 +27,19 @@ function onGive(mob, room, eventDetails) {
             return true;
         }
         mob.Command('say I have already seen this. The patrols are out.');
+        return true;
+    }
+
+    // Bribe ledger delivery for Q14
+    if ( eventDetails.item.ItemId == BRIBE_LEDGER_ID ) {
+        if ( user.HasQuest("14-evidence") && !user.HasQuest("14-report") ) {
+            mob.Command('say A bribe ledger? Let me see that.', 1.0);
+            mob.Command('say Names, dates, amounts. Gate captains, customs clerks, a warehouse inspector -- all on the take.', 2.5);
+            mob.Command('say This changes everything. I am ordering arrests tonight.', 4.5);
+            user.GiveQuest("14-report");
+            return true;
+        }
+        mob.Command('say I already have the ledger. The arrests are underway.');
         return true;
     }
 

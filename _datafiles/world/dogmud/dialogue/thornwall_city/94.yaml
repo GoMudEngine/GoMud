@@ -43,7 +43,14 @@ tree:
         text: "Any news on the missing girl? The father has been by twice today. If you have found something, I need to hear it."
         hints: "Report what you have found about Elara."
       - questRequired: ["8-end"]
+        questExcluded: ["14-evidence"]
         text: "You did the watch a service with that missing person case. If you hear of anything else, my door is open."
+      - questRequired: ["14-evidence"]
+        questExcluded: ["14-end"]
+        text: "You have been in the tunnels? I can smell it on you. If you have found something, let me see it."
+        hints: "You could give him the bribe ledger, or ask about the tunnel operation."
+      - questRequired: ["14-end"]
+        text: "The tunnel operation is shut down and the arrests are underway. That ledger you brought me is going to shake this city to its foundations. Good work."
 
   nodes:
     - id: missing_case
@@ -79,6 +86,22 @@ tree:
       questExcluded: ["8-end"]
       grantsQuest: "8-end"
       text: "I will close the case based on your account. The family will be notified that she has been located. What I tell them beyond that depends on what you have told me. The watch deals in facts, not judgments."
+      moodChange: grateful
+
+    - id: tunnel_report
+      triggers: ["tunnels", "smugglers", "smuggling", "ledger", "bribe", "quest", "task"]
+      questRequired: ["14-evidence"]
+      questExcluded: ["14-end"]
+      text: "Smuggling tunnels under the Craftsmen's Quarter? And a bribe ledger naming officials? That is... significant. Give me the ledger. I need to see the names before I can act."
+      hints: "You could hand over the bribe ledger."
+
+    - id: tunnel_complete
+      triggers: ["done", "finished", "complete", "quest", "task"]
+      questRequired: ["14-report"]
+      questExcluded: ["14-end"]
+      grantsQuest: "14-end"
+      givesItem: 40037
+      text: "The ledger checks out. Gate captains, customs clerks, a warehouse inspector -- all on the take. I am ordering arrests tonight. The tunnels will be sealed and patrols doubled in the quarter. You have done this city a real service. Take this -- a commendation bearing the Watch seal. It will not buy you a drink, but it means something to the right people."
       moodChange: grateful
 
 memory:
