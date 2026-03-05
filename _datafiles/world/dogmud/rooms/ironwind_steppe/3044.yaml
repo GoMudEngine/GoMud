@@ -10,12 +10,8 @@ description: The ridge drops away to the southeast here in a series of
   landscape becoming increasingly broken and maze-like.
 biome: cliffs
 exits:
-  west:
-    roomid: 3042
-  south:
-    roomid: 3050
-  southeast:
-    roomid: 3065
+  north:
+    roomid: 3043
 nouns:
   steps: Natural steps in the rock face, each a drop of a foot or
     two. The basalt has fractured in columnar patterns, creating

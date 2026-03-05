@@ -11,11 +11,9 @@ description: A shallow pool of murky water persists here where the
 biome: land
 exits:
   north:
-    roomid: 3046
-  northwest:
     roomid: 3018
-  east:
-    roomid: 3050
+  west:
+    roomid: 3045
 nouns:
   pool: A shallow pool of muddy water, perhaps ten paces across
     and no deeper than knee-height at its center. The water is

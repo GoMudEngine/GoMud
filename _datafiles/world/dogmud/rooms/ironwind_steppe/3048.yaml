@@ -11,13 +11,7 @@ description: The dry creek bed widens here into a broad, flat expanse
 biome: land
 exits:
   west:
-    roomid: 3045
-  north:
-    roomid: 3036
-  south:
-    roomid: 3049
-  east:
-    roomid: 3051
+    roomid: 3046
 nouns:
   clay: Hard-packed clay scored with a network of drying cracks,
     each crack an inch or more wide. White salt crusts line

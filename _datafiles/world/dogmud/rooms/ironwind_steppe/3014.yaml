@@ -14,6 +14,8 @@ exits:
     roomid: 3013
   east:
     roomid: 3018
+  south:
+    roomid: 3045
 nouns:
   anthills: Conical mounds of fine, sorted earth, each about the
     size of a dinner plate. Red ants stream in and out of the

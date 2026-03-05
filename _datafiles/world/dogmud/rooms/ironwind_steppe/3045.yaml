@@ -12,12 +12,10 @@ biome: land
 exits:
   north:
     roomid: 3014
-  northeast:
-    roomid: 3016
+  east:
+    roomid: 3047
   south:
     roomid: 3046
-  east:
-    roomid: 3048
 nouns:
   bed: A dry creek bed of pale sand and smooth, rounded stones.
     The stones range from pebble-sized to fist-sized, all worn
