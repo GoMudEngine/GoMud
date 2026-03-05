@@ -14,6 +14,8 @@ exits:
     roomid: 3064
   south:
     roomid: 3068
+  east:
+    roomid: 3073
 nouns:
   shelter: A crude lean-to built against the dead-end wall from
     flat stone slabs and salvaged planks. The interior is just
