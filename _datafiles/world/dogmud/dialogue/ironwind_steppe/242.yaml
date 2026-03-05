@@ -41,13 +41,13 @@ tree:
     text: "A young man in a dusty scholar's coat looks up from a spread of rock samples and charts, his face lighting up. 'Oh, wonderful -- someone who is not a bird or a lizard! Are you here about the windstone? Please say you are here about the windstone.'"
     hints: "Ask about windstone, the conflict, or what he needs."
     variants:
-      - questRequired: ["11-rhett"]
-        questExcluded: ["11-samples"]
-        text: "Rhett waves excitedly. 'You came back! Have you had a chance to look at the rock shelf? The veins of crystal there -- I need samples. Just a few chunks would tell me everything I need to know about extraction feasibility.'"
-        hints: "Collect windstone samples from the rocky shelf."
-      - questRequired: ["11-samples"]
+      - questRequired: ["11-sylara"]
         questExcluded: ["11-end"]
-        text: "Rhett examines the samples with barely contained glee. 'These are perfect. The crystalline structure is even better than I hoped. Now go talk to Kael -- he will want to know what you have learned.'"
+        text: "Rhett's smile falters. 'Ah. You went with the Windwarden. I understand -- tradition is comfortable. The crystal will wait for someone with clearer vision.' He turns back to his notes."
+      - questRequired: ["11-rhett"]
+        questExcluded: ["11-end"]
+        text: "Rhett waves excitedly. 'You came back! Have you had a chance to look at the rocky shelf? The veins of pale blue crystal there -- I need samples. Just chip off a few chunks from the crystal veins. The shelf is just south of here.'"
+        hints: "Collect windstone samples from the crystal veins on the rocky shelf to the south."
       - questRequired: ["13-start"]
         questExcluded: ["13-extraction"]
         text: "Rhett is practically vibrating with excitement. 'You chose to help! Excellent! The extraction site is prepared. I just need someone steady to help with the final phase. Are you ready?'"
@@ -56,33 +56,27 @@ tree:
         text: "Rhett adjusts his spectacles and grins. 'The aegis turned out better than I dared hope. Windstone is remarkable -- it practically shaped itself. Thornwall will hear about what you did here.'"
       - questRequired: ["12-end"]
         text: "Rhett's smile is tinged with disappointment. 'You chose the Windwarden. I understand. The crystal will wait -- it has waited this long.' He sighs. 'Perhaps someday someone will find a way that does not require choosing.'"
+      - questRequired: ["11-end"]
+        questExcluded: ["12-start", "13-start"]
+        text: "Rhett's eyes light up. 'Those samples confirmed everything I suspected. The crystal lattice is even more complex than I theorized.' He leans in conspiratorially. 'I have been preparing an extraction site. With the right help, I could pull a full slab of windstone from the ridge -- enough to forge a proper aegis. Ask me about the work if you are interested.'"
+        hints: "You could ask Rhett about further work with the windstone."
 
   nodes:
     - id: his_cause
-      triggers: ["windstone", "crystal", "conflict", "cause", "why", "problem", "quest", "task"]
-      questRequired: ["11-start"]
-      questExcluded: ["11-rhett"]
+      triggers: ["windstone", "crystal", "conflict", "cause", "why", "problem", "quest", "task", "help"]
+      questExcluded: ["11-rhett", "11-sylara"]
       grantsQuest: "11-rhett"
-      text: "'Windstone. That is what this is about.' Rhett holds up a pale blue crystal shard that catches the light. 'I found veins of it running through the ridge -- thick veins, high quality. This crystal resonates with healing frequencies. A refined shard could power protective wards for an entire city block. Thornwall needs this. Our ward-stones are failing and people are getting hurt.' He pauses. 'The problem is the veins run under the Windwarden's stone circle. Extracting them would crack the bedrock. She says it would destroy the wind-paths -- spiritual currents she believes sustain the steppe. I cannot measure wind-paths. I can measure crystal. And crystal saves lives.'"
-      hints: "Go complete Sylara's totem task, then collect windstone samples for Rhett."
-      moodChange: friendly
-
-    - id: sample_task
-      triggers: ["sample", "collect", "help", "need", "what", "task", "quest"]
-      requires: ["his_cause"]
-      questRequired: ["11-rhett"]
-      questExcluded: ["11-samples"]
-      text: "'I need windstone samples from the exposed veins on the rocky shelf -- the broad ledge on the ridge's western face. The quartz veins there have windstone running through them. Just chip off a few chunks. Look for the pale blue crystal among the white quartz. Be careful on the shelf -- the footing is treacherous.'"
-      hints: "Go to the rocky shelf and examine the crystal veins to collect windstone samples."
+      text: "'Windstone. That is what this is about.' Rhett holds up a pale blue crystal shard that catches the light. 'I found veins of it running through the ridge -- thick veins, high quality. This crystal resonates with healing frequencies. A refined shard could power protective wards for an entire city block. Thornwall needs this. Our ward-stones are failing and people are getting hurt.' He pauses. 'The problem is the veins run under a stone circle the local Windwarden considers sacred. Extracting them would crack the bedrock. She will not hear reason on the matter.' He straightens. 'If you believe Thornwall's people matter more than ancient stones, I could use your help. I need windstone samples from the exposed veins on the rocky shelf -- the broad ledge just south of here. Chip off a few chunks of the pale blue crystal from the veins.'"
+      hints: "Collect windstone samples from the crystal veins on the rocky shelf to the south."
       moodChange: friendly
 
     - id: sample_return
-      triggers: ["sample", "found", "here", "brought", "return", "have", "windstone", "quest", "task"]
+      triggers: ["sample", "found", "here", "brought", "return", "have", "windstone"]
       questRequired: ["11-rhett"]
-      questExcluded: ["11-samples"]
+      questExcluded: ["11-end"]
       requiresItem: 40032
-      grantsQuest: "11-samples"
-      text: "Rhett snatches the samples with eager hands, immediately holding one up to the light. 'Look at that lattice structure! The resonance potential is even higher than my estimates. This could power wards twice as strong as our current ones.' He catches himself and grins sheepishly. 'Sorry. I get excited. These are perfect. Thank you. Now -- go back to Kael. He wanted you to see both sides. You have. The choice is yours.'"
+      grantsQuest: "11-end"
+      text: "Rhett snatches the samples with eager hands, immediately holding one up to the light. 'Look at that lattice structure! The resonance potential is even higher than my estimates. This could power wards twice as strong as our current ones.' He catches himself and grins sheepishly. 'Sorry. I get excited. These are perfect. Thank you.' He tucks the samples carefully into his satchel. 'I have been preparing an extraction site -- with samples this good, I could pull a full slab of windstone from the ridge. Ask me about the work when you are ready.'"
       moodChange: friendly
 
     - id: extraction_begin
