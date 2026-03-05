@@ -11,10 +11,10 @@ description: A ragged line of scrubby trees -- wind-stunted oaks and
   wind.
 biome: land
 exits:
-  south:
-    roomid: 3019
+  west:
+    roomid: 3015
   north:
-    roomid: 3022
+    roomid: 3021
 nouns:
   oaks: Stunted oaks with massive trunks relative to their modest
     height. The bark is deeply furrowed and covered in lichen.

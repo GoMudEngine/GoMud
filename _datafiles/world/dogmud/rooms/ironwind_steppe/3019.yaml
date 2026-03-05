@@ -11,12 +11,10 @@ biome: land
 exits:
   south:
     roomid: 3015
-  west:
-    roomid: 3018
-  north:
-    roomid: 3020
   east:
     roomid: 3021
+  north:
+    roomid: 3022
 nouns:
   scrapes: Shallow depressions dug in the earth by canine paws,
     the dirt thrown back in sprays. Some are fresh, the soil still

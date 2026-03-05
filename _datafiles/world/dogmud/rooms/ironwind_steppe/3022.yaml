@@ -11,11 +11,9 @@ description: The flats are unusually barren here -- short-cropped grass
 biome: land
 exits:
   south:
-    roomid: 3020
-  west:
-    roomid: 3023
+    roomid: 3019
   east:
-    roomid: 3025
+    roomid: 3023
 nouns:
   tree: A dead tree, bleached white by the elements, its bare
     branches spread like skeletal fingers. Hawks use it as a

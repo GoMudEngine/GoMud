@@ -11,6 +11,10 @@ biome: land
 exits:
   south:
     roomid: 3010
+  north:
+    roomid: 3019
+  east:
+    roomid: 3020
 nouns:
   junipers: Stunted, wind-twisted juniper trees with shaggy bark
     and dense blue-green foliage. They provide the only real

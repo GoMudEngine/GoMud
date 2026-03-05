@@ -10,14 +10,10 @@ description: The ground is riddled with small holes -- dozens of burrow
   well-drained ground.
 biome: land
 exits:
-  east:
+  west:
     roomid: 3022
   south:
     roomid: 3021
-  north:
-    roomid: 3025
-  west:
-    roomid: 3024
 nouns:
   holes: Dozens of burrow entrances, each about the width of a fist,
     surrounded by low mounds of packed earth. The colony is a maze
