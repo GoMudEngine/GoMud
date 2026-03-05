@@ -15,8 +15,6 @@ exits:
     roomid: 3104
   west:
     roomid: 3103
-  north:
-    roomid: 3110
 nouns:
   tunnels: Small tunnels gnawed into the cave walls by deep
     gnawers, each about the width of two fists. The edges are

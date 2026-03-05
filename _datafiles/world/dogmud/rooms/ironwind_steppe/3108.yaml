@@ -12,10 +12,6 @@ biome: cave
 exits:
   south:
     roomid: 3105
-  east:
-    roomid: 3109
-  north:
-    roomid: 3111
 nouns:
   ceiling: The gallery ceiling drops to within four feet of the
     floor, forcing anyone human-sized to crouch. The stone is

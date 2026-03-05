@@ -13,6 +13,8 @@ biome: cave
 exits:
   north:
     roomid: 3103
+  east:
+    roomid: 3104
   west:
     roomid: 3100
 nouns:

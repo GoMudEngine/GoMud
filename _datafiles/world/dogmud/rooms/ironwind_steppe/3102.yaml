@@ -10,6 +10,8 @@ description: A long, narrow passage where the wind is channeled to
   the light from outside is reduced to a dim glow.
 biome: cave
 exits:
+  north:
+    roomid: 3105
   east:
     roomid: 3103
   south:

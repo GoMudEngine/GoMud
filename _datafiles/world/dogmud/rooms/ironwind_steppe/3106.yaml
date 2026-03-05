@@ -15,10 +15,6 @@ exits:
     roomid: 3103
   west:
     roomid: 3105
-  north:
-    roomid: 3109
-  east:
-    roomid: 3110
 nouns:
   quartz: A thick vein of white quartz running through the cave
     wall, its surface a mass of tiny crystal faces that catch

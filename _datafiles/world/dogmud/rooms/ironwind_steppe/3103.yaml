@@ -10,6 +10,10 @@ description: A medium-sized cave chamber where water seeps through
   their surfaces rippling with each drop.
 biome: cave
 exits:
+  north:
+    roomid: 3106
+  east:
+    roomid: 3107
   south:
     roomid: 3101
   west:

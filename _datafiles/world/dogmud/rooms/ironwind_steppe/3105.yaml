@@ -11,12 +11,12 @@ description: A large, dome-shaped chamber where every sound is
   make it impossible to judge the direction of any sound.
 biome: cave
 exits:
-  south:
-    roomid: 3102
-  east:
-    roomid: 3106
   north:
     roomid: 3108
+  east:
+    roomid: 3106
+  south:
+    roomid: 3102
 nouns:
   pillar: A natural stone pillar where a ceiling stalactite and
     floor stalagmite have grown together over millennia. The
