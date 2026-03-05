@@ -12,12 +12,12 @@ biome: land
 exits:
   north:
     roomid: 3090
+  east:
+    roomid: 3089
   south:
     roomid: 3092
-  east:
-    roomid: 3094
-  northeast:
-    roomid: 3080
+  west:
+    roomid: 3081
 nouns:
   wallows: Broad, shallow pits scooped in the muddy earth by
     boar bodies, each large enough for a single animal. The

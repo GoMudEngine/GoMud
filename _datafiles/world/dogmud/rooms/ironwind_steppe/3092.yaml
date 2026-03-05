@@ -13,9 +13,9 @@ exits:
   north:
     roomid: 3091
   south:
-    roomid: 3096
-  west:
     roomid: 3093
+  west:
+    roomid: 3082
 nouns:
   wallows: The deepest wallows on the steppe, some nearly three
     feet deep and filled with dark, silty water. The mud at the

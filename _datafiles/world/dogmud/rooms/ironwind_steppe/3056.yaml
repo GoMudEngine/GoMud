@@ -14,6 +14,8 @@ exits:
     roomid: 3053
   west:
     roomid: 3057
+  south:
+    roomid: 3090
 nouns:
   cattails: Tall cattails rising above the marsh, their brown
     seed heads bobbing in the breeze. The stems are thick and

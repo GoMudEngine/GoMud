@@ -11,11 +11,7 @@ description: Open grassland stretches east beyond the ravine and
 biome: land
 exits:
   west:
-    roomid: 3088
-  north:
-    roomid: 3094
-  south:
-    roomid: 3095
+    roomid: 3091
 nouns:
   grass: Tall golden-brown grass stretching to the horizon,
     undulating in continuous waves as the wind combs through

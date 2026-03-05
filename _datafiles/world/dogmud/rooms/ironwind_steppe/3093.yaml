@@ -10,10 +10,10 @@ description: Thick stands of tall reeds grow from the waterlogged
   reeds like tunnels, their floors churned to deep muck.
 biome: land
 exits:
-  east:
+  north:
     roomid: 3092
-  northeast:
-    roomid: 3086
+  west:
+    roomid: 3083
 nouns:
   reeds: Tall reeds growing in dense stands from the waterlogged
     soil, their stems as thick as fingers. They tower above your
