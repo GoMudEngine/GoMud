@@ -99,7 +99,7 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		KilledByUsers: killedByUserIds,
 	})
 
-	// Emit a local gossip event for PvE deaths (not PvP)
+	// Emit a regional gossip event for PvE deaths (not PvP)
 	if dmgCt == 0 {
 		causeOfDeath := ""
 		// Check if fighting a mob
@@ -127,7 +127,7 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		}
 		worldevents.EmitWorldEvent(worldevents.WorldEvent{
 			Type:         worldevents.PlayerDiedPvE,
-			Significance: worldevents.Local,
+			Significance: worldevents.Global,
 			ZoneName:     zone,
 			RegionName:   region,
 			Description:  causeOfDeath,

@@ -76,6 +76,18 @@ PlayerDiedPvE-Local:
   - "Another body for the Shadow Realm. {desc} got the better of some poor soul."
   - "Someone was not careful enough and {desc} did them in. Happens more than you think."
 
+PlayerDiedPvE-Regional:
+  - "Word came in that someone got killed by {desc} out there. The wilds do not forgive."
+  - "Travellers are saying somebody died to {desc}. Another one gone."
+  - "I heard {desc} claimed another life. You would think people would learn."
+  - "Some poor soul ran into {desc} and did not make it back. Grim business."
+
+PlayerDiedPvE-Global:
+  - "Everyone is talking about it. Someone got killed by {desc}. Nasty way to go."
+  - "Did you hear? {desc} killed someone. Word travels fast when people die."
+  - "The whole town is buzzing. {desc} got the better of some adventurer."
+  - "A death out there. {desc}. You hate to hear it, but you always do."
+
 fallback:
   - "Quiet day. Nothing worth repeating."
   - "Mm. No news is... well, it is just no news."
