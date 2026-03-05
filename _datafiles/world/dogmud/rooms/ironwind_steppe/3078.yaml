@@ -12,6 +12,10 @@ biome: land
 exits:
   north:
     roomid: 3077
+  east:
+    roomid: 3082
+  south:
+    roomid: 3079
 nouns:
   dens: Dark openings in the ravine walls, each about two feet
     across -- wide enough for a wolf to enter and exit. The

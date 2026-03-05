@@ -12,10 +12,6 @@ biome: land
 exits:
   east:
     roomid: 3079
-  north:
-    roomid: 3058
-  southwest:
-    roomid: 3091
 nouns:
   boulder: A huge boulder jammed between the ravine walls,
     forming a natural bridge overhead. Its surface is deeply

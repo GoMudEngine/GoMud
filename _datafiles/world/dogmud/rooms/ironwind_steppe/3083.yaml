@@ -13,9 +13,7 @@ exits:
   north:
     roomid: 3082
   west:
-    roomid: 3077
-  south:
-    roomid: 3084
+    roomid: 3079
 nouns:
   tunnel: A natural tunnel formed by dense vegetation growing
     over the narrow ravine. The interlocking branches block

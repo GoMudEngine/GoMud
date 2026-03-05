@@ -10,10 +10,10 @@ description: Dense thornbrush chokes this section of the ravine,
   use this natural barrier as a defensive perimeter.
 biome: land
 exits:
-  west:
-    roomid: 3075
   north:
-    roomid: 3073
+    roomid: 3058
+  west:
+    roomid: 3077
   south:
     roomid: 3082
 nouns:
