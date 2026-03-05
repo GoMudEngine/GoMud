@@ -24,6 +24,7 @@ const (
 	PackStrengthened                              // Pack group gained a training bonus
 	PlayerMutationMilestone                       // Player reached a mutation milestone
 	PlayerCraftedRare                             // Player produced a rare item
+	PlayerDiedPvE                                 // Player was killed by a mob or condition
 )
 
 type Significance int

@@ -179,6 +179,7 @@ var eventTypeKey = map[worldevents.WorldEventType]string{
 	worldevents.PackStrengthened:        "PackStrengthened",
 	worldevents.PlayerMutationMilestone: "PlayerMutationMilestone",
 	worldevents.PlayerCraftedRare:       "PlayerCraftedRare",
+	worldevents.PlayerDiedPvE:           "PlayerDiedPvE",
 }
 
 var significanceKey = map[worldevents.Significance]string{
@@ -220,7 +221,7 @@ func mobHasGroup(mob *mobs.Mob, groupName string) bool {
 func buildGossipLine(mob *mobs.Mob) string {
 	gossipTemplatesOnce.Do(loadGossipTemplates)
 
-	// Build a filter: show Regional+ events for this mob's region
+	// Build a filter: show Local+ events for this mob's zone/region
 	zone := mob.Character.Zone
 	region := ""
 	if zCfg := rooms.GetZoneConfig(zone); zCfg != nil {
@@ -228,7 +229,8 @@ func buildGossipLine(mob *mobs.Mob) string {
 	}
 
 	filter := &worldevents.WorldEventFilter{
-		MinSignificance: worldevents.Regional,
+		MinSignificance: worldevents.Local,
+		ZoneName:        zone,
 		RegionName:      region,
 	}
 

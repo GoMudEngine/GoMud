@@ -70,6 +70,12 @@ IronwindEvent-Global:
   - "The whole steppe is talking about this. {desc}"
   - "This one came from the Ironwind frontier. {desc}"
 
+PlayerDiedPvE-Local:
+  - "I heard some fool went and got themselves killed by {desc}. What a waste."
+  - "Word is somebody died to {desc}. You would think people would be more careful."
+  - "Another body for the Shadow Realm. {desc} got the better of some poor soul."
+  - "Someone was not careful enough and {desc} did them in. Happens more than you think."
+
 fallback:
   - "Quiet day. Nothing worth repeating."
   - "Mm. No news is... well, it is just no news."

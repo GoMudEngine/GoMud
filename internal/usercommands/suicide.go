@@ -9,11 +9,13 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/colorpatterns"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/term"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
+	"github.com/GoMudEngine/GoMud/internal/worldevents"
 )
 
 func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
@@ -96,6 +98,41 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		Permanent:     allowPenalties && bool(config.Death.PermaDeath) && user.Character.ExtraLives == 0,
 		KilledByUsers: killedByUserIds,
 	})
+
+	// Emit a local gossip event for PvE deaths (not PvP)
+	if dmgCt == 0 {
+		causeOfDeath := ""
+		// Check if fighting a mob
+		if user.Character.Aggro != nil && user.Character.Aggro.MobInstanceId > 0 {
+			if mob := mobs.GetInstance(user.Character.Aggro.MobInstanceId); mob != nil {
+				causeOfDeath = mob.Character.Name
+			}
+		}
+		// If not fighting a mob, check for lethal conditions
+		if causeOfDeath == "" {
+			if user.Character.HasCondition(characters.ConditionPoisoned) {
+				causeOfDeath = "poison"
+			} else if user.Character.HasCondition(characters.ConditionBleeding) {
+				causeOfDeath = "bleeding out"
+			}
+		}
+		if causeOfDeath == "" {
+			causeOfDeath = "their own foolishness"
+		}
+
+		zone := user.Character.Zone
+		region := ""
+		if zCfg := rooms.GetZoneConfig(zone); zCfg != nil {
+			region = zCfg.Region
+		}
+		worldevents.EmitWorldEvent(worldevents.WorldEvent{
+			Type:         worldevents.PlayerDiedPvE,
+			Significance: worldevents.Local,
+			ZoneName:     zone,
+			RegionName:   region,
+			Description:  causeOfDeath,
+		})
+	}
 
 	// If permadeath is enabled, do some extra bookkeeping
 	if allowPenalties && bool(config.Death.PermaDeath) {
