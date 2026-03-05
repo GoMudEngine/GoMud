@@ -14,8 +14,6 @@ exits:
     roomid: 3083
   south:
     roomid: 3085
-  west:
-    roomid: 3078
 nouns:
   ledge: A flat stone ledge jutting from the ravine wall, about
     six feet above the ravine floor. The surface is worn smooth

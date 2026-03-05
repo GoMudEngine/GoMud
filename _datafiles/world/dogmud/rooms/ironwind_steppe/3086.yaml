@@ -12,10 +12,8 @@ biome: land
 exits:
   north:
     roomid: 3085
-  south:
+  east:
     roomid: 3088
-  southwest:
-    roomid: 3093
 nouns:
   banks: Low earthen banks, barely waist-high, marking the last
     traces of the ravine system. They diminish southward until

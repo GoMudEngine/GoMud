@@ -12,10 +12,10 @@ biome: land
 exits:
   north:
     roomid: 3084
-  south:
-    roomid: 3086
   east:
     roomid: 3087
+  south:
+    roomid: 3086
 nouns:
   walls: Sheer ravine walls of packed earth and exposed stone,
     rising well above head height. The lower sections are damp

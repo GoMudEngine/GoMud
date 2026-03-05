@@ -11,13 +11,9 @@ description: This stretch of open ground between Wolf Run and the
 biome: land
 exits:
   north:
-    roomid: 3086
-  west:
     roomid: 3087
-  south:
-    roomid: 3094
-  east:
-    roomid: 3089
+  west:
+    roomid: 3086
 nouns:
   ground: Torn-up earth and trampled grass marking past
     territorial disputes. Cloven hoofprints and wolf

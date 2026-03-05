@@ -12,7 +12,7 @@ biome: land
 exits:
   west:
     roomid: 3085
-  east:
+  south:
     roomid: 3088
 nouns:
   bones: An extensive field of animal bones in various states
