@@ -9,12 +9,12 @@ description: A narrow ledge runs along the ridge's south face, the
   sandstone, the geological history of the region written in stone.
 biome: cliffs
 exits:
+  west:
+    roomid: 3035
   north:
     roomid: 3040
   south:
     roomid: 3042
-  west:
-    roomid: 3036
 nouns:
   ledge: A narrow shelf of stone, barely wide enough for a person,
     running along the ridge face. Chunks have broken off and lie

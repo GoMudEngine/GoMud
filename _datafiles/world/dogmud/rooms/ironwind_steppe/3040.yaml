@@ -11,7 +11,9 @@ description: A natural alcove in the ridge's eastern face, sheltered
 biome: cliffs
 exits:
   west:
-    roomid: 3035
+    roomid: 3037
+  north:
+    roomid: 3039
   south:
     roomid: 3041
 nouns:

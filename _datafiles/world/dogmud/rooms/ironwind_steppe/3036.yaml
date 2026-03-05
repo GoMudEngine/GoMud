@@ -14,6 +14,8 @@ exits:
     roomid: 3035
   west:
     roomid: 3031
+  east:
+    roomid: 3042
 nouns:
   slope: A gravel-covered slope descending southward, steep enough
     to require careful footwork. The loose stone shifts and slides,

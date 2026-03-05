@@ -14,6 +14,8 @@ exits:
     roomid: 3035
   north:
     roomid: 3038
+  east:
+    roomid: 3040
 nouns:
   terraces: Broken stone terraces stepping down the ridge's east
     face, each a few feet wide. Soil has accumulated on the flat

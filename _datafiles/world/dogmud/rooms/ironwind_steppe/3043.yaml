@@ -12,8 +12,6 @@ biome: cliffs
 exits:
   north:
     roomid: 3042
-  southeast:
-    roomid: 3049
 nouns:
   outcrop: A flat slab of basalt jutting from the ridge face,
     about ten paces across and remarkably level. The stone is
