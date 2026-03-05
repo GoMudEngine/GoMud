@@ -11,10 +11,12 @@ biome: land
 exits:
   north:
     roomid: 3003
-  northwest:
+  west:
     roomid: 3004
   east:
     roomid: 3009
+  south:
+    roomid: 3008
 nouns:
   mud: Dark, sticky mud that sucks at your boots. The surface is
     pockmarked with hoofprints, pawprints, and the drag marks of

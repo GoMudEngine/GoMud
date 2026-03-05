@@ -14,7 +14,7 @@ exits:
   west:
     roomid: 3002
   south:
-    roomid: 3006
+    roomid: 3003
 nouns:
   stones: A ring of fire-blackened stones arranged in a rough circle,
     large enough for a decent cooking fire. Ash and charcoal fill the

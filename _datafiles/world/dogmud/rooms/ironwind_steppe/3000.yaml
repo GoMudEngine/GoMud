@@ -10,11 +10,10 @@ description: The cobblestones of Thornwall give way to hard-packed dirt as
   grass and dust, a sharp contrast to the close city air.
 biome: land
 exits:
-  # west exit to Thornwall City (479) temporarily removed — zone under construction
+  west:
+    roomid: 479
   east:
     roomid: 3001
-  northeast:
-    roomid: 3002
 nouns:
   track: A pair of wagon ruts worn deep into the earth, running east from
     the gate. The track sees regular use by merchants and supply wagons,

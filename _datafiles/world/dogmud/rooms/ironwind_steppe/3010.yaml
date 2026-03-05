@@ -11,8 +11,6 @@ description: The steppe opens up into a vast expanse of flat grassland
   completely, replaced by open, unmarked terrain.
 biome: land
 exits:
-  west:
-    roomid: 3006
   east:
     roomid: 3011
   south:

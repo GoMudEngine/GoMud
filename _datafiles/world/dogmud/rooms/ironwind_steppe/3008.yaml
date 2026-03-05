@@ -10,10 +10,8 @@ description: A narrow gully cuts through the ground here, carved by
   the gully's lip, providing cover for anything hiding below.
 biome: land
 exits:
-  west:
-    roomid: 3004
-  southeast:
-    roomid: 3009
+  north:
+    roomid: 3007
 nouns:
   gully: A natural drainage channel about four feet deep, with walls
     of packed earth. Tree roots poke from the sides in places. The

@@ -12,10 +12,8 @@ biome: land
 exits:
   north:
     roomid: 3001
-  southeast:
-    roomid: 3007
   east:
-    roomid: 3008
+    roomid: 3007
 nouns:
   pools: Shallow pools of brackish water, dark and still. Insects skim
     the surface. The water is a mix of city runoff and rainwater, not

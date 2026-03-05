@@ -9,8 +9,6 @@ description: A natural clearing in the sagebrush where the grass grows
   wildlife. A game trail runs north-south through the clearing.
 biome: land
 exits:
-  northwest:
-    roomid: 3009
   west:
     roomid: 3012
   north:

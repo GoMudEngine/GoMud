@@ -13,10 +13,6 @@ biome: land
 exits:
   west:
     roomid: 3003
-  north:
-    roomid: 3005
-  east:
-    roomid: 3010
   south:
     roomid: 3009
 nouns:

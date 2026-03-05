@@ -12,7 +12,7 @@ exits:
   west:
     roomid: 3001
   north:
-    roomid: 3002
+    roomid: 3005
   east:
     roomid: 3006
   south:
