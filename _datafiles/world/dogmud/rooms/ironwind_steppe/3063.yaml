@@ -13,6 +13,8 @@ biome: cliffs
 exits:
   west:
     roomid: 3061
+  south:
+    roomid: 3065
 nouns:
   overhang: A thick slab of basalt extending from the wall like
     a shelf, providing about ten paces of covered floor space.

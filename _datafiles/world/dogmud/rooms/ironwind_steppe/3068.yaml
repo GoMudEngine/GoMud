@@ -12,8 +12,6 @@ biome: cliffs
 exits:
   north:
     roomid: 3066
-  south:
-    roomid: 3069
 nouns:
   barricades: Crude walls of stacked basalt blocks and sharpened
     wooden stakes, forming a rough defensive perimeter. The
