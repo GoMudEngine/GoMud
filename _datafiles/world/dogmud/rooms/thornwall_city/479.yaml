@@ -7,8 +7,9 @@ description: The easternmost point of the city opens into a circular plaza surro
   than the limestone of the city buildings. Its gate is sealed with iron doors that
   have not opened in living memory, and the windows above are dark. The plaza itself
   is wide and mostly empty, used as an overflow market on busy days and a gathering
-  place for public announcements. The citadel watches over it all with the patience
-  of something that was old when the city was young.
+  place for public announcements. A weathered <ansi fg="itemname">board</ansi>
+  near the eastern gate is papered with notices and handbills. The citadel watches
+  over it all with the patience of something that was old when the city was young.
 biome: city
 exits:
   west:
@@ -26,6 +27,19 @@ nouns:
     but still solid. They are sealed with chains and a lock the size of a man's
     fist. The lock shows no keyhole -- it was designed to be opened by some other
     mechanism. No one has tried to enter in decades, or so the locals claim.
+  board: A weathered wooden board mounted on a post near the eastern gate,
+    layered with notices and handbills pinned with nails and bone needles.
+    Two notices stand out among the clutter. A stiff sheet of bark reads --
+    'Warning to all travellers. The sacred places of the eastern steppe are
+    threatened by Thornwall prospectors who would crack the earth for profit.
+    Those who honour the old ways, seek the Windwarden at the stone circle
+    beyond the ridge. The land needs defenders, not miners.' Below it, a
+    clean parchment in a scholarly hand reads -- 'Assistants needed for
+    crystal survey work on Ironwind Ridge. The work is important and the
+    crystal could protect lives in Thornwall. Enquire with Geomancer Rhett
+    at the rocky shelf, east through the gate. Hazard pay negotiable.
+    -- R. Thorne, Geological Society.' The two notices have been pinned over
+    each other several times, each side refusing to yield the better spot.
   plaza: A circular cobblestoned plaza, its center marked with an ancient mosaic
     that has been worn nearly flat by foot traffic. The mosaic's pattern might
     once have depicted a map or a sigil, but now it is just a disc of coloured
