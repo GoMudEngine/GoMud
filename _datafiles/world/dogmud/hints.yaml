@@ -100,3 +100,11 @@ hints:
     Use <ansi fg="command">consider</ansi> before picking fights.
     Your instincts will tell you whether a foe is a real
     threat or easy prey.
+  - >-
+    Did you know you can make enemies less effective by hurting
+    their feelings? Try out the <ansi fg="command">taunt</ansi>
+    special command.
+  - >-
+    Healing up slow? Try hanging out in the Sanctum Basin or
+    the Temple in Thornwall. Some rooms are great places to
+    rest.

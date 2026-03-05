@@ -7,7 +7,7 @@ function onStart(actor, triggersLeft) {
 // Invoked every time the buff is triggered (see roundinterval)
 function onTrigger(actor, triggersLeft) {
     var maxHP = actor.GetHealthMax();
-    var healAmt = Math.floor(maxHP * 0.04);
+    var healAmt = Math.floor(maxHP * 0.08);
     if (healAmt < 1) { healAmt = 1; }
     actor.AddHealth(healAmt);
 

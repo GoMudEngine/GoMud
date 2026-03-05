@@ -455,7 +455,7 @@ Balance:
   # ── COMBAT: DAMAGE ────────────────────────────────────────────────────────
   # Global panic buttons. 1.0 = no change. GlobalDamageMultiplier is
   # applied to ALL damage channels in CalcRawDamage().
-  GlobalDamageMultiplier: 1.25
+  GlobalDamageMultiplier: 1.0
   GlobalDefenseMultiplier: 1.0
   #
   # Legacy unarmed knobs — still used by GetDefaultDistributionDamage()
@@ -489,7 +489,7 @@ Balance:
   #     0.05 →   5 raw damage per swing (current — low, needs MobDamageMultiplier)
   #     0.15 →  15 raw damage per swing
   #     0.30 →  30 raw damage per swing (original default)
-  MeleeDamageScale: 0.45       # Bumped +50% from 0.30; fights were too slow
+  MeleeDamageScale: 0.43       # Down ~5% from 0.45; melee was slightly overtuned
   #
   # MobDamageMultiplier: extra multiplier applied ONLY to NPC melee
   #   damage. Lets you keep player damage low while making NPCs threatening.
@@ -544,7 +544,7 @@ Balance:
   ConvictionPenaltyMax: 0.28     # At 0% CP: taunt/spell reduced by 28%
 
   # ── REGEN RATES (fraction of pool max per tick; 0.01 = 1%) ────────────────
-  PlayerHealthRegenPct: 0.01     # Player HP regen per tick (1% of HealthMax)
+  PlayerHealthRegenPct: 0.02     # Bumped from 1% to 2%; players needed faster recovery
   PlayerStaminaRegenPct: 0.02    # Tuned 39.2: doubled from 0.01; fights felt too exhausting at 1%
   PlayerConvictionRegenPct: 0.01 # Player conviction regen per tick
   MobHealthRegenPct: 0.01        # NPC HP regen per tick (1% of HealthMax)

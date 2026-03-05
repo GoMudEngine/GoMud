@@ -6,7 +6,10 @@ function onStart(actor, triggersLeft) {
 
 // Invoked every time the buff is triggered (see roundinterval)
 function onTrigger(actor, triggersLeft) {
-    actor.AddConviction(UtilDiceRoll(2, 3));
+    var maxCP = actor.GetConvictionMax();
+    var restoreAmt = Math.floor(maxCP * 0.08);
+    if (restoreAmt < 1) { restoreAmt = 1; }
+    actor.AddConviction(restoreAmt);
     SendUserMessage(actor.UserId(), 'Your thoughts clear, your resolve hardens.');
     SendRoomMessage(actor.GetRoomId(), actor.GetCharacterName(true) + ' seems to steel their mind.', actor.UserId());
 }

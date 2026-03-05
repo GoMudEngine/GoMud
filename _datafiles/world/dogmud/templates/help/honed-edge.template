@@ -1,0 +1,40 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="yellow">Honed Edge</ansi> (enchantment)
+
+Honed Edge is a beginner enchantment that sharpens a weapon beyond what
+any whetstone could achieve. The mutation bonds with the blade's edge,
+maintaining an impossibly fine cutting line at the cost of a small
+portion of your life force.
+
+<ansi fg="yellow">━━━ Recipe ━━━</ansi>
+
+  Skill:       <ansi fg="skill">enchanting</ansi> 0 (no minimum)
+  Station:     <ansi fg="yellow">enchanting_circle</ansi>
+  Ingredients: 1x binding-paste, 1x healers-root
+  Target:      Any weapon in your inventory
+  Time:        3 rounds
+
+<ansi fg="yellow">━━━ Enchantment Tiers ━━━</ansi>
+
+  <ansi fg="yellow">Tier 0 — Keen</ansi>
+  A subtle improvement to the weapon's edge. Increases damage slightly.
+  Reserves 1% of your health pool.
+  "The edge holds an unusually sharp line."
+
+  <ansi fg="yellow">Tier 1 — Razor-Edged</ansi>
+  The bond deepens and the edge becomes unnaturally sharp. Greater damage
+  bonus. Reserves 2% of your health pool.
+  "The blade's edge gleams with unnatural sharpness."
+
+<ansi fg="yellow">━━━ How It Works ━━━</ansi>
+
+Craft the enchantment at an enchanting circle with the required materials
+and a weapon in your inventory. Once applied, the weapon begins at Tier 0.
+As you use the weapon in combat, the enchantment grows stronger and may
+advance to the next tier over time.
+
+The enchantment reserves a portion of your health — you will see a dark
+section in your health bar representing the energy claimed by the bond.
+
+<ansi fg="yellow">See Also:</ansi>
+
+  <ansi fg="command">help enchanting</ansi>, <ansi fg="command">help craft</ansi>, <ansi fg="command">help disenchant</ansi>

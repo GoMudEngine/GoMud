@@ -49,6 +49,11 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 			regenMultiplier = 5.0
 		}
 
+		// 5x regen in Thornwall Temple (room 468)
+		if user.Character.RoomId == 468 {
+			regenMultiplier = 5.0
+		}
+
 		inCombat := user.Character.Aggro != nil
 		healthStart := user.Character.Health
 

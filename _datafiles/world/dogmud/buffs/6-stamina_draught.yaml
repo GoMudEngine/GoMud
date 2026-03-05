@@ -2,4 +2,4 @@ buffid: 6
 name: Stamina Draught
 description: A bitter brew is restoring your endurance.
 triggerrate: 2 rounds
-triggercount: 3
+triggercount: 6

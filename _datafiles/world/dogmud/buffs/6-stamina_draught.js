@@ -6,7 +6,10 @@ function onStart(actor, triggersLeft) {
 
 // Invoked every time the buff is triggered (see roundinterval)
 function onTrigger(actor, triggersLeft) {
-    actor.AddStamina(UtilDiceRoll(2, 3));
+    var maxSP = actor.GetStaminaMax();
+    var restoreAmt = Math.floor(maxSP * 0.08);
+    if (restoreAmt < 1) { restoreAmt = 1; }
+    actor.AddStamina(restoreAmt);
     SendUserMessage(actor.UserId(), 'Your legs feel stronger, your breath steadier.');
     SendRoomMessage(actor.GetRoomId(), actor.GetCharacterName(true) + ' seems to recover some energy.', actor.UserId());
 }
