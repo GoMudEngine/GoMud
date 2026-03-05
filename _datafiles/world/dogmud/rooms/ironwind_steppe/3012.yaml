@@ -17,6 +17,8 @@ exits:
     roomid: 3013
   south:
     roomid: 3018
+  east:
+    roomid: 3032
 nouns:
   clay: Pale, cracked hardpan clay exposed where the topsoil has
     blown away. The surface is tessellated with drying cracks in

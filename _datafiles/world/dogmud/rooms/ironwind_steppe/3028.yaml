@@ -14,6 +14,8 @@ exits:
     roomid: 3027
   east:
     roomid: 3026
+  north:
+    roomid: 3029
 nouns:
   stones: Flat, dark stones arranged in a natural tumble, their
     surfaces smooth and warm to the touch. Faint grooves in the

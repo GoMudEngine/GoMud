@@ -12,10 +12,6 @@ biome: land
 exits:
   south:
     roomid: 3028
-  north:
-    roomid: 3100
-  northeast:
-    roomid: 3039
 nouns:
   cliffs: Distant cliff faces of pale stone, streaked with dark
     mineral stains. Wind-carved hollows and overhangs are visible

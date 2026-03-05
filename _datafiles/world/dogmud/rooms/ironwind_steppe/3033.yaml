@@ -12,10 +12,8 @@ biome: cliffs
 exits:
   north:
     roomid: 3032
-  up:
-    roomid: 3038
   west:
-    roomid: 3030
+    roomid: 3018
 nouns:
   cairn: A neat stack of flat stones, waist-high, clearly built
     by a person. A few pebbles have been wedged between the

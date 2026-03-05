@@ -14,6 +14,8 @@ exits:
     roomid: 3010
   south:
     roomid: 3012
+  east:
+    roomid: 3030
 nouns:
   stones: Large, rounded stones half-buried in the soil, their
     exposed surfaces worn smooth by centuries of wind and grit.

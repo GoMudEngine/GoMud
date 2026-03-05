@@ -15,8 +15,8 @@ exits:
     roomid: 3030
   south:
     roomid: 3033
-  southwest:
-    roomid: 3016
+  west:
+    roomid: 3012
 nouns:
   shelf: A flat expanse of wind-polished stone, naturally formed
     and remarkably level. The quartz veins catch the light and

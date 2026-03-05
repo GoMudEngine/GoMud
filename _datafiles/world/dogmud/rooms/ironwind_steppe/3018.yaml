@@ -15,6 +15,8 @@ exits:
     roomid: 3014
   north:
     roomid: 3012
+  east:
+    roomid: 3033
 nouns:
   thicket: A dense tangle of mature sagebrush, the oldest and
     tallest on the flats. The bushes have grown together into
