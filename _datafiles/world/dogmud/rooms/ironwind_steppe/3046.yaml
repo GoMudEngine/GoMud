@@ -13,6 +13,8 @@ exits:
     roomid: 3045
   east:
     roomid: 3048
+  south:
+    roomid: 3052
 nouns:
   sandbar: A wide deposit of fine sand on the inner bank of the
     creek bend, packed with overlapping animal tracks. Boar

@@ -10,9 +10,9 @@ description: The creek banks rise sharply here into low bluffs of
 biome: land
 exits:
   north:
-    roomid: 3049
+    roomid: 3046
   east:
-    roomid: 3054
+    roomid: 3049
 nouns:
   bluffs: Sandstone bluffs sculpted by water erosion into smooth,
     flowing shapes. The pale stone is streaked with darker bands

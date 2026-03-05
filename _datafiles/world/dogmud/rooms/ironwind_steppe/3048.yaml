@@ -12,6 +12,8 @@ biome: land
 exits:
   west:
     roomid: 3046
+  south:
+    roomid: 3049
 nouns:
   clay: Hard-packed clay scored with a network of drying cracks,
     each crack an inch or more wide. White salt crusts line

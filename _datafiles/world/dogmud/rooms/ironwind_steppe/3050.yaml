@@ -10,14 +10,10 @@ description: A massive, ancient tree once grew here on the creek bank.
   of rotting wood colonized by fungi.
 biome: land
 exits:
-  north:
-    roomid: 3044
   west:
-    roomid: 3047
+    roomid: 3049
   south:
     roomid: 3053
-  northeast:
-    roomid: 3063
 nouns:
   roots: An enormous tangle of dead tree roots, still firmly
     anchored in the bank. The individual roots are as thick as

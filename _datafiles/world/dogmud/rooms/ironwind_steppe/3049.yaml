@@ -11,10 +11,12 @@ biome: land
 exits:
   north:
     roomid: 3048
-  south:
+  west:
     roomid: 3052
-  northwest:
-    roomid: 3043
+  east:
+    roomid: 3050
+  south:
+    roomid: 3051
 nouns:
   undercut: A hollow carved beneath the creek bank by flowing
     water, about four feet deep and wide enough for a large
