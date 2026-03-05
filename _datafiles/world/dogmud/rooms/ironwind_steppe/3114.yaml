@@ -14,6 +14,8 @@ biome: cave
 exits:
   south:
     roomid: 3113
+  west:
+    roomid: 3112
 nouns:
   marks: Massive claw marks gouged into the cave walls, each as
     wide as a person's hand and several inches deep. The stone

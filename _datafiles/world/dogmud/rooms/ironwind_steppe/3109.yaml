@@ -11,12 +11,14 @@ description: A damp, warm cave chamber where pale fungi grow in
   damp earth and decay.
 biome: cave
 exits:
+  north:
+    roomid: 3112
+  east:
+    roomid: 3113
   south:
     roomid: 3106
   west:
     roomid: 3108
-  north:
-    roomid: 3112
 nouns:
   fungi: An extraordinary variety of cave fungi -- pale shelf
     mushrooms, delicate thread-like growths, and bulbous caps

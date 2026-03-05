@@ -11,6 +11,8 @@ description: The cave walls here are riddled with small tunnels and
   reminder that you are surrounded by unseen inhabitants.
 biome: cave
 exits:
+  north:
+    roomid: 3110
   south:
     roomid: 3104
   west:

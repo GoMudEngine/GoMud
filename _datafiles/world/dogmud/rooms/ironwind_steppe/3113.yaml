@@ -11,12 +11,12 @@ description: A natural cistern fills the center of this cave chamber
   visible source.
 biome: cave
 exits:
+  north:
+    roomid: 3114
   south:
     roomid: 3110
   west:
-    roomid: 3112
-  north:
-    roomid: 3114
+    roomid: 3109
 nouns:
   cistern: A natural pool of dark, still water filling the cave
     floor. The water is cold enough to numb exposed skin in

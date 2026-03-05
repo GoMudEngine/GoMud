@@ -10,6 +10,10 @@ description: A long, narrow gallery where the ceiling drops low
   persistent, uncomfortable feeling of being watched.
 biome: cave
 exits:
+  north:
+    roomid: 3111
+  east:
+    roomid: 3109
   south:
     roomid: 3105
 nouns:

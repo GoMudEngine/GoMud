@@ -11,6 +11,10 @@ description: A passage where a thick vein of quartz runs through
   dust glitters on the cave floor.
 biome: cave
 exits:
+  north:
+    roomid: 3109
+  east:
+    roomid: 3110
   south:
     roomid: 3103
   west:

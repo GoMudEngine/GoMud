@@ -11,12 +11,12 @@ description: A large cave chamber with unusually smooth walls and a
   walls. This is the heart of the stone beetle colony.
 biome: cave
 exits:
+  east:
+    roomid: 3114
   west:
     roomid: 3111
   south:
     roomid: 3109
-  east:
-    roomid: 3113
 nouns:
   throne: A natural stone column partially hollowed and sculpted
     by beetle secretions into a bulbous, throne-like structure.
