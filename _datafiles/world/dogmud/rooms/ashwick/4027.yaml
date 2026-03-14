@@ -42,13 +42,7 @@ nouns:
     dried preparations, others empty and waiting. The
     workspace of someone unable to work at full capacity,
     supplies outpacing ability to restock.
-skilltraining:
-  foraging:
-    min: 1
-    max: 15
-  alchemy:
-    min: 1
-    max: 10
+station: alchemy_bench
 spawninfo:
 - mobid: 259
 idlemessages:

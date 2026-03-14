@@ -64,7 +64,7 @@ tree:
     - id: quest_done
       triggers: ["quest", "task", "herbs", "shortage"]
       questRequired: ["16-end"]
-      text: "The stock is recovering. You solved a problem I had been struggling with for weeks. If you want to learn something about the plants out there, I can teach you."
+      text: "The stock is recovering. You solved a problem I had been struggling with for weeks. My worktable is available if you want to do any herbalism work -- mortar, pestle, jars, everything you need for alchemy. Help yourself."
 
     - id: apprentice_surface
       triggers: ["girl", "apprentice", "trained", "student", "teach"]
@@ -79,11 +79,11 @@ tree:
       hints: "Delia clearly cared about this person. The name Maren may be worth remembering."
       moodChange: friendly
 
-    - id: foraging_teach
-      triggers: ["teach", "train", "foraging", "learn"]
+    - id: worktable_access
+      triggers: ["teach", "train", "foraging", "learn", "craft", "alchemy", "worktable"]
       questRequired: ["16-end"]
-      text: "You want to learn? Good. Start by looking at what grows where and asking why. Every plant is an answer to a question the soil asked. I will show you the basics."
-      hints: "Delia can now train you in foraging."
+      text: "You want to work with herbs? The worktable is yours to use. Mortar, pestle, jars -- everything you need. Start by looking at what grows where and asking why. Every plant is an answer to a question the soil asked."
+      hints: "The worktable in this room functions as an alchemy bench. You can craft here."
 
 memory:
   expiryPeriod: ""
