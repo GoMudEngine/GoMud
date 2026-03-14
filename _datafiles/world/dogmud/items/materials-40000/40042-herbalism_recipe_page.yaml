@@ -13,5 +13,5 @@ description: A single page torn from a notebook, covered in
   own practice.
 type: object
 subtype: holdable
-uses: 0
+uses: 1
 weight: 0.1

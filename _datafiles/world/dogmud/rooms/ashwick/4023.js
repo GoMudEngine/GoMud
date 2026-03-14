@@ -3,7 +3,8 @@
 // The letter (40041) is in the cavity container (behind the loose stone).
 // The recipe (40042) is in the drawer container.
 // The engine handles the actual item pickup from containers.
-// This script adds quest tokens, flavor text, and skill progression.
+// This script adds quest tokens and flavor text.
+// Skill progression is handled by the recipe item's onUse script.
 
 var LETTER_ITEM_ID = 40041;
 var RECIPE_ITEM_ID = 40042;
@@ -27,15 +28,12 @@ function onCommand(cmd, rest, user, room) {
     }
 
     // Recipe discovery (from drawer container)
-    // Triggers skill progression in addition to quest token
     if ( target == "recipe" || target == "recipe page"
          || target == "page" || target == "herbalism recipe page" ) {
         if ( user.HasItemId(RECIPE_ITEM_ID)
              && !user.HasQuest("17-recipe") ) {
             user.GiveQuest("17-recipe");
-            user.SendText('The drawer yields a single page of careful handwriting -- a technique you recognize from your own studies. Seeing it written in another hand clarifies something you had been working toward.');
-            // Trigger skill progression for alchemy or foraging
-            user.TrainSkill('foraging', 1);
+            user.SendText('The drawer yields a single page of careful handwriting. Use it to study the technique.');
         }
         return false;
     }
