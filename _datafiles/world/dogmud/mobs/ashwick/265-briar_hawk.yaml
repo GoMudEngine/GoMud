@@ -1,0 +1,37 @@
+mobid: 265
+zone: Ashwick
+statpool: 40
+hostile: true
+maxwander: 2
+groups:
+  - animal
+  - bird
+  - predator
+archetype: fighting
+idlecommands:
+  - 'emote circles above the clearing on broad wings'
+  - ''
+  - 'emote screeches -- a sharp, territorial warning'
+  - ''
+  - 'emote dives at movement below and pulls up at the last moment'
+  - ''
+activitylevel: 15
+character:
+  name: briar hawk
+  description: |
+    A large hawk with mottled brown-and-gray plumage and talons built
+    for killing. It patrols the herb clearings with aggressive
+    territorial instinct, diving at anything that enters its nesting
+    zone. The Chrysalis has given it size -- this bird is half again
+    as large as any hawk you have seen, and considerably less
+    interested in avoiding conflict.
+  speciesid: 20
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 12
+    perception:
+      training: 10
+    strength:
+      training: 4

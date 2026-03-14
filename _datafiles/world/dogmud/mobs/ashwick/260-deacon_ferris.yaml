@@ -1,0 +1,36 @@
+mobid: 260
+zone: Ashwick
+statpool: 30
+hostile: false
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote straightens a prayer cushion with absent precision'
+  - ''
+  - 'emote trims a candle wick and watches the flame steady'
+  - ''
+  - 'emote reads quietly from a small leather-bound book'
+  - ''
+activitylevel: 10
+character:
+  name: Deacon Ferris
+  description: |
+    A thin man with kind eyes and a careful manner, wearing the plain
+    gray robe of a rural deacon. His mutation is in his voice -- it
+    carries a resonance that makes even ordinary words sound considered
+    and weighty, as if the air itself pays more attention when he
+    speaks. He tends this chapel with the devotion of someone who
+    believes completely in what it represents, which makes the
+    questions he has been asking himself recently considerably more
+    difficult.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    willpower:
+      training: 8
+    perception:
+      training: 6
+    charisma:
+      training: 4

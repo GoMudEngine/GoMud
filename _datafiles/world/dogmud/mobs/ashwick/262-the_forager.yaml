@@ -1,0 +1,36 @@
+mobid: 262
+zone: Ashwick
+statpool: 35
+hostile: false
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote sorts herb bundles with quick, practiced hands'
+  - ''
+  - 'emote glances toward the path with alert tension'
+  - ''
+  - 'emote sits very still, listening to the forest'
+  - ''
+activitylevel: 12
+character:
+  name: the forager
+  description: |
+    A gaunt figure in patched traveling clothes, moving through the
+    camp with the wary efficiency of someone who has learned to be
+    invisible. Their hands are quick and precise with the herbs --
+    this is someone who was trained, not someone who learned by trial.
+    Their face is guarded, their posture ready to run. The most
+    striking thing about them is what is missing -- no visible
+    mutation, no change, no mark of the Chrysalis at all. Just a
+    person, unchanged, hiding in the woods.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 8
+    perception:
+      training: 10
+    willpower:
+      training: 4

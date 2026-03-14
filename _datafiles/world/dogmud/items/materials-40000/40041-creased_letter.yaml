@@ -1,0 +1,15 @@
+itemid: 40041
+name: creased letter
+namesimple: letter
+description: A letter written in a careful hand on paper that has
+  been folded and unfolded many times. The ink is faded but
+  legible. It reads in part -- "The hill is real. I have seen
+  the metal under the soil where the light catches it at dusk.
+  The disc will show them what it opens. I cannot stay -- they
+  are closer than I thought. If you find this, find Voss in
+  New Plymouth. He understood what we are. Do not trust the
+  ones with clean boots." The letter is unsigned.
+type: object
+subtype: holdable
+uses: 0
+weight: 0.1

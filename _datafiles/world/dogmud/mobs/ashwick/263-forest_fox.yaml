@@ -1,0 +1,32 @@
+mobid: 263
+zone: Ashwick
+statpool: 30
+hostile: false
+maxwander: 2
+groups:
+  - animal
+  - canine
+archetype: fighting
+idlecommands:
+  - 'emote watches from the undergrowth, ears flat and alert'
+  - ''
+  - ''
+  - 'emote pads silently along the forest path'
+  - ''
+activitylevel: 18
+character:
+  name: forest fox
+  description: |
+    A russet fox with a thick brush tail and sharp dark eyes. It moves
+    through the underbrush with the liquid economy of something that
+    considers every step before taking it. Not large enough to be
+    truly dangerous, but quick enough to make a bad day worse for
+    someone already injured.
+  speciesid: 10
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 10
+    perception:
+      training: 8
