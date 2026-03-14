@@ -10,11 +10,11 @@ description: A broad, shallow pool of brownish water persists here
   for miles. Watchful eyes observe from the surrounding cover.
 biome: land
 coord:
-  x: 16
-  y: -9
+  x: 15
+  y: -8
   z: 0
 exits:
-  west:
+  south:
     roomid: 3089
 nouns:
   pool: A shallow pool of warm, murky water about twenty paces

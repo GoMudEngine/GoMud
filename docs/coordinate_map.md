@@ -115,11 +115,11 @@ Total reachable: 224 rooms across multiple zones
 | 3092 | Ironwind Steppe | Central Wallows | 14 | -10 | 0 |
 | 3093 | Ironwind Steppe | Reed Bed | 14 | -11 | 0 |
 | 3094 | Ironwind Steppe | Mudflat | 15 | -10 | 0 |
-| 3095 | Ironwind Steppe | Drinking Pool | 16 | -9 | 0 |
+| 3095 | Ironwind Steppe | Drinking Pool | 15 | -8 | 0 |
 | 3096 | Ironwind Steppe | Trampled Clearing | 15 | -11 | 0 |
 | 3097 | Ironwind Steppe | Boar Rooting Ground | 15 | -12 | 0 |
 | 3098 | Ironwind Steppe | Boar Thicket | 15 | -13 | 0 |
-| 3099 | Ironwind Steppe | Southern Wallow Edge | 16 | -13 | 0 |
+| 3099 | Ironwind Steppe | Southern Wallow Edge | 15 | -14 | 0 |
 | 3100 | Ironwind Steppe | Cliff Base | 12 | 7 | 0 |
 | 3101 | Ironwind Steppe | Cave Mouth | 13 | 7 | 0 |
 | 3102 | Ironwind Steppe | Wind Gallery | 12 | 8 | 0 |
@@ -178,7 +178,7 @@ Total reachable: 224 rooms across multiple zones
 | 120 | Sanctum Basin | Boss Cave | -7 | 11 | 0 |
 | 121 | Sanctum Basin | Cramped Tunnel Mouth | -11 | 7 | 0 |
 | 122 | Sanctum Basin | Weaver's Alcove | -8 | 8 | 0 |
-| 123 | Sanctum Basin | Desert Cookfire | -11 | 8 | 0 |
+| 123 | Sanctum Basin | Desert Cookfire | -12 | 8 | 0 |
 | 460 | Thornwall City | Gate Ward | 0 | 0 | 0 |
 | 461 | Thornwall City | Main Street, West | 1 | 0 | 0 |
 | 462 | Thornwall City | Main Street, Central | 2 | 0 | 0 |
@@ -372,9 +372,11 @@ Total unreachable: 120 rooms across 6 zones
 
 ## Coordinate Overlaps
 
-These coordinates have multiple rooms (due to enter/leave
-exits or BFS path differences):
+All overlaps resolved. Previous conflicts and fixes:
 
-- (-11, 8, 0): 101 (South Cliffs Overlook), 123 (Desert Cookfire)
-- (16, -13, 0): 3071 (Goblin Sleeping Den), 3099 (Southern Wallow Edge)
-- (16, -9, 0): 3064 (Winding Coulee), 3095 (Drinking Pool)
+- (-11, 8, 0): 101 vs 123 — Fixed: moved 123 to (-12, 8, 0),
+  changed 106↔123 exits from south/north to southwest/northeast
+- (16, -13, 0): 3071 vs 3099 — Fixed: moved 3099 to (15, -14, 0),
+  changed 3098↔3099 exits from east/west to south/north
+- (16, -9, 0): 3064 vs 3095 — Fixed: moved 3095 to (15, -8, 0),
+  changed 3089↔3095 exits from east/west to north/south

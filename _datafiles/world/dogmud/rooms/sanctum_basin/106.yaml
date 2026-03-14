@@ -17,7 +17,7 @@ exits:
     roomid: 107
   north:
     roomid: 111
-  south:
+  southwest:
     roomid: 123
 idlemessages:
 - A <ansi fg="mobname">lizard</ansi> basks on a sun-warmed rock, utterly untroubled.

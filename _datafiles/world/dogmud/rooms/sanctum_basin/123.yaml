@@ -10,12 +10,12 @@ description: >
   that travelers return to again and again.
 biome: land
 coord:
-  x: -11
+  x: -12
   y: 8
   z: 0
 station: cooking_fire
 exits:
-  north:
+  northeast:
     roomid: 106
 items:
   - itemid: 40014

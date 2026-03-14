@@ -16,7 +16,7 @@ coord:
 exits:
   north:
     roomid: 3097
-  east:
+  south:
     roomid: 3099
   west:
     roomid: 3087
