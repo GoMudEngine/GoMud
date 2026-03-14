@@ -24,9 +24,6 @@ exits:
   south:
     roomid: 4024
 containers:
-  cavity:
-    items:
-      - itemid: 40041
   drawer:
     items:
       - itemid: 40042
@@ -55,14 +52,9 @@ nouns:
     smell of old lamp oil lingers. The hearthstones are solid
     except for one near the base.
   stone: A loose stone near the hearth base, slightly displaced
-    from its neighbors. It moves when pressed, shifting inward
-    to reveal a small <ansi fg="itemname">cavity</ansi> behind
-    it. The edges are worn smooth from being moved and replaced
-    many times.
-  cavity: A small hollow space behind the loose hearthstone,
-    just large enough to hold a folded letter. The walls of
-    the cavity are smooth -- this hiding spot was made on
-    purpose, not found by accident.
+    from its neighbors. The edges are worn smooth as if it has
+    been moved and replaced many times. It looks like it could
+    be pushed aside.
   drawer: A drawer in the small bedside table, swollen with
     damp and stiff to open. The wood protests as it slides.
     Inside, a folded page of careful handwriting rests against
