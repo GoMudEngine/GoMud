@@ -41,7 +41,6 @@ nouns:
     end up in an abandoned barn.
 spawninfo:
 - mobid: 254
-- mobid: 253
 idlemessages:
 - The remaining roof beams creak and groan as the wind pushes against them.
 - A rat scurries along the base of the wall and disappears into the rubble.
