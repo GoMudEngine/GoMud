@@ -1,0 +1,26 @@
+questid: 17
+name: The Empty Cottage
+description: An abandoned cottage at the east edge of Ashwick
+  holds traces of the family that once lived there. The
+  silence in the rooms has the quality of something left
+  behind on purpose.
+secret: false
+
+steps:
+  - id: letter
+    description: "You found a hidden letter behind a loose
+      stone in the cottage hearth. It mentions a hill, a
+      disc, and someone named Voss in New Plymouth."
+    hint: "The letter may be useful to someone who studies
+      old things."
+  - id: recipe
+    description: "You found a page of herbalism notes in
+      a drawer. The technique described has clarified
+      something in your own practice."
+    hint: "The recipe has already taught you what it had
+      to teach."
+
+rewards:
+  playermessage: ""
+  roommessage: ""
+  gold: 0

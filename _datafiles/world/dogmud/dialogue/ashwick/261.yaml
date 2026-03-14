@@ -1,0 +1,45 @@
+mobid: 261
+zone: Ashwick
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Mm. Passing through or staying?"
+      - "Welcome to Ashwick. Mind the goat."
+
+  - keywords: ["gossip", "news", "rumor", "rumors"]
+    responses:
+      - "News? In Ashwick? The most exciting thing this month was a fox in the henhouse."
+      - "You want gossip, talk to anyone at the well for more than five minutes."
+
+  - keywords: [""]
+    responses:
+      - "I have crops to tend. Was there something?"
+
+tree:
+  root:
+    text: "Hesta. I farm. That is about the full story."
+    hints: "You could ask about herbs, the cottage, Ashwick, or the bloodline."
+
+  nodes:
+    - id: herbs_shortage
+      triggers: ["herbs", "delia", "shortage", "stock", "quest", "task"]
+      text: "Delia has been short on stock for weeks. Used to be you could always get a poultice or a tea from her. Now she is rationing. Something in the forest is wrong, she says -- someone taking the herbs before she can get to them."
+      hints: "Delia's cottage is north of the central green. She might need help."
+
+    - id: cottage_gossip
+      triggers: ["cottage", "family", "left", "sale", "empty", "east"]
+      text: "The cottage at the east end has been empty for years. Family left in a hurry, nobody talks about why. The for-sale sign is a formality -- nobody is buying. If you are curious, the door is not locked. Nobody has bothered to lock it."
+      hints: "The abandoned cottage is south from the east edge of the hamlet."
+
+    - id: village_life
+      triggers: ["ashwick", "village", "life", "farming", "here"]
+      text: "It is a quiet place. Good soil, reliable water from the well, close enough to the crossroads for trade but far enough that trouble usually passes us by. I have been here twenty years and I do not plan to leave."
+
+    - id: bloodline
+      triggers: ["bloodline", "patrols", "agents", "questions"]
+      text: "We see the patrols sometimes. They come through, ask questions, leave. They never buy anything. The last time was -- what, a year ago? Maybe longer. They were looking for someone. They did not find them here."
+
+memory:
+  expiryPeriod: ""

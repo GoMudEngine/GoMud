@@ -1,0 +1,66 @@
+mobid: 260
+zone: Ashwick
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Peace be with you. The chapel is always open."
+      - "Welcome, traveler. Rest here if you need it."
+
+  - keywords: ["gossip", "news", "rumor", "rumors"]
+    responses:
+      - "I hear confessions, not rumors. Though sometimes they sound the same."
+
+  - keywords: [""]
+    responses:
+      - "The Chrysalis watches over us all."
+      - "Was there something on your mind?"
+
+tree:
+  root:
+    text: "I am Ferris, deacon of this chapel. It is a small congregation, but a sincere one. What brings you to Ashwick?"
+    hints: "You could ask about the Rite, the village, or what troubles the deacon."
+
+  nodes:
+    - id: rite
+      triggers: ["rite", "ritual", "ceremony", "blooming", "autumnal"]
+      text: "The Autumnal Rite is when the community gathers to witness the year's Bloomings. We celebrate the changes the Chrysalis brings. It is the most important day in Ashwick's year. The circle south of the green is where we hold it."
+      hints: "You could visit the ritual circle south of the central green."
+
+    - id: trouble_surface
+      triggers: ["trouble", "problem", "wrong", "incident", "worry"]
+      questExcluded: ["17-letter"]
+      text: "Every community has its difficulties. We manage. The herb shortage has been a nuisance, but Delia will sort it out. She always does."
+      hints: "The deacon seems to be deflecting. There may be more to learn."
+
+    - id: trouble_deep
+      triggers: ["trouble", "problem", "wrong", "incident", "rite"]
+      questRequired: ["17-letter"]
+      text: "There was an incident at the last Rite. A pouch shifted during the ceremony and something was revealed that should not have been visible. I have been thinking about it since. About what it means when someone among us is not what the Rite assumes they are. And about what my duty requires me to do with that knowledge."
+      hints: "The deacon is wrestling with something. This connects to the letter found in the cottage."
+      moodChange: friendly
+
+    - id: family_surface
+      triggers: ["girl", "family", "left", "cottage", "empty"]
+      questExcluded: ["17-letter"]
+      text: "A family left some time ago. These things happen in small places. People move on, seek better opportunities. The cottage stands empty."
+
+    - id: family_deep
+      triggers: ["girl", "family", "left", "maren", "cottage"]
+      questRequired: ["17-letter"]
+      text: "I saw what happened at the Rite. I saw the pouch shift and I saw what was underneath -- or what was not underneath. I reported what doctrine required me to report. The family left that night. I have prayed about whether I did the right thing every day since."
+      hints: "The deacon carries guilt about this. The family's departure was not entirely voluntary."
+      moodChange: friendly
+
+    - id: symbol
+      triggers: ["symbol", "carving", "old", "marks", "orbit", "door", "chapel"]
+      text: "The chapel was built on older foundations. Some of what is underneath the current stonework is not what I was taught it should be. The symbol above the door, for instance -- the spiral everyone sees is carved over something that was there first. I am not sure what the older shape means. I am not sure anyone alive knows."
+      hints: "The chapel's architecture hides older symbols. This connects to a larger mystery."
+
+    - id: village
+      triggers: ["ashwick", "village", "hamlet", "community", "people"]
+      text: "Ashwick is a quiet place. We farm, we gather, we hold the Rite. Most people are born here and die here and consider that a good life. I have served this chapel for fifteen years and I would not trade it for a city posting."
+
+memory:
+  expiryPeriod: ""
