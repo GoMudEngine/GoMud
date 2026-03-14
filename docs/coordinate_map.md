@@ -8,7 +8,7 @@ southwest=X-1/Y-1, up=Z+1, down=Z-1, enter/leave=same position
 
 ## Reachable Rooms by Zone
 
-Total reachable: 224 rooms across multiple zones
+Total reachable: 239 rooms across multiple zones
 
 | Room ID | Zone | Title | X | Y | Z |
 |---------|------|-------|---|---|---|
@@ -236,6 +236,21 @@ Total reachable: 224 rooms across multiple zones
 | 426 | Watchers Crossing | Under the Bridge | -6 | -1 | 0 |
 | 427 | Watchers Crossing | Watchers Crossing, East Road | -5 | 0 | 0 |
 | 2001 | World Road | The Northern Road | -10 | 6 | 0 |
+| 4000 | Marches Spur Road | Spur Road, Southern Fork | -8 | -2 | 0 |
+| 4001 | Marches Spur Road | Scrubland Bend | -8 | -3 | 0 |
+| 4002 | Marches Spur Road | Waypoint Shrine | -8 | -4 | 0 |
+| 4003 | Marches Spur Road | Peddler's Camp | -9 | -4 | 0 |
+| 4004 | Marches Spur Road | Open Country | -8 | -5 | 0 |
+| 4005 | Marches Spur Road | Old Fence Line | -8 | -6 | 0 |
+| 4006 | Marches Spur Road | Farmland Transition | -8 | -7 | 0 |
+| 4007 | Marches Spur Road | Ruined Barn | -9 | -7 | 0 |
+| 4008 | Marches Spur Road | Wagon Ruts | -8 | -8 | 0 |
+| 4009 | Marches Spur Road | Ridge View | -8 | -9 | 0 |
+| 4010 | Marches Spur Road | Descending Track | -8 | -10 | 0 |
+| 4011 | Marches Spur Road | Waypoint Inn Yard | -8 | -11 | 0 |
+| 4012 | Marches Spur Road | The Broken Yoke Inn | -9 | -11 | 0 |
+| 4013 | Marches Spur Road | South Road Approach | -8 | -12 | 0 |
+| 4014 | Marches Spur Road | Ashwick Crossroads | -8 | -13 | 0 |
 
 ## Unreachable Rooms (not connected to origin)
 
