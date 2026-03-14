@@ -8,7 +8,7 @@ southwest=X-1/Y-1, up=Z+1, down=Z-1, enter/leave=same position
 
 ## Reachable Rooms by Zone
 
-Total reachable: 239 rooms across multiple zones
+Total reachable: 259 rooms across multiple zones
 
 | Room ID | Zone | Title | X | Y | Z |
 |---------|------|-------|---|---|---|
@@ -251,6 +251,26 @@ Total reachable: 239 rooms across multiple zones
 | 4012 | Marches Spur Road | The Broken Yoke Inn | -9 | -11 | 0 |
 | 4013 | Marches Spur Road | South Road Approach | -8 | -12 | 0 |
 | 4014 | Marches Spur Road | Ashwick Crossroads | -8 | -13 | 0 |
+| 4015 | Ashwick | Village Gate | -7 | -13 | 0 |
+| 4016 | Ashwick | Hamlet Road | -6 | -13 | 0 |
+| 4017 | Ashwick | Central Green | -5 | -13 | 0 |
+| 4018 | Ashwick | Chapel Lane | -4 | -13 | 0 |
+| 4019 | Ashwick | East Edge | -3 | -13 | 0 |
+| 4020 | Ashwick | Farmstead | -6 | -14 | 0 |
+| 4021 | Ashwick | Ritual Circle | -5 | -14 | 0 |
+| 4022 | Ashwick | Deacon's Chapel | -4 | -14 | 0 |
+| 4023 | Ashwick | Maren's Cottage | -3 | -14 | 0 |
+| 4024 | Ashwick | Cottage Garden | -3 | -15 | 0 |
+| 4025 | Ashwick | South Fields | -7 | -14 | 0 |
+| 4026 | Ashwick | Old Well | -7 | -12 | 0 |
+| 4027 | Ashwick | Delia's Cottage | -5 | -12 | 0 |
+| 4028 | Ashwick | Delia's Garden | -4 | -12 | 0 |
+| 4029 | Ashwick | Forest Path | -3 | -12 | 0 |
+| 4030 | Ashwick | Deep Woods | -3 | -11 | 0 |
+| 4031 | Ashwick | Forager's Camp | -3 | -10 | 0 |
+| 4032 | Ashwick | Herb Clearing | -4 | -10 | 0 |
+| 4033 | Ashwick | Hidden Grove | -4 | -9 | 0 |
+| 4034 | Ashwick | Overgrown Hollow | -4 | -8 | 0 |
 
 ## Unreachable Rooms (not connected to origin)
 
