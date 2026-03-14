@@ -10,6 +10,10 @@ description: The northern cliffs rise abruptly from the steppe here,
   smells of stone and damp. Wind howls across the cliff face,
   creating an eerie, fluctuating moan.
 biome: cliffs
+coord:
+  x: 12
+  y: 7
+  z: 0
 exits:
   north:
     roomid: 3102

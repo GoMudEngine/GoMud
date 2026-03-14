@@ -9,6 +9,10 @@ description: A thin stream of clear water runs along the ravine floor
   greener and lusher than anything above, fed by the reliable
   moisture.
 biome: land
+coord:
+  x: 12
+  y: -9
+  z: 0
 exits:
   north:
     roomid: 3076

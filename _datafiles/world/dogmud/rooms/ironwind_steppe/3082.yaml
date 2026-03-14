@@ -10,6 +10,10 @@ description: A clearing in the ravine where the wolves bring their
   is strong and primal. Crows and other scavengers hop around
   the edges, waiting for the wolves to finish.
 biome: land
+coord:
+  x: 13
+  y: -10
+  z: 0
 exits:
   north:
     roomid: 3081

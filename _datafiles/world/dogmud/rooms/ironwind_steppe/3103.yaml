@@ -9,6 +9,10 @@ description: A medium-sized cave chamber where water seeps through
   sound. Pools of clear water collect in natural depressions,
   their surfaces rippling with each drop.
 biome: cave
+coord:
+  x: 13
+  y: 8
+  z: 0
 exits:
   north:
     roomid: 3106

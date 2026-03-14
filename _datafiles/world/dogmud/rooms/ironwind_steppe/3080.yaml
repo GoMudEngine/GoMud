@@ -9,6 +9,10 @@ description: The ravine splits here into two branches -- one
   of wolves using it as a scratching post. The stream surfaces
   briefly here before vanishing underground again.
 biome: land
+coord:
+  x: 11
+  y: -11
+  z: 0
 exits:
   east:
     roomid: 3079

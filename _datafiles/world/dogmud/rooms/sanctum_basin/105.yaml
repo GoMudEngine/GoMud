@@ -6,6 +6,10 @@ description: The trail ends here at a natural lookout point, a broad shelf of ba
   high desert basin stretching to the distant horizon. There is no path forward from
   here -- only the long drop south and the trail back to the west.
 biome: desert
+coord:
+  x: -8
+  y: 7
+  z: 0
 exits:
   west:
     roomid: 104

@@ -10,6 +10,10 @@ description: The wind is particularly fierce here, channeled across the
   them. The ridge to the northeast is more visible now -- a dark
   spine of rock rising above the flat terrain.
 biome: land
+coord:
+  x: 13
+  y: -1
+  z: 0
 exits:
   north:
     roomid: 3011

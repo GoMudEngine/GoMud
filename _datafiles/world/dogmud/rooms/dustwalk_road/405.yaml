@@ -8,6 +8,10 @@ description: A small waystation stands beside the road -- a stone-walled shelter
   location. A bedroll, a water skin, and a stack of patrol reports occupy the interior.
   Someone is stationed here, and takes the posting seriously.
 biome: plains
+coord:
+  x: -10
+  y: 1
+  z: 0
 exits:
   north:
     roomid: 404

@@ -10,6 +10,10 @@ description: The fields here have a sickly look -- crops that should be knee-hig
   is spreading from the abandoned field to the north, where the pests have established
   themselves unchecked.
 biome: farmland
+coord:
+  x: -3
+  y: 1
+  z: 0
 exits:
   west:
     roomid: 441

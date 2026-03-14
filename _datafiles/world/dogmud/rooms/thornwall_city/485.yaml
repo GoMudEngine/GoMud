@@ -10,6 +10,10 @@ description: >
   descends into darkness. Scratch marks on the stone around the grate show
   it has been moved recently -- and often.
 biome: cave
+coord:
+  x: 1
+  y: -2
+  z: -1
 mapsymbol: C
 maplegend: Cellar
 exits:

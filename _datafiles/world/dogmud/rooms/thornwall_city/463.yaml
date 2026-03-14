@@ -8,6 +8,10 @@ description: The eastern end of Main Street opens into the approach to Market Sq
   thickens as the market draws near, and the air fills with the competing smells of
   spices, leather, and roasting meat from the square ahead.
 biome: city
+coord:
+  x: 3
+  y: 0
+  z: 0
 exits:
   west:
     roomid: 462

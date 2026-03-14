@@ -9,6 +9,10 @@ description: >
   someone has climbed up and down here before, but there is no rope now.
   The shaft is a dead end without equipment.
 biome: cave
+coord:
+  x: 3
+  y: -3
+  z: -2
 exits:
   west:
     roomid: 489

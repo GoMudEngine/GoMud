@@ -10,6 +10,10 @@ description: A stone bridge spans the river here, wide enough for two carts to p
   capstones have been replaced with newer, lighter-coloured stone. Watchtowers stand
   at each end, their upper windows dark and empty.
 biome: river
+coord:
+  x: -6
+  y: 0
+  z: 0
 exits:
   west:
     roomid: 421

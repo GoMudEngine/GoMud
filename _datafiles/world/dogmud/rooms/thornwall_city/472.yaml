@@ -12,6 +12,10 @@ description: A low-ceilinged tavern tucked into the south end of the Craftsmen's
   regulars hold court. The tavern has the feel of a place where people come to
   talk seriously over cheap drinks.
 biome: city
+coord:
+  x: 2
+  y: -2
+  z: 0
 exits:
   north:
     roomid: 469

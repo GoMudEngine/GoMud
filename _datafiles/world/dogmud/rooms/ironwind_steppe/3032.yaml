@@ -10,6 +10,10 @@ description: A broad shelf of exposed rock juts from the ridge's western
   droppings and scraps of prey streak the rock, and deep scratches
   from talons score the surface near the edge.
 biome: cliffs
+coord:
+  x: 14
+  y: -1
+  z: 0
 exits:
   north:
     roomid: 3030

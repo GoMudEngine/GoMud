@@ -10,6 +10,10 @@ description: You stand on the narrow crest of Ironwind Ridge, the
   and ravines. The ridge runs north-south, its crest a jagged
   line of dark stone against the sky.
 biome: cliffs
+coord:
+  x: 15
+  y: 2
+  z: 0
 exits:
   west:
     roomid: 3034

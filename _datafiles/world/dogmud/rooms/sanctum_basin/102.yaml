@@ -7,6 +7,10 @@ description: A massive archway of black basalt spans the path here, carved with 
   the south, a gated road leads down toward the wider world. A sign reads -- By order
   of the Chrysalis Council, no citizen may pass south without demonstrating readiness.
 biome: desert
+coord:
+  x: -10
+  y: 8
+  z: 0
 mapsymbol: G
 maplegend: Basin Gate
 exits:

@@ -10,6 +10,10 @@ description: >
   here except the faint impression that this tunnel once continued much
   further east, toward the outer wall.
 biome: cave
+coord:
+  x: 2
+  y: -2
+  z: -2
 exits:
   west:
     roomid: 486

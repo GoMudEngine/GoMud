@@ -10,6 +10,10 @@ description: A large cooking fire burns in the center of a cleared
   the flames, arguing over portions with sharp gestures and
   sharper words.
 biome: cliffs
+coord:
+  x: 16
+  y: -12
+  z: 0
 exits:
   north:
     roomid: 3068

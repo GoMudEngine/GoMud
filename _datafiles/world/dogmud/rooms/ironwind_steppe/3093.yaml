@@ -9,6 +9,10 @@ description: Thick stands of tall reeds grow from the waterlogged
   warm, buzzing with mosquitoes. Boar trails cut through the
   reeds like tunnels, their floors churned to deep muck.
 biome: land
+coord:
+  x: 14
+  y: -11
+  z: 0
 exits:
   north:
     roomid: 3092

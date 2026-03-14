@@ -10,6 +10,10 @@ description: >
   collapsed, choked with rubble and broken timber. The air is stale and
   heavy, thick with the smell of wet stone and something organic.
 biome: cave
+coord:
+  x: 1
+  y: -2
+  z: -2
 exits:
   up:
     roomid: 485

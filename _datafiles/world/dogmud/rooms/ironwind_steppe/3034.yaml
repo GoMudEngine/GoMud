@@ -9,6 +9,10 @@ description: A series of narrow ledges on the ridge's east face where
   Bones, feathers, and prey remains litter the ground below the
   nests. The stench is considerable.
 biome: cliffs
+coord:
+  x: 14
+  y: 2
+  z: 0
 exits:
   south:
     roomid: 3031

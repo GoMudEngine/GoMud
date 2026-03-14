@@ -9,6 +9,10 @@ description: A small but stubbornly well-kept farmstead sits at the end of the t
   low fence separates the yard from the overgrown plot next door, where waist-high
   weeds have swallowed what was once a cultivated field.
 biome: farmland
+coord:
+  x: -4
+  y: 2
+  z: 0
 exits:
   south:
     roomid: 441

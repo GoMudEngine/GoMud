@@ -8,6 +8,10 @@ description: A muddy path leads down from the road to the river's edge, where th
   upstream, its arches dark with moss and river spray. Downstream, the water deepens
   and the current quickens, pulling at anything that strays too far from shore.
 biome: river
+coord:
+  x: -8
+  y: -1
+  z: 0
 exits:
   north:
     roomid: 420

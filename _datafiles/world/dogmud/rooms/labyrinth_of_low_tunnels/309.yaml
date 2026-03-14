@@ -9,6 +9,10 @@ description: Small bones have been pressed into the mud floor of this passage in
   and west, with a vertical crack dropping away to the east. The air here is very still
   and carries a sweet, rotten undertone beneath the mineral damp.
 biome: cave
+coord:
+  x: -11
+  y: 5
+  z: -1
 exits:
   north:
     roomid: 306

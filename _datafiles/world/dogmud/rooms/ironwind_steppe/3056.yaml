@@ -9,6 +9,10 @@ description: The creek basin dips into a marshy depression where
   reeds. The marsh is a vital oasis on the dry steppe, drawing
   wildlife from all directions.
 biome: land
+coord:
+  x: 14
+  y: -7
+  z: 0
 exits:
   north:
     roomid: 3053

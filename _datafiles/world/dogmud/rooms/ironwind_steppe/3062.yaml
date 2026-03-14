@@ -9,6 +9,10 @@ description: Several coulees intersect here in a wider space where
   walls. Scratches and crude markings on the wall suggest someone
   or something uses this junction regularly.
 biome: cliffs
+coord:
+  x: 16
+  y: -8
+  z: 0
 exits:
   north:
     roomid: 3061

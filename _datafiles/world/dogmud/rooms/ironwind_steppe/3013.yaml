@@ -8,6 +8,10 @@ description: A natural clearing in the sagebrush where the grass grows
   this is a regular grazing and resting spot for the steppe's
   wildlife. A game trail runs north-south through the clearing.
 biome: land
+coord:
+  x: 12
+  y: -1
+  z: 0
 exits:
   west:
     roomid: 3009

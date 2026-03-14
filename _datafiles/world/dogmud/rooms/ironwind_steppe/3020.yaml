@@ -10,6 +10,10 @@ description: A ragged line of scrubby trees -- wind-stunted oaks and
   between the branches, and the trees creak constantly in the
   wind.
 biome: land
+coord:
+  x: 13
+  y: 1
+  z: 0
 exits:
   west:
     roomid: 3015

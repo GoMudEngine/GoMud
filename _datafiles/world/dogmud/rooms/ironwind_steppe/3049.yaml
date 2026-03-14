@@ -8,6 +8,10 @@ description: The creek has carved a deep undercut into the bank here,
   fur, and gnawed bones. The creek bed below is narrow and rocky,
   the stones larger here where the current was once strongest.
 biome: land
+coord:
+  x: 13
+  y: -5
+  z: 0
 exits:
   north:
     roomid: 3048

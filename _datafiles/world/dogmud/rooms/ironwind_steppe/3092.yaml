@@ -9,6 +9,10 @@ description: The heart of the boar wallowing grounds -- a sprawling
   is tremendous. This is where the biggest boars gather, the
   tusked patriarchs who have first claim on the best mud.
 biome: land
+coord:
+  x: 14
+  y: -10
+  z: 0
 exits:
   north:
     roomid: 3091

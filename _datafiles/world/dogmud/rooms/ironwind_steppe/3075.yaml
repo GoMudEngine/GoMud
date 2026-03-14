@@ -9,6 +9,10 @@ description: A narrow ravine opens in the steppe here, its walls of
   claimed territory. From below comes the sound of running water,
   a rarity on the dry steppe.
 biome: land
+coord:
+  x: 12
+  y: -7
+  z: 0
 exits:
   north:
     roomid: 3054

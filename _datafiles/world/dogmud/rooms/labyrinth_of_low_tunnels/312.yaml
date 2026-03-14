@@ -10,6 +10,10 @@ description: A wider space where crude shelves have been gouged into the walls a
   smooth by the shuffling of many bare feet. The darkness presses in from every side,
   and the walls feel closer than they should.
 biome: cave
+coord:
+  x: -13
+  y: 5
+  z: -2
 exits:
   north:
     roomid: 308

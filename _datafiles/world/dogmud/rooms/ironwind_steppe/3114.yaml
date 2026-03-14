@@ -11,6 +11,10 @@ description: The deepest chamber of the Windscour Caves -- a vast,
   This is the lair of the windscour wyrm -- the apex predator
   of the cave system.
 biome: cave
+coord:
+  x: 14
+  y: 11
+  z: 0
 exits:
   south:
     roomid: 3113

@@ -9,6 +9,10 @@ description: >
   worn smooth by the passage of heavy loads dragged along it. The tunnel
   continues south toward a faint glow.
 biome: cave
+coord:
+  x: 1
+  y: -6
+  z: -2
 exits:
   east:
     roomid: 495

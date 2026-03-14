@@ -8,6 +8,10 @@ description: The eastern stretch of the back alley is marginally wider and sligh
   narrow yard where someone has stacked empty crates and barrels. The yard connects
   to the market square through a gap between buildings to the north.
 biome: city
+coord:
+  x: 6
+  y: -1
+  z: 0
 exits:
   north:
     roomid: 466

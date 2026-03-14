@@ -10,6 +10,10 @@ description: The coulee twists through the volcanic rock in a
   footsteps echo off the walls and the wind above moans across
   the gap like breath over a bottle.
 biome: cliffs
+coord:
+  x: 16
+  y: -9
+  z: 0
 exits:
   north:
     roomid: 3062

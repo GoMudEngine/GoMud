@@ -9,6 +9,10 @@ description: Dense thornbrush chokes this section of the ravine,
   rodents that shelter in the protective tangle, and the wolves
   use this natural barrier as a defensive perimeter.
 biome: land
+coord:
+  x: 13
+  y: -9
+  z: 0
 exits:
   north:
     roomid: 3058

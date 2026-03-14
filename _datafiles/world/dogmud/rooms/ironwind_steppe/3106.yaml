@@ -10,6 +10,10 @@ description: A passage where a thick vein of quartz runs through
   from the walls like the spine of some buried creature. Mineral
   dust glitters on the cave floor.
 biome: cave
+coord:
+  x: 13
+  y: 9
+  z: 0
 exits:
   north:
     roomid: 3109

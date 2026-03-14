@@ -9,6 +9,10 @@ description: The road from Watchers Crossing climbs a gentle rise and the landsc
   of a settled land. Ahead, the road forks between the farms to the north and the
   main city road to the east.
 biome: farmland
+coord:
+  x: -4
+  y: 0
+  z: 0
 exits:
   west:
     roomid: 427

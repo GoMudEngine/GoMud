@@ -10,6 +10,10 @@ description: The cave walls here are riddled with small tunnels and
   sounds come from the walls in every direction, an unsettling
   reminder that you are surrounded by unseen inhabitants.
 biome: cave
+coord:
+  x: 14
+  y: 8
+  z: 0
 exits:
   north:
     roomid: 3110

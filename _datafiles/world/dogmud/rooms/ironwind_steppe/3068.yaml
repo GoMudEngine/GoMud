@@ -9,6 +9,10 @@ description: The coulee widens into a defended space ringed with crude
   broken tools, and scraps of leather. Smoke rises from fires
   deeper in the camp.
 biome: cliffs
+coord:
+  x: 16
+  y: -11
+  z: 0
 exits:
   north:
     roomid: 3066

@@ -8,6 +8,10 @@ description: >
   tap dripping slowly onto the stone floor. This is where the tunnel
   guards sleep and eat between shifts -- functional but miserable.
 biome: cave
+coord:
+  x: 3
+  y: -5
+  z: -2
 exits:
   west:
     roomid: 493

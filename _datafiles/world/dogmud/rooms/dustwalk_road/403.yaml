@@ -8,6 +8,10 @@ description: A narrow trail leads from the road to a shallow creek bed that has 
   traveller might stop to forage or rest out of the wind. The banks of the creek
   provide modest shelter, and the herbs grow thick where the moisture lingers longest.
 biome: plains
+coord:
+  x: -11
+  y: 3
+  z: 0
 exits:
   east:
     roomid: 402

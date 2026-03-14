@@ -9,6 +9,10 @@ description: The road descends into a sheltered gully where someone has made cam
   and the view. It would be easy to walk into this place without seeing what waited
   at the bottom.
 biome: plains
+coord:
+  x: -10
+  y: -1
+  z: 0
 exits:
   north:
     roomid: 406

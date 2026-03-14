@@ -9,6 +9,10 @@ description: The eastern face of the ridge drops away in a series of
   possible but would require picking a careful route through the
   broken terrain.
 biome: cliffs
+coord:
+  x: 15
+  y: 3
+  z: 0
 exits:
   south:
     roomid: 3035

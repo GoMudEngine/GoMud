@@ -9,6 +9,10 @@ description: A narrow trail switchbacks up the western face of the
   view to the west is already impressive -- the sagebrush flats
   spread out below like a rumpled grey-green carpet.
 biome: cliffs
+coord:
+  x: 14
+  y: 1
+  z: 0
 exits:
   west:
     roomid: 3020

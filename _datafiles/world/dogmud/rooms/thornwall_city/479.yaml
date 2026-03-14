@@ -11,6 +11,10 @@ description: The easternmost point of the city opens into a circular plaza surro
   near the eastern gate is papered with notices and handbills. The citadel watches
   over it all with the patience of something that was old when the city was young.
 biome: city
+coord:
+  x: 7
+  y: 0
+  z: 0
 exits:
   west:
     roomid: 466

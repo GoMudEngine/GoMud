@@ -9,6 +9,10 @@ description: A stretch of ravine floor covered in a carpet of bones --
   paces along the ravine, and the ground beneath is rich and dark,
   fertilized by the decomposition.
 biome: land
+coord:
+  x: 14
+  y: -13
+  z: 0
 exits:
   east:
     roomid: 3098

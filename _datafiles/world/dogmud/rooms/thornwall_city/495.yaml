@@ -9,6 +9,10 @@ description: >
   on the wall at the fork show a crude arrow pointing west, with a symbol
   beneath it that might be a key or a fish hook.
 biome: cave
+coord:
+  x: 2
+  y: -6
+  z: -2
 exits:
   north:
     roomid: 493

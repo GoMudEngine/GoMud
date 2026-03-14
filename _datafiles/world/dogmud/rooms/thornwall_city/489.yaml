@@ -9,6 +9,10 @@ description: >
   channel left behind in the overflow chamber. A narrow passage continues
   east to a vertical shaft, and the main tunnel runs south.
 biome: cave
+coord:
+  x: 2
+  y: -3
+  z: -2
 exits:
   west:
     roomid: 488

@@ -9,6 +9,10 @@ description: A tight channel between basalt walls, barely shoulder-
   and small insects. The passage twists and turns, making it
   impossible to see more than a few paces in any direction.
 biome: cliffs
+coord:
+  x: 16
+  y: -7
+  z: 0
 exits:
   north:
     roomid: 3060

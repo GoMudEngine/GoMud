@@ -10,6 +10,10 @@ description: The ground tilts upward sharply as the sagebrush flats
   bulk. Above, the dark spine of the ridge crest cuts across
   the sky.
 biome: cliffs
+coord:
+  x: 14
+  y: 0
+  z: 0
 exits:
   west:
     roomid: 3011

@@ -8,6 +8,10 @@ description: A low rise on the eastern bank of the creek basin provides
   to the east. The transition between terrain types is stark -- soft
   earth and sand giving way abruptly to hard, dark volcanic stone.
 biome: land
+coord:
+  x: 15
+  y: -6
+  z: 0
 exits:
   west:
     roomid: 3053

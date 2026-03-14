@@ -10,6 +10,10 @@ description: The last traces of the city's influence end here. The wagon
   that might be boulders or bushes. The wind is constant here,
   pressing against you with dry, warm gusts.
 biome: land
+coord:
+  x: 11
+  y: 0
+  z: 0
 exits:
   west:
     roomid: 3003

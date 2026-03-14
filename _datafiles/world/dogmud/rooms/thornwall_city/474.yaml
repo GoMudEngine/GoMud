@@ -9,6 +9,10 @@ description: A narrow passage between the backs of buildings, barely wide enough
   halfway along has been fitted with a heavy curtain instead of a door, suggesting
   commerce of the unofficial kind.
 biome: city
+coord:
+  x: 1
+  y: -1
+  z: 0
 exits:
   north:
     roomid: 461

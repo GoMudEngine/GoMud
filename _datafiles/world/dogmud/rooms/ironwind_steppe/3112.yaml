@@ -10,6 +10,10 @@ description: A large cave chamber with unusually smooth walls and a
   the metabolic activity of the beetle colony that nests in the
   walls. This is the heart of the stone beetle colony.
 biome: cave
+coord:
+  x: 13
+  y: 11
+  z: 0
 exits:
   east:
     roomid: 3114

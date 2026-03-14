@@ -8,6 +8,10 @@ description: The road climbs a low ridge that gives a commanding view of the sur
   weathered milestone. The ridge itself is windswept and bare, with only short grass
   clinging to the stony soil.
 biome: plains
+coord:
+  x: -10
+  y: 0
+  z: 0
 exits:
   north:
     roomid: 405

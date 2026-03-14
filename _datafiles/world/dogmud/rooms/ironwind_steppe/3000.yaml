@@ -9,6 +9,10 @@ description: The cobblestones of Thornwall give way to hard-packed dirt as
   the horizon under an enormous sky. The wind carries the smell of dry
   grass and dust, a sharp contrast to the close city air.
 biome: land
+coord:
+  x: 8
+  y: 0
+  z: 0
 exits:
   west:
     roomid: 479

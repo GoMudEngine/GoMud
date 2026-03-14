@@ -8,6 +8,10 @@ description: The sagebrush here is scarred with claw marks and the
   line of scrubby trees to the north -- a transition zone where
   predators patrol regularly. The air smells of dust and musk.
 biome: land
+coord:
+  x: 12
+  y: 2
+  z: 0
 exits:
   south:
     roomid: 3015

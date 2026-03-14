@@ -9,6 +9,10 @@ description: A broad, shallow pool of brownish water persists here
   and on the dry steppe that is enough to draw every creature
   for miles. Watchful eyes observe from the surrounding cover.
 biome: land
+coord:
+  x: 16
+  y: -9
+  z: 0
 exits:
   west:
     roomid: 3089

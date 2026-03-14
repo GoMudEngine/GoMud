@@ -9,6 +9,10 @@ description: A massive, ancient tree once grew here on the creek bank.
   and shelters. The fallen trunk has been reduced to a long mound
   of rotting wood colonized by fungi.
 biome: land
+coord:
+  x: 14
+  y: -5
+  z: 0
 exits:
   west:
     roomid: 3049

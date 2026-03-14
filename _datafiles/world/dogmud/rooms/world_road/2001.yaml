@@ -6,6 +6,10 @@ description: A weathered track of packed basalt dust stretches away in both dire
   gate of the World Gate visible as a glint high above. To the south and east, the
   land descends into the wider world of Gaius -- untamed, unmapped, and waiting.
 biome: desert
+coord:
+  x: -10
+  y: 6
+  z: 0
 exits:
   north:
     roomid: 103

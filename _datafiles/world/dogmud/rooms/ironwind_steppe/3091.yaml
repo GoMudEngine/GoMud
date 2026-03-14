@@ -9,6 +9,10 @@ description: Broad, shallow pits of churned mud mark the outer
   Trampled reeds and flattened grass surround each wallow in
   a ring of destruction.
 biome: land
+coord:
+  x: 14
+  y: -9
+  z: 0
 exits:
   north:
     roomid: 3090

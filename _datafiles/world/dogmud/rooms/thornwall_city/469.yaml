@@ -9,6 +9,10 @@ description: South of Main Street, the city takes on a different character. The
   and direct manner of those who make things for a living. An apothecary's shop
   is visible to the east, its window cluttered with bottles.
 biome: city
+coord:
+  x: 2
+  y: -1
+  z: 0
 exits:
   north:
     roomid: 462

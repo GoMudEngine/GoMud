@@ -9,6 +9,10 @@ description: The terrain changes abruptly here as soft earth gives
   absorbs heat, making the air shimmer above its dark surface.
   The way east leads into the maze of volcanic channels.
 biome: land
+coord:
+  x: 16
+  y: -5
+  z: 0
 exits:
   south:
     roomid: 3060

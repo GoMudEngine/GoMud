@@ -10,6 +10,10 @@ description: The basalt coulees end here as the volcanic rock gives
   air feels fresher here, the wind returning after the sheltered
   coulee passages.
 biome: land
+coord:
+  x: 17
+  y: -10
+  z: 0
 exits:
   north:
     roomid: 3067

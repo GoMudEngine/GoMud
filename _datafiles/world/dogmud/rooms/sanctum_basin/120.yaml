@@ -8,6 +8,10 @@ description: The deepest chamber of the cave system is vast, its ceiling a dome 
   at impossible angles, radiating waves of distorted belief that make the air shimmer
   and the mind ache.
 biome: cave
+coord:
+  x: -7
+  y: 11
+  z: 0
 mutators:
 - mutatorid: bioluminescent-caves
 mapsymbol: B

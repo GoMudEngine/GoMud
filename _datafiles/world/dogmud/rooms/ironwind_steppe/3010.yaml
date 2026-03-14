@@ -10,6 +10,10 @@ description: The steppe opens up into a vast expanse of flat grassland
   before collapsing. The wagon track from the city has vanished
   completely, replaced by open, unmarked terrain.
 biome: land
+coord:
+  x: 12
+  y: 0
+  z: 0
 exits:
   west:
     roomid: 3006

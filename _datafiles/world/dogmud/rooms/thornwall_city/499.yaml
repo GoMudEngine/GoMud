@@ -9,6 +9,10 @@ description: >
   Scuff marks on the rungs show regular use. This is the smugglers' escape
   route -- and probably how goods enter the tunnel system from outside.
 biome: cave
+coord:
+  x: 2
+  y: -8
+  z: -2
 exits:
   west:
     roomid: 498

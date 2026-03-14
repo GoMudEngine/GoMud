@@ -10,6 +10,10 @@ description: A vertical crack in the rock, widened by something burrowing, conne
   through the stone -- guttural voices, the scrape of tools, the occasional sharp
   crack of something breaking.
 biome: cave
+coord:
+  x: -11
+  y: 5
+  z: -2
 exits:
   up:
     roomid: 309

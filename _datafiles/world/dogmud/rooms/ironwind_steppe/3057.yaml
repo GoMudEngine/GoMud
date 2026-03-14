@@ -8,6 +8,10 @@ description: The dry creek bed cuts deep here, its banks rising well
   past water levels. It feels like walking through a narrow canyon.
   The sky is a ribbon of blue above the steep banks.
 biome: land
+coord:
+  x: 13
+  y: -7
+  z: 0
 exits:
   north:
     roomid: 3051

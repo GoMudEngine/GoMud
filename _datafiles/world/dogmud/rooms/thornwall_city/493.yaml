@@ -9,6 +9,10 @@ description: >
   counting hours on watch. A narrow passage opens east into a storage
   alcove, and the main tunnel continues south.
 biome: cave
+coord:
+  x: 2
+  y: -5
+  z: -2
 exits:
   north:
     roomid: 491

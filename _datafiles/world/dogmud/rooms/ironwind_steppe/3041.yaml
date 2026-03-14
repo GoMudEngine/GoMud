@@ -8,6 +8,10 @@ description: A narrow ledge runs along the ridge's south face, the
   exposed rock face beside you is layered -- dark basalt over pale
   sandstone, the geological history of the region written in stone.
 biome: cliffs
+coord:
+  x: 16
+  y: 2
+  z: 0
 exits:
   west:
     roomid: 3035

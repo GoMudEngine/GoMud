@@ -9,6 +9,10 @@ description: The ridge's southern slope is gentler than the western
   and grass has taken hold. The wind is blocked by the ridge
   crest above, making this slope relatively sheltered.
 biome: cliffs
+coord:
+  x: 15
+  y: 1
+  z: 0
 exits:
   north:
     roomid: 3035

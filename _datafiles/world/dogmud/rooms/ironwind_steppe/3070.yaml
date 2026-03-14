@@ -10,6 +10,10 @@ description: A natural alcove in the coulee wall has been claimed by
   serves as an altar. The air is thick with the smell of burning
   herbs and something sharper, chemical.
 biome: cliffs
+coord:
+  x: 17
+  y: -12
+  z: 0
 exits:
   west:
     roomid: 3069

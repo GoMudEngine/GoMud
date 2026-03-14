@@ -9,6 +9,10 @@ description: Two dry creek beds converge here, their sandy floors
   junction is a natural crossroads for the basin's wildlife,
   with trails leading in every direction.
 biome: land
+coord:
+  x: 12
+  y: -6
+  z: 0
 exits:
   north:
     roomid: 3052

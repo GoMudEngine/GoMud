@@ -8,6 +8,10 @@ description: A stretch of thin scrubland opens here at the western reach of Sanc
   guide studies the terrain from a low rock, occasionally pointing out features of
   interest to passing initiates.
 biome: land
+coord:
+  x: -11
+  y: 9
+  z: 0
 exits:
   east:
     roomid: 107

@@ -107,6 +107,48 @@ Cities of 40+ rooms must have:
   visits with more knowledge or quest progress reveal hidden areas, new
   dialogue, and deeper lore.
 
+### Cartesian Consistency
+All rooms in the world must be placeable on a 2D coordinate grid without
+overlaps. If you walk north then east then south then west, you must
+arrive back where you started. No "impossible geometry" — the world is
+a consistent physical space.
+
+**Rules:**
+- Every room has an implicit (x, y) coordinate. North = +y, south = -y,
+  east = +x, west = -x. Diagonal exits (NE, NW, SE, SW) move both axes.
+- **No overlaps.** Two rooms cannot occupy the same coordinate. Before
+  placing a new room, verify that its coordinate is unoccupied by any
+  existing room in any zone.
+- **No wormholes.** If room A has a north exit to room B, then room B
+  must have a south exit back to room A (or no exit, for one-way passages
+  like cliffs or falls — but the coordinate relationship must still hold).
+- **Cross-zone boundaries must be consistent.** When a road crosses from
+  one zone folder to another, the coordinates must be continuous.
+- Up/down exits are z-axis and don't affect x,y position.
+- "Enter"/"leave" exits (e.g., entering a building from a street) occupy
+  an interior coordinate offset — typically the same x,y as the exterior
+  room but on a separate interior layer.
+
+**Hidden Coordinates:**
+Every room YAML should include a `coord` field for reference:
+```yaml
+coord:
+  x: 0
+  y: 0
+  z: 0
+```
+These are not shown to players but allow us to validate spatial consistency,
+generate automaps, and catch overlap errors. When building new rooms, always
+assign coordinates relative to the existing grid.
+
+**Existing World Origin:**
+Thornwall City Gate Ward (room 460) is designated as the coordinate origin
+(0, 0, 0). All existing and new rooms are placed relative to this point.
+
+**Coordinate Map of Existing Zones:**
+See `docs/coordinate_map.md` for the current room coordinate assignments.
+This file must be updated whenever rooms are added.
+
 ---
 
 ## World Geography — The Windward Marches

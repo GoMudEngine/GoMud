@@ -9,6 +9,10 @@ description: The ridge drops away to the southeast here in a series of
   rock to the dark volcanic stone of the basalt coulees, the
   landscape becoming increasingly broken and maze-like.
 biome: cliffs
+coord:
+  x: 16
+  y: -1
+  z: 0
 exits:
   north:
     roomid: 3043

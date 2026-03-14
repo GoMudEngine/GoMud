@@ -10,6 +10,10 @@ description: >
   for maintenance access. The passage continues east through a low archway
   and south into a narrowing tunnel.
 biome: cave
+coord:
+  x: 1
+  y: -3
+  z: -2
 exits:
   north:
     roomid: 486

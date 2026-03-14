@@ -8,6 +8,10 @@ description: The packed-earth track descends from the World Road into open count
   shimmer, narrowing as it drops toward the lowlands. Behind you, the plateau of Sanctum
   Basin rises like a dark wall against the sky.
 biome: plains
+coord:
+  x: -10
+  y: 5
+  z: 0
 exits:
   north:
     roomid: 2001

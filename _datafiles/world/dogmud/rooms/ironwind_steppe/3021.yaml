@@ -8,6 +8,10 @@ description: Several large boulders are scattered across the flats here,
   in pale green and orange. The boulders provide welcome windbreaks
   and the air in their lee is noticeably calmer.
 biome: land
+coord:
+  x: 13
+  y: 2
+  z: 0
 exits:
   west:
     roomid: 3019

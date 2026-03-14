@@ -9,6 +9,10 @@ description: The flats are unusually barren here -- short-cropped grass
   to always hold a circling silhouette. Small animals stay close
   to their burrows in this exposed killing field.
 biome: land
+coord:
+  x: 12
+  y: 3
+  z: 0
 exits:
   south:
     roomid: 3019

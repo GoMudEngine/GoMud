@@ -12,6 +12,10 @@ description: >
   east to the main tavern floor. A trapdoor in the floor leads down to the
   cellar.
 biome: city
+coord:
+  x: 1
+  y: -2
+  z: 0
 station: cooking_fire
 exits:
   east:

@@ -9,6 +9,10 @@ description: The southern edge of the residential ward borders the market square
   even as the outer wards have declined. A message board nailed to a wall post holds
   neighbourhood notices and lost-and-found postings.
 biome: city
+coord:
+  x: 5
+  y: 1
+  z: 0
 exits:
   north:
     roomid: 477

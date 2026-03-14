@@ -10,6 +10,10 @@ description: The sagebrush grows unusually dense here, the bushes
   and tufts of fur caught on branches show this is heavily
   trafficked by wildlife.
 biome: land
+coord:
+  x: 13
+  y: -2
+  z: 0
 exits:
   west:
     roomid: 3014

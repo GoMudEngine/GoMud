@@ -11,6 +11,10 @@ description: A cramped hollow behind the chieftain's seat, barely large enough f
   barely an arm-span apart, and the ceiling nearly touches the top of your head even
   kneeling.
 biome: cave
+coord:
+  x: -13
+  y: 2
+  z: -2
 exits:
   east:
     roomid: 317

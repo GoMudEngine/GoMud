@@ -10,6 +10,10 @@ description: The last of the city's detritus -- broken pottery, a
   trail threads southeast through the grass, worn by animals moving
   between the city fringe and the open plains.
 biome: land
+coord:
+  x: 11
+  y: -1
+  z: 0
 exits:
   north:
     roomid: 3006

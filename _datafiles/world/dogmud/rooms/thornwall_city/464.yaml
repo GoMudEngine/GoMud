@@ -9,6 +9,10 @@ description: The western edge of Market Square is dominated by food vendors -- s
   up a cart with a brazier, selling skewered meat and roasted roots to the market
   crowd.
 biome: city
+coord:
+  x: 4
+  y: 0
+  z: 0
 exits:
   west:
     roomid: 463

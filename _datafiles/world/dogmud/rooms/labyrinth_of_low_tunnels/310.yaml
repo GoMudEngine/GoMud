@@ -10,6 +10,10 @@ description: Clusters of pale fungi cover the walls and ceiling of this wider ch
   thick with spores, warm and humid and cloying, and every breath tastes of rot and
   mushroom.
 biome: cave
+coord:
+  x: -12
+  y: 6
+  z: -2
 exits:
   west:
     roomid: 308

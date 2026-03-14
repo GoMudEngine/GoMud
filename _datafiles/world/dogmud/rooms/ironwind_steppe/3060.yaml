@@ -10,6 +10,10 @@ description: A narrow gap between two walls of dark basalt opens into
   a sudden, oppressive stillness. Shadows pool in the narrow
   channel.
 biome: cliffs
+coord:
+  x: 16
+  y: -6
+  z: 0
 exits:
   west:
     roomid: 3055

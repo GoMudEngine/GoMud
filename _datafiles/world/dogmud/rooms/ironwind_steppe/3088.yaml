@@ -9,6 +9,10 @@ description: This stretch of open ground between Wolf Run and the
   area, and the tension in the air is palpable. Neither species
   has established dominance here.
 biome: land
+coord:
+  x: 14
+  y: -14
+  z: 0
 exits:
   north:
     roomid: 3087

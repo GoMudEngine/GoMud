@@ -8,6 +8,10 @@ description: The dusty road from the west widens as it approaches a cluster of l
   in faded paint. Wagon ruts deepen in the softer ground, and the buildings ahead show
   the wear of a waystation that has served travellers for longer than anyone remembers.
 biome: river
+coord:
+  x: -8
+  y: 0
+  z: 0
 exits:
   west:
     roomid: 409

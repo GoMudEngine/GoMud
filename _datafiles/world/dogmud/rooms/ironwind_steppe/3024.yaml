@@ -8,6 +8,10 @@ description: The grass grows tall here, reaching waist-height in thick
   past a wolf or boar bedded down in this tall grass without ever
   seeing it. The air smells of dry hay and sun-warmed earth.
 biome: land
+coord:
+  x: 14
+  y: 3
+  z: 0
 exits:
   west:
     roomid: 3023

@@ -11,6 +11,10 @@ description: The tunnel east of the den ends abruptly where the ceiling has give
   the warren's inhabitants have been testing the rubble, probing for a way through.
   They have not found one yet.
 biome: cave
+coord:
+  x: -11
+  y: 4
+  z: -2
 exits:
   west:
     roomid: 314

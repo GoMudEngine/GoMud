@@ -10,6 +10,10 @@ description: The inn is a long, low building of river stone and timber, its roof
   rooms above, and a doorway behind the bar opens to a kitchen where something is
   always simmering.
 biome: river
+coord:
+  x: -8
+  y: 1
+  z: 0
 exits:
   south:
     roomid: 420

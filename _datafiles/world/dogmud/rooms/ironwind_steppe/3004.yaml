@@ -9,6 +9,10 @@ description: The shallow drainage ditch from the city wall widens here
   a dog or fox. The ditch continues southeast, gradually blending into
   the natural drainage of the steppe.
 biome: land
+coord:
+  x: 9
+  y: -1
+  z: 0
 exits:
   north:
     roomid: 3001

@@ -9,6 +9,10 @@ description: A narrow gully cuts through the ground here, carved by
   network of holes. The surrounding steppe grass grows tall along
   the gully's lip, providing cover for anything hiding below.
 biome: land
+coord:
+  x: 10
+  y: -2
+  z: 0
 exits:
   north:
     roomid: 3007

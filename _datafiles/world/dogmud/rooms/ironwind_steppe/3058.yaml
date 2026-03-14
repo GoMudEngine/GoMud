@@ -8,6 +8,10 @@ description: The dry creek basin widens and shallows here as the
   of the steppe -- boar wallows to the southwest and wolf ravines
   to the south. The ground is drier here, the sand pale and fine.
 biome: land
+coord:
+  x: 13
+  y: -8
+  z: 0
 exits:
   north:
     roomid: 3057

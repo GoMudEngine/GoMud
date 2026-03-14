@@ -8,6 +8,10 @@ description: The dry creek bends sharply here, the outer bank cut steep
   roots half-exposed by erosion, trailing dried leaves. The sand is
   soft and deep, slowing your steps.
 biome: land
+coord:
+  x: 12
+  y: -4
+  z: 0
 exits:
   north:
     roomid: 3045

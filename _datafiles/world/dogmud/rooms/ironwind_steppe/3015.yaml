@@ -8,6 +8,10 @@ description: The flats extend north here, the sagebrush growing denser
   small skulls, leg bones, vertebrae -- the remains of prey
   animals discarded by predators. Wolf territory, by the signs.
 biome: land
+coord:
+  x: 12
+  y: 1
+  z: 0
 exits:
   south:
     roomid: 3010

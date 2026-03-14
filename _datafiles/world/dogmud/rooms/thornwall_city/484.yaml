@@ -11,6 +11,10 @@ description: A cramped alcove tucked behind the main bar, separated from the
   their cups slowly and watch the door with the careful disinterest of men who
   have seen everything at least twice.
 biome: city
+coord:
+  x: 2
+  y: -3
+  z: 0
 exits:
   north:
     roomid: 472

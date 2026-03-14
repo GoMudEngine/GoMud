@@ -6,6 +6,10 @@ description: A thin trail winds east along the rim of the plateau, following the
   basalt. To the north, the plateau spreads open into arid scrubland. The path is
   manageable but exposed -- the wind here is constant and biting.
 biome: desert
+coord:
+  x: -9
+  y: 7
+  z: 0
 exits:
   west:
     roomid: 103

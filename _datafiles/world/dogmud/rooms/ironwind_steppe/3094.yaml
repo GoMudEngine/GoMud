@@ -9,6 +9,10 @@ description: A broad, flat expanse of cracked mud stretching between
   the hoofprints and pawprints preserved in the dried mud like
   fossils.
 biome: land
+coord:
+  x: 15
+  y: -10
+  z: 0
 exits:
   north:
     roomid: 3089

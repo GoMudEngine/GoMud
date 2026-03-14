@@ -9,6 +9,10 @@ description: A sprawling mound of refuse and broken goods from the city
   the squalor, the heap clearly supports an entire ecosystem of vermin
   and scavengers who thrive on the city's waste.
 biome: land
+coord:
+  x: 9
+  y: 1
+  z: 0
 exits:
   east:
     roomid: 3005

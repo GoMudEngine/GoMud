@@ -9,6 +9,10 @@ description: The main road to Thornwall runs straight and wide here, paved with
   city guard's jurisdiction begins here. The walls of Thornwall loom ahead, grey
   and imposing, growing taller with each step east.
 biome: farmland
+coord:
+  x: -3
+  y: 0
+  z: 0
 exits:
   west:
     roomid: 440

@@ -8,6 +8,10 @@ description: An elevated platform of basalt slabs commands the highest point of 
   by day as faint discs against the pale sky. Elder Saris stands at the sighting device,
   observing.
 biome: desert
+coord:
+  x: -11
+  y: 11
+  z: 0
 mapsymbol: O
 maplegend: Observatory
 exits:

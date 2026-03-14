@@ -9,6 +9,10 @@ description: A narrow passage descending steeply into the earth. The
   Claw marks on the walls show that larger creatures use this route
   regularly.
 biome: cave
+coord:
+  x: 14
+  y: 9
+  z: 0
 exits:
   south:
     roomid: 3107

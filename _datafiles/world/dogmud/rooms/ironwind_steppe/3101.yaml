@@ -10,6 +10,10 @@ description: A broad cave entrance opens in the cliff face, wide
   cool to the touch, and the ceiling curves overhead in a natural
   vault. The passage leads deeper into darkness.
 biome: cave
+coord:
+  x: 13
+  y: 7
+  z: 0
 exits:
   north:
     roomid: 3103

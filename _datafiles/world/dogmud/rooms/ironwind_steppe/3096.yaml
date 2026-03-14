@@ -10,6 +10,10 @@ description: A wide clearing where the boars have destroyed all
   stand at the clearing's edges, and deep ruts in the earth
   mark where boars have been rooting.
 biome: land
+coord:
+  x: 15
+  y: -11
+  z: 0
 exits:
   north:
     roomid: 3094

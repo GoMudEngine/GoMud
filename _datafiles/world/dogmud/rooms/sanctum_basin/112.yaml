@@ -6,6 +6,10 @@ description: A circular courtyard surrounds a deep well of polished basalt -- on
   gather here between training sessions to rest and speak. The sound of the bucket
   on the windlass echoes across the quiet courtyard. Paths lead in all cardinal directions.
 biome: city
+coord:
+  x: -10
+  y: 10
+  z: 0
 exits:
   west:
     roomid: 111

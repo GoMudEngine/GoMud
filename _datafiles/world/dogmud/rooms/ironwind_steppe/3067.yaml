@@ -10,6 +10,10 @@ description: This stretch of coulee is perfect ambush territory --
   the floor at ankle height, and small piles of throwable stones
   sit on ledges overhead.
 biome: cliffs
+coord:
+  x: 17
+  y: -9
+  z: 0
 exits:
   west:
     roomid: 3064

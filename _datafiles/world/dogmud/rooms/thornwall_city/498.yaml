@@ -10,6 +10,10 @@ description: >
   sits beneath the table, secured with a brass lock. This is not a hideout
   -- it is an office, run with the efficiency of a legitimate business.
 biome: cave
+coord:
+  x: 1
+  y: -8
+  z: -2
 mapsymbol: T
 maplegend: Torvan
 exits:

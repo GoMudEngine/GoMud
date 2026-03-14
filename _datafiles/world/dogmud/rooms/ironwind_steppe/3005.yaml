@@ -10,6 +10,10 @@ description: A ring of charred stones marks where someone has been
   value. The camp is currently unoccupied, but recent footprints
   suggest it sees regular use.
 biome: land
+coord:
+  x: 10
+  y: 1
+  z: 0
 exits:
   west:
     roomid: 3002

@@ -9,6 +9,10 @@ description: The ravine shallows and widens here as it approaches
   beyond here their patrols are less frequent. The terrain
   opens into rolling grassland.
 biome: land
+coord:
+  x: 13
+  y: -14
+  z: 0
 exits:
   north:
     roomid: 3085

@@ -9,6 +9,10 @@ description: The western passage narrows to a crawlspace choked with loose rubbl
   sharp and eye-watering. Territorial markings, crudely daubed in something dark and
   sticky, cover the walls on either side of the squeeze.
 biome: cave
+coord:
+  x: -13
+  y: 7
+  z: -1
 exits:
   east:
     roomid: 301

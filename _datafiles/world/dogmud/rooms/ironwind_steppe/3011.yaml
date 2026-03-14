@@ -9,6 +9,10 @@ description: Endless sagebrush flats stretch in every direction, the
   bare soil -- the prints of rabbits, foxes, and something
   larger with padded paws.
 biome: land
+coord:
+  x: 13
+  y: 0
+  z: 0
 exits:
   west:
     roomid: 3010

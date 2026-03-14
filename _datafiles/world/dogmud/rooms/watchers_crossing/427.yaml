@@ -8,6 +8,10 @@ description: Beyond the bridge the road climbs a low rise and straightens, point
   boundaries, and in the distance the dark line of a city wall is just visible against
   the sky. A stone marker stands at the roadside, carved with distances and directions.
 biome: plains
+coord:
+  x: -5
+  y: 0
+  z: 0
 exits:
   west:
     roomid: 422

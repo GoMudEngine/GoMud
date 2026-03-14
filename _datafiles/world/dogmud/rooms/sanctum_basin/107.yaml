@@ -7,6 +7,10 @@ description: You stand in the center of Sanctum Basin's small settlement -- a br
   Citizens and initiates move through the square, their voices low in the dry air.
   Roads lead in all directions from this central hub.
 biome: city
+coord:
+  x: -10
+  y: 9
+  z: 0
 mapsymbol: T
 maplegend: Town Square
 exits:

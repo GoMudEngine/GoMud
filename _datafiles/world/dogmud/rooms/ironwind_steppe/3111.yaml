@@ -10,6 +10,10 @@ description: A grotto littered with bones -- not the small prey
   crawlers and gnawers of the upper caves. The bones are arranged
   with an almost ritualistic neatness around the grotto's edges.
 biome: cave
+coord:
+  x: 12
+  y: 11
+  z: 0
 exits:
   south:
     roomid: 3108

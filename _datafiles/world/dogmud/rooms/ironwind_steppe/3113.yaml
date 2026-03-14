@@ -10,6 +10,10 @@ description: A natural cistern fills the center of this cave chamber
   moves in the deep water -- slow, patient ripples that have no
   visible source.
 biome: cave
+coord:
+  x: 14
+  y: 10
+  z: 0
 exits:
   north:
     roomid: 3114

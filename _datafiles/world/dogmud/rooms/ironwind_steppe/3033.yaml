@@ -9,6 +9,10 @@ description: Two trails meet here on the ridge's western face -- one
   naturally. The ridge crest is close above, and the wind whips
   past with enough force to stagger the unwary.
 biome: cliffs
+coord:
+  x: 14
+  y: -2
+  z: 0
 exits:
   north:
     roomid: 3032

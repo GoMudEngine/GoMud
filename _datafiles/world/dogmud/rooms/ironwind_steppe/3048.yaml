@@ -9,6 +9,10 @@ description: The dry creek bed widens here into a broad, flat expanse
   this natural low point. The clay is tessellated with drying
   cracks and dusted with salt deposits.
 biome: land
+coord:
+  x: 13
+  y: -4
+  z: 0
 exits:
   west:
     roomid: 3046

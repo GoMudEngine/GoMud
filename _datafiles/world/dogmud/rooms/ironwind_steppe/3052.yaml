@@ -8,6 +8,10 @@ description: The creek banks rise sharply here into low bluffs of
   stony, squeezed between the bluff walls. Small caves and overhangs
   in the bluff faces show signs of animal habitation.
 biome: land
+coord:
+  x: 12
+  y: -5
+  z: 0
 exits:
   north:
     roomid: 3046

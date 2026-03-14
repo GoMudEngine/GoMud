@@ -6,6 +6,10 @@ description: You stand on a narrow basalt ledge overlooking a sheer cliff face. 
   you to the north, though the cliff face provides no handholds for climbing. The
   wind carries the faint smell of sage and hot stone.
 biome: desert
+coord:
+  x: -11
+  y: 8
+  z: 0
 exits:
   east:
     roomid: 102

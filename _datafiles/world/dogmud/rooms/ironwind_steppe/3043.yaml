@@ -9,6 +9,10 @@ description: A broad, flat outcrop on the ridge's south face provides
   into the boar wallows and wolf ravines. The wind is steady but
   not violent here, blocked partially by the ridge above.
 biome: cliffs
+coord:
+  x: 16
+  y: 0
+  z: 0
 exits:
   north:
     roomid: 3042

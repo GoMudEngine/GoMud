@@ -10,6 +10,10 @@ description: The highest point of Ironwind Ridge, a broad dome of
   tears from your eyes and stealing your breath. This is the
   place that gives the ridge its name.
 biome: cliffs
+coord:
+  x: 15
+  y: 4
+  z: 0
 exits:
   south:
     roomid: 3037

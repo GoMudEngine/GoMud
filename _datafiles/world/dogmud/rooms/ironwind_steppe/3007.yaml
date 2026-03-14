@@ -8,6 +8,10 @@ description: A low spot in the terrain collects rainwater and city runoff
   stepping stones by whatever creatures frequent this place. The air
   is thick with the smell of wet earth and the buzz of insects.
 biome: land
+coord:
+  x: 10
+  y: -1
+  z: 0
 exits:
   north:
     roomid: 3003

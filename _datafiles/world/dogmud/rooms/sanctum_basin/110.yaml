@@ -6,6 +6,10 @@ description: The eastern reach of the basin is a wide expanse of pale scrubland,
   rustlings in the undergrowth betray the presence of valley rats. The land drops
   toward the cliff edge to the south and rises toward denser scrub to the north.
 biome: land
+coord:
+  x: -7
+  y: 9
+  z: 0
 exits:
   west:
     roomid: 109
