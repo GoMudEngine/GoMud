@@ -24,7 +24,7 @@ patterns:
 tree:
   root:
     text: "You look like you have been walking a while. I am Malk -- road peddler, when the road cooperates. It has not been cooperating."
-    hints: "You could ask about his quest or task, his goods, the road, or New Plymouth."
+    hints: "You could ask about a quest or task, goods, the road, or New Plymouth."
 
   nodes:
     - id: quest_start
