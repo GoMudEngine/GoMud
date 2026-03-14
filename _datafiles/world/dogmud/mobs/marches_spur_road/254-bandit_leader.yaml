@@ -1,0 +1,45 @@
+mobid: 254
+zone: Marches Spur Road
+statpool: 75
+itemdropchance: 25
+hostile: false
+maxwander: 0
+archetype: fighting
+groups:
+  - humanoid
+  - bandit
+idlecommands:
+  - 'emote leans against the barn wall with arms crossed'
+  - ''
+  - 'emote watches the door with flat assessment'
+  - ''
+  - 'emote rolls one shoulder slowly, settling her vest'
+  - ''
+activitylevel: 8
+character:
+  name: bandit leader
+  description: |
+    A broad-shouldered woman with close-cropped hair and a
+    scar running from her left ear to her jaw. She carries a
+    proper short sword -- not crude, maintained -- and wears
+    a leather vest with metal studs. She has the settled
+    confidence of someone who has held this barn for long
+    enough to consider it hers. Her eyes assess you the way
+    a merchant assesses goods: quickly, completely, with the
+    price already calculated.
+  speciesid: 1
+  level: 1
+  gold: 12
+  stats:
+    strength:
+      training: 10
+    dexterity:
+      training: 8
+    vitality:
+      training: 8
+    perception:
+      training: 6
+    willpower:
+      training: 5
+    charisma:
+      training: 4

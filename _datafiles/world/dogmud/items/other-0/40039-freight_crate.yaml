@@ -1,0 +1,13 @@
+itemid: 40039
+name: freight crate
+namesimple: crate
+description: A sturdy wooden crate bound with iron straps, the
+  kind used for road freight between trading posts. Stenciled
+  markings on the side identify it as a consignment of sundries
+  -- rope, lamp oil, dried provisions -- addressed to a peddler
+  operating the southern spur road. The lock has been forced
+  open and clumsily re-closed.
+type: object
+subtype: holdable
+uses: 0
+weight: 5.0

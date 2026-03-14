@@ -1,0 +1,38 @@
+mobid: 255
+zone: Marches Spur Road
+statpool: 45
+itemdropchance: 5
+hostile: false
+maxwander: 2
+archetype: fighting
+groups:
+  - animal
+  - canine
+  - predator
+# speciesid 10 is a placeholder -- update if a canine species
+# is added to the engine species table
+idlecommands:
+  - 'emote sniffs the air with ears swiveling'
+  - ''
+  - 'emote paces along the road edge, head low'
+  - ''
+  - 'emote scratches behind one ear with a hind leg'
+  - ''
+activitylevel: 15
+character:
+  name: scrub coyote
+  description: |
+    A lean, sandy-furred coyote with sharp amber eyes and a
+    ragged tail. It watches the road with the calculating
+    patience of a scavenger that has learned exactly how close
+    it can get before something becomes a problem. Its ribs
+    are visible under the thin coat -- not starving, but never
+    quite full.
+  speciesid: 10
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 5
+    perception:
+      training: 8

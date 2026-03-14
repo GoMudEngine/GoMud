@@ -1,0 +1,39 @@
+mobid: 253
+zone: Marches Spur Road
+statpool: 60
+itemdropchance: 15
+hostile: true
+maxwander: 1
+archetype: fighting
+groups:
+  - humanoid
+  - bandit
+idlecommands:
+  - 'emote scans the road, eyes narrowed against the dust'
+  - ''
+  - 'emote tests a blade edge with his thumb, nodding slightly'
+  - ''
+  - 'emote spits into the dust and shifts his weight'
+  - ''
+activitylevel: 10
+character:
+  name: road bandit
+  description: |
+    A rough-looking man in mismatched clothing, armed with a
+    crude blade and the particular alertness of someone who
+    makes their living watching roads. He has the lean,
+    sun-darkened look of someone who sleeps rough and eats
+    irregularly but stays dangerous regardless. His eyes
+    never stop moving.
+  speciesid: 1
+  level: 1
+  gold: 5
+  stats:
+    strength:
+      training: 8
+    dexterity:
+      training: 6
+    vitality:
+      training: 5
+    perception:
+      training: 5

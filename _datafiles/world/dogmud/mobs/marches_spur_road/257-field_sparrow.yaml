@@ -1,0 +1,33 @@
+mobid: 257
+zone: Marches Spur Road
+statpool: 10
+itemdropchance: 0
+hostile: false
+maxwander: 3
+groups:
+  - animal
+  - bird
+idlecommands:
+  - 'emote chirps twice from a fence post'
+  - ''
+  - 'emote hops along the ground pecking at seeds'
+  - ''
+  - 'emote flutters to a new perch, tilting its head'
+  - ''
+activitylevel: 25
+character:
+  name: field sparrow
+  description: |
+    A small brown bird with a russet cap, perched on whatever
+    is highest and closest. It watches the road with the busy
+    indifference of something that has never considered whether
+    the world is dangerous, because it has always been fast
+    enough not to care.
+  speciesid: 20
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 15
+    perception:
+      training: 10

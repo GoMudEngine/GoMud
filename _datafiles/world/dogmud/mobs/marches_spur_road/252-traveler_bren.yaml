@@ -1,0 +1,38 @@
+mobid: 252
+zone: Marches Spur Road
+statpool: 36
+itemdropchance: 0
+hostile: false
+maxwander: 2
+groups:
+  - humanoid
+  - gossiper
+idlecommands:
+  - 'emote adjusts his pack straps, shifting the weight'
+  - ''
+  - 'emote glances south toward the crossroads, squinting'
+  - ''
+  - 'emote stretches his shoulders with a quiet grunt'
+  - ''
+activitylevel: 18
+character:
+  name: traveler Bren
+  description: |
+    A lean man in road-worn traveling clothes, heading north
+    with the unhurried pace of someone who has learned that
+    the road gives you what it gives you and rushing changes
+    nothing. His eyes are reflective silver-gray, catching
+    light from angles that should not have any -- his mark
+    from the Chrysalis. He carries a large pack and walks
+    with the easy gait of long practice, weight balanced so
+    naturally it looks like the pack weighs nothing at all.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 6
+    perception:
+      training: 8
+    vitality:
+      training: 4

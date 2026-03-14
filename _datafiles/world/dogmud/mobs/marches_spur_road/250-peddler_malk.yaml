@@ -1,0 +1,39 @@
+mobid: 250
+zone: Marches Spur Road
+statpool: 40
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote checks his inventory, counting crates with quiet precision'
+  - ''
+  - 'emote adjusts a wobbly wheel on his handcart, frowning'
+  - ''
+  - 'emote stokes the small campfire, feeding it a stick at a time'
+  - ''
+activitylevel: 15
+character:
+  name: peddler Malk
+  description: |
+    A road peddler, middle-aged and weathered by seasons of
+    travel along the spur roads. His face is lined but patient,
+    the kind that comes from years of waiting out bad weather
+    and worse customers. His elongated fingers -- each pinky
+    bearing an extra joint that bends at an unnatural angle --
+    move deftly as he handles his goods. It is a small mutation,
+    easy to miss until he reaches for something and the fingers
+    flex wrong. He is organized, unhurried, the sort of person
+    who survives by being useful to everyone and threatening to
+    no one. He has been camped here longer than he planned.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    perception:
+      training: 8
+    charisma:
+      training: 6
+    willpower:
+      training: 4
