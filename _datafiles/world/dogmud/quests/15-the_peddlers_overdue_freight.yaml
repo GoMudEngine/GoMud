@@ -1,0 +1,29 @@
+questid: 15
+name: The Peddler's Overdue Freight
+description: A road peddler on the southern spur has been waiting
+  on a freight shipment that never arrived. Bandits on the road
+  may have intercepted it.
+secret: false
+
+steps:
+  - id: start
+    description: "Peddler Malk on the southern spur road has been
+      waiting on a freight shipment for days. He suspects bandits
+      on the road south intercepted it. Find the missing freight."
+    hint: "The bandits have been seen near an old barn off the
+      road, west of the farmland stretch."
+  - id: end
+    description: "You recovered Malk's freight crate and returned
+      it to him. He is grateful and has offered you better prices
+      on his road supplies."
+
+rewards:
+  playermessage: "Malk examines the crate, running his elongated
+    fingers over the forced lock. 'This is the one. Everything
+    accounted for, near enough.' He reaches into the cart and
+    produces a small purse. 'Road rate from me, any time you
+    need supplies. Better than road rate, in fact. I do not
+    forget a good turn.'"
+  roommessage: "Malk examines the recovered freight crate with
+    evident relief, already tallying his inventory."
+  gold: 15

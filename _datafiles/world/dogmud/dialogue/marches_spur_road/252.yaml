@@ -1,0 +1,39 @@
+mobid: 252
+zone: Marches Spur Road
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Good road to you."
+      - "Heading south? Mind the stretch near the barn."
+
+  - keywords: ["gossip", "news", "rumor", "rumors", "talk", "word"]
+    responses:
+      - "I keep my ears open. The road teaches you that."
+      - "Talk to the innkeeper. She collects news the way some people collect coins."
+
+  - keywords: [""]
+    responses:
+      - "Safe travels."
+
+tree:
+  root:
+    text: "Just passing through. Heading north to the crossing and then east to Thornwall, if the road holds."
+    hints: "Ask about Stillwater, the road, or the bloodline."
+
+  nodes:
+    - id: stillwater
+      triggers: ["stillwater", "lake", "south", "town"]
+      text: "Stillwater is a day or two south of the crossroads. Lake town, fishing mostly. Quiet place. Good people, the kind who do not ask too many questions about where you have been."
+
+    - id: road_conditions
+      triggers: ["road", "travel", "conditions", "safe"]
+      text: "The road north from the crossroads has had some trouble. Bandits near an old barn, they say. I came through at dawn and did not see anyone, but I walk fast and I do not carry much worth stealing."
+
+    - id: bloodline_talk
+      triggers: ["bloodline", "agents", "patrols", "questions"]
+      text: "Saw some people asking questions at the crossroads. The kind who do not buy anything and do not smile and have very clean boots for people who claim to be traveling. I did not linger."
+
+memory:
+  expiryPeriod: ""

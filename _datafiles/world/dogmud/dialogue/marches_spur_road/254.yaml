@@ -1,0 +1,44 @@
+mobid: 254
+zone: Marches Spur Road
+defaultMood: hostile
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "You are in the wrong place. State your business or leave."
+      - "This barn is occupied. What do you want?"
+
+  - keywords: [""]
+    responses:
+      - "We are done talking."
+      - "Make your choice. Pay or leave."
+
+tree:
+  root:
+    text: "You have walked into the wrong barn. You have got a moment before this gets ugly."
+    hints: "You could try to negotiate. Ask about a toll, deal, or the freight."
+
+  nodes:
+    - id: negotiate
+      triggers: ["toll", "deal", "negotiate", "pay", "talk", "terms", "business", "freight", "crate"]
+      text: "Nobody patrols this stretch. We do. That makes this road ours, and ours means there is a toll. Fifty gold gets you passage and whatever you came looking for. Or you can try to take it. Your call."
+      hints: "You could pay the toll or try to convince her this arrangement is bad for business."
+
+    - id: pay_toll
+      triggers: ["pay", "fine", "gold", "accept", "agree", "yes"]
+      text: "Smart. Fifty gold."
+      hints: "Pay the toll to avoid combat. The freight crate is in the crates against the back wall."
+      moodChange: neutral
+
+    - id: convince
+      triggers: ["convince", "persuade", "reason", "think", "trade", "traffic", "business", "profit"]
+      text: "You think you can talk me out of a living? Interesting. Go on then -- tell me why I should let a perfectly good toll operation go."
+      hints: "Make your case. This is a rhetoric check — your Charisma against her Willpower."
+
+    - id: refuse
+      triggers: ["no", "never", "refuse", "fight", "attack"]
+      text: "Your choice."
+      moodChange: hostile
+
+memory:
+  expiryPeriod: ""
