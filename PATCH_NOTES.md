@@ -1,5 +1,54 @@
 # DOGMud Patch Notes
 
+## 2026-03-14 — Zone Expansion, Spell Merge, Coordinate System
+
+### New Zone: Marches Spur Road
+A new 15-room zone connecting Watchers Crossing south to the Ashwick
+Crossroads — the first road into the wider Windward Marches.
+
+- **15 rooms** from scrubland through farmland to a waypoint inn and
+  crossroads junction
+- **The Broken Yoke Inn** — social hub with gossiper NPCs relaying
+  world events
+- **Peddler Malk** — road merchant and quest giver at a camp along
+  the spur
+- **Quest: The Peddler's Overdue Freight** — find a stolen freight
+  crate. Solve it through combat (clear the bandit barn) or diplomacy
+  (negotiate a toll with the bandit leader). Multiple breadcrumbs and
+  elephant-path coverage.
+- **Bandit Leader encounter** — non-hostile with a 5-round dialogue
+  window before she attacks. Talk fast or fight.
+- **Wildlife**: scrub coyotes, feral hogs, field sparrows, farm cats
+
+### Spell Changes
+- **Fold Anchor + Fold Recall merged** into a single toggle spell.
+  Cast once to set an anchor, cast again from elsewhere to teleport
+  back. No more needing to learn two spells for one mechanic. Existing
+  players with Fold Anchor gain recall automatically.
+- New dedicated help template for Fold Anchor explaining both modes.
+
+### Cartesian Coordinate System
+- All 224 existing rooms now have hidden `coord` fields (x, y, z)
+  for spatial validation
+- Full coordinate map at `docs/coordinate_map.md`
+- **3 geometry overlaps fixed** in Sanctum Basin and Ironwind Steppe
+  where rooms occupied the same coordinate
+- Cartesian consistency rules added to zone expansion standards
+
+### Bug Fixes
+- Fixed steppe rooms 3032/3082: replaced JS quest item scripts with
+  native container-based spawns
+- Removed extra mob spawn from goblin camp room 3070
+- Deleted stale instance saves that were overriding template edits
+
+### Infrastructure
+- Zone expansion plan (ZONE_EXPANSION.md): 22 zones, ~600 rooms
+  planned across the Windward Marches
+- Geography aligned to novel canon (What the Moons Keep)
+- AI player default host updated to dogmud.org
+
+---
+
 ## 2026-03-05 — Ironwind Steppe Rebuild, Quests & Ecosystem AI
 
 ### Ironwind Steppe Zone Rebuild
