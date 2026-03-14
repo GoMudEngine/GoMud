@@ -45,7 +45,7 @@ function onCommand(cmd, rest, user, room) {
             if ( user.HasItemId(RECIPE_ITEM_ID)
                  && !user.HasQuest("17-recipe") ) {
                 user.GiveQuest("17-recipe");
-                user.SendText('The drawer yields a single page of careful handwriting. You could use it to study the technique.');
+                user.SendText('The bedside table yields a single page of careful handwriting from its swollen drawer. You could use it to study the technique.');
             }
             return false; // Let engine handle container pickup
         }

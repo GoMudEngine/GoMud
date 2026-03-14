@@ -11,8 +11,8 @@ description: >
   purpose. Inside, bare shelves line the walls with dust
   outlines where books once stood. A cold hearth sits against
   the far wall. A loose stone near the hearth base looks
-  slightly displaced. A small bedside
-  table holds a swollen <ansi fg="itemname">drawer</ansi>.
+  slightly displaced. A small <ansi fg="itemname">bedside table</ansi>
+  sits against the wall, its single drawer swollen with damp.
 biome: farmland
 coord:
   x: -3
@@ -24,7 +24,7 @@ exits:
   south:
     roomid: 4024
 containers:
-  drawer:
+  bedside table:
     items:
       - itemid: 40042
 nouns:
@@ -55,10 +55,10 @@ nouns:
     from its neighbors. The edges are worn smooth as if it has
     been moved and replaced many times. It looks like it could
     be pushed aside.
-  drawer: A drawer in the small bedside table, swollen with
-    damp and stiff to open. The wood protests as it slides.
-    Inside, a folded page of careful handwriting rests against
-    the drawer bottom.
+  table: A small bedside table with a single drawer, swollen
+    with damp and stiff to open. The wood protests as it
+    slides. Inside, a folded page of careful handwriting
+    rests against the drawer bottom.
 spawninfo:
 - mobid: 267
 idlemessages:
