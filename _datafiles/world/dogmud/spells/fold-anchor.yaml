@@ -1,6 +1,6 @@
 spellid: fold-anchor
 name: Fold Anchor
-description: Sets a Chrysalis anchor at your location for later recall.
+description: Sets an anchor here, or recalls you to your existing anchor.
 type: helpsingle
 schools:
   - enhancement

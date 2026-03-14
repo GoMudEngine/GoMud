@@ -178,7 +178,7 @@ conviction-barrage, cleansing-wave.
 conviction-surge, iron-will, chrysalis-haste, mind-fog, nerve-disruption,
 empathic-shroud, vital-surge, chrysalis-regeneration, skill-attunement,
 mutation-catalyst, psychic-anchor, sensory-overload, conviction-armor,
-veil-sight, fold-anchor, fold-recall, mass-mend.
+veil-sight, fold-anchor (set/recall toggle), mass-mend.
 
 ### Summon Spells (2)
 chrysalis-construct, summon-hive-swarm.
