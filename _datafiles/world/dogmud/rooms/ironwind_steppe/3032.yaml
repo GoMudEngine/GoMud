@@ -33,6 +33,10 @@ nouns:
     crystal catches the light. It hums faintly and feels warm
     to the touch -- distinctly different from the surrounding
     stone. A geomancer would recognize this as windstone.
+containers:
+  veins:
+    items:
+      - itemid: 40032
 spawninfo:
 - mobid: 210
 - mobid: 210

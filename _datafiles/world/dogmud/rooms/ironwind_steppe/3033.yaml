@@ -14,6 +14,8 @@ exits:
     roomid: 3032
   west:
     roomid: 3018
+  east:
+    roomid: 3115
 nouns:
   cairn: A neat stack of flat stones, waist-high, clearly built
     by a person. A few pebbles have been wedged between the

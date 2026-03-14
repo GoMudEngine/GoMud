@@ -11,7 +11,7 @@ Usage:
     python tools/ai_player.py
 
     Environment variables (all optional):
-        MUD_HOST        default: localhost
+        MUD_HOST        default: dogmud.org:55555
         MUD_PORT        default: 55555
         OLLAMA_URL      default: http://localhost:11434/api/chat
         OLLAMA_MODEL    default: gemma3:12b
@@ -41,7 +41,7 @@ import telnetlib3
 # Configuration
 # ---------------------------------------------------------------------------
 
-MUD_HOST = os.environ.get("MUD_HOST", "localhost")
+MUD_HOST = os.environ.get("MUD_HOST", "dogmud.org")
 MUD_PORT = int(os.environ.get("MUD_PORT", "55555"))
 OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://localhost:11434/api/chat")
 OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "gemma3:12b")

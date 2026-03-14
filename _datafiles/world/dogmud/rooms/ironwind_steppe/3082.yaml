@@ -32,6 +32,10 @@ nouns:
     carved from steppe cedar with a leather cord at the base. It
     looks out of place among the carnage -- clearly not prey
     remains. Someone might want this back.
+containers:
+  bones:
+    items:
+      - itemid: 40033
 spawninfo:
 - mobid: 205
 - mobid: 215

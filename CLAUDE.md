@@ -11,11 +11,10 @@ Follow the branch strategy in `github_guide.md`:
 - Merge features into development with `--no-ff`
 - Use conventional commit messages (feat:, fix:, refactor:, docs:, chore:)
 
-## Stage Completion SOP
-After completing each substage (e.g., 3.6, 3.7, etc.):
-1. Update `DEVELOPMENT_PLAN.md` — mark the stage as ✅ COMPLETED with merge commit hash
-2. Update the timeline table status (e.g., "3.1–3.7 Complete")
-3. Update the "Current Stage" line at the bottom to reflect the next stage
+## Pre-Push SOP
+Before pushing to prod (origin/master), update `PATCH_NOTES.md` in the
+project root with dated entries describing the work being pushed. Group
+changes by category (features, fixes, balance, etc.).
 
 ## Room Instance Saves (Important!)
 When editing room YAML templates in `_datafiles/world/dogmud/rooms/`, always check for **instance saves** in `_datafiles/world/dogmud/rooms.instances/` that may override your changes. The engine loads templates first, then overwrites with instance data if present. After editing room templates:
