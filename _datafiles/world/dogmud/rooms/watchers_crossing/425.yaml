@@ -7,6 +7,8 @@ description: A muddy path leads down from the road to the river's edge, where th
   and where children come to skip stones on quiet afternoons. The bridge is visible
   upstream, its arches dark with moss and river spray. Downstream, the water deepens
   and the current quickens, pulling at anything that strays too far from shore.
+  A narrower track branches south from the river bank, marked by a leaning
+  signpost.
 biome: river
 coord:
   x: -8
@@ -15,6 +17,9 @@ coord:
 exits:
   north:
     roomid: 420
+  south:
+    roomid: 4000
+    zone: Marches Spur Road
 nouns:
   reeds: Tall river reeds grow in dense clumps along the waterline, their tops heavy
     with seed. Small birds flit between the stalks, chirping. The reeds would provide

@@ -1,0 +1,32 @@
+roomid: 4010
+zone: Marches Spur Road
+title: Descending Track
+description: The road drops from the ridge in a long, gradual descent
+  toward the inn below. The surface is well-packed and graveled, made
+  for heavy traffic. A wagon passes heading north, its driver nodding
+  without slowing. The sound of activity grows closer -- voices, the
+  creak of harness, the thump of something being loaded or unloaded.
+  The crossroads ahead draws traffic the way a river draws streams.
+biome: farmland
+coord:
+  x: -8
+  y: -10
+  z: 0
+exits:
+  north:
+    roomid: 4009
+  south:
+    roomid: 4011
+nouns:
+  road: The road here is well-maintained and wide enough for two wagons
+    to pass abreast. Gravel has been packed into the surface and rolled
+    flat, with drainage ditches cut along both sides. This stretch sees
+    heavy use -- the ground is worn smooth and hard as stone in places.
+  fields: Farmland stretches on both sides of the descending road, fields
+    of dark soil marked off by low stone walls. Some lie fallow, others
+    show the green lines of crops. A scarecrow tilts in the nearest
+    field, its straw hat askew and one arm pointing east.
+idlemessages:
+- Wagon wheels rumble somewhere nearby, the sound carrying on the still air.
+- A rider passes heading north, cloak dusty from the road.
+- Gravel crunches underfoot with each step on the well-packed road.

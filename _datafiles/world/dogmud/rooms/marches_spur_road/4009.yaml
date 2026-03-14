@@ -1,0 +1,36 @@
+roomid: 4009
+zone: Marches Spur Road
+title: Ridge View
+description: The road crests a gentle rise, and the land opens up ahead
+  in a broad view south. Chimney smoke rises in a steady column from
+  what must be an inn or waystation, its pale thread drawn straight up
+  in the still air. Beyond it, a cluster of signposts marks a crossroads
+  where several paths converge. This is the first real sign of the wider
+  world beyond the crossing -- roads branching to destinations that are
+  more than a name on a signpost.
+biome: farmland
+coord:
+  x: -8
+  y: -9
+  z: 0
+exits:
+  north:
+    roomid: 4008
+  south:
+    roomid: 4010
+nouns:
+  smoke: A steady column of chimney smoke rises from a building to the
+    south, gray-white against the sky. It does not waver or gust --
+    the air is calm here in the lee of the ridge. The smoke suggests a
+    large hearth, well-fed, the kind that burns all day for cooking
+    and warmth. An inn, most likely.
+  signposts: Too far to read from here, but a cluster of wooden posts
+    is visible at the crossroads to the south. Their arms point in
+    several directions, marking the junction of multiple roads. The
+    posts look weathered but maintained -- someone keeps them legible.
+spawninfo:
+- mobid: 252
+idlemessages:
+- The chimney smoke to the south rises straight and steady in the calm air.
+- A wagon appears on the road below, crawling south toward the crossroads.
+- The view from the ridge stretches for miles, hazy at the edges.

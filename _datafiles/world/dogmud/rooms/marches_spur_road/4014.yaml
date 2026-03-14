@@ -1,0 +1,41 @@
+roomid: 4014
+zone: Marches Spur Road
+title: Ashwick Crossroads
+description: Three roads meet here on a broad circle of packed earth,
+  worn hard by a thousand choices. A cluster of wooden signposts stands
+  at the center, their arms pointing in every direction. North reads
+  "Watchers Crossing, Thornwall." South reads "Amber Valley, the
+  Confluence." East reads "Ashwick, the Basin Retreats." Southwest
+  reads "Stillwater, New Plymouth." The ground is scuffed and rutted
+  from every angle, wheel tracks overlapping in a pattern that would
+  take a tracker hours to unravel. This is where the spur road ends
+  and the wider world begins.
+biome: farmland
+coord:
+  x: -8
+  y: -13
+  z: 0
+exits:
+  north:
+    roomid: 4013
+nouns:
+  signposts: A cluster of weathered wooden signposts driven into the
+    center of the crossroads. Each arm points a different direction,
+    distances marked in days rather than miles. The north-pointing arm
+    has been repainted recently, its letters crisp -- "Watchers Crossing,
+    1 day. Thornwall, 2 days." The others are faded but legible. Someone
+    maintains these posts, though not all with equal care.
+  junction: The roads converge on a roughly circular area of packed earth,
+    beaten flat and hard by years of traffic. Wheel ruts overlap from
+    every direction, cutting grooves that cross and recross in a dense
+    web. At the edges, the packed earth gives way to softer ground where
+    grass has been worn away but not yet compacted. A few flat stones
+    have been set into the ground as stepping points.
+idlemessages:
+- A wagon rolls through the crossroads heading south, wheels grinding
+  on the packed earth.
+- Wind catches a loose paper from somewhere and sends it tumbling across
+  the junction.
+- A traveler pauses at the signposts, studying the arms before choosing
+  a direction.
+- The crossroads hums with the quiet energy of a place where paths meet.

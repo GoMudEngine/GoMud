@@ -1,0 +1,38 @@
+roomid: 4005
+zone: Marches Spur Road
+title: Old Fence Line
+description: A line of rotting fence posts runs east to west across the
+  grassland, crossing the road at an angle. The wire is long gone --
+  scavenged or rusted away -- leaving only gray wooden posts leaning at
+  odd angles like broken teeth. Someone's abandoned claim, marked and
+  forgotten. The grass grows taller here, thick and green at the base
+  where richer soil holds more moisture. Whatever this land was meant
+  to be, the prairie is taking it back.
+biome: plains
+coord:
+  x: -8
+  y: -6
+  z: 0
+exits:
+  north:
+    roomid: 4004
+  south:
+    roomid: 4006
+nouns:
+  posts: Old hardwood fence posts, gray and split from years of weather.
+    They lean in different directions as if the ground has shifted beneath
+    them. Some still bear carved notches -- property markers or boundary
+    signs in a system nobody uses anymore. The wood is too weathered to
+    burn well but too stubborn to fall.
+  grass: The grass grows noticeably taller and thicker near the old fence
+    line. At the base, the blades are green and lush -- the soil here is
+    richer, darker, holding moisture that the open plain cannot. Whatever
+    was planted here once has been replaced by wild growth, but the earth
+    remembers cultivation.
+spawninfo:
+- mobid: 253
+idlemessages:
+- A fence post groans as the wind pushes against it, leaning further.
+- Something moves through the tall grass nearby -- a rustle and then
+  silence.
+- A hawk circles high overhead, riding the thermals without a wingbeat.

@@ -1,0 +1,37 @@
+roomid: 4000
+zone: Marches Spur Road
+title: Spur Road, Southern Fork
+description: The road forks here, the main track continuing north toward
+  the river crossing while a narrower path splits south into open country.
+  A weathered signpost stands at the junction, its arms pointing in both
+  directions. The southern road is less traveled -- wagon ruts shallow and
+  half-filled with dust, scrub grass crowding closer to the packed earth
+  on either side. The air is drier here, the river's dampness fading with
+  each step away from the water.
+biome: plains
+coord:
+  x: -8
+  y: -2
+  z: 0
+exits:
+  north:
+    roomid: 425
+    zone: Watchers Crossing
+  south:
+    roomid: 4001
+nouns:
+  signpost: A tall wooden post with three plank arms. The north-facing arm
+    reads "Watchers Crossing" in faded paint. The south arm lists three
+    destinations in progressively rougher script -- "Ashwick Crossroads,
+    2 days" then "Stillwater, 4 days" then "New Plymouth, 7 days." The
+    south plank has been repainted recently, the letters sharper and darker
+    than the rest.
+  ruts: Wagon ruts score the road heading south, but they are shallower
+    than the deep-cut tracks on the main road north. Whatever traffic
+    passes this way is lighter and less frequent. Dust has settled into
+    the grooves, softening their edges.
+idlemessages:
+- Wind rattles the signpost arms, making them creak on their bolts.
+- A tuft of dried grass tumbles across the fork and catches in the ruts.
+- The sound of the river fades behind you, replaced by the whisper of wind
+  through scrub.
