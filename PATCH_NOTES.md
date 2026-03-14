@@ -20,6 +20,31 @@ Crossroads — the first road into the wider Windward Marches.
   window before she attacks. Talk fast or fight.
 - **Wildlife**: scrub coyotes, feral hogs, field sparrows, farm cats
 
+### New Zone: Ashwick
+Maren's home hamlet from the novel, 20 rooms east of the Ashwick
+Crossroads. A quiet farming village with secrets beneath the surface.
+
+- **20 rooms** — hamlet proper (central green, chapel, farmstead,
+  ritual circle, well, Delia's cottage) plus forest outskirts
+  leading into deep woods
+- **Delia the herbalist** — quest giver and alchemy crafting station
+- **Deacon Ferris** — lore NPC with quest-gated deeper dialogue
+- **The Forager (Sev)** — a hollow person hiding in the woods,
+  mirroring the novel's themes of identity and concealment
+- **Quest: The Herbalist's Shortage** — someone is harvesting
+  Delia's herbs. Negotiate with the forager or find an alternate
+  source in a hidden Chrysalis-touched grove.
+- **Quest: The Empty Cottage** — explore Maren's abandoned family
+  home. Push a loose hearthstone to find a hidden letter mentioning
+  "the hill" and "Voss in New Plymouth." Study a recipe page from
+  the bedside table to advance your foraging skill.
+- **Novel breadcrumbs** throughout — scorch mark on the ritual
+  circle, inner orbit symbol at the well and chapel, the cottage's
+  empty shelves and cold hearth. Layered discovery rewards
+  attentive players without frontloading spoilers.
+- **Wildlife**: timber wolves, briar hawks, forest foxes, village
+  chickens, a cottage mouse
+
 ### Spell Changes
 - **Fold Anchor + Fold Recall merged** into a single toggle spell.
   Cast once to set an anchor, cast again from elsewhere to teleport
