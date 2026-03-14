@@ -10,8 +10,8 @@ description: >
   vacated, the particular quiet of a place someone left on
   purpose. Inside, bare shelves line the walls with dust
   outlines where books once stood. A cold hearth sits against
-  the far wall. A loose <ansi fg="itemname">stone</ansi> near
-  the hearth base looks slightly displaced. A small bedside
+  the far wall. A loose stone near the hearth base looks
+  slightly displaced. A small bedside
   table holds a swollen <ansi fg="itemname">drawer</ansi>.
 biome: farmland
 coord:
@@ -24,7 +24,7 @@ exits:
   south:
     roomid: 4024
 containers:
-  stone:
+  cavity:
     items:
       - itemid: 40041
   drawer:
@@ -56,8 +56,13 @@ nouns:
     except for one near the base.
   stone: A loose stone near the hearth base, slightly displaced
     from its neighbors. It moves when pressed, shifting inward
-    to reveal a small cavity behind it. The edges are worn
-    smooth from being moved and replaced many times.
+    to reveal a small <ansi fg="itemname">cavity</ansi> behind
+    it. The edges are worn smooth from being moved and replaced
+    many times.
+  cavity: A small hollow space behind the loose hearthstone,
+    just large enough to hold a folded letter. The walls of
+    the cavity are smooth -- this hiding spot was made on
+    purpose, not found by accident.
   drawer: A drawer in the small bedside table, swollen with
     damp and stiff to open. The wood protests as it slides.
     Inside, a folded page of careful handwriting rests against

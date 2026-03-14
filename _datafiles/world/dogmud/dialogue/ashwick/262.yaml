@@ -16,20 +16,25 @@ patterns:
 tree:
   root:
     text: "You should not have come this deep into the forest. This is my camp. I am not looking for company."
-    hints: "You could ask about the herbs, why they are hiding, or try to negotiate."
+    hints: "You could ask about the herbs, or why someone would camp alone this deep in the woods."
+    variants:
+      - questRequired: ["16-end"]
+        text: "You came back. I did not expect that."
+        hints: "You could ask about the arrangement with Delia, or ask for a name."
 
   nodes:
     - id: why_herbs
       triggers: ["herbs", "taking", "why", "steal", "forest", "delia"]
+      questExcluded: ["16-end"]
       text: "I need them. To trade. In towns where nobody knows my face. It is the only skill I have that is worth anything without showing myself in a market. I know what I am taking and I know it causes problems for the woman in the village and I am sorry about that but I do not have a better option."
-      hints: "You could ask more about who they are, or propose an arrangement."
+      hints: "You could ask about the hiding, or propose an arrangement."
       moodChange: neutral
 
     - id: hollow_reveal
       triggers: ["hollow", "unchanged", "no change", "what are you", "who", "hiding"]
       requires: ["why_herbs"]
       text: "You know what I am. Or you would not be asking like that. I have no change. No mutation. No mark. I am what the temples call hollow and the songs call unblooded and what I call a person who has to be very careful about who sees them."
-      hints: "You could try to negotiate an arrangement with Delia on their behalf."
+      hints: "You could try to propose an arrangement with Delia."
       moodChange: neutral
 
     - id: negotiate
@@ -38,11 +43,11 @@ tree:
       questExcluded: ["16-end"]
       grantsQuest: "16-forager"
       text: "Work with the herbalist? She would have to know what I am. And she would have to not care. You think she would accept that? You think a woman in a village with a deacon and a ritual circle and the whole weight of what people believe about the unchanged would just... take me on?"
-      hints: "Return to Delia and tell her about the forager. Vouch for them."
+      hints: "Return to Delia and vouch for the arrangement."
       moodChange: neutral
 
     - id: negotiate_done
-      triggers: ["negotiate", "work", "delia", "help", "arrangement"]
+      triggers: ["negotiate", "work", "delia", "help", "arrangement", "herbs", "how"]
       questRequired: ["16-end"]
       text: "You spoke to her? And she said yes? I -- I do not know what to say. I will go to her. Carefully. Thank you."
       moodChange: friendly
