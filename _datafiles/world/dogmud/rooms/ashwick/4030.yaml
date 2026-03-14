@@ -1,0 +1,45 @@
+roomid: 4030
+zone: Ashwick
+title: Deep Woods
+description: >
+  The forest deepens here. The path narrows as undergrowth
+  thickens on both sides -- dense ferns and bramble pressing
+  close. Less light reaches the floor, the canopy heavier
+  and more complete. Hamlet sounds are gone, replaced by the
+  forest's own vocabulary of creaks, rustles, and bird calls.
+  Something has been through here recently, breaking small
+  branches at waist height -- someone pushing through
+  carrying something bulky, like bundles of herbs. The breaks
+  are clean and recent, sap still beading on the snapped
+  ends.
+biome: forest
+coord:
+  x: -3
+  y: -11
+  z: 0
+exits:
+  south:
+    roomid: 4029
+  north:
+    roomid: 4031
+nouns:
+  undergrowth: Dense ferns and bramble crowding the path from
+    both sides. The growth is thick enough to be impassable
+    off-trail without a blade. Thorns catch at clothing and
+    exposed skin. The path itself stays clear -- walked
+    regularly enough to keep the undergrowth at bay.
+  breaks: Small branches snapped at waist height along the
+    path's edge. The breaks are recent -- sap still beading
+    on the exposed wood. Someone has been pushing through
+    here carrying something bulky, probably bundles of herbs
+    or gathered material. The snapped branches are consistent
+    in height and direction, the same person making the same
+    trip repeatedly.
+spawninfo:
+- mobid: 263
+- mobid: 265
+idlemessages:
+- Something moves in the undergrowth -- a rustle, then
+  silence.
+- A hawk cries from above the canopy, sharp and predatory.
+- A branch snaps somewhere deeper in the woods.

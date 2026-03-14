@@ -1,0 +1,43 @@
+roomid: 4026
+zone: Ashwick
+title: Old Well
+description: >
+  The hamlet's well stands north of the gate, a stone-ringed
+  shaft with a wooden winch and frayed rope. The stones are
+  old, older than most of the hamlet, and carvings run around
+  the base -- water blessings in standard Chrysalis
+  iconography, worn smooth by weather and touching hands.
+  Among the blessings, one set of <ansi fg="itemname">marks
+  </ansi> is different. Partially overgrown with moss, it
+  predates the others by what might be generations. The well
+  water is clean and cold, the winch functional if creaky.
+  People still draw from this well daily.
+biome: farmland
+coord:
+  x: -7
+  y: -12
+  z: 0
+exits:
+  south:
+    roomid: 4015
+nouns:
+  well: A stone-ringed well, deep enough that dropped pebbles
+    take a long count before the splash. The water is clean
+    and cold -- Ashwick's primary water source. The winch is
+    wooden with an iron handle, the rope frayed but holding.
+    Someone has tied a knot where the fibers are thinnest.
+    The stone rim is worn into shallow grooves where buckets
+    have scraped for generations.
+  marks: Most carvings around the well base are water blessings
+    in standard Chrysalis iconography -- spirals with wave
+    motifs, prayers for clean water and good health. One mark
+    is older, partially overgrown with moss. It is NOT a
+    blessing. The inner orbit symbol -- concentric rings with
+    radial lines -- the same geometry found on old maps and
+    temple doorways. Someone carved it here long ago, before
+    the Chrysalis blessings covered the rest of the stone.
+idlemessages:
+- The well rope creaks in the wind, swaying over the dark
+  shaft.
+- Water echoes from far below, a hollow and distant sound.
+- Moss shifts on the old stones as the breeze dries its edges.

@@ -1,0 +1,43 @@
+roomid: 4015
+zone: Ashwick
+title: Village Gate
+description: >
+  A low stone wall runs north and south along the hamlet's
+  western edge, broken here by a wooden gate rusted permanently
+  open on its hinges. Beyond it, the hamlet of Ashwick is
+  visible -- small, tidy, unremarkable. Packed-earth road leads
+  east between fieldstone houses. A faded sign hangs from a post
+  beside the gate, swaying slightly in the wind. The wall is
+  more boundary marker than defense, barely waist-high, the
+  kind of barrier that keeps goats in rather than enemies out.
+biome: farmland
+coord:
+  x: -7
+  y: -13
+  z: 0
+exits:
+  west:
+    roomid: 4014
+    zone: Marches Spur Road
+  east:
+    roomid: 4016
+  north:
+    roomid: 4026
+  south:
+    roomid: 4025
+nouns:
+  gate: A wooden gate set into the low stone wall, its iron
+    hinges rusted open in a permanent welcome. The wood is
+    weathered grey and cracked along the grain, but the frame
+    still stands solid. It has not been closed in years --
+    perhaps decades. More boundary marker than barrier, it
+    marks where the road becomes a hamlet.
+  sign: A plain wooden sign nailed to a post beside the gate.
+    "Ashwick" is painted in faded black letters, the strokes
+    neat but old. Below the name, a date has been carved into
+    the wood, but weather has worn the numbers smooth and
+    unreadable. The sign tilts slightly on its post.
+idlemessages:
+- Wind funnels through the open gate with a low whistle.
+- A dog barks somewhere deeper inside the hamlet.
+- The sign creaks on its post as the breeze shifts.

@@ -1,0 +1,50 @@
+roomid: 4033
+zone: Ashwick
+title: Hidden Grove
+description: >
+  A deeper grove, less visited than the clearing to the south.
+  The herbs here are untouched -- no harvest cuts, no trampled
+  undergrowth. Older growth, rare varieties that an herbalist
+  would recognize but not expect this close to a hamlet. And
+  something is wrong. The colors are too vivid, greens deeper
+  than they should be, edges of leaves carrying a faint
+  bioluminescence visible even in daylight. Stems lean toward
+  you as you pass, tracking movement like sunflowers track
+  the sun. The Chrysalis is active in this soil. The air
+  hums faintly, felt more than heard.
+biome: forest
+coord:
+  x: -4
+  y: -9
+  z: 0
+exits:
+  south:
+    roomid: 4032
+  north:
+    roomid: 4034
+containers:
+  herbs:
+    items:
+      - itemid: 40040
+nouns:
+  herbs: Rare medicinal plants growing in profusion -- species
+    that Delia would recognize from old texts but not expect
+    to find within a day's walk of Ashwick. The Chrysalis
+    influence has produced something unusual here. Leaves
+    glow faintly at their edges, a bioluminescence that
+    pulses slowly like breathing. The plants are potent,
+    their scent almost overwhelming.
+  growth: The plants in this grove are subtly wrong. Colors
+    too vivid, greens that seem to pulse with inner light.
+    Stems lean toward movement, tracking you as you pass.
+    Faint bioluminescence edges the leaves, visible even
+    in the filtered daylight. The Chrysalis is active in
+    this soil -- whatever force drives transformation has
+    concentrated here, producing growth that is beautiful
+    and deeply unsettling.
+idlemessages:
+- A faint luminescence pulses at the edge of vision, then
+  fades.
+- The grove is unnaturally still -- no birdsong, no insects.
+- A low hum rises from the soil, felt through the feet more
+  than heard.

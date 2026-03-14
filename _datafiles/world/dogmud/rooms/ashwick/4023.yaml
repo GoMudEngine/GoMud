@@ -1,0 +1,71 @@
+roomid: 4023
+zone: Ashwick
+title: Maren's Cottage
+description: >
+  An abandoned cottage standing apart from the rest of Ashwick,
+  its garden gone wild and a faded "for sale" sign nailed to
+  the door. The shutters are closed from inside, though a gap
+  in one lets a thin blade of light cut across the dusty
+  interior. The silence here is specific -- not empty but
+  vacated, the particular quiet of a place someone left on
+  purpose. Inside, bare shelves line the walls with dust
+  outlines where books once stood. A cold hearth sits against
+  the far wall. A loose <ansi fg="itemname">stone</ansi> near
+  the hearth base looks slightly displaced. A small bedside
+  table holds a swollen <ansi fg="itemname">drawer</ansi>.
+biome: farmland
+coord:
+  x: -3
+  y: -14
+  z: 0
+exits:
+  north:
+    roomid: 4019
+  south:
+    roomid: 4024
+containers:
+  stone:
+    items:
+      - itemid: 40041
+  drawer:
+    items:
+      - itemid: 40042
+nouns:
+  sign: A hand-painted "for sale" sign nailed crookedly to
+    the door, its paint faded to a ghost of the original
+    black. It has been here long enough that nobody in
+    Ashwick expects it to work. The nail is rusted into
+    the wood.
+  door: Unlocked, the latch lifting easily as if left that
+    way on purpose. The hinges protest with a thin squeal
+    when moved. No one has locked this door since the
+    occupant left.
+  windows: Shuttered from inside, latched but not locked.
+    One shutter has warped enough to leave a gap where thin
+    light enters, cutting a bright line across the dusty
+    floor. Cobwebs bridge the gap.
+  shelf: A row of shelves along one wall, mostly bare. Dust
+    outlines show where books once stood -- different sizes,
+    a small library for a hamlet cottage. One book remains,
+    spine cracked, a pressed fennel flower between its pages.
+    The rest were taken deliberately.
+  hearth: Cold and unused for years. Soot patterns on the
+    stones suggest someone once sat very close, seeking warmth
+    from a fire not lit -- the habit of cold comfort. A faint
+    smell of old lamp oil lingers. The hearthstones are solid
+    except for one near the base.
+  stone: A loose stone near the hearth base, slightly displaced
+    from its neighbors. It moves when pressed, shifting inward
+    to reveal a small cavity behind it. The edges are worn
+    smooth from being moved and replaced many times.
+  drawer: A drawer in the small bedside table, swollen with
+    damp and stiff to open. The wood protests as it slides.
+    Inside, a folded page of careful handwriting rests against
+    the drawer bottom.
+spawninfo:
+- mobid: 267
+idlemessages:
+- A mouse scurries across the floor and vanishes behind the
+  shelves.
+- Dust motes drift through the thin light from the shutter gap.
+- The smell of old wood and absence fills the still air.

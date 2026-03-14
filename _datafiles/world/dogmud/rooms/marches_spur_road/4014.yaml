@@ -18,6 +18,9 @@ coord:
 exits:
   north:
     roomid: 4013
+  east:
+    roomid: 4015
+    zone: Ashwick
 nouns:
   signposts: A cluster of weathered wooden signposts driven into the
     center of the crossroads. Each arm points a different direction,

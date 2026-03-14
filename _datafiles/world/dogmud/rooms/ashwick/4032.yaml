@@ -1,0 +1,45 @@
+roomid: 4032
+zone: Ashwick
+title: Herb Clearing
+description: >
+  A natural clearing where a fallen tree opened the canopy
+  years ago, letting sunlight pour onto the forest floor.
+  The result is a dense carpet of medicinal herbs -- feverfew,
+  bitter-thistle, healers-root -- growing richer here than
+  in any tended garden. Signs of recent harvesting are
+  everywhere: clean cuts on stems, bare patches where plants
+  were taken at the root. Whoever is harvesting knows what
+  they are doing -- the cuts are precise, leaving enough
+  for regrowth. A path leads east to a camp and north
+  deeper into the woods.
+biome: forest
+coord:
+  x: -4
+  y: -10
+  z: 0
+exits:
+  east:
+    roomid: 4031
+  north:
+    roomid: 4033
+nouns:
+  herbs: Dense medicinal herbs thriving in the clearing's
+    sunlight. Feverfew with its white daisy-like flowers,
+    bitter-thistle with purple heads and sharp leaves,
+    healers-root with its distinctive red-veined stems.
+    Some patches have been recently harvested -- stems cut
+    cleanly with a sharp blade, not torn. The harvester
+    left enough root stock for regrowth. Skilled work.
+  clearing: A natural gap in the forest canopy where a large
+    tree fell years ago. The fallen trunk is moss-covered
+    and decomposing, returning its substance to the soil.
+    Sunlight feeds the herb growth here, producing plants
+    richer and more potent than anything in Delia's garden.
+    The clearing is perhaps fifteen paces across, a bright
+    island in the dim forest.
+spawninfo:
+- mobid: 265
+idlemessages:
+- Sunlight shifts across the clearing as clouds move overhead.
+- Insects hum among the herb flowers, a steady drone.
+- A butterfly traces a lazy circuit of the clearing's edge.
