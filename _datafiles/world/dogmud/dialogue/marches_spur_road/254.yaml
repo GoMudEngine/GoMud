@@ -22,7 +22,7 @@ tree:
     - id: negotiate
       triggers: ["toll", "deal", "negotiate", "pay", "talk", "terms", "business", "freight", "crate"]
       text: "Nobody patrols this stretch. We do. That makes this road ours, and ours means there is a toll. Fifty gold gets you passage and whatever you came looking for. Or you can try to take it. Your call."
-      hints: "You could pay the toll or try to convince her this arrangement is bad for business."
+      hints: "You could pay the toll or try to argue that this arrangement is bad for business."
 
     - id: pay_toll
       triggers: ["pay", "fine", "gold", "accept", "agree", "yes"]
@@ -33,7 +33,7 @@ tree:
     - id: convince
       triggers: ["convince", "persuade", "reason", "think", "trade", "traffic", "business", "profit"]
       text: "You think you can talk me out of a living? Interesting. Go on then -- tell me why I should let a perfectly good toll operation go."
-      hints: "Make your case. This is a rhetoric check — your Charisma against her Willpower."
+      hints: "Make your case. This is a rhetoric check — your Charisma against the leader's Willpower."
 
     - id: refuse
       triggers: ["no", "never", "refuse", "fight", "attack"]
