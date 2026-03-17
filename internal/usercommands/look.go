@@ -2,6 +2,7 @@ package usercommands
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
@@ -151,6 +152,13 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	}
 
 	containerName := room.FindContainerByName(lookAt)
+	if containerName != `` {
+		if container, exists := room.Containers[containerName]; exists && container.Hidden {
+			if user == nil || !user.Character.HasDiscovery(room.RoomId, containerName) {
+				containerName = `` // Treat as not found
+			}
+		}
+	}
 	if containerName != `` {
 
 		itemNames := []string{}
@@ -315,6 +323,15 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	// Look for any nouns in the room info
 	//
 	foundNoun, foundDesc := room.FindNoun(lookAt)
+	if foundNoun == "" && user != nil {
+		// Check discovered hidden nouns
+		if key, hn, ok := room.FindHiddenNoun(lookAt); ok {
+			if user.Character.HasDiscovery(room.RoomId, key) {
+				foundNoun = key
+				foundDesc = hn.Description
+			}
+		}
+	}
 	if len(foundNoun) > 0 {
 
 		user.SendText(``)
@@ -525,6 +542,23 @@ func lookRoom(user *users.UserRecord, roomId int, secretLook bool) {
 	textOut, _ = templates.Process("descriptions/room", details, user.UserId)
 	user.SendText(textOut)
 
+	// Append discovered hidden noun descriptions
+	if user != nil && room.HiddenNouns != nil {
+		hiddenKeys := make([]string, 0, len(room.HiddenNouns))
+		for k := range room.HiddenNouns {
+			hiddenKeys = append(hiddenKeys, k)
+		}
+		sort.Strings(hiddenKeys)
+		for _, key := range hiddenKeys {
+			if user.Character.HasDiscovery(room.RoomId, key) {
+				hn := room.HiddenNouns[key]
+				if hn.HiddenDescription != "" {
+					user.SendText(hn.HiddenDescription)
+				}
+			}
+		}
+	}
+
 	signCt := 0
 	privateSigns := room.GetPrivateSigns()
 	for _, sign := range privateSigns {
@@ -553,6 +587,13 @@ func lookRoom(user *users.UserRecord, roomId int, secretLook bool) {
 
 	groundStuff := []string{}
 	for containerName, container := range room.Containers {
+
+		// Skip hidden containers the user hasn't discovered
+		if container.Hidden {
+			if user == nil || !user.Character.HasDiscovery(room.RoomId, containerName) {
+				continue
+			}
+		}
 
 		chestName := fmt.Sprintf(`<ansi fg="container">%s</ansi>`, containerName)
 

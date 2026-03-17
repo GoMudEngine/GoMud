@@ -21,6 +21,13 @@ func Unlock(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	}
 
 	containerName := room.FindContainerByName(args[0])
+	if containerName != `` {
+		if c, exists := room.Containers[containerName]; exists && c.Hidden {
+			if user == nil || !user.Character.HasDiscovery(room.RoomId, containerName) {
+				containerName = ``
+			}
+		}
+	}
 	exitName, _ := room.FindExitByName(args[0])
 
 	if containerName != `` {
