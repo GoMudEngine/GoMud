@@ -2076,7 +2076,7 @@ func TestCharacter_GetSkillLevel(t *testing.T) {
 			name: "Nil Skills map",
 			args: args{
 				skillsMap: nil,
-				skillTag:  skills.Tracking,
+				skillTag:  skills.Search,
 			},
 			expected: 0,
 		},
@@ -2086,9 +2086,9 @@ func TestCharacter_GetSkillLevel(t *testing.T) {
 				skillsMap: map[string]int{
 					string(skills.Cast):      2,
 					string(skills.WeaponCombat): 1,
-					string(skills.Tracking):       4,
+					string(skills.Search):       4,
 				},
-				skillTag: skills.Tracking,
+				skillTag: skills.Search,
 			},
 			expected: 4,
 		},

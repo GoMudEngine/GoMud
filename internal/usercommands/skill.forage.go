@@ -42,7 +42,7 @@ func Forage(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		return true, fmt.Errorf("you're doing that too often")
 	}
 
-	forageSkill := int(math.Round(float64(user.Character.GetSkillLevel(skills.Foraging)) * float64(configs.GetBalanceConfig().SkillWeight)))
+	forageSkill := int(math.Round(float64(user.Character.GetSkillLevel(skills.Search)) * float64(configs.GetBalanceConfig().SkillWeight)))
 	perceptionAdj := user.Character.Stats.Perception.ValueAdj
 	successOdds := 20 + (forageSkill * 5) + int(math.Ceil(float64(perceptionAdj)/10))
 	if successOdds > 90 {
@@ -72,7 +72,7 @@ func Forage(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	user.Character.StoreItem(newItem)
 	events.AddToQueue(events.ItemOwnership{UserId: user.UserId, Item: newItem, Gained: true})
-	user.Character.OnSkillUse(`foraging`, user.UserId)
+	user.Character.OnSkillUse(`search`, user.UserId)
 
 	user.SendText(fmt.Sprintf(`You find a <ansi fg="itemname">%s</ansi>.`, newItem.DisplayName()))
 
