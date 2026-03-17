@@ -22,22 +22,25 @@ The DOGMud skills system provides a dual-layer character development framework c
 | `spellcasting` | All magic — elemental, enhancement, vital schools |
 | `psionics` | Mental powers — telepathy, telekinesis, illusion |
 
-### DOG Non-Combat Skills (Stage 3.8)
+### DOG Non-Combat Skills (Stage 3.8+)
 | Skill Tag | Covers |
 |-----------|--------|
 | `first-aid` | Healing others, treating wounds, stabilizing |
 | `stealth` | Sneaking, hiding, avoiding detection |
-| `tracking` | Finding creatures/players, reading trails |
+| `search` | Finding hidden objects, creatures, exits; tracking and foraging |
 | `bartering` | Trade prices, negotiation, appraisal |
-| `foraging` | Gathering resources — herbs, wood, ore, food |
 
-### Legacy GoMud Skills (15 total — still functional)
+### Legacy GoMud Skills (13 total — 2 removed in discovery system)
 ```go
 Cast, DualWield, Map, Enchant, Peep, Inspect, Portal,
-Search, Track, Skulduggery, Brawling, Scribe, Protection, Tame, Trading
+Skulduggery, Brawling, Scribe, Protection, Tame, Trading
 ```
 
-Legacy skills that overlap with DOG skills (Track↔tracking, Skulduggery↔stealth, Trading↔bartering) currently exist as separate skills. Aliasing is deferred to a future stage.
+**Removed in search system:**
+- `Track` — merged into `search` skill
+- `Foraging` — merged into `search` skill
+
+Legacy skill `Skulduggery` still exists separately (overlaps with `stealth` but aliasing is deferred).
 
 ## Architecture
 
@@ -66,6 +69,7 @@ func init() {
 - `GetSkillLevel(tag)` returns current rank
 - `GetCombatSkillTag()` routes to weapon-appropriate combat skill
 - `GetCombatSkillLevel()` returns combat skill rank with Brawling fallback
+- **Migration on load**: `search = max(tracking, foraging)`, old skills removed (runs before `ensureAllSkills()` in `Validate()`)
 
 ## Progression System (`characters/progression.go`)
 
@@ -120,6 +124,31 @@ Based on profession completion percentage:
 - `journeyman` (≥ 60%)
 - `expert` (≥ 90%)
 - `demigod` (all professions mastered)
+
+## Search Skill Details
+
+The `search` skill replaces and consolidates the legacy `Track` and `Foraging` skills:
+
+### Governing Stat
+- **Perception** — base attribute driving discovery effectiveness
+
+### Commands Using Search
+- **`search`** — Find hidden objects, containers, exits, creatures in current room
+- **`track`** — Follow hidden tracks of creatures/players
+- **`forage`** — Gather hidden resources from environment
+
+All three use the unified search score formula: `dice.RollStat(Perception + SkillMultiplier(searchRank) * 25.0)`
+
+### Migration Path
+When a character loads from disk:
+1. Check if legacy `Track` and/or `Foraging` skills exist
+2. Set `search = max(track_rank, foraging_rank)`
+3. Remove `Track` and `Foraging` from skills map
+4. This runs in `Validate()` **before** `ensureAllSkills()` so migration completes before missing skills are auto-added
+
+### Soft Cap
+- Default soft cap: 50 (same as other skills)
+- Progression curve unchanged from other use-based skills
 
 ## Dependencies
 
