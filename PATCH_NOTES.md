@@ -1,5 +1,52 @@
 # DOGMud Patch Notes
 
+## 2026-03-17 — Bug Fix Day + Hidden Object Discovery System
+
+### Bug Fixes (9 issues from playtesting)
+- Conviction regen bumped to 2% per tick (matches health/stamina)
+- Removed legacy tame-on-kill messages (taming now uses spells)
+- Fixed disarm crit triggering on unarmed/disabled-slot targets
+- Fixed misspelled commands showing "can't do that in combat"
+  instead of "command not recognized"
+- Fixed 2H weapon + extra arms exploit (extra arm slots now
+  cleared when equipping a two-handed weapon)
+- Fixed fold-anchor recall failing due to type mismatch
+- Fixed gossip system — NPCs now report mob kills and player
+  mutations (event buffer was starving for events)
+- Fixed bleedout test to match current rate (2 per tick)
+- Added `{attack}` token for defense messages (resolves to
+  "strike" when attacker is unarmed)
+
+### New Feature: Hidden Object Discovery
+Rooms can now contain hidden nouns and hidden containers that
+players must actively discover using the search command.
+
+- **Hidden nouns** — invisible until found via search. Once
+  discovered, they appear in the room description and respond
+  to `look <noun>` permanently for that character.
+- **Hidden containers** — function like normal containers but
+  are invisible until discovered. Locks still apply after
+  discovery.
+- Discoveries persist permanently per-character.
+
+### Skill Consolidation: Search
+The tracking and foraging skills have been merged into a single
+**Search** skill governed by Perception.
+
+- `search`, `track`, and `forage` all progress the Search skill
+- All three commands now use gaussian dice rolls (Perception +
+  Search skill bonus) instead of hard stat thresholds
+- Forage difficulty varies by biome (farmland is easiest,
+  cliffs are hardest)
+- Existing players: Search rank = max(tracking, foraging).
+  No progression is lost.
+
+### Balance
+- Extra-arms mutation restricted to species with arm slots
+  (no more wolves with extra arms)
+- Search skill progression only fires when there's something
+  undiscovered to roll against (prevents AFK botting)
+
 ## 2026-03-14 — Zone Expansion, Spell Merge, Coordinate System
 
 ### New Zone: Marches Spur Road
