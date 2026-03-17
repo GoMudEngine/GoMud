@@ -2,9 +2,9 @@ package usercommands
 
 import (
 	"fmt"
-	"math"
 
-	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/combat"
+	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -12,6 +12,19 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
+
+// forageDifficulty maps biome IDs to gaussian roll difficulty targets.
+// Lower values are easier to forage in.
+var forageDifficulty = map[string]float64{
+	"farmland":  110,
+	"forest":    120,
+	"land":      125,
+	"swamp":     130,
+	"shore":     135,
+	"cave":      135,
+	"mountains": 140,
+	"cliffs":    145,
+}
 
 // forageYields maps biome IDs to lists of item IDs that can be found.
 // Duplicate entries increase the probability of that item appearing.
@@ -42,11 +55,12 @@ func Forage(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		return true, fmt.Errorf("you're doing that too often")
 	}
 
-	forageSkill := int(math.Round(float64(user.Character.GetSkillLevel(skills.Foraging)) * float64(configs.GetBalanceConfig().SkillWeight)))
-	perceptionAdj := user.Character.Stats.Perception.ValueAdj
-	successOdds := 20 + (forageSkill * 5) + int(math.Ceil(float64(perceptionAdj)/10))
-	if successOdds > 90 {
-		successOdds = 90
+	searchRank := user.Character.GetSkillLevel(skills.Search)
+	searchScore := float64(user.Character.Stats.Perception.ValueAdj) + combat.SkillMultiplier(searchRank)*25.0
+
+	difficulty := forageDifficulty[biome.BiomeId]
+	if difficulty == 0 {
+		difficulty = 130 // fallback for unknown biomes
 	}
 
 	user.SendText(`You crouch low and begin searching the ground carefully...`)
@@ -55,10 +69,8 @@ func Forage(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		user.UserId,
 	)
 
-	roll := util.Rand(100)
-	util.LogRoll(`Forage`, roll, successOdds)
-
-	if roll >= successOdds {
+	roll := dice.RollStat(searchScore)
+	if roll.Value < difficulty {
 		user.SendText(`You find nothing of use this time.`)
 		return true, nil
 	}
@@ -72,7 +84,7 @@ func Forage(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	user.Character.StoreItem(newItem)
 	events.AddToQueue(events.ItemOwnership{UserId: user.UserId, Item: newItem, Gained: true})
-	user.Character.OnSkillUse(`foraging`, user.UserId)
+	user.Character.CheckSkillProgression(string(skills.Search), user.UserId, 1.0)
 
 	user.SendText(fmt.Sprintf(`You find a <ansi fg="itemname">%s</ansi>.`, newItem.DisplayName()))
 

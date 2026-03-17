@@ -74,6 +74,7 @@ The `internal/usercommands` package implements the complete command system for p
 - **Brawling skills**: Physical combat techniques (disarm, tackle, throw)
 - **Utility skills**: Map creation, portal magic, inspection abilities
 - **Protection skills**: Aid and defensive capabilities
+- **Search skill**: Discovery of hidden objects, containers, exits, and creatures
 
 #### **Skill Validation**
 - **Level requirements**: Commands check character skill levels
@@ -154,5 +155,43 @@ The package includes comprehensive testing for:
 - **Extensible system**: New commands can be easily added to the registry
 - **Permission control**: Granular access control for different user types
 - **Event integration**: Commands seamlessly integrate with the game's event system
+
+## Search Skill System
+
+### Overview
+The `search` command discovers hidden objects in rooms, including hidden containers, hidden nouns, secret exits, and hidden mobs. Uses Perception-based rolls with per-discovery granularity.
+
+### Search Roll Formula
+```
+searchScore = dice.RollStat(Perception + SkillMultiplier(searchRank) * 25.0)
+```
+
+- **Perception**: Character's current Perception stat (~100 baseline)
+- **SkillMultiplier**: Sqrt curve from current search rank to soft cap (rank 50)
+- **dice.RollStat**: Applies global `RollSpread` factor for variance
+- **searchScore**: Single roll covers all discoveries in one `search` command
+
+### Tier Difficulty Targets
+| Target | Hidden Type | Examples |
+|--------|------------|----------|
+| 125 | Secret exits, hidden containers | Doors behind tapestries, false walls |
+| 135 | Stashed items, hidden creatures | Boxes under beds, camouflaged mobs |
+| 175 | Hidden nouns | Faint carvings, ancient runes |
+
+### Per-Discovery Rolls
+- Each hidden object in the room gets compared against `searchScore` individually
+- Players with `searchScore ≥ target` discover that specific object
+- Multiple discoveries possible in one `search` if roll is high enough
+- Each discovery shows unique flavor text and adds to discovery tracking
+
+### Anti-Botting Protection
+- **Progression guard**: Search skill only gains progression if at least one undiscovered object was rolled against
+- If all objects in the room are already discovered, skill use doesn't trigger progression
+- Prevents skill grinding on discovered-only rooms
+
+### Related Commands
+- **`track`**: Uses search skill formula to find hidden tracks
+- **`forage`**: Uses search skill formula to gather hidden resources
+- All three commands use the same unified search score calculation
 
 This package serves as the primary interface between players and the game world, providing a rich and comprehensive command system that supports all aspects of gameplay from basic interaction to advanced administrative functions.

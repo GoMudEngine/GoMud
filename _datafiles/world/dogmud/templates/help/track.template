@@ -1,19 +1,34 @@
-<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">track</ansi> (skill)
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">track</ansi>
 
-The <ansi fg="skill">track</ansi> command searches the area for rooms a player or npc has recently 
-visited.
+The <ansi fg="command">track</ansi> command lets you follow the trail of a
+creature or player through the world. It reads the traces they left behind
+and builds a map of their recent path.
 
-Once the trail goes cold (Which could be immediately!) your map will end.
+Once a trail goes cold, your map will end. If your target is close enough,
+an X will mark their location on your map.
 
-If they are close enough, an X will mark their location on your map.
+<ansi fg="yellow">━━━ Governed Skill ━━━</ansi>
 
-You can train the <ansi fg="skill">track</ansi> skill at a <ansi fg="yellow">ranger</ansi> training school.
-With each level of training, your tracking skill will reach farther out to find your target.
+The <ansi fg="skill">search</ansi> skill governs your tracking ability. With
+higher <ansi fg="skill">search</ansi> skill rank, you can follow trails
+farther, read more detail from tracks, and pursue more distant prey.
 
-<ansi fg="yellow">Usage: </ansi>
+<ansi fg="yellow">━━━ The track Command ━━━</ansi>
 
-(Lvl 1) <ansi fg="skill">track</ansi> See the most recent mob/player to pass through this room, excluding any present mobs/players.
-(Lvl 2) <ansi fg="skill">track</ansi> See all recent mobs/players to pass through this room, excluding any present mobs/players.
-(Lvl 3) <ansi fg="skill">track</ansi> Shows exit information for all tracked players or mobs.
-(Lvl 4)       Enhances the <ansi fg="skill">map</ansi> skill to show nearby mobs and players, including the mini map.
+  <ansi fg="command">track <target></ansi>  Find the trail of a creature or player.
 
+<ansi fg="yellow">━━━ Skill Progression ━━━</ansi>
+
+The <ansi fg="skill">search</ansi> skill improves through use. Each time you
+track, you have a small chance to deepen your mastery. As your
+<ansi fg="skill">search</ansi> skill grows, you unlock new capabilities:
+
+  Novice tracker  — See the most recent trail through a room.
+  Adept tracker   — See all recent trails, not just the most recent.
+  Expert tracker  — Read detailed exit information from tracks.
+  Master tracker  — Your map skill shows nearby creatures and players.
+
+<ansi fg="yellow">See Also:</ansi>
+
+  <ansi fg="command">help search</ansi>, <ansi fg="command">help map</ansi>,
+  <ansi fg="command">help skills</ansi>

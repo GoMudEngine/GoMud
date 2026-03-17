@@ -62,6 +62,13 @@ const (
 	VisitorMob  = "mob"
 )
 
+// HiddenNoun represents a discoverable noun in a room that is invisible
+// until found via the search command (tier 3).
+type HiddenNoun struct {
+	Description       string `yaml:"description"`
+	HiddenDescription string `yaml:"hidden_description"`
+}
+
 type Room struct {
 	//mutex
 	RoomId            int                               `yaml:"roomid" instance:"skip"`              // a unique numeric index of the room. Also the filename.
@@ -79,6 +86,7 @@ type Room struct {
 	Exits             map[string]exit.RoomExit          `yaml:"exits" instance:"skip"`               // Exits to other rooms
 	ExitsTemp         map[string]exit.TemporaryRoomExit `yaml:"-"`                                   // Temporary exits that will be removed after a certain time. Don't bother saving on sever shutting down.
 	Nouns             map[string]string                 `yaml:"nouns,omitempty" instance:"skip"`     // Interesting nouns to highlight in the room or reveal on succesful searches.
+	HiddenNouns       map[string]HiddenNoun            `yaml:"hidden_nouns,omitempty" instance:"skip"` // Nouns invisible until discovered via search.
 	Items             []items.Item                      `yaml:"items,omitempty"`                     // Items on the floor
 	Stash             []items.Item                      `yaml:"stash,omitempty"`                     // list of items in the room that are not visible to players
 	Corpses           []Corpse                          `yaml:"-"`                                   // Any corpses laying around from recent deaths
@@ -1619,6 +1627,31 @@ func (r *Room) FindContainerByName(containerNameSearch string) string {
 	}
 
 	return closeMatch
+}
+
+// FindHiddenNoun looks up a hidden noun by key. Returns the noun key,
+// the HiddenNoun, and true if found. Returns empty values and false if not.
+func (r *Room) FindHiddenNoun(search string) (string, HiddenNoun, bool) {
+	if r.HiddenNouns == nil {
+		return "", HiddenNoun{}, false
+	}
+	// Try exact match first
+	if hn, ok := r.HiddenNouns[search]; ok {
+		return search, hn, true
+	}
+	// Build candidate list for fuzzy matching
+	keys := make([]string, 0, len(r.HiddenNouns))
+	for k := range r.HiddenNouns {
+		keys = append(keys, k)
+	}
+	exact, close := util.FindMatchIn(search, keys...)
+	if exact != "" {
+		return exact, r.HiddenNouns[exact], true
+	}
+	if close != "" {
+		return close, r.HiddenNouns[close], true
+	}
+	return "", HiddenNoun{}, false
 }
 
 func (r *Room) FindNoun(noun string) (foundNoun string, nounDescription string) {

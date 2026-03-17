@@ -37,9 +37,8 @@ const (
 	// DOG non-combat skills
 	FirstAid  SkillTag = `first-aid`  // Healing others, treating wounds, stabilizing
 	Stealth   SkillTag = `stealth`    // Sneaking, hiding, avoiding detection
-	Tracking  SkillTag = `tracking`   // Finding creatures/players, reading trails
+	Search    SkillTag = `search`     // Finding hidden objects, creatures, and resources
 	Bartering SkillTag = `bartering`  // Trade prices, negotiation, appraisal
-	Foraging      SkillTag = `foraging`      // Gathering resources — herbs, wood, ore, food
 	Blacksmithing SkillTag = `blacksmithing` // Metal weapons, armor, tools
 	Alchemy       SkillTag = `alchemy`       // Potions, salves, medicines
 	Tailoring     SkillTag = `tailoring`     // Cloth and leather goods
@@ -58,7 +57,7 @@ var (
 		},
 		"ranger": {
 			RangedCombat,
-			Tracking,
+			Search,
 		},
 		"mage": {
 			Spellcasting,
@@ -75,8 +74,7 @@ var (
 			Bartering,
 		},
 		"survivalist": {
-			Foraging,
-			Tracking,
+			Search,
 		},
 		"smith": {
 			Blacksmithing,
@@ -133,7 +131,7 @@ func GetMutationTier(owned map[string]int) string {
 
 // GetSkillTier returns the skill tier based on aggregate completion across all skills.
 func GetSkillTier(allRanks map[string]int) string {
-	const totalSkills = 17
+	const totalSkills = 16
 	const softCap = 50.0
 	maxTotal := totalSkills * softCap
 
@@ -271,10 +269,9 @@ var SkillPrimaryStats = map[string]string{
 	"spellcasting":   "willpower",
 	"first-aid":      "perception",
 	"stealth":        "dexterity",
-	"tracking":       "perception",
+	"search":         "perception",
 	"rhetoric":       "charisma",
 	"bartering":      "charisma",
-	"foraging":       "perception",
 	"blacksmithing":  "strength",
 	"alchemy":        "perception",
 	"tailoring":      "dexterity",
@@ -303,9 +300,8 @@ var SkillProgressionMultipliers = map[SkillTag]float64{
 	Rhetoric: 0.5,
 	Cast:         0.5,
 	// Utility skills — used infrequently
-	Tracking:  2.0,
+	Search:    2.0,
 	Bartering: 2.0,
-	Foraging:      2.0,
 	FirstAid:      2.0,
 	Stealth:       2.0,
 	Blacksmithing: 2.0,
@@ -370,7 +366,7 @@ func init() {
 	for _, sk := range []SkillTag{
 		Cast,
 		WeaponCombat, UnarmedCombat, RangedCombat, Spellcasting, Rhetoric,
-		FirstAid, Stealth, Tracking, Bartering, Foraging,
+		FirstAid, Stealth, Search, Bartering,
 		Blacksmithing, Alchemy, Tailoring, Cooking, Jewelcrafting, Enchanting,
 	} {
 		if _, ok := skillNameSet[sk]; !ok {

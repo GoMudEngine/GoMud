@@ -95,6 +95,7 @@ type Character struct {
 	KeyRing          map[string]string              `yaml:"keyring,omitempty"`       // key is the lock id, value is the sequence
 	KD               KDStats                        `yaml:"kd,omitempty"`            // Kill/Death stats
 	MiscData         map[string]any                 `yaml:"miscdata,omitempty"`      // Any random other data that needs to be stored
+	Discoveries      map[int][]string               `yaml:"discoveries,omitempty"`   // Per-room hidden object discoveries
 	ExtraLives       int                            `yaml:"extralives,omitempty"`    // How many lives remain. If enabled, players can perma-die if they die at zero
 	MobMastery       MobMasteries                   `yaml:"mobmastery,omitempty"`    // Tracks particular masteries around a given mob
 	SkillUseCount    map[string]int                 `yaml:"skillusecount,omitempty"` // Tracks how many times each skill has been used
@@ -136,6 +137,7 @@ func New() *Character {
 		CombatPosition: PositionStanding, // Stage 8.1: Default combat position
 		Cooldowns:      make(Cooldowns),  // Initialize cooldowns map
 		MiscData:       make(map[string]any),
+		Discoveries:    make(map[int][]string),
 		SkillUseCount:  make(map[string]int),
 		StatUseCount:   make(map[string]int),
 		roomHistory:    make([]int, 0, 10),
@@ -547,6 +549,28 @@ func (c *Character) GetMiscDataKeys(prefixMatch ...string) []string {
 	}
 
 	return retKeys
+}
+
+func (c *Character) HasDiscovery(roomId int, key string) bool {
+	if c.Discoveries == nil {
+		return false
+	}
+	for _, k := range c.Discoveries[roomId] {
+		if k == key {
+			return true
+		}
+	}
+	return false
+}
+
+func (c *Character) AddDiscovery(roomId int, key string) {
+	if c.HasDiscovery(roomId, key) {
+		return
+	}
+	if c.Discoveries == nil {
+		c.Discoveries = make(map[int][]string)
+	}
+	c.Discoveries[roomId] = append(c.Discoveries[roomId], key)
 }
 
 func (c *Character) FindKeyInBackpack(lockId string) (items.Item, bool) {
@@ -2437,6 +2461,33 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 		c.Name = defaultName
 	}
 	c.Buffs.Validate()
+
+	// Migrate tracking/foraging → search (must run before ensureAllSkills)
+	if _, hasTracking := c.Skills["tracking"]; hasTracking {
+		trackRank := c.Skills["tracking"]
+		forageRank := c.Skills["foraging"]
+		searchRank := max(trackRank, forageRank)
+		if searchRank < 1 {
+			searchRank = 1
+		}
+		c.Skills["search"] = searchRank
+		if c.SkillUseCount == nil {
+			c.SkillUseCount = make(map[string]int)
+		}
+		c.SkillUseCount["search"] = c.SkillUseCount["tracking"] + c.SkillUseCount["foraging"]
+		delete(c.Skills, "tracking")
+		delete(c.Skills, "foraging")
+		delete(c.SkillUseCount, "tracking")
+		delete(c.SkillUseCount, "foraging")
+	} else if _, hasForaging := c.Skills["foraging"]; hasForaging {
+		c.Skills["search"] = max(c.Skills["foraging"], 1)
+		if c.SkillUseCount == nil {
+			c.SkillUseCount = make(map[string]int)
+		}
+		c.SkillUseCount["search"] = c.SkillUseCount["foraging"]
+		delete(c.Skills, "foraging")
+		delete(c.SkillUseCount, "foraging")
+	}
 
 	// Ensure all known skills exist at rank 1 minimum (retroactive for existing characters)
 	c.Skills = ensureAllSkills(c.Skills)

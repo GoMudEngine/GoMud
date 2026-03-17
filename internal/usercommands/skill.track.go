@@ -6,6 +6,8 @@ import (
 	"math"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/combat"
+	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -25,18 +27,29 @@ type trackingInfo struct {
 
 /*
 Skill Track
-Level 1 - Display the last player or mob to walk through here (not the currently player or current mobs)
-Level 2 - Display all players and mobs to recently walk through here
-Level 3 - Shows exit information for all tracked players or mobs
-Level 4 - Specify a mob or username and every room you enter will tell you what exit they took.
+Uses a gaussian roll based on Perception + Search skill to determine
+how much tracking information the player receives:
+  - roll < 125: failure
+  - roll >= 125: most recent visitor only
+  - roll >= 135: all recent visitors
+  - roll >= 175: all visitors + exit directions + targeted/active tracking
 */
 func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
-	skillLevel := user.Character.GetSkillLevel(skills.Tracking)
+	// Compute search score: Perception + skill-scaled bonus
+	searchRank := user.Character.GetSkillLevel(skills.Search)
+	searchScore := float64(user.Character.Stats.Perception.ValueAdj) + combat.SkillMultiplier(searchRank)*25.0
 
-	if skillLevel == 0 {
-		user.SendText("You don't know how to track.")
-		return true, errors.New(`you don't know how to track`)
+	// Single roll determines info depth
+	roll := dice.RollStat(searchScore)
+
+	// Skill progression check
+	user.Character.CheckSkillProgression(string(skills.Search), user.UserId, 1.0)
+
+	// Failure case
+	if roll.Value < 125 {
+		user.SendText("You don't see any tracks.")
+		return true, nil
 	}
 
 	currentMobs := room.GetMobs()
@@ -48,14 +61,14 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	//
 	if rest == `` {
 
-		if !user.Character.TryCooldown(skills.Tracking.String(), "1 round") {
+		if !user.Character.TryCooldown(skills.Search.String(), "1 round") {
 			user.SendText(
-				fmt.Sprintf("You need to wait %d more rounds to use that skill again.", user.Character.GetCooldown(skills.Tracking.String())))
+				fmt.Sprintf("You need to wait %d more rounds to use that skill again.", user.Character.GetCooldown(skills.Search.String())))
 			return true, errors.New(`you're doing that too often`)
 		}
 
 		// Fire an event that a skill has been used
-		events.AddToQueue(events.SkillUsed{UserId: user.UserId, Skill: skills.Tracking, Details: ``})
+		events.AddToQueue(events.SkillUsed{UserId: user.UserId, Skill: skills.Search, Details: ``})
 
 		visitorData := make([]trackingInfo, 0)
 
@@ -85,11 +98,11 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 				NumericStrength: timeLeft,
 			}
 
-			if skillLevel >= 3 {
+			if roll.Value >= 175 {
 				newTrackInfo.ExitName = findExited(room, mId, rooms.VisitorMob)
 			}
 
-			if skillLevel == 1 {
+			if roll.Value < 135 {
 
 				if len(visitorData) == 0 {
 					visitorData = append(visitorData, newTrackInfo)
@@ -133,11 +146,11 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 				NumericStrength: timeLeft,
 			}
 
-			if skillLevel >= 3 {
+			if roll.Value >= 175 {
 				newTrackInfo.ExitName = findExited(room, uId, rooms.VisitorUser)
 			}
 
-			if skillLevel == 1 {
+			if roll.Value < 135 {
 
 				if len(visitorData) == 0 {
 					visitorData = append(visitorData, newTrackInfo)
@@ -165,30 +178,30 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	}
 
-	// only level 3 and 4 can specify a target
-	if skillLevel < 3 {
+	// Targeted tracking requires a high roll
+	if roll.Value < 175 {
 
-		user.SendText("You can't track a specific person or mob... yet.")
-		return true, errors.New(`you can't track a specific person or mob yet`)
+		user.SendText("Your tracking skills aren't sharp enough right now.")
+		return true, errors.New(`your tracking skills aren't sharp enough right now`)
 
 	}
 
-	if !user.Character.TryCooldown(skills.Tracking.String(), "1 round") {
+	if !user.Character.TryCooldown(skills.Search.String(), "1 round") {
 
 		user.SendText(
-			fmt.Sprintf("You need to wait %d more rounds to use that skill again.", user.Character.GetCooldown(skills.Tracking.String())))
+			fmt.Sprintf("You need to wait %d more rounds to use that skill again.", user.Character.GetCooldown(skills.Search.String())))
 
 		return true, errors.New(`you're doing that too often`)
 
 	}
 
 	// Fire an event that a skill has been used
-	events.AddToQueue(events.SkillUsed{UserId: user.UserId, Skill: skills.Tracking, Details: ``})
+	events.AddToQueue(events.SkillUsed{UserId: user.UserId, Skill: skills.Search, Details: ``})
 
 	//
-	// At skill level 3, search the room and adjacent rooms for quarry
+	// Search the room and adjacent rooms for quarry
 	//
-	if skillLevel >= 3 {
+	if roll.Value >= 175 {
 
 		foundPlayerId, foundMobId := room.FindByName(rest, rooms.FindAll)
 
@@ -213,8 +226,8 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			}
 		}
 
-		// at skill level 4, becomes an active tracking skill
-		if skillLevel >= 4 {
+		// active tracking when roll is high enough
+		if roll.Value >= 175 {
 
 			allNames := []string{}
 

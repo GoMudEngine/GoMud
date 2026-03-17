@@ -33,6 +33,13 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		if len(args) >= 2 {
 			cName := room.FindContainerByName(args[len(args)-1])
 			if cName != `` {
+				if c, exists := room.Containers[cName]; exists && c.Hidden {
+					if user == nil || !user.Character.HasDiscovery(room.RoomId, cName) {
+						cName = ``
+					}
+				}
+			}
+			if cName != `` {
 				container := room.Containers[cName]
 				if container.Gold > 0 {
 					Get(fmt.Sprintf("gold %s", cName), user, room, flags)
@@ -91,6 +98,13 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		}
 
 		containerName = room.FindContainerByName(args[len(args)-1])
+		if containerName != `` {
+			if c, exists := room.Containers[containerName]; exists && c.Hidden {
+				if user == nil || !user.Character.HasDiscovery(room.RoomId, containerName) {
+					containerName = ``
+				}
+			}
+		}
 		if containerName != `` {
 			getFromStash = false
 			if args[len(args)-2] == "from" {
@@ -362,6 +376,13 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	}
 
 	containerName = room.FindContainerByName(rest)
+	if containerName != `` {
+		if c, exists := room.Containers[containerName]; exists && c.Hidden {
+			if user == nil || !user.Character.HasDiscovery(room.RoomId, containerName) {
+				containerName = ``
+			}
+		}
+	}
 	if containerName != `` {
 		user.SendText(fmt.Sprintf(`You can't pick up the <ansi fg="container">%s</ansi>. Try looking at it.`, containerName))
 	} else {
