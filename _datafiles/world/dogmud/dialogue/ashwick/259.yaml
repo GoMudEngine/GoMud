@@ -24,7 +24,7 @@ patterns:
 tree:
   root:
     text: "I am Delia. I tend herbs, brew remedies, and try to keep this hamlet from falling apart one poultice at a time. Lately the falling apart has been winning."
-    hints: "You could ask about a quest or task, the herb shortage, or foraging."
+    hints: "You could ask about a quest or task, the herb shortage, or search."
 
   nodes:
     - id: quest_start
@@ -49,7 +49,7 @@ tree:
       requiresItem: 40040
       grantsQuest: "16-end"
       text: "Where did you find these? This is feverfew and bitter-thistle of a quality I have not seen in months. The color, the potency -- whatever soil grew these, it is touched by something deeper than rainfall. My stock will be full again within the week."
-      hints: "Quest complete. Delia now offers foraging training and serves as an herb vendor."
+      hints: "Quest complete. Delia now offers search training and serves as an herb vendor."
       moodChange: friendly
 
     - id: quest_complete_forager
@@ -58,7 +58,7 @@ tree:
       questExcluded: ["16-end"]
       grantsQuest: "16-end"
       text: "Another herbalist? Living in the forest? And they know feverfew from fireweed? If they are willing to work and I do not have to explain the difference between a poultice and a soup, I will take the help. Send them to me."
-      hints: "Quest complete. Delia now offers foraging training and serves as an herb vendor."
+      hints: "Quest complete. Delia now offers search training and serves as an herb vendor."
       moodChange: friendly
 
     - id: quest_done
@@ -80,7 +80,7 @@ tree:
       moodChange: friendly
 
     - id: worktable_access
-      triggers: ["teach", "train", "foraging", "learn", "craft", "alchemy", "worktable"]
+      triggers: ["teach", "train", "search", "learn", "craft", "alchemy", "worktable"]
       questRequired: ["16-end"]
       text: "You want to work with herbs? The worktable is yours to use. Mortar, pestle, jars -- everything you need. Start by looking at what grows where and asking why. Every plant is an answer to a question the soil asked."
       hints: "The worktable in this room functions as an alchemy bench. You can craft here."
