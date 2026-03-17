@@ -88,6 +88,13 @@ PlayerDiedPvE-Global:
   - "The whole town is buzzing. {desc} got the better of some adventurer."
   - "A death out there. {desc}. You hate to hear it, but you always do."
 
+MobKilledByPlayer-Local:
+  - "I heard {desc} Another one bites the dust."
+  - "Word is {desc} Someone is keeping busy out there."
+  - "They say {desc} Good riddance, if you ask me."
+  - "Someone was talking about it. {desc}"
+  - "News from outside the walls -- {desc}"
+
 fallback:
   - "Quiet day. Nothing worth repeating."
   - "Mm. No news is... well, it is just no news."

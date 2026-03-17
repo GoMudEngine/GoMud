@@ -546,7 +546,7 @@ Balance:
   # ── REGEN RATES (fraction of pool max per tick; 0.01 = 1%) ────────────────
   PlayerHealthRegenPct: 0.02     # Bumped from 1% to 2%; players needed faster recovery
   PlayerStaminaRegenPct: 0.02    # Tuned 39.2: doubled from 0.01; fights felt too exhausting at 1%
-  PlayerConvictionRegenPct: 0.015 # Bumped from 0.01 to 0.015; conviction felt too slow to recover
+  PlayerConvictionRegenPct: 0.02  # Bumped to 2% to match health/stamina regen rates
   MobHealthRegenPct: 0.01        # NPC HP regen per tick (1% of HealthMax)
   MobStaminaRegenPct: 0.01       # NPC stamina regen per tick
   MobConvictionRegenPct: 0.01    # NPC conviction regen per tick

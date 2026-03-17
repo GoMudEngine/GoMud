@@ -707,17 +707,20 @@ func sendDefenseMessages(result *AttackResult, best bestDefenseResult, sourceCha
 
 	// Prepare token replacements
 	weaponName := "fists"
+	attackName := "strike" // Generic term for unarmed attacks
 	if raceInfo := species.GetSpecies(sourceChar.SpeciesId); raceInfo != nil {
 		weaponName = raceInfo.UnarmedName
 	}
 	if sourceChar.Equipment.Weapon.ItemId > 0 {
 		weaponName = sourceChar.Equipment.Weapon.GetSpec().Name
+		attackName = weaponName
 	}
 
 	tokenReplacements := map[items.TokenName]string{
 		items.TokenDefender: targetChar.Name,
 		items.TokenAttacker: sourceChar.Name,
 		items.TokenWeapon:   weaponName,
+		items.TokenAttack:   attackName,
 		items.TokenStance:   targetChar.CalculateStanceString(),
 		items.TokenPosition: targetChar.CalculatePositionString(),
 		items.TokenMomentum: targetChar.CalculateMomentumString(),

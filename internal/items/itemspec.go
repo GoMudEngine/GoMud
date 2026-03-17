@@ -190,6 +190,7 @@ const (
 	TokenDefender     TokenName = "{defender}" // Stage 9.3: defensive action messages
 	TokenAttacker     TokenName = "{attacker}" // Stage 9.3: defensive action messages
 	TokenWeapon       TokenName = "{weapon}"   // Stage 9.3: defensive action messages
+	TokenAttack       TokenName = "{attack}"   // Generic "strike"/"blow" for unarmed, weapon name for armed
 	TokenStance       TokenName = "{stance}"   // Stage 9.4: combat stance (aggressive/defensive/balanced/reckless)
 	TokenPosition     TokenName = "{position}" // Stage 9.4: combat position (standing/prone/clinched/grounded)
 	TokenMomentum     TokenName = "{momentum}" // Stage 9.4: combat momentum (offensive/defensive/pressured/in control)

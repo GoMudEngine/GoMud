@@ -622,7 +622,7 @@ func TestAutoHeal_BleedOutWhenHealthBelowOne(t *testing.T) {
 	evt := events.NewRound{RoundNumber: 6}
 	AutoHeal(evt)
 
-	assert.Equal(t, -6, u1.Character.Health, "should decrease by 1 when bleeding out")
+	assert.Equal(t, -7, u1.Character.Health, "should decrease by 2 when bleeding out")
 }
 
 func TestAutoHeal_StaminaRegenOutOfCombat(t *testing.T) {

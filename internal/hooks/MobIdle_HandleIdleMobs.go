@@ -180,6 +180,7 @@ var eventTypeKey = map[worldevents.WorldEventType]string{
 	worldevents.PlayerMutationMilestone: "PlayerMutationMilestone",
 	worldevents.PlayerCraftedRare:       "PlayerCraftedRare",
 	worldevents.PlayerDiedPvE:           "PlayerDiedPvE",
+	worldevents.MobKilledByPlayer:       "MobKilledByPlayer",
 }
 
 var significanceKey = map[worldevents.Significance]string{

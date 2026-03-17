@@ -43,6 +43,11 @@ type MutationSpec struct {
 	// Conflicts lists mutation IDs that cannot coexist with this mutation.
 	// If a character owns any conflicting mutation, this one is excluded from the pool.
 	Conflicts []string `yaml:"conflicts,omitempty"`
+
+	// RequiresArms filters this mutation out of the pool for species with disabled
+	// weapon/offhand slots (e.g., wolves, bears). Only relevant for mutations that
+	// grant arm-related abilities.
+	RequiresArms bool `yaml:"requires_arms,omitempty"`
 }
 
 // Id implements fileloader.Loadable.
@@ -180,13 +185,26 @@ func HasConflict(owned map[string]int, candidateId string) bool {
 // GetWeightedPool builds a weighted slice of mutation IDs suitable for random selection.
 // Each mutation appears (11 - Rarity) times so rarer mutations are less likely.
 // Mutations already owned or conflicting with owned mutations are excluded.
-func GetWeightedPool(owned map[string]int) []string {
+// disabledSlots filters out mutations requiring arms for species that lack arm slots.
+func GetWeightedPool(owned map[string]int, disabledSlots ...[]string) []string {
+	// Build a set of disabled slots for quick lookup
+	slotDisabled := map[string]bool{}
+	if len(disabledSlots) > 0 && disabledSlots[0] != nil {
+		for _, slot := range disabledSlots[0] {
+			slotDisabled[slot] = true
+		}
+	}
+	hasArms := !slotDisabled["weapon"] && !slotDisabled["offhand"]
+
 	pool := make([]string, 0, len(allMutations)*5)
 	for id, spec := range allMutations {
 		if _, has := owned[id]; has {
 			continue
 		}
 		if HasConflict(owned, id) {
+			continue
+		}
+		if spec.RequiresArms && !hasArms {
 			continue
 		}
 		weight := 11 - spec.Rarity

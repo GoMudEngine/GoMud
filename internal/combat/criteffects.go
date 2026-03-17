@@ -31,8 +31,8 @@ func AttemptCritDisarm(source *characters.Character, target *characters.Characte
 		return result
 	}
 
-	// Check if target has a weapon equipped
-	if target.Equipment.Weapon.ItemId == 0 {
+	// Check if target has a weapon equipped (0 = unarmed, <0 = disabled slot)
+	if target.Equipment.Weapon.ItemId <= 0 {
 		return result
 	}
 

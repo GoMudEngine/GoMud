@@ -2758,6 +2758,18 @@ func (c *Character) Wear(i items.Item) (returnItems []items.Item, newItemWorn bo
 			}
 		}
 
+		// 2H weapons require ALL hands — clear extra arm weapons too
+		if iHandsRequired == 2 {
+			if c.Equipment.ExtraArm1.ItemId > 0 {
+				returnItems = append(returnItems, c.Equipment.ExtraArm1)
+				c.Equipment.ExtraArm1 = items.Item{}
+			}
+			if c.Equipment.ExtraArm2.ItemId > 0 {
+				returnItems = append(returnItems, c.Equipment.ExtraArm2)
+				c.Equipment.ExtraArm2 = items.Item{}
+			}
+		}
+
 		if c.Equipment.Weapon.IsCursed() {
 			return returnItems, false, `Your ` + c.Equipment.Weapon.DisplayName() + ` is cursed and prevents you from removing it.`
 		}

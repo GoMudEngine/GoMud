@@ -18,6 +18,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
+	"github.com/GoMudEngine/GoMud/internal/worldevents"
 )
 
 //
@@ -195,6 +196,26 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 											`<ansi fg="magenta">Something stirs beneath your skin. A mutation emerges: <ansi fg="yellow">%s</ansi>.</ansi>`,
 											spec.Name))
 										user.SendText(fmt.Sprintf(`<ansi fg="magenta">%s</ansi>`, spec.Description))
+
+										// Emit world event for gossip system
+										sig := worldevents.Regional
+										if spec.Rarity >= 8 {
+											sig = worldevents.Global
+										}
+										zone := user.Character.Zone
+										region := ""
+										if zCfg := rooms.GetZoneConfig(zone); zCfg != nil {
+											region = zCfg.Region
+										}
+										worldevents.EmitWorldEvent(worldevents.WorldEvent{
+											Type:         worldevents.PlayerMutationMilestone,
+											Significance: sig,
+											ZoneName:     zone,
+											RegionName:   region,
+											PlayerName:   user.Character.Name,
+											Description: fmt.Sprintf("%s has undergone a mutation: %s.",
+												user.Character.Name, spec.Name),
+										})
 									}
 								}
 							} else if canDeepen {

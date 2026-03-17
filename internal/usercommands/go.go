@@ -18,6 +18,23 @@ import (
 
 func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
+	exitName, goRoomId := room.FindExitByName(rest)
+
+	// If no valid exit, check if it's a recognized cardinal direction (handled below
+	// as "bumping into walls"). Otherwise return false so the dispatcher shows
+	// "not recognized" instead of a confusing "can't do that in combat" message.
+	isCardinal := false
+	if exitName == `` {
+		switch rest {
+		case "north", "south", "east", "west", "up", "down",
+			"northwest", "northeast", "southwest", "southeast":
+			isCardinal = true
+		}
+		if !isCardinal {
+			return false, nil
+		}
+	}
+
 	if user.Character.Aggro != nil {
 		user.SendText("You can't do that! You are in combat!")
 		return true, nil
@@ -34,8 +51,6 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 	isSneaking := user.Character.HasBuffFlag(buffs.Hidden)
 
 	handled := false
-
-	exitName, goRoomId := room.FindExitByName(rest)
 
 	if exitName != `` {
 

@@ -11,6 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -131,7 +132,11 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 				if mob.Character.MutationProgress >= threshold {
 					mob.Character.MutationProgress = 0
 					if canAcquire {
-						pool := mutations.GetWeightedPool(mob.Character.Mutations)
+						var specDisabledSlots []string
+						if specInfo := species.GetSpecies(mob.Character.SpeciesId); specInfo != nil {
+							specDisabledSlots = specInfo.DisabledSlots
+						}
+						pool := mutations.GetWeightedPool(mob.Character.Mutations, specDisabledSlots)
 						if mutId := mutations.RollAcquisition(pool); mutId != "" {
 							if mob.Character.Mutations == nil {
 								mob.Character.Mutations = make(map[string]int)
