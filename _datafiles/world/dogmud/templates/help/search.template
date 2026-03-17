@@ -1,17 +1,43 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">search</ansi> (skill)
 
-The <ansi fg="skill">search</ansi> skill searches the area for hidden objects. 
+The <ansi fg="skill">search</ansi> skill governs your ability to find hidden
+things — secret exits, concealed containers, stashed items, hidden creatures,
+and obscured objects. It also powers your capacity to track creatures and
+forage for materials.
 
-You can only search once every so often, and it relies on your Smarts for success.
+Searching relies on your <ansi fg="yellow">Perception</ansi> stat and your
+<ansi fg="skill">search</ansi> skill rank. The keener your eye and the more
+skilled you are, the more you can uncover.
 
-As you level up the <ansi fg="skill">search</ansi> skill, new things can become revealed.
+<ansi fg="yellow">━━━ The search Command ━━━</ansi>
 
-<ansi fg="yellow">Usage: </ansi>
+  <ansi fg="command">search</ansi>          Scour the current room for hidden things.
 
-(Lvl 1) <ansi fg="skill">search</ansi> Search for secret exits or hidden players/mobs.
-(Lvl 2) <ansi fg="skill">search</ansi> Finds objects that may be hidden in the area.
-(Lvl 3) <ansi fg="skill">search</ansi> Finds special/unknown "things of interest" in the area.
-(Lvl 4) <ansi fg="skill">search</ansi> Doubles your chance of success when searching.
+You can search once every couple of rounds. As your <ansi fg="skill">search</ansi>
+skill improves through repeated use, you may discover things you previously
+missed.
 
-Your chances of success when searching are calculated as follows: <ansi fg="red">Smarts/4 + Perception/2 + 5</ansi>
+<ansi fg="yellow">━━━ Search Applications ━━━</ansi>
 
+Your <ansi fg="skill">search</ansi> skill opens doors to three distinct arts:
+
+  <ansi fg="command">track</ansi>  — Follow trails left by creatures and players.
+            Higher search skill lets you follow trails farther and read
+            more detail from the tracks you find.
+
+  <ansi fg="command">forage</ansi> — Gather herbs, wood, ore, and materials from
+            natural environments. Your search skill determines what
+            quality materials you can uncover, and how rare the finds
+            might be.
+
+<ansi fg="yellow">━━━ Skill Progression ━━━</ansi>
+
+The <ansi fg="skill">search</ansi> skill improves through use — every search
+attempt has a small chance to deepen your mastery. Over time, your
+<ansi fg="yellow">Perception</ansi> and your accumulated rank in
+<ansi fg="skill">search</ansi> will determine what you can find.
+
+<ansi fg="yellow">See Also:</ansi>
+
+  <ansi fg="command">help track</ansi>, <ansi fg="command">help forage</ansi>,
+  <ansi fg="command">help perception</ansi>, <ansi fg="command">help skills</ansi>
