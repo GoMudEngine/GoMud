@@ -75,6 +75,7 @@ var (
 		`deafen`:      {Deafen, true, true, true}, // Admin only
 		`devtool`:     {Devtool, false, true, true}, // Admin only
 		`default`:     {Default, false, true, false},
+		`defuse`:      {Defuse, false, true, false},
 		`disenchant`:  {Disenchant, false, false, false}, // Can't disenchant in combat
 		`drop`:{Drop, true, false, false}, // Can't drop items in combat
 		`drink`:       {Drink, true, true, false},
