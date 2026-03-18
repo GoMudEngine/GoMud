@@ -95,7 +95,6 @@ var (
 		`killstats`:   {Killstats, true, true, false},
 		`history`:     {History, true, true, false},
 		`inbox`:       {Inbox, true, true, false},
-		`inspect`:     {Inspect, false, true, false},
 		`inventory`:   {Inventory, true, true, false},
 		`item`:        {Item, true, true, true}, // Admin only
 		`title`:       {Title, true, true, false},
