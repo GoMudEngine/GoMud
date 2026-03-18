@@ -2337,6 +2337,10 @@ func TestPicklock(t *testing.T) {
 	defer cleanup()
 
 	user, room := getTestUserAndRoom(t)
+	if user.Character.Skills == nil {
+		user.Character.Skills = make(map[string]int)
+	}
+	user.Character.Skills["skullduggery"] = 1
 
 	t.Run("no_args", func(t *testing.T) {
 		handled, err := Picklock("", user, room, 0)
@@ -5152,6 +5156,10 @@ func TestPicklockDeep(t *testing.T) {
 	defer cleanup()
 
 	user, room := getTestUserAndRoom(t)
+	if user.Character.Skills == nil {
+		user.Character.Skills = make(map[string]int)
+	}
+	user.Character.Skills["skullduggery"] = 1
 
 	t.Run("picklock_direction", func(t *testing.T) {
 		handled, err := Picklock("north", user, room, 0)
@@ -6207,6 +6215,10 @@ func TestPicklockBranches(t *testing.T) {
 	defer cleanup()
 
 	user, room := getTestUserAndRoom(t)
+	if user.Character.Skills == nil {
+		user.Character.Skills = make(map[string]int)
+	}
+	user.Character.Skills["skullduggery"] = 1
 
 	t.Run("picklock_no_args", func(t *testing.T) {
 		handled, err := Picklock("", user, room, 0)

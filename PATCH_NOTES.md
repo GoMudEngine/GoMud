@@ -1,5 +1,34 @@
 # DOGMud Patch Notes
 
+## 2026-03-18 — Skullduggery Skill + Tutorial Fix
+
+### New Skill: Skullduggery
+The old `stealth` skill has been consolidated into **skullduggery**,
+a full rogue toolkit with seven sub-commands:
+
+- **sneak** — hide using opposed rolls (Dex+skill vs observers'
+  Perception+search). Empty rooms auto-succeed. Party excluded.
+- **steal** — take gold/items from NPCs or containers. Being hidden
+  improves your chances. Replaces the old pickpocket command.
+- **plant** — slip items onto NPCs or into containers unnoticed.
+- **shadow** — tail a target between rooms while hidden (rank 2+).
+  Room-entry detection checks on each transition.
+- **surprise attack** — automatic extra crit hit when attacking from
+  stealth. Swings all weapons with stacking hit penalties. Party
+  auto-assist triggers coordinated ambushes.
+- **picklock** — existing minigame, now gated behind skullduggery
+  rank 1.
+- **defuse** — trap disabling stub for future content (rank 3+).
+
+### Stealth Detection Rework
+- Hidden players are now rolled against when entering rooms
+- New arrivals roll to spot hidden occupants in the room
+- Party members excluded from all detection checks
+
+### Bug Fixes
+- Tutorial casting step now accepts spell ID shortcuts and aliases
+  (e.g., `conviction-spike echo` works, not just `cast conviction-spike echo`)
+
 ## 2026-03-17 — Bug Fixes, Hidden Object Discovery, Identify Spell
 
 ### Legacy Stat Scaling Fixes
