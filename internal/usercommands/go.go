@@ -314,6 +314,40 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				}
 			}
 
+			// Shadow follow -- check if any hidden player in the OLD room was
+			// shadowing the mover (user). Auto-move them to the destination.
+			for _, pId := range room.GetPlayers(rooms.FindAll) {
+				if pId == user.UserId {
+					continue
+				}
+				shadowP := users.GetByUserId(pId)
+				if shadowP == nil {
+					continue
+				}
+				if !shadowP.Character.HasBuffFlag(buffs.Hidden) {
+					continue
+				}
+				if !shadowIsTargetingUser(shadowP, user.UserId) {
+					continue
+				}
+				// Shadower is in the old room and tracking the mover -- follow.
+				shadowP.Command(rest)
+
+				// After the move attempt, check if the shadower is still hidden.
+				// The room-entry detection in go.go runs for the shadower's move,
+				// so if they were spotted their hidden buff will already be gone.
+				if !shadowP.Character.HasBuffFlag(buffs.Hidden) {
+					endShadow(shadowP, "You've been spotted -- your shadow ends.")
+					continue
+				}
+
+				// Target-specific detection roll: does the mover sense pursuit?
+				if shadowDetectionRoll(shadowP, user) {
+					user.SendText(
+						"You sense someone following close behind you.")
+				}
+			}
+
 			// Stealth detection: hidden player entering a room
 			if isSneaking {
 				if spotted, spotterName := checkStealthDetection(user, destRoom); spotted {
