@@ -203,3 +203,81 @@ func TestStringOr(t *testing.T) {
 		})
 	}
 }
+
+func TestDamageQuality(t *testing.T) {
+	fn := funcMap["damageQuality"].(func(float64) string)
+
+	tests := []struct {
+		name string
+		mult float64
+		want string
+	}{
+		{"zero", 0.0, "negligible striking power"},
+		{"feeble low", 0.3, "feeble striking power"},
+		{"feeble mid", 0.5, "feeble striking power"},
+		{"light low", 0.6, "light striking power"},
+		{"light high", 0.99, "light striking power"},
+		{"moderate low", 1.0, "moderate striking power"},
+		{"moderate high", 1.49, "moderate striking power"},
+		{"strong low", 1.5, "strong striking power"},
+		{"strong high", 2.49, "strong striking power"},
+		{"devastating low", 2.5, "devastating striking power"},
+		{"devastating high", 3.99, "devastating striking power"},
+		{"legendary", 4.0, "legendary striking power"},
+		{"legendary high", 10.0, "legendary striking power"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, fn(tt.mult))
+		})
+	}
+}
+
+func TestSpellDamageQuality(t *testing.T) {
+	fn := funcMap["spellDamageQuality"].(func(float64) string)
+
+	tests := []struct {
+		name string
+		mult float64
+		want string
+	}{
+		{"zero", 0.0, "negligible arcane resonance"},
+		{"faint", 0.5, "faint arcane resonance"},
+		{"mild", 0.8, "mild arcane resonance"},
+		{"moderate", 1.2, "moderate arcane resonance"},
+		{"strong", 1.6, "strong arcane resonance"},
+		{"intense", 2.5, "intense arcane resonance"},
+		{"legendary", 4.0, "legendary arcane resonance"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, fn(tt.mult))
+		})
+	}
+}
+
+func TestStatModDescription(t *testing.T) {
+	fn := funcMap["statModDescription"].(func(string, int) string)
+
+	tests := []struct {
+		name  string
+		stat  string
+		value int
+		want  string
+	}{
+		{"large positive", "strength", 25, "greatly bolsters your strength"},
+		{"medium positive", "dexterity", 15, "bolsters your dexterity"},
+		{"small positive", "perception", 3, "slightly bolsters your perception"},
+		{"large negative", "vitality", -25, "greatly saps your vitality"},
+		{"medium negative", "willpower", -15, "saps your willpower"},
+		{"small negative", "charisma", -3, "slightly saps your charisma"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, fn(tt.stat, tt.value))
+		})
+	}
+}

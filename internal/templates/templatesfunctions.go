@@ -294,6 +294,62 @@ var (
 				return "fortified"
 			}
 		},
+		"damageQuality": func(mult float64) string {
+			switch {
+			case mult < 0.3:
+				return "negligible striking power"
+			case mult < 0.6:
+				return "feeble striking power"
+			case mult < 1.0:
+				return "light striking power"
+			case mult < 1.5:
+				return "moderate striking power"
+			case mult < 2.5:
+				return "strong striking power"
+			case mult < 4.0:
+				return "devastating striking power"
+			default:
+				return "legendary striking power"
+			}
+		},
+		"spellDamageQuality": func(mult float64) string {
+			switch {
+			case mult < 0.5:
+				return "negligible arcane resonance"
+			case mult < 0.8:
+				return "faint arcane resonance"
+			case mult < 1.2:
+				return "mild arcane resonance"
+			case mult < 1.6:
+				return "moderate arcane resonance"
+			case mult < 2.5:
+				return "strong arcane resonance"
+			case mult < 4.0:
+				return "intense arcane resonance"
+			default:
+				return "legendary arcane resonance"
+			}
+		},
+		"statModDescription": func(statName string, value int) string {
+			var prefix string
+			switch {
+			case value >= 20:
+				prefix = "greatly bolsters"
+			case value >= 10:
+				prefix = "bolsters"
+			case value >= 1:
+				prefix = "slightly bolsters"
+			case value <= -20:
+				prefix = "greatly saps"
+			case value <= -10:
+				prefix = "saps"
+			case value <= -1:
+				prefix = "slightly saps"
+			default:
+				return ""
+			}
+			return prefix + " your " + statName
+		},
 		"mutationLevel": func(level int) string {
 			switch level {
 			case 1:
