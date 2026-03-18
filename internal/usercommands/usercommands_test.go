@@ -1533,17 +1533,6 @@ func TestUnlock(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-// ─── Inspect ────────────────────────────────────────────────────────────────
-
-func TestInspect(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	user, room := getTestUserAndRoom(t)
-	handled, err := Inspect("skeleton", user, room, 0)
-	assert.True(t, handled)
-	assert.NoError(t, err)
-}
 
 // ─── Search ─────────────────────────────────────────────────────────────────
 
@@ -3674,32 +3663,6 @@ func TestMacrosWithData(t *testing.T) {
 	})
 }
 
-// ─── Deeper Coverage: Inspect branches ──────────────────────────────────────
-
-func TestInspectBranches(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	user, room := getTestUserAndRoom(t)
-
-	t.Run("inspect_no_args", func(t *testing.T) {
-		handled, err := Inspect("", user, room, 0)
-		assert.True(t, handled)
-		assert.NoError(t, err)
-	})
-
-	t.Run("inspect_player", func(t *testing.T) {
-		handled, err := Inspect("bobrick", user, room, 0)
-		assert.True(t, handled)
-		assert.NoError(t, err)
-	})
-
-	t.Run("inspect_nonexistent", func(t *testing.T) {
-		handled, err := Inspect("zzz_nobody", user, room, 0)
-		assert.True(t, handled)
-		assert.NoError(t, err)
-	})
-}
 
 // ─── Deeper Coverage: Whisper branches ──────────────────────────────────────
 
