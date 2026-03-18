@@ -2408,6 +2408,15 @@ func (c *Character) CanDualWield() bool {
 // Returns whether a correction was in order
 func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 
+	// ── Skill rename migrations ─────────────────────────────────
+	// Rename legacy skill keys so existing saves pick up new names.
+	if c.Skills != nil {
+		if v, ok := c.Skills["stealth"]; ok {
+			c.Skills["skullduggery"] = v
+			delete(c.Skills, "stealth")
+		}
+	}
+
 	if len(c.Description) == 0 {
 		c.Description = "They seem thoroughly uninteresting."
 	}

@@ -115,6 +115,14 @@ func LoadMobInstance(mobId MobId, zone string, mobName string, homeRoomId int) *
 		return nil
 	}
 
+	// Skill rename migration: stealth -> skullduggery
+	if data.Skills != nil {
+		if v, ok := data.Skills["stealth"]; ok {
+			data.Skills["skullduggery"] = v
+			delete(data.Skills, "stealth")
+		}
+	}
+
 	return &data
 }
 
