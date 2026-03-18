@@ -1,0 +1,14 @@
+spellid: identify
+name: Identify
+description: >
+  Reach out with your mind to sense the hidden properties
+  of an item you are carrying or wearing.
+type: neutral
+schools:
+  - mental
+cost: 20
+waitrounds: 30
+primarystat: willpower
+base_folds: 3
+difficulty: 0
+effect_type: identify
