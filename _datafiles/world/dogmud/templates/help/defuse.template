@@ -1,0 +1,12 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">defuse</ansi>
+
+Attempt to disable a trap on a container or exit.
+
+<ansi fg="yellow">Usage:</ansi> <ansi fg="command">defuse [target]</ansi>
+
+Requires <ansi fg="skill">skullduggery</ansi> rank 3.
+
+<ansi fg="yellow-bold">Note:</ansi> Traps are not yet in the game. This
+command is reserved for future content.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help skullduggery</ansi>
