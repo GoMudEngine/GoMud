@@ -27,8 +27,12 @@ func Shadow(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	skillLevel := user.Character.GetSkillLevel(skills.Skullduggery)
 
 	// Requires skullduggery rank 3
-	if skillLevel < 3 {
+	if skillLevel < 1 {
 		return false, nil
+	}
+	if skillLevel < 3 {
+		user.SendText("You aren't advanced enough at skullduggery for that.")
+		return true, nil
 	}
 
 	rest = strings.TrimSpace(rest)

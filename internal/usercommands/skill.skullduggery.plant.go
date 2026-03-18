@@ -29,8 +29,12 @@ func Plant(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	skillLevel := user.Character.GetSkillLevel(skills.Skullduggery)
 
 	// Requires skullduggery rank 2
-	if skillLevel < 2 {
+	if skillLevel < 1 {
 		return false, nil
+	}
+	if skillLevel < 2 {
+		user.SendText("You aren't advanced enough at skullduggery for that.")
+		return true, nil
 	}
 
 	if user.Character.Aggro != nil {

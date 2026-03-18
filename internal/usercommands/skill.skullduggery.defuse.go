@@ -11,8 +11,12 @@ func Defuse(rest string, user *users.UserRecord,
 	room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	skillLevel := user.Character.GetSkillLevel(skills.Skullduggery)
-	if skillLevel < 3 {
+	if skillLevel < 1 {
 		return false, nil
+	}
+	if skillLevel < 3 {
+		user.SendText("You aren't advanced enough at skullduggery for that.")
+		return true, nil
 	}
 
 	if rest == "" {
