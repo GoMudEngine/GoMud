@@ -251,7 +251,7 @@ func TestGetProgressionMultiplier(t *testing.T) {
 		{"search", 2.0},
 		{"bartering", 2.0},
 		{"first-aid", 2.0},
-		{"stealth", 2.0},
+		{"skullduggery", 2.0},
 		{"unknown-skill", 1.0},
 	}
 

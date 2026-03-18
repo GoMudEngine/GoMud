@@ -53,7 +53,7 @@ func HealingGel(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 	user.Character.AddCondition(characters.ConditionRecoveryPenalty, 2, 1.0, "healing-gel movement penalty")
 	user.SendText(`<ansi fg="yellow">The gel weighs you down, slowing your movements.</ansi>`)
 
-	events.AddToQueue(events.SkillUsed{UserId: user.UserId, Skill: skills.Stealth, Details: "healing-gel"})
+	events.AddToQueue(events.SkillUsed{UserId: user.UserId, Skill: skills.Skullduggery, Details: "healing-gel"})
 
 	if user.Character.Aggro != nil {
 		user.Character.Aggro.RoundsWaiting = 1

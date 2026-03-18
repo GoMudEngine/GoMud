@@ -63,7 +63,7 @@ func PacifismAura(rest string, user *users.UserRecord, room *rooms.Room, flags e
 	// Also clear own aggro
 	user.Character.Aggro = nil
 
-	events.AddToQueue(events.SkillUsed{UserId: user.UserId, Skill: skills.Stealth, Details: "pacifism-aura"})
+	events.AddToQueue(events.SkillUsed{UserId: user.UserId, Skill: skills.Skullduggery, Details: "pacifism-aura"})
 
 	return true, nil
 }

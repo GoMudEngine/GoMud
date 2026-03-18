@@ -14,7 +14,7 @@ Level 1 - Sneak: enter a hidden state outside of combat
 */
 func Sneak(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
-	skillLevel := user.Character.GetSkillLevel(skills.Stealth)
+	skillLevel := user.Character.GetSkillLevel(skills.Skullduggery)
 
 	// If they don't have the skill, act like it's not a valid command
 	if skillLevel < 1 {
@@ -40,7 +40,7 @@ func Sneak(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	user.AddBuff(9, `skill`)
 
 	// Fire an event that a skill has been used
-	events.AddToQueue(events.SkillUsed{UserId: user.UserId, Skill: skills.Stealth, Details: `sneak`})
+	events.AddToQueue(events.SkillUsed{UserId: user.UserId, Skill: skills.Skullduggery, Details: `sneak`})
 
 	return true, nil
 }

@@ -19,7 +19,7 @@ Level 3 - Pickpocket: steal from a target while hidden
 */
 func Pickpocket(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
-	skillLevel := user.Character.GetSkillLevel(skills.Stealth)
+	skillLevel := user.Character.GetSkillLevel(skills.Skullduggery)
 
 	// Requires stealth rank 3
 	if skillLevel < 3 {
@@ -50,8 +50,8 @@ func Pickpocket(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 
 	if pickPlayerId > 0 || pickMobInstanceId > 0 {
 
-		if !user.Character.TryCooldown(skills.Stealth.String(`pickpocket`), "1 real minute") {
-			user.SendText(fmt.Sprintf("You need to wait %d rounds before you can do that again!", user.Character.GetCooldown(skills.Stealth.String(`pickpocket`))))
+		if !user.Character.TryCooldown(skills.Skullduggery.String(`pickpocket`), "1 real minute") {
+			user.SendText(fmt.Sprintf("You need to wait %d rounds before you can do that again!", user.Character.GetCooldown(skills.Skullduggery.String(`pickpocket`))))
 			return true, nil
 		}
 
@@ -60,7 +60,7 @@ func Pickpocket(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 	if pickMobInstanceId > 0 {
 
 		// Fire an event that a skill has been used
-		events.AddToQueue(events.SkillUsed{UserId: user.UserId, Skill: skills.Stealth, Details: `pickpocket`})
+		events.AddToQueue(events.SkillUsed{UserId: user.UserId, Skill: skills.Skullduggery, Details: `pickpocket`})
 
 		m := mobs.GetInstance(pickMobInstanceId)
 
@@ -147,7 +147,7 @@ func Pickpocket(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 	} else if pickPlayerId > 0 {
 
 		// Fire an event that a skill has been used
-		events.AddToQueue(events.SkillUsed{UserId: user.UserId, Skill: skills.Stealth, Details: `pickpocket`})
+		events.AddToQueue(events.SkillUsed{UserId: user.UserId, Skill: skills.Skullduggery, Details: `pickpocket`})
 
 		if p := users.GetByUserId(pickPlayerId); p != nil {
 

@@ -36,7 +36,7 @@ const (
 
 	// DOG non-combat skills
 	FirstAid  SkillTag = `first-aid`  // Healing others, treating wounds, stabilizing
-	Stealth   SkillTag = `stealth`    // Sneaking, hiding, avoiding detection
+	Skullduggery SkillTag = `skullduggery` // Sneaking, stealing, lockpicking, surprise attacks
 	Search    SkillTag = `search`     // Finding hidden objects, creatures, and resources
 	Bartering SkillTag = `bartering`  // Trade prices, negotiation, appraisal
 	Blacksmithing SkillTag = `blacksmithing` // Metal weapons, armor, tools
@@ -67,7 +67,7 @@ var (
 			FirstAid,
 		},
 		"rogue": {
-			Stealth,
+			Skullduggery,
 			WeaponCombat,
 		},
 		"merchant": {
@@ -268,7 +268,7 @@ var SkillPrimaryStats = map[string]string{
 	"ranged-combat":  "perception",
 	"spellcasting":   "willpower",
 	"first-aid":      "perception",
-	"stealth":        "dexterity",
+	"skullduggery":   "dexterity",
 	"search":         "perception",
 	"rhetoric":       "charisma",
 	"bartering":      "charisma",
@@ -303,7 +303,7 @@ var SkillProgressionMultipliers = map[SkillTag]float64{
 	Search:    2.0,
 	Bartering: 2.0,
 	FirstAid:      2.0,
-	Stealth:       2.0,
+	Skullduggery:  2.0,
 	Blacksmithing: 2.0,
 	Alchemy:       2.0,
 	Tailoring:     2.0,
@@ -366,7 +366,7 @@ func init() {
 	for _, sk := range []SkillTag{
 		Cast,
 		WeaponCombat, UnarmedCombat, RangedCombat, Spellcasting, Rhetoric,
-		FirstAid, Stealth, Search, Bartering,
+		FirstAid, Skullduggery, Search, Bartering,
 		Blacksmithing, Alchemy, Tailoring, Cooking, Jewelcrafting, Enchanting,
 	} {
 		if _, ok := skillNameSet[sk]; !ok {
