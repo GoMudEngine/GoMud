@@ -120,6 +120,7 @@ var (
 		`pet`:{Pet, false, true, false},
 		`picklock`:    {Picklock, false, true, false},
 		`steal`:       {Steal, false, true, false},
+		`plant`:       {Plant, false, true, false},
 		`prepare`:     {Prepare, true, true, true}, // Admin only
 		`print`:{Print, true, true, false},
 		`printline`:   {PrintLine, true, true, false},
