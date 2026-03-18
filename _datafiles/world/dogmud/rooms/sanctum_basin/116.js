@@ -41,8 +41,9 @@ function onEnter(user, room) {
 
 function onCommand(cmd, rest, user, room) {
 
-    // Detect cast command (require a target/spell name in rest)
-    if ( cmd == "cast" && rest != "" ) {
+    // Detect cast command — works whether player types "cast conviction-spike echo",
+    // "conviction-spike echo" (spell ID shortcut), or uses an alias.
+    if ( (cmd == "cast" && rest != "") || cmd == "conviction-spike" ) {
         if ( user.HasQuest("1-magic_arrive") && !user.HasQuest("1-magic_cast") ) {
             castAttempted = true;
             castTicks = 0;
