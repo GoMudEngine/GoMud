@@ -108,3 +108,14 @@ hints:
     Healing up slow? Try hanging out in the Sanctum Basin or
     the Temple in Thornwall. Some rooms are great places to
     rest.
+  - >-
+    Found a mysterious item? Use <ansi fg="command">cast identify</ansi>
+    to reveal its properties, or visit a merchant and
+    <ansi fg="command">appraise</ansi> it.
+  - >-
+    The <ansi fg="command">search</ansi> command can reveal hidden
+    exits, containers, and secrets. Higher Perception helps
+    you find more.
+  - >-
+    Your <ansi fg="command">map</ansi> detail improves as your
+    Perception grows. Sharp eyes see further.
