@@ -131,7 +131,12 @@ func Sneak(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return true, nil
 	}
 
-	// Success — grant hidden buff and fire event
+	// Success — apply hidden buff synchronously so it's active immediately
+	// (user.AddBuff queues an event that doesn't process until next tick,
+	// which means HasBuffFlag(Hidden) would be false if the player moves
+	// before the tick fires).
+	user.Character.AddBuff(9, false)
+	// Also queue the event so the buff's onStart script fires
 	user.AddBuff(9, `skill`)
 
 	user.SendText(`You slip into the shadows.`)
