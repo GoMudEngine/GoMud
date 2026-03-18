@@ -51,7 +51,16 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 
 	c := configs.GetTextFormatsConfig()
 
+	// Check both the buff flag (set by event queue on next tick) and the
+	// misc-data flag (set synchronously by sneak command). This handles
+	// the case where the player sneaks then immediately moves before the
+	// buff event processes.
 	isSneaking := user.Character.HasBuffFlag(buffs.Hidden)
+	if !isSneaking {
+		if sneakFlag, ok := user.Character.GetMiscData(`sneaking`).(bool); ok && sneakFlag {
+			isSneaking = true
+		}
+	}
 
 	handled := false
 
@@ -352,6 +361,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 			if isSneaking {
 				if spotted, spotterName := checkStealthDetection(user, destRoom); spotted {
 					user.Character.CancelBuffsWithFlag(buffs.Hidden)
+					user.Character.SetMiscData(`sneaking`, nil)
 					isSneaking = false
 					user.SendText(fmt.Sprintf(
 						"You slip into the room but %s notices you.", spotterName))
@@ -375,6 +385,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 					success, _, _, _ := dice.OpposedRollStat(observerScore, hiddenScore)
 					if success {
 						hiddenP.Character.CancelBuffsWithFlag(buffs.Hidden)
+						hiddenP.Character.SetMiscData(`sneaking`, nil)
 						hiddenP.SendText(fmt.Sprintf(
 							"%s enters the room and notices you!", user.Character.Name))
 						user.SendText(fmt.Sprintf(
