@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
@@ -211,9 +212,26 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 						if partyUser.Character.RoomId == user.Character.RoomId &&
 							partyUser.Character.GetSetting("autoattack") != "off" &&
 							partyUser.Character.Aggro == nil {
+							// Surprise attack for hidden party members before they join combat
+							if partyUser.Character.HasBuffFlag(buffs.Hidden) {
+								partyCfg := configs.GetBalanceConfig()
+								if partyUser.Character.TryCooldown("special-move",
+									fmt.Sprintf("%d rounds", partyCfg.SpecialMoveCooldown)) {
+									executeSurpriseAttack(partyUser, room, attackMobInstanceId, 0)
+								}
+							}
 							partyUser.Command(fmt.Sprintf(`attack #%d`, attackMobInstanceId))
 						}
 					}
+				}
+			}
+
+			// Surprise attack from stealth — fires before normal combat begins
+			if isSneaking {
+				cfg := configs.GetBalanceConfig()
+				if user.Character.TryCooldown("special-move",
+					fmt.Sprintf("%d rounds", cfg.SpecialMoveCooldown)) {
+					executeSurpriseAttack(user, room, attackMobInstanceId, 0)
 				}
 			}
 
@@ -270,6 +288,15 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 							}
 						}
 					}
+				}
+			}
+
+			// Surprise attack from stealth — fires before normal combat begins
+			if isSneaking {
+				cfg := configs.GetBalanceConfig()
+				if user.Character.TryCooldown("special-move",
+					fmt.Sprintf("%d rounds", cfg.SpecialMoveCooldown)) {
+					executeSurpriseAttack(user, room, 0, attackPlayerId)
 				}
 			}
 
