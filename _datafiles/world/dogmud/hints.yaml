@@ -119,3 +119,20 @@ hints:
   - >-
     Your <ansi fg="command">map</ansi> detail improves as your
     Perception grows. Sharp eyes see further.
+  - >-
+    The <ansi fg="skill">skullduggery</ansi> skill covers sneaking,
+    stealing, lockpicking, and more. Type
+    <ansi fg="command">help skullduggery</ansi> for details.
+  - >-
+    Use <ansi fg="command">sneak</ansi> to enter the shadows. Be
+    careful -- sharp-eyed NPCs may notice you trying to hide.
+  - >-
+    Hidden and attacking? If your special move cooldown is ready,
+    you'll land a devastating surprise attack automatically.
+  - >-
+    Use <ansi fg="command">shadow</ansi> to tail someone between
+    rooms without being seen. Requires rank 2 skullduggery.
+  - >-
+    You can <ansi fg="command">steal</ansi> from NPCs or
+    <ansi fg="command">plant</ansi> items on them. Being hidden
+    improves your chances.</ansi>
