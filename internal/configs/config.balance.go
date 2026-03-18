@@ -43,6 +43,16 @@ type Balance struct {
 	KickKnockdownChance ConfigInt   `yaml:"KickKnockdownChance"` // Base % knockdown chance (default 35)
 	CoupDeGraceRounds   ConfigInt   `yaml:"CoupDeGraceRounds"`   // Rounds before mob finishes downed player (default 1; 0=disabled)
 
+	// ── SKULLDUGGERY ─────────────────────────────────────────────────────────
+	SneakFailCooldown              ConfigInt   `yaml:"SneakFailCooldown"`              // Rounds before sneak retry after failure (default 3)
+	SurpriseAttackOffhandPenalty   ConfigFloat `yaml:"SurpriseAttackOffhandPenalty"`   // Hit penalty for offhand surprise attack (default 0.10)
+	SurpriseAttackExtraArm1Penalty ConfigFloat `yaml:"SurpriseAttackExtraArm1Penalty"` // Hit penalty for extra arm 1 (default 0.25)
+	SurpriseAttackExtraArm2Penalty ConfigFloat `yaml:"SurpriseAttackExtraArm2Penalty"` // Hit penalty for extra arm 2 (default 0.40)
+	StealSkillMultiplier           ConfigFloat `yaml:"StealSkillMultiplier"`           // Tuning knob for steal/plant rolls (default 1.0)
+	StealHiddenBonus               ConfigInt   `yaml:"StealHiddenBonus"`               // Bonus to attacker score when hidden (default 25)
+	StealCooldown                  ConfigInt   `yaml:"StealCooldown"`                  // Steal/plant cooldown in real seconds (default 60)
+	ShadowCooldown                 ConfigInt   `yaml:"ShadowCooldown"`                 // Rounds before re-shadowing (default 5)
+
 	// ── COMBAT: SPELL COSTS ──────────────────────────────────────────────────
 	SpellConvictionCostMultiplier ConfigFloat `yaml:"SpellConvictionCostMultiplier"` // Global multiplier for spell conviction costs (default 1.0)
 	SpellHealthCostMultiplier     ConfigFloat `yaml:"SpellHealthCostMultiplier"`     // Global multiplier for spell health costs (default 1.0)
@@ -288,6 +298,32 @@ func (b *Balance) Validate() {
 	}
 	if b.CoupDeGraceRounds < 0 {
 		b.CoupDeGraceRounds = 1
+	}
+
+	// ── SKULLDUGGERY ─────────────────────────────────────────────────────────
+	if b.SneakFailCooldown < 0 {
+		b.SneakFailCooldown = 3
+	}
+	if b.SurpriseAttackOffhandPenalty < 0 || b.SurpriseAttackOffhandPenalty > 1.0 {
+		b.SurpriseAttackOffhandPenalty = 0.10
+	}
+	if b.SurpriseAttackExtraArm1Penalty < 0 || b.SurpriseAttackExtraArm1Penalty > 1.0 {
+		b.SurpriseAttackExtraArm1Penalty = 0.25
+	}
+	if b.SurpriseAttackExtraArm2Penalty < 0 || b.SurpriseAttackExtraArm2Penalty > 1.0 {
+		b.SurpriseAttackExtraArm2Penalty = 0.40
+	}
+	if b.StealSkillMultiplier <= 0 {
+		b.StealSkillMultiplier = 1.0
+	}
+	if b.StealHiddenBonus < 0 {
+		b.StealHiddenBonus = 25
+	}
+	if b.StealCooldown < 0 {
+		b.StealCooldown = 60
+	}
+	if b.ShadowCooldown < 0 {
+		b.ShadowCooldown = 5
 	}
 
 	// ── COMBAT: DARKNESS ─────────────────────────────────────────────────────
