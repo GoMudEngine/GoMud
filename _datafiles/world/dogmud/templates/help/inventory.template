@@ -6,3 +6,9 @@ You can search for a specific object by entering its full (or partial) name:
 <ansi fg="command">inventory wood</ansi> would list items with "wood" in the name.
 <ansi fg="command">inventory wearable</ansi> would list all wearable items in your inventory.
 
+To learn more about an item's properties, use the
+<ansi fg="spellname">identify</ansi> spell or visit a merchant and
+use <ansi fg="command">appraise</ansi>.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help identify</ansi>, <ansi fg="command">help appraise</ansi>
+

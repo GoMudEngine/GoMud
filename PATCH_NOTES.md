@@ -1,5 +1,27 @@
 # DOGMud Patch Notes
 
+## 2026-03-17 — Bug Fixes, Hidden Object Discovery, Identify Spell
+
+### Legacy Stat Scaling Fixes
+- Map command perception thresholds rescaled for 100-baseline
+  stats (was 25/50/75, now 110/135/175). New characters start
+  at tier 1 zoom instead of getting max zoom immediately.
+
+### New Spell: Identify
+The old `inspect` command has been removed and replaced with
+the **Identify** spell (Mental school).
+
+- Cast `identify <item>` to reveal an item's properties using
+  descriptive language (no raw numbers shown to players)
+- Works on items in your backpack or currently equipped
+- Costs 20 conviction, 3 folds to cast, 30-round cooldown
+- Merchants still offer `appraise` as a non-magical alternative
+
+### Appraise Rework
+- Appraise now shows full item details (previously capped at
+  tier 3). All output uses descriptive language instead of raw
+  numbers.
+
 ## 2026-03-17 — Bug Fix Day + Hidden Object Discovery System
 
 ### Bug Fixes (9 issues from playtesting)
