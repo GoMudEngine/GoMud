@@ -4,7 +4,9 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
+	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -12,6 +14,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
+	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -308,6 +311,42 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				}
 				if mob.Character.IsCharmed(user.UserId) { // Charmed mobs follow
 					mob.Command(rest)
+				}
+			}
+
+			// Stealth detection: hidden player entering a room
+			if isSneaking {
+				if spotted, spotterName := checkStealthDetection(user, destRoom); spotted {
+					user.Character.CancelBuffsWithFlag(buffs.Hidden)
+					isSneaking = false
+					user.SendText(fmt.Sprintf(
+						"You slip into the room but %s notices you.", spotterName))
+				}
+			}
+
+			// Newcomer tries to spot hidden occupants
+			if !isSneaking {
+				for _, pId := range destRoom.GetPlayers() {
+					if pId == user.UserId {
+						continue
+					}
+					hiddenP := users.GetByUserId(pId)
+					if hiddenP == nil || !hiddenP.Character.HasBuffFlag(buffs.Hidden) {
+						continue
+					}
+					observerScore := float64(user.Character.Stats.Perception.ValueAdj) +
+						combat.SkillMultiplier(user.Character.GetSkillLevel(skills.Search))*25.0
+					hiddenScore := float64(hiddenP.Character.Stats.Dexterity.ValueAdj) +
+						combat.SkillMultiplier(hiddenP.Character.GetSkillLevel(skills.Skullduggery))*25.0
+					success, _, _, _ := dice.OpposedRollStat(observerScore, hiddenScore)
+					if success {
+						hiddenP.Character.CancelBuffsWithFlag(buffs.Hidden)
+						hiddenP.SendText(fmt.Sprintf(
+							"%s enters the room and notices you!", user.Character.Name))
+						user.SendText(fmt.Sprintf(
+							`You notice <ansi fg="username">%s</ansi> lurking in the shadows.`,
+							hiddenP.Character.Name))
+					}
 				}
 			}
 
