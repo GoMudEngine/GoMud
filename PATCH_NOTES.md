@@ -25,9 +25,28 @@ a full rogue toolkit with seven sub-commands:
 - New arrivals roll to spot hidden occupants in the room
 - Party members excluded from all detection checks
 
+### Stealth & Movement Improvements
+- Hidden players skip room onEnter scripts (NPCs no longer greet
+  you when they can't see you)
+- Sneak buff now applies immediately (no tick delay before moving)
+- Per-weapon surprise attack messaging shows each weapon's hit
+  and damage individually
+
+### Quality of Life
+- MOTD now displays in a visible bordered box on login
+- Skill-gated commands show "You aren't advanced enough at
+  skullduggery for that" instead of "command not found"
+- Updated help files for steal and plant with clear syntax and
+  examples
+- Added missing alchemy_bench station to Apothecary Lane (room 471)
+- Added hidden buff (ID 9) to dogmud world buffs (was missing)
+
 ### Bug Fixes
 - Tutorial casting step now accepts spell ID shortcuts and aliases
-  (e.g., `conviction-spike echo` works, not just `cast conviction-spike echo`)
+  (e.g., `conviction-spike echo` works, not just
+  `cast conviction-spike echo`)
+- Existing characters auto-migrate stealth skill to skullduggery
+  on login
 
 ## 2026-03-17 — Bug Fixes, Hidden Object Discovery, Identify Spell
 
