@@ -473,7 +473,11 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 
 			handled = true
 
-			if doLook, err := scripting.TryRoomScriptEvent(`onEnter`, user.UserId, destRoom.RoomId); err != nil || doLook {
+			// Skip onEnter scripts when hidden — NPCs shouldn't react
+			// to a player they can't see. Still show the room via Look.
+			if isSneaking {
+				Look(``, user, destRoom, events.CmdSecretly)
+			} else if doLook, err := scripting.TryRoomScriptEvent(`onEnter`, user.UserId, destRoom.RoomId); err != nil || doLook {
 				Look(``, user, destRoom, events.CmdSecretly)
 			}
 
