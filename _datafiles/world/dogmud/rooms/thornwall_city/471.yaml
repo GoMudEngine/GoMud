@@ -9,6 +9,7 @@ description: A narrow side street connecting Main Street to the Craftsmen's Quar
   coloured liquids, bundles of dried herbs, and a mortar and pestle the size of a
   man's head. A sign reads "Voss — Apothecary & Herbalist."
 biome: city
+station: alchemy_bench
 coord:
   x: 4
   y: -1
