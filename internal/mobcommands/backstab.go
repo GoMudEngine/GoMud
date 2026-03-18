@@ -22,7 +22,7 @@ func Backstab(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	if rest == `` {
 
 		if mob.Character.Aggro != nil {
-			mob.Character.Aggro.Type = characters.BackStab
+			mob.Character.Aggro.Type = characters.SurpriseAttack
 			return true, nil
 		} else {
 			// If no argument supplied, attack whoever is attacking the player currently.
@@ -58,7 +58,7 @@ func Backstab(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		m := mobs.GetInstance(attackMobInstanceId)
 
 		if m != nil {
-			mob.Character.SetAggro(0, attackMobInstanceId, characters.BackStab)
+			mob.Character.SetAggro(0, attackMobInstanceId, characters.SurpriseAttack)
 		}
 
 	} else if attackPlayerId > 0 {
@@ -66,7 +66,7 @@ func Backstab(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		p := users.GetByUserId(attackPlayerId)
 
 		if p != nil {
-			mob.Character.SetAggro(attackPlayerId, 0, characters.BackStab)
+			mob.Character.SetAggro(attackPlayerId, 0, characters.SurpriseAttack)
 		}
 
 	}

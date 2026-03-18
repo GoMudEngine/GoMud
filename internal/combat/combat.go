@@ -310,9 +310,9 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 
 	attackMessagePrefix := ``
 	backstabCrit := false
-	if sourceChar.Aggro.Type == characters.BackStab {
+	if sourceChar.Aggro.Type == characters.SurpriseAttack {
 		backstabCrit = true
-		attackMessagePrefix = `<ansi fg="magenta-bold">*[BACKSTAB]*</ansi> `
+		attackMessagePrefix = `<ansi fg="magenta-bold">*[SURPRISE ATTACK]*</ansi> `
 		sourceChar.SetAggro(sourceChar.Aggro.UserId, sourceChar.Aggro.MobInstanceId, characters.DefaultAttack)
 	}
 

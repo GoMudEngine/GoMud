@@ -44,7 +44,9 @@
       "Bash(do:*)",
       "Bash(cp:*)",
       "Bash(/tmp/check_ansi_nesting.py:*)",
-      "Bash(PYTHONIOENCODING=utf-8 python3:*)"
+      "Bash(PYTHONIOENCODING=utf-8 python3:*)",
+      "Bash(/tmp/zone_analysis.txt:*)",
+      "Read(//tmp/**)"
     ]
   },
   "defaultMode": "bypassPermissions"

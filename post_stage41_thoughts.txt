@@ -1,0 +1,11 @@
+
+Need to update the ai tester script:
+
+Should try to find and finish quests, including the tutorial
+Should try to use different commands, spells, special attacks
+Should try out different weapons and gear, try to gear itself as well as possible
+Should explore and remember the local area, talk to npcs
+Has a robust template and instructions on how to report bugs and suggestions in a clear and useful way that details what they were trying to do and what failed. Report typos as bugs as well
+Should avoid loops like it does now, fallback to reading helpfiles, checking its own status, looking, etc
+Should avoid dying, take time to heal itself, buff itself, knows to use the chrysalis-glow spell in dark areas
+Any other behavior or info you think the model would need to behave like a player and tester
