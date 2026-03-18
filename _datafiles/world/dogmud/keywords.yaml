@@ -153,7 +153,7 @@ help:
 # Aliases for keywords when typing: help <keyword>
 # Key is the target keyword, value is the list of aliases
 help-aliases:
-  skullduggery:     [sneak, steal, plant, shadow, defuse, stealth]
+  skullduggery:     [stealth]
   combat:           [fighting, battle]
   cooldowns:        [cooldown]
   defense:          [dodge, parry, block, defenses]
