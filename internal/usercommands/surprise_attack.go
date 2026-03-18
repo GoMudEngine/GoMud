@@ -62,9 +62,10 @@ func executeSurpriseAttack(attacker *users.UserRecord, room *rooms.Room, targetM
 
 	// --- Collect attack weapons (same helper used by combat engine) ---
 	type weaponEntry struct {
-		itemId      int
-		dmgMult     float64
-		hitPenalty  float64 // fraction (0.0 = no penalty, 0.10 = 10% miss chance added)
+		itemId     int
+		name       string
+		dmgMult    float64
+		hitPenalty float64 // fraction (0.0 = no penalty, 0.10 = 10% miss chance added)
 	}
 
 	weapons := []weaponEntry{}
@@ -76,7 +77,7 @@ func executeSurpriseAttack(attacker *users.UserRecord, room *rooms.Room, targetM
 		if wm <= 0 {
 			wm = float64(cfg.UnarmedDamageMultiplier)
 		}
-		weapons = append(weapons, weaponEntry{itemId: attacker.Character.Equipment.Weapon.ItemId, dmgMult: wm, hitPenalty: 0.0})
+		weapons = append(weapons, weaponEntry{itemId: attacker.Character.Equipment.Weapon.ItemId, name: spec.NameSimple, dmgMult: wm, hitPenalty: 0.0})
 	}
 
 	// Offhand weapon
@@ -87,7 +88,7 @@ func executeSurpriseAttack(attacker *users.UserRecord, room *rooms.Room, targetM
 			if wm <= 0 {
 				wm = float64(cfg.UnarmedDamageMultiplier)
 			}
-			weapons = append(weapons, weaponEntry{itemId: attacker.Character.Equipment.Offhand.ItemId, dmgMult: wm, hitPenalty: float64(cfg.SurpriseAttackOffhandPenalty)})
+			weapons = append(weapons, weaponEntry{itemId: attacker.Character.Equipment.Offhand.ItemId, name: offSpec.NameSimple, dmgMult: wm, hitPenalty: float64(cfg.SurpriseAttackOffhandPenalty)})
 		}
 	}
 
@@ -99,7 +100,7 @@ func executeSurpriseAttack(attacker *users.UserRecord, room *rooms.Room, targetM
 			if wm <= 0 {
 				wm = float64(cfg.UnarmedDamageMultiplier)
 			}
-			weapons = append(weapons, weaponEntry{itemId: attacker.Character.Equipment.ExtraArm1.ItemId, dmgMult: wm, hitPenalty: float64(cfg.SurpriseAttackExtraArm1Penalty)})
+			weapons = append(weapons, weaponEntry{itemId: attacker.Character.Equipment.ExtraArm1.ItemId, name: ea1Spec.NameSimple, dmgMult: wm, hitPenalty: float64(cfg.SurpriseAttackExtraArm1Penalty)})
 		}
 	}
 
@@ -111,17 +112,16 @@ func executeSurpriseAttack(attacker *users.UserRecord, room *rooms.Room, targetM
 			if wm <= 0 {
 				wm = float64(cfg.UnarmedDamageMultiplier)
 			}
-			weapons = append(weapons, weaponEntry{itemId: attacker.Character.Equipment.ExtraArm2.ItemId, dmgMult: wm, hitPenalty: float64(cfg.SurpriseAttackExtraArm2Penalty)})
+			weapons = append(weapons, weaponEntry{itemId: attacker.Character.Equipment.ExtraArm2.ItemId, name: ea2Spec.NameSimple, dmgMult: wm, hitPenalty: float64(cfg.SurpriseAttackExtraArm2Penalty)})
 		}
 	}
 
 	// Fallback: unarmed
 	if len(weapons) == 0 {
-		weapons = append(weapons, weaponEntry{itemId: 0, dmgMult: float64(cfg.UnarmedDamageMultiplier), hitPenalty: 0.0})
+		weapons = append(weapons, weaponEntry{itemId: 0, name: "fists", dmgMult: float64(cfg.UnarmedDamageMultiplier), hitPenalty: 0.0})
 	}
 
 	// --- Swing each weapon ---
-	totalDamage := 0
 	anyHit := false
 
 	for _, w := range weapons {
@@ -130,6 +130,15 @@ func executeSurpriseAttack(attacker *users.UserRecord, room *rooms.Room, targetM
 		roll := util.Rand(100)
 		if roll < penaltyPct {
 			// Missed this weapon swing due to penalty
+			attacker.SendText(
+				fmt.Sprintf(`<ansi fg="magenta-bold">*[SURPRISE ATTACK]*</ansi> You swing your <ansi fg="item">%s</ansi> at <ansi fg="mobname">%s</ansi> but miss!`,
+					w.name, targetName),
+			)
+			room.SendText(
+				fmt.Sprintf(`<ansi fg="magenta-bold">*[SURPRISE ATTACK]*</ansi> <ansi fg="username">%s</ansi> swings at %s from the shadows but misses!`,
+					attacker.Character.Name, targetName),
+				attacker.UserId,
+			)
 			continue
 		}
 
@@ -153,7 +162,6 @@ func executeSurpriseAttack(attacker *users.UserRecord, room *rooms.Room, targetM
 		dmgResult := dice.RollStat(dmgMean)
 		dmg := int(math.Round(math.Max(1.0, dmgResult.Value)))
 
-		totalDamage += dmg
 		anyHit = true
 
 		// Apply damage to target
@@ -161,10 +169,30 @@ func executeSurpriseAttack(attacker *users.UserRecord, room *rooms.Room, targetM
 		if *defenderHealth < 0 {
 			*defenderHealth = 0
 		}
+
+		// Per-weapon hit message
+		dmgDesc := combat.GetDamageDescription(dmg, defenderMaxHP)
+		attacker.SendText(
+			fmt.Sprintf(`<ansi fg="magenta-bold">*[SURPRISE ATTACK]*</ansi> Your <ansi fg="item">%s</ansi> strikes <ansi fg="mobname">%s</ansi> from the shadows! (<ansi fg="damage">%s</ansi>)`,
+				w.name, targetName, dmgDesc),
+		)
+		room.SendText(
+			fmt.Sprintf(`<ansi fg="magenta-bold">*[SURPRISE ATTACK]*</ansi> <ansi fg="username">%s</ansi>'s <ansi fg="item">%s</ansi> strikes %s from the shadows!`,
+				attacker.Character.Name, w.name, targetName),
+			attacker.UserId,
+		)
+		if targetPlayerId > 0 {
+			if p := users.GetByUserId(targetPlayerId); p != nil {
+				p.SendText(
+					fmt.Sprintf(`<ansi fg="magenta-bold">*[SURPRISE ATTACK]*</ansi> <ansi fg="username">%s</ansi>'s <ansi fg="item">%s</ansi> strikes you from the shadows! (<ansi fg="damage">%s</ansi>)`,
+						attacker.Character.Name, w.name, dmgDesc),
+				)
+			}
+		}
 	}
 
 	if !anyHit {
-		// All weapons missed — still reveal position but no damage message
+		// All weapons missed — still reveal position
 		attacker.SendText(
 			fmt.Sprintf(`<ansi fg="magenta-bold">*[SURPRISE ATTACK]*</ansi> You lunge at <ansi fg="mobname">%s</ansi> from the shadows, but miss!`,
 				targetName),
@@ -174,31 +202,6 @@ func executeSurpriseAttack(attacker *users.UserRecord, room *rooms.Room, targetM
 				attacker.Character.Name, targetName),
 			attacker.UserId,
 		)
-		return
-	}
-
-	// --- Send hit messages ---
-	dmgDesc := combat.GetDamageDescription(totalDamage, defenderMaxHP)
-
-	attacker.SendText(
-		fmt.Sprintf(`<ansi fg="magenta-bold">*[SURPRISE ATTACK]*</ansi> You strike <ansi fg="mobname">%s</ansi> from the shadows! (<ansi fg="damage">%s</ansi>)`,
-			targetName, dmgDesc),
-	)
-
-	room.SendText(
-		fmt.Sprintf(`<ansi fg="magenta-bold">*[SURPRISE ATTACK]*</ansi> <ansi fg="username">%s</ansi> strikes %s from the shadows!`,
-			attacker.Character.Name, targetName),
-		attacker.UserId,
-	)
-
-	// Notify victim if player target
-	if targetPlayerId > 0 {
-		if p := users.GetByUserId(targetPlayerId); p != nil {
-			p.SendText(
-				fmt.Sprintf(`<ansi fg="magenta-bold">*[SURPRISE ATTACK]*</ansi> <ansi fg="username">%s</ansi> strikes you from the shadows! (<ansi fg="damage">%s</ansi>)`,
-					attacker.Character.Name, dmgDesc),
-			)
-		}
 	}
 
 	// --- Skill progression ---
