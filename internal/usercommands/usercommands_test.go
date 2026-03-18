@@ -2463,13 +2463,13 @@ func TestAsk(t *testing.T) {
 	})
 }
 
-func TestPickpocket(t *testing.T) {
+func TestSteal(t *testing.T) {
 	cleanup := seedAllRegistries()
 	defer cleanup()
 
 	user, room := getTestUserAndRoom(t)
-	// No stealth skill - should return
-	handled, err := Pickpocket("skeleton", user, room, 0)
+	// No skullduggery skill - should return false, nil
+	handled, err := Steal("skeleton", user, room, 0)
 	assert.NoError(t, err)
 	_ = handled
 }

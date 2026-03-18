@@ -119,7 +119,7 @@ var (
 		`paz`:         {Paz, true, true, true}, // Admin only
 		`pet`:{Pet, false, true, false},
 		`picklock`:    {Picklock, false, true, false},
-		`pickpocket`:  {Pickpocket, false, true, false},
+		`steal`:       {Steal, false, true, false},
 		`prepare`:     {Prepare, true, true, true}, // Admin only
 		`print`:{Print, true, true, false},
 		`printline`:   {PrintLine, true, true, false},
