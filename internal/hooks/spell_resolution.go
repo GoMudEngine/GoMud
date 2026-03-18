@@ -9,10 +9,12 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/dice"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
+	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -24,6 +26,12 @@ func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData
 	skillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
 	spellAttack := characters.CalcSpellAttack(user.Character.Stats.Willpower.ValueAdj, skillLevel)
 	magnitude := spellData.EffectMagnitude
+
+	// --- Identify: resolve against caster's item, no targets ---
+	if spellData.EffectType == "identify" {
+		resolveIdentify(user, cs.SpellRest, room)
+		return
+	}
 
 	// --- Populate area targets for HarmArea ---
 	if spellData.Type == spells.HarmArea {
@@ -615,4 +623,51 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 	}
 	// Stage 30.1: Record spell hit with actual damage
 	combat.RecordSpell(combat.Mob, combat.User, true, isCrit, false, false, mobSpellDmg, atkRoll.ZScore, &caster.Character, target.Character, round)
+}
+
+// resolveIdentify finds the named item on the caster and renders
+// the identify template with descriptive item properties.
+func resolveIdentify(user *users.UserRecord, itemName string, room *rooms.Room) {
+
+	if itemName == "" {
+		user.SendText("Identify what? (Usage: cast identify <item>)")
+		return
+	}
+
+	// Search backpack first, then equipped slots
+	matchItem, found := user.Character.FindInBackpack(itemName)
+	if !found {
+		matchItem, found = user.Character.FindOnBody(itemName)
+	}
+
+	if !found {
+		user.SendText("You can't seem to identify that.")
+		return
+	}
+
+	iSpec := matchItem.GetSpec()
+
+	type identifyDetails struct {
+		Item     *items.Item
+		ItemSpec *items.ItemSpec
+	}
+
+	details := identifyDetails{
+		Item:     &matchItem,
+		ItemSpec: &iSpec,
+	}
+
+	user.SendText(
+		fmt.Sprintf(`You concentrate on the <ansi fg="item">%s</ansi>...`,
+			matchItem.DisplayName()),
+	)
+	room.SendText(
+		fmt.Sprintf(
+			`<ansi fg="username">%s</ansi> concentrates on their <ansi fg="item">%s</ansi>...`,
+			user.Character.Name, matchItem.DisplayName()),
+		user.UserId,
+	)
+
+	identifyTxt, _ := templates.Process("descriptions/identify", details, user.UserId)
+	user.SendText(identifyTxt)
 }
