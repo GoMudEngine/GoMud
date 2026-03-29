@@ -340,6 +340,7 @@ func LoadUser(username string, skipValidation ...bool) (*UserRecord, error) {
 
 	// One-time migrations
 	loadedUser.Character.MigratePairedSpells()
+	loadedUser.Character.MigrateNeckToBack()
 
 	if loadedUser.Joined.IsZero() {
 		loadedUser.Joined = time.Now()

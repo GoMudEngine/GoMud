@@ -841,6 +841,27 @@ func (c *Character) MigratePairedSpells() {
 	c.SetMiscData(migrationKey, "1")
 }
 
+// MigrateNeckToBack is a one-time migration that moves cloak/cape items
+// from the Neck slot to the Back slot. Runs on character load.
+func (c *Character) MigrateNeckToBack() {
+	const migrationKey = "migration-neck-to-back-done"
+	if c.GetMiscData(migrationKey) != nil {
+		return
+	}
+	// If neck item is a back-type item (cloak data was updated), move it
+	if c.Equipment.Neck.ItemId > 0 {
+		spec := c.Equipment.Neck.GetSpec()
+		if spec.Type == items.Back {
+			// Only move if back slot is empty
+			if c.Equipment.Back.ItemId <= 0 && !c.Equipment.Back.IsDisabled() {
+				c.Equipment.Back = c.Equipment.Neck
+				c.Equipment.Neck = items.Item{}
+			}
+		}
+	}
+	c.SetMiscData(migrationKey, "1")
+}
+
 func (c *Character) HasRecipe(recipeId string) bool {
 	if c.KnownRecipes == nil {
 		return false
