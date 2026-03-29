@@ -140,17 +140,17 @@ func TestCharacter_GetMiscDataKeys(t *testing.T) {
 	}
 }
 func TestCharacter_CarryCapacity(t *testing.T) {
-	// CarryCapacity() = float64(strengthAdj) * 3.0
+	// CarryCapacity() = float64(strengthAdj) * Balance.CarryCapacityMultiplier (default 0.65)
 	tests := []struct {
 		name        string
 		strengthAdj int
 		expectedCap float64
 	}{
 		{"Strength 0", 0, 0.0},
-		{"Strength 2", 2, 6.0},
-		{"Strength 10", 10, 30.0},
-		{"Strength 100", 100, 300.0},
-		{"Negative Strength", -3, -9.0},
+		{"Strength 2", 2, 1.3},
+		{"Strength 10", 10, 6.5},
+		{"Strength 100", 100, 65.0},
+		{"Negative Strength", -3, -1.9500000000000002},
 	}
 
 	for _, tt := range tests {
