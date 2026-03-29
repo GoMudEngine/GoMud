@@ -1437,14 +1437,26 @@ func (c *Character) FindOnBody(itemName string) (items.Item, bool) {
 		c.Equipment.Offhand,
 		c.Equipment.ExtraArm1,
 		c.Equipment.ExtraArm2,
+		c.Equipment.ExtraArm3,
+		c.Equipment.ExtraArm4,
 		c.Equipment.Head,
 		c.Equipment.Neck,
+		c.Equipment.Shoulders,
 		c.Equipment.Body,
+		c.Equipment.Back,
 		c.Equipment.Belt,
+		c.Equipment.Wrist1,
+		c.Equipment.Wrist2,
+		c.Equipment.ExtraWrist1,
+		c.Equipment.ExtraWrist2,
+		c.Equipment.ExtraWrist3,
+		c.Equipment.ExtraWrist4,
 		c.Equipment.Gloves,
 		c.Equipment.Ring,
+		c.Equipment.Ring2,
 		c.Equipment.Legs,
-		c.Equipment.Feet)
+		c.Equipment.Feet,
+		c.Equipment.ComponentBag)
 
 	if fullMatch.ItemId != 0 {
 		return fullMatch, true
@@ -1485,14 +1497,26 @@ func (c *Character) FindItem(itemName string) (items.Item, string, bool) {
 		{c.Equipment.Offhand, "offhand"},
 		{c.Equipment.ExtraArm1, "extra arm"},
 		{c.Equipment.ExtraArm2, "extra arm"},
+		{c.Equipment.ExtraArm3, "extra arm 3"},
+		{c.Equipment.ExtraArm4, "extra arm 4"},
 		{c.Equipment.Head, "worn - head"},
 		{c.Equipment.Neck, "worn - neck"},
+		{c.Equipment.Shoulders, "worn - shoulders"},
 		{c.Equipment.Body, "worn - body"},
+		{c.Equipment.Back, "worn - back"},
 		{c.Equipment.Belt, "worn - belt"},
+		{c.Equipment.Wrist1, "worn - wrist"},
+		{c.Equipment.Wrist2, "worn - wrist"},
+		{c.Equipment.ExtraWrist1, "extra wrist 1"},
+		{c.Equipment.ExtraWrist2, "extra wrist 2"},
+		{c.Equipment.ExtraWrist3, "extra wrist 3"},
+		{c.Equipment.ExtraWrist4, "extra wrist 4"},
 		{c.Equipment.Gloves, "worn - gloves"},
 		{c.Equipment.Ring, "worn - ring"},
+		{c.Equipment.Ring2, "worn - ring"},
 		{c.Equipment.Legs, "worn - legs"},
 		{c.Equipment.Feet, "worn - feet"},
+		{c.Equipment.ComponentBag, "worn - componentbag"},
 	}
 	for _, slot := range slotItems {
 		if slot.item.ItemId > 0 {
@@ -2551,11 +2575,11 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 		c.Mutations = make(map[string]int)
 	}
 
-	// Derive ExtraArms from mutation level (capped at 2)
+	// Derive ExtraArms from mutation level (capped at 4)
 	if lvl, ok := c.Mutations["extra-arms"]; ok && lvl > 0 {
 		c.ExtraArms = lvl
-		if c.ExtraArms > 2 {
-			c.ExtraArms = 2
+		if c.ExtraArms > 4 {
+			c.ExtraArms = 4
 		}
 	} else {
 		c.ExtraArms = 0
@@ -2709,6 +2733,38 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 						itemFoundInDisabledSlot = c.Equipment.Feet
 					}
 					c.Equipment.Feet = items.ItemDisabledSlot
+				case items.Wrist:
+					if c.Equipment.Wrist1.ItemId > 0 {
+						itemFoundInDisabledSlot = c.Equipment.Wrist1
+					}
+					c.Equipment.Wrist1 = items.ItemDisabledSlot
+					if c.Equipment.Wrist2.ItemId > 0 {
+						c.StoreItem(c.Equipment.Wrist2)
+					}
+					c.Equipment.Wrist2 = items.ItemDisabledSlot
+				case items.Back:
+					if c.Equipment.Back.ItemId > 0 {
+						itemFoundInDisabledSlot = c.Equipment.Back
+					}
+					c.Equipment.Back = items.ItemDisabledSlot
+				case items.Shoulders:
+					if c.Equipment.Shoulders.ItemId > 0 {
+						itemFoundInDisabledSlot = c.Equipment.Shoulders
+					}
+					c.Equipment.Shoulders = items.ItemDisabledSlot
+				case items.ComponentBag:
+					if c.Equipment.ComponentBag.ItemId > 0 {
+						itemFoundInDisabledSlot = c.Equipment.ComponentBag
+					}
+					c.Equipment.ComponentBag = items.ItemDisabledSlot
+				}
+
+				// Handle non-ItemType disabled slots (string-keyed)
+				if disabledSlot == "ring2" {
+					if c.Equipment.Ring2.ItemId > 0 {
+						itemFoundInDisabledSlot = c.Equipment.Ring2
+					}
+					c.Equipment.Ring2 = items.ItemDisabledSlot
 				}
 
 				if !itemFoundInDisabledSlot.IsDisabled() {
@@ -2899,6 +2955,16 @@ func (c *Character) Wear(i items.Item) (returnItems []items.Item, newItemWorn bo
 				c.reapplyPermabuffs()
 				return returnItems, true, ``
 			}
+			if c.ExtraArms >= 3 && !c.Equipment.ExtraArm3.IsDisabled() && c.Equipment.ExtraArm3.ItemId == 0 {
+				c.Equipment.ExtraArm3 = i
+				c.reapplyPermabuffs()
+				return returnItems, true, ``
+			}
+			if c.ExtraArms >= 4 && !c.Equipment.ExtraArm4.IsDisabled() && c.Equipment.ExtraArm4.ItemId == 0 {
+				c.Equipment.ExtraArm4 = i
+				c.reapplyPermabuffs()
+				return returnItems, true, ``
+			}
 		}
 	}
 
@@ -2926,6 +2992,14 @@ func (c *Character) Wear(i items.Item) (returnItems []items.Item, newItemWorn bo
 			if c.Equipment.ExtraArm2.ItemId > 0 {
 				returnItems = append(returnItems, c.Equipment.ExtraArm2)
 				c.Equipment.ExtraArm2 = items.Item{}
+			}
+			if c.Equipment.ExtraArm3.ItemId > 0 {
+				returnItems = append(returnItems, c.Equipment.ExtraArm3)
+				c.Equipment.ExtraArm3 = items.Item{}
+			}
+			if c.Equipment.ExtraArm4.ItemId > 0 {
+				returnItems = append(returnItems, c.Equipment.ExtraArm4)
+				c.Equipment.ExtraArm4 = items.Item{}
 			}
 		}
 
@@ -2984,11 +3058,56 @@ func (c *Character) Wear(i items.Item) (returnItems []items.Item, newItemWorn bo
 		returnItems = append(returnItems, c.Equipment.Gloves)
 		c.Equipment.Gloves = i
 	case items.Ring:
-		if c.Equipment.Ring.IsDisabled() { // Don't allow equipping on a disabled slot
+		if c.Equipment.Ring.IsDisabled() && c.Equipment.Ring2.IsDisabled() {
 			return returnItems, false, `You can't wear rings.`
 		}
-		returnItems = append(returnItems, c.Equipment.Ring)
-		c.Equipment.Ring = i
+		if !c.Equipment.Ring.IsDisabled() && c.Equipment.Ring.ItemId == 0 {
+			c.Equipment.Ring = i
+		} else if !c.Equipment.Ring2.IsDisabled() && c.Equipment.Ring2.ItemId == 0 {
+			c.Equipment.Ring2 = i
+		} else {
+			returnItems = append(returnItems, c.Equipment.Ring)
+			c.Equipment.Ring = i
+		}
+	case items.Wrist:
+		if c.Equipment.Wrist1.IsDisabled() && c.Equipment.Wrist2.IsDisabled() {
+			return returnItems, false, `You can't wear things on your wrists.`
+		}
+		if !c.Equipment.Wrist1.IsDisabled() && c.Equipment.Wrist1.ItemId == 0 {
+			c.Equipment.Wrist1 = i
+		} else if !c.Equipment.Wrist2.IsDisabled() && c.Equipment.Wrist2.ItemId == 0 {
+			c.Equipment.Wrist2 = i
+		} else if c.ExtraArms >= 1 && !c.Equipment.ExtraWrist1.IsDisabled() && c.Equipment.ExtraWrist1.ItemId == 0 {
+			c.Equipment.ExtraWrist1 = i
+		} else if c.ExtraArms >= 2 && !c.Equipment.ExtraWrist2.IsDisabled() && c.Equipment.ExtraWrist2.ItemId == 0 {
+			c.Equipment.ExtraWrist2 = i
+		} else if c.ExtraArms >= 3 && !c.Equipment.ExtraWrist3.IsDisabled() && c.Equipment.ExtraWrist3.ItemId == 0 {
+			c.Equipment.ExtraWrist3 = i
+		} else if c.ExtraArms >= 4 && !c.Equipment.ExtraWrist4.IsDisabled() && c.Equipment.ExtraWrist4.ItemId == 0 {
+			c.Equipment.ExtraWrist4 = i
+		} else {
+			returnItems = append(returnItems, c.Equipment.Wrist1)
+			c.Equipment.Wrist1 = i
+		}
+	case items.Back:
+		if c.Equipment.Back.IsDisabled() {
+			return returnItems, false, `You can't wear things on your back.`
+		}
+		returnItems = append(returnItems, c.Equipment.Back)
+		c.Equipment.Back = i
+	case items.Shoulders:
+		if c.Equipment.Shoulders.IsDisabled() {
+			return returnItems, false, `You can't wear things on your shoulders.`
+		}
+		returnItems = append(returnItems, c.Equipment.Shoulders)
+		c.Equipment.Shoulders = i
+	case items.ComponentBag:
+		if c.Equipment.ComponentBag.IsDisabled() {
+			return returnItems, false, `You can't equip a component bag.`
+		}
+		returnItems = append(returnItems, c.Equipment.ComponentBag)
+		c.Equipment.ComponentBag = i
+		c.SortComponentItems()
 	case items.Legs:
 		if c.Equipment.Legs.IsDisabled() { // Don't allow equipping on a disabled slot
 			return returnItems, false, `You can't wear things on your legs.`
@@ -3008,6 +3127,12 @@ func (c *Character) Wear(i items.Item) (returnItems []items.Item, newItemWorn bo
 	c.reapplyPermabuffs(returnItems...)
 
 	return returnItems, true, ``
+}
+
+// SortComponentItems moves is_component items from backpack into ComponentItems.
+// Stub — full implementation in Task 6.
+func (c *Character) SortComponentItems() int {
+	return 0
 }
 
 func (c *Character) RemoveFromBody(i items.Item) bool {
@@ -3036,6 +3161,35 @@ func (c *Character) RemoveFromBody(i items.Item) bool {
 		c.Equipment.Legs = items.Item{}
 	} else if i.Equals(c.Equipment.Feet) {
 		c.Equipment.Feet = items.Item{}
+	} else if i.Equals(c.Equipment.ExtraArm3) {
+		c.Equipment.ExtraArm3 = items.Item{}
+	} else if i.Equals(c.Equipment.ExtraArm4) {
+		c.Equipment.ExtraArm4 = items.Item{}
+	} else if i.Equals(c.Equipment.Shoulders) {
+		c.Equipment.Shoulders = items.Item{}
+	} else if i.Equals(c.Equipment.Back) {
+		c.Equipment.Back = items.Item{}
+	} else if i.Equals(c.Equipment.Wrist1) {
+		c.Equipment.Wrist1 = items.Item{}
+	} else if i.Equals(c.Equipment.Wrist2) {
+		c.Equipment.Wrist2 = items.Item{}
+	} else if i.Equals(c.Equipment.ExtraWrist1) {
+		c.Equipment.ExtraWrist1 = items.Item{}
+	} else if i.Equals(c.Equipment.ExtraWrist2) {
+		c.Equipment.ExtraWrist2 = items.Item{}
+	} else if i.Equals(c.Equipment.ExtraWrist3) {
+		c.Equipment.ExtraWrist3 = items.Item{}
+	} else if i.Equals(c.Equipment.ExtraWrist4) {
+		c.Equipment.ExtraWrist4 = items.Item{}
+	} else if i.Equals(c.Equipment.Ring2) {
+		c.Equipment.Ring2 = items.Item{}
+	} else if i.Equals(c.Equipment.ComponentBag) {
+		// Spill component bag contents back to backpack
+		for _, ci := range c.ComponentItems {
+			c.Items = append(c.Items, ci)
+		}
+		c.ComponentItems = nil
+		c.Equipment.ComponentBag = items.Item{}
 	} else {
 		return false
 	}
