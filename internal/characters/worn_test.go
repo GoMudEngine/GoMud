@@ -243,12 +243,16 @@ func TestGetAllSlotTypes(t *testing.T) {
 		string(items.Offhand),
 		string(items.Head),
 		string(items.Neck),
+		string(items.Shoulders),
 		string(items.Body),
+		string(items.Back),
 		string(items.Belt),
+		string(items.Wrist),
 		string(items.Gloves),
 		string(items.Ring),
 		string(items.Legs),
 		string(items.Feet),
+		string(items.ComponentBag),
 	}
 
 	got := GetAllSlotTypes()

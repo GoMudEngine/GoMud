@@ -68,6 +68,7 @@ type Character struct {
 	Charmed          *CharmInfo                     `yaml:"-"`                       // If they are charmed, this is the info
 	CharmedMobs      []int                          `yaml:"-"`                       // If they have charmed anyone, this is the list of mob instance ids
 	Items            []items.Item                   `yaml:"items,omitempty"`         // The items the character is holding
+	ComponentItems   []items.Item                   `yaml:"componentitems,omitempty"` // Contents of equipped component bag
 	Buffs            buffs.Buffs                    `yaml:"buffs,omitempty"`         // The buffs the character has active
 	Equipment        Worn                           `yaml:"equipment,omitempty"`     // The equipment the character is wearing
 	HealthMax        stats.StatInfo                 `yaml:"-"`                       // The maximum health of the character. Don't write to yaml since is dynamically calculated.
@@ -343,46 +344,39 @@ func (c *Character) CarryCapacity() float64 {
 
 // GetCarriedWeight returns the total weight of all carried items in pounds
 func (c *Character) GetCarriedWeight() float64 {
-	totalWeight := 0.0
-
-	// Add weight from inventory items
+	// Backpack item weights
+	backpackWeight := 0.0
 	for _, item := range c.Items {
-		totalWeight += item.GetSpec().GetWeight()
+		backpackWeight += item.GetSpec().GetWeight()
+	}
+	// Apply Back slot weight reduction to backpack contents
+	if c.Equipment.Back.ItemId > 0 {
+		reduction := c.Equipment.Back.GetSpec().WeightReduction
+		if reduction > 0 && reduction <= 1.0 {
+			backpackWeight *= (1.0 - reduction)
+		}
 	}
 
-	// Add weight from equipped items
-	if c.Equipment.Weapon.ItemId > 0 {
-		totalWeight += c.Equipment.Weapon.GetSpec().GetWeight()
+	// Component bag item weights
+	componentWeight := 0.0
+	for _, item := range c.ComponentItems {
+		componentWeight += item.GetSpec().GetWeight()
 	}
-	if c.Equipment.Offhand.ItemId > 0 {
-		totalWeight += c.Equipment.Offhand.GetSpec().GetWeight()
-	}
-	if c.Equipment.Head.ItemId > 0 {
-		totalWeight += c.Equipment.Head.GetSpec().GetWeight()
-	}
-	if c.Equipment.Neck.ItemId > 0 {
-		totalWeight += c.Equipment.Neck.GetSpec().GetWeight()
-	}
-	if c.Equipment.Body.ItemId > 0 {
-		totalWeight += c.Equipment.Body.GetSpec().GetWeight()
-	}
-	if c.Equipment.Belt.ItemId > 0 {
-		totalWeight += c.Equipment.Belt.GetSpec().GetWeight()
-	}
-	if c.Equipment.Gloves.ItemId > 0 {
-		totalWeight += c.Equipment.Gloves.GetSpec().GetWeight()
-	}
-	if c.Equipment.Ring.ItemId > 0 {
-		totalWeight += c.Equipment.Ring.GetSpec().GetWeight()
-	}
-	if c.Equipment.Legs.ItemId > 0 {
-		totalWeight += c.Equipment.Legs.GetSpec().GetWeight()
-	}
-	if c.Equipment.Feet.ItemId > 0 {
-		totalWeight += c.Equipment.Feet.GetSpec().GetWeight()
+	// Apply ComponentBag weight reduction
+	if c.Equipment.ComponentBag.ItemId > 0 {
+		reduction := c.Equipment.ComponentBag.GetSpec().WeightReduction
+		if reduction > 0 && reduction <= 1.0 {
+			componentWeight *= (1.0 - reduction)
+		}
 	}
 
-	return totalWeight
+	// Equipped item weights (all slots via GetAllItems)
+	equippedWeight := 0.0
+	for _, item := range c.Equipment.GetAllItems() {
+		equippedWeight += item.GetSpec().GetWeight()
+	}
+
+	return backpackWeight + componentWeight + equippedWeight
 }
 
 func (c *Character) DeductActionPoints(amount int) bool {
