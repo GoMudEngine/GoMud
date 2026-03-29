@@ -2789,12 +2789,36 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 
 	// Handle extra arm slots based on ExtraArms mutation level
 	// If character lacks enough extra arms, move items back to backpack
+	if c.ExtraArms < 4 {
+		if c.Equipment.ExtraArm4.ItemId > 0 {
+			c.StoreItem(c.Equipment.ExtraArm4)
+		}
+		c.Equipment.ExtraArm4 = items.ItemDisabledSlot
+		if c.Equipment.ExtraWrist4.ItemId > 0 {
+			c.StoreItem(c.Equipment.ExtraWrist4)
+		}
+		c.Equipment.ExtraWrist4 = items.ItemDisabledSlot
+	}
+	if c.ExtraArms < 3 {
+		if c.Equipment.ExtraArm3.ItemId > 0 {
+			c.StoreItem(c.Equipment.ExtraArm3)
+		}
+		c.Equipment.ExtraArm3 = items.ItemDisabledSlot
+		if c.Equipment.ExtraWrist3.ItemId > 0 {
+			c.StoreItem(c.Equipment.ExtraWrist3)
+		}
+		c.Equipment.ExtraWrist3 = items.ItemDisabledSlot
+	}
 	if c.ExtraArms < 2 {
 		if c.Equipment.ExtraArm2.ItemId > 0 {
 			c.StoreItem(c.Equipment.ExtraArm2)
 			mudlog.Debug("Extra Arms Check", "info", "Item returned from extra arm 2 slot", "name", c.Equipment.ExtraArm2.Name(), "character", c.Name)
 		}
 		c.Equipment.ExtraArm2 = items.ItemDisabledSlot
+		if c.Equipment.ExtraWrist2.ItemId > 0 {
+			c.StoreItem(c.Equipment.ExtraWrist2)
+		}
+		c.Equipment.ExtraWrist2 = items.ItemDisabledSlot
 	}
 	if c.ExtraArms < 1 {
 		if c.Equipment.ExtraArm1.ItemId > 0 {
@@ -2802,6 +2826,10 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 			mudlog.Debug("Extra Arms Check", "info", "Item returned from extra arm 1 slot", "name", c.Equipment.ExtraArm1.Name(), "character", c.Name)
 		}
 		c.Equipment.ExtraArm1 = items.ItemDisabledSlot
+		if c.Equipment.ExtraWrist1.ItemId > 0 {
+			c.StoreItem(c.Equipment.ExtraWrist1)
+		}
+		c.Equipment.ExtraWrist1 = items.ItemDisabledSlot
 	}
 
 	if len(recalcPermaBuffs) > 0 && recalcPermaBuffs[0] {
