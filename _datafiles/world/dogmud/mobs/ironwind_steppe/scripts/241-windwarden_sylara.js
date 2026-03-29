@@ -70,6 +70,12 @@ function onAsk(mob, room, eventDetails) {
         return true;
     }
 
+    // Already carrying a fetish? Don't give another.
+    if (user.HasItemId(FETISH_ITEM_ID)) {
+        mob.Command('say You already carry a spirit fetish. Use it wisely.');
+        return true;
+    }
+
     // Subsequent asks: give 1 fetish
     user.GiveItem(FETISH_ITEM_ID);
     mob.Command('emote pulls a spirit fetish from her pouch and holds it out.');
