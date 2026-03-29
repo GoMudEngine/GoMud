@@ -1,26 +1,19 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">fold-anchor</ansi> spell
 
-<ansi fg="white-bold">Fold Anchor</ansi> lets you mark a location and teleport back to it later.
-The spell has two modes depending on whether you have an anchor set:
+<ansi fg="white-bold">Fold Anchor</ansi> sets a Chrysalis anchor at your current location.
+You can only have one anchor at a time. Casting again at a new
+location overwrites the previous anchor.
 
-  <ansi fg="yellow">No anchor set (or standing on your anchor):</ansi>
-  Sets a Chrysalis anchor at your current location. The anchor persists
-  until you set a new one somewhere else.
-
-  <ansi fg="yellow">Anchor set and you are elsewhere:</ansi>
-  Folds the Veil and teleports you back to your anchor point.
-
-You can only have one anchor at a time. Casting the spell while standing
-on your existing anchor refreshes it. Casting from anywhere else recalls
-you to it.
+Use <ansi fg="command">cast fold-recall</ansi> from anywhere else to teleport back
+to your anchor.
 
 <ansi fg="yellow">Usage: </ansi>
 
-  <ansi fg="command">cast fold-anchor</ansi>     Set anchor or recall to it.
+  <ansi fg="command">cast fold-anchor</ansi>     Set anchor at current location.
 
 <ansi fg="yellow">Base Folds:  </ansi> <ansi fg="white-bold">6</ansi>
 <ansi fg="yellow">Target:      </ansi> <ansi fg="white-bold">Self</ansi>
 <ansi fg="yellow">Conv. Cost:  </ansi> <ansi fg="white-bold">50</ansi>
 <ansi fg="yellow">School:      </ansi> <ansi fg="white-bold">Enhancement</ansi>
 
-<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help cast</ansi>, <ansi fg="command">help spells</ansi>
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help fold-recall</ansi>, <ansi fg="command">help cast</ansi>, <ansi fg="command">help spells</ansi>

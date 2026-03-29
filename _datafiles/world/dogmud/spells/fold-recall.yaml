@@ -1,6 +1,6 @@
-spellid: fold-anchor
-name: Fold Anchor
-description: Sets a Chrysalis anchor at your current location.
+spellid: fold-recall
+name: Fold Recall
+description: Folds the Veil and teleports you to your Chrysalis anchor.
 type: helpsingle
 schools:
   - enhancement
