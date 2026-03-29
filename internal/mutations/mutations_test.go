@@ -311,7 +311,8 @@ func TestLevelMultiplier(t *testing.T) {
 		{2, 1.5},
 		{3, 2.0},
 		{0, 1.0}, // default
-		{4, 1.0}, // beyond max → default
+		{4, 2.5}, // level 4 multiplier
+		{5, 1.0}, // beyond max → default
 	}
 	for _, c := range cases {
 		if got := LevelMultiplier(c.level); abs(got-c.want) > 1e-9 {
