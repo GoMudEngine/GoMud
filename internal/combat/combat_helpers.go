@@ -1018,7 +1018,10 @@ func applyPetDamage(result *AttackResult, sourceChar *characters.Character, targ
 		result.SendToTarget(toDefenderMsg)
 
 		toAttackerRoomMsg := fmt.Sprintf(`%s jumps into the fray and deals <ansi fg="damage">%s</ansi> to <ansi fg="%sname">%s</ansi>!`, sourceChar.Pet.DisplayName(), GetDamageDescription(attackTargetDamage, targetChar.HealthMax.Value), string(tgtType), targetChar.Name)
-		result.SendToTargetRoom(toAttackerRoomMsg)
+		result.SendToSourceRoom(toAttackerRoomMsg)
+		if sourceChar.RoomId != targetChar.RoomId {
+			result.SendToTargetRoom(toAttackerRoomMsg)
+		}
 	}
 }
 
