@@ -805,12 +805,45 @@ func (c *Character) TrackSpellCast(spellName string) bool {
 	return false
 }
 
+// pairedSpells maps spells that are always learned together.
+// Learning either spell automatically grants the other.
+var pairedSpells = map[string]string{
+	"fold-anchor": "fold-recall",
+	"fold-recall": "fold-anchor",
+}
+
 func (c *Character) LearnSpell(spellName string) bool {
-	if _, ok := c.SpellBook[spellName]; !ok {
-		c.SpellBook[spellName] = 1
-		return true
+	if _, ok := c.SpellBook[spellName]; ok {
+		return false
 	}
-	return false
+	c.SpellBook[spellName] = 1
+
+	// Grant paired spell if one exists
+	if paired, ok := pairedSpells[spellName]; ok {
+		if _, known := c.SpellBook[paired]; !known {
+			c.SpellBook[paired] = 1
+		}
+	}
+
+	return true
+}
+
+// MigratePairedSpells is a one-time migration that grants missing
+// paired spells to existing characters. Call on character load.
+// Uses MiscData flag to run only once per character.
+func (c *Character) MigratePairedSpells() {
+	const migrationKey = "migration-fold-pair-done"
+	if c.GetMiscData(migrationKey) != nil {
+		return
+	}
+	for spell, paired := range pairedSpells {
+		if _, known := c.SpellBook[spell]; known {
+			if _, hasPartner := c.SpellBook[paired]; !hasPartner {
+				c.SpellBook[paired] = 1
+			}
+		}
+	}
+	c.SetMiscData(migrationKey, "1")
 }
 
 func (c *Character) HasRecipe(recipeId string) bool {

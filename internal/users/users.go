@@ -338,6 +338,9 @@ func LoadUser(username string, skipValidation ...bool) (*UserRecord, error) {
 		}
 	}
 
+	// One-time migrations
+	loadedUser.Character.MigratePairedSpells()
+
 	if loadedUser.Joined.IsZero() {
 		loadedUser.Joined = time.Now()
 	}
