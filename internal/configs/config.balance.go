@@ -162,6 +162,7 @@ type Balance struct {
 	MutationProgressGainPerRound ConfigFloat `yaml:"MutationProgressGainPerRound"` // Progress added per combat round (default 1.0)
 	MutationLevel2Multiplier     ConfigFloat `yaml:"MutationLevel2Multiplier"`     // Effect scaling at level 2 (default 1.5)
 	MutationLevel3Multiplier     ConfigFloat `yaml:"MutationLevel3Multiplier"`     // Effect scaling at level 3 (default 2.0)
+	MutationLevel4Multiplier     ConfigFloat `yaml:"MutationLevel4Multiplier"`     // Effect scaling at level 4 (default 2.5)
 
 	// ── SPELLCASTING ─────────────────────────────────────────────────────
 	SpellDiscoveryBaseChance        ConfigFloat `yaml:"SpellDiscoveryBaseChance"`        // Base % to discover a new spell per successful cast (default 5.0)
@@ -589,6 +590,9 @@ func (b *Balance) Validate() {
 	}
 	if b.MutationLevel3Multiplier <= 0 {
 		b.MutationLevel3Multiplier = 2.0
+	}
+	if b.MutationLevel4Multiplier <= 0 {
+		b.MutationLevel4Multiplier = 2.5
 	}
 
 	// ── SPELLCASTING ─────────────────────────────────────────────────────
