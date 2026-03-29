@@ -2,6 +2,7 @@ package usercommands
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
@@ -26,7 +27,17 @@ func Buy(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	targetMobInstanceId := 0
 	targetUserId := 0
 
+	// Parse optional leading quantity: "buy 5 iron ingot"
+	quantity := 1
 	itemname := rest
+	args0 := strings.SplitN(strings.TrimSpace(rest), " ", 2)
+	if len(args0) == 2 {
+		if n, err := strconv.Atoi(args0[0]); err == nil && n >= 1 {
+			quantity = n
+			itemname = args0[1]
+			rest = args0[1]
+		}
+	}
 
 	// See if a "from" target was specified: "buy itemname from shopkeepername"
 	args := util.SplitButRespectQuotes(strings.ToLower(rest))
@@ -73,7 +84,18 @@ func Buy(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			continue
 		}
 
-		if success = tryPurchase(itemname, user, room, nil, shopUser); success {
+		if tryPurchase(itemname, user, room, nil, shopUser) {
+			purchased := 1
+			for purchased < quantity {
+				if !tryPurchase(itemname, user, room, nil, shopUser) {
+					break
+				}
+				purchased++
+			}
+			if quantity > 1 && purchased < quantity {
+				user.SendText(fmt.Sprintf(`<ansi fg="yellow">Purchased %d of %d before running short.</ansi>`, purchased, quantity))
+			}
+			success = true
 			user.Character.OnStatUse("charisma", user.UserId)
 			return true, nil
 		}
@@ -96,9 +118,19 @@ func Buy(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 
 		shopMob.Character.Shop.Restock()
 
-		if success = tryPurchase(itemname, user, room, shopMob, nil); success {
+		if tryPurchase(itemname, user, room, shopMob, nil) {
+			purchased := 1
+			for purchased < quantity {
+				if !tryPurchase(itemname, user, room, shopMob, nil) {
+					break
+				}
+				purchased++
+			}
+			if quantity > 1 && purchased < quantity {
+				user.SendText(fmt.Sprintf(`<ansi fg="yellow">Purchased %d of %d before running short.</ansi>`, purchased, quantity))
+			}
+			success = true
 			user.Character.OnStatUse("charisma", user.UserId)
-			// Stage 38.5.5: Merchant mob gains charisma from trade interactions
 			shopMob.Character.OnStatUse("charisma", 0)
 			return true, nil
 		}
