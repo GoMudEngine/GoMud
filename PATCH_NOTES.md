@@ -1,5 +1,56 @@
 # DOGMud Patch Notes
 
+## 2026-03-29 — Critical Fixes + Inventory Rework
+
+### Critical Bug Fixes
+- **Death loop fix**: Players can no longer get permanently stuck
+  in the Shadow Realm with stale combat state. Root cause fixed
+  (mobs could re-aggro dead players), plus safety net and escape
+  hatch so the portal always works.
+- **Spell scripts now work for players**: Fold Anchor, Chrysalis
+  Aid, Summon Steppe Spirit, and other script-based spells were
+  silently broken — onMagic/onCast/onWait callbacks never fired
+  for player casts. All three hooks are now wired into the cast
+  pipeline.
+- **Fold Anchor split**: Now two spells — `fold-anchor` (set) and
+  `fold-recall` (teleport back). Players who knew fold-anchor
+  automatically receive fold-recall on login.
+- **Quest spell rewards**: Quests can now teach spells on
+  completion. The Warden's Covenant (quest 12) now properly
+  grants Summon Steppe Spirit.
+- **Fetish gating**: Windwarden Sylara no longer gives unlimited
+  spirit fetishes. If you already have one, she refuses.
+
+### Inventory Rework
+- **Diku-style disambiguation**: Use `3.dagger` or `dagger#3` to
+  target a specific item when you have duplicates. Use `all.item`
+  with get/drop to affect all matching items (e.g., `drop all.potion`).
+- **Inventory stacking**: Identical items now group together with a
+  count, e.g., `iron ingot (x5)`. Items with different enchantments
+  remain separate.
+- **Equipped item targeting**: `look` and `identify` now search
+  your backpack and equipment as a single pool. You can examine a
+  wielded weapon without unequipping it — use `look 2.dagger` to
+  reach the equipped one when a duplicate is in your pack.
+- **Encumbrance display**: Carrying capacity has been rebalanced.
+  The inventory command now shows a colored encumbrance tier
+  (light / moderate / heavy / overburdened / crushed) instead of
+  raw weight numbers. Add `{enc}` to your prompt to track it at
+  a glance (`help set prompt`).
+- **Multi-buy**: `buy 5 iron ingot` purchases multiple copies in
+  one command. Stops early if you run out of gold or can't carry
+  any more.
+- **Enchanting targeting**: `craft <recipe> <item-name>` lets you
+  choose which item to enchant. Works on equipped items too. Shows
+  a numbered list when multiple targets match.
+- **Look direction fix**: `look n` no longer matches inventory
+  items when no north exit exists.
+
+### Balance
+- Carry capacity reduced ~78% (now Strength × 0.65, configurable).
+  Being overweight costs more stamina to move and reduces combat
+  swings.
+
 ## 2026-03-18 — Skullduggery Skill + Tutorial Fix
 
 ### New Skill: Skullduggery
