@@ -20,9 +20,14 @@ stamina to move and reduces your effectiveness in combat. You
 can add <ansi fg="magenta">{enc}</ansi> to your prompt to track this at a glance
 (see <ansi fg="command">help set prompt</ansi>).
 
+If you have a component bag equipped, crafting materials stored in
+it appear in a separate Components section at the bottom of your
+inventory. Use <ansi fg="command">sort</ansi> to move loose materials from your
+backpack into the bag.
+
 To learn more about an item's properties, use the
 <ansi fg="spellname">identify</ansi> spell or visit a merchant and
 use <ansi fg="command">appraise</ansi>.
 
-<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help identify</ansi>, <ansi fg="command">help appraise</ansi>, <ansi fg="command">help item-names</ansi>
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help identify</ansi>, <ansi fg="command">help appraise</ansi>, <ansi fg="command">help item-names</ansi>, <ansi fg="command">help sort</ansi>
 

@@ -1,5 +1,41 @@
 # DOGMud Patch Notes
 
+## 2026-03-29 — Equipment Slot Expansion + Component Bags
+
+### New Equipment Slots
+- **Wrist** (x2) — Bracelets and bracers now have their own slots
+  instead of using the ring slot. Existing bracelet items have been
+  updated.
+- **Shoulders** — Pauldrons, mantles, and shoulder armor.
+- **Back** — Cloaks for stats, or backpacks that reduce the effective
+  weight of your carried items. Choose wisely.
+- **Second Ring** — Two ring slots instead of one.
+- **Component Bag** — A dedicated bag for crafting materials. Materials
+  auto-sort into it on pickup. Use `sort` to migrate existing
+  materials. Buy a starter pouch from Weaver Maren in Thornwall.
+
+### Extra Arms Mutation — Levels 3-4
+- The Extra Arms mutation can now reach levels 3 and 4, granting up
+  to four additional arms (six total weapon slots).
+- Each extra arm comes with an extra wrist slot for bracelets.
+- Higher levels impose steeper charisma penalties and aggro, with
+  diminishing dexterity returns.
+- Combat hit penalties scale: +20 per arm beyond your offhand.
+
+### Component Bag System
+- Crafting materials with the `is_component` flag auto-route to your
+  component bag on pickup and purchase.
+- The `sort` command moves existing materials from your backpack into
+  the bag.
+- Crafting consumes from the component bag first, then your backpack.
+- Component bags reduce the effective weight of their contents.
+
+### Bug Fixes
+- Extra arm weapons now correctly count toward carried weight.
+- Bracelet items correctly equip to wrist slots instead of ring.
+
+---
+
 ## 2026-03-29 — Critical Fixes + Inventory Rework
 
 ### Critical Bug Fixes

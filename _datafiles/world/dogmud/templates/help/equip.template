@@ -4,12 +4,20 @@ The <ansi fg="command">equip</ansi> command wields or wears an item from your ba
 
 <ansi fg="yellow">Usage: </ansi>
 
-  <ansi fg="command">equip stick</ansi>
-  This would wield a stick from your backpack.
-  <ansi fg="command">equip cloak</ansi>
-  This would wear a cloak from your backpack.
+  <ansi fg="command">equip stick</ansi>          Wield a stick from your backpack.
+  <ansi fg="command">equip cloak</ansi>          Wear a cloak (goes in the back slot).
+  <ansi fg="command">equip bracelet</ansi>       Equip to first empty wrist slot.
+  <ansi fg="command">equip sword arm3</ansi>     Wield in extra arm 3 (mutation req.).
+  <ansi fg="command">equip sword arm4</ansi>     Wield in extra arm 4 (mutation req.).
+  <ansi fg="command">equip pouch</ansi>          Equip a component bag.
 
 Aliases: <ansi fg="command">wield</ansi>, <ansi fg="command">wear</ansi>
 
-Find out more about referring to items by name by typing <ansi fg="command">help item-names</ansi>.
+Available equipment slots: Weapon, Offhand, Head, Neck, Shoulders,
+Body, Back, Belt, Wrist (x2), Gloves, Ring (x2), Legs, Feet,
+Component Bag. Extra arm and wrist slots unlock via the Extra Arms
+mutation.
+
+Find out more about referring to items by name by typing
+<ansi fg="command">help item-names</ansi>.
 

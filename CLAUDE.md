@@ -191,6 +191,27 @@ Tree nodes and patterns support `givesItem: <itemId>`. When a node fires with
 `givesItem` set, the player receives the item and sees "You receive a <itemname>."
 Use this for NPCs handing quest items to the player during dialogue.
 
+## Equipment Slots
+Default slots: Weapon, Offhand, Head, Neck, Shoulders, Body, Back, Belt,
+Wrist (x2), Gloves, Ring (x2), Legs, Feet, Component Bag.
+
+Mutation-gated slots (Extra Arms mutation, levels 1-4):
+- Each level unlocks one ExtraArm + one ExtraWrist slot
+- Level 1: Arm 3 + Wrist 3. Level 2: Arm 4 + Wrist 4.
+  Level 3: Arm 5 + Wrist 5. Level 4: Arm 6 + Wrist 6.
+- Escalating penalties: charisma -28/-42/-56/-70, aggro 1.0/1.5/2.0/2.5x
+- Combat hit penalty: +20 per arm beyond offhand
+
+Back slot: Cloaks (stats) or backpacks (weight reduction on backpack
+contents). Component Bag slot: Holds crafting materials. `is_component:
+true` items auto-route on pickup. `sort` command migrates existing
+materials. `bag_capacity` limits items. Weight reduction on component bag
+contents (typical 30%).
+
+ItemSpec fields: `is_component` (bool), `weight_reduction` (float64 0-1),
+`bag_capacity` (int). New ItemTypes: `wrist`, `back`, `shoulders`,
+`componentbag`.
+
 ## Inventory & Item Disambiguation
 - **Disambiguation formats:** Players can use `N.item` (diku-style) or `item#N`
   (hash-style) to target a specific item when multiples exist. `all.item` targets
