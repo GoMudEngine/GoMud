@@ -23,7 +23,7 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return true, nil
 	}
 
-	// Check for "arm1" / "arm2" suffix for extra arm slot targeting
+	// Check for "arm1" / "arm2" / "arm3" / "arm4" suffix for extra arm slot targeting
 	targetArmSlot := 0
 	restLower := strings.ToLower(rest)
 	if strings.HasSuffix(restLower, " arm1") {
@@ -31,6 +31,12 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		rest = strings.TrimSpace(rest[:len(rest)-5])
 	} else if strings.HasSuffix(restLower, " arm2") {
 		targetArmSlot = 2
+		rest = strings.TrimSpace(rest[:len(rest)-5])
+	} else if strings.HasSuffix(restLower, " arm3") {
+		targetArmSlot = 3
+		rest = strings.TrimSpace(rest[:len(rest)-5])
+	} else if strings.HasSuffix(restLower, " arm4") {
+		targetArmSlot = 4
 		rest = strings.TrimSpace(rest[:len(rest)-5])
 	}
 
@@ -66,12 +72,19 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			}
 
 			var oldItem items.Item
-			if targetArmSlot == 1 {
+			switch targetArmSlot {
+			case 1:
 				oldItem = user.Character.Equipment.ExtraArm1
 				user.Character.Equipment.ExtraArm1 = matchItem
-			} else {
+			case 2:
 				oldItem = user.Character.Equipment.ExtraArm2
 				user.Character.Equipment.ExtraArm2 = matchItem
+			case 3:
+				oldItem = user.Character.Equipment.ExtraArm3
+				user.Character.Equipment.ExtraArm3 = matchItem
+			case 4:
+				oldItem = user.Character.Equipment.ExtraArm4
+				user.Character.Equipment.ExtraArm4 = matchItem
 			}
 
 			user.Character.CancelBuffsWithFlag(buffs.Hidden)
