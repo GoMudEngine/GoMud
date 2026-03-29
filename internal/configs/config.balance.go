@@ -208,7 +208,8 @@ type Balance struct {
 	GossipIntervalRounds ConfigInt `yaml:"GossipIntervalRounds"` // Rounds between gossip broadcasts for "gossiper" group mobs (default 75)
 
 	// ── MOON PHASES ───────────────────────────────────────────────────────────
-	MoonStatModMax ConfigFloat `yaml:"MoonStatModMax"` // Max fractional stat modifier from moon phases, e.g. 0.05 = ±5% (default 0.05)
+	MoonStatModMax          ConfigFloat `yaml:"MoonStatModMax"`          // Max fractional stat modifier from moon phases, e.g. 0.05 = ±5% (default 0.05)
+	CarryCapacityMultiplier ConfigFloat `yaml:"CarryCapacityMultiplier"` // Strength multiplier for carry capacity in lbs (default 0.65)
 }
 
 func (b *Balance) Validate() {
@@ -681,6 +682,11 @@ func (b *Balance) Validate() {
 	// ── MOON PHASES ───────────────────────────────────────────────────────────
 	if b.MoonStatModMax <= 0 {
 		b.MoonStatModMax = 0.05
+	}
+
+	// ── CARRY CAPACITY ──────────────────────────────────────────────────────
+	if b.CarryCapacityMultiplier < 0.1 || b.CarryCapacityMultiplier > 10.0 {
+		b.CarryCapacityMultiplier = 0.65
 	}
 }
 

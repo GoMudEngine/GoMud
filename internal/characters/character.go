@@ -335,9 +335,10 @@ func (c *Character) GetBaseCastSuccessChance(spellId string) int {
 	return targetNumber
 }
 
-// CarryCapacity returns weight capacity in pounds (Strength × 3)
+// CarryCapacity returns weight capacity in pounds (Strength × config multiplier)
 func (c *Character) CarryCapacity() float64 {
-	return float64(c.Stats.Strength.ValueAdj) * 3.0
+	bal := configs.GetBalanceConfig()
+	return float64(c.Stats.Strength.ValueAdj) * float64(bal.CarryCapacityMultiplier)
 }
 
 // GetCarriedWeight returns the total weight of all carried items in pounds
