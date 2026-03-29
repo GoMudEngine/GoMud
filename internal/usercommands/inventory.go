@@ -112,20 +112,49 @@ func Inventory(rest string, user *users.UserRecord, room *rooms.Room, flags even
 
 	}
 
+	// Build stack keys and group identical items
+	type stackEntry struct {
+		name          string
+		nameFormatted string
+		count         int
+	}
+	stackOrder := []string{}
+	stacks := map[string]*stackEntry{}
+
 	for _, item := range itemList {
+		iSpec := item.GetSpec()
+
+		// Stack key: ItemId + enchant state + uses (for consumables)
+		stackKey := fmt.Sprintf("%d|%s|%d|%d", item.ItemId, item.EnchantType, item.EnchantTier, item.Uses)
+
+		if entry, exists := stacks[stackKey]; exists {
+			entry.count++
+			continue
+		}
 
 		iName := item.Name()
 		iNameFormatted := fmt.Sprintf(`<ansi fg="itemname">%s</ansi>`, item.DisplayName())
 
-		iSpec := item.GetSpec()
 		if iSpec.Subtype == items.Drinkable || iSpec.Subtype == items.Edible || iSpec.Subtype == items.Usable || iSpec.Type == items.Lockpicks {
-			if iSpec.Uses > 0 { // Does the spec indicate a number of uses?
-				iName = fmt.Sprintf(`%s (%d)`, iName, item.Uses)                                               // Display uses left
-				iNameFormatted = fmt.Sprintf(`%s <ansi fg="uses-left">(%d)</ansi>`, iNameFormatted, item.Uses) // Display uses left
+			if iSpec.Uses > 0 {
+				iName = fmt.Sprintf(`%s (%d)`, iName, item.Uses)
+				iNameFormatted = fmt.Sprintf(`%s <ansi fg="uses-left">(%d)</ansi>`, iNameFormatted, item.Uses)
 			}
 		}
-		itemNames = append(itemNames, iName)
-		itemNamesFormatted = append(itemNamesFormatted, iNameFormatted)
+
+		stacks[stackKey] = &stackEntry{name: iName, nameFormatted: iNameFormatted, count: 1}
+		stackOrder = append(stackOrder, stackKey)
+	}
+
+	for _, key := range stackOrder {
+		entry := stacks[key]
+		if entry.count > 1 {
+			itemNames = append(itemNames, fmt.Sprintf(`%s (x%d)`, entry.name, entry.count))
+			itemNamesFormatted = append(itemNamesFormatted, fmt.Sprintf(`%s <ansi fg="uses-left">(x%d)</ansi>`, entry.nameFormatted, entry.count))
+		} else {
+			itemNames = append(itemNames, entry.name)
+			itemNamesFormatted = append(itemNamesFormatted, entry.nameFormatted)
+		}
 	}
 
 	raceInfo := species.GetSpecies(user.Character.SpeciesId)
