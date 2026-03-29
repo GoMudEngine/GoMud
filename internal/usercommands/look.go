@@ -282,6 +282,13 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 	}
 
+	// If the input is a recognized direction alias but no exit exists,
+	// stop here — never fall through to item/mob matching.
+	if alias := keywords.TryDirectionAlias(lookAt); alias != lookAt {
+		user.SendText("There is no exit in that direction.")
+		return true, nil
+	}
+
 	//
 	// Check for anything in their backpack they might want to look at
 	//
