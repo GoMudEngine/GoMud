@@ -1161,8 +1161,8 @@ func handleMobVsPlayer(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, 
 
 	*affectedPlayerIds = append(*affectedPlayerIds, mob.Character.Aggro.UserId)
 
-	// Reciprocal aggro
-	if defUser.Character.Aggro == nil {
+	// Reciprocal aggro — skip dead/downed players to prevent stale aggro in Shadow Realm
+	if defUser.Character.Health > 0 && defUser.Character.Aggro == nil {
 		defUser.Character.SetAggro(0, mob.InstanceId, characters.DefaultAttack)
 	}
 
