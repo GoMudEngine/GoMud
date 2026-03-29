@@ -245,7 +245,7 @@ func TestGetEligibleRecipes(t *testing.T) {
 		"alchemy":       0,
 	}
 
-	eligible := GetEligibleRecipes(known, skills)
+	eligible := GetEligibleRecipes(known, skills, "blacksmithing")
 
 	// iron-buckler (SkillMinimum=5, blacksmithing) should be eligible
 	found := false
@@ -264,10 +264,19 @@ func TestGetEligibleRecipes(t *testing.T) {
 
 	// If skill is too low, nothing should be eligible
 	skills["blacksmithing"] = 3
-	eligible = GetEligibleRecipes(known, skills)
+	eligible = GetEligibleRecipes(known, skills, "blacksmithing")
 	for _, id := range eligible {
 		if id == "iron-buckler" {
 			t.Error("iron-buckler should not be eligible with blacksmithing=3")
+		}
+	}
+
+	// Recipes from a different skill should never appear when filtering by blacksmithing
+	skills["blacksmithing"] = 5
+	eligible = GetEligibleRecipes(known, skills, "blacksmithing")
+	for _, id := range eligible {
+		if r := GetRecipe(id); r != nil && r.Skill != "blacksmithing" {
+			t.Errorf("recipe %q (skill=%s) should not appear when filtering for blacksmithing", id, r.Skill)
 		}
 	}
 
@@ -277,7 +286,7 @@ func TestGetEligibleRecipes(t *testing.T) {
 		"healing-poultice": 1,
 		"iron-buckler":     1,
 	}
-	eligible = GetEligibleRecipes(allKnown, map[string]int{"blacksmithing": 50, "alchemy": 50})
+	eligible = GetEligibleRecipes(allKnown, map[string]int{"blacksmithing": 50, "alchemy": 50}, "blacksmithing")
 	if len(eligible) != 0 {
 		t.Errorf("all known: expected 0 eligible, got %d", len(eligible))
 	}

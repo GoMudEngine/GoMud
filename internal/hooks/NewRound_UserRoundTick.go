@@ -313,7 +313,8 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 									if util.Rand(100) < int(discChance) {
 										eligible := crafting.GetEligibleRecipes(
 											user.Character.KnownRecipes,
-											user.Character.Skills)
+											user.Character.Skills,
+											recipe.Skill)
 										if len(eligible) > 0 {
 											pick := eligible[util.Rand(len(eligible))]
 											if user.Character.LearnRecipe(pick) {

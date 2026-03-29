@@ -1654,12 +1654,17 @@ func (c *Character) GetSkillLevelCost(currentLevel int) int {
 
 // IncreaseSkill increments the named skill by 1.
 // No hard cap — progression is governed by the soft cap in CheckSkillProgression.
+// Returns true only when the visible rank description actually changes (e.g.
+// novice → apprentice), so callers can show "Your X skill reaches Y!" only on
+// a genuine tier-up rather than every internal counter increment.
 func (c *Character) IncreaseSkill(skillName string) bool {
 	if c.Skills == nil {
 		c.Skills = make(map[string]int)
 	}
-	c.Skills[skillName] = c.Skills[skillName] + 1
-	return true
+	oldLevel := c.Skills[skillName]
+	c.Skills[skillName] = oldLevel + 1
+	newLevel := c.Skills[skillName]
+	return skills.GetSkillRankDescription(newLevel) != skills.GetSkillRankDescription(oldLevel)
 }
 
 // IncreaseStat increments the Training field of the named stat by the given amount,

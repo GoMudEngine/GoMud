@@ -98,9 +98,9 @@ func TestCalculateProgressionChance_StatSoftCap(t *testing.T) {
 
 func TestIncreaseSkill_Basic(t *testing.T) {
 	c := New()
-	// All skills start at rank 1 (Stage 3.5). Should increase from 1 to 2.
+	// All skills start at rank 1 (Stage 3.5). 1→2 crosses novice→apprentice boundary.
 	if !c.IncreaseSkill("unarmed-combat") {
-		t.Error("Expected IncreaseSkill to return true for level 1→2")
+		t.Error("Expected IncreaseSkill to return true for level 1→2 (rank change)")
 	}
 	if c.Skills["unarmed-combat"] != 2 {
 		t.Errorf("Expected skill level 2, got %d", c.Skills["unarmed-combat"])
@@ -110,10 +110,10 @@ func TestIncreaseSkill_Basic(t *testing.T) {
 func TestIncreaseSkill_NoCap(t *testing.T) {
 	c := New()
 	c.Skills["unarmed-combat"] = 4
-	// No hard cap — should increase past 4
-	if !c.IncreaseSkill("unarmed-combat") {
-		t.Error("Expected IncreaseSkill to return true (no hard cap)")
-	}
+	// 4→5: both are "apprentice", so returns false (no visible rank change).
+	// The counter still increments — this tests that IncreaseSkill always advances
+	// the internal counter regardless of return value.
+	_ = c.IncreaseSkill("unarmed-combat")
 	if c.Skills["unarmed-combat"] != 5 {
 		t.Errorf("Expected skill level 5, got %d", c.Skills["unarmed-combat"])
 	}
@@ -121,14 +121,32 @@ func TestIncreaseSkill_NoCap(t *testing.T) {
 
 func TestIncreaseSkill_Incremental(t *testing.T) {
 	c := New()
-	// All skills start at rank 1 (Stage 3.5). Increase several times.
-	for expected := 2; expected <= 6; expected++ {
-		if !c.IncreaseSkill("cast") {
-			t.Errorf("Expected IncreaseSkill to return true for level %d", expected)
+	// Start from 0. The rank description boundaries are:
+	//   0→1: "" → "novice"     (true)
+	//   1→2: "novice" → "apprentice" (true)
+	//   2→9: all "apprentice"  (false)
+	//   9→10: "apprentice" → "journeyman" (true)
+	c.Skills["cast"] = 0
+	rankChanged := c.IncreaseSkill("cast") // 0→1 novice
+	if !rankChanged {
+		t.Error("Expected true for 0→1 (unknown→novice)")
+	}
+	rankChanged = c.IncreaseSkill("cast") // 1→2 apprentice
+	if !rankChanged {
+		t.Error("Expected true for 1→2 (novice→apprentice)")
+	}
+	// 2→9: all within apprentice, should return false
+	for i := 2; i < 9; i++ {
+		if c.IncreaseSkill("cast") {
+			t.Errorf("Expected false at level %d→%d (still apprentice)", i, i+1)
 		}
-		if c.Skills["cast"] != expected {
-			t.Errorf("Expected skill level %d, got %d", expected, c.Skills["cast"])
-		}
+	}
+	// 9→10: apprentice→journeyman, should return true
+	if !c.IncreaseSkill("cast") {
+		t.Error("Expected true for 9→10 (apprentice→journeyman)")
+	}
+	if c.Skills["cast"] != 10 {
+		t.Errorf("Expected skill level 10, got %d", c.Skills["cast"])
 	}
 }
 

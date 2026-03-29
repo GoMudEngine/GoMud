@@ -133,7 +133,7 @@ func TestIntegration_RecipeDiscovery(t *testing.T) {
 		"alchemy":       0,
 	}
 
-	eligible := GetEligibleRecipes(knownRecipes, skills)
+	eligible := GetEligibleRecipes(knownRecipes, skills, "blacksmithing")
 
 	// iron-buckler (min=5, blacksmithing) should now be discoverable
 	found := false
@@ -151,7 +151,7 @@ func TestIntegration_RecipeDiscovery(t *testing.T) {
 
 	// If skill is too low, nothing should be eligible
 	skills["blacksmithing"] = 3
-	eligible = GetEligibleRecipes(knownRecipes, skills)
+	eligible = GetEligibleRecipes(knownRecipes, skills, "blacksmithing")
 	for _, id := range eligible {
 		assert.NotEqual(t, "iron-buckler", id,
 			"iron-buckler should not be eligible with skill 3")

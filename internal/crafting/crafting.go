@@ -215,10 +215,15 @@ func GetStarterRecipes() map[string]int {
 }
 
 // GetEligibleRecipes returns recipe IDs that the player could discover:
-// not already known, and the player's skill level meets the recipe's SkillMinimum.
-func GetEligibleRecipes(knownRecipes map[string]int, skillLevels map[string]int) []string {
+// not already known, the player's skill level meets the recipe's SkillMinimum,
+// and the recipe belongs to currentSkill (so blacksmithing can't discover
+// enchanting recipes).
+func GetEligibleRecipes(knownRecipes map[string]int, skillLevels map[string]int, currentSkill string) []string {
 	var eligible []string
 	for id, r := range allRecipes {
+		if r.Skill != currentSkill {
+			continue
+		}
 		if _, known := knownRecipes[id]; known {
 			continue
 		}
