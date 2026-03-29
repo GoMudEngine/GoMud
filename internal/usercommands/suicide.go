@@ -199,6 +199,11 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 
 	rooms.MoveToRoom(user.UserId, int(configs.GetSpecialRoomsConfig().DeathRecoveryRoom))
 
+	// Belt-and-suspenders: re-clear aggro after room move in case any
+	// code path (e.g., mob combat round processing) assigned aggro
+	// between our first clear (line 179) and the room move.
+	user.Character.Aggro = nil
+
 	if config.Death.CorpsesEnabled {
 		room.AddCorpse(rooms.Corpse{
 			UserId:       user.UserId,
