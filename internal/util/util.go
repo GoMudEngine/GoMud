@@ -283,24 +283,41 @@ func SplitButRespectQuotes(s string) []string {
 	return finalMatches
 }
 
-// accepts an input and splits it along a # if any.
-// By default returns the full string and 1 as the number.
+// GetMatchNumber accepts an input and extracts a match number.
+// Supports three formats:
+//   - "N.item"   (diku-style) → ("item", N)
+//   - "all.item"              → ("item", -1)  sentinel for "all matches"
+//   - "item#N"   (existing)   → ("item", N)
+//   - plain "item"            → ("item", 1)
 func GetMatchNumber(input string) (string, int) {
-	// Clean up the input
 	input = strings.TrimSpace(strings.ToLower(input))
-	// See if the item has a # and if so grab the left as the name, and the right as the number
-	if !strings.Contains(input, "#") {
-		return input, 1
+
+	// Check for N.item or all.item prefix
+	if dotIdx := strings.IndexByte(input, '.'); dotIdx > 0 {
+		prefix := input[:dotIdx]
+		rest := input[dotIdx+1:]
+		if len(rest) > 0 {
+			if prefix == "all" {
+				return rest, -1
+			}
+			if n, err := strconv.Atoi(prefix); err == nil && n >= 1 {
+				return rest, n
+			}
+		}
 	}
 
-	parts := strings.Split(input, "#")
-	input = parts[0]
-	inputNumber, _ := strconv.Atoi(strings.Join(parts[1:], "#"))
-	if inputNumber < 1 {
-		inputNumber = 1
+	// Check for item#N suffix (existing logic)
+	if strings.Contains(input, "#") {
+		parts := strings.Split(input, "#")
+		input = parts[0]
+		inputNumber, _ := strconv.Atoi(strings.Join(parts[1:], "#"))
+		if inputNumber < 1 {
+			inputNumber = 1
+		}
+		return input, inputNumber
 	}
 
-	return input, inputNumber
+	return input, 1
 }
 
 func FindMatchIn(searchName string, items ...string) (match string, closeMatch string) {
