@@ -308,6 +308,16 @@ func resolveAgainstPlayer(user *users.UserRecord, target *users.UserRecord, room
 
 	isCrit := atkRoll.ZScore >= 2.0
 	applyPlayerEffect(user, target, room, spellData, magnitude, isCrit)
+
+	// Set reciprocal aggro for harm spells
+	if spellData.Type == spells.HarmSingle || spellData.Type == spells.HarmArea || spellData.Type == spells.HarmMulti {
+		if user.Character.Aggro == nil {
+			user.Character.SetAggro(target.UserId, 0, characters.DefaultAttack)
+		}
+		if target.Character.Aggro == nil {
+			target.Character.SetAggro(user.UserId, 0, characters.DefaultAttack)
+		}
+	}
 }
 
 // applyPlayerEffect applies the spell effect to a player target.
@@ -319,6 +329,20 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 	}
 
 	switch spellData.EffectType {
+	case "damage":
+		dmg := calcSpellDamageForCharacter(spellData, user.Character, target.Character, magnitude, isCrit)
+		target.Character.Health -= dmg
+		dmgDesc := combat.GetDamageDescription(dmg, target.Character.HealthMax.Value)
+		user.SendText(fmt.Sprintf(
+			`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> strikes <ansi fg="username">%s</ansi>! (<ansi fg="damage">%s</ansi>)%s</ansi>`,
+			spellData.Name, target.Character.Name, dmgDesc, critTag))
+		room.SendText(fmt.Sprintf(
+			`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> strikes <ansi fg="username">%s</ansi>!`,
+			user.Character.Name, spellData.Name, target.Character.Name), user.UserId, target.UserId)
+		target.SendText(fmt.Sprintf(
+			`<ansi fg="red"><ansi fg="username">%s</ansi>'s <ansi fg="cyan-bold">%s</ansi> strikes you! (<ansi fg="damage">%s</ansi>)</ansi>`,
+			user.Character.Name, spellData.Name, combat.GetDamageDescription(dmg, target.Character.HealthMax.Value)))
+
 	case "purge":
 		target.Character.CancelBuffsWithFlag(buffs.Poison)
 		target.Character.RemoveCondition(characters.ConditionPoisoned)

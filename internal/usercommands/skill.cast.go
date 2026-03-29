@@ -131,6 +131,10 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			if mId > 0 {
 				targetMobInstanceIds = append(targetMobInstanceIds, mId)
 			} else if pId > 0 {
+				if pId == user.UserId {
+					user.SendText(`You can't target yourself with that spell.`)
+					return true, nil
+				}
 				targetUserIds = append(targetUserIds, pId)
 			} else {
 				user.SendText(fmt.Sprintf(`<ansi fg="red">You don't see "%s" here.</ansi>`, targetName))
