@@ -178,6 +178,48 @@ func Inventory(rest string, user *users.UserRecord, room *rooms.Room, flags even
 		}
 	}
 
+	// Build stacked list of component bag items
+	componentNames := []string{}
+	componentNamesFormatted := []string{}
+
+	compStackOrder := []string{}
+	compStacks := map[string]*stackEntry{}
+
+	for _, item := range user.Character.ComponentItems {
+		iSpec := item.GetSpec()
+
+		stackKey := fmt.Sprintf("%d|%s|%d|%d", item.ItemId, item.EnchantType, item.EnchantTier, item.Uses)
+
+		if entry, exists := compStacks[stackKey]; exists {
+			entry.count++
+			continue
+		}
+
+		iName := item.Name()
+		iNameFormatted := fmt.Sprintf(`<ansi fg="itemname">%s</ansi>`, item.DisplayName())
+
+		if iSpec.Subtype == items.Drinkable || iSpec.Subtype == items.Edible || iSpec.Subtype == items.Usable || iSpec.Type == items.Lockpicks {
+			if iSpec.Uses > 0 {
+				iName = fmt.Sprintf(`%s (%d)`, iName, item.Uses)
+				iNameFormatted = fmt.Sprintf(`%s <ansi fg="uses-left">(%d)</ansi>`, iNameFormatted, item.Uses)
+			}
+		}
+
+		compStacks[stackKey] = &stackEntry{name: iName, nameFormatted: iNameFormatted, count: 1}
+		compStackOrder = append(compStackOrder, stackKey)
+	}
+
+	for _, key := range compStackOrder {
+		entry := compStacks[key]
+		if entry.count > 1 {
+			componentNames = append(componentNames, fmt.Sprintf(`%s (x%d)`, entry.name, entry.count))
+			componentNamesFormatted = append(componentNamesFormatted, fmt.Sprintf(`%s <ansi fg="uses-left">(x%d)</ansi>`, entry.nameFormatted, entry.count))
+		} else {
+			componentNames = append(componentNames, entry.name)
+			componentNamesFormatted = append(componentNamesFormatted, entry.nameFormatted)
+		}
+	}
+
 	raceInfo := species.GetSpecies(user.Character.SpeciesId)
 
 	diceRoll := raceInfo.Damage.DiceRoll
@@ -189,14 +231,16 @@ func Inventory(rest string, user *users.UserRecord, room *rooms.Room, flags even
 	encLabel, encColor := encumbranceTier(user.Character.GetCarriedWeight(), user.Character.CarryCapacity())
 
 	invData := map[string]any{
-		`Equipment`:          &user.Character.Equipment,
-		`ItemNames`:          itemNames,
-		`ItemNamesFormatted`: itemNamesFormatted,
-		`AttackDamage`:       diceRoll,
-		`RaceInfo`:           raceInfo,
-		`Searching`:          len(rest) > 0,
-		`EncumbranceLabel`:   encLabel,
-		`EncumbranceColor`:   encColor,
+		`Equipment`:               &user.Character.Equipment,
+		`ItemNames`:               itemNames,
+		`ItemNamesFormatted`:      itemNamesFormatted,
+		`ComponentNames`:          componentNames,
+		`ComponentNamesFormatted`: componentNamesFormatted,
+		`AttackDamage`:            diceRoll,
+		`RaceInfo`:                raceInfo,
+		`Searching`:               len(rest) > 0,
+		`EncumbranceLabel`:        encLabel,
+		`EncumbranceColor`:        encColor,
 	}
 
 	tplTxt, _ := templates.Process("character/inventory", invData, user.UserId)

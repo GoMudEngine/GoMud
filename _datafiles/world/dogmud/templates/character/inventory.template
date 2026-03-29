@@ -1,31 +1,57 @@
 {{ if not .Searching }} ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Equipment</ansi> ──────────────────────────────────────────────────────────────┐
-{{ if not .Equipment.Weapon.IsDisabled }}   <ansi fg="yellow">Weapon:  </ansi><ansi fg="itemname">{{ .Equipment.Weapon.NameComplex  }}</ansi>
+{{ if not .Equipment.Weapon.IsDisabled }}   <ansi fg="yellow">Weapon:     </ansi><ansi fg="itemname">{{ .Equipment.Weapon.NameComplex    }}</ansi>
 {{ end -}}
-{{- if not .Equipment.Offhand.IsDisabled }}   <ansi fg="yellow">Offhand: </ansi><ansi fg="itemname">{{ .Equipment.Offhand.NameComplex }}</ansi>
+{{- if not .Equipment.Offhand.IsDisabled }}   <ansi fg="yellow">Offhand:    </ansi><ansi fg="itemname">{{ .Equipment.Offhand.NameComplex   }}</ansi>
 {{ end -}}
-{{- if not .Equipment.ExtraArm1.IsDisabled }}   <ansi fg="yellow">Arm 3:   </ansi><ansi fg="itemname">{{ .Equipment.ExtraArm1.NameComplex }}</ansi>
+{{- if not .Equipment.ExtraArm1.IsDisabled }}   <ansi fg="yellow">Arm 3:      </ansi><ansi fg="itemname">{{ .Equipment.ExtraArm1.NameComplex }}</ansi>
 {{ end -}}
-{{- if not .Equipment.ExtraArm2.IsDisabled }}   <ansi fg="yellow">Arm 4:   </ansi><ansi fg="itemname">{{ .Equipment.ExtraArm2.NameComplex }}</ansi>
+{{- if not .Equipment.ExtraArm2.IsDisabled }}   <ansi fg="yellow">Arm 4:      </ansi><ansi fg="itemname">{{ .Equipment.ExtraArm2.NameComplex }}</ansi>
 {{ end -}}
-{{- if not .Equipment.Head.IsDisabled }}   <ansi fg="yellow">Head:    </ansi><ansi fg="itemname">{{ .Equipment.Head.NameComplex    }}</ansi>
+{{- if not .Equipment.ExtraArm3.IsDisabled }}   <ansi fg="yellow">Arm 5:      </ansi><ansi fg="itemname">{{ .Equipment.ExtraArm3.NameComplex }}</ansi>
 {{ end -}}
-{{- if not .Equipment.Neck.IsDisabled }}   <ansi fg="yellow">Neck:    </ansi><ansi fg="itemname">{{ .Equipment.Neck.NameComplex    }}</ansi>
+{{- if not .Equipment.ExtraArm4.IsDisabled }}   <ansi fg="yellow">Arm 6:      </ansi><ansi fg="itemname">{{ .Equipment.ExtraArm4.NameComplex }}</ansi>
 {{ end -}}
-{{- if not .Equipment.Body.IsDisabled }}   <ansi fg="yellow">Body:    </ansi><ansi fg="itemname">{{ .Equipment.Body.NameComplex    }}</ansi>
+{{- if not .Equipment.Head.IsDisabled }}   <ansi fg="yellow">Head:       </ansi><ansi fg="itemname">{{ .Equipment.Head.NameComplex      }}</ansi>
 {{ end -}}
-{{- if not .Equipment.Belt.IsDisabled }}   <ansi fg="yellow">Belt:    </ansi><ansi fg="itemname">{{ .Equipment.Belt.NameComplex    }}</ansi>
+{{- if not .Equipment.Neck.IsDisabled }}   <ansi fg="yellow">Neck:       </ansi><ansi fg="itemname">{{ .Equipment.Neck.NameComplex      }}</ansi>
 {{ end -}}
-{{- if not .Equipment.Gloves.IsDisabled }}   <ansi fg="yellow">Gloves:  </ansi><ansi fg="itemname">{{ .Equipment.Gloves.NameComplex  }}</ansi>
+{{- if not .Equipment.Shoulders.IsDisabled }}   <ansi fg="yellow">Shoulders:  </ansi><ansi fg="itemname">{{ .Equipment.Shoulders.NameComplex }}</ansi>
 {{ end -}}
-{{- if not .Equipment.Ring.IsDisabled }}   <ansi fg="yellow">Ring:    </ansi><ansi fg="itemname">{{ .Equipment.Ring.NameComplex    }}</ansi>
+{{- if not .Equipment.Body.IsDisabled }}   <ansi fg="yellow">Body:       </ansi><ansi fg="itemname">{{ .Equipment.Body.NameComplex      }}</ansi>
 {{ end -}}
-{{- if not .Equipment.Legs.IsDisabled }}   <ansi fg="yellow">Legs:    </ansi><ansi fg="itemname">{{ .Equipment.Legs.NameComplex    }}</ansi>
+{{- if not .Equipment.Back.IsDisabled }}   <ansi fg="yellow">Back:       </ansi><ansi fg="itemname">{{ .Equipment.Back.NameComplex      }}</ansi>
 {{ end -}}
-{{- if not .Equipment.Feet.IsDisabled }}   <ansi fg="yellow">Feet:    </ansi><ansi fg="itemname">{{ .Equipment.Feet.NameComplex    }}</ansi>
+{{- if not .Equipment.Belt.IsDisabled }}   <ansi fg="yellow">Belt:       </ansi><ansi fg="itemname">{{ .Equipment.Belt.NameComplex      }}</ansi>
+{{ end -}}
+{{- if not .Equipment.Wrist1.IsDisabled }}   <ansi fg="yellow">Wrist:      </ansi><ansi fg="itemname">{{ .Equipment.Wrist1.NameComplex    }}</ansi>
+{{ end -}}
+{{- if not .Equipment.Wrist2.IsDisabled }}   <ansi fg="yellow">Wrist:      </ansi><ansi fg="itemname">{{ .Equipment.Wrist2.NameComplex    }}</ansi>
+{{ end -}}
+{{- if not .Equipment.ExtraWrist1.IsDisabled }}   <ansi fg="yellow">Wrist 3:    </ansi><ansi fg="itemname">{{ .Equipment.ExtraWrist1.NameComplex }}</ansi>
+{{ end -}}
+{{- if not .Equipment.ExtraWrist2.IsDisabled }}   <ansi fg="yellow">Wrist 4:    </ansi><ansi fg="itemname">{{ .Equipment.ExtraWrist2.NameComplex }}</ansi>
+{{ end -}}
+{{- if not .Equipment.ExtraWrist3.IsDisabled }}   <ansi fg="yellow">Wrist 5:    </ansi><ansi fg="itemname">{{ .Equipment.ExtraWrist3.NameComplex }}</ansi>
+{{ end -}}
+{{- if not .Equipment.ExtraWrist4.IsDisabled }}   <ansi fg="yellow">Wrist 6:    </ansi><ansi fg="itemname">{{ .Equipment.ExtraWrist4.NameComplex }}</ansi>
+{{ end -}}
+{{- if not .Equipment.Gloves.IsDisabled }}   <ansi fg="yellow">Gloves:     </ansi><ansi fg="itemname">{{ .Equipment.Gloves.NameComplex    }}</ansi>
+{{ end -}}
+{{- if not .Equipment.Ring.IsDisabled }}   <ansi fg="yellow">Ring:       </ansi><ansi fg="itemname">{{ .Equipment.Ring.NameComplex      }}</ansi>
+{{ end -}}
+{{- if not .Equipment.Ring2.IsDisabled }}   <ansi fg="yellow">Ring:       </ansi><ansi fg="itemname">{{ .Equipment.Ring2.NameComplex     }}</ansi>
+{{ end -}}
+{{- if not .Equipment.Legs.IsDisabled }}   <ansi fg="yellow">Legs:       </ansi><ansi fg="itemname">{{ .Equipment.Legs.NameComplex      }}</ansi>
+{{ end -}}
+{{- if not .Equipment.Feet.IsDisabled }}   <ansi fg="yellow">Feet:       </ansi><ansi fg="itemname">{{ .Equipment.Feet.NameComplex      }}</ansi>
+{{ end -}}
+{{- if not .Equipment.ComponentBag.IsDisabled }}   <ansi fg="yellow">Components: </ansi><ansi fg="itemname">{{ .Equipment.ComponentBag.NameComplex }}</ansi>
 {{ end }} └────────────────────────────────────────────────────────────────────────────┘
  {{ $itemCt := len .ItemNames -}}{{ $formattedNames := .ItemNamesFormatted -}}{{- $strlen := 0 -}}{{- $lineCt := 1 -}}
  Carrying: {{ range $index, $name := .ItemNames -}}{{ $proposedLength := (add 2 (add $strlen (len $name))) }}{{- if gt $proposedLength 68 -}}{{- $strlen = 0 -}}{{- $lineCt = (add 1 $lineCt) -}}{{- printf "\n           " -}}{{- end -}}{{ index $formattedNames $index }}{{- if ne $index (sub $itemCt 1) }}, {{ $strlen = (add 2 (add $strlen (len $name))) }}{{ end }}{{ end }}
- <ansi fg="{{ .EncumbranceColor }}">Encumbrance: [{{ .EncumbranceLabel }}]</ansi>
+{{ if .ComponentNames }} {{ $compCt := len .ComponentNames -}}{{ $compFormattedNames := .ComponentNamesFormatted -}}{{- $strlen := 0 -}}
+ Components: {{ range $index, $name := .ComponentNames -}}{{ $proposedLength := (add 2 (add $strlen (len $name))) }}{{- if gt $proposedLength 67 -}}{{- $strlen = 0 -}}{{- printf "\n            " -}}{{- end -}}{{ index $compFormattedNames $index }}{{- if ne $index (sub $compCt 1) }}, {{ $strlen = (add 2 (add $strlen (len $name))) }}{{ end }}{{ end }}
+{{ end }} <ansi fg="{{ .EncumbranceColor }}">Encumbrance: [{{ .EncumbranceLabel }}]</ansi>
 {{ else }}
 {{ $itemCt := len .ItemNames -}}{{ $formattedNames := .ItemNamesFormatted -}}
  Found in your bag: {{ range $index, $name := .ItemNames -}}{{  index $formattedNames $index }}
