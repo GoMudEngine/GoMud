@@ -94,7 +94,7 @@ func TestHasIngredients(t *testing.T) {
 	recipe := allRecipes["iron-dagger"] // needs 1x iron-ingot + 1x leather-strip
 
 	// Empty inventory → missing iron-ingot
-	ok, missing := HasIngredients([]items.Item{}, recipe)
+	ok, missing := HasIngredients([]items.Item{}, []items.Item{}, recipe)
 	if ok {
 		t.Error("empty inv: expected false")
 	}
@@ -104,7 +104,7 @@ func TestHasIngredients(t *testing.T) {
 
 	// Has iron-ingot but not leather-strip
 	inv := []items.Item{makeItem("iron-ingot")}
-	ok, missing = HasIngredients(inv, recipe)
+	ok, missing = HasIngredients(inv, []items.Item{}, recipe)
 	if ok {
 		t.Error("missing leather-strip: expected false")
 	}
@@ -114,7 +114,7 @@ func TestHasIngredients(t *testing.T) {
 
 	// Has both → success
 	inv = []items.Item{makeItem("iron-ingot"), makeItem("leather-strip")}
-	ok, missing = HasIngredients(inv, recipe)
+	ok, missing = HasIngredients(inv, []items.Item{}, recipe)
 	if !ok {
 		t.Errorf("exact match: expected true, missing=%q", missing)
 	}
@@ -122,7 +122,7 @@ func TestHasIngredients(t *testing.T) {
 	// Short count for iron-buckler (needs 2x iron-ingot)
 	buckler := allRecipes["iron-buckler"]
 	inv = []items.Item{makeItem("iron-ingot"), makeItem("wooden-plank")}
-	ok, missing = HasIngredients(inv, buckler)
+	ok, missing = HasIngredients(inv, []items.Item{}, buckler)
 	if ok {
 		t.Error("only 1 iron-ingot for buckler: expected false")
 	}
@@ -132,7 +132,7 @@ func TestHasIngredients(t *testing.T) {
 
 	// Exactly 2x iron-ingot + 1x wooden-plank → success
 	inv = []items.Item{makeItem("iron-ingot"), makeItem("iron-ingot"), makeItem("wooden-plank")}
-	ok, _ = HasIngredients(inv, buckler)
+	ok, _ = HasIngredients(inv, []items.Item{}, buckler)
 	if !ok {
 		t.Error("2x iron-ingot + wooden-plank: expected true")
 	}
@@ -152,7 +152,7 @@ func TestConsumeIngredients(t *testing.T) {
 		makeItem("iron-ingot"), // extra iron-ingot should NOT be consumed
 	}
 
-	result := ConsumeIngredients(inv, recipe)
+	result, _ := ConsumeIngredients(inv, []items.Item{}, recipe)
 
 	if len(result) != 2 {
 		t.Errorf("expected 2 items remaining, got %d", len(result))

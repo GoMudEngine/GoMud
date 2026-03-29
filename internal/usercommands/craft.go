@@ -61,7 +61,7 @@ func Craft(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	}
 
 	// Ingredient check
-	ok, missing := crafting.HasIngredients(user.Character.Items, recipe)
+	ok, missing := crafting.HasIngredients(user.Character.Items, user.Character.ComponentItems, recipe)
 	if !ok {
 		user.SendText(fmt.Sprintf(`<ansi fg="red">You are missing: %s.</ansi>`, missing))
 		return true, nil
@@ -208,7 +208,7 @@ func recipeStatus(user *users.UserRecord, room *rooms.Room, r *crafting.RecipeSp
 	if r.Station != "" && room.Station != r.Station {
 		return "X", fmt.Sprintf("need %s", strings.ReplaceAll(r.Station, "_", " "))
 	}
-	ok, missing := crafting.HasIngredients(user.Character.Items, r)
+	ok, missing := crafting.HasIngredients(user.Character.Items, user.Character.ComponentItems, r)
 	if !ok {
 		return "X", fmt.Sprintf("missing %s", missing)
 	}
@@ -226,7 +226,7 @@ func ingredientSummary(r *crafting.RecipeSpec) string {
 
 // completeCraft resolves a craft instantly (used when time_rounds <= 0).
 func completeCraft(user *users.UserRecord, recipe *crafting.RecipeSpec) {
-	user.Character.Items = crafting.ConsumeIngredients(user.Character.Items, recipe)
+	user.Character.Items, user.Character.ComponentItems = crafting.ConsumeIngredients(user.Character.Items, user.Character.ComponentItems, recipe)
 	newItem := items.New(recipe.Output.ItemId)
 	user.Character.StoreItem(newItem)
 	user.SendText(fmt.Sprintf(`<ansi fg="green">%s</ansi>`, recipe.SuccessMessage))

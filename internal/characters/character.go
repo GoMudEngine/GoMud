@@ -1327,6 +1327,16 @@ func (c *Character) StoreItem(i items.Item) bool {
 		return false
 	}
 
+	// Auto-route component items to the component bag
+	iSpec := i.GetSpec()
+	if iSpec.IsComponent && c.Equipment.ComponentBag.ItemId > 0 {
+		bagSpec := c.Equipment.ComponentBag.GetSpec()
+		if bagSpec.BagCapacity > 0 && len(c.ComponentItems) < bagSpec.BagCapacity {
+			c.ComponentItems = append(c.ComponentItems, i)
+			return true
+		}
+	}
+
 	c.Items = append(c.Items, i)
 
 	return true
@@ -3129,10 +3139,30 @@ func (c *Character) Wear(i items.Item) (returnItems []items.Item, newItemWorn bo
 	return returnItems, true, ``
 }
 
-// SortComponentItems moves is_component items from backpack into ComponentItems.
-// Stub — full implementation in Task 6.
+// SortComponentItems moves is_component items from backpack into ComponentItems
+// up to the equipped bag's capacity. Returns the count of items moved.
 func (c *Character) SortComponentItems() int {
-	return 0
+	if c.Equipment.ComponentBag.ItemId < 1 {
+		return 0
+	}
+	bagSpec := c.Equipment.ComponentBag.GetSpec()
+	capacity := bagSpec.BagCapacity
+	if capacity <= 0 {
+		return 0
+	}
+
+	moved := 0
+	remaining := make([]items.Item, 0, len(c.Items))
+	for _, item := range c.Items {
+		if item.GetSpec().IsComponent && len(c.ComponentItems) < capacity {
+			c.ComponentItems = append(c.ComponentItems, item)
+			moved++
+		} else {
+			remaining = append(remaining, item)
+		}
+	}
+	c.Items = remaining
+	return moved
 }
 
 func (c *Character) RemoveFromBody(i items.Item) bool {

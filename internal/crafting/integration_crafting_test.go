@@ -26,7 +26,7 @@ func TestIntegration_CraftingFullLoop(t *testing.T) {
 	}
 
 	// Step 1: Check ingredients
-	ok, missing := HasIngredients(inv, recipe)
+	ok, missing := HasIngredients(inv, []items.Item{}, recipe)
 	assert.True(t, ok, "Should have all ingredients")
 	assert.Empty(t, missing, "No missing ingredients")
 
@@ -39,13 +39,13 @@ func TestIntegration_CraftingFullLoop(t *testing.T) {
 	assert.Equal(t, 75, chance, "Skill 5 above min should give 75%%")
 
 	// Step 3: Consume ingredients
-	remaining := ConsumeIngredients(inv, recipe)
+	remaining, _ := ConsumeIngredients(inv, []items.Item{}, recipe)
 	assert.Len(t, remaining, 1, "Only the junk item should remain")
 	assert.Equal(t, "other-junk", remaining[0].GetSpec().ComponentTag,
 		"Remaining item should be the non-ingredient")
 
 	// Step 4: Verify ingredients are gone
-	ok, _ = HasIngredients(remaining, recipe)
+	ok, _ = HasIngredients(remaining, []items.Item{}, recipe)
 	assert.False(t, ok, "Should no longer have ingredients after consuming")
 }
 
@@ -78,12 +78,12 @@ func TestIntegration_CraftingIngredientsNotConsumedOnCheck(t *testing.T) {
 	}
 
 	// HasIngredients should NOT modify the inventory
-	ok, _ := HasIngredients(inv, recipe)
+	ok, _ := HasIngredients(inv, []items.Item{}, recipe)
 	assert.True(t, ok)
 	assert.Len(t, inv, 2, "HasIngredients should not modify inventory")
 
 	// Call it again — should still pass
-	ok, _ = HasIngredients(inv, recipe)
+	ok, _ = HasIngredients(inv, []items.Item{}, recipe)
 	assert.True(t, ok, "Repeated HasIngredients should still pass")
 }
 
@@ -97,17 +97,17 @@ func TestIntegration_CraftingMultiQuantityIngredient(t *testing.T) {
 		makeItem("iron-ingot"),
 		makeItem("wooden-plank"),
 	}
-	ok, missing := HasIngredients(inv, buckler)
+	ok, missing := HasIngredients(inv, []items.Item{}, buckler)
 	assert.False(t, ok, "Should fail with only 1 iron-ingot")
 	assert.Equal(t, "iron-ingot", missing, "Missing ingredient should be iron-ingot")
 
 	// Add second iron-ingot — should pass
 	inv = append(inv, makeItem("iron-ingot"))
-	ok, _ = HasIngredients(inv, buckler)
+	ok, _ = HasIngredients(inv, []items.Item{}, buckler)
 	assert.True(t, ok, "Should pass with 2 iron-ingots")
 
 	// Consume and verify
-	remaining := ConsumeIngredients(inv, buckler)
+	remaining, _ := ConsumeIngredients(inv, []items.Item{}, buckler)
 	assert.Len(t, remaining, 0, "All items should be consumed for buckler")
 }
 

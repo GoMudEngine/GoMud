@@ -137,10 +137,19 @@ func GetAllForSkill(skill string) []*RecipeSpec {
 	return result
 }
 
-// HasIngredients checks whether inv contains all required ingredients for recipe.
+// HasIngredients checks whether inv and componentInv together contain all
+// required ingredients for recipe.
 // Returns (true, "") on success; (false, firstMissingTag) on failure.
-func HasIngredients(inv []items.Item, recipe *RecipeSpec) (bool, string) {
+func HasIngredients(inv []items.Item, componentInv []items.Item, recipe *RecipeSpec) (bool, string) {
 	counts := make(map[string]int)
+	// Count from component bag first
+	for _, item := range componentInv {
+		spec := item.GetSpec()
+		if spec.ComponentTag != "" {
+			counts[spec.ComponentTag]++
+		}
+	}
+	// Then from backpack
 	for _, item := range inv {
 		spec := item.GetSpec()
 		if spec.ComponentTag != "" {
@@ -155,14 +164,30 @@ func HasIngredients(inv []items.Item, recipe *RecipeSpec) (bool, string) {
 	return true, ""
 }
 
-// ConsumeIngredients removes the required items from inv and returns the remainder.
+// ConsumeIngredients removes the required items from componentInv first, then
+// inv, and returns the remainders of both pools.
 // Items are matched by ComponentTag; exactly the needed quantity is consumed.
-func ConsumeIngredients(inv []items.Item, recipe *RecipeSpec) []items.Item {
+func ConsumeIngredients(inv []items.Item, componentInv []items.Item, recipe *RecipeSpec) ([]items.Item, []items.Item) {
 	needed := make(map[string]int)
 	for _, ing := range recipe.Ingredients {
 		needed[ing.ItemTag] = ing.Quantity
 	}
-	result := make([]items.Item, 0, len(inv))
+
+	// Consume from component bag first
+	newComponent := make([]items.Item, 0, len(componentInv))
+	for _, item := range componentInv {
+		spec := item.GetSpec()
+		if spec.ComponentTag != "" {
+			if remaining := needed[spec.ComponentTag]; remaining > 0 {
+				needed[spec.ComponentTag]--
+				continue // consume this item
+			}
+		}
+		newComponent = append(newComponent, item)
+	}
+
+	// Then from backpack
+	newInv := make([]items.Item, 0, len(inv))
 	for _, item := range inv {
 		spec := item.GetSpec()
 		if spec.ComponentTag != "" {
@@ -171,9 +196,10 @@ func ConsumeIngredients(inv []items.Item, recipe *RecipeSpec) []items.Item {
 				continue // consume this item
 			}
 		}
-		result = append(result, item)
+		newInv = append(newInv, item)
 	}
-	return result
+
+	return newInv, newComponent
 }
 
 // GetStarterRecipes returns a map of all recipes with SkillMinimum == 0,

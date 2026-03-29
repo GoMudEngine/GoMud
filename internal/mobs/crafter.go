@@ -80,8 +80,9 @@ func TickMobCraft(mob *Mob) *CraftResult {
 	}
 
 	// Consume ingredients regardless of success
+	// Mobs don't have a component bag, so pass an empty slice as the second arg.
 	backpack := mob.Character.GetAllBackpackItems()
-	remaining := crafting.ConsumeIngredients(backpack, recipe)
+	remaining, _ := crafting.ConsumeIngredients(backpack, []items.Item{}, recipe)
 	mob.Character.Items = remaining
 
 	if util.Rand(100) < chance {
@@ -118,8 +119,8 @@ func pickEligibleRecipe(mob *Mob) *crafting.RecipeSpec {
 		if skillLevel < recipe.SkillMinimum {
 			continue
 		}
-		// Ingredient check
-		ok, _ := crafting.HasIngredients(backpack, recipe)
+		// Ingredient check (mobs don't have a component bag)
+		ok, _ := crafting.HasIngredients(backpack, []items.Item{}, recipe)
 		if !ok {
 			continue
 		}

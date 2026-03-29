@@ -259,7 +259,7 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 								roll := util.Rand(100)
 								util.LogRoll("Craft", roll, chance)
 								if roll < chance {
-									user.Character.Items = crafting.ConsumeIngredients(user.Character.Items, recipe)
+									user.Character.Items, user.Character.ComponentItems = crafting.ConsumeIngredients(user.Character.Items, user.Character.ComponentItems, recipe)
 
 									if crafting.IsEnchantingRecipe(recipe) {
 										// Enchanting: find target item, apply enchantment
@@ -325,7 +325,7 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 										}
 									}
 								} else {
-									user.Character.Items = crafting.ConsumeIngredients(user.Character.Items, recipe)
+									user.Character.Items, user.Character.ComponentItems = crafting.ConsumeIngredients(user.Character.Items, user.Character.ComponentItems, recipe)
 									user.SendText(fmt.Sprintf(`<ansi fg="red">%s</ansi>`, recipe.FailureMessage))
 								}
 							}

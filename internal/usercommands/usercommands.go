@@ -156,6 +156,7 @@ var (
 		`spawn`:       {Spawn, false, true, true}, // Admin only
 		`spell`:       {Spell, true, true, true},  // Admin only
 		`spells`:      {Spells, true, true, false},
+		`sort`:        {Sort, false, false, false}, // Can't sort items in combat
 		`stash`:       {Stash, false, false, false}, // Can't manipulate stash in combat
 		`status`:      {Status, true, true, false},
 		`stand`:       {Stand, true, true, false}, // Can stand when downed
