@@ -49,7 +49,23 @@ character:
     charisma:
       training: -5
   shop:
-    - itemid: 40028
+    - itemid: 40004
+      quantity: 0
+      quantitymax: 0
+      price: 2
+    - itemid: 40005
+      quantity: 0
+      quantitymax: 0
+      price: 2
+    - itemid: 40006
       quantity: 0
       quantitymax: 0
       price: 3
+    - itemid: 40007
+      quantity: 0
+      quantitymax: 0
+      price: 1
+    - itemid: 40009
+      quantity: 0
+      quantitymax: 0
+      price: 4
