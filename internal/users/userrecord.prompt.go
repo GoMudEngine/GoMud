@@ -474,6 +474,29 @@ func (u *UserRecord) ProcessPromptString(promptStr string) string {
 			case `{g}`:
 				promptOut.WriteString(strconv.Itoa(u.Character.Gold))
 
+			case `{enc}`:
+				weight := u.Character.GetCarriedWeight()
+				capacity := u.Character.CarryCapacity()
+				var encLabel, encColor string
+				if capacity <= 0 {
+					encLabel, encColor = "crushed", "magenta-bold"
+				} else {
+					ratio := weight / capacity
+					switch {
+					case ratio <= 0.25:
+						encLabel, encColor = "light", "green"
+					case ratio <= 0.50:
+						encLabel, encColor = "moderate", "yellow"
+					case ratio <= 0.75:
+						encLabel, encColor = "heavy", "red"
+					case ratio <= 1.00:
+						encLabel, encColor = "overburdened", "red-bold"
+					default:
+						encLabel, encColor = "crushed", "magenta-bold"
+					}
+				}
+				promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%s</ansi>`, encColor, encLabel))
+
 			case `{i}`:
 				promptOut.WriteString(strconv.Itoa(len(u.Character.Items)))
 
