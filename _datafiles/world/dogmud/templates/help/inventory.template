@@ -1,14 +1,28 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">inventory</ansi>
 
-The <ansi fg="command">inventory</ansi> command gives you a summary of your characters equipment.
+The <ansi fg="command">inventory</ansi> command shows your equipment and backpack
+contents.
 
-You can search for a specific object by entering its full (or partial) name:
-<ansi fg="command">inventory wood</ansi> would list items with "wood" in the name.
-<ansi fg="command">inventory wearable</ansi> would list all wearable items in your inventory.
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">inventory</ansi>             Show all equipment and carried items.
+  <ansi fg="command">inventory wood</ansi>         Filter to items with "wood" in the name.
+  <ansi fg="command">inventory wearable</ansi>     Filter to wearable items.
+  <ansi fg="command">inventory weapons</ansi>      Filter to weapons.
+  <ansi fg="command">inventory potions</ansi>      Filter to potions.
+
+Identical items are stacked together with a count, for example:
+<ansi fg="itemname">iron ingot</ansi> <ansi fg="uses-left">(x5)</ansi> means you are carrying five iron ingots.
+
+Your encumbrance level is shown at the bottom, ranging from
+<ansi fg="green">light</ansi> to <ansi fg="magenta-bold">crushed</ansi>. Being overburdened costs extra
+stamina to move and reduces your effectiveness in combat. You
+can add <ansi fg="magenta">{enc}</ansi> to your prompt to track this at a glance
+(see <ansi fg="command">help set prompt</ansi>).
 
 To learn more about an item's properties, use the
 <ansi fg="spellname">identify</ansi> spell or visit a merchant and
 use <ansi fg="command">appraise</ansi>.
 
-<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help identify</ansi>, <ansi fg="command">help appraise</ansi>
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help identify</ansi>, <ansi fg="command">help appraise</ansi>, <ansi fg="command">help item-names</ansi>
 

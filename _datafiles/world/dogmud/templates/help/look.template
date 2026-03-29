@@ -1,23 +1,24 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">look</ansi>
 
-The <ansi fg="command">look</ansi> command looks at things in the room around 
+The <ansi fg="command">look</ansi> command looks at things in the room around
 you.
 
 <ansi fg="yellow">Usage: </ansi>
 
-  <ansi fg="command">look</ansi>
-  This looks at the room you are in and tells you about it.
+  <ansi fg="command">look</ansi>              Look at the room you are in.
+  <ansi fg="command">look north</ansi>        Peer into the room to the north.
+  <ansi fg="command">look dave</ansi>         Look at the player or NPC named dave.
+  <ansi fg="command">look sword</ansi>        Examine a sword you are carrying or wearing.
+  <ansi fg="command">look 2.sword</ansi>      Examine the second sword (backpack + equipped).
 
-  <ansi fg="command">look north</ansi>
-  This tries to peer into the room to the north exit.
+The <ansi fg="command">look</ansi> command searches your backpack and equipped
+items as a single pool. If you have a dagger in your pack and
+another one wielded, <ansi fg="command">look 2.dagger</ansi> examines the wielded one.
+The game tells you where the item is (backpack or equipment slot).
 
-  <ansi fg="command">look dave</ansi>
-  This looks at the user <ansi fg="username">dave</ansi> and tells you what you
-  can see about him.
+Sometimes there is text in a room description that warrants a
+closer look. You can often look at highlighted words for more
+information.
 
-  <ansi fg="command">look sword#2</ansi>
-  This looks at the second <ansi fg="item">sword</ansi> in your backpack and gives you a description.
-
-  Sometimes there is text in a room description that warrants a closer look.
-  You can often look at these for more information about them.
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help item-names</ansi>, <ansi fg="command">help identify</ansi>
 

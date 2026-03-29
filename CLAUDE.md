@@ -191,6 +191,25 @@ Tree nodes and patterns support `givesItem: <itemId>`. When a node fires with
 `givesItem` set, the player receives the item and sees "You receive a <itemname>."
 Use this for NPCs handing quest items to the player during dialogue.
 
+## Inventory & Item Disambiguation
+- **Disambiguation formats:** Players can use `N.item` (diku-style) or `item#N`
+  (hash-style) to target a specific item when multiples exist. `all.item` targets
+  all matching items (supported by `get` and `drop`).
+- **Unified FindItem:** `look` and `identify` search backpack + equipped items as
+  a single pool for disambiguation. `dagger#2` can reach a wielded dagger if the
+  first match is in backpack. Source is reported ("in your backpack" / "wielded").
+- **Inventory stacking:** Display-only. Items with same ItemId + EnchantType +
+  EnchantTier + Uses are grouped with `(xN)` count. Storage is unchanged.
+- **Carry capacity:** `Strength × Balance.CarryCapacityMultiplier` (default 0.65).
+  Displayed as colored encumbrance tiers (light/moderate/heavy/overburdened/crushed),
+  never raw numbers. `{enc}` prompt token available.
+- **Encumbrance penalties:** Movement stamina 1-5x multiplier when over capacity
+  (`go.go`). Combat swings reduced up to 50% when over capacity (`combat_helpers.go`).
+- **Multi-buy:** `buy 5 iron ingot` purchases N copies, stops early on insufficient
+  funds or carry capacity.
+- **Enchanting targeting:** `craft <recipe> <item-name>` targets a specific item.
+  Searches both backpack and equipped items. Shows numbered list when ambiguous.
+
 ## Content Generation Commands
 Use slash commands to generate new data files. Claude automatically loads world.md,
 the relevant schema, and existing examples before generating.
