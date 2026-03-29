@@ -67,6 +67,11 @@ func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData
 			user.SendText(fmt.Sprintf(`Your spell fizzles — <ansi fg="username">%s</ansi> is no longer here.`, targetUser.Character.Name))
 			continue // target left the room before spell resolved
 		}
+		// Skip downed players for harm spells — they're already down.
+		if targetUser.Character.Health < 1 &&
+			(spellData.Type == spells.HarmSingle || spellData.Type == spells.HarmArea || spellData.Type == spells.HarmMulti) {
+			continue
+		}
 		if spellData.TargetDefenseType == "" {
 			// Help spell with no defense — always applies
 			applyPlayerEffect(user, targetUser, room, spellData, magnitude, false)

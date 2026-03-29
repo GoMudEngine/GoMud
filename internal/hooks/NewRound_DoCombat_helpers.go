@@ -211,6 +211,8 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 
 	cs := user.Character.CastingState
 
+	spellData := spells.GetSpell(cs.SpellId)
+
 	// Check if the spell target is still alive
 	targetGone := false
 	for _, mobInstId := range cs.TargetMobInstanceIds {
@@ -221,7 +223,15 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 		}
 	}
 	for _, targetUserId := range cs.TargetUserIds {
-		if u := users.GetByUserId(targetUserId); u == nil || u.Character.Health < 1 {
+		u := users.GetByUserId(targetUserId)
+		if u == nil {
+			targetGone = true
+			break
+		}
+		// For harm spells, a downed player means the target is gone.
+		// For help spells, we allow targeting downed players (revive-style healing).
+		if u.Character.Health < 1 && spellData != nil &&
+			(spellData.Type == spells.HarmSingle || spellData.Type == spells.HarmArea || spellData.Type == spells.HarmMulti) {
 			targetGone = true
 			break
 		}
@@ -232,8 +242,6 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 		user.SendText(`<ansi fg="red">Your spell fizzles — the target is gone.</ansi>`)
 		return true
 	}
-
-	spellData := spells.GetSpell(cs.SpellId)
 	if spellData == nil {
 		user.Character.CastingState = nil
 		user.SendText(`<ansi fg="red">The spell dissipates — its data cannot be found.</ansi>`)
