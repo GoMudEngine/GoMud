@@ -67,13 +67,47 @@ func Craft(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return true, nil
 	}
 
-	// Enchanting: target item check
+	// Enchanting: target item check with disambiguation
 	if crafting.IsEnchantingRecipe(recipe) {
-		_, found := crafting.FindTargetItem(user.Character.Items, recipe.TargetType)
-		if !found {
+		specifier := ""
+		recipeArgs := strings.SplitN(rest, " ", 2)
+		if len(recipeArgs) > 1 {
+			specifier = strings.TrimSpace(recipeArgs[1])
+		}
+
+		eq := user.Character.Equipment
+		equipSlots := []crafting.EquipmentSlot{
+			{Item: eq.Weapon, Label: "wielded"},
+			{Item: eq.Offhand, Label: "offhand"},
+			{Item: eq.Head, Label: "worn - head"},
+			{Item: eq.Neck, Label: "worn - neck"},
+			{Item: eq.Body, Label: "worn - body"},
+			{Item: eq.Belt, Label: "worn - belt"},
+			{Item: eq.Gloves, Label: "worn - gloves"},
+			{Item: eq.Ring, Label: "worn - ring"},
+			{Item: eq.Legs, Label: "worn - legs"},
+			{Item: eq.Feet, Label: "worn - feet"},
+		}
+		candidates := crafting.FindTargetItems(user.Character.Items, equipSlots, recipe.TargetType, specifier)
+
+		if len(candidates) == 0 {
 			user.SendText(fmt.Sprintf(
-				`<ansi fg="red">You need a %s in your inventory to enchant.</ansi>`,
+				`<ansi fg="red">You need a %s in your inventory or equipment to enchant.</ansi>`,
 				strings.ReplaceAll(recipe.TargetType, "_", " ")))
+			return true, nil
+		}
+
+		if len(candidates) > 1 && specifier == "" {
+			user.SendText(`<ansi fg="yellow">Which item do you want to enchant?</ansi>`)
+			for i, c := range candidates {
+				slotInfo := ""
+				if c.SourceLabel != "" {
+					slotInfo = fmt.Sprintf(` <ansi fg="yellow">(%s)</ansi>`, c.SourceLabel)
+				}
+				user.SendText(fmt.Sprintf(`  <ansi fg="white-bold">[%d]</ansi> <ansi fg="itemname">%s</ansi>%s`, i+1, c.Item.DisplayName(), slotInfo))
+			}
+			user.SendText(`  <ansi fg="white-bold">[0]</ansi> Cancel`)
+			user.SendText(`<ansi fg="yellow">Specify which item: craft ` + recipeArgs[0] + ` <item name></ansi>`)
 			return true, nil
 		}
 	}

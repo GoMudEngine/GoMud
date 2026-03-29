@@ -156,6 +156,33 @@ func (w *Worn) GetAllItemPtrs() []*items.Item {
 	return ptrs
 }
 
+// GetSlotPointer returns a mutable pointer to the item in the named slot.
+func (w *Worn) GetSlotPointer(label string) *items.Item {
+	switch label {
+	case "wielded":
+		return &w.Weapon
+	case "offhand":
+		return &w.Offhand
+	case "worn - head":
+		return &w.Head
+	case "worn - neck":
+		return &w.Neck
+	case "worn - body":
+		return &w.Body
+	case "worn - belt":
+		return &w.Belt
+	case "worn - gloves":
+		return &w.Gloves
+	case "worn - ring":
+		return &w.Ring
+	case "worn - legs":
+		return &w.Legs
+	case "worn - feet":
+		return &w.Feet
+	}
+	return nil
+}
+
 func GetAllSlotTypes() []string {
 	return []string{
 		string(items.Weapon),

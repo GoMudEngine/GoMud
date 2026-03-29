@@ -263,16 +263,37 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 
 									if crafting.IsEnchantingRecipe(recipe) {
 										// Enchanting: find target item, apply enchantment
-										targetIdx, found := crafting.FindTargetItem(user.Character.Items, recipe.TargetType)
-										if found {
-											targetItem := &user.Character.Items[targetIdx]
-											eDef := enchantments.GetEnchantment(recipe.EnchantType)
-											if eDef != nil {
-												targetItem.EnchantType = recipe.EnchantType
-												targetItem.EnchantTier = 0
-												targetItem.EnchantUses = 0
-												targetItem.ReservePool = eDef.ReservePool
-												enchantments.ApplyTier(targetItem, eDef, 0)
+										eq := user.Character.Equipment
+										equipSlots := []crafting.EquipmentSlot{
+											{Item: eq.Weapon, Label: "wielded"},
+											{Item: eq.Offhand, Label: "offhand"},
+											{Item: eq.Head, Label: "worn - head"},
+											{Item: eq.Neck, Label: "worn - neck"},
+											{Item: eq.Body, Label: "worn - body"},
+											{Item: eq.Belt, Label: "worn - belt"},
+											{Item: eq.Gloves, Label: "worn - gloves"},
+											{Item: eq.Ring, Label: "worn - ring"},
+											{Item: eq.Legs, Label: "worn - legs"},
+											{Item: eq.Feet, Label: "worn - feet"},
+										}
+										candidates := crafting.FindTargetItems(user.Character.Items, equipSlots, recipe.TargetType, "")
+										if len(candidates) > 0 {
+											c := candidates[0]
+											var targetItem *items.Item
+											if c.BackpackIdx >= 0 {
+												targetItem = &user.Character.Items[c.BackpackIdx]
+											} else {
+												targetItem = user.Character.Equipment.GetSlotPointer(c.SourceLabel)
+											}
+											if targetItem != nil {
+												eDef := enchantments.GetEnchantment(recipe.EnchantType)
+												if eDef != nil {
+													targetItem.EnchantType = recipe.EnchantType
+													targetItem.EnchantTier = 0
+													targetItem.EnchantUses = 0
+													targetItem.ReservePool = eDef.ReservePool
+													enchantments.ApplyTier(targetItem, eDef, 0)
+												}
 											}
 										}
 									} else {

@@ -203,17 +203,73 @@ func GetEligibleRecipes(knownRecipes map[string]int, skillLevels map[string]int)
 	return eligible
 }
 
-// FindTargetItem searches the player's inventory for an item matching the recipe's
-// target_type (e.g. "weapon", "body", "head"). Returns the index and true if found.
-func FindTargetItem(inv []items.Item, targetType string) (int, bool) {
+// TargetCandidate represents a potential enchanting target.
+type TargetCandidate struct {
+	BackpackIdx int
+	Item        items.Item
+	Source      string // "backpack" or "equipped"
+	SourceLabel string // e.g. "wielded", "worn - body" (empty for backpack)
+}
+
+// EquipmentSlot is a lightweight descriptor of a single worn item slot,
+// used by FindTargetItems to avoid an import cycle with the characters package.
+type EquipmentSlot struct {
+	Item  items.Item
+	Label string // e.g. "wielded", "worn - body"
+}
+
+// FindTargetItems searches inventory and equipment slots for items matching
+// targetType. If specifier is non-empty, filters by item name substring.
+// Pass nil (or an empty slice) for slots to search only the backpack.
+func FindTargetItems(inv []items.Item, slots []EquipmentSlot, targetType string, specifier string) []TargetCandidate {
+	var candidates []TargetCandidate
+
 	for i, item := range inv {
 		if item.ItemId < 1 {
 			continue
 		}
 		spec := item.GetSpec()
-		if string(spec.Type) == targetType {
-			return i, true
+		if string(spec.Type) != targetType {
+			continue
 		}
+		if specifier != "" && !strings.Contains(strings.ToLower(item.DisplayName()), strings.ToLower(specifier)) {
+			continue
+		}
+		candidates = append(candidates, TargetCandidate{
+			BackpackIdx: i,
+			Item:        item,
+			Source:      "backpack",
+			SourceLabel: "",
+		})
+	}
+
+	for _, slot := range slots {
+		if slot.Item.ItemId < 1 {
+			continue
+		}
+		spec := slot.Item.GetSpec()
+		if string(spec.Type) != targetType {
+			continue
+		}
+		if specifier != "" && !strings.Contains(strings.ToLower(slot.Item.DisplayName()), strings.ToLower(specifier)) {
+			continue
+		}
+		candidates = append(candidates, TargetCandidate{
+			BackpackIdx: -1,
+			Item:        slot.Item,
+			Source:      "equipped",
+			SourceLabel: slot.Label,
+		})
+	}
+
+	return candidates
+}
+
+// FindTargetItem is a backward-compatible wrapper. Returns the first match index.
+func FindTargetItem(inv []items.Item, targetType string) (int, bool) {
+	candidates := FindTargetItems(inv, nil, targetType, "")
+	if len(candidates) > 0 {
+		return candidates[0].BackpackIdx, true
 	}
 	return -1, false
 }
