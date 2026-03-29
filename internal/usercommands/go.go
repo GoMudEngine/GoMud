@@ -50,6 +50,12 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 		user.Character.Aggro = nil
 	}
 
+	// Movement cancels crafting
+	if user.Character.CraftingState != nil {
+		user.Character.CraftingState = nil
+		user.SendText(`<ansi fg="red">Your movement interrupts your crafting.</ansi>`)
+	}
+
 	// If has a buff that prevents combat, skip the player
 	if user.Character.HasBuffFlag(buffs.NoMovement) {
 		user.SendText("You can't do that!")

@@ -40,6 +40,12 @@ func Sneak(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return true, nil
 	}
 
+	// Can't sneak while crafting
+	if user.Character.CraftingState != nil {
+		user.SendText(`You are busy crafting.`)
+		return true, nil
+	}
+
 	cfg := configs.GetBalanceConfig()
 	sneakCooldownKey := skills.Skullduggery.String(`sneak`)
 

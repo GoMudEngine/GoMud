@@ -72,6 +72,12 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
+	// 4.5. Can't cast while crafting
+	if user.Character.CraftingState != nil {
+		user.SendText(`You are busy crafting.`)
+		return true, nil
+	}
+
 	// 5. Conviction check — must have enough for the full cast
 	// Stage 12.1: Apply conviction_cost_multiplier from Magical Resistance mutation
 	convMult := 1.0 + mutations.GetConvictionCostMultiplier(user.Character.Mutations)
