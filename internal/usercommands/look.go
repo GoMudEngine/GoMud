@@ -292,13 +292,7 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	//
 	// Check for anything in their backpack they might want to look at
 	//
-	lookItem, foundItem := user.Character.FindInBackpack(lookAt)
-	lookDestination := `in your backpack`
-	if !foundItem {
-		// Check for any equipment they are wearing they might want to look at
-		lookItem, foundItem = user.Character.FindOnBody(lookAt)
-		lookDestination = `you are wearing`
-	}
+	lookItem, lookDestination, foundItem := user.Character.FindItem(lookAt)
 
 	if foundItem {
 

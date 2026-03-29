@@ -333,10 +333,7 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 		userDisabled = user.Character.IsDisabled()
 
 		// Check if the "rest" is an item the character has
-		matchingItem, found := user.Character.FindInBackpack(rest)
-		if !found {
-			matchingItem, found = user.Character.FindOnBody(rest)
-		}
+		matchingItem, _, found := user.Character.FindItem(rest)
 
 		if found {
 			// If the item has a script, run it

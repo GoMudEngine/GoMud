@@ -1463,6 +1463,77 @@ func (c *Character) FindOnBody(itemName string) (items.Item, bool) {
 	return items.Item{}, false
 }
 
+// FindItem searches backpack and equipped items as a single pool for
+// disambiguation. Returns the item, a source description, and whether found.
+func (c *Character) FindItem(itemName string) (items.Item, string, bool) {
+	if itemName == "" {
+		return items.Item{}, "", false
+	}
+
+	// Build combined pool of all items with source labels
+	type candidate struct {
+		item   items.Item
+		source string
+	}
+	var pool []candidate
+
+	for _, item := range c.Items {
+		if item.ItemId > 0 {
+			pool = append(pool, candidate{item, "in your backpack"})
+		}
+	}
+
+	slotItems := []struct {
+		item   items.Item
+		source string
+	}{
+		{c.Equipment.Weapon, "wielded"},
+		{c.Equipment.Offhand, "offhand"},
+		{c.Equipment.ExtraArm1, "extra arm"},
+		{c.Equipment.ExtraArm2, "extra arm"},
+		{c.Equipment.Head, "worn - head"},
+		{c.Equipment.Neck, "worn - neck"},
+		{c.Equipment.Body, "worn - body"},
+		{c.Equipment.Belt, "worn - belt"},
+		{c.Equipment.Gloves, "worn - gloves"},
+		{c.Equipment.Ring, "worn - ring"},
+		{c.Equipment.Legs, "worn - legs"},
+		{c.Equipment.Feet, "worn - feet"},
+	}
+	for _, slot := range slotItems {
+		if slot.item.ItemId > 0 {
+			pool = append(pool, candidate{slot.item, slot.source})
+		}
+	}
+
+	// Extract items for FindMatchIn
+	poolItems := make([]items.Item, len(pool))
+	for i, c := range pool {
+		poolItems[i] = c.item
+	}
+
+	closeMatch, fullMatch := items.FindMatchIn(itemName, poolItems...)
+
+	// Find source for the match
+	findSource := func(match items.Item) string {
+		for _, c := range pool {
+			if c.item.ItemId == match.ItemId && c.item.UUID == match.UUID {
+				return c.source
+			}
+		}
+		return "in your backpack"
+	}
+
+	if fullMatch.ItemId != 0 {
+		return fullMatch, findSource(fullMatch), true
+	}
+	if closeMatch.ItemId != 0 {
+		return closeMatch, findSource(closeMatch), true
+	}
+
+	return items.Item{}, "", false
+}
+
 func (c *Character) GetSkills() map[string]int {
 	skillResults := make(map[string]int)
 	for skillName, skillLevel := range c.Skills {
