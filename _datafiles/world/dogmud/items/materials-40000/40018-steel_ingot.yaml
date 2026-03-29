@@ -8,3 +8,4 @@ subtype: mundane
 component_tag: steel-ingot
 weight: 0.1
 value: 3
+is_component: true

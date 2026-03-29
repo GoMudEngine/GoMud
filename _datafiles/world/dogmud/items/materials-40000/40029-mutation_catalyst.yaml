@@ -9,3 +9,4 @@ subtype: mundane
 component_tag: mutation-catalyst
 weight: 0.3
 value: 10
+is_component: true

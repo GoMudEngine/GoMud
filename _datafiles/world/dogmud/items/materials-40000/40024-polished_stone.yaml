@@ -9,3 +9,4 @@ subtype: mundane
 component_tag: polished-stone
 weight: 0.1
 value: 2
+is_component: true

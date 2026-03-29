@@ -1,0 +1,13 @@
+itemid: 30033
+name: component pouch
+namesimple: pouch
+description: A sturdy leather pouch with multiple compartments, each lined
+  with soft cloth to protect delicate materials. The drawstring cinches
+  tight to keep everything secure, and a belt loop lets it hang at your
+  side while you work.
+type: componentbag
+subtype: wearable
+value: 25
+weight: 1.0
+bag_capacity: 10
+weight_reduction: 0.3

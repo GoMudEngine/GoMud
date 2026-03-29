@@ -8,3 +8,4 @@ subtype: mundane
 component_tag: salt-pouch
 weight: 0.1
 value: 1
+is_component: true

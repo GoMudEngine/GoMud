@@ -8,3 +8,4 @@ type: object
 subtype: mundane
 weight: 0.5
 value: 0
+is_component: true

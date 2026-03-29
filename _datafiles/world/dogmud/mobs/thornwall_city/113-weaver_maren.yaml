@@ -64,3 +64,7 @@ character:
       quantity: 0
       quantitymax: 0
       price: 3
+    - itemid: 30033
+      quantity: 0
+      quantitymax: 0
+      price: 25

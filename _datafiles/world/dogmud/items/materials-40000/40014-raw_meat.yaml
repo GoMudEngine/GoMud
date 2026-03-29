@@ -8,3 +8,4 @@ subtype: mundane
 component_tag: raw-meat
 weight: 0.5
 value: 1
+is_component: true

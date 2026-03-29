@@ -8,3 +8,4 @@ subtype: mundane
 component_tag: silver-wire
 weight: 0.1
 value: 3
+is_component: true

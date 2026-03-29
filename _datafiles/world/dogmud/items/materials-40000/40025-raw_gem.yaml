@@ -9,3 +9,4 @@ subtype: mundane
 component_tag: raw-gem
 weight: 0.1
 value: 5
+is_component: true

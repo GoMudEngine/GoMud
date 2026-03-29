@@ -9,3 +9,4 @@ subtype: mundane
 component_tag: chrysalis-setting
 weight: 0.2
 value: 8
+is_component: true
