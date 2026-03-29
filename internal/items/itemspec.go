@@ -53,6 +53,10 @@ func ItemTypes() []ItemTypeInfo {
 		{string(Ring), `This can be worn in the players ring equipment slot.`, 0, 20000, 29999},
 		{string(Legs), `This can be worn in the players legs equipment slot.`, 0, 20000, 29999},
 		{string(Feet), `This can be worn in the players feet equipment slot.`, 0, 20000, 29999},
+		{string(Wrist), `Worn on the wrist.`, 0, 20000, 29999},
+		{string(Back), `Worn on the back.`, 0, 20000, 29999},
+		{string(Shoulders), `Worn on the shoulders.`, 0, 20000, 29999},
+		{string(ComponentBag), `A bag for crafting materials.`, 0, 30000, 39999},
 		// Consumables
 		{string(Potion), `This is a magic potion.`, 0, 30000, 39999},
 		{string(Food), `This is food.`, 0, 30000, 39999},
@@ -109,6 +113,10 @@ const (
 	Belt    ItemType = "belt"
 	Gloves  ItemType = "gloves"
 	Ring    ItemType = "ring"
+	Wrist   ItemType = "wrist"        // Bracelets, bracers
+	Back    ItemType = "back"         // Cloaks, backpacks
+	Shoulders ItemType = "shoulders"    // Pauldrons, mantles
+	ComponentBag ItemType = "componentbag" // Crafting material bags
 	Legs    ItemType = "legs"
 	Feet    ItemType = "feet"
 	// Consumables
@@ -254,6 +262,9 @@ type ItemSpec struct {
 	Cursed          bool              `yaml:"cursed,omitempty"`      // Can't be removed once equipped
 	KeyLockId       string            `yaml:"keylockid,omitempty"`   // Example: `778-north` - If it's a key, what lock does it open? roomid-exitname etc.
 	ComponentTag    string            `yaml:"component_tag,omitempty"` // Spell component tag (e.g. "stone" for throw-stone)
+	IsComponent     bool              `yaml:"is_component,omitempty"`     // Auto-routes to component bag on pickup
+	WeightReduction float64           `yaml:"weight_reduction,omitempty"` // 0.0-1.0, fraction of contents weight reduced
+	BagCapacity     int               `yaml:"bag_capacity,omitempty"`     // Max items storable in component bag
 }
 
 func (i Element) String() string {
