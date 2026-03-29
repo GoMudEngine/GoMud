@@ -33,6 +33,42 @@
 ### Bug Fixes
 - Extra arm weapons now correctly count toward carried weight.
 - Bracelet items correctly equip to wrist slots instead of ring.
+- Cloaks moved from neck slot to back slot (automatic migration
+  on login for existing characters).
+
+---
+
+## 2026-03-29 — Combat, Spell & Crafting Fixes
+
+### Spell Fixes
+- **Sparks** now correctly hits all enemies in the room (was only
+  hitting one target despite being an area spell).
+- **Mend All** now actually heals (was missing effect type data).
+- **Hemorrhagic Wave** rebalanced: folds 10→20, magnitude 300→225.
+  Still powerful AoE but no longer trivializes encounters.
+- **Healing spells can now target downed players**, enabling
+  revive-style healing like Chrysalis Aid. Harm spells skip
+  downed players.
+- **Self-targeting blocked** for harm spells — Conviction Spike
+  and Nerve Disruption can no longer be cast on yourself.
+- **Player-targeted harm spells** now deal damage and trigger
+  reciprocal aggro (previously did nothing).
+- Pet damage messages no longer duplicate in same-room combat.
+
+### Crafting Fixes
+- **Skill level-up messages** no longer repeat on every successful
+  craft. The "Your X skill reaches Y!" message only appears when
+  your skill tier actually increases.
+- **Recipe discovery** now filters by the skill you're currently
+  crafting. No more learning enchanting recipes while blacksmithing.
+- **Casting and sneaking blocked while crafting.** Moving to another
+  room cancels the active craft.
+
+### Other Fixes
+- **Title command** no longer shows raw numbers. Mutation load and
+  skill progress use descriptive labels (fledgling/seasoned/etc).
+- **Apothecary Voss** now sells alchemy ingredients instead of
+  enchanting binding paste.
 
 ---
 
