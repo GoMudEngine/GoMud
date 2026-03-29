@@ -11,6 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -241,7 +242,19 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		SpellRest:            spellRest,
 	}
 
-	// 10. Announce and fire skill-used event
+	// 10a. Fire onCast spell script (if present) — can cancel the cast
+	spellAggro := characters.SpellAggroInfo{
+		SpellId:              spellInfo.SpellId,
+		SpellRest:            spellRest,
+		TargetUserIds:        targetUserIds,
+		TargetMobInstanceIds: targetMobInstanceIds,
+	}
+	if allowContinue, err := scripting.TrySpellScriptEvent("onCast", user.UserId, 0, spellAggro); err == nil && !allowContinue {
+		user.Character.CastingState = nil
+		return true, nil
+	}
+
+	// 10b. Announce and fire skill-used event
 	events.AddToQueue(events.SkillUsed{
 		UserId:  user.UserId,
 		Skill:   skills.Spellcasting,
