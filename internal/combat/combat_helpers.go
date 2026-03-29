@@ -142,6 +142,12 @@ func collectAttackWeapons(sourceChar *characters.Character) []items.Item {
 	if sourceChar.ExtraArms >= 2 && sourceChar.Equipment.ExtraArm2.ItemId > 0 && sourceChar.Equipment.ExtraArm2.GetSpec().Type == items.Weapon {
 		attackWeapons = append(attackWeapons, sourceChar.Equipment.ExtraArm2)
 	}
+	if sourceChar.ExtraArms >= 3 && sourceChar.Equipment.ExtraArm3.ItemId > 0 && sourceChar.Equipment.ExtraArm3.GetSpec().Type == items.Weapon {
+		attackWeapons = append(attackWeapons, sourceChar.Equipment.ExtraArm3)
+	}
+	if sourceChar.ExtraArms >= 4 && sourceChar.Equipment.ExtraArm4.ItemId > 0 && sourceChar.Equipment.ExtraArm4.GetSpec().Type == items.Weapon {
+		attackWeapons = append(attackWeapons, sourceChar.Equipment.ExtraArm4)
+	}
 
 	// Put an empty weapon, so basically hands.
 	if len(attackWeapons) == 0 {
@@ -172,11 +178,9 @@ func calcDualWieldPenalty(sourceChar *characters.Character, weapIdx, totalWeaps 
 			penalty = 10
 		}
 	}
-	// Extra arm weapons get escalating additional penalties
-	if weapIdx == 2 {
-		penalty += 20
-	} else if weapIdx >= 3 {
-		penalty += 40
+	// Extra arm weapons get escalating penalties: +20 per arm beyond offhand
+	if weapIdx >= 2 {
+		penalty += (weapIdx - 1) * 20
 	}
 	return penalty
 }

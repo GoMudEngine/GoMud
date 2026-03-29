@@ -78,6 +78,12 @@ func PowerScore(char characters.Character) float64 {
 	if char.ExtraArms >= 2 && char.Equipment.ExtraArm2.ItemId > 0 {
 		addWeaponDPS(char.Equipment.ExtraArm2, true)
 	}
+	if char.ExtraArms >= 3 && char.Equipment.ExtraArm3.ItemId > 0 {
+		addWeaponDPS(char.Equipment.ExtraArm3, true)
+	}
+	if char.ExtraArms >= 4 && char.Equipment.ExtraArm4.ItemId > 0 {
+		addWeaponDPS(char.Equipment.ExtraArm4, true)
+	}
 
 	// Apply mutation damage multiplier
 	physAtk *= (1.0 + mutations.GetDamageMultiplier(char.Mutations))
