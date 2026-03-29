@@ -724,10 +724,11 @@ Balance:
   MutationBaseProgress: 50.0         # Progress needed for first mutation
   MutationProgressScale: 1.5         # Each additional mutation costs Scale^n more
   MutationMaxCount: 5                # Max simultaneous mutations per character
-  MutationMaxLevel: 3                # Max level any single mutation can reach (1–3)
+  MutationMaxLevel: 4                # Max level any single mutation can reach (1–4)
   MutationProgressGainPerRound: 1.0  # Progress added per combat round
   MutationLevel2Multiplier: 1.5      # Effect magnitude at level 2 (1.5× level 1)
   MutationLevel3Multiplier: 2.0      # Effect magnitude at level 3 (2.0× level 1)
+  MutationLevel4Multiplier: 2.5      # Effect magnitude at level 4 (2.5× level 1)
 
   # ── SPELLCASTING ──────────────────────────────────────────────────────
   # Spell discovery: chance to learn a new spell on a successful cast.

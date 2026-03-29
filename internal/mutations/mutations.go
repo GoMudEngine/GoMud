@@ -231,8 +231,8 @@ func RollAcquisition(pool []string) string {
 // All accept the character's mutations map (mutationId → level).
 
 // LevelMultiplier returns the effect scaling factor for a given mutation level.
-// L1 → 1.0×, L2 → MutationLevel2Multiplier×, L3 → MutationLevel3Multiplier×.
-// Any other value defaults to 1.0.
+// L1 → 1.0×, L2 → MutationLevel2Multiplier×, L3 → MutationLevel3Multiplier×,
+// L4 → MutationLevel4Multiplier×. Any other value defaults to 1.0.
 func LevelMultiplier(level int) float64 {
 	b := configs.GetBalanceConfig()
 	switch level {
@@ -240,6 +240,8 @@ func LevelMultiplier(level int) float64 {
 		return float64(b.MutationLevel2Multiplier)
 	case 3:
 		return float64(b.MutationLevel3Multiplier)
+	case 4:
+		return float64(b.MutationLevel4Multiplier)
 	default:
 		return 1.0
 	}
