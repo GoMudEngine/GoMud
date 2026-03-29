@@ -27,6 +27,7 @@ type QuestReward struct {
 	ItemId        int    // itemId to give
 	BuffId        int    // buffId to apply
 	SkillInfo     string // skill to give, format: skillId:skillLevel such as "map:1"
+	SpellId       string // spell to teach on quest completion
 	PlayerMessage string // string to display to player
 	RoomMessage   string // string to display to room
 	RoomId        int    // roomId to move player to

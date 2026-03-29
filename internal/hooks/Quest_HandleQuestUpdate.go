@@ -11,6 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/quests"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -147,6 +148,16 @@ func HandleQuestUpdate(e events.Event) events.ListenerReturn {
 					questUser.SendText(skillUpTxt)
 				}
 
+			}
+		}
+		// Spell reward?
+		if questInfo.Rewards.SpellId != "" {
+			if questUser.Character.LearnSpell(questInfo.Rewards.SpellId) {
+				if spellData := spells.GetSpell(questInfo.Rewards.SpellId); spellData != nil {
+					questUser.SendText(fmt.Sprintf(
+						`<ansi fg="magenta-bold">You have learned the spell: <ansi fg="cyan-bold">%s</ansi></ansi>`,
+						spellData.Name))
+				}
 			}
 		}
 		// Move them to another room/area?
