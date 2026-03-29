@@ -1,8 +1,8 @@
  ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Title</ansi> ────────────────────────────────────────────────────────────────┐
    <ansi fg="yellow-bold">Current Title:</ansi> <ansi fg="white-bold">{{ .FullTitle }}</ansi>
 
-   <ansi fg="yellow">Mutation Tier:</ansi>  {{ .MutTier }} <ansi fg="black-bold">(load: {{ .MutLoad }})</ansi>
-   <ansi fg="yellow">Skill Tier:</ansi>     {{ .SkillTier }} <ansi fg="black-bold">({{ .SkillPct }} completion)</ansi>
+   <ansi fg="yellow">Mutation Tier:</ansi>  {{ .MutTier }} <ansi fg="black-bold">({{ .MutLoad }} presence)</ansi>
+   <ansi fg="yellow">Skill Tier:</ansi>     {{ .SkillTier }} <ansi fg="black-bold">({{ .SkillPct }})</ansi>
    <ansi fg="yellow">Archetype:</ansi>      {{ .Archetype }}
 
    <ansi fg="yellow">Stat Profile:</ansi>

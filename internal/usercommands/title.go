@@ -23,7 +23,7 @@ func Title(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	skillTier := skills.GetSkillTier(char.GetAllSkillRanks())
 	archetype := skills.GetStatArchetype(char.Stats)
 
-	// Skill completion %
+	// Skill completion — descriptive instead of percentage
 	allRanks := char.GetAllSkillRanks()
 	totalRanks := 0
 	for _, r := range allRanks {
@@ -31,6 +31,36 @@ func Title(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	}
 	const maxTotal = 17 * 50
 	skillPct := float64(totalRanks) / float64(maxTotal) * 100
+	var skillProgress string
+	switch {
+	case skillPct < 10:
+		skillProgress = "fledgling"
+	case skillPct < 25:
+		skillProgress = "developing"
+	case skillPct < 50:
+		skillProgress = "seasoned"
+	case skillPct < 75:
+		skillProgress = "accomplished"
+	case skillPct < 90:
+		skillProgress = "masterful"
+	default:
+		skillProgress = "legendary"
+	}
+
+	// Mutation load — descriptive instead of number
+	var mutLoadDesc string
+	switch {
+	case mutLoad <= 0:
+		mutLoadDesc = "untouched"
+	case mutLoad < 2:
+		mutLoadDesc = "faint"
+	case mutLoad < 4:
+		mutLoadDesc = "noticeable"
+	case mutLoad < 7:
+		mutLoadDesc = "heavy"
+	default:
+		mutLoadDesc = "overwhelming"
+	}
 
 	// Mutation tier progress
 	mutTierDisplay := mutTier
@@ -87,9 +117,9 @@ func Title(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	data := TitleDisplay{
 		FullTitle:  fullTitle,
 		MutTier:   mutTierDisplay,
-		MutLoad:   fmt.Sprintf("%.0f", mutLoad),
+		MutLoad:   mutLoadDesc,
 		SkillTier: skillTier,
-		SkillPct:  fmt.Sprintf("%.1f%%", skillPct),
+		SkillPct:  skillProgress,
 		Archetype: archetype,
 		TopStats:  statVals[:3],
 	}
