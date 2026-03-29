@@ -23,8 +23,9 @@
 {{ end -}}
 {{- if not .Equipment.Feet.IsDisabled }}   <ansi fg="yellow">Feet:    </ansi><ansi fg="itemname">{{ .Equipment.Feet.NameComplex    }}</ansi>
 {{ end }} └────────────────────────────────────────────────────────────────────────────┘
- {{ $itemCt := len .ItemNames -}}{{ $formattedNames := .ItemNamesFormatted -}}{{- $strlen := 0 -}}{{- $lineCt := 1 -}}{{- $itemCount := .Count -}}
- Carrying: {{ range $index, $name := .ItemNames -}}{{ $proposedLength := (add 2 (add $strlen (len $name))) }}{{- if gt $proposedLength 68 -}}{{- $strlen = 0 -}}{{- $lineCt = (add 1 $lineCt) -}}{{ if eq $lineCt 2 }}{{- printf "\n %s  " (padLeft 8 $itemCount) -}}{{ else }}{{- printf "\n           " -}}{{ end }}{{- end -}}{{ index $formattedNames $index }}{{- if ne $index (sub $itemCt 1) }}, {{ $strlen = (add 2 (add $strlen (len $name))) }}{{ end }}{{ end }}
+ {{ $itemCt := len .ItemNames -}}{{ $formattedNames := .ItemNamesFormatted -}}{{- $strlen := 0 -}}{{- $lineCt := 1 -}}
+ Carrying: {{ range $index, $name := .ItemNames -}}{{ $proposedLength := (add 2 (add $strlen (len $name))) }}{{- if gt $proposedLength 68 -}}{{- $strlen = 0 -}}{{- $lineCt = (add 1 $lineCt) -}}{{- printf "\n           " -}}{{- end -}}{{ index $formattedNames $index }}{{- if ne $index (sub $itemCt 1) }}, {{ $strlen = (add 2 (add $strlen (len $name))) }}{{ end }}{{ end }}
+ <ansi fg="{{ .EncumbranceColor }}">Encumbrance: [{{ .EncumbranceLabel }}]</ansi>
 {{ else }}
 {{ $itemCt := len .ItemNames -}}{{ $formattedNames := .ItemNamesFormatted -}}
  Found in your bag: {{ range $index, $name := .ItemNames -}}{{  index $formattedNames $index }}

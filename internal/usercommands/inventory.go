@@ -13,6 +13,27 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
+// encumbranceTier returns a descriptive label and ANSI color for the
+// player's current weight-to-capacity ratio.
+func encumbranceTier(weight, capacity float64) (label, color string) {
+	if capacity <= 0 {
+		return "crushed", "magenta-bold"
+	}
+	ratio := weight / capacity
+	switch {
+	case ratio <= 0.25:
+		return "light", "green"
+	case ratio <= 0.50:
+		return "moderate", "yellow"
+	case ratio <= 0.75:
+		return "heavy", "red"
+	case ratio <= 1.00:
+		return "overburdened", "red-bold"
+	default:
+		return "crushed", "magenta-bold"
+	}
+}
+
 func Inventory(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	itemNames := []string{}
@@ -165,6 +186,8 @@ func Inventory(rest string, user *users.UserRecord, room *rooms.Room, flags even
 		diceRoll = iSpec.Damage.DiceRoll
 	}
 
+	encLabel, encColor := encumbranceTier(user.Character.GetCarriedWeight(), user.Character.CarryCapacity())
+
 	invData := map[string]any{
 		`Equipment`:          &user.Character.Equipment,
 		`ItemNames`:          itemNames,
@@ -172,7 +195,8 @@ func Inventory(rest string, user *users.UserRecord, room *rooms.Room, flags even
 		`AttackDamage`:       diceRoll,
 		`RaceInfo`:           raceInfo,
 		`Searching`:          len(rest) > 0,
-		`Count`:              fmt.Sprintf(`(%.1f/%.0f lbs)`, user.Character.GetCarriedWeight(), user.Character.CarryCapacity()),
+		`EncumbranceLabel`:   encLabel,
+		`EncumbranceColor`:   encColor,
 	}
 
 	tplTxt, _ := templates.Process("character/inventory", invData, user.UserId)
