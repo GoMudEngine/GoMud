@@ -254,6 +254,15 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 	user.Character.Conviction -= roundCost
 	cs.ConvictionSpent += roundCost
 
+	// Run spell script onWait (if present) — flavor text during fold accumulation
+	spellAggro := characters.SpellAggroInfo{
+		SpellId:              cs.SpellId,
+		SpellRest:            cs.SpellRest,
+		TargetUserIds:        cs.TargetUserIds,
+		TargetMobInstanceIds: cs.TargetMobInstanceIds,
+	}
+	scripting.TrySpellScriptEvent("onWait", user.UserId, 0, spellAggro)
+
 	// Advance folds — resolve spell if complete
 	if advanceFolds(cs) {
 		resolveRoom := rooms.LoadRoom(user.Character.RoomId)
