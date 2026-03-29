@@ -39,8 +39,15 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 	}
 
 	if user.Character.Aggro != nil {
-		user.SendText("You can't do that! You are in combat!")
-		return true, nil
+		// Always allow movement out of the death recovery room —
+		// stale aggro must never trap a player in the Shadow Realm.
+		deathRoom := int(configs.GetSpecialRoomsConfig().DeathRecoveryRoom)
+		if user.Character.RoomId != deathRoom {
+			user.SendText("You can't do that! You are in combat!")
+			return true, nil
+		}
+		// Force-clear the stale aggro so it doesn't follow them out.
+		user.Character.Aggro = nil
 	}
 
 	// If has a buff that prevents combat, skip the player
