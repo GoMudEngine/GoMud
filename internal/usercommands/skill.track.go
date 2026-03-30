@@ -178,6 +178,16 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	}
 
+	// Handle "track stop" / "track clear" — cancel active tracking
+	if rest == "stop" || rest == "clear" {
+		user.Character.SetMiscData("tracking-mob", nil)
+		user.Character.SetMiscData("tracking-user", nil)
+		user.Character.SetMiscData("tracking-display-count", nil)
+		user.Character.RemoveBuff(26)
+		user.SendText(`You stop tracking.`)
+		return true, nil
+	}
+
 	// Targeted tracking requires a high roll
 	if roll.Value < 175 {
 
