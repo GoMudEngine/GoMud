@@ -53,6 +53,8 @@
  Carrying: {{ range $index, $name := .ItemNames -}}{{ $proposedLength := (add 2 (add $strlen (len $name))) }}{{- if gt $proposedLength 68 -}}{{- $strlen = 0 -}}{{- $lineCt = (add 1 $lineCt) -}}{{- printf "\n           " -}}{{- end -}}{{ index $formattedNames $index }}{{- if ne $index (sub $itemCt 1) }}, {{ $strlen = (add 2 (add $strlen (len $name))) }}{{ end }}{{ end }}
 {{ if .ComponentNames }} {{ $compCt := len .ComponentNames -}}{{ $compFormattedNames := .ComponentNamesFormatted -}}{{- $strlen := 0 -}}
  Components: {{ range $index, $name := .ComponentNames -}}{{ $proposedLength := (add 2 (add $strlen (len $name))) }}{{- if gt $proposedLength 67 -}}{{- $strlen = 0 -}}{{- printf "\n            " -}}{{- end -}}{{ index $compFormattedNames $index }}{{- if ne $index (sub $compCt 1) }}, {{ $strlen = (add 2 (add $strlen (len $name))) }}{{ end }}{{ end }}
+{{ end }}{{ if .PotionNames }} {{ $potCt := len .PotionNames -}}{{ $potFormattedNames := .PotionNamesFormatted -}}{{- $strlen := 0 -}}
+ Potions: {{ range $index, $name := .PotionNames -}}{{ $proposedLength := (add 2 (add $strlen (len $name))) }}{{- if gt $proposedLength 70 -}}{{- $strlen = 0 -}}{{- printf "\n          " -}}{{- end -}}{{ index $potFormattedNames $index }}{{- if ne $index (sub $potCt 1) }}, {{ $strlen = (add 2 (add $strlen (len $name))) }}{{ end }}{{ end }}
 {{ end }} <ansi fg="{{ .EncumbranceColor }}">Encumbrance: [{{ .EncumbranceLabel }}]</ansi>
 {{ else }}
 {{ $itemCt := len .ItemNames -}}{{ $formattedNames := .ItemNamesFormatted -}}

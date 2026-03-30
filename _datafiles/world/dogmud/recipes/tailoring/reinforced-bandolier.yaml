@@ -1,0 +1,20 @@
+id: reinforced-bandolier
+name: Reinforced Bandolier
+skill: tailoring
+skill_minimum: 20
+station: loom
+time_rounds: 6
+ingredients:
+  - item_tag: leather-strip
+    quantity: 3
+  - item_tag: iron-ingot
+    quantity: 1
+  - item_tag: thread-spool
+    quantity: 2
+  - item_tag: bone-needle
+    quantity: 1
+output:
+  item_id: 20060
+  quantity: 1
+success_message: "You layer the leather panels, rivet iron clasps at each loop, and stitch the whole assembly tight. A reinforced bandolier!"
+failure_message: "The rivets split the leather and the clasps come loose. The materials are wasted."

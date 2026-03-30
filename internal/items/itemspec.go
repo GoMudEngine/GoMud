@@ -270,6 +270,8 @@ type ItemSpec struct {
 	Aging                 AgingThresholds   `yaml:"aging,omitempty"`                   // Potion aging phase thresholds
 	BottleAgingMultiplier float64           `yaml:"bottle_aging_multiplier,omitempty"` // Bottle aging speed (clay=3.0, glass=1.0, phial=0.5, decanter=0.25)
 	Toxicity              int               `yaml:"toxicity,omitempty"`                // Toxicity cost when consumed
+	IsBandolier           bool              `yaml:"is_bandolier,omitempty"`            // Belt item that holds potions
+	BandolierCapacity     int               `yaml:"bandolier_capacity,omitempty"`      // Max potions storable in bandolier
 }
 
 func (i Element) String() string {

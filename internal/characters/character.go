@@ -70,6 +70,7 @@ type Character struct {
 	CharmedMobs      []int                          `yaml:"-"`                       // If they have charmed anyone, this is the list of mob instance ids
 	Items            []items.Item                   `yaml:"items,omitempty"`         // The items the character is holding
 	ComponentItems   []items.Item                   `yaml:"componentitems,omitempty"` // Contents of equipped component bag
+	PotionItems      []items.Item                   `yaml:"potionitems,omitempty"`   // Contents of equipped potion bandolier
 	Buffs            buffs.Buffs                    `yaml:"buffs,omitempty"`         // The buffs the character has active
 	Equipment        Worn                           `yaml:"equipment,omitempty"`     // The equipment the character is wearing
 	HealthMax        stats.StatInfo                 `yaml:"-"`                       // The maximum health of the character. Don't write to yaml since is dynamically calculated.
@@ -371,13 +372,19 @@ func (c *Character) GetCarriedWeight() float64 {
 		}
 	}
 
+	// Potion bandolier item weights
+	potionWeight := 0.0
+	for _, item := range c.PotionItems {
+		potionWeight += item.GetSpec().GetWeight()
+	}
+
 	// Equipped item weights (all slots via GetAllItems)
 	equippedWeight := 0.0
 	for _, item := range c.Equipment.GetAllItems() {
 		equippedWeight += item.GetSpec().GetWeight()
 	}
 
-	return backpackWeight + componentWeight + equippedWeight
+	return backpackWeight + componentWeight + potionWeight + equippedWeight
 }
 
 func (c *Character) DeductActionPoints(amount int) bool {
@@ -1384,6 +1391,15 @@ func (c *Character) StoreItem(i items.Item) bool {
 		}
 	}
 
+	// Auto-route potions to the bandolier
+	if (iSpec.Type == items.Potion || (iSpec.Subtype == items.Drinkable && len(iSpec.BuffIds) > 0)) && c.Equipment.Belt.ItemId > 0 {
+		beltSpec := c.Equipment.Belt.GetSpec()
+		if beltSpec.IsBandolier && beltSpec.BandolierCapacity > 0 && len(c.PotionItems) < beltSpec.BandolierCapacity {
+			c.PotionItems = append(c.PotionItems, i)
+			return true
+		}
+	}
+
 	c.Items = append(c.Items, i)
 
 	return true
@@ -1461,6 +1477,52 @@ func (c *Character) UseItem(i items.Item) int {
 		}
 	}
 
+	return 0
+}
+
+// FindInPotions searches the bandolier for a matching potion, oldest first.
+func (c *Character) FindInPotions(itemName string) (items.Item, bool) {
+	if itemName == `` || len(c.PotionItems) == 0 {
+		return items.Item{}, false
+	}
+
+	// Sort by CraftedRound ascending (oldest first) for consumption priority
+	oldestIdx := -1
+	var oldestRound uint64 = ^uint64(0)
+
+	for idx := range c.PotionItems {
+		closeMatch, fullMatch := items.FindMatchIn(itemName, c.PotionItems[idx])
+		matched := fullMatch.ItemId != 0 || closeMatch.ItemId != 0
+		if matched && c.PotionItems[idx].CraftedRound < oldestRound {
+			oldestIdx = idx
+			oldestRound = c.PotionItems[idx].CraftedRound
+		}
+	}
+
+	if oldestIdx >= 0 {
+		return c.PotionItems[oldestIdx], true
+	}
+
+	return items.Item{}, false
+}
+
+// UseItemFromPotions consumes a potion from the bandolier.
+func (c *Character) UseItemFromPotions(i items.Item) int {
+	for j := len(c.PotionItems) - 1; j >= 0; j-- {
+		if c.PotionItems[j].Equals(i) {
+			usesLeft := c.PotionItems[j].Uses
+			if usesLeft > 0 {
+				usesLeft--
+			}
+			if usesLeft <= 0 {
+				c.PotionItems = append(c.PotionItems[:j], c.PotionItems[j+1:]...)
+			} else {
+				c.PotionItems[j].Uses = usesLeft
+				c.PotionItems[j].LastUsedRound = util.GetRoundCount()
+			}
+			return usesLeft
+		}
+	}
 	return 0
 }
 
@@ -1544,6 +1606,12 @@ func (c *Character) FindItem(itemName string) (items.Item, string, bool) {
 	for _, item := range c.Items {
 		if item.ItemId > 0 {
 			pool = append(pool, candidate{item, "in your backpack"})
+		}
+	}
+
+	for _, item := range c.PotionItems {
+		if item.ItemId > 0 {
+			pool = append(pool, candidate{item, "in your bandolier"})
 		}
 	}
 
@@ -3331,6 +3399,14 @@ func (c *Character) RemoveFromBody(i items.Item) bool {
 	} else if i.Equals(c.Equipment.Body) {
 		c.Equipment.Body = items.Item{}
 	} else if i.Equals(c.Equipment.Belt) {
+		// If removing a bandolier, spill potions to backpack
+		beltSpec := c.Equipment.Belt.GetSpec()
+		if beltSpec.IsBandolier && len(c.PotionItems) > 0 {
+			for _, pi := range c.PotionItems {
+				c.Items = append(c.Items, pi)
+			}
+			c.PotionItems = nil
+		}
 		c.Equipment.Belt = items.Item{}
 	} else if i.Equals(c.Equipment.Gloves) {
 		c.Equipment.Gloves = items.Item{}

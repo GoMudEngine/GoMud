@@ -240,6 +240,60 @@ func Inventory(rest string, user *users.UserRecord, room *rooms.Room, flags even
 		}
 	}
 
+	// Build stacked list of bandolier potion items
+	potionNames := []string{}
+	potionNamesFormatted := []string{}
+
+	potStackOrder := []string{}
+	potStacks := map[string]*stackEntry{}
+
+	for _, item := range user.Character.PotionItems {
+		iSpec := item.GetSpec()
+
+		// Check if spoiled (for alchemy skill 6+ players)
+		isSpoiled := false
+		if alchSkill >= 6 && iSpec.Aging.HasAging() && item.CraftedRound > 0 {
+			elapsed := util.GetRoundCount() - item.CraftedRound
+			effSpeed := items.CalcEffectiveAgingSpeed(
+				iSpec.BottleAgingMultiplier, item.CraftSkill)
+			phase, _ := items.GetAgingPhase(elapsed, iSpec.Aging, effSpeed)
+			isSpoiled = phase == items.PhaseSpoiled
+		}
+
+		spoiledTag := ""
+		if isSpoiled {
+			spoiledTag = "|spoiled"
+		}
+		stackKey := fmt.Sprintf("%d|%s|%d|%d%s", item.ItemId, item.EnchantType, item.EnchantTier, item.Uses, spoiledTag)
+
+		if entry, exists := potStacks[stackKey]; exists {
+			entry.count++
+			continue
+		}
+
+		iName := item.Name()
+		iNameFormatted := fmt.Sprintf(`<ansi fg="itemname">%s</ansi>`, item.DisplayName())
+
+		if isSpoiled {
+			iName = fmt.Sprintf(`%s (turned)`, item.Name())
+			iNameFormatted = fmt.Sprintf(`<ansi fg="8">%s (turned)</ansi>`, item.DisplayName())
+		}
+
+		potStacks[stackKey] = &stackEntry{name: iName, nameFormatted: iNameFormatted, count: 1}
+		potStackOrder = append(potStackOrder, stackKey)
+	}
+
+	for _, key := range potStackOrder {
+		entry := potStacks[key]
+		if entry.count > 1 {
+			potionNames = append(potionNames, fmt.Sprintf(`%s (x%d)`, entry.name, entry.count))
+			potionNamesFormatted = append(potionNamesFormatted, fmt.Sprintf(`%s <ansi fg="uses-left">(x%d)</ansi>`, entry.nameFormatted, entry.count))
+		} else {
+			potionNames = append(potionNames, entry.name)
+			potionNamesFormatted = append(potionNamesFormatted, entry.nameFormatted)
+		}
+	}
+
 	raceInfo := species.GetSpecies(user.Character.SpeciesId)
 
 	diceRoll := raceInfo.Damage.DiceRoll
@@ -256,6 +310,8 @@ func Inventory(rest string, user *users.UserRecord, room *rooms.Room, flags even
 		`ItemNamesFormatted`:      itemNamesFormatted,
 		`ComponentNames`:          componentNames,
 		`ComponentNamesFormatted`: componentNamesFormatted,
+		`PotionNames`:             potionNames,
+		`PotionNamesFormatted`:    potionNamesFormatted,
 		`AttackDamage`:            diceRoll,
 		`RaceInfo`:                raceInfo,
 		`Searching`:               len(rest) > 0,
