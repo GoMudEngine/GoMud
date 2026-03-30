@@ -274,6 +274,32 @@ func (c *Character) OnFirstMobKill(userId int) {
 	}
 }
 
+// OnCritReceived is called when a character takes a critical hit.
+// Triggers stat progression for the stat related to the damage channel:
+//
+//	physical crit → vitality (body toughens from surviving hard blows)
+//	magical crit  → willpower (mind hardens against arcane trauma)
+//	rhetoric crit → charisma (ego steels itself after being shaken)
+func (c *Character) OnCritReceived(damageChannel string, userId int) {
+	if !configs.GetGamePlayConfig().UseSkillProgression {
+		return
+	}
+
+	var statName string
+	switch damageChannel {
+	case "physical":
+		statName = "vitality"
+	case "magical":
+		statName = "willpower"
+	case "conviction":
+		statName = "charisma"
+	default:
+		return
+	}
+
+	c.CheckRegenProgression(statName, userId, 0.05)
+}
+
 // OnLowResource is called when a resource (health, stamina, conviction)
 // drops below 25% of its maximum. Triggers a stat progression check
 // for the related stat (e.g. low health → vitality progression).

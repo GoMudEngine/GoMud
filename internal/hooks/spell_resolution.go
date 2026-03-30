@@ -314,6 +314,15 @@ func resolveAgainstPlayer(user *users.UserRecord, target *users.UserRecord, room
 	isCrit := atkRoll.ZScore >= 2.0
 	applyPlayerEffect(user, target, room, spellData, magnitude, isCrit)
 
+	// Crit received → stat progression for the defender
+	if isCrit && (spellData.Type == spells.HarmSingle || spellData.Type == spells.HarmArea || spellData.Type == spells.HarmMulti) {
+		// Determine damage channel from spell effect
+		switch spellData.EffectType {
+		case "damage":
+			target.Character.OnCritReceived("magical", target.UserId)
+		}
+	}
+
 	// Set reciprocal aggro for harm spells
 	if spellData.Type == spells.HarmSingle || spellData.Type == spells.HarmArea || spellData.Type == spells.HarmMulti {
 		if user.Character.Aggro == nil {
@@ -613,6 +622,10 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 			caster.Character.Name, spellData.Name, target.Character.Name), target.UserId)
 		if target.Character.Aggro == nil {
 			target.Character.Aggro = &characters.Aggro{MobInstanceId: caster.InstanceId}
+		}
+		// Magical crit received → willpower progression for defender
+		if isCrit {
+			target.Character.OnCritReceived("magical", target.UserId)
 		}
 	case "dot":
 		dotDuration := spellData.EffectDuration

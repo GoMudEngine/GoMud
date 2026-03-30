@@ -178,6 +178,11 @@ func Taunt(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		sendTauntMessages(intensity, dmgDesc, sourceName, targetName,
 			"username", targetType, user, targetPlayer, room, targetPlayerId)
 
+		// Rhetoric crit received → charisma progression for defender
+		if isCrit && targetPlayer != nil {
+			targetPlayer.Character.OnCritReceived("conviction", targetPlayer.UserId)
+		}
+
 		// Record analytics
 		combat.RecordSpecialMove(combat.User, combat.Mob, "taunt", true, dmg,
 			user.Character, targetChar, util.GetRoundCount())

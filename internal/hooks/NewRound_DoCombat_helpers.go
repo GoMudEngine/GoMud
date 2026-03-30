@@ -943,6 +943,10 @@ func handlePlayerVsPlayer(user *users.UserRecord, uRoom *rooms.Room, evt events.
 
 	if roundResult.Hit {
 		defUser.Character.TrackPlayerDamage(user.UserId, roundResult.DamageToTarget)
+		// Physical crit received → vitality progression for defender
+		if roundResult.Crit {
+			defUser.Character.OnCritReceived("physical", defUser.UserId)
+		}
 	}
 	handleOffhandBreakUserDef(roundResult, defUser, defRoom)
 
@@ -1301,6 +1305,11 @@ func handleMobVsPlayer(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, 
 
 	handlePlayerConcentrationBreak(defUser, roundResult, defRoom)
 	handleOffhandBreakUserDef(roundResult, defUser, defRoom)
+
+	// Physical crit received → vitality progression for defender
+	if roundResult.Hit && roundResult.Crit {
+		defUser.Character.OnCritReceived("physical", defUser.UserId)
+	}
 
 	// Stage 38.3: Mob attacker progression
 	statMobName := mobDisplayName(mob, mobRoom, 0)
