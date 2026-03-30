@@ -9,10 +9,21 @@ groups:
   - humanoid
 idlecommands:
   - 'emote traces a circle in the air with one finger, murmuring softly'
+  - 'cast empathic-shroud'
   - ''
   - 'emote kneels to press a palm against the bare earth'
+  - 'cast vital-surge'
   - ''
   - 'emote gazes toward the stone circle with reverent attention'
+combatcommands:
+  - 'cast sparks'
+  - ''
+  - 'cast conviction-spike'
+  - ''
+  - 'cast hemorrhagic-burst'
+  - ''
+  - 'cast heal'
+  - ''
 activitylevel: 10
 character:
   name: Windwarden Sylara
@@ -28,6 +39,15 @@ character:
   speciesid: 1
   level: 1
   gold: 0
+  spellbook:
+    empathic-shroud: 6
+    vital-surge: 8
+    sparks: 10
+    conviction-spike: 8
+    hemorrhagic-burst: 5
+    heal: 10
+  skills:
+    spellcasting: 16
   stats:
     willpower:
       training: 20

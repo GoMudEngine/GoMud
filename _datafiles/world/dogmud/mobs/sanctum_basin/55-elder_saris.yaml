@@ -6,8 +6,18 @@ hostile: false
 maxwander: 0
 idlecommands:
   - 'emote observes the moons through the bronze sighting device'
-  - 'emote makes a small notation in a slim leather-bound journal'
+  - 'cast conviction-ward'
   - ''
+  - 'emote makes a small notation in a slim leather-bound journal'
+  - 'cast iron-will'
+  - ''
+  - ''
+combatcommands:
+  - 'cast heal'
+  - ''
+  - 'cast mend-wounds'
+  - ''
+  - 'cast conviction-ward'
   - ''
 activitylevel: 10
 llmprofile:
@@ -113,6 +123,14 @@ llmprofile:
 
 character:
   name: Elder Saris
+  spellbook:
+    conviction-ward: 10
+    iron-will: 8
+    heal: 15
+    mend-wounds: 12
+    chrysalis-regeneration: 5
+  skills:
+    spellcasting: 20
   description: 'Elder Saris is old in the way that certain basalt formations are old --
     weathered to essentials, nothing extraneous remaining. Their eyes carry the particular
     calm of someone who has spent decades watching the three moons and thinking about

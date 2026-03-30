@@ -9,10 +9,21 @@ groups:
   - humanoid
 idlecommands:
   - 'emote holds a crystal shard up to the light, squinting at it'
+  - 'cast conviction-armor'
   - ''
   - 'emote scribbles notes in a battered leather journal'
+  - 'cast iron-will'
   - ''
   - 'emote taps a rock with a small hammer, listening intently'
+combatcommands:
+  - 'cast pyretic-surge'
+  - ''
+  - 'cast kinetic-hurl'
+  - ''
+  - 'cast mind-spike'
+  - ''
+  - 'cast sparks'
+  - ''
 activitylevel: 15
 character:
   name: Geomancer Rhett
@@ -28,6 +39,15 @@ character:
   speciesid: 1
   level: 1
   gold: 0
+  spellbook:
+    conviction-armor: 8
+    iron-will: 6
+    pyretic-surge: 10
+    kinetic-hurl: 8
+    mind-spike: 12
+    sparks: 6
+  skills:
+    spellcasting: 18
   stats:
     willpower:
       training: 10
