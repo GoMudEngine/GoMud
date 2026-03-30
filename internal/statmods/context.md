@@ -46,7 +46,6 @@ Type-safe string wrapper for standardized stat name constants, ensuring consiste
 - **ConvictionRecovery**: `"convictionrecovery"` - Conviction regeneration rate modifier
 
 ### Skill-Specific Stats
-- **Tame**: `"tame"` - Animal taming skill effectiveness
 - **Picklock**: `"picklock"` - Lock picking skill effectiveness
 - **Casting**: `"casting"` - General spell casting effectiveness
 - **CastingPrefix**: `"casting-"` - Prefix for school-specific casting bonuses

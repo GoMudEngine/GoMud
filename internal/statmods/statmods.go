@@ -10,7 +10,6 @@ type StatName string
 
 var (
 	// specific skills
-	Tame     StatName = `tame`
 	Picklock StatName = `picklock`
 
 	// Not an exhaustive list, but ideally keep track of
