@@ -42,11 +42,41 @@
 - **Ironbark Shaving** — uncommon forest forage.
 - Clay flask sold by Apothecary Voss.
 
+### Consumption Rework
+- Drinking a potion now checks toxicity before consuming. If you'd
+  exceed your maximum, the potion is rejected.
+- Aging phase affects potency: peak potions last 30% longer, declining
+  potions are weaker, spoiled potions cause nausea + 3x toxicity.
+- Craft skill at brew time scales potion duration (skill 20 = +20%).
+- Bottle type is stamped on the potion at craft time, determining its
+  aging speed for its entire lifecycle.
+
+### Maker's Mark
+- Skilled crafters (skill 30+) now leave their name on items they
+  craft. Examine a crafted weapon, potion, or piece of armor to see
+  "Made by {name}." Purely cosmetic — does not affect stacking.
+
 ### QoL
 - Spoiled potions display as "(turned)" in inventory for alchemists.
 - Potions in bandolier show in a dedicated "Potions:" section.
 - Drink command pulls from bandolier first (oldest potion).
 - Five new alchemy-related gameplay tips in the hints rotation.
+- Old potions and recipe knowledge auto-migrate on login.
+
+### Bug Fixes
+- **Velk bribe ledger quest:** Fixed quest getting stuck at 83%.
+  The dialogue was still asking for the ledger after it had been
+  given. Players with the stuck quest should now be able to complete
+  it by talking to Velk.
+- **Sylara spirit fetish spell:** Fixed "You need a spirit fetish"
+  error when the fetish was in the component bag. Spirit fetishes
+  now stay in the regular backpack where the spell can find them.
+- **Text wrapping:** Say, shout, whisper, emote, and party chat
+  now wrap the full message (including speaker name) at 80 chars
+  instead of wrapping text alone at 65 then prepending the name.
+- **zMUD compatibility:** Fixed display flashing for legacy MUD
+  clients that don't support GMCP. The server no longer sends GMCP
+  data to clients that haven't completed the GMCP handshake.
 
 ---
 
