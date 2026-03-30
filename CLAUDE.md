@@ -212,6 +212,18 @@ ItemSpec fields: `is_component` (bool), `weight_reduction` (float64 0-1),
 `bag_capacity` (int). New ItemTypes: `wrist`, `back`, `shoulders`,
 `componentbag`.
 
+## Buff/Ward Spell System
+- Shield spells scale by `effect_magnitude` (100 = 1.0x baseline).
+  Conviction Ward = 75, Chrysalis Cocoon = 125.
+- Shield duration: `50 + spellcasting_skill` rounds. Crits +50% strength.
+- Buff statmods `magical_mitigation` and `conviction_mitigation` flow
+  through `GetMagicalMitigation()` / `GetConvictionMitigation()`.
+- Kick command auto-selects variant: kick (standing), stomp (prone),
+  knee (grapple+control). Config: `KickDamagePercent` (0.80),
+  `StompDamagePercent` (1.20), `KneeDamagePercent` (1.00).
+- Hidden mob detection on room entry: Perception+Search vs Dex+Skullduggery
+  opposed roll in `go.go`. Mobs can spawn hidden via `buffids: [9]`.
+
 ## Inventory & Item Disambiguation
 - **Disambiguation formats:** Players can use `N.item` (diku-style) or `item#N`
   (hash-style) to target a specific item when multiples exist. `all.item` targets

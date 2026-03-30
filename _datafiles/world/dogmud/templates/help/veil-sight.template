@@ -1,0 +1,31 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">veil-sight</ansi> spell
+
+The <ansi fg="command">Veil Sight</ansi> spell opens the caster's perception to the hidden layer of
+reality, allowing them to pierce illusions and detect concealed enemies.
+While active, hidden creatures in the same room are revealed.
+
+This is an essential buff when venturing into areas known to shelter
+stealthy enemies -- particularly tunnels, bandit roads, and other zones
+where ambushers lurk.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">cast veil-sight</ansi>     Grants yourself see-hidden for its duration.
+
+<ansi fg="yellow">Base Folds:  </ansi> <ansi fg="white-bold">4</ansi>
+<ansi fg="yellow">Target:      </ansi> <ansi fg="white-bold">Self only</ansi>
+<ansi fg="yellow">Defense:     </ansi> <ansi fg="white-bold">None -- help spells always apply</ansi>
+<ansi fg="yellow">Duration:    </ansi> <ansi fg="white-bold">Scales with spellcasting skill</ansi>
+<ansi fg="yellow">Effect:      </ansi> <ansi fg="white-bold">See-hidden: reveals concealed creatures in your room</ansi>
+<ansi fg="yellow">Conv. Cost:  </ansi> <ansi fg="white-bold">4</ansi>
+<ansi fg="yellow">School:      </ansi> <ansi fg="white-bold">Divination</ansi>
+
+<ansi fg="white-bold">Notes:</ansi>
+  - Hidden mobs will attack on entry if you don't detect them first.
+  - Even with Veil Sight active, detection on entry is an opposed roll
+    (Perception + Search vs Dex + Skullduggery). Higher perception helps.
+  - Refreshing the spell before it expires is cheaper than fighting from
+    a surprised state.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help cast</ansi>, <ansi fg="command">help spells</ansi>, <ansi fg="command">help skulduggery</ansi>,
+          <ansi fg="command">help perception</ansi>

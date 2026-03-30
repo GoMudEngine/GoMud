@@ -1,5 +1,76 @@
 # DOGMud Patch Notes
 
+## 2026-03-29 — Combat, Stealth & Spell Balance
+
+### Kick Rework
+- **Kick** is now a powerful unarmed strike (damage doubled from 0.40 to
+  0.80). Three automatic variants based on combat position:
+  - **Kick** (standing target): 35% knockdown chance.
+  - **Stomp** (prone target): 1.20x damage, bypasses half armor,
+    extends prone duration. The payoff for knocking someone down.
+  - **Knee** (grapple, in control): 1.0x damage, works in clinch/ground.
+- `stomp` and `knee` are command aliases for `kick`.
+
+### Opening Fights with Special Moves
+- Kick, bash, trip, grapple, and taunt can now initiate combat by
+  naming a target (e.g., `kick bandit`). No longer requires attacking
+  first.
+
+### Stealth System
+- Players now detect hidden mobs when entering a room via opposed
+  Perception+Search vs Dex+Skullduggery roll.
+- Rogue NPCs added: Blind Stalker, Pale Lurker, Warren Scout, Tunnel
+  Lookout, and Goblin Scout spawn hidden and ambush on entry.
+- Thornwall Highwayman, Smuggler Runner, and Torvan Cresk use tactical
+  combat stealth.
+
+### Caster NPCs
+- Elder Saris, Priest Olen, Geomancer Rhett, and Windwarden Sylara now
+  have spellbooks and cast buff spells while idle. Attack them and
+  they fight back with appropriate magic.
+
+### Buff/Ward Spell Rework
+- **Shield spells** now scale by spell magnitude. Conviction Ward is
+  75% strength (quick/cheap). Chrysalis Cocoon is 125% strength and
+  grants magical/conviction mitigation. Both last 2.5x longer.
+- **Iron Will** now provides magical and conviction damage mitigation
+  alongside the willpower boost. Lasts 50 rounds (was 8). Costs more.
+- **Chrysalis Haste** costs more but lasts twice as long.
+- **Vital Surge** regen lasts 3x longer.
+- **Empathic Shroud** no longer cancels on entering combat.
+- **Veil Sight** now grants see-hidden (was incorrectly giving light).
+- **Skill Attunement** and **Mutation Catalyst** last 10x longer but
+  cost 3x more conviction.
+- All debuffs (Nerve Disruption, Mind Fog, Sensory Overload, Psychic
+  Anchor) last 50% longer.
+
+### New Commands
+- **reply** — Whisper back to the last person who whispered to you.
+- **rep/report** — Broadcast your vital bars to the room, party, or
+  a specific player.
+- **setdesc** — Set your own character description.
+
+### Stat Progression
+- Taking a critical hit now triggers stat progression: physical crits
+  improve vitality, magical crits improve willpower, rhetoric crits
+  improve charisma.
+
+### Balance
+- Taunt damage +50% (RhetoricDamageScale 2.0 → 3.0).
+- Spell damage -14% (SpellDamageScale 1.85 → 1.6).
+- Subcomponent recipe discovery thresholds lowered: Steel Ingot 10→4,
+  Chain Links 15→7, Chrysalis Setting 15→7.
+
+### Other
+- Spells list now sorted by fold count (simplest first).
+- Leaderboard expanded from 10 to 20 entries.
+- 4 new tailoring recipes: Leather Backpack, Reinforced Travel Pack,
+  Artisan's Satchel, Master's Component Case.
+- Component bag capacities increased (20/40/75).
+- Apothecary Voss now sells alchemy ingredients.
+
+---
+
 ## 2026-03-29 — Equipment Slot Expansion + Component Bags
 
 ### New Equipment Slots
