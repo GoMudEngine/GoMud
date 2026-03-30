@@ -59,6 +59,7 @@ type Character struct {
 	Health           int                            // The health of the character
 	Stamina          int                            // The stamina of the character (physical energy)
 	Conviction       int                            // The conviction of the character (mental/spiritual energy)
+	Toxicity         float64                        `yaml:"toxicity,omitempty"`      // Current toxicity from potions
 	ActionPoints     int                            // The resevoir of action points the character has to spend on movement etc.
 	Gold             int                            // The gold the character is holding
 	Bank             int                            // The gold the character has in the bank
@@ -2339,6 +2340,43 @@ func (c *Character) ConvictionPerRound() int {
 		base = 1
 	}
 	return base
+}
+
+// GetToxicityMax returns the maximum toxicity this character can handle.
+// Formula: BaseMax + Vitality / VitalityScale
+func (c *Character) GetToxicityMax() float64 {
+	bal := configs.GetBalanceConfig()
+	return float64(bal.ToxicityBaseMax) + float64(c.Stats.Vitality.ValueAdj)/float64(bal.ToxicityVitalityScale)
+}
+
+// AddToxicity attempts to add toxicity. Returns false if it would exceed max.
+func (c *Character) AddToxicity(amount float64) bool {
+	if c.Toxicity+amount > c.GetToxicityMax() {
+		return false
+	}
+	c.Toxicity += amount
+	return true
+}
+
+// GetToxicityPenalties returns stat multipliers based on toxicity threshold.
+// Returns (regenMult, perceptionMult, dexterityMult) where 1.0 = no penalty.
+func (c *Character) GetToxicityPenalties() (float64, float64, float64) {
+	max := c.GetToxicityMax()
+	if max <= 0 {
+		return 1.0, 1.0, 1.0
+	}
+	ratio := c.Toxicity / max
+
+	switch {
+	case ratio >= 0.90:
+		return 0.60, 0.80, 0.90 // -40% regen, -20% Per, -10% Dex
+	case ratio >= 0.75:
+		return 0.80, 0.90, 0.90 // -20% regen, -10% Per, -10% Dex
+	case ratio >= 0.50:
+		return 0.90, 0.90, 1.0  // -10% regen, -10% Per
+	default:
+		return 1.0, 1.0, 1.0   // no penalty
+	}
 }
 
 // Where 1000 = a full round

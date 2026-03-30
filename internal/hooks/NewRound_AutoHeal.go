@@ -87,12 +87,24 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 		// ── Not downed: reset downed counter, normal regen ──────────
 		user.Character.DownedRounds = 0
 
+		// Toxicity decay
+		if user.Character.Toxicity > 0 {
+			bal := configs.GetBalanceConfig()
+			user.Character.Toxicity -= float64(bal.ToxicityDecayPerTick)
+			if user.Character.Toxicity < 0 {
+				user.Character.Toxicity = 0
+			}
+		}
+
+		// Toxicity regen penalty (applied to all pool regen below)
+		toxRegenMult, _, _ := user.Character.GetToxicityPenalties()
+
 		// Regeneration (only heal health if health > 0)
 		if user.Character.Health > 0 {
 
 			if !inCombat {
 				// Out of combat: base %-regen, then mutation multipliers, then room multiplier
-				healthRegen := float64(user.Character.HealthPerRound())
+				healthRegen := float64(user.Character.HealthPerRound()) * toxRegenMult
 
 				// Mutation health regen multiplier (e.g. Healing Gel, Regenerative Tissue)
 				if mult := mutations.GetHealthRegenMultiplier(user.Character.Mutations); mult != 0 {
@@ -126,7 +138,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 				// In combat: no base regen, but ConditionRegen (heal spell) still applies
 				if user.Character.HasCondition(characters.ConditionRegen) {
 					regenMult := user.Character.GetConditionMagnitude(characters.ConditionRegen)
-					healAmt := int(math.Floor(float64(user.Character.HealthPerRound()) * regenMult * regenMultiplier))
+					healAmt := int(math.Floor(float64(user.Character.HealthPerRound()) * toxRegenMult * regenMult * regenMultiplier))
 					if healAmt < 1 {
 						healAmt = 1
 					}
@@ -173,14 +185,14 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 			// Out of combat: full regen
 			staminaRegen = user.Character.StaminaPerRound()
 		}
-		staminaRegen = int(float64(staminaRegen) * regenMultiplier)
+		staminaRegen = int(float64(staminaRegen) * toxRegenMult * regenMultiplier)
 		user.Character.Stamina += staminaRegen
 		if user.Character.Stamina > user.Character.StaminaMax.Value {
 			user.Character.Stamina = user.Character.StaminaMax.Value
 		}
 
 		// Regenerate Conviction (not affected by combat state)
-		convictionRegen := int(float64(user.Character.ConvictionPerRound()) * regenMultiplier)
+		convictionRegen := int(float64(user.Character.ConvictionPerRound()) * toxRegenMult * regenMultiplier)
 		user.Character.Conviction += convictionRegen
 		if user.Character.Conviction > user.Character.ConvictionMax.Value {
 			user.Character.Conviction = user.Character.ConvictionMax.Value

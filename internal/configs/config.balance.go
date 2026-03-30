@@ -219,6 +219,11 @@ type Balance struct {
 	// ── MOON PHASES ───────────────────────────────────────────────────────────
 	MoonStatModMax          ConfigFloat `yaml:"MoonStatModMax"`          // Max fractional stat modifier from moon phases, e.g. 0.05 = ±5% (default 0.05)
 	CarryCapacityMultiplier ConfigFloat `yaml:"CarryCapacityMultiplier"` // Strength multiplier for carry capacity in lbs (default 0.65)
+
+	// ── TOXICITY ────────────────────────────────────────────────────────────
+	ToxicityDecayPerTick  ConfigFloat `yaml:"ToxicityDecayPerTick"`  // Points decayed per regen tick (default 1.0)
+	ToxicityBaseMax       ConfigFloat `yaml:"ToxicityBaseMax"`       // Base max before vitality bonus (default 100)
+	ToxicityVitalityScale ConfigFloat `yaml:"ToxicityVitalityScale"` // Vitality divisor for max bonus (default 5)
 }
 
 func (b *Balance) Validate() {
@@ -723,6 +728,17 @@ func (b *Balance) Validate() {
 	// ── CARRY CAPACITY ──────────────────────────────────────────────────────
 	if b.CarryCapacityMultiplier < 0.1 || b.CarryCapacityMultiplier > 10.0 {
 		b.CarryCapacityMultiplier = 0.65
+	}
+
+	// ── TOXICITY ────────────────────────────────────────────────────────────
+	if b.ToxicityDecayPerTick <= 0 {
+		b.ToxicityDecayPerTick = 1.0
+	}
+	if b.ToxicityBaseMax <= 0 {
+		b.ToxicityBaseMax = 100
+	}
+	if b.ToxicityVitalityScale <= 0 {
+		b.ToxicityVitalityScale = 5
 	}
 }
 
