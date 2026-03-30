@@ -1,5 +1,6 @@
 mobid: 227
 zone: Ironwind Steppe
+buffids: [9]
 statpool: 200
 itemdropchance: 20
 hostile: true
@@ -19,6 +20,11 @@ idlecommands:
   - ''
   - 'emote opens its jaws impossibly wide, tasting the air'
 activitylevel: 15
+combatcommands:
+  - 'sneak'
+  - ''
+  - ''
+  - ''
 character:
   name: blind stalker
   description: |
@@ -42,3 +48,5 @@ character:
       training: 10
     vitality:
       training: 8
+  skills:
+    skullduggery: 15

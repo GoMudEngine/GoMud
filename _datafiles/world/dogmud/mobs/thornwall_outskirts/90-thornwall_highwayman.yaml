@@ -16,7 +16,10 @@ idlecommands:
 combatcommands:
   - 'emote draws a short blade and advances with practiced confidence'
   - ''
+  - 'sneak'
   - 'emote feints left, then strikes from the right'
+  - ''
+  - ''
   - ''
 activitylevel: 25
 character:
@@ -44,3 +47,5 @@ character:
       training: 5
     strength:
       training: 3
+  skills:
+    skullduggery: 8

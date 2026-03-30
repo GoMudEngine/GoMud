@@ -1,5 +1,6 @@
 mobid: 247
 zone: Thornwall City
+buffids: [9]
 archetype: fighting
 statpool: 22
 itemdropchance: 10
@@ -14,6 +15,7 @@ idlecommands:
   - ''
   - ''
 combatcommands:
+  - 'sneak'
   - 'emote stabs quickly with a short blade'
   - ''
   - 'emote darts back and strikes again'
@@ -35,5 +37,7 @@ character:
       training: 8
     dexterity:
       training: 5
+  skills:
+    skullduggery: 8
   items:
     - itemid: 10021

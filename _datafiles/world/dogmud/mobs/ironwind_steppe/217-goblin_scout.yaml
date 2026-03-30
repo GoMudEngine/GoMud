@@ -1,5 +1,6 @@
 mobid: 217
 zone: Ironwind Steppe
+buffids: [9]
 statpool: 100
 itemdropchance: 20
 hostile: true
@@ -17,6 +18,11 @@ idlecommands:
   - ''
   - 'emote sniffs the air and mutters something in guttural goblin-speak'
 activitylevel: 30
+combatcommands:
+  - 'sneak'
+  - ''
+  - ''
+  - ''
 character:
   name: goblin scout
   description: |
@@ -36,3 +42,5 @@ character:
       training: 5
     strength:
       training: -3
+  skills:
+    skullduggery: 6

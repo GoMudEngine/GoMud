@@ -5,7 +5,7 @@ statpool: 8
 itemdropchance: 10
 hostile: true
 maxwander: 2
-buffids: [29]
+buffids: [9, 29]
 groups:
   - warren
   - humanoid
@@ -17,6 +17,7 @@ idlecommands:
   - ''
   - ''
 combatcommands:
+  - 'sneak'
   - 'emote hisses and darts sideways, trying to flank'
   - ''
   - 'emote lets out a shrill whistle that echoes through the tunnels'
@@ -49,3 +50,5 @@ character:
       training: -10
     vitality:
       training: -5
+  skills:
+    skullduggery: 10
