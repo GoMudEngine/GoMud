@@ -1,0 +1,23 @@
+mutationid: chameleon-skin
+name: Chameleon Skin
+description: Your skin shifts colour and pattern to match your surroundings,
+  making you extraordinarily difficult to spot when still. The mutation
+  comes with a cost -- your skin becomes thinner and more sensitive,
+  leaving you vulnerable to temperature extremes.
+rarity: 7
+visual: Their skin ripples with faint colour shifts, blending into the
+  background like a living camouflage.
+conflicts:
+  - thick-hide
+  - bioluminescence
+pros:
+  - type: stealth_bonus
+    value: 30
+  - type: dodge_modifier
+    value: 10
+cons:
+  - type: stat_flat
+    target: charisma
+    value: -8
+  - type: natural_armor
+    value: -15

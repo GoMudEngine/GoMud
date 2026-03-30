@@ -452,6 +452,12 @@ func GetDodgeModifier(owned map[string]int) float64 {
 	return sumEffects(owned, "dodge_modifier", "")
 }
 
+// GetStealthBonus returns the flat bonus to sneak score from mutations.
+// Applied additively to the sneak score before opposed rolls.
+func GetStealthBonus(owned map[string]int) float64 {
+	return sumEffects(owned, "stealth_bonus", "")
+}
+
 // GetDamageMultiplier returns the net outgoing physical damage multiplier.
 // Apply as: dmg = int(float64(dmg) * (1.0 + GetDamageMultiplier(m)))
 func GetDamageMultiplier(owned map[string]int) float64 {

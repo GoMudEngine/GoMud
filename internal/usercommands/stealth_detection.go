@@ -6,6 +6,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
@@ -15,10 +16,13 @@ import (
 )
 
 // calcSneakScore computes the stealth score for a character, applying
-// an illumination penalty if the character is emitting light.
+// mutation bonuses and an illumination penalty.
 func calcSneakScore(c *characters.Character) float64 {
 	score := float64(c.Stats.Dexterity.ValueAdj) +
 		combat.SkillMultiplier(c.GetSkillLevel(skills.Skullduggery))*25.0
+
+	// Mutation stealth bonus (e.g., chameleon skin)
+	score += mutations.GetStealthBonus(c.Mutations)
 
 	// Emitting light makes it much harder to hide
 	if c.HasBuffFlag(buffs.EmitsLight) {
