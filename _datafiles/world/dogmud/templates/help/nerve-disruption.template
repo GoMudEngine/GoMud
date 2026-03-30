@@ -1,0 +1,21 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">nerve-disruption</ansi> spell
+
+The <ansi fg="command">Nerve Disruption</ansi> spell interferes with the target's neural pathways,
+scrambling signals to muscle and limb. The afflicted target finds
+their strength and dexterity substantially diminished for the
+duration, making them far less dangerous in melee.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">cast nerve-disruption [target]</ansi>
+
+<ansi fg="yellow">Details: </ansi>
+
+  <ansi fg="yellow">Type:        </ansi> Harm Single
+  <ansi fg="yellow">School:      </ansi> Mental
+  <ansi fg="yellow">Base Folds:  </ansi> 5
+  <ansi fg="yellow">Conv. Cost:  </ansi> 40
+  <ansi fg="yellow">Defense:     </ansi> Mental — willpower and constitution resist the disruption
+  <ansi fg="yellow">Effect:      </ansi> Debuff — weakens target's strength and dexterity
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help spells</ansi>, <ansi fg="command">help cast</ansi>

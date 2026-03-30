@@ -1,0 +1,19 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">chrysalis-haste</ansi> spell
+
+The <ansi fg="command">Chrysalis Haste</ansi> spell floods the target's body with accelerating
+Chrysalis energy, dramatically quickening movement and reflexes for
+the duration. Targets under haste act with unnatural swiftness.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">cast chrysalis-haste [target]</ansi>
+
+<ansi fg="yellow">Details: </ansi>
+
+  <ansi fg="yellow">Type:        </ansi> Help Single
+  <ansi fg="yellow">School:      </ansi> Enhancement
+  <ansi fg="yellow">Base Folds:  </ansi> 8
+  <ansi fg="yellow">Conv. Cost:  </ansi> 70
+  <ansi fg="yellow">Effect:      </ansi> Haste buff — accelerates movement and actions
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help spells</ansi>, <ansi fg="command">help cast</ansi>

@@ -1,0 +1,23 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">summon-hive-swarm</ansi> spell
+
+The <ansi fg="command">Summon Hive Swarm</ansi> spell shatters a Hive Fragment into a permanent
+swarm servant that fights alongside the caster. The ritual demands
+intense concentration to execute but yields a tireless ally capable
+of harrying and overwhelming individual enemies.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">cast summon-hive-swarm</ansi>
+
+<ansi fg="yellow">Details: </ansi>
+
+  <ansi fg="yellow">Type:        </ansi> Help Single
+  <ansi fg="yellow">School:      </ansi> Mental
+  <ansi fg="yellow">Base Folds:  </ansi> 24
+  <ansi fg="yellow">Conv. Cost:  </ansi> 50
+
+<ansi fg="white-bold">Notes:</ansi>
+  - Requires a Hive Fragment in your inventory to cast.
+  - The swarm persists until destroyed or dismissed.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help spells</ansi>, <ansi fg="command">help cast</ansi>

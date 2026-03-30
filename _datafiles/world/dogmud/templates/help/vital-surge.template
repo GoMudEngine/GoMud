@@ -1,0 +1,20 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">vital-surge</ansi> spell
+
+The <ansi fg="command">Vital Surge</ansi> spell establishes a sustained pulse of Chrysalis healing
+energy within the target, steadily restoring their health over the
+duration. Less dramatic than a burst heal, but the ongoing restoration
+is invaluable during extended engagements.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">cast vital-surge [target]</ansi>
+
+<ansi fg="yellow">Details: </ansi>
+
+  <ansi fg="yellow">Type:        </ansi> Help Single
+  <ansi fg="yellow">School:      </ansi> Vital
+  <ansi fg="yellow">Base Folds:  </ansi> 5
+  <ansi fg="yellow">Conv. Cost:  </ansi> 40
+  <ansi fg="yellow">Effect:      </ansi> Regeneration buff — restores health steadily over time
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help spells</ansi>, <ansi fg="command">help cast</ansi>

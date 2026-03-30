@@ -1,0 +1,21 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">conviction-spike</ansi> spell
+
+The <ansi fg="command">Conviction Spike</ansi> spell projects raw belief as a focused kinetic
+spike of force, striking a single target with considerable precision.
+A reliable attack for the practiced caster — fast to cast and reliable
+against physically resilient foes.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">cast conviction-spike [target]</ansi>
+
+<ansi fg="yellow">Details: </ansi>
+
+  <ansi fg="yellow">Type:        </ansi> Harm Single
+  <ansi fg="yellow">School:      </ansi> Elemental
+  <ansi fg="yellow">Base Folds:  </ansi> 4
+  <ansi fg="yellow">Conv. Cost:  </ansi> 50
+  <ansi fg="yellow">Defense:     </ansi> Physical — armor and toughness blunt the impact
+  <ansi fg="yellow">Effect:      </ansi> Direct damage to a single target
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help spells</ansi>, <ansi fg="command">help cast</ansi>

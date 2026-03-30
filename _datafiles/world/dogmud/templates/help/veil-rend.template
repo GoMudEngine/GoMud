@@ -1,0 +1,21 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">veil-rend</ansi> spell
+
+The <ansi fg="command">Veil Rend</ansi> spell tears open the boundary between the material world
+and the Veil itself, releasing an explosion of raw unbound energy
+that scours everything nearby. The most destructive area spell in the
+elemental school — catastrophic cost, catastrophic effect.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">cast veil-rend</ansi>
+
+<ansi fg="yellow">Details: </ansi>
+
+  <ansi fg="yellow">Type:        </ansi> Harm Area
+  <ansi fg="yellow">School:      </ansi> Elemental
+  <ansi fg="yellow">Base Folds:  </ansi> 28
+  <ansi fg="yellow">Conv. Cost:  </ansi> 200
+  <ansi fg="yellow">Defense:     </ansi> Physical — armor and constitution resist the raw energy
+  <ansi fg="yellow">Effect:      </ansi> Catastrophic damage to all enemies in the room
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help spells</ansi>, <ansi fg="command">help cast</ansi>
