@@ -119,13 +119,13 @@ func TestIntegration_DamageChannels(t *testing.T) {
 	physRaw := CalcRawDamage(100, 0, 1.0, ChannelPhysical)
 	assert.InDelta(t, 30.0, physRaw, 0.01, "Physical channel baseline")
 
-	// Magical: stat=100, rank=0, mult=1.0 → 100 * 1.0 * 1.0 * 0.8 = 80
+	// Magical: stat=100, rank=0, mult=1.0 → 100 * 1.0 * 1.0 * 1.0 = 100
 	magRaw := CalcRawDamage(100, 0, 1.0, ChannelMagical)
-	assert.InDelta(t, 80.0, magRaw, 0.01, "Magical channel baseline")
+	assert.InDelta(t, 100.0, magRaw, 0.01, "Magical channel baseline")
 
-	// Conviction: stat=100, rank=0, mult=0.5 → 100 * 1.0 * 0.5 * 1.5 = 75
+	// Conviction: stat=100, rank=0, mult=0.5 → 100 * 1.0 * 0.5 * 1.0 = 50
 	convRaw := CalcRawDamage(100, 0, 0.5, ChannelConviction)
-	assert.InDelta(t, 75.0, convRaw, 0.01, "Conviction channel baseline")
+	assert.InDelta(t, 50.0, convRaw, 0.01, "Conviction channel baseline")
 
 	// A caster (high Willpower) vs a fighter (high Strength)
 	casterWillpower := 150
@@ -134,7 +134,7 @@ func TestIntegration_DamageChannels(t *testing.T) {
 	casterDmg := CalcRawDamage(casterWillpower, 30, 1.0, ChannelMagical)
 	fighterDmg := CalcRawDamage(fighterStrength, 30, 1.0, ChannelPhysical)
 
-	// Magical has 0.8 scale vs Physical 0.30, so caster should deal more raw damage
+	// Magical has 1.0 scale vs Physical 0.30, so caster should deal more raw damage
 	assert.Greater(t, casterDmg, fighterDmg,
 		"Caster magical damage should exceed fighter physical damage at same stat/rank")
 

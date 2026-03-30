@@ -71,21 +71,21 @@ func TestCalcRawDamage_Physical(t *testing.T) {
 }
 
 func TestCalcRawDamage_Magical(t *testing.T) {
-	// Magical: stat * SkillMult * itemMult * SpellDamageScale(0.8)
+	// Magical: stat * SkillMult * itemMult * SpellDamageScale(1.0)
 	// No stat normalization — flat multiplier
-	// Stat 100, rank 0, mult 1.0 → 100 * 1.0 * 1.0 * 0.8 = 80
+	// Stat 100, rank 0, mult 1.0 → 100 * 1.0 * 1.0 * 1.0 = 100
 	raw := CalcRawDamage(100, 0, 1.0, ChannelMagical)
-	if math.Abs(raw-80.0) > 0.01 {
-		t.Errorf("CalcRawDamage magical(100, 0, 1.0) = %f, want 80.0", raw)
+	if math.Abs(raw-100.0) > 0.01 {
+		t.Errorf("CalcRawDamage magical(100, 0, 1.0) = %f, want 100.0", raw)
 	}
 }
 
 func TestCalcRawDamage_Conviction(t *testing.T) {
-	// Conviction: stat * SkillMult * itemMult * RhetoricDamageScale(1.5)
-	// Stat 100, rank 0, mult 0.5 → 100 * 1.0 * 0.5 * 1.5 = 75
+	// Conviction: stat * SkillMult * itemMult * RhetoricDamageScale(1.0)
+	// Stat 100, rank 0, mult 0.5 → 100 * 1.0 * 0.5 * 1.0 = 50
 	raw := CalcRawDamage(100, 0, 0.5, ChannelConviction)
-	if math.Abs(raw-75.0) > 0.01 {
-		t.Errorf("CalcRawDamage conviction(100, 0, 0.5) = %f, want 75.0", raw)
+	if math.Abs(raw-50.0) > 0.01 {
+		t.Errorf("CalcRawDamage conviction(100, 0, 0.5) = %f, want 50.0", raw)
 	}
 }
 
@@ -185,8 +185,8 @@ func TestDamageScale(t *testing.T) {
 		want    float64
 	}{
 		{"Physical", ChannelPhysical, 0.30},
-		{"Magical", ChannelMagical, 0.8},
-		{"Conviction", ChannelConviction, 1.5},
+		{"Magical", ChannelMagical, 1.0},
+		{"Conviction", ChannelConviction, 1.0},
 	}
 
 	for _, tt := range tests {
