@@ -699,12 +699,12 @@ for _, buff := range prunedBuffs {
 ```go
 // Calculate total stat bonuses from all buffs
 strengthBonus := character.Buffs.StatMod("strength")
-speedBonus := character.Buffs.StatMod("speed")
+dexBonus := character.Buffs.StatMod("dexterity")
 healthBonus := character.Buffs.StatMod("health")
 
 // Apply to character stats
 character.Stats.Strength.ValueAdj += strengthBonus
-character.Stats.Speed.ValueAdj += speedBonus
+character.Stats.Dexterity.ValueAdj += dexBonus
 character.HealthMax.Value += healthBonus
 ```
 
