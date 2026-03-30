@@ -1,0 +1,14 @@
+itemid: 40045
+name: crystalline decanter
+namesimple: decanter
+description: A flawless vessel of crystal-clear glass, its facets
+  catching the light like cut gemstone. The chrysalis-laced seal
+  practically suspends time inside -- brews stored here age at a
+  fraction of their normal rate.
+type: object
+subtype: mundane
+component_tag: bottle
+weight: 0.2
+value: 30
+is_component: true
+bottle_aging_multiplier: 0.25

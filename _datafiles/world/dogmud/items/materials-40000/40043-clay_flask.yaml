@@ -1,0 +1,13 @@
+itemid: 40043
+name: clay flask
+namesimple: flask
+description: A rough-fired clay flask sealed with beeswax. Cheap
+  and disposable -- whatever you brew in this won't keep long,
+  but it's better than cupping the liquid in your hands.
+type: object
+subtype: mundane
+component_tag: bottle
+weight: 0.2
+value: 1
+is_component: true
+bottle_aging_multiplier: 3.0

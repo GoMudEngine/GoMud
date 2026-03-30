@@ -69,3 +69,7 @@ character:
       quantity: 0
       quantitymax: 0
       price: 4
+    - itemid: 40043
+      quantity: 0
+      quantitymax: 0
+      price: 1

@@ -1,10 +1,13 @@
 itemid: 40006
-name: small vial
+name: glass vial
 namesimple: vial
-description: An empty glass vial stoppered with a cork. Ready to hold a liquid.
+description: An empty glass vial stoppered with a cork. The standard
+  vessel for alchemy -- neither speeding nor slowing the aging of
+  whatever brew it holds.
 type: object
 subtype: mundane
-component_tag: small-vial
+component_tag: bottle
 weight: 0.1
-value: 1
+value: 3
 is_component: true
+bottle_aging_multiplier: 1.0

@@ -1,0 +1,18 @@
+id: crystalline-decanter
+name: Crystalline Decanter
+skill: jewelcrafting
+skill_minimum: 20
+station: jeweler_bench
+time_rounds: 6
+ingredients:
+  - item_tag: raw-gem
+    quantity: 1
+  - item_tag: chrysalis-shard
+    quantity: 1
+  - item_tag: bottle
+    quantity: 2
+output:
+  item_id: 40045
+  quantity: 1
+success_message: "You fuse the gemstone dust into molten glass and shape a flawless vessel. The chrysalis seal locks with a soft chime. A crystalline decanter!"
+failure_message: "The glass fractures as the gemstone refuses to bond. The materials are lost."

@@ -7,7 +7,7 @@ time_rounds: 2
 ingredients:
   - item_tag: bitter-thistle
     quantity: 2
-  - item_tag: small-vial
+  - item_tag: bottle
     quantity: 1
 output:
   item_id: 30011

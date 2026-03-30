@@ -1,0 +1,13 @@
+itemid: 40048
+name: serpent venom sac
+namesimple: sac
+description: A glistening sac of translucent membrane, still
+  bulging with viscous yellow-green venom. It needs careful
+  handling -- a puncture would ruin the contents and sting
+  fiercely. Alchemists extract the venom for potent brews.
+type: object
+subtype: mundane
+component_tag: venom-sac
+weight: 0.1
+value: 12
+is_component: true
