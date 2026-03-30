@@ -6,6 +6,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
@@ -29,14 +30,22 @@ var forageDifficulty = map[string]float64{
 // forageYields maps biome IDs to lists of item IDs that can be found.
 // Duplicate entries increase the probability of that item appearing.
 var forageYields = map[string][]int{
-	"forest":    {40004, 40004, 40005, 40005},
-	"land":      {40004, 40005},
+	"forest":    {40004, 40004, 40005, 40005, 40049, 40049},
+	"land":      {40004, 40005, 40049, 40047},
 	"farmland":  {40004, 40004, 40005, 40007},
 	"swamp":     {40005, 40005, 40004},
 	"shore":     {40004},
 	"mountains": {40004, 40005, 40020, 40024, 40025},
 	"cliffs":    {40005, 40020, 40024},
 	"cave":      {40020, 40020, 40005, 40024, 40025, 40026, 40027, 40029},
+}
+
+// nightForageYields are appended to the yield table when it's night.
+var nightForageYields = map[string][]int{
+	"forest":    {40046},
+	"mountains": {40046},
+	"cave":      {40046},
+	"land":      {40046},
 }
 
 func Forage(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
@@ -46,6 +55,13 @@ func Forage(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	if !ok || len(yields) == 0 {
 		user.SendText(`There is nothing here worth foraging. Try an outdoor area.`)
 		return true, nil
+	}
+
+	// Moonpetal only appears at night
+	if gametime.IsNight() {
+		if nightYields, hasNight := nightForageYields[biome.BiomeId]; hasNight {
+			yields = append(append([]int{}, yields...), nightYields...)
+		}
 	}
 
 	if !user.Character.TryCooldown(`forage`, "6 rounds") {

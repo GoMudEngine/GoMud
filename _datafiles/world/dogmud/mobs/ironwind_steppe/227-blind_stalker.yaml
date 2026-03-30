@@ -3,6 +3,8 @@ zone: Ironwind Steppe
 buffids: [9]
 statpool: 200
 itemdropchance: 20
+items:
+  - itemid: 40048
 hostile: true
 maxwander: 2
 groups:
