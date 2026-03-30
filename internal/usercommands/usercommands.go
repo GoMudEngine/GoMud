@@ -134,8 +134,10 @@ var (
 		`questtoken`:  {QuestToken, false, true, true}, // Admin only
 		`read`:        {Read, false, true, false},
 		`reload`:      {Reload, true, true, true},   // Admin only
+		`rep`:         {Report, true, true, false},
 		`reply`:       {Reply, true, true, false},
 		`remove`:      {Remove, false, false, false},  // Can't remove equipment in combat
+		`report`:      {Report, true, true, false},
 		`rename`:      {Rename, false, true, true},    // Admin only
 		`redescribe`:  {Redescribe, false, true, true}, // Admin only
 		`room`:        {Room, false, true, true},       // Admin only

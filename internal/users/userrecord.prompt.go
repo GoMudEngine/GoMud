@@ -33,6 +33,11 @@ var (
 	promptFindTagsRegex        = regexp.MustCompile(`\{[a-zA-Z%:\-]+\}`)
 )
 
+// RenderVitalBar is the exported version of renderVitalBar.
+func RenderVitalBar(current, max, reserved int) string {
+	return renderVitalBar(current, max, reserved)
+}
+
 // renderVitalBar returns a 10-block ANSI progress bar for a vital stat.
 // Color breakpoints match the web client vitals window gradient:
 //
