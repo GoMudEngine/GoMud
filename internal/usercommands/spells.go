@@ -1,6 +1,7 @@
 package usercommands
 
 import (
+	"sort"
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/combat"
@@ -11,18 +12,20 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
+// spellEntry holds a display row together with its sort key.
+type spellEntry struct {
+	baseFolds  int
+	row        []string
+	formatRow  []string
+}
+
 func Spells(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	headers := []string{`SpellId`, `Name`, `Target`, `Cost`, `Cast time`, `Familiarity`, `Reliability`}
 
-	helpfulRowFormatting := [][]string{}
-	helpfulRows := [][]string{}
-
-	harmfulRowFormatting := [][]string{}
-	harmfulRows := [][]string{}
-
-	neutralRowFormatting := [][]string{}
-	neutralRows := [][]string{}
+	helpfulEntries := []spellEntry{}
+	harmfulEntries := []spellEntry{}
+	neutralEntries := []spellEntry{}
 
 	rowFormatting := [][]string{}
 	rows := [][]string{}
@@ -67,40 +70,36 @@ func Spells(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				combat.GetSuccessChanceDescription(user.Character.GetBaseCastSuccessChance(sp.SpellId)),
 			}
 
+			entry := spellEntry{baseFolds: sp.BaseFolds, row: row, formatRow: formatRow}
+
 			if helpOrHarm == `helpful` {
-				helpfulRowFormatting = append(helpfulRowFormatting, formatRow)
-				helpfulRows = append(helpfulRows, row)
+				helpfulEntries = append(helpfulEntries, entry)
 			} else if helpOrHarm == `harmful` {
-				harmfulRowFormatting = append(harmfulRowFormatting, formatRow)
-				harmfulRows = append(harmfulRows, row)
+				harmfulEntries = append(harmfulEntries, entry)
 			} else {
-				neutralRowFormatting = append(neutralRowFormatting, formatRow)
-				neutralRows = append(neutralRows, row)
+				neutralEntries = append(neutralEntries, entry)
 			}
 
 		}
 
 	}
 
-	if len(helpfulRows) > 0 {
-		for i := 0; i < len(helpfulRows); i++ {
-			rowFormatting = append(rowFormatting, helpfulRowFormatting[i])
-			rows = append(rows, helpfulRows[i])
-		}
-	}
+	// Sort each group ascending by BaseFolds (simplest spells first).
+	sort.Slice(helpfulEntries, func(i, j int) bool { return helpfulEntries[i].baseFolds < helpfulEntries[j].baseFolds })
+	sort.Slice(harmfulEntries, func(i, j int) bool { return harmfulEntries[i].baseFolds < harmfulEntries[j].baseFolds })
+	sort.Slice(neutralEntries, func(i, j int) bool { return neutralEntries[i].baseFolds < neutralEntries[j].baseFolds })
 
-	if len(harmfulRows) > 0 {
-		for i := 0; i < len(harmfulRows); i++ {
-			rowFormatting = append(rowFormatting, harmfulRowFormatting[i])
-			rows = append(rows, harmfulRows[i])
-		}
+	for _, e := range helpfulEntries {
+		rowFormatting = append(rowFormatting, e.formatRow)
+		rows = append(rows, e.row)
 	}
-
-	if len(neutralRows) > 0 {
-		for i := 0; i < len(neutralRows); i++ {
-			rowFormatting = append(rowFormatting, neutralRowFormatting[i])
-			rows = append(rows, neutralRows[i])
-		}
+	for _, e := range harmfulEntries {
+		rowFormatting = append(rowFormatting, e.formatRow)
+		rows = append(rows, e.row)
+	}
+	for _, e := range neutralEntries {
+		rowFormatting = append(rowFormatting, e.formatRow)
+		rows = append(rows, e.row)
 	}
 
 	onlineResultsTable := templates.GetTable(`Spells`, headers, rows, rowFormatting...)
