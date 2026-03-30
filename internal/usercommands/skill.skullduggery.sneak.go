@@ -57,10 +57,8 @@ func Sneak(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return true, nil
 	}
 
-	// Sneak score: Dexterity + skill curve bonus
-	sneakRank := skillLevel
-	sneakScore := float64(user.Character.Stats.Dexterity.ValueAdj) +
-		combat.SkillMultiplier(sneakRank)*25.0
+	// Sneak score: Dexterity + skill curve bonus (penalized by illumination)
+	sneakScore := calcSneakScore(user.Character)
 
 	// Build party member exclusion set so we skip allies
 	partySet := map[int]bool{user.UserId: true}

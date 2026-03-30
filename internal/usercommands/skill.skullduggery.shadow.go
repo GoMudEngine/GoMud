@@ -170,8 +170,7 @@ func shadowIsTargetingUser(shadower *users.UserRecord, moverId int) bool {
 // Returns true if the target sensed the follower (shadower detected).
 // Uses Perception+Search vs Dex+Skullduggery (target is the attacker).
 func shadowDetectionRoll(shadower *users.UserRecord, target *users.UserRecord) bool {
-	sneakScore := float64(shadower.Character.Stats.Dexterity.ValueAdj) +
-		combat.SkillMultiplier(shadower.Character.GetSkillLevel(skills.Skullduggery))*25.0
+	sneakScore := calcSneakScore(shadower.Character)
 	targetScore := float64(target.Character.Stats.Perception.ValueAdj) +
 		combat.SkillMultiplier(target.Character.GetSkillLevel(skills.Search))*25.0
 

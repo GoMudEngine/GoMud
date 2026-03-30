@@ -3,6 +3,8 @@ package usercommands
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/buffs"
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -12,6 +14,20 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
+// calcSneakScore computes the stealth score for a character, applying
+// an illumination penalty if the character is emitting light.
+func calcSneakScore(c *characters.Character) float64 {
+	score := float64(c.Stats.Dexterity.ValueAdj) +
+		combat.SkillMultiplier(c.GetSkillLevel(skills.Skullduggery))*25.0
+
+	// Emitting light makes it much harder to hide
+	if c.HasBuffFlag(buffs.EmitsLight) {
+		score *= 0.5
+	}
+
+	return score
+}
+
 // checkStealthDetection rolls each observer in the room against the hidden
 // user. Returns (spotted, spotterName). Party members of the hidden user are
 // excluded from the check.
@@ -19,8 +35,7 @@ func checkStealthDetection(
 	hiddenUser *users.UserRecord,
 	room *rooms.Room,
 ) (bool, string) {
-	sneakScore := float64(hiddenUser.Character.Stats.Dexterity.ValueAdj) +
-		combat.SkillMultiplier(hiddenUser.Character.GetSkillLevel(skills.Skullduggery))*25.0
+	sneakScore := calcSneakScore(hiddenUser.Character)
 
 	// Build party exclusion set
 	partyIds := make(map[int]bool)

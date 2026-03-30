@@ -437,6 +437,11 @@ func (c *Character) GetMovementStaminaCost(terrainMultiplier float64) int {
 		cost *= (1.0 - moveMod) // positive moveMod = faster = less cost
 	}
 
+	// Sneaking costs extra stamina — moving carefully is harder
+	if c.HasBuffFlag(buffs.Hidden) {
+		cost *= 1.5
+	}
+
 	// Cap at maximum stamina cost
 	if cost > maxCost {
 		cost = maxCost

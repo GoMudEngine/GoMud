@@ -395,8 +395,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 					if hiddenP == nil || !hiddenP.Character.HasBuffFlag(buffs.Hidden) {
 						continue
 					}
-					hiddenScore := float64(hiddenP.Character.Stats.Dexterity.ValueAdj) +
-						combat.SkillMultiplier(hiddenP.Character.GetSkillLevel(skills.Skullduggery))*25.0
+					hiddenScore := calcSneakScore(hiddenP.Character)
 					success, _, _, _ := dice.OpposedRollStat(observerScore, hiddenScore)
 					if success {
 						hiddenP.Character.CancelBuffsWithFlag(buffs.Hidden)
@@ -415,8 +414,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 					if mob == nil || !mob.Character.HasBuffFlag(buffs.Hidden) {
 						continue
 					}
-					hiddenScore := float64(mob.Character.Stats.Dexterity.ValueAdj) +
-						combat.SkillMultiplier(mob.Character.GetSkillLevel(skills.Skullduggery))*25.0
+					hiddenScore := calcSneakScore(&mob.Character)
 					success, _, _, _ := dice.OpposedRollStat(observerScore, hiddenScore)
 					if success {
 						mob.Character.CancelBuffsWithFlag(buffs.Hidden)
