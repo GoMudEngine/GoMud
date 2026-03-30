@@ -29,11 +29,8 @@ func Reply(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return true, nil
 	}
 
-	wrappedMsg := util.SplitStringNL(rest, 65)
-
-	targetUser.SendText(
-		fmt.Sprintf(`<ansi fg="white">***</ansi> <ansi fg="black-bold"><ansi fg="username">%s</ansi> whispers, "%s"</ansi> <ansi fg="white">***</ansi>`, user.Character.Name, wrappedMsg),
-	)
+	replyMsg := fmt.Sprintf(`<ansi fg="white">***</ansi> <ansi fg="black-bold"><ansi fg="username">%s</ansi> whispers, "%s"</ansi> <ansi fg="white">***</ansi>`, user.Character.Name, rest)
+	targetUser.SendText(util.SplitStringNL(replyMsg, 80))
 
 	// Track reply chain — target can reply back
 	targetUser.LastWhisperFrom = user.UserId

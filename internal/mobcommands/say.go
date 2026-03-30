@@ -18,17 +18,17 @@ func Say(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		return true, nil
 	}
 
-	// Wrap long dialogue text to 65 chars to account for "Name says, ..."
-	rest = util.SplitStringNL(rest, 65)
-
 	isSneaking := mob.Character.HasBuffFlag(buffs.Hidden)
 
 	if isSneaking {
-		room.SendText(fmt.Sprintf(`someone says, "<ansi fg="saytext-mob">%s</ansi>"`, rest))
+		msg := fmt.Sprintf(`someone says, "<ansi fg="saytext-mob">%s</ansi>"`, rest)
+		room.SendText(util.SplitStringNL(msg, 80))
 	} else {
+		anonMsg := fmt.Sprintf(`someone says, "<ansi fg="saytext-mob">%s</ansi>"`, rest)
+		namedMsg := fmt.Sprintf(`<ansi fg="mobname">%s</ansi> says, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, rest)
 		sendAudioRoomText(room, mob,
-			fmt.Sprintf(`someone says, "<ansi fg="saytext-mob">%s</ansi>"`, rest),
-			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> says, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, rest))
+			util.SplitStringNL(anonMsg, 80),
+			util.SplitStringNL(namedMsg, 80))
 	}
 
 	events.AddToQueue(events.Communication{

@@ -523,14 +523,13 @@ func cmdPartyChat(user *users.UserRecord, currentParty *parties.Party, rest stri
 		return
 	}
 
-	rest = util.SplitStringNL(rest, 65)
-
 	for _, uId := range currentParty.GetMembers() {
 		if uId == user.UserId {
 			continue
 		}
 		if u := users.GetByUserId(uId); u != nil {
-			u.SendText(fmt.Sprintf(`<ansi fg="magenta">(party)</ansi> <ansi fg="username">%s</ansi> says, "<ansi fg="yellow">%s</ansi>`, user.Character.Name, rest))
+			msg := fmt.Sprintf(`<ansi fg="magenta">(party)</ansi> <ansi fg="username">%s</ansi> says, "<ansi fg="yellow">%s</ansi>"`, user.Character.Name, rest)
+			u.SendText(util.SplitStringNL(msg, 80))
 		}
 	}
 

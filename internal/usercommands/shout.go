@@ -28,13 +28,12 @@ func Shout(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		rest = drunkify(rest)
 	}
 
-	// Wrap long shout text to 65 chars to account for "Name shouts, ..."
-	rest = util.SplitStringNL(rest, 65)
-
 	if isSneaking {
-		room.SendTextCommunication(fmt.Sprintf(`someone shouts, "<ansi fg="yellow">%s</ansi>"`, rest), user.UserId)
+		msg := fmt.Sprintf(`someone shouts, "<ansi fg="yellow">%s</ansi>"`, rest)
+		room.SendTextCommunication(util.SplitStringNL(msg, 80), user.UserId)
 	} else {
-		room.SendTextCommunication(fmt.Sprintf(`<ansi fg="username">%s</ansi> shouts, "<ansi fg="yellow">%s</ansi>"`, user.Character.Name, rest), user.UserId)
+		msg := fmt.Sprintf(`<ansi fg="username">%s</ansi> shouts, "<ansi fg="yellow">%s</ansi>"`, user.Character.Name, rest)
+		room.SendTextCommunication(util.SplitStringNL(msg, 80), user.UserId)
 	}
 
 	for _, roomInfo := range room.Exits {
@@ -67,7 +66,8 @@ func Shout(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		}
 	}
 
-	user.SendText(fmt.Sprintf(`You shout, "<ansi fg="yellow">%s</ansi>"`, rest))
+	selfMsg := fmt.Sprintf(`You shout, "<ansi fg="yellow">%s</ansi>"`, rest)
+	user.SendText(util.SplitStringNL(selfMsg, 80))
 
 	return true, nil
 }

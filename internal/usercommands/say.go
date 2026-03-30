@@ -26,16 +26,16 @@ func Say(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		rest = drunkify(rest)
 	}
 
-	// Wrap long dialogue text to 65 chars to account for "Name says, ..."
-	rest = util.SplitStringNL(rest, 65)
-
 	if isSneaking {
-		room.SendTextCommunication(fmt.Sprintf(`someone says, "<ansi fg="saytext">%s</ansi>"`, rest), user.UserId)
+		msg := fmt.Sprintf(`someone says, "<ansi fg="saytext">%s</ansi>"`, rest)
+		room.SendTextCommunication(util.SplitStringNL(msg, 80), user.UserId)
 	} else {
-		room.SendTextCommunication(fmt.Sprintf(`<ansi fg="username">%s</ansi> says, "<ansi fg="saytext">%s</ansi>"`, user.Character.Name, rest), user.UserId)
+		msg := fmt.Sprintf(`<ansi fg="username">%s</ansi> says, "<ansi fg="saytext">%s</ansi>"`, user.Character.Name, rest)
+		room.SendTextCommunication(util.SplitStringNL(msg, 80), user.UserId)
 	}
 
-	user.SendText(fmt.Sprintf(`You say, "<ansi fg="saytext">%s</ansi>"`, rest))
+	selfMsg := fmt.Sprintf(`You say, "<ansi fg="saytext">%s</ansi>"`, rest)
+	user.SendText(util.SplitStringNL(selfMsg, 80))
 
 	room.SendTextToExits(`You hear someone talking.`, true)
 

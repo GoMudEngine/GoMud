@@ -47,9 +47,8 @@ func Whisper(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		return true, nil
 	}
 
-	rest = util.SplitStringNL(rest, 65)
-
-	toUser.SendText(fmt.Sprintf(`<ansi fg="white">***</ansi> <ansi fg="black-bold"><ansi fg="username">%s</ansi> whispers, "%s"</ansi> <ansi fg="white">***</ansi>`, user.Character.Name, rest))
+	whisperMsg := fmt.Sprintf(`<ansi fg="white">***</ansi> <ansi fg="black-bold"><ansi fg="username">%s</ansi> whispers, "%s"</ansi> <ansi fg="white">***</ansi>`, user.Character.Name, rest)
+	toUser.SendText(util.SplitStringNL(whisperMsg, 80))
 
 	toUser.LastWhisperFrom = user.UserId
 
