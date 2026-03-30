@@ -5,4 +5,3 @@ triggerrate: 1 round
 triggercount: 16
 flags:
   - hidden
-  - cancel-on-combat

@@ -2,7 +2,7 @@ buffid: 41
 name: Mind Fog
 description: A psionic fog clouds your thoughts, dulling perception and willpower.
 triggerrate: 1 round
-triggercount: 6
+triggercount: 9
 statmods:
   perception: -15
   willpower: -10

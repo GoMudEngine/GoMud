@@ -2,6 +2,6 @@ buffid: 34
 name: Skill Attunement
 description: Your mind is attuned to learning, accelerating skill progression.
 triggerrate: 1 round
-triggercount: 20
+triggercount: 200
 flags:
   - skill-progress

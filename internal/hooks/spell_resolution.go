@@ -425,7 +425,17 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 		if shieldBonus < 1 {
 			shieldBonus = 1
 		}
-		duration := 20 + int(math.Round(float64(skillLevel)*2/5))
+		// Scale shield strength by spell magnitude (100 = 1.0x baseline)
+		if magnitude > 0 {
+			shieldBonus = int(math.Round(float64(shieldBonus) * float64(magnitude) / 100.0))
+			if shieldBonus < 1 {
+				shieldBonus = 1
+			}
+		}
+		duration := 50 + int(math.Round(float64(skillLevel)))
+		if isCrit {
+			shieldBonus = int(float64(shieldBonus) * 1.5)
+		}
 		target.Character.AddCondition(characters.ConditionShield, duration, float64(shieldBonus), "spell")
 		target.SendText(`<ansi fg="cyan">A shimmering magical barrier forms around you, bolstering your defenses.</ansi>`)
 		if target.UserId != user.UserId {
@@ -553,7 +563,14 @@ func applyMobSelfEffect(mob *mobs.Mob, room *rooms.Room, spellData *spells.Spell
 		if shieldBonus < 1 {
 			shieldBonus = 1
 		}
-		duration := 20 + int(math.Round(float64(skillLevel)*2/5))
+		// Scale shield strength by spell magnitude (100 = 1.0x baseline)
+		if magnitude > 0 {
+			shieldBonus = int(math.Round(float64(shieldBonus) * float64(magnitude) / 100.0))
+			if shieldBonus < 1 {
+				shieldBonus = 1
+			}
+		}
+		duration := 50 + int(math.Round(float64(skillLevel)))
 		mob.Character.AddCondition(characters.ConditionShield, duration, float64(shieldBonus), "spell")
 		room.SendText(fmt.Sprintf(
 			`A shimmering barrier forms around %s.`, mobDisplayName(mob, room, 0)))

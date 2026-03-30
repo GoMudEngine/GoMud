@@ -2,6 +2,6 @@ buffid: 36
 name: Psychic Anchor
 description: A psionic anchor roots you in place, preventing teleportation.
 triggerrate: 1 round
-triggercount: 6
+triggercount: 9
 flags:
   - no-go

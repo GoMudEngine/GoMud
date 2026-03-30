@@ -10,3 +10,6 @@ difficulty: 0
 primarystat: willpower
 base_folds: 8
 effect_type: shield
+effect_magnitude: 125
+buff_ids:
+  - 52

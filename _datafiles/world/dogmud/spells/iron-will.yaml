@@ -4,11 +4,11 @@ description: Fortifies the target's willpower, strengthening their mental defens
 type: helpsingle
 schools:
   - enhancement
-cost: 25
+cost: 45
 waitrounds: 1
 difficulty: 0
 primarystat: willpower
-base_folds: 3
+base_folds: 6
 effect_type: buff
 buff_ids:
   - 27

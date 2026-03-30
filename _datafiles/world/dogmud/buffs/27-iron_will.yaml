@@ -1,7 +1,10 @@
 buffid: 27
 name: Iron Will
-description: Your willpower is fortified, strengthening your mental defenses.
+description: Your willpower is fortified, strengthening your mental defenses
+  and providing resistance to magical and conviction-based attacks.
 triggerrate: 1 round
-triggercount: 8
+triggercount: 50
 statmods:
   willpower: 20
+  magical_mitigation: 10
+  conviction_mitigation: 10

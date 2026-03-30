@@ -4,7 +4,7 @@ description: Opens the mind to accelerated learning and skill growth.
 type: helpsingle
 schools:
   - mental
-cost: 60
+cost: 180
 waitrounds: 1
 difficulty: 0
 primarystat: willpower

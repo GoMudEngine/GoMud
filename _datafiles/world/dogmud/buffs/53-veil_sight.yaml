@@ -1,0 +1,7 @@
+buffid: 53
+name: Veil Sight
+description: Your perception pierces the Veil, revealing hidden creatures.
+triggerrate: 1 round
+triggercount: 30
+flags:
+  - see-hidden

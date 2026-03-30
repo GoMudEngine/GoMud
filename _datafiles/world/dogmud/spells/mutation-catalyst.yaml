@@ -4,7 +4,7 @@ description: Accelerates the target's mutagenic processes.
 type: helpsingle
 schools:
   - vital
-cost: 90
+cost: 270
 waitrounds: 2
 difficulty: 0
 primarystat: willpower

@@ -2,6 +2,6 @@ buffid: 35
 name: Mutation Catalyst
 description: Chrysalis energy accelerates your body's mutagenic processes.
 triggerrate: 1 round
-triggercount: 20
+triggercount: 200
 flags:
   - mutation-rate

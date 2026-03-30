@@ -1101,11 +1101,14 @@ func (c *Character) GetMagicalMitigation() float64 {
 	// Mutation magical resistance (returned as fraction 0.0–1.0, convert to percentage points)
 	total += int(mutations.GetMagicalResistance(c.Mutations) * 100)
 
+	// Buff statmods (e.g. Iron Will, Chrysalis Shell)
+	total += c.StatMod("magical_mitigation")
+
 	return float64(total) / 100.0
 }
 
 // GetConvictionMitigation returns total conviction mitigation as a fraction (0.0–1.0).
-// Sources: equipment conviction_mitigation, mutation conviction resistance.
+// Sources: equipment conviction_mitigation, mutation conviction resistance, buff statmods.
 func (c *Character) GetConvictionMitigation() float64 {
 	total := 0
 
@@ -1126,6 +1129,9 @@ func (c *Character) GetConvictionMitigation() float64 {
 
 	// Mutation conviction resistance (returned as fraction 0.0–1.0, convert to percentage points)
 	total += int(mutations.GetConvictionResistance(c.Mutations) * 100)
+
+	// Buff statmods (e.g. Iron Will, Chrysalis Shell)
+	total += c.StatMod("conviction_mitigation")
 
 	return float64(total) / 100.0
 }

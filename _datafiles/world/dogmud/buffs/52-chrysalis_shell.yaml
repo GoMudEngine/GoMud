@@ -1,0 +1,8 @@
+buffid: 52
+name: Chrysalis Shell
+description: A Chrysalis shell provides resistance to magical and conviction attacks.
+triggerrate: 1 round
+triggercount: 50
+statmods:
+  magical_mitigation: 15
+  conviction_mitigation: 15
