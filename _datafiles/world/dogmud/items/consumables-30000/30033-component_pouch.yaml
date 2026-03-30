@@ -9,5 +9,5 @@ type: componentbag
 subtype: wearable
 value: 25
 weight: 1.0
-bag_capacity: 10
+bag_capacity: 20
 weight_reduction: 0.3

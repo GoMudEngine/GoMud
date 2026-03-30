@@ -6,7 +6,7 @@ component pouch, with more capacity and better weight relief.
 
 <ansi fg="yellow">━━━ Stats ━━━</ansi>
 
-  <ansi fg="yellow">Capacity:</ansi>          20 items
+  <ansi fg="yellow">Capacity:</ansi>          40 items
   <ansi fg="yellow">Weight Reduction:</ansi>  35% of stored component weight
   <ansi fg="yellow">Slot:</ansi>              Components
 
