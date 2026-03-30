@@ -263,7 +263,15 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 				}
 
 				pName := player.Character.GetPlayerName(user.UserId, renderFlags...)
-				details.VisiblePlayers = append(details.VisiblePlayers, pName.String())
+				playerEntry := pName.String()
+				if player.ManualAFK {
+					if player.AFKMessage != "" {
+						playerEntry += ` <ansi fg="8">(AFK: ` + player.AFKMessage + `)</ansi>`
+					} else {
+						playerEntry += ` <ansi fg="8">(AFK)</ansi>`
+					}
+				}
+				details.VisiblePlayers = append(details.VisiblePlayers, playerEntry)
 			}
 		}
 	}

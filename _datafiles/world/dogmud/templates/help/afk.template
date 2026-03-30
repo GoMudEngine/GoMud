@@ -1,0 +1,20 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">afk</ansi>
+
+The <ansi fg="command">afk</ansi> command marks you as away from keyboard.
+Other players see an AFK tag next to your name in the room.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">afk</ansi>                Toggle AFK on or off.
+  <ansi fg="command">afk <message></ansi>      Set AFK with a custom message.
+
+<ansi fg="yellow">Examples: </ansi>
+
+  <ansi fg="command">afk</ansi>                You are now AFK.
+  <ansi fg="command">afk getting coffee</ansi>  AFK: getting coffee
+  <ansi fg="command">afk</ansi>                You are no longer AFK.
+
+Typing any other command while AFK automatically clears the
+AFK status.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help online</ansi>

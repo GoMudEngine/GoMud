@@ -48,6 +48,8 @@ type UserRecord struct {
 	EventLog        UserLog               `yaml:"-"` // Do not retain in user file (for now)
 	LastMusic       string                `yaml:"-"` // Keeps track of the last music that was played
 	LastWhisperFrom int                   `yaml:"-"` // UserId of last person who whispered to us (don't save)
+	ManualAFK       bool                  `yaml:"-"` // Manually set AFK status (don't save)
+	AFKMessage      string                `yaml:"-"` // Optional AFK message (don't save)
 	connectionId   uint64
 	unsentText     string
 	suggestText    string
@@ -536,8 +538,8 @@ func (u *UserRecord) GetOnlineInfo() OnlineInfo {
 		timeStr = fmt.Sprintf(`%ds`, s)
 	}
 
-	isAfk := false
-	if afkRounds > 0 && roundNow-u.GetLastInputRound() >= afkRounds {
+	isAfk := u.ManualAFK
+	if !isAfk && afkRounds > 0 && roundNow-u.GetLastInputRound() >= afkRounds {
 		isAfk = true
 	}
 
