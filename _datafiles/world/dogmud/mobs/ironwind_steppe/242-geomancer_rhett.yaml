@@ -24,7 +24,7 @@ combatcommands:
   - ''
   - 'cast sparks'
   - ''
-activitylevel: 15
+activitylevel: 25
 character:
   name: Geomancer Rhett
   description: |

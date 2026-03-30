@@ -23,7 +23,7 @@ combatcommands:
   - ''
   - 'cast cleansing-wave'
   - ''
-activitylevel: 10
+activitylevel: 25
 character:
   name: temple priest Olen
   description: |

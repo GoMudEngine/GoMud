@@ -19,7 +19,7 @@ combatcommands:
   - ''
   - 'cast conviction-ward'
   - ''
-activitylevel: 10
+activitylevel: 25
 llmprofile:
   model: "llama3.2:3b"
   maxwords: 100

@@ -24,7 +24,7 @@ combatcommands:
   - ''
   - 'cast heal'
   - ''
-activitylevel: 10
+activitylevel: 25
 character:
   name: Windwarden Sylara
   description: |
