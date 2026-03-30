@@ -673,11 +673,8 @@ func resolveIdentify(user *users.UserRecord, itemName string, room *rooms.Room) 
 		return
 	}
 
-	// Search backpack first, then equipped slots
-	matchItem, found := user.Character.FindInBackpack(itemName)
-	if !found {
-		matchItem, found = user.Character.FindOnBody(itemName)
-	}
+	// Search backpack and equipped items as a single pool
+	matchItem, _, found := user.Character.FindItem(itemName)
 
 	if !found {
 		user.SendText("You can't seem to identify that.")
