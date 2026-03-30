@@ -264,9 +264,12 @@ type ItemSpec struct {
 	Cursed          bool              `yaml:"cursed,omitempty"`      // Can't be removed once equipped
 	KeyLockId       string            `yaml:"keylockid,omitempty"`   // Example: `778-north` - If it's a key, what lock does it open? roomid-exitname etc.
 	ComponentTag    string            `yaml:"component_tag,omitempty"` // Spell component tag (e.g. "stone" for throw-stone)
-	IsComponent     bool              `yaml:"is_component,omitempty"`     // Auto-routes to component bag on pickup
-	WeightReduction float64           `yaml:"weight_reduction,omitempty"` // 0.0-1.0, fraction of contents weight reduced
-	BagCapacity     int               `yaml:"bag_capacity,omitempty"`     // Max items storable in component bag
+	IsComponent           bool              `yaml:"is_component,omitempty"`            // Auto-routes to component bag on pickup
+	WeightReduction       float64           `yaml:"weight_reduction,omitempty"`        // 0.0-1.0, fraction of contents weight reduced
+	BagCapacity           int               `yaml:"bag_capacity,omitempty"`            // Max items storable in component bag
+	Aging                 AgingThresholds   `yaml:"aging,omitempty"`                   // Potion aging phase thresholds
+	BottleAgingMultiplier float64           `yaml:"bottle_aging_multiplier,omitempty"` // Bottle aging speed (clay=3.0, glass=1.0, phial=0.5, decanter=0.25)
+	Toxicity              int               `yaml:"toxicity,omitempty"`                // Toxicity cost when consumed
 }
 
 func (i Element) String() string {

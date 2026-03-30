@@ -14,6 +14,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -314,6 +315,23 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		user.SendText(
 			util.SplitStringNL(lookItem.GetLongDescription(), 80),
 		)
+
+		// Show potion aging info based on alchemy skill
+		lookSpec := lookItem.GetSpec()
+		if lookSpec.Aging.HasAging() && lookItem.CraftedRound > 0 {
+			elapsed := util.GetRoundCount() - lookItem.CraftedRound
+			effSpeed := items.CalcEffectiveAgingSpeed(
+				lookSpec.BottleAgingMultiplier, lookItem.CraftSkill)
+			phase, _ := items.GetAgingPhase(elapsed, lookSpec.Aging, effSpeed)
+			alchSkill := user.Character.GetSkillLevel(skills.Alchemy)
+			desc := items.GetPhaseDescription(
+				phase, alchSkill, elapsed, lookSpec.Aging, effSpeed)
+			if desc != "" {
+				user.SendText(
+					fmt.Sprintf(` - <ansi fg="yellow-bold">%s</ansi>`, desc),
+				)
+			}
+		}
 
 		user.SendText(``)
 

@@ -6,8 +6,9 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
-	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -142,11 +143,27 @@ func Inventory(rest string, user *users.UserRecord, room *rooms.Room, flags even
 	stackOrder := []string{}
 	stacks := map[string]*stackEntry{}
 
+	alchSkill := user.Character.GetSkillLevel(skills.Alchemy)
+
 	for _, item := range itemList {
 		iSpec := item.GetSpec()
 
-		// Stack key: ItemId + enchant state + uses (for consumables)
-		stackKey := fmt.Sprintf("%d|%s|%d|%d", item.ItemId, item.EnchantType, item.EnchantTier, item.Uses)
+		// Check if this potion is spoiled (for alchemy skill 6+ players)
+		isSpoiled := false
+		if alchSkill >= 6 && iSpec.Aging.HasAging() && item.CraftedRound > 0 {
+			elapsed := util.GetRoundCount() - item.CraftedRound
+			effSpeed := items.CalcEffectiveAgingSpeed(
+				iSpec.BottleAgingMultiplier, item.CraftSkill)
+			phase, _ := items.GetAgingPhase(elapsed, iSpec.Aging, effSpeed)
+			isSpoiled = phase == items.PhaseSpoiled
+		}
+
+		// Stack key: ItemId + enchant state + uses + spoiled flag
+		spoiledTag := ""
+		if isSpoiled {
+			spoiledTag = "|spoiled"
+		}
+		stackKey := fmt.Sprintf("%d|%s|%d|%d%s", item.ItemId, item.EnchantType, item.EnchantTier, item.Uses, spoiledTag)
 
 		if entry, exists := stacks[stackKey]; exists {
 			entry.count++
@@ -156,7 +173,10 @@ func Inventory(rest string, user *users.UserRecord, room *rooms.Room, flags even
 		iName := item.Name()
 		iNameFormatted := fmt.Sprintf(`<ansi fg="itemname">%s</ansi>`, item.DisplayName())
 
-		if iSpec.Subtype == items.Drinkable || iSpec.Subtype == items.Edible || iSpec.Subtype == items.Usable || iSpec.Type == items.Lockpicks {
+		if isSpoiled {
+			iName = fmt.Sprintf(`%s (turned)`, item.Name())
+			iNameFormatted = fmt.Sprintf(`<ansi fg="8">%s (turned)</ansi>`, item.DisplayName())
+		} else if iSpec.Subtype == items.Drinkable || iSpec.Subtype == items.Edible || iSpec.Subtype == items.Usable || iSpec.Type == items.Lockpicks {
 			if iSpec.Uses > 0 {
 				iName = fmt.Sprintf(`%s (%d)`, iName, item.Uses)
 				iNameFormatted = fmt.Sprintf(`%s <ansi fg="uses-left">(%d)</ansi>`, iNameFormatted, item.Uses)
