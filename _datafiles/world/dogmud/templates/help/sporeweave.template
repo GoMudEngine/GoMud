@@ -1,0 +1,25 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">sporeweave</ansi> (enchantment)
+
+<ansi fg="white-bold">Sporeweave</ansi> is a Chrysalis enchantment that infuses body
+armor with fungal mycelial networks, enhancing the wearer's
+agility and reflexes.
+
+<ansi fg="yellow">━━━ Effects ━━━</ansi>
+
+  Reserves a portion of your <ansi fg="yellow">stamina</ansi> pool.
+  Grants a <ansi fg="green">dexterity</ansi> bonus that grows with each tier.
+  Applied to: <ansi fg="itemname">body</ansi> armor.
+
+<ansi fg="yellow">━━━ Tiers ━━━</ansi>
+
+  As you use the enchanted item, it evolves through five tiers,
+  each reserving more stamina but granting greater dexterity.
+
+<ansi fg="yellow">━━━ Crafting ━━━</ansi>
+
+  <ansi fg="yellow">Skill:</ansi>       enchanting (minimum 10)
+  <ansi fg="yellow">Station:</ansi>     enchanting circle
+  <ansi fg="yellow">Ingredients:</ansi> chrysalis setting, mutation catalyst,
+               binding paste (x2)
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help enchanting</ansi>, <ansi fg="command">help craft</ansi>

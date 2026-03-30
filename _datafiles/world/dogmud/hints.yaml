@@ -43,7 +43,7 @@ hints:
     The <ansi fg="command">map</ansi> command shows your surroundings.
     Explore to discover new areas and resources.
   - >-
-    Use <ansi fg="command">cast</ansi> to see available spells.
+    Use <ansi fg="command">spells</ansi> to see available spells.
     Spellcasting costs Conviction and requires concentration.
   - >-
     <ansi fg="command">Talk</ansi> to NPCs! Many have useful
