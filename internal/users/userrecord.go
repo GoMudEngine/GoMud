@@ -45,8 +45,9 @@ type UserRecord struct {
 	ScreenReader   bool                  `yaml:"screenreader,omitempty"` // Are they using a screen reader? (We should remove excess symbols)
 	EmailAddress   string                `yaml:"emailaddress,omitempty"` // Email address (if provided)
 	TipsComplete   map[string]bool       `yaml:"tipscomplete,omitempty"` // Tips the user has followed/completed so they can be quiet
-	EventLog       UserLog               `yaml:"-"`                      // Do not retain in user file (for now)
-	LastMusic      string                `yaml:"-"`                      // Keeps track of the last music that was played
+	EventLog        UserLog               `yaml:"-"` // Do not retain in user file (for now)
+	LastMusic       string                `yaml:"-"` // Keeps track of the last music that was played
+	LastWhisperFrom int                   `yaml:"-"` // UserId of last person who whispered to us (don't save)
 	connectionId   uint64
 	unsentText     string
 	suggestText    string
