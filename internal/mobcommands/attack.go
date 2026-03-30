@@ -113,7 +113,12 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			// Track that they've attacked this player
 			mob.PlayerAttacked(attackPlayerId)
 
-			mob.Character.SetAggro(attackPlayerId, 0, characters.DefaultAttack)
+			// Hidden mobs get a surprise attack on their first strike
+			aggroType := characters.DefaultAttack
+			if mob.Character.HasBuffFlag(buffs.Hidden) {
+				aggroType = characters.SurpriseAttack
+			}
+			mob.Character.SetAggro(attackPlayerId, 0, aggroType)
 
 			if !isSneaking {
 
@@ -138,7 +143,11 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 		if m != nil {
 
-			mob.Character.SetAggro(0, attackMobInstanceId, characters.DefaultAttack)
+			mobAggroType := characters.DefaultAttack
+			if mob.Character.HasBuffFlag(buffs.Hidden) {
+				mobAggroType = characters.SurpriseAttack
+			}
+			mob.Character.SetAggro(0, attackMobInstanceId, mobAggroType)
 
 			if !isSneaking {
 				sendRoomText(room,
