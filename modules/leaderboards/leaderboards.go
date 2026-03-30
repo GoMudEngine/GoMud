@@ -157,7 +157,7 @@ func (l *LeaderboardModule) Reset(maxSize int) {
 
 func (l *LeaderboardModule) RefreshConfig() {
 
-	l.LBSize = 10
+	l.LBSize = 20
 	if size, ok := l.plug.Config.Get(`Size`).(int); ok {
 		l.LBSize = size
 	}
