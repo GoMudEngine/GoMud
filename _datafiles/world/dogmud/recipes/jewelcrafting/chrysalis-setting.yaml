@@ -1,7 +1,7 @@
 id: chrysalis-setting
 name: Chrysalis Setting
 skill: jewelcrafting
-skill_minimum: 15
+skill_minimum: 7
 station: jeweler_bench
 time_rounds: 4
 ingredients:

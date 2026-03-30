@@ -1,7 +1,7 @@
 id: chain-links
 name: Chain Links
 skill: blacksmithing
-skill_minimum: 15
+skill_minimum: 7
 station: forge
 time_rounds: 3
 ingredients:
