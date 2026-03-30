@@ -1,0 +1,31 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi>Component Bags
+
+A component bag is a dedicated container for crafting materials,
+worn in the <ansi fg="yellow">Components</ansi> equipment slot.
+
+<ansi fg="yellow">━━━ How It Works ━━━</ansi>
+
+When you have a component bag equipped, crafting materials
+automatically go into it when you pick them up or buy them.
+The bag has a limited capacity and reduces the effective weight
+of its contents.
+
+<ansi fg="yellow">━━━ Commands ━━━</ansi>
+
+  <ansi fg="command">sort</ansi>       Move loose materials from backpack into bag.
+  <ansi fg="command">inventory</ansi>  Shows bag contents in the Components section.
+
+<ansi fg="yellow">━━━ Available Bags ━━━</ansi>
+
+  <ansi fg="itemname">Component Pouch</ansi>       20 items, 30% weight reduction.
+    Buy from Weaver Maren in Thornwall.
+
+  <ansi fg="itemname">Artisan's Satchel</ansi>     40 items, 35% weight reduction.
+    Tailoring recipe (skill 15).
+
+  <ansi fg="itemname">Master's Component Case</ansi> 75 items, 45% weight reduction.
+    Tailoring recipe (skill 30).
+
+Removing the bag spills its contents back into your backpack.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help sort</ansi>, <ansi fg="command">help inventory</ansi>, <ansi fg="command">help craft</ansi>

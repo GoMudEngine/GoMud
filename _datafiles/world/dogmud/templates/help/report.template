@@ -1,0 +1,17 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">report</ansi> / <ansi fg="command">rep</ansi>
+
+The <ansi fg="command">report</ansi> command broadcasts your vital bars
+(HP, SP, CP) so others can see your status. Useful for
+party coordination during combat.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">rep</ansi>              Broadcast vitals to the room.
+  <ansi fg="command">rep party</ansi>        Send vitals to party chat only.
+  <ansi fg="command">rep <player></ansi>     Whisper vitals to a specific player.
+  <ansi fg="command">rep me</ansi>           Check your own vitals privately.
+
+The bars use the same colored 10-block display as the fight
+prompt — green when healthy, yellow when low, red when critical.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help party</ansi>, <ansi fg="command">help whisper</ansi>
