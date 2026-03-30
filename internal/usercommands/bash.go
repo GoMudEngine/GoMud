@@ -16,10 +16,26 @@ import (
 
 func Bash(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
-	// Must be in combat to use bash
+	// Must be in combat or specify a target to use bash
 	if user.Character.Aggro == nil {
-		user.SendText("You must be in combat to use shield bash!")
-		return true, nil
+		if rest == "" {
+			user.SendText("Bash whom?")
+			return true, nil
+		}
+		targetPId, targetMId := room.FindByName(rest)
+		if targetPId == user.UserId {
+			user.SendText("You can't bash yourself.")
+			return true, nil
+		}
+		if targetPId == 0 && targetMId == 0 {
+			user.SendText("You don't see them here.")
+			return true, nil
+		}
+		if targetMId > 0 {
+			user.Character.SetAggro(0, targetMId, characters.DefaultAttack)
+		} else {
+			user.Character.SetAggro(targetPId, 0, characters.DefaultAttack)
+		}
 	}
 
 	// Must have a shield equipped

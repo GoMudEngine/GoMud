@@ -16,10 +16,26 @@ import (
 
 func Kick(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
-	// Must be in combat to use kick
+	// Must be in combat or specify a target to use kick
 	if user.Character.Aggro == nil {
-		user.SendText("You must be in combat to kick!")
-		return true, nil
+		if rest == "" {
+			user.SendText("Kick whom?")
+			return true, nil
+		}
+		targetPId, targetMId := room.FindByName(rest)
+		if targetPId == user.UserId {
+			user.SendText("You can't kick yourself.")
+			return true, nil
+		}
+		if targetPId == 0 && targetMId == 0 {
+			user.SendText("You don't see them here.")
+			return true, nil
+		}
+		if targetMId > 0 {
+			user.Character.SetAggro(0, targetMId, characters.DefaultAttack)
+		} else {
+			user.Character.SetAggro(targetPId, 0, characters.DefaultAttack)
+		}
 	}
 
 	// Check shared special move cooldown

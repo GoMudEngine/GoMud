@@ -381,10 +381,10 @@ func (b *Balance) Validate() {
 		b.MeleeDamageScale = 0.30
 	}
 	if b.SpellDamageScale <= 0 {
-		b.SpellDamageScale = 1.0
+		b.SpellDamageScale = 0.8
 	}
 	if b.RhetoricDamageScale <= 0 {
-		b.RhetoricDamageScale = 1.0
+		b.RhetoricDamageScale = 1.5
 	}
 	if b.MobDamageMultiplier <= 0 {
 		b.MobDamageMultiplier = 1.0
