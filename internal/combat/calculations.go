@@ -15,7 +15,7 @@ import (
 
 // PowerScore computes an absolute power score for a character.
 // Uses the real damage pipeline so it automatically tracks config tuning.
-// Baseline character (stats=100, no gear, 0 skills, 0 kills) ≈ 300–350.
+// Components: Offense, Defense, Durability, Skills, Mutations, KD Ratio.
 func PowerScore(char characters.Character) float64 {
 	bal := configs.GetBalanceConfig()
 	softCap := float64(bal.SkillSoftCap)
@@ -23,22 +23,20 @@ func PowerScore(char characters.Character) float64 {
 		softCap = 50
 	}
 
-	// --- Offense ---
+	// ── OFFENSE ──────────────────────────────────────────────────────────
 	physAtk := 0.0
 
-	// Helper: compute physical DPS for one weapon slot
 	addWeaponDPS := func(weapon items.Item, isOffhand bool) {
 		spec := weapon.GetSpec()
 		damageMult := spec.DamageMultiplier
 		if damageMult <= 0 {
-			damageMult = 0.30 // unarmed fallback
+			damageMult = 0.30
 		}
 		weaponSpeed := spec.SpeedMultiplier
 		if weaponSpeed <= 0 {
 			weaponSpeed = 1.0
 		}
 
-		// Estimate swing count (simplified calcSwingCount without stamina/encumbrance)
 		dex := float64(char.Stats.Dexterity.ValueAdj)
 		combatSkill := float64(char.GetCombatSkillLevel()) * float64(bal.SkillWeight)
 		swings := 1.0 + (dex-50.0)/100.0*weaponSpeed*(1.0+combatSkill/softCap)
@@ -58,20 +56,14 @@ func PowerScore(char characters.Character) float64 {
 		physAtk += swings * rawDmg
 	}
 
-	// Main hand (always)
 	if char.Equipment.Weapon.ItemId > 0 {
 		addWeaponDPS(char.Equipment.Weapon, false)
 	} else {
-		// Unarmed
 		addWeaponDPS(items.Item{}, false)
 	}
-
-	// Offhand
 	if char.Equipment.Offhand.ItemId > 0 {
 		addWeaponDPS(char.Equipment.Offhand, true)
 	}
-
-	// Extra arms (mutation slots)
 	if char.ExtraArms >= 1 && char.Equipment.ExtraArm1.ItemId > 0 {
 		addWeaponDPS(char.Equipment.ExtraArm1, true)
 	}
@@ -84,13 +76,11 @@ func PowerScore(char characters.Character) float64 {
 	if char.ExtraArms >= 4 && char.Equipment.ExtraArm4.ItemId > 0 {
 		addWeaponDPS(char.Equipment.ExtraArm4, true)
 	}
-
-	// Apply mutation damage multiplier
 	physAtk *= (1.0 + mutations.GetDamageMultiplier(char.Mutations))
 
-	// Magical offense
+	// Normalize all three channels to comparable scale
 	spellcastingRank := char.GetSkillLevel(skills.Spellcasting)
-	spellMult := 1.0 // default: no caster weapon
+	spellMult := 1.0
 	if char.Equipment.Weapon.ItemId > 0 {
 		sdm := char.Equipment.Weapon.GetSpec().SpellDamageMultiplier
 		if sdm > 0 {
@@ -99,27 +89,52 @@ func PowerScore(char characters.Character) float64 {
 	}
 	magAtk := CalcRawDamage(char.Stats.Willpower.ValueAdj, spellcastingRank, spellMult, ChannelMagical)
 
-	// Conviction offense
 	rhetoricRank := char.GetSkillLevel(skills.Rhetoric)
 	convAtk := CalcRawDamage(char.Stats.Charisma.ValueAdj, rhetoricRank, 0.5, ChannelConviction)
 
-	offenseScore := physAtk + magAtk + convAtk
+	// Normalize: physical already includes swing count so it's higher per-round.
+	// Magical/conviction are single-cast values. Weight them equally.
+	offenseScore := physAtk + magAtk*0.5 + convAtk*0.5
 
-	// --- Defense ---
+	// ── DEFENSE ──────────────────────────────────────────────────────────
 	avgMit := (char.GetPhysicalMitigation() + char.GetMagicalMitigation() + char.GetConvictionMitigation()) / 3.0
 	dodgeScore := char.GetDefenseScore(characters.DefenseDodge)
 	parryScore := char.GetDefenseScore(characters.DefenseParry)
 	blockScore := char.GetDefenseScore(characters.DefenseBlock)
 	defenseAvoidance := (dodgeScore + parryScore + blockScore) / 3.0
-	defenseScore := (avgMit * 100) + defenseAvoidance
+	naturalArmor := mutations.GetNaturalArmor(char.Mutations)
+	defenseScore := (avgMit * 300) + (defenseAvoidance * 2) + float64(naturalArmor)
 
-	// --- Durability ---
-	durabilityScore := float64(char.HealthMax.Value)
+	// ── DURABILITY ───────────────────────────────────────────────────────
+	durabilityScore := float64(char.HealthMax.Value) +
+		float64(char.StaminaMax.Value)*0.5 +
+		float64(char.ConvictionMax.Value)*0.5
 
-	// --- Kill bump ---
-	killBump := math.Sqrt(float64(char.KD.TotalKills))
+	// ── SKILLS ───────────────────────────────────────────────────────────
+	totalRanks := 0
+	for _, rank := range char.GetAllSkillRanks() {
+		totalRanks += rank
+	}
+	skillScore := math.Sqrt(float64(totalRanks)) * 25.0
 
-	return offenseScore + defenseScore + durabilityScore + killBump
+	// ── MUTATIONS ────────────────────────────────────────────────────────
+	totalMutLevels := 0
+	for _, level := range char.Mutations {
+		if level > 0 {
+			totalMutLevels += level
+		}
+	}
+	mutationScore := float64(totalMutLevels) * 20.0
+
+	// ── KD RATIO ─────────────────────────────────────────────────────────
+	deaths := char.KD.TotalDeaths
+	if deaths < 1 {
+		deaths = 1
+	}
+	kdRatio := float64(char.KD.TotalKills) / float64(deaths)
+	kdScore := math.Min(kdRatio*10.0, 50.0)
+
+	return offenseScore + defenseScore + durabilityScore + skillScore + mutationScore + kdScore
 }
 
 func ChanceToTame(s *users.UserRecord, t *mobs.Mob) int {
