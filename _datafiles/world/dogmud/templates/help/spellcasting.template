@@ -1,0 +1,16 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">spellcasting</ansi> skill
+
+The <ansi fg="skill">spellcasting</ansi> skill governs your ability to
+channel Chrysalis energy into spells. Higher ranks improve spell
+hit chance, duration, and damage. It also determines which spells
+you can discover through practice.
+
+Spellcasting improves each time you successfully cast a spell.
+As your skill grows, you discover new spell patterns — more
+complex spells require higher skill to learn.
+
+Spells cost <ansi fg="yellow">Conviction</ansi> and require
+concentration through fold accumulation. Being knocked prone or
+taking heavy damage can break your concentration.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help spells</ansi>, <ansi fg="command">help cast</ansi>, <ansi fg="command">help skills</ansi>

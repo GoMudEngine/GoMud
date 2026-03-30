@@ -1,0 +1,13 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">chain-links</ansi> (blacksmithing recipe)
+
+Interlocking iron rings drawn and bent at the forge. A crafting
+subcomponent used in the production of chainmail armor.
+
+<ansi fg="yellow">━━━ Crafting ━━━</ansi>
+
+  <ansi fg="yellow">Skill:</ansi>       blacksmithing (minimum 7)
+  <ansi fg="yellow">Station:</ansi>     forge
+  <ansi fg="yellow">Ingredients:</ansi> iron ingot (x2)
+  <ansi fg="yellow">Produces:</ansi>    3 sets of chain links per craft
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help blacksmithing</ansi>, <ansi fg="command">help craft</ansi>

@@ -1,0 +1,12 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">polished-stone-amulet</ansi> (jewelcrafting recipe)
+
+Two polished stones set in a copper frame and bound tight — a
+sturdy, unpretentious amulet suited for practical adventurers.
+
+<ansi fg="yellow">━━━ Crafting ━━━</ansi>
+
+  <ansi fg="yellow">Skill:</ansi>       jewelcrafting (minimum 8)
+  <ansi fg="yellow">Station:</ansi>     jeweler bench
+  <ansi fg="yellow">Ingredients:</ansi> polished stone (x2), copper wire (x1)
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help jewelcrafting</ansi>, <ansi fg="command">help craft</ansi>

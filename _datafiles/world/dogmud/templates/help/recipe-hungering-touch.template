@@ -1,0 +1,14 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">hungering-touch</ansi> (enchanting recipe)
+
+An enchantment applied to a weapon. Twin catalysts fuse into the
+blade's edge, filling it with an insatiable hunger for battle.
+
+<ansi fg="yellow">━━━ Crafting ━━━</ansi>
+
+  <ansi fg="yellow">Skill:</ansi>       enchanting (minimum 30)
+  <ansi fg="yellow">Station:</ansi>     enchanting circle
+  <ansi fg="yellow">Target:</ansi>      weapon
+  <ansi fg="yellow">Ingredients:</ansi> chrysalis setting (x2), mutation catalyst (x2),
+                 binding paste (x1)
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help enchanting</ansi>, <ansi fg="command">help craft</ansi>

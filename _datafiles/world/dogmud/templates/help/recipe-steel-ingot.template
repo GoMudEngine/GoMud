@@ -1,0 +1,12 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">steel-ingot</ansi> (blacksmithing recipe)
+
+Iron folded with coal dust through many heats, producing a denser
+metal used in advanced armors, shields, and high-quality weapons.
+
+<ansi fg="yellow">━━━ Crafting ━━━</ansi>
+
+  <ansi fg="yellow">Skill:</ansi>       blacksmithing (minimum 4)
+  <ansi fg="yellow">Station:</ansi>     forge
+  <ansi fg="yellow">Ingredients:</ansi> iron ingot (x3), coal dust (x1)
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help blacksmithing</ansi>, <ansi fg="command">help craft</ansi>

@@ -1,0 +1,12 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">copper-ring</ansi> (jewelcrafting recipe)
+
+Copper wire twisted into a neat band with gem dust pressed into
+the setting — simple to make and a fine introduction to the craft.
+
+<ansi fg="yellow">━━━ Crafting ━━━</ansi>
+
+  <ansi fg="yellow">Skill:</ansi>       jewelcrafting (minimum 0)
+  <ansi fg="yellow">Station:</ansi>     jeweler bench
+  <ansi fg="yellow">Ingredients:</ansi> copper wire (x1), gem dust (x1)
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help jewelcrafting</ansi>, <ansi fg="command">help craft</ansi>
