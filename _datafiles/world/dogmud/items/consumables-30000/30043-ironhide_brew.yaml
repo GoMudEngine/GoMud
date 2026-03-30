@@ -1,0 +1,19 @@
+itemid: 30043
+name: ironhide brew
+namesimple: brew
+description: A dark, gritty brew flecked with ironbark.
+  It tastes like licking a forge, but your skin hardens
+  after drinking it.
+type: potion
+subtype: drinkable
+uses: 1
+buffids:
+  - 61
+value: 18
+weight: 0.4
+toxicity: 15
+aging:
+  ferment_rounds: 1500
+  peak_rounds: 6000
+  decay_rounds: 18000
+  spoil_rounds: 30000

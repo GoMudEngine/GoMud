@@ -1,0 +1,22 @@
+id: elixir-of-renewal
+name: Elixir of Renewal
+skill: alchemy
+skill_minimum: 25
+station: alchemy_bench
+time_rounds: 7
+ingredients:
+  - item_tag: healers-root
+    quantity: 2
+  - item_tag: bitter-thistle
+    quantity: 1
+  - item_tag: dustwalk-herb
+    quantity: 1
+  - item_tag: chrysalis-core
+    quantity: 1
+  - item_tag: bottle
+    quantity: 1
+output:
+  item_id: 30042
+  quantity: 1
+success_message: "The liquid shifts through every color before settling into a prismatic glow. An elixir of renewal!"
+failure_message: "The ingredients fight each other and the brew turns grey. The materials are wasted."

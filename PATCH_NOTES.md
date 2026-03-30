@@ -1,5 +1,55 @@
 # DOGMud Patch Notes
 
+## 2026-03-30 — Alchemy Rework (Phase 1-3)
+
+### Alchemy Overhaul
+- **Potion Aging:** Potions now age through five phases (Fresh →
+  Fermented → Peak → Declining → Spoiled). Peak potions are 30% more
+  potent. Spoiled potions cause nausea and triple toxicity.
+- **Bottle Tiers:** Four bottle types control aging speed. Clay flask
+  (ages 3x faster, cheap), glass vial (baseline), sealed phial (half
+  speed, jewelcrafting), crystalline decanter (quarter speed, advanced
+  jewelcrafting).
+- **Toxicity System:** Every potion adds toxicity. Exceed your limit
+  and your body rejects the brew. High toxicity causes stat penalties.
+  Toxicity decays naturally over time.
+- **Craft Skill Matters:** Higher alchemy skill at brew time means
+  stronger, longer-lasting potions that age slower.
+- **Skill-Based Detection:** Examining potions reveals aging info
+  based on your alchemy skill. Novices can't tell fresh from spoiled.
+
+### New Potions (21 recipes)
+- **Pool Regen (7):** Healing salve, stamina tonic, conviction
+  draught, warrior's brew, preacher's tincture, windrunner draught,
+  elixir of renewal.
+- **Combat/Utility (10):** Ironhide brew, mindshield elixir,
+  veilguard tonic, stone stomach, cat's eye draught, swiftfoot
+  essence, berserker elixir, silver tongue oil, battle trance,
+  purging draught.
+- **Progression (4):** Essence of growth, savant's infusion, mutagen
+  brew, chrysalis catalyst. These accelerate character development
+  but reserve portions of your resource pools.
+
+### Potion Bandolier
+- New belt-slot item that auto-routes potions and reduces their
+  weight. Two tiers: leather (6 slots, 30% weight reduction) and
+  reinforced (12 slots, 40% weight reduction). Craft via tailoring.
+
+### New Materials
+- **Moonpetal** — rare forage, night only.
+- **Veilbloom Petal** — very rare forage on the steppe.
+- **Serpent Venom Sac** — drops from river lurkers and blind stalkers.
+- **Ironbark Shaving** — uncommon forest forage.
+- Clay flask sold by Apothecary Voss.
+
+### QoL
+- Spoiled potions display as "(turned)" in inventory for alchemists.
+- Potions in bandolier show in a dedicated "Potions:" section.
+- Drink command pulls from bandolier first (oldest potion).
+- Five new alchemy-related gameplay tips in the hints rotation.
+
+---
+
 ## 2026-03-30 — Mutations, Balance, Documentation & QoL
 
 ### New Mutations

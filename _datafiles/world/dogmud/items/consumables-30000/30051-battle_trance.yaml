@@ -1,0 +1,19 @@
+itemid: 30051
+name: battle trance
+namesimple: draught
+description: A pitch-black liquid that seems to drink the
+  light. After consuming it, every attack aimed at you
+  feels predictable.
+type: potion
+subtype: drinkable
+uses: 1
+buffids:
+  - 69
+value: 35
+weight: 0.4
+toxicity: 30
+aging:
+  ferment_rounds: 1500
+  peak_rounds: 6000
+  decay_rounds: 18000
+  spoil_rounds: 30000

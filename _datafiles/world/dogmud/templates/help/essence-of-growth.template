@@ -1,0 +1,13 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">essence-of-growth</ansi> (alchemy recipe)
+
+A vitality-rich essence that accelerates the body's natural development.
+Reserves a portion of vitality.
+
+<ansi fg="yellow">━━━ Crafting ━━━</ansi>
+
+  <ansi fg="yellow">Skill:</ansi>       alchemy (minimum 28)
+  <ansi fg="yellow">Station:</ansi>     alchemy bench
+  <ansi fg="yellow">Ingredients:</ansi> moonpetal (x2), chrysalis core (x1),
+                  healer's root (x2), bottle (x1)
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help alchemy</ansi>, <ansi fg="command">help craft</ansi>

@@ -1,0 +1,19 @@
+itemid: 30036
+name: healing salve
+namesimple: salve
+description: A thick paste of healer's root sealed in a
+  bottle. The warmth it gives off suggests it will mend
+  wounds when consumed.
+type: potion
+subtype: drinkable
+uses: 1
+buffids:
+  - 54
+value: 5
+weight: 0.3
+toxicity: 8
+aging:
+  ferment_rounds: 1000
+  peak_rounds: 5000
+  decay_rounds: 15000
+  spoil_rounds: 25000

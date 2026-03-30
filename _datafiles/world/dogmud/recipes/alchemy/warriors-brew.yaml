@@ -1,0 +1,20 @@
+id: warriors-brew
+name: Warrior's Brew
+skill: alchemy
+skill_minimum: 12
+station: alchemy_bench
+time_rounds: 5
+ingredients:
+  - item_tag: healers-root
+    quantity: 2
+  - item_tag: bitter-thistle
+    quantity: 1
+  - item_tag: dustwalk-herb
+    quantity: 1
+  - item_tag: bottle
+    quantity: 1
+output:
+  item_id: 30039
+  quantity: 1
+success_message: "The herbs fuse into a rust-colored brew that radiates warmth. A warrior's brew!"
+failure_message: "The mixture thickens and burns. The materials are wasted."

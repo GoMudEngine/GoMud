@@ -1,0 +1,18 @@
+itemid: 30044
+name: mindshield elixir
+namesimple: elixir
+description: A silvery liquid that smells of moonpetal
+  and chrysalis. It coats your thoughts like armor.
+type: potion
+subtype: drinkable
+uses: 1
+buffids:
+  - 62
+value: 20
+weight: 0.4
+toxicity: 15
+aging:
+  ferment_rounds: 1500
+  peak_rounds: 6000
+  decay_rounds: 18000
+  spoil_rounds: 30000

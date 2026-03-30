@@ -1,0 +1,8 @@
+buffid: 69
+name: Battle Trance
+description: Your senses sharpen to a razor edge. Every attack feels predictable.
+triggerrate: 1 round
+triggercount: 300
+statmods:
+  dexterity: 10
+  perception: 10

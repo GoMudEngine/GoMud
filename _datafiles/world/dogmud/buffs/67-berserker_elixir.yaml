@@ -1,0 +1,9 @@
+buffid: 67
+name: Berserker Elixir
+description: Raw fury floods your muscles. Everything narrows to the kill.
+triggerrate: 1 round
+triggercount: 350
+statmods:
+  strength: 20
+  dexterity: -15
+  perception: -10

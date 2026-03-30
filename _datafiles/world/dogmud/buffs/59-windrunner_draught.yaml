@@ -1,0 +1,8 @@
+buffid: 59
+name: Windrunner Draught
+description: Your lungs open and your mind clears. You could run for hours.
+triggerrate: 1 round
+triggercount: 400
+statmods:
+  staminarecovery: 2
+  convictionrecovery: 2

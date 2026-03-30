@@ -1,0 +1,20 @@
+id: essence-of-growth
+name: Essence of Growth
+skill: alchemy
+skill_minimum: 28
+station: alchemy_bench
+time_rounds: 8
+ingredients:
+  - item_tag: moonpetal
+    quantity: 2
+  - item_tag: chrysalis-core
+    quantity: 1
+  - item_tag: healers-root
+    quantity: 2
+  - item_tag: bottle
+    quantity: 1
+output:
+  item_id: 30053
+  quantity: 1
+success_message: "The green elixir pulses with the rhythm of a heartbeat. An essence of growth!"
+failure_message: "The essence dissipates before it can stabilize. The materials are wasted."

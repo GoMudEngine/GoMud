@@ -1,0 +1,20 @@
+id: windrunner-draught
+name: Windrunner Draught
+skill: alchemy
+skill_minimum: 15
+station: alchemy_bench
+time_rounds: 5
+ingredients:
+  - item_tag: bitter-thistle
+    quantity: 2
+  - item_tag: dustwalk-herb
+    quantity: 1
+  - item_tag: chrysalis-core
+    quantity: 1
+  - item_tag: bottle
+    quantity: 1
+output:
+  item_id: 30041
+  quantity: 1
+success_message: "The brew effervesces as the last ingredient settles. A windrunner draught!"
+failure_message: "The mixture fizzes violently and evaporates. The materials are wasted."

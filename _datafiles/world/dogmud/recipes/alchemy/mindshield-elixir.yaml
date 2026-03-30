@@ -1,0 +1,18 @@
+id: mindshield-elixir
+name: Mindshield Elixir
+skill: alchemy
+skill_minimum: 10
+station: alchemy_bench
+time_rounds: 4
+ingredients:
+  - item_tag: chrysalis-core
+    quantity: 1
+  - item_tag: moonpetal
+    quantity: 1
+  - item_tag: bottle
+    quantity: 1
+output:
+  item_id: 30044
+  quantity: 1
+success_message: "Moonpetal and chrysalis fuse into a silvery elixir. A mindshield elixir!"
+failure_message: "The moonpetal wilts on contact with the chrysalis. The materials are wasted."

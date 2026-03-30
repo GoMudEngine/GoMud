@@ -1,0 +1,13 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">silver-tongue-oil</ansi> (alchemy recipe)
+
+A slick oil that sharpens the tongue and bolsters persuasion, at the cost
+of physical vitality.
+
+<ansi fg="yellow">━━━ Crafting ━━━</ansi>
+
+  <ansi fg="yellow">Skill:</ansi>       alchemy (minimum 20)
+  <ansi fg="yellow">Station:</ansi>     alchemy bench
+  <ansi fg="yellow">Ingredients:</ansi> moonpetal (x1), chrysalis core (x1),
+                  dustwalk herb (x1), bottle (x1)
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help alchemy</ansi>, <ansi fg="command">help craft</ansi>

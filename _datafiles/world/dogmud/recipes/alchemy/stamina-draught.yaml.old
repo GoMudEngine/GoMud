@@ -1,0 +1,16 @@
+id: stamina-draught
+name: Stamina Draught
+skill: alchemy
+skill_minimum: 0
+station: alchemy_bench
+time_rounds: 2
+ingredients:
+  - item_tag: bitter-thistle
+    quantity: 2
+  - item_tag: bottle
+    quantity: 1
+output:
+  item_id: 30011
+  quantity: 1
+success_message: "You steep the thistle and strain the brew into the vial. A stamina draught!"
+failure_message: "The brew comes out foul-smelling and opaque. The materials are lost."

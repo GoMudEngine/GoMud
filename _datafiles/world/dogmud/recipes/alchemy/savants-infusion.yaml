@@ -1,0 +1,20 @@
+id: savants-infusion
+name: Savant's Infusion
+skill: alchemy
+skill_minimum: 30
+station: alchemy_bench
+time_rounds: 8
+ingredients:
+  - item_tag: moonpetal
+    quantity: 2
+  - item_tag: chrysalis-core
+    quantity: 1
+  - item_tag: dustwalk-herb
+    quantity: 2
+  - item_tag: bottle
+    quantity: 1
+output:
+  item_id: 30054
+  quantity: 1
+success_message: "Amber liquid flecked with crystallized knowledge. A savant's infusion!"
+failure_message: "The herbs lose potency during infusion. The materials are wasted."

@@ -183,3 +183,18 @@ hints:
   - >-
     Use <ansi fg="command">buy 5 iron ingot</ansi> to purchase multiple
     items at once from a merchant.
+  - >-
+    Potions age over time. Brew them in better bottles to slow aging.
+    A crystalline decanter keeps brews fresh four times longer.
+  - >-
+    Drinking too many potions builds toxicity. Your body can only
+    handle so much alchemy at once — let it decay between doses.
+  - >-
+    Moonpetal only grows at night. Try
+    <ansi fg="command">forage</ansi> in wilderness areas after dark.
+  - >-
+    A potion bandolier lets you carry potions separately from your
+    backpack. Craft one with <ansi fg="skill">tailoring</ansi>.
+  - >-
+    Higher <ansi fg="skill">alchemy</ansi> skill means your brews age
+    slower and hit harder. Skill matters as much as ingredients.

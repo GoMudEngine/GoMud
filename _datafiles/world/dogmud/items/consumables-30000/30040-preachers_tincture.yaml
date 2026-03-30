@@ -1,0 +1,19 @@
+itemid: 30040
+name: preacher's tincture
+namesimple: tincture
+description: A pale golden liquid that seems to glow
+  faintly. It smells of healer's root and something
+  older.
+type: potion
+subtype: drinkable
+uses: 1
+buffids:
+  - 58
+value: 15
+weight: 0.4
+toxicity: 14
+aging:
+  ferment_rounds: 1500
+  peak_rounds: 6000
+  decay_rounds: 18000
+  spoil_rounds: 30000

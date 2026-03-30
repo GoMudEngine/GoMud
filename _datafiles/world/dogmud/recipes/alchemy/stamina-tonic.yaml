@@ -1,0 +1,16 @@
+id: stamina-tonic
+name: Stamina Tonic
+skill: alchemy
+skill_minimum: 0
+station: alchemy_bench
+time_rounds: 3
+ingredients:
+  - item_tag: bitter-thistle
+    quantity: 2
+  - item_tag: bottle
+    quantity: 1
+output:
+  item_id: 30037
+  quantity: 1
+success_message: "You steep the thistle until the liquid turns sharp green. A stamina tonic!"
+failure_message: "The brew turns sour and you pour it out. The materials are wasted."

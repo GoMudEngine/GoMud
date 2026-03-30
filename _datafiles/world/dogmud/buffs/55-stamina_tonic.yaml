@@ -1,0 +1,7 @@
+buffid: 55
+name: Stamina Tonic
+description: A surge of energy steadies your breathing.
+triggerrate: 1 round
+triggercount: 300
+statmods:
+  staminarecovery: 3

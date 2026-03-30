@@ -1,0 +1,9 @@
+buffid: 76
+name: Purging Weakness
+description: Your body is recovering from the violent purge. Everything aches.
+triggerrate: 1 round
+triggercount: 50
+statmods:
+  vitality: -15
+  willpower: -15
+  charisma: -15

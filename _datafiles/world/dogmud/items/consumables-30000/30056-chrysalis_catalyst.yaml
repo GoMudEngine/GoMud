@@ -1,0 +1,18 @@
+itemid: 30056
+name: chrysalis catalyst
+namesimple: catalyst
+description: A dense, luminous liquid saturated with
+  chrysalis energy. It hums against the glass.
+type: potion
+subtype: drinkable
+uses: 1
+buffids:
+  - 74
+value: 100
+weight: 0.5
+toxicity: 90
+aging:
+  ferment_rounds: 3000
+  peak_rounds: 12000
+  decay_rounds: 30000
+  spoil_rounds: 50000

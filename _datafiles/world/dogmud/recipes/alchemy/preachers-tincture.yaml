@@ -1,0 +1,18 @@
+id: preachers-tincture
+name: Preacher's Tincture
+skill: alchemy
+skill_minimum: 12
+station: alchemy_bench
+time_rounds: 5
+ingredients:
+  - item_tag: healers-root
+    quantity: 2
+  - item_tag: chrysalis-core
+    quantity: 1
+  - item_tag: bottle
+    quantity: 1
+output:
+  item_id: 30040
+  quantity: 1
+success_message: "Chrysalis energy infuses the root extract, glowing faintly gold. A preacher's tincture!"
+failure_message: "The chrysalis energy dissipates before bonding. The materials are wasted."

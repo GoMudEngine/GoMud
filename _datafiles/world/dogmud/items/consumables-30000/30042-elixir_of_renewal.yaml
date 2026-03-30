@@ -1,0 +1,19 @@
+itemid: 30042
+name: elixir of renewal
+namesimple: elixir
+description: A prismatic liquid that shifts color as it
+  catches the light. It smells like the first morning
+  after a long fever.
+type: potion
+subtype: drinkable
+uses: 1
+buffids:
+  - 60
+value: 30
+weight: 0.4
+toxicity: 22
+aging:
+  ferment_rounds: 1500
+  peak_rounds: 6000
+  decay_rounds: 18000
+  spoil_rounds: 30000

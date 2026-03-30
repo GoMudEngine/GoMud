@@ -1,0 +1,18 @@
+id: veilguard-tonic
+name: Veilguard Tonic
+skill: alchemy
+skill_minimum: 10
+station: alchemy_bench
+time_rounds: 4
+ingredients:
+  - item_tag: chrysalis-core
+    quantity: 1
+  - item_tag: bitter-thistle
+    quantity: 2
+  - item_tag: bottle
+    quantity: 1
+output:
+  item_id: 30045
+  quantity: 1
+success_message: "The brew turns cloudy and bitter -- exactly right. A veilguard tonic!"
+failure_message: "The brew turns clear instead of cloudy. Something went wrong. The materials are wasted."
