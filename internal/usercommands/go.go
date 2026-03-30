@@ -381,8 +381,12 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				}
 			}
 
-			// Newcomer tries to spot hidden occupants
+			// Newcomer tries to spot hidden occupants (players and mobs)
 			if !isSneaking {
+				observerScore := float64(user.Character.Stats.Perception.ValueAdj) +
+					combat.SkillMultiplier(user.Character.GetSkillLevel(skills.Search))*25.0
+
+				// Check hidden players
 				for _, pId := range destRoom.GetPlayers() {
 					if pId == user.UserId {
 						continue
@@ -391,8 +395,6 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 					if hiddenP == nil || !hiddenP.Character.HasBuffFlag(buffs.Hidden) {
 						continue
 					}
-					observerScore := float64(user.Character.Stats.Perception.ValueAdj) +
-						combat.SkillMultiplier(user.Character.GetSkillLevel(skills.Search))*25.0
 					hiddenScore := float64(hiddenP.Character.Stats.Dexterity.ValueAdj) +
 						combat.SkillMultiplier(hiddenP.Character.GetSkillLevel(skills.Skullduggery))*25.0
 					success, _, _, _ := dice.OpposedRollStat(observerScore, hiddenScore)
@@ -404,6 +406,27 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 						user.SendText(fmt.Sprintf(
 							`You notice <ansi fg="username">%s</ansi> lurking in the shadows.`,
 							hiddenP.Character.Name))
+					}
+				}
+
+				// Check hidden mobs
+				for _, mId := range destRoom.GetMobs(rooms.FindAll) {
+					mob := mobs.GetInstance(mId)
+					if mob == nil || !mob.Character.HasBuffFlag(buffs.Hidden) {
+						continue
+					}
+					hiddenScore := float64(mob.Character.Stats.Dexterity.ValueAdj) +
+						combat.SkillMultiplier(mob.Character.GetSkillLevel(skills.Skullduggery))*25.0
+					success, _, _, _ := dice.OpposedRollStat(observerScore, hiddenScore)
+					if success {
+						mob.Character.CancelBuffsWithFlag(buffs.Hidden)
+						user.SendText(fmt.Sprintf(
+							`You notice <ansi fg="mobname">%s</ansi> lurking in the shadows!`,
+							mob.Character.Name))
+						destRoom.SendText(fmt.Sprintf(
+							`<ansi fg="username">%s</ansi> spots <ansi fg="mobname">%s</ansi> hiding in the shadows!`,
+							user.Character.Name, mob.Character.Name),
+							user.UserId)
 					}
 				}
 			}
