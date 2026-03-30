@@ -12,3 +12,4 @@ weight: 2.5
 physical_mitigation: 1
 is_bandolier: true
 bandolier_capacity: 12
+weight_reduction: 0.40

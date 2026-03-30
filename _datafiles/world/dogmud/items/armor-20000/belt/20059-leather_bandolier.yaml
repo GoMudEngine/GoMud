@@ -10,3 +10,4 @@ value: 15
 weight: 1.5
 is_bandolier: true
 bandolier_capacity: 6
+weight_reduction: 0.30

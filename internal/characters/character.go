@@ -377,6 +377,13 @@ func (c *Character) GetCarriedWeight() float64 {
 	for _, item := range c.PotionItems {
 		potionWeight += item.GetSpec().GetWeight()
 	}
+	// Apply bandolier weight reduction
+	if c.Equipment.Belt.ItemId > 0 {
+		beltSpec := c.Equipment.Belt.GetSpec()
+		if beltSpec.IsBandolier && beltSpec.WeightReduction > 0 && beltSpec.WeightReduction <= 1.0 {
+			potionWeight *= (1.0 - beltSpec.WeightReduction)
+		}
+	}
 
 	// Equipped item weights (all slots via GetAllItems)
 	equippedWeight := 0.0
