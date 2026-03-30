@@ -862,6 +862,20 @@ func (c *Character) MigrateNeckToBack() {
 	c.SetMiscData(migrationKey, "1")
 }
 
+// MigrateQuestSpells is a one-time migration that grants spells to
+// characters who completed quests before spell rewards were added.
+func (c *Character) MigrateQuestSpells() {
+	const migrationKey = "migration-quest-spells-done"
+	if c.GetMiscData(migrationKey) != nil {
+		return
+	}
+	// Quest 12 (Warden's Covenant) should grant summon-steppe-spirit
+	if c.HasQuest("12-end") {
+		c.LearnSpell("summon-steppe-spirit")
+	}
+	c.SetMiscData(migrationKey, "1")
+}
+
 func (c *Character) HasRecipe(recipeId string) bool {
 	if c.KnownRecipes == nil {
 		return false
