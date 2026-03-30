@@ -91,7 +91,7 @@ tree:
     - id: tunnel_report
       triggers: ["tunnels", "smugglers", "smuggling", "ledger", "bribe", "quest", "task"]
       questRequired: ["14-evidence"]
-      questExcluded: ["14-end"]
+      questExcluded: ["14-end", "14-report"]
       text: "Smuggling tunnels under the Craftsmen's Quarter? And a bribe ledger naming officials? That is... significant. Give me the ledger. I need to see the names before I can act."
       hints: "You could hand over the bribe ledger."
 
