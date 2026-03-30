@@ -501,12 +501,12 @@ Balance:
   # SpellDamageScale: multiplier on ALL spell damage output (players + NPCs).
   #   1.0 = no scaling. Example at Wil 100, skill 0, spell mult 1.0:
   #     1.0 → 100 raw,  1.5 → 150 raw,  0.5 → 50 raw
-  SpellDamageScale: 1.85        # Detuned -33% from 2.75; spells were hitting too hard relative to melee
+  SpellDamageScale: 1.6         # Detuned from 1.85; spells still slightly overperforming vs melee
   #
   # RhetoricDamageScale: multiplier on taunt/conviction damage output.
   #   Taunt uses itemMult 0.5 as base. Example at Cha 100, skill 0:
   #     1.0 → 50 raw,  2.0 → 100 raw
-  RhetoricDamageScale: 2.0      # Tuned 39.2: taunts are utility/CC, not primary damage; 2x keeps conviction damage meaningful but secondary
+  RhetoricDamageScale: 3.0      # Bumped from 2.0; taunts need to be a real damage threat to justify the conviction cost
   #
   # SkillMultiplierBase/Max: controls how much skill rank affects damage.
   #   At rank 0 the multiplier is Base, at soft cap (50) it's Max.
