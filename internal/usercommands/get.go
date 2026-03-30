@@ -73,6 +73,54 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		return true, nil
 	}
 
+	// Handle "get all.item" — pick up all matching items from the floor
+	{
+		itemName, matchNum := util.GetMatchNumber(args[0])
+		if matchNum == -1 {
+			picked := 0
+			for {
+				matchItem, found := room.FindOnFloor(itemName, false)
+				if !found {
+					break
+				}
+
+				if matchItem.HasAdjective(`exploding`) {
+					break
+				}
+
+				user.Character.CancelBuffsWithFlag(buffs.Hidden)
+
+				if user.Character.StoreItem(matchItem) {
+					room.RemoveItem(matchItem, false)
+
+					events.AddToQueue(events.ItemOwnership{
+						UserId: user.UserId,
+						Item:   matchItem,
+						Gained: true,
+					})
+
+					picked++
+				} else {
+					user.SendText(
+						fmt.Sprintf(`You can't carry the <ansi fg="itemname">%s</ansi> - you're already overloaded!`, matchItem.DisplayName()),
+					)
+					break
+				}
+			}
+			if picked == 0 {
+				user.SendText(fmt.Sprintf(`You don't see any "%s" to pick up.`, itemName))
+			} else {
+				user.SendText(fmt.Sprintf(`You pick up %d item(s).`, picked))
+				room.SendText(
+					fmt.Sprintf(`<ansi fg="username">%s</ansi> picks up some items.`, user.Character.Name),
+					user.UserId,
+				)
+				sendEncumbranceWarning(user)
+			}
+			return true, nil
+		}
+	}
+
 	getFromStash := false
 	containerName := ``
 	petUserId := 0

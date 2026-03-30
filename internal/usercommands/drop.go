@@ -75,6 +75,41 @@ func Drop(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
+	// Parse match number for all.item support (e.g. "drop all.potion")
+	itemName, matchNum := util.GetMatchNumber(rest)
+	if matchNum == -1 {
+		dropped := 0
+		for {
+			matchItem, found := user.Character.FindInBackpack(itemName)
+			if !found {
+				break
+			}
+
+			user.Character.CancelBuffsWithFlag(buffs.Hidden)
+
+			user.Character.RemoveItem(matchItem)
+
+			events.AddToQueue(events.ItemOwnership{
+				UserId: user.UserId,
+				Item:   matchItem,
+				Gained: false,
+			})
+
+			room.AddItem(matchItem, false)
+			dropped++
+		}
+		if dropped == 0 {
+			user.SendText(fmt.Sprintf(`You don't have any "%s" to drop.`, itemName))
+		} else {
+			user.SendText(fmt.Sprintf(`You drop %d item(s).`, dropped))
+			room.SendText(
+				fmt.Sprintf(`<ansi fg="username">%s</ansi> drops some items.`, user.Character.Name),
+				user.UserId,
+			)
+		}
+		return true, nil
+	}
+
 	// Check whether the user has an item in their inventory that matches
 	matchItem, found := user.Character.FindInBackpack(rest)
 
