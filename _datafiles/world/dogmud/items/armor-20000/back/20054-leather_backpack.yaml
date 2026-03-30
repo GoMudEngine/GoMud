@@ -1,0 +1,13 @@
+itemid: 20054
+name: leather backpack
+namesimple: backpack
+description: A rugged leather backpack with wide straps and reinforced
+  stitching. Multiple buckled compartments distribute weight evenly
+  across the shoulders. Practical, not pretty -- but it lets you
+  carry far more without the strain.
+type: back
+subtype: wearable
+value: 30
+weight: 2.0
+weight_reduction: 0.35
+physical_mitigation: 0
