@@ -26,6 +26,7 @@ type Worn struct {
 	Ring2        items.Item `yaml:"ring2,omitempty"`
 	Legs         items.Item `yaml:"legs,omitempty"`
 	Feet         items.Item `yaml:"feet,omitempty"`
+	Tail         items.Item `yaml:"tail,omitempty"` // Tail mutation slot
 	ComponentBag items.Item `yaml:"componentbag,omitempty"`
 }
 
@@ -54,6 +55,7 @@ func (w *Worn) StatMod(stat ...string) int {
 		w.Ring2.StatMod(stat...) +
 		w.Legs.StatMod(stat...) +
 		w.Feet.StatMod(stat...) +
+		w.Tail.StatMod(stat...) +
 		w.ComponentBag.StatMod(stat...)
 }
 
@@ -126,6 +128,9 @@ func (w *Worn) EnableAll() {
 	}
 	if w.Feet.ItemId < 0 {
 		w.Feet = items.Item{}
+	}
+	if w.Tail.ItemId < 0 {
+		w.Tail = items.Item{}
 	}
 	if w.ComponentBag.ItemId < 0 {
 		w.ComponentBag = items.Item{}
@@ -202,6 +207,9 @@ func (w *Worn) GetAllItems() []items.Item {
 	}
 	if w.Feet.ItemId > 0 {
 		iList = append(iList, w.Feet)
+	}
+	if w.Tail.ItemId > 0 {
+		iList = append(iList, w.Tail)
 	}
 	if w.ComponentBag.ItemId > 0 {
 		iList = append(iList, w.ComponentBag)
@@ -282,6 +290,9 @@ func (w *Worn) GetAllItemPtrs() []*items.Item {
 	if w.Feet.ItemId > 0 {
 		ptrs = append(ptrs, &w.Feet)
 	}
+	if w.Tail.ItemId > 0 {
+		ptrs = append(ptrs, &w.Tail)
+	}
 	if w.ComponentBag.ItemId > 0 {
 		ptrs = append(ptrs, &w.ComponentBag)
 	}
@@ -337,6 +348,8 @@ func (w *Worn) GetSlotPointer(label string) *items.Item {
 		return &w.Legs
 	case "worn - feet":
 		return &w.Feet
+	case "worn - tail":
+		return &w.Tail
 	case "worn - componentbag":
 		return &w.ComponentBag
 	}
@@ -358,6 +371,7 @@ func GetAllSlotTypes() []string {
 		string(items.Ring),
 		string(items.Legs),
 		string(items.Feet),
+		string(items.Tail),
 		string(items.ComponentBag),
 	}
 }

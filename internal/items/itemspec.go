@@ -53,6 +53,7 @@ func ItemTypes() []ItemTypeInfo {
 		{string(Ring), `This can be worn in the players ring equipment slot.`, 0, 20000, 29999},
 		{string(Legs), `This can be worn in the players legs equipment slot.`, 0, 20000, 29999},
 		{string(Feet), `This can be worn in the players feet equipment slot.`, 0, 20000, 29999},
+		{string(Tail), `Worn on the tail.`, 0, 20000, 29999},
 		{string(Wrist), `Worn on the wrist.`, 0, 20000, 29999},
 		{string(Back), `Worn on the back.`, 0, 20000, 29999},
 		{string(Shoulders), `Worn on the shoulders.`, 0, 20000, 29999},
@@ -119,6 +120,7 @@ const (
 	ComponentBag ItemType = "componentbag" // Crafting material bags
 	Legs    ItemType = "legs"
 	Feet    ItemType = "feet"
+	Tail    ItemType = "tail"             // Tail attachments (tail mutation slot)
 	// Consumables
 	Potion  ItemType = "potion"
 	Food    ItemType = "food"

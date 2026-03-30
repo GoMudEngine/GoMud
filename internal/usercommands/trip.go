@@ -75,7 +75,32 @@ func Trip(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
-	// Execute skill move (trip uses Dexterity for attack stat)
+	// Check for tail mutation — reskin to tailsweep with better stats
+	hasTail := false
+	if _, ok := user.Character.Mutations["tail"]; ok {
+		hasTail = true
+	}
+
+	damagePercent := float64(cfg.TripDamagePercent)
+	knockdownChance := int(cfg.TripKnockdownChance)
+	moveLabel := "trip"
+
+	if hasTail {
+		damagePercent = 0.40  // Better than regular trip (0.25)
+		knockdownChance = 70  // Better than regular trip (60%)
+		moveLabel = "tailsweep"
+
+		// Apply tail attachment bonuses if equipped
+		if user.Character.Equipment.Tail.ItemId > 0 {
+			tailSpec := user.Character.Equipment.Tail.GetSpec()
+			if tailSpec.DamageMultiplier > 0 {
+				damagePercent += tailSpec.DamageMultiplier / 100.0
+			}
+			knockdownChance += user.Character.Equipment.Tail.StatMod("knockdown")
+		}
+	}
+
+	// Execute skill move
 	result := combat.ExecuteSkillMove(combat.SkillMoveParams{
 		Attacker:        user.Character,
 		Defender:        defender,
@@ -83,42 +108,75 @@ func Trip(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		AttackSkill:     user.Character.GetSkillLevel(skills.UnarmedCombat),
 		DefenseStat:     defender.Stats.Dexterity.ValueAdj,
 		DefenseSkill:    defender.GetCombatSkillLevel(),
-		DamagePercent:   float64(cfg.TripDamagePercent),
-		KnockdownChance: int(cfg.TripKnockdownChance),
+		DamagePercent:   damagePercent,
+		KnockdownChance: knockdownChance,
 		SkillRank:       user.Character.GetSkillLevel(skills.UnarmedCombat),
 		DamageStat:      user.Character.Stats.Strength.ValueAdj,
 	})
 
 	// Send messages
 	if result.Hit {
-		if result.KnockedDown {
-			user.SendText(fmt.Sprintf(`Your <ansi fg="yellow-bold">trip</ansi> sends <ansi fg="mobname">%s</ansi> crashing to the ground! (<ansi fg="damage">%s</ansi>)`, targetName, combat.GetDamageDescription(result.Damage, result.TargetMaxHP)))
+		if hasTail {
+			if result.KnockedDown {
+				user.SendText(fmt.Sprintf(`Your <ansi fg="yellow-bold">tailsweep</ansi> sends <ansi fg="mobname">%s</ansi> crashing to the ground! (<ansi fg="damage">%s</ansi>)`, targetName, combat.GetDamageDescription(result.Damage, result.TargetMaxHP)))
+				if targetChar != nil {
+					targetChar.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> hammers you with their tail, sending you crashing to the ground! (<ansi fg="damage">%s</ansi>)`, user.Character.Name, combat.GetDamageDescription(result.Damage, result.TargetMaxHP)))
+				}
+				room.SendText(
+					fmt.Sprintf(`<ansi fg="username">%s</ansi> tailsweeps <ansi fg="mobname">%s</ansi>, sending them crashing to the ground!`, user.Character.Name, targetName),
+					user.UserId, targetPlayerId,
+				)
+			} else {
+				user.SendText(fmt.Sprintf(`Your <ansi fg="yellow-bold">tailsweep</ansi> strikes <ansi fg="mobname">%s</ansi>, but they keep their footing! (<ansi fg="damage">%s</ansi>)`, targetName, combat.GetDamageDescription(result.Damage, result.TargetMaxHP)))
+				if targetChar != nil {
+					targetChar.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> sweeps at you with their tail, but you manage to stay upright! (<ansi fg="damage">%s</ansi>)`, user.Character.Name, combat.GetDamageDescription(result.Damage, result.TargetMaxHP)))
+				}
+				room.SendText(
+					fmt.Sprintf(`<ansi fg="username">%s</ansi> tailsweeps <ansi fg="mobname">%s</ansi>, but they keep their footing!`, user.Character.Name, targetName),
+					user.UserId, targetPlayerId,
+				)
+			}
+		} else {
+			if result.KnockedDown {
+				user.SendText(fmt.Sprintf(`Your <ansi fg="yellow-bold">trip</ansi> sends <ansi fg="mobname">%s</ansi> crashing to the ground! (<ansi fg="damage">%s</ansi>)`, targetName, combat.GetDamageDescription(result.Damage, result.TargetMaxHP)))
+				if targetChar != nil {
+					targetChar.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> sweeps your legs, sending you crashing to the ground! (<ansi fg="damage">%s</ansi>)`, user.Character.Name, combat.GetDamageDescription(result.Damage, result.TargetMaxHP)))
+				}
+				room.SendText(
+					fmt.Sprintf(`<ansi fg="username">%s</ansi> trips <ansi fg="mobname">%s</ansi>, sending them crashing to the ground!`, user.Character.Name, targetName),
+					user.UserId, targetPlayerId,
+				)
+			} else {
+				user.SendText(fmt.Sprintf(`Your <ansi fg="yellow-bold">trip</ansi> strikes <ansi fg="mobname">%s</ansi>, but they stay on their feet! (<ansi fg="damage">%s</ansi>)`, targetName, combat.GetDamageDescription(result.Damage, result.TargetMaxHP)))
+				if targetChar != nil {
+					targetChar.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> attempts to trip you, but you keep your footing! (<ansi fg="damage">%s</ansi>)`, user.Character.Name, combat.GetDamageDescription(result.Damage, result.TargetMaxHP)))
+				}
+				room.SendText(
+					fmt.Sprintf(`<ansi fg="username">%s</ansi> attempts to trip <ansi fg="mobname">%s</ansi>, but they keep their footing!`, user.Character.Name, targetName),
+					user.UserId, targetPlayerId,
+				)
+			}
+		}
+	} else {
+		if hasTail {
+			user.SendText(fmt.Sprintf(`Your <ansi fg="yellow-bold">tailsweep</ansi> misses <ansi fg="mobname">%s</ansi>!`, targetName))
 			if targetChar != nil {
-				targetChar.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> sweeps your legs, sending you crashing to the ground! (<ansi fg="damage">%s</ansi>)`, user.Character.Name, combat.GetDamageDescription(result.Damage, result.TargetMaxHP)))
+				targetChar.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> swings their tail at you, but you avoid it!`, user.Character.Name))
 			}
 			room.SendText(
-				fmt.Sprintf(`<ansi fg="username">%s</ansi> trips <ansi fg="mobname">%s</ansi>, sending them crashing to the ground!`, user.Character.Name, targetName),
+				fmt.Sprintf(`<ansi fg="username">%s</ansi> attempts a tailsweep on <ansi fg="mobname">%s</ansi>, but misses!`, user.Character.Name, targetName),
 				user.UserId, targetPlayerId,
 			)
 		} else {
-			user.SendText(fmt.Sprintf(`Your <ansi fg="yellow-bold">trip</ansi> strikes <ansi fg="mobname">%s</ansi>, but they stay on their feet! (<ansi fg="damage">%s</ansi>)`, targetName, combat.GetDamageDescription(result.Damage, result.TargetMaxHP)))
+			user.SendText(fmt.Sprintf(`Your <ansi fg="yellow-bold">trip</ansi> attempt misses <ansi fg="mobname">%s</ansi>!`, targetName))
 			if targetChar != nil {
-				targetChar.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> attempts to trip you, but you keep your footing! (<ansi fg="damage">%s</ansi>)`, user.Character.Name, combat.GetDamageDescription(result.Damage, result.TargetMaxHP)))
+				targetChar.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> attempts to trip you, but you avoid it!`, user.Character.Name))
 			}
 			room.SendText(
-				fmt.Sprintf(`<ansi fg="username">%s</ansi> attempts to trip <ansi fg="mobname">%s</ansi>, but they keep their footing!`, user.Character.Name, targetName),
+				fmt.Sprintf(`<ansi fg="username">%s</ansi> attempts to trip <ansi fg="mobname">%s</ansi>, but misses!`, user.Character.Name, targetName),
 				user.UserId, targetPlayerId,
 			)
 		}
-	} else {
-		user.SendText(fmt.Sprintf(`Your <ansi fg="yellow-bold">trip</ansi> attempt misses <ansi fg="mobname">%s</ansi>!`, targetName))
-		if targetChar != nil {
-			targetChar.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> attempts to trip you, but you avoid it!`, user.Character.Name))
-		}
-		room.SendText(
-			fmt.Sprintf(`<ansi fg="username">%s</ansi> attempts to trip <ansi fg="mobname">%s</ansi>, but misses!`, user.Character.Name, targetName),
-			user.UserId, targetPlayerId,
-		)
 	}
 
 	// Record combat analytics
@@ -130,13 +188,13 @@ func Trip(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	if targetMob == nil {
 		tgtType = combat.User
 	}
-	combat.RecordSpecialMove(combat.User, tgtType, "trip", result.Hit, dmgRecorded, user.Character, defender, util.GetRoundCount())
+	combat.RecordSpecialMove(combat.User, tgtType, moveLabel, result.Hit, dmgRecorded, user.Character, defender, util.GetRoundCount())
 
 	// Progress unarmed combat skill
 	events.AddToQueue(events.SkillUsed{
 		UserId:  user.UserId,
 		Skill:   skills.UnarmedCombat,
-		Details: "trip",
+		Details: moveLabel,
 	})
 
 	// Trip costs the current combat round

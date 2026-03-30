@@ -1059,7 +1059,7 @@ func (c *Character) GetPhysicalMitigation() float64 {
 		c.Equipment.ExtraArm1, c.Equipment.ExtraArm2,
 		c.Equipment.Head, c.Equipment.Neck, c.Equipment.Body,
 		c.Equipment.Belt, c.Equipment.Gloves, c.Equipment.Ring,
-		c.Equipment.Legs, c.Equipment.Feet,
+		c.Equipment.Legs, c.Equipment.Feet, c.Equipment.Tail,
 	}
 	for _, slot := range slots {
 		if slot.ItemId <= 0 {
@@ -1093,7 +1093,7 @@ func (c *Character) GetMagicalMitigation() float64 {
 		c.Equipment.ExtraArm1, c.Equipment.ExtraArm2,
 		c.Equipment.Head, c.Equipment.Neck, c.Equipment.Body,
 		c.Equipment.Belt, c.Equipment.Gloves, c.Equipment.Ring,
-		c.Equipment.Legs, c.Equipment.Feet,
+		c.Equipment.Legs, c.Equipment.Feet, c.Equipment.Tail,
 	}
 	for _, slot := range slots {
 		if slot.ItemId <= 0 {
@@ -1122,7 +1122,7 @@ func (c *Character) GetConvictionMitigation() float64 {
 		c.Equipment.ExtraArm1, c.Equipment.ExtraArm2,
 		c.Equipment.Head, c.Equipment.Neck, c.Equipment.Body,
 		c.Equipment.Belt, c.Equipment.Gloves, c.Equipment.Ring,
-		c.Equipment.Legs, c.Equipment.Feet,
+		c.Equipment.Legs, c.Equipment.Feet, c.Equipment.Tail,
 	}
 	for _, slot := range slots {
 		if slot.ItemId <= 0 {
@@ -1512,6 +1512,7 @@ func (c *Character) FindOnBody(itemName string) (items.Item, bool) {
 		c.Equipment.Ring2,
 		c.Equipment.Legs,
 		c.Equipment.Feet,
+		c.Equipment.Tail,
 		c.Equipment.ComponentBag)
 
 	if fullMatch.ItemId != 0 {
@@ -1572,6 +1573,7 @@ func (c *Character) FindItem(itemName string) (items.Item, string, bool) {
 		{c.Equipment.Ring2, "worn - ring"},
 		{c.Equipment.Legs, "worn - legs"},
 		{c.Equipment.Feet, "worn - feet"},
+		{c.Equipment.Tail, "worn - tail"},
 		{c.Equipment.ComponentBag, "worn - componentbag"},
 	}
 	for _, slot := range slotItems {
@@ -2646,6 +2648,20 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 		c.ExtraArms = 0
 	}
 
+	// Derive tail mutation: enable tail slot if mutation present, disable otherwise
+	if _, hasTail := c.Mutations["tail"]; hasTail {
+		// Enable tail slot (clear disabled state if set)
+		if c.Equipment.Tail.ItemId < 0 {
+			c.Equipment.Tail = items.Item{}
+		}
+	} else {
+		// No tail mutation: disable the tail slot
+		if c.Equipment.Tail.ItemId > 0 {
+			c.StoreItem(c.Equipment.Tail)
+		}
+		c.Equipment.Tail = items.ItemDisabledSlot
+	}
+
 	if c.Zone == "" {
 		c.Zone = startingZone
 	}
@@ -2730,6 +2746,7 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 	c.Equipment.Ring.Validate()
 	c.Equipment.Legs.Validate()
 	c.Equipment.Feet.Validate()
+	c.Equipment.Tail.Validate()
 	// Done with validation
 
 	if speciesInfo := species.GetSpecies(c.SpeciesId); speciesInfo != nil {
@@ -2881,6 +2898,15 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 			c.StoreItem(c.Equipment.ExtraWrist1)
 		}
 		c.Equipment.ExtraWrist1 = items.ItemDisabledSlot
+	}
+
+	// Tail mutation disables legs slot
+	if flags := mutations.GetMutationFlags(c.Mutations); flags["disable-legs"] {
+		if c.Equipment.Legs.ItemId > 0 {
+			c.StoreItem(c.Equipment.Legs)
+			mudlog.Debug("Mutation Check", "info", "Item returned from legs slot (tail mutation)", "name", c.Equipment.Legs.Name(), "character", c.Name)
+		}
+		c.Equipment.Legs = items.ItemDisabledSlot
 	}
 
 	if len(recalcPermaBuffs) > 0 && recalcPermaBuffs[0] {
@@ -3209,6 +3235,12 @@ func (c *Character) Wear(i items.Item) (returnItems []items.Item, newItemWorn bo
 		}
 		returnItems = append(returnItems, c.Equipment.Feet)
 		c.Equipment.Feet = i
+	case items.Tail:
+		if c.Equipment.Tail.IsDisabled() {
+			return returnItems, false, `You don't have a tail to attach that to.`
+		}
+		returnItems = append(returnItems, c.Equipment.Tail)
+		c.Equipment.Tail = i
 	default:
 		return returnItems, false, `Unrecognized object.`
 	}
@@ -3292,6 +3324,8 @@ func (c *Character) RemoveFromBody(i items.Item) bool {
 		c.Equipment.ExtraWrist4 = items.Item{}
 	} else if i.Equals(c.Equipment.Ring2) {
 		c.Equipment.Ring2 = items.Item{}
+	} else if i.Equals(c.Equipment.Tail) {
+		c.Equipment.Tail = items.Item{}
 	} else if i.Equals(c.Equipment.ComponentBag) {
 		// Spill component bag contents back to backpack
 		for _, ci := range c.ComponentItems {

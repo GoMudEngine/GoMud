@@ -45,6 +45,8 @@
 {{ end -}}
 {{- if not .Equipment.Feet.IsDisabled }}   <ansi fg="yellow">Feet:       </ansi><ansi fg="itemname">{{ .Equipment.Feet.NameSimple }}</ansi>
 {{ end -}}
+{{- if not .Equipment.Tail.IsDisabled }}   <ansi fg="yellow">Tail:       </ansi><ansi fg="itemname">{{ .Equipment.Tail.NameSimple }}</ansi>
+{{ end -}}
 {{- if not .Equipment.ComponentBag.IsDisabled }}   <ansi fg="yellow">Components: </ansi><ansi fg="itemname">{{ .Equipment.ComponentBag.NameSimple }}</ansi>
 {{ end }} └────────────────────────────────────────────────────────────────────────────┘
  Carrying: {{ $itmCt := len .ItemNames }}{{ if eq $itmCt 0 }}no{{ else if lt $itmCt 4 }}a few{{ else if lt $itmCt 7 }}several{{ else }}lots of{{ end }} objects

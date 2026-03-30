@@ -1,0 +1,14 @@
+itemid: 20058
+name: bladed tail sheath
+namesimple: tail sheath
+description: A fitted sheath of hardened leather with a curved blade
+  mounted at the tip. The best of both worlds -- more damage and
+  better knockdown, but heavier and more expensive.
+type: tail
+subtype: wearable
+value: 50
+weight: 3.0
+damage_multiplier: 10
+statmods:
+  knockdown: 5
+physical_mitigation: 1
