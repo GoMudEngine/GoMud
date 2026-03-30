@@ -43,9 +43,10 @@ type Item struct {
 	Blob          string         `yaml:"blob,omitempty"`          // Does this item have a blob? Should be base64 encoded.
 	Uses          int            `yaml:"uses,omitempty"`          // How many uses it has left
 	LastUsedRound uint64         `yaml:"lastusedround,omitempty"` // Last round this item was used
-	CraftedRound   uint64         `yaml:"crafted_round,omitempty"`   // Round when this item was crafted
-	CraftSkill     int            `yaml:"craft_skill,omitempty"`     // Crafter's skill level at craft time
-	BottleMultiplier float64      `yaml:"bottle_multiplier,omitempty"` // Aging speed from the bottle used during crafting
+	CraftedRound     uint64         `yaml:"crafted_round,omitempty"`     // Round when this item was crafted
+	CraftSkill       int            `yaml:"craft_skill,omitempty"`       // Crafter's skill level at craft time
+	BottleMultiplier float64        `yaml:"bottle_multiplier,omitempty"` // Aging speed from the bottle used during crafting
+	MakerName        string         `yaml:"maker_name,omitempty"`        // Cosmetic crafter attribution (skill 30+)
 	Spec          *ItemSpec      `yaml:"overrides,omitempty"`
 	Uncursed      bool           `yaml:"uncursed,omitempty"`     // Is this item uncursed?
 	Enchantments  uint8          `yaml:"enchantments,omitempty"` // Is this item enchanted?
@@ -250,6 +251,12 @@ func (i *Item) GetLongDescription() string {
 		longDesc.WriteString("\n")
 		longDesc.WriteString(` - You could probably <ansi fg="command">use</ansi> this.`)
 
+	}
+
+	if i.MakerName != "" {
+		longDesc.WriteString("\n")
+		longDesc.WriteString(fmt.Sprintf(
+			` - <ansi fg="yellow-bold">Made by %s</ansi>`, i.MakerName))
 	}
 
 	return longDesc.String()

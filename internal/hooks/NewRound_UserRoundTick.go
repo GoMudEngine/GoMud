@@ -340,6 +340,11 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 										if bottleAgingMult > 0 {
 											newItem.BottleMultiplier = bottleAgingMult
 										}
+										// Maker's mark for skilled crafters on non-material items
+										newSpec := newItem.GetSpec()
+										if newItem.CraftSkill >= 30 && !newSpec.IsComponent && newSpec.Type != items.Object {
+											newItem.MakerName = user.Character.Name
+										}
 										user.Character.StoreItem(newItem)
 										events.AddToQueue(events.ItemOwnership{UserId: user.UserId, Item: newItem, Gained: true})
 									}
