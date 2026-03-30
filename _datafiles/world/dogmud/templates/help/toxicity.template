@@ -1,0 +1,32 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">toxicity</ansi>
+
+Every potion you drink adds toxicity to your body. Your tolerance
+is based on your Vitality — hardier characters can handle more.
+
+<ansi fg="yellow">━━━ How It Works ━━━</ansi>
+
+  Drinking a potion adds its toxicity cost to your total.
+  Toxicity decays naturally over time, a little each round.
+  If your total would exceed your maximum, your body rejects
+  the potion and it is not consumed.
+
+<ansi fg="yellow">━━━ Threshold Effects ━━━</ansi>
+
+  At low toxicity, there are no ill effects. As it builds:
+  - Moderate toxicity dulls your senses and slows recovery.
+  - High toxicity further impairs your reflexes.
+  - Severe toxicity significantly hampers regeneration and
+    awareness.
+
+<ansi fg="yellow">━━━ Spoiled Potions ━━━</ansi>
+
+  Drinking a spoiled potion inflicts triple the normal toxicity
+  and causes nausea. Skilled alchemists can detect spoiled brews
+  by examining them — look for the telltale signs.
+
+<ansi fg="yellow">━━━ Purging ━━━</ansi>
+
+  The purging draught (alchemy skill 35) clears all active potion
+  effects and toxicity, but leaves you weakened afterward.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help alchemy</ansi>, <ansi fg="command">help drink</ansi>

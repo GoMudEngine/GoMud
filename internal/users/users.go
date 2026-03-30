@@ -342,6 +342,8 @@ func LoadUser(username string, skipValidation ...bool) (*UserRecord, error) {
 	loadedUser.Character.MigratePairedSpells()
 	loadedUser.Character.MigrateNeckToBack()
 	loadedUser.Character.MigrateQuestSpells()
+	loadedUser.Character.MigrateAlchemyPotions()
+	loadedUser.Character.MigrateAlchemyRecipes()
 
 	if loadedUser.Joined.IsZero() {
 		loadedUser.Joined = time.Now()

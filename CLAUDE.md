@@ -290,3 +290,51 @@ damage when the weapon is equipped. This is independent of `damage_multiplier`
 
 `spell_damage_multiplier` is applied in `calcSpellDamage()` and
 `calcMobSpellDamage()` in `internal/hooks/spell_resolution.go`.
+
+## Alchemy & Potions System
+Potions use a witcher-style design with aging, toxicity, and craft-skill scaling.
+
+### Potion Aging
+- Five phases: Fresh (1.0x) → Fermented (1.15x) → Peak (1.30x) → Declining (1.30→0.5x) → Spoiled (harmful)
+- Thresholds defined per-potion in `aging:` YAML field (ferment/peak/decay/spoil rounds)
+- Aging speed = `bottleMultiplier × (1.0 - craftSkill/200)` — higher = faster aging
+- `items.GetAgingPhase()` and `items.CalcEffectiveAgingSpeed()` in `internal/items/aging.go`
+
+### Bottle Tiers
+| Bottle | ItemID | Aging Multiplier | component_tag |
+|--------|--------|-----------------|---------------|
+| Clay Flask | 40043 | 3.0x (fastest) | bottle |
+| Glass Vial | 40006 | 1.0x (baseline) | bottle |
+| Sealed Phial | 40044 | 0.5x | bottle |
+| Crystalline Decanter | 40045 | 0.25x (slowest) | bottle |
+
+All share `component_tag: bottle`. Crafting consumes the first match. The bottle's `BottleAgingMultiplier` is stamped on the output item's `BottleMultiplier` field.
+
+### Toxicity
+- Each potion has a `toxicity` field (int) on ItemSpec
+- `Character.Toxicity` accumulates; decays by `ToxicityDecayPerTick` per regen tick
+- `GetToxicityMax() = ToxicityBaseMax + Vitality/ToxicityVitalityScale`
+- Threshold penalties via `GetToxicityPenalties()`: regen/Per/Dex penalties at 50/75/90%
+- Spoiled potions apply 3x toxicity + nausea debuff (buff 75)
+
+### Craft Skill Scaling
+- Duration: `baseDuration × (1.0 + craftSkill/100) × agingPotencyMultiplier`
+- Aging speed reduction: skill 30 = 15% slower aging
+- Applied in `drink.go` via `AddBuffScaled()`
+
+### Potion Bandolier
+- Belt-slot item with `is_bandolier: true` and `bandolier_capacity` field
+- Auto-routes potions in `StoreItem()`, consumed first by `drink` (oldest first)
+- Removal spills to backpack. Weight reduction applies to contents.
+- `Character.PotionItems` slice, displayed in inventory "Potions:" section
+
+### Buff IDs
+- 54-60: Pool regen potions (healing salve through elixir of renewal)
+- 61-70: Combat/utility potions (ironhide through purging draught)
+- 71-74: Progression potions (essence of growth through chrysalis catalyst)
+- 75: Spoiled potion nausea debuff
+- 76: Purging draught weakness debuff
+
+### Item IDs
+- 30036-30056: New potion items
+- 40043-40049: New alchemy materials (bottles + forage/drop ingredients)

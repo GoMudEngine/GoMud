@@ -896,6 +896,71 @@ func (c *Character) MigrateQuestSpells() {
 	c.SetMiscData(migrationKey, "1")
 }
 
+// MigrateAlchemyPotions replaces old potion items with new equivalents.
+func (c *Character) MigrateAlchemyPotions() {
+	const migrationKey = "migration-alchemy-potions-done"
+	if c.GetMiscData(migrationKey) != nil {
+		return
+	}
+
+	potionMap := map[int]int{
+		30010: 30036, // Healing Poultice → Healing Salve
+		30011: 30037, // Stamina Draught → Stamina Tonic
+		30012: 30038, // Conviction Draught → Conviction Draught
+		30028: 30046, // Minor Antidote → Stone Stomach
+		30029: 30044, // Clarity Tonic → Mindshield Elixir
+		30030: 30043, // Fire Resistance → Ironhide Brew
+		30031: 30042, // Greater Healing → Elixir of Renewal
+		30032: 30049, // Berserker Elixir → Berserker Elixir
+	}
+
+	migrateSlice := func(slice []items.Item) []items.Item {
+		for i := range slice {
+			if newId, ok := potionMap[slice[i].ItemId]; ok {
+				slice[i].ItemId = newId
+				slice[i].CraftedRound = util.GetRoundCount()
+				slice[i].CraftSkill = 10
+				slice[i].BottleMultiplier = 1.0 // Glass vial baseline
+			}
+		}
+		return slice
+	}
+
+	c.Items = migrateSlice(c.Items)
+	c.PotionItems = migrateSlice(c.PotionItems)
+
+	c.SetMiscData(migrationKey, "1")
+}
+
+// MigrateAlchemyRecipes grants new recipe equivalents for old known recipes.
+func (c *Character) MigrateAlchemyRecipes() {
+	const migrationKey = "migration-alchemy-recipes-done"
+	if c.GetMiscData(migrationKey) != nil {
+		return
+	}
+
+	recipeMap := map[string]string{
+		"healing-poultice":        "healing-salve",
+		"stamina-draught":         "stamina-tonic",
+		"conviction-draught":      "conviction-draught",
+		"minor-antidote":          "stone-stomach",
+		"clarity-tonic":           "mindshield-elixir",
+		"fire-resistance-draught": "ironhide-brew",
+		"greater-healing-poultice": "elixir-of-renewal",
+		"berserker-elixir":        "berserker-elixir",
+	}
+
+	if c.KnownRecipes != nil {
+		for oldId, newId := range recipeMap {
+			if _, known := c.KnownRecipes[oldId]; known {
+				c.KnownRecipes[newId] = 1
+			}
+		}
+	}
+
+	c.SetMiscData(migrationKey, "1")
+}
+
 func (c *Character) HasRecipe(recipeId string) bool {
 	if c.KnownRecipes == nil {
 		return false
