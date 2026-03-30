@@ -171,6 +171,40 @@ func (bs *Buffs) Started(buffId int) {
 	}
 }
 
+// AddBuffScaled adds a buff with its duration multiplied by durationMult.
+func (bs *Buffs) AddBuffScaled(buffId int, durationMult float64) bool {
+	if buffInfo := GetBuffSpec(buffId); buffInfo != nil {
+		triggers := int(float64(buffInfo.TriggerCount) * durationMult)
+		if triggers < 1 {
+			triggers = 1
+		}
+		newBuff := Buff{
+			BuffId:       buffInfo.BuffId,
+			RoundCounter: 0,
+			PermaBuff:    false,
+			TriggersLeft: triggers,
+		}
+
+		if idx, ok := bs.buffIds[buffId]; ok {
+			bs.List[idx].TriggersLeft = newBuff.TriggersLeft
+			bs.List[idx].PermaBuff = newBuff.PermaBuff
+			return true
+		}
+
+		bs.List = append(bs.List, &newBuff)
+		listIndex := len(bs.List) - 1
+		bs.buffIds[buffId] = listIndex
+		for _, flag := range buffInfo.Flags {
+			if _, ok := bs.buffFlags[flag]; !ok {
+				bs.buffFlags[flag] = []int{}
+			}
+			bs.buffFlags[flag] = append(bs.buffFlags[flag], listIndex)
+		}
+		return true
+	}
+	return false
+}
+
 func (bs *Buffs) AddBuff(buffId int, isPermanent bool) bool {
 	if buffInfo := GetBuffSpec(buffId); buffInfo != nil {
 

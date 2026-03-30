@@ -260,6 +260,28 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 								roll := util.Rand(100)
 								util.LogRoll("Craft", roll, chance)
 								if roll < chance {
+									// Before consuming, find bottle aging multiplier if recipe uses a bottle
+									var bottleAgingMult float64
+									for _, ing := range recipe.Ingredients {
+										if ing.ItemTag == "bottle" {
+											for _, itm := range user.Character.Items {
+												if itm.GetSpec().ComponentTag == "bottle" && itm.GetSpec().BottleAgingMultiplier > 0 {
+													bottleAgingMult = itm.GetSpec().BottleAgingMultiplier
+													break
+												}
+											}
+											if bottleAgingMult == 0 {
+												for _, itm := range user.Character.ComponentItems {
+													if itm.GetSpec().ComponentTag == "bottle" && itm.GetSpec().BottleAgingMultiplier > 0 {
+														bottleAgingMult = itm.GetSpec().BottleAgingMultiplier
+														break
+													}
+												}
+											}
+											break
+										}
+									}
+
 									user.Character.Items, user.Character.ComponentItems = crafting.ConsumeIngredients(user.Character.Items, user.Character.ComponentItems, recipe)
 
 									if crafting.IsEnchantingRecipe(recipe) {
@@ -315,6 +337,9 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 										newItem := items.New(recipe.Output.ItemId)
 										newItem.CraftedRound = util.GetRoundCount()
 										newItem.CraftSkill = user.Character.GetSkillLevel(skills.SkillTag(recipe.Skill))
+										if bottleAgingMult > 0 {
+											newItem.BottleMultiplier = bottleAgingMult
+										}
 										user.Character.StoreItem(newItem)
 										events.AddToQueue(events.ItemOwnership{UserId: user.UserId, Item: newItem, Gained: true})
 									}

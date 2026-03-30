@@ -2274,6 +2274,16 @@ func (c *Character) AddBuff(buffId int, isPermanent bool) error {
 	return nil
 }
 
+// AddBuffScaled adds a buff with its duration scaled by durationMult.
+func (c *Character) AddBuffScaled(buffId int, durationMult float64) error {
+	buffId = int(math.Abs(float64(buffId)))
+	if !c.Buffs.AddBuffScaled(buffId, durationMult) {
+		return fmt.Errorf(`failed to add buff. target: "%s" buffId: %d`, c.Name, buffId)
+	}
+	c.Validate()
+	return nil
+}
+
 func (c *Character) TrackBuffStarted(buffId int) {
 	c.Buffs.Started(buffId)
 }

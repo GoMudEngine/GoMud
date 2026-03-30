@@ -7,7 +7,9 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 func Drink(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
@@ -23,29 +25,126 @@ func Drink(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	if !found {
 		user.SendText(fmt.Sprintf(`You don't have a "%s" to drink.`, rest))
-	} else {
+		return true, nil
+	}
 
-		itemSpec := matchItem.GetSpec()
+	itemSpec := matchItem.GetSpec()
 
-		if itemSpec.Subtype != items.Drinkable {
-			user.SendText(
-				fmt.Sprintf(`You can't drink <ansi fg="itemname">%s</ansi>.`, matchItem.DisplayName()),
-			)
-			return true, nil
+	if itemSpec.Subtype != items.Drinkable {
+		user.SendText(
+			fmt.Sprintf(`You can't drink <ansi fg="itemname">%s</ansi>.`, matchItem.DisplayName()),
+		)
+		return true, nil
+	}
+
+	// Compute aging phase if the potion has aging data
+	var phase items.AgingPhase
+	var potencyMult float64 = 1.0
+	hasAging := itemSpec.Aging.HasAging() && matchItem.CraftedRound > 0
+
+	if hasAging {
+		elapsed := util.GetRoundCount() - matchItem.CraftedRound
+		bottleMult := matchItem.BottleMultiplier
+		if bottleMult <= 0 {
+			bottleMult = itemSpec.BottleAgingMultiplier
 		}
+		effSpeed := items.CalcEffectiveAgingSpeed(bottleMult, matchItem.CraftSkill)
+		phase, potencyMult = items.GetAgingPhase(elapsed, itemSpec.Aging, effSpeed)
+	}
+
+	// Handle spoiled potions
+	if hasAging && phase == items.PhaseSpoiled {
+		// Spoiled potions apply 3x toxicity
+		spoiledTox := float64(itemSpec.Toxicity) * 3.0
+		user.Character.Toxicity += spoiledTox
 
 		user.Character.CancelBuffsWithFlag(buffs.Hidden)
 
+		// Consume the item
 		if fromBandolier {
 			user.Character.UseItemFromPotions(matchItem)
 		} else {
 			user.Character.UseItem(matchItem)
 		}
 
-		user.SendText(fmt.Sprintf(`You drink the <ansi fg="itemname">%s</ansi>.`, matchItem.DisplayName()))
-		room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> drinks <ansi fg="itemname">%s</ansi>.`, user.Character.Name, matchItem.DisplayName()), user.UserId)
+		user.SendText(fmt.Sprintf(
+			`You drink the <ansi fg="itemname">%s</ansi>...`, matchItem.DisplayName()))
+		user.SendText(
+			`<ansi fg="red">The potion has gone bad! You retch as the foul liquid burns your throat.</ansi>`)
+		room.SendText(fmt.Sprintf(
+			`<ansi fg="username">%s</ansi> drinks something and immediately gags.`,
+			user.Character.Name), user.UserId)
 
-		for _, buffId := range itemSpec.BuffIds {
+		// Apply nausea debuff (buff 75)
+		user.Character.AddBuffScaled(75, 1.0)
+
+		// Recipe discovery chance: 10% + (alchemySkill * 0.5)%
+		alchSkill := user.Character.GetSkillLevel(skills.Alchemy)
+		discoveryChance := 10.0 + float64(alchSkill)*0.5
+		if float64(util.Rand(100)) < discoveryChance {
+			user.SendText(
+				`<ansi fg="yellow">The foul taste teaches you something about how the ingredients interact...</ansi>`)
+		}
+
+		return true, nil
+	}
+
+	// Check toxicity before consuming
+	if itemSpec.Toxicity > 0 {
+		toxCost := float64(itemSpec.Toxicity)
+		if user.Character.Toxicity+toxCost > user.Character.GetToxicityMax() {
+			user.SendText(
+				`<ansi fg="red">Your body rejects the potion — too much toxicity.</ansi>`)
+			return true, nil
+		}
+	}
+
+	user.Character.CancelBuffsWithFlag(buffs.Hidden)
+
+	// Consume the item
+	if fromBandolier {
+		user.Character.UseItemFromPotions(matchItem)
+	} else {
+		user.Character.UseItem(matchItem)
+	}
+
+	// Apply toxicity
+	if itemSpec.Toxicity > 0 {
+		user.Character.Toxicity += float64(itemSpec.Toxicity)
+	}
+
+	user.SendText(fmt.Sprintf(
+		`You drink the <ansi fg="itemname">%s</ansi>.`, matchItem.DisplayName()))
+	room.SendText(fmt.Sprintf(
+		`<ansi fg="username">%s</ansi> drinks <ansi fg="itemname">%s</ansi>.`,
+		user.Character.Name, matchItem.DisplayName()), user.UserId)
+
+	// Aging quality message
+	if hasAging {
+		switch phase {
+		case items.PhaseFresh:
+			user.SendText(`The potion is freshly brewed — it should do the job.`)
+		case items.PhaseFermented:
+			user.SendText(`The potion has fermented nicely — you feel it working stronger than expected.`)
+		case items.PhasePeak:
+			user.SendText(`<ansi fg="green">The potion is at its peak — you feel its full potency.</ansi>`)
+		case items.PhaseDeclining:
+			user.SendText(`The potion tastes a bit stale — its effects are diminished.`)
+		}
+	}
+
+	// Calculate final duration multiplier:
+	// potencyMult (from aging phase) * craftSkill scaling
+	durationMult := potencyMult
+	if matchItem.CraftSkill > 0 {
+		durationMult *= 1.0 + float64(matchItem.CraftSkill)/100.0
+	}
+
+	// Apply buffs with scaled duration
+	for _, buffId := range itemSpec.BuffIds {
+		if durationMult != 1.0 {
+			user.Character.AddBuffScaled(buffId, durationMult)
+		} else {
 			user.AddBuff(buffId, `drink`)
 		}
 	}

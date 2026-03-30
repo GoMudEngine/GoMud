@@ -43,8 +43,9 @@ type Item struct {
 	Blob          string         `yaml:"blob,omitempty"`          // Does this item have a blob? Should be base64 encoded.
 	Uses          int            `yaml:"uses,omitempty"`          // How many uses it has left
 	LastUsedRound uint64         `yaml:"lastusedround,omitempty"` // Last round this item was used
-	CraftedRound  uint64         `yaml:"crafted_round,omitempty"`  // Round when this item was crafted
-	CraftSkill    int            `yaml:"craft_skill,omitempty"`     // Crafter's skill level at craft time
+	CraftedRound   uint64         `yaml:"crafted_round,omitempty"`   // Round when this item was crafted
+	CraftSkill     int            `yaml:"craft_skill,omitempty"`     // Crafter's skill level at craft time
+	BottleMultiplier float64      `yaml:"bottle_multiplier,omitempty"` // Aging speed from the bottle used during crafting
 	Spec          *ItemSpec      `yaml:"overrides,omitempty"`
 	Uncursed      bool           `yaml:"uncursed,omitempty"`     // Is this item uncursed?
 	Enchantments  uint8          `yaml:"enchantments,omitempty"` // Is this item enchanted?

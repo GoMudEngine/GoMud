@@ -320,8 +320,11 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		lookSpec := lookItem.GetSpec()
 		if lookSpec.Aging.HasAging() && lookItem.CraftedRound > 0 {
 			elapsed := util.GetRoundCount() - lookItem.CraftedRound
-			effSpeed := items.CalcEffectiveAgingSpeed(
-				lookSpec.BottleAgingMultiplier, lookItem.CraftSkill)
+			bottleMult := lookItem.BottleMultiplier
+			if bottleMult <= 0 {
+				bottleMult = lookSpec.BottleAgingMultiplier
+			}
+			effSpeed := items.CalcEffectiveAgingSpeed(bottleMult, lookItem.CraftSkill)
 			phase, _ := items.GetAgingPhase(elapsed, lookSpec.Aging, effSpeed)
 			alchSkill := user.Character.GetSkillLevel(skills.Alchemy)
 			desc := items.GetPhaseDescription(

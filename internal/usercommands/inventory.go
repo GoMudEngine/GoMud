@@ -152,8 +152,11 @@ func Inventory(rest string, user *users.UserRecord, room *rooms.Room, flags even
 		isSpoiled := false
 		if alchSkill >= 6 && iSpec.Aging.HasAging() && item.CraftedRound > 0 {
 			elapsed := util.GetRoundCount() - item.CraftedRound
-			effSpeed := items.CalcEffectiveAgingSpeed(
-				iSpec.BottleAgingMultiplier, item.CraftSkill)
+			bMult := item.BottleMultiplier
+			if bMult <= 0 {
+				bMult = iSpec.BottleAgingMultiplier
+			}
+			effSpeed := items.CalcEffectiveAgingSpeed(bMult, item.CraftSkill)
 			phase, _ := items.GetAgingPhase(elapsed, iSpec.Aging, effSpeed)
 			isSpoiled = phase == items.PhaseSpoiled
 		}
@@ -254,8 +257,11 @@ func Inventory(rest string, user *users.UserRecord, room *rooms.Room, flags even
 		isSpoiled := false
 		if alchSkill >= 6 && iSpec.Aging.HasAging() && item.CraftedRound > 0 {
 			elapsed := util.GetRoundCount() - item.CraftedRound
-			effSpeed := items.CalcEffectiveAgingSpeed(
-				iSpec.BottleAgingMultiplier, item.CraftSkill)
+			bMult := item.BottleMultiplier
+			if bMult <= 0 {
+				bMult = iSpec.BottleAgingMultiplier
+			}
+			effSpeed := items.CalcEffectiveAgingSpeed(bMult, item.CraftSkill)
 			phase, _ := items.GetAgingPhase(elapsed, iSpec.Aging, effSpeed)
 			isSpoiled = phase == items.PhaseSpoiled
 		}
