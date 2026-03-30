@@ -39,8 +39,10 @@ type Balance struct {
 	BashKnockdownChance ConfigInt   `yaml:"BashKnockdownChance"` // Base % knockdown chance (default 40)
 	TripDamagePercent   ConfigFloat `yaml:"TripDamagePercent"`   // Fraction of normal melee damage (default 0.25)
 	TripKnockdownChance ConfigInt   `yaml:"TripKnockdownChance"` // Base % knockdown chance (default 60)
-	KickDamagePercent   ConfigFloat `yaml:"KickDamagePercent"`   // Fraction of normal melee damage (default 0.40)
+	KickDamagePercent   ConfigFloat `yaml:"KickDamagePercent"`   // Fraction of normal melee damage (default 0.80)
 	KickKnockdownChance ConfigInt   `yaml:"KickKnockdownChance"` // Base % knockdown chance (default 35)
+	StompDamagePercent  ConfigFloat `yaml:"StompDamagePercent"`  // Stomp damage when target is prone (default 1.20)
+	KneeDamagePercent   ConfigFloat `yaml:"KneeDamagePercent"`   // Knee damage in grapple (default 1.00)
 	CoupDeGraceRounds   ConfigInt   `yaml:"CoupDeGraceRounds"`   // Rounds before mob finishes downed player (default 1; 0=disabled)
 
 	// ── SKULLDUGGERY ─────────────────────────────────────────────────────────
@@ -292,11 +294,17 @@ func (b *Balance) Validate() {
 	if b.TripKnockdownChance < 0 || b.TripKnockdownChance > 100 {
 		b.TripKnockdownChance = 60
 	}
-	if b.KickDamagePercent <= 0 || b.KickDamagePercent > 1.0 {
-		b.KickDamagePercent = 0.40
+	if b.KickDamagePercent <= 0 || b.KickDamagePercent > 2.0 {
+		b.KickDamagePercent = 0.80
 	}
 	if b.KickKnockdownChance < 0 || b.KickKnockdownChance > 100 {
 		b.KickKnockdownChance = 35
+	}
+	if b.StompDamagePercent <= 0 || b.StompDamagePercent > 3.0 {
+		b.StompDamagePercent = 1.20
+	}
+	if b.KneeDamagePercent <= 0 || b.KneeDamagePercent > 2.0 {
+		b.KneeDamagePercent = 1.00
 	}
 	if b.CoupDeGraceRounds < 0 {
 		b.CoupDeGraceRounds = 1

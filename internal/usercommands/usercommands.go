@@ -93,6 +93,8 @@ var (
 		`help`:        {Help, true, true, false},
 		`keyring`:     {KeyRing, true, true, false},
 		`kick`:        {Kick, false, true, false},
+		`stomp`:       {Kick, false, true, false},
+		`knee`:        {Kick, false, true, false},
 		`killstats`:   {Killstats, true, true, false},
 		`history`:     {History, true, true, false},
 		`inbox`:       {Inbox, true, true, false},
