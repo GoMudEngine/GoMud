@@ -212,10 +212,18 @@ ItemSpec fields: `is_component` (bool), `weight_reduction` (float64 0-1),
 `bag_capacity` (int). New ItemTypes: `wrist`, `back`, `shoulders`,
 `componentbag`.
 
+Tail mutation: adds Tail slot, disables Legs slot. `tail` ItemType. Trip
+reskins to tailsweep with enhanced damage/knockdown when mutation active.
+
+## Spell Duration System
+All spell durations use `calcSpellDuration(baseFolds, skill, willpower)`:
+`duration = baseFolds × (10 + wil/20 + skill/2)`. Effect-specific scaling:
+shield = full, heal = ÷2, DoT = ÷3.
+
 ## Buff/Ward Spell System
 - Shield spells scale by `effect_magnitude` (100 = 1.0x baseline).
   Conviction Ward = 75, Chrysalis Cocoon = 125.
-- Shield duration: `50 + spellcasting_skill` rounds. Crits +50% strength.
+- Shield duration: via `calcSpellDuration`. Crits +50% strength.
 - Buff statmods `magical_mitigation` and `conviction_mitigation` flow
   through `GetMagicalMitigation()` / `GetConvictionMitigation()`.
 - Kick command auto-selects variant: kick (standing), stomp (prone),

@@ -1,5 +1,56 @@
 # DOGMud Patch Notes
 
+## 2026-03-30 — Mutations, Balance, Documentation & QoL
+
+### New Mutations
+- **Chameleon Skin** (rarity 7) — +30 stealth bonus, +10 dodge.
+  Costs charisma and natural armor. Conflicts with thick-hide.
+- **Tail** (rarity 8) — Adds Tail equipment slot, disables Legs
+  slot. Reskins trip to tailsweep (better damage and knockdown).
+  Three tail attachments: weighted cap, spiked band, bladed sheath.
+
+### Stealth Improvements
+- Characters emitting light have their sneak score halved.
+- Moving while sneaking costs 50% more stamina.
+- Hidden mobs now get surprise attack on their first strike.
+
+### Spell Duration Scaling
+- All spell durations now scale with fold count, spellcasting
+  skill, and willpower via universal formula.
+- Higher-fold spells naturally last longer. Investing in willpower
+  and spellcasting extends everything.
+
+### PowerScore Rework
+- Skills are now a major factor (sqrt of total ranks × 25).
+- All three resource pools count (HP + SP×0.5 + CP×0.5).
+- Mutations contribute 20 points per level.
+- KD ratio replaces raw kill count (kills/deaths × 10, cap 50).
+- Magic/conviction offense normalized against physical.
+- Defense weighted 3× more heavily.
+
+### Defense Balance
+- Dodge effectiveness 0.97→0.95, Parry 1.0→0.97, Block 1.02→1.05.
+- New clinch defense penalties: dodge 0.80, parry 0.83, block 0.85.
+- New grounded defense penalties: dodge 0.75, parry 0.77, block 0.80.
+- Prone dodge/parry penalties 0.95→0.93.
+
+### New Commands
+- **afk** — Manual AFK toggle with optional message. Shows (AFK)
+  next to your name in the room. Auto-clears on any input.
+- **setdesc** — Set your own character description.
+
+### Crafting
+- Craft list now shows recipe completion tier per skill and overall.
+- Subcomponent recipe thresholds lowered (steel ingot, chain links,
+  chrysalis setting).
+
+### Documentation
+- Help files for all 39 spells, 47 recipes, and 4 combat skills.
+- Completeness tests ensure new content always has help files.
+- 15 new gameplay tips added to the hint rotation.
+
+---
+
 ## 2026-03-29 — Combat, Stealth & Spell Balance
 
 ### Kick Rework
