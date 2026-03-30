@@ -420,8 +420,9 @@ func runBestOfAllDefense(result *AttackResult, sourceChar *characters.Character,
 			defenseScore *= float64(bal.BlockEffectiveness)
 		}
 
-		// Stage 7.5: Apply prone defense penalties
-		if targetChar.CombatPosition == characters.PositionProne {
+		// Stage 7.5: Apply position-based defense penalties
+		switch targetChar.CombatPosition {
+		case characters.PositionProne:
 			switch defenseType {
 			case "dodge":
 				defenseScore *= float64(bal.ProneDodgePenalty)
@@ -429,6 +430,24 @@ func runBestOfAllDefense(result *AttackResult, sourceChar *characters.Character,
 				defenseScore *= float64(bal.ProneParryPenalty)
 			case "block":
 				defenseScore *= float64(bal.ProneBlockPenalty)
+			}
+		case characters.PositionClinched:
+			switch defenseType {
+			case "dodge":
+				defenseScore *= float64(bal.ClinchDodgePenalty)
+			case "parry":
+				defenseScore *= float64(bal.ClinchParryPenalty)
+			case "block":
+				defenseScore *= float64(bal.ClinchBlockPenalty)
+			}
+		case characters.PositionGrounded:
+			switch defenseType {
+			case "dodge":
+				defenseScore *= float64(bal.GroundedDodgePenalty)
+			case "parry":
+				defenseScore *= float64(bal.GroundedParryPenalty)
+			case "block":
+				defenseScore *= float64(bal.GroundedBlockPenalty)
 			}
 		}
 

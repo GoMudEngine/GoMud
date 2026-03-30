@@ -32,6 +32,12 @@ type Balance struct {
 	StandStaminaCost             ConfigFloat `yaml:"StandStaminaCost"`             // Fraction of max stamina to stand up (default 0.15)
 	StandMinStamina              ConfigFloat `yaml:"StandMinStamina"`              // Minimum fraction of max SP to stand (default 0.15)
 	ThirdPartyGrapplePenalty     ConfigFloat `yaml:"ThirdPartyGrapplePenalty"`     // Defense multiplier when grappled vs third party (default 0.70)
+	ClinchDodgePenalty          ConfigFloat `yaml:"ClinchDodgePenalty"`          // Dodge score multiplier while clinched (default 0.80)
+	ClinchParryPenalty          ConfigFloat `yaml:"ClinchParryPenalty"`          // Parry score multiplier while clinched (default 0.83)
+	ClinchBlockPenalty          ConfigFloat `yaml:"ClinchBlockPenalty"`          // Block score multiplier while clinched (default 0.85)
+	GroundedDodgePenalty        ConfigFloat `yaml:"GroundedDodgePenalty"`        // Dodge score multiplier while grounded (default 0.75)
+	GroundedParryPenalty        ConfigFloat `yaml:"GroundedParryPenalty"`        // Parry score multiplier while grounded (default 0.77)
+	GroundedBlockPenalty        ConfigFloat `yaml:"GroundedBlockPenalty"`        // Block score multiplier while grounded (default 0.80)
 
 	// ── COMBAT: SPECIAL MOVES ────────────────────────────────────────────────
 	SpecialMoveCooldown ConfigInt   `yaml:"SpecialMoveCooldown"` // Shared cooldown rounds for bash/trip/kick (default 5)
@@ -276,6 +282,24 @@ func (b *Balance) Validate() {
 	}
 	if b.ThirdPartyGrapplePenalty <= 0 || b.ThirdPartyGrapplePenalty > 1.0 {
 		b.ThirdPartyGrapplePenalty = 0.70
+	}
+	if b.ClinchDodgePenalty <= 0 || b.ClinchDodgePenalty > 1.0 {
+		b.ClinchDodgePenalty = 0.80
+	}
+	if b.ClinchParryPenalty <= 0 || b.ClinchParryPenalty > 1.0 {
+		b.ClinchParryPenalty = 0.83
+	}
+	if b.ClinchBlockPenalty <= 0 || b.ClinchBlockPenalty > 1.0 {
+		b.ClinchBlockPenalty = 0.85
+	}
+	if b.GroundedDodgePenalty <= 0 || b.GroundedDodgePenalty > 1.0 {
+		b.GroundedDodgePenalty = 0.75
+	}
+	if b.GroundedParryPenalty <= 0 || b.GroundedParryPenalty > 1.0 {
+		b.GroundedParryPenalty = 0.77
+	}
+	if b.GroundedBlockPenalty <= 0 || b.GroundedBlockPenalty > 1.0 {
+		b.GroundedBlockPenalty = 0.80
 	}
 
 	// ── COMBAT: SPECIAL MOVES ────────────────────────────────────────────────

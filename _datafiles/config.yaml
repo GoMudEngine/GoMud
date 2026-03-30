@@ -359,9 +359,9 @@ Balance:
   #   Block = (Str+Dex)/2 + WeaponSkill + shield BlockRating
   # Example: defender Dex 100, skill 10, DodgeEffectiveness 0.97:
   #   dodge score = (100 + 10) × 0.97 = 106.7 (vs attacker's ~110)
-  DodgeEffectiveness: 0.97      # Tuned 39.2: slight nerf to dodge (most common defense)
-  ParryEffectiveness: 1.0
-  BlockEffectiveness: 1.02      # Tuned 39.2: slight buff; requires shield investment
+  DodgeEffectiveness: 0.95      # Nerfed: dodge is most common defense, needs counterplay
+  ParryEffectiveness: 0.97      # Slight nerf: parry is middle ground
+  BlockEffectiveness: 1.05      # Buffed: requires shield investment, should reward it
   #
   # MinDefenseChance: even when the attacker's score vastly outclasses the
   #   defender's, this floor ensures fights never feel like guaranteed hits.
@@ -385,8 +385,8 @@ Balance:
   # ProneDodge/Parry/BlockPenalty: fraction of defense score kept while prone.
   #   1.0 = full defense (no penalty). 0.50 = half defense. 0 = no defense.
   #   Example: dodge score 100, penalty 0.95 → score 95.
-  ProneDodgePenalty: 0.95        # Tuned 39.2: mild; prone already punishes via attack + damage mults
-  ProneParryPenalty: 0.95
+  ProneDodgePenalty: 0.93        # Mild; prone already punishes via attack + damage mults
+  ProneParryPenalty: 0.93
   ProneBlockPenalty: 0.95
   #
   # ProneDamagePenalty: damage dealt while attacking from prone.
@@ -409,6 +409,18 @@ Balance:
   #   party while grappling. Only block is available; dodge/parry stripped.
   #   Example: block score 80 × 0.70 = 56 vs third-party attacker.
   ThirdPartyGrapplePenalty: 0.70
+  #
+  # ClinchDodge/Parry/BlockPenalty: defense score kept while clinched.
+  #   Clinch is a standing grapple — limited movement but not on the ground.
+  ClinchDodgePenalty: 0.80
+  ClinchParryPenalty: 0.83
+  ClinchBlockPenalty: 0.85
+  #
+  # GroundedDodge/Parry/BlockPenalty: defense score kept while grounded.
+  #   Grounded is worse than clinch — on the floor with opponent on top.
+  GroundedDodgePenalty: 0.75
+  GroundedParryPenalty: 0.77
+  GroundedBlockPenalty: 0.80
 
   # ── COMBAT: SPECIAL MOVES ─────────────────────────────────────────────────
   # Bash, trip, and kick all share a cooldown so players can't chain knockdowns.
