@@ -16,6 +16,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
+	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/GoMudEngine/GoMud/internal/worldevents"
@@ -312,6 +313,8 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 									} else {
 										// Normal crafting: produce output item
 										newItem := items.New(recipe.Output.ItemId)
+										newItem.CraftedRound = util.GetRoundCount()
+										newItem.CraftSkill = user.Character.GetSkillLevel(skills.SkillTag(recipe.Skill))
 										user.Character.StoreItem(newItem)
 										events.AddToQueue(events.ItemOwnership{UserId: user.UserId, Item: newItem, Gained: true})
 									}
