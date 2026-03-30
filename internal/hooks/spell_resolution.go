@@ -20,6 +20,21 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
+// calcSpellDuration computes a universal spell duration in rounds based on
+// the spell's fold count, the caster's spellcasting skill, and willpower.
+// Higher folds, skill, and willpower all extend duration.
+// Formula: baseFolds × (10 + willpower/20 + spellcastingSkill/2)
+func calcSpellDuration(baseFolds int, spellcastingSkill int, willpower int) int {
+	if baseFolds < 1 {
+		baseFolds = 4
+	}
+	duration := float64(baseFolds) * (10.0 + float64(willpower)/20.0 + float64(spellcastingSkill)/2.0)
+	if duration < 10 {
+		duration = 10
+	}
+	return int(math.Round(duration))
+}
+
 // resolveSpell is called when fold accumulation completes.
 // It dispatches to per-target resolution based on spell type and effect.
 func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData *spells.SpellData, room *rooms.Room) {
@@ -179,12 +194,17 @@ func applyMobEffect(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spe
 		}
 
 	case "dot":
-		dotDuration := spellData.EffectDuration
-		if dotDuration < 1 {
+		casterSkill := 0
+		casterWil := 100
+		if user != nil {
+			casterSkill = user.Character.GetSkillLevel(skills.Spellcasting)
+			casterWil = user.Character.Stats.Willpower.ValueAdj
+		}
+		dotDuration := calcSpellDuration(spellData.BaseFolds, casterSkill, casterWil) / 3
+		if dotDuration < 3 {
 			dotDuration = 3
 		}
-		// Duration is in AutoHeal ticks (every 3 rounds), so multiply by 3 for round count
-		mob.Character.AddCondition(characters.ConditionPoisoned, dotDuration*3, float64(magnitude), "spell")
+		mob.Character.AddCondition(characters.ConditionPoisoned, dotDuration, float64(magnitude), "spell")
 		// Set aggro on both sides immediately
 		if mob.Character.Aggro == nil {
 			mob.PreventIdle = true
@@ -385,11 +405,10 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 			// Crit: boost the multiplier portion above 1x by 2x
 			regenMult = 1.0 + (regenMult-1.0)*2.0
 		}
-		ticks := skillLevel / 10
-		if ticks < 1 {
-			ticks = 1
+		durationRounds := calcSpellDuration(spellData.BaseFolds, skillLevel, user.Character.Stats.Willpower.ValueAdj) / 2
+		if durationRounds < 6 {
+			durationRounds = 6
 		}
-		durationRounds := ticks * 6 // TickConditions runs every combat round; AutoHeal fires every 3
 		target.Character.AddCondition(characters.ConditionRegen, durationRounds, regenMult, "heal spell")
 		user.SendText(fmt.Sprintf(
 			`<ansi fg="green">You weave restorative magic around <ansi fg="username">%s</ansi>.%s</ansi>`,
@@ -432,7 +451,7 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 				shieldBonus = 1
 			}
 		}
-		duration := 50 + int(math.Round(float64(skillLevel)))
+		duration := calcSpellDuration(spellData.BaseFolds, skillLevel, user.Character.Stats.Willpower.ValueAdj)
 		if isCrit {
 			shieldBonus = int(float64(shieldBonus) * 1.5)
 		}
@@ -548,11 +567,10 @@ func applyMobSelfEffect(mob *mobs.Mob, room *rooms.Room, spellData *spells.Spell
 		if regenMult < 1.0 {
 			regenMult = 1.0
 		}
-		ticks := skillLevel / 10
-		if ticks < 1 {
-			ticks = 1
+		durationRounds := calcSpellDuration(spellData.BaseFolds, skillLevel, mob.Character.Stats.Willpower.ValueAdj) / 2
+		if durationRounds < 6 {
+			durationRounds = 6
 		}
-		durationRounds := ticks * 6
 		mob.Character.AddCondition(characters.ConditionRegen, durationRounds, regenMult, "heal spell")
 		room.SendText(fmt.Sprintf(
 			`%s channels restorative magic.`, mobDisplayName(mob, room, 0)))
@@ -570,7 +588,7 @@ func applyMobSelfEffect(mob *mobs.Mob, room *rooms.Room, spellData *spells.Spell
 				shieldBonus = 1
 			}
 		}
-		duration := 50 + int(math.Round(float64(skillLevel)))
+		duration := calcSpellDuration(spellData.BaseFolds, skillLevel, mob.Character.Stats.Willpower.ValueAdj)
 		mob.Character.AddCondition(characters.ConditionShield, duration, float64(shieldBonus), "spell")
 		room.SendText(fmt.Sprintf(
 			`A shimmering barrier forms around %s.`, mobDisplayName(mob, room, 0)))
@@ -645,11 +663,11 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 			target.Character.OnCritReceived("magical", target.UserId)
 		}
 	case "dot":
-		dotDuration := spellData.EffectDuration
-		if dotDuration < 1 {
+		dotDuration := calcSpellDuration(spellData.BaseFolds, caster.Character.GetSkillLevel(skills.Spellcasting), caster.Character.Stats.Willpower.ValueAdj) / 3
+		if dotDuration < 3 {
 			dotDuration = 3
 		}
-		target.Character.AddCondition(characters.ConditionPoisoned, dotDuration*3, float64(magnitude), "spell")
+		target.Character.AddCondition(characters.ConditionPoisoned, dotDuration, float64(magnitude), "spell")
 		target.SendText(fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> afflicts you!%s`,
 			caster.Character.Name, spellData.Name, critTag))
