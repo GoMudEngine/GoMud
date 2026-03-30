@@ -136,3 +136,50 @@ hints:
     You can <ansi fg="command">steal</ansi> from NPCs or
     <ansi fg="command">plant</ansi> items on them. Being hidden
     improves your chances.</ansi>
+  - >-
+    Knock someone down? Follow up with a
+    <ansi fg="command">kick</ansi> for a devastating stomp that
+    bypasses half their armor.
+  - >-
+    In a grapple and in control? Use <ansi fg="command">kick</ansi>
+    for a powerful knee strike.
+  - >-
+    You can open a fight with <ansi fg="command">kick</ansi>,
+    <ansi fg="command">bash</ansi>, <ansi fg="command">trip</ansi>,
+    <ansi fg="command">grapple</ansi>, or
+    <ansi fg="command">taunt</ansi> — no need to
+    <ansi fg="command">attack</ansi> first.
+  - >-
+    Use <ansi fg="command">reply</ansi> to whisper back to the last
+    person who whispered to you.
+  - >-
+    Use <ansi fg="command">rep</ansi> to broadcast your vital bars.
+    <ansi fg="command">rep party</ansi> sends them to party chat only.
+  - >-
+    Use <ansi fg="command">setdesc</ansi> to write your own character
+    description that others see when they look at you.
+  - >-
+    Crafting materials auto-sort into your component bag on pickup.
+    Buy a starter pouch from Weaver Maren in Thornwall.
+  - >-
+    Use <ansi fg="command">sort</ansi> to move loose crafting materials
+    from your backpack into your component bag.
+  - >-
+    Backpacks reduce the weight of what you carry. Craft one with
+    <ansi fg="skill">tailoring</ansi> or buy a cloak for stats instead.
+  - >-
+    Got duplicates? Use <ansi fg="command">3.dagger</ansi> or
+    <ansi fg="command">dagger#3</ansi> to target the third one.
+    <ansi fg="command">drop all.potion</ansi> drops all potions.
+  - >-
+    Stay alert in dark tunnels. Some creatures lurk hidden, waiting
+    to ambush unwary travelers. High Perception helps you spot them.
+  - >-
+    Surviving a critical hit makes you tougher. Physical crits train
+    Vitality, magical crits train Willpower, taunts train Charisma.
+  - >-
+    <ansi fg="command">Veil Sight</ansi> lets you see hidden creatures
+    and players. Useful when exploring dangerous areas.
+  - >-
+    Use <ansi fg="command">buy 5 iron ingot</ansi> to purchase multiple
+    items at once from a merchant.
