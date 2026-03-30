@@ -178,12 +178,29 @@ func craftList(user *users.UserRecord, room *rooms.Room) bool {
 	user.SendText(``)
 	user.SendText(`<ansi fg="cyan-bold"> .:. Crafting Recipes .:.</ansi>`)
 
+	totalKnown := 0
+	grandTotal := 0
+
 	for _, skillName := range skillNames {
 		skillLevel := user.Character.GetSkillLevel(skills.SkillTag(skillName))
+
+		// Count known vs total for this skill
+		allForSkill := crafting.GetAllForSkill(skillName)
+		knownCount := 0
+		for _, r := range allForSkill {
+			if user.Character.HasRecipe(r.RecipeId) {
+				knownCount++
+			}
+		}
+		totalKnown += knownCount
+		grandTotal += len(allForSkill)
+
+		completionDesc := recipeCompletionTier(knownCount, len(allForSkill))
+
 		user.SendText(``)
 		user.SendText(fmt.Sprintf(
-			`<ansi fg="yellow">%s</ansi> <ansi fg="white">(%s)</ansi>`,
-			titleCase(strings.ReplaceAll(skillName, "-", " ")), skills.GetSkillRankDescription(skillLevel)))
+			`<ansi fg="yellow">%s</ansi> <ansi fg="white">(%s)</ansi> — <ansi fg="black-bold">%s</ansi>`,
+			titleCase(strings.ReplaceAll(skillName, "-", " ")), skills.GetSkillRankDescription(skillLevel), completionDesc))
 
 		recipes := crafting.GetAllForSkill(skillName)
 		for _, r := range recipes {
@@ -208,8 +225,33 @@ func craftList(user *users.UserRecord, room *rooms.Room) bool {
 		}
 	}
 
+	// Overall completion
+	overallDesc := recipeCompletionTier(totalKnown, grandTotal)
+	user.SendText(``)
+	user.SendText(fmt.Sprintf(`<ansi fg="cyan">Overall recipe knowledge: %s</ansi>`, overallDesc))
 	user.SendText(``)
 	return true
+}
+
+// recipeCompletionTier returns a descriptive tier for how many recipes
+// are known out of a total. No hard numbers shown to the player.
+func recipeCompletionTier(known, total int) string {
+	if total <= 0 {
+		return "unknown"
+	}
+	pct := float64(known) / float64(total) * 100
+	switch {
+	case pct < 15:
+		return "a handful of recipes"
+	case pct < 35:
+		return "a modest collection"
+	case pct < 60:
+		return "a solid repertoire"
+	case pct < 85:
+		return "an extensive catalog"
+	default:
+		return "near-complete mastery"
+	}
 }
 
 // recipeStatus returns the indicator character and a blocking reason string.
