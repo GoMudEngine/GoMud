@@ -1186,3 +1186,35 @@ func containsAt(s, sub string, index int) bool {
 	}
 	return true
 }
+
+func TestConvertToAscii(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    string
+		expected string
+	}{
+		{"pure ascii passthrough", "Hello world!", "Hello world!"},
+		{"box corners", "┌─┐└─┘", "+-++-+"},
+		{"box sides", "│text│", "|text|"},
+		{"double box", "╔═╗║x║╚═╝", "+=+|x|+=+"},
+		{"mixed box", "╒═╕╘═╛", "+=++=+"},
+		{"intersections", "├┤┬┴┼", "+++++"},
+		{"double intersections", "╠╣╦╩╬", "+++++"},
+		{"block elements", "█░▒▓", "#.:#"},
+		{"half blocks", "▄▀▌▐", "-_||"},
+		{"bullet", "• item", "* item"},
+		{"ansi preserved", "\x1b[32mgreen\x1b[0m", "\x1b[32mgreen\x1b[0m"},
+		{"mixed ansi and unicode", "\x1b[33m┌─┐\x1b[0m", "\x1b[33m+-+\x1b[0m"},
+		{"status template chars", " ┌─ Attributes ─┐\n └──────────────┘", " +- Attributes -+\n +--------------+"},
+		{"motd chars", "╔══╗\n║hi║\n╚══╝", "+==+\n|hi|\n+==+"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := ConvertToAscii(tt.input)
+			if result != tt.expected {
+				t.Errorf("ConvertToAscii(%q)\n  got:  %q\n  want: %q", tt.input, result, tt.expected)
+			}
+		})
+	}
+}

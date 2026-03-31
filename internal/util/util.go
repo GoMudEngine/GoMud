@@ -988,3 +988,57 @@ func StripCharsForScreenReaders(s string) string {
 
 	return b.String()
 }
+
+// ConvertToAscii replaces UTF-8 box-drawing, block element, and other
+// decorative Unicode characters with ASCII visual equivalents.
+// ANSI escape sequences pass through unchanged.
+// Fast-paths when input contains no bytes >= 0x80.
+func ConvertToAscii(s string) string {
+	// Fast path: if no high bytes, nothing to convert
+	hasHighByte := false
+	for i := 0; i < len(s); i++ {
+		if s[i] >= 0x80 {
+			hasHighByte = true
+			break
+		}
+	}
+	if !hasHighByte {
+		return s
+	}
+
+	var b strings.Builder
+	b.Grow(len(s))
+
+	for _, r := range s {
+		if ascii, ok := unicodeToAscii[r]; ok {
+			b.WriteByte(ascii)
+		} else {
+			b.WriteRune(r)
+		}
+	}
+	return b.String()
+}
+
+// unicodeToAscii maps decorative Unicode runes to ASCII byte equivalents.
+var unicodeToAscii = map[rune]byte{
+	// Box-drawing: light
+	'─': '-', '│': '|',
+	'┌': '+', '┐': '+', '└': '+', '┘': '+',
+	'├': '+', '┤': '+', '┬': '+', '┴': '+', '┼': '+',
+	// Box-drawing: double
+	'═': '=', '║': '|',
+	'╔': '+', '╗': '+', '╚': '+', '╝': '+',
+	'╠': '+', '╣': '+', '╦': '+', '╩': '+', '╬': '+',
+	// Box-drawing: mixed single/double
+	'╒': '+', '╕': '+', '╘': '+', '╛': '+',
+	'╞': '+', '╡': '+', '╤': '+', '╧': '+', '╪': '+',
+	'╓': '+', '╖': '+', '╙': '+', '╜': '+',
+	'╟': '+', '╢': '+', '╥': '+', '╨': '+', '╫': '+',
+	// Block elements
+	'█': '#', '▓': '#', '▒': ':', '░': '.',
+	'▄': '-', '▀': '_', '▌': '|', '▐': '|',
+	// Bullet / misc
+	'•': '*',
+	// Diagonal lines
+	'╲': '\\', '╱': '/',
+}
