@@ -179,6 +179,13 @@ func LoginUser(user *UserRecord, connectionId connections.ConnectionId) (*UserRe
 
 				user.connectionId = connectionId
 
+				// Apply persisted charset preference to connection
+				if user.AsciiMode {
+					cs := connections.GetClientSettings(connectionId)
+					cs.AsciiMode = true
+					connections.OverwriteClientSettings(connectionId, cs)
+				}
+
 				userManager.Users[user.UserId] = user
 				userManager.Usernames[user.Username] = user.UserId
 				userManager.Connections[user.connectionId] = user.UserId
@@ -210,6 +217,13 @@ func LoginUser(user *UserRecord, connectionId connections.ConnectionId) (*UserRe
 	user.SetLastInputRound(util.GetRoundCount())
 
 	user.connectionId = connectionId
+
+	// Apply persisted charset preference to connection
+	if user.AsciiMode {
+		cs := connections.GetClientSettings(connectionId)
+		cs.AsciiMode = true
+		connections.OverwriteClientSettings(connectionId, cs)
+	}
 
 	userManager.Users[user.UserId] = user
 	userManager.Usernames[user.Username] = user.UserId
