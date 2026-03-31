@@ -528,7 +528,7 @@ func (a ScriptActor) RemoveBuff(buffId int) bool {
 }
 
 func (a ScriptActor) HasItemId(itemId int, excludeWorn ...bool) bool {
-	for _, itm := range a.characterRecord.GetAllBackpackItems() {
+	for _, itm := range a.characterRecord.GetAllCarriedItems() {
 		if itm.ItemId == itemId {
 			return true
 		}
@@ -545,7 +545,7 @@ func (a ScriptActor) HasItemId(itemId int, excludeWorn ...bool) bool {
 
 func (a ScriptActor) GetBackpackItems() []ScriptItem {
 	itms := make([]ScriptItem, 0, 5)
-	for _, item := range a.characterRecord.GetAllBackpackItems() {
+	for _, item := range a.characterRecord.GetAllCarriedItems() {
 		itms = append(itms, newScriptItem(item))
 	}
 	return itms

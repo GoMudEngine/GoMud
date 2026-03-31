@@ -3159,6 +3159,12 @@ func (c *Character) Species() string {
 }
 
 func (c *Character) GetAllBackpackItems() []items.Item {
+	return append([]items.Item{}, c.Items...)
+}
+
+// GetAllCarriedItems returns items from all pools (backpack, component bag, bandolier).
+// Used by scripting APIs that need to find items regardless of which pool they're in.
+func (c *Character) GetAllCarriedItems() []items.Item {
 	all := append([]items.Item{}, c.Items...)
 	all = append(all, c.ComponentItems...)
 	all = append(all, c.PotionItems...)
