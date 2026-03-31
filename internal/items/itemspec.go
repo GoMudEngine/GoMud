@@ -272,6 +272,13 @@ type ItemSpec struct {
 	Toxicity              int               `yaml:"toxicity,omitempty"`                // Toxicity cost when consumed
 	IsBandolier           bool              `yaml:"is_bandolier,omitempty"`            // Belt item that holds potions
 	BandolierCapacity     int               `yaml:"bandolier_capacity,omitempty"`      // Max potions storable in bandolier
+	SalvageReturns        []SalvageReturn   `yaml:"salvage_returns,omitempty"`         // Custom salvage returns for non-crafted items
+}
+
+// SalvageReturn defines a material recovered when salvaging a tagged item.
+type SalvageReturn struct {
+	ItemTag  string `yaml:"item_tag"`
+	Quantity int    `yaml:"quantity"`
 }
 
 func (i Element) String() string {
