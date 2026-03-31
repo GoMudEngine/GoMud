@@ -255,11 +255,12 @@ func (c *Character) OnCriticalFailure(context string, userId int) {
 	mudlog.Debug("Progression", "event", "critical_failure", "context", context, "character", c.Name)
 
 	if configs.GetGamePlayConfig().UseSkillProgression {
-		if userId > 0 {
-			msg := fmt.Sprintf(`<ansi fg="red">!!!</ansi> You learn from your mistake! Your <ansi fg="yellow">%s</ansi> understanding deepens. <ansi fg="red">!!!</ansi>`, context)
-			events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+		if c.CheckSkillProgression(context, userId, 1.0) {
+			if userId > 0 {
+				msg := fmt.Sprintf(`<ansi fg="red">!!!</ansi> You learn from your mistake! Your <ansi fg="yellow">%s</ansi> understanding deepens. <ansi fg="red">!!!</ansi>`, context)
+				events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+			}
 		}
-		c.CheckSkillProgression(context, userId, 1.0)
 	}
 }
 
@@ -269,9 +270,10 @@ func (c *Character) OnFirstMobKill(userId int) {
 	mudlog.Debug("Progression", "event", "first_mob_kill", "character", c.Name)
 
 	if configs.GetGamePlayConfig().UseSkillProgression {
-		msg := `<ansi fg="magenta">***</ansi> Defeating a new foe hones your combat instincts! <ansi fg="magenta">***</ansi>`
-		events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
-		c.CheckSkillProgression("combat", userId, 2.0)
+		if c.CheckSkillProgression("combat", userId, 2.0) {
+			msg := `<ansi fg="magenta">***</ansi> Defeating a new foe hones your combat instincts! <ansi fg="magenta">***</ansi>`
+			events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+		}
 	}
 }
 
