@@ -1,0 +1,19 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">questdebug</ansi> <ansi fg="red">(Admin)</ansi>
+
+Toggle verbose quest engine logging for a specific player.
+When enabled, every quest trigger evaluation, condition check,
+and action execution for that player is logged at verbose level,
+regardless of the global QuestLogLevel config setting.
+
+<ansi fg="yellow">Usage:</ansi>
+
+  <ansi fg="command">questdebug <player></ansi>       Enable verbose quest logging
+  <ansi fg="command">questdebug <player> off</ansi>   Disable quest logging
+
+<ansi fg="yellow">When to use:</ansi>
+
+  A player reports a quest is stuck. Enable debug for them,
+  have them retry the quest action, then grep the server log
+  for [QUEST] to see exactly which triggers evaluated, which
+  conditions passed or failed, and what actions fired.
+
