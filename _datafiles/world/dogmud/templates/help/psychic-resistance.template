@@ -1,0 +1,17 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="yellow">Psychic Resistance</ansi> mutation
+
+A crystalline lattice forms in your mind, deflecting magical
+intrusion. The barrier makes you harder to reach — in every sense.
+
+<ansi fg="yellow">Type:</ansi>     Passive
+<ansi fg="yellow">Rarity:</ansi>   Rare
+
+<ansi fg="yellow">Benefits:</ansi>
+  Moderately reduced incoming magical damage — mental and magical
+  intrusions find little purchase
+
+<ansi fg="yellow">Drawbacks:</ansi>
+  Moderately reduced charisma — the psychic barrier walls you off
+  from others, making genuine connection difficult
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help mutations</ansi>

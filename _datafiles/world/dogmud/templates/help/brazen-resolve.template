@@ -1,0 +1,18 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="yellow">Brazen Resolve</ansi> mutation
+
+An unshakable, almost foolish confidence saturates your being.
+Insults and intimidation slide off you like rain, but your swaggering
+self-assurance blinds you to danger.
+
+<ansi fg="yellow">Type:</ansi>     Passive
+<ansi fg="yellow">Rarity:</ansi>   Rare
+
+<ansi fg="yellow">Benefits:</ansi>
+  Moderately reduced incoming conviction damage — taunts and
+  intimidation are far less effective against you
+
+<ansi fg="yellow">Drawbacks:</ansi>
+  Moderately reduced perception — your confidence blinds you to
+  threats you should notice
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help mutations</ansi>

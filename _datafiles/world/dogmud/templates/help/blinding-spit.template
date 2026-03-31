@@ -1,0 +1,18 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="yellow">Blinding Spit</ansi> mutation
+
+Glands beneath your tongue produce a caustic, irritating fluid that
+you can project with startling accuracy. The constant taste of bile
+makes social interactions unpleasant.
+
+<ansi fg="yellow">Type:</ansi>     Active Ability
+<ansi fg="yellow">Rarity:</ansi>   Rare
+
+<ansi fg="yellow">Benefits:</ansi>
+  Active ability: spit caustic fluid to temporarily blind a single
+  target
+
+<ansi fg="yellow">Drawbacks:</ansi>
+  Significantly reduced charisma — the chemical smell and oily sheen
+  are deeply off-putting
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help mutations</ansi>
