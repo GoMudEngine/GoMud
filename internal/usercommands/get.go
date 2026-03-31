@@ -29,6 +29,33 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 
 	if args[0] == "all" {
 
+		// get all bag/case/pouch — move everything from component bag to backpack
+		if len(args) >= 2 {
+			allLastArg := args[len(args)-1]
+			if allLastArg == "bag" || allLastArg == "case" || allLastArg == "pouch" || allLastArg == "components" {
+				if len(user.Character.ComponentItems) == 0 {
+					user.SendText(`Your component bag is empty.`)
+				} else {
+					ct := len(user.Character.ComponentItems)
+					user.Character.Items = append(user.Character.Items, user.Character.ComponentItems...)
+					user.Character.ComponentItems = nil
+					user.SendText(fmt.Sprintf(`You move %d item(s) from your component bag to your backpack.`, ct))
+				}
+				return true, nil
+			}
+			if allLastArg == "bandolier" || allLastArg == "potions" {
+				if len(user.Character.PotionItems) == 0 {
+					user.SendText(`Your bandolier is empty.`)
+				} else {
+					ct := len(user.Character.PotionItems)
+					user.Character.Items = append(user.Character.Items, user.Character.PotionItems...)
+					user.Character.PotionItems = nil
+					user.SendText(fmt.Sprintf(`You move %d potion(s) from your bandolier to your backpack.`, ct))
+				}
+				return true, nil
+			}
+		}
+
 		// get all <container> — grab everything from a specific container
 		if len(args) >= 2 {
 			cName := room.FindContainerByName(args[len(args)-1])
@@ -143,6 +170,51 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			} else {
 				rest = strings.Join(args[0:len(args)-1], " ")
 			}
+		}
+
+		// Check for "get X from bag/case/pouch/bandolier" — pull from component bag or bandolier
+		lastArg := args[len(args)-1]
+		isBagGet := lastArg == "bag" || lastArg == "case" || lastArg == "pouch" || lastArg == "components"
+		isBandolierGet := lastArg == "bandolier" || lastArg == "potions"
+
+		if isBagGet || isBandolierGet {
+			if len(args) >= 3 && args[len(args)-2] == "from" {
+				rest = strings.Join(args[0:len(args)-2], " ")
+			} else {
+				rest = strings.Join(args[0:len(args)-1], " ")
+			}
+
+			var sourceItems *[]items.Item
+			var label string
+			if isBagGet {
+				sourceItems = &user.Character.ComponentItems
+				label = "component bag"
+			} else {
+				sourceItems = &user.Character.PotionItems
+				label = "bandolier"
+			}
+
+			closeMatch, exactMatch := items.FindMatchIn(rest, *sourceItems...)
+			foundItem := exactMatch
+			if foundItem.ItemId == 0 {
+				foundItem = closeMatch
+			}
+
+			if foundItem.ItemId == 0 {
+				user.SendText(fmt.Sprintf(`You don't see a "%s" in your %s.`, rest, label))
+				return true, nil
+			}
+
+			// Remove from source and add to backpack
+			for j := len(*sourceItems) - 1; j >= 0; j-- {
+				if (*sourceItems)[j].Equals(foundItem) {
+					*sourceItems = append((*sourceItems)[:j], (*sourceItems)[j+1:]...)
+					break
+				}
+			}
+			user.Character.Items = append(user.Character.Items, foundItem)
+			user.SendText(fmt.Sprintf(`You move the <ansi fg="itemname">%s</ansi> from your %s to your backpack.`, foundItem.DisplayName(), label))
+			return true, nil
 		}
 
 		containerName = room.FindContainerByName(args[len(args)-1])
