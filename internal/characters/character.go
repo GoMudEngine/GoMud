@@ -227,11 +227,24 @@ func RollCharacterStats() stats.Statistics {
 // which points to another description location.
 func (c *Character) GetDescription() string {
 
-	if !strings.HasPrefix(c.Description, `h:`) {
-		return c.Description
+	desc := c.Description
+	if strings.HasPrefix(desc, `h:`) {
+		hash := strings.TrimPrefix(desc, `h:`)
+		desc = descriptionCache[hash]
 	}
-	hash := strings.TrimPrefix(c.Description, `h:`)
-	return descriptionCache[hash]
+
+	// Normalize line breaks: collapse single newlines to spaces
+	// (continuation wrapping) while preserving double newlines
+	// (intentional paragraph breaks).
+	desc = strings.ReplaceAll(desc, "\r\n", "\n")
+	desc = strings.ReplaceAll(desc, "\n\n", "\x00") // protect paragraph breaks
+	desc = strings.ReplaceAll(desc, "\n", " ")
+	desc = strings.ReplaceAll(desc, "\x00", "\n\n") // restore paragraph breaks
+	for strings.Contains(desc, "  ") {
+		desc = strings.ReplaceAll(desc, "  ", " ")
+	}
+
+	return desc
 }
 
 // GetMutationVisuals returns a space-joined string of all owned mutation visual
