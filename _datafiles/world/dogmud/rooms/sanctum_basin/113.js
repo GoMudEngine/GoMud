@@ -62,7 +62,7 @@ function onEnter(user, room) {
     priest.Command('say You can type <ansi fg="command">mutations</ansi> at any time to see what the change has wrought.', 25.5);
     priest.Command('say Now. Before you leave this place, you have six trials to complete. Each instructor teaches a different skill.', 27.0);
     priest.Command('say First: visit the Merchant on Market Street, one step south of here. She will show you how commerce works here.', 28.5);
-    priest.Command('say After that, find the Combat Trainer in the Training Yard -- northeast from here. Then the Forge to the east, the Alchemist west of the well, the Wilderness Guide in the West Meadow, and finally the Elder at the Observatory above.', 30.0);
+    priest.Command('say After that, find the Combat Trainer in the Training Yard -- go east, just beyond here. Then the Forge to the east, the Alchemist west of the well, the Wilderness Guide in the West Meadow, and finally the Elder at the Observatory above.', 30.0);
     priest.Command('say When all six are done, the Basin Warden at the south gate will let you pass. Type <ansi fg="command">quest</ansi> at any time if you lose your place.', 32.0);
     priest.Command('say There is a map of the wider world set into the floor. Type <ansi fg="command">look mosaic</ansi> to examine it before you leave.', 33.5);
 

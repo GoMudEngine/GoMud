@@ -12,7 +12,7 @@ steps:
   - id: shopping_buy
     description: "Equip what you bought. Type wield or wear to put your new gear on."
   - id: shopping_equip
-    description: "Visit the Combat Trainer in the Training Yard, northeast of Town Square, and defeat the training dummy."
+    description: "Visit the Combat Trainer in the Training Yard, north and then east of Town Square, and defeat the training dummy."
   - id: combat_arrive
     description: "Defeat the training dummy. Type attack dummy to start the fight, then keep fighting until it falls."
   - id: combat_defeat
