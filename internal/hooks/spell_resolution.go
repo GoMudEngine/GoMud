@@ -257,6 +257,18 @@ func applyMobEffect(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spe
 		for _, buffId := range spellData.BuffIds {
 			mob.AddBuff(buffId, "spell")
 		}
+		// Set aggro for harmful buff spells
+		if spellData.Type == spells.HarmSingle || spellData.Type == spells.HarmArea || spellData.Type == spells.HarmMulti {
+			if mob.Character.Aggro == nil {
+				mob.PreventIdle = true
+				if user != nil {
+					mob.Character.SetAggro(user.UserId, 0, characters.DefaultAttack)
+				}
+			}
+			if user != nil && user.Character.Aggro == nil {
+				user.Character.SetAggro(0, mob.InstanceId, characters.DefaultAttack)
+			}
+		}
 		if user != nil {
 			user.SendText(fmt.Sprintf(
 				`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> takes effect on %s!%s</ansi>`,
@@ -696,6 +708,12 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 	case "buff":
 		for _, buffId := range spellData.BuffIds {
 			target.AddBuff(buffId, "spell")
+		}
+		// Set aggro for harmful buff spells
+		if spellData.Type == spells.HarmSingle || spellData.Type == spells.HarmArea || spellData.Type == spells.HarmMulti {
+			if target.Character.Aggro == nil {
+				target.Character.Aggro = &characters.Aggro{MobInstanceId: caster.InstanceId}
+			}
 		}
 		target.SendText(fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> takes effect on you!%s`,
