@@ -338,3 +338,26 @@ All share `component_tag: bottle`. Crafting consumes the first match. The bottle
 ### Item IDs
 - 30036-30056: New potion items
 - 40043-40049: New alchemy materials (bottles + forage/drop ingredients)
+
+## Salvage System
+Players can break down crafted items (or items with `salvage_returns` on
+their ItemSpec) to recover materials. New standalone skill: `salvage`,
+primary stat: Perception, progression multiplier 2.0.
+
+### How It Works
+- `salvage <item>` starts a multi-round activity (1-5 rounds based on
+  ingredient gold value).
+- Each ingredient is rolled independently. Chance scales with skill:
+  `chance = min + (max - min) * sqrt(skill / softCap)`.
+- Config: `SalvageMinChance` (0.15), `SalvageMaxChance` (0.85),
+  `SalvageSoftCap` (50).
+- Item is always consumed, even if no materials recovered.
+
+### Stations & Tool
+- Free at the recipe's crafting station (forge, alchemy bench, etc.).
+- Salvage Kit (sold by Fence Dealer Siv, 1g) allows salvage anywhere.
+- Tagged items (non-crafted with `salvage_returns`) require the tool.
+
+### ItemSpec Fields
+- `salvage_returns`: list of `{item_tag, quantity}` for non-crafted items.
+  Every `item_tag` must match a valid `component_tag` on an existing item.
