@@ -26,12 +26,11 @@ func SetDesc(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		return true, nil
 	}
 
-	// Wrap at 80 chars for MUD display
-	wrapped := util.SplitStringNL(rest, 78)
-
-	user.Character.Description = wrapped
+	// Store raw text — wrapping happens at display time in the template
+	user.Character.Description = rest
 	user.SendText(fmt.Sprintf(
-		"Your description has been set to:\n%s", wrapped))
+		"Your description has been set to:\n%s",
+		util.SplitStringNL(rest, 72)))
 
 	return true, nil
 }
