@@ -228,6 +228,15 @@ func (c *Character) OnSkillUse(skillName string, userId int) bool {
 	if primaryStat := skills.GetSkillPrimaryStat(skillName); primaryStat != "" {
 		c.OnStatUse(primaryStat, userId)
 	}
+
+	// Emit SkillUsed event for quest engine and other listeners
+	if userId > 0 {
+		events.AddToQueue(events.SkillUsed{
+			UserId: userId,
+			Skill:  skills.SkillTag(skillName),
+		})
+	}
+
 	return gained
 }
 
