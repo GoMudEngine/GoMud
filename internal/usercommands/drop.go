@@ -26,11 +26,6 @@ func Drop(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	if args[0] == "all" {
 
 		iCopies := []items.Item{}
-
-		if user.Character.Gold > 0 {
-			Drop(fmt.Sprintf("%d gold", user.Character.Gold), user, room, flags)
-		}
-
 		iCopies = append(iCopies, user.Character.Items...)
 
 		for _, item := range iCopies {
