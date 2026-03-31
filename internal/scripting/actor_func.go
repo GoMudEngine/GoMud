@@ -716,6 +716,11 @@ func (a ScriptActor) GetCharmedUserId() int {
 	return a.characterRecord.GetCharmedUserId()
 }
 
+// HasCharmedMobs returns true if this actor has any active charmed mobs.
+func (a ScriptActor) HasCharmedMobs() bool {
+	return len(a.characterRecord.CharmedMobs) > 0
+}
+
 func (a ScriptActor) CharmSet(userId int, charmRounds int, onRevertCommand ...string) {
 
 	// If the player is in a party, add the mob to their party

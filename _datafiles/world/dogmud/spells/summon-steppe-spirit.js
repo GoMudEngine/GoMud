@@ -5,12 +5,10 @@
 
 var COMPONENT_ITEM_ID = 40031;
 var SUMMON_MOB_ID = 243;
-var SUMMON_KEY = 'steppe-spirit-active';
 
 function onCast(sourceActor, targetActor) {
-    // Check if caster already has an active spirit wolf
-    var existing = sourceActor.GetMiscCharacterData(SUMMON_KEY);
-    if (existing && existing !== '' && existing !== '0') {
+    // Check if caster already has an active charmed mob
+    if (sourceActor.HasCharmedMobs()) {
         SendUserMessage(sourceActor.UserId(), 'A steppe spirit already walks beside you. The wind carries only one voice at a time.');
         return false;
     }
@@ -56,9 +54,6 @@ function onMagic(sourceActor, targetActor) {
 
     // Charm permanently (99999 rounds)
     wolf.CharmSet(sourceActor.UserId(), 99999);
-
-    // Track the summon
-    sourceActor.SetMiscCharacterData(SUMMON_KEY, '1');
 
     SendUserMessage(sourceActor.UserId(), 'The fetish dissolves into motes of pale light. A spectral wolf coalesces from steppe wind and moonlight, its eyes burning with cold intelligence. It regards you steadily, then falls into step beside you.');
     SendRoomMessage(sourceActor.GetRoomId(), 'A ghostly wolf materializes from swirling wind and pale light, falling into step beside '+sourceActor.GetCharacterName(true)+'.', sourceActor.UserId());
