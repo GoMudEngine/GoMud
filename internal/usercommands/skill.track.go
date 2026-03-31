@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/templates"
@@ -174,6 +175,14 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			user.SendText("You don't see any tracks.")
 		}
 
+		// Quest engine: command notification
+		bridge := questengine.NewGameBridge(user, room.RoomId)
+		questengine.GetEngine().Notify("command", questengine.EventDetails{
+			UserId:  user.UserId,
+			RoomId:  room.RoomId,
+			Command: "track",
+		}, bridge, bridge)
+
 		return true, nil
 
 	}
@@ -261,6 +270,14 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 				user.AddBuff(26, `skill`) // 26 is the buff for active tracking
 
+				// Quest engine: command notification
+				bridge := questengine.NewGameBridge(user, room.RoomId)
+				questengine.GetEngine().Notify("command", questengine.EventDetails{
+					UserId:  user.UserId,
+					RoomId:  room.RoomId,
+					Command: "track",
+				}, bridge, bridge)
+
 				return true, nil
 
 			} else if closeMatch != `` {
@@ -269,6 +286,14 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 				user.Character.SetMiscData("tracking-mob", nil)
 
 				user.AddBuff(26, `skill`) // 26 is the buff for active tracking
+
+				// Quest engine: command notification
+				bridge := questengine.NewGameBridge(user, room.RoomId)
+				questengine.GetEngine().Notify("command", questengine.EventDetails{
+					UserId:  user.UserId,
+					RoomId:  room.RoomId,
+					Command: "track",
+				}, bridge, bridge)
 
 				return true, nil
 
@@ -290,6 +315,14 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 				user.AddBuff(26, `skill`) // 26 is the buff for active tracking
 
+				// Quest engine: command notification
+				bridge := questengine.NewGameBridge(user, room.RoomId)
+				questengine.GetEngine().Notify("command", questengine.EventDetails{
+					UserId:  user.UserId,
+					RoomId:  room.RoomId,
+					Command: "track",
+				}, bridge, bridge)
+
 				return true, nil
 
 			} else if closeMatch != `` {
@@ -298,6 +331,14 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 				user.Character.SetMiscData("tracking-mob", closeMatch)
 
 				user.AddBuff(26, `skill`) // 26 is the buff for active tracking
+
+				// Quest engine: command notification
+				bridge := questengine.NewGameBridge(user, room.RoomId)
+				questengine.GetEngine().Notify("command", questengine.EventDetails{
+					UserId:  user.UserId,
+					RoomId:  room.RoomId,
+					Command: "track",
+				}, bridge, bridge)
 
 				return true, nil
 
@@ -425,6 +466,14 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		} else {
 			user.SendText("You don't see any tracks.")
 		}
+
+		// Quest engine: command notification
+		bridge := questengine.NewGameBridge(user, room.RoomId)
+		questengine.GetEngine().Notify("command", questengine.EventDetails{
+			UserId:  user.UserId,
+			RoomId:  room.RoomId,
+			Command: "track",
+		}, bridge, bridge)
 
 		return true, nil
 	}

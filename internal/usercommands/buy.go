@@ -12,6 +12,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/pets"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -97,6 +98,15 @@ func Buy(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			}
 			success = true
 			user.Character.OnStatUse("charisma", user.UserId)
+
+			// Quest engine: command notification
+			bridge := questengine.NewGameBridge(user, room.RoomId)
+			questengine.GetEngine().Notify("command", questengine.EventDetails{
+				UserId:  user.UserId,
+				RoomId:  room.RoomId,
+				Command: "buy",
+			}, bridge, bridge)
+
 			return true, nil
 		}
 	}
@@ -132,6 +142,15 @@ func Buy(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			success = true
 			user.Character.OnStatUse("charisma", user.UserId)
 			shopMob.Character.OnStatUse("charisma", 0)
+
+			// Quest engine: command notification
+			bridge := questengine.NewGameBridge(user, room.RoomId)
+			questengine.GetEngine().Notify("command", questengine.EventDetails{
+				UserId:  user.UserId,
+				RoomId:  room.RoomId,
+				Command: "buy",
+			}, bridge, bridge)
+
 			return true, nil
 		}
 	}
