@@ -1,5 +1,31 @@
 # DOGMud Patch Notes
 
+## 2026-03-31 — Salvage System
+
+### New Feature: Salvage
+Break down crafted items and tagged salvageable items to recover
+crafting materials with the new `salvage` command.
+
+- **New skill: Salvage** — standalone Perception-based skill in
+  the "scavenger" profession alongside Search. Recovery chance
+  scales with skill via a sqrt curve (15% at novice, up to 85%
+  at master). Each ingredient is rolled independently.
+- **Recipe reverse-lookup** — any item produced by a crafting
+  recipe can be salvaged at the matching station for free.
+- **Salvage kit** — sold by Fence Dealer Siv in Thornwall's back
+  alleys for 1g. Allows salvaging anywhere without a station.
+  Consumed on each use.
+- **Tagged items** — non-crafted items can be marked salvageable
+  with `salvage_returns` on their item spec. Always requires a
+  salvage kit.
+- **Multi-round activity** — salvage duration scales with
+  ingredient value (1-5 rounds). Interrupted by combat.
+- **Item always consumed** — even if no materials are recovered,
+  the item is destroyed.
+- Type `help salvage` in-game for full details.
+
+---
+
 ## 2026-03-31 — Bug Fixes & QoL
 
 ### Features

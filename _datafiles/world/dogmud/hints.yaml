@@ -201,3 +201,13 @@ hints:
   - >-
     Dedicated crafters leave their mark. Hone your craft skill high
     enough and your name appears on everything you make.
+  - >-
+    Use <ansi fg="command">salvage</ansi> to break down crafted items
+    and recover materials. Higher skill means better returns.
+  - >-
+    Salvaging is free at a crafting station. Buy a
+    <ansi fg="itemname">salvage kit</ansi> from Fence Dealer Siv in
+    Thornwall to salvage anywhere.
+  - >-
+    Salvaging always destroys the item, even if you recover
+    nothing. Make sure you really want to break it down.
