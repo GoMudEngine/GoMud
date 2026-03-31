@@ -655,6 +655,11 @@ Balance:
   SalvageGoldPerRound: 10     # Ingredient gold value per salvage round
   SalvageMaxRounds: 5         # Maximum salvage duration
 
+  # ── QUEST ENGINE ──────────────────────────────────────────────────────────
+  QuestLogLevel: verbose        # verbose, medium, minimal
+  QuestChainDepthLimit: 10      # max chained grant evaluations per event
+  QuestPerformanceWarnMs: 50    # warn if trigger evaluation exceeds this (ms)
+
   # ── MOB PROGRESSION ──────────────────────────────────────────────────────────
   # When enabled, mobs gain stats and skills through combat just like players.
   # Mobs that survive longer become more dangerous. Progression resets when
