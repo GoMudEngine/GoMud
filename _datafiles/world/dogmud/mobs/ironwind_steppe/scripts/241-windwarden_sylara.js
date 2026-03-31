@@ -51,8 +51,8 @@ function onAsk(mob, room, eventDetails) {
         return false;
     }
 
-    // Must have completed quest 12
-    if (!user.HasQuest("12-end")) {
+    // Must have completed quest 12 or know the spell
+    if (!user.HasQuest("12-end") && !user.HasSpell("summon-steppe-spirit")) {
         mob.Command('say The spirits do not know you yet. Prove yourself first.');
         return true;
     }
