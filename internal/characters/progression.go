@@ -239,11 +239,12 @@ func (c *Character) OnCriticalSuccess(context string, userId int) {
 	mudlog.Debug("Progression", "event", "critical_success", "context", context, "character", c.Name)
 
 	if configs.GetGamePlayConfig().UseSkillProgression {
-		if userId > 0 {
-			msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> A moment of brilliance! Your <ansi fg="yellow">%s</ansi> technique improves! <ansi fg="magenta">***</ansi>`, context)
-			events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+		if c.CheckSkillProgression(context, userId, 2.0) {
+			if userId > 0 {
+				msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> A moment of brilliance! Your <ansi fg="yellow">%s</ansi> technique improves! <ansi fg="magenta">***</ansi>`, context)
+				events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+			}
 		}
-		c.CheckSkillProgression(context, userId, 2.0)
 	}
 }
 
