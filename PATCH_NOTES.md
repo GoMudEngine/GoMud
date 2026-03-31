@@ -1,5 +1,35 @@
 # DOGMud Patch Notes
 
+## 2026-03-31 — Bug Fixes & QoL
+
+### Features
+- **ASCII Charset Mode:** `set charset` toggles between UTF-8 and ASCII
+  display. Legacy clients (zMUD etc.) that show garbled box-drawing
+  characters can switch to clean ASCII mode. Persists across sessions.
+- **Mutation Help Files:** All 40 mutations now have individual help
+  pages (`help healing-gel`, `help extra-arms`, etc.).
+
+### Bug Fixes
+- **Skill progression messages fixed:** Critical hit "technique improves"
+  messages were firing on every crit regardless of whether the skill
+  actually advanced. Now only shows when a real gain occurs.
+- **Harm spell exploit closed:** Casting harm spells with no target no
+  longer grants free spellcasting progression.
+- **Harmful buffs trigger aggro:** Spells like Nerve Disruption that
+  apply debuffs now properly start combat, matching damage/dot/knockdown
+  behavior.
+- **Tutorial directions corrected:** Directions to the Training Yard
+  now correctly say north-then-east (was "northeast").
+- **Removed misleading combat-end message:** The generic "rage subsides"
+  text no longer appears after every kill.
+
+### Balance
+- **Combat skill progression bumped:** Weapon-combat and unarmed-combat
+  progression rate increased from 0.12 to 0.20. These skills were
+  advancing too slowly relative to other skills.
+
+---
+
 ## 2026-03-30 — Alchemy Rework (Phase 1-3)
 
 ### Alchemy Overhaul
