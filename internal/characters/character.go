@@ -896,6 +896,28 @@ func (c *Character) MigrateQuestSpells() {
 	c.SetMiscData(migrationKey, "1")
 }
 
+// MigrateDescriptionWrapping strips embedded line breaks from player
+// descriptions so wrapping only happens at display time.
+func (c *Character) MigrateDescriptionWrapping() {
+	const migrationKey = "migration-desc-unwrap-done"
+	if c.GetMiscData(migrationKey) != nil {
+		return
+	}
+
+	if c.Description != "" && !strings.HasPrefix(c.Description, "h:") {
+		// Collapse \r\n and \n back to spaces
+		d := strings.ReplaceAll(c.Description, "\r\n", " ")
+		d = strings.ReplaceAll(d, "\n", " ")
+		// Collapse any double spaces from the join
+		for strings.Contains(d, "  ") {
+			d = strings.ReplaceAll(d, "  ", " ")
+		}
+		c.Description = strings.TrimSpace(d)
+	}
+
+	c.SetMiscData(migrationKey, "1")
+}
+
 // MigrateAlchemyPotions replaces old potion items with new equivalents.
 func (c *Character) MigrateAlchemyPotions() {
 	const migrationKey = "migration-alchemy-potions-done"
