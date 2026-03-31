@@ -132,6 +132,7 @@ var (
 		`pvp`:         {Pvp, true, true, false},
 		`quests`:      {Quests, true, true, false},
 		`quit`:        {Quit, true, true, false},
+		`questdebug`:  {QuestDebug, false, true, true}, // Admin only
 		`questtoken`:  {QuestToken, false, true, true}, // Admin only
 		`read`:        {Read, false, true, false},
 		`reload`:      {Reload, true, true, true},   // Admin only
