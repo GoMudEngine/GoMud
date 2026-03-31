@@ -574,6 +574,17 @@ func GetItemSpec(itemId int) *ItemSpec {
 	return nil
 }
 
+// FindSpecByComponentTag returns the first ItemSpec with a matching ComponentTag,
+// or nil if none is found.
+func FindSpecByComponentTag(tag string) *ItemSpec {
+	for _, spec := range items {
+		if spec.ComponentTag == tag {
+			return spec
+		}
+	}
+	return nil
+}
+
 // file self loads due to init()
 func LoadDataFiles() {
 
