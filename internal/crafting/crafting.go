@@ -102,6 +102,23 @@ func GetAll() map[string]*RecipeSpec {
 	return allRecipes
 }
 
+// recipeByOutputId is a lazy-built index from output item ID to recipe.
+var recipeByOutputId map[int]*RecipeSpec
+
+// GetRecipeByOutputItemId returns the recipe that produces the given item ID,
+// or nil if no recipe outputs that item. Builds an index on first call.
+func GetRecipeByOutputItemId(itemId int) *RecipeSpec {
+	if recipeByOutputId == nil {
+		recipeByOutputId = make(map[int]*RecipeSpec)
+		for _, r := range allRecipes {
+			if r.Output.ItemId > 0 {
+				recipeByOutputId[r.Output.ItemId] = r
+			}
+		}
+	}
+	return recipeByOutputId[itemId]
+}
+
 // FindRecipeByName does a case-insensitive search across recipe names.
 // Prefers exact matches over substring matches.
 func FindRecipeByName(name string) *RecipeSpec {

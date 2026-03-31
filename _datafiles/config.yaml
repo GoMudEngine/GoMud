@@ -646,6 +646,14 @@ Balance:
     cooking: 3.5
     jewelcrafting: 3.5
     enchanting: 3.5
+    salvage: 2.0
+
+  # ── SALVAGE ────────────────────────────────────────────────────────────────
+  SalvageMinChance: 0.15      # Per-ingredient recovery chance at skill 1
+  SalvageMaxChance: 0.85      # Hard cap on per-ingredient chance
+  SalvageSoftCap: 50          # Skill level where curve flattens
+  SalvageGoldPerRound: 10     # Ingredient gold value per salvage round
+  SalvageMaxRounds: 5         # Maximum salvage duration
 
   # ── MOB PROGRESSION ──────────────────────────────────────────────────────────
   # When enabled, mobs gain stats and skills through combat just like players.

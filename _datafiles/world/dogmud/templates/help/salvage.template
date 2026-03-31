@@ -1,0 +1,49 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">salvage</ansi>
+
+The <ansi fg="command">salvage</ansi> command lets you break down items to
+recover crafting materials. Your skill determines how much
+you recover -- higher skill means better returns.
+
+<ansi fg="yellow">━━━ Usage ━━━</ansi>
+
+  <ansi fg="command">salvage <item></ansi>       Break down an item for materials.
+  <ansi fg="command">salvage 2.sword</ansi>      Disambiguate with diku-style numbering.
+
+<ansi fg="yellow">━━━ What Can Be Salvaged ━━━</ansi>
+
+Any item that was produced by a crafting recipe, plus certain
+special items marked as salvageable. Items that were never
+crafted and have no salvageable components cannot be broken
+down.
+
+<ansi fg="yellow">━━━ Where to Salvage ━━━</ansi>
+
+Crafted items can be salvaged for free at the station where
+they were made -- swords at the forge, potions at the alchemy
+bench, cloth at the loom, and so on.
+
+Alternatively, buy a <ansi fg="itemname">salvage kit</ansi> from Fence Dealer Siv
+in Thornwall's back alleys. With the kit in your pack, you
+can salvage anywhere. The kit is consumed on each use.
+
+<ansi fg="yellow">━━━ How It Works ━━━</ansi>
+
+Salvage always destroys the item, even if no materials are
+recovered. Each ingredient has a chance to be recovered based
+on your salvage skill. At low skill you may get nothing back;
+at high skill you recover most materials.
+
+Salvaging takes several rounds depending on the complexity
+of the item being broken down.
+
+<ansi fg="yellow">━━━ Tips ━━━</ansi>
+
+  Items must be in your backpack -- unequip gear first.
+  Salvage cannot be done during combat.
+  If attacked mid-salvage, the work is interrupted and the
+  item is not consumed.
+
+<ansi fg="yellow">See Also:</ansi>
+
+  <ansi fg="command">help craft</ansi>, <ansi fg="command">help skills</ansi>
+

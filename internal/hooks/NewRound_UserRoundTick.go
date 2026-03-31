@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"strconv"
+	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/configs"
@@ -248,9 +249,18 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 						cs := user.Character.CraftingState
 						cs.RoundsComplete++
 						if cs.RoundsComplete < cs.RoundsTotal {
+							progressMsg := cs.RecipeId
+							if len(cs.RecipeId) > 8 && cs.RecipeId[:8] == "salvage:" {
+								progressMsg = "salvaging"
+							}
 							user.SendText(fmt.Sprintf(
 								`<ansi fg="yellow">You continue working on %s... (%d/%d)</ansi>`,
-								cs.RecipeId, cs.RoundsComplete, cs.RoundsTotal))
+								progressMsg, cs.RoundsComplete, cs.RoundsTotal))
+						} else if len(cs.RecipeId) > 8 && cs.RecipeId[:8] == "salvage:" {
+							// Salvage completion
+							itemIdStr := cs.RecipeId[8:]
+							user.Character.CraftingState = nil
+							resolveSalvage(user, itemIdStr)
 						} else {
 							recipe := crafting.GetRecipe(cs.RecipeId)
 							user.Character.CraftingState = nil
@@ -425,4 +435,93 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 	}
 
 	return events.Continue
+}
+
+// resolveSalvage handles salvage completion when CraftingState finishes.
+func resolveSalvage(user *users.UserRecord, itemIdStr string) {
+	var itemId int
+	fmt.Sscanf(itemIdStr, "%d", &itemId)
+
+	spec := items.GetItemSpec(itemId)
+	if spec == nil {
+		user.SendText(`<ansi fg="red">Something went wrong with your salvage attempt.</ansi>`)
+		return
+	}
+
+	// Find the specific item in backpack by UUID
+	uuidStr, _ := user.Character.GetMiscData("salvage_item_uuid").(string)
+	usesKit, _ := user.Character.GetMiscData("salvage_uses_kit").(bool)
+	user.Character.SetMiscData("salvage_item_uuid", nil)
+	user.Character.SetMiscData("salvage_uses_kit", nil)
+
+	// Consume salvage kit if used
+	if usesKit {
+		for _, itm := range user.Character.Items {
+			if itm.GetSpec().ComponentTag == "salvage-kit" {
+				user.Character.RemoveItem(itm)
+				break
+			}
+		}
+	}
+
+	found := false
+	var targetItem items.Item
+	for _, itm := range user.Character.Items {
+		if itm.UUID.String() == uuidStr && itm.ItemId == itemId {
+			targetItem = itm
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		user.SendText(`<ansi fg="red">The item you were salvaging is no longer in your backpack.</ansi>`)
+		return
+	}
+
+	// Calculate salvage chance from skill
+	bal := configs.GetBalanceConfig()
+	salvageSkill := user.Character.GetSkillLevel(skills.Salvage)
+	chance := crafting.CalcSalvageChance(salvageSkill,
+		float64(bal.SalvageMinChance), float64(bal.SalvageMaxChance),
+		int(bal.SalvageSoftCap))
+
+	// Roll returns from recipe or tagged salvage_returns
+	var recovered []crafting.RecipeIngredient
+	recipe := crafting.GetRecipeByOutputItemId(itemId)
+	if recipe != nil {
+		recovered = crafting.RollSalvageReturns(recipe.Ingredients, chance)
+	} else if len(spec.SalvageReturns) > 0 {
+		recovered = crafting.RollSalvageReturnsFromSpec(spec.SalvageReturns, chance)
+	}
+
+	// Destroy the item (always consumed)
+	user.Character.RemoveItem(targetItem)
+
+	// Give recovered materials
+	if len(recovered) > 0 {
+		var parts []string
+		for _, ing := range recovered {
+			for i := 0; i < ing.Quantity; i++ {
+				matSpec := items.FindSpecByComponentTag(ing.ItemTag)
+				if matSpec != nil {
+					newItem := items.New(matSpec.ItemId)
+					user.Character.StoreItem(newItem)
+				}
+			}
+			parts = append(parts, fmt.Sprintf("%dx %s",
+				ing.Quantity, ing.ItemTag))
+		}
+		user.SendText(fmt.Sprintf(
+			`<ansi fg="green">You salvage the <ansi fg="itemname">%s</ansi> and recover: %s.</ansi>`,
+			targetItem.DisplayName(),
+			strings.Join(parts, ", ")))
+	} else {
+		user.SendText(fmt.Sprintf(
+			`<ansi fg="red">You attempt to salvage the <ansi fg="itemname">%s</ansi> but recover nothing useful.</ansi>`,
+			targetItem.DisplayName()))
+	}
+
+	// Track skill use for progression
+	user.Character.OnSkillUse("salvage", user.UserId)
 }
