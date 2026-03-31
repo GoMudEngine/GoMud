@@ -807,7 +807,7 @@ Balance:
   GossipIntervalRounds: 75  # Rounds between gossip broadcasts for "gossiper" mobs (min 20)
 
   # ── MOON PHASES ─────────────────────────────────────────────────────────────
-  MoonStatModMax: 0.05  # Max fractional stat modifier from moon phases (±5% at full/new moon)
+  MoonStatModMax: 0.10  # Max fractional stat modifier from moon phases (±10% at full/new moon)
 
 ################################################################################
 #
