@@ -8,10 +8,10 @@ const (
 )
 
 type ClientSettings struct {
-	Display DisplaySettings
-	// Is MSP enabled?
+	Display           DisplaySettings
 	MSPEnabled        bool // Do they accept sound in their client?
 	SendTelnetGoAhead bool // Defaults false, should we send a IAC GA after prompts?
+	AsciiMode         bool // Convert UTF-8 decorative chars to ASCII equivalents?
 }
 
 func (c ClientSettings) IsMsp() bool {

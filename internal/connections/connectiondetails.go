@@ -11,6 +11,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/term"
+	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/gorilla/websocket"
 )
 
@@ -238,6 +239,14 @@ func (cd *ConnectionDetails) Write(p []byte) (n int, err error) {
 	// Strip ANSI escape codes for AI connections (not telnet IAC commands)
 	if cd.stripAnsi && p[0] != term.TELNET_IAC {
 		p = ansiRegexp.ReplaceAll(p, nil)
+		if len(p) == 0 {
+			return 0, nil
+		}
+	}
+
+	// Convert UTF-8 decorative chars to ASCII for legacy clients
+	if cd.clientSettings.AsciiMode && p[0] != term.TELNET_IAC {
+		p = []byte(util.ConvertToAscii(string(p)))
 		if len(p) == 0 {
 			return 0, nil
 		}
