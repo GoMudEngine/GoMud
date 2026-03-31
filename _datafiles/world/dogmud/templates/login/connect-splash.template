@@ -20,3 +20,4 @@
                                                       <ansi fg="black-bold">The Chrysalis awaits.</ansi>
 
 <ansi fg="black-bold">{{ repeat "=" 80 }}</ansi>
+<ansi fg="8">Seeing garbled characters? Type</ansi> <ansi fg="command">set charset</ansi> <ansi fg="8">after logging in.</ansi>
