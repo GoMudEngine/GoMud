@@ -20,9 +20,6 @@ station: enchanting_circle
 exits:
   west:
     roomid: 482
-items:
-  - itemid: 40028
-  - itemid: 40028
 spawninfo:
 - mobid: 109
 idlemessages:

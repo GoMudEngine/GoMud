@@ -22,11 +22,6 @@ exits:
     roomid: 480
   east:
     roomid: 483
-items:
-  - itemid: 40021
-  - itemid: 40021
-  - itemid: 40026
-  - itemid: 40026
 spawninfo:
 - mobid: 108
 idlemessages:

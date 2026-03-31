@@ -18,12 +18,6 @@ station: loom
 exits:
   north:
     roomid: 109
-items:
-  - itemid: 40012
-  - itemid: 40012
-  - itemid: 40012
-  - itemid: 40013
-  - itemid: 40013
 spawninfo:
 - itemid: 40007
   message: A cloth strip lies folded on the weaving bench.

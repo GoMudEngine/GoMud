@@ -22,11 +22,6 @@ exits:
     roomid: 472
   down:
     roomid: 485
-items:
-  - itemid: 40014
-  - itemid: 40017
-  - itemid: 40015
-  - itemid: 40016
 spawninfo:
   - mobid: 248
 nouns:

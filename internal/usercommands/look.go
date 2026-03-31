@@ -635,12 +635,34 @@ func lookRoom(user *users.UserRecord, roomId int, secretLook bool) {
 		groundStuff = append(groundStuff, fmt.Sprintf(`<ansi fg="gold">%d gold</ansi>`, room.Gold))
 	}
 
+	// Stack identical floor items for display
+	type groundStack struct {
+		name  string
+		count int
+	}
+	groundStackOrder := []string{}
+	groundStacks := map[string]*groundStack{}
+
 	for _, item := range room.Items {
 		if !item.IsValid() {
 			room.RemoveItem(item, false)
 			continue
 		}
-		groundStuff = append(groundStuff, item.DisplayName())
+		key := fmt.Sprintf("%d|%s|%d", item.ItemId, item.EnchantType, item.EnchantTier)
+		if entry, exists := groundStacks[key]; exists {
+			entry.count++
+		} else {
+			groundStacks[key] = &groundStack{name: item.DisplayName(), count: 1}
+			groundStackOrder = append(groundStackOrder, key)
+		}
+	}
+	for _, key := range groundStackOrder {
+		entry := groundStacks[key]
+		if entry.count > 1 {
+			groundStuff = append(groundStuff, fmt.Sprintf(`%s <ansi fg="uses-left">(x%d)</ansi>`, entry.name, entry.count))
+		} else {
+			groundStuff = append(groundStuff, entry.name)
+		}
 	}
 
 	// Find stashed items
