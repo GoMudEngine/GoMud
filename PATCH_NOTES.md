@@ -77,6 +77,16 @@
 - **zMUD compatibility:** Fixed display flashing for legacy MUD
   clients that don't support GMCP. The server no longer sends GMCP
   data to clients that haven't completed the GMCP handshake.
+- **Description wrapping:** Player and NPC descriptions no longer
+  double-wrap with orphaned words. Descriptions are stored raw and
+  wrapped once at display time. Existing player descriptions are
+  auto-migrated on login.
+- **Floor item stacking:** Identical items on the ground now display
+  with (xN) count instead of separate lines.
+- **Vendor room clutter:** Removed crafting materials baked into
+  7 vendor/crafter room templates that respawned every restart.
+- **Drop all:** No longer drops your gold. Use "drop N gold" to
+  drop gold explicitly.
 
 ---
 
