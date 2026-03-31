@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/keywords"
 	"github.com/GoMudEngine/GoMud/internal/llm"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -151,6 +152,15 @@ func Ask(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		}
 
 		rest = strings.Join(args, ` `)
+
+		// Quest engine: dialogue notification
+		bridge := questengine.NewGameBridge(user, room.RoomId)
+		questengine.GetEngine().Notify("dialogue", questengine.EventDetails{
+			UserId: user.UserId,
+			RoomId: room.RoomId,
+			MobId:  int(mob.MobId),
+			Topic:  rest,
+		}, bridge, bridge)
 
 		// Build PlayerState for quest/item gating in dialogue
 		ps := buildPlayerState(user)
