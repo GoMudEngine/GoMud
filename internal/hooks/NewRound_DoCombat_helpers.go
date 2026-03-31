@@ -880,7 +880,7 @@ func handlePlayerVsPlayer(user *users.UserRecord, uRoom *rooms.Room, evt events.
 	defUser.Character.CancelBuffsWithFlag(buffs.CancelIfCombat)
 
 	if defUser.Character.Health < 1 {
-		user.SendText(`Your rage subsides.`)
+		user.SendText(`The adrenaline of battle fades.`)
 		user.Character.Aggro = nil
 		return
 	}
@@ -1003,7 +1003,7 @@ func handlePlayerVsMob(user *users.UserRecord, uRoom *rooms.Room, evt events.New
 	defMob.Character.CancelBuffsWithFlag(buffs.CancelIfCombat)
 
 	if defMob.Character.Health < 1 {
-		user.SendText("Your rage subsides.")
+		user.SendText("The adrenaline of battle fades.")
 		user.Character.Aggro = nil
 		return
 	}
