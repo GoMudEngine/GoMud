@@ -146,6 +146,7 @@ func TestHelpFileCompleteness_Skills(t *testing.T) {
 		"cooking",
 		"jewelcrafting",
 		"enchanting",
+		"salvage",
 	}
 
 	missing := []string{}
