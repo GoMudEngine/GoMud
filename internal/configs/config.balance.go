@@ -162,6 +162,13 @@ type Balance struct {
 	RecipeDiscoveryBaseChance ConfigFloat `yaml:"RecipeDiscoveryBaseChance"` // Base % to discover a new recipe per successful craft (default 8.0)
 	RecipeDiscoveryDecayRate  ConfigFloat `yaml:"RecipeDiscoveryDecayRate"`  // Decay per known recipe: chance = base / (1 + known*this) (default 0.1)
 
+	// ── SALVAGE ──────────────────────────────────────────────────────────────
+	SalvageMinChance    ConfigFloat `yaml:"SalvageMinChance"`    // Per-ingredient recovery chance at skill 1 (default 0.15)
+	SalvageMaxChance    ConfigFloat `yaml:"SalvageMaxChance"`    // Hard cap on per-ingredient chance (default 0.85)
+	SalvageSoftCap      ConfigInt   `yaml:"SalvageSoftCap"`      // Skill level for max curve (default 50)
+	SalvageGoldPerRound ConfigInt   `yaml:"SalvageGoldPerRound"` // Ingredient gold value per salvage round (default 10)
+	SalvageMaxRounds    ConfigInt   `yaml:"SalvageMaxRounds"`    // Maximum salvage rounds (default 5)
+
 	// ── MUTATIONS ─────────────────────────────────────────────────────────────
 	MutationBaseProgress         ConfigFloat `yaml:"MutationBaseProgress"`         // Progress needed for first mutation (default 50.0)
 	MutationProgressScale        ConfigFloat `yaml:"MutationProgressScale"`        // Each additional mutation costs Scale^n more (default 1.5)
@@ -604,6 +611,23 @@ func (b *Balance) Validate() {
 	}
 	if b.RecipeDiscoveryDecayRate <= 0 {
 		b.RecipeDiscoveryDecayRate = 0.1
+	}
+
+	// ── SALVAGE ──────────────────────────────────────────────────────────────
+	if b.SalvageMinChance <= 0 {
+		b.SalvageMinChance = 0.15
+	}
+	if b.SalvageMaxChance <= 0 {
+		b.SalvageMaxChance = 0.85
+	}
+	if b.SalvageSoftCap < 1 {
+		b.SalvageSoftCap = 50
+	}
+	if b.SalvageGoldPerRound < 1 {
+		b.SalvageGoldPerRound = 10
+	}
+	if b.SalvageMaxRounds < 1 {
+		b.SalvageMaxRounds = 5
 	}
 
 	// ── MUTATIONS ─────────────────────────────────────────────────────────────
