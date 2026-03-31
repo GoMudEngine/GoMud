@@ -215,6 +215,15 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		spellRest = targetName // pass through for spell script
 	}
 
+	// 8.4. Harm spells require at least one target (prevents no-target exploit for free skill gains).
+	// HarmArea is excluded — those spells determine targets at resolution time via spell scripts.
+	if spellInfo.Type == spells.HarmSingle || spellInfo.Type == spells.HarmMulti {
+		if len(targetUserIds) == 0 && len(targetMobInstanceIds) == 0 {
+			user.SendText(`<ansi fg="red">You need a target to cast that spell.</ansi>`)
+			return true, nil
+		}
+	}
+
 	// 8.5. Component check — must have the required item in inventory before committing
 	if spellInfo.ComponentTag != "" {
 		found := false
