@@ -1519,6 +1519,18 @@ func (c *Character) RemoveItem(i items.Item) bool {
 			return true
 		}
 	}
+	for j := len(c.ComponentItems) - 1; j >= 0; j-- {
+		if c.ComponentItems[j].Equals(i) {
+			c.ComponentItems = append(c.ComponentItems[:j], c.ComponentItems[j+1:]...)
+			return true
+		}
+	}
+	for j := len(c.PotionItems) - 1; j >= 0; j-- {
+		if c.PotionItems[j].Equals(i) {
+			c.PotionItems = append(c.PotionItems[:j], c.PotionItems[j+1:]...)
+			return true
+		}
+	}
 	return false
 }
 
@@ -3147,7 +3159,10 @@ func (c *Character) Species() string {
 }
 
 func (c *Character) GetAllBackpackItems() []items.Item {
-	return append([]items.Item{}, c.Items...)
+	all := append([]items.Item{}, c.Items...)
+	all = append(all, c.ComponentItems...)
+	all = append(all, c.PotionItems...)
+	return all
 }
 
 func (c *Character) GetAllWornItems() []items.Item {

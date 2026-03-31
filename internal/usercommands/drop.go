@@ -25,6 +25,13 @@ func Drop(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 	if args[0] == "all" {
 
+		// "drop all gold" — drop all gold explicitly
+		if len(args) >= 2 && args[1] == "gold" && user.Character.Gold > 0 {
+			Drop(fmt.Sprintf("%d gold", user.Character.Gold), user, room, flags)
+			return true, nil
+		}
+
+		// "drop all" — drop all items but not gold
 		iCopies := []items.Item{}
 		iCopies = append(iCopies, user.Character.Items...)
 
