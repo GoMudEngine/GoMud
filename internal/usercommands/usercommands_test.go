@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/exit"
 	"github.com/GoMudEngine/GoMud/internal/items"
@@ -5880,6 +5881,41 @@ func TestSetWimpyBranch(t *testing.T) {
 		assert.True(t, handled)
 		_ = err
 	})
+}
+
+// ─── Charset ────────────────────────────────────────────────────────────────
+
+func TestSetCharset(t *testing.T) {
+	cleanup := seedAllRegistries()
+	defer cleanup()
+
+	user, room := getTestUserAndRoom(t)
+
+	// Register test connections for the user
+	connections.RegisterTestConnection(user.ConnectionId())
+	defer connections.UnregisterTestConnection(user.ConnectionId())
+
+	// Default should be false (UTF-8)
+	assert.False(t, user.AsciiMode)
+
+	// Toggle to ASCII
+	handled, err := Set("charset", user, room, 0)
+	assert.True(t, handled)
+	assert.NoError(t, err)
+	assert.True(t, user.AsciiMode)
+
+	// Verify connection setting was updated
+	cs := connections.GetClientSettings(user.ConnectionId())
+	assert.True(t, cs.AsciiMode)
+
+	// Toggle back to UTF-8
+	handled, err = Set("charset", user, room, 0)
+	assert.True(t, handled)
+	assert.NoError(t, err)
+	assert.False(t, user.AsciiMode)
+
+	cs = connections.GetClientSettings(user.ConnectionId())
+	assert.False(t, cs.AsciiMode)
 }
 
 // ─── Craft branches ────────────────────────────────────────────────────────
