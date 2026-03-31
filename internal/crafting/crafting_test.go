@@ -62,6 +62,28 @@ func makeItem(tag string) items.Item {
 	return items.Item{Spec: &items.ItemSpec{ComponentTag: tag}}
 }
 
+// ─── GetRecipeByOutputItemId ─────────────────────────────────────────────────
+
+func TestGetRecipeByOutputItemId(t *testing.T) {
+	seedRegistry()
+	recipeByOutputId = nil // force rebuild
+
+	// Should find iron dagger recipe by its output item ID
+	recipe := GetRecipeByOutputItemId(10005)
+	if recipe == nil {
+		t.Fatal("expected to find recipe for item 10005")
+	}
+	if recipe.RecipeId != "iron-dagger" {
+		t.Errorf("expected iron-dagger, got %s", recipe.RecipeId)
+	}
+
+	// Should return nil for unknown item ID
+	recipe = GetRecipeByOutputItemId(999999)
+	if recipe != nil {
+		t.Errorf("expected nil for unknown item ID, got %s", recipe.RecipeId)
+	}
+}
+
 // ─── CalcSuccessChance ────────────────────────────────────────────────────────
 
 func TestCalcSuccessChance(t *testing.T) {
