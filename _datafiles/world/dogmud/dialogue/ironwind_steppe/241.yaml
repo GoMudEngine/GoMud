@@ -111,10 +111,9 @@ tree:
       text: "Sylara nods and reaches into a pouch at her belt. She produces a spirit fetish -- a small bundle of steppe grass, wolf fur, and windstone dust bound with sinew. 'For the calling. Use it with respect.'"
       moodChange: friendly
 
-    - id: give_fetish_trusted
-      triggers: ["fetish", "component", "spirit", "summon", "more", "need"]
-      questRequired: ["11-end"]
-      questExcluded: ["12-end"]
+    - id: give_fetish_noqust
+      triggers: ["fetish", "component", "spirit", "summon"]
+      questExcluded: ["12-end", "11-end"]
       givesItem: 40031
       text: "Sylara studies you for a long moment, then nods slowly. 'The wind tells me you already know the calling. I do not know how, but the spirits do not lie.' She reaches into a pouch at her belt and produces a spirit fetish. 'Use it with respect. The steppe remembers those who dishonour its gifts.'"
       moodChange: friendly
