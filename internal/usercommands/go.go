@@ -12,6 +12,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/parties"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/skills"
@@ -248,6 +249,13 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 		} else {
 
 			scripting.TryRoomScriptEvent(`onExit`, user.UserId, originRoomId)
+
+			// Quest engine: room_enter notification
+			bridge := questengine.NewGameBridge(user, destRoom.RoomId)
+			questengine.GetEngine().Notify("room_enter", questengine.EventDetails{
+				UserId: user.UserId,
+				RoomId: destRoom.RoomId,
+			}, bridge, bridge)
 
 			// Tell the player they are moving
 			if isSneaking {
