@@ -102,6 +102,29 @@ func TestHelpFileCompleteness_Recipes(t *testing.T) {
 	}
 }
 
+// TestHelpFileCompleteness_Mutations ensures every mutation YAML has a matching help file.
+func TestHelpFileCompleteness_Mutations(t *testing.T) {
+	root := dataRoot(t)
+	mutationDir := filepath.Join(root, "mutations")
+
+	mutations := listYAMLBasenames(t, mutationDir)
+	if len(mutations) == 0 {
+		t.Fatal("no mutation YAML files found — check path")
+	}
+
+	missing := []string{}
+	for _, mutation := range mutations {
+		if !helpFileExists(root, mutation) {
+			missing = append(missing, mutation)
+		}
+	}
+
+	if len(missing) > 0 {
+		t.Errorf("mutations missing help files (%d):\n  %s\n\nAdd help templates to _datafiles/world/dogmud/templates/help/ for each.",
+			len(missing), strings.Join(missing, "\n  "))
+	}
+}
+
 // TestHelpFileCompleteness_Skills ensures core skills have help files.
 func TestHelpFileCompleteness_Skills(t *testing.T) {
 	root := dataRoot(t)
