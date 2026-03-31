@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -174,6 +175,39 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 					)
 				} else {
 
+					// Check quest engine first — it may intercept the give before
+					// the item is transferred to the mob.
+					bridge := questengine.NewGameBridge(user, room.RoomId)
+					qResult := questengine.GetEngine().Notify("item_give", questengine.EventDetails{
+						UserId: user.UserId,
+						RoomId: room.RoomId,
+						MobId:  int(m.MobId),
+						ItemId: giveItem.ItemId,
+					}, bridge, bridge)
+
+					if qResult.Handled && qResult.ConsumeItem {
+						// Quest engine consumed the item — remove from player only,
+						// do NOT transfer to mob and do NOT fire onGive script.
+						user.Character.RemoveItem(giveItem)
+
+						user.SendText(
+							fmt.Sprintf(`You give the <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, giveItem.DisplayName(), m.Character.Name),
+						)
+						room.SendText(
+							fmt.Sprintf(`<ansi fg="username">%s</ansi> gave their <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, user.Character.Name, giveItem.DisplayName(), m.Character.Name),
+							user.UserId,
+						)
+
+						events.AddToQueue(events.ItemOwnership{
+							UserId: user.UserId,
+							Item:   giveItem,
+							Gained: false,
+						})
+
+						return true, nil
+					}
+
+					// Normal flow — transfer item to mob.
 					m.Character.StoreItem(giveItem)
 					user.Character.RemoveItem(giveItem)
 
