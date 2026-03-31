@@ -143,6 +143,7 @@ var (
 		`redescribe`:  {Redescribe, false, true, true}, // Admin only
 		`room`:        {Room, false, true, true},       // Admin only
 		`save`:        {Save, true, true, false},
+		`salvage`:     {Salvage, false, false, false}, // Can't salvage in combat
 		`say`:         {Say, true, true, false},
 		`scan`:        {Scan, false, true, false},
 		`search`:{Search, false, true, false},
