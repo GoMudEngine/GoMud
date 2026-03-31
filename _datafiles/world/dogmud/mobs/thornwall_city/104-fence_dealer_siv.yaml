@@ -37,8 +37,8 @@ character:
       training: 8
     charisma:
       training: 5
-shop:
-  - itemid: 32
-    quantity: 0
-    quantitymax: 0
-    price: 1
+  shop:
+    - itemid: 32
+      quantity: 0
+      quantitymax: 0
+      price: 1
