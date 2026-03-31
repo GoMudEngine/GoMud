@@ -450,7 +450,19 @@ func resolveSalvage(user *users.UserRecord, itemIdStr string) {
 
 	// Find the specific item in backpack by UUID
 	uuidStr, _ := user.Character.GetMiscData("salvage_item_uuid").(string)
+	usesKit, _ := user.Character.GetMiscData("salvage_uses_kit").(bool)
 	user.Character.SetMiscData("salvage_item_uuid", nil)
+	user.Character.SetMiscData("salvage_uses_kit", nil)
+
+	// Consume salvage kit if used
+	if usesKit {
+		for _, itm := range user.Character.Items {
+			if itm.GetSpec().ComponentTag == "salvage-kit" {
+				user.Character.RemoveItem(itm)
+				break
+			}
+		}
+	}
 
 	found := false
 	var targetItem items.Item

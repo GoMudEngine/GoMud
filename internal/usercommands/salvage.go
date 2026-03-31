@@ -55,6 +55,7 @@ func Salvage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 
 	// Station or tool check
 	hasTool := userHasSalvageKit(user)
+	usesKit := false
 
 	if hasSalvageReturns && recipe == nil {
 		// Tagged items always require tool
@@ -62,6 +63,7 @@ func Salvage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 			user.SendText(`<ansi fg="red">You need a salvage kit to break that down.</ansi>`)
 			return true, nil
 		}
+		usesKit = true
 	} else if recipe != nil && recipe.Station != "" && room.Station != recipe.Station {
 		if !hasTool {
 			user.SendText(fmt.Sprintf(
@@ -69,6 +71,7 @@ func Salvage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 				strings.ReplaceAll(recipe.Station, "_", " ")))
 			return true, nil
 		}
+		usesKit = true
 	}
 
 	// Calculate rounds based on ingredient gold value
@@ -84,6 +87,7 @@ func Salvage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 
 	// Store salvage target info for resolution
 	user.Character.SetMiscData("salvage_item_uuid", itm.UUID.String())
+	user.Character.SetMiscData("salvage_uses_kit", usesKit)
 
 	// Start multi-round salvage activity using CraftingState
 	user.Character.CraftingState = &characters.CraftingState{
