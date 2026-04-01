@@ -95,6 +95,7 @@ type Character struct {
 	Cooldowns        Cooldowns                      `yaml:"cooldowns,omitempty"`     // How many rounds until it is cooled down
 	Settings         map[string]string              `yaml:"settings,omitempty"`      // custom setting tracking, used for anything.
 	QuestProgress    map[int]string                 `yaml:"questprogress,omitempty"` // quest progress tracking
+	QuestFlags       map[string]string              `yaml:"questflags,omitempty"`    // quest flag tracking (e.g., "11-branch" → "rhett")
 	LastQuestId      int                            `yaml:"lastquestid,omitempty"`   // most recently progressed quest
 	KeyRing          map[string]string              `yaml:"keyring,omitempty"`       // key is the lock id, value is the sequence
 	KD               KDStats                        `yaml:"kd,omitempty"`            // Kill/Death stats
@@ -2248,6 +2249,35 @@ func (c *Character) ClearQuestToken(questToken string) {
 	questId, _ := quests.TokenToParts(questToken)
 
 	delete(c.QuestProgress, questId)
+}
+
+func (c *Character) SetQuestFlag(key, value string) {
+	if c.QuestFlags == nil {
+		c.QuestFlags = make(map[string]string)
+	}
+	c.QuestFlags[key] = value
+}
+
+func (c *Character) GetQuestFlag(key string) string {
+	if c.QuestFlags == nil {
+		return ""
+	}
+	return c.QuestFlags[key]
+}
+
+func (c *Character) HasQuestFlag(key string) bool {
+	if c.QuestFlags == nil {
+		return false
+	}
+	_, ok := c.QuestFlags[key]
+	return ok
+}
+
+func (c *Character) ClearQuestFlag(key string) {
+	if c.QuestFlags == nil {
+		return
+	}
+	delete(c.QuestFlags, key)
 }
 
 func (c *Character) SetAggroRemote(exitName string, userId int, mobInstanceId int, aggroType AggroType, roundsWaitTime ...int) {
