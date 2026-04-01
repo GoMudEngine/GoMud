@@ -187,3 +187,13 @@ triggers:
             - grant: 1-warden
             - grant: 1-end
             - unlock_exits: {room: 102}
+
+  # ── GATE RE-UNLOCK (returning players) ────────────────
+  # The south exit lock resets on server restart. Re-unlock
+  # it whenever a player who completed the trials enters.
+  - event: room_enter
+    room: 102
+    conditions:
+      has: [1-end]
+    actions:
+      - unlock_exits: {room: 102}
