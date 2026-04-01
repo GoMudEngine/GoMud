@@ -64,25 +64,14 @@ triggers:
           delay_between: 0
           lock_message: "The Rite is not yet complete. A moment more."
           lines:
-            - {speaker: 50, delay: 1, text: "Be still for a moment."}
-            - {speaker: 50, delay: 3, text: "Type <ansi fg=\"command\">look</ansi> at any time to examine your surroundings. Type <ansi fg=\"command\">help</ansi> if you are unsure what commands are available -- there is documentation for most things."}
-            - {speaker: 50, delay: 5, text: "You are newly arrived in Gaius. You may not yet understand what that means."}
-            - {speaker: 50, delay: 7, text: "The world here is not like any world you have come from. Gaius is made of belief -- belief shapes the land, the creatures, the rules of cause and effect."}
-            - {speaker: 50, delay: 9, text: "And it shapes people."}
-            - {speaker: 50, delay: 10, text: "The Chrysalis has been cataloguing that shaping for four hundred years. We know what to expect. You may not."}
-            - {speaker: 50, delay: 12, text: "The Chrysalis is the name we give to the form between what was and what will be. Every person who has passed through this hall was once standing where you are standing."}
-            - {speaker: 50, delay: 15, text: "In Gaius, that becoming is not a metaphor. The body remembers stress, conflict, effort. Over time, it changes. We call these changes Mutations."}
-            - {speaker: 50, delay: 17, text: "Every Mutation is the body saying yes to something. Yes to strength, yes to perception, yes to endurance. There are costs -- the Chrysalis does not lie about that -- but a Priest does not dwell on costs. We dwell on what you are becoming."}
-            - {speaker: 50, delay: 19, text: "The first Mutation is always a gift -- or a warning. The Chrysalis performs the Awakening Rite to initiate it before the body does something unexpected on its own."}
-            - {speaker: 50, delay: 21, emote: true, text: "steps forward and places two fingers lightly on your forehead. The air around you hums very quietly."}
-            - {speaker: 50, delay: 23, emote: true, text: "withdraws their hand. The hum fades."}
-            - {speaker: 50, delay: 24, text: "It has begun. You will feel the change over time -- in combat, in effort, in moments of stress. It is part of you now."}
-            - {speaker: 50, delay: 26, text: "You can type <ansi fg=\"command\">mutations</ansi> at any time to see what the change has wrought."}
-            - {speaker: 50, delay: 27, text: "Now. Before you leave this place, you have six trials to complete. Each instructor teaches a different skill."}
-            - {speaker: 50, delay: 29, text: "First: visit the Merchant on Market Street, one step south of here. She will show you how commerce works here."}
-            - {speaker: 50, delay: 30, text: "After that, find the Combat Trainer in the Training Yard -- go east, just beyond here. Then the Forge to the east, the Alchemist west of the well, the Wilderness Guide in the West Meadow, and finally the Elder at the Observatory above."}
-            - {speaker: 50, delay: 32, text: "When all six are done, the Basin Warden at the south gate will let you pass. Type <ansi fg=\"command\">quest</ansi> at any time if you lose your place."}
-            - {speaker: 50, delay: 34, text: "There is a map of the wider world set into the floor. Type <ansi fg=\"command\">look mosaic</ansi> to examine it before you leave."}
+            - {speaker: 50, delay: 1, text: "Be still."}
+            - {speaker: 50, delay: 2, emote: true, text: "draws a circle in the air with one hand. The chalk diagrams on the walls begin to glow faintly."}
+            - {speaker: 50, delay: 4, text: "In Gaius, the body changes through effort and conflict. We call these changes Mutations."}
+            - {speaker: 50, delay: 6, emote: true, text: "steps forward and places two fingers lightly on your forehead. The air hums."}
+            - {speaker: 50, delay: 8, emote: true, text: "closes their eyes. The glow intensifies, then fades."}
+            - {speaker: 50, delay: 10, emote: true, text: "withdraws their hand. The hum fades. Something has changed."}
+            - {speaker: 50, delay: 11, text: "It is done. Type <ansi fg=\"command\">mutations</ansi> to see what the change has wrought."}
+            - {speaker: 50, delay: 13, text: "You have six trials before the Basin Warden will let you pass. Start with the Merchant -- south of here. Type <ansi fg=\"command\">hint</ansi> if you lose your way."}
           on_complete:
             - give_mutation: true
             - give_gold: 10

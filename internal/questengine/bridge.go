@@ -9,9 +9,10 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
+	"github.com/GoMudEngine/GoMud/internal/quests"
+	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
-	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 // GameBridge wraps a UserRecord and a room ID to satisfy both PlayerState
@@ -57,8 +58,43 @@ func (b *GameBridge) GetUserId() int {
 }
 
 // GrantQuest advances the player's quest progress to the given token.
+// Sets the token immediately (for synchronous chain evaluation) and
+// sends a quest progress banner to the player.
 func (b *GameBridge) GrantQuest(token string) {
-	b.user.Character.GiveQuestToken(token)
+	if !b.user.Character.GiveQuestToken(token) {
+		return
+	}
+
+	// Look up quest name for the banner
+	questId, stepName := quests.TokenToParts(token)
+	questInfo := quests.GetQuest(token)
+	questName := ""
+	if questInfo != nil {
+		questName = questInfo.Name
+	}
+
+	var bannerMsg string
+	switch stepName {
+	case "start":
+		bannerMsg = fmt.Sprintf("You have been given a new quest: <ansi fg=\"questname\">%s</ansi>!", questName)
+	case "end":
+		bannerMsg = fmt.Sprintf("You have completed the quest: <ansi fg=\"questname\">%s</ansi>!", questName)
+		// Fire quest completion rewards via the old event system
+		events.AddToQueue(events.Quest{
+			UserId:     b.user.UserId,
+			QuestToken: token,
+		})
+	default:
+		bannerMsg = fmt.Sprintf("You've made progress on the quest: <ansi fg=\"questname\">%s</ansi>!", questName)
+	}
+
+	if questInfo != nil && !questInfo.Secret {
+		questUpTxt, _ := templates.Process("character/questup", bannerMsg, b.user.UserId)
+		b.user.SendText(questUpTxt)
+		b.user.EventLog.Add("quest", bannerMsg)
+	}
+
+	_ = questId // suppress unused warning
 }
 
 // ConsumeItem removes the first matching item from the player's inventory.
@@ -283,53 +319,30 @@ func (b *GameBridge) QueueSequence(s SequenceDef) {
 		}
 	}
 
-	// Schedule on_complete: mob.Command uses the turn system so
-	// "delay: 34" in YAML may take longer than 34 real seconds.
-	// We use a mob noop command scheduled at maxDelay+3 to sync
-	// with the turn-based timing, then fire on_complete from
-	// the noop's resolution via a polling goroutine.
-	if len(s.OnComplete) > 0 {
-		// Find any speaker mob to piggyback on their turn scheduling
-		var anchorMob *mobs.Mob
-		for _, line := range s.Lines {
-			if line.Speaker != 0 {
-				anchorMob = findMobInRoom(line.Speaker, b.roomId)
-				if anchorMob != nil {
-					break
+	// Schedule on_complete after the longest delay + buffer.
+	if len(s.OnComplete) > 0 || s.LockMessage != "" {
+		waitSeconds := maxDelay + 3
+		userId := b.user.UserId
+		roomId := b.roomId
+		onComplete := s.OnComplete
+		lockMsg := s.LockMessage
+		go func() {
+			time.Sleep(time.Duration(waitSeconds) * time.Second)
+			u := users.GetByUserId(userId)
+			if u == nil {
+				return
+			}
+			// Clear movement lock
+			if lockMsg != "" {
+				u.SetTempData(`questSequenceLock`, "")
+			}
+			bridge := NewGameBridge(u, roomId)
+			for _, action := range onComplete {
+				if err := ExecuteAction(action, bridge); err != nil {
+					mudlog.Error("GameBridge.QueueSequence.OnComplete", "error", err)
 				}
 			}
-		}
-
-		if anchorMob != nil {
-			// Schedule a noop after the last line; its lastCommandTurn
-			// tells us when the mob will be done.
-			anchorMob.Command("noop", float64(maxDelay+3))
-			targetTurn := anchorMob.GetLastCommandTurn()
-
-			userId := b.user.UserId
-			roomId := b.roomId
-			onComplete := s.OnComplete
-			lockMsg := s.LockMessage
-			go func() {
-				for util.GetTurnCount() < targetTurn {
-					time.Sleep(500 * time.Millisecond)
-				}
-				u := users.GetByUserId(userId)
-				if u == nil {
-					return
-				}
-				// Clear movement lock
-				if lockMsg != "" {
-					u.SetTempData(`questSequenceLock`, "")
-				}
-				bridge := NewGameBridge(u, roomId)
-				for _, action := range onComplete {
-					if err := ExecuteAction(action, bridge); err != nil {
-						mudlog.Error("GameBridge.QueueSequence.OnComplete", "error", err)
-					}
-				}
-			}()
-		}
+		}()
 	}
 }
 
