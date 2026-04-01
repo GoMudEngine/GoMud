@@ -65,6 +65,12 @@ tree:
         hints: "You could tell him you are ready to begin."
       - questRequired: ["13-end"]
         text: "Rhett adjusts his spectacles and grins. 'The aegis turned out better than I dared hope. Windstone is remarkable -- it practically shaped itself. Thornwall will hear about what you did here.'"
+      - questRequired: ["12-start"]
+        questExcluded: ["12-end"]
+        text: "Rhett's expression is carefully neutral. 'I hear you
+          are learning the Windwarden's ways. I wish you well with
+          that.' He turns back to his charts with studied
+          indifference."
       - questRequired: ["12-end"]
         text: "Rhett's smile is tinged with disappointment. 'You chose the Windwarden. I understand. The crystal will wait -- it has waited this long.' He sighs. 'Perhaps someday someone will find a way that does not require choosing.'"
       - questRequired: ["11-end"]

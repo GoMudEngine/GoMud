@@ -65,6 +65,11 @@ tree:
         hints: "You could tell her you are ready for the ritual."
       - questRequired: ["12-end"]
         text: "Sylara smiles -- warm and genuine, transforming her stern features. 'The spirits know you now. You carry the steppe with you wherever you go. If you need more fetishes for the summoning, you have only to ask.'"
+      - questRequired: ["13-start"]
+        questExcluded: ["13-end"]
+        text: "Sylara's expression darkens. 'You are helping the
+          scholar crack the ridge. I can feel it in the wind-paths.'
+          She grips her staff tighter and says nothing more."
       - questRequired: ["13-end"]
         text: "Sylara's expression is carefully neutral, but grief shows in her eyes. 'You chose the scholar's path. The circle will endure... diminished. I will tend what remains.' She turns away."
       - questRequired: ["11-end"]
