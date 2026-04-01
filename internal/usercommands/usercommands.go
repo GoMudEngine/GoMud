@@ -92,6 +92,7 @@ var (
 		`grapple`:     {Grapple, false, true, false},
 		`healing-gel`: {HealingGel, false, true, false},
 		`help`:        {Help, true, true, false},
+		`hint`:        {Hint, true, true, false},
 		`keyring`:     {KeyRing, true, true, false},
 		`kick`:        {Kick, false, true, false},
 		`stomp`:       {Kick, false, true, false},
