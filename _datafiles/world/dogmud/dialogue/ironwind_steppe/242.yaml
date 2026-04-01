@@ -51,7 +51,7 @@ tree:
       - questRequired: ["13-start"]
         questExcluded: ["13-extraction"]
         text: "Rhett is practically vibrating with excitement. 'You chose to help! Excellent! The extraction site is prepared. I just need someone steady to help with the final phase. Are you ready?'"
-        hints: "You could tell me you are ready to begin the extraction."
+        hints: "You could tell him you are ready to begin."
       - questRequired: ["13-end"]
         text: "Rhett adjusts his spectacles and grins. 'The aegis turned out better than I dared hope. Windstone is remarkable -- it practically shaped itself. Thornwall will hear about what you did here.'"
       - questRequired: ["12-end"]
@@ -62,7 +62,7 @@ tree:
       - questRequired: ["11-end", "11-rhett"]
         questExcluded: ["12-start", "13-start"]
         text: "Rhett's eyes light up. 'Those samples confirmed everything I suspected. The crystal lattice is even more complex than I theorized.' He leans in conspiratorially. 'I have been preparing an extraction site. With the right help, I could pull a full slab of windstone from the ridge -- enough to forge a proper aegis. Ask me about the work if you are interested.'"
-        hints: "You could ask me about further work with the windstone."
+        hints: "You could ask about further work with the windstone."
 
   nodes:
     - id: his_cause
@@ -94,8 +94,7 @@ tree:
         excitement. 'One clean slab of windstone -- enough to forge a
         proper aegis for Thornwall''s failing wards. What do you say?
         Will you help?'"
-      hints: "You could tell me you are ready to help with the
-        extraction."
+      hints: "You could tell him you are ready to help."
       moodChange: friendly
 
     - id: extraction_begin

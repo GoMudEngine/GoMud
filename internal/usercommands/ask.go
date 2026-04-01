@@ -25,7 +25,9 @@ func deliverDialogue(df *dialogue.DialogueFile, mob *mobs.Mob, mobInstanceId int
 		if nodeText, hints, moodChange, ok := dialogue.TreeAdvance(df, mobInstanceId, userId, topic, ps); ok {
 			mob.Command(`say ` + nodeText)
 			if hints != `` {
-				mob.Command(`say ` + hints)
+				if u := users.GetByUserId(userId); u != nil {
+					u.SendText(fmt.Sprintf(`<ansi fg="181">  [%s]</ansi>`, hints))
+				}
 			}
 			dialogue.ShiftMood(mobInstanceId, moodChange, df.DefaultMood)
 		} else if response, moodChange, ok := dialogue.Match(df, mobInstanceId, topic, ps); ok {
