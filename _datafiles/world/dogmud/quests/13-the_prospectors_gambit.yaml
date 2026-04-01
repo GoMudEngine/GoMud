@@ -8,12 +8,20 @@ steps:
   - id: start
     description: "Travel to Geomancer Rhett at the rocky shelf and
       help him begin the windstone extraction."
+    hint: "Geomancer Rhett is at the Ridge Approach. From Thornwall's
+      eastern gate, go east 7 times to reach him. Tell him you are
+      ready to help with the extraction (ask about 'work' or 'gambit')."
   - id: extraction
     description: "Assist Rhett with the delicate extraction process.
       The crystal must be removed without shattering."
+    hint: "Rhett is at the Ridge Approach (east 7 from Thornwall's
+      eastern gate). Tell him you are ready to begin -- say 'ready'
+      or 'begin' to start the extraction."
   - id: end
     description: "The extraction is complete. Rhett has the windstone
       he needs."
+    hint: "The extraction is complete. Speak with Rhett at the Ridge
+      Approach (east 7 from Thornwall's eastern gate) to finish."
 rewards:
   playermessage: "Rhett grins broadly, cradling the extracted crystal
     like a newborn. He disappears into his work for hours, and when

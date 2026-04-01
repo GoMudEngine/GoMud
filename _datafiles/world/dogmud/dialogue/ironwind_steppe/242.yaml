@@ -51,7 +51,7 @@ tree:
       - questRequired: ["13-start"]
         questExcluded: ["13-extraction"]
         text: "Rhett is practically vibrating with excitement. 'You chose to help! Excellent! The extraction site is prepared. I just need someone steady to help with the final phase. Are you ready?'"
-        hints: "Tell Rhett you are ready to help with the extraction."
+        hints: "You could tell him you are ready to begin the extraction."
       - questRequired: ["13-end"]
         text: "Rhett adjusts his spectacles and grins. 'The aegis turned out better than I dared hope. Windstone is remarkable -- it practically shaped itself. Thornwall will hear about what you did here.'"
       - questRequired: ["12-end"]
@@ -77,6 +77,22 @@ tree:
       requiresItem: 40032
       grantsQuest: "11-end"
       text: "Rhett snatches the samples with eager hands, immediately holding one up to the light. 'Look at that lattice structure! The resonance potential is even higher than my estimates. This could power wards twice as strong as our current ones.' He catches himself and grins sheepishly. 'Sorry. I get excited. These are perfect. Thank you.' He tucks the samples carefully into his satchel. 'I have been preparing an extraction site -- with samples this good, I could pull a full slab of windstone from the ridge. Ask me about the work when you are ready.'"
+      moodChange: friendly
+
+    - id: offer_gambit
+      triggers: ["work", "extract", "gambit", "help", "quest", "task"]
+      questRequired: ["11-end"]
+      questExcluded: ["13-start", "12-start"]
+      grantsQuest: "13-start"
+      text: "'The extraction site is ready. I have mapped the crystal
+        grain, prepared the tools, set the fracture points. All I need
+        is someone with steady hands to hold the brace while I work
+        the seam.' Rhett's eyes are bright with barely contained
+        excitement. 'One clean slab of windstone -- enough to forge a
+        proper aegis for Thornwall''s failing wards. What do you say?
+        Will you help?'"
+      hints: "You could tell Rhett you are ready to help with the
+        extraction."
       moodChange: friendly
 
     - id: extraction_begin
