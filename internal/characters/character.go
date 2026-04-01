@@ -998,6 +998,27 @@ func (c *Character) MigrateAlchemyRecipes() {
 	c.SetMiscData(migrationKey, "1")
 }
 
+// MigrateQuestFlags infers quest flags from downstream quest progress.
+// For Quest 11's branch flag: if the player has Q12 progress, they took
+// the Sylara path; if Q13 progress, the Rhett path.
+func (c *Character) MigrateQuestFlags() {
+	if c.QuestFlags != nil {
+		return // already has flags — skip
+	}
+
+	// Infer Q11 branch from Q12/Q13 progress
+	q12Progress := c.QuestProgress[12]
+	q13Progress := c.QuestProgress[13]
+
+	if q12Progress != "" {
+		c.SetQuestFlag("11-branch", "sylara")
+	} else if q13Progress != "" {
+		c.SetQuestFlag("11-branch", "rhett")
+	}
+	// If neither Q12 nor Q13 started, leave unset —
+	// the player will pick a branch when they next interact.
+}
+
 func (c *Character) HasRecipe(recipeId string) bool {
 	if c.KnownRecipes == nil {
 		return false
