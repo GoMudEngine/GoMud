@@ -1,11 +1,36 @@
-The <ansi fg="command">questtoken</ansi> command can be used in the following ways:
+The <ansi fg="command">questtoken</ansi> command manages quest
+progress for your character.
 
-<ansi fg="command">questtoken [token_name]</ansi> - e.g. <ansi fg="command">questtoken "HAM"</ansi>
-Give youself a quest token
+<ansi fg="yellow-bold">Usage:</ansi>
 
 <ansi fg="command">questtoken list</ansi>
-List all quest tokens that you have
+  Show your current quest progress. Each quest displays
+  all steps, with your current step in [brackets].
 
 <ansi fg="command">questtoken all</ansi>
-List all quest tokens
+  List every quest in the game and all their step tokens.
+  Useful for finding the exact token name to grant.
 
+<ansi fg="command">questtoken [questid-step]</ansi>
+  Grant yourself a quest token, advancing (or starting)
+  a quest. Triggers rewards if the step is the final one.
+
+<ansi fg="yellow-bold">Token format:</ansi> <ansi fg="cyan">questid-stepname</ansi>
+  Examples: <ansi fg="command">questtoken 8-start</ansi>
+            <ansi fg="command">questtoken 8-end</ansi>
+            <ansi fg="command">questtoken 12-ritual</ansi>
+
+<ansi fg="yellow-bold">Common uses:</ansi>
+  - Unstick a player whose quest bricked (grant the
+    next step they should be on)
+  - Skip to the end of a quest for testing
+  - Set up prerequisites before testing a later quest
+    (e.g. <ansi fg="command">questtoken 11-end</ansi> before testing Q12)
+
+<ansi fg="yellow-bold">Notes:</ansi>
+  - Granting an end step triggers quest rewards (gold,
+    items, spells) just like normal completion.
+  - Use <ansi fg="command">questtoken list</ansi> first to see current
+    state before making changes.
+  - There is no undo. To "reset" a quest, the character
+    data must be edited directly.
