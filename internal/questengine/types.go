@@ -76,8 +76,9 @@ type ActionDef struct {
 	TeachSpell  string       `yaml:"teach_spell,omitempty"`
 	TrainSkill  *SkillDef    `yaml:"train_skill,omitempty"`
 	ApplyBuff   *BuffDef     `yaml:"apply_buff,omitempty"`
-	Teleport    int          `yaml:"teleport,omitempty"`
-	Sequence    *SequenceDef `yaml:"sequence,omitempty"`
+	Teleport     int          `yaml:"teleport,omitempty"`
+	GiveMutation bool         `yaml:"give_mutation,omitempty"` // roll and grant a random mutation
+	Sequence     *SequenceDef `yaml:"sequence,omitempty"`
 }
 
 type NpcSayDef struct {
@@ -90,6 +91,7 @@ type SayLineDef struct {
 	Text    string `yaml:"text"`
 	Delay   int    `yaml:"delay,omitempty"`   // delay in seconds before this line
 	Speaker int    `yaml:"speaker,omitempty"` // mob ID override (0 = use parent NpcSayDef.Mob)
+	Emote   bool   `yaml:"emote,omitempty"`   // true = emote instead of say
 }
 
 type SpawnDef struct {

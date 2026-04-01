@@ -46,6 +46,7 @@ func (m *mockActionContext) LockExits(e ExitLock)               { m.lockedExits 
 func (m *mockActionContext) UnlockExits(e ExitLock)             { m.unlockedExits = append(m.unlockedExits, e) }
 func (m *mockActionContext) QueueNpcSay(n NpcSayDef)            { m.npcSays = append(m.npcSays, n) }
 func (m *mockActionContext) QueueSequence(s SequenceDef)        { m.sequences = append(m.sequences, s) }
+func (m *mockActionContext) GiveMutation()                      {}
 func (m *mockActionContext) GetUserId() int                     { return m.userId }
 
 func TestExecuteAction_Grant(t *testing.T) {

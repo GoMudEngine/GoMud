@@ -21,6 +21,7 @@ type ActionContext interface {
 	UnlockExits(e ExitLock)
 	QueueNpcSay(n NpcSayDef)
 	QueueSequence(s SequenceDef)
+	GiveMutation()
 	GetUserId() int
 }
 
@@ -97,6 +98,11 @@ func ExecuteAction(a ActionDef, ctx ActionContext) error {
 	if a.Teleport > 0 {
 		LogVerboseF(ctx.GetUserId(), "teleport to room %d", a.Teleport)
 		ctx.Teleport(a.Teleport)
+		return nil
+	}
+	if a.GiveMutation {
+		LogVerboseF(ctx.GetUserId(), "give_mutation")
+		ctx.GiveMutation()
 		return nil
 	}
 	if a.Sequence != nil {

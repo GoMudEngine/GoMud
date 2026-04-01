@@ -2,11 +2,13 @@ package questengine
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -186,6 +188,32 @@ func (b *GameBridge) UnlockExits(e ExitLock) {
 }
 
 // QueueNpcSay finds the mob in the room and makes it say each line.
+func (b *GameBridge) GiveMutation() {
+	if b.user.Character.Mutations == nil {
+		b.user.Character.Mutations = make(map[string]int)
+	}
+	pool := mutations.GetWeightedPool(b.user.Character.Mutations)
+	if len(pool) == 0 {
+		return
+	}
+	mutId := mutations.RollAcquisition(pool)
+	if mutId == "" {
+		return
+	}
+	if _, exists := b.user.Character.Mutations[mutId]; !exists {
+		b.user.Character.Mutations[mutId] = 1
+	}
+}
+
+// npcCommand builds a "say" or "emote" command string from a SayLineDef.
+func npcCommand(line SayLineDef) string {
+	if line.Emote {
+		return fmt.Sprintf("emote %s", line.Text)
+	}
+	return fmt.Sprintf("say %s", line.Text)
+}
+
+// QueueNpcSay finds the mob in the room and schedules each line with delays.
 func (b *GameBridge) QueueNpcSay(n NpcSayDef) {
 	for _, line := range n.Lines {
 		speakerMobId := n.Mob
@@ -198,15 +226,29 @@ func (b *GameBridge) QueueNpcSay(n NpcSayDef) {
 				fmt.Sprintf("mob spec %d not found in room %d", speakerMobId, b.roomId))
 			continue
 		}
-		mob.Command(fmt.Sprintf("say %s", line.Text))
+		if line.Delay > 0 {
+			mob.Command(npcCommand(line), float64(line.Delay))
+		} else {
+			mob.Command(npcCommand(line))
+		}
 	}
 }
 
-// QueueSequence executes all lines immediately: speaker lines become NPC
-// say commands, non-speaker lines go to SendText. On-complete actions
-// are executed afterwards.
+// QueueSequence schedules lines with per-line delays or a default
+// delay_between interval. Speaker lines become mob commands; non-speaker
+// lines are sent to the player. On-complete actions fire after the
+// longest delay.
 func (b *GameBridge) QueueSequence(s SequenceDef) {
+	maxDelay := 0
 	for _, line := range s.Lines {
+		delay := line.Delay
+		if delay == 0 {
+			delay = s.DelayBetween
+		}
+		if delay > maxDelay {
+			maxDelay = delay
+		}
+
 		if line.Speaker != 0 {
 			mob := findMobInRoom(line.Speaker, b.roomId)
 			if mob == nil {
@@ -214,15 +256,45 @@ func (b *GameBridge) QueueSequence(s SequenceDef) {
 					fmt.Sprintf("mob spec %d not found in room %d", line.Speaker, b.roomId))
 				continue
 			}
-			mob.Command(fmt.Sprintf("say %s", line.Text))
+			if delay > 0 {
+				mob.Command(npcCommand(line), float64(delay))
+			} else {
+				mob.Command(npcCommand(line))
+			}
 		} else {
-			b.user.SendText(line.Text)
+			if delay > 0 {
+				text := line.Text
+				userId := b.user.UserId
+				go func() {
+					<-time.After(time.Duration(delay) * time.Second)
+					if u := users.GetByUserId(userId); u != nil {
+						u.SendText(text)
+					}
+				}()
+			} else {
+				b.user.SendText(line.Text)
+			}
 		}
 	}
-	for _, action := range s.OnComplete {
-		if err := ExecuteAction(action, b); err != nil {
-			mudlog.Error("GameBridge.QueueSequence.OnComplete", "error", err)
-		}
+
+	// Schedule on_complete actions after the longest delay.
+	if len(s.OnComplete) > 0 {
+		userId := b.user.UserId
+		roomId := b.roomId
+		onComplete := s.OnComplete
+		go func() {
+			<-time.After(time.Duration(maxDelay+1) * time.Second)
+			u := users.GetByUserId(userId)
+			if u == nil {
+				return
+			}
+			bridge := NewGameBridge(u, roomId)
+			for _, action := range onComplete {
+				if err := ExecuteAction(action, bridge); err != nil {
+					mudlog.Error("GameBridge.QueueSequence.OnComplete", "error", err)
+				}
+			}
+		}()
 	}
 }
 
