@@ -15,6 +15,7 @@ skills:
   jewelcrafting: 1
   ranged-combat: 1
   rhetoric: 1
+  salvage: 1
   search: 1
   skullduggery: 1
   spellcasting: 1
@@ -26,3 +27,4 @@ mutations:
   psychic-resistance: 1
   sixth-sense: 1
   tough-skin: 1
+mutation_progress: 2.4

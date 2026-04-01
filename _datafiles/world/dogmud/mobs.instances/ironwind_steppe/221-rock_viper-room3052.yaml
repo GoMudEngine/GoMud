@@ -1,7 +1,7 @@
 strength_training: 31
 dexterity_training: 37
 perception_training: 8
-vitality_training: 27
+vitality_training: 28
 willpower_training: 3
 charisma_training: 5
 skills:
@@ -15,6 +15,7 @@ skills:
   jewelcrafting: 1
   ranged-combat: 1
   rhetoric: 1
+  salvage: 1
   search: 1
   skullduggery: 1
   spellcasting: 1
@@ -23,3 +24,4 @@ skills:
   weapon-combat: 1
 mutations:
   fast-reflexes: 1
+  pheromone-glands: 1

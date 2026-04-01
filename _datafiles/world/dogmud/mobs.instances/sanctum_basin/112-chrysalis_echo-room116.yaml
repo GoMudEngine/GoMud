@@ -1,9 +1,6 @@
-strength_training: 7
-dexterity_training: 10
-perception_training: 5
-vitality_training: 5
-willpower_training: 8
-charisma_training: 5
+strength_training: -4
+dexterity_training: -5
+vitality_training: -5
 skills:
   alchemy: 1
   bartering: 1
@@ -15,6 +12,7 @@ skills:
   jewelcrafting: 1
   ranged-combat: 1
   rhetoric: 1
+  salvage: 1
   search: 1
   skullduggery: 1
   spellcasting: 1

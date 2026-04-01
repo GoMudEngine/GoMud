@@ -1,9 +1,9 @@
-strength_training: 26
-dexterity_training: 24
-perception_training: 6
-vitality_training: 27
+strength_training: 13
+dexterity_training: 20
+perception_training: 11
+vitality_training: 12
 willpower_training: 6
-charisma_training: 4
+charisma_training: 1
 skills:
   alchemy: 1
   bartering: 1
@@ -15,19 +15,16 @@ skills:
   jewelcrafting: 1
   ranged-combat: 1
   rhetoric: 1
+  salvage: 1
   search: 1
   skullduggery: 1
   spellcasting: 1
   tailoring: 1
-  unarmed-combat: 1
+  unarmed-combat: 2
   weapon-combat: 1
 skill_use_count:
-  unarmed-combat: 2
+  unarmed-combat: 17
 stat_use_count:
-  dexterity: 6
-  strength: 4
-mutations:
-  brazen-resolve: 1
-  photosynthetic-skin: 1
-  tremorsense: 1
-mutation_progress: 1.8
+  dexterity: 26
+  strength: 13
+mutation_progress: 4.499999999999999

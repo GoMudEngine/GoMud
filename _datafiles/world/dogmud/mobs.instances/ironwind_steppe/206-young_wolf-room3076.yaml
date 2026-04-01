@@ -15,6 +15,7 @@ skills:
   jewelcrafting: 1
   ranged-combat: 1
   rhetoric: 1
+  salvage: 1
   search: 1
   skullduggery: 1
   spellcasting: 1
@@ -22,6 +23,7 @@ skills:
   unarmed-combat: 1
   weapon-combat: 1
 mutations:
+  fast-reflexes: 1
   heightened-senses: 1
   talented: 1
   tough-skin: 1

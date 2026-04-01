@@ -15,11 +15,18 @@ skills:
   jewelcrafting: 1
   ranged-combat: 1
   rhetoric: 1
+  salvage: 1
   search: 1
   skullduggery: 1
   spellcasting: 1
   tailoring: 1
   unarmed-combat: 1
   weapon-combat: 1
+skill_use_count:
+  unarmed-combat: 3
+stat_use_count:
+  dexterity: 6
+  strength: 3
 mutations:
   fast-reflexes: 1
+mutation_progress: 1.8

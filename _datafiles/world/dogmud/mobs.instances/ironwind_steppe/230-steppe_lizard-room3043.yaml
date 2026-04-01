@@ -1,9 +1,9 @@
-strength_training: 32
-dexterity_training: 18
-perception_training: 8
-vitality_training: 19
-willpower_training: 4
-charisma_training: 2
+strength_training: 4
+dexterity_training: 6
+perception_training: 3
+vitality_training: 3
+willpower_training: 2
+charisma_training: 7
 skills:
   alchemy: 1
   bartering: 1
@@ -15,15 +15,10 @@ skills:
   jewelcrafting: 1
   ranged-combat: 1
   rhetoric: 1
+  salvage: 1
   search: 1
   skullduggery: 1
   spellcasting: 1
   tailoring: 1
   unarmed-combat: 1
   weapon-combat: 1
-mutations:
-  pacifism-aura: 1
-  psychic-resistance: 1
-  sixth-sense: 1
-  tough-skin: 1
-mutation_progress: 1.8

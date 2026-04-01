@@ -76,6 +76,11 @@ func LookForTrouble(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) 
 				}
 			}
 
+			// peacefulquest: mob won't attack players who have this token
+			if mob.PeacefulQuest != "" && user.Character.HasQuest(mob.PeacefulQuest) {
+				continue
+			}
+
 			if mob.Hostile { // Does it always attack players?
 
 				allPotentialTargets = append(allPotentialTargets, playerId)
