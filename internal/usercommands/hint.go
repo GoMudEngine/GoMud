@@ -84,29 +84,17 @@ func Hint(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
-	// Find the hint for the NEXT step after current progress.
-	// If currentStep is "" (just started), show the first step's hint.
+	// Find the hint for the current step (what the player should do now).
 	hintText := ""
 	if currentStep == "" {
 		if len(qDef.Steps) > 0 {
 			hintText = qDef.Steps[0].Hint
 		}
 	} else {
-		found := false
-		for i, step := range qDef.Steps {
+		for _, step := range qDef.Steps {
 			if step.Id == currentStep {
-				// Take the next step's hint if it exists.
-				if i+1 < len(qDef.Steps) {
-					hintText = qDef.Steps[i+1].Hint
-				}
-				found = true
+				hintText = step.Hint
 				break
-			}
-		}
-		if !found {
-			// Current step not located; show first step hint as fallback.
-			if len(qDef.Steps) > 0 {
-				hintText = qDef.Steps[0].Hint
 			}
 		}
 	}
