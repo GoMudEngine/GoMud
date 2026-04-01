@@ -124,7 +124,7 @@ tree:
       questRequired: ["12-start"]
       questExcluded: ["12-ritual"]
       grantsQuest: "12-ritual"
-      text: "Sylara leads you to the centre of the stone circle. She kneels and places the wolf totem on the altar stone, then begins to chant in a language older than any you have heard. The wind rises, circling the stones with increasing force. The standing stones hum. 'Open yourself,' she whispers. 'The steppe is speaking. Listen.' The wind howls -- and then, suddenly, falls silent. In the silence, you hear it: a wolf's howl, distant and spectral, echoing from nowhere and everywhere."
+      text: "Come. Stand in the centre of the circle. Do not speak -- only listen. The wind-paths will do the rest."
       unlocks: ["ritual_complete"]
 
     - id: ritual_complete
@@ -132,7 +132,7 @@ tree:
       questRequired: ["12-ritual"]
       questExcluded: ["12-end"]
       grantsQuest: "12-end"
-      text: "The spectral howl fades and warmth floods through you -- the warmth of sunbaked grass, of wind-scoured stone, of a land that has endured since the world was young. Sylara rises, her eyes shining. 'It is done. The steppe knows you. When you hold a spirit fetish and speak the words of calling, a wolf of wind and light will answer.' She presses a bundle of fetishes into your hands. 'These will sustain the summoning. When they run out, come back to me. The steppe provides for its own.'"
+      text: "It is done. The steppe knows you now. When you hold a spirit fetish and speak the words of calling, a wolf of wind and light will answer. Take these -- they will sustain the summoning. When they run out, come back to me. The steppe provides for its own."
       moodChange: grateful
 
     - id: give_fetish
