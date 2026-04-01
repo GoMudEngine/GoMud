@@ -616,6 +616,12 @@ func (r *Mob) HatesMob(m *Mob) bool {
 		return false // Can't hate exact same as self
 	}
 
+	// Check hates list against target's groups first — group hatred
+	// overrides species alliance (a warden hates bandits even if both human)
+	if r.hatesAnyGroup(m.Groups) {
+		return true
+	}
+
 	// Same species = ally, never hate
 	if r.Character.SpeciesId > 0 &&
 		r.Character.SpeciesId == m.Character.SpeciesId {
@@ -677,12 +683,30 @@ func (r *Mob) ConsidersAnAlly(m *Mob) bool {
 		return true
 	}
 
+	// If either mob hates any of the other's groups, they are NOT allies
+	// regardless of species. A warden should never ally with a bandit.
+	if r.hatesAnyGroup(m.Groups) || m.hatesAnyGroup(r.Groups) {
+		return false
+	}
+
 	// Same species = allies (SpeciesId 0 is unset/ghostly spirit, skip)
 	if r.Character.SpeciesId > 0 &&
 		r.Character.SpeciesId == m.Character.SpeciesId {
 		return true
 	}
 
+	return false
+}
+
+// hatesAnyGroup returns true if this mob's Hates list includes any of the given groups.
+func (r *Mob) hatesAnyGroup(groups []string) bool {
+	for _, hate := range r.Hates {
+		for _, grp := range groups {
+			if strings.EqualFold(hate, grp) {
+				return true
+			}
+		}
+	}
 	return false
 }
 

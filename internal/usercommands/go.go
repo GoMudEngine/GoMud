@@ -42,8 +42,11 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 	if user.Character.Aggro != nil {
 		// Always allow movement out of the death recovery room —
 		// stale aggro must never trap a player in the Shadow Realm.
+		// Use GetOriginalRoom() because the shadow realm is an ephemeral
+		// copy — the actual room ID won't match the config value.
 		deathRoom := int(configs.GetSpecialRoomsConfig().DeathRecoveryRoom)
-		if user.Character.RoomId != deathRoom {
+		actualRoom := rooms.GetOriginalRoom(user.Character.RoomId)
+		if actualRoom != deathRoom {
 			user.SendText("You can't do that! You are in combat!")
 			return true, nil
 		}
