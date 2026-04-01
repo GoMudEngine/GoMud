@@ -95,6 +95,7 @@ type Character struct {
 	Cooldowns        Cooldowns                      `yaml:"cooldowns,omitempty"`     // How many rounds until it is cooled down
 	Settings         map[string]string              `yaml:"settings,omitempty"`      // custom setting tracking, used for anything.
 	QuestProgress    map[int]string                 `yaml:"questprogress,omitempty"` // quest progress tracking
+	LastQuestId      int                            `yaml:"lastquestid,omitempty"`   // most recently progressed quest
 	KeyRing          map[string]string              `yaml:"keyring,omitempty"`       // key is the lock id, value is the sequence
 	KD               KDStats                        `yaml:"kd,omitempty"`            // Kill/Death stats
 	MiscData         map[string]any                 `yaml:"miscdata,omitempty"`      // Any random other data that needs to be stored
@@ -2231,6 +2232,7 @@ func (c *Character) GiveQuestToken(questToken string) bool {
 
 	if quests.IsTokenAfter(currentToken, questToken) {
 		c.QuestProgress[questId] = newStep
+		c.LastQuestId = questId
 		return true
 	}
 
