@@ -51,7 +51,7 @@ tree:
       - questRequired: ["12-start"]
         questExcluded: ["12-ritual"]
         text: "Sylara's eyes brighten. 'You chose the covenant. The spirits will be pleased. I can teach you to hear the steppe's voice -- to call upon the wolf spirits that guard the wind-paths. Are you ready for the ritual?'"
-        hints: "You could tell her you are ready for the ritual."
+        hints: "You could tell me you are ready for the ritual."
       - questRequired: ["12-end"]
         text: "Sylara smiles -- warm and genuine, transforming her stern features. 'The spirits know you now. You carry the steppe with you wherever you go. If you need more fetishes for the summoning, you have only to ask.'"
       - questRequired: ["13-end"]
@@ -62,7 +62,7 @@ tree:
       - questRequired: ["11-end", "11-sylara"]
         questExcluded: ["12-start", "13-start"]
         text: "Sylara regards you with newfound respect. 'You proved yourself on the steppe. The spirits noticed.' Her voice softens. 'I could teach you the old covenant -- to call upon the wolf spirits that guard the wind-paths. It is not offered lightly.'"
-        hints: "You could ask her about the covenant."
+        hints: "You could ask me about the covenant."
 
   nodes:
     - id: her_cause
