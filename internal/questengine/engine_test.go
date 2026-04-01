@@ -11,6 +11,7 @@ import (
 type fullMockPlayer struct {
 	quests map[string]bool
 	items  map[int]bool
+	flags  map[string]string
 	roomId int
 }
 
@@ -18,13 +19,15 @@ func newFullMockPlayer(roomId int) *fullMockPlayer {
 	return &fullMockPlayer{
 		quests: make(map[string]bool),
 		items:  make(map[int]bool),
+		flags:  make(map[string]string),
 		roomId: roomId,
 	}
 }
 
-func (p *fullMockPlayer) HasQuest(token string) bool { return p.quests[token] }
-func (p *fullMockPlayer) HasItem(itemId int) bool     { return p.items[itemId] }
-func (p *fullMockPlayer) GetRoomId() int              { return p.roomId }
+func (p *fullMockPlayer) HasQuest(token string) bool        { return p.quests[token] }
+func (p *fullMockPlayer) HasItem(itemId int) bool           { return p.items[itemId] }
+func (p *fullMockPlayer) GetRoomId() int                    { return p.roomId }
+func (p *fullMockPlayer) GetQuestFlag(key string) string    { return p.flags[key] }
 
 // fullMockActionContext wraps mockActionContext but mutates the player's state
 // on GrantQuest, ConsumeItem, and GiveItem so chained evaluation works.
@@ -53,6 +56,10 @@ func (c *fullMockActionContext) ConsumeItem(itemId int) {
 func (c *fullMockActionContext) GiveItem(itemId int) {
 	c.mockActionContext.GiveItem(itemId)
 	c.player.items[itemId] = true
+}
+
+func (m *fullMockActionContext) SetQuestFlag(key, value string) {
+	m.player.flags[key] = value
 }
 
 // seedTestQuests creates an Engine loaded with the Scholar's Collection quest (quest 3).

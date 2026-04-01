@@ -50,6 +50,11 @@ func (b *GameBridge) GetRoomId() int {
 	return b.roomId
 }
 
+// GetQuestFlag returns the value of a quest flag from the player's character.
+func (b *GameBridge) GetQuestFlag(key string) string {
+	return b.user.Character.GetQuestFlag(key)
+}
+
 // --- ActionContext ---
 
 // GetUserId returns the user's ID.
@@ -222,6 +227,11 @@ func (b *GameBridge) UnlockExits(e ExitLock) {
 	for exitName := range room.Exits {
 		room.SetExitLock(exitName, false)
 	}
+}
+
+// SetQuestFlag sets a quest flag on the player's character.
+func (b *GameBridge) SetQuestFlag(key, value string) {
+	b.user.Character.SetQuestFlag(key, value)
 }
 
 // QueueNpcSay finds the mob in the room and makes it say each line.

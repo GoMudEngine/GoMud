@@ -6,6 +6,7 @@ type PlayerState interface {
 	HasQuest(token string) bool
 	HasItem(itemId int) bool
 	GetRoomId() int
+	GetQuestFlag(key string) string
 }
 
 // EvalConditions checks all conditions against the player's current state.
@@ -29,6 +30,16 @@ func EvalConditions(c Conditions, p PlayerState) bool {
 	}
 	if c.MissingItem > 0 && p.HasItem(c.MissingItem) {
 		return false
+	}
+	for key, val := range c.HasFlag {
+		if p.GetQuestFlag(key) != val {
+			return false
+		}
+	}
+	for key, val := range c.MissingFlag {
+		if p.GetQuestFlag(key) == val {
+			return false
+		}
 	}
 	return true
 }

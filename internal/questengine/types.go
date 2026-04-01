@@ -59,11 +59,13 @@ type TriggerDef struct {
 
 // Conditions for trigger evaluation.
 type Conditions struct {
-	Has         []string `yaml:"has,omitempty"`          // player must have ALL these quest tokens
-	Missing     []string `yaml:"missing,omitempty"`      // player must NOT have ANY of these tokens
-	InRoom      int      `yaml:"in_room,omitempty"`      // player must be in this room
-	HasItem     int      `yaml:"has_item,omitempty"`     // player must have this item
-	MissingItem int      `yaml:"missing_item,omitempty"` // player must NOT have this item
+	Has         []string          `yaml:"has,omitempty"`          // player must have ALL these quest tokens
+	Missing     []string          `yaml:"missing,omitempty"`      // player must NOT have ANY of these tokens
+	InRoom      int               `yaml:"in_room,omitempty"`      // player must be in this room
+	HasItem     int               `yaml:"has_item,omitempty"`     // player must have this item
+	MissingItem int               `yaml:"missing_item,omitempty"` // player must NOT have this item
+	HasFlag     map[string]string `yaml:"has_flag,omitempty"`     // player must have ALL these flag key=value pairs
+	MissingFlag map[string]string `yaml:"missing_flag,omitempty"` // player must NOT have ANY of these flag key=value pairs
 }
 
 // ActionDef is a single action to execute when a trigger fires.
@@ -84,8 +86,14 @@ type ActionDef struct {
 	TrainSkill  *SkillDef    `yaml:"train_skill,omitempty"`
 	ApplyBuff   *BuffDef     `yaml:"apply_buff,omitempty"`
 	Teleport     int          `yaml:"teleport,omitempty"`
-	GiveMutation bool         `yaml:"give_mutation,omitempty"` // roll and grant a random mutation
-	Sequence     *SequenceDef `yaml:"sequence,omitempty"`
+	GiveMutation bool            `yaml:"give_mutation,omitempty"` // roll and grant a random mutation
+	SetFlag      *QuestFlagAction `yaml:"set_flag,omitempty"`
+	Sequence     *SequenceDef    `yaml:"sequence,omitempty"`
+}
+
+type QuestFlagAction struct {
+	Key   string `yaml:"key"`
+	Value string `yaml:"value"`
 }
 
 type NpcSayDef struct {

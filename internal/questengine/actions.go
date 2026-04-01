@@ -22,6 +22,7 @@ type ActionContext interface {
 	QueueNpcSay(n NpcSayDef)
 	QueueSequence(s SequenceDef)
 	GiveMutation()
+	SetQuestFlag(key, value string)
 	GetUserId() int
 }
 
@@ -103,6 +104,11 @@ func ExecuteAction(a ActionDef, ctx ActionContext) error {
 	if a.GiveMutation {
 		LogVerboseF(ctx.GetUserId(), "give_mutation")
 		ctx.GiveMutation()
+		return nil
+	}
+	if a.SetFlag != nil {
+		LogVerboseF(ctx.GetUserId(), "set quest flag %s=%s", a.SetFlag.Key, a.SetFlag.Value)
+		ctx.SetQuestFlag(a.SetFlag.Key, a.SetFlag.Value)
 		return nil
 	}
 	if a.Sequence != nil {

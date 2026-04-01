@@ -9,6 +9,7 @@ import (
 type mockPlayer struct {
 	quests map[string]bool
 	items  map[int]bool
+	flags  map[string]string
 	roomId int
 }
 
@@ -16,13 +17,15 @@ func newMockPlayer(roomId int) *mockPlayer {
 	return &mockPlayer{
 		quests: make(map[string]bool),
 		items:  make(map[int]bool),
+		flags:  make(map[string]string),
 		roomId: roomId,
 	}
 }
 
-func (m *mockPlayer) HasQuest(token string) bool { return m.quests[token] }
-func (m *mockPlayer) HasItem(itemId int) bool     { return m.items[itemId] }
-func (m *mockPlayer) GetRoomId() int              { return m.roomId }
+func (m *mockPlayer) HasQuest(token string) bool        { return m.quests[token] }
+func (m *mockPlayer) HasItem(itemId int) bool           { return m.items[itemId] }
+func (m *mockPlayer) GetRoomId() int                    { return m.roomId }
+func (m *mockPlayer) GetQuestFlag(key string) string    { return m.flags[key] }
 
 func TestEvalConditions_Empty(t *testing.T) {
 	p := newMockPlayer(100)
@@ -71,4 +74,23 @@ func TestEvalConditions_Combined(t *testing.T) {
 	assert.True(t, EvalConditions(c, p))
 	c.InRoom = 200
 	assert.False(t, EvalConditions(c, p))
+}
+
+func TestEvalConditions_HasFlag(t *testing.T) {
+	p := newMockPlayer(100)
+	p.flags["11-branch"] = "rhett"
+	assert.True(t, EvalConditions(Conditions{HasFlag: map[string]string{"11-branch": "rhett"}}, p))
+	assert.False(t, EvalConditions(Conditions{HasFlag: map[string]string{"11-branch": "sylara"}}, p))
+}
+
+func TestEvalConditions_MissingFlag(t *testing.T) {
+	p := newMockPlayer(100)
+	p.flags["11-branch"] = "rhett"
+	assert.True(t, EvalConditions(Conditions{MissingFlag: map[string]string{"11-branch": "sylara"}}, p))
+	assert.False(t, EvalConditions(Conditions{MissingFlag: map[string]string{"11-branch": "rhett"}}, p))
+}
+
+func TestEvalConditions_HasFlag_Missing(t *testing.T) {
+	p := newMockPlayer(100)
+	assert.False(t, EvalConditions(Conditions{HasFlag: map[string]string{"11-branch": "rhett"}}, p))
 }
