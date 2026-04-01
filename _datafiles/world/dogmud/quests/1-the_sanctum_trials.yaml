@@ -12,32 +12,32 @@ steps:
     description: "Survive the Awakening Rite and receive your first mutation."
     hint: "Visit Merchant Adela on Market Street. From Town Square, go south."
   - id: shopping_buy
-    description: "Purchase equipment from Merchant Adela."
-    hint: "Type list to see what the merchant carries, then buy something you can afford."
+    description: "Visit Merchant Adela on Market Street and buy equipment."
+    hint: "Go to Market Street (from the Academy, go south). Type list to see her wares, then buy something."
   - id: shopping_equip
-    description: "Equip your new gear."
-    hint: "Type wield or wear to put on what you bought. Type inventory to see what you have."
+    description: "Equip what you just bought."
+    hint: "Type wield [weapon] or wear [armor] to put on your purchase. Type inventory to see what you have."
   - id: combat_defeat
     description: "Defeat the training dummy in the Training Yard."
     hint: "Go to the Training Yard (from Town Square, north then east). Type attack dummy to start the fight."
   - id: crafting_craft
-    description: "Forge an item at Korvath's smithy."
-    hint: "Visit The Forge south of the Training Yard. Korvath will give you materials. Type craft iron dagger."
+    description: "Visit Korvath at The Forge and craft an iron dagger."
+    hint: "The Forge is south of the Training Yard. Korvath will give you materials. Type craft iron dagger."
   - id: alchemy_craft
-    description: "Brew a potion at Alchemist Yenna's workshop."
-    hint: "Visit the Alchemist's Workshop west of Well Court. Yenna will give you materials. Type craft healing poultice."
+    description: "Visit Alchemist Yenna and brew a healing poultice."
+    hint: "The Alchemist's Workshop is west of Well Court. Yenna will give you materials. Type craft healing poultice."
   - id: wilderness_forage
-    description: "Forage for materials in the wild."
-    hint: "Visit the West Meadow (from Town Square, go west). Type forage to search the area."
+    description: "Visit Wilderness Guide Fen and forage for materials."
+    hint: "The West Meadow is west of Town Square. Type forage to search the area."
   - id: wilderness_track
     description: "Track a creature in the wilderness."
     hint: "While in the West Meadow with Guide Fen, type track to read the signs."
   - id: magic_cast
-    description: "Cast a spell at the Observatory."
-    hint: "Visit Elder Saris at the Observatory (above the Alchemist). Type cast conviction-spike echo."
+    description: "Visit Elder Saris at the Observatory and cast a spell."
+    hint: "The Observatory is above the Alchemist's Workshop. Type cast conviction-spike echo."
   - id: cave
     description: "Defeat the Aberrant Chrysalis in the cave."
-    hint: "Go east from the Observatory into the cave tunnels. Find and defeat the Aberrant Chrysalis at the back."
+    hint: "Go east from the Observatory into the cave tunnels. Find and defeat the Aberrant at the back."
   - id: warden
     description: "Report to the Basin Warden at the south gate."
     hint: "Return to the Basin Warden at Basin Gate, south of Town Square."
