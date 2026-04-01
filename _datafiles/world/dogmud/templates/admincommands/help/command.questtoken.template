@@ -27,6 +27,18 @@ progress for your character.
   - Set up prerequisites before testing a later quest
     (e.g. <ansi fg="command">questtoken 11-end</ansi> before testing Q12)
 
+<ansi fg="yellow-bold">Quest Flags:</ansi>
+
+<ansi fg="command">questtoken flags</ansi>
+  Show all quest flags on your character.
+
+<ansi fg="command">questtoken flag <key></ansi>
+  Show a specific flag's value.
+
+<ansi fg="command">questtoken flag <key> <value></ansi>
+  Set a quest flag manually. Flag keys use the format
+  <ansi fg="cyan">questid-flagname</ansi> (e.g., 11-branch).
+
 <ansi fg="yellow-bold">Notes:</ansi>
   - Granting an end step triggers quest rewards (gold,
     items, spells) just like normal completion.
