@@ -211,3 +211,6 @@ hints:
   - >-
     Salvaging always destroys the item, even if you recover
     nothing. Make sure you really want to break it down.
+  - >-
+    Stuck on a quest? Type <ansi fg="command">hint</ansi> for a nudge
+    in the right direction.
