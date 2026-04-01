@@ -1019,6 +1019,56 @@ func (c *Character) MigrateQuestFlags() {
 	// the player will pick a branch when they next interact.
 }
 
+// MigrateLegacyPotions replaces removed alchemy items and recipes
+// with their current equivalents.
+// 30010 (healing poultice) → 30036 (healing salve)
+// 30011 (stamina draught)  → 30037 (stamina tonic)
+// 30031 (greater healing poultice) → 30036 (healing salve)
+func (c *Character) MigrateLegacyPotions() {
+	// Replace items in backpack
+	for i := range c.Items {
+		switch c.Items[i].ItemId {
+		case 30010, 30031:
+			c.Items[i].ItemId = 30036
+		case 30011:
+			c.Items[i].ItemId = 30037
+		}
+	}
+
+	// Replace items in component bag
+	for i := range c.ComponentItems {
+		switch c.ComponentItems[i].ItemId {
+		case 30010, 30031:
+			c.ComponentItems[i].ItemId = 30036
+		case 30011:
+			c.ComponentItems[i].ItemId = 30037
+		}
+	}
+
+	// Replace items in potion bandolier
+	for i := range c.PotionItems {
+		switch c.PotionItems[i].ItemId {
+		case 30010, 30031:
+			c.PotionItems[i].ItemId = 30036
+		case 30011:
+			c.PotionItems[i].ItemId = 30037
+		}
+	}
+
+	// Replace recipe knowledge
+	if c.KnownRecipes != nil {
+		if _, ok := c.KnownRecipes["healing-poultice"]; ok {
+			delete(c.KnownRecipes, "healing-poultice")
+			c.KnownRecipes["healing-salve"] = 1
+		}
+		if _, ok := c.KnownRecipes["stamina-draught"]; ok {
+			delete(c.KnownRecipes, "stamina-draught")
+			c.KnownRecipes["stamina-tonic"] = 1
+		}
+		delete(c.KnownRecipes, "greater-healing-poultice")
+	}
+}
+
 func (c *Character) HasRecipe(recipeId string) bool {
 	if c.KnownRecipes == nil {
 		return false
