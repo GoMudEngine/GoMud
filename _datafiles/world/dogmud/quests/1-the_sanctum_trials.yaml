@@ -10,40 +10,40 @@ steps:
     hint: "Stay in the Academy Hall and listen to the Priest."
   - id: mutation
     description: "Visit Merchant Adela on Market Street and buy equipment. Type hint for directions."
-    hint: "Go south from the Academy Hall to Market Street. Type list to see her wares, then buy something."
+    hint: "From the Academy Hall, go south (1 south). Type list to see her wares, then buy something."
   - id: shopping_buy
     description: "Equip what you just bought. Type hint if you need help."
     hint: "Type wield [weapon] or wear [armor] to put on your purchase. Type inventory to see what you have."
   - id: shopping_equip
     description: "Defeat the training dummy in the Training Yard. Type hint for directions."
-    hint: "From Market Street, go north back to the Academy Hall, then east to the Training Yard. Type attack dummy to fight."
+    hint: "From Market Street, go north then east (1 north, 1 east). Type attack dummy to start the fight."
   - id: combat_defeat
     description: "Visit Korvath at The Forge and craft an iron dagger."
-    hint: "From the Training Yard, go south to The Forge. Korvath will give you materials. Type craft iron dagger."
+    hint: "From the Training Yard, go south (1 south). Korvath will give you materials. Type craft iron dagger."
   - id: crafting_craft
     description: "Visit Alchemist Yenna and brew a healing salve."
-    hint: "From The Forge, go west to Market Street, then west again to Town Square, north to Well Court, then west to the Alchemist's Workshop. Type craft healing salve."
+    hint: "From The Forge, go west, west, north, west (3 west, 1 north). Yenna will give you materials. Type craft healing salve."
   - id: alchemy_craft
     description: "Visit Wilderness Guide Fen and forage for materials."
-    hint: "From the Alchemist's Workshop, go south to the West Meadow. Type forage to search the area."
+    hint: "From the Alchemist's Workshop, go south (1 south). Type forage to search the area."
   - id: wilderness_forage
     description: "Track a creature in the wilderness."
-    hint: "Stay in the West Meadow with Guide Fen. Type track to read the signs."
+    hint: "Stay in the West Meadow. Type track to read the signs."
   - id: wilderness_track
     description: "Visit Elder Saris at the Observatory and cast a spell."
-    hint: "From the West Meadow, go north to the Alchemist's Workshop, then north again to the Observatory. Type cast conviction-spike echo."
+    hint: "From the West Meadow, go north, north (2 north). Type cast conviction-spike echo."
   - id: magic_cast
     description: "Defeat the Aberrant Chrysalis in the cave."
-    hint: "From the Observatory, go east to Observatory Path, east to Cave Path, east to Cave Depths, then east to the Boss Cave. Defeat the Aberrant."
+    hint: "From the Observatory, go east, east, east, east (4 east) into the Boss Cave. Defeat the Aberrant."
   - id: cave
     description: "Report to the Basin Warden at the south gate."
-    hint: "Head back west through the caves, then south through Well Court and Town Square to Basin Gate."
+    hint: "From the Boss Cave, go west, west, west, south, south, south (3 west, 3 south) to Basin Gate."
   - id: warden
     description: "The Basin Warden is opening the gate. Listen to the final words."
     hint: "Stay and listen to the Basin Warden's farewell."
   - id: end
     description: "The Sanctum Trials are complete. Head south through the gate."
-    hint: "Head south through the gate. The world of Gaius awaits you."
+    hint: "Go south through the gate. The world awaits."
 
 rewards:
   gold: 25
