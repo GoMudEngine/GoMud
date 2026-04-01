@@ -9,13 +9,13 @@ steps:
     description: "Listen to the Chrysalis Priest's Awakening Rite."
     hint: "Stay in the Academy Hall and listen to the Priest. The rite takes about a minute."
   - id: mutation
-    description: "Visit Merchant Adela on Market Street and buy equipment."
+    description: "Visit Merchant Adela on Market Street and buy equipment. Type hint for directions."
     hint: "Go south from the Academy Hall to reach Market Street. Type list to see her wares, then buy something."
   - id: shopping_buy
-    description: "Equip what you just bought."
+    description: "Equip what you just bought. Type hint if you need help."
     hint: "Type wield [weapon] or wear [armor] to put on your purchase. Type inventory to see what you have."
   - id: shopping_equip
-    description: "Defeat the training dummy in the Training Yard."
+    description: "Defeat the training dummy in the Training Yard. Type hint for directions."
     hint: "Go north from Market Street to Town Square, then east to the Training Yard. Type attack dummy to start the fight."
   - id: combat_defeat
     description: "Visit Korvath at The Forge and craft an iron dagger."
