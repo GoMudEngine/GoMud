@@ -639,4 +639,296 @@ When an NPC has an LLM profile, `talk.go` and `ask.go` populate
 player's active quests. These are injected into the LLM system prompt so
 Ollama-powered NPCs can reference quest state naturally.
 
-This comprehensive quests system provides flexible quest management with multi-step progression, diverse reward types, secret quest support, and seamless integration with character progression, item distribution, and skill advancement systems.
+This comprehensive quests system provides flexible quest management with
+multi-step progression, diverse reward types, secret quest support, and
+seamless integration with character progression, item distribution, and
+skill advancement systems.
+
+---
+
+## Quest Flags System
+
+Quest flags are a key-value metadata store attached to a player's quest
+progress. They complement the token system: tokens track *where* a player
+is in a quest (which step), while flags track *how* they got there (which
+branch, which choice, whose side they took).
+
+### Flags vs. Tokens — When to Use Each
+
+| Mechanism | Use for | Storage |
+|-----------|---------|---------|
+| Quest token (`{id}-{step}`) | Step progress, gating future steps | `character.QuestTokens` |
+| Quest flag (`{id}-{name}`) | Branching choices, cross-quest state | `character.QuestFlags` |
+
+Use **tokens** when you want to gate an NPC interaction on whether a player
+has reached a certain quest stage. Use **flags** when you need to remember
+a *choice* the player made — especially when that choice affects a different
+NPC or a later quest in the same chain.
+
+Flags never expire and are never consumed. They are permanent markers on the
+character until explicitly cleared by a script.
+
+### Flag Declaration in Quest YAML
+
+Every flag key that any dialogue file or quest condition references MUST be
+declared in the quest's YAML under a top-level `flags:` list. **Referencing
+an undeclared flag key causes a server panic at startup.** This is
+intentional — it catches typos in dialogue files before players ever see
+them in production.
+
+```yaml
+questid: 11
+name: "The Schism at Veltara"
+flags:
+  - key: branch
+    values: [sylara, rhett]
+    description: "Which NPC the player sided with"
+steps:
+  - id: start
+    description: "Speak to Sylara or Rhett about the schism."
+  - id: middle
+    description: "Carry out your chosen ally's request."
+  - id: end
+    description: "Return to your ally with proof."
+```
+
+**Key naming convention:** `"{questId}-{flagName}"` — e.g., `"11-branch"`.
+Always namespace the flag with the quest ID to prevent collisions between
+quests. The YAML `key:` field stores only the short name (`branch`); the
+full namespaced key is constructed at runtime as `"{questId}-{key}"`.
+
+**Values list:** All legal values must be listed. The engine validates that
+any `setsQuestFlag` value is in the declared list at startup.
+
+### Dialogue Integration
+
+Three new fields on `TreeNode` and `Pattern` support flag-driven gating:
+
+#### `setsQuestFlag`
+Sets a flag when this dialogue node fires. Evaluated after `grantsQuest` so
+both the token and the flag are written atomically from the player's
+perspective.
+
+```yaml
+- id: side_with_rhett
+  triggers: ["rhett", "side", "help"]
+  questRequired: ["11-start"]
+  questExcluded: ["11-middle"]
+  grantsQuest: "11-middle"
+  setsQuestFlag:
+    key: "11-branch"
+    value: "rhett"
+  text: "Then we are agreed. Bring me the seal and we are done."
+```
+
+#### `questFlagRequired`
+Gates the node on an exact flag value. Accepts a map of `key: value` pairs.
+All pairs must match for the node to be eligible.
+
+```yaml
+- id: rhett_midquest_check
+  triggers: ["progress", "seal", "status"]
+  questRequired: ["11-middle"]
+  questFlagRequired:
+    "11-branch": "rhett"
+  text: "Have you found the seal yet? Time is short."
+```
+
+#### `questFlagExcluded`
+Hides the node if ANY of the listed key/value pairs match. Useful for
+suppressing irrelevant dialogue on wrong-path players.
+
+```yaml
+- id: sylara_reward
+  triggers: ["reward", "done", "finished"]
+  questRequired: ["11-end"]
+  questFlagExcluded:
+    "11-branch": "rhett"
+  text: "You have done well. The Circle will remember this."
+```
+
+### Quest Engine Condition/Action Integration
+
+Quest step conditions and actions (used in quest YAML `steps[].conditions`)
+support flag checks:
+
+```yaml
+steps:
+  - id: middle
+    description: "Complete your ally's task."
+    conditions:
+      - has_flag: {"11-branch": "rhett"}
+        hint: "Rhett wants you to retrieve the obsidian seal."
+      - has_flag: {"11-branch": "sylara"}
+        hint: "Sylara wants you to destroy the seal before Rhett can use it."
+```
+
+**Condition types:**
+- `has_flag: {key: value}` — true if flag equals value
+- `missing_flag: {key: value}` — true if flag does NOT equal value (or
+  is unset)
+
+**Action type (for use in reward blocks or triggered events):**
+- `set_flag: {key: "11-branch", value: "rhett"}` — programmatically set a
+  flag (used in JS scripts when dialogue-layer flag setting isn't sufficient)
+
+### Admin and Scripting Interface
+
+**Admin commands (via `questtoken` command):**
+
+```
+questtoken flags              # list all flags on your character
+questtoken flag 11-branch     # show current value of one flag
+questtoken flag 11-branch rhett  # manually set a flag (admin use only)
+```
+
+**JavaScript scripting API** (available in all mob `.js` scripts via the
+`user` object):
+
+```javascript
+// Read a flag
+var branch = user.GetQuestFlag("11-branch");
+if (branch === "rhett") {
+    user.SendText("Rhett's ally — I know your face.");
+}
+
+// Set a flag (rare — prefer setsQuestFlag in dialogue YAML)
+user.SetQuestFlag("11-branch", "sylara");
+
+// Check existence (flag is unset if empty string)
+if (user.HasQuestFlag("11-branch")) {
+    // branch is already chosen
+}
+```
+
+Prefer `setsQuestFlag` in dialogue YAML over `SetQuestFlag` in scripts
+wherever possible. Script-side flag setting is best reserved for `onGive`
+handlers or combat hooks where dialogue YAML can't fire.
+
+### Worked Example: Quest 11 — The Schism at Veltara
+
+Quest 11 is a two-NPC branching quest. Sylara and Rhett both offer the
+quest; the player can only side with one. The flag `11-branch` records the
+choice and gates all subsequent dialogue on both NPCs.
+
+**Quest YAML (`11-the_schism_at_veltara.yaml`):**
+
+```yaml
+questid: 11
+name: "The Schism at Veltara"
+flags:
+  - key: branch
+    values: [sylara, rhett]
+    description: "Which NPC the player sided with"
+steps:
+  - id: start
+    description: "Speak to Sylara or Rhett about the schism."
+    hint: "Ask Sylara or Rhett about the schism."
+  - id: middle
+    description: "Carry out your chosen ally's request."
+  - id: end
+    description: "Return to your ally with the proof."
+rewards:
+  gold: 200
+  playerMessage: "The schism is resolved — for better or worse."
+```
+
+**Sylara's dialogue tree (abbreviated):**
+
+```yaml
+tree:
+  root:
+    text: "The Circle fractures around us. Choose your allegiance wisely."
+    variants:
+      # Mid-quest: player is on Sylara's branch
+      - questRequired: ["11-middle"]
+        questFlagRequired: {"11-branch": "sylara"}
+        text: "You serve the Circle still. Bring me the proof."
+      # Mid-quest: player sided with Rhett — show dismissal
+      - questRequired: ["11-middle"]
+        questFlagRequired: {"11-branch": "rhett"}
+        text: "You walk Rhett's path. We have nothing to discuss."
+      # Quest done
+      - questRequired: ["11-end"]
+        text: "It is done. The Circle holds."
+
+  nodes:
+    # DISMISSAL NODE — must appear FIRST so it blocks keyword matches
+    # for players already committed to Rhett's branch
+    - id: rhett_dismiss
+      triggers: ["schism", "quest", "task", "help", "side", "sylara"]
+      questRequired: ["11-middle"]
+      questFlagRequired: {"11-branch": "rhett"}
+      text: "You have chosen Rhett. I have nothing for you."
+
+    # Quest offer — only shows before player has started
+    - id: offer_quest
+      triggers: ["schism", "quest", "task", "help"]
+      questExcluded: ["11-start", "11-middle", "11-end"]
+      grantsQuest: "11-start"
+      setsQuestFlag:
+        key: "11-branch"
+        value: "sylara"
+      text: "Then stand with me. The seal must be destroyed."
+
+    # Mid-quest check — only for Sylara's branch
+    - id: progress_check
+      triggers: ["seal", "progress", "proof"]
+      questRequired: ["11-middle"]
+      questFlagRequired: {"11-branch": "sylara"}
+      questExcluded: ["11-end"]
+      text: "The seal must be destroyed before Rhett can use it."
+
+    # Completion — only for Sylara's branch
+    - id: complete
+      triggers: ["done", "finished", "proof", "seal"]
+      questRequired: ["11-middle"]
+      questFlagRequired: {"11-branch": "sylara"}
+      questExcluded: ["11-end"]
+      requiresItem: 4422
+      grantsQuest: "11-end"
+      text: "The fragments. It is done. You have my gratitude."
+```
+
+**Rhett's dialogue tree follows the mirror pattern** with `questFlagRequired:
+{"11-branch": "rhett"}` and a dismissal node gating `{"11-branch": "sylara"}`
+players out of his quest flow.
+
+### Common Pitfalls
+
+#### 1. Missing dismissal nodes
+The most common mistake. If a player already committed to Rhett's branch
+visits Sylara, her `schism`/`quest`/`task` keyword nodes will still match
+unless a dismissal node sits above them in the nodes list. Dismissal nodes
+**must appear first** in the `nodes:` list so the engine evaluates them
+before reaching the quest-offer nodes.
+
+#### 2. Missing mid-quest root variants
+Without a variant for "player is on the other path," the NPC gives their
+default greeting to wrong-path players, which often contains hints about the
+quest. This leaks quest text and confuses players. Always add a root variant
+with `questFlagRequired` for both branches during the active quest phase.
+
+#### 3. `is_component` on quest items
+Items with `is_component: true` auto-route to the component bag on pickup.
+Quest items must NOT have `is_component: true` — they belong in the regular
+backpack where quest scripts and `requiresItem` checks can find them.
+
+#### 4. Flag key typos bypassing validation
+The startup panic for undeclared flag keys only fires if the quest YAML is
+loaded AND the dialogue YAML references a `questFlagRequired`/
+`questFlagExcluded`/`setsQuestFlag` key that the quest didn't declare.
+If you create a flag reference in dialogue before writing the quest YAML,
+the server will panic at start. Write the quest YAML `flags:` block first.
+
+#### 5. Double-completion guard missing
+Nodes that fire `grantsQuest` for the final step should always include
+`questExcluded: ["{id}-end"]` to prevent re-triggering if the player talks
+to the NPC again after completion. This is the same guard used for all
+completion nodes (see CLAUDE.md "Double-completion guard").
+
+#### 6. Cross-quest flag references
+If quest 14 needs to know which branch the player took in quest 11, it reads
+`"11-branch"` directly. There is no need to copy the flag into a new key.
+Document the dependency in both quest YAMLs with a comment so future
+maintainers know the quests are coupled.
