@@ -2277,10 +2277,11 @@ func (c *Character) SetQuestFlag(key, value string) {
 		c.QuestFlags = make(map[string]string)
 	}
 	// Runtime defense-in-depth: log if flag isn't in the registry.
-	// Startup validation (questengine.ValidateAllFlags) should catch this first,
-	// but this guards against flags set via code paths that bypass the engine.
-	if err := quests.ValidateFlag(key, value); err != nil {
-		mudlog.Error("SetQuestFlag", "warning", err.Error())
+	// Skip if registry is empty (test environment / data not loaded yet).
+	if len(quests.GetFlagRegistry()) > 0 {
+		if err := quests.ValidateFlag(key, value); err != nil {
+			mudlog.Error("SetQuestFlag", "warning", err.Error())
+		}
 	}
 	c.QuestFlags[key] = value
 }
