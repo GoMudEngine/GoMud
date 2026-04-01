@@ -92,6 +92,17 @@ tree:
         hints: "You could ask about further work with the windstone."
 
   nodes:
+    - id: dismiss_sylara_path
+      triggers: ["quest", "task", "help", "work", "windstone", "crystal",
+        "extract", "gambit"]
+      questRequired: ["11-start"]
+      questFlagRequired:
+        "11-branch": "sylara"
+      text: "You chose the Windwarden's path. I respect that, even
+        if I think it is a mistake. But I cannot work with someone
+        whose loyalties lie with the people trying to stop me. The
+        crystal will have to wait for another pair of hands."
+
     - id: his_cause
       triggers: ["windstone", "crystal", "conflict", "cause", "why", "problem", "quest", "task", "help"]
       questExcluded: ["11-start"]

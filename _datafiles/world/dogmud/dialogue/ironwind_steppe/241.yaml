@@ -92,6 +92,17 @@ tree:
         hints: "You could ask about the covenant."
 
   nodes:
+    - id: dismiss_rhett_path
+      triggers: ["quest", "task", "help", "covenant", "teach",
+        "spirits", "circle", "conflict", "wind", "sacred"]
+      questRequired: ["11-start"]
+      questFlagRequired:
+        "11-branch": "rhett"
+      text: "The wind-paths remember what you did. You helped the
+        scholar crack the earth for his crystals. I will tend what
+        remains of the circle, but the covenant is not for those who
+        side with the one who would destroy it."
+
     - id: her_cause
       triggers: ["circle", "conflict", "wind", "problem", "sacred", "cause", "why", "quest", "task", "help"]
       questExcluded: ["11-start"]
