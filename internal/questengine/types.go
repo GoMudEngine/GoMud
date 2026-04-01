@@ -1,5 +1,11 @@
 package questengine
 
+type QuestFlagDef struct {
+	Key         string   `yaml:"key"`
+	Values      []string `yaml:"values"`
+	Description string   `yaml:"description,omitempty"`
+}
+
 // QuestDef is the expanded quest definition loaded from YAML.
 type QuestDef struct {
 	QuestId     int          `yaml:"questid"`
@@ -9,7 +15,8 @@ type QuestDef struct {
 	Linear      bool         `yaml:"linear,omitempty"` // true = steps must be granted in order (default true)
 	Steps       []QuestStep  `yaml:"steps"`
 	Rewards     QuestRewards `yaml:"rewards,omitempty"`
-	Triggers    []TriggerDef `yaml:"triggers"`
+	Triggers    []TriggerDef   `yaml:"triggers"`
+	Flags       []QuestFlagDef `yaml:"flags,omitempty"`
 }
 
 type QuestStep struct {

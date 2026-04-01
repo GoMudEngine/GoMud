@@ -8,6 +8,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/quests"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/pkg/errors"
 )
@@ -62,6 +63,22 @@ func (q *QuestDef) Validate() error {
 		seen[s.Id] = true
 	}
 
+	// Validate flag declarations
+	flagKeys := make(map[string]bool)
+	for _, f := range q.Flags {
+		if f.Key == "" {
+			return fmt.Errorf("quest %d (%s): flag has empty key", q.QuestId, q.Name)
+		}
+		if len(f.Values) == 0 {
+			return fmt.Errorf("quest %d (%s): flag %q has no allowed values", q.QuestId, q.Name, f.Key)
+		}
+		fullKey := fmt.Sprintf("%d-%s", q.QuestId, f.Key)
+		if flagKeys[fullKey] {
+			return fmt.Errorf("quest %d (%s): duplicate flag key %q", q.QuestId, q.Name, f.Key)
+		}
+		flagKeys[fullKey] = true
+	}
+
 	// Validate grant tokens reference valid steps (only for this quest's own tokens)
 	for i, t := range q.Triggers {
 		for _, a := range t.Actions {
@@ -109,6 +126,12 @@ func LoadDataFiles() {
 	globalEngine = NewEngine()
 	for _, q := range tmpQuests {
 		globalEngine.RegisterQuest(q)
+	}
+
+	for _, q := range tmpQuests {
+		for _, f := range q.Flags {
+			quests.RegisterFlags(q.QuestId, []quests.QuestFlagDef{{Key: f.Key, Values: f.Values, Description: f.Description}})
+		}
 	}
 
 	mudlog.Info("questengine.LoadDataFiles()", "loadedCount", len(tmpQuests), "Time Taken", time.Since(start))
