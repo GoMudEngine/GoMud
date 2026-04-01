@@ -56,7 +56,10 @@ tree:
         text: "Sylara smiles -- warm and genuine, transforming her stern features. 'The spirits know you now. You carry the steppe with you wherever you go. If you need more fetishes for the summoning, you have only to ask.'"
       - questRequired: ["13-end"]
         text: "Sylara's expression is carefully neutral, but grief shows in her eyes. 'You chose the scholar's path. The circle will endure... diminished. I will tend what remains.' She turns away."
-      - questRequired: ["11-end"]
+      - questRequired: ["11-end", "11-rhett"]
+        questExcluded: ["13-end"]
+        text: "Sylara regards you with cold respect. 'You helped the scholar dig his crystal from the ridge. The wind-paths felt it.' She turns back to the standing stones. 'The covenant is not for those who crack the earth for trinkets, however well-meaning.'"
+      - questRequired: ["11-end", "11-sylara"]
         questExcluded: ["12-start", "13-start"]
         text: "Sylara regards you with newfound respect. 'You proved yourself on the steppe. The spirits noticed.' Her voice softens. 'I could teach you the old covenant -- to call upon the wolf spirits that guard the wind-paths. It is not offered lightly.'"
         hints: "You could ask her about the covenant."
@@ -81,7 +84,7 @@ tree:
 
     - id: offer_covenant
       triggers: ["covenant", "quest", "task", "teach", "offer", "spirits"]
-      questRequired: ["11-end"]
+      questRequired: ["11-end", "11-sylara"]
       questExcluded: ["12-start"]
       grantsQuest: "12-start"
       text: "'The covenant is ancient -- older than any clan, older than the circle itself. The wolf spirits that guard the wind-paths will answer the call of one the steppe trusts.' Sylara's eyes burn with quiet intensity. 'I will teach you the ritual of binding. When it is done, you will carry the steppe's voice with you wherever you go. The spirits will come when you call.' She gestures toward the standing stones. 'Tell me when you are ready to begin.'"

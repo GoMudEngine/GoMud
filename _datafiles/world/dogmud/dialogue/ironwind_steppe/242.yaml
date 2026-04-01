@@ -56,10 +56,13 @@ tree:
         text: "Rhett adjusts his spectacles and grins. 'The aegis turned out better than I dared hope. Windstone is remarkable -- it practically shaped itself. Thornwall will hear about what you did here.'"
       - questRequired: ["12-end"]
         text: "Rhett's smile is tinged with disappointment. 'You chose the Windwarden. I understand. The crystal will wait -- it has waited this long.' He sighs. 'Perhaps someday someone will find a way that does not require choosing.'"
-      - questRequired: ["11-end"]
+      - questRequired: ["11-end", "11-sylara"]
+        questExcluded: ["12-end"]
+        text: "Rhett's smile is strained. 'You sided with the Windwarden in the end. I understand -- tradition has a gravity to it.' He turns back to his notes. 'The crystal will wait. It has waited this long.'"
+      - questRequired: ["11-end", "11-rhett"]
         questExcluded: ["12-start", "13-start"]
         text: "Rhett's eyes light up. 'Those samples confirmed everything I suspected. The crystal lattice is even more complex than I theorized.' He leans in conspiratorially. 'I have been preparing an extraction site. With the right help, I could pull a full slab of windstone from the ridge -- enough to forge a proper aegis. Ask me about the work if you are interested.'"
-        hints: "You could ask Rhett about further work with the windstone."
+        hints: "You could ask him about further work with the windstone."
 
   nodes:
     - id: his_cause
@@ -81,7 +84,7 @@ tree:
 
     - id: offer_gambit
       triggers: ["work", "extract", "gambit", "help", "quest", "task"]
-      questRequired: ["11-end"]
+      questRequired: ["11-end", "11-rhett"]
       questExcluded: ["13-start", "12-start"]
       grantsQuest: "13-start"
       text: "'The extraction site is ready. I have mapped the crystal
