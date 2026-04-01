@@ -10,7 +10,7 @@ steps:
     hint: "Stay in the Academy Hall and listen to the Priest. The rite takes about a minute."
   - id: mutation
     description: "Visit Merchant Adela on Market Street and buy equipment."
-    hint: "Go to Market Street (from the Academy, go south). Type list to see her wares, then buy something."
+    hint: "Go south from the Academy Hall to reach Market Street. Type list to see her wares, then buy something."
   - id: shopping_buy
     description: "Equip what you just bought."
     hint: "Type wield [weapon] or wear [armor] to put on your purchase. Type inventory to see what you have."
