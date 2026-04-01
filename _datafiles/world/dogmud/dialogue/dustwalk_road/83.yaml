@@ -100,12 +100,12 @@ tree:
 
     - id: evidence_return
       triggers: ["evidence", "purse", "letter", "found", "proof", "report", "documents"]
-      questRequired: ["4-evidence"]
+      questRequired: ["4-investigate"]
       questExcluded: ["4-end"]
-      requiresItem: 16
-      grantsQuest: "4-end"
-      text: "Caravan schedules. Supply routes. This is not petty theft -- someone is feeding them information from inside the trading houses. This changes things. You have done good work. The Watchers will act on this."
-      moodChange: grateful
+      text: "If you have found evidence from the bandit camp -- a purse, documents,\
+        \ anything with names or schedules -- bring it to me directly. Hand it\
+        \ over and I will see it gets into my report."
+      hints: "Give the bandit's purse to Tessara to complete the evidence handoff."
 
 memory:
   expiryPeriod: ""
