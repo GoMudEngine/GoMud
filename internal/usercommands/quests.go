@@ -68,24 +68,11 @@ func Quests(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			description := questInfo.Description
 
 			if questStep != `all+` {
-				foundCurrent := false
-				for i, step := range questInfo.Steps {
+				for _, step := range questInfo.Steps {
 					completedSteps++
 					if step.Id == questStep {
-						// Show the NEXT step's description (what to do now)
-						if i+1 < len(questInfo.Steps) {
-							description = questInfo.Steps[i+1].Description
-						} else {
-							description = step.Description
-						}
-						foundCurrent = true
+						description = step.Description
 						break
-					}
-				}
-				if !foundCurrent {
-					// Step not found — show first step
-					if len(questInfo.Steps) > 0 {
-						description = questInfo.Steps[0].Description
 					}
 				}
 			}
