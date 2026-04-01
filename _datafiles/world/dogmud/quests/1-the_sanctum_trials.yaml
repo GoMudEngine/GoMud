@@ -59,8 +59,8 @@ triggers:
     conditions:
       missing: [1-start]
     actions:
-      - lock_exits: {room: 113}
       - grant: 1-start
+      - grant: 1-mutation
       - give_mutation: true
       - give_gold: 10
       - sequence:
@@ -85,9 +85,6 @@ triggers:
             - {speaker: 50, delay: 30, text: "After that, find the Combat Trainer in the Training Yard -- go east, just beyond here. Then the Forge to the east, the Alchemist west of the well, the Wilderness Guide in the West Meadow, and finally the Elder at the Observatory above."}
             - {speaker: 50, delay: 32, text: "When all six are done, the Basin Warden at the south gate will let you pass. Type <ansi fg=\"command\">quest</ansi> at any time if you lose your place."}
             - {speaker: 50, delay: 34, text: "There is a map of the wider world set into the floor. Type <ansi fg=\"command\">look mosaic</ansi> to examine it before you leave."}
-          on_complete:
-            - grant: 1-mutation
-            - unlock_exits: {room: 113}
 
   # ── SHOPPING: BUY (Room 108) ──────────────────────────
   - event: command
