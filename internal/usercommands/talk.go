@@ -180,6 +180,12 @@ func buildPlayerState(user *users.UserRecord) *dialogue.PlayerState {
 				})
 			}
 		},
+		GetQuestFlag: func(key string) string {
+			return user.Character.GetQuestFlag(key)
+		},
+		SetQuestFlag: func(key, value string) {
+			user.Character.SetQuestFlag(key, value)
+		},
 	}
 }
 
