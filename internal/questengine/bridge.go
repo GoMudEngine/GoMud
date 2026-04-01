@@ -11,6 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 // GameBridge wraps a UserRecord and a room ID to satisfy both PlayerState
@@ -236,8 +237,8 @@ func (b *GameBridge) QueueNpcSay(n NpcSayDef) {
 
 // QueueSequence schedules lines with per-line delays or a default
 // delay_between interval. Speaker lines become mob commands; non-speaker
-// lines are sent to the player. On-complete actions fire after the
-// longest delay.
+// lines are sent as delayed user messages. On-complete actions fire
+// after the longest delay plus a buffer.
 func (b *GameBridge) QueueSequence(s SequenceDef) {
 	maxDelay := 0
 	for _, line := range s.Lines {
@@ -277,24 +278,48 @@ func (b *GameBridge) QueueSequence(s SequenceDef) {
 		}
 	}
 
-	// Schedule on_complete actions after the longest delay.
+	// Schedule on_complete: mob.Command uses the turn system so
+	// "delay: 34" in YAML may take longer than 34 real seconds.
+	// We use a mob noop command scheduled at maxDelay+3 to sync
+	// with the turn-based timing, then fire on_complete from
+	// the noop's resolution via a polling goroutine.
 	if len(s.OnComplete) > 0 {
-		userId := b.user.UserId
-		roomId := b.roomId
-		onComplete := s.OnComplete
-		go func() {
-			<-time.After(time.Duration(maxDelay+1) * time.Second)
-			u := users.GetByUserId(userId)
-			if u == nil {
-				return
-			}
-			bridge := NewGameBridge(u, roomId)
-			for _, action := range onComplete {
-				if err := ExecuteAction(action, bridge); err != nil {
-					mudlog.Error("GameBridge.QueueSequence.OnComplete", "error", err)
+		// Find any speaker mob to piggyback on their turn scheduling
+		var anchorMob *mobs.Mob
+		for _, line := range s.Lines {
+			if line.Speaker != 0 {
+				anchorMob = findMobInRoom(line.Speaker, b.roomId)
+				if anchorMob != nil {
+					break
 				}
 			}
-		}()
+		}
+
+		if anchorMob != nil {
+			// Schedule a noop after the last line; its lastCommandTurn
+			// tells us when the mob will be done.
+			anchorMob.Command("noop", float64(maxDelay+3))
+			targetTurn := anchorMob.GetLastCommandTurn()
+
+			userId := b.user.UserId
+			roomId := b.roomId
+			onComplete := s.OnComplete
+			go func() {
+				for util.GetTurnCount() < targetTurn {
+					time.Sleep(500 * time.Millisecond)
+				}
+				u := users.GetByUserId(userId)
+				if u == nil {
+					return
+				}
+				bridge := NewGameBridge(u, roomId)
+				for _, action := range onComplete {
+					if err := ExecuteAction(action, bridge); err != nil {
+						mudlog.Error("GameBridge.QueueSequence.OnComplete", "error", err)
+					}
+				}
+			}()
+		}
 	}
 }
 

@@ -440,6 +440,11 @@ func (m *Mob) Converse() {
 	}
 }
 
+// GetLastCommandTurn returns the turn at which the mob's last scheduled command will execute.
+func (m *Mob) GetLastCommandTurn() uint64 {
+	return m.lastCommandTurn
+}
+
 // Cause the mob to basically wait and do nothing for x seconds
 func (m *Mob) Sleep(seconds int) {
 	m.Command(`noop`, float64(seconds))
