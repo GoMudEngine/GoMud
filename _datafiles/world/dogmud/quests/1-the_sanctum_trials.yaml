@@ -2,46 +2,160 @@ questid: 1
 name: The Sanctum Trials
 description: Complete the trials of Sanctum Basin to earn passage to the wider world.
 secret: false
+linear: true
+
 steps:
   - id: start
-    description: "Speak with the Chrysalis Priest in the Academy Hall to begin your trials. The Priest will perform your Awakening Rite."
+    description: "Begin the Awakening Rite in the Academy Hall."
+    hint: "Go to the Academy Hall and speak with the Chrysalis Priest. From Town Square, go north then east."
   - id: mutation
-    description: "Visit the Merchant on Market Street, east of Town Square, to learn how to buy and equip gear."
-  - id: shopping_arrive
-    description: "Browse Merchant Adela's wares. Type list to see what she carries, then buy something."
+    description: "Survive the Awakening Rite and receive your first mutation."
+    hint: "Visit Merchant Adela on Market Street. From Town Square, go south."
   - id: shopping_buy
-    description: "Equip what you bought. Type wield or wear to put your new gear on."
+    description: "Purchase equipment from Merchant Adela."
+    hint: "Type list to see what the merchant carries, then buy something you can afford."
   - id: shopping_equip
-    description: "Visit the Combat Trainer in the Training Yard, north and then east of Town Square, and defeat the training dummy."
-  - id: combat_arrive
-    description: "Defeat the training dummy. Type attack dummy to start the fight, then keep fighting until it falls."
+    description: "Equip your new gear."
+    hint: "Type wield or wear to put on what you bought. Type inventory to see what you have."
   - id: combat_defeat
-    description: "Visit Korvath in The Forge, south of the Training Yard, to learn crafting."
-  - id: crafting_arrive
-    description: "Craft the iron dagger Korvath described. Type craft iron dagger."
+    description: "Defeat the training dummy in the Training Yard."
+    hint: "Go to the Training Yard (from Town Square, north then east). Type attack dummy to start the fight."
   - id: crafting_craft
-    description: "Visit Alchemist Yenna in the Alchemist's Workshop, west of Well Court, to learn alchemy."
-  - id: alchemy_arrive
-    description: "Craft the healing poultice Yenna described. Type craft healing poultice."
+    description: "Forge an item at Korvath's smithy."
+    hint: "Visit The Forge south of the Training Yard. Korvath will give you materials. Type craft iron dagger."
   - id: alchemy_craft
-    description: "Visit Wilderness Guide Fen in the West Meadow, west of Town Square, to learn survival skills."
-  - id: wilderness_arrive
-    description: "Forage for supplies. Type forage to search the area."
+    description: "Brew a potion at Alchemist Yenna's workshop."
+    hint: "Visit the Alchemist's Workshop west of Well Court. Yenna will give you materials. Type craft healing poultice."
   - id: wilderness_forage
-    description: "Read the tracks in the area. Type track to look for signs of passage."
+    description: "Forage for materials in the wild."
+    hint: "Visit the West Meadow (from Town Square, go west). Type forage to search the area."
   - id: wilderness_track
-    description: "Visit Elder Saris at the Observatory, north of the Alchemist's Workshop, to learn about the Fold."
-  - id: magic_arrive
-    description: "Cast a spell on the Chrysalis Echo. Type cast conviction-spike echo."
+    description: "Track a creature in the wilderness."
+    hint: "While in the West Meadow with Guide Fen, type track to read the signs."
   - id: magic_cast
-    description: "Go east from the Observatory into the cave system and defeat the Aberrant Chrysalis."
+    description: "Cast a spell at the Observatory."
+    hint: "Visit Elder Saris at the Observatory (above the Alchemist). Type cast conviction-spike echo."
   - id: cave
-    description: "Return to the Basin Warden at Basin Gate, south of Town Square, to claim your passage."
+    description: "Defeat the Aberrant Chrysalis in the cave."
+    hint: "Go east from the Observatory into the cave tunnels. Find and defeat the Aberrant Chrysalis at the back."
   - id: warden
-    description: "The Basin Warden is opening the gate. Listen to the final words."
+    description: "Report to the Basin Warden at the south gate."
+    hint: "Return to the Basin Warden at Basin Gate, south of Town Square."
   - id: end
     description: "The Sanctum Trials are complete."
+    hint: "Head south through the gate. The world of Gaius awaits you."
+
 rewards:
-  playermessage: "The Basin Warden nods with quiet satisfaction. The gate swings open. The world of Gaius awaits you."
   gold: 25
-  skillinfo: "map:1"
+  player_message: >-
+    The Basin Warden nods with quiet satisfaction.
+    The gate swings open. The world of Gaius awaits you.
+  skill_info: "map:1"
+
+triggers:
+  # ── AWAKENING RITE (Room 113) ─────────────────────────
+  - event: room_enter
+    room: 113
+    conditions:
+      missing: [1-start]
+    actions:
+      - grant: 1-start
+      - grant: 1-mutation
+
+  # ── SHOPPING: BUY (Room 108) ──────────────────────────
+  - event: command
+    command: buy
+    room: 108
+    conditions:
+      has: [1-mutation]
+      missing: [1-shopping_buy]
+    actions:
+      - grant: 1-shopping_buy
+
+  # ── SHOPPING: EQUIP (Room 108) ────────────────────────
+  - event: command
+    command: equip
+    room: 108
+    conditions:
+      has: [1-shopping_buy]
+      missing: [1-shopping_equip]
+    actions:
+      - grant: 1-shopping_equip
+
+  # ── COMBAT: DEFEAT DUMMY (Room 114) ───────────────────
+  - event: mob_death
+    mob: 65
+    conditions:
+      has: [1-shopping_equip]
+      missing: [1-combat_defeat]
+    actions:
+      - grant: 1-combat_defeat
+
+  # ── CRAFTING: FORGE (Room 109) ────────────────────────
+  - event: skill_use
+    skill: blacksmithing
+    room: 109
+    conditions:
+      has: [1-combat_defeat]
+      missing: [1-crafting_craft]
+    actions:
+      - grant: 1-crafting_craft
+
+  # ── ALCHEMY: BREW (Room 111) ──────────────────────────
+  - event: skill_use
+    skill: alchemy
+    room: 111
+    conditions:
+      has: [1-crafting_craft]
+      missing: [1-alchemy_craft]
+    actions:
+      - grant: 1-alchemy_craft
+
+  # ── WILDERNESS: FORAGE (Room 106) ─────────────────────
+  - event: skill_use
+    skill: search
+    room: 106
+    conditions:
+      has: [1-alchemy_craft]
+      missing: [1-wilderness_forage]
+    actions:
+      - grant: 1-wilderness_forage
+
+  # ── WILDERNESS: TRACK (Room 106) ──────────────────────
+  - event: command
+    command: track
+    room: 106
+    conditions:
+      has: [1-wilderness_forage]
+      missing: [1-wilderness_track]
+    actions:
+      - grant: 1-wilderness_track
+
+  # ── MAGIC: CAST SPELL (Room 116) ──────────────────────
+  - event: skill_use
+    skill: spellcasting
+    room: 116
+    conditions:
+      has: [1-wilderness_track]
+      missing: [1-magic_cast]
+    actions:
+      - grant: 1-magic_cast
+
+  # ── BOSS CAVE: DEFEAT ABERRANT (Room 120) ─────────────
+  - event: mob_death
+    mob: 69
+    conditions:
+      has: [1-magic_cast]
+      missing: [1-cave]
+    actions:
+      - grant: 1-cave
+
+  # ── WARDEN GATE (Room 102) ───────────────────────────
+  - event: room_enter
+    room: 102
+    conditions:
+      has: [1-cave]
+      missing: [1-warden]
+    actions:
+      - grant: 1-warden
+      - grant: 1-end
