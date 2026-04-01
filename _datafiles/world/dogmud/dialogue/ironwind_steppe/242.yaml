@@ -41,13 +41,24 @@ tree:
     text: "A young man in a dusty scholar's coat looks up from a spread of rock samples and charts, his face lighting up. 'Oh, wonderful -- someone who is not a bird or a lizard! Are you here about the windstone? Please say you are here about the windstone.'"
     hints: "Ask about windstone, the conflict, or what he needs."
     variants:
-      - questRequired: ["11-sylara"]
-        questExcluded: ["11-end"]
-        text: "Rhett's smile falters. 'Ah. You went with the Windwarden. I understand -- tradition is comfortable. The crystal will wait for someone with clearer vision.' He turns back to his notes."
       - questRequired: ["11-start"]
         questExcluded: ["11-end"]
-        text: "Rhett waves excitedly. 'You came back! Have you had a chance to look at the rocky shelf? The veins of pale blue crystal there -- I need samples. Just chip off a few chunks from the crystal veins. The shelf is just south of here.'"
-        hints: "Collect windstone samples from the crystal veins on the rocky shelf to the south."
+        questFlagRequired:
+          "11-branch": "sylara"
+        text: "Rhett's smile falters. 'Ah. You went with the
+          Windwarden. I understand -- tradition is comfortable. The
+          crystal will wait for someone with clearer vision.' He turns
+          back to his notes."
+      - questRequired: ["11-start"]
+        questExcluded: ["11-end"]
+        questFlagRequired:
+          "11-branch": "rhett"
+        text: "Rhett waves excitedly. 'You came back! Have you had a
+          chance to look at the rocky shelf? The veins of pale blue
+          crystal there -- I need samples. Just chip off a few chunks
+          from the crystal veins. The shelf is just south of here.'"
+        hints: "Collect windstone samples from the crystal veins on
+          the rocky shelf to the south."
       - questRequired: ["13-start"]
         questExcluded: ["13-extraction"]
         text: "Rhett is practically vibrating with excitement. 'You chose to help! Excellent! The extraction site is prepared. I just need someone steady to help with the final phase. Are you ready?'"
@@ -58,7 +69,20 @@ tree:
         text: "Rhett's smile is tinged with disappointment. 'You chose the Windwarden. I understand. The crystal will wait -- it has waited this long.' He sighs. 'Perhaps someday someone will find a way that does not require choosing.'"
       - questRequired: ["11-end"]
         questExcluded: ["12-start", "13-start"]
-        text: "Rhett's eyes light up. 'Those samples confirmed everything I suspected. The crystal lattice is even more complex than I theorized.' He leans in conspiratorially. 'I have been preparing an extraction site. With the right help, I could pull a full slab of windstone from the ridge -- enough to forge a proper aegis. Ask me about the work if you are interested.'"
+        questFlagRequired:
+          "11-branch": "sylara"
+        text: "Rhett's smile is strained. 'You sided with the
+          Windwarden in the end. I understand -- tradition has a
+          gravity to it.' He turns back to his notes. 'The crystal
+          will wait. It has waited this long.'"
+      - questRequired: ["11-end"]
+        questExcluded: ["12-start", "13-start"]
+        questFlagRequired:
+          "11-branch": "rhett"
+        text: "Rhett's eyes light up. 'Those samples confirmed
+          everything I suspected.' He leans in conspiratorially.
+          'I have been preparing an extraction site. Ask me about
+          the work if you are interested.'"
         hints: "You could ask about further work with the windstone."
 
   nodes:
@@ -66,6 +90,9 @@ tree:
       triggers: ["windstone", "crystal", "conflict", "cause", "why", "problem", "quest", "task", "help"]
       questExcluded: ["11-start"]
       grantsQuest: "11-start"
+      setsQuestFlag:
+        key: "11-branch"
+        value: "rhett"
       text: "'Windstone. That is what this is about.' Rhett holds up a pale blue crystal shard that catches the light. 'I found veins of it running through the ridge -- thick veins, high quality. This crystal resonates with healing frequencies. A refined shard could power protective wards for an entire city block. Thornwall needs this. Our ward-stones are failing and people are getting hurt.' He pauses. 'The problem is the veins run under a stone circle the local Windwarden considers sacred. Extracting them would crack the bedrock. She will not hear reason on the matter.' He straightens. 'If you believe Thornwall's people matter more than ancient stones, I could use your help. I need windstone samples from the exposed veins on the rocky shelf -- the broad ledge just south of here. Chip off a few chunks of the pale blue crystal from the veins.'"
       hints: "Collect windstone samples from the crystal veins on the rocky shelf to the south."
       moodChange: friendly
@@ -83,6 +110,8 @@ tree:
       triggers: ["work", "extract", "gambit", "help", "quest", "task"]
       questRequired: ["11-end"]
       questExcluded: ["13-start", "12-start"]
+      questFlagRequired:
+        "11-branch": "rhett"
       grantsQuest: "13-start"
       text: "'The extraction site is ready. I have mapped the crystal
         grain, prepared the tools, set the fracture points. All I need

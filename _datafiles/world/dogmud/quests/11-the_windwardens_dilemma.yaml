@@ -5,6 +5,10 @@ description: A conflict is brewing on the Ironwind Steppe between a
   who wants to extract rare crystal from beneath it. You must choose
   a side.
 secret: false
+flags:
+  - key: branch
+    values: [sylara, rhett]
+    description: "Which NPC the player sided with"
 steps:
   - id: start
     description: "A conflict is brewing on the Ironwind Steppe. Visit
