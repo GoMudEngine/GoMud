@@ -145,7 +145,7 @@ tree:
       questRequired: ["13-start"]
       questExcluded: ["13-extraction"]
       grantsQuest: "13-extraction"
-      text: "Rhett leads you to a carefully prepared site where pale blue crystal veins are exposed in the rock. Tools are laid out with scholarly precision. 'The key is controlled fracture -- we follow the crystal's natural grain, not against it. Like splitting wood, but with more math.' He positions his chisels. 'Hold this brace steady while I work the seam. If the crystal shatters, we lose everything.'"
+      text: "Right, the extraction site is just over here. The key is controlled fracture -- we follow the crystal's natural grain, not against it. Like splitting wood, but with more math. Now hold this brace steady while I work the seam. If the crystal shatters, we lose everything."
       unlocks: ["extraction_complete"]
 
     - id: extraction_complete
@@ -153,7 +153,7 @@ tree:
       questRequired: ["13-extraction"]
       questExcluded: ["13-end"]
       grantsQuest: "13-end"
-      text: "The chisel rings against crystal and a perfect slab of windstone separates from the ridge face, humming with captured energy. Rhett catches it reverently. 'Beautiful. Absolutely beautiful.' He turns the slab in his hands, already calculating. 'Give me a few hours with this and my tools. I am going to make you something special -- a shield of pure windstone. It is the least I can do.' True to his word, when he emerges from his camp hours later, he carries a round shield of pale blue crystal that hums with quiet power."
+      text: "Beautiful. Absolutely beautiful. Look at that lattice -- perfect separation along the grain. Give me a few hours with this and my tools. I am going to make you something special -- a shield of pure windstone. It is the least I can do."
       moodChange: grateful
 
     - id: about_healing
