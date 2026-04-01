@@ -51,7 +51,7 @@ tree:
       - questRequired: ["12-start"]
         questExcluded: ["12-ritual"]
         text: "Sylara's eyes brighten. 'You chose the covenant. The spirits will be pleased. I can teach you to hear the steppe's voice -- to call upon the wolf spirits that guard the wind-paths. Are you ready for the ritual?'"
-        hints: "Tell Sylara you are ready for the ritual."
+        hints: "You could tell her you are ready for the ritual."
       - questRequired: ["12-end"]
         text: "Sylara smiles -- warm and genuine, transforming her stern features. 'The spirits know you now. You carry the steppe with you wherever you go. If you need more fetishes for the summoning, you have only to ask.'"
       - questRequired: ["13-end"]
@@ -59,7 +59,7 @@ tree:
       - questRequired: ["11-end"]
         questExcluded: ["12-start", "13-start"]
         text: "Sylara regards you with newfound respect. 'You proved yourself on the steppe. The spirits noticed.' Her voice softens. 'I could teach you the old covenant -- to call upon the wolf spirits that guard the wind-paths. It is not offered lightly.'"
-        hints: "You could ask Sylara about the covenant."
+        hints: "You could ask her about the covenant."
 
   nodes:
     - id: her_cause
@@ -85,11 +85,12 @@ tree:
       questExcluded: ["12-start"]
       grantsQuest: "12-start"
       text: "'The covenant is ancient -- older than any clan, older than the circle itself. The wolf spirits that guard the wind-paths will answer the call of one the steppe trusts.' Sylara's eyes burn with quiet intensity. 'I will teach you the ritual of binding. When it is done, you will carry the steppe's voice with you wherever you go. The spirits will come when you call.' She gestures toward the standing stones. 'Tell me when you are ready to begin.'"
-      hints: "Tell Sylara you are ready for the ritual."
+      hints: "You could tell her you are ready for the ritual."
       moodChange: friendly
 
     - id: ritual_begin
-      triggers: ["ready", "ritual", "begin", "teach", "spirit", "covenant", "yes"]
+      triggers: ["ready", "ritual", "begin", "teach", "spirit", "covenant",
+        "yes", "quest", "task"]
       questRequired: ["12-start"]
       questExcluded: ["12-ritual"]
       grantsQuest: "12-ritual"
