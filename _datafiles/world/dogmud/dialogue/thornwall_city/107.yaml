@@ -72,7 +72,7 @@ tree:
       questExcluded: ["8-found"]
       grantsQuest: "8-found"
       text: "You do not look like one of his people. All right. I am Elara. I am sure you have heard the name -- my father has been telling everyone I am missing. I am not missing. I left. There is a difference, but the guard does not care about the distinction."
-      hints: "You could ask why I left, or about my father. Or ask what happens now."
+      hints: "You could ask why she left, or about her father. Or ask what happens next."
       moodChange: trusting
 
     - id: why_she_left

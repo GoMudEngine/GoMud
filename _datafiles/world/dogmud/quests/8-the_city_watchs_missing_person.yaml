@@ -7,13 +7,22 @@ secret: false
 
 steps:
   - id: start
-    description: "Guard Captain Velk at the barracks has asked you to locate a missing person -- a young woman named Elara, reported missing by her family. Search the city for any sign of her."
-    hint: "Check the residential wards, back alleys, and ask around. Someone may have seen her."
+    description: "Guard Captain Velk at the barracks has asked you to locate a missing
+      person -- a young woman named Elara, reported missing by her family. Search the
+      residential wards north of the market for any sign of her."
+    hint: "From the barracks, go south 1, then east 5 along Main Street, then north
+      2 into the Residential Ward. Look for Elara there. Try speaking with her -- she
+      may respond to calm, reassuring words."
   - id: found
-    description: "You have found Elara hiding in the residential ward. She is running from an arranged marriage and does not want to be returned. You must decide what to tell the guard captain."
-    hint: "Return to the barracks and speak with Captain Velk. What you tell him is your choice."
+    description: "You have found Elara hiding in the residential ward. She is running
+      from an arranged marriage and does not want to be returned. You must decide what
+      to tell the guard captain."
+    hint: "Return to Captain Velk at the barracks. From the residential ward, go south
+      2, then west 5, then north 1. Report what you found -- the choice of what to
+      tell him is yours."
   - id: end
-    description: "You reported back to Captain Velk. The case is closed, one way or another."
+    description: "You reported back to Captain Velk. The case is closed, one way or
+      another."
 
 rewards:
   playermessage: "Velk listens to your report without interruption, his expression unreadable. When you finish, he makes a notation in the duty log. 'The case is closed. I will file it accordingly.' He does not ask for details beyond what you offered, and you get the sense that he has seen enough of these cases to know that the paperwork rarely captures the whole truth."
