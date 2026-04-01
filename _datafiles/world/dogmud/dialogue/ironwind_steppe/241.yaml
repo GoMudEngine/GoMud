@@ -41,10 +41,7 @@ tree:
     text: "A tall woman in layered wool and bone ornaments stands before a circle of ancient standing stones. She plants her staff -- a gnarled cedar branch topped with a bleached wolf skull -- and fixes you with pale green eyes. 'Another one drawn by the wind. Or by the crystal. Which is it?'"
     hints: "Ask about the circle, the conflict, or what she needs."
     variants:
-      - questRequired: ["11-rhett"]
-        questExcluded: ["11-end"]
-        text: "Sylara's pale eyes narrow. 'I can smell the scholar's chalk dust on you. You have made your choice. The wind-paths have no words for those who would crack the earth for trinkets.' She turns her back."
-      - questRequired: ["11-sylara"]
+      - questRequired: ["11-start"]
         questExcluded: ["11-end"]
         text: "Sylara regards you with slightly less hostility than before. 'You listened. That is more than most manage. Have you found my totem? The wolves dragged it into their kill ground to the southwest. Search the bone pile there.'"
         hints: "Search the bone pile at the wolf kill ground southwest of here for the carved wolf totem."
@@ -64,15 +61,15 @@ tree:
   nodes:
     - id: her_cause
       triggers: ["circle", "conflict", "wind", "problem", "sacred", "cause", "why", "quest", "task", "help"]
-      questExcluded: ["11-sylara", "11-rhett"]
-      grantsQuest: "11-sylara"
+      questExcluded: ["11-start"]
+      grantsQuest: "11-start"
       text: "'This circle has stood since before the first goblin clan lit a fire on the steppe. The wind-paths -- currents of spiritual energy -- converge here. They sustain the land, the creatures, the balance of everything that lives on the open grass.' She grips her staff tighter. 'A Thornwall scholar has found windstone crystal in the ridge. To extract it, he would crack the bedrock beneath the circle. The wind-paths would scatter. The goblin ancestors who rest in those currents would be lost.' Her voice drops. 'I will not allow it. If you would stand with me, prove it. The wolves dragged my carved totem into their kill ground to the southwest. Search the bone pile and bring it back. Then I will know you are sincere.'"
       hints: "Search the bone pile at the wolf kill ground to the southwest for the carved wolf totem."
       moodChange: neutral
 
     - id: totem_return
       triggers: ["totem", "found", "here", "brought", "return", "have"]
-      questRequired: ["11-sylara"]
+      questRequired: ["11-start"]
       questExcluded: ["11-end"]
       requiresItem: 40033
       grantsQuest: "11-end"

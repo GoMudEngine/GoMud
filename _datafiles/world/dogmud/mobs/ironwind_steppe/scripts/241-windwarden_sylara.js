@@ -20,7 +20,7 @@ function onGive(mob, room, eventDetails) {
 
     // Wolf totem delivery for Q11
     if ( eventDetails.item.ItemId == TOTEM_ITEM_ID ) {
-        if ( user.HasQuest("11-sylara") && !user.HasQuest("11-end") ) {
+        if ( user.HasQuest("11-start") && !user.HasQuest("11-end") ) {
             mob.Command('say You found it.', 1.0);
             mob.Command('say The wolf spirit\'s voice -- I can hear it again.', 2.5);
             mob.Command('say The spirits noticed what you did. Ask me about the covenant when you are ready.', 4.0);

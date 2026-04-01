@@ -17,7 +17,7 @@ function onGive(mob, room, eventDetails) {
 
     // Windstone sample delivery for Q11
     if ( eventDetails.item.ItemId == SAMPLE_ITEM_ID ) {
-        if ( user.HasQuest("11-rhett") && !user.HasQuest("11-end") ) {
+        if ( user.HasQuest("11-start") && !user.HasQuest("11-end") ) {
             mob.Command('say Look at that lattice structure!', 1.0);
             mob.Command('say The resonance potential is even higher than my estimates. These are perfect.', 2.5);
             mob.Command('say Ask me about further work when you are ready. I have plans for this crystal.', 4.0);

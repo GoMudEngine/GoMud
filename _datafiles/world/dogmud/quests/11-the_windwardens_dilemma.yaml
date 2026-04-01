@@ -7,19 +7,12 @@ description: A conflict is brewing on the Ironwind Steppe between a
 secret: false
 steps:
   - id: start
-    description: "Hermit Kael has told you about a conflict between
-      Windwarden Sylara and Geomancer Rhett. Visit one of them to
-      choose a side -- but choosing one means the other will not
-      trust you. Sylara camps at the stone circle east of the
-      ridge trail. Rhett is at the ridge approach to the northwest."
-  - id: sylara
-    description: "You have sided with Windwarden Sylara. She needs
-      you to retrieve her carved wolf totem from the wolf kill
-      ground to the southwest. Search the bone pile there."
-  - id: rhett
-    description: "You have sided with Geomancer Rhett. He needs
-      windstone samples from the crystal veins on the rocky shelf
-      to the north. Chip off a few chunks of pale blue crystal."
+    description: "A conflict is brewing on the Ironwind Steppe. Visit
+      Windwarden Sylara at the stone circle or Geomancer Rhett at the
+      ridge approach and choose a side."
+    hint: "Sylara is at the stone circle (east from the ridge trail).
+      Rhett is at the ridge approach (east from the ridge trail then
+      north). Ask either about the conflict to choose a side."
   - id: end
     description: "You have made your choice and completed the task.
       The consequences remain to be seen."

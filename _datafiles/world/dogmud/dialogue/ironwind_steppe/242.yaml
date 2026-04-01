@@ -44,7 +44,7 @@ tree:
       - questRequired: ["11-sylara"]
         questExcluded: ["11-end"]
         text: "Rhett's smile falters. 'Ah. You went with the Windwarden. I understand -- tradition is comfortable. The crystal will wait for someone with clearer vision.' He turns back to his notes."
-      - questRequired: ["11-rhett"]
+      - questRequired: ["11-start"]
         questExcluded: ["11-end"]
         text: "Rhett waves excitedly. 'You came back! Have you had a chance to look at the rocky shelf? The veins of pale blue crystal there -- I need samples. Just chip off a few chunks from the crystal veins. The shelf is just south of here.'"
         hints: "Collect windstone samples from the crystal veins on the rocky shelf to the south."
@@ -64,15 +64,15 @@ tree:
   nodes:
     - id: his_cause
       triggers: ["windstone", "crystal", "conflict", "cause", "why", "problem", "quest", "task", "help"]
-      questExcluded: ["11-rhett", "11-sylara"]
-      grantsQuest: "11-rhett"
+      questExcluded: ["11-start"]
+      grantsQuest: "11-start"
       text: "'Windstone. That is what this is about.' Rhett holds up a pale blue crystal shard that catches the light. 'I found veins of it running through the ridge -- thick veins, high quality. This crystal resonates with healing frequencies. A refined shard could power protective wards for an entire city block. Thornwall needs this. Our ward-stones are failing and people are getting hurt.' He pauses. 'The problem is the veins run under a stone circle the local Windwarden considers sacred. Extracting them would crack the bedrock. She will not hear reason on the matter.' He straightens. 'If you believe Thornwall's people matter more than ancient stones, I could use your help. I need windstone samples from the exposed veins on the rocky shelf -- the broad ledge just south of here. Chip off a few chunks of the pale blue crystal from the veins.'"
       hints: "Collect windstone samples from the crystal veins on the rocky shelf to the south."
       moodChange: friendly
 
     - id: sample_return
       triggers: ["sample", "found", "here", "brought", "return", "have", "windstone"]
-      questRequired: ["11-rhett"]
+      questRequired: ["11-start"]
       questExcluded: ["11-end"]
       requiresItem: 40032
       grantsQuest: "11-end"
