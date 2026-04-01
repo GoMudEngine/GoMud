@@ -21,8 +21,8 @@ steps:
     description: "Visit Korvath at The Forge and craft an iron dagger."
     hint: "From the Training Yard, go south to The Forge. Korvath will give you materials. Type craft iron dagger."
   - id: crafting_craft
-    description: "Visit Alchemist Yenna and brew a healing poultice."
-    hint: "From The Forge, go west to Market Street, then west again to Town Square, north to Well Court, then west to the Alchemist's Workshop. Type craft healing poultice."
+    description: "Visit Alchemist Yenna and brew a healing salve."
+    hint: "From The Forge, go west to Market Street, then west again to Town Square, north to Well Court, then west to the Alchemist's Workshop. Type craft healing salve."
   - id: alchemy_craft
     description: "Visit Wilderness Guide Fen and forage for materials."
     hint: "From the Alchemist's Workshop, go south to the West Meadow. Type forage to search the area."

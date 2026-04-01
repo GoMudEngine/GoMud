@@ -1,11 +1,11 @@
 // The Alchemist's Workshop - Room 111
-// Alchemist Yenna gives mats, player crafts healing poultice, Yenna reacts to outcome.
+// Alchemist Yenna gives mats, player crafts healing salve, Yenna reacts to outcome.
 // Sub-steps: alchemy_arrive -> alchemy_craft
 
 const alchemistMobId = 53;
 const healersRootId  = 40004;
-const clothStripId   = 40007;
-const poulticeId     = 30010;
+const glassVialId    = 40006;
+const salveId        = 30036;
 
 var craftStarted    = false;
 var craftIdleTicks  = 0;
@@ -25,13 +25,12 @@ function onEnter(user, room) {
     // Give crafting materials
     user.GiveItem(healersRootId);
     user.GiveItem(healersRootId);
-    user.GiveItem(clothStripId);
+    user.GiveItem(glassVialId);
 
     alchemist.Command('say Alchemy is pattern recognition. The world has rules and compounds have relationships.', 1.0);
-    alchemist.Command('say A healing poultice is crushed healer\'s root, pressed into cloth. The root draws contamination. The cloth carries it.', 2.5);
-    alchemist.Command('say Everything in that formulation has a reason. Swap components without understanding why and you get something useless at best, poisonous at worst.', 4.5);
-    alchemist.Command('say I have put two healer\'s roots and a cloth strip in your pack.', 6.0);
-    alchemist.Command('say Type <ansi fg="command">craft</ansi> to see your options. Then type <ansi fg="command">craft healing poultice</ansi>. One attempt.', 7.5);
+    alchemist.Command('say A healing salve is ground healer\'s root mixed with water and sealed in a vial. Simple, but effective.', 2.5);
+    alchemist.Command('say I have put two healer\'s roots and a glass vial in your pack.', 4.5);
+    alchemist.Command('say Type <ansi fg="command">craft</ansi> to see your options. Then type <ansi fg="command">craft healing salve</ansi>. One attempt.', 6.0);
 
     user.GiveQuest("1-alchemy_arrive");
     craftStarted   = false;
@@ -61,8 +60,8 @@ function onIdle(room) {
 
     craftIdleTicks++;
 
-    // Healing poultice takes 2 rounds; wait 4 ticks to be sure it has resolved
-    if ( craftIdleTicks < 4 ) {
+    // Healing salve takes 3 rounds; wait 5 ticks to be sure it has resolved
+    if ( craftIdleTicks < 5 ) {
         return;
     }
 
@@ -80,42 +79,40 @@ function onIdle(room) {
             continue;
         }
 
-        var hasPoultice = player.HasItemId(poulticeId);
-        var hasRoot     = player.HasItemId(healersRootId);
-        var hasCloth    = player.HasItemId(clothStripId);
+        var hasSalve = player.HasItemId(salveId);
+        var hasRoot  = player.HasItemId(healersRootId);
+        var hasVial  = player.HasItemId(glassVialId);
 
         // Only grant quest if crafting actually happened:
-        // Success: player has the poultice
-        // Failure: materials were consumed (missing root or cloth)
+        // Success: player has the salve
+        // Failure: materials were consumed (missing root or vial)
         // If they still have all materials, the craft was rejected (wrong recipe/station)
-        if ( hasRoot && hasCloth && !hasPoultice ) {
+        if ( hasRoot && hasVial && !hasSalve ) {
             // Craft was rejected — don't grant quest, let them try again
             var npc = room.GetMob(alchemistMobId, true);
             if ( npc != null ) {
-                npc.Command('say That didn\'t take. Check the recipe and try again. Type <ansi fg="command">craft healing poultice</ansi>.', 0.5);
+                npc.Command('say That didn\'t take. Check the recipe and try again. Type <ansi fg="command">craft healing salve</ansi>.', 0.5);
             }
             continue;
         }
 
         var alchemist = room.GetMob(alchemistMobId, true);
 
-        if ( hasPoultice ) {
+        if ( hasSalve ) {
             // Success
             if ( alchemist != null ) {
-                alchemist.Command('emote examines the poultice with a brief, approving look.', 0.5);
+                alchemist.Command('emote examines the salve with a brief, approving look.', 0.5);
                 alchemist.Command('say Good. The color is right. You understood what you were doing.', 1.5);
-                alchemist.Command('say To use it: type <ansi fg="command">drink poultice</ansi>. It applies a regen effect -- you will see it listed when you type <ansi fg="command">condition</ansi>.', 2.5);
-                alchemist.Command('say The condition command shows everything currently affecting you. Buffs, poisons, regen ticks -- all of it. Check it when something feels wrong.', 4.0);
-                alchemist.Command('say Find Fen in the West Meadow, west of Town Square. They will teach you what grows out there.', 5.5);
+                alchemist.Command('say To use it: type <ansi fg="command">drink salve</ansi>. It applies a regen effect -- you will see it listed when you type <ansi fg="command">condition</ansi>.', 2.5);
+                alchemist.Command('say Find Fen in the West Meadow -- go south from here.', 4.0);
             }
         } else {
             // Failure - materials consumed
             if ( alchemist != null ) {
                 alchemist.Command('emote frowns at the ruined mixture without comment.', 0.5);
-                alchemist.Command('emote makes a quiet note in the ledger, expression unreadable.', 1.5);
-                alchemist.Command('say The world is full of things that want to kill you. Knowing what heals you is not optional.', 2.5);
-                alchemist.Command('say When you do have a consumable, type <ansi fg="command">drink [item]</ansi> to use it. Type <ansi fg="command">condition</ansi> to see what effects are active on you.', 4.0);
-                alchemist.Command('say Find Fen in the West Meadow, west of Town Square. They will show you where the raw materials come from.', 5.5);
+                alchemist.Command('say The world is full of things that want to kill you. Knowing what heals you is not optional.', 1.5);
+                alchemist.Command('say When you do have a consumable, type <ansi fg="command">drink [item]</ansi> to use it. Type <ansi fg="command">condition</ansi> to see what effects are active on you.', 3.0);
+                alchemist.Command('say Find Fen in the West Meadow -- go south from here.', 4.5);
             }
         }
 

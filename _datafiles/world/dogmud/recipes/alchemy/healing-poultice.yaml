@@ -1,7 +1,7 @@
 id: healing-poultice
 name: Healing Poultice
 skill: alchemy
-skill_minimum: 0
+skill_minimum: 1
 station: alchemy_bench
 time_rounds: 2
 ingredients:

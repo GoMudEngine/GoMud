@@ -118,8 +118,10 @@ func TestIntegration_RecipeDiscovery(t *testing.T) {
 	starters := GetStarterRecipes()
 	assert.Contains(t, starters, "iron-dagger",
 		"iron-dagger (min=0) should be a starter")
-	assert.Contains(t, starters, "healing-poultice",
-		"healing-poultice (min=0) should be a starter")
+	assert.Contains(t, starters, "healing-salve",
+		"healing-salve (min=0) should be a starter")
+	assert.NotContains(t, starters, "healing-poultice",
+		"healing-poultice (min=1) should NOT be a starter")
 	assert.NotContains(t, starters, "iron-buckler",
 		"iron-buckler (min=5) should NOT be a starter")
 
@@ -188,12 +190,13 @@ func TestIntegration_RecipeRegistry(t *testing.T) {
 
 	// GetAll should return all seeded recipes
 	all := GetAll()
-	assert.Len(t, all, 3, "Should have 3 seeded recipes")
+	assert.Len(t, all, 4, "Should have 4 seeded recipes")
 
 	// GetRecipe for each
 	assert.NotNil(t, GetRecipe("iron-dagger"))
 	assert.NotNil(t, GetRecipe("iron-buckler"))
 	assert.NotNil(t, GetRecipe("healing-poultice"))
+	assert.NotNil(t, GetRecipe("healing-salve"))
 	assert.Nil(t, GetRecipe("nonexistent"))
 
 	// FindRecipeByName
@@ -206,5 +209,5 @@ func TestIntegration_RecipeRegistry(t *testing.T) {
 	assert.Len(t, blacksmithing, 2, "Should have 2 blacksmithing recipes")
 
 	alchemy := GetAllForSkill("alchemy")
-	assert.Len(t, alchemy, 1, "Should have 1 alchemy recipe")
+	assert.Len(t, alchemy, 2, "Should have 2 alchemy recipes")
 }
