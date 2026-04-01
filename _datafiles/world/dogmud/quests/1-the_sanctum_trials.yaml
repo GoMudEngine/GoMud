@@ -62,6 +62,7 @@ triggers:
       - grant: 1-start
       - sequence:
           delay_between: 0
+          lock_message: "The Rite is not yet complete. A moment more."
           lines:
             - {speaker: 50, delay: 1, text: "Be still for a moment."}
             - {speaker: 50, delay: 3, text: "Type <ansi fg=\"command\">look</ansi> at any time to examine your surroundings. Type <ansi fg=\"command\">help</ansi> if you are unsure what commands are available -- there is documentation for most things."}

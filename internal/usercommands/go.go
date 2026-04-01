@@ -51,6 +51,12 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 		user.Character.Aggro = nil
 	}
 
+	// Block movement during quest sequences (e.g., Awakening Rite ceremony)
+	if lockMsg, ok := user.GetTempData(`questSequenceLock`).(string); ok && lockMsg != "" {
+		user.SendText(lockMsg)
+		return true, nil
+	}
+
 	// Movement cancels crafting
 	if user.Character.CraftingState != nil {
 		user.Character.CraftingState = nil

@@ -115,9 +115,10 @@ type BuffDef struct {
 }
 
 type SequenceDef struct {
-	DelayBetween int         `yaml:"delay_between"` // seconds between lines
+	DelayBetween int          `yaml:"delay_between"`              // seconds between lines
 	Lines        []SayLineDef `yaml:"lines"`
-	OnComplete   []ActionDef  `yaml:"on_complete,omitempty"` // actions to run after sequence
+	OnComplete   []ActionDef  `yaml:"on_complete,omitempty"`      // actions to run after sequence
+	LockMessage  string       `yaml:"lock_message,omitempty"`     // if set, block player movement during sequence with this message
 }
 
 // EventDetails carries context about the event that triggered evaluation.

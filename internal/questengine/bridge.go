@@ -240,6 +240,11 @@ func (b *GameBridge) QueueNpcSay(n NpcSayDef) {
 // lines are sent as delayed user messages. On-complete actions fire
 // after the longest delay plus a buffer.
 func (b *GameBridge) QueueSequence(s SequenceDef) {
+	// Lock player movement during the sequence if configured
+	if s.LockMessage != "" {
+		b.user.SetTempData(`questSequenceLock`, s.LockMessage)
+	}
+
 	maxDelay := 0
 	for _, line := range s.Lines {
 		delay := line.Delay
@@ -304,6 +309,7 @@ func (b *GameBridge) QueueSequence(s SequenceDef) {
 			userId := b.user.UserId
 			roomId := b.roomId
 			onComplete := s.OnComplete
+			lockMsg := s.LockMessage
 			go func() {
 				for util.GetTurnCount() < targetTurn {
 					time.Sleep(500 * time.Millisecond)
@@ -311,6 +317,10 @@ func (b *GameBridge) QueueSequence(s SequenceDef) {
 				u := users.GetByUserId(userId)
 				if u == nil {
 					return
+				}
+				// Clear movement lock
+				if lockMsg != "" {
+					u.SetTempData(`questSequenceLock`, "")
 				}
 				bridge := NewGameBridge(u, roomId)
 				for _, action := range onComplete {
