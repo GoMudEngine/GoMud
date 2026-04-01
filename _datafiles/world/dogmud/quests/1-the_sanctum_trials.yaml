@@ -107,8 +107,10 @@ triggers:
       - grant: 1-combat_defeat
 
   # ── CRAFTING: FORGE (Room 109) ────────────────────────
-  - event: skill_use
-    skill: blacksmithing
+  # Uses command trigger, not skill_use — skill_use only fires on
+  # success, but the tutorial should advance even on a failed craft.
+  - event: command
+    command: craft
     room: 109
     conditions:
       has: [1-combat_defeat]
@@ -117,8 +119,8 @@ triggers:
       - grant: 1-crafting_craft
 
   # ── ALCHEMY: BREW (Room 111) ──────────────────────────
-  - event: skill_use
-    skill: alchemy
+  - event: command
+    command: craft
     room: 111
     conditions:
       has: [1-crafting_craft]
