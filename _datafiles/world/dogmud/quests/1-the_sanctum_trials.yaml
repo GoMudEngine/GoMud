@@ -16,7 +16,7 @@ steps:
     hint: "Type wield [weapon] or wear [armor] to put on your purchase. Type inventory to see what you have."
   - id: shopping_equip
     description: "Defeat the training dummy in the Training Yard."
-    hint: "Go to the Training Yard (from Town Square, north then east). Type attack dummy to start the fight."
+    hint: "Go north from Market Street to Town Square, then east to the Training Yard. Type attack dummy to start the fight."
   - id: combat_defeat
     description: "Visit Korvath at The Forge and craft an iron dagger."
     hint: "The Forge is south of the Training Yard. Korvath will give you materials. Type craft iron dagger."
