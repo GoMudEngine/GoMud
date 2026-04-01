@@ -129,8 +129,8 @@ triggers:
       - grant: 1-alchemy_craft
 
   # ── WILDERNESS: FORAGE (Room 106) ─────────────────────
-  - event: skill_use
-    skill: search
+  - event: command
+    command: forage
     room: 106
     conditions:
       has: [1-alchemy_craft]

@@ -6,6 +6,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -78,6 +79,14 @@ func Forage(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	if difficulty == 0 {
 		difficulty = 130 // fallback for unknown biomes
 	}
+
+	// Quest engine: command notification
+	bridge := questengine.NewGameBridge(user, room.RoomId)
+	questengine.GetEngine().Notify("command", questengine.EventDetails{
+		UserId:  user.UserId,
+		RoomId:  room.RoomId,
+		Command: "forage",
+	}, bridge, bridge)
 
 	user.SendText(`You crouch low and begin searching the ground carefully...`)
 	room.SendText(
