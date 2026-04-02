@@ -3,11 +3,10 @@ package usercommands
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
-	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
-	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -38,89 +37,27 @@ func Kick(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		}
 	}
 
-	// Check shared special move cooldown
-	cfg := configs.GetBalanceConfig()
-	if !user.Character.Cooldowns.Try("special-move", fmt.Sprintf("%d rounds", cfg.SpecialMoveCooldown)) {
+	// Delegate core resolution to the shared action.
+	res := actions.ExecuteKick(&actions.UserActor{User: user, Room: room})
+
+	if res.OnCooldown {
 		user.SendText("You need a moment to recover before attempting another special move.")
 		return true, nil
 	}
-
-	// Resolve target
-	targetPlayerId := user.Character.Aggro.UserId
-	targetMobId := user.Character.Aggro.MobInstanceId
-
-	var targetChar *users.UserRecord
-	var targetMob *mobs.Mob
-	var targetName string
-	var defender *characters.Character
-
-	if targetMobId > 0 {
-		targetMob = mobs.GetInstance(targetMobId)
-		if targetMob == nil {
-			user.SendText("Your target is gone!")
-			return true, nil
-		}
-		targetName = targetMob.Character.Name
-		defender = &targetMob.Character
-	} else if targetPlayerId > 0 {
-		targetChar = users.GetByUserId(targetPlayerId)
-		if targetChar == nil {
-			user.SendText("Your target is gone!")
-			return true, nil
-		}
-		targetName = targetChar.Character.Name
-		defender = targetChar.Character
-	} else {
+	if res.NoTarget {
 		user.SendText("You have no target!")
 		return true, nil
 	}
 
-	// Determine kick variant based on combat positions
-	variant := "kick"
-	damagePercent := float64(cfg.KickDamagePercent)
-	knockdownChance := int(cfg.KickKnockdownChance)
-	mitigationMult := 1.0
-
-	// Stomp: target is prone
-	if defender.CombatPosition == characters.PositionProne {
-		variant = "stomp"
-		damagePercent = float64(cfg.StompDamagePercent)
-		knockdownChance = 0
-		mitigationMult = 0.5
-	}
-
-	// Knee: attacker is clinched or grounded AND in control
-	if (user.Character.CombatPosition == characters.PositionClinched ||
-		user.Character.CombatPosition == characters.PositionGrounded) &&
-		user.Character.HasCondition(characters.ConditionGrappleController) {
-		variant = "knee"
-		damagePercent = float64(cfg.KneeDamagePercent)
-		knockdownChance = 0
-		mitigationMult = 1.0
-	}
-
-	// Execute skill move
-	result := combat.ExecuteSkillMove(combat.SkillMoveParams{
-		Attacker:             user.Character,
-		Defender:             defender,
-		AttackStat:           user.Character.Stats.Strength.ValueAdj,
-		AttackSkill:          user.Character.GetSkillLevel(skills.UnarmedCombat),
-		DefenseStat:          defender.Stats.Dexterity.ValueAdj,
-		DefenseSkill:         defender.GetCombatSkillLevel(),
-		DamagePercent:        damagePercent,
-		KnockdownChance:      knockdownChance,
-		SkillRank:            user.Character.GetSkillLevel(skills.UnarmedCombat),
-		DamageStat:           user.Character.Stats.Strength.ValueAdj,
-		MitigationMultiplier: mitigationMult,
-	})
-
-	// Build variant-specific message arrays
+	// Build variant-specific message arrays.
 	var kickMsgs, kickTargetMsgs, kickRoomMsgs []string
 	var knockdownMsgs, knockdownTargetMsgs, knockdownRoomMsgs []string
 	var missMsgs, missTargetMsgs, missRoomMsgs []string
 
-	switch variant {
-	case "stomp":
+	targetName := res.Target.Name
+
+	switch res.Variant {
+	case actions.KickStomp:
 		kickMsgs = []string{
 			`You bring your heel down hard on <ansi fg="mobname">%s</ansi>! (<ansi fg="damage">%s</ansi>)`,
 			`You slam your foot into the downed <ansi fg="mobname">%s</ansi>! (<ansi fg="damage">%s</ansi>)`,
@@ -157,7 +94,8 @@ func Kick(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		missRoomMsgs = []string{
 			`<ansi fg="username">%s</ansi> tries to stomp <ansi fg="mobname">%s</ansi>, but misses!`,
 		}
-	case "knee":
+
+	case actions.KickKnee:
 		kickMsgs = []string{
 			`You drive a knee into <ansi fg="mobname">%s</ansi>! (<ansi fg="damage">%s</ansi>)`,
 			`You slam your knee into <ansi fg="mobname">%s</ansi>'s body! (<ansi fg="damage">%s</ansi>)`,
@@ -193,7 +131,8 @@ func Kick(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		missRoomMsgs = []string{
 			`<ansi fg="username">%s</ansi> tries to knee <ansi fg="mobname">%s</ansi> in the grapple, but misses!`,
 		}
-	default: // kick
+
+	default: // KickStandard
 		kickMsgs = []string{
 			`Your <ansi fg="yellow-bold">kick</ansi> strikes <ansi fg="mobname">%s</ansi>! (<ansi fg="damage">%s</ansi>)`,
 			`You land a solid kick on <ansi fg="mobname">%s</ansi>! (<ansi fg="damage">%s</ansi>)`,
@@ -243,58 +182,50 @@ func Kick(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		}
 	}
 
-	// Send messages
-	dmgDesc := combat.GetDamageDescription(result.Damage, result.TargetMaxHP)
+	// Resolve player target for direct messaging.
+	var targetChar *users.UserRecord
+	if res.Target.UserId > 0 {
+		targetChar = users.GetByUserId(res.Target.UserId)
+	}
 
-	if result.Hit {
-		// Stomp extends prone duration
-		if variant == "stomp" && defender.CombatPosition == characters.PositionProne {
-			defender.PositionRoundsMin += 1
-		}
+	// Send messages.
+	dmgDesc := combat.GetDamageDescription(res.MoveResult.Damage, res.MoveResult.TargetMaxHP)
 
-		if result.KnockedDown && len(knockdownMsgs) > 0 {
+	if res.MoveResult.Hit {
+		if res.MoveResult.KnockedDown && len(knockdownMsgs) > 0 {
 			user.SendText(fmt.Sprintf(knockdownMsgs[util.Rand(len(knockdownMsgs))], targetName, dmgDesc))
 			if targetChar != nil {
 				targetChar.SendText(fmt.Sprintf(knockdownTargetMsgs[util.Rand(len(knockdownTargetMsgs))], user.Character.Name, dmgDesc))
 			}
-			room.SendText(fmt.Sprintf(knockdownRoomMsgs[util.Rand(len(knockdownRoomMsgs))], user.Character.Name, targetName), user.UserId, targetPlayerId)
+			room.SendText(fmt.Sprintf(knockdownRoomMsgs[util.Rand(len(knockdownRoomMsgs))], user.Character.Name, targetName), user.UserId, res.Target.UserId)
 		} else {
 			user.SendText(fmt.Sprintf(kickMsgs[util.Rand(len(kickMsgs))], targetName, dmgDesc))
 			if targetChar != nil {
 				targetChar.SendText(fmt.Sprintf(kickTargetMsgs[util.Rand(len(kickTargetMsgs))], user.Character.Name, dmgDesc))
 			}
-			room.SendText(fmt.Sprintf(kickRoomMsgs[util.Rand(len(kickRoomMsgs))], user.Character.Name, targetName), user.UserId, targetPlayerId)
+			room.SendText(fmt.Sprintf(kickRoomMsgs[util.Rand(len(kickRoomMsgs))], user.Character.Name, targetName), user.UserId, res.Target.UserId)
 		}
 	} else {
 		user.SendText(fmt.Sprintf(missMsgs[util.Rand(len(missMsgs))], targetName))
 		if targetChar != nil {
 			targetChar.SendText(fmt.Sprintf(missTargetMsgs[util.Rand(len(missTargetMsgs))], user.Character.Name))
 		}
-		room.SendText(fmt.Sprintf(missRoomMsgs[util.Rand(len(missRoomMsgs))], user.Character.Name, targetName), user.UserId, targetPlayerId)
+		room.SendText(fmt.Sprintf(missRoomMsgs[util.Rand(len(missRoomMsgs))], user.Character.Name, targetName), user.UserId, res.Target.UserId)
 	}
 
-	// Record combat analytics
-	dmgRecorded := 0
-	if result.Hit {
-		dmgRecorded = result.Damage
+	// Progress unarmed combat skill.
+	variantName := "kick"
+	switch res.Variant {
+	case actions.KickStomp:
+		variantName = "stomp"
+	case actions.KickKnee:
+		variantName = "knee"
 	}
-	tgtType := combat.Mob
-	if targetMob == nil {
-		tgtType = combat.User
-	}
-	combat.RecordSpecialMove(combat.User, tgtType, variant, result.Hit, dmgRecorded, user.Character, defender, util.GetRoundCount())
-
-	// Progress unarmed combat skill
 	events.AddToQueue(events.SkillUsed{
 		UserId:  user.UserId,
 		Skill:   skills.UnarmedCombat,
-		Details: variant,
+		Details: variantName,
 	})
-
-	// Kick costs the current combat round
-	if user.Character.Aggro != nil {
-		user.Character.Aggro.RoundsWaiting = 1
-	}
 
 	return true, nil
 }
