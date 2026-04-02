@@ -1,5 +1,23 @@
 # DOGMud Patch Notes
 
+## 2026-04-02 — Bug Fixes & Polish
+
+### Fixes
+- **Enchantment idle bug:** Chrysalis enchantments (honed edge, etc.)
+  no longer progress while idle. They now only tick during combat.
+- **Web client side panels:** Map, Communications, and Vitals
+  windows now resize and reposition dynamically when the browser
+  window is resized (both horizontally and vertically). Vitals
+  no longer gets cut off on smaller screens like laptops.
+- **Small screen support:** Side panels are hidden entirely on
+  very small screens (phones/small tablets under 768px) to keep
+  the terminal usable.
+
+### Content
+- **help equipment:** New help file covering all equipment slots,
+  back slot trade-off (cloaks vs backpacks), belt slot trade-off
+  (belts vs bandoliers), and the component bag system.
+
 ## 2026-04-01 — Quest Engine
 
 ### New System: Quest Engine

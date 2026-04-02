@@ -390,35 +390,37 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 					}
 				}
 
-				// Stage 31.6: Chrysalis enchantment ticking
-				for _, itemPtr := range user.Character.Equipment.GetAllItemPtrs() {
-					if !itemPtr.HasChrysalisEnchantment() {
-						continue
-					}
-					itemPtr.EnchantUses++
+				// Stage 31.6: Chrysalis enchantment ticking (combat only)
+				if user.Character.Aggro != nil {
+					for _, itemPtr := range user.Character.Equipment.GetAllItemPtrs() {
+						if !itemPtr.HasChrysalisEnchantment() {
+							continue
+						}
+						itemPtr.EnchantUses++
 
-					eDef := enchantments.GetEnchantment(itemPtr.EnchantType)
-					if eDef == nil {
-						continue
-					}
+						eDef := enchantments.GetEnchantment(itemPtr.EnchantType)
+						if eDef == nil {
+							continue
+						}
 
-					currentTier := itemPtr.EnchantTier
-					maxTier := int(configs.GetBalanceConfig().EnchantMaxTier)
-					if currentTier >= maxTier || currentTier >= len(eDef.Tiers)-1 {
-						continue
-					}
+						currentTier := itemPtr.EnchantTier
+						maxTier := int(configs.GetBalanceConfig().EnchantMaxTier)
+						if currentTier >= maxTier || currentTier >= len(eDef.Tiers)-1 {
+							continue
+						}
 
-					bal := configs.GetBalanceConfig()
-					threshold := float64(bal.EnchantTierUsesBase) * math.Pow(float64(bal.EnchantTierUsesScale), float64(currentTier))
-					if float64(itemPtr.EnchantUses) >= threshold {
-						if util.Rand(100) < int(float64(bal.EnchantTierUpBaseChance)*100) {
-							itemPtr.EnchantTier++
-							itemPtr.EnchantUses = 0
-							enchantments.ApplyTier(itemPtr, eDef, itemPtr.EnchantTier)
+						bal := configs.GetBalanceConfig()
+						threshold := float64(bal.EnchantTierUsesBase) * math.Pow(float64(bal.EnchantTierUsesScale), float64(currentTier))
+						if float64(itemPtr.EnchantUses) >= threshold {
+							if util.Rand(100) < int(float64(bal.EnchantTierUpBaseChance)*100) {
+								itemPtr.EnchantTier++
+								itemPtr.EnchantUses = 0
+								enchantments.ApplyTier(itemPtr, eDef, itemPtr.EnchantTier)
 
-							newTier := itemPtr.EnchantTier
-							if newTier < len(eDef.Tiers) && eDef.Tiers[newTier].TierUpMessage != "" {
-								user.SendText(fmt.Sprintf(`<ansi fg="magenta">%s</ansi>`, eDef.Tiers[newTier].TierUpMessage))
+								newTier := itemPtr.EnchantTier
+								if newTier < len(eDef.Tiers) && eDef.Tiers[newTier].TierUpMessage != "" {
+									user.SendText(fmt.Sprintf(`<ansi fg="magenta">%s</ansi>`, eDef.Tiers[newTier].TierUpMessage))
+								}
 							}
 						}
 					}
