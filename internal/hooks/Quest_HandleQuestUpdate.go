@@ -51,9 +51,15 @@ func HandleQuestUpdate(e events.Event) events.ListenerReturn {
 		questUser.Character.ClearQuestToken(evt.QuestToken)
 		return events.Continue
 	}
-	// This only succees if the user doesn't have the quest yet or the quest is a later step of one they've started
+	// Try to advance the quest. If it fails, check whether the quest engine
+	// already set this token (GrantQuest sets it synchronously for chain
+	// evaluation, then fires this event for rewards). In that case, proceed
+	// with reward processing.
 	if !questUser.Character.GiveQuestToken(evt.QuestToken) {
-		return events.Continue
+		// Already at this step? The quest engine pre-set it. Continue to rewards.
+		if !questUser.Character.HasQuest(evt.QuestToken) {
+			return events.Continue
+		}
 	}
 
 	_, stepName := quests.TokenToParts(evt.QuestToken)
