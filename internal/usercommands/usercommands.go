@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/keywords"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -502,6 +503,25 @@ func RegisterCommand(command string, handlerFunc UserCommand, disabledWhenDowned
 // TryRoomScripts is called to try both the onCommand_X direct route and also onCommand with a 'cmd' parameter.
 // Returns true if a script handled it. False if not.
 func TryRoomScripts(input, alias, rest string, userId int) (bool, error) {
+
+	// Quest engine: room_interact notification
+	// Fires before JS scripts so triggers can replace onCommand handlers.
+	user := users.GetByUserId(userId)
+	if user != nil {
+		room := rooms.LoadRoom(user.Character.RoomId)
+		if room != nil {
+			bridge := questengine.NewGameBridge(user, room.RoomId)
+			result := questengine.GetEngine().Notify("room_interact", questengine.EventDetails{
+				UserId: user.UserId,
+				RoomId: room.RoomId,
+				Verb:   alias,
+				Noun:   strings.ToLower(rest),
+			}, bridge, bridge)
+			if result.Handled {
+				return true, nil
+			}
+		}
+	}
 
 	// Try direct command room script first
 	cmdHandled, err := scripting.TryRoomCommand(alias, rest, userId)
