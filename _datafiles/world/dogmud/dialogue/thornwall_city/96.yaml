@@ -96,7 +96,7 @@ tree:
       - questRequired: ["14-start"]
         questExcluded: ["14-evidence"]
         text: "Any luck in the tunnels? Be careful down there. I hear things moving at night -- more than rats."
-        hints: "Explore the tunnels beneath the cellar."
+        hints: "Search the tunnels for evidence of smuggling. Check any stash rooms or crates you find."
       - questRequired: ["14-evidence"]
         questExcluded: ["14-end"]
         text: "You found what? A bribe ledger? Names of corrupt officials? Take that to Guard Captain Velk. He will know what to do with it."
@@ -147,7 +147,7 @@ tree:
       grantsQuest: "14-start"
       givesItem: 40038
       text: "The noises from the cellar have gotten worse. Scraping, voices, the sound of things being dragged. The old drainage tunnels run under the whole district and connect to the cellar through a grate. I pulled it open once and... I did not like what I saw. Fresh boot prints in the mud. Someone is using those tunnels. Here -- take this lantern. The kitchen has a trapdoor down to the cellar. Be careful."
-      hints: "Go to the kitchen and descend through the trapdoor to the cellar."
+      hints: "Go to the kitchen and descend through the trapdoor to the cellar. Search the tunnels for evidence of smuggling -- check any stash rooms or crates you find."
 
     - id: found_ledger
       triggers: ["ledger", "bribe", "names", "found", "evidence", "smuggler", "torvan"]

@@ -12,8 +12,9 @@ steps:
       cellar -- scraping, voices, the sound of things being moved. The old
       drainage tunnels run beneath the tavern. He has given you a lantern and
       asked you to investigate."
-    hint: "Go to the tavern kitchen and descend into the cellar through the
-      trapdoor."
+    hint: "Descend through the kitchen trapdoor into the cellar. Search the
+      tunnels for evidence of smuggling -- check any stash rooms or crates
+      you find."
   - id: explore
     description: "You found a tally stick in the smugglers' stash room -- proof
       of regular shipments moving through these tunnels. The chalk arrows on
