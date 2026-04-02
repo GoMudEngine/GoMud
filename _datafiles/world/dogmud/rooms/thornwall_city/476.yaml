@@ -27,6 +27,8 @@ nouns:
     Processing time varies. Do not ring bell more than once."
 spawninfo:
 - mobid: 99
+- itemid: 29
+  respawnrate: 5 real minutes
 idlemessages:
 - A page turns somewhere deep in the stacks, a dry whisper of parchment.
 - The clerk stamps a document with a heavy seal, the sound sharp in the quiet room.

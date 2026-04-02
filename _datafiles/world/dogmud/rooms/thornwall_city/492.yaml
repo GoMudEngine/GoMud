@@ -17,10 +17,12 @@ coord:
 exits:
   east:
     roomid: 491
+spawninfo:
+- itemid: 40035
+  container: crates
+  respawnrate: 5 real minutes
 containers:
-  crates:
-    items:
-      - itemid: 40035
+  crates: {}
 nouns:
   shelf: A rough plank shelf holding pouches of dried herbs, coils of thin
     rope, and folded signal flags in dark colours. The herbs smell medicinal
