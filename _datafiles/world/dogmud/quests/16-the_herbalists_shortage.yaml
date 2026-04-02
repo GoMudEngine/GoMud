@@ -36,3 +36,45 @@ rewards:
   roommessage: "Delia's expression shifts from concern to
     quiet satisfaction as the herb supply problem is resolved."
   gold: 12
+
+triggers:
+  # Herb delivery -- normal path (has quest, not yet complete)
+  - event: item_give
+    mob: 259
+    item: 40040
+    conditions:
+      has: [16-start]
+      missing: [16-end]
+    actions:
+      - grant: 16-end
+      - npc_say:
+          mob: 259
+          lines:
+            - {delay: 1, text: "These are exactly what I needed.
+                Fresh and potent. Where did you find them?"}
+            - {delay: 3, text: "The grove. I should have looked
+                there myself. Thank you."}
+
+  # Herb delivery -- bypass (no quest yet, player explored first)
+  - event: item_give
+    mob: 259
+    item: 40040
+    conditions:
+      missing: [16-start]
+    actions:
+      - grant: 16-start
+      - npc_say:
+          mob: 259
+          lines:
+            - {delay: 1, text: "Forest herbs! Where did you find
+                these? I have been running low for weeks."}
+            - {delay: 3, text: "You have no idea how much this
+                helps. Thank you, truly."}
+
+  # Chain: bypass grants 16-start, auto-complete to 16-end
+  - event: quest_granted
+    quest_token: "16-start"
+    conditions:
+      missing: [16-end]
+    actions:
+      - grant: 16-end

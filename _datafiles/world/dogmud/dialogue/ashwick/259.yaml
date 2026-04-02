@@ -54,7 +54,7 @@ tree:
 
     - id: quest_complete_forager
       triggers: ["forager", "help", "arrangement", "worker", "sev", "person", "woods"]
-      questRequired: ["16-start"]
+      questRequired: ["16-start", "16-forager"]
       questExcluded: ["16-end"]
       grantsQuest: "16-end"
       text: "Another herbalist? Living in the forest? And they know feverfew from fireweed? If they are willing to work and I do not have to explain the difference between a poultice and a soup, I will take the help. Send them to me."
