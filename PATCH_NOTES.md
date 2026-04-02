@@ -1,38 +1,85 @@
 # DOGMud Patch Notes
 
-## 2026-04-01 — Quest Engine Batch 4 (Final)
+## 2026-04-01 — Quest Engine
 
-### Quest Engine: room_interact Events
-- The quest engine now fires `room_interact` events before JS room
-  scripts. This enables strongbox, push-stone, and other container
-  interactions to be handled by quest triggers instead of scripts.
+### New System: Quest Engine
+A complete YAML-driven quest engine that replaces JavaScript
+scripts for all quest logic. Quests are now defined entirely in
+data files with declarative triggers and conditions.
 
-### Quests Ported to Quest Engine
-- **Quest 9 (The Temple's Tithe Audit)** — collapsed to 2 steps,
-  ledger delivery via `item_give` trigger on Priest Olen.
-- **Quest 10 (The Drowning Post's Debt)** — collapsed to 3 steps,
-  notice delivery via `item_give` trigger on Guard Captain Velk.
-  Marek now gives the notice via dialogue `givesItem`.
-- **Quest 14 (The Undertow)** — full 6-step dungeon crawl ported
-  with `item_gain`, `room_enter`, `room_interact`, `item_give`,
-  and `quest_granted` triggers. Cellar gate, strongbox key/open
-  logic, and auto-chain completion all handled by triggers.
-- **Quest 17 (The Empty Cottage)** — converted from quest to lore
-  discovery. Room interactions preserved, quest tracking removed.
+- **9 event types:** room_enter, room_interact, item_gain,
+  item_give, mob_death, skill_use, command, dialogue,
+  quest_granted (for chaining steps automatically).
+- **Trigger actions:** grant quest tokens, give/consume items,
+  send text, NPC dialogue sequences, teleport, spawn mobs,
+  teach spells, apply buffs, set quest flags.
+- **Quest flags:** branching quests track which path the player
+  chose. Flag-gated dialogue shows different content per path.
+  Undeclared flags panic at startup to catch typos early.
+- **hint command:** type `hint` for guidance on your current
+  quest step. Hints give explicit directions and next actions.
+- **Verbose quest debugging:** admins can enable per-player
+  quest debug logging with `questdebug <player>`.
+
+### All Quests Ported (1-16)
+Every quest in the game now runs through the quest engine:
+- **Quest 1 (Sanctum Trials)** — full tutorial with ceremony
+  sequences, mutation grant, shopping/equip/combat/magic steps.
+- **Quest 2 (Warren Compact)** — salve delivery to tunnel shaman.
+  Mobs become peaceful after quest completion.
+- **Quest 3 (Scholar's Collection)** — dual-item delivery with
+  flag tracking for partial completion.
+- **Quests 4-7** — item delivery and combat quests across
+  Dustwalk Road, Watchers Crossing, and Thornwall Outskirts.
+- **Quest 8 (Missing Person)** — investigation quest in Thornwall.
+- **Quest 9 (Tithe Audit)** — ledger delivery to Priest Olen.
+- **Quest 10 (Drowning Post)** — protection notice to Velk.
+- **Quest 11 (Windwarden's Dilemma)** — opposed branching quest
+  with quest flags. Choose Sylara or Rhett; the other dismisses
+  you. Flag-gated followup quests (12 or 13).
+- **Quests 12-13** — path-exclusive followup quests (Covenant
+  vs Extraction) gated by Q11 branch flag.
+- **Quest 14 (The Undertow)** — 6-step dungeon crawl with cellar
+  gate, tally stick discovery, strongbox key/open interaction,
+  and bribe ledger delivery. Full room_interact support.
+- **Quest 15 (Peddler's Freight)** — crate delivery with combat
+  or diplomacy paths.
+- **Quest 16 (Herbalist's Shortage)** — dual-path herb delivery
+  with bypass for players who explore first.
+- **Quest 17 (Empty Cottage)** — converted to lore discovery
+  (no longer a tracked quest).
 
 ### Bug Fixes
 - **Quest re-grant prevention** — fixed 18 dialogue nodes across
-  15 files where completed quests could be re-offered because
-  `questExcluded` was missing the end token. Added runtime
-  validation that warns on load if a `grantsQuest` node is missing
-  its quest's end-token exclusion.
-- **Q14 hints improved** — start hint now directs players to search
-  stash rooms and crates for evidence, not just descend.
+  15 files where completed quests could be re-offered. Added
+  runtime validation that warns if a quest-granting node is
+  missing its end-token exclusion.
+- **Quest hints improved** — all quests now give explicit
+  step-by-step directions with cardinal directions and counts.
+- **Dialogue hints** now display as narrator text, not NPC speech.
+- **Branching quest dismissals** — wrong-path players get clear
+  rejection instead of confusing keyword matches.
+- **Shadow Realm combat trap** — fixed a bug where players could
+  get stuck in the Shadow Realm with stale combat state after
+  the warden-bandit alliance fight.
+- **False skill-up messages** — skill progression messages no
+  longer fire on critical failures or first mob kills when no
+  real skill gain occurred.
+- **Alchemy recipe cleanup** — removed legacy duplicate starter
+  recipes that confused new players in the tutorial. Tutorial
+  now uses healing salve instead of removed healing poultice.
+
+### Balance
+- **Moon phase effects doubled** — full/new moon bonuses and
+  penalties are now more noticeable.
 
 ### Migration
-- On startup, players with progress on removed quest steps (Q9
-  investigate/evidence, Q10 investigate) are automatically reset
-  to "start". Quest 17 progress is removed entirely.
+- Players on removed quest steps are automatically reset to
+  "start" on server startup. Quest 17 progress removed entirely.
+- Quest 11 branch flags inferred from Q12/Q13 progress for
+  existing players.
+- Legacy healing poultice and stamina draught auto-converted to
+  new alchemy equivalents.
 
 ---
 
