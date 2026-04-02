@@ -88,7 +88,7 @@ tree:
     - id: ledger_return
       triggers: ["ledger", "found", "proof", "evidence", "records", "here",
         "quest", "task"]
-      questRequired: ["5-evidence"]
+      questRequired: ["5-start"]
       questExcluded: ["5-end"]
       requiresItem: 21
       grantsQuest: "5-end"
