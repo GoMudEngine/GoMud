@@ -1,6 +1,8 @@
 package actions
 
 import (
+	"slices"
+
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -62,14 +64,7 @@ func sendRoomTextDarknessAware(room *rooms.Room, msg string, excludeUserIds ...i
 		return
 	}
 	for _, uid := range room.GetPlayers() {
-		excluded := false
-		for _, eid := range excludeUserIds {
-			if uid == eid {
-				excluded = true
-				break
-			}
-		}
-		if excluded {
+		if slices.Contains(excludeUserIds, uid) {
 			continue
 		}
 		u := users.GetByUserId(uid)
