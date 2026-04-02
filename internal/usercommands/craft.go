@@ -8,6 +8,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/crafting"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
@@ -139,6 +140,14 @@ func Craft(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	user.SendText(fmt.Sprintf(
 		`<ansi fg="yellow">You begin crafting %s... (%s)</ansi>`,
 		recipe.Name, craftTimeDesc(recipe.TimeRounds)))
+
+	// Quest engine: command notification
+	bridge := questengine.NewGameBridge(user, room.RoomId)
+	questengine.GetEngine().Notify("command", questengine.EventDetails{
+		UserId:  user.UserId,
+		RoomId:  room.RoomId,
+		Command: "craft",
+	}, bridge, bridge)
 
 	return true, nil
 }

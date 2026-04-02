@@ -23,9 +23,11 @@ exits:
   north:
     roomid: 4034
 containers:
-  herbs:
-    items:
-      - itemid: 40040
+  herbs: {}
+spawninfo:
+- itemid: 40040
+  container: herbs
+  respawnrate: 5 real minutes
 nouns:
   herbs: Rare medicinal plants growing in profusion -- species
     that Delia would recognize from old texts but not expect

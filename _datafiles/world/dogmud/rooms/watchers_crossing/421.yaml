@@ -30,6 +30,8 @@ nouns:
     through the damp river air. The plants are well-tended, trimmed back neatly.
 spawninfo:
 - mobid: 86
+- itemid: 21
+  respawnrate: 5 real minutes
 idlemessages:
 - The scratch of a quill on paper comes from behind the counter.
 - A breeze through the window carries the smell of rosemary and river water.

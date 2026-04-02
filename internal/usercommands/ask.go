@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/keywords"
 	"github.com/GoMudEngine/GoMud/internal/llm"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -24,7 +25,9 @@ func deliverDialogue(df *dialogue.DialogueFile, mob *mobs.Mob, mobInstanceId int
 		if nodeText, hints, moodChange, ok := dialogue.TreeAdvance(df, mobInstanceId, userId, topic, ps); ok {
 			mob.Command(`say ` + nodeText)
 			if hints != `` {
-				mob.Command(`say ` + hints)
+				if u := users.GetByUserId(userId); u != nil {
+					u.SendText(fmt.Sprintf(`<ansi fg="181">  [%s]</ansi>`, hints))
+				}
 			}
 			dialogue.ShiftMood(mobInstanceId, moodChange, df.DefaultMood)
 		} else if response, moodChange, ok := dialogue.Match(df, mobInstanceId, topic, ps); ok {
@@ -151,6 +154,15 @@ func Ask(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		}
 
 		rest = strings.Join(args, ` `)
+
+		// Quest engine: dialogue notification
+		bridge := questengine.NewGameBridge(user, room.RoomId)
+		questengine.GetEngine().Notify("dialogue", questengine.EventDetails{
+			UserId: user.UserId,
+			RoomId: room.RoomId,
+			MobId:  int(mob.MobId),
+			Topic:  rest,
+		}, bridge, bridge)
 
 		// Build PlayerState for quest/item gating in dialogue
 		ps := buildPlayerState(user)

@@ -98,7 +98,9 @@ func Talk(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 					if greetText, hints, ok := dialogue.Greet(df, mobIdCopy, user.UserId, ps); ok {
 						m.Command(`say ` + greetText)
 						if hints != `` {
-							m.Command(`say ` + hints)
+							if u := users.GetByUserId(user.UserId); u != nil {
+								u.SendText(fmt.Sprintf(`<ansi fg="181">  [%s]</ansi>`, hints))
+							}
 						}
 					} else if response, moodChange, ok := dialogue.Match(df, mobIdCopy, ``, ps); ok {
 						m.Command(`say ` + response)
@@ -120,7 +122,7 @@ func Talk(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			if greetText, hints, ok := dialogue.Greet(df, mobId, user.UserId, ps); ok {
 				mob.Command(`say ` + greetText)
 				if hints != `` {
-					mob.Command(`say ` + hints)
+					user.SendText(fmt.Sprintf(`<ansi fg="181">  [%s]</ansi>`, hints))
 				}
 			} else if response, moodChange, ok := dialogue.Match(df, mobId, ``, ps); ok {
 				// no tree — try a greeting pattern match with empty topic
@@ -177,6 +179,12 @@ func buildPlayerState(user *users.UserRecord) *dialogue.PlayerState {
 					Gained: true,
 				})
 			}
+		},
+		GetQuestFlag: func(key string) string {
+			return user.Character.GetQuestFlag(key)
+		},
+		SetQuestFlag: func(key, value string) {
+			user.Character.SetQuestFlag(key, value)
 		},
 	}
 }

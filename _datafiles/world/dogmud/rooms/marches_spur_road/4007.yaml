@@ -21,9 +21,7 @@ exits:
   east:
     roomid: 4006
 containers:
-  crates:
-    items:
-      - itemid: 40039
+  crates: {}
 nouns:
   roof: The north side of the roof has collapsed entirely, beams snapped
     and hanging at angles like broken ribs. Daylight pours through the
@@ -41,6 +39,9 @@ nouns:
     end up in an abandoned barn.
 spawninfo:
 - mobid: 254
+- itemid: 40039
+  container: crates
+  respawnrate: 5 real minutes
 idlemessages:
 - The remaining roof beams creak and groan as the wind pushes against them.
 - A rat scurries along the base of the wall and disappears into the rubble.

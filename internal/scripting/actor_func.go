@@ -194,6 +194,18 @@ func (a ScriptActor) HasQuest(questId string) bool {
 	return a.characterRecord.HasQuest(questId)
 }
 
+func (a ScriptActor) GetQuestFlag(key string) string {
+	return a.characterRecord.GetQuestFlag(key)
+}
+
+func (a ScriptActor) SetQuestFlag(key, value string) {
+	a.characterRecord.SetQuestFlag(key, value)
+}
+
+func (a ScriptActor) HasQuestFlag(key string) bool {
+	return a.characterRecord.HasQuestFlag(key)
+}
+
 func (a ScriptActor) GiveQuest(questId string) {
 
 	if a.userRecord != nil {

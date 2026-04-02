@@ -18,8 +18,8 @@ activitylevel: 10
 crafter: true
 crafterskill: alchemy
 crafterrecipeids:
-  - healing-poultice
-  - stamina-draught
+  - healing-salve
+  - stamina-tonic
 crafterrestockmaterials:
   - 40004
   - 40005

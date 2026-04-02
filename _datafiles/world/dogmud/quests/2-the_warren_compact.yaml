@@ -1,22 +1,46 @@
 questid: 2
 name: The Warren Compact
-description: The tunnel shaman has asked you to prove your good intent by bringing a healing poultice to the warren. Completing this quest will lock The Scholar's Collection.
+description: The tunnel shaman has asked you to prove your good
+  intent by bringing a healing salve to the warren.
 secret: false
 
 steps:
   - id: start
-    description: "The tunnel shaman has asked you to bring a healing poultice as proof of good intent. Obtain a healing poultice and return to the shaman."
-    hint: "Healing poultices can be purchased from Alchemist Yenna in Sanctum Basin, or crafted if you have the materials."
-  - id: poultices
-    description: "The shaman accepted your gift. Follow the shaman's directions deeper into the warren and speak with the chieftain."
-    hint: "The chieftain's chamber is deep in the southern tunnels."
-  - id: audience
-    description: "The chieftain has agreed to speak with you. It watches you with the wariness of a leader whose people have been hunted. Listen to what it has to say."
+    description: "The Tunnel Shaman has asked you to bring a healing
+      salve as proof of good intent. Obtain one and bring it to the
+      shaman in the Low Junction."
+    hint: "Bring a healing salve to the Tunnel Shaman. From the
+      Labyrinth entrance, go down 1 to the Low Junction. Salves can
+      be bought from Alchemist Yenna in Sanctum Basin or crafted
+      with the healing-salve recipe."
   - id: end
-    description: "You have earned a fragile peace with the warren. The chieftain has granted you passage through the tunnels and the shaman has offered to share what knowledge it can."
+    description: "You have earned a fragile peace with the warren."
 
 rewards:
-  playermessage: "The chieftain inclines its heavy head -- the closest thing to a bow its mutated frame allows. You are not welcome here. But you are tolerated. That is more than any surface-dweller has been given in living memory."
-  roommessage: "A low, guttural exchange passes between the shaman and the chieftain. Something has shifted."
+  playermessage: "The chieftain inclines its heavy head -- the
+    closest thing to a bow its mutated frame allows. You are not
+    welcome here. But you are tolerated. That is more than any
+    surface-dweller has been given in living memory."
+  roommessage: "A low, guttural exchange passes between the shaman
+    and the chieftain. Something has shifted."
   gold: 15
   skillinfo: "rhetoric:1"
+
+triggers:
+  # Item delivery via give command
+  - event: item_give
+    mob: 74
+    item: 30036
+    conditions:
+      has: [2-start]
+      missing: [2-end]
+    actions:
+      - grant: 2-end
+      - npc_say:
+          mob: 74
+          lines:
+            - {delay: 1, text: "These are good. Strong. Our sick
+                will benefit."}
+            - {delay: 3, text: "You have done what I asked. The
+                Eldest will hear of this. Go deeper -- the warriors
+                will not stop you now."}

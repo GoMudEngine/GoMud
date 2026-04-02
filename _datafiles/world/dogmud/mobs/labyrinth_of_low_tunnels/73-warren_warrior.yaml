@@ -4,6 +4,7 @@ archetype: fighting
 statpool: 12
 itemdropchance: 15
 hostile: true
+peacefulquest: "2-end"
 maxwander: 1
 buffids: [29]
 groups:

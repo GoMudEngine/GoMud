@@ -73,7 +73,7 @@ tree:
 
     - id: help_quest
       triggers: ["help", "kill", "clear", "quest", "task", "what can i do", "sample"]
-      questExcluded: ["7-start"]
+      questExcluded: ["7-start", "7-end"]
       grantsQuest: "7-start"
       text: "If you are willing, clear the worst of the pests from the south fields. Kill enough to thin the numbers. And bring me one of the bodies -- I want to see what is making them grow so large. Something in that fallow soil, maybe. And look at the notice on the post in Gareth's field, while you are there. Someone should know what happened. Someone who might actually do something about it."
       hints: "Head east to the fallow field, then south to the pest fields. Kill crop pests and collect a sample."

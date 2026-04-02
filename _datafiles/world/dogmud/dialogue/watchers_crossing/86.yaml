@@ -75,7 +75,7 @@ tree:
 
     - id: help_quest
       triggers: ["help", "report", "quest", "task", "deliver", "thornwall", "magistrate"]
-      questExcluded: ["6-start"]
+      questExcluded: ["6-start", "6-end"]
       grantsQuest: "6-start"
       givesItem: 31
       text: "I have documented everything. Damage assessments, repair costs, projected failure timelines. Here -- take this. If Thornwall sees it, they will understand why the toll exists. Take it to the Records Office in Thornwall -- ask for Clerk Pell. He handles filings for the magistrate."

@@ -6,6 +6,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -62,6 +63,13 @@ func HandleJoin(e events.Event) events.ListenerReturn {
 	}
 
 	if room != nil {
+		// Quest engine: room_enter notification on login/spawn
+		bridge := questengine.NewGameBridge(user, user.Character.RoomId)
+		questengine.GetEngine().Notify("room_enter", questengine.EventDetails{
+			UserId: user.UserId,
+			RoomId: user.Character.RoomId,
+		}, bridge, bridge)
+
 		if doLook, err := scripting.TryRoomScriptEvent(`onEnter`, user.UserId, user.Character.RoomId); err != nil || doLook {
 			user.CommandFlagged(`look`, events.CmdSecretly) // Do a secret look.
 		}

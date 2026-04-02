@@ -1,0 +1,10 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">hint</ansi>
+
+The <ansi fg="command">hint</ansi> command gives you a hint for your
+current quest step. Useful when you're not sure what to do next.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">hint</ansi>              Show hint for your most recent quest
+  <ansi fg="command">hint [name]</ansi>       Show hint for a specific quest
+  <ansi fg="command">hint [number]</ansi>     Show hint for a quest by ID

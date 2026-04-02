@@ -7,19 +7,49 @@ secret: false
 
 steps:
   - id: start
-    description: "Tavern keeper Marek at the Drowning Post is in trouble -- he owes taxes to the city and protection money to thugs. He needs help finding a way out that does not involve violence."
-    hint: "Talk to Marek about his debts. He may have ideas about who to approach."
-  - id: investigate
-    description: "Marek needs proof of the protection racket to bring to the guard. Find the protection notice and bring it to Guard Captain Velk at the barracks."
-    hint: "Marek should have the protection notice. Take it to the guard barracks."
+    description: "Tavern keeper Marek at the Drowning Post gave you a protection
+      notice as evidence of the racket squeezing his business. Take it to Guard
+      Captain Velk at the barracks."
+    hint: "Bring the protection notice to Guard Captain Velk at the city
+      barracks."
   - id: report
-    description: "You have brought evidence of the protection racket to the guard captain. Return to Marek with the news."
-    hint: "Go back to the Drowning Post tavern."
+    description: "Guard Captain Velk has seen the evidence and will act on it.
+      Return to Marek with the good news."
+    hint: "Go back to the Drowning Post tavern and tell Marek the guard
+      will handle the racket."
   - id: end
-    description: "Marek's protection problem is in the hands of the city guard. The tax debt remains, but at least one boot is off his neck. The cellar, however, has its own secrets."
+    description: "Marek's protection problem is in the hands of the city guard.
+      The tax debt remains, but at least one boot is off his neck. The cellar,
+      however, has its own secrets."
 
 rewards:
-  playermessage: "Marek pours you a drink on the house -- the good stuff, from the bottle he keeps behind the keg. 'The guard cannot fix the taxes, but at least I will not have to pay two masters. That is something.' He glances toward the cellar stairs. 'While you were gone, I heard noises down there again. Something in the old drainage tunnels beneath the city. I have been meaning to look, but...' He trails off. 'Another time, perhaps. For now, drink.'"
-  roommessage: "Marek pours a drink with visible relief, some of the tension leaving his shoulders."
+  playermessage: "Marek pours you a drink on the house -- the good stuff, from
+    the bottle he keeps behind the keg. 'The guard cannot fix the taxes, but at
+    least I will not have to pay two masters. That is something.' He glances
+    toward the cellar stairs. 'While you were gone, I heard noises down there
+    again. Something in the old drainage tunnels beneath the city. I have been
+    meaning to look, but...' He trails off. 'Another time, perhaps. For now,
+    drink.'"
+  roommessage: "Marek pours a drink with visible relief, some of the tension
+    leaving his shoulders."
   gold: 10
   itemid: 28
+
+triggers:
+  # Notice delivery to Velk via give command
+  - event: item_give
+    mob: 94
+    item: 30
+    conditions:
+      has: ["10-start"]
+      missing: ["10-report"]
+    actions:
+      - grant: "10-report"
+      - npc_say:
+          mob: 94
+          lines:
+            - {delay: 1, text: "A protection notice? Let me see that."}
+            - {delay: 3, text: "This is enough to act on. I will put a patrol
+                on the back alleys and bring someone in for questioning."}
+            - {delay: 5, text: "Tell the tavern keeper he can stop paying. The
+                watch will handle this now."}

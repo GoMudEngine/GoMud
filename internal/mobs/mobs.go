@@ -64,6 +64,7 @@ type Mob struct {
 	InstanceId      int      `yaml:"-"`
 	HomeRoomId      int      `yaml:"-"`
 	Hostile         bool     // whether they attack on sight
+	PeacefulQuest   string   `yaml:"peacefulquest,omitempty"` // if set, mob won't attack players who have this quest token
 	LastIdleCommand uint8    `yaml:"-"` // Track what hte last used idlecommand was
 	BoredomCounter  uint8    `yaml:"-"` // how many rounds have passed since this mob has seen a player
 	Groups          []string // What group do they identify with? Helps with teamwork
@@ -440,6 +441,11 @@ func (m *Mob) Converse() {
 	}
 }
 
+// GetLastCommandTurn returns the turn at which the mob's last scheduled command will execute.
+func (m *Mob) GetLastCommandTurn() uint64 {
+	return m.lastCommandTurn
+}
+
 // Cause the mob to basically wait and do nothing for x seconds
 func (m *Mob) Sleep(seconds int) {
 	m.Command(`noop`, float64(seconds))
@@ -611,6 +617,12 @@ func (r *Mob) HatesMob(m *Mob) bool {
 		return false // Can't hate exact same as self
 	}
 
+	// Check hates list against target's groups first — group hatred
+	// overrides species alliance (a warden hates bandits even if both human)
+	if r.hatesAnyGroup(m.Groups) {
+		return true
+	}
+
 	// Same species = ally, never hate
 	if r.Character.SpeciesId > 0 &&
 		r.Character.SpeciesId == m.Character.SpeciesId {
@@ -672,12 +684,30 @@ func (r *Mob) ConsidersAnAlly(m *Mob) bool {
 		return true
 	}
 
+	// If either mob hates any of the other's groups, they are NOT allies
+	// regardless of species. A warden should never ally with a bandit.
+	if r.hatesAnyGroup(m.Groups) || m.hatesAnyGroup(r.Groups) {
+		return false
+	}
+
 	// Same species = allies (SpeciesId 0 is unset/ghostly spirit, skip)
 	if r.Character.SpeciesId > 0 &&
 		r.Character.SpeciesId == m.Character.SpeciesId {
 		return true
 	}
 
+	return false
+}
+
+// hatesAnyGroup returns true if this mob's Hates list includes any of the given groups.
+func (r *Mob) hatesAnyGroup(groups []string) bool {
+	for _, hate := range r.Hates {
+		for _, grp := range groups {
+			if strings.EqualFold(hate, grp) {
+				return true
+			}
+		}
+	}
 	return false
 }
 

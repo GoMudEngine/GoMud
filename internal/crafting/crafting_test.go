@@ -43,7 +43,7 @@ func seedRegistry() {
 			RecipeId:     "healing-poultice",
 			Name:         "Healing Poultice",
 			Skill:        "alchemy",
-			SkillMinimum: 0,
+			SkillMinimum: 1,
 			Station:      "alchemy_bench",
 			TimeRounds:   2,
 			Ingredients: []RecipeIngredient{
@@ -53,6 +53,21 @@ func seedRegistry() {
 			Output:         RecipeOutput{ItemId: 30010, Quantity: 1},
 			SuccessMessage: "You grind the roots into cloth.",
 			FailureMessage: "The mixture crumbles.",
+		},
+		"healing-salve": {
+			RecipeId:     "healing-salve",
+			Name:         "Healing Salve",
+			Skill:        "alchemy",
+			SkillMinimum: 0,
+			Station:      "alchemy_bench",
+			TimeRounds:   3,
+			Ingredients: []RecipeIngredient{
+				{ItemTag: "healers-root", Quantity: 2},
+				{ItemTag: "bottle", Quantity: 1},
+			},
+			Output:         RecipeOutput{ItemId: 30036, Quantity: 1},
+			SuccessMessage: "You seal the salve in the bottle.",
+			FailureMessage: "The mixture separates.",
 		},
 	}
 }
@@ -233,12 +248,13 @@ func TestGetStarterRecipes(t *testing.T) {
 
 	starters := GetStarterRecipes()
 
-	// iron-dagger (SkillMinimum=0) and healing-poultice (SkillMinimum=0) should be starters
+	// iron-dagger (SkillMinimum=0) should be a starter
 	if _, ok := starters["iron-dagger"]; !ok {
 		t.Error("expected iron-dagger in starter recipes")
 	}
-	if _, ok := starters["healing-poultice"]; !ok {
-		t.Error("expected healing-poultice in starter recipes")
+	// healing-poultice (SkillMinimum=1) should NOT be a starter
+	if _, ok := starters["healing-poultice"]; ok {
+		t.Error("healing-poultice should not be a starter recipe (SkillMinimum=1)")
 	}
 	// iron-buckler (SkillMinimum=5) should NOT be a starter
 	if _, ok := starters["iron-buckler"]; ok {

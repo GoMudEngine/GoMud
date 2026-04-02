@@ -96,7 +96,7 @@ tree:
       - questRequired: ["14-start"]
         questExcluded: ["14-evidence"]
         text: "Any luck in the tunnels? Be careful down there. I hear things moving at night -- more than rats."
-        hints: "Explore the tunnels beneath the cellar."
+        hints: "Search the tunnels for evidence of smuggling. Check any stash rooms or crates you find."
       - questRequired: ["14-evidence"]
         questExcluded: ["14-end"]
         text: "You found what? A bribe ledger? Names of corrupt officials? Take that to Guard Captain Velk. He will know what to do with it."
@@ -107,8 +107,9 @@ tree:
   nodes:
     - id: the_squeeze
       triggers: ["trouble", "favour", "favor", "help", "debt", "problem", "quest", "task"]
-      questExcluded: ["10-start"]
+      questExcluded: ["10-start", "10-end"]
       grantsQuest: "10-start"
+      givesItem: 30
       text: "The tavern owes taxes to the city. That is my problem and I am working on it. But there is another problem -- someone in the back alleys has been sending protection notices to every business in the quarter. Pay up or get hurt. I have been paying both, and the money is running out. This is the latest notice. If the guard captain saw this, he would have to act. But I am afraid to walk into that barracks myself. People who report the racket tend to have accidents."
       hints: "Take the protection notice to Guard Captain Velk at the barracks."
       unlocks: ["about_thugs", "cellar_hint"]
@@ -118,6 +119,13 @@ tree:
       triggers: ["who", "thugs", "behind", "racket", "boss"]
       requires: ["the_squeeze"]
       text: "I do not know who runs it. The notices are unsigned, delivered at night. The thugs in the back alleys collect, but they are just muscle -- someone higher up is pulling strings. The guard might be able to find out, if they care enough to look."
+
+    - id: lost_notice
+      triggers: ["notice", "lost", "another", "protection"]
+      questRequired: ["10-start"]
+      questExcluded: ["10-report"]
+      givesItem: 30
+      text: "Lost it? Here -- I have more. They keep sliding them under the door. Take this one and get it to the guard captain before I lose my nerve."
 
     - id: cellar_hint
       triggers: ["cellar", "noise", "tunnel", "sewer", "below", "basement"]
@@ -135,11 +143,11 @@ tree:
     - id: cellar_investigation
       triggers: ["cellar", "noise", "tunnel", "investigate", "below", "grate", "quest", "task"]
       questRequired: ["10-end"]
-      questExcluded: ["14-start"]
+      questExcluded: ["14-start", "14-end"]
       grantsQuest: "14-start"
       givesItem: 40038
       text: "The noises from the cellar have gotten worse. Scraping, voices, the sound of things being dragged. The old drainage tunnels run under the whole district and connect to the cellar through a grate. I pulled it open once and... I did not like what I saw. Fresh boot prints in the mud. Someone is using those tunnels. Here -- take this lantern. The kitchen has a trapdoor down to the cellar. Be careful."
-      hints: "Go to the kitchen and descend through the trapdoor to the cellar."
+      hints: "Go to the kitchen and descend through the trapdoor to the cellar. Search the tunnels for evidence of smuggling -- check any stash rooms or crates you find."
 
     - id: found_ledger
       triggers: ["ledger", "bribe", "names", "found", "evidence", "smuggler", "torvan"]

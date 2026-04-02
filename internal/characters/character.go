@@ -95,6 +95,8 @@ type Character struct {
 	Cooldowns        Cooldowns                      `yaml:"cooldowns,omitempty"`     // How many rounds until it is cooled down
 	Settings         map[string]string              `yaml:"settings,omitempty"`      // custom setting tracking, used for anything.
 	QuestProgress    map[int]string                 `yaml:"questprogress,omitempty"` // quest progress tracking
+	QuestFlags       map[string]string              `yaml:"questflags,omitempty"`    // quest flag tracking (e.g., "11-branch" → "rhett")
+	LastQuestId      int                            `yaml:"lastquestid,omitempty"`   // most recently progressed quest
 	KeyRing          map[string]string              `yaml:"keyring,omitempty"`       // key is the lock id, value is the sequence
 	KD               KDStats                        `yaml:"kd,omitempty"`            // Kill/Death stats
 	MiscData         map[string]any                 `yaml:"miscdata,omitempty"`      // Any random other data that needs to be stored
@@ -994,6 +996,77 @@ func (c *Character) MigrateAlchemyRecipes() {
 	}
 
 	c.SetMiscData(migrationKey, "1")
+}
+
+// MigrateQuestFlags infers quest flags from downstream quest progress.
+// For Quest 11's branch flag: if the player has Q12 progress, they took
+// the Sylara path; if Q13 progress, the Rhett path.
+func (c *Character) MigrateQuestFlags() {
+	if c.QuestFlags != nil {
+		return // already has flags — skip
+	}
+
+	// Infer Q11 branch from Q12/Q13 progress
+	q12Progress := c.QuestProgress[12]
+	q13Progress := c.QuestProgress[13]
+
+	if q12Progress != "" {
+		c.SetQuestFlag("11-branch", "sylara")
+	} else if q13Progress != "" {
+		c.SetQuestFlag("11-branch", "rhett")
+	}
+	// If neither Q12 nor Q13 started, leave unset —
+	// the player will pick a branch when they next interact.
+}
+
+// MigrateLegacyPotions replaces removed alchemy items and recipes
+// with their current equivalents.
+// 30010 (healing poultice) → 30036 (healing salve)
+// 30011 (stamina draught)  → 30037 (stamina tonic)
+// 30031 (greater healing poultice) → 30036 (healing salve)
+func (c *Character) MigrateLegacyPotions() {
+	// Replace items in backpack
+	for i := range c.Items {
+		switch c.Items[i].ItemId {
+		case 30010, 30031:
+			c.Items[i].ItemId = 30036
+		case 30011:
+			c.Items[i].ItemId = 30037
+		}
+	}
+
+	// Replace items in component bag
+	for i := range c.ComponentItems {
+		switch c.ComponentItems[i].ItemId {
+		case 30010, 30031:
+			c.ComponentItems[i].ItemId = 30036
+		case 30011:
+			c.ComponentItems[i].ItemId = 30037
+		}
+	}
+
+	// Replace items in potion bandolier
+	for i := range c.PotionItems {
+		switch c.PotionItems[i].ItemId {
+		case 30010, 30031:
+			c.PotionItems[i].ItemId = 30036
+		case 30011:
+			c.PotionItems[i].ItemId = 30037
+		}
+	}
+
+	// Replace recipe knowledge
+	if c.KnownRecipes != nil {
+		if _, ok := c.KnownRecipes["healing-poultice"]; ok {
+			delete(c.KnownRecipes, "healing-poultice")
+			c.KnownRecipes["healing-salve"] = 1
+		}
+		if _, ok := c.KnownRecipes["stamina-draught"]; ok {
+			delete(c.KnownRecipes, "stamina-draught")
+			c.KnownRecipes["stamina-tonic"] = 1
+		}
+		delete(c.KnownRecipes, "greater-healing-poultice")
+	}
 }
 
 func (c *Character) HasRecipe(recipeId string) bool {
@@ -2231,6 +2304,7 @@ func (c *Character) GiveQuestToken(questToken string) bool {
 
 	if quests.IsTokenAfter(currentToken, questToken) {
 		c.QuestProgress[questId] = newStep
+		c.LastQuestId = questId
 		return true
 	}
 
@@ -2246,6 +2320,42 @@ func (c *Character) ClearQuestToken(questToken string) {
 	questId, _ := quests.TokenToParts(questToken)
 
 	delete(c.QuestProgress, questId)
+}
+
+func (c *Character) SetQuestFlag(key, value string) {
+	if c.QuestFlags == nil {
+		c.QuestFlags = make(map[string]string)
+	}
+	// Runtime defense-in-depth: log if flag isn't in the registry.
+	// Skip if registry is empty (test environment / data not loaded yet).
+	if len(quests.GetFlagRegistry()) > 0 {
+		if err := quests.ValidateFlag(key, value); err != nil {
+			mudlog.Error("SetQuestFlag", "warning", err.Error())
+		}
+	}
+	c.QuestFlags[key] = value
+}
+
+func (c *Character) GetQuestFlag(key string) string {
+	if c.QuestFlags == nil {
+		return ""
+	}
+	return c.QuestFlags[key]
+}
+
+func (c *Character) HasQuestFlag(key string) bool {
+	if c.QuestFlags == nil {
+		return false
+	}
+	_, ok := c.QuestFlags[key]
+	return ok
+}
+
+func (c *Character) ClearQuestFlag(key string) {
+	if c.QuestFlags == nil {
+		return
+	}
+	delete(c.QuestFlags, key)
 }
 
 func (c *Character) SetAggroRemote(exitName string, userId int, mobInstanceId int, aggroType AggroType, roundsWaitTime ...int) {

@@ -1,5 +1,41 @@
 # DOGMud Patch Notes
 
+## 2026-04-01 — Quest Engine Batch 4 (Final)
+
+### Quest Engine: room_interact Events
+- The quest engine now fires `room_interact` events before JS room
+  scripts. This enables strongbox, push-stone, and other container
+  interactions to be handled by quest triggers instead of scripts.
+
+### Quests Ported to Quest Engine
+- **Quest 9 (The Temple's Tithe Audit)** — collapsed to 2 steps,
+  ledger delivery via `item_give` trigger on Priest Olen.
+- **Quest 10 (The Drowning Post's Debt)** — collapsed to 3 steps,
+  notice delivery via `item_give` trigger on Guard Captain Velk.
+  Marek now gives the notice via dialogue `givesItem`.
+- **Quest 14 (The Undertow)** — full 6-step dungeon crawl ported
+  with `item_gain`, `room_enter`, `room_interact`, `item_give`,
+  and `quest_granted` triggers. Cellar gate, strongbox key/open
+  logic, and auto-chain completion all handled by triggers.
+- **Quest 17 (The Empty Cottage)** — converted from quest to lore
+  discovery. Room interactions preserved, quest tracking removed.
+
+### Bug Fixes
+- **Quest re-grant prevention** — fixed 18 dialogue nodes across
+  15 files where completed quests could be re-offered because
+  `questExcluded` was missing the end token. Added runtime
+  validation that warns on load if a `grantsQuest` node is missing
+  its quest's end-token exclusion.
+- **Q14 hints improved** — start hint now directs players to search
+  stash rooms and crates for evidence, not just descend.
+
+### Migration
+- On startup, players with progress on removed quest steps (Q9
+  investigate/evidence, Q10 investigate) are automatically reset
+  to "start". Quest 17 progress is removed entirely.
+
+---
+
 ## 2026-03-31 — Salvage System
 
 ### New Feature: Salvage

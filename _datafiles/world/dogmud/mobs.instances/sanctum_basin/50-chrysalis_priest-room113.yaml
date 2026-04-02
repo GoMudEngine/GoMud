@@ -1,7 +1,7 @@
 strength_training: 5
 dexterity_training: 8
 perception_training: 21
-vitality_training: 4
+vitality_training: 6
 willpower_training: 24
 charisma_training: 28
 skills:
@@ -15,9 +15,10 @@ skills:
   jewelcrafting: 1
   ranged-combat: 1
   rhetoric: 1
+  salvage: 1
   search: 1
-  spellcasting: 1
   skullduggery: 1
+  spellcasting: 1
   tailoring: 1
   unarmed-combat: 1
   weapon-combat: 1

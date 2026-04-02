@@ -6,11 +6,18 @@ description: You have chosen to support Windwarden Sylara and protect
 secret: false
 steps:
   - id: start
-    description: "Travel to Windwarden Sylara near the stone circle
-      and attend her spirit binding ritual."
+    description: "Windwarden Sylara has offered to teach you the
+      ancient covenant. Travel to her at the stone circle and tell
+      her you are ready for the ritual."
+    hint: "From Thornwall's eastern gate, go east 5, south 2, east 3
+      to the ridge trail junction, then east 1 into the stone circle.
+      Try: ask sylara ritual"
   - id: ritual
-    description: "Sylara has begun the ritual. Open yourself to the
-      spirits of the steppe and complete the binding."
+    description: "Sylara has begun the binding ritual at the stone
+      circle. Open yourself to the spirits of the steppe and complete
+      the binding."
+    hint: "Complete the ritual with Sylara. Listen and accept the
+      spirits' call. Try: ask sylara accept"
   - id: end
     description: "The spirits of the steppe answer your call. You
       have earned the Windwarden's trust."

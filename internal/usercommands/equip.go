@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -107,6 +108,15 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 				ItemsWorn:    []items.Item{matchItem},
 				ItemsRemoved: []items.Item{oldItem},
 			})
+
+			// Quest engine: command notification
+			bridge := questengine.NewGameBridge(user, room.RoomId)
+			questengine.GetEngine().Notify("command", questengine.EventDetails{
+				UserId:  user.UserId,
+				RoomId:  room.RoomId,
+				Command: "equip",
+			}, bridge, bridge)
+
 			return true, nil
 		}
 
@@ -170,6 +180,14 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 				ItemsWorn:    []items.Item{matchItem},
 				ItemsRemoved: oldItems,
 			})
+
+			// Quest engine: command notification
+			bridge := questengine.NewGameBridge(user, room.RoomId)
+			questengine.GetEngine().Notify("command", questengine.EventDetails{
+				UserId:  user.UserId,
+				RoomId:  room.RoomId,
+				Command: "equip",
+			}, bridge, bridge)
 
 		} else {
 			if len(failureReason) == 1 {

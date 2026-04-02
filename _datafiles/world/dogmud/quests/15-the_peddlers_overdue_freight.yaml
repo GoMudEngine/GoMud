@@ -7,15 +7,16 @@ secret: false
 
 steps:
   - id: start
-    description: "Peddler Malk on the southern spur road has been
-      waiting on a freight shipment for days. He suspects bandits
-      on the road south intercepted it. Find the missing freight."
-    hint: "The bandits have been seen near an old barn off the
-      road, west of the farmland stretch."
+    description: "Peddler Malk has been waiting on a freight
+      shipment for days. He suspects bandits intercepted it. Find
+      the missing freight crate."
+    hint: "Find Malk's missing freight crate. From his camp, go
+      east 1 to the Waypoint Shrine, then south along the road.
+      The bandits have been seen near a ruined barn west of the
+      farmland stretch."
   - id: end
     description: "You recovered Malk's freight crate and returned
-      it to him. He is grateful and has offered you better prices
-      on his road supplies."
+      it to him."
 
 rewards:
   playermessage: "Malk examines the crate, running his elongated
@@ -27,3 +28,46 @@ rewards:
   roommessage: "Malk examines the recovered freight crate with
     evident relief, already tallying his inventory."
   gold: 15
+
+triggers:
+  # Normal completion: player has quest, delivers crate
+  - event: item_give
+    mob: 250
+    item: 40039
+    conditions:
+      has: [15-start]
+      missing: [15-end]
+    actions:
+      - grant: 15-end
+      - npc_say:
+          mob: 250
+          lines:
+            - {delay: 1, text: "That is the one! The iron straps,
+                the stencil marks -- that is my consignment."}
+            - {delay: 3, text: "I owe you for this. Road prices
+                from me, any time. Better than road prices."}
+
+  # Pre-discovery: player found crate before talking to Malk
+  - event: item_give
+    mob: 250
+    item: 40039
+    conditions:
+      missing: [15-start]
+    actions:
+      - grant: 15-start
+      - npc_say:
+          mob: 250
+          lines:
+            - {delay: 1, text: "My freight! Where did you -- never
+                mind, I can see the lock has been forced. Bandits."}
+            - {delay: 3, text: "You have done me a considerable
+                favor. Road prices from me, any time. Better than
+                road prices."}
+
+  # Chain: after pre-discovery grants 15-start, auto-complete
+  - event: quest_granted
+    quest_token: "15-start"
+    conditions:
+      missing: [15-end]
+    actions:
+      - grant: 15-end

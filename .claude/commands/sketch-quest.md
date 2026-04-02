@@ -33,6 +33,11 @@ From `$ARGUMENTS`, identify:
 - Delivery/completion NPC(s) (existing or new)
 - Quest type: fetch, delivery, investigation, combat, escort, multi-zone
 - Approximate step count
+- Is this a branching/opposed quest? If yes, identify:
+  - The branch point (which step forces a choice)
+  - The branch NPC(s) (one per path)
+  - What flag key/values to use (e.g., `branch: [sylara, rhett]`)
+  - What followup quests each path unlocks
 
 **If the concept is vague or underspecified, ASK the user for clarification
 before proceeding.** Specifically ask about:
@@ -87,6 +92,32 @@ Step 2: "evidence" — granted by room script
   Description: "..."
   Hint: "..."
 ```
+
+---
+
+**BRANCHING / OPPOSED QUEST** (include only if applicable)
+
+If this quest has mutually exclusive paths:
+
+Flag declaration:
+```yaml
+flags:
+  - key: {flagname}
+    values: [{path1}, {path2}]
+    description: "{what the flag tracks}"
+```
+
+Branch NPCs:
+- Path A: {NPC name} (mob {id}) — sets `{questid}-{flagname}: {path1}`
+- Path B: {NPC name} (mob {id}) — sets `{questid}-{flagname}: {path2}`
+
+Followup quest gating:
+- Path A quest: `questFlagRequired: {"{questid}-{flagname}": "{path1}"}`
+- Path B quest: `questFlagRequired: {"{questid}-{flagname}": "{path2}"}`
+
+Dismissal nodes needed:
+- Path A NPC must dismiss Path B players (and vice versa)
+- Place at TOP of nodes list in dialogue YAML
 
 ---
 
@@ -193,10 +224,24 @@ complete:
       only) and document why
 - [ ] Multi-zone quests — confirm NPCs exist and have spawninfo in their rooms
 - [ ] `questExcluded` on completion nodes prevents double-completion
+- [ ] **End-token exclusion:** every `grantsQuest` node excludes BOTH the
+      granted token AND `{questid}-end` in `questExcluded` — prevents
+      re-offering completed quests
 - [ ] Quest YAML `rewards` section is filled out (gold, item, message)
 - [ ] Instance saves: list any rooms/mobs that have instance saves to delete
 - [ ] Line width: all description text wraps at 80 chars
 - [ ] No raw numbers in player-facing text
+- [ ] **Branching quests:** If quest has flags, declare them in quest YAML
+      with allowed values. Undeclared flags cause startup panic.
+- [ ] **Flag-gated nodes:** Followup quest offers use `questFlagRequired`
+      to gate on the player's branch choice
+- [ ] **Dismissal nodes:** Every branch NPC has a dismissal node at the
+      TOP of the nodes list for wrong-path players. Without this, keyword
+      patterns fire and players think there's a quest to discover.
+- [ ] **Mid-quest variants:** Root variants exist for all cross-NPC visit
+      states (wrong-path player visits during Q, after Q, etc.)
+- [ ] **Quest items not components:** Delivery items must NOT have
+      `is_component: true` — component pouch is not checked by give/requiresItem
 
 ---
 

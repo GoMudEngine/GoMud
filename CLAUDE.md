@@ -156,6 +156,14 @@ Never display raw numeric values (damage, healing, armor points, round counts, e
 
 Displaying raw numbers breaks immersion and leaks internal balance values to players. The exception is the `status` command's stat sheet — that is a deliberate mechanical display.
 
+## Quest Re-Grant Prevention SOP
+Every dialogue node or pattern with `grantsQuest` must include the quest's
+**end token** (e.g., `{questid}-end`) in `questExcluded`, not just the token
+being granted. Without this, a player who completed the quest can get it
+re-offered. Example: `grantsQuest: "10-start"` requires
+`questExcluded: ["10-start", "10-end"]`. The dialogue loader logs a warning
+at runtime if this exclusion is missing.
+
 ## Quest NPC Dialogue SOP
 Every quest-granting dialogue node (any tree node with `grantsQuest`) MUST include
 `"quest"` and `"task"` in its `triggers` list. Similarly, quest-introducing
@@ -190,6 +198,51 @@ Every quest-granting dialogue node (any tree node with `grantsQuest`) MUST inclu
 Tree nodes and patterns support `givesItem: <itemId>`. When a node fires with
 `givesItem` set, the player receives the item and sees "You receive a <itemname>."
 Use this for NPCs handing quest items to the player during dialogue.
+
+## Quest Flags System
+Quest flags store arbitrary metadata about quest choices. Primary use case:
+tracking which branch a player took in an opposed/branching quest.
+
+### Flag Declaration (Quest YAML)
+Quests declare expected flags with allowed values. **Undeclared flag
+references cause a server panic at startup** — this catches typos before
+they reach production.
+
+```yaml
+flags:
+  - key: branch
+    values: [sylara, rhett]
+    description: "Which NPC the player sided with"
+```
+
+Flag key convention: `"{questId}-{flagName}"` (e.g., `"11-branch"`).
+
+### Dialogue Integration
+- `setsQuestFlag: {key: "11-branch", value: "rhett"}` — set a flag on
+  node match
+- `questFlagRequired: {"11-branch": "rhett"}` — gate on flag value
+- `questFlagExcluded: {"11-branch": "sylara"}` — hide if flag matches
+
+### Quest Engine Integration
+- Conditions: `has_flag: {"11-branch": "rhett"}`, `missing_flag: ...`
+- Action: `set_flag: {key: "11-branch", value: "rhett"}`
+
+### Admin/Scripting
+- `questtoken flags` — show all flags on your character
+- `questtoken flag <key> [value]` — view or set a flag
+- JS scripting: `user.GetQuestFlag(key)`, `user.SetQuestFlag(key, value)`,
+  `user.HasQuestFlag(key)`
+
+### Branching Quest SOP
+Every branching quest MUST have:
+1. Flag declaration in quest YAML with all valid values
+2. `setsQuestFlag` on each branch NPC's quest-start dialogue node
+3. `questFlagRequired` on followup quest offers to gate by branch
+4. **Dismissal nodes** at the TOP of each NPC's tree nodes list for
+   wrong-path players — without these, keyword patterns fire and
+   players think there's a hidden quest
+5. Root variants with `questFlagRequired` for path-specific greetings
+6. Mid-quest root variants for cross-NPC visits during the OTHER quest
 
 ## Equipment Slots
 Default slots: Weapon, Offhand, Head, Neck, Shoulders, Body, Back, Belt,

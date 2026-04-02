@@ -655,6 +655,11 @@ Balance:
   SalvageGoldPerRound: 10     # Ingredient gold value per salvage round
   SalvageMaxRounds: 5         # Maximum salvage duration
 
+  # ── QUEST ENGINE ──────────────────────────────────────────────────────────
+  QuestLogLevel: verbose        # verbose, medium, minimal
+  QuestChainDepthLimit: 10      # max chained grant evaluations per event
+  QuestPerformanceWarnMs: 50    # warn if trigger evaluation exceeds this (ms)
+
   # ── MOB PROGRESSION ──────────────────────────────────────────────────────────
   # When enabled, mobs gain stats and skills through combat just like players.
   # Mobs that survive longer become more dangerous. Progression resets when
@@ -802,7 +807,7 @@ Balance:
   GossipIntervalRounds: 75  # Rounds between gossip broadcasts for "gossiper" mobs (min 20)
 
   # ── MOON PHASES ─────────────────────────────────────────────────────────────
-  MoonStatModMax: 0.05  # Max fractional stat modifier from moon phases (±5% at full/new moon)
+  MoonStatModMax: 0.10  # Max fractional stat modifier from moon phases (±10% at full/new moon)
 
 ################################################################################
 #

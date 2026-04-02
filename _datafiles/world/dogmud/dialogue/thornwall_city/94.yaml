@@ -55,7 +55,7 @@ tree:
   nodes:
     - id: missing_case
       triggers: ["missing", "person", "elara", "case", "help", "quest", "task"]
-      questExcluded: ["8-start"]
+      questExcluded: ["8-start", "8-end"]
       grantsQuest: "8-start"
       text: "Elara. Twenty-two years old, daughter of a merchant family in the eastern quarter. Reported missing three days ago by her father. No signs of violence, no ransom demand. She just vanished. My guards are watching the gates and the market, but I do not have the people to search the residential wards door by door. If you are willing to look into it, I would appreciate the help. Her father is Aldric Sevarn -- ask me about the family if you want background. Otherwise, start searching the residential wards north of the market."
       hints: "Search the residential wards north of the market for Elara. You could also ask Velk about her family."
@@ -74,7 +74,7 @@ tree:
     - id: protection_report
       triggers: ["protection", "racket", "thug", "extortion", "notice", "evidence", "proof", "quest", "task"]
       questRequired: ["10-start"]
-      questExcluded: ["10-report"]
+      questExcluded: ["10-report", "10-end"]
       requiresItem: 30
       grantsQuest: "10-report"
       text: "You have evidence of a protection racket? Show me. This is enough to act on. I will put a patrol on the back alleys and bring someone in for questioning. Tell the tavern keeper he can stop paying -- the watch will handle this now."
@@ -91,17 +91,14 @@ tree:
     - id: tunnel_report
       triggers: ["tunnels", "smugglers", "smuggling", "ledger", "bribe", "quest", "task"]
       questRequired: ["14-evidence"]
-      questExcluded: ["14-end", "14-report"]
+      questExcluded: ["14-report"]
       text: "Smuggling tunnels under the Craftsmen's Quarter? And a bribe ledger naming officials? That is... significant. Give me the ledger. I need to see the names before I can act."
       hints: "You could hand over the bribe ledger."
 
     - id: tunnel_complete
-      triggers: ["done", "finished", "complete", "quest", "task"]
-      questRequired: ["14-report"]
-      questExcluded: ["14-end"]
-      grantsQuest: "14-end"
-      givesItem: 40037
-      text: "The ledger checks out. Gate captains, customs clerks, a warehouse inspector -- all on the take. I am ordering arrests tonight. The tunnels will be sealed and patrols doubled in the quarter. You have done this city a real service. Take this -- a commendation bearing the Watch seal. It will not buy you a drink, but it means something to the right people."
+      triggers: ["done", "finished", "complete", "tunnels", "quest", "task"]
+      questRequired: ["14-end"]
+      text: "The ledger checks out. Gate captains, customs clerks, a warehouse inspector -- all on the take. The arrests are underway. The tunnels will be sealed and patrols doubled in the quarter. You have done this city a real service."
       moodChange: grateful
 
 memory:

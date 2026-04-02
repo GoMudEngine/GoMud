@@ -169,6 +169,11 @@ type Balance struct {
 	SalvageGoldPerRound ConfigInt   `yaml:"SalvageGoldPerRound"` // Ingredient gold value per salvage round (default 10)
 	SalvageMaxRounds    ConfigInt   `yaml:"SalvageMaxRounds"`    // Maximum salvage rounds (default 5)
 
+	// ── QUEST ENGINE ─────────────────────────────────────────────────────────
+	QuestLogLevel          string    `yaml:"QuestLogLevel"`          // verbose, medium, minimal (default verbose)
+	QuestChainDepthLimit   ConfigInt `yaml:"QuestChainDepthLimit"`   // max chained grant evaluations per event (default 10)
+	QuestPerformanceWarnMs ConfigInt `yaml:"QuestPerformanceWarnMs"` // warn if trigger evaluation exceeds this (default 50)
+
 	// ── MUTATIONS ─────────────────────────────────────────────────────────────
 	MutationBaseProgress         ConfigFloat `yaml:"MutationBaseProgress"`         // Progress needed for first mutation (default 50.0)
 	MutationProgressScale        ConfigFloat `yaml:"MutationProgressScale"`        // Each additional mutation costs Scale^n more (default 1.5)
@@ -628,6 +633,17 @@ func (b *Balance) Validate() {
 	}
 	if b.SalvageMaxRounds < 1 {
 		b.SalvageMaxRounds = 5
+	}
+
+	// ── QUEST ENGINE ─────────────────────────────────────────────────────────
+	if b.QuestLogLevel == "" {
+		b.QuestLogLevel = "verbose"
+	}
+	if b.QuestChainDepthLimit < 1 {
+		b.QuestChainDepthLimit = 10
+	}
+	if b.QuestPerformanceWarnMs < 1 {
+		b.QuestPerformanceWarnMs = 50
 	}
 
 	// ── MUTATIONS ─────────────────────────────────────────────────────────────

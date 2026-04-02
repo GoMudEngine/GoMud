@@ -20,9 +20,11 @@ exits:
   east:
     roomid: 313
 containers:
-  shelves:
-    items:
-      - itemid: 14
+  shelves: {}
+spawninfo:
+- itemid: 14
+  container: shelves
+  respawnrate: 5 real minutes
 nouns:
   pots: Rough clay vessels, pinched and shaped by small fingers. Some are sealed tight
     with dark wax. Others have been opened and re-sealed many times. The contents

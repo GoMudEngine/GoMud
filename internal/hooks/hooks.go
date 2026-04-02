@@ -83,6 +83,9 @@ func RegisterListeners() {
 	// Mob death: pack flee behavior (Stage 42.7)
 	events.RegisterListener(events.MobDeath{}, PackFlee)
 
+	// Skill use: quest engine notifications
+	events.RegisterListener(events.SkillUsed{}, SkillUseQuestNotify)
+
 	// Log tee to users
 	events.RegisterListener(events.Log{}, FollowLogs)
 
