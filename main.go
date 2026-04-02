@@ -35,7 +35,9 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/keywords"
 	"github.com/GoMudEngine/GoMud/internal/language"
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/migration"
+	"github.com/GoMudEngine/GoMud/internal/mobcommands"
 	"github.com/GoMudEngine/GoMud/internal/usercommands"
 	"github.com/GoMudEngine/GoMud/internal/version"
 	"github.com/gorilla/websocket"
@@ -256,6 +258,14 @@ func main() {
 	)
 
 	web.SetWebPlugin(plugins.GetPluginRegistry())
+
+	// Audit command registry parity between user and mob command sets.
+	// Logs warnings for any unexpected gaps (i.e. commands present on one side
+	// but absent on the other that aren't in the intentional allowlists).
+	actions.AuditCommandParity(
+		usercommands.GetAllUserCommands(),
+		mobcommands.GetAllMobCommands(),
+	)
 
 	//
 	// Capture OS signals to gracefully shutdown the server

@@ -481,6 +481,23 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 	return false, nil
 }
 
+// GetAllUserCommands returns the names of all registered user commands.
+func GetAllUserCommands() []string {
+	result := []string{}
+	for cmd := range userCommands {
+		result = append(result, cmd)
+	}
+	return result
+}
+
+// IsAdminCommand reports whether the named command is admin-only.
+func IsAdminCommand(cmd string) bool {
+	if info, ok := userCommands[cmd]; ok {
+		return info.AdminOnly
+	}
+	return false
+}
+
 // GetCommandRegistry returns a snapshot of all registered commands for external use.
 // Callers should filter AdminOnly entries as appropriate.
 func GetCommandRegistry() map[string]CommandAccess {
