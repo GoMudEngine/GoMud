@@ -91,17 +91,14 @@ tree:
     - id: tunnel_report
       triggers: ["tunnels", "smugglers", "smuggling", "ledger", "bribe", "quest", "task"]
       questRequired: ["14-evidence"]
-      questExcluded: ["14-end", "14-report"]
+      questExcluded: ["14-report"]
       text: "Smuggling tunnels under the Craftsmen's Quarter? And a bribe ledger naming officials? That is... significant. Give me the ledger. I need to see the names before I can act."
       hints: "You could hand over the bribe ledger."
 
     - id: tunnel_complete
-      triggers: ["done", "finished", "complete", "quest", "task"]
-      questRequired: ["14-report"]
-      questExcluded: ["14-end"]
-      grantsQuest: "14-end"
-      givesItem: 40037
-      text: "The ledger checks out. Gate captains, customs clerks, a warehouse inspector -- all on the take. I am ordering arrests tonight. The tunnels will be sealed and patrols doubled in the quarter. You have done this city a real service. Take this -- a commendation bearing the Watch seal. It will not buy you a drink, but it means something to the right people."
+      triggers: ["done", "finished", "complete", "tunnels", "quest", "task"]
+      questRequired: ["14-end"]
+      text: "The ledger checks out. Gate captains, customs clerks, a warehouse inspector -- all on the take. The arrests are underway. The tunnels will be sealed and patrols doubled in the quarter. You have done this city a real service."
       moodChange: grateful
 
 memory:
