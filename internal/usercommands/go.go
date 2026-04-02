@@ -3,6 +3,7 @@ package usercommands
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
@@ -22,7 +23,8 @@ import (
 
 func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
-	exitName, goRoomId := room.FindExitByName(rest)
+	exitResult := actions.FindExit(room, rest)
+	exitName, goRoomId := exitResult.ExitName, exitResult.RoomId
 
 	// If no valid exit, check if it's a recognized cardinal direction (handled below
 	// as "bumping into walls"). Otherwise return false so the dispatcher shows

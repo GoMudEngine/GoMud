@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -87,15 +88,14 @@ func Go(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		}
 	}
 
-	exitName := ``
-	goRoomId := 0
-
-	exitName, goRoomId = room.FindExitByName(rest)
-
 	if rest == `home` {
 		mob.Command(`pathto home`)
 		return true, nil
 	}
+
+	exitResult := actions.FindExit(room, rest)
+	exitName := exitResult.ExitName
+	goRoomId := exitResult.RoomId
 
 	exitInfo, _ := room.GetExitInfo(exitName)
 	if exitInfo.Lock.IsLocked() {
