@@ -1,4 +1,4 @@
-strength_training: 1
+strength_training: 2
 dexterity_training: 5
 perception_training: 11
 vitality_training: 11
@@ -15,6 +15,7 @@ skills:
   jewelcrafting: 1
   ranged-combat: 1
   rhetoric: 1
+  salvage: 1
   search: 1
   skullduggery: 1
   spellcasting: 1

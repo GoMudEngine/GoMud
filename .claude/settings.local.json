@@ -48,7 +48,18 @@
       "Bash(/tmp/zone_analysis.txt:*)",
       "Read(//tmp/**)",
       "Bash(mv _datafiles/world/dogmud/rooms/sanctum_basin/113.js _datafiles/world/dogmud/rooms/sanctum_basin/113.js.bak)",
-      "Bash(mv _datafiles/world/dogmud/rooms/sanctum_basin/102.js _datafiles/world/dogmud/rooms/sanctum_basin/102.js.bak)"
+      "Bash(mv _datafiles/world/dogmud/rooms/sanctum_basin/102.js _datafiles/world/dogmud/rooms/sanctum_basin/102.js.bak)",
+      "Bash(go run:*)",
+      "Bash(2)",
+      "Bash(while read:*)",
+      "Read(//c/Users/Calabe Davis/workspace/DOGMud/**)",
+      "Bash(for f:*)",
+      "Read(//c/Users/Calabe Davis/workspace/DOGMud/_datafiles/world/dogmud/rooms/sanctum_basin/**)",
+      "Bash(mv _datafiles/world/dogmud/rooms/thornwall_city/476.js _datafiles/world/dogmud/rooms/thornwall_city/476.js.bak)",
+      "Bash(mv _datafiles/world/dogmud/mobs/thornwall_city/scripts/95-temple_priest_olen.js _datafiles/world/dogmud/mobs/thornwall_city/scripts/95-temple_priest_olen.js.bak)",
+      "Bash(mv _datafiles/world/dogmud/rooms/thornwall_city/485.js _datafiles/world/dogmud/rooms/thornwall_city/485.js.bak)",
+      "Bash(mv _datafiles/world/dogmud/rooms/thornwall_city/498.js _datafiles/world/dogmud/rooms/thornwall_city/498.js.bak)",
+      "Bash(mv _datafiles/world/dogmud/mobs/thornwall_city/scripts/94-guard_captain_velk.js _datafiles/world/dogmud/mobs/thornwall_city/scripts/94-guard_captain_velk.js.bak)"
     ]
   },
   "defaultMode": "bypassPermissions"

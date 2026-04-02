@@ -1,7 +1,7 @@
 strength_training: -2
 dexterity_training: -4
 perception_training: 6
-vitality_training: 10
+vitality_training: 11
 charisma_training: 1
 skills:
   alchemy: 1

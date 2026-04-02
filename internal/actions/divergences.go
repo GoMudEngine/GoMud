@@ -104,8 +104,6 @@ var userOnlyCommands = map[string]string{
 	"stomp":     "alias",
 	"tailsweep": "alias",
 
-	// --- Vestigial commands (not yet removed from registry) ---
-	"train": "vestigial",
 }
 
 // mobOnlyCommands lists mob commands that intentionally have no user equivalent.

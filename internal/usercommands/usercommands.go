@@ -182,7 +182,6 @@ var (
 		`teleport`:    {Teleport, true, true, true}, // Admin only
 		`toxic-bite`:  {ToxicBite, false, true, false},
 		`track`:{Track, false, true, false},
-		`train`:       {Train, false, false, false}, // Can't train in combat
 		`taunt`:       {Taunt, false, true, false},
 		`trip`:        {Trip, false, true, false},
 		`tailsweep`:   {Trip, false, true, false},
