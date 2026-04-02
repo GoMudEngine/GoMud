@@ -3,8 +3,8 @@ package mobcommands
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
-	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -42,63 +42,42 @@ func Equip(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	}
 
 	if !found {
-		// Check whether the user has an item in their inventory that matches
 		matchItem, found = mob.Character.FindInBackpack(rest)
 	}
 
-	if found {
+	if !found {
+		return true, nil
+	}
 
-		iSpec := matchItem.GetSpec()
-		if iSpec.Type != items.Weapon && iSpec.Subtype != items.Wearable {
-			return true, nil
-		}
+	iSpec := matchItem.GetSpec()
+	if iSpec.Type != items.Weapon && iSpec.Subtype != items.Wearable {
+		return true, nil
+	}
 
-		// Swap the item location
-		oldItems, wearSuccess, _ := mob.Character.Wear(matchItem)
+	// Same-item no-op guard: if the mob already has this exact item on body,
+	// skip to avoid noisy "equips / unequips" churn from blind equip commands.
+	if existingItem, onBody := mob.Character.FindOnBody(matchItem.Name()); onBody && matchItem.Equals(existingItem) {
+		return true, nil
+	}
 
-		if wearSuccess {
+	actor := &actions.MobActor{Mob: mob, Room: room}
+	result := actions.EquipItem(actor, matchItem.Name())
 
-			mob.Character.RemoveItem(matchItem)
-
-			// if there is only one item removed, and it's the same as the one put on, don't bother with the rest.
-			// This is to address blind commands where mobs wear the same item over and over.
-			if len(oldItems) == 1 && matchItem.Equals(oldItems[0]) {
-
-				mob.Character.StoreItem(oldItems[0])
-
-			} else {
-
-				mob.Character.CancelBuffsWithFlag(buffs.Hidden)
-
-				for _, oldItem := range oldItems {
-					if oldItem.ItemId != 0 {
-
-						room.SendText(
-							fmt.Sprintf(`<ansi fg="mobname">%s</ansi> removes their <ansi fg="item">%s</ansi> and stores it away.`, mob.Character.Name, oldItem.DisplayName()))
-
-						mob.Character.StoreItem(oldItem)
-					}
-				}
-
-				if iSpec.Subtype == items.Wearable {
-
-					room.SendText(
-						fmt.Sprintf(`<ansi fg="mobname">%s</ansi> puts on <ansi fg="item">%s</ansi>.`, mob.Character.Name, matchItem.DisplayName()))
-				} else {
-					room.SendText(
-						fmt.Sprintf(`<ansi fg="mobname">%s</ansi> wields <ansi fg="item">%s</ansi>.`, mob.Character.Name, matchItem.DisplayName()))
-				}
-
-				mob.Character.Validate()
-
-				events.AddToQueue(events.EquipmentChange{
-					MobInstanceId: mob.InstanceId,
-					ItemsWorn:     []items.Item{matchItem},
-					ItemsRemoved:  oldItems,
-				})
+	if result.Equipped {
+		for _, oldItem := range result.DisplacedItems {
+			if oldItem.ItemId != 0 {
+				room.SendText(
+					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> removes their <ansi fg="item">%s</ansi> and stores it away.`, mob.Character.Name, oldItem.DisplayName()))
 			}
 		}
 
+		if iSpec.Subtype == items.Wearable {
+			room.SendText(
+				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> puts on <ansi fg="item">%s</ansi>.`, mob.Character.Name, result.Item.DisplayName()))
+		} else {
+			room.SendText(
+				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> wields <ansi fg="item">%s</ansi>.`, mob.Character.Name, result.Item.DisplayName()))
+		}
 	}
 
 	return true, nil

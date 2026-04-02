@@ -6,6 +6,72 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 )
 
+// EquipItemResult is the result of an EquipItem call.
+type EquipItemResult struct {
+	Item           items.Item
+	DisplacedItems []items.Item
+	Found          bool
+	Equipped       bool
+	FailureReason  string
+}
+
+// EquipItem takes a named item from the actor's backpack and equips it.
+// Displaced items (swapped-out gear) are stored back to the backpack, or
+// dropped to the floor if the backpack is full — no item loss allowed.
+// CancelBuffsWithFlag(Hidden), Validate(), and EquipmentChange are all
+// handled here. Messaging, arm-slot logic, buff onStart triggers, and
+// quest-engine notifications remain in the callers.
+func EquipItem(actor Actor, itemName string) EquipItemResult {
+	char := actor.GetCharacter()
+
+	matchItem, found := char.FindInBackpack(itemName)
+	if !found {
+		return EquipItemResult{Found: false}
+	}
+
+	// Tentatively remove from backpack so Wear() can place it on the body.
+	char.RemoveItem(matchItem)
+
+	displaced, newItemWorn, failureReason := char.Wear(matchItem)
+	if !newItemWorn {
+		// Put it back — equip failed.
+		char.StoreItem(matchItem)
+		return EquipItemResult{
+			Item:          matchItem,
+			Found:         true,
+			Equipped:      false,
+			FailureReason: failureReason,
+		}
+	}
+
+	char.CancelBuffsWithFlag(buffs.Hidden)
+
+	// Return displaced gear to backpack; drop to floor on overflow.
+	for _, di := range displaced {
+		if di.ItemId != 0 {
+			if !char.StoreItem(di) {
+				actor.GetRoom().AddItem(di, false)
+			}
+		}
+	}
+
+	char.Validate()
+
+	events.AddToQueue(events.EquipmentChange{
+		UserId:        actor.GetUserId(),
+		MobInstanceId: actor.GetMobInstanceId(),
+		ItemsWorn:     []items.Item{matchItem},
+		ItemsRemoved:  displaced,
+	})
+
+	return EquipItemResult{
+		Item:           matchItem,
+		DisplacedItems: displaced,
+		Found:          true,
+		Equipped:       true,
+	}
+}
+
 // RemoveEquipResult is the result of a RemoveEquipment call.
 type RemoveEquipResult struct {
 	Item    items.Item
