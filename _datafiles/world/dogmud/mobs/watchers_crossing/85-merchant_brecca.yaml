@@ -64,10 +64,10 @@ character:
       quantity: 0
       quantitymax: 0
       price: 2
-    - itemid: 40006
+    - itemid: 40043
       quantity: 0
       quantitymax: 0
-      price: 2
+      price: 1
   stats:
     perception:
       training: 10
