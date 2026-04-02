@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
@@ -73,31 +74,23 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 		// Swap the item location
 		if giveItem.ItemId > 0 {
-			targetUser.Character.StoreItem(giveItem)
-			user.Character.RemoveItem(giveItem)
+			userActor := &actions.UserActor{User: user, Room: room}
+			result := actions.GiveItemToChar(userActor, giveWhat, targetUser.Character, targetUser.UserId, 0)
+			if result.Err != nil {
+				user.SendText("Something went wrong.")
+				return true, nil
+			}
 
 			user.SendText(
-				fmt.Sprintf(`You give the <ansi fg="item">%s</ansi> to <ansi fg="username">%s</ansi>.`, giveItem.DisplayName(), targetUser.Character.Name),
+				fmt.Sprintf(`You give the <ansi fg="item">%s</ansi> to <ansi fg="username">%s</ansi>.`, result.Item.DisplayName(), targetUser.Character.Name),
 			)
 			targetUser.SendText(
-				fmt.Sprintf(`<ansi fg="username">%s</ansi> gives you their <ansi fg="item">%s</ansi>.`, user.Character.Name, giveItem.DisplayName()),
+				fmt.Sprintf(`<ansi fg="username">%s</ansi> gives you their <ansi fg="item">%s</ansi>.`, user.Character.Name, result.Item.DisplayName()),
 			)
 			room.SendText(
-				fmt.Sprintf(`<ansi fg="username">%s</ansi> gives <ansi fg="username">%s</ansi> a <ansi fg="itemname">%s</ansi>.`, user.Character.Name, targetUser.Character.Name, giveItem.NameSimple()),
+				fmt.Sprintf(`<ansi fg="username">%s</ansi> gives <ansi fg="username">%s</ansi> a <ansi fg="itemname">%s</ansi>.`, user.Character.Name, targetUser.Character.Name, result.Item.NameSimple()),
 				user.UserId,
 				targetUser.UserId)
-
-			events.AddToQueue(events.ItemOwnership{
-				UserId: user.UserId,
-				Item:   giveItem,
-				Gained: false,
-			})
-
-			events.AddToQueue(events.ItemOwnership{
-				UserId: targetUser.UserId,
-				Item:   giveItem,
-				Gained: true,
-			})
 
 		} else if giveGoldAmount > 0 {
 
@@ -111,8 +104,11 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 					user.UserId)
 
 			} else {
-				targetUser.Character.Gold += giveGoldAmount
-				user.Character.Gold -= giveGoldAmount
+				userActor := &actions.UserActor{User: user, Room: room}
+				if err := actions.GiveGoldToChar(userActor, giveGoldAmount, targetUser.Character); err != nil {
+					user.SendText("Something went wrong.")
+					return true, nil
+				}
 
 				events.AddToQueue(events.EquipmentChange{
 					UserId:     targetUser.UserId,
@@ -158,8 +154,11 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			if giveItem.ItemId > 0 || giveGoldAmount > 0 {
 
 				if giveGoldAmount > 0 {
-					m.Character.Gold += giveGoldAmount
-					user.Character.Gold -= giveGoldAmount
+					userActor := &actions.UserActor{User: user, Room: room}
+					if err := actions.GiveGoldToChar(userActor, giveGoldAmount, &m.Character); err != nil {
+						user.SendText("Something went wrong.")
+						return true, nil
+					}
 
 					events.AddToQueue(events.EquipmentChange{
 						UserId:     user.UserId,
@@ -207,9 +206,15 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 						return true, nil
 					}
 
-					// Normal flow — transfer item to mob.
-					m.Character.StoreItem(giveItem)
-					user.Character.RemoveItem(giveItem)
+					// Normal flow — transfer item to mob via atomic transfer.
+					userActor := &actions.UserActor{User: user, Room: room}
+					result := actions.GiveItemToChar(userActor, giveWhat, &m.Character, 0, m.InstanceId)
+					if result.Err != nil {
+						user.SendText("Something went wrong.")
+						return true, nil
+					}
+					// Update giveItem so onGive scripting below has the live value.
+					giveItem = result.Item
 
 					user.SendText(
 						fmt.Sprintf(`You give the <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, giveItem.DisplayName(), m.Character.Name),
@@ -218,18 +223,6 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 						fmt.Sprintf(`<ansi fg="username">%s</ansi> gave their <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, user.Character.Name, giveItem.DisplayName(), m.Character.Name),
 						user.UserId,
 					)
-
-					events.AddToQueue(events.ItemOwnership{
-						UserId: user.UserId,
-						Item:   giveItem,
-						Gained: false,
-					})
-
-					events.AddToQueue(events.ItemOwnership{
-						MobInstanceId: m.InstanceId,
-						Item:          giveItem,
-						Gained:        true,
-					})
 
 				}
 
