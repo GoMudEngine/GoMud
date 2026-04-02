@@ -156,6 +156,14 @@ Never display raw numeric values (damage, healing, armor points, round counts, e
 
 Displaying raw numbers breaks immersion and leaks internal balance values to players. The exception is the `status` command's stat sheet — that is a deliberate mechanical display.
 
+## Quest Re-Grant Prevention SOP
+Every dialogue node or pattern with `grantsQuest` must include the quest's
+**end token** (e.g., `{questid}-end`) in `questExcluded`, not just the token
+being granted. Without this, a player who completed the quest can get it
+re-offered. Example: `grantsQuest: "10-start"` requires
+`questExcluded: ["10-start", "10-end"]`. The dialogue loader logs a warning
+at runtime if this exclusion is missing.
+
 ## Quest NPC Dialogue SOP
 Every quest-granting dialogue node (any tree node with `grantsQuest`) MUST include
 `"quest"` and `"task"` in its `triggers` list. Similarly, quest-introducing

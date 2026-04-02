@@ -243,6 +243,14 @@ The quest event handler processes all rewards (gold, items, buffs) defined
 in the quest YAML. You do not need a separate reward mechanism — just point
 `grantsQuest` at the right quest token.
 
+**`grantsQuest` nodes must exclude the quest's end token.**
+Every node or pattern with `grantsQuest` must include the quest's end token
+(e.g., `{questid}-end`) in `questExcluded`, not just the token being granted.
+Without this, a player who has completed the quest can be re-offered it.
+Example: a node granting `"10-start"` must have
+`questExcluded: ["10-start", "10-end"]`. The dialogue loader logs a warning
+at runtime if this exclusion is missing.
+
 **Greeting `variants` are checked in order.**
 The first variant whose conditions match wins. Put more specific conditions
 (e.g. quest completed) before less specific ones (e.g. quest started).

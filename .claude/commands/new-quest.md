@@ -59,6 +59,9 @@ quest nodes with proper gating. For each dialogue file:
 - Every `grantsQuest` pattern entry MUST include `"quest"` and `"task"` in
   `keywords`
 - Use `questRequired` and `questExcluded` for proper step gating
+  - **End-token exclusion:** every `grantsQuest` node must exclude BOTH
+    the granted token AND `{questid}-end` in `questExcluded` — prevents
+    re-offering completed quests
 - Item delivery steps need BOTH a dialogue path AND an `onGive` script
 - **Narrative voice:** NPC `text` must use first person ("I", "my"). Hints
   must describe player options from the player's perspective. Never write

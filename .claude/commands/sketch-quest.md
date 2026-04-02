@@ -224,6 +224,9 @@ complete:
       only) and document why
 - [ ] Multi-zone quests — confirm NPCs exist and have spawninfo in their rooms
 - [ ] `questExcluded` on completion nodes prevents double-completion
+- [ ] **End-token exclusion:** every `grantsQuest` node excludes BOTH the
+      granted token AND `{questid}-end` in `questExcluded` — prevents
+      re-offering completed quests
 - [ ] Quest YAML `rewards` section is filled out (gold, item, message)
 - [ ] Instance saves: list any rooms/mobs that have instance saves to delete
 - [ ] Line width: all description text wraps at 80 chars
