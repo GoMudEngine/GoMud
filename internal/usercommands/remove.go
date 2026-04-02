@@ -3,7 +3,7 @@ package usercommands
 import (
 	"fmt"
 
-	"github.com/GoMudEngine/GoMud/internal/buffs"
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -13,11 +13,15 @@ import (
 
 func Remove(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
+	actor := &actions.UserActor{User: user, Room: room}
+
 	if rest == "all" {
 		removedItems := []items.Item{}
 		for _, item := range user.Character.Equipment.GetAllItems() {
-			Remove(item.Name(), user, room, flags)
-			removedItems = append(removedItems, item)
+			result := actions.RemoveEquipment(actor, item.Name())
+			if result.Removed {
+				removedItems = append(removedItems, result.Item)
+			}
 		}
 
 		events.AddToQueue(events.EquipmentChange{
@@ -28,15 +32,16 @@ func Remove(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		return true, nil
 	}
 
-	// Check whether the user has an item in their inventory that matches
+	// Check whether the user has an item equipped that matches
 	matchItem, found := user.Character.FindOnBody(rest)
 
 	if !found || matchItem.ItemId < 1 {
 		user.SendText(fmt.Sprintf(`You don't appear to be using a "%s".`, rest))
 	} else {
 
+		// Cursed item check — must happen BEFORE calling the shared action,
+		// since the shared action will actually remove the item.
 		if matchItem.IsCursed() && user.Character.Health > 0 {
-			// Cursed items can no longer be removed by skill — use an uncurse spell or service
 			if user.Character.GetSkillLevel(skills.Spellcasting) < 4 {
 				user.SendText(
 					fmt.Sprintf(`You can't seem to remove your <ansi fg="item">%s</ansi>... It's <ansi fg="red-bold">CURSED!</ansi>`, matchItem.DisplayName()),
@@ -50,31 +55,21 @@ func Remove(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			}
 		}
 
-		user.Character.CancelBuffsWithFlag(buffs.Hidden)
+		result := actions.RemoveEquipment(actor, rest)
 
-		if user.Character.RemoveFromBody(matchItem) {
+		if result.Removed {
 			user.SendText(
-				fmt.Sprintf(`You remove your <ansi fg="item">%s</ansi> and return it to your backpack.`, matchItem.DisplayName()),
+				fmt.Sprintf(`You remove your <ansi fg="item">%s</ansi> and return it to your backpack.`, result.Item.DisplayName()),
 			)
 			room.SendText(
-				fmt.Sprintf(`<ansi fg="username">%s</ansi> removes their <ansi fg="item">%s</ansi> and stores it away.`, user.Character.Name, matchItem.DisplayName()),
+				fmt.Sprintf(`<ansi fg="username">%s</ansi> removes their <ansi fg="item">%s</ansi> and stores it away.`, user.Character.Name, result.Item.DisplayName()),
 				user.UserId,
 			)
-
-			user.Character.StoreItem(matchItem)
-
-			events.AddToQueue(events.EquipmentChange{
-				UserId:       user.UserId,
-				ItemsRemoved: []items.Item{matchItem},
-			})
-
-		} else {
+		} else if result.Found {
 			user.SendText(
 				fmt.Sprintf(`You can't seem to remove your <ansi fg="item">%s</ansi>.`, matchItem.DisplayName()),
 			)
 		}
-
-		user.Character.Validate()
 
 	}
 
