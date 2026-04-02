@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/keywords"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -166,7 +167,7 @@ func TryCommand(cmd string, rest string, mobId int) (bool, error) {
 		}
 
 	}
-	if emoteText, ok := emoteAliases[cmd]; ok {
+	if emoteText, ok := actions.EmoteAliases[cmd]; ok {
 		handled, err := Emote(emoteText, mob, room)
 		return handled, err
 	}

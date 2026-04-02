@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/keywords"
@@ -453,7 +454,7 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 		}
 	}
 
-	if _, ok := emoteAliases[cmd]; ok {
+	if _, ok := actions.EmoteAliases[cmd]; ok {
 		handled, err := Emote(cmd, user, room, flags)
 		return handled, err
 	}

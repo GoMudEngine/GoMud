@@ -6,6 +6,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/keywords"
 	"github.com/GoMudEngine/GoMud/internal/species"
@@ -155,7 +156,7 @@ func GetHelpContents(input string) (string, error) {
 	var helpVars any = nil
 
 	if helpName == `emote` {
-		helpVars = emoteAliases
+		helpVars = actions.EmoteAliases
 	}
 
 	if helpName == `races` {
