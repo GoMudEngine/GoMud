@@ -105,7 +105,7 @@ tree:
 
     - id: his_cause
       triggers: ["windstone", "crystal", "conflict", "cause", "why", "problem", "quest", "task", "help"]
-      questExcluded: ["11-start"]
+      questExcluded: ["11-start", "11-end"]
       grantsQuest: "11-start"
       setsQuestFlag:
         key: "11-branch"
@@ -126,7 +126,7 @@ tree:
     - id: offer_gambit
       triggers: ["work", "extract", "gambit", "help", "quest", "task"]
       questRequired: ["11-end"]
-      questExcluded: ["13-start", "12-start"]
+      questExcluded: ["13-start", "12-start", "13-end"]
       questFlagRequired:
         "11-branch": "rhett"
       grantsQuest: "13-start"
@@ -143,7 +143,7 @@ tree:
     - id: extraction_begin
       triggers: ["ready", "extract", "begin", "help", "yes", "gambit"]
       questRequired: ["13-start"]
-      questExcluded: ["13-extraction"]
+      questExcluded: ["13-extraction", "13-end"]
       grantsQuest: "13-extraction"
       text: "Right, the extraction site is just over here. The key is controlled fracture -- we follow the crystal's natural grain, not against it. Like splitting wood, but with more math. Now hold this brace steady while I work the seam. If the crystal shatters, we lose everything."
       unlocks: ["extraction_complete"]

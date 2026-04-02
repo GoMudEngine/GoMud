@@ -105,7 +105,7 @@ tree:
 
     - id: her_cause
       triggers: ["circle", "conflict", "wind", "problem", "sacred", "cause", "why", "quest", "task", "help"]
-      questExcluded: ["11-start"]
+      questExcluded: ["11-start", "11-end"]
       grantsQuest: "11-start"
       setsQuestFlag:
         key: "11-branch"
@@ -126,7 +126,7 @@ tree:
     - id: offer_covenant
       triggers: ["covenant", "quest", "task", "teach", "offer", "spirits"]
       questRequired: ["11-end"]
-      questExcluded: ["12-start"]
+      questExcluded: ["12-start", "12-end"]
       questFlagRequired:
         "11-branch": "sylara"
       grantsQuest: "12-start"
@@ -138,7 +138,7 @@ tree:
       triggers: ["ready", "ritual", "begin", "teach", "spirit", "covenant",
         "yes", "quest", "task"]
       questRequired: ["12-start"]
-      questExcluded: ["12-ritual"]
+      questExcluded: ["12-ritual", "12-end"]
       grantsQuest: "12-ritual"
       text: "Come. Stand in the centre of the circle. Do not speak -- only listen. The wind-paths will do the rest."
       unlocks: ["ritual_complete"]

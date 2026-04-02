@@ -67,7 +67,7 @@ tree:
 
     - id: help_quest
       triggers: ["help", "ledger", "proof", "quest", "task", "what can i do"]
-      questExcluded: ["5-start"]
+      questExcluded: ["5-start", "5-end"]
       grantsQuest: "5-start"
       text: "Harn keeps a ledger. Every toll payment, every expense. If there is no commission from Thornwall in those records -- and I wager there is not -- that is proof the toll is unauthorized. Get me that ledger and I will send it to the magistrate myself. I have a contact who will see it reaches the right desk."
       hints: "Head to the tollhouse east of the crossroads and find the crossing ledger."

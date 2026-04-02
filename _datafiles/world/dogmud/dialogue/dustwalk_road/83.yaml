@@ -79,7 +79,7 @@ tree:
 
     - id: help_quest
       triggers: ["help", "investigate", "quest", "task", "what can i do", "willing"]
-      questExcluded: ["4-start"]
+      questExcluded: ["4-start", "4-end"]
       grantsQuest: "4-start"
       text: "I cannot leave the post. But if you were willing to scout the camp and bring me evidence -- documents, anything with names or schedules -- I could include it in my next report. Hard evidence is what the Watchers need to justify sending a patrol. It would make a real difference."
       hints: "Accept the task and head south past the ridgeline to find the bandit camp."

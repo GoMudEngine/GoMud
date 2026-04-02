@@ -29,7 +29,7 @@ tree:
   nodes:
     - id: quest_start
       triggers: ["quest", "task", "help", "problem", "herbs", "shortage"]
-      questExcluded: ["16-start"]
+      questExcluded: ["16-start", "16-end"]
       grantsQuest: "16-start"
       text: "Someone has been taking the wild herbs from the forest before I can harvest them. Feverfew, bitter-thistle, healers-root -- the things I cannot grow fast enough in the garden. I have been rationing stock for weeks. If you are heading into the forest north of the east edge, see if you can find out who is stripping my supply."
       hints: "Follow the forest path north from the east edge of Ashwick. Look for signs of whoever has been taking the herbs."

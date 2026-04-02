@@ -62,7 +62,7 @@ tree:
   nodes:
     - id: the_problem
       triggers: ["problem", "trouble", "conflict", "help", "quest", "task", "solve"]
-      questExcluded: ["11-start", "11-sylara", "11-rhett"]
+      questExcluded: ["11-start", "11-sylara", "11-rhett", "11-end"]
       grantsQuest: "11-start"
       text: "'Two people I care about are on a collision course. Windwarden Sylara guards the ancient stone circle east of the ridge trail -- it is the spiritual heart of the steppe. Geomancer Rhett, a Thornwall scholar, has found veins of rare windstone crystal in the ridge near the circle. He says extracting it could advance healing magic. Sylara says it would crack the circle's foundation and unravel the steppe's balance.' Kael sighs. 'Neither is wrong. Neither will back down. Go to one of them and offer your help. But choose carefully -- once you pick a side, the other will not trust you. Sylara is at the stone circle. Rhett camps at the ridge approach.'"
       hints: "Visit Windwarden Sylara at the stone circle or Geomancer Rhett at the ridge approach. Choosing one side means the other will not work with you."

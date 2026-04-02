@@ -55,7 +55,7 @@ tree:
   nodes:
     - id: missing_case
       triggers: ["missing", "person", "elara", "case", "help", "quest", "task"]
-      questExcluded: ["8-start"]
+      questExcluded: ["8-start", "8-end"]
       grantsQuest: "8-start"
       text: "Elara. Twenty-two years old, daughter of a merchant family in the eastern quarter. Reported missing three days ago by her father. No signs of violence, no ransom demand. She just vanished. My guards are watching the gates and the market, but I do not have the people to search the residential wards door by door. If you are willing to look into it, I would appreciate the help. Her father is Aldric Sevarn -- ask me about the family if you want background. Otherwise, start searching the residential wards north of the market."
       hints: "Search the residential wards north of the market for Elara. You could also ask Velk about her family."
@@ -74,7 +74,7 @@ tree:
     - id: protection_report
       triggers: ["protection", "racket", "thug", "extortion", "notice", "evidence", "proof", "quest", "task"]
       questRequired: ["10-start"]
-      questExcluded: ["10-report"]
+      questExcluded: ["10-report", "10-end"]
       requiresItem: 30
       grantsQuest: "10-report"
       text: "You have evidence of a protection racket? Show me. This is enough to act on. I will put a patrol on the back alleys and bring someone in for questioning. Tell the tavern keeper he can stop paying -- the watch will handle this now."

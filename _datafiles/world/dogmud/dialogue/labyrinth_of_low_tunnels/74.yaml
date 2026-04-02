@@ -116,7 +116,7 @@ tree:
 
     - id: prove_intent
       triggers: ["prove", "how", "help", "trust", "intent", "peace", "salve", "medicine", "quest", "task"]
-      questExcluded: ["2-start"]
+      questExcluded: ["2-start", "2-end"]
       grantsQuest: "2-start"
       text: "Bring a healing salve. The kind your alchemists make. We know the recipe but lack the surface herbs. Bring one here, to me, and I will carry it to the Eldest as proof that a surface-walker chose to help rather than to take."
       hints: "Obtain a healing salve from Alchemist Yenna in Sanctum Basin and bring it to the shaman."

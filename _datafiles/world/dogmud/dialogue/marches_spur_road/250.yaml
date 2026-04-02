@@ -29,7 +29,7 @@ tree:
   nodes:
     - id: quest_start
       triggers: ["quest", "task", "help", "problem", "trouble", "freight", "shipment"]
-      questExcluded: ["15-start"]
+      questExcluded: ["15-start", "15-end"]
       grantsQuest: "15-start"
       text: "I have been camped here for a week waiting on a freight shipment that should have come up from the crossroads. Paid in advance, which I do not usually do, but the supplier was reliable. Was. The crate never arrived. I cannot go check myself -- one man with a cart on a road with bandits is an invitation. If you are heading south, keep an eye out. Sturdy wooden crate, iron straps, my stencil on the side."
       hints: "The bandits have been seen near an old barn west of the farmland stretch. Look for a ruined barn off the road."

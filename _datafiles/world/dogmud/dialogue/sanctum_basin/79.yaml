@@ -107,7 +107,7 @@ tree:
 
     - id: specimens_need
       triggers: ["specimen", "sample", "need", "help", "what do you need", "collect", "quest", "task", "job"]
-      questExcluded: ["3-start"]
+      questExcluded: ["3-start", "3-end"]
       grantsQuest: "3-start"
       text: "Two things. A bone totem -- the figurines they keep on communal shelves. It would tell us about social bonding and symbolic thought in mutated populations. And a spore sac from the cave crawlers -- to map the mutation ecology of the tunnel biome. Bring me both and I will compensate you generously."
       hints: "Head into the tunnels and bring me a bone totem from the Carved Niche and a spore sac from a cave crawler."

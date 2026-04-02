@@ -49,7 +49,7 @@ tree:
   nodes:
     - id: tithe_problem
       triggers: ["tithe", "problem", "help", "quest", "task", "ledger", "matter"]
-      questExcluded: ["9-start"]
+      questExcluded: ["9-start", "9-end"]
       grantsQuest: "9-start"
       text: "The temple collects tithes from the market merchants -- it has for generations. Recently, the payments have dropped. Significantly. Either the merchants have all suddenly become poorer, or they are under-reporting their income. I need someone outside the temple to look into it. Talk to the merchants, find the tithe ledger, compare the numbers. I want the truth, even if it is uncomfortable."
       hints: "Talk to merchants in the market about their tithes, then find the tithe ledger."

@@ -107,7 +107,7 @@ tree:
   nodes:
     - id: the_squeeze
       triggers: ["trouble", "favour", "favor", "help", "debt", "problem", "quest", "task"]
-      questExcluded: ["10-start"]
+      questExcluded: ["10-start", "10-end"]
       grantsQuest: "10-start"
       givesItem: 30
       text: "The tavern owes taxes to the city. That is my problem and I am working on it. But there is another problem -- someone in the back alleys has been sending protection notices to every business in the quarter. Pay up or get hurt. I have been paying both, and the money is running out. This is the latest notice. If the guard captain saw this, he would have to act. But I am afraid to walk into that barracks myself. People who report the racket tend to have accidents."
@@ -143,7 +143,7 @@ tree:
     - id: cellar_investigation
       triggers: ["cellar", "noise", "tunnel", "investigate", "below", "grate", "quest", "task"]
       questRequired: ["10-end"]
-      questExcluded: ["14-start"]
+      questExcluded: ["14-start", "14-end"]
       grantsQuest: "14-start"
       givesItem: 40038
       text: "The noises from the cellar have gotten worse. Scraping, voices, the sound of things being dragged. The old drainage tunnels run under the whole district and connect to the cellar through a grate. I pulled it open once and... I did not like what I saw. Fresh boot prints in the mud. Someone is using those tunnels. Here -- take this lantern. The kitchen has a trapdoor down to the cellar. Be careful."

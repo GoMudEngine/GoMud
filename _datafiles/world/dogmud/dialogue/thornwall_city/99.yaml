@@ -63,7 +63,7 @@ tree:
       triggers: ["bridge", "harn", "toll", "maintenance", "report",
         "crossing", "quest", "task"]
       questRequired: ["6-start"]
-      questExcluded: ["6-report"]
+      questExcluded: ["6-report", "6-end"]
       requiresItem: 31
       grantsQuest: "6-report"
       text: "A maintenance report from the bridge keeper at
