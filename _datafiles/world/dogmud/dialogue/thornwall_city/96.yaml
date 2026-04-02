@@ -109,6 +109,7 @@ tree:
       triggers: ["trouble", "favour", "favor", "help", "debt", "problem", "quest", "task"]
       questExcluded: ["10-start"]
       grantsQuest: "10-start"
+      givesItem: 30
       text: "The tavern owes taxes to the city. That is my problem and I am working on it. But there is another problem -- someone in the back alleys has been sending protection notices to every business in the quarter. Pay up or get hurt. I have been paying both, and the money is running out. This is the latest notice. If the guard captain saw this, he would have to act. But I am afraid to walk into that barracks myself. People who report the racket tend to have accidents."
       hints: "Take the protection notice to Guard Captain Velk at the barracks."
       unlocks: ["about_thugs", "cellar_hint"]
@@ -118,6 +119,13 @@ tree:
       triggers: ["who", "thugs", "behind", "racket", "boss"]
       requires: ["the_squeeze"]
       text: "I do not know who runs it. The notices are unsigned, delivered at night. The thugs in the back alleys collect, but they are just muscle -- someone higher up is pulling strings. The guard might be able to find out, if they care enough to look."
+
+    - id: lost_notice
+      triggers: ["notice", "lost", "another", "protection"]
+      questRequired: ["10-start"]
+      questExcluded: ["10-report"]
+      givesItem: 30
+      text: "Lost it? Here -- I have more. They keep sliding them under the door. Take this one and get it to the guard captain before I lose my nerve."
 
     - id: cellar_hint
       triggers: ["cellar", "noise", "tunnel", "sewer", "below", "basement"]
