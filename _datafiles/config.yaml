@@ -811,7 +811,7 @@ Balance:
   MoonStatModMax: 0.10  # Max fractional stat modifier from moon phases (±10% at full/new moon)
 
   # ── MANIFESTATION / COMPANION SCALING ──────────────────────────────────────
-  ManifestStatScaleChaFactor: 200    # Charisma divisor for companion stat scaling
+  ManifestStatScaleChaFactor: 400    # Charisma divisor — halved from 200 so skill is primary scaling driver
   ManifestStatScaleSkillFactor: 0.02 # Manifestation skill additive factor per rank
 
 ################################################################################
