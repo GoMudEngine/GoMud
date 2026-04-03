@@ -30,6 +30,16 @@ as long as they know at least one manifestation spell.
   <ansi fg="yellow">Raised</ansi>      Necromantic reanimation of the fallen.
               Strength scales with your skill.
 
+<ansi fg="yellow">━━━ Necromancy ━━━</ansi>
+
+  When creatures fall in battle, their remains can be raised
+  as undead companions. Use <ansi fg="command">assess</ansi> to study a corpse
+  and determine what forms of undeath it can sustain.
+
+  Stronger corpses support more powerful undead types, from
+  simple skeletons to terrifying flesh golems. Your skill
+  determines which types you can raise.
+
 <ansi fg="yellow">━━━ Tips ━━━</ansi>
 
 Companions fight alongside you automatically if auto-assist

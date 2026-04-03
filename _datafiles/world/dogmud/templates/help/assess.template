@@ -1,0 +1,38 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">assess</ansi>
+
+When creatures fall, their remains can be raised as undead
+companions through necromantic magic. Before attempting to
+reanimate a corpse, use <ansi fg="command">assess</ansi> to study it.
+
+<ansi fg="yellow">━━━ Usage ━━━</ansi>
+
+  <ansi fg="command">assess &lt;corpse&gt;</ansi>
+
+<ansi fg="yellow">━━━ What It Tells You ━━━</ansi>
+
+Assessment reveals the corpse's power level and the forms of
+undeath it can sustain. Weak remains can only support basic
+skeletons, while stronger corpses can sustain more powerful
+undead types — wraiths, golems, and other terrible forms.
+
+Your <ansi fg="yellow">manifestation</ansi> skill determines which undead
+types you can actually raise. A master necromancer can pull
+forth a flesh golem from a suitable corpse where a novice
+could only coax out a simple skeleton.
+
+<ansi fg="yellow">━━━ Important Notes ━━━</ansi>
+
+Assessment is purely informational — you don't need to assess
+a corpse before raising it. It's useful for understanding
+what's available and planning your ritual.
+
+Every undead you raise adds to your total companion count,
+so factor that into your decisions.
+
+<ansi fg="yellow">━━━ Skill Progression ━━━</ansi>
+
+Using <ansi fg="command">assess</ansi> trains your manifestation skill. The
+more corpses you study, the better you become at gauging
+their potential.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help manifestation</ansi>, <ansi fg="command">help companion</ansi>
