@@ -76,6 +76,7 @@ var (
 		`command`:     {Command, false, true, true}, // Admin only
 		`conditions`:  {Conditions, true, true, false},
 		`companion`:   {Companion, true, true, false},
+		`companions`:  {Companion, true, true, false},
 		`consider`:    {Consider, true, true, false},
 		`deafen`:      {Deafen, true, true, true}, // Admin only
 		`devtool`:     {Devtool, false, true, true}, // Admin only
