@@ -201,7 +201,7 @@ Three tactical combat abilities with knockdown mechanics and shared cooldown:
 - Balanced: Moderate damage and knockdown
 
 **Shared Cooldown System:**
-- All three moves share a single 5-round cooldown (config: `SpecialMoveCooldown`)
+- All three moves share a single cooldown (config: `SpecialMoveCooldown`, currently 4 rounds)
 - Tracked in `Character.Cooldowns` map with key "combat-special"
 - Cooldowns automatically decrement via `RoundTick()` called in combat hooks
 
