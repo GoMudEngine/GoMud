@@ -16,7 +16,7 @@ idlecommands:
   - ''
   - 'emote remains utterly motionless for a long moment, watching'
   - ''
-activitylevel: 35
+activitylevel: 75
 combatcommands:
   - 'cast conviction-spike'
   - ''

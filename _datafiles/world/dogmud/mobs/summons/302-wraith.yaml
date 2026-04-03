@@ -16,7 +16,7 @@ idlecommands:
   - ''
   - 'emote turns its hollow gaze slowly across the room'
   - ''
-activitylevel: 40
+activitylevel: 70
 combatcommands:
   - 'cast mind-spike'
   - ''
