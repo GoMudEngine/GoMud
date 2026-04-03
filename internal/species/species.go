@@ -45,6 +45,8 @@ type Species struct {
 	Stats            stats.Statistics // Base stats for this species.
 	NaturalArmor     int              `yaml:"naturalarmor,omitempty"` // Innate damage reduction (chitin, thick hide, etc.)
 	DisabledSlots    []string         `yaml:"disabledslots,omitempty"`
+	NaturalBash      bool             `yaml:"naturalbash,omitempty"`    // Can bash without a shield (elementals, golems)
+	ReturnDamage     int              `yaml:"return_damage,omitempty"`  // % of melee damage returned to attacker (fire elemental, etc.)
 }
 
 func GetAllSpecies() []Species {

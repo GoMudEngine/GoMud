@@ -8,6 +8,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -42,36 +43,46 @@ func Bash(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	}
 	canSee := targetUser == nil || canSeeInDark(targetUser, room)
 
+	// Natural bashers (elementals, golems) slam instead of %s
+	bashLabel := "%s"
+	bashVerb := "bashes"
+	bashWith := "with their shield"
+	if sp := species.GetSpecies(mob.Character.SpeciesId); sp != nil && sp.NaturalBash {
+		bashLabel = "crushing slam"
+		bashVerb = "slams into"
+		bashWith = "with tremendous force"
+	}
+
 	if result.Hit {
 		if result.KnockedDown {
 			if targetUser != nil {
 				if canSee {
-					targetUser.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s <ansi fg="yellow-bold">shield bash</ansi> knocks you to the ground! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
+					targetUser.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s <ansi fg="yellow-bold">%s</ansi> knocks you to the ground! (<ansi fg="damage">%s</ansi> damage)`, mobName, bashLabel, dmgDesc))
 				} else {
-					targetUser.SendText(fmt.Sprintf(`Something's <ansi fg="yellow-bold">shield bash</ansi> knocks you to the ground! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
+					targetUser.SendText(fmt.Sprintf(`Something's <ansi fg="yellow-bold">%s</ansi> knocks you to the ground! (<ansi fg="damage">%s</ansi> damage)`, bashLabel, dmgDesc))
 				}
 			}
 			sendRoomText(room,
-				fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s <ansi fg="yellow-bold">shield bash</ansi> knocks <ansi fg="username">%s</ansi> to the ground!`, mobName, target.Name),
+				fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s <ansi fg="yellow-bold">%s</ansi> knocks <ansi fg="username">%s</ansi> to the ground!`, mobName, bashLabel, target.Name),
 				target.UserId)
 		} else {
 			if targetUser != nil {
 				if canSee {
-					targetUser.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s <ansi fg="yellow-bold">shield bash</ansi> strikes you! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
+					targetUser.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s <ansi fg="yellow-bold">%s</ansi> strikes you! (<ansi fg="damage">%s</ansi> damage)`, mobName, bashLabel, dmgDesc))
 				} else {
-					targetUser.SendText(fmt.Sprintf(`Something's <ansi fg="yellow-bold">shield bash</ansi> strikes you! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
+					targetUser.SendText(fmt.Sprintf(`Something's <ansi fg="yellow-bold">%s</ansi> strikes you! (<ansi fg="damage">%s</ansi> damage)`, bashLabel, dmgDesc))
 				}
 			}
 			sendRoomText(room,
-				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> bashes <ansi fg="username">%s</ansi> with their shield!`, mobName, target.Name),
+				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> %s <ansi fg="username">%s</ansi> %s!`, mobName, bashVerb, target.Name, bashWith),
 				target.UserId)
 		}
 	} else {
 		if targetUser != nil {
 			if canSee {
-				targetUser.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts to bash you with their shield, but misses!`, mobName))
+				targetUser.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts a %s, but misses!`, mobName, bashLabel))
 			} else {
-				targetUser.SendText(`Something attempts to bash you with a shield, but misses!`)
+				targetUser.SendText(fmt.Sprintf(`Something attempts a %s, but misses!`, bashLabel))
 			}
 		}
 		sendRoomText(room,

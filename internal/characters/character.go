@@ -2067,8 +2067,13 @@ const (
 	DefenseBlock string = "block"
 )
 
-// HasShield returns true if the character is wielding a shield in offhand
+// HasShield returns true if the character is wielding a shield in offhand,
+// or if the species has natural bash ability (earth elemental, etc.).
 func (c *Character) HasShield() bool {
+	// Species-based natural bash (elementals, golems, etc.)
+	if sp := species.GetSpecies(c.SpeciesId); sp != nil && sp.NaturalBash {
+		return true
+	}
 	if c.Equipment.Offhand.ItemId <= 0 {
 		return false
 	}
