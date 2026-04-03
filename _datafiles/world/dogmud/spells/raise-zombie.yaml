@@ -1,0 +1,18 @@
+spellid: raise-zombie
+name: Raise Zombie
+description: Infuses a corpse with foul necrotic energy, reanimating it
+  as a shambling zombie. Slower than a skeleton but considerably
+  tougher, the zombie retains the bulk and durability of its former
+  flesh. Requires a more substantial corpse to sustain the animating
+  force.
+type: neutral
+schools:
+  - manifestation
+cost: 30
+waitrounds: 6
+difficulty: 0
+primarystat: willpower
+base_folds: 6
+target_defense_type: none
+effect_type: none
+effect_magnitude: 0
