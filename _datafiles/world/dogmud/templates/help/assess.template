@@ -6,7 +6,7 @@ reanimate a corpse, use <ansi fg="command">assess</ansi> to study it.
 
 <ansi fg="yellow">━━━ Usage ━━━</ansi>
 
-  <ansi fg="command">assess &lt;corpse&gt;</ansi>
+  <ansi fg="command">assess</ansi> corpse name
 
 <ansi fg="yellow">━━━ What It Tells You ━━━</ansi>
 
