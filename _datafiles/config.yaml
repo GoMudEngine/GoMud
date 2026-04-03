@@ -257,7 +257,7 @@ GamePlay:
     # - CorpseDecayTime -
     #   How long until corpses crumble to dust (Go away).
     #   See ShopRestockRate comments for time format.
-    CorpseDecayTime: 1 hour
+    CorpseDecayTime: 4 hours
   # - LivesStart -
   #   (Req: PermaDeath) How many lives players start with before being reset.
   LivesStart: 3
