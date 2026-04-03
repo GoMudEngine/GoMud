@@ -301,6 +301,41 @@ func cmdPartyList(user *users.UserRecord, currentParty *parties.Party) {
 			formatting = append(formatting, rowFormat)
 		}
 
+		// Companions: show each party member's active companions.
+		for _, uid := range currentParty.UserIds {
+			u := users.GetByUserId(uid)
+			if u == nil {
+				continue
+			}
+			for _, comp := range u.Character.Companions {
+				if comp.InstanceId == 0 {
+					continue
+				}
+				m := mobs.GetInstance(comp.InstanceId)
+				if m == nil {
+					continue
+				}
+				mRoom := rooms.LoadRoom(m.Character.RoomId)
+				if mRoom == nil {
+					continue
+				}
+				mHealthPct := int(math.Floor((float64(m.Character.Health) / float64(m.Character.HealthMax.Value)) * 100))
+				rows = append(rows, []string{
+					m.Character.Name,
+					`♦companion`,
+					fmt.Sprintf(`%d%%`, mHealthPct),
+					mRoom.Title,
+					`-`,
+				})
+				rowFormat := []string{`<ansi fg="cyan">%s</ansi>`,
+					`<ansi fg="cyan">%s</ansi>`,
+					`<ansi fg="` + util.HealthClass(m.Character.Health, m.Character.HealthMax.Value) + `">%s</ansi>`,
+					`<ansi fg="magenta-bold">%s</ansi>`,
+					`<ansi fg="white-bold">%s</ansi>`}
+				formatting = append(formatting, rowFormat)
+			}
+		}
+
 		for _, uid := range currentParty.InviteUserIds {
 			u := users.GetByUserId(uid)
 			rows = append(rows, []string{
