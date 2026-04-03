@@ -35,8 +35,25 @@ func calcSpellDuration(baseFolds int, spellcastingSkill int, willpower int) int 
 	return int(math.Round(duration))
 }
 
-// resolveSpell is called when fold accumulation completes.
+// resolveSpell is called when fold accumulation completes for a player caster.
 // It dispatches to per-target resolution based on spell type and effect.
+//
+// Why this is NOT merged with resolveMobSpell:
+//   - resolveSpell handles the "identify" spell type (no mob equivalent).
+//   - HarmArea populates only mob targets for players; resolveMobSpell also
+//     hits players in the room (mobs can cleave all occupants).
+//   - HelpArea is player-only (mobs never cast area healing in this engine).
+//   - Player targets go through resolveAgainstPlayer which has a help-spell
+//     shortcut (TargetDefenseType == "") absent in the mob path.
+//   - Post-resolution: player fires the onMagic script and consumes a
+//     component; mob does neither.
+//   - The per-target helpers (resolveAgainstMob vs resolveMobSpellAgainstMob,
+//     resolveAgainstPlayer vs resolveMobSpellAgainstPlayer) have fundamentally
+//     different signatures, messaging, and combat-record calls.
+//
+// Extracting the 6-line loop skeleton into a shared wrapper would require
+// function-parameter callbacks or an interface, adding abstraction without
+// meaningful savings. Keep them separate and well-documented instead.
 func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData *spells.SpellData, room *rooms.Room) {
 
 	skillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
@@ -543,6 +560,16 @@ func consumeSpellComponent(user *users.UserRecord, tag string) {
 }
 
 // resolveMobSpell is called when a mob's fold accumulation completes.
+// resolveMobSpell is called when fold accumulation completes for a mob caster.
+// It dispatches to per-target resolution based on spell type and effect.
+//
+// Why this is NOT merged with resolveSpell (see that function for details):
+//   - HarmArea here populates both mob AND player targets; player casters only
+//     hit mobs (players in the room are excluded from player-cast area spells).
+//   - Mob targets include a self-cast branch (applyMobSelfEffect) for help
+//     spells; player casters never self-target via this dispatcher.
+//   - No onMagic script, no component consumption.
+//   - Per-target helpers are entirely separate from the player equivalents.
 func resolveMobSpell(mob *mobs.Mob, cs *characters.CastingState, spellData *spells.SpellData, room *rooms.Room) {
 	skillLevel := mob.Character.GetSkillLevel(skills.Spellcasting)
 	spellAttack := characters.CalcSpellAttack(mob.Character.Stats.Willpower.ValueAdj, skillLevel)
