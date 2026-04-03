@@ -61,6 +61,20 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 			continue
 		}
 
+		// Clear stale aggro pointing at dead/despawned targets
+		if user.Character.Aggro.MobInstanceId > 0 {
+			if target := mobs.GetInstance(user.Character.Aggro.MobInstanceId); target == nil || target.Character.Health < 1 {
+				uRoom := rooms.LoadRoom(user.Character.RoomId)
+				user.Character.EndAggro()
+				if uRoom != nil {
+					handleAutoRetargetPlayer(user, uRoom)
+				}
+				if user.Character.Aggro == nil {
+					continue
+				}
+			}
+		}
+
 		user.Character.CancelBuffsWithFlag(buffs.CancelIfCombat)
 
 		uRoom := rooms.LoadRoom(user.Character.RoomId)

@@ -1520,6 +1520,19 @@ func handleMobVsMob(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, aff
 	if mob.Character.Health <= 0 || defMob.Character.Health <= 0 {
 		mob.Character.EndAggro()
 		defMob.Character.EndAggro()
+
+		// When a charmed mob's target dies, retarget the charm owner
+		// so the player doesn't get stuck with stale aggro.
+		if mob.Character.Health > 0 && mob.Character.IsCharmed() {
+			if ownerId := mob.Character.GetCharmedUserId(); ownerId > 0 {
+				if owner := users.GetByUserId(ownerId); owner != nil {
+					ownerRoom := rooms.LoadRoom(owner.Character.RoomId)
+					if ownerRoom != nil {
+						handleAutoRetargetPlayer(owner, ownerRoom)
+					}
+				}
+			}
+		}
 	} else {
 		mob.Character.SetAggro(0, defMob.InstanceId, characters.DefaultAttack)
 	}
