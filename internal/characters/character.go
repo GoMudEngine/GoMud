@@ -3709,6 +3709,18 @@ func (c *Character) SetPermaBuffs(buffIds []int) {
 	c.permaBuffIds = buffIds
 }
 
+// RemovePermaBuff removes a buff ID from the permanent buff list so
+// it won't be re-applied during Validate(). Use this when a permabuff
+// should be permanently lost (e.g., revealing a hidden mob).
+func (c *Character) RemovePermaBuff(buffId int) {
+	for i, id := range c.permaBuffIds {
+		if id == buffId {
+			c.permaBuffIds = append(c.permaBuffIds[:i], c.permaBuffIds[i+1:]...)
+			return
+		}
+	}
+}
+
 func (c *Character) reapplyPermabuffs(removedItems ...items.Item) {
 
 	buffIdCount := map[int]int{}

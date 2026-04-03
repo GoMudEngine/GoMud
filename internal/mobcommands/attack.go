@@ -65,8 +65,9 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			aggroType := characters.DefaultAttack
 			if mob.Character.HasBuffFlag(buffs.Hidden) {
 				aggroType = characters.SurpriseAttack
-				// Clear hidden immediately so the player can fight back
-				// without waiting for the next combat loop tick
+				// Clear hidden: remove from permabuffs first so Validate
+				// doesn't re-add it, then expire the active buff.
+				mob.Character.RemovePermaBuff(9)
 				mob.Character.CancelBuffsWithFlag(buffs.Hidden)
 				mob.Character.Buffs.RemoveBuff(9)
 				mob.Character.Validate(true)
@@ -99,6 +100,7 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			mobAggroType := characters.DefaultAttack
 			if mob.Character.HasBuffFlag(buffs.Hidden) {
 				mobAggroType = characters.SurpriseAttack
+				mob.Character.RemovePermaBuff(9)
 				mob.Character.CancelBuffsWithFlag(buffs.Hidden)
 				mob.Character.Buffs.RemoveBuff(9)
 				mob.Character.Validate(true)

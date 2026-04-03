@@ -436,6 +436,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 					hiddenScore := calcSneakScore(&mob.Character)
 					success, _, _, _ := dice.OpposedRollStat(observerScore, hiddenScore)
 					if success {
+						mob.Character.RemovePermaBuff(9)
 						mob.Character.CancelBuffsWithFlag(buffs.Hidden)
 						mob.Character.Buffs.RemoveBuff(9)
 						mob.Character.Validate(true)
