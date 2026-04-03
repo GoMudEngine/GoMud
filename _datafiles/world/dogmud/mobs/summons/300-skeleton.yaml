@@ -1,0 +1,40 @@
+mobid: 300
+zone: Summons
+archetype: fighting
+statpool: 60
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - summon
+  - undead
+idlecommands:
+  - 'emote stands motionless, pale fire guttering in its eye sockets'
+  - ''
+  - 'emote clacks its jaw twice in a soundless, mechanical rhythm'
+  - ''
+  - 'emote tilts its skull slightly, as if listening to something only it can hear'
+  - ''
+activitylevel: 40
+combatcommands:
+  - 'emote slashes with razor-sharp finger bones in a blur of motion'
+  - ''
+  - 'emote drives its elbow into the attack with unnatural precision'
+  - ''
+character:
+  name: skeleton
+  description: |
+    An animated skeleton, each bone scrubbed clean of flesh and bound by a pale
+    necromantic fire that gutters in its empty eye sockets. It moves with
+    unsettling speed — joints rotating further than they should, limbs
+    snapping from stillness to motion without the hesitation of living muscle.
+    The faint rattle of bone on bone follows every movement.
+  speciesid: 30
+  level: 1
+  stats:
+    strength:
+      training: 5
+    dexterity:
+      training: 15
+    perception:
+      training: 5

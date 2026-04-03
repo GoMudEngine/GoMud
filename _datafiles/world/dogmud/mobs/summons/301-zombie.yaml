@@ -1,0 +1,40 @@
+mobid: 301
+zone: Summons
+archetype: fighting
+statpool: 80
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - summon
+  - undead
+idlecommands:
+  - 'emote shifts its weight from foot to foot with a wet, grinding sound'
+  - ''
+  - 'emote lets out a low, rattling groan from somewhere deep in its chest'
+  - ''
+  - 'emote rolls its head slowly, tendons creaking like old rope'
+  - ''
+activitylevel: 30
+combatcommands:
+  - 'emote lunges forward with terrifying force, arms outstretched'
+  - ''
+  - 'emote grasps with rotting fingers, pulling its target close'
+  - ''
+character:
+  name: zombie
+  description: |
+    A rotting corpse shambling forward with relentless, grinding purpose.
+    Its flesh hangs loose, mottled grey and green, and the smell of decay
+    arrives before it does. What the zombie lacks in speed it makes up for
+    with bulk and brutal strength — a single grasp from those bloated hands
+    is enough to realize how wrong it is to underestimate it.
+  speciesid: 31
+  level: 1
+  stats:
+    strength:
+      training: 20
+    vitality:
+      training: 20
+    dexterity:
+      training: -10
