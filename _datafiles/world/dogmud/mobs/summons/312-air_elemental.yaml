@@ -1,0 +1,42 @@
+mobid: 312
+zone: Summons
+archetype: fighting
+statpool: 70
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - summon
+  - elemental
+idlecommands:
+  - 'emote spins in a lazy eddy, dust motes trailing in its wake'
+  - ''
+  - 'emote gusts outward suddenly and then contracts back to stillness'
+  - ''
+  - 'emote hisses past like a wind through a crack in the wall'
+  - ''
+  - 'emote whispers with a sound like distant thunder'
+activitylevel: 50
+combatcommands:
+  - ''
+  - ''
+  - ''
+character:
+  name: air elemental
+  description: |
+    A howling vortex of compressed wind that holds itself in a rough
+    upright column, its edges fraying into wispy tendrils of current.
+    Lightning-white threads arc silently through its core with each
+    movement. It is difficult to look at directly — the eye slides off
+    it like water off glass. When it moves, papers scatter and flames
+    gutter. The only constant sound is the low, continuous keen of air
+    moving far too fast through too small a space.
+  speciesid: 38
+  level: 1
+  stats:
+    dexterity:
+      training: 20
+    perception:
+      training: 20
+    willpower:
+      training: 10
