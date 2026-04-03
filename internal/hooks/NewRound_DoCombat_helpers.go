@@ -318,6 +318,23 @@ func handleMobFoldCasting(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 		mob.Character.OnSkillUse(string(skills.Spellcasting), 0)
 		mob.Character.OnStatUse("willpower", 0)
 
+		// Task 6: Spell discovery for caster mobs.
+		// Only mobs that started with spells or have archetype="casting" can discover new ones.
+		isCaster := mob.Archetype == "casting" || len(mob.Character.SpellBook) > 0
+		if isCaster {
+			castSkillLevel := mob.Character.GetSkillLevel(skills.Spellcasting)
+			knownCount := len(mob.Character.SpellBook)
+			bal := configs.GetBalanceConfig()
+			discoveryChance := float64(bal.SpellDiscoveryBaseChance) / (1.0 + float64(knownCount)*float64(bal.SpellDiscoveryDecayRate))
+			if util.Rand(100) < int(discoveryChance) {
+				eligible := spells.GetEligibleSpells(mob.Character.SpellBook, castSkillLevel)
+				if len(eligible) > 0 {
+					pick := eligible[util.Rand(len(eligible))]
+					mob.Character.LearnSpell(pick)
+				}
+			}
+		}
+
 	case result.StillCasting:
 		mobRoom.SendText(fmt.Sprintf(
 			`%s weaves magic with focused intent.`, mobDisplayName(mob, mobRoom, 0)))
