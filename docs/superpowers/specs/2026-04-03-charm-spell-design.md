@@ -15,7 +15,7 @@ re-rolls. Charmed mobs keep original stats and gear.
 | Type | harmsingle (targets one mob) |
 | Base Folds | 36 |
 | Cost | 120 conviction |
-| Manifestation Gate | 12 |
+| Manifestation Gate | 20 |
 
 ## Opposed Roll
 
