@@ -780,6 +780,60 @@ func (a ScriptActor) CharmExpire() {
 	a.characterRecord.Charmed.Expire()
 }
 
+// AddCompanion registers a mob instance as a companion of this actor.
+// sourceType should be one of: "summoned", "conjured", "charmed", "raised", "pet".
+// Also calls TrackCharmed so the mob participates in combat assist.
+// Returns true on success, false if the actor is already at companion cap.
+func (a ScriptActor) AddCompanion(mobInstanceId int, sourceType string, name string) bool {
+	info := characters.CompanionInfo{
+		SourceType: characters.CompanionSourceType(sourceType),
+		Name:       name,
+		AutoAssist: true,
+		InstanceId: mobInstanceId,
+	}
+	if mob := mobs.GetInstance(mobInstanceId); mob != nil {
+		info.MobId = int(mob.MobId)
+	}
+	if !a.characterRecord.AddCompanion(info) {
+		return false
+	}
+	// Also wire into the existing charm-based combat assist so the mob
+	// follows and auto-assists the owner without duplicating logic.
+	if a.userRecord != nil {
+		a.userRecord.Character.TrackCharmed(mobInstanceId, true)
+	}
+	return true
+}
+
+// HasCompanion returns true if this actor has any active companions.
+func (a ScriptActor) HasCompanion() bool {
+	return len(a.characterRecord.Companions) > 0
+}
+
+// GetCompanionCount returns the number of active companions.
+func (a ScriptActor) GetCompanionCount() int {
+	return len(a.characterRecord.Companions)
+}
+
+// GetMaxCompanionCount returns the maximum companions this actor may have.
+func (a ScriptActor) GetMaxCompanionCount() int {
+	return a.characterRecord.GetMaxCompanions()
+}
+
+// RemoveCompanion removes a companion by mob instance ID.
+// Returns true if a companion was found and removed.
+func (a ScriptActor) RemoveCompanion(mobInstanceId int) bool {
+	removed := a.characterRecord.RemoveCompanion(mobInstanceId)
+	if removed == nil {
+		return false
+	}
+	// Un-wire from charm tracking so combat assist stops.
+	if a.userRecord != nil {
+		a.userRecord.Character.TrackCharmed(mobInstanceId, false)
+	}
+	return true
+}
+
 func (a ScriptActor) getScript() string {
 	if a.mobRecord != nil {
 		return a.mobRecord.GetScript()
