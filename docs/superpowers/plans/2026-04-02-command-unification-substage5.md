@@ -17,7 +17,7 @@
 | Sneak | Full unification | Mob version is a stub (auto-success, no rolls) |
 | Search | Extract score calc helper | No mob equivalent; helper enables future mob search |
 | Forage | Extract score calc helper | No mob equivalent; helper enables future mob forage |
-| Craft | Progression only | Mob crafting needs design work; just ensure progression fires |
+| Craft | Full unification | Mobs need to craft for the craftsperson NPC archetype |
 | Buy/Sell | Defer | No mob equivalent; NPC economy is a major feature |
 
 ---
@@ -147,34 +147,98 @@ git commit -m "refactor: extract shared skill score helpers"
 
 ---
 
-### Task 3: Mob Craft/Forage Skill Progression
+### Task 3: Shared Craft Action + Mob Crafting
 
 **Files:**
-- Modify: `internal/hooks/NewRound_UserRoundTick.go` (or wherever crafting completion fires)
-- Possibly: `internal/mobcommands/` craft-related files
+- Create: `internal/actions/craft.go`
+- Modify: `internal/usercommands/craft.go`
+- Create or modify: `internal/mobcommands/craft.go`
 
-Ensure that when mobs craft or forage (via existing systems like
-crafter NPCs), the appropriate skill progression fires.
+Mobs need to craft to support the craftsperson NPC archetype. A
+blacksmith mob that forges items, an alchemist mob that brews potions.
 
-- [ ] **Step 1: Audit crafting completion**
+- [ ] **Step 1: Read user craft.go fully**
 
-Search for where crafting completes (CraftingState → finished) in the
-round tick hooks. Does it fire OnSkillUse for the crafting skill? Does
-it handle both users and mobs?
+Read `internal/usercommands/craft.go` (324 lines). Understand:
+- Recipe lookup and validation
+- Known-recipe gate
+- Skill level check
+- Station requirement
+- Ingredient consumption
+- CraftingState for multi-round crafting
+- Crafting completion (where does it fire? in round tick?)
 
-- [ ] **Step 2: Audit mob crafter system**
+Also read `internal/mobcommands/alchemy.go` if it exists — this may
+be a mob-specific crafting path already.
 
-Read `internal/mobcommands/alchemy.go` — this is the mob crafting
-command. Does it fire skill progression?
+- [ ] **Step 2: Create shared craft action**
 
-- [ ] **Step 3: Add missing progression**
+```go
+type CraftResult struct {
+    Recipe       *recipes.Recipe  // check actual type
+    Initiated    bool
+    // Early exit reasons
+    RecipeNotFound    bool
+    RecipeNotKnown    bool
+    SkillTooLow       bool
+    WrongStation      bool
+    MissingIngredients bool
+    AlreadyCrafting   bool
+}
 
-Add `OnSkillUse` calls to mob crafting completion paths if missing.
+func InitiateCraft(actor Actor, recipeName string) CraftResult
+```
 
-- [ ] **Step 4: Verify build + commit**
+InitiateCraft handles shared logic:
+1. Recipe lookup by name
+2. Check recipe known (HasRecipe)
+3. Check skill level vs recipe minimum
+4. Check station match (room.Station)
+5. Check ingredients available
+6. Consume ingredients
+7. Set CraftingState (or return for wrapper to set)
+8. Return result
+
+**What stays in user wrapper:**
+- Enchanting disambiguation (targeting specific items)
+- Quest engine notification
+- Player messaging (recipe list display, error messages)
+
+**What stays in mob wrapper:**
+- Simplified interface: `craft <recipe-name>` (no enchanting)
+- Room messaging
+- Skill progression: `OnSkillUse` for crafting skill
+
+- [ ] **Step 3: Create mob craft command**
+
+Create `internal/mobcommands/craft.go` if it doesn't exist:
+- Call `actions.InitiateCraft(actor, recipeName)`
+- Handle result with mob messaging
+- Fire skill progression
+- Add to mob command registry
+
+- [ ] **Step 4: Update user craft wrapper**
+
+Refactor to use `actions.InitiateCraft()` for the shared logic.
+Keep enchanting, quest hooks, user messaging.
+
+- [ ] **Step 5: Ensure crafting completion fires progression for mobs**
+
+Read the round tick hook where CraftingState completes. Ensure it
+handles mob characters the same as player characters for:
+- Item creation
+- Skill progression (OnSkillUse)
+- Recipe discovery
+
+- [ ] **Step 6: Register mob craft command**
+
+Add `"craft": {Craft, false}` to mob command registry in
+`internal/mobcommands/mobcommands.go`.
+
+- [ ] **Step 7: Verify build + commit**
 
 ```bash
-git commit -m "feat: mob craft/forage skill progression"
+git commit -m "feat: shared Craft action — mobs can now craft items"
 ```
 
 ---
