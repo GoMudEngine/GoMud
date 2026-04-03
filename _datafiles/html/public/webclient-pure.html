@@ -260,10 +260,13 @@
             return window.innerWidth < SMALL_SCREEN_WIDTH;
         }
 
+        // Track the current number of vitals rows (self + companions + party)
+        var currentVitalsRowCount = 1;
+
         function calcPanelLayout() {
             var avail = window.innerHeight - INPUT_AREA_HEIGHT;
-            // Vitals is fixed height, map and comms split the rest
-            var vitalsH = PANEL_HEADER + VITALS_BODY;
+            // Vitals height scales with the number of rows
+            var vitalsH = PANEL_HEADER + (currentVitalsRowCount * 22) + 4;
             var remaining = avail - vitalsH - (PANEL_GAP * 2);
             // Map gets 55% of remaining, comms gets 45%
             var mapH = Math.max(80, Math.floor(remaining * 0.55));
@@ -776,10 +779,11 @@
                 }
             }
 
-            // Resize window height to fit
-            var rowCount = members.length;
-            var newHeight = PANEL_HEADER + (rowCount * 22) + 4;
-            GMCPWindows['Char.Vitals'].resize(PANEL_WIDTH, newHeight);
+            // If row count changed, reposition all panels as a unit
+            if (members.length !== currentVitalsRowCount) {
+                currentVitalsRowCount = members.length;
+                repositionPanels();
+            }
         }
 
         function handleGMCP(objNamespace, objBody) {
