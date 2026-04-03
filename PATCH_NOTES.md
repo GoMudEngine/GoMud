@@ -43,6 +43,20 @@ go, bash, kick, trip, grapple, shoot, attack, cast, sneak, craft.
   re-attacks the same target.
 - **Sneak in combat:** Blocked for both players and mobs — sneaking
   mid-combat doesn't make sense and caused perma-hidden bug.
+- **Conditions duration display:** Was showing total duration instead
+  of remaining rounds (swapped return values).
+- **Infinite gold exploit:** Merchants now pay from their own gold
+  pool when buying items. Refuse if they can't afford it.
+- **Defense hint:** Now points to `help defense` instead of a
+  nonexistent `defense` command.
+
+### Balance
+- Melee skill progression reduced from 0.20 to 0.15 — the bump
+  was compensating for broken auto-attack progression (now fixed).
+- Spell damage scale reduced 25% (1.6 → 1.2) — progression now
+  provides natural scaling.
+- Merchants buffed: higher stats (85-150 statpool), gold reserves
+  (50-300g), Siv armed with a dagger.
 
 ## 2026-04-02 — Bug Fixes & Polish
 
