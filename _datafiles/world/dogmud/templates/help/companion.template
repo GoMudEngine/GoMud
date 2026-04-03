@@ -1,0 +1,40 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">companion</ansi>
+
+The <ansi fg="command">companion</ansi> command lets you review and manage the
+creatures bound to you through manifestation magic.
+
+<ansi fg="yellow">━━━ Usage ━━━</ansi>
+
+  <ansi fg="command">companion</ansi>            List all your active companions.
+  <ansi fg="command">companion &lt;name&gt;</ansi>     Show detailed info for one companion.
+  <ansi fg="command">companion assist &lt;name&gt;</ansi>
+                       Toggle auto-assist on or off for that
+                       companion. When assist is on, the
+                       companion joins combat alongside you
+                       automatically.
+
+<ansi fg="yellow">━━━ What the Display Shows ━━━</ansi>
+
+For each companion you will see:
+
+  <ansi fg="yellow">Name</ansi>         The creature's name and bond type
+               (summoned, charmed, raised, etc.).
+  <ansi fg="yellow">Condition</ansi>    A rough sense of how healthy the
+               companion currently is.
+  <ansi fg="yellow">Auto-assist</ansi>  Whether the companion will fight with
+               you automatically.
+
+<ansi fg="yellow">━━━ Persistence ━━━</ansi>
+
+Companions persist across sessions. When you log out, your
+companions wait for your return. Summoned and raised
+companions linger in the world until you reconnect. Charmed
+companions persist as long as the magical bond holds.
+
+<ansi fg="yellow">━━━ Death is Permanent ━━━</ansi>
+
+If a companion falls in battle it is gone. Summon or charm
+a new one to replace it. Guard your companions carefully
+in dangerous areas.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help manifestation</ansi>, <ansi fg="command">help dismiss</ansi>

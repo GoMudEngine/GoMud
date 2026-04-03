@@ -1,0 +1,41 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">manifestation</ansi>
+
+<ansi fg="command">Manifestation</ansi> is the art of binding creatures to your
+will. It governs summoning, conjuring, charming, and raising
+companions through magical bonds.
+
+<ansi fg="yellow">━━━ How It Works ━━━</ansi>
+
+Manifestation spells are cast like any other spell, but draw
+on your <ansi fg="yellow">Charisma</ansi> and manifestation skill rather
+than Willpower and spellcasting. The strength of the bond
+determines how powerful your companions are and how many you
+can maintain at once.
+
+<ansi fg="yellow">━━━ Companion Limit ━━━</ansi>
+
+Your manifestation skill determines how many companions you
+can maintain. As your skill grows, you can sustain more bonds
+simultaneously. Even a novice can maintain a single companion
+as long as they know at least one manifestation spell.
+
+<ansi fg="yellow">━━━ Companion Types ━━━</ansi>
+
+  <ansi fg="yellow">Summoned</ansi>    Called from nothing. Strength scales
+              with your Charisma and skill.
+  <ansi fg="yellow">Conjured</ansi>    Similar to summoned, but draws from
+              a different magical tradition.
+  <ansi fg="yellow">Charmed</ansi>     An existing creature bent to your will.
+              Retains its original capabilities.
+  <ansi fg="yellow">Raised</ansi>      Necromantic reanimation of the fallen.
+              Strength scales with your skill.
+
+<ansi fg="yellow">━━━ Tips ━━━</ansi>
+
+Companions fight alongside you automatically if auto-assist
+is enabled. Use <ansi fg="command">companion</ansi> to review your active bonds,
+toggle assist behavior, or check each companion's condition.
+Use <ansi fg="command">dismiss</ansi> to end a bond — but be warned, dismissing
+a companion can have consequences.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help companion</ansi>, <ansi fg="command">help dismiss</ansi>
