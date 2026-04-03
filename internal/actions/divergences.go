@@ -104,6 +104,12 @@ var userOnlyCommands = map[string]string{
 	"stomp":     "alias",
 	"tailsweep": "alias",
 
+	// --- Shared actions (implemented on both user and mob sides) ---
+	// These are intentionally NOT in either allowlist because they should exist on both.
+	// If they appear in any allowlist, it's a sign they were miscategorized.
+	// craft: shared crafting action (substage 5)
+	// sneak: shared stealth action (substage 5)
+
 }
 
 // mobOnlyCommands lists mob commands that intentionally have no user equivalent.
