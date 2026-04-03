@@ -210,7 +210,18 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 			[]string{"willpower", "charisma"}, user.UserId)
 
 		// If it has changed, send an update
-		if user.Character.Health-healthStart != 0 {
+		vitalsChanged := user.Character.Health-healthStart != 0
+		// Always push vitals if the player has active companions
+		// so companion bars in the web client stay up to date.
+		if !vitalsChanged && len(user.Character.Companions) > 0 {
+			for _, comp := range user.Character.Companions {
+				if comp.InstanceId > 0 {
+					vitalsChanged = true
+					break
+				}
+			}
+		}
+		if vitalsChanged {
 
 			// Trigger a redraw, but only if the users prompt has changed.
 			events.AddToQueue(events.RedrawPrompt{UserId: user.UserId, OnlyIfChanged: true}, 100)
