@@ -640,6 +640,7 @@ Balance:
     foraging: 2.0
     first-aid: 2.0
     stealth: 2.0
+    manifestation: 0.3    # Companion management — moderate use frequency
     blacksmithing: 3.5  # Crafting skills fire rarely (once per craft); boosted for feel
     alchemy: 3.5
     tailoring: 3.5
