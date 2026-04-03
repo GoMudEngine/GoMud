@@ -1,6 +1,7 @@
 mobid: 304
 zone: Summons
 archetype: fighting
+aiprofile: caster
 statpool: 100
 itemdropchance: 0
 hostile: false

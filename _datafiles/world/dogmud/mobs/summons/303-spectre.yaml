@@ -1,6 +1,7 @@
 mobid: 303
 zone: Summons
 archetype: casting
+aiprofile: caster
 statpool: 90
 itemdropchance: 0
 hostile: false
