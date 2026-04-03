@@ -8,16 +8,17 @@ with unique combat identities. High conviction cost, no components.
 
 | Type | Skill Gate | Archetype | Base Pool | Conviction Cost | Base Folds |
 |------|-----------|-----------|-----------|----------------|------------|
-| Water | 3 | fighting | 80 | 80 | 4 |
-| Earth | 10 | fighting | 90 | 110 | 6 |
-| Air | 18 | fighting | 70 | 130 | 8 |
-| Fire | 25 | fighting | 85 | 160 | 10 |
-| Magma | 60 | fighting | 130 | 200 | 14 |
+| Water | 3 | fighting | 80 | 150 | 4 |
+| Earth | 10 | fighting | 90 | 200 | 6 |
+| Air | 18 | fighting | 70 | 280 | 8 |
+| Fire | 25 | fighting | 85 | 350 | 10 |
+| Magma | 60 | fighting | 130 | 450 | 14 |
 
-Conviction costs are intentionally very high — conjuring requires
-most of a dedicated caster's conviction pool. This is the trade-off
-for not needing components or corpses. A player who conjures a
-magma elemental is spent for the fight.
+Conviction costs are punishing — conjuring drains most of a
+caster's conviction pool. A typical endgame caster with ~450-500
+CP will be nearly empty after conjuring a magma elemental. Even
+water at 150 is a significant commitment. This is the trade-off
+for not needing components or corpses.
 
 All are `school: manifestation`, `type: neutral` (no target needed).
 No components — pure conviction cost. Scaling uses the standard
