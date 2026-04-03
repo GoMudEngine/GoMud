@@ -1,9 +1,9 @@
-strength_training: 28
-dexterity_training: 29
-perception_training: 15
-vitality_training: 31
+strength_training: 31
+dexterity_training: 30
+perception_training: 11
+vitality_training: 27
 willpower_training: 9
-charisma_training: 5
+charisma_training: 9
 skills:
   alchemy: 1
   bartering: 1
@@ -12,18 +12,13 @@ skills:
   cooking: 1
   enchanting: 1
   first-aid: 1
-  foraging: 1
   jewelcrafting: 1
   ranged-combat: 1
   rhetoric: 1
-  spellcasting: 1
+  salvage: 1
+  search: 1
   skullduggery: 1
+  spellcasting: 1
   tailoring: 1
-  tracking: 1
   unarmed-combat: 1
   weapon-combat: 1
-skill_use_count:
-  unarmed-combat: 3
-stat_use_count:
-  dexterity: 15
-  strength: 12

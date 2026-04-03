@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
@@ -120,16 +121,13 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			return true, nil
 		}
 
-		// Swap the item location
-		oldItems, wearSuccess, failureReason := user.Character.Wear(matchItem)
+		// Delegate core equip logic to shared action.
+		actor := &actions.UserActor{User: user, Room: room}
+		result := actions.EquipItem(actor, rest)
 
-		if wearSuccess {
+		if result.Equipped {
 
-			user.Character.CancelBuffsWithFlag(buffs.Hidden)
-
-			user.Character.RemoveItem(matchItem)
-
-			for _, oldItem := range oldItems {
+			for _, oldItem := range result.DisplacedItems {
 				if oldItem.ItemId != 0 {
 					user.SendText(
 						fmt.Sprintf(`You remove your <ansi fg="item">%s</ansi> and return it to your backpack.`, oldItem.DisplayName()),
@@ -138,48 +136,37 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 						fmt.Sprintf(`<ansi fg="username">%s</ansi> removes their <ansi fg="item">%s</ansi> and stores it away.`, user.Character.Name, oldItem.DisplayName()),
 						user.UserId,
 					)
-
-					user.Character.StoreItem(oldItem)
 				}
 			}
 
-			if iSpec.Subtype == items.Wearable {
+			if result.Item.GetSpec().Subtype == items.Wearable {
 				user.SendText(
-					fmt.Sprintf(`You wear your <ansi fg="item">%s</ansi>.`, matchItem.DisplayName()),
+					fmt.Sprintf(`You wear your <ansi fg="item">%s</ansi>.`, result.Item.DisplayName()),
 				)
 				room.SendText(
-					fmt.Sprintf(`<ansi fg="username">%s</ansi> puts on their <ansi fg="item">%s</ansi>.`, user.Character.Name, matchItem.DisplayName()),
+					fmt.Sprintf(`<ansi fg="username">%s</ansi> puts on their <ansi fg="item">%s</ansi>.`, user.Character.Name, result.Item.DisplayName()),
 					user.UserId,
 				)
 			} else {
 				user.SendText(
-					fmt.Sprintf(`You wield your <ansi fg="item">%s</ansi>. You're feeling dangerous.`, matchItem.DisplayName()),
+					fmt.Sprintf(`You wield your <ansi fg="item">%s</ansi>. You're feeling dangerous.`, result.Item.DisplayName()),
 				)
 				room.SendText(
-					fmt.Sprintf(`<ansi fg="username">%s</ansi> wields their <ansi fg="item">%s</ansi>.`, user.Character.Name, matchItem.DisplayName()),
+					fmt.Sprintf(`<ansi fg="username">%s</ansi> wields their <ansi fg="item">%s</ansi>.`, user.Character.Name, result.Item.DisplayName()),
 					user.UserId,
 				)
 			}
 
 			// Trigger any outstanding buff onStart events
-			if len(matchItem.GetSpec().WornBuffIds) > 0 {
+			if len(result.Item.GetSpec().WornBuffIds) > 0 {
 				for _, buff := range user.Character.Buffs.List {
 					if buff.OnStartWaiting {
 						if _, err := scripting.TryBuffScriptEvent(`onStart`, user.UserId, 0, buff.BuffId); err == nil {
 							user.Character.TrackBuffStarted(buff.BuffId)
 						}
 					}
-
 				}
 			}
-
-			user.Character.Validate(true)
-
-			events.AddToQueue(events.EquipmentChange{
-				UserId:       user.UserId,
-				ItemsWorn:    []items.Item{matchItem},
-				ItemsRemoved: oldItems,
-			})
 
 			// Quest engine: command notification
 			bridge := questengine.NewGameBridge(user, room.RoomId)
@@ -189,13 +176,12 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 				Command: "equip",
 			}, bridge, bridge)
 
-		} else {
-			if len(failureReason) == 1 {
+		} else if result.Found {
+			failureReason := result.FailureReason
+			if len(failureReason) <= 1 {
 				failureReason = fmt.Sprintf(`You can't figure out how to equip the <ansi fg="item">%s</ansi>.`, matchItem.DisplayName())
 			}
-			user.SendText(
-				failureReason,
-			)
+			user.SendText(failureReason)
 		}
 
 	}

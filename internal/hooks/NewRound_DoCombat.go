@@ -111,6 +111,11 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 			continue
 		}
 
+		// Strip combat-cancelling buffs (Hidden, etc.)
+		// Also remove Hidden from permabuffs so Validate doesn't re-add it
+		if mob.Character.HasBuffFlag(buffs.Hidden) {
+			mob.Character.RemovePermaBuff(9)
+		}
 		mob.Character.CancelBuffsWithFlag(buffs.CancelIfCombat)
 
 		// Mob shield decay (symmetric with handlePlayerShieldDecay)

@@ -1,6 +1,6 @@
 mobid: 88
 zone: Watchers Crossing
-statpool: 36
+statpool: 85
 itemdropchance: 0
 hostile: false
 maxwander: 3
@@ -28,7 +28,7 @@ character:
     want to be.
   speciesid: 1
   level: 1
-  gold: 3
+  gold: 50
   equipment:
     weapon:
       itemid: 10020

@@ -3,33 +3,20 @@ package usercommands
 import (
 	"fmt"
 
-	"github.com/GoMudEngine/GoMud/internal/buffs"
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/characters"
-	"github.com/GoMudEngine/GoMud/internal/combat"
-	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
-// calcSneakScore computes the stealth score for a character, applying
-// mutation bonuses and an illumination penalty.
+// calcSneakScore is a package-level shim that delegates to the shared
+// actions.CalcSneakScore helper. All callers within usercommands use this
+// wrapper so they don't need to reference the actions package directly.
 func calcSneakScore(c *characters.Character) float64 {
-	score := float64(c.Stats.Dexterity.ValueAdj) +
-		combat.SkillMultiplier(c.GetSkillLevel(skills.Skullduggery))*25.0
-
-	// Mutation stealth bonus (e.g., chameleon skin)
-	score += mutations.GetStealthBonus(c.Mutations)
-
-	// Emitting light makes it much harder to hide
-	if c.HasBuffFlag(buffs.EmitsLight) {
-		score *= 0.5
-	}
-
-	return score
+	return actions.CalcSneakScore(c)
 }
 
 // checkStealthDetection rolls each observer in the room against the hidden
@@ -58,8 +45,7 @@ func checkStealthDetection(
 		if p == nil {
 			continue
 		}
-		observerScore := float64(p.Character.Stats.Perception.ValueAdj) +
-			combat.SkillMultiplier(p.Character.GetSkillLevel(skills.Search))*25.0
+		observerScore := actions.CalcSearchScore(p.Character)
 		success, _, _, _ := dice.OpposedRollStat(sneakScore, observerScore)
 		if !success {
 			p.SendText(fmt.Sprintf(
@@ -75,8 +61,7 @@ func checkStealthDetection(
 		if mob == nil {
 			continue
 		}
-		observerScore := float64(mob.Character.Stats.Perception.ValueAdj) +
-			combat.SkillMultiplier(mob.Character.GetSkillLevel(skills.Search))*25.0
+		observerScore := actions.CalcSearchScore(&mob.Character)
 		success, _, _, _ := dice.OpposedRollStat(sneakScore, observerScore)
 		if !success {
 			return true, mob.Character.Name

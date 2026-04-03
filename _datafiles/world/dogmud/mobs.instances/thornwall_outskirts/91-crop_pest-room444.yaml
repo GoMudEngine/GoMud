@@ -1,7 +1,7 @@
-strength_training: -9
-dexterity_training: 11
-perception_training: 6
-vitality_training: -4
+strength_training: -10
+dexterity_training: 12
+perception_training: 5
+vitality_training: -3
 willpower_training: -15
 charisma_training: -19
 skills:
@@ -22,5 +22,3 @@ skills:
   tailoring: 1
   unarmed-combat: 1
   weapon-combat: 1
-skill_use_count:
-  search: 0

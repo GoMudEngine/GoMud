@@ -3,6 +3,7 @@ package usercommands
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
@@ -11,7 +12,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
-	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
@@ -87,56 +87,11 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			}
 		}
 
-	} else if rest[0] == '*' { // choose a target at random. Friend or foe.
-
-		if rest == `*` { // * ANYONE
-
-			allMobs := room.GetMobs()
-			allPlayers := []int{}
-			for _, userId := range room.GetPlayers() {
-				if userId == user.UserId {
-					continue
-				}
-				allPlayers = append(allPlayers, userId)
-			}
-
-			randomSelection := util.Rand(len(allMobs) + len(allPlayers))
-
-			if randomSelection < len(allMobs) {
-				attackMobInstanceId = allMobs[randomSelection]
-			} else {
-				randomSelection -= len(allMobs)
-				attackPlayerId = allPlayers[randomSelection]
-			}
-
-		} else if rest == `*mob` { // *mob ANY MOB
-
-			if allMobs := room.GetMobs(); len(allMobs) > 0 {
-				attackMobInstanceId = allMobs[util.Rand(len(allMobs))]
-			}
-
-		} else { // *user etc. ANY PLAYER
-
-			allPlayers := []int{}
-			for _, userId := range room.GetPlayers() {
-				if userId == user.UserId {
-					continue
-				}
-				allPlayers = append(allPlayers, userId)
-			}
-
-			if len(allPlayers) > 0 {
-				attackPlayerId = allPlayers[util.Rand(len(allPlayers))]
-			}
-
-		}
-
 	} else {
-		attackPlayerId, attackMobInstanceId = room.FindByName(rest)
-	}
-
-	if attackPlayerId == user.UserId { // Can't attack self!
-		attackPlayerId = 0
+		// Wildcard and named-target resolution delegated to shared helper.
+		t := actions.FindAttackTarget(rest, room, user.UserId, 0)
+		attackPlayerId = t.UserId
+		attackMobInstanceId = t.MobInstanceId
 	}
 
 	if attackMobInstanceId == 0 && attackPlayerId == 0 {

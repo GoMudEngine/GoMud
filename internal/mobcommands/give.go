@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
-	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -63,29 +63,22 @@ func Give(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 		// Swap the item location
 		if giveItem.ItemId > 0 {
-			targetUser.Character.StoreItem(giveItem)
-			mob.Character.RemoveItem(giveItem)
-
-			events.AddToQueue(events.ItemOwnership{
-				MobInstanceId: mob.InstanceId,
-				Item:          giveItem,
-				Gained:        false,
-			})
-
-			events.AddToQueue(events.ItemOwnership{
-				UserId: targetUser.UserId,
-				Item:   giveItem,
-				Gained: true,
-			})
+			mobActor := &actions.MobActor{Mob: mob, Room: room}
+			result := actions.GiveItemToChar(mobActor, giveWhat, targetUser.Character, targetUser.UserId, 0)
+			if result.Err != nil {
+				return true, nil
+			}
 
 			targetUser.SendText(
-				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> gives you their <ansi fg="item">%s</ansi>.`, mob.Character.Name, giveItem.DisplayName()),
+				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> gives you their <ansi fg="item">%s</ansi>.`, mob.Character.Name, result.Item.DisplayName()),
 			)
 
 		} else if giveGoldAmount > 0 {
 
-			targetUser.Character.Gold += giveGoldAmount
-			mob.Character.Gold -= giveGoldAmount
+			mobActor := &actions.MobActor{Mob: mob, Room: room}
+			if err := actions.GiveGoldToChar(mobActor, giveGoldAmount, targetUser.Character); err != nil {
+				return true, nil
+			}
 
 			targetUser.SendText(
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> gives you <ansi fg="gold">%d gold</ansi>.`, mob.Character.Name, giveGoldAmount),
@@ -110,28 +103,21 @@ func Give(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 			// Swap the item location
 			if giveItem.ItemId > 0 {
-				m.Character.StoreItem(giveItem)
-				mob.Character.RemoveItem(giveItem)
-
-				events.AddToQueue(events.ItemOwnership{
-					MobInstanceId: mob.InstanceId,
-					Item:          giveItem,
-					Gained:        false,
-				})
-
-				events.AddToQueue(events.ItemOwnership{
-					MobInstanceId: m.InstanceId,
-					Item:          giveItem,
-					Gained:        true,
-				})
+				mobActor := &actions.MobActor{Mob: mob, Room: room}
+				result := actions.GiveItemToChar(mobActor, giveWhat, &m.Character, 0, m.InstanceId)
+				if result.Err != nil {
+					return true, nil
+				}
 
 				room.SendText(
-					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> gave their <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, mob.Character.Name, giveItem.DisplayName(), m.Character.Name),
+					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> gave their <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, mob.Character.Name, result.Item.DisplayName(), m.Character.Name),
 				)
 			} else if giveGoldAmount > 0 {
 
-				m.Character.Gold += giveGoldAmount
-				mob.Character.Gold -= giveGoldAmount
+				mobActor := &actions.MobActor{Mob: mob, Room: room}
+				if err := actions.GiveGoldToChar(mobActor, giveGoldAmount, &m.Character); err != nil {
+					return true, nil
+				}
 
 				room.SendText(
 					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> gave some gold to <ansi fg="mobname">%s</ansi>.`, mob.Character.Name, m.Character.Name),

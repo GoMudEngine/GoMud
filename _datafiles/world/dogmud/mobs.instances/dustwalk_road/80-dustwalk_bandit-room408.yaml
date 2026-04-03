@@ -1,4 +1,4 @@
-strength_training: 5
+strength_training: 6
 dexterity_training: 8
 perception_training: 3
 vitality_training: 3
@@ -22,8 +22,8 @@ skills:
   unarmed-combat: 1
   weapon-combat: 1
 skill_use_count:
-  weapon-combat: 3
+  weapon-combat: 5
 stat_use_count:
-  dexterity: 21
-  strength: 18
-mutation_progress: 9.600000000000001
+  dexterity: 28
+  strength: 23
+mutation_progress: 12.300000000000008

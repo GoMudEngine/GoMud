@@ -201,9 +201,17 @@ Three tactical combat abilities with knockdown mechanics and shared cooldown:
 - Balanced: Moderate damage and knockdown
 
 **Shared Cooldown System:**
-- All three moves share a single 5-round cooldown (config: `SpecialMoveCooldown`)
+- All three moves share a single cooldown (config: `SpecialMoveCooldown`, currently 4 rounds)
 - Tracked in `Character.Cooldowns` map with key "combat-special"
 - Cooldowns automatically decrement via `RoundTick()` called in combat hooks
+
+**Intentional: Cooldown-blocked specials still initiate combat.**
+If a player opens a fight with a special move (kick, bash, trip) while
+on cooldown, the move itself fizzles but combat still starts. This is
+by design — the player committed to an aggressive action and the target
+noticed. This prevents risk-free cooldown probing (try special on a
+passive mob, walk away if on cooldown, repeat). The player learns to
+track their cooldown timing.
 - Prevents knockdown spam, encourages tactical timing
 
 ### Target Switching

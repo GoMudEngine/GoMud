@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/keywords"
@@ -162,7 +163,7 @@ var (
 		`skills`:      {Skills, true, true, false},
 		`skillset`:    {Skillset, false, true, true}, // Admin only
 		`shadow`:      {Shadow, false, false, false},
-		`sneak`:       {Sneak, false, true, false},
+		`sneak`:       {Sneak, false, false, false}, // Can't sneak in combat
 		`sonic-shout`: {SonicShout, false, true, false},
 		`spawn`:       {Spawn, false, true, true}, // Admin only
 		`spell`:       {Spell, true, true, true},  // Admin only
@@ -181,7 +182,6 @@ var (
 		`teleport`:    {Teleport, true, true, true}, // Admin only
 		`toxic-bite`:  {ToxicBite, false, true, false},
 		`track`:{Track, false, true, false},
-		`train`:       {Train, false, false, false}, // Can't train in combat
 		`taunt`:       {Taunt, false, true, false},
 		`trip`:        {Trip, false, true, false},
 		`tailsweep`:   {Trip, false, true, false},
@@ -453,7 +453,7 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 		}
 	}
 
-	if _, ok := emoteAliases[cmd]; ok {
+	if _, ok := actions.EmoteAliases[cmd]; ok {
 		handled, err := Emote(cmd, user, room, flags)
 		return handled, err
 	}
@@ -478,6 +478,23 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 	// end "go" attempt
 
 	return false, nil
+}
+
+// GetAllUserCommands returns the names of all registered user commands.
+func GetAllUserCommands() []string {
+	result := []string{}
+	for cmd := range userCommands {
+		result = append(result, cmd)
+	}
+	return result
+}
+
+// IsAdminCommand reports whether the named command is admin-only.
+func IsAdminCommand(cmd string) bool {
+	if info, ok := userCommands[cmd]; ok {
+		return info.AdminOnly
+	}
+	return false
 }
 
 // GetCommandRegistry returns a snapshot of all registered commands for external use.

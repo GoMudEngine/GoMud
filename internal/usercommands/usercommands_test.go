@@ -2250,18 +2250,6 @@ func TestCharacter(t *testing.T) {
 	})
 }
 
-func TestTrain(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	user, room := getTestUserAndRoom(t)
-
-	t.Run("no_training_room", func(t *testing.T) {
-		handled, err := Train("", user, room, 0)
-		assert.NoError(t, err)
-		_ = handled // May return false if room has no training
-	})
-}
 
 func TestCraft(t *testing.T) {
 	cleanup := seedAllRegistries()

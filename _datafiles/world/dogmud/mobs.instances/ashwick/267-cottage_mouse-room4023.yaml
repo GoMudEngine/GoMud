@@ -11,13 +11,15 @@ skills:
   cooking: 1
   enchanting: 1
   first-aid: 1
-  foraging: 1
   jewelcrafting: 1
   ranged-combat: 1
   rhetoric: 1
-  spellcasting: 1
+  salvage: 1
+  search: 1
   skullduggery: 1
+  spellcasting: 1
   tailoring: 1
-  tracking: 1
   unarmed-combat: 1
   weapon-combat: 1
+skill_use_count:
+  search: 0

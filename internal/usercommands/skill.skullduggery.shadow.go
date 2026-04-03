@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
-	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -171,8 +171,7 @@ func shadowIsTargetingUser(shadower *users.UserRecord, moverId int) bool {
 // Uses Perception+Search vs Dex+Skullduggery (target is the attacker).
 func shadowDetectionRoll(shadower *users.UserRecord, target *users.UserRecord) bool {
 	sneakScore := calcSneakScore(shadower.Character)
-	targetScore := float64(target.Character.Stats.Perception.ValueAdj) +
-		combat.SkillMultiplier(target.Character.GetSkillLevel(skills.Search))*25.0
+	targetScore := actions.CalcSearchScore(target.Character)
 
 	// OpposedRollStat(atk, def) returns true when atk (first arg) wins.
 	// Target detects when targetScore beats sneakScore.

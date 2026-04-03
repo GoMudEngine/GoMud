@@ -1,6 +1,6 @@
 mobid: 96
 zone: Thornwall City
-statpool: 54
+statpool: 120
 itemdropchance: 0
 hostile: false
 maxwander: 0
@@ -27,7 +27,7 @@ character:
     less official, and the squeeze is slowly killing the business.
   speciesid: 1
   level: 1
-  gold: 0
+  gold: 200
   equipment:
     weapon:
       itemid: 10009

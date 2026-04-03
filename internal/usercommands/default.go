@@ -16,12 +16,6 @@ func Default(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		return true, nil
 	}
 
-	// If there is a trainer, "train"
-	if len(room.SkillTraining) > 0 {
-		Train(``, user, room, flags)
-		return true, nil
-	}
-
 	// If a bank, "bank"
 	if room.IsBank {
 		Bank(``, user, room, flags)

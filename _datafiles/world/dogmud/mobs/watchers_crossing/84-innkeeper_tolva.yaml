@@ -1,6 +1,6 @@
 mobid: 84
 zone: Watchers Crossing
-statpool: 60
+statpool: 100
 itemdropchance: 0
 hostile: false
 maxwander: 0
@@ -26,7 +26,7 @@ character:
     no patience for nonsense but plenty of patience for honest travellers.
   speciesid: 1
   level: 1
-  gold: 0
+  gold: 100
   stats:
     willpower:
       training: 10

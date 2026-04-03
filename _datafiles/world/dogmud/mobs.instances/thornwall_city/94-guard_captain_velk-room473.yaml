@@ -1,9 +1,9 @@
-strength_training: 44
-dexterity_training: 35
-perception_training: 13
-vitality_training: 35
-willpower_training: 23
-charisma_training: 6
+strength_training: 45
+dexterity_training: 31
+perception_training: 16
+vitality_training: 38
+willpower_training: 18
+charisma_training: 8
 skills:
   alchemy: 1
   bartering: 1
@@ -22,5 +22,3 @@ skills:
   tailoring: 1
   unarmed-combat: 1
   weapon-combat: 1
-skill_use_count:
-  search: 0

@@ -1,6 +1,6 @@
 mobid: 102
 zone: Thornwall City
-statpool: 48
+statpool: 120
 itemdropchance: 0
 hostile: false
 maxwander: 1
@@ -26,7 +26,7 @@ character:
     about both.
   speciesid: 1
   level: 1
-  gold: 5
+  gold: 200
   stats:
     charisma:
       training: 10

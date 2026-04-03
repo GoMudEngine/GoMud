@@ -3,13 +3,11 @@ package mobcommands
 import (
 	"fmt"
 
-	"github.com/GoMudEngine/GoMud/internal/characters"
-	"github.com/GoMudEngine/GoMud/internal/combat"
-	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
-	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 func Grapple(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
@@ -19,45 +17,30 @@ func Grapple(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		return true, nil
 	}
 
-	// Check shared special move cooldown
-	cfg := configs.GetBalanceConfig()
-	if !mob.Character.Cooldowns.Try("special-move", fmt.Sprintf("%d rounds", cfg.SpecialMoveCooldown)) {
+	res := actions.ExecuteGrapple(&actions.MobActor{Mob: mob, Room: room})
+
+	if res.OnCooldown || res.NoTarget || !res.Executed {
 		return true, nil
 	}
 
-	// Resolve target
-	targetPlayerId := mob.Character.Aggro.UserId
-	targetMobId := mob.Character.Aggro.MobInstanceId
+	// Fire skill progression for the executed special move.
+	mob.Character.OnSkillUse(string(skills.UnarmedCombat), 0)
 
+	target := res.Target
+	result := res.MoveResult
+	mobName := mob.Character.Name
+	targetName := target.Name
+	targetPlayerId := target.UserId
+
+	// Resolve the target user record for direct messaging (player targets).
 	var targetChar *users.UserRecord
-	var targetMob *mobs.Mob
-	var targetName string
-	var defender *characters.Character
-
-	if targetMobId > 0 {
-		targetMob = mobs.GetInstance(targetMobId)
-		if targetMob == nil {
-			return true, nil
-		}
-		targetName = targetMob.Character.Name
-		defender = &targetMob.Character
-	} else if targetPlayerId > 0 {
-		targetChar = users.GetByUserId(targetPlayerId)
-		if targetChar == nil {
-			return true, nil
-		}
-		targetName = targetChar.Character.Name
-		defender = targetChar.Character
-	} else {
-		return true, nil
+	if target.UserId > 0 {
+		targetChar = users.GetByUserId(target.UserId)
 	}
 
-	// Execute grapple move (attackerId=0 for mobs)
-	result := combat.ExecuteGrappleMove(&mob.Character, defender, 0, room)
+	canSee := targetChar == nil || canSeeInDark(targetChar, room)
 
 	// Send messages based on result
-	mobName := mob.Character.Name
-	canSee := targetChar == nil || canSeeInDark(targetChar, room)
 	if result.Success {
 		if targetChar != nil {
 			if canSee {
@@ -96,18 +79,6 @@ func Grapple(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			}
 			sendRoomText(room, result.CritFailure.RoomMessage, targetPlayerId)
 		}
-	}
-
-	// Record combat analytics
-	tgtType := combat.Mob
-	if targetMob == nil {
-		tgtType = combat.User
-	}
-	combat.RecordSpecialMove(combat.Mob, tgtType, "grapple", result.Success, 0, &mob.Character, defender, util.GetRoundCount())
-
-	// Grapple costs the current combat round
-	if mob.Character.Aggro != nil {
-		mob.Character.Aggro.RoundsWaiting = 1
 	}
 
 	return true, nil

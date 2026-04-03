@@ -24,7 +24,7 @@ func Conditions(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 
 		spec := buffs.GetBuffSpec(buff.BuffId)
 
-		_, roundsLeft := buffs.GetDurations(buff, spec)
+		roundsLeft, _ := buffs.GetDurations(buff, spec)
 
 		newAffliction := buffInfo{
 			Name:        spec.Name,

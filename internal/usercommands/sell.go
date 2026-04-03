@@ -53,6 +53,14 @@ func Sell(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			continue
 		}
 
+		// Merchant must have enough gold to buy the item
+		if mob.Character.Gold < sellValue {
+			mob.Command(`say I can't afford that right now.`)
+			continue
+		}
+
+		// Transfer gold from merchant to player (not created from air)
+		mob.Character.Gold -= sellValue
 		user.Character.Gold += sellValue
 		user.Character.RemoveItem(item)
 

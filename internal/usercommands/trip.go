@@ -3,15 +3,13 @@ package usercommands
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
-	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
-	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
-	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 func Trip(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
@@ -38,81 +36,34 @@ func Trip(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		}
 	}
 
-	// Check shared special move cooldown
-	cfg := configs.GetBalanceConfig()
-	if !user.Character.Cooldowns.Try("special-move", fmt.Sprintf("%d rounds", cfg.SpecialMoveCooldown)) {
+	res := actions.ExecuteTrip(&actions.UserActor{User: user, Room: room})
+
+	if res.OnCooldown {
 		user.SendText("You need a moment to recover before attempting another special move.")
 		return true, nil
 	}
 
-	// Resolve target
-	targetPlayerId := user.Character.Aggro.UserId
-	targetMobId := user.Character.Aggro.MobInstanceId
-
-	var targetChar *users.UserRecord
-	var targetMob *mobs.Mob
-	var targetName string
-	var defender *characters.Character
-
-	if targetMobId > 0 {
-		targetMob = mobs.GetInstance(targetMobId)
-		if targetMob == nil {
-			user.SendText("Your target is gone!")
-			return true, nil
-		}
-		targetName = targetMob.Character.Name
-		defender = &targetMob.Character
-	} else if targetPlayerId > 0 {
-		targetChar = users.GetByUserId(targetPlayerId)
-		if targetChar == nil {
-			user.SendText("Your target is gone!")
-			return true, nil
-		}
-		targetName = targetChar.Character.Name
-		defender = targetChar.Character
-	} else {
+	if res.NoTarget {
 		user.SendText("You have no target!")
 		return true, nil
 	}
 
-	// Check for tail mutation — reskin to tailsweep with better stats
-	hasTail := false
-	if _, ok := user.Character.Mutations["tail"]; ok {
-		hasTail = true
+	if !res.Executed {
+		return true, nil
 	}
 
-	damagePercent := float64(cfg.TripDamagePercent)
-	knockdownChance := int(cfg.TripKnockdownChance)
-	moveLabel := "trip"
+	target := res.Target
+	result := res.MoveResult
+	hasTail := res.Variant == actions.TripTailsweep
 
-	if hasTail {
-		damagePercent = 0.40  // Better than regular trip (0.25)
-		knockdownChance = 70  // Better than regular trip (60%)
-		moveLabel = "tailsweep"
+	targetName := target.Name
+	targetPlayerId := target.UserId
 
-		// Apply tail attachment bonuses if equipped
-		if user.Character.Equipment.Tail.ItemId > 0 {
-			tailSpec := user.Character.Equipment.Tail.GetSpec()
-			if tailSpec.DamageMultiplier > 0 {
-				damagePercent += tailSpec.DamageMultiplier / 100.0
-			}
-			knockdownChance += user.Character.Equipment.Tail.StatMod("knockdown")
-		}
+	// Resolve the target user record for direct messaging (player targets).
+	var targetChar *users.UserRecord
+	if target.UserId > 0 {
+		targetChar = users.GetByUserId(target.UserId)
 	}
-
-	// Execute skill move
-	result := combat.ExecuteSkillMove(combat.SkillMoveParams{
-		Attacker:        user.Character,
-		Defender:        defender,
-		AttackStat:      user.Character.Stats.Dexterity.ValueAdj,
-		AttackSkill:     user.Character.GetSkillLevel(skills.UnarmedCombat),
-		DefenseStat:     defender.Stats.Dexterity.ValueAdj,
-		DefenseSkill:    defender.GetCombatSkillLevel(),
-		DamagePercent:   damagePercent,
-		KnockdownChance: knockdownChance,
-		SkillRank:       user.Character.GetSkillLevel(skills.UnarmedCombat),
-		DamageStat:      user.Character.Stats.Strength.ValueAdj,
-	})
 
 	// Send messages
 	if result.Hit {
@@ -179,28 +130,16 @@ func Trip(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		}
 	}
 
-	// Record combat analytics
-	dmgRecorded := 0
-	if result.Hit {
-		dmgRecorded = result.Damage
-	}
-	tgtType := combat.Mob
-	if targetMob == nil {
-		tgtType = combat.User
-	}
-	combat.RecordSpecialMove(combat.User, tgtType, moveLabel, result.Hit, dmgRecorded, user.Character, defender, util.GetRoundCount())
-
 	// Progress unarmed combat skill
+	moveLabel := "trip"
+	if hasTail {
+		moveLabel = "tailsweep"
+	}
 	events.AddToQueue(events.SkillUsed{
 		UserId:  user.UserId,
 		Skill:   skills.UnarmedCombat,
 		Details: moveLabel,
 	})
-
-	// Trip costs the current combat round
-	if user.Character.Aggro != nil {
-		user.Character.Aggro.RoundsWaiting = 1
-	}
 
 	return true, nil
 }

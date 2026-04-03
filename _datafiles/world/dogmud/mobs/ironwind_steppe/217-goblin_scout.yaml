@@ -19,7 +19,6 @@ idlecommands:
   - 'emote sniffs the air and mutters something in guttural goblin-speak'
 activitylevel: 30
 combatcommands:
-  - 'sneak'
   - ''
   - ''
   - ''
