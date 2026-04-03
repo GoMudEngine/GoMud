@@ -353,20 +353,15 @@ threshold system.
 - [ ] **Step 2: Design decision**
 
 Mobs currently have a fixed spell list from their YAML definition.
-Options:
-- **A)** Mobs discover spells like players — as spellcasting rank
-  increases, they unlock new spells from the global pool
-- **B)** Mobs only use spells from their YAML definition — no
-  discovery, but their existing spells get stronger via skill rank
-- **C)** Mob spell lists expand from a per-mob pool defined in YAML
-  (`potential_spells`) that unlock as skill increases
+Spell discovery is opt-in: only mobs that are already casters
+(have spells in YAML definition OR archetype=casting) should be
+eligible to discover new spells as spellcasting skill grows.
+Non-caster mobs (wolves, bandits with no spells) never discover
+spells regardless of what happens to their stats.
 
-Option B is simplest and probably correct — a wolf mob shouldn't
-suddenly learn fireball because its spellcasting went up. The mob
-designer controls the spell list; progression makes existing spells
-hit harder and cast faster (more folds/round).
-
-Decide based on what makes design sense, then implement or skip.
+The gate: check if mob has any known spells or casting archetype.
+If yes, use the same discovery mechanism as players (skill-gated
+thresholds from GetEligibleSpells). If no, skip entirely.
 
 - [ ] **Step 3: Implement if needed, or document decision**
 
