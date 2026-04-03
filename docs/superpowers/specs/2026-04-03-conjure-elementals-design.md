@@ -8,11 +8,16 @@ with unique combat identities. High conviction cost, no components.
 
 | Type | Skill Gate | Archetype | Base Pool | Conviction Cost | Base Folds |
 |------|-----------|-----------|-----------|----------------|------------|
-| Water | 3 | fighting | 80 | 40 | 4 |
-| Earth | 10 | fighting | 90 | 55 | 6 |
-| Air | 18 | fighting | 70 | 70 | 8 |
-| Fire | 25 | fighting | 85 | 90 | 10 |
-| Magma | 60 | fighting | 130 | 120 | 14 |
+| Water | 3 | fighting | 80 | 80 | 4 |
+| Earth | 10 | fighting | 90 | 110 | 6 |
+| Air | 18 | fighting | 70 | 130 | 8 |
+| Fire | 25 | fighting | 85 | 160 | 10 |
+| Magma | 60 | fighting | 130 | 200 | 14 |
+
+Conviction costs are intentionally very high — conjuring requires
+most of a dedicated caster's conviction pool. This is the trade-off
+for not needing components or corpses. A player who conjures a
+magma elemental is spent for the fight.
 
 All are `school: manifestation`, `type: neutral` (no target needed).
 No components — pure conviction cost. Scaling uses the standard
@@ -51,28 +56,65 @@ companion formula: `CalcCompanionStatPool(basePool, charisma, manifestation)`.
 - Aspirational — skill gate 60 means this is endgame
 - basedamage: 7
 
-## Return Damage (Fire + Magma)
+## Return Damage System (General — not elemental-specific)
 
-When a melee attacker hits a fire or magma elemental, the attacker
-takes return damage:
+Return damage is a general combat mechanic: when a melee attacker
+hits a defender that has return damage, the attacker takes a
+percentage of their own damage back.
 
 ```
-returnDamage = attackDamage × ReturnDamagePercent
+returnDamage = attackDamage × defender's return_damage_pct
 ```
 
-Config: `ElementalReturnDamagePercent` (default 0.25 = 25%)
+This is implemented as a **stat mod** on the Character, not a
+species-specific hack. Sources of return damage:
+- Equipment: `return_damage` stat mod on armor (battlerager armor)
+- Buffs: `return_damage` stat mod from buff effects
+- Species: base return damage on species definition
+- Mutations: `return_damage` mutation effect (future)
 
-This is processed in the combat result handling — after damage is
-applied to the elemental, the attacker takes return damage. The
-return damage is physical (fire/heat themed in messaging).
+Fire elemental gets return damage via its species definition.
+Magma elemental gets it the same way. Players can get it from
+equipment or buffs.
 
-Messaging:
-- "Flames lash out at [attacker] as they strike the fire elemental!"
-- "[attacker] recoils from the searing heat!"
+### Implementation
 
-Return damage should NOT trigger return damage back (no infinite
-loops). Flag it as "return damage" so the combat system skips
-the return check on return damage.
+In the combat resolution (after damage is applied to the defender),
+check `defender.StatMod("return_damage")`. If > 0, apply:
+
+```go
+returnPct := float64(defender.StatMod("return_damage")) / 100.0
+returnDmg := int(float64(damageDealt) * returnPct)
+if returnDmg > 0 {
+    attacker.Health -= returnDmg
+    // Message: "[defender]'s [source] lashes back at [attacker]!"
+}
+```
+
+**Anti-loop:** Return damage must NOT trigger return damage back.
+Add a flag to the combat context (`IsReturnDamage bool`) that
+skips the return damage check when processing return damage.
+
+### Species Return Damage
+
+Add a `return_damage` field to species definitions:
+
+```yaml
+# In species/39-fire_elemental.yaml
+return_damage: 25  # 25% of melee damage returned to attacker
+```
+
+This gets picked up by `StatMod("return_damage")` via the species
+stat mod system, or added as a separate field on the species struct.
+
+### Messaging
+
+The return damage message should be flavor-appropriate to the source:
+- Fire/magma species: "Flames lash back at [attacker]!"
+- Equipment (armor): "[attacker] is cut by the barbed armor!"
+- Buff: "[attacker] recoils from the retaliatory magic!"
+
+A generic fallback: "[attacker] takes damage from striking [defender]!"
 
 ## Earth/Magma Bash
 
