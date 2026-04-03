@@ -513,7 +513,7 @@ Balance:
   # SpellDamageScale: multiplier on ALL spell damage output (players + NPCs).
   #   1.0 = no scaling. Example at Wil 100, skill 0, spell mult 1.0:
   #     1.0 → 100 raw,  1.5 → 150 raw,  0.5 → 50 raw
-  SpellDamageScale: 1.6         # Detuned from 1.85; spells still slightly overperforming vs melee
+  SpellDamageScale: 1.2         # Tuned 39.4: -25% from 1.6; progression now works so spells scale naturally
   #
   # RhetoricDamageScale: multiplier on taunt/conviction damage output.
   #   Taunt uses itemMult 0.5 as base. Example at Cha 100, skill 0:
@@ -630,8 +630,8 @@ Balance:
   # Combat skills fire many times per round (low mult), utility skills
   # fire rarely (high mult). Only skills listed here override the defaults.
   SkillProgressionMultipliers:
-    weapon-combat: 0.20   # Tuned 39.3: bumped from 0.12 — was too slow after crit message bug fix
-    unarmed-combat: 0.20  # Tuned 39.3: same as weapon-combat
+    weapon-combat: 0.15   # Tuned 39.4: reduced from 0.20 — auto-attack progression now fires correctly
+    unarmed-combat: 0.15  # Tuned 39.4: same as weapon-combat
     ranged-combat: 0.3
     spellcasting: 0.5
     rhetoric: 0.5
