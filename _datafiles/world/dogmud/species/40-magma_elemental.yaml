@@ -1,0 +1,35 @@
+speciesid: 40
+name: Magma Elemental
+description: The magma elemental combines the crushing mass of earth with
+  the searing heat of fire — a slow-moving avalanche of molten rock that
+  scorches anything it touches and bowls enemies flat with contemptuous
+  force. The most devastating elemental a conjurer can summon, it demands
+  a staggering amount of conviction to call forth.
+size: large
+unarmedname: molten slam
+selectable: false
+tameable: false
+naturalbash: true
+return_damage: 25
+angrycommands:
+  - emote rumbles deep within its core, magma sloshing between plates
+    of cooling crust.
+  - emote cracks along its surface, rivulets of orange lava seeping out.
+stats:
+  strength:
+    base: 180
+  dexterity:
+    base: 70
+  perception:
+    base: 80
+  vitality:
+    base: 180
+  willpower:
+    base: 60
+  charisma:
+    base: 5
+damage:
+  basedamage: 7
+  variance: 3
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'back',
+  'belt', 'gloves', 'ring', 'legs', 'feet']

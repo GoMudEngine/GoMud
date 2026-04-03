@@ -1,0 +1,32 @@
+speciesid: 37
+name: Earth Elemental
+description: A lumbering fortress of living rock and compacted soil, the
+  earth elemental is among the most durable constructs a conjurer can
+  summon. It moves slowly but strikes with seismic force, and its natural
+  mass lets it knock foes sprawling without need of a shield.
+size: large
+unarmedname: stone fists
+selectable: false
+tameable: false
+naturalbash: true
+angrycommands:
+  - emote grinds forward, the earth cracking beneath each heavy step.
+  - emote raises a boulder-like fist and slams it into the ground.
+stats:
+  strength:
+    base: 160
+  dexterity:
+    base: 45
+  perception:
+    base: 50
+  vitality:
+    base: 220
+  willpower:
+    base: 30
+  charisma:
+    base: 5
+damage:
+  basedamage: 6
+  variance: 2
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'back',
+  'belt', 'gloves', 'ring', 'legs', 'feet']

@@ -1,0 +1,31 @@
+speciesid: 36
+name: Water Elemental
+description: A surging mass of animated water, the water elemental flows
+  around obstacles and strikes with crushing waves. Nearly impossible to
+  wound with conventional weapons, it drowns foes in relentless watery
+  blows and wears down resistance through sheer persistence.
+size: large
+unarmedname: watery surge
+selectable: false
+tameable: false
+angrycommands:
+  - emote surges forward, water churning with violent intent.
+  - emote crests like a wave and crashes down with terrible weight.
+stats:
+  strength:
+    base: 100
+  dexterity:
+    base: 50
+  perception:
+    base: 60
+  vitality:
+    base: 200
+  willpower:
+    base: 40
+  charisma:
+    base: 5
+damage:
+  basedamage: 4
+  variance: 2
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'back',
+  'belt', 'gloves', 'ring', 'legs', 'feet']

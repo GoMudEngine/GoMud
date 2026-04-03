@@ -1,0 +1,32 @@
+speciesid: 38
+name: Air Elemental
+description: A howling vortex of wind and lightning-laced current, the air
+  elemental is the swiftest creature a conjurer can bind. It strikes with
+  slashing gusts before foes can react, darting around counterattacks with
+  preternatural speed. What it lacks in durability it repays in relentless
+  aggression.
+size: medium
+unarmedname: slicing gust
+selectable: false
+tameable: false
+angrycommands:
+  - emote shrieks as the wind around it whips into a cutting spiral.
+  - emote contracts into a tight vortex and expands violently outward.
+stats:
+  strength:
+    base: 40
+  dexterity:
+    base: 200
+  perception:
+    base: 160
+  vitality:
+    base: 30
+  willpower:
+    base: 60
+  charisma:
+    base: 5
+damage:
+  basedamage: 2
+  variance: 1
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'back',
+  'belt', 'gloves', 'ring', 'legs', 'feet']
