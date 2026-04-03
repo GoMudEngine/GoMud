@@ -45,6 +45,23 @@ func RetargetOrEnd(char *characters.Character, room *rooms.Room,
 
 	char.EndAggro()
 
+	// Build a set of "our side" instance IDs for companion-aware scanning.
+	// If we're a player, include our companions' instance IDs so we retarget
+	// mobs attacking our companions (not just mobs attacking us directly).
+	myMobIds := map[int]bool{}
+	if mobInstanceId > 0 {
+		myMobIds[mobInstanceId] = true
+	}
+	if userId > 0 {
+		if owner := users.GetByUserId(userId); owner != nil {
+			for _, comp := range owner.Character.Companions {
+				if comp.InstanceId > 0 {
+					myMobIds[comp.InstanceId] = true
+				}
+			}
+		}
+	}
+
 	// Scan mobs in the room that are currently fighting.
 	for _, instId := range room.GetMobs(rooms.FindFighting) {
 		attackingMob := mobs.GetInstance(instId)
@@ -54,9 +71,9 @@ func RetargetOrEnd(char *characters.Character, room *rooms.Room,
 
 		aggro := attackingMob.Character.Aggro
 
-		// Is this mob attacking us (player or mob)?
+		// Is this mob attacking us, or any of our companions?
 		if (userId > 0 && aggro.UserId == userId) ||
-			(mobInstanceId > 0 && aggro.MobInstanceId == mobInstanceId) {
+			(aggro.MobInstanceId > 0 && myMobIds[aggro.MobInstanceId]) {
 			char.SetAggro(0, attackingMob.InstanceId, characters.DefaultAttack)
 			return true
 		}
