@@ -14,7 +14,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
-	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
@@ -118,15 +117,6 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 
 				// Roundtick any cooldowns
 				user.Character.Cooldowns.RoundTick()
-
-				// Clear stale aggro pointing at dead/despawned targets.
-				// This catches cases where a companion kills the player's
-				// target and the combat loop never clears the player's aggro.
-				if user.Character.Aggro != nil && user.Character.Aggro.MobInstanceId > 0 {
-					if target := mobs.GetInstance(user.Character.Aggro.MobInstanceId); target == nil || target.Character.Health < 1 {
-						user.Character.EndAggro()
-					}
-				}
 
 				// Stage 7.5: Attempt automatic recovery from prone (uses DEX)
 				if attemptMade, success := user.Character.AttemptRecovery(user.Character.Stats.Dexterity.ValueAdj); attemptMade {

@@ -61,17 +61,20 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 			continue
 		}
 
-		// Clear stale aggro pointing at dead/despawned targets
-		if user.Character.Aggro.MobInstanceId > 0 {
-			if target := mobs.GetInstance(user.Character.Aggro.MobInstanceId); target == nil || target.Character.Health < 1 {
-				uRoom := rooms.LoadRoom(user.Character.RoomId)
-				user.Character.EndAggro()
-				if uRoom != nil {
-					handleAutoRetargetPlayer(user, uRoom)
+		// Validate aggro target still exists and is alive; retarget if possible
+		if !ValidateAggro(user.Character) {
+			uRoom := rooms.LoadRoom(user.Character.RoomId)
+			if uRoom != nil {
+				if RetargetOrEnd(user.Character, uRoom, user.UserId, 0) {
+					if mob := mobs.GetInstance(user.Character.Aggro.MobInstanceId); mob != nil {
+						user.SendText(fmt.Sprintf("You turn your attention to <ansi fg=\"mobname\">%s</ansi>!", mob.Character.Name))
+					} else if defUser := users.GetByUserId(user.Character.Aggro.UserId); defUser != nil {
+						user.SendText(fmt.Sprintf("You turn your attention to <ansi fg=\"username\">%s</ansi>!", defUser.Character.Name))
+					}
 				}
-				if user.Character.Aggro == nil {
-					continue
-				}
+			}
+			if user.Character.Aggro == nil {
+				continue
 			}
 		}
 
@@ -146,6 +149,16 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 
 		if handleMobFoldCasting(mob, mobRoom) {
 			continue
+		}
+
+		// Validate mob's aggro target still exists and is alive; retarget if possible
+		if !ValidateAggro(&mob.Character) {
+			if mobRoom != nil {
+				RetargetOrEnd(&mob.Character, mobRoom, 0, mob.InstanceId)
+			}
+			if mob.Character.Aggro == nil {
+				continue
+			}
 		}
 
 		c := configs.GetConfig()
