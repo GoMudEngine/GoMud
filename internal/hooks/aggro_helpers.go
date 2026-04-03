@@ -19,7 +19,8 @@ func ValidateAggro(char *characters.Character) bool {
 
 	if char.Aggro.MobInstanceId > 0 {
 		target := mobs.GetInstance(char.Aggro.MobInstanceId)
-		if target == nil || target.Character.Health < 1 {
+		if target == nil || target.Character.Health < 1 ||
+			target.Character.RoomId != char.RoomId {
 			char.EndAggro()
 			return false
 		}
@@ -27,7 +28,8 @@ func ValidateAggro(char *characters.Character) bool {
 
 	if char.Aggro.UserId > 0 {
 		target := users.GetByUserId(char.Aggro.UserId)
-		if target == nil || target.Character.Health < 1 {
+		if target == nil || target.Character.Health < 1 ||
+			target.Character.RoomId != char.RoomId {
 			char.EndAggro()
 			return false
 		}
