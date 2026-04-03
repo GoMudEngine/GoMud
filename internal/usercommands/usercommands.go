@@ -74,12 +74,14 @@ var (
 		`cooldowns`:   {Cooldowns, true, true, false},
 		`command`:     {Command, false, true, true}, // Admin only
 		`conditions`:  {Conditions, true, true, false},
+		`companion`:   {Companion, true, true, false},
 		`consider`:    {Consider, true, true, false},
 		`deafen`:      {Deafen, true, true, true}, // Admin only
 		`devtool`:     {Devtool, false, true, true}, // Admin only
 		`default`:     {Default, false, true, false},
 		`defuse`:      {Defuse, false, true, false},
 		`disenchant`:  {Disenchant, false, false, false}, // Can't disenchant in combat
+		`dismiss`:     {Dismiss, false, true, false},
 		`drop`:{Drop, true, false, false}, // Can't drop items in combat
 		`drink`:       {Drink, true, true, false},
 		`eat`:         {Eat, true, true, false},
