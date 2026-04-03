@@ -153,9 +153,16 @@ func InitiateCast(actor Actor, spellName, targetName string) CastResult {
 	case spells.HelpSingle:
 		if actor.IsPlayer() {
 			if targetName != `` && targetName != actor.GetName() {
-				pId, _ := room.FindByName(targetName)
+				pId, mId := room.FindByName(targetName)
 				if pId > 0 {
 					targetUserIds = append(targetUserIds, pId)
+				} else if mId > 0 {
+					// Allow targeting companions with help spells
+					if m := mobs.GetInstance(mId); m != nil && m.Character.IsCharmed(actor.GetUserId()) {
+						targetMobInstanceIds = append(targetMobInstanceIds, mId)
+					} else {
+						return CastResult{SpellInfo: spellInfo, NoTarget: true}
+					}
 				} else {
 					return CastResult{SpellInfo: spellInfo, NoTarget: true}
 				}

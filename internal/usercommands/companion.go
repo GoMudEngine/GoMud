@@ -139,34 +139,19 @@ func Companion(rest string, user *users.UserRecord,
 		vitalDesc(mob.Character.Conviction, mob.Character.ConvictionMax.Value),
 	))
 
-	// Stat comparisons (relative to player — no raw numbers)
-	pStr := user.Character.Stats.Strength.ValueAdj
-	pDex := user.Character.Stats.Dexterity.ValueAdj
-	pPer := user.Character.Stats.Perception.ValueAdj
-	pVit := user.Character.Stats.Vitality.ValueAdj
-	pWil := user.Character.Stats.Willpower.ValueAdj
-	pCha := user.Character.Stats.Charisma.ValueAdj
-
-	mStr := mob.Character.Stats.Strength.ValueAdj
-	mDex := mob.Character.Stats.Dexterity.ValueAdj
-	mPer := mob.Character.Stats.Perception.ValueAdj
-	mVit := mob.Character.Stats.Vitality.ValueAdj
-	mWil := mob.Character.Stats.Willpower.ValueAdj
-	mCha := mob.Character.Stats.Charisma.ValueAdj
-
-	strLine := statCompare("strength", mStr, pStr)
-	dexLine := statCompare("agility", mDex, pDex)
-	perLine := statCompare("perception", mPer, pPer)
-	vitLine := statCompare("hardiness", mVit, pVit)
-	wilLine := statCompare("willpower", mWil, pWil)
-	chaLine := statCompare("force of personality", mCha, pCha)
-
-	user.SendText(
-		`  Compared to you, it seems:`,
-	)
-	for _, line := range []string{strLine, dexLine, perLine, vitLine, wilLine, chaLine} {
-		user.SendText(`    ` + line)
-	}
+	// Stat descriptions using the same tiers as the player status command
+	user.SendText(fmt.Sprintf(
+		`  <ansi fg="yellow">Strength:</ansi>   %-13s <ansi fg="yellow">Dexterity:</ansi>  %-13s <ansi fg="yellow">Perception:</ansi> %s`,
+		statQualityDesc(mob.Character.Stats.Strength.ValueAdj),
+		statQualityDesc(mob.Character.Stats.Dexterity.ValueAdj),
+		statQualityDesc(mob.Character.Stats.Perception.ValueAdj),
+	))
+	user.SendText(fmt.Sprintf(
+		`  <ansi fg="yellow">Vitality:</ansi>   %-13s <ansi fg="yellow">Willpower:</ansi>  %-13s <ansi fg="yellow">Charisma:</ansi>   %s`,
+		statQualityDesc(mob.Character.Stats.Vitality.ValueAdj),
+		statQualityDesc(mob.Character.Stats.Willpower.ValueAdj),
+		statQualityDesc(mob.Character.Stats.Charisma.ValueAdj),
+	))
 
 	user.SendText(fmt.Sprintf(`  Auto-Assist: %s`, assistStr))
 
@@ -195,29 +180,28 @@ func vitalDesc(current, max int) string {
 	}
 }
 
-// statCompare returns a one-line description of how the companion's stat
-// compares to the player's. Uses relative language only — no raw values.
-func statCompare(label string, compStat, playerStat int) string {
-	if playerStat <= 0 {
-		playerStat = 1
-	}
-	ratio := float64(compStat) / float64(playerStat)
-	var rel string
+// statQualityDesc returns the same descriptive tier used by the player
+// status command. Matches the statQuality template function exactly.
+func statQualityDesc(value int) string {
 	switch {
-	case ratio >= 1.40:
-		rel = "far greater"
-	case ratio >= 1.15:
-		rel = "noticeably greater"
-	case ratio >= 0.90:
-		rel = "roughly matched"
-	case ratio >= 0.70:
-		rel = "somewhat lesser"
+	case value <= 60:
+		return "feeble"
+	case value <= 75:
+		return "poor"
+	case value <= 90:
+		return "modest"
+	case value <= 110:
+		return "average"
+	case value <= 130:
+		return "keen"
+	case value <= 150:
+		return "exceptional"
+	case value <= 200:
+		return "remarkable"
+	case value <= 300:
+		return "transcendent"
 	default:
-		rel = "far lesser"
+		return "godlike"
 	}
-	return fmt.Sprintf(
-		`<ansi fg="yellow">%s</ansi> — %s`,
-		label, rel,
-	)
 }
 
