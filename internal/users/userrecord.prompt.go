@@ -379,6 +379,33 @@ func (u *UserRecord) ProcessPromptString(promptStr string) string {
 				promptOut.WriteString(renderVitalBar(u.Character.Conviction, u.Character.ConvictionMax.Value,
 					u.Character.GetPoolReservation("conviction", u.Character.ConvictionMax.Value)))
 
+			case `{pet_hp}`:
+				if len(u.Character.Companions) > 0 && u.Character.Companions[0].InstanceId > 0 {
+					if pet := mobs.GetInstance(u.Character.Companions[0].InstanceId); pet != nil && pet.Character.HealthMax.Value > 0 {
+						petClass := fmt.Sprintf(`health-%d`, util.QuantizeTens(pet.Character.Health, pet.Character.HealthMax.Value))
+						pct := int(math.Floor(float64(pet.Character.Health) / float64(pet.Character.HealthMax.Value) * 100))
+						promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%d%%</ansi>`, petClass, pct))
+					}
+				}
+
+			case `{pet_sp}`:
+				if len(u.Character.Companions) > 0 && u.Character.Companions[0].InstanceId > 0 {
+					if pet := mobs.GetInstance(u.Character.Companions[0].InstanceId); pet != nil && pet.Character.StaminaMax.Value > 0 {
+						petClass := fmt.Sprintf(`health-%d`, util.QuantizeTens(pet.Character.Stamina, pet.Character.StaminaMax.Value))
+						pct := int(math.Floor(float64(pet.Character.Stamina) / float64(pet.Character.StaminaMax.Value) * 100))
+						promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%d%%</ansi>`, petClass, pct))
+					}
+				}
+
+			case `{pet_cp}`:
+				if len(u.Character.Companions) > 0 && u.Character.Companions[0].InstanceId > 0 {
+					if pet := mobs.GetInstance(u.Character.Companions[0].InstanceId); pet != nil && pet.Character.ConvictionMax.Value > 0 {
+						petClass := fmt.Sprintf(`mana-%d`, util.QuantizeTens(pet.Character.Conviction, pet.Character.ConvictionMax.Value))
+						pct := int(math.Floor(float64(pet.Character.Conviction) / float64(pet.Character.ConvictionMax.Value) * 100))
+						promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%d%%</ansi>`, petClass, pct))
+					}
+				}
+
 			case `{target}`:
 				if u.Character.Aggro != nil {
 					if u.Character.Aggro.MobInstanceId > 0 {
