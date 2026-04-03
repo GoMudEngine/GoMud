@@ -326,7 +326,7 @@ func applyMobEffect(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spe
 			}
 			mob.Character.CharmedMobs = nil
 			mob.Character.Charm(user.UserId, 24, "")
-			mob.Character.Aggro = nil
+			mob.Character.EndAggro()
 			user.Character.TrackCharmed(mob.InstanceId, true)
 			user.SendText(fmt.Sprintf(
 				`<ansi fg="cyan">%s calms and becomes your companion!</ansi>`,

@@ -12,7 +12,7 @@ func Flee(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	// If in combat, clear aggro
 	if mob.Character.Aggro != nil {
-		mob.Character.Aggro = nil
+		mob.Character.EndAggro()
 	}
 
 	// Get a random exit (skips secret and locked exits)

@@ -112,11 +112,11 @@ func Submit(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			)
 
 			// End combat for both
-			user.Character.Aggro = nil
+			user.Character.EndAggro()
 			if targetMob != nil {
-				targetMob.Character.Aggro = nil
+				targetMob.Character.EndAggro()
 			} else {
-				targetChar.Character.Aggro = nil
+				targetChar.Character.EndAggro()
 			}
 
 		} else {

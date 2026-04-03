@@ -1111,7 +1111,7 @@ func (c *Character) Charm(userId int, rounds int, expireCommand string) {
 	c.SetAdjective(`charmed`, true)
 	c.Charmed = NewCharm(userId, rounds, expireCommand)
 	if c.Aggro != nil && c.Aggro.UserId == userId {
-		c.Aggro = nil
+		c.EndAggro()
 	}
 }
 

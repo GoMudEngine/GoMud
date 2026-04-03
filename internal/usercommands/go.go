@@ -51,7 +51,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 			return true, nil
 		}
 		// Force-clear the stale aggro so it doesn't follow them out.
-		user.Character.Aggro = nil
+		user.Character.EndAggro()
 	}
 
 	// Block movement during quest sequences (e.g., Awakening Rite ceremony)

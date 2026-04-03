@@ -68,7 +68,7 @@ func IdleMobs(e events.Event) events.ListenerReturn {
 				user := users.GetByUserId(mob.Character.Aggro.UserId)
 				if user == nil || user.Character.RoomId != mob.Character.RoomId {
 					mob.Command(`emote mumbles about losing their quarry.`)
-					mob.Character.Aggro = nil
+					mob.Character.EndAggro()
 				}
 			}
 			continue

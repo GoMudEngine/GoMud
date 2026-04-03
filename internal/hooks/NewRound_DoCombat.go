@@ -121,7 +121,7 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 
 		mobRoom := rooms.LoadRoom(mob.Character.RoomId)
 		if mobRoom == nil {
-			mob.Character.Aggro = nil
+			mob.Character.EndAggro()
 			continue
 		}
 

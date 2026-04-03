@@ -10,7 +10,7 @@ import (
 func Break(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	if mob.Character.Aggro != nil {
-		mob.Character.Aggro = nil
+		mob.Character.EndAggro()
 		sendRoomText(room,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> breaks off combat.`, mob.Character.Name))
 	}

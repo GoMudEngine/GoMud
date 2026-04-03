@@ -176,7 +176,7 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	user.SendText(`<ansi fg="yellow">You feel weakened by the brush with death. (Type <ansi fg="command">help death</ansi> to learn more.)</ansi>`)
 
 	user.Character.CancelBuffsWithFlag(buffs.All)
-	user.Character.Aggro = nil
+	user.Character.EndAggro()
 	user.Character.CastingState = nil
 
 	// Set all pools to 5% of max so the player can regen up in the shadow realm
@@ -202,7 +202,7 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	// Belt-and-suspenders: re-clear aggro after room move in case any
 	// code path (e.g., mob combat round processing) assigned aggro
 	// between our first clear (line 179) and the room move.
-	user.Character.Aggro = nil
+	user.Character.EndAggro()
 
 	if config.Death.CorpsesEnabled {
 		room.AddCorpse(rooms.Corpse{

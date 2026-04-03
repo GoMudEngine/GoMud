@@ -103,11 +103,11 @@ func Submit(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 				targetPlayerId)
 
 			// End combat for both
-			mob.Character.Aggro = nil
+			mob.Character.EndAggro()
 			if targetMob != nil {
-				targetMob.Character.Aggro = nil
+				targetMob.Character.EndAggro()
 			} else {
-				targetChar.Character.Aggro = nil
+				targetChar.Character.EndAggro()
 			}
 
 		} else {

@@ -41,7 +41,7 @@ func PacifismAura(rest string, user *users.UserRecord, room *rooms.Room, flags e
 			continue
 		}
 		if mob.Character.Aggro.UserId == user.UserId {
-			mob.Character.Aggro = nil
+			mob.Character.EndAggro()
 			deAggroCount++
 		}
 	}
@@ -61,7 +61,7 @@ func PacifismAura(rest string, user *users.UserRecord, room *rooms.Room, flags e
 	user.SendText(`<ansi fg="yellow">The aura's peaceful influence washes over you as well. You cannot bring yourself to attack.</ansi>`)
 
 	// Also clear own aggro
-	user.Character.Aggro = nil
+	user.Character.EndAggro()
 
 	events.AddToQueue(events.SkillUsed{UserId: user.UserId, Skill: skills.Skullduggery, Details: "pacifism-aura"})
 

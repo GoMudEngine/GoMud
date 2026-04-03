@@ -464,7 +464,7 @@ func handlePlayerFlee(user *users.UserRecord, uRoom *rooms.Room, userId int) boo
 	user.SendText(fmt.Sprintf(`You flee to the <ansi fg="exit">%s</ansi> exit!`, exitName))
 	uRoom.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> flees to the <ansi fg="exit">%s</ansi> exit!`, user.Character.Name, exitName), user.UserId)
 
-	user.Character.Aggro = nil
+	user.Character.EndAggro()
 
 	originRoomId := user.Character.RoomId
 	if err := rooms.MoveToRoom(user.UserId, exitRoomId); err == nil {
@@ -840,7 +840,7 @@ func handleMobDownedGrace(mob *mobs.Mob, defUser *users.UserRecord, defRoom *roo
 	bal := configs.GetBalanceConfig()
 	graceRounds := int(bal.CoupDeGraceRounds)
 	if graceRounds <= 0 {
-		mob.Character.Aggro = nil
+		mob.Character.EndAggro()
 		return true
 	}
 	defUser.Character.DownedRounds++
@@ -889,7 +889,7 @@ func handlePlayerVsPlayer(user *users.UserRecord, uRoom *rooms.Room, evt events.
 	defUser := users.GetByUserId(user.Character.Aggro.UserId)
 
 	if uRoom == nil {
-		user.Character.Aggro = nil
+		user.Character.EndAggro()
 		return
 	}
 
@@ -908,20 +908,20 @@ func handlePlayerVsPlayer(user *users.UserRecord, uRoom *rooms.Room, evt events.
 
 	if !targetFound {
 		user.SendText(`Your target can't be found.`)
-		user.Character.Aggro = nil
+		user.Character.EndAggro()
 		return
 	}
 
 	defRoom := rooms.LoadRoom(defUser.Character.RoomId)
 	if defRoom == nil {
-		user.Character.Aggro = nil
+		user.Character.EndAggro()
 		return
 	}
 
 	defUser.Character.CancelBuffsWithFlag(buffs.CancelIfCombat)
 
 	if defUser.Character.Health < 1 {
-		user.Character.Aggro = nil
+		user.Character.EndAggro()
 		return
 	}
 
@@ -1033,7 +1033,7 @@ func handlePlayerVsMob(user *users.UserRecord, uRoom *rooms.Room, evt events.New
 			targetFound = false
 		} else {
 			if uRoom == nil {
-				user.Character.Aggro = nil
+				user.Character.EndAggro()
 				return
 			}
 			if _, exitRoomId := uRoom.FindExitByName(user.Character.Aggro.ExitName); exitRoomId != defMob.Character.RoomId {
@@ -1044,20 +1044,20 @@ func handlePlayerVsMob(user *users.UserRecord, uRoom *rooms.Room, evt events.New
 
 	if !targetFound {
 		user.SendText("Your target can't be found.")
-		user.Character.Aggro = nil
+		user.Character.EndAggro()
 		return
 	}
 
 	defRoom := rooms.LoadRoom(defMob.Character.RoomId)
 	if defRoom == nil {
-		user.Character.Aggro = nil
+		user.Character.EndAggro()
 		return
 	}
 
 	defMob.Character.CancelBuffsWithFlag(buffs.CancelIfCombat)
 
 	if defMob.Character.Health < 1 {
-		user.Character.Aggro = nil
+		user.Character.EndAggro()
 		return
 	}
 
@@ -1252,13 +1252,13 @@ func handlePlayerVsMob(user *users.UserRecord, uRoom *rooms.Room, evt events.New
 func handleMobVsPlayer(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, moonMod float64, affectedPlayerIds *[]int) {
 	defUser := users.GetByUserId(mob.Character.Aggro.UserId)
 	if defUser == nil || mob.Character.RoomId != defUser.Character.RoomId {
-		mob.Character.Aggro = nil
+		mob.Character.EndAggro()
 		return
 	}
 
 	defRoom := rooms.LoadRoom(defUser.Character.RoomId)
 	if defRoom == nil {
-		mob.Character.Aggro = nil
+		mob.Character.EndAggro()
 		return
 	}
 
@@ -1465,20 +1465,20 @@ func handleMobVsMob(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, aff
 	defMob := mobs.GetInstance(mob.Character.Aggro.MobInstanceId)
 
 	if defMob == nil || mob.Character.RoomId != defMob.Character.RoomId {
-		mob.Character.Aggro = nil
+		mob.Character.EndAggro()
 		return
 	}
 
 	defRoom := rooms.LoadRoom(defMob.Character.RoomId)
 	if defRoom == nil {
-		mob.Character.Aggro = nil
+		mob.Character.EndAggro()
 		return
 	}
 
 	defMob.Character.CancelBuffsWithFlag(buffs.CancelIfCombat)
 
 	if defMob.Character.Health < 1 {
-		mob.Character.Aggro = nil
+		mob.Character.EndAggro()
 		return
 	}
 
