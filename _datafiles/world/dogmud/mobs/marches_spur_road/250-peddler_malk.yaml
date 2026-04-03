@@ -1,6 +1,6 @@
 mobid: 250
 zone: Marches Spur Road
-statpool: 40
+statpool: 85
 itemdropchance: 0
 hostile: false
 maxwander: 0
@@ -29,7 +29,7 @@ character:
     no one. He has been camped here longer than he planned.
   speciesid: 1
   level: 1
-  gold: 0
+  gold: 50
   stats:
     perception:
       training: 8

@@ -22,3 +22,5 @@ skills:
   tailoring: 1
   unarmed-combat: 1
   weapon-combat: 1
+stat_use_count:
+  charisma: 1

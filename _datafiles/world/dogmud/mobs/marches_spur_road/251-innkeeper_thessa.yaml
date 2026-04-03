@@ -1,6 +1,6 @@
 mobid: 251
 zone: Marches Spur Road
-statpool: 36
+statpool: 85
 itemdropchance: 0
 hostile: false
 maxwander: 0
@@ -28,7 +28,7 @@ character:
     a flock, alert without anxiety.
   speciesid: 1
   level: 1
-  gold: 0
+  gold: 50
   stats:
     charisma:
       training: 8

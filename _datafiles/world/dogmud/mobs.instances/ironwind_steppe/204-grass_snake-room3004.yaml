@@ -23,8 +23,8 @@ skills:
   unarmed-combat: 1
   weapon-combat: 1
 skill_use_count:
-  unarmed-combat: 36
+  unarmed-combat: 51
 stat_use_count:
-  dexterity: 56
-  strength: 28
-mutation_progress: 9
+  dexterity: 84
+  strength: 42
+mutation_progress: 13.800000000000011

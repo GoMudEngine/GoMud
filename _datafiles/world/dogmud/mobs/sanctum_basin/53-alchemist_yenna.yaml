@@ -1,7 +1,7 @@
 mobid: 53
 zone: Sanctum Basin
 archetype: casting
-statpool: 75
+statpool: 120
 hostile: false
 maxwander: 0
 idlecommands:
@@ -91,7 +91,7 @@ character:
     who is always running three experiments in her head simultaneously.'
   speciesid: 1
   level: 3
-  gold: 0
+  gold: 200
   shop:
     - itemid: 40004
       quantity: 0

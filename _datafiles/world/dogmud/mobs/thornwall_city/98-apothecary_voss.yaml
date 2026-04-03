@@ -1,7 +1,7 @@
 mobid: 98
 zone: Thornwall City
 archetype: casting
-statpool: 54
+statpool: 120
 itemdropchance: 0
 hostile: false
 maxwander: 0
@@ -38,7 +38,7 @@ character:
     the work is excellent.
   speciesid: 1
   level: 1
-  gold: 0
+  gold: 200
   skills:
     alchemy: 8
   stats:

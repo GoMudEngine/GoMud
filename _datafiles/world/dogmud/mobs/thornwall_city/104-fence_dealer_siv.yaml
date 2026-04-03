@@ -1,6 +1,6 @@
 mobid: 104
 zone: Thornwall City
-statpool: 48
+statpool: 150
 itemdropchance: 0
 hostile: false
 maxwander: 0
@@ -26,10 +26,12 @@ character:
     and absolutely disinterested in your reasons for selling.
   speciesid: 1
   level: 1
-  gold: 10
+  gold: 300
   equipment:
     weapon:
       itemid: 10009
+  items:
+    - itemid: 10013
   stats:
     perception:
       training: 10

@@ -1,6 +1,6 @@
 mobid: 63
 zone: Sanctum Basin
-statpool: 60
+statpool: 120
 hostile: false
 maxwander: 0
 idlecommands:
@@ -92,7 +92,7 @@ character:
     might need. She has a gift for sizing up a customer in two seconds flat.'
   speciesid: 1
   level: 1
-  gold: 0
+  gold: 200
   shop:
     - itemid: 10001
       quantity: 0

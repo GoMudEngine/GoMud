@@ -1,6 +1,6 @@
 mobid: 248
 zone: Thornwall City
-statpool: 30
+statpool: 120
 itemdropchance: 0
 hostile: false
 maxwander: 0
@@ -25,7 +25,7 @@ character:
     behind one ear like a carpenter's pencil.
   speciesid: 1
   level: 1
-  gold: 0
+  gold: 200
   stats:
     vitality:
       training: 5

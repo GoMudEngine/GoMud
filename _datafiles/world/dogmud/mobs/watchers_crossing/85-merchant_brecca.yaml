@@ -1,6 +1,6 @@
 mobid: 85
 zone: Watchers Crossing
-statpool: 54
+statpool: 100
 itemdropchance: 0
 hostile: false
 maxwander: 0
@@ -26,7 +26,7 @@ character:
     toll that is strangling trade at the crossing.
   speciesid: 1
   level: 1
-  gold: 0
+  gold: 100
   shop:
     - itemid: 30001
       quantity: 0
