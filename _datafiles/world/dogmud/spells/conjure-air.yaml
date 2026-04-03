@@ -1,0 +1,15 @@
+spellid: conjure-air
+name: Conjure Air Elemental
+description: Tears an air elemental from the elemental plane and binds it
+  to your command. Blindingly fast but fragile; best for harassment.
+type: neutral
+schools:
+  - manifestation
+cost: 280
+waitrounds: 3
+difficulty: 0
+primarystat: willpower
+base_folds: 8
+target_defense_type: none
+effect_type: none
+effect_magnitude: 0

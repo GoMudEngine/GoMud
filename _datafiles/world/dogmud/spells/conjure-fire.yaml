@@ -1,0 +1,15 @@
+spellid: conjure-fire
+name: Conjure Fire Elemental
+description: Wrenches a fire elemental into existence and shackles it to
+  your will. Strikes back at anyone who hits it with bare flesh.
+type: neutral
+schools:
+  - manifestation
+cost: 350
+waitrounds: 4
+difficulty: 0
+primarystat: willpower
+base_folds: 10
+target_defense_type: none
+effect_type: none
+effect_magnitude: 0

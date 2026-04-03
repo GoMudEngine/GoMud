@@ -1,0 +1,16 @@
+spellid: conjure-magma
+name: Conjure Magma Elemental
+description: Forces a magma elemental through the planar boundary and
+  binds it as a companion. Combined might of earth and fire; the toll
+  on the conjurer's conviction is devastating.
+type: neutral
+schools:
+  - manifestation
+cost: 450
+waitrounds: 5
+difficulty: 0
+primarystat: willpower
+base_folds: 14
+target_defense_type: none
+effect_type: none
+effect_magnitude: 0

@@ -1,0 +1,15 @@
+spellid: conjure-earth
+name: Conjure Earth Elemental
+description: Drags a hulking earth elemental into the world and binds it
+  as a companion. Brutally slow but nearly impossible to topple.
+type: neutral
+schools:
+  - manifestation
+cost: 200
+waitrounds: 3
+difficulty: 0
+primarystat: willpower
+base_folds: 6
+target_defense_type: none
+effect_type: none
+effect_magnitude: 0
