@@ -3,6 +3,7 @@ zone: Marches Spur Road
 statpool: 85
 itemdropchance: 0
 hostile: false
+charm_immune: true
 maxwander: 0
 groups:
   - humanoid

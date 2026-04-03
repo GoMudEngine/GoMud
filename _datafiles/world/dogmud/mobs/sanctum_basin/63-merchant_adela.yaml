@@ -2,6 +2,7 @@ mobid: 63
 zone: Sanctum Basin
 statpool: 120
 hostile: false
+charm_immune: true
 maxwander: 0
 idlecommands:
   - 'emote straightens a row of items on the display counter'

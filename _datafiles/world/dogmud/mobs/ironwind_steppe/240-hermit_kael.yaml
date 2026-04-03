@@ -3,6 +3,7 @@ zone: Ironwind Steppe
 statpool: 100
 itemdropchance: 0
 hostile: false
+charm_immune: true
 maxwander: 0
 archetype: fighting
 groups:

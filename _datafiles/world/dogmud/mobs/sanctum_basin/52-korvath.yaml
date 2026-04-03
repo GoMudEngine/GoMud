@@ -3,6 +3,7 @@ zone: Sanctum Basin
 archetype: fighting
 statpool: 90
 hostile: false
+charm_immune: true
 maxwander: 0
 idlecommands:
   - 'emote hammers at the anvil with practiced, rhythmic blows'

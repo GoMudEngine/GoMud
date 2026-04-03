@@ -2,6 +2,7 @@ mobid: 259
 zone: Ashwick
 statpool: 36
 hostile: false
+charm_immune: true
 maxwander: 0
 groups:
   - humanoid

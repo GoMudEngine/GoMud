@@ -4,6 +4,7 @@ archetype: fighting
 statpool: 75
 itemdropchance: 0
 hostile: false
+charm_immune: true
 maxwander: 1
 groups:
   - humanoid

@@ -60,6 +60,8 @@ type CompanionInfo struct {
 	Mutations        map[string]int      `yaml:"mutations,omitempty"`
 	SpellBook        map[string]int      `yaml:"spellbook,omitempty"`
 	MutationProgress float64             `yaml:"mutation_progress,omitempty"`
+	CharmDuration    int                 `yaml:"charm_duration,omitempty"`  // Rounds until charm re-roll (0 = no timer)
+	CharmRerolls     int                 `yaml:"charm_rerolls,omitempty"`   // Number of times charm has been re-rolled
 }
 
 // GetCompanion finds a companion by name (case-insensitive partial match).

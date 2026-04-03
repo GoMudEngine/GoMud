@@ -3,6 +3,7 @@ zone: Labyrinth of Low Tunnels
 archetype: casting
 statpool: 15
 hostile: false
+charm_immune: true
 maxwander: 0
 buffids: [29]
 groups:

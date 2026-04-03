@@ -4,6 +4,7 @@ archetype: casting
 statpool: 88
 itemdropchance: 0
 hostile: false
+charm_immune: true
 maxwander: 0
 groups:
   - humanoid
