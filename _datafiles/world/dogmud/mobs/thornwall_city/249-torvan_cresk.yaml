@@ -10,6 +10,7 @@ groups:
   - humanoid
   - smuggler
 idlecommands:
+  - 'sneak'
   - 'emote studies a map on the table, tracing a route with one finger'
   - 'emote rests a hand on the strongbox key at his belt, watching you'
   - ''

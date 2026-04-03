@@ -9,6 +9,7 @@ groups:
   - bandit
   - humanoid
 idlecommands:
+  - 'sneak'
   - 'emote loiters at the roadside, watching passing traffic with calculating eyes'
   - 'emote flips a coin absently, catching it without looking'
   - ''

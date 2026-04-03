@@ -9,6 +9,7 @@ groups:
   - humanoid
   - smuggler
 idlecommands:
+  - 'sneak'
   - 'emote shifts a crate against the wall, grunting with effort'
   - 'emote checks a mark on the wall and nods to himself'
   - ''
