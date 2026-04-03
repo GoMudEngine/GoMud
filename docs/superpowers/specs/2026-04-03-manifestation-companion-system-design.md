@@ -183,6 +183,23 @@ via the existing charmed mob assist code in `attack.go` and
 **Party Member → Companion:** Other party members with autoassist
 also defend companions, same as they would any party member.
 
+### Party Merge Behavior
+
+When a player with companions is invited to a party:
+- `party invite <player>` — invites the player AND all their
+  companions join the party automatically
+- No separate invite needed for each companion
+
+When a player with companions leaves a party:
+- `party leave` — the player AND all their companions leave
+- A new party is formed with just the player + their companions
+- Remaining party members keep their party intact
+
+This means two players with companions can party up seamlessly:
+Player A (with wolf) invites Player B (with swarm) → party of
+4: A, wolf, B, swarm. If B leaves → B+swarm form their own
+party, A+wolf stay in the original party.
+
 ### Auto-Assist Toggle
 
 `companion <name> assist on` / `companion <name> assist off`
