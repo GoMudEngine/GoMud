@@ -22,45 +22,57 @@ corpse/skill.
 Each type gets its own species definition with appropriate base
 stats, its own mob YAML template, and a corresponding raise spell.
 
-### Species Stat Profiles
+### Species Base Stats
 
-**Skeleton** (species TBD):
-- High Dex, moderate Str, low Vit/Wil/Cha
-- Fast attacks, poor durability
+All stats use 100 = average human as baseline.
+
+| Species | Str | Dex | Per | Vit | Wil | Cha | Notes |
+|---------|-----|-----|-----|-----|-----|-----|-------|
+| Skeleton | 100 | 150 | 80 | 60 | 15 | 5 | Fast striker, fragile |
+| Zombie | 130 | 50 | 40 | 200 | 15 | 5 | Hits hard, absorbs everything |
+| Wraith | 40 | 160 | 150 | 35 | 170 | 30 | Ethereal — hard to hit, strong caster |
+| Spectre | 30 | 150 | 130 | 30 | 150 | 170 | Ethereal — hard to hit, conviction powerhouse |
+| Vampire | 120 | 140 | 120 | 110 | 110 | 160 | All-rounder, nothing below average |
+| Flesh Golem | 220 | 65 | 40 | 240 | 15 | 5 | Slow but functional, extreme Str/Vit |
+
+**Wraith/Spectre defense philosophy:** Low Vit = tiny HP pool, but
+extremely high Dex = nearly impossible to hit with melee. Players
+fight them with spells. This is thematic — ethereal beings phase
+through physical attacks.
+
+### Species Details
+
+**Skeleton:**
 - No special abilities
+- Fast attacks from high Dex, average human strength
+- Fragile (Vit 60) — a glass cannon melee fighter
 
-**Zombie** (species TBD):
-- High Vit, moderate Str, very low Dex/Per/Wil/Cha
-- Slow but tanky, absorbs punishment
+**Zombie:**
 - No special abilities
+- Enormous HP pool from Vit 200, strong hits (Str 130)
+- Very slow (Dex 50), poor awareness — a wall of meat
 
-**Wraith** (species TBD):
-- High Wil, high Per, moderate Dex, low Str/Vit/Cha
+**Wraith:**
 - Starting spells: chill touch (harm), minor shield (buff)
 - Can discover more spells via manifestation discovery
-- Detects hidden enemies (nightvision/see-hidden buff)
+- Spawns with nightvision/see-hidden buffs (detects hidden)
 
-**Spectre** (species TBD):
-- High Cha, high Wil, moderate Per, low Str/Vit/Dex
-- Starting spells: conviction spike (conviction damage),
-  conviction ward (conviction defense), fear (debuff)
+**Spectre:**
+- Starting spells: conviction spike, conviction ward, fear
 - Slightly better starting spells than wraith
 - Can discover more spells
 
-**Vampire** (species TBD):
-- Balanced stats, high Cha, moderate across physical
+**Vampire:**
 - Starting spells: ward (self-buff), conviction surge (buff)
-- Special attack: bite (melee that heals the vampire)
+- Special attack: bite (melee + life drain, heals self)
 - Hybrid: primarily fights, self-buffs between engagements
 - Can discover more spells (self-buff focused)
 
-**Flesh Golem** (species TBD):
-- Extreme Str and Vit, very low Dex/Per/Wil/Cha
-- Slowest but hardest hitting and tankiest
+**Flesh Golem:**
+- No spells
 - Special: absorbs corpses in room for temporary stat buff /
-  healing (uses existing consume mechanic as base)
-- Combat flavor: "rips a piece from the fallen and grafts it
-  onto itself"
+  healing (extends existing consume mechanic)
+- Flavor: "rips a piece from the fallen and grafts it onto itself"
 
 ## Raise Spells
 
@@ -88,14 +100,14 @@ Each undead type requires the corpse to have a minimum original
 statpool (sum of all stat training values). If the corpse is too
 weak, the raise fails with flavor text.
 
-| Type | Min Corpse Statpool |
-|------|-------------------|
-| Skeleton | 10 |
-| Zombie | 20 |
-| Wraith | 40 |
-| Spectre | 60 |
-| Vampire | 80 |
-| Flesh Golem | 100 |
+| Type | Min Corpse Statpool | What qualifies currently |
+|------|-------------------|------------------------|
+| Skeleton | 30 | Most basic mobs (rats, pests) |
+| Zombie | 60 | Standard combat mobs (bandits, scouts) |
+| Wraith | 120 | Mid-tier mobs (guard captains, wardens) |
+| Spectre | 200 | Strong mobs (pale lurkers, deep gnawers) |
+| Vampire | 300 | Future endgame content only |
+| Flesh Golem | 500 | Future raid/boss content only |
 
 ## Scaling Formula
 
