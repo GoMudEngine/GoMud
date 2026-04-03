@@ -32,6 +32,7 @@ var (
 		"break":          {Break, false},
 		"broadcast":      {Broadcast, false},
 		"cast":           {Cast, false},
+		"craft":          {Craft, false},
 		"charge":         {Charge, false},
 		"consume":        {Consume, false},
 		"converse":       {Converse, false},

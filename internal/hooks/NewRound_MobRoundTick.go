@@ -6,7 +6,9 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/crafting"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
@@ -226,6 +228,48 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 					cmd = strings.TrimSpace(cmd)
 					if len(cmd) > 0 {
 						mob.Command(cmd)
+					}
+				}
+			}
+		}
+
+		// Crafting tick — advance or complete active crafting for mob NPCs.
+		// Mobs are interrupted by combat (same behaviour as players).
+		if mob.Character.CraftingState != nil {
+			if mob.Character.Aggro != nil {
+				mob.Character.CraftingState = nil
+			} else {
+				cs := mob.Character.CraftingState
+				cs.RoundsComplete++
+				if cs.RoundsComplete >= cs.RoundsTotal {
+					recipe := crafting.GetRecipe(cs.RecipeId)
+					mob.Character.CraftingState = nil
+					if recipe != nil {
+						sl := mob.Character.Skills[recipe.Skill]
+						chance := crafting.CalcSuccessChance(sl, recipe.SkillMinimum)
+						roll := util.Rand(100)
+						util.LogRoll("MobCraft", roll, chance)
+						if roll < chance {
+							mob.Character.Items, mob.Character.ComponentItems =
+								crafting.ConsumeIngredients(
+									mob.Character.Items,
+									mob.Character.ComponentItems,
+									recipe)
+							newItem := items.New(recipe.Output.ItemId)
+							mob.Character.StoreItem(newItem)
+							mob.Character.OnSkillUse(recipe.Skill, 0)
+							if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
+								room.SendText(fmt.Sprintf(
+									`<ansi fg="mobname">%s</ansi> finishes their work.`,
+									mob.Character.Name))
+							}
+						} else {
+							mob.Character.Items, mob.Character.ComponentItems =
+								crafting.ConsumeIngredients(
+									mob.Character.Items,
+									mob.Character.ComponentItems,
+									recipe)
+						}
 					}
 				}
 			}
