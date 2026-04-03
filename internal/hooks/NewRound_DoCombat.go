@@ -30,6 +30,34 @@ func DoCombat(e events.Event) events.ListenerReturn {
 	// Do any resolution or extra checks based on everyone that has been involved in combat this round.
 	handleAffected(append(affectedPlayers1, affectedPlayers2...), append(affectedMobs1, affectedMobs2...))
 
+	// Post-combat retarget pass: players with no aggro who have mobs
+	// attacking them (or their companions) should pick up a target.
+	// This catches cases where mobs initiated combat during handleMobCombat
+	// but the player's retarget scan in handlePlayerCombat ran too early.
+	for _, userId := range users.GetOnlineUserIds() {
+		user := users.GetByUserId(userId)
+		if user == nil || user.Character.Aggro != nil {
+			continue
+		}
+		uRoom := rooms.LoadRoom(user.Character.RoomId)
+		if uRoom == nil {
+			continue
+		}
+		if RetargetOrEnd(user.Character, uRoom, user.UserId, 0) {
+			targetName := "something"
+			if user.Character.Aggro.MobInstanceId > 0 {
+				if m := mobs.GetInstance(user.Character.Aggro.MobInstanceId); m != nil {
+					targetName = m.Character.Name
+				}
+			} else if user.Character.Aggro.UserId > 0 {
+				if u := users.GetByUserId(user.Character.Aggro.UserId); u != nil {
+					targetName = u.Character.Name
+				}
+			}
+			user.SendText(fmt.Sprintf("You shift your focus to <ansi fg=\"mobname\">%s</ansi>!", targetName))
+		}
+	}
+
 	return events.Continue
 }
 
