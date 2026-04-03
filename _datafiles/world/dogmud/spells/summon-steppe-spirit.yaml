@@ -4,7 +4,8 @@ description: Calls forth a spirit wolf from the steppe's spiritual
   plane to fight alongside you.
 type: helpsingle
 schools:
-  - vital
+  - manifestation
+quest_required: "12-end"
 cost: 35
 waitrounds: 3
 difficulty: 0

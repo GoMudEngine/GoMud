@@ -1,15 +1,17 @@
 // Summon Steppe Spirit — spirit wolf companion spell
 // Requires: Spirit Fetish (item 40031) consumed on cast
 // Spawns: Steppe Spirit Wolf (mob 243), charmed permanently
-// Limit: one spirit wolf per caster
+// School: manifestation — scales with charisma + manifestation skill
+// Quest-gated: only castable after completing Quest 12
 
 var COMPONENT_ITEM_ID = 40031;
 var SUMMON_MOB_ID = 243;
+var BASE_STAT_POOL = 120;
 
 function onCast(sourceActor, targetActor) {
-    // Check if caster already has an active charmed mob
-    if (sourceActor.HasCharmedMobs()) {
-        SendUserMessage(sourceActor.UserId(), 'A steppe spirit already walks beside you. The wind carries only one voice at a time.');
+    // Check companion cap
+    if (sourceActor.GetCompanionCount() >= sourceActor.GetMaxCompanionCount()) {
+        SendUserMessage(sourceActor.UserId(), 'You have reached your limit of bound companions. Release one before calling another.');
         return false;
     }
 
@@ -29,6 +31,12 @@ function onWait(sourceActor, targetActor) {
 }
 
 function onMagic(sourceActor, targetActor) {
+    // Re-check companion cap (state may have changed between cast and resolve)
+    if (sourceActor.GetCompanionCount() >= sourceActor.GetMaxCompanionCount()) {
+        SendUserMessage(sourceActor.UserId(), 'You have reached your limit of bound companions. The spirit cannot answer your call.');
+        return;
+    }
+
     // Consume the component
     var items = sourceActor.GetBackpackItems();
     var consumed = false;
@@ -44,9 +52,15 @@ function onMagic(sourceActor, targetActor) {
         return;
     }
 
-    // Spawn the spirit wolf
+    // Calculate scaled stat pool: charisma and manifestation skill both contribute
+    var charisma = sourceActor.GetStat('charisma');
+    var manifestSkill = sourceActor.GetSkillLevel('manifestation');
+    var scale = 1.0 + charisma / 200.0 + manifestSkill * 0.02;
+    var scaledPool = Math.round(BASE_STAT_POOL * scale);
+
+    // Spawn the spirit wolf with scaled stats
     var room = GetRoom(sourceActor.GetRoomId());
-    var wolf = room.SpawnMob(SUMMON_MOB_ID);
+    var wolf = room.SpawnMobScaled(SUMMON_MOB_ID, scaledPool);
     if (!wolf) {
         SendUserMessage(sourceActor.UserId(), 'The spirits stir but refuse to take form. Something is wrong.');
         return;
@@ -54,6 +68,9 @@ function onMagic(sourceActor, targetActor) {
 
     // Charm permanently (99999 rounds)
     wolf.CharmSet(sourceActor.UserId(), 99999);
+
+    // Register as companion
+    sourceActor.AddCompanion(wolf.InstanceId(), 'summoned', 'Steppe Spirit Wolf');
 
     SendUserMessage(sourceActor.UserId(), 'The fetish dissolves into motes of pale light. A spectral wolf coalesces from steppe wind and moonlight, its eyes burning with cold intelligence. It regards you steadily, then falls into step beside you.');
     SendRoomMessage(sourceActor.GetRoomId(), 'A ghostly wolf materializes from swirling wind and pale light, falling into step beside '+sourceActor.GetCharacterName(true)+'.', sourceActor.UserId());
