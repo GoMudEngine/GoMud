@@ -509,6 +509,41 @@ func dispatchCritEffectsPvM(result CritEffectResult, atkUser *users.UserRecord, 
 	}
 }
 
+// handleCompanionOwnerAssist triggers a companion's owner (and the owner's other
+// companions) to fight back when the companion is attacked.
+// attackerDesc is the attack-command argument that identifies the attacker
+// (e.g. "#42" for a mob instance or "@7" for a player).
+func handleCompanionOwnerAssist(defMob *mobs.Mob, attackerDesc string) {
+	ownerId := defMob.Character.GetCharmedUserId()
+	if ownerId == 0 {
+		return
+	}
+	owner := users.GetByUserId(ownerId)
+	if owner == nil {
+		return
+	}
+
+	// Find the companion entry to check AutoAssist.
+	comp := owner.Character.GetCompanionByInstanceId(defMob.InstanceId)
+	if comp == nil || !comp.AutoAssist {
+		return
+	}
+
+	// Owner fights back if not already in combat.
+	if owner.Character.Aggro == nil {
+		owner.Character.Aggro = &characters.Aggro{
+			Type: characters.DefaultAttack,
+		}
+		owner.Command(fmt.Sprintf("attack %s", attackerDesc))
+	}
+
+	// Other companions of the same owner also assist.
+	ownerRoom := rooms.LoadRoom(owner.Character.RoomId)
+	if ownerRoom != nil {
+		handleCharmedMobAssist(ownerRoom, ownerId, attackerDesc)
+	}
+}
+
 // handleCharmedMobAssist triggers charmed mobs to assist their owner when attacked.
 func handleCharmedMobAssist(room *rooms.Room, defId int, targetDesc string) {
 	for _, instanceId := range room.GetMobs(rooms.FindCharmed) {
@@ -1161,6 +1196,9 @@ func handlePlayerVsMob(user *users.UserRecord, uRoom *rooms.Room, evt events.New
 		defMob.Command(fmt.Sprintf("attack @%d", user.UserId))
 	}
 
+	// Bidirectional autoassist: companion owner fights back when their companion is attacked.
+	handleCompanionOwnerAssist(defMob, fmt.Sprintf("@%d", user.UserId))
+
 	if user.Character.Health <= 0 || defMob.Character.Health <= 0 {
 		defMob.Character.EndAggro()
 		user.Character.EndAggro()
@@ -1465,6 +1503,9 @@ func handleMobVsMob(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, aff
 		}
 		defMob.Command(fmt.Sprintf("attack #%d", mob.InstanceId))
 	}
+
+	// Bidirectional autoassist: companion owner fights back when companion is attacked.
+	handleCompanionOwnerAssist(defMob, fmt.Sprintf("#%d", mob.InstanceId))
 
 	handleOffhandBreakMobDef(roundResult, defMob)
 
