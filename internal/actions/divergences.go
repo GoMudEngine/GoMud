@@ -113,10 +113,17 @@ var userOnlyCommands = map[string]string{
 }
 
 // mobOnlyCommands lists mob commands that intentionally have no user equivalent.
+//
+// Future work candidates (not mob-only forever):
+//   - howl: functionally a renamed taunt — should use shared taunt action
+//   - roar: candidate for player shout/intimidation system
+//   - throw: planned for player ranged attacks
+//   - alchemy: legacy mob brewing — consolidate with shared craft system
+//   - backstab: redundant with surprise strike system — candidate for removal
 var mobOnlyCommands = map[string]string{
 	// --- Mob AI behaviours ---
 	"aid":            "mob-ai",
-	"backstab":       "mob-ai",
+	"backstab":       "mob-ai: redundant with surprise strike, remove later",
 	"befriend":       "mob-ai",
 	"callforhelp":    "mob-ai",
 	"charge":         "mob-ai",
@@ -125,20 +132,20 @@ var mobOnlyCommands = map[string]string{
 	"despawn":        "mob-ai",
 	"givequest":      "mob-ai",
 	"hamstring":      "mob-ai",
-	"howl":           "mob-ai",
+	"howl":           "mob-ai: renamed taunt, unify with taunt system",
 	"lookforaid":     "mob-ai",
 	"lookfortrouble": "mob-ai",
 	"pathto":         "mob-ai",
 	"portal":         "mob-ai",
 	"replyto":        "mob-ai",
-	"roar":           "mob-ai",
+	"roar":           "mob-ai: future player shout/intimidation",
 	"sayto":          "mob-ai",
 	"saytoonly":      "mob-ai",
-	"throw":          "mob-ai",
+	"throw":          "mob-ai: future player ranged ability",
 	"wander":         "mob-ai",
 
-	// --- Mob-only alchemy ---
-	"alchemy": "mob-alchemy",
+	// --- Legacy mob alchemy (consolidate with shared craft) ---
+	"alchemy": "mob-alchemy: consolidate with shared craft system",
 }
 
 // AuditCommandParity compares the user and mob command registries and logs a
