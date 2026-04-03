@@ -16,6 +16,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
@@ -1122,6 +1123,29 @@ func handlePlayerVsMob(user *users.UserRecord, uRoom *rooms.Room, evt events.New
 		}
 	}
 
+	// Return damage — fire elementals, battlerager armor, etc.
+	// Direct HP reduction; does NOT trigger another combat round (no recursion risk).
+	if roundResult.Hit && roundResult.DamageToTarget > 0 {
+		returnPct := defMob.Character.StatMod("return_damage")
+		if sp := species.GetSpecies(defMob.Character.SpeciesId); sp != nil {
+			returnPct += sp.ReturnDamage
+		}
+		if returnPct > 0 {
+			returnDmg := int(float64(roundResult.DamageToTarget) * float64(returnPct) / 100.0)
+			if returnDmg > 0 {
+				user.Character.Health -= returnDmg
+				dmgDesc := combat.GetDamageDescription(returnDmg, user.Character.HealthMax.Value)
+				defMobName := mobDisplayName(defMob, defRoom, user.UserId)
+				sendCombatRoomText(uRoom, fmt.Sprintf(
+					`<ansi fg="red">%s recoils from striking %s! (%s)</ansi>`,
+					user.Character.Name, defMobName, dmgDesc))
+				user.SendText(fmt.Sprintf(
+					`<ansi fg="red">You recoil from striking %s! (%s)</ansi>`,
+					defMobName, dmgDesc))
+			}
+		}
+	}
+
 	// Stage 30.1: Record combat analytics
 	pvmAtkType := "unarmed"
 	if user.Character.Equipment.Weapon.ItemId > 0 {
@@ -1319,6 +1343,29 @@ func handleMobVsPlayer(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, 
 		}
 	}
 
+	// Return damage — fire elementals, battlerager armor, etc.
+	// Direct HP reduction; does NOT trigger another combat round (no recursion risk).
+	if roundResult.Hit && roundResult.DamageToTarget > 0 {
+		returnPct := defUser.Character.StatMod("return_damage")
+		if sp := species.GetSpecies(defUser.Character.SpeciesId); sp != nil {
+			returnPct += sp.ReturnDamage
+		}
+		if returnPct > 0 {
+			returnDmg := int(float64(roundResult.DamageToTarget) * float64(returnPct) / 100.0)
+			if returnDmg > 0 {
+				mob.Character.Health -= returnDmg
+				dmgDesc := combat.GetDamageDescription(returnDmg, mob.Character.HealthMax.Value)
+				mvpMobName := mobDisplayName(mob, mobRoom, defUser.UserId)
+				defUser.SendText(fmt.Sprintf(
+					`<ansi fg="red">%s recoils from striking you! (%s)</ansi>`,
+					mvpMobName, dmgDesc))
+				sendCombatRoomText(mobRoom, fmt.Sprintf(
+					`<ansi fg="red">%s recoils from striking %s! (%s)</ansi>`,
+					mvpMobName, defUser.Character.Name, dmgDesc), defUser.UserId)
+			}
+		}
+	}
+
 	// Stage 30.1: Record combat analytics
 	mvpAtkType := "unarmed"
 	if mob.Character.Equipment.Weapon.ItemId > 0 {
@@ -1473,6 +1520,27 @@ func handleMobVsMob(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, aff
 				}
 				defMob.Character.Health -= bonusDmg
 				roundResult.DamageToTarget += bonusDmg
+			}
+		}
+	}
+
+	// Return damage — fire elementals, battlerager armor, etc.
+	// Direct HP reduction; does NOT trigger another combat round (no recursion risk).
+	if roundResult.Hit && roundResult.DamageToTarget > 0 {
+		returnPct := defMob.Character.StatMod("return_damage")
+		if sp := species.GetSpecies(defMob.Character.SpeciesId); sp != nil {
+			returnPct += sp.ReturnDamage
+		}
+		if returnPct > 0 {
+			returnDmg := int(float64(roundResult.DamageToTarget) * float64(returnPct) / 100.0)
+			if returnDmg > 0 {
+				mob.Character.Health -= returnDmg
+				dmgDesc := combat.GetDamageDescription(returnDmg, mob.Character.HealthMax.Value)
+				atkMobName := mobDisplayName(mob, mobRoom, 0)
+				defMobName := mobDisplayName(defMob, defRoom, 0)
+				sendCombatRoomText(mobRoom, fmt.Sprintf(
+					`<ansi fg="red">%s recoils from striking %s! (%s)</ansi>`,
+					atkMobName, defMobName, dmgDesc))
 			}
 		}
 	}
