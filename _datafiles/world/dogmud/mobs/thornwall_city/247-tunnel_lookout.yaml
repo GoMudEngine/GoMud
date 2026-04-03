@@ -15,7 +15,6 @@ idlecommands:
   - ''
   - ''
 combatcommands:
-  - 'sneak'
   - 'emote stabs quickly with a short blade'
   - ''
   - 'emote darts back and strikes again'

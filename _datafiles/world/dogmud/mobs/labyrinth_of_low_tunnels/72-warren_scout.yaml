@@ -18,7 +18,6 @@ idlecommands:
   - ''
   - ''
 combatcommands:
-  - 'sneak'
   - 'emote hisses and darts sideways, trying to flank'
   - ''
   - 'emote lets out a shrill whistle that echoes through the tunnels'

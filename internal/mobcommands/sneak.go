@@ -8,9 +8,13 @@ import (
 
 func Sneak(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
-	// Must be sneaking
-	isSneaking := mob.Character.HasBuffFlag(buffs.Hidden)
-	if isSneaking {
+	// Can't sneak while in combat
+	if mob.Character.Aggro != nil {
+		return true, nil
+	}
+
+	// Already sneaking
+	if mob.Character.HasBuffFlag(buffs.Hidden) {
 		return true, nil
 	}
 

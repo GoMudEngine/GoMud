@@ -16,7 +16,6 @@ idlecommands:
 combatcommands:
   - 'emote draws a short blade and advances with practiced confidence'
   - ''
-  - 'sneak'
   - 'emote feints left, then strikes from the right'
   - ''
   - ''

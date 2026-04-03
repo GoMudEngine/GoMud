@@ -15,7 +15,6 @@ idlecommands:
   - ''
   - ''
 combatcommands:
-  - 'sneak'
   - 'emote draws a blackened blade and strikes with practiced precision'
   - ''
   - 'emote pivots and slashes in a tight arc'

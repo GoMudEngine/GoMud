@@ -19,7 +19,6 @@ idlecommands:
   - 'emote opens a wide, pale mouth in a silent yawn'
 activitylevel: 10
 combatcommands:
-  - 'sneak'
   - ''
   - ''
   - ''

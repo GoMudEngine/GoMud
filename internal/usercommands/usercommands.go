@@ -163,7 +163,7 @@ var (
 		`skills`:      {Skills, true, true, false},
 		`skillset`:    {Skillset, false, true, true}, // Admin only
 		`shadow`:      {Shadow, false, false, false},
-		`sneak`:       {Sneak, false, true, false},
+		`sneak`:       {Sneak, false, false, false}, // Can't sneak in combat
 		`sonic-shout`: {SonicShout, false, true, false},
 		`spawn`:       {Spawn, false, true, true}, // Admin only
 		`spell`:       {Spell, true, true, true},  // Admin only
