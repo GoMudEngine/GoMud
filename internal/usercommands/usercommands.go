@@ -50,6 +50,7 @@ var (
 		`afk`:         {AFK, true, true, false},
 		`appraise`:    {Appraise, false, true, false},
 		`ask`:         {Ask, false, true, false},
+		`assess`:      {Assess, false, true, false},
 		`assist`:      {Assist, false, true, false},
 		`attack`:      {Attack, false, true, false},
 		`ai-flag`:    {AiFlag, true, true, true},       // Admin only
