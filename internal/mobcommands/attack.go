@@ -72,9 +72,11 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 				mob.Character.Buffs.RemoveBuff(9)
 				mob.Character.Validate(true)
 			}
+			// Only announce if not already fighting this target
+			alreadyFighting := mob.Character.Aggro != nil && mob.Character.Aggro.UserId == attackPlayerId
 			mob.Character.SetAggro(attackPlayerId, 0, aggroType)
 
-			if !isSneaking {
+			if !isSneaking && !alreadyFighting {
 
 				if canSeeInDark(u, room) {
 					u.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> prepares to fight you!`, mob.Character.Name))
