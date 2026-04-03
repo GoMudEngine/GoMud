@@ -17,6 +17,33 @@ import (
 // respawnCompanions re-creates mob instances for all stored companions.
 // Called once the player is fully in the world.
 func respawnCompanions(user *users.UserRecord) {
+	// First: clean up any stale instances from a previous session
+	// (e.g., browser refresh without clean logout).
+	for i := range user.Character.Companions {
+		comp := &user.Character.Companions[i]
+		if comp.InstanceId > 0 {
+			if oldMob := mobs.GetInstance(comp.InstanceId); oldMob != nil {
+				oldMob.Character.RemoveCharm()
+				if oldRoom := rooms.LoadRoom(oldMob.Character.RoomId); oldRoom != nil {
+					oldRoom.RemoveMob(comp.InstanceId)
+				}
+				mobs.DestroyInstance(comp.InstanceId)
+			}
+			comp.InstanceId = 0
+		}
+	}
+	// Also clean up any charmed mobs that aren't in the Companions list
+	for _, charmId := range user.Character.GetCharmIds() {
+		user.Character.TrackCharmed(charmId, false)
+		if oldMob := mobs.GetInstance(charmId); oldMob != nil {
+			oldMob.Character.RemoveCharm()
+			if oldRoom := rooms.LoadRoom(oldMob.Character.RoomId); oldRoom != nil {
+				oldRoom.RemoveMob(charmId)
+			}
+			mobs.DestroyInstance(charmId)
+		}
+	}
+
 	for i := range user.Character.Companions {
 		comp := &user.Character.Companions[i]
 		if comp.MobId == 0 {
