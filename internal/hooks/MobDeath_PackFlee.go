@@ -54,6 +54,11 @@ func PackFlee(e events.Event) events.ListenerReturn {
 			continue
 		}
 
+		// Charmed/companion mobs don't flee with wild packs
+		if mob.Character.IsCharmed() {
+			continue
+		}
+
 		// Check alliance: same MobId or same species
 		if mob.MobId != mobs.MobId(evt.MobId) {
 			if mob.Character.SpeciesId == 0 ||
