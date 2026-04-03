@@ -3,13 +3,9 @@ package usercommands
 import (
 	"fmt"
 
-	"github.com/GoMudEngine/GoMud/internal/buffs"
-	"github.com/GoMudEngine/GoMud/internal/combat"
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/configs"
-	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
-	"github.com/GoMudEngine/GoMud/internal/mobs"
-	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -29,17 +25,6 @@ func Sneak(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return false, nil
 	}
 
-	// Already hidden
-	if user.Character.HasBuffFlag(buffs.Hidden) {
-		user.SendText("You're already hidden!")
-		return true, nil
-	}
-
-	if user.Character.Aggro != nil {
-		user.SendText("You can't do that while in combat!")
-		return true, nil
-	}
-
 	// Can't sneak while crafting
 	if user.Character.CraftingState != nil {
 		user.SendText(`You are busy crafting.`)
@@ -57,91 +42,39 @@ func Sneak(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return true, nil
 	}
 
-	// Sneak score: Dexterity + skill curve bonus (penalized by illumination)
-	sneakScore := calcSneakScore(user.Character)
+	result := actions.ExecuteSneak(&actions.UserActor{User: user, Room: room})
 
-	// Build party member exclusion set so we skip allies
-	partySet := map[int]bool{user.UserId: true}
-	if party := parties.Get(user.UserId); party != nil {
-		for _, memberId := range party.GetMembers() {
-			partySet[memberId] = true
-		}
-	}
+	switch {
+	case result.AlreadyHidden:
+		user.SendText("You're already hidden!")
+		return true, nil
 
-	spotted := false
-	spotterName := ""
-	rollHappened := false
+	case result.InCombat:
+		user.SendText("You can't do that while in combat!")
+		return true, nil
 
-	// Check each player in the room
-	for _, observerId := range room.GetPlayers() {
-		if partySet[observerId] {
-			continue
-		}
-		observer := users.GetByUserId(observerId)
-		if observer == nil {
-			continue
-		}
-
-		searchRank := observer.Character.GetSkillLevel(skills.Search)
-		observerScore := float64(observer.Character.Stats.Perception.ValueAdj) +
-			combat.SkillMultiplier(searchRank)*25.0
-
-		rollHappened = true
-		success, _, _, _ := dice.OpposedRollStat(sneakScore, observerScore)
-		if !success {
-			spotted = true
-			spotterName = observer.Character.Name
-			observer.SendText(fmt.Sprintf(
-				`<ansi fg="username">%s</ansi> tries to hide but you notice them.`,
-				user.Character.Name))
-			break
-		}
-	}
-
-	// Check each mob in the room if not already spotted
-	if !spotted {
-		for _, mobInstanceId := range room.GetMobs() {
-			m := mobs.GetInstance(mobInstanceId)
-			if m == nil {
-				continue
-			}
-
-			searchRank := m.Character.GetSkillLevel(skills.Search)
-			observerScore := float64(m.Character.Stats.Perception.ValueAdj) +
-				combat.SkillMultiplier(searchRank)*25.0
-
-			rollHappened = true
-			success, _, _, _ := dice.OpposedRollStat(sneakScore, observerScore)
-			if !success {
-				spotted = true
-				spotterName = m.Character.Name
-				break
-			}
-		}
-	}
-
-	// Progress the skill if at least one roll was made
-	if rollHappened {
-		user.Character.CheckSkillProgression(string(skills.Skullduggery), user.UserId, 1.0)
-	}
-
-	if spotted {
+	case result.SpottedByName != "":
 		// Apply failure cooldown so the player can't spam sneak
 		user.Character.TryCooldown(sneakCooldownKey,
 			fmt.Sprintf(`%d rounds`, cfg.SneakFailCooldown))
 		user.SendText(fmt.Sprintf(
 			`You try to blend into the shadows but <ansi fg="mobname">%s</ansi> notices you.`,
-			spotterName))
+			result.SpottedByName))
+
+		// Progress the skill only when a roll actually happened
+		if result.RollHappened {
+			user.Character.CheckSkillProgression(string(skills.Skullduggery), user.UserId, 1.0)
+		}
 		return true, nil
 	}
 
-	// Apply hidden buff via event queue (processes next tick).
-	user.AddBuff(9, `skill`)
-	// Set a misc-data flag so go.go knows we're hidden immediately,
-	// even before the buff event processes on the next tick.
-	user.Character.SetMiscData(`sneaking`, true)
-
+	// Success
 	user.SendText(`You slip into the shadows.`)
+
+	// Progress the skill only when a roll actually happened
+	if result.RollHappened {
+		user.Character.CheckSkillProgression(string(skills.Skullduggery), user.UserId, 1.0)
+	}
 
 	events.AddToQueue(events.SkillUsed{
 		UserId: user.UserId,

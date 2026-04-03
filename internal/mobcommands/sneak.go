@@ -1,24 +1,19 @@
 package mobcommands
 
 import (
-	"github.com/GoMudEngine/GoMud/internal/buffs"
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
 
 func Sneak(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
-	// Can't sneak while in combat
-	if mob.Character.Aggro != nil {
-		return true, nil
-	}
+	result := actions.ExecuteSneak(&actions.MobActor{Mob: mob, Room: room})
 
-	// Already sneaking
-	if mob.Character.HasBuffFlag(buffs.Hidden) {
-		return true, nil
+	if result.Success {
+		// Track skill use so mobs can progress skullduggery like players.
+		mob.Character.OnSkillUse("skullduggery", 0)
 	}
-
-	mob.AddBuff(9, `skill`)
 
 	return true, nil
 }
