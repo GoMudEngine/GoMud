@@ -1,5 +1,49 @@
 # DOGMud Patch Notes
 
+## 2026-04-02 — Command Unification + Bug Fixes
+
+### Command Unification (feature/command-unification)
+Major architectural rework unifying player and mob command systems
+through shared core logic. Both sides now call the same underlying
+actions for all major game commands.
+
+**Shared Actor System:**
+- Actor interface in `internal/actions/` abstracts over players
+  and mobs. Shared actions operate on either actor type.
+- Atomic transfer primitives (TransferItem, TransferGold) with
+  rollback prevent item duplication and loss.
+- Registry audit at startup warns about unintentional command gaps.
+
+**Unified Commands:** say, emote, drop, remove, equip, get, give,
+go, bash, kick, trip, grapple, shoot, attack, cast, sneak, craft.
+
+**Combat Parity:**
+- Kick now selects stomp/knee variants for mobs (position-aware).
+- Trip uses tailsweep for mobs with tail mutation.
+- Shared combat helpers (target resolution, cooldowns, analytics).
+
+**Progression Parity:**
+- Mobs now advance stats and skills from combat, casting, crafting.
+- Player auto-attack melee progression was broken (never fired) —
+  now works correctly.
+- Caster mobs discover new spells as spellcasting skill increases.
+- Mob sneak uses opposed rolls instead of auto-succeeding.
+
+**Mob Crafting:**
+- Mobs can now craft items via the shared craft system.
+- Crafting completion fires skill progression for mobs.
+
+### Fixes
+- **Hidden mob perma-stealth:** Root cause found — permabuff system
+  re-added Hidden buff after every Validate(). Fixed with
+  RemovePermaBuff + proper combat loop integration.
+- **Hidden mob surprise attacks:** Mobs properly get [SURPRISE ATTACK]
+  when ambushing from stealth. Hidden buff clears after first strike.
+- **Duplicate "prepares to fight" message:** Suppressed when mob
+  re-attacks the same target.
+- **Sneak in combat:** Blocked for both players and mobs — sneaking
+  mid-combat doesn't make sense and caused perma-hidden bug.
+
 ## 2026-04-02 — Bug Fixes & Polish
 
 ### Fixes
