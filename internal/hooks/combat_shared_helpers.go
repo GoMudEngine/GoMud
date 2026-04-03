@@ -8,10 +8,12 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
+	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -242,4 +244,126 @@ func advanceFolds(cs *characters.CastingState) bool {
 		}
 	}
 	return false
+}
+
+// =============================================================================
+// processFoldRound — shared fold casting step for both players and mobs.
+//
+// Handles all state mutations that are identical for every caster type:
+//   - Prone → concentration break
+//   - Target-gone check
+//   - Simulate fold advance → compute conviction cost
+//   - Insufficient conviction → break
+//   - Deduct conviction + advance folds
+//
+// The caller (handlePlayerFoldCasting / handleMobFoldCasting) is responsible
+// for all messaging and spell resolution, because those differ by caster type.
+// =============================================================================
+
+// FoldRoundResult describes the outcome of a single fold casting step.
+// Exactly one of the boolean fields will be true; StillCasting and
+// CastComplete are mutually exclusive; the break fields are all terminal.
+type FoldRoundResult struct {
+	// Terminal states — caller should return after messaging.
+	ProneBroke             bool // caster fell prone, concentration broken
+	TargetGone             bool // all targets are dead/gone
+	SpellDataMissing       bool // spells.GetSpell returned nil
+	InsufficientConviction bool // not enough CP to pay this fold's cost
+
+	// Ongoing states.
+	StillCasting bool // folds advanced but not yet complete; send in-progress msg
+	CastComplete bool // folds complete; caller should resolve the spell
+
+	// Values the caller needs for messaging / resolution.
+	FoldDelta      int                  // folds simulated this round
+	ConvictionCost int                  // CP deducted from caster this round
+	SpellData      *spells.SpellData    // non-nil when SpellDataMissing==false
+	CastingState   *characters.CastingState // same pointer as char.CastingState
+}
+
+// processFoldRound advances one round of fold casting for any caster character.
+// It mutates char.CastingState (deducting conviction, advancing folds, or
+// clearing the state on terminal conditions).  Returns a FoldRoundResult
+// describing what happened so the caller can emit the right messages.
+func processFoldRound(char *characters.Character) FoldRoundResult {
+	cs := char.CastingState // caller must have verified non-nil
+
+	// Prone → immediate concentration break.
+	if char.CombatPosition == characters.PositionProne {
+		char.CastingState = nil
+		return FoldRoundResult{ProneBroke: true, CastingState: cs}
+	}
+
+	// Target-gone check: any dead/nil target breaks the spell.
+	spellData := spells.GetSpell(cs.SpellId)
+	targetGone := false
+	for _, mobInstId := range cs.TargetMobInstanceIds {
+		m := mobs.GetInstance(mobInstId)
+		if m == nil || m.Character.Health < 1 {
+			targetGone = true
+			break
+		}
+	}
+	if !targetGone {
+		for _, targetUserId := range cs.TargetUserIds {
+			u := users.GetByUserId(targetUserId)
+			if u == nil {
+				targetGone = true
+				break
+			}
+			// For harm spells, downed players count as gone.
+			if u.Character.Health < 1 && spellData != nil &&
+				(spellData.Type == spells.HarmSingle || spellData.Type == spells.HarmArea || spellData.Type == spells.HarmMulti) {
+				targetGone = true
+				break
+			}
+		}
+	}
+	if targetGone {
+		char.CastingState = nil
+		return FoldRoundResult{TargetGone: true, CastingState: cs}
+	}
+
+	if spellData == nil {
+		char.CastingState = nil
+		return FoldRoundResult{SpellDataMissing: true, CastingState: cs}
+	}
+
+	// Simulate fold advance → compute conviction cost.
+	foldDelta := simulateFoldRound(cs)
+	roundCost := calcFoldConvictionCost(cs, foldDelta)
+
+	if roundCost > 0 && char.Conviction < roundCost {
+		char.CastingState = nil
+		return FoldRoundResult{
+			InsufficientConviction: true,
+			FoldDelta:              foldDelta,
+			ConvictionCost:         roundCost,
+			SpellData:              spellData,
+			CastingState:           cs,
+		}
+	}
+
+	// Deduct conviction and advance folds.
+	char.Conviction -= roundCost
+	cs.ConvictionSpent += roundCost
+
+	complete := advanceFolds(cs)
+	if complete {
+		char.CastingState = nil
+		return FoldRoundResult{
+			CastComplete:   true,
+			FoldDelta:      foldDelta,
+			ConvictionCost: roundCost,
+			SpellData:      spellData,
+			CastingState:   cs,
+		}
+	}
+	return FoldRoundResult{
+		StillCasting:   true,
+		FoldDelta:      foldDelta,
+		ConvictionCost: roundCost,
+		SpellData:      spellData,
+		CastingState:   cs,
+	}
 }

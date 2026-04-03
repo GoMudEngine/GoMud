@@ -189,90 +189,51 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 		return false
 	}
 
-	// Bleeding out = automatic concentration break
+	// Bleeding out = automatic concentration break (player-only check).
 	if user.Character.IsDisabled() {
 		recordConcentrationFailure(combat.User, combat.Mob, user.Character, castingTargetChar(user.Character.CastingState))
 		user.Character.CastingState = nil
 		return true
 	}
 
-	// Stage 11.3: prone = automatic concentration break
-	if user.Character.CombatPosition == characters.PositionProne {
-		recordConcentrationFailure(combat.User, combat.Mob, user.Character, castingTargetChar(user.Character.CastingState))
-		user.Character.CastingState = nil
+	// Capture state before processFoldRound clears it on terminal conditions.
+	csBeforeProcess := user.Character.CastingState
+
+	result := processFoldRound(user.Character)
+
+	switch {
+	case result.ProneBroke:
+		recordConcentrationFailure(combat.User, combat.Mob, user.Character, castingTargetChar(csBeforeProcess))
 		user.SendText(`<ansi fg="red">You lose your concentration as you hit the ground!</ansi>`)
 		room := rooms.LoadRoom(user.Character.RoomId)
 		if room != nil {
 			room.SendText(fmt.Sprintf(
 				`<ansi fg="username">%s</ansi>'s concentration breaks.`, user.Character.Name), user.UserId)
 		}
-		return true
-	}
 
-	cs := user.Character.CastingState
-
-	spellData := spells.GetSpell(cs.SpellId)
-
-	// Check if the spell target is still alive
-	targetGone := false
-	for _, mobInstId := range cs.TargetMobInstanceIds {
-		mob := mobs.GetInstance(mobInstId)
-		if mob == nil || mob.Character.Health < 1 {
-			targetGone = true
-			break
-		}
-	}
-	for _, targetUserId := range cs.TargetUserIds {
-		u := users.GetByUserId(targetUserId)
-		if u == nil {
-			targetGone = true
-			break
-		}
-		// For harm spells, a downed player means the target is gone.
-		// For help spells, we allow targeting downed players (revive-style healing).
-		if u.Character.Health < 1 && spellData != nil &&
-			(spellData.Type == spells.HarmSingle || spellData.Type == spells.HarmArea || spellData.Type == spells.HarmMulti) {
-			targetGone = true
-			break
-		}
-	}
-	if targetGone {
-		recordConcentrationFailure(combat.User, combat.Mob, user.Character, castingTargetChar(user.Character.CastingState))
-		user.Character.CastingState = nil
+	case result.TargetGone:
+		recordConcentrationFailure(combat.User, combat.Mob, user.Character, castingTargetChar(csBeforeProcess))
 		user.SendText(`<ansi fg="red">Your spell fizzles — the target is gone.</ansi>`)
-		return true
-	}
-	if spellData == nil {
-		user.Character.CastingState = nil
+
+	case result.SpellDataMissing:
 		user.SendText(`<ansi fg="red">The spell dissipates — its data cannot be found.</ansi>`)
-		return true
-	}
 
-	// Pre-flight: simulate fold advance to compute conviction cost
-	foldDelta := simulateFoldRound(cs)
-	roundCost := calcFoldConvictionCost(cs, foldDelta)
-
-	if roundCost > 0 && user.Character.Conviction < roundCost {
-		recordConcentrationFailure(combat.User, combat.Mob, user.Character, castingTargetChar(user.Character.CastingState))
-		user.Character.CastingState = nil
+	case result.InsufficientConviction:
+		recordConcentrationFailure(combat.User, combat.Mob, user.Character, castingTargetChar(csBeforeProcess))
 		user.SendText(`<ansi fg="red">Your conviction wavers — the fold collapses.</ansi>`)
-		return true
-	}
 
-	user.Character.Conviction -= roundCost
-	cs.ConvictionSpent += roundCost
+	case result.CastComplete:
+		cs := result.CastingState
+		spellData := result.SpellData
+		// Run spell script onWait one last time before resolution.
+		spellAggro := characters.SpellAggroInfo{
+			SpellId:              cs.SpellId,
+			SpellRest:            cs.SpellRest,
+			TargetUserIds:        cs.TargetUserIds,
+			TargetMobInstanceIds: cs.TargetMobInstanceIds,
+		}
+		scripting.TrySpellScriptEvent("onWait", user.UserId, 0, spellAggro)
 
-	// Run spell script onWait (if present) — flavor text during fold accumulation
-	spellAggro := characters.SpellAggroInfo{
-		SpellId:              cs.SpellId,
-		SpellRest:            cs.SpellRest,
-		TargetUserIds:        cs.TargetUserIds,
-		TargetMobInstanceIds: cs.TargetMobInstanceIds,
-	}
-	scripting.TrySpellScriptEvent("onWait", user.UserId, 0, spellAggro)
-
-	// Advance folds — resolve spell if complete
-	if advanceFolds(cs) {
 		resolveRoom := rooms.LoadRoom(user.Character.RoomId)
 		if resolveRoom != nil {
 			resolveSpell(user, cs, spellData, resolveRoom)
@@ -300,8 +261,16 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 			}
 		}
 
-		user.Character.CastingState = nil
-	} else {
+	case result.StillCasting:
+		cs := result.CastingState
+		// Run spell script onWait (if present) — flavor text during fold accumulation.
+		spellAggro := characters.SpellAggroInfo{
+			SpellId:              cs.SpellId,
+			SpellRest:            cs.SpellRest,
+			TargetUserIds:        cs.TargetUserIds,
+			TargetMobInstanceIds: cs.TargetMobInstanceIds,
+		}
+		scripting.TrySpellScriptEvent("onWait", user.UserId, 0, spellAggro)
 		user.SendText(`<ansi fg="cyan">` + spells.GetCastMessage("cast_started", cs.SpellId) + `</ansi>`)
 	}
 
@@ -315,71 +284,45 @@ func handleMobFoldCasting(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 		return false
 	}
 
-	if mob.Character.CombatPosition == characters.PositionProne {
-		recordConcentrationFailure(combat.Mob, combat.User, &mob.Character, castingTargetChar(mob.Character.CastingState))
-		mob.Character.CastingState = nil
+	// Capture state before processFoldRound clears it on terminal conditions.
+	csBeforeProcess := mob.Character.CastingState
+
+	result := processFoldRound(&mob.Character)
+
+	switch {
+	case result.ProneBroke:
+		recordConcentrationFailure(combat.Mob, combat.User, &mob.Character, castingTargetChar(csBeforeProcess))
 		mobRoom.SendText(fmt.Sprintf(
 			`%s's concentration breaks.`, mobDisplayName(mob, mobRoom, 0)))
-		return true
-	}
 
-	cs := mob.Character.CastingState
-
-	// Check if the spell target is still alive
-	mobTargetGone := false
-	for _, targetUserId := range cs.TargetUserIds {
-		if u := users.GetByUserId(targetUserId); u == nil || u.Character.Health < 1 {
-			mobTargetGone = true
-			break
-		}
-	}
-	for _, mobInstId := range cs.TargetMobInstanceIds {
-		tm := mobs.GetInstance(mobInstId)
-		if tm == nil || tm.Character.Health < 1 {
-			mobTargetGone = true
-			break
-		}
-	}
-	if mobTargetGone {
-		recordConcentrationFailure(combat.Mob, combat.User, &mob.Character, castingTargetChar(mob.Character.CastingState))
-		mob.Character.CastingState = nil
+	case result.TargetGone:
+		recordConcentrationFailure(combat.Mob, combat.User, &mob.Character, castingTargetChar(csBeforeProcess))
 		mobRoom.SendText(fmt.Sprintf(
 			`%s's spell fizzles.`, mobDisplayName(mob, mobRoom, 0)))
-		return true
-	}
 
-	spellData := spells.GetSpell(cs.SpellId)
-	if spellData == nil {
-		mob.Character.CastingState = nil
-		return true
-	}
+	case result.SpellDataMissing:
+		// Silent failure — no message for missing spell data on mobs.
 
-	// Pre-flight: simulate fold advance to compute conviction cost
-	foldDelta := simulateFoldRound(cs)
-	roundCost := calcFoldConvictionCost(cs, foldDelta)
-
-	if roundCost > 0 && mob.Character.Conviction < roundCost {
-		recordConcentrationFailure(combat.Mob, combat.User, &mob.Character, castingTargetChar(mob.Character.CastingState))
-		mob.Character.CastingState = nil
+	case result.InsufficientConviction:
+		recordConcentrationFailure(combat.Mob, combat.User, &mob.Character, castingTargetChar(csBeforeProcess))
 		mobRoom.SendText(fmt.Sprintf(
 			`%s's spell falters.`, mobDisplayName(mob, mobRoom, 0)))
-		return true
-	}
-	mob.Character.Conviction -= roundCost
 
-	// Advance folds — resolve spell if complete
-	if advanceFolds(cs) {
+	case result.CastComplete:
+		cs := result.CastingState
+		spellData := result.SpellData
 		if resolveRoom := rooms.LoadRoom(mob.Character.RoomId); resolveRoom != nil {
 			resolveMobSpell(mob, cs, spellData, resolveRoom)
 		}
-		mob.Character.CastingState = nil
 		// Stage 38.3: Mob spellcasting progression
 		mob.Character.OnSkillUse(string(skills.Spellcasting), 0)
 		mob.Character.OnStatUse("willpower", 0)
-	} else {
+
+	case result.StillCasting:
 		mobRoom.SendText(fmt.Sprintf(
 			`%s weaves magic with focused intent.`, mobDisplayName(mob, mobRoom, 0)))
 	}
+
 	return true
 }
 
