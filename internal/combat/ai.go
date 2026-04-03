@@ -4,6 +4,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -187,6 +188,10 @@ func CanUseGrapple(char *characters.Character) bool {
 	}
 	// Can't grapple if already in grapple
 	if char.CombatPosition.IsGrapplePosition() {
+		return false
+	}
+	// Grapple-immune species can't initiate grapple either
+	if sp := species.GetSpecies(char.SpeciesId); sp != nil && sp.GrappleImmune {
 		return false
 	}
 	return true

@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -27,6 +28,9 @@ type GrappleResult struct {
 
 	// NoTarget is true when there is no aggro target or the target is gone.
 	NoTarget bool
+
+	// GrappleImmune is true when the target cannot be grappled (ethereal, fire, etc.)
+	GrappleImmune bool
 }
 
 // ExecuteGrapple performs the core grapple resolution shared between player
@@ -47,6 +51,11 @@ func ExecuteGrapple(actor Actor) GrappleResult {
 		return GrappleResult{NoTarget: true}
 	}
 
+	// Grapple-immune species can't initiate grapple either (ethereal, fire, etc.)
+	if sp := species.GetSpecies(char.SpeciesId); sp != nil && sp.GrappleImmune {
+		return GrappleResult{GrappleImmune: true}
+	}
+
 	// Check special-move cooldown using the config value.
 	cfg := configs.GetBalanceConfig()
 	cooldownStr := fmt.Sprintf("%d rounds", cfg.SpecialMoveCooldown)
@@ -58,6 +67,11 @@ func ExecuteGrapple(actor Actor) GrappleResult {
 	target := ResolveAggroTarget(char.Aggro)
 	if !target.Found {
 		return GrappleResult{NoTarget: true}
+	}
+
+	// Grapple immunity (ethereal creatures, fire elementals, etc.)
+	if sp := species.GetSpecies(target.Char.SpeciesId); sp != nil && sp.GrappleImmune {
+		return GrappleResult{Target: target, GrappleImmune: true}
 	}
 
 	// Execute the grapple move. Player actors pass their UserId; mobs pass 0.

@@ -47,6 +47,11 @@ func Grapple(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		return true, nil
 	}
 
+	if res.GrappleImmune {
+		user.SendText(fmt.Sprintf("You reach for %s but your hands pass right through!", res.Target.Name))
+		return true, nil
+	}
+
 	if !res.Executed {
 		return true, nil
 	}

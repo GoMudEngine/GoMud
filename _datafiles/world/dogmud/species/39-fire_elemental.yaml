@@ -30,3 +30,4 @@ damage:
   variance: 2
 disabledslots: ['weapon', 'offhand', 'head', 'neck', 'back',
   'belt', 'gloves', 'ring', 'legs', 'feet']
+grapple_immune: true

@@ -19,7 +19,7 @@ func Grapple(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	res := actions.ExecuteGrapple(&actions.MobActor{Mob: mob, Room: room})
 
-	if res.OnCooldown || res.NoTarget || !res.Executed {
+	if res.OnCooldown || res.NoTarget || res.GrappleImmune || !res.Executed {
 		return true, nil
 	}
 

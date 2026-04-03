@@ -47,6 +47,7 @@ type Species struct {
 	DisabledSlots    []string         `yaml:"disabledslots,omitempty"`
 	NaturalBash      bool             `yaml:"naturalbash,omitempty"`    // Can bash without a shield (elementals, golems)
 	ReturnDamage     int              `yaml:"return_damage,omitempty"`  // % of melee damage returned to attacker (fire elemental, etc.)
+	GrappleImmune    bool             `yaml:"grapple_immune,omitempty"` // Cannot be grappled (ethereal, fire, etc.)
 }
 
 func GetAllSpecies() []Species {
