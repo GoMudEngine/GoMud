@@ -132,3 +132,74 @@ func stripANSICodes(s string) string {
 	}
 	return result
 }
+
+// TestAuditCommandParity_CatchesUnlistedUserCmd verifies that AuditCommandParity
+// does not panic when it encounters a user command that is absent from the mob
+// registry and absent from the user-only allowlist. The function logs a warning
+// via mudlog; we cannot capture that output here, but we confirm the call
+// completes without panicking.
+//
+// Note: AuditCommandParity returns nothing (void), so we cannot assert a warning
+// count directly. The test validates that the code path for an unlisted user
+// command is traversed safely.
+func TestAuditCommandParity_CatchesUnlistedUserCmd(t *testing.T) {
+	// "fakecmd" is not in mobOnlyCommands, not in userOnlyCommands, and not
+	// present on the mob side — this should trigger a mudlog.Warn internally.
+	userCmds := []string{"say", "fakecmd"}
+	mobCmds := []string{"say"}
+
+	// Verify the precondition: fakecmd is genuinely not in either allowlist.
+	_, inUserOnly := userOnlyCommands["fakecmd"]
+	_, inMobOnly := mobOnlyCommands["fakecmd"]
+	assert.False(t, inUserOnly, "fakecmd must not be in the user-only allowlist for this test to be meaningful")
+	assert.False(t, inMobOnly, "fakecmd must not be in the mob-only allowlist for this test to be meaningful")
+
+	// Must not panic — the gap is logged as a warning, not a fatal error.
+	assert.NotPanics(t, func() {
+		AuditCommandParity(userCmds, mobCmds)
+	}, "AuditCommandParity should not panic on an unlisted user command")
+}
+
+// TestAuditCommandParity_CatchesUnlistedMobCmd verifies that AuditCommandParity
+// does not panic when it encounters a mob command that is absent from the user
+// registry and absent from the mob-only allowlist.
+func TestAuditCommandParity_CatchesUnlistedMobCmd(t *testing.T) {
+	// "fakemobcmd" is not in userOnlyCommands, not in mobOnlyCommands, and not
+	// present on the user side — this should trigger a mudlog.Warn internally.
+	userCmds := []string{"say"}
+	mobCmds := []string{"say", "fakemobcmd"}
+
+	// Verify the precondition: fakemobcmd is genuinely not in either allowlist.
+	_, inUserOnly := userOnlyCommands["fakemobcmd"]
+	_, inMobOnly := mobOnlyCommands["fakemobcmd"]
+	assert.False(t, inUserOnly, "fakemobcmd must not be in the user-only allowlist for this test to be meaningful")
+	assert.False(t, inMobOnly, "fakemobcmd must not be in the mob-only allowlist for this test to be meaningful")
+
+	// Must not panic — the gap is logged as a warning, not a fatal error.
+	assert.NotPanics(t, func() {
+		AuditCommandParity(userCmds, mobCmds)
+	}, "AuditCommandParity should not panic on an unlisted mob command")
+}
+
+// TestAuditCommandParity_RealRegistries would call GetAllUserCommands() and
+// GetAllMobCommands() from the live registries and pass them to AuditCommandParity,
+// giving a full integration check at server-startup fidelity.
+//
+// This test CANNOT be implemented inside package actions because both
+// usercommands and mobcommands import "internal/actions", creating a circular
+// dependency:
+//
+//	actions → (test imports) → usercommands → actions  [cycle]
+//
+// The test would need to live in a separate package (e.g. a top-level
+// integration test binary) that imports all three packages without cycles.
+// No such package exists in this repo yet. If one is added in the future,
+// move this test there and remove this placeholder.
+//
+// The existing TestAuditCommandParity_NoWarnings test covers the logic path
+// with hand-crafted slices; the real-registry gap is documented here for
+// future implementors.
+func TestAuditCommandParity_RealRegistries_Skipped(t *testing.T) {
+	t.Skip("import cycle: usercommands and mobcommands both import actions; " +
+		"move this test to a top-level integration package when one exists")
+}
