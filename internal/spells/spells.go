@@ -34,6 +34,7 @@ type SpellData struct {
 	DamageMultiplier    float64 `yaml:"damage_multiplier,omitempty"`   // Spell damage multiplier for new pipeline (Stage 34)
 	EffectDuration      int    `yaml:"effect_duration,omitempty"`      // DoT tick count (default 0 = use 3)
 	BuffIds             []int  `yaml:"buff_ids,omitempty"`             // Buff IDs to apply (for "buff" effect type)
+	QuestRequired       string `yaml:"quest_required,omitempty"`       // Quest token required before spell can be discovered
 }
 
 const (
@@ -48,10 +49,11 @@ const (
 	HelpArea   SpellType = "helparea"   // Hits everyone in the room, even if hidden
 
 	// DOG Spell Schools
-	SchoolElemental   = "elemental"   // Fire, ice, lightning, earth, wind - offensive elemental magic
-	SchoolEnhancement = "enhancement" // Buffs, shields, enchantments - augmentation magic
-	SchoolMental      = "mental"      // Illusions, charms, telepathy - mind-affecting magic (Psionics skill)
-	SchoolVital       = "vital"       // Healing, curing, life/death manipulation - vital force magic
+	SchoolElemental     = "elemental"     // Fire, ice, lightning, earth, wind - offensive elemental magic
+	SchoolEnhancement   = "enhancement"   // Buffs, shields, enchantments - augmentation magic
+	SchoolMental        = "mental"        // Illusions, charms, telepathy - mind-affecting magic (Psionics skill)
+	SchoolVital         = "vital"         // Healing, curing, life/death manipulation - vital force magic
+	SchoolManifestation = "manifestation" // Companion summoning, charming, binding - uses Charisma+manifestation
 )
 
 var (
@@ -176,6 +178,16 @@ func (s *SpellData) GetDifficulty() int {
 	return s.Difficulty
 }
 
+// HasSchool returns true if the spell belongs to the given school.
+func (s *SpellData) HasSchool(school string) bool {
+	for _, sc := range s.Schools {
+		if sc == school {
+			return true
+		}
+	}
+	return false
+}
+
 // GetSchoolsString returns a comma-separated string of spell schools
 func (s *SpellData) GetSchoolsString() string {
 	if len(s.Schools) == 0 {
@@ -246,12 +258,37 @@ func MaxFoldsForSkill(skillLevel int) int {
 }
 
 // GetEligibleSpells returns spell IDs the player could discover (not in spellBook, within fold threshold).
-func GetEligibleSpells(spellBook map[string]int, castingSkillLevel int) []string {
-	maxFolds := MaxFoldsForSkill(castingSkillLevel)
+// When schools are provided, only spells belonging to at least one of those schools are returned.
+// When schools is empty, all non-manifestation spells are returned (backward compat).
+// Spells with QuestRequired set are never returned by discovery.
+func GetEligibleSpells(spellBook map[string]int, skillLevel int, schools ...string) []string {
+	maxFolds := MaxFoldsForSkill(skillLevel)
 	var eligible []string
 	for id, sp := range allSpells {
 		if _, known := spellBook[id]; known {
 			continue
+		}
+		// Quest-gated spells are never discovered organically.
+		if sp.QuestRequired != "" {
+			continue
+		}
+		// School filtering.
+		if len(schools) > 0 {
+			matched := false
+			for _, school := range schools {
+				if sp.HasSchool(school) {
+					matched = true
+					break
+				}
+			}
+			if !matched {
+				continue
+			}
+		} else {
+			// Backward compat: no school filter means all non-manifestation spells.
+			if sp.HasSchool(SchoolManifestation) {
+				continue
+			}
 		}
 		folds := sp.BaseFolds
 		if folds == 0 {

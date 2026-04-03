@@ -29,9 +29,11 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
-	// 1. Spellcasting skill required
+	// 1. Spellcasting or manifestation skill required (checked again after spell
+	//    lookup for a better error message, but we need at least one non-zero).
 	skillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
-	if skillLevel == 0 {
+	manifestLevel := user.Character.GetSkillLevel(skills.Manifestation)
+	if skillLevel == 0 && manifestLevel == 0 {
 		user.SendText(`<ansi fg="red">You have no spellcasting skill.</ansi>`)
 		return true, nil
 	}
@@ -68,6 +70,19 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	if !user.Character.HasSpell(spellInfo.SpellId) {
 		user.SendText(fmt.Sprintf(`<ansi fg="red">You haven't learned the spell "%s".</ansi>`, spellInfo.Name))
 		return true, nil
+	}
+
+	// 3b. Verify the player has the skill appropriate for this spell's school.
+	if spellInfo.HasSchool(spells.SchoolManifestation) {
+		if manifestLevel == 0 {
+			user.SendText(`<ansi fg="red">You have no manifestation skill.</ansi>`)
+			return true, nil
+		}
+	} else {
+		if skillLevel == 0 {
+			user.SendText(`<ansi fg="red">You have no spellcasting skill.</ansi>`)
+			return true, nil
+		}
 	}
 
 	// 4. Already casting?
@@ -132,13 +147,19 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
-	// 8. Stage 17.2: The Eye modulates Perception → folds-per-round for mutated casters.
-	// We pass modified perception via a custom foldsPerRound override after calling
-	// InitiateCast, then patch the CastingState before applying it.
-	perForCast := user.Character.Stats.Perception.ValueAdj
-	if len(user.Character.Mutations) > 0 {
-		eyeFrac := (gametime.GetEyePhase() - 0.5) * 2 * float64(configs.GetBalanceConfig().MoonStatModMax)
-		perForCast += int(float64(perForCast) * eyeFrac)
+	// 8. Stage 17.2: The Eye modulates Perception → folds-per-round for mutated
+	// traditional casters. Manifestation spells use Charisma instead and are
+	// NOT modulated by The Eye.
+	isManifestation := spellInfo.HasSchool(spells.SchoolManifestation)
+	var primaryStatForCast int
+	if isManifestation {
+		primaryStatForCast = user.Character.Stats.Charisma.ValueAdj
+	} else {
+		primaryStatForCast = user.Character.Stats.Perception.ValueAdj
+		if len(user.Character.Mutations) > 0 {
+			eyeFrac := (gametime.GetEyePhase() - 0.5) * 2 * float64(configs.GetBalanceConfig().MoonStatModMax)
+			primaryStatForCast += int(float64(primaryStatForCast) * eyeFrac)
+		}
 	}
 
 	// 9. Shared initiation logic.
@@ -163,10 +184,27 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
-	// 10. Apply Eye-modulated folds-per-round override.
-	if perForCast != user.Character.Stats.Perception.ValueAdj {
+	// 10. Apply stat override for folds-per-round.
+	// For traditional spells, this captures The Eye modulation of Perception.
+	// For manifestation spells, this ensures Charisma is used (InitiateCast
+	// already used it, but we recompute with the correct skill level here).
+	var baseStatForCast int
+	if isManifestation {
+		baseStatForCast = user.Character.Stats.Charisma.ValueAdj
+	} else {
+		baseStatForCast = user.Character.Stats.Perception.ValueAdj
+	}
+	if primaryStatForCast != baseStatForCast {
+		manifestSkill := user.Character.GetSkillLevel(skills.Manifestation)
+		castSkill := user.Character.GetSkillLevel(skills.Spellcasting)
+		var overrideSkill int
+		if isManifestation {
+			overrideSkill = manifestSkill
+		} else {
+			overrideSkill = castSkill
+		}
 		result.CastingState.FoldsPerRound = characters.CalcFoldsPerRound(
-			perForCast, skillLevel)
+			primaryStatForCast, overrideSkill)
 	}
 
 	// 11. Apply conviction cost multiplier to the CastingState.
@@ -187,10 +225,14 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
-	// 14. Announce and fire skill-used event.
+	// 14. Announce and fire skill-used event for the relevant skill.
+	castEventSkill := skills.Spellcasting
+	if isManifestation {
+		castEventSkill = skills.Manifestation
+	}
 	events.AddToQueue(events.SkillUsed{
 		UserId:  user.UserId,
-		Skill:   skills.Spellcasting,
+		Skill:   castEventSkill,
 		Details: spellInfo.Name,
 	})
 

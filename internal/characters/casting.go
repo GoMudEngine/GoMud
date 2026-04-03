@@ -32,13 +32,13 @@ func NextPowerOfTwo(n int) int {
 	return p
 }
 
-// CalcFoldsPerRound returns max(1, round((perception + spellcastingLevel*SpellFoldsSkillFactor) / 100)).
-// Example: per=50, skill=2 → round(100/100)=1; per=100, skill=4 → round(200/100)=2
-func CalcFoldsPerRound(perception, spellcastingLevel int) int {
+// CalcFoldsPerRound returns max(1, round((primaryStat + skillLevel*SpellFoldsSkillFactor) / 100)).
+// Example: stat=50, skill=2 → round(100/100)=1; stat=100, skill=4 → round(200/100)=2
+func CalcFoldsPerRound(primaryStat, skillLevel int) int {
 	b := configs.GetBalanceConfig()
 	skillFactor := int(b.SpellFoldsSkillFactor)
-	weightedSkill := int(math.Round(float64(spellcastingLevel) * float64(b.SkillWeight)))
-	result := int(math.Round(float64(perception+weightedSkill*skillFactor) / 100.0))
+	weightedSkill := int(math.Round(float64(skillLevel) * float64(b.SkillWeight)))
+	result := int(math.Round(float64(primaryStat+weightedSkill*skillFactor) / 100.0))
 	if result < 1 {
 		return 1
 	}

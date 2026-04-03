@@ -242,13 +242,14 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 		user.Character.OnSkillUse(string(skills.Spellcasting), userId)
 		user.Character.OnStatUse("willpower", userId)
 
-		// Phase 25.1: Spell discovery
+		// Phase 25.1: Spell discovery — traditional schools.
 		castSkillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
 		knownCount := len(user.Character.SpellBook)
 		bal := configs.GetBalanceConfig()
 		discoveryChance := float64(bal.SpellDiscoveryBaseChance) / (1.0 + float64(knownCount)*float64(bal.SpellDiscoveryDecayRate))
 		if util.Rand(100) < int(discoveryChance) {
-			eligible := spells.GetEligibleSpells(user.Character.SpellBook, castSkillLevel)
+			eligible := spells.GetEligibleSpells(user.Character.SpellBook, castSkillLevel,
+				spells.SchoolElemental, spells.SchoolEnhancement, spells.SchoolMental, spells.SchoolVital)
 			if len(eligible) > 0 {
 				pick := eligible[util.Rand(len(eligible))]
 				if user.Character.LearnSpell(pick) {
@@ -256,6 +257,25 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 						user.SendText(fmt.Sprintf(
 							`<ansi fg="magenta-bold">A new pattern crystallizes in your mind: <ansi fg="cyan-bold">%s</ansi></ansi>`,
 							newSpell.Name))
+					}
+				}
+			}
+		}
+		// Phase 25.1: Spell discovery — manifestation school.
+		// Only runs if the player has any manifestation skill.
+		manifestSkillLevel := user.Character.GetSkillLevel(skills.Manifestation)
+		if manifestSkillLevel > 0 {
+			if util.Rand(100) < int(discoveryChance) {
+				eligible := spells.GetEligibleSpells(user.Character.SpellBook, manifestSkillLevel,
+					spells.SchoolManifestation)
+				if len(eligible) > 0 {
+					pick := eligible[util.Rand(len(eligible))]
+					if user.Character.LearnSpell(pick) {
+						if newSpell := spells.GetSpell(pick); newSpell != nil {
+							user.SendText(fmt.Sprintf(
+								`<ansi fg="magenta-bold">A manifestation reveals itself: <ansi fg="cyan-bold">%s</ansi></ansi>`,
+								newSpell.Name))
+						}
 					}
 				}
 			}
@@ -326,11 +346,25 @@ func handleMobFoldCasting(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 			knownCount := len(mob.Character.SpellBook)
 			bal := configs.GetBalanceConfig()
 			discoveryChance := float64(bal.SpellDiscoveryBaseChance) / (1.0 + float64(knownCount)*float64(bal.SpellDiscoveryDecayRate))
+			// Traditional school discovery.
 			if util.Rand(100) < int(discoveryChance) {
-				eligible := spells.GetEligibleSpells(mob.Character.SpellBook, castSkillLevel)
+				eligible := spells.GetEligibleSpells(mob.Character.SpellBook, castSkillLevel,
+					spells.SchoolElemental, spells.SchoolEnhancement, spells.SchoolMental, spells.SchoolVital)
 				if len(eligible) > 0 {
 					pick := eligible[util.Rand(len(eligible))]
 					mob.Character.LearnSpell(pick)
+				}
+			}
+			// Manifestation school discovery — only if mob has manifestation skill.
+			manifestSkillLevel := mob.Character.GetSkillLevel(skills.Manifestation)
+			if manifestSkillLevel > 0 {
+				if util.Rand(100) < int(discoveryChance) {
+					eligible := spells.GetEligibleSpells(mob.Character.SpellBook, manifestSkillLevel,
+						spells.SchoolManifestation)
+					if len(eligible) > 0 {
+						pick := eligible[util.Rand(len(eligible))]
+						mob.Character.LearnSpell(pick)
+					}
 				}
 			}
 		}
