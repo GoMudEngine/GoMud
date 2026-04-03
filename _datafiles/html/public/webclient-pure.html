@@ -643,10 +643,11 @@
             var members = []; // {name, hp, sp, cp, isSelf, isRemote}
             var partyObj = GMCPStructs["Party"];
 
+            var vitals = (partyObj && partyObj.Vitals) ? partyObj.Vitals : {};
+
             if (partyObj && partyObj.Members && partyObj.Members.length > 0) {
                 // Party exists — build ordered list (leader first)
                 var leader = partyObj.Leader || '';
-                var vitals = partyObj.Vitals || {};
 
                 // Leader first
                 var ordered = [];
@@ -654,6 +655,19 @@
                 for (var i = 0; i < partyObj.Members.length; i++) {
                     var mName = partyObj.Members[i].name;
                     if (mName !== leader) ordered.push(mName);
+                }
+
+                // Track which names are party members (vs companions)
+                var partyMemberSet = {};
+                for (var i = 0; i < ordered.length; i++) {
+                    partyMemberSet[ordered[i]] = true;
+                }
+
+                // Append companion entries: in Vitals but not in party members
+                for (var cName in vitals) {
+                    if (!partyMemberSet[cName]) {
+                        ordered.push(cName);
+                    }
                 }
 
                 for (var i = 0; i < ordered.length; i++) {
@@ -688,11 +702,25 @@
                     });
                 }
             } else {
-                // Solo — just self
+                // Solo — self first
                 members.push({
                     name: selfName, hp: selfHp, sp: selfSp,
                     cp: selfCp, isSelf: true, isRemote: false
                 });
+
+                // Append any companion entries from Party.Vitals
+                for (var cName in vitals) {
+                    if (cName === selfName) continue;
+                    var cVitals = vitals[cName];
+                    members.push({
+                        name: cName,
+                        hp: Math.max(0, Math.min(100, cVitals.health || 0)),
+                        sp: Math.max(0, Math.min(100, cVitals.stamina || 0)),
+                        cp: Math.max(0, Math.min(100, cVitals.conviction || 0)),
+                        isSelf: false,
+                        isRemote: (cVitals.location !== selfRoom)
+                    });
+                }
             }
 
             // Update DOM

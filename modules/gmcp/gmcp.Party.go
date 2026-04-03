@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/plugins"
@@ -59,6 +60,8 @@ func (g *GMCPPartyModule) vitalsChangedHandler(e events.Event) events.ListenerRe
 
 	party := parties.Get(evt.UserId)
 	if party == nil {
+		// Solo player — push companion vitals if they have any
+		g.maybeSendSoloCompanionVitals(evt.UserId)
 		return events.Continue
 	}
 
@@ -67,6 +70,88 @@ func (g *GMCPPartyModule) vitalsChangedHandler(e events.Event) events.ListenerRe
 	})
 
 	return events.Continue
+}
+
+// maybeSendSoloCompanionVitals pushes a Party.Vitals payload for solo players
+// who have active companions, so companion bars appear in the vitals panel.
+func (g *GMCPPartyModule) maybeSendSoloCompanionVitals(userId int) {
+	user := users.GetByUserId(userId)
+	if user == nil || len(user.Character.Companions) == 0 {
+		return
+	}
+
+	vitals := map[string]GMCPPartyModule_Payload_Vitals{}
+	roomTitles := map[int]string{}
+
+	for _, comp := range user.Character.Companions {
+		if comp.InstanceId <= 0 {
+			continue
+		}
+		mob := mobs.GetInstance(comp.InstanceId)
+		if mob == nil {
+			continue
+		}
+
+		hPct := 0
+		if mob.Character.HealthMax.Value > 0 {
+			hPct = int(math.Floor(float64(mob.Character.Health) / float64(mob.Character.HealthMax.Value) * 100))
+			if hPct < 0 {
+				hPct = 0
+			} else if hPct > 100 {
+				hPct = 100
+			}
+		}
+
+		sPct := 0
+		if mob.Character.StaminaMax.Value > 0 {
+			sPct = int(math.Floor(float64(mob.Character.Stamina) / float64(mob.Character.StaminaMax.Value) * 100))
+			if sPct < 0 {
+				sPct = 0
+			} else if sPct > 100 {
+				sPct = 100
+			}
+		}
+
+		cPct := 0
+		if mob.Character.ConvictionMax.Value > 0 {
+			cPct = int(math.Floor(float64(mob.Character.Conviction) / float64(mob.Character.ConvictionMax.Value) * 100))
+			if cPct < 0 {
+				cPct = 0
+			} else if cPct > 100 {
+				cPct = 100
+			}
+		}
+
+		roomTitle := ``
+		if rt, ok := roomTitles[mob.Character.RoomId]; ok {
+			roomTitle = rt
+		} else if mobRoom := rooms.LoadRoom(mob.Character.RoomId); mobRoom != nil {
+			roomTitle = mobRoom.Title
+			roomTitles[mob.Character.RoomId] = roomTitle
+		}
+
+		compName := comp.Name
+		if compName == `` {
+			compName = mob.Character.Name
+		}
+
+		vitals[compName] = GMCPPartyModule_Payload_Vitals{
+			HealthPercent:     hPct,
+			StaminaPercent:    sPct,
+			ConvictionPercent: cPct,
+			Location:          roomTitle,
+		}
+	}
+
+	if len(vitals) == 0 {
+		return
+	}
+
+	events.AddToQueue(GMCPOut{
+		UserId:  userId,
+		Module:  `Party.Vitals`,
+		Payload: vitals,
+	})
 }
 
 func (g *GMCPPartyModule) roomChangeHandler(e events.Event) events.ListenerReturn {
@@ -258,6 +343,71 @@ func (g *GMCPPartyModule) GetPartyNode(party *parties.Party, gmcpModule string) 
 
 		}
 
+	}
+
+	// Add companions for each party member
+	for _, uId := range party.GetMembers() {
+		if user := users.GetByUserId(uId); user != nil {
+			for _, comp := range user.Character.Companions {
+				if comp.InstanceId <= 0 {
+					continue
+				}
+				mob := mobs.GetInstance(comp.InstanceId)
+				if mob == nil {
+					continue
+				}
+
+				hPct := 0
+				if mob.Character.HealthMax.Value > 0 {
+					hPct = int(math.Floor(float64(mob.Character.Health) / float64(mob.Character.HealthMax.Value) * 100))
+					if hPct < 0 {
+						hPct = 0
+					} else if hPct > 100 {
+						hPct = 100
+					}
+				}
+
+				sPct := 0
+				if mob.Character.StaminaMax.Value > 0 {
+					sPct = int(math.Floor(float64(mob.Character.Stamina) / float64(mob.Character.StaminaMax.Value) * 100))
+					if sPct < 0 {
+						sPct = 0
+					} else if sPct > 100 {
+						sPct = 100
+					}
+				}
+
+				cPct := 0
+				if mob.Character.ConvictionMax.Value > 0 {
+					cPct = int(math.Floor(float64(mob.Character.Conviction) / float64(mob.Character.ConvictionMax.Value) * 100))
+					if cPct < 0 {
+						cPct = 0
+					} else if cPct > 100 {
+						cPct = 100
+					}
+				}
+
+				roomTitle := ``
+				if rt, ok := roomTitles[mob.Character.RoomId]; ok {
+					roomTitle = rt
+				} else if mobRoom := rooms.LoadRoom(mob.Character.RoomId); mobRoom != nil {
+					roomTitle = mobRoom.Title
+					roomTitles[mob.Character.RoomId] = roomTitle
+				}
+
+				compName := comp.Name
+				if compName == `` {
+					compName = mob.Character.Name
+				}
+
+				partyPayload.Vitals[compName] = GMCPPartyModule_Payload_Vitals{
+					HealthPercent:     hPct,
+					StaminaPercent:    sPct,
+					ConvictionPercent: cPct,
+					Location:          roomTitle,
+				}
+			}
+		}
 	}
 
 	for _, uId := range party.GetInvited() {
