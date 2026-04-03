@@ -61,16 +61,13 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			// Track that they've attacked this player
 			mob.PlayerAttacked(attackPlayerId)
 
-			// Hidden mobs get a surprise attack on their first strike
+			// Hidden mobs get a surprise attack on their first strike.
+			// Don't clear the Hidden buff here — leave it for the combat
+			// loop's CancelIfCombat pass so the surprise attack resolves
+			// with the mob still hidden (backstab crit bonus).
 			aggroType := characters.DefaultAttack
 			if mob.Character.HasBuffFlag(buffs.Hidden) {
 				aggroType = characters.SurpriseAttack
-				// Clear hidden: remove from permabuffs first so Validate
-				// doesn't re-add it, then expire the active buff.
-				mob.Character.RemovePermaBuff(9)
-				mob.Character.CancelBuffsWithFlag(buffs.Hidden)
-				mob.Character.Buffs.RemoveBuff(9)
-				mob.Character.Validate(true)
 			}
 			// Only announce if not already fighting this target
 			alreadyFighting := mob.Character.Aggro != nil && mob.Character.Aggro.UserId == attackPlayerId
@@ -102,9 +99,6 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			mobAggroType := characters.DefaultAttack
 			if mob.Character.HasBuffFlag(buffs.Hidden) {
 				mobAggroType = characters.SurpriseAttack
-				mob.Character.RemovePermaBuff(9)
-				mob.Character.CancelBuffsWithFlag(buffs.Hidden)
-				mob.Character.Buffs.RemoveBuff(9)
 				mob.Character.Validate(true)
 			}
 			mob.Character.SetAggro(0, attackMobInstanceId, mobAggroType)

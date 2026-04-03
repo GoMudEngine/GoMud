@@ -502,6 +502,13 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 						continue
 					}
 
+					// Hidden mobs don't "notice" the player — they ambush
+					// via their own lookfortrouble idle behavior. Skip them
+					// here so they get a proper surprise attack.
+					if mob.Character.HasBuffFlag(buffs.Hidden) {
+						continue
+					}
+
 					isHostile := mob.Hostile // Is it automatically hostile?
 					if !isHostile {
 						for _, groupName := range mob.Groups {
