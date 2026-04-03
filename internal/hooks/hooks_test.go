@@ -1983,14 +1983,14 @@ func TestHandleCharmedMobAssist_NoCharmedMobs(t *testing.T) {
 	// no panic
 }
 
-// ─── Combat Helper: handleAutoRetargetPlayer ──────────────────────────────────
+// ─── Combat Helper: RetargetOrEnd ─────────────────────────────────────────────
 
-func TestHandleAutoRetargetPlayer_NoAttackers(t *testing.T) {
+func TestRetargetOrEnd_NoAttackers(t *testing.T) {
 	cleanup := seedAllRegistries()
 	defer cleanup()
 	u := users.GetByUserId(1)
 	room := rooms.LoadRoom(1)
-	handleAutoRetargetPlayer(u, room)
+	RetargetOrEnd(u.Character, room, u.UserId, 0)
 	// Should not panic, no attackers to retarget
 }
 

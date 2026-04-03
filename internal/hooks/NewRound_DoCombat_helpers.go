@@ -621,31 +621,6 @@ func handleOffhandBreakMobDef(roundResult combat.AttackResult, defMob *mobs.Mob)
 	})
 }
 
-// handleAutoRetargetPlayer auto-targets a new attacker when the current target dies.
-func handleAutoRetargetPlayer(user *users.UserRecord, uRoom *rooms.Room) {
-	// Check for mobs attacking this player
-	for _, mobInstId := range uRoom.GetMobs(rooms.FindFighting) {
-		if attackingMob := mobs.GetInstance(mobInstId); attackingMob != nil {
-			if attackingMob.Character.Aggro != nil && attackingMob.Character.Aggro.UserId == user.UserId {
-				user.Character.SetAggro(0, attackingMob.InstanceId, characters.DefaultAttack)
-				user.SendText(fmt.Sprintf("You turn your attention to <ansi fg=\"mobname\">%s</ansi>!", attackingMob.Character.Name))
-				return
-			}
-		}
-	}
-
-	// If no mobs attacking, check for players attacking
-	for _, playerId := range uRoom.GetPlayers(rooms.FindFighting) {
-		if attackingPlayer := users.GetByUserId(playerId); attackingPlayer != nil {
-			if attackingPlayer.Character.Aggro != nil && attackingPlayer.Character.Aggro.UserId == user.UserId {
-				user.Character.SetAggro(attackingPlayer.UserId, 0, characters.DefaultAttack)
-				user.SendText(fmt.Sprintf("You turn your attention to <ansi fg=\"username\">%s</ansi>!", attackingPlayer.Character.Name))
-				return
-			}
-		}
-	}
-}
-
 // handlePlayerConcentrationBreak checks if a caster's concentration breaks when hit.
 func handlePlayerConcentrationBreak(defUser *users.UserRecord, roundResult combat.AttackResult, defRoom *rooms.Room) {
 	if checkConcentrationBreak(defUser.Character, roundResult.DamageToTarget) {
@@ -1006,10 +981,16 @@ func handlePlayerVsPlayer(user *users.UserRecord, uRoom *rooms.Room, evt events.
 
 	if user.Character.Health <= 0 || defUser.Character.Health <= 0 {
 		defUser.Character.EndAggro()
-		user.Character.EndAggro()
-
-		if user.Character.Health > 0 && defUser.Character.Health <= 0 {
-			handleAutoRetargetPlayer(user, uRoom)
+		if user.Character.Health > 0 {
+			if RetargetOrEnd(user.Character, uRoom, user.UserId, 0) {
+				if mob := mobs.GetInstance(user.Character.Aggro.MobInstanceId); mob != nil {
+					user.SendText(fmt.Sprintf("You turn your attention to <ansi fg=\"mobname\">%s</ansi>!", mob.Character.Name))
+				} else if newDef := users.GetByUserId(user.Character.Aggro.UserId); newDef != nil {
+					user.SendText(fmt.Sprintf("You turn your attention to <ansi fg=\"username\">%s</ansi>!", newDef.Character.Name))
+				}
+			}
+		} else {
+			user.Character.EndAggro()
 		}
 	} else {
 		user.Character.SetAggro(defUser.UserId, 0, characters.DefaultAttack)
@@ -1236,10 +1217,16 @@ func handlePlayerVsMob(user *users.UserRecord, uRoom *rooms.Room, evt events.New
 
 	if user.Character.Health <= 0 || defMob.Character.Health <= 0 {
 		defMob.Character.EndAggro()
-		user.Character.EndAggro()
-
-		if user.Character.Health > 0 && defMob.Character.Health <= 0 {
-			handleAutoRetargetPlayer(user, uRoom)
+		if user.Character.Health > 0 {
+			if RetargetOrEnd(user.Character, uRoom, user.UserId, 0) {
+				if mob := mobs.GetInstance(user.Character.Aggro.MobInstanceId); mob != nil {
+					user.SendText(fmt.Sprintf("You turn your attention to <ansi fg=\"mobname\">%s</ansi>!", mob.Character.Name))
+				} else if newDef := users.GetByUserId(user.Character.Aggro.UserId); newDef != nil {
+					user.SendText(fmt.Sprintf("You turn your attention to <ansi fg=\"username\">%s</ansi>!", newDef.Character.Name))
+				}
+			}
+		} else {
+			user.Character.EndAggro()
 		}
 	} else {
 		user.Character.SetAggro(0, defMob.InstanceId, characters.DefaultAttack)
@@ -1451,8 +1438,12 @@ func handleMobVsPlayer(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, 
 	}
 
 	if mob.Character.Health <= 0 || defUser.Character.Health <= 0 {
-		mob.Character.EndAggro()
 		defUser.Character.EndAggro()
+		if mob.Character.Health > 0 {
+			RetargetOrEnd(&mob.Character, mobRoom, 0, mob.InstanceId)
+		} else {
+			mob.Character.EndAggro()
+		}
 	} else {
 		mob.Character.SetAggro(defUser.UserId, 0, characters.DefaultAttack)
 	}
@@ -1597,20 +1588,11 @@ func handleMobVsMob(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, aff
 	}
 
 	if mob.Character.Health <= 0 || defMob.Character.Health <= 0 {
-		mob.Character.EndAggro()
 		defMob.Character.EndAggro()
-
-		// When a charmed mob's target dies, retarget the charm owner
-		// so the player doesn't get stuck with stale aggro.
-		if mob.Character.Health > 0 && mob.Character.IsCharmed() {
-			if ownerId := mob.Character.GetCharmedUserId(); ownerId > 0 {
-				if owner := users.GetByUserId(ownerId); owner != nil {
-					ownerRoom := rooms.LoadRoom(owner.Character.RoomId)
-					if ownerRoom != nil {
-						handleAutoRetargetPlayer(owner, ownerRoom)
-					}
-				}
-			}
+		if mob.Character.Health > 0 {
+			RetargetOrEnd(&mob.Character, mobRoom, 0, mob.InstanceId)
+		} else {
+			mob.Character.EndAggro()
 		}
 	} else {
 		mob.Character.SetAggro(0, defMob.InstanceId, characters.DefaultAttack)
