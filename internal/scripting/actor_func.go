@@ -743,6 +743,20 @@ func (a ScriptActor) CharmSet(userId int, charmRounds int, onRevertCommand ...st
 	if len(onRevertCommand) < 1 {
 		onRevertCommand = append(onRevertCommand, ``)
 	}
+
+	// Anti-recursion: strip any companions this mob itself had before
+	// charming it, so we never create companion chains.
+	for _, subId := range a.characterRecord.GetCharmIds() {
+		if subMob := mobs.GetInstance(subId); subMob != nil {
+			subMob.Character.RemoveCharm()
+			if subRoom := rooms.LoadRoom(subMob.Character.RoomId); subRoom != nil {
+				subRoom.RemoveMob(subId)
+			}
+			mobs.DestroyInstance(subId)
+		}
+	}
+	a.characterRecord.CharmedMobs = nil
+
 	a.characterRecord.Charm(userId, charmRounds, onRevertCommand[0])
 
 	if user := users.GetByUserId(userId); user != nil {
