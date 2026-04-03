@@ -949,6 +949,20 @@ func handlePlayerVsPlayer(user *users.UserRecord, uRoom *rooms.Room, evt events.
 	}
 	handleOffhandBreakUserDef(roundResult, defUser, defRoom)
 
+	// Stage 38.3: Player attacker progression
+	user.Character.OnStatUse("strength", user.UserId)
+	user.Character.OnStatUse("dexterity", user.UserId)
+	if roundResult.Hit {
+		combatSkill := string(user.Character.GetCombatSkillTag())
+		user.Character.OnSkillUse(combatSkill, user.UserId)
+		if roundResult.Crit {
+			user.Character.OnCriticalSuccess(combatSkill, user.UserId)
+		}
+	} else if roundResult.Fumble {
+		combatSkill := string(user.Character.GetCombatSkillTag())
+		user.Character.OnCriticalFailure(combatSkill, user.UserId)
+	}
+
 	if user.Character.Health <= 0 || defUser.Character.Health <= 0 {
 		defUser.Character.EndAggro()
 		user.Character.EndAggro()
@@ -1113,6 +1127,20 @@ func handlePlayerVsMob(user *users.UserRecord, uRoom *rooms.Room, evt events.New
 	// Handle any scripted behavior now.
 	if roundResult.Hit {
 		scripting.TryMobScriptEvent(`onHurt`, defMob.InstanceId, user.UserId, `user`, map[string]any{`damage`: roundResult.DamageToTarget, `crit`: roundResult.Crit})
+	}
+
+	// Stage 38.3: Player attacker progression
+	user.Character.OnStatUse("strength", user.UserId)
+	user.Character.OnStatUse("dexterity", user.UserId)
+	if roundResult.Hit {
+		combatSkill := string(user.Character.GetCombatSkillTag())
+		user.Character.OnSkillUse(combatSkill, user.UserId)
+		if roundResult.Crit {
+			user.Character.OnCriticalSuccess(combatSkill, user.UserId)
+		}
+	} else if roundResult.Fumble {
+		combatSkill := string(user.Character.GetCombatSkillTag())
+		user.Character.OnCriticalFailure(combatSkill, user.UserId)
 	}
 
 	// Hostility
