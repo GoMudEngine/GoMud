@@ -7,6 +7,32 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/spells"
 )
 
+// ── Pet → Companion migration (DEFERRED) ─────────────────────────────────────
+//
+// The legacy Pet system (Character.Pet of type pets.Pet) is fundamentally
+// different from the Companions system and cannot be cleanly migrated today:
+//
+//   - Pets have no MobId — they are identified by a Type string and loaded
+//     from pet YAML definitions, not mob templates. CompanionInfo requires
+//     a MobId to respawn the companion on login.
+//
+//   - Pets provide stat mods and buffs directly to the player character
+//     (GetStatMod, GetBuffs). The Companions system does not have this concept.
+//
+//   - Pets have their own inventory (Pet.Items) which has no counterpart in
+//     CompanionInfo.
+//
+// Migration plan (future work):
+//  1. Create pet-backed mob templates that mirror each pet type's stats/buffs.
+//  2. Add a PetMobId field to each pet YAML definition.
+//  3. In Validate(), create a CompanionInfo{SourceType: CompanionPet, MobId: …}
+//     for each existing Pet and clear Character.Pet.
+//  4. Remove the pets package once all players have migrated.
+//
+// Until then, Character.Pet and Character.Companions coexist. CompanionPet
+// source type is reserved for when this migration is implemented.
+// ─────────────────────────────────────────────────────────────────────────────
+
 // CompanionSourceType describes how a companion came to follow the player.
 type CompanionSourceType string
 
