@@ -239,8 +239,14 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 			resolveSpell(user, cs, spellData, resolveRoom)
 		}
 		user.Character.TrackSpellCast(cs.SpellId)
-		user.Character.OnSkillUse(string(skills.Spellcasting), userId)
-		user.Character.OnStatUse("willpower", userId)
+		// Fire progression for the correct skill based on spell school
+		if spellData != nil && spellData.HasSchool(spells.SchoolManifestation) {
+			user.Character.OnSkillUse(string(skills.Manifestation), userId)
+			user.Character.OnStatUse("charisma", userId)
+		} else {
+			user.Character.OnSkillUse(string(skills.Spellcasting), userId)
+			user.Character.OnStatUse("willpower", userId)
+		}
 
 		// Phase 25.1: Spell discovery — traditional schools.
 		castSkillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
@@ -334,9 +340,14 @@ func handleMobFoldCasting(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 		if resolveRoom := rooms.LoadRoom(mob.Character.RoomId); resolveRoom != nil {
 			resolveMobSpell(mob, cs, spellData, resolveRoom)
 		}
-		// Stage 38.3: Mob spellcasting progression
-		mob.Character.OnSkillUse(string(skills.Spellcasting), 0)
-		mob.Character.OnStatUse("willpower", 0)
+		// Stage 38.3: Mob spellcasting progression — route to correct skill
+		if spellData != nil && spellData.HasSchool(spells.SchoolManifestation) {
+			mob.Character.OnSkillUse(string(skills.Manifestation), 0)
+			mob.Character.OnStatUse("charisma", 0)
+		} else {
+			mob.Character.OnSkillUse(string(skills.Spellcasting), 0)
+			mob.Character.OnStatUse("willpower", 0)
+		}
 
 		// Task 6: Spell discovery for caster mobs.
 		// Only mobs that started with spells or have archetype="casting" can discover new ones.
