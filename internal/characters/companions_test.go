@@ -1,6 +1,7 @@
 package characters
 
 import (
+	"math"
 	"testing"
 
 	"gopkg.in/yaml.v2"
@@ -266,4 +267,32 @@ func TestCompanionInfo_YAMLPersistence(t *testing.T) {
 	assert.Equal(t, original.Mutations, restored.Mutations)
 	assert.Equal(t, original.SpellBook, restored.SpellBook)
 	assert.InDelta(t, original.MutationProgress, restored.MutationProgress, 1e-9)
+}
+
+// ─── CalcRaisedStatPool ──────────────────────────────────────────────────────
+
+func TestCalcRaisedStatPool(t *testing.T) {
+	// 50/50 split: companionScale * 0.5 + corpsePool * 0.5
+	// Test uses hardcoded defaults (chaFactor=200, skillFactor=0.02)
+
+	// Skeleton (base 60), Cha 100, Manifest 0, corpse pool 50
+	// companionScale = CalcCompanionStatPool(60, 100, 0) = 60 * (1 + 100/200 + 0) = 60 * 1.5 = 90
+	// raisedPool = 90 * 0.5 + 50 * 0.5 = 45 + 25 = 70
+	companionScale := CalcCompanionStatPool(60, 100, 0)
+	raisedPool := int(math.Round(float64(companionScale)*0.5 + float64(50)*0.5))
+	assert.Equal(t, 70, raisedPool)
+
+	// Wraith (base 70), Cha 150, Manifest 25, corpse pool 150
+	// companionScale = 70 * (1 + 150/200 + 25*0.02) = 70 * (1 + 0.75 + 0.5) = 70 * 2.25 = 157.5 → 158
+	// raisedPool = 158 * 0.5 + 150 * 0.5 = 79 + 75 = 154
+	companionScale = CalcCompanionStatPool(70, 150, 25)
+	raisedPool = int(math.Round(float64(companionScale)*0.5 + float64(150)*0.5))
+	assert.Equal(t, 154, raisedPool)
+
+	// Golem (base 120), Cha 100, Manifest 50, corpse pool 500
+	// companionScale = 120 * (1 + 100/200 + 50*0.02) = 120 * (1 + 0.5 + 1.0) = 120 * 2.5 = 300
+	// raisedPool = 300 * 0.5 + 500 * 0.5 = 150 + 250 = 400
+	companionScale = CalcCompanionStatPool(120, 100, 50)
+	raisedPool = int(math.Round(float64(companionScale)*0.5 + float64(500)*0.5))
+	assert.Equal(t, 400, raisedPool)
 }
