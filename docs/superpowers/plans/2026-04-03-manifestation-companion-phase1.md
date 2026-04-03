@@ -359,14 +359,20 @@ Output format for `companion` (no args):
     HP: ██████████  SP: ████████░░  CP: ██████████
 ```
 
-For `companion <name>`:
+For `companion <name>` — NO hard numbers. Use descriptive language
+and power ranking relative to the player, same as the `consider`
+command:
 ```
 ━━━ Steppe Spirit Wolf [summoned] ━━━
-  HP: 45/50  SP: 30/30  CP: 25/25
-  Strength: 110  Dexterity: 95  Perception: 80
-  Vitality: 100  Willpower: 70  Charisma: 60
+  Health: strong    Stamina: fresh    Conviction: steady
+  Compared to you, it seems roughly matched in strength,
+  quicker on its feet, but less perceptive.
   Auto-Assist: on
 ```
+
+Read `internal/usercommands/consider.go` for the existing power
+comparison pattern. Reuse the same descriptive tiers and relative
+comparison language.
 
 For the assist toggle, find the companion by name, flip
 `AutoAssist`, send confirmation.
