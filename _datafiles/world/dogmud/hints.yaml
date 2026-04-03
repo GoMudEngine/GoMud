@@ -58,8 +58,8 @@ hints:
     Mutations are permanent changes to your body. They develop
     naturally as you adventure and grow.
   - >-
-    Use <ansi fg="command">defense</ansi> to adjust your combat
-    stance. Dodge, parry, and block each have strengths.
+    Try <ansi fg="command">help defense</ansi> to learn about combat
+    stances. Dodge, parry, and block each have strengths.
   - >-
     NPCs remember your actions. Completing quests and making
     choices shapes how the world treats you.
