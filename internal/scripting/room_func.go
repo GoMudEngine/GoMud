@@ -315,6 +315,18 @@ func (r ScriptRoom) SpawnMob(mobId int) *ScriptActor {
 	return nil
 }
 
+// SpawnMobScaled spawns a mob and overrides its stat pool with the given
+// value. Use CalcCompanionStatPool (characters package) to compute the
+// scaled value before calling this. Returns nil if the mob could not be
+// created.
+func (r ScriptRoom) SpawnMobScaled(mobId int, statPool int) *ScriptActor {
+	if mob := mobs.NewMobById(mobs.MobId(mobId), r.roomId, statPool); mob != nil {
+		r.roomRecord.AddMob(mob.InstanceId)
+		return GetMob(mob.InstanceId)
+	}
+	return nil
+}
+
 func (r ScriptRoom) SendText(msg string, excludeIds ...int) {
 
 	msg = roomTextWrap.Wrap(msg)

@@ -1,8 +1,10 @@
 package characters
 
 import (
+	"math"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 )
@@ -140,4 +142,24 @@ func (c *Character) hasManifestationSpell() bool {
 		}
 	}
 	return false
+}
+
+// CalcCompanionStatPool computes the stat pool for a summoned companion,
+// scaling the mob's base stat pool by the caster's Charisma and
+// manifestation skill level.
+//
+//	scale = 1.0 + charisma/chaFactor + manifestationSkill*skillFactor
+//	result = round(baseStatPool * scale)
+//
+// Config knobs: ManifestStatScaleChaFactor (default 200),
+// ManifestStatScaleSkillFactor (default 0.02).
+func CalcCompanionStatPool(baseStatPool int, charisma int, manifestationSkill int) int {
+	cfg := configs.GetBalanceConfig()
+	chaFactor := float64(cfg.ManifestStatScaleChaFactor)
+	skillFactor := float64(cfg.ManifestStatScaleSkillFactor)
+	if chaFactor <= 0 {
+		chaFactor = 200
+	}
+	scale := 1.0 + float64(charisma)/chaFactor + float64(manifestationSkill)*skillFactor
+	return int(math.Round(float64(baseStatPool) * scale))
 }
