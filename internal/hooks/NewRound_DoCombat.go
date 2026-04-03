@@ -114,7 +114,7 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 
 		mob := mobs.GetInstance(mobId)
 
-		if mob == nil || mob.Character.Aggro == nil || mob.Character.Health <= 0 {
+		if mob == nil || mob.Character.Health <= 0 {
 			continue
 		}
 
@@ -124,41 +124,54 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 
 		mobRoom := rooms.LoadRoom(mob.Character.RoomId)
 		if mobRoom == nil {
-			mob.Character.EndAggro()
+			if mob.Character.Aggro != nil {
+				mob.Character.EndAggro()
+			}
 			continue
 		}
 
-		// Strip combat-cancelling buffs (Hidden, etc.)
-		// Also remove Hidden from permabuffs so Validate doesn't re-add it
-		if mob.Character.HasBuffFlag(buffs.Hidden) {
-			mob.Character.RemovePermaBuff(9)
-		}
-		mob.Character.CancelBuffsWithFlag(buffs.CancelIfCombat)
+		// Only run the full combat prep (buff stripping, shield decay, etc.) when
+		// actually fighting or when the mob might enter combat this round.
+		if mob.Character.Aggro != nil {
+			// Strip combat-cancelling buffs (Hidden, etc.)
+			// Also remove Hidden from permabuffs so Validate doesn't re-add it
+			if mob.Character.HasBuffFlag(buffs.Hidden) {
+				mob.Character.RemovePermaBuff(9)
+			}
+			mob.Character.CancelBuffsWithFlag(buffs.CancelIfCombat)
 
-		// Mob shield decay (symmetric with handlePlayerShieldDecay)
-		if mob.Character.HasCondition(characters.ConditionShield) {
-			if mob.Character.GetConditionDuration(characters.ConditionShield) <= 1 {
-				mob.Character.RemoveCondition(characters.ConditionShield)
-				mobRoom.SendText(fmt.Sprintf(
-					`<ansi fg="blue"><ansi fg="mobname">%s</ansi>'s Minor Shield dissipates.</ansi>`,
-					mob.Character.Name))
-			} else {
-				mob.Character.DecrementCondition(characters.ConditionShield)
+			// Mob shield decay (symmetric with handlePlayerShieldDecay)
+			if mob.Character.HasCondition(characters.ConditionShield) {
+				if mob.Character.GetConditionDuration(characters.ConditionShield) <= 1 {
+					mob.Character.RemoveCondition(characters.ConditionShield)
+					mobRoom.SendText(fmt.Sprintf(
+						`<ansi fg="blue"><ansi fg="mobname">%s</ansi>'s Minor Shield dissipates.</ansi>`,
+						mob.Character.Name))
+				} else {
+					mob.Character.DecrementCondition(characters.ConditionShield)
+				}
+			}
+
+			if handleMobFoldCasting(mob, mobRoom) {
+				continue
+			}
+
+			// Validate mob's aggro target still exists and is alive; retarget if possible
+			if !ValidateAggro(&mob.Character) {
+				if mobRoom != nil {
+					RetargetOrEnd(&mob.Character, mobRoom, 0, mob.InstanceId)
+				}
 			}
 		}
 
-		if handleMobFoldCasting(mob, mobRoom) {
-			continue
-		}
-
-		// Validate mob's aggro target still exists and is alive; retarget if possible
-		if !ValidateAggro(&mob.Character) {
-			if mobRoom != nil {
-				RetargetOrEnd(&mob.Character, mobRoom, 0, mob.InstanceId)
-			}
+		// Idle companions with autoassist scan for threats to owner
+		if mob.Character.Aggro == nil && mob.Character.IsCharmed() {
+			CompanionAutoTarget(mob, mobRoom)
 			if mob.Character.Aggro == nil {
 				continue
 			}
+		} else if mob.Character.Aggro == nil {
+			continue
 		}
 
 		c := configs.GetConfig()
