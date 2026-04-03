@@ -121,14 +121,15 @@ damage:
   variance: 2
 ```
 
-**`31-zombie.yaml`:** Str 130, Dex 50, Per 40, Vit 200, Wil 15, Cha 5
-**`32-wraith.yaml`:** Str 40, Dex 160, Per 150, Vit 35, Wil 170, Cha 30
-**`33-spectre.yaml`:** Str 30, Dex 150, Per 130, Vit 30, Wil 150, Cha 170
-**`34-vampire.yaml`:** Str 120, Dex 140, Per 120, Vit 110, Wil 110, Cha 160
-**`35-flesh_golem.yaml`:** Str 220, Dex 65, Per 40, Vit 240, Wil 15, Cha 5
+Create the remaining 5 species with these exact base stats:
 
-Set appropriate `damage` fields for each (higher basedamage for
-strength-based types).
+| File | Str | Dex | Per | Vit | Wil | Cha | basedamage |
+|------|-----|-----|-----|-----|-----|-----|------------|
+| `31-zombie.yaml` | 130 | 50 | 40 | 200 | 15 | 5 | 5 |
+| `32-wraith.yaml` | 40 | 160 | 150 | 35 | 170 | 30 | 2 |
+| `33-spectre.yaml` | 30 | 150 | 130 | 30 | 150 | 170 | 2 |
+| `34-vampire.yaml` | 120 | 140 | 120 | 110 | 110 | 160 | 5 |
+| `35-flesh_golem.yaml` | 220 | 65 | 40 | 240 | 15 | 5 | 8 |
 
 - [ ] **Step 2: Commit**
 
@@ -201,7 +202,21 @@ git commit -m "feat: 6 undead mob templates for necromancy"
 
 - [ ] **Step 1: Create spell YAMLs**
 
-All raise spells follow the same pattern:
+All raise spells follow the same pattern. Create all 6 with
+these exact values:
+
+| Spell ID | Name | Folds | Cost | Mob ID | Base Pool | Min Corpse |
+|----------|------|-------|------|--------|-----------|------------|
+| raise-skeleton | Raise Skeleton | 4 | 20 | 300 | 60 | 30 |
+| raise-zombie | Raise Zombie | 6 | 30 | 301 | 80 | 60 |
+| raise-wraith | Raise Wraith | 8 | 45 | 302 | 70 | 120 |
+| raise-spectre | Raise Spectre | 10 | 60 | 303 | 90 | 200 |
+| raise-vampire | Raise Vampire | 12 | 80 | 304 | 100 | 300 |
+| raise-golem | Raise Flesh Golem | 16 | 100 | 305 | 120 | 500 |
+
+All are `type: neutral`, `schools: [manifestation]`, no `quest_required`.
+
+Example YAML:
 
 ```yaml
 spellid: raise-skeleton
@@ -215,8 +230,6 @@ type: neutral
 schools:
   - manifestation
 ```
-
-Create all 6 with costs/folds from the spec table.
 
 - [ ] **Step 2: Create spell JS scripts**
 
