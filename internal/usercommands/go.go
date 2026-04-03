@@ -437,6 +437,8 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 					success, _, _, _ := dice.OpposedRollStat(observerScore, hiddenScore)
 					if success {
 						mob.Character.CancelBuffsWithFlag(buffs.Hidden)
+						mob.Character.Buffs.RemoveBuff(9)
+						mob.Character.Validate(true)
 						user.SendText(fmt.Sprintf(
 							`You notice <ansi fg="mobname">%s</ansi> lurking in the shadows!`,
 							mob.Character.Name))

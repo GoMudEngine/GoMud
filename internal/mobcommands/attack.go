@@ -68,6 +68,8 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 				// Clear hidden immediately so the player can fight back
 				// without waiting for the next combat loop tick
 				mob.Character.CancelBuffsWithFlag(buffs.Hidden)
+				mob.Character.Buffs.RemoveBuff(9)
+				mob.Character.Validate(true)
 			}
 			mob.Character.SetAggro(attackPlayerId, 0, aggroType)
 
@@ -98,6 +100,8 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			if mob.Character.HasBuffFlag(buffs.Hidden) {
 				mobAggroType = characters.SurpriseAttack
 				mob.Character.CancelBuffsWithFlag(buffs.Hidden)
+				mob.Character.Buffs.RemoveBuff(9)
+				mob.Character.Validate(true)
 			}
 			mob.Character.SetAggro(0, attackMobInstanceId, mobAggroType)
 
