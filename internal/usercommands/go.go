@@ -502,13 +502,6 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 						continue
 					}
 
-					// Hidden mobs don't "notice" the player — they ambush
-					// via their own lookfortrouble idle behavior. Skip them
-					// here so they get a proper surprise attack.
-					if mob.Character.HasBuffFlag(buffs.Hidden) {
-						continue
-					}
-
 					isHostile := mob.Hostile // Is it automatically hostile?
 					if !isHostile {
 						for _, groupName := range mob.Groups {
@@ -522,10 +515,14 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 						}
 					}
 
-					if destRoom.GetVisibility() >= 1 || user.Character.HasFlagFromAnySource(buffs.NightVision) {
-						user.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> notices you as you enter!`, mob.Character.Name))
-					} else {
-						user.SendText(`<ansi fg="yellow">Something notices you in the darkness!</ansi>`)
+					// Hidden mobs attack silently — no "notices you" message.
+					// They still trigger lookfortrouble for the surprise attack.
+					if !mob.Character.HasBuffFlag(buffs.Hidden) {
+						if destRoom.GetVisibility() >= 1 || user.Character.HasFlagFromAnySource(buffs.NightVision) {
+							user.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> notices you as you enter!`, mob.Character.Name))
+						} else {
+							user.SendText(`<ansi fg="yellow">Something notices you in the darkness!</ansi>`)
+						}
 					}
 
 					mob.Command(`lookfortrouble`, 4)
