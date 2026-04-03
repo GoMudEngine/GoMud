@@ -1,0 +1,31 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">raise-vampire</ansi> spell
+
+The <ansi fg="command">Raise Vampire</ansi> spell performs the forbidden rite that transforms a
+worthy corpse into a blood-drinking undead noble. Unlike lesser risen, the
+vampire retains cunning and can act with terrifying independence. Only the
+most formidable remains can survive the dark gift's demands.
+
+Vampires are predatory spellcasters that drain the lifeforce from their foes
+through both claw and sorcery. They heal themselves by wounding others,
+making them dangerous foes that grow stronger as battle rages.
+
+The undead servant's power scales with your willpower and spellcasting skill.
+More skilled casters raise more formidable specimens.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">cast raise-vampire [corpse]</ansi>     Animate nearby remains.
+
+<ansi fg="yellow">Base Folds:  </ansi> <ansi fg="white-bold">12</ansi>
+<ansi fg="yellow">Corpse:      </ansi> <ansi fg="white-bold">Requires immense remains</ansi>
+<ansi fg="yellow">Target:      </ansi> <ansi fg="white-bold">Nearby corpse or ground loot</ansi>
+<ansi fg="yellow">Conv. Cost:  </ansi> <ansi fg="white-bold">80</ansi>
+<ansi fg="yellow">School:      </ansi> <ansi fg="white-bold">Manifestation</ansi>
+
+<ansi fg="white-bold">Notes:</ansi>
+  - The vampire appears under your command and aids you in combat.
+  - Once raised, the undead servant remains active as a companion.
+  - Use the <ansi fg="command">assess</ansi> command to evaluate a corpse's quality.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help cast</ansi>, <ansi fg="command">help manifestation</ansi>,
+  <ansi fg="command">help assess</ansi>, <ansi fg="command">help companion</ansi>

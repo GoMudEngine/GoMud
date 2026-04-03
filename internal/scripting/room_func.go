@@ -315,6 +315,18 @@ func (r ScriptRoom) SpawnMob(mobId int) *ScriptActor {
 	return nil
 }
 
+// SpawnMobScaled spawns a mob and overrides its stat pool with the given
+// value. Use CalcCompanionStatPool (characters package) to compute the
+// scaled value before calling this. Returns nil if the mob could not be
+// created.
+func (r ScriptRoom) SpawnMobScaled(mobId int, statPool int) *ScriptActor {
+	if mob := mobs.NewMobById(mobs.MobId(mobId), r.roomId, statPool); mob != nil {
+		r.roomRecord.AddMob(mob.InstanceId)
+		return GetMob(mob.InstanceId)
+	}
+	return nil
+}
+
 func (r ScriptRoom) SendText(msg string, excludeIds ...int) {
 
 	msg = roomTextWrap.Wrap(msg)
@@ -379,6 +391,69 @@ func (r ScriptRoom) RemoveMutator(mutName string) {
 
 func (r ScriptRoom) IsEphemeral() bool {
 	return rooms.IsEphemeralRoomId(r.roomRecord.RoomId)
+}
+
+// ScriptCorpse is a lightweight JS-accessible wrapper around a room corpse.
+type ScriptCorpse struct {
+	corpse rooms.Corpse
+	index  int
+}
+
+// Name returns the name of the character whose corpse this is.
+func (sc ScriptCorpse) Name() string {
+	return sc.corpse.Character.Name
+}
+
+// MobId returns the mob type ID, or 0 for player corpses.
+func (sc ScriptCorpse) MobId() int {
+	return sc.corpse.MobId
+}
+
+// IsPlayerCorpse returns true when the corpse belongs to a player character.
+func (sc ScriptCorpse) IsPlayerCorpse() bool {
+	return sc.corpse.UserId > 0
+}
+
+// GetStatTrainingTotal returns the sum of all 6 stat Training values.
+// This is the "corpse statpool" used for necromancy companion scaling.
+func (sc ScriptCorpse) GetStatTrainingTotal() int {
+	c := &sc.corpse.Character
+	return c.Stats.Strength.Training +
+		c.Stats.Dexterity.Training +
+		c.Stats.Perception.Training +
+		c.Stats.Vitality.Training +
+		c.Stats.Willpower.Training +
+		c.Stats.Charisma.Training
+}
+
+// Index returns the position of this corpse in the room's Corpses slice.
+// Pass this value to RemoveCorpse to consume the corpse.
+func (sc ScriptCorpse) Index() int {
+	return sc.index
+}
+
+// GetCorpses returns all non-prunable corpses currently in the room,
+// each wrapped in a ScriptCorpse for JS access.
+func (r ScriptRoom) GetCorpses() []ScriptCorpse {
+	result := make([]ScriptCorpse, 0, len(r.roomRecord.Corpses))
+	for idx, c := range r.roomRecord.Corpses {
+		if c.Prunable {
+			continue
+		}
+		result = append(result, ScriptCorpse{corpse: c, index: idx})
+	}
+	return result
+}
+
+// RemoveCorpse removes the corpse at the given index from the room.
+// Returns true if the index was valid and the corpse was removed.
+func (r ScriptRoom) RemoveCorpse(index int) bool {
+	corpses := r.roomRecord.Corpses
+	if index < 0 || index >= len(corpses) {
+		return false
+	}
+	r.roomRecord.Corpses = append(corpses[:index], corpses[index+1:]...)
+	return true
 }
 
 // ////////////////////////////////////////////////////////

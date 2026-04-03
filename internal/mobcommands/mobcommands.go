@@ -28,6 +28,7 @@ var (
 		"attack":         {Attack, false},
 		"backstab":       {Backstab, false},
 		"bash":           {Bash, false},
+		"bite":           {Bite, false},
 		"befriend":       {Befriend, false},
 		"break":          {Break, false},
 		"broadcast":      {Broadcast, false},

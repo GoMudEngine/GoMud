@@ -1,0 +1,17 @@
+spellid: raise-spectre
+name: Raise Spectre
+description: Draws the deepest shadow of a powerful soul from its
+  remains and compresses it into a spectre — a being of pure cold
+  malice. Spectres strike at the mind as much as the body, and require
+  a corpse of great potency to anchor the transformation.
+type: neutral
+schools:
+  - manifestation
+cost: 60
+waitrounds: 10
+difficulty: 0
+primarystat: willpower
+base_folds: 10
+target_defense_type: none
+effect_type: none
+effect_magnitude: 0

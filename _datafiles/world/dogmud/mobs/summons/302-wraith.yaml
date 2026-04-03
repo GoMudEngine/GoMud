@@ -1,0 +1,49 @@
+mobid: 302
+zone: Summons
+archetype: casting
+aiprofile: caster
+statpool: 70
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - summon
+  - undead
+idlecommands:
+  - 'emote hovers a hand-span off the ground, trailing wisps of cold shadow'
+  - ''
+  - 'emote flickers briefly, its edges dissolving into darkness before returning'
+  - ''
+  - 'emote turns its hollow gaze slowly across the room'
+  - ''
+activitylevel: 70
+combatcommands:
+  - 'cast mind-spike'
+  - ''
+  - 'emote phases through its target, trailing cold that cuts to the bone'
+  - ''
+  - 'cast nerve-disruption'
+  - ''
+character:
+  name: wraith
+  description: |
+    A spirit of pure necromantic fury, the wraith exists at the threshold
+    between death and the mortal world. Its form is a suggestion of a figure —
+    black smoke and cold light given shape — that flickers and phases without
+    warning. Where it passes the air drops sharply in temperature and the
+    shadows stretch toward it as if drawn by gravity.
+  speciesid: 32
+  level: 1
+  spellbook:
+    mind-spike: 5
+    nerve-disruption: 3
+    conviction-ward: 4
+  skills:
+    spellcasting: 10
+  stats:
+    willpower:
+      training: 15
+    perception:
+      training: 10
+    dexterity:
+      training: 10

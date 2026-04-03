@@ -168,6 +168,8 @@ help-aliases:
   tailoring:        [tailor, sewing, weaving, clothwork]
   cooking:          [cook, baking, food, meals]
   jewelcrafting:    [jeweler, jewelry, gemwork, gemcutting, jewel]
+  manifestation:    [manifest, summon, conjure, necromancy, raise]
+  assess:           [examine corpse, study corpse, evaluate corpse, inspect corpse]
   enchanting:       [enchant, enchantment, enchantments, imbue]
   disenchant:       [unenchant, remove-enchant, strip-enchant]
   storage:          [store, unstore]

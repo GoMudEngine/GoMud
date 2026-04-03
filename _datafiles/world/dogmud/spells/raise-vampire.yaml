@@ -1,0 +1,17 @@
+spellid: raise-vampire
+name: Raise Vampire
+description: Performs the forbidden rite that transforms a worthy
+  corpse into a blood-drinking undead noble. Unlike lesser risen, the
+  vampire retains cunning and can act with terrifying independence.
+  Only the most formidable remains can survive the dark gift's demands.
+type: neutral
+schools:
+  - manifestation
+cost: 80
+waitrounds: 12
+difficulty: 0
+primarystat: willpower
+base_folds: 12
+target_defense_type: none
+effect_type: none
+effect_magnitude: 0

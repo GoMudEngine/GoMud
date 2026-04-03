@@ -46,6 +46,7 @@ const (
 	Jewelcrafting SkillTag = `jewelcrafting` // Rings, pendants, gemwork
 	Enchanting    SkillTag = `enchanting`   // Imbuing items with magic (31.6)
 	Salvage       SkillTag = `salvage`     // Breaking down items for materials
+	Manifestation SkillTag = `manifestation` // Companion summoning, charming, necromancy
 )
 
 var (
@@ -136,7 +137,7 @@ func GetMutationTier(owned map[string]int) string {
 
 // GetSkillTier returns the skill tier based on aggregate completion across all skills.
 func GetSkillTier(allRanks map[string]int) string {
-	const totalSkills = 16
+	const totalSkills = 17
 	const softCap = 50.0
 	maxTotal := totalSkills * softCap
 
@@ -284,6 +285,7 @@ var SkillPrimaryStats = map[string]string{
 	"jewelcrafting":  "dexterity",
 	"enchanting":     "perception",
 	"salvage":        "perception",
+	"manifestation":  "charisma",
 }
 
 // GetSkillPrimaryStat returns the primary governing stat for a skill,
@@ -305,6 +307,8 @@ var SkillProgressionMultipliers = map[SkillTag]float64{
 	// Social combat — moderate frequency
 	Rhetoric: 0.5,
 	Cast:         0.5,
+	// Companion management — moderate use frequency
+	Manifestation: 0.3,
 	// Utility skills — used infrequently
 	Search:    2.0,
 	Bartering: 2.0,
@@ -375,6 +379,7 @@ func init() {
 		WeaponCombat, UnarmedCombat, RangedCombat, Spellcasting, Rhetoric,
 		FirstAid, Skullduggery, Search, Bartering,
 		Blacksmithing, Alchemy, Tailoring, Cooking, Jewelcrafting, Enchanting, Salvage,
+		Manifestation,
 	} {
 		if _, ok := skillNameSet[sk]; !ok {
 			skillNameSet[sk] = struct{}{}

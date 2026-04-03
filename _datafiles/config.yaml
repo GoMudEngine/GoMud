@@ -257,7 +257,7 @@ GamePlay:
     # - CorpseDecayTime -
     #   How long until corpses crumble to dust (Go away).
     #   See ShopRestockRate comments for time format.
-    CorpseDecayTime: 1 hour
+    CorpseDecayTime: 4 hours
   # - LivesStart -
   #   (Req: PermaDeath) How many lives players start with before being reset.
   LivesStart: 3
@@ -640,6 +640,7 @@ Balance:
     foraging: 2.0
     first-aid: 2.0
     stealth: 2.0
+    manifestation: 0.3    # Companion management — moderate use frequency
     blacksmithing: 3.5  # Crafting skills fire rarely (once per craft); boosted for feel
     alchemy: 3.5
     tailoring: 3.5
@@ -808,6 +809,10 @@ Balance:
 
   # ── MOON PHASES ─────────────────────────────────────────────────────────────
   MoonStatModMax: 0.10  # Max fractional stat modifier from moon phases (±10% at full/new moon)
+
+  # ── MANIFESTATION / COMPANION SCALING ──────────────────────────────────────
+  ManifestStatScaleChaFactor: 500    # Charisma divisor — skill is primary scaling driver
+  ManifestStatScaleSkillFactor: 0.02 # Manifestation skill additive factor per rank
 
 ################################################################################
 #

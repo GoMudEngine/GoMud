@@ -236,6 +236,10 @@ type Balance struct {
 	ToxicityDecayPerTick  ConfigFloat `yaml:"ToxicityDecayPerTick"`  // Points decayed per regen tick (default 1.0)
 	ToxicityBaseMax       ConfigFloat `yaml:"ToxicityBaseMax"`       // Base max before vitality bonus (default 100)
 	ToxicityVitalityScale ConfigFloat `yaml:"ToxicityVitalityScale"` // Vitality divisor for max bonus (default 5)
+
+	// ── MANIFESTATION / COMPANION SCALING ───────────────────────────────────
+	ManifestStatScaleChaFactor   ConfigInt   `yaml:"ManifestStatScaleChaFactor"`   // Charisma divisor for companion stat scaling (default 200)
+	ManifestStatScaleSkillFactor ConfigFloat `yaml:"ManifestStatScaleSkillFactor"` // Manifestation skill additive factor (default 0.02)
 }
 
 func (b *Balance) Validate() {
@@ -779,6 +783,14 @@ func (b *Balance) Validate() {
 	}
 	if b.ToxicityVitalityScale <= 0 {
 		b.ToxicityVitalityScale = 5
+	}
+
+	// ── MANIFESTATION / COMPANION SCALING ───────────────────────────────────
+	if b.ManifestStatScaleChaFactor < 1 {
+		b.ManifestStatScaleChaFactor = 200
+	}
+	if b.ManifestStatScaleSkillFactor <= 0 {
+		b.ManifestStatScaleSkillFactor = 0.02
 	}
 }
 

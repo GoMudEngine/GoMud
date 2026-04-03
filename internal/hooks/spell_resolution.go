@@ -313,6 +313,18 @@ func applyMobEffect(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spe
 			return 0
 		}
 		if user != nil {
+			// Anti-recursion: strip any companions the mob itself had before
+			// charming it, so we never create companion chains.
+			for _, subId := range mob.Character.GetCharmIds() {
+				if subMob := mobs.GetInstance(subId); subMob != nil {
+					subMob.Character.RemoveCharm()
+					if subRoom := rooms.LoadRoom(subMob.Character.RoomId); subRoom != nil {
+						subRoom.RemoveMob(subId)
+					}
+					mobs.DestroyInstance(subId)
+				}
+			}
+			mob.Character.CharmedMobs = nil
 			mob.Character.Charm(user.UserId, 24, "")
 			mob.Character.Aggro = nil
 			user.Character.TrackCharmed(mob.InstanceId, true)

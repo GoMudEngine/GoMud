@@ -349,6 +349,10 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 					continue
 				}
 				if mob.Character.IsCharmed(user.UserId) { // Charmed mobs follow
+					// Companions interrupt casting to follow owner
+					if mob.Character.CastingState != nil {
+						mob.Character.CastingState = nil
+					}
 					mob.Command(rest)
 				}
 			}

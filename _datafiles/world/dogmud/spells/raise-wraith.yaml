@@ -1,0 +1,17 @@
+spellid: raise-wraith
+name: Raise Wraith
+description: Tears the lingering spirit from a corpse and binds it into
+  an ethereal form — half ghost, half hunger. Wraiths are difficult to
+  strike and sap the will of those they wound. Only a creature of
+  considerable essence can sustain this transformation.
+type: neutral
+schools:
+  - manifestation
+cost: 45
+waitrounds: 8
+difficulty: 0
+primarystat: willpower
+base_folds: 8
+target_defense_type: none
+effect_type: none
+effect_magnitude: 0

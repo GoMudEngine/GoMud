@@ -1,0 +1,30 @@
+speciesid: 34
+name: Vampire
+description: A predator in the truest sense — stronger than any mortal, faster
+  than most, with a magnetism that makes prey hesitate at exactly the wrong
+  moment. Vampires are calculating hunters that blend martial prowess with
+  the power of the will, and a bite that drains more than blood.
+size: medium
+unarmedname: claws
+selectable: false
+tameable: false
+angrycommands:
+  - emote fixes you with a cold, measuring gaze, utterly unhurried.
+  - emote bares its fangs in something that is not quite a smile.
+stats:
+  strength:
+    base: 120
+  dexterity:
+    base: 140
+  perception:
+    base: 120
+  vitality:
+    base: 110
+  willpower:
+    base: 110
+  charisma:
+    base: 160
+damage:
+  basedamage: 5
+  variance: 2
+disabledslots: ['neck', 'legs', 'feet']

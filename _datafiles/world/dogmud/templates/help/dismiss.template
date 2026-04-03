@@ -1,0 +1,34 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">dismiss</ansi>
+
+The <ansi fg="command">dismiss</ansi> command ends the magical bond with one of
+your companions, releasing them from your service.
+
+<ansi fg="yellow">━━━ Usage ━━━</ansi>
+
+  <ansi fg="command">dismiss &lt;name&gt;</ansi>    Release the named companion.
+
+<ansi fg="yellow">━━━ WARNING: Betrayal ━━━</ansi>
+
+Dismissing a companion is an act of betrayal in the eyes of
+bound creatures. <ansi fg="red-bold">ALL</ansi> companions present in the same room
+when you issue the command will immediately turn hostile —
+not just the one you dismissed. Choose the time and place
+carefully, or ensure your companions are elsewhere first.
+
+<ansi fg="yellow">━━━ What Happens After ━━━</ansi>
+
+  <ansi fg="yellow">Summoned</ansi>    The creature unmakes itself and fades from
+              the world. It does not linger after dismissal.
+  <ansi fg="yellow">Raised</ansi>      The reanimated body collapses and crumbles.
+              The bond dissolves completely.
+  <ansi fg="yellow">Charmed</ansi>     The creature's will is restored. It reverts
+              to its natural behavior permanently — the charm
+              cannot be reapplied to the same creature.
+
+<ansi fg="yellow">━━━ Alternative ━━━</ansi>
+
+If you simply want a companion to stop fighting alongside you
+without releasing it, use <ansi fg="command">companion assist &lt;name&gt;</ansi> to
+toggle auto-assist off instead.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help manifestation</ansi>, <ansi fg="command">help companion</ansi>

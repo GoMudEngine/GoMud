@@ -1,17 +1,16 @@
-// Summon Hive Swarm — permanent summon spell
+// Summon Hive Swarm — permanent swarm companion spell
 // Requires: Hive Fragment (item 40011) consumed on cast
 // Spawns: Hive Swarm (mob 111), charmed permanently
-// Limit: one swarm per caster
+// School: manifestation — scales with charisma + manifestation skill
 
 var COMPONENT_ITEM_ID = 40011;
 var SUMMON_MOB_ID = 111;
-var SUMMON_KEY = 'hive-swarm-active';
+var BASE_STAT_POOL = 18;
 
 function onCast(sourceActor, targetActor) {
-    // Check if caster already has a swarm
-    var existing = sourceActor.GetMiscCharacterData(SUMMON_KEY);
-    if (existing && existing !== '' && existing !== '0') {
-        SendUserMessage(sourceActor.UserId(), 'You already have a Hive Swarm bound to your will.');
+    // Check companion cap
+    if (sourceActor.GetCompanionCount() >= sourceActor.GetMaxCompanionCount()) {
+        SendUserMessage(sourceActor.UserId(), 'You have reached your limit of bound companions. Release one before calling another.');
         return false;
     }
 
@@ -31,6 +30,12 @@ function onWait(sourceActor, targetActor) {
 }
 
 function onMagic(sourceActor, targetActor) {
+    // Re-check companion cap (state may have changed between cast and resolve)
+    if (sourceActor.GetCompanionCount() >= sourceActor.GetMaxCompanionCount()) {
+        SendUserMessage(sourceActor.UserId(), 'You have reached your limit of bound companions. The swarm cannot coalesce.');
+        return;
+    }
+
     // Consume the component
     var items = sourceActor.GetBackpackItems();
     var consumed = false;
@@ -46,19 +51,25 @@ function onMagic(sourceActor, targetActor) {
         return;
     }
 
-    // Spawn the swarm
+    // Calculate scaled stat pool: charisma and manifestation skill both contribute
+    var charisma = sourceActor.GetStat('charisma');
+    var manifestSkill = sourceActor.GetSkillLevel('manifestation');
+    var scale = 1.0 + charisma / 200.0 + manifestSkill * 0.02;
+    var scaledPool = Math.round(BASE_STAT_POOL * scale);
+
+    // Spawn the swarm with scaled stats
     var room = GetRoom(sourceActor.GetRoomId());
-    var swarm = room.SpawnMob(SUMMON_MOB_ID);
+    var swarm = room.SpawnMobScaled(SUMMON_MOB_ID, scaledPool);
     if (!swarm) {
         SendUserMessage(sourceActor.UserId(), 'The tiny organisms scatter and dissolve. Something is wrong.');
         return;
     }
 
-    // Charm permanently (99999 rounds ≈ forever)
+    // Charm permanently (99999 rounds)
     swarm.CharmSet(sourceActor.UserId(), 99999);
 
-    // Track the summon
-    sourceActor.SetMiscCharacterData(SUMMON_KEY, '1');
+    // Register as companion
+    sourceActor.AddCompanion(swarm.InstanceId(), 'summoned', 'Hive Swarm');
 
     SendUserMessage(sourceActor.UserId(), 'The fragment erupts into a roiling cloud of iridescent organisms — a Hive Swarm coalesces around you, awaiting your command!');
     SendRoomMessage(sourceActor.GetRoomId(), 'A chitinous fragment shatters in '+sourceActor.GetCharacterName(true)+"'s hand, releasing a dense swarm of tiny Chrysalis creatures that swirl into formation.", sourceActor.UserId());

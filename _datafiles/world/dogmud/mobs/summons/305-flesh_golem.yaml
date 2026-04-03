@@ -1,0 +1,43 @@
+mobid: 305
+zone: Summons
+archetype: fighting
+statpool: 120
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - summon
+  - undead
+idlecommands:
+  - 'emote shifts its bulk slowly, mismatched limbs grinding with the effort'
+  - ''
+  - 'emote breathes in a wet, irregular rhythm, chest rising unevenly'
+  - ''
+  - 'emote stands with a patience that has nothing to do with thought'
+  - ''
+activitylevel: 30
+combatcommands:
+  - 'consume'
+  - ''
+  - 'emote brings both fists down in a crushing overhead blow'
+  - ''
+  - 'emote drives a shoulder into its target with the force of falling stone'
+  - ''
+character:
+  name: flesh golem
+  description: |
+    A massive construct of stitched and grafted corpse-parts, standing head
+    and shoulders above a tall human. Its body is a patchwork of mismatched
+    limbs sewn together with coarse suture and sealed with something dark and
+    resinous. It does not think or plan — it simply advances, absorbing
+    punishment without slowing, and strikes with the mechanical force of a
+    mill wheel.
+  speciesid: 35
+  level: 1
+  stats:
+    strength:
+      training: 25
+    vitality:
+      training: 25
+    dexterity:
+      training: -10

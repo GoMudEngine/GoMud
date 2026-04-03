@@ -106,6 +106,7 @@ type Character struct {
 	SkillUseCount    map[string]int                 `yaml:"skillusecount,omitempty"` // Tracks how many times each skill has been used
 	StatUseCount     map[string]int                 `yaml:"statusecount,omitempty"`  // Tracks how many times each stat has been checked
 	Pet              pets.Pet                       `yaml:"pet,omitempty"`           // Do they have a pet?
+	Companions       []CompanionInfo                `yaml:"companions,omitempty"`    // Active companions (manifestation system)
 	Created          time.Time                      `yaml:"created"`                 // When this character was created
 	Timers           map[string]gametime.RoundTimer `yaml:"timers,omitempty"`        // any special timers added to this character
 	roomHistory      []int                          // A stack FILO of the last X rooms the character has been in

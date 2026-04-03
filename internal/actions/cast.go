@@ -153,9 +153,16 @@ func InitiateCast(actor Actor, spellName, targetName string) CastResult {
 	case spells.HelpSingle:
 		if actor.IsPlayer() {
 			if targetName != `` && targetName != actor.GetName() {
-				pId, _ := room.FindByName(targetName)
+				pId, mId := room.FindByName(targetName)
 				if pId > 0 {
 					targetUserIds = append(targetUserIds, pId)
+				} else if mId > 0 {
+					// Allow targeting companions with help spells
+					if m := mobs.GetInstance(mId); m != nil && m.Character.IsCharmed(actor.GetUserId()) {
+						targetMobInstanceIds = append(targetMobInstanceIds, mId)
+					} else {
+						return CastResult{SpellInfo: spellInfo, NoTarget: true}
+					}
 				} else {
 					return CastResult{SpellInfo: spellInfo, NoTarget: true}
 				}
@@ -201,16 +208,14 @@ func InitiateCast(actor Actor, spellName, targetName string) CastResult {
 		}
 	}
 
-	// 5. Fold calculation.
+	// 5. Fold calculation — school-aware stat/skill selection.
 	baseFolds := spellInfo.BaseFolds
 	if baseFolds < 1 {
 		baseFolds = 4
 	}
 	foldsNeeded := characters.NextPowerOfTwo(baseFolds)
-	foldsPerRound := characters.CalcFoldsPerRound(
-		char.Stats.Perception.ValueAdj,
-		char.GetSkillLevel(skills.Spellcasting),
-	)
+	primaryStat, spellSkillLevel := GetSpellStatAndSkill(char, spellInfo)
+	foldsPerRound := characters.CalcFoldsPerRound(primaryStat, spellSkillLevel)
 
 	// 6. Conviction cost (base, no multiplier — caller applies mutations).
 	totalCost := spellInfo.Cost
@@ -239,6 +244,19 @@ func InitiateCast(actor Actor, spellName, targetName string) CastResult {
 		TargetMobInstanceIds: targetMobInstanceIds,
 		SpellRest:            spellRest,
 	}
+}
+
+// GetSpellStatAndSkill returns the primary stat value and skill level used for
+// fold calculation for a given spell. Manifestation spells use Charisma +
+// manifestation skill; all other spells use Perception + spellcasting.
+func GetSpellStatAndSkill(char *characters.Character, spellData *spells.SpellData) (statValue int, skillLevel int) {
+	if spellData.HasSchool(spells.SchoolManifestation) {
+		return char.Stats.Charisma.ValueAdj,
+			char.GetSkillLevel(skills.Manifestation)
+	}
+	// Default: perception + spellcasting (traditional magic)
+	return char.Stats.Perception.ValueAdj,
+		char.GetSkillLevel(skills.Spellcasting)
 }
 
 // ---------------------------------------------------------------------------

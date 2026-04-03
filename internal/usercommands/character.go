@@ -406,6 +406,18 @@ func cmdCharacterHire(user *users.UserRecord, room *rooms.Room, cmdPrompt *promp
 
 		room.AddMob(m.InstanceId)
 
+		// Anti-recursion: strip any companions the hired mob had before charming.
+		for _, subId := range m.Character.GetCharmIds() {
+			if subMob := mobs.GetInstance(subId); subMob != nil {
+				subMob.Character.RemoveCharm()
+				if subRoom := rooms.LoadRoom(subMob.Character.RoomId); subRoom != nil {
+					subRoom.RemoveMob(subId)
+				}
+				mobs.DestroyInstance(subId)
+			}
+		}
+		m.Character.CharmedMobs = nil
+
 		m.Character.Charm(user.UserId, -1, `suicide vanish`)
 		user.Character.TrackCharmed(m.InstanceId, true)
 

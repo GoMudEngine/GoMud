@@ -532,6 +532,20 @@ func executePurchaseMerc(user *users.UserRecord, room *rooms.Room, shopMob *mobs
 	// Give them the merc
 
 	newMob := mobs.NewMobById(mobs.MobId(matchedShopItem.MobId), user.Character.RoomId)
+
+	// Anti-recursion: strip any companions the new mob had before charming it.
+	// (Fresh mobs from template rarely have charmed mobs, but guard regardless.)
+	for _, subId := range newMob.Character.GetCharmIds() {
+		if subMob := mobs.GetInstance(subId); subMob != nil {
+			subMob.Character.RemoveCharm()
+			if subRoom := rooms.LoadRoom(subMob.Character.RoomId); subRoom != nil {
+				subRoom.RemoveMob(subId)
+			}
+			mobs.DestroyInstance(subId)
+		}
+	}
+	newMob.Character.CharmedMobs = nil
+
 	// Charm 'em
 	newMob.Character.Charm(user.UserId, -2, characters.CharmExpiredRevert)
 	user.Character.TrackCharmed(newMob.InstanceId, true)

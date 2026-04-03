@@ -15,6 +15,63 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
+// saveCompanionState copies live mob progression data into the CompanionInfo
+// and then cleanly despawns the mob instance.
+func saveCompanionState(user *users.UserRecord) {
+	for i := range user.Character.Companions {
+		comp := &user.Character.Companions[i]
+		if comp.InstanceId == 0 {
+			continue
+		}
+		mob := mobs.GetInstance(comp.InstanceId)
+		if mob == nil {
+			comp.InstanceId = 0
+			continue
+		}
+
+		// Copy stat training from individual fields into the map.
+		if comp.StatTraining == nil {
+			comp.StatTraining = make(map[string]int)
+		}
+		comp.StatTraining["strength"] = mob.Character.Stats.Strength.Training
+		comp.StatTraining["dexterity"] = mob.Character.Stats.Dexterity.Training
+		comp.StatTraining["perception"] = mob.Character.Stats.Perception.Training
+		comp.StatTraining["vitality"] = mob.Character.Stats.Vitality.Training
+		comp.StatTraining["willpower"] = mob.Character.Stats.Willpower.Training
+		comp.StatTraining["charisma"] = mob.Character.Stats.Charisma.Training
+
+		// Copy skill progression maps (shallow copy is fine — we replace the map).
+		comp.Skills = copyIntMap(mob.Character.Skills)
+		comp.SkillUseCount = copyIntMap(mob.Character.SkillUseCount)
+		comp.Mutations = copyIntMap(mob.Character.Mutations)
+		comp.SpellBook = copyIntMap(mob.Character.SpellBook)
+		comp.MutationProgress = mob.Character.MutationProgress
+
+		// Remove charm so the mob does not flag as charmed in any cleanup loops.
+		mob.Character.RemoveCharm()
+
+		// Pull mob out of its current room.
+		if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
+			room.RemoveMob(mob.InstanceId)
+		}
+
+		mobs.DestroyInstance(mob.InstanceId)
+		comp.InstanceId = 0
+	}
+}
+
+// copyIntMap returns a shallow copy of a map[string]int (or nil if src is nil).
+func copyIntMap(src map[string]int) map[string]int {
+	if src == nil {
+		return nil
+	}
+	dst := make(map[string]int, len(src))
+	for k, v := range src {
+		dst[k] = v
+	}
+	return dst
+}
+
 //
 // Some clean up
 //
@@ -49,6 +106,9 @@ func HandleLeave(e events.Event) events.ListenerReturn {
 	if currentParty := parties.Get(evt.UserId); currentParty != nil {
 		currentParty.Leave(evt.UserId)
 	}
+
+	// Save companion progression and cleanly despawn companion instances.
+	saveCompanionState(user)
 
 	for _, mobInstId := range room.GetMobs(rooms.FindCharmed) {
 		if mob := mobs.GetInstance(mobInstId); mob != nil {

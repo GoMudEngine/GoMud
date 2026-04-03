@@ -242,13 +242,14 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 		user.Character.OnSkillUse(string(skills.Spellcasting), userId)
 		user.Character.OnStatUse("willpower", userId)
 
-		// Phase 25.1: Spell discovery
+		// Phase 25.1: Spell discovery — traditional schools.
 		castSkillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
 		knownCount := len(user.Character.SpellBook)
 		bal := configs.GetBalanceConfig()
 		discoveryChance := float64(bal.SpellDiscoveryBaseChance) / (1.0 + float64(knownCount)*float64(bal.SpellDiscoveryDecayRate))
 		if util.Rand(100) < int(discoveryChance) {
-			eligible := spells.GetEligibleSpells(user.Character.SpellBook, castSkillLevel)
+			eligible := spells.GetEligibleSpells(user.Character.SpellBook, castSkillLevel,
+				spells.SchoolElemental, spells.SchoolEnhancement, spells.SchoolMental, spells.SchoolVital)
 			if len(eligible) > 0 {
 				pick := eligible[util.Rand(len(eligible))]
 				if user.Character.LearnSpell(pick) {
@@ -256,6 +257,25 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 						user.SendText(fmt.Sprintf(
 							`<ansi fg="magenta-bold">A new pattern crystallizes in your mind: <ansi fg="cyan-bold">%s</ansi></ansi>`,
 							newSpell.Name))
+					}
+				}
+			}
+		}
+		// Phase 25.1: Spell discovery — manifestation school.
+		// Only runs if the player has any manifestation skill.
+		manifestSkillLevel := user.Character.GetSkillLevel(skills.Manifestation)
+		if manifestSkillLevel > 0 {
+			if util.Rand(100) < int(discoveryChance) {
+				eligible := spells.GetEligibleSpells(user.Character.SpellBook, manifestSkillLevel,
+					spells.SchoolManifestation)
+				if len(eligible) > 0 {
+					pick := eligible[util.Rand(len(eligible))]
+					if user.Character.LearnSpell(pick) {
+						if newSpell := spells.GetSpell(pick); newSpell != nil {
+							user.SendText(fmt.Sprintf(
+								`<ansi fg="magenta-bold">A manifestation reveals itself: <ansi fg="cyan-bold">%s</ansi></ansi>`,
+								newSpell.Name))
+						}
 					}
 				}
 			}
@@ -326,11 +346,25 @@ func handleMobFoldCasting(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 			knownCount := len(mob.Character.SpellBook)
 			bal := configs.GetBalanceConfig()
 			discoveryChance := float64(bal.SpellDiscoveryBaseChance) / (1.0 + float64(knownCount)*float64(bal.SpellDiscoveryDecayRate))
+			// Traditional school discovery.
 			if util.Rand(100) < int(discoveryChance) {
-				eligible := spells.GetEligibleSpells(mob.Character.SpellBook, castSkillLevel)
+				eligible := spells.GetEligibleSpells(mob.Character.SpellBook, castSkillLevel,
+					spells.SchoolElemental, spells.SchoolEnhancement, spells.SchoolMental, spells.SchoolVital)
 				if len(eligible) > 0 {
 					pick := eligible[util.Rand(len(eligible))]
 					mob.Character.LearnSpell(pick)
+				}
+			}
+			// Manifestation school discovery — only if mob has manifestation skill.
+			manifestSkillLevel := mob.Character.GetSkillLevel(skills.Manifestation)
+			if manifestSkillLevel > 0 {
+				if util.Rand(100) < int(discoveryChance) {
+					eligible := spells.GetEligibleSpells(mob.Character.SpellBook, manifestSkillLevel,
+						spells.SchoolManifestation)
+					if len(eligible) > 0 {
+						pick := eligible[util.Rand(len(eligible))]
+						mob.Character.LearnSpell(pick)
+					}
 				}
 			}
 		}
@@ -472,6 +506,41 @@ func dispatchCritEffectsPvM(result CritEffectResult, atkUser *users.UserRecord, 
 			`<ansi fg="combat"><ansi fg="mobname">%s</ansi> slips inside %s's guard!</ansi>`,
 			defMob.Character.Name, atkUser.Character.Name),
 			atkUser.UserId)
+	}
+}
+
+// handleCompanionOwnerAssist triggers a companion's owner (and the owner's other
+// companions) to fight back when the companion is attacked.
+// attackerDesc is the attack-command argument that identifies the attacker
+// (e.g. "#42" for a mob instance or "@7" for a player).
+func handleCompanionOwnerAssist(defMob *mobs.Mob, attackerDesc string) {
+	ownerId := defMob.Character.GetCharmedUserId()
+	if ownerId == 0 {
+		return
+	}
+	owner := users.GetByUserId(ownerId)
+	if owner == nil {
+		return
+	}
+
+	// Find the companion entry to check AutoAssist.
+	comp := owner.Character.GetCompanionByInstanceId(defMob.InstanceId)
+	if comp == nil || !comp.AutoAssist {
+		return
+	}
+
+	// Owner fights back if not already in combat.
+	if owner.Character.Aggro == nil {
+		owner.Character.Aggro = &characters.Aggro{
+			Type: characters.DefaultAttack,
+		}
+		owner.Command(fmt.Sprintf("attack %s", attackerDesc))
+	}
+
+	// Other companions of the same owner also assist.
+	ownerRoom := rooms.LoadRoom(owner.Character.RoomId)
+	if ownerRoom != nil {
+		handleCharmedMobAssist(ownerRoom, ownerId, attackerDesc)
 	}
 }
 
@@ -1127,6 +1196,9 @@ func handlePlayerVsMob(user *users.UserRecord, uRoom *rooms.Room, evt events.New
 		defMob.Command(fmt.Sprintf("attack @%d", user.UserId))
 	}
 
+	// Bidirectional autoassist: companion owner fights back when their companion is attacked.
+	handleCompanionOwnerAssist(defMob, fmt.Sprintf("@%d", user.UserId))
+
 	if user.Character.Health <= 0 || defMob.Character.Health <= 0 {
 		defMob.Character.EndAggro()
 		user.Character.EndAggro()
@@ -1432,6 +1504,9 @@ func handleMobVsMob(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, aff
 		defMob.Command(fmt.Sprintf("attack #%d", mob.InstanceId))
 	}
 
+	// Bidirectional autoassist: companion owner fights back when companion is attacked.
+	handleCompanionOwnerAssist(defMob, fmt.Sprintf("#%d", mob.InstanceId))
+
 	handleOffhandBreakMobDef(roundResult, defMob)
 
 	// Stage 38.3: Mob attacker progression (skip room messages for MvM)
@@ -1445,6 +1520,19 @@ func handleMobVsMob(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, aff
 	if mob.Character.Health <= 0 || defMob.Character.Health <= 0 {
 		mob.Character.EndAggro()
 		defMob.Character.EndAggro()
+
+		// When a charmed mob's target dies, retarget the charm owner
+		// so the player doesn't get stuck with stale aggro.
+		if mob.Character.Health > 0 && mob.Character.IsCharmed() {
+			if ownerId := mob.Character.GetCharmedUserId(); ownerId > 0 {
+				if owner := users.GetByUserId(ownerId); owner != nil {
+					ownerRoom := rooms.LoadRoom(owner.Character.RoomId)
+					if ownerRoom != nil {
+						handleAutoRetargetPlayer(owner, ownerRoom)
+					}
+				}
+			}
+		}
 	} else {
 		mob.Character.SetAggro(0, defMob.InstanceId, characters.DefaultAttack)
 	}
