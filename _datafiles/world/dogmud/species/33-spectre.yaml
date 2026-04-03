@@ -1,0 +1,33 @@
+speciesid: 33
+name: Spectre
+description: Where a wraith strikes with raw willpower, the spectre works through
+  dread — a cold unmaking of courage and conviction. Its presence alone drains
+  the will to fight. Ancient and calculating, spectres are the most feared of
+  the lesser undead for what they take from the spirit rather than the flesh.
+size: medium
+unarmedname: presence
+selectable: false
+tameable: false
+buffids:
+  - 53 # Veil Sight — see-hidden
+angrycommands:
+  - emote fixes you with hollow eyes, and the air grows cold and still.
+  - emote drifts forward, trailing a sense of absolute dread.
+stats:
+  strength:
+    base: 30
+  dexterity:
+    base: 150
+  perception:
+    base: 130
+  vitality:
+    base: 30
+  willpower:
+    base: 150
+  charisma:
+    base: 170
+damage:
+  basedamage: 2
+  variance: 1
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'body', 'back',
+  'belt', 'wrist', 'gloves', 'ring', 'legs', 'feet']

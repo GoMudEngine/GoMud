@@ -1,0 +1,33 @@
+speciesid: 32
+name: Wraith
+description: A spirit torn from death and bound by necromantic rage, the wraith
+  exists half in the mortal world and half beyond it. Its form flickers and
+  phases, striking from angles that defy natural geometry. It sees the hidden
+  and fears little that the living can throw at it.
+size: medium
+unarmedname: touch
+selectable: false
+tameable: false
+buffids:
+  - 53 # Veil Sight — see-hidden
+angrycommands:
+  - emote wails with a sound that seems to come from inside your skull.
+  - emote phases partially out of sight, edges blurring into shadow.
+stats:
+  strength:
+    base: 40
+  dexterity:
+    base: 160
+  perception:
+    base: 150
+  vitality:
+    base: 35
+  willpower:
+    base: 170
+  charisma:
+    base: 30
+damage:
+  basedamage: 2
+  variance: 1
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'body', 'back',
+  'belt', 'wrist', 'gloves', 'ring', 'legs', 'feet']
