@@ -265,7 +265,116 @@ git commit -m "test: cast initiation parity tests"
 
 ---
 
-### Task 5: Final Verification
+### Task 5: Mob Progression Parity
+
+**Goal:** Mobs should progress stats and skills the same way players
+do. Currently mob combat/casting code skips SkillUsed and StatUsed
+events. This means mobs never improve — they stay at spawn power
+forever. The design intent is that mobs get stronger over time.
+
+**Files:**
+- Modify: `internal/hooks/NewRound_DoCombat_helpers.go` (or wherever mob combat fires)
+- Modify: `internal/hooks/spell_resolution.go` (mob spell resolution)
+- Modify: `internal/mobcommands/bash.go`, `kick.go`, `trip.go`, `grapple.go`, `shoot.go`
+- Possibly: `internal/hooks/NewRound_DoCombat.go`
+
+- [ ] **Step 1: Audit all SkillUsed/StatUsed event firing**
+
+Search for `events.SkillUsed` and `events.StatUsed` (or `OnStatUse`,
+`OnSkillUse`) across the codebase. Document every place where the
+player side fires these but the mob side doesn't.
+
+Key areas to check:
+- Combat melee hits (stat use for Strength/Dexterity)
+- Special moves (bash→weapon-combat, kick→unarmed-combat, etc.)
+- Spell casting completion (spellcasting skill, Willpower stat)
+- Spell resolution (stat use)
+- Defense rolls (dodge/parry/block → stat use)
+- Non-combat: forage, craft, search, etc. (substage 5 concern)
+
+- [ ] **Step 2: Add progression events to mob combat paths**
+
+For each location where player side fires SkillUsed/StatUsed but
+mob side doesn't, add the equivalent event fire for mobs.
+
+The events use `MobInstanceId` instead of `UserId`:
+```go
+events.AddToQueue(events.SkillUsed{
+    MobInstanceId: mob.InstanceId,
+    SkillName:     "spellcasting",
+})
+```
+
+Check if the SkillUsed/StatUsed event handlers actually process
+mob instance IDs. If they only handle UserId > 0, the handler
+needs updating too.
+
+- [ ] **Step 3: Verify progression handlers support mobs**
+
+Read `internal/hooks/` for the SkillUsed and StatUsed event
+listeners. Do they call `CheckSkillProgression` / `OnStatUse`
+on the character regardless of whether it's a user or mob? Or
+do they only process users?
+
+If mob-only: the event handler needs a mob path that loads the
+mob instance and calls progression on `mob.Character`.
+
+- [ ] **Step 4: Test mob progression**
+
+After implementation, verify in-game:
+- Mob fights player → mob's combat skills should have a chance
+  to increase over multiple fights
+- Mob casts spell → spellcasting skill should progress
+- Mob stats should advance via OnStatUse
+
+Note: mob progression will persist across the mob's lifetime
+(until respawn). Instance saves store training values, so this
+should work with the existing persistence system.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git commit -m "feat: mob progression parity — mobs now advance stats and skills"
+```
+
+---
+
+### Task 6: Spell Discovery for Mobs
+
+**Goal:** Investigate whether mobs should discover new spells as
+their spellcasting skill increases, same as players.
+
+- [ ] **Step 1: Research spell discovery system**
+
+Read how players discover spells. Look for `GetEligibleSpells`,
+`HasSpell`, `LearnSpell` or similar. Understand the skill-gated
+threshold system.
+
+- [ ] **Step 2: Design decision**
+
+Mobs currently have a fixed spell list from their YAML definition.
+Options:
+- **A)** Mobs discover spells like players — as spellcasting rank
+  increases, they unlock new spells from the global pool
+- **B)** Mobs only use spells from their YAML definition — no
+  discovery, but their existing spells get stronger via skill rank
+- **C)** Mob spell lists expand from a per-mob pool defined in YAML
+  (`potential_spells`) that unlock as skill increases
+
+Option B is simplest and probably correct — a wolf mob shouldn't
+suddenly learn fireball because its spellcasting went up. The mob
+designer controls the spell list; progression makes existing spells
+hit harder and cast faster (more folds/round).
+
+Decide based on what makes design sense, then implement or skip.
+
+- [ ] **Step 3: Implement if needed, or document decision**
+
+- [ ] **Step 4: Commit**
+
+---
+
+### Task 7: Final Verification
 
 - [ ] **Step 1: Full build + all tests**
 
