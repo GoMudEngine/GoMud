@@ -13,8 +13,8 @@ re-rolls. Charmed mobs keep original stats and gear.
 | Name | Charm |
 | School | manifestation |
 | Type | harmsingle (targets one mob) |
-| Base Folds | 8 |
-| Cost | 60 conviction |
+| Base Folds | 36 |
+| Cost | 120 conviction |
 | Manifestation Gate | 12 |
 
 ## Opposed Roll
@@ -106,6 +106,46 @@ If the caster LOSES:
 "You attempt to bend [name]'s will, but it resists!"
 Conviction is consumed. Target is NOT consumed (stays hostile).
 If the target was attacking the caster, combat continues.
+
+## Companion Cap Check
+
+The `onCast` handler checks `GetCompanionCount() >= GetMaxCompanionCount()`
+before allowing the cast. If at cap: "You cannot maintain another
+companion bond." and the cast is cancelled (no conviction spent).
+
+## Messaging
+
+### During cast (onWait folds)
+- "You lock eyes with [name], your will pressing against theirs..."
+- "The air between you and [name] crackles with psychic tension..."
+- "You feel [name]'s resistance wavering..."
+
+### On charm success
+- To caster: "[name]'s eyes glaze as your will takes hold. It is yours."
+- To room: "[player] bends [name] to their will!"
+- To target (if player): N/A (mob targets only)
+
+### On charm failure (initial)
+- To caster: "You reach for [name]'s mind, but its will is iron. The spell shatters."
+- To room: "[player]'s charm spell breaks against [name]'s resolve!"
+
+### On charm-immune target
+- To caster: "Your will washes over [name] but finds no purchase. This creature cannot be charmed."
+
+### On re-roll success (charm holds)
+- To caster: "Your hold on [name] wavers... but you reassert your will."
+- No room message (internal struggle, not visible)
+
+### On re-roll failure (charm breaks)
+- To caster: "[name] breaks free of your control!"
+- To room: "[name] snarls and turns on [player]!"
+- Same betrayal mechanic as dismiss (mob turns hostile)
+
+### Periodic warning as re-rolls accumulate
+When `rerollCount >= 3`:
+- "You sense [name]'s will straining against your bond..."
+When `rerollCount >= 5`:
+- "[name]'s eyes flash with defiance. Your control is slipping..."
 
 ## Duration Tracking
 
