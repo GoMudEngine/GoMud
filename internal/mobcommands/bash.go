@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -24,6 +25,9 @@ func Bash(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	if !bashResult.Executed {
 		return true, nil
 	}
+
+	// Fire skill progression for the executed special move.
+	mob.Character.OnSkillUse(string(skills.WeaponCombat), 0)
 
 	// Format and send darkness-aware messages.
 	target := bashResult.Target
