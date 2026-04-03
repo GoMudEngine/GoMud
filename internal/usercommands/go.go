@@ -5,7 +5,6 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
-	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -16,7 +15,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
-	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -402,8 +400,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 
 			// Newcomer tries to spot hidden occupants (players and mobs)
 			if !isSneaking {
-				observerScore := float64(user.Character.Stats.Perception.ValueAdj) +
-					combat.SkillMultiplier(user.Character.GetSkillLevel(skills.Search))*25.0
+				observerScore := actions.CalcSearchScore(user.Character)
 
 				// Check hidden players
 				for _, pId := range destRoom.GetPlayers() {

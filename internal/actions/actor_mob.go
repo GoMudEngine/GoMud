@@ -55,6 +55,10 @@ func (a *MobActor) GetMobInstanceId() int {
 	return a.Mob.InstanceId
 }
 
+func (a *MobActor) AddBuff(buffId int, source string) {
+	a.Mob.AddBuff(buffId, source)
+}
+
 // sendRoomTextDarknessAware is a darkness-aware room broadcast. In lit rooms
 // it delegates to room.SendText() directly. In dark rooms only players who
 // have the NightVision flag receive the message.

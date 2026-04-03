@@ -57,3 +57,7 @@ func (a *UserActor) GetUserId() int {
 func (a *UserActor) GetMobInstanceId() int {
 	return 0
 }
+
+func (a *UserActor) AddBuff(buffId int, source string) {
+	a.User.AddBuff(buffId, source)
+}

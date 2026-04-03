@@ -41,4 +41,7 @@ type Actor interface {
 	// GetMobInstanceId returns the mob instance ID for mob actors, or 0 for
 	// players.
 	GetMobInstanceId() int
+
+	// AddBuff applies a buff to this actor via the event queue.
+	AddBuff(buffId int, source string)
 }
