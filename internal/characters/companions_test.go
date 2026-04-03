@@ -164,6 +164,60 @@ func TestGetCompanionByInstanceId(t *testing.T) {
 	assert.Nil(t, notFound)
 }
 
+// ─── CalcCompanionStatPool ────────────────────────────────────────────────────
+
+func TestCalcCompanionStatPool(t *testing.T) {
+	// Config defaults kick in when no config is loaded:
+	//   ManifestStatScaleChaFactor  = 200  (zero-value triggers default)
+	//   ManifestStatScaleSkillFactor = 0.02 (zero-value triggers default)
+
+	tests := []struct {
+		name              string
+		baseStatPool      int
+		charisma          int
+		manifestationSkill int
+		want              int
+	}{
+		{
+			// scale = 1.0 + 100/200 + 0*0.02 = 1.5  →  120 * 1.5 = 180
+			name: "wolf base cha=100 manifest=0",
+			baseStatPool: 120, charisma: 100, manifestationSkill: 0,
+			want: 180,
+		},
+		{
+			// scale = 1.0 + 100/200 + 25*0.02 = 1.0 + 0.5 + 0.5 = 2.0  →  120 * 2.0 = 240
+			name: "wolf base cha=100 manifest=25",
+			baseStatPool: 120, charisma: 100, manifestationSkill: 25,
+			want: 240,
+		},
+		{
+			// scale = 1.5 (same as first case)  →  18 * 1.5 = 27
+			name: "swarm base cha=100 manifest=0",
+			baseStatPool: 18, charisma: 100, manifestationSkill: 0,
+			want: 27,
+		},
+		{
+			// scale = 1.0 + 150/200 + 50*0.02 = 1.0 + 0.75 + 1.0 = 2.75  →  120 * 2.75 = 330
+			name: "wolf base cha=150 manifest=50",
+			baseStatPool: 120, charisma: 150, manifestationSkill: 50,
+			want: 330,
+		},
+		{
+			// scale = 1.0 + 0/200 + 0*0.02 = 1.0  →  120 * 1.0 = 120 (no charisma boost)
+			name: "cha=0 manifest=0 no boost",
+			baseStatPool: 120, charisma: 0, manifestationSkill: 0,
+			want: 120,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := CalcCompanionStatPool(tt.baseStatPool, tt.charisma, tt.manifestationSkill)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
 // ─── CompanionInfo YAML persistence ──────────────────────────────────────────
 
 func TestCompanionInfo_YAMLPersistence(t *testing.T) {
