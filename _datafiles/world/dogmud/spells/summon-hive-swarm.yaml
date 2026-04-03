@@ -3,7 +3,7 @@ name: Summon Hive Swarm
 description: Shatters a Hive Fragment into a permanent swarm servant.
 type: helpsingle
 schools:
-  - mental
+  - manifestation
 cost: 50
 waitrounds: 3
 difficulty: 0
