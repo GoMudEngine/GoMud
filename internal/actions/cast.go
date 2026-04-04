@@ -192,7 +192,26 @@ func InitiateCast(actor Actor, spellName, targetName string) CastResult {
 			targetMobInstanceIds, targetUserIds = resolveMobHelpMultiTargets(actor, room)
 		}
 
-	case spells.HarmArea, spells.HelpArea:
+	case spells.HarmArea:
+		// Exclude self from harm area — don't damage yourself
+		for _, pId := range room.GetPlayers() {
+			if pId != actor.GetUserId() {
+				targetUserIds = append(targetUserIds, pId)
+			}
+		}
+		for _, mId := range room.GetMobs() {
+			if mId != actor.GetMobInstanceId() {
+				// Don't target the caster's own companions
+				if actor.IsPlayer() {
+					if m := mobs.GetInstance(mId); m != nil && m.Character.IsCharmed(actor.GetUserId()) {
+						continue
+					}
+				}
+				targetMobInstanceIds = append(targetMobInstanceIds, mId)
+			}
+		}
+
+	case spells.HelpArea:
 		targetUserIds = room.GetPlayers()
 		targetMobInstanceIds = room.GetMobs()
 
