@@ -30,7 +30,7 @@ func TestBuyRules_QuestItemRejected(t *testing.T) {
 		QuestToken: "some-quest-token",
 		Type:       items.Object,
 	})
-	offer := EvaluateBuyRules(item, baseShop(), "", false, DefaultPricingConfig())
+	offer := EvaluateBuyRules(item, baseShop(), "", false, DefaultPricingConfig(), nil)
 	assert.Equal(t, 0, offer.Price, "quest items must always be rejected")
 	assert.Equal(t, "", offer.Reason)
 }
@@ -42,7 +42,7 @@ func TestBuyRules_CraftMaterialWithCrafterSkill(t *testing.T) {
 		ComponentTag: "iron",
 		Type:         items.Object,
 	})
-	offer := EvaluateBuyRules(item, baseShop(), "blacksmithing", false, DefaultPricingConfig())
+	offer := EvaluateBuyRules(item, baseShop(), "blacksmithing", false, DefaultPricingConfig(), nil)
 	assert.Greater(t, offer.Price, 0, "crafter NPC should offer a price for materials")
 	assert.Equal(t, "craft_material", offer.Reason)
 }
@@ -55,7 +55,7 @@ func TestBuyRules_CraftMaterialWithoutCrafterSkill(t *testing.T) {
 		Type:         items.Object,
 	})
 	// No crafter skill and no buysGeneral — should reject
-	offer := EvaluateBuyRules(item, baseShop(), "", false, DefaultPricingConfig())
+	offer := EvaluateBuyRules(item, baseShop(), "", false, DefaultPricingConfig(), nil)
 	assert.Equal(t, 0, offer.Price, "non-crafter should not buy craft materials")
 }
 
@@ -67,7 +67,7 @@ func TestBuyRules_CraftMaterialCrafterSkillFallsToGeneral(t *testing.T) {
 		Type:         items.Object,
 	})
 	// No crafter skill but buysGeneral = true → falls through to general rule
-	offer := EvaluateBuyRules(item, baseShop(), "", true, DefaultPricingConfig())
+	offer := EvaluateBuyRules(item, baseShop(), "", true, DefaultPricingConfig(), nil)
 	assert.Greater(t, offer.Price, 0)
 	assert.Equal(t, "general", offer.Reason)
 }
@@ -84,7 +84,7 @@ func TestBuyRules_CraftMaterialAtMaxStock_Rejected(t *testing.T) {
 		Type:         items.Object,
 	})
 	// At max_stock — crafter should decline this rule and fall through to empty
-	offer := EvaluateBuyRules(item, shop, "blacksmithing", false, DefaultPricingConfig())
+	offer := EvaluateBuyRules(item, shop, "blacksmithing", false, DefaultPricingConfig(), nil)
 	assert.Equal(t, 0, offer.Price, "should reject material already at max stock")
 }
 
@@ -100,7 +100,7 @@ func TestBuyRules_CraftMaterialAtMaxStock_FallsToGeneral(t *testing.T) {
 		Type:         items.Object,
 	})
 	// buysGeneral = true — max stock material falls through to general
-	offer := EvaluateBuyRules(item, shop, "blacksmithing", true, DefaultPricingConfig())
+	offer := EvaluateBuyRules(item, shop, "blacksmithing", true, DefaultPricingConfig(), nil)
 	assert.Greater(t, offer.Price, 0)
 	assert.Equal(t, "general", offer.Reason)
 }
@@ -112,7 +112,7 @@ func TestBuyRules_PotionNoAging_Accepted(t *testing.T) {
 		Type:   items.Potion,
 		// No aging thresholds — always fresh
 	})
-	offer := EvaluateBuyRules(item, baseShop(), "", false, DefaultPricingConfig())
+	offer := EvaluateBuyRules(item, baseShop(), "", false, DefaultPricingConfig(), nil)
 	assert.Greater(t, offer.Price, 0)
 	assert.Equal(t, "potion", offer.Reason)
 }
@@ -133,7 +133,7 @@ func TestBuyRules_PotionFresh_Accepted(t *testing.T) {
 	})
 	item.CraftedRound = 0
 	item.BottleMultiplier = 1.0
-	offer := EvaluateBuyRules(item, baseShop(), "", false, DefaultPricingConfig())
+	offer := EvaluateBuyRules(item, baseShop(), "", false, DefaultPricingConfig(), nil)
 	assert.Greater(t, offer.Price, 0)
 	assert.Equal(t, "potion", offer.Reason)
 }
@@ -154,7 +154,7 @@ func TestBuyRules_PotionWithAging_NoCraftedRound_Accepted(t *testing.T) {
 	})
 	item.CraftedRound = 0 // No recorded craft round — skip aging check
 	item.BottleMultiplier = 1.0
-	offer := EvaluateBuyRules(item, baseShop(), "", false, DefaultPricingConfig())
+	offer := EvaluateBuyRules(item, baseShop(), "", false, DefaultPricingConfig(), nil)
 	assert.Greater(t, offer.Price, 0, "potion with no craft round should be accepted")
 	assert.Equal(t, "potion", offer.Reason)
 }
@@ -171,7 +171,7 @@ func TestBuyRules_GeneralGoods_GeneralMerchant(t *testing.T) {
 		Value:  100,
 		Type:   items.Object,
 	})
-	offer := EvaluateBuyRules(item, baseShop(), "", true, DefaultPricingConfig())
+	offer := EvaluateBuyRules(item, baseShop(), "", true, DefaultPricingConfig(), nil)
 	assert.Greater(t, offer.Price, 0)
 	assert.Equal(t, "general", offer.Reason)
 	// Verify 25% pricing
@@ -185,7 +185,7 @@ func TestBuyRules_GeneralGoods_SpecialistDeclines(t *testing.T) {
 		Type:   items.Object,
 	})
 	// Specialist crafter that doesn't buy general goods
-	offer := EvaluateBuyRules(item, baseShop(), "blacksmithing", false, DefaultPricingConfig())
+	offer := EvaluateBuyRules(item, baseShop(), "blacksmithing", false, DefaultPricingConfig(), nil)
 	assert.Equal(t, 0, offer.Price, "specialist without buysGeneral should reject generic items")
 }
 
@@ -195,6 +195,83 @@ func TestBuyRules_GeneralGoods_MinimumOne(t *testing.T) {
 		Value:  0, // Zero value item
 		Type:   items.Object,
 	})
-	offer := EvaluateBuyRules(item, baseShop(), "", true, DefaultPricingConfig())
+	offer := EvaluateBuyRules(item, baseShop(), "", true, DefaultPricingConfig(), nil)
 	assert.GreaterOrEqual(t, offer.Price, 1, "offer should never be zero for accepted items")
+}
+
+func TestBuyRules_GearUpgrade_EmptySlot(t *testing.T) {
+	// NPC has no weapon — any weapon with power > 0 is an upgrade.
+	item := makeItem(items.ItemSpec{
+		ItemId:           500,
+		Value:            80,
+		Type:             items.Weapon,
+		DamageMultiplier: 0.5,
+	})
+	worn := []items.Item{} // NPC wears nothing
+	offer := EvaluateBuyRules(item, baseShop(), "", false, DefaultPricingConfig(), worn)
+	assert.Greater(t, offer.Price, 0, "NPC with empty weapon slot should want a weapon")
+	assert.Equal(t, "gear_upgrade", offer.Reason)
+}
+
+func TestBuyRules_GearUpgrade_BetterWeapon(t *testing.T) {
+	// NPC has a weak weapon — offered a better one.
+	item := makeItem(items.ItemSpec{
+		ItemId:           501,
+		Value:            120,
+		Type:             items.Weapon,
+		DamageMultiplier: 0.8,
+	})
+	currentWeapon := makeItem(items.ItemSpec{
+		ItemId:           500,
+		Type:             items.Weapon,
+		DamageMultiplier: 0.4,
+	})
+	worn := []items.Item{currentWeapon}
+	offer := EvaluateBuyRules(item, baseShop(), "", false, DefaultPricingConfig(), worn)
+	assert.Greater(t, offer.Price, 0, "NPC should buy a better weapon")
+	assert.Equal(t, "gear_upgrade", offer.Reason)
+}
+
+func TestBuyRules_GearUpgrade_WorseWeapon(t *testing.T) {
+	// NPC already has a better weapon — should decline.
+	item := makeItem(items.ItemSpec{
+		ItemId:           500,
+		Value:            40,
+		Type:             items.Weapon,
+		DamageMultiplier: 0.3,
+	})
+	currentWeapon := makeItem(items.ItemSpec{
+		ItemId:           501,
+		Type:             items.Weapon,
+		DamageMultiplier: 0.8,
+	})
+	worn := []items.Item{currentWeapon}
+	offer := EvaluateBuyRules(item, baseShop(), "", false, DefaultPricingConfig(), worn)
+	assert.Equal(t, 0, offer.Price, "NPC should not buy a downgrade")
+}
+
+func TestBuyRules_GearUpgrade_NonEquipmentIgnored(t *testing.T) {
+	// A potion is not equipment — gear rule should not fire.
+	item := makeItem(items.ItemSpec{
+		ItemId: 600,
+		Value:  50,
+		Type:   items.Potion,
+	})
+	worn := []items.Item{}
+	offer := EvaluateBuyRules(item, baseShop(), "", false, DefaultPricingConfig(), worn)
+	// Should fall through to potion rule, not gear_upgrade
+	assert.Equal(t, "potion", offer.Reason)
+}
+
+func TestBuyRules_GearUpgrade_NilWornSkipsRule(t *testing.T) {
+	// When wornItems is nil, gear-upgrade rule is skipped entirely.
+	item := makeItem(items.ItemSpec{
+		ItemId:           500,
+		Value:            80,
+		Type:             items.Weapon,
+		DamageMultiplier: 0.5,
+	})
+	// nil wornItems + no crafter + no buysGeneral = rejection
+	offer := EvaluateBuyRules(item, baseShop(), "", false, DefaultPricingConfig(), nil)
+	assert.Equal(t, 0, offer.Price, "nil wornItems should skip gear upgrade rule")
 }

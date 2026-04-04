@@ -17,17 +17,23 @@ type BuyOffer struct {
 //  1. Quest items — always rejected.
 //  2. Craft materials — if the NPC has a crafter skill and the item has a
 //     component tag, offer a dynamic buy price. Skip if at max stock.
-//  3. Potions — if the item is a potion, reject declining or spoiled items.
+//  3. Gear upgrade — if the item is an equipment upgrade over what the NPC
+//     currently wears (or fills an empty slot), offer buy-ratio price.
+//  4. Potions — if the item is a potion, reject declining or spoiled items.
 //     Accept others at a dynamic buy price.
-//  4. General goods — if buysGeneral is true, offer 25% of base value.
+//  5. General goods — if buysGeneral is true, offer 25% of base value.
 //
 // Returns an empty BuyOffer (Price == 0) when the NPC refuses the item.
+//
+// wornItems is the NPC's currently equipped items (pass nil to skip the
+// gear-upgrade rule).
 func EvaluateBuyRules(
 	item items.Item,
 	shopInv *ShopInventory,
 	crafterSkill string,
 	buysGeneral bool,
 	cfg PricingConfig,
+	wornItems []items.Item,
 ) BuyOffer {
 	spec := item.GetSpec()
 	if spec.ItemId < 1 {
@@ -58,7 +64,38 @@ func EvaluateBuyRules(
 		}
 	}
 
-	// Rule 3: Potions.
+	// Rule 3: Gear upgrade — NPC wants equipment that improves their loadout.
+	// Pass wornItems == nil to skip this rule entirely.
+	if wornItems != nil && isEquipType(spec.Type) {
+		isUpgrade := false
+		hasSlot := false
+
+		for _, worn := range wornItems {
+			wornSpec := worn.GetSpec()
+			if wornSpec.Type == spec.Type {
+				hasSlot = true
+				if items.IsUpgrade(wornSpec, spec) {
+					isUpgrade = true
+					break
+				}
+			}
+		}
+
+		// Empty slot — any item with power > 0 is an upgrade.
+		if !hasSlot && items.ItemPower(spec) > 0 {
+			isUpgrade = true
+		}
+
+		if isUpgrade {
+			price := int(float64(spec.Value) * cfg.BuyRatio)
+			if price < 1 {
+				price = 1
+			}
+			return BuyOffer{Price: price, Reason: "gear_upgrade"}
+		}
+	}
+
+	// Rule 4: Potions.
 	if spec.Type == items.Potion {
 		if spec.Aging.HasAging() && item.CraftedRound > 0 {
 			currentRound := util.GetRoundCount()
@@ -90,7 +127,7 @@ func EvaluateBuyRules(
 		return BuyOffer{Price: price, Reason: "potion"}
 	}
 
-	// Rule 4: General goods.
+	// Rule 5: General goods.
 	if buysGeneral {
 		price := int(float64(spec.Value) * 0.25)
 		if price < 1 {
@@ -100,4 +137,18 @@ func EvaluateBuyRules(
 	}
 
 	return BuyOffer{}
+}
+
+// isEquipType returns true for item types that represent wearable/wieldable
+// equipment slots — the kinds of items an NPC would consider as a personal
+// gear upgrade.
+func isEquipType(t items.ItemType) bool {
+	switch t {
+	case items.Weapon, items.Offhand, items.Head, items.Neck,
+		items.Body, items.Belt, items.Gloves, items.Ring,
+		items.Wrist, items.Back, items.Shoulders, items.Legs,
+		items.Feet, items.Tail:
+		return true
+	}
+	return false
 }

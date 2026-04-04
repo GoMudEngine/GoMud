@@ -1,6 +1,19 @@
 # DOGMud Patch Notes
 
-## 2026-04-04 — Mob Progression Parity, Spell Fixes
+## 2026-04-04 — Living Economy, Gear Upgrades, Spell & PvP Fixes
+
+### Living Economy
+- Merchants now track finite stock and gold. Prices rise when
+  stock runs low and drop when overstocked.
+- Crafter NPCs restock materials periodically and craft items
+  to sell — prioritizing self-gear upgrades, then profitable
+  crafts, then salvage.
+- Merchants will buy craft materials matching their trade,
+  potions (unless spoiled), and gear that upgrades their own
+  equipment. Specialists won't buy random junk.
+- Shopkeepers are now non-combatant — they cannot be attacked,
+  stolen from, or targeted by harmful spells.
+- Bartering skill now affects buy and sell prices at shops.
 
 ### Under the Hood
 - Mobs now advance stats and skills from basic attacks, special
@@ -26,6 +39,12 @@
 - Casting an area spell with no valid targets now gives feedback
   ("Your spell erupts outward but finds no targets.") instead
   of silently consuming conviction.
+- PvP is now properly blocked across all combat entry points
+  (attack, bash, kick, trip, grapple, taunt, shoot, spells).
+- Fixed enchanting craft command parsing for hyphenated recipe
+  names (e.g. "craft honed-edge knuckles" no longer fails).
+- Shop listing now shows correct finite stock and dynamic
+  prices instead of infinite legacy quantities.
 
 ### Cleanup
 - Removed deprecated mob commands: roar, throw, backstab.
