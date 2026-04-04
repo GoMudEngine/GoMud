@@ -1,0 +1,15 @@
+itemid: 20063
+name: resin-laced bracers
+namesimple: bracers
+description: >-
+  Supple leather bracers threaded through with chrysalis resin,
+  the amber veins hardened into the leather in branching patterns.
+  They mold to the wrist perfectly. The hands feel steadier and
+  quicker for wearing them -- something about the resin's grip
+  on the skin.
+type: wrist
+subtype: wearable
+physical_mitigation: 2
+statmods:
+  skullduggery: 3
+value: 28

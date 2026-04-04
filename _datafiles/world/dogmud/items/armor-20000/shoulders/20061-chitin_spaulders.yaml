@@ -1,0 +1,14 @@
+itemid: 20061
+name: chitin spaulders
+namesimple: spaulders
+description: >-
+  Overlapping plates of chrysalis chitin layered across a leather
+  backing, articulated so each plate shifts with the shoulder's
+  movement. The chitin is dense and surprisingly light -- wherever
+  it came from, the creature it belonged to was built for impact.
+type: shoulders
+subtype: wearable
+physical_mitigation: 9
+statmods:
+  strength: 5
+value: 35
