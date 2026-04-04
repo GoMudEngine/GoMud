@@ -59,6 +59,22 @@ func (a *MobActor) AddBuff(buffId int, source string) {
 	a.Mob.AddBuff(buffId, source)
 }
 
+func (a *MobActor) OnSkillUse(skillName string) bool {
+	return a.Mob.Character.OnSkillUse(skillName, 0)
+}
+
+func (a *MobActor) OnStatUse(statName string) bool {
+	return a.Mob.Character.OnStatUse(statName, 0)
+}
+
+func (a *MobActor) OnCriticalSuccess(skillName string) {
+	a.Mob.Character.OnCriticalSuccess(skillName, 0)
+}
+
+func (a *MobActor) OnCriticalFailure(skillName string) {
+	a.Mob.Character.OnCriticalFailure(skillName, 0)
+}
+
 // sendRoomTextDarknessAware is a darkness-aware room broadcast. In lit rooms
 // it delegates to room.SendText() directly. In dark rooms only players who
 // have the NightVision flag receive the message.

@@ -44,4 +44,19 @@ type Actor interface {
 
 	// AddBuff applies a buff to this actor via the event queue.
 	AddBuff(buffId int, source string)
+
+	// OnSkillUse triggers skill progression (and the skill's governing stat).
+	// UserActor calls Character.OnSkillUse(skill, userId) which internally
+	// fires events.SkillUsed for quest tracking when userId > 0.
+	// MobActor calls Character.OnSkillUse(skill, 0).
+	OnSkillUse(skillName string) bool
+
+	// OnStatUse triggers stat progression.
+	OnStatUse(statName string) bool
+
+	// OnCriticalSuccess records a critical hit for progression bonuses.
+	OnCriticalSuccess(skillName string)
+
+	// OnCriticalFailure records a fumble for progression tracking.
+	OnCriticalFailure(skillName string)
 }
