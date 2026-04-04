@@ -44,6 +44,16 @@ func respawnCompanions(user *users.UserRecord) {
 		}
 	}
 
+	// Remove charmed companions — they don't persist through restart.
+	// Charmed mobs are temporary by nature (borrowed, not created).
+	cleaned := make([]characters.CompanionInfo, 0, len(user.Character.Companions))
+	for _, comp := range user.Character.Companions {
+		if comp.SourceType != characters.CompanionCharmed {
+			cleaned = append(cleaned, comp)
+		}
+	}
+	user.Character.Companions = cleaned
+
 	for i := range user.Character.Companions {
 		comp := &user.Character.Companions[i]
 		if comp.MobId == 0 {

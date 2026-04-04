@@ -107,14 +107,7 @@ function onMagic(sourceActor, targetActor) {
             targetName
         );
 
-        // Set timed charm duration based on caster stats
-        var cha = sourceActor.GetStat('charisma');
-        var skill = sourceActor.GetSkillLevel('manifestation');
-        var duration = 50 + Math.floor(cha / 2) + skill * 3;
-        sourceActor.SetCompanionCharmDuration(
-            targetActor.InstanceId(),
-            duration
-        );
+        // Charm duration is auto-set by AddCompanion in Go for charmed types.
 
         SendUserMessage(sourceActor.UserId(),
             targetName + '\'s eyes glaze as your will takes hold. ' +

@@ -818,6 +818,12 @@ func (a ScriptActor) AddCompanion(mobInstanceId int, sourceType string, name str
 	if mob := mobs.GetInstance(mobInstanceId); mob != nil {
 		info.MobId = int(mob.MobId)
 	}
+	// For charmed companions, auto-calculate duration from caster stats
+	if characters.CompanionSourceType(sourceType) == characters.CompanionCharmed {
+		cha := a.characterRecord.Stats.Charisma.ValueAdj
+		manifestSkill := a.characterRecord.GetSkillLevel(skills.Manifestation)
+		info.CharmDuration = 50 + cha/2 + manifestSkill*3
+	}
 	if !a.characterRecord.AddCompanion(info) {
 		return false
 	}
