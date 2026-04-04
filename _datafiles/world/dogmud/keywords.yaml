@@ -169,6 +169,7 @@ help-aliases:
   cooking:          [cook, baking, food, meals]
   jewelcrafting:    [jeweler, jewelry, gemwork, gemcutting, jewel]
   manifestation:    [manifest, summon, conjure, necromancy, raise]
+  charm:            [mesmerize, dominate, control, bewitch, enthral]
   assess:           [examine corpse, study corpse, evaluate corpse, inspect corpse]
   enchanting:       [enchant, enchantment, enchantments, imbue]
   disenchant:       [unenchant, remove-enchant, strip-enchant]

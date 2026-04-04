@@ -1,0 +1,40 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">charm</ansi> spell
+
+The <ansi fg="command">Charm</ansi> spell reaches into a creature's mind and bends its will to
+yours, turning it into a loyal companion. The creature will follow you
+and fight at your side until the hold on its mind fades.
+
+Success is determined by an opposed roll — your charisma and
+manifestation skill against the creature's willpower and mental
+fortitude. Creatures already in combat are harder to charm, as their
+minds are focused on survival rather than open to influence.
+
+Your hold gradually loosens over time. When the charm finally breaks,
+the creature reverts to its natural state and may turn hostile. The
+stronger your charisma and the higher your manifestation skill, the
+longer the charm endures.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">cast charm</ansi>             Attempts to charm your current combat target.
+  <ansi fg="command">cast charm [target]</ansi>    Targets a specific creature by name.
+
+<ansi fg="yellow">Base Folds:  </ansi> <ansi fg="white-bold">36</ansi>
+<ansi fg="yellow">Target:      </ansi> <ansi fg="white-bold">Single creature</ansi>
+<ansi fg="yellow">Defense:     </ansi> <ansi fg="white-bold">Mental (opposed by target's willpower)</ansi>
+<ansi fg="yellow">Duration:    </ansi> <ansi fg="white-bold">Scales with charisma and manifestation skill</ansi>
+<ansi fg="yellow">Conv. Cost:  </ansi> <ansi fg="white-bold">120</ansi>
+<ansi fg="yellow">School:      </ansi> <ansi fg="white-bold">Manifestation</ansi>
+
+<ansi fg="white-bold">Notes:</ansi>
+  - Charm cannot be used on other players.
+  - Merchants, powerful named creatures, and certain others are
+    immune — their minds are beyond your reach.
+  - Creatures already in combat resist more strongly. Engaging a
+    target before casting gives it an edge in the mental contest.
+  - You may only have a limited number of companions at once.
+    Release one with <ansi fg="command">dismiss</ansi> before charming another.
+  - If the charm breaks while the creature is near you, expect it
+    to become hostile immediately.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help manifestation</ansi>, <ansi fg="command">help companion</ansi>, <ansi fg="command">help dismiss</ansi>
