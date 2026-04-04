@@ -45,44 +45,56 @@ func EvaluateBuyRules(
 		return BuyOffer{}
 	}
 
-	// Rule 2: Craft materials — only if NPC has a crafter skill.
+	// Rule 2: Craft materials — only if NPC stocks this specific item
+	// (i.e., it's in their restock list). This prevents cross-profession
+	// buying (blacksmith buying herbs, apothecary buying ingots).
 	if crafterSkill != "" && spec.ComponentTag != "" {
 		entry := shopInv.GetStock(spec.ItemId)
-		if entry != nil && entry.MaxStock > 0 && entry.Current >= entry.MaxStock {
-			// Already at capacity — skip this rule, fall through.
-		} else {
-			current := 0
-			restock := 1
-			if entry != nil {
-				current = entry.Current
-				if entry.RestockQty > 0 {
-					restock = entry.RestockQty
+		if entry != nil {
+			if entry.MaxStock > 0 && entry.Current >= entry.MaxStock {
+				// Already at capacity — skip this rule, fall through.
+			} else {
+				current := entry.Current
+				restock := entry.RestockQty
+				if restock < 1 {
+					restock = 1
 				}
+				price := CalcBuyPrice(spec.Value, current, restock, cfg)
+				return BuyOffer{Price: price, Reason: "craft_material"}
 			}
-			price := CalcBuyPrice(spec.Value, current, restock, cfg)
-			return BuyOffer{Price: price, Reason: "craft_material"}
 		}
+		// Item not in this NPC's stock list — they don't use it.
 	}
 
 	// Rule 3: Gear upgrade — NPC wants equipment that improves their loadout.
 	// Pass wornItems == nil to skip this rule entirely.
+	// For paired slots (ring, wrist), checks all slots of that type: an
+	// empty second slot counts as an upgrade opportunity.
 	if wornItems != nil && isEquipType(spec.Type) {
 		isUpgrade := false
-		hasSlot := false
+		hasEmptySlot := false
+		hasSlotAtAll := false
+		candidatePower := items.ItemPower(spec)
 
 		for _, worn := range wornItems {
 			wornSpec := worn.GetSpec()
-			if wornSpec.Type == spec.Type {
-				hasSlot = true
-				if items.IsUpgrade(wornSpec, spec) {
-					isUpgrade = true
-					break
-				}
+			if wornSpec.Type != spec.Type {
+				continue
+			}
+			hasSlotAtAll = true
+			if worn.ItemId == 0 {
+				// Empty slot marker (from GetAllItemsWithEmptySlots).
+				hasEmptySlot = true
+				continue
+			}
+			if items.IsUpgrade(wornSpec, spec) {
+				isUpgrade = true
+				break
 			}
 		}
 
-		// Empty slot — any item with power > 0 is an upgrade.
-		if !hasSlot && items.ItemPower(spec) > 0 {
+		// No items of this type at all = empty slot. Or explicit empty marker.
+		if !isUpgrade && (!hasSlotAtAll || hasEmptySlot) && candidatePower > 0 {
 			isUpgrade = true
 		}
 

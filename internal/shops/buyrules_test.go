@@ -42,9 +42,26 @@ func TestBuyRules_CraftMaterialWithCrafterSkill(t *testing.T) {
 		ComponentTag: "iron",
 		Type:         items.Object,
 	})
-	offer := EvaluateBuyRules(item, baseShop(), "blacksmithing", false, DefaultPricingConfig(), nil)
-	assert.Greater(t, offer.Price, 0, "crafter NPC should offer a price for materials")
+	// NPC must stock this item for the craft material rule to fire.
+	shop := baseShop()
+	shop.Stock = []StockEntry{
+		{ItemId: 100, RestockQty: 3, MaxStock: 10, Current: 2},
+	}
+	offer := EvaluateBuyRules(item, shop, "blacksmithing", false, DefaultPricingConfig(), nil)
+	assert.Greater(t, offer.Price, 0, "crafter NPC should offer a price for stocked materials")
 	assert.Equal(t, "craft_material", offer.Reason)
+}
+
+func TestBuyRules_CraftMaterialNotStocked(t *testing.T) {
+	// NPC has a crafter skill but doesn't stock this material.
+	item := makeItem(items.ItemSpec{
+		ItemId:       100,
+		Value:        20,
+		ComponentTag: "iron",
+		Type:         items.Object,
+	})
+	offer := EvaluateBuyRules(item, baseShop(), "blacksmithing", false, DefaultPricingConfig(), nil)
+	assert.Equal(t, 0, offer.Price, "crafter should not buy materials they don't stock")
 }
 
 func TestBuyRules_CraftMaterialWithoutCrafterSkill(t *testing.T) {

@@ -217,6 +217,32 @@ func (w *Worn) GetAllItems() []items.Item {
 	return iList
 }
 
+// GetAllItemsWithEmptySlots returns all equipped items plus zero-value marker
+// items for empty paired slots (Ring, Wrist). This lets callers detect that
+// a second slot of a given type exists but is unfilled. Single slots that are
+// empty are not included — only paired slots need the marker because the
+// caller cannot otherwise distinguish "no slot" from "empty second slot."
+func (w *Worn) GetAllItemsWithEmptySlots() []items.Item {
+	iList := w.GetAllItems()
+
+	// For paired slots, if one is filled and the other empty, add a typed
+	// marker so the caller knows the empty slot exists.
+	if w.Ring.ItemId <= 0 && !w.Ring.IsDisabled() {
+		iList = append(iList, items.Item{Spec: &items.ItemSpec{Type: items.Ring}})
+	}
+	if w.Ring2.ItemId <= 0 && !w.Ring2.IsDisabled() {
+		iList = append(iList, items.Item{Spec: &items.ItemSpec{Type: items.Ring}})
+	}
+	if w.Wrist1.ItemId <= 0 && !w.Wrist1.IsDisabled() {
+		iList = append(iList, items.Item{Spec: &items.ItemSpec{Type: items.Wrist}})
+	}
+	if w.Wrist2.ItemId <= 0 && !w.Wrist2.IsDisabled() {
+		iList = append(iList, items.Item{Spec: &items.ItemSpec{Type: items.Wrist}})
+	}
+
+	return iList
+}
+
 // GetAllItemPtrs returns pointers to all equipped item slots with valid items.
 // Used by the enchantment tick system to modify items in-place.
 func (w *Worn) GetAllItemPtrs() []*items.Item {

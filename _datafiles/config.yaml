@@ -666,6 +666,10 @@ Balance:
   BarterMaxDiscount: 0.15       # Max fractional buy-price discount from bartering
   BarterMaxBonus: 0.15          # Max fractional sell-price bonus from bartering
 
+  # ── CRAFTER MOBS ─────────────────────────────────────────────────────────
+  CrafterEnabled: true            # Enable mob autonomous crafting
+  CrafterMaterialRestockRate: 75  # Rounds between restock/craft ticks (~5 min)
+
   # ── QUEST ENGINE ──────────────────────────────────────────────────────────
   QuestLogLevel: verbose        # verbose, medium, minimal
   QuestChainDepthLimit: 10      # max chained grant evaluations per event

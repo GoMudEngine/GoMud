@@ -57,7 +57,7 @@ func Sell(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 		if shopInv != nil {
 			cfg := shops.PricingConfigFromBalance()
-			wornItems := mob.Character.Equipment.GetAllItems()
+			wornItems := mob.Character.Equipment.GetAllItemsWithEmptySlots()
 			offer := shops.EvaluateBuyRules(item, shopInv, mob.CrafterSkill, mob.BuysGeneral, cfg, wornItems)
 			sellValue = offer.Price
 			buyReason = offer.Reason
