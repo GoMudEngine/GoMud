@@ -309,6 +309,15 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 
 			mobName := mob.Character.GetMobName(user.UserId, tmpNameFlags...)
 
+			// Check if this mob is targeting one of the player's companions.
+			if mobName.Suffix == `` && mob.Character.Aggro != nil && mob.Character.Aggro.MobInstanceId > 0 {
+				if targetMob := mobs.GetInstance(mob.Character.Aggro.MobInstanceId); targetMob != nil {
+					if targetMob.Character.Charmed.UserId == user.UserId {
+						mobName.Suffix = `aggro`
+					}
+				}
+			}
+
 			// Assign duplicate index when multiple mobs share the same name
 			if mobNameCount[mob.Character.Name] > 1 {
 				mobNameIndex[mob.Character.Name]++

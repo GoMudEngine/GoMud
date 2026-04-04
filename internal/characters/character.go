@@ -2999,20 +2999,6 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 		c.ExtraArms = 0
 	}
 
-	// Derive tail mutation: enable tail slot if mutation present, disable otherwise
-	if _, hasTail := c.Mutations["tail"]; hasTail {
-		// Enable tail slot (clear disabled state if set)
-		if c.Equipment.Tail.ItemId < 0 {
-			c.Equipment.Tail = items.Item{}
-		}
-	} else {
-		// No tail mutation: disable the tail slot
-		if c.Equipment.Tail.ItemId > 0 {
-			c.StoreItem(c.Equipment.Tail)
-		}
-		c.Equipment.Tail = items.ItemDisabledSlot
-	}
-
 	if c.Zone == "" {
 		c.Zone = startingZone
 	}
@@ -3249,6 +3235,19 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 			c.StoreItem(c.Equipment.ExtraWrist1)
 		}
 		c.Equipment.ExtraWrist1 = items.ItemDisabledSlot
+	}
+
+	// Derive tail mutation: enable tail slot if mutation present, disable otherwise.
+	// Must run AFTER EnableAll() which resets all slots.
+	if _, hasTail := c.Mutations["tail"]; hasTail {
+		if c.Equipment.Tail.ItemId < 0 {
+			c.Equipment.Tail = items.Item{}
+		}
+	} else {
+		if c.Equipment.Tail.ItemId > 0 {
+			c.StoreItem(c.Equipment.Tail)
+		}
+		c.Equipment.Tail = items.ItemDisabledSlot
 	}
 
 	// Tail mutation disables legs slot

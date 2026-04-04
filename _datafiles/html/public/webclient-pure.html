@@ -715,8 +715,10 @@
                 for (var cName in vitals) {
                     if (cName === selfName) continue;
                     var cVitals = vitals[cName];
+                    var displayName = cVitals.name || cName;
+                    if (displayName === selfName) continue;
                     members.push({
-                        name: cName,
+                        name: displayName,
                         hp: Math.max(0, Math.min(100, cVitals.health || 0)),
                         sp: Math.max(0, Math.min(100, cVitals.stamina || 0)),
                         cp: Math.max(0, Math.min(100, cVitals.conviction || 0)),

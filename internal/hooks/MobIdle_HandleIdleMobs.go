@@ -245,8 +245,41 @@ func buildGossipLine(mob *mobs.Mob) string {
 		return ""
 	}
 
-	// Pick a random recent event
-	evt := evts[util.Rand(len(evts))]
+	// Filter out events this mob recently gossiped about (dedup window).
+	var recentEventKeys []string
+	if v := mob.GetTempData("recentGossipEvents"); v != nil {
+		recentEventKeys, _ = v.([]string)
+	}
+	var candidates []worldevents.WorldEvent
+	for _, e := range evts {
+		eKey := fmt.Sprintf("%d-%s", e.Round, e.Description)
+		skip := false
+		for _, rk := range recentEventKeys {
+			if eKey == rk {
+				skip = true
+				break
+			}
+		}
+		if !skip {
+			candidates = append(candidates, e)
+		}
+	}
+	if len(candidates) == 0 {
+		// All recent events already gossiped — clear history and retry
+		candidates = evts
+		recentEventKeys = nil
+	}
+
+	// Pick a random event from deduplicated candidates
+	evt := candidates[util.Rand(len(candidates))]
+
+	// Track this event as recently gossiped (keep last 5)
+	evtKey := fmt.Sprintf("%d-%s", evt.Round, evt.Description)
+	recentEventKeys = append(recentEventKeys, evtKey)
+	if len(recentEventKeys) > 5 {
+		recentEventKeys = recentEventKeys[len(recentEventKeys)-5:]
+	}
+	mob.SetTempData("recentGossipEvents", recentEventKeys)
 
 	// Build the template key: "EventType-Significance"
 	typeStr, ok := eventTypeKey[evt.Type]
@@ -257,13 +290,23 @@ func buildGossipLine(mob *mobs.Mob) string {
 	if !ok {
 		sigStr = "Regional"
 	}
-	key := typeStr + "-" + sigStr
+	baseKey := typeStr + "-" + sigStr
 
-	templates, ok := gossipTemplates[key]
-	if !ok || len(templates) == 0 {
+	// Try distance-aware template: "Local" if same zone, "Distant" otherwise
+	distance := "Distant"
+	if evt.ZoneName == zone {
+		distance = "Local"
+	}
+
+	templates, found := gossipTemplates[baseKey+"-"+distance]
+	if !found || len(templates) == 0 {
+		// Fall back to base key without distance suffix
+		templates, found = gossipTemplates[baseKey]
+	}
+	if !found || len(templates) == 0 {
 		// Try without significance
 		for _, s := range []string{"Global", "Regional", "Local"} {
-			if templates, ok = gossipTemplates[typeStr+"-"+s]; ok && len(templates) > 0 {
+			if templates, found = gossipTemplates[typeStr+"-"+s]; found && len(templates) > 0 {
 				break
 			}
 		}

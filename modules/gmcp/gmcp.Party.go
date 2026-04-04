@@ -1,6 +1,7 @@
 package gmcp
 
 import (
+	"fmt"
 	"math"
 	"strconv"
 
@@ -135,7 +136,11 @@ func (g *GMCPPartyModule) maybeSendSoloCompanionVitals(userId int) {
 			compName = mob.Character.Name
 		}
 
-		vitals[compName] = GMCPPartyModule_Payload_Vitals{
+		// Use instance ID in key to avoid collisions between same-name companions.
+		key := fmt.Sprintf("%s#%d", compName, comp.InstanceId)
+
+		vitals[key] = GMCPPartyModule_Payload_Vitals{
+			Name:              compName,
 			HealthPercent:     hPct,
 			StaminaPercent:    sPct,
 			ConvictionPercent: cPct,
@@ -319,6 +324,7 @@ func (g *GMCPPartyModule) GetPartyNode(party *parties.Party, gmcpModule string) 
 			}
 
 			partyPayload.Vitals[user.Character.Name] = GMCPPartyModule_Payload_Vitals{
+				Name:              user.Character.Name,
 				HealthPercent:     hPct,
 				StaminaPercent:    sPct,
 				ConvictionPercent: cPct,
@@ -400,7 +406,10 @@ func (g *GMCPPartyModule) GetPartyNode(party *parties.Party, gmcpModule string) 
 					compName = mob.Character.Name
 				}
 
-				partyPayload.Vitals[compName] = GMCPPartyModule_Payload_Vitals{
+				key := fmt.Sprintf("%s#%d", compName, comp.InstanceId)
+
+				partyPayload.Vitals[key] = GMCPPartyModule_Payload_Vitals{
+					Name:              compName,
 					HealthPercent:     hPct,
 					StaminaPercent:    sPct,
 					ConvictionPercent: cPct,
@@ -415,6 +424,7 @@ func (g *GMCPPartyModule) GetPartyNode(party *parties.Party, gmcpModule string) 
 		if user := users.GetByUserId(uId); user != nil {
 
 			partyPayload.Vitals[user.Character.Name] = GMCPPartyModule_Payload_Vitals{
+				Name:          user.Character.Name,
 				HealthPercent: 0,
 				Location:      ``,
 			}
@@ -462,6 +472,7 @@ type GMCPPartyModule_Payload_User struct {
 }
 
 type GMCPPartyModule_Payload_Vitals struct {
+	Name              string `json:"name"`       // Display name (may differ from map key)
 	HealthPercent     int    `json:"health"`     // 1 = 1%, 23 = 23% etc.
 	StaminaPercent    int    `json:"stamina"`    // 1 = 1%, 23 = 23% etc.
 	ConvictionPercent int    `json:"conviction"` // 1 = 1%, 23 = 23% etc.

@@ -2,6 +2,21 @@
 
 ## 2026-04-04 — Living Economy, Gear Upgrades, Spell & PvP Fixes
 
+### Bug Fixes (Round 2)
+- **Tail slot no longer shows** when the character lacks the tail
+  mutation. Was caused by EnableAll() resetting the disabled state
+  before the tail check ran.
+- **Companions no longer despawn** from the idle boredom timer.
+  Wolf spirits and other charmed companions now persist properly,
+  fixing missing vitals bars in the web client.
+- **Mobs targeting your companions now show red** in the look
+  command, same as mobs targeting you directly.
+- **Duplicate companion vitals fixed** — same-name companions
+  (e.g., two skeletons) now show separate health bars.
+- **Gossip quality improved** — NPCs now use different phrasing
+  for local vs. distant events, and each gossiper tracks recently
+  mentioned events to avoid repetition.
+
 ### Living Economy
 - Merchants now track finite stock and gold. Prices rise when
   stock runs low and drop when overstocked.

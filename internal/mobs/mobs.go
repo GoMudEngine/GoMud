@@ -545,6 +545,10 @@ func (m *Mob) Despawns() bool {
 	if m.HasShop() {
 		return false
 	}
+	// Charmed companions should not despawn from boredom.
+	if m.Character.IsCharmed() {
+		return false
+	}
 	return true
 }
 
