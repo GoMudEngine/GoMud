@@ -7,7 +7,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -115,13 +114,6 @@ func Grapple(rest string, user *users.UserRecord, room *rooms.Room, flags events
 			room.SendText(result.CritFailure.RoomMessage, user.UserId, targetPlayerId)
 		}
 	}
-
-	// Progress unarmed combat skill
-	events.AddToQueue(events.SkillUsed{
-		UserId:  user.UserId,
-		Skill:   skills.UnarmedCombat,
-		Details: "grapple",
-	})
 
 	return true, nil
 }

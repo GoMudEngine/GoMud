@@ -6,7 +6,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -22,9 +21,6 @@ func Grapple(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	if res.OnCooldown || res.NoTarget || res.GrappleImmune || !res.Executed {
 		return true, nil
 	}
-
-	// Fire skill progression for the executed special move.
-	mob.Character.OnSkillUse(string(skills.UnarmedCombat), 0)
 
 	target := res.Target
 	result := res.MoveResult

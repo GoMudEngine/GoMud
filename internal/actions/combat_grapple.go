@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -90,6 +91,11 @@ func ExecuteGrapple(actor Actor) GrappleResult {
 
 	// Record analytics and consume the combat round.
 	RecordAndWait(char, "grapple", sourceType, target.Char, targetType, result.Success, 0, util.GetRoundCount())
+
+	// Progression: unarmed-combat on executed grapple (moved from user/mob wrappers)
+	if result.Success {
+		actor.OnSkillUse(string(skills.UnarmedCombat))
+	}
 
 	return GrappleResult{
 		Target:     target,
