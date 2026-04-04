@@ -5,7 +5,6 @@ statpool: 75
 itemdropchance: 0
 hostile: false
 charm_immune: true
-non_combatant: true
 maxwander: 1
 groups:
   - humanoid

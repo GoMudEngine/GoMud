@@ -5,7 +5,6 @@ statpool: 80
 itemdropchance: 100
 hostile: false
 charm_immune: true
-non_combatant: true
 maxwander: 0
 scripttag: torvan
 groups:
