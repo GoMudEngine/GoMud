@@ -45,3 +45,11 @@ character:
       quantity: 0
       quantitymax: 0
       price: 1
+    - itemid: 33
+      quantity: 0
+      quantitymax: 0
+      price: 5
+    - itemid: 36
+      quantity: 0
+      quantitymax: 0
+      price: 30
