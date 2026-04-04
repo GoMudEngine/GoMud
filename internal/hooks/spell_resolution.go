@@ -71,8 +71,8 @@ func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData
 		allMobs := room.GetMobs(rooms.FindAll)
 		filtered := make([]int, 0, len(allMobs))
 		for _, mId := range allMobs {
-			// Don't damage the caster's own companions
-			if m := mobs.GetInstance(mId); m != nil && m.Character.IsCharmed(user.UserId) {
+			// Don't damage any player-owned companions
+			if m := mobs.GetInstance(mId); m != nil && m.Character.IsCharmed() {
 				continue
 			}
 			filtered = append(filtered, mId)
