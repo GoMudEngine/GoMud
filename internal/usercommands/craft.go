@@ -129,11 +129,16 @@ func craftEnchanting(rest string, recipe *crafting.RecipeSpec, user *users.UserR
 		return true, nil
 	}
 
-	// Target item disambiguation
+	// Target item disambiguation — strip the recipe name from the input
+	// to get the optional item specifier. The recipe name may contain spaces
+	// (e.g., "carapace ward"), so we can't just split on the first space.
 	specifier := ""
-	recipeArgs := strings.SplitN(rest, " ", 2)
-	if len(recipeArgs) > 1 {
-		specifier = strings.TrimSpace(recipeArgs[1])
+	recipeName := strings.ToLower(recipe.Name)
+	restLower := strings.ToLower(strings.TrimSpace(rest))
+	if strings.HasPrefix(restLower, recipeName) {
+		specifier = strings.TrimSpace(rest[len(recipeName):])
+	} else if strings.HasPrefix(restLower, strings.ToLower(recipe.RecipeId)) {
+		specifier = strings.TrimSpace(rest[len(recipe.RecipeId):])
 	}
 
 	eq := user.Character.Equipment
@@ -181,7 +186,7 @@ func craftEnchanting(rest string, recipe *crafting.RecipeSpec, user *users.UserR
 			user.SendText(fmt.Sprintf(`  <ansi fg="white-bold">[%d]</ansi> <ansi fg="itemname">%s</ansi>%s`, i+1, c.Item.DisplayName(), slotInfo))
 		}
 		user.SendText(`  <ansi fg="white-bold">[0]</ansi> Cancel`)
-		user.SendText(`<ansi fg="yellow">Specify which item: craft ` + recipeArgs[0] + ` <item name></ansi>`)
+		user.SendText(`<ansi fg="yellow">Specify which item: craft ` + recipe.Name + ` <item name></ansi>`)
 		return true, nil
 	}
 
