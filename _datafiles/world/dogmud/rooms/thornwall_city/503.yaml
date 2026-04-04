@@ -1,0 +1,58 @@
+roomid: 503
+zone: Thornwall City
+title: Fungal Nook
+description: >
+  A cramped side chamber where luminescent fungi grow in dense clusters on
+  chrysalis-laced stone, filling every surface with soft blue-white light.
+  The air here is humid and thick with spores, drifting in lazy spirals
+  whenever the air stirs. A battered <ansi fg="itemname">chest</ansi> sits
+  half-buried in a mound of fungal growth, its iron surface etched with crude
+  ward symbols matching those in the corridor below. The growth has spread
+  across the lid and begun creeping down the sides, as if trying to claim
+  the chest for itself. A rough stone shelf protrudes from the east wall,
+  holding a scatter of small objects barely visible under the fungi.
+biome: cave
+coord:
+  x: 2
+  y: -1
+  z: -3
+exits:
+  south:
+    roomid: 500
+containers:
+  chest:
+    lock:
+      difficulty: 20
+      relockinterval: 30 real minutes
+      trapbuffids: [40]
+    long: "A battered iron chest half-buried in fungal growth, its surface
+      etched with crude ward symbols. Chrysalis resin seals the hinges."
+spawninfo:
+  - itemid: 20061
+    container: chest
+    respawnrate: 30 real minutes
+nouns:
+  fungi: Dense clusters of bioluminescent fungi covering the chamber walls
+    and floor. Each cap is pale and waxy, seamed with faint blue veins that
+    pulse with slow light. The spores they release are fine as dust -- you
+    can feel them on your skin and at the back of your throat.
+  chest: A battered iron chest sitting in a hollow of fungal growth. The
+    ward symbols etched into its surface match those scratched in the
+    corridor walls -- the same hand, the same crude geometry. The lock is
+    newer than the chest and has been replaced recently.
+  wards: The same crude symbols etched into the chest's surface appear on
+    the surrounding stone as well, scratched at the height of a crouching
+    figure. A pattern rather than script -- boundaries, warnings, or some
+    private superstition carried deep underground.
+  spore clusters: Tight clusters where the fungi grow densest, releasing
+    visible puffs of spores when disturbed. The cloud drifts and settles
+    slowly. Breathing too deeply near these would be unwise.
+  stone shelf: A natural shelf of rock protrudes from the east wall, its
+    surface softened by a thin crust of fungal growth. On it: a cracked
+    ceramic vial, three bone dice, a fold of cloth tied with a strip of
+    leather. Someone's small kit of personal effects, left and not returned
+    for.
+idlemessages:
+- Spores drift lazily through the fungal light, settling on every surface.
+- The fungi pulse with a slow rhythm, blue-white light ebbing and brightening.
+- A quiet dripping sound comes from somewhere deeper in the growth.

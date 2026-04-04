@@ -1,0 +1,45 @@
+roomid: 501
+zone: Thornwall City
+title: Resin-Slicked Shaft
+description: >
+  A near-vertical shaft drops away into darkness, its walls coated in a
+  thick layer of hardened chrysalis resin that shimmers faintly with trapped
+  bioluminescence. Hand- and footholds have been carved directly into the
+  tacky surface -- rough, irregular, but workable. The air here is thick
+  and warm, carrying the sharp sweetness of fresh resin. A rusted iron piton
+  juts from the wall above, trailing frayed rope fragments. Someone rigged
+  a climbing line here and abandoned it. Watch your step -- the footholds
+  are slicker than they look, and the walls hide more than resin.
+biome: cave
+coord:
+  x: 2
+  y: -3
+  z: -3
+exits:
+  up:
+    roomid: 500
+  south:
+    roomid: 502
+    lock:
+      difficulty: 12
+      relockinterval: 15 real minutes
+      trapbuffids: [39]
+nouns:
+  resin: The chrysalis resin coats every surface of the shaft in overlapping
+    layers, each new coat slightly translucent over the last. Deep inside
+    the hardened amber, you can make out the shapes of insects -- small ones,
+    trapped and preserved like specimens in glass. Still. Watching.
+  piton: A rusted iron piton hammered into the wall above head height. Old
+    work -- the metal has oxidised to dark brown against the amber resin.
+    The rope fragments tied through its eye are frayed nearly to breaking.
+  rope fragments: Short lengths of frayed rope hanging from the piton above.
+    They are too short to be useful now -- the rest was cut away or rotted
+    through. The ends are raw, not cleanly cut.
+  footholds: Rough divots carved into the resin with something sharp. They
+    are serviceable but coated in a thin film of fresh resin that oozes
+    from the walls continuously. Every third hold has a smear of something
+    dark -- old blood, or just mud.
+idlemessages:
+- The resin walls pulse faintly with trapped bioluminescence, slow as breath.
+- A bead of fresh resin detaches from the wall and falls into the dark below.
+- Warmth rises from the shaft below, carrying that sweet organic smell.
