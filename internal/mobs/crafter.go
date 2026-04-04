@@ -19,6 +19,7 @@ type CraftResult struct {
 	MobName      string
 	Zone         string
 	Salvaged     bool // true when the action was a salvage rather than a craft
+	Restocked    bool // true when the supply cart delivered materials this tick
 }
 
 // RegisterMobShop seeds a ShopInventory for a mob that has a legacy shop or
@@ -116,7 +117,7 @@ func TickMobCraft(mob *Mob) *CraftResult {
 
 	if shopInv != nil {
 		// Supply cart delivery
-		shopInv.Restock()
+		restocked := shopInv.Restock()
 
 		cfg := shops.DefaultPricingConfig()
 		reserve := 1 // Keep at least 1 of each ingredient in stock
@@ -124,9 +125,17 @@ func TickMobCraft(mob *Mob) *CraftResult {
 		// Build full recipe list: mob's known recipes + shop's known recipes
 		recipeIds := mergeRecipeIds(mob.CrafterRecipeIds, shopInv.KnownRecipes)
 
+		// Helper to tag restock on any result.
+		tagRestock := func(r *CraftResult) *CraftResult {
+			if r != nil {
+				r.Restocked = restocked
+			}
+			return r
+		}
+
 		// ── Priority 1: Self-gear upgrade ──────────────────────────────────
 		if selfRecipe := pickSelfGearRecipe(mob, recipeIds, shopInv, reserve); selfRecipe != nil {
-			return executeCraft(mob, selfRecipe, true, shopInv)
+			return tagRestock(executeCraft(mob, selfRecipe, true, shopInv))
 		}
 
 		// ── Priority 2: Profitable craft ──────────────────────────────────
@@ -134,7 +143,7 @@ func TickMobCraft(mob *Mob) *CraftResult {
 		if craftDecision != nil {
 			recipe := crafting.GetRecipe(craftDecision.RecipeId)
 			if recipe != nil {
-				return executeCraft(mob, recipe, false, shopInv)
+				return tagRestock(executeCraft(mob, recipe, false, shopInv))
 			}
 		}
 
@@ -157,10 +166,18 @@ func TickMobCraft(mob *Mob) *CraftResult {
 				MobName:      mob.Character.Name,
 				Zone:         mob.Character.Zone,
 				Salvaged:     true,
+				Restocked:    restocked,
 			}
 		}
 
-		// Nothing to do this tick
+		// No craft or salvage this tick, but restock may have happened.
+		if restocked {
+			return &CraftResult{
+				Restocked: true,
+				MobName:   mob.Character.Name,
+				Zone:      mob.Character.Zone,
+			}
+		}
 		return nil
 	}
 

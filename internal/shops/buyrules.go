@@ -109,8 +109,8 @@ func EvaluateBuyRules(
 		}
 	}
 
-	// Rule 4: Potions.
-	if spec.Type == items.Potion {
+	// Rule 4: Potions — buy potions unless the NPC crafts them.
+	if spec.Type == items.Potion && !canCraftItem(shopInv, spec.ItemId) {
 		if spec.Aging.HasAging() && item.CraftedRound > 0 {
 			currentRound := util.GetRoundCount()
 			var elapsed uint64
@@ -151,6 +151,21 @@ func EvaluateBuyRules(
 	}
 
 	return BuyOffer{}
+}
+
+// canCraftItem returns true if any of the shop's known recipes produces the
+// given item as output. Used to prevent NPCs from buying items they craft.
+func canCraftItem(shopInv *ShopInventory, itemId int) bool {
+	if shopInv == nil || itemId <= 0 {
+		return false
+	}
+	for _, recipeId := range shopInv.KnownRecipes {
+		recipe := crafting.GetRecipe(recipeId)
+		if recipe != nil && recipe.Output.ItemId == itemId {
+			return true
+		}
+	}
+	return false
 }
 
 // usesComponent returns true if the NPC has a use for this component:

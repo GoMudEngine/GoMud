@@ -55,11 +55,19 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 	if result := mobs.TickMobCraft(mob); result != nil {
 		if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
 			var msg string
-			if result.Success {
+			if result.Restocked && !result.Success && result.RecipeName == "" {
+				// Restock-only tick — supply cart delivery, no craft.
+				msgs := []string{
+					`A supply cart pulls up outside. <ansi fg="mobname">%s</ansi> sorts through a fresh delivery of materials.`,
+					`<ansi fg="mobname">%s</ansi> unpacks a crate of supplies and stacks them neatly behind the counter.`,
+					`A runner drops off a bundle of materials. <ansi fg="mobname">%s</ansi> checks the contents and nods.`,
+				}
+				msg = fmt.Sprintf(msgs[util.Rand(len(msgs))], mob.Character.Name)
+			} else if result.Success {
 				msg = fmt.Sprintf(
 					`<ansi fg="mobname">%s</ansi> finishes crafting and sets a new item on the shelf.`,
 					mob.Character.Name)
-			} else {
+			} else if result.RecipeName != "" {
 				msg = fmt.Sprintf(
 					`<ansi fg="mobname">%s</ansi> frowns at a failed attempt and discards the ruined materials.`,
 					mob.Character.Name)
