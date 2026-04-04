@@ -3,6 +3,7 @@ package mobcommands
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -16,6 +17,18 @@ import (
 // blocked and stays in the room.
 func Flee(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
+	// Can't flee while grappled
+	if mob.Character.CombatPosition == characters.PositionClinched ||
+		mob.Character.CombatPosition == characters.PositionGrounded {
+		return true, nil
+	}
+
+	// Prone penalty applied to flee score below
+	pronePenalty := 1.0
+	if mob.Character.CombatPosition == characters.PositionProne {
+		pronePenalty = 0.5
+	}
+
 	// Check players fighting this mob
 	for _, uId := range room.GetPlayers(rooms.FindFightingMob) {
 		u := users.GetByUserId(uId)
@@ -26,8 +39,8 @@ func Flee(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			continue
 		}
 
-		fleeScore := float64(mob.Character.Stats.Dexterity.ValueAdj +
-			mob.Character.GetSkillLevel(skills.Skullduggery)*25)
+		fleeScore := float64(mob.Character.Stats.Dexterity.ValueAdj+
+			mob.Character.GetSkillLevel(skills.Skullduggery)*25) * pronePenalty
 		blockScore := float64(u.Character.Stats.Dexterity.ValueAdj +
 			u.Character.GetSkillLevel(skills.UnarmedCombat)*25)
 		success, _, _, _ := dice.OpposedRollStat(fleeScore, blockScore)
@@ -48,8 +61,8 @@ func Flee(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			continue
 		}
 
-		fleeScore := float64(mob.Character.Stats.Dexterity.ValueAdj +
-			mob.Character.GetSkillLevel(skills.Skullduggery)*25)
+		fleeScore := float64(mob.Character.Stats.Dexterity.ValueAdj+
+			mob.Character.GetSkillLevel(skills.Skullduggery)*25) * pronePenalty
 		blockScore := float64(m.Character.Stats.Dexterity.ValueAdj +
 			m.Character.GetSkillLevel(skills.UnarmedCombat)*25)
 		success, _, _, _ := dice.OpposedRollStat(fleeScore, blockScore)

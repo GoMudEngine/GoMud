@@ -400,6 +400,13 @@ func handlePlayerFlee(user *users.UserRecord, uRoom *rooms.Room, userId int) boo
 	// Revert to Default combat regardless of outcome
 	user.Character.SetAggro(user.Character.Aggro.UserId, user.Character.Aggro.MobInstanceId, characters.DefaultAttack)
 
+	// Can't flee while in a grapple position (clinched or grounded)
+	if user.Character.CombatPosition == characters.PositionClinched ||
+		user.Character.CombatPosition == characters.PositionGrounded {
+		user.SendText(`<ansi fg="red">You can't flee while grappled!</ansi>`)
+		return true
+	}
+
 	blockedByMob := ``
 	for _, mobInstId := range uRoom.GetMobs(rooms.FindFighting) {
 		if mob := mobs.GetInstance(mobInstId); mob != nil {
@@ -410,6 +417,11 @@ func handlePlayerFlee(user *users.UserRecord, uRoom *rooms.Room, userId int) boo
 			// Flee: Dex + Skullduggery vs blocker's Dex + UnarmedCombat
 			fleeScore := float64(user.Character.Stats.Dexterity.ValueAdj +
 				user.Character.GetSkillLevel(skills.Skullduggery)*25)
+
+			// Prone penalty — halve flee score when knocked down
+			if user.Character.CombatPosition == characters.PositionProne {
+				fleeScore *= 0.5
+			}
 			blockScore := float64(mob.Character.Stats.Dexterity.ValueAdj +
 				mob.Character.GetSkillLevel(skills.UnarmedCombat)*25)
 			success, _, _, _ := dice.OpposedRollStat(fleeScore, blockScore)
