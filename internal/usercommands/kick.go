@@ -8,7 +8,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -212,20 +211,6 @@ func Kick(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		}
 		room.SendText(fmt.Sprintf(missRoomMsgs[util.Rand(len(missRoomMsgs))], user.Character.Name, targetName), user.UserId, res.Target.UserId)
 	}
-
-	// Progress unarmed combat skill.
-	variantName := "kick"
-	switch res.Variant {
-	case actions.KickStomp:
-		variantName = "stomp"
-	case actions.KickKnee:
-		variantName = "knee"
-	}
-	events.AddToQueue(events.SkillUsed{
-		UserId:  user.UserId,
-		Skill:   skills.UnarmedCombat,
-		Details: variantName,
-	})
 
 	return true, nil
 }

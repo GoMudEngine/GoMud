@@ -152,6 +152,11 @@ func ExecuteKick(actor Actor) KickResult {
 	}
 	RecordAndWait(char, moveName, sourceType, target.Char, targetType, result.Hit, dmgRecorded, util.GetRoundCount())
 
+	// Progression: unarmed-combat on hit (moved from user/mob wrappers)
+	if result.Hit {
+		actor.OnSkillUse(string(skills.UnarmedCombat))
+	}
+
 	return KickResult{
 		Target:     target,
 		MoveResult: result,
