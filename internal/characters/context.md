@@ -233,6 +233,26 @@ if !user.Character.Cooldowns.Try("combat-special", fmt.Sprintf("%d rounds", cfg.
 - Pet ownership and management
 - Quest progress tracking
 
+## Shop Inventory Decoupling (Living Economy)
+
+Merchant NPCs separate trade inventory from character inventory:
+
+- **`ShopInventory`** (in `internal/shops/`) is the live trade state — stock
+  levels, dynamic prices, NPC gold for transactions, restock timers. This is
+  what `buy`/`sell` commands interact with.
+- **`Character.Shop`** (the legacy `[]ShopItem` slice) remains as template /
+  seed data and a fallback for non-migrated merchants. It is NOT the live
+  inventory.
+- **`Character.Gold`** is the NPC's personal gold (loot on death). NPC gold
+  for trade transactions is tracked in `ShopInventory.Gold`, not here.
+- **`Character.Items`** (backpack) is NOT used for merchant trade stock.
+  Crafter mobs do use the backpack transiently to hold raw materials between
+  restock and craft, but finished goods go directly into `ShopInventory`.
+
+When reading or writing merchant code, always distinguish between these three
+gold/inventory sources to avoid double-counting or routing items to the
+wrong pool.
+
 ## Dependencies
 - `internal/stats`: Core statistics definitions
 - `internal/items`: Item system integration
