@@ -1,5 +1,39 @@
 # DOGMud Patch Notes
 
+## 2026-04-04 — Mob Progression Parity, Spell Fixes
+
+### Under the Hood
+- Mobs now advance stats and skills from basic attacks, special
+  moves, and spellcasting — same progression system as players.
+- Combat commands (bash, kick, trip, grapple, cast) now handle
+  skill progression in the shared action layer rather than
+  separately for players and mobs.
+- Mob howl and player taunt now share the same underlying
+  conviction-damage mechanics. (Also fixed howl not applying
+  the skill-weight multiplier to rhetoric.)
+- Bite and hamstring are now shared actions, ready for future
+  player species-gated abilities.
+
+### Bug Fixes
+- **Area harm spells no longer damage the caster's companions.**
+  This was caused by the spell resolution step overwriting the
+  companion-exclusion filter from cast initiation.
+- Single-target harm spells now prevent targeting your own
+  companion ("You can't target your own companion with a
+  harmful spell.").
+- Charmed mob casters no longer hit their owner or the owner's
+  other companions with area spells.
+- Casting an area spell with no valid targets now gives feedback
+  ("Your spell erupts outward but finds no targets.") instead
+  of silently consuming conviction.
+
+### Cleanup
+- Removed deprecated mob commands: roar, throw, backstab.
+- Renamed mob `alchemy` command to `selljunk` (converts
+  inventory to gold — not related to player alchemy).
+
+---
+
 ## 2026-04-03 — Manifestation, Companions, Necromancy, Elementals, New Zones
 
 ### New Content
