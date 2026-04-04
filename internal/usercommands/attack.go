@@ -158,6 +158,11 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				return true, nil
 			}
 
+			if m.IsNonCombatant() {
+				user.SendText(fmt.Sprintf(`You can't attack <ansi fg="mobname">%s</ansi>.`, m.Character.Name))
+				return true, nil
+			}
+
 			if party := parties.Get(user.UserId); party != nil {
 				for _, id := range party.UserIds {
 					if id == user.UserId {

@@ -87,6 +87,7 @@ type Mob struct {
 	SpawnMutations []string        `yaml:"spawnmutations,omitempty,flow"` // Mutations always granted at spawn (Phase 24.3)
 	MutationChance int             `yaml:"mutationchance,omitempty"`      // % chance to gain 1 random bonus mutation on spawn (Phase 24.3)
 	CharmImmune             bool     `yaml:"charm_immune,omitempty"`            // If true, charm spells cannot affect this mob
+	NonCombatant            bool     `yaml:"non_combatant,omitempty"`           // If true, cannot be attacked, stolen from, or aggroed
 	Crafter                 bool     `yaml:"crafter,omitempty"`                 // Whether this mob crafts autonomously (Stage 38.5.4)
 	CrafterSkill            string   `yaml:"crafterskill,omitempty"`            // Craft skill used (e.g. "blacksmithing")
 	CrafterRecipeIds        []string `yaml:"crafterrecipeids,omitempty"`        // Recipe IDs this mob can craft
@@ -107,6 +108,12 @@ func MobInstanceExists(instanceId int) bool {
 
 	_, ok := mobInstances[instanceId]
 	return ok
+}
+
+// IsNonCombatant returns true if the mob is flagged as a non-combatant
+// (shopkeepers, quest NPCs, etc.) that cannot be attacked or stolen from.
+func (m *Mob) IsNonCombatant() bool {
+	return m.NonCombatant
 }
 
 // Gets a copy of all mob info

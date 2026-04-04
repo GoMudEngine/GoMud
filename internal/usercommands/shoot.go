@@ -44,6 +44,11 @@ func Shoot(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return true, nil
 	}
 
+	if res.IsNonCombatant {
+		user.SendText(fmt.Sprintf(`You can't attack <ansi fg="mobname">%s</ansi>.`, res.TargetName))
+		return true, nil
+	}
+
 	// PvP check (player targets only).
 	if !res.IsTargetMob && res.TargetUserId > 0 {
 		if p := users.GetByUserId(res.TargetUserId); p != nil {

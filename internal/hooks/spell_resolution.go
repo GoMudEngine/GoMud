@@ -71,8 +71,8 @@ func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData
 		allMobs := room.GetMobs(rooms.FindAll)
 		filtered := make([]int, 0, len(allMobs))
 		for _, mId := range allMobs {
-			// Don't damage any player-owned companions
-			if m := mobs.GetInstance(mId); m != nil && m.Character.IsCharmed() {
+			// Don't damage any player-owned companions or non-combatants
+			if m := mobs.GetInstance(mId); m != nil && (m.Character.IsCharmed() || m.IsNonCombatant()) {
 				continue
 			}
 			filtered = append(filtered, mId)
@@ -615,8 +615,12 @@ func resolveMobSpell(mob *mobs.Mob, cs *characters.CastingState, spellData *spel
 				continue // don't target self
 			}
 			// If this mob is charmed by a player, don't hit that player's other companions
-			if charmedByUserId > 0 {
-				if m := mobs.GetInstance(mId); m != nil && m.Character.IsCharmed(charmedByUserId) {
+			// Also never hit non-combatant mobs (shopkeepers etc.)
+			if m := mobs.GetInstance(mId); m != nil {
+				if m.IsNonCombatant() {
+					continue
+				}
+				if charmedByUserId > 0 && m.Character.IsCharmed(charmedByUserId) {
 					continue
 				}
 			}

@@ -57,6 +57,10 @@ type ShootResult struct {
 	// IsCharmed is true when the target mob is charmed by this actor (friendly
 	// fire prevention). Only set for mob targets.
 	IsCharmed bool
+
+	// IsNonCombatant is true when the target mob is flagged non_combatant
+	// (shopkeepers, etc.) and cannot be attacked.
+	IsNonCombatant bool
 }
 
 // ExecuteShoot performs the core shoot target-resolution shared between player
@@ -136,6 +140,16 @@ func ExecuteShoot(actor Actor, rest string) ShootResult {
 				TargetMobInstanceId: attackMobInstanceId,
 				IsTargetMob:         true,
 				IsCharmed:           true,
+			}
+		}
+
+		if m.IsNonCombatant() {
+			return ShootResult{
+				ExitName:            exitName,
+				TargetName:          m.Character.Name,
+				TargetMobInstanceId: attackMobInstanceId,
+				IsTargetMob:         true,
+				IsNonCombatant:      true,
 			}
 		}
 

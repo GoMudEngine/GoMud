@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -30,6 +31,10 @@ func Kick(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			return true, nil
 		}
 		if targetMId > 0 {
+			if m := mobs.GetInstance(targetMId); m != nil && m.IsNonCombatant() {
+				user.SendText(fmt.Sprintf(`You can't attack <ansi fg="mobname">%s</ansi>.`, m.Character.Name))
+				return true, nil
+			}
 			user.Character.SetAggro(0, targetMId, characters.DefaultAttack)
 		} else {
 			if p := users.GetByUserId(targetPId); p != nil {

@@ -98,11 +98,17 @@ func InitiateCast(actor Actor, spellName, targetName string) CastResult {
 		if targetName != `` {
 			pId, mId := room.FindByName(targetName)
 			if mId > 0 {
-				// Don't let players target any player-owned companion with harm spells
+				// Don't let players target a companion or non-combatant with harm spells
 				if actor.IsPlayer() {
-					if m := mobs.GetInstance(mId); m != nil && m.Character.IsCharmed() {
-						actor.SendText("You can't target a companion with a harmful spell.")
-						return CastResult{SpellInfo: spellInfo, NoTarget: true}
+					if m := mobs.GetInstance(mId); m != nil {
+						if m.Character.IsCharmed() {
+							actor.SendText("You can't target a companion with a harmful spell.")
+							return CastResult{SpellInfo: spellInfo, NoTarget: true}
+						}
+						if m.IsNonCombatant() {
+							actor.SendText(fmt.Sprintf("You can't target %s with a harmful spell.", m.Character.Name))
+							return CastResult{SpellInfo: spellInfo, NoTarget: true}
+						}
 					}
 				}
 				targetMobInstanceIds = append(targetMobInstanceIds, mId)
