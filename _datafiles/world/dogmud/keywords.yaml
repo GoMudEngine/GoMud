@@ -98,6 +98,7 @@ help:
       - party
       - share
     locks:
+      - defuse
       - lock
       - picklock
       - unlock
@@ -182,7 +183,8 @@ help-aliases:
   perception:       [per, percep, percept]
   health:           [hp]
   species:          [race, races]
-  picklock:         [pick]
+  defuse:           [disarm, disarm trap, defuse trap]
+  picklock:         [pick, pick lock, lockpicking]
   picklock-example: [pick-example]
   keyring:          [key, keys]
   equip:            [wear, wield, hold]

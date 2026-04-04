@@ -232,5 +232,14 @@ hints:
     Elementals cost heavy conviction to conjure but need no
     components. Fire and magma reflect damage back at attackers.
   - >-
-    Be careful with <ansi fg="command">dismiss</ansi> — dismissed
+    Be careful with <ansi fg="command">dismiss</ansi> -- dismissed
     companions turn hostile immediately. All of them.
+  - >-
+    Rumor has it some tunnels go deeper than anyone lets on.
+    A sharp eye might spot what others miss.
+  - >-
+    Disarm kits can save your life in trapped passages. Fence
+    Dealer Siv in Thornwall sells basic kits.
+  - >-
+    Higher <ansi fg="skill">skullduggery</ansi> makes you harder
+    to catch when fleeing. Rogues always have an escape plan.
