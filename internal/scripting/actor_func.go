@@ -760,8 +760,31 @@ func (a ScriptActor) CharmSet(userId int, charmRounds int, onRevertCommand ...st
 
 	a.characterRecord.Charm(userId, charmRounds, onRevertCommand[0])
 
+	// Clear the newly charmed mob's own aggro
+	a.characterRecord.EndAggro()
+
 	if user := users.GetByUserId(userId); user != nil {
 		user.Character.TrackCharmed(a.mobInstanceId, true)
+
+		// Clear aggro from all of the owner's other companions toward
+		// the newly charmed mob (they're on the same team now).
+		for _, charmId := range user.Character.GetCharmIds() {
+			if charmId == a.mobInstanceId {
+				continue
+			}
+			if companion := mobs.GetInstance(charmId); companion != nil {
+				if companion.Character.Aggro != nil &&
+					companion.Character.Aggro.MobInstanceId == a.mobInstanceId {
+					companion.Character.EndAggro()
+				}
+			}
+		}
+
+		// Clear the owner's own aggro if targeting the charmed mob
+		if user.Character.Aggro != nil &&
+			user.Character.Aggro.MobInstanceId == a.mobInstanceId {
+			user.Character.EndAggro()
+		}
 	}
 
 }
