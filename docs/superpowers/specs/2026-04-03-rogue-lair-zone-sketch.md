@@ -259,14 +259,29 @@ Nouns: resin lining, lock mechanism, velvet shelves, hoard
 | Silkstep Boots | feet | wearable | Stash (509) | guaranteed | Dex bonus, movement stamina reduction |
 | Phantom's Cowl | head | wearable | Boss (508) | 15% | Per + Dex bonus, sneak-themed |
 
-### Tools (sold by Whisper AND Siv)
+### Tools — Lockpicks
 
-| Item | Type | Uses | Price | Notes |
-|------|------|------|-------|-------|
-| Iron Lockpicks | lockpicks | 3 | 5g | Breaks easily |
-| Steel Lockpicks | lockpicks | 8 | 15g | Standard |
-| Master Lockpicks | lockpicks | 20 | 50g | Expensive, durable |
-| Disarm Kit | tool | 1 | 10g | Single-use, consumed on defuse attempt |
+Lockpicks have a `uses` field. Each failed pin in the lockpick
+minigame consumes 1 use. Successful pins don't consume. When
+uses hit 0, they break. Tier 1 bought, Tiers 2-3 crafted.
+
+| Item | Uses | Source | Skill Gate | Price/Mats |
+|------|------|--------|-----------|------------|
+| Iron Lockpicks | 3 | Buy from Siv/Whisper | — | 5g |
+| Steel Lockpicks | 8 | Craft (blacksmithing) | Blacksmithing 12 | iron ingot ×2, binding paste |
+| Master Lockpicks | 20 | Craft (jewelcrafting) | Jewelcrafting 20 | steel ingot, silver wire, gem dust |
+
+### Tools — Disarm Kits
+
+All kits are single-use (consumed on attempt, success or fail).
+Higher tier kits give a stat mod bonus to the defuse opposed
+roll, making harder traps viable.
+
+| Item | Bonus | Source | Skill Gate | Price/Mats |
+|------|-------|--------|-----------|------------|
+| Basic Disarm Kit | +0 | Buy from Siv/Whisper | — | 30g |
+| Reinforced Disarm Kit | +15 | Craft (blacksmithing) | Blacksmithing 15 | iron ingot ×2, leather strip, spring |
+| Precision Disarm Kit | +30 | Craft (jewelcrafting) | Jewelcrafting 22 | steel wire, crystal lens, clockwork gear |
 
 ## Respawn Rates
 
