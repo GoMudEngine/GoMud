@@ -133,6 +133,11 @@ func ExecuteTrip(actor Actor) TripResult {
 	}
 	RecordAndWait(char, moveName, sourceType, target.Char, targetType, result.Hit, dmgRecorded, util.GetRoundCount())
 
+	// Progression: unarmed-combat on hit (moved from user/mob wrappers)
+	if result.Hit {
+		actor.OnSkillUse(string(skills.UnarmedCombat))
+	}
+
 	return TripResult{
 		Target:     target,
 		MoveResult: result,

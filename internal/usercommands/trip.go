@@ -8,7 +8,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -129,17 +128,6 @@ func Trip(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			)
 		}
 	}
-
-	// Progress unarmed combat skill
-	moveLabel := "trip"
-	if hasTail {
-		moveLabel = "tailsweep"
-	}
-	events.AddToQueue(events.SkillUsed{
-		UserId:  user.UserId,
-		Skill:   skills.UnarmedCombat,
-		Details: moveLabel,
-	})
 
 	return true, nil
 }
