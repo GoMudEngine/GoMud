@@ -44,8 +44,15 @@ func Shoot(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return true, nil
 	}
 
-	// Party friendly-fire check (player targets only).
+	// PvP check (player targets only).
 	if !res.IsTargetMob && res.TargetUserId > 0 {
+		if p := users.GetByUserId(res.TargetUserId); p != nil {
+			if pvpErr := room.CanPvp(user, p); pvpErr != nil {
+				user.SendText(pvpErr.Error())
+				return true, nil
+			}
+		}
+		// Party friendly-fire check.
 		if partyInfo := parties.Get(user.UserId); partyInfo != nil {
 			if partyInfo.IsMember(res.TargetUserId) {
 				p := users.GetByUserId(res.TargetUserId)

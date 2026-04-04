@@ -289,7 +289,7 @@ GamePlay:
   #     enabled   - PVP is enabled everywhere
   #     disabled  - PVP is disabled eveywhere
   #     limited   - PVP is enabled for all players but only in PVP enabled rooms
-  PVP: limited
+  PVP: disabled
   # - PVPMinimumSkillRanks -
   #   Total skill ranks required to engage in PVP combat.
   PVPMinimumSkillRanks: 15

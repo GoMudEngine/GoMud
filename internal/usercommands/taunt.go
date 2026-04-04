@@ -31,6 +31,12 @@ func Taunt(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		if targetMId > 0 {
 			user.Character.SetAggro(0, targetMId, characters.DefaultAttack)
 		} else {
+			if p := users.GetByUserId(targetPId); p != nil {
+				if pvpErr := room.CanPvp(user, p); pvpErr != nil {
+					user.SendText(pvpErr.Error())
+					return true, nil
+				}
+			}
 			user.Character.SetAggro(targetPId, 0, characters.DefaultAttack)
 		}
 	}
