@@ -86,6 +86,7 @@ func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData
 	}
 
 	// --- Resolve against mob targets ---
+	targetsResolved := 0
 	for _, mobInstId := range cs.TargetMobInstanceIds {
 		mob := mobs.GetInstance(mobInstId)
 		if mob == nil || mob.Character.Health < 1 {
@@ -95,6 +96,7 @@ func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData
 			continue // target left the room before spell resolved
 		}
 		resolveAgainstMob(user, mob, room, spellData, spellAttack, magnitude)
+		targetsResolved++
 	}
 
 	// --- Resolve against player targets ---
@@ -118,6 +120,15 @@ func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData
 		} else {
 			resolveAgainstPlayer(user, targetUser, room, spellData, spellAttack, magnitude)
 		}
+		targetsResolved++
+	}
+
+	// --- Empty room / no valid targets feedback ---
+	if targetsResolved == 0 {
+		user.SendText(`<ansi fg="cyan">Your spell erupts outward but finds no targets.</ansi>`)
+		room.SendText(fmt.Sprintf(
+			`<ansi fg="username">%s</ansi>'s spell crackles through the air harmlessly.`,
+			user.Character.Name), user.UserId)
 	}
 
 	// --- Run spell script onMagic (if present) ---
