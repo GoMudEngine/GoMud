@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
@@ -832,6 +833,64 @@ func (a ScriptActor) RemoveCompanion(mobInstanceId int) bool {
 		a.userRecord.Character.TrackCharmed(mobInstanceId, false)
 	}
 	return true
+}
+
+// IsCharmImmune returns true if this actor is a mob whose template has
+// CharmImmune set — such creatures cannot be affected by charm spells.
+func (a ScriptActor) IsCharmImmune() bool {
+	if a.mobRecord == nil {
+		return false
+	}
+	spec := mobs.GetMobSpec(a.mobRecord.MobId)
+	if spec == nil {
+		return false
+	}
+	return spec.CharmImmune
+}
+
+// SetCompanionCharmDuration sets the CharmDuration field on the CompanionInfo
+// entry matching mobInstanceId. Returns false if the entry is not found.
+func (a ScriptActor) SetCompanionCharmDuration(mobInstanceId int, duration int) bool {
+	ci := a.characterRecord.GetCompanionByInstanceId(mobInstanceId)
+	if ci == nil {
+		return false
+	}
+	ci.CharmDuration = duration
+	return true
+}
+
+// GetStatTrainingTotal returns the sum of all six stat Training values.
+// Used as a proxy for how much a creature has been developed — stronger
+// creatures accumulate more total training and thus resist charm better.
+func (a ScriptActor) GetStatTrainingTotal() int {
+	s := a.characterRecord.Stats
+	return s.Strength.Training +
+		s.Dexterity.Training +
+		s.Perception.Training +
+		s.Vitality.Training +
+		s.Willpower.Training +
+		s.Charisma.Training
+}
+
+// RollOpposed wraps dice.OpposedRollStat for use in JS spell scripts.
+// Returns true if the attacker wins the opposed roll.
+func (a ScriptActor) RollOpposed(attackScore int, defenseScore int) bool {
+	success, _, _, _ := dice.OpposedRollStat(float64(attackScore), float64(defenseScore))
+	return success
+}
+
+// IsAggroed returns true if this character currently has an active Aggro target.
+func (a ScriptActor) IsAggroed() bool {
+	return a.characterRecord.Aggro != nil
+}
+
+// GetAggroUserId returns the UserId that this character is aggro'd on.
+// Returns 0 if not aggroed or if aggroed on a mob rather than a player.
+func (a ScriptActor) GetAggroUserId() int {
+	if a.characterRecord.Aggro == nil {
+		return 0
+	}
+	return a.characterRecord.Aggro.UserId
 }
 
 func (a ScriptActor) getScript() string {
