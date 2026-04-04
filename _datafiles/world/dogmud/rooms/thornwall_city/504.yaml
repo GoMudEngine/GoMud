@@ -20,6 +20,9 @@ exits:
     roomid: 502
   south:
     roomid: 505
+spawninfo:
+  - mobid: 270
+    respawnrate: 10 real minutes
 nouns:
   scratches: Long parallel scratches scoring both walls at crawl height.
     Some are clearly tool marks -- neat, deliberate, meant to aid grip.

@@ -1,0 +1,59 @@
+mobid: 273
+zone: Thornwall City
+statpool: 80
+itemdropchance: 0
+hostile: false
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+  - merchant
+idlecommands:
+  - 'emote turns a small object over in gloved fingers, examining it in
+    the faint light'
+  - ''
+  - 'emote leans close to the wall slit, listening to sounds from the
+    den, then sits back'
+  - ''
+  - 'emote makes a notation in a small coded ledger with a stub of
+    charcoal'
+  - ''
+  - 'emote glances at you briefly -- measuring, categorizing -- then
+    looks away'
+  - ''
+activitylevel: 10
+character:
+  name: Whisper
+  description: |
+    A compact figure seated behind a low table, dressed in dark cloth
+    with a hood pulled forward. You cannot see their face clearly. What
+    you can see: gloved hands with nimble, deliberate movements; a
+    small coded ledger open on the table; and a listening posture that
+    suggests they registered every sound you made entering this room
+    before you came through the door. Whisper deals in information,
+    tools, and discretion -- in that order of value. They speak quietly
+    enough that you have to lean in to hear, which means they can see
+    your face and you cannot see theirs. This is probably intentional.
+  speciesid: 1
+  level: 1
+  gold: 200
+  stats:
+    perception:
+      training: 15
+    charisma:
+      training: 10
+    dexterity:
+      training: 8
+  shop:
+    - itemid: 33
+      quantity: 0
+      quantitymax: 0
+      price: 5
+    - itemid: 34
+      quantity: 0
+      quantitymax: 0
+      price: 20
+    - itemid: 36
+      quantity: 0
+      quantitymax: 0
+      price: 30

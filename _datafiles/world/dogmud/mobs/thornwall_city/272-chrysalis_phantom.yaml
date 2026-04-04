@@ -1,0 +1,76 @@
+mobid: 272
+zone: Thornwall City
+buffids: [9]
+archetype: fighting
+statpool: 300
+itemdropchance: 20
+hostile: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+  - smuggler
+idlecommands:
+  - 'sneak'
+  - 'emote shimmers at the edge of visibility -- there and not there'
+  - ''
+  - 'emote moves from one wall to another in a single fluid motion that
+    crosses the room faster than it should'
+  - ''
+  - 'emote goes utterly still, skin shifting through three colours in
+    the span of a breath, settling into something close to the wall
+    behind it'
+  - ''
+  - 'emote tilts its head, studying the room with pale, reflective eyes'
+  - ''
+combatcommands:
+  - 'emote phases sideways mid-strike, knuckles connecting from an angle
+    that should have been behind you'
+  - ''
+  - 'emote breaks contact and blurs toward the nearest shadow'
+  - ''
+  - 'flee'
+  - 'emote dissolves into the dark, footsteps going silent two paces in'
+  - ''
+  - 'emote re-enters from a direction you did not watch, already
+    swinging'
+  - ''
+activitylevel: 70
+character:
+  name: Chrysalis Phantom
+  description: |
+    What stands before you is recognizably human only in the broad
+    sense -- two arms, two legs, upright. The details wrong. Its skin
+    shifts between colours the way a cuttlefish shifts between patterns:
+    not slowly, not smoothly, but in sudden reconfigurations that leave
+    your eyes reporting contradictory information about where it is
+    standing. Its eyes catch light at angles that eyes should not, pale
+    and pupil-wide in the dark, reflecting back colours that are not in
+    this room. It moves like liquid poured downhill -- no wasted motion,
+    no telegraph, weight committing fully only at the last possible
+    instant. The chrysalis mutation has gone deep here. Whatever this
+    was before, it is something else now. On each hand, knuckle weapons
+    of chrysalis chitin: shaped, fitted, and clearly very used.
+  speciesid: 1
+  level: 1
+  gold: 25
+  stats:
+    dexterity:
+      training: 60
+    perception:
+      training: 40
+    strength:
+      training: 30
+    vitality:
+      training: 25
+  skills:
+    skullduggery: 20
+    unarmed-combat: 15
+    weapon-combat: 10
+  equipment:
+    weapon:
+      itemid: 10024
+    offhand:
+      itemid: 10024
+  items:
+    - itemid: 20065
