@@ -1,6 +1,7 @@
 package shops
 
 import (
+	"github.com/GoMudEngine/GoMud/internal/crafting"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -45,25 +46,26 @@ func EvaluateBuyRules(
 		return BuyOffer{}
 	}
 
-	// Rule 2: Craft materials — only if NPC stocks this specific item
-	// (i.e., it's in their restock list). This prevents cross-profession
-	// buying (blacksmith buying herbs, apothecary buying ingots).
-	if crafterSkill != "" && spec.ComponentTag != "" {
+	// Rule 2: Craft materials — buy if this component is used by any of the
+	// NPC's known recipes (ingredient tag matches). This prevents cross-
+	// profession buying while still accepting materials beyond the seed
+	// stock list (e.g., steel ingots for a blacksmith with steel recipes).
+	if crafterSkill != "" && spec.ComponentTag != "" && usesComponent(shopInv, spec.ItemId, spec.ComponentTag) {
 		entry := shopInv.GetStock(spec.ItemId)
-		if entry != nil {
-			if entry.MaxStock > 0 && entry.Current >= entry.MaxStock {
-				// Already at capacity — skip this rule, fall through.
-			} else {
-				current := entry.Current
-				restock := entry.RestockQty
-				if restock < 1 {
-					restock = 1
+		if entry != nil && entry.MaxStock > 0 && entry.Current >= entry.MaxStock {
+			// Already at capacity — skip this rule, fall through.
+		} else {
+			current := 0
+			restock := 1
+			if entry != nil {
+				current = entry.Current
+				if entry.RestockQty > 0 {
+					restock = entry.RestockQty
 				}
-				price := CalcBuyPrice(spec.Value, current, restock, cfg)
-				return BuyOffer{Price: price, Reason: "craft_material"}
 			}
+			price := CalcBuyPrice(spec.Value, current, restock, cfg)
+			return BuyOffer{Price: price, Reason: "craft_material"}
 		}
-		// Item not in this NPC's stock list — they don't use it.
 	}
 
 	// Rule 3: Gear upgrade — NPC wants equipment that improves their loadout.
@@ -149,6 +151,41 @@ func EvaluateBuyRules(
 	}
 
 	return BuyOffer{}
+}
+
+// usesComponent returns true if the NPC has a use for this component:
+// either a known recipe uses it as an ingredient, or the item is already
+// in the shop's stock list. This prevents cross-profession buying while
+// accepting materials beyond the seed stock (e.g., steel ingots for a
+// blacksmith who learns steel recipes).
+func usesComponent(shopInv *ShopInventory, itemId int, componentTag string) bool {
+	if shopInv == nil {
+		return false
+	}
+	// Check if the item is already in the stock list by ID.
+	if itemId > 0 && shopInv.GetStock(itemId) != nil {
+		return true
+	}
+	// Check known recipes for ingredient tag match.
+	for _, recipeId := range shopInv.KnownRecipes {
+		recipe := crafting.GetRecipe(recipeId)
+		if recipe == nil {
+			continue
+		}
+		for _, ing := range recipe.Ingredients {
+			if ing.ItemTag == componentTag {
+				return true
+			}
+		}
+	}
+	// Check stock list by component tag (for restock mats not in recipes).
+	for _, entry := range shopInv.Stock {
+		matSpec := items.GetItemSpec(entry.ItemId)
+		if matSpec != nil && matSpec.ComponentTag == componentTag {
+			return true
+		}
+	}
+	return false
 }
 
 // isEquipType returns true for item types that represent wearable/wieldable
