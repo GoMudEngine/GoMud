@@ -252,6 +252,13 @@ func InitiateCast(actor Actor, spellName, targetName string) CastResult {
 		SpellRest:            spellRest,
 	}
 
+	// Progression: cast skill on successful initiation (covers both players and mobs).
+	castSkill := string(skills.Spellcasting)
+	if spellInfo.HasSchool(spells.SchoolManifestation) {
+		castSkill = string(skills.Manifestation)
+	}
+	actor.OnSkillUse(castSkill)
+
 	return CastResult{
 		SpellInfo:            spellInfo,
 		CastingState:         cs,

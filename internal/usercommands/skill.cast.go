@@ -225,17 +225,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
-	// 14. Announce and fire skill-used event for the relevant skill.
-	castEventSkill := skills.Spellcasting
-	if isManifestation {
-		castEventSkill = skills.Manifestation
-	}
-	events.AddToQueue(events.SkillUsed{
-		UserId:  user.UserId,
-		Skill:   castEventSkill,
-		Details: spellInfo.Name,
-	})
-
+	// 14. Announce the cast start (skill progression now fires in InitiateCast).
 	user.SendText(`<ansi fg="cyan">` + spells.GetCastMessage("cast_started", spellInfo.Name) + `</ansi>`)
 	room.SendText(fmt.Sprintf(
 		`<ansi fg="username">%s</ansi> closes their eyes in concentration.`,
