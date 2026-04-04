@@ -8,7 +8,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -92,13 +91,6 @@ func Bash(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			user.UserId, target.UserId,
 		)
 	}
-
-	// Progress weapon combat skill.
-	events.AddToQueue(events.SkillUsed{
-		UserId:  user.UserId,
-		Skill:   skills.WeaponCombat,
-		Details: "bash",
-	})
 
 	return true, nil
 }

@@ -99,6 +99,11 @@ func ExecuteBash(actor Actor) BashResult {
 	}
 	RecordAndWait(char, "bash", sourceType, target.Char, targetType, result.Hit, dmgRecorded, util.GetRoundCount())
 
+	// Progression: weapon-combat on hit (moved from user/mob wrappers)
+	if result.Hit {
+		actor.OnSkillUse(string(skills.WeaponCombat))
+	}
+
 	return BashResult{
 		Target:     target,
 		MoveResult: result,
