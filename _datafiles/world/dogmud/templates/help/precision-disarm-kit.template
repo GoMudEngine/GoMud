@@ -1,0 +1,15 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">precision-disarm-kit</ansi> (jewelcrafting recipe)
+
+An expertly assembled disarm kit with jeweler-grade precision tools.
+Each instrument is perfectly calibrated for maximum sensitivity to trap
+mechanism resistance, allowing the master craftsman to navigate even
+the most elaborate trigger systems with confidence.
+
+<ansi fg="yellow">━━━ Crafting ━━━</ansi>
+
+  <ansi fg="yellow">Skill:</ansi>       jewelcrafting (minimum 27)
+  <ansi fg="yellow">Station:</ansi>     jeweler's workbench
+  <ansi fg="yellow">Ingredients:</ansi> silver bar (x1), masterwork gem (x3),
+                  crafting steel (x2), bone needle (x3)
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help jewelcrafting</ansi>, <ansi fg="command">help craft</ansi>, <ansi fg="command">help defuse</ansi>
