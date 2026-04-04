@@ -4,6 +4,7 @@ statpool: 80
 itemdropchance: 0
 hostile: false
 charm_immune: true
+non_combatant: true
 maxwander: 0
 groups:
   - humanoid
@@ -36,7 +37,7 @@ character:
     your face and you cannot see theirs. This is probably intentional.
   speciesid: 1
   level: 1
-  gold: 200
+  gold: 500
   stats:
     perception:
       training: 15

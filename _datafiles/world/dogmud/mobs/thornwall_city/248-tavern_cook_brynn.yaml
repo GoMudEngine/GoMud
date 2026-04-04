@@ -4,6 +4,7 @@ statpool: 120
 itemdropchance: 0
 hostile: false
 charm_immune: true
+non_combatant: true
 maxwander: 0
 groups:
   - humanoid
@@ -26,7 +27,7 @@ character:
     behind one ear like a carpenter's pencil.
   speciesid: 1
   level: 1
-  gold: 200
+  gold: 500
   stats:
     vitality:
       training: 5

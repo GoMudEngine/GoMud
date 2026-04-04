@@ -5,6 +5,7 @@ statpool: 54
 itemdropchance: 0
 hostile: false
 charm_immune: true
+non_combatant: true
 maxwander: 0
 groups:
   - humanoid
@@ -28,7 +29,7 @@ character:
     warm about Vael, but the work is meticulous.
   speciesid: 1
   level: 1
-  gold: 0
+  gold: 500
   equipment:
     weapon:
       itemid: 10017

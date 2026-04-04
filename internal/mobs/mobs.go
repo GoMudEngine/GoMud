@@ -324,6 +324,10 @@ func NewMobById(mobId MobId, homeRoomId int, forceStatPool ...int) *Mob {
 		mob.Validate()
 		mob.Character.Validate(true)
 
+		// Register the mob's shop with the living economy system if applicable.
+		// Must happen after HomeRoomId and Zone are set (they key the shop store).
+		RegisterMobShop(&mob)
+
 		// Save the mob instance
 		mobInstances[mob.InstanceId] = &mob
 

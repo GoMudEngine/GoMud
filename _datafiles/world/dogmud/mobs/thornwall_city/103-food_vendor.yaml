@@ -4,6 +4,7 @@ statpool: 36
 itemdropchance: 0
 hostile: false
 charm_immune: true
+non_combatant: true
 maxwander: 0
 groups:
   - humanoid
@@ -25,7 +26,7 @@ character:
     of her regulars by name and order.
   speciesid: 1
   level: 1
-  gold: 2
+  gold: 500
   shop:
     - itemid: 30022
       quantity: 0

@@ -4,6 +4,7 @@ statpool: 100
 itemdropchance: 0
 hostile: false
 charm_immune: true
+non_combatant: true
 maxwander: 0
 groups:
   - humanoid
@@ -27,7 +28,7 @@ character:
     toll that is strangling trade at the crossing.
   speciesid: 1
   level: 1
-  gold: 100
+  gold: 500
   shop:
     - itemid: 30001
       quantity: 0

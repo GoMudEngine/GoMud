@@ -4,6 +4,7 @@ statpool: 58
 itemdropchance: 0
 hostile: false
 charm_immune: true
+non_combatant: true
 maxwander: 0
 groups:
   - humanoid
@@ -38,7 +39,7 @@ character:
     last.
   speciesid: 1
   level: 1
-  gold: 0
+  gold: 500
   skills:
     tailoring: 12
   stats:

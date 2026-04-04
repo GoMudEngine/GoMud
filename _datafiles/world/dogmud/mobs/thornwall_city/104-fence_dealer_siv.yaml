@@ -4,6 +4,7 @@ statpool: 150
 itemdropchance: 0
 hostile: false
 charm_immune: true
+non_combatant: true
 maxwander: 0
 groups:
   - humanoid
@@ -29,7 +30,7 @@ character:
     and absolutely disinterested in your reasons for selling.
   speciesid: 1
   level: 1
-  gold: 300
+  gold: 500
   equipment:
     weapon:
       itemid: 10009

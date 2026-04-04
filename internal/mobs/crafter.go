@@ -21,6 +21,62 @@ type CraftResult struct {
 	Salvaged     bool // true when the action was a salvage rather than a craft
 }
 
+// RegisterMobShop seeds a ShopInventory for a mob that has a legacy shop or
+// crafter materials. It merges:
+//   - legacy Character.Shop items (each gets RestockQty=5, MaxStock=20)
+//   - CrafterRestockMaterials (RestockQty=3, MaxStock=10)
+//   - CrafterRecipeIds → KnownRecipes
+//
+// If neither shop items nor crafter materials are present, it does nothing.
+// The mob's starting gold from the YAML is respected; a floor of 500 is
+// applied so merchants always have meaningful purchasing power.
+func RegisterMobShop(mob *Mob) {
+	hasSaleItems := len(mob.Character.Shop) > 0
+	hasCrafter := mob.Crafter && (len(mob.CrafterRestockMaterials) > 0 || len(mob.CrafterRecipeIds) > 0)
+
+	if !hasSaleItems && !hasCrafter {
+		return
+	}
+
+	const startingGold = 500
+
+	template := shops.ShopInventory{
+		Gold:         startingGold,
+		StartingGold: startingGold,
+		KnownRecipes: append([]string{}, mob.CrafterRecipeIds...),
+	}
+
+	seen := map[int]bool{}
+
+	// Seed from legacy shop items (unlimited stock → restocked each cycle).
+	for _, si := range mob.Character.Shop {
+		if si.ItemId <= 0 || seen[si.ItemId] {
+			continue
+		}
+		seen[si.ItemId] = true
+		template.Stock = append(template.Stock, shops.StockEntry{
+			ItemId:     si.ItemId,
+			RestockQty: 5,
+			MaxStock:   20,
+		})
+	}
+
+	// Seed crafter restock materials (ingredients the supply cart delivers).
+	for _, itemId := range mob.CrafterRestockMaterials {
+		if itemId <= 0 || seen[itemId] {
+			continue
+		}
+		seen[itemId] = true
+		template.Stock = append(template.Stock, shops.StockEntry{
+			ItemId:     itemId,
+			RestockQty: 3,
+			MaxStock:   10,
+		})
+	}
+
+	shops.RegisterShop(mob.Zone, int(mob.MobId), mob.HomeRoomId, template)
+}
+
 // TickMobCraft handles autonomous crafting for crafter mobs. Crafting only
 // fires on the material restock tick (every CrafterMaterialRestockRate rounds):
 // materials arrive, and the mob immediately attempts one craft from them.

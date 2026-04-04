@@ -5,6 +5,7 @@ statpool: 120
 itemdropchance: 0
 hostile: false
 charm_immune: true
+non_combatant: true
 maxwander: 0
 groups:
   - humanoid
@@ -39,7 +40,7 @@ character:
     the work is excellent.
   speciesid: 1
   level: 1
-  gold: 200
+  gold: 500
   skills:
     alchemy: 8
   stats:

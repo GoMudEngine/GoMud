@@ -5,6 +5,7 @@ statpool: 66
 itemdropchance: 0
 hostile: false
 charm_immune: true
+non_combatant: true
 maxwander: 0
 groups:
   - humanoid
@@ -37,7 +38,7 @@ character:
     work, and people who do not waste her time.
   speciesid: 1
   level: 1
-  gold: 0
+  gold: 500
   equipment:
     weapon:
       itemid: 10008
