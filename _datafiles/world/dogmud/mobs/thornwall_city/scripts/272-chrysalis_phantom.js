@@ -30,11 +30,11 @@ function onIdle(mob, room) {
 
     if (!hasEngaged) { return false; }
 
-    // If not fighting and players are in the room, backstab
+    // If not fighting and players are in the room, surprise attack
     if (!mob.IsAggroed()) {
         var players = room.GetPlayers();
         if (players && players.length > 0) {
-            mob.Command('backstab');
+            mob.Command('attack');
         }
     }
 

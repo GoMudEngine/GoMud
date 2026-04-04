@@ -24,9 +24,7 @@ type CommandAccess struct {
 var (
 	mobCommands map[string]CommandAccess = map[string]CommandAccess{
 		"aid":            {Aid, false},
-		"alchemy":        {Alchemy, false},
 		"attack":         {Attack, false},
-		"backstab":       {Backstab, false},
 		"bash":           {Bash, false},
 		"bite":           {Bite, false},
 		"befriend":       {Befriend, false},
@@ -63,9 +61,9 @@ var (
 		"put":            {Put, false},
 		"remove":         {Remove, false},
 		"replyto":        {ReplyTo, true},
-		"roar":           {Roar, false},
 		"say":            {Say, true},
 		"sayto":          {SayTo, true},
+		"selljunk":       {Selljunk, false},
 		"saytoonly":      {SayToOnly, true},
 		"shout":          {Shout, true},
 		"shoot":          {Shoot, false},
@@ -74,7 +72,6 @@ var (
 		"submit":         {Submit, false},
 		"suicide":        {Suicide, true},
 		//		"stash":  {Stash, false},
-		"throw":  {Throw, false},
 		"trip":   {Trip, false},
 		"wander": {Wander, false},
 	}
