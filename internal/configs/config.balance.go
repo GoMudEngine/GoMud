@@ -240,6 +240,16 @@ type Balance struct {
 	// ── MANIFESTATION / COMPANION SCALING ───────────────────────────────────
 	ManifestStatScaleChaFactor   ConfigInt   `yaml:"ManifestStatScaleChaFactor"`   // Charisma divisor for companion stat scaling (default 200)
 	ManifestStatScaleSkillFactor ConfigFloat `yaml:"ManifestStatScaleSkillFactor"` // Manifestation skill additive factor (default 0.02)
+
+	// ── SHOP ECONOMY ─────────────────────────────────────────────────────────
+	ShopBuyRatio           ConfigFloat `yaml:"ShopBuyRatio,omitempty"`           // Base buy/sell spread: NPC buy offer = baseValue * BuyRatio * scarcityMult (default 0.50)
+	ShopPriceFloor         ConfigFloat `yaml:"ShopPriceFloor,omitempty"`         // Minimum scarcity multiplier when stock is very high (default 0.25)
+	ShopPriceCeiling       ConfigFloat `yaml:"ShopPriceCeiling,omitempty"`       // Maximum scarcity multiplier when stock is zero (default 5.0)
+	ShopAbundanceThreshold ConfigFloat `yaml:"ShopAbundanceThreshold,omitempty"` // Stock/restock ratio at which price hits the floor (default 3.0)
+	ShopMaterialReserve    ConfigInt   `yaml:"ShopMaterialReserve,omitempty"`    // Units of each material a crafter mob reserves before selling (default 1)
+	ShopGoldReserveRatio   ConfigFloat `yaml:"ShopGoldReserveRatio,omitempty"`   // Fraction of gold pool a shop keeps in reserve before buying (default 0.50)
+	BarterMaxDiscount      ConfigFloat `yaml:"BarterMaxDiscount,omitempty"`      // Max fractional price reduction a player can get via bartering (default 0.15)
+	BarterMaxBonus         ConfigFloat `yaml:"BarterMaxBonus,omitempty"`         // Max fractional sell-price bonus a player can get via bartering (default 0.15)
 }
 
 func (b *Balance) Validate() {
@@ -791,6 +801,32 @@ func (b *Balance) Validate() {
 	}
 	if b.ManifestStatScaleSkillFactor <= 0 {
 		b.ManifestStatScaleSkillFactor = 0.02
+	}
+
+	// ── SHOP ECONOMY ─────────────────────────────────────────────────────────
+	if b.ShopBuyRatio <= 0 {
+		b.ShopBuyRatio = 0.50
+	}
+	if b.ShopPriceFloor <= 0 {
+		b.ShopPriceFloor = 0.25
+	}
+	if b.ShopPriceCeiling <= 0 {
+		b.ShopPriceCeiling = 5.0
+	}
+	if b.ShopAbundanceThreshold <= 0 {
+		b.ShopAbundanceThreshold = 3.0
+	}
+	if b.ShopMaterialReserve < 0 {
+		b.ShopMaterialReserve = 1
+	}
+	if b.ShopGoldReserveRatio <= 0 {
+		b.ShopGoldReserveRatio = 0.50
+	}
+	if b.BarterMaxDiscount <= 0 {
+		b.BarterMaxDiscount = 0.15
+	}
+	if b.BarterMaxBonus <= 0 {
+		b.BarterMaxBonus = 0.15
 	}
 }
 

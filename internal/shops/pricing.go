@@ -2,6 +2,8 @@ package shops
 
 import (
 	"math"
+
+	"github.com/GoMudEngine/GoMud/internal/configs"
 )
 
 // PricingConfig holds the tunable knobs for dynamic pricing.
@@ -10,6 +12,26 @@ type PricingConfig struct {
 	PriceFloor          float64 // Min scarcity multiplier (default 0.25)
 	PriceCeiling        float64 // Max scarcity multiplier (default 5.0)
 	AbundanceThreshold  float64 // Stock/restock ratio for full abundance (default 3.0)
+}
+
+// PricingConfigFromBalance creates a PricingConfig from the game's balance settings.
+// Falls back to DefaultPricingConfig() values for any field that is zero/unset.
+func PricingConfigFromBalance() PricingConfig {
+	b := configs.GetBalanceConfig()
+	cfg := DefaultPricingConfig()
+	if float64(b.ShopBuyRatio) > 0 {
+		cfg.BuyRatio = float64(b.ShopBuyRatio)
+	}
+	if float64(b.ShopPriceFloor) > 0 {
+		cfg.PriceFloor = float64(b.ShopPriceFloor)
+	}
+	if float64(b.ShopPriceCeiling) > 0 {
+		cfg.PriceCeiling = float64(b.ShopPriceCeiling)
+	}
+	if float64(b.ShopAbundanceThreshold) > 0 {
+		cfg.AbundanceThreshold = float64(b.ShopAbundanceThreshold)
+	}
+	return cfg
 }
 
 // DefaultPricingConfig returns sensible defaults.

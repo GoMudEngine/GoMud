@@ -53,7 +53,7 @@ func Sell(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		var sellValue int
 
 		if shopInv != nil {
-			cfg := shops.DefaultPricingConfig()
+			cfg := shops.PricingConfigFromBalance()
 			offer := shops.EvaluateBuyRules(item, shopInv, mob.CrafterSkill, mob.BuysGeneral, cfg)
 			sellValue = offer.Price
 

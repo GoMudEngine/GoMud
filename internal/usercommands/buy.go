@@ -663,7 +663,7 @@ func effectiveRestock(entry *shops.StockEntry) int {
 // Buff/merc/pet purchases are NOT handled here — those remain legacy-only.
 func tryPurchaseFromInventory(request string, user *users.UserRecord, room *rooms.Room, shopMob *mobs.Mob, shopInv *shops.ShopInventory) bool {
 
-	cfg := shops.DefaultPricingConfig()
+	cfg := shops.PricingConfigFromBalance()
 
 	type invEntry struct {
 		entry     *shops.StockEntry

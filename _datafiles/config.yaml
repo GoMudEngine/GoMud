@@ -656,6 +656,16 @@ Balance:
   SalvageGoldPerRound: 10     # Ingredient gold value per salvage round
   SalvageMaxRounds: 5         # Maximum salvage duration
 
+  # ── SHOP ECONOMY ──────────────────────────────────────────────────────────
+  ShopBuyRatio: 0.50            # NPC buy offer = baseValue * BuyRatio * scarcityMult
+  ShopPriceFloor: 0.25          # Minimum scarcity multiplier (overstocked)
+  ShopPriceCeiling: 5.0         # Maximum scarcity multiplier (out of stock)
+  ShopAbundanceThreshold: 3.0   # Stock/restock ratio where price hits floor
+  ShopMaterialReserve: 1        # Units a crafter reserves per material before selling
+  ShopGoldReserveRatio: 0.50    # Fraction of gold pool kept in reserve before buying
+  BarterMaxDiscount: 0.15       # Max fractional buy-price discount from bartering
+  BarterMaxBonus: 0.15          # Max fractional sell-price bonus from bartering
+
   # ── QUEST ENGINE ──────────────────────────────────────────────────────────
   QuestLogLevel: verbose        # verbose, medium, minimal
   QuestChainDepthLimit: 10      # max chained grant evaluations per event
