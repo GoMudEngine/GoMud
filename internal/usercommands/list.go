@@ -13,6 +13,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/pets"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/shops"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/term"
@@ -32,13 +33,26 @@ func List(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 		user.DidTip(`list`, true)
 
-		/// Run restock routine
-		mob.Character.Shop.Restock()
-
 		listedSomething = true
 
-		if !renderMobMerchantListing(user, mob.Character.Shop.GetInstock(), mob.Character.Name) {
-			mob.Command(`say I have nothing to sell right now, but check again later.`)
+		// Use ShopInventory for dynamic pricing if available; legacy otherwise.
+		shopInv := shops.GetShopInventory(mob.Zone, int(mob.MobId), mob.HomeRoomId)
+		if shopInv != nil {
+			stock := buildShopStockFromInventory(shopInv, user)
+			// Also include non-item entries (buffs, mercs, pets) from legacy shop
+			for _, si := range mob.Character.Shop {
+				if si.ItemId == 0 { // buff, merc, or pet entry
+					stock = append(stock, si)
+				}
+			}
+			if !renderMobMerchantListing(user, stock, mob.Character.Name) {
+				mob.Command(`say I have nothing to sell right now, but check again later.`)
+			}
+		} else {
+			mob.Character.Shop.Restock()
+			if !renderMobMerchantListing(user, mob.Character.Shop.GetInstock(), mob.Character.Name) {
+				mob.Command(`say I have nothing to sell right now, but check again later.`)
+			}
 		}
 	}
 
@@ -63,6 +77,34 @@ func List(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	}
 
 	return true, nil
+}
+
+// buildShopStockFromInventory converts a ShopInventory into a legacy characters.Shop
+// slice for display in the existing table renderer. Prices are dynamically calculated.
+func buildShopStockFromInventory(shopInv *shops.ShopInventory, user *users.UserRecord) characters.Shop {
+	cfg := shops.PricingConfigFromBalance()
+	var stock characters.Shop
+
+	for _, entry := range shopInv.Stock {
+		if entry.Current <= 0 {
+			continue
+		}
+		itm := items.New(entry.ItemId)
+		if itm.ItemId == 0 {
+			continue
+		}
+		spec := itm.GetSpec()
+		restock := effectiveRestock(&entry)
+		price := shops.CalcSellPrice(spec.Value, entry.Current, restock, cfg)
+
+		stock = append(stock, characters.ShopItem{
+			ItemId:      entry.ItemId,
+			Quantity:    entry.Current,
+			QuantityMax: entry.MaxStock, // Non-zero so the display shows the actual count, not "N/A"
+			Price:       price,
+		})
+	}
+	return stock
 }
 
 // partitionShopStock splits shop stock into four categories: items, mercs, buffs, pets.
