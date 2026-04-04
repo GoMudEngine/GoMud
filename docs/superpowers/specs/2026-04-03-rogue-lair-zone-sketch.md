@@ -268,8 +268,8 @@ uses hit 0, they break. Tier 1 bought, Tiers 2-3 crafted.
 | Item | Uses | Source | Skill Gate | Price/Mats |
 |------|------|--------|-----------|------------|
 | Iron Lockpicks | 3 | Buy from Siv/Whisper | — | 5g |
-| Steel Lockpicks | 8 | Craft (blacksmithing) | Blacksmithing 12 | iron ingot ×2, binding paste |
-| Master Lockpicks | 20 | Craft (jewelcrafting) | Jewelcrafting 20 | steel ingot, silver wire, gem dust |
+| Steel Lockpicks | 8 | Craft (blacksmithing) | Blacksmithing 12 | TBD — must cost > 5g in mats |
+| Master Lockpicks | 20 | Craft (jewelcrafting) | Jewelcrafting 20 | TBD — must include rare ingredient |
 
 ### Tools — Disarm Kits
 
@@ -280,8 +280,22 @@ roll, making harder traps viable.
 | Item | Bonus | Source | Skill Gate | Price/Mats |
 |------|-------|--------|-----------|------------|
 | Basic Disarm Kit | +0 | Buy from Siv/Whisper | — | 30g |
-| Reinforced Disarm Kit | +15 | Craft (blacksmithing) | Blacksmithing 15 | iron ingot ×2, leather strip, spring |
-| Precision Disarm Kit | +30 | Craft (jewelcrafting) | Jewelcrafting 22 | steel wire, crystal lens, clockwork gear |
+| Reinforced Disarm Kit | +15 | Craft (blacksmithing) | Blacksmithing 15 | TBD — must cost > 30g in mats |
+| Precision Disarm Kit | +30 | Craft (jewelcrafting) | Jewelcrafting 22 | TBD — must include rare ingredient |
+
+### Crafted Tool Material Philosophy
+
+Crafted tools must NOT be cheaper than buying the base version.
+The value of crafting is better quality, not gold savings.
+Higher tier recipes should require at least one ingredient that
+is either:
+- A rare mob drop (not sold by merchants)
+- A zone-specific forage item (must search it out)
+- Expensive enough that total mat cost > base tool shop price
+
+Exact material lists finalized during item creation. The goal:
+iron lockpicks are pocket change, steel lockpicks take effort,
+master lockpicks take real investment in both skill and mats.
 
 ## Respawn Rates
 
