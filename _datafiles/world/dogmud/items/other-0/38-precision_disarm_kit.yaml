@@ -1,0 +1,14 @@
+itemid: 38
+name: precision disarm kit
+namesimple: disarm kit
+description: >-
+  A jeweler's-quality case with micro-tipped probes, hair-gauge
+  wire snips, and a crystal-lens inspection loop. Engineered for
+  the most unforgiving trap mechanisms. In skilled hands, little
+  stands against it.
+type: object
+value: 80
+uses: 1
+weight: 0.6
+statmods:
+  defuse_bonus: 30

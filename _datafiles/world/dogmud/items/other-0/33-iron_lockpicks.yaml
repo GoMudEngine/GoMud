@@ -1,0 +1,11 @@
+itemid: 33
+name: iron lockpicks
+namesimple: lockpicks
+description: >-
+  A set of three iron picks and a tension wrench, bound together
+  with a strip of leather. The tips are hand-filed to common lock
+  profiles. Functional but fragile -- use them carefully.
+type: lockpicks
+value: 5
+uses: 3
+weight: 0.3

@@ -1,0 +1,14 @@
+itemid: 37
+name: reinforced disarm kit
+namesimple: disarm kit
+description: >-
+  A hardened case holding tempered wire snips, a jointed probe,
+  and shielded grounding strips. The reinforced tools handle
+  heavier-gauge trigger mechanisms and add a notable edge when
+  working against sturdier traps.
+type: object
+value: 45
+uses: 1
+weight: 0.6
+statmods:
+  defuse_bonus: 15

@@ -1,0 +1,11 @@
+itemid: 34
+name: steel lockpicks
+namesimple: lockpicks
+description: >-
+  A compact roll of steel picks and a tension wrench, each ground
+  to precise tolerances. The tempered steel holds an edge through
+  repeated use without flexing or snapping.
+type: lockpicks
+value: 15
+uses: 8
+weight: 0.3

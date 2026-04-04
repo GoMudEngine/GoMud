@@ -1,0 +1,11 @@
+itemid: 36
+name: basic disarm kit
+namesimple: disarm kit
+description: >-
+  A small pouch containing wire snips, a probe, and a grounding
+  strip -- the minimum tools for disabling a simple mechanical
+  trap. Single use; the components are consumed in the process.
+type: object
+value: 30
+uses: 1
+weight: 0.5

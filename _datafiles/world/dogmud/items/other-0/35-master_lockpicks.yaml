@@ -1,0 +1,12 @@
+itemid: 35
+name: master lockpicks
+namesimple: lockpicks
+description: >-
+  A slim leather case holding a full set of silver-tipped picks,
+  diamond tension wrenches, and a bypass shim. Each tool is balanced
+  for feel. This is the kit a professional carries when the job
+  demands nothing go wrong.
+type: lockpicks
+value: 50
+uses: 20
+weight: 0.4
