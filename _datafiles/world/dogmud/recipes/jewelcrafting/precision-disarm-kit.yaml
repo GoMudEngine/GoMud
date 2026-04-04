@@ -1,0 +1,20 @@
+id: precision-disarm-kit
+name: Precision Disarm Kit
+skill: jewelcrafting
+skill_minimum: 22
+station: jeweler_bench
+time_rounds: 6
+ingredients:
+  - item_tag: silver-wire
+    quantity: 6
+  - item_tag: gem-dust
+    quantity: 4
+  - item_tag: iron-ingot
+    quantity: 3
+  - item_tag: binding-paste
+    quantity: 2
+output:
+  item_id: 38
+  quantity: 1
+success_message: "You draw silver wire to micro-gauge, grind gem-tipped probes, and assemble each component in a fitted jeweler's case. A precision disarm kit!"
+failure_message: "A wire breaks during fine drawing and the delicate assembly is compromised. The materials are lost."

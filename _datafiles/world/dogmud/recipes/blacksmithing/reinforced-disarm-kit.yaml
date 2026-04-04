@@ -1,0 +1,20 @@
+id: reinforced-disarm-kit
+name: Reinforced Disarm Kit
+skill: blacksmithing
+skill_minimum: 15
+station: forge
+time_rounds: 5
+ingredients:
+  - item_tag: steel-ingot
+    quantity: 4
+  - item_tag: leather-strip
+    quantity: 2
+  - item_tag: binding-paste
+    quantity: 5
+  - item_tag: iron-ingot
+    quantity: 3
+output:
+  item_id: 37
+  quantity: 1
+success_message: "You shape hardened steel components, bind them with reinforced leather, and pack the kit in a protective case. A reinforced disarm kit!"
+failure_message: "The steel shears at a stress point during shaping -- the work is ruined. The materials are lost."
