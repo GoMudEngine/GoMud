@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -52,11 +53,14 @@ func Sell(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 		var sellValue int
 
+		var buyReason string
+
 		if shopInv != nil {
 			cfg := shops.PricingConfigFromBalance()
 			wornItems := mob.Character.Equipment.GetAllItems()
 			offer := shops.EvaluateBuyRules(item, shopInv, mob.CrafterSkill, mob.BuysGeneral, cfg, wornItems)
 			sellValue = offer.Price
+			buyReason = offer.Reason
 
 			if sellValue > 0 {
 				// Apply bartering bonus
@@ -109,9 +113,32 @@ func Sell(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			GoldChange: sellValue,
 		})
 
-		// Update stock.
+		// Update stock or equip.
 		if shopInv != nil {
-			shopInv.AddStock(item.ItemId, 1)
+			if buyReason == "gear_upgrade" {
+				// NPC equips the upgrade immediately.
+				newItem := items.New(item.ItemId)
+				if newItem.ItemId > 0 {
+					returnedItems, wore, _ := mob.Character.Wear(newItem)
+					if wore {
+						// Put any unequipped old item into shop stock.
+						for _, old := range returnedItems {
+							if old.ItemId > 0 {
+								shopInv.AddStock(old.ItemId, 1)
+							}
+						}
+						room.SendText(
+							fmt.Sprintf(`<ansi fg="mobname">%s</ansi> examines the <ansi fg="itemname">%s</ansi> and puts it on.`, mob.Character.Name, newItem.DisplayName()),
+							user.UserId,
+						)
+					} else {
+						// Fallback: couldn't equip, stock it instead.
+						shopInv.AddStock(item.ItemId, 1)
+					}
+				}
+			} else {
+				shopInv.AddStock(item.ItemId, 1)
+			}
 			if err := shops.SaveShop(mob.Zone, int(mob.MobId), mob.HomeRoomId); err != nil {
 				mudlog.Error("SELL", "msg", "SaveShop failed", "error", err)
 			}
