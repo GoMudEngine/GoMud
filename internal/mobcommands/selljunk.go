@@ -11,7 +11,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
-func Alchemy(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
+// Selljunk converts mob inventory items into gold (1 coin per item).
+func Selljunk(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	args := util.SplitButRespectQuotes(strings.ToLower(rest))
 
@@ -19,7 +20,7 @@ func Alchemy(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		// select a random item
 		if len(mob.Character.Items) > 0 {
 			matchItem := mob.Character.Items[util.Rand(len(mob.Character.Items))]
-			Alchemy(matchItem.Name(), mob, room)
+			Selljunk(matchItem.Name(), mob, room)
 
 		}
 		return true, nil
@@ -33,7 +34,7 @@ func Alchemy(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		}
 
 		for _, item := range iCopies {
-			Alchemy(item.Name(), mob, room)
+			Selljunk(item.Name(), mob, room)
 		}
 
 		return true, nil
