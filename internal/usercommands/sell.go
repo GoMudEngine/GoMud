@@ -115,7 +115,12 @@ func Sell(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 		// Update stock or equip.
 		if shopInv != nil {
-			if buyReason == "gear_upgrade" {
+			equipSpec := item.GetSpec()
+			// Only equip single-slot gear (weapon, head, body, etc).
+			// Paired slots (ring, wrist) go to stock — shopkeepers don't
+			// put on jewelry customers sell them.
+			isPairedSlot := equipSpec.Type == items.Ring || equipSpec.Type == items.Wrist
+			if buyReason == "gear_upgrade" && !isPairedSlot {
 				// NPC equips the upgrade immediately.
 				newItem := items.New(item.ItemId)
 				if newItem.ItemId > 0 {
@@ -135,6 +140,8 @@ func Sell(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 						// Fallback: couldn't equip, stock it instead.
 						shopInv.AddStock(item.ItemId, 1)
 					}
+				} else {
+					shopInv.AddStock(item.ItemId, 1)
 				}
 			} else {
 				shopInv.AddStock(item.ItemId, 1)
