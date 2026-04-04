@@ -23,8 +23,9 @@ exits:
   west:
     roomid: 506
     lock:
-      difficulty: 22
+      difficulty: 25
       relockinterval: 15 real minutes
+      trapbuffids: [39, 40]
   east:
     roomid: 507
   south:
@@ -42,18 +43,21 @@ nouns:
     these had time and patience. Personal effects tucked into the
     curves -- a folded cloth, a belt knife without a sheath, a
     small charm made from carved bone.
-  weapon racks: Crude racks of lashed wood leaning against the wall,
-    holding eight or nine blades in various states of edge. Some are
-    wrapped in oilcloth. Others are bare and notched. A whetstone sits
-    on the lowest rack next to a patch of leather for stropping. The
+  weapon racks: >
+    Crude racks of lashed wood leaning against the wall, holding
+    eight or nine blades in various states of edge. Some are wrapped
+    in oilcloth. Others are bare and notched. A whetstone sits on
+    the lowest rack next to a patch of leather for stropping. The
     collection is practical, not decorative.
-  cookfire: The fire pit is ringed with flat stones, its ashes cold and
-    grey. The cracked iron pot hanging over it still has a residue of
-    old stew along the bottom, dark and dried. A wooden ladle rests
-    against the pot, its handle worn smooth with use. Someone ate here
-    regularly not long ago.
-  merchant sacks: Heavy canvas sacks stenciled with trade house marks --
-    none of them matching the same merchant. Goods from at least four
+  cookfire: >
+    The fire pit is ringed with flat stones, its ashes cold and grey.
+    The cracked iron pot hanging over it still has a residue of old
+    stew along the bottom, dark and dried. A wooden ladle rests
+    against the pot, its handle worn smooth with use. Someone ate
+    here regularly not long ago.
+  merchant sacks: >
+    Heavy canvas sacks stenciled with trade house marks -- none of
+    them matching the same merchant. Goods from at least four
     separate sources. The sacks have been opened and re-tied, their
     contents sorted and pulled. Whatever was most valuable is already
     gone.
@@ -63,10 +67,12 @@ nouns:
     many times the wood around it is dark with old spills.
     Sniffing the tap -- rough red wine, sour at the edges.
     Still drinkable, probably.
-  broken loom: A small portable loom, one upright cracked and repaired
-    with chrysalis resin. Still strung with half-finished cloth in a
-    dark, close weave. Someone started this and walked away mid-pattern.
-    The design, where it exists, is abstract -- concentric rings.
+  broken loom: >
+    A small portable loom, one upright cracked and repaired with
+    chrysalis resin. Still strung with half-finished cloth in a
+    dark, close weave. Someone started this and walked away
+    mid-pattern. The design, where it exists, is abstract --
+    concentric rings.
   stolen goods pile: >
     A loose heap of miscellaneous goods shoved against the wall --
     a bolt of silk wrapped in oilcloth, a merchant ledger, a small

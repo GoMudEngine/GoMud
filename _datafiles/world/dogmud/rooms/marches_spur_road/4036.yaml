@@ -1,0 +1,78 @@
+roomid: 4036
+zone: Marches Spur Road
+title: The Hermit's Cottage
+description: >
+  A squat stone cottage with a sagging thatch roof, built into the
+  lee of a low hill. The walls are rough fieldstone mortared with
+  clay, patched in places with chrysalis resin that has hardened to
+  amber. A fire pit outside holds banked coals under a drying rack
+  hung with bundles of herbs and roots. The door stands open. Inside,
+  the single room is cluttered with jars, drying racks, a straw
+  pallet, and stacks of crumbling books. A curtain of woven grass
+  hangs across a doorway at the back, blocking the view of whatever
+  lies beyond. The whole place smells of woodsmoke, dried herbs, and
+  old paper. It looks like it has been lived in for a very long time
+  by someone who does not expect visitors.
+biome: plains
+coord:
+  x: -10
+  y: -6
+  z: 0
+exits:
+  east:
+    roomid: 4035
+  west:
+    roomid: 4037
+    lock:
+      difficulty: 10
+      relockinterval: 30 real minutes
+spawninfo:
+  - mobid: 275
+    respawnrate: 60 real minutes
+containers:
+  curtain:
+    long: >
+      A curtain of woven grass and dried herb stems, hung from a
+      wooden rod across a low doorway. It sways slightly in the
+      draught from the open door. Whatever is behind it, the old
+      man does not seem to want visitors seeing it.
+nouns:
+  cottage: >
+    Rough fieldstone walls, a sagging thatch roof repaired with
+    chrysalis resin in places. The building is old but maintained
+    by someone who cares more about function than appearance. The
+    mortar is fresh in patches. The door frame is worn smooth by
+    decades of a single hand.
+  books: >
+    Stacks of crumbling volumes piled against the wall and under
+    the pallet. The titles are faded beyond reading on most. The
+    few legible spines suggest subjects ranging from herbalism to
+    theoretical chrysalis mechanics to something in a script you
+    do not recognize. Several are bookmarked with dried leaves.
+  jars: >
+    Dozens of clay and glass jars crowding every flat surface.
+    Some hold dried herbs, others pickled roots in cloudy liquid,
+    others powders of various colours. A few glow faintly with
+    residual chrysalis energy. None are labelled -- the owner
+    knows what each one contains by sight.
+  fire pit: >
+    A stone-ringed fire pit with banked coals still radiating
+    heat. The drying rack above it holds bundles of herbs at
+    various stages -- some freshly cut, others dried to brittle
+    brown. The smoke is thin and aromatic, more medicine than
+    cooking.
+  herbs: >
+    Wild-gathered herbs in various stages of drying. You recognize
+    healer's root and dustwalk herb among them, but several others
+    are unfamiliar -- plants from deeper wilderness, gathered by
+    someone who knows where to look and what to look for.
+  pallet: >
+    A straw sleeping pallet pushed against the wall, covered with
+    a threadbare blanket. A staff leans against the wall beside
+    it, within arm's reach. The blanket is worn thin but clean.
+    Whoever sleeps here does so lightly.
+idlemessages:
+- Coals shift in the fire pit, sending up a brief curl of herbal smoke.
+- A page turns in one of the crumbling books, stirred by a draught.
+- Jars rattle faintly on their shelf as the cottage settles.
+- The grass curtain sways in a draught that seems to come from nowhere.

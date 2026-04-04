@@ -20,10 +20,6 @@ coord:
 exits:
   north:
     roomid: 508
-    lock:
-      difficulty: 30
-      relockinterval: 15 real minutes
-      trapbuffids: [39, 40]
 spawninfo:
   - itemid: 20063
     respawnrate: 45 real minutes
@@ -36,27 +32,31 @@ containers:
       The smell around it is chemical -- something applied to punish
       failed attempts."
 nouns:
-  resin lining: The walls are tiled in overlapping plates of processed
-    chrysalis resin, each piece sealed to the next with a finer compound.
-    No gaps. No moisture. Whatever has been stored here was meant to be
+  resin lining: >
+    The walls are tiled in overlapping plates of processed chrysalis
+    resin, each piece sealed to the next with a finer compound. No
+    gaps. No moisture. Whatever has been stored here was meant to be
     preserved indefinitely. The resin is slightly warm -- the biological
     source not entirely inert even in this processed form.
-  lock mechanism: A masterwork of small engineering set into the door
-    frame. The exposed plate shows a grid of tiny tumbler heads, each
-    needing independent alignment. A false set in any pin resets all of
-    them. The acrid smell around the frame is deliberate -- the mechanism
-    has been treated with something that punishes failure on contact with
-    skin.
-  velvet shelves: Dark velvet nailed over the shelf surfaces, soft despite
-    its age. The shelves are built in tiers, the lower ones wider for
-    larger items. Everything on them is wrapped in oilcloth or packed in
-    felt pouches. Whoever stored these things intended to come back for
-    them.
-  hoard: The collected contents of the shelves: items wrapped in cloth and
-    leather, stored without labels or markers that an outsider could read.
-    A system exists here -- the arrangement is deliberate -- but the logic
-    of it belongs to whoever built this room. The shapes suggest bracers,
-    boots, sealed coin pouches, and smaller valuables in felt pouches.
+  lock mechanism: >
+    A masterwork of small engineering set into the door frame. The
+    exposed plate shows a grid of tiny tumbler heads, each needing
+    independent alignment. A false set in any pin resets all of them.
+    The acrid smell around the frame is deliberate -- the mechanism
+    has been treated with something that punishes failure on contact
+    with skin.
+  velvet shelves: >
+    Dark velvet nailed over the shelf surfaces, soft despite its age.
+    The shelves are built in tiers, the lower ones wider for larger
+    items. Everything on them is wrapped in oilcloth or packed in felt
+    pouches. Whoever stored these things intended to come back for them.
+  hoard: >
+    The collected contents of the shelves -- items wrapped in cloth
+    and leather, stored without labels or markers that an outsider
+    could read. A system exists here, the arrangement is deliberate,
+    but the logic of it belongs to whoever built this room. The
+    shapes suggest bracers, boots, sealed coin pouches, and smaller
+    valuables in felt pouches.
 idlemessages:
 - The sealed resin walls hold the silence absolutely -- no sound from outside
   penetrates here.

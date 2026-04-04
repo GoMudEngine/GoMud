@@ -57,6 +57,7 @@ function onMagic(sourceActor, targetActor, spellAggro) {
     for (var i = 0; i < corpses.length; i++) {
         var corpse = corpses[i];
         if (corpse.IsPlayerCorpse()) continue;
+        if (corpse.WasCompanion()) continue;
         if (targetName.length > 0 && corpse.Name().toLowerCase().indexOf(targetName.toLowerCase()) === -1) continue;
         target = corpse;
         break;

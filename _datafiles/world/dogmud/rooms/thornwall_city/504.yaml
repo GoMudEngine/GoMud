@@ -24,24 +24,29 @@ spawninfo:
   - mobid: 270
     respawnrate: 10 real minutes
 nouns:
-  scratches: Long parallel scratches scoring both walls at crawl height.
-    Some are clearly tool marks -- neat, deliberate, meant to aid grip.
-    Others are ragged and irregular, dug in desperation rather than craft.
-    There are more of these deeper in, toward the south.
-  drag marks: A wide smear on the floor, the kind left by something heavy
-    and roughly human-shaped being pulled through. Someone tried to clean
-    it up -- the smear has been partially wiped, but the residue soaked
-    into the stone. Old, but not ancient.
-  bone dice: Three knuckle-bone dice scattered in the dust near the west
-    end. The pips are carved deep and filled with something dark. Two show
+  scratches: >
+    Long parallel scratches scoring both walls at crawl height. Some
+    are clearly tool marks -- neat, deliberate, meant to aid grip.
+    Others are ragged and irregular, dug in desperation rather than
+    craft. There are more of these deeper in, toward the south.
+  drag marks: >
+    A wide smear on the floor, the kind left by something heavy and
+    roughly human-shaped being pulled through. Someone tried to clean
+    it up -- the smear has been partially wiped, but the residue
+    soaked into the stone. Old, but not ancient.
+  bone dice: >
+    Three knuckle-bone dice scattered in the dust near the west end.
+    The pips are carved deep and filled with something dark. Two show
     sixes; one shows a face that does not match any standard die -- a
     chrysalis shape, many-legged.
-  playing card: A torn playing card, one corner missing. The figure on it
-    wears a black mask and a long coat, arms spread. From a deck not made
-    for gambling -- the face cards are all masked figures, criminals or
-    performers. A signature card for someone's crew.
-  residue: Dried chrysalis residue pressed into the wall scratches and
-    floor cracks. It has hardened clear, like resin amber, preserving
+  playing card: >
+    A torn playing card, one corner missing. The figure on it wears
+    a black mask and a long coat, arms spread. From a deck not made
+    for gambling -- the face cards are all masked figures, criminals
+    or performers. A signature card for someone's crew.
+  residue: >
+    Dried chrysalis residue pressed into the wall scratches and floor
+    cracks. It has hardened clear, like resin amber, preserving
     whatever was in it. Not a spill -- someone smeared it deliberately
     into the cuts to mark them.
 idlemessages:

@@ -1,0 +1,75 @@
+mobid: 275
+zone: Marches Spur Road
+buffids: [52, 61]
+archetype: casting
+statpool: 500
+spawnmutations: [regenerative-tissue, magical-resistance, psychic-resistance, thick-hide, brazen-resolve]
+itemdropchance: 10
+hostile: false
+charm_immune: true
+maxwander: 0
+aiprofile: caster
+groups:
+  - humanoid
+  - hermit
+scriptag: 275-old_edrin
+idlecommands:
+  - 'emote mutters something about the wrong season for binding paste'
+  - ''
+  - 'emote shuffles to a jar, squints at it, puts it back'
+  - ''
+  - 'emote stares at nothing for a long moment, lips moving silently'
+  - ''
+  - 'emote adjusts the drying herbs over the fire pit with practiced hands'
+  - ''
+combatcommands:
+  - 'emote gestures sharply and the air crackles with chrysalis energy'
+  - ''
+  - 'emote speaks a word that makes the ground tremble'
+  - ''
+  - 'emote flicks his staff and light bends around him like heat shimmer'
+  - ''
+activitylevel: 50
+character:
+  name: Old Edrin
+  description: |
+    A stooped old man in threadbare robes, leaning heavily on a
+    gnarled staff. His face is weathered to deep creases, his hair
+    white and wild, his eyes milky and unfocused. He seems barely
+    aware of his surroundings, muttering to himself about herbs and
+    drying times. His hands shake slightly. His robes are patched
+    and stained with reagent spills. He looks like what he appears
+    to be -- an old hermit living alone in the grasslands, too far
+    gone to be dangerous. But the chrysalis resin patches on his
+    cottage walls are precisely applied. The jars in his shelves
+    are arranged with a system. And his staff, for all its gnarled
+    ugliness, hums faintly when the light catches it wrong.
+  speciesid: 1
+  level: 1
+  gold: 50
+  stats:
+    willpower:
+      training: 55
+    perception:
+      training: 45
+    charisma:
+      training: 40
+    vitality:
+      training: 50
+  spellbook:
+    hemorrhagic-burst: 20
+    veil-rend: 15
+    pyretic-surge: 15
+    sparks: 15
+    conviction-ward: 10
+    heal: 10
+    mind-spike: 15
+  skills:
+    spellcasting: 30
+    manifestation: 30
+    search: 10
+  equipment:
+    weapon:
+      itemid: 10025
+    body:
+      itemid: 20066

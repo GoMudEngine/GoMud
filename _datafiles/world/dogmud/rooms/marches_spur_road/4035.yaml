@@ -1,0 +1,41 @@
+roomid: 4035
+zone: Marches Spur Road
+title: Overgrown Path
+description: >
+  A narrow track leads west from the road through waist-high grass
+  and wild scrub. The path is barely visible -- just a faint depression
+  where feet have pressed the soil enough times to discourage new
+  growth. Old fence posts from the abandoned claim line the way, leaning
+  inward as if trying to close the gap. The grass thins ahead where
+  a low stone wall comes into view, half-swallowed by creeping vines.
+  Smoke rises from somewhere beyond it, thin and pale against the sky.
+  Someone lives out here.
+biome: plains
+coord:
+  x: -9
+  y: -6
+  z: 0
+exits:
+  east:
+    roomid: 4005
+  west:
+    roomid: 4036
+nouns:
+  path: >
+    A depression in the grass rather than a proper path. Someone walks
+    this route regularly enough to keep it from vanishing entirely,
+    but not often enough to wear it bare. The soil is soft underfoot,
+    springy with root mat.
+  fence posts: >
+    The same rotting hardwood posts from the old fence line, but here
+    they lean closer together. Vine and wild berry have woven between
+    them, creating a loose natural wall on either side of the track.
+  smoke: >
+    Thin pale smoke rising from beyond the stone wall ahead. Wood
+    smoke, with something herbal underneath -- not cooking, but
+    something being dried or burned deliberately. The smell is
+    pleasant from this distance.
+idlemessages:
+- A bird startles out of the tall grass and wheels away south.
+- The smoke ahead thins for a moment, then thickens again.
+- Wind pushes through the grass in long slow waves.

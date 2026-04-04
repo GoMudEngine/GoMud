@@ -1,0 +1,56 @@
+roomid: 4037
+zone: Marches Spur Road
+title: Cluttered Back Room
+description: >
+  Behind the grass curtain, a smaller chamber carved directly into
+  the hillside. The air is cooler here, drier, and heavy with the
+  mineral tang of chrysalis compound. Shelves line every wall from
+  floor to ceiling, packed with sealed jars, wrapped bundles, and
+  stoppered vials arranged in a system that makes sense only to
+  whoever built it. A heavy oak table dominates the center, its
+  surface scarred with burn marks and stained with reagent spills
+  in colours that do not occur in nature. This is not a hermit's
+  pantry -- it is a laboratory, maintained with the discipline of
+  someone who has been doing serious work for a very long time.
+biome: cave
+coord:
+  x: -11
+  y: -6
+  z: 0
+exits:
+  east:
+    roomid: 4036
+nouns:
+  shelves: >
+    Floor-to-ceiling shelving carved into the hillside rock, each
+    shelf packed tight with containers. The arrangement follows a
+    logic -- similar shapes grouped together, labels in a personal
+    shorthand scratched into the wood. Some jars pulse faintly
+    with chrysalis energy. Others are deliberately sealed with
+    wax and stored facing the wall.
+  table: >
+    A heavy oak table that has seen decades of use. The surface
+    is a palimpsest of chemical burns, knife scores, and reagent
+    stains. Faint circles mark where crucibles sat for long
+    hours. A set of copper measuring tools hangs from hooks on
+    the table's edge, tarnished green but precisely calibrated.
+  vials: >
+    Stoppered glass vials in wooden racks, each containing a
+    different liquid or powder. The colours range from pale gold
+    to deep violet to a black that seems to absorb light. None
+    are labelled for an outsider. The stoppers are sealed with
+    chrysalis resin -- airtight, permanent until broken.
+  burn marks: >
+    Scorch patterns on the table surface, some deliberate and
+    some clearly accidental. The deliberate ones form geometric
+    patterns -- containment circles, perhaps, or focusing guides
+    for channeling chrysalis energy. The accidental ones are
+    larger and more chaotic. Experiments that did not go as
+    planned.
+idlemessages:
+- A sealed jar on the highest shelf pulses once with pale light,
+  then goes dark.
+- The mineral smell of chrysalis compound intensifies briefly,
+  then fades.
+- Something ticks inside one of the sealed containers -- a slow,
+  irregular rhythm.

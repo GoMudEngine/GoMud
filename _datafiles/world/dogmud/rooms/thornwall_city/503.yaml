@@ -32,20 +32,25 @@ spawninfo:
     container: chest
     respawnrate: 30 real minutes
 nouns:
-  fungi: Dense clusters of bioluminescent fungi covering the chamber walls
-    and floor. Each cap is pale and waxy, seamed with faint blue veins that
-    pulse with slow light. The spores they release are fine as dust -- you
-    can feel them on your skin and at the back of your throat.
-  chest: A battered iron chest sitting in a hollow of fungal growth. The
+  fungi: >
+    Dense clusters of bioluminescent fungi covering the chamber walls
+    and floor. Each cap is pale and waxy, seamed with faint blue veins
+    that pulse with slow light. The spores they release are fine as
+    dust -- you can feel them on your skin and at the back of your
+    throat.
+  chest: >
+    A battered iron chest sitting in a hollow of fungal growth. The
     ward symbols etched into its surface match those scratched in the
-    corridor walls -- the same hand, the same crude geometry. The lock is
-    newer than the chest and has been replaced recently.
-  wards: The same crude symbols etched into the chest's surface appear on
-    the surrounding stone as well, scratched at the height of a crouching
-    figure. A pattern rather than script -- boundaries, warnings, or some
-    private superstition carried deep underground.
-  spore clusters: Tight clusters where the fungi grow densest, releasing
-    visible puffs of spores when disturbed. The cloud drifts and settles
+    corridor walls -- the same hand, the same crude geometry. The
+    lock is newer than the chest and has been replaced recently.
+  wards: >
+    The same crude symbols etched into the chest's surface appear on
+    the surrounding stone as well, scratched at the height of a
+    crouching figure. A pattern rather than script -- boundaries,
+    warnings, or some private superstition carried deep underground.
+  spore clusters: >
+    Tight clusters where the fungi grow densest, releasing visible
+    puffs of spores when disturbed. The cloud drifts and settles
     slowly. Breathing too deeply near these would be unwise.
   stone shelf: >
     A natural shelf of rock protrudes from the east wall, its

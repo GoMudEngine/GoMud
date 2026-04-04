@@ -1,12 +1,15 @@
 # DOGMud Patch Notes
 
-## 2026-04-03 — Manifestation, Companions, Necromancy, Elementals, Rogue Lair
+## 2026-04-03 — Manifestation, Companions, Necromancy, Elementals, New Zones
 
 ### New Content
 - New hidden areas have been added to the world. Sharp-eyed
   adventurers may discover passages others have overlooked.
+- A reclusive figure lives off the beaten path. Not everything
+  is as it appears — tread carefully.
 - Lockpicks and disarm kits now available from certain merchants.
 - Crafters can forge superior tools at high skill levels.
+- Powerful caster equipment can be found by those who earn it.
 
 ### New Mechanics
 - **Defuse command** — disarm traps on locks before picking.
@@ -15,6 +18,13 @@
   vs Dex+unarmed-combat). Rogues are better at escaping.
   Can't flee while grappled. Prone halves flee chance.
 - **Fist weapons** — new weapon subtype using unarmed-combat skill.
+
+### Quality of Life
+- `idea` is now an alias for `suggest`.
+- `disarm` is now an alias for `defuse`.
+- `lockpick` and `pick` are aliases for `picklock`.
+- Companions prevent sneaking — dismiss before stealth.
+- Companion corpses cannot be raised by necromancy.
 
 ### Bug Fixes
 - AOE harm spells no longer damage the caster or their companions.

@@ -31,6 +31,13 @@ companions wait for your return. Summoned and raised
 companions linger in the world until you reconnect. Charmed
 companions persist as long as the magical bond holds.
 
+<ansi fg="yellow">━━━ Stealth Warning ━━━</ansi>
+
+Companions give away your position. You cannot sneak
+effectively while companions are present -- they will be
+noticed even if you are not. Dismiss your companions
+before attempting anything requiring stealth.
+
 <ansi fg="yellow">━━━ Death is Permanent ━━━</ansi>
 
 If a companion falls in battle it is gone. Summon or charm

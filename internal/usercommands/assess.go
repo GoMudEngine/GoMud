@@ -26,6 +26,11 @@ func Assess(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		return true, nil
 	}
 
+	if corpse.Character.IsCharmed() {
+		user.SendText(`These remains were bound to a master. The essence is spent — there is nothing left to raise.`)
+		return true, nil
+	}
+
 	// Sum all stat training values as a proxy for the creature's total power.
 	stats := corpse.Character.Stats
 	totalTraining := stats.Strength.Training +

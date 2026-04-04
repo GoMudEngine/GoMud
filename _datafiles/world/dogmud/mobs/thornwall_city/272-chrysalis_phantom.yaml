@@ -3,7 +3,7 @@ zone: Thornwall City
 buffids: [9]
 archetype: fighting
 statpool: 300
-itemdropchance: 20
+itemdropchance: 10
 hostile: true
 charm_immune: true
 maxwander: 0
@@ -12,17 +12,17 @@ groups:
   - smuggler
 idlecommands:
   - 'sneak'
+  - 'sneak'
   - 'emote shimmers at the edge of visibility -- there and not there'
-  - ''
+  - 'sneak'
   - 'emote moves from one wall to another in a single fluid motion that
     crosses the room faster than it should'
-  - ''
+  - 'sneak'
   - 'emote goes utterly still, skin shifting through three colours in
     the span of a breath, settling into something close to the wall
     behind it'
-  - ''
+  - 'sneak'
   - 'emote tilts its head, studying the room with pale, reflective eyes'
-  - ''
 combatcommands:
   - 'emote phases sideways mid-strike, knuckles connecting from an angle
     that should have been behind you'
@@ -35,7 +35,7 @@ combatcommands:
   - 'emote re-enters from a direction you did not watch, already
     swinging'
   - ''
-activitylevel: 70
+activitylevel: 90
 character:
   name: Chrysalis Phantom
   description: |

@@ -18,6 +18,8 @@ exits:
     roomid: 4004
   south:
     roomid: 4006
+  west:
+    roomid: 4035
 nouns:
   posts: Old hardwood fence posts, gray and split from years of weather.
     They lean in different directions as if the ground has shifted beneath

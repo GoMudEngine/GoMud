@@ -199,6 +199,7 @@ help-aliases:
   history:          ['log']
   pvp:              ['pk']
   title:            [jobs, job, profession, class, titles, archetypes, archetype]
+  suggest:          [idea, suggestion, ideas]
   about:            ['gomud', 'dogmud', 'dog', 'lore', 'world', 'setting', 'background']
 
 # Default aliases for commands
@@ -248,6 +249,8 @@ command-aliases:
   'storage remove':   ['unstore']
   'rank back':        ['backrank']
   'rank front':       ['frontrank']
+  defuse:             ['disarm']
+  suggest:            ['idea']
   'help about':       ['about']
   'set screenreader': ['screenreader']
   
