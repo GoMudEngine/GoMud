@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -406,13 +407,13 @@ func handlePlayerFlee(user *users.UserRecord, uRoom *rooms.Room, userId int) boo
 				continue
 			}
 
-			chanceIn100 := int(float64(user.Character.Stats.Dexterity.ValueAdj) / (float64(user.Character.Stats.Dexterity.ValueAdj) + float64(mob.Character.Stats.Dexterity.ValueAdj)) * 70)
-			chanceIn100 += 30
-
-			roll := util.Rand(100)
-			util.LogRoll(`Flee`, roll, chanceIn100)
-
-			if roll >= chanceIn100 {
+			// Flee: Dex + Skullduggery vs blocker's Dex + UnarmedCombat
+			fleeScore := float64(user.Character.Stats.Dexterity.ValueAdj +
+				user.Character.GetSkillLevel(skills.Skullduggery)*25)
+			blockScore := float64(mob.Character.Stats.Dexterity.ValueAdj +
+				mob.Character.GetSkillLevel(skills.UnarmedCombat)*25)
+			success, _, _, _ := dice.OpposedRollStat(fleeScore, blockScore)
+			if !success {
 				blockedByMob = mob.Character.Name
 				break
 			}
@@ -427,13 +428,13 @@ func handlePlayerFlee(user *users.UserRecord, uRoom *rooms.Room, userId int) boo
 				continue
 			}
 
-			chanceIn100 := int(float64(user.Character.Stats.Dexterity.ValueAdj) / (float64(user.Character.Stats.Dexterity.ValueAdj) + float64(u.Character.Stats.Dexterity.ValueAdj)) * 70)
-			chanceIn100 += 30
-
-			roll := util.Rand(100)
-			util.LogRoll(`Flee`, roll, chanceIn100)
-
-			if roll < chanceIn100 {
+			// Flee: Dex + Skullduggery vs blocker's Dex + UnarmedCombat
+			fleeScore := float64(user.Character.Stats.Dexterity.ValueAdj +
+				user.Character.GetSkillLevel(skills.Skullduggery)*25)
+			blockScore := float64(u.Character.Stats.Dexterity.ValueAdj +
+				u.Character.GetSkillLevel(skills.UnarmedCombat)*25)
+			success, _, _, _ := dice.OpposedRollStat(fleeScore, blockScore)
+			if !success {
 				blockedByPlayer = u.Character.Name
 				blockedByPlayerId = u.UserId
 				break
