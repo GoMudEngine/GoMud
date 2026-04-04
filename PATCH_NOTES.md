@@ -1,6 +1,23 @@
 # DOGMud Patch Notes
 
-## 2026-04-03 — Manifestation, Companions, Necromancy, Elementals
+## 2026-04-03 — Manifestation, Companions, Necromancy, Elementals, Rogue Lair
+
+### New Content
+- New hidden areas have been added to the world. Sharp-eyed
+  adventurers may discover passages others have overlooked.
+- Lockpicks and disarm kits now available from certain merchants.
+- Crafters can forge superior tools at high skill levels.
+
+### New Mechanics
+- **Defuse command** — disarm traps on locks before picking.
+  Requires a disarm kit. Higher tier kits improve success.
+- **Flee rework** — flee is now an opposed roll (Dex+skullduggery
+  vs Dex+unarmed-combat). Rogues are better at escaping.
+  Can't flee while grappled. Prone halves flee chance.
+- **Fist weapons** — new weapon subtype using unarmed-combat skill.
+
+### Bug Fixes
+- AOE harm spells no longer damage the caster or their companions.
 
 ### New System: Manifestation Skill
 A new charisma-based skill governing summoning, conjuring, charming,

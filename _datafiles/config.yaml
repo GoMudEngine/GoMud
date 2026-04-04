@@ -63,7 +63,7 @@ Server:
   - checkclient
   # - Motd -
   #   Message of the day. This is displayed when the motd command is run.
-  Motd: '{{ t "NEW: Manifestation skill -- summon, conjure, raise undead, charm creatures.\nNEW: 5 elemental companions (water/earth/air/fire/magma).\nNEW: 6 undead types (skeleton through flesh golem) via necromancy.\nNEW: Charm spell -- bend hostile creatures to your will.\nNEW: Return damage mechanic (fire/magma elementals reflect melee).\nNEW: companion/dismiss/assess commands. Type help manifestation.\nFIX: Aggro rework -- companions integrate cleanly with combat.\nFull patch notes: https://github.com/pruuk/DOGMud/blob/master/PATCH_NOTES.md" }}'
+  Motd: '{{ t "NEW: Hidden areas added to the world. Explore and discover.\nNEW: Defuse command -- disarm traps before picking locks.\nNEW: Lockpicks and disarm kits available from merchants and crafting.\nNEW: Flee rework -- skullduggery skill helps you escape. Grapple blocks flee.\nNEW: Fist weapons (unarmed-combat scaling).\nFIX: AOE spells no longer damage the caster.\nFull patch notes: https://github.com/pruuk/DOGMud/blob/master/PATCH_NOTES.md" }}'
   # - NextRoomID -
   # This number is auto-updated to the highest number of rooms in the game.
   #   If creating your own rooms but don't want to risk an update conflicting,
