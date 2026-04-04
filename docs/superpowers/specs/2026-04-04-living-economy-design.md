@@ -212,6 +212,23 @@ For each known recipe where output `restock_qty == 0` (finished good):
 
 Craft the option with the highest `productValue - materialCost`.
 
+**Priority 3: Profitable salvage**
+
+When overstocked on finished goods but low on materials, NPCs break
+items down for parts using the existing salvage system.
+
+For each finished good in stock where `current > 1`:
+- `itemValue` = `baseValue × scarcityMult` at current stock level
+- `salvageValue` = sum of expected material returns, each valued at
+  `baseValue × scarcityMult` at that material's current stock level
+- Skip if `salvageValue <= itemValue` (item worth more intact)
+
+Salvage the option with the highest `salvageValue - itemValue`.
+
+Uses the same `salvage_returns` data on ItemSpec or recipe-based
+ingredient recovery from the existing salvage system. NPC salvage
+skill progresses naturally through use like any other skill.
+
 ### Reserve Threshold
 
 NPCs hold back the last N of any material so it's still available
