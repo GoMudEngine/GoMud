@@ -835,17 +835,6 @@ func TestPutMob(t *testing.T) {
 	_ = err
 }
 
-func TestBackstab(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	mob, room := getTestMobAndRoom(t)
-
-	handled, err := Backstab("alice", mob, room)
-	_ = handled
-	_ = err
-}
-
 func TestBashMob(t *testing.T) {
 	cleanup := seedAllRegistries()
 	defer cleanup()
@@ -922,17 +911,6 @@ func TestShootMob(t *testing.T) {
 	_ = err
 }
 
-func TestThrowMob(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	mob, room := getTestMobAndRoom(t)
-
-	handled, err := Throw("nothing at alice", mob, room)
-	_ = handled
-	_ = err
-}
-
 func TestGiveQuest(t *testing.T) {
 	cleanup := seedAllRegistries()
 	defer cleanup()
@@ -952,13 +930,13 @@ func TestGiveQuest(t *testing.T) {
 	})
 }
 
-func TestAlchemy(t *testing.T) {
+func TestSelljunk(t *testing.T) {
 	cleanup := seedAllRegistries()
 	defer cleanup()
 
 	mob, room := getTestMobAndRoom(t)
 
-	handled, err := Alchemy("health potion", mob, room)
+	handled, err := Selljunk("health potion", mob, room)
 	_ = handled
 	_ = err
 }
@@ -1179,32 +1157,6 @@ func TestShootInCombat(t *testing.T) {
 
 	mob.Character.Aggro = &characters.Aggro{UserId: 1}
 	handled, err := Shoot("", mob, room)
-	_ = handled
-	_ = err
-	mob.Character.Aggro = nil
-}
-
-func TestBackstabInCombat(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	mob, room := getTestMobAndRoom(t)
-
-	mob.Character.Aggro = &characters.Aggro{UserId: 1}
-	handled, err := Backstab("alice", mob, room)
-	_ = handled
-	_ = err
-	mob.Character.Aggro = nil
-}
-
-func TestThrowInCombat(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	mob, room := getTestMobAndRoom(t)
-
-	mob.Character.Aggro = &characters.Aggro{UserId: 1}
-	handled, err := Throw("sword at alice", mob, room)
 	_ = handled
 	_ = err
 	mob.Character.Aggro = nil
