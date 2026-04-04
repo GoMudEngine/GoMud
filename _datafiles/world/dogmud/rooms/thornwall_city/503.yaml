@@ -47,11 +47,12 @@ nouns:
   spore clusters: Tight clusters where the fungi grow densest, releasing
     visible puffs of spores when disturbed. The cloud drifts and settles
     slowly. Breathing too deeply near these would be unwise.
-  stone shelf: A natural shelf of rock protrudes from the east wall, its
-    surface softened by a thin crust of fungal growth. On it: a cracked
-    ceramic vial, three bone dice, a fold of cloth tied with a strip of
-    leather. Someone's small kit of personal effects, left and not returned
-    for.
+  stone shelf: >
+    A natural shelf of rock protrudes from the east wall, its
+    surface softened by a thin crust of fungal growth. On it, a
+    cracked ceramic vial, three bone dice, a fold of cloth tied
+    with a strip of leather. Someone's small kit of personal
+    effects, left and not returned for.
 idlemessages:
 - Spores drift lazily through the fungal light, settling on every surface.
 - The fungi pulse with a slow rhythm, blue-white light ebbing and brightening.
