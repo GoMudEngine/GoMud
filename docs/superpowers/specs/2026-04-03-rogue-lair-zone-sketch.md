@@ -9,60 +9,158 @@
 - **Depth:** z:-3 (one level below smuggler tunnels at z:-2)
 - **Entry:** Hidden locked grate in room 487 (Collapsed Passage)
 
+## Design Notes
+
+### Atmosphere
+Every room should feel cluttered, cramped, and dangerous. Random
+flavor objects (bric-a-brac) with `look` descriptions throughout:
+chrysalis resin drippings, crude scratched symbols, discarded
+lockpick fragments, stained rags, bone dice, stolen merchant
+ledgers, cracked vials. Nouns with look descriptions in every room.
+Players should feel there's a trap around every corner.
+
+### Mob Behavior — Hit and Run
+ALL mobs in this zone fight dirty:
+- Sneak → surprise strike → fight 2-3 rounds → flee → sneak → repeat
+- All mobs have high skullduggery (8-15) and high dexterity
+- All mobs should have `sneak` and `flee` in idle/combat commands
+- Mobs re-sneak between engagements (idle sneak)
+- Players with high perception/skullduggery counter this
+
+### Boss — First Real Boss Encounter
+The Chrysalis Phantom should be a genuine challenge for endgame
+players. Not a gear check — a skill check. Players need stealth
+detection, good timing on interrupts, and poison resistance.
+
+### Loot Philosophy
+- Boss weapon drops at 20% chance (rare, aspirational)
+- Other zone items have rarity but at least 2 guaranteed items
+  are always present in the zone via chest spawns
+- Equipment fills underrepresented slots: shoulders, fist,
+  wrist, gloves, feet
+- All items chrysalis-themed even if effects are mechanical
+
 ## Room List
 
 ### Room 500 — "Sealed Drain Grate"
-Coord: (2, -2, -3). Entry room below Collapsed Passage.
-Rusted iron grate half-hidden beneath rubble. Requires search
-to discover, locked to pick. Stale air carrying chrysalis resin
-and damp stone rises from below.
+Coord: (2, -2, -3). Entry below Collapsed Passage (room 487).
+
+Rusted iron grate half-hidden beneath rubble and chrysalis
+residue. Requires `search` to discover the exit. Locked grate
+(difficulty 15). On failed pick: minor poison trap (buff).
+Scratch marks show it's been pried open before. Chrysalis
+resin beads along the edges like dried amber.
+
+Nouns: grate, rubble, scratch marks, resin beads
 
 ### Room 501 — "Resin-Slicked Shaft"
-Coord: (2, -3, -3). Near-vertical shaft coated in hardened
-chrysalis resin. Hand and footholds carved into tacky resin.
-TRAPPED: tripwire triggers chrysalis-tipped poison dart.
+Coord: (2, -3, -3). Near-vertical shaft.
+
+Shaft coated in hardened chrysalis resin shimmering faintly.
+Hand/footholds carved into tacky resin. Air thick and warm.
+TRAPPED: chrysalis-tipped dart trap (poison debuff, difficulty
+12). Discarded rope fragments hang from a rusted piton above.
+
+Nouns: resin, piton, rope fragments, footholds
 
 ### Room 502 — "Warded Corridor"
-Coord: (2, -4, -3). Low corridor lined with pulsing chrysalis
-growths. Thin filaments across passage — some natural, some
-deliberate tripwires. TRAPPED: alarm filaments trigger guard
-mob spawn (resin hounds) if not defused.
+Coord: (2, -4, -3). Branches east. Key trap room.
+
+Low corridor lined with pulsing chrysalis growths. Thin
+filaments stretch across passage — some natural mycelium, some
+deliberately placed tripwires. TRAPPED: alarm filaments
+(difficulty 18). If triggered without defusing, spawns 1-2
+resin hounds in this room. Crude ward symbols scratched into
+walls in what looks like dried blood.
+
+Nouns: filaments, ward symbols, chrysalis growths, blood marks
 
 ### Room 503 — "Fungal Nook"
-Coord: (2, -1, -3). Side chamber north of entry. Luminescent
-fungi on chrysalis-laced stone. Locked + trapped chest with
-shoulder armor loot (chitin spaulders).
+Coord: (2, -1, -3). North of entry. Side chamber.
+
+Cramped chamber where luminescent fungi grow in dense clusters
+on chrysalis-laced stone. A battered chest sits half-buried in
+fungal growth, its surface etched with crude wards. Locked
+(difficulty 20) + trapped (chrysalis spore burst — blindness
+debuff). Contains: chitin spaulders (shoulders).
+
+Nouns: fungi, chest, wards, spore clusters, stone shelf
 
 ### Room 504 — "The Crawl"
-Coord: (3, -4, -3). East branch. Passage so low you crouch.
-Scratched walls, dried chrysalis residue. Stealth check — mobs
-detect non-sneaking players entering.
+Coord: (3, -4, -3). East branch.
+
+Passage so low you crouch. Walls scratched with fingernail
+marks and dried chrysalis residue. Something has been dragged
+through here recently. Stealth detection check on entry — mobs
+in room 505 detect non-sneaking players. Scattered bone dice
+and a torn playing card lie in the dust.
+
+Nouns: scratches, drag marks, bone dice, playing card, residue
 
 ### Room 505 — "Chrysalis Den"
-Coord: (2, -5, -3). Hub room. Circular chamber, chrysalis on
-every surface. Resin hammocks, crude weapon racks. 2-3 chrysalis
-skulker mobs. Exits: north, west, east, south.
+Coord: (2, -5, -3). Hub room. Main mob camp.
+
+Roughly circular chamber, chrysalis growth on every surface in
+overlapping layers. Hammocks of woven resin hang from ceiling.
+Crude weapon racks, a cookfire pit with cold ashes, stolen
+goods piled against walls — merchant sacks, a broken loom, a
+barrel of questionable wine. This is home to the skulkers.
+
+Mobs: 2-3 Chrysalis Skulkers
+Nouns: hammocks, weapon racks, cookfire, merchant sacks, wine
+barrel, broken loom, stolen goods pile
 
 ### Room 506 — "Resin Armory"
-Coord: (1, -5, -3). West of den. Locked alcove with chrysalis-
-hardened weapons. Fist weapon (chrysalis knuckles) + gloves
-(phantom's wraps) loot.
+Coord: (1, -5, -3). West of den. Locked (difficulty 22).
+
+Alcove packed with chrysalis-hardened weapons and armor. Racks
+hold daggers with resin-coated blades and gauntlets studded
+with crystallized chrysalis nodes. A workbench shows signs of
+recent use — chrysalis shavings, a pot of binding paste, molds
+for knuckle weapons. Everything crafted, not looted.
+
+Contains: Chrysalis Knuckles (fist weapon), Phantom's Wraps
+(gloves). Item respawn: 30 real minutes.
+Nouns: weapon racks, workbench, shavings, paste pot, molds,
+dagger rack
 
 ### Room 507 — "The Listening Post"
-Coord: (3, -5, -3). East of den. Niche overlooking den through
-wall slit. Speaking tube to tunnels above. Fence NPC "Whisper"
-buys stolen goods, sells lockpicks + disarm kits.
+Coord: (3, -5, -3). East of den. Fence NPC.
+
+Narrow niche overlooking the den through a slit in the wall.
+A crude speaking tube runs up through the rock. Maps of
+Thornwall's sewer system are pinned to the wall with chrysalis
+resin tacks. A hooded figure sits in the shadows, dealing in
+whispers.
+
+NPC: Whisper (fence). Sells: lockpick sets (3 tiers), disarm
+kits, chrysalis resin vials. Buys stolen goods.
+Nouns: wall slit, speaking tube, sewer maps, resin tacks
 
 ### Room 508 — "Chitin Throne"
-Coord: (2, -6, -3). Boss room. Chair carved from massive
-chrysalis chitin. The Chrysalis Phantom — chameleon skin mutation,
-high skullduggery, dual chrysalis knuckles with poison, flees
-and surprise strikes.
+Coord: (2, -6, -3). Boss room.
+
+Chamber dominated by a chair carved from a single massive piece
+of chrysalis chitin, its surface covered in iridescent whorls.
+The air shimmers with residual mutation energy. Trophies hang
+from the walls — guard badges, merchant seals, a broken sword
+with a noble crest. The room smells of chrysalis and fear.
+
+Boss: Chrysalis Phantom (statpool 300)
+Nouns: throne, trophies, guard badges, merchant seals, broken
+sword, noble crest, chrysalis whorls
 
 ### Room 509 — "The Stash"
-Coord: (2, -7, -3). Behind throne. Hidden compartment lined
-with preservation resin. Complex lock, multi-trapped. Best loot:
-resin-laced bracers (wrist) + silkstep boots (feet).
+Coord: (2, -7, -3). Behind throne.
+
+Hidden compartment lined with chrysalis resin to preserve its
+contents. The lock is intricate — multiple pins, each trapped
+independently (difficulty 30, multi-trap: poison + alarm).
+Velvet-lined shelves hold the best of the rogues' hoard.
+
+Contains: Resin-Laced Bracers (wrist), Silkstep Boots (feet).
+Item respawn: 45 real minutes.
+Nouns: resin lining, lock mechanism, velvet shelves, hoard
 
 ## Adjacency Map
 
@@ -86,99 +184,123 @@ resin-laced bracers (wrist) + silkstep boots (feet).
 ## Exit Connections
 
 ```
-487 (down) → 500, 500 (up) → 487
-500 (north) → 503, 503 (south) → 500
-500 (down) → 501, 501 (up) → 500
-501 (south) → 502, 502 (north) → 501
-502 (east) → 504, 504 (west) → 502
-502 (south) → 505, 504 (south) → 505
-505 (north) → 502
-505 (west) → 506, 506 (east) → 505
-505 (east) → 507, 507 (west) → 505
-505 (south) → 508, 508 (north) → 505
-508 (south) → 509, 509 (north) → 508
+487 (down) → 500 [hidden + locked]
+500 (up) → 487, (north) → 503, (down) → 501
+501 (up) → 500, (south) → 502
+502 (north) → 501, (east) → 504, (south) → 505
+503 (south) → 500
+504 (west) → 502, (south) → 505
+505 (north) → 502, (west) → 506, (east) → 507, (south) → 508
+506 (east) → 505
+507 (west) → 505
+508 (north) → 505, (south) → 509
+509 (north) → 508
 ```
 
-## Boundary Connections
-
-Room 487 (Collapsed Passage) needs:
-- New `down` exit to room 500
-- Exit should be a hidden exit requiring `search` to discover
-- Locked with difficulty ~20, trap on failure (minor poison)
-
-## Mob Suggestions
+## Mob Details
 
 ### Chrysalis Skulker (×2-3, rooms 505/504)
-Hit-and-run rogues. High skullduggery, sneak+flee+surprise
-strike combat loop. Chrysalis-hardened leather, poisoned daggers.
-Statpool: 80-100. Groups: [humanoid, smuggler].
+- Statpool: 100-120
+- Archetype: fighting
+- Species: human (1)
+- Skills: skullduggery 12, weapon-combat 8, unarmed-combat 6
+- High Dex training, moderate Str/Per
+- buffids: [9] (spawn hidden)
+- Combat loop: sneak, flee, sneak — surprise strike focus
+- Idle: sneak (re-hide between fights)
+- Combat: flee + emotes, poisoned dagger stabs
+- Item drops: chrysalis dagger (10%), stolen gold (50-100g)
+- Respawn: 10 real minutes
 
-### Resin Hound (×1-2, spawns in room 502 on alarm)
-Mutated guard dogs with chrysalis chitin plating. Only appear
-if alarm trap in room 502 is triggered without defusing.
-Aggressive, high perception (tracks hidden players).
-Statpool: 60-80. Species: canine. Groups: [predatory].
+### Resin Hound (×1-2, room 502 alarm spawn only)
+- Statpool: 70
+- Archetype: fighting
+- Species: canine (2)
+- High Per (tracks hidden), high Dex
+- Only spawns if alarm trap in 502 triggers
+- Aggressive, no flee — they chase
+- Respawn: only on alarm trigger (not timed)
 
 ### Chrysalis Phantom (boss, room 508)
-Lair leader. Chameleon skin mutation → spawns hidden, re-sneaks
-mid-combat via combat commands. High skullduggery + dexterity.
-Dual-wields chrysalis knuckles (fist subtype, poison on hit).
-Flees and surprise strikes repeatedly. Statpool: 140-160.
-buffids: [9] (hidden). Combat: sneak, flee, surprise strike loop.
-Groups: [humanoid, smuggler].
+- **Statpool: 300** — first real boss encounter
+- Archetype: fighting
+- Species: human (1)
+- Skills: skullduggery 20, unarmed-combat 15, weapon-combat 10
+- Mutations: chameleon-skin (flavor — implemented via buffids: [9])
+- Extremely high Dex (training 60+) and Per (training 40+)
+- Dual-wields chrysalis knuckles (fist subtype, poison on hit)
+- buffids: [9] (spawn hidden)
+- Combat commands: sneak, flee, emotes about phasing/shimmering
+- Combat AI: flee after 3-4 rounds, re-sneak, surprise strike
+- activitylevel: 70 (aggressive special moves)
+- Item drops: chrysalis knuckles (20%), phantom's cowl (15%),
+  stolen hoard key (100% — opens stash if player doesn't pick)
+- Respawn: 30 real minutes (boss respawn)
+- charm_immune: true
 
 ### Whisper (fence NPC, room 507)
-Shadowy fence. Buys stolen goods at better rates than Siv.
-Sells: lockpick sets (3 tiers), disarm kits, chrysalis resin
-vials (poison consumable?). Charm immune. Not hostile.
+- Statpool: 80
+- Not hostile, charm_immune
+- Shop: lockpick sets × 3 tiers, disarm kits, chrysalis vials
+- Buys stolen goods at good rates
+- Idle: whispered emotes, examining goods
+- High perception (notices everything)
 
-## Item Suggestions (Chrysalis-themed)
+## Item Details
 
-### Equipment Drops
-| Item | Slot | Source | Effect |
-|------|------|--------|--------|
-| Chrysalis Knuckles | weapon (fist) | Boss / armory | Unarmed combat, poison on hit |
-| Chitin Spaulders | shoulders | Fungal nook chest | Physical mitigation |
-| Phantom's Wraps | gloves | Armory | Dex bonus, slight magical mitigation |
-| Resin-Laced Bracers | wrist | Stash chest | Skullduggery stat bonus |
-| Silkstep Boots | feet | Stash chest | Movement stamina reduction |
+### Equipment (Chrysalis-themed)
 
-### Tools (sold by Whisper + Siv)
-| Item | Type | Effect |
-|------|------|--------|
-| Iron Lockpicks | lockpicks | Basic, breaks easily |
-| Steel Lockpicks | lockpicks | Standard durability |
-| Master Lockpicks | lockpicks | High durability, expensive |
-| Disarm Kit | tool | Single-use trap defusing |
+| Item | Slot | Subtype | Drop Source | Drop % | Key Stats |
+|------|------|---------|------------|--------|-----------|
+| Chrysalis Knuckles | weapon | fist | Boss (508) | 20% | Unarmed scaling, poison on hit debuff |
+| Chitin Spaulders | shoulders | wearable | Chest (503) | guaranteed | Physical mitigation, Str bonus |
+| Phantom's Wraps | gloves | wearable | Armory (506) | guaranteed | Dex bonus, magical mitigation |
+| Resin-Laced Bracers | wrist | wearable | Stash (509) | guaranteed | Skullduggery stat mod bonus |
+| Silkstep Boots | feet | wearable | Stash (509) | guaranteed | Dex bonus, movement stamina reduction |
+| Phantom's Cowl | head | wearable | Boss (508) | 15% | Per + Dex bonus, sneak-themed |
+
+### Tools (sold by Whisper AND Siv)
+
+| Item | Type | Uses | Price | Notes |
+|------|------|------|-------|-------|
+| Iron Lockpicks | lockpicks | 3 | 5g | Breaks easily |
+| Steel Lockpicks | lockpicks | 8 | 15g | Standard |
+| Master Lockpicks | lockpicks | 20 | 50g | Expensive, durable |
+| Disarm Kit | tool | 1 | 10g | Single-use, consumed on defuse attempt |
+
+## Respawn Rates
+
+| Thing | Rate | Notes |
+|-------|------|-------|
+| Skulker mobs | 10 real minutes | Fast — zone should feel alive |
+| Boss (Phantom) | 30 real minutes | Boss timer, worth camping |
+| Resin Hounds | alarm-triggered only | No timer, spawn on trap |
+| Chest items (503) | 30 real minutes | Guaranteed shoulders |
+| Armory items (506) | 30 real minutes | Guaranteed gloves + fist |
+| Stash items (509) | 45 real minutes | Best loot, slower respawn |
+| Locks | relock 15 real minutes | Locks re-engage periodically |
+| Traps | re-arm with lock | Traps reset when lock relocks |
 
 ## Mechanics to Implement
 
-### 1. Flee Rework
-Opposed roll: fleeer's Dex + skullduggery vs target's Dex +
+### 1. Flee Rework (global)
+Opposed roll: fleeer's Dex + skullduggery vs blocker's Dex +
 unarmed-combat. Same formula for players and mobs. Replaces
-the current flat dex-ratio calculation.
+the current flat dex-ratio calculation. Applied everywhere.
 
-### 2. Defuse Command
-Wire up the existing stub. Opposed roll: Perception +
-skullduggery vs trap difficulty. Success disarms trap. Failure
-triggers trap. Requires disarm kit (consumed on use).
+### 2. Defuse Command (global)
+Wire up existing stub. Opposed: Perception + skullduggery vs
+trap difficulty. Requires disarm kit (consumed). Success
+disarms trap. Failure triggers trap effects.
 
 ### 3. Siv's Shop Update
 Add lockpick sets (3 tiers) and disarm kits to Fence Dealer
-Siv's inventory in Thornwall.
+Siv's shop in Thornwall.
 
 ### 4. Lockpick Items
-Create 3 tiers of lockpick items with the `lockpicks` type.
-Higher tier = more uses before breaking.
+Create 3 tiers with `lockpicks` item type. Uses field controls
+durability.
 
-### 5. Skullduggery Flee Bonus
-The flee opposed roll naturally incorporates skullduggery via
-the formula. Higher skullduggery = better flee chance.
-
-## Tone Notes
-
-Claustrophobic, tense, paranoid. Chrysalis growth everywhere
-gives an organic alien quality — walls breathe, light pulses.
-Players feel like trespassers being watched. Hit-and-run rogues
-reinforce this — shadows may stab you. Boss fight is genuinely
-frustrating in a fun way — the Phantom keeps disappearing.
+### 5. PvP Taunt Loophole (pinned for later)
+Taunt command missing CanPvp check — players deal conviction
+damage to each other in non-PvP rooms.
