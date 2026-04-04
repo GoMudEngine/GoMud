@@ -5,12 +5,9 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/combat"
-	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
-	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 // Bite is a vampire-only special attack that deals moderate physical damage
@@ -22,50 +19,14 @@ func Bite(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		return true, nil
 	}
 
-	// Check special-move cooldown (shared with bash/kick/trip).
-	cfg := configs.GetBalanceConfig()
-	cooldownStr := fmt.Sprintf("%d rounds", cfg.SpecialMoveCooldown)
-	if !mob.Character.Cooldowns.Try("special-move", cooldownStr) {
+	res := actions.ExecuteBite(&actions.MobActor{Mob: mob, Room: room})
+
+	if res.OnCooldown || res.NoTarget || !res.Executed {
 		return true, nil
 	}
 
-	// Resolve the aggro target.
-	target := actions.ResolveAggroTarget(mob.Character.Aggro)
-	if !target.Found {
-		return true, nil
-	}
-
-	// Execute the skill move.
-	result := combat.ExecuteSkillMove(combat.SkillMoveParams{
-		Attacker:        &mob.Character,
-		Defender:        target.Char,
-		AttackStat:      mob.Character.Stats.Strength.ValueAdj,
-		AttackSkill:     mob.Character.GetSkillLevel(skills.UnarmedCombat),
-		DefenseStat:     target.Char.Stats.Dexterity.ValueAdj,
-		DefenseSkill:    target.Char.GetCombatSkillLevel(),
-		DamagePercent:   0.60,
-		KnockdownChance: 0,
-		SkillRank:       mob.Character.GetSkillLevel(skills.UnarmedCombat),
-		DamageStat:      mob.Character.Stats.Strength.ValueAdj,
-	})
-
-	// On hit: drain life — heal the vampire for 50% of damage dealt.
-	if result.Hit && result.Damage > 0 {
-		drain := int(float64(result.Damage) * 0.50)
-		mob.Character.Health += drain
-		if mob.Character.Health > mob.Character.HealthMax.Value {
-			mob.Character.Health = mob.Character.HealthMax.Value
-		}
-	}
-
-	// Record analytics and consume the combat round.
-	actions.RecordAndWait(&mob.Character, "bite", combat.Mob, target.Char, combat.User, result.Hit,
-		func() int {
-			if result.Hit {
-				return result.Damage
-			}
-			return 0
-		}(), util.GetRoundCount())
+	target := res.Target
+	result := res.MoveResult
 
 	// Messaging — darkness-aware.
 	mobName := mob.Character.Name
