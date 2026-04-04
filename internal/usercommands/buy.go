@@ -15,6 +15,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
+	"github.com/GoMudEngine/GoMud/internal/shops"
+	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -126,12 +128,21 @@ func Buy(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			continue
 		}
 
-		shopMob.Character.Shop.Restock()
+		// Check for ShopInventory-backed merchant first; fall back to legacy Shop.
+		shopInv := shops.GetShopInventory(shopMob.Zone, int(shopMob.MobId), shopMob.HomeRoomId)
+		purchaseFn := tryPurchase
+		if shopInv != nil {
+			purchaseFn = func(request string, u *users.UserRecord, r *rooms.Room, sm *mobs.Mob, su *users.UserRecord) bool {
+				return tryPurchaseFromInventory(request, u, r, sm, shopInv)
+			}
+		} else {
+			shopMob.Character.Shop.Restock()
+		}
 
-		if tryPurchase(itemname, user, room, shopMob, nil) {
+		if purchaseFn(itemname, user, room, shopMob, nil) {
 			purchased := 1
 			for purchased < quantity {
-				if !tryPurchase(itemname, user, room, shopMob, nil) {
+				if !purchaseFn(itemname, user, room, shopMob, nil) {
 					break
 				}
 				purchased++
@@ -632,6 +643,156 @@ func executePurchaseBuff(user *users.UserRecord, room *rooms.Room, shopMob *mobs
 	}
 
 	return true
+}
+
+// effectiveRestock returns the normalizer for pricing calculations.
+// Materials use their RestockQty. Crafted goods (RestockQty==0) use half MaxStock.
+func effectiveRestock(entry *shops.StockEntry) int {
+	if entry.RestockQty > 0 {
+		return entry.RestockQty
+	}
+	norm := entry.MaxStock / 2
+	if norm < 1 {
+		norm = 1
+	}
+	return norm
+}
+
+// tryPurchaseFromInventory handles purchases from a ShopInventory-backed merchant.
+// It mirrors tryPurchase but reads stock from shopInv and uses dynamic pricing.
+// Buff/merc/pet purchases are NOT handled here — those remain legacy-only.
+func tryPurchaseFromInventory(request string, user *users.UserRecord, room *rooms.Room, shopMob *mobs.Mob, shopInv *shops.ShopInventory) bool {
+
+	cfg := shops.DefaultPricingConfig()
+
+	type invEntry struct {
+		entry     *shops.StockEntry
+		item      items.Item
+		plainName string
+		price     int
+	}
+
+	var available []invEntry
+	var itemNames []string
+	var itemNamesFancy []string
+
+	for i := range shopInv.Stock {
+		entry := &shopInv.Stock[i]
+		if entry.Current <= 0 {
+			continue
+		}
+		itm := items.New(entry.ItemId)
+		if itm.ItemId == 0 {
+			continue
+		}
+		spec := itm.GetSpec()
+		restock := effectiveRestock(entry)
+		basePrice := shops.CalcSellPrice(spec.Value, entry.Current, restock, cfg)
+
+		// Apply bartering discount
+		barterSkill := user.Character.GetSkillLevel(skills.Bartering)
+		if barterSkill > 0 {
+			discount := float64(barterSkill) / 50.0 * 0.15 // max 15% at skill 50
+			basePrice = shops.ApplyBarterSellDiscount(basePrice, discount)
+		}
+
+		available = append(available, invEntry{
+			entry:     entry,
+			item:      itm,
+			plainName: spec.Name,
+			price:     basePrice,
+		})
+		itemNames = append(itemNames, spec.Name)
+		itemNamesFancy = append(itemNamesFancy, itm.DisplayName())
+	}
+
+	match, closeMatch := util.FindMatchIn(request, itemNames...)
+	if match == `` {
+		match = closeMatch
+	}
+
+	if match == `` {
+		mudlog.Debug("PURCHASE", "msg", "no item match found (ShopInventory)",
+			"request", request, "availableItems", itemNames,
+			"user", user.Character.Name)
+
+		if shopMob != nil {
+			extraSay := ``
+			if len(itemNamesFancy) > 0 {
+				randSelection := util.Rand(len(itemNamesFancy))
+				extraSay = fmt.Sprintf(` Any interest in this <ansi fg="itemname">%s</ansi>?`, itemNamesFancy[randSelection])
+			}
+			shopMob.Command(`say Sorry, I can't offer that right now.` + extraSay)
+		}
+		return false
+	}
+
+	// Find the matched entry
+	var matched *invEntry
+	for i := range available {
+		if available[i].plainName == match {
+			matched = &available[i]
+			break
+		}
+	}
+	if matched == nil {
+		return false
+	}
+
+	mudlog.Debug("PURCHASE", "msg", "item matched (ShopInventory)",
+		"request", request, "match", match, "user", user.Character.Name,
+		"userGold", user.Character.Gold, "price", matched.price)
+
+	// Stock check
+	if matched.entry.Current <= 0 {
+		if shopMob != nil {
+			shopMob.Command(`say I don't have that for sale right now.`)
+		}
+		return false
+	}
+
+	// Gold check
+	if user.Character.Gold < matched.price {
+		mudlog.Debug("PURCHASE", "msg", "insufficient gold (ShopInventory)",
+			"userGold", user.Character.Gold, "price", matched.price,
+			"itemId", matched.entry.ItemId, "user", user.Character.Name)
+		if shopMob != nil {
+			shopMob.Command(`say You don't have enough gold for that.`)
+		} else {
+			user.SendText(`You don't have enough gold for that.`)
+		}
+		return false
+	}
+
+	// Deduct stock
+	if shopInv.RemoveStock(matched.entry.ItemId, 1) == 0 {
+		if shopMob != nil {
+			shopMob.Command(`say I don't have that item right now.`)
+		}
+		return false
+	}
+
+	// Transfer gold
+	events.AddToQueue(events.EquipmentChange{
+		UserId:     user.UserId,
+		GoldChange: -matched.price,
+	})
+	user.Character.Gold -= matched.price
+	shopInv.Gold += matched.price
+
+	// Persist shop state
+	if err := shops.SaveShop(shopInv.Zone, shopInv.MobId, shopInv.RoomId); err != nil {
+		mudlog.Error("PURCHASE", "msg", "SaveShop failed", "error", err)
+	}
+
+	tradeInString := fmt.Sprintf(`<ansi fg="gold">%d gold</ansi>`, matched.price)
+	if matched.price == 0 {
+		tradeInString = `nothing`
+	}
+
+	return executePurchaseItem(user, room, shopMob, nil,
+		characters.ShopItem{ItemId: matched.entry.ItemId},
+		matched.price, tradeInString)
 }
 
 func executePurchasePet(user *users.UserRecord, room *rooms.Room, shopMob *mobs.Mob, shopUser *users.UserRecord, matchedShopItem characters.ShopItem, price int, tradeInString string) bool {
