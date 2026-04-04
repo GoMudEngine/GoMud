@@ -2006,7 +2006,7 @@ func (c *Character) GetCombatSkillTag() skills.SkillTag {
 		if weaponSpec.Subtype == items.Shooting {
 			return skills.RangedCombat
 		}
-		if weaponSpec.Subtype != items.Claws {
+		if weaponSpec.Subtype != items.Claws && weaponSpec.Subtype != items.Fist {
 			return skills.WeaponCombat
 		}
 	}

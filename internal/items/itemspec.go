@@ -93,6 +93,7 @@ func ItemSubtypes() []ItemTypeInfo {
 		{string(Slashing), `A slicing and slashing weapon.`, 0, 0, 0},
 		{string(Shooting), `A ranged weapon.`, 0, 0, 0},
 		{string(Claws), `A slashing weapon worn on the hands.`, 0, 0, 0},
+		{string(Fist), `A weapon that enhances unarmed strikes.`, 0, 0, 0},
 		{string(Whipping), `A whipping weapon.`, 0, 0, 0},
 		{string(Wand), `A caster weapon that boosts spell damage.`, 0, 0, 0},
 		{string(Sceptre), `A caster weapon that boosts spell damage.`, 0, 0, 0},
@@ -155,6 +156,7 @@ const (
 	Slashing    ItemSubType = "slashing"
 	Shooting    ItemSubType = "shooting" // bows, crossbows, guns, etc.
 	Claws       ItemSubType = "claws"
+	Fist        ItemSubType = "fist"
 	Bite        ItemSubType = "bite"
 	Sting       ItemSubType = "sting"
 	Gore        ItemSubType = "gore"
