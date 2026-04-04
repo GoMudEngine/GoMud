@@ -112,6 +112,17 @@ func InitiateCast(actor Actor, spellName, targetName string) CastResult {
 				if actor.IsPlayer() && pId == actor.GetUserId() {
 					return CastResult{SpellInfo: spellInfo, NoTarget: true}
 				}
+				// PvP check: block targeting other players if PvP isn't allowed
+				if actor.IsPlayer() {
+					casterUser := users.GetByUserId(actor.GetUserId())
+					targetUser := users.GetByUserId(pId)
+					if casterUser != nil && targetUser != nil {
+						if pvpErr := room.CanPvp(casterUser, targetUser); pvpErr != nil {
+							actor.SendText(pvpErr.Error())
+							return CastResult{SpellInfo: spellInfo, NoTarget: true}
+						}
+					}
+				}
 				targetUserIds = append(targetUserIds, pId)
 			} else {
 				return CastResult{SpellInfo: spellInfo, NoTarget: true}
@@ -203,6 +214,16 @@ func InitiateCast(actor Actor, spellName, targetName string) CastResult {
 		// Exclude self from harm area — don't damage yourself
 		for _, pId := range room.GetPlayers() {
 			if pId != actor.GetUserId() {
+				// PvP check: skip other players if PvP isn't allowed here
+				if actor.IsPlayer() {
+					casterUser := users.GetByUserId(actor.GetUserId())
+					targetUser := users.GetByUserId(pId)
+					if casterUser != nil && targetUser != nil {
+						if pvpErr := room.CanPvp(casterUser, targetUser); pvpErr != nil {
+							continue
+						}
+					}
+				}
 				targetUserIds = append(targetUserIds, pId)
 			}
 		}
