@@ -1,42 +1,41 @@
 // Old Edrin - Mob 275
 // Hermit caster boss. Acts muddled until attacked, then reveals himself
-// as a powerful caster and summons elemental guardians.
+// as a powerful caster and summons hostile elemental guardians.
+// Anti-cheese: elementals are SetHostile (permanent aggro), Edrin
+// re-aggros via onIdle. Fleeing gains nothing.
 
 var revealed = false;
+var targetName = '';
 
 function onHurt(mob, room, eventDetails) {
-    if (revealed) { return false; }
-    revealed = true;
-
-    // Get the attacker's name so elementals can target them
-    var attackerName = '';
-    if (eventDetails.sourceId > 0) {
+    // Remember who started this
+    if (eventDetails.sourceId > 0 && targetName === '') {
         var attacker = GetUser(eventDetails.sourceId);
         if (attacker) {
-            attackerName = attacker.GetCharacterName(false);
+            targetName = attacker.GetCharacterName(false);
         }
     }
+
+    if (revealed) { return false; }
+    revealed = true;
 
     // Drop the act
     mob.Command('say ...ah.');
     mob.Command('emote straightens slowly, the stoop vanishing from his spine. His milky eyes clear to sharp, pale blue. The tremor in his hands stops.');
     mob.Command('say You should not have done that.');
 
-    // Summon three elementals
+    // Summon three hostile elementals
     room.SendText('Old Edrin raises his staff and speaks three words in a language that predates the road, the fence, and the colony itself.');
 
     var fire = room.SpawnMob(313);
     var earth = room.SpawnMob(311);
     var water = room.SpawnMob(310);
 
-    room.SendText('The air splits. Fire gathers from nothing. Stone tears itself from the ground. Water condenses from the humidity and takes shape. Three elementals stand beside the old man, burning and grinding and flowing.');
+    if (fire) { fire.SetHostile(true); fire.Command('attack ' + targetName); }
+    if (earth) { earth.SetHostile(true); earth.Command('attack ' + targetName); }
+    if (water) { water.SetHostile(true); water.Command('attack ' + targetName); }
 
-    // Elementals attack whoever hit Edrin
-    if (attackerName.length > 0) {
-        if (fire) { fire.Command('attack ' + attackerName); }
-        if (earth) { earth.Command('attack ' + attackerName); }
-        if (water) { water.Command('attack ' + attackerName); }
-    }
+    room.SendText('The air splits. Fire gathers from nothing. Stone tears itself from the ground. Water condenses from the humidity and takes shape. Three elementals stand beside the old man, burning and grinding and flowing.');
 
     mob.Command('emote levels his staff at you, and the air between you and him begins to shimmer with heat.');
 
@@ -45,6 +44,17 @@ function onHurt(mob, room, eventDetails) {
 
 function onIdle(mob, room) {
     if (!revealed) { return false; }
+
+    // Re-aggro if not fighting and players present
+    if (!mob.IsAggroed()) {
+        var players = room.GetPlayers();
+        if (players && players.length > 0) {
+            if (targetName.length > 0) {
+                mob.Command('attack ' + targetName);
+            }
+        }
+    }
+
     return false;
 }
 

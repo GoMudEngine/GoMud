@@ -908,6 +908,14 @@ func (a ScriptActor) RollOpposed(attackScore int, defenseScore int) bool {
 	return success
 }
 
+// SetHostile flips the mob's hostile flag so it will attack players on sight.
+// No-op for player actors.
+func (a ScriptActor) SetHostile(hostile bool) {
+	if a.mobRecord != nil {
+		a.mobRecord.Hostile = hostile
+	}
+}
+
 // IsAggroed returns true if this character currently has an active Aggro target.
 func (a ScriptActor) IsAggroed() bool {
 	return a.characterRecord.Aggro != nil

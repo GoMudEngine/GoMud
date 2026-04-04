@@ -6,6 +6,7 @@ statpool: 300
 itemdropchance: 10
 hostile: true
 charm_immune: true
+scriptag: 272-chrysalis_phantom
 maxwander: 0
 groups:
   - humanoid
