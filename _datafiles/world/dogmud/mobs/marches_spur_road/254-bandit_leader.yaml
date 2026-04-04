@@ -30,7 +30,7 @@ character:
     price already calculated.
   speciesid: 1
   level: 1
-  gold: 500
+  gold: 50
   stats:
     strength:
       training: 10

@@ -39,7 +39,7 @@ character:
     infrastructure.
   speciesid: 1
   level: 1
-  gold: 500
+  gold: 75
   stats:
     strength:
       training: 12

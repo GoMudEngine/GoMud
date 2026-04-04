@@ -26,7 +26,7 @@ character:
     She is polite but firm, and her questions are brief and to the point.
   speciesid: 1
   level: 1
-  gold: 500
+  gold: 10
   equipment:
     weapon:
       itemid: 10019

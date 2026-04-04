@@ -31,7 +31,7 @@ character:
     hunger, opportunity, and a willingness to use violence.
   speciesid: 1
   level: 1
-  gold: 500
+  gold: 15
   equipment:
     weapon:
       itemid: 10021
