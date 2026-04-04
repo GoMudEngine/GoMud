@@ -115,37 +115,30 @@ var userOnlyCommands = map[string]string{
 // mobOnlyCommands lists mob commands that intentionally have no user equivalent.
 //
 // Future work candidates (not mob-only forever):
-//   - howl: functionally a renamed taunt — should use shared taunt action
-//   - roar: candidate for player shout/intimidation system
-//   - throw: planned for player ranged attacks
-//   - alchemy: legacy mob brewing — consolidate with shared craft system
-//   - backstab: redundant with surprise strike system — candidate for removal
+//   - bite: shared action (ExecuteBite), future player species-gated ability
+//   - hamstring: shared action (ExecuteHamstring), future player species-gated ability
 var mobOnlyCommands = map[string]string{
 	// --- Mob AI behaviours ---
 	"aid":            "mob-ai",
-	"backstab":       "mob-ai: redundant with surprise strike, remove later",
 	"befriend":       "mob-ai",
+	"bite":           "mob-ai: shared ExecuteBite action, future player ability",
 	"callforhelp":    "mob-ai",
 	"charge":         "mob-ai",
 	"consume":        "mob-ai",
 	"converse":       "mob-ai",
 	"despawn":        "mob-ai",
 	"givequest":      "mob-ai",
-	"hamstring":      "mob-ai",
-	"howl":           "mob-ai: renamed taunt, unify with taunt system",
+	"hamstring":      "mob-ai: shared ExecuteHamstring action, future player ability",
+	"howl":           "mob-ai: shared ExecuteTaunt action with mob flavor text",
 	"lookforaid":     "mob-ai",
 	"lookfortrouble": "mob-ai",
 	"pathto":         "mob-ai",
 	"portal":         "mob-ai",
 	"replyto":        "mob-ai",
-	"roar":           "mob-ai: future player shout/intimidation",
 	"sayto":          "mob-ai",
 	"saytoonly":      "mob-ai",
-	"throw":          "mob-ai: future player ranged ability",
+	"selljunk":       "mob-ai: converts inventory items to gold",
 	"wander":         "mob-ai",
-
-	// --- Legacy mob alchemy (consolidate with shared craft) ---
-	"alchemy": "mob-alchemy: consolidate with shared craft system",
 }
 
 // AuditCommandParity compares the user and mob command registries and logs a
