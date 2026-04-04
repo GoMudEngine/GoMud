@@ -315,10 +315,17 @@ If the NPC is flagged as a general merchant (`shop.buys_general`):
 
 ### NPC Gold
 
-Merchants start with a `shop.starting_gold` value and accumulate
-gold through sales. If they run out of gold, they can't buy from
-players ("I can't afford that right now" — already implemented).
-Gold is part of the persisted shop state.
+Merchants start with a `shop.starting_gold` value (seed for first
+boot only) and accumulate gold through sales. Gold persists across
+restarts in the shop save file. If they run out, they can't buy
+from players ("I can't afford that right now" — already implemented).
+
+**Gold reserve:** NPCs won't spend below `starting_gold ×
+ShopGoldReserveRatio` on gear purchases. Materials buying can dip
+lower since that's core business. This prevents an NPC from blowing
+all their gold on a nice helmet and being unable to buy materials.
+
+Config: `ShopGoldReserveRatio` (default 0.50).
 
 ---
 
@@ -437,10 +444,29 @@ All under `Balance` in `config.yaml`:
 | `ShopMaterialReserve` | 1 | NPCs hold back this many of each material |
 | `BarterMaxDiscount` | 0.15 | Max sell price discount at max bartering skill |
 | `BarterMaxBonus` | 0.15 | Max buy price bonus at max bartering skill |
+| `ShopGoldReserveRatio` | 0.50 | NPC won't spend below this % of starting gold on gear |
 
 ---
 
-## 10. Follow-Up Work (Not in Scope)
+## 10. Documentation Updates
+
+The implementation plan must include updates to:
+
+- `internal/mobs/context.md` — new shop persistence model, shop
+  directory, crafter decision logic, non-combatant flag
+- `internal/items/context.md` — `ComparePower` utility, salvage
+  integration with shop NPCs
+- `internal/characters/context.md` — shop inventory decoupled from
+  Character.Items, gold reserve behavior
+- Help templates — update `buy`, `sell`, `craft`, `salvage` help
+  files to reflect dynamic pricing and NPC buy rules
+- `CLAUDE.md` — add shop persistence notes (shops/ directory
+  separate from rooms.instances/ and mobs.instances/, not cleaned
+  by instance save SOP)
+
+---
+
+## 11. Follow-Up Work (Not in Scope)
 
 - **World material sources** — ore nodes, foraging spots, mob loot
   tables with crafting materials. The shop economy assumes materials
