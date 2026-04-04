@@ -1,5 +1,70 @@
 # DOGMud Patch Notes
 
+## 2026-04-03 — Manifestation, Companions, Necromancy, Elementals
+
+### New System: Manifestation Skill
+A new charisma-based skill governing summoning, conjuring, charming,
+and raising undead companions. Manifestation spells use Charisma
+instead of Willpower for fold rate and discovery.
+
+### New System: Unified Companions
+Pets, summoned creatures, conjured elementals, charmed mobs, and
+raised undead all share a unified companion system. Companions
+persist across restarts, show in the vitals panel, respond to
+autoassist, and can be buffed with help spells.
+
+- `companion` / `companions` — view companion vitals and stats
+- `dismiss` — release a companion (warning: full betrayal)
+- `assess` — study a corpse for necromantic potential
+- `{pet_hp}`, `{pet_sp}`, `{pet_cp}` prompt tokens
+
+### Necromancy (6 undead types)
+Raise undead from corpses. Stronger corpses support more powerful
+types. Power scales 50/50 from caster stats and corpse strength.
+- Skeleton, Zombie, Wraith (caster), Spectre (conviction caster),
+  Vampire (life drain bite), Flesh Golem (absorbs corpses)
+
+### Conjure Elementals (5 types)
+Conjure elemental companions from nothing. Very high conviction
+cost — conjuring a magma elemental drains nearly your entire pool.
+- Water (tank), Earth (bash), Air (evasive), Fire (return damage),
+  Magma (bash + return damage, skill gate 60)
+
+### Charm Spell
+Opposed roll (Charisma+manifestation vs Willpower+statpool%) to
+convert hostile mobs into companions. Harder against targets in
+combat. Duration-based with diminishing re-rolls — your hold
+gradually weakens until it breaks or you reassert control.
+
+### New Combat Mechanics
+- **Return damage** — fire/magma elementals reflect melee damage.
+  Also available via equipment and buffs (battlerager armor, etc.)
+- **Natural bash** — earth/magma elementals bash without shields
+  ("crushing slam" instead of "shield bash")
+- **Grapple immunity** — wraiths, spectres, air and fire elementals
+  can't be grappled or grapple others
+- **Vampire bite** — life drain special attack
+
+### Aggro Rework
+Centralized aggro state management fixes multiple companion combat
+bugs. Players now properly retarget when companions kill their
+target, when targets flee, and when new threats appear.
+
+### Bug Fixes
+- Conditions display showed total duration instead of remaining
+- Infinite gold exploit — merchants pay from own gold pool
+- Companion duplication on browser refresh
+- Summon species corrections (were using rodent stats)
+- Pack flee excludes companions
+- Stale aggro from companion kills
+- Web client vitals panel resizes with companion rows
+
+### Balance
+- Melee skill progression 0.20 → 0.15 (auto-attack now works)
+- Spell damage scale 1.6 → 1.2 (progression provides natural scaling)
+- Merchant stats buffed (85-150 statpool, 50-300g gold)
+- Corpse decay 1 hour → 4 hours (for necromancy)
+
 ## 2026-04-02 — Command Unification + Bug Fixes
 
 ### Command Unification (feature/command-unification)
