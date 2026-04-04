@@ -127,6 +127,31 @@ func AttackPlayerVsPlayer(userAtk *users.UserRecord, userDef *users.UserRecord) 
 	return attackResult
 }
 
+// trackMobAttackProgression mirrors the player progression calls in
+// AttackPlayerVsMob / AttackPlayerVsPlayer for a mob attacker.
+// MobActor cannot be used here because actions imports combat (cycle).
+// We call character methods directly with userId=0 (mob convention).
+func trackMobAttackProgression(mob *mobs.Mob, result AttackResult) {
+	mob.Character.OnStatUse("strength", 0)
+	mob.Character.OnStatUse("dexterity", 0)
+	if result.Hit {
+		combatSkill := string(mob.Character.GetCombatSkillTag())
+		mob.Character.OnSkillUse(combatSkill, 0)
+		if result.Crit {
+			mob.Character.OnCriticalSuccess(combatSkill, 0)
+		}
+		// Dual-wield weapon-combat tracking (same logic as player path)
+		if mob.Character.Equipment.Weapon.ItemId > 0 &&
+			mob.Character.Equipment.Offhand.ItemId > 0 &&
+			mob.Character.Equipment.Offhand.GetSpec().Type == items.Weapon {
+			mob.Character.OnSkillUse(string(skills.WeaponCombat), 0)
+		}
+	} else if result.Fumble {
+		combatSkill := string(mob.Character.GetCombatSkillTag())
+		mob.Character.OnCriticalFailure(combatSkill, 0)
+	}
+}
+
 // Performs a combat round from a mob to a player
 func AttackMobVsPlayer(mob *mobs.Mob, user *users.UserRecord) AttackResult {
 
@@ -149,6 +174,9 @@ func AttackMobVsPlayer(mob *mobs.Mob, user *users.UserRecord) AttackResult {
 
 	// Track defender's dexterity use (reacting to attacks)
 	user.Character.OnStatUse("dexterity", user.UserId)
+
+	// Track progression for the attacking mob (mirrors player attacker logic)
+	trackMobAttackProgression(mob, attackResult)
 
 	if attackResult.Hit {
 		user.PlaySound(`hit-self`, `combat`)
@@ -178,6 +206,11 @@ func AttackMobVsMob(mobAtk *mobs.Mob, mobDef *mobs.Mob) AttackResult {
 		// Remember who has hit him
 		mobDef.Character.TrackPlayerDamage(charmedUserId, attackResult.DamageToTarget)
 	}
+
+	// Track progression for both mobs
+	trackMobAttackProgression(mobAtk, attackResult)
+	// Defender dexterity (mirrors player defender tracking in AttackMobVsPlayer)
+	mobDef.Character.OnStatUse("dexterity", 0)
 
 	return attackResult
 }
