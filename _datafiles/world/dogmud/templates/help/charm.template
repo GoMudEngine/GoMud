@@ -19,12 +19,12 @@ longer the charm endures.
   <ansi fg="command">cast charm</ansi>             Attempts to charm your current combat target.
   <ansi fg="command">cast charm [target]</ansi>    Targets a specific creature by name.
 
-<ansi fg="yellow">Base Folds:  </ansi> <ansi fg="white-bold">36</ansi>
-<ansi fg="yellow">Target:      </ansi> <ansi fg="white-bold">Single creature</ansi>
-<ansi fg="yellow">Defense:     </ansi> <ansi fg="white-bold">Mental (opposed by target's willpower)</ansi>
-<ansi fg="yellow">Duration:    </ansi> <ansi fg="white-bold">Scales with charisma and manifestation skill</ansi>
-<ansi fg="yellow">Conv. Cost:  </ansi> <ansi fg="white-bold">120</ansi>
-<ansi fg="yellow">School:      </ansi> <ansi fg="white-bold">Manifestation</ansi>
+<ansi fg="yellow">Casting:     </ansi> Long channel — requires deep concentration
+<ansi fg="yellow">Target:      </ansi> Single creature
+<ansi fg="yellow">Defense:     </ansi> Mental (opposed by target's willpower)
+<ansi fg="yellow">Duration:    </ansi> Scales with charisma and manifestation skill
+<ansi fg="yellow">Conv. Cost:  </ansi> Very high — drains most of your conviction
+<ansi fg="yellow">School:      </ansi> Manifestation
 
 <ansi fg="white-bold">Notes:</ansi>
   - Charm cannot be used on other players.

@@ -1,16 +1,18 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">defense</ansi>
 
-DOGMud uses a layered defense system where you get multiple chances to avoid incoming
-attacks. Each defense type uses different skills, costs different stamina, and has
-different requirements.
+DOGMud uses a best-of-all defense system. When attacked, all
+your available defenses are rolled simultaneously and the best
+result wins. Each defense type uses different skills, costs
+different stamina, and has different requirements.
 
 <ansi fg="yellow">━━━ Defense Order ━━━</ansi>
 
-When attacked, your defenses are checked in this order (first success avoids the attack):
+When attacked, all available defenses are rolled and the best
+result wins. Each defense uses different skills and stamina:
 
-  1. <ansi fg="stat">Dodge</ansi> → 2 stamina
-  2. <ansi fg="stat">Parry</ansi> → 4 stamina (only if weapon equipped)
-  3. <ansi fg="stat">Block</ansi> → 5 stamina (only if shield equipped)
+  <ansi fg="stat">Dodge</ansi>  — low stamina cost, always available
+  <ansi fg="stat">Parry</ansi>  — moderate stamina cost, requires a weapon
+  <ansi fg="stat">Block</ansi>  — highest stamina cost, requires a shield
 
 Each defense costs stamina even if it fails. Run out of stamina and your defenses
 collapse! This makes combat a war of attrition in long fights.
@@ -20,13 +22,13 @@ collapse! This makes combat a war of attrition in long fights.
 Your first line of defense, available to everyone.
 
   <ansi fg="stat">Skills Used:</ansi> Unarmed Combat + Dexterity
-  <ansi fg="stat">Stamina Cost:</ansi> 2 per attempt
+  <ansi fg="stat">Stamina Cost:</ansi> Low
   <ansi fg="stat">Requirements:</ansi> None (always available)
 
   <ansi fg="stat">Effectiveness Reduced By:</ansi>
   - Heavy armor (reduces mobility)
   - High encumbrance (too much weight)
-  - Being prone (-50% effectiveness)
+  - Being prone (severely reduced)
 
 Dodge is your bread-and-butter defense. Even heavily armored fighters rely on dodge
 as their first chance to avoid damage.
@@ -36,7 +38,7 @@ as their first chance to avoid damage.
 Use your weapon to deflect incoming attacks.
 
   <ansi fg="stat">Skills Used:</ansi> Weapon Combat + weapon parry rating
-  <ansi fg="stat">Stamina Cost:</ansi> 4 per attempt
+  <ansi fg="stat">Stamina Cost:</ansi> Moderate
   <ansi fg="stat">Requirements:</ansi> Weapon equipped in primary or offhand
 
   <ansi fg="stat">Bonuses:</ansi>
@@ -44,7 +46,7 @@ Use your weapon to deflect incoming attacks.
   - Can parry with either hand when dual wielding
 
   <ansi fg="stat">Penalties:</ansi>
-  - Being prone (-30% effectiveness)
+  - Being prone (noticeably reduced)
 
 Parry is more stamina-intensive than dodge but can be very effective with the right
 weapon. Two-handed weapons excel at parrying.
@@ -54,12 +56,12 @@ weapon. Two-handed weapons excel at parrying.
 Use your shield to absorb the blow.
 
   <ansi fg="stat">Skills Used:</ansi> Weapon Combat + shield block rating
-  <ansi fg="stat">Stamina Cost:</ansi> 5 per attempt (most expensive)
+  <ansi fg="stat">Stamina Cost:</ansi> High (most expensive defense)
   <ansi fg="stat">Requirements:</ansi> Shield equipped in offhand
 
   <ansi fg="stat">Benefits:</ansi>
   - High effectiveness with quality shields
-  - Works reasonably well even when prone (-20% effectiveness)
+  - Works reasonably well even when prone (slightly reduced)
 
   <ansi fg="stat">Penalties:</ansi>
   - Highest stamina cost
@@ -71,8 +73,9 @@ protection when your other defenses fail.
 <ansi fg="yellow">━━━ Defense Strategy ━━━</ansi>
 
   <ansi fg="stat">Stamina Management:</ansi>
-  Long fights drain stamina quickly. Each missed defense costs stamina, so manage
-  your stamina pool carefully. Low stamina (<50%) imposes severe combat penalties.
+  Long fights drain stamina quickly. Each defense attempt costs
+  stamina, so manage your pool carefully. Low stamina imposes
+  severe combat penalties.
 
   <ansi fg="stat">Equipment Choices:</ansi>
   - Dual wield: More attacks, only dodge and parry

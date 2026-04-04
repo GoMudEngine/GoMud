@@ -9,9 +9,11 @@ instead of Willpower for fold rate and discovery.
 
 ### New System: Unified Companions
 Pets, summoned creatures, conjured elementals, charmed mobs, and
-raised undead all share a unified companion system. Companions
-persist across restarts, show in the vitals panel, respond to
-autoassist, and can be buffed with help spells.
+raised undead all share a unified companion system. Summoned,
+conjured, and raised companions persist across restarts. Charmed
+companions are temporary — they don't survive server restarts.
+All companions show in the vitals panel, respond to autoassist,
+and can be buffed with help spells.
 
 - `companion` / `companions` — view companion vitals and stats
 - `dismiss` — release a companion (warning: full betrayal)
@@ -51,6 +53,7 @@ bugs. Players now properly retarget when companions kill their
 target, when targets flee, and when new threats appear.
 
 ### Bug Fixes
+- Enchanting target search broken by multi-word recipe names
 - Conditions display showed total duration instead of remaining
 - Infinite gold exploit — merchants pay from own gold pool
 - Companion duplication on browser refresh
