@@ -214,3 +214,23 @@ hints:
   - >-
     Stuck on a quest? Type <ansi fg="command">hint</ansi> for a nudge
     in the right direction.
+  - >-
+    The <ansi fg="skill">manifestation</ansi> skill lets you summon,
+    conjure, raise undead, and charm creatures. Type
+    <ansi fg="command">help manifestation</ansi> for details.
+  - >-
+    Use <ansi fg="command">companion</ansi> to see your companions'
+    vitals and stats. Toggle autoassist with
+    <ansi fg="command">companion [name] assist off</ansi>.
+  - >-
+    Use <ansi fg="command">assess</ansi> on a corpse to see what forms
+    of undeath it can sustain before raising it.
+  - >-
+    Charming a creature in combat is harder. Its mind is focused
+    on survival, making it resist your influence more strongly.
+  - >-
+    Elementals cost heavy conviction to conjure but need no
+    components. Fire and magma reflect damage back at attackers.
+  - >-
+    Be careful with <ansi fg="command">dismiss</ansi> — dismissed
+    companions turn hostile immediately. All of them.
