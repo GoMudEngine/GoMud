@@ -28,7 +28,20 @@ func Craft(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	// ── Enchanting: needs player-specific disambiguation before delegating ─────
 	// Peek at the recipe first to route enchanting separately.
+	// Input may be "recipe-name item-name" so try progressively shorter
+	// prefixes: "honed-edge knuckles" → try "honed-edge knuckles", then
+	// "honed-edge". This handles hyphenated recipe names with an item target.
 	recipe := crafting.FindRecipeByName(rest)
+	if recipe == nil {
+		words := strings.Fields(rest)
+		for i := len(words) - 1; i >= 1; i-- {
+			candidate := strings.Join(words[:i], " ")
+			if r := crafting.FindRecipeByName(candidate); r != nil {
+				recipe = r
+				break
+			}
+		}
+	}
 	if recipe != nil && crafting.IsEnchantingRecipe(recipe) {
 		return craftEnchanting(rest, recipe, user, room)
 	}
