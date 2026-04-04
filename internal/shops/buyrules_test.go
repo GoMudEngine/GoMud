@@ -1,0 +1,200 @@
+package shops
+
+import (
+	"testing"
+
+	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/stretchr/testify/assert"
+)
+
+// makeItem constructs an Item with an inline ItemSpec for testing.
+func makeItem(spec items.ItemSpec) items.Item {
+	return items.Item{
+		ItemId: spec.ItemId,
+		Spec:   &spec,
+	}
+}
+
+func baseShop() *ShopInventory {
+	return &ShopInventory{
+		Gold:         1000,
+		StartingGold: 1000,
+		Stock:        []StockEntry{},
+	}
+}
+
+func TestBuyRules_QuestItemRejected(t *testing.T) {
+	item := makeItem(items.ItemSpec{
+		ItemId:     1,
+		Value:      50,
+		QuestToken: "some-quest-token",
+		Type:       items.Object,
+	})
+	offer := EvaluateBuyRules(item, baseShop(), "", false, DefaultPricingConfig())
+	assert.Equal(t, 0, offer.Price, "quest items must always be rejected")
+	assert.Equal(t, "", offer.Reason)
+}
+
+func TestBuyRules_CraftMaterialWithCrafterSkill(t *testing.T) {
+	item := makeItem(items.ItemSpec{
+		ItemId:       100,
+		Value:        20,
+		ComponentTag: "iron",
+		Type:         items.Object,
+	})
+	offer := EvaluateBuyRules(item, baseShop(), "blacksmithing", false, DefaultPricingConfig())
+	assert.Greater(t, offer.Price, 0, "crafter NPC should offer a price for materials")
+	assert.Equal(t, "craft_material", offer.Reason)
+}
+
+func TestBuyRules_CraftMaterialWithoutCrafterSkill(t *testing.T) {
+	item := makeItem(items.ItemSpec{
+		ItemId:       100,
+		Value:        20,
+		ComponentTag: "iron",
+		Type:         items.Object,
+	})
+	// No crafter skill and no buysGeneral — should reject
+	offer := EvaluateBuyRules(item, baseShop(), "", false, DefaultPricingConfig())
+	assert.Equal(t, 0, offer.Price, "non-crafter should not buy craft materials")
+}
+
+func TestBuyRules_CraftMaterialCrafterSkillFallsToGeneral(t *testing.T) {
+	item := makeItem(items.ItemSpec{
+		ItemId:       100,
+		Value:        20,
+		ComponentTag: "iron",
+		Type:         items.Object,
+	})
+	// No crafter skill but buysGeneral = true → falls through to general rule
+	offer := EvaluateBuyRules(item, baseShop(), "", true, DefaultPricingConfig())
+	assert.Greater(t, offer.Price, 0)
+	assert.Equal(t, "general", offer.Reason)
+}
+
+func TestBuyRules_CraftMaterialAtMaxStock_Rejected(t *testing.T) {
+	shop := baseShop()
+	shop.Stock = []StockEntry{
+		{ItemId: 100, RestockQty: 5, MaxStock: 10, Current: 10}, // already full
+	}
+	item := makeItem(items.ItemSpec{
+		ItemId:       100,
+		Value:        20,
+		ComponentTag: "iron",
+		Type:         items.Object,
+	})
+	// At max_stock — crafter should decline this rule and fall through to empty
+	offer := EvaluateBuyRules(item, shop, "blacksmithing", false, DefaultPricingConfig())
+	assert.Equal(t, 0, offer.Price, "should reject material already at max stock")
+}
+
+func TestBuyRules_CraftMaterialAtMaxStock_FallsToGeneral(t *testing.T) {
+	shop := baseShop()
+	shop.Stock = []StockEntry{
+		{ItemId: 100, RestockQty: 5, MaxStock: 10, Current: 10},
+	}
+	item := makeItem(items.ItemSpec{
+		ItemId:       100,
+		Value:        20,
+		ComponentTag: "iron",
+		Type:         items.Object,
+	})
+	// buysGeneral = true — max stock material falls through to general
+	offer := EvaluateBuyRules(item, shop, "blacksmithing", true, DefaultPricingConfig())
+	assert.Greater(t, offer.Price, 0)
+	assert.Equal(t, "general", offer.Reason)
+}
+
+func TestBuyRules_PotionNoAging_Accepted(t *testing.T) {
+	item := makeItem(items.ItemSpec{
+		ItemId: 200,
+		Value:  40,
+		Type:   items.Potion,
+		// No aging thresholds — always fresh
+	})
+	offer := EvaluateBuyRules(item, baseShop(), "", false, DefaultPricingConfig())
+	assert.Greater(t, offer.Price, 0)
+	assert.Equal(t, "potion", offer.Reason)
+}
+
+func TestBuyRules_PotionFresh_Accepted(t *testing.T) {
+	// CraftedRound = 0 means no recorded craft time, so aging check is skipped
+	// and the potion is treated as acceptable (not declining/spoiled).
+	item := makeItem(items.ItemSpec{
+		ItemId: 201,
+		Value:  40,
+		Type:   items.Potion,
+		Aging: items.AgingThresholds{
+			FermentRounds: 100,
+			PeakRounds:    200,
+			DecayRounds:   300,
+			SpoilRounds:   400,
+		},
+	})
+	item.CraftedRound = 0
+	item.BottleMultiplier = 1.0
+	offer := EvaluateBuyRules(item, baseShop(), "", false, DefaultPricingConfig())
+	assert.Greater(t, offer.Price, 0)
+	assert.Equal(t, "potion", offer.Reason)
+}
+
+func TestBuyRules_PotionWithAging_NoCraftedRound_Accepted(t *testing.T) {
+	// When CraftedRound == 0, the aging check is skipped entirely (item has
+	// no recorded craft time — treat as fresh). The potion is accepted.
+	item := makeItem(items.ItemSpec{
+		ItemId: 202,
+		Value:  40,
+		Type:   items.Potion,
+		Aging: items.AgingThresholds{
+			FermentRounds: 10,
+			PeakRounds:    20,
+			DecayRounds:   30,
+			SpoilRounds:   100,
+		},
+	})
+	item.CraftedRound = 0 // No recorded craft round — skip aging check
+	item.BottleMultiplier = 1.0
+	offer := EvaluateBuyRules(item, baseShop(), "", false, DefaultPricingConfig())
+	assert.Greater(t, offer.Price, 0, "potion with no craft round should be accepted")
+	assert.Equal(t, "potion", offer.Reason)
+}
+
+// Note: Testing declining/spoiled phases in isolation requires controlling
+// util.GetRoundCount(). The real aging rejection path is exercised during
+// integration/server tests where the round counter advances. The unit tests
+// above cover the structural routing; phase computation is separately verified
+// in internal/items/aging_test.go.
+
+func TestBuyRules_GeneralGoods_GeneralMerchant(t *testing.T) {
+	item := makeItem(items.ItemSpec{
+		ItemId: 300,
+		Value:  100,
+		Type:   items.Object,
+	})
+	offer := EvaluateBuyRules(item, baseShop(), "", true, DefaultPricingConfig())
+	assert.Greater(t, offer.Price, 0)
+	assert.Equal(t, "general", offer.Reason)
+	// Verify 25% pricing
+	assert.Equal(t, 25, offer.Price)
+}
+
+func TestBuyRules_GeneralGoods_SpecialistDeclines(t *testing.T) {
+	item := makeItem(items.ItemSpec{
+		ItemId: 300,
+		Value:  100,
+		Type:   items.Object,
+	})
+	// Specialist crafter that doesn't buy general goods
+	offer := EvaluateBuyRules(item, baseShop(), "blacksmithing", false, DefaultPricingConfig())
+	assert.Equal(t, 0, offer.Price, "specialist without buysGeneral should reject generic items")
+}
+
+func TestBuyRules_GeneralGoods_MinimumOne(t *testing.T) {
+	item := makeItem(items.ItemSpec{
+		ItemId: 301,
+		Value:  0, // Zero value item
+		Type:   items.Object,
+	})
+	offer := EvaluateBuyRules(item, baseShop(), "", true, DefaultPricingConfig())
+	assert.GreaterOrEqual(t, offer.Price, 1, "offer should never be zero for accepted items")
+}
