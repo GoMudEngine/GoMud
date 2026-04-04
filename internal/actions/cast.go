@@ -98,6 +98,13 @@ func InitiateCast(actor Actor, spellName, targetName string) CastResult {
 		if targetName != `` {
 			pId, mId := room.FindByName(targetName)
 			if mId > 0 {
+				// Don't let players target their own companions with harm spells
+				if actor.IsPlayer() {
+					if m := mobs.GetInstance(mId); m != nil && m.Character.IsCharmed(actor.GetUserId()) {
+						actor.SendText("You can't target your own companion with a harmful spell.")
+						return CastResult{SpellInfo: spellInfo, NoTarget: true}
+					}
+				}
 				targetMobInstanceIds = append(targetMobInstanceIds, mId)
 			} else if pId > 0 {
 				// Players cannot self-target harmful single spells; mobs can

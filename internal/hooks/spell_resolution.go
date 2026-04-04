@@ -68,8 +68,16 @@ func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData
 
 	// --- Populate area targets for HarmArea ---
 	if spellData.Type == spells.HarmArea {
-		cs.TargetMobInstanceIds = room.GetMobs(rooms.FindAll)
-		// HarmArea hits everyone in the room (all mobs); players are excluded in this stage
+		allMobs := room.GetMobs(rooms.FindAll)
+		filtered := make([]int, 0, len(allMobs))
+		for _, mId := range allMobs {
+			// Don't damage the caster's own companions
+			if m := mobs.GetInstance(mId); m != nil && m.Character.IsCharmed(user.UserId) {
+				continue
+			}
+			filtered = append(filtered, mId)
+		}
+		cs.TargetMobInstanceIds = filtered
 	}
 
 	// --- Populate area targets for HelpArea ---
@@ -588,8 +596,33 @@ func resolveMobSpell(mob *mobs.Mob, cs *characters.CastingState, spellData *spel
 	magnitude := spellData.EffectMagnitude
 
 	if spellData.Type == spells.HarmArea {
-		cs.TargetMobInstanceIds = room.GetMobs(rooms.FindAll)
+		allMobs := room.GetMobs(rooms.FindAll)
+		filtered := make([]int, 0, len(allMobs))
+		charmedByUserId := mob.Character.GetCharmedUserId()
+		for _, mId := range allMobs {
+			if mId == mob.InstanceId {
+				continue // don't target self
+			}
+			// If this mob is charmed by a player, don't hit that player's other companions
+			if charmedByUserId > 0 {
+				if m := mobs.GetInstance(mId); m != nil && m.Character.IsCharmed(charmedByUserId) {
+					continue
+				}
+			}
+			filtered = append(filtered, mId)
+		}
+		cs.TargetMobInstanceIds = filtered
 		cs.TargetUserIds = room.GetPlayers(rooms.FindAll)
+		// If charmed, don't hit the owner
+		if charmedByUserId > 0 {
+			ownerFiltered := make([]int, 0, len(cs.TargetUserIds))
+			for _, pId := range cs.TargetUserIds {
+				if pId != charmedByUserId {
+					ownerFiltered = append(ownerFiltered, pId)
+				}
+			}
+			cs.TargetUserIds = ownerFiltered
+		}
 	}
 
 	for _, mobInstId := range cs.TargetMobInstanceIds {
