@@ -16,10 +16,10 @@ More skilled casters raise more formidable specimens.
 
   <ansi fg="command">cast raise-vampire [corpse]</ansi>     Animate nearby remains.
 
-<ansi fg="yellow">Base Folds:  </ansi> <ansi fg="white-bold">12</ansi>
+<ansi fg="yellow">Base Folds:  </ansi> Extended channel
 <ansi fg="yellow">Corpse:      </ansi> <ansi fg="white-bold">Requires immense remains</ansi>
 <ansi fg="yellow">Target:      </ansi> <ansi fg="white-bold">Nearby corpse or ground loot</ansi>
-<ansi fg="yellow">Conv. Cost:  </ansi> <ansi fg="white-bold">80</ansi>
+<ansi fg="yellow">Conv. Cost:  </ansi> Heavy
 <ansi fg="yellow">School:      </ansi> <ansi fg="white-bold">Manifestation</ansi>
 
 <ansi fg="white-bold">Notes:</ansi>

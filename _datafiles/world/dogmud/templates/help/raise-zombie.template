@@ -15,10 +15,10 @@ More skilled casters raise more formidable specimens.
 
   <ansi fg="command">cast raise-zombie [corpse]</ansi>     Animate nearby remains.
 
-<ansi fg="yellow">Base Folds:  </ansi> <ansi fg="white-bold">5</ansi>
+<ansi fg="yellow">Base Folds:  </ansi> Brief channel
 <ansi fg="yellow">Corpse:      </ansi> <ansi fg="white-bold">Requires modest remains</ansi>
 <ansi fg="yellow">Target:      </ansi> <ansi fg="white-bold">Nearby corpse or ground loot</ansi>
-<ansi fg="yellow">Conv. Cost:  </ansi> <ansi fg="white-bold">35</ansi>
+<ansi fg="yellow">Conv. Cost:  </ansi> Moderate
 <ansi fg="yellow">School:      </ansi> <ansi fg="white-bold">Manifestation</ansi>
 
 <ansi fg="white-bold">Notes:</ansi>
