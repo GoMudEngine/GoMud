@@ -312,7 +312,7 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 			// Check if this mob is targeting one of the player's companions.
 			if mobName.Suffix == `` && mob.Character.Aggro != nil && mob.Character.Aggro.MobInstanceId > 0 {
 				if targetMob := mobs.GetInstance(mob.Character.Aggro.MobInstanceId); targetMob != nil {
-					if targetMob.Character.Charmed.UserId == user.UserId {
+					if targetMob.Character.Charmed != nil && targetMob.Character.Charmed.UserId == user.UserId {
 						mobName.Suffix = `aggro`
 					}
 				}
