@@ -117,16 +117,8 @@ func Sell(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		if shopInv != nil {
 			if buyReason == "gear_upgrade" {
 				newItem := items.New(item.ItemId)
-				mudlog.Info("SELL-EQUIP", "mob", mob.Character.Name, "item", item.DisplayName(),
-					"itemId", item.ItemId, "newItemId", newItem.ItemId,
-					"ring1", mob.Character.Equipment.Ring.ItemId,
-					"ring2", mob.Character.Equipment.Ring2.ItemId)
 				if newItem.ItemId > 0 {
-					returnedItems, wore, failReason := mob.Character.Wear(newItem)
-					mudlog.Info("SELL-EQUIP", "wore", wore, "failReason", failReason,
-						"returnedCount", len(returnedItems),
-						"ring1After", mob.Character.Equipment.Ring.ItemId,
-						"ring2After", mob.Character.Equipment.Ring2.ItemId)
+					returnedItems, wore, _ := mob.Character.Wear(newItem)
 					if wore {
 						for _, old := range returnedItems {
 							if old.ItemId > 0 {
