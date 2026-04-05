@@ -20,12 +20,14 @@
 ### Living Economy
 - Merchants now track finite stock and gold. Prices rise when
   stock runs low and drop when overstocked.
-- Crafter NPCs restock materials periodically and craft items
-  to sell — prioritizing self-gear upgrades, then profitable
-  crafts, then salvage.
+- Crafter NPCs restock materials periodically (with flavor
+  text) and craft items to sell — prioritizing self-gear
+  upgrades, then profitable crafts, then salvage.
 - Merchants will buy craft materials matching their trade,
-  potions (unless spoiled), and gear that upgrades their own
-  equipment. Specialists won't buy random junk.
+  potions (unless they craft that potion themselves), and gear
+  that upgrades their own equipment — including paired slots
+  like rings and wrists. Specialists won't buy materials from
+  other professions.
 - Shopkeepers are now non-combatant — they cannot be attacked,
   stolen from, or targeted by harmful spells.
 - Bartering skill now affects buy and sell prices at shops.
