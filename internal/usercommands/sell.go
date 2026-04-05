@@ -115,18 +115,19 @@ func Sell(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 		// Update stock or equip.
 		if shopInv != nil {
-			equipSpec := item.GetSpec()
-			// Only equip single-slot gear (weapon, head, body, etc).
-			// Paired slots (ring, wrist) go to stock — shopkeepers don't
-			// put on jewelry customers sell them.
-			isPairedSlot := equipSpec.Type == items.Ring || equipSpec.Type == items.Wrist
-			if buyReason == "gear_upgrade" && !isPairedSlot {
-				// NPC equips the upgrade immediately.
+			if buyReason == "gear_upgrade" {
 				newItem := items.New(item.ItemId)
+				mudlog.Info("SELL-EQUIP", "mob", mob.Character.Name, "item", item.DisplayName(),
+					"itemId", item.ItemId, "newItemId", newItem.ItemId,
+					"ring1", mob.Character.Equipment.Ring.ItemId,
+					"ring2", mob.Character.Equipment.Ring2.ItemId)
 				if newItem.ItemId > 0 {
-					returnedItems, wore, _ := mob.Character.Wear(newItem)
+					returnedItems, wore, failReason := mob.Character.Wear(newItem)
+					mudlog.Info("SELL-EQUIP", "wore", wore, "failReason", failReason,
+						"returnedCount", len(returnedItems),
+						"ring1After", mob.Character.Equipment.Ring.ItemId,
+						"ring2After", mob.Character.Equipment.Ring2.ItemId)
 					if wore {
-						// Put any unequipped old item into shop stock.
 						for _, old := range returnedItems {
 							if old.ItemId > 0 {
 								shopInv.AddStock(old.ItemId, 1)
@@ -137,7 +138,6 @@ func Sell(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 							user.UserId,
 						)
 					} else {
-						// Fallback: couldn't equip, stock it instead.
 						shopInv.AddStock(item.ItemId, 1)
 					}
 				} else {
