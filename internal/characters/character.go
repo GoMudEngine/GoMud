@@ -2931,7 +2931,7 @@ func (c *Character) GetPoolReservation(pool string, poolMax int) int {
 		if !itm.HasChrysalisEnchantment() || itm.ReservePool != pool {
 			continue
 		}
-		pct := enchantments.GetTierReservePct(itm.EnchantType, itm.EnchantTier)
+		pct := enchantments.GetTierReservePct(itm.EnchantType, itm.EnchantTier, itm.GetSpec().Hands)
 		total += int(math.Floor(float64(poolMax) * pct))
 	}
 	return total

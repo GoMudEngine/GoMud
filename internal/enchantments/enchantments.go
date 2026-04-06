@@ -92,9 +92,10 @@ func GetAll() map[string]*EnchantmentDef {
 	return allEnchantments
 }
 
-// GetTierReservePct returns the reserve_pct for the given enchantment at the given tier.
+// GetTierReservePct returns the reserve_pct for the given enchantment at the
+// given tier. If hands >= 2 (two-handed weapon), the reserve is doubled.
 // Returns 0 if the enchantment or tier is not found.
-func GetTierReservePct(enchantType string, tier int) float64 {
+func GetTierReservePct(enchantType string, tier int, hands ...int) float64 {
 	def := GetEnchantment(enchantType)
 	if def == nil {
 		return 0
@@ -102,7 +103,11 @@ func GetTierReservePct(enchantType string, tier int) float64 {
 	if tier < 0 || tier >= len(def.Tiers) {
 		return 0
 	}
-	return def.Tiers[tier].ReservePct
+	pct := def.Tiers[tier].ReservePct
+	if len(hands) > 0 && hands[0] >= 2 {
+		pct *= 2.0
+	}
+	return pct
 }
 
 // ApplyTier rewrites the item's override spec based on the enchantment tier.
@@ -114,12 +119,18 @@ func ApplyTier(item *items.Item, def *EnchantmentDef, tier int) {
 
 	tierDef := def.Tiers[tier]
 
+	// Detect 2-handed weapons — double effects and reserve
+	twoHandMult := 1
+	baseSpec := items.GetItemSpec(item.ItemId)
+	if baseSpec != nil && baseSpec.Hands >= 2 {
+		twoHandMult = 2
+	}
+
 	// Ensure we have an override spec to work with
 	var newSpec items.ItemSpec
 	if item.Spec != nil {
 		newSpec = *item.Spec
 	} else {
-		baseSpec := items.GetItemSpec(item.ItemId)
 		if baseSpec == nil {
 			return
 		}
@@ -127,7 +138,6 @@ func ApplyTier(item *items.Item, def *EnchantmentDef, tier int) {
 	}
 
 	// Reset to base spec first to avoid stacking from previous tiers
-	baseSpec := items.GetItemSpec(item.ItemId)
 	if baseSpec != nil {
 		newSpec.Damage = baseSpec.Damage
 		newSpec.DamageReduction = baseSpec.DamageReduction
@@ -138,29 +148,30 @@ func ApplyTier(item *items.Item, def *EnchantmentDef, tier int) {
 		newSpec.StatMods = copyStatMods(baseSpec.StatMods)
 	}
 
-	// Apply tier effects
+	// Apply tier effects (doubled for 2H weapons)
 	for effectKey, effectVal := range tierDef.Effects {
+		scaledVal := effectVal * twoHandMult
 		switch effectKey {
 		case "damage_bonus":
 			if newSpec.Damage.BaseDamage > 0 {
-				newSpec.Damage.BaseDamage += effectVal
+				newSpec.Damage.BaseDamage += scaledVal
 			} else {
-				newSpec.Damage.BonusDamage += effectVal
+				newSpec.Damage.BonusDamage += scaledVal
 			}
 		case "damage_multiplier_bonus":
 			// Int value interpreted as hundredths: 10 = +0.10
-			newSpec.DamageMultiplier += float64(effectVal) / 100.0
+			newSpec.DamageMultiplier += float64(scaledVal) / 100.0
 		case "dr_bonus":
-			newSpec.DamageReduction += effectVal
+			newSpec.DamageReduction += scaledVal
 		case "physical_mitigation_bonus":
-			newSpec.PhysicalMitigation += effectVal
+			newSpec.PhysicalMitigation += scaledVal
 		case "magical_mitigation_bonus":
-			newSpec.MagicalMitigation += effectVal
+			newSpec.MagicalMitigation += scaledVal
 		case "conviction_mitigation_bonus":
-			newSpec.ConvictionMitigation += effectVal
+			newSpec.ConvictionMitigation += scaledVal
 		default:
-			// Treat as a stat mod
-			newSpec.StatMods.Add(effectKey, effectVal)
+			// Treat as a stat mod (e.g. "willpower_statmod", "return_damage", "lifesteal_pct")
+			newSpec.StatMods.Add(effectKey, scaledVal)
 		}
 	}
 
