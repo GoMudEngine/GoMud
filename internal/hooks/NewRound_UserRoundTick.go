@@ -263,6 +263,7 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 							resolveSalvage(user, itemIdStr)
 						} else {
 							recipe := crafting.GetRecipe(cs.RecipeId)
+							enchantTargetSlot := cs.TargetSlot
 							user.Character.CraftingState = nil
 							if recipe != nil {
 								sl := user.Character.Skills[recipe.Skill]
@@ -294,8 +295,7 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 
 									if crafting.IsEnchantingRecipe(recipe) {
 										// Enchanting: use the stored slot label to find the target
-										targetSlot := user.Character.CraftingState.TargetSlot
-										targetItem := user.Character.Equipment.GetSlotPointer(targetSlot)
+										targetItem := user.Character.Equipment.GetSlotPointer(enchantTargetSlot)
 										if targetItem == nil || targetItem.ItemId < 1 {
 											user.SendText(`<ansi fg="red">The item is no longer equipped. The enchanting fails, but your materials are returned.</ansi>`)
 										} else {
