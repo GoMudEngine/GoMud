@@ -2,7 +2,7 @@ buffid: 57
 name: Warrior's Brew
 description: Fire in your veins. Your body mends and your muscles stop aching.
 triggerrate: 1 round
-triggercount: 400
+triggercount: 200
 statmods:
   healthrecovery: 2
   staminarecovery: 2
