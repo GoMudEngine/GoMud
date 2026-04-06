@@ -308,7 +308,7 @@ var SkillProgressionMultipliers = map[SkillTag]float64{
 	Rhetoric: 0.5,
 	Cast:         0.5,
 	// Companion management — moderate use frequency
-	Manifestation: 0.3,
+	Manifestation: 0.5,
 	// Utility skills — used infrequently
 	Search:    2.0,
 	Bartering: 2.0,
