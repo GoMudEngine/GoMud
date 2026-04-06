@@ -1140,6 +1140,24 @@ func handlePlayerVsMob(user *users.UserRecord, uRoom *rooms.Room, evt events.New
 		}
 	}
 
+	// Lifesteal — Hungering Touch enchantment heals attacker on hit
+	if roundResult.Hit && roundResult.DamageToTarget > 0 {
+		lifestealPct := user.Character.StatMod("lifesteal_pct")
+		if lifestealPct > 0 {
+			healAmt := int(float64(roundResult.DamageToTarget) * float64(lifestealPct) / 100.0)
+			if healAmt > 0 {
+				user.Character.Health += healAmt
+				if user.Character.Health > user.Character.HealthMax.Value {
+					user.Character.Health = user.Character.HealthMax.Value
+				}
+				healDesc := combat.GetHealDescription(healAmt, user.Character.HealthMax.Value)
+				user.SendText(fmt.Sprintf(
+					`<ansi fg="green">Your weapon feeds on the blow! (%s)</ansi>`,
+					healDesc))
+			}
+		}
+	}
+
 	// Stage 30.1: Record combat analytics
 	pvmAtkType := "unarmed"
 	if user.Character.Equipment.Weapon.ItemId > 0 {
@@ -1366,6 +1384,20 @@ func handleMobVsPlayer(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, 
 		}
 	}
 
+	// Lifesteal — mob enchantment heals attacker on hit
+	if roundResult.Hit && roundResult.DamageToTarget > 0 {
+		lifestealPct := mob.Character.StatMod("lifesteal_pct")
+		if lifestealPct > 0 {
+			healAmt := int(float64(roundResult.DamageToTarget) * float64(lifestealPct) / 100.0)
+			if healAmt > 0 {
+				mob.Character.Health += healAmt
+				if mob.Character.Health > mob.Character.HealthMax.Value {
+					mob.Character.Health = mob.Character.HealthMax.Value
+				}
+			}
+		}
+	}
+
 	// Stage 30.1: Record combat analytics
 	mvpAtkType := "unarmed"
 	if mob.Character.Equipment.Weapon.ItemId > 0 {
@@ -1545,6 +1577,20 @@ func handleMobVsMob(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, aff
 				sendCombatRoomText(mobRoom, fmt.Sprintf(
 					`<ansi fg="red">%s recoils from striking %s! (%s)</ansi>`,
 					atkMobName, defMobName, dmgDesc))
+			}
+		}
+	}
+
+	// Lifesteal — attacking mob heals on hit
+	if roundResult.Hit && roundResult.DamageToTarget > 0 {
+		lifestealPct := mob.Character.StatMod("lifesteal_pct")
+		if lifestealPct > 0 {
+			healAmt := int(float64(roundResult.DamageToTarget) * float64(lifestealPct) / 100.0)
+			if healAmt > 0 {
+				mob.Character.Health += healAmt
+				if mob.Character.Health > mob.Character.HealthMax.Value {
+					mob.Character.Health = mob.Character.HealthMax.Value
+				}
 			}
 		}
 	}
