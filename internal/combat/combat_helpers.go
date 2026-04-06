@@ -903,10 +903,6 @@ func buildAttackMessages(result *AttackResult, sourceChar *characters.Character,
 		}
 	}
 
-	if sourceChar.Equipment.Weapon.ItemId > 0 {
-		tokenReplacements[items.TokenItemName] = sourceChar.Equipment.Weapon.DisplayName()
-	}
-
 	if srcType == Mob {
 		tokenReplacements[items.TokenSource] = sourceChar.GetMobName(0).String()
 	}
