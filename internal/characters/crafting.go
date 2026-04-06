@@ -7,4 +7,5 @@ type CraftingState struct {
 	RecipeId       string
 	RoundsTotal    int
 	RoundsComplete int
+	TargetSlot     string // equipment slot label for enchanting (e.g. "wielded", "worn - ring2")
 }
