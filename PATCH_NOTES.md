@@ -82,6 +82,21 @@
   their own name in combat text instead of the main hand weapon.
 - **Surprise attack arms 5-6**: surprise strike now swings all
   equipped weapons, including extra arms 3 and 4.
+- **Merchant kill exploit**: non-combatant NPCs (merchants, quest
+  givers) no longer flee from pack scatter, can't enter the combat
+  loop, and can't be provoked into fighting.
+- **Companion auto-assist aggro**: player now properly engages when
+  their companion is attacked. Previously a dummy aggro with no
+  target was set, leaving the player stuck swinging at nothing.
+- **Target switch on dead targets**: switching targets when your
+  current target is dead is now free — no skill roll, no round
+  penalty.
+- **Fold-recall clears combat**: casting fold-recall now ends combat
+  before teleporting. New `EndCombat()` scripting API for spells.
+- **Wooden shield price**: fixed inflated auto-value (was ~430g from
+  legacy DamageReduction formula, now 8g).
+- **Chrysalis cores**: Apothecary Voss and Alchemist Yenna now buy
+  chrysalis cores.
 
 ## 2026-04-04 — Living Economy, Gear Upgrades, Spell & PvP Fixes
 
