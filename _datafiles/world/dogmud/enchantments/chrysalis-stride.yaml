@@ -4,35 +4,35 @@ reserve_pool: stamina
 target_type: legs
 tiers:
   - tier: 0
-    reserve_pct: 0.02
+    reserve_pct: 0.01
     effects:
       dexterity_statmod: 1
     adjective: grooved
     description_suffix: "Grooves form along the leg armor like insect exoskeletons."
     tier_up_message: ""
   - tier: 1
-    reserve_pct: 0.04
+    reserve_pct: 0.02
     effects:
       dexterity_statmod: 2
     adjective: jointed
     description_suffix: "Articulated joints emerge, bending in inhuman directions."
     tier_up_message: "Your legs twist and reform—the Chrysalis teaches you to move."
   - tier: 2
-    reserve_pct: 0.06
+    reserve_pct: 0.04
     effects:
       dexterity_statmod: 3
     adjective: chitin-legged
     description_suffix: "Chitin plates replace your shins, hard and gleaming."
     tier_up_message: "You leap with insectile grace—you are not fully human."
   - tier: 3
-    reserve_pct: 0.08
+    reserve_pct: 0.06
     effects:
       dexterity_statmod: 4
     adjective: insectile
     description_suffix: "Your legs are now segmented chitin, pulsing with life."
     tier_up_message: "The Chrysalis remolds your limbs into something faster."
   - tier: 4
-    reserve_pct: 0.10
+    reserve_pct: 0.08
     effects:
       dexterity_statmod: 5
     adjective: chrysalis-limbed

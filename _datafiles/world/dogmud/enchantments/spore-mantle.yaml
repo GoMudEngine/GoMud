@@ -1,0 +1,40 @@
+enchantid: spore-mantle
+name: "Spore Mantle"
+reserve_pool: stamina
+target_type: shoulders
+tiers:
+  - tier: 0
+    reserve_pct: 0.01
+    effects:
+      magical_mitigation_bonus: 1
+    adjective: spore-dusted
+    description_suffix: "A fine dusting of spores settles on your shoulders."
+    tier_up_message: ""
+  - tier: 1
+    reserve_pct: 0.02
+    effects:
+      magical_mitigation_bonus: 2
+    adjective: spore-veiled
+    description_suffix: "Spores veil your shoulders in a shimmering cloud."
+    tier_up_message: "The spores drift inward—the Chrysalis shields your mind."
+  - tier: 2
+    reserve_pct: 0.04
+    effects:
+      magical_mitigation_bonus: 3
+    adjective: fungal-mantled
+    description_suffix: "A fungal mantle wraps your shoulders, protective and alive."
+    tier_up_message: "The spores form a barrier—magic cannot penetrate your will."
+  - tier: 3
+    reserve_pct: 0.06
+    effects:
+      magical_mitigation_bonus: 4
+    adjective: mycelial-cloaked
+    description_suffix: "A mycelial cloak shrouds your shoulders, ancient and wise."
+    tier_up_message: "The Chrysalis has cloaked you in its own protection."
+  - tier: 4
+    reserve_pct: 0.08
+    effects:
+      magical_mitigation_bonus: 5
+    adjective: spore-crowned
+    description_suffix: "You are spore-crowned—the mantle of the Chrysalis itself."
+    tier_up_message: "The Chrysalis has made you immune to mortal magic."
