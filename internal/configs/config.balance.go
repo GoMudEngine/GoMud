@@ -56,6 +56,8 @@ type Balance struct {
 	SurpriseAttackOffhandPenalty   ConfigFloat `yaml:"SurpriseAttackOffhandPenalty"`   // Hit penalty for offhand surprise attack (default 0.10)
 	SurpriseAttackExtraArm1Penalty ConfigFloat `yaml:"SurpriseAttackExtraArm1Penalty"` // Hit penalty for extra arm 1 (default 0.25)
 	SurpriseAttackExtraArm2Penalty ConfigFloat `yaml:"SurpriseAttackExtraArm2Penalty"` // Hit penalty for extra arm 2 (default 0.40)
+	SurpriseAttackExtraArm3Penalty ConfigFloat `yaml:"SurpriseAttackExtraArm3Penalty"` // Hit penalty for extra arm 3 (default 0.55)
+	SurpriseAttackExtraArm4Penalty ConfigFloat `yaml:"SurpriseAttackExtraArm4Penalty"` // Hit penalty for extra arm 4 (default 0.70)
 	StealSkillMultiplier           ConfigFloat `yaml:"StealSkillMultiplier"`           // Tuning knob for steal/plant rolls (default 1.0)
 	StealHiddenBonus               ConfigInt   `yaml:"StealHiddenBonus"`               // Bonus to attacker score when hidden (default 25)
 	StealCooldown                  ConfigInt   `yaml:"StealCooldown"`                  // Steal/plant cooldown in real seconds (default 60)
@@ -377,6 +379,12 @@ func (b *Balance) Validate() {
 	}
 	if b.SurpriseAttackExtraArm2Penalty < 0 || b.SurpriseAttackExtraArm2Penalty > 1.0 {
 		b.SurpriseAttackExtraArm2Penalty = 0.40
+	}
+	if b.SurpriseAttackExtraArm3Penalty < 0 || b.SurpriseAttackExtraArm3Penalty > 1.0 {
+		b.SurpriseAttackExtraArm3Penalty = 0.55
+	}
+	if b.SurpriseAttackExtraArm4Penalty < 0 || b.SurpriseAttackExtraArm4Penalty > 1.0 {
+		b.SurpriseAttackExtraArm4Penalty = 0.70
 	}
 	if b.StealSkillMultiplier <= 0 {
 		b.StealSkillMultiplier = 1.0

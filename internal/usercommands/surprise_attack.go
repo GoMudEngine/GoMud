@@ -116,6 +116,30 @@ func executeSurpriseAttack(attacker *users.UserRecord, room *rooms.Room, targetM
 		}
 	}
 
+	// Extra arm 3
+	if attacker.Character.ExtraArms >= 3 && attacker.Character.Equipment.ExtraArm3.ItemId > 0 {
+		ea3Spec := attacker.Character.Equipment.ExtraArm3.GetSpec()
+		if ea3Spec.Type == items.Weapon {
+			wm := ea3Spec.DamageMultiplier
+			if wm <= 0 {
+				wm = float64(cfg.UnarmedDamageMultiplier)
+			}
+			weapons = append(weapons, weaponEntry{itemId: attacker.Character.Equipment.ExtraArm3.ItemId, name: ea3Spec.NameSimple, dmgMult: wm, hitPenalty: float64(cfg.SurpriseAttackExtraArm3Penalty)})
+		}
+	}
+
+	// Extra arm 4
+	if attacker.Character.ExtraArms >= 4 && attacker.Character.Equipment.ExtraArm4.ItemId > 0 {
+		ea4Spec := attacker.Character.Equipment.ExtraArm4.GetSpec()
+		if ea4Spec.Type == items.Weapon {
+			wm := ea4Spec.DamageMultiplier
+			if wm <= 0 {
+				wm = float64(cfg.UnarmedDamageMultiplier)
+			}
+			weapons = append(weapons, weaponEntry{itemId: attacker.Character.Equipment.ExtraArm4.ItemId, name: ea4Spec.NameSimple, dmgMult: wm, hitPenalty: float64(cfg.SurpriseAttackExtraArm4Penalty)})
+		}
+	}
+
 	// Fallback: unarmed
 	if len(weapons) == 0 {
 		weapons = append(weapons, weaponEntry{itemId: 0, name: "fists", dmgMult: float64(cfg.UnarmedDamageMultiplier), hitPenalty: 0.0})
