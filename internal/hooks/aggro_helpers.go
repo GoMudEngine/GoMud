@@ -17,6 +17,13 @@ func ValidateAggro(char *characters.Character) bool {
 		return false
 	}
 
+	// Aggro with no target is invalid (can happen from stale state)
+	if char.Aggro.MobInstanceId == 0 && char.Aggro.UserId == 0 &&
+		char.Aggro.Type != characters.SpellCast {
+		char.EndAggro()
+		return false
+	}
+
 	if char.Aggro.MobInstanceId > 0 {
 		target := mobs.GetInstance(char.Aggro.MobInstanceId)
 		if target == nil || target.Character.Health < 1 ||

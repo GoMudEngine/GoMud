@@ -588,9 +588,6 @@ func handleCompanionOwnerAssist(defMob *mobs.Mob, attackerDesc string) {
 
 	// Owner fights back if not already in combat.
 	if owner.Character.Aggro == nil {
-		owner.Character.Aggro = &characters.Aggro{
-			Type: characters.DefaultAttack,
-		}
 		owner.Command(fmt.Sprintf("attack %s", attackerDesc))
 	}
 
@@ -606,9 +603,6 @@ func handleCharmedMobAssist(room *rooms.Room, defId int, targetDesc string) {
 	for _, instanceId := range room.GetMobs(rooms.FindCharmed) {
 		if charmedMob := mobs.GetInstance(instanceId); charmedMob != nil {
 			if charmedMob.Character.IsCharmed(defId) && charmedMob.Character.Aggro == nil {
-				charmedMob.Character.Aggro = &characters.Aggro{
-					Type: characters.DefaultAttack,
-				}
 				charmedMob.Command(fmt.Sprintf("attack %s", targetDesc))
 			}
 		}
