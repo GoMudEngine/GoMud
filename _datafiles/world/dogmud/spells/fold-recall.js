@@ -44,6 +44,9 @@ function onMagic(sourceActor, targetActor) {
         return;
     }
 
+    // Clear combat state before teleporting
+    sourceActor.EndCombat();
+
     SendRoomMessage(currentRoom,
         sourceActor.GetCharacterName(true) +
         ' folds through the Veil and vanishes!',

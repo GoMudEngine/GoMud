@@ -392,6 +392,11 @@ func (a ScriptActor) GetSkillLevel(skillName string) int {
 	return a.characterRecord.GetSkillLevel(skills.SkillTag(skillName))
 }
 
+// EndCombat clears the actor's aggro and exits combat cleanly.
+func (a ScriptActor) EndCombat() {
+	a.characterRecord.EndAggro()
+}
+
 func (a ScriptActor) MoveRoom(destRoomId int, leaveCharmedMobs ...bool) {
 
 	if a.userRecord != nil {
