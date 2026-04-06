@@ -2,6 +2,7 @@ package mobcommands
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/items"
@@ -17,7 +18,7 @@ func Gearup(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	}
 
 	if rest != `` {
-		// Check whether the user has an item in their inventory that matches
+		// Check whether the mob has an item in their inventory that matches
 		matchItem, found := mob.Character.FindInBackpack(rest)
 
 		if found {
@@ -35,51 +36,47 @@ func Gearup(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 		}
 	} else {
-		wornItems := map[items.ItemType]items.Item{}
-		wearNewItems := map[items.ItemType]items.Item{}
-
-		allWornItems := mob.Character.Equipment.GetAllItems()
-
-		for _, itm := range allWornItems {
-			wornItems[itm.GetSpec().Type] = itm
-		}
-
 		allBackpackItems := mob.Character.GetAllBackpackItems()
+
+		// Sort by value descending — best items first
+		sort.Slice(allBackpackItems, func(i, j int) bool {
+			return allBackpackItems[i].GetSpec().Value > allBackpackItems[j].GetSpec().Value
+		})
+
+		isCharmed := mob.Character.IsCharmed()
 
 		for _, itm := range allBackpackItems {
 			itmSpec := itm.GetSpec()
 
-			// Is there already a new item ready for that slot? Compare to that.
-			if plannedItem, ok := wearNewItems[itmSpec.Type]; ok {
-				if itmSpec.Value > plannedItem.GetSpec().Value {
-					wearNewItems[itmSpec.Type] = itm
-				}
+			if itmSpec.Type != items.Weapon && itmSpec.Subtype != items.Wearable {
 				continue
 			}
 
-			// If we get here, there hasn't been anything to replace the current gear yet.
-			if wornItem, ok := wornItems[itmSpec.Type]; ok {
-				if itmSpec.Value > wornItem.GetSpec().Value {
-					wearNewItems[itmSpec.Type] = itm
-				}
-				continue
+			// Track what was worn before so charmed mobs can drop displaced items
+			var oldEquipped []items.Item
+			if isCharmed {
+				oldEquipped = mob.Character.Equipment.GetAllItems()
 			}
-
-			// Getting here means there's nothing currently worn, so just accept the offering.
-			wearNewItems[itmSpec.Type] = itm
-		}
-
-		isCharmed := mob.Character.IsCharmed()
-		for _, itm := range wearNewItems {
 
 			mob.Command(fmt.Sprintf(`wear !%d`, itm.ItemId))
 
-			// drop the old one
+			// If charmed, drop any displaced items
 			if isCharmed {
-				if oldItm, ok := wornItems[itm.GetSpec().Type]; ok {
-
-					mob.Command(fmt.Sprintf(`drop !%d`, oldItm.ItemId))
-
+				newEquipped := mob.Character.Equipment.GetAllItems()
+				for _, oldItm := range oldEquipped {
+					if oldItm.ItemId < 1 {
+						continue
+					}
+					found := false
+					for _, newItm := range newEquipped {
+						if oldItm.ItemId == newItm.ItemId {
+							found = true
+							break
+						}
+					}
+					if !found {
+						mob.Command(fmt.Sprintf(`drop !%d`, oldItm.ItemId))
+					}
 				}
 			}
 		}

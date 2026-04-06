@@ -2074,12 +2074,7 @@ func (c *Character) HasShield() bool {
 	if sp := species.GetSpecies(c.SpeciesId); sp != nil && sp.NaturalBash {
 		return true
 	}
-	if c.Equipment.Offhand.ItemId <= 0 {
-		return false
-	}
-	spec := c.Equipment.Offhand.GetSpec()
-	// Shield detection: type offhand + has damage reduction or subtype wearable
-	return spec.Type == items.Offhand && (spec.DamageReduction > 0 || spec.Subtype == items.Wearable)
+	return c.HasAnyShield()
 }
 
 // IsDualWielding returns true if character has weapons in both hands
@@ -2154,22 +2149,16 @@ func (c *Character) GetDefenseScore(defenseType string) float64 {
 		return score
 
 	case DefenseParry:
-		// Parry: Dexterity + WeaponCombat skill + weapon ParryRating
+		// Parry: Dexterity + WeaponCombat skill + best weapon ParryRating
 		weaponSkill := float64(c.GetSkillLevel(skills.WeaponCombat)) * skillWeight
-		parryRating := 0
-		if c.Equipment.Weapon.ItemId > 0 {
-			parryRating = c.Equipment.Weapon.GetSpec().ParryRating
-		}
+		parryRating := c.BestParryRating()
 		return dex + weaponSkill + float64(parryRating)
 
 	case DefenseBlock:
-		// Block: (Strength + Dexterity)/2 + WeaponCombat skill + shield BlockRating
+		// Block: (Strength + Dexterity)/2 + WeaponCombat skill + best shield BlockRating
 		str := float64(c.Stats.Strength.ValueAdj)
 		weaponSkill := float64(c.GetSkillLevel(skills.WeaponCombat)) * skillWeight
-		blockRating := 0
-		if c.HasShield() {
-			blockRating = c.Equipment.Offhand.GetSpec().BlockRating
-		}
+		blockRating := c.BestBlockRating()
 		return (str+dex)/2 + weaponSkill + float64(blockRating)
 
 	default:
@@ -3383,124 +3372,120 @@ func (c *Character) Wear(i items.Item) (returnItems []items.Item, newItemWorn bo
 		return returnItems, false, `That requires too many hands.`
 	}
 
-	// are botht he currently equipped weapon and this weapon claws?
-	bothMartial := false
-	if spec.Subtype == items.Claws && c.Equipment.Weapon.GetSpec().Subtype == items.Claws {
-		bothMartial = true
-	}
-
 	canDualWield := c.CanDualWield()
 
-	// Weapons can go in either hand.
-	// Only do this if this is a 1 handed weapon
-	if spec.Type == items.Weapon && iHandsRequired < 2 {
+	// ── Pair-based weapon/shield placement ──────────────────────────
+	if spec.Type == items.Weapon || spec.Type == items.Offhand {
+		pairs := c.GetHandPairs()
+		isShield := spec.Type == items.Offhand
 
-		// If they can dual wield
-		if canDualWield || bothMartial {
+		if iHandsRequired >= 2 {
+			// 2H weapon: find a free pair, or displace the cheapest pair
+			freePair := FindFirstFreePair(pairs)
+			if freePair == nil {
+				freePair = FindCheapestPairToDisplace(pairs)
+			}
+			if freePair == nil {
+				return returnItems, false, `You have no free pair of hands for a two-handed weapon.`
+			}
 
-			// If they have a weapon equippment and it is 1 handed
-			if c.Equipment.Weapon.ItemId != 0 && c.HandsRequired(c.Equipment.Weapon) == 1 {
-				// If nothing is in their offhand
-				if c.Equipment.Offhand.ItemId == 0 {
-					// Put it in the offhand.
-					//returnItems = append(returnItems, c.Equipment.Offhand)
-					c.Equipment.Offhand = i
+			// Check for cursed items in the pair
+			if !freePair.First.IsEmpty() && freePair.First.ItemPtr.IsCursed() {
+				return returnItems, false, `Your ` + freePair.First.ItemPtr.DisplayName() + ` is cursed and prevents you from removing it.`
+			}
+			if !freePair.Second.IsEmpty() && freePair.Second.ItemPtr.IsCursed() {
+				return returnItems, false, `Your ` + freePair.Second.ItemPtr.DisplayName() + ` is cursed and prevents you from removing it.`
+			}
 
-					c.reapplyPermabuffs()
+			// Displace existing items
+			if !freePair.First.IsEmpty() {
+				returnItems = append(returnItems, *freePair.First.ItemPtr)
+			}
+			if !freePair.IsHalfPair() && !freePair.Second.IsEmpty() {
+				returnItems = append(returnItems, *freePair.Second.ItemPtr)
+			}
 
-					return returnItems, true, ``
+			// Place 2H in first slot, clear second
+			*freePair.First.ItemPtr = i
+			if !freePair.IsHalfPair() {
+				*freePair.Second.ItemPtr = items.Item{}
+			}
+
+			c.reapplyPermabuffs()
+			return returnItems, true, ``
+		}
+
+		// 1H weapon or shield
+		if isShield {
+			// Shields go in arms 2-6 (not arm 1 / Weapon slot)
+			slot := c.FindFirstEmptySlot(pairs, true)
+			if slot != nil {
+				*slot.ItemPtr = i
+				c.reapplyPermabuffs()
+				return returnItems, true, ``
+			}
+			// No empty slot — displace offhand (Pair A second slot)
+			if pairs[0].First.Is2H(c) {
+				return returnItems, false, `Your two-handed weapon leaves no room for a shield.`
+			}
+			if pairs[0].Second.ItemPtr.IsCursed() {
+				return returnItems, false, `Your ` + pairs[0].Second.ItemPtr.DisplayName() + ` is cursed and prevents you from removing it.`
+			}
+			returnItems = append(returnItems, *pairs[0].Second.ItemPtr)
+			*pairs[0].Second.ItemPtr = i
+			c.reapplyPermabuffs()
+			return returnItems, true, ``
+		}
+
+		// 1H weapon
+		bothMartial := spec.Subtype == items.Claws && c.Equipment.Weapon.GetSpec().Subtype == items.Claws
+
+		// Try to find an empty slot across all pairs
+		slot := c.FindFirstEmptySlot(pairs, false)
+		if slot != nil {
+			// If placing in Pair A offhand, need dual-wield or martial
+			if slot.Label == "offhand" && !canDualWield && !bothMartial {
+				// Skip offhand, try extra arms instead
+				slot = nil
+				for pi := 1; pi < len(pairs); pi++ {
+					p := &pairs[pi]
+					if p.First.Is2H(c) {
+						continue
+					}
+					if p.First.IsEmpty() {
+						slot = &p.First
+						break
+					}
+					if !p.IsHalfPair() && p.Second.IsEmpty() {
+						slot = &p.Second
+						break
+					}
 				}
 			}
-
-		}
-
-	}
-
-	// Extra arms: if main hand and offhand are both occupied, try extra arm slots
-	if spec.Type == items.Weapon && iHandsRequired < 2 && c.ExtraArms > 0 {
-		if c.Equipment.Weapon.ItemId > 0 && c.Equipment.Offhand.ItemId > 0 {
-			if c.ExtraArms >= 1 && !c.Equipment.ExtraArm1.IsDisabled() && c.Equipment.ExtraArm1.ItemId == 0 {
-				c.Equipment.ExtraArm1 = i
-				c.reapplyPermabuffs()
-				return returnItems, true, ``
-			}
-			if c.ExtraArms >= 2 && !c.Equipment.ExtraArm2.IsDisabled() && c.Equipment.ExtraArm2.ItemId == 0 {
-				c.Equipment.ExtraArm2 = i
-				c.reapplyPermabuffs()
-				return returnItems, true, ``
-			}
-			if c.ExtraArms >= 3 && !c.Equipment.ExtraArm3.IsDisabled() && c.Equipment.ExtraArm3.ItemId == 0 {
-				c.Equipment.ExtraArm3 = i
-				c.reapplyPermabuffs()
-				return returnItems, true, ``
-			}
-			if c.ExtraArms >= 4 && !c.Equipment.ExtraArm4.IsDisabled() && c.Equipment.ExtraArm4.ItemId == 0 {
-				c.Equipment.ExtraArm4 = i
+			if slot != nil {
+				*slot.ItemPtr = i
 				c.reapplyPermabuffs()
 				return returnItems, true, ``
 			}
 		}
-	}
 
-	// First handle weapon/offhand, since they are special cases
-	switch spec.Type {
-	case items.Weapon:
-		if c.Equipment.Weapon.IsDisabled() { // Don't allow equipping on a disabled slot
-			return returnItems, false, `You can't use a weapon.`
-		}
-
-		if !c.Equipment.Offhand.IsDisabled() { // Don't allow equipping on a disabled slot
-			// If it's a 2 handed weapon, remove whatever is in the offhand
-			if iHandsRequired == 2 || !canDualWield && c.Equipment.Offhand.GetSpec().Type == items.Weapon {
-				returnItems = append(returnItems, c.Equipment.Offhand)
-				c.Equipment.Offhand = items.Item{}
-			}
-		}
-
-		// 2H weapons require ALL hands — clear extra arm weapons too
-		if iHandsRequired == 2 {
-			if c.Equipment.ExtraArm1.ItemId > 0 {
-				returnItems = append(returnItems, c.Equipment.ExtraArm1)
-				c.Equipment.ExtraArm1 = items.Item{}
-			}
-			if c.Equipment.ExtraArm2.ItemId > 0 {
-				returnItems = append(returnItems, c.Equipment.ExtraArm2)
-				c.Equipment.ExtraArm2 = items.Item{}
-			}
-			if c.Equipment.ExtraArm3.ItemId > 0 {
-				returnItems = append(returnItems, c.Equipment.ExtraArm3)
-				c.Equipment.ExtraArm3 = items.Item{}
-			}
-			if c.Equipment.ExtraArm4.ItemId > 0 {
-				returnItems = append(returnItems, c.Equipment.ExtraArm4)
-				c.Equipment.ExtraArm4 = items.Item{}
-			}
-		}
-
+		// No empty slots — displace Weapon slot (arm 1)
 		if c.Equipment.Weapon.IsCursed() {
 			return returnItems, false, `Your ` + c.Equipment.Weapon.DisplayName() + ` is cursed and prevents you from removing it.`
 		}
-
+		// If current weapon is 2H, also clear offhand
+		if pairs[0].First.Is2H(c) && !pairs[0].Second.IsEmpty() {
+			returnItems = append(returnItems, *pairs[0].Second.ItemPtr)
+			*pairs[0].Second.ItemPtr = items.Item{}
+		}
 		returnItems = append(returnItems, c.Equipment.Weapon)
 		c.Equipment.Weapon = i
-	case items.Offhand:
-		if c.Equipment.Offhand.IsDisabled() { // Don't allow equipping on a disabled slot
-			return returnItems, false, `You can't hold things in an offhand.`
-		}
+		c.reapplyPermabuffs()
+		return returnItems, true, ``
+	}
 
-		if !c.Equipment.Weapon.IsDisabled() { // Don't allow equipping on a disabled slot
-			// If they have a 2h weapon equipped, remove it
-			if c.HandsRequired(c.Equipment.Weapon) == 2 {
-				// If the weapon is cursed, do not allow the offhand to be equipped
-				if c.Equipment.Weapon.IsCursed() {
-					return returnItems, false, `Your ` + c.Equipment.Weapon.DisplayName() + ` is cursed and prevents you from removing it.`
-				}
-				returnItems = append(returnItems, c.Equipment.Weapon)
-				c.Equipment.Weapon = items.Item{}
-			}
-		}
-		returnItems = append(returnItems, c.Equipment.Offhand)
-		c.Equipment.Offhand = i
+	// ── Armor slots ─────────────────────────────────────────────────
+	switch spec.Type {
 	case items.Head:
 		if c.Equipment.Head.IsDisabled() { // Don't allow equipping on a disabled slot
 			return returnItems, false, `You can't wear things on your head.`
