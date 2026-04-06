@@ -402,9 +402,11 @@ func (c *Character) GetCarriedWeight() float64 {
 	}
 
 	// Equipped item weights (all slots via GetAllItems)
+	// Equipped items count at 50% weight — wearing something distributes
+	// its load across your body rather than stuffing it in a bag.
 	equippedWeight := 0.0
 	for _, item := range c.Equipment.GetAllItems() {
-		equippedWeight += item.GetSpec().GetWeight()
+		equippedWeight += item.GetSpec().GetWeight() * 0.5
 	}
 
 	return backpackWeight + componentWeight + potionWeight + equippedWeight
