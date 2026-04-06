@@ -1,15 +1,15 @@
 {{ if not .Searching }} ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Equipment</ansi> ──────────────────────────────────────────────────────────────┐
 {{ if not .Equipment.Weapon.IsDisabled }}   <ansi fg="yellow">Weapon:     </ansi><ansi fg="itemname">{{ .Equipment.Weapon.NameComplex    }}</ansi>
 {{ end -}}
-{{- if not .Equipment.Offhand.IsDisabled }}   <ansi fg="yellow">Offhand:    </ansi><ansi fg="itemname">{{ .Equipment.Offhand.NameComplex   }}</ansi>
+{{- if and (not .Equipment.Offhand.IsDisabled) (not (.Equipment.IsBlockedBy2H "offhand")) }}   <ansi fg="yellow">Offhand:    </ansi><ansi fg="itemname">{{ .Equipment.Offhand.NameComplex   }}</ansi>
 {{ end -}}
 {{- if not .Equipment.ExtraArm1.IsDisabled }}   <ansi fg="yellow">Arm 3:      </ansi><ansi fg="itemname">{{ .Equipment.ExtraArm1.NameComplex }}</ansi>
 {{ end -}}
-{{- if not .Equipment.ExtraArm2.IsDisabled }}   <ansi fg="yellow">Arm 4:      </ansi><ansi fg="itemname">{{ .Equipment.ExtraArm2.NameComplex }}</ansi>
+{{- if and (not .Equipment.ExtraArm2.IsDisabled) (not (.Equipment.IsBlockedBy2H "extra arm 2")) }}   <ansi fg="yellow">Arm 4:      </ansi><ansi fg="itemname">{{ .Equipment.ExtraArm2.NameComplex }}</ansi>
 {{ end -}}
 {{- if not .Equipment.ExtraArm3.IsDisabled }}   <ansi fg="yellow">Arm 5:      </ansi><ansi fg="itemname">{{ .Equipment.ExtraArm3.NameComplex }}</ansi>
 {{ end -}}
-{{- if not .Equipment.ExtraArm4.IsDisabled }}   <ansi fg="yellow">Arm 6:      </ansi><ansi fg="itemname">{{ .Equipment.ExtraArm4.NameComplex }}</ansi>
+{{- if and (not .Equipment.ExtraArm4.IsDisabled) (not (.Equipment.IsBlockedBy2H "extra arm 4")) }}   <ansi fg="yellow">Arm 6:      </ansi><ansi fg="itemname">{{ .Equipment.ExtraArm4.NameComplex }}</ansi>
 {{ end -}}
 {{- if not .Equipment.Head.IsDisabled }}   <ansi fg="yellow">Head:       </ansi><ansi fg="itemname">{{ .Equipment.Head.NameComplex      }}</ansi>
 {{ end -}}

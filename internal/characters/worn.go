@@ -325,6 +325,23 @@ func (w *Worn) GetAllItemPtrs() []*items.Item {
 	return ptrs
 }
 
+// IsBlockedBy2H returns true if the given slot is the second slot in a hand
+// pair where the first slot holds a 2-handed weapon. Used by the inventory
+// template to hide "Offhand: -nothing-" when a 2H is wielded, etc.
+func (w *Worn) IsBlockedBy2H(slot string) bool {
+	// Map each "second" slot to its pair's "first" slot
+	partnerMap := map[string]*items.Item{
+		"offhand":     &w.Weapon,
+		"extra arm 2": &w.ExtraArm1,
+		"extra arm 4": &w.ExtraArm3,
+	}
+	partner, ok := partnerMap[slot]
+	if !ok || partner.ItemId < 1 {
+		return false
+	}
+	return partner.GetSpec().Hands >= 2
+}
+
 // GetSlotPointer returns a mutable pointer to the item in the named slot.
 func (w *Worn) GetSlotPointer(label string) *items.Item {
 	switch label {
