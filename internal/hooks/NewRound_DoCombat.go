@@ -150,6 +150,15 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 			continue
 		}
 
+		// Non-combatant mobs (merchants, quest NPCs) should never fight.
+		// If they somehow got aggro (e.g., from pack scatter), clear it.
+		if mob.IsNonCombatant() {
+			if mob.Character.Aggro != nil {
+				mob.Character.EndAggro()
+			}
+			continue
+		}
+
 		mobRoom := rooms.LoadRoom(mob.Character.RoomId)
 		if mobRoom == nil {
 			if mob.Character.Aggro != nil {

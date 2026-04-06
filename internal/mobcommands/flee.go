@@ -17,6 +17,11 @@ import (
 // blocked and stays in the room.
 func Flee(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
+	// Non-combatant mobs never flee (they should never be in combat)
+	if mob.IsNonCombatant() {
+		return true, nil
+	}
+
 	// Can't flee while grappled
 	if mob.Character.CombatPosition == characters.PositionClinched ||
 		mob.Character.CombatPosition == characters.PositionGrounded {
