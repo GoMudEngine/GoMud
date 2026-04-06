@@ -6,35 +6,35 @@ tiers:
   - tier: 0
     reserve_pct: 0.01
     effects:
-      damage_multiplier_bonus: 5
+      damage_multiplier_bonus: 6
     adjective: shimmering
     description_suffix: "The metal shifts with iridescent scales."
     tier_up_message: ""
   - tier: 1
     reserve_pct: 0.02
     effects:
-      damage_multiplier_bonus: 10
+      damage_multiplier_bonus: 12
     adjective: scaled
     description_suffix: "Scaled patterns ripple across the weapon's surface."
     tier_up_message: "The blade coils with serpentine power."
   - tier: 2
     reserve_pct: 0.04
     effects:
-      damage_multiplier_bonus: 15
+      damage_multiplier_bonus: 18
     adjective: writhing
     description_suffix: "The weapon writhes like a living serpent at rest."
     tier_up_message: "Scales unfurl along your arms as power flows."
   - tier: 3
     reserve_pct: 0.06
     effects:
-      damage_multiplier_bonus: 20
+      damage_multiplier_bonus: 24
     adjective: serpent-fang
     description_suffix: "Twin fangs of venom-dripping chitin form the edge."
     tier_up_message: "Your breath becomes cold. The serpent claims you."
   - tier: 4
     reserve_pct: 0.08
     effects:
-      damage_multiplier_bonus: 25
+      damage_multiplier_bonus: 30
     adjective: living-chitin
     description_suffix: "A serpent of living chitin—fang and scale reborn."
     tier_up_message: "You shed your skin and become the chrysalis serpent."
