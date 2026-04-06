@@ -292,57 +292,25 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 										}
 									}
 
-									user.Character.Items, user.Character.ComponentItems = crafting.ConsumeIngredients(user.Character.Items, user.Character.ComponentItems, recipe)
-
 									if crafting.IsEnchantingRecipe(recipe) {
-										// Enchanting: find target item, apply enchantment
-										eq := user.Character.Equipment
-										equipSlots := []crafting.EquipmentSlot{
-											{Item: eq.Weapon, Label: "wielded"},
-											{Item: eq.Offhand, Label: "offhand"},
-											{Item: eq.ExtraArm1, Label: "extra arm 1"},
-											{Item: eq.ExtraArm2, Label: "extra arm 2"},
-											{Item: eq.ExtraArm3, Label: "extra arm 3"},
-											{Item: eq.ExtraArm4, Label: "extra arm 4"},
-											{Item: eq.Head, Label: "worn - head"},
-											{Item: eq.Neck, Label: "worn - neck"},
-											{Item: eq.Shoulders, Label: "worn - shoulders"},
-											{Item: eq.Body, Label: "worn - body"},
-											{Item: eq.Back, Label: "worn - back"},
-											{Item: eq.Belt, Label: "worn - belt"},
-											{Item: eq.Wrist1, Label: "worn - wrist"},
-											{Item: eq.Wrist2, Label: "worn - wrist"},
-											{Item: eq.ExtraWrist1, Label: "extra wrist 1"},
-											{Item: eq.ExtraWrist2, Label: "extra wrist 2"},
-											{Item: eq.ExtraWrist3, Label: "extra wrist 3"},
-											{Item: eq.ExtraWrist4, Label: "extra wrist 4"},
-											{Item: eq.Gloves, Label: "worn - gloves"},
-											{Item: eq.Ring, Label: "worn - ring"},
-											{Item: eq.Ring2, Label: "worn - ring"},
-											{Item: eq.Legs, Label: "worn - legs"},
-											{Item: eq.Feet, Label: "worn - feet"},
-										}
-										candidates := crafting.FindTargetItems(user.Character.Items, equipSlots, recipe.TargetType, "")
-										if len(candidates) > 0 {
-											c := candidates[0]
-											var targetItem *items.Item
-											if c.BackpackIdx >= 0 {
-												targetItem = &user.Character.Items[c.BackpackIdx]
-											} else {
-												targetItem = user.Character.Equipment.GetSlotPointer(c.SourceLabel)
-											}
-											if targetItem != nil {
-												eDef := enchantments.GetEnchantment(recipe.EnchantType)
-												if eDef != nil {
-													targetItem.EnchantType = recipe.EnchantType
-													targetItem.EnchantTier = 0
-													targetItem.EnchantUses = 0
-													targetItem.ReservePool = eDef.ReservePool
-													enchantments.ApplyTier(targetItem, eDef, 0)
-												}
+										// Enchanting: use the stored slot label to find the target
+										targetSlot := user.Character.CraftingState.TargetSlot
+										targetItem := user.Character.Equipment.GetSlotPointer(targetSlot)
+										if targetItem == nil || targetItem.ItemId < 1 {
+											user.SendText(`<ansi fg="red">The item is no longer equipped. The enchanting fails, but your materials are returned.</ansi>`)
+										} else {
+											user.Character.Items, user.Character.ComponentItems = crafting.ConsumeIngredients(user.Character.Items, user.Character.ComponentItems, recipe)
+											eDef := enchantments.GetEnchantment(recipe.EnchantType)
+											if eDef != nil {
+												targetItem.EnchantType = recipe.EnchantType
+												targetItem.EnchantTier = 0
+												targetItem.EnchantUses = 0
+												targetItem.ReservePool = eDef.ReservePool
+												enchantments.ApplyTier(targetItem, eDef, 0)
 											}
 										}
 									} else {
+										user.Character.Items, user.Character.ComponentItems = crafting.ConsumeIngredients(user.Character.Items, user.Character.ComponentItems, recipe)
 										// Normal crafting: produce output item
 										newItem := items.New(recipe.Output.ItemId)
 										newItem.CraftedRound = util.GetRoundCount()
