@@ -39,6 +39,25 @@
 - Inventory hides the partner slot when a 2H weapon occupies
   the pair (no more "Offhand: -nothing-").
 
+### Companion Naming
+- Use `companion <name> name <nickname>` to give your companion
+  a personal name. Displays as "Nickname the Type" (e.g.,
+  "Fred the Spirit Wolf") in room text, combat, and vitals.
+- Names must be unique — no duplicates across companions or
+  player characters. New characters also can't take a name
+  that belongs to an active companion.
+- Creature-type words (skeleton, wraith, elemental, etc.)
+  added to the banned names list.
+- Companion disambiguation now supports `2.earth` / `earth#2`
+  syntax for targeting specific companions of the same type.
+- Nicknames persist across logout/login.
+
+### Balance
+- Assess command now has a 6-round cooldown.
+- Companion corpses can no longer be re-raised.
+- Healing potion durations halved.
+- Equipped items now encumber 50% less.
+
 ### Bug Fixes
 - **Aggro cleanup on mob flee**: players no longer get stuck
   "in combat" after all enemies flee the room.

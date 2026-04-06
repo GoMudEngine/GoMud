@@ -69,6 +69,11 @@ func respawnCompanions(user *users.UserRecord) {
 		// Apply saved progression back onto the fresh mob instance.
 		applyCompanionState(mob, comp)
 
+		// Apply nickname if the companion was renamed.
+		if comp.Nickname != "" {
+			mob.Character.Name = comp.Name
+		}
+
 		// Restore to full resources.
 		mob.Character.Health = mob.Character.HealthMax.Value
 		mob.Character.Stamina = mob.Character.StaminaMax.Value

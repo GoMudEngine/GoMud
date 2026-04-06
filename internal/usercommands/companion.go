@@ -4,17 +4,19 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
-// Companion handles the `companion` command in three forms:
+// Companion handles the `companion` command in four forms:
 //
-//	companion             — list all companions
-//	companion <name>      — detailed view (no hard numbers)
-//	companion <name> assist on/off — toggle auto-assist
+//	companion                          — list all companions
+//	companion <name>                   — detailed view (no hard numbers)
+//	companion <name> assist on/off     — toggle auto-assist
+//	companion <name> name <nickname>   — rename a companion
 func Companion(rest string, user *users.UserRecord,
 	room *rooms.Room, flags events.EventFlag) (bool, error) {
 
@@ -75,9 +77,9 @@ func Companion(rest string, user *users.UserRecord,
 	}
 
 	// ── Parse remaining forms ────────────────────────────────────────────────
-	// Check for trailing "assist on" / "assist off"
 	lowerRest := strings.ToLower(rest)
 	var assistToggle string // "on", "off", or "" (no toggle)
+	var renameNick string   // non-empty if "name <nick>" form
 	compName := rest
 
 	if strings.HasSuffix(lowerRest, " assist on") {
@@ -86,6 +88,10 @@ func Companion(rest string, user *users.UserRecord,
 	} else if strings.HasSuffix(lowerRest, " assist off") {
 		assistToggle = "off"
 		compName = rest[:len(rest)-len(" assist off")]
+	} else if idx := strings.Index(lowerRest, " name "); idx >= 0 {
+		// "companion <name> name <nickname>"
+		compName = rest[:idx]
+		renameNick = strings.TrimSpace(rest[idx+len(" name "):])
 	}
 	compName = strings.TrimSpace(compName)
 
@@ -93,6 +99,36 @@ func Companion(rest string, user *users.UserRecord,
 	if comp == nil {
 		user.SendText(fmt.Sprintf(
 			`You have no companion named "%s".`, compName,
+		))
+		return true, nil
+	}
+
+	// ── Form 4: rename companion ─────────────────────────────────────────────
+	if renameNick != "" {
+		if err := validateCompanionName(renameNick); err != nil {
+			user.SendText(err.Error())
+			return true, nil
+		}
+
+		// Backfill BaseName for pre-existing companions that lack it.
+		if comp.BaseName == "" {
+			comp.BaseName = comp.Name
+		}
+
+		oldName := comp.Name
+		newDisplayName := renameNick + " the " + comp.BaseName
+		comp.Nickname = renameNick
+		comp.Name = newDisplayName
+
+		// Update the live mob's name so it shows in room/combat text.
+		if mob := mobs.GetInstance(comp.InstanceId); mob != nil {
+			mob.Character.Name = newDisplayName
+		}
+
+		user.SendText(fmt.Sprintf(
+			`<ansi fg="mobname">%s</ansi> is now known as `+
+				`<ansi fg="mobname">%s</ansi>.`,
+			oldName, newDisplayName,
 		))
 		return true, nil
 	}
@@ -203,5 +239,37 @@ func statQualityDesc(value int) string {
 	default:
 		return "godlike"
 	}
+}
+
+// validateCompanionName checks a proposed companion nickname against the
+// banned-names list, existing player character names, and existing companion
+// nicknames. Names are freed when companions die or are dismissed.
+func validateCompanionName(name string) error {
+	if len(name) < 2 || len(name) > 20 {
+		return fmt.Errorf("Companion names must be between 2 and 20 characters.")
+	}
+
+	// Only allow letters (no numbers, symbols, spaces).
+	for _, ch := range name {
+		if (ch < 'a' || ch > 'z') && (ch < 'A' || ch > 'Z') {
+			return fmt.Errorf("Companion names may only contain letters.")
+		}
+	}
+
+	if bannedPattern, ok := configs.GetConfig().IsBannedName(name); ok {
+		return fmt.Errorf("That name matched the prohibited pattern: %q.", bannedPattern)
+	}
+
+	// Check against existing player character names.
+	if foundUserId, _ := users.CharacterNameSearch(name); foundUserId > 0 {
+		return fmt.Errorf("That name is already in use by a player.")
+	}
+
+	// Check against other companions' nicknames.
+	if users.CompanionNameExists(name) {
+		return fmt.Errorf("That name is already in use by another companion.")
+	}
+
+	return nil
 }
 

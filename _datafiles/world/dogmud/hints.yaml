@@ -223,6 +223,10 @@ hints:
     vitals and stats. Toggle autoassist with
     <ansi fg="command">companion [name] assist off</ansi>.
   - >-
+    Give your companion a personal name with
+    <ansi fg="command">companion [name] name [nickname]</ansi>.
+    It becomes "Nickname the Spirit Wolf" and such.
+  - >-
     Use <ansi fg="command">assess</ansi> on a corpse to see what forms
     of undeath it can sustain before raising it.
   - >-

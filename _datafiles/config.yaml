@@ -1099,6 +1099,22 @@ Validation:
   - "new"
   - "join"
   - "register"
+  # Companion / creature type words
+  - "skeleton"
+  - "zombie"
+  - "wraith"
+  - "spectre"
+  - "vampire"
+  - "golem"
+  - "elemental"
+  - "magma"
+  - "swarm"
+  - "spirit"
+  - "wolf"
+  - "undead"
+  - "conjure*"
+  - "summon*"
+  - "companion"
 
 ################################################################################
 #

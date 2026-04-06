@@ -812,6 +812,7 @@ func (a ScriptActor) AddCompanion(mobInstanceId int, sourceType string, name str
 	info := characters.CompanionInfo{
 		SourceType: characters.CompanionSourceType(sourceType),
 		Name:       name,
+		BaseName:   name,
 		AutoAssist: true,
 		InstanceId: mobInstanceId,
 	}

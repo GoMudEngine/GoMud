@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 // ── Pet → Companion migration (DEFERRED) ─────────────────────────────────────
@@ -53,6 +54,8 @@ type CompanionInfo struct {
 	InstanceId       int                 `yaml:"-"` // runtime only
 	SourceType       CompanionSourceType `yaml:"source_type"`
 	Name             string              `yaml:"name"`
+	BaseName         string              `yaml:"base_name,omitempty"` // mob template name, e.g. "Spirit Wolf"
+	Nickname         string              `yaml:"nickname,omitempty"`  // player-given name, e.g. "Fred"
 	AutoAssist       bool                `yaml:"auto_assist"`
 	StatTraining     map[string]int      `yaml:"stat_training,omitempty"`
 	Skills           map[string]int      `yaml:"skills,omitempty"`
@@ -65,12 +68,18 @@ type CompanionInfo struct {
 }
 
 // GetCompanion finds a companion by name (case-insensitive partial match).
+// Supports N.name / name#N disambiguation (via util.GetMatchNumber).
 // Returns nil if no match is found.
 func (c *Character) GetCompanion(name string) *CompanionInfo {
-	lower := strings.ToLower(name)
+	search, matchNum := util.GetMatchNumber(name)
+	lower := strings.ToLower(search)
+	count := 0
 	for i := range c.Companions {
 		if strings.Contains(strings.ToLower(c.Companions[i].Name), lower) {
-			return &c.Companions[i]
+			count++
+			if count == matchNum {
+				return &c.Companions[i]
+			}
 		}
 	}
 	return nil

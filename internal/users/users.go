@@ -450,6 +450,10 @@ func ValidateName(name string) error {
 		return errors.New("that username is in use")
 	}
 
+	if CompanionNameExists(name) {
+		return errors.New("that name is in use by a companion")
+	}
+
 	return nil
 }
 
@@ -493,6 +497,35 @@ func CharacterNameSearch(nameToFind string) (foundUserId int, foundUserName stri
 	})
 
 	return foundUserId, foundUserName
+}
+
+// CompanionNameExists checks whether any player (online or offline) has a
+// companion whose Nickname matches the given string (case-insensitive exact
+// match). Used to prevent new characters from taking a name already in use
+// by a companion. Names are freed when companions die or are dismissed.
+func CompanionNameExists(name string) bool {
+	// Check online users first (fast path).
+	for _, u := range GetAllActiveUsers() {
+		for _, comp := range u.Character.Companions {
+			if strings.EqualFold(comp.Nickname, name) {
+				return true
+			}
+		}
+	}
+
+	// Check offline users.
+	found := false
+	SearchOfflineUsers(func(u *UserRecord) bool {
+		for _, comp := range u.Character.Companions {
+			if strings.EqualFold(comp.Nickname, name) {
+				found = true
+				return false // stop searching
+			}
+		}
+		return true
+	})
+
+	return found
 }
 
 func SaveUser(u UserRecord, isAutoSave ...bool) error {
