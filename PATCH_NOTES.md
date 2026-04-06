@@ -52,6 +52,20 @@
   syntax for targeting specific companions of the same type.
 - Nicknames persist across logout/login.
 
+### Skill Progression Overhaul
+- **Ceiling fix**: combat skills (weapon-combat, unarmed-combat,
+  ranged-combat) could never advance past ~apprentice due to an
+  asymptotic ceiling in the progression formula. Now all skills
+  can reach soft cap regardless of their progression multiplier.
+- **Per-weapon progression**: each weapon in a multi-arm setup
+  independently trains weapon-combat skill. Extra arm weapons
+  now contribute to skill growth, not just the main hand.
+- **Defender progression**: dodging trains unarmed-combat + dex,
+  parrying trains weapon-combat + dex + str, blocking trains
+  weapon-combat + str. Defense type is tracked per-round.
+- **Manifestation multiplier**: bumped from 0.3 to 0.5, matching
+  spellcasting progression rate.
+
 ### Balance
 - Assess command now has a 6-round cooldown.
 - Companion corpses can no longer be re-raised.
@@ -61,6 +75,9 @@
 ### Bug Fixes
 - **Aggro cleanup on mob flee**: players no longer get stuck
   "in combat" after all enemies flee the room.
+- **Staff combat messages**: removed all "two-handed" and
+  "both hands" references. Staves can be equipped one-handed
+  in extra arm slots.
 
 ## 2026-04-04 — Living Economy, Gear Upgrades, Spell & PvP Fixes
 
