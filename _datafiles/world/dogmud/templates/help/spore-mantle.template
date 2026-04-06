@@ -1,21 +1,21 @@
-<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="yellow">Predators-Instinct</ansi> (enchanting recipe)
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="yellow">Spore-Mantle</ansi> (enchanting recipe)
 
-A predator's hunger pulses through the ring, sharpening the
-wearer's senses.
+Luminous spores bloom across the pauldrons, forming a living ward
+against magic.
 
 <ansi fg="yellow">━━━ Recipe ━━━</ansi>
 
-  <ansi fg="yellow">Skill:</ansi>       enchanting (minimum 25)
+  <ansi fg="yellow">Skill:</ansi>       enchanting (minimum 14)
   <ansi fg="yellow">Station:</ansi>     enchanting circle
-  <ansi fg="yellow">Target:</ansi>      ring (must be equipped)
-  <ansi fg="yellow">Ingredients:</ansi> chrysalis setting (x1), mutation catalyst (x2),
+  <ansi fg="yellow">Target:</ansi>      shoulders (must be equipped)
+  <ansi fg="yellow">Ingredients:</ansi> chrysalis setting (x1), mutation catalyst (x1),
                 binding paste (x1)
-  <ansi fg="yellow">Time:</ansi>        6 rounds
+  <ansi fg="yellow">Time:</ansi>        4 rounds
   <ansi fg="yellow">Reserve:</ansi>     stamina (1% at tier 0, scaling with tier)
 
 <ansi fg="yellow">━━━ Effect ━━━</ansi>
 
-Increases perception.
+Provides magical damage mitigation.
 
 The enchantment grows stronger through combat use, advancing
 through five tiers of increasing power and reserve cost.

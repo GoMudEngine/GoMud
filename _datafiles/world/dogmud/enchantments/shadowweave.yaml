@@ -1,0 +1,40 @@
+enchantid: shadowweave
+name: "Shadowweave"
+reserve_pool: conviction
+target_type: back
+tiers:
+  - tier: 0
+    reserve_pct: 0.01
+    effects:
+      magical_mitigation_bonus: 1
+    adjective: shadow-touched
+    description_suffix: "Shadows cling faintly to the back of your armor."
+    tier_up_message: ""
+  - tier: 1
+    reserve_pct: 0.02
+    effects:
+      magical_mitigation_bonus: 2
+    adjective: shadow-woven
+    description_suffix: "Shadows are woven into your cloak, deep and protective."
+    tier_up_message: "The shadows embrace you—magic cannot pierce the veil."
+  - tier: 2
+    reserve_pct: 0.04
+    effects:
+      magical_mitigation_bonus: 3
+    adjective: void-touched
+    description_suffix: "The void itself touches your back, ancient and unknowable."
+    tier_up_message: "The Chrysalis wraps you in the void—you are hidden from sight."
+  - tier: 3
+    reserve_pct: 0.06
+    effects:
+      magical_mitigation_bonus: 4
+    adjective: null-cloaked
+    description_suffix: "A null-cloak drapes from your shoulders, absorbing all magic."
+    tier_up_message: "The Chrysalis has cloaked you in the nothing between things."
+  - tier: 4
+    reserve_pct: 0.08
+    effects:
+      magical_mitigation_bonus: 5
+    adjective: shadowweave
+    description_suffix: "You wear shadowweave—magic dissolves against your form."
+    tier_up_message: "The Chrysalis has made you eternal as the void itself."

@@ -1,0 +1,18 @@
+id: rootwalker
+name: "Rootwalker"
+skill: enchanting
+skill_minimum: 7
+station: enchanting_circle
+time_rounds: 3
+target_type: feet
+enchant_type: rootwalker
+ingredients:
+  - item_tag: chrysalis-setting
+    quantity: 1
+  - item_tag: binding-paste
+    quantity: 1
+output:
+  item_id: 0
+  quantity: 0
+success_message: "Root-like soles form beneath the boots, gripping the ground with living purpose. Each step feels steadier, more grounded."
+failure_message: "The setting rejects the boot leather. The materials crumble to dust, but the boots are unharmed."

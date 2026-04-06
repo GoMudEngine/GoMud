@@ -361,6 +361,7 @@ func LoadUser(username string, skipValidation ...bool) (*UserRecord, error) {
 	loadedUser.Character.MigrateDescriptionWrapping()
 	loadedUser.Character.MigrateQuestFlags()
 	loadedUser.Character.MigrateLegacyPotions()
+	loadedUser.Character.MigrateEnchantments()
 
 	if loadedUser.Joined.IsZero() {
 		loadedUser.Joined = time.Now()

@@ -4,37 +4,37 @@ reserve_pool: health
 target_type: body
 tiers:
   - tier: 0
+    reserve_pct: 0.01
+    effects:
+      physical_mitigation_bonus: 1
+    adjective: shell-traced
+    description_suffix: "Faint shell-like patterns emerge across the fabric."
+    tier_up_message: ""
+  - tier: 1
     reserve_pct: 0.02
     effects:
       physical_mitigation_bonus: 2
-    adjective: chitinous
-    description_suffix: "A chitinous coating forms across the armor's surface."
-    tier_up_message: ""
-  - tier: 1
-    reserve_pct: 0.04
-    effects:
-      physical_mitigation_bonus: 4
     adjective: plated
     description_suffix: "Overlapping plates of chitin harden into place."
     tier_up_message: "The armor gnaws at your flesh, melding with bone."
   - tier: 2
-    reserve_pct: 0.06
+    reserve_pct: 0.04
     effects:
-      physical_mitigation_bonus: 6
-    adjective: carapace
+      physical_mitigation_bonus: 3
+    adjective: carapaced
     description_suffix: "A full carapace envelops you, breathing in the darkness."
     tier_up_message: "Your skin cracks and reforms—the Chrysalis claims your shell."
   - tier: 3
+    reserve_pct: 0.06
+    effects:
+      physical_mitigation_bonus: 4
+    adjective: exoskeletal
+    description_suffix: "An exoskeletal layer of living chitin encases you completely."
+    tier_up_message: "The shell consumes your sense of self—you are armored now."
+  - tier: 4
     reserve_pct: 0.08
     effects:
-      physical_mitigation_bonus: 8
-    adjective: armored-shell
-    description_suffix: "An armored shell of living chitin encases you completely."
-    tier_up_message: "The exoskeleton consumes your sense of self."
-  - tier: 4
-    reserve_pct: 0.10
-    effects:
-      physical_mitigation_bonus: 10
-    adjective: living-fortress
-    description_suffix: "You are a living fortress—a chrysalis of impenetrable chitin."
+      physical_mitigation_bonus: 5
+    adjective: chrysalis-shelled
+    description_suffix: "You are wrapped in a chrysalis shell—impenetrable, eternal."
     tier_up_message: "The Chrysalis has made you eternal. You are the fortress now."

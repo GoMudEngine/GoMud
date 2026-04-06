@@ -1,0 +1,40 @@
+enchantid: thornguard
+name: "Thornguard"
+reserve_pool: health
+target_type: offhand
+tiers:
+  - tier: 0
+    reserve_pct: 0.01
+    effects:
+      return_damage: 5
+    adjective: barbed
+    description_suffix: "Faint barbs form across the shield's surface."
+    tier_up_message: ""
+  - tier: 1
+    reserve_pct: 0.02
+    effects:
+      return_damage: 10
+    adjective: thorn-studded
+    description_suffix: "Thorns stud the shield, ready to draw blood."
+    tier_up_message: "The thorns drink in the pain around you."
+  - tier: 2
+    reserve_pct: 0.04
+    effects:
+      return_damage: 15
+    adjective: spine-ridged
+    description_suffix: "Spines ridge the shield in patterns like chitin armor."
+    tier_up_message: "The Chrysalis flows through your defense—you are weaponized."
+  - tier: 3
+    reserve_pct: 0.06
+    effects:
+      return_damage: 20
+    adjective: chitin-thorned
+    description_suffix: "Your shield becomes a forest of chitin thorns."
+    tier_up_message: "The Chrysalis has turned your shield into a predatory tool."
+  - tier: 4
+    reserve_pct: 0.08
+    effects:
+      return_damage: 25
+    adjective: thornguard
+    description_suffix: "You are thornguard—a pulsing forest of living spines."
+    tier_up_message: "The Chrysalis has made your defense a weapon eternal."

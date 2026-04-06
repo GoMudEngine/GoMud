@@ -4,35 +4,35 @@ reserve_pool: stamina
 target_type: ring
 tiers:
   - tier: 0
-    reserve_pct: 0.02
+    reserve_pct: 0.01
     effects:
       perception_statmod: 1
     adjective: warm
     description_suffix: "The ring pulses with warmth, alive in your palm."
     tier_up_message: ""
   - tier: 1
-    reserve_pct: 0.04
+    reserve_pct: 0.02
     effects:
       perception_statmod: 2
     adjective: pulsing
     description_suffix: "The ring's pulse quickens—heartbeat of a hunter."
     tier_up_message: "The ring feeds on your instincts—you smell everything."
   - tier: 2
-    reserve_pct: 0.06
+    reserve_pct: 0.04
     effects:
       perception_statmod: 3
     adjective: ember-eyed
     description_suffix: "Ember-like eyes form on the ring's surface, watching."
     tier_up_message: "Your eyes see prey. The Chrysalis has awakened the predator."
   - tier: 3
-    reserve_pct: 0.08
+    reserve_pct: 0.06
     effects:
       perception_statmod: 4
     adjective: predatory
     description_suffix: "The ring becomes a predatory thing, thirsting for the hunt."
     tier_up_message: "You are one with the Chrysalis—hunger and instinct made flesh."
   - tier: 4
-    reserve_pct: 0.10
+    reserve_pct: 0.08
     effects:
       perception_statmod: 5
     adjective: hunter-souled

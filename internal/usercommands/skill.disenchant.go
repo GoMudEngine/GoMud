@@ -48,7 +48,7 @@ func Disenchant(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 
 	// Record reservation before stripping
 	reservePool := targetItem.ReservePool
-	reservePct := enchantments.GetTierReservePct(targetItem.EnchantType, targetItem.EnchantTier)
+	reservePct := enchantments.GetTierReservePct(targetItem.EnchantType, targetItem.EnchantTier, targetItem.GetSpec().Hands)
 
 	// Find the actual item in the slice and strip it
 	for i := range user.Character.Items {

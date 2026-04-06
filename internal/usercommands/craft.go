@@ -142,9 +142,8 @@ func craftEnchanting(rest string, recipe *crafting.RecipeSpec, user *users.UserR
 		return true, nil
 	}
 
-	// Target item disambiguation — strip the recipe name from the input
-	// to get the optional item specifier. The recipe name may contain spaces
-	// (e.g., "carapace ward"), so we can't just split on the first space.
+	// Slot-based target resolution
+	// Strip the recipe name from the input to get the optional slot specifier.
 	specifier := ""
 	recipeName := strings.ToLower(recipe.Name)
 	restLower := strings.ToLower(strings.TrimSpace(rest))
@@ -154,52 +153,14 @@ func craftEnchanting(rest string, recipe *crafting.RecipeSpec, user *users.UserR
 		specifier = strings.TrimSpace(rest[len(recipe.RecipeId):])
 	}
 
-	eq := user.Character.Equipment
-	equipSlots := []crafting.EquipmentSlot{
-		{Item: eq.Weapon, Label: "wielded"},
-		{Item: eq.Offhand, Label: "offhand"},
-		{Item: eq.ExtraArm1, Label: "extra arm 1"},
-		{Item: eq.ExtraArm2, Label: "extra arm 2"},
-		{Item: eq.ExtraArm3, Label: "extra arm 3"},
-		{Item: eq.ExtraArm4, Label: "extra arm 4"},
-		{Item: eq.Head, Label: "worn - head"},
-		{Item: eq.Neck, Label: "worn - neck"},
-		{Item: eq.Shoulders, Label: "worn - shoulders"},
-		{Item: eq.Body, Label: "worn - body"},
-		{Item: eq.Back, Label: "worn - back"},
-		{Item: eq.Belt, Label: "worn - belt"},
-		{Item: eq.Wrist1, Label: "worn - wrist"},
-		{Item: eq.Wrist2, Label: "worn - wrist"},
-		{Item: eq.ExtraWrist1, Label: "extra wrist 1"},
-		{Item: eq.ExtraWrist2, Label: "extra wrist 2"},
-		{Item: eq.ExtraWrist3, Label: "extra wrist 3"},
-		{Item: eq.ExtraWrist4, Label: "extra wrist 4"},
-		{Item: eq.Gloves, Label: "worn - gloves"},
-		{Item: eq.Ring, Label: "worn - ring"},
-		{Item: eq.Ring2, Label: "worn - ring"},
-		{Item: eq.Legs, Label: "worn - legs"},
-		{Item: eq.Feet, Label: "worn - feet"},
-	}
-	candidates := crafting.FindTargetItems(user.Character.Items, equipSlots, recipe.TargetType, specifier)
-
-	if len(candidates) == 0 {
-		user.SendText(fmt.Sprintf(
-			`<ansi fg="red">You need a %s in your inventory or equipment to enchant.</ansi>`,
-			strings.ReplaceAll(recipe.TargetType, "_", " ")))
+	slotLabel, targetItem, errMsg := resolveEnchantSlot(&user.Character.Equipment, recipe.TargetType, specifier)
+	if errMsg != "" {
+		user.SendText(fmt.Sprintf(`<ansi fg="red">%s</ansi>`, errMsg))
 		return true, nil
 	}
 
-	if len(candidates) > 1 && specifier == "" {
-		user.SendText(`<ansi fg="yellow">Which item do you want to enchant?</ansi>`)
-		for i, c := range candidates {
-			slotInfo := ""
-			if c.SourceLabel != "" {
-				slotInfo = fmt.Sprintf(` <ansi fg="yellow">(%s)</ansi>`, c.SourceLabel)
-			}
-			user.SendText(fmt.Sprintf(`  <ansi fg="white-bold">[%d]</ansi> <ansi fg="itemname">%s</ansi>%s`, i+1, c.Item.DisplayName(), slotInfo))
-		}
-		user.SendText(`  <ansi fg="white-bold">[0]</ansi> Cancel`)
-		user.SendText(`<ansi fg="yellow">Specify which item: craft ` + recipe.Name + ` <item name></ansi>`)
+	if targetItem == nil {
+		user.SendText(`<ansi fg="red">Could not find a valid item in that slot.</ansi>`)
 		return true, nil
 	}
 
@@ -209,14 +170,15 @@ func craftEnchanting(rest string, recipe *crafting.RecipeSpec, user *users.UserR
 		return true, nil
 	}
 
-	// Start multi-round enchanting
+	// Start multi-round enchanting with the resolved slot
 	user.Character.CraftingState = &characters.CraftingState{
 		RecipeId:    recipe.RecipeId,
 		RoundsTotal: recipe.TimeRounds,
+		TargetSlot:  slotLabel,
 	}
 	user.SendText(fmt.Sprintf(
-		`<ansi fg="yellow">You begin crafting %s... (%s)</ansi>`,
-		recipe.Name, craftTimeDesc(recipe.TimeRounds)))
+		`<ansi fg="yellow">You begin enchanting <ansi fg="itemname">%s</ansi>... (%s)</ansi>`,
+		targetItem.DisplayName(), craftTimeDesc(recipe.TimeRounds)))
 
 	// Quest engine: command notification
 	bridge := questengine.NewGameBridge(user, room.RoomId)

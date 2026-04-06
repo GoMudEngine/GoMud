@@ -1,0 +1,20 @@
+id: shadowweave
+name: "Shadowweave"
+skill: enchanting
+skill_minimum: 28
+station: enchanting_circle
+time_rounds: 6
+target_type: back
+enchant_type: shadowweave
+ingredients:
+  - item_tag: chrysalis-setting
+    quantity: 2
+  - item_tag: mutation-catalyst
+    quantity: 2
+  - item_tag: binding-paste
+    quantity: 1
+output:
+  item_id: 0
+  quantity: 0
+success_message: "Shadows pour from the settings into the cloak's fabric, weaving a darkness that drinks in light and magic alike."
+failure_message: "The catalyst rejects the binding. The materials crumble to dust, but the cloak is unharmed."

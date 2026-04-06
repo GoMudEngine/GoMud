@@ -4,42 +4,42 @@ reserve_pool: conviction
 target_type: neck
 tiers:
   - tier: 0
-    reserve_pct: 0.02
+    reserve_pct: 0.01
     effects:
-      willpower_statmod: 1
       conviction_mitigation_bonus: 1
+      willpower_statmod: 1
     adjective: warm-veined
     description_suffix: "Warm veins pulse beneath the surface of the neck armor."
     tier_up_message: ""
   - tier: 1
-    reserve_pct: 0.04
+    reserve_pct: 0.02
     effects:
-      willpower_statmod: 2
       conviction_mitigation_bonus: 2
+      willpower_statmod: 1
     adjective: ore-blooded
     description_suffix: "Your blood becomes molten ore—veins glow with inner heat."
     tier_up_message: "The Chrysalis infuses your essence with metal and fire."
   - tier: 2
-    reserve_pct: 0.06
+    reserve_pct: 0.04
     effects:
-      willpower_statmod: 3
       conviction_mitigation_bonus: 3
+      willpower_statmod: 2
     adjective: iron-pulsed
     description_suffix: "Iron courses through your veins, hardening your resolve."
     tier_up_message: "You are no longer flesh—you are living iron, bonded to the Chrysalis."
   - tier: 3
-    reserve_pct: 0.08
+    reserve_pct: 0.06
     effects:
-      willpower_statmod: 4
       conviction_mitigation_bonus: 4
+      willpower_statmod: 2
     adjective: living-ore
     description_suffix: "Your very essence becomes living ore, pulsing with power."
     tier_up_message: "The Chrysalis has remade you in its image—eternal and unyielding."
   - tier: 4
-    reserve_pct: 0.10
+    reserve_pct: 0.08
     effects:
-      willpower_statmod: 5
       conviction_mitigation_bonus: 5
+      willpower_statmod: 3
     adjective: ironblood
     description_suffix: "You are Ironblood—living veins of metal and will incarnate."
     tier_up_message: "The Chrysalis flows through your core. You are iron eternal."

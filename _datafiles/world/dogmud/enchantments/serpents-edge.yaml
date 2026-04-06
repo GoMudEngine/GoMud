@@ -1,40 +1,40 @@
 enchantid: serpents-edge
 name: "Serpent's Edge"
-reserve_pool: health
+reserve_pool: stamina
 target_type: weapon
 tiers:
   - tier: 0
-    reserve_pct: 0.02
+    reserve_pct: 0.01
     effects:
-      damage_multiplier_bonus: 5
+      damage_multiplier_bonus: 6
     adjective: shimmering
-    description_suffix: "A faint iridescent sheen plays across its surface."
+    description_suffix: "The metal shifts with iridescent scales."
     tier_up_message: ""
   - tier: 1
+    reserve_pct: 0.02
+    effects:
+      damage_multiplier_bonus: 12
+    adjective: scaled
+    description_suffix: "Scaled patterns ripple across the weapon's surface."
+    tier_up_message: "The blade coils with serpentine power."
+  - tier: 2
     reserve_pct: 0.04
     effects:
-      damage_multiplier_bonus: 10
-    adjective: scaled
-    description_suffix: "Scales begin to form along the blade's edge."
-    tier_up_message: "The weapon writhes subtly, as if alive."
-  - tier: 2
+      damage_multiplier_bonus: 18
+    adjective: writhing
+    description_suffix: "The weapon writhes like a living serpent at rest."
+    tier_up_message: "Scales unfurl along your arms as power flows."
+  - tier: 3
     reserve_pct: 0.06
     effects:
-      damage_multiplier_bonus: 15
-    adjective: writhing
-    description_suffix: "The weapon's surface undulates with serpent-like motion."
-    tier_up_message: "The blade throbs, and you feel it bonding with your flesh."
-  - tier: 3
+      damage_multiplier_bonus: 24
+    adjective: serpent-fang
+    description_suffix: "Twin fangs of venom-dripping chitin form the edge."
+    tier_up_message: "Your breath becomes cold. The serpent claims you."
+  - tier: 4
     reserve_pct: 0.08
     effects:
-      damage_multiplier_bonus: 20
-    adjective: serpent-fang
-    description_suffix: "Fanged protrusions grow from the blade, glistening with venom."
-    tier_up_message: "A hunger pulses through the weapon—it calls for blood."
-  - tier: 4
-    reserve_pct: 0.10
-    effects:
-      damage_multiplier_bonus: 25
+      damage_multiplier_bonus: 30
     adjective: living-chitin
-    description_suffix: "The weapon's form hardens into living chitin, pulsing with malice."
-    tier_up_message: "The Chrysalis consumes you—you are one with the blade now."
+    description_suffix: "A serpent of living chitin—fang and scale reborn."
+    tier_up_message: "You shed your skin and become the chrysalis serpent."

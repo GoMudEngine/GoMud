@@ -1,0 +1,40 @@
+enchantid: chrysalis-bond
+name: "Chrysalis Bond"
+reserve_pool: conviction
+target_type: ring
+tiers:
+  - tier: 0
+    reserve_pct: 0.01
+    effects:
+      conviction_mitigation_bonus: 1
+    adjective: bonded
+    description_suffix: "The ring bonds gently to your finger with warmth."
+    tier_up_message: ""
+  - tier: 1
+    reserve_pct: 0.02
+    effects:
+      conviction_mitigation_bonus: 2
+    adjective: mind-bonded
+    description_suffix: "Mind and ring bond together—thoughts flow without resistance."
+    tier_up_message: "The bond deepens—the Chrysalis flows through your will."
+  - tier: 2
+    reserve_pct: 0.04
+    effects:
+      conviction_mitigation_bonus: 3
+    adjective: soul-linked
+    description_suffix: "Your soul links with the ring—neither separate anymore."
+    tier_up_message: "The Chrysalis has bonded to your very essence."
+  - tier: 3
+    reserve_pct: 0.06
+    effects:
+      conviction_mitigation_bonus: 4
+    adjective: will-forged
+    description_suffix: "The ring becomes a will-forged instrument of your power."
+    tier_up_message: "You are one with the Chrysalis—your will is absolute."
+  - tier: 4
+    reserve_pct: 0.08
+    effects:
+      conviction_mitigation_bonus: 5
+    adjective: chrysalis-bonded
+    description_suffix: "You are chrysalis-bonded—eternally fused with pure will."
+    tier_up_message: "The Chrysalis has made you a beacon of eternal conviction."
