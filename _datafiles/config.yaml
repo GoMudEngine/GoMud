@@ -274,7 +274,7 @@ GamePlay:
   #   Unit can be: rounds, hours, days, weeks, months, years
   #   Default is in-game time, not real time. To use real time, use the following
   #   format: {num} real {unit} - Example: 1 real day
-  ShopRestockRate: 6 hours
+  ShopRestockRate: 2 hours
   # - ContainerSizeMax -
   #   Maximum number of objects a container can hold before stuff overflows
   ContainerSizeMax: 10
