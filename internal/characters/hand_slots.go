@@ -149,34 +149,30 @@ func FindCheapestPairToDisplace(pairs []HandPair) *HandPair {
 }
 
 // BestParryRating returns the highest ParryRating across all equipped
-// weapons (Weapon slot + all extra arm slots holding weapons).
+// items in weapon/arm slots.
 func (c *Character) BestParryRating() int {
 	best := 0
-	slots := c.getWeaponAndArmItems()
-	for _, slot := range slots {
+	for _, slot := range c.getWeaponAndArmItems() {
 		if slot.ItemId < 1 {
 			continue
 		}
-		spec := slot.GetSpec()
-		if spec.Type == items.Weapon && spec.ParryRating > best {
-			best = spec.ParryRating
+		if pr := slot.GetSpec().ParryRating; pr > best {
+			best = pr
 		}
 	}
 	return best
 }
 
 // BestBlockRating returns the highest BlockRating across all equipped
-// shields (Offhand + all extra arm slots holding offhand-type items).
+// items in weapon/arm slots.
 func (c *Character) BestBlockRating() int {
 	best := 0
-	slots := c.getWeaponAndArmItems()
-	for _, slot := range slots {
+	for _, slot := range c.getWeaponAndArmItems() {
 		if slot.ItemId < 1 {
 			continue
 		}
-		spec := slot.GetSpec()
-		if spec.Type == items.Offhand && spec.BlockRating > best {
-			best = spec.BlockRating
+		if br := slot.GetSpec().BlockRating; br > best {
+			best = br
 		}
 	}
 	return best

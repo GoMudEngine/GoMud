@@ -2074,12 +2074,7 @@ func (c *Character) HasShield() bool {
 	if sp := species.GetSpecies(c.SpeciesId); sp != nil && sp.NaturalBash {
 		return true
 	}
-	if c.Equipment.Offhand.ItemId <= 0 {
-		return false
-	}
-	spec := c.Equipment.Offhand.GetSpec()
-	// Shield detection: type offhand + has damage reduction or subtype wearable
-	return spec.Type == items.Offhand && (spec.DamageReduction > 0 || spec.Subtype == items.Wearable)
+	return c.HasAnyShield()
 }
 
 // IsDualWielding returns true if character has weapons in both hands
@@ -2154,22 +2149,16 @@ func (c *Character) GetDefenseScore(defenseType string) float64 {
 		return score
 
 	case DefenseParry:
-		// Parry: Dexterity + WeaponCombat skill + weapon ParryRating
+		// Parry: Dexterity + WeaponCombat skill + best weapon ParryRating
 		weaponSkill := float64(c.GetSkillLevel(skills.WeaponCombat)) * skillWeight
-		parryRating := 0
-		if c.Equipment.Weapon.ItemId > 0 {
-			parryRating = c.Equipment.Weapon.GetSpec().ParryRating
-		}
+		parryRating := c.BestParryRating()
 		return dex + weaponSkill + float64(parryRating)
 
 	case DefenseBlock:
-		// Block: (Strength + Dexterity)/2 + WeaponCombat skill + shield BlockRating
+		// Block: (Strength + Dexterity)/2 + WeaponCombat skill + best shield BlockRating
 		str := float64(c.Stats.Strength.ValueAdj)
 		weaponSkill := float64(c.GetSkillLevel(skills.WeaponCombat)) * skillWeight
-		blockRating := 0
-		if c.HasShield() {
-			blockRating = c.Equipment.Offhand.GetSpec().BlockRating
-		}
+		blockRating := c.BestBlockRating()
 		return (str+dex)/2 + weaponSkill + float64(blockRating)
 
 	default:
