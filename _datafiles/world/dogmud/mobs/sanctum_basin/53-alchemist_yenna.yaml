@@ -110,6 +110,10 @@ character:
       quantity: 0
       quantitymax: 0
       price: 2
+    - itemid: 40010
+      quantity: 0
+      quantitymax: 0
+      price: 5
     - itemid: 30036
       quantity: 0
       quantitymax: 0
