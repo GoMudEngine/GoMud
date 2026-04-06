@@ -1,0 +1,20 @@
+id: thornguard
+name: "Thornguard"
+skill: enchanting
+skill_minimum: 18
+station: enchanting_circle
+time_rounds: 5
+target_type: offhand
+enchant_type: thornguard
+ingredients:
+  - item_tag: chrysalis-setting
+    quantity: 1
+  - item_tag: mutation-catalyst
+    quantity: 1
+  - item_tag: binding-paste
+    quantity: 2
+output:
+  item_id: 0
+  quantity: 0
+success_message: "Sharp barbs erupt from the shield's face, hardening into chitin thorns. Attackers will think twice before striking."
+failure_message: "The catalyst rejects the binding. The materials crumble to dust, but the shield is unharmed."

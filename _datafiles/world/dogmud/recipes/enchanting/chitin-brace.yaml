@@ -1,0 +1,18 @@
+id: chitin-brace
+name: "Chitin-Brace"
+skill: enchanting
+skill_minimum: 2
+station: enchanting_circle
+time_rounds: 3
+target_type: wrist
+enchant_type: chitin-brace
+ingredients:
+  - item_tag: binding-paste
+    quantity: 1
+  - item_tag: healers-root
+    quantity: 2
+output:
+  item_id: 0
+  quantity: 0
+success_message: "The paste hardens into chitinous ridges along the bracer. You flex your wrist — it feels armored yet supple."
+failure_message: "The paste crumbles away without bonding. The materials are wasted, but the bracer is unharmed."
