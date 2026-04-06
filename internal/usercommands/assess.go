@@ -1,6 +1,7 @@
 package usercommands
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -17,6 +18,13 @@ func Assess(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	rest = strings.TrimSpace(rest)
 	if rest == `` {
 		user.SendText(`Assess what?`)
+		return true, nil
+	}
+
+	if !user.Character.TryCooldown(`assess`, "6 rounds") {
+		user.SendText(
+			fmt.Sprintf("You need to wait %d more rounds before you can assess again.", user.Character.GetCooldown(`assess`)),
+		)
 		return true, nil
 	}
 
