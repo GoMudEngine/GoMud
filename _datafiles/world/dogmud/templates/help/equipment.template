@@ -82,10 +82,15 @@ backpack.
 
 Some mutations alter your available slots:
 
-  <ansi fg="yellow">Extra Arms</ansi>   Each level unlocks an additional arm and
-               wrist slot. Extra limbs are powerful but
-               draw unwanted attention and make social
-               interactions more difficult.
+  <ansi fg="yellow">Extra Arms</ansi>   Unlocks additional arm and wrist slots,
+               grouped in pairs:
+               Level 1-2: Pair B (arms 3-4, wrists 3-4)
+               Level 3-4: Pair C (arms 5-6, wrists 5-6)
+
+               Two-handed weapons fill a whole pair. Shields
+               and one-handed weapons fill a single slot.
+               Arm 1 holds weapons only; arms 2-6 hold
+               weapons or shields.
 
   <ansi fg="yellow">Tail</ansi>         Replaces your legs slot with a tail slot.
                Changes how certain combat moves work.
