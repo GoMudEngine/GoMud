@@ -1,5 +1,48 @@
 # DOGMud Patch Notes
 
+## 2026-04-06 — Enchanting Rework, Multi-Arm Equip, Aggro Fix
+
+### Enchanting System Rework
+- Enchanting now targets **equipped items by slot**, not inventory.
+  Use `craft <recipe>` for auto-targeting or `craft <recipe> weapon#2`
+  / `craft <recipe> 2.ring` for specific slots.
+- **18 enchantments** covering all equipment slots (was 10).
+  New: Chitin Brace (wrist), Rootbind (belt), Rootwalker (feet),
+  Chrysalis Bond (ring), Spore Mantle (shoulders), Thornguard
+  (shield), Venomgrip (gloves), Shadowweave (back).
+- **Mitigation coverage**: physical (body/wrist/feet), magical
+  (shoulders/back), conviction (neck/ring).
+- **Lifesteal**: Hungering Touch now heals on hit instead of
+  flat damage bonus.
+- **Thornguard**: shield enchant that deals return damage.
+- **Two-handed weapons** get doubled enchantment effects and
+  doubled reserve costs.
+- All enchantments rebalanced to 5 tiers with standard reserve
+  curve (1%/2%/4%/6%/8%).
+- Existing enchanted items are automatically migrated on login.
+- Help files updated for all 18 recipes.
+
+### Multi-Arm Equipment Rework
+- Arms are now grouped into **pairs**: (1+2), (3+4), (5+6).
+  Two-handed weapons occupy a full pair. One-handed weapons and
+  shields fill individual slots.
+- Arm 1 is weapon-only; arms 2-6 hold weapons or shields.
+  Maximum turtle build: 1 weapon + 5 shields.
+- Equip syntax: `equip sword arm#3`, `equip shield 2.arm`.
+  Two-handed weapons must target odd-numbered arms (1, 3, 5).
+- Odd extra-arm counts (1 or 3) create a half-pair that holds
+  one-handed items only.
+- **Defense scores fixed**: parry and block now use the best
+  rating across all equipped weapons/shields, not just main hand.
+- **Gearup** (`wear all`) now fills extra arm slots, best items
+  first.
+- Inventory hides the partner slot when a 2H weapon occupies
+  the pair (no more "Offhand: -nothing-").
+
+### Bug Fixes
+- **Aggro cleanup on mob flee**: players no longer get stuck
+  "in combat" after all enemies flee the room.
+
 ## 2026-04-04 — Living Economy, Gear Upgrades, Spell & PvP Fixes
 
 ### Bug Fixes (Round 2)
