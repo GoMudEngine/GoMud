@@ -78,6 +78,10 @@
 - **Staff combat messages**: removed all "two-handed" and
   "both hands" references. Staves can be equipped one-handed
   in extra arm slots.
+- **Extra arm attack messages**: weapons in extra arms now show
+  their own name in combat text instead of the main hand weapon.
+- **Surprise attack arms 5-6**: surprise strike now swings all
+  equipped weapons, including extra arms 3 and 4.
 
 ## 2026-04-04 — Living Economy, Gear Upgrades, Spell & PvP Fixes
 
