@@ -26,6 +26,38 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
+// processDefenderProgression fires skill and stat progression for a defender
+// based on which defense types were used across all swings in the round.
+// Dodge → unarmed-combat + dexterity, Parry → weapon-combat + dexterity + strength,
+// Block → weapon-combat + strength.
+func processDefenderProgression(c *characters.Character, userId int, result combat.AttackResult) {
+	dodged, parried, blocked := false, false, false
+	for _, se := range result.SwingEvents {
+		switch se.DefenseUsed {
+		case combat.DefenseDodge:
+			dodged = true
+		case combat.DefenseParry:
+			parried = true
+		case combat.DefenseBlock:
+			blocked = true
+		}
+	}
+
+	if dodged {
+		c.OnSkillUse(string(skills.UnarmedCombat), userId)
+		c.OnStatUse("dexterity", userId)
+	}
+	if parried {
+		c.OnSkillUse(string(skills.WeaponCombat), userId)
+		c.OnStatUse("dexterity", userId)
+		c.OnStatUse("strength", userId)
+	}
+	if blocked {
+		c.OnSkillUse(string(skills.WeaponCombat), userId)
+		c.OnStatUse("strength", userId)
+	}
+}
+
 // mobDisplayName returns the formatted display name for a mob in combat text,
 // including duplicate index coloring when multiple mobs share the same name.
 func mobDisplayName(mob *mobs.Mob, room *rooms.Room, viewingUserId int) string {
@@ -978,19 +1010,25 @@ func handlePlayerVsPlayer(user *users.UserRecord, uRoom *rooms.Room, evt events.
 	}
 	handleOffhandBreakUserDef(roundResult, defUser, defRoom)
 
-	// Stage 38.3: Player attacker progression
+	// Stage 38.3: Player attacker progression — per-weapon skill tracking
 	user.Character.OnStatUse("strength", user.UserId)
 	user.Character.OnStatUse("dexterity", user.UserId)
-	if roundResult.Hit {
-		combatSkill := string(user.Character.GetCombatSkillTag())
-		user.Character.OnSkillUse(combatSkill, user.UserId)
-		if roundResult.Crit {
-			user.Character.OnCriticalSuccess(combatSkill, user.UserId)
+	for _, wh := range roundResult.WeaponHits {
+		if wh.Hit {
+			user.Character.OnSkillUse(wh.SkillTag, user.UserId)
+			if wh.Crit {
+				user.Character.OnCriticalSuccess(wh.SkillTag, user.UserId)
+			}
+		} else if wh.Fumble {
+			user.Character.OnCriticalFailure(wh.SkillTag, user.UserId)
 		}
-	} else if roundResult.Fumble {
-		combatSkill := string(user.Character.GetCombatSkillTag())
-		user.Character.OnCriticalFailure(combatSkill, user.UserId)
 	}
+	if len(roundResult.WeaponHits) == 0 && roundResult.Hit {
+		user.Character.OnSkillUse(string(skills.UnarmedCombat), user.UserId)
+	}
+
+	// Defender progression — dodge/parry/block train specific skills
+	processDefenderProgression(defUser.Character, defUser.UserId, roundResult)
 
 	if user.Character.Health <= 0 || defUser.Character.Health <= 0 {
 		defUser.Character.EndAggro()
@@ -1205,19 +1243,26 @@ func handlePlayerVsMob(user *users.UserRecord, uRoom *rooms.Room, evt events.New
 		scripting.TryMobScriptEvent(`onHurt`, defMob.InstanceId, user.UserId, `user`, map[string]any{`damage`: roundResult.DamageToTarget, `crit`: roundResult.Crit})
 	}
 
-	// Stage 38.3: Player attacker progression
+	// Stage 38.3: Player attacker progression — per-weapon skill tracking
 	user.Character.OnStatUse("strength", user.UserId)
 	user.Character.OnStatUse("dexterity", user.UserId)
-	if roundResult.Hit {
-		combatSkill := string(user.Character.GetCombatSkillTag())
-		user.Character.OnSkillUse(combatSkill, user.UserId)
-		if roundResult.Crit {
-			user.Character.OnCriticalSuccess(combatSkill, user.UserId)
+	for _, wh := range roundResult.WeaponHits {
+		if wh.Hit {
+			user.Character.OnSkillUse(wh.SkillTag, user.UserId)
+			if wh.Crit {
+				user.Character.OnCriticalSuccess(wh.SkillTag, user.UserId)
+			}
+		} else if wh.Fumble {
+			user.Character.OnCriticalFailure(wh.SkillTag, user.UserId)
 		}
-	} else if roundResult.Fumble {
-		combatSkill := string(user.Character.GetCombatSkillTag())
-		user.Character.OnCriticalFailure(combatSkill, user.UserId)
 	}
+	// Unarmed progression when fighting with no weapons at all
+	if len(roundResult.WeaponHits) == 0 && roundResult.Hit {
+		user.Character.OnSkillUse(string(skills.UnarmedCombat), user.UserId)
+	}
+
+	// Defender progression — dodge/parry/block train specific skills
+	processDefenderProgression(&defMob.Character, 0, roundResult)
 
 	// Hostility
 	for _, groupName := range defMob.Groups {
@@ -1459,7 +1504,7 @@ func handleMobVsPlayer(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, 
 		defUser.Character.OnCritReceived("physical", defUser.UserId)
 	}
 
-	// Stage 38.3: Mob attacker progression
+	// Stage 38.3: Mob attacker progression — per-weapon skill tracking
 	statMobName := mobDisplayName(mob, mobRoom, 0)
 	if gained := mob.Character.OnStatUse("strength", 0); gained {
 		if tmpl, ok := characters.MobStatGainMessages["strength"]; ok {
@@ -1471,16 +1516,22 @@ func handleMobVsPlayer(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, 
 			mobRoom.SendText(fmt.Sprintf(tmpl, statMobName))
 		}
 	}
-	if roundResult.Hit {
-		combatSkill := string(mob.Character.GetCombatSkillTag())
-		mob.Character.OnSkillUse(combatSkill, 0)
-		if roundResult.Crit {
-			mob.Character.OnCriticalSuccess(combatSkill, 0)
+	for _, wh := range roundResult.WeaponHits {
+		if wh.Hit {
+			mob.Character.OnSkillUse(wh.SkillTag, 0)
+			if wh.Crit {
+				mob.Character.OnCriticalSuccess(wh.SkillTag, 0)
+			}
+		} else if wh.Fumble {
+			mob.Character.OnCriticalFailure(wh.SkillTag, 0)
 		}
-	} else if roundResult.Fumble {
-		combatSkill := string(mob.Character.GetCombatSkillTag())
-		mob.Character.OnCriticalFailure(combatSkill, 0)
 	}
+	if len(roundResult.WeaponHits) == 0 && roundResult.Hit {
+		mob.Character.OnSkillUse(string(skills.UnarmedCombat), 0)
+	}
+
+	// Defender progression — dodge/parry/block train specific skills
+	processDefenderProgression(defUser.Character, defUser.UserId, roundResult)
 
 	if mob.Character.Health <= 0 || defUser.Character.Health <= 0 {
 		defUser.Character.EndAggro()
@@ -1641,10 +1692,17 @@ func handleMobVsMob(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, aff
 	// Stage 38.3: Mob attacker progression (skip room messages for MvM)
 	mob.Character.OnStatUse("strength", 0)
 	mob.Character.OnStatUse("dexterity", 0)
-	if roundResult.Hit {
-		combatSkill := string(mob.Character.GetCombatSkillTag())
-		mob.Character.OnSkillUse(combatSkill, 0)
+	for _, wh := range roundResult.WeaponHits {
+		if wh.Hit {
+			mob.Character.OnSkillUse(wh.SkillTag, 0)
+		}
 	}
+	if len(roundResult.WeaponHits) == 0 && roundResult.Hit {
+		mob.Character.OnSkillUse(string(skills.UnarmedCombat), 0)
+	}
+
+	// Defender progression — dodge/parry/block train specific skills
+	processDefenderProgression(&defMob.Character, 0, roundResult)
 
 	if mob.Character.Health <= 0 || defMob.Character.Health <= 0 {
 		defMob.Character.EndAggro()

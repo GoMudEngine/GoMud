@@ -79,7 +79,16 @@ func (c *Character) CheckSkillProgression(skillName string, userId int, bonusMul
 		bonusMultiplier *= float64(b.MobProgressionRate)
 	}
 
-	virtualRank := c.GetSkillUseCount(skillName) / int(b.UsesPerRank)
+	// Normalize use count by the skill's progression multiplier so that
+	// frequently-fired skills (combat) don't exhaust the progression curve
+	// faster than infrequently-fired skills (utility). Without this,
+	// combat skills asymptote at ~15 progs vs ~100 for utility skills.
+	progressMult := skills.GetProgressionMultiplier(skillName)
+	adjustedUseCount := c.GetSkillUseCount(skillName)
+	if progressMult > 0 && progressMult < 1.0 {
+		adjustedUseCount = int(float64(adjustedUseCount) * progressMult)
+	}
+	virtualRank := adjustedUseCount / int(b.UsesPerRank)
 	// If the actual skill level exceeds the soft cap, use it as a floor for the virtual rank.
 	// This prevents characters with artificially high skills (e.g. admin accounts) from
 	// exploiting the low use-count portion of the progression curve.

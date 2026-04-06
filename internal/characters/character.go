@@ -2004,15 +2004,24 @@ func (c *Character) GetStatValue(statName string) int {
 // the character's equipped weapon type.
 func (c *Character) GetCombatSkillTag() skills.SkillTag {
 	if c.Equipment.Weapon.ItemId > 0 {
-		weaponSpec := c.Equipment.Weapon.GetSpec()
-		if weaponSpec.Subtype == items.Shooting {
-			return skills.RangedCombat
-		}
-		if weaponSpec.Subtype != items.Claws && weaponSpec.Subtype != items.Fist {
-			return skills.WeaponCombat
-		}
+		return CombatSkillTagForItem(c.Equipment.Weapon)
 	}
 	return skills.UnarmedCombat
+}
+
+// CombatSkillTagForItem returns the combat skill tag for a specific weapon item.
+func CombatSkillTagForItem(weapon items.Item) skills.SkillTag {
+	if weapon.ItemId == 0 {
+		return skills.UnarmedCombat
+	}
+	spec := weapon.GetSpec()
+	if spec.Subtype == items.Shooting {
+		return skills.RangedCombat
+	}
+	if spec.Subtype == items.Claws || spec.Subtype == items.Fist {
+		return skills.UnarmedCombat
+	}
+	return skills.WeaponCombat
 }
 
 // GetCombatSkillLevel returns an effective combat skill value for use in
