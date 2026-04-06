@@ -12,6 +12,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
@@ -25,21 +26,27 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return true, nil
 	}
 
-	// Check for "arm1" / "arm2" / "arm3" / "arm4" suffix for extra arm slot targeting
+	// Check for arm#N / N.arm suffix for arm slot targeting (arms 1-6).
+	// Also supports legacy "arm1" through "arm6" plain suffix.
 	targetArmSlot := 0
 	restLower := strings.ToLower(rest)
-	if strings.HasSuffix(restLower, " arm1") {
-		targetArmSlot = 1
-		rest = strings.TrimSpace(rest[:len(rest)-5])
-	} else if strings.HasSuffix(restLower, " arm2") {
-		targetArmSlot = 2
-		rest = strings.TrimSpace(rest[:len(rest)-5])
-	} else if strings.HasSuffix(restLower, " arm3") {
-		targetArmSlot = 3
-		rest = strings.TrimSpace(rest[:len(rest)-5])
-	} else if strings.HasSuffix(restLower, " arm4") {
-		targetArmSlot = 4
-		rest = strings.TrimSpace(rest[:len(rest)-5])
+	words := strings.Fields(restLower)
+	if len(words) >= 2 {
+		lastWord := words[len(words)-1]
+		armBase, armNum := util.GetMatchNumber(lastWord)
+		if armBase == "arm" && armNum >= 1 && armNum <= 6 {
+			targetArmSlot = armNum
+		} else if len(lastWord) == 4 && strings.HasPrefix(lastWord, "arm") {
+			// Legacy: "arm1" through "arm6" (no separator)
+			if n := lastWord[3] - '0'; n >= 1 && n <= 6 {
+				targetArmSlot = int(n)
+			}
+		}
+		if targetArmSlot > 0 {
+			// Strip the last word from rest
+			lastSpaceIdx := strings.LastIndex(rest, " ")
+			rest = strings.TrimSpace(rest[:lastSpaceIdx])
+		}
 	}
 
 	// Check whether the user has an item in their inventory that matches
@@ -57,49 +64,121 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			return true, nil
 		}
 
-		// Handle direct extra arm slot equip
+		// Handle direct arm slot equip (arms 1-6)
 		if targetArmSlot > 0 {
-			if iSpec.Type != items.Weapon {
-				user.SendText(`You can only wield weapons in extra arms.`)
+			// Only weapons and shields (offhand) can go in arm slots
+			if iSpec.Type != items.Weapon && iSpec.Type != items.Offhand {
+				user.SendText(`You can only wield weapons or shields in arm slots.`)
 				return true, nil
 			}
-			if user.Character.ExtraArms < targetArmSlot {
-				user.SendText(fmt.Sprintf(`You don't have enough extra arms for arm slot %d.`, targetArmSlot))
+			// Shields cannot go in arm 1 (primary weapon hand)
+			if iSpec.Type == items.Offhand && targetArmSlot == 1 {
+				user.SendText(`You can't put a shield in your primary weapon hand (arm 1).`)
 				return true, nil
 			}
+
+			// Validate the character has this arm
+			pairs := user.Character.GetHandPairs()
+			pairIdx := (targetArmSlot - 1) / 2
+			slotInPair := (targetArmSlot - 1) % 2
+
+			if pairIdx >= len(pairs) {
+				user.SendText(fmt.Sprintf(`You don't have arm %d.`, targetArmSlot))
+				return true, nil
+			}
+			pair := &pairs[pairIdx]
+
+			// Check if targeting the second slot of a half-pair
+			if slotInPair == 1 && pair.IsHalfPair() {
+				user.SendText(fmt.Sprintf(`You don't have arm %d.`, targetArmSlot))
+				return true, nil
+			}
+
 			handsReq := user.Character.HandsRequired(matchItem)
-			if handsReq > 1 {
-				user.SendText(`You can only wield one-handed weapons in extra arms.`)
+
+			// 2H weapons must go in odd-numbered arms (first slot of a pair)
+			if handsReq >= 2 {
+				if slotInPair != 0 {
+					user.SendText(`A two-handed weapon needs a pair of arms. Try arm 1, 3, or 5.`)
+					return true, nil
+				}
+				if pair.IsHalfPair() {
+					user.SendText(`That arm doesn't have a partner for a two-handed weapon.`)
+					return true, nil
+				}
+			}
+
+			// Determine which slots to displace
+			var displaced []items.Item
+			targetSlot := &pair.First
+			if slotInPair == 1 {
+				targetSlot = &pair.Second
+			}
+
+			// Check for cursed items before displacement
+			if !targetSlot.IsEmpty() && targetSlot.ItemPtr.IsCursed() {
+				user.SendText(fmt.Sprintf(`Your <ansi fg="item">%s</ansi> is cursed and can't be removed!`, targetSlot.ItemPtr.DisplayName()))
 				return true, nil
 			}
 
-			var oldItem items.Item
-			switch targetArmSlot {
-			case 1:
-				oldItem = user.Character.Equipment.ExtraArm1
-				user.Character.Equipment.ExtraArm1 = matchItem
-			case 2:
-				oldItem = user.Character.Equipment.ExtraArm2
-				user.Character.Equipment.ExtraArm2 = matchItem
-			case 3:
-				oldItem = user.Character.Equipment.ExtraArm3
-				user.Character.Equipment.ExtraArm3 = matchItem
-			case 4:
-				oldItem = user.Character.Equipment.ExtraArm4
-				user.Character.Equipment.ExtraArm4 = matchItem
+			// For 2H, also check/displace the second slot
+			if handsReq >= 2 {
+				if !pair.Second.IsEmpty() && pair.Second.ItemPtr.IsCursed() {
+					user.SendText(fmt.Sprintf(`Your <ansi fg="item">%s</ansi> is cursed and can't be removed!`, pair.Second.ItemPtr.DisplayName()))
+					return true, nil
+				}
+				// Also check if the first slot holds a 2H (its partner is implicitly occupied)
+				if !pair.First.IsEmpty() && pair.First.ItemPtr.IsCursed() {
+					user.SendText(fmt.Sprintf(`Your <ansi fg="item">%s</ansi> is cursed and can't be removed!`, pair.First.ItemPtr.DisplayName()))
+					return true, nil
+				}
 			}
 
+			// If the partner slot holds a 2H weapon, we need to displace it too
+			if slotInPair == 1 && pair.First.Is2H(user.Character) {
+				if pair.First.ItemPtr.IsCursed() {
+					user.SendText(fmt.Sprintf(`Your <ansi fg="item">%s</ansi> is cursed and can't be removed!`, pair.First.ItemPtr.DisplayName()))
+					return true, nil
+				}
+				displaced = append(displaced, *pair.First.ItemPtr)
+				*pair.First.ItemPtr = items.Item{}
+			}
+
+			// Displace current occupant(s)
+			if !targetSlot.IsEmpty() {
+				displaced = append(displaced, *targetSlot.ItemPtr)
+				*targetSlot.ItemPtr = items.Item{}
+			}
+			if handsReq >= 2 && !pair.Second.IsEmpty() {
+				displaced = append(displaced, *pair.Second.ItemPtr)
+				*pair.Second.ItemPtr = items.Item{}
+			}
+
+			// Place the new item
 			user.Character.CancelBuffsWithFlag(buffs.Hidden)
 			user.Character.RemoveItem(matchItem)
+			*targetSlot.ItemPtr = matchItem
 
-			if oldItem.ItemId > 0 {
-				user.SendText(fmt.Sprintf(`You remove your <ansi fg="item">%s</ansi> from extra arm %d and return it to your backpack.`, oldItem.DisplayName(), targetArmSlot))
-				user.Character.StoreItem(oldItem)
+			// Return displaced items to backpack
+			for _, old := range displaced {
+				if old.ItemId > 0 {
+					user.SendText(fmt.Sprintf(`You remove your <ansi fg="item">%s</ansi> and return it to your backpack.`, old.DisplayName()))
+					user.Character.StoreItem(old)
+				}
 			}
 
-			user.SendText(fmt.Sprintf(`You wield your <ansi fg="item">%s</ansi> in extra arm %d.`, matchItem.DisplayName(), targetArmSlot))
+			// Build wield/wear message
+			armLabel := pair.First.Label
+			if slotInPair == 1 {
+				armLabel = pair.Second.Label
+			}
+			if iSpec.Type == items.Offhand {
+				user.SendText(fmt.Sprintf(`You equip your <ansi fg="item">%s</ansi> in your %s.`, matchItem.DisplayName(), armLabel))
+			} else {
+				user.SendText(fmt.Sprintf(`You wield your <ansi fg="item">%s</ansi> in your %s.`, matchItem.DisplayName(), armLabel))
+			}
 			room.SendText(
-				fmt.Sprintf(`<ansi fg="username">%s</ansi> wields their <ansi fg="item">%s</ansi> in an extra arm.`, user.Character.Name, matchItem.DisplayName()),
+				fmt.Sprintf(`<ansi fg="username">%s</ansi> equips their <ansi fg="item">%s</ansi>.`, user.Character.Name, matchItem.DisplayName()),
 				user.UserId,
 			)
 
@@ -107,8 +186,19 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			events.AddToQueue(events.EquipmentChange{
 				UserId:       user.UserId,
 				ItemsWorn:    []items.Item{matchItem},
-				ItemsRemoved: []items.Item{oldItem},
+				ItemsRemoved: displaced,
 			})
+
+			// Trigger any outstanding buff onStart events
+			if len(iSpec.WornBuffIds) > 0 {
+				for _, buff := range user.Character.Buffs.List {
+					if buff.OnStartWaiting {
+						if _, err := scripting.TryBuffScriptEvent(`onStart`, user.UserId, 0, buff.BuffId); err == nil {
+							user.Character.TrackBuffStarted(buff.BuffId)
+						}
+					}
+				}
+			}
 
 			// Quest engine: command notification
 			bridge := questengine.NewGameBridge(user, room.RoomId)
