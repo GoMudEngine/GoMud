@@ -3,6 +3,7 @@ package combat
 import (
 	"fmt"
 	"math"
+	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
@@ -15,7 +16,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/statmods"
-	"strings"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
