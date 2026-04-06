@@ -11,6 +11,7 @@ type Corpse struct {
 	Character    characters.Character
 	RoundCreated uint64
 	Prunable     bool // Whether it can be removed
+	WasCharmed   bool // True if the mob was a charmed companion when it died
 }
 
 func (c *Corpse) Update(roundNow uint64, decayRate string) {

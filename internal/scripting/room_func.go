@@ -429,7 +429,7 @@ func (sc ScriptCorpse) GetStatTrainingTotal() int {
 // WasCompanion returns true if this corpse was a charmed/summoned companion
 // when it died. Companion corpses should not be raiseable.
 func (sc ScriptCorpse) WasCompanion() bool {
-	return sc.corpse.Character.IsCharmed()
+	return sc.corpse.WasCharmed
 }
 
 // Index returns the position of this corpse in the room's Corpses slice.
