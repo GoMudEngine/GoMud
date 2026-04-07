@@ -95,6 +95,8 @@ type Balance struct {
 	PhysicalMitigationCap      ConfigFloat `yaml:"PhysicalMitigationCap"`     // Max physical mitigation % (default 0.75)
 	MagicalMitigationCap       ConfigFloat `yaml:"MagicalMitigationCap"`      // Max magical mitigation % (default 0.75)
 	ConvictionMitigationCap    ConfigFloat `yaml:"ConvictionMitigationCap"`   // Max conviction mitigation % (default 0.75)
+	SpellAvoidanceDamageMultiplier    ConfigFloat `yaml:"SpellAvoidanceDamageMultiplier"`    // Damage multiplier on successful spell deflection (default 0.50)
+	RhetoricAvoidanceDamageMultiplier ConfigFloat `yaml:"RhetoricAvoidanceDamageMultiplier"` // Damage multiplier on successful stoic resolve (default 0.50)
 	ResourcePenaltyCurve       ConfigFloat `yaml:"ResourcePenaltyCurve"`     // Exponent for resource depletion penalty curve (default 2.0)
 	HealthPenaltyMax           ConfigFloat `yaml:"HealthPenaltyMax"`         // Max melee damage penalty at 0% HP (default 0.28)
 	StaminaPenaltyMax          ConfigFloat `yaml:"StaminaPenaltyMax"`        // Max attack count + hit rate penalty at 0% SP (default 0.28)
@@ -467,6 +469,12 @@ func (b *Balance) Validate() {
 	}
 	if b.ConvictionMitigationCap <= 0 || b.ConvictionMitigationCap > 1.0 {
 		b.ConvictionMitigationCap = 0.75
+	}
+	if b.SpellAvoidanceDamageMultiplier <= 0 || b.SpellAvoidanceDamageMultiplier > 1.0 {
+		b.SpellAvoidanceDamageMultiplier = 0.50
+	}
+	if b.RhetoricAvoidanceDamageMultiplier <= 0 || b.RhetoricAvoidanceDamageMultiplier > 1.0 {
+		b.RhetoricAvoidanceDamageMultiplier = 0.50
 	}
 	if b.ResourcePenaltyCurve <= 0 {
 		b.ResourcePenaltyCurve = 2.0

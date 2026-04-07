@@ -536,6 +536,11 @@ Balance:
   MagicalMitigationCap: 0.75
   ConvictionMitigationCap: 0.75
   #
+  # Avoidance damage multipliers: damage taken when successfully avoiding a spell or taunt.
+  # 0.50 = take 50% damage on successful avoidance (half damage).
+  SpellAvoidanceDamageMultiplier: 0.50     # Damage multiplier on successful spell deflection
+  RhetoricAvoidanceDamageMultiplier: 0.50  # Damage multiplier on successful stoic resolve
+  #
   # ── Resource Depletion Penalties ──
   # As HP/SP/CP drain, combat effectiveness gradually decreases.
   # Formula: mult = 1 - maxPenalty × (1 - ratio)^curve
