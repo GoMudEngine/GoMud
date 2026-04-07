@@ -970,6 +970,16 @@ func handlePlayerVsPlayer(user *users.UserRecord, uRoom *rooms.Room, evt events.
 
 	roundResult := combat.AttackPlayerVsPlayer(user, defUser)
 
+	// Conviction Surge buff: +15% damage bonus
+	if roundResult.Hit && roundResult.DamageToTarget > 0 && user.Character.HasBuffFlag(buffs.DamageBonus) {
+		bonusDmg := int(math.Round(float64(roundResult.DamageToTarget) * 0.15))
+		if bonusDmg < 1 {
+			bonusDmg = 1
+		}
+		defUser.Character.Health -= bonusDmg
+		roundResult.DamageToTarget += bonusDmg
+	}
+
 	// Stage 30.1: Record combat analytics
 	atkType := "unarmed"
 	if user.Character.Equipment.Weapon.ItemId > 0 {
@@ -1377,6 +1387,16 @@ func handleMobVsPlayer(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, 
 		}
 	}
 
+	// Conviction Surge buff: +15% damage bonus (mob attacker)
+	if roundResult.Hit && roundResult.DamageToTarget > 0 && mob.Character.HasBuffFlag(buffs.DamageBonus) {
+		bonusDmg := int(math.Round(float64(roundResult.DamageToTarget) * 0.15))
+		if bonusDmg < 1 {
+			bonusDmg = 1
+		}
+		defUser.Character.Health -= bonusDmg
+		roundResult.DamageToTarget += bonusDmg
+	}
+
 	// Stage 12.2: Adrenaline Surge
 	if roundResult.Hit && roundResult.DamageToTarget > 0 {
 		if mutations.IsAdrenalSurgeActive(mob.Character.Mutations, mob.Character.Health, mob.Character.HealthMax.Value) {
@@ -1573,6 +1593,16 @@ func handleMobVsMob(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, aff
 
 	var roundResult combat.AttackResult
 	roundResult = combat.AttackMobVsMob(mob, defMob)
+
+	// Conviction Surge buff: +15% damage bonus (mob attacker)
+	if roundResult.Hit && roundResult.DamageToTarget > 0 && mob.Character.HasBuffFlag(buffs.DamageBonus) {
+		bonusDmg := int(math.Round(float64(roundResult.DamageToTarget) * 0.15))
+		if bonusDmg < 1 {
+			bonusDmg = 1
+		}
+		defMob.Character.Health -= bonusDmg
+		roundResult.DamageToTarget += bonusDmg
+	}
 
 	// Stage 12.2: Adrenaline Surge
 	if roundResult.Hit && roundResult.DamageToTarget > 0 {

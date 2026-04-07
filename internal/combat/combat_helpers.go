@@ -104,6 +104,11 @@ func calcSwingCount(sourceChar *characters.Character, weaponSpeed float64, extra
 		swings *= (1.0 - encumbrancePenalty)
 	}
 
+	// Haste buff: significant attack speed boost
+	if sourceChar.HasBuffFlag(buffs.Haste) {
+		swings *= float64(bal.HasteSwingMultiplier)
+	}
+
 	// Position-based speed modifier
 	positionSpeed := sourceChar.CombatPosition.GetSpeedMultiplier()
 	swings *= positionSpeed

@@ -83,6 +83,7 @@ type Balance struct {
 	UnarmedBaseVariance        ConfigFloat `yaml:"UnarmedBaseVariance"`        // Base randomness of unarmed hits (default 3.0)
 	UnarmedDamageMultiplier    ConfigFloat `yaml:"UnarmedDamageMultiplier"`    // Fist damage multiplier for new pipeline (default 0.30)
 	UnarmedSpeedMultiplier     ConfigFloat `yaml:"UnarmedSpeedMultiplier"`     // Unarmed attack speed — slightly faster than light weapons (default 1.4)
+	HasteSwingMultiplier       ConfigFloat `yaml:"HasteSwingMultiplier"`       // Swing count multiplier when haste buff is active (default 1.50)
 	SkillMultiplierBase        ConfigFloat `yaml:"SkillMultiplierBase"`        // Skill multiplier at rank 0 (default 1.0)
 	SkillMultiplierMax         ConfigFloat `yaml:"SkillMultiplierMax"`         // Skill multiplier at soft cap (default 3.0)
 	SkillWeight                ConfigFloat `yaml:"SkillWeight"`                // Global multiplier on skill contributions in additive formulas (default 2.0)
@@ -430,6 +431,9 @@ func (b *Balance) Validate() {
 	}
 	if b.UnarmedSpeedMultiplier <= 0 {
 		b.UnarmedSpeedMultiplier = 1.8
+	}
+	if b.HasteSwingMultiplier <= 0 {
+		b.HasteSwingMultiplier = 1.50
 	}
 	if b.SkillMultiplierBase <= 0 {
 		b.SkillMultiplierBase = 1.0
