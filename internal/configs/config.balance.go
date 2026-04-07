@@ -215,6 +215,12 @@ type Balance struct {
 	MobMutationEnabled ConfigBool  `yaml:"MobMutationEnabled"` // Enable mob mutation acquisition in combat (default false)
 	MobMutationRate    ConfigFloat `yaml:"MobMutationRate"`    // Multiplier on mutation progress vs players (default 0.3)
 
+	// ── MOB AI ───────────────────────────────────────────────────────────────
+	CombatMemoryDuration ConfigInt   `yaml:"CombatMemoryDuration"` // Rounds before combat memory expires (default 300)
+	MobAIEnabled         ConfigBool  `yaml:"MobAIEnabled"`         // Global toggle for reactive AI system (default true)
+	MobReactionDelayMin  ConfigFloat `yaml:"MobReactionDelayMin"`  // Min reaction delay in seconds (default 0.25)
+	MobReactionDelayMax  ConfigFloat `yaml:"MobReactionDelayMax"`  // Max reaction delay in seconds (default 4.0)
+
 	// ── PACK SCALING ─────────────────────────────────────────────────────────
 	PackScalingEnabled   ConfigBool `yaml:"PackScalingEnabled"`   // Enable pack survival bonuses (default true)
 	PackSurvivalRounds   ConfigInt  `yaml:"PackSurvivalRounds"`   // Consecutive rounds together before bonus (default 10)
@@ -765,6 +771,20 @@ func (b *Balance) Validate() {
 	// ── MOB MUTATIONS ────────────────────────────────────────────────────────
 	if b.MobMutationRate <= 0 || b.MobMutationRate > 1.0 {
 		b.MobMutationRate = 0.3
+	}
+
+	// ── MOB AI ───────────────────────────────────────────────────────────────
+	if b.CombatMemoryDuration < 1 {
+		b.CombatMemoryDuration = 300
+	}
+	if !bool(b.MobAIEnabled) {
+		b.MobAIEnabled = true
+	}
+	if b.MobReactionDelayMin <= 0 {
+		b.MobReactionDelayMin = 0.25
+	}
+	if b.MobReactionDelayMax <= 0 {
+		b.MobReactionDelayMax = 4.0
 	}
 
 	// ── PACK SCALING ─────────────────────────────────────────────────────────

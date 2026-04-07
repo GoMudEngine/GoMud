@@ -822,6 +822,12 @@ Balance:
   MobMutationEnabled: true   # Mobs can acquire mutations through combat
   MobMutationRate: 0.3       # Mutation progress rate vs players (default 0.3)
 
+  # ── MOB AI ──────────────────────────────────────────────────────────────────
+  CombatMemoryDuration: 300       # Rounds before mob forgets combat target
+  MobAIEnabled: true              # Global toggle for reactive mob AI
+  MobReactionDelayMin: 0.25       # Minimum reaction delay (seconds)
+  MobReactionDelayMax: 4.0        # Maximum reaction delay (seconds)
+
   # ── GOSSIP SYSTEM ───────────────────────────────────────────────────────────
   GossipIntervalRounds: 75  # Rounds between gossip broadcasts for "gossiper" mobs (min 20)
 
