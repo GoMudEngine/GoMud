@@ -48,8 +48,9 @@ type AttackResult struct {
 	DefenseAttempts         []DefenseType // Sequence of defenses attempted (Stage 7.1)
 	DefenseZScore           float64      // Defense roll z-score (Stage 8.4)
 	AttackZScore            float64      // Attack roll z-score (Stage 8.4)
-	ParryCritDetected       bool         // Flag for parry crit (Stage 8.4)
-	DodgeCritDetected       bool         // Flag for dodge crit (Stage 8.4)
+	ParryCritDetected       bool         // Flag for parry crit → riposte
+	DodgeCritDetected       bool         // Flag for dodge crit → auto-trip
+	BlockCritDetected       bool         // Flag for block crit → auto-bash
 	SwingEvents             []SwingEvent    // Per-swing analytics (Stage 30.2)
 	WeaponHits              []WeaponHitInfo // Per-weapon hit tracking for skill progression
 	DefenderWasAttacked     bool            // True if any swing was attempted against defender

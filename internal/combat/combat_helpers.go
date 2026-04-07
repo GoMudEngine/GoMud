@@ -708,12 +708,15 @@ func resolveDefenseOutcome(result *AttackResult, best bestDefenseResult, sourceC
 	return res
 }
 
-// setDefenseCritFlags marks parry/dodge crit flags on the result.
+// setDefenseCritFlags marks parry/dodge/block crit flags on the result.
 func setDefenseCritFlags(result *AttackResult, best bestDefenseResult) {
-	if best.defenseType == characters.DefenseParry {
+	switch best.defenseType {
+	case characters.DefenseParry:
 		result.ParryCritDetected = true
-	} else if best.defenseType == characters.DefenseDodge {
+	case characters.DefenseDodge:
 		result.DodgeCritDetected = true
+	case characters.DefenseBlock:
+		result.BlockCritDetected = true
 	}
 }
 

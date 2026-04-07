@@ -48,12 +48,13 @@ func AttemptCritDisarm(source *characters.Character, target *characters.Characte
 
 	// Generate messages
 	weaponName := result.Weapon.NameSimple()
-	result.Message = fmt.Sprintf(`<ansi fg="yellow-bold">You disarm %s, knocking their %s to the ground!</ansi>`, target.Name, weaponName)
-	result.TargetMsg = fmt.Sprintf(`<ansi fg="red-bold">%s disarms you! Your %s falls to the ground!</ansi>`, source.Name, weaponName)
-	result.RoomMessage = fmt.Sprintf(`<ansi fg="combat">%s disarms %s, knocking their %s to the ground!</ansi>`, source.Name, target.Name, weaponName)
+	result.Message = fmt.Sprintf(`<ansi fg="yellow-bold">You disarm %s, loosening their grip on their %s!</ansi>`, target.Name, weaponName)
+	result.TargetMsg = fmt.Sprintf(`<ansi fg="red-bold">%s disarms you! Your %s slips from your grasp!</ansi>`, source.Name, weaponName)
+	result.RoomMessage = fmt.Sprintf(`<ansi fg="combat">%s disarms %s, knocking their %s loose!</ansi>`, source.Name, target.Name, weaponName)
 
-	// Remove weapon from target
+	// Remove weapon from equipped and put in inventory
 	target.RemoveFromBody(result.Weapon)
+	target.StoreItem(result.Weapon)
 
 	return result
 }

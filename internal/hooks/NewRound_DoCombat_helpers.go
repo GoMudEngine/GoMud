@@ -536,33 +536,24 @@ func handlePlayerFlee(user *users.UserRecord, uRoom *rooms.Room, userId int) boo
 
 // dispatchCritEffectsPvP routes crit effect messages for PvP combat.
 func dispatchCritEffectsPvP(result CritEffectResult, atkUser *users.UserRecord, defUser *users.UserRecord, uRoom *rooms.Room) {
-	if result.Disarmed {
-		defUser.SendText(result.DisarmItem.Message)
-		atkUser.SendText(result.DisarmItem.TargetMsg)
-		uRoom.SendText(result.DisarmItem.RoomMessage, atkUser.UserId, defUser.UserId)
+	if result.DefenderMsg != "" {
+		defUser.SendText(result.DefenderMsg)
 	}
-	if result.GrappleSet {
-		defUser.SendText(fmt.Sprintf(
-			`<ansi fg="yellow">You slip inside %s's guard! [Grapple opportunity]</ansi>`,
-			atkUser.Character.Name))
-		uRoom.SendText(fmt.Sprintf(
-			`<ansi fg="combat">%s slips inside %s's guard!</ansi>`,
-			defUser.Character.Name, atkUser.Character.Name),
-			atkUser.UserId, defUser.UserId)
+	if result.AttackerMsg != "" {
+		atkUser.SendText(result.AttackerMsg)
+	}
+	if result.RoomMsg != "" {
+		uRoom.SendText(result.RoomMsg, atkUser.UserId, defUser.UserId)
 	}
 }
 
 // dispatchCritEffectsPvM routes crit effect messages for PvM combat (player attacking mob).
 func dispatchCritEffectsPvM(result CritEffectResult, atkUser *users.UserRecord, defMob *mobs.Mob, uRoom *rooms.Room) {
-	if result.Disarmed {
-		atkUser.SendText(result.DisarmItem.TargetMsg)
-		uRoom.SendText(result.DisarmItem.RoomMessage, atkUser.UserId)
+	if result.AttackerMsg != "" {
+		atkUser.SendText(result.AttackerMsg)
 	}
-	if result.GrappleSet {
-		uRoom.SendText(fmt.Sprintf(
-			`<ansi fg="combat"><ansi fg="mobname">%s</ansi> slips inside %s's guard!</ansi>`,
-			defMob.Character.Name, atkUser.Character.Name),
-			atkUser.UserId)
+	if result.RoomMsg != "" {
+		uRoom.SendText(result.RoomMsg, atkUser.UserId)
 	}
 }
 
@@ -1446,19 +1437,11 @@ func handleMobVsPlayer(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, 
 
 	// Crit effects (player defending)
 	mvpCritResult := applyCritEffects(&mob.Character, defUser.Character, roundResult, mobRoom)
-	if mvpCritResult.Disarmed {
-		defUser.SendText(mvpCritResult.DisarmItem.Message)
-		mobRoom.SendText(mvpCritResult.DisarmItem.RoomMessage, defUser.UserId)
+	if mvpCritResult.DefenderMsg != "" {
+		defUser.SendText(mvpCritResult.DefenderMsg)
 	}
-	if mvpCritResult.GrappleSet {
-		mvpMobName := mobDisplayName(mob, mobRoom, defUser.UserId)
-		defUser.SendText(fmt.Sprintf(
-			`<ansi fg="yellow">You slip inside %s's guard! [Grapple opportunity]</ansi>`,
-			mob.Character.Name))
-		mobRoom.SendText(fmt.Sprintf(
-			`<ansi fg="combat">%s slips inside %s's guard!</ansi>`,
-			defUser.Character.Name, mvpMobName),
-			defUser.UserId)
+	if mvpCritResult.RoomMsg != "" {
+		mobRoom.SendText(mvpCritResult.RoomMsg, defUser.UserId)
 	}
 
 	// Charmed mob assist

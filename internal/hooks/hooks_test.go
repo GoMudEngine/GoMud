@@ -470,8 +470,9 @@ func TestWeaponBreakResult_ZeroValue(t *testing.T) {
 
 func TestCritEffectResult_ZeroValue(t *testing.T) {
 	result := CritEffectResult{}
-	assert.False(t, result.Disarmed)
-	assert.False(t, result.GrappleSet)
+	assert.False(t, result.Riposte)
+	assert.False(t, result.AutoTrip)
+	assert.False(t, result.AutoBash)
 }
 
 // ─── CheckNewDay ──────────────────────────────────────────────────────────────
@@ -1033,8 +1034,9 @@ func TestApplyCritEffects_NoCrit(t *testing.T) {
 
 	ar := dummyAttackResult(true, false)
 	result := applyCritEffects(atk, def, ar, room)
-	assert.False(t, result.Disarmed)
-	assert.False(t, result.GrappleSet)
+	assert.False(t, result.Riposte)
+	assert.False(t, result.AutoTrip)
+	assert.False(t, result.AutoBash)
 }
 
 func TestApplyCritEffects_DodgeCritSetsGrapple(t *testing.T) {
@@ -1051,7 +1053,7 @@ func TestApplyCritEffects_DodgeCritSetsGrapple(t *testing.T) {
 	ar.DodgeCritDetected = true
 
 	result := applyCritEffects(atk, def, ar, room)
-	assert.True(t, result.GrappleSet, "dodge crit should set grapple opportunity")
+	assert.True(t, result.AutoTrip, "dodge crit should trigger auto-trip")
 }
 
 // ─── RegisterListeners ────────────────────────────────────────────────────────
@@ -1907,30 +1909,33 @@ func TestDispatchCritEffectsPvP_NoCrit(t *testing.T) {
 	// no panic
 }
 
-func TestDispatchCritEffectsPvP_Disarmed(t *testing.T) {
+func TestDispatchCritEffectsPvP_Riposte(t *testing.T) {
 	cleanup := seedAllRegistries()
 	defer cleanup()
 	u1 := users.GetByUserId(1)
 	u2 := users.GetByUserId(2)
 	room := rooms.LoadRoom(1)
 	result := CritEffectResult{
-		Disarmed: true,
-		DisarmItem: combat.DisarmResult{
-			Message:     "You are disarmed!",
-			TargetMsg:   "You disarm them!",
-			RoomMessage: "A disarm happens!",
-		},
+		Riposte:     true,
+		DefenderMsg: "You riposte!",
+		AttackerMsg: "They riposte!",
+		RoomMsg:     "A riposte!",
 	}
 	dispatchCritEffectsPvP(result, u1, u2, room)
 }
 
-func TestDispatchCritEffectsPvP_Grapple(t *testing.T) {
+func TestDispatchCritEffectsPvP_AutoTrip(t *testing.T) {
 	cleanup := seedAllRegistries()
 	defer cleanup()
 	u1 := users.GetByUserId(1)
 	u2 := users.GetByUserId(2)
 	room := rooms.LoadRoom(1)
-	result := CritEffectResult{GrappleSet: true}
+	result := CritEffectResult{
+		AutoTrip:    true,
+		DefenderMsg: "You sweep!",
+		AttackerMsg: "Swept!",
+		RoomMsg:     "A sweep!",
+	}
 	dispatchCritEffectsPvP(result, u1, u2, room)
 }
 
@@ -1946,30 +1951,31 @@ func TestDispatchCritEffectsPvM_NoCrit(t *testing.T) {
 	dispatchCritEffectsPvM(result, u1, mob, room)
 }
 
-func TestDispatchCritEffectsPvM_Disarmed(t *testing.T) {
+func TestDispatchCritEffectsPvM_Riposte(t *testing.T) {
 	cleanup := seedAllRegistries()
 	defer cleanup()
 	u1 := users.GetByUserId(1)
 	mob := mobs.GetInstance(100)
 	room := rooms.LoadRoom(1)
 	result := CritEffectResult{
-		Disarmed: true,
-		DisarmItem: combat.DisarmResult{
-			Message:     "Disarmed!",
-			TargetMsg:   "You disarm!",
-			RoomMessage: "Room disarm!",
-		},
+		Riposte:     true,
+		AttackerMsg: "You get riposted!",
+		RoomMsg:     "Room riposte!",
 	}
 	dispatchCritEffectsPvM(result, u1, mob, room)
 }
 
-func TestDispatchCritEffectsPvM_Grapple(t *testing.T) {
+func TestDispatchCritEffectsPvM_AutoBash(t *testing.T) {
 	cleanup := seedAllRegistries()
 	defer cleanup()
 	u1 := users.GetByUserId(1)
 	mob := mobs.GetInstance(100)
 	room := rooms.LoadRoom(1)
-	result := CritEffectResult{GrappleSet: true}
+	result := CritEffectResult{
+		AutoBash:    true,
+		AttackerMsg: "Shield slammed!",
+		RoomMsg:     "A shield slam!",
+	}
 	dispatchCritEffectsPvM(result, u1, mob, room)
 }
 
