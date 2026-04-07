@@ -184,7 +184,35 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 							math.Pow(float64(mb.MutationProgressScale), load)
 						if user.Character.MutationProgress >= threshold {
 							user.Character.MutationProgress = 0
-							if canAcquire {
+							// Decide: deepen existing mutation or acquire new one
+							doDeepen := false
+							if canAcquire && canDeepen {
+								// Both possible — coin flip weighted toward deepening
+								if util.Rand(100) < int(mb.MutationDeepenChance*100) {
+									doDeepen = true
+								}
+							} else if canDeepen && !canAcquire {
+								// At max count — must deepen
+								doDeepen = true
+							}
+							// else: canAcquire && !canDeepen — acquire new (doDeepen stays false)
+
+							if doDeepen {
+								mutId := mutations.RollDeepening(user.Character.Mutations)
+								if mutId != "" {
+									user.Character.Mutations[mutId]++
+									newLevel := user.Character.Mutations[mutId]
+									if spec := mutations.GetMutation(mutId); spec != nil {
+										levelTag := fmt.Sprintf("Level %d", newLevel)
+										if newLevel >= int(mb.MutationMaxLevel) {
+											levelTag = "fully matured"
+										}
+										user.SendText(fmt.Sprintf(
+											`<ansi fg="magenta">The Chrysalis deepens its hold. Your <ansi fg="yellow">%s</ansi> grows stronger (%s).</ansi>`,
+											spec.Name, levelTag))
+									}
+								}
+							} else if canAcquire {
 								pool := mutations.GetWeightedPool(user.Character.Mutations)
 								if len(pool) > 0 {
 									mutId := mutations.RollAcquisition(pool)
@@ -218,21 +246,6 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 											Description: fmt.Sprintf("%s has undergone a mutation: %s.",
 												user.Character.Name, spec.Name),
 										})
-									}
-								}
-							} else if canDeepen {
-								mutId := mutations.RollDeepening(user.Character.Mutations)
-								if mutId != "" {
-									user.Character.Mutations[mutId]++
-									newLevel := user.Character.Mutations[mutId]
-									if spec := mutations.GetMutation(mutId); spec != nil {
-										levelTag := fmt.Sprintf("Level %d", newLevel)
-										if newLevel >= int(mb.MutationMaxLevel) {
-											levelTag = "fully matured"
-										}
-										user.SendText(fmt.Sprintf(
-											`<ansi fg="magenta">The Chrysalis deepens its hold. Your <ansi fg="yellow">%s</ansi> grows stronger (%s).</ansi>`,
-											spec.Name, levelTag))
 									}
 								}
 							}
