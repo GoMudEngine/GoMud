@@ -66,11 +66,36 @@
 - **Manifestation multiplier**: bumped from 0.3 to 0.5, matching
   spellcasting progression rate.
 
+### Unarmed Combat Rework
+- **Both hands attack**: every empty hand is a fist. Bare-handed
+  fighters get 2 fist attacks. With extra arms mutation, up to 6.
+- **Mixed setups**: sword in one hand + empty offhand? The free
+  hand still punches. Works with all arm slots.
+- **Fist/claws weapons**: train unarmed-combat skill, not weapon.
+- **No parry**: unarmed-style fighters (fists, claws, bare hands)
+  can only dodge. You can't deflect a blade with your knuckles.
+- **Speed bonus**: unarmed attack speed increased (1.4 → 1.8) to
+  compensate for dodge-only defense.
+- **No dual-wield penalty**: natural weapons fight penalty-free.
+
+### Defense Crit Rework
+- **Parry crit → RIPOSTE**: free counter-attack at half weapon
+  damage. Replaces the old disarm-on-parry mechanic.
+- **Dodge crit → SWEEP**: automatic trip attempt that ignores
+  the special move cooldown. Can knock the attacker prone.
+- **Block crit → SHIELD SLAM**: automatic bash attempt that
+  ignores the special move cooldown. Can knock them down.
+- All three use distinctive cyan-bold messages to stand out in
+  the combat scroll.
+- **Disarm reworked**: disarmed weapons now go to inventory
+  instead of dropping on the ground (grapple disarm still exists).
+
 ### Balance
 - Assess command now has a 6-round cooldown.
 - Companion corpses can no longer be re-raised.
 - Healing potion durations halved.
 - Equipped items now encumber 50% less.
+- Shop restock rate tripled (6 hours → 2 hours).
 
 ### Bug Fixes
 - **Aggro cleanup on mob flee**: players no longer get stuck

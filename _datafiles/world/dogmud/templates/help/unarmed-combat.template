@@ -1,13 +1,42 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">unarmed-combat</ansi> skill
 
-The <ansi fg="skill">unarmed-combat</ansi> skill governs fighting without
-weapons — fists, kicks, grapples, and special unarmed moves.
-Higher ranks improve your hit chance, unarmed damage, and the
-power of kick, trip, and grapple maneuvers.
+The <ansi fg="skill">unarmed-combat</ansi> skill governs fighting with
+fists, claws, and bare hands.
 
-Unarmed-combat improves through use. Fighting without a weapon
-and using special moves like <ansi fg="command">kick</ansi>,
-<ansi fg="command">trip</ansi>, and <ansi fg="command">grapple</ansi>
-all advance this skill.
+<ansi fg="yellow">━━━ Attacks ━━━</ansi>
 
-<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help kick</ansi>, <ansi fg="command">help trip</ansi>, <ansi fg="command">help grapple</ansi>
+  - <ansi fg="stat">Both Hands:</ansi> Every empty hand attacks as a fist.
+    Two arms = two fists. Six arms = six fists.
+  - <ansi fg="stat">Fist/Claws Weapons:</ansi> These train unarmed-combat,
+    not weapon-combat. Empty offhand still punches.
+  - <ansi fg="stat">Mixed Setup:</ansi> Sword in one hand, empty offhand?
+    The free hand punches too.
+  - <ansi fg="stat">No Dual-Wield Penalty:</ansi> Fists, claws, and bare
+    hands fight naturally with no accuracy loss.
+
+<ansi fg="yellow">━━━ Speed ━━━</ansi>
+
+Unarmed fighters are faster than armed ones. The speed bonus
+compensates for having dodge as the only defense.
+
+<ansi fg="yellow">━━━ Defense ━━━</ansi>
+
+Unarmed-style fighters (bare hands, fists, claws) can only
+<ansi fg="stat">dodge</ansi>. You cannot parry without a weapon or block
+without a shield.
+
+Dodging trains <ansi fg="skill">unarmed-combat</ansi> and
+<ansi fg="stat">dexterity</ansi>.
+
+<ansi fg="yellow">━━━ Progression ━━━</ansi>
+
+This skill improves through use:
+  - Landing hits with fists or claws
+  - Using <ansi fg="command">kick</ansi>, <ansi fg="command">trip</ansi>,
+    and <ansi fg="command">grapple</ansi>
+  - Dodging attacks
+  - Each arm that hits progresses the skill independently
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help combat</ansi>,
+  <ansi fg="command">help kick</ansi>, <ansi fg="command">help trip</ansi>,
+  <ansi fg="command">help grapple</ansi>
