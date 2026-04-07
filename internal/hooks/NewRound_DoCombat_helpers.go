@@ -12,6 +12,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/mobai"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
@@ -706,6 +707,20 @@ func dispatchCombatMessages(roundResult combat.AttackResult, atkUser *users.User
 func handleMobAIDecision(mob *mobs.Mob, c configs.Config) bool {
 	if mob.Character.Aggro.Type != characters.DefaultAttack {
 		return false
+	}
+
+	// If mob has reactive AI tactics and recently reacted, skip legacy AI
+	if len(mobai.ResolveTactics(mob.TacticPreset, mob.Tactics)) > 0 {
+		bal := configs.GetBalanceConfig()
+		delay := mobai.GetEffectiveReactionDelay(
+			mob.ReactionDelay,
+			float64(bal.MobReactionDelayMin),
+			float64(bal.MobReactionDelayMax),
+		)
+		cooldownTurns := uint64(delay * float64(configs.GetTimingConfig().TurnsPerSecond()))
+		if util.GetTurnCount()-mob.GetLastReactionTurn() < cooldownTurns*2 {
+			return true // Reactive AI is handling this mob
+		}
 	}
 
 	// Stage 11.5: Caster AI decision - try spell first, then special move
