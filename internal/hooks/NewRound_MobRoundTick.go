@@ -136,47 +136,17 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 					math.Pow(float64(mb.MutationProgressScale), load)
 				if mob.Character.MutationProgress >= threshold {
 					mob.Character.MutationProgress = 0
-					if canAcquire {
-						var specDisabledSlots []string
-						if specInfo := species.GetSpecies(mob.Character.SpeciesId); specInfo != nil {
-							specDisabledSlots = specInfo.DisabledSlots
+					// Decide: deepen existing mutation or acquire new one
+					doDeepen := false
+					if canAcquire && canDeepen {
+						if util.Rand(100) < int(mb.MutationDeepenChance*100) {
+							doDeepen = true
 						}
-						pool := mutations.GetWeightedPool(mob.Character.Mutations, specDisabledSlots)
-						if mutId := mutations.RollAcquisition(pool); mutId != "" {
-							if mob.Character.Mutations == nil {
-								mob.Character.Mutations = make(map[string]int)
-							}
-							mob.Character.Mutations[mutId] = 1
-							if spec := mutations.GetMutation(mutId); spec != nil {
-								if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
-									room.SendText(fmt.Sprintf(
-										`<ansi fg="magenta">Something shifts in <ansi fg="mobname">%s</ansi>. %s</ansi>`,
-										mob.Character.Name, spec.Visual))
-								}
-								// Emit world event with significance based on rarity
-								sig := worldevents.Local
-								if spec.Rarity >= 8 {
-									sig = worldevents.Global
-								} else if spec.Rarity >= 5 {
-									sig = worldevents.Regional
-								}
-								zone := mob.Character.Zone
-								region := ""
-								if zCfg := rooms.GetZoneConfig(zone); zCfg != nil {
-									region = zCfg.Region
-								}
-								worldevents.EmitWorldEvent(worldevents.WorldEvent{
-									Type:         worldevents.MobMutationGained,
-									Significance: sig,
-									ZoneName:     zone,
-									RegionName:   region,
-									MobName:      mob.Character.Name,
-									Description: fmt.Sprintf("%s has manifested a mutation: %s",
-										mob.Character.Name, spec.Name),
-								})
-							}
-						}
-					} else if canDeepen {
+					} else if canDeepen && !canAcquire {
+						doDeepen = true
+					}
+
+					if doDeepen {
 						if mutId := mutations.RollDeepening(mob.Character.Mutations); mutId != "" {
 							mob.Character.Mutations[mutId]++
 							newLevel := mob.Character.Mutations[mutId]
@@ -186,7 +156,6 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 										`<ansi fg="magenta">The mutation in <ansi fg="mobname">%s</ansi> intensifies.</ansi>`,
 										mob.Character.Name))
 								}
-								// Deepening significance: bump one tier if level 3
 								sig := worldevents.Local
 								if spec.Rarity >= 5 {
 									sig = worldevents.Regional
@@ -209,6 +178,45 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 									MobName:      mob.Character.Name,
 									Description: fmt.Sprintf("%s's %s deepens to level %d",
 										mob.Character.Name, spec.Name, newLevel),
+								})
+							}
+						}
+					} else if canAcquire {
+						var specDisabledSlots []string
+						if specInfo := species.GetSpecies(mob.Character.SpeciesId); specInfo != nil {
+							specDisabledSlots = specInfo.DisabledSlots
+						}
+						pool := mutations.GetWeightedPool(mob.Character.Mutations, specDisabledSlots)
+						if mutId := mutations.RollAcquisition(pool); mutId != "" {
+							if mob.Character.Mutations == nil {
+								mob.Character.Mutations = make(map[string]int)
+							}
+							mob.Character.Mutations[mutId] = 1
+							if spec := mutations.GetMutation(mutId); spec != nil {
+								if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
+									room.SendText(fmt.Sprintf(
+										`<ansi fg="magenta">Something shifts in <ansi fg="mobname">%s</ansi>. %s</ansi>`,
+										mob.Character.Name, spec.Visual))
+								}
+								sig := worldevents.Local
+								if spec.Rarity >= 8 {
+									sig = worldevents.Global
+								} else if spec.Rarity >= 5 {
+									sig = worldevents.Regional
+								}
+								zone := mob.Character.Zone
+								region := ""
+								if zCfg := rooms.GetZoneConfig(zone); zCfg != nil {
+									region = zCfg.Region
+								}
+								worldevents.EmitWorldEvent(worldevents.WorldEvent{
+									Type:         worldevents.MobMutationGained,
+									Significance: sig,
+									ZoneName:     zone,
+									RegionName:   region,
+									MobName:      mob.Character.Name,
+									Description: fmt.Sprintf("%s has manifested a mutation: %s",
+										mob.Character.Name, spec.Name),
 								})
 							}
 						}
