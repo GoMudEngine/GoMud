@@ -149,11 +149,21 @@ func collectAttackWeapons(sourceChar *characters.Character) []items.Item {
 		attackWeapons = append(attackWeapons, sourceChar.Equipment.ExtraArm4)
 	}
 
-	// Put an empty weapon, so basically hands.
+	// Unarmed: no weapons at all → both fists
 	if len(attackWeapons) == 0 {
-		attackWeapons = append(attackWeapons, items.Item{
-			ItemId: 0,
-		})
+		attackWeapons = append(attackWeapons, items.Item{ItemId: 0})
+		attackWeapons = append(attackWeapons, items.Item{ItemId: 0})
+		return attackWeapons
+	}
+
+	// If main hand is fist/claws and offhand is empty (no shield, no weapon),
+	// add a bare-fist offhand so the other hand still punches.
+	if len(attackWeapons) == 1 && attackWeapons[0].ItemId > 0 {
+		spec := attackWeapons[0].GetSpec()
+		if (spec.Subtype == items.Fist || spec.Subtype == items.Claws) &&
+			sourceChar.Equipment.Offhand.ItemId == 0 {
+			attackWeapons = append(attackWeapons, items.Item{ItemId: 0})
+		}
 	}
 
 	return attackWeapons
@@ -168,8 +178,12 @@ func calcDualWieldPenalty(sourceChar *characters.Character, weapIdx, totalWeaps 
 	dualWieldLevel := sourceChar.GetSkillLevel(skills.WeaponCombat)
 
 	penalty := 0
-	// Natural weapons (claws) ignore penalty
-	if sourceChar.Equipment.Weapon.GetSpec().Subtype == items.Claws && sourceChar.Equipment.Offhand.GetSpec().Subtype == items.Claws {
+	// Natural weapons (claws, fists, bare hands) ignore dual-wield penalty
+	mainSub := sourceChar.Equipment.Weapon.GetSpec().Subtype
+	offSub := sourceChar.Equipment.Offhand.GetSpec().Subtype
+	mainIsNatural := mainSub == items.Claws || mainSub == items.Fist || sourceChar.Equipment.Weapon.ItemId == 0
+	offIsNatural := offSub == items.Claws || offSub == items.Fist || sourceChar.Equipment.Offhand.ItemId == 0
+	if mainIsNatural && offIsNatural {
 		penalty = 0
 	} else {
 		penaltyReduction := float64(dualWieldLevel) / 50.0
