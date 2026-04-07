@@ -81,7 +81,7 @@ type playerSkillJSON struct {
 	Rank               int     `json:"rank"`
 	Tier               string  `json:"tier"`
 	UseCount           int     `json:"use_count"`
-	VirtualRank        int     `json:"virtual_rank"`
+	VirtualRank        float64 `json:"virtual_rank"`
 	ProgressionChance  float64 `json:"progression_chance"`
 }
 
@@ -187,9 +187,9 @@ func collectPlayers() []*users.UserRecord {
 		all = append(all, u)
 	}
 
-	// Recent offline users from disk (last 90 days)
+	// Recent offline users from disk (last 14 days)
 	userDir := util.FilePath(string(configs.GetFilePathsConfig().DataFiles), "/", "users")
-	for _, u := range loadRecentUserFiles(userDir, 90) {
+	for _, u := range loadRecentUserFiles(userDir, 14) {
 		if seen[u.UserId] {
 			continue
 		}
@@ -217,36 +217,27 @@ func calcExpectedRank(useCount int, mult float64, bal configs.Balance) float64 {
 }
 
 // calcHealthScore combines deviation, stall, and clustering metrics into a
-// 0–100 health score for a skill.
+// 0.0–1.0 health score for a skill. Spec formula:
+//
+//	curve  = 1.0 - clamp(|avg_deviation| / soft_cap, 0, 1)
+//	stall  = 1.0 - (stall_count / total_with_uses)
+//	cluster = 1.0 - clustering_score
+//	health = (curve + stall + cluster) / 3.0
 func calcHealthScore(avgDeviation float64, stallCount, totalWithUses int, clusteringScore float64, softCap int) float64 {
 	if totalWithUses == 0 {
-		return 0
+		return 1.0 // no data, no problem
 	}
-	// Deviation penalty: ideal deviation ratio is ≈0 (everyone progressing evenly)
-	devRatio := clamp(avgDeviation/float64(softCap), 0, 1)
-	devScore := 1.0 - devRatio
+	curveScore := 1.0 - clamp(math.Abs(avgDeviation)/float64(softCap), 0, 1)
+	stallScore := 1.0 - float64(stallCount)/float64(totalWithUses)
+	clusterScore := 1.0 - clusteringScore
 
-	// Stall penalty: fraction of active players who appear stalled
-	stallRatio := clamp(float64(stallCount)/float64(totalWithUses), 0, 1)
-	stallScore := 1.0 - stallRatio
-
-	// Clustering bonus/penalty (0=perfectly even, 1=all at same rank)
-	clusterPenalty := clamp(clusteringScore, 0, 1) * 0.2
-
-	raw := (devScore*0.5 + stallScore*0.5) - clusterPenalty
-	return clamp(raw, 0, 1) * 100
+	return (curveScore + stallScore + clusterScore) / 3.0
 }
 
 // buildSkillHealth aggregates per-skill health metrics across all players.
 func buildSkillHealth(playerList []*users.UserRecord) map[string]skillHealthJSON {
 	bal := configs.GetBalanceConfig()
 	softCap := int(bal.SkillSoftCap)
-
-	type perPlayerEntry struct {
-		name       string
-		rank       int
-		virtualRank float64
-	}
 
 	allSkillTags := skills.GetAllSkillNames()
 	result := make(map[string]skillHealthJSON, len(allSkillTags))
@@ -256,14 +247,10 @@ func buildSkillHealth(playerList []*users.UserRecord) map[string]skillHealthJSON
 		mult := skills.GetProgressionMultiplier(skillName)
 
 		distribution := map[string]int{
-			"0":      0,
-			"1-10":   0,
-			"11-25":  0,
-			"26-50":  0,
-			"50+":    0,
+			"novice": 0, "apprentice": 0, "journeyman": 0,
+			"adept": 0, "expert": 0, "master": 0,
 		}
 
-		var entries []perPlayerEntry
 		totalWithUses := 0
 		stallCount := 0
 		worstPlayer := ""
@@ -280,19 +267,9 @@ func buildSkillHealth(playerList []*users.UserRecord) map[string]skillHealthJSON
 			}
 			useCount := u.Character.GetSkillUseCount(skillName)
 
-			// Distribution buckets
-			switch {
-			case rank == 0:
-				distribution["0"]++
-			case rank <= 10:
-				distribution["1-10"]++
-			case rank <= 25:
-				distribution["11-25"]++
-			case rank <= 50:
-				distribution["26-50"]++
-			default:
-				distribution["50+"]++
-			}
+			// Distribution by tier name
+			tier := skills.GetSkillRankDescription(rank)
+			distribution[tier]++
 
 			if useCount == 0 {
 				continue
@@ -300,24 +277,27 @@ func buildSkillHealth(playerList []*users.UserRecord) map[string]skillHealthJSON
 			totalWithUses++
 
 			expected := calcExpectedRank(useCount, mult, bal)
-			deviation := math.Abs(float64(rank) - expected)
+			deviation := float64(rank) - expected
 			deviationSum += deviation
 
-			if deviation > worstDeviation {
+			if deviation < worstDeviation || worstPlayer == "" {
 				worstDeviation = deviation
 				worstPlayer = u.Character.Name
 			}
 
-			// Stall detection: rank hasn't moved but has significant use count
-			if rank < 2 && useCount > int(bal.UsesPerRank)*3 {
-				stallCount++
+			// Stall detection: uses since last gain vs expected uses for next
+			approxUsesAtRank := float64(rank) * float64(bal.UsesPerRank) / mult
+			usesSinceGain := float64(useCount) - approxUsesAtRank
+			if usesSinceGain < 0 {
+				usesSinceGain = 0
 			}
-
-			entries = append(entries, perPlayerEntry{
-				name:        u.Character.Name,
-				rank:        rank,
-				virtualRank: expected,
-			})
+			chanceAtRank := characters.CalculateProgressionChance(rank, softCap)
+			if chanceAtRank > 0 {
+				expectedUsesForNext := 1.0 / chanceAtRank
+				if expectedUsesForNext > 0 && usesSinceGain/expectedUsesForNext > 2.0 {
+					stallCount++
+				}
+			}
 		}
 
 		avgDeviation := 0.0
@@ -325,25 +305,16 @@ func buildSkillHealth(playerList []*users.UserRecord) map[string]skillHealthJSON
 			avgDeviation = deviationSum / float64(totalWithUses)
 		}
 
-		// Clustering score: stddev of ranks as fraction of softCap
+		// Clustering: max_tier_count / total_with_uses
 		clusteringScore := 0.0
-		if len(entries) > 1 {
-			sum := 0.0
-			for _, e := range entries {
-				sum += float64(e.rank)
+		if totalWithUses > 0 {
+			maxCount := 0
+			for _, c := range distribution {
+				if c > maxCount {
+					maxCount = c
+				}
 			}
-			mean := sum / float64(len(entries))
-			variance := 0.0
-			for _, e := range entries {
-				d := float64(e.rank) - mean
-				variance += d * d
-			}
-			variance /= float64(len(entries))
-			stddev := math.Sqrt(variance)
-			// Normalize: low stddev = high clustering
-			if float64(softCap) > 0 {
-				clusteringScore = 1.0 - clamp(stddev/float64(softCap), 0, 1)
-			}
+			clusteringScore = float64(maxCount) / float64(totalWithUses)
 		}
 
 		health := calcHealthScore(avgDeviation, stallCount, totalWithUses, clusteringScore, softCap)
@@ -371,12 +342,7 @@ func buildStatHealth(playerList []*users.UserRecord) map[string]statHealthJSON {
 
 	for _, statName := range statNames {
 		distribution := map[string]int{
-			"<80":     0,
-			"80-99":   0,
-			"100":     0,
-			"101-120": 0,
-			"121-150": 0,
-			"150+":    0,
+			"0-50": 0, "51-100": 0, "101-150": 0, "151+": 0,
 		}
 		for _, u := range playerList {
 			if u.Character == nil {
@@ -384,18 +350,14 @@ func buildStatHealth(playerList []*users.UserRecord) map[string]statHealthJSON {
 			}
 			val := u.Character.GetStatValue(statName)
 			switch {
-			case val < 80:
-				distribution["<80"]++
-			case val < 100:
-				distribution["80-99"]++
-			case val == 100:
-				distribution["100"]++
-			case val <= 120:
-				distribution["101-120"]++
+			case val <= 50:
+				distribution["0-50"]++
+			case val <= 100:
+				distribution["51-100"]++
 			case val <= 150:
-				distribution["121-150"]++
+				distribution["101-150"]++
 			default:
-				distribution["150+"]++
+				distribution["151+"]++
 			}
 		}
 		result[statName] = statHealthJSON{Distribution: distribution}
@@ -457,8 +419,14 @@ func buildSpellHealth(playerList []*users.UserRecord) map[string]spellHealthJSON
 	totalPlayers := len(playerList)
 
 	activities := playerActivities(playerList)
-	p25 := percentile(activities, 25)
-	p75 := percentile(activities, 75)
+	medianActivity := percentile(activities, 50)
+	p10Activity := percentile(activities, 10)
+
+	// Starter spells — excluded from "too easy" flagging
+	starterSpells := map[string]bool{
+		"conviction-spike": true,
+		"minor-light":      true,
+	}
 
 	result := make(map[string]spellHealthJSON, len(allSpells))
 
@@ -486,15 +454,31 @@ func buildSpellHealth(playerList []*users.UserRecord) map[string]spellHealthJSON
 			avgActivity = float64(activitySum) / float64(knownCount)
 		}
 
-		flag := "ok"
-		if knownCount == 0 {
-			flag = "unlearned"
-		} else {
-			discoveryRate := float64(knownCount) / float64(totalPlayers)
-			if discoveryRate < 0.05 && avgActivity > float64(p75) {
-				flag = "bottleneck"
-			} else if discoveryRate > 0.95 && avgActivity < float64(p25) {
-				flag = "trivial"
+		flag := ""
+		if knownCount == 0 && totalPlayers > 0 {
+			// too_hidden: no player with activity > median has it
+			hasHighActivity := false
+			for _, a := range activities {
+				if a > medianActivity {
+					hasHighActivity = true
+					break
+				}
+			}
+			if hasHighActivity {
+				flag = "too_hidden"
+			}
+		} else if knownCount > 0 && !starterSpells[spellId] {
+			// too_easy: players with activity < 10th percentile have it
+			for _, u := range playerList {
+				if u.Character == nil || u.Character.SpellBook == nil {
+					continue
+				}
+				if _, known := u.Character.SpellBook[spellId]; known {
+					if playerTotalActivity(u) < p10Activity {
+						flag = "too_easy"
+						break
+					}
+				}
 			}
 		}
 
@@ -516,8 +500,10 @@ func buildRecipeHealth(playerList []*users.UserRecord) map[string]recipeHealthJS
 	totalPlayers := len(playerList)
 
 	activities := playerActivities(playerList)
-	p25 := percentile(activities, 25)
-	p75 := percentile(activities, 75)
+	medianActivity := percentile(activities, 50)
+	p10Activity := percentile(activities, 10)
+
+	starterRecipes := crafting.GetStarterRecipes()
 
 	result := make(map[string]recipeHealthJSON, len(allRecipes))
 
@@ -540,15 +526,30 @@ func buildRecipeHealth(playerList []*users.UserRecord) map[string]recipeHealthJS
 			avgActivity = float64(activitySum) / float64(knownCount)
 		}
 
-		flag := "ok"
-		if knownCount == 0 {
-			flag = "unlearned"
-		} else {
-			discoveryRate := float64(knownCount) / float64(totalPlayers)
-			if discoveryRate < 0.05 && avgActivity > float64(p75) {
-				flag = "bottleneck"
-			} else if discoveryRate > 0.95 && avgActivity < float64(p25) {
-				flag = "trivial"
+		isStarter := starterRecipes[recipeId] > 0
+		flag := ""
+		if knownCount == 0 && totalPlayers > 0 {
+			hasHighActivity := false
+			for _, a := range activities {
+				if a > medianActivity {
+					hasHighActivity = true
+					break
+				}
+			}
+			if hasHighActivity {
+				flag = "too_hidden"
+			}
+		} else if knownCount > 0 && !isStarter {
+			for _, u := range playerList {
+				if u.Character == nil || u.Character.KnownRecipes == nil {
+					continue
+				}
+				if _, known := u.Character.KnownRecipes[recipeId]; known {
+					if playerTotalActivity(u) < p10Activity {
+						flag = "too_easy"
+						break
+					}
+				}
 			}
 		}
 
@@ -591,8 +592,8 @@ func buildPlayerOverview(playerList []*users.UserRecord) []playerJSON {
 			}
 			useCount := c.GetSkillUseCount(name)
 			mult := skills.GetProgressionMultiplier(name)
-			virtualRank := int(calcExpectedRank(useCount, mult, bal))
-			progChance := characters.CalculateProgressionChance(virtualRank, softCap)
+			virtualRank := math.Round(calcExpectedRank(useCount, mult, bal)*100) / 100
+			progChance := characters.CalculateProgressionChance(int(virtualRank), softCap)
 
 			skillsMap[name] = playerSkillJSON{
 				Rank:              rank,
