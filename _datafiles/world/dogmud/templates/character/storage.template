@@ -3,5 +3,5 @@
  {{ end }}{{ if eq (len .) 0 }}  Nothing
  {{ end -}}
  └──────────────────────────────────────────────────────────────────────────┘
- <ansi fg="command">unstore [itemname]</ansi> or <ansi fg="command">unstore [#]</ansi> to remove items from storage.
+ <ansi fg="command">storage add [item/all]</ansi> to store items. <ansi fg="command">unstore [item/#]</ansi> to retrieve.
 
