@@ -179,14 +179,15 @@ func resolveAgainstMob(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, 
 	}
 
 	isCrit := atkRoll.ZScore >= 2.0
-	dmgDealt := applyMobEffect(user, mob, room, spellData, magnitude, isCrit)
+	dmgDealt := applyMobEffect(user, user.Character, mob, room, spellData, magnitude, isCrit)
 	// Stage 30.1: Record spell hit with actual damage
 	combat.RecordSpell(combat.User, combat.Mob, true, isCrit, false, false, dmgDealt, atkRoll.ZScore, user.Character, &mob.Character, round)
 }
 
 // applyMobEffect applies the spell effect to a mob and returns damage dealt (0 for non-damage effects).
 // user may be nil when the caster is a mob (guards all user.* references).
-func applyMobEffect(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spellData *spells.SpellData, magnitude int, isCrit bool) int {
+// casterChar is the caster's Character pointer (may be nil for mob-on-mob when unavailable).
+func applyMobEffect(user *users.UserRecord, casterChar *characters.Character, mob *mobs.Mob, room *rooms.Room, spellData *spells.SpellData, magnitude int, isCrit bool) int {
 
 	dmgDealt := 0
 
@@ -203,11 +204,17 @@ func applyMobEffect(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spe
 
 	switch spellData.EffectType {
 	case "damage":
-		var casterChar *characters.Character
-		if user != nil {
-			casterChar = user.Character
-		}
 		dmg := calcSpellDamageForCharacter(spellData, casterChar, &mob.Character, magnitude, isCrit)
+		// Spell Deflection: defender attempts to partially deflect
+		if !isCrit && casterChar != nil {
+			deflectMult := combat.TrySpellDeflection(casterChar, &mob.Character, 0)
+			if deflectMult < 1.0 {
+				dmg = int(math.Round(float64(dmg) * deflectMult))
+				if dmg < 1 && deflectMult > 0 {
+					dmg = 1
+				}
+			}
+		}
 		dmgDealt = dmg
 		mob.Character.Health -= dmg
 		// Set aggro on both sides immediately
@@ -261,11 +268,17 @@ func applyMobEffect(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spe
 		}
 
 	case "knockdown":
-		var casterChar2 *characters.Character
-		if user != nil {
-			casterChar2 = user.Character
+		dmg := calcSpellDamageForCharacter(spellData, casterChar, &mob.Character, magnitude, isCrit)
+		// Spell Deflection: defender attempts to partially deflect
+		if !isCrit && casterChar != nil {
+			deflectMult := combat.TrySpellDeflection(casterChar, &mob.Character, 0)
+			if deflectMult < 1.0 {
+				dmg = int(math.Round(float64(dmg) * deflectMult))
+				if dmg < 1 && deflectMult > 0 {
+					dmg = 1
+				}
+			}
 		}
-		dmg := calcSpellDamageForCharacter(spellData, casterChar2, &mob.Character, magnitude, isCrit)
 		dmgDealt = dmg
 		mob.Character.Health -= dmg
 		mob.Character.CombatPosition = characters.PositionProne
@@ -425,17 +438,75 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 	switch spellData.EffectType {
 	case "damage":
 		dmg := calcSpellDamageForCharacter(spellData, user.Character, target.Character, magnitude, isCrit)
+		deflected := false
+		critDeflect := false
+		if !isCrit {
+			deflectMult := combat.TrySpellDeflection(
+				user.Character, target.Character, target.UserId)
+			if deflectMult < 1.0 {
+				deflected = true
+				if deflectMult == 0.0 {
+					critDeflect = true
+				}
+				dmg = int(math.Round(float64(dmg) * deflectMult))
+				if dmg < 1 && deflectMult > 0 {
+					dmg = 1
+				}
+			}
+		}
+		if critDeflect {
+			target.SendText(fmt.Sprintf(
+				`<ansi fg="green">You read <ansi fg="username">%s</ansi>'s spell perfectly `+
+					`and unravel it before it reaches you!</ansi>`,
+				user.Character.Name))
+			user.SendText(fmt.Sprintf(
+				`<ansi fg="yellow"><ansi fg="username">%s</ansi> completely unravels `+
+					`your spell!</ansi>`,
+				target.Character.Name))
+			room.SendText(fmt.Sprintf(
+				`<ansi fg="username">%s</ansi> unravels <ansi fg="username">%s</ansi>'s `+
+					`spell completely!`,
+				target.Character.Name, user.Character.Name), user.UserId, target.UserId)
+			return
+		}
 		target.Character.Health -= dmg
 		dmgDesc := combat.GetDamageDescription(dmg, target.Character.HealthMax.Value)
-		user.SendText(fmt.Sprintf(
-			`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> strikes <ansi fg="username">%s</ansi>! (<ansi fg="damage">%s</ansi>)%s</ansi>`,
-			spellData.Name, target.Character.Name, dmgDesc, critTag))
-		room.SendText(fmt.Sprintf(
-			`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> strikes <ansi fg="username">%s</ansi>!`,
-			user.Character.Name, spellData.Name, target.Character.Name), user.UserId, target.UserId)
-		target.SendText(fmt.Sprintf(
-			`<ansi fg="red"><ansi fg="username">%s</ansi>'s <ansi fg="cyan-bold">%s</ansi> strikes you! (<ansi fg="damage">%s</ansi>)</ansi>`,
-			user.Character.Name, spellData.Name, combat.GetDamageDescription(dmg, target.Character.HealthMax.Value)))
+		if deflected {
+			target.SendText(fmt.Sprintf(
+				`<ansi fg="green">You partially deflect `+
+					`<ansi fg="username">%s</ansi>'s `+
+					`<ansi fg="cyan-bold">%s</ansi>! `+
+					`(<ansi fg="damage">%s</ansi>)</ansi>`,
+				user.Character.Name, spellData.Name, dmgDesc))
+			user.SendText(fmt.Sprintf(
+				`<ansi fg="yellow"><ansi fg="username">%s</ansi> partially deflects `+
+					`your <ansi fg="cyan-bold">%s</ansi>! `+
+					`(<ansi fg="damage">%s</ansi>)</ansi>`,
+				target.Character.Name, spellData.Name, dmgDesc))
+			room.SendText(fmt.Sprintf(
+				`<ansi fg="username">%s</ansi> partially deflects `+
+					`<ansi fg="username">%s</ansi>'s `+
+					`<ansi fg="cyan">%s</ansi>!`,
+				target.Character.Name, user.Character.Name, spellData.Name),
+				user.UserId, target.UserId)
+		} else {
+			user.SendText(fmt.Sprintf(
+				`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> strikes `+
+					`<ansi fg="username">%s</ansi>! `+
+					`(<ansi fg="damage">%s</ansi>)%s</ansi>`,
+				spellData.Name, target.Character.Name, dmgDesc, critTag))
+			room.SendText(fmt.Sprintf(
+				`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> strikes `+
+					`<ansi fg="username">%s</ansi>!`,
+				user.Character.Name, spellData.Name, target.Character.Name),
+				user.UserId, target.UserId)
+			target.SendText(fmt.Sprintf(
+				`<ansi fg="red"><ansi fg="username">%s</ansi>'s `+
+					`<ansi fg="cyan-bold">%s</ansi> strikes you! `+
+					`(<ansi fg="damage">%s</ansi>)</ansi>`,
+				user.Character.Name, spellData.Name,
+				combat.GetDamageDescription(dmg, target.Character.HealthMax.Value)))
+		}
 
 	case "purge":
 		target.Character.CancelBuffsWithFlag(buffs.Poison)
@@ -710,7 +781,7 @@ func resolveMobSpellAgainstMob(caster *mobs.Mob, target *mobs.Mob, room *rooms.R
 	if !success {
 		return
 	}
-	applyMobEffect(nil, target, room, spellData, magnitude, atkRoll.ZScore >= 2.0)
+	applyMobEffect(nil, &caster.Character, target, room, spellData, magnitude, atkRoll.ZScore >= 2.0)
 }
 
 func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, room *rooms.Room,
@@ -745,15 +816,61 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 	switch spellData.EffectType {
 	case "damage":
 		dmg := calcSpellDamageForCharacter(spellData, &caster.Character, target.Character, magnitude, isCrit)
+		deflected := false
+		critDeflect := false
+		if !isCrit {
+			deflectMult := combat.TrySpellDeflection(
+				&caster.Character, target.Character, target.UserId)
+			if deflectMult < 1.0 {
+				deflected = true
+				if deflectMult == 0.0 {
+					critDeflect = true
+				}
+				dmg = int(math.Round(float64(dmg) * deflectMult))
+				if dmg < 1 && deflectMult > 0 {
+					dmg = 1
+				}
+			}
+		}
+		if critDeflect {
+			target.SendText(fmt.Sprintf(
+				`<ansi fg="green">You read `+
+					`<ansi fg="mobname">%s</ansi>'s spell perfectly `+
+					`and unravel it before it reaches you!</ansi>`,
+				caster.Character.Name))
+			room.SendText(fmt.Sprintf(
+				`<ansi fg="username">%s</ansi> unravels `+
+					`<ansi fg="mobname">%s</ansi>'s spell completely!`,
+				target.Character.Name, caster.Character.Name), target.UserId)
+			break
+		}
 		mobSpellDmg = dmg
 		target.Character.Health -= dmg
-		target.SendText(fmt.Sprintf(
-			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> strikes you! (<ansi fg="damage">%s</ansi>)%s`,
-			caster.Character.Name, spellData.Name,
-			combat.GetDamageDescription(dmg, target.Character.HealthMax.Value), critTag))
-		room.SendText(fmt.Sprintf(
-			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> strikes <ansi fg="username">%s</ansi>!`,
-			caster.Character.Name, spellData.Name, target.Character.Name), target.UserId)
+		if deflected {
+			target.SendText(fmt.Sprintf(
+				`<ansi fg="green">You partially deflect `+
+					`<ansi fg="mobname">%s</ansi>'s `+
+					`<ansi fg="cyan">%s</ansi>! `+
+					`(<ansi fg="damage">%s</ansi>)</ansi>`,
+				caster.Character.Name, spellData.Name,
+				combat.GetDamageDescription(dmg, target.Character.HealthMax.Value)))
+			room.SendText(fmt.Sprintf(
+				`<ansi fg="username">%s</ansi> partially deflects `+
+					`<ansi fg="mobname">%s</ansi>'s `+
+					`<ansi fg="cyan">%s</ansi>!`,
+				target.Character.Name, caster.Character.Name, spellData.Name),
+				target.UserId)
+		} else {
+			target.SendText(fmt.Sprintf(
+				`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> `+
+					`strikes you! (<ansi fg="damage">%s</ansi>)%s`,
+				caster.Character.Name, spellData.Name,
+				combat.GetDamageDescription(dmg, target.Character.HealthMax.Value), critTag))
+			room.SendText(fmt.Sprintf(
+				`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> strikes `+
+					`<ansi fg="username">%s</ansi>!`,
+				caster.Character.Name, spellData.Name, target.Character.Name), target.UserId)
+		}
 		if target.Character.Aggro == nil {
 			target.Character.Aggro = &characters.Aggro{MobInstanceId: caster.InstanceId}
 		}
@@ -778,16 +895,28 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 		}
 	case "knockdown":
 		dmg := calcSpellDamageForCharacter(spellData, &caster.Character, target.Character, magnitude, isCrit)
+		if !isCrit {
+			deflectMult := combat.TrySpellDeflection(
+				&caster.Character, target.Character, target.UserId)
+			if deflectMult < 1.0 {
+				dmg = int(math.Round(float64(dmg) * deflectMult))
+				if dmg < 1 && deflectMult > 0 {
+					dmg = 1
+				}
+			}
+		}
 		mobSpellDmg = dmg
 		target.Character.Health -= dmg
 		target.Character.CombatPosition = characters.PositionProne
 		target.Character.PositionRoundsMin = 1
 		target.SendText(fmt.Sprintf(
-			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> slams you to the ground! (<ansi fg="damage">%s</ansi>)%s`,
+			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> slams you `+
+				`to the ground! (<ansi fg="damage">%s</ansi>)%s`,
 			caster.Character.Name, spellData.Name,
 			combat.GetDamageDescription(dmg, target.Character.HealthMax.Value), critTag))
 		room.SendText(fmt.Sprintf(
-			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> knocks <ansi fg="username">%s</ansi> to the ground!`,
+			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> knocks `+
+				`<ansi fg="username">%s</ansi> to the ground!`,
 			caster.Character.Name, spellData.Name, target.Character.Name), target.UserId)
 		if target.Character.Aggro == nil {
 			target.Character.Aggro = &characters.Aggro{MobInstanceId: caster.InstanceId}

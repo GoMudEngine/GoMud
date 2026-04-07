@@ -2266,7 +2266,7 @@ func TestApplyMobEffect_Damage(t *testing.T) {
 	mob.Character.Health = 100
 
 	spellData := spells.GetSpell("sparks")
-	dmg := applyMobEffect(u, mob, room, spellData, 30, false)
+	dmg := applyMobEffect(u, u.Character, mob, room, spellData, 30, false)
 	assert.GreaterOrEqual(t, dmg, 0)
 }
 
@@ -2279,7 +2279,7 @@ func TestApplyMobEffect_DamageWithCrit(t *testing.T) {
 	mob.Character.Health = 100
 
 	spellData := spells.GetSpell("sparks")
-	dmg := applyMobEffect(u, mob, room, spellData, 30, true)
+	dmg := applyMobEffect(u, u.Character, mob, room, spellData, 30, true)
 	assert.GreaterOrEqual(t, dmg, 0)
 }
 
@@ -2300,7 +2300,7 @@ func TestApplyMobEffect_DotEffect(t *testing.T) {
 		EffectMagnitude:   10,
 	}
 
-	dmg := applyMobEffect(u, mob, room, dotSpell, 10, false)
+	dmg := applyMobEffect(u, u.Character, mob, room, dotSpell, 10, false)
 	assert.Equal(t, 0, dmg)
 }
 
@@ -2312,7 +2312,7 @@ func TestApplyMobEffect_NilUser(t *testing.T) {
 	mob.Character.Health = 100
 
 	spellData := spells.GetSpell("sparks")
-	dmg := applyMobEffect(nil, mob, room, spellData, 30, false)
+	dmg := applyMobEffect(nil, nil, mob, room, spellData, 30, false)
 	assert.GreaterOrEqual(t, dmg, 0)
 }
 
@@ -2340,7 +2340,7 @@ func TestApplyMobEffect_Knockdown(t *testing.T) {
 		DamageMultiplier:  0.5,
 		EffectMagnitude:   20,
 	}
-	dmg := applyMobEffect(u, mob, room, kdSpell, 20, false)
+	dmg := applyMobEffect(u, u.Character, mob, room, kdSpell, 20, false)
 	assert.GreaterOrEqual(t, dmg, 0)
 	assert.Equal(t, characters.PositionProne, mob.Character.CombatPosition)
 }
@@ -2359,7 +2359,7 @@ func TestApplyMobEffect_Buff(t *testing.T) {
 		EffectType: "buff",
 		BuffIds:    []int{100},
 	}
-	dmg := applyMobEffect(u, mob, room, buffSpell, 0, false)
+	dmg := applyMobEffect(u, u.Character, mob, room, buffSpell, 0, false)
 	assert.Equal(t, 0, dmg)
 }
 
@@ -2376,7 +2376,7 @@ func TestApplyMobEffect_Tame_NotAnimal(t *testing.T) {
 		Type:       spells.HarmSingle,
 		EffectType: "tame",
 	}
-	dmg := applyMobEffect(u, mob, room, tameSpell, 0, false)
+	dmg := applyMobEffect(u, u.Character, mob, room, tameSpell, 0, false)
 	assert.Equal(t, 0, dmg)
 }
 
@@ -2393,7 +2393,7 @@ func TestApplyMobEffect_DefaultEffect(t *testing.T) {
 		Type:       spells.HarmSingle,
 		EffectType: "unknown-effect",
 	}
-	dmg := applyMobEffect(u, mob, room, unknownSpell, 10, false)
+	dmg := applyMobEffect(u, u.Character, mob, room, unknownSpell, 10, false)
 	assert.Equal(t, 0, dmg)
 }
 
