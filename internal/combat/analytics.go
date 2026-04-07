@@ -221,10 +221,15 @@ func RecordSwings(result AttackResult, src, tgt SourceTarget, atkType string,
 	tgtPos, tgtCtrl := positionFields(tgtChar)
 
 	for _, swing := range result.SwingEvents {
+		// Use per-swing attack type if available, fall back to caller-provided
+		swingType := atkType
+		if swing.AttackType != "" {
+			swingType = swing.AttackType
+		}
 		evt := CombatEvent{
 			SourceType:                src,
 			TargetType:                tgt,
-			AttackType:                atkType,
+			AttackType:                swingType,
 			Hit:                       swing.Hit,
 			Crit:                      swing.Crit,
 			Fumble:                    swing.Fumble,

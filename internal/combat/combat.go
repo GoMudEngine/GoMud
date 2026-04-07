@@ -409,6 +409,14 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				weaponHit.Fumble = true
 			}
 
+			// Determine per-swing attack type for analytics
+			swingAtkType := "unarmed"
+			if weaponHit.SkillTag == string(skills.WeaponCombat) {
+				swingAtkType = "weapon"
+			} else if weaponHit.SkillTag == string(skills.RangedCombat) {
+				swingAtkType = "ranged"
+			}
+
 			// Record per-swing analytics
 			attackResult.SwingEvents = append(attackResult.SwingEvents, SwingEvent{
 				Hit:           res.hit,
@@ -421,6 +429,7 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				DefenseUsed:   attackResult.DefenseUsed,
 				AttackZScore:  attackResult.AttackZScore,
 				DefenseZScore: attackResult.DefenseZScore,
+				AttackType:    swingAtkType,
 			})
 
 			// Only build attack messages for non-double-fumble (double fumble already sent)

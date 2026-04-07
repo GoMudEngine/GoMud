@@ -31,6 +31,7 @@ type SwingEvent struct {
 	DefenseUsed   DefenseType
 	AttackZScore  float64
 	DefenseZScore float64
+	AttackType    string // "weapon", "unarmed", "ranged" — per-swing weapon type for analytics
 }
 
 type AttackResult struct {
