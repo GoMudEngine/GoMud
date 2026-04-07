@@ -20,6 +20,7 @@ func RegisterListeners() {
 	events.RegisterListener(events.NewRound{}, UpdateZoneMutators)
 	events.RegisterListener(events.NewRound{}, CheckNewDay)
 	events.RegisterListener(events.NewRound{}, CheckMoonPhase)
+	events.RegisterListener(events.NewRound{}, CheckStorageFees)
 	events.RegisterListener(events.NewRound{}, SpawnLootGoblin)
 	events.RegisterListener(events.NewRound{}, UserRoundTick)
 	events.RegisterListener(events.NewRound{}, MobRoundTick)
