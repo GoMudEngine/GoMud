@@ -309,9 +309,6 @@ func (c *Character) GetBaseCastSuccessChance(spellId string) int {
 	// add spell level bonus
 	// 10-30
 	skillLevel := c.GetSkillLevel(skills.Spellcasting)
-	if skillLevel == 0 {
-		skillLevel = c.GetSkillLevel(skills.Cast) // backward compat with legacy Cast skill
-	}
 	//targetNumber += (skillLevel * 5)
 	//targetNumber -= 5 // cancel out the first level
 
@@ -2015,9 +2012,6 @@ func CombatSkillTagForItem(weapon items.Item) skills.SkillTag {
 		return skills.UnarmedCombat
 	}
 	spec := weapon.GetSpec()
-	if spec.Subtype == items.Shooting {
-		return skills.RangedCombat
-	}
 	if spec.Subtype == items.Claws || spec.Subtype == items.Fist {
 		return skills.UnarmedCombat
 	}
@@ -3044,6 +3038,14 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 		c.SkillUseCount["search"] = c.SkillUseCount["foraging"]
 		delete(c.Skills, "foraging")
 		delete(c.SkillUseCount, "foraging")
+	}
+
+	// Remove retired skills (cast, ranged-combat, first-aid)
+	for _, dead := range []string{"cast", "ranged-combat", "first-aid"} {
+		delete(c.Skills, dead)
+		if c.SkillUseCount != nil {
+			delete(c.SkillUseCount, dead)
+		}
 	}
 
 	// Ensure all known skills exist at rank 1 minimum (retroactive for existing characters)

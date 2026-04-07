@@ -133,13 +133,11 @@ func TestHelpFileCompleteness_Skills(t *testing.T) {
 	requiredSkills := []string{
 		"weapon-combat",
 		"unarmed-combat",
-		"ranged-combat",
 		"spellcasting",
 		"rhetoric",
 		"search",
 		"skullduggery",
 		"map",
-		"foraging",
 		"blacksmithing",
 		"alchemy",
 		"tailoring",

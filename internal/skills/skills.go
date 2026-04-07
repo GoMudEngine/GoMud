@@ -24,18 +24,13 @@ func (s SkillTag) Sub(subtag string) SkillTag {
 }
 
 const (
-	// Cast is stubbed — full implementation in Phase 11 (fold-based magic system)
-	Cast SkillTag = `cast`
-
 	// DOG combat & magic skills
-	WeaponCombat SkillTag = `weapon-combat`  // Melee attack & defense with weapons
+	WeaponCombat  SkillTag = `weapon-combat`  // Melee attack & defense with weapons
 	UnarmedCombat SkillTag = `unarmed-combat` // Fist/body attacks & defense, grappling
-	RangedCombat  SkillTag = `ranged-combat`  // Bows, crossbows, thrown weapons
 	Spellcasting  SkillTag = `spellcasting`   // All magic — offense & defense
-	Rhetoric      SkillTag = `rhetoric`      // Conviction attacks — taunt, demoralize (Stage 34)
+	Rhetoric      SkillTag = `rhetoric`       // Conviction attacks — taunt, demoralize (Stage 34)
 
 	// DOG non-combat skills
-	FirstAid  SkillTag = `first-aid`  // Healing others, treating wounds, stabilizing
 	Skullduggery SkillTag = `skullduggery` // Sneaking, stealing, lockpicking, surprise attacks
 	Search    SkillTag = `search`     // Finding hidden objects, creatures, and resources
 	Bartering SkillTag = `bartering`  // Trade prices, negotiation, appraisal
@@ -58,7 +53,6 @@ var (
 			UnarmedCombat,
 		},
 		"ranger": {
-			RangedCombat,
 			Search,
 		},
 		"mage": {
@@ -66,7 +60,6 @@ var (
 		},
 		"healer": {
 			Spellcasting,
-			FirstAid,
 		},
 		"rogue": {
 			Skullduggery,
@@ -271,9 +264,7 @@ func GetTitle(owned map[string]int, allRanks map[string]int, s stats.Statistics)
 var SkillPrimaryStats = map[string]string{
 	"weapon-combat":  "dexterity",
 	"unarmed-combat": "dexterity",
-	"ranged-combat":  "perception",
 	"spellcasting":   "willpower",
-	"first-aid":      "perception",
 	"skullduggery":   "dexterity",
 	"search":         "perception",
 	"rhetoric":       "charisma",
@@ -301,18 +292,15 @@ var SkillProgressionMultipliers = map[SkillTag]float64{
 	// Combat skills — fire multiple times per round
 	WeaponCombat:  0.3,
 	UnarmedCombat: 0.3,
-	RangedCombat:  0.3,
 	// Magic skills — moderate frequency
 	Spellcasting: 0.5,
 	// Social combat — moderate frequency
 	Rhetoric: 0.5,
-	Cast:         0.5,
 	// Companion management — moderate use frequency
 	Manifestation: 0.5,
 	// Utility skills — used infrequently
 	Search:    2.0,
 	Bartering: 2.0,
-	FirstAid:      2.0,
 	Skullduggery:  2.0,
 	Blacksmithing: 2.0,
 	Alchemy:       2.0,
@@ -373,11 +361,10 @@ func init() {
 		}
 	}
 
-	// Register all DOG skills directly (ensures cast and any not in professions are included)
+	// Register all DOG skills directly (ensures any not in professions are included)
 	for _, sk := range []SkillTag{
-		Cast,
-		WeaponCombat, UnarmedCombat, RangedCombat, Spellcasting, Rhetoric,
-		FirstAid, Skullduggery, Search, Bartering,
+		WeaponCombat, UnarmedCombat, Spellcasting, Rhetoric,
+		Skullduggery, Search, Bartering,
 		Blacksmithing, Alchemy, Tailoring, Cooking, Jewelcrafting, Enchanting, Salvage,
 		Manifestation,
 	} {

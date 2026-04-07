@@ -632,14 +632,9 @@ Balance:
   SkillProgressionMultipliers:
     weapon-combat: 0.15   # Tuned 39.4: reduced from 0.20 — auto-attack progression now fires correctly
     unarmed-combat: 0.15  # Tuned 39.4: same as weapon-combat
-    ranged-combat: 0.3
     spellcasting: 0.5
     rhetoric: 0.5
-    tracking: 2.0
     bartering: 2.0
-    foraging: 2.0
-    first-aid: 2.0
-    stealth: 2.0
     manifestation: 0.3    # Companion management — moderate use frequency
     blacksmithing: 3.5  # Crafting skills fire rarely (once per craft); boosted for feel
     alchemy: 3.5

@@ -126,27 +126,27 @@ func TestIncreaseSkill_Incremental(t *testing.T) {
 	//   1→2: "novice" → "apprentice" (true)
 	//   2→9: all "apprentice"  (false)
 	//   9→10: "apprentice" → "journeyman" (true)
-	c.Skills["cast"] = 0
-	rankChanged := c.IncreaseSkill("cast") // 0→1 novice
+	c.Skills["spellcasting"] = 0
+	rankChanged := c.IncreaseSkill("spellcasting") // 0→1 novice
 	if !rankChanged {
 		t.Error("Expected true for 0→1 (unknown→novice)")
 	}
-	rankChanged = c.IncreaseSkill("cast") // 1→2 apprentice
+	rankChanged = c.IncreaseSkill("spellcasting") // 1→2 apprentice
 	if !rankChanged {
 		t.Error("Expected true for 1→2 (novice→apprentice)")
 	}
 	// 2→9: all within apprentice, should return false
 	for i := 2; i < 9; i++ {
-		if c.IncreaseSkill("cast") {
+		if c.IncreaseSkill("spellcasting") {
 			t.Errorf("Expected false at level %d→%d (still apprentice)", i, i+1)
 		}
 	}
 	// 9→10: apprentice→journeyman, should return true
-	if !c.IncreaseSkill("cast") {
+	if !c.IncreaseSkill("spellcasting") {
 		t.Error("Expected true for 9→10 (apprentice→journeyman)")
 	}
-	if c.Skills["cast"] != 10 {
-		t.Errorf("Expected skill level 10, got %d", c.Skills["cast"])
+	if c.Skills["spellcasting"] != 10 {
+		t.Errorf("Expected skill level 10, got %d", c.Skills["spellcasting"])
 	}
 }
 
@@ -187,9 +187,9 @@ func TestResolveSkillName_PassThrough(t *testing.T) {
 	if result != "weapon-combat" {
 		t.Errorf("Expected 'weapon-combat' to pass through, got '%s'", result)
 	}
-	result = resolveSkillName("cast")
-	if result != "cast" {
-		t.Errorf("Expected 'cast' to pass through as 'cast', got '%s'", result)
+	result = resolveSkillName("spellcasting")
+	if result != "spellcasting" {
+		t.Errorf("Expected 'spellcasting' to pass through, got '%s'", result)
 	}
 }
 
@@ -207,7 +207,6 @@ func TestGetCombatSkillLevel_BrawlingFallback(t *testing.T) {
 	c := New()
 	delete(c.Skills, "unarmed-combat")
 	delete(c.Skills, "weapon-combat")
-	delete(c.Skills, "ranged-combat")
 	if got := c.GetCombatSkillLevel(); got != 1 {
 		t.Errorf("Expected combat skill minimum 1 with no skills, got %d", got)
 	}
@@ -219,7 +218,6 @@ func TestGetCombatSkillLevel_NoSkillsReturns1(t *testing.T) {
 	delete(c.Skills, "unarmed-combat")
 	delete(c.Skills, "brawling")
 	delete(c.Skills, "weapon-combat")
-	delete(c.Skills, "ranged-combat")
 	if got := c.GetCombatSkillLevel(); got != 1 {
 		t.Errorf("Expected combat skill 1 (minimum), got %d", got)
 	}
@@ -263,12 +261,9 @@ func TestGetProgressionMultiplier(t *testing.T) {
 	}{
 		{"weapon-combat", 0.3},
 		{"unarmed-combat", 0.3},
-		{"ranged-combat", 0.3},
 		{"spellcasting", 0.5},
-		{"cast", 0.5},
 		{"search", 2.0},
 		{"bartering", 2.0},
-		{"first-aid", 2.0},
 		{"skullduggery", 2.0},
 		{"unknown-skill", 1.0},
 	}

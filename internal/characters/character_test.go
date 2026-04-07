@@ -2059,8 +2059,8 @@ func TestCharacter_GetSkillLevel(t *testing.T) {
 		{
 			name: "Skill exists with zero value",
 			args: args{
-				skillsMap: map[string]int{string(skills.Cast): 0},
-				skillTag:  skills.Cast,
+				skillsMap: map[string]int{string(skills.Spellcasting): 0},
+				skillTag:  skills.Spellcasting,
 			},
 			expected: 0,
 		},
@@ -2068,7 +2068,7 @@ func TestCharacter_GetSkillLevel(t *testing.T) {
 			name: "Skill does not exist",
 			args: args{
 				skillsMap: map[string]int{string(skills.Spellcasting): 2},
-				skillTag:  skills.Cast,
+				skillTag:  skills.Search,
 			},
 			expected: 0,
 		},
@@ -2084,7 +2084,7 @@ func TestCharacter_GetSkillLevel(t *testing.T) {
 			name: "Multiple skills, get correct one",
 			args: args{
 				skillsMap: map[string]int{
-					string(skills.Cast):      2,
+					string(skills.Spellcasting):  2,
 					string(skills.WeaponCombat): 1,
 					string(skills.Search):       4,
 				},
@@ -2095,8 +2095,8 @@ func TestCharacter_GetSkillLevel(t *testing.T) {
 		{
 			name: "Skill exists with negative value",
 			args: args{
-				skillsMap: map[string]int{string(skills.Cast): -2},
-				skillTag:  skills.Cast,
+				skillsMap: map[string]int{string(skills.Bartering): -2},
+				skillTag:  skills.Bartering,
 			},
 			expected: -2,
 		},

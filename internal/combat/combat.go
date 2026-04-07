@@ -413,8 +413,6 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 			swingAtkType := "unarmed"
 			if weaponHit.SkillTag == string(skills.WeaponCombat) {
 				swingAtkType = "weapon"
-			} else if weaponHit.SkillTag == string(skills.RangedCombat) {
-				swingAtkType = "ranged"
 			}
 
 			// Record per-swing analytics
