@@ -153,21 +153,34 @@ func collectAttackWeapons(sourceChar *characters.Character) []items.Item {
 		attackWeapons = append(attackWeapons, sourceChar.Equipment.ExtraArm4)
 	}
 
-	// Unarmed: no weapons at all → both fists
-	if len(attackWeapons) == 0 {
-		attackWeapons = append(attackWeapons, items.Item{ItemId: 0})
-		attackWeapons = append(attackWeapons, items.Item{ItemId: 0})
-		return attackWeapons
+	// Empty hand slots become fist attacks (unless holding a shield).
+	emptyArm := items.Item{ItemId: 0}
+
+	// Main hand empty → fist (ItemId 0 = empty, -1 = disabled)
+	if sourceChar.Equipment.Weapon.ItemId == 0 {
+		attackWeapons = append(attackWeapons, emptyArm)
+	}
+	// Offhand empty → fist (shields/weapons already collected above)
+	if sourceChar.Equipment.Offhand.ItemId == 0 {
+		attackWeapons = append(attackWeapons, emptyArm)
+	}
+	// Extra arm empty slots → fist
+	if sourceChar.ExtraArms >= 1 && sourceChar.Equipment.ExtraArm1.ItemId == 0 {
+		attackWeapons = append(attackWeapons, emptyArm)
+	}
+	if sourceChar.ExtraArms >= 2 && sourceChar.Equipment.ExtraArm2.ItemId == 0 {
+		attackWeapons = append(attackWeapons, emptyArm)
+	}
+	if sourceChar.ExtraArms >= 3 && sourceChar.Equipment.ExtraArm3.ItemId == 0 {
+		attackWeapons = append(attackWeapons, emptyArm)
+	}
+	if sourceChar.ExtraArms >= 4 && sourceChar.Equipment.ExtraArm4.ItemId == 0 {
+		attackWeapons = append(attackWeapons, emptyArm)
 	}
 
-	// If main hand is fist/claws and offhand is empty (no shield, no weapon),
-	// add a bare-fist offhand so the other hand still punches.
-	if len(attackWeapons) == 1 && attackWeapons[0].ItemId > 0 {
-		spec := attackWeapons[0].GetSpec()
-		if (spec.Subtype == items.Fist || spec.Subtype == items.Claws) &&
-			sourceChar.Equipment.Offhand.ItemId == 0 {
-			attackWeapons = append(attackWeapons, items.Item{ItemId: 0})
-		}
+	// Fallback: must have at least one attack
+	if len(attackWeapons) == 0 {
+		attackWeapons = append(attackWeapons, items.Item{ItemId: 0})
 	}
 
 	return attackWeapons
