@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
+	"github.com/GoMudEngine/GoMud/internal/mobai"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -209,6 +210,23 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 			}
 		} else if mob.Character.Aggro == nil {
 			continue
+		}
+
+		// Emit combat_start signal on the first round of engagement.
+		// CombatMemory being nil indicates the mob has not yet been in combat
+		// with this target, so we set the memory and fire the signal once.
+		if mob.CombatMemory == nil && mob.Character.Aggro != nil {
+			mob.CombatMemory = mobai.SetMemory(
+				mob.Character.Aggro.UserId,
+				mob.Character.Aggro.MobInstanceId,
+				mob.Character.RoomId,
+				evt.RoundNumber,
+			)
+			events.AddToQueue(events.MobAISignal{
+				MobInstanceId: mob.InstanceId,
+				SignalType:    "combat_start",
+				RoomId:        mob.Character.RoomId,
+			})
 		}
 
 		c := configs.GetConfig()

@@ -93,6 +93,10 @@ func RegisterListeners() {
 	// Log tee to users
 	events.RegisterListener(events.Log{}, FollowLogs)
 
+	// Mob AI reactor — signal handler and per-turn reaction processor
+	events.RegisterListener(events.MobAISignal{}, HandleMobAISignal)
+	events.RegisterListener(events.NewTurn{}, ProcessMobReactions)
+
 	// Listener for debugging some stuff (catches all events)
 	/*
 		events.RegisterListener(nil, func(e events.Event) events.ListenerReturn {

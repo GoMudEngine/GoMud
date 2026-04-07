@@ -169,6 +169,41 @@ func (m *Mob) GrowDiscipline(amount float64) {
 	}
 }
 
+// GetZone satisfies mobai.MobActor — returns the mob's zone name.
+func (m *Mob) GetZone() string {
+	return m.Zone
+}
+
+// GetRoomId satisfies mobai.MobActor — returns the mob's current room ID.
+func (m *Mob) GetRoomId() int {
+	return m.Character.RoomId
+}
+
+// GetName satisfies mobai.MobActor — returns the mob's display name.
+func (m *Mob) GetName() string {
+	return m.Character.Name
+}
+
+// GetAggroUserId satisfies mobai.MobActor — returns the UserId of the aggro
+// target, or 0 if there is no aggro or the aggro target is a mob.
+func (m *Mob) GetAggroUserId() int {
+	if m.Character.Aggro == nil {
+		return 0
+	}
+	return m.Character.Aggro.UserId
+}
+
+// HasAggro satisfies mobai.MobActor — returns true if the mob has an active
+// aggro target.
+func (m *Mob) HasAggro() bool {
+	return m.Character.Aggro != nil
+}
+
+// GetCombatMemory satisfies mobai.MobActor — returns the mob's combat memory.
+func (m *Mob) GetCombatMemory() *mobai.CombatMemory {
+	return m.CombatMemory
+}
+
 // Gets a copy of all mob info
 func GetAllMobInfo() []Mob {
 	ret := []Mob{}

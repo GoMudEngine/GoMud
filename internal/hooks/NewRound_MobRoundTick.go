@@ -11,6 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/mobai"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
@@ -93,6 +94,14 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 
 		// Roundtick any cooldowns
 		mob.Character.Cooldowns.RoundTick()
+
+		// Expire combat memory when it grows stale.
+		if mob.CombatMemory != nil {
+			if mobai.MemoryExpired(mob.CombatMemory, util.GetRoundCount(),
+				int(configs.GetBalanceConfig().CombatMemoryDuration)) {
+				mob.CombatMemory = nil
+			}
+		}
 
 		// Stage 7.5: Attempt automatic recovery from prone (uses DEX)
 		if attemptMade, success := mob.Character.AttemptRecovery(mob.Character.Stats.Dexterity.ValueAdj); attemptMade {

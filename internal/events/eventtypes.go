@@ -369,3 +369,13 @@ type RedrawPrompt struct {
 
 func (l RedrawPrompt) Type() string     { return `RedrawPrompt` }
 func (l RedrawPrompt) UniqueID() string { return `RedrawPrompt-` + strconv.Itoa(l.UserId) }
+
+// MobAISignal is fired when a combat-relevant event occurs for a mob's AI system.
+type MobAISignal struct {
+	MobInstanceId int
+	SignalType    string // "damage_taken", "combat_start", "target_fled", "action_complete", "player_entered"
+	Detail        string
+	RoomId        int
+}
+
+func (m MobAISignal) Type() string { return "MobAISignal" }
