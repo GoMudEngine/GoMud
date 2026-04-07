@@ -324,10 +324,12 @@
 
   function populateSkillDropdown(d) {
     var sel = document.getElementById('distSkillSelect');
+    var prev = sel.value;
     sel.innerHTML = '';
     Object.keys(d.skills).sort().forEach(function(sk) {
       var opt = document.createElement('option');
       opt.value = sk; opt.textContent = sk;
+      if (sk === prev) opt.selected = true;
       sel.appendChild(opt);
     });
   }
