@@ -18,6 +18,9 @@ services:
       - type: volume
         source: log-volume
         target: /app/log
+      - type: volume
+        source: feedback-volume
+        target: /app/_datafiles/feedback
 
   busybox:
     container_name: "server-logs"
@@ -51,6 +54,7 @@ services:
 
 volumes:
   log-volume:
+  feedback-volume:
 
 networks:
   mud_network:
