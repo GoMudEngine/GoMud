@@ -1,0 +1,355 @@
+{{template "header" .}}
+
+<script src="/admin/static/js/chart.js"></script>
+
+<div class="container-fluid mt-3">
+  <h2>Progression Health</h2>
+
+  <!-- Sub-view tabs -->
+  <ul class="nav nav-pills mb-3" id="progTabs">
+    <li class="nav-item">
+      <a class="nav-link active" href="#" onclick="showTab('health',this);return false">System Health</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#" onclick="showTab('players',this);return false">Player Overview</a>
+    </li>
+  </ul>
+
+  <!-- SYSTEM HEALTH -->
+  <div id="tab-health">
+
+    <!-- Panel 1: Skill Health Table -->
+    <div class="card mb-3">
+      <div class="card-header" data-toggle="collapse" data-target="#skillHealthBody" style="cursor:pointer">
+        <strong>Skill Health Scores</strong>
+      </div>
+      <div class="collapse show" id="skillHealthBody">
+        <div class="card-body">
+          <table class="table table-sm table-striped" id="skillHealthTable">
+            <thead>
+              <tr>
+                <th>Skill</th>
+                <th>Health</th>
+                <th>Avg Deviation</th>
+                <th>Worst Player</th>
+                <th>Stalls</th>
+                <th>Players</th>
+                <th>Clustering</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel 2: Stall Detection -->
+    <div class="card mb-3">
+      <div class="card-header" data-toggle="collapse" data-target="#stallBody" style="cursor:pointer">
+        <strong>Stall Detection</strong>
+      </div>
+      <div class="collapse" id="stallBody">
+        <div class="card-body">
+          <div class="alert alert-info" id="noStalls" style="display:none">No stalled progressions detected.</div>
+          <table class="table table-sm table-striped" id="stallTable">
+            <thead>
+              <tr>
+                <th>Player</th>
+                <th>Skill</th>
+                <th>Rank</th>
+                <th>Uses Since Gain</th>
+                <th>Expected Uses</th>
+                <th>Staleness</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel 3: Distribution Charts -->
+    <div class="card mb-3">
+      <div class="card-header" data-toggle="collapse" data-target="#distBody" style="cursor:pointer">
+        <strong>Population Distribution</strong>
+      </div>
+      <div class="collapse" id="distBody">
+        <div class="card-body">
+          <div class="row mb-2">
+            <div class="col-md-3">
+              <select class="form-control form-control-sm" id="distSkillSelect" onchange="updateDistChart()"></select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6"><canvas id="skillDistChart" height="250"></canvas></div>
+            <div class="col-md-6"><canvas id="statDistChart" height="250"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel 4: Discovery Health -->
+    <div class="card mb-3">
+      <div class="card-header" data-toggle="collapse" data-target="#discoveryBody" style="cursor:pointer">
+        <strong>Discovery Health</strong>
+      </div>
+      <div class="collapse" id="discoveryBody">
+        <div class="card-body">
+          <h5>Spells</h5>
+          <table class="table table-sm table-striped" id="spellTable">
+            <thead>
+              <tr><th>Spell</th><th>School</th><th>Known</th><th>Total</th><th>Avg Activity</th><th>Flag</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <h5 class="mt-3">Recipes</h5>
+          <table class="table table-sm table-striped" id="recipeTable">
+            <thead>
+              <tr><th>Recipe</th><th>Skill</th><th>Known</th><th>Total</th><th>Avg Activity</th><th>Flag</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PLAYER OVERVIEW -->
+  <div id="tab-players" style="display:none">
+    <div class="card">
+      <div class="card-body">
+        <table class="table table-sm table-striped" id="playerTable">
+          <thead>
+            <tr>
+              <th>Player</th>
+              <th>Activity</th>
+              <th id="skillHeaders"></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function() {
+  var data = null;
+  var skillDistChart = null;
+  var statDistChart = null;
+
+  var tierColors = {
+    'unknown':'#6c757d','novice':'#6c757d','apprentice':'#28a745',
+    'journeyman':'#007bff','adept':'#6f42c1','expert':'#fd7e14','master':'#dc3545'
+  };
+
+  function healthBadge(score) {
+    var cls = score >= 0.7 ? 'success' : score >= 0.4 ? 'warning' : 'danger';
+    return '<span class="badge badge-' + cls + '">' + score.toFixed(2) + '</span>';
+  }
+
+  function tierBadge(tier) {
+    var color = tierColors[tier] || '#6c757d';
+    return '<span class="badge" style="background:'+color+';color:#fff">'+tier+'</span>';
+  }
+
+  function flagBadge(flag) {
+    if (!flag) return '';
+    var cls = flag === 'too_hidden' ? 'warning' : 'info';
+    return '<span class="badge badge-' + cls + '">' + flag.replace('_',' ') + '</span>';
+  }
+
+  function showTab(name, el) {
+    document.getElementById('tab-health').style.display = name === 'health' ? '' : 'none';
+    document.getElementById('tab-players').style.display = name === 'players' ? '' : 'none';
+    document.querySelectorAll('#progTabs .nav-link').forEach(function(a) {
+      a.classList.remove('active');
+    });
+    el.classList.add('active');
+  }
+  window.showTab = showTab;
+
+  function updateSkillHealthTable(d) {
+    var tbody = document.querySelector('#skillHealthTable tbody');
+    tbody.innerHTML = '';
+    var entries = Object.entries(d.skills).sort(function(a,b) {
+      return a[1].health_score - b[1].health_score;
+    });
+    entries.forEach(function(e) {
+      var sk = e[0], s = e[1];
+      var row = '<tr><td>'+sk+'</td><td>'+healthBadge(s.health_score)+'</td>';
+      row += '<td>'+s.avg_deviation.toFixed(1)+'</td>';
+      row += '<td>'+s.worst_player+' ('+s.worst_deviation.toFixed(1)+')</td>';
+      row += '<td>'+s.stall_count+'</td><td>'+s.total_with_uses+'</td>';
+      row += '<td>'+s.clustering_score.toFixed(2)+'</td></tr>';
+      tbody.innerHTML += row;
+    });
+  }
+
+  function updateStallTable(d) {
+    var tbody = document.querySelector('#stallTable tbody');
+    tbody.innerHTML = '';
+    var stalls = [];
+    d.players.forEach(function(p) {
+      Object.entries(p.skills).forEach(function(e) {
+        var sk = e[0], s = e[1];
+        if (s.use_count > 0 && s.progression_chance > 0) {
+          var chanceDecimal = s.progression_chance / 100;
+          var expectedForNext = chanceDecimal > 0 ? 1.0 / chanceDecimal : 9999;
+          var approxUsesAtRank = s.rank * expectedForNext;
+          var usesSince = s.use_count - approxUsesAtRank;
+          if (usesSince < 0) usesSince = 0;
+          var staleness = expectedForNext > 0 ? usesSince / expectedForNext : 0;
+          if (staleness > 1.5) {
+            stalls.push({player:p.name, skill:sk, rank:s.rank, tier:s.tier,
+                        usesSince:Math.round(usesSince),
+                        expected:Math.round(expectedForNext),
+                        staleness:staleness});
+          }
+        }
+      });
+    });
+    stalls.sort(function(a,b) { return b.staleness - a.staleness; });
+    if (stalls.length === 0) {
+      document.getElementById('noStalls').style.display = '';
+      document.getElementById('stallTable').style.display = 'none';
+      return;
+    }
+    document.getElementById('noStalls').style.display = 'none';
+    document.getElementById('stallTable').style.display = '';
+    stalls.forEach(function(s) {
+      var cls = s.staleness > 2.0 ? 'danger' : s.staleness > 1.5 ? 'warning' : 'success';
+      var row = '<tr><td>'+s.player+'</td><td>'+s.skill+'</td>';
+      row += '<td>'+tierBadge(s.tier)+'</td>';
+      row += '<td>'+s.usesSince+'</td><td>'+s.expected+'</td>';
+      row += '<td><span class="badge badge-'+cls+'">'+s.staleness.toFixed(1)+'x</span></td></tr>';
+      tbody.innerHTML += row;
+    });
+  }
+
+  function updateDistChart() {
+    var sel = document.getElementById('distSkillSelect');
+    var sk = sel.value;
+    if (!data || !data.skills[sk]) return;
+    var dist = data.skills[sk].distribution;
+    var labels = ['novice','apprentice','journeyman','adept','expert','master'];
+    var values = labels.map(function(l) { return dist[l] || 0; });
+    var colors = labels.map(function(l) { return tierColors[l]; });
+
+    if (skillDistChart) skillDistChart.destroy();
+    skillDistChart = new Chart(document.getElementById('skillDistChart'), {
+      type: 'bar',
+      data: { labels: labels, datasets: [{label: sk, data: values, backgroundColor: colors}] },
+      options: {
+        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+        plugins: { legend: { display: false } }
+      }
+    });
+  }
+  window.updateDistChart = updateDistChart;
+
+  function updateStatDistChart(d) {
+    var labels = ['0-50','51-100','101-150','151+'];
+    var datasets = [];
+    var statColors = {
+      strength:'#dc3545',dexterity:'#28a745',perception:'#fd7e14',
+      vitality:'#6f42c1',willpower:'#007bff',charisma:'#ffc107'
+    };
+    Object.entries(d.stats).forEach(function(e) {
+      datasets.push({
+        label: e[0],
+        data: labels.map(function(l) { return e[1].distribution[l] || 0; }),
+        backgroundColor: statColors[e[0]] || '#6c757d'
+      });
+    });
+    if (statDistChart) statDistChart.destroy();
+    statDistChart = new Chart(document.getElementById('statDistChart'), {
+      type: 'bar',
+      data: { labels: labels, datasets: datasets },
+      options: { scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+    });
+  }
+
+  function updateDiscoveryTables(d) {
+    var spellBody = document.querySelector('#spellTable tbody');
+    spellBody.innerHTML = '';
+    Object.entries(d.spells).sort(function(a,b) {
+      return a[1].name.localeCompare(b[1].name);
+    }).forEach(function(e) {
+      var s = e[1];
+      spellBody.innerHTML += '<tr><td>'+s.name+'</td><td>'+s.school+'</td>'
+        +'<td>'+s.known_count+'</td><td>'+s.total_players+'</td>'
+        +'<td>'+Math.round(s.avg_activity_at_discovery)+'</td>'
+        +'<td>'+flagBadge(s.flag)+'</td></tr>';
+    });
+
+    var recipeBody = document.querySelector('#recipeTable tbody');
+    recipeBody.innerHTML = '';
+    Object.entries(d.recipes).sort(function(a,b) {
+      return a[1].name.localeCompare(b[1].name);
+    }).forEach(function(e) {
+      var s = e[1];
+      recipeBody.innerHTML += '<tr><td>'+s.name+'</td><td>'+s.skill+'</td>'
+        +'<td>'+s.known_count+'</td><td>'+s.total_players+'</td>'
+        +'<td>'+Math.round(s.avg_activity_at_discovery)+'</td>'
+        +'<td>'+flagBadge(s.flag)+'</td></tr>';
+    });
+  }
+
+  function updatePlayerTable(d) {
+    var allSkills = Object.keys(d.skills).sort();
+
+    // Rebuild header row
+    var thead = document.querySelector('#playerTable thead tr');
+    thead.innerHTML = '<th>Player</th><th>Activity</th>';
+    allSkills.forEach(function(sk) {
+      thead.innerHTML += '<th>'+sk.replace(/-combat$/,'')+'</th>';
+    });
+
+    var tbody = document.querySelector('#playerTable tbody');
+    tbody.innerHTML = '';
+    d.players.forEach(function(p) {
+      var row = '<tr><td>'+p.name+'</td><td>'+p.total_activity+'</td>';
+      allSkills.forEach(function(sk) {
+        var s = p.skills[sk];
+        row += '<td>'+ (s ? tierBadge(s.tier) : '-') +'</td>';
+      });
+      row += '</tr>';
+      tbody.innerHTML += row;
+    });
+  }
+
+  function populateSkillDropdown(d) {
+    var sel = document.getElementById('distSkillSelect');
+    sel.innerHTML = '';
+    Object.keys(d.skills).sort().forEach(function(sk) {
+      var opt = document.createElement('option');
+      opt.value = sk; opt.textContent = sk;
+      sel.appendChild(opt);
+    });
+  }
+
+  function fetchData() {
+    fetch('/admin/api/progression/')
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        data = d;
+        updateSkillHealthTable(d);
+        updateStallTable(d);
+        populateSkillDropdown(d);
+        updateDistChart();
+        updateStatDistChart(d);
+        updateDiscoveryTables(d);
+        updatePlayerTable(d);
+      });
+  }
+
+  fetchData();
+  setInterval(fetchData, 30000);
+})();
+</script>
+
+{{template "footer" .}}
