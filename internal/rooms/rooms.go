@@ -76,6 +76,7 @@ type Room struct {
 	MusicFile         string                            `yaml:"musicfile,omitempty" instance:"skip"` // background music to play when in this room
 	IsBank            bool                              `yaml:"isbank,omitempty" instance:"skip"`    // Is this a bank room? If so, players can deposit/withdraw gold here.
 	IsStorage         bool                              `yaml:"isstorage,omitempty" instance:"skip"` // Is this a storage room? If so, players can add/remove objects here.
+	StorageCapacity   int                               `yaml:"storagecapacity,omitempty" instance:"skip"` // Max items in storage (0 = default 20)
 	IsCharacterRoom   bool                              `yaml:"ischaracterroom,omitempty" instance:"skip"` // Is this a room where characters can create new characters to swap between them?
 	Title             string                            `yaml:"title" instance:"skip"`               // Title shown to the user
 	Description       string                            `yaml:"description" instance:"skip"`         // Description shown to the user
