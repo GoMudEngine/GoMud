@@ -68,7 +68,7 @@ func Assess(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	}
 
 	user.SendText(`You study the remains of <ansi fg="mob-corpse">` + corpse.Character.Name + `</ansi>.`)
-	user.SendText(`You sense ` + essenceDesc + `within.`)
+	user.SendText(`You sense ` + essenceDesc + ` within.`)
 
 	// List which undead types this corpse could support.
 	var supported []string
