@@ -272,6 +272,28 @@ no problem).
 
 ---
 
+## Player Loading Strategy
+
+The dashboard includes both online and recently-active offline players.
+
+**Loading:** A new helper function scans user YAML files on disk
+(`_datafiles/world/dogmud/users/{userId}.yaml`). For each file:
+1. Check file modification time — skip if older than 14 days (proxy for
+   last active, since users are saved on logout and periodically).
+2. Load and unmarshal the YAML.
+3. Filter by `Role == "user"` — exclude admins and guests.
+
+Online users (`GetAllActiveUsers()`) are merged with the loaded offline
+users, deduplicating by UserId. This runs on each API call (admin-only,
+infrequent — no caching needed for V1).
+
+**Fields available for filtering:**
+- `UserRecord.Role` — `"guest"` / `"user"` / `"admin"`
+- File mod time — proxy for last login/activity
+- No explicit `LastLogin` field exists on UserRecord
+
+---
+
 ## Constraints
 
 - All computation server-side in Go. No progression math in JavaScript.
@@ -280,5 +302,6 @@ no problem).
 - Player activity = sum of all use counts (not wall-clock time).
 - Starter spells/recipes (those granted at character creation) are excluded
   from "too easy" flagging.
-- The dashboard reads live data from online users. Offline users are not
-  included (consistent with existing admin behavior).
+- Only `Role == "user"` characters are included (no admins/guests).
+- Only characters active within the last 14 days (file mod time) are
+  included, plus all currently online users.
