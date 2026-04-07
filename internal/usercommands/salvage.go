@@ -8,8 +8,10 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/crafting"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 // Salvage handles the `salvage` command — breaks down items for materials.
@@ -44,11 +46,30 @@ func Salvage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 
 	spec := itm.GetSpec()
 
+	// Spoiled/declining potions can be salvaged for binding paste
+	isSpoiledPotion := false
+	if spec.Type == items.Potion && spec.Aging.HasAging() && itm.CraftedRound > 0 {
+		currentRound := util.GetRoundCount()
+		var elapsed uint64
+		if currentRound >= itm.CraftedRound {
+			elapsed = currentRound - itm.CraftedRound
+		}
+		bottleMult := itm.BottleMultiplier
+		if bottleMult <= 0 {
+			bottleMult = spec.BottleAgingMultiplier
+		}
+		effSpeed := items.CalcEffectiveAgingSpeed(bottleMult, itm.CraftSkill)
+		phase, _ := items.GetAgingPhase(elapsed, spec.Aging, effSpeed)
+		if phase == items.PhaseSpoiled || phase == items.PhaseDeclining {
+			isSpoiledPotion = true
+		}
+	}
+
 	// Determine salvage source: recipe reverse-lookup or tagged returns
 	recipe := crafting.GetRecipeByOutputItemId(spec.ItemId)
 	hasSalvageReturns := len(spec.SalvageReturns) > 0
 
-	if recipe == nil && !hasSalvageReturns {
+	if recipe == nil && !hasSalvageReturns && !isSpoiledPotion {
 		user.SendText(`<ansi fg="red">You can't find anything useful to salvage from that.</ansi>`)
 		return true, nil
 	}
@@ -77,7 +98,9 @@ func Salvage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	// Calculate rounds based on ingredient gold value
 	bal := configs.GetBalanceConfig()
 	var totalGold int
-	if recipe != nil {
+	if isSpoiledPotion {
+		totalGold = 1 // Quick salvage — just scraping residue
+	} else if recipe != nil {
 		totalGold = crafting.CalcIngredientGoldValue(recipe.Ingredients)
 	} else {
 		totalGold = crafting.CalcSalvageReturnGoldValue(spec.SalvageReturns)
@@ -88,6 +111,7 @@ func Salvage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	// Store salvage target info for resolution
 	user.Character.SetMiscData("salvage_item_uuid", itm.UUID.String())
 	user.Character.SetMiscData("salvage_uses_kit", usesKit)
+	user.Character.SetMiscData("salvage_spoiled_potion", isSpoiledPotion)
 
 	// Start multi-round salvage activity using CraftingState
 	user.Character.CraftingState = &characters.CraftingState{

@@ -456,13 +456,27 @@ func resolveSalvage(user *users.UserRecord, itemIdStr string) {
 		float64(bal.SalvageMinChance), float64(bal.SalvageMaxChance),
 		int(bal.SalvageSoftCap))
 
-	// Roll returns from recipe or tagged salvage_returns
+	// Roll returns from recipe, tagged salvage_returns, or spoiled potion
 	var recovered []crafting.RecipeIngredient
-	recipe := crafting.GetRecipeByOutputItemId(itemId)
-	if recipe != nil {
-		recovered = crafting.RollSalvageReturns(recipe.Ingredients, chance)
-	} else if len(spec.SalvageReturns) > 0 {
-		recovered = crafting.RollSalvageReturnsFromSpec(spec.SalvageReturns, chance)
+	isSpoiledPotion, _ := user.Character.GetMiscData("salvage_spoiled_potion").(bool)
+	user.Character.SetMiscData("salvage_spoiled_potion", nil)
+
+	if isSpoiledPotion {
+		// Spoiled/declining potions always return 1-2 binding paste
+		qty := 1
+		if chance > 0.5 {
+			qty = 2
+		}
+		recovered = []crafting.RecipeIngredient{
+			{ItemTag: "binding-paste", Quantity: qty},
+		}
+	} else {
+		recipe := crafting.GetRecipeByOutputItemId(itemId)
+		if recipe != nil {
+			recovered = crafting.RollSalvageReturns(recipe.Ingredients, chance)
+		} else if len(spec.SalvageReturns) > 0 {
+			recovered = crafting.RollSalvageReturnsFromSpec(spec.SalvageReturns, chance)
+		}
 	}
 
 	// Destroy the item (always consumed)

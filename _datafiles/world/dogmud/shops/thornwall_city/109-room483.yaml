@@ -1,0 +1,12 @@
+gold: 394
+starting_gold: 500
+last_restock: 0
+inventory:
+- item_id: 40028
+  restock_qty: 15
+  max_stock: 30
+  current: 15
+- item_id: 10017
+  restock_qty: 0
+  max_stock: 20
+  current: 1
