@@ -12,9 +12,11 @@ you recover -- higher skill means better returns.
 <ansi fg="yellow">━━━ What Can Be Salvaged ━━━</ansi>
 
 Any item that was produced by a crafting recipe, plus certain
-special items marked as salvageable. Items that were never
-crafted and have no salvageable components cannot be broken
-down.
+special items marked as salvageable. Spoiled or declining
+potions can also be salvaged, yielding binding paste.
+
+Items that were never crafted and have no salvageable
+components cannot be broken down.
 
 <ansi fg="yellow">━━━ Where to Salvage ━━━</ansi>
 

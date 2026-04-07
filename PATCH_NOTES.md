@@ -1,5 +1,31 @@
 # DOGMud Patch Notes
 
+## 2026-04-06 (evening) — Foraging, Salvage, Progression Dashboard
+
+### Foraging
+- **Iron ingots** now forageable in caves (common) and mountains
+  (uncommon). Previously only available from merchants.
+
+### Salvage
+- **Spoiled/declining potions** can now be salvaged for binding
+  paste (1-2 depending on salvage skill). Previously spoiled
+  potions were useless.
+
+### Economy
+- Enchanter Vael's binding paste restock increased from 5 to 15.
+
+### Admin
+- **Progression Dashboard**: new admin tab with system-level health
+  metrics for the use-based progression system.
+  - Skill health scores (expected curve deviation, stall detection,
+    clustering)
+  - Population distribution charts (skill tiers + stat values)
+  - Discovery health (spell/recipe flags: too_hidden, too_easy)
+  - Player overview with tier badges and activity totals
+  - Auto-refreshes every 30 seconds
+
+---
+
 ## 2026-04-06 — Enchanting Rework, Multi-Arm Equip, Aggro Fix
 
 ### Enchanting System Rework
