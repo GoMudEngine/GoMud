@@ -184,6 +184,7 @@ type Balance struct {
 	MutationProgressScale        ConfigFloat `yaml:"MutationProgressScale"`        // Each additional mutation costs Scale^n more (default 1.5)
 	MutationMaxCount             ConfigInt   `yaml:"MutationMaxCount"`             // Max simultaneous mutations per character (default 5)
 	MutationMaxLevel             ConfigInt   `yaml:"MutationMaxLevel"`             // Max level any single mutation can reach (default 3)
+	MutationDeepenChance         ConfigFloat `yaml:"MutationDeepenChance"`         // Probability of deepening vs new discovery when both possible (default 0.70)
 	MutationProgressGainPerRound ConfigFloat `yaml:"MutationProgressGainPerRound"` // Progress added per combat round (default 1.0)
 	MutationLevel2Multiplier     ConfigFloat `yaml:"MutationLevel2Multiplier"`     // Effect scaling at level 2 (default 1.5)
 	MutationLevel3Multiplier     ConfigFloat `yaml:"MutationLevel3Multiplier"`     // Effect scaling at level 3 (default 2.0)
@@ -692,6 +693,9 @@ func (b *Balance) Validate() {
 	}
 	if b.MutationMaxLevel < 1 {
 		b.MutationMaxLevel = 3
+	}
+	if b.MutationDeepenChance <= 0 || b.MutationDeepenChance > 1.0 {
+		b.MutationDeepenChance = 0.70
 	}
 	if b.MutationProgressGainPerRound <= 0 {
 		b.MutationProgressGainPerRound = 1.0

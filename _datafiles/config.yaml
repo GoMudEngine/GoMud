@@ -765,6 +765,7 @@ Balance:
   MutationProgressScale: 1.5         # Each additional mutation costs Scale^n more
   MutationMaxCount: 5                # Max simultaneous mutations per character
   MutationMaxLevel: 4                # Max level any single mutation can reach (1–4)
+  MutationDeepenChance: 0.70         # Probability of deepening vs new when both possible (0.0-1.0)
   MutationProgressGainPerRound: 1.0  # Progress added per combat round
   MutationLevel2Multiplier: 1.5      # Effect magnitude at level 2 (1.5× level 1)
   MutationLevel3Multiplier: 2.0      # Effect magnitude at level 3 (2.0× level 1)
