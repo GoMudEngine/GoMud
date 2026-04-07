@@ -51,6 +51,19 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 		}
 	}
 
+	// Non-crafter merchant restock (supply cart delivery for regular shops)
+	if mobs.TickMobShopRestock(mob) {
+		if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
+			msgs := []string{
+				`A supply cart pulls up outside. <ansi fg="mobname">%s</ansi> sorts through a fresh delivery.`,
+				`<ansi fg="mobname">%s</ansi> unpacks a crate of supplies and restocks the shelves.`,
+				`A runner drops off a bundle of goods. <ansi fg="mobname">%s</ansi> checks the contents and nods.`,
+			}
+			msg := fmt.Sprintf(msgs[util.Rand(len(msgs))], mob.Character.Name)
+			room.SendText(msg)
+		}
+	}
+
 	// Stage 38.5.4: Crafter mob tick — background activity alongside normal idle
 	if result := mobs.TickMobCraft(mob); result != nil {
 		if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {

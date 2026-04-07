@@ -82,6 +82,38 @@ func RegisterMobShop(mob *Mob) {
 // fires on the material restock tick (every CrafterMaterialRestockRate rounds):
 // materials arrive, and the mob immediately attempts one craft from them.
 // Returns a non-nil CraftResult only when a craft is attempted.
+// TickMobShopRestock handles periodic supply-cart restocking for non-crafter
+// merchant mobs that have a registered ShopInventory. Returns true if any
+// stock was added. Crafter mobs are handled by TickMobCraft instead.
+func TickMobShopRestock(mob *Mob) bool {
+	if mob.Crafter {
+		return false // Crafter restock is handled in TickMobCraft
+	}
+
+	shopInv := shops.GetShopInventory(mob.Zone, int(mob.MobId), mob.HomeRoomId)
+	if shopInv == nil {
+		return false
+	}
+
+	b := configs.GetBalanceConfig()
+	roundCount := util.GetRoundCount()
+
+	restockRate := uint64(b.CrafterMaterialRestockRate)
+	if restockRate == 0 {
+		return false
+	}
+	if mob.crafterLastRestockRound == 0 {
+		mob.crafterLastRestockRound = roundCount
+		return false
+	}
+	if roundCount-mob.crafterLastRestockRound < restockRate {
+		return false
+	}
+	mob.crafterLastRestockRound = roundCount
+
+	return shopInv.Restock()
+}
+
 func TickMobCraft(mob *Mob) *CraftResult {
 	if !mob.Crafter {
 		return nil
