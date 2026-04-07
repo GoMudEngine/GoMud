@@ -429,7 +429,7 @@ func (b *Balance) Validate() {
 		b.UnarmedDamageMultiplier = 0.30
 	}
 	if b.UnarmedSpeedMultiplier <= 0 {
-		b.UnarmedSpeedMultiplier = 1.4
+		b.UnarmedSpeedMultiplier = 1.8
 	}
 	if b.SkillMultiplierBase <= 0 {
 		b.SkillMultiplierBase = 1.0

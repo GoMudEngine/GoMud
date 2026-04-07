@@ -79,10 +79,14 @@ func calcSwingCount(sourceChar *characters.Character, weaponSpeed float64, extra
 	swings := 1.0 + (dex-50.0)/100.0*weaponSpeed*(1.0+skillLevel/softCap)
 	swings += float64(extraAttacks)
 
-	// Offhand penalty: weapon-combat skill governs dual-wield speed
+	// Offhand penalty: skill governs dual-wield speed
 	if isOffhand {
-		wcLevel := float64(sourceChar.GetSkillLevel(skills.WeaponCombat)) * float64(bal.SkillWeight)
-		dualWieldMod := 0.5 + (wcLevel/50.0)*0.5
+		dualSkill := float64(sourceChar.GetSkillLevel(skills.WeaponCombat))
+		if sourceChar.IsUnarmedStyle() {
+			dualSkill = float64(sourceChar.GetSkillLevel(skills.UnarmedCombat))
+		}
+		dualSkill *= float64(bal.SkillWeight)
+		dualWieldMod := 0.5 + (dualSkill/50.0)*0.5
 		swings *= dualWieldMod
 	}
 

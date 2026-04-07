@@ -2104,6 +2104,17 @@ func (c *Character) IsUnarmed() bool {
 	return c.Equipment.Weapon.ItemId <= 0
 }
 
+// IsUnarmedStyle returns true if the character fights with fists, claws, or
+// bare hands — anything that uses unarmed-combat skill. These fighters cannot
+// parry (no weapon to deflect with) but get a speed bonus instead.
+func (c *Character) IsUnarmedStyle() bool {
+	if c.Equipment.Weapon.ItemId <= 0 {
+		return true
+	}
+	sub := c.Equipment.Weapon.GetSpec().Subtype
+	return sub == items.Fist || sub == items.Claws
+}
+
 // GetDefenseSequence returns ordered defenses based on equipment (Stage 7.1)
 func (c *Character) GetDefenseSequence() []string {
 	defenses := []string{}
@@ -2111,8 +2122,8 @@ func (c *Character) GetDefenseSequence() []string {
 	// Everyone can dodge
 	defenses = append(defenses, DefenseDodge)
 
-	// If unarmed, only dodge
-	if c.IsUnarmed() {
+	// Unarmed-style fighters (bare hands, fists, claws) only dodge — no parry
+	if c.IsUnarmedStyle() {
 		return defenses
 	}
 
