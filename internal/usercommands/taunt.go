@@ -85,6 +85,23 @@ func Taunt(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		sendTauntMessages(combat.TauntHit, result.DmgDesc, sourceName, targetName,
 			"username", targetType, user, targetPlayer, room, result.Target.UserId)
 
+		// Stoic resolve messaging
+		if result.CritDeflected {
+			if targetPlayer != nil {
+				targetPlayer.SendText(
+					`<ansi fg="green">The words wash over you harmlessly — you are unmoved.</ansi>`)
+			}
+			user.SendText(
+				`<ansi fg="yellow">Your words have no effect — your target is completely unmoved!</ansi>`)
+		} else if result.Deflected {
+			if targetPlayer != nil {
+				targetPlayer.SendText(
+					`<ansi fg="green">You steel yourself against the barrage of words.</ansi>`)
+			}
+			user.SendText(
+				`<ansi fg="yellow">Your words fail to fully penetrate your target's resolve!</ansi>`)
+		}
+
 	default:
 		sendTauntMessages(combat.TauntMiss, "", sourceName, targetName,
 			"username", targetType, user, targetPlayer, room, result.Target.UserId)

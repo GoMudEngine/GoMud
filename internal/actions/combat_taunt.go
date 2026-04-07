@@ -44,6 +44,12 @@ type TauntResult struct {
 
 	// SelfDamage is the self-conviction damage taken on a fumble.
 	SelfDamage int
+
+	// Deflected reports whether the target partially resisted the conviction damage.
+	Deflected bool
+
+	// CritDeflected reports whether the target fully negated the conviction damage.
+	CritDeflected bool
 }
 
 // ExecuteTaunt performs the shared conviction-attack resolution used by both
@@ -164,6 +170,27 @@ func ExecuteTaunt(actor Actor) TauntResult {
 			dmg = 1
 		}
 
+		// Stoic Resolve: defender attempts to partially resist
+		deflected := false
+		critDeflect := false
+		if !isCrit {
+			defenderUserId := 0
+			if target.UserId > 0 {
+				defenderUserId = target.UserId
+			}
+			resolveMult := combat.TryStoicResolve(char, target.Char, defenderUserId)
+			if resolveMult < 1.0 {
+				deflected = true
+				if resolveMult == 0.0 {
+					critDeflect = true
+				}
+				dmg = int(math.Round(float64(dmg) * resolveMult))
+				if dmg < 1 && resolveMult > 0 {
+					dmg = 1
+				}
+			}
+		}
+
 		// Apply conviction damage to target.
 		target.Char.Conviction -= dmg
 		if target.Char.Conviction < 0 {
@@ -192,12 +219,14 @@ func ExecuteTaunt(actor Actor) TauntResult {
 		}
 
 		return TauntResult{
-			Target:   target,
-			Executed: true,
-			Hit:      true,
-			Crit:     isCrit,
-			Damage:   dmg,
-			DmgDesc:  dmgDesc,
+			Target:        target,
+			Executed:      true,
+			Hit:           true,
+			Crit:          isCrit,
+			Damage:        dmg,
+			DmgDesc:       dmgDesc,
+			Deflected:     deflected,
+			CritDeflected: critDeflect,
 		}
 	}
 

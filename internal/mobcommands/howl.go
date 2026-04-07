@@ -48,6 +48,19 @@ func Howl(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			fmt.Sprintf(`Something lets out a bone-chilling howl at <ansi fg="username">%s</ansi>!`, targetName),
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> throws back its head and lets out a bone-chilling howl at <ansi fg="username">%s</ansi>!`, mob.Character.Name, targetName))
 
+		// Stoic resolve messaging
+		if result.CritDeflected {
+			if targetPlayer != nil {
+				targetPlayer.SendText(
+					`<ansi fg="green">The howl washes over you harmlessly — you are unmoved.</ansi>`)
+			}
+		} else if result.Deflected {
+			if targetPlayer != nil {
+				targetPlayer.SendText(
+					`<ansi fg="green">You steel yourself against the howl's fury.</ansi>`)
+			}
+		}
+
 	default: // miss
 		if targetPlayer != nil {
 			if canSeeInDark(targetPlayer, room) {
