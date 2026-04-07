@@ -2,6 +2,8 @@ package mutations
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 // buildOwned is a helper that builds a fake owned map from id→level pairs.
@@ -660,6 +662,51 @@ func TestGetStatProgressionMultiplier(t *testing.T) {
 	got := GetStatProgressionMultiplier(buildOwned("bio-adaptation", 1))
 	if abs(got-0.05) > 1e-9 {
 		t.Errorf("bio-adaptation: want 0.05, got %v", got)
+	}
+}
+
+// ─── Stage rarity uplift tests ───────────────────────────────────────────────
+
+func TestGetWeightedPool_RarityUplift_NoMutations(t *testing.T) {
+	seedRegistry()
+	owned := map[string]int{}
+	pool := GetWeightedPool(owned)
+	assert.Greater(t, len(pool), 0, "pool should not be empty")
+}
+
+func TestGetWeightedPool_RarityUplift_HighAvgLevel(t *testing.T) {
+	seedRegistry()
+	basePool := GetWeightedPool(map[string]int{})
+
+	owned := map[string]int{
+		"thick-hide": 4,
+		"iron-gut":   4,
+	}
+	upliftPool := GetWeightedPool(owned)
+
+	assert.Greater(t, len(basePool), len(upliftPool),
+		"high avg level should produce a smaller pool (reduced common weights)")
+}
+
+func TestRarityBonus_Calculation(t *testing.T) {
+	tests := []struct {
+		name     string
+		owned    map[string]int
+		expected int
+	}{
+		{"no mutations", map[string]int{}, 0},
+		{"all level 1", map[string]int{"a": 1, "b": 1}, 0},
+		{"avg level 2", map[string]int{"a": 2, "b": 2}, 1},
+		{"avg level 3", map[string]int{"a": 3, "b": 3}, 2},
+		{"avg level 4", map[string]int{"a": 4, "b": 4}, 3},
+		{"mixed levels", map[string]int{"a": 1, "b": 3}, 1},
+		{"single level 4", map[string]int{"a": 4}, 3},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := calcRarityBonus(tt.owned)
+			assert.Equal(t, tt.expected, got)
+		})
 	}
 }
 

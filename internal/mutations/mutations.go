@@ -182,12 +182,35 @@ func HasConflict(owned map[string]int, candidateId string) bool {
 	return false
 }
 
+// calcRarityBonus computes a pool weight reduction based on the player's
+// average mutation level. Higher average levels shift new discoveries
+// toward rarer mutations.
+//
+//	avgLevel 1 → bonus 0 (normal weights)
+//	avgLevel 2 → bonus 1
+//	avgLevel 3 → bonus 2
+//	avgLevel 4 → bonus 3
+func calcRarityBonus(owned map[string]int) int {
+	if len(owned) == 0 {
+		return 0
+	}
+	totalLevels := 0
+	for _, level := range owned {
+		totalLevels += level
+	}
+	avgLevel := totalLevels / len(owned) // integer division = floor
+	bonus := avgLevel - 1
+	if bonus < 0 {
+		bonus = 0
+	}
+	return bonus
+}
+
 // GetWeightedPool builds a weighted slice of mutation IDs suitable for random selection.
 // Each mutation appears (11 - Rarity) times so rarer mutations are less likely.
 // Mutations already owned or conflicting with owned mutations are excluded.
 // disabledSlots filters out mutations requiring arms for species that lack arm slots.
 func GetWeightedPool(owned map[string]int, disabledSlots ...[]string) []string {
-	// Build a set of disabled slots for quick lookup
 	slotDisabled := map[string]bool{}
 	if len(disabledSlots) > 0 && disabledSlots[0] != nil {
 		for _, slot := range disabledSlots[0] {
@@ -195,6 +218,9 @@ func GetWeightedPool(owned map[string]int, disabledSlots ...[]string) []string {
 		}
 	}
 	hasArms := !slotDisabled["weapon"] && !slotDisabled["offhand"]
+
+	// Rarity uplift: reduce common mutation weights for advanced players
+	rarityBonus := calcRarityBonus(owned)
 
 	pool := make([]string, 0, len(allMutations)*5)
 	for id, spec := range allMutations {
@@ -207,7 +233,7 @@ func GetWeightedPool(owned map[string]int, disabledSlots ...[]string) []string {
 		if spec.RequiresArms && !hasArms {
 			continue
 		}
-		weight := 11 - spec.Rarity
+		weight := 11 - spec.Rarity - rarityBonus
 		if weight < 1 {
 			weight = 1
 		}
