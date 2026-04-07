@@ -666,6 +666,9 @@ Balance:
   BarterMaxDiscount: 0.15       # Max fractional buy-price discount from bartering
   BarterMaxBonus: 0.15          # Max fractional sell-price bonus from bartering
 
+  # ── STORAGE FEES ───────────────────────────────────────────────────────────
+  StorageFeePerItem: 1               # Gold charged per stored item per game month
+
   # ── CRAFTER MOBS ─────────────────────────────────────────────────────────
   CrafterEnabled: true            # Enable mob autonomous crafting
   CrafterMaterialRestockRate: 75  # Rounds between restock/craft ticks (~5 min)

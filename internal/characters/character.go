@@ -63,6 +63,7 @@ type Character struct {
 	ActionPoints     int                            // The resevoir of action points the character has to spend on movement etc.
 	Gold             int                            // The gold the character is holding
 	Bank             int                            // The gold the character has in the bank
+	StorageFeeLastMonth int `yaml:"storagefee_lastmonth,omitempty"` // Game month when storage fees were last charged
 	Shop             Shop                           `yaml:"shop,omitempty"`          // Definition of shop services/items this character stocks (or just has at the moment)
 	SpellBook        map[string]int                 `yaml:"spellbook,omitempty"`     // The spells the character has learned
 	KnownRecipes     map[string]int                 `yaml:"knownrecipes,omitempty"`  // The crafting recipes the character has discovered

@@ -256,6 +256,7 @@ type Balance struct {
 	ShopGoldReserveRatio   ConfigFloat `yaml:"ShopGoldReserveRatio,omitempty"`   // Fraction of gold pool a shop keeps in reserve before buying (default 0.50)
 	BarterMaxDiscount      ConfigFloat `yaml:"BarterMaxDiscount,omitempty"`      // Max fractional price reduction a player can get via bartering (default 0.15)
 	BarterMaxBonus         ConfigFloat `yaml:"BarterMaxBonus,omitempty"`         // Max fractional sell-price bonus a player can get via bartering (default 0.15)
+	StorageFeePerItem      ConfigInt   `yaml:"StorageFeePerItem"`                // Gold charged per stored item per game month (default 1)
 }
 
 func (b *Balance) Validate() {
@@ -851,6 +852,11 @@ func (b *Balance) Validate() {
 	}
 	if b.BarterMaxBonus <= 0 {
 		b.BarterMaxBonus = 0.15
+	}
+
+	// ── STORAGE FEES ─────────────────────────────────────────────────────────
+	if b.StorageFeePerItem < 0 {
+		b.StorageFeePerItem = 1
 	}
 }
 
