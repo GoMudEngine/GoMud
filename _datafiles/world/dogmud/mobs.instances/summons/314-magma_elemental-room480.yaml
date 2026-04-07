@@ -1,0 +1,25 @@
+strength_training: 56
+dexterity_training: 38
+perception_training: 4
+vitality_training: 54
+willpower_training: 15
+charisma_training: 13
+skills:
+  alchemy: 1
+  bartering: 1
+  blacksmithing: 1
+  cast: 1
+  cooking: 1
+  enchanting: 1
+  first-aid: 1
+  jewelcrafting: 1
+  manifestation: 1
+  ranged-combat: 1
+  rhetoric: 1
+  salvage: 1
+  search: 1
+  skullduggery: 1
+  spellcasting: 1
+  tailoring: 1
+  unarmed-combat: 1
+  weapon-combat: 1

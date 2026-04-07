@@ -1,0 +1,27 @@
+mobid: 120
+zone: Thornwall City
+statpool: 80
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote adjusts a stack of coins on the counter'
+  - 'emote makes a notation in a heavy ledger'
+  - ''
+  - 'emote examines a wax seal with a practiced eye'
+  - ''
+activitylevel: 15
+character:
+  name: bank clerk
+  description: |
+    A precise, bespectacled figure in a dark coat with ink-stained
+    cuffs. The bank clerk moves with the careful efficiency of
+    someone who handles other people's gold for a living. Every
+    gesture is measured, every word considered. A heavy ring of
+    keys hangs from their belt.
+  speciesid: 1
+  level: 1

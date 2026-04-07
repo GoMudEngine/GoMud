@@ -103,7 +103,22 @@ pair-based logic. Remove the "clear all extra arms" block.
   slots) to explain the pair system and arm numbering.
 - Add error message for 2H-in-even-arm attempts.
 
-## 7. Defense Score Fix — Parry and Block From Extra Arms
+## 7. Gearup ("wear all") Fix
+
+`Gearup` currently uses `map[ItemType]Item` which only tracks one weapon
+and one shield. It never fills extra arm slots.
+
+Fix: after the existing gearup logic fills standard slots, scan remaining
+backpack weapons and shields into free arm slots. Use the same pair-based
+placement as `Wear()` — try to fill pairs intelligently (2H into empty
+pairs, 1H/shields into remaining slots). Pick highest-value items first.
+
+**File:** `internal/usercommands/gearup.go`
+
+The mob version (`internal/mobcommands/gearup.go`) should get the same
+fix so NPCs with extra arms gear up correctly on spawn.
+
+## 8. Defense Score Fix — Parry and Block From Extra Arms
 
 Currently `GetDefenseScore()` only reads the main Weapon slot for parry
 and the Offhand slot for block. Extra arm weapons/shields are ignored
@@ -124,7 +139,7 @@ shield at a time, use the best available.
 - Modify: `internal/characters/character.go` — `GetDefenseScore()`
   cases for DefenseParry and DefenseBlock.
 
-## 8. What Does NOT Change
+## 9. What Does NOT Change
 
 - Enchanting (slot targeting is independent of equip logic)
 - Remove/unequip (already works per-slot)

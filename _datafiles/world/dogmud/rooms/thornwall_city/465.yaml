@@ -20,6 +20,8 @@ exits:
     roomid: 466
   north:
     roomid: 478
+  south:
+    roomid: 510
 nouns:
   platform: A raised stone platform, about waist-high, worn smooth by use. Iron rings
     set into the corners suggest it once served a darker purpose, but now it is

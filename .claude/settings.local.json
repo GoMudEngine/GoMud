@@ -59,7 +59,10 @@
       "Bash(mv _datafiles/world/dogmud/mobs/thornwall_city/scripts/95-temple_priest_olen.js _datafiles/world/dogmud/mobs/thornwall_city/scripts/95-temple_priest_olen.js.bak)",
       "Bash(mv _datafiles/world/dogmud/rooms/thornwall_city/485.js _datafiles/world/dogmud/rooms/thornwall_city/485.js.bak)",
       "Bash(mv _datafiles/world/dogmud/rooms/thornwall_city/498.js _datafiles/world/dogmud/rooms/thornwall_city/498.js.bak)",
-      "Bash(mv _datafiles/world/dogmud/mobs/thornwall_city/scripts/94-guard_captain_velk.js _datafiles/world/dogmud/mobs/thornwall_city/scripts/94-guard_captain_velk.js.bak)"
+      "Bash(mv _datafiles/world/dogmud/mobs/thornwall_city/scripts/94-guard_captain_velk.js _datafiles/world/dogmud/mobs/thornwall_city/scripts/94-guard_captain_velk.js.bak)",
+      "Read(//c/Users/Calabe Davis/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7/**)",
+      "Bash(bash scripts/start-server.sh --project-dir \"/c/Users/Calabe Davis/workspace/DOGMud\")",
+      "Bash(echo \"Exit: $?\")"
     ]
   },
   "defaultMode": "bypassPermissions"

@@ -1,0 +1,32 @@
+strength_training: 29
+dexterity_training: 51
+perception_training: 14
+vitality_training: 44
+willpower_training: 15
+charisma_training: 10
+skills:
+  alchemy: 1
+  bartering: 1
+  blacksmithing: 1
+  cooking: 1
+  enchanting: 1
+  jewelcrafting: 1
+  manifestation: 1
+  rhetoric: 1
+  salvage: 1
+  search: 1
+  skullduggery: 1
+  spellcasting: 1
+  tailoring: 1
+  unarmed-combat: 1
+  weapon-combat: 1
+skill_use_count:
+  critical_success: 1
+  unarmed-combat: 11
+stat_use_count:
+  dexterity: 26
+  strength: 8
+mutations:
+  pheromone-glands: 1
+  photosynthetic-skin: 1
+mutation_progress: 1.5

@@ -1,0 +1,36 @@
+gold: 377
+starting_gold: 500
+last_restock: 0
+inventory:
+- item_id: 40021
+  restock_qty: 5
+  max_stock: 20
+  current: 2
+- item_id: 40022
+  restock_qty: 5
+  max_stock: 20
+  current: 8
+- item_id: 40023
+  restock_qty: 5
+  max_stock: 20
+  current: 10
+- item_id: 40026
+  restock_qty: 5
+  max_stock: 20
+  current: 2
+- item_id: 40024
+  restock_qty: 3
+  max_stock: 10
+  current: 6
+- item_id: 10025
+  restock_qty: 0
+  max_stock: 20
+  current: 1
+- item_id: 20066
+  restock_qty: 0
+  max_stock: 20
+  current: 1
+known_recipes:
+- copper-ring
+- simple-pendant
+- polished-stone-amulet

@@ -1,0 +1,40 @@
+gold: 425
+starting_gold: 500
+last_restock: 0
+inventory:
+- item_id: 40001
+  restock_qty: 5
+  max_stock: 20
+  current: 4
+- item_id: 40020
+  restock_qty: 5
+  max_stock: 20
+  current: 10
+- item_id: 40002
+  restock_qty: 5
+  max_stock: 20
+  current: 6
+- item_id: 40003
+  restock_qty: 5
+  max_stock: 20
+  current: 9
+- item_id: 40009
+  restock_qty: 0
+  max_stock: 20
+  current: 0
+- item_id: 40012
+  restock_qty: 0
+  max_stock: 20
+  current: 0
+- item_id: 40022
+  restock_qty: 0
+  max_stock: 20
+  current: 0
+- item_id: 40027
+  restock_qty: 0
+  max_stock: 20
+  current: 0
+known_recipes:
+- iron-dagger
+- iron-buckler
+- iron-short-sword

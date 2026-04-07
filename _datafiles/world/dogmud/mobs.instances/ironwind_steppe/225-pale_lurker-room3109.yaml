@@ -1,0 +1,32 @@
+strength_training: 62
+dexterity_training: 45
+perception_training: 11
+vitality_training: 57
+willpower_training: 8
+charisma_training: 5
+skills:
+  alchemy: 1
+  bartering: 1
+  blacksmithing: 1
+  cast: 1
+  cooking: 1
+  enchanting: 1
+  first-aid: 1
+  jewelcrafting: 1
+  manifestation: 1
+  ranged-combat: 1
+  rhetoric: 1
+  salvage: 1
+  search: 1
+  skullduggery: 12
+  spellcasting: 1
+  tailoring: 1
+  unarmed-combat: 1
+  weapon-combat: 1
+mutations:
+  blinding-flash: 1
+  blinding-spit: 1
+  clawed-hands: 1
+  cold-blooded: 1
+  sonic-shout: 1
+  tough-skin: 1
