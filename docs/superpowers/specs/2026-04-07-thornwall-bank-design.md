@@ -174,17 +174,43 @@ online users each tick (cheap — just compares two integers). For
 offline users, the check runs on login via the existing
 `Validate()` or user-load path.
 
+## Help Files
+
+### bank.template
+
+Explains the banking system: where the bank is, how to deposit
+and withdraw gold, how item storage works, the monthly fee, and
+what happens if you can't pay.
+
+Key points to cover:
+- Location: south of Market Square in Thornwall City
+- `bank deposit <amount>` / `bank withdraw <amount>` for gold
+- `storage add <item>` / `storage remove <item>` for items
+- Monthly fee: 1g per stored item per game month
+- Fee deducted automatically from bank balance
+- Warning sent if balance is low
+- Cheapest items forfeited if you can't pay
+- Most valuable items kept first
+
+### storage.template (update)
+
+The existing storage help file should mention the bank as a
+location with higher capacity and note the monthly fee that
+applies there.
+
 ## Files to Create
 
 - `_datafiles/world/dogmud/rooms/thornwall_city/510.yaml` — bank room
 - `_datafiles/world/dogmud/mobs/thornwall_city/120-bank_clerk.yaml` — NPC
 - `internal/hooks/StorageFee_MonthlyCharge.go` — fee logic
+- `_datafiles/world/dogmud/templates/help/bank.template` — bank help file
 
 ## Files to Modify
 
 - `_datafiles/world/dogmud/rooms/thornwall_city/465.yaml` — add south exit
 - `internal/rooms/rooms.go` — add `StorageCapacity` field
 - `internal/usercommands/storage.go` — use room capacity instead of hardcoded 20
+- `_datafiles/world/dogmud/templates/help/storage.template` — mention bank storage + fees
 - `internal/characters/character.go` — add `StorageFeeLastMonth` field
 - `internal/configs/config.balance.go` — add `StorageFeePerItem`
 - `_datafiles/config.yaml` — add `StorageFeePerItem: 1`
