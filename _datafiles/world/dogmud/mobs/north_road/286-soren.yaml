@@ -2,7 +2,7 @@ mobid: 286
 zone: North Road
 archetype: fighting
 statpool: 250
-itemdropchance: 40
+itemdropchance: 100
 items:
   - itemid: 20067
   - itemid: 10026
