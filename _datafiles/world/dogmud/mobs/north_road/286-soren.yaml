@@ -5,7 +5,7 @@ statpool: 250
 itemdropchance: 40
 items:
   - itemid: 20054
-  - itemid: 10020
+  - itemid: 10026
 hostile: true
 maxwander: 0
 groups:
@@ -48,7 +48,7 @@ character:
   gold: 60
   equipment:
     weapon:
-      itemid: 10020
+      itemid: 10026
     offhand:
       itemid: 20054
     body:
