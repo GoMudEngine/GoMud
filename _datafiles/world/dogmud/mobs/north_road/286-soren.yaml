@@ -6,7 +6,6 @@ itemdropchance: 100
 items:
   - itemid: 20067
   - itemid: 10026
-  - itemid: 54
 hostile: true
 pack_flee_immune: true
 maxwander: 0
@@ -48,6 +47,8 @@ character:
   speciesid: 1
   level: 1
   gold: 60
+  items:
+    - itemid: 54
   equipment:
     weapon:
       itemid: 10026
