@@ -12,19 +12,18 @@ tree:
   nodes:
     - id: inquiries
       triggers: ["what", "inquiries", "want", "questions",
-        "authority", "asking"]
+        "authority", "asking", "quest", "task", "help"]
       text: "I am looking for a young woman who may have passed
         through this area recently. Dark-haired, traveling alone,
         heading north. Have you seen anyone matching that
         description? Or heard of anyone sheltering travelers
         off the road?"
-      unlocks: ["say_nothing", "tell_truth", "misdirect"]
-      hints: "You could stay quiet, share what you know, or
-        point them elsewhere."
+      hints: "You could say you have not seen anyone, tell them
+        about the farmstead, or point them in the wrong direction."
 
     - id: say_nothing
       triggers: ["no", "nothing", "not seen", "quiet", "cannot",
-        "sorry"]
+        "sorry", "nobody"]
       questRequired: ["18-start"]
       questExcluded: ["18-end"]
       setsQuestFlag:
