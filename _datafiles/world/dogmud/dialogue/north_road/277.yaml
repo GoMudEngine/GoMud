@@ -9,15 +9,40 @@ tree:
     variants:
       - questRequired: ["18-start"]
         questExcluded: ["18-end"]
+        questFlagRequired:
+          "18-resolution": "quiet"
+        grantsQuest: "18-end"
+        givesItem: 50
+        text: "You kept quiet. Corvin made this -- he makes them
+          for people he decides are worth it. He does not decide
+          often. The road north is quieter than it looks. People
+          watch out for each other, in their way."
+        hints: "Betta trusts you."
+      - questRequired: ["18-start"]
+        questExcluded: ["18-end"]
+        questFlagRequired:
+          "18-resolution": "told"
+        grantsQuest: "18-end"
+        text: "I can smell it on you. You told them. We have
+          nothing more to say to each other."
+      - questRequired: ["18-start"]
+        questExcluded: ["18-end"]
+        questFlagRequired:
+          "18-resolution": "killed"
+        grantsQuest: "18-end"
+        text: "You think killing one of them helps? Now they
+          will send more. Now they will pay attention to this
+          stretch of road. I asked for silence, not slaughter."
+      - questRequired: ["18-start"]
+        questExcluded: ["18-end"]
         text: "You know what I asked. I have nothing more to say
           about it."
-        hints: "Betta is waiting for you to handle the situation
-          on the road."
+        hints: "A bloodline agent is patrolling the road. Find
+          them and decide what to say."
       - questRequired: ["18-end"]
         questFlagRequired:
           "18-resolution": "quiet"
         text: "You kept your word. That matters."
-        hints: "Betta trusts you now."
       - questRequired: ["18-end"]
         questFlagRequired:
           "18-resolution": "told"
