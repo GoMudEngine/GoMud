@@ -1,0 +1,27 @@
+questid: 17
+name: The Caravan Guard
+description: A caravan master at the crossroads village needs
+  protection against bandits operating north of the village.
+  The bandits have a camp off the road near the drainage ditch.
+secret: false
+
+flags:
+  - key: resolution
+    values: [combat, diplomacy]
+    description: "How the player resolved the bandit problem"
+
+steps:
+  - id: start
+    description: "The caravan master has asked you to deal with
+      the bandit threat on the north road."
+    hint: "The bandits have a camp west of the north road, past
+      the drainage ditch. You can fight them or try to negotiate
+      with their leader, Soren."
+  - id: end
+    description: "The bandit situation has been resolved."
+
+rewards:
+  playermessage: "The caravan master nods with the satisfaction
+    of a man whose cargo is no longer at risk."
+  roommessage: "The caravan master looks visibly relieved."
+  gold: 40
