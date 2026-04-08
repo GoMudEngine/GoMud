@@ -20,7 +20,7 @@ exits:
   south:
     roomid: 4043
   west:
-    roomid: 4047
+    roomid: 4048
 nouns:
   scrub: A narrow gap in the dead scrub along the embankment.
     The branches have been pushed aside recently — they are

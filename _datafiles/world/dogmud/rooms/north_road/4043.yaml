@@ -21,7 +21,7 @@ exits:
   north:
     roomid: 4044
   west:
-    roomid: 4050
+    roomid: 4051
 nouns:
   prints: Boot prints and hoofprints pressed into the mud,
     overlapping in layers. Most are the broad, flat marks of
