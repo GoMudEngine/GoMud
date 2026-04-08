@@ -10,13 +10,25 @@ tree:
     hints: "You could ask about the bandits, offer to help,
       or ask about his cargo."
     variants:
-      - questRequired: ["17-start"]
+      - questRequired: ["17-soren-dead"]
         questExcluded: ["17-end"]
+        grantsQuest: "17-end"
+        setsQuestFlag:
+          key: "17-resolution"
+          value: "combat"
+        givesItem: 51
+        text: "You dealt with their leader? Then the road is ours
+          again. Here -- a letter for my brother Edric in Stillwater.
+          Show it at his trading post. He will see you right."
+        hints: "The caravan master is grateful."
+      - questRequired: ["17-start"]
+        questExcluded: ["17-soren-dead", "17-end"]
         questFlagExcluded:
           "17-resolution": "diplomacy"
         text: "Any progress on those bandits? I cannot sit here
           forever."
-        hints: "Tell the caravan master about the bandits."
+        hints: "Deal with the bandits in their camp, north of
+          the village past the drainage ditch."
       - questRequired: ["17-end"]
         questFlagRequired:
           "17-resolution": "combat"
@@ -101,7 +113,7 @@ tree:
       triggers: ["done", "dead", "killed", "cleared", "safe",
         "bandit", "quest", "task", "dealt", "finished", "camp",
         "progress", "report"]
-      questRequired: ["17-start"]
+      questRequired: ["17-soren-dead"]
       questExcluded: ["17-end"]
       grantsQuest: "17-end"
       setsQuestFlag:

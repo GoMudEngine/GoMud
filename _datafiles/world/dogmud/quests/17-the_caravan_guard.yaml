@@ -17,6 +17,11 @@ steps:
     hint: "The bandits have a camp west of the north road, past
       the drainage ditch. You can fight them or try to negotiate
       with their leader, Soren."
+  - id: soren-dead
+    description: "Soren has been dealt with. Return to the
+      caravan master with the news."
+    hint: "Report back to the caravan master at the crossroads
+      village."
   - id: end
     description: "The bandit situation has been resolved."
 
@@ -25,3 +30,12 @@ rewards:
     of a man whose cargo is no longer at risk."
   roommessage: "The caravan master looks visibly relieved."
   gold: 40
+
+triggers:
+  - event: mob_death
+    mob: 286
+    conditions:
+      has: [17-start]
+      missing: [17-soren-dead, 17-end]
+    actions:
+      - grant: 17-soren-dead
