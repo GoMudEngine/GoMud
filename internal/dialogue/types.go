@@ -73,6 +73,10 @@ type QuestGreeting struct {
 	QuestFlagExcluded map[string]string `yaml:"questFlagExcluded,omitempty"`
 	Text              string            `yaml:"text"`
 	Hints             string            `yaml:"hints,omitempty"`
+	GrantsQuest       string            `yaml:"grantsQuest,omitempty"`
+	GivesItem         int               `yaml:"givesItem,omitempty"`
+	RequiresItem      int               `yaml:"requiresItem,omitempty"`
+	SetsQuestFlag     *QuestFlagSet     `yaml:"setsQuestFlag,omitempty"`
 }
 
 // TreeRoot holds the greeting delivered when a player first uses 'talk'.

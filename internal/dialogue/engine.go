@@ -220,6 +220,7 @@ func Greet(df *DialogueFile, mobInstanceId, userId int, ps *PlayerState) (string
 	if ps != nil {
 		for _, v := range df.Tree.Root.Variants {
 			if checkQuestGate(v.QuestRequired, v.QuestExcluded, 0, v.QuestFlagRequired, v.QuestFlagExcluded, ps) {
+				applyQuestEffects(v.GrantsQuest, v.RequiresItem, v.GivesItem, v.SetsQuestFlag, ps)
 				return v.Text, v.Hints, true
 			}
 		}
