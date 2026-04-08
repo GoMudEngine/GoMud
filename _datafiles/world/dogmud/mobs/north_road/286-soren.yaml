@@ -4,7 +4,7 @@ archetype: fighting
 statpool: 250
 itemdropchance: 40
 items:
-  - itemid: 20054
+  - itemid: 20067
   - itemid: 10026
 hostile: true
 maxwander: 0
@@ -50,9 +50,9 @@ character:
     weapon:
       itemid: 10026
     offhand:
-      itemid: 20054
+      itemid: 20067
     body:
-      itemid: 20055
+      itemid: 20068
   stats:
     strength:
       training: 20
