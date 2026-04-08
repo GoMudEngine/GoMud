@@ -22,6 +22,18 @@ combatcommands:
   - ''
   - ''
 activitylevel: 25
+reaction_delay: 1.2
+tactical_discipline: 0.40
+tactics:
+  - trigger: health_below:25
+    action: flee
+    priority: 10
+  - trigger: no_aggro
+    action: hide
+    priority: 9
+  - trigger: target_casting
+    action: trip
+    priority: 8
 character:
   name: thornwall highwayman
   description: |

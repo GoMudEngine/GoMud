@@ -16,8 +16,7 @@ var presets = map[string][]TacticRule{
 	},
 	"ambusher": {
 		{Trigger: "after_action:surprise-strike", Action: "flee", Priority: 10},
-		{Trigger: "no_aggro", Action: "track_memory", Priority: 9},
-		{Trigger: "not_hidden", Action: "hide", Priority: 8},
+		{Trigger: "no_aggro", Action: "hide", Priority: 9},
 		{Trigger: "target_casting", Action: "trip", Priority: 7},
 	},
 	"tank": {

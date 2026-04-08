@@ -26,6 +26,13 @@ combatcommands:
   - 'cast sparks'
   - ''
 activitylevel: 25
+reaction_delay: 1.0
+tactical_discipline: 0.70
+tactic_preset: aggressive_melee
+tactics:
+  - trigger: combat_start
+    action: cast conviction-armor
+    priority: 11
 character:
   name: Geomancer Rhett
   description: |

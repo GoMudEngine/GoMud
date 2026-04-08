@@ -37,6 +37,16 @@ combatcommands:
     swinging'
   - ''
 activitylevel: 90
+reaction_delay: 0.5
+tactical_discipline: 0.95
+tactic_preset: ambusher
+tactics:
+  - trigger: health_below:20
+    action: flee
+    priority: 12
+  - trigger: target_casting
+    action: trip
+    priority: 11
 character:
   name: Chrysalis Phantom
   description: |

@@ -26,6 +26,9 @@ combatcommands:
   - 'emote breaks contact and vanishes into the nearest shadow'
   - ''
 activitylevel: 60
+reaction_delay: 1.0
+tactical_discipline: 0.60
+tactic_preset: ambusher
 character:
   name: chrysalis skulker
   description: |

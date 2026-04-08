@@ -16,6 +16,9 @@ idlecommands:
   - ''
   - ''
 activitylevel: 15
+reaction_delay: 1.5
+tactical_discipline: 0.40
+tactic_preset: defensive_caster
 character:
   name: tunnel shaman
   description: |

@@ -17,6 +17,9 @@ idlecommands:
   - ''
   - 'emote clicks its tongue against its teeth in a rapid pattern'
 activitylevel: 20
+reaction_delay: 1.2
+tactical_discipline: 0.45
+tactic_preset: tank
 character:
   name: goblin sentry
   description: |

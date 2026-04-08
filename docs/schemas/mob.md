@@ -48,8 +48,12 @@ _datafiles/world/dogmud/mobs/{zone_folder}/scripts/{mobid}-{ConvertForFilename(n
 | `buffids` | list | no | Buff IDs always applied when mob spawns. |
 | `questflags` | list | no | Quest flag strings set on this mob. |
 | `scripttag` | string | no | Tag appended to the script filename. Must match the `.js` file. |
-| `aiprofile` | string | no | Combat AI profile: `"default"`, `"aggressive"`, `"defensive"`, `"grappler"`, `"brawler"`, `"tactical"`. |
+| `aiprofile` | string | no | Legacy combat AI profile: `"default"`, `"aggressive"`, `"defensive"`, `"grappler"`, `"brawler"`, `"tactical"`. |
 | `specialmovechance` | int | no | Base % chance to use special moves in combat (0–100). |
+| `tactic_preset` | string | no | Reactive AI preset: `"aggressive_melee"`, `"defensive_caster"`, `"ambusher"`, `"tank"`. See Reactive AI below. |
+| `tactics` | list | no | Custom tactic rules. Each entry: `trigger`, `action`, `priority`. Merged with preset. |
+| `reaction_delay` | float | no | Seconds before reactive AI acts (0.25–4.0). Lower = faster reactions. |
+| `tactical_discipline` | float | no | 0.0–1.0. Probability the mob follows through on a tactic. Higher = more reliable. |
 | `idlecommands` | list | no | Commands executed while not in combat. Use `""` for empty (wait) turns. |
 | `combatcommands` | list | no | Commands executed while in combat. |
 | `spawnmutations` | list | no | Mutation IDs always granted at level 1 on spawn (Phase 24.3). |
@@ -167,6 +171,19 @@ If `scripttag: patrol`, the JS file must be named `{mobid}-{name}-patrol.js`. Mi
 
 **LLMProfile is optional — dialogue file is the fallback.**
 If Ollama is unreachable, the engine falls back to the mob's dialogue YAML (if one exists). Always provide at minimum a dialogue file for important NPCs. See `docs/schemas/dialogue.md`.
+
+**Reactive AI fields require at least one tactic source.**
+A mob needs either `tactic_preset` or `tactics` (or both) for the reactive AI to fire. Without either, the mob uses only the legacy `aiprofile` + `combatcommands` system. `reaction_delay` and `tactical_discipline` are only meaningful when tactics exist.
+
+**Tactic presets:**
+- `aggressive_melee` — kick prone targets, bash casters, submit grapplers
+- `defensive_caster` — self-shield, AoE on multiple targets, flee when low, single-target spell
+- `ambusher` — flee after engagement, hide when out of combat, trip casters
+- `tank` — bash casters, kick prone targets, call for help when low
+
+**Available triggers:** `combat_start`, `health_below:N`, `target_casting`, `target_prone`, `target_grappled`, `multiple_targets`, `single_target`, `no_aggro`, `not_hidden`, `after_action:X`, `player_entered`, `has_buff:N`, `missing_buff:N`
+
+**Available actions:** `flee`, `hide`, `kick`, `bash`, `trip`, `call_for_help`, `retarget_strongest`, `cast <spell>`, `track_memory`, `recall`
 
 **`statpool` distributes by archetype.**
 Stats in `statpool` are weighted by `archetype` at spawn: `"fighting"` favors Str/Dex/Vit (80/20 split), `"casting"` favors Per/Wil/Cha (20/80 split), and default is uniform. Identical mob templates will still vary. Use explicit `stats:` overrides when a specific stat spread matters.

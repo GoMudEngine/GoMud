@@ -71,6 +71,23 @@ func RetargetOrEnd(char *characters.Character, room *rooms.Room,
 		}
 	}
 
+	// Scan players in the room first — prefer player targets over companions.
+	for _, pId := range room.GetPlayers(rooms.FindFighting) {
+		attackingPlayer := users.GetByUserId(pId)
+		if attackingPlayer == nil || attackingPlayer.Character.Aggro == nil {
+			continue
+		}
+
+		aggro := attackingPlayer.Character.Aggro
+
+		// Is this player attacking us?
+		if (userId > 0 && aggro.UserId == userId) ||
+			(mobInstanceId > 0 && aggro.MobInstanceId == mobInstanceId) {
+			char.SetAggro(attackingPlayer.UserId, 0, characters.DefaultAttack)
+			return true
+		}
+	}
+
 	// Scan mobs in the room that are currently fighting.
 	for _, instId := range room.GetMobs(rooms.FindFighting) {
 		attackingMob := mobs.GetInstance(instId)
@@ -102,23 +119,6 @@ func RetargetOrEnd(char *characters.Character, room *rooms.Room,
 					return true
 				}
 			}
-		}
-	}
-
-	// Scan players in the room that are currently fighting.
-	for _, pId := range room.GetPlayers(rooms.FindFighting) {
-		attackingPlayer := users.GetByUserId(pId)
-		if attackingPlayer == nil || attackingPlayer.Character.Aggro == nil {
-			continue
-		}
-
-		aggro := attackingPlayer.Character.Aggro
-
-		// Is this player attacking us?
-		if (userId > 0 && aggro.UserId == userId) ||
-			(mobInstanceId > 0 && aggro.MobInstanceId == mobInstanceId) {
-			char.SetAggro(attackingPlayer.UserId, 0, characters.DefaultAttack)
-			return true
 		}
 	}
 

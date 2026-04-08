@@ -23,6 +23,15 @@ combatcommands:
   - 'emote lets out a shrill whistle that echoes through the tunnels'
   - ''
 activitylevel: 35
+reaction_delay: 0.8
+tactical_discipline: 0.35
+tactics:
+  - trigger: health_below:40
+    action: flee
+    priority: 10
+  - trigger: no_aggro
+    action: hide
+    priority: 9
 spawnmutations: [keen-eyes, fast-reflexes]
 character:
   name: warren scout

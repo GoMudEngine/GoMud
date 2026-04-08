@@ -16,6 +16,9 @@ idlecommands:
   - 'emote glances toward the cells, then back to the paperwork'
   - ''
 activitylevel: 15
+reaction_delay: 1.0
+tactical_discipline: 0.75
+tactic_preset: tank
 character:
   name: guard captain Velk
   description: |

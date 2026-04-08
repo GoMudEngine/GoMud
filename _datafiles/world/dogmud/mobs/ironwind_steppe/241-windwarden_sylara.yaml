@@ -26,6 +26,21 @@ combatcommands:
   - 'cast heal'
   - ''
 activitylevel: 25
+reaction_delay: 0.8
+tactical_discipline: 0.80
+tactics:
+  - trigger: health_below:30
+    action: cast heal
+    priority: 11
+  - trigger: missing_buff:2
+    action: cast chrysalis-cocoon
+    priority: 10
+  - trigger: combat_start
+    action: cast conviction-ward
+    priority: 9
+  - trigger: target_casting
+    action: bash
+    priority: 8
 character:
   name: Windwarden Sylara
   description: |

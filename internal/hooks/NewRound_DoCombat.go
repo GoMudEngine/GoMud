@@ -12,6 +12,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/mobai"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -216,6 +217,7 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 		// CombatMemory being nil indicates the mob has not yet been in combat
 		// with this target, so we set the memory and fire the signal once.
 		if mob.CombatMemory == nil && mob.Character.Aggro != nil {
+			mudlog.Debug("MobAI", "emit", "combat_start", "mob", mob.Character.Name, "mobId", mob.InstanceId)
 			mob.CombatMemory = mobai.SetMemory(
 				mob.Character.Aggro.UserId,
 				mob.Character.Aggro.MobInstanceId,
@@ -225,6 +227,17 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 			events.AddToQueue(events.MobAISignal{
 				MobInstanceId: mob.InstanceId,
 				SignalType:    "combat_start",
+				RoomId:        mob.Character.RoomId,
+			})
+		}
+
+		// Emit combat_round signal every round for mobs already in combat.
+		// This allows per-round triggers (health_below, multiple_targets, etc.)
+		// to fire the reactive AI on an ongoing basis.
+		if mob.CombatMemory != nil && mob.Character.Aggro != nil {
+			events.AddToQueue(events.MobAISignal{
+				MobInstanceId: mob.InstanceId,
+				SignalType:    "combat_round",
 				RoomId:        mob.Character.RoomId,
 			})
 		}

@@ -5,6 +5,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobai"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -120,11 +121,16 @@ func HandleMobAISignal(e events.Event) events.ListenerReturn {
 		return events.Continue
 	}
 
+	mudlog.Debug("MobAI", "signal", signal.SignalType, "mob", mob.Character.Name, "mobId", mob.InstanceId, "detail", signal.Detail)
+
 	// Resolve tactics — skip mobs that have none configured
 	tactics := mobai.ResolveTactics(mob.TacticPreset, mob.Tactics)
 	if len(tactics) == 0 {
+		mudlog.Debug("MobAI", "skip", "no tactics", "mob", mob.Character.Name)
 		return events.Continue
 	}
+
+	mudlog.Debug("MobAI", "tactics_count", len(tactics), "mob", mob.Character.Name)
 
 	bal := configs.GetBalanceConfig()
 	cfg := mobai.ReactorConfig{
@@ -148,8 +154,11 @@ func HandleMobAISignal(e events.Event) events.ListenerReturn {
 		mob.GetLastReactionTurn(), cfg)
 
 	if action != "" {
+		mudlog.Debug("MobAI", "queued", action, "mob", mob.Character.Name, "discipline", mob.GetEffectiveDiscipline())
 		mob.SetLastReactionTurn(util.GetTurnCount())
 		mob.GrowDiscipline(0.01)
+	} else {
+		mudlog.Debug("MobAI", "no_action", mob.Character.Name, "signal", signal.SignalType)
 	}
 
 	return events.Continue

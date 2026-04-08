@@ -1,5 +1,71 @@
 # DOGMud Patch Notes
 
+## 2026-04-07 — Spell Deflection, Bank, Mutation Tuning, Mob AI
+
+### Spell Deflection & Stoic Resolve
+- **Spell Deflection**: high-Willpower characters have a chance to
+  deflect incoming spells entirely (Willpower-based opposed roll).
+  Mobs that deflect show attacker-facing messages.
+- **Stoic Resolve**: high-Willpower characters have a chance to
+  resist taunts and rhetoric attacks entirely.
+- Both are percentage-based avoidance layers checked before damage
+  resolution.
+
+### Thornwall Bank
+- New **bank room** in Thornwall with a bank clerk NPC.
+- **Unlimited storage** with monthly per-item fees. Forfeiture
+  warnings sent via inbox when fees are due.
+- Room-level `StorageCapacity` field replaces hardcoded 20-item
+  limit. Bank room has uncapped storage.
+- Updated bank and storage help files.
+
+### Mutation Discovery Tuning
+- Mutations now **prefer deepening** existing mutations (70/30
+  coin flip) over discovering new ones.
+- **Rarity uplift**: higher-level characters are more likely to
+  discover rare mutations (weighted pool scales with avg level).
+- New config knob: `MutationDeepenChance` (default 0.70).
+
+### Reactive Tactical AI
+- Mobs can now have **tactical AI** that reacts to combat events
+  in real time. Configured via YAML with triggers, actions, and
+  discipline settings.
+- **4 presets**: aggressive_melee, defensive_caster, ambusher, tank.
+  Mobs can also define custom tactics that merge with presets.
+- **19 mobs configured** across warren tunnels, Ironwind Steppe
+  caves, bandits, named NPCs, and Thornwall enemies.
+- Ambusher mobs (stalkers, lurkers, skulkers) flee after engaging,
+  then re-hide for another surprise strike cycle.
+- Caster mobs (shamans, Sylara) self-buff, heal, and interrupt.
+- Tank mobs (beetle queen, sentries, Velk) call for help and
+  protect allies.
+
+### Combat Targeting
+- Hostile mobs now **prefer player targets** over companions when
+  choosing who to attack. Companions only get targeted when no
+  eligible players are in the room.
+- Mid-fight retargeting also prefers players over companions,
+  keeping aggro on the player consistently.
+
+### Cleanup
+- Removed dead skills: `cast`, `ranged-combat`, `first-aid`.
+- Player feedback files now persist across container restarts.
+
+### Bug Fixes
+- Fixed non-crafter merchant shops not restocking inventory.
+- Fixed tutorial items having missing gold values (broke shop
+  pricing).
+- Fixed missing space in `assess` corpse essence message.
+- Fixed mobs that die in round 1 never receiving their AI signal
+  (combat_start now emits before the player's attack resolves).
+- Fixed per-round triggers (health_below, etc.) never firing —
+  added combat_round signal emission every round tick.
+- Fixed ambusher preset trying to hide mid-combat instead of
+  after fleeing.
+- Restored backed-up tutorial room scripts.
+
+---
+
 ## 2026-04-06 (evening) — Foraging, Salvage, Progression Dashboard
 
 ### Foraging

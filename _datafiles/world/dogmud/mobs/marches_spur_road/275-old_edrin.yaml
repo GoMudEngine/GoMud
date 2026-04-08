@@ -30,6 +30,24 @@ combatcommands:
   - 'emote flicks his staff and light bends around him like heat shimmer'
   - ''
 activitylevel: 50
+reaction_delay: 1.0
+tactical_discipline: 0.85
+tactics:
+  - trigger: health_below:25
+    action: flee
+    priority: 12
+  - trigger: health_below:50
+    action: cast heal
+    priority: 11
+  - trigger: combat_start
+    action: cast conviction-ward
+    priority: 10
+  - trigger: target_casting
+    action: cast mind-spike
+    priority: 9
+  - trigger: multiple_targets
+    action: cast hemorrhagic-burst
+    priority: 8
 character:
   name: Old Edrin
   description: |

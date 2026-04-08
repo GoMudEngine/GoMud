@@ -710,7 +710,8 @@ func handleMobAIDecision(mob *mobs.Mob, c configs.Config) bool {
 	}
 
 	// If mob has reactive AI tactics and recently reacted, skip legacy AI
-	if len(mobai.ResolveTactics(mob.TacticPreset, mob.Tactics)) > 0 {
+	resolvedTactics := mobai.ResolveTactics(mob.TacticPreset, mob.Tactics)
+	if len(resolvedTactics) > 0 {
 		bal := configs.GetBalanceConfig()
 		delay := mobai.GetEffectiveReactionDelay(
 			mob.ReactionDelay,
@@ -718,9 +719,13 @@ func handleMobAIDecision(mob *mobs.Mob, c configs.Config) bool {
 			float64(bal.MobReactionDelayMax),
 		)
 		cooldownTurns := uint64(delay * float64(configs.GetTimingConfig().TurnsPerSecond()))
-		if util.GetTurnCount()-mob.GetLastReactionTurn() < cooldownTurns*2 {
+		lastReaction := mob.GetLastReactionTurn()
+		currentTurn := util.GetTurnCount()
+		if lastReaction > 0 && currentTurn-lastReaction < cooldownTurns*2 {
+			mudlog.Debug("MobAI", "decision", "skip_legacy", "mob", mob.Character.Name, "lastReaction", lastReaction, "current", currentTurn)
 			return true // Reactive AI is handling this mob
 		}
+		mudlog.Debug("MobAI", "decision", "fallthrough_to_legacy", "mob", mob.Character.Name, "tactics", len(resolvedTactics), "lastReaction", lastReaction)
 	}
 
 	// Stage 11.5: Caster AI decision - try spell first, then special move
@@ -1094,6 +1099,24 @@ func handlePlayerVsMob(user *users.UserRecord, uRoom *rooms.Room, evt events.New
 	if defRoom == nil {
 		user.Character.EndAggro()
 		return
+	}
+
+	// Emit combat_start for the defender mob if this is its first round
+	// in combat. We do this here (before the attack roll) so mobs that
+	// die in round 1 still get their reactive AI signal fired.
+	if defMob.CombatMemory == nil && defMob.Character.Aggro != nil {
+		mudlog.Debug("MobAI", "emit", "combat_start", "mob", defMob.Character.Name, "mobId", defMob.InstanceId, "source", "handlePlayerVsMob")
+		defMob.CombatMemory = mobai.SetMemory(
+			defMob.Character.Aggro.UserId,
+			defMob.Character.Aggro.MobInstanceId,
+			defMob.Character.RoomId,
+			evt.RoundNumber,
+		)
+		events.AddToQueue(events.MobAISignal{
+			MobInstanceId: defMob.InstanceId,
+			SignalType:    "combat_start",
+			RoomId:        defMob.Character.RoomId,
+		})
 	}
 
 	defMob.Character.CancelBuffsWithFlag(buffs.CancelIfCombat)

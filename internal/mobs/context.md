@@ -55,6 +55,30 @@ The mobs system is built around several key components:
 - Idle, angry, and combat command sets
 - Boredom tracking and player interaction memory
 - Conversation participation with other NPCs
+- **Reactive Tactical AI** — event-driven combat decisions via `internal/mobai/`
+
+### 2b. **Reactive Tactical AI (mobai package)**
+Mobs with `tactic_preset` and/or `tactics` in their YAML gain event-driven
+combat intelligence that fires alongside (and can override) the legacy AI.
+
+**Signal flow:**
+1. `combat_start` signal emits when a mob first enters combat (from both
+   `handlePlayerVsMob` and `handleMobCombat`)
+2. `combat_round` signal emits every round for mobs already in combat
+3. `HandleMobAISignal` evaluates tactics against current `TriggerContext`
+4. Matching tactic queued as `PendingReaction` with delay
+5. `ProcessMobReactions` fires reactions on NewTurn (50ms tick)
+6. `handleMobAIDecision` defers legacy AI when reactive AI recently acted
+
+**YAML fields:** `tactic_preset`, `tactics` (list of trigger/action/priority),
+`reaction_delay` (seconds), `tactical_discipline` (0-1 follow-through chance)
+
+**Presets:** `aggressive_melee`, `defensive_caster`, `ambusher`, `tank`
+Custom tactics merge with preset rules (custom priorities override preset).
+
+**Targeting preference:** `LookForTrouble` and `RetargetOrEnd` both prefer
+player targets over companions/mobs. Companions only get targeted when no
+eligible players are available.
 
 ### 3. **Social and Combat Dynamics**
 - Group-based allegiance system
