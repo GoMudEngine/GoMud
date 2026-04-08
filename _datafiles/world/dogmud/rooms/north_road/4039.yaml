@@ -1,0 +1,38 @@
+roomid: 4039
+zone: North Road
+title: Open Farmland
+description: >
+  Flat country stretches to the horizon in every direction,
+  broken only by low hedgerows dividing fields of harvested
+  stubble. The road runs straight and exposed through the
+  center of it all. The wind carries the smell of turned earth
+  and something faintly sweet — late apples rotting under a
+  tree somewhere out of sight. A lone oak stands in the nearest
+  field, its branches stripped bare by autumn, casting long
+  skeletal shadows across the stubble.
+biome: farmland
+coord:
+  x: -10
+  y: -13
+  z: 0
+exits:
+  east:
+    roomid: 4038
+  west:
+    roomid: 4040
+nouns:
+  hedgerow: A dense tangle of hawthorn and bramble, chest-high,
+    running north-south between two fields. The berries are long
+    gone but the thorns remain, sharp enough to discourage anyone
+    from taking a shortcut through the fields. Small birds flit
+    in and out of the branches.
+  oak: A solitary oak standing in the harvested field, its trunk
+    thick enough that two people could not join hands around it.
+    Every leaf has fallen. A few withered apples lie in the grass
+    at its base, brown and soft, filling the air with a cidery
+    sweetness that the wind carries across the road.
+idlemessages:
+- Wind bends the stubble in the nearest field, rippling across
+  it like water.
+- A hawk circles high overhead, riding a thermal.
+- The hedgerow rustles as something small moves through it.
