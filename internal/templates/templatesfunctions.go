@@ -358,6 +358,8 @@ var (
 				return "moderate"
 			case 3:
 				return "major"
+			case 4:
+				return "extreme"
 			default:
 				return "unknown"
 			}
