@@ -8,13 +8,10 @@ skills:
   alchemy: 1
   bartering: 1
   blacksmithing: 1
-  cast: 1
   cooking: 1
   enchanting: 1
-  first-aid: 1
   jewelcrafting: 1
   manifestation: 1
-  ranged-combat: 1
   rhetoric: 1
   salvage: 1
   search: 1
@@ -24,9 +21,9 @@ skills:
   unarmed-combat: 3
   weapon-combat: 1
 skill_use_count:
-  critical_success: 5
-  unarmed-combat: 64
+  critical_success: 6
+  unarmed-combat: 85
 stat_use_count:
-  dexterity: 150
-  strength: 58
-mutation_progress: 9
+  dexterity: 204
+  strength: 80
+mutation_progress: 12.600000000000009

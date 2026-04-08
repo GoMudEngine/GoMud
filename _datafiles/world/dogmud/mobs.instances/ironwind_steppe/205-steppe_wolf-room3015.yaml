@@ -28,5 +28,6 @@ stat_use_count:
 mutations:
   brazen-resolve: 1
   dense-muscles: 1
+  pheromone-glands: 1
   tough-skin: 1
 mutation_progress: 0.6

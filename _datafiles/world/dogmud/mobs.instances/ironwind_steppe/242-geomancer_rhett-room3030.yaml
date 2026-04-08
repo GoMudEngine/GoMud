@@ -8,13 +8,10 @@ skills:
   alchemy: 1
   bartering: 1
   blacksmithing: 1
-  cast: 1
   cooking: 1
   enchanting: 1
-  first-aid: 1
   jewelcrafting: 1
   manifestation: 1
-  ranged-combat: 1
   rhetoric: 1
   salvage: 1
   search: 1
@@ -24,6 +21,6 @@ skills:
   unarmed-combat: 1
   weapon-combat: 1
 skill_use_count:
-  spellcasting: 2
+  spellcasting: 3
 stat_use_count:
-  willpower: 2
+  willpower: 3

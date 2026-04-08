@@ -1,6 +1,9 @@
-dexterity_training: -5
-perception_training: 5
-vitality_training: 11
+strength_training: 30
+dexterity_training: 23
+perception_training: 10
+vitality_training: 19
+willpower_training: 2
+charisma_training: 4
 skills:
   alchemy: 1
   bartering: 1
@@ -18,5 +21,4 @@ skills:
   unarmed-combat: 1
   weapon-combat: 1
 mutations:
-  thick-hide: 1
-  tough-skin: 1
+  bioluminescence: 1

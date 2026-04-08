@@ -21,11 +21,11 @@ skills:
   unarmed-combat: 1
   weapon-combat: 1
 skill_use_count:
-  unarmed-combat: 22
+  unarmed-combat: 27
 stat_use_count:
-  dexterity: 48
-  strength: 22
+  dexterity: 60
+  strength: 26
 mutations:
   blinding-spit: 1
   fast-reflexes: 1
-mutation_progress: 3.2999999999999994
+mutation_progress: 4.499999999999999

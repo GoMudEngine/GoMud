@@ -1,4 +1,4 @@
-strength_training: 29
+strength_training: 30
 dexterity_training: 51
 perception_training: 14
 vitality_training: 44
@@ -18,15 +18,15 @@ skills:
   skullduggery: 1
   spellcasting: 1
   tailoring: 1
-  unarmed-combat: 1
+  unarmed-combat: 2
   weapon-combat: 1
 skill_use_count:
   critical_success: 1
-  unarmed-combat: 11
+  unarmed-combat: 21
 stat_use_count:
-  dexterity: 26
-  strength: 8
+  dexterity: 49
+  strength: 16
 mutations:
   pheromone-glands: 1
   photosynthetic-skin: 1
-mutation_progress: 1.5
+mutation_progress: 2.4

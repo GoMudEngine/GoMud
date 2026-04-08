@@ -1,9 +1,9 @@
-strength_training: 15
-dexterity_training: 21
-perception_training: 8
-vitality_training: 15
-willpower_training: 2
-charisma_training: 2
+strength_training: 38
+dexterity_training: 38
+perception_training: 17
+vitality_training: 52
+willpower_training: 7
+charisma_training: 11
 skills:
   alchemy: 1
   bartering: 1
@@ -21,9 +21,11 @@ skills:
   unarmed-combat: 1
   weapon-combat: 1
 skill_use_count:
-  critical_success: 2
-  unarmed-combat: 12
+  critical_success: 1
+  unarmed-combat: 6
 stat_use_count:
-  dexterity: 26
-  strength: 12
-mutation_progress: 1.8
+  dexterity: 16
+  strength: 6
+mutations:
+  bioluminescence: 1
+mutation_progress: 0.8999999999999999

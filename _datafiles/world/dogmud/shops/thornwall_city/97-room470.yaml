@@ -1,4 +1,4 @@
-gold: 425
+gold: 453
 starting_gold: 500
 last_restock: 0
 inventory:
@@ -9,7 +9,7 @@ inventory:
 - item_id: 40020
   restock_qty: 5
   max_stock: 20
-  current: 10
+  current: 0
 - item_id: 40002
   restock_qty: 5
   max_stock: 20

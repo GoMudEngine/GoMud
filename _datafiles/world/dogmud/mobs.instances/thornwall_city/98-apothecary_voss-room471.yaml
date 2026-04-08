@@ -20,5 +20,8 @@ skills:
   tailoring: 1
   unarmed-combat: 1
   weapon-combat: 1
+skill_use_count:
+  alchemy: 2
 stat_use_count:
   charisma: 5
+  perception: 2

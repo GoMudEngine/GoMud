@@ -1,7 +1,7 @@
-strength_training: -2
-dexterity_training: -5
-perception_training: 5
-vitality_training: 13
+strength_training: 1
+dexterity_training: 5
+perception_training: -4
+vitality_training: -1
 skills:
   alchemy: 1
   bartering: 1
@@ -18,6 +18,3 @@ skills:
   tailoring: 1
   unarmed-combat: 1
   weapon-combat: 1
-mutations:
-  thick-hide: 1
-  tough-skin: 1

@@ -21,7 +21,7 @@ skills:
   unarmed-combat: 1
   weapon-combat: 1
 skill_use_count:
-  blacksmithing: 1
+  blacksmithing: 4
 stat_use_count:
-  charisma: 7
-  strength: 1
+  charisma: 17
+  strength: 4
