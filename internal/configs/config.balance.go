@@ -200,6 +200,9 @@ type Balance struct {
 	SpellFoldsSkillFactor           ConfigInt   `yaml:"SpellFoldsSkillFactor"`           // Skill * this in folds-per-round calc (default 25)
 	SpellAttackSkillFactor          ConfigInt   `yaml:"SpellAttackSkillFactor"`          // Skill * this in spell attack mean (default 3)
 	SpellProficiencyCastsPerPoint   ConfigInt   `yaml:"SpellProficiencyCastsPerPoint"`   // Casts needed per 1 proficiency point (default 50)
+	SpellDifficultyProgressionScale ConfigFloat `yaml:"SpellDifficultyProgressionScale"` // Per-point spell difficulty bonus to skill progression (default 0.01)
+	CraftDifficultyProgressionScale ConfigFloat `yaml:"CraftDifficultyProgressionScale"` // Per-point recipe skill_minimum bonus to skill progression (default 0.02)
+	SelfCastProgressionMultiplier   ConfigFloat `yaml:"SelfCastProgressionMultiplier"`   // Progression multiplier when spell only targets self (default 0.5)
 
 	// ── ENCHANTMENTS ─────────────────────────────────────────────────────────
 	EnchantTierUpBaseChance     ConfigFloat `yaml:"EnchantTierUpBaseChance"`     // Chance per use (once threshold met) to advance tier (default 0.02)
@@ -744,6 +747,15 @@ func (b *Balance) Validate() {
 	}
 	if b.SpellProficiencyCastsPerPoint < 1 {
 		b.SpellProficiencyCastsPerPoint = 50
+	}
+	if b.SpellDifficultyProgressionScale <= 0 {
+		b.SpellDifficultyProgressionScale = 0.01
+	}
+	if b.CraftDifficultyProgressionScale <= 0 {
+		b.CraftDifficultyProgressionScale = 0.02
+	}
+	if b.SelfCastProgressionMultiplier <= 0 {
+		b.SelfCastProgressionMultiplier = 0.5
 	}
 
 	// ── ENCHANTMENTS ─────────────────────────────────────────────────────────

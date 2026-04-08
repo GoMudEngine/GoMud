@@ -716,11 +716,11 @@ Balance:
   # so per-stat tuning is still available. Mob progression uses MobProgressionRate.
   #
   # RegenProgressionBase: Maximum chance per stat per tick when the pool is
-  #   at 0%. At the default 0.005 (0.5%), a character sitting at 0% HP would
-  #   have a 0.5% chance per tick (every 3 rounds) to gain Vitality and a
-  #   separate 0.5% chance to gain Willpower. Higher = faster stat gains from
+  #   at 0%. At the default 0.01 (1%), a character sitting at 0% HP would
+  #   have a 1% chance per tick (every 3 rounds) to gain Vitality and a
+  #   separate 1% chance to gain Willpower. Higher = faster stat gains from
   #   resource depletion. Range: 0.001 to 1.0.
-  RegenProgressionBase: 0.005
+  RegenProgressionBase: 0.01
   # RegenProgressionCurve: Controls how steeply the chance ramps up as the
   #   pool empties. Higher values mean the chance stays near zero until the
   #   pool is very low, then spikes. Lower values spread the chance more
@@ -804,6 +804,14 @@ Balance:
   # Proficiency: successful casts needed to gain 1 proficiency point
   #   with a specific spell. Higher proficiency reduces fizzle chance.
   SpellProficiencyCastsPerPoint: 50
+
+  # ── DIFFICULTY-SCALED PROGRESSION ──────────────────────────────────────────
+  # Harder spells and recipes give proportionally more skill progression.
+  # Formula (spells):  bonusMultiplier = 1.0 + difficulty * Scale
+  # Formula (crafts):  bonusMultiplier = 1.0 + skill_minimum * Scale
+  SpellDifficultyProgressionScale: 0.01   # difficulty 75 → 1.75x progression
+  CraftDifficultyProgressionScale: 0.02   # skill_minimum 50 → 2.0x progression
+  SelfCastProgressionMultiplier: 0.5      # self-only buffs get half progression
 
   # ── ENCHANTMENTS ────────────────────────────────────────────────────────────
   # Enchanted items grow stronger with use. Each tier requires more uses.
