@@ -8,7 +8,7 @@ southwest=X-1/Y-1, up=Z+1, down=Z-1, enter/leave=same position
 
 ## Reachable Rooms by Zone
 
-Total reachable: 259 rooms across multiple zones
+Total reachable: 274 rooms across multiple zones
 
 | Room ID | Zone | Title | X | Y | Z |
 |---------|------|-------|---|---|---|
@@ -271,6 +271,21 @@ Total reachable: 259 rooms across multiple zones
 | 4032 | Ashwick | Herb Clearing | -4 | -10 | 0 |
 | 4033 | Ashwick | Hidden Grove | -4 | -9 | 0 |
 | 4034 | Ashwick | Overgrown Hollow | -4 | -8 | 0 |
+| 4038 | North Road | Road Fork | -9 | -13 | 0 |
+| 4039 | North Road | Open Farmland | -10 | -13 | 0 |
+| 4040 | North Road | Hedgerow Bend | -11 | -13 | 0 |
+| 4041 | North Road | Rolling Fields | -11 | -12 | 0 |
+| 4042 | North Road | Crossroads Village Square | -11 | -11 | 0 |
+| 4043 | North Road | North Road | -11 | -10 | 0 |
+| 4044 | North Road | Drainage Ditch | -11 | -9 | 0 |
+| 4045 | North Road | Common Room | -11 | -11 | -1 |
+| 4046 | North Road | Kitchen | -11 | -12 | -1 |
+| 4047 | North Road | Back Yard | -11 | -13 | -1 |
+| 4048 | North Road | Betta's Path | -12 | -9 | 0 |
+| 4049 | North Road | Betta's Yard | -13 | -9 | 0 |
+| 4050 | North Road | Betta's Barn | -13 | -10 | 0 |
+| 4051 | North Road | Camp Approach | -12 | -10 | 0 |
+| 4052 | North Road | Bandit Camp | -13 | -11 | 0 |
 
 ## Unreachable Rooms (not connected to origin)
 
