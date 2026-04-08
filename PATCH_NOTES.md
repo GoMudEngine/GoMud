@@ -1,6 +1,38 @@
 # DOGMud Patch Notes
 
-## 2026-04-08 — Progression Balance, Bug Fixes, Spell Tuning
+## 2026-04-08 — North Road Zone, Progression Balance, Bug Fixes
+
+### New Zone: North Road — Southern Stretch
+- **15 new rooms** west of Ashwick Crossroads: farmland road,
+  crossroads village with tavern, Betta's farmstead, bandit camp.
+- **Quest: The Caravan Guard** — deal with a bandit crew
+  threatening the road. Kill their leader Soren and bring his
+  iron pin back to the caravan master for a reward and a trade
+  contact in Stillwater.
+- **Quest: Betta's Silence** — discover a trace of a recent
+  traveler in a farmstead barn. Betta asks you to keep quiet
+  when a bloodline agent comes asking questions. Your choice
+  has consequences.
+- **12 new NPCs**: Corvin (whittler boy), Betta (taciturn farm
+  wife), Haral (tavern-keeper with shop), Old Dessa (gossiper),
+  Tam (loud farmhand), Caravan Master, ambient farmer, 4 bandits
+  (coordinated group fight), roaming bloodline agent.
+- **New loot**: Soren's Ironbound Buckler (mid-tier shield),
+  bandit longsword, leather vest, lockpick set.
+- Bandits fight as a coordinated unit (no pack scatter).
+- Bandit lookout spawns hidden — high Perception detects on entry.
+
+### Engine Improvements
+- **pack_flee_immune** mob flag: mobs hold their ground when
+  packmates die instead of scattering.
+- **Dialogue root variants** now support grantsQuest, givesItem,
+  and setsQuestFlag — quests can complete on NPC greeting.
+- **Mob death quest notifications** moved to dedicated listener
+  (was buried inside PackFlee handler).
+- **2H weapon + shield equip bug fixed**: shields could be equipped
+  in offhand alongside 2-handed weapons, applying invisible stats.
+- **Level 4 mutation display**: now shows "extreme" instead of
+  "unknown" for max-level mutations like Extra Arms.
 
 ### Difficulty-Scaled Skill Progression
 - Spell and crafting skill progression now scales with difficulty.
