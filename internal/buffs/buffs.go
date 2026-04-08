@@ -187,6 +187,7 @@ func (bs *Buffs) AddBuffScaled(buffId int, durationMult float64) bool {
 
 		if idx, ok := bs.buffIds[buffId]; ok {
 			bs.List[idx].TriggersLeft = newBuff.TriggersLeft
+			bs.List[idx].RoundCounter = 0
 			bs.List[idx].PermaBuff = newBuff.PermaBuff
 			return true
 		}
@@ -222,6 +223,7 @@ func (bs *Buffs) AddBuff(buffId int, isPermanent bool) bool {
 
 		if idx, ok := bs.buffIds[buffId]; ok {
 			bs.List[idx].TriggersLeft = newBuff.TriggersLeft
+			bs.List[idx].RoundCounter = 0
 			bs.List[idx].PermaBuff = newBuff.PermaBuff
 			return true
 		}

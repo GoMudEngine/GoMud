@@ -68,6 +68,7 @@ type Character struct {
 	SpellBook        map[string]int                 `yaml:"spellbook,omitempty"`     // The spells the character has learned
 	KnownRecipes     map[string]int                 `yaml:"knownrecipes,omitempty"`  // The crafting recipes the character has discovered
 	Charmed          *CharmInfo                     `yaml:"-"`                       // If they are charmed, this is the info
+	EverCharmed      bool                           `yaml:"-"`                       // True if this mob was ever a companion (survives dismiss)
 	CharmedMobs      []int                          `yaml:"-"`                       // If they have charmed anyone, this is the list of mob instance ids
 	Items            []items.Item                   `yaml:"items,omitempty"`         // The items the character is holding
 	ComponentItems   []items.Item                   `yaml:"componentitems,omitempty"` // Contents of equipped component bag
@@ -1109,6 +1110,7 @@ func (c *Character) GetCharmIds() []int {
 
 func (c *Character) Charm(userId int, rounds int, expireCommand string) {
 	c.SetAdjective(`charmed`, true)
+	c.EverCharmed = true
 	c.Charmed = NewCharm(userId, rounds, expireCommand)
 	if c.Aggro != nil && c.Aggro.UserId == userId {
 		c.EndAggro()

@@ -88,18 +88,19 @@ func Buy(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		}
 
 		if tryPurchase(itemname, user, room, nil, shopUser) {
+			user.Character.OnSkillUse(string(skills.Bartering), user.UserId)
 			purchased := 1
 			for purchased < quantity {
 				if !tryPurchase(itemname, user, room, nil, shopUser) {
 					break
 				}
+				user.Character.OnSkillUse(string(skills.Bartering), user.UserId)
 				purchased++
 			}
 			if quantity > 1 && purchased < quantity {
 				user.SendText(fmt.Sprintf(`<ansi fg="yellow">Purchased %d of %d before running short.</ansi>`, purchased, quantity))
 			}
 			success = true
-			user.Character.OnStatUse("charisma", user.UserId)
 
 			// Quest engine: command notification
 			bridge := questengine.NewGameBridge(user, room.RoomId)
@@ -140,19 +141,21 @@ func Buy(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		}
 
 		if purchaseFn(itemname, user, room, shopMob, nil) {
+			user.Character.OnSkillUse(string(skills.Bartering), user.UserId)
+			shopMob.Character.OnStatUse("charisma", 0)
 			purchased := 1
 			for purchased < quantity {
 				if !purchaseFn(itemname, user, room, shopMob, nil) {
 					break
 				}
+				user.Character.OnSkillUse(string(skills.Bartering), user.UserId)
+				shopMob.Character.OnStatUse("charisma", 0)
 				purchased++
 			}
 			if quantity > 1 && purchased < quantity {
 				user.SendText(fmt.Sprintf(`<ansi fg="yellow">Purchased %d of %d before running short.</ansi>`, purchased, quantity))
 			}
 			success = true
-			user.Character.OnStatUse("charisma", user.UserId)
-			shopMob.Character.OnStatUse("charisma", 0)
 
 			// Quest engine: command notification
 			bridge := questengine.NewGameBridge(user, room.RoomId)

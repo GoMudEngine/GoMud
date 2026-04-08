@@ -155,8 +155,8 @@ func Sell(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			user.UserId,
 		)
 
-		// Track charisma use on successful sale.
-		user.Character.OnStatUse("charisma", user.UserId)
+		// Track bartering skill use (also progresses charisma as primary stat).
+		user.Character.OnSkillUse(string(skills.Bartering), user.UserId)
 		// Stage 38.5.5: Merchant mob gains charisma from trade interactions.
 		mob.Character.OnStatUse("charisma", 0)
 

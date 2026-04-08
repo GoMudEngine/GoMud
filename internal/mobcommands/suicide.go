@@ -232,7 +232,7 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			MobId:        int(mob.MobId),
 			Character:    mob.Character,
 			RoundCreated: currentRound,
-			WasCharmed:   mob.Character.IsCharmed(),
+			WasCharmed:   mob.Character.IsCharmed() || mob.Character.EverCharmed,
 		})
 	}
 
