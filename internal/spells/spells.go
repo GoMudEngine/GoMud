@@ -77,7 +77,7 @@ func (s SpellType) TargetTypeString(short ...bool) string {
 	if len(short) > 0 && short[0] {
 		switch s {
 		case Neutral:
-			return `Unknown`
+			return `Self`
 		case HelpSingle, HarmSingle:
 			return `Single`
 		case HelpMulti, HarmMulti:
@@ -90,7 +90,7 @@ func (s SpellType) TargetTypeString(short ...bool) string {
 	// Regular handling
 	switch s {
 	case Neutral:
-		return `Unknown`
+		return `Self`
 	case HelpSingle:
 		return `Single Target`
 	case HarmSingle:
