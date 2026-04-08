@@ -21,7 +21,7 @@ exits:
     roomid: 4041
   north:
     roomid: 4043
-  enter:
+  west:
     roomid: 4045
 nouns:
   well: A stone well at the center of the square, its rim worn

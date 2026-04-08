@@ -17,7 +17,7 @@ coord:
   y: -11
   z: -1
 exits:
-  leave:
+  east:
     roomid: 4042
   south:
     roomid: 4046
