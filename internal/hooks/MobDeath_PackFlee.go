@@ -64,6 +64,11 @@ func PackFlee(e events.Event) events.ListenerReturn {
 			continue
 		}
 
+		// Mobs with pack_flee_immune hold their ground
+		if mob.PackFleeImmune {
+			continue
+		}
+
 		// Check alliance: same MobId or same species
 		if mob.MobId != mobs.MobId(evt.MobId) {
 			if mob.Character.SpeciesId == 0 ||

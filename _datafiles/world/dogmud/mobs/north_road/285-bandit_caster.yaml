@@ -4,6 +4,7 @@ archetype: casting
 statpool: 160
 itemdropchance: 20
 hostile: true
+pack_flee_immune: true
 maxwander: 0
 groups:
   - humanoid
@@ -33,7 +34,7 @@ character:
     restless even when the rest of her is still, tracing patterns
     in the air that might be habit or might be practice. She does
     not carry a visible weapon. She does not need one.
-  speciesid: 0
+  speciesid: 1
   level: 1
   gold: 20
   stats:

@@ -7,6 +7,7 @@ items:
   - itemid: 20068
   - itemid: 10026
 hostile: true
+pack_flee_immune: true
 maxwander: 0
 groups:
   - humanoid
@@ -41,7 +42,7 @@ character:
     been hit many times and has stopped being bothered by it.
     He does not fidget. He does not look nervous. He looks like
     someone who is very good at one particular thing.
-  speciesid: 0
+  speciesid: 1
   level: 1
   gold: 30
   equipment:

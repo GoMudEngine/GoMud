@@ -6,6 +6,7 @@ itemdropchance: 30
 items:
   - itemid: 53
 hostile: true
+pack_flee_immune: true
 maxwander: 1
 groups:
   - humanoid
@@ -42,7 +43,7 @@ character:
     loose coat. The eyes are the giveaway — they track every
     movement on the road with a focus that has nothing to do with
     idle curiosity. This person is waiting for something specific.
-  speciesid: 0
+  speciesid: 1
   level: 1
   gold: 20
   equipment:
