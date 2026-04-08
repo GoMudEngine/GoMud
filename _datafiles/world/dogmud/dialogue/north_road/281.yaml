@@ -16,8 +16,7 @@ tree:
           "17-resolution": "diplomacy"
         text: "Any progress on those bandits? I cannot sit here
           forever."
-        hints: "Deal with the bandits in their camp, north of
-          the village past the drainage ditch."
+        hints: "Tell the caravan master about the bandits."
       - questRequired: ["17-end"]
         questFlagRequired:
           "17-resolution": "combat"
@@ -98,7 +97,9 @@ tree:
         you are done."
 
     - id: combat_done
-      triggers: ["done", "dead", "killed", "cleared", "safe"]
+      triggers: ["done", "dead", "killed", "cleared", "safe",
+        "bandit", "quest", "task", "dealt", "finished", "camp",
+        "progress", "report"]
       questRequired: ["17-start"]
       questExcluded: ["17-end"]
       grantsQuest: "17-end"
