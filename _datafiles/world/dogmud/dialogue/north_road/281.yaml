@@ -31,6 +31,7 @@ tree:
   nodes:
     - id: bandits
       triggers: ["bandit", "danger", "road", "attack", "problem"]
+      questExcluded: ["17-start", "17-end"]
       text: "A crew operating north of the village. They hit my
         last wagon and took cargo. I cannot afford another loss.
         I need someone to deal with them -- one way or another."
