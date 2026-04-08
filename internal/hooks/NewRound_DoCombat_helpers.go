@@ -274,13 +274,35 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 			resolveSpell(user, cs, spellData, resolveRoom)
 		}
 		user.Character.TrackSpellCast(cs.SpellId)
-		// Fire progression for the correct skill based on spell school
-		if spellData != nil && spellData.HasSchool(spells.SchoolManifestation) {
-			user.Character.OnSkillUse(string(skills.Manifestation), userId)
-			user.Character.OnStatUse("charisma", userId)
-		} else {
-			user.Character.OnSkillUse(string(skills.Spellcasting), userId)
-			user.Character.OnStatUse("willpower", userId)
+		// Fire progression for the correct skill based on spell school.
+		// Difficulty scaling: harder spells give proportionally more progression.
+		spellBonus := 1.0
+		if spellData != nil {
+			bal := configs.GetBalanceConfig()
+			spellBonus = 1.0 + float64(spellData.Difficulty)*float64(bal.SpellDifficultyProgressionScale)
+
+			// Self-cast penalty: HelpSingle targeting only self gets reduced progression
+			if spellData.Type == spells.HelpSingle &&
+				len(cs.TargetMobInstanceIds) == 0 &&
+				len(cs.TargetUserIds) == 1 && cs.TargetUserIds[0] == userId {
+				spellBonus *= float64(bal.SelfCastProgressionMultiplier)
+			}
+
+			// AoE guard: HarmArea/HarmMulti with no targets hit skips progression
+			if (spellData.Type == spells.HarmArea || spellData.Type == spells.HarmMulti) &&
+				len(cs.TargetUserIds) == 0 && len(cs.TargetMobInstanceIds) == 0 {
+				spellBonus = 0
+			}
+		}
+
+		if spellBonus > 0 {
+			if spellData != nil && spellData.HasSchool(spells.SchoolManifestation) {
+				user.Character.OnSkillUseScaled(string(skills.Manifestation), userId, spellBonus)
+				user.Character.OnStatUse("charisma", userId)
+			} else {
+				user.Character.OnSkillUseScaled(string(skills.Spellcasting), userId, spellBonus)
+				user.Character.OnStatUse("willpower", userId)
+			}
 		}
 
 		// Phase 25.1: Spell discovery — traditional schools.
@@ -375,12 +397,17 @@ func handleMobFoldCasting(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 		if resolveRoom := rooms.LoadRoom(mob.Character.RoomId); resolveRoom != nil {
 			resolveMobSpell(mob, cs, spellData, resolveRoom)
 		}
-		// Stage 38.3: Mob spellcasting progression — route to correct skill
+		// Stage 38.3: Mob spellcasting progression — difficulty-scaled
+		spellBonus := 1.0
+		if spellData != nil {
+			bal := configs.GetBalanceConfig()
+			spellBonus = 1.0 + float64(spellData.Difficulty)*float64(bal.SpellDifficultyProgressionScale)
+		}
 		if spellData != nil && spellData.HasSchool(spells.SchoolManifestation) {
-			mob.Character.OnSkillUse(string(skills.Manifestation), 0)
+			mob.Character.OnSkillUseScaled(string(skills.Manifestation), 0, spellBonus)
 			mob.Character.OnStatUse("charisma", 0)
 		} else {
-			mob.Character.OnSkillUse(string(skills.Spellcasting), 0)
+			mob.Character.OnSkillUseScaled(string(skills.Spellcasting), 0, spellBonus)
 			mob.Character.OnStatUse("willpower", 0)
 		}
 
