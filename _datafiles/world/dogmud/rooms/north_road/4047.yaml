@@ -1,0 +1,42 @@
+roomid: 4047
+zone: North Road
+title: Back Yard
+description: >
+  A small flagstone yard behind the tavern, hemmed in by a low
+  wall on three sides. A few barrels lean against the wall,
+  their staves dark with rain and age. The flagstones are uneven,
+  one cracked where something heavy landed. Below the kitchen
+  window, a faint scuff mark on the stone — someone landed here
+  recently and stumbled left, catching themselves on the wall.
+  The yard smells of old ale and wet stone. A gate in the south
+  wall leads back to the road.
+biome: farmland
+coord:
+  x: -11
+  y: -13
+  z: -1
+exits:
+  north:
+    roomid: 4046
+nouns:
+  flagstone: One of the flagstones is cracked down the center,
+    the edges sharp and recent compared to the worn smoothness
+    of the others. Something heavy landed here — or someone
+    dropped from the window above. At the base of the wall
+    beneath the kitchen window, a scuff mark where a boot
+    scraped stone on a bad landing. The stumble went left.
+  barrels: Three ale barrels stacked against the east wall,
+    empty and weathered. Their tops are covered in a thin layer
+    of fallen leaves. One has been repurposed as a table — a
+    wooden cup and a candle stub sit on its flat top, as if
+    someone sat here in the dark recently.
+  wall: A low fieldstone wall, waist-height, enclosing the yard.
+    The stones are mortared but crumbling in places. Easy enough
+    to climb over. A wooden gate in the south section leads to
+    an alley and the road beyond, but it is jammed shut with
+    rust and disuse.
+idlemessages:
+- Water drips from the eaves onto the flagstones with a slow,
+  steady rhythm.
+- A cat watches from the top of the wall, then drops silently
+  to the other side.

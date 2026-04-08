@@ -1,0 +1,22 @@
+itemid: 10020
+name: bandit's longsword
+namesimple: longsword
+description: >
+  A longsword with a nicked blade and a hilt wrapped in stained
+  leather. The steel is decent quality beneath the abuse — this
+  was a good weapon before it was used hard without proper care.
+  The edge has been resharpened unevenly, giving it a slightly
+  serrated look. It cuts well enough.
+type: weapon
+hands: 1
+subtype: slashing
+weight: 7.5
+speedmultiplier: 0.75
+staminacost: 8
+grapplemodifier: 0.7
+damage:
+  basedamage: 7
+  variance: 2
+damage_multiplier: 1.10
+parryrating: 13
+value: 35

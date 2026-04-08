@@ -1,0 +1,13 @@
+itemid: 53
+name: lockpick set
+namesimple: lockpicks
+description: >
+  A leather roll containing a set of slender metal picks, each
+  one bent to a different angle. The handles are wrapped in thin
+  cord for grip. The metal is dark — treated to avoid catching
+  light. These are well-used tools, not display pieces. Someone
+  spent real time learning to use them.
+type: object
+subtype: mundane
+weight: 0.3
+value: 12
