@@ -1,0 +1,38 @@
+mobid: 280
+zone: North Road
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hey! Pull up a chair. Buy me a drink and I will tell
+        you about the time I --"
+      - "You look like you have been on the road. Sit! Drink!"
+
+  - keywords: ["bandit", "camp", "attack", "rob"]
+    responses:
+      - "They tried to toll my master's wagon! Right there on
+        the road, bold as anything. Big man with a sword and
+        a woman who looked at you wrong and your head hurt.
+        Camp is off the road past the drainage ditch -- follow
+        the scrub west from the north road. My master refused
+        to pay, so they took a crate right off the back."
+
+  - keywords: ["soren", "leader", "boss"]
+    responses:
+      - "The leader? Did not catch his name. Talks like a
+        soldier, carries himself like one too. Not your usual
+        road trash. Made it sound like he was owed something.
+        Maybe he was. What do I know."
+
+  - keywords: ["road", "travel", "north"]
+    responses:
+      - "I would not go north past the ditch without company.
+        Just saying. Some of us have to use that road for work."
+
+  - keywords: [""]
+    responses:
+      - "Another drink and I will remember more. Probably."
+
+memory:
+  expiryPeriod: ""

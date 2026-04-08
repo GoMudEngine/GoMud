@@ -1,0 +1,115 @@
+mobid: 281
+zone: North Road
+defaultMood: neutral
+
+tree:
+  root:
+    text: "Good day. I am waiting for the road to clear before
+      heading north. These bandits have made a mess of my
+      schedule."
+    hints: "You could ask about the bandits, offer to help,
+      or ask about his cargo."
+    variants:
+      - questRequired: ["17-start"]
+        questExcluded: ["17-end"]
+        questFlagExcluded:
+          "17-resolution": "diplomacy"
+        text: "Any progress on those bandits? I cannot sit here
+          forever."
+        hints: "Deal with the bandits in their camp, north of
+          the village past the drainage ditch."
+      - questRequired: ["17-end"]
+        questFlagRequired:
+          "17-resolution": "combat"
+        text: "The road is clear. You have earned this."
+        hints: "The caravan master is grateful."
+      - questRequired: ["17-end"]
+        questFlagRequired:
+          "17-resolution": "diplomacy"
+        text: "You gave them the crate. I suppose the road is
+          safe enough. Here is your pay -- what is left of it."
+
+  nodes:
+    - id: bandits
+      triggers: ["bandit", "danger", "road", "attack", "problem"]
+      text: "A crew operating north of the village. They hit my
+        last wagon and took cargo. I cannot afford another loss.
+        I need someone to deal with them -- one way or another."
+      unlocks: ["hire", "cargo_ask"]
+      hints: "You could offer to help or ask about the cargo."
+
+    - id: hire
+      triggers: ["help", "hire", "guard", "deal", "quest", "task"]
+      questExcluded: ["17-start", "17-end"]
+      grantsQuest: "17-start"
+      text: "You would do that? Good. Their camp is off the road
+        to the west, past the drainage ditch. Kill them, scatter
+        them, I do not care. Just make the road safe. I will pay
+        you well, and my brother in Stillwater will make it worth
+        your while for trade."
+      moodChange: friendly
+
+    - id: cargo_ask
+      triggers: ["cargo", "crate", "carrying", "goods"]
+      text: "Trade goods bound for Stillwater. Nothing exotic.
+        My brother runs a trading post there and he is expecting
+        delivery."
+      hints: "The caravan master seems straightforward about his
+        cargo, but there is a sealed crate he does not mention."
+
+    - id: crate_ask
+      triggers: ["sealed", "crate", "specific", "iron bands"]
+      text: "That crate is business between me and my buyer. It
+        is paid for and it is mine. That is all anyone needs to
+        know."
+      moodChange: neutral
+
+    - id: soren_deal
+      triggers: ["soren", "deal", "negotiate", "wants", "give them"]
+      questRequired: ["17-start"]
+      questExcluded: ["17-end"]
+      text: "He told you I owe him? That is his version. I paid
+        for the work. The crate is separate business. But --"
+      hints: "You could press him to hand over the crate, or
+        refuse the deal and fight the bandits."
+      unlocks: ["hand_over", "refuse_deal"]
+
+    - id: hand_over
+      triggers: ["hand over", "give", "agree", "fine", "take it",
+        "diplomacy"]
+      questRequired: ["17-start"]
+      questExcluded: ["17-end"]
+      grantsQuest: "17-end"
+      setsQuestFlag:
+        key: "17-resolution"
+        value: "diplomacy"
+      givesItem: 52
+      text: "Fine. Take the damned crate. If it buys safe passage
+        then it is cheaper than hiring more guards. But do not
+        expect a letter of introduction after this. My brother
+        does not do business with people who roll over for thugs."
+      moodChange: hostile
+
+    - id: refuse_deal
+      triggers: ["refuse", "no", "fight", "kill"]
+      questRequired: ["17-start"]
+      questExcluded: ["17-end"]
+      text: "Good. Deal with them properly. I will be here when
+        you are done."
+
+    - id: combat_done
+      triggers: ["done", "dead", "killed", "cleared", "safe"]
+      questRequired: ["17-start"]
+      questExcluded: ["17-end"]
+      grantsQuest: "17-end"
+      setsQuestFlag:
+        key: "17-resolution"
+        value: "combat"
+      givesItem: 51
+      text: "The road is clear? Then we move at dawn. You have
+        earned this -- a letter for my brother Edric in Stillwater.
+        Show it at his trading post. He will see you right."
+      moodChange: grateful
+
+memory:
+  expiryPeriod: ""

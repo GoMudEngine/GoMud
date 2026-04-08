@@ -1,0 +1,50 @@
+mobid: 278
+zone: North Road
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "What will you have?"
+      - "Sit anywhere. Food is on the board."
+
+  - keywords: ["village", "town", "place", "here"]
+    responses:
+      - "No name worth posting. Just a crossroads. People stop
+        because the roads cross and they need to eat. That is
+        the whole story."
+
+  - keywords: ["road", "travel", "north", "south", "bandits"]
+    responses:
+      - "The road north has been rough lately. Bandits working
+        the stretch past the ditch. I posted a notice. Nobody
+        reads notices."
+
+  - keywords: ["girl", "kitchen", "worked", "dark-haired"]
+    responses:
+      - "A girl worked my kitchen for three days. Good hands,
+        quiet. Left one night without collecting what she was
+        owed. That was weeks ago. I do not know where she went."
+
+  - keywords: ["food", "drink", "ale", "buy", "eat"]
+    responses:
+      - "Ale or stew. That is what I have. Both are honest."
+
+  - keywords: ["dessa", "old woman", "hearth"]
+    responses:
+      - "Dessa? She has been sitting by that fire since before
+        I bought the place. She knows everything. She will tell
+        you everything. Whether you asked or not."
+
+  - keywords: ["tam", "farmhand", "drunk"]
+    responses:
+      - "Tam talks loud and drinks fast. Harmless, mostly. Take
+        what he says about the bandits with a grain of salt --
+        he has never been north of the ditch."
+
+  - keywords: [""]
+    responses:
+      - "I keep the bar. I do not keep track of questions."
+
+memory:
+  expiryPeriod: ""

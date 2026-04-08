@@ -1,0 +1,72 @@
+mobid: 287
+zone: North Road
+defaultMood: neutral
+
+tree:
+  root:
+    text: "Traveler. A moment of your time. I am conducting
+      inquiries on behalf of the district authority."
+    hints: "You could ask what they want or answer their
+      questions."
+
+  nodes:
+    - id: inquiries
+      triggers: ["what", "inquiries", "want", "questions",
+        "authority", "asking"]
+      text: "I am looking for a young woman who may have passed
+        through this area recently. Dark-haired, traveling alone,
+        heading north. Have you seen anyone matching that
+        description? Or heard of anyone sheltering travelers
+        off the road?"
+      unlocks: ["say_nothing", "tell_truth", "misdirect"]
+      hints: "You could stay quiet, share what you know, or
+        point them elsewhere."
+
+    - id: say_nothing
+      triggers: ["no", "nothing", "not seen", "quiet", "cannot",
+        "sorry"]
+      questRequired: ["18-start"]
+      questExcluded: ["18-end"]
+      setsQuestFlag:
+        key: "18-resolution"
+        value: "quiet"
+      text: "I see. Well. If you do recall anything, the district
+        authority offers fair compensation for useful information.
+        Good day."
+      moodChange: neutral
+
+    - id: tell_truth
+      triggers: ["yes", "barn", "farmstead", "betta", "saw",
+        "stayed", "girl", "seen"]
+      questRequired: ["18-start"]
+      questExcluded: ["18-end"]
+      setsQuestFlag:
+        key: "18-resolution"
+        value: "told"
+      text: "A farmstead, you say. North of the village. Thank
+        you -- that is useful. The district authority appreciates
+        cooperation. Here, for your trouble."
+      moodChange: friendly
+
+    - id: misdirect
+      triggers: ["south", "east", "wrong way", "left",
+        "somewhere else", "other direction"]
+      questRequired: ["18-start"]
+      questExcluded: ["18-end"]
+      setsQuestFlag:
+        key: "18-resolution"
+        value: "quiet"
+      text: "South, you say. Hmm. I will look into it. Thank you
+        for your time."
+      moodChange: neutral
+
+    - id: no_quest
+      triggers: ["no", "nothing", "not seen", "quiet", "yes",
+        "barn", "south"]
+      questExcluded: ["18-start"]
+      text: "I see. Well, if you recall anything, the district
+        authority can be reached through any temple clerk. Good
+        day."
+
+memory:
+  expiryPeriod: ""
