@@ -65,6 +65,17 @@ tree:
         know."
       moodChange: neutral
 
+    - id: bring_proof
+      triggers: ["quest", "task", "bandit", "proof", "pin",
+        "done", "killed", "dead", "progress", "report"]
+      questRequired: ["17-start"]
+      questExcluded: ["17-end"]
+      text: "You dealt with them? Then bring me proof. Their
+        leader wore an iron pin on his collar -- crossed swords.
+        Bring it to me and we are square."
+      hints: "Kill the bandit leader Soren and bring his iron
+        pin back to the caravan master."
+
     - id: soren_deal
       triggers: ["soren", "deal", "negotiate", "wants", "give them"]
       questRequired: ["17-start"]

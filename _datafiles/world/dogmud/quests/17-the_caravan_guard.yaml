@@ -22,9 +22,6 @@ steps:
     description: "The bandit situation has been resolved."
 
 rewards:
-  playermessage: "The caravan master nods with the satisfaction
-    of a man whose cargo is no longer at risk."
-  roommessage: "The caravan master looks visibly relieved."
   gold: 40
 
 triggers:
