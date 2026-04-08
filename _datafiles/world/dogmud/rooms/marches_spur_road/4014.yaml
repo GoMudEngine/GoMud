@@ -18,6 +18,9 @@ coord:
 exits:
   north:
     roomid: 4013
+  west:
+    roomid: 4038
+    zone: North Road
   east:
     roomid: 4015
     zone: Ashwick
