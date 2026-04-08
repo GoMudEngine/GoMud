@@ -1,0 +1,39 @@
+mobid: 279
+zone: North Road
+statpool: 25
+itemdropchance: 0
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+  - gossiper
+idlecommands:
+  - 'emote mutters to herself and shakes her head slowly'
+  - ''
+  - 'emote adjusts her shawl closer against a draft only she can feel'
+  - ''
+  - 'emote peers at the door over the rim of her cup whenever it opens'
+  - ''
+  - 'emote taps the table with one finger, a slow impatient rhythm'
+  - ''
+activitylevel: 9
+character:
+  name: old Dessa
+  description: An elderly woman tucked into the chair nearest the hearth, a
+    clay cup cradled in both hands as if it were the last warm thing in the
+    world. Her face is a map of fine lines, her eyes sharp and quick behind
+    drooping lids. She was the village midwife for thirty years before her hands
+    got too stiff, and she has not stopped paying attention to people's
+    business since. Her shawl is pulled tight around thin shoulders.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    perception:
+      training: 12
+    charisma:
+      training: 10
+    willpower:
+      training: 6

@@ -1,0 +1,33 @@
+mobid: 280
+zone: North Road
+statpool: 40
+itemdropchance: 0
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote laughs too loudly at nothing in particular'
+  - ''
+  - 'emote waves his empty cup toward the bar, then seems to forget about it'
+  - ''
+  - 'emote leans his chair back on two legs, wobbling dangerously'
+  - ''
+activitylevel: 11
+character:
+  name: Tam
+  description: A young farmhand, maybe twenty, with the red face and loose
+    posture of someone who started drinking before the afternoon was properly
+    underway. His shirt is untucked and his boots are caked with field mud. He
+    talks to anyone who will listen and several people who will not. His voice
+    carries further than he realizes.
+  speciesid: 1
+  level: 1
+  gold: 2
+  stats:
+    strength:
+      training: 8
+    charisma:
+      training: 4

@@ -1,0 +1,43 @@
+mobid: 278
+zone: North Road
+statpool: 80
+itemdropchance: 0
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+shop:
+  - itemid: 30021
+    price: 3
+  - itemid: 30022
+    price: 5
+idlecommands:
+  - 'emote polishes a cup with a rag that is not noticeably cleaner than the cup'
+  - ''
+  - 'emote arranges bottles behind the bar, adjusting their spacing by fractions'
+  - ''
+  - 'emote leans on the bar and watches the room with the patience of a man who has heard every story'
+  - ''
+activitylevel: 7
+character:
+  name: Haral
+  description: A heavyset man in his fifties with thick forearms and knees
+    that creak when he moves. He bought this tavern after his own knees gave out
+    from farming, and he runs it with the same unhurried efficiency he once
+    applied to crops. His face is broad and weathered, his expression neutral in
+    a way that could be friendliness or could be indifference. He keeps his
+    opinions behind the bar with the bottles.
+  speciesid: 1
+  level: 1
+  gold: 50
+  stats:
+    strength:
+      training: 10
+    vitality:
+      training: 8
+    perception:
+      training: 6
+    charisma:
+      training: 8
