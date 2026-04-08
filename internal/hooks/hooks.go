@@ -84,6 +84,9 @@ func RegisterListeners() {
 	// Mob death: pack flee behavior (Stage 42.7)
 	events.RegisterListener(events.MobDeath{}, PackFlee)
 
+	// Mob death: quest engine notifications
+	events.RegisterListener(events.MobDeath{}, MobDeathQuestNotify)
+
 	// Mob death: companion cleanup (remove from owner's list + notify)
 	events.RegisterListener(events.MobDeath{}, CompanionCleanup)
 
