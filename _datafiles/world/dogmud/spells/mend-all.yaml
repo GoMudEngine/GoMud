@@ -8,7 +8,7 @@ schools:
 cost: 50
 healthcost: 3
 waitrounds: 2
-difficulty: 10
+difficulty: 30
 primarystat: willpower
 base_folds: 10
 effect_type: heal

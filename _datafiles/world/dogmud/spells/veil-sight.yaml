@@ -6,7 +6,7 @@ schools:
   - mental
 cost: 35
 waitrounds: 1
-difficulty: 0
+difficulty: 5
 primarystat: willpower
 base_folds: 4
 effect_type: buff

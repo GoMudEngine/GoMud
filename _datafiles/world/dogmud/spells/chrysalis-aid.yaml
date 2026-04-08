@@ -7,5 +7,5 @@ schools:
   - vital
 cost: 0
 waitrounds: 2
-difficulty: 0
+difficulty: 5
 primarystat: willpower

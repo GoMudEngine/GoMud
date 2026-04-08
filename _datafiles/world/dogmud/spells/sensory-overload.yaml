@@ -6,7 +6,7 @@ schools:
   - mental
 cost: 80
 waitrounds: 2
-difficulty: 0
+difficulty: 40
 primarystat: willpower
 base_folds: 10
 target_defense_type: mental

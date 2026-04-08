@@ -6,7 +6,7 @@ schools:
   - elemental
 cost: 160
 waitrounds: 3
-difficulty: 0
+difficulty: 60
 primarystat: willpower
 base_folds: 24
 target_defense_type: physical

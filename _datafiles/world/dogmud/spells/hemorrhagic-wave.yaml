@@ -6,7 +6,7 @@ schools:
   - vital
 cost: 80
 waitrounds: 2
-difficulty: 0
+difficulty: 45
 primarystat: willpower
 base_folds: 20
 target_defense_type: physical

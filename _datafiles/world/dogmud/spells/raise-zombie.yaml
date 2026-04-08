@@ -10,7 +10,7 @@ schools:
   - manifestation
 cost: 30
 waitrounds: 6
-difficulty: 0
+difficulty: 20
 primarystat: willpower
 base_folds: 6
 target_defense_type: none

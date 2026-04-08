@@ -6,7 +6,7 @@ schools:
   - vital
 cost: 80
 waitrounds: 2
-difficulty: 0
+difficulty: 35
 primarystat: willpower
 base_folds: 10
 effect_type: buff

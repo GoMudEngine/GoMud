@@ -10,3 +10,4 @@ base_folds: 36
 type: harmsingle
 schools:
   - manifestation
+difficulty: 60
