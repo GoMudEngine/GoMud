@@ -7,6 +7,7 @@ items:
   - itemid: 53
 hostile: true
 pack_flee_immune: true
+buffids: [9]
 maxwander: 1
 groups:
   - humanoid
