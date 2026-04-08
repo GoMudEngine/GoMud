@@ -99,7 +99,7 @@ func (c *Character) FindFirstEmptySlot(pairs []HandPair, isShield bool) *HandSlo
 		p := &pairs[pi]
 		// Skip first slot of first pair (Weapon) for shields
 		if pi == 0 && isShield {
-			if !p.IsHalfPair() && p.Second.IsEmpty() {
+			if !p.IsHalfPair() && p.Second.IsEmpty() && !p.First.Is2H(c) {
 				return &p.Second
 			}
 			continue
