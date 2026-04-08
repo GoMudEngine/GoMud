@@ -8,11 +8,6 @@ charm_immune: true
 maxwander: 0
 groups:
   - humanoid
-shop:
-  - itemid: 30021
-    price: 3
-  - itemid: 30022
-    price: 5
 idlecommands:
   - 'emote polishes a cup with a rag that is not noticeably cleaner than the cup'
   - ''
@@ -32,6 +27,11 @@ character:
   speciesid: 1
   level: 1
   gold: 50
+  shop:
+    - itemid: 30021
+      price: 3
+    - itemid: 30022
+      price: 5
   stats:
     strength:
       training: 10
