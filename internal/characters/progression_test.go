@@ -4,6 +4,7 @@ import (
 	"math"
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 )
 
@@ -273,5 +274,43 @@ func TestGetProgressionMultiplier(t *testing.T) {
 		if got != tt.expected {
 			t.Errorf("GetProgressionMultiplier(%q) = %.1f, want %.1f", tt.skill, got, tt.expected)
 		}
+	}
+}
+
+func TestOnSkillUseScaled_PassesBonusMultiplier(t *testing.T) {
+	// Initialize logger for this test
+	mudlog.SetupLogger(nil, "", "", false)
+
+	// OnSkillUseScaled should exist and accept a bonus multiplier.
+	// We can't easily test the full progression pipeline in a unit test
+	// (it depends on configs and RNG), but we can verify the method exists
+	// and tracks skill usage by checking it compiles and doesn't panic.
+	c := Character{
+		Name:          "TestChar",
+		Skills:        map[string]int{string(skills.Spellcasting): 5},
+		SkillUseCount: map[string]int{},
+		StatUseCount:  map[string]int{},
+	}
+	// Should not panic and should track the skill use
+	c.OnSkillUseScaled(string(skills.Spellcasting), 0, 1.5)
+	if c.SkillUseCount[string(skills.Spellcasting)] != 1 {
+		t.Errorf("Expected use count 1 after OnSkillUseScaled, got %d", c.SkillUseCount[string(skills.Spellcasting)])
+	}
+}
+
+func TestOnSkillUse_DelegatesToScaled(t *testing.T) {
+	// Initialize logger for this test
+	mudlog.SetupLogger(nil, "", "", false)
+
+	// OnSkillUse should work exactly as before (delegates with bonus=1.0)
+	c := Character{
+		Name:          "TestChar",
+		Skills:        map[string]int{string(skills.Spellcasting): 5},
+		SkillUseCount: map[string]int{},
+		StatUseCount:  map[string]int{},
+	}
+	c.OnSkillUse(string(skills.Spellcasting), 0)
+	if c.SkillUseCount[string(skills.Spellcasting)] != 1 {
+		t.Errorf("Expected use count 1, got %d", c.SkillUseCount[string(skills.Spellcasting)])
 	}
 }

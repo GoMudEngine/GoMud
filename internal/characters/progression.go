@@ -225,12 +225,19 @@ func (c *Character) OnStatUse(statName string, userId int) bool {
 // Also auto-tracks and progresses the skill's primary governing stat.
 // Returns true if the skill actually increased.
 func (c *Character) OnSkillUse(skillName string, userId int) bool {
+	return c.OnSkillUseScaled(skillName, userId, 1.0)
+}
+
+// OnSkillUseScaled is like OnSkillUse but accepts a bonus multiplier that
+// scales the progression chance. Used for difficulty-scaled progression
+// where harder spells/crafts reward proportionally more skill growth.
+func (c *Character) OnSkillUseScaled(skillName string, userId int, bonusMultiplier float64) bool {
 	c.TrackSkillUse(skillName)
-	mudlog.Debug("Progression", "event", "skill_use", "skill", skillName, "character", c.Name)
+	mudlog.Debug("Progression", "event", "skill_use", "skill", skillName, "bonus", fmt.Sprintf("%.2f", bonusMultiplier), "character", c.Name)
 
 	gained := false
 	if configs.GetGamePlayConfig().UseSkillProgression {
-		gained = c.CheckSkillProgression(skillName, userId, 1.0)
+		gained = c.CheckSkillProgression(skillName, userId, bonusMultiplier)
 	}
 
 	// Auto-track and progress the skill's primary governing stat
@@ -318,7 +325,7 @@ func (c *Character) OnCritReceived(damageChannel string, userId int) {
 		return
 	}
 
-	c.CheckRegenProgression(statName, userId, 0.05)
+	c.CheckRegenProgression(statName, userId, 0.25)
 }
 
 // OnLowResource is called when a resource (health, stamina, conviction)
