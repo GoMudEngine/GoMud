@@ -16,12 +16,8 @@ steps:
       the bandit threat on the north road."
     hint: "The bandits have a camp west of the north road, past
       the drainage ditch. You can fight them or try to negotiate
-      with their leader, Soren."
-  - id: soren-dead
-    description: "Soren has been dealt with. Return to the
-      caravan master with the news."
-    hint: "Report back to the caravan master at the crossroads
-      village."
+      with their leader, Soren. If you kill Soren, bring proof
+      back to the caravan master."
   - id: end
     description: "The bandit situation has been resolved."
 
@@ -32,10 +28,24 @@ rewards:
   gold: 40
 
 triggers:
-  - event: mob_death
-    mob: 286
+  - event: item_give
+    mob: 281
+    item: 54
     conditions:
       has: [17-start]
-      missing: [17-soren-dead, 17-end]
+      missing: [17-end]
     actions:
-      - grant: 17-soren-dead
+      - grant: 17-end
+      - set_flag:
+          key: "17-resolution"
+          value: "combat"
+      - consume_item: 54
+      - give_item: 51
+      - npc_say:
+          mob: 281
+          lines:
+            - {delay: 1, text: "Soren's pin. So he is done."}
+            - {delay: 3, text: "The road is ours again. Here --
+                a letter for my brother Edric in Stillwater.
+                Show it at his trading post. He will see you
+                right."}

@@ -6,6 +6,7 @@ itemdropchance: 40
 items:
   - itemid: 20067
   - itemid: 10026
+  - itemid: 54
 hostile: true
 pack_flee_immune: true
 maxwander: 0
