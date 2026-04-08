@@ -1,0 +1,46 @@
+roomid: 4050
+zone: North Road
+title: Betta's Barn
+description: >
+  Warm in the way of places where animals have lived for a long
+  time — a deep, settled warmth that has nothing to do with fire,
+  that comes from the accumulated heat of many large bodies over
+  many years. Two cows chew placidly in their stalls, undisturbed
+  by your presence. A donkey watches from the far corner with
+  ancient suspicion. Gap boards in the walls let in thin bars of
+  light that stripe the straw-covered floor. In the far corner,
+  a makeshift straw bedroll has been recently disturbed.
+biome: farmland
+coord:
+  x: -13
+  y: -10
+  z: 0
+exits:
+  north:
+    roomid: 4049
+nouns:
+  bedroll: A rough bed of straw piled against the wall in the
+    darkest corner of the barn, partially covered by an old horse
+    blanket. The straw is pressed flat where someone slept —
+    recently, by the look of it. A few dark hairs cling to the
+    blanket. Beside the bedroll, a withered apple core, brown
+    and soft, the kind that was past its best when it was eaten.
+    Someone stayed here. Not long ago.
+  cows: Two brown cows standing in their stalls, jaws working
+    in slow circles. They are clean, well-fed, and profoundly
+    indifferent to anything that is not food. Their breath fogs
+    in the cool air.
+  donkey: A grey donkey in the corner stall, watching you with
+    an expression that manages to convey both complete boredom
+    and deep personal offense at your presence. Its ears swivel
+    independently, tracking sounds you cannot hear.
+  boards: Gap boards in the barn wall where the timber has
+    shrunk with age, letting thin bars of light into the dim
+    interior. Through the gaps you can see the yard and the
+    side of the farmhouse. At night, moonlight would stripe
+    the floor. You could hear a conversation at the back door
+    from here, if someone were having one.
+idlemessages:
+- One of the cows shifts in its stall, straw rustling.
+- The donkey snorts and looks away, apparently disgusted.
+- Light moves across the floor as clouds pass overhead.
