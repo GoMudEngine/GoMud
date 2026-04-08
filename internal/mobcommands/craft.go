@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
@@ -48,7 +49,8 @@ func Craft(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		room.SendText(fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi> works quickly and produces something.`,
 			mob.Character.Name))
-		mob.Character.OnSkillUse(result.SkillName, 0)
+		craftBonus := 1.0 + float64(result.SkillMinimum)*float64(configs.GetBalanceConfig().CraftDifficultyProgressionScale)
+		mob.Character.OnSkillUseScaled(result.SkillName, 0, craftBonus)
 		return true, nil
 
 	case result.Initiated:

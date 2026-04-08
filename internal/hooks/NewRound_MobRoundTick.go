@@ -351,7 +351,8 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 									recipe)
 							newItem := items.New(recipe.Output.ItemId)
 							mob.Character.StoreItem(newItem)
-							mob.Character.OnSkillUse(recipe.Skill, 0)
+							craftBonus := 1.0 + float64(recipe.SkillMinimum)*float64(configs.GetBalanceConfig().CraftDifficultyProgressionScale)
+							mob.Character.OnSkillUseScaled(recipe.Skill, 0, craftBonus)
 							if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
 								room.SendText(fmt.Sprintf(
 									`<ansi fg="mobname">%s</ansi> finishes their work.`,
