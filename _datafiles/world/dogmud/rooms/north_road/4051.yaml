@@ -1,0 +1,37 @@
+roomid: 4051
+zone: North Road
+title: Camp Approach
+description: >
+  A narrow track through dense scrub, barely visible from the
+  road. The undergrowth has been cut back just enough for a
+  person to pass single-file, the stumps freshly hacked. Boot
+  prints press deep into the mud — multiple sets, heavy, coming
+  and going with regularity. The scrub thickens overhead,
+  blocking the sky and muffling sound. The smell of a cold
+  campfire drifts from somewhere ahead. This is not a deer
+  trail.
+biome: farmland
+coord:
+  x: -12
+  y: -10
+  z: 0
+exits:
+  east:
+    roomid: 4043
+  west:
+    roomid: 4052
+nouns:
+  prints: Boot prints pressed deep into soft earth — heavy,
+    deliberate, the kind made by people carrying weight. Multiple
+    sets overlap, all roughly the same size. These are not
+    farmers. The freshest prints are only hours old, heading
+    west toward the smell of smoke.
+  stumps: Scrub branches hacked off at waist height, the cuts
+    fresh enough to show pale wood. Someone has been maintaining
+    this path — widening it, keeping it clear. The cut branches
+    have been dragged aside and piled, not left where they fell.
+    Organized.
+idlemessages:
+- A branch snaps somewhere deeper in the scrub.
+- The smell of old smoke intensifies briefly as the wind shifts.
+- Something moves in the undergrowth — too heavy for a rabbit.
