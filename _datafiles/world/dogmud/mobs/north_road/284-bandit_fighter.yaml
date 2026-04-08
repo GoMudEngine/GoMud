@@ -1,0 +1,60 @@
+mobid: 284
+zone: North Road
+archetype: fighting
+statpool: 200
+itemdropchance: 25
+items:
+  - itemid: 20055
+  - itemid: 10020
+hostile: true
+maxwander: 0
+groups:
+  - humanoid
+  - bandit
+idlecommands:
+  - 'emote runs a whetstone along a sword blade with slow, deliberate strokes'
+  - ''
+  - 'emote rolls one shoulder and cracks a knuckle, restless'
+  - ''
+  - 'emote spits into the fire and watches it hiss'
+  - ''
+combatcommands:
+  - 'emote drives forward with a heavy overhand cut'
+  - ''
+  - 'emote sets feet and swings from the hip, putting full weight behind it'
+  - ''
+activitylevel: 12
+reaction_delay: 0.8
+tactical_discipline: 0.85
+tactic_preset: aggressive_melee
+tactics:
+  - trigger: health_below:30
+    action: call_for_help
+    priority: 8
+character:
+  name: bandit fighter
+  description: |
+    A broad-shouldered man in a scarred leather vest, built for
+    violence and comfortable with it. A longsword rests across
+    his knees, its edge freshly honed despite the nicks in the
+    blade. His face has the flattened look of someone who has
+    been hit many times and has stopped being bothered by it.
+    He does not fidget. He does not look nervous. He looks like
+    someone who is very good at one particular thing.
+  speciesid: 1
+  level: 1
+  gold: 30
+  equipment:
+    weapon:
+      itemid: 10020
+    body:
+      itemid: 20055
+  stats:
+    strength:
+      training: 18
+    vitality:
+      training: 15
+    dexterity:
+      training: 10
+  skills:
+    weapon-combat: 15

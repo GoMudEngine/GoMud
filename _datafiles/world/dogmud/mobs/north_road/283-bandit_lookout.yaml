@@ -1,0 +1,60 @@
+mobid: 283
+zone: North Road
+archetype: fighting
+statpool: 140
+itemdropchance: 30
+items:
+  - itemid: 53
+hostile: true
+maxwander: 1
+groups:
+  - humanoid
+  - bandit
+idlecommands:
+  - 'emote leans against a tree, watching the road with practiced indifference'
+  - ''
+  - 'emote picks at a thumbnail with a short knife'
+  - ''
+  - 'emote glances west toward the scrub, then back to the road'
+  - ''
+combatcommands:
+  - 'emote darts in low, blade flicking toward an opening'
+  - ''
+  - 'emote feints left and strikes right'
+  - ''
+activitylevel: 15
+reaction_delay: 0.5
+tactical_discipline: 0.80
+tactic_preset: ambusher
+tactics:
+  - trigger: combat_start
+    action: call_for_help
+    priority: 10
+  - trigger: health_below:25
+    action: flee
+    priority: 11
+character:
+  name: bandit lookout
+  description: |
+    A wiry figure in dark, travel-worn clothing, standing near the
+    treeline with the too-casual posture of someone pretending to
+    belong. A short blade hangs at the hip, half-hidden by a
+    loose coat. The eyes are the giveaway — they track every
+    movement on the road with a focus that has nothing to do with
+    idle curiosity. This person is waiting for something specific.
+  speciesid: 1
+  level: 1
+  gold: 20
+  equipment:
+    weapon:
+      itemid: 10003
+  stats:
+    dexterity:
+      training: 15
+    perception:
+      training: 10
+    strength:
+      training: 5
+  skills:
+    skullduggery: 10
+    weapon-combat: 8

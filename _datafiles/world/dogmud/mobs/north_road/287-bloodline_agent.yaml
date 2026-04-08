@@ -1,0 +1,60 @@
+mobid: 287
+zone: North Road
+archetype: fighting
+statpool: 350
+itemdropchance: 15
+hostile: false
+charm_immune: true
+maxwander: 6
+groups:
+  - humanoid
+idlecommands:
+  - 'emote scans the road ahead with unhurried attention'
+  - ''
+  - 'emote adjusts the fit of a glove, flexing each finger precisely'
+  - ''
+  - 'emote pauses to examine something in the mud, then straightens and moves on'
+  - ''
+  - ''
+combatcommands:
+  - 'emote draws with practiced speed, the blade clearing the scabbard without sound'
+  - ''
+  - 'emote moves with the fluid precision of formal training, each cut exact'
+  - ''
+activitylevel: 6
+reaction_delay: 0.3
+tactical_discipline: 0.95
+tactic_preset: aggressive_melee
+character:
+  name: bloodline agent
+  description: |
+    A tall figure in a dark, well-cut coat, moving with the quiet
+    authority of someone who expects to be obeyed and is rarely
+    disappointed. The coat is road-dusty but the leather is good,
+    the boots are good, the sword at the hip is very good. Minor
+    rank, by the bearing — not a decision-maker, but someone who
+    carries out decisions efficiently. The eyes miss nothing.
+    They have already assessed you.
+  speciesid: 1
+  level: 1
+  gold: 40
+  equipment:
+    weapon:
+      itemid: 10006
+    body:
+      itemid: 20010
+  stats:
+    strength:
+      training: 25
+    dexterity:
+      training: 20
+    vitality:
+      training: 20
+    perception:
+      training: 18
+    willpower:
+      training: 15
+    charisma:
+      training: 10
+  skills:
+    weapon-combat: 25
