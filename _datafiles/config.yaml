@@ -63,7 +63,7 @@ Server:
   - checkclient
   # - Motd -
   #   Message of the day. This is displayed when the motd command is run.
-  Motd: '{{ t "NEW: Mobs now use reactive tactical AI — ambushers, casters, and tanks fight smarter.\nNEW: Spell deflection and stoic resolve — high Willpower can deflect spells and resist taunts.\nNEW: Thornwall Bank — unlimited storage with monthly fees.\nNEW: Hostile mobs prefer targeting players over companions.\nFull patch notes: https://github.com/pruuk/DOGMud/blob/master/PATCH_NOTES.md" }}'
+  Motd: '{{ t "NEW: Skill progression now scales with difficulty — harder spells and crafts reward more growth.\nNEW: Spells command shows difficulty ratings and improved sorting.\nFIX: Companion corpse exploit, condition duration display, multi-buy progression.\nFIX: Bartering skill now actually progresses from buying and selling.\nFull patch notes: https://github.com/pruuk/DOGMud/blob/master/PATCH_NOTES.md" }}'
   # - NextRoomID -
   # This number is auto-updated to the highest number of rooms in the game.
   #   If creating your own rooms but don't want to risk an update conflicting,
@@ -635,8 +635,8 @@ Balance:
   # Combat skills fire many times per round (low mult), utility skills
   # fire rarely (high mult). Only skills listed here override the defaults.
   SkillProgressionMultipliers:
-    weapon-combat: 0.15   # Tuned 39.4: reduced from 0.20 — auto-attack progression now fires correctly
-    unarmed-combat: 0.15  # Tuned 39.4: same as weapon-combat
+    weapon-combat: 0.18   # Tuned 39.5: bumped ~20% from 0.15 for better progression feel
+    unarmed-combat: 0.18  # Tuned 39.5: same as weapon-combat
     spellcasting: 0.5
     rhetoric: 0.5
     bartering: 2.0

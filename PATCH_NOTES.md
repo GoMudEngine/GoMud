@@ -1,5 +1,48 @@
 # DOGMud Patch Notes
 
+## 2026-04-08 — Progression Balance, Bug Fixes, Spell Tuning
+
+### Difficulty-Scaled Skill Progression
+- Spell and crafting skill progression now scales with difficulty.
+  Harder spells and higher-tier recipes give proportionally more
+  skill growth. Utility spells like Identify still progress skills,
+  just slower than combat spells.
+- Self-cast buff spells give reduced progression (50% by default).
+- AoE spells cast in empty rooms no longer give progression.
+- Spells no longer fire progression twice (was triggering at both
+  cast start and spell resolution).
+- Three new config knobs: `SpellDifficultyProgressionScale`,
+  `CraftDifficultyProgressionScale`, `SelfCastProgressionMultiplier`.
+
+### Spell Difficulty Pass
+- All spells now have meaningful difficulty values (0-75 range).
+  Previously most spells had difficulty 0.
+- Removed Empathic Bond spell (redundant with Charm).
+- `spells` command now shows Difficulty instead of Familiarity.
+- Spell list sorted by category (utility → heals → buffs → damage
+  → summon), then target scope, then difficulty.
+- Neutral-type spells (conjure, raise, identify) now show "Self"
+  instead of "Unknown" for target type.
+
+### Bug Fixes
+- **Companion corpse re-raise exploit**: dismissed companions can
+  no longer be killed and re-raised via necromancy.
+- **Condition duration display**: recasting a spell now correctly
+  shows refreshed duration instead of stale "fading" text.
+- **Multi-buy progression**: buying multiple items now triggers
+  charisma and bartering progression for each item purchased,
+  matching individual buy behavior.
+- **Bartering skill**: bartering now actually progresses during
+  buy and sell transactions (was never triggered before).
+
+### Balance Tuning
+- Vitality progression: crit-received base chance increased from
+  5% to 25%. Regen progression base doubled (0.005 → 0.01).
+- Weapon-combat and unarmed-combat skill progression multipliers
+  increased ~20% (0.15 → 0.18).
+
+---
+
 ## 2026-04-07 — Spell Deflection, Bank, Mutation Tuning, Mob AI
 
 ### Spell Deflection & Stoic Resolve

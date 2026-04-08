@@ -65,6 +65,16 @@ type SpellData struct {
 }
 ```
 
+### Spell Difficulty and Target Types
+
+**Difficulty Field:** The `Difficulty` integer (range 0–75) affects skill
+progression via difficulty-scaled bonus multiplier (applied in spell resolution).
+Values: 0 (utility), 1–15 (weak combat), 15–30 (moderate), 30–50 (strong),
+50–75 (apex combat spells).
+
+**TargetTypeString:** `Neutral` spells now return "Self" instead of "Unknown"
+for display purposes.
+
 ### Spell Types
 ```go
 const (

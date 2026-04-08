@@ -34,6 +34,13 @@ The `internal/characters` package is the core character system for DOGMud, handl
 - **15 legacy GoMud skills**: Still functional alongside DOG skills
 - **Combat skill routing**: `GetCombatSkillTag()` selects weapon-appropriate skill
 
+### Difficulty-Scaled Progression
+`OnSkillUseScaled(skillName, userId, bonusMultiplier)` accepts a difficulty
+bonus that flows into `CheckSkillProgression`. `OnSkillUse` delegates with
+1.0 for backwards compatibility. Spell resolution passes
+`1.0 + difficulty * SpellDifficultyProgressionScale`, craft completion passes
+`1.0 + skillMinimum * CraftDifficultyProgressionScale`.
+
 ### Regen-Based Stat Progression
 Every regen tick (every 3 rounds), each resource pool has a small chance to
 trigger stat progression based on how depleted it is. This replaced the old
@@ -41,7 +48,7 @@ hard 25%-threshold `OnLowResource` system.
 
 **Formula:** `chance = RegenProgressionBase × (1 - current/max) ^ RegenProgressionCurve`
 
-**Config knobs:** `RegenProgressionBase` (default 0.005), `RegenProgressionCurve` (default 3.0)
+**Config knobs:** `RegenProgressionBase` (default 0.01), `RegenProgressionCurve` (default 3.0)
 
 **Resource → Stat Mappings:**
 - Health → Vitality, Willpower (enduring injury toughens body + mind)

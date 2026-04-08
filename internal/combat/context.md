@@ -702,7 +702,15 @@ if Health < 1:
   - Mob attack gets `ProneAttackMultiplier` (0.80x) and
     `ProneDamagePenalty`.
 
-### 7. File Map After Refactor (Stage 37.1a+)
+### 7. Difficulty Display (`descriptions.go`)
+
+The `GetDifficultyDescription(difficulty int)` function converts spell
+difficulty integers (0-75) into qualitative labels for player-facing display:
+trivial, simple, moderate, challenging, demanding, formidable, masterwork.
+Used in spell UX to communicate challenge without exposing numeric difficulty
+values directly.
+
+### 8. File Map After Refactor (Stage 37.1a+)
 
 | File | Contents |
 |------|----------|
@@ -716,7 +724,7 @@ if Health < 1:
 | `combat/grapple_move.go` | `ExecuteGrappleMove`, `GrappleMoveResult`, `GrappleMoveDisarmWeapon` |
 | `combat/skill_moves.go` | `ExecuteSkillMove`, `SkillMoveResult`, `SkillMoveParams` |
 | `combat/calculations.go` | Hit chance, crit probability, power ranking, alignment calculations |
-| `combat/descriptions.go` | Damage/heal description helpers |
+| `combat/descriptions.go` | `GetDamageDescription`, `GetHealDescription`, `GetDifficultyDescription` helpers |
 | `combat/taunt_messages.go` | Taunt/conviction combat messages |
 | `combat/analytics.go` | Ring buffer, `CombatEvent`, `AnalyticsSummary`, recording + query functions |
 | `hooks/NewRound_DoCombat.go` | `DoCombat`, `handlePlayerCombat` (~50 lines), `handleMobCombat` (~50 lines), `processGrappleProgression`, `handleAffected`, `applyMoonMods` |
