@@ -1,7 +1,11 @@
 package rooms
 
 import (
+	"fmt"
 	"sync"
+
+	"github.com/GoMudEngine/GoMud/internal/exit"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 // ZoneInstance tracks an active instanced zone.
@@ -119,4 +123,87 @@ var instanceRegistry = NewInstanceRegistry()
 // GetInstanceRegistry returns the global instance registry.
 func GetInstanceRegistry() *InstanceRegistry {
 	return instanceRegistry
+}
+
+// CreateZoneInstance clones a zone template into ephemeral rooms, wires up a
+// return portal in the entry room, stamps instance metadata on every ephemeral
+// room, and registers the instance in the global registry.
+func CreateZoneInstance(
+	zoneName string,
+	goldPaid int,
+	ownerUserId int,
+	authorizedUsers []int,
+	overworldRoomId int,
+) (*ZoneInstance, error) {
+
+	// 1. Look up and validate the zone config.
+	zCfg := GetZoneConfig(zoneName)
+	if zCfg == nil {
+		return nil, fmt.Errorf("CreateZoneInstance: zone %q not found", zoneName)
+	}
+	if !zCfg.Instanced {
+		return nil, fmt.Errorf("CreateZoneInstance: zone %q is not marked as instanced", zoneName)
+	}
+
+	// 2. Clone the zone into ephemeral rooms.
+	roomIdMap, err := CreateEphemeralZone(zoneName)
+	if err != nil {
+		return nil, fmt.Errorf("CreateZoneInstance: failed to clone zone %q: %w", zoneName, err)
+	}
+
+	// 3. Resolve the ephemeral entry room.
+	ephemeralEntryId, ok := roomIdMap[zCfg.EntryRoom]
+	if !ok {
+		return nil, fmt.Errorf("CreateZoneInstance: entry room %d not in cloned zone %q", zCfg.EntryRoom, zoneName)
+	}
+
+	// 4. Build the ZoneInstance struct.
+	inst := &ZoneInstance{
+		InstanceId:      ephemeralEntryId,
+		TemplateZone:    zoneName,
+		GoldPaid:        goldPaid,
+		AuthorizedUsers: authorizedUsers,
+		OwnerUserId:     ownerUserId,
+		CreatedRound:    util.GetRoundCount(),
+		PortalDuration:  zCfg.PortalDuration,
+		DeathPolicy:     zCfg.DeathPolicy,
+		AllowRecall:     zCfg.AllowRecall,
+		OverworldRoomId: overworldRoomId,
+		EntryRoomId:     ephemeralEntryId,
+		RoomIdMap:       roomIdMap,
+	}
+
+	// 5. Add a return portal in the ephemeral entry room pointing back to the
+	//    overworld. Expires is set very long; actual cleanup is handled by
+	//    the instance cleanup system when all players leave.
+	entryRoom := LoadRoom(ephemeralEntryId)
+	if entryRoom == nil {
+		return nil, fmt.Errorf("CreateZoneInstance: could not load ephemeral entry room %d", ephemeralEntryId)
+	}
+
+	returnExit := exit.TemporaryRoomExit{
+		RoomId:       overworldRoomId,
+		Title:        "Return Portal",
+		UserId:       0, // system-created
+		SpawnedRound: inst.CreatedRound,
+		Expires:      "999h",
+	}
+	entryRoom.AddTemporaryExit("return portal", returnExit)
+
+	// 6. Stamp instance metadata on every ephemeral room for scripting access.
+	for _, ephemeralId := range roomIdMap {
+		room := LoadRoom(ephemeralId)
+		if room == nil {
+			continue
+		}
+		room.SetTempData("instance_id", inst.InstanceId)
+		room.SetTempData("allow_recall", inst.AllowRecall)
+		room.SetTempData("death_policy", inst.DeathPolicy)
+		room.SetTempData("gold_paid", inst.GoldPaid)
+	}
+
+	// 7. Register the instance in the global registry.
+	instanceRegistry.Add(inst)
+
+	return inst, nil
 }
