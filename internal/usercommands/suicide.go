@@ -197,6 +197,16 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 
 	clear(user.Character.PlayerDamage)
 
+	// Check if player died in an instanced zone with ejected death policy
+	if rooms.IsEphemeralRoomId(user.Character.RoomId) {
+		if inst := rooms.GetInstanceRegistry().FindByRoomId(user.Character.RoomId); inst != nil {
+			if inst.DeathPolicy == "ejected" {
+				inst.RevokeAccess(user.UserId)
+				user.SendText(`<ansi fg="red">You have been expelled from the instance. There is no return.</ansi>`)
+			}
+		}
+	}
+
 	rooms.MoveToRoom(user.UserId, int(configs.GetSpecialRoomsConfig().DeathRecoveryRoom))
 
 	// Belt-and-suspenders: re-clear aggro after room move in case any
