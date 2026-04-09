@@ -7,10 +7,12 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 //
@@ -93,6 +95,38 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 			user.Character.Toxicity -= float64(bal.ToxicityDecayPerTick)
 			if user.Character.Toxicity < 0 {
 				user.Character.Toxicity = 0
+			}
+		}
+
+		// Auto-eject spoiled potions from bandolier
+		if len(user.Character.PotionItems) > 0 {
+			currentRound := util.GetRoundCount()
+			ejected := 0
+			remaining := make([]items.Item, 0, len(user.Character.PotionItems))
+			for _, pot := range user.Character.PotionItems {
+				potSpec := pot.GetSpec()
+				if potSpec.Aging.HasAging() && pot.CraftedRound > 0 {
+					elapsed := currentRound - pot.CraftedRound
+					bottleMult := pot.BottleMultiplier
+					if bottleMult <= 0 {
+						bottleMult = potSpec.BottleAgingMultiplier
+					}
+					effSpeed := items.CalcEffectiveAgingSpeed(bottleMult, pot.CraftSkill)
+					phase, _ := items.GetAgingPhase(elapsed, potSpec.Aging, effSpeed)
+					if phase == items.PhaseSpoiled {
+						// Force into backpack — do NOT use StoreItem (it re-routes drinkables back into bandolier)
+						user.Character.Items = append(user.Character.Items, pot)
+						user.SendText(fmt.Sprintf(
+							`<ansi fg="yellow">Your <ansi fg="itemname">%s</ansi> has spoiled and falls out of your bandolier.</ansi>`,
+							pot.DisplayName()))
+						ejected++
+						continue
+					}
+				}
+				remaining = append(remaining, pot)
+			}
+			if ejected > 0 {
+				user.Character.PotionItems = remaining
 			}
 		}
 
