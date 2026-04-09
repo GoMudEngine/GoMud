@@ -62,7 +62,9 @@
       "Bash(mv _datafiles/world/dogmud/mobs/thornwall_city/scripts/94-guard_captain_velk.js _datafiles/world/dogmud/mobs/thornwall_city/scripts/94-guard_captain_velk.js.bak)",
       "Read(//c/Users/Calabe Davis/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7/**)",
       "Bash(bash scripts/start-server.sh --project-dir \"/c/Users/Calabe Davis/workspace/DOGMud\")",
-      "Bash(echo \"Exit: $?\")"
+      "Bash(echo \"Exit: $?\")",
+      "Bash(mv _datafiles/world/dogmud/items/armor-20000/offhand/20054-sorens_ironbound_buckler.yaml _datafiles/world/dogmud/items/armor-20000/offhand/20067-sorens_ironbound_buckler.yaml)",
+      "Bash(mv _datafiles/world/dogmud/items/armor-20000/body/20055-bandits_leather_vest.yaml _datafiles/world/dogmud/items/armor-20000/body/20068-bandits_leather_vest.yaml)"
     ]
   },
   "defaultMode": "bypassPermissions"
