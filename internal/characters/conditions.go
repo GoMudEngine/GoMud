@@ -13,6 +13,8 @@ const (
 	ConditionPoisoned                              // DoT damage over time (Phase 24.5)
 	ConditionEnchantWithdrawal                     // Pool max penalty after disenchanting (Stage 31.6)
 	ConditionBleeding                              // Wounds seeping blood, taking damage over time (Stage 42.7)
+	ConditionWarcry                                // Physical damage multiplier from warcry shout
+	ConditionRally                                 // Defense score multiplier from rally shout
 )
 
 // CombatCondition represents a single active combat state on a character.
@@ -44,6 +46,10 @@ func (c ConditionType) DisplayName() string {
 		return "Enchant Withdrawal"
 	case ConditionBleeding:
 		return "Bleeding"
+	case ConditionWarcry:
+		return "Warcry"
+	case ConditionRally:
+		return "Rally"
 	default:
 		return "Unknown Condition"
 	}
@@ -70,6 +76,10 @@ func (c ConditionType) Description() string {
 		return "Weakened from severing a Chrysalis bond"
 	case ConditionBleeding:
 		return "Wounds seeping blood, taking damage over time"
+	case ConditionWarcry:
+		return "A rallying battle cry bolsters your fighting spirit"
+	case ConditionRally:
+		return "An inspiring shout steadies your defenses"
 	default:
 		return ""
 	}

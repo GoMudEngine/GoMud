@@ -188,6 +188,8 @@ var (
 		`track`:{Track, false, true, false},
 		`taunt`:       {Taunt, false, true, false},
 		`trip`:        {Trip, false, true, false},
+		`warcry`:      {Warcry, false, true, false},
+		`rally`:       {Rally, false, true, false},
 		`tailsweep`:   {Trip, false, true, false},
 		`unlock`:{Unlock, false, true, false},
 		`undeafen`:    {UnDeafen, true, true, true}, // Admin only

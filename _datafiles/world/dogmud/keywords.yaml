@@ -63,8 +63,10 @@ help:
       - shoot
       - stamina
       - stand
+      - rally
       - taunt
       - trip
+      - warcry
     crafting:
       - craft
     information:

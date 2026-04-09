@@ -303,6 +303,13 @@ func buildDamageParams(sourceChar *characters.Character, targetChar *characters.
 		rawDmgForCrit *= (1.0 + mutDmgMult)
 	}
 
+	// Warcry condition: applies a physical damage multiplier from rhetoric shout
+	if sourceChar.HasCondition(characters.ConditionWarcry) {
+		warcryMult := 1.0 + sourceChar.GetConditionMagnitude(characters.ConditionWarcry)
+		dmgMean *= warcryMult
+		rawDmgForCrit *= warcryMult
+	}
+
 	// Message seed
 	msgSeed := 0
 	if configs.GetBalanceConfig().ConsistentAttackMessages {
@@ -485,6 +492,11 @@ func runBestOfAllDefense(result *AttackResult, sourceChar *characters.Character,
 			case "block":
 				defenseScore *= float64(bal.GroundedBlockPenalty)
 			}
+		}
+
+		// Rally condition: applies a defense score multiplier from rhetoric shout
+		if targetChar.HasCondition(characters.ConditionRally) {
+			defenseScore *= 1.0 + targetChar.GetConditionMagnitude(characters.ConditionRally)
 		}
 
 		// Stage 8.5: Apply third-party vulnerability penalty
