@@ -43,6 +43,13 @@ effectively while companions are present -- they will be
 noticed even if you are not. Dismiss your companions
 before attempting anything requiring stealth.
 
+<ansi fg="yellow">━━━ Companions Act on Their Own ━━━</ansi>
+
+Companions cannot be ordered or micromanaged. They fight
+alongside you when auto-assist is enabled, but you cannot
+tell them what to do, what to pick up, or where to go.
+They are bound creatures, not servants.
+
 <ansi fg="yellow">━━━ Death is Permanent ━━━</ansi>
 
 If a companion falls in battle it is gone. Summon or charm
