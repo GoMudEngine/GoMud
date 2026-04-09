@@ -1,6 +1,16 @@
 // Fold Recall spell script — teleport to your Chrysalis anchor
 
 function onCast(sourceActor, targetActor) {
+    var currentRoomId = sourceActor.GetRoomId();
+    var currentRoom = GetRoom(currentRoomId);
+
+    // Check if recall is blocked in this room (instanced zones with allow_recall: false)
+    if (currentRoom && currentRoom.GetTempData('allow_recall') === false) {
+        SendUserMessage(sourceActor.UserId(),
+            'Something about this place prevents you from recalling.');
+        return false;
+    }
+
     var anchorRoom = Number(
         sourceActor.GetMiscCharacterData('fold-anchor-room')) || 0;
 
@@ -12,8 +22,7 @@ function onCast(sourceActor, targetActor) {
         return false;
     }
 
-    var currentRoom = sourceActor.GetRoomId();
-    if (anchorRoom == currentRoom) {
+    if (anchorRoom == currentRoomId) {
         SendUserMessage(sourceActor.UserId(),
             'You are already standing on your anchor.');
         return false;
