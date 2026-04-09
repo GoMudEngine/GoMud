@@ -117,6 +117,43 @@ func (ir *InstanceRegistry) All() []*ZoneInstance {
 	return result
 }
 
+// CleanupEmptyInstances removes registry entries for instances whose
+// ephemeral rooms have been destroyed, and removes their overworld portals.
+func (ir *InstanceRegistry) CleanupEmptyInstances() {
+	ir.mu.Lock()
+	defer ir.mu.Unlock()
+
+	remaining := make([]*ZoneInstance, 0, len(ir.instances))
+	for _, inst := range ir.instances {
+		// Check if any room in the instance still exists in memory
+		alive := false
+		for _, ephId := range inst.RoomIdMap {
+			if LoadRoom(ephId) != nil {
+				alive = true
+				break
+			}
+		}
+		if alive {
+			remaining = append(remaining, inst)
+		} else {
+			// Clean up room index entries
+			for _, ephId := range inst.RoomIdMap {
+				delete(ir.roomIndex, ephId)
+			}
+			// Remove the entry portal from the overworld room
+			if owRoom := LoadRoom(inst.OverworldRoomId); owRoom != nil {
+				for k, v := range owRoom.ExitsTemp {
+					if v.RoomId == inst.EntryRoomId {
+						delete(owRoom.ExitsTemp, k)
+						break
+					}
+				}
+			}
+		}
+	}
+	ir.instances = remaining
+}
+
 // Package-level singleton.
 var instanceRegistry = NewInstanceRegistry()
 
