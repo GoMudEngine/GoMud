@@ -3647,6 +3647,35 @@ func (c *Character) SortComponentItems() int {
 	return moved
 }
 
+// SortPotionItems moves drinkable items from backpack into PotionItems
+// up to the equipped bandolier's capacity. Returns the count of items moved.
+func (c *Character) SortPotionItems() int {
+	if c.Equipment.Belt.ItemId < 1 {
+		return 0
+	}
+	beltSpec := c.Equipment.Belt.GetSpec()
+	if !beltSpec.IsBandolier {
+		return 0
+	}
+	capacity := beltSpec.BandolierCapacity
+	if capacity <= 0 {
+		return 0
+	}
+
+	moved := 0
+	remaining := make([]items.Item, 0, len(c.Items))
+	for _, item := range c.Items {
+		if item.GetSpec().Subtype == items.Drinkable && len(c.PotionItems) < capacity {
+			c.PotionItems = append(c.PotionItems, item)
+			moved++
+		} else {
+			remaining = append(remaining, item)
+		}
+	}
+	c.Items = remaining
+	return moved
+}
+
 func (c *Character) RemoveFromBody(i items.Item) bool {
 
 	if i.Equals(c.Equipment.Weapon) {
