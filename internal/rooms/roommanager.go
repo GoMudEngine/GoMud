@@ -295,6 +295,18 @@ func MoveToRoom(userId int, toRoomId int, isSpawn ...bool) error {
 		return fmt.Errorf(`room %d not found`, toRoomId)
 	}
 
+	// Instance access control: block unauthorized entry to instanced zones
+	if IsEphemeralRoomId(toRoomId) {
+		if inst := instanceRegistry.FindByRoomId(toRoomId); inst != nil {
+			if !inst.IsAuthorized(userId) {
+				if user != nil {
+					user.SendText(`<ansi fg="red">The portal's energy pushes you back. It wasn't opened for you.</ansi>`)
+				}
+				return fmt.Errorf("instance access denied")
+			}
+		}
+	}
+
 	// r.prepare locks, so do it before the upcoming lock
 	if len(newRoom.players) == 0 {
 		newRoom.Prepare(true)
