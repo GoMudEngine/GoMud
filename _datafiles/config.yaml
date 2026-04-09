@@ -63,7 +63,7 @@ Server:
   - checkclient
   # - Motd -
   #   Message of the day. This is displayed when the motd command is run.
-  Motd: '{{ t "NEW: North Road zone — 15 rooms west of Ashwick with two quests, a bandit camp, and new loot.\nNEW: Skill progression scales with spell/craft difficulty. Spells command shows difficulty ratings.\nFIX: 2H weapon + shield equip bug, companion corpse exploit, condition duration, bartering progression.\nFull patch notes: https://github.com/pruuk/DOGMud/blob/master/PATCH_NOTES.md" }}'
+  Motd: '{{ t "NEW: Grenade system — flashbang, firebomb, toxic flask. Craft via Alchemy, throw in combat (AoE).\nNEW: Warcry and Rally rhetoric shouts — AoE offense/defense buffs for your group.\nNEW: Taunt now pulls aggro. Golem companions taunt. Sort moves grenades to bandolier.\nBAL: Mob regen doubled, companion stat pools improved. Grenades age and can detonate if neglected!\nFull patch notes: https://github.com/pruuk/DOGMud/blob/master/PATCH_NOTES.md" }}'
   # - NextRoomID -
   # This number is auto-updated to the highest number of rooms in the game.
   #   If creating your own rooms but don't want to risk an update conflicting,
@@ -565,8 +565,8 @@ Balance:
   PlayerStaminaRegenPct: 0.02    # Tuned 39.2: doubled from 0.01; fights felt too exhausting at 1%
   PlayerConvictionRegenPct: 0.02  # Bumped to 2% to match health/stamina regen rates
   MobHealthRegenPct: 0.01        # NPC HP regen per tick (1% of HealthMax)
-  MobStaminaRegenPct: 0.01       # NPC stamina regen per tick
-  MobConvictionRegenPct: 0.01    # NPC conviction regen per tick
+  MobStaminaRegenPct: 0.02       # NPC stamina regen per tick (raised to match players)
+  MobConvictionRegenPct: 0.02    # NPC conviction regen per tick (raised to match players)
 
   # ── STAMINA & CONVICTION ────────────────────────────────────────────────────
   # MovementBaseStaminaCost: stamina spent per room move on normal terrain.
@@ -843,7 +843,7 @@ Balance:
   MoonStatModMax: 0.10  # Max fractional stat modifier from moon phases (±10% at full/new moon)
 
   # ── MANIFESTATION / COMPANION SCALING ──────────────────────────────────────
-  ManifestStatScaleChaFactor: 500    # Charisma divisor — skill is primary scaling driver
+  ManifestStatScaleChaFactor: 150    # Charisma divisor — stronger Cha contribution to companion pools
   ManifestStatScaleSkillFactor: 0.02 # Manifestation skill additive factor per rank
 
 ################################################################################

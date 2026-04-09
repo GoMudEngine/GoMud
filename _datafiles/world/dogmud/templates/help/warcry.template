@@ -1,0 +1,37 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">warcry</ansi>
+
+The <ansi fg="command">warcry</ansi> command lets out a thunderous battle cry
+that bolsters the fighting spirit of you and your allies. All
+friendly characters in the room receive a temporary bonus to
+physical damage.
+
+<ansi fg="yellow">Requirements:</ansi>
+
+  - Cannot be used if special move cooldown is active
+
+<ansi fg="yellow">Usage:</ansi>
+
+  <ansi fg="command">warcry</ansi>
+  Let out a rallying battle cry
+
+<ansi fg="yellow">Affects:</ansi>
+
+  - You (the caster)
+  - Your companions in the room
+  - Party members in the room and their companions
+
+<ansi fg="yellow">Mechanics:</ansi>
+
+  <ansi fg="stat">Effect:</ansi> Increases physical damage dealt
+  <ansi fg="stat">Duration:</ansi> Moderate
+  <ansi fg="stat">Scaling:</ansi> Rhetoric skill and Charisma
+  <ansi fg="stat">Cooldown:</ansi> Shared with bash, trip, kick, and taunt
+  <ansi fg="stat">Skill:</ansi> Progresses Rhetoric and Charisma
+
+Warcry can be used before combat begins, making it useful
+for pre-buffing before engaging a tough enemy. Higher Rhetoric
+skill and Charisma increase the potency of the effect.
+
+<ansi fg="yellow">See Also:</ansi>
+
+  <ansi fg="command">help rally</ansi>, <ansi fg="command">help rhetoric</ansi>, <ansi fg="command">help combat</ansi>

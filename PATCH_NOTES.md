@@ -1,5 +1,60 @@
 # DOGMud Patch Notes
 
+## 2026-04-09 — QOL Batch, Grenades, Rhetoric Shouts
+
+### New: Grenade System
+- **Three throwable grenades** crafted via Alchemy:
+  - **Flashbang** (Alchemy 35) — AoE stun + blind
+  - **Firebomb** (Alchemy 25) — AoE physical damage
+  - **Toxic Flask** (Alchemy 20) — AoE poison DoT
+- New `throw` command: AoE opposed roll (Dex+Skullduggery vs
+  Dex+Perception). Fumbles hit the thrower. Shares special move
+  cooldown. Progresses Skullduggery and Dexterity.
+- **Grenade aging**: grenades grow more potent over time, then
+  decline and eventually spoil. Spoiled grenades in the bandolier
+  are safely ejected to the ground. Spoiled grenades in your
+  backpack have a chance to detonate when you check inventory!
+- New material: **Putrid Residue** — salvaged from spoiled food.
+
+### New: Rhetoric Shouts
+- **Warcry** — AoE offense buff. Boosts physical damage for you,
+  companions, and party members in the room. Scales with Rhetoric
+  and Charisma (5-20%).
+- **Rally** — AoE defense buff. Boosts dodge, parry, and block for
+  all allies in the room. Same scaling curve.
+- Both share the special move cooldown. Can be used before combat
+  to pre-buff your group. Progress Rhetoric and Charisma.
+
+### New: Tank Taunt
+- Successful taunt now **forces the target to switch aggro** to the
+  taunter. Essential for protecting companions and party members.
+- Flesh Golem companion now taunts in combat — the "tank pet."
+- New flavor text for aggro pulls.
+
+### QOL Improvements
+- **Sort** now moves potions AND grenades into the bandolier.
+- **Sell** searches bandolier and component bag as fallbacks.
+- **Auto-eject**: spoiled potions move to backpack, spoiled grenades
+  drop safely to the ground.
+- **Food spoiling**: crafted food now ages and can spoil. Spoiled
+  food cannot be eaten but can be salvaged for putrid residue.
+- **Inventory** label changed from "Potions:" to "Bandolier:".
+
+### Balance
+- **Mob regen**: stamina and conviction regen doubled (1% → 2% per
+  tick) to match player rates. Reduces chip-away tactics on tough
+  mobs and helps companion sustainability.
+- **Companion stat scaling**: Charisma factor improved (divisor 500
+  → 150). Companions get meaningfully larger stat pools.
+
+### Bug Fixes
+- Companions can no longer be ordered via `ask`. They respond with
+  a blank stare instead. Companion help updated accordingly.
+- Farmer and bloodline agent now wander the North Road as intended.
+- Rhetoric help file now lists warcry and rally.
+
+---
+
 ## 2026-04-08 — North Road Zone, Progression Balance, Bug Fixes
 
 ### New Zone: North Road — Southern Stretch

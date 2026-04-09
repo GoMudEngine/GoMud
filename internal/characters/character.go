@@ -1574,8 +1574,8 @@ func (c *Character) StoreItem(i items.Item) bool {
 		}
 	}
 
-	// Auto-route potions to the bandolier
-	if (iSpec.Type == items.Potion || (iSpec.Subtype == items.Drinkable && len(iSpec.BuffIds) > 0)) && c.Equipment.Belt.ItemId > 0 {
+	// Auto-route potions and throwables to the bandolier
+	if (iSpec.Type == items.Potion || (iSpec.Subtype == items.Drinkable && len(iSpec.BuffIds) > 0) || iSpec.Subtype == items.Throwable) && c.Equipment.Belt.ItemId > 0 {
 		beltSpec := c.Equipment.Belt.GetSpec()
 		if beltSpec.IsBandolier && beltSpec.BandolierCapacity > 0 && len(c.PotionItems) < beltSpec.BandolierCapacity {
 			c.PotionItems = append(c.PotionItems, i)
@@ -1719,6 +1719,24 @@ func (c *Character) UseItemFromPotions(i items.Item) int {
 		}
 	}
 	return 0
+}
+
+func (c *Character) FindInComponents(itemName string) (items.Item, bool) {
+	if itemName == `` || len(c.ComponentItems) == 0 {
+		return items.Item{}, false
+	}
+
+	closeMatchItem, matchItem := items.FindMatchIn(itemName, c.ComponentItems...)
+
+	if matchItem.ItemId != 0 {
+		return matchItem, true
+	}
+
+	if closeMatchItem.ItemId != 0 {
+		return closeMatchItem, true
+	}
+
+	return items.Item{}, false
 }
 
 func (c *Character) FindInBackpack(itemName string) (items.Item, bool) {
@@ -3638,6 +3656,36 @@ func (c *Character) SortComponentItems() int {
 	for _, item := range c.Items {
 		if item.GetSpec().IsComponent && len(c.ComponentItems) < capacity {
 			c.ComponentItems = append(c.ComponentItems, item)
+			moved++
+		} else {
+			remaining = append(remaining, item)
+		}
+	}
+	c.Items = remaining
+	return moved
+}
+
+// SortPotionItems moves drinkable items from backpack into PotionItems
+// up to the equipped bandolier's capacity. Returns the count of items moved.
+func (c *Character) SortPotionItems() int {
+	if c.Equipment.Belt.ItemId < 1 {
+		return 0
+	}
+	beltSpec := c.Equipment.Belt.GetSpec()
+	if !beltSpec.IsBandolier {
+		return 0
+	}
+	capacity := beltSpec.BandolierCapacity
+	if capacity <= 0 {
+		return 0
+	}
+
+	moved := 0
+	remaining := make([]items.Item, 0, len(c.Items))
+	for _, item := range c.Items {
+		sub := item.GetSpec().Subtype
+		if (sub == items.Drinkable || sub == items.Throwable) && len(c.PotionItems) < capacity {
+			c.PotionItems = append(c.PotionItems, item)
 			moved++
 		} else {
 			remaining = append(remaining, item)

@@ -10,12 +10,12 @@ groups:
   - humanoid
 idlecommands:
   - 'emote adjusts a heavy sack across one shoulder'
-  - ''
+  - 'wander'
   - 'emote shields eyes against the wind and squints down the road'
   - ''
   - 'emote nods in passing, not breaking stride'
-  - ''
-activitylevel: 6
+  - 'wander'
+activitylevel: 20
 character:
   name: farmer
   description: A weather-beaten figure in rough homespun, moving with the

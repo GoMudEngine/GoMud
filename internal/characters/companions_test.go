@@ -169,7 +169,7 @@ func TestGetCompanionByInstanceId(t *testing.T) {
 
 func TestCalcCompanionStatPool(t *testing.T) {
 	// Config defaults kick in when no config is loaded:
-	//   ManifestStatScaleChaFactor  = 200  (zero-value triggers default)
+	//   ManifestStatScaleChaFactor  = 150  (zero-value triggers default)
 	//   ManifestStatScaleSkillFactor = 0.02 (zero-value triggers default)
 
 	tests := []struct {
@@ -180,31 +180,31 @@ func TestCalcCompanionStatPool(t *testing.T) {
 		want              int
 	}{
 		{
-			// scale = 1.0 + 100/200 + 0*0.02 = 1.5  →  120 * 1.5 = 180
+			// scale = 1.0 + 100/150 + 0*0.02 = 1.667  →  120 * 1.667 = 200
 			name: "wolf base cha=100 manifest=0",
 			baseStatPool: 120, charisma: 100, manifestationSkill: 0,
-			want: 180,
+			want: 200,
 		},
 		{
-			// scale = 1.0 + 100/200 + 25*0.02 = 1.0 + 0.5 + 0.5 = 2.0  →  120 * 2.0 = 240
+			// scale = 1.0 + 100/150 + 25*0.02 = 1.0 + 0.667 + 0.5 = 2.167  →  120 * 2.167 = 260
 			name: "wolf base cha=100 manifest=25",
 			baseStatPool: 120, charisma: 100, manifestationSkill: 25,
-			want: 240,
+			want: 260,
 		},
 		{
-			// scale = 1.5 (same as first case)  →  18 * 1.5 = 27
+			// scale = 1.667 (same as first case)  →  18 * 1.667 = 30
 			name: "swarm base cha=100 manifest=0",
 			baseStatPool: 18, charisma: 100, manifestationSkill: 0,
-			want: 27,
+			want: 30,
 		},
 		{
-			// scale = 1.0 + 150/200 + 50*0.02 = 1.0 + 0.75 + 1.0 = 2.75  →  120 * 2.75 = 330
+			// scale = 1.0 + 150/150 + 50*0.02 = 1.0 + 1.0 + 1.0 = 3.0  →  120 * 3.0 = 360
 			name: "wolf base cha=150 manifest=50",
 			baseStatPool: 120, charisma: 150, manifestationSkill: 50,
-			want: 330,
+			want: 360,
 		},
 		{
-			// scale = 1.0 + 0/200 + 0*0.02 = 1.0  →  120 * 1.0 = 120 (no charisma boost)
+			// scale = 1.0 + 0/150 + 0*0.02 = 1.0  →  120 * 1.0 = 120 (no charisma boost)
 			name: "cha=0 manifest=0 no boost",
 			baseStatPool: 120, charisma: 0, manifestationSkill: 0,
 			want: 120,
@@ -273,26 +273,26 @@ func TestCompanionInfo_YAMLPersistence(t *testing.T) {
 
 func TestCalcRaisedStatPool(t *testing.T) {
 	// 50/50 split: companionScale * 0.5 + corpsePool * 0.5
-	// Test uses hardcoded defaults (chaFactor=200, skillFactor=0.02)
+	// Test uses hardcoded defaults (chaFactor=150, skillFactor=0.02)
 
 	// Skeleton (base 60), Cha 100, Manifest 0, corpse pool 50
-	// companionScale = CalcCompanionStatPool(60, 100, 0) = 60 * (1 + 100/200 + 0) = 60 * 1.5 = 90
-	// raisedPool = 90 * 0.5 + 50 * 0.5 = 45 + 25 = 70
+	// companionScale = CalcCompanionStatPool(60, 100, 0) = 60 * (1 + 100/150 + 0) = 60 * 1.667 = 100
+	// raisedPool = 100 * 0.5 + 50 * 0.5 = 50 + 25 = 75
 	companionScale := CalcCompanionStatPool(60, 100, 0)
 	raisedPool := int(math.Round(float64(companionScale)*0.5 + float64(50)*0.5))
-	assert.Equal(t, 70, raisedPool)
+	assert.Equal(t, 75, raisedPool)
 
 	// Wraith (base 70), Cha 150, Manifest 25, corpse pool 150
-	// companionScale = 70 * (1 + 150/200 + 25*0.02) = 70 * (1 + 0.75 + 0.5) = 70 * 2.25 = 157.5 → 158
-	// raisedPool = 158 * 0.5 + 150 * 0.5 = 79 + 75 = 154
+	// companionScale = 70 * (1 + 150/150 + 25*0.02) = 70 * (1 + 1.0 + 0.5) = 70 * 2.5 = 175
+	// raisedPool = 175 * 0.5 + 150 * 0.5 = 87.5 + 75 = 162.5 → 163
 	companionScale = CalcCompanionStatPool(70, 150, 25)
 	raisedPool = int(math.Round(float64(companionScale)*0.5 + float64(150)*0.5))
-	assert.Equal(t, 154, raisedPool)
+	assert.Equal(t, 163, raisedPool)
 
 	// Golem (base 120), Cha 100, Manifest 50, corpse pool 500
-	// companionScale = 120 * (1 + 100/200 + 50*0.02) = 120 * (1 + 0.5 + 1.0) = 120 * 2.5 = 300
-	// raisedPool = 300 * 0.5 + 500 * 0.5 = 150 + 250 = 400
+	// companionScale = 120 * (1 + 100/150 + 50*0.02) = 120 * (1 + 0.667 + 1.0) = 120 * 2.667 = 320
+	// raisedPool = 320 * 0.5 + 500 * 0.5 = 160 + 250 = 410
 	companionScale = CalcCompanionStatPool(120, 100, 50)
 	raisedPool = int(math.Round(float64(companionScale)*0.5 + float64(500)*0.5))
-	assert.Equal(t, 400, raisedPool)
+	assert.Equal(t, 410, raisedPool)
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 func Taunt(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
@@ -81,9 +82,17 @@ func Taunt(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		sendTauntMessages(combat.TauntCritical, result.DmgDesc, sourceName, targetName,
 			"username", targetType, user, targetPlayer, room, result.Target.UserId)
 
+		if result.AggroPulled {
+			sendAggroPullMessages(user, room, sourceName, targetName)
+		}
+
 	case result.Hit:
 		sendTauntMessages(combat.TauntHit, result.DmgDesc, sourceName, targetName,
 			"username", targetType, user, targetPlayer, room, result.Target.UserId)
+
+		if result.AggroPulled {
+			sendAggroPullMessages(user, room, sourceName, targetName)
+		}
 
 		// Stoic resolve messaging
 		if result.CritDeflected {
@@ -108,6 +117,32 @@ func Taunt(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	}
 
 	return true, nil
+}
+
+// sendAggroPullMessages notifies the taunter and the room that the mob
+// switched its aggro to the taunter.
+func sendAggroPullMessages(user *users.UserRecord, room *rooms.Room, sourceName, targetName string) {
+	pullMsgs := []string{
+		`Your words cut deep -- <ansi fg="mobname">%s</ansi> turns away from its prey and fixes its fury on you!`,
+		`The insult lands true. <ansi fg="mobname">%s</ansi> abandons its quarry and lunges toward you!`,
+		`Your mockery is unbearable -- <ansi fg="mobname">%s</ansi> wheels around to face you!`,
+		`<ansi fg="mobname">%s</ansi> snarls and shifts its full attention to you.`,
+	}
+	user.SendText(fmt.Sprintf(pullMsgs[util.Rand(len(pullMsgs))], targetName))
+
+	roomPullMsgs := []string{
+		`<ansi fg="mobname">%s</ansi> breaks off and turns its fury on <ansi fg="username">%s</ansi>!`,
+		`Enraged by <ansi fg="username">%s</ansi>'s taunts, <ansi fg="mobname">%s</ansi> shifts its attention!`,
+		`<ansi fg="mobname">%s</ansi> abandons its quarry and charges at <ansi fg="username">%s</ansi>!`,
+	}
+	idx := util.Rand(len(roomPullMsgs))
+	var roomMsg string
+	if idx == 1 {
+		roomMsg = fmt.Sprintf(roomPullMsgs[idx], sourceName, targetName)
+	} else {
+		roomMsg = fmt.Sprintf(roomPullMsgs[idx], targetName, sourceName)
+	}
+	room.SendText(roomMsg, user.UserId)
 }
 
 // sendTauntMessages sends data-driven taunt messages to attacker, defender,

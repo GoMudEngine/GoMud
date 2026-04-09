@@ -1,0 +1,18 @@
+id: toxic-flask
+name: Toxic Flask
+skill: alchemy
+skill_minimum: 20
+station: alchemy_bench
+time_rounds: 4
+ingredients:
+  - item_tag: putrid-residue
+    quantity: 1
+  - item_tag: venom-sac
+    quantity: 1
+  - item_tag: bottle
+    quantity: 1
+output:
+  item_id: 30059
+  quantity: 1
+success_message: "The venom dissolves into a sickly green cloud inside the sealed flask. A toxic flask!"
+failure_message: "The venom crystallizes uselessly. The materials are wasted."

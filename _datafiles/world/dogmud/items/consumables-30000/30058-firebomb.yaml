@@ -1,0 +1,17 @@
+itemid: 30058
+name: firebomb
+namesimple: firebomb
+description: >-
+  A sealed flask of unstable alchemical reagents that
+  explode violently on impact.
+type: object
+subtype: throwable
+uses: 1
+value: 20
+weight: 0.3
+damage_multiplier: 0.85
+aging:
+  ferment_rounds: 2000
+  peak_rounds: 8000
+  decay_rounds: 20000
+  spoil_rounds: 30000
