@@ -744,25 +744,29 @@ git commit -m "feat(instances): add portal timer warnings at 5min and 1min"
 
 ---
 
-### Task 10: NPC Vendor Script
+### Task 10: Riftkeeper NPC, Room, and Vendor Script
 
 **Files:**
-- Create: `_datafiles/world/dogmud/mobs/thornwall/<mobid>-instance_vendor.yaml` (new mob)
-- Create: `_datafiles/world/dogmud/mobs/thornwall/<mobid>-instance_vendor.js` (NPC script)
+- Create: `_datafiles/world/dogmud/rooms/thornwall_city/<roomid>.yaml` (new Rift Chamber room in Thornwall)
+- Create: `_datafiles/world/dogmud/mobs/thornwall_city/<mobid>-riftkeeper_sable.yaml` (new mob)
+- Create: `_datafiles/world/dogmud/mobs/thornwall_city/<mobid>-riftkeeper_sable.js` (NPC script)
 - Create: `_datafiles/world/dogmud/templates/help/instances.template`
 - Modify: `_datafiles/world/dogmud/keywords.yaml` (add instances to help)
+- Modify: An existing Thornwall room to add an exit to the new Rift Chamber
 
-Note: The mob ID and zone placement need to be determined by the implementer. Check the next available mob ID and choose an appropriate location (Thornwall is the main hub town).
+Note: The mob ID, room ID, and exit placement need to be determined by the implementer. Check the next available mob/room IDs. The Rift Chamber should connect to an existing Thornwall room (e.g., near the market or main square) via a standard cardinal exit. The room description should convey arcane energy and a dormant stone archway.
 
 - [ ] **Step 1: Create the vendor mob YAML**
 
-The vendor should be `non_combatant: true`, `charm_immune: true`, placed in a sensible Thornwall room. Use the next available mob ID. The mob needs an `onCommand_buy` or `onAsk` script handler.
+First create the **Rift Chamber room** in Thornwall. Use the next available room ID. Connect it to an existing Thornwall room via a cardinal exit (and add the reverse exit on that room). The room should describe a chamber with a dormant stone archway etched with shifting runes.
 
-Example mob YAML (adjust ID and room):
+Then create the **vendor mob**. The mob should be `non_combatant: true`, `charm_immune: true`, spawned in the new Rift Chamber. Use the next available mob ID. The mob needs an `onAsk` script handler.
+
+Example mob YAML (adjust ID):
 
 ```yaml
 mobid: <next_id>
-zone: Thornwall
+zone: Thornwall City
 non_combatant: true
 charm_immune: true
 groups:
@@ -774,7 +778,7 @@ idlecommands:
   - 'emote adjusts the runes carved into a stone archway'
   - ''
 character:
-  name: Riftkeeper Voss
+  name: riftkeeper Sable
   description: >-
     A gaunt figure in robes that shimmer with barely-contained
     energy. The air around them crackles with static. A stone
@@ -801,9 +805,9 @@ function onAsk(mob, room, eventDetails) {
     if (text === 'portal' || text === 'portals' || text === 'zones'
         || text === 'instance' || text === 'instances') {
         mob.Command('say I can open rifts to dangerous places, for a price.');
-        mob.Command('say Currently I can reach: the Arena.');
+        mob.Command('say Currently I can reach: the Arena and the Planar Oasis.');
         mob.Command('say Tell me the zone and how much gold you are willing to invest.');
-        mob.Command('say For example: ask voss arena 500');
+        mob.Command('say For example: ask sable arena 500');
         SendUserMessage(user.UserId(),
             '<ansi fg="181">  [You could ask about specific zones, or name a zone and gold amount.]</ansi>');
         return true;
@@ -824,7 +828,8 @@ function onAsk(mob, room, eventDetails) {
         // NOTE: The implementer needs to map player-facing zone names
         // to actual zone template names. For now, hardcode "arena".
         var zoneMap = {
-            'arena': 'Instance Arena'
+            'arena': 'Instance Arena',
+            'oasis': 'Instance Planar Oasis'
         };
 
         var templateZone = zoneMap[zoneName];
@@ -1009,15 +1014,21 @@ git commit -m "feat(instances): add CreateInstance scripting API bridge"
 
 ---
 
-### Task 12: Test Instance Zone Template — Arena
+### Task 12: Test Instance Zone Templates — Arena + Planar Oasis
 
 **Files:**
 - Create: `_datafiles/world/dogmud/rooms/instance_arena/zone-config.yaml`
-- Create: `_datafiles/world/dogmud/rooms/instance_arena/*.yaml` (5-8 rooms)
-- Create: mob YAMLs for arena mobs if needed
+- Create: `_datafiles/world/dogmud/rooms/instance_arena/*.yaml` (2-3 stub rooms)
+- Create: `_datafiles/world/dogmud/rooms/instance_planar_oasis/zone-config.yaml`
+- Create: `_datafiles/world/dogmud/rooms/instance_planar_oasis/*.yaml` (2-3 stub rooms)
 
-- [ ] **Step 1: Create arena zone config**
+These are minimal stubs for testing the framework pipeline — not final
+content. Just enough rooms to verify portal creation, entry, mob spawns,
+death policy, and cleanup.
 
+- [ ] **Step 1: Create arena zone — ejected death policy, no recall**
+
+Arena zone config:
 ```yaml
 name: Instance Arena
 instanced: true
@@ -1027,19 +1038,34 @@ entry_room: <first_room_id>
 allow_recall: false
 ```
 
-- [ ] **Step 2: Create 5-8 arena rooms**
+Create 2-3 rooms:
+1. **Arena Entrance** — safe room, return portal spawns here. Short
+   description about a blood-stained fighting pit ahead.
+2. **Arena Floor** — one combat room with a mob spawn (use an existing
+   hostile mob like a bandit or dustwalk creature). This verifies
+   mob spawning, combat, and death ejection.
 
-Design a simple arena layout:
-1. **Entry Chamber** — safe room with the return portal, flavor text about the arena
-2. **Arena Antechamber** — transition room, maybe a container with supplies
-3. **Arena Floor** (2-3 rooms) — connected combat rooms with mob spawns
-4. **Champion's Pit** — the final room with the toughest mob spawn
+- [ ] **Step 2: Create planar oasis zone — rejoin death policy, recall allowed**
 
-Use the next available room IDs. Set `entry_room` in zone-config to the Entry Chamber ID.
+Planar oasis zone config:
+```yaml
+name: Instance Planar Oasis
+instanced: true
+death_policy: rejoin
+portal_duration: "30m"
+entry_room: <first_room_id>
+allow_recall: true
+```
 
-All rooms should have mob spawns defined via `spawninfo:` with appropriate mobs. Use existing mob templates or create simple arena-specific mobs.
+Create 2-3 rooms:
+1. **Oasis Threshold** — safe entry room with return portal.
+2. **Shimmering Sands** — one combat room with elemental mob spawns.
 
-Note: The arena zone folder name must use underscores (`instance_arena`), matching `ConvertForFilename("Instance Arena")`.
+This gives you two zones with different death policies and recall
+settings for testing both paths.
+
+Use next available room IDs. Folder names: `instance_arena` and
+`instance_planar_oasis` (matching `ConvertForFilename` output).
 
 - [ ] **Step 3: Commit**
 
@@ -1063,15 +1089,26 @@ Run: `go build ./...`
 - [ ] **Step 3: Manual integration test**
 
 Start the server and test the full flow:
-1. Party up with a second character (or test solo)
-2. Find the Riftkeeper NPC
-3. `ask voss arena 200` — should create portal
-4. Walk through portal — should enter instance
-5. Verify mobs spawn in arena rooms
-6. Die in arena — should be ejected (death_policy: ejected)
-7. Try to re-enter — should be blocked
-8. Wait for portal to expire — should get timer warnings
-9. Verify instance cleans up after all players leave
+
+**Arena (ejected, no recall):**
+1. Go to the Rift Chamber in Thornwall
+2. `ask sable arena 200` — should create portal, list authorized players
+3. Walk through portal — should enter Arena Entrance
+4. Walk to Arena Floor — mobs should spawn
+5. Try `cast fold-recall` — should be blocked
+6. Die — should respawn at death recovery, NOT able to re-enter
+7. Have someone unauthorized try the portal — should be rejected
+
+**Planar Oasis (rejoin, recall allowed):**
+8. `ask sable oasis 300` — should create a second portal
+9. Enter, fight, die — should be able to re-enter through portal
+10. Try `cast fold-recall` — should work
+11. Re-enter through portal — should still work
+
+**Cleanup:**
+12. Leave instance, wait — should see timer warnings
+13. After all players leave — instance should clean up
+14. Log in as different character, try someone else's portal — blocked
 
 - [ ] **Step 4: Verify all help files**
 
