@@ -17,6 +17,12 @@ import (
 func Sell(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	item, found := user.Character.FindInBackpack(rest)
+	if !found {
+		item, found = user.Character.FindInPotions(rest)
+	}
+	if !found {
+		item, found = user.Character.FindInComponents(rest)
+	}
 
 	if !found {
 		user.SendText("You don't have that item.")

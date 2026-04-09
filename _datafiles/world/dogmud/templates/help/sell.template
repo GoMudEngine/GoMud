@@ -1,11 +1,20 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">sell</ansi>
 
-The <ansi fg="command">sell</ansi> sells an item to merchants you are visiting.
+The <ansi fg="command">sell</ansi> command sells an item to a merchant in
+your current room.
 
 <ansi fg="yellow">Usage: </ansi>
 
-  <ansi fg="command">sell sword</ansi>
-  This would sell a sword, the merchant wants it and has the gold.
+  <ansi fg="command">sell <item></ansi>     Sell an item to a merchant.
 
-Find out more about referring to items by name by typing <ansi fg="command">help item-names</ansi>.
+The command searches your backpack first, then your bandolier,
+then your component bag. Quest items cannot be sold.
 
+The price offered depends on the merchant's current stock and
+gold reserves. Your <ansi fg="skill">Bartering</ansi> skill can increase
+the sale price by up to 15%.
+
+Find out more about referring to items by name by typing
+<ansi fg="command">help item-names</ansi>.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help buy</ansi>, <ansi fg="command">help appraise</ansi>, <ansi fg="command">help list</ansi>

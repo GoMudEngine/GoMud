@@ -1721,6 +1721,24 @@ func (c *Character) UseItemFromPotions(i items.Item) int {
 	return 0
 }
 
+func (c *Character) FindInComponents(itemName string) (items.Item, bool) {
+	if itemName == `` || len(c.ComponentItems) == 0 {
+		return items.Item{}, false
+	}
+
+	closeMatchItem, matchItem := items.FindMatchIn(itemName, c.ComponentItems...)
+
+	if matchItem.ItemId != 0 {
+		return matchItem, true
+	}
+
+	if closeMatchItem.ItemId != 0 {
+		return closeMatchItem, true
+	}
+
+	return items.Item{}, false
+}
+
 func (c *Character) FindInBackpack(itemName string) (items.Item, bool) {
 
 	if itemName == `` {
