@@ -6,14 +6,19 @@ import (
 )
 
 type ZoneConfig struct {
-	Name         string `yaml:"name,omitempty"`
-	RoomId       int    `yaml:"roomid,omitempty"`
-	Mutators     mutators.MutatorList `yaml:"mutators,omitempty"`     // mutators defined here apply to entire zone
-	IdleMessages []string             `yaml:"idlemessages,omitempty"` // list of messages that can be displayed to players in the zone, assuming a room has none defined
-	MusicFile    string               `yaml:"musicfile,omitempty"`    // background music to play when in this zone
-	DefaultBiome string               `yaml:"defaultbiome,omitempty"` // city, swamp etc. see biomes.go
-	Region       string               `yaml:"region,omitempty"`       // Geographic region for world event filtering (e.g. "Thornwall Region")
-	RoomIds      map[int]struct{}     `yaml:"-"`                      // Does not get written. Built dyanmically when rooms are loaded.
+	Name           string `yaml:"name,omitempty"`
+	RoomId         int    `yaml:"roomid,omitempty"`
+	Mutators       mutators.MutatorList `yaml:"mutators,omitempty"`         // mutators defined here apply to entire zone
+	IdleMessages   []string             `yaml:"idlemessages,omitempty"`     // list of messages that can be displayed to players in the zone, assuming a room has none defined
+	MusicFile      string               `yaml:"musicfile,omitempty"`        // background music to play when in this zone
+	DefaultBiome   string               `yaml:"defaultbiome,omitempty"`     // city, swamp etc. see biomes.go
+	Region         string               `yaml:"region,omitempty"`           // Geographic region for world event filtering (e.g. "Thornwall Region")
+	Instanced      bool                 `yaml:"instanced,omitempty"`        // true = this zone is an instance template
+	DeathPolicy    string               `yaml:"death_policy,omitempty"`     // "rejoin" (default) or "ejected"
+	PortalDuration string               `yaml:"portal_duration,omitempty"`  // e.g. "30m", "1h"
+	EntryRoom      int                  `yaml:"entry_room,omitempty"`       // room ID where portal drops players
+	AllowRecall    bool                 `yaml:"allow_recall,omitempty"`     // whether recall works inside (default true)
+	RoomIds        map[int]struct{}     `yaml:"-"`                          // Does not get written. Built dyanmically when rooms are loaded.
 }
 
 func (z *ZoneConfig) Id() string {
@@ -23,6 +28,14 @@ func (z *ZoneConfig) Id() string {
 func (z *ZoneConfig) Validate() error {
 	if z.RoomIds == nil {
 		z.RoomIds = make(map[int]struct{})
+	}
+
+	if z.DeathPolicy == "" {
+		z.DeathPolicy = "rejoin"
+	}
+
+	if z.Instanced && z.PortalDuration == "" {
+		z.PortalDuration = "30m"
 	}
 
 	return nil
@@ -39,7 +52,9 @@ func (z *ZoneConfig) Filepath() string {
 
 func NewZoneConfig(zName string) *ZoneConfig {
 	return &ZoneConfig{
-		Name:    zName,
-		RoomIds: map[int]struct{}{},
+		Name:        zName,
+		RoomIds:     map[int]struct{}{},
+		DeathPolicy: "rejoin",
+		AllowRecall: true,
 	}
 }
