@@ -107,8 +107,8 @@ type Balance struct {
 	PlayerStaminaRegenPct    ConfigFloat `yaml:"PlayerStaminaRegenPct"`    // Fraction of StaminaMax regen'd per tick — players (default 0.01)
 	PlayerConvictionRegenPct ConfigFloat `yaml:"PlayerConvictionRegenPct"` // Fraction of ConvictionMax regen'd per tick — players (default 0.01)
 	MobHealthRegenPct        ConfigFloat `yaml:"MobHealthRegenPct"`        // Fraction of HealthMax regen'd per tick — NPCs (default 0.01)
-	MobStaminaRegenPct       ConfigFloat `yaml:"MobStaminaRegenPct"`       // Fraction of StaminaMax regen'd per tick — NPCs (default 0.01)
-	MobConvictionRegenPct    ConfigFloat `yaml:"MobConvictionRegenPct"`    // Fraction of ConvictionMax regen'd per tick — NPCs (default 0.01)
+	MobStaminaRegenPct       ConfigFloat `yaml:"MobStaminaRegenPct"`       // Fraction of StaminaMax regen'd per tick — NPCs (default 0.02)
+	MobConvictionRegenPct    ConfigFloat `yaml:"MobConvictionRegenPct"`    // Fraction of ConvictionMax regen'd per tick — NPCs (default 0.02)
 
 	// ── STAMINA & CONVICTION ──────────────────────────────────────────────────
 	MovementBaseStaminaCost  ConfigFloat `yaml:"MovementBaseStaminaCost"`  // Flat cost to move on normal terrain (default 2.0)
@@ -253,7 +253,7 @@ type Balance struct {
 	ToxicityVitalityScale ConfigFloat `yaml:"ToxicityVitalityScale"` // Vitality divisor for max bonus (default 5)
 
 	// ── MANIFESTATION / COMPANION SCALING ───────────────────────────────────
-	ManifestStatScaleChaFactor   ConfigInt   `yaml:"ManifestStatScaleChaFactor"`   // Charisma divisor for companion stat scaling (default 200)
+	ManifestStatScaleChaFactor   ConfigInt   `yaml:"ManifestStatScaleChaFactor"`   // Charisma divisor for companion stat scaling (default 150)
 	ManifestStatScaleSkillFactor ConfigFloat `yaml:"ManifestStatScaleSkillFactor"` // Manifestation skill additive factor (default 0.02)
 
 	// ── SHOP ECONOMY ─────────────────────────────────────────────────────────
@@ -513,8 +513,8 @@ func (b *Balance) Validate() {
 	clampPct(&b.PlayerStaminaRegenPct, 0.01)
 	clampPct(&b.PlayerConvictionRegenPct, 0.01)
 	clampPct(&b.MobHealthRegenPct, 0.01)
-	clampPct(&b.MobStaminaRegenPct, 0.01)
-	clampPct(&b.MobConvictionRegenPct, 0.01)
+	clampPct(&b.MobStaminaRegenPct, 0.02)
+	clampPct(&b.MobConvictionRegenPct, 0.02)
 
 	// ── STAMINA & CONVICTION ──────────────────────────────────────────────────
 	if b.MovementBaseStaminaCost <= 0 {
@@ -854,7 +854,7 @@ func (b *Balance) Validate() {
 
 	// ── MANIFESTATION / COMPANION SCALING ───────────────────────────────────
 	if b.ManifestStatScaleChaFactor < 1 {
-		b.ManifestStatScaleChaFactor = 200
+		b.ManifestStatScaleChaFactor = 150
 	}
 	if b.ManifestStatScaleSkillFactor <= 0 {
 		b.ManifestStatScaleSkillFactor = 0.02
