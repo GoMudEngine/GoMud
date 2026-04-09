@@ -1,0 +1,13 @@
+itemid: 30059
+name: toxic flask
+namesimple: flask
+description: >-
+  A thin-walled vial of concentrated poison that shatters
+  easily, releasing a cloud of choking fumes.
+type: object
+subtype: throwable
+uses: 1
+value: 18
+weight: 0.2
+buffids:
+  - 78

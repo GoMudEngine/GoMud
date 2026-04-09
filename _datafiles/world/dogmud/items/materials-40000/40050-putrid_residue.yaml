@@ -1,0 +1,13 @@
+itemid: 40050
+name: putrid residue
+namesimple: residue
+description: >-
+  A vile, viscous paste that forms when organic matter breaks
+  down. The smell alone could peel paint. Alchemists prize it
+  as a volatile base for explosive mixtures.
+type: object
+subtype: mundane
+component_tag: putrid-residue
+weight: 0.1
+value: 1
+is_component: true

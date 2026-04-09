@@ -65,6 +65,7 @@ help:
       - stand
       - rally
       - taunt
+      - throw
       - trip
       - warcry
     crafting:
@@ -175,6 +176,7 @@ help-aliases:
   manifestation:    [manifest, summon, conjure, necromancy, raise]
   charm:            [mesmerize, dominate, control, bewitch, enthral]
   assess:           [examine corpse, study corpse, evaluate corpse, inspect corpse]
+  throw:            [grenade, grenades, flashbang, firebomb, toxic flask]
   enchanting:       [enchant, enchantment, enchantments, imbue]
   disenchant:       [unenchant, remove-enchant, strip-enchant]
   storage:          [store, unstore]

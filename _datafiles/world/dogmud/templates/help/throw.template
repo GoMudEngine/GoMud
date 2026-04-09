@@ -1,0 +1,25 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">throw</ansi>
+
+Hurl a throwable item at all hostile creatures in the room.
+The projectile detonates on impact, potentially hitting
+every enemy. Throwable items are consumed on use.
+
+Each target is rolled against independently — some may
+dodge while others are caught in the blast. A badly
+fumbled throw can backfire and hit you instead.
+
+Throwable items include grenades crafted through alchemy:
+  <ansi fg="itemname">flashbang</ansi>     Blinds targets, reducing awareness.
+  <ansi fg="itemname">firebomb</ansi>      Explodes for physical damage.
+  <ansi fg="itemname">toxic flask</ansi>   Releases a lingering toxic cloud.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">throw flashbang</ansi>
+
+Requires being in combat. Shares a cooldown with other
+special moves (bash, trip, kick). Uses the
+<ansi fg="skill">skullduggery</ansi> skill.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help craft</ansi>, <ansi fg="command">help alchemy</ansi>
+

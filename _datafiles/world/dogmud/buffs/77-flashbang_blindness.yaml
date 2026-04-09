@@ -1,0 +1,8 @@
+buffid: 77
+name: Flashbang Blindness
+description: A blinding flash has seared your vision.
+triggerrate: 1 round
+triggercount: 3
+statmods:
+  perception: -30
+  dexterity: -15

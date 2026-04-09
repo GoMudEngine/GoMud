@@ -185,6 +185,7 @@ var (
 		`target`:{Target, false, true, false},
 		`teleport`:    {Teleport, true, true, true}, // Admin only
 		`toxic-bite`:  {ToxicBite, false, true, false},
+		`throw`:       {Throw, false, true, false},
 		`track`:{Track, false, true, false},
 		`taunt`:       {Taunt, false, true, false},
 		`trip`:        {Trip, false, true, false},

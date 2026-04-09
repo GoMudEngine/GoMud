@@ -1,0 +1,18 @@
+id: flashbang
+name: Flashbang
+skill: alchemy
+skill_minimum: 15
+station: alchemy_bench
+time_rounds: 3
+ingredients:
+  - item_tag: putrid-residue
+    quantity: 1
+  - item_tag: salt-pouch
+    quantity: 1
+  - item_tag: bottle
+    quantity: 1
+output:
+  item_id: 30057
+  quantity: 1
+success_message: "The mixture crystallizes into a volatile sphere that glows faintly. A flashbang!"
+failure_message: "The compounds fizzle and separate. The materials are wasted."

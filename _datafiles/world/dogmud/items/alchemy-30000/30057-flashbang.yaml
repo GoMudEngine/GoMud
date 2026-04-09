@@ -1,0 +1,13 @@
+itemid: 30057
+name: flashbang
+namesimple: flashbang
+description: >-
+  A small glass sphere filled with a volatile mixture that
+  ignites on impact, producing a blinding flash.
+type: object
+subtype: throwable
+uses: 1
+value: 15
+weight: 0.2
+buffids:
+  - 77

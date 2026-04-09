@@ -1,0 +1,5 @@
+buffid: 78
+name: Toxic Cloud
+description: A noxious cloud clings to you, sapping your strength.
+triggerrate: 1 round
+triggercount: 5
