@@ -4,6 +4,7 @@ package hooks
 import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -41,6 +42,18 @@ func InactivePlayers(e events.Event) events.ListenerReturn {
 
 		if li == 0 {
 			continue
+		}
+
+		// Check if player is AFK in an instanced zone — eject them to overworld
+		if rooms.IsEphemeralRoomId(user.Character.RoomId) {
+			afkRounds := uint64(c.Timing.SecondsToRounds(int(c.Network.AfkSeconds)))
+			if afkRounds > 0 && evt.RoundNumber >= afkRounds && evt.RoundNumber-li >= afkRounds {
+				if inst := rooms.GetInstanceRegistry().FindByRoomId(user.Character.RoomId); inst != nil {
+					user.SendText(`<ansi fg="yellow">You've been idle too long. The unstable magic of this place expels you.</ansi>`)
+					rooms.MoveToRoom(user.UserId, inst.OverworldRoomId)
+					continue
+				}
+			}
 		}
 
 		if li-cutoffRound == 5 {
