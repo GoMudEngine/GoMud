@@ -25,6 +25,17 @@ damage. It attacks their will to fight rather than their body.
   <ansi fg="stat">Cooldown:</ansi> 5 rounds (shared with bash, trip, and kick)
   <ansi fg="stat">Skill:</ansi> Progresses Rhetoric
 
+<ansi fg="yellow">Aggro Pull:</ansi>
+
+  When a taunt lands against a creature that is fighting someone
+  else, the creature is forced to turn its attention to you. This
+  makes taunt a powerful tool for drawing enemies away from weaker
+  allies and controlling the flow of battle.
+
+  Aggro pull triggers on both normal hits and critical hits. It
+  only applies to hostile creatures — taunting another player will
+  not redirect their attacks.
+
 When a target's conviction reaches zero, they enter a
 <ansi fg="red">downed</ansi> state — overwhelmed and unable to fight. Conviction
 recovers over time like health and stamina.

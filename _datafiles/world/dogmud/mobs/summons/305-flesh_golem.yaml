@@ -19,6 +19,8 @@ activitylevel: 30
 combatcommands:
   - 'consume'
   - ''
+  - 'taunt'
+  - ''
   - 'emote brings both fists down in a crushing overhead blow'
   - ''
   - 'emote drives a shoulder into its target with the force of falling stone'

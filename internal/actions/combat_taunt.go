@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/dice"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -50,6 +52,10 @@ type TauntResult struct {
 
 	// CritDeflected reports whether the target fully negated the conviction damage.
 	CritDeflected bool
+
+	// AggroPulled is true when the taunt forced the target to switch aggro
+	// to the taunter (target was fighting someone else).
+	AggroPulled bool
 }
 
 // ExecuteTaunt performs the shared conviction-attack resolution used by both
@@ -214,6 +220,20 @@ func ExecuteTaunt(actor Actor) TauntResult {
 		combat.RecordSpecialMove(sourceType, targetType, "taunt", true, dmg,
 			char, target.Char, util.GetRoundCount())
 
+		// Tank taunt: force mob target to switch aggro to the taunter.
+		agroPulled := false
+		if target.MobInstanceId > 0 {
+			mob := mobs.GetInstance(target.MobInstanceId)
+			if mob != nil && mob.Character.Aggro != nil {
+				currentTargetUserId := mob.Character.Aggro.UserId
+				attackerUserId := actor.GetUserId()
+				if attackerUserId > 0 && currentTargetUserId != attackerUserId {
+					mob.Character.SetAggro(attackerUserId, 0, characters.DefaultAttack)
+					agroPulled = true
+				}
+			}
+		}
+
 		if char.Aggro != nil {
 			char.Aggro.RoundsWaiting = 1
 		}
@@ -227,6 +247,7 @@ func ExecuteTaunt(actor Actor) TauntResult {
 			DmgDesc:       dmgDesc,
 			Deflected:     deflected,
 			CritDeflected: critDeflect,
+			AggroPulled:   agroPulled,
 		}
 	}
 

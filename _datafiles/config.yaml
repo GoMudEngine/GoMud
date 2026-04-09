@@ -565,8 +565,8 @@ Balance:
   PlayerStaminaRegenPct: 0.02    # Tuned 39.2: doubled from 0.01; fights felt too exhausting at 1%
   PlayerConvictionRegenPct: 0.02  # Bumped to 2% to match health/stamina regen rates
   MobHealthRegenPct: 0.01        # NPC HP regen per tick (1% of HealthMax)
-  MobStaminaRegenPct: 0.01       # NPC stamina regen per tick
-  MobConvictionRegenPct: 0.01    # NPC conviction regen per tick
+  MobStaminaRegenPct: 0.02       # NPC stamina regen per tick (raised to match players)
+  MobConvictionRegenPct: 0.02    # NPC conviction regen per tick (raised to match players)
 
   # ── STAMINA & CONVICTION ────────────────────────────────────────────────────
   # MovementBaseStaminaCost: stamina spent per room move on normal terrain.
@@ -843,7 +843,7 @@ Balance:
   MoonStatModMax: 0.10  # Max fractional stat modifier from moon phases (±10% at full/new moon)
 
   # ── MANIFESTATION / COMPANION SCALING ──────────────────────────────────────
-  ManifestStatScaleChaFactor: 500    # Charisma divisor — skill is primary scaling driver
+  ManifestStatScaleChaFactor: 150    # Charisma divisor — stronger Cha contribution to companion pools
   ManifestStatScaleSkillFactor: 0.02 # Manifestation skill additive factor per rank
 
 ################################################################################

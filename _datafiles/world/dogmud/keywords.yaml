@@ -63,6 +63,7 @@ help:
       - shoot
       - stamina
       - stand
+      - taunt
       - trip
     crafting:
       - craft
