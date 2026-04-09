@@ -7,7 +7,7 @@ description: >-
 type: object
 subtype: throwable
 uses: 1
-value: 15
+value: 35
 weight: 0.2
 buffids:
   - 77

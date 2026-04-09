@@ -5,15 +5,17 @@ impact, impairing all enemies in the room.
 
 <ansi fg="yellow">Crafting:</ansi>
 
-  <ansi fg="stat">Skill:</ansi> Alchemy (minimum 15)
+  <ansi fg="stat">Skill:</ansi> Alchemy (minimum 35)
   <ansi fg="stat">Station:</ansi> Alchemy Bench
-  <ansi fg="stat">Ingredients:</ansi> Putrid Residue, Salt Pouch, Bottle
-  <ansi fg="stat">Time:</ansi> 3 rounds
+  <ansi fg="stat">Ingredients:</ansi> Putrid Residue (x2), Salt Pouch (x2),
+               Chrysalis Core, Bottle
+  <ansi fg="stat">Time:</ansi> 5 rounds
 
 <ansi fg="yellow">Effect:</ansi>
 
-  Blinds affected targets, reducing their Perception and
-  Dexterity for a short time.
+  Stuns affected targets for a short time, preventing them
+  from attacking. Also reduces Perception and Dexterity
+  for the duration.
 
 Use with the <ansi fg="command">throw</ansi> command during combat.
 

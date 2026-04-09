@@ -9,4 +9,4 @@ subtype: throwable
 uses: 1
 value: 20
 weight: 0.3
-damage_multiplier: 0.30
+damage_multiplier: 0.85
