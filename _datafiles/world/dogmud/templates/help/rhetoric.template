@@ -26,8 +26,16 @@ rather than their body.
 
 <ansi fg="yellow">Abilities:</ansi>
 
-  <ansi fg="command">taunt</ansi> — Hurl a scathing verbal attack at your target
+  <ansi fg="command">taunt</ansi>  — Verbal assault that deals conviction damage
+             and forces the target to attack you
+  <ansi fg="command">warcry</ansi> — Battle cry that boosts physical damage for
+             all allies in the room
+  <ansi fg="command">rally</ansi>  — Rallying shout that improves dodge, parry,
+             and block for all allies in the room
+
+All three share the special move cooldown.
 
 <ansi fg="yellow">See Also:</ansi>
 
-  <ansi fg="command">help taunt</ansi>, <ansi fg="command">help skills</ansi>, <ansi fg="command">help combat</ansi>
+  <ansi fg="command">help taunt</ansi>, <ansi fg="command">help warcry</ansi>, <ansi fg="command">help rally</ansi>,
+  <ansi fg="command">help skills</ansi>, <ansi fg="command">help combat</ansi>
