@@ -98,7 +98,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 			}
 		}
 
-		// Auto-eject spoiled potions from bandolier
+		// Auto-eject spoiled items from bandolier
 		if len(user.Character.PotionItems) > 0 {
 			currentRound := util.GetRoundCount()
 			ejected := 0
@@ -114,11 +114,21 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 					effSpeed := items.CalcEffectiveAgingSpeed(bottleMult, pot.CraftSkill)
 					phase, _ := items.GetAgingPhase(elapsed, potSpec.Aging, effSpeed)
 					if phase == items.PhaseSpoiled {
-						// Force into backpack — do NOT use StoreItem (it re-routes drinkables back into bandolier)
-						user.Character.Items = append(user.Character.Items, pot)
-						user.SendText(fmt.Sprintf(
-							`<ansi fg="yellow">Your <ansi fg="itemname">%s</ansi> has spoiled and falls out of your bandolier.</ansi>`,
-							pot.DisplayName()))
+						if potSpec.Subtype == items.Throwable {
+							// Spoiled grenades fall safely to the ground
+							if userRoom := rooms.LoadRoom(user.Character.RoomId); userRoom != nil {
+								userRoom.AddItem(pot, false)
+							}
+							user.SendText(fmt.Sprintf(
+								`<ansi fg="yellow">Your <ansi fg="itemname">%s</ansi> has destabilized and falls out of your bandolier onto the ground.</ansi>`,
+								pot.DisplayName()))
+						} else {
+							// Spoiled potions go to backpack
+							user.Character.Items = append(user.Character.Items, pot)
+							user.SendText(fmt.Sprintf(
+								`<ansi fg="yellow">Your <ansi fg="itemname">%s</ansi> has spoiled and falls out of your bandolier.</ansi>`,
+								pot.DisplayName()))
+						}
 						ejected++
 						continue
 					}

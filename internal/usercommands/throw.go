@@ -36,8 +36,11 @@ func Throw(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return true, nil
 	}
 
-	// Find throwable in backpack
+	// Find throwable in backpack or bandolier
 	matchItem, found := user.Character.FindInBackpack(rest)
+	if !found {
+		matchItem, found = user.Character.FindInPotions(rest)
+	}
 	if !found {
 		user.SendText(fmt.Sprintf(`You don't have a "%s" to throw.`, rest))
 		return true, nil
@@ -47,6 +50,24 @@ func Throw(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	if spec.Subtype != items.Throwable {
 		user.SendText(fmt.Sprintf(`<ansi fg="itemname">%s</ansi> isn't something you can throw.`, matchItem.DisplayName()))
 		return true, nil
+	}
+
+	// Check if grenade has spoiled — auto-detonates in hand
+	if spec.Aging.HasAging() && matchItem.CraftedRound > 0 {
+		currentRound := util.GetRoundCount()
+		var elapsed uint64
+		if currentRound >= matchItem.CraftedRound {
+			elapsed = currentRound - matchItem.CraftedRound
+		}
+		effSpeed := items.CalcEffectiveAgingSpeed(matchItem.BottleMultiplier, matchItem.CraftSkill)
+		phase, _ := items.GetAgingPhase(elapsed, spec.Aging, effSpeed)
+		if phase == items.PhaseSpoiled {
+			user.Character.UseItem(matchItem)
+			user.SendText(fmt.Sprintf(
+				`<ansi fg="red-bold">You pull out the <ansi fg="itemname">%s</ansi> and it crumbles apart in your hand -- it's gone bad!</ansi>`,
+				matchItem.DisplayName()))
+			return true, nil
+		}
 	}
 
 	// Consume the item

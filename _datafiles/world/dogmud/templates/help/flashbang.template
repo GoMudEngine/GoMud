@@ -19,4 +19,12 @@ impact, impairing all enemies in the room.
 
 Use with the <ansi fg="command">throw</ansi> command during combat.
 
-<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help throw</ansi>, <ansi fg="command">help craft</ansi>
+<ansi fg="yellow">Aging:</ansi>
+
+  Flashbangs age over time. They grow more potent as they
+  mature, but will eventually destabilize and spoil. Store
+  them in a <ansi fg="itemname">bandolier</ansi> for safe disposal if
+  they go bad. Spoiled flashbangs left in your backpack may
+  go off!
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help throw</ansi>, <ansi fg="command">help sort</ansi>, <ansi fg="command">help craft</ansi>

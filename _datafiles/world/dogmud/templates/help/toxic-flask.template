@@ -17,4 +17,12 @@ cloud of choking poison that damages all enemies over time.
 
 Use with the <ansi fg="command">throw</ansi> command during combat.
 
-<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help throw</ansi>, <ansi fg="command">help craft</ansi>
+<ansi fg="yellow">Aging:</ansi>
+
+  Toxic flasks age over time. They grow more potent as they
+  mature, but will eventually destabilize and spoil. Store
+  them in a <ansi fg="itemname">bandolier</ansi> for safe disposal if
+  they go bad. Spoiled flasks left in your backpack may
+  burst!
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help throw</ansi>, <ansi fg="command">help sort</ansi>, <ansi fg="command">help craft</ansi>

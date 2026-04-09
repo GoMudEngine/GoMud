@@ -12,9 +12,11 @@ striking from the shadows.
   <ansi fg="command">picklock</ansi>    - Pick locks on doors and containers
   <ansi fg="command">shadow</ansi>      - Tail someone between rooms unseen
   <ansi fg="command">defuse</ansi>      - Disable traps on locks and containers
+  <ansi fg="command">throw</ansi>       - Hurl grenades at enemies (AoE)
 
 Attacking from stealth triggers a
 <ansi fg="magenta-bold">surprise attack</ansi> automatically if your
 special move cooldown is ready.
 
-<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help sneak</ansi>, <ansi fg="command">help steal</ansi>, <ansi fg="command">help shadow</ansi>, <ansi fg="command">help defuse</ansi>
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help sneak</ansi>, <ansi fg="command">help steal</ansi>,
+  <ansi fg="command">help shadow</ansi>, <ansi fg="command">help defuse</ansi>, <ansi fg="command">help throw</ansi>

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -13,6 +14,95 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
+
+// checkSpoiledGrenades scans the player's backpack for spoiled throwable items.
+// Each spoiled grenade has a 35% chance to detonate (applying its effect to the
+// holder) or fizzle into putrid residue. Grenades in the bandolier are safe —
+// they get ejected to the room floor by the regen tick instead.
+func checkSpoiledGrenades(user *users.UserRecord, room *rooms.Room) {
+	currentRound := util.GetRoundCount()
+	detonated := 0
+	fizzled := 0
+	remaining := make([]items.Item, 0, len(user.Character.Items))
+
+	for _, item := range user.Character.Items {
+		spec := item.GetSpec()
+		if spec.Subtype != items.Throwable || !spec.Aging.HasAging() || item.CraftedRound == 0 {
+			remaining = append(remaining, item)
+			continue
+		}
+
+		var elapsed uint64
+		if currentRound >= item.CraftedRound {
+			elapsed = currentRound - item.CraftedRound
+		}
+		effSpeed := items.CalcEffectiveAgingSpeed(item.BottleMultiplier, item.CraftSkill)
+		phase, _ := items.GetAgingPhase(elapsed, spec.Aging, effSpeed)
+
+		if phase != items.PhaseSpoiled {
+			remaining = append(remaining, item)
+			continue
+		}
+
+		// Spoiled grenade — 35% chance to detonate
+		if util.Rand(100) < 35 {
+			detonated++
+			// Apply grenade effect to the holder
+			if spec.DamageMultiplier > 0 {
+				// Firebomb: self-damage
+				rawDmg := combat.CalcRawDamage(
+					user.Character.Stats.Dexterity.ValueAdj,
+					user.Character.GetSkillLevel(skills.Skullduggery),
+					spec.DamageMultiplier,
+					combat.ChannelPhysical,
+				)
+				dmg := int(rawDmg)
+				if dmg < 1 {
+					dmg = 1
+				}
+				user.Character.Health -= dmg
+				if user.Character.Health < -10 {
+					user.Character.Health = -10
+				}
+				user.SendText(fmt.Sprintf(
+					`<ansi fg="red-bold">A <ansi fg="itemname">%s</ansi> in your pack detonates! (%s)</ansi>`,
+					item.DisplayName(),
+					combat.GetDamageDescription(dmg, user.Character.HealthMax.Value)))
+			} else {
+				// Debuff grenade: apply buffs to self
+				for _, buffId := range spec.BuffIds {
+					user.AddBuff(buffId, "grenade-accident")
+				}
+				user.SendText(fmt.Sprintf(
+					`<ansi fg="red-bold">A <ansi fg="itemname">%s</ansi> in your pack goes off!</ansi>`,
+					item.DisplayName()))
+			}
+		} else {
+			// Fizzle into putrid residue
+			fizzled++
+			residue := items.New(40050)
+			if residue.ItemId > 0 {
+				remaining = append(remaining, residue)
+			}
+		}
+	}
+
+	if detonated > 0 || fizzled > 0 {
+		user.Character.Items = remaining
+		if fizzled > 0 {
+			user.SendText(fmt.Sprintf(
+				`<ansi fg="yellow">%d grenade(s) have destabilized and dissolved into putrid residue.</ansi>`,
+				fizzled))
+		}
+		if room != nil {
+			room.SendText(
+				fmt.Sprintf(`<ansi fg="username">%s</ansi> fumbles with something in their pack...`,
+					user.Character.Name),
+				user.UserId)
+		}
+		events.AddToQueue(events.RedrawPrompt{UserId: user.UserId, OnlyIfChanged: true}, 100)
+	}
+}
 
 // encumbranceTier returns a descriptive label and ANSI color for the
 // player's current weight-to-capacity ratio.
@@ -36,6 +126,9 @@ func encumbranceTier(weight, capacity float64) (label, color string) {
 }
 
 func Inventory(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
+
+	// Check for spoiled grenades in backpack — risk of detonation
+	checkSpoiledGrenades(user, room)
 
 	itemNames := []string{}
 	itemNamesFormatted := []string{}

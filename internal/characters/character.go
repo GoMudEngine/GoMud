@@ -1574,8 +1574,8 @@ func (c *Character) StoreItem(i items.Item) bool {
 		}
 	}
 
-	// Auto-route potions to the bandolier
-	if (iSpec.Type == items.Potion || (iSpec.Subtype == items.Drinkable && len(iSpec.BuffIds) > 0)) && c.Equipment.Belt.ItemId > 0 {
+	// Auto-route potions and throwables to the bandolier
+	if (iSpec.Type == items.Potion || (iSpec.Subtype == items.Drinkable && len(iSpec.BuffIds) > 0) || iSpec.Subtype == items.Throwable) && c.Equipment.Belt.ItemId > 0 {
 		beltSpec := c.Equipment.Belt.GetSpec()
 		if beltSpec.IsBandolier && beltSpec.BandolierCapacity > 0 && len(c.PotionItems) < beltSpec.BandolierCapacity {
 			c.PotionItems = append(c.PotionItems, i)
@@ -3683,7 +3683,8 @@ func (c *Character) SortPotionItems() int {
 	moved := 0
 	remaining := make([]items.Item, 0, len(c.Items))
 	for _, item := range c.Items {
-		if item.GetSpec().Subtype == items.Drinkable && len(c.PotionItems) < capacity {
+		sub := item.GetSpec().Subtype
+		if (sub == items.Drinkable || sub == items.Throwable) && len(c.PotionItems) < capacity {
 			c.PotionItems = append(c.PotionItems, item)
 			moved++
 		} else {

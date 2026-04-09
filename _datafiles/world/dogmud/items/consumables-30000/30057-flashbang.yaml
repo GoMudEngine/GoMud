@@ -11,3 +11,8 @@ value: 35
 weight: 0.2
 buffids:
   - 77
+aging:
+  ferment_rounds: 2000
+  peak_rounds: 8000
+  decay_rounds: 20000
+  spoil_rounds: 30000

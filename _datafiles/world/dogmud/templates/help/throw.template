@@ -4,12 +4,12 @@ Hurl a throwable item at all hostile creatures in the room.
 The projectile detonates on impact, potentially hitting
 every enemy. Throwable items are consumed on use.
 
-Each target is rolled against independently — some may
+Each target is rolled against independently -- some may
 dodge while others are caught in the blast. A badly
 fumbled throw can backfire and hit you instead.
 
 Throwable items include grenades crafted through alchemy:
-  <ansi fg="itemname">flashbang</ansi>     Blinds targets, reducing awareness.
+  <ansi fg="itemname">flashbang</ansi>     Stuns and blinds targets.
   <ansi fg="itemname">firebomb</ansi>      Explodes for physical damage.
   <ansi fg="itemname">toxic flask</ansi>   Releases a lingering toxic cloud.
 
@@ -19,7 +19,21 @@ Throwable items include grenades crafted through alchemy:
 
 Requires being in combat. Shares a cooldown with other
 special moves (bash, trip, kick). Uses the
-<ansi fg="skill">skullduggery</ansi> skill.
+<ansi fg="skill">Skullduggery</ansi> skill and progresses
+<ansi fg="stat">Dexterity</ansi>.
 
-<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help craft</ansi>, <ansi fg="command">help alchemy</ansi>
+<ansi fg="yellow">Aging and Storage:</ansi>
 
+  Grenades age over time like potions. Fresh grenades work
+  at baseline strength, while aged grenades become more
+  potent before eventually declining and spoiling.
+
+  Store grenades in your <ansi fg="itemname">bandolier</ansi> for safety!
+  Spoiled grenades in the bandolier are safely ejected to
+  the ground. Spoiled grenades left in your backpack risk
+  detonating when you rummage through your belongings.
+
+  Use <ansi fg="command">sort</ansi> to move grenades into your bandolier.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help flashbang</ansi>, <ansi fg="command">help firebomb</ansi>,
+  <ansi fg="command">help toxic-flask</ansi>, <ansi fg="command">help craft</ansi>, <ansi fg="command">help sort</ansi>

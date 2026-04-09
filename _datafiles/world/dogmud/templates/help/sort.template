@@ -1,17 +1,22 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">sort</ansi>
 
 The <ansi fg="command">sort</ansi> command moves crafting materials from your
-backpack into your equipped component bag, and potions into
-your equipped bandolier.
+backpack into your equipped component bag, and potions and
+grenades into your equipped bandolier.
 
 <ansi fg="yellow">Usage: </ansi>
 
-  <ansi fg="command">sort</ansi>     Move materials and potions into their containers.
+  <ansi fg="command">sort</ansi>     Move materials, potions, and grenades into
+           their containers.
 
 You must have a component bag and/or a bandolier equipped.
-Materials are items flagged as crafting components (ores, herbs,
-leather, binding paste, gemstones, etc.). Potions are any
-drinkable items (healing salves, elixirs, tonics, etc.).
+Materials are items flagged as crafting components (ores,
+herbs, leather, binding paste, gemstones, etc.). Potions
+and grenades are stored in the bandolier.
+
+<ansi fg="yellow">Grenade Safety:</ansi> Grenades stored in your bandolier are
+safely ejected to the ground if they spoil. Grenades left
+in your backpack may detonate when they go bad!
 
 When you pick up or buy these items, they automatically go into
 the appropriate container if one is equipped and has space.
