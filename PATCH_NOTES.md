@@ -1,5 +1,63 @@
 # DOGMud Patch Notes
 
+## 2026-04-10 — Instanced Zones: Arena, Planar Oasis, Randomized Loot
+
+### New: Instanced Zones
+- Pay the **Riftkeeper Sable** (Rift Chamber, east of Temple District)
+  to open a private portal to a dangerous zone. More gold = tougher
+  enemies = better loot. Party up before purchasing — only current
+  party members can enter.
+- Portals last 30 minutes. Instances persist until all players leave.
+- **`help instances`**, **`help arena`**, **`help oasis`** for details.
+
+### New: The Arena (Instance Zone)
+- A linear gauntlet of pit fighters. Push through trash mobs,
+  veterans, and the Arena Champion.
+- **Death ends your run.** No recall. No re-entry.
+- Enemies respawn in waves — how far can you get before they
+  grind you down?
+- Veterans and the Champion drop unique weapons and armor.
+
+### New: The Planar Oasis (Instance Zone)
+- A 4x4x4 wrapping cube of elemental terrain — 64 rooms where
+  every direction wraps around. Navigation is the challenge.
+- Elementals wander the maze. Two elite elementals and one
+  elemental lord (king, queen, or prince) roam randomly.
+- **Death allows re-entry.** Recall works. Guardians don't respawn
+  — clear the cube methodically.
+- Oasis gear is stronger than Arena gear.
+
+### New: Randomized Loot System
+- Tougher instance mobs spawn wearing randomly-generated equipment.
+  The gear makes them harder to fight AND drops when they die.
+- **Point budget system**: gold invested determines a bonus pool that
+  is randomly distributed across damage, mitigation, stats, and skills.
+- Items are prefixed by their dominant bonus: Keen (damage), Warding
+  (mitigation), Empowered (stats), Masterwork (skills).
+- Every item is unique — two runs at the same gold level produce
+  different gear.
+- Weapons favor damage bonuses, armor favors mitigation. A snowball
+  effect creates focused items rather than thin spreads.
+
+### New: Rift Chamber
+- New room in Thornwall (east of Temple District) housing the
+  Riftkeeper NPC and the rift archway.
+
+### Balance
+- Mob regen and companion scaling changes from 2026-04-09 are
+  included (mob SP/CP regen 2%/tick, companion stat factor 150).
+
+### Instance Framework
+- Party-scoped access control — only authorized players can enter.
+- Death policy per zone: ejected (arena) or rejoin (oasis).
+- Recall blocking per zone (arena blocks, oasis allows).
+- Difficulty scales linearly with gold (stat pools = gold * template
+  multiplier).
+- Instance cleanup when all players leave.
+- Portal timer warnings at 5 minutes and 1 minute remaining.
+
+---
+
 ## 2026-04-09 — QOL Batch, Grenades, Rhetoric Shouts
 
 ### New: Grenade System

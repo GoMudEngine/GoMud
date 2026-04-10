@@ -63,7 +63,7 @@ Server:
   - checkclient
   # - Motd -
   #   Message of the day. This is displayed when the motd command is run.
-  Motd: '{{ t "NEW: Grenade system — flashbang, firebomb, toxic flask. Craft via Alchemy, throw in combat (AoE).\nNEW: Warcry and Rally rhetoric shouts — AoE offense/defense buffs for your group.\nNEW: Taunt now pulls aggro. Golem companions taunt. Sort moves grenades to bandolier.\nBAL: Mob regen doubled, companion stat pools improved. Grenades age and can detonate if neglected!\nFull patch notes: https://github.com/pruuk/DOGMud/blob/master/PATCH_NOTES.md" }}'
+  Motd: '{{ t "NEW: Instanced Zones! Pay the Riftkeeper in Thornwall to open rifts to the Arena and Planar Oasis.\nNEW: Randomized loot — unique weapons and armor drop from instance bosses. More gold = tougher enemies = better gear.\nNEW: Arena is a brutal gauntlet where death ends your run. Oasis is a 3D elemental maze to explore and clear.\nType help instances, help arena, or help oasis for details.\nFull patch notes: https://github.com/pruuk/DOGMud/blob/master/PATCH_NOTES.md" }}'
   # - NextRoomID -
   # This number is auto-updated to the highest number of rooms in the game.
   #   If creating your own rooms but don't want to risk an update conflicting,

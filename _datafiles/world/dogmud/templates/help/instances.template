@@ -6,39 +6,38 @@ tougher the enemies -- and the better the potential loot.
 
 <ansi fg="yellow">How It Works:</ansi>
 
-  1. Find a Riftkeeper NPC (Temple District in Thornwall).
+  1. Find the Riftkeeper (east of Temple District).
   2. <ansi fg="command">ask sable portals</ansi> to see available zones.
-  3. <ansi fg="command">ask sable arena 200</ansi> to open a portal to the
+  3. <ansi fg="command">ask sable arena 200</ansi> to open a rift to the
      Arena with 200 gold invested. The gold is deducted
-     from your purse immediately.
-  4. Type the zone name to enter (e.g. <ansi fg="command">arena</ansi>).
+     immediately. Minimum investment is 100 gold.
+  4. Sable will tell you the exit command to enter.
 
-  The amount of gold you invest determines how tough the
-  enemies are and how good the loot can be. Invest more
-  for a greater challenge and greater rewards.
+  The gold you invest determines how tough the enemies
+  are and how good the loot can be. Invest more for a
+  greater challenge and greater rewards.
 
 <ansi fg="yellow">Important Rules:</ansi>
 
   Party up BEFORE purchasing! Only party members at the
-  time of purchase can enter the portal. Members added
-  later cannot get in.
+  time of purchase can enter. Members added later cannot.
 
-  The portal stays open for a limited time. When it closes,
+  Each rift stays open for 30 minutes. When it closes,
   you can still leave through the return portal inside.
+  The instance stays open as long as anyone is in it.
 
   Your companions follow you in automatically.
 
+<ansi fg="yellow">Loot:</ansi>
+
+  Tougher enemies inside carry unique equipment with
+  random properties. Every item is different. The more
+  gold invested, the better the base quality.
+
 <ansi fg="yellow">Death:</ansi>
 
-  Some zones allow re-entry after dying. Others expel you
-  permanently on death. The Riftkeeper will tell you which
-  rules apply for each zone.
-
-<ansi fg="yellow">Storage:</ansi>
-
-  Loot drops normally from enemies inside. Anything left
-  on the ground when the instance closes is lost forever.
-  Pick up your loot!
+  Some zones allow re-entry after dying. Others expel
+  you permanently on death. Check each zone's help page.
 
 <ansi fg="yellow">Available Zones:</ansi>
 
@@ -47,8 +46,6 @@ tougher the enemies -- and the better the potential loot.
   <ansi fg="command">Oasis</ansi>    A three-dimensional elemental maze.
              Death allows re-entry. Recall works.
              Methodical exploration rewarded.
-
-  Type <ansi fg="command">help arena</ansi> or <ansi fg="command">help oasis</ansi> for details.
 
 <ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help arena</ansi>,
   <ansi fg="command">help oasis</ansi>, <ansi fg="command">help party</ansi>, <ansi fg="command">help combat</ansi>
