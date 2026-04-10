@@ -498,9 +498,9 @@ func CreateInstance(zoneName string, goldPaid int, userId int, roomId int) bool 
 		return false
 	}
 
-	owRoom.AddTemporaryExit("instance portal", exit.TemporaryRoomExit{
+	owRoom.AddTemporaryExit("portal", exit.TemporaryRoomExit{
 		RoomId:  inst.EntryRoomId,
-		Title:   "instance portal",
+		Title:   "shimmering portal",
 		UserId:  0,
 		Expires: inst.PortalDuration,
 	})
