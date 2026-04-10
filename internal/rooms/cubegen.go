@@ -128,13 +128,15 @@ func GenerateOasisCube(
 	entryRoom := rooms[entryIdx]
 	entryRoom.Exits["south"] = exit.RoomExit{RoomId: entryRoomId}
 
-	// 5. Assign mob spawns: 1 trash elemental per room.
+	// 5. Assign mob spawns: 1 trash elemental per room. Force hostile
+	//    since the base templates are companion mobs (not hostile).
 	for i := 0; i < cubeTotal; i++ {
 		rooms[i].SpawnInfo = []SpawnInfo{
 			{
-				MobId:       cubeTrashMobs[util.Rand(len(cubeTrashMobs))],
-				StatPool:    1,
-				RespawnRate: "2 real hours",
+				MobId:        cubeTrashMobs[util.Rand(len(cubeTrashMobs))],
+				StatPool:     1,
+				RespawnRate:  "2 real hours",
+				ForceHostile: true,
 			},
 		}
 	}
@@ -144,9 +146,10 @@ func GenerateOasisCube(
 	for _, idx := range toughIndices {
 		rooms[idx].SpawnInfo = []SpawnInfo{
 			{
-				MobId:       cubeToughMobs[util.Rand(len(cubeToughMobs))],
-				StatPool:    2,
-				RespawnRate: "2 real hours",
+				MobId:        cubeToughMobs[util.Rand(len(cubeToughMobs))],
+				StatPool:     2,
+				RespawnRate:  "2 real hours",
+				ForceHostile: true,
 			},
 		}
 	}
@@ -156,9 +159,10 @@ func GenerateOasisCube(
 	for _, idx := range bossIndices {
 		rooms[idx].SpawnInfo = []SpawnInfo{
 			{
-				MobId:       cubeBossMobs[util.Rand(len(cubeBossMobs))],
-				StatPool:    4,
-				RespawnRate: "2 real hours",
+				MobId:        cubeBossMobs[util.Rand(len(cubeBossMobs))],
+				StatPool:     4,
+				RespawnRate:  "2 real hours",
+				ForceHostile: true,
 			},
 		}
 	}
