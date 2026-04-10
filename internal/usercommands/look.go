@@ -119,6 +119,10 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		} else if mobId > 0 {
 
 			m := mobs.GetInstance(mobId)
+			if m == nil {
+				user.SendText("You don't see them here.")
+				return true, nil
+			}
 
 			if !isSneaking {
 				targetName := m.Character.GetMobName(0).String()
