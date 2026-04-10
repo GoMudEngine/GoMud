@@ -2,5 +2,5 @@ name: Instance Planar Oasis
 instanced: true
 death_policy: rejoin
 portal_duration: "30m"
-entry_room: 1005
+entry_room: 5003
 allow_recall: true

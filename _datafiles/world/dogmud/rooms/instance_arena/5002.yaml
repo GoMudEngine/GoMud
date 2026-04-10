@@ -1,4 +1,4 @@
-roomid: 1004
+roomid: 5002
 zone: Instance Arena
 title: Arena Floor
 description: >-
@@ -8,7 +8,7 @@ description: >-
   in here with you. The gate behind you is the only way out.
 exits:
   south:
-    roomid: 1003
+    roomid: 5001
     mapdirection: south
 spawninfo:
   - mobid: 73

@@ -1,4 +1,4 @@
-roomid: 1003
+roomid: 5001
 zone: Instance Arena
 title: Arena Entrance
 description: >-
@@ -8,5 +8,5 @@ description: >-
   something large moving echo from beyond.
 exits:
   north:
-    roomid: 1004
+    roomid: 5002
     mapdirection: north

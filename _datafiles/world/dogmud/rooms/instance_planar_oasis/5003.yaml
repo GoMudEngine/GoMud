@@ -1,4 +1,4 @@
-roomid: 1005
+roomid: 5003
 zone: Instance Planar Oasis
 title: Oasis Threshold
 description: >-
@@ -10,5 +10,5 @@ description: >-
   with reassuring stability.
 exits:
   north:
-    roomid: 1006
+    roomid: 5004
     mapdirection: north

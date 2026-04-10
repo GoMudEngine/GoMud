@@ -1,4 +1,4 @@
-roomid: 1006
+roomid: 5004
 zone: Instance Planar Oasis
 title: Shimmering Sands
 description: >-
@@ -9,7 +9,7 @@ description: >-
   stirs within the sand itself.
 exits:
   south:
-    roomid: 1005
+    roomid: 5003
     mapdirection: south
 spawninfo:
   - mobid: 311
