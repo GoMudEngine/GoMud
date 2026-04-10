@@ -1,0 +1,18 @@
+roomid: 5005
+zone: Instance Planar Oasis
+title: The Oasis Heart
+description: >-
+  The dark water of the oasis stretches before you, utterly
+  still. The sky above has settled into a permanent twilight.
+  Something vast moves beneath the surface — a shadow that
+  covers the entire pool. The crystalline sand at the water's
+  edge has been fused into glass by repeated exposure to
+  tremendous heat. Whatever rules this place is here.
+exits:
+  south:
+    roomid: 5004
+    mapdirection: south
+spawninfo:
+  - mobid: 320
+    statpool: 3
+    respawnrate: "30m"

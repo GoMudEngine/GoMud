@@ -1,0 +1,35 @@
+mobid: 320
+zone: Instance Planar Oasis
+archetype: fighting
+statpool: 3
+hostile: true
+groups:
+  - elemental
+activitylevel: 30
+tactic_preset: aggressive_melee
+tactical_discipline: 0.90
+combatcommands:
+  - 'emote brings both fists down in a thunderous overhead strike'
+  - ''
+  - 'emote sweeps a massive arm in a wide arc of stone and fire'
+  - 'bash'
+  - 'emote roars, the ground cracking beneath its feet'
+  - ''
+character:
+  name: elemental king
+  description: >-
+    A towering figure of fused stone and molten earth, twice
+    the height of a man. A crude crown of obsidian juts from
+    its head like a volcanic ridge. Each step sends tremors
+    through the ground. The heat radiating from its core
+    warps the air into shimmering curtains. This is not a
+    creature to be reasoned with. It is a force of nature
+    wearing a shape, and it has noticed you.
+  speciesid: 37
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 10
+    vitality:
+      training: 10

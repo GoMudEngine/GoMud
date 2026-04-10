@@ -1,0 +1,35 @@
+mobid: 322
+zone: Instance Planar Oasis
+archetype: fighting
+statpool: 3
+hostile: true
+groups:
+  - elemental
+activitylevel: 30
+tactic_preset: aggressive_melee
+tactical_discipline: 0.85
+combatcommands:
+  - 'emote flickers and strikes from an impossible angle'
+  - ''
+  - 'emote dissolves into mist and reforms behind its target'
+  - 'trip'
+  - 'emote lashes out with whip-thin tendrils of superheated air'
+  - ''
+character:
+  name: elemental prince
+  description: >-
+    A lithe shape of smoke and flickering embers, constantly
+    shifting between solid and vapor. It moves too fast to
+    track cleanly — your eyes keep sliding off it as if it
+    exists slightly out of phase with reality. When it
+    strikes, it is already somewhere else.
+  speciesid: 37
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 12
+    perception:
+      training: 8
+  skills:
+    skullduggery: 3
