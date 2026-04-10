@@ -12,6 +12,8 @@ exits:
     mapdirection: south
 spawninfo:
   - mobid: 73
+    statpool: 1
     respawnrate: "15m"
   - mobid: 73
+    statpool: 1
     respawnrate: "15m"
