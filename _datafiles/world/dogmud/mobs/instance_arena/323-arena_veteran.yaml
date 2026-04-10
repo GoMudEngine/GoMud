@@ -1,0 +1,41 @@
+mobid: 323
+zone: Instance Arena
+archetype: fighting
+statpool: 2
+hostile: true
+groups:
+  - humanoid
+activitylevel: 20
+itemdropchance: 50
+loot_pool:
+  - 20070
+idlecommands:
+  - 'emote rolls scarred shoulders and scans the pit'
+  - ''
+  - 'emote drags a thumb across the edge of a blade, checking it'
+  - 'wander'
+combatcommands:
+  - 'emote steps into the swing with practiced economy'
+  - ''
+  - 'emote reads the attack and angles away, counterstriking'
+  - ''
+character:
+  name: arena veteran
+  description: >-
+    A fighter who has survived the pit long enough to carry
+    permanent reminders of it — a jaw set crooked from a break
+    that healed wrong, one ear torn to a stub, a latticework
+    of old scars across both forearms. Moves with the careful
+    efficiency of someone who has learned that wild aggression
+    gets you killed. Not the biggest fighter in the arena, but
+    very possibly the smartest.
+  speciesid: 1
+  level: 1
+  gold: 5
+  stats:
+    strength:
+      training: 4
+    dexterity:
+      training: 3
+    vitality:
+      training: 3

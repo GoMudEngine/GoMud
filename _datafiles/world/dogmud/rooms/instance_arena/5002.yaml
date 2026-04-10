@@ -10,6 +10,9 @@ exits:
   south:
     roomid: 5001
     mapdirection: south
+  north:
+    roomid: 5006
+    mapdirection: north
 spawninfo:
   - mobid: 316
     statpool: 1

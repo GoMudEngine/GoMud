@@ -1,0 +1,16 @@
+itemid: 20069
+name: arena tower shield
+namesimple: shield
+description: >-
+  A full-length tower shield of banded iron over hardwood, wide
+  enough to shelter most of a man's body. The facing is dented
+  and gouged from arena use, the inside grip rewrapped with
+  fresh leather. It is heavy, slow to reposition, and
+  extraordinarily difficult to get past.
+type: offhand
+subtype: wearable
+physical_mitigation: 12
+magical_mitigation: 4
+blockrating: 22
+weight: 6.5
+value: 60

@@ -1,0 +1,15 @@
+itemid: 10027
+name: arena warhammer
+namesimple: warhammer
+description: >-
+  A massive warhammer forged from dark iron, its head scarred
+  by countless impacts. The leather-wrapped haft is stained
+  with old blood. Heavy enough to crack stone.
+type: weapon
+hands: 2
+subtype: bludgeoning
+weight: 3.0
+speedmultiplier: 0.6
+damage_multiplier: 0.70
+parryrating: 6
+value: 50

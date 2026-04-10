@@ -1,0 +1,13 @@
+itemid: 20070
+name: arena chain gloves
+namesimple: gloves
+description: >-
+  Close-fitted gloves of interlocked iron rings over a thin
+  leather liner. Lightweight enough to grip a weapon without
+  fumbling, tough enough to take a blade across the knuckles
+  without consequence.
+type: gloves
+subtype: wearable
+physical_mitigation: 3
+weight: 0.5
+value: 20

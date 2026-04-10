@@ -1,0 +1,49 @@
+mobid: 324
+zone: Instance Arena
+archetype: fighting
+statpool: 4
+hostile: true
+groups:
+  - humanoid
+activitylevel: 20
+itemdropchance: 75
+loot_pool:
+  - 10027
+  - 20069
+tactic_preset: aggressive_melee
+tactical_discipline: 0.90
+idlecommands:
+  - 'emote plants the warhammer head-down in the dirt and stares at the gate'
+  - ''
+  - 'emote rolls the warhammer haft between both hands and waits'
+  - ''
+combatcommands:
+  - 'emote brings the warhammer overhead in a crushing arc'
+  - ''
+  - 'emote shoves forward with the shield and follows with the hammer'
+  - ''
+  - 'emote absorbs the blow on the tower shield without flinching'
+  - ''
+character:
+  name: arena champion
+  description: >-
+    The arena champion is everything the pit produces at its
+    best and worst: a fighter of terrible skill, shaped into
+    something barely human by years of surviving what killed
+    everyone else. Towering, unhurried. The tower shield on
+    one arm is as much a weapon as the dark-iron warhammer
+    in the other hand. There are no wasted movements, no
+    theatrics. Just the absolute certainty of a creature
+    that has never been beaten in this room.
+  speciesid: 1
+  level: 1
+  gold: 15
+  stats:
+    strength:
+      training: 8
+    dexterity:
+      training: 4
+    vitality:
+      training: 6
+    perception:
+      training: 3
