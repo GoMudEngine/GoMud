@@ -292,3 +292,33 @@ func TestZoneInstance_RevokeAccessNotInList(t *testing.T) {
 	assert.True(t, inst.IsAuthorized(10))
 	assert.True(t, inst.IsAuthorized(20))
 }
+
+func TestScaleSpawnStatPools(t *testing.T) {
+	spawns := []SpawnInfo{
+		{MobId: 1, StatPool: 1},
+		{MobId: 2, StatPool: 2},
+		{MobId: 3, StatPool: 3},
+		{MobId: 4, StatPool: 0},
+	}
+	ScaleSpawnStatPools(spawns, 500, 50000)
+	assert.Equal(t, 500, spawns[0].StatPool)
+	assert.Equal(t, 1000, spawns[1].StatPool)
+	assert.Equal(t, 1500, spawns[2].StatPool)
+	assert.Equal(t, 500, spawns[3].StatPool)
+}
+
+func TestScaleSpawnStatPools_Cap(t *testing.T) {
+	spawns := []SpawnInfo{
+		{MobId: 1, StatPool: 3},
+	}
+	ScaleSpawnStatPools(spawns, 20000, 50000)
+	assert.Equal(t, 50000, spawns[0].StatPool)
+}
+
+func TestScaleSpawnStatPools_NoCap(t *testing.T) {
+	spawns := []SpawnInfo{
+		{MobId: 1, StatPool: 3},
+	}
+	ScaleSpawnStatPools(spawns, 20000, 0)
+	assert.Equal(t, 60000, spawns[0].StatPool)
+}

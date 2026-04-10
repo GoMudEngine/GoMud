@@ -214,6 +214,23 @@ func GetInstanceRegistry() *InstanceRegistry {
 	return instanceRegistry
 }
 
+// ScaleSpawnStatPools multiplies each spawn's StatPool by goldPaid.
+// Template stat pools act as multipliers (1=trash, 2=tough, 3=boss).
+// Spawns with StatPool 0 default to 1x. Cap of 0 means uncapped.
+func ScaleSpawnStatPools(spawns []SpawnInfo, goldPaid int, cap int) {
+	for i := range spawns {
+		mult := spawns[i].StatPool
+		if mult < 1 {
+			mult = 1
+		}
+		scaled := goldPaid * mult
+		if cap > 0 && scaled > cap {
+			scaled = cap
+		}
+		spawns[i].StatPool = scaled
+	}
+}
+
 // CreateZoneInstance clones a zone template into ephemeral rooms, wires up a
 // return portal in the entry room, stamps instance metadata on every ephemeral
 // room, and registers the instance in the global registry.
@@ -278,6 +295,14 @@ func CreateZoneInstance(
 		Expires:      "999 real hours",
 	}
 	entryRoom.AddTemporaryExit("return portal", returnExit)
+
+	// 5b. Scale mob stat pools based on gold paid.
+	cap := int(configs.GetBalanceConfig().InstanceStatPoolCap)
+	for _, ephId := range roomIdMap {
+		if room := LoadRoom(ephId); room != nil {
+			ScaleSpawnStatPools(room.SpawnInfo, goldPaid, cap)
+		}
+	}
 
 	// 6. Stamp instance metadata on every ephemeral room for scripting access.
 	for _, ephemeralId := range roomIdMap {
