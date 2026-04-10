@@ -182,7 +182,7 @@ func GenerateOasisCube(
 	if thresholdRoom != nil {
 		thresholdRoom.AddTemporaryExit("north", exit.TemporaryRoomExit{
 			RoomId:       entryCubeRoomId,
-			Title:        "Planar Wastes",
+			Title:        "north",
 			UserId:       0,
 			SpawnedRound: util.GetRoundCount(),
 			Expires:      "999 real hours",
