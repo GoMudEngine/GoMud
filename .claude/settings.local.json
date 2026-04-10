@@ -72,7 +72,10 @@
       "Bash(sed -i 's/mobid: 320/mobid: 325/' _datafiles/world/dogmud/mobs/instance_arena/325-arena_veteran_heavy.yaml)",
       "Bash(sed -i 's/mobid: 318/mobid: 323/' _datafiles/world/dogmud/rooms/instance_arena/5006.yaml _datafiles/world/dogmud/rooms/instance_arena/5007.yaml)",
       "Bash(sed -i 's/mobid: 319/mobid: 324/' _datafiles/world/dogmud/rooms/instance_arena/5008.yaml)",
-      "Bash(sed -i 's/mobid: 320/mobid: 325/' _datafiles/world/dogmud/rooms/instance_arena/5007.yaml)"
+      "Bash(sed -i 's/mobid: 320/mobid: 325/' _datafiles/world/dogmud/rooms/instance_arena/5007.yaml)",
+      "Bash(sed -i 's/respawnrate: \"30m\"/respawnrate: \"1h\"/' _datafiles/world/dogmud/rooms/instance_arena/5002.yaml)",
+      "Bash(sed -i 's/respawnrate: \"30m\"/respawnrate: \"1h\"/' _datafiles/world/dogmud/rooms/instance_arena/5006.yaml)",
+      "Bash(sed -i 's/respawnrate: \"45m\"/respawnrate: \"1h 30m\"/' _datafiles/world/dogmud/rooms/instance_arena/5006.yaml _datafiles/world/dogmud/rooms/instance_arena/5007.yaml)"
     ]
   },
   "defaultMode": "bypassPermissions"

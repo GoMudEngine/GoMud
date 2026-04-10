@@ -1,0 +1,17 @@
+itemid: 10028
+name: champion mace
+namesimple: mace
+description: >-
+  A brutal mace of blackened iron, its flanged head dented and
+  scarred from a hundred pit fights. The leather grip is dark
+  with old sweat and blood. Nothing elegant about it — this is
+  a weapon that wins fights through weight and violence. The
+  champion who carried it earned every dent.
+type: weapon
+hands: 1
+subtype: bludgeoning
+damage_multiplier: 0.55
+speedmultiplier: 0.85
+parryrating: 5
+weight: 4.5
+value: 65

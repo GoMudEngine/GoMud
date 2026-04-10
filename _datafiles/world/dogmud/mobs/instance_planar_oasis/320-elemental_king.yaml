@@ -35,5 +35,5 @@ character:
       training: 10
 itemdropchance: 75
 loot_pool:
-  - 10028
+  - 10027
   - 20072
