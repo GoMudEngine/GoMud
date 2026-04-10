@@ -27,6 +27,7 @@ func setRoomFunctions(vm *goja.Runtime) {
 	vm.Set(`GetMap`, GetMap)
 	vm.Set(`CreateInstancesFromRoomIds`, CreateInstancesFromRoomIds)
 	vm.Set(`CreateInstancesFromZone`, CreateInstancesFromZone)
+	vm.Set(`CreateInstance`, CreateInstance)
 }
 
 type ScriptRoom struct {
@@ -467,6 +468,46 @@ func (r ScriptRoom) RemoveCorpse(index int) bool {
 // # These functions get exported to the scripting engine
 //
 // ////////////////////////////////////////////////////////
+
+// CreateInstance creates a full instanced zone for the given user (and their
+// party members). A portal exit named "instance portal" is added to the
+// overworld room (roomId) pointing into the instance entry room.
+// Returns true on success, false on any failure.
+func CreateInstance(zoneName string, goldPaid int, userId int, roomId int) bool {
+
+	// Build the authorized user list: owner + party members.
+	authorizedUsers := []int{userId}
+	if party := parties.Get(userId); party != nil {
+		for _, memberId := range party.GetMembers() {
+			if memberId != userId {
+				authorizedUsers = append(authorizedUsers, memberId)
+			}
+		}
+	}
+
+	inst, err := rooms.CreateZoneInstance(zoneName, goldPaid, userId, authorizedUsers, roomId)
+	if err != nil {
+		mudlog.Error("CreateInstance", "zone", zoneName, "userId", userId, "error", err)
+		return false
+	}
+
+	// Add the entry portal in the overworld room.
+	owRoom := rooms.LoadRoom(roomId)
+	if owRoom == nil {
+		mudlog.Error("CreateInstance", "zone", zoneName, "msg", "could not load overworld room", "roomId", roomId)
+		return false
+	}
+
+	owRoom.AddTemporaryExit("instance portal", exit.TemporaryRoomExit{
+		RoomId:  inst.EntryRoomId,
+		Title:   "instance portal",
+		UserId:  0,
+		Expires: inst.PortalDuration,
+	})
+
+	return true
+}
+
 func CreateInstancesFromRoomIds(roomList []int) map[int]int {
 	ret, _ := rooms.CreateEphemeralRoomIds(roomList...)
 	return ret
