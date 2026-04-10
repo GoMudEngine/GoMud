@@ -65,7 +65,8 @@
       "Bash(echo \"Exit: $?\")",
       "Bash(mv _datafiles/world/dogmud/items/armor-20000/offhand/20054-sorens_ironbound_buckler.yaml _datafiles/world/dogmud/items/armor-20000/offhand/20067-sorens_ironbound_buckler.yaml)",
       "Bash(mv _datafiles/world/dogmud/items/armor-20000/body/20055-bandits_leather_vest.yaml _datafiles/world/dogmud/items/armor-20000/body/20068-bandits_leather_vest.yaml)",
-      "Bash(echo \"EXIT: $?\")"
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(echo \"EXIT:$?\")"
     ]
   },
   "defaultMode": "bypassPermissions"

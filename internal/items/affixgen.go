@@ -154,6 +154,11 @@ func GenerateAffixedItem(baseItemId int, goldPaid int, scalar float64) Item {
 	}
 
 	item.Spec = &specCopy
+
+	// Set display prefix based on dominant bonus type.
+	prefix := getAffixPrefix(&specCopy, &baseSpec)
+	item.Adjectives = append(item.Adjectives, prefix)
+
 	return item
 }
 
@@ -199,4 +204,80 @@ func applyBonus(spec *ItemSpec, bonusName string) {
 	case "skill_manifestation":
 		spec.StatMods.Add("manifestation", 1)
 	}
+}
+
+// isSkillMod returns true if the stat mod name is a skill (not a stat).
+func isSkillMod(name string) bool {
+	skills := []string{
+		"weapon-combat", "unarmed-combat", "skullduggery",
+		"spellcasting", "rhetoric", "manifestation",
+	}
+	for _, s := range skills {
+		if s == name {
+			return true
+		}
+	}
+	return false
+}
+
+// getAffixPrefix returns a descriptive prefix based on what type of
+// bonus dominated the point spend.
+func getAffixPrefix(spec *ItemSpec, baseSpec *ItemSpec) string {
+	dmgScore := 0
+	mitScore := 0
+	statScore := 0
+	skillScore := 0
+
+	// Check damage mult increase
+	if spec.DamageMultiplier > baseSpec.DamageMultiplier {
+		dmgScore += 10
+	}
+	if spec.SpellDamageMultiplier > baseSpec.SpellDamageMultiplier {
+		dmgScore += 10
+	}
+
+	// Check mitigation increases
+	if spec.PhysicalMitigation > baseSpec.PhysicalMitigation {
+		mitScore += spec.PhysicalMitigation - baseSpec.PhysicalMitigation
+	}
+	if spec.MagicalMitigation > baseSpec.MagicalMitigation {
+		mitScore += spec.MagicalMitigation - baseSpec.MagicalMitigation
+	}
+	if spec.ConvictionMitigation > baseSpec.ConvictionMitigation {
+		mitScore += spec.ConvictionMitigation - baseSpec.ConvictionMitigation
+	}
+
+	// Check stat/skill mods
+	for k, v := range spec.StatMods {
+		baseVal := 0
+		if baseSpec.StatMods != nil {
+			baseVal = baseSpec.StatMods[k]
+		}
+		added := v - baseVal
+		if added > 0 {
+			// Skills cost 12 pts, stats cost 3 — weight accordingly
+			if isSkillMod(k) {
+				skillScore += added * 4
+			} else {
+				statScore += added
+			}
+		}
+	}
+
+	// Pick dominant category
+	best := dmgScore
+	prefix := "Keen"
+	if mitScore > best {
+		best = mitScore
+		prefix = "Warding"
+	}
+	if statScore > best {
+		best = statScore
+		prefix = "Empowered"
+	}
+	if skillScore > best {
+		prefix = "Masterwork"
+	}
+
+	return prefix
 }
