@@ -1,0 +1,37 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">instances</ansi>
+
+Instanced zones are dangerous, private areas you can enter
+by paying a Riftkeeper NPC. The more gold you invest, the
+tougher the enemies -- and the better the potential loot.
+
+<ansi fg="yellow">How It Works:</ansi>
+
+  1. Find a Riftkeeper NPC (Temple District in Thornwall).
+  2. Ask about available zones.
+  3. Name a zone and how much gold to invest.
+  4. A portal opens for you and your current party.
+
+<ansi fg="yellow">Important Rules:</ansi>
+
+  Party up BEFORE purchasing! Only party members at the
+  time of purchase can enter the portal. Members added
+  later cannot get in.
+
+  The portal stays open for a limited time. When it closes,
+  you can still leave through the return portal inside.
+
+  Your companions follow you in automatically.
+
+<ansi fg="yellow">Death:</ansi>
+
+  Some zones allow re-entry after dying. Others expel you
+  permanently on death. The Riftkeeper will tell you which
+  rules apply for each zone.
+
+<ansi fg="yellow">Storage:</ansi>
+
+  Loot drops normally from enemies inside. Anything left
+  on the ground when the instance closes is lost forever.
+  Pick up your loot!
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help party</ansi>, <ansi fg="command">help combat</ansi>

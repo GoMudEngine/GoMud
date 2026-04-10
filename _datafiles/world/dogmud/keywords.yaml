@@ -94,6 +94,7 @@ help:
       - read
       - put
     general:
+      - instances
       - motd
       - online
       - quit

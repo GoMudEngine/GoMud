@@ -1,0 +1,23 @@
+roomid: 1002
+zone: Thornwall City
+title: The Rift Chamber
+description: >-
+  A circular chamber beneath the Temple District, its walls lined
+  with dark stone etched in geometric patterns that pulse with faint
+  light. A massive stone archway dominates the far wall, its surface
+  carved with runes that shift and rearrange when observed too
+  closely. The air smells of ozone and something older -- the dry,
+  electric scent of places that should not be connected touching.
+  A figure in shimmering robes tends the archway with practiced care.
+biome: city
+coord:
+  x: 3
+  y: 1
+  z: 0
+exits:
+  west:
+    roomid: 467
+    mapdirection: west
+spawninfo:
+  - mobid: 315
+    respawnrate: "1s"
