@@ -473,7 +473,10 @@ func (r ScriptRoom) RemoveCorpse(index int) bool {
 // party members). A portal exit named "instance portal" is added to the
 // overworld room (roomId) pointing into the instance entry room.
 // Returns true on success, false on any failure.
-func CreateInstance(zoneName string, goldPaid int, userId int, roomId int) bool {
+// CreateInstance clones an instanced zone and returns the ephemeral entry
+// room ID (0 on failure). The caller is responsible for creating the
+// overworld portal via room.AddTemporaryExit in the script.
+func CreateInstance(zoneName string, goldPaid int, userId int, roomId int) int {
 
 	// Build the authorized user list: owner + party members.
 	authorizedUsers := []int{userId}
@@ -488,24 +491,10 @@ func CreateInstance(zoneName string, goldPaid int, userId int, roomId int) bool 
 	inst, err := rooms.CreateZoneInstance(zoneName, goldPaid, userId, authorizedUsers, roomId)
 	if err != nil {
 		mudlog.Error("CreateInstance", "zone", zoneName, "userId", userId, "error", err)
-		return false
+		return 0
 	}
 
-	// Add the entry portal in the overworld room.
-	owRoom := rooms.LoadRoom(roomId)
-	if owRoom == nil {
-		mudlog.Error("CreateInstance", "zone", zoneName, "msg", "could not load overworld room", "roomId", roomId)
-		return false
-	}
-
-	owRoom.AddTemporaryExit("portal", exit.TemporaryRoomExit{
-		RoomId:  inst.EntryRoomId,
-		Title:   "shimmering portal",
-		UserId:  0,
-		Expires: inst.PortalDuration,
-	})
-
-	return true
+	return inst.EntryRoomId
 }
 
 func CreateInstancesFromRoomIds(roomList []int) map[int]int {
