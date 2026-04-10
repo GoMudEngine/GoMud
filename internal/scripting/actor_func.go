@@ -277,6 +277,10 @@ func (a ScriptActor) GetPartyMembers() []ScriptActor {
 	return append(partyMembers, mobPartyMembers...)
 }
 
+func (a ScriptActor) GetGold() int {
+	return a.characterRecord.Gold
+}
+
 func (a ScriptActor) AddGold(amt int, bankAmt ...int) {
 	a.characterRecord.Gold += amt
 	if a.characterRecord.Gold < 0 {
