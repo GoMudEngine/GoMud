@@ -10,7 +10,7 @@ description: >-
   not use conventional tools.
 type: body
 subtype: wearable
-physical_mitigation: 8
-magical_mitigation: 3
+physical_mitigation: 12
+magical_mitigation: 5
 value: 90
 weight: 10.0

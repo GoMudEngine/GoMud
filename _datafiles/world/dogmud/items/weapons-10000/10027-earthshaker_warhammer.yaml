@@ -12,6 +12,6 @@ hands: 2
 subtype: bludgeoning
 weight: 3.0
 speedmultiplier: 0.6
-damage_multiplier: 0.70
-parryrating: 6
-value: 50
+damage_multiplier: 0.90
+parryrating: 8
+value: 80

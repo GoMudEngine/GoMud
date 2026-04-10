@@ -10,8 +10,8 @@ description: >-
   outline slightly indistinct from a distance.
 type: shoulders
 subtype: wearable
-physical_mitigation: 3
-magical_mitigation: 3
-conviction_mitigation: 3
+physical_mitigation: 5
+magical_mitigation: 5
+conviction_mitigation: 5
 value: 75
 weight: 3.0

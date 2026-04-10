@@ -11,7 +11,7 @@ description: >-
 type: weapon
 hands: 1
 subtype: slashing
-damage_multiplier: 0.45
+damage_multiplier: 0.55
 speedmultiplier: 1.3
 parryrating: 5
 weight: 2.0

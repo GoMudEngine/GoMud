@@ -11,7 +11,7 @@ description: >-
   the cold clarifies intent.
 type: head
 subtype: wearable
-magical_mitigation: 6
-conviction_mitigation: 3
+magical_mitigation: 9
+conviction_mitigation: 5
 value: 85
 weight: 1.5

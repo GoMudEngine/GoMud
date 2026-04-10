@@ -11,8 +11,8 @@ description: >-
 type: weapon
 hands: 1
 subtype: sceptre
-damage_multiplier: 0.55
-spell_damage_multiplier: 1.25
+damage_multiplier: 0.65
+spell_damage_multiplier: 1.45
 speedmultiplier: 0.9
 parryrating: 4
 weight: 3.5

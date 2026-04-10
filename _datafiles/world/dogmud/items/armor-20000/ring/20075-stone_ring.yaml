@@ -10,7 +10,7 @@ description: >-
 type: ring
 subtype: wearable
 statmods:
-  strength: 3
-  vitality: 2
+  strength: 5
+  vitality: 4
 value: 40
 weight: 0.5
