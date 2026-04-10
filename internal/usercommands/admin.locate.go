@@ -78,6 +78,9 @@ func Locate(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	for _, mobId := range mobs.GetAllMobInstanceIds() {
 
 		mob := mobs.GetInstance(mobId)
+		if mob == nil {
+			continue
+		}
 
 		if !listAll {
 			testName := strings.ToLower(mob.Character.Name)

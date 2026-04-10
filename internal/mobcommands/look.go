@@ -109,6 +109,9 @@ func Look(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		} else if mobId > 0 {
 
 			m := mobs.GetInstance(mobId)
+			if m == nil {
+				return true, nil
+			}
 
 			if !isSneaking {
 				targetName := m.Character.GetMobName(0).String()

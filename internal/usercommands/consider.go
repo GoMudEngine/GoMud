@@ -52,6 +52,10 @@ func Consider(rest string, user *users.UserRecord, room *rooms.Room, flags event
 			} else if mobId > 0 {
 
 				m := mobs.GetInstance(mobId)
+				if m == nil {
+					user.SendText("You don't see them here.")
+					return true, nil
+				}
 
 				p1 := combat.PowerScore(*user.Character)
 				p2 := combat.PowerScore(m.Character)
