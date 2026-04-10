@@ -2,6 +2,12 @@
 
 ## 2026-04-10 — Instanced Zones: Arena, Planar Oasis, Randomized Loot
 
+### Hot Fixes
+- **Server crash fix**: `look` command on a mob with a stale instance
+  reference no longer crashes the server. Added nil checks to
+  consider, locate, and mob-look commands as well.
+- **Taunt exploit fix**: can no longer taunt your own companions.
+
 ### New: Instanced Zones
 - Pay the **Riftkeeper Sable** (Rift Chamber, east of Temple District)
   to open a private portal to a dangerous zone. More gold = tougher
