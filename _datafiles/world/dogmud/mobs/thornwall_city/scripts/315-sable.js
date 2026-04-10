@@ -23,8 +23,12 @@ function onAsk(mob, room, eventDetails) {
         return true;
     }
 
+    // Debug: log what we received
+    mob.Command('say [DEBUG] Received text: ' + text + ' (length: ' + text.length + ')');
+
     // Parse "<zone> <gold>" format
     var parts = text.split(' ');
+    mob.Command('say [DEBUG] Parts: ' + parts.length + ' = ' + parts.join(', '));
     if (parts.length >= 2) {
         var zoneName = parts[0];
         var goldAmount = parseInt(parts[1], 10);
@@ -57,13 +61,15 @@ function onAsk(mob, room, eventDetails) {
 
         user.AddGold(-goldAmount);
 
+        mob.Command('say [DEBUG] Calling CreateInstance(' + templateZone + ', ' + goldAmount + ', ' + user.UserId() + ', ' + room.RoomId() + ')');
         var success = CreateInstance(templateZone, goldAmount,
-            user.UserId(), room.GetRoomId());
+            user.UserId(), room.RoomId());
+        mob.Command('say [DEBUG] CreateInstance returned: ' + success);
 
         if (success) {
             mob.Command('say The rift is open. You and your companions may enter.');
             mob.Command('say It will hold for a time. Do not tarry.');
-            SendRoomMessage(room.GetRoomId(),
+            SendRoomMessage(room.RoomId(),
                 'The stone archway flares with energy. A shimmering portal appears.',
                 0);
         } else {
