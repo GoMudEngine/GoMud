@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	cubeSize = 5
-	cubeTotal = cubeSize * cubeSize * cubeSize // 125
+	cubeSize  = 4
+	cubeTotal = cubeSize * cubeSize * cubeSize // 64
 )
 
 // Trash elemental mob IDs.
@@ -35,7 +35,7 @@ var cubeDescriptions = []string{
 	"The sand gives way to packed clay veined with glowing mineral deposits. The warmth here is almost pleasant.",
 }
 
-var cubeTitles = []string{"Elemental Depths", "Lower Wastes", "Middle Wastes", "Upper Wastes", "Elemental Heights"}
+var cubeTitles = []string{"Elemental Depths", "Lower Wastes", "Upper Wastes", "Elemental Heights"}
 
 // wrapCoord wraps a coordinate into [0, size).
 func wrapCoord(v, size int) int {
