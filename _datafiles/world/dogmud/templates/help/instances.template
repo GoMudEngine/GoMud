@@ -7,9 +7,15 @@ tougher the enemies -- and the better the potential loot.
 <ansi fg="yellow">How It Works:</ansi>
 
   1. Find a Riftkeeper NPC (Temple District in Thornwall).
-  2. Ask about available zones.
-  3. Name a zone and how much gold to invest.
-  4. A portal opens for you and your current party.
+  2. <ansi fg="command">ask sable portals</ansi> to see available zones.
+  3. <ansi fg="command">ask sable arena 200</ansi> to open a portal to the
+     Arena with 200 gold invested. The gold is deducted
+     from your purse immediately.
+  4. Type the zone name to enter (e.g. <ansi fg="command">arena</ansi>).
+
+  The amount of gold you invest determines how tough the
+  enemies are and how good the loot can be. Invest more
+  for a greater challenge and greater rewards.
 
 <ansi fg="yellow">Important Rules:</ansi>
 

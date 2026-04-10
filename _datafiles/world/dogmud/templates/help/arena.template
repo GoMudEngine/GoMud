@@ -27,6 +27,13 @@ expulsion. There is no coming back.
   Arena fighters are unique, with properties that vary
   each time.
 
+<ansi fg="yellow">How to Enter:</ansi>
+
+  Visit the Rift Chamber (east of Temple District) and
+  <ansi fg="command">ask sable arena 200</ansi> (or any amount of gold).
+  The gold is deducted and a portal opens. Type
+  <ansi fg="command">arena</ansi> to enter.
+
 <ansi fg="yellow">Tips:</ansi>
 
   Bring potions and grenades. Prepare your bandolier

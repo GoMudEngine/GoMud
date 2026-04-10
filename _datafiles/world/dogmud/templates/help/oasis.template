@@ -37,5 +37,12 @@ fold back on themselves and elementals roam freely.
   track of your position — it is easy to become lost.
   The entrance is the only fixed point of reference.
 
+<ansi fg="yellow">How to Enter:</ansi>
+
+  Visit the Rift Chamber (east of Temple District) and
+  <ansi fg="command">ask sable oasis 200</ansi> (or any amount of gold).
+  The gold is deducted and a portal opens. Type
+  <ansi fg="command">oasis</ansi> to enter.
+
 <ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help instances</ansi>,
   <ansi fg="command">help arena</ansi>, <ansi fg="command">help party</ansi>
