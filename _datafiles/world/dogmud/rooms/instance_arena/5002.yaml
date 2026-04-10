@@ -11,9 +11,9 @@ exits:
     roomid: 5001
     mapdirection: south
 spawninfo:
-  - mobid: 73
+  - mobid: 316
     statpool: 1
     respawnrate: "15m"
-  - mobid: 73
+  - mobid: 317
     statpool: 1
     respawnrate: "15m"

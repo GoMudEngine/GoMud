@@ -1,0 +1,34 @@
+mobid: 317
+zone: Instance Arena
+archetype: fighting
+statpool: 1
+hostile: true
+groups:
+  - humanoid
+activitylevel: 20
+idlecommands:
+  - 'emote flips a blade between fingers with practiced ease'
+  - ''
+  - 'emote watches the shadows, waiting'
+  - ''
+combatcommands:
+  - 'emote darts in low, blade seeking soft flesh'
+  - ''
+  - 'emote feints left and strikes right'
+  - ''
+character:
+  name: arena cutthroat
+  description: >-
+    Lean and quick, built for speed over power. A pair of
+    short blades hang from a belt of cracked leather. The
+    eyes are flat and assessing — the look of someone who
+    counts wounds rather than kills, and prefers the ones
+    that bleed slowly.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 5
+    perception:
+      training: 3
