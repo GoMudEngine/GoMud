@@ -19,9 +19,19 @@ activitylevel: 15
 crafter: true
 crafterskill: jewelcrafting
 crafterrecipeids:
+  - chrysalis-setting
   - copper-ring
-  - simple-pendant
+  - crystalline-decanter
+  - engraved-bracelet
+  - gem-set-necklace
+  - gold-signet-ring
+  - master-lockpicks
+  - masterwork-gem-pendant
   - polished-stone-amulet
+  - precision-disarm-kit
+  - sealed-phial
+  - silver-ring
+  - simple-pendant
 crafterrestockmaterials:
   - 40021
   - 40022

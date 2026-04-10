@@ -20,9 +20,18 @@ activitylevel: 15
 crafter: true
 crafterskill: blacksmithing
 crafterrecipeids:
-  - iron-dagger
+  - chain-links
+  - chainmail-vest
   - iron-buckler
+  - iron-dagger
   - iron-short-sword
+  - masterwork-plate-helm
+  - reinforced-disarm-kit
+  - reinforced-wooden-shield
+  - steel-buckler
+  - steel-ingot
+  - steel-lockpicks
+  - steel-longsword
 crafterrestockmaterials:
   - 40001
   - 40002

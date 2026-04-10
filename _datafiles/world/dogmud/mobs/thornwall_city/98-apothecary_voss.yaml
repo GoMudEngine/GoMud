@@ -20,8 +20,33 @@ activitylevel: 10
 crafter: true
 crafterskill: alchemy
 crafterrecipeids:
+  - battle-trance
+  - berserker-elixir
+  - cats-eye-draught
+  - chrysalis-catalyst
+  - clarity-tonic
+  - conviction-draught
+  - elixir-of-renewal
+  - essence-of-growth
+  - fire-resistance-draught
+  - firebomb
+  - flashbang
   - healing-salve
+  - ironhide-brew
+  - mindshield-elixir
+  - minor-antidote
+  - mutagen-brew
+  - preachers-tincture
+  - purging-draught
+  - savants-infusion
+  - silver-tongue-oil
   - stamina-tonic
+  - stone-stomach
+  - swiftfoot-essence
+  - toxic-flask
+  - veilguard-tonic
+  - warriors-brew
+  - windrunner-draught
 crafterrestockmaterials:
   - 40004
   - 40005
