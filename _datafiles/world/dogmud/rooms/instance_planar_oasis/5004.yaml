@@ -17,7 +17,7 @@ exits:
 spawninfo:
   - mobid: 318
     statpool: 1
-    respawnrate: "15m"
+    respawnrate: "1h"
   - mobid: 319
     statpool: 1
-    respawnrate: "15m"
+    respawnrate: "1h"

@@ -1,7 +1,7 @@
 mobid: 320
 zone: Instance Planar Oasis
 archetype: fighting
-statpool: 3
+statpool: 4
 hostile: true
 groups:
   - elemental

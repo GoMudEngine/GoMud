@@ -1,7 +1,7 @@
 mobid: 321
 zone: Instance Planar Oasis
 archetype: casting
-statpool: 3
+statpool: 4
 hostile: true
 groups:
   - elemental
