@@ -131,26 +131,66 @@ func GenerateAffixedItem(baseItemId int, goldPaid int, scalar float64) Item {
 		return item
 	}
 
-	// Spend the budget one purchase at a time.
-	budget := rolledBudget
-	for budget > 0 {
-		// Collect candidates whose cost fits within remaining budget.
-		candidates := make([]BonusType, 0, len(eligible))
-		for _, b := range eligible {
-			if b.Cost <= budget {
-				candidates = append(candidates, b)
+	// Build weighted selection table. Base weights favor the item's
+	// primary role: weapons prefer damage, armor prefers mitigation.
+	// The snowball mechanic increases a bonus's weight each time it's
+	// picked, creating focused items instead of thin spreads.
+	weights := make(map[string]int, len(eligible))
+	for _, b := range eligible {
+		switch b.Category {
+		case CategoryWeapon, CategoryWeaponCaster:
+			weights[b.Name] = 5 // damage mult heavily favored on weapons
+		case CategoryArmor:
+			weights[b.Name] = 5 // mitigations heavily favored on armor
+		case CategoryAny:
+			if len(b.Name) > 6 && b.Name[:6] == "skill_" {
+				weights[b.Name] = 1 // skills rare
+			} else {
+				weights[b.Name] = 2 // stats moderate
 			}
 		}
-		if len(candidates) == 0 {
+	}
+
+	// Spend the budget one purchase at a time with weighted selection.
+	budget := rolledBudget
+	for budget > 0 {
+		// Collect affordable candidates and their weights.
+		type weightedCandidate struct {
+			bonus  BonusType
+			weight int
+		}
+		candidates := make([]weightedCandidate, 0, len(eligible))
+		totalWeight := 0
+		for _, b := range eligible {
+			if b.Cost <= budget {
+				w := weights[b.Name]
+				if w < 1 {
+					w = 1
+				}
+				candidates = append(candidates, weightedCandidate{b, w})
+				totalWeight += w
+			}
+		}
+		if len(candidates) == 0 || totalWeight == 0 {
 			break
 		}
 
-		// Pick a random candidate.
-		chosen := candidates[util.Rand(len(candidates))]
-		budget -= chosen.Cost
+		// Weighted random selection.
+		roll := util.Rand(totalWeight)
+		var chosen BonusType
+		for _, wc := range candidates {
+			roll -= wc.weight
+			if roll < 0 {
+				chosen = wc.bonus
+				break
+			}
+		}
 
-		// Apply the chosen bonus to the spec copy.
+		budget -= chosen.Cost
 		applyBonus(&specCopy, chosen.Name)
+
+		// Snowball: increase weight of chosen bonus for next iteration.
+		weights[chosen.Name]++
 	}
 
 	item.Spec = &specCopy
