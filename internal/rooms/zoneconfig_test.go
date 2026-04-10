@@ -28,7 +28,7 @@ func TestZoneConfig_ValidateInstancePortalDuration(t *testing.T) {
 	zc.Instanced = true
 	err := zc.Validate()
 	assert.NoError(t, err)
-	assert.Equal(t, "30m", zc.PortalDuration)
+	assert.Equal(t, "30 real minutes", zc.PortalDuration)
 }
 
 func TestZoneConfig_ValidateInstanceCustomPortalDuration(t *testing.T) {

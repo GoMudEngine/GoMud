@@ -61,7 +61,7 @@ function onAsk(mob, room, eventDetails) {
             user.UserId(), room.RoomId());
 
         if (entryRoomId > 0) {
-            room.AddTemporaryExit('portal', 'shimmering portal', entryRoomId, '30m');
+            room.AddTemporaryExit('portal', 'shimmering portal', entryRoomId, '30 real minutes');
             mob.Command('say The rift is open. You and your companions may enter.');
             mob.Command('say It will hold for a time. Do not tarry.');
             SendRoomMessage(room.RoomId(),

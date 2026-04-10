@@ -275,7 +275,7 @@ func CreateZoneInstance(
 		Title:        "Return Portal",
 		UserId:       0, // system-created
 		SpawnedRound: inst.CreatedRound,
-		Expires:      "999h",
+		Expires:      "999 real hours",
 	}
 	entryRoom.AddTemporaryExit("return portal", returnExit)
 

@@ -35,7 +35,7 @@ func (z *ZoneConfig) Validate() error {
 	}
 
 	if z.Instanced && z.PortalDuration == "" {
-		z.PortalDuration = "30m"
+		z.PortalDuration = "30 real minutes"
 	}
 
 	return nil
