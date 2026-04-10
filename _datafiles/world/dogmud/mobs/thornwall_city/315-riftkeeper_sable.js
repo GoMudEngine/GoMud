@@ -1,3 +1,9 @@
+function onCommand_talk(rest, mob, room) {
+    mob.Command('say I am Sable. I tend the rift archway.');
+    mob.Command('say If you seek passage to dangerous places, ask me about portals.');
+    return true;
+}
+
 function onAsk(mob, room, eventDetails) {
     var user = GetUser(eventDetails.sourceId);
     if (!user) return false;
@@ -65,6 +71,17 @@ function onAsk(mob, room, eventDetails) {
             mob.Command('say Something went wrong. The planes resist me. Your gold is returned.');
         }
 
+        return true;
+    }
+
+    // General greetings / intro
+    if (text === 'hello' || text === 'hi' || text === 'help'
+        || text === 'who' || text === 'what' || text === 'quest') {
+        mob.Command('say I am Sable. I open rifts to places best left undisturbed.');
+        mob.Command('say For the right price in gold, I can send you and your party somewhere dangerous.');
+        mob.Command('say Ask me about portals if you want to know more.');
+        SendUserMessage(user.UserId(),
+            '<ansi fg="181">  [Try: ask sable portals]</ansi>');
         return true;
     }
 
