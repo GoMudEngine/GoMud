@@ -130,6 +130,8 @@ func GenerateOasisCube(
 
 	// 5. Assign mob spawns: 1 trash elemental per room. Force hostile
 	//    since the base templates are companion mobs (not hostile).
+	//    All mobs wander through the cube.
+	wanderIdle := []string{"wander", "", "wander", ""}
 	for i := 0; i < cubeTotal; i++ {
 		rooms[i].SpawnInfo = []SpawnInfo{
 			{
@@ -137,6 +139,8 @@ func GenerateOasisCube(
 				StatPool:     1,
 				RespawnRate:  "2 real hours",
 				ForceHostile: true,
+				MaxWander:    5,
+				IdleCommands: wanderIdle,
 			},
 		}
 	}
@@ -150,6 +154,8 @@ func GenerateOasisCube(
 				StatPool:     2,
 				RespawnRate:  "2 real hours",
 				ForceHostile: true,
+				MaxWander:    5,
+				IdleCommands: wanderIdle,
 			},
 		}
 	}
@@ -163,6 +169,8 @@ func GenerateOasisCube(
 				StatPool:     4,
 				RespawnRate:  "2 real hours",
 				ForceHostile: true,
+				MaxWander:    5,
+				IdleCommands: wanderIdle,
 			},
 		}
 	}
