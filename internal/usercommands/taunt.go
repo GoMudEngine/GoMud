@@ -31,9 +31,15 @@ func Taunt(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			return true, nil
 		}
 		if targetMId > 0 {
-			if m := mobs.GetInstance(targetMId); m != nil && m.IsNonCombatant() {
-				user.SendText(fmt.Sprintf(`You can't attack <ansi fg="mobname">%s</ansi>.`, m.Character.Name))
-				return true, nil
+			if m := mobs.GetInstance(targetMId); m != nil {
+				if m.IsNonCombatant() {
+					user.SendText(fmt.Sprintf(`You can't attack <ansi fg="mobname">%s</ansi>.`, m.Character.Name))
+					return true, nil
+				}
+				if m.Character.IsCharmed(user.UserId) {
+					user.SendText(`You can't taunt your own companion.`)
+					return true, nil
+				}
 			}
 			user.Character.SetAggro(0, targetMId, characters.DefaultAttack)
 		} else {
