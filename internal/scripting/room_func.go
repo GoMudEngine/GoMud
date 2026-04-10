@@ -360,7 +360,9 @@ func (r ScriptRoom) AddTemporaryExit(exitNameSimple string, exitNameFancy string
 	}
 
 	// Spawn a portal in the room that leads to the portal location
-	return r.roomRecord.AddTemporaryExit(exitNameSimple, tmpExit)
+	result := r.roomRecord.AddTemporaryExit(exitNameSimple, tmpExit)
+	mudlog.Info("ScriptRoom.AddTemporaryExit", "exitName", exitNameSimple, "title", exitNameFancy, "roomId", exitRoomId, "expires", expiresTimeString, "result", result, "targetRoom", r.roomId, "exitsTemp", len(r.roomRecord.ExitsTemp))
+	return result
 }
 
 func (r ScriptRoom) RemoveTemporaryExit(exitNameSimple string, exitNameFancy string, exitRoomId int) bool {

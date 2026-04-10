@@ -169,6 +169,12 @@ func TryEphemeralCleanup(ephemeralRoomId int) []int {
 		if len(room.players) > 0 {
 			return []int{}
 		}
+
+		// Don't clean up rooms belonging to an active instance —
+		// instance cleanup is handled separately via CleanupEmptyInstances.
+		if instanceRegistry.FindByRoomId(ephemeralRoomId) != nil {
+			return []int{}
+		}
 	}
 
 	deletedMin := 0
