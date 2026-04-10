@@ -252,18 +252,64 @@ func CreateZoneInstance(
 	}
 
 	// 2. Clone the zone into ephemeral rooms.
-	roomIdMap, err := CreateEphemeralZone(zoneName)
-	if err != nil {
-		return nil, fmt.Errorf("CreateZoneInstance: failed to clone zone %q: %w", zoneName, err)
+	//    For the oasis zone, clone only the entry room and generate the
+	//    cube procedurally. Other zones use the standard full-zone clone.
+	var roomIdMap map[int]int
+	var ephemeralEntryId int
+	var err error
+
+	if zoneName == "Instance Planar Oasis" {
+		// Clone only the entry room (Oasis Threshold).
+		roomIdMap, err = CreateEphemeralRoomIds(zCfg.EntryRoom)
+		if err != nil {
+			return nil, fmt.Errorf("CreateZoneInstance: failed to clone entry room for %q: %w", zoneName, err)
+		}
+
+		var ok bool
+		ephemeralEntryId, ok = roomIdMap[zCfg.EntryRoom]
+		if !ok {
+			return nil, fmt.Errorf("CreateZoneInstance: entry room %d not in cloned rooms for %q", zCfg.EntryRoom, zoneName)
+		}
+
+		// Remove the template north exit (pointed to room 5004) since the
+		// cube generator will add a temporary north exit to the cube entry.
+		entryRoom := LoadRoom(ephemeralEntryId)
+		if entryRoom != nil {
+			delete(entryRoom.Exits, "north")
+		}
+
+		// Generate the 5x5x5 wrapping cube.
+		cubeRoomIds, _, cubeErr := GenerateOasisCube(
+			ephemeralEntryId,
+			zoneName,
+			goldPaid,
+			ephemeralEntryId, // instanceId
+			zCfg.AllowRecall,
+			zCfg.DeathPolicy,
+		)
+		if cubeErr != nil {
+			return nil, fmt.Errorf("CreateZoneInstance: cube generation failed for %q: %w", zoneName, cubeErr)
+		}
+
+		// Add all cube rooms to the roomIdMap so the instance registry
+		// indexes them and cleanup works.
+		for _, cubeId := range cubeRoomIds {
+			roomIdMap[cubeId] = cubeId
+		}
+	} else {
+		roomIdMap, err = CreateEphemeralZone(zoneName)
+		if err != nil {
+			return nil, fmt.Errorf("CreateZoneInstance: failed to clone zone %q: %w", zoneName, err)
+		}
+
+		var ok bool
+		ephemeralEntryId, ok = roomIdMap[zCfg.EntryRoom]
+		if !ok {
+			return nil, fmt.Errorf("CreateZoneInstance: entry room %d not in cloned zone %q", zCfg.EntryRoom, zoneName)
+		}
 	}
 
-	// 3. Resolve the ephemeral entry room.
-	ephemeralEntryId, ok := roomIdMap[zCfg.EntryRoom]
-	if !ok {
-		return nil, fmt.Errorf("CreateZoneInstance: entry room %d not in cloned zone %q", zCfg.EntryRoom, zoneName)
-	}
-
-	// 4. Build the ZoneInstance struct.
+	// 3. Build the ZoneInstance struct.
 	inst := &ZoneInstance{
 		InstanceId:      ephemeralEntryId,
 		TemplateZone:    zoneName,
@@ -279,7 +325,7 @@ func CreateZoneInstance(
 		RoomIdMap:       roomIdMap,
 	}
 
-	// 5. Add a return portal in the ephemeral entry room pointing back to the
+	// 4. Add a return portal in the ephemeral entry room pointing back to the
 	//    overworld. Expires is set very long; actual cleanup is handled by
 	//    the instance cleanup system when all players leave.
 	entryRoom := LoadRoom(ephemeralEntryId)
@@ -296,7 +342,7 @@ func CreateZoneInstance(
 	}
 	entryRoom.AddTemporaryExit("return portal", returnExit)
 
-	// 5b. Scale mob stat pools based on gold paid.
+	// 5. Scale mob stat pools based on gold paid.
 	cap := int(configs.GetBalanceConfig().InstanceStatPoolCap)
 	for _, ephId := range roomIdMap {
 		if room := LoadRoom(ephId); room != nil {
