@@ -27,3 +27,6 @@ character:
   speciesid: 37
   level: 1
   gold: 0
+itemdropchance: 50
+loot_pool:
+  - 20075

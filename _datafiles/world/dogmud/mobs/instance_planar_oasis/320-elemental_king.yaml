@@ -33,3 +33,7 @@ character:
       training: 10
     vitality:
       training: 10
+itemdropchance: 75
+loot_pool:
+  - 10028
+  - 20072

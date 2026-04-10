@@ -33,3 +33,7 @@ character:
       training: 8
   skills:
     skullduggery: 3
+itemdropchance: 75
+loot_pool:
+  - 10030
+  - 20074

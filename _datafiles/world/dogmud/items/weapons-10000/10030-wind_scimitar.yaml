@@ -1,0 +1,18 @@
+itemid: 10030
+name: wind scimitar
+namesimple: scimitar
+description: >-
+  A curved blade of compressed air made solid — semi-translucent,
+  its edge a constant rushing whisper. The steel-like material
+  flexes slightly under pressure and springs back instantly. It
+  catches ambient wind and adds it to each swing with unnerving
+  efficiency. The guard is a swirl of frozen gale-force current
+  that bends lesser blades aside on contact.
+type: weapon
+hands: 1
+subtype: slashing
+damage_multiplier: 0.45
+speedmultiplier: 1.3
+parryrating: 5
+weight: 2.0
+value: 70

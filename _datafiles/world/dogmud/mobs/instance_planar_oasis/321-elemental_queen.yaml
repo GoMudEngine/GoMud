@@ -34,3 +34,7 @@ character:
       training: 8
   skills:
     spellcasting: 5
+itemdropchance: 75
+loot_pool:
+  - 10029
+  - 20073
