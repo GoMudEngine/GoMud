@@ -34,4 +34,15 @@ tougher the enemies -- and the better the potential loot.
   on the ground when the instance closes is lost forever.
   Pick up your loot!
 
-<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help party</ansi>, <ansi fg="command">help combat</ansi>
+<ansi fg="yellow">Available Zones:</ansi>
+
+  <ansi fg="command">Arena</ansi>    A brutal linear gauntlet. Death ends
+             your run. No recall. Fast and dangerous.
+  <ansi fg="command">Oasis</ansi>    A three-dimensional elemental maze.
+             Death allows re-entry. Recall works.
+             Methodical exploration rewarded.
+
+  Type <ansi fg="command">help arena</ansi> or <ansi fg="command">help oasis</ansi> for details.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help arena</ansi>,
+  <ansi fg="command">help oasis</ansi>, <ansi fg="command">help party</ansi>, <ansi fg="command">help combat</ansi>
