@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/exit"
+	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -152,6 +154,56 @@ func (ir *InstanceRegistry) CleanupEmptyInstances() {
 		}
 	}
 	ir.instances = remaining
+}
+
+// CheckPortalTimers broadcasts warning messages to players inside instances
+// when the portal timer is running low (5 minutes and 1 minute remaining).
+func (ir *InstanceRegistry) CheckPortalTimers() {
+	ir.mu.RLock()
+	defer ir.mu.RUnlock()
+
+	if len(ir.instances) == 0 {
+		return
+	}
+
+	c := configs.GetConfig()
+	currentRound := util.GetRoundCount()
+
+	fiveMinRounds := uint64(c.Timing.MinutesToRounds(5))
+	oneMinRounds := uint64(c.Timing.MinutesToRounds(1))
+
+	for _, inst := range ir.instances {
+		if inst.PortalDuration == `` {
+			continue
+		}
+
+		g := gametime.GetDate(inst.CreatedRound)
+		expiryRound := g.AddPeriod(inst.PortalDuration)
+
+		if currentRound >= expiryRound {
+			continue // already expired — cleanup handled elsewhere
+		}
+
+		remainingRounds := expiryRound - currentRound
+
+		var msg string
+		switch remainingRounds {
+		case fiveMinRounds:
+			msg = `<ansi fg="yellow">The portal flickers — it won't hold much longer.</ansi>`
+		case oneMinRounds:
+			msg = `<ansi fg="red">The portal is barely a shimmer now. Leave soon or find your own way out.</ansi>`
+		}
+
+		if msg == `` {
+			continue
+		}
+
+		for _, ephId := range inst.RoomIdMap {
+			if room := LoadRoom(ephId); room != nil {
+				room.SendText(msg)
+			}
+		}
+	}
 }
 
 // Package-level singleton.
