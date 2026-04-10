@@ -267,6 +267,9 @@ type Balance struct {
 	BarterMaxBonus         ConfigFloat `yaml:"BarterMaxBonus,omitempty"`         // Max fractional sell-price bonus a player can get via bartering (default 0.15)
 	StorageFeePerItem      ConfigInt   `yaml:"StorageFeePerItem"`                // Gold charged per stored item per game month (default 1)
 
+	// ── LOOT ──────────────────────────────────────────────────────────────────
+	LootBudgetScalar ConfigFloat `yaml:"LootBudgetScalar"` // Multiplier for sqrt(goldPaid) loot budget (default 7.0)
+
 	// ── INSTANCES ────────────────────────────────────────────────────────────
 	InstanceStatPoolCap ConfigInt `yaml:"InstanceStatPoolCap"` // Max stat pool per mob in instances (default 50000, 0=uncapped)
 }
@@ -892,6 +895,11 @@ func (b *Balance) Validate() {
 	// ── STORAGE FEES ─────────────────────────────────────────────────────────
 	if b.StorageFeePerItem < 0 {
 		b.StorageFeePerItem = 1
+	}
+
+	// ── LOOT ──────────────────────────────────────────────────────────────────
+	if b.LootBudgetScalar <= 0 {
+		b.LootBudgetScalar = 7.0
 	}
 
 	// ── INSTANCES ────────────────────────────────────────────────────────────
