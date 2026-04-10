@@ -1,0 +1,14 @@
+roomid: 5003
+zone: Instance Planar Oasis
+title: Oasis Threshold
+description: >-
+  The air shimmers like heat haze, though the temperature is
+  mild. You stand at the edge of an impossible landscape —
+  crystalline sand stretching in every direction beneath a
+  sky that is simultaneously dawn and dusk. An oasis of dark
+  water glimmers to the north. The portal behind you pulses
+  with reassuring stability.
+exits:
+  north:
+    roomid: 5004
+    mapdirection: north

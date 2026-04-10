@@ -61,6 +61,7 @@ type Mob struct {
 	Zone            string   `yaml:"zone,omitempty"`
 	StatPool        int      `yaml:"statpool,omitempty"`      // Stat points randomly distributed across stats on spawn
 	ItemDropChance  int      // chance in 100
+	LootPool        []int    `yaml:"loot_pool,omitempty"`     // Item IDs for instance loot generation
 	ActivityLevel   int      `yaml:"activitylevel,omitempty"` // 1-100%
 	InstanceId      int      `yaml:"-"`
 	HomeRoomId      int      `yaml:"-"`

@@ -64,7 +64,18 @@
       "Bash(bash scripts/start-server.sh --project-dir \"/c/Users/Calabe Davis/workspace/DOGMud\")",
       "Bash(echo \"Exit: $?\")",
       "Bash(mv _datafiles/world/dogmud/items/armor-20000/offhand/20054-sorens_ironbound_buckler.yaml _datafiles/world/dogmud/items/armor-20000/offhand/20067-sorens_ironbound_buckler.yaml)",
-      "Bash(mv _datafiles/world/dogmud/items/armor-20000/body/20055-bandits_leather_vest.yaml _datafiles/world/dogmud/items/armor-20000/body/20068-bandits_leather_vest.yaml)"
+      "Bash(mv _datafiles/world/dogmud/items/armor-20000/body/20055-bandits_leather_vest.yaml _datafiles/world/dogmud/items/armor-20000/body/20068-bandits_leather_vest.yaml)",
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(sed -i 's/mobid: 318/mobid: 323/' _datafiles/world/dogmud/mobs/instance_arena/323-arena_veteran.yaml)",
+      "Bash(sed -i 's/mobid: 319/mobid: 324/' _datafiles/world/dogmud/mobs/instance_arena/324-arena_champion.yaml)",
+      "Bash(sed -i 's/mobid: 320/mobid: 325/' _datafiles/world/dogmud/mobs/instance_arena/325-arena_veteran_heavy.yaml)",
+      "Bash(sed -i 's/mobid: 318/mobid: 323/' _datafiles/world/dogmud/rooms/instance_arena/5006.yaml _datafiles/world/dogmud/rooms/instance_arena/5007.yaml)",
+      "Bash(sed -i 's/mobid: 319/mobid: 324/' _datafiles/world/dogmud/rooms/instance_arena/5008.yaml)",
+      "Bash(sed -i 's/mobid: 320/mobid: 325/' _datafiles/world/dogmud/rooms/instance_arena/5007.yaml)",
+      "Bash(sed -i 's/respawnrate: \"30m\"/respawnrate: \"1h\"/' _datafiles/world/dogmud/rooms/instance_arena/5002.yaml)",
+      "Bash(sed -i 's/respawnrate: \"30m\"/respawnrate: \"1h\"/' _datafiles/world/dogmud/rooms/instance_arena/5006.yaml)",
+      "Bash(sed -i 's/respawnrate: \"45m\"/respawnrate: \"1h 30m\"/' _datafiles/world/dogmud/rooms/instance_arena/5006.yaml _datafiles/world/dogmud/rooms/instance_arena/5007.yaml)"
     ]
   },
   "defaultMode": "bypassPermissions"

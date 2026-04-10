@@ -1,0 +1,23 @@
+mobid: 315
+zone: Thornwall City
+non_combatant: true
+charm_immune: true
+groups:
+  - humanoid
+activitylevel: 5
+idlecommands:
+  - 'emote studies a swirling orb of energy, muttering calculations'
+  - ''
+  - 'emote adjusts the runes carved into the stone archway'
+  - ''
+character:
+  name: Sable
+  description: >-
+    A gaunt figure in robes that shimmer with barely-contained
+    energy. The air around them crackles with static. Eyes the
+    colour of tarnished copper regard you with professional
+    interest -- the look of someone who routinely opens doors
+    to places that would drive lesser minds to gibbering.
+  speciesid: 1
+  level: 1
+  gold: 0

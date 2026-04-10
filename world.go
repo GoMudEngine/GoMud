@@ -784,6 +784,8 @@ loop:
 			util.LockMud()
 			scripting.PruneRoomVMs(rooms.RoomMaintenance()...)
 			scripting.PruneRoomVMs(rooms.EphemeralRoomMaintenance()...)
+			rooms.GetInstanceRegistry().CheckPortalTimers()
+			rooms.GetInstanceRegistry().CleanupEmptyInstances()
 			util.UnlockMud()
 
 			roomUpdateTimer.Reset(roomMaintenancePeriod)

@@ -1,0 +1,29 @@
+mobid: 316
+zone: Instance Arena
+archetype: fighting
+statpool: 1
+hostile: true
+groups:
+  - humanoid
+activitylevel: 20
+idlecommands:
+  - 'emote cracks knuckles and paces the pit'
+  - ''
+  - 'emote slams a fist into an open palm'
+  - 'wander'
+combatcommands:
+  - 'emote throws a savage haymaker'
+  - ''
+  - 'emote lunges forward with reckless aggression'
+  - ''
+character:
+  name: arena brute
+  description: >-
+    A massive figure scarred from countless pit fights. Thick
+    arms corded with muscle, hands wrapped in stained cloth
+    bindings. Moves with the confidence of someone who has
+    beaten everything put in front of them — or the ignorance
+    of someone who has not yet met their match.
+  speciesid: 1
+  level: 1
+  gold: 0

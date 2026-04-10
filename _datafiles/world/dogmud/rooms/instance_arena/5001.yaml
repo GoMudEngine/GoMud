@@ -1,0 +1,12 @@
+roomid: 5001
+zone: Instance Arena
+title: Arena Entrance
+description: >-
+  A vaulted stone chamber lit by guttering torches. The air
+  is thick with the smell of old blood and lamp oil. A heavy
+  iron gate ahead leads to the fighting pit. The sounds of
+  something large moving echo from beyond.
+exits:
+  north:
+    roomid: 5002
+    mapdirection: north

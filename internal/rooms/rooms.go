@@ -654,6 +654,20 @@ func (r *Room) Prepare(checkAdjacentRooms bool) {
 				}
 
 				mob.Character.Zone = r.Zone
+
+				// Instance loot: generate and equip affixed items from loot pool
+				if goldPaid, ok := r.GetTempData("gold_paid").(int); ok && goldPaid > 0 {
+					if len(mob.LootPool) > 0 {
+						scalar := float64(configs.GetBalanceConfig().LootBudgetScalar)
+						for _, baseItemId := range mob.LootPool {
+							affixedItem := items.GenerateAffixedItem(baseItemId, goldPaid, scalar)
+							if affixedItem.ItemId > 0 {
+								mob.Character.Wear(affixedItem)
+							}
+						}
+					}
+				}
+
 				mob.Validate()
 
 				r.mobs = append(r.mobs, mob.InstanceId)

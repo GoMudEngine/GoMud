@@ -1,0 +1,17 @@
+itemid: 20074
+name: mist pauldrons
+namesimple: pauldrons
+description: >-
+  Pauldrons of condensed elemental mist, solid enough to wear
+  but shifting at the edges into wisps of cold vapor. They
+  absorb both physical and magical force with equal efficiency
+  — neither channel seems to penetrate cleanly. A faint haze
+  drifts from them in warm rooms. They make the wearer's
+  outline slightly indistinct from a distance.
+type: shoulders
+subtype: wearable
+physical_mitigation: 5
+magical_mitigation: 5
+conviction_mitigation: 5
+value: 75
+weight: 3.0

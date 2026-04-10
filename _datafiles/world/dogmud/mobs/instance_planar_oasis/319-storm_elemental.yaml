@@ -1,0 +1,32 @@
+mobid: 319
+zone: Instance Planar Oasis
+archetype: casting
+statpool: 1
+hostile: true
+groups:
+  - elemental
+activitylevel: 25
+idlecommands:
+  - 'emote crackles with arcs of static discharge'
+  - 'wander'
+  - 'emote swirls in a tight vortex of wind and lightning'
+  - ''
+combatcommands:
+  - 'emote hurls a bolt of compressed air'
+  - ''
+  - 'emote erupts in a burst of electrical fury'
+  - ''
+character:
+  name: storm elemental
+  description: >-
+    A roiling mass of dark cloud and flickering lightning,
+    compressed into a roughly bipedal shape. The air around
+    it tastes of copper and ozone. Miniature thunderclaps
+    sound with each movement, and the hair on your arms
+    stands on end in its presence.
+  speciesid: 37
+  level: 1
+  gold: 0
+itemdropchance: 50
+loot_pool:
+  - 20076

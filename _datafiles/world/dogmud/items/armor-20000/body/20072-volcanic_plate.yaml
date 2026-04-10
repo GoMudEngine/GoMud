@@ -1,0 +1,16 @@
+itemid: 20072
+name: volcanic plate
+namesimple: plate
+description: >-
+  A breastplate of fused basalt and cooled magma, its surface
+  cross-hatched with deep stress cracks that glow a dull orange
+  from within. Impossibly heavy for its size yet fitted by some
+  elemental force to the wearer's frame. The heat it radiates
+  is uncomfortable but not harmful. Whatever smithed this did
+  not use conventional tools.
+type: body
+subtype: wearable
+physical_mitigation: 12
+magical_mitigation: 5
+value: 90
+weight: 10.0

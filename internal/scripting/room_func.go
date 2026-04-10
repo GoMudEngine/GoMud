@@ -27,6 +27,7 @@ func setRoomFunctions(vm *goja.Runtime) {
 	vm.Set(`GetMap`, GetMap)
 	vm.Set(`CreateInstancesFromRoomIds`, CreateInstancesFromRoomIds)
 	vm.Set(`CreateInstancesFromZone`, CreateInstancesFromZone)
+	vm.Set(`CreateInstance`, CreateInstance)
 }
 
 type ScriptRoom struct {
@@ -359,7 +360,9 @@ func (r ScriptRoom) AddTemporaryExit(exitNameSimple string, exitNameFancy string
 	}
 
 	// Spawn a portal in the room that leads to the portal location
-	return r.roomRecord.AddTemporaryExit(exitNameSimple, tmpExit)
+	result := r.roomRecord.AddTemporaryExit(exitNameSimple, tmpExit)
+	mudlog.Info("ScriptRoom.AddTemporaryExit", "exitName", exitNameSimple, "title", exitNameFancy, "roomId", exitRoomId, "expires", expiresTimeString, "result", result, "targetRoom", r.roomId, "exitsTemp", len(r.roomRecord.ExitsTemp))
+	return result
 }
 
 func (r ScriptRoom) RemoveTemporaryExit(exitNameSimple string, exitNameFancy string, exitRoomId int) bool {
@@ -467,6 +470,35 @@ func (r ScriptRoom) RemoveCorpse(index int) bool {
 // # These functions get exported to the scripting engine
 //
 // ////////////////////////////////////////////////////////
+
+// CreateInstance creates a full instanced zone for the given user (and their
+// party members). A portal exit named "instance portal" is added to the
+// overworld room (roomId) pointing into the instance entry room.
+// Returns true on success, false on any failure.
+// CreateInstance clones an instanced zone and returns the ephemeral entry
+// room ID (0 on failure). The caller is responsible for creating the
+// overworld portal via room.AddTemporaryExit in the script.
+func CreateInstance(zoneName string, goldPaid int, userId int, roomId int) int {
+
+	// Build the authorized user list: owner + party members.
+	authorizedUsers := []int{userId}
+	if party := parties.Get(userId); party != nil {
+		for _, memberId := range party.GetMembers() {
+			if memberId != userId {
+				authorizedUsers = append(authorizedUsers, memberId)
+			}
+		}
+	}
+
+	inst, err := rooms.CreateZoneInstance(zoneName, goldPaid, userId, authorizedUsers, roomId)
+	if err != nil {
+		mudlog.Error("CreateInstance", "zone", zoneName, "userId", userId, "error", err)
+		return 0
+	}
+
+	return inst.EntryRoomId
+}
+
 func CreateInstancesFromRoomIds(roomList []int) map[int]int {
 	ret, _ := rooms.CreateEphemeralRoomIds(roomList...)
 	return ret

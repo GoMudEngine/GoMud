@@ -1,0 +1,49 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">oasis</ansi>
+
+The Planar Oasis is an otherworldly labyrinth of elemental
+energy — a cube of shifting terrain where directions fold
+back on themselves and elementals roam freely.
+
+<ansi fg="yellow">Layout:</ansi>
+
+  A three-dimensional maze. Moving north, south, east,
+  west, up, or down wraps around — walk far enough in
+  any direction and you return to where you started.
+
+  Every room holds an elemental guardian. Somewhere in
+  the maze, elite elementals and a powerful elemental
+  lord wander the corridors. The lord may find you
+  before you find it.
+
+<ansi fg="yellow">Rules:</ansi>
+
+  Death does not end your run. You may return through
+  the rift and continue where you left off. Recall
+  magic works here.
+
+  Guardians do not respawn once slain — clear the cube
+  methodically. The rift stays open for 30 minutes.
+
+<ansi fg="yellow">Loot:</ansi>
+
+  Elite elementals and the elemental lord carry planar-
+  forged equipment with random properties. Oasis gear
+  is stronger than Arena gear — harder to earn, but
+  worth the effort. More gold invested means tougher
+  guardians with better equipment.
+
+<ansi fg="yellow">Navigation:</ansi>
+
+  The cube wraps in all six directions including up and
+  down. The entrance is your only fixed reference point.
+  It is easy to become lost. Some adventurers drop items
+  to mark their path.
+
+<ansi fg="yellow">How to Enter:</ansi>
+
+  Visit the Rift Chamber (east of Temple District).
+  <ansi fg="command">ask sable oasis 200</ansi> — invest any amount over 100
+  gold. Sable will tell you the exit command.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help instances</ansi>,
+  <ansi fg="command">help arena</ansi>, <ansi fg="command">help party</ansi>

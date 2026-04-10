@@ -94,6 +94,9 @@ help:
       - read
       - put
     general:
+      - instances
+      - arena
+      - oasis
       - motd
       - online
       - quit
@@ -206,6 +209,9 @@ help-aliases:
   title:            [jobs, job, profession, class, titles, archetypes, archetype]
   suggest:          [idea, suggestion, ideas]
   about:            ['gomud', 'dogmud', 'dog', 'lore', 'world', 'setting', 'background']
+  instances:        [instance, rift, rifts, riftkeeper, portal, portals, instanced]
+  arena:            [arena instance, pit, fighting pit, gauntlet]
+  oasis:            [oasis instance, planar oasis, elemental oasis, cube, elemental cube]
 
 # Default aliases for commands
 # For example: inv -> inventory

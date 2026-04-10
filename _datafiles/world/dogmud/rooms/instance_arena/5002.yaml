@@ -1,0 +1,22 @@
+roomid: 5002
+zone: Instance Arena
+title: Arena Floor
+description: >-
+  A circular pit of packed earth ringed by high stone walls.
+  Old bloodstains darken the ground in overlapping patterns.
+  There is no audience — just you and whatever they've put
+  in here with you. The gate behind you is the only way out.
+exits:
+  south:
+    roomid: 5001
+    mapdirection: south
+  north:
+    roomid: 5006
+    mapdirection: north
+spawninfo:
+  - mobid: 316
+    statpool: 1
+    respawnrate: "1h"
+  - mobid: 317
+    statpool: 1
+    respawnrate: "1h"
