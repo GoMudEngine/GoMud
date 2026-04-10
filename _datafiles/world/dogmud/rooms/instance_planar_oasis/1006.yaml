@@ -1,0 +1,18 @@
+roomid: 1006
+zone: Instance Planar Oasis
+title: Shimmering Sands
+description: >-
+  The crystalline sand crunches underfoot, each grain a tiny
+  prism scattering light in impossible directions. Shapes
+  move in the heat haze — some are mirages, some are not.
+  The oasis water is dark and still to the north. Something
+  stirs within the sand itself.
+exits:
+  south:
+    roomid: 1005
+    mapdirection: south
+spawninfo:
+  - mobid: 311
+    respawnrate: "15m"
+  - mobid: 312
+    respawnrate: "15m"

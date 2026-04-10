@@ -1,0 +1,6 @@
+name: Instance Arena
+instanced: true
+death_policy: ejected
+portal_duration: "30m"
+entry_room: 1003
+allow_recall: false
