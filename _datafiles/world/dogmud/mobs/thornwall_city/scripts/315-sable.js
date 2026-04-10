@@ -61,10 +61,8 @@ function onAsk(mob, room, eventDetails) {
             user.UserId(), room.RoomId());
 
         if (entryRoomId > 0) {
-            var exitKey = zoneName + '-portal';
-            var exitTitle = zoneName + ' portal';
-            room.AddTemporaryExit(exitKey, exitTitle, entryRoomId, '30 real minutes');
-            mob.Command('say The rift to the ' + zoneName + ' is open. Type ' + exitKey + ' to enter.');
+            room.AddTemporaryExit(zoneName, zoneName + ' rift', entryRoomId, '30 real minutes');
+            mob.Command('say The rift is open. Type ' + zoneName + ' to enter.');
             mob.Command('say It will hold for a time. Do not tarry.');
             SendRoomMessage(room.RoomId(),
                 'The stone archway flares with energy. A shimmering portal appears.',
