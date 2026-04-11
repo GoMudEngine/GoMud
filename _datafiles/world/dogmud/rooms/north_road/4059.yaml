@@ -9,7 +9,7 @@ description: >
   occupies the centre of the clearing, an axe buried to the
   eye in its top. Cordwood is stacked in long rows to one side,
   ends aligned, seasoning in the air. A cold firepit sits near
-  the lean-to: grey ash, a blackened tin cup balanced on a
+  the lean-to — grey ash, a blackened tin cup balanced on a
   flat stone. Someone works here every day and sleeps somewhere
   else.
 biome: forest
@@ -21,14 +21,14 @@ exits:
   west:
     roomid: 4058
 nouns:
-  lean-to: Rough timber uprights lashed with rope, a canvas
+  lean-to — Rough timber uprights lashed with rope, a canvas
     roof pitched steep to shed rain. The canvas is patched
     in three places with different material — this shelter
     has been repaired more than once. Tools hang from a
-    horizontal pole inside: a draw knife, two iron wedges,
+    horizontal pole inside — a draw knife, two iron wedges,
     a maul with a cracked handle wrapped in leather. A
     canvas pack sits in one corner, its contents unknown.
-  chopping-block: A massive section of oak trunk, worn flat
+  chopping-block — A massive section of oak trunk, worn flat
     on top and split deep in every direction from years of
     use. An axe is buried to its eye in the centre, handle
     angled toward whoever will come next to use it. The wood
