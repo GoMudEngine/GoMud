@@ -103,6 +103,13 @@ type BuffSpec struct {
 	TriggerRoomText string `yaml:"trigger_room_text,omitempty"`
 	EndUserText     string `yaml:"end_user_text,omitempty"`
 	EndRoomText     string `yaml:"end_room_text,omitempty"`
+
+	// Config-driven tick fields — replaces JS onTrigger for heal/DoT buffs
+	TickPool         string  `yaml:"tick_pool,omitempty"`           // "health", "stamina", "conviction"
+	TickPercent      float64 `yaml:"tick_percent,omitempty"`        // Base % of max pool. Positive=heal, negative=damage
+	TickVariance     float64 `yaml:"tick_variance,omitempty"`       // Random variance added to percent
+	TickMin          int     `yaml:"tick_min,omitempty"`            // Minimum absolute tick amount (default 1)
+	StartRemoveBuffs []int   `yaml:"start_remove_buffs,omitempty"` // Buff IDs to remove when this buff starts
 }
 
 // Calculates the value of this buff
@@ -198,6 +205,19 @@ func (b *BuffSpec) Validate() error {
 	} {
 		for _, w := range textutil.ValidateTokens(text) {
 			mudlog.Warn("Buff.Validate", "buffId", b.BuffId, "warning", w)
+		}
+	}
+
+	// Validate tick fields
+	if b.TickPool != "" {
+		switch b.TickPool {
+		case "health", "stamina", "conviction":
+			// valid
+		default:
+			return fmt.Errorf("buffId %d (%s) has invalid tick_pool %q (must be health/stamina/conviction)", b.BuffId, b.Name, b.TickPool)
+		}
+		if b.TickPercent == 0 {
+			mudlog.Warn("Buff.Validate", "buffId", b.BuffId, "warning", "tick_pool set but tick_percent is 0")
 		}
 	}
 

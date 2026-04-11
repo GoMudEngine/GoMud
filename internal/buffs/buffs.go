@@ -17,6 +17,7 @@ type Buff struct {
 	// Need to instance track the following:
 	RoundCounter int `yaml:"roundcounter,omitempty"` // How many rounds have passed. Triggers on (RoundCounter%RoundInterval == 0)
 	TriggersLeft int `yaml:"triggersleft,omitempty"` // How many times it triggers
+	TickAmount   int `yaml:"tickamount,omitempty"`   // Snapshot: computed at application time, applied each trigger
 }
 
 func (b *Buff) StatMod(statName string) int {
