@@ -1,0 +1,28 @@
+mobid: 328
+zone: North Road
+statpool: 80
+hostile: false
+non_combatant: true
+charm_immune: true
+groups:
+  - humanoid
+activitylevel: 15
+idlecommands:
+  - 'emote brings an axe down on a log with a solid crack'
+  - ''
+  - 'emote stacks a split log on the growing pile'
+  - ''
+  - 'emote wipes sweat from his forehead with a thick forearm'
+  - ''
+character:
+  name: woodcutter Hagen
+  description: >-
+    A broad man with arms like knotted rope, scarred hands,
+    and sawdust in his beard. He works with the unhurried
+    efficiency of someone who has done this for decades.
+    His clothes are patched and practical. He speaks slowly
+    and looks at you directly when he does — the honesty of
+    someone with nothing to sell and nothing to hide.
+  speciesid: 1
+  level: 1
+  gold: 5

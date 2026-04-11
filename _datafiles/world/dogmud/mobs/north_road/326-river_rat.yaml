@@ -1,0 +1,28 @@
+mobid: 326
+zone: North Road
+archetype: fighting
+statpool: 40
+hostile: true
+groups:
+  - animal
+activitylevel: 20
+maxwander: 1
+idlecommands:
+  - 'emote scrabbles along the riverbank, nose twitching'
+  - ''
+  - 'emote rises on hind legs, sniffing the air'
+  - ''
+combatcommands:
+  - 'emote lunges with bared teeth'
+  - ''
+character:
+  name: river rat
+  description: >-
+    A fat, aggressive rat the size of a small dog, its fur
+    slick with river mud. The teeth are yellowed and long —
+    longer than any rat has a right to. It watches you with
+    the calculating patience of something that has learned
+    humans sometimes drop food, and sometimes ARE food.
+  speciesid: 1
+  level: 1
+  gold: 0

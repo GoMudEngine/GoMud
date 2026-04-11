@@ -1,0 +1,35 @@
+mobid: 327
+zone: North Road
+archetype: fighting
+statpool: 60
+hostile: true
+groups:
+  - animal
+activitylevel: 25
+maxwander: 2
+idlecommands:
+  - 'emote paces in a tight circle, hackles raised'
+  - 'wander'
+  - 'emote sniffs the ground, following some invisible trail'
+  - ''
+combatcommands:
+  - 'emote lunges with a snarl, jaws snapping'
+  - ''
+  - 'emote circles and darts in from the side'
+  - ''
+character:
+  name: wild dog
+  description: >-
+    A lean, scarred dog gone feral — ribs visible under a
+    patchy coat of mud-colored fur. It moves with the wary
+    aggression of something that hunts in packs but is
+    currently alone. The eyes track you with unsettling
+    focus. There is nothing friendly left in this animal.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 3
+    perception:
+      training: 2
