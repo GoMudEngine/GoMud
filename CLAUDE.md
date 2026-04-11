@@ -338,6 +338,20 @@ Full workflow: `docs/CONTENT_GENERATION_GUIDE.md`
 After generating any file: restart server. If editing an existing zone, check
 `_datafiles/world/dogmud/rooms.instances/` for stale instance saves.
 
+## AI Testing
+Run autonomous AI testers against the MUD server:
+- `/test-mud local feature-tester phase2-summons.yaml` — test specific features locally
+- `/test-mud prod bug-finder` — exploratory bug hunting on production
+- `/test-mud local feel-tester` — natural play session for UX feedback
+
+Config: `tools/testing/targets.yaml` (server credentials)
+Roles: `tools/testing/roles/` (bug-finder, feature-tester, feel-tester)
+Goals: `tools/testing/goals/` (session-specific test objectives)
+Reports: `tools/testing/reports/` (output, gitignored)
+
+Prerequisites: test character must exist, be AI-flagged, and have
+tutorial completed. Edit player YAML directly for setup.
+
 ## Mob Stat Archetypes
 Mobs have an optional `archetype` field that controls stat pool distribution:
 - `"fighting"` — 80% physical (Str/Dex/Vit), 20% mental (Per/Wil/Cha)

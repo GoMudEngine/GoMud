@@ -1,0 +1,12 @@
+description: Test Phase 2 companion summoning and buff tick systems
+goals:
+  - Equip available gear from inventory and verify with status
+  - Cast conjure-earth — verify earth elemental spawns as companion
+  - Cast conviction-surge on self — verify buff start text and end text
+  - Find and kill a hostile mob using melee combat
+  - If a corpse is available, cast raise-skeleton — verify companion spawns and corpse consumed
+  - Cast summon-hive-swarm — verify hive fragment component consumed from inventory
+  - Cast mend-wounds on self — check for healing tick flavor text
+  - Drink a healing potion — verify healing buff applies with tick messages
+  - Cast sparks or conviction-spike in combat — verify damage spell text phases
+  - Check conditions command during active buffs — verify buff names and descriptions show

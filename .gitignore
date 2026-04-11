@@ -8,6 +8,7 @@ _datafiles/**/plugin-data/*
 **/mobs.instances
 **/shops
 .worktrees/
+tools/testing/reports/*.md
 vendor/
 server.crt
 server.key
