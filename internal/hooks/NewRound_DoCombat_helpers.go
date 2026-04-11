@@ -22,6 +22,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
+	"github.com/GoMudEngine/GoMud/internal/textutil"
 	"github.com/GoMudEngine/GoMud/internal/usercommands"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -267,6 +268,23 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 			TargetUserIds:        cs.TargetUserIds,
 			TargetMobInstanceIds: cs.TargetMobInstanceIds,
 		}
+		// Send YAML wait text (if defined).
+		if spellData != nil && (spellData.WaitUserText != "" || spellData.WaitRoomText != "") {
+			tCtx := textutil.TokenContext{
+				SourceName:      user.Character.GetCharacterName(true),
+				SourcePlainName: user.Character.GetCharacterName(false),
+			}
+			cfg := textutil.SendTextConfig{
+				UserSendFunc: func(msg string) { user.SendText(msg) },
+				RoomSendFunc: func(msg string, skip ...int) {
+					if r := rooms.LoadRoom(user.Character.RoomId); r != nil {
+						r.SendText(msg, skip...)
+					}
+				},
+				ExcludeId: user.UserId,
+			}
+			textutil.SendPhaseText(spellData.WaitUserText, spellData.WaitRoomText, tCtx, "pink", cfg)
+		}
 		scripting.TrySpellScriptEvent("onWait", user.UserId, 0, spellAggro)
 
 		resolveRoom := rooms.LoadRoom(user.Character.RoomId)
@@ -352,6 +370,24 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 			SpellRest:            cs.SpellRest,
 			TargetUserIds:        cs.TargetUserIds,
 			TargetMobInstanceIds: cs.TargetMobInstanceIds,
+		}
+		// Send YAML wait text (if defined).
+		waitSpellInfo := spells.GetSpell(cs.SpellId)
+		if waitSpellInfo != nil && (waitSpellInfo.WaitUserText != "" || waitSpellInfo.WaitRoomText != "") {
+			tCtx := textutil.TokenContext{
+				SourceName:      user.Character.GetCharacterName(true),
+				SourcePlainName: user.Character.GetCharacterName(false),
+			}
+			cfg := textutil.SendTextConfig{
+				UserSendFunc: func(msg string) { user.SendText(msg) },
+				RoomSendFunc: func(msg string, skip ...int) {
+					if r := rooms.LoadRoom(user.Character.RoomId); r != nil {
+						r.SendText(msg, skip...)
+					}
+				},
+				ExcludeId: user.UserId,
+			}
+			textutil.SendPhaseText(waitSpellInfo.WaitUserText, waitSpellInfo.WaitRoomText, tCtx, "pink", cfg)
 		}
 		scripting.TrySpellScriptEvent("onWait", user.UserId, 0, spellAggro)
 		user.SendText(`<ansi fg="cyan">` + spells.GetCastMessage("cast_started", cs.SpellId) + `</ansi>`)

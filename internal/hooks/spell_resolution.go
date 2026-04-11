@@ -16,6 +16,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/templates"
+	"github.com/GoMudEngine/GoMud/internal/textutil"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -132,6 +133,34 @@ func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData
 	}
 
 	// --- Run spell script onMagic (if present) ---
+	// Send YAML magic text (if defined).
+	if spellData != nil && (spellData.MagicUserText != "" || spellData.MagicRoomText != "") {
+		tCtx := textutil.TokenContext{
+			SourceName:      user.Character.GetCharacterName(true),
+			SourcePlainName: user.Character.GetCharacterName(false),
+		}
+		if len(cs.TargetUserIds) > 0 {
+			if tUser := users.GetByUserId(cs.TargetUserIds[0]); tUser != nil {
+				tCtx.TargetName = tUser.Character.GetCharacterName(true)
+				tCtx.TargetPlainName = tUser.Character.GetCharacterName(false)
+			}
+		} else if len(cs.TargetMobInstanceIds) > 0 {
+			if tMob := mobs.GetInstance(cs.TargetMobInstanceIds[0]); tMob != nil {
+				tCtx.TargetName = tMob.Character.GetCharacterName(true)
+				tCtx.TargetPlainName = tMob.Character.GetCharacterName(false)
+			}
+		}
+		cfg := textutil.SendTextConfig{
+			UserSendFunc: func(msg string) { user.SendText(msg) },
+			RoomSendFunc: func(msg string, skip ...int) {
+				if r := rooms.LoadRoom(user.Character.RoomId); r != nil {
+					r.SendText(msg, skip...)
+				}
+			},
+			ExcludeId: user.UserId,
+		}
+		textutil.SendPhaseText(spellData.MagicUserText, spellData.MagicRoomText, tCtx, "pink", cfg)
+	}
 	spellAggro := characters.SpellAggroInfo{
 		SpellId:              cs.SpellId,
 		SpellRest:            cs.SpellRest,
