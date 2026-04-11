@@ -1,0 +1,58 @@
+roomid: 4059
+zone: North Road
+title: Woodcutter's Camp
+description: >
+  The track opens into a small clearing that serves as a working
+  camp. A lean-to of rough timber and patched canvas stands
+  against a large oak, its interior hung with tools — wedges,
+  a draw knife, a coil of rope. A scarred chopping block
+  occupies the centre of the clearing, an axe buried to the
+  eye in its top. Cordwood is stacked in long rows to one side,
+  ends aligned, seasoning in the air. A cold firepit sits near
+  the lean-to: grey ash, a blackened tin cup balanced on a
+  flat stone. Someone works here every day and sleeps somewhere
+  else.
+biome: forest
+coord:
+  x: -10
+  y: -3
+  z: 0
+exits:
+  west:
+    roomid: 4058
+nouns:
+  lean-to: Rough timber uprights lashed with rope, a canvas
+    roof pitched steep to shed rain. The canvas is patched
+    in three places with different material — this shelter
+    has been repaired more than once. Tools hang from a
+    horizontal pole inside: a draw knife, two iron wedges,
+    a maul with a cracked handle wrapped in leather. A
+    canvas pack sits in one corner, its contents unknown.
+  chopping-block: A massive section of oak trunk, worn flat
+    on top and split deep in every direction from years of
+    use. An axe is buried to its eye in the centre, handle
+    angled toward whoever will come next to use it. The wood
+    around the axe head is dark with sap and old effort.
+    Chips of bark and pale wood litter the ground around it.
+  cordwood: Split lengths stacked in careful rows, bark out,
+    ends aligned. The wood is dry enough that the stacks have
+    settled and the gaps between pieces have widened. A few
+    pieces have been marked with a notch — unclear if this is
+    counting or sorting. This much cordwood means weeks of
+    cutting, and it is bound for Stillwater.
+  firepit: Three flat stones arranged in a ring, their inner
+    faces black with old smoke. Cold grey ash sits at the
+    centre, undisturbed by wind. A blackened tin cup rests
+    on a flat stone at the edge — whatever was in it long
+    since evaporated. The ash is old enough that no heat
+    remains, but the ground around it is swept clean.
+spawninfo:
+  - mobid: 328
+    respawnrate: 1s
+idlemessages:
+- Cordwood shifts in the stack with a soft crack as the
+  wood continues to dry and settle.
+- Wind moves through the treetops overhead, a long slow
+  rush that bends the branches without reaching the ground.
+- Something rustles in the undergrowth at the edge of the
+  clearing, investigates nothing, and goes quiet.

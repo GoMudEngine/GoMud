@@ -1,0 +1,51 @@
+roomid: 4061
+zone: North Road
+title: Travelers' Rest
+description: >
+  A flat stretch where the verge widens and the grass has
+  been worn flat by repeated use. Three blackened fire rings
+  are spaced along the shoulder — old campfire circles, well
+  used, their stones dark with smoke. A hitching post stands
+  at the road's edge: a rough-cut log set upright in the
+  ground, iron rings driven into its side, the bark worn
+  smooth by years of rope. The smell of old ash lingers.
+  A lone figure sits near the nearest fire ring, watching
+  the road north with the patient stillness of someone
+  accustomed to waiting.
+biome: farmland
+coord:
+  x: -11
+  y: -1
+  z: 0
+exits:
+  south:
+    roomid: 4060
+  north:
+    roomid: 4062
+nouns:
+  firepits: Three rings of fieldstone, each holding a
+    bed of cold grey ash. The rings are well-made —
+    stones chosen for flatness, set level, the ground
+    inside cleared of grass. Each one has a flat stone
+    at the edge that serves as a seat or a cooking
+    surface, worn dark and smooth. The ash in the
+    nearest ring is fresh enough to still be powdery.
+    Someone stopped here last night.
+  hitching-post: A peeled log, chest-high, set deep in
+    the ground and braced with two angled stakes. Three
+    iron rings are driven into its upper half at different
+    heights, sized for different rope gauges. The bark
+    where hands and rope have worked it is worn to pale
+    bare wood, polished smooth. A short length of frayed
+    rope dangles from the lowest ring, left behind by
+    whoever was here last.
+spawninfo:
+  - mobid: 329
+    respawnrate: 1s
+idlemessages:
+- Somewhere nearby, a horse shifts its weight and blows
+  a long breath — you can hear it but not see it.
+- A cinder pops in the cold ash of one of the fire rings,
+  settling deeper into the grey powder.
+- Wind moves through the long grass beyond the road with
+  a low rushing sound, bending the stalks in slow waves.
