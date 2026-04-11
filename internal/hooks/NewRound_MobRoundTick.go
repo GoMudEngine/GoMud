@@ -5,6 +5,7 @@ import (
 	"math"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/crafting"
@@ -127,6 +128,31 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 			//
 			triggeredBuffIds := []int{}
 			for _, buff := range triggeredBuffs {
+
+				// Apply config-driven tick amount (if set)
+				if buff.TickAmount != 0 {
+					if mobBuffSpec := buffs.GetBuffSpec(buff.BuffId); mobBuffSpec != nil {
+						switch mobBuffSpec.TickPool {
+						case "health":
+							mob.Character.Heal(buff.TickAmount)
+						case "stamina":
+							mob.Character.Stamina += buff.TickAmount
+							if mob.Character.Stamina > mob.Character.StaminaMax.Value {
+								mob.Character.Stamina = mob.Character.StaminaMax.Value
+							} else if mob.Character.Stamina < 0 {
+								mob.Character.Stamina = 0
+							}
+						case "conviction":
+							mob.Character.Conviction += buff.TickAmount
+							if mob.Character.Conviction > mob.Character.ConvictionMax.Value {
+								mob.Character.Conviction = mob.Character.ConvictionMax.Value
+							} else if mob.Character.Conviction < 0 {
+								mob.Character.Conviction = 0
+							}
+						}
+					}
+				}
+
 				scripting.TryBuffScriptEvent(`onTrigger`, 0, mobInstanceId, buff.BuffId)
 				triggeredBuffIds = append(triggeredBuffIds, buff.BuffId)
 			}

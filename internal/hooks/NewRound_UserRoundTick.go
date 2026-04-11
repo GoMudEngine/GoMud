@@ -170,6 +170,33 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 							textutil.SendPhaseText(trigBuffSpec.TriggerUserText, trigBuffSpec.TriggerRoomText, tCtx, "cyan", cfg)
 						}
 
+						// Apply config-driven tick amount (if set)
+						if buff.TickAmount != 0 {
+							if trigBuffSpec == nil {
+								trigBuffSpec = buffs.GetBuffSpec(buff.BuffId)
+							}
+							if trigBuffSpec != nil {
+								switch trigBuffSpec.TickPool {
+								case "health":
+									user.Character.Heal(buff.TickAmount)
+								case "stamina":
+									user.Character.Stamina += buff.TickAmount
+									if user.Character.Stamina > user.Character.StaminaMax.Value {
+										user.Character.Stamina = user.Character.StaminaMax.Value
+									} else if user.Character.Stamina < 0 {
+										user.Character.Stamina = 0
+									}
+								case "conviction":
+									user.Character.Conviction += buff.TickAmount
+									if user.Character.Conviction > user.Character.ConvictionMax.Value {
+										user.Character.Conviction = user.Character.ConvictionMax.Value
+									} else if user.Character.Conviction < 0 {
+										user.Character.Conviction = 0
+									}
+								}
+							}
+						}
+
 						_, err := scripting.TryBuffScriptEvent(`onTrigger`, uId, 0, buff.BuffId)
 
 						if buff.TriggersLeft != buffs.TriggersLeftUnlimited || err != scripting.ErrEventNotFound {
