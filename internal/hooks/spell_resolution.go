@@ -161,6 +161,11 @@ func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData
 		}
 		textutil.SendPhaseText(spellData.MagicUserText, spellData.MagicRoomText, tCtx, "pink", cfg)
 	}
+	// Resolve companion summon (if configured)
+	if spellData != nil && spellData.SummonMobId > 0 {
+		resolveCompanionSummon(user, spellData, cs.SpellRest, room)
+	}
+
 	spellAggro := characters.SpellAggroInfo{
 		SpellId:              cs.SpellId,
 		SpellRest:            cs.SpellRest,
