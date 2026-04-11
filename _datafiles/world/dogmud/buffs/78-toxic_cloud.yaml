@@ -3,3 +3,6 @@ name: Toxic Cloud
 description: A noxious cloud clings to you, sapping your strength.
 triggerrate: 1 round
 triggercount: 5
+start_user_text: A cloud of choking fumes engulfs you!
+start_room_text: "{source} is engulfed in a cloud of toxic fumes."
+end_user_text: The toxic cloud finally dissipates.

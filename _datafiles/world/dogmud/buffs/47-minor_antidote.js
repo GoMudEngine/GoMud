@@ -8,16 +8,4 @@ function onStart(actor, triggersLeft) {
 
     actor.RemoveBuff(39);
     actor.RemoveBuff(40);
-
-    SendUserMessage(actor.UserId(), 'The bitter draught burns your throat but you feel poisons loosening their grip.');
-    SendRoomMessage(actor.GetRoomId(), actor.GetCharacterName(true) + ' grimaces as they swallow an antidote.', actor.UserId());
-}
-
-// Invoked every time the buff is triggered (see roundinterval)
-function onTrigger(actor, triggersLeft) {
-}
-
-// Invoked when the buff has run its course.
-function onEnd(actor, triggersLeft) {
-    SendUserMessage(actor.UserId(), 'The antidote has run its course.');
 }

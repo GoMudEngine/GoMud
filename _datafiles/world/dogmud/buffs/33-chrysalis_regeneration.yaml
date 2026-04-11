@@ -3,3 +3,5 @@ name: Chrysalis Regeneration
 description: Deep Chrysalis energy rapidly regenerates your body.
 triggerrate: 2 rounds
 triggercount: 8
+start_user_text: Deep Chrysalis energy wraps around you, accelerating your body's healing.
+end_user_text: The Chrysalis regeneration fades.

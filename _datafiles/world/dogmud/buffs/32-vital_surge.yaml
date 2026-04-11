@@ -3,3 +3,5 @@ name: Vital Surge
 description: Chrysalis energy steadily mends your body over time.
 triggerrate: 2 rounds
 triggercount: 9
+start_user_text: Chrysalis energy suffuses your body with a warm, mending pulse.
+end_user_text: The vital surge fades.

@@ -3,3 +3,6 @@ name: Venom
 description: Venom courses through your veins, burning from within.
 triggerrate: 1 round
 triggercount: 5
+start_user_text: You feel venom seeping into your bloodstream!
+start_room_text: "{source} winces as venom takes hold."
+end_user_text: The venom finally subsides, leaving you weakened.

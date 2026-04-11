@@ -5,3 +5,6 @@ triggerrate: 1 round
 triggercount: 20
 statmods:
   vitality: 6
+start_user_text: A warm tingling spreads through your body as you become more resistant to heat.
+start_room_text: "{source}'s skin takes on a faint reddish hue."
+end_user_text: The protective warmth fades from your skin.

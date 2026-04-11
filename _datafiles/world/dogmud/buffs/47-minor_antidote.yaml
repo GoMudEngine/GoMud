@@ -3,3 +3,6 @@ name: Minor Antidote
 description: A cleansing draught purges toxins from your body.
 triggerrate: 1 round
 triggercount: 1
+start_user_text: The bitter draught burns your throat but you feel poisons loosening their grip.
+start_room_text: "{source} grimaces as they swallow an antidote."
+end_user_text: The antidote has run its course.

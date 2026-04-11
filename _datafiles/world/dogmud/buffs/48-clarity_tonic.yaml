@@ -5,3 +5,6 @@ triggerrate: 1 round
 triggercount: 30
 statmods:
   willpower: 8
+start_user_text: The tonic sharpens your thoughts to a razor's edge.
+start_room_text: "{source}'s eyes brighten with renewed focus."
+end_user_text: The mental clarity fades, leaving your thoughts slightly muddled.
