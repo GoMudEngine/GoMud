@@ -2,10 +2,25 @@
 
 ## 2026-04-10 — Instanced Zones: Arena, Planar Oasis, Randomized Loot
 
+### Zone 2.1b: North Road — River Approach
+- **10 new rooms** extending the North Road northward through river
+  country toward Stillwater. Stone bridge, river ford, woodcutter's
+  camp, travelers' rest, and the first glimpse of Stillwater on
+  the horizon.
+- **Woodcutter Hagen** — NPC at the camp with dialogue about
+  Stillwater, the road, and bloodline agents seen heading north.
+- **Lone Traveler** — NPC at the rest stop who foreshadows Maren's
+  trail and describes Stillwater.
+- **River rats** and **wild dogs** as ambient hostile wildlife.
+- Milestone at Wide Bend reads "Stillwater — 2 leagues."
+
 ### Hot Fixes
 - **Server crash fix**: `look` command on a mob with a stale instance
   reference no longer crashes the server. Added nil checks to
   consider, locate, and mob-look commands as well.
+- **Taunt exploit fix**: can no longer taunt your own companions.
+- **Crafting vendors** now know all recipes in their profession
+  (Voss buys moonpetal/veilbloom, Kerra buys steel, etc.).
 - **Taunt exploit fix**: can no longer taunt your own companions.
 
 ### New: Instanced Zones
