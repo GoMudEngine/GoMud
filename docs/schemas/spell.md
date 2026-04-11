@@ -45,6 +45,12 @@ _datafiles/world/dogmud/spells/{spellid}.js   (optional — only if spell has lo
 | `effect_type` | string | no | `"damage"`, `"heal"`, `"buff"`, `"tame"`, `"shield"`. |
 | `effect_magnitude` | int | no | Base damage or heal amount for simple effects. |
 | `buff_ids` | list | no | Buff IDs applied to target on success (for `effect_type: buff`). |
+| `summon_mob_id` | int | no | Mob ID to summon. Non-zero = this is a summon spell. |
+| `summon_base_pool` | int | no | Base stat pool before charisma/skill scaling. |
+| `summon_scaling_divisor` | int | no | Charisma divisor for scaling (default 500, lower = more scaling). |
+| `summon_component_id` | int | no | Item ID consumed on cast. 0 = no component needed. |
+| `summon_requires_corpse` | bool | no | If true, requires and consumes a room corpse. |
+| `summon_min_corpse_pool` | int | no | Minimum corpse stat pool required for raise spells. |
 | `cast_user_text` | string | no | Text sent to caster on cast. Supports `{source}`, `{target}` tokens. |
 | `cast_room_text` | string | no | Text sent to room on cast. Supports `{source}`, `{target}` tokens. |
 | `wait_user_text` | string | no | Text sent to caster each wait round. |
@@ -92,6 +98,40 @@ type: neutral
 cast_user_text: You reach toward the remains, dark energy gathering.
 cast_room_text: "{source} reaches toward the remains, tendrils of shadow curling from outstretched fingers."
 # JS file still exists for onMagic companion spawning logic
+```
+
+**Example — Raise Skeleton (corpse-consuming summon):**
+```yaml
+spellid: raise-skeleton
+name: Raise Skeleton
+type: neutral
+schools:
+  - manifestation
+cost: 40
+waitrounds: 2
+summon_mob_id: 300
+summon_base_pool: 60
+summon_scaling_divisor: 500
+summon_requires_corpse: true
+summon_min_corpse_pool: 30
+cast_user_text: "You reach toward the remains, dark energy gathering."
+cast_room_text: "{source} reaches toward the remains, tendrils of shadow curling."
+```
+
+**Example — Conjure Earth Elemental (no corpse, no component):**
+```yaml
+spellid: conjure-earth
+name: Conjure Earth Elemental
+type: neutral
+schools:
+  - manifestation
+cost: 55
+waitrounds: 2
+summon_mob_id: 311
+summon_base_pool: 90
+summon_scaling_divisor: 500
+cast_user_text: "You slam your fist into the ground, willing stone to rise."
+cast_room_text: "{source} slams a fist into the ground with a thunderous crack."
 ```
 
 ### Valid SpellType Values
