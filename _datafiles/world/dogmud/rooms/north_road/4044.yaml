@@ -9,8 +9,8 @@ description: >
   the branches have been recently disturbed — someone crouched
   here, parting the dead growth to watch the road. A dirt path
   leads west toward a farmstead visible in the distance. The
-  road continues north, but no rooms are built beyond this
-  point yet.
+  road continues north where the ground roughens and the
+  sound of running water begins to build.
 biome: farmland
 coord:
   x: -11
@@ -19,6 +19,8 @@ coord:
 exits:
   south:
     roomid: 4043
+  north:
+    roomid: 4053
   west:
     roomid: 4048
 nouns:

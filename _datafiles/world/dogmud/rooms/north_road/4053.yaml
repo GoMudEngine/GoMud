@@ -1,0 +1,42 @@
+roomid: 4053
+zone: North Road
+title: Muddy Track
+description: >
+  Farmland gives way to rougher ground here. The road narrows,
+  its edges no longer defined by field boundaries but by scrub
+  and tussock grass pressing in from both sides. Cart ruts cut
+  deep into the clay — recent rain has turned the track into a
+  churned mess of mud and standing water. Somewhere ahead, just
+  beyond hearing, is the faint sound of running water. The
+  smell of it reaches before the sound does: cold, mineral,
+  clean.
+biome: farmland
+coord:
+  x: -11
+  y: -8
+  z: 0
+exits:
+  south:
+    roomid: 4044
+  north:
+    roomid: 4054
+nouns:
+  ruts: Wagon ruts pressed deep into red clay, some a full
+    hand-width across. The spacing marks a heavy vehicle —
+    a loaded cart, or a dray. A few of the ruts show the
+    marks of iron-rimmed wheels slipping sideways where
+    the mud gave way. Whoever drove through here last had
+    a difficult crossing.
+  stones: Rough fieldstones have pushed up through the mud
+    along the road's edge — not placed deliberately, but
+    heaved up by frost and the weight of repeated traffic.
+    One large stone sits half-buried at an angle. Someone
+    has scratched a small arrow into its face, pointing
+    north.
+idlemessages:
+- A distant trickle of water carries on the wind from
+  the north.
+- Wind moves through the scrub grass with a dry hiss,
+  bending the stalks flat.
+- A crow lands in the mud ahead, eyes the road, and
+  lifts off without finding anything worth staying for.

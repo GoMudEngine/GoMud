@@ -1,0 +1,48 @@
+roomid: 4055
+zone: North Road
+title: River Road, South
+description: >
+  Past the bridge the road bends to follow a river, and
+  the whole character of the terrain changes. Willow trees
+  line the bank to the west, their long branches trailing
+  in the current. The air is cooler here, carrying the
+  smell of wet earth and slow water. The road itself is
+  better maintained than the muddy stretch to the south —
+  the river traffic brings enough coin to keep the gravel
+  topped up. It is quieter too. The farmland noise drops
+  away and there is only the water and the birds.
+biome: farmland
+coord:
+  x: -11
+  y: -6
+  z: 0
+exits:
+  south:
+    roomid: 4054
+  north:
+    roomid: 4056
+nouns:
+  willows: Old willow trees crowd the riverbank, their
+    trunks twisted and knotted with age. The long trailing
+    branches reach the water and drag in the current,
+    waving slowly. The roots are exposed where the bank
+    has eroded, forming a lattice above the waterline
+    that birds use for nesting. The shade under the
+    willows is dense enough that the ground beneath is
+    bare and damp.
+  river: Wide and brown, moving steadily north with the
+    unhurried weight of deep water. The surface is smooth
+    except where submerged rocks ripple it from below.
+    The far bank is twenty yards away, lost in the shadow
+    of more willows. A log drifts past, slow and deliberate,
+    turning in the current.
+spawninfo:
+  - mobid: 326
+    respawnrate: 4h
+idlemessages:
+- Willow branches swish against the water surface with
+  a soft, papery sound.
+- Birdsong floats across from the far bank — something
+  small and persistent, repeating the same phrase.
+- The river murmurs against its banks, a low constant
+  sound just below silence.
