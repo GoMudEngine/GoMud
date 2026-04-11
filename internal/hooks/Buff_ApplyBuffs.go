@@ -102,6 +102,13 @@ func ApplyBuffs(e events.Event) events.ListenerReturn {
 		}
 	}
 
+	// Remove buffs listed in start_remove_buffs (cure effects)
+	if buffSpec := buffs.GetBuffSpec(evt.BuffId); buffSpec != nil && len(buffSpec.StartRemoveBuffs) > 0 {
+		for _, removeId := range buffSpec.StartRemoveBuffs {
+			targetChar.RemoveBuff(removeId)
+		}
+	}
+
 	//
 	// Fire onStart for buff script
 	//
