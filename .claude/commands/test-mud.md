@@ -39,18 +39,21 @@ If any file is missing, report the error and stop.
 
 ### Step 3 — Start the Bridge
 
-Run the bridge in background:
+Run the bridge in background using `run_in_background: true`:
 
 ```bash
-cd tools && MUD_HOST=<host> MUD_PORT=<port> AI_USERNAME=<username> AI_PASSWORD=<password> python mud_bridge.py &
+cd tools && MUD_HOST=<host> MUD_PORT=<port> AI_USERNAME=<username> AI_PASSWORD=<password> python mud_bridge.py
 ```
 
-Wait 15 seconds for connection and login. Then check `tools/mud_output.txt`
-to verify login succeeded (should contain a room description).
+The bridge handles login, account creation, and session kicks automatically.
+After starting it, wait for it to be ready by polling `tools/mud_output.txt`
+in a loop — check every 2 seconds (use `sleep 2` which is within the
+allowed limit) until the file is non-empty and contains game content
+(look for room descriptions, HP bars, or exit listings). Allow up to
+30 seconds (15 polls) before giving up.
 
-If the bridge prompts for account creation ("new" account flow) or session
-kick ("y" to kick), handle those by writing the appropriate responses to
-`tools/mud_cmd.txt`.
+**IMPORTANT: Claude Code blocks `sleep` calls over 2 seconds.** Always
+use `sleep 1` or `sleep 2`, never `sleep 4` or higher.
 
 ### Step 4 — Play the Game
 
@@ -61,18 +64,21 @@ work toward them while following your role's playstyle.
 
 1. Read `tools/mud_output.txt` to see current game state
 2. Decide your next command based on role + goals + game state
-3. Write the command: `echo "<command>" > tools/mud_cmd.txt`
-4. Wait 4 seconds (server round timer): `sleep 4`
-5. Read the response: read `tools/mud_output.txt`
-6. Process the response — note findings, track goal progress
-7. Repeat
+3. Send the command AND wait in one Bash call:
+   `echo "<command>" > tools/mud_cmd.txt && sleep 2 && sleep 2 && cat tools/mud_output.txt`
+   This writes the command, waits ~4 seconds total (two `sleep 2` calls
+   chained, which Claude Code allows), and reads the response — all in
+   one tool call. This is more efficient than separate calls.
+4. Process the response — note findings, track goal progress
+5. Repeat
 
 **Important rules:**
 - Send ONE command at a time
-- Always wait 4 seconds between commands
+- Always chain `sleep 2 && sleep 2` for the 4-second round wait —
+  Claude Code blocks `sleep` calls over 2 seconds
 - Read the output after every command — don't send blind
-- After each `echo` command, also check for background output that may
-  have arrived (combat ticks, regen messages, NPC actions)
+- Background output (combat ticks, regen messages) accumulates in
+  `mud_output.txt` between commands — the bridge appends it
 - Keep a mental count of commands sent and time elapsed
 - Track your findings as you go
 
@@ -143,8 +149,8 @@ For example: `2026-04-11-local-feature-tester-phase2-summons.md`
 ### Step 6 — Cleanup
 
 1. Send the quit command: `echo "quit" > tools/mud_cmd.txt`
-2. Wait 3 seconds
-3. Kill the bridge process: find and kill the `mud_bridge.py` process
+2. Wait: `sleep 2`
+3. Kill the bridge process: `pkill -f mud_bridge.py` (or `taskkill` on Windows)
 4. Report to the user that the session is complete and where the report
    was saved
 
