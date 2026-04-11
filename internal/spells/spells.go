@@ -37,6 +37,14 @@ type SpellData struct {
 	BuffIds             []int  `yaml:"buff_ids,omitempty"`             // Buff IDs to apply (for "buff" effect type)
 	QuestRequired       string `yaml:"quest_required,omitempty"`       // Quest token required before spell can be discovered
 
+	// Companion summoning fields — replaces JS onMagic for summon spells
+	SummonMobId          int    `yaml:"summon_mob_id,omitempty"`
+	SummonBasePool       int    `yaml:"summon_base_pool,omitempty"`
+	SummonScalingDivisor int    `yaml:"summon_scaling_divisor,omitempty"`
+	SummonComponentId    int    `yaml:"summon_component_id,omitempty"`
+	SummonRequiresCorpse bool   `yaml:"summon_requires_corpse,omitempty"`
+	SummonMinCorpsePool  int    `yaml:"summon_min_corpse_pool,omitempty"`
+
 	// YAML text fields — flavor text sent by the engine (replaces JS messaging)
 	CastUserText  string `yaml:"cast_user_text,omitempty"`
 	CastRoomText  string `yaml:"cast_room_text,omitempty"`
@@ -189,6 +197,14 @@ func (s *SpellData) Validate() error {
 		for _, w := range textutil.ValidateTokens(text) {
 			mudlog.Warn("Spell.Validate", "spellId", s.SpellId, "warning", w)
 		}
+	}
+
+	// Validate summon fields
+	if s.SummonMobId > 0 && s.SummonBasePool == 0 {
+		mudlog.Warn("Spell.Validate", "spellId", s.SpellId, "warning", "summon_mob_id set but summon_base_pool is 0")
+	}
+	if s.SummonRequiresCorpse && s.SummonMinCorpsePool == 0 {
+		mudlog.Warn("Spell.Validate", "spellId", s.SpellId, "warning", "summon_requires_corpse set but summon_min_corpse_pool is 0")
 	}
 
 	return nil
