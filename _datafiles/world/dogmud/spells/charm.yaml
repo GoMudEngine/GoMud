@@ -11,3 +11,9 @@ type: harmsingle
 schools:
   - manifestation
 difficulty: 60
+cast_user_text: >-
+  You fix your gaze on your target, pressing your will
+  against its mind...
+cast_room_text: >-
+  {source} stares intently at {target}, brow furrowed with
+  fierce concentration.

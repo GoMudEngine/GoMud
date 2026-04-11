@@ -21,13 +21,7 @@ function onCast(sourceActor, targetActor) {
         return false;
     }
 
-    SendUserMessage(sourceActor.UserId(), 'You hold the Chrysalis Core aloft, pouring your conviction into its pulsing depths...');
-    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true)+' holds a pulsing orb aloft, Chrysalis energy swirling around them.', sourceActor.UserId());
     return true;
-}
-
-function onWait(sourceActor, targetActor) {
-    SendUserMessage(sourceActor.UserId(), 'The Core fractures and reforms, matter coalescing into a towering shape...');
 }
 
 function onMagic(sourceActor, targetActor) {

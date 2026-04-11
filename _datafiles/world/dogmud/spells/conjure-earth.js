@@ -11,13 +11,7 @@ function onCast(sourceActor, targetActor) {
         return false;
     }
 
-    SendUserMessage(sourceActor.UserId(), 'You drag your will into the earth itself, feeling stone and soil begin to answer...');
-    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true)+' plants both feet and begins to pull. The ground trembles faintly.', sourceActor.UserId());
     return true;
-}
-
-function onWait(sourceActor, targetActor) {
-    SendUserMessage(sourceActor.UserId(), 'The floor shudders. Something vast and patient stirs beneath it, rising reluctantly toward your call...');
 }
 
 function onMagic(sourceActor, targetActor) {

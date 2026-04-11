@@ -12,13 +12,7 @@ function onCast(sourceActor, targetActor) {
         return false;
     }
 
-    SendUserMessage(sourceActor.UserId(), 'You force your will through both the earth and fire planes simultaneously, bracing against the dual weight of what answers...');
-    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true)+' goes rigid, face contorted, as the ground cracks and the air shimmers with sudden savage heat.', sourceActor.UserId());
     return true;
-}
-
-function onWait(sourceActor, targetActor) {
-    SendUserMessage(sourceActor.UserId(), 'The floor heaves. Orange light bleeds through the cracks. Something immense and blazing hot is forcing its way through...');
 }
 
 function onMagic(sourceActor, targetActor) {

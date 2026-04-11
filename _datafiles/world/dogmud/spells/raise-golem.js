@@ -29,13 +29,7 @@ function onCast(sourceActor, targetActor, spellAggro) {
         return false;
     }
 
-    SendUserMessage(sourceActor.UserId(), 'You begin the brutal stitching-work — not resurrection but construction, forcing flesh and sinew to knit according to your will...');
-    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true) + ' gestures over the remains with sweeping, surgical motions. The ground shudders faintly with each pass of their hands.', sourceActor.UserId());
     return true;
-}
-
-function onWait(sourceActor, targetActor, spellAggro) {
-    SendUserMessage(sourceActor.UserId(), 'The ground trembles as flesh begins to knit and bulk, assembling into something vast and purposeful. The air reeks of raw meat and ozone...');
 }
 
 function onMagic(sourceActor, targetActor, spellAggro) {

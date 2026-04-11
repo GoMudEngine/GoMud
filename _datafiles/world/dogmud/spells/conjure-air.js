@@ -11,13 +11,7 @@ function onCast(sourceActor, targetActor) {
         return false;
     }
 
-    SendUserMessage(sourceActor.UserId(), 'You tear an opening in the veil and call to the shrieking currents beyond...');
-    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true)+"'s hair and clothing snap sideways as if caught in sudden wind.", sourceActor.UserId());
     return true;
-}
-
-function onWait(sourceActor, targetActor) {
-    SendUserMessage(sourceActor.UserId(), 'A high, keening sound builds from nowhere. The air pressure drops sharply as something tears through...');
 }
 
 function onMagic(sourceActor, targetActor) {

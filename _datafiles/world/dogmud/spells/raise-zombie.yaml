@@ -16,3 +16,12 @@ base_folds: 6
 target_defense_type: none
 effect_type: none
 effect_magnitude: 0
+cast_user_text: >-
+  You press your will deep into the flesh, searching for the
+  rot-thread that ties body to borrowed life...
+cast_room_text: >-
+  {source} leans over the remains, hands splayed, a sickly green
+  light seeping between their fingers.
+wait_user_text: >-
+  Foul energy seeps into the decaying flesh, swelling it with
+  borrowed animation. A low, wet groan rises from the remains...

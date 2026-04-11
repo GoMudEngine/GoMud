@@ -11,13 +11,7 @@ function onCast(sourceActor, targetActor) {
         return false;
     }
 
-    SendUserMessage(sourceActor.UserId(), 'You reach into the elemental plane, feeling the cold rush of deep water answer your call...');
-    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true)+' gestures outward, and the air grows heavy with the smell of rain and deep wells.', sourceActor.UserId());
     return true;
-}
-
-function onWait(sourceActor, targetActor) {
-    SendUserMessage(sourceActor.UserId(), 'The moisture in the air thickens. Water begins to spiral inward from every direction...');
 }
 
 function onMagic(sourceActor, targetActor) {

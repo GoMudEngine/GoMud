@@ -15,3 +15,13 @@ base_folds: 8
 target_defense_type: none
 effect_type: none
 effect_magnitude: 0
+cast_user_text: >-
+  You reach beyond flesh and bone, grasping for the shadow-self
+  that still clings to these remains...
+cast_room_text: >-
+  {source} raises both hands, pulling at something invisible above
+  the remains. The air grows cold and still.
+wait_user_text: >-
+  Ethereal threads weave through the air, pulling at the lingering
+  spirit. Something cold and furious stirs at the edge of your
+  vision...

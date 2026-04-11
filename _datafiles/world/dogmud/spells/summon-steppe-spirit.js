@@ -21,13 +21,7 @@ function onCast(sourceActor, targetActor) {
         return false;
     }
 
-    SendUserMessage(sourceActor.UserId(), 'You hold the spirit fetish aloft. The steppe wind rises, carrying the scent of sage and old bones...');
-    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true)+' raises a small fetish overhead. The wind sharpens and the air grows cold.', sourceActor.UserId());
     return true;
-}
-
-function onWait(sourceActor, targetActor) {
-    SendUserMessage(sourceActor.UserId(), 'The fetish thrums in your hand. Ghostly howling builds from nowhere and everywhere at once...');
 }
 
 function onMagic(sourceActor, targetActor) {

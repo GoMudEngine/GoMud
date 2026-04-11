@@ -14,3 +14,13 @@ base_folds: 14
 target_defense_type: none
 effect_type: none
 effect_magnitude: 0
+cast_user_text: >-
+  You force your will through both the earth and fire planes
+  simultaneously, bracing against the dual weight of what
+  answers...
+cast_room_text: >-
+  {source} goes rigid, face contorted, as the ground cracks and
+  the air shimmers with sudden savage heat.
+wait_user_text: >-
+  The floor heaves. Orange light bleeds through the cracks.
+  Something immense and blazing hot is forcing its way through...

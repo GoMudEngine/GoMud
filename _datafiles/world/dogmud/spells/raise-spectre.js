@@ -29,13 +29,7 @@ function onCast(sourceActor, targetActor, spellAggro) {
         return false;
     }
 
-    SendUserMessage(sourceActor.UserId(), 'You reach into the deep cold beneath these remains, searching for the heavy, hateful shadow of a powerful soul...');
-    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true) + ' crouches over the remains, hands pressing into the ground on either side. A ring of frost spreads outward from the contact.', sourceActor.UserId());
     return true;
-}
-
-function onWait(sourceActor, targetActor, spellAggro) {
-    SendUserMessage(sourceActor.UserId(), 'A cold dread emanates from the remains as the soul\'s deepest shadow is compressed and shaped. The air tastes of iron and old grief...');
 }
 
 function onMagic(sourceActor, targetActor, spellAggro) {

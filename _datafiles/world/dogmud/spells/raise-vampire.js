@@ -29,13 +29,7 @@ function onCast(sourceActor, targetActor, spellAggro) {
         return false;
     }
 
-    SendUserMessage(sourceActor.UserId(), 'You begin the forbidden rite, weaving blood-dark energy through the remains. This will either work or unmake the corpse entirely...');
-    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true) + ' begins a low, rhythmic incantation over the remains. The shadows around them deepen and lean inward.', sourceActor.UserId());
     return true;
-}
-
-function onWait(sourceActor, targetActor, spellAggro) {
-    SendUserMessage(sourceActor.UserId(), 'Blood-dark energy pulses through the corpse in rhythmic waves, hunting for the thread of self that the dark gift requires. Something almost stirs...');
 }
 
 function onMagic(sourceActor, targetActor, spellAggro) {

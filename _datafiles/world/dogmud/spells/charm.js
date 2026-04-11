@@ -26,26 +26,7 @@ function onCast(sourceActor, targetActor) {
         return false;
     }
 
-    SendUserMessage(sourceActor.UserId(),
-        'You fix your gaze on your target, pressing your will ' +
-        'against its mind...');
-    SendRoomMessage(sourceActor.GetRoomId(),
-        sourceActor.GetCharacterName(true) +
-        ' stares intently at ' + targetActor.GetCharacterName(true) +
-        ', brow furrowed with fierce concentration.',
-        sourceActor.UserId());
     return true;
-}
-
-function onWait(sourceActor, targetActor) {
-    var msgs = [
-        'You lock eyes with your target, your will pressing ' +
-            'against theirs...',
-        'The air crackles with psychic tension...',
-        'You feel the resistance wavering...'
-    ];
-    var pick = msgs[Math.floor(Math.random() * msgs.length)];
-    SendUserMessage(sourceActor.UserId(), pick);
 }
 
 function onMagic(sourceActor, targetActor) {

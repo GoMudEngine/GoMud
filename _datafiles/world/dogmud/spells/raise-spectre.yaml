@@ -15,3 +15,14 @@ base_folds: 10
 target_defense_type: none
 effect_type: none
 effect_magnitude: 0
+cast_user_text: >-
+  You reach into the deep cold beneath these remains, searching
+  for the heavy, hateful shadow of a powerful soul...
+cast_room_text: >-
+  {source} crouches over the remains, hands pressing into the
+  ground on either side. A ring of frost spreads outward from
+  the contact.
+wait_user_text: >-
+  A cold dread emanates from the remains as the soul's deepest
+  shadow is compressed and shaped. The air tastes of iron and
+  old grief...

@@ -29,13 +29,7 @@ function onCast(sourceActor, targetActor, spellAggro) {
         return false;
     }
 
-    SendUserMessage(sourceActor.UserId(), 'You press your will deep into the flesh, searching for the rot-thread that ties body to borrowed life...');
-    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true) + ' leans over the remains, hands splayed, a sickly green light seeping between their fingers.', sourceActor.UserId());
     return true;
-}
-
-function onWait(sourceActor, targetActor, spellAggro) {
-    SendUserMessage(sourceActor.UserId(), 'Foul energy seeps into the decaying flesh, swelling it with borrowed animation. A low, wet groan rises from the remains...');
 }
 
 function onMagic(sourceActor, targetActor, spellAggro) {

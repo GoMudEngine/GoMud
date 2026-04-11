@@ -29,13 +29,7 @@ function onCast(sourceActor, targetActor, spellAggro) {
         return false;
     }
 
-    SendUserMessage(sourceActor.UserId(), 'You reach beyond flesh and bone, grasping for the shadow-self that still clings to these remains...');
-    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true) + ' raises both hands, pulling at something invisible above the remains. The air grows cold and still.', sourceActor.UserId());
     return true;
-}
-
-function onWait(sourceActor, targetActor, spellAggro) {
-    SendUserMessage(sourceActor.UserId(), 'Ethereal threads weave through the air, pulling at the lingering spirit. Something cold and furious stirs at the edge of your vision...');
 }
 
 function onMagic(sourceActor, targetActor, spellAggro) {

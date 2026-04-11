@@ -29,13 +29,7 @@ function onCast(sourceActor, targetActor, spellAggro) {
         return false;
     }
 
-    SendUserMessage(sourceActor.UserId(), 'You extend your will toward the fallen, reaching for the echoes of life still clinging to the bones...');
-    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true) + '\'s hands trace patterns in the air above the remains, dark energy gathering at their fingertips.', sourceActor.UserId());
     return true;
-}
-
-function onWait(sourceActor, targetActor, spellAggro) {
-    SendUserMessage(sourceActor.UserId(), 'Dark energy crackles along the bones, stripping away the last of their flesh. Something dry and purposeful stirs beneath your will...');
 }
 
 function onMagic(sourceActor, targetActor, spellAggro) {

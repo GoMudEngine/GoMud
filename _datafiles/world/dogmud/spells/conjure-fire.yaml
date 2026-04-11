@@ -13,3 +13,12 @@ base_folds: 10
 target_defense_type: none
 effect_type: none
 effect_magnitude: 0
+cast_user_text: >-
+  You reach through the veil into the roiling fire plane, pulling
+  at something that burns even through the gap...
+cast_room_text: >-
+  {source}'s hands glow red as searing heat bleeds through an
+  unseen gap in the air.
+wait_user_text: >-
+  The heat is nearly unbearable. Something blazing and furious is
+  being dragged through against its will...

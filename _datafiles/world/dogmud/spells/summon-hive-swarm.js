@@ -20,13 +20,7 @@ function onCast(sourceActor, targetActor) {
         return false;
     }
 
-    SendUserMessage(sourceActor.UserId(), 'You crush the Hive Fragment in your fist, feeling thousands of tiny lives stir within...');
-    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true)+' crushes a chitinous fragment, a faint buzzing filling the air.', sourceActor.UserId());
     return true;
-}
-
-function onWait(sourceActor, targetActor) {
-    SendUserMessage(sourceActor.UserId(), 'The buzzing intensifies as countless tiny organisms pour from the shattered fragment...');
 }
 
 function onMagic(sourceActor, targetActor) {

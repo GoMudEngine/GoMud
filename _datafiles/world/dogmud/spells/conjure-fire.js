@@ -12,13 +12,7 @@ function onCast(sourceActor, targetActor) {
         return false;
     }
 
-    SendUserMessage(sourceActor.UserId(), 'You reach through the veil into the roiling fire plane, pulling at something that burns even through the gap...');
-    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true)+"'s hands glow red as searing heat bleeds through an unseen gap in the air.", sourceActor.UserId());
     return true;
-}
-
-function onWait(sourceActor, targetActor) {
-    SendUserMessage(sourceActor.UserId(), 'The heat is nearly unbearable. Something blazing and furious is being dragged through against its will...');
 }
 
 function onMagic(sourceActor, targetActor) {
