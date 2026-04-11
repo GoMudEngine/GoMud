@@ -13,3 +13,5 @@ target_defense_type: physical
 effect_type: damage
 effect_magnitude: 450
 damage_multiplier: 1.40
+cast_user_text: "You focus on the blood of your enemies, willing it to boil and rupture outward!"
+cast_room_text: "{source} clenches their fists, veins pulsing with terrible intent."

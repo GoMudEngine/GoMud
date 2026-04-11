@@ -12,3 +12,6 @@ primarystat: willpower
 effect_type: buff
 buff_ids:
   - 1
+cast_user_text: "You coax the Chrysalis spores around you to luminesce."
+cast_room_text: "{source} concentrates as faint motes of light gather."
+wait_user_text: "You hold the image steady, coaxing more spores to glow..."

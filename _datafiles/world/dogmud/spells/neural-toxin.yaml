@@ -14,3 +14,5 @@ effect_type: dot
 effect_magnitude: 60
 damage_multiplier: 0.60
 effect_duration: 4
+cast_user_text: "You channel psionic venom toward your target's mind."
+cast_room_text: "{source} focuses with toxic intent, a sickly glow around their hands."

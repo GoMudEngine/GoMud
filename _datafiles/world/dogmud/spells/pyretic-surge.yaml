@@ -13,3 +13,5 @@ target_defense_type: physical
 effect_type: damage
 effect_magnitude: 350
 damage_multiplier: 1.10
+cast_user_text: "You channel Chrysalis energy, feeling the air shimmer with heat."
+cast_room_text: "{source} holds out their hands as the air begins to ripple with heat."

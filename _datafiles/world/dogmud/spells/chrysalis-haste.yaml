@@ -12,3 +12,5 @@ base_folds: 8
 effect_type: buff
 buff_ids:
   - 28
+cast_user_text: "You channel Chrysalis energy into accelerating the target."
+cast_room_text: "{source} weaves quickening energy through the air."

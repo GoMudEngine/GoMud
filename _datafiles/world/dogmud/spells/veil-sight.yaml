@@ -12,3 +12,5 @@ base_folds: 4
 effect_type: buff
 buff_ids:
   - 53
+cast_user_text: "You open your perception to the Veil, seeking what hides beyond."
+cast_room_text: "{source} narrows their eyes, peering at something unseen."

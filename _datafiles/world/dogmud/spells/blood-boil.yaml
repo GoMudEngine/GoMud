@@ -14,3 +14,5 @@ effect_type: dot
 effect_magnitude: 80
 damage_multiplier: 0.80
 effect_duration: 3
+cast_user_text: "You focus on the target's blood, willing it to boil."
+cast_room_text: "{source} extends a trembling hand, eyes burning with intent."
