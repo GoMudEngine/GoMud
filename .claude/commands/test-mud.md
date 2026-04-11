@@ -52,6 +52,12 @@ allowed limit) until the file is non-empty and contains game content
 (look for room descriptions, HP bars, or exit listings). Allow up to
 30 seconds (15 polls) before giving up.
 
+**Post-login setup:** Once connected, immediately send `set charset` to
+switch to ASCII mode. This prevents Unicode box-drawing characters and
+emoji from corrupting the bridge output. Verify the response says
+"Charset mode set to ASCII". If it says Unicode instead, send it again
+to toggle back.
+
 **IMPORTANT: Claude Code blocks `sleep` calls over 2 seconds.** Always
 use `sleep 1` or `sleep 2`, never `sleep 4` or higher.
 
