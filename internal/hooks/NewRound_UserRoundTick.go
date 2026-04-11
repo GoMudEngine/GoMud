@@ -18,6 +18,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/textutil"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/GoMudEngine/GoMud/internal/worldevents"
@@ -148,6 +149,25 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 						if buff.Expired() {
 							triggeredBuffIds = append(triggeredBuffIds, buff.BuffId)
 							continue
+						}
+
+						// Send YAML trigger text (if defined).
+						trigBuffSpec := buffs.GetBuffSpec(buff.BuffId)
+						if trigBuffSpec != nil && (trigBuffSpec.TriggerUserText != "" || trigBuffSpec.TriggerRoomText != "") {
+							tCtx := textutil.TokenContext{
+								SourceName:      user.Character.GetCharacterName(true),
+								SourcePlainName: user.Character.GetCharacterName(false),
+							}
+							cfg := textutil.SendTextConfig{
+								UserSendFunc: func(msg string) { user.SendText(msg) },
+								RoomSendFunc: func(msg string, skip ...int) {
+									if r := rooms.LoadRoom(user.Character.RoomId); r != nil {
+										r.SendText(msg, skip...)
+									}
+								},
+								ExcludeId: user.UserId,
+							}
+							textutil.SendPhaseText(trigBuffSpec.TriggerUserText, trigBuffSpec.TriggerRoomText, tCtx, "cyan", cfg)
 						}
 
 						_, err := scripting.TryBuffScriptEvent(`onTrigger`, uId, 0, buff.BuffId)

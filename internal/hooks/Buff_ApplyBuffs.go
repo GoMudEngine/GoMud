@@ -6,7 +6,9 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
+	"github.com/GoMudEngine/GoMud/internal/textutil"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -57,6 +59,48 @@ func ApplyBuffs(e events.Event) events.ListenerReturn {
 
 	// Apply the buff
 	targetChar.AddBuff(evt.BuffId, false)
+
+	//
+	// Send YAML start text (if defined).
+	//
+	if buffInfo.StartUserText != "" || buffInfo.StartRoomText != "" {
+		var charName, charPlainName string
+		var sendFunc func(string)
+		var roomId, excludeId int
+
+		if evt.UserId != 0 {
+			if u := users.GetByUserId(evt.UserId); u != nil {
+				charName = u.Character.GetCharacterName(true)
+				charPlainName = u.Character.GetCharacterName(false)
+				roomId = u.Character.RoomId
+				excludeId = u.UserId
+				sendFunc = func(msg string) { u.SendText(msg) }
+			}
+		} else if evt.MobInstanceId != 0 {
+			if m := mobs.GetInstance(evt.MobInstanceId); m != nil {
+				charName = m.Character.GetCharacterName(true)
+				charPlainName = m.Character.GetCharacterName(false)
+				roomId = m.Character.RoomId
+			}
+		}
+
+		if charName != "" {
+			tCtx := textutil.TokenContext{
+				SourceName:      charName,
+				SourcePlainName: charPlainName,
+			}
+			cfg := textutil.SendTextConfig{
+				UserSendFunc: sendFunc,
+				RoomSendFunc: func(msg string, skip ...int) {
+					if r := rooms.LoadRoom(roomId); r != nil {
+						r.SendText(msg, skip...)
+					}
+				},
+				ExcludeId: excludeId,
+			}
+			textutil.SendPhaseText(buffInfo.StartUserText, buffInfo.StartRoomText, tCtx, "cyan", cfg)
+		}
+	}
 
 	//
 	// Fire onStart for buff script

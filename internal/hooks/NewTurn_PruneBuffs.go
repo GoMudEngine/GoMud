@@ -1,11 +1,13 @@
 package hooks
 
 import (
+	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
+	"github.com/GoMudEngine/GoMud/internal/textutil"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -37,6 +39,25 @@ func PruneBuffs(e events.Event) events.ListenerReturn {
 				logOff = false
 				if buffsToPrune := user.Character.Buffs.Prune(); len(buffsToPrune) > 0 {
 					for _, buffInfo := range buffsToPrune {
+						// Send YAML end text (if defined).
+						endBuffSpec := buffs.GetBuffSpec(buffInfo.BuffId)
+						if endBuffSpec != nil && (endBuffSpec.EndUserText != "" || endBuffSpec.EndRoomText != "") {
+							tCtx := textutil.TokenContext{
+								SourceName:      user.Character.GetCharacterName(true),
+								SourcePlainName: user.Character.GetCharacterName(false),
+							}
+							cfg := textutil.SendTextConfig{
+								UserSendFunc: func(msg string) { user.SendText(msg) },
+								RoomSendFunc: func(msg string, skip ...int) {
+									if r := rooms.LoadRoom(user.Character.RoomId); r != nil {
+										r.SendText(msg, skip...)
+									}
+								},
+								ExcludeId: user.UserId,
+							}
+							textutil.SendPhaseText(endBuffSpec.EndUserText, endBuffSpec.EndRoomText, tCtx, "cyan", cfg)
+						}
+
 						scripting.TryBuffScriptEvent(`onEnd`, uId, 0, buffInfo.BuffId)
 
 						if buffInfo.BuffId == 0 { // Log them out // logoff // logout
@@ -65,6 +86,23 @@ func PruneBuffs(e events.Event) events.ListenerReturn {
 
 		if buffsToPrune := mob.Character.Buffs.Prune(); len(buffsToPrune) > 0 {
 			for _, buffInfo := range buffsToPrune {
+				// Send YAML end text (if defined).
+				endBuffSpec := buffs.GetBuffSpec(buffInfo.BuffId)
+				if endBuffSpec != nil && endBuffSpec.EndRoomText != "" {
+					tCtx := textutil.TokenContext{
+						SourceName:      mob.Character.GetCharacterName(true),
+						SourcePlainName: mob.Character.GetCharacterName(false),
+					}
+					cfg := textutil.SendTextConfig{
+						RoomSendFunc: func(msg string, skip ...int) {
+							if r := rooms.LoadRoom(mob.Character.RoomId); r != nil {
+								r.SendText(msg, skip...)
+							}
+						},
+					}
+					textutil.SendPhaseText("", endBuffSpec.EndRoomText, tCtx, "cyan", cfg)
+				}
+
 				scripting.TryBuffScriptEvent(`onEnd`, 0, mobInstanceId, buffInfo.BuffId)
 			}
 
