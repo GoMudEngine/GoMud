@@ -1,5 +1,23 @@
 # DOGMud Patch Notes
 
+## 2026-04-11 — JS Audit Phase 1: YAML Text Fields
+
+### Code Cleanup: Spell & Buff Text Migration
+- **60 JS files deleted** — flavor-only spell and buff scripts replaced
+  by YAML text fields on the data definitions. No gameplay changes;
+  same messages, same colors, now driven by data instead of scripts.
+- **13 stub room scripts deleted** — empty JS files that did nothing.
+- **20 complex spell/buff scripts slimmed** — flavor text extracted to
+  YAML, logic (companion spawning, charm, teleport, healing ticks)
+  remains in JS.
+- **New `textutil` package** — centralized token substitution
+  (`{source}`, `{target}`) and text dispatch for spell/buff messaging.
+  Sets the stage for ANSI-aware line wrapping in a future pass.
+- **Schema docs updated** — spell and buff schemas now document YAML
+  text fields. JS files are optional for flavor-only spells/buffs.
+- Net result: 185 files changed, ~60 fewer lines of code, 60 fewer
+  files to maintain.
+
 ## 2026-04-10 — Instanced Zones: Arena, Planar Oasis, Randomized Loot
 
 ### Zone 2.1b: North Road — River Approach
