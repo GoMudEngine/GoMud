@@ -9,3 +9,7 @@ statmods:
 start_user_text: A cloud of toxic spores engulfs you!
 start_room_text: "{source} is enveloped in a cloud of choking spores."
 end_user_text: You finally cough up the last of the spores.
+tick_pool: health
+tick_percent: -0.05
+tick_variance: 0.03
+tick_min: 2
