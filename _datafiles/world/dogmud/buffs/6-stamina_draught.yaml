@@ -5,6 +5,7 @@ triggerrate: 2 rounds
 triggercount: 6
 start_user_text: The bitter draught burns going down, then spreads warmth through your legs.
 end_user_text: The draught's effect fades.
+trigger_user_text: The draught restores your vigor.
 tick_pool: stamina
 tick_percent: 0.08
 tick_min: 1

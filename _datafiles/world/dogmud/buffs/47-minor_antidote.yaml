@@ -6,6 +6,7 @@ triggercount: 1
 start_user_text: The bitter draught burns your throat but you feel poisons loosening their grip.
 start_room_text: "{source} grimaces as they swallow an antidote."
 end_user_text: The antidote has run its course.
+trigger_user_text: The antidote soothes your body.
 tick_pool: health
 tick_percent: 0.05
 tick_min: 1
