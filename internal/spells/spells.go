@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/textutil"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/pkg/errors"
 )
@@ -35,6 +36,14 @@ type SpellData struct {
 	EffectDuration      int    `yaml:"effect_duration,omitempty"`      // DoT tick count (default 0 = use 3)
 	BuffIds             []int  `yaml:"buff_ids,omitempty"`             // Buff IDs to apply (for "buff" effect type)
 	QuestRequired       string `yaml:"quest_required,omitempty"`       // Quest token required before spell can be discovered
+
+	// YAML text fields — flavor text sent by the engine (replaces JS messaging)
+	CastUserText  string `yaml:"cast_user_text,omitempty"`
+	CastRoomText  string `yaml:"cast_room_text,omitempty"`
+	WaitUserText  string `yaml:"wait_user_text,omitempty"`
+	WaitRoomText  string `yaml:"wait_room_text,omitempty"`
+	MagicUserText string `yaml:"magic_user_text,omitempty"`
+	MagicRoomText string `yaml:"magic_room_text,omitempty"`
 }
 
 const (
@@ -169,6 +178,17 @@ func (s *SpellData) Validate() error {
 		s.Difficulty = 0
 	} else if s.Difficulty > 100 {
 		s.Difficulty = 100
+	}
+
+	// Validate YAML text tokens
+	for _, text := range []string{
+		s.CastUserText, s.CastRoomText,
+		s.WaitUserText, s.WaitRoomText,
+		s.MagicUserText, s.MagicRoomText,
+	} {
+		for _, w := range textutil.ValidateTokens(text) {
+			mudlog.Warn("Spell.Validate", "spellId", s.SpellId, "warning", w)
+		}
 	}
 
 	return nil
