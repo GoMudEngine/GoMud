@@ -4,10 +4,11 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
-	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/spells"
+	"github.com/GoMudEngine/GoMud/internal/textutil"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -51,6 +52,27 @@ func Aid(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 				TargetMobInstanceIds: []int{},
 			}
 
+			spellInfo := spells.GetSpell(`aidskill`)
+
+			// Send YAML cast text (if defined).
+			if spellInfo != nil && (spellInfo.CastUserText != "" || spellInfo.CastRoomText != "") {
+				castRoom := rooms.LoadRoom(mob.Character.RoomId)
+				tCtx := textutil.TokenContext{
+					SourceName:      mob.Character.GetCharacterName(true),
+					SourcePlainName: mob.Character.GetCharacterName(false),
+					TargetName:      p.Character.GetCharacterName(true),
+					TargetPlainName: p.Character.GetCharacterName(false),
+				}
+				cfg := textutil.SendTextConfig{
+					RoomSendFunc: func(msg string, skip ...int) {
+						if castRoom != nil {
+							castRoom.SendText(msg, skip...)
+						}
+					},
+				}
+				textutil.SendPhaseText("", spellInfo.CastRoomText, tCtx, "pink", cfg)
+			}
+
 			continueCasting := true
 			if allowToContinue, err := scripting.TrySpellScriptEvent(`onCast`, 0, mob.InstanceId, spellAggro); err == nil {
 				continueCasting = allowToContinue
@@ -58,9 +80,10 @@ func Aid(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 			if continueCasting {
 
-				spellInfo := spells.GetSpell(`aidskill`)
 				mob.Character.CancelBuffsWithFlag(buffs.Hidden)
-				mob.Character.SetCast(spellInfo.WaitRounds, spellAggro)
+				if spellInfo != nil {
+					mob.Character.SetCast(spellInfo.WaitRounds, spellAggro)
+				}
 			}
 
 		}

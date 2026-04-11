@@ -9,11 +9,13 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
+	"github.com/GoMudEngine/GoMud/internal/textutil"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -212,6 +214,36 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 	// 12. Commit CastingState.
 	user.Character.CastingState = result.CastingState
+
+	// 12b. Send YAML cast text (if defined).
+	if spellInfo.CastUserText != "" || spellInfo.CastRoomText != "" {
+		castRoom := rooms.LoadRoom(user.Character.RoomId)
+		tCtx := textutil.TokenContext{
+			SourceName:      user.Character.GetCharacterName(true),
+			SourcePlainName: user.Character.GetCharacterName(false),
+		}
+		if len(result.TargetUserIds) > 0 {
+			if tUser := users.GetByUserId(result.TargetUserIds[0]); tUser != nil {
+				tCtx.TargetName = tUser.Character.GetCharacterName(true)
+				tCtx.TargetPlainName = tUser.Character.GetCharacterName(false)
+			}
+		} else if len(result.TargetMobInstanceIds) > 0 {
+			if tMob := mobs.GetInstance(result.TargetMobInstanceIds[0]); tMob != nil {
+				tCtx.TargetName = tMob.Character.GetCharacterName(true)
+				tCtx.TargetPlainName = tMob.Character.GetCharacterName(false)
+			}
+		}
+		cfg := textutil.SendTextConfig{
+			UserSendFunc: func(msg string) { user.SendText(msg) },
+			RoomSendFunc: func(msg string, skip ...int) {
+				if castRoom != nil {
+					castRoom.SendText(msg, skip...)
+				}
+			},
+			ExcludeId: user.UserId,
+		}
+		textutil.SendPhaseText(spellInfo.CastUserText, spellInfo.CastRoomText, tCtx, "pink", cfg)
+	}
 
 	// 13. Fire onCast spell script (if present) — can cancel the cast.
 	spellAggro := characters.SpellAggroInfo{
