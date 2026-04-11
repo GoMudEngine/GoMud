@@ -349,6 +349,14 @@ func (bs *Buffs) Prune() (prunedBuffs []*Buff) {
 	return prunedBuffs
 }
 
+// SetTickAmount sets the TickAmount on the most recently added buff with
+// the given buffId. Called right after AddBuff to set the snapshot.
+func (bs *Buffs) SetTickAmount(buffId int, amount int) {
+	if idx, ok := bs.buffIds[buffId]; ok {
+		bs.List[idx].TickAmount = amount
+	}
+}
+
 func GetDurations(buff *Buff, spec *BuffSpec) (roundsLeft int, totalRounds int) {
 
 	totalRounds = spec.TriggerCount * spec.RoundInterval

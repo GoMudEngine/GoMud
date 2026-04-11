@@ -369,6 +369,30 @@ func applyMobEffect(user *users.UserRecord, casterChar *characters.Character, mo
 	case "buff":
 		for _, buffId := range spellData.BuffIds {
 			mob.AddBuff(buffId, "spell")
+			// Compute tick snapshot for config-driven buffs
+			if user != nil {
+				if buffSpec := buffs.GetBuffSpec(buffId); buffSpec != nil && buffSpec.TickPool != "" {
+					skillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
+					scalingMult := combat.SkillMultiplier(skillLevel)
+					// Apply weapon spell damage multiplier if equipped
+					if user.Character.Equipment.Weapon.ItemId > 0 {
+						if weaponSpec := items.GetItemSpec(user.Character.Equipment.Weapon.ItemId); weaponSpec != nil && weaponSpec.SpellDamageMultiplier > 0 {
+							scalingMult *= weaponSpec.SpellDamageMultiplier
+						}
+					}
+					var maxPool int
+					switch buffSpec.TickPool {
+					case "health":
+						maxPool = mob.Character.HealthMax.Value
+					case "stamina":
+						maxPool = mob.Character.StaminaMax.Value
+					case "conviction":
+						maxPool = mob.Character.ConvictionMax.Value
+					}
+					tickAmt := buffs.ComputeTickAmount(maxPool, buffSpec.TickPercent, buffSpec.TickVariance, buffSpec.TickMin, scalingMult)
+					mob.Character.Buffs.SetTickAmount(buffId, tickAmt)
+				}
+			}
 		}
 		// Set aggro for harmful buff spells
 		if spellData.Type == spells.HarmSingle || spellData.Type == spells.HarmArea || spellData.Type == spells.HarmMulti {
@@ -622,6 +646,28 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 	case "buff":
 		for _, buffId := range spellData.BuffIds {
 			target.AddBuff(buffId, "spell")
+			// Compute tick snapshot for config-driven buffs
+			if buffSpec := buffs.GetBuffSpec(buffId); buffSpec != nil && buffSpec.TickPool != "" {
+				skillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
+				scalingMult := combat.SkillMultiplier(skillLevel)
+				// Apply weapon spell damage multiplier if equipped
+				if user.Character.Equipment.Weapon.ItemId > 0 {
+					if weaponSpec := items.GetItemSpec(user.Character.Equipment.Weapon.ItemId); weaponSpec != nil && weaponSpec.SpellDamageMultiplier > 0 {
+						scalingMult *= weaponSpec.SpellDamageMultiplier
+					}
+				}
+				var maxPool int
+				switch buffSpec.TickPool {
+				case "health":
+					maxPool = target.Character.HealthMax.Value
+				case "stamina":
+					maxPool = target.Character.StaminaMax.Value
+				case "conviction":
+					maxPool = target.Character.ConvictionMax.Value
+				}
+				tickAmt := buffs.ComputeTickAmount(maxPool, buffSpec.TickPercent, buffSpec.TickVariance, buffSpec.TickMin, scalingMult)
+				target.Character.Buffs.SetTickAmount(buffId, tickAmt)
+			}
 		}
 		user.SendText(fmt.Sprintf(
 			`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> takes effect on <ansi fg="username">%s</ansi>!%s</ansi>`,
