@@ -21,3 +21,7 @@ cast_room_text: >-
 wait_user_text: >-
   The buzzing intensifies as countless tiny organisms pour from
   the shattered fragment...
+summon_mob_id: 111
+summon_base_pool: 18
+summon_scaling_divisor: 200
+summon_component_id: 40011

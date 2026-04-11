@@ -22,3 +22,6 @@ cast_room_text: >-
 wait_user_text: >-
   The floor shudders. Something vast and patient stirs beneath it,
   rising reluctantly toward your call...
+summon_mob_id: 311
+summon_base_pool: 90
+summon_scaling_divisor: 500

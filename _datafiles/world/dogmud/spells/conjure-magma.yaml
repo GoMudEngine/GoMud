@@ -24,3 +24,6 @@ cast_room_text: >-
 wait_user_text: >-
   The floor heaves. Orange light bleeds through the cracks.
   Something immense and blazing hot is forcing its way through...
+summon_mob_id: 314
+summon_base_pool: 130
+summon_scaling_divisor: 500

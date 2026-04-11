@@ -22,3 +22,6 @@ cast_room_text: >-
 wait_user_text: >-
   A high, keening sound builds from nowhere. The air pressure
   drops sharply as something tears through...
+summon_mob_id: 312
+summon_base_pool: 70
+summon_scaling_divisor: 500

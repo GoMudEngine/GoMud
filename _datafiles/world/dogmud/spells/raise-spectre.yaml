@@ -26,3 +26,8 @@ wait_user_text: >-
   A cold dread emanates from the remains as the soul's deepest
   shadow is compressed and shaped. The air tastes of iron and
   old grief...
+summon_mob_id: 303
+summon_base_pool: 90
+summon_scaling_divisor: 500
+summon_requires_corpse: true
+summon_min_corpse_pool: 200

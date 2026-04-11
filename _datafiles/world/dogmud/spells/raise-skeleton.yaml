@@ -25,3 +25,8 @@ wait_user_text: >-
   Dark energy crackles along the bones, stripping away the last
   of their flesh. Something dry and purposeful stirs beneath your
   will...
+summon_mob_id: 300
+summon_base_pool: 60
+summon_scaling_divisor: 500
+summon_requires_corpse: true
+summon_min_corpse_pool: 30

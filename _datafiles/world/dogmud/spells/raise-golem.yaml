@@ -28,3 +28,8 @@ wait_user_text: >-
   The ground trembles as flesh begins to knit and bulk,
   assembling into something vast and purposeful. The air reeks
   of raw meat and ozone...
+summon_mob_id: 305
+summon_base_pool: 120
+summon_scaling_divisor: 500
+summon_requires_corpse: true
+summon_min_corpse_pool: 500
