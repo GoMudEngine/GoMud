@@ -125,7 +125,9 @@ func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData
 	}
 
 	// --- Empty room / no valid targets feedback ---
-	if targetsResolved == 0 {
+	// Skip for summon/charm spells — they handle their own targeting via Go functions
+	isSummonOrCharm := spellData != nil && (spellData.SummonMobId > 0 || spellData.EffectType == "charm")
+	if targetsResolved == 0 && !isSummonOrCharm {
 		user.SendText(`<ansi fg="cyan">Your spell erupts outward but finds no targets.</ansi>`)
 		room.SendText(fmt.Sprintf(
 			`<ansi fg="username">%s</ansi>'s spell crackles through the air harmlessly.`,
