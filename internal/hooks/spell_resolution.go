@@ -165,6 +165,14 @@ func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData
 	if spellData != nil && spellData.SummonMobId > 0 {
 		resolveCompanionSummon(user, spellData, cs.SpellRest, room)
 	}
+	// Resolve charm spell
+	if spellData != nil && spellData.EffectType == "charm" {
+		if len(cs.TargetMobInstanceIds) > 0 {
+			if targetMob := mobs.GetInstance(cs.TargetMobInstanceIds[0]); targetMob != nil {
+				resolveCharmSpell(user, targetMob, room)
+			}
+		}
+	}
 
 	spellAggro := characters.SpellAggroInfo{
 		SpellId:              cs.SpellId,
