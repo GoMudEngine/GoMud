@@ -12,6 +12,12 @@ description: A single page torn from a notebook, covered in
   clarifies something you have been working toward in your
   own practice.
 type: object
-subtype: holdable
+subtype: usable
 uses: 1
 weight: 0.1
+on_use_train_skill: search
+on_use_train_amount: 1
+on_use_user_text: "You study the recipe page, tracing the careful handwriting and\
+  \ the teacher's corrections. The technique for fever-bark extraction is elegant\
+  \ in its simplicity -- lower heat, longer time, patience as an ingredient.\
+  \ Something clicks in your understanding of how plants yield their properties."
