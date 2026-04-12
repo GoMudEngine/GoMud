@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
@@ -20,6 +21,15 @@ import (
 //
 // Returns true on success, false on failure (error already sent to user).
 func resolveCompanionSummon(user *users.UserRecord, spellData *spells.SpellData, spellRest string, room *rooms.Room) bool {
+
+	// Handle corpse targeting: "corpse", "2.corpse", "corpse#2", etc.
+	// Use the engine's standard disambiguation parser.
+	targetWord, targetIndex := util.GetMatchNumber(spellRest)
+	genericTargets := map[string]bool{"corpse": true, "remains": true, "body": true, "corpses": true, "bones": true, "": true}
+	if genericTargets[targetWord] {
+		spellRest = "" // Generic word — match by index, not name
+	}
+	// targetIndex: 1 = first valid, 2 = second valid, etc.
 
 	ch := user.Character
 
@@ -51,6 +61,7 @@ func resolveCompanionSummon(user *users.UserRecord, spellData *spells.SpellData,
 
 	if spellData.SummonRequiresCorpse {
 		targetIdx := -1
+		validCount := 0
 		for idx, c := range room.Corpses {
 			if c.Prunable {
 				continue
@@ -63,7 +74,7 @@ func resolveCompanionSummon(user *users.UserRecord, spellData *spells.SpellData,
 			if c.WasCharmed {
 				continue
 			}
-			// Name filter if spellRest is provided
+			// Name filter if spellRest is a specific mob name
 			if spellRest != "" && !strings.Contains(strings.ToLower(c.Character.Name), strings.ToLower(spellRest)) {
 				continue
 			}
@@ -79,9 +90,12 @@ func resolveCompanionSummon(user *users.UserRecord, spellData *spells.SpellData,
 				continue
 			}
 
-			targetIdx = idx
-			corpsePool = pool
-			break
+			validCount++
+			if validCount == targetIndex {
+				targetIdx = idx
+				corpsePool = pool
+				break
+			}
 		}
 
 		if targetIdx < 0 {
