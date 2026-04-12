@@ -42,7 +42,7 @@ _datafiles/world/dogmud/spells/{spellid}.js   (optional — only if spell has lo
 | `base_folds` | int | no | Base fold complexity. 0 = defaults to 4. |
 | `target_defense_type` | string | no | `"physical"`, `"mental"`, or `""` (no defense roll). |
 | `component_tag` | string | no | Required item component (e.g. `"stone"` requires throw-stone component). |
-| `effect_type` | string | no | `"damage"`, `"heal"`, `"buff"`, `"tame"`, `"shield"`. |
+| `effect_type` | string | no | `"damage"`, `"heal"`, `"buff"`, `"tame"`, `"shield"`, `"charm"`. |
 | `effect_magnitude` | int | no | Base damage or heal amount for simple effects. |
 | `buff_ids` | list | no | Buff IDs applied to target on success (for `effect_type: buff`). |
 | `summon_mob_id` | int | no | Mob ID to summon. Non-zero = this is a summon spell. |

@@ -93,6 +93,27 @@ damage:
 | `uses` | int | no | Number of uses before item is consumed. |
 | `buffids` | list | no | Buff IDs applied when item is used. |
 
+### YAML-Driven Use Effects
+
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `on_use_train_skill` | string | no | Skill name trained when item is used. |
+| `on_use_train_amount` | int | no | Amount to train (default 1). |
+| `on_use_user_text` | string | no | Text sent to user on use. Supports `{source}` token. |
+| `on_use_room_text` | string | no | Text sent to room on use. Supports `{source}` token. |
+
+Example — consumable recipe page that trains a skill:
+```yaml
+itemid: 40042
+name: herbalism recipe page
+type: object
+subtype: usable
+uses: 1
+on_use_train_skill: search
+on_use_train_amount: 1
+on_use_user_text: "You study the recipe page carefully. Something clicks."
+```
+
 ### StatMods Sub-fields
 
 ```yaml
