@@ -1,0 +1,15 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">sethome</ansi> command
+
+The <ansi fg="command">sethome</ansi> command sets your home location.
+Your home is where you return after leaving the shadow realm.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">sethome</ansi>              Show current home and options
+  <ansi fg="command">sethome default</ansi>      Sanctum Basin (starting area)
+  <ansi fg="command">sethome thornwall</ansi>    Thornwall City (Temple Interior)
+
+New characters start with Sanctum Basin as their home.
+More locations will be added as you discover new cities.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help death</ansi>
