@@ -1349,6 +1349,16 @@ func (c *Character) GetPlayerName(viewingUserId int, renderFlags ...NameRenderFl
 	return c.getFormattedName(viewingUserId, `username`, renderFlags...)
 }
 
+// GetCharacterName returns the character's name as a plain string (ansi=false)
+// or as an ANSI-tagged display string (ansi=true). Works for both player and
+// mob characters; uses the username color tag for ANSI display.
+func (c *Character) GetCharacterName(ansi bool) string {
+	if !ansi {
+		return c.Name
+	}
+	return c.getFormattedName(0, `username`).String()
+}
+
 func (c *Character) HasAdjective(adj string) bool {
 	return slices.Contains(c.Adjectives, adj)
 }

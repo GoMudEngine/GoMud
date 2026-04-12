@@ -195,6 +195,10 @@ func (a ScriptActor) HasQuest(questId string) bool {
 	return a.characterRecord.HasQuest(questId)
 }
 
+func (a ScriptActor) GetSetting(key string) string {
+	return a.characterRecord.GetSetting(key)
+}
+
 func (a ScriptActor) GetQuestFlag(key string) string {
 	return a.characterRecord.GetQuestFlag(key)
 }

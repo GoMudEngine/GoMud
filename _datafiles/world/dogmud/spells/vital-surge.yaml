@@ -12,3 +12,5 @@ base_folds: 5
 effect_type: buff
 buff_ids:
   - 32
+cast_user_text: "You channel a sustained pulse of healing energy."
+cast_room_text: "{source} channels a warm, pulsing glow."

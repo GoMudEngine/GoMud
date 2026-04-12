@@ -5,3 +5,5 @@ triggerrate: 1 round
 triggercount: 200
 flags:
   - skill-progress
+start_user_text: "Your mind opens and sharpens \u2014 every action feels more instructive."
+end_user_text: The heightened attunement fades from your mind.

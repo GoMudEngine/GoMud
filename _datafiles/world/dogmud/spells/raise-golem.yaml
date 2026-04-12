@@ -16,3 +16,20 @@ base_folds: 16
 target_defense_type: none
 effect_type: none
 effect_magnitude: 0
+cast_user_text: >-
+  You begin the brutal stitching-work — not resurrection but
+  construction, forcing flesh and sinew to knit according to
+  your will...
+cast_room_text: >-
+  {source} gestures over the remains with sweeping, surgical
+  motions. The ground shudders faintly with each pass of their
+  hands.
+wait_user_text: >-
+  The ground trembles as flesh begins to knit and bulk,
+  assembling into something vast and purposeful. The air reeks
+  of raw meat and ozone...
+summon_mob_id: 305
+summon_base_pool: 120
+summon_scaling_divisor: 500
+summon_requires_corpse: true
+summon_min_corpse_pool: 500

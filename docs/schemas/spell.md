@@ -5,16 +5,18 @@
 **Path formula:**
 ```
 _datafiles/world/dogmud/spells/{spellid}.yaml
-_datafiles/world/dogmud/spells/{spellid}.js
+_datafiles/world/dogmud/spells/{spellid}.js   (optional — only if spell has logic)
 ```
 
 - `{spellid}` is used **directly** as the filename — no `ConvertForFilename` conversion.
-- The `.yaml` and `.js` files must share the exact same base name.
+- The `.js` file is **optional**. Flavor-only spells use YAML text fields
+  instead (see Section 2b). Only create a `.js` when the spell needs
+  custom logic (companion spawning, teleportation, validation, etc.).
 
 **Worked example:**
 - spellid: `fire-bolt`
 - YAML: `_datafiles/world/dogmud/spells/fire-bolt.yaml`
-- JS:   `_datafiles/world/dogmud/spells/fire-bolt.js`
+- JS:   `_datafiles/world/dogmud/spells/fire-bolt.js` (only if logic needed)
 
 **Existing spells** (for reference IDs):
 `aidskill`, `blind`, `curepoison`, `fireball`, `fire-bolt`, `heal`, `healall`, `illum`, `minor-shield`, `mm`, `sparks`, `stun`, `tame`, `throw-stone`
@@ -40,9 +42,97 @@ _datafiles/world/dogmud/spells/{spellid}.js
 | `base_folds` | int | no | Base fold complexity. 0 = defaults to 4. |
 | `target_defense_type` | string | no | `"physical"`, `"mental"`, or `""` (no defense roll). |
 | `component_tag` | string | no | Required item component (e.g. `"stone"` requires throw-stone component). |
-| `effect_type` | string | no | `"damage"`, `"heal"`, `"buff"`, `"tame"`, `"shield"`. |
+| `effect_type` | string | no | `"damage"`, `"heal"`, `"buff"`, `"tame"`, `"shield"`, `"charm"`. |
 | `effect_magnitude` | int | no | Base damage or heal amount for simple effects. |
 | `buff_ids` | list | no | Buff IDs applied to target on success (for `effect_type: buff`). |
+| `summon_mob_id` | int | no | Mob ID to summon. Non-zero = this is a summon spell. |
+| `summon_base_pool` | int | no | Base stat pool before charisma/skill scaling. |
+| `summon_scaling_divisor` | int | no | Charisma divisor for scaling (default 500, lower = more scaling). |
+| `summon_component_id` | int | no | Item ID consumed on cast. 0 = no component needed. |
+| `summon_requires_corpse` | bool | no | If true, requires and consumes a room corpse. |
+| `summon_min_corpse_pool` | int | no | Minimum corpse stat pool required for raise spells. |
+| `cast_user_text` | string | no | Text sent to caster on cast. Supports `{source}`, `{target}` tokens. |
+| `cast_room_text` | string | no | Text sent to room on cast. Supports `{source}`, `{target}` tokens. |
+| `wait_user_text` | string | no | Text sent to caster each wait round. |
+| `wait_room_text` | string | no | Text sent to room each wait round. |
+| `magic_user_text` | string | no | Text sent to caster on resolution. |
+| `magic_room_text` | string | no | Text sent to room on resolution. |
+
+### YAML Text Fields (Section 2b)
+
+Flavor text can live in YAML instead of JS. The engine sends YAML text
+automatically before calling any JS hooks. If a `.js` file also exists,
+both run (YAML text first, then JS).
+
+**Token substitution:**
+
+| Token | Resolves to |
+|-------|------------|
+| `{source}` | Caster's ANSI-tagged display name |
+| `{target}` | Target's ANSI-tagged display name |
+| `{source_plain}` | Caster's plain name (for possessives) |
+| `{target_plain}` | Target's plain name |
+
+**Example — flavor-only spell (no JS needed):**
+```yaml
+spellid: conviction-surge
+name: Conviction Surge
+type: helpsingle
+schools:
+  - enhancement
+cost: 35
+waitrounds: 1
+effect_type: buff
+buff_ids:
+  - 26
+cast_user_text: You channel conviction into empowering energy.
+cast_room_text: "{source} gathers conviction, a fierce glow building."
+```
+
+**Example — spell with logic (JS handles onMagic only):**
+```yaml
+spellid: raise-skeleton
+name: Raise Skeleton
+type: neutral
+# ... other fields ...
+cast_user_text: You reach toward the remains, dark energy gathering.
+cast_room_text: "{source} reaches toward the remains, tendrils of shadow curling from outstretched fingers."
+# JS file still exists for onMagic companion spawning logic
+```
+
+**Example — Raise Skeleton (corpse-consuming summon):**
+```yaml
+spellid: raise-skeleton
+name: Raise Skeleton
+type: neutral
+schools:
+  - manifestation
+cost: 40
+waitrounds: 2
+summon_mob_id: 300
+summon_base_pool: 60
+summon_scaling_divisor: 500
+summon_requires_corpse: true
+summon_min_corpse_pool: 30
+cast_user_text: "You reach toward the remains, dark energy gathering."
+cast_room_text: "{source} reaches toward the remains, tendrils of shadow curling."
+```
+
+**Example — Conjure Earth Elemental (no corpse, no component):**
+```yaml
+spellid: conjure-earth
+name: Conjure Earth Elemental
+type: neutral
+schools:
+  - manifestation
+cost: 55
+waitrounds: 2
+summon_mob_id: 311
+summon_base_pool: 90
+summon_scaling_divisor: 500
+cast_user_text: "You slam your fist into the ground, willing stone to rise."
+cast_room_text: "{source} slams a fist into the ground with a thunderous crack."
+```
 
 ### Valid SpellType Values
 
@@ -76,7 +166,11 @@ schools:
 
 ## 3. JS Script Contract
 
-Every non-trivial spell requires a `.js` file with three required functions:
+A `.js` file is only needed for spells with custom logic (validation,
+companion spawning, teleportation, etc.). Flavor-only spells should use
+YAML text fields instead.
+
+When a `.js` is needed, it can define up to three functions:
 
 ```javascript
 // Called when casting begins (the cast command is issued)
@@ -167,13 +261,16 @@ function onMagic(sourceActor, targetActor) {
 ## 5. Gotchas
 
 **spellid IS the filename — no ConvertForFilename.**
-Unlike mobs/items/buffs, spell filenames use the `spellid` value directly. `spellid: fire-bolt` → `fire-bolt.yaml` and `fire-bolt.js`. Do not apply underscore conversion.
+Unlike mobs/items/buffs, spell filenames use the `spellid` value directly.
+`spellid: fire-bolt` → `fire-bolt.yaml`. Do not apply underscore conversion.
 
-**Both `.yaml` and `.js` must exist.**
-If a spell YAML references a JS behavior (via non-trivial logic), the `.js` file must exist with the correct name. A missing `.js` causes the spell to silently do nothing on cast.
+**JS is optional.** Flavor-only spells use YAML text fields. Only create
+a `.js` file when the spell needs custom logic (companion spawning,
+validation, teleportation, etc.). If a `.js` exists, it runs after YAML
+text is sent.
 
 **`waitrounds: 0` means instant.**
-The `onWait` function is never called for instant spells. Still provide it as an empty function for safety.
+The `onWait` function is never called for instant spells.
 
 **`effect_magnitude` for simple spells only.**
 For spells with complex logic in JS, `effect_magnitude` is ignored. The JS `onMagic` function handles all effect application. Only use `effect_magnitude` for spells that rely on the engine's built-in effect system.

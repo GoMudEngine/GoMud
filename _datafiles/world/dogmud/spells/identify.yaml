@@ -12,3 +12,6 @@ primarystat: willpower
 base_folds: 3
 difficulty: 0
 effect_type: identify
+cast_user_text: >-
+  You focus your mind, reaching out to sense the item's
+  essence...

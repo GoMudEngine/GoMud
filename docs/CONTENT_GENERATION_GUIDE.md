@@ -15,7 +15,11 @@ This guide explains how to use Claude Code's slash commands to generate new worl
 | A new quest (planning)  | `/sketch-quest` |
 | A new quest (execution) | `/new-quest <plan-file>` |
 
-For spells and buffs, use the schema docs as reference and write the YAML manually for now — the `/new-mob` and `/new-item` commands will reference buff IDs as needed.
+For spells and buffs, use the schema docs as reference and write the YAML
+manually for now. **Flavor text goes in YAML text fields** (`cast_user_text`,
+`cast_room_text`, etc. for spells; `start_user_text`, `end_user_text`, etc.
+for buffs) — see `spell.md` Section 2b and `buff.md` Section 4. Only create
+a `.js` file if the spell/buff needs custom logic.
 
 **Schema docs** live in `docs/schemas/`:
 - `room.md`, `mob.md`, `item.md`, `spell.md`, `buff.md`, `dialogue.md`

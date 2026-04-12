@@ -15,3 +15,19 @@ base_folds: 12
 target_defense_type: none
 effect_type: none
 effect_magnitude: 0
+cast_user_text: >-
+  You begin the forbidden rite, weaving blood-dark energy through
+  the remains. This will either work or unmake the corpse
+  entirely...
+cast_room_text: >-
+  {source} begins a low, rhythmic incantation over the remains.
+  The shadows around them deepen and lean inward.
+wait_user_text: >-
+  Blood-dark energy pulses through the corpse in rhythmic waves,
+  hunting for the thread of self that the dark gift requires.
+  Something almost stirs...
+summon_mob_id: 304
+summon_base_pool: 100
+summon_scaling_divisor: 500
+summon_requires_corpse: true
+summon_min_corpse_pool: 300

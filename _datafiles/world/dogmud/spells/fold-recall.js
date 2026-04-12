@@ -28,18 +28,7 @@ function onCast(sourceActor, targetActor) {
         return false;
     }
 
-    SendUserMessage(sourceActor.UserId(),
-        'You reach through the Veil toward your anchor point...');
-    SendRoomMessage(currentRoom,
-        sourceActor.GetCharacterName(true) +
-        ' reaches into the Veil, reality blurring around them.',
-        sourceActor.UserId());
     return true;
-}
-
-function onWait(sourceActor, targetActor) {
-    SendUserMessage(sourceActor.UserId(),
-        'The Veil thins as you pull yourself toward the anchor...');
 }
 
 function onMagic(sourceActor, targetActor) {

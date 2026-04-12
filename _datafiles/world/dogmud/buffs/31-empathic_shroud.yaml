@@ -5,3 +5,7 @@ triggerrate: 1 round
 triggercount: 16
 flags:
   - hidden
+start_user_text: You wrap yourself in a psionic shroud, fading from perception.
+start_room_text: "{source} seems to shimmer and fade from view."
+end_user_text: The empathic shroud dissolves and you become visible again.
+end_room_text: "{source} shimmers back into view."

@@ -13,3 +13,7 @@ primarystat: willpower
 base_folds: 10
 effect_type: heal
 effect_magnitude: 3
+cast_user_text: "You radiate Chrysalis healing energy outward to all nearby allies."
+cast_room_text: "{source} spreads their arms as warm energy radiates outward."
+wait_user_text: "You continue channeling healing energy..."
+wait_room_text: "{source} continues radiating warm energy..."

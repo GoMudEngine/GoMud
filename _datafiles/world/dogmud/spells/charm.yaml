@@ -11,3 +11,10 @@ type: harmsingle
 schools:
   - manifestation
 difficulty: 60
+effect_type: charm
+cast_user_text: >-
+  You fix your gaze on your target, pressing your will
+  against its mind...
+cast_room_text: >-
+  {source} stares intently at {target}, brow furrowed with
+  fierce concentration.

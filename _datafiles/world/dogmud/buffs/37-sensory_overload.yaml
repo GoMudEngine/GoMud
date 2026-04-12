@@ -6,3 +6,5 @@ triggercount: 6
 statmods:
   perception: -25
   dexterity: -15
+start_user_text: "Your senses explode with input \u2014 everything is too bright, too loud!"
+end_user_text: The sensory overload subsides and your senses normalize.

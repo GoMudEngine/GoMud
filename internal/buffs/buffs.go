@@ -17,6 +17,7 @@ type Buff struct {
 	// Need to instance track the following:
 	RoundCounter int `yaml:"roundcounter,omitempty"` // How many rounds have passed. Triggers on (RoundCounter%RoundInterval == 0)
 	TriggersLeft int `yaml:"triggersleft,omitempty"` // How many times it triggers
+	TickAmount   int `yaml:"tickamount,omitempty"`   // Snapshot: computed at application time, applied each trigger
 }
 
 func (b *Buff) StatMod(statName string) int {
@@ -346,6 +347,14 @@ func (bs *Buffs) Prune() (prunedBuffs []*Buff) {
 	}
 
 	return prunedBuffs
+}
+
+// SetTickAmount sets the TickAmount on the most recently added buff with
+// the given buffId. Called right after AddBuff to set the snapshot.
+func (bs *Buffs) SetTickAmount(buffId int, amount int) {
+	if idx, ok := bs.buffIds[buffId]; ok {
+		bs.List[idx].TickAmount = amount
+	}
 }
 
 func GetDurations(buff *Buff, spec *BuffSpec) (roundsLeft int, totalRounds int) {

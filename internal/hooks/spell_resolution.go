@@ -16,6 +16,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/templates"
+	"github.com/GoMudEngine/GoMud/internal/textutil"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -132,6 +133,47 @@ func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData
 	}
 
 	// --- Run spell script onMagic (if present) ---
+	// Send YAML magic text (if defined).
+	if spellData != nil && (spellData.MagicUserText != "" || spellData.MagicRoomText != "") {
+		tCtx := textutil.TokenContext{
+			SourceName:      user.Character.GetCharacterName(true),
+			SourcePlainName: user.Character.GetCharacterName(false),
+		}
+		if len(cs.TargetUserIds) > 0 {
+			if tUser := users.GetByUserId(cs.TargetUserIds[0]); tUser != nil {
+				tCtx.TargetName = tUser.Character.GetCharacterName(true)
+				tCtx.TargetPlainName = tUser.Character.GetCharacterName(false)
+			}
+		} else if len(cs.TargetMobInstanceIds) > 0 {
+			if tMob := mobs.GetInstance(cs.TargetMobInstanceIds[0]); tMob != nil {
+				tCtx.TargetName = tMob.Character.GetCharacterName(true)
+				tCtx.TargetPlainName = tMob.Character.GetCharacterName(false)
+			}
+		}
+		cfg := textutil.SendTextConfig{
+			UserSendFunc: func(msg string) { user.SendText(msg) },
+			RoomSendFunc: func(msg string, skip ...int) {
+				if r := rooms.LoadRoom(user.Character.RoomId); r != nil {
+					r.SendText(msg, skip...)
+				}
+			},
+			ExcludeId: user.UserId,
+		}
+		textutil.SendPhaseText(spellData.MagicUserText, spellData.MagicRoomText, tCtx, "pink", cfg)
+	}
+	// Resolve companion summon (if configured)
+	if spellData != nil && spellData.SummonMobId > 0 {
+		resolveCompanionSummon(user, spellData, cs.SpellRest, room)
+	}
+	// Resolve charm spell
+	if spellData != nil && spellData.EffectType == "charm" {
+		if len(cs.TargetMobInstanceIds) > 0 {
+			if targetMob := mobs.GetInstance(cs.TargetMobInstanceIds[0]); targetMob != nil {
+				resolveCharmSpell(user, targetMob, room)
+			}
+		}
+	}
+
 	spellAggro := characters.SpellAggroInfo{
 		SpellId:              cs.SpellId,
 		SpellRest:            cs.SpellRest,
@@ -335,6 +377,30 @@ func applyMobEffect(user *users.UserRecord, casterChar *characters.Character, mo
 	case "buff":
 		for _, buffId := range spellData.BuffIds {
 			mob.AddBuff(buffId, "spell")
+			// Compute tick snapshot for config-driven buffs
+			if user != nil {
+				if buffSpec := buffs.GetBuffSpec(buffId); buffSpec != nil && buffSpec.TickPool != "" {
+					skillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
+					scalingMult := combat.SkillMultiplier(skillLevel)
+					// Apply weapon spell damage multiplier if equipped
+					if user.Character.Equipment.Weapon.ItemId > 0 {
+						if weaponSpec := items.GetItemSpec(user.Character.Equipment.Weapon.ItemId); weaponSpec != nil && weaponSpec.SpellDamageMultiplier > 0 {
+							scalingMult *= weaponSpec.SpellDamageMultiplier
+						}
+					}
+					var maxPool int
+					switch buffSpec.TickPool {
+					case "health":
+						maxPool = mob.Character.HealthMax.Value
+					case "stamina":
+						maxPool = mob.Character.StaminaMax.Value
+					case "conviction":
+						maxPool = mob.Character.ConvictionMax.Value
+					}
+					tickAmt := buffs.ComputeTickAmount(maxPool, buffSpec.TickPercent, buffSpec.TickVariance, buffSpec.TickMin, scalingMult)
+					mob.Character.Buffs.SetTickAmount(buffId, tickAmt)
+				}
+			}
 		}
 		// Set aggro for harmful buff spells
 		if spellData.Type == spells.HarmSingle || spellData.Type == spells.HarmArea || spellData.Type == spells.HarmMulti {
@@ -588,6 +654,28 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 	case "buff":
 		for _, buffId := range spellData.BuffIds {
 			target.AddBuff(buffId, "spell")
+			// Compute tick snapshot for config-driven buffs
+			if buffSpec := buffs.GetBuffSpec(buffId); buffSpec != nil && buffSpec.TickPool != "" {
+				skillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
+				scalingMult := combat.SkillMultiplier(skillLevel)
+				// Apply weapon spell damage multiplier if equipped
+				if user.Character.Equipment.Weapon.ItemId > 0 {
+					if weaponSpec := items.GetItemSpec(user.Character.Equipment.Weapon.ItemId); weaponSpec != nil && weaponSpec.SpellDamageMultiplier > 0 {
+						scalingMult *= weaponSpec.SpellDamageMultiplier
+					}
+				}
+				var maxPool int
+				switch buffSpec.TickPool {
+				case "health":
+					maxPool = target.Character.HealthMax.Value
+				case "stamina":
+					maxPool = target.Character.StaminaMax.Value
+				case "conviction":
+					maxPool = target.Character.ConvictionMax.Value
+				}
+				tickAmt := buffs.ComputeTickAmount(maxPool, buffSpec.TickPercent, buffSpec.TickVariance, buffSpec.TickMin, scalingMult)
+				target.Character.Buffs.SetTickAmount(buffId, tickAmt)
+			}
 		}
 		user.SendText(fmt.Sprintf(
 			`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> takes effect on <ansi fg="username">%s</ansi>!%s</ansi>`,

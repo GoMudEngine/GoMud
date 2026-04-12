@@ -12,3 +12,5 @@ base_folds: 10
 effect_type: buff
 buff_ids:
   - 33
+cast_user_text: "You call upon deep Chrysalis energy to wrap the target in regenerative power."
+cast_room_text: "{source} draws deep Chrysalis energy, a vivid green glow pulsing."

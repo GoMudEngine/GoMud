@@ -275,6 +275,12 @@ type ItemSpec struct {
 	IsBandolier           bool              `yaml:"is_bandolier,omitempty"`            // Belt item that holds potions
 	BandolierCapacity     int               `yaml:"bandolier_capacity,omitempty"`      // Max potions storable in bandolier
 	SalvageReturns        []SalvageReturn   `yaml:"salvage_returns,omitempty"`         // Custom salvage returns for non-crafted items
+
+	// YAML-driven use effects — replaces JS onUse/onCommand_use
+	OnUseTrainSkill  string `yaml:"on_use_train_skill,omitempty"`
+	OnUseTrainAmount int    `yaml:"on_use_train_amount,omitempty"`
+	OnUseUserText    string `yaml:"on_use_user_text,omitempty"`
+	OnUseRoomText    string `yaml:"on_use_room_text,omitempty"`
 }
 
 // SalvageReturn defines a material recovered when salvaging a tagged item.

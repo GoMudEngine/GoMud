@@ -37,6 +37,17 @@ _datafiles/world/dogmud/buffs/{buffid}-{ConvertForFilename(name)}.js
 | `triggercount` | int | no | How many times the trigger fires before the buff expires. 0 = permanent until removed. |
 | `statmods` | map | no | Stat modifiers applied while buff is active. |
 | `flags` | list | no | Behavior flags. See valid flags below. |
+| `tick_pool` | string | no | `"health"`, `"stamina"`, or `"conviction"`. Enables auto-tick. |
+| `tick_percent` | float | no | Base % of max pool per tick. Positive=heal, negative=damage. |
+| `tick_variance` | float | no | Random variance added to percentage (for DoTs). |
+| `tick_min` | int | no | Minimum absolute tick amount. Default 1. |
+| `start_remove_buffs` | list | no | Buff IDs removed when this buff starts (cure effects). |
+| `start_user_text` | string | no | Text sent to holder when buff starts. Supports `{source}` token. |
+| `start_room_text` | string | no | Text sent to room when buff starts. Supports `{source}` token. |
+| `trigger_user_text` | string | no | Text sent to holder each trigger tick. |
+| `trigger_room_text` | string | no | Text sent to room each trigger tick. |
+| `end_user_text` | string | no | Text sent to holder when buff expires. |
+| `end_room_text` | string | no | Text sent to room when buff expires. |
 
 ### triggerrate Formats
 
@@ -136,23 +147,109 @@ statmods:
 
 ---
 
-## 4. JS Hooks (Optional)
+## 4. YAML Text Fields
 
-If a buff needs custom behavior on trigger or expiry, create a matching `.js` file:
+Buff messaging can live in YAML instead of JS. The engine sends YAML text
+automatically before calling any JS hooks. Use `{source}` for the buff
+holder's name.
+
+**Flavor-only buff (no JS needed):**
+```yaml
+buffid: 27
+name: Iron Will
+description: Your mind is fortified against intrusion.
+triggerrate: 1 round
+triggercount: 12
+statmods:
+  willpower: 10
+start_user_text: "Your mind hardens like iron, walling off intrusion."
+end_user_text: "The iron resolve softens, leaving your thoughts exposed."
+```
+
+**Buff with trigger logic (JS handles onTrigger only):**
+```yaml
+buffid: 39
+name: Venom
+description: Poison courses through your veins.
+triggerrate: 1 round
+triggercount: 5
+triggernow: true
+flags:
+  - poison
+start_user_text: "Venom seeps into your blood, burning from within."
+start_room_text: "{source} winces as venom takes hold."
+end_user_text: "The venom finally runs its course."
+# JS file still exists for onTrigger damage calculation
+```
+
+**Healing buff using tick_pool (no JS needed):**
+```yaml
+buffid: 32
+name: Vital Surge
+description: Chrysalis energy steadily mends your body over time.
+triggerrate: 2 rounds
+triggercount: 9
+tick_pool: health
+tick_percent: 0.05
+start_user_text: "Chrysalis energy suffuses your body with a warm, mending pulse."
+end_user_text: "The vital surge fades."
+```
+
+**Poison DoT using tick_pool with variance:**
+```yaml
+buffid: 39
+name: Venom
+description: Poison courses through your veins.
+triggerrate: 1 round
+triggercount: 5
+triggernow: true
+flags:
+  - poison
+tick_pool: health
+tick_percent: -0.08
+tick_variance: 0.04
+tick_min: 3
+start_user_text: "Venom seeps into your blood, burning from within."
+end_user_text: "The venom finally runs its course."
+```
+
+**Cure buff (removes poison on start, then heals over time):**
+```yaml
+buffid: 47
+name: Minor Antidote
+triggerrate: 1 round
+triggercount: 6
+tick_pool: health
+tick_percent: 0.05
+start_remove_buffs:
+  - 39
+  - 40
+start_user_text: "The antidote burns through your veins, purging toxins."
+end_user_text: "The antidote fades from your system."
+```
+
+**Stat scaling note:** When a buff with `tick_pool` is applied by a spell,
+the tick amount scales with the caster's spellcasting skill and weapon spell
+multiplier. When applied by a potion or other non-spell source, no stat
+scaling is applied.
+
+---
+
+## 5. JS Hooks (Optional)
+
+A `.js` file is only needed for buffs with custom trigger logic (damage
+calculation, healing, buff removal, etc.). Flavor-only messaging should
+use YAML text fields instead.
+
+When a `.js` is needed:
 
 ```javascript
 // Called each time the buff triggers (per triggerrate interval)
-function onTrigger(actor) {
-    // e.g., apply poison damage, send a message
-    userId = actor.UserId();
-    SendUserMessage(userId, "The poison burns through you.");
-    actor.AddHealth(-5);  // But never display this number to the player
-}
-
-// Called when the buff expires naturally or is removed
-function onExpire(actor) {
-    userId = actor.UserId();
-    SendUserMessage(userId, "The sensation fades.");
+function onTrigger(actor, triggersLeft) {
+    // e.g., calculate and apply poison damage
+    var maxHP = actor.GetHealthMax();
+    var dmg = Math.max(2, Math.floor(maxHP * 0.05));
+    actor.AddHealth(-dmg);
 }
 ```
 

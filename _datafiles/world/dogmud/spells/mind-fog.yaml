@@ -13,3 +13,5 @@ target_defense_type: mental
 effect_type: buff
 buff_ids:
   - 41
+cast_user_text: "You project a dense psionic fog toward your target."
+cast_room_text: "{source} stares at a target with unfocused eyes, projecting something unseen."

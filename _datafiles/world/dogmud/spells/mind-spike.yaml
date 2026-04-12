@@ -13,3 +13,5 @@ target_defense_type: mental
 effect_type: damage
 effect_magnitude: 100
 damage_multiplier: 0.40
+cast_user_text: "You focus a needle of psionic force toward your target."
+cast_room_text: "{source} stares intently, a faint pressure building in the air."

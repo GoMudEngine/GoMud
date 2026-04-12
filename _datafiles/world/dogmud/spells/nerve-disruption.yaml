@@ -13,3 +13,5 @@ target_defense_type: mental
 effect_type: buff
 buff_ids:
   - 30
+cast_user_text: "You reach into the target's nervous system with psionic energy."
+cast_room_text: "{source} focuses with a sharp, clinical intensity."

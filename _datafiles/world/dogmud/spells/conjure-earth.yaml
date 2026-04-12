@@ -13,3 +13,15 @@ base_folds: 6
 target_defense_type: none
 effect_type: none
 effect_magnitude: 0
+cast_user_text: >-
+  You drag your will into the earth itself, feeling stone and soil
+  begin to answer...
+cast_room_text: >-
+  {source} plants both feet and begins to pull. The ground
+  trembles faintly.
+wait_user_text: >-
+  The floor shudders. Something vast and patient stirs beneath it,
+  rising reluctantly toward your call...
+summon_mob_id: 311
+summon_base_pool: 90
+summon_scaling_divisor: 500

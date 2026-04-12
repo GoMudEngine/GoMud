@@ -12,3 +12,5 @@ base_folds: 6
 effect_type: buff
 buff_ids:
   - 38
+cast_user_text: "You solidify your conviction into a protective shell."
+cast_room_text: "{source} concentrates as conviction hardens into visible armor."

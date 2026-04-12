@@ -14,3 +14,5 @@ effect_type: buff
 effect_magnitude: 10
 buff_ids:
   - 2
+cast_user_text: "You focus a psionic pulse at your target's nervous system."
+cast_room_text: "{source} stares intently, brow furrowed with concentration."

@@ -1,5 +1,44 @@
 # DOGMud Patch Notes
 
+## 2026-04-11 — JS Audit Phases 1-3
+
+### Phase 3: Item Cleanup + Charm Migration
+- **11 dead default item JS files deleted** — all shadowed by DOGMud
+  items at the same ID or completely unused.
+- **Herbalism recipe page** migrated to YAML `on_use_train_skill` field.
+- **Charm spell ported to Go** — opposed roll with charisma+manifestation
+  vs willpower+statpool, aggro penalties, companion registration. The
+  last non-mob/room spell JS file eliminated.
+- Net: 13 JS files deleted, ~380 lines removed.
+
+### Phase 2: Companion Consolidation + Config-Driven Buff Ticks
+- **13 companion spell JS files replaced** by one Go function with YAML
+  config (summon_mob_id, summon_base_pool, etc.). Conjure, raise, and
+  summon spells all use the same code path now.
+- **~10 healing/DoT buff JS files replaced** with YAML tick config
+  (tick_pool, tick_percent, tick_variance). Buff tick magnitude now
+  scales with caster spellcasting skill for spell-cast buffs.
+- **Chrysalis-construct spell deleted** (redundant, undiscovered).
+- **Minor antidote** migrated via `start_remove_buffs` field.
+
+## 2026-04-11 — JS Audit Phase 1: YAML Text Fields
+
+### Code Cleanup: Spell & Buff Text Migration
+- **60 JS files deleted** — flavor-only spell and buff scripts replaced
+  by YAML text fields on the data definitions. No gameplay changes;
+  same messages, same colors, now driven by data instead of scripts.
+- **13 stub room scripts deleted** — empty JS files that did nothing.
+- **20 complex spell/buff scripts slimmed** — flavor text extracted to
+  YAML, logic (companion spawning, charm, teleport, healing ticks)
+  remains in JS.
+- **New `textutil` package** — centralized token substitution
+  (`{source}`, `{target}`) and text dispatch for spell/buff messaging.
+  Sets the stage for ANSI-aware line wrapping in a future pass.
+- **Schema docs updated** — spell and buff schemas now document YAML
+  text fields. JS files are optional for flavor-only spells/buffs.
+- Net result: 185 files changed, ~60 fewer lines of code, 60 fewer
+  files to maintain.
+
 ## 2026-04-10 — Instanced Zones: Arena, Planar Oasis, Randomized Loot
 
 ### Zone 2.1b: North Road — River Approach

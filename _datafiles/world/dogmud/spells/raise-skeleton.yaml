@@ -15,3 +15,18 @@ base_folds: 4
 target_defense_type: none
 effect_type: none
 effect_magnitude: 0
+cast_user_text: >-
+  You extend your will toward the fallen, reaching for the echoes
+  of life still clinging to the bones...
+cast_room_text: >-
+  {source}'s hands trace patterns in the air above the remains,
+  dark energy gathering at their fingertips.
+wait_user_text: >-
+  Dark energy crackles along the bones, stripping away the last
+  of their flesh. Something dry and purposeful stirs beneath your
+  will...
+summon_mob_id: 300
+summon_base_pool: 60
+summon_scaling_divisor: 500
+summon_requires_corpse: true
+summon_min_corpse_pool: 30

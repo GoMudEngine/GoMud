@@ -6,3 +6,12 @@ triggercount: 5
 statmods:
   perception: -20
   dexterity: -15
+start_user_text: A cloud of toxic spores engulfs you!
+start_room_text: "{source} is enveloped in a cloud of choking spores."
+end_user_text: You finally cough up the last of the spores.
+trigger_user_text: Toxic spores eat at your flesh.
+trigger_room_text: "{source} winces as fungal toxin spreads."
+tick_pool: health
+tick_percent: -0.05
+tick_variance: 0.03
+tick_min: 2

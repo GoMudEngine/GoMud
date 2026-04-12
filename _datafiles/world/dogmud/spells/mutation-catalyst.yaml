@@ -12,3 +12,5 @@ base_folds: 12
 effect_type: buff
 buff_ids:
   - 35
+cast_user_text: "You channel Chrysalis energy into accelerating mutagenic change."
+cast_room_text: "{source} channels a sickly green energy that crackles with potential."

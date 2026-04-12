@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -86,6 +87,24 @@ func Use(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 
 		user.SendText(fmt.Sprintf(`You use the <ansi fg="itemname">%s</ansi>.`, matchItem.DisplayName()))
 		room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> uses their <ansi fg="itemname">%s</ansi>.`, user.Character.Name, matchItem.DisplayName()), user.UserId)
+
+		// YAML-driven use effects (replaces JS onUse for simple items)
+		if itemSpec.OnUseTrainSkill != "" {
+			trainAmount := itemSpec.OnUseTrainAmount
+			if trainAmount < 1 {
+				trainAmount = 1
+			}
+			user.Character.TrainSkill(itemSpec.OnUseTrainSkill, trainAmount)
+			if itemSpec.OnUseUserText != "" {
+				user.SendText(itemSpec.OnUseUserText)
+			}
+			if itemSpec.OnUseRoomText != "" {
+				room.SendText(itemSpec.OnUseRoomText, user.UserId)
+			}
+		}
+
+		// JS onUse hook — fires if the item has a script with an onUse function
+		scripting.TryItemScriptEvent(`onUse`, matchItem, user.UserId) //nolint:errcheck
 
 		// If no more uses, will be lost, so trigger event
 		if usesLeft := user.Character.UseItem(matchItem); usesLeft < 1 {

@@ -147,6 +147,20 @@ func Drink(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		} else {
 			user.AddBuff(buffId, `drink`)
 		}
+		// Compute tick snapshot for config-driven buffs (no stat scaling for potions)
+		if buffSpec := buffs.GetBuffSpec(buffId); buffSpec != nil && buffSpec.TickPool != "" {
+			var maxPool int
+			switch buffSpec.TickPool {
+			case "health":
+				maxPool = user.Character.HealthMax.Value
+			case "stamina":
+				maxPool = user.Character.StaminaMax.Value
+			case "conviction":
+				maxPool = user.Character.ConvictionMax.Value
+			}
+			tickAmt := buffs.ComputeTickAmount(maxPool, buffSpec.TickPercent, buffSpec.TickVariance, buffSpec.TickMin, 1.0)
+			user.Character.Buffs.SetTickAmount(buffId, tickAmt)
+		}
 	}
 
 	return true, nil

@@ -6,3 +6,5 @@ triggercount: 9
 statmods:
   perception: -15
   willpower: -10
+start_user_text: A thick fog descends over your thoughts...
+end_user_text: The fog lifts from your mind and clarity returns.
