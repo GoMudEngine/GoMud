@@ -95,7 +95,7 @@ func checkSpoiledGrenades(user *users.UserRecord, room *rooms.Room) {
 				fizzled))
 		}
 		if room != nil {
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> fumbles with something in their pack...`,
 					user.Character.Name),
 				user.UserId)

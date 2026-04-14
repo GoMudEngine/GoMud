@@ -106,7 +106,7 @@ func Submit(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				targetChar.SendText(`<ansi fg="red">You are helpless on the ground.</ansi>`)
 			}
 
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf(`<ansi fg="combat">%s forces %s into submission! %s yields!</ansi>`, user.Character.Name, targetName, targetName),
 				user.UserId, targetPlayerId,
 			)
@@ -142,7 +142,7 @@ func Submit(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				targetChar.SendText(fmt.Sprintf(`<ansi fg="red-bold">You resist, but take %s from the brutal hold!</ansi>`, combat.GetDamageDescription(damage, targetMaxHP)))
 			}
 
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf(`<ansi fg="combat">%s attempts to force %s into submission! %s resists through the pain!</ansi>`, user.Character.Name, targetName, targetName),
 				user.UserId, targetPlayerId,
 			)
@@ -163,7 +163,7 @@ func Submit(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			targetChar.SendText(`<ansi fg="green">They fall to the ground from overcommitting!</ansi>`)
 		}
 
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="combat">%s attempts a submission, but %s escapes and %s falls to the ground!</ansi>`, user.Character.Name, targetName, user.Character.Name),
 			user.UserId, targetPlayerId,
 		)

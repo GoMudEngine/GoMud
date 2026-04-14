@@ -15,7 +15,7 @@ func Shout(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	if isSneaking {
 		msg := fmt.Sprintf(`someone shouts, "<ansi fg="saytext-mob">%s</ansi>"`, rest)
-		room.SendText(util.SplitStringNL(msg, 80))
+		room.SendTextVisual(util.SplitStringNL(msg, 80))
 	} else {
 		anonMsg := fmt.Sprintf(`someone shouts, "<ansi fg="saytext-mob">%s</ansi>"`, rest)
 		namedMsg := fmt.Sprintf(`<ansi fg="mobname">%s</ansi> shouts, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, rest)

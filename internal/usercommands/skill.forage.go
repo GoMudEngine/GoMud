@@ -89,7 +89,7 @@ func Forage(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	}, bridge, bridge)
 
 	user.SendText(`You crouch low and begin searching the ground carefully...`)
-	room.SendText(
+	room.SendTextVisual(
 		fmt.Sprintf(`<ansi fg="username">%s</ansi> is searching the ground for something.`, user.Character.Name),
 		user.UserId,
 	)

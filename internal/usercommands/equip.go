@@ -177,7 +177,7 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			} else {
 				user.SendText(fmt.Sprintf(`You wield your <ansi fg="item">%s</ansi> in your %s.`, matchItem.DisplayName(), armLabel))
 			}
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> equips their <ansi fg="item">%s</ansi>.`, user.Character.Name, matchItem.DisplayName()),
 				user.UserId,
 			)
@@ -222,7 +222,7 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 					user.SendText(
 						fmt.Sprintf(`You remove your <ansi fg="item">%s</ansi> and return it to your backpack.`, oldItem.DisplayName()),
 					)
-					room.SendText(
+					room.SendTextVisual(
 						fmt.Sprintf(`<ansi fg="username">%s</ansi> removes their <ansi fg="item">%s</ansi> and stores it away.`, user.Character.Name, oldItem.DisplayName()),
 						user.UserId,
 					)
@@ -233,7 +233,7 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 				user.SendText(
 					fmt.Sprintf(`You wear your <ansi fg="item">%s</ansi>.`, result.Item.DisplayName()),
 				)
-				room.SendText(
+				room.SendTextVisual(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> puts on their <ansi fg="item">%s</ansi>.`, user.Character.Name, result.Item.DisplayName()),
 					user.UserId,
 				)
@@ -241,7 +241,7 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 				user.SendText(
 					fmt.Sprintf(`You wield your <ansi fg="item">%s</ansi>. You're feeling dangerous.`, result.Item.DisplayName()),
 				)
-				room.SendText(
+				room.SendTextVisual(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> wields their <ansi fg="item">%s</ansi>.`, user.Character.Name, result.Item.DisplayName()),
 					user.UserId,
 				)

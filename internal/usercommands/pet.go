@@ -62,7 +62,7 @@ func Pet(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		user.EventLog.Add(`pet`, `Named your pet: `+user.Character.Pet.DisplayName())
 
 		user.SendText(fmt.Sprintf(`You name your pet: %s.`, user.Character.Pet.DisplayName()))
-		room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> names their pet %s`, user.Character.Name, user.Character.Pet.DisplayName()), user.UserId)
+		room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> names their pet %s`, user.Character.Name, user.Character.Pet.DisplayName()), user.UserId)
 
 		// rename their pet?
 		return true, nil
@@ -85,14 +85,14 @@ func Pet(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 
 	user.SendText(fmt.Sprintf(`You pet %s`, petUser.Character.Pet.DisplayName()))
 
-	room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> pets %s`, user.Character.Name, petUser.Character.Pet.DisplayName()), user.UserId)
+	room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> pets %s`, user.Character.Name, petUser.Character.Pet.DisplayName()), user.UserId)
 
 	roll := util.RollDice(1, 4)
 
 	if roll == 1 {
-		room.SendText(fmt.Sprintf(`%s twirls a bit.`, petUser.Character.Pet.DisplayName()))
+		room.SendTextVisual(fmt.Sprintf(`%s twirls a bit.`, petUser.Character.Pet.DisplayName()))
 	} else if roll == 2 {
-		room.SendText(fmt.Sprintf(`%s stiffens.`, petUser.Character.Pet.DisplayName()))
+		room.SendTextVisual(fmt.Sprintf(`%s stiffens.`, petUser.Character.Pet.DisplayName()))
 	}
 
 	return true, nil

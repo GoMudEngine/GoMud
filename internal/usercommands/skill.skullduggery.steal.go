@@ -182,7 +182,7 @@ func stealFromMob(mobInstanceId int, attackerScore float64, rank int,
 			`<ansi fg="mobname">%s</ansi> catches you in the act!`,
 			m.Character.Name))
 
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(
 				`<ansi fg="username">%s</ansi> gets caught trying to steal `+
 					`from <ansi fg="mobname">%s</ansi>!`,
@@ -278,7 +278,7 @@ func stealFromContainer(containerName string, attackerScore float64, rank int,
 				`<ansi fg="itemname">%s</ansi>!`,
 			spotterName, containerName))
 
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(
 				`<ansi fg="username">%s</ansi> is caught stealing from `+
 					`the <ansi fg="itemname">%s</ansi>!`,

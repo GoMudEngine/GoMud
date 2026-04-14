@@ -143,14 +143,14 @@ func Picklock(rest string, user *users.UserRecord, room *rooms.Room, flags event
 
 		if containerName != `` {
 
-			room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> picks the <ansi fg="container">%s</ansi> lock`, user.Character.Name, containerName), user.UserId)
+			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> picks the <ansi fg="container">%s</ansi> lock`, user.Character.Name, containerName), user.UserId)
 
 			container := room.Containers[containerName]
 			container.Lock.SetUnlocked()
 			room.Containers[containerName] = container
 		} else {
 
-			room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> picks the <ansi fg="exit">%s</ansi> lock`, user.Character.Name, exitName), user.UserId)
+			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> picks the <ansi fg="exit">%s</ansi> lock`, user.Character.Name, exitName), user.UserId)
 
 			room.SetExitLock(exitName, false)
 
@@ -207,13 +207,13 @@ func Picklock(rest string, user *users.UserRecord, room *rooms.Room, flags event
 			user.SendText(fmt.Sprintf(`<ansi fg="yellow-bold">***</ansi> <ansi fg="red-bold">Oops! Your <ansi fg="item">%s</ansi> break off in the lock, resetting the lock. You'll have to start all over.</ansi> <ansi fg="yellow-bold">***</ansi>`, lockpickItm.GetSpec().NameSimple))
 			user.SendText(``)
 
-			room.SendText(fmt.Sprintf(`<ansi fg="alert-2"><ansi fg="username">%s</ansi> broke their lockpicks trying to pick a lock!</ansi>`, user.Character.Name), user.UserId)
+			room.SendTextVisual(fmt.Sprintf(`<ansi fg="alert-2"><ansi fg="username">%s</ansi> broke their lockpicks trying to pick a lock!</ansi>`, user.Character.Name), user.UserId)
 
 			if len(lockTrap) > 0 {
 
 				user.SendText(`<ansi fg="yellow-bold">***</ansi> <ansi fg="alert-5">A trap was triggered!</ansi> <ansi fg="yellow-bold">***</ansi>`)
 				user.SendText(``)
-				room.SendText(fmt.Sprintf(`<ansi fg="alert-3"><ansi fg="username">%s</ansi> triggered a trap!</ansi>`, user.Character.Name), user.UserId)
+				room.SendTextVisual(fmt.Sprintf(`<ansi fg="alert-3"><ansi fg="username">%s</ansi> triggered a trap!</ansi>`, user.Character.Name), user.UserId)
 
 				for _, buffId := range lockTrap {
 					user.AddBuff(buffId, `trap`)
@@ -252,13 +252,13 @@ func Picklock(rest string, user *users.UserRecord, room *rooms.Room, flags event
 
 		if containerName != `` {
 
-			room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> picks the <ansi fg="container">%s</ansi> lock`, user.Character.Name, containerName), user.UserId)
+			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> picks the <ansi fg="container">%s</ansi> lock`, user.Character.Name, containerName), user.UserId)
 
 			container := room.Containers[containerName]
 			container.Lock.SetUnlocked()
 			room.Containers[containerName] = container
 		} else {
-			room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> picks the <ansi fg="exit">%s</ansi> lock`, user.Character.Name, exitName), user.UserId)
+			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> picks the <ansi fg="exit">%s</ansi> lock`, user.Character.Name, exitName), user.UserId)
 			room.SetExitLock(exitName, false)
 		}
 
@@ -268,9 +268,9 @@ func Picklock(rest string, user *users.UserRecord, room *rooms.Room, flags event
 
 	} else {
 		if containerName != `` {
-			room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> tries to pick the <ansi fg="container">%s</ansi> lock`, user.Character.Name, containerName), user.UserId)
+			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> tries to pick the <ansi fg="container">%s</ansi> lock`, user.Character.Name, containerName), user.UserId)
 		} else {
-			room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> tries to pick the <ansi fg="exit">%s</ansi> lock`, user.Character.Name, exitName), user.UserId)
+			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> tries to pick the <ansi fg="exit">%s</ansi> lock`, user.Character.Name, exitName), user.UserId)
 		}
 	}
 

@@ -60,7 +60,7 @@ func Use(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			user.SendText(fmt.Sprintf(`The <ansi fg="container">%s</ansi> produces a <ansi fg="itemname">%s</ansi>!`, containerName, newItem.DisplayName()))
 			user.SendText(``)
 
-			room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> does something with the <ansi fg="container">%s</ansi>.`, user.Character.Name, containerName), user.UserId)
+			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> does something with the <ansi fg="container">%s</ansi>.`, user.Character.Name, containerName), user.UserId)
 
 			return true, nil
 
@@ -86,7 +86,7 @@ func Use(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		user.Character.CancelBuffsWithFlag(buffs.Hidden)
 
 		user.SendText(fmt.Sprintf(`You use the <ansi fg="itemname">%s</ansi>.`, matchItem.DisplayName()))
-		room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> uses their <ansi fg="itemname">%s</ansi>.`, user.Character.Name, matchItem.DisplayName()), user.UserId)
+		room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> uses their <ansi fg="itemname">%s</ansi>.`, user.Character.Name, matchItem.DisplayName()), user.UserId)
 
 		// YAML-driven use effects (replaces JS onUse for simple items)
 		if itemSpec.OnUseTrainSkill != "" {
@@ -99,7 +99,7 @@ func Use(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 				user.SendText(itemSpec.OnUseUserText)
 			}
 			if itemSpec.OnUseRoomText != "" {
-				room.SendText(itemSpec.OnUseRoomText, user.UserId)
+				room.SendTextVisual(itemSpec.OnUseRoomText, user.UserId)
 			}
 		}
 

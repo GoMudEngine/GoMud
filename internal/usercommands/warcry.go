@@ -41,7 +41,7 @@ func Warcry(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	user.Character.AddBuff(79, false)
 
 	user.SendText(`<ansi fg="red-bold">You let out a thunderous warcry that ignites the fighting spirit of your allies!</ansi>`)
-	room.SendText(
+	room.SendTextVisual(
 		fmt.Sprintf(`<ansi fg="red-bold"><ansi fg="username">%s</ansi> lets out a thunderous warcry!</ansi>`, user.Character.Name),
 		user.UserId,
 	)

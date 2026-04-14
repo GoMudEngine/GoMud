@@ -511,7 +511,7 @@ func executePurchaseItem(user *users.UserRecord, room *rooms.Room, shopMob *mobs
 		user.SendText(
 			fmt.Sprintf(`You purchase the <ansi fg="itemname">%s</ansi> from <ansi fg="mobname">%s</ansi> for %s.`, newItm.DisplayName(), shopMob.Character.Name, tradeInString),
 		)
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> purchases the <ansi fg="itemname">%s</ansi> from <ansi fg="mobname">%s</ansi>.`, user.Character.Name, newItm.DisplayName(), shopMob.Character.Name),
 			user.UserId,
 		)
@@ -526,7 +526,7 @@ func executePurchaseItem(user *users.UserRecord, room *rooms.Room, shopMob *mobs
 
 		shopUser.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> purchased the <ansi fg="itemname">%s</ansi> you were selling for %s.`, user.Character.Name, newItm.DisplayName(), tradeInString))
 
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> purchases the <ansi fg="itemname">%s</ansi> from <ansi fg="mobname">%s</ansi>.`, user.Character.Name, newItm.DisplayName(), shopUser.Character.Name),
 			user.UserId, shopUser.UserId)
 	}
@@ -574,7 +574,7 @@ func executePurchaseMerc(user *users.UserRecord, room *rooms.Room, shopMob *mobs
 			fmt.Sprintf(`You pay %s to <ansi fg="mobname">%s</ansi>.`, tradeInString, shopMob.Character.Name),
 		)
 
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> pays %s to <ansi fg="mobname">%s</ansi>.`, user.Character.Name, tradeInString, shopMob.Character.Name),
 			user.UserId,
 		)
@@ -588,7 +588,7 @@ func executePurchaseMerc(user *users.UserRecord, room *rooms.Room, shopMob *mobs
 
 		shopUser.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> hired your <ansi fg="mobname">%s</ansi> you were selling for %s.`, user.Character.Name, newMob.Character.Name, tradeInString))
 
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> hires a <ansi fg="mobname">%s</ansi> from <ansi fg="username">%s</ansi>.`, user.Character.Name, newMob.Character.Name, shopUser.Character.Name),
 			user.UserId, shopUser.UserId)
 
@@ -611,7 +611,7 @@ func executePurchaseBuff(user *users.UserRecord, room *rooms.Room, shopMob *mobs
 			fmt.Sprintf(`You pay %s to <ansi fg="mobname">%s</ansi>.`, tradeInString, shopMob.Character.Name),
 		)
 
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> pays %s to <ansi fg="mobname">%s</ansi>.`, user.Character.Name, tradeInString, shopMob.Character.Name),
 			user.UserId,
 		)
@@ -626,7 +626,7 @@ func executePurchaseBuff(user *users.UserRecord, room *rooms.Room, shopMob *mobs
 
 		shopUser.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> pays you %s for an enchantment.`, user.Character.Name, tradeInString))
 
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> pays to <ansi fg="username">%s</ansi> for an enchantment.`, user.Character.Name, shopUser.Character.Name),
 			user.UserId, shopUser.UserId)
 
@@ -810,7 +810,7 @@ func executePurchasePet(user *users.UserRecord, room *rooms.Room, shopMob *mobs.
 			fmt.Sprintf(`You pay %s to <ansi fg="mobname">%s</ansi>.`, tradeInString, shopMob.Character.Name),
 		)
 
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> pays %s to <ansi fg="mobname">%s</ansi>.`, user.Character.Name, tradeInString, shopMob.Character.Name),
 			user.UserId,
 		)
@@ -825,7 +825,7 @@ func executePurchasePet(user *users.UserRecord, room *rooms.Room, shopMob *mobs.
 
 		shopUser.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> pays you %s for the %s.`, user.Character.Name, tradeInString, petInfo.DisplayName()))
 
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> pays to <ansi fg="username">%s</ansi> for the %s.`, user.Character.Name, shopUser.Character.Name, petInfo.DisplayName()),
 			user.UserId, shopUser.UserId)
 
@@ -841,14 +841,14 @@ func executePurchasePet(user *users.UserRecord, room *rooms.Room, shopMob *mobs.
 
 		if len(user.Character.Pet.Items) > 0 {
 
-			room.SendText(fmt.Sprintf(`%s drops everything they were carrying.`, user.Character.Pet.DisplayName()))
+			room.SendTextVisual(fmt.Sprintf(`%s drops everything they were carrying.`, user.Character.Pet.DisplayName()))
 
 			for _, item := range user.Character.Pet.Items {
 				room.AddItem(item, false)
 			}
 		}
 
-		room.SendText(fmt.Sprintf(`%s sadly slinks away into the shadows. Never to be seen again.`, user.Character.Pet.DisplayName()))
+		room.SendTextVisual(fmt.Sprintf(`%s sadly slinks away into the shadows. Never to be seen again.`, user.Character.Pet.DisplayName()))
 	}
 
 	for i := 0; i < 5; i++ {

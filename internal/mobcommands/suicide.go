@@ -24,7 +24,7 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 		mob.Character.Health = mob.Character.HealthMax.Value
 
-		room.SendText(`<ansi fg="mobname">` + mob.Character.Name + `</ansi> is suddenly revived in a shower of sparks!`)
+		room.SendTextVisual(`<ansi fg="mobname">` + mob.Character.Name + `</ansi> is suddenly revived in a shower of sparks!`)
 
 		mob.Character.CancelBuffsWithFlag(buffs.ReviveOnDeath)
 

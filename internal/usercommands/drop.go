@@ -72,7 +72,7 @@ func Drop(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		user.SendText(
 			fmt.Sprintf(`You drop <ansi fg="gold">%d gold</ansi> on the floor.`, dropAmt),
 		)
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> drops <ansi fg="gold">%d gold</ansi>.`, user.Character.Name, dropAmt),
 			user.UserId,
 		)
@@ -97,7 +97,7 @@ func Drop(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			user.SendText(fmt.Sprintf(`You don't have any "%s" to drop.`, itemName))
 		} else {
 			user.SendText(fmt.Sprintf(`You drop %d item(s).`, dropped))
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> drops some items.`, user.Character.Name),
 				user.UserId,
 			)
@@ -119,7 +119,7 @@ func Drop(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		user.SendText(
 			fmt.Sprintf(`You drop the <ansi fg="item">%s</ansi>.`, result.Item.DisplayName()),
 		)
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> drops their <ansi fg="item">%s</ansi>...`, user.Character.Name, result.Item.DisplayName()),
 			user.UserId,
 		)

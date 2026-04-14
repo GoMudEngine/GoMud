@@ -79,7 +79,7 @@ func Shoot(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			fmt.Sprintf(`You prepare to shoot at <ansi fg="mobname">%s</ansi> through the <ansi fg="exit">%s</ansi> exit.`, res.TargetName, res.ExitName),
 		)
 		if !res.IsSneaking {
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> prepares to shoot at <ansi fg="mobname">%s</ansi> through the <ansi fg="exit">%s</ansi> exit.`, user.Character.Name, res.TargetName, res.ExitName),
 				user.UserId,
 			)
@@ -89,7 +89,7 @@ func Shoot(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			fmt.Sprintf(`You prepare to shoot at <ansi fg="username">%s</ansi> through the <ansi fg="exit">%s</ansi> exit.`, res.TargetName, res.ExitName),
 		)
 		if !res.IsSneaking {
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> prepares to shoot at <ansi fg="username">%s</ansi> through the <ansi fg="exit">%s</ansi> exit.`, user.Character.Name, res.TargetName, res.ExitName),
 				user.UserId,
 			)

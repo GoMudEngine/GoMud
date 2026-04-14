@@ -71,7 +71,7 @@ func Drink(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			`You drink the <ansi fg="itemname">%s</ansi>...`, matchItem.DisplayName()))
 		user.SendText(
 			`<ansi fg="red">The potion has gone bad! You retch as the foul liquid burns your throat.</ansi>`)
-		room.SendText(fmt.Sprintf(
+		room.SendTextVisual(fmt.Sprintf(
 			`<ansi fg="username">%s</ansi> drinks something and immediately gags.`,
 			user.Character.Name), user.UserId)
 
@@ -115,7 +115,7 @@ func Drink(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	user.SendText(fmt.Sprintf(
 		`You drink the <ansi fg="itemname">%s</ansi>.`, matchItem.DisplayName()))
-	room.SendText(fmt.Sprintf(
+	room.SendTextVisual(fmt.Sprintf(
 		`<ansi fg="username">%s</ansi> drinks <ansi fg="itemname">%s</ansi>.`,
 		user.Character.Name, matchItem.DisplayName()), user.UserId)
 

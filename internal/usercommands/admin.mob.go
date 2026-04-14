@@ -144,7 +144,7 @@ func mob_Spawn(rest string, user *users.UserRecord, room *rooms.Room, flags even
 			user.SendText(
 				fmt.Sprintf(`You wave your hands around and <ansi fg="mobname">%s</ansi> appears in the air and falls to the ground.`, mob.Character.Name),
 			)
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> waves their hands around and <ansi fg="mobname">%s</ansi> appears in the air and falls to the ground.`, user.Character.Name, mob.Character.Name),
 				user.UserId,
 			)

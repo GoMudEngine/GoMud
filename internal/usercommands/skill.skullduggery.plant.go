@@ -164,7 +164,7 @@ func plantOnMob(mobInstanceId int, plantItem items.Item, attackerScore float64, 
 			`<ansi fg="mobname">%s</ansi> catches you in the act!`,
 			m.Character.Name))
 
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(
 				`<ansi fg="username">%s</ansi> gets caught trying to plant `+
 					`something on <ansi fg="mobname">%s</ansi>!`,
@@ -252,7 +252,7 @@ func plantInContainer(containerName string, plantItem items.Item, attackerScore 
 				`the <ansi fg="itemname">%s</ansi>!`,
 			spotterName, containerName))
 
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(
 				`<ansi fg="username">%s</ansi> is caught planting something in `+
 					`the <ansi fg="itemname">%s</ansi>!`,

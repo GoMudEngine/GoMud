@@ -81,7 +81,7 @@ func Report(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	// Mode 3 (default): rep — broadcast to room
 	user.SendText(fmt.Sprintf(`You report: %s`, barText))
-	room.SendText(fmt.Sprintf(
+	room.SendTextVisual(fmt.Sprintf(
 		`<ansi fg="username">%s</ansi> reports: %s`,
 		c.Name, barText), user.UserId)
 

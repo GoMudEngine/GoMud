@@ -48,7 +48,7 @@ func Get(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			actor := &actions.MobActor{Mob: mob, Room: room}
 			goldAmt := room.Gold
 			if err := actions.GetGoldFromFloor(actor, goldAmt); err == nil {
-				room.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> picks up <ansi fg="gold">%d gold</ansi>.`, mob.Character.Name, goldAmt))
+				room.SendTextVisual(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> picks up <ansi fg="gold">%d gold</ansi>.`, mob.Character.Name, goldAmt))
 			}
 		}
 
@@ -86,7 +86,7 @@ func Get(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	if result.Found && result.Err == nil {
 		mob.Character.CancelBuffsWithFlag(buffs.Hidden) // No longer sneaking
 
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> picks up the <ansi fg="itemname">%s</ansi>...`, mob.Character.Name, result.Item.DisplayName()))
 	}
 

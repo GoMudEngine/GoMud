@@ -33,7 +33,7 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		user.Character.Health = user.Character.HealthMax.Value
 
 		user.SendText(`You are revived in a shower of magical sparks!`)
-		room.SendText(`<ansi fg="username">`+user.Character.Name+`</ansi> is suddenly revived in a shower of sparks!`, user.UserId)
+		room.SendTextVisual(`<ansi fg="username">`+user.Character.Name+`</ansi> is suddenly revived in a shower of sparks!`, user.UserId)
 
 		user.Character.CancelBuffsWithFlag(buffs.ReviveOnDeath)
 
@@ -41,7 +41,7 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	}
 
 	// Send a death msg to everyone in the room.
-	room.SendText(
+	room.SendTextVisual(
 		fmt.Sprintf(`<ansi fg="username">%s</ansi> has died.`, user.Character.Name),
 		user.UserId,
 	)

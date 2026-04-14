@@ -131,7 +131,7 @@ func Sell(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 								shopInv.AddStock(old.ItemId, 1)
 							}
 						}
-						room.SendText(
+						room.SendTextVisual(
 							fmt.Sprintf(`<ansi fg="mobname">%s</ansi> examines the <ansi fg="itemname">%s</ansi> and puts it on.`, mob.Character.Name, newItem.DisplayName()),
 							user.UserId,
 						)
@@ -156,7 +156,7 @@ func Sell(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		user.SendText(
 			fmt.Sprintf(`You sell a <ansi fg="itemname">%s</ansi> for <ansi fg="gold">%d gold</ansi>.`, item.DisplayName(), sellValue),
 		)
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> sells a <ansi fg="itemname">%s</ansi>.`, user.Character.Name, item.DisplayName()),
 			user.UserId,
 		)

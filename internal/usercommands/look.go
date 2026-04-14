@@ -60,7 +60,7 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	if len(lookAt) == 0 {
 
 		if !secretLook && !isSneaking {
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> is looking around.`, user.Character.Name),
 				user.UserId,
 			)
@@ -95,7 +95,7 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> is looking at you.`, user.Character.Name),
 				)
 
-				room.SendText(
+				room.SendTextVisual(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> is looking at <ansi fg="username">%s</ansi>.`, user.Character.Name, u.Character.Name),
 					u.UserId)
 			}
@@ -126,7 +126,7 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 			if !isSneaking {
 				targetName := m.Character.GetMobName(0).String()
-				room.SendText(
+				room.SendTextVisual(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> is looking at %s.`, user.Character.Name, targetName),
 					user.UserId,
 				)
@@ -278,7 +278,7 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 		user.SendText(fmt.Sprintf("You peer toward the %s.", exitName))
 		if !isSneaking {
-			room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> peers toward the %s.`, user.Character.Name, exitName), user.UserId)
+			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> peers toward the %s.`, user.Character.Name, exitName), user.UserId)
 		}
 
 		lookRoom(user, lookRoomId, secretLook || isSneaking)
@@ -310,7 +310,7 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		user.SendText(``)
 
 		if !isSneaking {
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> is admiring their <ansi fg="item">%s</ansi>.`, user.Character.Name, lookItem.DisplayName()),
 				user.UserId,
 			)
@@ -381,7 +381,7 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				}
 			}
 
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> is examining the <ansi fg="noun">%s</ansi>.`, user.Character.Name, foundNoun),
 				user.UserId,
 			)
@@ -406,7 +406,7 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 			user.SendText(fmt.Sprintf(`You look at %s`, petUser.Character.Pet.DisplayName()))
 
-			room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> is looking at %s.`, user.Character.Name, petUser.Character.Pet.DisplayName()), user.UserId)
+			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> is looking at %s.`, user.Character.Name, petUser.Character.Pet.DisplayName()), user.UserId)
 
 			textOut, _ := templates.Process("character/pet", petUser, user.UserId)
 			user.SendText(textOut)
@@ -452,7 +452,7 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			}
 
 			user.SendText(fmt.Sprintf(`You look at the <ansi fg="%s">%s corpse</ansi>.`, corpseColor, corpse.Character.Name))
-			room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> is looking at the <ansi fg="%s">%s corpse</ansi>.`, user.Character.Name, corpseColor, corpse.Character.Name), user.UserId)
+			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> is looking at the <ansi fg="%s">%s corpse</ansi>.`, user.Character.Name, corpseColor, corpse.Character.Name), user.UserId)
 
 			descTxt, _ := templates.Process("character/description-corpse", &corpse.Character, user.UserId)
 			user.SendText(descTxt)
@@ -487,12 +487,12 @@ func lookRoom(user *users.UserRecord, roomId int, secretLook bool) {
 		// Find the exit back
 		lookFromName := room.FindExitTo(user.Character.RoomId)
 		if lookFromName == "" {
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> is looking into the room from somewhere...`, user.Character.Name),
 				user.UserId,
 			)
 		} else {
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> is looking into the room from the <ansi fg="exit">%s</ansi> exit`, user.Character.Name, lookFromName),
 				user.UserId,
 			)

@@ -90,7 +90,7 @@ func Throw(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	user.SendText(fmt.Sprintf(
 		`<ansi fg="yellow-bold">You hurl the <ansi fg="itemname">%s</ansi> into the fray!</ansi>`,
 		matchItem.DisplayName()))
-	room.SendText(fmt.Sprintf(
+	room.SendTextVisual(fmt.Sprintf(
 		`<ansi fg="yellow-bold"><ansi fg="username">%s</ansi> hurls a <ansi fg="itemname">%s</ansi> into the fray!</ansi>`,
 		user.Character.Name, matchItem.DisplayName()),
 		user.UserId)
@@ -125,7 +125,7 @@ func Throw(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		if atkRoll.ZScore <= -2.0 {
 			fumbled = true
 			user.SendText(`<ansi fg="red-bold">Your throw goes horribly wrong — the projectile detonates in your hand!</ansi>`)
-			room.SendText(fmt.Sprintf(
+			room.SendTextVisual(fmt.Sprintf(
 				`<ansi fg="red"><ansi fg="username">%s</ansi>'s throw backfires spectacularly!</ansi>`,
 				user.Character.Name), user.UserId)
 

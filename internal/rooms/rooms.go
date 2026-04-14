@@ -264,6 +264,34 @@ func (r *Room) SendText(txt string, excludeUserIds ...int) {
 
 }
 
+// SendTextVisual sends a visual message that requires sight. In dark rooms,
+// only players with nightvision receive the message. Use this instead of
+// SendText when the message contains character names or visual descriptions
+// that shouldn't be visible in darkness.
+func (r *Room) SendTextVisual(txt string, excludeUserIds ...int) {
+	if r.GetVisibility() >= 1 {
+		r.SendText(txt, excludeUserIds...)
+		return
+	}
+	// Dark room — send only to nightvision players
+	for _, uid := range r.GetPlayers() {
+		excluded := false
+		for _, eid := range excludeUserIds {
+			if uid == eid {
+				excluded = true
+				break
+			}
+		}
+		if excluded {
+			continue
+		}
+		u := users.GetByUserId(uid)
+		if u != nil && u.Character.HasFlagFromAnySource(buffs.NightVision) {
+			u.SendText(txt)
+		}
+	}
+}
+
 func (r *Room) PlaySound(soundId string, category string, excludeUserIds ...int) {
 
 	volume := 100

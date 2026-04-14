@@ -50,7 +50,7 @@ func SonicShout(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 	}
 
 	user.SendText(`<ansi fg="magenta-bold">You unleash a devastating sonic shout that reverberates through the room!</ansi>`)
-	room.SendText(
+	room.SendTextVisual(
 		fmt.Sprintf(`<ansi fg="magenta-bold"><ansi fg="username">%s</ansi> unleashes a devastating sonic shout!</ansi>`, user.Character.Name),
 		user.UserId,
 	)

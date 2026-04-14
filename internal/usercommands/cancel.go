@@ -21,7 +21,7 @@ func Cancel(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	user.SendText(fmt.Sprintf(
 		`<ansi fg="cyan">You release your held folds. %d conviction is lost.</ansi>`,
 		cs.ConvictionSpent))
-	room.SendText(fmt.Sprintf(
+	room.SendTextVisual(fmt.Sprintf(
 		`<ansi fg="username">%s</ansi> breaks their concentration.`,
 		user.Character.Name), user.UserId)
 

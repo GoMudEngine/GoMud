@@ -77,7 +77,7 @@ func Ask(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		args = args[1:]
 
 		if !mob.Character.IsCharmed() {
-			room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> asks <ansi fg="mobname">%s</ansi> about "%s"`, user.Character.Name, mob.Character.Name, strings.Join(args, ` `)), user.UserId)
+			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> asks <ansi fg="mobname">%s</ansi> about "%s"`, user.Character.Name, mob.Character.Name, strings.Join(args, ` `)), user.UserId)
 		}
 
 		// players may type "ask <mob> to <do something>"

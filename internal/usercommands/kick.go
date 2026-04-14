@@ -207,20 +207,20 @@ func Kick(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			if targetChar != nil {
 				targetChar.SendText(fmt.Sprintf(knockdownTargetMsgs[util.Rand(len(knockdownTargetMsgs))], user.Character.Name, dmgDesc))
 			}
-			room.SendText(fmt.Sprintf(knockdownRoomMsgs[util.Rand(len(knockdownRoomMsgs))], user.Character.Name, targetName), user.UserId, res.Target.UserId)
+			room.SendTextVisual(fmt.Sprintf(knockdownRoomMsgs[util.Rand(len(knockdownRoomMsgs))], user.Character.Name, targetName), user.UserId, res.Target.UserId)
 		} else {
 			user.SendText(fmt.Sprintf(kickMsgs[util.Rand(len(kickMsgs))], targetName, dmgDesc))
 			if targetChar != nil {
 				targetChar.SendText(fmt.Sprintf(kickTargetMsgs[util.Rand(len(kickTargetMsgs))], user.Character.Name, dmgDesc))
 			}
-			room.SendText(fmt.Sprintf(kickRoomMsgs[util.Rand(len(kickRoomMsgs))], user.Character.Name, targetName), user.UserId, res.Target.UserId)
+			room.SendTextVisual(fmt.Sprintf(kickRoomMsgs[util.Rand(len(kickRoomMsgs))], user.Character.Name, targetName), user.UserId, res.Target.UserId)
 		}
 	} else {
 		user.SendText(fmt.Sprintf(missMsgs[util.Rand(len(missMsgs))], targetName))
 		if targetChar != nil {
 			targetChar.SendText(fmt.Sprintf(missTargetMsgs[util.Rand(len(missTargetMsgs))], user.Character.Name))
 		}
-		room.SendText(fmt.Sprintf(missRoomMsgs[util.Rand(len(missRoomMsgs))], user.Character.Name, targetName), user.UserId, res.Target.UserId)
+		room.SendTextVisual(fmt.Sprintf(missRoomMsgs[util.Rand(len(missRoomMsgs))], user.Character.Name, targetName), user.UserId, res.Target.UserId)
 	}
 
 	return true, nil

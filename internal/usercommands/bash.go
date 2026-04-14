@@ -78,7 +78,7 @@ func Bash(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			if targetUser != nil {
 				targetUser.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi>'s <ansi fg="yellow-bold">shield bash</ansi> knocks you to the ground! (<ansi fg="damage">%s</ansi>)`, user.Character.Name, dmgDesc))
 			}
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi>'s <ansi fg="yellow-bold">shield bash</ansi> knocks <ansi fg="mobname">%s</ansi> to the ground!`, user.Character.Name, target.Name),
 				user.UserId, target.UserId,
 			)
@@ -87,7 +87,7 @@ func Bash(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			if targetUser != nil {
 				targetUser.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi>'s <ansi fg="yellow-bold">shield bash</ansi> strikes you! (<ansi fg="damage">%s</ansi>)`, user.Character.Name, dmgDesc))
 			}
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> bashes <ansi fg="mobname">%s</ansi> with their shield!`, user.Character.Name, target.Name),
 				user.UserId, target.UserId,
 			)
@@ -97,7 +97,7 @@ func Bash(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		if targetUser != nil {
 			targetUser.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> attempts to bash you with their shield, but misses!`, user.Character.Name))
 		}
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> attempts to bash <ansi fg="mobname">%s</ansi>, but misses!`, user.Character.Name, target.Name),
 			user.UserId, target.UserId,
 		)

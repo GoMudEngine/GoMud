@@ -165,7 +165,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 			if lockpickItm.ItemId > 0 && hasSequence {
 
 				user.SendText(`You know this lock well, you quickly pick it.`)
-				room.SendText(
+				room.SendTextVisual(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> quickly picks the lock on the <ansi fg="exit">%s</ansi> exit.`, user.Character.Name, exitName),
 					user.UserId)
 
@@ -176,7 +176,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 
 			} else if hasKey {
 				user.SendText(fmt.Sprintf(`You use the key on your key ring to unlock the <ansi fg="exit">%s</ansi> exit.`, exitName))
-				room.SendText(
+				room.SendTextVisual(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="exit">%s</ansi> exit.`, user.Character.Name, exitName),
 					user.UserId)
 
@@ -195,7 +195,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 					room.PlaySound(`change`, `other`)
 
 					user.SendText(fmt.Sprintf(`You use your <ansi fg="item">%s</ansi> to unlock the <ansi fg="exit">%s</ansi> exit, and add it to your key ring for the future.`, itmSpec.Name, exitName))
-					room.SendText(
+					room.SendTextVisual(
 						fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="exit">%s</ansi> exit.`, user.Character.Name, exitName),
 						user.UserId)
 
@@ -281,14 +281,14 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				// Tell the old room they are leaving
 				if user.Character.Pet.Exists() {
 
-					room.SendText(
+					room.SendTextVisual(
 						fmt.Sprintf(string(c.ExitRoomMessageWrapper),
 							fmt.Sprintf(`<ansi fg="username">%s</ansi> and %s leave towards the <ansi fg="exit">%s</ansi> exit.`, user.Character.Name, user.Character.Pet.DisplayName(), exitName),
 						),
 						user.UserId)
 
 				} else {
-					room.SendText(
+					room.SendTextVisual(
 						fmt.Sprintf(string(c.ExitRoomMessageWrapper),
 							fmt.Sprintf(`<ansi fg="username">%s</ansi> leaves towards the <ansi fg="exit">%s</ansi> exit.`, user.Character.Name, exitName),
 						),
@@ -563,7 +563,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 
 			if !user.Character.HasBuffFlag(buffs.Hidden) {
 
-				room.SendText(
+				room.SendTextVisual(
 					fmt.Sprintf(string(c.ExitRoomMessageWrapper),
 						fmt.Sprintf(`<ansi fg="username">%s</ansi> is bumping into walls.`, user.Character.Name),
 					),

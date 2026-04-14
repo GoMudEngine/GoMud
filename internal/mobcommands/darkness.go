@@ -7,12 +7,12 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
-// sendRoomText is a darkness-aware drop-in replacement for room.SendText().
+// sendRoomText is a darkness-aware drop-in replacement for room.SendTextVisual().
 // In lit rooms it behaves identically. In dark rooms only players with
 // nightvision receive the message; others see nothing.
 func sendRoomText(room *rooms.Room, msg string, excludeUserIds ...int) {
 	if room.GetVisibility() >= 1 {
-		room.SendText(msg, excludeUserIds...)
+		room.SendTextVisual(msg, excludeUserIds...)
 		return
 	}
 	for _, uid := range room.GetPlayers() {
@@ -32,7 +32,7 @@ func sendRoomText(room *rooms.Room, msg string, excludeUserIds ...int) {
 // In lit rooms, everyone sees the full message.
 func sendAudioRoomText(room *rooms.Room, mob *mobs.Mob, anonMsg string, fullMsg string) {
 	if room.GetVisibility() >= 1 {
-		room.SendText(fullMsg)
+		room.SendTextVisual(fullMsg)
 		return
 	}
 	for _, uid := range room.GetPlayers() {

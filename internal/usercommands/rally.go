@@ -41,7 +41,7 @@ func Rally(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	user.Character.AddBuff(80, false)
 
 	user.SendText(`<ansi fg="cyan-bold">You rally your allies with an inspiring shout that steadies their resolve!</ansi>`)
-	room.SendText(
+	room.SendTextVisual(
 		fmt.Sprintf(`<ansi fg="cyan-bold"><ansi fg="username">%s</ansi> rallies everyone with an inspiring shout!</ansi>`, user.Character.Name),
 		user.UserId,
 	)

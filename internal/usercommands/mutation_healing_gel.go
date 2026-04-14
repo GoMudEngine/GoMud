@@ -44,7 +44,7 @@ func HealingGel(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 	user.SendText(fmt.Sprintf(`<ansi fg="green-bold">A thick, regenerative gel oozes from your pores, knitting wounds as it spreads. (%s)</ansi>`,
 		combat.GetHealDescription(healed, user.Character.HealthMax.Value)))
 
-	room.SendText(
+	room.SendTextVisual(
 		fmt.Sprintf(`<ansi fg="green">A glistening gel coats <ansi fg="username">%s</ansi>'s skin, sealing wounds before your eyes.</ansi>`, user.Character.Name),
 		user.UserId,
 	)

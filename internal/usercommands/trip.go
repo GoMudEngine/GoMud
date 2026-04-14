@@ -83,7 +83,7 @@ func Trip(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				if targetChar != nil {
 					targetChar.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> hammers you with their tail, sending you crashing to the ground! (<ansi fg="damage">%s</ansi>)`, user.Character.Name, combat.GetDamageDescription(result.Damage, result.TargetMaxHP)))
 				}
-				room.SendText(
+				room.SendTextVisual(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> tailsweeps <ansi fg="mobname">%s</ansi>, sending them crashing to the ground!`, user.Character.Name, targetName),
 					user.UserId, targetPlayerId,
 				)
@@ -92,7 +92,7 @@ func Trip(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				if targetChar != nil {
 					targetChar.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> sweeps at you with their tail, but you manage to stay upright! (<ansi fg="damage">%s</ansi>)`, user.Character.Name, combat.GetDamageDescription(result.Damage, result.TargetMaxHP)))
 				}
-				room.SendText(
+				room.SendTextVisual(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> tailsweeps <ansi fg="mobname">%s</ansi>, but they keep their footing!`, user.Character.Name, targetName),
 					user.UserId, targetPlayerId,
 				)
@@ -103,7 +103,7 @@ func Trip(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				if targetChar != nil {
 					targetChar.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> sweeps your legs, sending you crashing to the ground! (<ansi fg="damage">%s</ansi>)`, user.Character.Name, combat.GetDamageDescription(result.Damage, result.TargetMaxHP)))
 				}
-				room.SendText(
+				room.SendTextVisual(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> trips <ansi fg="mobname">%s</ansi>, sending them crashing to the ground!`, user.Character.Name, targetName),
 					user.UserId, targetPlayerId,
 				)
@@ -112,7 +112,7 @@ func Trip(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				if targetChar != nil {
 					targetChar.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> attempts to trip you, but you keep your footing! (<ansi fg="damage">%s</ansi>)`, user.Character.Name, combat.GetDamageDescription(result.Damage, result.TargetMaxHP)))
 				}
-				room.SendText(
+				room.SendTextVisual(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> attempts to trip <ansi fg="mobname">%s</ansi>, but they keep their footing!`, user.Character.Name, targetName),
 					user.UserId, targetPlayerId,
 				)
@@ -124,7 +124,7 @@ func Trip(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			if targetChar != nil {
 				targetChar.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> swings their tail at you, but you avoid it!`, user.Character.Name))
 			}
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> attempts a tailsweep on <ansi fg="mobname">%s</ansi>, but misses!`, user.Character.Name, targetName),
 				user.UserId, targetPlayerId,
 			)
@@ -133,7 +133,7 @@ func Trip(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			if targetChar != nil {
 				targetChar.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> attempts to trip you, but you avoid it!`, user.Character.Name))
 			}
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> attempts to trip <ansi fg="mobname">%s</ansi>, but misses!`, user.Character.Name, targetName),
 				user.UserId, targetPlayerId,
 			)

@@ -46,7 +46,7 @@ func Craft(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		return true, nil
 
 	case result.ImmediateComplete:
-		room.SendText(fmt.Sprintf(
+		room.SendTextVisual(fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi> works quickly and produces something.`,
 			mob.Character.Name))
 		craftBonus := 1.0 + float64(result.SkillMinimum)*float64(configs.GetBalanceConfig().CraftDifficultyProgressionScale)
@@ -54,7 +54,7 @@ func Craft(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		return true, nil
 
 	case result.Initiated:
-		room.SendText(fmt.Sprintf(
+		room.SendTextVisual(fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi> begins working on something.`,
 			mob.Character.Name))
 		return true, nil

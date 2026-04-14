@@ -47,7 +47,7 @@ func PacifismAura(rest string, user *users.UserRecord, room *rooms.Room, flags e
 	}
 
 	user.SendText(`<ansi fg="cyan-bold">A wave of calming energy pulses outward from you. Hostile intent fades from nearby creatures.</ansi>`)
-	room.SendText(
+	room.SendTextVisual(
 		fmt.Sprintf(`<ansi fg="cyan">A soothing aura radiates from <ansi fg="username">%s</ansi>. Nearby creatures seem to lose their aggression.</ansi>`, user.Character.Name),
 		user.UserId,
 	)

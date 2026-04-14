@@ -202,7 +202,7 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			)
 
 			if !isSneaking {
-				room.SendText(
+				room.SendTextVisual(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> prepares to fight %s.`, user.Character.Name, mName),
 					user.UserId,
 				)
@@ -272,7 +272,7 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> prepares to fight you!`, user.Character.Name),
 				)
 
-				room.SendText(
+				room.SendTextVisual(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> prepares to fight <ansi fg="mobname">%s</ansi>.`, user.Character.Name, p.Character.Name),
 					user.UserId, attackPlayerId)
 			}

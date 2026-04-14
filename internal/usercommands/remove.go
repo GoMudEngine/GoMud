@@ -61,7 +61,7 @@ func Remove(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			user.SendText(
 				fmt.Sprintf(`You remove your <ansi fg="item">%s</ansi> and return it to your backpack.`, result.Item.DisplayName()),
 			)
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> removes their <ansi fg="item">%s</ansi> and stores it away.`, user.Character.Name, result.Item.DisplayName()),
 				user.UserId,
 			)

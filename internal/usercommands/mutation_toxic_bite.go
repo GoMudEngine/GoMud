@@ -116,7 +116,7 @@ func ToxicBite(rest string, user *users.UserRecord, room *rooms.Room, flags even
 					user.Character.Name, combat.GetDamageDescription(biteDamage, targetMaxHP)))
 			}
 		}
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> bites <ansi fg="mobname">%s</ansi> with venomous fangs!`, user.Character.Name, targetName),
 			user.UserId, targetPlayerId,
 		)
@@ -137,7 +137,7 @@ func ToxicBite(rest string, user *users.UserRecord, room *rooms.Room, flags even
 				tUser.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> lunges to bite you, but misses!`, user.Character.Name))
 			}
 		}
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> lunges to bite <ansi fg="mobname">%s</ansi>, but misses and bites their own tongue!`, user.Character.Name, targetName),
 			user.UserId, targetPlayerId,
 		)

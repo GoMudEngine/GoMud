@@ -36,7 +36,7 @@ func Stash(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			fmt.Sprintf(`You stash the <ansi fg="itemname">%s</ansi>. To get it back, try <ansi fg="command">get %s from stash</ansi>`, matchItem.DisplayName(), matchItem.DisplayName()))
 
 		if !isSneaking {
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> is attempting to look unsuspicious.`, user.Character.Name),
 				user.UserId)
 		}

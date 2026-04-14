@@ -13,7 +13,7 @@ func Emote(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	if len(rest) == 0 {
 		user.SendText("You emote.")
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> emotes.`, user.Character.Name),
 			user.UserId,
 		)
@@ -25,7 +25,7 @@ func Emote(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	if result.IsAlias {
 		aliasMsg := actions.FormatEmoteText(user.Character.Name, result.AliasText, "username")
 		user.SendText(fmt.Sprintf(`You Emote: %s`, aliasMsg))
-		room.SendText(aliasMsg, user.UserId)
+		room.SendTextVisual(aliasMsg, user.UserId)
 		return true, nil
 	}
 

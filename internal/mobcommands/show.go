@@ -57,7 +57,7 @@ func Show(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			)
 
 			// Tell the rest of the room
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> shows their <ansi fg="item">%s</ansi> to <ansi fg="username">%s</ansi>.`, mob.Character.Name, showItem.DisplayName(), targetUser.Character.Name),
 				targetUser.UserId)
 
@@ -80,7 +80,7 @@ func Show(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 			if showItem.ItemId > 0 {
 
-				room.SendText(
+				room.SendTextVisual(
 					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> shows their <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, mob.Character.Name, showItem.DisplayName(), targetMob.Character.Name),
 				)
 

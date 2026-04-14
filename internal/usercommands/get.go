@@ -139,7 +139,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 				user.SendText(fmt.Sprintf(`You don't see any "%s" to pick up.`, itemName))
 			} else {
 				user.SendText(fmt.Sprintf(`You pick up %d item(s).`, picked))
-				room.SendText(
+				room.SendTextVisual(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> picks up some items.`, user.Character.Name),
 					user.UserId,
 				)
@@ -285,7 +285,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 					user.SendText(
 						fmt.Sprintf(`You remove a <ansi fg="itemname">%s</ansi> from %s.`, matchItem.DisplayName(), user.Character.Pet.DisplayName()),
 					)
-					room.SendText(
+					room.SendTextVisual(
 						fmt.Sprintf(`<ansi fg="username">%s</ansi> removes a <ansi fg="itemname">%s</ansi> from %s...`, user.Character.Name, matchItem.DisplayName(), user.Character.Pet.DisplayName()),
 						user.UserId,
 					)
@@ -326,7 +326,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 				user.SendText(
 					fmt.Sprintf(`You pick up <ansi fg="gold">%d gold</ansi> from the <ansi fg="container">%s</ansi>.`, goldAmt, containerName),
 				)
-				room.SendText(
+				room.SendTextVisual(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> picks up some <ansi fg="gold">gold</ansi> from the <ansi fg="container">%s</ansi>.`, user.Character.Name, containerName),
 					user.UserId,
 				)
@@ -359,7 +359,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 				user.SendText(
 					fmt.Sprintf(`You take the <ansi fg="itemname">%s</ansi> from the <ansi fg="container">%s</ansi>.`, matchItem.DisplayName(), containerName),
 				)
-				room.SendText(
+				room.SendTextVisual(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> picks up the <ansi fg="itemname">%s</ansi> from the <ansi fg="container">%s</ansi>...`, user.Character.Name, matchItem.DisplayName(), containerName),
 					user.UserId,
 				)
@@ -398,7 +398,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 					user.SendText(
 						fmt.Sprintf(`You pick up <ansi fg="gold">%d gold</ansi>.`, goldAmt),
 					)
-					room.SendText(
+					room.SendTextVisual(
 						fmt.Sprintf(`<ansi fg="username">%s</ansi> picks up some <ansi fg="gold">gold</ansi>.`, user.Character.Name),
 						user.UserId,
 					)
@@ -470,7 +470,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 				user.SendText(
 					fmt.Sprintf(`You dig out the <ansi fg="itemname">%s</ansi> from where it was stashed.`, matchItem.DisplayName()),
 				)
-				room.SendText(
+				room.SendTextVisual(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> digs around in the area and picks something up...`, user.Character.Name),
 					user.UserId,
 				)
@@ -478,7 +478,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 				user.SendText(
 					fmt.Sprintf(`You pick up the <ansi fg="itemname">%s</ansi>.`, matchItem.DisplayName()),
 				)
-				room.SendText(
+				room.SendTextVisual(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> picks up the <ansi fg="itemname">%s</ansi>...`, user.Character.Name, matchItem.DisplayName()),
 					user.UserId,
 				)
@@ -497,7 +497,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		if len(foundNoun) > 0 {
 
 			user.SendText(fmt.Sprintf(`You can't get the <ansi fg="noun">%s</ansi>`, foundNoun))
-			room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> is grasping at the air.`, user.Character.Name), user.UserId)
+			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> is grasping at the air.`, user.Character.Name), user.UserId)
 
 			return true, nil
 		}

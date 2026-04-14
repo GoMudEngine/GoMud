@@ -104,7 +104,7 @@ func Put(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 
 		container.Gold += goldAmt
 		user.SendText(fmt.Sprintf(`You place <ansi fg="gold">%d gold</ansi> into the <ansi fg="container">%s</ansi>`, goldAmt, containerName))
-		room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> places some <ansi fg="gold">gold</ansi> into the <ansi fg="container">%s</ansi>`, user.Character.Name, containerName), user.UserId)
+		room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> places some <ansi fg="gold">gold</ansi> into the <ansi fg="container">%s</ansi>`, user.Character.Name, containerName), user.UserId)
 	}
 
 	if itemFound {
@@ -119,7 +119,7 @@ func Put(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		})
 
 		user.SendText(fmt.Sprintf(`You place your <ansi fg="itemname">%s</ansi> into the <ansi fg="container">%s</ansi>`, item.DisplayName(), containerName))
-		room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> places their <ansi fg="itemname">%s</ansi> into the <ansi fg="container">%s</ansi>`, user.Character.Name, item.DisplayName(), containerName), user.UserId)
+		room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> places their <ansi fg="itemname">%s</ansi> into the <ansi fg="container">%s</ansi>`, user.Character.Name, item.DisplayName(), containerName), user.UserId)
 
 		// Enforce container size limits
 
@@ -138,7 +138,7 @@ func Put(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			}
 
 			container.RemoveItem(oopsItem)
-			room.SendText(fmt.Sprintf(`The <ansi fg="container">%s</ansi> is too full and a <ansi fg="itemname">%s</ansi> falls out and onto the floor.`, containerName, oopsItem.DisplayName()))
+			room.SendTextVisual(fmt.Sprintf(`The <ansi fg="container">%s</ansi> is too full and a <ansi fg="itemname">%s</ansi> falls out and onto the floor.`, containerName, oopsItem.DisplayName()))
 			room.AddItem(oopsItem, false)
 		}
 	}

@@ -148,7 +148,7 @@ func sendAggroPullMessages(user *users.UserRecord, room *rooms.Room, sourceName,
 	} else {
 		roomMsg = fmt.Sprintf(roomPullMsgs[idx], targetName, sourceName)
 	}
-	room.SendText(roomMsg, user.UserId)
+	room.SendTextVisual(roomMsg, user.UserId)
 }
 
 // sendTauntMessages sends data-driven taunt messages to attacker, defender,
@@ -179,6 +179,6 @@ func sendTauntMessages(intensity combat.TauntIntensity, dmgDesc, source, target,
 	}
 
 	if roomMsg != "" {
-		room.SendText(roomMsg, user.UserId, targetPlayerId)
+		room.SendTextVisual(roomMsg, user.UserId, targetPlayerId)
 	}
 }

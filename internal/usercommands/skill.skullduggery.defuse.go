@@ -159,7 +159,7 @@ func Defuse(rest string, user *users.UserRecord,
 			container.Lock.TrapBuffIds = nil
 			room.Containers[containerName] = container
 			user.SendText(`<ansi fg="green">You carefully disarm the trap mechanism.</ansi>`)
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> disarms a trap on the <ansi fg="container">%s</ansi>.`,
 					user.Character.Name, containerName),
 				user.UserId)
@@ -171,7 +171,7 @@ func Defuse(rest string, user *users.UserRecord,
 				room.Exits[exitName] = exitInfo
 			}
 			user.SendText(`<ansi fg="green">You carefully disarm the trap mechanism.</ansi>`)
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> disarms a trap on the <ansi fg="exit">%s</ansi> exit.`,
 					user.Character.Name, exitName),
 				user.UserId)
@@ -179,7 +179,7 @@ func Defuse(rest string, user *users.UserRecord,
 	} else {
 		// ── Trigger the trap ────────────────────────────────────────────────
 		user.SendText(`<ansi fg="red-bold">The trap triggers as you fumble the mechanism!</ansi>`)
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="alert-3"><ansi fg="username">%s</ansi> triggers a trap!</ansi>`,
 				user.Character.Name),
 			user.UserId)

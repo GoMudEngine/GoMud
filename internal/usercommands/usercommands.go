@@ -388,7 +388,7 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 			user.SendText(fmt.Sprintf(
 				`<ansi fg="cyan">You lose your concentration as you flee! %d conviction is lost.</ansi>`,
 				cs.ConvictionSpent))
-			room.SendText(fmt.Sprintf(
+			room.SendTextVisual(fmt.Sprintf(
 				`<ansi fg="username">%s</ansi> breaks their concentration.`,
 				user.Character.Name), user.UserId)
 			// Fall through — let the flee command execute normally

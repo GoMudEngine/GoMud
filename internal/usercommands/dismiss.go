@@ -79,7 +79,7 @@ func Dismiss(rest string, user *users.UserRecord,
 	))
 
 	// Room message (exclude the dismissing player — they already saw it).
-	room.SendText(
+	room.SendTextVisual(
 		fmt.Sprintf(
 			`<ansi fg="username">%s</ansi> dismisses `+
 				`<ansi fg="mobname">%s</ansi>!`,
@@ -87,7 +87,7 @@ func Dismiss(rest string, user *users.UserRecord,
 		),
 		user.UserId,
 	)
-	room.SendText(
+	room.SendTextVisual(
 		fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi> turns hostile!`,
 			compName,

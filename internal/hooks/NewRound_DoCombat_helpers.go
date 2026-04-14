@@ -67,27 +67,13 @@ func mobDisplayName(mob *mobs.Mob, room *rooms.Room, viewingUserId int) string {
 	return mob.Character.GetMobNameIndexed(viewingUserId, dupIdx).String()
 }
 
-// sendVisualRoomText sends a visual combat message to room observers.
-// In lit rooms, all players see the message. In dark rooms, only players
-// with nightvision see the visual text; others receive nothing here
-// (a one-time sound fallback is sent per round instead).
+// sendVisualRoomText sends a visual message that requires sight.
+// Delegates to Room.SendTextVisual which handles darkness filtering.
 func sendVisualRoomText(room *rooms.Room, visualMsg string, excludeUserIds ...int) {
 	if room == nil {
 		return
 	}
-	if room.GetVisibility() >= 1 {
-		room.SendText(visualMsg, excludeUserIds...)
-		return
-	}
-	for _, uid := range room.GetPlayers() {
-		if isExcludedUser(uid, excludeUserIds) {
-			continue
-		}
-		u := users.GetByUserId(uid)
-		if u != nil && u.Character.HasFlagFromAnySource(buffs.NightVision) {
-			u.SendText(visualMsg)
-		}
-	}
+	room.SendTextVisual(visualMsg, excludeUserIds...)
 }
 
 // isExcludedUser checks if a userId is in the exclusion list.

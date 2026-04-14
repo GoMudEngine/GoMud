@@ -86,7 +86,7 @@ func BlindingSpit(rest string, user *users.UserRecord, room *rooms.Room, flags e
 				tUser.SendText(fmt.Sprintf(`<ansi fg="red"><ansi fg="username">%s</ansi> spits caustic fluid into your eyes! You can barely see!</ansi>`, user.Character.Name))
 			}
 		}
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> spits a stream of fluid into <ansi fg="mobname">%s</ansi>'s eyes!`, user.Character.Name, targetName),
 			user.UserId, targetPlayerId,
 		)
@@ -97,7 +97,7 @@ func BlindingSpit(rest string, user *users.UserRecord, room *rooms.Room, flags e
 				tUser.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> spits at you, but you dodge the caustic stream!`, user.Character.Name))
 			}
 		}
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> spits at <ansi fg="mobname">%s</ansi>, but misses!`, user.Character.Name, targetName),
 			user.UserId, targetPlayerId,
 		)

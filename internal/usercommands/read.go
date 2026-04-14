@@ -40,7 +40,7 @@ func Read(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		)
 
 		if !isSneaking {
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> looks at their <ansi fg="item">%s</ansi>...`, user.Character.Name, foundItemName),
 				user.UserId,
 			)

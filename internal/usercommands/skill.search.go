@@ -41,7 +41,7 @@ func Search(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		combat.SkillMultiplier(searchRank)*25.0
 
 	user.SendText("You snoop around for a bit...\n")
-	room.SendText(
+	room.SendTextVisual(
 		fmt.Sprintf(`<ansi fg="username">%s</ansi> is snooping around.`, user.Character.Name),
 		user.UserId,
 	)

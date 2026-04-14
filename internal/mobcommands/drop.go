@@ -50,7 +50,7 @@ func Drop(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 		if dropAmt <= mob.Character.Gold {
 			if err := actions.FloorDropGold(dropAmt, &mob.Character, room); err == nil {
-				room.SendText(
+				room.SendTextVisual(
 					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> drops <ansi fg="gold">%d gold</ansi>.`, mob.Character.Name, dropAmt))
 			}
 			return true, nil
@@ -66,7 +66,7 @@ func Drop(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	result := actions.DropItem(actor, rest)
 
 	if result.Found {
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> drops their <ansi fg="item">%s</ansi>...`, mob.Character.Name, result.Item.DisplayName()))
 	}
 

@@ -53,7 +53,7 @@ func Selljunk(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		})
 
 		mob.Character.Gold += 1
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> chants softly. Their <ansi fg="item">%s</ansi> slowly levitates in the air, trembles briefly and then in a flash of light becomes a gold coin!`, mob.Character.Name, matchItem.DisplayName()))
 	}
 

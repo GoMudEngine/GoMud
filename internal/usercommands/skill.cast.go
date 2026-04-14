@@ -143,7 +143,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		// Failed — apply 2-round cooldown and inform user
 		user.Character.TryCooldown(`cast-init`, `2 rounds`)
 		user.SendText(`<ansi fg="red">` + spells.GetCastMessage("concentration_slipped", spellInfo.Name) + `</ansi>`)
-		room.SendText(fmt.Sprintf(
+		room.SendTextVisual(fmt.Sprintf(
 			`<ansi fg="username">%s</ansi> <ansi fg="red">loses their concentration.</ansi>`,
 			user.Character.Name), user.UserId)
 		return true, nil
@@ -259,7 +259,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 	// 14. Announce the cast start (skill progression now fires in InitiateCast).
 	user.SendText(`<ansi fg="cyan">` + spells.GetCastMessage("cast_started", spellInfo.Name) + `</ansi>`)
-	room.SendText(fmt.Sprintf(
+	room.SendTextVisual(fmt.Sprintf(
 		`<ansi fg="username">%s</ansi> closes their eyes in concentration.`,
 		user.Character.Name), user.UserId)
 

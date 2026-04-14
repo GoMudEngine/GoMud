@@ -80,7 +80,7 @@ func sendMovementMessage(room *rooms.Room, visualMsg string, soundMsg string) {
 	vis := room.GetVisibility()
 	if vis >= 1 {
 		// Room is lit enough — everyone sees the message
-		room.SendText(visualMsg)
+		room.SendTextVisual(visualMsg)
 		return
 	}
 	// Room is dark — send per-player based on night vision

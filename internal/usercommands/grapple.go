@@ -83,7 +83,7 @@ func Grapple(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		if targetChar != nil {
 			targetChar.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> <ansi fg="yellow-bold">grapples</ansi> you, transitioning to <ansi fg="cyan">%s</ansi> position!`, user.Character.Name, result.PositionDesc))
 		}
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> <ansi fg="yellow-bold">grapples</ansi> <ansi fg="mobname">%s</ansi> into <ansi fg="cyan">%s</ansi> position!`, user.Character.Name, targetName, result.PositionDesc),
 			user.UserId, targetPlayerId,
 		)
@@ -99,14 +99,14 @@ func Grapple(rest string, user *users.UserRecord, room *rooms.Room, flags events
 			if targetChar != nil {
 				targetChar.SendText(result.DisarmResult.TargetMsg)
 			}
-			room.SendText(result.DisarmResult.RoomMessage, user.UserId, targetPlayerId)
+			room.SendTextVisual(result.DisarmResult.RoomMessage, user.UserId, targetPlayerId)
 		}
 	} else {
 		user.SendText(fmt.Sprintf(`Your <ansi fg="yellow-bold">grapple</ansi> attempt against <ansi fg="mobname">%s</ansi> fails!`, targetName))
 		if targetChar != nil {
 			targetChar.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> tries to grapple you, but you slip away!`, user.Character.Name))
 		}
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> tries to grapple <ansi fg="mobname">%s</ansi>, but fails!`, user.Character.Name, targetName),
 			user.UserId, targetPlayerId,
 		)
@@ -122,7 +122,7 @@ func Grapple(rest string, user *users.UserRecord, room *rooms.Room, flags events
 			if targetChar != nil {
 				targetChar.SendText(result.CritFailure.TargetMessage)
 			}
-			room.SendText(result.CritFailure.RoomMessage, user.UserId, targetPlayerId)
+			room.SendTextVisual(result.CritFailure.RoomMessage, user.UserId, targetPlayerId)
 		}
 	}
 

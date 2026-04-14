@@ -87,7 +87,7 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			targetUser.SendText(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> gives you their <ansi fg="item">%s</ansi>.`, user.Character.Name, result.Item.DisplayName()),
 			)
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> gives <ansi fg="username">%s</ansi> a <ansi fg="itemname">%s</ansi>.`, user.Character.Name, targetUser.Character.Name, result.Item.NameSimple()),
 				user.UserId,
 				targetUser.UserId)
@@ -99,7 +99,7 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				user.SendText(
 					fmt.Sprintf(`You count out <ansi fg="gold">%d gold</ansi> and put it back in your pocket.`, giveGoldAmount),
 				)
-				room.SendText(
+				room.SendTextVisual(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> counts out some <ansi fg="gold">gold</ansi> and put it back in their pocket.`, user.Character.Name),
 					user.UserId)
 
@@ -126,7 +126,7 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				targetUser.SendText(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> gives you <ansi fg="gold">%d gold</ansi>.`, user.Character.Name, giveGoldAmount),
 				)
-				room.SendText(
+				room.SendTextVisual(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> gives <ansi fg="username">%s</ansi> some <ansi fg="gold">gold</ansi>.`, user.Character.Name, targetUser.Character.Name),
 					user.UserId,
 					targetUser.UserId)
@@ -168,7 +168,7 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 					user.SendText(
 						fmt.Sprintf(`You give <ansi fg="gold">%d gold</ansi> to <ansi fg="username">%s</ansi>.`, giveGoldAmount, m.Character.Name),
 					)
-					room.SendText(
+					room.SendTextVisual(
 						fmt.Sprintf(`<ansi fg="username">%s</ansi> gave some gold to <ansi fg="mobname">%s</ansi>.`, user.Character.Name, m.Character.Name),
 						user.UserId,
 					)
@@ -192,7 +192,7 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 						user.SendText(
 							fmt.Sprintf(`You give the <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, giveItem.DisplayName(), m.Character.Name),
 						)
-						room.SendText(
+						room.SendTextVisual(
 							fmt.Sprintf(`<ansi fg="username">%s</ansi> gave their <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, user.Character.Name, giveItem.DisplayName(), m.Character.Name),
 							user.UserId,
 						)
@@ -219,7 +219,7 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 					user.SendText(
 						fmt.Sprintf(`You give the <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, giveItem.DisplayName(), m.Character.Name),
 					)
-					room.SendText(
+					room.SendTextVisual(
 						fmt.Sprintf(`<ansi fg="username">%s</ansi> gave their <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, user.Character.Name, giveItem.DisplayName(), m.Character.Name),
 						user.UserId,
 					)
@@ -263,12 +263,12 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		}
 
 		if giveGoldAmount > 0 {
-			room.SendText(fmt.Sprintf(`What would %s do with <ansi fg="gold">%d gold</ansi>?`, petUser.Character.Pet.DisplayName(), giveGoldAmount))
+			room.SendTextVisual(fmt.Sprintf(`What would %s do with <ansi fg="gold">%d gold</ansi>?`, petUser.Character.Pet.DisplayName(), giveGoldAmount))
 			return true, nil
 		}
 
 		user.SendText(fmt.Sprintf(`You give the <ansi fg="itemname">%s</ansi> to %s.`, giveItem.DisplayName(), petUser.Character.Pet.DisplayName()))
-		room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> gives their <ansi fg="itemname">%s</ansi> to %s...`, user.Character.Name, giveItem.DisplayName(), petUser.Character.Pet.DisplayName()), user.UserId)
+		room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> gives their <ansi fg="itemname">%s</ansi> to %s...`, user.Character.Name, giveItem.DisplayName(), petUser.Character.Pet.DisplayName()), user.UserId)
 
 		user.Character.RemoveItem(giveItem)
 
@@ -279,7 +279,7 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		})
 
 		if len(petUser.Character.Pet.Items) >= petUser.Character.Pet.Capacity || !petUser.Character.Pet.StoreItem(giveItem) {
-			room.SendText(fmt.Sprintf(`%s throws the <ansi fg="itemname">%s</ansi> onto the ground.`, petUser.Character.Pet.DisplayName(), giveItem.DisplayName()))
+			room.SendTextVisual(fmt.Sprintf(`%s throws the <ansi fg="itemname">%s</ansi> onto the ground.`, petUser.Character.Pet.DisplayName(), giveItem.DisplayName()))
 			room.AddItem(giveItem, false)
 		}
 

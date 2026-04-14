@@ -148,7 +148,7 @@ func Target(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		if newTargetMobInstanceId > 0 {
 			m := mobs.GetInstance(newTargetMobInstanceId)
 			user.SendText(fmt.Sprintf("You shift your focus to <ansi fg=\"mobname\">%s</ansi>!", m.Character.Name))
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf("<ansi fg=\"username\">%s</ansi> shifts focus to <ansi fg=\"mobname\">%s</ansi>!", user.Character.Name, m.Character.Name),
 				user.UserId,
 			)
@@ -156,7 +156,7 @@ func Target(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			p := users.GetByUserId(newTargetPlayerId)
 			user.SendText(fmt.Sprintf("You shift your focus to <ansi fg=\"username\">%s</ansi>!", p.Character.Name))
 			p.SendText(fmt.Sprintf("<ansi fg=\"username\">%s</ansi> shifts focus to you!", user.Character.Name))
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf("<ansi fg=\"username\">%s</ansi> shifts focus to <ansi fg=\"username\">%s</ansi>!", user.Character.Name, p.Character.Name),
 				user.UserId, newTargetPlayerId,
 			)
