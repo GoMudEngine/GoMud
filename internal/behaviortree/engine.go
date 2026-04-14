@@ -1,0 +1,97 @@
+package behaviortree
+
+import (
+	"sync"
+	"time"
+)
+
+// Engine manages behavior tree loading, caching, and evaluation.
+type Engine struct {
+	mu    sync.RWMutex
+	trees map[int]Node // mobId → compiled root node
+	queue []DelayedAction
+}
+
+type DelayedAction struct {
+	ExecuteAt time.Time
+	Action    func()
+}
+
+var globalEngine *Engine
+
+func init() {
+	globalEngine = &Engine{
+		trees: make(map[int]Node),
+	}
+}
+
+func GetEngine() *Engine {
+	return globalEngine
+}
+
+// LoadTree loads and caches a behavior tree for a mob type.
+func (e *Engine) LoadTree(mobId int, path string) error {
+	node, err := LoadTreeFromFile(path)
+	if err != nil {
+		return err
+	}
+	e.mu.Lock()
+	e.trees[mobId] = node
+	e.mu.Unlock()
+	return nil
+}
+
+// GetTree returns the cached tree for a mob type, or nil.
+func (e *Engine) GetTree(mobId int) Node {
+	e.mu.RLock()
+	defer e.mu.RUnlock()
+	return e.trees[mobId]
+}
+
+// EvaluateEvent triggers immediate tree evaluation for a mob instance.
+func (e *Engine) EvaluateEvent(mobId int, instanceId int, event EventContext, state *BehaviorState) {
+	tree := e.GetTree(mobId)
+	if tree == nil {
+		return
+	}
+	ctx := &EvalContext{
+		Event:      event,
+		MobState:   state,
+		MobId:      mobId,
+		InstanceId: instanceId,
+		RoomId:     event.RoomId,
+	}
+	tree.Evaluate(ctx)
+}
+
+// QueueDelayed adds an action to execute after a delay.
+func (e *Engine) QueueDelayed(delay time.Duration, action func()) {
+	e.mu.Lock()
+	e.queue = append(e.queue, DelayedAction{
+		ExecuteAt: time.Now().Add(delay),
+		Action:    action,
+	})
+	e.mu.Unlock()
+}
+
+// DrainQueue executes all delayed actions whose time has come.
+// Called once per round tick.
+func (e *Engine) DrainQueue() {
+	e.mu.Lock()
+	now := time.Now()
+	remaining := make([]DelayedAction, 0, len(e.queue))
+	var ready []DelayedAction
+	for _, da := range e.queue {
+		if now.After(da.ExecuteAt) || now.Equal(da.ExecuteAt) {
+			ready = append(ready, da)
+		} else {
+			remaining = append(remaining, da)
+		}
+	}
+	e.queue = remaining
+	e.mu.Unlock()
+
+	for _, da := range ready {
+		da.Action()
+	}
+}
