@@ -1,0 +1,48 @@
+# Bandit Leader — Behavior Tree
+# Timed aggro: if player stays in room without talking, attacks after
+# a delay. Any ask event cancels the countdown by setting negotiating
+# state. Dialogue responses stay in dialogue YAML.
+#
+# State: "negotiating" — set to "true" when player initiates dialogue
+
+tree:
+  type: selector
+  children:
+
+    # ── ASK EVENT: cancel countdown, let dialogue handle response ──
+    # Sets negotiating flag then returns Failure so dialogue YAML fires.
+    - type: sequence
+      event: player_ask
+      children:
+        - type: action
+          do: set_state
+          key: negotiating
+          value: "true"
+        # Fail intentionally — dialogue system handles the response
+        - type: condition
+          check: random_chance
+          percent: 0
+
+    # ── IDLE EVENT: timed aggro countdown ──
+    - type: sequence
+      event: mob_idle
+      children:
+        # Only if not negotiating
+        - type: decorator
+          mod: invert
+          child:
+            type: condition
+            check: state_equals
+            key: negotiating
+            value: "true"
+        # Only if players are present
+        - type: condition
+          check: players_in_room
+        # Wait 5 rounds, then attack
+        - type: decorator
+          mod: delay
+          rounds: 5
+          child:
+            type: action
+            do: command
+            cmd: attack
