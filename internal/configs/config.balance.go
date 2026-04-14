@@ -222,7 +222,9 @@ type Balance struct {
 	CombatMemoryDuration ConfigInt   `yaml:"CombatMemoryDuration"` // Rounds before combat memory expires (default 300)
 	MobAIEnabled         ConfigBool  `yaml:"MobAIEnabled"`         // Global toggle for reactive AI system (default true)
 	MobReactionDelayMin  ConfigFloat `yaml:"MobReactionDelayMin"`  // Min reaction delay in seconds (default 0.25)
-	MobReactionDelayMax  ConfigFloat `yaml:"MobReactionDelayMax"`  // Max reaction delay in seconds (default 4.0)
+	MobReactionDelayMax             ConfigFloat `yaml:"MobReactionDelayMax"`             // Max reaction delay in seconds (default 4.0)
+	MobBTreeReactionBase            ConfigFloat `yaml:"MobBTreeReactionBase"`            // Base reaction delay in seconds for behavior tree mobs (default 3.0)
+	MobBTreeReactionPerceptionScale ConfigInt   `yaml:"MobBTreeReactionPerceptionScale"` // Perception divisor for reaction delay (default 100)
 
 	// ── PACK SCALING ─────────────────────────────────────────────────────────
 	PackScalingEnabled   ConfigBool `yaml:"PackScalingEnabled"`   // Enable pack survival bonuses (default true)
@@ -803,6 +805,12 @@ func (b *Balance) Validate() {
 	}
 	if b.MobReactionDelayMax <= 0 {
 		b.MobReactionDelayMax = 4.0
+	}
+	if b.MobBTreeReactionBase <= 0 {
+		b.MobBTreeReactionBase = 3.0
+	}
+	if b.MobBTreeReactionPerceptionScale < 1 {
+		b.MobBTreeReactionPerceptionScale = 100
 	}
 
 	// ── PACK SCALING ─────────────────────────────────────────────────────────
