@@ -62,6 +62,8 @@ function onAsk(mob, room, eventDetails) {
 
         if (entryRoomId > 0) {
             var exitKey = zoneName + '-' + user.UserId();
+            // AddTemporaryExit replaces any existing portal with the same key,
+            // so upgrading difficulty just overwrites the old portal.
             var added = room.AddTemporaryExit(exitKey, exitKey + ' rift', entryRoomId, '30 real minutes');
             if (!added) {
                 user.AddGold(goldAmount);

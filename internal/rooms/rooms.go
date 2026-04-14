@@ -435,8 +435,9 @@ func (r *Room) RemoveTemporaryExit(t exit.TemporaryRoomExit) bool {
 	return false
 }
 
-// Can't add twoof the same exitName
-// Will return false if it already exists
+// AddTemporaryExit adds (or replaces) a temporary exit. Replacing an
+// existing exit with the same key allows instance portals to be
+// upgraded without waiting for the old timer to expire.
 func (r *Room) AddTemporaryExit(exitName string, t exit.TemporaryRoomExit) bool {
 
 	t.SpawnedRound = util.GetRoundCount()
@@ -447,9 +448,6 @@ func (r *Room) AddTemporaryExit(exitName string, t exit.TemporaryRoomExit) bool 
 
 	if len(t.Title) == 0 {
 		t.Title = exitName
-	}
-	if _, ok := r.ExitsTemp[exitName]; ok {
-		return false
 	}
 	r.ExitsTemp[exitName] = t
 	return true
