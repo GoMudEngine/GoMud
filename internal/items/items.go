@@ -578,20 +578,34 @@ func (i *Item) NameMatch(input string, allowContains bool) (partialMatch bool, f
 	input = strings.ToLower(input)
 	simpleName := strings.ToLower(i.Name())
 
-	if allowContains {
-		if strings.Contains(simpleName, input) {
-			if simpleName == input {
+	// Also check against the display name which includes enchant adjectives.
+	// This lets "devouring staff" and "staff" disambiguate correctly.
+	displayName := strings.ToLower(i.NameSimple())
+	// Build adjective-prefixed name for matching (e.g. "devouring staff")
+	adjName := ""
+	if len(i.Adjectives) > 0 {
+		adjName = strings.ToLower(strings.Join(i.Adjectives, " ") + " " + i.NameSimple())
+	}
+
+	// Check all name variants
+	for _, name := range []string{simpleName, displayName, adjName} {
+		if name == "" {
+			continue
+		}
+		if allowContains {
+			if strings.Contains(name, input) {
+				if name == input {
+					return true, true
+				}
+				return true, false
+			}
+		}
+		if strings.HasPrefix(name, input) {
+			if name == input {
 				return true, true
 			}
 			return true, false
 		}
-	}
-
-	if strings.HasPrefix(simpleName, input) {
-		if simpleName == input {
-			return true, true
-		}
-		return true, false
 	}
 
 	return false, false
