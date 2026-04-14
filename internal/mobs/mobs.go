@@ -284,6 +284,24 @@ func NewMobById(mobId MobId, homeRoomId int, forceStatPool ...int) *Mob {
 		mob.Character.IsMob = true
 		mob.Character.PlayerDamage = make(map[int]int)
 
+		// Deep copy maps to prevent shared state with template.
+		// Go shallow copy shares map backing data — mutations to an
+		// instance's skills/spellbook would contaminate the template.
+		if mob.Character.Skills != nil {
+			skillsCopy := make(map[string]int, len(mob.Character.Skills))
+			for k, v := range mob.Character.Skills {
+				skillsCopy[k] = v
+			}
+			mob.Character.Skills = skillsCopy
+		}
+		if mob.Character.SpellBook != nil {
+			spellCopy := make(map[string]int, len(mob.Character.SpellBook))
+			for k, v := range mob.Character.SpellBook {
+				spellCopy[k] = v
+			}
+			mob.Character.SpellBook = spellCopy
+		}
+
 		// Stage 38.4: Try to load a saved instance (progression data from disk).
 		// If found, apply saved training values instead of randomizing.
 		savedInstance := LoadMobInstance(mob.MobId, mob.Zone, mob.Character.Name, homeRoomId)
@@ -360,7 +378,26 @@ func NewMobById(mobId MobId, homeRoomId int, forceStatPool ...int) *Mob {
 
 		mob.Character.Buffs = buffs.New()
 
-		for idx, _ := range mob.Character.Items {
+		// Deep copy item slices to prevent shared backing array with template.
+		// Without this, giving items to a mob instance can contaminate the
+		// template, causing all future spawns to carry the given items.
+		if len(mob.Character.Items) > 0 {
+			itemsCopy := make([]items.Item, len(mob.Character.Items))
+			copy(itemsCopy, mob.Character.Items)
+			mob.Character.Items = itemsCopy
+		}
+		if len(mob.Character.ComponentItems) > 0 {
+			compCopy := make([]items.Item, len(mob.Character.ComponentItems))
+			copy(compCopy, mob.Character.ComponentItems)
+			mob.Character.ComponentItems = compCopy
+		}
+		if len(mob.Character.PotionItems) > 0 {
+			potCopy := make([]items.Item, len(mob.Character.PotionItems))
+			copy(potCopy, mob.Character.PotionItems)
+			mob.Character.PotionItems = potCopy
+		}
+
+		for idx := range mob.Character.Items {
 			mob.Character.Items[idx].Validate()
 		}
 
