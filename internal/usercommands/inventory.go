@@ -254,24 +254,29 @@ func Inventory(rest string, user *users.UserRecord, room *rooms.Room, flags even
 			isSpoiled = phase == items.PhaseSpoiled
 		}
 
-		// Stack key: ItemId + enchant state + uses + spoiled flag
+		// Stack key: ItemId + uses + spoiled flag.
+		// Enchant state is intentionally excluded — differently enchanted
+		// copies of the same item stack together. Players inspect individual
+		// copies via look/identify with #N disambiguation.
 		spoiledTag := ""
 		if isSpoiled {
 			spoiledTag = "|spoiled"
 		}
-		stackKey := fmt.Sprintf("%d|%s|%d|%d%s", item.ItemId, item.EnchantType, item.EnchantTier, item.Uses, spoiledTag)
+		stackKey := fmt.Sprintf("%d|%d%s", item.ItemId, item.Uses, spoiledTag)
 
 		if entry, exists := stacks[stackKey]; exists {
 			entry.count++
 			continue
 		}
 
+		// Use base name for stacked display — enchant adjectives are
+		// revealed via look/identify, not the inventory list.
 		iName := item.Name()
-		iNameFormatted := fmt.Sprintf(`<ansi fg="itemname">%s</ansi>`, item.DisplayName())
+		iNameFormatted := fmt.Sprintf(`<ansi fg="itemname">%s</ansi>`, item.Name())
 
 		if isSpoiled {
 			iName = fmt.Sprintf(`%s (turned)`, item.Name())
-			iNameFormatted = fmt.Sprintf(`<ansi fg="8">%s (turned)</ansi>`, item.DisplayName())
+			iNameFormatted = fmt.Sprintf(`<ansi fg="8">%s (turned)</ansi>`, item.Name())
 		} else if iSpec.Subtype == items.Drinkable || iSpec.Subtype == items.Edible || iSpec.Subtype == items.Usable || iSpec.Type == items.Lockpicks {
 			if iSpec.Uses > 0 {
 				iName = fmt.Sprintf(`%s (%d)`, iName, item.Uses)
