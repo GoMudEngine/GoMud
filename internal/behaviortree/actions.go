@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/textutil"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 // ActionFunc is the signature for all registered action implementations.
@@ -231,10 +232,20 @@ func actAttack(params map[string]any, ctx *EvalContext) Result {
 	if mob == nil {
 		return Failure
 	}
-	if ctx.Event.UserId == 0 {
-		return Failure
+	targetUserId := ctx.Event.UserId
+	// If no specific target, pick a random player in the room
+	if targetUserId == 0 {
+		room := rooms.LoadRoom(ctx.RoomId)
+		if room == nil {
+			return Failure
+		}
+		players := room.GetPlayers()
+		if len(players) == 0 {
+			return Failure
+		}
+		targetUserId = players[util.Rand(len(players))]
 	}
-	mob.Character.SetAggro(ctx.Event.UserId, 0, characters.DefaultAttack)
+	mob.Character.SetAggro(targetUserId, 0, characters.DefaultAttack)
 	return Success
 }
 

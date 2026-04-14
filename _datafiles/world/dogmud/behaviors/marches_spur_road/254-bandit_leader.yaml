@@ -38,11 +38,10 @@ tree:
         # Only if players are present
         - type: condition
           check: players_in_room
-        # Wait 5 rounds, then attack
+        # Wait 5 rounds, then attack a player in the room
         - type: decorator
           mod: delay
           rounds: 5
           child:
             type: action
-            do: command
-            cmd: attack
+            do: attack
