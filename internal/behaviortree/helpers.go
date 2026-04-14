@@ -1,0 +1,78 @@
+package behaviortree
+
+import (
+	"fmt"
+	"os"
+	"strconv"
+
+	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/util"
+)
+
+// GetBehaviorPath constructs the filesystem path to a mob's behavior tree YAML.
+// Path: {dataFiles}/mobs/{zone}/behaviors/{mobId}-{convertedName}.yaml
+func GetBehaviorPath(mobId int, zone string, name string) string {
+	dataFiles := configs.GetFilePathsConfig().DataFiles.String()
+	zoneSafe := mobs.ZoneNameSanitize(zone)
+	nameSafe := util.ConvertForFilename(name)
+	return util.FilePath(dataFiles, `/`, `mobs`, `/`, zoneSafe, `/`, `behaviors`, `/`,
+		strconv.Itoa(mobId)+`-`+nameSafe+`.yaml`)
+}
+
+// EnsureBTreeState lazily initializes the BehaviorState on a mob instance.
+func EnsureBTreeState(mob *mobs.Mob) *BehaviorState {
+	if mob.BTreeState == nil {
+		mob.BTreeState = NewBehaviorState()
+	}
+	state, ok := mob.BTreeState.(*BehaviorState)
+	if !ok {
+		state = NewBehaviorState()
+		mob.BTreeState = state
+	}
+	return state
+}
+
+// TryMobBehavior is the main entry point for event dispatch.
+// Returns true if the behavior tree handled the event (Success).
+func TryMobBehavior(mobInstanceId int, event EventContext) bool {
+	mob := mobs.GetInstance(mobInstanceId)
+	if mob == nil {
+		return false
+	}
+
+	mobId := int(mob.MobId)
+
+	// Lazy-load tree if not cached
+	tree := GetEngine().GetTree(mobId)
+	if tree == nil {
+		path := GetBehaviorPath(mobId, mob.Zone, mob.Character.Name)
+		// Check if file exists
+		if _, err := os.Stat(path); err != nil {
+			return false // No behavior tree for this mob
+		}
+		if err := GetEngine().LoadTree(mobId, path); err != nil {
+			mudlog.Error("TryMobBehavior", "error", fmt.Sprintf("failed to load behavior tree for mob %d: %v", mobId, err))
+			return false
+		}
+		tree = GetEngine().GetTree(mobId)
+		if tree == nil {
+			return false
+		}
+	}
+
+	state := EnsureBTreeState(mob)
+	event.RoomId = mob.Character.RoomId
+
+	ctx := &EvalContext{
+		Event:      event,
+		MobState:   state,
+		MobId:      mobId,
+		InstanceId: mobInstanceId,
+		RoomId:     mob.Character.RoomId,
+		MobName:    mob.Character.Name,
+	}
+	result := tree.Evaluate(ctx)
+	return result == Success
+}

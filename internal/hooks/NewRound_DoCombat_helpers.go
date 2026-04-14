@@ -5,6 +5,7 @@ import (
 	"math"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
@@ -1322,6 +1323,12 @@ func handlePlayerVsMob(user *users.UserRecord, uRoom *rooms.Room, evt events.New
 
 	// Handle any scripted behavior now.
 	if roundResult.Hit {
+		// Behavior tree: fire-and-forget (don't short-circuit JS)
+		behaviortree.TryMobBehavior(defMob.InstanceId, behaviortree.EventContext{
+			EventType: "mob_hurt",
+			UserId:    user.UserId,
+			RoomId:    defMob.Character.RoomId,
+		})
 		scripting.TryMobScriptEvent(`onHurt`, defMob.InstanceId, user.UserId, `user`, map[string]any{`damage`: roundResult.DamageToTarget, `crit`: roundResult.Crit})
 	}
 
@@ -1766,6 +1773,12 @@ func handleMobVsMob(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, aff
 
 	// Handle any scripted behavior now.
 	if roundResult.Hit {
+		// Behavior tree: fire-and-forget (don't short-circuit JS)
+		behaviortree.TryMobBehavior(defMob.InstanceId, behaviortree.EventContext{
+			EventType: "mob_hurt",
+			MobId:     mob.InstanceId,
+			RoomId:    defMob.Character.RoomId,
+		})
 		scripting.TryMobScriptEvent(`onHurt`, defMob.InstanceId, mob.InstanceId, `mob`, map[string]any{`damage`: roundResult.DamageToTarget, `crit`: roundResult.Crit})
 	}
 

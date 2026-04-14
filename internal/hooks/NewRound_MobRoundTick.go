@@ -5,6 +5,7 @@ import (
 	"math"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
@@ -408,6 +409,9 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 		}
 
 	}
+
+	// Drain behavior tree delayed action queue
+	behaviortree.GetEngine().DrainQueue()
 
 	return events.Continue
 }

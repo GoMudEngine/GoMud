@@ -6,6 +6,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/conversations"
@@ -144,6 +145,14 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 				mob.SetTempData("lastGossipRound", roundNow)
 			}
 		}
+	}
+
+	// Behavior tree: try before JS
+	if behaviortree.TryMobBehavior(mob.InstanceId, behaviortree.EventContext{
+		EventType: "mob_idle",
+		RoomId:    mob.Character.RoomId,
+	}) {
+		return events.Continue
 	}
 
 	// If they have idle commands, maybe do one of them?

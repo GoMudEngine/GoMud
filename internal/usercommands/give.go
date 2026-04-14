@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
+	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
@@ -224,6 +225,16 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 						user.UserId,
 					)
 
+				}
+
+				// Behavior tree: try before JS
+				if behaviortree.TryMobBehavior(m.InstanceId, behaviortree.EventContext{
+					EventType: "player_give",
+					UserId:    user.UserId,
+					ItemId:    giveItem.ItemId,
+					RoomId:    room.RoomId,
+				}) {
+					return true, nil
 				}
 
 				if handled, err := scripting.TryMobScriptEvent(`onGive`, m.InstanceId, user.UserId, `user`, map[string]any{`gold`: giveGoldAmount, `item`: giveItem}); err == nil {
