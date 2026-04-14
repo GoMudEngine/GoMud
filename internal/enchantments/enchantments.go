@@ -137,7 +137,10 @@ func ApplyTier(item *items.Item, def *EnchantmentDef, tier int) {
 		newSpec = *baseSpec
 	}
 
-	// Reset to base spec first to avoid stacking from previous tiers
+	// Reset numeric fields to base spec to avoid stacking from previous tiers.
+	// For StatMods: start from base, then merge in any affix bonuses from the
+	// item's override spec (instanced zone random affixes, etc.) that aren't
+	// in the base. This preserves affix bonuses while preventing enchant stacking.
 	if baseSpec != nil {
 		newSpec.Damage = baseSpec.Damage
 		newSpec.DamageReduction = baseSpec.DamageReduction
@@ -145,7 +148,26 @@ func ApplyTier(item *items.Item, def *EnchantmentDef, tier int) {
 		newSpec.PhysicalMitigation = baseSpec.PhysicalMitigation
 		newSpec.MagicalMitigation = baseSpec.MagicalMitigation
 		newSpec.ConvictionMitigation = baseSpec.ConvictionMitigation
-		newSpec.StatMods = copyStatMods(baseSpec.StatMods)
+
+		// Preserve affix stat bonuses: start from base, add any extra mods
+		// that the item's override had beyond the base spec.
+		baseMods := copyStatMods(baseSpec.StatMods)
+		if baseMods == nil {
+			baseMods = make(statmods.StatMods)
+		}
+		if item.Spec != nil && len(item.Spec.StatMods) > 0 {
+			for k, v := range item.Spec.StatMods {
+				baseVal := 0
+				if baseSpec.StatMods != nil {
+					baseVal = baseSpec.StatMods.Get(k)
+				}
+				extra := v - baseVal
+				if extra != 0 {
+					baseMods.Add(k, extra)
+				}
+			}
+		}
+		newSpec.StatMods = baseMods
 	}
 
 	// Apply tier effects (doubled for 2H weapons)
