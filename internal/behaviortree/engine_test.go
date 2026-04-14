@@ -98,3 +98,28 @@ func TestEventFilter_PassesMatch(t *testing.T) {
 		t.Error("child should have been called")
 	}
 }
+
+func TestLoadTree_SimpleSelector(t *testing.T) {
+	yamlData := `
+tree:
+  type: selector
+  children:
+    - type: condition
+      check: random_chance
+      percent: 0
+    - type: action
+      do: set_state
+      key: test
+      value: passed
+`
+	node, err := LoadTreeFromBytes([]byte(yamlData))
+	if err != nil {
+		t.Fatalf("load error: %v", err)
+	}
+	state := NewBehaviorState()
+	ctx := &EvalContext{MobState: state, Event: EventContext{EventType: "mob_idle"}}
+	node.Evaluate(ctx)
+	if state.GetString("test") != "passed" {
+		t.Error("expected state 'test' to be 'passed'")
+	}
+}
