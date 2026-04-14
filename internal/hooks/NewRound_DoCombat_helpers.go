@@ -67,11 +67,11 @@ func mobDisplayName(mob *mobs.Mob, room *rooms.Room, viewingUserId int) string {
 	return mob.Character.GetMobNameIndexed(viewingUserId, dupIdx).String()
 }
 
-// sendCombatRoomText sends a visual combat message to room observers.
+// sendVisualRoomText sends a visual combat message to room observers.
 // In lit rooms, all players see the message. In dark rooms, only players
 // with nightvision see the visual text; others receive nothing here
 // (a one-time sound fallback is sent per round instead).
-func sendCombatRoomText(room *rooms.Room, visualMsg string, excludeUserIds ...int) {
+func sendVisualRoomText(room *rooms.Room, visualMsg string, excludeUserIds ...int) {
 	if room == nil {
 		return
 	}
@@ -243,7 +243,7 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 		user.SendText(`<ansi fg="red">You lose your concentration as you hit the ground!</ansi>`)
 		room := rooms.LoadRoom(user.Character.RoomId)
 		if room != nil {
-			room.SendText(fmt.Sprintf(
+			sendVisualRoomText(room, fmt.Sprintf(
 				`<ansi fg="username">%s</ansi>'s concentration breaks.`, user.Character.Name), user.UserId)
 		}
 
@@ -751,11 +751,11 @@ func dispatchCombatMessages(roundResult combat.AttackResult, atkUser *users.User
 	}
 
 	for _, msg := range roundResult.MessagesToSourceRoom {
-		sendCombatRoomText(atkRoom, msg, atkUser.UserId, defUser.UserId)
+		sendVisualRoomText(atkRoom, msg, atkUser.UserId, defUser.UserId)
 	}
 
 	for _, msg := range roundResult.MessagesToTargetRoom {
-		sendCombatRoomText(defRoom, msg, atkUser.UserId, defUser.UserId)
+		sendVisualRoomText(defRoom, msg, atkUser.UserId, defUser.UserId)
 	}
 
 	// One-time sound fallback for dark rooms
@@ -1027,12 +1027,12 @@ func handlePlayerVsPlayer(user *users.UserRecord, uRoom *rooms.Room, evt events.
 		}
 		if len(roundResult.MessagesToSourceRoom) > 0 {
 			for _, msg := range roundResult.MessagesToSourceRoom {
-				sendCombatRoomText(uRoom, msg, user.UserId, defUser.UserId)
+				sendVisualRoomText(uRoom, msg, user.UserId, defUser.UserId)
 			}
 		}
 		if len(roundResult.MessagesToTargetRoom) > 0 {
 			for _, msg := range roundResult.MessagesToTargetRoom {
-				sendCombatRoomText(defRoom, msg, user.UserId, defUser.UserId)
+				sendVisualRoomText(defRoom, msg, user.UserId, defUser.UserId)
 			}
 		}
 		sendDarkRoomCombatFallback(uRoom, user.UserId, defUser.UserId)
@@ -1199,10 +1199,10 @@ func handlePlayerVsMob(user *users.UserRecord, uRoom *rooms.Room, evt events.New
 			user.SendText(msg)
 		}
 		for _, msg := range roundResult.MessagesToSourceRoom {
-			sendCombatRoomText(uRoom, msg, user.UserId)
+			sendVisualRoomText(uRoom, msg, user.UserId)
 		}
 		for _, msg := range roundResult.MessagesToTargetRoom {
-			sendCombatRoomText(defRoom, msg, user.UserId)
+			sendVisualRoomText(defRoom, msg, user.UserId)
 		}
 		sendDarkRoomCombatFallback(uRoom, user.UserId)
 		if defRoom != uRoom {
@@ -1264,7 +1264,7 @@ func handlePlayerVsMob(user *users.UserRecord, uRoom *rooms.Room, evt events.New
 				user.Character.Health -= returnDmg
 				dmgDesc := combat.GetDamageDescription(returnDmg, user.Character.HealthMax.Value)
 				defMobName := mobDisplayName(defMob, defRoom, user.UserId)
-				sendCombatRoomText(uRoom, fmt.Sprintf(
+				sendVisualRoomText(uRoom, fmt.Sprintf(
 					`<ansi fg="red">%s recoils from striking %s! (%s)</ansi>`,
 					user.Character.Name, defMobName, dmgDesc))
 				user.SendText(fmt.Sprintf(
@@ -1316,10 +1316,10 @@ func handlePlayerVsMob(user *users.UserRecord, uRoom *rooms.Room, evt events.New
 		user.SendText(msg)
 	}
 	for _, msg := range roundResult.MessagesToSourceRoom {
-		sendCombatRoomText(uRoom, msg, user.UserId)
+		sendVisualRoomText(uRoom, msg, user.UserId)
 	}
 	for _, msg := range roundResult.MessagesToTargetRoom {
-		sendCombatRoomText(defRoom, msg, user.UserId)
+		sendVisualRoomText(defRoom, msg, user.UserId)
 	}
 	sendDarkRoomCombatFallback(uRoom, user.UserId)
 	if defRoom != uRoom {
@@ -1460,10 +1460,10 @@ func handleMobVsPlayer(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, 
 			defUser.SendText(msg)
 		}
 		for _, msg := range roundResult.MessagesToSourceRoom {
-			sendCombatRoomText(mobRoom, msg, defUser.UserId)
+			sendVisualRoomText(mobRoom, msg, defUser.UserId)
 		}
 		for _, msg := range roundResult.MessagesToTargetRoom {
-			sendCombatRoomText(defRoom, msg, defUser.UserId)
+			sendVisualRoomText(defRoom, msg, defUser.UserId)
 		}
 		sendDarkRoomCombatFallback(mobRoom, defUser.UserId)
 		if defRoom != mobRoom {
@@ -1528,7 +1528,7 @@ func handleMobVsPlayer(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, 
 				defUser.SendText(fmt.Sprintf(
 					`<ansi fg="red">%s recoils from striking you! (%s)</ansi>`,
 					mvpMobName, dmgDesc))
-				sendCombatRoomText(mobRoom, fmt.Sprintf(
+				sendVisualRoomText(mobRoom, fmt.Sprintf(
 					`<ansi fg="red">%s recoils from striking %s! (%s)</ansi>`,
 					mvpMobName, defUser.Character.Name, dmgDesc), defUser.UserId)
 			}
@@ -1584,10 +1584,10 @@ func handleMobVsPlayer(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, 
 		defUser.SendText(msg)
 	}
 	for _, msg := range roundResult.MessagesToSourceRoom {
-		sendCombatRoomText(mobRoom, msg, defUser.UserId)
+		sendVisualRoomText(mobRoom, msg, defUser.UserId)
 	}
 	for _, msg := range roundResult.MessagesToTargetRoom {
-		sendCombatRoomText(defRoom, msg, defUser.UserId)
+		sendVisualRoomText(defRoom, msg, defUser.UserId)
 	}
 	sendDarkRoomCombatFallback(mobRoom, defUser.UserId)
 	if defRoom != mobRoom {
@@ -1674,10 +1674,10 @@ func handleMobVsMob(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, aff
 		roundResult := combat.GetWaitMessages(items.Wait, &mob.Character, &defMob.Character, combat.Mob, combat.Mob)
 
 		for _, msg := range roundResult.MessagesToSourceRoom {
-			sendCombatRoomText(mobRoom, msg)
+			sendVisualRoomText(mobRoom, msg)
 		}
 		for _, msg := range roundResult.MessagesToTargetRoom {
-			sendCombatRoomText(defRoom, msg)
+			sendVisualRoomText(defRoom, msg)
 		}
 		sendDarkRoomCombatFallback(mobRoom)
 		if defRoom != mobRoom {
@@ -1733,7 +1733,7 @@ func handleMobVsMob(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, aff
 				dmgDesc := combat.GetDamageDescription(returnDmg, mob.Character.HealthMax.Value)
 				atkMobName := mobDisplayName(mob, mobRoom, 0)
 				defMobName := mobDisplayName(defMob, defRoom, 0)
-				sendCombatRoomText(mobRoom, fmt.Sprintf(
+				sendVisualRoomText(mobRoom, fmt.Sprintf(
 					`<ansi fg="red">%s recoils from striking %s! (%s)</ansi>`,
 					atkMobName, defMobName, dmgDesc))
 			}
@@ -1768,10 +1768,10 @@ func handleMobVsMob(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, aff
 		defMob.AddBuff(buffId, `combat`)
 	}
 	for _, msg := range roundResult.MessagesToSourceRoom {
-		sendCombatRoomText(mobRoom, msg)
+		sendVisualRoomText(mobRoom, msg)
 	}
 	for _, msg := range roundResult.MessagesToTargetRoom {
-		sendCombatRoomText(defRoom, msg)
+		sendVisualRoomText(defRoom, msg)
 	}
 	sendDarkRoomCombatFallback(mobRoom)
 	if defRoom != mobRoom {

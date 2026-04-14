@@ -37,7 +37,7 @@ func (a *roomAdapter) GetMobInstanceIds() []int {
 }
 
 func (a *roomAdapter) SendText(txt string, excludeUserIds ...int) {
-	a.room.SendText(txt, excludeUserIds...)
+	sendVisualRoomText(a.room, txt, excludeUserIds...)
 }
 
 // ─── Player adapter ───────────────────────────────────────────────────────────

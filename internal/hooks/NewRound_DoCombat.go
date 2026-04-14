@@ -308,12 +308,12 @@ func processGrappleProgression(char1 *characters.Character, char2 *characters.Ch
 	if result.Changed {
 		if result.NewPosition == characters.PositionStanding {
 			// Both broke apart
-			room.SendText(
+			sendVisualRoomText(room, 
 				fmt.Sprintf(`<ansi fg="combat">%s</ansi>`, result.RoomMessage),
 			)
 		} else if result.NewPosition == characters.PositionGrounded {
 			// Advanced to grounded
-			room.SendText(
+			sendVisualRoomText(room, 
 				fmt.Sprintf(`<ansi fg="combat"><ansi fg="username">%s</ansi> takes <ansi fg="mobname">%s</ansi> to the ground!</ansi>`,
 					controllerName, controlledName),
 			)

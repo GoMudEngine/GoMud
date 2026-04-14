@@ -120,7 +120,7 @@ func HandleLeave(e events.Event) events.ListenerReturn {
 
 	if _, ok := room.RemovePlayer(evt.UserId); ok {
 		tplTxt, _ := templates.Process("player-despawn", user.Character.Name)
-		room.SendText(tplTxt)
+		sendVisualRoomText(room, tplTxt)
 	}
 
 	tplTxt, _ := templates.Process("goodbye", nil, evt.UserId)

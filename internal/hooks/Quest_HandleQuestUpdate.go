@@ -88,7 +88,7 @@ func HandleQuestUpdate(e events.Event) events.ListenerReturn {
 		// Message to room?
 		if len(questInfo.Rewards.RoomMessage) > 0 {
 			if room := rooms.LoadRoom(questUser.Character.RoomId); room != nil {
-				room.SendText(questInfo.Rewards.RoomMessage, questUser.UserId)
+				sendVisualRoomText(room, questInfo.Rewards.RoomMessage, questUser.UserId)
 			}
 		}
 		// New quest to start?
@@ -171,7 +171,7 @@ func HandleQuestUpdate(e events.Event) events.ListenerReturn {
 			questUser.SendText(`You are suddenly moved to a new place!`)
 
 			if room := rooms.LoadRoom(questUser.Character.RoomId); room != nil {
-				room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> is suddenly moved to a new place!`, questUser.Character.Name), questUser.UserId)
+				sendVisualRoomText(room, fmt.Sprintf(`<ansi fg="username">%s</ansi> is suddenly moved to a new place!`, questUser.Character.Name), questUser.UserId)
 			}
 
 			rooms.MoveToRoom(questUser.UserId, questInfo.Rewards.RoomId)

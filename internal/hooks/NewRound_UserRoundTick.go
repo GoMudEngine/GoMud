@@ -95,7 +95,7 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 										}
 									}
 								} else {
-									room.SendText(wrappedMsg)
+									sendVisualRoomText(room, wrappedMsg)
 								}
 							}
 
@@ -124,12 +124,12 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 					if success {
 						user.SendText("You scramble to your feet!")
 						if room := rooms.LoadRoom(user.Character.RoomId); room != nil {
-							room.SendText("<ansi fg=\"username\">"+user.Character.Name+"</ansi> clambers to their feet in a rushed panic.", user.UserId)
+							sendVisualRoomText(room, "<ansi fg=\"username\">"+user.Character.Name+"</ansi> clambers to their feet in a rushed panic.", user.UserId)
 						}
 					} else {
 						user.SendText("You attempt to stand, but slip back down in the chaos of battle!")
 						if room := rooms.LoadRoom(user.Character.RoomId); room != nil {
-							room.SendText("<ansi fg=\"username\">"+user.Character.Name+"</ansi> attempts to stand, but slips and falls in the chaos of battle.", user.UserId)
+							sendVisualRoomText(room, "<ansi fg=\"username\">"+user.Character.Name+"</ansi> attempts to stand, but slips and falls in the chaos of battle.", user.UserId)
 						}
 					}
 				}

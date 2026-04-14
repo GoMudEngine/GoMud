@@ -59,7 +59,7 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 					region = zCfg.Region
 				}
 				if room := rooms.LoadRoom(firstMob.Character.RoomId); room != nil {
-					room.SendText(fmt.Sprintf(
+					sendVisualRoomText(room, fmt.Sprintf(
 						`The <ansi fg="mobname">%s</ansi> pack moves with renewed coordination.`,
 						bonus.GroupTag))
 				}
@@ -110,9 +110,9 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 			if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
 				mName := mobDisplayName(mob, room, 0)
 				if success {
-					room.SendText(mName + " clambers to their feet in a rushed panic.")
+					sendVisualRoomText(room, mName + " clambers to their feet in a rushed panic.")
 				} else {
-					room.SendText(mName + " attempts to stand, but slips and falls in the chaos of battle.")
+					sendVisualRoomText(room, mName + " attempts to stand, but slips and falls in the chaos of battle.")
 				}
 			}
 		}
@@ -187,7 +187,7 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 							newLevel := mob.Character.Mutations[mutId]
 							if spec := mutations.GetMutation(mutId); spec != nil {
 								if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
-									room.SendText(fmt.Sprintf(
+									sendVisualRoomText(room, fmt.Sprintf(
 										`<ansi fg="magenta">The mutation in <ansi fg="mobname">%s</ansi> intensifies.</ansi>`,
 										mob.Character.Name))
 								}
@@ -229,7 +229,7 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 							mob.Character.Mutations[mutId] = 1
 							if spec := mutations.GetMutation(mutId); spec != nil {
 								if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
-									room.SendText(fmt.Sprintf(
+									sendVisualRoomText(room, fmt.Sprintf(
 										`<ansi fg="magenta">Something shifts in <ansi fg="mobname">%s</ansi>. %s</ansi>`,
 										mob.Character.Name, spec.Visual))
 								}
@@ -338,7 +338,7 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 								owner.SendText(fmt.Sprintf(
 									`<ansi fg="red-bold">%s breaks free of your control!</ansi>`, comp.Name))
 								if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
-									room.SendText(fmt.Sprintf(
+									sendVisualRoomText(room, fmt.Sprintf(
 										`<ansi fg="red">%s snarls and turns on %s!</ansi>`,
 										mob.Character.Name, owner.Character.Name), owner.UserId)
 								}
@@ -380,7 +380,7 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 							craftBonus := 1.0 + float64(recipe.SkillMinimum)*float64(configs.GetBalanceConfig().CraftDifficultyProgressionScale)
 							mob.Character.OnSkillUseScaled(recipe.Skill, 0, craftBonus)
 							if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
-								room.SendText(fmt.Sprintf(
+								sendVisualRoomText(room, fmt.Sprintf(
 									`<ansi fg="mobname">%s</ansi> finishes their work.`,
 									mob.Character.Name))
 							}

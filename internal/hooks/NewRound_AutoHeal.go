@@ -72,7 +72,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 			user.Character.Health -= 2
 			user.SendText(`<ansi fg="red">you are bleeding out!</ansi>`)
 			if room := rooms.LoadRoom(user.Character.RoomId); room != nil {
-				room.SendText(fmt.Sprintf(
+				sendVisualRoomText(room, fmt.Sprintf(
 					`<ansi fg="username">%s</ansi> is <ansi fg="red">bleeding out</ansi>!`,
 					user.Character.Name), user.UserId)
 			}

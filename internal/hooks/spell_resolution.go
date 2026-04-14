@@ -129,7 +129,7 @@ func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData
 	isSummonOrCharm := spellData != nil && (spellData.SummonMobId > 0 || spellData.EffectType == "charm")
 	if targetsResolved == 0 && !isSummonOrCharm {
 		user.SendText(`<ansi fg="cyan">Your spell erupts outward but finds no targets.</ansi>`)
-		room.SendText(fmt.Sprintf(
+		sendVisualRoomText(room, fmt.Sprintf(
 			`<ansi fg="username">%s</ansi>'s spell crackles through the air harmlessly.`,
 			user.Character.Name), user.UserId)
 	}
@@ -206,7 +206,7 @@ func resolveAgainstMob(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, 
 		}
 		user.Character.Health -= backfireDmg
 		user.SendText(`<ansi fg="red">Your spell backfires violently, wounding you!</ansi>`)
-		room.SendText(fmt.Sprintf(
+		sendVisualRoomText(room, fmt.Sprintf(
 			`<ansi fg="red"><ansi fg="username">%s</ansi>'s spell backfires!</ansi>`, user.Character.Name), user.UserId)
 		// Stage 30.1: Record backfire
 		combat.RecordSpell(combat.User, combat.Mob, false, false, true, false, 0, atkRoll.ZScore, user.Character, &mob.Character, round)
@@ -282,21 +282,21 @@ func applyMobEffect(user *users.UserRecord, casterChar *characters.Character, mo
 				user.SendText(fmt.Sprintf(
 					`<ansi fg="yellow">%s completely unravels your <ansi fg="cyan-bold">%s</ansi>!</ansi>`,
 					mName, spellData.Name))
-				room.SendText(fmt.Sprintf(
+				sendVisualRoomText(room, fmt.Sprintf(
 					`%s unravels <ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> completely!`,
 					mName, user.Character.Name, spellData.Name), user.UserId)
 			} else if deflected {
 				user.SendText(fmt.Sprintf(
 					`<ansi fg="yellow">%s partially deflects your <ansi fg="cyan-bold">%s</ansi>! (<ansi fg="damage">%s</ansi>)</ansi>`,
 					mName, spellData.Name, combat.GetDamageDescription(dmg, mob.Character.HealthMax.Value)))
-				room.SendText(fmt.Sprintf(
+				sendVisualRoomText(room, fmt.Sprintf(
 					`%s partially deflects <ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi>!`,
 					mName, user.Character.Name, spellData.Name), user.UserId)
 			} else {
 				user.SendText(fmt.Sprintf(
 					`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> strikes %s! (<ansi fg="damage">%s</ansi>)%s</ansi>`,
 					spellData.Name, mName, combat.GetDamageDescription(dmg, mob.Character.HealthMax.Value), critTag))
-				room.SendText(fmt.Sprintf(
+				sendVisualRoomText(room, fmt.Sprintf(
 					`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> strikes %s!`,
 					user.Character.Name, spellData.Name, mName), user.UserId)
 			}
@@ -328,7 +328,7 @@ func applyMobEffect(user *users.UserRecord, casterChar *characters.Character, mo
 			user.SendText(fmt.Sprintf(
 				`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> afflicts %s!%s</ansi>`,
 				spellData.Name, mName, critTag))
-			room.SendText(fmt.Sprintf(
+			sendVisualRoomText(room, fmt.Sprintf(
 				`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> afflicts %s!`,
 				user.Character.Name, spellData.Name, mName), user.UserId)
 		}
@@ -371,7 +371,7 @@ func applyMobEffect(user *users.UserRecord, casterChar *characters.Character, mo
 					`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> slams %s to the ground! (<ansi fg="damage">%s</ansi>)%s</ansi>`,
 					spellData.Name, mName, combat.GetDamageDescription(dmg, mob.Character.HealthMax.Value), critTag))
 			}
-			room.SendText(fmt.Sprintf(
+			sendVisualRoomText(room, fmt.Sprintf(
 				`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> knocks %s to the ground!`,
 				user.Character.Name, spellData.Name, mName), user.UserId)
 		}
@@ -420,7 +420,7 @@ func applyMobEffect(user *users.UserRecord, casterChar *characters.Character, mo
 			user.SendText(fmt.Sprintf(
 				`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> takes effect on %s!%s</ansi>`,
 				spellData.Name, mName, critTag))
-			room.SendText(fmt.Sprintf(
+			sendVisualRoomText(room, fmt.Sprintf(
 				`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> affects %s!`,
 				user.Character.Name, spellData.Name, mName), user.UserId)
 		}
@@ -461,7 +461,7 @@ func applyMobEffect(user *users.UserRecord, casterChar *characters.Character, mo
 			user.SendText(fmt.Sprintf(
 				`<ansi fg="cyan">%s calms and becomes your companion!</ansi>`,
 				mName))
-			room.SendText(fmt.Sprintf(
+			sendVisualRoomText(room, fmt.Sprintf(
 				`%s becomes docile and follows <ansi fg="username">%s</ansi>.`,
 				mName, user.Character.Name), user.UserId)
 		}
@@ -490,7 +490,7 @@ func resolveAgainstPlayer(user *users.UserRecord, target *users.UserRecord, room
 		}
 		user.Character.Health -= backfireDmg
 		user.SendText(`<ansi fg="red">Your spell backfires violently, wounding you!</ansi>`)
-		room.SendText(fmt.Sprintf(
+		sendVisualRoomText(room, fmt.Sprintf(
 			`<ansi fg="red"><ansi fg="username">%s</ansi>'s spell backfires!</ansi>`, user.Character.Name), user.UserId)
 		return
 	}
@@ -561,7 +561,7 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 				`<ansi fg="yellow"><ansi fg="username">%s</ansi> completely unravels `+
 					`your spell!</ansi>`,
 				target.Character.Name))
-			room.SendText(fmt.Sprintf(
+			sendVisualRoomText(room, fmt.Sprintf(
 				`<ansi fg="username">%s</ansi> unravels <ansi fg="username">%s</ansi>'s `+
 					`spell completely!`,
 				target.Character.Name, user.Character.Name), user.UserId, target.UserId)
@@ -581,7 +581,7 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 					`your <ansi fg="cyan-bold">%s</ansi>! `+
 					`(<ansi fg="damage">%s</ansi>)</ansi>`,
 				target.Character.Name, spellData.Name, dmgDesc))
-			room.SendText(fmt.Sprintf(
+			sendVisualRoomText(room, fmt.Sprintf(
 				`<ansi fg="username">%s</ansi> partially deflects `+
 					`<ansi fg="username">%s</ansi>'s `+
 					`<ansi fg="cyan">%s</ansi>!`,
@@ -593,7 +593,7 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 					`<ansi fg="username">%s</ansi>! `+
 					`(<ansi fg="damage">%s</ansi>)%s</ansi>`,
 				spellData.Name, target.Character.Name, dmgDesc, critTag))
-			room.SendText(fmt.Sprintf(
+			sendVisualRoomText(room, fmt.Sprintf(
 				`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> strikes `+
 					`<ansi fg="username">%s</ansi>!`,
 				user.Character.Name, spellData.Name, target.Character.Name),
@@ -619,7 +619,7 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 		} else {
 			target.SendText(`<ansi fg="green">You purge the afflictions from your body.</ansi>`)
 		}
-		room.SendText(fmt.Sprintf(
+		sendVisualRoomText(room, fmt.Sprintf(
 			`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> cleanses <ansi fg="username">%s</ansi>.`,
 			user.Character.Name, spellData.Name, target.Character.Name), user.UserId, target.UserId)
 
@@ -649,7 +649,7 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 		} else {
 			target.SendText(`<ansi fg="green">A warm glow of healing magic envelops you. Your wounds begin to mend.</ansi>`)
 		}
-		room.SendText(fmt.Sprintf(
+		sendVisualRoomText(room, fmt.Sprintf(
 			`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> envelops <ansi fg="username">%s</ansi> in healing light.`,
 			user.Character.Name, spellData.Name, target.Character.Name), user.UserId, target.UserId)
 
@@ -713,7 +713,7 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 				`<ansi fg="cyan">A shimmering magical barrier forms around <ansi fg="username">%s</ansi>, bolstering their defenses.</ansi>`,
 				target.Character.Name))
 		}
-		room.SendText(fmt.Sprintf(
+		sendVisualRoomText(room, fmt.Sprintf(
 			`A shimmering barrier surrounds <ansi fg="username">%s</ansi>.`, target.Character.Name), target.UserId)
 
 	default:
@@ -862,7 +862,7 @@ func applyMobSelfEffect(mob *mobs.Mob, room *rooms.Room, spellData *spells.Spell
 			durationRounds = 6
 		}
 		mob.Character.AddCondition(characters.ConditionRegen, durationRounds, regenMult, "heal spell")
-		room.SendText(fmt.Sprintf(
+		sendVisualRoomText(room, fmt.Sprintf(
 			`%s channels restorative magic.`, mobDisplayName(mob, room, 0)))
 	case "shield":
 		skillLevel := mob.Character.GetSkillLevel(skills.Spellcasting)
@@ -880,7 +880,7 @@ func applyMobSelfEffect(mob *mobs.Mob, room *rooms.Room, spellData *spells.Spell
 		}
 		duration := calcSpellDuration(spellData.BaseFolds, skillLevel, mob.Character.Stats.Willpower.ValueAdj)
 		mob.Character.AddCondition(characters.ConditionShield, duration, float64(shieldBonus), "spell")
-		room.SendText(fmt.Sprintf(
+		sendVisualRoomText(room, fmt.Sprintf(
 			`A shimmering barrier forms around %s.`, mobDisplayName(mob, room, 0)))
 	}
 }
@@ -895,7 +895,7 @@ func resolveMobSpellAgainstMob(caster *mobs.Mob, target *mobs.Mob, room *rooms.R
 			dmg = 1
 		}
 		caster.Character.Health -= dmg
-		room.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s spell backfires!`, caster.Character.Name))
+		sendVisualRoomText(room, fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s spell backfires!`, caster.Character.Name))
 		return
 	}
 	if !success {
@@ -915,13 +915,13 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 			dmg = 1
 		}
 		caster.Character.Health -= dmg
-		room.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s spell backfires!`, caster.Character.Name))
+		sendVisualRoomText(room, fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s spell backfires!`, caster.Character.Name))
 		// Stage 30.1: Record backfire
 		combat.RecordSpell(combat.Mob, combat.User, false, false, true, false, 0, atkRoll.ZScore, &caster.Character, target.Character, round)
 		return
 	}
 	if !success {
-		room.SendText(fmt.Sprintf(
+		sendVisualRoomText(room, fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi>'s %s fizzles.`, caster.Character.Name, spellData.Name))
 		// Stage 30.1: Record fizzle
 		combat.RecordSpell(combat.Mob, combat.User, false, false, false, true, 0, atkRoll.ZScore, &caster.Character, target.Character, round)
@@ -958,7 +958,7 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 					`<ansi fg="mobname">%s</ansi>'s spell perfectly `+
 					`and unravel it before it reaches you!</ansi>`,
 				caster.Character.Name))
-			room.SendText(fmt.Sprintf(
+			sendVisualRoomText(room, fmt.Sprintf(
 				`<ansi fg="username">%s</ansi> unravels `+
 					`<ansi fg="mobname">%s</ansi>'s spell completely!`,
 				target.Character.Name, caster.Character.Name), target.UserId)
@@ -974,7 +974,7 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 					`(<ansi fg="damage">%s</ansi>)</ansi>`,
 				caster.Character.Name, spellData.Name,
 				combat.GetDamageDescription(dmg, target.Character.HealthMax.Value)))
-			room.SendText(fmt.Sprintf(
+			sendVisualRoomText(room, fmt.Sprintf(
 				`<ansi fg="username">%s</ansi> partially deflects `+
 					`<ansi fg="mobname">%s</ansi>'s `+
 					`<ansi fg="cyan">%s</ansi>!`,
@@ -986,7 +986,7 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 					`strikes you! (<ansi fg="damage">%s</ansi>)%s`,
 				caster.Character.Name, spellData.Name,
 				combat.GetDamageDescription(dmg, target.Character.HealthMax.Value), critTag))
-			room.SendText(fmt.Sprintf(
+			sendVisualRoomText(room, fmt.Sprintf(
 				`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> strikes `+
 					`<ansi fg="username">%s</ansi>!`,
 				caster.Character.Name, spellData.Name, target.Character.Name), target.UserId)
@@ -1007,7 +1007,7 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 		target.SendText(fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> afflicts you!%s`,
 			caster.Character.Name, spellData.Name, critTag))
-		room.SendText(fmt.Sprintf(
+		sendVisualRoomText(room, fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> afflicts <ansi fg="username">%s</ansi>!`,
 			caster.Character.Name, spellData.Name, target.Character.Name), target.UserId)
 		if target.Character.Aggro == nil {
@@ -1034,7 +1034,7 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 				`to the ground! (<ansi fg="damage">%s</ansi>)%s`,
 			caster.Character.Name, spellData.Name,
 			combat.GetDamageDescription(dmg, target.Character.HealthMax.Value), critTag))
-		room.SendText(fmt.Sprintf(
+		sendVisualRoomText(room, fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> knocks `+
 				`<ansi fg="username">%s</ansi> to the ground!`,
 			caster.Character.Name, spellData.Name, target.Character.Name), target.UserId)
@@ -1054,7 +1054,7 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 		target.SendText(fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> takes effect on you!%s`,
 			caster.Character.Name, spellData.Name, critTag))
-		room.SendText(fmt.Sprintf(
+		sendVisualRoomText(room, fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> affects <ansi fg="username">%s</ansi>!`,
 			caster.Character.Name, spellData.Name, target.Character.Name), target.UserId)
 	default:
@@ -1099,7 +1099,7 @@ func resolveIdentify(user *users.UserRecord, itemName string, room *rooms.Room) 
 		fmt.Sprintf(`You concentrate on the <ansi fg="item">%s</ansi>...`,
 			matchItem.DisplayName()),
 	)
-	room.SendText(
+	sendVisualRoomText(room, 
 		fmt.Sprintf(
 			`<ansi fg="username">%s</ansi> concentrates on their <ansi fg="item">%s</ansi>...`,
 			user.Character.Name, matchItem.DisplayName()),

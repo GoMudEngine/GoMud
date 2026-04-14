@@ -60,7 +60,7 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 				`A runner drops off a bundle of goods. <ansi fg="mobname">%s</ansi> checks the contents and nods.`,
 			}
 			msg := fmt.Sprintf(msgs[util.Rand(len(msgs))], mob.Character.Name)
-			room.SendText(msg)
+			sendVisualRoomText(room, msg)
 		}
 	}
 
@@ -94,7 +94,7 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 					}
 				}
 			} else {
-				room.SendText(msg)
+				sendVisualRoomText(room, msg)
 			}
 		}
 		// Emit world event for rare crafts
