@@ -9,8 +9,11 @@ and dialogue, giving behavior trees first priority.
 
 **Path formula:**
 ```
-_datafiles/world/dogmud/mobs/{zone_folder}/behaviors/{mobId}-{ConvertForFilename(name)}.yaml
+_datafiles/world/dogmud/behaviors/{zone_folder}/{mobId}-{ConvertForFilename(name)}.yaml
 ```
+
+Behavior trees live in a top-level `behaviors/` directory parallel to `mobs/`,
+NOT inside `mobs/` (the mob loader panics on unknown YAML in its tree).
 
 **Naming convention:** `{mobId}-{convertedName}.yaml` where `convertedName`
 follows `ConvertForFilename` rules (lowercase, keep a-z/0-9, drop
@@ -18,7 +21,7 @@ apostrophes, all other chars become underscore).
 
 **Worked example:**
 - Zone: `Startland`, Mob ID: `14`, Name: `"Barmaid Dal"`
-- Path: `_datafiles/world/dogmud/mobs/startland/behaviors/14-barmaid_dal.yaml`
+- Path: `_datafiles/world/dogmud/behaviors/startland/14-barmaid_dal.yaml`
 
 ---
 

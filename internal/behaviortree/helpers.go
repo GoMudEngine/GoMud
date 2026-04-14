@@ -12,12 +12,14 @@ import (
 )
 
 // GetBehaviorPath constructs the filesystem path to a mob's behavior tree YAML.
-// Path: {dataFiles}/mobs/{zone}/behaviors/{mobId}-{convertedName}.yaml
+// Path: {dataFiles}/../behaviors/{zone}/{mobId}-{convertedName}.yaml
+// Behavior trees live in a top-level behaviors/ directory parallel to mobs/,
+// NOT inside mobs/ (the mob loader panics on unknown YAML in its tree).
 func GetBehaviorPath(mobId int, zone string, name string) string {
 	dataFiles := configs.GetFilePathsConfig().DataFiles.String()
 	zoneSafe := mobs.ZoneNameSanitize(zone)
 	nameSafe := util.ConvertForFilename(name)
-	return util.FilePath(dataFiles, `/`, `mobs`, `/`, zoneSafe, `/`, `behaviors`, `/`,
+	return util.FilePath(dataFiles, `/`, `behaviors`, `/`, zoneSafe, `/`,
 		strconv.Itoa(mobId)+`-`+nameSafe+`.yaml`)
 }
 
