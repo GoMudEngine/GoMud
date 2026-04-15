@@ -472,6 +472,190 @@ current event type does not match, short-circuiting the entire subtree.
 
 - `TryMobBehavior(instanceId int, event EventContext) bool` — main entry
   point. Resolves tree, builds context, evaluates, returns true on Success.
+- `TryRoomBehavior(roomId int, event EventContext) bool` — room entry point.
+  For `room_command` events returns `ctx.Intercepted`; for all others returns
+  `true` on Success.
 - `GetEngine().EvaluateEvent(...)` — lower-level call used by hooks.
 - `GetEngine().DrainQueue()` — called once per round tick to execute
   pending delayed actions.
+
+---
+
+## Room Behavior Tree System
+
+Rooms can have their own behavior trees evaluated on room-level events. Room
+trees share all the same node types, conditions, and actions as mob trees, but
+they run in a room context rather than a mob context.
+
+### File Path
+
+```
+_datafiles/world/dogmud/behaviors/rooms/{zone}/{roomId}.yaml
+```
+
+- `zone` is the room's zone folder name (sanitized with `ZoneNameSanitize`).
+- `roomId` is the integer room ID (no name suffix needed — room IDs are unique).
+
+**Example:**
+- Zone: `sanctum_basin`, Room ID: `113`
+- Path: `behaviors/rooms/sanctum_basin/113.yaml`
+
+### Room Events
+
+| Event | Trigger | Notable Context |
+|-------|---------|-----------------|
+| `room_enter` | A player enters the room | `UserId` = entering player |
+| `room_exit` | A player leaves the room | `UserId` = leaving player |
+| `room_command` | A player types a command in the room | `Command` = command name, `Rest` = arguments |
+| `room_idle` | Room's idle tick fires (every server round) | No player context |
+| `room_load` | Room first loads from disk | No player context |
+
+### Command Interception
+
+Room behavior trees can intercept commands typed by players in the room,
+preventing the default handler from processing them. Use the `intercept` action
+to suppress the normal command handling after the behavior tree responds.
+
+`ctx.Intercepted` is set to `true` by the `intercept` action. `TryRoomBehavior`
+returns `ctx.Intercepted` for `room_command` events so the command dispatcher
+knows whether to proceed.
+
+### RoomBehaviorState
+
+Each room has its own `BehaviorState` (stored in `EnsureRoomBTreeState`). It
+persists for the lifetime of the process — rooms do not respawn, so the state
+survives indefinitely. This enables persistent room-level state like ceremony
+phases, NPC dialogue counters, and flag tracking.
+
+The state is passed into `EvalContext.MobState` so all existing `set_state`,
+`state_equals`, `state_greater_than`, etc. conditions and actions work
+identically in room trees.
+
+### Negative Caching (rooms)
+
+Room trees use the same negative-cache pattern as mob trees. If no file is
+found on first lookup, the room ID is recorded in `noRoomTree`. Subsequent
+events skip `os.Stat`. Adding a behavior file at runtime is picked up after
+the next successful load.
+
+---
+
+## Static Delay on Action Nodes
+
+Any action node may carry a `delay: <seconds>` field (float64). When present,
+the action is scheduled for execution that many seconds in the future rather
+than firing immediately. All pending delayed actions are drained once per round
+by `GetEngine().DrainQueue()`.
+
+This is distinct from the perception-scaled reaction delay system: static
+delays let content authors script precise timing for scripted NPC sequences
+(e.g., the Awakening Rite ceremony). Perception-scaled delays apply only to
+the communication and combat actions when triggered by mob behavior trees.
+
+```yaml
+- type: action
+  do: mob_say
+  mob_id: 50
+  text: Step forward. This will not hurt.
+  delay: 2.5        # fires 2.5 seconds from now
+```
+
+---
+
+## New Conditions
+
+These conditions were added alongside the room behavior tree system:
+
+| Condition | Params | Description |
+|-----------|--------|-------------|
+| `command_matches` | `commands` (list of strings) | Matches the `Command` field of a `room_command` event. Case-insensitive. |
+| `command_rest_contains` | `keywords` (list of strings) | Matches any keyword against the `Rest` field of a `room_command` event. Case-insensitive. |
+| `mob_in_room` | `mob_id` (int) | At least one mob with the given template ID is present in the room. |
+
+---
+
+## New Actions
+
+These actions were added alongside the room behavior tree system:
+
+### NPC Targeting (room context)
+
+| Action | Params | Description |
+|--------|--------|-------------|
+| `mob_say` | `mob_id` (int), `text` (string) | Finds the first mob in the room with the given template ID and makes it say text. |
+| `mob_emote` | `mob_id` (int), `text` (string) | Same as `mob_say` but uses `emote` instead of `say`. |
+
+### Player Effects
+
+| Action | Params | Description |
+|--------|--------|-------------|
+| `grant_mutation` | none | Rolls and grants a random mutation to the triggering player from the weighted acquisition pool. |
+| `send_user_text` | `text` (string) | Sends raw text to the triggering player (no mob prefix). |
+| `send_room_text` | `text` (string) | Sends raw text to all players in the room. |
+| `remove_buff` | `buff_id` (int) | Removes the specified buff from the triggering player. |
+| `move_player` | `room_id` (int) | Teleports the triggering player to the target room. |
+
+### Command Control
+
+| Action | Params | Description |
+|--------|--------|-------------|
+| `intercept` | none | Marks the event as intercepted, preventing the default command handler from processing it. Only meaningful on `room_command` events. |
+
+### Instance Portals
+
+| Action | Params | Description |
+|--------|--------|-------------|
+| `create_instance` | `zone_name` (string), `gold_amount` (int), `state_key` (string, default `"instance_entry_room_id"`) | Clones an instanced zone and stores the entry room ID in BehaviorState. Use `add_temp_exit` with no `room_id` param to consume it. |
+| `open_instance_portal` | `zones` (map), `min_gold` (int, default 100), `exit_expires` (string, default `"30 real minutes"`) | Full portal-vendor flow: parses `"<zone> <gold>"` from ask text, validates, charges gold, creates instance, adds temp exit. Returns Failure if text doesn't match pattern; returns Success with mob dialogue on all other outcomes (success or error). |
+
+The `zones` param is a YAML mapping of short names to template zone names:
+```yaml
+zones:
+  arena: "Instance Arena"
+  oasis: "Instance Planar Oasis"
+```
+
+### Updated: `add_temp_exit`
+
+When `room_id` is 0 or absent, `add_temp_exit` reads the entry room ID from
+`BehaviorState` using the `state_key` param (default `"instance_entry_room_id"`).
+This allows `create_instance` and `add_temp_exit` to work as a two-step pair:
+
+```yaml
+- type: action
+  do: create_instance
+  zone_name: "Instance Arena"
+  gold_amount: 200
+- type: action
+  do: add_temp_exit
+  exit_name: arena-portal
+  title: arena-portal rift
+  expires: "30 real minutes"
+  # room_id omitted — read from "instance_entry_room_id" state key
+```
+
+---
+
+## Ceremony Room Example (Room 113 — Academy Hall)
+
+Room 113 (`behaviors/rooms/sanctum_basin/113.yaml`) is the reference example
+for the room behavior tree system. It demonstrates:
+
+1. **Exit locking via `set_room_locked`** — all four cardinal exits are locked
+   when a new player enters and the Awakening Rite begins.
+2. **Timed NPC dialogue via static delays** — the Chrysalis Priest (mob 50)
+   delivers a 32-second monologue using `mob_say` with `delay:` fields.
+3. **Multi-player collision handling via room state** — a `ceremony_active`
+   flag prevents re-triggering if a second player enters mid-ceremony; they
+   receive the mutation silently without restarting the sequence.
+4. **Idle tick counter for timed unlock** — `room_idle` increments
+   `ceremony_ticks`; after 5 ticks the exits unlock and state resets.
+5. **Command interception** — `room_command` with `command_matches` intercepts
+   movement commands during the ceremony and blocks item pickup of the mosaic.
+6. **Inline text display** — `look mosaic` is handled by a sequence of
+   `send_user_text` actions rendering an ASCII art world map.
+
+Key takeaway: room state (`ceremony_active`, `ceremony_ticks`) coordinates
+between the `room_enter` (which starts the ceremony) and `room_idle` (which
+ends it), demonstrating how to build timed multi-phase room events without any
+JavaScript.

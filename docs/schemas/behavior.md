@@ -334,3 +334,157 @@ Example patrol pattern:
       key: patrol
       value: return
 ```
+
+---
+
+## Room Behavior Trees
+
+Rooms support their own behavior trees evaluated on room-level events.
+
+### File Path
+
+```
+_datafiles/world/dogmud/behaviors/rooms/{zone}/{roomId}.yaml
+```
+
+**Example:** Zone `sanctum_basin`, Room ID 113 →
+`behaviors/rooms/sanctum_basin/113.yaml`
+
+Room trees use the same node types, conditions, and actions as mob trees.
+The `BehaviorState` for a room persists for the lifetime of the process.
+
+### Room Events
+
+| Event | Trigger | Context |
+|-------|---------|---------|
+| `room_enter` | Player enters the room | `UserId` = entering player |
+| `room_exit` | Player leaves the room | `UserId` = leaving player |
+| `room_command` | Player types a command in the room | `Command`, `Rest` |
+| `room_idle` | Room idle tick (every round) | No player context |
+| `room_load` | Room first loads from disk | No player context |
+
+### Command Interception
+
+Use the `intercept` action inside a `room_command` branch to prevent the
+default command handler from running:
+
+```yaml
+- type: sequence
+  event: room_command
+  children:
+    - type: condition
+      check: command_matches
+      commands: [north, south, east, west]
+    - type: action
+      do: send_user_text
+      text: A barrier blocks the way.
+    - type: action
+      do: intercept
+```
+
+---
+
+## Static Delay
+
+Any action node may include a `delay: <seconds>` field (float64). The action
+is scheduled for the future rather than firing immediately. Useful for timed
+NPC dialogue sequences.
+
+```yaml
+- type: action
+  do: mob_say
+  mob_id: 50
+  text: You will feel the change over time.
+  delay: 14.5
+```
+
+---
+
+## Additional Conditions
+
+| Condition | Params | Description |
+|-----------|--------|-------------|
+| `command_matches` | `commands` (list) | Matches `Command` of a `room_command` event. Case-insensitive. |
+| `command_rest_contains` | `keywords` (list) | Matches any keyword against `Rest` of a `room_command` event. Case-insensitive. |
+| `mob_in_room` | `mob_id` (int) | At least one mob with the given template ID is in the room. |
+
+---
+
+## Additional Actions
+
+### NPC Targeting
+
+| Action | Params | Description |
+|--------|--------|-------------|
+| `mob_say` | `mob_id` (int), `text` (string) | Finds the first mob with the given template ID in the room and makes it say text. |
+| `mob_emote` | `mob_id` (int), `text` (string) | Like `mob_say` but uses `emote`. |
+
+### Player & Room Text
+
+| Action | Params | Description |
+|--------|--------|-------------|
+| `send_user_text` | `text` (string) | Sends raw text to the triggering player (no mob prefix). |
+| `send_room_text` | `text` (string) | Sends raw text to all players in the room. |
+| `grant_mutation` | none | Rolls and grants a random mutation to the triggering player. |
+| `remove_buff` | `buff_id` (int) | Removes a buff from the triggering player. |
+| `move_player` | `room_id` (int) | Teleports the triggering player to a target room. |
+| `intercept` | none | Prevents the default command handler from running. `room_command` only. |
+
+### Instance Portals
+
+| Action | Params | Description |
+|--------|--------|-------------|
+| `open_instance_portal` | `zones` (map), `min_gold` (int), `exit_expires` (string) | Full portal-vendor flow. Parses `"<zone> <gold>"` from ask text, validates, charges gold, clones instance, adds temp exit. Returns Failure if text doesn't match; otherwise Success with inline mob dialogue. |
+| `create_instance` | `zone_name` (string), `gold_amount` (int), `state_key` (string) | Clones an instance and stores entry room ID in state. Follow with `add_temp_exit` (omit `room_id` to read from state). |
+
+`open_instance_portal` `zones` param maps short names to template zone names:
+```yaml
+zones:
+  arena: "Instance Arena"
+  oasis: "Instance Planar Oasis"
+```
+
+---
+
+## Instant vs Delayed Action Table (updated)
+
+| Action | Delayed? |
+|--------|----------|
+| `respond` | Yes |
+| `say` | Yes |
+| `emote` | Yes |
+| `attack` | Yes |
+| `flee` | Yes |
+| `cast` | Yes |
+| `move` | Yes |
+| `add_buff` | Yes |
+| `command_mob` | Yes |
+| `grant_quest` | No |
+| `grant_quest_to_user` | No |
+| `set_quest_flag` | No |
+| `give_item` | No |
+| `give_item_multiple` | No |
+| `return_item` | No |
+| `take_item` | No |
+| `give_gold` | No |
+| `take_gold` | No |
+| `spawn_mob` | No |
+| `summon_companion` | No |
+| `spawn_item_in_room` | No |
+| `add_temp_exit` | No |
+| `set_state` | No |
+| `increment_state` | No |
+| `decrement_state` | No |
+| `set_misc_data` | No |
+| `set_room_locked` | No |
+| `command` | No |
+| `mob_say` | No (use `delay:` param for timing) |
+| `mob_emote` | No (use `delay:` param for timing) |
+| `grant_mutation` | No |
+| `send_user_text` | No |
+| `send_room_text` | No |
+| `intercept` | No |
+| `remove_buff` | No |
+| `move_player` | No |
+| `create_instance` | No |
+| `open_instance_portal` | No |
