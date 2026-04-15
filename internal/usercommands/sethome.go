@@ -64,7 +64,7 @@ func SetHome(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	user.Character.SetSetting("home", args)
 	user.SendText(fmt.Sprintf(
 		`<ansi fg="green">Home set to %s.</ansi> `+
-			`You will return here after leaving the shadow realm.`,
+			`You will return here when you die.`,
 		homeLocationNames[args]))
 
 	return true, nil

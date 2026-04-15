@@ -148,7 +148,8 @@ func TryMobBehavior(mobInstanceId int, event EventContext) bool {
 			return false // No behavior tree for this mob
 		}
 		if err := GetEngine().LoadTree(mobId, path); err != nil {
-			mudlog.Error("TryMobBehavior", "error", fmt.Sprintf("failed to load behavior tree for mob %d: %v", mobId, err))
+			mudlog.Error("TryMobBehavior", "error", fmt.Sprintf("failed to load behavior tree for mob %d (%s): %v", mobId, path, err))
+			GetEngine().SetNoTree(mobId) // Don't retry on parse errors
 			return false
 		}
 		tree = GetEngine().GetTree(mobId)

@@ -55,6 +55,24 @@ tree:
             <ansi fg="181">  [Try: ask sable arena 200 or ask sable
             oasis 300]</ansi>
 
+    # ── ASK: portal purchase "<zone> <gold>" ──────────────────────────────
+    # open_instance_portal parses the ask text for "arena 200" or "oasis 300",
+    # validates gold, clones the instance, and wires up the temporary exit.
+    # It returns Failure when the text doesn't match the "<zone> <number>"
+    # pattern, falling through to the info branches below.
+    # MUST be above arena/oasis info branches so "arena 200" isn't caught
+    # by the keyword_match on "arena" first.
+    - type: sequence
+      event: player_ask
+      children:
+        - type: action
+          do: open_instance_portal
+          min_gold: 100
+          exit_expires: "30 real minutes"
+          zones:
+            arena: "Instance Arena"
+            oasis: "Instance Planar Oasis"
+
     # ── ASK: arena info ────────────────────────────────────────────────────
     - type: sequence
       event: player_ask
@@ -85,22 +103,6 @@ tree:
         - type: action
           do: say
           text: Recall magic still works there. Tell me how much gold to invest.
-
-    # ── ASK: portal purchase "<zone> <gold>" ──────────────────────────────
-    # open_instance_portal parses the ask text for "arena 200" or "oasis 300",
-    # validates gold, clones the instance, and wires up the temporary exit.
-    # It returns Failure when the text doesn't match the pattern, allowing
-    # earlier keyword branches to handle named queries first.
-    - type: sequence
-      event: player_ask
-      children:
-        - type: action
-          do: open_instance_portal
-          min_gold: 100
-          exit_expires: "30 real minutes"
-          zones:
-            arena: "Instance Arena"
-            oasis: "Instance Planar Oasis"
 
     # ── COMMAND: talk ──────────────────────────────────────────────────────
     - type: sequence

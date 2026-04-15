@@ -9,9 +9,10 @@ Once you reach -10 hitpoints, you will die!
 <ansi fg="yellow-bold">Death Penalties:</ansi>
   - One of your core attributes will permanently weaken slightly.
   - Skills you haven't practiced recently may grow rusty and diminish.
-  - You'll be transported to the Shadow Realm with a lingering debuff
-    that dulls all of your attributes until it fades.
+  - You'll be transported home with all pools restored.
 
 The best defense against death is staying aware of your health and knowing
 when to <ansi fg="command">flee</ansi>. Skills and attributes you use regularly are protected
 from decay -- keep training and they'll endure.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help sethome</ansi>

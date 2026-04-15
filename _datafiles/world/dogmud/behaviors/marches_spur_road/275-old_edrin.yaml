@@ -40,16 +40,19 @@ tree:
             mob_id: 313
             count: 1
             base_pool: 60
+            hostile: "true"
           - type: action
             do: summon_companion
             mob_id: 311
             count: 1
             base_pool: 60
+            hostile: "true"
           - type: action
             do: summon_companion
             mob_id: 310
             count: 1
             base_pool: 60
+            hostile: "true"
 
     # ── PHASE 1: mob_hurt — revelation (fires once) ──
     - type: sequence
@@ -88,19 +91,22 @@ tree:
           mob_id: 313
           count: 1
           base_pool: 60
+          hostile: "true"
         - type: action
           do: summon_companion
           mob_id: 311
           count: 1
           base_pool: 60
+          hostile: "true"
         - type: action
           do: summon_companion
           mob_id: 310
           count: 1
           base_pool: 60
+          hostile: "true"
         - type: action
-          do: respond
-          room_text: >-
+          do: send_room_text
+          text: >-
             The air splits. Fire gathers from nothing. Stone tears
             itself from the ground. Water condenses from the humidity
             and takes shape. Three elementals stand beside the old man,
@@ -114,53 +120,25 @@ tree:
             levels his staff at you, and the air between you and him
             begins to shimmer with heat.
 
-    # ── PHASE 2: mob_idle — tactical combat once revealed ──
-    - type: sequence
-      event: mob_idle
-      children:
-        # Only act when revealed
-        - type: condition
-          check: state_equals
-          key: revealed
-          value: "true"
-        # Only act during combat
-        - type: condition
-          check: mob_in_combat
-        # Re-cast conviction-ward every 20 rounds
-        - type: selector
-          children:
-            - type: decorator
-              mod: cooldown
-              rounds: 20
-              child:
-                type: action
-                do: cast
-                spell: conviction-ward
-            # AoE if multiple enemies, otherwise single target
-            - type: sequence
-              children:
-                - type: condition
-                  check: multiple_enemies
-                - type: action
-                  do: cast
-                  spell: hemorrhagic-burst
-            - type: action
-              do: cast
-              spell: mind-spike
+    # Phase 2 (tactical combat) is handled by the reactive AI preset
+    # in the mob YAML — it already casts conviction-ward, mind-spike,
+    # and hemorrhagic-burst based on combat conditions.
 
     # ── PHASE 3: mob_die — flavor, unlock room, spawn loot ──
+    # Uses send_room_text instead of respond because the mob instance
+    # is about to be destroyed — delayed actions would fire on a dead mob.
     - type: sequence
       event: mob_die
       children:
         - type: action
-          do: respond
-          room_text: >-
+          do: send_room_text
+          text: >-
             Old Edrin sinks to one knee, staff cracking beneath him.
             The elementals shudder and dissolve -- fire guttering,
             stone crumbling, water splashing to nothing.
         - type: action
-          do: respond
-          room_text: >-
+          do: send_room_text
+          text: >-
             The old man looks up with those clear, pale eyes.
             "Hm," he says. "Stronger than you looked."
             And then he is still.
@@ -169,8 +147,8 @@ tree:
           direction: west
           locked: "false"
         - type: action
-          do: respond
-          room_text: >-
+          do: send_room_text
+          text: >-
             The grass curtain over the back doorway falls away, the
             ward holding it shut broken with its maker.
         - type: action

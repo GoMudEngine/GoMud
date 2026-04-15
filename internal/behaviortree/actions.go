@@ -463,9 +463,14 @@ func actCommand(params map[string]any, ctx *EvalContext) Result {
 	return Success
 }
 
-// actSummonCompanion spawns a mob and registers it as a companion of the
-// acting mob (mob-owned companion). Uses the same Charm mechanism as the
-// player manifestation system, with userId=0 to indicate mob ownership.
+// actSummonCompanion spawns a mob as either a hostile ally (attacks the
+// player) or a charmed companion of the summoning mob.
+//
+// params: mob_id (int), count (int, default 1), base_pool (int, default 50),
+//         hostile (string "true"/"false", default "false")
+//
+// When hostile=true: spawned mobs aggro the triggering player immediately.
+// When hostile=false: spawned mobs are charmed to the summoning mob (companion).
 func actSummonCompanion(params map[string]any, ctx *EvalContext) Result {
 	mob := mobs.GetInstance(ctx.InstanceId)
 	if mob == nil {
@@ -489,6 +494,7 @@ func actSummonCompanion(params map[string]any, ctx *EvalContext) Result {
 	if basePool <= 0 {
 		basePool = 50
 	}
+	hostile := getStringParam(params, "hostile") == "true"
 	pool := characters.CalcCompanionStatPool(basePool, charisma, manifestSkill)
 	for i := 0; i < count; i++ {
 		companion := mobs.NewMobById(mobs.MobId(mobId), room.RoomId, pool)
@@ -496,17 +502,26 @@ func actSummonCompanion(params map[string]any, ctx *EvalContext) Result {
 			continue
 		}
 		room.AddMob(companion.InstanceId)
-		companion.Character.Charm(0, 99999, "")
-		companion.Character.EndAggro()
-		info := characters.CompanionInfo{
-			MobId:      int(companion.MobId),
-			InstanceId: companion.InstanceId,
-			SourceType: characters.CompanionSummoned,
-			Name:       companion.Character.Name,
-			BaseName:   companion.Character.Name,
-			AutoAssist: true,
+		if hostile {
+			// Hostile ally: aggro the triggering player and engage
+			if ctx.Event.UserId > 0 {
+				companion.Character.SetAggro(ctx.Event.UserId, 0, characters.DefaultAttack)
+				companion.Command(`lookfortrouble`, 4)
+			}
+		} else {
+			// Charmed companion of the summoning mob
+			companion.Character.Charm(0, 99999, "")
+			companion.Character.EndAggro()
+			info := characters.CompanionInfo{
+				MobId:      int(companion.MobId),
+				InstanceId: companion.InstanceId,
+				SourceType: characters.CompanionSummoned,
+				Name:       companion.Character.Name,
+				BaseName:   companion.Character.Name,
+				AutoAssist: true,
+			}
+			mob.Character.AddCompanion(info)
 		}
-		mob.Character.AddCompanion(info)
 	}
 	return Success
 }
@@ -883,6 +898,10 @@ func actOpenInstancePortal(params map[string]any, ctx *EvalContext) Result {
 	if zonesRaw, ok := params["zones"]; ok {
 		switch zm := zonesRaw.(type) {
 		case map[string]any:
+			if v, ok := zm[zoneName]; ok {
+				templateZone, _ = v.(string)
+			}
+		case map[any]any:
 			if v, ok := zm[zoneName]; ok {
 				templateZone, _ = v.(string)
 			}
