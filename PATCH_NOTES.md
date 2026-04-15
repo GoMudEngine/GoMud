@@ -1,5 +1,69 @@
 # DOGMud Patch Notes
 
+## 2026-04-15 — JS Audit Complete (Phases 4-5)
+
+### Death System Simplified
+- **Death no longer sends you to the Shadow Realm.** When you die,
+  you respawn directly at your home location with full health,
+  stamina, and conviction. Stat decay and skill rust penalties
+  still apply.
+- Type `sethome` to set your respawn location.
+- Type `help death` for updated details.
+
+### Mob AI: Behavior Trees
+- **7 mob scripts migrated** to YAML-based behavior trees with
+  perception-scaled reaction delays. Smarter mobs react faster.
+- **Old Edrin upgraded** — multi-phase caster boss with elemental
+  summons, reveal sequence, and tactical combat AI.
+- **Chrysalis Phantom upgraded** — hit-and-run assassin with
+  surprise strikes, flee-and-rehide loop, and target tracking.
+- **Barmaid Dal** now heckles back at tavern patrons with 4
+  randomized NPC-NPC interaction sequences.
+
+### Room Behavior Trees (New System)
+- **14 room scripts migrated** to room behavior trees — a new
+  first-class system for room-level AI and event handling.
+- **Sanctum Basin tutorial** fully converted — all 9 tutorial rooms
+  now use room behavior trees for quest progression, command
+  detection, and the Awakening Rite ceremony.
+- Room behavior trees support command interception, timed NPC
+  dialogue sequences, and room-scoped state.
+
+### Spell & Buff Migration
+- **Fold-anchor and fold-recall** moved to native Go hooks.
+- **Purge-affliction** moved to native Go hook.
+- **Chrysalis-aid removed** — vestigial resurrect spell (death
+  system handles respawn). Pruned from spellbooks automatically.
+- **Buff flavor text** (illumination, stunned, blinded, hidden,
+  meditating) moved to YAML text fields.
+
+### Sable Portal Vendor
+- **Sable migrated** from JS to behavior tree with a new
+  `open_instance_portal` action for creating instanced zones.
+
+### JS Scripting Bridge Removed
+- **The entire JavaScript scripting system has been removed.**
+  The goja JS engine, all 152 JS files, and the Go/JS bridge
+  code are gone. All game logic now runs natively in Go via
+  behavior trees, Go hooks, quest engine triggers, and YAML.
+- Admin `mob create` and `spell create` commands removed (content
+  is hand-authored as YAML files).
+
+### Bug Fixes
+- Fixed quest NPC item delivery — quest engine triggers now
+  properly grant rewards without behavior tree interference.
+- Fixed inventory stacking by base item instead of enchant state.
+- Fixed enchanting preservation of instanced zone affix bonuses.
+- Fixed instance portal replacement for difficulty upgrades.
+- Fixed deep copy of item slices in NewMobById (prevents shared
+  state corruption between mob instances).
+- Fixed raise spells accepting generic corpse targeting words.
+- Fixed visual room broadcasts routing through darkness filter.
+
+### Balance
+- Mob reaction delay curve tuned — base 2.0s, max 2.0s (was 3.0s
+  base, 4.0s max). Perception 100 yields ~1s delay.
+
 ## 2026-04-11 — JS Audit Phases 1-3
 
 ### Phase 3: Item Cleanup + Charm Migration
