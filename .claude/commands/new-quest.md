@@ -62,7 +62,7 @@ quest nodes with proper gating. For each dialogue file:
   - **End-token exclusion:** every `grantsQuest` node must exclude BOTH
     the granted token AND `{questid}-end` in `questExcluded` — prevents
     re-offering completed quests
-- Item delivery steps need BOTH a dialogue path AND an `onGive` script
+- Item delivery steps need BOTH a dialogue path AND a quest YAML `item_give` trigger
 - **Narrative voice:** NPC `text` must use first person ("I", "my"). Hints
   must describe player options from the player's perspective. Never write
   3rd-person self-references like "Ask about why she left" — write "You
@@ -78,19 +78,21 @@ quest nodes with proper gating. For each dialogue file:
   for quests where urgency is the explicit design intent (e.g., "deliver
   this before the trolls attack"). Default: leave empty or omit.
 
-**4d. Room scripts** — create `.js` files for item pickups / command
-intercepts. Confirm the noun appears in the room's `description` or `nouns`
-section so `get <noun>` feels natural.
+**4d. Room behavior trees** — create room behavior tree handlers for item
+pickups / command intercepts if needed. Confirm the noun appears in the room's
+`description` or `nouns` section so `get <noun>` feels natural.
 
-**4e. Mob scripts** — create `.js` files for `onGive` handlers.
-**CRITICAL: give.go transfers the item to the mob BEFORE onGive fires.** This
-means:
-- Quest-accepting NPCs: `onGive` just grants the quest token (item is already
-  consumed by the transfer)
-- "Wrong NPC" handlers (quest giver who should NOT keep the item): `onGive`
-  must call `user.GiveItem(itemId)` to return a copy to the player
-- Every NPC involved in item-delivery quests needs an `onGive` script, or the
-  player loses the item to the default "considers the item" behavior
+**4e. Behavior trees** — create `player_give` handlers for item rejection.
+Quest advancement is handled by the quest engine's `item_give` triggers in the
+quest YAML. Behavior trees only handle rejection cases (wrong item, quest
+already complete, not on quest).
+**CRITICAL: give.go transfers the item to the mob BEFORE any handler fires.**
+This means:
+- Quest-accepting NPCs: the quest engine `item_give` trigger grants the token
+  (item is already consumed by the transfer)
+- "Wrong NPC" handlers (quest giver who should NOT keep the item): use a
+  behavior tree `player_give` handler with the `return_item` action to give
+  the item back to the player
 - Quest givers who hand out items via `givesItem` need a recovery dialogue node
   (fires when player has the quest but not the item) that gives a replacement
 

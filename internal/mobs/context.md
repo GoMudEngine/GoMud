@@ -2,7 +2,7 @@
 
 ## Overview
 
-The DOGMud mobs system provides comprehensive NPC (Non-Player Character) management with support for AI behaviors, scripting integration, conversation systems, pathfinding, shop management, and complex social dynamics. It features a dual-layer architecture with immutable mob specifications and mutable mob instances, supporting dynamic spawning, behavioral patterns, and sophisticated interaction systems.
+The DOGMud mobs system provides comprehensive NPC (Non-Player Character) management with support for AI behaviors, behavior trees, conversation systems, pathfinding, shop management, and complex social dynamics. It features a dual-layer architecture with immutable mob specifications and mutable mob instances, supporting dynamic spawning, behavioral patterns, and sophisticated interaction systems.
 
 **DOGMud Differences from upstream GoMud:**
 - Mobs no longer use Level for stat initialization — stats and skills defined directly in YAML
@@ -86,13 +86,7 @@ eligible players are available.
 - Player attack tracking and memory
 - Shop ownership and trading behavior
 
-### 4. **Scripting Integration**
-- JavaScript event handling for custom behaviors
-- Script tag system for specialized mob variants
-- Event-driven interaction with game systems
-- Custom script path resolution
-
-### 5. **Pathfinding and Movement**
+### 4. **Pathfinding and Movement**
 - Pre-calculated path following system
 - Waypoint-based navigation
 - Wandering behavior with distance limits
@@ -136,7 +130,7 @@ type Mob struct {
     // Runtime State
     LastIdleCommand uint8                    // Track last idle command used
     BoredomCounter  uint8                    // Rounds since seeing players
-    tempDataStore   map[string]any           // Temporary data storage
+    tempDataStore   map[string]any           // Temporary data storage for AI
     conversationId  int                      // Active conversation ID
     Path            PathQueue                // Movement pathfinding queue
     lastCommandTurn uint64                   // Command scheduling tracking
@@ -510,53 +504,10 @@ func (m *Mob) GetSellPrice(item items.Item) int {
 }
 ```
 
-## Scripting Integration
+## Temporary Data Storage
 
-### Script System Support
 ```go
-// Check for custom scripts
-func (m *Mob) HasScript() bool {
-    scriptPath := m.GetScriptPath()
-    if _, err := os.Stat(scriptPath); err == nil {
-        return true
-    }
-    return false
-}
-
-// Load mob script content
-func (m *Mob) GetScript() string {
-    scriptPath := m.GetScriptPath()
-    if _, err := os.Stat(scriptPath); err == nil {
-        if bytes, err := os.ReadFile(scriptPath); err == nil {
-            return string(bytes)
-        }
-    }
-    return ""
-}
-
-// Generate script file path
-func (m *Mob) GetScriptPath() string {
-    mobFilePath := m.Filename()
-    
-    newExt := ".js"
-    if m.ScriptTag != "" {
-        newExt = fmt.Sprintf("-%s.js", m.ScriptTag)
-    }
-    
-    scriptFilePath := "scripts/" + strings.Replace(mobFilePath, ".yaml", newExt, 1)
-    fullScriptPath := strings.Replace(
-        configs.GetFilePathsConfig().DataFiles.String()+"/mobs/"+m.Filepath(),
-        mobFilePath,
-        scriptFilePath,
-        1)
-    
-    return util.FilePath(fullScriptPath)
-}
-```
-
-### Temporary Data Storage
-```go
-// Runtime data storage for scripts and AI
+// Runtime data storage for AI systems
 func (m *Mob) SetTempData(key string, value any) {
     if m.tempDataStore == nil {
         m.tempDataStore = make(map[string]any)
@@ -750,7 +701,7 @@ func (m *Mob) IsTameable() bool {
         return false // Merchants can't be tamed
     }
     if len(m.ScriptTag) > 0 {
-        return false // Scripted mobs can't be tamed
+        return false // Tagged mobs can't be tamed
     }
     if r := races.GetRace(m.Character.RaceId); r != nil {
         if !r.Tameable {
@@ -990,17 +941,12 @@ func shouldAttack(attacker *Mob, target *Mob) bool {
 
 ### New Mob Creation System
 ```go
-// Create new mob with optional script template
-func CreateNewMobFile(newMobInfo Mob, copyScript string) (MobId, error) {
+// Create new mob file
+func CreateNewMobFile(newMobInfo Mob) (MobId, error) {
     newMobInfo.MobId = getNextMobId()
     
     if newMobInfo.MobId == 0 {
         return 0, errors.New("Could not find a new mob id to assign.")
-    }
-    
-    // Apply quest template if specified
-    if copyScript == ScriptTemplateQuest {
-        newMobInfo.QuestFlags = []string{"1000000-start"}
     }
     
     // Validate mob configuration
@@ -1027,17 +973,6 @@ func CreateNewMobFile(newMobInfo Mob, copyScript string) (MobId, error) {
     mobNameCache[newMobInfo.MobId] = newMobInfo.Character.Name
     mobs[newMobInfo.Id()] = &newMobInfo
     
-    // Copy script template if requested
-    if copyScript != "" {
-        newScriptPath := newMobInfo.GetScriptPath()
-        os.MkdirAll(filepath.Dir(newScriptPath), os.ModePerm)
-        
-        fileloader.CopyFileContents(
-            util.FilePath("_datafiles/sample-scripts/mobs/"+copyScript),
-            newMobInfo.GetScriptPath(),
-        )
-    }
-    
     return newMobInfo.MobId, nil
 }
 
@@ -1053,29 +988,12 @@ func getNextMobId() MobId {
 }
 ```
 
-### Script Templates
-```go
-// Available script templates for new mobs
-var SampleScripts = map[string]string{
-    "item and gold": "item-gold-quest.js",
-}
-
-const ScriptTemplateQuest = "item-gold-quest.js"
-
-// Quest template automatically sets quest flags
-if copyScript == ScriptTemplateQuest {
-    newMobInfo.QuestFlags = []string{"1000000-start"}
-}
-```
-
 ### File System Integration
 - **Automatic ID Assignment**: Sequential ID allocation to prevent conflicts
-- **Template System**: Pre-built script templates for common mob behaviors
 - **Careful Save Mode**: Optional backup creation during file operations
-- **Directory Management**: Automatic creation of script directories
 - **Cache Synchronization**: Immediate update of in-memory caches after creation
 
-This comprehensive mob system provides sophisticated NPC management with AI behaviors, social dynamics, scripting integration, file management capabilities, and seamless integration with all other game systems.
+This comprehensive mob system provides sophisticated NPC management with AI behaviors, social dynamics, file management capabilities, and seamless integration with all other game systems.
 
 ---
 

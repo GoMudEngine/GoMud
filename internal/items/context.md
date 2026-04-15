@@ -2,7 +2,7 @@
 
 ## Overview
 
-The GoMud items system provides a comprehensive item management framework with support for equipment, consumables, weapons, and special objects. It features a dual-layer architecture with immutable item specifications and mutable item instances, supporting enchantments, durability, scripting integration, and complex item behaviors through type-based categorization and attribute systems.
+The GoMud items system provides a comprehensive item management framework with support for equipment, consumables, weapons, and special objects. It features a dual-layer architecture with immutable item specifications and mutable item instances, supporting enchantments, durability, and complex item behaviors through type-based categorization and attribute systems.
 
 ## Architecture
 
@@ -51,7 +51,7 @@ The items system is built around two main components:
 ### 3. **Dynamic Item Modification**
 - Runtime enchantment system with stat modifications
 - Temporary adjective system for visual effects
-- Blob storage for custom content and scripting data
+- Blob storage for custom content and runtime data
 - Override specifications for personalized item properties
 
 ### 4. **Combat Integration**
@@ -59,12 +59,6 @@ The items system is built around two main components:
 - Attack message generation based on weapon type and damage intensity
 - Critical hit mechanics with buff application
 - Backstab compatibility based on weapon subtype
-
-### 5. **Scripting Support**
-- JavaScript integration for custom item behaviors
-- Event-driven item interactions (onFound, onLost, onUse, onPurchase)
-- Template data storage for dynamic content
-- Script path resolution and loading
 
 ## Item Types and Categories
 
@@ -482,24 +476,6 @@ func (i *ItemSpec) ItemFolder(baseonly ...bool) string {
 ```
 
 ## Integration Patterns
-
-### Scripting Integration
-```go
-// JavaScript event integration
-func (i *Item) GetScript() string {
-    return i.GetSpec().GetScript()
-}
-
-func (i *ItemSpec) GetScriptPath() string {
-    return strings.Replace(
-        string(configs.GetFilePathsConfig().DataFiles)+"/items/"+i.Filepath(),
-        ".yaml", ".js", 1,
-    )
-}
-
-// Script events: onFound, onLost, onUse, onPurchase
-// Called from various game systems when items are manipulated
-```
 
 ### Character Equipment Integration
 ```go

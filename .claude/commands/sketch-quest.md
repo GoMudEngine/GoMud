@@ -71,8 +71,9 @@ Output a structured planning document with the following sections:
 For each step, specify:
 - Step ID (e.g. `start`, `investigate`, `evidence`, `end`)
 - What triggers advancement to this step
-- Trigger mechanism: dialogue node (`grantsQuest`), room script (`onCommand`),
-  mob script (`onGive`), or automatic (e.g. entering a room)
+- Trigger mechanism: dialogue node (`grantsQuest`), room behavior tree
+  (`room_command`), quest engine `item_give` trigger, behavior tree
+  `player_give` handler, or automatic (e.g. entering a room)
 - Quest token: `{questid}-{stepid}`
 - Player-facing description and hint
 
@@ -85,9 +86,9 @@ Step 1: "start" — granted by dialogue node
   Description: "..."
   Hint: "..."
 
-Step 2: "evidence" — granted by room script
-  Trigger: `get ledger` in room 421 → room script onCommand gives item,
-           grants quest
+Step 2: "evidence" — granted by room behavior tree
+  Trigger: `get ledger` in room 421 → room behavior tree room_command
+           gives item, grants quest
   Token: {id}-evidence
   Description: "..."
   Hint: "..."
@@ -129,7 +130,7 @@ the alternative and how it will be handled:
 ```
 Step 2 alternative: Player uses `give poultice shaman` instead of
                     `ask shaman poultice`
-  Mechanism: mob script onGive handler on mob 74
+  Mechanism: quest engine item_give trigger on quest YAML (mob 74)
   Grants same token: 2-poultices
   Text: (shaman acceptance dialogue)
 ```
@@ -168,8 +169,8 @@ List every file that must be created or modified:
 | CREATE | `quests/{id}-{name}.yaml` | Quest definition with steps and rewards |
 | CREATE | `dialogue/{zone}/{mobid}.yaml` | New NPC dialogue (if NPC has none) |
 | MODIFY | `dialogue/{zone}/{mobid}.yaml` | Add quest nodes to existing dialogue |
-| CREATE | `rooms/{zone}/{roomid}.js` | Room script for item pickup / command intercept |
-| CREATE | `mobs/{zone}/scripts/{id}-{name}.js` | Mob script for onGive handler |
+| MODIFY | `quests/{id}-{name}.yaml` | Add item_give triggers for item delivery steps |
+| MODIFY | `mobs/{zone}/{id}-{name}.yaml` | Add behavior tree player_give handler for item rejection |
 | CREATE | `items/{type}/{id}-{name}.yaml` | New quest item (if needed) |
 | MODIFY | `mobs/{zone}/{id}-{name}.yaml` | Mob group/behavior changes |
 | MODIFY | `rooms/{zone}/{roomid}.yaml` | Add spawninfo, exits, nouns |
@@ -202,12 +203,13 @@ complete:
       `expiryPeriod` for quests where urgency is the explicit design
       intent (e.g., "deliver this before the trolls attack"). Default:
       leave empty or omit entirely.
-- [ ] Item delivery steps have BOTH dialogue path AND `onGive` script path
+- [ ] Item delivery steps have BOTH dialogue path AND quest YAML `item_give`
+      trigger for the quest-accepting NPC
 - [ ] **give.go gotcha:** `give.go` transfers the item to the mob BEFORE
-      `onGive` fires. The script cannot undo the transfer. Every NPC that
-      should accept a quest item needs an `onGive` script. NPCs that should
-      NOT accept a quest item (e.g., the quest giver who handed it out) need
-      an `onGive` that calls `user.GiveItem(itemId)` to return it.
+      any handler fires. The handler cannot undo the transfer. Quest
+      advancement uses the quest engine `item_give` trigger. NPCs that
+      should NOT keep a quest item (e.g., the quest giver who handed it out)
+      need a behavior tree `player_give` handler with `return_item` action.
 - [ ] **Lost item recovery:** Every quest giver who hands out a physical item
       must have a recovery dialogue node (e.g., `lost_report`) that gives a
       replacement copy if the player has the quest but lost the item.
@@ -216,7 +218,7 @@ complete:
       scripts for simple handoffs. The player sees "You receive a <itemname>."
 - [ ] `requiresItem` nodes — confirm item exists, is obtainable, and is in the
       player's inventory at that point (not consumed earlier)
-- [ ] Room scripts that give items — confirm the noun appears in room
+- [ ] Room behavior trees that give items — confirm the noun appears in room
       description or nouns section so `get <noun>` feels natural
 - [ ] Mob groups — quest NPCs are NOT in hostile mob groups (no `warren` on
       the shaman, etc.)

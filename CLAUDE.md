@@ -148,7 +148,7 @@ All HP/SP/CP regeneration is **percentage-of-max** — never flat values.
 - `HealthPerRound()` / `StaminaPerRound()` / `ConvictionPerRound()` compute `floor(poolMax * pct)`, min 1
 - **Mutations** use multiplier effects (`health_regen_multiplier`, `health_regen_if_lit_multiplier`, `stamina_regen_multiplier`) — never flat `health_regen` effects
 - **Heal spells** store a regen multiplier in `effect_magnitude` (e.g. 3 = 3x base regen); applied via `ConditionRegen`
-- **Buff scripts** that heal should use `Math.floor(actor.GetHealthMax() * fraction)` — never flat dice for healing
+- **Heal buffs** that heal should compute `floor(poolMax * fraction)` — never flat dice for healing
 - NPCs regen health (out of combat), stamina (1/4 in combat), and conviction every tick
 
 ## Data File Naming Convention
@@ -158,7 +158,6 @@ Before creating any new data file, verify the expected filename from the loader'
 - `ConvertForFilename()`: lowercase, keep a-z/0-9, drop apostrophes, all other chars → underscore
 - Spells: use the `spellid` field value directly as the filename base (no conversion needed)
 - Items/mobs follow the same `ConvertForFilename` pattern
-- Always confirm the `.js` stub filename matches the `.yaml` filename (same base, different extension)
 - Mismatch between filesystem path and `Filepath()` output causes a startup panic
 
 ## MUD Line Width
@@ -202,12 +201,14 @@ Every quest-granting dialogue node (any tree node with `grantsQuest`) MUST inclu
   For all other NPCs, leave it empty or omit entirely.
 
 ## Quest Item Delivery — give.go Gotcha
-**CRITICAL:** `give.go` transfers the item from the player to the mob BEFORE the
-`onGive` script fires. The script cannot prevent or undo the transfer. Consequences:
-- Every NPC that should accept a quest item needs an `onGive` script (otherwise
-  the mob does the default "considers the item" emote and the quest doesn't advance)
-- NPCs that should NOT keep the item (e.g., the quest giver who handed it out)
-  need an `onGive` script that calls `user.GiveItem(itemId)` to return a copy
+**CRITICAL:** `give.go` transfers the item from the player to the mob BEFORE
+any handler fires. The handler cannot prevent or undo the transfer.
+Consequences:
+- Quest item delivery is handled by the quest engine's `item_give` triggers
+  (in quest YAML) and/or behavior tree `player_give` handlers on the mob
+- NPCs that should NOT keep the item (e.g., the quest giver who handed it
+  out) need a behavior tree `player_give` handler that uses the `return_item`
+  action to give the item back
 - Quest givers who hand out physical items via `givesItem` must also have a
   recovery dialogue node that gives a replacement if the player lost the item
 

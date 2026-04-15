@@ -2,7 +2,7 @@
 
 ## Overview
 
-The GoMud buffs system provides comprehensive temporary status effects for characters with support for stat modifications, behavioral flags, round-based triggers, duration management, and scripting integration. It features a dual-layer architecture with immutable buff specifications and mutable buff instances, supporting complex timing mechanics, permanent buffs, and sophisticated flag-based behavior modification.
+The GoMud buffs system provides comprehensive temporary status effects for characters with support for stat modifications, behavioral flags, round-based triggers, and duration management. It features a dual-layer architecture with immutable buff specifications and mutable buff instances, supporting complex timing mechanics, permanent buffs, and sophisticated flag-based behavior modification.
 
 ## Architecture
 
@@ -15,7 +15,7 @@ The buffs system is built around several key components:
 - YAML-based storage with automatic loading and validation
 - Time-based trigger rate calculations with game time integration
 - Stat modification definitions and behavioral flags
-- JavaScript scripting support for custom buff behaviors
+- Config-driven tick behaviors with stat scaling
 
 **Buff Instances (Buff):**
 - Runtime instances with unique state tracking
@@ -52,12 +52,6 @@ The buffs system is built around several key components:
 - Integration with character stat system
 - Racial and equipment stat modifications
 - Combat effectiveness modifiers
-
-### 4. **Scripting and Customization**
-- JavaScript event handling for complex buff behaviors
-- Custom script path resolution and loading
-- Event-driven interaction with game systems
-- Flexible buff value calculations for balance
 
 ## Buff Structure
 
@@ -519,37 +513,7 @@ func (bs *Buffs) GetBuffs(buffId ...int) []*Buff {
 }
 ```
 
-## Scripting Integration
-
-### Script System Support
-```go
-// Get buff script content
-func (b *BuffSpec) GetScript() string {
-    scriptPath := b.GetScriptPath()
-    if _, err := os.Stat(scriptPath); err == nil {
-        if bytes, err := os.ReadFile(scriptPath); err == nil {
-            return string(bytes)
-        }
-    }
-    return ""
-}
-
-// Generate script file path
-func (b *BuffSpec) GetScriptPath() string {
-    buffFilePath := b.Filename()
-    scriptFilePath := strings.Replace(buffFilePath, ".yaml", ".js", 1)
-    
-    fullScriptPath := strings.Replace(
-        string(configs.GetFilePathsConfig().DataFiles)+"/buffs/"+b.Filepath(),
-        buffFilePath,
-        scriptFilePath,
-        1)
-    
-    return util.FilePath(fullScriptPath)
-}
-```
-
-### Display and Visibility
+## Display and Visibility
 ```go
 // Get visible name and description (handles secret buffs)
 func (b *BuffSpec) VisibleNameDesc() (name, description string) {
@@ -737,4 +701,4 @@ if character.Buffs.HasFlag(buffs.EmitsLight, false) {
 - `internal/util` - Utility functions for file operations and validation
 - `internal/mudlog` - Logging system for debugging and monitoring
 
-This comprehensive buffs system provides sophisticated temporary status effects with precise timing control, behavioral modification, stat integration, and seamless integration with all other game systems.
+This comprehensive buffs system provides sophisticated temporary status effects with precise timing control, behavioral modification, stat integration, and config-driven effect behaviors.
