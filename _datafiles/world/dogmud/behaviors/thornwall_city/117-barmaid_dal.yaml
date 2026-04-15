@@ -51,6 +51,73 @@ tree:
                       do: move
                       direction: south
 
+        # Away from home: patron heckling
+        - type: sequence
+          children:
+            - type: decorator
+              mod: invert
+              child:
+                type: condition
+                check: mob_at_home
+            - type: decorator
+              mod: cooldown
+              rounds: 20
+              child:
+                type: decorator
+                mod: random
+                percent: 40
+                child:
+                  type: selector
+                  children:
+                    - type: decorator
+                      mod: random
+                      percent: 25
+                      child:
+                        type: sequence
+                        children:
+                          - type: action
+                            do: command_mob
+                            mob_id: 114
+                            cmd: "emote nudges his cup forward with one finger, grinning."
+                          - type: action
+                            do: emote
+                            text: "smacks the cup back without looking. \"Ask nicer.\""
+                    - type: decorator
+                      mod: random
+                      percent: 33
+                      child:
+                        type: sequence
+                        children:
+                          - type: action
+                            do: command_mob
+                            mob_id: 115
+                            cmd: "say Dal, you get prettier every year."
+                          - type: action
+                            do: emote
+                            text: "does not look up from the tray. \"And you get older. Funny how that works.\""
+                    - type: decorator
+                      mod: random
+                      percent: 50
+                      child:
+                        type: sequence
+                        children:
+                          - type: action
+                            do: command_mob
+                            mob_id: 116
+                            cmd: "emote reaches for the bread and accidentally brushes her arm."
+                          - type: action
+                            do: emote
+                            text: "pulls her arm back and gives him a look that could curdle milk."
+                    - type: sequence
+                      children:
+                        - type: action
+                          do: command_mob
+                          mob_id: 114
+                          cmd: "say How about a smile with that ale, Dal?"
+                        - type: action
+                          do: emote
+                          text: "sets the cup down hard enough to slosh. \"How about a tip?\""
+
         # Away from home: after cooldown, return
         - type: sequence
           children:
