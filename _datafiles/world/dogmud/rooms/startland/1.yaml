@@ -26,6 +26,16 @@ spawninfo:
   - wander
   levelmod: 10
   respawnrate: 5 real minutes
+nouns:
+  map: |
+    A hand-drawn map nailed to a weathered post shows the town and
+    surrounding roads. The town square sits at the center, with roads
+    branching north toward the market, south toward the outskirts,
+    east to the craftsmen's quarter, and west to the inn district.
+    Faint annotations mark points of interest in a practiced hand.
+  sign: |
+    A sturdy wooden post holds a painted sign and a hand-drawn map
+    of the area. Someone has taken care to keep it in good repair.
 idlemessages:
 - A <ansi fg="mobname">citizen</ansi> walks up and examines the <ansi fg="itemname">map</ansi>
   posted to the <ansi fg="itemname">sign</ansi>.

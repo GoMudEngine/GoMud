@@ -1,0 +1,37 @@
+tree:
+  type: sequence
+  event: room_command
+  children:
+    - type: condition
+      check: command_matches
+      commands: ["push", "move", "pull", "shift", "press"]
+    - type: condition
+      check: command_rest_contains
+      keywords: ["stone"]
+    - type: action
+      do: intercept
+    - type: selector
+      children:
+        # Branch 1: player already found the letter — empty cavity message
+        - type: sequence
+          children:
+            - type: condition
+              check: player_has_item
+              item_id: 40041
+            - type: action
+              do: send_user_text
+              text: "The loose stone shifts aside, revealing the empty cavity\
+                \ behind it. Whatever was hidden here has already been found."
+        # Branch 2: first discovery — give the letter and emit flavor text
+        - type: sequence
+          children:
+            - type: action
+              do: give_item
+              item_id: 40041
+            - type: action
+              do: send_user_text
+              text: "You push the loose stone aside. It grinds against its\
+                \ neighbors and shifts inward, revealing a small cavity in\
+                \ the wall behind it. Inside, a folded letter rests against\
+                \ the smooth stone -- hidden deliberately, waiting for\
+                \ someone to look."
