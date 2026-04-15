@@ -81,13 +81,9 @@ func InitiateCast(actor Actor, spellName, targetName string) CastResult {
 		return CastResult{SpellInfo: spellInfo, AlreadyCasting: true}
 	}
 
-	// 3. Special-move cooldown — shared slot with bash/kick/trip.
-	cfg := configs.GetBalanceConfig()
-	if !char.TryCooldown(`special-move`, fmt.Sprintf(`%d rounds`, cfg.SpecialMoveCooldown)) {
-		return CastResult{SpellInfo: spellInfo, OnCooldown: true}
-	}
-
-	// 4. Resolve targets by spell type.
+	// 3. Resolve targets by spell type.
+	// Cooldown is applied AFTER target resolution so that typos,
+	// missing targets, and invalid targets don't consume the cooldown.
 	targetUserIds := []int{}
 	targetMobInstanceIds := []int{}
 	spellRest := ``
@@ -253,12 +249,18 @@ func InitiateCast(actor Actor, spellName, targetName string) CastResult {
 		spellRest = targetName
 	}
 
-	// 4a. Harm spells (single/multi) require at least one resolved target.
-	// HarmArea determines targets at resolution time via script — skip check.
+	// 3a. Harm spells (single/multi) require at least one resolved target.
 	if spellInfo.Type == spells.HarmSingle || spellInfo.Type == spells.HarmMulti {
 		if len(targetUserIds) == 0 && len(targetMobInstanceIds) == 0 {
 			return CastResult{SpellInfo: spellInfo, NoTarget: true}
 		}
+	}
+
+	// 4. Special-move cooldown — shared slot with bash/kick/trip.
+	// Applied AFTER target resolution so invalid targets don't waste it.
+	cfg := configs.GetBalanceConfig()
+	if !char.TryCooldown(`special-move`, fmt.Sprintf(`%d rounds`, cfg.SpecialMoveCooldown)) {
+		return CastResult{SpellInfo: spellInfo, OnCooldown: true}
 	}
 
 	// 5. Fold calculation — school-aware stat/skill selection.
