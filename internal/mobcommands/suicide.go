@@ -11,7 +11,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/GoMudEngine/GoMud/internal/worldevents"
@@ -133,8 +132,6 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	if len(mob.Character.PlayerDamage) > 0 {
 
-		attackerCt := len(mob.Character.PlayerDamage)
-
 		for uId := range mob.Character.PlayerDamage {
 			if user := users.GetByUserId(uId); user != nil {
 
@@ -143,8 +140,6 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 						user.Character.EndAggro()
 					}
 				}
-
-				scripting.TryMobScriptEvent(`onDie`, mob.InstanceId, uId, `user`, map[string]any{`attackerCount`: attackerCt})
 
 				if mob.Character.Zone != `Training` { // Don't track any kills in the training zone
 					user.Character.KD.AddMobKill(int(mob.MobId))
