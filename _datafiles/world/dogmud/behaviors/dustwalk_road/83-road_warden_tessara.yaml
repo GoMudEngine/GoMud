@@ -1,0 +1,63 @@
+# Road Warden Tessara — Behavior Tree
+# Handles: player_give event for Quest 4 (The Warden's Report).
+# When a player gives the bandit's purse (item 16) and is on quest
+# step 4-start, advance to 4-end and speak flavor lines.
+# All conversation is handled by dialogue YAML.
+
+tree:
+  type: selector
+  children:
+
+    # ── GIVE: bandit's purse, Q4 active — accept and advance ──
+    - type: sequence
+      event: player_give
+      children:
+        - type: condition
+          check: item_matches
+          item_id: 16
+        - type: condition
+          check: player_has_quest
+          quest: "4-start"
+        - type: condition
+          check: player_missing_quest
+          quest: "4-end"
+        - type: action
+          do: say
+          text: Caravan schedules. Supply routes.
+        - type: action
+          do: say
+          text: >-
+            This is not petty theft -- someone is feeding them
+            information from inside the trading houses.
+        - type: action
+          do: say
+          text: >-
+            This changes things. You have done good work.
+            The Watchers will act on this.
+        - type: action
+          do: grant_quest
+          quest: "4-end"
+
+    # ── GIVE: bandit's purse, Q4 already complete — return it ──
+    - type: sequence
+      event: player_give
+      children:
+        - type: condition
+          check: item_matches
+          item_id: 16
+        - type: action
+          do: say
+          text: >-
+            You have already done your part. The Watchers remember it.
+        - type: action
+          do: return_item
+
+    # ── GIVE: any other item — reject and return ──
+    - type: sequence
+      event: player_give
+      children:
+        - type: action
+          do: say
+          text: I appreciate the thought, but I do not need that.
+        - type: action
+          do: return_item
