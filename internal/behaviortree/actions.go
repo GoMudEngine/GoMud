@@ -66,7 +66,41 @@ type ActionNode struct {
 	Fn     ActionFunc
 }
 
+// delayedActions is the set of action names that are subject to
+// perception-scaled reaction delays. Internal bookkeeping actions
+// (state, quest, item) remain instant.
+var delayedActions = map[string]bool{
+	"respond":     true,
+	"say":         true,
+	"emote":       true,
+	"attack":      true,
+	"flee":        true,
+	"cast":        true,
+	"move":        true,
+	"add_buff":    true,
+	"command_mob": true,
+}
+
 func (n *ActionNode) Evaluate(ctx *EvalContext) Result {
+	if delayedActions[n.Name] {
+		delay := calcReactionDelay(ctx.InstanceId)
+		if delay > 0 {
+			params := n.Params
+			fn := n.Fn
+			evalCtx := &EvalContext{
+				Event:      ctx.Event,
+				MobState:   ctx.MobState,
+				MobId:      ctx.MobId,
+				InstanceId: ctx.InstanceId,
+				RoomId:     ctx.RoomId,
+				MobName:    ctx.MobName,
+			}
+			GetEngine().QueueDelayed(delay, func() {
+				fn(params, evalCtx)
+			})
+			return Success
+		}
+	}
 	return n.Fn(n.Params, ctx)
 }
 

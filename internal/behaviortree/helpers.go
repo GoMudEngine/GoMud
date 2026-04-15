@@ -4,12 +4,44 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
+
+// calcReactionDelay computes a perception-scaled delay for behavior tree actions.
+// Formula: delay = base - (perception / scale), clamped to [min, max].
+// High-perception mobs react faster; low-perception mobs react slower.
+// Returns 0 if the mob instance doesn't exist.
+func calcReactionDelay(mobInstanceId int) time.Duration {
+	mob := mobs.GetInstance(mobInstanceId)
+	if mob == nil {
+		return 0
+	}
+	cfg := configs.GetBalanceConfig()
+	base := float64(cfg.MobBTreeReactionBase)
+	scale := float64(cfg.MobBTreeReactionPerceptionScale)
+	minDelay := float64(cfg.MobReactionDelayMin)
+	maxDelay := float64(cfg.MobReactionDelayMax)
+
+	if scale <= 0 {
+		scale = 100
+	}
+
+	perception := float64(mob.Character.Stats.Perception.ValueAdj)
+	delay := base - (perception / scale)
+
+	if delay < minDelay {
+		delay = minDelay
+	}
+	if delay > maxDelay {
+		delay = maxDelay
+	}
+	return time.Duration(delay * float64(time.Second))
+}
 
 // GetBehaviorPath constructs the filesystem path to a mob's behavior tree YAML.
 // Path: {dataFiles}/../behaviors/{zone}/{mobId}-{convertedName}.yaml
