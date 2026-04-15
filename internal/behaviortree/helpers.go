@@ -81,9 +81,14 @@ func TryMobBehavior(mobInstanceId int, event EventContext) bool {
 	// Lazy-load tree if not cached
 	tree := GetEngine().GetTree(mobId)
 	if tree == nil {
+		// Fast-path: negative cache avoids repeated os.Stat for mobs with no file.
+		if GetEngine().HasNoTree(mobId) {
+			return false
+		}
 		path := GetBehaviorPath(mobId, mob.Zone, mob.Character.Name)
-		// Check if file exists
+		// Check if file exists; record miss in negative cache so we skip next time.
 		if _, err := os.Stat(path); err != nil {
+			GetEngine().SetNoTree(mobId)
 			return false // No behavior tree for this mob
 		}
 		if err := GetEngine().LoadTree(mobId, path); err != nil {

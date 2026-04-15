@@ -7,9 +7,10 @@ import (
 
 // Engine manages behavior tree loading, caching, and evaluation.
 type Engine struct {
-	mu    sync.RWMutex
-	trees map[int]Node // mobId → compiled root node
-	queue []DelayedAction
+	mu     sync.RWMutex
+	trees  map[int]Node // mobId → compiled root node
+	noTree map[int]bool // mobId → no behavior file exists on disk
+	queue  []DelayedAction
 }
 
 type DelayedAction struct {
@@ -21,7 +22,8 @@ var globalEngine *Engine
 
 func init() {
 	globalEngine = &Engine{
-		trees: make(map[int]Node),
+		trees:  make(map[int]Node),
+		noTree: make(map[int]bool),
 	}
 }
 
@@ -30,6 +32,7 @@ func GetEngine() *Engine {
 }
 
 // LoadTree loads and caches a behavior tree for a mob type.
+// Clears any negative-cache entry so newly added files are picked up at runtime.
 func (e *Engine) LoadTree(mobId int, path string) error {
 	node, err := LoadTreeFromFile(path)
 	if err != nil {
@@ -37,8 +40,26 @@ func (e *Engine) LoadTree(mobId int, path string) error {
 	}
 	e.mu.Lock()
 	e.trees[mobId] = node
+	delete(e.noTree, mobId)
 	e.mu.Unlock()
 	return nil
+}
+
+// HasNoTree reports whether the negative cache has recorded that mobId has no
+// behavior tree file on disk. Callers should check this before os.Stat.
+func (e *Engine) HasNoTree(mobId int) bool {
+	e.mu.RLock()
+	defer e.mu.RUnlock()
+	return e.noTree[mobId]
+}
+
+// SetNoTree records that mobId has no behavior tree file on disk, suppressing
+// future os.Stat calls for this template until the engine is restarted or a
+// tree is successfully loaded via LoadTree.
+func (e *Engine) SetNoTree(mobId int) {
+	e.mu.Lock()
+	e.noTree[mobId] = true
+	e.mu.Unlock()
 }
 
 // GetTree returns the cached tree for a mob type, or nil.
