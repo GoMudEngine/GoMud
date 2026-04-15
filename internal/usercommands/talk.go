@@ -12,7 +12,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/quests"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -55,11 +54,7 @@ func Talk(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	// Build PlayerState for quest/item gating in dialogue
 	ps := buildPlayerState(user)
 
-	// Try JS onAsk with empty string first for backward compatibility
 	jsHandled := false
-	if handled, err := scripting.TryMobScriptEvent(`onAsk`, mobId, user.UserId, `user`, map[string]any{"askText": ``}); err == nil && handled {
-		jsHandled = true
-	}
 
 	// LLM greeting path: fires if JS didn't handle it and the mob has an LLM profile.
 	if !jsHandled && mob.LLMProfile != nil && bool(configs.GetLLMConfig().Enabled) {

@@ -12,7 +12,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/term"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -144,9 +143,7 @@ func Start(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 					user.UserId,
 				)
 
-				if doLook, err := scripting.TryRoomScriptEvent(`onEnter`, user.UserId, destRoom.RoomId); err != nil || doLook {
-					Look(``, user, destRoom, events.CmdSecretly) // Do a secret look.
-				}
+				Look(``, user, destRoom, events.CmdSecretly) // Do a secret look.
 
 				room.PlaySound(`room-exit`, `movement`, user.UserId)
 				destRoom.PlaySound(`room-enter`, `movement`, user.UserId)
@@ -183,10 +180,8 @@ func Start(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	rooms.MoveToRoom(user.UserId, ephemeralStartRoomId)
 
-	if doLook, err := scripting.TryRoomScriptEvent(`onEnter`, user.UserId, ephemeralStartRoomId); err != nil || doLook {
-		if lookRoom := rooms.LoadRoom(ephemeralStartRoomId); lookRoom != nil {
-			Look(``, user, lookRoom, events.CmdSecretly)
-		}
+	if lookRoom := rooms.LoadRoom(ephemeralStartRoomId); lookRoom != nil {
+		Look(``, user, lookRoom, events.CmdSecretly)
 	}
 
 	return true, nil

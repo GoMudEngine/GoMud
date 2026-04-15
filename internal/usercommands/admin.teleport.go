@@ -11,7 +11,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -90,14 +89,11 @@ func Teleport(rest string, user *users.UserRecord, room *rooms.Room, flags event
 
 	if gotoRoomId != 0 || rest == `0` {
 
-		previousRoomId := targetUser.Character.RoomId
-
 		if err := rooms.MoveToRoom(targetUser.UserId, gotoRoomId); err != nil {
 			user.SendText(err.Error())
 
 		} else {
 
-			scripting.TryRoomScriptEvent(`onExit`, user.UserId, previousRoomId)
 
 			user.SendText(fmt.Sprintf("Moved to room %d.", gotoRoomId))
 
@@ -146,9 +142,7 @@ func Teleport(rest string, user *users.UserRecord, room *rooms.Room, flags event
 
 			}
 
-			if doLook, err := scripting.TryRoomScriptEvent(`onEnter`, targetUser.UserId, gotoRoomId); err != nil || doLook {
-				Look(``, targetUser, gotoRoom, flags)
-			}
+			Look(``, targetUser, gotoRoom, flags)
 
 		}
 	} else {

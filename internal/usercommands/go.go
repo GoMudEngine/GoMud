@@ -15,7 +15,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -265,7 +264,6 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 			user.SendText("Oops, couldn't move there!")
 		} else {
 
-			scripting.TryRoomScriptEvent(`onExit`, user.UserId, originRoomId)
 
 			// Quest engine: room_enter notification
 			bridge := questengine.NewGameBridge(user, destRoom.RoomId)
@@ -569,7 +567,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 			// to a player they can't see. Still show the room via Look.
 			if isSneaking {
 				Look(``, user, destRoom, events.CmdSecretly)
-			} else if doLook, err := scripting.TryRoomScriptEvent(`onEnter`, user.UserId, destRoom.RoomId); err != nil || doLook {
+			} else {
 				Look(``, user, destRoom, events.CmdSecretly)
 			}
 

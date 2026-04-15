@@ -12,7 +12,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/textutil"
@@ -279,18 +278,6 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			user.Character.CastingState = nil
 			return true, nil
 		}
-	}
-
-	// 13b. Fire onCast spell script (if present) — can cancel the cast.
-	spellAggro := characters.SpellAggroInfo{
-		SpellId:              spellInfo.SpellId,
-		SpellRest:            result.SpellRest,
-		TargetUserIds:        result.TargetUserIds,
-		TargetMobInstanceIds: result.TargetMobInstanceIds,
-	}
-	if allowContinue, err := scripting.TrySpellScriptEvent("onCast", user.UserId, 0, spellAggro); err == nil && !allowContinue {
-		user.Character.CastingState = nil
-		return true, nil
 	}
 
 	// 14. Announce the cast start (skill progression now fires in InitiateCast).
