@@ -8,6 +8,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/textutil"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -26,6 +27,7 @@ func init() {
 	actionRegistry["grant_quest"] = actGrantQuest
 	actionRegistry["set_quest_flag"] = actSetQuestFlag
 	actionRegistry["give_item"] = actGiveItem
+	actionRegistry["return_item"] = actReturnItem
 	actionRegistry["take_item"] = actTakeItem
 	actionRegistry["give_gold"] = actGiveGold
 	actionRegistry["take_gold"] = actTakeGold
@@ -37,6 +39,18 @@ func init() {
 	actionRegistry["add_temp_exit"] = actAddTempExit
 	actionRegistry["set_state"] = actSetState
 	actionRegistry["command"] = actCommand
+
+	// New actions for boss mob / quest NPC behavior
+	actionRegistry["summon_companion"] = actSummonCompanion
+	actionRegistry["set_room_locked"] = actSetRoomLocked
+	actionRegistry["spawn_item_in_room"] = actSpawnItemInRoom
+	actionRegistry["add_buff"] = actAddBuff
+	actionRegistry["command_mob"] = actCommandMob
+	actionRegistry["give_item_multiple"] = actGiveItemMultiple
+	actionRegistry["set_misc_data"] = actSetMiscData
+	actionRegistry["increment_state"] = actIncrementState
+	actionRegistry["decrement_state"] = actDecrementState
+	actionRegistry["grant_quest_to_user"] = actGrantQuest // alias for grant_quest
 }
 
 // LookupAction returns the action function for the given name,
@@ -163,6 +177,27 @@ func actGiveItem(params map[string]any, ctx *EvalContext) Result {
 		return Failure
 	}
 	user.SendText(fmt.Sprintf("You receive a %s.\n", item.Name()))
+	return Success
+}
+
+// actReturnItem gives a fresh copy of the triggering event's item back
+// to the player. Used in player_give handlers to reject/return items.
+// Unlike give_item, no item_id param is needed — the item comes from
+// ctx.Event.ItemId.
+func actReturnItem(params map[string]any, ctx *EvalContext) Result {
+	user := users.GetByUserId(ctx.Event.UserId)
+	if user == nil {
+		return Failure
+	}
+	itemId := ctx.Event.ItemId
+	if itemId == 0 {
+		return Failure
+	}
+	item := items.New(itemId)
+	if !user.Character.StoreItem(item) {
+		return Failure
+	}
+	user.SendText(fmt.Sprintf("%s hands back the %s.\n", ctx.MobName, item.Name()))
 	return Success
 }
 
@@ -333,5 +368,212 @@ func actCommand(params map[string]any, ctx *EvalContext) Result {
 		return Failure
 	}
 	mob.Command(cmd)
+	return Success
+}
+
+// actSummonCompanion spawns a mob and registers it as a companion of the
+// acting mob (mob-owned companion). Uses the same Charm mechanism as the
+// player manifestation system, with userId=0 to indicate mob ownership.
+func actSummonCompanion(params map[string]any, ctx *EvalContext) Result {
+	mob := mobs.GetInstance(ctx.InstanceId)
+	if mob == nil {
+		return Failure
+	}
+	mobId := getIntParam(params, "mob_id")
+	if mobId == 0 {
+		return Failure
+	}
+	count := getIntParam(params, "count")
+	if count <= 0 {
+		count = 1
+	}
+	room := rooms.LoadRoom(ctx.RoomId)
+	if room == nil {
+		return Failure
+	}
+	manifestSkill := mob.Character.GetSkillLevel(skills.Manifestation)
+	charisma := mob.Character.Stats.Charisma.ValueAdj
+	basePool := getIntParam(params, "base_pool")
+	if basePool <= 0 {
+		basePool = 50
+	}
+	pool := characters.CalcCompanionStatPool(basePool, charisma, manifestSkill)
+	for i := 0; i < count; i++ {
+		companion := mobs.NewMobById(mobs.MobId(mobId), room.RoomId, pool)
+		if companion == nil {
+			continue
+		}
+		room.AddMob(companion.InstanceId)
+		companion.Character.Charm(0, 99999, "")
+		companion.Character.EndAggro()
+		info := characters.CompanionInfo{
+			MobId:      int(companion.MobId),
+			InstanceId: companion.InstanceId,
+			SourceType: characters.CompanionSummoned,
+			Name:       companion.Character.Name,
+			BaseName:   companion.Character.Name,
+			AutoAssist: true,
+		}
+		mob.Character.AddCompanion(info)
+	}
+	return Success
+}
+
+// actSetRoomLocked locks or unlocks a named exit in the current room.
+// params: direction (string), locked ("true"/"false", default true)
+func actSetRoomLocked(params map[string]any, ctx *EvalContext) Result {
+	room := rooms.LoadRoom(ctx.RoomId)
+	if room == nil {
+		return Failure
+	}
+	direction := getStringParam(params, "direction")
+	if direction == "" {
+		return Failure
+	}
+	locked := getStringParam(params, "locked") != "false"
+	room.SetExitLock(direction, locked)
+	return Success
+}
+
+// actSpawnItemInRoom drops an item on the floor of a room.
+// params: item_id (int), room_id (int, default ctx.RoomId), chance (int 1-100, default 100)
+func actSpawnItemInRoom(params map[string]any, ctx *EvalContext) Result {
+	itemId := getIntParam(params, "item_id")
+	if itemId == 0 {
+		return Failure
+	}
+	roomId := getIntParam(params, "room_id")
+	if roomId == 0 {
+		roomId = ctx.RoomId
+	}
+	chance := getIntParam(params, "chance")
+	if chance <= 0 {
+		chance = 100
+	}
+	if util.Rand(100) >= chance {
+		return Success // skipped by chance — not a failure
+	}
+	room := rooms.LoadRoom(roomId)
+	if room == nil {
+		return Failure
+	}
+	item := items.New(itemId)
+	room.AddItem(item, false)
+	return Success
+}
+
+// actAddBuff applies a buff to the acting mob.
+// params: buff_id (int)
+func actAddBuff(params map[string]any, ctx *EvalContext) Result {
+	mob := mobs.GetInstance(ctx.InstanceId)
+	if mob == nil {
+		return Failure
+	}
+	buffId := getIntParam(params, "buff_id")
+	if buffId == 0 {
+		return Failure
+	}
+	mob.AddBuff(buffId, "behaviortree")
+	return Success
+}
+
+// actCommandMob finds the first mob in the room with the given mob_id and
+// issues it a command string. Returns Failure if no matching mob is found.
+// params: mob_id (int), cmd (string)
+func actCommandMob(params map[string]any, ctx *EvalContext) Result {
+	targetMobId := getIntParam(params, "mob_id")
+	if targetMobId == 0 {
+		return Failure
+	}
+	cmd := getStringParam(params, "cmd")
+	if cmd == "" {
+		return Failure
+	}
+	room := rooms.LoadRoom(ctx.RoomId)
+	if room == nil {
+		return Failure
+	}
+	for _, instId := range room.GetMobs(rooms.FindAll) {
+		m := mobs.GetInstance(instId)
+		if m != nil && int(m.MobId) == targetMobId {
+			m.Command(cmd)
+			return Success
+		}
+	}
+	return Failure
+}
+
+// actGiveItemMultiple gives one or more copies of an item to the triggering user.
+// params: item_id (int), count (int, default 1)
+func actGiveItemMultiple(params map[string]any, ctx *EvalContext) Result {
+	user := users.GetByUserId(ctx.Event.UserId)
+	if user == nil {
+		return Failure
+	}
+	itemId := getIntParam(params, "item_id")
+	if itemId == 0 {
+		return Failure
+	}
+	count := getIntParam(params, "count")
+	if count <= 0 {
+		count = 1
+	}
+	for i := 0; i < count; i++ {
+		item := items.New(itemId)
+		user.Character.StoreItem(item)
+	}
+	return Success
+}
+
+// actSetMiscData stores an arbitrary string value on the triggering user's
+// character. Useful for quest-branch tracking via misc data keys.
+// params: key (string), value (string)
+func actSetMiscData(params map[string]any, ctx *EvalContext) Result {
+	user := users.GetByUserId(ctx.Event.UserId)
+	if user == nil {
+		return Failure
+	}
+	key := getStringParam(params, "key")
+	if key == "" {
+		return Failure
+	}
+	value := getStringParam(params, "value")
+	user.Character.SetMiscData(key, value)
+	return Success
+}
+
+// actIncrementState adds amount (default 1) to a numeric MobState key.
+// params: key (string), amount (int, default 1)
+func actIncrementState(params map[string]any, ctx *EvalContext) Result {
+	if ctx.MobState == nil {
+		return Failure
+	}
+	key := getStringParam(params, "key")
+	if key == "" {
+		return Failure
+	}
+	amount := getIntParam(params, "amount")
+	if amount == 0 {
+		amount = 1
+	}
+	ctx.MobState.Set(key, ctx.MobState.GetInt(key)+amount)
+	return Success
+}
+
+// actDecrementState subtracts amount (default 1) from a numeric MobState key.
+// params: key (string), amount (int, default 1)
+func actDecrementState(params map[string]any, ctx *EvalContext) Result {
+	if ctx.MobState == nil {
+		return Failure
+	}
+	key := getStringParam(params, "key")
+	if key == "" {
+		return Failure
+	}
+	amount := getIntParam(params, "amount")
+	if amount == 0 {
+		amount = 1
+	}
+	ctx.MobState.Set(key, ctx.MobState.GetInt(key)-amount)
 	return Success
 }
