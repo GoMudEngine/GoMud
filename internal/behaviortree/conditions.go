@@ -32,6 +32,11 @@ func init() {
 	conditionRegistry["state_equals"] = condStateEquals
 	conditionRegistry["players_in_room"] = condPlayersInRoom
 	conditionRegistry["item_matches"] = condItemMatches
+	conditionRegistry["mob_has_buff"] = condMobHasBuff
+	conditionRegistry["player_has_spell"] = condPlayerHasSpell
+	conditionRegistry["player_has_misc_data"] = condPlayerHasMiscData
+	conditionRegistry["state_greater_than"] = condStateGreaterThan
+	conditionRegistry["multiple_enemies"] = condMultipleEnemies
 }
 
 // LookupCondition returns the condition function for the given name,
@@ -273,6 +278,69 @@ func condPlayersInRoom(params map[string]any, ctx *EvalContext) Result {
 func condItemMatches(params map[string]any, ctx *EvalContext) Result {
 	itemId := getIntParam(params, "item_id")
 	if ctx.Event.ItemId == itemId {
+		return Success
+	}
+	return Failure
+}
+
+func condMobHasBuff(params map[string]any, ctx *EvalContext) Result {
+	mob := mobs.GetInstance(ctx.InstanceId)
+	if mob == nil {
+		return Failure
+	}
+	buffId := getIntParam(params, "buff_id")
+	if mob.Character.HasBuff(buffId) {
+		return Success
+	}
+	return Failure
+}
+
+func condPlayerHasSpell(params map[string]any, ctx *EvalContext) Result {
+	user := users.GetByUserId(ctx.Event.UserId)
+	if user == nil {
+		return Failure
+	}
+	spell := getStringParam(params, "spell")
+	if user.Character.HasSpell(spell) {
+		return Success
+	}
+	return Failure
+}
+
+func condPlayerHasMiscData(params map[string]any, ctx *EvalContext) Result {
+	user := users.GetByUserId(ctx.Event.UserId)
+	if user == nil {
+		return Failure
+	}
+	key := getStringParam(params, "key")
+	value := getStringParam(params, "value")
+	actual, _ := user.Character.GetMiscData(key).(string)
+	if actual == value {
+		return Success
+	}
+	return Failure
+}
+
+func condStateGreaterThan(params map[string]any, ctx *EvalContext) Result {
+	if ctx.MobState == nil {
+		return Failure
+	}
+	key := getStringParam(params, "key")
+	threshold := getIntParam(params, "value")
+	if ctx.MobState.GetInt(key) > threshold {
+		return Success
+	}
+	return Failure
+}
+
+func condMultipleEnemies(params map[string]any, ctx *EvalContext) Result {
+	room := rooms.LoadRoom(ctx.RoomId)
+	if room == nil {
+		return Failure
+	}
+	// Count players plus charmed companion mobs
+	count := len(room.GetPlayers()) + len(room.GetMobs(rooms.FindCharmed))
+	if count > 1 {
 		return Success
 	}
 	return Failure

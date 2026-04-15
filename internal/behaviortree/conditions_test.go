@@ -210,3 +210,72 @@ func TestCondLookup_Unknown(t *testing.T) {
 		t.Error("expected nil for unknown condition")
 	}
 }
+
+func TestCondStateGreaterThan_Above(t *testing.T) {
+	state := NewBehaviorState()
+	state.Set("counter", 5)
+	ctx := &EvalContext{MobState: state}
+	fn := LookupCondition("state_greater_than")
+	if fn == nil {
+		t.Fatal("state_greater_than not registered")
+	}
+	result := fn(map[string]any{"key": "counter", "value": 3}, ctx)
+	if result != Success {
+		t.Error("expected Success when 5 > 3")
+	}
+}
+
+func TestCondStateGreaterThan_Equal(t *testing.T) {
+	state := NewBehaviorState()
+	state.Set("counter", 3)
+	ctx := &EvalContext{MobState: state}
+	fn := LookupCondition("state_greater_than")
+	result := fn(map[string]any{"key": "counter", "value": 3}, ctx)
+	if result != Failure {
+		t.Error("expected Failure when 3 == 3 (not greater)")
+	}
+}
+
+func TestCondStateGreaterThan_Below(t *testing.T) {
+	state := NewBehaviorState()
+	state.Set("counter", 1)
+	ctx := &EvalContext{MobState: state}
+	fn := LookupCondition("state_greater_than")
+	result := fn(map[string]any{"key": "counter", "value": 3}, ctx)
+	if result != Failure {
+		t.Error("expected Failure when 1 < 3")
+	}
+}
+
+func TestCondStateGreaterThan_NilState(t *testing.T) {
+	ctx := &EvalContext{}
+	fn := LookupCondition("state_greater_than")
+	result := fn(map[string]any{"key": "counter", "value": 0}, ctx)
+	if result != Failure {
+		t.Error("expected Failure for nil state")
+	}
+}
+
+func TestCondStateGreaterThan_Float64Param(t *testing.T) {
+	state := NewBehaviorState()
+	state.Set("counter", 5)
+	ctx := &EvalContext{MobState: state}
+	fn := LookupCondition("state_greater_than")
+	// YAML parses numbers as float64
+	result := fn(map[string]any{"key": "counter", "value": float64(3)}, ctx)
+	if result != Success {
+		t.Error("expected Success with float64 threshold")
+	}
+}
+
+func TestCondAllNewRegistered(t *testing.T) {
+	for _, name := range []string{
+		"mob_has_buff", "player_has_spell",
+		"player_has_misc_data", "state_greater_than",
+		"multiple_enemies",
+	} {
+		if LookupCondition(name) == nil {
+			t.Errorf("condition %q not registered", name)
+		}
+	}
+}
