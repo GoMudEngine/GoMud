@@ -5,3 +5,6 @@ triggerrate: 1 round
 triggercount: 2
 flags:
   - no-combat
+start_user_text: '<ansi fg="yellow">You are stunned! You cannot attack.</ansi>'
+start_room_text: "{sourceplainname} staggers, dazed!"
+end_user_text: '<ansi fg="green">You shake off the stun.</ansi>'
