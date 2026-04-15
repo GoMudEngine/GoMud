@@ -1,0 +1,32 @@
+# Aberrant Chrysalis — Behavior Tree
+# On death: grant 1-cave to the killing player and deliver completion text.
+
+tree:
+  type: sequence
+  event: mob_die
+  children:
+    - type: condition
+      check: player_has_quest
+      quest: "1-magic_cast"
+    - type: condition
+      check: player_missing_quest
+      quest: "1-cave"
+    - type: action
+      do: grant_quest
+      quest: "1-cave"
+    - type: action
+      do: respond
+      user_text: ""
+    - type: action
+      do: respond
+      user_text: >-
+        The Aberrant collapses. The pressure in the air releases.
+        Somewhere above, Elder Saris is probably not surprised.
+    - type: action
+      do: respond
+      user_text: >-
+        The south gate is open to you now. Return to the Basin
+        Warden.
+    - type: action
+      do: respond
+      user_text: ""

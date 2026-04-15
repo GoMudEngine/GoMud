@@ -1,0 +1,33 @@
+# Boss Cave — Room 120
+# Aberrant Chrysalis (mob 69) final trial.
+# On enter: atmospheric flavor text.
+# Quest advancement on boss death is handled in
+# behaviors/sanctum_basin/69-aberrant_chrysalis.yaml (mob_die event).
+
+tree:
+  type: sequence
+  event: room_enter
+  children:
+    - type: action
+      do: send_user_text
+      text: ""
+    - type: action
+      do: send_user_text
+      text: >-
+        The air in this chamber is wrong. The moisture on the
+        walls has no source you can identify, and there is a
+        pressure here that is not quite sound.
+    - type: action
+      do: send_user_text
+      text: ""
+    - type: action
+      do: send_user_text
+      text: >-
+        At the far end of the cave, a shape moves. It is roughly
+        person-shaped, but the proportions have drifted. The
+        Chrysalis process does this sometimes -- a Becoming that
+        lost direction. The Academy calls them Aberrants. This one
+        does not speak. It does not need to.
+    - type: action
+      do: send_user_text
+      text: ""

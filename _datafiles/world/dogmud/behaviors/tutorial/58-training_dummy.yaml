@@ -1,5 +1,5 @@
 # Training Dummy — Behavior Tree
-# On death: crumble flavor text + teacher mob (57) reacts.
+# On death: trainer (mob 51) reacts and grants 1-combat_defeat to killer.
 
 tree:
   type: sequence
@@ -10,9 +10,14 @@ tree:
       room_text: "<ansi fg=\"mobname\">{source}</ansi> crumbles to dust."
     - type: action
       do: command_mob
-      mob_id: 57
-      cmd: "say You did it! As you can see you gain experience for combat victories."
+      mob_id: 51
+      cmd: "say Well done. You have a sense of it now."
     - type: action
       do: command_mob
-      mob_id: 57
-      cmd: 'say Now head <ansi fg="exit">west</ansi> to complete your training.'
+      mob_id: 51
+      cmd: >-
+        say The Forge is south of here. Speak with Korvath --
+        physical mastery and craft mastery are not separate things.
+    - type: action
+      do: grant_quest
+      quest: "1-combat_defeat"

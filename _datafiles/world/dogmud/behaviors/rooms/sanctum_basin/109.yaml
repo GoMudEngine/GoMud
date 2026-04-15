@@ -1,0 +1,122 @@
+# The Forge — Room 109
+# Blacksmith Korvath (mob 52) gives crafting materials and teaches
+# smithing. Sub-steps: crafting_arrive -> crafting_craft
+# Quest advances on craft attempt — outcome is secondary to the lesson.
+
+tree:
+  type: selector
+  children:
+
+    # ── ROOM ENTER: first arrival after combat trial ──
+    - type: sequence
+      event: room_enter
+      children:
+        - type: condition
+          check: player_has_quest
+          quest: "1-combat_defeat"
+        - type: condition
+          check: player_missing_quest
+          quest: "1-crafting_arrive"
+        - type: condition
+          check: mob_in_room
+          mob_id: 52
+        - type: action
+          do: give_item
+          item_id: 40001
+        - type: action
+          do: give_item
+          item_id: 40002
+        - type: action
+          do: mob_emote
+          mob_id: 52
+          text: >-
+            sets down the hammer and turns to face you. The forge
+            has been burning continuously for decades -- the heat
+            in this room is a permanent condition.
+          delay: 1.0
+        - type: action
+          do: mob_say
+          mob_id: 52
+          text: >-
+            Crafting is belief made material. You take raw substance
+            and impose a shape on it through skill and intent.
+          delay: 2.0
+        - type: action
+          do: mob_say
+          mob_id: 52
+          text: >-
+            The forge does not care about your feelings. It cares
+            about your technique.
+          delay: 3.5
+        - type: action
+          do: mob_say
+          mob_id: 52
+          text: >-
+            Heat the metal until it tells you it is ready -- color,
+            texture, the sound it makes. Then shape it before doubt
+            sets in.
+          delay: 5.0
+        - type: action
+          do: mob_say
+          mob_id: 52
+          text: >-
+            I have put an iron ingot and a leather strip in your
+            pack.
+          delay: 6.5
+        - type: action
+          do: mob_say
+          mob_id: 52
+          text: >-
+            Type <ansi fg="command">craft</ansi> to see your
+            options. Then type
+            <ansi fg="command">craft iron dagger</ansi>. One
+            attempt. Go.
+          delay: 8.0
+        - type: action
+          do: grant_quest
+          quest: "1-crafting_arrive"
+
+    # ── ROOM COMMAND: craft attempt ──
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [craft]
+        - type: condition
+          check: player_has_quest
+          quest: "1-crafting_arrive"
+        - type: condition
+          check: player_missing_quest
+          quest: "1-crafting_craft"
+        - type: condition
+          check: mob_in_room
+          mob_id: 52
+        - type: action
+          do: mob_emote
+          mob_id: 52
+          text: glances at the work and gives a single slow nod.
+          delay: 0.5
+        - type: action
+          do: mob_say
+          mob_id: 52
+          text: You have the idea.
+          delay: 1.5
+        - type: action
+          do: mob_say
+          mob_id: 52
+          text: >-
+            The Alchemist is west of the well court. She works
+            with a different kind of precision.
+          delay: 2.5
+        - type: action
+          do: mob_say
+          mob_id: 52
+          text: >-
+            If you get turned around, type
+            <ansi fg="command">map</ansi> -- it will show you
+            where you are.
+          delay: 4.0
+        - type: action
+          do: grant_quest
+          quest: "1-crafting_craft"

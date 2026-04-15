@@ -1,0 +1,433 @@
+# Academy Hall — Room 113
+# Chrysalis Priest (mob 50) delivers the Awakening Rite. Exits are
+# locked for the duration of the ceremony, then unlocked.
+# ceremony_active state prevents re-triggering while rite is running.
+
+tree:
+  type: selector
+  children:
+
+    # ── ROOM ENTER: eligible — no mutation yet, no ceremony running ──
+    - type: sequence
+      event: room_enter
+      children:
+        - type: condition
+          check: player_missing_quest
+          quest: "1-mutation"
+        - type: condition
+          check: state_equals
+          key: ceremony_active
+          value: ""
+        - type: condition
+          check: mob_in_room
+          mob_id: 50
+        - type: action
+          do: set_room_locked
+          direction: north
+          locked: "true"
+        - type: action
+          do: set_room_locked
+          direction: south
+          locked: "true"
+        - type: action
+          do: set_room_locked
+          direction: east
+          locked: "true"
+        - type: action
+          do: set_room_locked
+          direction: west
+          locked: "true"
+        - type: action
+          do: mob_say
+          mob_id: 50
+          text: Be still for a moment.
+          delay: 1.0
+        - type: action
+          do: mob_say
+          mob_id: 50
+          text: >-
+            Type <ansi fg="command">look</ansi> at any time to
+            examine your surroundings. Type
+            <ansi fg="command">help</ansi> if you are unsure what
+            commands are available -- there is documentation for
+            most things.
+          delay: 2.5
+        - type: action
+          do: mob_say
+          mob_id: 50
+          text: >-
+            You are newly arrived in Gaius. You may not yet
+            understand what that means.
+          delay: 5.0
+        - type: action
+          do: mob_say
+          mob_id: 50
+          text: >-
+            The world here is not like any world you have come
+            from. Gaius is made of belief -- belief shapes the
+            land, the creatures, the rules of cause and effect.
+          delay: 6.5
+        - type: action
+          do: mob_say
+          mob_id: 50
+          text: And it shapes people.
+          delay: 8.5
+        - type: action
+          do: mob_say
+          mob_id: 50
+          text: >-
+            The Chrysalis has been cataloguing that shaping for
+            four hundred years. We know what to expect. You may
+            not.
+          delay: 10.0
+        - type: action
+          do: mob_say
+          mob_id: 50
+          text: >-
+            The Chrysalis is the name we give to the form between
+            what was and what will be. Every person who has passed
+            through this hall was once standing where you are
+            standing.
+          delay: 12.0
+        - type: action
+          do: mob_say
+          mob_id: 50
+          text: >-
+            In Gaius, that becoming is not a metaphor. The body
+            remembers stress, conflict, effort. Over time, it
+            changes. We call these changes Mutations.
+          delay: 14.5
+        - type: action
+          do: mob_say
+          mob_id: 50
+          text: >-
+            Every Mutation is the body saying yes to something.
+            Yes to strength, yes to perception, yes to endurance.
+            There are costs -- the Chrysalis does not lie about
+            that -- but a Priest does not dwell on costs. We dwell
+            on what you are becoming.
+          delay: 16.5
+        - type: action
+          do: mob_say
+          mob_id: 50
+          text: >-
+            The first Mutation is always a gift -- or a warning.
+            The Chrysalis performs the Awakening Rite to initiate
+            it before the body does something unexpected on its
+            own.
+          delay: 18.5
+        - type: action
+          do: mob_emote
+          mob_id: 50
+          text: >-
+            steps forward and places two fingers lightly on your
+            forehead. The air around you hums very quietly.
+          delay: 20.5
+        - type: action
+          do: mob_emote
+          mob_id: 50
+          text: withdraws their hand. The hum fades.
+          delay: 22.5
+        - type: action
+          do: mob_say
+          mob_id: 50
+          text: >-
+            It has begun. You will feel the change over time --
+            in combat, in effort, in moments of stress. It is
+            part of you now.
+          delay: 24.0
+        - type: action
+          do: mob_say
+          mob_id: 50
+          text: >-
+            You can type <ansi fg="command">mutations</ansi> at
+            any time to see what the change has wrought.
+          delay: 25.5
+        - type: action
+          do: mob_say
+          mob_id: 50
+          text: >-
+            Now. Before you leave this place, you have six trials
+            to complete. Each instructor teaches a different skill.
+          delay: 27.0
+        - type: action
+          do: mob_say
+          mob_id: 50
+          text: >-
+            First: visit the Merchant on Market Street, one step
+            south of here. She will show you how commerce works
+            here.
+          delay: 28.5
+        - type: action
+          do: mob_say
+          mob_id: 50
+          text: >-
+            After that, find the Combat Trainer in the Training
+            Yard -- go east, just beyond here. Then the Forge to
+            the east, the Alchemist west of the well, the
+            Wilderness Guide in the West Meadow, and finally the
+            Elder at the Observatory above.
+          delay: 30.0
+        - type: action
+          do: mob_say
+          mob_id: 50
+          text: >-
+            When all six are done, the Basin Warden at the south
+            gate will let you pass. Type
+            <ansi fg="command">quest</ansi> at any time if you
+            lose your place.
+          delay: 32.0
+        - type: action
+          do: mob_say
+          mob_id: 50
+          text: >-
+            There is a map of the wider world set into the floor.
+            Type <ansi fg="command">look mosaic</ansi> to examine
+            it before you leave.
+          delay: 33.5
+        - type: action
+          do: grant_mutation
+        - type: action
+          do: give_gold
+          amount: 10
+        - type: action
+          do: grant_quest
+          quest: "1-start"
+        - type: action
+          do: grant_quest
+          quest: "1-mutation"
+        - type: action
+          do: set_state
+          key: ceremony_active
+          value: "true"
+        - type: action
+          do: set_state
+          key: ceremony_ticks
+          value: 0
+
+    # ── ROOM ENTER: eligible — ceremony already running ──
+    # Second player walks in during an active rite: give quietly.
+    - type: sequence
+      event: room_enter
+      children:
+        - type: condition
+          check: player_missing_quest
+          quest: "1-mutation"
+        - type: condition
+          check: state_equals
+          key: ceremony_active
+          value: "true"
+        - type: action
+          do: grant_mutation
+        - type: action
+          do: give_gold
+          amount: 10
+        - type: action
+          do: grant_quest
+          quest: "1-start"
+        - type: action
+          do: grant_quest
+          quest: "1-mutation"
+
+    # ── ROOM IDLE: tick ceremony timer, then unlock exits ──
+    - type: sequence
+      event: room_idle
+      children:
+        - type: condition
+          check: state_equals
+          key: ceremony_active
+          value: "true"
+        - type: action
+          do: increment_state
+          key: ceremony_ticks
+        - type: condition
+          check: state_greater_than
+          key: ceremony_ticks
+          value: 5
+        - type: action
+          do: set_room_locked
+          direction: north
+          locked: "false"
+        - type: action
+          do: set_room_locked
+          direction: south
+          locked: "false"
+        - type: action
+          do: set_room_locked
+          direction: east
+          locked: "false"
+        - type: action
+          do: set_room_locked
+          direction: west
+          locked: "false"
+        - type: action
+          do: set_state
+          key: ceremony_active
+          value: ""
+        - type: action
+          do: set_state
+          key: ceremony_ticks
+          value: 0
+
+    # ── ROOM COMMAND: block movement during ceremony ──
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: state_equals
+          key: ceremony_active
+          value: "true"
+        - type: condition
+          check: command_matches
+          commands: [north, south, east, west, n, s, e, w, go]
+        - type: action
+          do: mob_say
+          mob_id: 50
+          text: The Rite is not yet complete. A moment more.
+        - type: action
+          do: intercept
+
+    # ── ROOM COMMAND: block picking up the mosaic ──
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [get, take, grab]
+        - type: condition
+          check: command_rest_contains
+          keywords: [map, mosaic]
+        - type: action
+          do: send_user_text
+          text: The mosaic is set into the floor. It is not going anywhere.
+        - type: action
+          do: intercept
+
+    # ── ROOM COMMAND: look mosaic / look map ──
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [look, examine]
+        - type: condition
+          check: command_rest_contains
+          keywords: [mosaic, map]
+        - type: action
+          do: send_user_text
+          text: ""
+        - type: action
+          do: send_user_text
+          text: "+------------------------------------------------------+"
+        - type: action
+          do: send_user_text
+          text: "|  THE WINDWARD MARCHES                                |"
+        - type: action
+          do: send_user_text
+          text: "|  (partial -- much of Gaius remains uncharted)        |"
+        - type: action
+          do: send_user_text
+          text: "+------------------------------------------------------+"
+        - type: action
+          do: send_user_text
+          text: "|                                                      |"
+        - type: action
+          do: send_user_text
+          text: "|  [NEW PLYMOUTH *]               [? ? ?]             |"
+        - type: action
+          do: send_user_text
+          text: "|        |         \\                                   |"
+        - type: action
+          do: send_user_text
+          text: "|   [TIDEMARK]      \\         [STILLWATER]            |"
+        - type: action
+          do: send_user_text
+          text: "|        |           \\              |                 |"
+        - type: action
+          do: send_user_text
+          text: "|   [GREENFORD]   [AMBER VALLEY]   |                 |"
+        - type: action
+          do: send_user_text
+          text: "|         \\              \\          |                 |"
+        - type: action
+          do: send_user_text
+          text: "|          \\---------[CONFLUENCE]                    |"
+        - type: action
+          do: send_user_text
+          text: "|                         |                           |"
+        - type: action
+          do: send_user_text
+          text: "|                   . . . . . . .                     |"
+        - type: action
+          do: send_user_text
+          text: "|                  .   unmapped   .                   |"
+        - type: action
+          do: send_user_text
+          text: "|                   . . . . . . .                     |"
+        - type: action
+          do: send_user_text
+          text: "|                    /~~~~~~~~~~~\\                    |"
+        - type: action
+          do: send_user_text
+          text: "|                   |  SANCTUM    |                   |"
+        - type: action
+          do: send_user_text
+          text: "|                   |   BASIN     |  <- you are here  |"
+        - type: action
+          do: send_user_text
+          text: "|                    \\~~~~~~~~~~~/                    |"
+        - type: action
+          do: send_user_text
+          text: "+------------------------------------------------------+"
+        - type: action
+          do: send_user_text
+          text: "| * city  ~ plateau rim  . unmapped  \\ road           |"
+        - type: action
+          do: send_user_text
+          text: "+------------------------------------------------------+"
+        - type: action
+          do: send_user_text
+          text: ""
+        - type: action
+          do: intercept
+
+    # ── ROOM COMMAND: talk/greet ──
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [talk, greet]
+        - type: condition
+          check: mob_in_room
+          mob_id: 50
+        - type: selector
+          children:
+            - type: sequence
+              children:
+                - type: condition
+                  check: player_has_quest
+                  quest: "1-shopping_arrive"
+                - type: action
+                  do: mob_say
+                  mob_id: 50
+                  text: >-
+                    Your Awakening is behind you. The trials are
+                    ahead. Type <ansi fg="command">quest</ansi> to
+                    see what remains.
+            - type: sequence
+              children:
+                - type: condition
+                  check: player_has_quest
+                  quest: "1-mutation"
+                - type: action
+                  do: mob_say
+                  mob_id: 50
+                  text: >-
+                    Visit the Merchant on Market Street -- east to
+                    Town Square, then south. She will show you how
+                    commerce works here.
+            - type: action
+              do: mob_say
+              mob_id: 50
+              text: Step closer. The Awakening Rite will not wait.
