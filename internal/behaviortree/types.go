@@ -18,6 +18,9 @@ type EventContext struct {
 	ItemId    int            // For give/show events — the item
 	RoomId    int            // Room where event occurred
 	Extra     map[string]any // Extensible context
+	Command   string         // Command name for room command interception
+	Rest      string         // Command arguments
+	Direction string         // Direction for movement events
 }
 
 // Node is the interface all behavior tree nodes implement.
@@ -34,6 +37,7 @@ type EvalContext struct {
 	InstanceId int    // Mob instance ID
 	RoomId     int    // Current room
 	MobName    string // Mob's display name
+	Intercepted bool  // Whether the command was intercepted by a behavior tree
 }
 
 // NodeDef is the raw YAML definition of a node, parsed before
