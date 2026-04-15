@@ -37,6 +37,9 @@ func init() {
 	conditionRegistry["player_has_misc_data"] = condPlayerHasMiscData
 	conditionRegistry["state_greater_than"] = condStateGreaterThan
 	conditionRegistry["multiple_enemies"] = condMultipleEnemies
+	conditionRegistry["command_matches"] = condCommandMatches
+	conditionRegistry["command_rest_contains"] = condCommandRestContains
+	conditionRegistry["mob_in_room"] = condMobInRoom
 }
 
 // LookupCondition returns the condition function for the given name,
@@ -342,6 +345,63 @@ func condMultipleEnemies(params map[string]any, ctx *EvalContext) Result {
 	count := len(room.GetPlayers()) + len(room.GetMobs(rooms.FindCharmed))
 	if count > 1 {
 		return Success
+	}
+	return Failure
+}
+
+// condCommandMatches checks if ctx.Event.Command matches any string in the
+// "commands" list param.
+func condCommandMatches(params map[string]any, ctx *EvalContext) Result {
+	cmdList, ok := params["commands"]
+	if !ok {
+		return Failure
+	}
+	list, ok := cmdList.([]any)
+	if !ok {
+		return Failure
+	}
+	cmd := strings.ToLower(ctx.Event.Command)
+	for _, v := range list {
+		if s, ok := v.(string); ok && strings.ToLower(s) == cmd {
+			return Success
+		}
+	}
+	return Failure
+}
+
+// condCommandRestContains checks if ctx.Event.Rest contains any keyword from
+// the "keywords" list param.
+func condCommandRestContains(params map[string]any, ctx *EvalContext) Result {
+	kwList, ok := params["keywords"]
+	if !ok {
+		return Failure
+	}
+	list, ok := kwList.([]any)
+	if !ok {
+		return Failure
+	}
+	rest := strings.ToLower(ctx.Event.Rest)
+	for _, v := range list {
+		if s, ok := v.(string); ok && strings.Contains(rest, strings.ToLower(s)) {
+			return Success
+		}
+	}
+	return Failure
+}
+
+// condMobInRoom checks if a mob with the given template mob_id is present in
+// the room.
+func condMobInRoom(params map[string]any, ctx *EvalContext) Result {
+	mobId := getIntParam(params, "mob_id")
+	room := rooms.LoadRoom(ctx.RoomId)
+	if room == nil {
+		return Failure
+	}
+	for _, instId := range room.GetMobs(rooms.FindAll) {
+		m := mobs.GetInstance(instId)
+		if m != nil && int(m.MobId) == mobId {
+			return Success
+		}
 	}
 	return Failure
 }

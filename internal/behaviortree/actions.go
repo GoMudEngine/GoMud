@@ -8,6 +8,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/exit"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/textutil"
@@ -52,6 +53,16 @@ func init() {
 	actionRegistry["increment_state"] = actIncrementState
 	actionRegistry["decrement_state"] = actDecrementState
 	actionRegistry["grant_quest_to_user"] = actGrantQuest // alias for grant_quest
+
+	// New actions for room behavior trees
+	actionRegistry["mob_say"] = actMobSay
+	actionRegistry["mob_emote"] = actMobEmote
+	actionRegistry["grant_mutation"] = actGrantMutation
+	actionRegistry["send_user_text"] = actSendUserText
+	actionRegistry["send_room_text"] = actSendRoomText
+	actionRegistry["intercept"] = actIntercept
+	actionRegistry["remove_buff"] = actRemoveBuff
+	actionRegistry["move_player"] = actMovePlayer
 }
 
 // LookupAction returns the action function for the given name,
@@ -80,6 +91,8 @@ var delayedActions = map[string]bool{
 	"move":        true,
 	"add_buff":    true,
 	"command_mob": true,
+	"mob_say":     true,
+	"mob_emote":   true,
 }
 
 func (n *ActionNode) Evaluate(ctx *EvalContext) Result {
@@ -639,5 +652,123 @@ func actDecrementState(params map[string]any, ctx *EvalContext) Result {
 		amount = 1
 	}
 	ctx.MobState.Set(key, ctx.MobState.GetInt(key)-amount)
+	return Success
+}
+
+// actMobSay finds the first mob in the room with the given mob_id and makes
+// it speak.
+// params: mob_id (int), text (string)
+func actMobSay(params map[string]any, ctx *EvalContext) Result {
+	mobId := getIntParam(params, "mob_id")
+	text := getStringParam(params, "text")
+	room := rooms.LoadRoom(ctx.RoomId)
+	if room == nil {
+		return Failure
+	}
+	for _, instId := range room.GetMobs(rooms.FindAll) {
+		m := mobs.GetInstance(instId)
+		if m != nil && int(m.MobId) == mobId {
+			m.Command("say " + text)
+			return Success
+		}
+	}
+	return Failure
+}
+
+// actMobEmote finds the first mob in the room with the given mob_id and makes
+// it emote.
+// params: mob_id (int), text (string)
+func actMobEmote(params map[string]any, ctx *EvalContext) Result {
+	mobId := getIntParam(params, "mob_id")
+	text := getStringParam(params, "text")
+	room := rooms.LoadRoom(ctx.RoomId)
+	if room == nil {
+		return Failure
+	}
+	for _, instId := range room.GetMobs(rooms.FindAll) {
+		m := mobs.GetInstance(instId)
+		if m != nil && int(m.MobId) == mobId {
+			m.Command("emote " + text)
+			return Success
+		}
+	}
+	return Failure
+}
+
+// actGrantMutation rolls and grants a random mutation to the triggering player
+// from the weighted acquisition pool. Returns Success even if no mutations are
+// available (no eligible mutations is not an error).
+func actGrantMutation(params map[string]any, ctx *EvalContext) Result {
+	user := users.GetByUserId(ctx.Event.UserId)
+	if user == nil {
+		return Failure
+	}
+	pool := mutations.GetWeightedPool(user.Character.Mutations)
+	if len(pool) == 0 {
+		return Success // no mutations available, but not an error
+	}
+	mutId := mutations.RollAcquisition(pool)
+	if mutId == "" {
+		return Success
+	}
+	if user.Character.Mutations == nil {
+		user.Character.Mutations = make(map[string]int)
+	}
+	user.Character.Mutations[mutId] = 1
+	user.Character.Validate()
+	return Success
+}
+
+// actSendUserText sends a text message to the triggering player.
+// params: text (string)
+func actSendUserText(params map[string]any, ctx *EvalContext) Result {
+	user := users.GetByUserId(ctx.Event.UserId)
+	if user == nil {
+		return Failure
+	}
+	text := getStringParam(params, "text")
+	user.SendText(text)
+	return Success
+}
+
+// actSendRoomText sends a text message to everyone in the room.
+// params: text (string)
+func actSendRoomText(params map[string]any, ctx *EvalContext) Result {
+	room := rooms.LoadRoom(ctx.RoomId)
+	if room == nil {
+		return Failure
+	}
+	text := getStringParam(params, "text")
+	room.SendText(text)
+	return Success
+}
+
+// actIntercept marks the event as intercepted, preventing the default command
+// handler from processing it.
+func actIntercept(params map[string]any, ctx *EvalContext) Result {
+	ctx.Intercepted = true
+	return Success
+}
+
+// actRemoveBuff removes a buff from the triggering player by buff ID.
+// params: buff_id (int)
+func actRemoveBuff(params map[string]any, ctx *EvalContext) Result {
+	user := users.GetByUserId(ctx.Event.UserId)
+	if user == nil {
+		return Failure
+	}
+	buffId := getIntParam(params, "buff_id")
+	user.Character.RemoveBuff(buffId)
+	return Success
+}
+
+// actMovePlayer teleports the triggering player to a target room.
+// params: room_id (int)
+func actMovePlayer(params map[string]any, ctx *EvalContext) Result {
+	roomId := getIntParam(params, "room_id")
+	if roomId == 0 {
+		return Failure
+	}
+	rooms.MoveToRoom(ctx.Event.UserId, roomId)
 	return Success
 }
