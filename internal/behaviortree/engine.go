@@ -7,10 +7,12 @@ import (
 
 // Engine manages behavior tree loading, caching, and evaluation.
 type Engine struct {
-	mu     sync.RWMutex
-	trees  map[int]Node // mobId → compiled root node
-	noTree map[int]bool // mobId → no behavior file exists on disk
-	queue  []DelayedAction
+	mu         sync.RWMutex
+	trees      map[int]Node // mobId → compiled root node
+	noTree     map[int]bool // mobId → no behavior file exists on disk
+	roomTrees  map[int]Node // roomId → compiled root node
+	noRoomTree map[int]bool // roomId → no behavior file exists on disk
+	queue      []DelayedAction
 }
 
 type DelayedAction struct {
@@ -22,8 +24,10 @@ var globalEngine *Engine
 
 func init() {
 	globalEngine = &Engine{
-		trees:  make(map[int]Node),
-		noTree: make(map[int]bool),
+		trees:      make(map[int]Node),
+		noTree:     make(map[int]bool),
+		roomTrees:  make(map[int]Node),
+		noRoomTree: make(map[int]bool),
 	}
 }
 
@@ -67,6 +71,44 @@ func (e *Engine) GetTree(mobId int) Node {
 	e.mu.RLock()
 	defer e.mu.RUnlock()
 	return e.trees[mobId]
+}
+
+// LoadRoomTree loads and caches a behavior tree for a room.
+// Clears any negative-cache entry so newly added files are picked up at runtime.
+func (e *Engine) LoadRoomTree(roomId int, path string) error {
+	node, err := LoadTreeFromFile(path)
+	if err != nil {
+		return err
+	}
+	e.mu.Lock()
+	e.roomTrees[roomId] = node
+	delete(e.noRoomTree, roomId)
+	e.mu.Unlock()
+	return nil
+}
+
+// HasNoRoomTree reports whether the negative cache has recorded that roomId has
+// no behavior tree file on disk. Callers should check this before os.Stat.
+func (e *Engine) HasNoRoomTree(roomId int) bool {
+	e.mu.RLock()
+	defer e.mu.RUnlock()
+	return e.noRoomTree[roomId]
+}
+
+// SetNoRoomTree records that roomId has no behavior tree file on disk,
+// suppressing future os.Stat calls until the engine is restarted or a tree is
+// successfully loaded via LoadRoomTree.
+func (e *Engine) SetNoRoomTree(roomId int) {
+	e.mu.Lock()
+	e.noRoomTree[roomId] = true
+	e.mu.Unlock()
+}
+
+// GetRoomTree returns the cached tree for a room, or nil.
+func (e *Engine) GetRoomTree(roomId int) Node {
+	e.mu.RLock()
+	defer e.mu.RUnlock()
+	return e.roomTrees[roomId]
 }
 
 // EvaluateEvent triggers immediate tree evaluation for a mob instance.

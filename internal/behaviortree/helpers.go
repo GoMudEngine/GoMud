@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -66,6 +67,61 @@ func EnsureBTreeState(mob *mobs.Mob) *BehaviorState {
 		mob.BTreeState = state
 	}
 	return state
+}
+
+// GetRoomBehaviorPath constructs the filesystem path to a room's behavior tree
+// YAML. Path: {dataFiles}/behaviors/rooms/{zoneSafe}/{roomId}.yaml
+func GetRoomBehaviorPath(roomId int, zone string) string {
+	dataFiles := configs.GetFilePathsConfig().DataFiles.String()
+	zoneSafe := rooms.ZoneNameSanitize(zone)
+	return util.FilePath(dataFiles, `/`, `behaviors`, `/`, `rooms`, `/`, zoneSafe, `/`,
+		strconv.Itoa(roomId)+`.yaml`)
+}
+
+// TryRoomBehavior is the main entry point for room behavior tree event dispatch.
+// For room_command events it returns ctx.Intercepted; for all others it returns
+// true when the tree evaluates to Success.
+func TryRoomBehavior(roomId int, event EventContext) bool {
+	room := rooms.LoadRoom(roomId)
+	if room == nil {
+		return false
+	}
+
+	// Lazy-load tree if not cached.
+	tree := GetEngine().GetRoomTree(roomId)
+	if tree == nil {
+		if GetEngine().HasNoRoomTree(roomId) {
+			return false
+		}
+		path := GetRoomBehaviorPath(roomId, room.Zone)
+		if _, err := os.Stat(path); err != nil {
+			GetEngine().SetNoRoomTree(roomId)
+			return false
+		}
+		if err := GetEngine().LoadRoomTree(roomId, path); err != nil {
+			mudlog.Error("TryRoomBehavior", "error", fmt.Sprintf("failed to load behavior tree for room %d: %v", roomId, err))
+			return false
+		}
+		tree = GetEngine().GetRoomTree(roomId)
+		if tree == nil {
+			return false
+		}
+	}
+
+	state := EnsureRoomBTreeState(roomId)
+	event.RoomId = roomId
+
+	ctx := &EvalContext{
+		Event:    event,
+		MobState: state,
+		RoomId:   roomId,
+	}
+	result := tree.Evaluate(ctx)
+
+	if event.EventType == "room_command" {
+		return ctx.Intercepted
+	}
+	return result == Success
 }
 
 // TryMobBehavior is the main entry point for event dispatch.
