@@ -3,6 +3,7 @@ zone: Sanctum Basin
 archetype: fighting
 statpool: 120
 hostile: false
+non_combatant: true
 maxwander: 0
 idlecommands:
   - 'emote practices forms -- a slow, deliberate sequence of strikes and footwork'
