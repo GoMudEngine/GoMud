@@ -173,26 +173,16 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		applySkillRust(user, config)
 	}
 
-	user.SendText(`<ansi fg="yellow">You feel weakened by the brush with death. (Type <ansi fg="command">help death</ansi> to learn more.)</ansi>`)
+	user.SendText(`<ansi fg="yellow">You feel weakened by the brush with death.</ansi>`)
 
 	user.Character.CancelBuffsWithFlag(buffs.All)
 	user.Character.EndAggro()
 	user.Character.CastingState = nil
 
-	// Set all pools to 5% of max so the player can regen up in the shadow realm
-	// instead of arriving deep in the negatives and getting stuck.
-	user.Character.Health = user.Character.HealthMax.Value / 20
-	if user.Character.Health < 1 {
-		user.Character.Health = 1
-	}
-	user.Character.Stamina = user.Character.StaminaMax.Value / 20
-	if user.Character.Stamina < 1 {
-		user.Character.Stamina = 1
-	}
-	user.Character.Conviction = user.Character.ConvictionMax.Value / 20
-	if user.Character.Conviction < 1 {
-		user.Character.Conviction = 1
-	}
+	// Restore pools to full — no shadow realm detour needed.
+	user.Character.Health = user.Character.HealthMax.Value
+	user.Character.Stamina = user.Character.StaminaMax.Value
+	user.Character.Conviction = user.Character.ConvictionMax.Value
 	events.AddToQueue(events.CharacterVitalsChanged{UserId: user.UserId})
 
 	clear(user.Character.PlayerDamage)
@@ -207,7 +197,15 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		}
 	}
 
-	rooms.MoveToRoom(user.UserId, int(configs.GetSpecialRoomsConfig().DeathRecoveryRoom))
+	user.SendText(`<ansi fg="yellow">Darkness swallows you. When you open your eyes, you are somewhere safe.</ansi>`)
+
+	// Resolve home room from player settings, falling back to default.
+	homeSetting := user.Character.GetSetting("home")
+	homeRoomId, ok := homeLocations[homeSetting]
+	if !ok {
+		homeRoomId = homeLocations["default"]
+	}
+	rooms.MoveToRoom(user.UserId, homeRoomId)
 
 	// Belt-and-suspenders: re-clear aggro after room move in case any
 	// code path (e.g., mob combat round processing) assigned aggro
