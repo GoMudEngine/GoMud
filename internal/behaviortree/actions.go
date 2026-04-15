@@ -2,6 +2,7 @@ package behaviortree
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/exit"
@@ -82,18 +83,47 @@ var delayedActions = map[string]bool{
 }
 
 func (n *ActionNode) Evaluate(ctx *EvalContext) Result {
+	// Static delay check first — bypasses perception-scaled timing.
+	if staticDelay, ok := n.Params["delay"]; ok {
+		var delaySec float64
+		switch v := staticDelay.(type) {
+		case float64:
+			delaySec = v
+		case int:
+			delaySec = float64(v)
+		}
+		if delaySec > 0 {
+			params := n.Params
+			fn := n.Fn
+			evalCtx := &EvalContext{
+				Event:       ctx.Event,
+				MobState:    ctx.MobState,
+				MobId:       ctx.MobId,
+				InstanceId:  ctx.InstanceId,
+				RoomId:      ctx.RoomId,
+				MobName:     ctx.MobName,
+				Intercepted: ctx.Intercepted,
+			}
+			dur := time.Duration(delaySec * float64(time.Second))
+			GetEngine().QueueDelayed(dur, func() {
+				fn(params, evalCtx)
+			})
+			return Success
+		}
+	}
 	if delayedActions[n.Name] {
 		delay := calcReactionDelay(ctx.InstanceId)
 		if delay > 0 {
 			params := n.Params
 			fn := n.Fn
 			evalCtx := &EvalContext{
-				Event:      ctx.Event,
-				MobState:   ctx.MobState,
-				MobId:      ctx.MobId,
-				InstanceId: ctx.InstanceId,
-				RoomId:     ctx.RoomId,
-				MobName:    ctx.MobName,
+				Event:       ctx.Event,
+				MobState:    ctx.MobState,
+				MobId:       ctx.MobId,
+				InstanceId:  ctx.InstanceId,
+				RoomId:      ctx.RoomId,
+				MobName:     ctx.MobName,
+				Intercepted: ctx.Intercepted,
 			}
 			GetEngine().QueueDelayed(delay, func() {
 				fn(params, evalCtx)
