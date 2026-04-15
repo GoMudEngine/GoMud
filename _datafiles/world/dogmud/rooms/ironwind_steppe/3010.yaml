@@ -10,17 +10,19 @@ description: The steppe opens up into a vast expanse of flat grassland
   before collapsing. The wagon track from the city has vanished
   completely, replaced by open, unmarked terrain.
 biome: land
+coord:
+  x: 12
+  y: 0
+  z: 0
 exits:
   west:
     roomid: 3006
-  northwest:
-    roomid: 3008
+  north:
+    roomid: 3015
   east:
     roomid: 3011
   south:
-    roomid: 3014
-  northeast:
-    roomid: 3012
+    roomid: 3013
 nouns:
   sagebrush: Low, woody bushes with silvery-green leaves and a strong
     aromatic scent. They grow in scattered clusters across the flats,

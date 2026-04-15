@@ -1,0 +1,48 @@
+mobid: 304
+zone: Summons
+archetype: fighting
+aiprofile: caster
+statpool: 100
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - summon
+  - undead
+idlecommands:
+  - 'emote stands with its hands clasped behind its back, perfectly still'
+  - ''
+  - 'emote turns its head slowly toward you with unsettling deliberateness'
+  - ''
+  - 'emote traces one finger along its jaw, watching with pale, flat eyes'
+  - ''
+activitylevel: 65
+combatcommands:
+  - 'bite'
+  - ''
+  - 'emote moves with impossible speed, closing distance in a single step'
+  - ''
+  - 'cast conviction-ward'
+  - ''
+character:
+  name: vampire
+  description: |
+    The vampire looks almost human until you notice the small things: the
+    total stillness between movements, the way its eyes reflect light like a
+    cat's, the too-white teeth just visible behind a closed mouth. It moves
+    with fluid precision, each action economical and deliberate. The bite,
+    when it comes, is shockingly fast and drains more than blood.
+  speciesid: 34
+  level: 1
+  spellbook:
+    conviction-ward: 6
+    iron-will: 4
+  skills:
+    spellcasting: 8
+  stats:
+    strength:
+      training: 10
+    dexterity:
+      training: 15
+    charisma:
+      training: 10

@@ -7,12 +7,20 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
 func Use(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	containerName := room.FindContainerByName(rest)
+	if containerName != `` {
+		if c, exists := room.Containers[containerName]; exists && c.Hidden {
+			if user == nil || !user.Character.HasDiscovery(room.RoomId, containerName) {
+				containerName = ``
+			}
+		}
+	}
 	if containerName != `` {
 
 		container := room.Containers[containerName]
@@ -52,7 +60,7 @@ func Use(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			user.SendText(fmt.Sprintf(`The <ansi fg="container">%s</ansi> produces a <ansi fg="itemname">%s</ansi>!`, containerName, newItem.DisplayName()))
 			user.SendText(``)
 
-			room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> does something with the <ansi fg="container">%s</ansi>.`, user.Character.Name, containerName), user.UserId)
+			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> does something with the <ansi fg="container">%s</ansi>.`, user.Character.Name, containerName), user.UserId)
 
 			return true, nil
 
@@ -78,7 +86,25 @@ func Use(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		user.Character.CancelBuffsWithFlag(buffs.Hidden)
 
 		user.SendText(fmt.Sprintf(`You use the <ansi fg="itemname">%s</ansi>.`, matchItem.DisplayName()))
-		room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> uses their <ansi fg="itemname">%s</ansi>.`, user.Character.Name, matchItem.DisplayName()), user.UserId)
+		room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> uses their <ansi fg="itemname">%s</ansi>.`, user.Character.Name, matchItem.DisplayName()), user.UserId)
+
+		// YAML-driven use effects (replaces JS onUse for simple items)
+		if itemSpec.OnUseTrainSkill != "" {
+			trainAmount := itemSpec.OnUseTrainAmount
+			if trainAmount < 1 {
+				trainAmount = 1
+			}
+			user.Character.TrainSkill(itemSpec.OnUseTrainSkill, trainAmount)
+			if itemSpec.OnUseUserText != "" {
+				user.SendText(itemSpec.OnUseUserText)
+			}
+			if itemSpec.OnUseRoomText != "" {
+				room.SendTextVisual(itemSpec.OnUseRoomText, user.UserId)
+			}
+		}
+
+		// JS onUse hook — fires if the item has a script with an onUse function
+		scripting.TryItemScriptEvent(`onUse`, matchItem, user.UserId) //nolint:errcheck
 
 		// If no more uses, will be lost, so trigger event
 		if usesLeft := user.Character.UseItem(matchItem); usesLeft < 1 {

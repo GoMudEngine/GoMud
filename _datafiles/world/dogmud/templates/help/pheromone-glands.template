@@ -1,0 +1,19 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="yellow">Pheromone Glands</ansi> mutation
+
+Your body exudes compelling pheromones that charm other people.
+Predatory beasts, however, find you irresistible prey.
+
+<ansi fg="yellow">Type:</ansi>     Passive
+<ansi fg="yellow">Rarity:</ansi>   Rare
+
+<ansi fg="yellow">Benefits:</ansi>
+  Significantly increased charisma — your pheromones make you
+  unusually persuasive and appealing to other people
+
+<ansi fg="yellow">Drawbacks:</ansi>
+  Greatly draws hostile attention from animals and predatory
+  creatures — they find the scent irresistible
+
+<ansi fg="yellow">Conflicts:</ansi> Camo Skin
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help mutations</ansi>

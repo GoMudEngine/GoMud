@@ -6,7 +6,7 @@ const (
 	// Enumerated Aggro Types
 	DefaultAttack AggroType = iota // Regular H2H combat, everything can decay to this. Starts at zero
 	Shooting
-	BackStab
+	SurpriseAttack
 	SpellCast
 	Flee
 )

@@ -9,15 +9,17 @@ description: The creek basin dips into a marshy depression where
   reeds. The marsh is a vital oasis on the dry steppe, drawing
   wildlife from all directions.
 biome: land
+coord:
+  x: 14
+  y: -7
+  z: 0
 exits:
   north:
     roomid: 3053
+  west:
+    roomid: 3057
   south:
     roomid: 3090
-  east:
-    roomid: 3057
-  west:
-    roomid: 3079
 nouns:
   cattails: Tall cattails rising above the marsh, their brown
     seed heads bobbing in the breeze. The stems are thick and

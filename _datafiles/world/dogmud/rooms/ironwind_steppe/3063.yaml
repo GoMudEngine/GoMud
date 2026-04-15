@@ -10,17 +10,15 @@ description: A massive slab of basalt juts from the coulee wall,
   ground. The overhang faces south, catching the warmth of the
   sun while blocking the northern wind.
 biome: cliffs
+coord:
+  x: 17
+  y: -7
+  z: 0
 exits:
   west:
     roomid: 3061
-  north:
-    roomid: 3050
   south:
     roomid: 3065
-  east:
-    roomid: 3066
-  northwest:
-    roomid: 3038
 nouns:
   overhang: A thick slab of basalt extending from the wall like
     a shelf, providing about ten paces of covered floor space.

@@ -32,6 +32,12 @@ type Balance struct {
 	StandStaminaCost             ConfigFloat `yaml:"StandStaminaCost"`             // Fraction of max stamina to stand up (default 0.15)
 	StandMinStamina              ConfigFloat `yaml:"StandMinStamina"`              // Minimum fraction of max SP to stand (default 0.15)
 	ThirdPartyGrapplePenalty     ConfigFloat `yaml:"ThirdPartyGrapplePenalty"`     // Defense multiplier when grappled vs third party (default 0.70)
+	ClinchDodgePenalty          ConfigFloat `yaml:"ClinchDodgePenalty"`          // Dodge score multiplier while clinched (default 0.80)
+	ClinchParryPenalty          ConfigFloat `yaml:"ClinchParryPenalty"`          // Parry score multiplier while clinched (default 0.83)
+	ClinchBlockPenalty          ConfigFloat `yaml:"ClinchBlockPenalty"`          // Block score multiplier while clinched (default 0.85)
+	GroundedDodgePenalty        ConfigFloat `yaml:"GroundedDodgePenalty"`        // Dodge score multiplier while grounded (default 0.75)
+	GroundedParryPenalty        ConfigFloat `yaml:"GroundedParryPenalty"`        // Parry score multiplier while grounded (default 0.77)
+	GroundedBlockPenalty        ConfigFloat `yaml:"GroundedBlockPenalty"`        // Block score multiplier while grounded (default 0.80)
 
 	// ── COMBAT: SPECIAL MOVES ────────────────────────────────────────────────
 	SpecialMoveCooldown ConfigInt   `yaml:"SpecialMoveCooldown"` // Shared cooldown rounds for bash/trip/kick (default 5)
@@ -39,9 +45,23 @@ type Balance struct {
 	BashKnockdownChance ConfigInt   `yaml:"BashKnockdownChance"` // Base % knockdown chance (default 40)
 	TripDamagePercent   ConfigFloat `yaml:"TripDamagePercent"`   // Fraction of normal melee damage (default 0.25)
 	TripKnockdownChance ConfigInt   `yaml:"TripKnockdownChance"` // Base % knockdown chance (default 60)
-	KickDamagePercent   ConfigFloat `yaml:"KickDamagePercent"`   // Fraction of normal melee damage (default 0.40)
+	KickDamagePercent   ConfigFloat `yaml:"KickDamagePercent"`   // Fraction of normal melee damage (default 0.80)
 	KickKnockdownChance ConfigInt   `yaml:"KickKnockdownChance"` // Base % knockdown chance (default 35)
+	StompDamagePercent  ConfigFloat `yaml:"StompDamagePercent"`  // Stomp damage when target is prone (default 1.20)
+	KneeDamagePercent   ConfigFloat `yaml:"KneeDamagePercent"`   // Knee damage in grapple (default 1.00)
 	CoupDeGraceRounds   ConfigInt   `yaml:"CoupDeGraceRounds"`   // Rounds before mob finishes downed player (default 1; 0=disabled)
+
+	// ── SKULLDUGGERY ─────────────────────────────────────────────────────────
+	SneakFailCooldown              ConfigInt   `yaml:"SneakFailCooldown"`              // Rounds before sneak retry after failure (default 3)
+	SurpriseAttackOffhandPenalty   ConfigFloat `yaml:"SurpriseAttackOffhandPenalty"`   // Hit penalty for offhand surprise attack (default 0.10)
+	SurpriseAttackExtraArm1Penalty ConfigFloat `yaml:"SurpriseAttackExtraArm1Penalty"` // Hit penalty for extra arm 1 (default 0.25)
+	SurpriseAttackExtraArm2Penalty ConfigFloat `yaml:"SurpriseAttackExtraArm2Penalty"` // Hit penalty for extra arm 2 (default 0.40)
+	SurpriseAttackExtraArm3Penalty ConfigFloat `yaml:"SurpriseAttackExtraArm3Penalty"` // Hit penalty for extra arm 3 (default 0.55)
+	SurpriseAttackExtraArm4Penalty ConfigFloat `yaml:"SurpriseAttackExtraArm4Penalty"` // Hit penalty for extra arm 4 (default 0.70)
+	StealSkillMultiplier           ConfigFloat `yaml:"StealSkillMultiplier"`           // Tuning knob for steal/plant rolls (default 1.0)
+	StealHiddenBonus               ConfigInt   `yaml:"StealHiddenBonus"`               // Bonus to attacker score when hidden (default 25)
+	StealCooldown                  ConfigInt   `yaml:"StealCooldown"`                  // Steal/plant cooldown in real seconds (default 60)
+	ShadowCooldown                 ConfigInt   `yaml:"ShadowCooldown"`                 // Rounds before re-shadowing (default 5)
 
 	// ── COMBAT: SPELL COSTS ──────────────────────────────────────────────────
 	SpellConvictionCostMultiplier ConfigFloat `yaml:"SpellConvictionCostMultiplier"` // Global multiplier for spell conviction costs (default 1.0)
@@ -63,6 +83,7 @@ type Balance struct {
 	UnarmedBaseVariance        ConfigFloat `yaml:"UnarmedBaseVariance"`        // Base randomness of unarmed hits (default 3.0)
 	UnarmedDamageMultiplier    ConfigFloat `yaml:"UnarmedDamageMultiplier"`    // Fist damage multiplier for new pipeline (default 0.30)
 	UnarmedSpeedMultiplier     ConfigFloat `yaml:"UnarmedSpeedMultiplier"`     // Unarmed attack speed — slightly faster than light weapons (default 1.4)
+	HasteSwingMultiplier       ConfigFloat `yaml:"HasteSwingMultiplier"`       // Swing count multiplier when haste buff is active (default 1.50)
 	SkillMultiplierBase        ConfigFloat `yaml:"SkillMultiplierBase"`        // Skill multiplier at rank 0 (default 1.0)
 	SkillMultiplierMax         ConfigFloat `yaml:"SkillMultiplierMax"`         // Skill multiplier at soft cap (default 3.0)
 	SkillWeight                ConfigFloat `yaml:"SkillWeight"`                // Global multiplier on skill contributions in additive formulas (default 2.0)
@@ -74,6 +95,8 @@ type Balance struct {
 	PhysicalMitigationCap      ConfigFloat `yaml:"PhysicalMitigationCap"`     // Max physical mitigation % (default 0.75)
 	MagicalMitigationCap       ConfigFloat `yaml:"MagicalMitigationCap"`      // Max magical mitigation % (default 0.75)
 	ConvictionMitigationCap    ConfigFloat `yaml:"ConvictionMitigationCap"`   // Max conviction mitigation % (default 0.75)
+	SpellAvoidanceDamageMultiplier    ConfigFloat `yaml:"SpellAvoidanceDamageMultiplier"`    // Damage multiplier on successful spell deflection (default 0.50)
+	RhetoricAvoidanceDamageMultiplier ConfigFloat `yaml:"RhetoricAvoidanceDamageMultiplier"` // Damage multiplier on successful stoic resolve (default 0.50)
 	ResourcePenaltyCurve       ConfigFloat `yaml:"ResourcePenaltyCurve"`     // Exponent for resource depletion penalty curve (default 2.0)
 	HealthPenaltyMax           ConfigFloat `yaml:"HealthPenaltyMax"`         // Max melee damage penalty at 0% HP (default 0.28)
 	StaminaPenaltyMax          ConfigFloat `yaml:"StaminaPenaltyMax"`        // Max attack count + hit rate penalty at 0% SP (default 0.28)
@@ -84,8 +107,8 @@ type Balance struct {
 	PlayerStaminaRegenPct    ConfigFloat `yaml:"PlayerStaminaRegenPct"`    // Fraction of StaminaMax regen'd per tick — players (default 0.01)
 	PlayerConvictionRegenPct ConfigFloat `yaml:"PlayerConvictionRegenPct"` // Fraction of ConvictionMax regen'd per tick — players (default 0.01)
 	MobHealthRegenPct        ConfigFloat `yaml:"MobHealthRegenPct"`        // Fraction of HealthMax regen'd per tick — NPCs (default 0.01)
-	MobStaminaRegenPct       ConfigFloat `yaml:"MobStaminaRegenPct"`       // Fraction of StaminaMax regen'd per tick — NPCs (default 0.01)
-	MobConvictionRegenPct    ConfigFloat `yaml:"MobConvictionRegenPct"`    // Fraction of ConvictionMax regen'd per tick — NPCs (default 0.01)
+	MobStaminaRegenPct       ConfigFloat `yaml:"MobStaminaRegenPct"`       // Fraction of StaminaMax regen'd per tick — NPCs (default 0.02)
+	MobConvictionRegenPct    ConfigFloat `yaml:"MobConvictionRegenPct"`    // Fraction of ConvictionMax regen'd per tick — NPCs (default 0.02)
 
 	// ── STAMINA & CONVICTION ──────────────────────────────────────────────────
 	MovementBaseStaminaCost  ConfigFloat `yaml:"MovementBaseStaminaCost"`  // Flat cost to move on normal terrain (default 2.0)
@@ -144,14 +167,28 @@ type Balance struct {
 	RecipeDiscoveryBaseChance ConfigFloat `yaml:"RecipeDiscoveryBaseChance"` // Base % to discover a new recipe per successful craft (default 8.0)
 	RecipeDiscoveryDecayRate  ConfigFloat `yaml:"RecipeDiscoveryDecayRate"`  // Decay per known recipe: chance = base / (1 + known*this) (default 0.1)
 
+	// ── SALVAGE ──────────────────────────────────────────────────────────────
+	SalvageMinChance    ConfigFloat `yaml:"SalvageMinChance"`    // Per-ingredient recovery chance at skill 1 (default 0.15)
+	SalvageMaxChance    ConfigFloat `yaml:"SalvageMaxChance"`    // Hard cap on per-ingredient chance (default 0.85)
+	SalvageSoftCap      ConfigInt   `yaml:"SalvageSoftCap"`      // Skill level for max curve (default 50)
+	SalvageGoldPerRound ConfigInt   `yaml:"SalvageGoldPerRound"` // Ingredient gold value per salvage round (default 10)
+	SalvageMaxRounds    ConfigInt   `yaml:"SalvageMaxRounds"`    // Maximum salvage rounds (default 5)
+
+	// ── QUEST ENGINE ─────────────────────────────────────────────────────────
+	QuestLogLevel          string    `yaml:"QuestLogLevel"`          // verbose, medium, minimal (default verbose)
+	QuestChainDepthLimit   ConfigInt `yaml:"QuestChainDepthLimit"`   // max chained grant evaluations per event (default 10)
+	QuestPerformanceWarnMs ConfigInt `yaml:"QuestPerformanceWarnMs"` // warn if trigger evaluation exceeds this (default 50)
+
 	// ── MUTATIONS ─────────────────────────────────────────────────────────────
 	MutationBaseProgress         ConfigFloat `yaml:"MutationBaseProgress"`         // Progress needed for first mutation (default 50.0)
 	MutationProgressScale        ConfigFloat `yaml:"MutationProgressScale"`        // Each additional mutation costs Scale^n more (default 1.5)
 	MutationMaxCount             ConfigInt   `yaml:"MutationMaxCount"`             // Max simultaneous mutations per character (default 5)
 	MutationMaxLevel             ConfigInt   `yaml:"MutationMaxLevel"`             // Max level any single mutation can reach (default 3)
+	MutationDeepenChance         ConfigFloat `yaml:"MutationDeepenChance"`         // Probability of deepening vs new discovery when both possible (default 0.70)
 	MutationProgressGainPerRound ConfigFloat `yaml:"MutationProgressGainPerRound"` // Progress added per combat round (default 1.0)
 	MutationLevel2Multiplier     ConfigFloat `yaml:"MutationLevel2Multiplier"`     // Effect scaling at level 2 (default 1.5)
 	MutationLevel3Multiplier     ConfigFloat `yaml:"MutationLevel3Multiplier"`     // Effect scaling at level 3 (default 2.0)
+	MutationLevel4Multiplier     ConfigFloat `yaml:"MutationLevel4Multiplier"`     // Effect scaling at level 4 (default 2.5)
 
 	// ── SPELLCASTING ─────────────────────────────────────────────────────
 	SpellDiscoveryBaseChance        ConfigFloat `yaml:"SpellDiscoveryBaseChance"`        // Base % to discover a new spell per successful cast (default 5.0)
@@ -163,6 +200,9 @@ type Balance struct {
 	SpellFoldsSkillFactor           ConfigInt   `yaml:"SpellFoldsSkillFactor"`           // Skill * this in folds-per-round calc (default 25)
 	SpellAttackSkillFactor          ConfigInt   `yaml:"SpellAttackSkillFactor"`          // Skill * this in spell attack mean (default 3)
 	SpellProficiencyCastsPerPoint   ConfigInt   `yaml:"SpellProficiencyCastsPerPoint"`   // Casts needed per 1 proficiency point (default 50)
+	SpellDifficultyProgressionScale ConfigFloat `yaml:"SpellDifficultyProgressionScale"` // Per-point spell difficulty bonus to skill progression (default 0.01)
+	CraftDifficultyProgressionScale ConfigFloat `yaml:"CraftDifficultyProgressionScale"` // Per-point recipe skill_minimum bonus to skill progression (default 0.02)
+	SelfCastProgressionMultiplier   ConfigFloat `yaml:"SelfCastProgressionMultiplier"`   // Progression multiplier when spell only targets self (default 0.5)
 
 	// ── ENCHANTMENTS ─────────────────────────────────────────────────────────
 	EnchantTierUpBaseChance     ConfigFloat `yaml:"EnchantTierUpBaseChance"`     // Chance per use (once threshold met) to advance tier (default 0.02)
@@ -177,6 +217,14 @@ type Balance struct {
 	// ── MOB MUTATIONS ────────────────────────────────────────────────────────
 	MobMutationEnabled ConfigBool  `yaml:"MobMutationEnabled"` // Enable mob mutation acquisition in combat (default false)
 	MobMutationRate    ConfigFloat `yaml:"MobMutationRate"`    // Multiplier on mutation progress vs players (default 0.3)
+
+	// ── MOB AI ───────────────────────────────────────────────────────────────
+	CombatMemoryDuration ConfigInt   `yaml:"CombatMemoryDuration"` // Rounds before combat memory expires (default 300)
+	MobAIEnabled         ConfigBool  `yaml:"MobAIEnabled"`         // Global toggle for reactive AI system (default true)
+	MobReactionDelayMin  ConfigFloat `yaml:"MobReactionDelayMin"`  // Min reaction delay in seconds (default 0.25)
+	MobReactionDelayMax             ConfigFloat `yaml:"MobReactionDelayMax"`             // Max reaction delay in seconds (default 4.0)
+	MobBTreeReactionBase            ConfigFloat `yaml:"MobBTreeReactionBase"`            // Base reaction delay in seconds for behavior tree mobs (default 3.0)
+	MobBTreeReactionPerceptionScale ConfigInt   `yaml:"MobBTreeReactionPerceptionScale"` // Perception divisor for reaction delay (default 100)
 
 	// ── PACK SCALING ─────────────────────────────────────────────────────────
 	PackScalingEnabled   ConfigBool `yaml:"PackScalingEnabled"`   // Enable pack survival bonuses (default true)
@@ -198,7 +246,34 @@ type Balance struct {
 	GossipIntervalRounds ConfigInt `yaml:"GossipIntervalRounds"` // Rounds between gossip broadcasts for "gossiper" group mobs (default 75)
 
 	// ── MOON PHASES ───────────────────────────────────────────────────────────
-	MoonStatModMax ConfigFloat `yaml:"MoonStatModMax"` // Max fractional stat modifier from moon phases, e.g. 0.05 = ±5% (default 0.05)
+	MoonStatModMax          ConfigFloat `yaml:"MoonStatModMax"`          // Max fractional stat modifier from moon phases, e.g. 0.05 = ±5% (default 0.05)
+	CarryCapacityMultiplier ConfigFloat `yaml:"CarryCapacityMultiplier"` // Strength multiplier for carry capacity in lbs (default 0.65)
+
+	// ── TOXICITY ────────────────────────────────────────────────────────────
+	ToxicityDecayPerTick  ConfigFloat `yaml:"ToxicityDecayPerTick"`  // Points decayed per regen tick (default 1.0)
+	ToxicityBaseMax       ConfigFloat `yaml:"ToxicityBaseMax"`       // Base max before vitality bonus (default 100)
+	ToxicityVitalityScale ConfigFloat `yaml:"ToxicityVitalityScale"` // Vitality divisor for max bonus (default 5)
+
+	// ── MANIFESTATION / COMPANION SCALING ───────────────────────────────────
+	ManifestStatScaleChaFactor   ConfigInt   `yaml:"ManifestStatScaleChaFactor"`   // Charisma divisor for companion stat scaling (default 150)
+	ManifestStatScaleSkillFactor ConfigFloat `yaml:"ManifestStatScaleSkillFactor"` // Manifestation skill additive factor (default 0.02)
+
+	// ── SHOP ECONOMY ─────────────────────────────────────────────────────────
+	ShopBuyRatio           ConfigFloat `yaml:"ShopBuyRatio,omitempty"`           // Base buy/sell spread: NPC buy offer = baseValue * BuyRatio * scarcityMult (default 0.50)
+	ShopPriceFloor         ConfigFloat `yaml:"ShopPriceFloor,omitempty"`         // Minimum scarcity multiplier when stock is very high (default 0.25)
+	ShopPriceCeiling       ConfigFloat `yaml:"ShopPriceCeiling,omitempty"`       // Maximum scarcity multiplier when stock is zero (default 5.0)
+	ShopAbundanceThreshold ConfigFloat `yaml:"ShopAbundanceThreshold,omitempty"` // Stock/restock ratio at which price hits the floor (default 3.0)
+	ShopMaterialReserve    ConfigInt   `yaml:"ShopMaterialReserve,omitempty"`    // Units of each material a crafter mob reserves before selling (default 1)
+	ShopGoldReserveRatio   ConfigFloat `yaml:"ShopGoldReserveRatio,omitempty"`   // Fraction of gold pool a shop keeps in reserve before buying (default 0.50)
+	BarterMaxDiscount      ConfigFloat `yaml:"BarterMaxDiscount,omitempty"`      // Max fractional price reduction a player can get via bartering (default 0.15)
+	BarterMaxBonus         ConfigFloat `yaml:"BarterMaxBonus,omitempty"`         // Max fractional sell-price bonus a player can get via bartering (default 0.15)
+	StorageFeePerItem      ConfigInt   `yaml:"StorageFeePerItem"`                // Gold charged per stored item per game month (default 1)
+
+	// ── LOOT ──────────────────────────────────────────────────────────────────
+	LootBudgetScalar ConfigFloat `yaml:"LootBudgetScalar"` // Multiplier for sqrt(goldPaid) loot budget (default 7.0)
+
+	// ── INSTANCES ────────────────────────────────────────────────────────────
+	InstanceStatPoolCap ConfigInt `yaml:"InstanceStatPoolCap"` // Max stat pool per mob in instances (default 50000, 0=uncapped)
 }
 
 func (b *Balance) Validate() {
@@ -263,6 +338,24 @@ func (b *Balance) Validate() {
 	if b.ThirdPartyGrapplePenalty <= 0 || b.ThirdPartyGrapplePenalty > 1.0 {
 		b.ThirdPartyGrapplePenalty = 0.70
 	}
+	if b.ClinchDodgePenalty <= 0 || b.ClinchDodgePenalty > 1.0 {
+		b.ClinchDodgePenalty = 0.80
+	}
+	if b.ClinchParryPenalty <= 0 || b.ClinchParryPenalty > 1.0 {
+		b.ClinchParryPenalty = 0.83
+	}
+	if b.ClinchBlockPenalty <= 0 || b.ClinchBlockPenalty > 1.0 {
+		b.ClinchBlockPenalty = 0.85
+	}
+	if b.GroundedDodgePenalty <= 0 || b.GroundedDodgePenalty > 1.0 {
+		b.GroundedDodgePenalty = 0.75
+	}
+	if b.GroundedParryPenalty <= 0 || b.GroundedParryPenalty > 1.0 {
+		b.GroundedParryPenalty = 0.77
+	}
+	if b.GroundedBlockPenalty <= 0 || b.GroundedBlockPenalty > 1.0 {
+		b.GroundedBlockPenalty = 0.80
+	}
 
 	// ── COMBAT: SPECIAL MOVES ────────────────────────────────────────────────
 	if b.SpecialMoveCooldown < 1 {
@@ -280,14 +373,52 @@ func (b *Balance) Validate() {
 	if b.TripKnockdownChance < 0 || b.TripKnockdownChance > 100 {
 		b.TripKnockdownChance = 60
 	}
-	if b.KickDamagePercent <= 0 || b.KickDamagePercent > 1.0 {
-		b.KickDamagePercent = 0.40
+	if b.KickDamagePercent <= 0 || b.KickDamagePercent > 2.0 {
+		b.KickDamagePercent = 0.80
 	}
 	if b.KickKnockdownChance < 0 || b.KickKnockdownChance > 100 {
 		b.KickKnockdownChance = 35
 	}
+	if b.StompDamagePercent <= 0 || b.StompDamagePercent > 3.0 {
+		b.StompDamagePercent = 1.20
+	}
+	if b.KneeDamagePercent <= 0 || b.KneeDamagePercent > 2.0 {
+		b.KneeDamagePercent = 1.00
+	}
 	if b.CoupDeGraceRounds < 0 {
 		b.CoupDeGraceRounds = 1
+	}
+
+	// ── SKULLDUGGERY ─────────────────────────────────────────────────────────
+	if b.SneakFailCooldown < 0 {
+		b.SneakFailCooldown = 3
+	}
+	if b.SurpriseAttackOffhandPenalty < 0 || b.SurpriseAttackOffhandPenalty > 1.0 {
+		b.SurpriseAttackOffhandPenalty = 0.10
+	}
+	if b.SurpriseAttackExtraArm1Penalty < 0 || b.SurpriseAttackExtraArm1Penalty > 1.0 {
+		b.SurpriseAttackExtraArm1Penalty = 0.25
+	}
+	if b.SurpriseAttackExtraArm2Penalty < 0 || b.SurpriseAttackExtraArm2Penalty > 1.0 {
+		b.SurpriseAttackExtraArm2Penalty = 0.40
+	}
+	if b.SurpriseAttackExtraArm3Penalty < 0 || b.SurpriseAttackExtraArm3Penalty > 1.0 {
+		b.SurpriseAttackExtraArm3Penalty = 0.55
+	}
+	if b.SurpriseAttackExtraArm4Penalty < 0 || b.SurpriseAttackExtraArm4Penalty > 1.0 {
+		b.SurpriseAttackExtraArm4Penalty = 0.70
+	}
+	if b.StealSkillMultiplier <= 0 {
+		b.StealSkillMultiplier = 1.0
+	}
+	if b.StealHiddenBonus < 0 {
+		b.StealHiddenBonus = 25
+	}
+	if b.StealCooldown < 0 {
+		b.StealCooldown = 60
+	}
+	if b.ShadowCooldown < 0 {
+		b.ShadowCooldown = 5
 	}
 
 	// ── COMBAT: DARKNESS ─────────────────────────────────────────────────────
@@ -320,7 +451,10 @@ func (b *Balance) Validate() {
 		b.UnarmedDamageMultiplier = 0.30
 	}
 	if b.UnarmedSpeedMultiplier <= 0 {
-		b.UnarmedSpeedMultiplier = 1.4
+		b.UnarmedSpeedMultiplier = 1.8
+	}
+	if b.HasteSwingMultiplier <= 0 {
+		b.HasteSwingMultiplier = 1.50
 	}
 	if b.SkillMultiplierBase <= 0 {
 		b.SkillMultiplierBase = 1.0
@@ -355,6 +489,12 @@ func (b *Balance) Validate() {
 	if b.ConvictionMitigationCap <= 0 || b.ConvictionMitigationCap > 1.0 {
 		b.ConvictionMitigationCap = 0.75
 	}
+	if b.SpellAvoidanceDamageMultiplier <= 0 || b.SpellAvoidanceDamageMultiplier > 1.0 {
+		b.SpellAvoidanceDamageMultiplier = 0.50
+	}
+	if b.RhetoricAvoidanceDamageMultiplier <= 0 || b.RhetoricAvoidanceDamageMultiplier > 1.0 {
+		b.RhetoricAvoidanceDamageMultiplier = 0.50
+	}
 	if b.ResourcePenaltyCurve <= 0 {
 		b.ResourcePenaltyCurve = 2.0
 	}
@@ -381,8 +521,8 @@ func (b *Balance) Validate() {
 	clampPct(&b.PlayerStaminaRegenPct, 0.01)
 	clampPct(&b.PlayerConvictionRegenPct, 0.01)
 	clampPct(&b.MobHealthRegenPct, 0.01)
-	clampPct(&b.MobStaminaRegenPct, 0.01)
-	clampPct(&b.MobConvictionRegenPct, 0.01)
+	clampPct(&b.MobStaminaRegenPct, 0.02)
+	clampPct(&b.MobConvictionRegenPct, 0.02)
 
 	// ── STAMINA & CONVICTION ──────────────────────────────────────────────────
 	if b.MovementBaseStaminaCost <= 0 {
@@ -531,6 +671,34 @@ func (b *Balance) Validate() {
 		b.RecipeDiscoveryDecayRate = 0.1
 	}
 
+	// ── SALVAGE ──────────────────────────────────────────────────────────────
+	if b.SalvageMinChance <= 0 {
+		b.SalvageMinChance = 0.15
+	}
+	if b.SalvageMaxChance <= 0 {
+		b.SalvageMaxChance = 0.85
+	}
+	if b.SalvageSoftCap < 1 {
+		b.SalvageSoftCap = 50
+	}
+	if b.SalvageGoldPerRound < 1 {
+		b.SalvageGoldPerRound = 10
+	}
+	if b.SalvageMaxRounds < 1 {
+		b.SalvageMaxRounds = 5
+	}
+
+	// ── QUEST ENGINE ─────────────────────────────────────────────────────────
+	if b.QuestLogLevel == "" {
+		b.QuestLogLevel = "verbose"
+	}
+	if b.QuestChainDepthLimit < 1 {
+		b.QuestChainDepthLimit = 10
+	}
+	if b.QuestPerformanceWarnMs < 1 {
+		b.QuestPerformanceWarnMs = 50
+	}
+
 	// ── MUTATIONS ─────────────────────────────────────────────────────────────
 	if b.MutationBaseProgress <= 0 {
 		b.MutationBaseProgress = 50.0
@@ -544,6 +712,9 @@ func (b *Balance) Validate() {
 	if b.MutationMaxLevel < 1 {
 		b.MutationMaxLevel = 3
 	}
+	if b.MutationDeepenChance <= 0 || b.MutationDeepenChance > 1.0 {
+		b.MutationDeepenChance = 0.70
+	}
 	if b.MutationProgressGainPerRound <= 0 {
 		b.MutationProgressGainPerRound = 1.0
 	}
@@ -552,6 +723,9 @@ func (b *Balance) Validate() {
 	}
 	if b.MutationLevel3Multiplier <= 0 {
 		b.MutationLevel3Multiplier = 2.0
+	}
+	if b.MutationLevel4Multiplier <= 0 {
+		b.MutationLevel4Multiplier = 2.5
 	}
 
 	// ── SPELLCASTING ─────────────────────────────────────────────────────
@@ -582,6 +756,15 @@ func (b *Balance) Validate() {
 	if b.SpellProficiencyCastsPerPoint < 1 {
 		b.SpellProficiencyCastsPerPoint = 50
 	}
+	if b.SpellDifficultyProgressionScale <= 0 {
+		b.SpellDifficultyProgressionScale = 0.01
+	}
+	if b.CraftDifficultyProgressionScale <= 0 {
+		b.CraftDifficultyProgressionScale = 0.02
+	}
+	if b.SelfCastProgressionMultiplier <= 0 {
+		b.SelfCastProgressionMultiplier = 0.5
+	}
 
 	// ── ENCHANTMENTS ─────────────────────────────────────────────────────────
 	if b.EnchantTierUpBaseChance <= 0 {
@@ -608,6 +791,26 @@ func (b *Balance) Validate() {
 	// ── MOB MUTATIONS ────────────────────────────────────────────────────────
 	if b.MobMutationRate <= 0 || b.MobMutationRate > 1.0 {
 		b.MobMutationRate = 0.3
+	}
+
+	// ── MOB AI ───────────────────────────────────────────────────────────────
+	if b.CombatMemoryDuration < 1 {
+		b.CombatMemoryDuration = 300
+	}
+	if !bool(b.MobAIEnabled) {
+		b.MobAIEnabled = true
+	}
+	if b.MobReactionDelayMin <= 0 {
+		b.MobReactionDelayMin = 0.25
+	}
+	if b.MobReactionDelayMax <= 0 {
+		b.MobReactionDelayMax = 4.0
+	}
+	if b.MobBTreeReactionBase <= 0 {
+		b.MobBTreeReactionBase = 3.0
+	}
+	if b.MobBTreeReactionPerceptionScale < 1 {
+		b.MobBTreeReactionPerceptionScale = 100
 	}
 
 	// ── PACK SCALING ─────────────────────────────────────────────────────────
@@ -645,6 +848,71 @@ func (b *Balance) Validate() {
 	// ── MOON PHASES ───────────────────────────────────────────────────────────
 	if b.MoonStatModMax <= 0 {
 		b.MoonStatModMax = 0.05
+	}
+
+	// ── CARRY CAPACITY ──────────────────────────────────────────────────────
+	if b.CarryCapacityMultiplier < 0.1 || b.CarryCapacityMultiplier > 10.0 {
+		b.CarryCapacityMultiplier = 0.65
+	}
+
+	// ── TOXICITY ────────────────────────────────────────────────────────────
+	if b.ToxicityDecayPerTick <= 0 {
+		b.ToxicityDecayPerTick = 1.0
+	}
+	if b.ToxicityBaseMax <= 0 {
+		b.ToxicityBaseMax = 100
+	}
+	if b.ToxicityVitalityScale <= 0 {
+		b.ToxicityVitalityScale = 5
+	}
+
+	// ── MANIFESTATION / COMPANION SCALING ───────────────────────────────────
+	if b.ManifestStatScaleChaFactor < 1 {
+		b.ManifestStatScaleChaFactor = 150
+	}
+	if b.ManifestStatScaleSkillFactor <= 0 {
+		b.ManifestStatScaleSkillFactor = 0.02
+	}
+
+	// ── SHOP ECONOMY ─────────────────────────────────────────────────────────
+	if b.ShopBuyRatio <= 0 {
+		b.ShopBuyRatio = 0.50
+	}
+	if b.ShopPriceFloor <= 0 {
+		b.ShopPriceFloor = 0.25
+	}
+	if b.ShopPriceCeiling <= 0 {
+		b.ShopPriceCeiling = 5.0
+	}
+	if b.ShopAbundanceThreshold <= 0 {
+		b.ShopAbundanceThreshold = 3.0
+	}
+	if b.ShopMaterialReserve < 0 {
+		b.ShopMaterialReserve = 1
+	}
+	if b.ShopGoldReserveRatio <= 0 {
+		b.ShopGoldReserveRatio = 0.50
+	}
+	if b.BarterMaxDiscount <= 0 {
+		b.BarterMaxDiscount = 0.15
+	}
+	if b.BarterMaxBonus <= 0 {
+		b.BarterMaxBonus = 0.15
+	}
+
+	// ── STORAGE FEES ─────────────────────────────────────────────────────────
+	if b.StorageFeePerItem < 0 {
+		b.StorageFeePerItem = 1
+	}
+
+	// ── LOOT ──────────────────────────────────────────────────────────────────
+	if b.LootBudgetScalar <= 0 {
+		b.LootBudgetScalar = 7.0
+	}
+
+	// ── INSTANCES ────────────────────────────────────────────────────────────
+	if b.InstanceStatPoolCap < 1 {
+		b.InstanceStatPoolCap = 50000
 	}
 }
 

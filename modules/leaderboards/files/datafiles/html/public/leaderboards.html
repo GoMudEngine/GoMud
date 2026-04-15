@@ -13,7 +13,7 @@
     <table class="leaderboard">
         <tr>
             <th>Name</th>
-            <th>Class</th>
+            <th>Title</th>
             <th>{{ $lb.Name }}</th>
         </tr>
         {{ range $idx, $entry := $lb.Top }}
@@ -22,13 +22,13 @@
             {{ end }}
             <tr>
                 <td>{{ $entry.CharacterName }}</td>
-                <td>{{ $entry.CharacterClass }}</td>
+                <td>{{ $entry.CharacterTitle }}</td>
                 <td>{{ $entry.ScoreValue }}</td>
             </tr>
         {{ end }}
     </table>
     {{ end }}
-    
+
 
 </div>
 

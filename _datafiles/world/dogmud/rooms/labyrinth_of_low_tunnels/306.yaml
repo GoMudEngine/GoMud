@@ -9,6 +9,10 @@ description: A wider chamber where the ceiling rises just high enough to stand h
   with cracked bones that have been split lengthwise for the marrow. The smell of
   cured flesh and rancid fat is thick enough to taste.
 biome: cave
+coord:
+  x: -11
+  y: 6
+  z: -1
 exits:
   north:
     roomid: 303

@@ -4,35 +4,35 @@ reserve_pool: stamina
 target_type: body
 tiers:
   - tier: 0
-    reserve_pct: 0.02
+    reserve_pct: 0.01
     effects:
       dexterity_statmod: 1
     adjective: filament-laced
     description_suffix: "Fine filaments weave through the armor's weave."
     tier_up_message: ""
   - tier: 1
-    reserve_pct: 0.04
+    reserve_pct: 0.02
     effects:
       dexterity_statmod: 2
     adjective: spore-dusted
     description_suffix: "A dusting of spores settles across the fabric, shimmering."
     tier_up_message: "The spores drift into your lungs—you breathe the Chrysalis."
   - tier: 2
-    reserve_pct: 0.06
+    reserve_pct: 0.04
     effects:
       dexterity_statmod: 3
     adjective: mycelial
     description_suffix: "Mycelial networks spread across the armor like living roots."
     tier_up_message: "The fungal threads bind to your muscles—you move as one."
   - tier: 3
-    reserve_pct: 0.08
+    reserve_pct: 0.06
     effects:
       dexterity_statmod: 4
     adjective: fungal-woven
-    description_suffix: "The armor is now woven entirely of fungal threads, growing."
+    description_suffix: "The armor is woven entirely of fungal threads, growing."
     tier_up_message: "The Chrysalis grows through your body—agility beyond mortal limits."
   - tier: 4
-    reserve_pct: 0.10
+    reserve_pct: 0.08
     effects:
       dexterity_statmod: 5
     adjective: spore-blooming

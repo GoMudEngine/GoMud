@@ -7,6 +7,10 @@ description: The road narrows here to a single flagged causeway of polished basa
   The gate opens south onto a weathered track that descends from the plateau and into
   the wider world of Gaius. To the east, a trail follows the rim of the plateau.
 biome: desert
+coord:
+  x: -10
+  y: 7
+  z: 0
 exits:
   north:
     roomid: 102

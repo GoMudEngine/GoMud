@@ -1,0 +1,18 @@
+id: cats-eye-draught
+name: Cat's Eye Draught
+skill: alchemy
+skill_minimum: 12
+station: alchemy_bench
+time_rounds: 5
+ingredients:
+  - item_tag: moonpetal
+    quantity: 2
+  - item_tag: dustwalk-herb
+    quantity: 1
+  - item_tag: bottle
+    quantity: 1
+output:
+  item_id: 30047
+  quantity: 1
+success_message: "The moonpetal essence concentrates into a luminous draught. A cat's eye draught!"
+failure_message: "The moonpetal extract loses its glow and goes inert. The materials are wasted."

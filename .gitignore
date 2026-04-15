@@ -5,6 +5,10 @@ _datafiles/**/plugin-data/*
 **/config-overrides.yaml
 **/.roundcount
 **/rooms.instances
+**/mobs.instances
+**/shops
+.worktrees/
+tools/testing/reports/*.md
 vendor/
 server.crt
 server.key

@@ -9,11 +9,15 @@ description: A narrow passage between the backs of buildings, barely wide enough
   halfway along has been fitted with a heavy curtain instead of a door, suggesting
   commerce of the unofficial kind.
 biome: city
+coord:
+  x: 1
+  y: -1
+  z: 0
 exits:
   north:
     roomid: 461
   east:
-    roomid: 475
+    roomid: 469
 nouns:
   curtain: A heavy canvas curtain, once dyed dark red, now faded to a muddy brown.
     It covers a doorway that leads into a ground-floor room. The curtain moves

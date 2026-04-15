@@ -4,7 +4,7 @@
 
 The `internal/statmods` package provides a centralized system for managing character statistic modifications in the DOGMud game engine. It defines standardized stat names, modification structures, and provides utilities for applying temporary and permanent stat changes from various sources like items, buffs, species bonuses, and skills.
 
-**DOGMud note:** The internal stat key strings (e.g., `"speed"`, `"smarts"`, `"mysticism"`) are used as map keys in the engine and may not match the player-facing stat names (Dexterity, Perception, Willpower). The mapping is: speed→Dexterity, smarts→Perception, mysticism→Willpower, perception→Charisma. Mana-related keys are deprecated.
+**DOGMud note:** The internal stat key strings match the player-facing names: `"strength"`, `"dexterity"`, `"perception"`, `"vitality"`, `"willpower"`, `"charisma"`. Legacy keys (`"speed"`, `"smarts"`, `"mysticism"`) were migrated in 0.10.0 and should not be used. Mana-related keys are deprecated.
 
 ## Key Components
 
@@ -33,20 +33,19 @@ Type-safe string wrapper for standardized stat name constants, ensuring consiste
 
 ### Core Character Stats
 - **Strength**: `"strength"` - Physical power affecting melee damage and carrying capacity
-- **Speed/Dexterity**: `"speed"` - Agility and reaction time affecting initiative and dodge (displayed as "Dexterity")
-- **Smarts/Perception**: `"smarts"` - Awareness affecting detection and observation (displayed as "Perception")
-- **Vitality**: `"vitality"` - Constitution affecting health and resistance
-- **Mysticism/Willpower**: `"mysticism"` - Mental fortitude affecting conviction and spell effectiveness (displayed as "Willpower")
-- **Perception/Charisma**: `"perception"` - Social influence affecting NPC interactions (displayed as "Charisma")
+- **Dexterity**: `"dexterity"` - Agility and reaction time affecting dodge, parry, and attack speed
+- **Perception**: `"perception"` - Awareness affecting detection, search, and ranged accuracy
+- **Vitality**: `"vitality"` - Constitution affecting health, toxicity tolerance, and resistance
+- **Willpower**: `"willpower"` - Mental fortitude affecting conviction pool and spell power
+- **Charisma**: `"charisma"` - Social influence affecting taunt damage and NPC interactions
 
 ### Derived Stats
 - **HealthMax**: `"healthmax"` - Maximum health points
-- **ManaMax**: `"manamax"` - DEPRECATED (Mana removed in DOGMud)
 - **HealthRecovery**: `"healthrecovery"` - Health regeneration rate modifier
-- **ManaRecovery**: `"manarecovery"` - DEPRECATED (Mana removed in DOGMud)
+- **StaminaRecovery**: `"staminarecovery"` - Stamina regeneration rate modifier
+- **ConvictionRecovery**: `"convictionrecovery"` - Conviction regeneration rate modifier
 
 ### Skill-Specific Stats
-- **Tame**: `"tame"` - Animal taming skill effectiveness
 - **Picklock**: `"picklock"` - Lock picking skill effectiveness
 - **Casting**: `"casting"` - General spell casting effectiveness
 - **CastingPrefix**: `"casting-"` - Prefix for school-specific casting bonuses
@@ -105,8 +104,8 @@ racialMods := statmods.StatMods{
 // Item-based stat modifications
 item := items.Item{
     StatMods: statmods.StatMods{
-        "strength": 3,
-        "speed":    2,
+        "strength":  3,
+        "dexterity": 2,
     },
 }
 

@@ -5,10 +5,12 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/crafting"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -24,14 +26,87 @@ func Craft(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return craftList(user, room), nil
 	}
 
-	// ── craft <name> ──────────────────────────────────────────────────────────
+	// ── Enchanting: needs player-specific disambiguation before delegating ─────
+	// Peek at the recipe first to route enchanting separately.
+	// Input may be "recipe-name item-name" so try progressively shorter
+	// prefixes: "honed-edge knuckles" → try "honed-edge knuckles", then
+	// "honed-edge". This handles hyphenated recipe names with an item target.
 	recipe := crafting.FindRecipeByName(rest)
 	if recipe == nil {
-		user.SendText(fmt.Sprintf(`<ansi fg="red">No recipe found for "%s". Type <ansi fg="cyan-bold">craft list</ansi> to see available recipes.</ansi>`, rest))
+		words := strings.Fields(rest)
+		for i := len(words) - 1; i >= 1; i-- {
+			candidate := strings.Join(words[:i], " ")
+			if r := crafting.FindRecipeByName(candidate); r != nil {
+				recipe = r
+				break
+			}
+		}
+	}
+	if recipe != nil && crafting.IsEnchantingRecipe(recipe) {
+		return craftEnchanting(rest, recipe, user, room)
+	}
+
+	// ── Normal craft path: delegate to shared action ──────────────────────────
+	actor := &actions.UserActor{User: user, Room: room}
+	result := actions.InitiateCraft(actor, rest)
+
+	switch {
+	case result.RecipeNotFound:
+		user.SendText(fmt.Sprintf(
+			`<ansi fg="red">No recipe found for "%s". Type <ansi fg="cyan-bold">craft list</ansi> to see available recipes.</ansi>`,
+			rest))
+		return true, nil
+
+	case result.RecipeNotKnown:
+		user.SendText(`<ansi fg="red">You don't know that recipe yet. Keep crafting to discover new ones!</ansi>`)
+		return true, nil
+
+	case result.AlreadyCrafting:
+		user.SendText(`<ansi fg="red">You are already working on something. Finish or be interrupted first.</ansi>`)
+		return true, nil
+
+	case result.SkillTooLow:
+		user.SendText(fmt.Sprintf(
+			`<ansi fg="red">Your %s skill is too low (requires %d, you have %d).</ansi>`,
+			result.SkillName, result.SkillMinimum, result.SkillLevel))
+		return true, nil
+
+	case result.WrongStation:
+		user.SendText(fmt.Sprintf(
+			`<ansi fg="red">You need to be at a %s to craft that.</ansi>`,
+			result.StationNeeded))
+		return true, nil
+
+	case result.MissingIngredients:
+		user.SendText(fmt.Sprintf(`<ansi fg="red">You are missing: %s.</ansi>`, result.MissingTag))
+		return true, nil
+
+	case result.ImmediateComplete:
+		user.SendText(fmt.Sprintf(`<ansi fg="green">%s</ansi>`, result.SuccessMsg))
+		return true, nil
+
+	case result.Initiated:
+		user.SendText(fmt.Sprintf(
+			`<ansi fg="yellow">You begin crafting %s... (%s)</ansi>`,
+			result.RecipeName, craftTimeDesc(result.TimeRounds)))
+
+		// Quest engine: command notification
+		bridge := questengine.NewGameBridge(user, room.RoomId)
+		questengine.GetEngine().Notify("command", questengine.EventDetails{
+			UserId:  user.UserId,
+			RoomId:  room.RoomId,
+			Command: "craft",
+		}, bridge, bridge)
 		return true, nil
 	}
 
-	// Known-recipe gate (Stage 31.1)
+	return true, nil
+}
+
+// craftEnchanting handles the enchanting sub-path of craft, which requires
+// player-specific target disambiguation not available to mob actors.
+func craftEnchanting(rest string, recipe *crafting.RecipeSpec, user *users.UserRecord, room *rooms.Room) (bool, error) {
+	// Known-recipe gate
 	if !user.Character.HasRecipe(recipe.RecipeId) {
 		user.SendText(`<ansi fg="red">You don't know that recipe yet. Keep crafting to discover new ones!</ansi>`)
 		return true, nil
@@ -61,21 +136,32 @@ func Craft(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	}
 
 	// Ingredient check
-	ok, missing := crafting.HasIngredients(user.Character.Items, recipe)
+	ok, missing := crafting.HasIngredients(user.Character.Items, user.Character.ComponentItems, recipe)
 	if !ok {
 		user.SendText(fmt.Sprintf(`<ansi fg="red">You are missing: %s.</ansi>`, missing))
 		return true, nil
 	}
 
-	// Enchanting: target item check
-	if crafting.IsEnchantingRecipe(recipe) {
-		_, found := crafting.FindTargetItem(user.Character.Items, recipe.TargetType)
-		if !found {
-			user.SendText(fmt.Sprintf(
-				`<ansi fg="red">You need a %s in your inventory to enchant.</ansi>`,
-				strings.ReplaceAll(recipe.TargetType, "_", " ")))
-			return true, nil
-		}
+	// Slot-based target resolution
+	// Strip the recipe name from the input to get the optional slot specifier.
+	specifier := ""
+	recipeName := strings.ToLower(recipe.Name)
+	restLower := strings.ToLower(strings.TrimSpace(rest))
+	if strings.HasPrefix(restLower, recipeName) {
+		specifier = strings.TrimSpace(rest[len(recipeName):])
+	} else if strings.HasPrefix(restLower, strings.ToLower(recipe.RecipeId)) {
+		specifier = strings.TrimSpace(rest[len(recipe.RecipeId):])
+	}
+
+	slotLabel, targetItem, errMsg := resolveEnchantSlot(&user.Character.Equipment, recipe.TargetType, specifier)
+	if errMsg != "" {
+		user.SendText(fmt.Sprintf(`<ansi fg="red">%s</ansi>`, errMsg))
+		return true, nil
+	}
+
+	if targetItem == nil {
+		user.SendText(`<ansi fg="red">Could not find a valid item in that slot.</ansi>`)
+		return true, nil
 	}
 
 	// Safety: complete immediately if time_rounds <= 0
@@ -84,14 +170,23 @@ func Craft(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return true, nil
 	}
 
-	// Start crafting
+	// Start multi-round enchanting with the resolved slot
 	user.Character.CraftingState = &characters.CraftingState{
 		RecipeId:    recipe.RecipeId,
 		RoundsTotal: recipe.TimeRounds,
+		TargetSlot:  slotLabel,
 	}
 	user.SendText(fmt.Sprintf(
-		`<ansi fg="yellow">You begin crafting %s... (%d rounds)</ansi>`,
-		recipe.Name, recipe.TimeRounds))
+		`<ansi fg="yellow">You begin enchanting <ansi fg="itemname">%s</ansi>... (%s)</ansi>`,
+		targetItem.DisplayName(), craftTimeDesc(recipe.TimeRounds)))
+
+	// Quest engine: command notification
+	bridge := questengine.NewGameBridge(user, room.RoomId)
+	questengine.GetEngine().Notify("command", questengine.EventDetails{
+		UserId:  user.UserId,
+		RoomId:  room.RoomId,
+		Command: "craft",
+	}, bridge, bridge)
 
 	return true, nil
 }
@@ -131,12 +226,29 @@ func craftList(user *users.UserRecord, room *rooms.Room) bool {
 	user.SendText(``)
 	user.SendText(`<ansi fg="cyan-bold"> .:. Crafting Recipes .:.</ansi>`)
 
+	totalKnown := 0
+	grandTotal := 0
+
 	for _, skillName := range skillNames {
 		skillLevel := user.Character.GetSkillLevel(skills.SkillTag(skillName))
+
+		// Count known vs total for this skill
+		allForSkill := crafting.GetAllForSkill(skillName)
+		knownCount := 0
+		for _, r := range allForSkill {
+			if user.Character.HasRecipe(r.RecipeId) {
+				knownCount++
+			}
+		}
+		totalKnown += knownCount
+		grandTotal += len(allForSkill)
+
+		completionDesc := recipeCompletionTier(knownCount, len(allForSkill))
+
 		user.SendText(``)
 		user.SendText(fmt.Sprintf(
-			`<ansi fg="yellow">%s</ansi> <ansi fg="white">(skill: %d)</ansi>`,
-			titleCase(strings.ReplaceAll(skillName, "-", " ")), skillLevel))
+			`<ansi fg="yellow">%s</ansi> <ansi fg="white">(%s)</ansi> — <ansi fg="black-bold">%s</ansi>`,
+			titleCase(strings.ReplaceAll(skillName, "-", " ")), skills.GetSkillRankDescription(skillLevel), completionDesc))
 
 		recipes := crafting.GetAllForSkill(skillName)
 		for _, r := range recipes {
@@ -151,30 +263,55 @@ func craftList(user *users.UserRecord, room *rooms.Room) bool {
 			}
 			if reason != "" {
 				user.SendText(fmt.Sprintf(
-					`  <ansi fg="red">[%s]</ansi> <ansi fg="white">%-22s</ansi> — %s  <ansi fg="red">%s</ansi><ansi fg="dark-cyan">%s, %d rounds</ansi>`,
-					indicator, r.Name, ingredientList, reason, stationStr, r.TimeRounds))
+					`  <ansi fg="red">[%s]</ansi> <ansi fg="white">%-22s</ansi> — %s  <ansi fg="red">%s</ansi><ansi fg="dark-cyan">%s, %s</ansi>`,
+					indicator, r.Name, ingredientList, reason, stationStr, craftTimeDesc(r.TimeRounds)))
 			} else {
 				user.SendText(fmt.Sprintf(
-					`  <ansi fg="green">[%s]</ansi> <ansi fg="white">%-22s</ansi> — %s  <ansi fg="dark-cyan">%s, %d rounds</ansi>`,
-					indicator, r.Name, ingredientList, stationStr, r.TimeRounds))
+					`  <ansi fg="green">[%s]</ansi> <ansi fg="white">%-22s</ansi> — %s  <ansi fg="dark-cyan">%s, %s</ansi>`,
+					indicator, r.Name, ingredientList, stationStr, craftTimeDesc(r.TimeRounds)))
 			}
 		}
 	}
 
+	// Overall completion
+	overallDesc := recipeCompletionTier(totalKnown, grandTotal)
+	user.SendText(``)
+	user.SendText(fmt.Sprintf(`<ansi fg="cyan">Overall recipe knowledge: %s</ansi>`, overallDesc))
 	user.SendText(``)
 	return true
+}
+
+// recipeCompletionTier returns a descriptive tier for how many recipes
+// are known out of a total. No hard numbers shown to the player.
+func recipeCompletionTier(known, total int) string {
+	if total <= 0 {
+		return "unknown"
+	}
+	pct := float64(known) / float64(total) * 100
+	switch {
+	case pct < 15:
+		return "a handful of recipes"
+	case pct < 35:
+		return "a modest collection"
+	case pct < 60:
+		return "a solid repertoire"
+	case pct < 85:
+		return "an extensive catalog"
+	default:
+		return "near-complete mastery"
+	}
 }
 
 // recipeStatus returns the indicator character and a blocking reason string.
 // indicator is "✓" if craftable, "✗" otherwise. reason is "" if craftable.
 func recipeStatus(user *users.UserRecord, room *rooms.Room, r *crafting.RecipeSpec, skillLevel int) (string, string) {
 	if skillLevel < r.SkillMinimum {
-		return "X", fmt.Sprintf("skill %d required", r.SkillMinimum)
+		return "X", fmt.Sprintf("%s skill required", skills.GetSkillRankDescription(r.SkillMinimum))
 	}
 	if r.Station != "" && room.Station != r.Station {
 		return "X", fmt.Sprintf("need %s", strings.ReplaceAll(r.Station, "_", " "))
 	}
-	ok, missing := crafting.HasIngredients(user.Character.Items, r)
+	ok, missing := crafting.HasIngredients(user.Character.Items, user.Character.ComponentItems, r)
 	if !ok {
 		return "X", fmt.Sprintf("missing %s", missing)
 	}
@@ -192,7 +329,7 @@ func ingredientSummary(r *crafting.RecipeSpec) string {
 
 // completeCraft resolves a craft instantly (used when time_rounds <= 0).
 func completeCraft(user *users.UserRecord, recipe *crafting.RecipeSpec) {
-	user.Character.Items = crafting.ConsumeIngredients(user.Character.Items, recipe)
+	user.Character.Items, user.Character.ComponentItems = crafting.ConsumeIngredients(user.Character.Items, user.Character.ComponentItems, recipe)
 	newItem := items.New(recipe.Output.ItemId)
 	user.Character.StoreItem(newItem)
 	user.SendText(fmt.Sprintf(`<ansi fg="green">%s</ansi>`, recipe.SuccessMessage))
@@ -207,4 +344,20 @@ func titleCase(s string) string {
 		}
 	}
 	return strings.Join(words, " ")
+}
+
+// craftTimeDesc returns a qualitative description for crafting duration.
+func craftTimeDesc(rounds int) string {
+	switch {
+	case rounds <= 1:
+		return "instant"
+	case rounds <= 3:
+		return "quick"
+	case rounds <= 6:
+		return "moderate"
+	case rounds <= 10:
+		return "lengthy"
+	default:
+		return "prolonged"
+	}
 }

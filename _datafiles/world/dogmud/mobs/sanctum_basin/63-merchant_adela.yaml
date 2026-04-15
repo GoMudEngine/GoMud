@@ -1,7 +1,9 @@
 mobid: 63
 zone: Sanctum Basin
-statpool: 60
+statpool: 120
 hostile: false
+charm_immune: true
+non_combatant: true
 maxwander: 0
 idlecommands:
   - 'emote straightens a row of items on the display counter'
@@ -74,8 +76,8 @@ llmprofile:
       sympathy with a merchant's pragmatism: everyone needs better
       gear after a close call. Steer them toward browsing.
     - Ready to move on (past shopping): Make friendly conversation.
-      Tell them the Combat Trainer is northeast in the Training
-      Yard. Remind them you are always here if they need supplies.
+      Tell them the Combat Trainer is north and then east in the
+      Training Yard. Remind them you are always here if they need supplies.
       Wish them luck with warmth.
 
     ADAPTIVE COACHING:
@@ -92,7 +94,7 @@ character:
     might need. She has a gift for sizing up a customer in two seconds flat.'
   speciesid: 1
   level: 1
-  gold: 0
+  gold: 500
   shop:
     - itemid: 10001
       quantity: 0

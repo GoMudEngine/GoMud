@@ -4,11 +4,13 @@ description: Opens the mind to accelerated learning and skill growth.
 type: helpsingle
 schools:
   - mental
-cost: 60
+cost: 180
 waitrounds: 1
-difficulty: 0
+difficulty: 35
 primarystat: willpower
 base_folds: 8
 effect_type: buff
 buff_ids:
   - 34
+cast_user_text: "You attune the target's mind for accelerated learning."
+cast_room_text: "{source} touches their temple and focuses deeply."

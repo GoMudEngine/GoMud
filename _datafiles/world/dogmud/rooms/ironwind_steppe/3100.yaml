@@ -10,13 +10,17 @@ description: The northern cliffs rise abruptly from the steppe here,
   smells of stone and damp. Wind howls across the cliff face,
   creating an eerie, fluctuating moan.
 biome: cliffs
+coord:
+  x: 12
+  y: 7
+  z: 0
 exits:
-  south:
-    roomid: 3029
-  east:
-    roomid: 3101
   north:
     roomid: 3102
+  east:
+    roomid: 3101
+  south:
+    roomid: 3029
 nouns:
   cliffs: Pale sandstone cliffs rising several stories above you,
     their faces sculpted by wind into smooth, organic shapes. Dark

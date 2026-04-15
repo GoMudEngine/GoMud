@@ -1,0 +1,10 @@
+buffid: 64
+name: Stone Stomach
+description: Nothing can turn your stomach now, though your reflexes feel sluggish.
+triggerrate: 1 round
+triggercount: 500
+statmods:
+  dexterity: -10
+  charisma: -5
+flags:
+  - poison-immunity

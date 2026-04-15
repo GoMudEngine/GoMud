@@ -1,0 +1,68 @@
+mobid: 329
+zone: North Road
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello. Sorry — long day on the road. Heading up to Stillwater.
+        Just stopping to rest my feet a while."
+      - "Greetings. I am fine, just tired. Been walking since dawn."
+
+  - keywords: ["stillwater", "town", "pike", "inn", "lantern"]
+    responses:
+      - "I know Stillwater well. The Pike and Lantern is a good inn —
+        comfortable beds, decent food, the kind of place where nobody
+        bothers you. The fish market in the morning is worth seeing.
+        Good place to resupply before heading further north."
+      - "Stillwater is lovely, honestly. The lake at dusk is one of the
+        nicer things on this road. I try to arrive before dark so I can
+        sit by the water before turning in."
+
+  - keywords: ["road", "dangers", "dogs", "bandits", "safe", "travel"]
+    responses:
+      - "The wild dogs near the ford have been worse this season. I
+        startled a pack of them two days ago — they backed off, but they
+        were not shy about it. Stick to the center of the road near
+        the tree line."
+      - "Bandits used to work the south stretch, but I have not seen
+        trouble there in a while. Could be they moved on, or the agents
+        cleared them out — I am not sure. The road is safer the closer
+        you get to Stillwater."
+
+  - keywords: ["agents", "bloodline", "coat", "riders", "official", "man"]
+    responses:
+      - "A man stopped me south of here. Dark coat, very polite. Asked
+        if I had seen a young woman traveling north alone — said it might
+        have been a season ago. I told him I had not seen anyone matching
+        that. He thanked me and moved on. Had the air of someone used to
+        asking questions without getting answers."
+      - "One of those dark-coat riders spoke to me a day's walk south.
+        He was professional about it — not threatening. Just asking after
+        a traveler. I could not help him. He did not press."
+
+  - keywords: ["girl", "woman", "maren", "young", "dark", "hair"]
+    responses:
+      - "He described her as young, dark-haired, traveling light. Said
+        she might have worked odd jobs along the road. I see young women
+        traveling alone all the time out here — I had no way to single
+        anyone out. I told him as much."
+      - "Young, dark-haired, traveling light and keeping to herself.
+        That is half the people I pass on a busy market day. I genuinely
+        could not help him, and I said so."
+
+  - keywords: ["quest", "task", "help", "need"]
+    responses:
+      - "Nothing I need, thank you. I am just trying to reach Stillwater
+        before dark."
+      - "I appreciate the offer, but I have everything I need. Just
+        tired legs."
+
+  - keywords: [""]
+    responses:
+      - "Forgive me — I am resting. Is there something specific I can
+        help you with?"
+      - "I do not mean to be short. Long road today."
+
+memory:
+  expiryPeriod: ""

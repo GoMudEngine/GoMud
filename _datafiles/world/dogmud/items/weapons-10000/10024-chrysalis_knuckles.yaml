@@ -1,0 +1,22 @@
+itemid: 10024
+name: chrysalis knuckles
+namesimple: knuckles
+description: >-
+  Hardened nodes of chrysalis chitin mounted over a leather
+  knuckle frame, each node shaped to concentrate the force of
+  a strike. The surface catches light with an oily iridescent
+  sheen, shifting between blue and green as the angle changes.
+  The edges have been left deliberately sharp.
+type: weapon
+hands: 1
+subtype: fist
+weight: 0.8
+speedmultiplier: 1.15
+staminacost: 3
+grapplemodifier: 0.5
+damage:
+  basedamage: 4
+  variance: 2
+damage_multiplier: 0.55
+parryrating: 3
+value: 40

@@ -1,5 +1,6 @@
 mobid: 225
 zone: Ironwind Steppe
+buffids: [9]
 statpool: 160
 itemdropchance: 20
 hostile: true
@@ -17,6 +18,17 @@ idlecommands:
   - ''
   - 'emote opens a wide, pale mouth in a silent yawn'
 activitylevel: 10
+reaction_delay: 0.8
+tactical_discipline: 0.60
+tactic_preset: ambusher
+tactics:
+  - trigger: health_below:25
+    action: flee
+    priority: 11
+combatcommands:
+  - ''
+  - ''
+  - ''
 character:
   name: pale lurker
   description: |
@@ -40,3 +52,5 @@ character:
       training: 5
     vitality:
       training: 5
+  skills:
+    skullduggery: 12

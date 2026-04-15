@@ -1,0 +1,159 @@
+questid: 14
+name: The Undertow
+description: The protection racket was only the surface. Beneath the Drowning
+  Post, old drainage tunnels have been converted into a smuggling pipeline
+  that bypasses the city gates entirely. Marek needs someone to investigate
+  the noises from his cellar.
+secret: false
+
+steps:
+  - id: start
+    description: "Marek at the Drowning Post has been hearing noises from his
+      cellar -- scraping, voices, the sound of things being moved. The old
+      drainage tunnels run beneath the tavern. He has given you a lantern and
+      asked you to investigate."
+    hint: "Descend through the kitchen trapdoor into the cellar. Search the
+      tunnels for evidence of smuggling -- check any stash rooms or crates
+      you find."
+  - id: explore
+    description: "You found a tally stick in the smugglers' stash room -- proof
+      of regular shipments moving through these tunnels. The chalk arrows on
+      the walls point south, deeper into the tunnel system."
+    hint: "Follow the tunnels south. The chalk arrows point toward whoever is
+      in charge of the operation."
+  - id: confront
+    description: "You have reached the operations room at the heart of the
+      smuggling tunnels. A man named Torvan Cresk runs the whole operation from
+      here. A locked strongbox beneath his table likely holds the real
+      evidence -- but Torvan has the key."
+    hint: "Torvan Cresk has the key to the strongbox. Fight him, take the
+      key, and open the strongbox."
+  - id: evidence
+    description: "You have obtained a bribe ledger from the strongbox -- it
+      names corrupt city officials taking payments to look the other way.
+      Guard Captain Velk needs to see this."
+    hint: "Bring the bribe ledger to Guard Captain Velk at the barracks in
+      the city centre."
+  - id: report
+    description: "Guard Captain Velk has the bribe ledger and is reviewing the
+      names. He is ready to act."
+    hint: "Speak with Velk to close the case."
+  - id: end
+    description: "The smuggling tunnels have been exposed and the bribe ledger
+      is in the hands of the city watch. Thornwall's underground corruption
+      runs deeper than anyone knew."
+
+rewards:
+  playermessage: "Guard Captain Velk nods with grim satisfaction. 'This ledger
+    changes everything. Names, dates, amounts -- enough to end careers and
+    start trials. You have done Thornwall a real service.' He hands you a
+    folded parchment bearing the Watch seal. 'A commendation. It may not buy
+    you a drink, but it buys you goodwill with the guard.'"
+  roommessage: "Velk hands over a sealed document with a look of grudging
+    respect."
+  gold: 25
+  itemid: 40037
+
+triggers:
+  # ── CELLAR GATE: block descent without quest ──────────
+  - event: room_enter
+    room: 486
+    conditions:
+      missing: ["14-start"]
+    actions:
+      - send_text: "The iron grate covers a dark opening that descends into
+          the old drainage tunnels. You have no reason to go down there."
+      - teleport: 485
+
+  # ── EXPLORE: tally stick pickup ───────────────────────
+  - event: item_gain
+    item: 40035
+    conditions:
+      has: ["14-start"]
+      missing: ["14-explore"]
+    actions:
+      - grant: "14-explore"
+      - send_text: "A tally stick -- notched marks recording regular
+          shipments. Someone is running goods through these tunnels on a
+          schedule. The chalk arrows on the walls point south, deeper into
+          the system."
+
+  # ── CONFRONT: enter operations room ───────────────────
+  - event: room_enter
+    room: 498
+    conditions:
+      has: ["14-explore"]
+      missing: ["14-confront"]
+    actions:
+      - grant: "14-confront"
+      - send_text: "You step into a well-lit chamber that serves as the nerve
+          center of the smuggling operation. A man at the table looks up
+          sharply -- this must be the one in charge. A heavy iron strongbox
+          sits beneath his table, locked tight. Whatever proof you need is
+          probably in there."
+
+  # ── STRONGBOX: open with key ──────────────────────────
+  - event: room_interact
+    room: 498
+    noun: strongbox
+    conditions:
+      has: ["14-confront"]
+      missing: ["14-evidence"]
+      has_item: 40034
+    actions:
+      - consume_item: 40034
+      - give_item: 40036
+      - grant: "14-evidence"
+      - send_text: "You fit the brass key into the padlock and turn. The lock
+          clicks open. Inside the strongbox you find a slim leather journal --
+          a bribe ledger, filled with names, dates, and amounts paid to
+          corrupt city officials. This is the evidence you need."
+      - room_text: "unlocks the strongbox and pulls out a leather journal."
+
+  # ── STRONGBOX: locked (no key) ────────────────────────
+  - event: room_interact
+    room: 498
+    noun: strongbox
+    conditions:
+      has: ["14-confront"]
+      missing: ["14-evidence"]
+      missing_item: 40034
+    actions:
+      - send_text: "The strongbox is locked with a heavy brass padlock. You
+          need a key."
+
+  # ── STRONGBOX: already opened ─────────────────────────
+  - event: room_interact
+    room: 498
+    noun: strongbox
+    conditions:
+      has: ["14-evidence"]
+    actions:
+      - send_text: "The strongbox is open and empty. You have already taken
+          the ledger."
+
+  # ── REPORT: bribe ledger to Velk ─────────────────────
+  - event: item_give
+    mob: 94
+    item: 40036
+    conditions:
+      has: ["14-evidence"]
+      missing: ["14-report"]
+    actions:
+      - grant: "14-report"
+      - npc_say:
+          mob: 94
+          lines:
+            - {delay: 1, text: "A bribe ledger? Let me see that."}
+            - {delay: 3, text: "Names, dates, amounts. Gate captains, customs
+                clerks, a warehouse inspector -- all on the take."}
+            - {delay: 5, text: "This changes everything. I am ordering arrests
+                tonight."}
+
+  # ── AUTO-COMPLETE: report → end ───────────────────────
+  - event: quest_granted
+    quest_token: "14-report"
+    conditions:
+      missing: ["14-end"]
+    actions:
+      - grant: "14-end"

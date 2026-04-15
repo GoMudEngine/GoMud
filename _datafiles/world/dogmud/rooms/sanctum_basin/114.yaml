@@ -6,6 +6,10 @@ description: A wide open yard of packed basalt dust serves as the combat trainin
   dummies are arranged around the space. A combat trainer moves through slow practice
   forms at the center of the yard, pausing to watch for students in need of instruction.
 biome: city
+coord:
+  x: -8
+  y: 10
+  z: 0
 mapsymbol: Y
 maplegend: Training Yard
 exits:

@@ -1,0 +1,19 @@
+itemid: 30052
+name: purging draught
+namesimple: draught
+description: A violently acrid concoction of veilbloom
+  and venom. It purges everything -- potions, toxicity,
+  and a little bit of yourself.
+type: potion
+subtype: drinkable
+uses: 1
+buffids:
+  - 70
+value: 50
+weight: 0.5
+toxicity: 60
+aging:
+  ferment_rounds: 500
+  peak_rounds: 2000
+  decay_rounds: 8000
+  spoil_rounds: 15000

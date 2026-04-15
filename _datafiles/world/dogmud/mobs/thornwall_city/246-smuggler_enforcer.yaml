@@ -1,0 +1,44 @@
+mobid: 246
+zone: Thornwall City
+archetype: fighting
+statpool: 55
+itemdropchance: 20
+hostile: true
+maxwander: 0
+groups:
+  - humanoid
+  - smuggler
+idlecommands:
+  - 'emote cracks knuckles and rolls thick shoulders'
+  - 'emote leans against the wall, arms folded, watching the tunnel'
+  - ''
+  - ''
+combatcommands:
+  - 'emote swings a heavy fist at your head'
+  - ''
+  - 'emote charges forward, trying to pin you against the wall'
+  - ''
+activitylevel: 10
+aiprofile: aggressive
+character:
+  name: smuggler enforcer
+  description: |
+    A broad-shouldered bruiser with a scarred face and hands like shovels.
+    The enforcer wears a boiled leather vest over a stained tunic, and
+    carries a cudgel at the belt alongside a knife. This is the tunnel
+    operation's muscle -- the one who makes sure runners do not skim,
+    guards do not sleep, and uninvited visitors do not leave. The flat,
+    calculating look in those eyes says this is not the enforcer's first
+    time dealing with problems in a dark place.
+  speciesid: 1
+  level: 1
+  gold: 5
+  stats:
+    strength:
+      training: 12
+    vitality:
+      training: 10
+    dexterity:
+      training: 3
+  items:
+    - itemid: 10006

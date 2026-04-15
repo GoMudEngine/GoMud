@@ -18,8 +18,15 @@ const (
 )
 
 var (
-	quests map[int]*Quest = map[int]*Quest{}
+	quests       map[int]*Quest = map[int]*Quest{}
+	flagRegistry                = map[string][]string{}
 )
+
+type QuestFlagDef struct {
+	Key         string   `yaml:"key"`
+	Values      []string `yaml:"values"`
+	Description string   `yaml:"description,omitempty"`
+}
 
 type QuestReward struct {
 	QuestId       string // new questId to give ( {id}-{step} format )
@@ -27,6 +34,7 @@ type QuestReward struct {
 	ItemId        int    // itemId to give
 	BuffId        int    // buffId to apply
 	SkillInfo     string // skill to give, format: skillId:skillLevel such as "map:1"
+	SpellId       string // spell to teach on quest completion
 	PlayerMessage string // string to display to player
 	RoomMessage   string // string to display to room
 	RoomId        int    // roomId to move player to
@@ -36,9 +44,10 @@ type Quest struct {
 	QuestId     int
 	Name        string
 	Description string
-	Secret      bool        // Secret quests are useful for marking some progress without making it known to the player
-	Steps       []QuestStep // String identifiers for each step required to complete the quest
+	Secret      bool           // Secret quests are useful for marking some progress without making it known to the player
+	Steps       []QuestStep    // String identifiers for each step required to complete the quest
 	Rewards     QuestReward
+	Flags       []QuestFlagDef `yaml:"flags,omitempty"`
 }
 
 type QuestStep struct {
@@ -183,6 +192,37 @@ func GetAllQuests() []Quest {
 	return ret
 }
 
+func RegisterFlags(questId int, flags []QuestFlagDef) {
+	for _, f := range flags {
+		key := fmt.Sprintf("%d-%s", questId, f.Key)
+		flagRegistry[key] = f.Values
+	}
+}
+
+func ValidateFlag(key, value string) error {
+	allowed, ok := flagRegistry[key]
+	if !ok {
+		return fmt.Errorf("undeclared quest flag %q (not defined in any quest's flags section)", key)
+	}
+	if value == "" {
+		return nil
+	}
+	for _, v := range allowed {
+		if v == value {
+			return nil
+		}
+	}
+	return fmt.Errorf("quest flag %q has invalid value %q (allowed: %v)", key, value, allowed)
+}
+
+func GetFlagRegistry() map[string][]string {
+	out := make(map[string][]string, len(flagRegistry))
+	for k, v := range flagRegistry {
+		out[k] = v
+	}
+	return out
+}
+
 // file self loads due to init()
 func LoadDataFiles() {
 
@@ -195,6 +235,11 @@ func LoadDataFiles() {
 	}
 
 	quests = tmpQuests
+
+	flagRegistry = map[string][]string{}
+	for _, q := range quests {
+		RegisterFlags(q.QuestId, q.Flags)
+	}
 
 	mudlog.Info("quests.LoadDataFiles()", "loadedCount", len(quests), "Time Taken", time.Since(start))
 

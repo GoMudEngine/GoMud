@@ -3,6 +3,7 @@ package combat
 import (
 	"fmt"
 	"math"
+	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
@@ -15,7 +16,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/statmods"
-	"strings"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -79,10 +79,14 @@ func calcSwingCount(sourceChar *characters.Character, weaponSpeed float64, extra
 	swings := 1.0 + (dex-50.0)/100.0*weaponSpeed*(1.0+skillLevel/softCap)
 	swings += float64(extraAttacks)
 
-	// Offhand penalty: weapon-combat skill governs dual-wield speed
+	// Offhand penalty: skill governs dual-wield speed
 	if isOffhand {
-		wcLevel := float64(sourceChar.GetSkillLevel(skills.WeaponCombat)) * float64(bal.SkillWeight)
-		dualWieldMod := 0.5 + (wcLevel/50.0)*0.5
+		dualSkill := float64(sourceChar.GetSkillLevel(skills.WeaponCombat))
+		if sourceChar.IsUnarmedStyle() {
+			dualSkill = float64(sourceChar.GetSkillLevel(skills.UnarmedCombat))
+		}
+		dualSkill *= float64(bal.SkillWeight)
+		dualWieldMod := 0.5 + (dualSkill/50.0)*0.5
 		swings *= dualWieldMod
 	}
 
@@ -98,6 +102,11 @@ func calcSwingCount(sourceChar *characters.Character, weaponSpeed float64, extra
 		overRatio := overAmount / capacity
 		encumbrancePenalty := math.Min(overRatio*0.5, 0.5)
 		swings *= (1.0 - encumbrancePenalty)
+	}
+
+	// Haste buff: significant attack speed boost
+	if sourceChar.HasBuffFlag(buffs.Haste) {
+		swings *= float64(bal.HasteSwingMultiplier)
 	}
 
 	// Position-based speed modifier
@@ -142,12 +151,41 @@ func collectAttackWeapons(sourceChar *characters.Character) []items.Item {
 	if sourceChar.ExtraArms >= 2 && sourceChar.Equipment.ExtraArm2.ItemId > 0 && sourceChar.Equipment.ExtraArm2.GetSpec().Type == items.Weapon {
 		attackWeapons = append(attackWeapons, sourceChar.Equipment.ExtraArm2)
 	}
+	if sourceChar.ExtraArms >= 3 && sourceChar.Equipment.ExtraArm3.ItemId > 0 && sourceChar.Equipment.ExtraArm3.GetSpec().Type == items.Weapon {
+		attackWeapons = append(attackWeapons, sourceChar.Equipment.ExtraArm3)
+	}
+	if sourceChar.ExtraArms >= 4 && sourceChar.Equipment.ExtraArm4.ItemId > 0 && sourceChar.Equipment.ExtraArm4.GetSpec().Type == items.Weapon {
+		attackWeapons = append(attackWeapons, sourceChar.Equipment.ExtraArm4)
+	}
 
-	// Put an empty weapon, so basically hands.
+	// Empty hand slots become fist attacks (unless holding a shield).
+	emptyArm := items.Item{ItemId: 0}
+
+	// Main hand empty → fist (ItemId 0 = empty, -1 = disabled)
+	if sourceChar.Equipment.Weapon.ItemId == 0 {
+		attackWeapons = append(attackWeapons, emptyArm)
+	}
+	// Offhand empty → fist (shields/weapons already collected above)
+	if sourceChar.Equipment.Offhand.ItemId == 0 {
+		attackWeapons = append(attackWeapons, emptyArm)
+	}
+	// Extra arm empty slots → fist
+	if sourceChar.ExtraArms >= 1 && sourceChar.Equipment.ExtraArm1.ItemId == 0 {
+		attackWeapons = append(attackWeapons, emptyArm)
+	}
+	if sourceChar.ExtraArms >= 2 && sourceChar.Equipment.ExtraArm2.ItemId == 0 {
+		attackWeapons = append(attackWeapons, emptyArm)
+	}
+	if sourceChar.ExtraArms >= 3 && sourceChar.Equipment.ExtraArm3.ItemId == 0 {
+		attackWeapons = append(attackWeapons, emptyArm)
+	}
+	if sourceChar.ExtraArms >= 4 && sourceChar.Equipment.ExtraArm4.ItemId == 0 {
+		attackWeapons = append(attackWeapons, emptyArm)
+	}
+
+	// Fallback: must have at least one attack
 	if len(attackWeapons) == 0 {
-		attackWeapons = append(attackWeapons, items.Item{
-			ItemId: 0,
-		})
+		attackWeapons = append(attackWeapons, items.Item{ItemId: 0})
 	}
 
 	return attackWeapons
@@ -162,8 +200,12 @@ func calcDualWieldPenalty(sourceChar *characters.Character, weapIdx, totalWeaps 
 	dualWieldLevel := sourceChar.GetSkillLevel(skills.WeaponCombat)
 
 	penalty := 0
-	// Natural weapons (claws) ignore penalty
-	if sourceChar.Equipment.Weapon.GetSpec().Subtype == items.Claws && sourceChar.Equipment.Offhand.GetSpec().Subtype == items.Claws {
+	// Natural weapons (claws, fists, bare hands) ignore dual-wield penalty
+	mainSub := sourceChar.Equipment.Weapon.GetSpec().Subtype
+	offSub := sourceChar.Equipment.Offhand.GetSpec().Subtype
+	mainIsNatural := mainSub == items.Claws || mainSub == items.Fist || sourceChar.Equipment.Weapon.ItemId == 0
+	offIsNatural := offSub == items.Claws || offSub == items.Fist || sourceChar.Equipment.Offhand.ItemId == 0
+	if mainIsNatural && offIsNatural {
 		penalty = 0
 	} else {
 		penaltyReduction := float64(dualWieldLevel) / 50.0
@@ -172,11 +214,9 @@ func calcDualWieldPenalty(sourceChar *characters.Character, weapIdx, totalWeaps 
 			penalty = 10
 		}
 	}
-	// Extra arm weapons get escalating additional penalties
-	if weapIdx == 2 {
-		penalty += 20
-	} else if weapIdx >= 3 {
-		penalty += 40
+	// Extra arm weapons get escalating penalties: +20 per arm beyond offhand
+	if weapIdx >= 2 {
+		penalty += (weapIdx - 1) * 20
 	}
 	return penalty
 }
@@ -261,6 +301,13 @@ func buildDamageParams(sourceChar *characters.Character, targetChar *characters.
 	if mutDmgMult := mutations.GetDamageMultiplier(sourceChar.Mutations); mutDmgMult != 0 {
 		dmgMean *= (1.0 + mutDmgMult)
 		rawDmgForCrit *= (1.0 + mutDmgMult)
+	}
+
+	// Warcry condition: applies a physical damage multiplier from rhetoric shout
+	if sourceChar.HasCondition(characters.ConditionWarcry) {
+		warcryMult := 1.0 + sourceChar.GetConditionMagnitude(characters.ConditionWarcry)
+		dmgMean *= warcryMult
+		rawDmgForCrit *= warcryMult
 	}
 
 	// Message seed
@@ -416,8 +463,9 @@ func runBestOfAllDefense(result *AttackResult, sourceChar *characters.Character,
 			defenseScore *= float64(bal.BlockEffectiveness)
 		}
 
-		// Stage 7.5: Apply prone defense penalties
-		if targetChar.CombatPosition == characters.PositionProne {
+		// Stage 7.5: Apply position-based defense penalties
+		switch targetChar.CombatPosition {
+		case characters.PositionProne:
 			switch defenseType {
 			case "dodge":
 				defenseScore *= float64(bal.ProneDodgePenalty)
@@ -426,6 +474,29 @@ func runBestOfAllDefense(result *AttackResult, sourceChar *characters.Character,
 			case "block":
 				defenseScore *= float64(bal.ProneBlockPenalty)
 			}
+		case characters.PositionClinched:
+			switch defenseType {
+			case "dodge":
+				defenseScore *= float64(bal.ClinchDodgePenalty)
+			case "parry":
+				defenseScore *= float64(bal.ClinchParryPenalty)
+			case "block":
+				defenseScore *= float64(bal.ClinchBlockPenalty)
+			}
+		case characters.PositionGrounded:
+			switch defenseType {
+			case "dodge":
+				defenseScore *= float64(bal.GroundedDodgePenalty)
+			case "parry":
+				defenseScore *= float64(bal.GroundedParryPenalty)
+			case "block":
+				defenseScore *= float64(bal.GroundedBlockPenalty)
+			}
+		}
+
+		// Rally condition: applies a defense score multiplier from rhetoric shout
+		if targetChar.HasCondition(characters.ConditionRally) {
+			defenseScore *= 1.0 + targetChar.GetConditionMagnitude(characters.ConditionRally)
 		}
 
 		// Stage 8.5: Apply third-party vulnerability penalty
@@ -667,12 +738,15 @@ func resolveDefenseOutcome(result *AttackResult, best bestDefenseResult, sourceC
 	return res
 }
 
-// setDefenseCritFlags marks parry/dodge crit flags on the result.
+// setDefenseCritFlags marks parry/dodge/block crit flags on the result.
 func setDefenseCritFlags(result *AttackResult, best bestDefenseResult) {
-	if best.defenseType == characters.DefenseParry {
+	switch best.defenseType {
+	case characters.DefenseParry:
 		result.ParryCritDetected = true
-	} else if best.defenseType == characters.DefenseDodge {
+	case characters.DefenseDodge:
 		result.DodgeCritDetected = true
+	case characters.DefenseBlock:
+		result.BlockCritDetected = true
 	}
 }
 
@@ -707,17 +781,20 @@ func sendDefenseMessages(result *AttackResult, best bestDefenseResult, sourceCha
 
 	// Prepare token replacements
 	weaponName := "fists"
+	attackName := "strike" // Generic term for unarmed attacks
 	if raceInfo := species.GetSpecies(sourceChar.SpeciesId); raceInfo != nil {
 		weaponName = raceInfo.UnarmedName
 	}
 	if sourceChar.Equipment.Weapon.ItemId > 0 {
 		weaponName = sourceChar.Equipment.Weapon.GetSpec().Name
+		attackName = weaponName
 	}
 
 	tokenReplacements := map[items.TokenName]string{
 		items.TokenDefender: targetChar.Name,
 		items.TokenAttacker: sourceChar.Name,
 		items.TokenWeapon:   weaponName,
+		items.TokenAttack:   attackName,
 		items.TokenStance:   targetChar.CalculateStanceString(),
 		items.TokenPosition: targetChar.CalculatePositionString(),
 		items.TokenMomentum: targetChar.CalculateMomentumString(),
@@ -877,10 +954,6 @@ func buildAttackMessages(result *AttackResult, sourceChar *characters.Character,
 		}
 	}
 
-	if sourceChar.Equipment.Weapon.ItemId > 0 {
-		tokenReplacements[items.TokenItemName] = sourceChar.Equipment.Weapon.DisplayName()
-	}
-
 	if srcType == Mob {
 		tokenReplacements[items.TokenSource] = sourceChar.GetMobName(0).String()
 	}
@@ -1011,7 +1084,10 @@ func applyPetDamage(result *AttackResult, sourceChar *characters.Character, targ
 		result.SendToTarget(toDefenderMsg)
 
 		toAttackerRoomMsg := fmt.Sprintf(`%s jumps into the fray and deals <ansi fg="damage">%s</ansi> to <ansi fg="%sname">%s</ansi>!`, sourceChar.Pet.DisplayName(), GetDamageDescription(attackTargetDamage, targetChar.HealthMax.Value), string(tgtType), targetChar.Name)
-		result.SendToTargetRoom(toAttackerRoomMsg)
+		result.SendToSourceRoom(toAttackerRoomMsg)
+		if sourceChar.RoomId != targetChar.RoomId {
+			result.SendToTargetRoom(toAttackerRoomMsg)
+		}
 	}
 }
 

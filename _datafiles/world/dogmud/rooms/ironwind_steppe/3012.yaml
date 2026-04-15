@@ -10,17 +10,19 @@ description: The wind is particularly fierce here, channeled across the
   them. The ridge to the northeast is more visible now -- a dark
   spine of rock rising above the flat terrain.
 biome: land
+coord:
+  x: 13
+  y: -1
+  z: 0
 exits:
-  west:
+  north:
     roomid: 3011
-  southwest:
-    roomid: 3010
-  east:
+  west:
     roomid: 3013
-  northeast:
-    roomid: 3030
   south:
-    roomid: 3016
+    roomid: 3018
+  east:
+    roomid: 3032
 nouns:
   clay: Pale, cracked hardpan clay exposed where the topsoil has
     blown away. The surface is tessellated with drying cracks in

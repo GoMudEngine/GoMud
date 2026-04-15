@@ -1,0 +1,21 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="yellow">Infrared Vision</ansi> mutation
+
+The Chrysalis rewrites your optic nerves entirely. You see heat,
+motion, the hidden shapes of living things — but the old spectrum
+dims and fades.
+
+<ansi fg="yellow">Type:</ansi>     Passive
+<ansi fg="yellow">Rarity:</ansi>   Very Rare
+
+<ansi fg="yellow">Benefits:</ansi>
+  See clearly in complete darkness
+  Detect hidden creatures by their body heat — concealment offers
+  less protection against you
+
+<ansi fg="yellow">Drawbacks:</ansi>
+  Moderately reduced perception — conventional sight dims as the
+  heat-spectrum dominates your vision
+
+<ansi fg="yellow">Conflicts:</ansi> Night Vision, Keen Eyes
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help mutations</ansi>

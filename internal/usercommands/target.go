@@ -98,6 +98,39 @@ func Target(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		}
 	}
 
+	// If current target is dead or gone, switch freely (no roll, no round cost)
+	currentTargetGone := false
+	if currentTargetMobId > 0 {
+		curMob := mobs.GetInstance(currentTargetMobId)
+		if curMob == nil || curMob.Character.Health < 1 || curMob.Character.RoomId != user.Character.RoomId {
+			currentTargetGone = true
+		}
+	} else if currentTargetUserId > 0 {
+		curUser := users.GetByUserId(currentTargetUserId)
+		if curUser == nil || curUser.Character.Health < 1 || curUser.Character.RoomId != user.Character.RoomId {
+			currentTargetGone = true
+		}
+	} else {
+		// No actual target set (MobInstanceId=0, UserId=0) — switch freely
+		currentTargetGone = true
+	}
+
+	if currentTargetGone {
+		aggroType := user.Character.Aggro.Type
+		user.Character.SetAggro(newTargetPlayerId, newTargetMobInstanceId, aggroType)
+
+		if newTargetMobInstanceId > 0 {
+			if m := mobs.GetInstance(newTargetMobInstanceId); m != nil {
+				user.SendText(fmt.Sprintf("You turn your attention to <ansi fg=\"mobname\">%s</ansi>!", m.Character.Name))
+			}
+		} else if newTargetPlayerId > 0 {
+			if p := users.GetByUserId(newTargetPlayerId); p != nil {
+				user.SendText(fmt.Sprintf("You turn your attention to <ansi fg=\"username\">%s</ansi>!", p.Character.Name))
+			}
+		}
+		return true, nil
+	}
+
 	// Perform skill check to see if target switch succeeds
 	switchChance := combat.ChanceToSwitchTarget(user.Character)
 	roll := util.Rand(100)
@@ -115,7 +148,7 @@ func Target(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		if newTargetMobInstanceId > 0 {
 			m := mobs.GetInstance(newTargetMobInstanceId)
 			user.SendText(fmt.Sprintf("You shift your focus to <ansi fg=\"mobname\">%s</ansi>!", m.Character.Name))
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf("<ansi fg=\"username\">%s</ansi> shifts focus to <ansi fg=\"mobname\">%s</ansi>!", user.Character.Name, m.Character.Name),
 				user.UserId,
 			)
@@ -123,7 +156,7 @@ func Target(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			p := users.GetByUserId(newTargetPlayerId)
 			user.SendText(fmt.Sprintf("You shift your focus to <ansi fg=\"username\">%s</ansi>!", p.Character.Name))
 			p.SendText(fmt.Sprintf("<ansi fg=\"username\">%s</ansi> shifts focus to you!", user.Character.Name))
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf("<ansi fg=\"username\">%s</ansi> shifts focus to <ansi fg=\"username\">%s</ansi>!", user.Character.Name, p.Character.Name),
 				user.UserId, newTargetPlayerId,
 			)

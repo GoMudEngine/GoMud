@@ -8,6 +8,10 @@ description: The road cuts through a stretch of low scrubland where thornbush an
   here recently. The road itself is well-worn but unmaintained -- no one has filled
   the ruts or cleared the encroaching brush in a long time.
 biome: plains
+coord:
+  x: -10
+  y: 4
+  z: 0
 exits:
   north:
     roomid: 400

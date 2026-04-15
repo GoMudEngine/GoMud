@@ -1,0 +1,39 @@
+roomid: 4025
+zone: Ashwick
+title: South Fields
+description: >
+  Fallow fields stretch south of the village gate, open to
+  the sky and flat to the horizon. The soil is dark and rich,
+  plowed in neat furrows but not planted this season. No one
+  works this land now, though it is ready -- someone turned
+  the earth and then stopped. A line of stones marks the
+  hamlet's southern boundary, beyond which the fields give
+  way to wild grass. The quiet here is different from the
+  hamlet -- wider, emptier, the silence of unused potential.
+biome: farmland
+coord:
+  x: -7
+  y: -14
+  z: 0
+exits:
+  north:
+    roomid: 4015
+nouns:
+  fields: Fallow fields, plowed but not planted. The furrows
+    are neat and even -- someone took the time to prepare the
+    soil and then never returned to sow. Dark, rich earth
+    sits exposed to rain and wind, slowly losing the shape
+    of its rows. A season's food, unplanted. In a hamlet
+    this small, that means something.
+  boundary: A line of stones set into the ground marking the
+    hamlet's southern limit. The stones are old, half-buried,
+    covered in lichen. Beyond them, the plowed earth ends
+    and wild grass begins. The boundary is more tradition
+    than barrier -- everyone knows where Ashwick stops.
+idlemessages:
+- Wind sweeps across the empty fields, bending the wild grass
+  beyond the boundary stones.
+- A crow calls from somewhere over the fallow ground, harsh
+  and lonely.
+- Clouds move fast overhead, their shadows racing across the
+  unplanted furrows.

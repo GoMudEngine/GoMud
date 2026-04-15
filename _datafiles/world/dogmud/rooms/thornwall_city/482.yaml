@@ -12,17 +12,16 @@ description: >
 mapsymbol: J
 maplegend: Jeweler
 biome: city
+coord:
+  x: 7
+  y: 1
+  z: 0
 station: jeweler_bench
 exits:
   west:
     roomid: 480
   east:
     roomid: 483
-items:
-  - itemid: 40021
-  - itemid: 40021
-  - itemid: 40026
-  - itemid: 40026
 spawninfo:
 - mobid: 108
 idlemessages:

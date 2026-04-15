@@ -20,3 +20,5 @@
                                                       <ansi fg="black-bold">The Chrysalis awaits.</ansi>
 
 <ansi fg="black-bold">{{ repeat "=" 80 }}</ansi>
+<ansi fg="8">Note: Some legacy clients (zMUD, etc.) are not supported.</ansi>
+<ansi fg="8">We recommend</ansi> <ansi fg="45">Mudlet</ansi> <ansi fg="8">or the web client for the best experience.</ansi>

@@ -10,15 +10,17 @@ description: A wide clearing where the boars have destroyed all
   stand at the clearing's edges, and deep ruts in the earth
   mark where boars have been rooting.
 biome: land
+coord:
+  x: 15
+  y: -11
+  z: 0
 exits:
   north:
-    roomid: 3092
+    roomid: 3094
   west:
     roomid: 3093
   south:
     roomid: 3097
-  east:
-    roomid: 3098
 nouns:
   posts: Sturdy tree trunks -- the last survivors of whatever
     grew here before the boars moved in. The bark has been

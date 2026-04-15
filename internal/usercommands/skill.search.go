@@ -2,43 +2,31 @@ package usercommands
 
 import (
 	"fmt"
-	"math"
+	"sort"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/combat"
+	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
-	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 /*
-Searcg Skill
-Level 1 - Find secret exits or hidden players/mobs
-Level 2 - Find objects stashed in the area
-Level 3 - ???
-Level 4 - You are always aware of hidden players/mobs in the area
+Search Skill
+Uses Perception + Search skill rank to find hidden things.
+Per-discovery gaussian rolls against tier difficulty targets:
 
-(Lvl 1) <ansi fg="skill">search</ansi> Search for secret exits or hidden players/mobs.
-(Lvl 2) <ansi fg="skill">search</ansi> Finds objects that may be hidden in the area.
-(Lvl 3) <ansi fg="skill">search</ansi> Finds special/unknown "things of interest" in the area.
-(Lvl 4) <ansi fg="skill">search</ansi> Doubles your chance of success when searching.
+	Tier 1 (target 125): Secret exits, hidden containers
+	Tier 2 (target 135): Stashed items, hidden players/mobs
+	Tier 3 (target 175): Hidden nouns, hidden contents
 */
 func Search(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
-
-	// Search is a free command — no skill gate.
-	// Depth scales with Perception (skill tiers 1–4).
-	perceptionAdj := user.Character.Stats.Perception.ValueAdj
-	skillLevel := 1
-	if perceptionAdj >= 75 {
-		skillLevel = 4
-	} else if perceptionAdj >= 50 {
-		skillLevel = 3
-	} else if perceptionAdj >= 25 {
-		skillLevel = 2
-	}
 
 	if !user.Character.TryCooldown(`search`, "2 rounds") {
 		user.SendText(
@@ -47,130 +35,160 @@ func Search(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		return true, fmt.Errorf("you're doing that too often")
 	}
 
-	// Search odds based on Perception stat
-	searchOddsIn100 := 10 + int(math.Ceil(float64(perceptionAdj)/2))
+	// Compute search score: Perception + skill bonus
+	searchRank := user.Character.GetSkillLevel(skills.Search)
+	searchScore := float64(user.Character.Stats.Perception.ValueAdj) +
+		combat.SkillMultiplier(searchRank)*25.0
 
 	user.SendText("You snoop around for a bit...\n")
-	room.SendText(
+	room.SendTextVisual(
 		fmt.Sprintf(`<ansi fg="username">%s</ansi> is snooping around.`, user.Character.Name),
 		user.UserId,
 	)
 
-	// Check room exists
-	for exit, exitInfo := range room.Exits {
-		if exitInfo.Secret {
+	rolledAgainstSomething := false
 
-			roll := util.Rand(100)
-
-			util.LogRoll(`Secret Exit`, roll, searchOddsIn100)
-
-			if roll < searchOddsIn100 {
-				user.SendText(fmt.Sprintf(`You found a secret exit: <ansi fg="secret-exit">%s</ansi>`, exit))
-			}
+	// ── Tier 1 (target 125): Secret exits ────────────────────────
+	for exitName, exitInfo := range room.Exits {
+		if !exitInfo.Secret {
+			continue
+		}
+		rolledAgainstSomething = true
+		roll := dice.RollStat(searchScore)
+		if roll.Value >= 125 {
+			user.SendText(fmt.Sprintf(`You found a secret exit: <ansi fg="secret-exit">%s</ansi>`, exitName))
 		}
 	}
 
-	if skillLevel > 2 {
-		// Find stashed items
-		stashedItems := []string{}
-		for _, item := range room.Stash {
-			if !item.IsValid() {
-				room.RemoveItem(item, true)
-			}
+	// ── Tier 1 (target 125): Hidden containers ──────────────────
+	for containerName, container := range room.Containers {
+		if !container.Hidden {
+			continue
+		}
+		if user.Character.HasDiscovery(room.RoomId, containerName) {
+			continue
+		}
+		rolledAgainstSomething = true
+		roll := dice.RollStat(searchScore)
+		if roll.Value >= 125 {
+			user.Character.AddDiscovery(room.RoomId, containerName)
+			user.SendText(fmt.Sprintf(`You discover a hidden <ansi fg="container">%s</ansi>!`, containerName))
+		}
+	}
+
+	// ── Tier 2 (target 135): Stashed items ──────────────────────
+	stashedItems := []string{}
+	for _, item := range room.Stash {
+		if !item.IsValid() {
+			room.RemoveItem(item, true)
+			continue
+		}
+		rolledAgainstSomething = true
+		roll := dice.RollStat(searchScore)
+		if roll.Value >= 135 {
 			name := item.DisplayName() + ` <ansi fg="item-stashed">(stashed)</ansi>`
 			stashedItems = append(stashedItems, name)
 		}
+	}
 
-		hiddenPlayers := []string{}
-
-		for _, pId := range room.GetPlayers() {
-			if pId == user.UserId {
-				continue
-			}
-			if p := users.GetByUserId(pId); p != nil {
-
-				roll := util.Rand(100)
-
-				util.LogRoll(`Hidden Player`, roll, searchOddsIn100)
-
-				if roll < searchOddsIn100 {
-					if p.Character.HasBuffFlag(buffs.Hidden) {
-						hiddenPlayers = append(hiddenPlayers, p.Character.Name+` <ansi fg="black-bold">(hiding)</ansi>`)
-					}
-				}
-			}
-		}
-
-		if len(hiddenPlayers) > 0 {
-
-			details := rooms.GetDetails(room, user)
-			details.VisiblePlayers = []string{}
-
-			for _, name := range hiddenPlayers {
-				details.VisiblePlayers = append(details.VisiblePlayers,
-					characters.FormattedName{
-						Name:   name,
-						Type:   `username`,
-						Suffix: `hidden`,
-					}.String(),
-				)
-			}
-
-			whoTxt, _ := templates.Process("descriptions/who", details, user.UserId)
-			user.SendText(whoTxt)
-
-		}
-
-		hiddenMobs := []string{}
-
-		for _, mId := range room.GetMobs() {
-			if m := users.GetByUserId(mId); m != nil {
-
-				roll := util.Rand(100)
-
-				util.LogRoll(`Hidden Mob`, roll, searchOddsIn100)
-
-				if roll < searchOddsIn100 {
-					if m.Character.HasBuffFlag(buffs.Hidden) {
-						hiddenMobs = append(hiddenPlayers, m.Character.Name+` <ansi fg="black-bold">(hiding)</ansi>`)
-					}
-				}
-			}
-		}
-
-		if len(hiddenMobs) > 0 {
-
-			details := rooms.GetDetails(room, user)
-			details.VisiblePlayers = []string{}
-
-			for _, name := range hiddenMobs {
-				details.VisibleMobs = append(details.VisiblePlayers,
-					characters.FormattedName{
-						Name:   name,
-						Type:   `mob`,
-						Suffix: `hidden`,
-					}.String(),
-				)
-			}
-
-			whoTxt, _ := templates.Process("descriptions/who", details, user.UserId)
-			user.SendText(whoTxt)
-
-		}
-
+	if len(stashedItems) > 0 {
 		groundDetails := map[string]any{
 			`GroundStuff`: stashedItems,
 			`IsDark`:      room.GetBiome().IsDark(),
 			`IsNight`:     gametime.IsNight(),
 		}
-
 		textOut, _ := templates.Process("descriptions/ontheground", groundDetails, user.UserId)
 		user.SendText(textOut)
 	}
 
-	if skillLevel >= 3 {
-		// Find props
+	// ── Tier 2 (target 135): Hidden players ─────────────────────
+	hiddenPlayers := []string{}
+	for _, pId := range room.GetPlayers() {
+		if pId == user.UserId {
+			continue
+		}
+		p := users.GetByUserId(pId)
+		if p == nil || !p.Character.HasBuffFlag(buffs.Hidden) {
+			continue
+		}
+		rolledAgainstSomething = true
+		roll := dice.RollStat(searchScore)
+		if roll.Value >= 135 {
+			hiddenPlayers = append(hiddenPlayers, p.Character.Name+` <ansi fg="black-bold">(hiding)</ansi>`)
+		}
+	}
 
+	if len(hiddenPlayers) > 0 {
+		details := rooms.GetDetails(room, user)
+		details.VisiblePlayers = []string{}
+		for _, name := range hiddenPlayers {
+			details.VisiblePlayers = append(details.VisiblePlayers,
+				characters.FormattedName{
+					Name:   name,
+					Type:   `username`,
+					Suffix: `hidden`,
+				}.String(),
+			)
+		}
+		whoTxt, _ := templates.Process("descriptions/who", details, user.UserId)
+		user.SendText(whoTxt)
+	}
+
+	// ── Tier 2 (target 135): Hidden mobs ────────────────────────
+	hiddenMobs := []string{}
+	for _, mId := range room.GetMobs() {
+		mob := mobs.GetInstance(mId)
+		if mob == nil || !mob.Character.HasBuffFlag(buffs.Hidden) {
+			continue
+		}
+		rolledAgainstSomething = true
+		roll := dice.RollStat(searchScore)
+		if roll.Value >= 135 {
+			hiddenMobs = append(hiddenMobs, mob.Character.Name+` <ansi fg="black-bold">(hiding)</ansi>`)
+		}
+	}
+
+	if len(hiddenMobs) > 0 {
+		details := rooms.GetDetails(room, user)
+		details.VisibleMobs = []string{}
+		for _, name := range hiddenMobs {
+			details.VisibleMobs = append(details.VisibleMobs,
+				characters.FormattedName{
+					Name:   name,
+					Type:   `mob`,
+					Suffix: `hidden`,
+				}.String(),
+			)
+		}
+		whoTxt, _ := templates.Process("descriptions/who", details, user.UserId)
+		user.SendText(whoTxt)
+	}
+
+	// ── Tier 3 (target 175): Hidden nouns ───────────────────────
+	// Sort keys for deterministic output order
+	hiddenNounKeys := make([]string, 0, len(room.HiddenNouns))
+	for k := range room.HiddenNouns {
+		hiddenNounKeys = append(hiddenNounKeys, k)
+	}
+	sort.Strings(hiddenNounKeys)
+
+	for _, nounKey := range hiddenNounKeys {
+		if user.Character.HasDiscovery(room.RoomId, nounKey) {
+			continue
+		}
+		hiddenNoun := room.HiddenNouns[nounKey]
+		rolledAgainstSomething = true
+		roll := dice.RollStat(searchScore)
+		if roll.Value >= 175 {
+			user.Character.AddDiscovery(room.RoomId, nounKey)
+			user.SendText(fmt.Sprintf(`You discover something: <ansi fg="noun">%s</ansi>`, nounKey))
+			user.SendText(hiddenNoun.HiddenDescription)
+		}
+	}
+
+	// ── Skill progression (anti-botting gate) ───────────────────
+	if rolledAgainstSomething {
+		user.Character.CheckSkillProgression(string(skills.Search), user.UserId, 1.0)
 	}
 
 	return true, nil

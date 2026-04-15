@@ -8,13 +8,19 @@ description: A low spot in the terrain collects rainwater and city runoff
   stepping stones by whatever creatures frequent this place. The air
   is thick with the smell of wet earth and the buzz of insects.
 biome: land
+coord:
+  x: 10
+  y: -1
+  z: 0
 exits:
   north:
     roomid: 3003
-  northwest:
+  west:
     roomid: 3004
   east:
     roomid: 3009
+  south:
+    roomid: 3008
 nouns:
   mud: Dark, sticky mud that sucks at your boots. The surface is
     pockmarked with hoofprints, pawprints, and the drag marks of

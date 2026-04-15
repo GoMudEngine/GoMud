@@ -9,13 +9,17 @@ description: A rare cluster of pines has found purchase on a broad
   carpeted with dry needles that crunch underfoot. Bird nests
   dot the upper branches and the air smells of warm pine resin.
 biome: cliffs
+coord:
+  x: 16
+  y: 1
+  z: 0
 exits:
+  west:
+    roomid: 3036
   north:
     roomid: 3041
   south:
     roomid: 3043
-  east:
-    roomid: 3044
 nouns:
   pines: A grove of perhaps a dozen pines, the tallest barely
     fifteen feet high but healthy and dense. Their roots have

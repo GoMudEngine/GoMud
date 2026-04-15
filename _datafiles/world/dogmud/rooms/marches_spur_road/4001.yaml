@@ -1,0 +1,35 @@
+roomid: 4001
+zone: Marches Spur Road
+title: Scrubland Bend
+description: The road curves gently through dry scrubland, sage and
+  bunchgrass pressing close on both sides. The air carries a sharp herbal
+  scent -- bruised sage from where wagon wheels have clipped the bushes.
+  The river's sound is gone now, replaced entirely by wind pushing across
+  the open plain. A flat basalt rock sits beside the road, dark and
+  sun-warmed, where a lizard watches passing travelers with ancient
+  indifference.
+biome: plains
+coord:
+  x: -8
+  y: -3
+  z: 0
+exits:
+  north:
+    roomid: 4000
+  south:
+    roomid: 4002
+nouns:
+  scrub: Dense clumps of silver-green sage and dry bunchgrass crowd the
+    road's edges. The sage is knee-high and woody at the base, its leaves
+    narrow and dusty. Bunchgrass grows in tight tufts between the bushes,
+    seed heads rattling in the wind.
+  rock: A slab of dark basalt, flat-topped and warm to the touch from
+    hours of direct sun. A small lizard perches on its surface, throat
+    pulsing, watching you with one bright eye. It does not seem inclined
+    to move.
+spawninfo:
+- mobid: 255
+idlemessages:
+- A gust of wind bends the sage bushes flat, releasing their sharp scent.
+- The lizard on the rock shifts position, then freezes again.
+- Something rustles in the scrub off the road -- too small to see.

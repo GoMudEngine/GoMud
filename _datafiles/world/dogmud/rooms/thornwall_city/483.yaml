@@ -12,13 +12,14 @@ description: >
 mapsymbol: E
 maplegend: Enchanter
 biome: city
+coord:
+  x: 8
+  y: 1
+  z: 0
 station: enchanting_circle
 exits:
   west:
     roomid: 482
-items:
-  - itemid: 40028
-  - itemid: 40028
 spawninfo:
 - mobid: 109
 idlemessages:

@@ -7,6 +7,10 @@ description: The clang of hammer on steel rings out from an open-sided smithy bu
   are hung with tools, half-finished blades, and racks of metal stock. Blacksmith
   Korvath works here, a figure of soot and muscle.
 biome: city
+coord:
+  x: -8
+  y: 9
+  z: 0
 station: forge
 exits:
   west:

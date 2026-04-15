@@ -1,0 +1,77 @@
+# Barmaid Dal — Behavior Tree
+# Room cycling between main tavern (home) and back corner.
+# Gossip redirect on ask. All dialogue handled here.
+#
+# State:
+#   location — "home" or "back" (tracks where she is)
+
+tree:
+  type: selector
+  children:
+
+    # ── ASK EVENT: gossip redirect ──
+    - type: sequence
+      event: player_ask
+      children:
+        - type: condition
+          check: keyword_match
+          keywords: [gossip, news, rumor, rumors, talk, word, hear]
+        - type: action
+          do: respond
+          user_text: "You want gossip? Ask the old men in the back corner. They have more stories than sense."
+
+    # ── IDLE EVENT: room cycling ──
+    - type: selector
+      event: mob_idle
+      children:
+
+        # At home: after cooldown, chance to visit back room
+        - type: sequence
+          children:
+            - type: condition
+              check: mob_at_home
+            - type: decorator
+              mod: cooldown
+              rounds: 75
+              child:
+                type: decorator
+                mod: random
+                percent: 15
+                child:
+                  type: sequence
+                  children:
+                    - type: action
+                      do: set_state
+                      key: location
+                      value: "back"
+                    - type: action
+                      do: emote
+                      text: gathers a tray of cups and heads toward the back corner.
+                    - type: action
+                      do: move
+                      direction: south
+
+        # Away from home: after cooldown, return
+        - type: sequence
+          children:
+            - type: decorator
+              mod: invert
+              child:
+                type: condition
+                check: mob_at_home
+            - type: decorator
+              mod: cooldown
+              rounds: 15
+              child:
+                type: sequence
+                children:
+                  - type: action
+                    do: set_state
+                    key: location
+                    value: "home"
+                  - type: action
+                    do: emote
+                    text: wipes her hands on her apron and heads back to the bar.
+                  - type: action
+                    do: command
+                    cmd: pathto home

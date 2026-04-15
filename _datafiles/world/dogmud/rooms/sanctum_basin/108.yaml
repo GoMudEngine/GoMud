@@ -6,6 +6,10 @@ description: A short cobbled street runs through the market district of Sanctum 
   skins. The merchants are a mix of gruff locals and traveling traders who supply
   the Chrysalis academy. The smells of spiced food and tanned leather mix in the dry air.
 biome: city
+coord:
+  x: -9
+  y: 9
+  z: 0
 exits:
   west:
     roomid: 107

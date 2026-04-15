@@ -19,6 +19,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/mobai"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/pkg/errors"
@@ -60,10 +61,13 @@ type Mob struct {
 	Zone            string   `yaml:"zone,omitempty"`
 	StatPool        int      `yaml:"statpool,omitempty"`      // Stat points randomly distributed across stats on spawn
 	ItemDropChance  int      // chance in 100
+	LootPool        []int    `yaml:"loot_pool,omitempty"`     // Item IDs for instance loot generation
 	ActivityLevel   int      `yaml:"activitylevel,omitempty"` // 1-100%
 	InstanceId      int      `yaml:"-"`
 	HomeRoomId      int      `yaml:"-"`
 	Hostile         bool     // whether they attack on sight
+	PackFleeImmune  bool     `yaml:"pack_flee_immune,omitempty"` // if true, won't flee when packmates die
+	PeacefulQuest   string   `yaml:"peacefulquest,omitempty"` // if set, mob won't attack players who have this quest token
 	LastIdleCommand uint8    `yaml:"-"` // Track what hte last used idlecommand was
 	BoredomCounter  uint8    `yaml:"-"` // how many rounds have passed since this mob has seen a player
 	Groups          []string // What group do they identify with? Helps with teamwork
@@ -83,8 +87,20 @@ type Mob struct {
 	BuffIds         []int    `yaml:"buffids,omitempty"`         // Buff Id's this mob always has upon spawn
 	LLMProfile     *llm.LLMProfile `yaml:"llmprofile,omitempty"` // Optional LLM-driven dialogue profile
 	Archetype      string          `yaml:"archetype,omitempty"`           // "fighting", "casting", or "" (default even distribution)
+	// Mob AI framework fields
+	ReactionDelay       float64             `yaml:"reaction_delay,omitempty"`      // Seconds before executing a reactive tactic (default 1.5)
+	TacticalDiscipline  float64             `yaml:"tactical_discipline,omitempty"` // 0.0-1.0, how reliably mob follows tactics (default 0.5)
+	TacticPreset        string              `yaml:"tactic_preset,omitempty"`       // Named preset: "aggressive_melee", "defensive_caster", "ambusher"
+	Tactics             []mobai.TacticRule  `yaml:"tactics,omitempty"`             // Per-mob tactic overrides
+	CombatMemory        *mobai.CombatMemory `yaml:"-"`                             // Runtime combat memory (not persisted)
+	lastReactionTurn    uint64                                                      // Cooldown: last turn a reaction fired
+	effectiveDiscipline float64                                                     // Runtime discipline (base ± variance, grows over time)
+	disciplineInitialized bool                                                      // Whether effective discipline has been set
 	SpawnMutations []string        `yaml:"spawnmutations,omitempty,flow"` // Mutations always granted at spawn (Phase 24.3)
 	MutationChance int             `yaml:"mutationchance,omitempty"`      // % chance to gain 1 random bonus mutation on spawn (Phase 24.3)
+	CharmImmune             bool     `yaml:"charm_immune,omitempty"`            // If true, charm spells cannot affect this mob
+	NonCombatant            bool     `yaml:"non_combatant,omitempty"`           // If true, cannot be attacked, stolen from, or aggroed
+	BuysGeneral             bool     `yaml:"buys_general,omitempty"`            // Whether this merchant buys misc goods
 	Crafter                 bool     `yaml:"crafter,omitempty"`                 // Whether this mob crafts autonomously (Stage 38.5.4)
 	CrafterSkill            string   `yaml:"crafterskill,omitempty"`            // Craft skill used (e.g. "blacksmithing")
 	CrafterRecipeIds        []string `yaml:"crafterrecipeids,omitempty"`        // Recipe IDs this mob can craft
@@ -94,6 +110,7 @@ type Mob struct {
 	IsPackAlpha             bool     `yaml:"-"`                                 // Whether this mob is currently the pack alpha
 	ScatterRounds           int      `yaml:"-"`                                 // Rounds remaining where mob skips wander (after alpha death)
 	crafterLastRestockRound uint64                                              // Last round materials were restocked (transient)
+	BTreeState              any `yaml:"-"` // Behavior tree per-instance state (*behaviortree.BehaviorState)
 	tempDataStore           map[string]any
 	conversationId  int              // Identifier of conversation currently involved in.
 	Path            PathQueue        `yaml:"-"` // a pre-calculated path the mob is following.
@@ -105,6 +122,89 @@ func MobInstanceExists(instanceId int) bool {
 
 	_, ok := mobInstances[instanceId]
 	return ok
+}
+
+// IsNonCombatant returns true if the mob is flagged as a non-combatant
+// (shopkeepers, quest NPCs, etc.) that cannot be attacked or stolen from.
+func (m *Mob) IsNonCombatant() bool {
+	return m.NonCombatant
+}
+
+func (m *Mob) GetLastReactionTurn() uint64 {
+	return m.lastReactionTurn
+}
+
+func (m *Mob) SetLastReactionTurn(turn uint64) {
+	m.lastReactionTurn = turn
+}
+
+// GetEffectiveDiscipline returns the mob's current discipline, initializing
+// on first call with ±0.1 random variance from the base YAML value.
+func (m *Mob) GetEffectiveDiscipline() float64 {
+	if !m.disciplineInitialized {
+		base := m.TacticalDiscipline
+		if base <= 0 {
+			base = 0.5
+		}
+		// ±0.1 variance (uniform random)
+		variance := (float64(util.Rand(21)) - 10.0) / 100.0 // -0.10 to +0.10
+		m.effectiveDiscipline = base + variance
+		if m.effectiveDiscipline < 0 {
+			m.effectiveDiscipline = 0
+		}
+		if m.effectiveDiscipline > 1.0 {
+			m.effectiveDiscipline = 1.0
+		}
+		m.disciplineInitialized = true
+	}
+	return m.effectiveDiscipline
+}
+
+// GrowDiscipline nudges the mob's effective discipline toward 1.0.
+// Called after a successful tactic execution.
+func (m *Mob) GrowDiscipline(amount float64) {
+	if !m.disciplineInitialized {
+		m.GetEffectiveDiscipline() // initialize first
+	}
+	m.effectiveDiscipline += amount
+	if m.effectiveDiscipline > 1.0 {
+		m.effectiveDiscipline = 1.0
+	}
+}
+
+// GetZone satisfies mobai.MobActor — returns the mob's zone name.
+func (m *Mob) GetZone() string {
+	return m.Zone
+}
+
+// GetRoomId satisfies mobai.MobActor — returns the mob's current room ID.
+func (m *Mob) GetRoomId() int {
+	return m.Character.RoomId
+}
+
+// GetName satisfies mobai.MobActor — returns the mob's display name.
+func (m *Mob) GetName() string {
+	return m.Character.Name
+}
+
+// GetAggroUserId satisfies mobai.MobActor — returns the UserId of the aggro
+// target, or 0 if there is no aggro or the aggro target is a mob.
+func (m *Mob) GetAggroUserId() int {
+	if m.Character.Aggro == nil {
+		return 0
+	}
+	return m.Character.Aggro.UserId
+}
+
+// HasAggro satisfies mobai.MobActor — returns true if the mob has an active
+// aggro target.
+func (m *Mob) HasAggro() bool {
+	return m.Character.Aggro != nil
+}
+
+// GetCombatMemory satisfies mobai.MobActor — returns the mob's combat memory.
+func (m *Mob) GetCombatMemory() *mobai.CombatMemory {
+	return m.CombatMemory
 }
 
 // Gets a copy of all mob info
@@ -185,6 +285,24 @@ func NewMobById(mobId MobId, homeRoomId int, forceStatPool ...int) *Mob {
 		mob.Character.IsMob = true
 		mob.Character.PlayerDamage = make(map[int]int)
 
+		// Deep copy maps to prevent shared state with template.
+		// Go shallow copy shares map backing data — mutations to an
+		// instance's skills/spellbook would contaminate the template.
+		if mob.Character.Skills != nil {
+			skillsCopy := make(map[string]int, len(mob.Character.Skills))
+			for k, v := range mob.Character.Skills {
+				skillsCopy[k] = v
+			}
+			mob.Character.Skills = skillsCopy
+		}
+		if mob.Character.SpellBook != nil {
+			spellCopy := make(map[string]int, len(mob.Character.SpellBook))
+			for k, v := range mob.Character.SpellBook {
+				spellCopy[k] = v
+			}
+			mob.Character.SpellBook = spellCopy
+		}
+
 		// Stage 38.4: Try to load a saved instance (progression data from disk).
 		// If found, apply saved training values instead of randomizing.
 		savedInstance := LoadMobInstance(mob.MobId, mob.Zone, mob.Character.Name, homeRoomId)
@@ -261,7 +379,26 @@ func NewMobById(mobId MobId, homeRoomId int, forceStatPool ...int) *Mob {
 
 		mob.Character.Buffs = buffs.New()
 
-		for idx, _ := range mob.Character.Items {
+		// Deep copy item slices to prevent shared backing array with template.
+		// Without this, giving items to a mob instance can contaminate the
+		// template, causing all future spawns to carry the given items.
+		if len(mob.Character.Items) > 0 {
+			itemsCopy := make([]items.Item, len(mob.Character.Items))
+			copy(itemsCopy, mob.Character.Items)
+			mob.Character.Items = itemsCopy
+		}
+		if len(mob.Character.ComponentItems) > 0 {
+			compCopy := make([]items.Item, len(mob.Character.ComponentItems))
+			copy(compCopy, mob.Character.ComponentItems)
+			mob.Character.ComponentItems = compCopy
+		}
+		if len(mob.Character.PotionItems) > 0 {
+			potCopy := make([]items.Item, len(mob.Character.PotionItems))
+			copy(potCopy, mob.Character.PotionItems)
+			mob.Character.PotionItems = potCopy
+		}
+
+		for idx := range mob.Character.Items {
 			mob.Character.Items[idx].Validate()
 		}
 
@@ -289,7 +426,11 @@ func NewMobById(mobId MobId, homeRoomId int, forceStatPool ...int) *Mob {
 			if mob.Character.Mutations == nil {
 				mob.Character.Mutations = make(map[string]int)
 			}
-			pool := mutations.GetWeightedPool(mob.Character.Mutations)
+			var specDisabledSlots []string
+			if specInfo := species.GetSpecies(mob.Character.SpeciesId); specInfo != nil {
+				specDisabledSlots = specInfo.DisabledSlots
+			}
+			pool := mutations.GetWeightedPool(mob.Character.Mutations, specDisabledSlots)
 			if len(pool) > 0 {
 				mutId := mutations.RollAcquisition(pool)
 				mob.Character.Mutations[mutId] = 1
@@ -309,6 +450,10 @@ func NewMobById(mobId MobId, homeRoomId int, forceStatPool ...int) *Mob {
 
 		mob.Validate()
 		mob.Character.Validate(true)
+
+		// Register the mob's shop with the living economy system if applicable.
+		// Must happen after HomeRoomId and Zone are set (they key the shop store).
+		RegisterMobShop(&mob)
 
 		// Save the mob instance
 		mobInstances[mob.InstanceId] = &mob
@@ -436,6 +581,11 @@ func (m *Mob) Converse() {
 	}
 }
 
+// GetLastCommandTurn returns the turn at which the mob's last scheduled command will execute.
+func (m *Mob) GetLastCommandTurn() uint64 {
+	return m.lastCommandTurn
+}
+
 // Cause the mob to basically wait and do nothing for x seconds
 func (m *Mob) Sleep(seconds int) {
 	m.Command(`noop`, float64(seconds))
@@ -520,6 +670,10 @@ func (m *Mob) GetTempData(key string) any {
 
 func (m *Mob) Despawns() bool {
 	if m.HasShop() {
+		return false
+	}
+	// Charmed companions should not despawn from boredom.
+	if m.Character.IsCharmed() {
 		return false
 	}
 	return true
@@ -607,27 +761,27 @@ func (r *Mob) HatesMob(m *Mob) bool {
 		return false // Can't hate exact same as self
 	}
 
+	// Check hates list against target's groups first — group hatred
+	// overrides species alliance (a warden hates bandits even if both human)
+	if r.hatesAnyGroup(m.Groups) {
+		return true
+	}
+
+	// Same species = ally, never hate
+	if r.Character.SpeciesId > 0 &&
+		r.Character.SpeciesId == m.Character.SpeciesId {
+		return false
+	}
+
+	// Check hates list against target's species name
 	mRace := species.GetSpecies(m.Character.SpeciesId)
 	raceName := strings.ToLower(mRace.Name)
-	for _, rGroup := range r.Groups {
-		if rGroup == raceName {
+	for _, hateName := range r.Hates {
+		if hateName == `*` {
 			return true
 		}
-		for _, mGroup := range m.Groups {
-			if rGroup == mGroup {
-				return false // Can't hate groups its part of.
-			}
-		}
-	}
-	// Loop through groups it hates and if it finds a match, return true
-	for _, groupName := range r.Hates {
-		if groupName == `*` { // If * it hates all groups
+		if hateName == raceName {
 			return true
-		}
-		for _, mGroup := range m.Groups {
-			if groupName == mGroup {
-				return true
-			}
 		}
 	}
 	return false
@@ -669,28 +823,35 @@ func (m *Mob) GetIdleCommand() string {
 
 func (r *Mob) ConsidersAnAlly(m *Mob) bool {
 
+	// Same mob type always allies
 	if m.MobId == r.MobId {
-		return true // Auto ally with own kind
+		return true
 	}
 
-	if len(m.Groups) == 0 && len(r.Groups) == 0 {
-		return true // No allegiance on either side, consider an ally for now
+	// If either mob hates any of the other's groups, they are NOT allies
+	// regardless of species. A warden should never ally with a bandit.
+	if r.hatesAnyGroup(m.Groups) || m.hatesAnyGroup(r.Groups) {
+		return false
 	}
 
-	// If they both belong to factions/groups, check for matches
-	// Could conver tthis to a look up map.
-	// Only a couple entries likely, so maybe not worth it.
-	if len(r.Groups) > 0 {
-		// Look for a group match
-		for _, targetGroup := range r.Groups {
-			for _, testGroup := range m.Groups {
-				if testGroup == targetGroup {
-					return true
-				}
+	// Same species = allies (SpeciesId 0 is unset/ghostly spirit, skip)
+	if r.Character.SpeciesId > 0 &&
+		r.Character.SpeciesId == m.Character.SpeciesId {
+		return true
+	}
+
+	return false
+}
+
+// hatesAnyGroup returns true if this mob's Hates list includes any of the given groups.
+func (r *Mob) hatesAnyGroup(groups []string) bool {
+	for _, hate := range r.Hates {
+		for _, grp := range groups {
+			if strings.EqualFold(hate, grp) {
+				return true
 			}
 		}
 	}
-
 	return false
 }
 

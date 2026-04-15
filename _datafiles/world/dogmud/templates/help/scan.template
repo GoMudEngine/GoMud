@@ -1,0 +1,22 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">scan</ansi>
+
+The <ansi fg="command">scan</ansi> command surveys the rooms adjacent to
+your current location, showing you what creatures and players are nearby
+without having to walk into each room.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">scan</ansi>
+  Scans all visible exits and reports what you see in each
+  adjacent room.
+
+<ansi fg="yellow">━━━ Details ━━━</ansi>
+
+For each exit, you will see the direction, the room name, and any mobs
+or players present. If a room is empty, it reports "nothing of interest."
+
+Secret exits are not revealed by scanning.
+
+<ansi fg="yellow">See Also:</ansi>
+
+  <ansi fg="command">help look</ansi>, <ansi fg="command">help peek</ansi>

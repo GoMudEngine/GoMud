@@ -9,6 +9,10 @@ description: The descent levels out into a cramped junction where the tunnel spl
   bodies and rancid fat. This is not a natural cave. Something lives here, and has
   for a long time.
 biome: cave
+coord:
+  x: -12
+  y: 7
+  z: -1
 exits:
   up:
     roomid: 300

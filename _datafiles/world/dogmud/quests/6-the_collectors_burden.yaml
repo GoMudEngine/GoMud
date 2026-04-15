@@ -7,16 +7,46 @@ secret: false
 
 steps:
   - id: start
-    description: "Toll collector Harn at the tollhouse has asked for your help. He has written a maintenance report documenting the bridge's structural problems and needs it delivered to the magistrate in Thornwall."
-    hint: "Speak with Harn at the tollhouse to receive the report."
+    description: "Toll collector Harn at the tollhouse has given you a maintenance
+      report documenting the bridge's structural problems. He needs it delivered to
+      Clerk Pell in the Records Office in Thornwall."
+    hint: "Deliver the maintenance report to Records Clerk Pell in Thornwall City.
+      From Watchers Crossing, head north along the road to reach the city."
   - id: report
-    description: "You are carrying Harn's maintenance report. It documents stress cracks, crumbling mortar, and the cost of ongoing repairs. Deliver it to the magistrate in Thornwall."
-    hint: "Travel east through Watchers Crossing and continue toward Thornwall."
+    description: "Clerk Pell has filed Harn's maintenance report with the magistrate.
+      Return to Harn at Watchers Crossing and tell him the report has been delivered."
+    hint: "Return to Toll Collector Harn at Watchers Crossing and tell him the report
+      has been filed."
   - id: end
-    description: "The maintenance report has been delivered. Thornwall will review the bridge's condition and decide the toll's fate."
+    description: "The maintenance report has been delivered. Thornwall will review the
+      bridge's condition and decide the toll's fate."
+
+triggers:
+  - event: item_give
+    mob: 99
+    item: 31
+    conditions:
+      has: ["6-start"]
+      missing: ["6-report"]
+    actions:
+      - grant: "6-report"
+      - npc_say:
+          mob: 99
+          lines:
+            - delay: 1
+              text: "A maintenance report from the crossing. Let me file
+                this properly."
+            - delay: 3
+              text: "Done. Tell Harn the report is on record. The Council
+                will review it in due course."
 
 rewards:
-  playermessage: "Harn exhales slowly when you confirm the report is on its way. 'That is all I can do. If they see the numbers -- what the stone costs, what the masons charge, what happens if that crack reaches the keystone -- they will understand. The toll is not greed. It is the only thing keeping that bridge standing.' He produces a stamped receipt. 'For your crossing. You have earned it, and then some.'"
+  playermessage: "Harn exhales slowly when you confirm the report is on its way.
+    'That is all I can do. If they see the numbers -- what the stone costs, what
+    the masons charge, what happens if that crack reaches the keystone -- they
+    will understand. The toll is not greed. It is the only thing keeping that
+    bridge standing.' He produces a stamped receipt. 'For your crossing. You
+    have earned it, and then some.'"
   roommessage: "Harn nods with quiet relief, adjusting the ledger on his counter."
   gold: 10
   itemid: 18

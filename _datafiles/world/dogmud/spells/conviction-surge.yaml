@@ -6,9 +6,11 @@ schools:
   - enhancement
 cost: 35
 waitrounds: 1
-difficulty: 0
+difficulty: 10
 primarystat: willpower
 base_folds: 4
 effect_type: buff
 buff_ids:
   - 26
+cast_user_text: You channel conviction into empowering energy.
+cast_room_text: "{source} gathers conviction, a fierce glow building."

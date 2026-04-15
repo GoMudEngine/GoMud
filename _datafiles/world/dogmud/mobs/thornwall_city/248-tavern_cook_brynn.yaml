@@ -1,0 +1,56 @@
+mobid: 248
+zone: Thornwall City
+statpool: 120
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+groups:
+  - humanoid
+  - merchant
+idlecommands:
+  - 'emote stirs a pot on the hearth, tasting from a wooden spoon'
+  - 'emote chops vegetables with quick, practiced strokes'
+  - ''
+  - 'emote wipes her hands on her apron and checks the fire'
+  - ''
+activitylevel: 15
+character:
+  name: tavern cook Brynn
+  description: |
+    A stocky woman with ruddy cheeks and forearms dusted with flour.
+    Her apron is stained with the evidence of a morning's work -- grease
+    spots, herb smudges, a streak of something that might be gravy. She
+    moves through the cramped kitchen with the economy of someone who
+    has cooked in tight spaces her whole life. A wooden spoon is tucked
+    behind one ear like a carpenter's pencil.
+  speciesid: 1
+  level: 1
+  gold: 500
+  stats:
+    vitality:
+      training: 5
+    perception:
+      training: 3
+  shop:
+    - itemid: 40014
+      quantity: 0
+      quantitymax: 0
+      price: 3
+    - itemid: 40017
+      quantity: 0
+      quantitymax: 0
+      price: 2
+    - itemid: 40015
+      quantity: 0
+      quantitymax: 0
+      price: 3
+    - itemid: 40016
+      quantity: 0
+      quantitymax: 0
+      price: 2
+    - itemid: 40004
+      quantity: 0
+      quantitymax: 0
+      price: 5

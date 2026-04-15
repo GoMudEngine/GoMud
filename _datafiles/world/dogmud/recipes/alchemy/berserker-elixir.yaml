@@ -1,20 +1,20 @@
 id: berserker-elixir
 name: Berserker Elixir
 skill: alchemy
-skill_minimum: 38
+skill_minimum: 18
 station: alchemy_bench
 time_rounds: 6
 ingredients:
   - item_tag: hive-fragment
     quantity: 1
+  - item_tag: venom-sac
+    quantity: 1
   - item_tag: chrysalis-core
     quantity: 1
-  - item_tag: bitter-thistle
-    quantity: 1
-  - item_tag: small-vial
+  - item_tag: bottle
     quantity: 1
 output:
-  item_id: 30032
+  item_id: 30049
   quantity: 1
-success_message: "The volatile ingredients meld into a dark, viscous elixir. A berserker elixir!"
-failure_message: "The mixture reacts violently and the vial shatters. The materials are lost."
+success_message: "The brew turns blood-red and seems to throb with fury. A berserker elixir!"
+failure_message: "The hive fragment rejects the venom and cracks apart. The materials are wasted."

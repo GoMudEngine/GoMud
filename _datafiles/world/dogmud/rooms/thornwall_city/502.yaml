@@ -1,0 +1,50 @@
+roomid: 502
+zone: Thornwall City
+title: Warded Corridor
+description: >
+  A low corridor where the ceiling forces a stoop. Chrysalis growths pulse
+  along the walls in irregular clusters, their bioluminescence painting
+  everything in dim blue-green. Thin filaments stretch across the passage
+  at intervals -- some are natural mycelium threading between growths, but
+  others are too regular, too deliberate, attached to small hooks driven
+  into the stone. Crude ward symbols have been scratched into the walls
+  at shoulder height, drawn in what looks like dried blood. Whatever lives
+  deeper in this place wanted warning before visitors arrived.
+biome: cave
+coord:
+  x: 2
+  y: -4
+  z: -3
+exits:
+  north:
+    roomid: 501
+  east:
+    roomid: 504
+  south:
+    roomid: 505
+nouns:
+  filaments: >
+    A network of thin filaments stretching across the passage. The
+    natural ones sag in irregular curves; the deliberately placed
+    ones are taut, horizontal, attached at both ends to small iron
+    hooks. Disturbing the taut ones would almost certainly make
+    noise -- or worse.
+  ward symbols: >
+    Rough symbols scratched into the stone at intervals. They are
+    not any recognized script -- more like a personal code, repeated
+    glyphs that might mean "danger" or "home" or something with no
+    word in common language. Each symbol has a small smear beneath
+    it, darker than the stone.
+  chrysalis growths: >
+    Clusters of hardened chrysalis resin on the walls, shaped over
+    time into irregular lumps and ledges. The bioluminescence pulses
+    from within, as if something alive is still trapped inside each
+    one. Up close, the surface is warm to the touch.
+  blood marks: >
+    The pigment used to draw the ward symbols. It is dark brown now,
+    old and flaking at the edges. Recent additions are darker -- some
+    still slightly tacky. Someone keeps maintaining these marks.
+idlemessages:
+- The filaments sway in an imperceptible draught, taut and trembling.
+- Chrysalis growths pulse with cold light, irregular as a sleeping heartbeat.
+- A ward symbol near the floor looks freshly touched up, the pigment darker.

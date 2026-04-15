@@ -1,0 +1,49 @@
+mobid: 251
+zone: Marches Spur Road
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Welcome to the Yoke. Sit where you like."
+      - "You look like you could use a meal. Or a drink. Or both."
+
+  - keywords: ["gossip", "news", "rumor", "rumors", "talk", "word"]
+    responses:
+      - "News comes through here whether I want it or not. What have you heard?"
+      - "People talk. I listen. It is part of the trade."
+
+  - keywords: ["buy", "sell", "food", "drink", "room", "stay", "lodging"]
+    responses:
+      - "I have food, drink, and a spot by the fire. What will it be?"
+
+  - keywords: [""]
+    responses:
+      - "Something else?"
+      - "Speak up if you need something."
+
+tree:
+  root:
+    text: "Another traveler. The road has been busy this season. I am Thessa. I run this place. Food is hot, ale is cold, and the fire does not go out."
+    hints: "Ask about the road, trouble, Thornwall, the crossroads, or quest."
+
+  nodes:
+    - id: road_trouble
+      triggers: ["road", "trouble", "bandits", "danger", "safe", "quest", "task"]
+      text: "The road north has been dicey. That peddler camped up past the shrine has been waiting on a freight shipment for days. Something is holding things up between here and the crossroads. Bandits, most likely -- they have been working the stretch near that old barn."
+      hints: "The peddler's camp is north along the spur road, past the waypoint shrine."
+
+    - id: thornwall
+      triggers: ["thornwall", "city", "town", "east", "crossing"]
+      text: "Thornwall is a day's walk northeast through the crossing. Proper walls, proper guard, proper market. It is where most of the traffic through here is heading, or coming from."
+
+    - id: crossroads
+      triggers: ["crossroads", "south", "directions", "where"]
+      text: "The crossroads is just south of here. Three roads meet -- north to Thornwall, south toward Amber Valley and the Confluence, southwest toward Stillwater and the coast. Signposts are clear enough if you can read."
+
+    - id: inn_history
+      triggers: ["yoke", "inn", "broken", "name", "history"]
+      text: "The Broken Yoke. Named for the day my grandmother decided she was done being a farm wife and opened a roadhouse instead. Split the yoke clean in half and hung it on the sign. We have been here three generations now."
+
+memory:
+  expiryPeriod: ""

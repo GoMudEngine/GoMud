@@ -10,15 +10,13 @@ description: A natural alcove in the coulee wall has been claimed by
   serves as an altar. The air is thick with the smell of burning
   herbs and something sharper, chemical.
 biome: cliffs
+coord:
+  x: 17
+  y: -12
+  z: 0
 exits:
   west:
     roomid: 3069
-  north:
-    roomid: 3068
-  south:
-    roomid: 3071
-  northwest:
-    roomid: 3067
 nouns:
   symbols: Crude paintings on the alcove walls in red ochre and
     charcoal -- spiraling patterns, stylized predator shapes,
@@ -38,7 +36,6 @@ spawninfo:
 - mobid: 219
 - mobid: 219
 - mobid: 218
-- mobid: 241
 idlemessages:
 - Herb smoke curls in thick spirals, refusing to dissipate.
 - The bone circle on the floor seems undisturbed despite the breeze.

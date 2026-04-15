@@ -127,6 +127,28 @@ func AttackPlayerVsPlayer(userAtk *users.UserRecord, userDef *users.UserRecord) 
 	return attackResult
 }
 
+// trackMobAttackProgression mirrors the player progression calls in
+// AttackPlayerVsMob / AttackPlayerVsPlayer for a mob attacker.
+// MobActor cannot be used here because actions imports combat (cycle).
+// We call character methods directly with userId=0 (mob convention).
+func trackMobAttackProgression(mob *mobs.Mob, result AttackResult) {
+	mob.Character.OnStatUse("strength", 0)
+	mob.Character.OnStatUse("dexterity", 0)
+	for _, wh := range result.WeaponHits {
+		if wh.Hit {
+			mob.Character.OnSkillUse(wh.SkillTag, 0)
+			if wh.Crit {
+				mob.Character.OnCriticalSuccess(wh.SkillTag, 0)
+			}
+		} else if wh.Fumble {
+			mob.Character.OnCriticalFailure(wh.SkillTag, 0)
+		}
+	}
+	if len(result.WeaponHits) == 0 && result.Hit {
+		mob.Character.OnSkillUse(string(skills.UnarmedCombat), 0)
+	}
+}
+
 // Performs a combat round from a mob to a player
 func AttackMobVsPlayer(mob *mobs.Mob, user *users.UserRecord) AttackResult {
 
@@ -149,6 +171,9 @@ func AttackMobVsPlayer(mob *mobs.Mob, user *users.UserRecord) AttackResult {
 
 	// Track defender's dexterity use (reacting to attacks)
 	user.Character.OnStatUse("dexterity", user.UserId)
+
+	// Track progression for the attacking mob (mirrors player attacker logic)
+	trackMobAttackProgression(mob, attackResult)
 
 	if attackResult.Hit {
 		user.PlaySound(`hit-self`, `combat`)
@@ -178,6 +203,11 @@ func AttackMobVsMob(mobAtk *mobs.Mob, mobDef *mobs.Mob) AttackResult {
 		// Remember who has hit him
 		mobDef.Character.TrackPlayerDamage(charmedUserId, attackResult.DamageToTarget)
 	}
+
+	// Track progression for both mobs
+	trackMobAttackProgression(mobAtk, attackResult)
+	// Defender dexterity (mirrors player defender tracking in AttackMobVsPlayer)
+	mobDef.Character.OnStatUse("dexterity", 0)
 
 	return attackResult
 }
@@ -310,17 +340,24 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 
 	attackMessagePrefix := ``
 	backstabCrit := false
-	if sourceChar.Aggro.Type == characters.BackStab {
+	if sourceChar.Aggro.Type == characters.SurpriseAttack {
 		backstabCrit = true
-		attackMessagePrefix = `<ansi fg="magenta-bold">*[BACKSTAB]*</ansi> `
+		attackMessagePrefix = `<ansi fg="magenta-bold">*[SURPRISE ATTACK]*</ansi> `
 		sourceChar.SetAggro(sourceChar.Aggro.UserId, sourceChar.Aggro.MobInstanceId, characters.DefaultAttack)
 	}
+
+	attackResult.DefenderWasAttacked = len(attackWeapons) > 0
 
 	for weaponIdx, weapon := range attackWeapons {
 
 		ws := buildWeaponSetup(&sourceChar, &targetChar, weapon, weaponIdx, len(attackWeapons))
 		sdp := buildDamageParams(&sourceChar, &targetChar, ws, statModDBonus, sourceType)
 		sdp.critBuffs = ws.critBuffs
+
+		// Track per-weapon hits for skill progression
+		weaponHit := WeaponHitInfo{
+			SkillTag: string(characters.CombatSkillTagForItem(weapon)),
+		}
 
 		// Single merged swing count per weapon
 		swingCount := calcSwingCount(&sourceChar, ws.weaponSpeed, extraAttacks, ws.isOffhand)
@@ -360,11 +397,22 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 
 			if res.hit {
 				attackResult.Hit = true
+				weaponHit.Hit = true
+				if res.crit {
+					weaponHit.Crit = true
+				}
 				attackTargetDamage, backstabCrit = calcHitDamage(&attackResult, res.crit, backstabCrit, sdp)
 			}
 
 			if res.fumble {
 				attackResult.Fumble = true
+				weaponHit.Fumble = true
+			}
+
+			// Determine per-swing attack type for analytics
+			swingAtkType := "unarmed"
+			if weaponHit.SkillTag == string(skills.WeaponCombat) {
+				swingAtkType = "weapon"
 			}
 
 			// Record per-swing analytics
@@ -379,6 +427,7 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 				DefenseUsed:   attackResult.DefenseUsed,
 				AttackZScore:  attackResult.AttackZScore,
 				DefenseZScore: attackResult.DefenseZScore,
+				AttackType:    swingAtkType,
 			})
 
 			// Only build attack messages for non-double-fumble (double fumble already sent)
@@ -394,8 +443,15 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 			attackResult.DamageToSourceReduction += attackSourceReduction
 		}
 
+		attackResult.WeaponHits = append(attackResult.WeaponHits, weaponHit)
 		applyPetDamage(&attackResult, &sourceChar, &targetChar, targetType)
 	}
+
+	// If unarmed (no weapons at all), add unarmed entry
+	if len(attackWeapons) == 0 {
+		attackResult.DefenderWasAttacked = true
+	}
+
 	return attackResult
 
 }

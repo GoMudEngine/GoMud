@@ -11,15 +11,17 @@ import (
 
 func Shout(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
-	// Wrap long shout text to 65 chars to account for "Name shouts, ..."
-	rest = util.NormalizeAndWrap(rest, 65)
-
 	isSneaking := mob.Character.HasBuffFlag(buffs.Hidden)
 
 	if isSneaking {
-		room.SendText(fmt.Sprintf(`someone shouts, "<ansi fg="saytext-mob">%s</ansi>"`, rest))
+		msg := fmt.Sprintf(`someone shouts, "<ansi fg="saytext-mob">%s</ansi>"`, rest)
+		room.SendTextVisual(util.SplitStringNL(msg, 80))
 	} else {
-		room.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> shouts, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, rest))
+		anonMsg := fmt.Sprintf(`someone shouts, "<ansi fg="saytext-mob">%s</ansi>"`, rest)
+		namedMsg := fmt.Sprintf(`<ansi fg="mobname">%s</ansi> shouts, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, rest)
+		sendAudioRoomText(room, mob,
+			util.SplitStringNL(anonMsg, 80),
+			util.SplitStringNL(namedMsg, 80))
 	}
 
 	for _, roomInfo := range room.Exits {

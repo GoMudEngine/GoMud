@@ -9,6 +9,10 @@ description: The deepest point of the goblin encampment, a narrow
   or worse. The goblins guard this area more aggressively than the
   rest of the camp, viewing it as their collective wealth.
 biome: cave
+coord:
+  x: 16
+  y: -14
+  z: 0
 exits:
   north:
     roomid: 3071

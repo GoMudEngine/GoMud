@@ -49,6 +49,7 @@ _datafiles/world/dogmud/rooms/{zone_folder}/{roomid}.yaml
 | `idlemessages` | list | no | Flavor text messages displayed periodically. Supports `<ansi>` tags. |
 | `nouns` | map | no | Keyword → description. Players can `look {noun}` to read. |
 | `containers` | map | no | Named containers (e.g. `chest:`) holding items. |
+| `hidden_nouns` | map | no | Hidden noun objects discovered via search. See Hidden Nouns sub-section below. Marked `instance:"skip"`. |
 | `signs` | list | no | Readable signs. Each has a `title` and `body`. |
 | `skilltraining` | map | no | Skill → `{min: N, max: N}` range. Allows players to train here. |
 | `mutators` | list | no | Mutator tags applied when the room spawns. |
@@ -99,6 +100,32 @@ skilltraining:
     max: 25
 ```
 
+### Hidden Nouns Sub-fields
+
+Hidden noun objects are discovered via the `search` command and provide optional flavor or worldbuilding details. Each hidden noun has a description players see after discovery and a hidden description appended to the room description for discoverers.
+
+```yaml
+hidden_nouns:
+  scratchmarks:                    # noun key (used with `look scratchmarks`)
+    description: |
+      Deep claw marks gouged into the wooden wall, three in parallel.
+      They're old, weathered by time.
+    hidden_description: |
+      You notice strange scratchmarks on the wall here.
+  passage:
+    description: |
+      A narrow gap behind the tapestry, barely wide enough to squeeze
+      through. Darkness lies beyond.
+    hidden_description: |
+      There's a hidden passage here!
+```
+
+**Rules:**
+- `description` — what `look <noun>` displays after discovery
+- `hidden_description` — appended to the room description for players who have discovered this noun
+- No formal parent link; references to parent objects are written as prose in `hidden_description`
+- Marked `instance:"skip"` — always loaded from template, never instance-saved
+
 ---
 
 ## 3. Annotated Example
@@ -140,6 +167,31 @@ idlemessages:                # Flavor — shown periodically to players in the r
 - A <ansi fg="mobname">citizen</ansi> walks up and examines the sign.
 - A <ansi fg="mobname">guard</ansi> is looking at the sign.
 ```
+
+---
+
+### Container Sub-fields
+
+```yaml
+containers:
+  chest:                           # container name (referenced in exits/items)
+    title: An oaken chest
+    description: A sturdy wooden chest with iron bands.
+    gold: 50                       # optional gold coins inside
+    items:                         # optional items inside
+      - 10001
+      - 10002
+    lock:                          # optional lock
+      difficulty: 8
+      key: 10003
+    hidden: false                  # if true, container hidden until discovered
+```
+
+**The `hidden` field:**
+- If `true`, the container is invisible in normal room descriptions and `look` output
+- Players can only interact with it after discovering it via the `search` command
+- Once discovered, the container appears in room details and `look` output for all players who have found it
+- The container noun should be subtly color-highlighted in the room description with `<ansi fg="itemname">noun</ansi>` for discoverability hints
 
 ---
 

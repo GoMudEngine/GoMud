@@ -64,9 +64,13 @@ func Storage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 
 	if action == `add` {
 
-		spaceLeft := 20 - len(itemsInStorage)
+		storageCap := room.StorageCapacity
+		if storageCap <= 0 {
+			storageCap = 20
+		}
+		spaceLeft := storageCap - len(itemsInStorage)
 		if spaceLeft < 1 {
-			user.SendText(`You can have 20 objects in storage`)
+			user.SendText(`Your storage is full.`)
 			return true, nil
 		}
 

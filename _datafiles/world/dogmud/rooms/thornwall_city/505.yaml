@@ -1,0 +1,85 @@
+roomid: 505
+zone: Thornwall City
+title: Chrysalis Den
+description: >
+  A roughly circular chamber where chrysalis growth covers every surface in
+  overlapping layers, thick as quilting. The ceiling is hung with hammocks
+  woven from strips of hardened resin, swaying gently in air currents only
+  they can feel. A cookfire pit in the center holds cold grey ashes and a
+  cracked iron pot still dark with old stew. Crude weapon racks lean against
+  the south wall, holding blades in various states of repair. Stolen goods
+  pile against the west exit -- merchant sacks, a broken loom still strung
+  with half-finished cloth, a barrel of wine with a tap hammered through
+  the side. This is home. Someone lives here, and they are almost certainly
+  still nearby.
+biome: cave
+coord:
+  x: 2
+  y: -5
+  z: -3
+exits:
+  north:
+    roomid: 502
+  west:
+    roomid: 506
+    lock:
+      difficulty: 25
+      relockinterval: 15 real minutes
+      trapbuffids: [39, 40]
+  east:
+    roomid: 507
+  south:
+    roomid: 508
+spawninfo:
+  - mobid: 270
+    respawnrate: 10 real minutes
+  - mobid: 270
+    respawnrate: 10 real minutes
+nouns:
+  hammocks: >
+    Hammocks of woven chrysalis resin strips hung from ceiling
+    hooks driven into the stone. Each can hold a person, swaying
+    in a slow arc. The weave is surprisingly tight -- whoever made
+    these had time and patience. Personal effects tucked into the
+    curves -- a folded cloth, a belt knife without a sheath, a
+    small charm made from carved bone.
+  weapon racks: >
+    Crude racks of lashed wood leaning against the wall, holding
+    eight or nine blades in various states of edge. Some are wrapped
+    in oilcloth. Others are bare and notched. A whetstone sits on
+    the lowest rack next to a patch of leather for stropping. The
+    collection is practical, not decorative.
+  cookfire: >
+    The fire pit is ringed with flat stones, its ashes cold and grey.
+    The cracked iron pot hanging over it still has a residue of old
+    stew along the bottom, dark and dried. A wooden ladle rests
+    against the pot, its handle worn smooth with use. Someone ate
+    here regularly not long ago.
+  merchant sacks: >
+    Heavy canvas sacks stenciled with trade house marks -- none of
+    them matching the same merchant. Goods from at least four
+    separate sources. The sacks have been opened and re-tied, their
+    contents sorted and pulled. Whatever was most valuable is already
+    gone.
+  wine barrel: >
+    A small barrel with a brass tap hammered through the side,
+    sitting on its end. The tap has been opened and closed so
+    many times the wood around it is dark with old spills.
+    Sniffing the tap -- rough red wine, sour at the edges.
+    Still drinkable, probably.
+  broken loom: >
+    A small portable loom, one upright cracked and repaired with
+    chrysalis resin. Still strung with half-finished cloth in a
+    dark, close weave. Someone started this and walked away
+    mid-pattern. The design, where it exists, is abstract --
+    concentric rings.
+  stolen goods pile: >
+    A loose heap of miscellaneous goods shoved against the wall --
+    a bolt of silk wrapped in oilcloth, a merchant ledger, a small
+    locked strongbox with the lock already punched out, two pairs
+    of boots in good condition. The detritus of a dozen scores.
+idlemessages:
+- Cold ashes in the cookfire stir as air moves through the chamber's exits.
+- A hammock sways slowly, as if its occupant only just stepped away.
+- The wine barrel drips from its tap, a slow rhythm on the stone below.
+- Chrysalis growth creaks and pops faintly as the walls settle.

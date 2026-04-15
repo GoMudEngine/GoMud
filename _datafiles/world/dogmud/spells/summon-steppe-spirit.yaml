@@ -4,12 +4,26 @@ description: Calls forth a spirit wolf from the steppe's spiritual
   plane to fight alongside you.
 type: helpsingle
 schools:
-  - vital
+  - manifestation
+quest_required: "12-end"
 cost: 35
 waitrounds: 3
-difficulty: 0
+difficulty: 15
 primarystat: willpower
 base_folds: 6
 target_defense_type: none
 effect_type: none
 effect_magnitude: 0
+cast_user_text: >-
+  You hold the spirit fetish aloft. The steppe wind rises,
+  carrying the scent of sage and old bones...
+cast_room_text: >-
+  {source} raises a small fetish overhead. The wind sharpens
+  and the air grows cold.
+wait_user_text: >-
+  The fetish thrums in your hand. Ghostly howling builds from
+  nowhere and everywhere at once...
+summon_mob_id: 243
+summon_base_pool: 120
+summon_scaling_divisor: 200
+summon_component_id: 40031

@@ -1,0 +1,45 @@
+roomid: 4016
+zone: Ashwick
+title: Hamlet Road
+description: >
+  The main road through Ashwick runs east and west between
+  rows of fieldstone-and-thatch houses. Packed earth underfoot,
+  smooth from generations of use, a single set of cart ruts
+  worn into the surface like old habit. Kitchen gardens peek
+  over low walls, and the smell of cooking fires and animal
+  dung mingles in the still air. It is quiet in the way that
+  small places are quiet -- not empty, but unhurried. A
+  farmstead lies to the south.
+biome: farmland
+coord:
+  x: -6
+  y: -13
+  z: 0
+exits:
+  west:
+    roomid: 4015
+  east:
+    roomid: 4017
+  south:
+    roomid: 4020
+nouns:
+  houses: Fieldstone-and-thatch houses line the road, well-
+    maintained and sturdy. Low walls enclose kitchen gardens
+    behind each one, neat rows of herbs and root vegetables
+    visible over the stone. Smoke rises from several chimneys.
+    The houses are built close but not crowded, each with its
+    own space -- the architecture of people who value privacy
+    but not isolation.
+  road: Packed earth worn smooth by generations of feet and
+    wheels. A single set of cart ruts runs down the center,
+    the grooves deep and permanent. The surface is hard enough
+    to shed rain but soft enough to show recent footprints --
+    mostly boots, a few bare feet, and the small prints of
+    chickens wandering freely.
+spawninfo:
+- mobid: 266
+idlemessages:
+- Smoke drifts from a nearby chimney, carrying the smell of
+  stewing vegetables.
+- A door closes somewhere along the road with a wooden thud.
+- A chicken struts across the road, pecking at the packed earth.

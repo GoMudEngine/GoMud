@@ -1,0 +1,45 @@
+roomid: 4046
+zone: North Road
+title: Kitchen
+description: >
+  The smell hits first — fat-smoke and old wood and the sharp
+  green note of herbs hanging from the ceiling in dried bundles.
+  A heavy work-table dominates the center, its surface scarred
+  from years of chopping. Pots hang from iron hooks above a
+  cooking hearth. A window on the south wall looks out onto the
+  back yard — the sill is at chest height, a body-length drop
+  to flagstones below. The sill has been scuffed recently, the
+  grime disturbed by something gripping the edge.
+biome: farmland
+coord:
+  x: -11
+  y: -12
+  z: -1
+exits:
+  north:
+    roomid: 4045
+  south:
+    roomid: 4047
+nouns:
+  window: A small window set high in the south wall, unglazed,
+    covered by a shutter that stands open. The sill is at chest
+    height — you could climb out, but the drop to the flagstones
+    below is a full body-length. The grime on the sill has been
+    disturbed recently. Someone gripped the edge here, swung
+    their legs over, and dropped. The marks are small — a young
+    person, or someone slight.
+  table: A massive work-table of scarred oak, its surface a
+    topography of knife cuts, burn marks, and stains that no
+    amount of scrubbing will remove. A cleaver is embedded in
+    one corner, left there by someone who knew exactly where
+    they would need it next. Flour dust covers everything in
+    a fine pale layer.
+  herbs: Bundles of dried herbs hang from the ceiling beams on
+    twine — rosemary, thyme, sage, and something darker that
+    smells faintly of anise. The bundles are old enough to be
+    brittle but still fragrant when disturbed.
+idlemessages:
+- A pot bubbles quietly over the cooking hearth.
+- A mouse darts along the baseboard and vanishes behind a
+  flour sack.
+- The herbs sway slightly as a draft moves through the kitchen.

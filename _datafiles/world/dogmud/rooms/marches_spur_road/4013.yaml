@@ -1,0 +1,37 @@
+roomid: 4013
+zone: Marches Spur Road
+title: South Road Approach
+description: The road south of the inn carries steady traffic as it
+  approaches the crossroads ahead. A farmer's cart sits at the roadside,
+  its bed loaded with muddy root vegetables -- turnips and parsnips fresh
+  from the field. The farmer glances at passersby without much interest,
+  used to the flow of strangers. The road is wide and well-maintained
+  here, packed earth with gravel patches, built for the volume of trade
+  that a crossroads demands.
+biome: farmland
+coord:
+  x: -8
+  y: -12
+  z: 0
+exits:
+  north:
+    roomid: 4011
+  south:
+    roomid: 4014
+nouns:
+  cart: A farmer's cart with solid wooden wheels, its bed heaped with
+    freshly pulled root vegetables still caked in dark field soil.
+    Turnips and parsnips, mostly, with a few misshapen beets. The
+    farmer sits on the cart's bench, chewing something and watching
+    the road with the patient disinterest of someone who has seen
+    every kind of traveler pass.
+  road: The road is broad and busy this close to the crossroads. Hoofprints
+    and wheel ruts overlap in the packed earth, and the verges are worn
+    bare from travelers stepping aside to let wagons pass. Small stones
+    have been kicked to the edges by traffic.
+spawninfo:
+- mobid: 257
+idlemessages:
+- A sparrow lands on the farmer's cart and pecks at the vegetable soil.
+- The farmer shifts on his bench and adjusts his hat against the sun.
+- Dust rises from the road as a pair of travelers pass heading north.

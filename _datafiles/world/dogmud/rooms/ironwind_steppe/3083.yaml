@@ -9,11 +9,17 @@ description: The ravine narrows drastically here, the vegetation
   growth. Wolf scent is everywhere -- this is a heavily traveled
   corridor between different parts of their territory.
 biome: land
+coord:
+  x: 13
+  y: -11
+  z: 0
 exits:
   north:
     roomid: 3082
+  east:
+    roomid: 3093
   west:
-    roomid: 3077
+    roomid: 3079
   south:
     roomid: 3084
 nouns:

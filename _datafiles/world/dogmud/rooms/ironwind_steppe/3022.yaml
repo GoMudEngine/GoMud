@@ -9,15 +9,17 @@ description: The flats are unusually barren here -- short-cropped grass
   to always hold a circling silhouette. Small animals stay close
   to their burrows in this exposed killing field.
 biome: land
+coord:
+  x: 12
+  y: 3
+  z: 0
 exits:
   south:
-    roomid: 3020
+    roomid: 3019
   east:
-    roomid: 3024
-  north:
-    roomid: 3025
-  west:
     roomid: 3023
+  north:
+    roomid: 3027
 nouns:
   tree: A dead tree, bleached white by the elements, its bare
     branches spread like skeletal fingers. Hawks use it as a

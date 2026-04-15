@@ -1,0 +1,9 @@
+buffid: 60
+name: Elixir of Renewal
+description: Every part of you feels restored, as if waking from perfect sleep.
+triggerrate: 1 round
+triggercount: 250
+statmods:
+  healthrecovery: 2
+  staminarecovery: 2
+  convictionrecovery: 2

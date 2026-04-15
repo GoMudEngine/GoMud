@@ -20,6 +20,7 @@ func RegisterListeners() {
 	events.RegisterListener(events.NewRound{}, UpdateZoneMutators)
 	events.RegisterListener(events.NewRound{}, CheckNewDay)
 	events.RegisterListener(events.NewRound{}, CheckMoonPhase)
+	events.RegisterListener(events.NewRound{}, CheckStorageFees)
 	events.RegisterListener(events.NewRound{}, SpawnLootGoblin)
 	events.RegisterListener(events.NewRound{}, UserRoundTick)
 	events.RegisterListener(events.NewRound{}, MobRoundTick)
@@ -83,8 +84,21 @@ func RegisterListeners() {
 	// Mob death: pack flee behavior (Stage 42.7)
 	events.RegisterListener(events.MobDeath{}, PackFlee)
 
+	// Mob death: quest engine notifications
+	events.RegisterListener(events.MobDeath{}, MobDeathQuestNotify)
+
+	// Mob death: companion cleanup (remove from owner's list + notify)
+	events.RegisterListener(events.MobDeath{}, CompanionCleanup)
+
+	// Skill use: quest engine notifications
+	events.RegisterListener(events.SkillUsed{}, SkillUseQuestNotify)
+
 	// Log tee to users
 	events.RegisterListener(events.Log{}, FollowLogs)
+
+	// Mob AI reactor — signal handler and per-turn reaction processor
+	events.RegisterListener(events.MobAISignal{}, HandleMobAISignal)
+	events.RegisterListener(events.NewTurn{}, ProcessMobReactions)
 
 	// Listener for debugging some stuff (catches all events)
 	/*

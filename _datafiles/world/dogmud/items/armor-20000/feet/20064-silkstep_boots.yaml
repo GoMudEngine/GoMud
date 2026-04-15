@@ -1,0 +1,14 @@
+itemid: 20064
+name: silkstep boots
+namesimple: boots
+description: >-
+  Boots soled with layered chrysalis silk, compressed and cured
+  until the material is denser than leather but still utterly
+  silent underfoot. Stone, gravel, wood planks -- none of it
+  carries the sound of these boots.
+type: feet
+subtype: wearable
+physical_mitigation: 2
+statmods:
+  dexterity: 5
+value: 32

@@ -1,0 +1,20 @@
+itemid: 10023
+name: smuggler's short blade
+namesimple: blade
+description: A well-balanced dagger with a blackened blade and a grip
+  wrapped in dark cord. The edge is honed to a razor finish -- this is
+  not a kitchen knife pressed into service but a weapon made for quiet,
+  close work. A faint maker's mark near the hilt has been filed off.
+type: weapon
+hands: 1
+subtype: piercing
+weight: 1.5
+speedmultiplier: 1.1
+staminacost: 3
+grapplemodifier: 0.4
+damage:
+  basedamage: 5
+  variance: 2
+damage_multiplier: 0.55
+parryrating: 5
+value: 12

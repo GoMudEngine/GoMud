@@ -1,0 +1,15 @@
+itemid: 30035
+name: master's component case
+namesimple: case
+description: A rigid case of boiled leather and bone reinforcement,
+  lined with silk and divided into dozens of labeled compartments.
+  Each slot is sized for a specific type of material -- ingots,
+  powders, crystals, herbs -- and the whole case seals with a
+  clever interlocking mechanism that keeps everything secure even
+  at a full sprint. The mark of a serious crafter.
+type: componentbag
+subtype: wearable
+value: 150
+weight: 2.0
+bag_capacity: 75
+weight_reduction: 0.45

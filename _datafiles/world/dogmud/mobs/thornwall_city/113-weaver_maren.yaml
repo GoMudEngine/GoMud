@@ -3,6 +3,8 @@ zone: Thornwall City
 statpool: 58
 itemdropchance: 0
 hostile: false
+charm_immune: true
+non_combatant: true
 maxwander: 0
 groups:
   - humanoid
@@ -17,9 +19,18 @@ activitylevel: 12
 crafter: true
 crafterskill: tailoring
 crafterrecipeids:
-  - linen-tunic
-  - cloth-pants
+  - artisans-satchel
   - cloth-bandage
+  - cloth-pants
+  - leather-backpack
+  - leather-bandolier
+  - leather-leggings
+  - leather-satchel
+  - leather-vest
+  - linen-tunic
+  - masters-component-case
+  - reinforced-bandolier
+  - reinforced-travel-pack
   - wool-cloak
 crafterrestockmaterials:
   - 40007
@@ -37,7 +48,7 @@ character:
     last.
   speciesid: 1
   level: 1
-  gold: 0
+  gold: 500
   skills:
     tailoring: 12
   stats:
@@ -64,3 +75,7 @@ character:
       quantity: 0
       quantitymax: 0
       price: 3
+    - itemid: 30033
+      quantity: 0
+      quantitymax: 0
+      price: 25

@@ -1,0 +1,14 @@
+itemid: 50
+name: carved wooden bird
+namesimple: bird
+description: >
+  A small wooden bird, roughly but carefully carved. Its wings
+  are tucked against its body and its head is tilted slightly,
+  as if listening to something only it can hear. The wood is
+  pale and fresh, the knife marks still sharp. It fits in the
+  palm of your hand. Someone young made this — someone who pays
+  attention to how birds actually hold themselves.
+type: object
+subtype: mundane
+weight: 0.1
+value: 0

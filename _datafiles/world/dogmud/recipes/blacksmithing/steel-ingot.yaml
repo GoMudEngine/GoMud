@@ -1,7 +1,7 @@
 id: steel-ingot
 name: Steel Ingot
 skill: blacksmithing
-skill_minimum: 10
+skill_minimum: 4
 station: forge
 time_rounds: 4
 ingredients:

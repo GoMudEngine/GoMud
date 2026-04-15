@@ -1,12 +1,33 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">bank</ansi>
 
-The <ansi fg="command">bank</ansi> command lets you deposit and withdraw from a bank. 
+The <ansi fg="command">bank</ansi> command lets you deposit and
+withdraw gold at a bank. The Thornwall Bank is located south of
+Market Square.
 
-<ansi fg="yellow">Usage: </ansi>
+<ansi fg="yellow">Gold Commands: </ansi>
 
-  <ansi fg="command">bank</ansi> - See your gold on hand and in the bank
+  <ansi fg="command">bank</ansi> - See your gold on hand and
+  in the bank
 
-  <ansi fg="command">deposit [amount/all]</ansi> - Deposit an amount of gold (or all) into the bank
-  
-  <ansi fg="command">withdraw [amount/all]</ansi> - Withdraw an amount of gold (or all) from the bank
+  <ansi fg="command">bank deposit [amount/all]</ansi> - Deposit
+  gold into the bank
+
+  <ansi fg="command">bank withdraw [amount/all]</ansi> - Withdraw
+  gold from the bank
+
+<ansi fg="yellow">Item Storage: </ansi>
+
+The bank also offers item storage. Use the
+<ansi fg="command">storage</ansi> command while at the bank to
+store and retrieve items. Unlike other storage locations,
+the bank has no item limit.
+
+<ansi fg="yellow">Storage Fees: </ansi>
+
+The bank charges a monthly fee of 1 gold per stored item,
+deducted automatically from your bank balance. If you
+cannot cover the fee, the bank will forfeit your least
+valuable items first and notify you via
+<ansi fg="command">inbox</ansi>. Keep gold deposited to
+cover your storage costs.
 

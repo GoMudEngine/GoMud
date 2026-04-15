@@ -77,10 +77,6 @@ tree:
     text: "A surface-walker in the Hollow. My warriors wanted to kill you. I am still deciding. Leave before I decide wrong."
     hints: "The chieftain does not seem interested in talking to someone who has not earned the warren's trust."
     variants:
-      - questRequired: ["2-poultices"]
-        questExcluded: ["2-end"]
-        text: "The shaman tells me you brought medicine. Surface herbs. For our sick. You want something in return. They always do. Speak."
-        hints: "The chieftain is willing to hear you. Ask about the compact."
       - questRequired: ["2-end"]
         text: "The compact-bringer. You are remembered. Sit, if you wish."
 
@@ -117,10 +113,8 @@ tree:
       moodChange: friendly
 
     - id: audience
-      triggers: ["compact", "peace", "alliance", "shaman", "sent", "poultice", "medicine", "treaty", "quest", "task"]
-      questRequired: ["2-poultices"]
-      questExcluded: ["2-end"]
-      grantsQuest: "2-end"
+      triggers: ["compact", "peace", "alliance", "shaman", "sent", "salve", "medicine", "treaty", "quest", "task"]
+      questRequired: ["2-end"]
       text: "You brought medicine when you could have brought blades. That is... not what we expected. Very well. We will not attack surface-walkers who come in peace. We will not raid the cave entrance. In return, the surface leaves our dead alone and sends no more specimen collectors. That is the compact. Break it and there will be no second chance."
       moodChange: friendly
 
@@ -130,4 +124,4 @@ tree:
       moodChange: hostile
 
 memory:
-  expiryPeriod: "1h"
+  expiryPeriod: ""

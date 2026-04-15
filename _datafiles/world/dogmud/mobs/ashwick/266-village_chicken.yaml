@@ -1,0 +1,34 @@
+mobid: 266
+zone: Ashwick
+statpool: 5
+hostile: false
+maxwander: 2
+groups:
+  - animal
+  - bird
+itemdropchance: 0
+idlecommands:
+  - 'emote pecks industriously at the packed earth'
+  - ''
+  - ''
+  - 'emote clucks and ruffles its feathers'
+  - ''
+  - 'emote struts across the road with unreasonable confidence'
+  - ''
+activitylevel: 25
+character:
+  name: village chicken
+  description: |
+    A plump brown hen going about the serious business of being a
+    chicken. It pecks, it clucks, it regards you with one orange eye
+    and finds you irrelevant. It belongs to no one and everyone, the
+    kind of communal village animal that has been here longer than
+    most of the residents and intends to stay.
+  speciesid: 20
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 5
+    perception:
+      training: 3

@@ -2,7 +2,9 @@ buffid: 30
 name: Nerve Disruption
 description: Your nerves are disrupted, weakening your dexterity and strength.
 triggerrate: 1 round
-triggercount: 5
+triggercount: 8
 statmods:
   dexterity: -15
   strength: -10
+start_user_text: Your muscles twitch uncontrollably as nerve signals misfire.
+end_user_text: Your nerves settle and control returns to your limbs.

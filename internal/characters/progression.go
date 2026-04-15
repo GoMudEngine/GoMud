@@ -79,7 +79,16 @@ func (c *Character) CheckSkillProgression(skillName string, userId int, bonusMul
 		bonusMultiplier *= float64(b.MobProgressionRate)
 	}
 
-	virtualRank := c.GetSkillUseCount(skillName) / int(b.UsesPerRank)
+	// Normalize use count by the skill's progression multiplier so that
+	// frequently-fired skills (combat) don't exhaust the progression curve
+	// faster than infrequently-fired skills (utility). Without this,
+	// combat skills asymptote at ~15 progs vs ~100 for utility skills.
+	progressMult := skills.GetProgressionMultiplier(skillName)
+	adjustedUseCount := c.GetSkillUseCount(skillName)
+	if progressMult > 0 && progressMult < 1.0 {
+		adjustedUseCount = int(float64(adjustedUseCount) * progressMult)
+	}
+	virtualRank := adjustedUseCount / int(b.UsesPerRank)
 	// If the actual skill level exceeds the soft cap, use it as a floor for the virtual rank.
 	// This prevents characters with artificially high skills (e.g. admin accounts) from
 	// exploiting the low use-count portion of the progression curve.
@@ -216,18 +225,34 @@ func (c *Character) OnStatUse(statName string, userId int) bool {
 // Also auto-tracks and progresses the skill's primary governing stat.
 // Returns true if the skill actually increased.
 func (c *Character) OnSkillUse(skillName string, userId int) bool {
+	return c.OnSkillUseScaled(skillName, userId, 1.0)
+}
+
+// OnSkillUseScaled is like OnSkillUse but accepts a bonus multiplier that
+// scales the progression chance. Used for difficulty-scaled progression
+// where harder spells/crafts reward proportionally more skill growth.
+func (c *Character) OnSkillUseScaled(skillName string, userId int, bonusMultiplier float64) bool {
 	c.TrackSkillUse(skillName)
-	mudlog.Debug("Progression", "event", "skill_use", "skill", skillName, "character", c.Name)
+	mudlog.Debug("Progression", "event", "skill_use", "skill", skillName, "bonus", fmt.Sprintf("%.2f", bonusMultiplier), "character", c.Name)
 
 	gained := false
 	if configs.GetGamePlayConfig().UseSkillProgression {
-		gained = c.CheckSkillProgression(skillName, userId, 1.0)
+		gained = c.CheckSkillProgression(skillName, userId, bonusMultiplier)
 	}
 
 	// Auto-track and progress the skill's primary governing stat
 	if primaryStat := skills.GetSkillPrimaryStat(skillName); primaryStat != "" {
 		c.OnStatUse(primaryStat, userId)
 	}
+
+	// Emit SkillUsed event for quest engine and other listeners
+	if userId > 0 {
+		events.AddToQueue(events.SkillUsed{
+			UserId: userId,
+			Skill:  skills.SkillTag(skillName),
+		})
+	}
+
 	return gained
 }
 
@@ -239,11 +264,12 @@ func (c *Character) OnCriticalSuccess(context string, userId int) {
 	mudlog.Debug("Progression", "event", "critical_success", "context", context, "character", c.Name)
 
 	if configs.GetGamePlayConfig().UseSkillProgression {
-		if userId > 0 {
-			msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> A moment of brilliance! Your <ansi fg="yellow">%s</ansi> technique improves! <ansi fg="magenta">***</ansi>`, context)
-			events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+		if c.CheckSkillProgression(context, userId, 2.0) {
+			if userId > 0 {
+				msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> A moment of brilliance! Your <ansi fg="yellow">%s</ansi> technique improves! <ansi fg="magenta">***</ansi>`, context)
+				events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+			}
 		}
-		c.CheckSkillProgression(context, userId, 2.0)
 	}
 }
 
@@ -254,11 +280,12 @@ func (c *Character) OnCriticalFailure(context string, userId int) {
 	mudlog.Debug("Progression", "event", "critical_failure", "context", context, "character", c.Name)
 
 	if configs.GetGamePlayConfig().UseSkillProgression {
-		if userId > 0 {
-			msg := fmt.Sprintf(`<ansi fg="red">!!!</ansi> You learn from your mistake! Your <ansi fg="yellow">%s</ansi> understanding deepens. <ansi fg="red">!!!</ansi>`, context)
-			events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+		if c.CheckSkillProgression(context, userId, 1.0) {
+			if userId > 0 {
+				msg := fmt.Sprintf(`<ansi fg="red">!!!</ansi> You learn from your mistake! Your <ansi fg="yellow">%s</ansi> understanding deepens. <ansi fg="red">!!!</ansi>`, context)
+				events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+			}
 		}
-		c.CheckSkillProgression(context, userId, 1.0)
 	}
 }
 
@@ -268,10 +295,37 @@ func (c *Character) OnFirstMobKill(userId int) {
 	mudlog.Debug("Progression", "event", "first_mob_kill", "character", c.Name)
 
 	if configs.GetGamePlayConfig().UseSkillProgression {
-		msg := `<ansi fg="magenta">***</ansi> Defeating a new foe hones your combat instincts! <ansi fg="magenta">***</ansi>`
-		events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
-		c.CheckSkillProgression("combat", userId, 2.0)
+		if c.CheckSkillProgression("combat", userId, 2.0) {
+			msg := `<ansi fg="magenta">***</ansi> Defeating a new foe hones your combat instincts! <ansi fg="magenta">***</ansi>`
+			events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+		}
 	}
+}
+
+// OnCritReceived is called when a character takes a critical hit.
+// Triggers stat progression for the stat related to the damage channel:
+//
+//	physical crit → vitality (body toughens from surviving hard blows)
+//	magical crit  → willpower (mind hardens against arcane trauma)
+//	rhetoric crit → charisma (ego steels itself after being shaken)
+func (c *Character) OnCritReceived(damageChannel string, userId int) {
+	if !configs.GetGamePlayConfig().UseSkillProgression {
+		return
+	}
+
+	var statName string
+	switch damageChannel {
+	case "physical":
+		statName = "vitality"
+	case "magical":
+		statName = "willpower"
+	case "conviction":
+		statName = "charisma"
+	default:
+		return
+	}
+
+	c.CheckRegenProgression(statName, userId, 0.25)
 }
 
 // OnLowResource is called when a resource (health, stamina, conviction)

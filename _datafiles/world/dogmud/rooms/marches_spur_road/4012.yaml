@@ -1,0 +1,43 @@
+roomid: 4012
+zone: Marches Spur Road
+title: The Broken Yoke Inn
+description: The common room of the Broken Yoke is warm and dim, lit by
+  a stone fireplace that dominates the west wall and a handful of oil
+  lamps hanging from the beams. Trestle tables fill the space, each one
+  different -- some rough-hewn, some smooth with age, all bearing the
+  scars of years of use. The bar is a wide plank laid across two barrels,
+  bottles and jars lined up behind it on a shelf. The air smells of wood
+  smoke, fresh bread, and the faint sweetness of ale. Travelers sit in
+  small groups, eating and talking in low voices. This is a place where
+  roads meet and news travels.
+biome: farmland
+coord:
+  x: -9
+  y: -11
+  z: 0
+exits:
+  east:
+    roomid: 4011
+nouns:
+  fireplace: A broad fieldstone fireplace, soot-blackened from decades
+    of use. The stones are river-worn and fitted without mortar, held
+    in place by their own weight. On the mantel sits a clay jug stuffed
+    with dried wildflowers and a carved wooden horse, its paint nearly
+    gone. The fire burns low but steady, more for comfort than warmth.
+  bar: A wide oak plank laid across two ale barrels, serving as the
+    bar. Behind it, a rough shelf holds bottles of spirits, a bread
+    board with a half-cut loaf, and a cast iron soup pot with a ladle
+    hooked on the rim. The plank is worn smooth in the center where
+    elbows have rested for years.
+  tables: Trestle tables scattered around the common room, no two alike.
+    One is dark oak, scarred with knife marks. Another is pale pine,
+    newer, its legs still square. A third has been repaired so many
+    times it is more patch than original. Each table tells a small
+    history of the inn in its wood.
+spawninfo:
+- mobid: 251
+idlemessages:
+- The fire shifts in the hearth, casting dancing shadows across the room.
+- A low murmur of conversation rises and falls among the tables.
+- Someone laughs at a far table, a brief warm sound in the dim room.
+- The smell of bread and soup drifts from behind the bar.

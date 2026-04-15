@@ -6,10 +6,12 @@ schools:
   - elemental
 cost: 200
 waitrounds: 3
-difficulty: 0
+difficulty: 75
 primarystat: willpower
 base_folds: 28
 target_defense_type: physical
 effect_type: damage
 effect_magnitude: 900
 damage_multiplier: 2.50
+cast_user_text: "You reach deep into the Veil and begin tearing it apart!"
+cast_room_text: "{source} raises both arms as reality itself begins to crack and splinter!"

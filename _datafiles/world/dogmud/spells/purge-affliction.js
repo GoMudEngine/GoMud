@@ -1,15 +1,4 @@
-// Purge Affliction spell script — flavor only; effects resolved in Go (Stage 11.4)
-
-function onCast(sourceActor, targetActor) {
-    SendUserMessage(sourceActor.UserId(), 'You focus Chrysalis energy inward, seeking out foreign agents.');
-    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true)+' enters a meditative focus, Chrysalis energy pulsing softly.', sourceActor.UserId());
-    return true;
-}
-
-function onWait(sourceActor, targetActor) {
-    SendUserMessage(sourceActor.UserId(), 'You feel the Chrysalis isolating the toxins...');
-    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true)+' sways slightly as energy pulses through them...', sourceActor.UserId());
-}
+// Purge Affliction spell script — cast/wait text in YAML; onMagic handles logic
 
 function onMagic(sourceActor, targetActor) {
     roomId = sourceActor.GetRoomId();

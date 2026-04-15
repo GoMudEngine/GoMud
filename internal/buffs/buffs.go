@@ -17,6 +17,7 @@ type Buff struct {
 	// Need to instance track the following:
 	RoundCounter int `yaml:"roundcounter,omitempty"` // How many rounds have passed. Triggers on (RoundCounter%RoundInterval == 0)
 	TriggersLeft int `yaml:"triggersleft,omitempty"` // How many times it triggers
+	TickAmount   int `yaml:"tickamount,omitempty"`   // Snapshot: computed at application time, applied each trigger
 }
 
 func (b *Buff) StatMod(statName string) int {
@@ -171,6 +172,41 @@ func (bs *Buffs) Started(buffId int) {
 	}
 }
 
+// AddBuffScaled adds a buff with its duration multiplied by durationMult.
+func (bs *Buffs) AddBuffScaled(buffId int, durationMult float64) bool {
+	if buffInfo := GetBuffSpec(buffId); buffInfo != nil {
+		triggers := int(float64(buffInfo.TriggerCount) * durationMult)
+		if triggers < 1 {
+			triggers = 1
+		}
+		newBuff := Buff{
+			BuffId:       buffInfo.BuffId,
+			RoundCounter: 0,
+			PermaBuff:    false,
+			TriggersLeft: triggers,
+		}
+
+		if idx, ok := bs.buffIds[buffId]; ok {
+			bs.List[idx].TriggersLeft = newBuff.TriggersLeft
+			bs.List[idx].RoundCounter = 0
+			bs.List[idx].PermaBuff = newBuff.PermaBuff
+			return true
+		}
+
+		bs.List = append(bs.List, &newBuff)
+		listIndex := len(bs.List) - 1
+		bs.buffIds[buffId] = listIndex
+		for _, flag := range buffInfo.Flags {
+			if _, ok := bs.buffFlags[flag]; !ok {
+				bs.buffFlags[flag] = []int{}
+			}
+			bs.buffFlags[flag] = append(bs.buffFlags[flag], listIndex)
+		}
+		return true
+	}
+	return false
+}
+
 func (bs *Buffs) AddBuff(buffId int, isPermanent bool) bool {
 	if buffInfo := GetBuffSpec(buffId); buffInfo != nil {
 
@@ -188,6 +224,7 @@ func (bs *Buffs) AddBuff(buffId int, isPermanent bool) bool {
 
 		if idx, ok := bs.buffIds[buffId]; ok {
 			bs.List[idx].TriggersLeft = newBuff.TriggersLeft
+			bs.List[idx].RoundCounter = 0
 			bs.List[idx].PermaBuff = newBuff.PermaBuff
 			return true
 		}
@@ -310,6 +347,14 @@ func (bs *Buffs) Prune() (prunedBuffs []*Buff) {
 	}
 
 	return prunedBuffs
+}
+
+// SetTickAmount sets the TickAmount on the most recently added buff with
+// the given buffId. Called right after AddBuff to set the snapshot.
+func (bs *Buffs) SetTickAmount(buffId int, amount int) {
+	if idx, ok := bs.buffIds[buffId]; ok {
+		bs.List[idx].TickAmount = amount
+	}
 }
 
 func GetDurations(buff *Buff, spec *BuffSpec) (roundsLeft int, totalRounds int) {

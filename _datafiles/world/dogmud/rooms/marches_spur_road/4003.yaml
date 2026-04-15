@@ -1,0 +1,40 @@
+roomid: 4003
+zone: Marches Spur Road
+title: Peddler's Camp
+description: A cleared patch of ground sits just off the road, sheltered
+  from the wind by a low rise on the north side. A canvas lean-to has
+  been stretched between two poles, its edges weighed down with stones.
+  A small firepit smolders nearby, and a peddler's cart rests with one
+  wheel propped on a flat stone -- not broken, just resting. Crates
+  and bundles of trade goods are stacked neatly beneath the lean-to.
+  The whole camp has the organized look of someone who knows how to
+  live on the road, and the settled feel of someone staying longer
+  than they planned.
+biome: plains
+coord:
+  x: -9
+  y: -4
+  z: 0
+exits:
+  east:
+    roomid: 4002
+nouns:
+  cart: A sturdy two-wheeled peddler's cart, its bed covered with oiled
+    canvas strapped down tight. One wheel is propped up on a flat stone
+    to keep it off the damp ground -- a maintenance habit, not a repair.
+    The axle is greased and the frame is solid. This cart is waiting, not
+    stuck.
+  firepit: A ring of stones around a shallow pit of ash and coals. The
+    coals are still warm, a thin thread of smoke rising from the center.
+    A blackened pot sits on a flat rock beside the pit, its lid slightly
+    askew.
+  crates: Wooden crates and canvas bundles stacked under the lean-to.
+    The visible goods include coils of rope, clay jugs of lamp oil,
+    packets of dried provisions, and a bundle of iron tools wrapped in
+    sacking. Everyday supplies for farms and homesteads.
+spawninfo:
+- mobid: 250
+idlemessages:
+- The lean-to canvas flaps in a gust of wind, snapping taut.
+- Coals shift in the firepit, releasing a brief curl of smoke.
+- A rope on the cart creaks as the wind pushes against the canvas cover.

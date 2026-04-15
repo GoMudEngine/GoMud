@@ -3,6 +3,7 @@ zone: Sanctum Basin
 archetype: casting
 statpool: 36
 hostile: false
+charm_immune: true
 maxwander: 0
 groups:
   - human

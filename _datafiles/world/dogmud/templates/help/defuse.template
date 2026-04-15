@@ -1,0 +1,40 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">defuse</ansi>
+
+Traps set on locks will trigger when a lockpick attempt fails.
+The <ansi fg="command">defuse</ansi> command lets you disarm a trap
+before picking, so a failed pick costs you the kit -- not your
+health.
+
+<ansi fg="yellow">━━━ Usage ━━━</ansi>
+
+  <ansi fg="command">defuse</ansi> <ansi fg="yellow">[direction]</ansi>
+  <ansi fg="command">defuse</ansi> <ansi fg="yellow">[container name]</ansi>
+
+<ansi fg="yellow">━━━ Requirements ━━━</ansi>
+
+Defusing requires a <ansi fg="itemname">disarm kit</ansi>, which is
+consumed on use whether you succeed or fail. Higher-tier kits are
+sturdier and significantly improve your odds against more intricate
+traps.
+
+<ansi fg="itemname">Disarm kits</ansi> can be purchased from
+<ansi fg="mob">Fence Dealer Siv</ansi> in Thornwall, or crafted
+if you know the recipe.
+
+<ansi fg="yellow">━━━ How It Works ━━━</ansi>
+
+Your <ansi fg="skill">skullduggery</ansi> skill and
+<ansi fg="yellow">Perception</ansi> stat determine your chances.
+Simple traps on light locks are approachable for a novice; the
+elaborate mechanisms protecting valuable stashes demand a seasoned
+hand. Failing to defuse triggers the trap immediately.
+
+If no trap is set on the lock, defuse tells you as much and does
+not consume the kit.
+
+<ansi fg="yellow">━━━ Skill Progression ━━━</ansi>
+
+Each defuse attempt trains your <ansi fg="skill">skullduggery</ansi>
+skill, win or lose. The closer the call, the more you learn.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help picklock</ansi>, <ansi fg="command">help skullduggery</ansi>

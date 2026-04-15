@@ -6,10 +6,12 @@ schools:
   - elemental
 cost: 160
 waitrounds: 3
-difficulty: 0
+difficulty: 60
 primarystat: willpower
 base_folds: 24
 target_defense_type: physical
 effect_type: damage
 effect_magnitude: 700
 damage_multiplier: 2.00
+cast_user_text: "You compress your conviction into hundreds of razor-sharp fragments!"
+cast_room_text: "{source} raises their arms as the air fills with crackling shards of light!"

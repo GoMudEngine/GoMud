@@ -1,0 +1,18 @@
+itemid: 20067
+name: Soren's ironbound buckler
+namesimple: buckler
+description: >
+  A round buckler of layered hardwood, its rim reinforced with
+  a band of dark iron scored by years of hard use. The grip is
+  wrapped in sweat-stained leather, shaped to the hand of
+  someone who held it through a great many fights. The iron rim
+  is dented in places where it caught blows meant for the body
+  behind it. Battered, but maintained — someone valued this
+  above everything else in camp.
+type: offhand
+subtype: wearable
+physical_mitigation: 8
+magical_mitigation: 4
+blockrating: 15
+value: 80
+weight: 4.5

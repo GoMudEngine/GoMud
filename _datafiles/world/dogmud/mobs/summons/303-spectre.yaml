@@ -1,0 +1,49 @@
+mobid: 303
+zone: Summons
+archetype: casting
+aiprofile: caster
+statpool: 90
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - summon
+  - undead
+idlecommands:
+  - 'emote radiates a cold stillness that makes the air feel thicker'
+  - ''
+  - 'emote drifts forward slightly, trailing a low resonance of dread'
+  - ''
+  - 'emote remains utterly motionless for a long moment, watching'
+  - ''
+activitylevel: 75
+combatcommands:
+  - 'cast conviction-spike'
+  - ''
+  - 'emote projects a wave of pure dread that presses on the chest like a stone'
+  - ''
+  - 'cast conviction-ward'
+  - ''
+character:
+  name: spectre
+  description: |
+    The spectre makes no sound and casts no shadow. It moves through a room
+    like a cold front, and where it lingers the courage drains from those
+    nearby without them understanding why. Ancient and patient, it attacks
+    not with blows but with a crushing, suffocating sense of hopelessness
+    — a weapon more terrible than any edge.
+  speciesid: 33
+  level: 1
+  spellbook:
+    conviction-spike: 5
+    conviction-ward: 4
+    conviction-surge: 3
+  skills:
+    spellcasting: 10
+  stats:
+    charisma:
+      training: 15
+    willpower:
+      training: 10
+    dexterity:
+      training: 10

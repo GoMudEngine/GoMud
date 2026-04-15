@@ -1,0 +1,41 @@
+mobid: 325
+zone: Instance Arena
+archetype: fighting
+statpool: 2
+hostile: true
+groups:
+  - humanoid
+activitylevel: 20
+itemdropchance: 50
+loot_pool:
+  - 20071
+idlecommands:
+  - 'emote shifts weight between feet, testing the footing'
+  - ''
+  - 'emote taps the flat of a blade against an armored thigh'
+  - 'wander'
+combatcommands:
+  - 'emote absorbs the hit on plated legs and drives forward'
+  - ''
+  - 'emote takes the blow and answers with interest'
+  - ''
+character:
+  name: arena veteran heavy
+  description: >-
+    A pit fighter who has traded speed for durability — iron
+    plates cover the legs and torso over a base of chainmail,
+    and the approach is to outlast rather than outmaneuver.
+    Slow to close the distance, but once inside the reach
+    of a lighter fighter, nearly impossible to move. The eyes
+    are patient. This one has waited out faster opponents
+    before.
+  speciesid: 1
+  level: 1
+  gold: 5
+  stats:
+    strength:
+      training: 5
+    vitality:
+      training: 5
+    perception:
+      training: 2

@@ -3,10 +3,13 @@ zone: Dustwalk Road
 archetype: fighting
 statpool: 60
 hostile: false
+charm_immune: true
 maxwander: 0
 groups:
   - humanoid
   - warden
+hates:
+  - bandit
 idlecommands:
   - 'emote studies the road to the south with a worried expression'
   - 'emote makes a note on a scrap of paper, frowning'

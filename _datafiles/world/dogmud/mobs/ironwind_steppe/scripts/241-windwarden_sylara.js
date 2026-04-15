@@ -20,11 +20,11 @@ function onGive(mob, room, eventDetails) {
 
     // Wolf totem delivery for Q11
     if ( eventDetails.item.ItemId == TOTEM_ITEM_ID ) {
-        if ( user.HasQuest("11-sylara") && !user.HasQuest("11-totem") ) {
+        if ( user.HasQuest("11-start") && !user.HasQuest("11-end") ) {
             mob.Command('say You found it.', 1.0);
             mob.Command('say The wolf spirit\'s voice -- I can hear it again.', 2.5);
-            mob.Command('say Thank you. Now go -- finish what Kael asked. Hear the scholar\'s side. Then choose.', 4.0);
-            user.GiveQuest("11-totem");
+            mob.Command('say The spirits noticed what you did. Ask me about the covenant when you are ready.', 4.0);
+            user.GiveQuest("11-end");
             return true;
         }
         mob.Command('say The totem is where it belongs. Thank you.');
@@ -51,8 +51,8 @@ function onAsk(mob, room, eventDetails) {
         return false;
     }
 
-    // Must have completed quest 12
-    if (!user.HasQuest("12-end")) {
+    // Must have completed quest 12 or know the spell
+    if (!user.HasQuest("12-end") && !user.HasSpell("summon-steppe-spirit")) {
         mob.Command('say The spirits do not know you yet. Prove yourself first.');
         return true;
     }
@@ -67,6 +67,12 @@ function onAsk(mob, room, eventDetails) {
         user.SetMiscCharacterData(BONUS_KEY, '1');
         mob.Command('emote reaches into a pouch and produces several small bundles of grass and wolf fur.');
         mob.Command('say Take these. The spirits provided well this season. You will need them for the calling.', 2.0);
+        return true;
+    }
+
+    // Already carrying a fetish? Don't give another.
+    if (user.HasItemId(FETISH_ITEM_ID)) {
+        mob.Command('say You already carry a spirit fetish. Use it wisely.');
         return true;
     }
 

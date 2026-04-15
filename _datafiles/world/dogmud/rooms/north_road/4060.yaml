@@ -1,0 +1,49 @@
+roomid: 4060
+zone: North Road
+title: Wide Bend
+description: >
+  The road curves west around a grey rock outcrop that juts
+  from the hillside like a blunt shoulder. Beyond the bend
+  the terrain opens — low hills roll north in long grass,
+  the sky wide and pale above them. The river valley falls
+  behind, replaced by open country that smells of dry grass
+  and cold wind. A worn stone milestone stands at the curve's
+  apex, its carved face smoothed by weather but still legible.
+  A hawk turns in a slow circle above the nearest hill, riding
+  the updraft without effort.
+biome: farmland
+coord:
+  x: -11
+  y: -2
+  z: 0
+exits:
+  south:
+    roomid: 4058
+  north:
+    roomid: 4061
+nouns:
+  outcrop: A weathered mass of grey stone jutting from the
+    hillside where the road bends around it. The rock is
+    fractured in horizontal layers, each face dusted with
+    pale lichen in shades of grey and orange. At the base,
+    where soil has built up against the stone, ferns grow
+    in a dark fringe. The outcrop is large enough that the
+    road was routed around it rather than through it — no
+    one bothered to quarry what could be avoided.
+  milestone: A stone pillar, roughly knee height, set at
+    the road's edge where the bend peaks. The carved text
+    on its face has been worn by rain and rubbing hands —
+    STILLWATER — II LEAGUES. Below the distance marking,
+    someone has scratched a second line in a different
+    hand — SAFE ROAD. Whether that is a reassurance or a
+    warning is not clear.
+spawninfo:
+  - mobid: 327
+    respawnrate: 4h
+idlemessages:
+- Wind rolls across the open hillside from the north,
+  carrying the smell of cold grass and turned earth.
+- Grass along the road's edge bends in a long ripple
+  as a gust moves through, then snaps upright.
+- A hawk wheels in a slow circle above the hill to the
+  north, tilting on one wing, watching the ground below.

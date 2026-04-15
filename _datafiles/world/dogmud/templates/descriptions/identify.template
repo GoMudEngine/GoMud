@@ -1,0 +1,41 @@
+{{ $item := .Item }}{{ $spec := .ItemSpec }} ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Basic Info</ansi> ──────────────────────────────────────────────────────────────┐
+   <ansi fg="yellow">Name:</ansi>        {{ padRight 53 (uc $item.Name) }}
+   <ansi fg="yellow">Description:</ansi> {{ splitstring $spec.Description 61 "                " }}
+   <ansi fg="yellow">Type:</ansi>        {{ uc $spec.Type.String }} ({{ uc $spec.Subtype.String }})
+   <ansi fg="yellow">Value:</ansi>       {{ padRight 53 ( printf "%d gold" $spec.Value ) }}
+ └─────────────────────────────────────────────────────────────────────────────┘
+ ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Combat Properties</ansi> ──────────────────────────────────────────────────────┐
+   <ansi fg="yellow">Striking Power:</ansi>  {{ if ne $spec.Type.String "weapon" }}{{ padRight 47 "N/A" }}{{ else }}{{ padRight 47 (damageQuality $spec.DamageMultiplier) }}{{ end }}
+   <ansi fg="yellow">Arcane Resonance:</ansi>{{ if eq $spec.SpellDamageMultiplier 0.0 }}{{ padRight 47 " N/A" }}{{ else }}{{ padRight 47 (printf " %s" (spellDamageQuality $spec.SpellDamageMultiplier)) }}{{ end }}
+   <ansi fg="yellow">Physical:</ansi>    {{ if eq $spec.PhysicalMitigation 0 }}{{ padRight 53 "N/A" }}{{ else }}{{ padRight 53 (mitigationQuality (divFloat $spec.PhysicalMitigation 100)) }}{{ end }}
+   <ansi fg="yellow">Magical:</ansi>     {{ if eq $spec.MagicalMitigation 0 }}{{ padRight 53 "N/A" }}{{ else }}{{ padRight 53 (mitigationQuality (divFloat $spec.MagicalMitigation 100)) }}{{ end }}
+   <ansi fg="yellow">Conviction:</ansi>  {{ if eq $spec.ConvictionMitigation 0 }}{{ padRight 53 "N/A" }}{{ else }}{{ padRight 53 (mitigationQuality (divFloat $spec.ConvictionMitigation 100)) }}{{ end }}
+ └─────────────────────────────────────────────────────────────────────────────┘
+ ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Modifiers</ansi> ───────────────────────────────────────────────────────────────┐
+{{- $hasMods := false }}
+{{- range $statName, $qty := $spec.StatMods }}{{ $hasMods = true }}
+   {{ statModDescription $statName $qty }}
+{{- end }}
+{{- if gt (len $spec.BuffIds) 0 }}{{ $hasMods = true }}
+{{- range $idx, $buffId := $spec.BuffIds }}
+   <ansi fg="yellow">Applies:</ansi>     <ansi fg="spellname">{{ buffname $buffId }}</ansi> - {{ buffduration $buffId }}
+{{- end }}{{ end }}
+{{- if not $hasMods }}
+   None detected.
+{{- end }}
+ └─────────────────────────────────────────────────────────────────────────────┘
+ ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Magical Effects</ansi> ─────────────────────────────────────────────────────────┐
+{{- $hasMagic := false }}
+{{- if $item.IsCursed }}{{ $hasMagic = true }}
+   It's <ansi fg="red-bold">CURSED!</ansi>{{ end }}
+{{- if gt (len $spec.Element.String) 0 }}{{ $hasMagic = true }}
+   <ansi fg="yellow">Element:</ansi>     {{ padRight 53 (uc $spec.Element.String) }}{{ end }}
+{{- if gt (len $spec.Damage.CritBuffIds) 0 }}{{ $hasMagic = true }}
+{{- range $idx, $buffId := $spec.Damage.CritBuffIds }}
+   <ansi fg="yellow">Crits Apply:</ansi> <ansi fg="spellname">{{ buffname $buffId }}</ansi> - {{ buffduration $buffId }}
+{{- end }}{{ end }}
+{{- if not $hasMagic }}
+   None detected.
+{{- end }}
+ └─────────────────────────────────────────────────────────────────────────────┘
+

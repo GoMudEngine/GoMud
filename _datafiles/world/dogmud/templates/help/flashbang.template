@@ -1,0 +1,30 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">flashbang</ansi>
+
+An alchemical grenade that produces a blinding flash on
+impact, impairing all enemies in the room.
+
+<ansi fg="yellow">Crafting:</ansi>
+
+  <ansi fg="stat">Skill:</ansi> Alchemy (minimum 35)
+  <ansi fg="stat">Station:</ansi> Alchemy Bench
+  <ansi fg="stat">Ingredients:</ansi> Putrid Residue (x2), Salt Pouch (x2),
+               Chrysalis Core, Bottle
+  <ansi fg="stat">Time:</ansi> 5 rounds
+
+<ansi fg="yellow">Effect:</ansi>
+
+  Stuns affected targets for a short time, preventing them
+  from attacking. Also reduces Perception and Dexterity
+  for the duration.
+
+Use with the <ansi fg="command">throw</ansi> command during combat.
+
+<ansi fg="yellow">Aging:</ansi>
+
+  Flashbangs age over time. They grow more potent as they
+  mature, but will eventually destabilize and spoil. Store
+  them in a <ansi fg="itemname">bandolier</ansi> for safe disposal if
+  they go bad. Spoiled flashbangs left in your backpack may
+  go off!
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help throw</ansi>, <ansi fg="command">help sort</ansi>, <ansi fg="command">help craft</ansi>

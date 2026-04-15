@@ -9,15 +9,19 @@ description: Dense thornbrush chokes this section of the ravine,
   rodents that shelter in the protective tangle, and the wolves
   use this natural barrier as a defensive perimeter.
 biome: land
+coord:
+  x: 13
+  y: -9
+  z: 0
 exits:
-  west:
-    roomid: 3075
   north:
-    roomid: 3073
+    roomid: 3058
+  east:
+    roomid: 3091
+  west:
+    roomid: 3077
   south:
     roomid: 3082
-  east:
-    roomid: 3086
 nouns:
   thornbrush: A nearly solid wall of thorny vegetation, its
     branches interlocked and bristling with inch-long spines.

@@ -9,13 +9,15 @@ description: The southern edge of the residential ward borders the market square
   even as the outer wards have declined. A message board nailed to a wall post holds
   neighbourhood notices and lost-and-found postings.
 biome: city
+coord:
+  x: 5
+  y: 1
+  z: 0
 exits:
   north:
     roomid: 477
   south:
     roomid: 465
-  west:
-    roomid: 467
 nouns:
   well: A stone well with a wooden windlass and a bucket on a chain. The water
     is clean -- Thornwall's wells are fed by a deep aquifer. The low wall around

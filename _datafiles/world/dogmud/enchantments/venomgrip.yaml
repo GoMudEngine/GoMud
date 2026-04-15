@@ -1,0 +1,40 @@
+enchantid: venomgrip
+name: "Venomgrip"
+reserve_pool: stamina
+target_type: gloves
+tiers:
+  - tier: 0
+    reserve_pct: 0.01
+    effects:
+      strength_statmod: 1
+    adjective: slick
+    description_suffix: "The gloves become slick with an opalescent sheen."
+    tier_up_message: ""
+  - tier: 1
+    reserve_pct: 0.02
+    effects:
+      strength_statmod: 2
+    adjective: venom-slick
+    description_suffix: "Venom coats the gloves, making them slick and deadly."
+    tier_up_message: "Your hands grip with venomous power—strength beyond mortal."
+  - tier: 2
+    reserve_pct: 0.04
+    effects:
+      strength_statmod: 3
+    adjective: toxin-laced
+    description_suffix: "Toxins lace through the glove material, deadly to touch."
+    tier_up_message: "The Chrysalis teaches you to grip with lethal force."
+  - tier: 3
+    reserve_pct: 0.06
+    effects:
+      strength_statmod: 4
+    adjective: chitin-fisted
+    description_suffix: "Your hands become chitin-fisted—hard as stone, sharp as fangs."
+    tier_up_message: "You are no longer bound by flesh—the Chrysalis has remade you."
+  - tier: 4
+    reserve_pct: 0.08
+    effects:
+      strength_statmod: 5
+    adjective: venomgrip
+    description_suffix: "You wield venomgrip—eternal power and deadly precision."
+    tier_up_message: "The Chrysalis has made your grip an instrument of absolute power."

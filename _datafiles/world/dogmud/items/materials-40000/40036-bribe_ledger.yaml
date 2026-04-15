@@ -1,0 +1,11 @@
+itemid: 40036
+name: bribe ledger
+namesimple: ledger
+description: A slim leather journal filled with columns of names, dates,
+  and amounts. The handwriting is meticulous. Several entries name city
+  officials alongside sums paid -- gate captains, warehouse inspectors,
+  a customs clerk. This is a record of systematic corruption.
+type: object
+subtype: mundane
+weight: 0.1
+value: 0

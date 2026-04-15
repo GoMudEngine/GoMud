@@ -16,22 +16,56 @@ patterns:
 
   - keywords: ["debt", "tax", "money", "trouble", "owe", "problem"]
     moods: ["neutral", "friendly"]
+    questExcluded: ["10-end"]
     responses:
       - "I owe the city taxes I cannot pay, and someone in the back alleys has decided I owe them too. Protection money. Two boots on my neck and not enough air for either."
       - "The tavern is drowning in more than name. City taxes on one side, thugs on the other. I need help, but the kind of help I need does not come cheap."
 
+  - keywords: ["debt", "tax", "money", "trouble", "owe", "problem"]
+    moods: ["neutral", "friendly"]
+    questRequired: ["10-end"]
+    responses:
+      - "The protection money problem is sorted, thanks to you and the guard captain. Taxes are still a weight, but at least I only have one boot on my neck now."
+
   - keywords: ["help", "quest", "task", "work"]
     moods: ["neutral", "friendly"]
+    questExcluded: ["10-start"]
     responses:
       - "If you want to help, take this protection notice to the guard captain at the barracks. It is proof they are extorting businesses in the quarter. That might get one boot off my neck, at least."
 
+  - keywords: ["help", "quest", "task", "work"]
+    moods: ["neutral", "friendly"]
+    questRequired: ["10-end"]
+    questExcluded: ["14-start"]
+    responses:
+      - "There is something you could look into. The cellar noises have gotten worse -- scraping, voices. Something is using the old drainage tunnels under the tavern."
+
+  - keywords: ["help", "quest", "task", "work"]
+    moods: ["neutral", "friendly"]
+    questRequired: ["14-start"]
+    questExcluded: ["14-end"]
+    responses:
+      - "You are already helping -- just be careful in those tunnels."
+
   - keywords: ["protection", "thug", "racket", "alley", "extort"]
+    questExcluded: ["10-end"]
     responses:
       - "Someone has been leaving notices under doors in the Craftsmen's Quarter. Pay up or bad things happen. I have been paying, but I cannot keep it up. The guard needs to know, but I am afraid to go myself."
 
+  - keywords: ["protection", "thug", "racket", "alley", "extort"]
+    questRequired: ["10-end"]
+    responses:
+      - "That is over now, thanks to the guard captain's patrols. No more notices, no more collectors. One problem down."
+
   - keywords: ["cellar", "basement", "below", "noise", "tunnel", "sewer"]
+    questExcluded: ["10-end"]
     responses:
       - "There are noises from the cellar at night. Scraping, sometimes splashing. The old drainage tunnels run under the city, and the cellar connects to them. I have been meaning to investigate, but... one problem at a time."
+
+  - keywords: ["cellar", "basement", "below", "noise", "tunnel", "sewer"]
+    questRequired: ["14-end"]
+    responses:
+      - "Quiet as a grave down there now. Whatever you did in those tunnels, it worked."
 
   - keywords: ["drink", "ale", "food", "menu"]
     responses:
@@ -56,13 +90,26 @@ tree:
         text: "Did the captain say anything? Is the guard going to act? I need to know if it is safe to stop paying."
         hints: "Tell Marek what Guard Captain Velk said."
       - questRequired: ["10-end"]
-        text: "The patrols have already started. First quiet night in months. Sit -- this one is on me."
+        questExcluded: ["14-start"]
+        text: "The patrols have already started. First quiet night in months. Sit -- this one is on me. Though... the cellar noises have gotten worse. Scraping, voices. Something is down there."
+        hints: "You could ask about the cellar noises."
+      - questRequired: ["14-start"]
+        questExcluded: ["14-evidence"]
+        text: "Any luck in the tunnels? Be careful down there. I hear things moving at night -- more than rats."
+        hints: "Search the tunnels for evidence of smuggling. Check any stash rooms or crates you find."
+      - questRequired: ["14-evidence"]
+        questExcluded: ["14-end"]
+        text: "You found what? A bribe ledger? Names of corrupt officials? Take that to Guard Captain Velk. He will know what to do with it."
+        hints: "Bring the bribe ledger to Guard Captain Velk at the barracks."
+      - questRequired: ["14-end"]
+        text: "The cellar has been quiet since you cleared those tunnels. I sleep through the night now. You have done more for this tavern than you know."
 
   nodes:
     - id: the_squeeze
       triggers: ["trouble", "favour", "favor", "help", "debt", "problem", "quest", "task"]
-      questExcluded: ["10-start"]
+      questExcluded: ["10-start", "10-end"]
       grantsQuest: "10-start"
+      givesItem: 30
       text: "The tavern owes taxes to the city. That is my problem and I am working on it. But there is another problem -- someone in the back alleys has been sending protection notices to every business in the quarter. Pay up or get hurt. I have been paying both, and the money is running out. This is the latest notice. If the guard captain saw this, he would have to act. But I am afraid to walk into that barracks myself. People who report the racket tend to have accidents."
       hints: "Take the protection notice to Guard Captain Velk at the barracks."
       unlocks: ["about_thugs", "cellar_hint"]
@@ -73,6 +120,13 @@ tree:
       requires: ["the_squeeze"]
       text: "I do not know who runs it. The notices are unsigned, delivered at night. The thugs in the back alleys collect, but they are just muscle -- someone higher up is pulling strings. The guard might be able to find out, if they care enough to look."
 
+    - id: lost_notice
+      triggers: ["notice", "lost", "another", "protection"]
+      questRequired: ["10-start"]
+      questExcluded: ["10-report"]
+      givesItem: 30
+      text: "Lost it? Here -- I have more. They keep sliding them under the door. Take this one and get it to the guard captain before I lose my nerve."
+
     - id: cellar_hint
       triggers: ["cellar", "noise", "tunnel", "sewer", "below", "basement"]
       requires: ["the_squeeze"]
@@ -80,12 +134,34 @@ tree:
 
     - id: quest_complete
       triggers: ["guard", "captain", "reported", "told", "evidence", "done", "quest", "task"]
-      requires: ["the_squeeze"]
       questRequired: ["10-report"]
       questExcluded: ["10-end"]
       grantsQuest: "10-end"
       text: "You told the captain? And he is going to act? That is... that is something. The taxes are still a problem, but at least I will not have to feed two mouths that want to eat me alive. Here -- the good stuff. You have earned it."
       moodChange: grateful
 
+    - id: cellar_investigation
+      triggers: ["cellar", "noise", "tunnel", "investigate", "below", "grate", "quest", "task"]
+      questRequired: ["10-end"]
+      questExcluded: ["14-start", "14-end"]
+      grantsQuest: "14-start"
+      givesItem: 40038
+      text: "The noises from the cellar have gotten worse. Scraping, voices, the sound of things being dragged. The old drainage tunnels run under the whole district and connect to the cellar through a grate. I pulled it open once and... I did not like what I saw. Fresh boot prints in the mud. Someone is using those tunnels. Here -- take this lantern. The kitchen has a trapdoor down to the cellar. Be careful."
+      hints: "Go to the kitchen and descend through the trapdoor to the cellar. Search the tunnels for evidence of smuggling -- check any stash rooms or crates you find."
+
+    - id: found_ledger
+      triggers: ["ledger", "bribe", "names", "found", "evidence", "smuggler", "torvan"]
+      questRequired: ["14-evidence"]
+      questExcluded: ["14-end"]
+      text: "A bribe ledger? With names of city officials? That is bigger than protection money and back-alley thugs. Take that to Guard Captain Velk immediately. He is the one person in this city I trust to do the right thing with it."
+      hints: "Bring the bribe ledger to Guard Captain Velk at the barracks."
+
+    - id: lost_lantern
+      triggers: ["lantern", "lost", "light", "another"]
+      questRequired: ["14-start"]
+      questExcluded: ["14-end"]
+      givesItem: 40038
+      text: "Lost the lantern? Here, take another. I keep a few behind the bar. Do not lose this one -- they are not free, you know."
+
 memory:
-  expiryPeriod: "1h"
+  expiryPeriod: ""

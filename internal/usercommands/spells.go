@@ -1,7 +1,7 @@
 package usercommands
 
 import (
-	"strings"
+	"sort"
 
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -11,21 +11,65 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
+// spellEntry holds a display row together with its sort keys.
+type spellEntry struct {
+	category   int // 0=utility, 1=heal, 2=buff, 3=damage, 4=summon
+	targetRank int // 0=self, 1=single, 2=group, 3=area
+	difficulty int
+	row        []string
+	formatRow  []string
+}
+
+// spellCategory returns a sort-order category for a spell based on its
+// effect type and school. Groups related spells together in the list.
+func spellCategory(sp *spells.SpellData) int {
+	switch sp.EffectType {
+	case "identify":
+		return 0 // utility
+	case "heal":
+		return 1
+	case "buff", "shield", "purge":
+		return 2
+	case "damage", "dot", "knockdown":
+		return 3
+	case "tame":
+		return 4 // summon/companion
+	}
+	// Manifestation school spells (raise/conjure) are neutral type with no effect_type
+	if sp.HasSchool(spells.SchoolManifestation) {
+		return 4
+	}
+	// Remaining neutral spells (glow, fold-anchor, etc.) are utility
+	if sp.Type == spells.Neutral {
+		return 0
+	}
+	// Debuffs applied via harmful buff spells
+	if sp.Type == spells.HarmSingle || sp.Type == spells.HarmMulti || sp.Type == spells.HarmArea {
+		return 3
+	}
+	return 2
+}
+
+// targetRank returns a sort-order rank for target scope.
+func targetRank(sp *spells.SpellData) int {
+	switch sp.Type {
+	case spells.Neutral:
+		return 0
+	case spells.HelpSingle, spells.HarmSingle:
+		return 1
+	case spells.HelpMulti, spells.HarmMulti:
+		return 2
+	case spells.HelpArea, spells.HarmArea:
+		return 3
+	}
+	return 0
+}
+
 func Spells(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
-	headers := []string{`SpellId`, `Name`, `Target`, `Cost`, `Cast time`, `Familiarity`, `Reliability`}
+	headers := []string{`SpellId`, `Name`, `Target`, `Cost`, `Cast time`, `Difficulty`, `Reliability`}
 
-	helpfulRowFormatting := [][]string{}
-	helpfulRows := [][]string{}
-
-	harmfulRowFormatting := [][]string{}
-	harmfulRows := [][]string{}
-
-	neutralRowFormatting := [][]string{}
-	neutralRows := [][]string{}
-
-	rowFormatting := [][]string{}
-	rows := [][]string{}
+	entries := []spellEntry{}
 
 	for spellId, casts := range user.Character.GetSpells() {
 
@@ -33,12 +77,9 @@ func Spells(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			continue
 		}
 
-		casts -= 1
-
 		if sp := spells.GetSpell(spellId); sp != nil {
 
-			helpOrHarm := strings.ToLower(sp.Type.HelpOrHarmString())
-
+			helpOrHarm := sp.Type.HelpOrHarmString()
 			targetColor := `spell-` + helpOrHarm
 			target := sp.Type.TargetTypeString(true)
 
@@ -52,7 +93,6 @@ func Spells(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				`<ansi fg="red">%s</ansi>`,
 			}
 
-			// Format cost display - show qualitative conviction cost and optionally health
 			costStr := combat.GetConvictionCostDescription(sp.Cost)
 			if sp.HealthCost > 0 {
 				costStr += ", drains health"
@@ -63,68 +103,41 @@ func Spells(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				target,
 				costStr,
 				combat.GetWaitRoundsDescription(sp.WaitRounds),
-				combat.GetCastCountDescription(casts),
+				combat.GetDifficultyDescription(sp.Difficulty),
 				combat.GetSuccessChanceDescription(user.Character.GetBaseCastSuccessChance(sp.SpellId)),
 			}
 
-			if helpOrHarm == `helpful` {
-				helpfulRowFormatting = append(helpfulRowFormatting, formatRow)
-				helpfulRows = append(helpfulRows, row)
-			} else if helpOrHarm == `harmful` {
-				harmfulRowFormatting = append(harmfulRowFormatting, formatRow)
-				harmfulRows = append(harmfulRows, row)
-			} else {
-				neutralRowFormatting = append(neutralRowFormatting, formatRow)
-				neutralRows = append(neutralRows, row)
-			}
-
-		}
-
-	}
-
-	if len(helpfulRows) > 0 {
-		for i := 0; i < len(helpfulRows); i++ {
-			rowFormatting = append(rowFormatting, helpfulRowFormatting[i])
-			rows = append(rows, helpfulRows[i])
+			entries = append(entries, spellEntry{
+				category:   spellCategory(sp),
+				targetRank: targetRank(sp),
+				difficulty: sp.Difficulty,
+				row:        row,
+				formatRow:  formatRow,
+			})
 		}
 	}
 
-	if len(harmfulRows) > 0 {
-		for i := 0; i < len(harmfulRows); i++ {
-			rowFormatting = append(rowFormatting, harmfulRowFormatting[i])
-			rows = append(rows, harmfulRows[i])
+	// Sort by category, then target scope, then difficulty.
+	sort.Slice(entries, func(i, j int) bool {
+		if entries[i].category != entries[j].category {
+			return entries[i].category < entries[j].category
 		}
-	}
+		if entries[i].targetRank != entries[j].targetRank {
+			return entries[i].targetRank < entries[j].targetRank
+		}
+		return entries[i].difficulty < entries[j].difficulty
+	})
 
-	if len(neutralRows) > 0 {
-		for i := 0; i < len(neutralRows); i++ {
-			rowFormatting = append(rowFormatting, neutralRowFormatting[i])
-			rows = append(rows, neutralRows[i])
-		}
+	rowFormatting := make([][]string, 0, len(entries))
+	rows := make([][]string, 0, len(entries))
+	for _, e := range entries {
+		rowFormatting = append(rowFormatting, e.formatRow)
+		rows = append(rows, e.row)
 	}
 
 	onlineResultsTable := templates.GetTable(`Spells`, headers, rows, rowFormatting...)
 	tplTxt, _ := templates.Process("tables/generic", onlineResultsTable, user.UserId)
 	user.SendText(tplTxt)
 
-	/*
-		if len(neutralRows) > 0 {
-			onlineResultsTable := templates.GetTable(`<ansi fg="spell-neutral">Neutral</ansi> Spells`, headers, neutralRows, neutralRowFormatting...)
-			tplTxt, _ := templates.Process("tables/generic", onlineResultsTable, user.UserId)
-			user.SendText( tplTxt)
-		}
-
-		if len(harmfulRows) > 0 {
-			onlineResultsTable := templates.GetTable(`<ansi fg="spell-helpful">Helpful</ansi> Spells`, headers, harmfulRows, harmfulRowFormatting...)
-			tplTxt, _ := templates.Process("tables/generic", onlineResultsTable, user.UserId)
-			user.SendText( tplTxt)
-		}
-
-		if len(helpfulRows) > 0 {
-			onlineResultsTable := templates.GetTable(`<ansi fg="spell-harmful">Harmful</ansi> Spells`, headers, helpfulRows, helpfulRowFormatting...)
-			tplTxt, _ := templates.Process("tables/generic", onlineResultsTable, user.UserId)
-			user.SendText( tplTxt)
-		}
-	*/
 	return true, nil
 }

@@ -1,0 +1,19 @@
+itemid: 30048
+name: swiftfoot essence
+namesimple: essence
+description: An almost weightless liquid that evaporates
+  on contact with your tongue. The world seems to slow
+  down.
+type: potion
+subtype: drinkable
+uses: 1
+buffids:
+  - 66
+value: 28
+weight: 0.3
+toxicity: 20
+aging:
+  ferment_rounds: 1500
+  peak_rounds: 6000
+  decay_rounds: 18000
+  spoil_rounds: 30000

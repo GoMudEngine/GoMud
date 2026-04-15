@@ -1,0 +1,21 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="spellname">identify</ansi> (spell)
+
+The <ansi fg="spellname">identify</ansi> spell reveals the hidden
+properties of an item you are carrying or wearing.
+
+<ansi fg="yellow">Usage:</ansi>
+
+  <ansi fg="command">cast identify sword</ansi>       Identify a sword.
+  <ansi fg="command">cast identify 2.sword</ansi>     Identify the second sword.
+
+Searches both your backpack and equipped items as a single
+pool, so you can identify a wielded weapon without removing
+it first. Use <ansi fg="command">2.item</ansi> or <ansi fg="command">item#2</ansi> to target a specific
+match when you have duplicates.
+
+Requires the <ansi fg="skill">spellcasting</ansi> skill. Costs conviction to cast.
+
+For a non-magical alternative, visit a merchant and use the
+<ansi fg="command">appraise</ansi> command.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help appraise</ansi>, <ansi fg="command">help item-names</ansi>

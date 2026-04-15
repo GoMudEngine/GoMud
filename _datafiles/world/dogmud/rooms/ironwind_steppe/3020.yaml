@@ -10,15 +10,17 @@ description: A ragged line of scrubby trees -- wind-stunted oaks and
   between the branches, and the trees creak constantly in the
   wind.
 biome: land
+coord:
+  x: 13
+  y: 1
+  z: 0
 exits:
-  south:
-    roomid: 3019
-  east:
-    roomid: 3021
-  north:
-    roomid: 3022
   west:
-    roomid: 3017
+    roomid: 3015
+  north:
+    roomid: 3021
+  east:
+    roomid: 3031
 nouns:
   oaks: Stunted oaks with massive trunks relative to their modest
     height. The bark is deeply furrowed and covered in lichen.

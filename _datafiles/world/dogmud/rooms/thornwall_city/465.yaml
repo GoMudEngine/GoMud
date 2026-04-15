@@ -9,6 +9,10 @@ description: The center of Market Square is the busiest place in Thornwall. A ra
   position among the stalls. Pickpockets work the edges, guards patrol in pairs, and
   above it all the temple spire watches from the northwest.
 biome: city
+coord:
+  x: 5
+  y: 0
+  z: 0
 exits:
   west:
     roomid: 464
@@ -16,6 +20,8 @@ exits:
     roomid: 466
   north:
     roomid: 478
+  south:
+    roomid: 510
 nouns:
   platform: A raised stone platform, about waist-high, worn smooth by use. Iron rings
     set into the corners suggest it once served a darker purpose, but now it is

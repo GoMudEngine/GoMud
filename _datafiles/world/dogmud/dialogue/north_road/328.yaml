@@ -1,0 +1,58 @@
+mobid: 328
+zone: North Road
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hagen. I cut wood. That is about all there is to say."
+      - "Name is Hagen. You passing through or you got business on the road?"
+
+  - keywords: ["stillwater", "town", "city", "settlement"]
+    responses:
+      - "Stillwater is a lake town. Good fishing. Decent trade. If you need
+        a bed there is The Pike and Lantern — clean enough, fair prices.
+        I have been supplying them cordwood twenty years."
+      - "Most of what comes down this road ends up in Stillwater eventually.
+        Lake town, fish market, one decent inn. You will find what you need
+        there."
+
+  - keywords: ["road", "travel", "north", "ford", "south"]
+    responses:
+      - "The ford is safe for wagons if the water is low. Wild dogs have
+        been working the tree line near it lately. Keep your pack closed
+        and your eyes open and you will be fine."
+      - "North road is reliable. The ford is the only tricky part, and
+        only if you go at night. Dogs near there — not wolves, just feral
+        dogs — but they are bold."
+
+  - keywords: ["agents", "bloodline", "riders", "coat", "coats", "official"]
+    responses:
+      - "Riders came through a few days back. Dark coats, good horses.
+        Stopped at the crossroads and asked the innkeeper something. Not
+        rough men — official-looking. Moved on north before noon."
+      - "I saw them. Two riders, dark coats. Did not say much to me. They
+        asked questions at the crossroads and headed north. That kind of
+        man is always asking questions somewhere."
+
+  - keywords: ["work", "wood", "lumber", "trees", "forest", "cutting"]
+    responses:
+      - "I supply cordwood to Stillwater. Been doing it twenty years.
+        The forest here is thinning — I have to go further in each season.
+        Another ten years and it will not be worth the trek."
+      - "Cordwood for the inn, the smithy, the tannery. Everyone burns
+        wood and nobody wants to cut their own. I do not mind the work.
+        Quiet out here."
+
+  - keywords: ["quest", "task", "help", "hire", "job"]
+    responses:
+      - "I have got my own cutting to do. No work for travelers."
+      - "Nothing I need from you. I work alone."
+
+  - keywords: [""]
+    responses:
+      - "I am not much for talking. Ask what you need and move on."
+      - "Mmm."
+
+memory:
+  expiryPeriod: ""

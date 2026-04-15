@@ -245,6 +245,83 @@
 
         /////////////////////////////////////////////
         //
+        // Side Panel Layout
+        //
+        /////////////////////////////////////////////
+        const PANEL_WIDTH = 363;
+        const PANEL_HEADER = 20;
+        const PANEL_GAP = 7;
+        const INPUT_AREA_HEIGHT = 60;
+        const VITALS_BODY = 22;
+        // Below this width, hide side panels entirely (phones/small tablets)
+        const SMALL_SCREEN_WIDTH = 768;
+
+        function isTooSmallForPanels() {
+            return window.innerWidth < SMALL_SCREEN_WIDTH;
+        }
+
+        // Track the current number of vitals rows (self + companions + party)
+        var currentVitalsRowCount = 1;
+
+        function calcPanelLayout() {
+            var avail = window.innerHeight - INPUT_AREA_HEIGHT;
+            // Vitals height scales with the number of rows
+            var vitalsH = PANEL_HEADER + (currentVitalsRowCount * 22) + 4;
+            var remaining = avail - vitalsH - (PANEL_GAP * 2);
+            // Map gets 55% of remaining, comms gets 45%
+            var mapH = Math.max(80, Math.floor(remaining * 0.55));
+            var commsH = Math.max(80, remaining - mapH);
+            var mapY = 0;
+            var commsY = mapH + PANEL_GAP;
+            var vitalsY = commsY + commsH + PANEL_GAP;
+            return {
+                mapY: mapY, mapH: mapH,
+                commsY: commsY, commsH: commsH,
+                vitalsY: vitalsY, vitalsH: vitalsH
+            };
+        }
+
+        let GMCPWindows = {};
+
+        function setPanelVisibility(win, visible) {
+            if (!win || win === false) return;
+            if (visible) {
+                win.show();
+            } else {
+                win.hide();
+            }
+        }
+
+        function repositionPanels() {
+            var tooSmall = isTooSmallForPanels();
+
+            setPanelVisibility(GMCPWindows['Map'], !tooSmall);
+            setPanelVisibility(GMCPWindows['Comm'], !tooSmall);
+            setPanelVisibility(GMCPWindows['Char.Vitals'], !tooSmall);
+
+            if (tooSmall) return;
+
+            var layout = calcPanelLayout();
+            var xPos = window.innerWidth - PANEL_WIDTH;
+
+            if (GMCPWindows['Map'] && GMCPWindows['Map'] !== false) {
+                GMCPWindows['Map'].resize(PANEL_WIDTH, layout.mapH, true)
+                                  .move(xPos, layout.mapY, true);
+            }
+            if (GMCPWindows['Comm'] && GMCPWindows['Comm'] !== false) {
+                GMCPWindows['Comm'].resize(PANEL_WIDTH, layout.commsH, true)
+                                   .move(xPos, layout.commsY, true);
+            }
+            if (GMCPWindows['Char.Vitals'] && GMCPWindows['Char.Vitals'] !== false) {
+                GMCPWindows['Char.Vitals'].resize(PANEL_WIDTH, layout.vitalsH, true)
+                                          .move(xPos, layout.vitalsY, true);
+            }
+        }
+
+        window.addEventListener('resize', repositionPanels);
+
+        /////////////////////////////////////////////
+        //
         // GMCP
         //
         /////////////////////////////////////////////
@@ -262,14 +339,15 @@
                     return;
                 }
 
-                if ( !GMCPWindows['Comm'] && GMCPWindows['Comm'] !== false ) {
+                if ( !GMCPWindows['Comm'] && GMCPWindows['Comm'] !== false && !isTooSmallForPanels() ) {
 
+                    var layout = calcPanelLayout();
                     GMCPWindows['Comm'] = new WinBox({ title: "Communications",
                                             mount: document.getElementById("comm-output"),
                                             background: "#1a1a3e", border: 1,
-                                            x: "right", y: 327,
-                                            width:363,  height:20+250,
-                                            header: 20,
+                                            x: "right", y: layout.commsY,
+                                            width: PANEL_WIDTH,  height: layout.commsH,
+                                            header: PANEL_HEADER,
                                             bottom: 60, // Limit how far down it can go. This affects docking the minimized window.
                                             // end limit position range
                                             onclose: force => { GMCPWindows['Comm'] = false; return false; },
@@ -325,17 +403,18 @@
                     return;
                 }
 
-                if ( !GMCPWindows['Map'] && GMCPWindows['Map'] !== false ) {
+                if ( !GMCPWindows['Map'] && GMCPWindows['Map'] !== false && !isTooSmallForPanels() ) {
 
+                    var layout = calcPanelLayout();
                     GMCPWindows['Map'] = new WinBox({ title: "Map",
                                             mount: document.getElementById("map-render"),
                                             background: "#1a1a3e",
                                             border: 1,
                                             x: "right",
-                                            y: 0,
-                                            width:363,
-                                            height:20+300,
-                                            header: 20,
+                                            y: layout.mapY,
+                                            width: PANEL_WIDTH,
+                                            height: layout.mapH,
+                                            header: PANEL_HEADER,
                                             bottom: 60, // Limit how far down it can go. This affects docking the minimized window.
                                             // end limit position range
                                             onclose: force => { GMCPWindows['Map'] = false; return false; },
@@ -453,7 +532,6 @@
                 updateVitalsWindow();
             },
         };
-        let GMCPWindows = {};
 
         // Build a single vitals row DOM element
         function createVitalsRow(name, hp, sp, cp, isSelf, isRemote) {
@@ -526,17 +604,18 @@
             if ( !charObj || !charObj.Vitals ) return;
 
             // Ensure window exists
-            if ( !GMCPWindows['Char.Vitals'] && GMCPWindows['Char.Vitals'] !== false ) {
+            if ( !GMCPWindows['Char.Vitals'] && GMCPWindows['Char.Vitals'] !== false && !isTooSmallForPanels() ) {
+                var layout = calcPanelLayout();
                 GMCPWindows['Char.Vitals'] = new WinBox({
                     title: "Vitals",
                     mount: document.getElementById("vitals-bars"),
                     background: "#1a1a3e",
                     border: 1,
                     x: "right",
-                    y: 604,
-                    width: 363,
-                    height: 20 + 22,
-                    header: 20,
+                    y: layout.vitalsY,
+                    width: PANEL_WIDTH,
+                    height: layout.vitalsH,
+                    header: PANEL_HEADER,
                     bottom: 60,
                     onclose: force => {
                         GMCPWindows['Char.Vitals'] = false;
@@ -567,10 +646,11 @@
             var members = []; // {name, hp, sp, cp, isSelf, isRemote}
             var partyObj = GMCPStructs["Party"];
 
+            var vitals = (partyObj && partyObj.Vitals) ? partyObj.Vitals : {};
+
             if (partyObj && partyObj.Members && partyObj.Members.length > 0) {
                 // Party exists — build ordered list (leader first)
                 var leader = partyObj.Leader || '';
-                var vitals = partyObj.Vitals || {};
 
                 // Leader first
                 var ordered = [];
@@ -578,6 +658,19 @@
                 for (var i = 0; i < partyObj.Members.length; i++) {
                     var mName = partyObj.Members[i].name;
                     if (mName !== leader) ordered.push(mName);
+                }
+
+                // Track which names are party members (vs companions)
+                var partyMemberSet = {};
+                for (var i = 0; i < ordered.length; i++) {
+                    partyMemberSet[ordered[i]] = true;
+                }
+
+                // Append companion entries: in Vitals but not in party members
+                for (var cName in vitals) {
+                    if (!partyMemberSet[cName]) {
+                        ordered.push(cName);
+                    }
                 }
 
                 for (var i = 0; i < ordered.length; i++) {
@@ -612,11 +705,27 @@
                     });
                 }
             } else {
-                // Solo — just self
+                // Solo — self first
                 members.push({
                     name: selfName, hp: selfHp, sp: selfSp,
                     cp: selfCp, isSelf: true, isRemote: false
                 });
+
+                // Append any companion entries from Party.Vitals
+                for (var cName in vitals) {
+                    if (cName === selfName) continue;
+                    var cVitals = vitals[cName];
+                    var displayName = cVitals.name || cName;
+                    if (displayName === selfName) continue;
+                    members.push({
+                        name: displayName,
+                        hp: Math.max(0, Math.min(100, cVitals.health || 0)),
+                        sp: Math.max(0, Math.min(100, cVitals.stamina || 0)),
+                        cp: Math.max(0, Math.min(100, cVitals.conviction || 0)),
+                        isSelf: false,
+                        isRemote: (cVitals.location !== selfRoom)
+                    });
+                }
             }
 
             // Update DOM
@@ -672,10 +781,11 @@
                 }
             }
 
-            // Resize window height to fit
-            var rowCount = members.length;
-            var newHeight = 20 + (rowCount * 22) + 4;
-            GMCPWindows['Char.Vitals'].resize(363, newHeight);
+            // If row count changed, reposition all panels as a unit
+            if (members.length !== currentVitalsRowCount) {
+                currentVitalsRowCount = members.length;
+                repositionPanels();
+            }
         }
 
         function handleGMCP(objNamespace, objBody) {
@@ -1371,6 +1481,8 @@
             flex: 1;
             padding: 0.25em;
             background: #000;
+            overflow: hidden;
+            position: relative;
         }
 
         .tab-content {
@@ -1389,7 +1501,8 @@
             color: #fce94f;
         }
         .chat-window {
-            overflow:scroll;
+            overflow-y:auto;
+            height:100%;
             background-color:#000;
             color:#fff;
         }

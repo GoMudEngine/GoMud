@@ -121,12 +121,20 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 				description = append(description, strings.Repeat(` `, desclineWidth))
 			}
 
-			description[i] += strings.Repeat(` `, desclineWidth-len(description[i])) + tinymap[0][i]
+			padWidth := desclineWidth - util.VisibleWidth(description[i])
+			if padWidth < 0 {
+				padWidth = 0
+			}
+			description[i] += strings.Repeat(` `, padWidth) + tinymap[0][i]
 		}
 
 		if renderNouns && len(r.Nouns) > 0 {
 			for i := range description {
 				for noun, _ := range r.Nouns {
+					// Skip if noun is already inside an ANSI tag to avoid nested tags
+					if strings.Contains(description[i], `>`+noun+`</ansi>`) {
+						continue
+					}
 					description[i] = strings.Replace(description[i], noun, `<ansi fg="noun">`+noun+`</ansi>`, 1)
 				}
 			}
@@ -140,6 +148,10 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 		if renderNouns && len(r.Nouns) > 0 {
 			for i := range roomDesc {
 				for noun, _ := range r.Nouns {
+					// Skip if noun is already inside an ANSI tag to avoid nested tags
+					if strings.Contains(roomDesc[i], `>`+noun+`</ansi>`) {
+						continue
+					}
 					roomDesc[i] = strings.Replace(roomDesc[i], noun, `<ansi fg="noun">`+noun+`</ansi>`, 1)
 				}
 			}
@@ -251,7 +263,15 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 				}
 
 				pName := player.Character.GetPlayerName(user.UserId, renderFlags...)
-				details.VisiblePlayers = append(details.VisiblePlayers, pName.String())
+				playerEntry := pName.String()
+				if player.ManualAFK {
+					if player.AFKMessage != "" {
+						playerEntry += ` <ansi fg="8">(AFK: ` + player.AFKMessage + `)</ansi>`
+					} else {
+						playerEntry += ` <ansi fg="8">(AFK)</ansi>`
+					}
+				}
+				details.VisiblePlayers = append(details.VisiblePlayers, playerEntry)
 			}
 		}
 	}
@@ -288,6 +308,15 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 			tmpNameFlags := nameFlags
 
 			mobName := mob.Character.GetMobName(user.UserId, tmpNameFlags...)
+
+			// Check if this mob is targeting one of the player's companions.
+			if mobName.Suffix == `` && mob.Character.Aggro != nil && mob.Character.Aggro.MobInstanceId > 0 {
+				if targetMob := mobs.GetInstance(mob.Character.Aggro.MobInstanceId); targetMob != nil {
+					if targetMob.Character.Charmed != nil && targetMob.Character.Charmed.UserId == user.UserId {
+						mobName.Suffix = `aggro`
+					}
+				}
+			}
 
 			// Assign duplicate index when multiple mobs share the same name
 			if mobNameCount[mob.Character.Name] > 1 {
@@ -384,8 +413,10 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 
 			if r.isInRoom(searchMobNameStr, ``) {
 
+				// Always show when target is found in the room
 				details.TrackingString = `Tracking <ansi fg="mobname">` + searchMobNameStr + `</ansi>... They are here!`
 				user.Character.RemoveBuff(26)
+				user.Character.SetMiscData("tracking-display-count", nil)
 
 			} else {
 
@@ -400,20 +431,35 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 				match, closeMatch := util.FindMatchIn(searchMobNameStr, allNames...)
 				if match == `` && closeMatch == `` {
 
+					// Always show when trail is lost
 					details.TrackingString = `You lost the trail of <ansi fg="mobname">` + searchMobNameStr + `</ansi>`
 					user.Character.RemoveBuff(26)
+					user.Character.SetMiscData("tracking-display-count", nil)
 
 				} else {
 
 					exitName := r.findMobExit(0, searchMobNameStr)
 					if exitName == `` {
 
+						// Always show when trail is lost
 						details.TrackingString = `You lost the trail of <ansi fg="username">` + searchMobNameStr + `</ansi>`
 						user.Character.RemoveBuff(26)
+						user.Character.SetMiscData("tracking-display-count", nil)
 
 					} else {
 
-						details.TrackingString = `Tracking <ansi fg="mobname">` + searchMobNameStr + `</ansi>... They went <ansi fg="exit">` + exitName + `</ansi>`
+						// Throttle ongoing direction hints to every 3rd room
+						trackCount := 0
+						if tc := user.Character.GetMiscData("tracking-display-count"); tc != nil {
+							if tcInt, ok := tc.(int); ok {
+								trackCount = tcInt
+							}
+						}
+						trackCount++
+						user.Character.SetMiscData("tracking-display-count", trackCount)
+						if trackCount%3 == 1 {
+							details.TrackingString = `Tracking <ansi fg="mobname">` + searchMobNameStr + `</ansi>... They went <ansi fg="exit">` + exitName + `</ansi>`
+						}
 					}
 
 				}
@@ -427,8 +473,10 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 
 			if r.isInRoom(``, searchUserNameStr) {
 
+				// Always show when target is found in the room
 				details.TrackingString = `Tracking <ansi fg="username">` + searchUserNameStr + `</ansi>... They are here!`
 				user.Character.RemoveBuff(26)
+				user.Character.SetMiscData("tracking-display-count", nil)
 
 			} else {
 
@@ -443,20 +491,35 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 				match, closeMatch := util.FindMatchIn(searchUserNameStr, allNames...)
 				if match == `` && closeMatch == `` {
 
+					// Always show when trail is lost
 					details.TrackingString = `You lost the trail of <ansi fg="username">` + searchUserNameStr + `</ansi>`
 					user.Character.RemoveBuff(26)
+					user.Character.SetMiscData("tracking-display-count", nil)
 
 				} else {
 
 					exitName := r.findUserExit(0, searchUserNameStr)
 					if exitName == `` {
 
+						// Always show when trail is lost
 						details.TrackingString = `You lost the trail of <ansi fg="username">` + searchUserNameStr + `</ansi>`
 						user.Character.RemoveBuff(26)
+						user.Character.SetMiscData("tracking-display-count", nil)
 
 					} else {
 
-						details.TrackingString = `Tracking <ansi fg="username">` + searchUserNameStr + `</ansi>... They went <ansi fg="exit">` + exitName + `</ansi>`
+						// Throttle ongoing direction hints to every 3rd room
+						trackCount := 0
+						if tc := user.Character.GetMiscData("tracking-display-count"); tc != nil {
+							if tcInt, ok := tc.(int); ok {
+								trackCount = tcInt
+							}
+						}
+						trackCount++
+						user.Character.SetMiscData("tracking-display-count", trackCount)
+						if trackCount%3 == 1 {
+							details.TrackingString = `Tracking <ansi fg="username">` + searchUserNameStr + `</ansi>... They went <ansi fg="exit">` + exitName + `</ansi>`
+						}
 					}
 
 				}

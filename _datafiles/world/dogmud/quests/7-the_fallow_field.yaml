@@ -1,26 +1,54 @@
 questid: 7
 name: The Fallow Field
-description: Farmer Dorn's neighbour Gareth was evicted by the Thornwall Tax Authority,
-  and the abandoned field next door is now breeding pests that threaten the remaining
-  farms. Dorn wants someone to deal with the pest problem and find out what happened
-  to Gareth.
+description: Farmer Dorn's neighbour was evicted by the Thornwall
+  Tax Authority, and the abandoned field is breeding pests that
+  threaten the remaining farms. Kill the pests and bring Dorn a
+  sample.
 secret: false
 
 steps:
   - id: start
-    description: "Farmer Dorn has asked you to help with the pest infestation spreading from the fallow field next to his farm. Kill the crop pests in the pest fields and bring back a sample."
-    hint: "Head east from Dorn's farm to the fallow field, then south to the pest fields."
-  - id: pests
-    description: "You need to clear the crop pests from the pest fields south of the fallow field and collect a pest sample to bring back to Dorn."
-    hint: "Fight the crop pests in the pest fields. One should drop a sample you can bring back."
-  - id: evidence
-    description: "You have a pest sample. You also found an eviction notice on the fallow field. Return to Dorn with what you have learned."
-    hint: "Go back to Dorn's farm north of the farmstead road."
+    description: "Farmer Dorn has asked you to clear the crop pests
+      from the south fields and bring back a sample."
+    hint: "Kill crop pests and collect a sample for Farmer Dorn.
+      From Dorn's farm, go east 1 to the fallow field, then south
+      1 to the pest fields. Kill pests until one drops a sample,
+      then bring it back to Dorn."
   - id: end
-    description: "You reported back to Dorn. The pest problem is under control for now, but the root cause -- Thornwall's tax seizures leaving fields abandoned -- remains."
+    description: "You reported back to Dorn. The pest problem is
+      under control for now."
 
 rewards:
-  playermessage: "Dorn examines the pest sample with a grim expression, then sets it down carefully. 'Bigger than they should be. The fallow field is feeding them -- all that untended root growth, it is a paradise for vermin.' He looks toward Thornwall's walls. 'Gareth was a good farmer. The tax took everything. And now the rest of us pay for it in different coin.' He reaches into a pouch. 'This is not much, but it is honest. And if you get inside those walls, see if you can find what happened to Gareth. I owe him that.'"
-  roommessage: "Dorn nods slowly, the weight of the situation evident in his weathered face."
+  playermessage: "Dorn examines the pest sample with a grim
+    expression, then sets it down carefully. 'Bigger than they
+    should be. The fallow field is feeding them -- all that
+    untended root growth, it is a paradise for vermin.' He looks
+    toward Thornwall's walls. 'Gareth was a good farmer. The tax
+    took everything. And now the rest of us pay for it in
+    different coin.' He reaches into a pouch. 'This is not much,
+    but it is honest.'"
+  roommessage: "Dorn nods slowly, the weight of the situation
+    evident in his weathered face."
   gold: 8
   itemid: 23
+
+triggers:
+  # Item delivery via give command
+  - event: item_give
+    mob: 89
+    item: 24
+    conditions:
+      has: [7-start]
+      missing: [7-end]
+    actions:
+      - grant: 7-end
+      - npc_say:
+          mob: 89
+          lines:
+            - {delay: 1, text: "Too big. This is not natural
+                size."}
+            - {delay: 3, text: "Something in the fallow soil is
+                feeding them. As long as that field sits empty,
+                this will keep happening."}
+            - {delay: 5, text: "You have done what you can. The
+                rest is politics."}

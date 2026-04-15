@@ -42,7 +42,7 @@ func BlindingFlash(rest string, user *users.UserRecord, room *rooms.Room, flags 
 	attackerScore := float64(user.Character.GetSkillLevel(skills.UnarmedCombat)) + float64(user.Character.Stats.Willpower.ValueAdj)
 
 	user.SendText(`<ansi fg="white-bold">Blinding light erupts from your skin in a searing flash!</ansi>`)
-	room.SendText(
+	room.SendTextVisual(
 		fmt.Sprintf(`<ansi fg="white-bold">A blinding flash of light erupts from <ansi fg="username">%s</ansi>!</ansi>`, user.Character.Name),
 		user.UserId,
 	)

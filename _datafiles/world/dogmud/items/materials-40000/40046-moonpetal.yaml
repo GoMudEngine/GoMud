@@ -1,0 +1,13 @@
+itemid: 40046
+name: moonpetal
+namesimple: petal
+description: A pale, luminous petal that curls inward like a
+  sleeping moth. It only opens under moonlight and wilts by dawn.
+  Alchemists prize it for brews that sharpen the mind or calm
+  the nerves.
+type: object
+subtype: mundane
+component_tag: moonpetal
+weight: 0.05
+value: 8
+is_component: true

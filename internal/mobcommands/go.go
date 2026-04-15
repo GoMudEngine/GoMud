@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -12,13 +14,73 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
+// clearRoomAggroOnDeparture cleans up aggro for any player or mob still in the
+// room that was targeting the departing mob. Without this, characters remain
+// stuck "in combat" until the next combat round validates their aggro target.
+func clearRoomAggroOnDeparture(room *rooms.Room, departingInstanceId int) {
+	// Clear player aggro targeting this mob
+	for _, uid := range room.GetPlayers(rooms.FindFighting) {
+		u := users.GetByUserId(uid)
+		if u == nil || u.Character.Aggro == nil {
+			continue
+		}
+		if u.Character.Aggro.MobInstanceId == departingInstanceId {
+			// Try to retarget another hostile mob in the room
+			retargeted := false
+			for _, mId := range room.GetMobs(rooms.FindFighting) {
+				m := mobs.GetInstance(mId)
+				if m == nil || m.Character.Aggro == nil || mId == departingInstanceId {
+					continue
+				}
+				// Is this mob attacking us or one of our companions?
+				if m.Character.Aggro.UserId == uid {
+					u.Character.SetAggro(0, mId, characters.DefaultAttack)
+					u.SendText(fmt.Sprintf(
+						"You turn your attention to <ansi fg=\"mobname\">%s</ansi>!",
+						m.Character.Name))
+					retargeted = true
+					break
+				}
+				// Check if attacking one of our companions
+				for _, comp := range u.Character.Companions {
+					if comp.InstanceId > 0 && m.Character.Aggro.MobInstanceId == comp.InstanceId {
+						u.Character.SetAggro(0, mId, characters.DefaultAttack)
+						u.SendText(fmt.Sprintf(
+							"You turn your attention to <ansi fg=\"mobname\">%s</ansi>!",
+							m.Character.Name))
+						retargeted = true
+						break
+					}
+				}
+				if retargeted {
+					break
+				}
+			}
+			if !retargeted {
+				u.Character.EndAggro()
+			}
+		}
+	}
+
+	// Clear mob aggro targeting the departing mob
+	for _, mId := range room.GetMobs(rooms.FindFighting) {
+		m := mobs.GetInstance(mId)
+		if m == nil || m.Character.Aggro == nil {
+			continue
+		}
+		if m.Character.Aggro.MobInstanceId == departingInstanceId {
+			m.Character.EndAggro()
+		}
+	}
+}
+
 // sendMovementMessage sends a visual movement message to players who can see
 // and a sound-based fallback to players in darkness without night vision.
 func sendMovementMessage(room *rooms.Room, visualMsg string, soundMsg string) {
 	vis := room.GetVisibility()
 	if vis >= 1 {
 		// Room is lit enough — everyone sees the message
-		room.SendText(visualMsg)
+		room.SendTextVisual(visualMsg)
 		return
 	}
 	// Room is dark — send per-player based on night vision
@@ -66,6 +128,7 @@ func Go(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			}
 
 			room.RemoveMob(mob.InstanceId)
+			clearRoomAggroOnDeparture(room, mob.InstanceId)
 			destRoom.AddMob(mob.InstanceId)
 
 			// Tell the old room they are leaving
@@ -87,15 +150,14 @@ func Go(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		}
 	}
 
-	exitName := ``
-	goRoomId := 0
-
-	exitName, goRoomId = room.FindExitByName(rest)
-
 	if rest == `home` {
 		mob.Command(`pathto home`)
 		return true, nil
 	}
+
+	exitResult := actions.FindExit(room, rest)
+	exitName := exitResult.ExitName
+	goRoomId := exitResult.RoomId
 
 	exitInfo, _ := room.GetExitInfo(exitName)
 	if exitInfo.Lock.IsLocked() {
@@ -135,6 +197,7 @@ func Go(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		}
 
 		room.RemoveMob(mob.InstanceId)
+		clearRoomAggroOnDeparture(room, mob.InstanceId)
 		destRoom.AddMob(mob.InstanceId)
 
 		c := configs.GetTextFormatsConfig()

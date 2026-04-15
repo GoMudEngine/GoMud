@@ -6,8 +6,8 @@ description: |
   The liquid is warm and faintly bitter, with an aftertaste of something
   floral. Herbalists swear by it for settling the mind after hard work
   or long travel.
-type: food
-subtype: edible
+type: potion
+subtype: drinkable
 uses: 1
 buffids:
   - 44

@@ -1,0 +1,42 @@
+roomid: 4029
+zone: Ashwick
+title: Forest Path
+description: >
+  A narrow path leads into the woods from Ashwick's eastern
+  edge. The canopy closes overhead almost immediately --
+  mixed hardwood and evergreen branches interlocking to filter
+  the light into green-gold dapples that shift with the wind.
+  The air is cooler here, heavy with the scent of leaf mold
+  and damp earth. The path is well-worn by years of foot
+  traffic, beaten smooth and clear of undergrowth. Behind
+  you, the hamlet is still visible through the trees. Ahead,
+  the forest deepens.
+biome: forest
+coord:
+  x: -3
+  y: -12
+  z: 0
+exits:
+  south:
+    roomid: 4019
+  north:
+    roomid: 4030
+nouns:
+  path: A narrow but clear trail beaten into the forest floor
+    by years of foot traffic. Foragers, herb-gatherers, and
+    children playing in the woods have worn this track smooth.
+    The soil is dark and packed, scattered with fallen leaves
+    that are quickly trampled into the earth.
+  canopy: Mixed hardwood and evergreen branches interlocking
+    overhead, forming a nearly continuous ceiling of leaves
+    and needles. Light filters through in shifting dapples --
+    green-gold in the morning, deeper emerald as the canopy
+    thickens. The effect is like walking into a room with a
+    living roof.
+spawninfo:
+- mobid: 263
+idlemessages:
+- Birdsong echoes between the trees, muffled by the canopy.
+- Branches creak overhead as the wind moves through the upper
+  canopy.
+- Light shifts across the path as leaves stir above.

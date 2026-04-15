@@ -1,0 +1,38 @@
+roomid: 4004
+zone: Marches Spur Road
+title: Open Country
+description: The scrub thins and the land flattens into broad, open
+  country. Tall dry grass stretches in every direction, seed-heavy
+  heads bending in the wind like a pale golden sea. The road is a
+  narrow pale line drawn across the landscape, its edges blurred where
+  grass encroaches. To the north, the crossing's bridge is barely
+  visible as a dark line against the sky. To the south, the first
+  suggestion of tilled earth appears -- faint geometric lines that
+  hint at fenced fields and cultivation ahead.
+biome: plains
+coord:
+  x: -8
+  y: -5
+  z: 0
+exits:
+  north:
+    roomid: 4002
+  south:
+    roomid: 4005
+nouns:
+  grassland: Tall dry grass grows thick on both sides of the road,
+    reaching waist-high in places. The seed heads are heavy and golden,
+    bending with each gust of wind. Walking through it would leave you
+    dusted in pollen and seeds. Small paths have been worn through the
+    grass by animals -- narrow trails leading nowhere obvious.
+  horizon: The view stretches for miles in every direction. To the north,
+    the dark shape of the crossing's bridge is just visible against pale
+    sky. To the south, faint lines of fenced fields break the grassland
+    into squares. East and west, nothing but open plain and sky.
+spawninfo:
+- mobid: 257
+- mobid: 255
+idlemessages:
+- The wind bends the grass in long waves, rippling south to north.
+- A field sparrow bursts from the grass beside the road and arcs away.
+- Seeds drift on the wind like pale snow, catching the light.

@@ -1,0 +1,18 @@
+id: rootbind
+name: "Rootbind"
+skill: enchanting
+skill_minimum: 5
+station: enchanting_circle
+time_rounds: 3
+target_type: belt
+enchant_type: rootbind
+ingredients:
+  - item_tag: binding-paste
+    quantity: 2
+  - item_tag: healers-root
+    quantity: 1
+output:
+  item_id: 0
+  quantity: 0
+success_message: "Root-like tendrils burrow into the leather, anchoring it with living wood. You feel the earth's endurance flow through you."
+failure_message: "The roots wither before bonding. The materials are wasted, but the belt is unharmed."

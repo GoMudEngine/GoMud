@@ -76,6 +76,40 @@ func QuestToken(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 		tplTxt, _ := templates.Process("tables/generic", searchResultsTable, user.UserId)
 		user.SendText(tplTxt)
 
+	} else if args[0] == "flags" {
+
+		allFlags := user.Character.QuestFlags
+		headers := []string{"Flag Key", "Value"}
+		rows := [][]string{}
+
+		if len(allFlags) == 0 {
+			rows = append(rows, []string{"None", ""})
+		} else {
+			for k, v := range allFlags {
+				rows = append(rows, []string{k, v})
+			}
+		}
+
+		searchResultsTable := templates.GetTable("Quest Flags", headers, rows)
+		tplTxt, _ := templates.Process("tables/generic", searchResultsTable, user.UserId)
+		user.SendText(tplTxt)
+
+	} else if args[0] == "flag" {
+
+		if len(args) < 2 {
+			user.SendText("Usage: questtoken flag <key> [value]")
+		} else if len(args) == 2 {
+			val := user.Character.GetQuestFlag(args[1])
+			if val == "" {
+				user.SendText(fmt.Sprintf("Flag %q is not set.", args[1]))
+			} else {
+				user.SendText(fmt.Sprintf("Flag %q = %q", args[1], val))
+			}
+		} else {
+			user.Character.SetQuestFlag(args[1], args[2])
+			user.SendText(fmt.Sprintf("Set flag %q = %q", args[1], args[2]))
+		}
+
 	} else {
 
 		events.AddToQueue(events.Quest{

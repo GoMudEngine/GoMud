@@ -9,15 +9,19 @@ description: The creek basin floor is churned to deep mud here where
   coating themselves in the dark mud. Boar tracks lead south
   toward the main wallowing grounds.
 biome: land
+coord:
+  x: 14
+  y: -6
+  z: 0
 exits:
   west:
     roomid: 3051
   north:
     roomid: 3050
-  south:
-    roomid: 3056
   east:
     roomid: 3055
+  south:
+    roomid: 3056
 nouns:
   wallows: Broad, shallow depressions churned into thick mud by
     boar wallowing. The mud is dark, rich, and stinking. Some

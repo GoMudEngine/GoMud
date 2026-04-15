@@ -38,7 +38,7 @@ func HandlePlayerDrop(e events.Event) events.ListenerReturn {
 		return events.Continue
 	}
 
-	room.SendText(
+	sendVisualRoomText(room, 
 		fmt.Sprintf(`<ansi fg="username">%s</ansi> <ansi fg="red">drops to the ground!</ansi>`, user.Character.Name),
 		user.UserId)
 

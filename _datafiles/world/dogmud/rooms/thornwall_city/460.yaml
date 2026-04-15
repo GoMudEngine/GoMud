@@ -9,6 +9,10 @@ description: Beyond the gate tunnel, Thornwall opens up around you. The Gate War
   the city's heart. The city wall looms behind you, massive and reassuring from this
   side. Ahead, the noise and smell of civilization in all its dense, complicated glory.
 biome: city
+coord:
+  x: 0
+  y: 0
+  z: 0
 exits:
   west:
     roomid: 447

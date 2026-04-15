@@ -1,0 +1,42 @@
+roomid: 4028
+zone: Ashwick
+title: Delia's Garden
+description: >
+  A cultivated herb garden behind Delia's cottage, enclosed
+  by a low fence. Raised wooden beds are arranged in neat
+  rows, each labeled with small painted stakes. Comfrey and
+  sage grow thick and healthy, their leaves broad and dark.
+  But the feverfew and bitter-thistle beds are stripped bare
+  -- harvested down to the root crowns, nothing left to cut.
+  A glass cold frame protects rows of tiny seedlings, weeks
+  from being harvestable. The garden is well-tended but
+  clearly under strain, producing less than is needed.
+biome: farmland
+coord:
+  x: -4
+  y: -12
+  z: 0
+exits:
+  west:
+    roomid: 4027
+nouns:
+  beds: Raised wooden beds with painted labels -- "comfrey,"
+    "sage," "feverfew," "bitter-thistle," and others. The
+    comfrey and sage beds are healthy, leaves broad and ready
+    for harvest. The feverfew and bitter-thistle beds are
+    stripped bare, cut down to root crowns with nothing left
+    to take. The contrast is stark -- plenty of some, none
+    of others.
+  frame: A glass cold frame sheltering rows of tiny seedlings.
+    The glass is clean, the frame well-maintained. Inside,
+    feverfew and bitter-thistle sprouts push through dark
+    soil -- weeks from being large enough to harvest. Someone
+    is trying to regrow what was lost, but time is not
+    cooperating.
+idlemessages:
+- Bees work the sage flowers methodically, ignoring the bare
+  beds.
+- Wind moves through the garden, stirring the herb-scented
+  air.
+- A painted label wobbles on its stake as the breeze catches
+  it.

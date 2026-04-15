@@ -1,0 +1,12 @@
+itemid: 54
+name: Soren's iron pin
+namesimple: pin
+description: >
+  A small iron pin in the shape of a crossed-swords emblem,
+  tarnished but well-made. The kind of thing a soldier wears
+  to mark rank or unit. Soren kept this on his collar. The
+  caravan master would recognize it.
+type: object
+subtype: mundane
+weight: 0.1
+value: 0

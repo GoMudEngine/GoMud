@@ -10,6 +10,10 @@ description: A shallow alcove branching west from the den, its walls lined with 
   and proof that those things do not leave. Some of the trophies look recent. The bone
   is still white.
 biome: cave
+coord:
+  x: -13
+  y: 4
+  z: -2
 exits:
   east:
     roomid: 314

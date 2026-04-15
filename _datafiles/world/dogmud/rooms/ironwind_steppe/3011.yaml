@@ -9,15 +9,17 @@ description: Endless sagebrush flats stretch in every direction, the
   bare soil -- the prints of rabbits, foxes, and something
   larger with padded paws.
 biome: land
+coord:
+  x: 13
+  y: 0
+  z: 0
 exits:
   west:
     roomid: 3010
   south:
-    roomid: 3009
-  east:
     roomid: 3012
-  north:
-    roomid: 3015
+  east:
+    roomid: 3030
 nouns:
   stones: Large, rounded stones half-buried in the soil, their
     exposed surfaces worn smooth by centuries of wind and grit.

@@ -1,0 +1,19 @@
+itemid: 30053
+name: essence of growth
+namesimple: essence
+description: A deep green elixir that pulses with
+  vitality. Your muscles twitch as though remembering
+  every exertion.
+type: potion
+subtype: drinkable
+uses: 1
+buffids:
+  - 71
+value: 60
+weight: 0.5
+toxicity: 60
+aging:
+  ferment_rounds: 3000
+  peak_rounds: 12000
+  decay_rounds: 30000
+  spoil_rounds: 50000

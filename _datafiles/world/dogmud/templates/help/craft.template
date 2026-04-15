@@ -6,9 +6,10 @@ skill, the right ingredients, and in most cases a crafting station.
 
 <ansi fg="yellow">━━━ Basic Usage ━━━</ansi>
 
-  <ansi fg="command">craft list</ansi>             Show all known recipes with status.
-  <ansi fg="command">craft</ansi>                  Same as craft list.
-  <ansi fg="command">craft <recipe name></ansi>    Start crafting (partial name works).
+  <ansi fg="command">craft list</ansi>                    Show all known recipes.
+  <ansi fg="command">craft</ansi>                         Same as craft list.
+  <ansi fg="command">craft <recipe></ansi>                Start crafting.
+  <ansi fg="command">craft <enchant> <item></ansi>        Enchant a specific item.
 
 <ansi fg="yellow">━━━ Crafting Skills ━━━</ansi>
 
@@ -25,6 +26,18 @@ The first four are standalone trades. Jewelcrafting and enchanting
 together form the <ansi fg="yellow">artificer</ansi> profession — jewelcrafting produces
 chrysalis settings that enchanting consumes to bind living mutations
 into equipment.
+
+<ansi fg="yellow">━━━ Enchanting Targets ━━━</ansi>
+
+When enchanting, you can specify which item to enchant by name:
+
+  <ansi fg="command">craft keen dagger</ansi>     Enchant the dagger named "dagger".
+  <ansi fg="command">craft keen 2.sword</ansi>    Enchant the second sword.
+
+Enchanting searches both your backpack and equipped items, so
+you can enchant a wielded weapon without unequipping it. If
+multiple items match and you don't specify, the game shows a
+numbered list to choose from.
 
 <ansi fg="yellow">━━━ The Crafting Loop ━━━</ansi>
 

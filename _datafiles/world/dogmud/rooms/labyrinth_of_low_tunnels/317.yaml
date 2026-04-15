@@ -13,6 +13,10 @@ description: Beyond the barricade, the tunnel opens into a chamber that feels al
   is a palpable presence -- the ceiling so low and the walls so close that the chamber
   feels like the inside of a clenched fist.
 biome: cave
+coord:
+  x: -12
+  y: 2
+  z: -2
 exits:
   north:
     roomid: 316

@@ -1,0 +1,10 @@
+buffid: 65
+name: Cat's Eye Draught
+description: The darkness recedes. Hidden things reveal themselves.
+triggerrate: 1 round
+triggercount: 500
+statmods:
+  strength: -10
+flags:
+  - night-vision
+  - see-hidden

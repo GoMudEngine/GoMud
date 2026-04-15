@@ -9,11 +9,13 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/colorpatterns"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/term"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
+	"github.com/GoMudEngine/GoMud/internal/worldevents"
 )
 
 func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
@@ -31,7 +33,7 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		user.Character.Health = user.Character.HealthMax.Value
 
 		user.SendText(`You are revived in a shower of magical sparks!`)
-		room.SendText(`<ansi fg="username">`+user.Character.Name+`</ansi> is suddenly revived in a shower of sparks!`, user.UserId)
+		room.SendTextVisual(`<ansi fg="username">`+user.Character.Name+`</ansi> is suddenly revived in a shower of sparks!`, user.UserId)
 
 		user.Character.CancelBuffsWithFlag(buffs.ReviveOnDeath)
 
@@ -39,7 +41,7 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	}
 
 	// Send a death msg to everyone in the room.
-	room.SendText(
+	room.SendTextVisual(
 		fmt.Sprintf(`<ansi fg="username">%s</ansi> has died.`, user.Character.Name),
 		user.UserId,
 	)
@@ -97,6 +99,41 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		KilledByUsers: killedByUserIds,
 	})
 
+	// Emit a regional gossip event for PvE deaths (not PvP)
+	if dmgCt == 0 {
+		causeOfDeath := ""
+		// Check if fighting a mob
+		if user.Character.Aggro != nil && user.Character.Aggro.MobInstanceId > 0 {
+			if mob := mobs.GetInstance(user.Character.Aggro.MobInstanceId); mob != nil {
+				causeOfDeath = mob.Character.Name
+			}
+		}
+		// If not fighting a mob, check for lethal conditions
+		if causeOfDeath == "" {
+			if user.Character.HasCondition(characters.ConditionPoisoned) {
+				causeOfDeath = "poison"
+			} else if user.Character.HasCondition(characters.ConditionBleeding) {
+				causeOfDeath = "bleeding out"
+			}
+		}
+		if causeOfDeath == "" {
+			causeOfDeath = "their own foolishness"
+		}
+
+		zone := user.Character.Zone
+		region := ""
+		if zCfg := rooms.GetZoneConfig(zone); zCfg != nil {
+			region = zCfg.Region
+		}
+		worldevents.EmitWorldEvent(worldevents.WorldEvent{
+			Type:         worldevents.PlayerDiedPvE,
+			Significance: worldevents.Global,
+			ZoneName:     zone,
+			RegionName:   region,
+			Description:  causeOfDeath,
+		})
+	}
+
 	// If permadeath is enabled, do some extra bookkeeping
 	if allowPenalties && bool(config.Death.PermaDeath) {
 
@@ -139,7 +176,7 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	user.SendText(`<ansi fg="yellow">You feel weakened by the brush with death. (Type <ansi fg="command">help death</ansi> to learn more.)</ansi>`)
 
 	user.Character.CancelBuffsWithFlag(buffs.All)
-	user.Character.Aggro = nil
+	user.Character.EndAggro()
 	user.Character.CastingState = nil
 
 	// Set all pools to 5% of max so the player can regen up in the shadow realm
@@ -160,7 +197,22 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 
 	clear(user.Character.PlayerDamage)
 
+	// Check if player died in an instanced zone with ejected death policy
+	if rooms.IsEphemeralRoomId(user.Character.RoomId) {
+		if inst := rooms.GetInstanceRegistry().FindByRoomId(user.Character.RoomId); inst != nil {
+			if inst.DeathPolicy == "ejected" {
+				inst.RevokeAccess(user.UserId)
+				user.SendText(`<ansi fg="red">You have been expelled from the instance. There is no return.</ansi>`)
+			}
+		}
+	}
+
 	rooms.MoveToRoom(user.UserId, int(configs.GetSpecialRoomsConfig().DeathRecoveryRoom))
+
+	// Belt-and-suspenders: re-clear aggro after room move in case any
+	// code path (e.g., mob combat round processing) assigned aggro
+	// between our first clear (line 179) and the room move.
+	user.Character.EndAggro()
 
 	if config.Death.CorpsesEnabled {
 		room.AddCorpse(rooms.Corpse{

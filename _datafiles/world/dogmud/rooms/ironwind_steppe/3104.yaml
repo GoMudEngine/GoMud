@@ -10,6 +10,10 @@ description: A low-ceilinged side chamber infested with cave crawlers.
   cling to the walls and ceiling, their segmented bodies pressed
   flat against the stone.
 biome: cave
+coord:
+  x: 14
+  y: 7
+  z: 0
 exits:
   west:
     roomid: 3101

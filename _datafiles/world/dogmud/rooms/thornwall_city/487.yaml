@@ -1,0 +1,38 @@
+roomid: 487
+zone: Thornwall City
+title: Collapsed Passage
+description: >
+  The passage ends in a wall of fallen stone and splintered timber. Whatever
+  this channel once connected to is buried under tons of rubble. Chunks of
+  dressed stone jut from the debris at odd angles, and dust still sifts
+  down from cracks in the ceiling above. The collapse looks old -- decades
+  at least -- but the stone overhead creaks ominously. A faint sweetness
+  drifts up from the floor -- organic, warm, and entirely wrong for a dead
+  end. The rubble is thorough, but the floor is not.
+biome: cave
+coord:
+  x: 2
+  y: -2
+  z: -2
+exits:
+  west:
+    roomid: 486
+  down:
+    roomid: 500
+    secret: true
+    lock:
+      difficulty: 15
+      relockinterval: 15 real minutes
+      trapbuffids: [39]
+nouns:
+  rubble: Fallen stone blocks, cracked timber supports, and packed earth.
+    The collapse is thorough -- there is no way through. But the floor
+    feels different near the east edge of the debris. Hollow, almost.
+  floor: The stone floor near the base of the collapse is cleaner than it
+    should be. No dust accumulation. The mortar seams look disturbed,
+    as if something shifts through here regularly. A faint organic smell
+    rises from somewhere below.
+idlemessages:
+- Dust sifts down from a crack in the ceiling.
+- A stone shifts somewhere in the rubble, settling deeper.
+- A warm, sweetish draft rises faintly from the floor near the debris.

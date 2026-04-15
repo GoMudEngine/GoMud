@@ -1,0 +1,31 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">conviction-ward</ansi> spell
+
+The <ansi fg="command">Conviction Ward</ansi> spell weaves spiritual energy into a fast, lightweight
+barrier around a target. It is cheaper and quicker to cast than heavier
+shield spells, making it ideal for use in the middle of a fight.
+
+The ward's protective strength scales with the caster's willpower and
+spellcasting skill. It provides physical damage mitigation only.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">cast conviction-ward</ansi>              Wards yourself.
+  <ansi fg="command">cast conviction-ward [target]</ansi>     Wards a nearby ally.
+
+<ansi fg="yellow">Base Folds:  </ansi> <ansi fg="white-bold">3</ansi>
+<ansi fg="yellow">Target:      </ansi> <ansi fg="white-bold">Single ally (or self)</ansi>
+<ansi fg="yellow">Defense:     </ansi> <ansi fg="white-bold">None — help spells always apply</ansi>
+<ansi fg="yellow">Duration:    </ansi> <ansi fg="white-bold">Scales with spellcasting skill</ansi>
+<ansi fg="yellow">Strength:    </ansi> <ansi fg="white-bold">75% of baseline shield — quick and cheap</ansi>
+<ansi fg="yellow">Mitigation:  </ansi> <ansi fg="white-bold">Physical only</ansi>
+<ansi fg="yellow">Conv. Cost:  </ansi> <ansi fg="white-bold">3</ansi>
+<ansi fg="yellow">School:      </ansi> <ansi fg="white-bold">Enhancement</ansi>
+
+<ansi fg="white-bold">Notes:</ansi>
+  - Lighter than Chrysalis Cocoon but provides physical protection only.
+  - A good choice when conviction is running low mid-fight.
+  - Casting again while a ward is active overwrites the existing one.
+  - Crits boost the barrier's strength by roughly half again.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help cast</ansi>, <ansi fg="command">help spells</ansi>, <ansi fg="command">help chrysalis-cocoon</ansi>,
+          <ansi fg="command">help minor-shield</ansi>

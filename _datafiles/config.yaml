@@ -63,7 +63,7 @@ Server:
   - checkclient
   # - Motd -
   #   Message of the day. This is displayed when the motd command is run.
-  Motd: '{{ t "Please report bugs using the bug command!" }}'
+  Motd: '{{ t "NEW: Instanced Zones! Pay the Riftkeeper in Thornwall to open rifts to the Arena and Planar Oasis.\nNEW: Randomized loot — unique weapons and armor drop from instance bosses. More gold = tougher enemies = better gear.\nNEW: Arena is a brutal gauntlet where death ends your run. Oasis is a 3D elemental maze to explore and clear.\nType help instances, help arena, or help oasis for details.\nFull patch notes: https://github.com/pruuk/DOGMud/blob/master/PATCH_NOTES.md" }}'
   # - NextRoomID -
   # This number is auto-updated to the highest number of rooms in the game.
   #   If creating your own rooms but don't want to risk an update conflicting,
@@ -257,7 +257,7 @@ GamePlay:
     # - CorpseDecayTime -
     #   How long until corpses crumble to dust (Go away).
     #   See ShopRestockRate comments for time format.
-    CorpseDecayTime: 1 hour
+    CorpseDecayTime: 4 hours
   # - LivesStart -
   #   (Req: PermaDeath) How many lives players start with before being reset.
   LivesStart: 3
@@ -274,7 +274,7 @@ GamePlay:
   #   Unit can be: rounds, hours, days, weeks, months, years
   #   Default is in-game time, not real time. To use real time, use the following
   #   format: {num} real {unit} - Example: 1 real day
-  ShopRestockRate: 6 hours
+  ShopRestockRate: 2 hours
   # - ContainerSizeMax -
   #   Maximum number of objects a container can hold before stuff overflows
   ContainerSizeMax: 10
@@ -289,7 +289,7 @@ GamePlay:
   #     enabled   - PVP is enabled everywhere
   #     disabled  - PVP is disabled eveywhere
   #     limited   - PVP is enabled for all players but only in PVP enabled rooms
-  PVP: limited
+  PVP: disabled
   # - PVPMinimumSkillRanks -
   #   Total skill ranks required to engage in PVP combat.
   PVPMinimumSkillRanks: 15
@@ -359,9 +359,9 @@ Balance:
   #   Block = (Str+Dex)/2 + WeaponSkill + shield BlockRating
   # Example: defender Dex 100, skill 10, DodgeEffectiveness 0.97:
   #   dodge score = (100 + 10) × 0.97 = 106.7 (vs attacker's ~110)
-  DodgeEffectiveness: 0.97      # Tuned 39.2: slight nerf to dodge (most common defense)
-  ParryEffectiveness: 1.0
-  BlockEffectiveness: 1.02      # Tuned 39.2: slight buff; requires shield investment
+  DodgeEffectiveness: 0.95      # Nerfed: dodge is most common defense, needs counterplay
+  ParryEffectiveness: 0.97      # Slight nerf: parry is middle ground
+  BlockEffectiveness: 1.05      # Buffed: requires shield investment, should reward it
   #
   # MinDefenseChance: even when the attacker's score vastly outclasses the
   #   defender's, this floor ensures fights never feel like guaranteed hits.
@@ -385,8 +385,8 @@ Balance:
   # ProneDodge/Parry/BlockPenalty: fraction of defense score kept while prone.
   #   1.0 = full defense (no penalty). 0.50 = half defense. 0 = no defense.
   #   Example: dodge score 100, penalty 0.95 → score 95.
-  ProneDodgePenalty: 0.95        # Tuned 39.2: mild; prone already punishes via attack + damage mults
-  ProneParryPenalty: 0.95
+  ProneDodgePenalty: 0.93        # Mild; prone already punishes via attack + damage mults
+  ProneParryPenalty: 0.93
   ProneBlockPenalty: 0.95
   #
   # ProneDamagePenalty: damage dealt while attacking from prone.
@@ -409,6 +409,18 @@ Balance:
   #   party while grappling. Only block is available; dodge/parry stripped.
   #   Example: block score 80 × 0.70 = 56 vs third-party attacker.
   ThirdPartyGrapplePenalty: 0.70
+  #
+  # ClinchDodge/Parry/BlockPenalty: defense score kept while clinched.
+  #   Clinch is a standing grapple — limited movement but not on the ground.
+  ClinchDodgePenalty: 0.80
+  ClinchParryPenalty: 0.83
+  ClinchBlockPenalty: 0.85
+  #
+  # GroundedDodge/Parry/BlockPenalty: defense score kept while grounded.
+  #   Grounded is worse than clinch — on the floor with opponent on top.
+  GroundedDodgePenalty: 0.75
+  GroundedParryPenalty: 0.77
+  GroundedBlockPenalty: 0.80
 
   # ── COMBAT: SPECIAL MOVES ─────────────────────────────────────────────────
   # Bash, trip, and kick all share a cooldown so players can't chain knockdowns.
@@ -455,7 +467,7 @@ Balance:
   # ── COMBAT: DAMAGE ────────────────────────────────────────────────────────
   # Global panic buttons. 1.0 = no change. GlobalDamageMultiplier is
   # applied to ALL damage channels in CalcRawDamage().
-  GlobalDamageMultiplier: 1.75
+  GlobalDamageMultiplier: 1.0
   GlobalDefenseMultiplier: 1.0
   #
   # Legacy unarmed knobs — still used by GetDefaultDistributionDamage()
@@ -475,8 +487,8 @@ Balance:
   #   raw = 100 × 1.0 × 1.0 × 0.05 = 5.0
   UnarmedDamageMultiplier: 0.30 # Tuned 39.2: fists are a last resort; 0.30 = ~1/3 of a basic weapon
   # UnarmedSpeedMultiplier: attack speed for unarmed combat.
-  # Slightly faster than light weapons (1.2) to keep fists viable.
-  UnarmedSpeedMultiplier: 1.4
+  # Faster than weapons to compensate for dodge-only defense (no parry).
+  UnarmedSpeedMultiplier: 1.8
   #
   # ── Per-Channel Damage Scales ──
   # All channels use the same formula:
@@ -489,7 +501,7 @@ Balance:
   #     0.05 →   5 raw damage per swing (current — low, needs MobDamageMultiplier)
   #     0.15 →  15 raw damage per swing
   #     0.30 →  30 raw damage per swing (original default)
-  MeleeDamageScale: 0.45       # Bumped +50% from 0.30; fights were too slow
+  MeleeDamageScale: 0.43       # Down ~5% from 0.45; melee was slightly overtuned
   #
   # MobDamageMultiplier: extra multiplier applied ONLY to NPC melee
   #   damage. Lets you keep player damage low while making NPCs threatening.
@@ -501,12 +513,12 @@ Balance:
   # SpellDamageScale: multiplier on ALL spell damage output (players + NPCs).
   #   1.0 = no scaling. Example at Wil 100, skill 0, spell mult 1.0:
   #     1.0 → 100 raw,  1.5 → 150 raw,  0.5 → 50 raw
-  SpellDamageScale: 1.85        # Detuned -33% from 2.75; spells were hitting too hard relative to melee
+  SpellDamageScale: 1.2         # Tuned 39.4: -25% from 1.6; progression now works so spells scale naturally
   #
   # RhetoricDamageScale: multiplier on taunt/conviction damage output.
   #   Taunt uses itemMult 0.5 as base. Example at Cha 100, skill 0:
   #     1.0 → 50 raw,  2.0 → 100 raw
-  RhetoricDamageScale: 2.0      # Tuned 39.2: taunts are utility/CC, not primary damage; 2x keeps conviction damage meaningful but secondary
+  RhetoricDamageScale: 3.0      # Bumped from 2.0; taunts need to be a real damage threat to justify the conviction cost
   #
   # SkillMultiplierBase/Max: controls how much skill rank affects damage.
   #   At rank 0 the multiplier is Base, at soft cap (50) it's Max.
@@ -523,6 +535,11 @@ Balance:
   PhysicalMitigationCap: 0.75
   MagicalMitigationCap: 0.75
   ConvictionMitigationCap: 0.75
+  #
+  # Avoidance damage multipliers: damage taken when successfully avoiding a spell or taunt.
+  # 0.50 = take 50% damage on successful avoidance (half damage).
+  SpellAvoidanceDamageMultiplier: 0.50     # Damage multiplier on successful spell deflection
+  RhetoricAvoidanceDamageMultiplier: 0.50  # Damage multiplier on successful stoic resolve
   #
   # ── Resource Depletion Penalties ──
   # As HP/SP/CP drain, combat effectiveness gradually decreases.
@@ -544,12 +561,12 @@ Balance:
   ConvictionPenaltyMax: 0.28     # At 0% CP: taunt/spell reduced by 28%
 
   # ── REGEN RATES (fraction of pool max per tick; 0.01 = 1%) ────────────────
-  PlayerHealthRegenPct: 0.01     # Player HP regen per tick (1% of HealthMax)
+  PlayerHealthRegenPct: 0.02     # Bumped from 1% to 2%; players needed faster recovery
   PlayerStaminaRegenPct: 0.02    # Tuned 39.2: doubled from 0.01; fights felt too exhausting at 1%
-  PlayerConvictionRegenPct: 0.01 # Player conviction regen per tick
+  PlayerConvictionRegenPct: 0.02  # Bumped to 2% to match health/stamina regen rates
   MobHealthRegenPct: 0.01        # NPC HP regen per tick (1% of HealthMax)
-  MobStaminaRegenPct: 0.01       # NPC stamina regen per tick
-  MobConvictionRegenPct: 0.01    # NPC conviction regen per tick
+  MobStaminaRegenPct: 0.02       # NPC stamina regen per tick (raised to match players)
+  MobConvictionRegenPct: 0.02    # NPC conviction regen per tick (raised to match players)
 
   # ── STAMINA & CONVICTION ────────────────────────────────────────────────────
   # MovementBaseStaminaCost: stamina spent per room move on normal terrain.
@@ -618,22 +635,48 @@ Balance:
   # Combat skills fire many times per round (low mult), utility skills
   # fire rarely (high mult). Only skills listed here override the defaults.
   SkillProgressionMultipliers:
-    weapon-combat: 0.12   # Tuned 39.2: ~8 attacks/round × 0.12 ≈ 1 effective check/round, matches non-combat pacing
-    unarmed-combat: 0.12  # Tuned 39.2: same rationale as weapon-combat
-    ranged-combat: 0.3
+    weapon-combat: 0.18   # Tuned 39.5: bumped ~20% from 0.15 for better progression feel
+    unarmed-combat: 0.18  # Tuned 39.5: same as weapon-combat
     spellcasting: 0.5
     rhetoric: 0.5
-    tracking: 2.0
     bartering: 2.0
-    foraging: 2.0
-    first-aid: 2.0
-    stealth: 2.0
+    manifestation: 0.3    # Companion management — moderate use frequency
     blacksmithing: 3.5  # Crafting skills fire rarely (once per craft); boosted for feel
     alchemy: 3.5
     tailoring: 3.5
     cooking: 3.5
     jewelcrafting: 3.5
     enchanting: 3.5
+    salvage: 2.0
+
+  # ── SALVAGE ────────────────────────────────────────────────────────────────
+  SalvageMinChance: 0.15      # Per-ingredient recovery chance at skill 1
+  SalvageMaxChance: 0.85      # Hard cap on per-ingredient chance
+  SalvageSoftCap: 50          # Skill level where curve flattens
+  SalvageGoldPerRound: 10     # Ingredient gold value per salvage round
+  SalvageMaxRounds: 5         # Maximum salvage duration
+
+  # ── SHOP ECONOMY ──────────────────────────────────────────────────────────
+  ShopBuyRatio: 0.50            # NPC buy offer = baseValue * BuyRatio * scarcityMult
+  ShopPriceFloor: 0.25          # Minimum scarcity multiplier (overstocked)
+  ShopPriceCeiling: 5.0         # Maximum scarcity multiplier (out of stock)
+  ShopAbundanceThreshold: 3.0   # Stock/restock ratio where price hits floor
+  ShopMaterialReserve: 1        # Units a crafter reserves per material before selling
+  ShopGoldReserveRatio: 0.50    # Fraction of gold pool kept in reserve before buying
+  BarterMaxDiscount: 0.15       # Max fractional buy-price discount from bartering
+  BarterMaxBonus: 0.15          # Max fractional sell-price bonus from bartering
+
+  # ── STORAGE FEES ───────────────────────────────────────────────────────────
+  StorageFeePerItem: 1               # Gold charged per stored item per game month
+
+  # ── CRAFTER MOBS ─────────────────────────────────────────────────────────
+  CrafterEnabled: true            # Enable mob autonomous crafting
+  CrafterMaterialRestockRate: 75  # Rounds between restock/craft ticks (~5 min)
+
+  # ── QUEST ENGINE ──────────────────────────────────────────────────────────
+  QuestLogLevel: verbose        # verbose, medium, minimal
+  QuestChainDepthLimit: 10      # max chained grant evaluations per event
+  QuestPerformanceWarnMs: 50    # warn if trigger evaluation exceeds this (ms)
 
   # ── MOB PROGRESSION ──────────────────────────────────────────────────────────
   # When enabled, mobs gain stats and skills through combat just like players.
@@ -673,11 +716,11 @@ Balance:
   # so per-stat tuning is still available. Mob progression uses MobProgressionRate.
   #
   # RegenProgressionBase: Maximum chance per stat per tick when the pool is
-  #   at 0%. At the default 0.005 (0.5%), a character sitting at 0% HP would
-  #   have a 0.5% chance per tick (every 3 rounds) to gain Vitality and a
-  #   separate 0.5% chance to gain Willpower. Higher = faster stat gains from
+  #   at 0%. At the default 0.01 (1%), a character sitting at 0% HP would
+  #   have a 1% chance per tick (every 3 rounds) to gain Vitality and a
+  #   separate 1% chance to gain Willpower. Higher = faster stat gains from
   #   resource depletion. Range: 0.001 to 1.0.
-  RegenProgressionBase: 0.005
+  RegenProgressionBase: 0.01
   # RegenProgressionCurve: Controls how steeply the chance ramps up as the
   #   pool empties. Higher values mean the chance stays near zero until the
   #   pool is very low, then spikes. Lower values spread the chance more
@@ -724,10 +767,12 @@ Balance:
   MutationBaseProgress: 50.0         # Progress needed for first mutation
   MutationProgressScale: 1.5         # Each additional mutation costs Scale^n more
   MutationMaxCount: 5                # Max simultaneous mutations per character
-  MutationMaxLevel: 3                # Max level any single mutation can reach (1–3)
+  MutationMaxLevel: 4                # Max level any single mutation can reach (1–4)
+  MutationDeepenChance: 0.70         # Probability of deepening vs new when both possible (0.0-1.0)
   MutationProgressGainPerRound: 1.0  # Progress added per combat round
   MutationLevel2Multiplier: 1.5      # Effect magnitude at level 2 (1.5× level 1)
   MutationLevel3Multiplier: 2.0      # Effect magnitude at level 3 (2.0× level 1)
+  MutationLevel4Multiplier: 2.5      # Effect magnitude at level 4 (2.5× level 1)
 
   # ── SPELLCASTING ──────────────────────────────────────────────────────
   # Spell discovery: chance to learn a new spell on a successful cast.
@@ -760,6 +805,14 @@ Balance:
   #   with a specific spell. Higher proficiency reduces fizzle chance.
   SpellProficiencyCastsPerPoint: 50
 
+  # ── DIFFICULTY-SCALED PROGRESSION ──────────────────────────────────────────
+  # Harder spells and recipes give proportionally more skill progression.
+  # Formula (spells):  bonusMultiplier = 1.0 + difficulty * Scale
+  # Formula (crafts):  bonusMultiplier = 1.0 + skill_minimum * Scale
+  SpellDifficultyProgressionScale: 0.01   # difficulty 75 → 1.75x progression
+  CraftDifficultyProgressionScale: 0.02   # skill_minimum 50 → 2.0x progression
+  SelfCastProgressionMultiplier: 0.5      # self-only buffs get half progression
+
   # ── ENCHANTMENTS ────────────────────────────────────────────────────────────
   # Enchanted items grow stronger with use. Each tier requires more uses.
   # Uses threshold per tier: UsesBase × UsesScale^tier
@@ -773,11 +826,25 @@ Balance:
   EnchantRemovalPenaltyRounds: 50   # Rounds of withdrawal debuff after disenchant
   EnchantMaxTier: 4                 # Maximum tier (tiers 0–4 = 5 levels total)
 
+  # ── MOB MUTATIONS ──────────────────────────────────────────────────────────
+  MobMutationEnabled: true   # Mobs can acquire mutations through combat
+  MobMutationRate: 0.3       # Mutation progress rate vs players (default 0.3)
+
+  # ── MOB AI ──────────────────────────────────────────────────────────────────
+  CombatMemoryDuration: 300       # Rounds before mob forgets combat target
+  MobAIEnabled: true              # Global toggle for reactive mob AI
+  MobReactionDelayMin: 0.25       # Minimum reaction delay (seconds)
+  MobReactionDelayMax: 4.0        # Maximum reaction delay (seconds)
+
   # ── GOSSIP SYSTEM ───────────────────────────────────────────────────────────
   GossipIntervalRounds: 75  # Rounds between gossip broadcasts for "gossiper" mobs (min 20)
 
   # ── MOON PHASES ─────────────────────────────────────────────────────────────
-  MoonStatModMax: 0.05  # Max fractional stat modifier from moon phases (±5% at full/new moon)
+  MoonStatModMax: 0.10  # Max fractional stat modifier from moon phases (±10% at full/new moon)
+
+  # ── MANIFESTATION / COMPANION SCALING ──────────────────────────────────────
+  ManifestStatScaleChaFactor: 150    # Charisma divisor — stronger Cha contribution to companion pools
+  ManifestStatScaleSkillFactor: 0.02 # Manifestation skill additive factor per rank
 
 ################################################################################
 #
@@ -1050,6 +1117,22 @@ Validation:
   - "new"
   - "join"
   - "register"
+  # Companion / creature type words
+  - "skeleton"
+  - "zombie"
+  - "wraith"
+  - "spectre"
+  - "vampire"
+  - "golem"
+  - "elemental"
+  - "magma"
+  - "swarm"
+  - "spirit"
+  - "wolf"
+  - "undead"
+  - "conjure*"
+  - "summon*"
+  - "companion"
 
 ################################################################################
 #

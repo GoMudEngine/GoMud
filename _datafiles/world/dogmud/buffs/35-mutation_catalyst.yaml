@@ -2,6 +2,8 @@ buffid: 35
 name: Mutation Catalyst
 description: Chrysalis energy accelerates your body's mutagenic processes.
 triggerrate: 1 round
-triggercount: 20
+triggercount: 200
 flags:
   - mutation-rate
+start_user_text: "Chrysalis energy surges through your cells, accelerating mutation."
+end_user_text: The mutagenic catalyst fades from your system.

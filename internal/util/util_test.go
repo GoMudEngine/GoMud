@@ -1127,6 +1127,38 @@ func TestValidateWorldFiles(t *testing.T) {
 	})
 }
 
+func TestGetMatchNumber_DikuFormat(t *testing.T) {
+	name, num := GetMatchNumber("3.dagger")
+	if name != "dagger" || num != 3 {
+		t.Errorf("expected (dagger, 3), got (%s, %d)", name, num)
+	}
+
+	name, num = GetMatchNumber("all.dagger")
+	if name != "dagger" || num != -1 {
+		t.Errorf("expected (dagger, -1), got (%s, %d)", name, num)
+	}
+
+	name, num = GetMatchNumber("dagger#2")
+	if name != "dagger" || num != 2 {
+		t.Errorf("expected (dagger, 2), got (%s, %d)", name, num)
+	}
+
+	name, num = GetMatchNumber("st.elmo")
+	if name != "st.elmo" || num != 1 {
+		t.Errorf("expected (st.elmo, 1), got (%s, %d)", name, num)
+	}
+
+	name, num = GetMatchNumber("dagger")
+	if name != "dagger" || num != 1 {
+		t.Errorf("expected (dagger, 1), got (%s, %d)", name, num)
+	}
+
+	name, num = GetMatchNumber("1.sword")
+	if name != "sword" || num != 1 {
+		t.Errorf("expected (sword, 1), got (%s, %d)", name, num)
+	}
+}
+
 // Utility helper: check that a string contains all given substrings.
 func containsAll(s string, subs ...string) bool {
 	for _, sub := range subs {
@@ -1153,4 +1185,36 @@ func containsAt(s, sub string, index int) bool {
 		}
 	}
 	return true
+}
+
+func TestConvertToAscii(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    string
+		expected string
+	}{
+		{"pure ascii passthrough", "Hello world!", "Hello world!"},
+		{"box corners", "┌─┐└─┘", "+-++-+"},
+		{"box sides", "│text│", "|text|"},
+		{"double box", "╔═╗║x║╚═╝", "+=+|x|+=+"},
+		{"mixed box", "╒═╕╘═╛", "+=++=+"},
+		{"intersections", "├┤┬┴┼", "+++++"},
+		{"double intersections", "╠╣╦╩╬", "+++++"},
+		{"block elements", "█░▒▓", "#.:#"},
+		{"half blocks", "▄▀▌▐", "-_||"},
+		{"bullet", "• item", "* item"},
+		{"ansi preserved", "\x1b[32mgreen\x1b[0m", "\x1b[32mgreen\x1b[0m"},
+		{"mixed ansi and unicode", "\x1b[33m┌─┐\x1b[0m", "\x1b[33m+-+\x1b[0m"},
+		{"status template chars", " ┌─ Attributes ─┐\n └──────────────┘", " +- Attributes -+\n +--------------+"},
+		{"motd chars", "╔══╗\n║hi║\n╚══╝", "+==+\n|hi|\n+==+"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := ConvertToAscii(tt.input)
+			if result != tt.expected {
+				t.Errorf("ConvertToAscii(%q)\n  got:  %q\n  want: %q", tt.input, result, tt.expected)
+			}
+		})
+	}
 }

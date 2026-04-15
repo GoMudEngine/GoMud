@@ -9,13 +9,15 @@ description: This dead-end coulee is draped in thick spider webs that
   the spiders nest. The air is still and heavy, and visibility
   through the web layers is limited.
 biome: cliffs
+coord:
+  x: 17
+  y: -8
+  z: 0
 exits:
   north:
     roomid: 3063
   west:
     roomid: 3062
-  northwest:
-    roomid: 3044
 nouns:
   webs: Layer upon layer of spider silk spanning the coulee,
     from fresh and glistening to old and dust-caked. The

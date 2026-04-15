@@ -5,10 +5,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/keywords"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -45,8 +47,10 @@ var (
 
 	userCommands map[string]CommandAccess = map[string]CommandAccess{
 		`alias`:       {Alias, true, true, false},
+		`afk`:         {AFK, true, true, false},
 		`appraise`:    {Appraise, false, true, false},
 		`ask`:         {Ask, false, true, false},
+		`assess`:      {Assess, false, true, false},
 		`assist`:      {Assist, false, true, false},
 		`attack`:      {Attack, false, true, false},
 		`ai-flag`:    {AiFlag, true, true, true},       // Admin only
@@ -71,11 +75,15 @@ var (
 		`cooldowns`:   {Cooldowns, true, true, false},
 		`command`:     {Command, false, true, true}, // Admin only
 		`conditions`:  {Conditions, true, true, false},
+		`companion`:   {Companion, true, true, false},
+		`companions`:  {Companion, true, true, false},
 		`consider`:    {Consider, true, true, false},
 		`deafen`:      {Deafen, true, true, true}, // Admin only
 		`devtool`:     {Devtool, false, true, true}, // Admin only
 		`default`:     {Default, false, true, false},
+		`defuse`:      {Defuse, false, true, false},
 		`disenchant`:  {Disenchant, false, false, false}, // Can't disenchant in combat
+		`dismiss`:     {Dismiss, false, true, false},
 		`drop`:{Drop, true, false, false}, // Can't drop items in combat
 		`drink`:       {Drink, true, true, false},
 		`eat`:         {Eat, true, true, false},
@@ -90,15 +98,17 @@ var (
 		`grapple`:     {Grapple, false, true, false},
 		`healing-gel`: {HealingGel, false, true, false},
 		`help`:        {Help, true, true, false},
+		`hint`:        {Hint, true, true, false},
 		`keyring`:     {KeyRing, true, true, false},
 		`kick`:        {Kick, false, true, false},
+		`stomp`:       {Kick, false, true, false},
+		`knee`:        {Kick, false, true, false},
 		`killstats`:   {Killstats, true, true, false},
 		`history`:     {History, true, true, false},
 		`inbox`:       {Inbox, true, true, false},
-		`inspect`:     {Inspect, false, true, false},
 		`inventory`:   {Inventory, true, true, false},
 		`item`:        {Item, true, true, true}, // Admin only
-		`jobs`:        {Jobs, true, true, false},
+		`title`:       {Title, true, true, false},
 		`list`:        {List, false, true, false},
 		`locate`:      {Locate, true, true, true}, // Admin only
 		`lock`:        {Lock, false, true, false},
@@ -120,7 +130,8 @@ var (
 		`paz`:         {Paz, true, true, true}, // Admin only
 		`pet`:{Pet, false, true, false},
 		`picklock`:    {Picklock, false, true, false},
-		`pickpocket`:  {Pickpocket, false, true, false},
+		`steal`:       {Steal, false, true, false},
+		`plant`:       {Plant, false, true, false},
 		`prepare`:     {Prepare, true, true, true}, // Admin only
 		`print`:{Print, true, true, false},
 		`printline`:   {PrintLine, true, true, false},
@@ -128,31 +139,41 @@ var (
 		`pvp`:         {Pvp, true, true, false},
 		`quests`:      {Quests, true, true, false},
 		`quit`:        {Quit, true, true, false},
+		`questdebug`:  {QuestDebug, false, true, true}, // Admin only
 		`questtoken`:  {QuestToken, false, true, true}, // Admin only
-		`read`:{Read, false, true, false},
-		`reload`:{Reload, true, true, true},     // Admin only
+		`read`:        {Read, false, true, false},
+		`reload`:      {Reload, true, true, true},   // Admin only
+		`rep`:         {Report, true, true, false},
+		`reply`:       {Reply, true, true, false},
 		`remove`:      {Remove, false, false, false},  // Can't remove equipment in combat
+		`report`:      {Report, true, true, false},
 		`rename`:      {Rename, false, true, true},    // Admin only
 		`redescribe`:  {Redescribe, false, true, true}, // Admin only
 		`room`:        {Room, false, true, true},       // Admin only
 		`save`:        {Save, true, true, false},
+		`salvage`:     {Salvage, false, false, false}, // Can't salvage in combat
 		`say`:         {Say, true, true, false},
 		`scan`:        {Scan, false, true, false},
 		`search`:{Search, false, true, false},
 		`sell`:        {Sell, false, true, false},
 		`server`:      {Server, false, true, true}, // Admin only
 		`set`:         {Set, true, true, false},
+		`setdesc`:     {SetDesc, true, true, false},
+		`sethome`:     {SetHome, true, true, false},
+		`setmotd`:     {SetMotd, true, true, true}, // Admin only
 		`share`:       {Share, false, true, false},
 		`shoot`:       {Shoot, false, true, false},
 		`shout`:       {Shout, true, true, false},
 		`show`:        {Show, true, true, false},
 		`skills`:      {Skills, true, true, false},
 		`skillset`:    {Skillset, false, true, true}, // Admin only
-		`sneak`:       {Sneak, false, true, false},
+		`shadow`:      {Shadow, false, false, false},
+		`sneak`:       {Sneak, false, false, false}, // Can't sneak in combat
 		`sonic-shout`: {SonicShout, false, true, false},
 		`spawn`:       {Spawn, false, true, true}, // Admin only
 		`spell`:       {Spell, true, true, true},  // Admin only
 		`spells`:      {Spells, true, true, false},
+		`sort`:        {Sort, false, false, false}, // Can't sort items in combat
 		`stash`:       {Stash, false, false, false}, // Can't manipulate stash in combat
 		`status`:      {Status, true, true, false},
 		`stand`:       {Stand, true, true, false}, // Can stand when downed
@@ -165,10 +186,13 @@ var (
 		`target`:{Target, false, true, false},
 		`teleport`:    {Teleport, true, true, true}, // Admin only
 		`toxic-bite`:  {ToxicBite, false, true, false},
+		`throw`:       {Throw, false, true, false},
 		`track`:{Track, false, true, false},
-		`train`:       {Train, false, false, false}, // Can't train in combat
 		`taunt`:       {Taunt, false, true, false},
 		`trip`:        {Trip, false, true, false},
+		`warcry`:      {Warcry, false, true, false},
+		`rally`:       {Rally, false, true, false},
+		`tailsweep`:   {Trip, false, true, false},
 		`unlock`:{Unlock, false, true, false},
 		`undeafen`:    {UnDeafen, true, true, true}, // Admin only
 		`unmute`:      {UnMute, true, true, true},   // Admin only
@@ -255,6 +279,13 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 		return false, fmt.Errorf(`user %d not found`, userId)
 	}
 
+	// Any input clears manual AFK (except the afk command itself)
+	if user.ManualAFK && cmd != "afk" {
+		user.ManualAFK = false
+		user.AFKMessage = ""
+		user.SendText(`<ansi fg="8">You are no longer AFK.</ansi>`)
+	}
+
 	// Do not allow scripts to intercept server commands
 	if cmd != `server` {
 
@@ -330,10 +361,7 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 		userDisabled = user.Character.IsDisabled()
 
 		// Check if the "rest" is an item the character has
-		matchingItem, found := user.Character.FindInBackpack(rest)
-		if !found {
-			matchingItem, found = user.Character.FindOnBody(rest)
-		}
+		matchingItem, _, found := user.Character.FindItem(rest)
 
 		if found {
 			// If the item has a script, run it
@@ -360,7 +388,7 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 			user.SendText(fmt.Sprintf(
 				`<ansi fg="cyan">You lose your concentration as you flee! %d conviction is lost.</ansi>`,
 				cs.ConvictionSpent))
-			room.SendText(fmt.Sprintf(
+			room.SendTextVisual(fmt.Sprintf(
 				`<ansi fg="username">%s</ansi> breaks their concentration.`,
 				user.Character.Name), user.UserId)
 			// Fall through — let the flee command execute normally
@@ -433,7 +461,7 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 		}
 	}
 
-	if _, ok := emoteAliases[cmd]; ok {
+	if _, ok := actions.EmoteAliases[cmd]; ok {
 		handled, err := Emote(cmd, user, room, flags)
 		return handled, err
 	}
@@ -460,6 +488,23 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 	return false, nil
 }
 
+// GetAllUserCommands returns the names of all registered user commands.
+func GetAllUserCommands() []string {
+	result := []string{}
+	for cmd := range userCommands {
+		result = append(result, cmd)
+	}
+	return result
+}
+
+// IsAdminCommand reports whether the named command is admin-only.
+func IsAdminCommand(cmd string) bool {
+	if info, ok := userCommands[cmd]; ok {
+		return info.AdminOnly
+	}
+	return false
+}
+
 // GetCommandRegistry returns a snapshot of all registered commands for external use.
 // Callers should filter AdminOnly entries as appropriate.
 func GetCommandRegistry() map[string]CommandAccess {
@@ -483,6 +528,25 @@ func RegisterCommand(command string, handlerFunc UserCommand, disabledWhenDowned
 // TryRoomScripts is called to try both the onCommand_X direct route and also onCommand with a 'cmd' parameter.
 // Returns true if a script handled it. False if not.
 func TryRoomScripts(input, alias, rest string, userId int) (bool, error) {
+
+	// Quest engine: room_interact notification
+	// Fires before JS scripts so triggers can replace onCommand handlers.
+	user := users.GetByUserId(userId)
+	if user != nil {
+		room := rooms.LoadRoom(user.Character.RoomId)
+		if room != nil {
+			bridge := questengine.NewGameBridge(user, room.RoomId)
+			result := questengine.GetEngine().Notify("room_interact", questengine.EventDetails{
+				UserId: user.UserId,
+				RoomId: room.RoomId,
+				Verb:   alias,
+				Noun:   strings.ToLower(rest),
+			}, bridge, bridge)
+			if result.Handled {
+				return true, nil
+			}
+		}
+	}
 
 	// Try direct command room script first
 	cmdHandled, err := scripting.TryRoomCommand(alias, rest, userId)

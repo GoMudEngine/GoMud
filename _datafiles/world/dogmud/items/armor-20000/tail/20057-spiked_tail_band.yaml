@@ -1,0 +1,12 @@
+itemid: 20057
+name: spiked tail band
+namesimple: tail band
+description: A leather band studded with short iron spikes, fitted around
+  the tail. Each sweep rakes across the target, making it much harder
+  to keep footing.
+type: tail
+subtype: wearable
+value: 25
+weight: 1.5
+statmods:
+  knockdown: 10

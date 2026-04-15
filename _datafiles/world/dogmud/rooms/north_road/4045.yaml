@@ -1,0 +1,49 @@
+roomid: 4045
+zone: North Road
+title: Common Room
+description: >
+  Low-ceilinged and warm, the air thick with woodsmoke and the
+  yeasty smell of old ale soaked into the floorboards. A stone
+  hearth dominates the far wall, its fire crackling behind an
+  iron grate. Rough tables fill the room, most empty this time
+  of day, their surfaces scarred by knife points and cup rings.
+  A bar runs along the back wall where a heavyset man keeps
+  his bottles in careful rows. The ceiling beams are dark with
+  years of smoke. It is the kind of room that has absorbed a
+  great many conversations and remembers none of them.
+biome: farmland
+coord:
+  x: -11
+  y: -11
+  z: -1
+exits:
+  east:
+    roomid: 4042
+  south:
+    roomid: 4046
+nouns:
+  hearth: A wide stone hearth set into the wall, blackened by
+    years of use. The fire burns steady — not roaring, not dying,
+    maintained by someone who knows exactly how much wood a room
+    this size needs. The iron grate in front has been repaired
+    more than once, one bar slightly thicker where it was
+    re-forged.
+  bar: A plank of dark oak laid across two barrel-ends, polished
+    smooth by elbows and spilled drink. Behind it, bottles stand
+    in careful rows on a shelf — not many, but each in its place.
+    A clay pitcher of water sits at one end, a stack of wooden
+    cups at the other.
+  tables: Rough-hewn tables scattered across the room, each one
+    different — built at different times from whatever wood was
+    available. Their surfaces are maps of use -- knife marks, burn
+    rings, initials carved by people who are no longer here.
+idlemessages:
+- The fire pops, sending a shower of sparks up the chimney.
+- A floorboard creaks under the barkeep's weight as he moves
+  behind the bar.
+- The smell of something cooking drifts from somewhere deeper
+  in the building.
+spawninfo:
+  - mobid: 278
+  - mobid: 279
+  - mobid: 280

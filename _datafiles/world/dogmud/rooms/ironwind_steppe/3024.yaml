@@ -8,15 +8,13 @@ description: The grass grows tall here, reaching waist-height in thick
   past a wolf or boar bedded down in this tall grass without ever
   seeing it. The air smells of dry hay and sun-warmed earth.
 biome: land
+coord:
+  x: 14
+  y: 3
+  z: 0
 exits:
-  east:
-    roomid: 3023
-  south:
-    roomid: 3022
-  north:
-    roomid: 3026
   west:
-    roomid: 3025
+    roomid: 3023
 nouns:
   grass: Tall, dense steppe grass in shades of gold and brown,
     swaying in continuous waves. The stems are tough and wiry,

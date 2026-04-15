@@ -1,0 +1,45 @@
+roomid: 4049
+zone: North Road
+title: Betta's Yard
+description: >
+  The farmhouse is stone-walled and low, built to endure weather
+  rather than impress anyone. A front door of heavy oak faces
+  the yard, and a side path leads around to a back door that
+  is not visible from the approach. Chickens scratch in the
+  packed dirt. A wooden bench sits by the front door, a
+  half-finished whittling project resting on its seat — a
+  small bird with its wings tucked. Smoke curls from the
+  chimney in a thin, steady line. Everything here is
+  maintained, nothing is new.
+biome: farmland
+coord:
+  x: -13
+  y: -9
+  z: 0
+exits:
+  east:
+    roomid: 4048
+  south:
+    roomid: 4050
+nouns:
+  whittling: A half-finished carving resting on the bench — a
+    small wooden bird, wings folded against its body, head
+    tilted slightly as if listening to something only it can
+    hear. The knife work is careful but unpolished, the marks
+    of someone still learning the craft. Wood shavings litter
+    the bench around it.
+  door: A heavy oak door, its surface dark with weather and age.
+    The iron handle is worn smooth. The threshold has been swept
+    recently — a broom leans against the wall beside the door.
+    The door is closed but not locked.
+  chickens: Brown hens picking through the dirt, scratching for
+    grubs with the focused intensity of creatures that have
+    found their calling. A rooster perches on the low wall,
+    looking offended by everything.
+idlemessages:
+- A chicken flutters up to the bench and is shooed away by
+  an invisible hand from the doorway.
+- The whittling knife catches a glint of light on the bench.
+- Smoke from the chimney shifts direction as the wind changes.
+spawninfo:
+  - mobid: 277

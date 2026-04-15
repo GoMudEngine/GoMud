@@ -1,0 +1,27 @@
+roomid: 488
+zone: Thornwall City
+title: Overflow Chamber
+description: >
+  A wider section of the drainage system where multiple channels converge
+  into a broad, shallow pool. The water is ankle-deep and murky, rippling
+  faintly from unseen currents below. The walls are slick with condensation
+  and patches of pale fungus that glow faintly in the lantern light. Iron
+  rings set into the walls at intervals once held chains or ropes -- perhaps
+  for maintenance access. The passage continues east through a low archway
+  and south into a narrowing tunnel.
+biome: cave
+coord:
+  x: 1
+  y: -3
+  z: -2
+exits:
+  north:
+    roomid: 486
+  east:
+    roomid: 489
+spawninfo:
+  - mobid: 244
+idlemessages:
+- The water ripples faintly, disturbed by something unseen.
+- Pale fungus on the walls pulses with a dim, sickly light.
+- A bubble rises from the murky water and pops softly.

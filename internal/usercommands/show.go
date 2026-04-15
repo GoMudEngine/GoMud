@@ -66,7 +66,7 @@ func Show(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			)
 
 			// Tell the rest of the room
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> shows their <ansi fg="item">%s</ansi> to <ansi fg="username">%s</ansi>.`, user.Character.Name, showItem.DisplayName(), targetUser.Character.Name),
 				targetUser.UserId,
 				user.UserId)
@@ -99,7 +99,7 @@ func Show(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				// Do trigger of onShow
 				scripting.TryMobScriptEvent(`onShow`, targetMob.InstanceId, user.UserId, `user`, map[string]any{`gold`: 0, `item`: showItem})
 
-				room.SendText(
+				room.SendTextVisual(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> shows their <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, user.Character.Name, showItem.DisplayName(), targetMob.Character.Name),
 					user.UserId,
 				)

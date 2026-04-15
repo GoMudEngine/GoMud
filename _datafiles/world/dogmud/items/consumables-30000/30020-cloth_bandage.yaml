@@ -3,8 +3,8 @@ name: cloth bandage
 namesimple: bandage
 description: A clean strip of linen wound into a tight roll. When applied to a
   wound it stems bleeding and promotes healing.
-type: potion
-subtype: drinkable
+type: object
+subtype: usable
 uses: 1
 buffids:
   - 5

@@ -10,11 +10,13 @@ description: North of the market, the city settles into a residential neighbourh
   quiet compared to the market, with the particular hush of a neighbourhood where
   people are either at work or sleeping.
 biome: city
+coord:
+  x: 5
+  y: 2
+  z: 0
 exits:
   south:
     roomid: 478
-  west:
-    roomid: 467
 nouns:
   houses: Narrow-fronted houses with shared walls, each one slightly different from
     its neighbours -- a different colour of shutter, a window box here, a carved

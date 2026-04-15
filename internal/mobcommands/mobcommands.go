@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/keywords"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -23,14 +24,14 @@ type CommandAccess struct {
 var (
 	mobCommands map[string]CommandAccess = map[string]CommandAccess{
 		"aid":            {Aid, false},
-		"alchemy":        {Alchemy, false},
 		"attack":         {Attack, false},
-		"backstab":       {Backstab, false},
 		"bash":           {Bash, false},
+		"bite":           {Bite, false},
 		"befriend":       {Befriend, false},
 		"break":          {Break, false},
 		"broadcast":      {Broadcast, false},
 		"cast":           {Cast, false},
+		"craft":          {Craft, false},
 		"charge":         {Charge, false},
 		"consume":        {Consume, false},
 		"converse":       {Converse, false},
@@ -60,9 +61,9 @@ var (
 		"put":            {Put, false},
 		"remove":         {Remove, false},
 		"replyto":        {ReplyTo, true},
-		"roar":           {Roar, false},
 		"say":            {Say, true},
 		"sayto":          {SayTo, true},
+		"selljunk":       {Selljunk, false},
 		"saytoonly":      {SayToOnly, true},
 		"shout":          {Shout, true},
 		"shoot":          {Shoot, false},
@@ -71,7 +72,6 @@ var (
 		"submit":         {Submit, false},
 		"suicide":        {Suicide, true},
 		//		"stash":  {Stash, false},
-		"throw":  {Throw, false},
 		"trip":   {Trip, false},
 		"wander": {Wander, false},
 	}
@@ -166,7 +166,7 @@ func TryCommand(cmd string, rest string, mobId int) (bool, error) {
 		}
 
 	}
-	if emoteText, ok := emoteAliases[cmd]; ok {
+	if emoteText, ok := actions.EmoteAliases[cmd]; ok {
 		handled, err := Emote(emoteText, mob, room)
 		return handled, err
 	}

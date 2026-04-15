@@ -1,0 +1,39 @@
+mobid: 251
+zone: Marches Spur Road
+statpool: 85
+itemdropchance: 0
+hostile: false
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+  - gossiper
+idlecommands:
+  - 'emote wipes the bar with a rag in long, practiced strokes'
+  - ''
+  - 'emote stokes the fire, sending a cascade of sparks upward'
+  - ''
+  - 'emote slides a drink to a patron without looking up'
+  - ''
+activitylevel: 12
+character:
+  name: innkeeper Thessa
+  description: |
+    A solid woman with copper-tinted skin that catches the
+    firelight like a new coin -- her particular mark from the
+    Chrysalis. She runs the Broken Yoke with the efficient
+    warmth of someone who has fed ten thousand travelers and
+    remembers none of their names but all of their preferences.
+    Her hands are always moving: wiping, pouring, stacking,
+    adjusting. She watches the room the way a shepherd watches
+    a flock, alert without anxiety.
+  speciesid: 1
+  level: 1
+  gold: 50
+  stats:
+    charisma:
+      training: 8
+    perception:
+      training: 6
+    willpower:
+      training: 4

@@ -30,11 +30,11 @@ func Map(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	// Detail level scales with Perception (1–4 equivalent tiers).
 	perceptionAdj := user.Character.Stats.Perception.ValueAdj
 	skillLevel := 1
-	if perceptionAdj >= 75 {
+	if perceptionAdj >= 175 {
 		skillLevel = 4
-	} else if perceptionAdj >= 50 {
+	} else if perceptionAdj >= 135 {
 		skillLevel = 3
-	} else if perceptionAdj >= 25 {
+	} else if perceptionAdj >= 110 {
 		skillLevel = 2
 	}
 

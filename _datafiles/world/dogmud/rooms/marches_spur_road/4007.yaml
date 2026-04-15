@@ -1,0 +1,48 @@
+roomid: 4007
+zone: Marches Spur Road
+title: Ruined Barn
+description: >
+  The farm track ends at a collapsed barn, its north wall caved in and
+  half the roof gone. Massive oak beams jut from the wreckage like the
+  ribs of some great beast, and vines have climbed the remaining walls
+  in thick green curtains. The interior is dim and smells of old hay
+  and animal musk. The south half of the roof still holds, creaking in
+  the wind. Someone has been here recently -- a firepit of fresh ash
+  sits near the entrance, and boot prints track through the dust.
+  Against the back wall, a stack of <ansi fg="itemname">crates</ansi>
+  sits in shadow, their locks broken and road freight markings still
+  visible on the wood.
+biome: farmland
+coord:
+  x: -9
+  y: -7
+  z: 0
+exits:
+  east:
+    roomid: 4006
+containers:
+  crates: {}
+nouns:
+  roof: The north side of the roof has collapsed entirely, beams snapped
+    and hanging at angles like broken ribs. Daylight pours through the
+    gap, illuminating dust motes in the air. The south half still holds,
+    but it groans and creaks with every gust of wind. It will not last
+    many more seasons.
+  firepit: A circle of stones around a pile of fresh ash, still faintly
+    warm. Boot prints surround it -- two or three sets of different sizes.
+    Someone has been sleeping here, and recently. A charred bone and
+    the remains of a meal sit at the edge of the stones.
+  crates: Wooden crates stacked against the back wall, partially hidden
+    in shadow. The locks have been forced open and hang broken from their
+    hasps. Road freight markings are stamped on the sides -- shipping
+    labels from merchants along the spur road. These were not meant to
+    end up in an abandoned barn.
+spawninfo:
+- mobid: 254
+- itemid: 40039
+  container: crates
+  respawnrate: 5 real minutes
+idlemessages:
+- The remaining roof beams creak and groan as the wind pushes against them.
+- A rat scurries along the base of the wall and disappears into the rubble.
+- Dust motes drift through the shaft of light where the roof has fallen.

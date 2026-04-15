@@ -1,0 +1,36 @@
+mobid: 244
+zone: Thornwall City
+statpool: 8
+itemdropchance: 0
+hostile: true
+maxwander: 1
+groups:
+  - rats
+  - animal
+idlecommands:
+  - 'emote scurries along the base of the wall, noses twitching'
+  - 'emote squeaks and fights over a scrap of something unidentifiable'
+  - ''
+  - ''
+combatcommands:
+  - 'emote swarms forward, biting at exposed skin'
+  - ''
+  - ''
+activitylevel: 20
+character:
+  name: tunnel rat swarm
+  description: |
+    A writhing mass of grey-brown rats, each the size of a man's fist,
+    moving together as a single chittering entity. Their eyes gleam red
+    in the lantern light. The swarm flows around obstacles like water,
+    surging toward anything that smells like food -- which, down here,
+    includes you. They are not individually dangerous but together they
+    are a biting, scratching nuisance that can overwhelm the unwary.
+  speciesid: 10
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 3
+    vitality:
+      training: -2

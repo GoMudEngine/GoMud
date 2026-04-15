@@ -9,3 +9,4 @@ subtype: mundane
 component_tag: steppe-spirit
 weight: 0.5
 value: 50
+is_component: false

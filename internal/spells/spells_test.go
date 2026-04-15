@@ -286,3 +286,44 @@ func TestGetEligibleSpells(t *testing.T) {
 	assert.False(t, found["pyretic-surge"], "pyretic-surge (folds=12) should NOT be eligible at skill 20")
 	assert.False(t, found["sparks"], "known spell should not appear")
 }
+
+// ─── GetEligibleSpells quest-gated exclusion ─────────────────────────────────
+
+func TestGetEligibleSpells_QuestGatedExcluded(t *testing.T) {
+	// Build a registry that contains one regular spell and one quest-gated spell,
+	// both well within the skill threshold so the only reason to exclude the
+	// quest-gated one is the QuestRequired field.
+	allSpells = map[string]*SpellData{
+		"sparks": {
+			SpellId:   "sparks",
+			Name:      "Sparks",
+			Type:      HarmSingle,
+			BaseFolds: 4,
+			Schools:   []string{SchoolElemental},
+			// No QuestRequired → discoverable
+		},
+		"summon-steppe-spirit": {
+			SpellId:      "summon-steppe-spirit",
+			Name:         "Summon Steppe Spirit",
+			Type:         HelpSingle,
+			BaseFolds:    6,
+			Schools:      []string{SchoolManifestation},
+			QuestRequired: "12-end",
+			// Quest-gated → must NEVER appear in eligible list
+		},
+	}
+
+	// High skill → maxFolds = 32, so both spells are within range by folds.
+	// Empty spellbook so neither is "known".
+	known := map[string]int{}
+	eligible := GetEligibleSpells(known, 100, SchoolElemental, SchoolManifestation)
+
+	found := map[string]bool{}
+	for _, id := range eligible {
+		found[id] = true
+	}
+
+	assert.True(t, found["sparks"], "sparks (no quest required) should be discoverable")
+	assert.False(t, found["summon-steppe-spirit"],
+		"summon-steppe-spirit has QuestRequired set and must never appear in eligible list")
+}

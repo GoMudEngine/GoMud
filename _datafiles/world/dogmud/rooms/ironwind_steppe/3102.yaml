@@ -9,13 +9,17 @@ description: A long, narrow passage where the wind is channeled to
   the wind stings exposed skin. The passage curves gently, and
   the light from outside is reduced to a dim glow.
 biome: cave
+coord:
+  x: 12
+  y: 8
+  z: 0
 exits:
-  south:
-    roomid: 3100
   north:
     roomid: 3105
   east:
     roomid: 3103
+  south:
+    roomid: 3100
 nouns:
   fluting: Narrow channels carved into the cave walls by wind
     erosion, each a slightly different depth and angle. When

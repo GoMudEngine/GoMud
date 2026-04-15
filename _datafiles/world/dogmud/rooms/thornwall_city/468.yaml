@@ -10,6 +10,10 @@ description: The interior of the temple is a single vaulted nave, its ceiling lo
   temple serves no single deity -- it is a place for contemplation, community, and
   the management of tithes.
 biome: city
+coord:
+  x: 2
+  y: 2
+  z: 0
 exits:
   south:
     roomid: 467

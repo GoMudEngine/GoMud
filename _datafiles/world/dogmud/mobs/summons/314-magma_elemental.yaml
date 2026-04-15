@@ -1,0 +1,42 @@
+mobid: 314
+zone: Summons
+archetype: fighting
+statpool: 130
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - summon
+  - elemental
+idlecommands:
+  - 'emote rumbles from deep within, lava bubbling at the surface'
+  - ''
+  - 'emote cracks along one arm, a fresh seam of orange light widening'
+  - ''
+  - 'emote drips molten rock that hisses and solidifies on the ground'
+activitylevel: 50
+combatcommands:
+  - 'bash'
+  - ''
+  - ''
+  - ''
+character:
+  name: magma elemental
+  description: |
+    A towering figure of cooling basalt and churning magma, the magma
+    elemental moves with slow, inevitable purpose. Its outer shell is
+    black rock that constantly fractures to reveal the molten interior
+    beneath — each crack sealing and reopening as it moves, painting it
+    in shifting veins of orange and red. The ground around it blackens
+    and smokes. Standing near it is like standing next to an open forge.
+    Its voice, if it has one, would be the grinding roar of tectonic
+    plates.
+  speciesid: 40
+  level: 1
+  stats:
+    strength:
+      training: 25
+    vitality:
+      training: 20
+    willpower:
+      training: 5

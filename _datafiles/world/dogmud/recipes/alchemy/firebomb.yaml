@@ -1,0 +1,18 @@
+id: firebomb
+name: Firebomb
+skill: alchemy
+skill_minimum: 25
+station: alchemy_bench
+time_rounds: 4
+ingredients:
+  - item_tag: putrid-residue
+    quantity: 1
+  - item_tag: coal-dust
+    quantity: 1
+  - item_tag: bottle
+    quantity: 1
+output:
+  item_id: 30058
+  quantity: 1
+success_message: "The coal ignites briefly then stabilizes inside the flask. A firebomb!"
+failure_message: "The mixture sputters and goes inert. The materials are lost."

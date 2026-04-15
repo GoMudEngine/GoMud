@@ -1,0 +1,28 @@
+roomid: 494
+zone: Thornwall City
+title: Storage Alcove
+description: >
+  A shallow alcove off the guard post, stacked with supplies for the
+  tunnel operation. Bedrolls are shoved against one wall alongside a crate
+  of hard bread and dried meat. A water barrel stands in the corner, its
+  tap dripping slowly onto the stone floor. This is where the tunnel
+  guards sleep and eat between shifts -- functional but miserable.
+biome: cave
+coord:
+  x: 3
+  y: -5
+  z: -2
+exits:
+  west:
+    roomid: 493
+spawninfo:
+  - mobid: 245
+nouns:
+  supplies: Hard bread, strips of dried meat, a few onions going soft.
+    Tunnel rations -- enough to keep a guard fed, not enough to keep
+    them happy about it.
+  bedrolls: Thin wool bedrolls laid directly on the stone. They smell
+    of mildew and sweat. Nobody sleeps well down here.
+idlemessages:
+- The water barrel drips steadily onto the stone floor.
+- A bedroll lies twisted, as if its last occupant left in a hurry.

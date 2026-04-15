@@ -33,6 +33,11 @@ From `$ARGUMENTS`, identify:
 - Delivery/completion NPC(s) (existing or new)
 - Quest type: fetch, delivery, investigation, combat, escort, multi-zone
 - Approximate step count
+- Is this a branching/opposed quest? If yes, identify:
+  - The branch point (which step forces a choice)
+  - The branch NPC(s) (one per path)
+  - What flag key/values to use (e.g., `branch: [sylara, rhett]`)
+  - What followup quests each path unlocks
 
 **If the concept is vague or underspecified, ASK the user for clarification
 before proceeding.** Specifically ask about:
@@ -87,6 +92,32 @@ Step 2: "evidence" — granted by room script
   Description: "..."
   Hint: "..."
 ```
+
+---
+
+**BRANCHING / OPPOSED QUEST** (include only if applicable)
+
+If this quest has mutually exclusive paths:
+
+Flag declaration:
+```yaml
+flags:
+  - key: {flagname}
+    values: [{path1}, {path2}]
+    description: "{what the flag tracks}"
+```
+
+Branch NPCs:
+- Path A: {NPC name} (mob {id}) — sets `{questid}-{flagname}: {path1}`
+- Path B: {NPC name} (mob {id}) — sets `{questid}-{flagname}: {path2}`
+
+Followup quest gating:
+- Path A quest: `questFlagRequired: {"{questid}-{flagname}": "{path1}"}`
+- Path B quest: `questFlagRequired: {"{questid}-{flagname}": "{path2}"}`
+
+Dismissal nodes needed:
+- Path A NPC must dismiss Path B players (and vice versa)
+- Place at TOP of nodes list in dialogue YAML
 
 ---
 
@@ -157,7 +188,32 @@ complete:
 
 - [ ] Every `grantsQuest` dialogue node has `"quest"` and `"task"` in triggers
 - [ ] Every `grantsQuest` pattern entry has `"quest"` and `"task"` in keywords
+- [ ] **Narrative voice:** NPC `text` uses first person ("I", "my"). Hints
+      describe player options from the player's perspective. Never write
+      3rd-person self-references like "Ask about why she left" — write
+      "You could ask why she left" or "You could ask about the marriage."
+- [ ] **Trigger discoverability:** every trigger word appears in a hint,
+      NPC dialogue, room description, or quest log entry. If the player
+      has to guess a keyword, the quest is broken.
+- [ ] **Prefer `questRequired` over `requires`** for quest-gated nodes.
+      `requires` depends on memory that can expire. Quest tokens are permanent.
+- [ ] **`expiryPeriod` should almost never be set.** Memory expiry bricks
+      quests when `requires`-gated nodes become unreachable. Only use
+      `expiryPeriod` for quests where urgency is the explicit design
+      intent (e.g., "deliver this before the trolls attack"). Default:
+      leave empty or omit entirely.
 - [ ] Item delivery steps have BOTH dialogue path AND `onGive` script path
+- [ ] **give.go gotcha:** `give.go` transfers the item to the mob BEFORE
+      `onGive` fires. The script cannot undo the transfer. Every NPC that
+      should accept a quest item needs an `onGive` script. NPCs that should
+      NOT accept a quest item (e.g., the quest giver who handed it out) need
+      an `onGive` that calls `user.GiveItem(itemId)` to return it.
+- [ ] **Lost item recovery:** Every quest giver who hands out a physical item
+      must have a recovery dialogue node (e.g., `lost_report`) that gives a
+      replacement copy if the player has the quest but lost the item.
+- [ ] **NPC item handoff via dialogue:** Use `givesItem: <itemId>` on dialogue
+      tree nodes to hand quest items to the player. This is preferred over JS
+      scripts for simple handoffs. The player sees "You receive a <itemname>."
 - [ ] `requiresItem` nodes — confirm item exists, is obtainable, and is in the
       player's inventory at that point (not consumed earlier)
 - [ ] Room scripts that give items — confirm the noun appears in room
@@ -168,10 +224,24 @@ complete:
       only) and document why
 - [ ] Multi-zone quests — confirm NPCs exist and have spawninfo in their rooms
 - [ ] `questExcluded` on completion nodes prevents double-completion
+- [ ] **End-token exclusion:** every `grantsQuest` node excludes BOTH the
+      granted token AND `{questid}-end` in `questExcluded` — prevents
+      re-offering completed quests
 - [ ] Quest YAML `rewards` section is filled out (gold, item, message)
 - [ ] Instance saves: list any rooms/mobs that have instance saves to delete
 - [ ] Line width: all description text wraps at 80 chars
 - [ ] No raw numbers in player-facing text
+- [ ] **Branching quests:** If quest has flags, declare them in quest YAML
+      with allowed values. Undeclared flags cause startup panic.
+- [ ] **Flag-gated nodes:** Followup quest offers use `questFlagRequired`
+      to gate on the player's branch choice
+- [ ] **Dismissal nodes:** Every branch NPC has a dismissal node at the
+      TOP of the nodes list for wrong-path players. Without this, keyword
+      patterns fire and players think there's a quest to discover.
+- [ ] **Mid-quest variants:** Root variants exist for all cross-NPC visit
+      states (wrong-path player visits during Q, after Q, etc.)
+- [ ] **Quest items not components:** Delivery items must NOT have
+      `is_component: true` — component pouch is not checked by give/requiresItem
 
 ---
 

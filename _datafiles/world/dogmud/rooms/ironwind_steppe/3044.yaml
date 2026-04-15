@@ -9,15 +9,13 @@ description: The ridge drops away to the southeast here in a series of
   rock to the dark volcanic stone of the basalt coulees, the
   landscape becoming increasingly broken and maze-like.
 biome: cliffs
+coord:
+  x: 16
+  y: -1
+  z: 0
 exits:
-  west:
-    roomid: 3042
   north:
     roomid: 3043
-  south:
-    roomid: 3050
-  east:
-    roomid: 3065
 nouns:
   steps: Natural steps in the rock face, each a drop of a foot or
     two. The basalt has fractured in columnar patterns, creating

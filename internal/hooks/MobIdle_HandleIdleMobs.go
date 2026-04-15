@@ -6,6 +6,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/GoMudEngine/GoMud/internal/behaviortree"
+	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/conversations"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -14,6 +16,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
+	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/GoMudEngine/GoMud/internal/worldevents"
 	"gopkg.in/yaml.v2"
@@ -49,17 +52,50 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 		}
 	}
 
+	// Non-crafter merchant restock (supply cart delivery for regular shops)
+	if mobs.TickMobShopRestock(mob) {
+		if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
+			msgs := []string{
+				`A supply cart pulls up outside. <ansi fg="mobname">%s</ansi> sorts through a fresh delivery.`,
+				`<ansi fg="mobname">%s</ansi> unpacks a crate of supplies and restocks the shelves.`,
+				`A runner drops off a bundle of goods. <ansi fg="mobname">%s</ansi> checks the contents and nods.`,
+			}
+			msg := fmt.Sprintf(msgs[util.Rand(len(msgs))], mob.Character.Name)
+			sendVisualRoomText(room, msg)
+		}
+	}
+
 	// Stage 38.5.4: Crafter mob tick — background activity alongside normal idle
 	if result := mobs.TickMobCraft(mob); result != nil {
 		if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
-			if result.Success {
-				room.SendText(fmt.Sprintf(
+			var msg string
+			if result.Restocked && !result.Success && result.RecipeName == "" {
+				// Restock-only tick — supply cart delivery, no craft.
+				msgs := []string{
+					`A supply cart pulls up outside. <ansi fg="mobname">%s</ansi> sorts through a fresh delivery of materials.`,
+					`<ansi fg="mobname">%s</ansi> unpacks a crate of supplies and stacks them neatly behind the counter.`,
+					`A runner drops off a bundle of materials. <ansi fg="mobname">%s</ansi> checks the contents and nods.`,
+				}
+				msg = fmt.Sprintf(msgs[util.Rand(len(msgs))], mob.Character.Name)
+			} else if result.Success {
+				msg = fmt.Sprintf(
 					`<ansi fg="mobname">%s</ansi> finishes crafting and sets a new item on the shelf.`,
-					mob.Character.Name))
-			} else {
-				room.SendText(fmt.Sprintf(
+					mob.Character.Name)
+			} else if result.RecipeName != "" {
+				msg = fmt.Sprintf(
 					`<ansi fg="mobname">%s</ansi> frowns at a failed attempt and discards the ruined materials.`,
-					mob.Character.Name))
+					mob.Character.Name)
+			}
+			// Visual text — suppress in dark rooms except for nightvision
+			if room.GetVisibility() < 1 {
+				for _, uid := range room.GetPlayers() {
+					u := users.GetByUserId(uid)
+					if u != nil && u.Character.HasFlagFromAnySource(buffs.NightVision) {
+						u.SendText(msg)
+					}
+				}
+			} else {
+				sendVisualRoomText(room, msg)
 			}
 		}
 		// Emit world event for rare crafts
@@ -109,6 +145,14 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 				mob.SetTempData("lastGossipRound", roundNow)
 			}
 		}
+	}
+
+	// Behavior tree: try before JS
+	if behaviortree.TryMobBehavior(mob.InstanceId, behaviortree.EventContext{
+		EventType: "mob_idle",
+		RoomId:    mob.Character.RoomId,
+	}) {
+		return events.Continue
 	}
 
 	// If they have idle commands, maybe do one of them?
@@ -165,6 +209,8 @@ var eventTypeKey = map[worldevents.WorldEventType]string{
 	worldevents.PackStrengthened:        "PackStrengthened",
 	worldevents.PlayerMutationMilestone: "PlayerMutationMilestone",
 	worldevents.PlayerCraftedRare:       "PlayerCraftedRare",
+	worldevents.PlayerDiedPvE:           "PlayerDiedPvE",
+	worldevents.MobKilledByPlayer:       "MobKilledByPlayer",
 }
 
 var significanceKey = map[worldevents.Significance]string{
@@ -206,7 +252,7 @@ func mobHasGroup(mob *mobs.Mob, groupName string) bool {
 func buildGossipLine(mob *mobs.Mob) string {
 	gossipTemplatesOnce.Do(loadGossipTemplates)
 
-	// Build a filter: show Regional+ events for this mob's region
+	// Build a filter: show Local+ events for this mob's zone/region
 	zone := mob.Character.Zone
 	region := ""
 	if zCfg := rooms.GetZoneConfig(zone); zCfg != nil {
@@ -214,7 +260,8 @@ func buildGossipLine(mob *mobs.Mob) string {
 	}
 
 	filter := &worldevents.WorldEventFilter{
-		MinSignificance: worldevents.Regional,
+		MinSignificance: worldevents.Local,
+		ZoneName:        zone,
 		RegionName:      region,
 	}
 
@@ -228,8 +275,41 @@ func buildGossipLine(mob *mobs.Mob) string {
 		return ""
 	}
 
-	// Pick a random recent event
-	evt := evts[util.Rand(len(evts))]
+	// Filter out events this mob recently gossiped about (dedup window).
+	var recentEventKeys []string
+	if v := mob.GetTempData("recentGossipEvents"); v != nil {
+		recentEventKeys, _ = v.([]string)
+	}
+	var candidates []worldevents.WorldEvent
+	for _, e := range evts {
+		eKey := fmt.Sprintf("%d-%s", e.Round, e.Description)
+		skip := false
+		for _, rk := range recentEventKeys {
+			if eKey == rk {
+				skip = true
+				break
+			}
+		}
+		if !skip {
+			candidates = append(candidates, e)
+		}
+	}
+	if len(candidates) == 0 {
+		// All recent events already gossiped — clear history and retry
+		candidates = evts
+		recentEventKeys = nil
+	}
+
+	// Pick a random event from deduplicated candidates
+	evt := candidates[util.Rand(len(candidates))]
+
+	// Track this event as recently gossiped (keep last 5)
+	evtKey := fmt.Sprintf("%d-%s", evt.Round, evt.Description)
+	recentEventKeys = append(recentEventKeys, evtKey)
+	if len(recentEventKeys) > 5 {
+		recentEventKeys = recentEventKeys[len(recentEventKeys)-5:]
+	}
+	mob.SetTempData("recentGossipEvents", recentEventKeys)
 
 	// Build the template key: "EventType-Significance"
 	typeStr, ok := eventTypeKey[evt.Type]
@@ -240,13 +320,23 @@ func buildGossipLine(mob *mobs.Mob) string {
 	if !ok {
 		sigStr = "Regional"
 	}
-	key := typeStr + "-" + sigStr
+	baseKey := typeStr + "-" + sigStr
 
-	templates, ok := gossipTemplates[key]
-	if !ok || len(templates) == 0 {
+	// Try distance-aware template: "Local" if same zone, "Distant" otherwise
+	distance := "Distant"
+	if evt.ZoneName == zone {
+		distance = "Local"
+	}
+
+	templates, found := gossipTemplates[baseKey+"-"+distance]
+	if !found || len(templates) == 0 {
+		// Fall back to base key without distance suffix
+		templates, found = gossipTemplates[baseKey]
+	}
+	if !found || len(templates) == 0 {
 		// Try without significance
 		for _, s := range []string{"Global", "Regional", "Local"} {
-			if templates, ok = gossipTemplates[typeStr+"-"+s]; ok && len(templates) > 0 {
+			if templates, found = gossipTemplates[typeStr+"-"+s]; found && len(templates) > 0 {
 				break
 			}
 		}

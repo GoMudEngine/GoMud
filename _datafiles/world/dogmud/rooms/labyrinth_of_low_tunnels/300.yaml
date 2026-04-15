@@ -8,6 +8,10 @@ description: The crack in the cliff face gives way to a steep chute of slick bas
   too close together, as though made for hands much smaller than yours. The air turns
   cold and damp within a few steps, carrying the faint stink of something animal.
 biome: cave
+coord:
+  x: -12
+  y: 7
+  z: 0
 exits:
   east:
     roomid: 121

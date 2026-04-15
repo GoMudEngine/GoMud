@@ -10,6 +10,10 @@ description: A wall of stacked stone and sharpened sticks blocks most of the pas
   air that seeps through the gap is warmer still, carrying the strongest concentration
   of smoke and animal musk yet. You are deep now. Very deep. And very unwelcome.
 biome: cave
+coord:
+  x: -12
+  y: 3
+  z: -2
 exits:
   north:
     roomid: 314

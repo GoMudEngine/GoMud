@@ -1,0 +1,13 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">hearty-stew</ansi> (cooking recipe)
+
+Meat and wild vegetables simmered into a rich, warming stew that
+restores stamina and keeps the body fueled through hard work.
+
+<ansi fg="yellow">━━━ Crafting ━━━</ansi>
+
+  <ansi fg="yellow">Skill:</ansi>       cooking (minimum 5)
+  <ansi fg="yellow">Station:</ansi>     cooking fire
+  <ansi fg="yellow">Ingredients:</ansi> raw meat (x1), wild vegetables (x1),
+                 water flask (x1)
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help cooking</ansi>, <ansi fg="command">help craft</ansi>

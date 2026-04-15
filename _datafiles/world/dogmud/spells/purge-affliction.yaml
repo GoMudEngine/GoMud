@@ -7,5 +7,12 @@ schools:
   - vital
 cost: 75
 waitrounds: 2
-difficulty: 0
+difficulty: 20
 primarystat: willpower
+cast_user_text: >-
+  You focus Chrysalis energy inward, seeking out foreign agents.
+cast_room_text: >-
+  {source} enters a meditative focus, Chrysalis energy pulsing
+  softly.
+wait_user_text: You feel the Chrysalis isolating the toxins...
+wait_room_text: "{source} sways slightly as energy pulses through them..."

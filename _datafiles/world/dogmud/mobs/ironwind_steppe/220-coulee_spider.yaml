@@ -6,6 +6,8 @@ hostile: true
 maxwander: 2
 groups:
   - animal
+hates:
+  - insectoid
 archetype: fighting
 mutationchance: 15
 idlecommands:

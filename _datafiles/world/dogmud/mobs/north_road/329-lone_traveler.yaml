@@ -1,0 +1,28 @@
+mobid: 329
+zone: North Road
+statpool: 100
+hostile: false
+non_combatant: true
+charm_immune: true
+groups:
+  - humanoid
+activitylevel: 10
+idlecommands:
+  - 'emote watches the road north with tired eyes'
+  - ''
+  - 'emote tears a strip of dried meat and chews slowly'
+  - ''
+  - 'emote adjusts the pack at her feet'
+  - ''
+character:
+  name: lone traveler
+  description: >-
+    A weathered woman in a road-stained cloak, sitting on a
+    flat rock with the patient stillness of someone who has
+    been walking for days and is not yet done. A heavy pack
+    rests at her feet. She has the look of someone who has
+    seen the road between here and Stillwater enough times
+    to know what to worry about and what to ignore.
+  speciesid: 1
+  level: 1
+  gold: 10

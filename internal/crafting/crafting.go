@@ -102,10 +102,36 @@ func GetAll() map[string]*RecipeSpec {
 	return allRecipes
 }
 
-// FindRecipeByName does a case-insensitive substring search across recipe names.
-// Returns the first match, or nil if none found.
+// recipeByOutputId is a lazy-built index from output item ID to recipe.
+var recipeByOutputId map[int]*RecipeSpec
+
+// GetRecipeByOutputItemId returns the recipe that produces the given item ID,
+// or nil if no recipe outputs that item. Builds an index on first call.
+func GetRecipeByOutputItemId(itemId int) *RecipeSpec {
+	if recipeByOutputId == nil {
+		recipeByOutputId = make(map[int]*RecipeSpec)
+		for _, r := range allRecipes {
+			if r.Output.ItemId > 0 {
+				recipeByOutputId[r.Output.ItemId] = r
+			}
+		}
+	}
+	return recipeByOutputId[itemId]
+}
+
+// FindRecipeByName does a case-insensitive search across recipe names.
+// Prefers exact matches over substring matches.
 func FindRecipeByName(name string) *RecipeSpec {
 	lower := strings.ToLower(name)
+
+	// First pass: exact match
+	for _, r := range allRecipes {
+		if strings.ToLower(r.Name) == lower {
+			return r
+		}
+	}
+
+	// Second pass: substring match
 	for _, r := range allRecipes {
 		if strings.Contains(strings.ToLower(r.Name), lower) {
 			return r
@@ -128,10 +154,19 @@ func GetAllForSkill(skill string) []*RecipeSpec {
 	return result
 }
 
-// HasIngredients checks whether inv contains all required ingredients for recipe.
+// HasIngredients checks whether inv and componentInv together contain all
+// required ingredients for recipe.
 // Returns (true, "") on success; (false, firstMissingTag) on failure.
-func HasIngredients(inv []items.Item, recipe *RecipeSpec) (bool, string) {
+func HasIngredients(inv []items.Item, componentInv []items.Item, recipe *RecipeSpec) (bool, string) {
 	counts := make(map[string]int)
+	// Count from component bag first
+	for _, item := range componentInv {
+		spec := item.GetSpec()
+		if spec.ComponentTag != "" {
+			counts[spec.ComponentTag]++
+		}
+	}
+	// Then from backpack
 	for _, item := range inv {
 		spec := item.GetSpec()
 		if spec.ComponentTag != "" {
@@ -146,14 +181,30 @@ func HasIngredients(inv []items.Item, recipe *RecipeSpec) (bool, string) {
 	return true, ""
 }
 
-// ConsumeIngredients removes the required items from inv and returns the remainder.
+// ConsumeIngredients removes the required items from componentInv first, then
+// inv, and returns the remainders of both pools.
 // Items are matched by ComponentTag; exactly the needed quantity is consumed.
-func ConsumeIngredients(inv []items.Item, recipe *RecipeSpec) []items.Item {
+func ConsumeIngredients(inv []items.Item, componentInv []items.Item, recipe *RecipeSpec) ([]items.Item, []items.Item) {
 	needed := make(map[string]int)
 	for _, ing := range recipe.Ingredients {
 		needed[ing.ItemTag] = ing.Quantity
 	}
-	result := make([]items.Item, 0, len(inv))
+
+	// Consume from component bag first
+	newComponent := make([]items.Item, 0, len(componentInv))
+	for _, item := range componentInv {
+		spec := item.GetSpec()
+		if spec.ComponentTag != "" {
+			if remaining := needed[spec.ComponentTag]; remaining > 0 {
+				needed[spec.ComponentTag]--
+				continue // consume this item
+			}
+		}
+		newComponent = append(newComponent, item)
+	}
+
+	// Then from backpack
+	newInv := make([]items.Item, 0, len(inv))
 	for _, item := range inv {
 		spec := item.GetSpec()
 		if spec.ComponentTag != "" {
@@ -162,9 +213,10 @@ func ConsumeIngredients(inv []items.Item, recipe *RecipeSpec) []items.Item {
 				continue // consume this item
 			}
 		}
-		result = append(result, item)
+		newInv = append(newInv, item)
 	}
-	return result
+
+	return newInv, newComponent
 }
 
 // GetStarterRecipes returns a map of all recipes with SkillMinimum == 0,
@@ -180,10 +232,15 @@ func GetStarterRecipes() map[string]int {
 }
 
 // GetEligibleRecipes returns recipe IDs that the player could discover:
-// not already known, and the player's skill level meets the recipe's SkillMinimum.
-func GetEligibleRecipes(knownRecipes map[string]int, skillLevels map[string]int) []string {
+// not already known, the player's skill level meets the recipe's SkillMinimum,
+// and the recipe belongs to currentSkill (so blacksmithing can't discover
+// enchanting recipes).
+func GetEligibleRecipes(knownRecipes map[string]int, skillLevels map[string]int, currentSkill string) []string {
 	var eligible []string
 	for id, r := range allRecipes {
+		if r.Skill != currentSkill {
+			continue
+		}
 		if _, known := knownRecipes[id]; known {
 			continue
 		}
@@ -192,21 +249,6 @@ func GetEligibleRecipes(knownRecipes map[string]int, skillLevels map[string]int)
 		}
 	}
 	return eligible
-}
-
-// FindTargetItem searches the player's inventory for an item matching the recipe's
-// target_type (e.g. "weapon", "body", "head"). Returns the index and true if found.
-func FindTargetItem(inv []items.Item, targetType string) (int, bool) {
-	for i, item := range inv {
-		if item.ItemId < 1 {
-			continue
-		}
-		spec := item.GetSpec()
-		if string(spec.Type) == targetType {
-			return i, true
-		}
-	}
-	return -1, false
 }
 
 // IsEnchantingRecipe returns true if this recipe produces an enchanted item

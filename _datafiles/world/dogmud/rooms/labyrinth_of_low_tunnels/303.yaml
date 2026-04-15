@@ -8,6 +8,10 @@ description: The eastern tunnel stretches ahead in a low, straight line -- unusu
   or boasts. The passage is narrow enough that you must turn sideways in places, and
   the scratches continue at a height that suggests their makers barely reach your waist.
 biome: cave
+coord:
+  x: -11
+  y: 7
+  z: -1
 exits:
   west:
     roomid: 301

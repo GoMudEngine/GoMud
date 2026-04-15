@@ -9,15 +9,17 @@ description: The ravine widens slightly here, and the earth banks
   den entrance. This is the heart of wolf territory, and
   multiple pairs of pale eyes watch from the shadows.
 biome: land
+coord:
+  x: 12
+  y: -10
+  z: 0
 exits:
   north:
     roomid: 3077
+  east:
+    roomid: 3082
   south:
     roomid: 3079
-  east:
-    roomid: 3084
-  west:
-    roomid: 3054
 nouns:
   dens: Dark openings in the ravine walls, each about two feet
     across -- wide enough for a wolf to enter and exit. The

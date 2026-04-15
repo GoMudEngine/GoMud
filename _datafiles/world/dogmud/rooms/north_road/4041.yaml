@@ -1,0 +1,51 @@
+roomid: 4041
+zone: North Road
+title: Rolling Fields
+description: >
+  The road rises and falls through gentle terrain, each crest
+  offering a view of the road stretching north and south — a
+  pale line through dark fields. At the high point, a roadside
+  shrine sits in a stone niche, its offering bowl faded and
+  chipped. A wooden notice board leans against the shrine,
+  weather-warped but legible. The sky is enormous here, the
+  horizon unbroken in every direction. On a clear day you
+  could see for miles.
+biome: farmland
+coord:
+  x: -11
+  y: -12
+  z: 0
+exits:
+  south:
+    roomid: 4040
+  north:
+    roomid: 4042
+nouns:
+  shrine: A small stone niche set into a cairn of stacked
+    fieldstone, sheltered from the wind by its own bulk. Inside
+    sits a clay offering bowl, cracked and empty, and the stub
+    of a candle that has not been lit in some time. Someone has
+    placed a sprig of dried wildflowers beside the bowl. The
+    shrine is simple and old — a place for travelers to pause,
+    not pray.
+  notice: A weather-warped board leaning against the shrine,
+    covered in overlapping papers. Most are faded beyond reading,
+    but one recent notice stands out — a warning about road
+    attacks between here and the drainage ditch to the north.
+    "Travelers advised to move in groups. Report suspicious
+    activity to the nearest constable." No constable is named.
+  view: From the crest of this gentle rise, the road is visible
+    for a long distance in both directions. To the south, the
+    hedgerow bend and the farmland beyond. To the north, the
+    road descends toward what looks like a small cluster of
+    buildings. The fields on either side are harvested, the
+    stubble dark against pale soil.
+idlemessages:
+- The wind picks up on the exposed hilltop, tugging at your
+  clothing.
+- A distant figure moves along the road to the south, too far
+  to identify.
+- Clouds move fast overhead, their shadows racing across the
+  fields.
+spawninfo:
+  - mobid: 282

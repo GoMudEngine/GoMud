@@ -1,0 +1,49 @@
+roomid: 4054
+zone: North Road
+title: Stone Bridge
+description: >
+  A low stone bridge carries the road over a fast-running
+  creek. The stonework is old — fitted without mortar, each
+  block worn smooth by weather and the endless passage of
+  wheels. Grooves have been cut into the surface by iron
+  rims over decades — two parallel channels, worn an inch
+  deep into the stone. The creek runs loud beneath, brown
+  with sediment from upstream rain. Cold spray drifts up
+  from below when the current kicks against the pilings.
+biome: farmland
+coord:
+  x: -11
+  y: -7
+  z: 0
+exits:
+  south:
+    roomid: 4053
+  north:
+    roomid: 4055
+nouns:
+  bridge: The bridge is older than the road that crosses it.
+    The fitted stones are a different colour from the
+    surrounding fieldstone — quarried from somewhere else
+    and hauled here. Moss has grown thick in the joints on
+    the shaded northern side. The parapet is barely knee
+    height, and one section has crumbled away entirely,
+    leaving a ragged gap with a long drop to the water.
+  creek: Brown with upstream sediment, the creek runs fast
+    and loud over a rocky bed. Where it shallows near the
+    bank it clears enough to see the bottom — smooth stones
+    and flickering shapes that might be small fish. A
+    branch is wedged against the upstream piling, shaking
+    in the current like something alive.
+  grooves: Two parallel grooves worn into the bridge
+    surface by iron-rimmed wheels. They run true and
+    straight — generations of drivers lining up their
+    wheels in exactly the same tracks. The grooves are
+    nearly an inch deep at the centre, shallower at the
+    edges where the stone is harder.
+idlemessages:
+- Water rushes loud beneath the bridge, loud enough to
+  cover quiet footsteps.
+- A small silver shape leaps in the creek below and is
+  gone before you can be sure you saw it.
+- Cold spray drifts up from below as the current surges
+  against the bridge pilings.

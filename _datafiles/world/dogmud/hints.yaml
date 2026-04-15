@@ -43,7 +43,7 @@ hints:
     The <ansi fg="command">map</ansi> command shows your surroundings.
     Explore to discover new areas and resources.
   - >-
-    Use <ansi fg="command">cast</ansi> to see available spells.
+    Use <ansi fg="command">spells</ansi> to see available spells.
     Spellcasting costs Conviction and requires concentration.
   - >-
     <ansi fg="command">Talk</ansi> to NPCs! Many have useful
@@ -58,8 +58,8 @@ hints:
     Mutations are permanent changes to your body. They develop
     naturally as you adventure and grow.
   - >-
-    Use <ansi fg="command">defense</ansi> to adjust your combat
-    stance. Dodge, parry, and block each have strengths.
+    Try <ansi fg="command">help defense</ansi> to learn about combat
+    stances. Dodge, parry, and block each have strengths.
   - >-
     NPCs remember your actions. Completing quests and making
     choices shapes how the world treats you.
@@ -92,3 +92,158 @@ hints:
   - >-
     Wolves and goblins form packs on the steppe. The longer a
     pack survives together, the stronger its members become.
+  - >-
+    Use <ansi fg="command">title</ansi> to see your three-part title:
+    mutation tier, skill tier, and stat archetype. It evolves
+    as you grow.
+  - >-
+    Use <ansi fg="command">consider</ansi> before picking fights.
+    Your instincts will tell you whether a foe is a real
+    threat or easy prey.
+  - >-
+    Did you know you can make enemies less effective by hurting
+    their feelings? Try out the <ansi fg="command">taunt</ansi>
+    special command.
+  - >-
+    Healing up slow? Try hanging out in the Sanctum Basin or
+    the Temple in Thornwall. Some rooms are great places to
+    rest.
+  - >-
+    Found a mysterious item? Use <ansi fg="command">cast identify</ansi>
+    to reveal its properties, or visit a merchant and
+    <ansi fg="command">appraise</ansi> it.
+  - >-
+    The <ansi fg="command">search</ansi> command can reveal hidden
+    exits, containers, and secrets. Higher Perception helps
+    you find more.
+  - >-
+    Your <ansi fg="command">map</ansi> detail improves as your
+    Perception grows. Sharp eyes see further.
+  - >-
+    The <ansi fg="skill">skullduggery</ansi> skill covers sneaking,
+    stealing, lockpicking, and more. Type
+    <ansi fg="command">help skullduggery</ansi> for details.
+  - >-
+    Use <ansi fg="command">sneak</ansi> to enter the shadows. Be
+    careful -- sharp-eyed NPCs may notice you trying to hide.
+  - >-
+    Hidden and attacking? If your special move cooldown is ready,
+    you'll land a devastating surprise attack automatically.
+  - >-
+    Use <ansi fg="command">shadow</ansi> to tail someone between
+    rooms without being seen. Requires rank 2 skullduggery.
+  - >-
+    You can <ansi fg="command">steal</ansi> from NPCs or
+    <ansi fg="command">plant</ansi> items on them. Being hidden
+    improves your chances.</ansi>
+  - >-
+    Knock someone down? Follow up with a
+    <ansi fg="command">kick</ansi> for a devastating stomp that
+    bypasses half their armor.
+  - >-
+    In a grapple and in control? Use <ansi fg="command">kick</ansi>
+    for a powerful knee strike.
+  - >-
+    You can open a fight with <ansi fg="command">kick</ansi>,
+    <ansi fg="command">bash</ansi>, <ansi fg="command">trip</ansi>,
+    <ansi fg="command">grapple</ansi>, or
+    <ansi fg="command">taunt</ansi> — no need to
+    <ansi fg="command">attack</ansi> first.
+  - >-
+    Use <ansi fg="command">reply</ansi> to whisper back to the last
+    person who whispered to you.
+  - >-
+    Use <ansi fg="command">rep</ansi> to broadcast your vital bars.
+    <ansi fg="command">rep party</ansi> sends them to party chat only.
+  - >-
+    Use <ansi fg="command">setdesc</ansi> to write your own character
+    description that others see when they look at you.
+  - >-
+    Crafting materials auto-sort into your component bag on pickup.
+    Buy a starter pouch from Weaver Maren in Thornwall.
+  - >-
+    Use <ansi fg="command">sort</ansi> to move loose crafting materials
+    from your backpack into your component bag.
+  - >-
+    Backpacks reduce the weight of what you carry. Craft one with
+    <ansi fg="skill">tailoring</ansi> or buy a cloak for stats instead.
+  - >-
+    Got duplicates? Use <ansi fg="command">3.dagger</ansi> or
+    <ansi fg="command">dagger#3</ansi> to target the third one.
+    <ansi fg="command">drop all.potion</ansi> drops all potions.
+  - >-
+    Stay alert in dark tunnels. Some creatures lurk hidden, waiting
+    to ambush unwary travelers. High Perception helps you spot them.
+  - >-
+    Surviving a critical hit makes you tougher. Physical crits train
+    Vitality, magical crits train Willpower, taunts train Charisma.
+  - >-
+    <ansi fg="command">Veil Sight</ansi> lets you see hidden creatures
+    and players. Useful when exploring dangerous areas.
+  - >-
+    Use <ansi fg="command">buy 5 iron ingot</ansi> to purchase multiple
+    items at once from a merchant.
+  - >-
+    Potions age over time. Brew them in better bottles to slow aging.
+    A crystalline decanter keeps brews fresh four times longer.
+  - >-
+    Drinking too many potions builds toxicity. Your body can only
+    handle so much alchemy at once — let it decay between doses.
+  - >-
+    Moonpetal only grows at night. Try
+    <ansi fg="command">forage</ansi> in wilderness areas after dark.
+  - >-
+    A potion bandolier lets you carry potions separately from your
+    backpack. Craft one with <ansi fg="skill">tailoring</ansi>.
+  - >-
+    Higher <ansi fg="skill">alchemy</ansi> skill means your brews age
+    slower and hit harder. Skill matters as much as ingredients.
+  - >-
+    Dedicated crafters leave their mark. Hone your craft skill high
+    enough and your name appears on everything you make.
+  - >-
+    Use <ansi fg="command">salvage</ansi> to break down crafted items
+    and recover materials. Higher skill means better returns.
+  - >-
+    Salvaging is free at a crafting station. Buy a
+    <ansi fg="itemname">salvage kit</ansi> from Fence Dealer Siv in
+    Thornwall to salvage anywhere.
+  - >-
+    Salvaging always destroys the item, even if you recover
+    nothing. Make sure you really want to break it down.
+  - >-
+    Stuck on a quest? Type <ansi fg="command">hint</ansi> for a nudge
+    in the right direction.
+  - >-
+    The <ansi fg="skill">manifestation</ansi> skill lets you summon,
+    conjure, raise undead, and charm creatures. Type
+    <ansi fg="command">help manifestation</ansi> for details.
+  - >-
+    Use <ansi fg="command">companion</ansi> to see your companions'
+    vitals and stats. Toggle autoassist with
+    <ansi fg="command">companion [name] assist off</ansi>.
+  - >-
+    Give your companion a personal name with
+    <ansi fg="command">companion [name] name [nickname]</ansi>.
+    It becomes "Nickname the Spirit Wolf" and such.
+  - >-
+    Use <ansi fg="command">assess</ansi> on a corpse to see what forms
+    of undeath it can sustain before raising it.
+  - >-
+    Charming a creature in combat is harder. Its mind is focused
+    on survival, making it resist your influence more strongly.
+  - >-
+    Elementals cost heavy conviction to conjure but need no
+    components. Fire and magma reflect damage back at attackers.
+  - >-
+    Be careful with <ansi fg="command">dismiss</ansi> -- dismissed
+    companions turn hostile immediately. All of them.
+  - >-
+    Rumor has it some tunnels go deeper than anyone lets on.
+    A sharp eye might spot what others miss.
+  - >-
+    Disarm kits can save your life in trapped passages. Fence
+    Dealer Siv in Thornwall sells basic kits.
+  - >-
+    Higher <ansi fg="skill">skullduggery</ansi> makes you harder
+    to catch when fleeing. Rogues always have an escape plan.

@@ -7,6 +7,10 @@ description: A dense tangle of scraggly desert trees and thorned brush occupies 
   The undergrowth looks like it could conceal forage-worthy plants for those who know
   where to look.
 biome: forest
+coord:
+  x: -7
+  y: 10
+  z: 0
 exits:
   west:
     roomid: 114

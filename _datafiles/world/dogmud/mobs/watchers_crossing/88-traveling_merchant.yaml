@@ -1,8 +1,9 @@
 mobid: 88
 zone: Watchers Crossing
-statpool: 36
+statpool: 85
 itemdropchance: 0
 hostile: false
+non_combatant: true
 maxwander: 3
 groups:
   - humanoid
@@ -28,7 +29,7 @@ character:
     want to be.
   speciesid: 1
   level: 1
-  gold: 3
+  gold: 500
   equipment:
     weapon:
       itemid: 10020

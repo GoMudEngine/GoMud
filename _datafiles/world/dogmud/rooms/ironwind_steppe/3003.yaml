@@ -8,11 +8,15 @@ description: The wagon track narrows here as grass encroaches from both
   nearly complete. A collapsed stone cairn sits beside the track,
   perhaps an old waymarker or boundary stone half-swallowed by weeds.
 biome: land
+coord:
+  x: 10
+  y: 0
+  z: 0
 exits:
   west:
     roomid: 3001
   north:
-    roomid: 3002
+    roomid: 3005
   east:
     roomid: 3006
   south:

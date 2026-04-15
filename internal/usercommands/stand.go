@@ -44,7 +44,7 @@ func Stand(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	// Send messages
 	user.SendText("You struggle to your feet!")
 
-	room.SendText(
+	room.SendTextVisual(
 		fmt.Sprintf(`<ansi fg="username">%s</ansi> struggles to their feet.`, user.Character.Name),
 		user.UserId,
 	)

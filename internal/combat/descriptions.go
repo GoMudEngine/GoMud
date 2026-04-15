@@ -134,6 +134,26 @@ func GetSuccessChanceDescription(pct int) string {
 	}
 }
 
+// GetDifficultyDescription returns a qualitative label for spell difficulty.
+func GetDifficultyDescription(difficulty int) string {
+	switch {
+	case difficulty <= 0:
+		return "trivial"
+	case difficulty <= 10:
+		return "simple"
+	case difficulty <= 20:
+		return "moderate"
+	case difficulty <= 35:
+		return "challenging"
+	case difficulty <= 50:
+		return "demanding"
+	case difficulty <= 65:
+		return "formidable"
+	default:
+		return "masterwork"
+	}
+}
+
 // bodyParts lists humanoid body locations for hit flavor text.
 var bodyParts = []string{
 	"head", "face", "neck", "throat",

@@ -1,0 +1,13 @@
+itemid: 40040
+name: forest herbs
+namesimple: herbs
+description: A bundle of fresh medicinal herbs gathered from a
+  forest clearing -- feverfew, bitter-thistle, and healers-root,
+  tied with a strip of bark. The plants are unusually vivid, the
+  colors deeper than cultivated stock. They smell sharp and green
+  and faintly electric, as if the soil they grew in carried
+  something extra.
+type: object
+subtype: holdable
+uses: 0
+weight: 1.0

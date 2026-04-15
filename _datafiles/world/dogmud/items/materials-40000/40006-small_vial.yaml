@@ -1,9 +1,0 @@
-itemid: 40006
-name: small vial
-namesimple: vial
-description: An empty glass vial stoppered with a cork. Ready to hold a liquid.
-type: object
-subtype: mundane
-component_tag: small-vial
-weight: 0.1
-value: 1

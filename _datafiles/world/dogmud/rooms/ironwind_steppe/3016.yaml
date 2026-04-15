@@ -12,8 +12,6 @@ biome: land
 exits:
   west:
     roomid: 3014
-  northwest:
-    roomid: 3015
   north:
     roomid: 3012
   south:
@@ -22,6 +20,8 @@ exits:
     roomid: 3017
   northeast:
     roomid: 3032
+  southwest:
+    roomid: 3045
 nouns:
   boulder: An enormous grey boulder, taller than a person, sitting
     alone on the flat steppe. Its surface is covered with pale

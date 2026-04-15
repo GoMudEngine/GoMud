@@ -1,0 +1,38 @@
+mobid: 277
+zone: North Road
+statpool: 60
+itemdropchance: 0
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote wipes her hands on her apron and surveys the yard with a practiced eye'
+  - ''
+  - 'emote bends to pull a weed from between the flagstones, crushing it between her fingers'
+  - ''
+  - 'emote glances toward the road, a brief assessment, then returns to her work'
+  - ''
+activitylevel: 8
+character:
+  name: Betta
+  description: A compact, capable woman in her late forties with the quality
+    of someone who has solved so many practical problems that solving them has
+    become invisible. Her hands are rough from work, her face weathered but not
+    aged. She wears a plain wool dress under a stained apron. Her eyes decided
+    something about you within approximately three seconds of seeing you, and
+    they are not revising it.
+  speciesid: 1
+  level: 1
+  gold: 3
+  stats:
+    vitality:
+      training: 8
+    perception:
+      training: 10
+    willpower:
+      training: 12
+    charisma:
+      training: 6

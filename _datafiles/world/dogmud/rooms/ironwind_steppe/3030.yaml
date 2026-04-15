@@ -10,15 +10,17 @@ description: The ground tilts upward sharply as the sagebrush flats
   bulk. Above, the dark spine of the ridge crest cuts across
   the sky.
 biome: cliffs
+coord:
+  x: 14
+  y: 0
+  z: 0
 exits:
-  southwest:
-    roomid: 3012
-  south:
-    roomid: 3032
+  west:
+    roomid: 3011
   north:
     roomid: 3031
-  east:
-    roomid: 3033
+  south:
+    roomid: 3032
 nouns:
   scree: Loose, broken stone covering the slope in a treacherous
     layer. Each step sends small rocks clattering downhill.

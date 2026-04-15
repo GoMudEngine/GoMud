@@ -8,15 +8,17 @@ description: The flats extend north here, the sagebrush growing denser
   small skulls, leg bones, vertebrae -- the remains of prey
   animals discarded by predators. Wolf territory, by the signs.
 biome: land
+coord:
+  x: 12
+  y: 1
+  z: 0
 exits:
   south:
-    roomid: 3011
-  east:
-    roomid: 3016
-  northeast:
-    roomid: 3031
+    roomid: 3010
   north:
     roomid: 3019
+  east:
+    roomid: 3020
 nouns:
   junipers: Stunted, wind-twisted juniper trees with shaggy bark
     and dense blue-green foliage. They provide the only real

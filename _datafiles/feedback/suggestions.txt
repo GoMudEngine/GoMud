@@ -1,2 +1,0 @@
-[2026-02-27 15:52:10] Meirok (zone: Thornwall City, room: 480 "Tailor's Workshop"): add a crafting npc/shopkeeper to the tailor shop
-[2026-02-27 16:02:47] Meirok (zone: Thornwall City, room: 472 "The Drowning Post Tavern"): Tavern keeper Marek should probably sell food and drinks

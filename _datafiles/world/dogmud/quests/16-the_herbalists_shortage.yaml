@@ -1,0 +1,80 @@
+questid: 16
+name: The Herbalist's Shortage
+description: Ashwick's herbalist Delia has been unable to
+  restock her supplies. Someone in the forest has been
+  harvesting the wild herbs before she can reach them.
+secret: false
+
+steps:
+  - id: start
+    description: "Delia, the herbalist in Ashwick, cannot
+      restock her supplies. Someone has been taking the
+      wild herbs from the forest before she can harvest
+      them. Investigate the forest north of the hamlet's
+      east edge."
+    hint: "Follow the forest path north from the east edge
+      of Ashwick. Look for signs of who has been taking
+      the herbs."
+  - id: forager
+    description: "You found a forager living in the woods
+      who has been harvesting Delia's herbs. They have
+      agreed to work with Delia if you vouch for them.
+      Return to Delia with the news."
+    hint: "Go back to Delia's cottage and tell her about
+      the forager."
+  - id: end
+    description: "You resolved Delia's herb shortage. She
+      is grateful and has offered to teach you what she
+      knows about foraging."
+
+rewards:
+  playermessage: "Delia nods slowly, the practical assessment
+    of someone who has weighed a solution and found it sound.
+    'You have a good eye for problems and their fixes. If
+    you want to learn something about the plants out there,
+    I can teach you. Come back any time.'"
+  roommessage: "Delia's expression shifts from concern to
+    quiet satisfaction as the herb supply problem is resolved."
+  gold: 12
+
+triggers:
+  # Herb delivery -- normal path (has quest, not yet complete)
+  - event: item_give
+    mob: 259
+    item: 40040
+    conditions:
+      has: [16-start]
+      missing: [16-end]
+    actions:
+      - grant: 16-end
+      - npc_say:
+          mob: 259
+          lines:
+            - {delay: 1, text: "These are exactly what I needed.
+                Fresh and potent. Where did you find them?"}
+            - {delay: 3, text: "The grove. I should have looked
+                there myself. Thank you."}
+
+  # Herb delivery -- bypass (no quest yet, player explored first)
+  - event: item_give
+    mob: 259
+    item: 40040
+    conditions:
+      missing: [16-start]
+    actions:
+      - grant: 16-start
+      - npc_say:
+          mob: 259
+          lines:
+            - {delay: 1, text: "Forest herbs! Where did you find
+                these? I have been running low for weeks."}
+            - {delay: 3, text: "You have no idea how much this
+                helps. Thank you, truly."}
+
+  # Chain: bypass grants 16-start, auto-complete to 16-end
+  - event: quest_granted
+    quest_token: "16-start"
+    conditions:
+      missing: [16-end]
+    actions:
+      - grant: 16-end

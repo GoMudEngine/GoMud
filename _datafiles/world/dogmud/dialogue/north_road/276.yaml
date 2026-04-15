@@ -1,0 +1,48 @@
+mobid: 276
+zone: North Road
+defaultMood: neutral
+
+tree:
+  root:
+    text: "Hullo. Are you heading north? The road is busy today."
+    hints: "You could ask about the cart, his mother, or what
+      he is making."
+
+  nodes:
+    - id: cart
+      triggers: ["cart", "wheel", "turnip", "stuck"]
+      text: "Wheel caught a rut. Happens sometimes when the
+        load is heavy. These turnips are good ones though --
+        my mother grew them. She grows the best turnips on
+        the road."
+      hints: "You could ask about his mother or offer to help."
+      unlocks: ["mother", "help_cart"]
+
+    - id: help_cart
+      triggers: ["help", "fix", "push", "lift"]
+      text: "Really? That would be -- yes, if you could just
+        lift that side. There. Thank you. My mother makes a
+        lot of soup, if you are hungry. The farmstead is west
+        of the ditch, down the path."
+      moodChange: friendly
+
+    - id: mother
+      triggers: ["mother", "betta", "farm", "farmstead", "soup"]
+      text: "She is at the farm. West of the drainage ditch,
+        follow the path. She does not like surprises, but she
+        feeds people. That is just what she does."
+
+    - id: whittling
+      triggers: ["whittle", "carving", "bird", "wood", "making"]
+      text: "Birds. I make birds mostly. This one is not done
+        yet -- the head is wrong. Birds tilt their heads when
+        they listen. Most people do not notice that."
+
+    - id: road
+      triggers: ["road", "travel", "north", "south"]
+      text: "Lots of people on the road lately. Riders too,
+        asking questions. My mother told me not to talk to
+        riders. But you are not a rider."
+
+memory:
+  expiryPeriod: ""

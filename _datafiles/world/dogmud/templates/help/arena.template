@@ -1,0 +1,41 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">arena</ansi>
+
+The Arena is a brutal proving ground where death means
+expulsion. There is no coming back.
+
+<ansi fg="yellow">Layout:</ansi>
+
+  A linear gauntlet of increasingly dangerous rooms.
+  Push through pit fighters, veterans, and finally the
+  Arena Champion. Enemies respawn — the waves never
+  truly stop. How far can you get before they grind
+  you down?
+
+<ansi fg="yellow">Rules:</ansi>
+
+  <ansi fg="red">Death ends your run.</ansi> You are expelled permanently.
+  Recall magic does not work. The only way out is the
+  return portal at the entrance.
+
+  The rift stays open for 30 minutes.
+
+<ansi fg="yellow">Loot:</ansi>
+
+  Veterans and the Champion carry unique weapons and
+  armor with random properties. More gold invested
+  means tougher enemies but better gear. Each piece
+  is one of a kind.
+
+<ansi fg="yellow">How to Enter:</ansi>
+
+  Visit the Rift Chamber (east of Temple District).
+  <ansi fg="command">ask sable arena 200</ansi> — invest any amount over 100
+  gold. Sable will tell you the exit command.
+
+<ansi fg="yellow">Tips:</ansi>
+
+  Stock your bandolier with potions and grenades.
+  Party up before purchasing. Companions help.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help instances</ansi>,
+  <ansi fg="command">help oasis</ansi>, <ansi fg="command">help party</ansi>

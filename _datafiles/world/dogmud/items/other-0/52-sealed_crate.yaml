@@ -1,0 +1,15 @@
+itemid: 52
+name: sealed crate
+namesimple: crate
+description: >
+  A wooden crate bound with iron bands, sealed with a wax stamp
+  matching the caravan master's merchant mark. It is heavy for
+  its size. The contents shift slightly when tilted — something
+  wrapped in cloth, densely packed. The crate is addressed to
+  a trading house in Stillwater, the name partially smudged.
+  Neither the caravan master nor Soren is entirely forthcoming
+  about what is inside.
+type: object
+subtype: mundane
+weight: 8.0
+value: 50

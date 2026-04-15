@@ -1,0 +1,22 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="yellow">Honed-Edge</ansi> (enchanting recipe)
+
+Sharpens a weapon beyond mortal craft. The Chrysalis maintains an
+impossibly fine edge.
+
+<ansi fg="yellow">━━━ Recipe ━━━</ansi>
+
+  <ansi fg="yellow">Skill:</ansi>       enchanting (minimum 0)
+  <ansi fg="yellow">Station:</ansi>     enchanting circle
+  <ansi fg="yellow">Target:</ansi>      weapon (must be equipped)
+  <ansi fg="yellow">Ingredients:</ansi> binding paste (x1), healers root (x1)
+  <ansi fg="yellow">Time:</ansi>        3 rounds
+  <ansi fg="yellow">Reserve:</ansi>     health (1% at tier 0, scaling with tier)
+
+<ansi fg="yellow">━━━ Effect ━━━</ansi>
+
+Increases physical damage.
+
+The enchantment grows stronger through combat use, advancing
+through five tiers of increasing power and reserve cost.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help enchanting</ansi>, <ansi fg="command">help craft</ansi>

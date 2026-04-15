@@ -8,15 +8,19 @@ description: The dry creek basin broadens here into a wide, flat floor
   driftwood -- branches and logs deposited by past floods. The air
   is warmer and stiller here, trapped in the basin's channel.
 biome: land
+coord:
+  x: 13
+  y: -6
+  z: 0
 exits:
   north:
-    roomid: 3048
-  west:
-    roomid: 3047
-  south:
-    roomid: 3054
+    roomid: 3049
   east:
     roomid: 3053
+  west:
+    roomid: 3054
+  south:
+    roomid: 3057
 nouns:
   driftwood: Sun-bleached branches and log sections, polished
     smooth by water and deposited along the basin floor by past

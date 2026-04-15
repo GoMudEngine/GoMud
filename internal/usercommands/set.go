@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -37,6 +38,8 @@ func Set(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		return cmdSetToggle(user, `hints`, `Hints`, true)
 	case `screenreader`:
 		return cmdSetScreenReader(user)
+	case `charset`:
+		return cmdSetCharset(user)
 	case `prompt`:
 		return cmdSetPrompt(user, rest, setTarget, args)
 	case `fprompt`:
@@ -65,6 +68,14 @@ func displaySetStatus(user *users.UserRecord) {
 		user.SendText(`<ansi fg="green">ON</ansi>`)
 	} else {
 		user.SendText(`<ansi fg="red">OFF</ansi>`)
+	}
+	user.SendText(``)
+
+	user.SendText(`<ansi fg="yellow-bold">charset:</ansi> `)
+	if user.AsciiMode {
+		user.SendText(`<ansi fg="red">ASCII</ansi> (legacy client mode)`)
+	} else {
+		user.SendText(`<ansi fg="green">UTF-8</ansi>`)
 	}
 	user.SendText(``)
 
@@ -334,6 +345,31 @@ func cmdSetWimpy(user *users.UserRecord, rest string, setTarget string, args []s
 	events.AddToQueue(events.UserSettingChanged{
 		UserId: user.UserId,
 		Name:   `wimpy`,
+	})
+
+	return true, nil
+}
+
+func cmdSetCharset(user *users.UserRecord) (bool, error) {
+	user.AsciiMode = !user.AsciiMode
+
+	// Apply to active connection immediately
+	cs := connections.GetClientSettings(user.ConnectionId())
+	cs.AsciiMode = user.AsciiMode
+	connections.OverwriteClientSettings(user.ConnectionId(), cs)
+
+	if user.AsciiMode {
+		user.SendText("Charset mode set to <ansi fg=\"red\">ASCII</ansi>.")
+		user.SendText("Box-drawing characters will be converted to ASCII equivalents.")
+		user.SendText("Use <ansi fg=\"command\">set charset</ansi> again to switch back to UTF-8.")
+	} else {
+		user.SendText("Charset mode set to <ansi fg=\"green\">UTF-8</ansi>.")
+		user.SendText("Full Unicode box-drawing characters will be displayed.")
+	}
+
+	events.AddToQueue(events.UserSettingChanged{
+		UserId: user.UserId,
+		Name:   "charset",
 	})
 
 	return true, nil

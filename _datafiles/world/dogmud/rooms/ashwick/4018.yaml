@@ -1,0 +1,45 @@
+roomid: 4018
+zone: Ashwick
+title: Chapel Lane
+description: >
+  The road narrows here into a lane that runs east toward the
+  chapel, its stone spire visible above the rooftops. The
+  surface is better maintained than the main road -- someone
+  sweeps it regularly. Houses on either side have their
+  shutters closed, the stillness of homes whose occupants
+  left or simply stopped opening the windows. A few flower
+  boxes sit empty on windowsills. The chapel draws the eye
+  forward, modest but deliberate in its placement at the
+  lane's end.
+biome: farmland
+coord:
+  x: -4
+  y: -13
+  z: 0
+exits:
+  west:
+    roomid: 4017
+  east:
+    roomid: 4019
+  south:
+    roomid: 4022
+nouns:
+  lane: Narrower than the main road, this lane has been swept
+    clean of debris and loose stones. The surface is packed
+    earth like the rest of Ashwick, but someone takes care
+    of this stretch -- broom marks are visible in the dust.
+    The lane runs straight east toward the chapel, aligned
+    with its door as if by design.
+  shutters: Several houses along the lane have their shutters
+    closed and latched from inside. The wood is in good repair
+    but the latches show no sign of recent use -- no oil on
+    the hinges, no fingerprints in the dust on the sills.
+    The stillness is not abandonment exactly, more like a
+    slow withdrawal. These homes had people once.
+spawninfo:
+- mobid: 266
+idlemessages:
+- The chapel spire catches the light above the rooftops.
+- Wind moves down the lane with nothing to stop it, stirring
+  dust along the swept stones.
+- An empty flower box creaks on a windowsill.

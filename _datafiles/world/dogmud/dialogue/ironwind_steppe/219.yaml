@@ -51,4 +51,4 @@ tree:
       text: "The shaman lowers its voice, and for the first time its hostility gives way to genuine unease. 'The caves to the north -- the Windscour, the tall-things call them. Something lives in the deep. Old. Patient. Even goblins will not go there. The stone itself remembers what it is.' The shaman shudders. 'You want to die, go north. You want to live, go west.'"
 
 memory:
-  expiryPeriod: "1h"
+  expiryPeriod: ""

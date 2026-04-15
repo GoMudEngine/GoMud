@@ -8,6 +8,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/statmods"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -15,6 +16,11 @@ import (
 )
 
 func Picklock(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
+
+	skillLevel := user.Character.GetSkillLevel(skills.Skullduggery)
+	if skillLevel < 1 {
+		return false, nil
+	}
 
 	lockpickItm := items.Item{}
 	for _, itm := range user.Character.GetAllBackpackItems() {
@@ -41,6 +47,13 @@ func Picklock(rest string, user *users.UserRecord, room *rooms.Room, flags event
 	lockTrap := []int{}
 
 	containerName := room.FindContainerByName(args[0])
+	if containerName != `` {
+		if c, exists := room.Containers[containerName]; exists && c.Hidden {
+			if user == nil || !user.Character.HasDiscovery(room.RoomId, containerName) {
+				containerName = ``
+			}
+		}
+	}
 	exitName, _ := room.FindExitByName(args[0])
 
 	if containerName != `` {
@@ -124,18 +137,20 @@ func Picklock(rest string, user *users.UserRecord, room *rooms.Room, flags event
 		user.SendText(`<ansi fg="yellow-bold">***</ansi> <ansi fg="green-bold">You can automatically pick this lock any time as long as you carry <ansi fg="item">lockpicks</ansi>!</ansi> <ansi fg="yellow-bold">***</ansi>`)
 		user.SendText(``)
 
+		user.Character.CheckSkillProgression(string(skills.Skullduggery), user.UserId, 1.0)
+
 		room.PlaySound(`change`, `other`)
 
 		if containerName != `` {
 
-			room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> picks the <ansi fg="container">%s</ansi> lock`, user.Character.Name, containerName), user.UserId)
+			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> picks the <ansi fg="container">%s</ansi> lock`, user.Character.Name, containerName), user.UserId)
 
 			container := room.Containers[containerName]
 			container.Lock.SetUnlocked()
 			room.Containers[containerName] = container
 		} else {
 
-			room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> picks the <ansi fg="exit">%s</ansi> lock`, user.Character.Name, exitName), user.UserId)
+			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> picks the <ansi fg="exit">%s</ansi> lock`, user.Character.Name, exitName), user.UserId)
 
 			room.SetExitLock(exitName, false)
 
@@ -192,13 +207,13 @@ func Picklock(rest string, user *users.UserRecord, room *rooms.Room, flags event
 			user.SendText(fmt.Sprintf(`<ansi fg="yellow-bold">***</ansi> <ansi fg="red-bold">Oops! Your <ansi fg="item">%s</ansi> break off in the lock, resetting the lock. You'll have to start all over.</ansi> <ansi fg="yellow-bold">***</ansi>`, lockpickItm.GetSpec().NameSimple))
 			user.SendText(``)
 
-			room.SendText(fmt.Sprintf(`<ansi fg="alert-2"><ansi fg="username">%s</ansi> broke their lockpicks trying to pick a lock!</ansi>`, user.Character.Name), user.UserId)
+			room.SendTextVisual(fmt.Sprintf(`<ansi fg="alert-2"><ansi fg="username">%s</ansi> broke their lockpicks trying to pick a lock!</ansi>`, user.Character.Name), user.UserId)
 
 			if len(lockTrap) > 0 {
 
 				user.SendText(`<ansi fg="yellow-bold">***</ansi> <ansi fg="alert-5">A trap was triggered!</ansi> <ansi fg="yellow-bold">***</ansi>`)
 				user.SendText(``)
-				room.SendText(fmt.Sprintf(`<ansi fg="alert-3"><ansi fg="username">%s</ansi> triggered a trap!</ansi>`, user.Character.Name), user.UserId)
+				room.SendTextVisual(fmt.Sprintf(`<ansi fg="alert-3"><ansi fg="username">%s</ansi> triggered a trap!</ansi>`, user.Character.Name), user.UserId)
 
 				for _, buffId := range lockTrap {
 					user.AddBuff(buffId, `trap`)
@@ -231,17 +246,19 @@ func Picklock(rest string, user *users.UserRecord, room *rooms.Room, flags event
 		user.SendText(`<ansi fg="yellow-bold">***</ansi> <ansi fg="green-bold">You can automatically pick this lock any time as long as you carry <ansi fg="item">lockpicks</ansi>!</ansi> <ansi fg="yellow-bold">***</ansi>`)
 		user.SendText(``)
 
+		user.Character.CheckSkillProgression(string(skills.Skullduggery), user.UserId, 1.0)
+
 		room.PlaySound(`change`, `other`)
 
 		if containerName != `` {
 
-			room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> picks the <ansi fg="container">%s</ansi> lock`, user.Character.Name, containerName), user.UserId)
+			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> picks the <ansi fg="container">%s</ansi> lock`, user.Character.Name, containerName), user.UserId)
 
 			container := room.Containers[containerName]
 			container.Lock.SetUnlocked()
 			room.Containers[containerName] = container
 		} else {
-			room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> picks the <ansi fg="exit">%s</ansi> lock`, user.Character.Name, exitName), user.UserId)
+			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> picks the <ansi fg="exit">%s</ansi> lock`, user.Character.Name, exitName), user.UserId)
 			room.SetExitLock(exitName, false)
 		}
 
@@ -251,9 +268,9 @@ func Picklock(rest string, user *users.UserRecord, room *rooms.Room, flags event
 
 	} else {
 		if containerName != `` {
-			room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> tries to pick the <ansi fg="container">%s</ansi> lock`, user.Character.Name, containerName), user.UserId)
+			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> tries to pick the <ansi fg="container">%s</ansi> lock`, user.Character.Name, containerName), user.UserId)
 		} else {
-			room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> tries to pick the <ansi fg="exit">%s</ansi> lock`, user.Character.Name, exitName), user.UserId)
+			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> tries to pick the <ansi fg="exit">%s</ansi> lock`, user.Character.Name, exitName), user.UserId)
 		}
 	}
 

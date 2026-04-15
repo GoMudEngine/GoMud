@@ -4,11 +4,13 @@ description: Fortifies the target's willpower, strengthening their mental defens
 type: helpsingle
 schools:
   - enhancement
-cost: 25
+cost: 45
 waitrounds: 1
-difficulty: 0
+difficulty: 15
 primarystat: willpower
-base_folds: 3
+base_folds: 6
 effect_type: buff
 buff_ids:
   - 27
+cast_user_text: "You forge a wall of iron resolve around the target's mind."
+cast_room_text: "{source} focuses intently, a steely aura forming."

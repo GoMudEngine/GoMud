@@ -470,8 +470,9 @@ func TestWeaponBreakResult_ZeroValue(t *testing.T) {
 
 func TestCritEffectResult_ZeroValue(t *testing.T) {
 	result := CritEffectResult{}
-	assert.False(t, result.Disarmed)
-	assert.False(t, result.GrappleSet)
+	assert.False(t, result.Riposte)
+	assert.False(t, result.AutoTrip)
+	assert.False(t, result.AutoBash)
 }
 
 // ─── CheckNewDay ──────────────────────────────────────────────────────────────
@@ -622,7 +623,7 @@ func TestAutoHeal_BleedOutWhenHealthBelowOne(t *testing.T) {
 	evt := events.NewRound{RoundNumber: 6}
 	AutoHeal(evt)
 
-	assert.Equal(t, -6, u1.Character.Health, "should decrease by 1 when bleeding out")
+	assert.Equal(t, -7, u1.Character.Health, "should decrease by 2 when bleeding out")
 }
 
 func TestAutoHeal_StaminaRegenOutOfCombat(t *testing.T) {
@@ -1033,8 +1034,9 @@ func TestApplyCritEffects_NoCrit(t *testing.T) {
 
 	ar := dummyAttackResult(true, false)
 	result := applyCritEffects(atk, def, ar, room)
-	assert.False(t, result.Disarmed)
-	assert.False(t, result.GrappleSet)
+	assert.False(t, result.Riposte)
+	assert.False(t, result.AutoTrip)
+	assert.False(t, result.AutoBash)
 }
 
 func TestApplyCritEffects_DodgeCritSetsGrapple(t *testing.T) {
@@ -1051,7 +1053,7 @@ func TestApplyCritEffects_DodgeCritSetsGrapple(t *testing.T) {
 	ar.DodgeCritDetected = true
 
 	result := applyCritEffects(atk, def, ar, room)
-	assert.True(t, result.GrappleSet, "dodge crit should set grapple opportunity")
+	assert.True(t, result.AutoTrip, "dodge crit should trigger auto-trip")
 }
 
 // ─── RegisterListeners ────────────────────────────────────────────────────────
@@ -1907,30 +1909,33 @@ func TestDispatchCritEffectsPvP_NoCrit(t *testing.T) {
 	// no panic
 }
 
-func TestDispatchCritEffectsPvP_Disarmed(t *testing.T) {
+func TestDispatchCritEffectsPvP_Riposte(t *testing.T) {
 	cleanup := seedAllRegistries()
 	defer cleanup()
 	u1 := users.GetByUserId(1)
 	u2 := users.GetByUserId(2)
 	room := rooms.LoadRoom(1)
 	result := CritEffectResult{
-		Disarmed: true,
-		DisarmItem: combat.DisarmResult{
-			Message:     "You are disarmed!",
-			TargetMsg:   "You disarm them!",
-			RoomMessage: "A disarm happens!",
-		},
+		Riposte:     true,
+		DefenderMsg: "You riposte!",
+		AttackerMsg: "They riposte!",
+		RoomMsg:     "A riposte!",
 	}
 	dispatchCritEffectsPvP(result, u1, u2, room)
 }
 
-func TestDispatchCritEffectsPvP_Grapple(t *testing.T) {
+func TestDispatchCritEffectsPvP_AutoTrip(t *testing.T) {
 	cleanup := seedAllRegistries()
 	defer cleanup()
 	u1 := users.GetByUserId(1)
 	u2 := users.GetByUserId(2)
 	room := rooms.LoadRoom(1)
-	result := CritEffectResult{GrappleSet: true}
+	result := CritEffectResult{
+		AutoTrip:    true,
+		DefenderMsg: "You sweep!",
+		AttackerMsg: "Swept!",
+		RoomMsg:     "A sweep!",
+	}
 	dispatchCritEffectsPvP(result, u1, u2, room)
 }
 
@@ -1946,30 +1951,31 @@ func TestDispatchCritEffectsPvM_NoCrit(t *testing.T) {
 	dispatchCritEffectsPvM(result, u1, mob, room)
 }
 
-func TestDispatchCritEffectsPvM_Disarmed(t *testing.T) {
+func TestDispatchCritEffectsPvM_Riposte(t *testing.T) {
 	cleanup := seedAllRegistries()
 	defer cleanup()
 	u1 := users.GetByUserId(1)
 	mob := mobs.GetInstance(100)
 	room := rooms.LoadRoom(1)
 	result := CritEffectResult{
-		Disarmed: true,
-		DisarmItem: combat.DisarmResult{
-			Message:     "Disarmed!",
-			TargetMsg:   "You disarm!",
-			RoomMessage: "Room disarm!",
-		},
+		Riposte:     true,
+		AttackerMsg: "You get riposted!",
+		RoomMsg:     "Room riposte!",
 	}
 	dispatchCritEffectsPvM(result, u1, mob, room)
 }
 
-func TestDispatchCritEffectsPvM_Grapple(t *testing.T) {
+func TestDispatchCritEffectsPvM_AutoBash(t *testing.T) {
 	cleanup := seedAllRegistries()
 	defer cleanup()
 	u1 := users.GetByUserId(1)
 	mob := mobs.GetInstance(100)
 	room := rooms.LoadRoom(1)
-	result := CritEffectResult{GrappleSet: true}
+	result := CritEffectResult{
+		AutoBash:    true,
+		AttackerMsg: "Shield slammed!",
+		RoomMsg:     "A shield slam!",
+	}
 	dispatchCritEffectsPvM(result, u1, mob, room)
 }
 
@@ -1983,14 +1989,14 @@ func TestHandleCharmedMobAssist_NoCharmedMobs(t *testing.T) {
 	// no panic
 }
 
-// ─── Combat Helper: handleAutoRetargetPlayer ──────────────────────────────────
+// ─── Combat Helper: RetargetOrEnd ─────────────────────────────────────────────
 
-func TestHandleAutoRetargetPlayer_NoAttackers(t *testing.T) {
+func TestRetargetOrEnd_NoAttackers(t *testing.T) {
 	cleanup := seedAllRegistries()
 	defer cleanup()
 	u := users.GetByUserId(1)
 	room := rooms.LoadRoom(1)
-	handleAutoRetargetPlayer(u, room)
+	RetargetOrEnd(u.Character, room, u.UserId, 0)
 	// Should not panic, no attackers to retarget
 }
 
@@ -2260,7 +2266,7 @@ func TestApplyMobEffect_Damage(t *testing.T) {
 	mob.Character.Health = 100
 
 	spellData := spells.GetSpell("sparks")
-	dmg := applyMobEffect(u, mob, room, spellData, 30, false)
+	dmg := applyMobEffect(u, u.Character, mob, room, spellData, 30, false)
 	assert.GreaterOrEqual(t, dmg, 0)
 }
 
@@ -2273,7 +2279,7 @@ func TestApplyMobEffect_DamageWithCrit(t *testing.T) {
 	mob.Character.Health = 100
 
 	spellData := spells.GetSpell("sparks")
-	dmg := applyMobEffect(u, mob, room, spellData, 30, true)
+	dmg := applyMobEffect(u, u.Character, mob, room, spellData, 30, true)
 	assert.GreaterOrEqual(t, dmg, 0)
 }
 
@@ -2294,7 +2300,7 @@ func TestApplyMobEffect_DotEffect(t *testing.T) {
 		EffectMagnitude:   10,
 	}
 
-	dmg := applyMobEffect(u, mob, room, dotSpell, 10, false)
+	dmg := applyMobEffect(u, u.Character, mob, room, dotSpell, 10, false)
 	assert.Equal(t, 0, dmg)
 }
 
@@ -2306,7 +2312,7 @@ func TestApplyMobEffect_NilUser(t *testing.T) {
 	mob.Character.Health = 100
 
 	spellData := spells.GetSpell("sparks")
-	dmg := applyMobEffect(nil, mob, room, spellData, 30, false)
+	dmg := applyMobEffect(nil, nil, mob, room, spellData, 30, false)
 	assert.GreaterOrEqual(t, dmg, 0)
 }
 
@@ -2334,7 +2340,7 @@ func TestApplyMobEffect_Knockdown(t *testing.T) {
 		DamageMultiplier:  0.5,
 		EffectMagnitude:   20,
 	}
-	dmg := applyMobEffect(u, mob, room, kdSpell, 20, false)
+	dmg := applyMobEffect(u, u.Character, mob, room, kdSpell, 20, false)
 	assert.GreaterOrEqual(t, dmg, 0)
 	assert.Equal(t, characters.PositionProne, mob.Character.CombatPosition)
 }
@@ -2353,7 +2359,7 @@ func TestApplyMobEffect_Buff(t *testing.T) {
 		EffectType: "buff",
 		BuffIds:    []int{100},
 	}
-	dmg := applyMobEffect(u, mob, room, buffSpell, 0, false)
+	dmg := applyMobEffect(u, u.Character, mob, room, buffSpell, 0, false)
 	assert.Equal(t, 0, dmg)
 }
 
@@ -2370,7 +2376,7 @@ func TestApplyMobEffect_Tame_NotAnimal(t *testing.T) {
 		Type:       spells.HarmSingle,
 		EffectType: "tame",
 	}
-	dmg := applyMobEffect(u, mob, room, tameSpell, 0, false)
+	dmg := applyMobEffect(u, u.Character, mob, room, tameSpell, 0, false)
 	assert.Equal(t, 0, dmg)
 }
 
@@ -2387,7 +2393,7 @@ func TestApplyMobEffect_DefaultEffect(t *testing.T) {
 		Type:       spells.HarmSingle,
 		EffectType: "unknown-effect",
 	}
-	dmg := applyMobEffect(u, mob, room, unknownSpell, 10, false)
+	dmg := applyMobEffect(u, u.Character, mob, room, unknownSpell, 10, false)
 	assert.Equal(t, 0, dmg)
 }
 

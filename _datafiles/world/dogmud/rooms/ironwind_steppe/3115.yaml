@@ -1,0 +1,43 @@
+roomid: 3115
+zone: Ironwind Steppe
+title: The Stone Circle
+description: A ring of weathered standing stones rises from the grass
+  at the base of the ridge, each stone twice the height of a person
+  and dark with age. The stones are rough basalt, their surfaces
+  carved with spiraling patterns so old they have nearly merged
+  with the natural grain of the rock. The grass inside the circle
+  is shorter and greener than the surrounding steppe, as if fed
+  by something beneath the soil. The air here is different -- still
+  and warm, humming with a faint resonance that seems to come from
+  the stones themselves. Small offerings of bone, feather, and
+  dried flowers are tucked into cracks at the base of each stone.
+biome: land
+coord:
+  x: 15
+  y: -2
+  z: 0
+exits:
+  west:
+    roomid: 3033
+nouns:
+  stones: Ancient standing stones of dark basalt, each roughly
+    hewn and deeply weathered. Spiral patterns carved into their
+    faces are barely visible, smoothed by centuries of wind and
+    rain. The stone is warm to the touch regardless of the weather,
+    and pressing a hand to the surface produces a faint vibration
+    like a distant heartbeat.
+  offerings: Small bundles of bone, feather, dried herbs, and
+    wildflowers tucked into cracks at the base of the standing
+    stones. Some are fresh, others desiccated and crumbling.
+    The goblin clans have left offerings here for generations.
+  grass: The grass within the circle is lush and green, startlingly
+    vivid against the grey-green sage of the surrounding steppe.
+    It grows in a perfect circle defined by the standing stones,
+    as though the boundary has meaning to the earth itself.
+spawninfo:
+- mobid: 241
+idlemessages:
+- The standing stones hum with a deep, almost subsonic resonance.
+- Wind curls around the stone circle but never seems to enter it.
+- The grass inside the circle ripples in patterns with no wind.
+- A faint scent of sage and old smoke hangs in the still air.

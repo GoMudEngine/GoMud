@@ -1,0 +1,8 @@
+buffid: 63
+name: Veilguard Tonic
+description: A bitter film coats your thoughts, deflecting words of power. Your senses dull slightly.
+triggerrate: 1 round
+triggercount: 400
+statmods:
+  conviction_mitigation: 15
+  perception: -10

@@ -36,4 +36,4 @@ tree:
       hints: "Gobb shares what he hears, embellished or otherwise."
 
 memory:
-  expiryPeriod: "30m"
+  expiryPeriod: ""

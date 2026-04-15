@@ -1,0 +1,32 @@
+mobid: 318
+zone: Instance Planar Oasis
+archetype: fighting
+statpool: 1
+hostile: true
+groups:
+  - elemental
+activitylevel: 25
+idlecommands:
+  - 'emote shifts and reforms, sand cascading in slow spirals'
+  - 'wander'
+  - 'emote rises from the ground in a column of whirling grit'
+  - ''
+combatcommands:
+  - 'emote slams a fist of compacted sand forward'
+  - ''
+  - 'emote hurls a spray of razor-sharp crystals'
+  - ''
+character:
+  name: sand elemental
+  description: >-
+    A vaguely humanoid shape of swirling sand and crystalline
+    grit. It moves in stuttering lurches, reforming after
+    each step as if the wind cannot decide what shape it
+    should take. Granules of glass glint within the mass
+    like embedded teeth.
+  speciesid: 37
+  level: 1
+  gold: 0
+itemdropchance: 50
+loot_pool:
+  - 20075

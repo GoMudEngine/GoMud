@@ -178,9 +178,9 @@ func TestIntegration_AllSkillsProgression(t *testing.T) {
 	// Verify all skills can be increased
 	c := New()
 	skillNames := []string{
-		"weapon-combat", "unarmed-combat", "ranged-combat",
-		"spellcasting", "rhetoric", "tracking",
-		"bartering", "foraging", "first-aid",
+		"weapon-combat", "unarmed-combat",
+		"spellcasting", "rhetoric", "search",
+		"bartering",
 	}
 
 	for _, skill := range skillNames {

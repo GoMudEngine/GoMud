@@ -9,10 +9,12 @@ description: The wallowing grounds peter out here at the southern
   the boundary of boar territory -- their tracks thin out and
   disappear to the south.
 biome: land
+coord:
+  x: 15
+  y: -14
+  z: 0
 exits:
   north:
-    roomid: 3097
-  west:
     roomid: 3098
 nouns:
   wallows: Small, shallow wallows at the territory's edge,

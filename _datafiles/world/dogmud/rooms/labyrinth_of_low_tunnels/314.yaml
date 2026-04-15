@@ -11,6 +11,10 @@ description: The tunnels open into the largest chamber you have encountered down
   is so thick with smoke, sweat, and the reek of communal habitation that it feels
   like breathing through a damp cloth pressed against your face.
 biome: cave
+coord:
+  x: -12
+  y: 4
+  z: -2
 exits:
   north:
     roomid: 313

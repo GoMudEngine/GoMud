@@ -1,0 +1,19 @@
+itemid: 30047
+name: cat's eye draught
+namesimple: draught
+description: A draught of concentrated moonpetal extract.
+  Your pupils dilate and the darkness becomes
+  transparent.
+type: potion
+subtype: drinkable
+uses: 1
+buffids:
+  - 65
+value: 25
+weight: 0.4
+toxicity: 18
+aging:
+  ferment_rounds: 1500
+  peak_rounds: 6000
+  decay_rounds: 18000
+  spoil_rounds: 30000

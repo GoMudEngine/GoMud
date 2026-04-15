@@ -1,0 +1,23 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="yellow">Extra Arms</ansi> mutation
+
+A second pair of arms has sprouted from your torso, granting you the
+ability to wield additional weapons. The grotesque sight of four
+flailing limbs draws hostile attention and unsettles everyone around
+you.
+
+<ansi fg="yellow">Type:</ansi>     Active Ability
+<ansi fg="yellow">Rarity:</ansi>   Extremely Rare
+
+<ansi fg="yellow">Benefits:</ansi>
+  Unlocks additional weapon slots — you can wield more weapons
+  simultaneously than a normal combatant
+  Slightly improved dexterity from the additional limb coordination
+
+<ansi fg="yellow">Drawbacks:</ansi>
+  Greatly reduced charisma — four arms are deeply disturbing to
+  behold
+  Draws significantly more hostile attention from enemies
+
+<ansi fg="yellow">Conflicts:</ansi> Clawed Hands, Elongated Limbs
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help mutations</ansi>

@@ -43,6 +43,10 @@ func InactivePlayers(e events.Event) events.ListenerReturn {
 			continue
 		}
 
+		// Instance AFK: removed. The portal timer handles instance lifecycle.
+		// Players in instances are not ejected for being idle — the instance
+		// dies naturally when the portal expires and all players leave.
+
 		if li-cutoffRound == 5 {
 			user.SendText(`<ansi fg="203">WARNING:</ansi> <ansi fg="208">You are about to be kicked for inactivity!</ansi>`)
 		}

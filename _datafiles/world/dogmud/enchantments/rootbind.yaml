@@ -1,0 +1,40 @@
+enchantid: rootbind
+name: "Rootbind"
+reserve_pool: health
+target_type: belt
+tiers:
+  - tier: 0
+    reserve_pct: 0.01
+    effects:
+      vitality_statmod: 1
+    adjective: root-threaded
+    description_suffix: "Thin roots thread through the belt's weave."
+    tier_up_message: ""
+  - tier: 1
+    reserve_pct: 0.02
+    effects:
+      vitality_statmod: 2
+    adjective: bark-bound
+    description_suffix: "Bark bindings strengthen the belt, earthy and resilient."
+    tier_up_message: "The roots dig into your core—you feel connected to the earth."
+  - tier: 2
+    reserve_pct: 0.04
+    effects:
+      vitality_statmod: 3
+    adjective: rootbound
+    description_suffix: "The belt becomes rootbound—deep roots anchor your essence."
+    tier_up_message: "The Chrysalis roots you to the world—you cannot be shaken."
+  - tier: 3
+    reserve_pct: 0.06
+    effects:
+      vitality_statmod: 4
+    adjective: deep-rooted
+    description_suffix: "Deep roots extend from the belt, binding you to the earth."
+    tier_up_message: "You are deep-rooted now—the Chrysalis makes you unshakeable."
+  - tier: 4
+    reserve_pct: 0.08
+    effects:
+      vitality_statmod: 5
+    adjective: earthbound
+    description_suffix: "You are earthbound, rooted in the Chrysalis itself."
+    tier_up_message: "The Chrysalis has made you eternal as stone and soil."

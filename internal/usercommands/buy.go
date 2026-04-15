@@ -2,6 +2,7 @@ package usercommands
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
@@ -11,8 +12,11 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/pets"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
+	"github.com/GoMudEngine/GoMud/internal/shops"
+	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -26,7 +30,17 @@ func Buy(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	targetMobInstanceId := 0
 	targetUserId := 0
 
+	// Parse optional leading quantity: "buy 5 iron ingot"
+	quantity := 1
 	itemname := rest
+	args0 := strings.SplitN(strings.TrimSpace(rest), " ", 2)
+	if len(args0) == 2 {
+		if n, err := strconv.Atoi(args0[0]); err == nil && n >= 1 {
+			quantity = n
+			itemname = args0[1]
+			rest = args0[1]
+		}
+	}
 
 	// See if a "from" target was specified: "buy itemname from shopkeepername"
 	args := util.SplitButRespectQuotes(strings.ToLower(rest))
@@ -58,6 +72,7 @@ func Buy(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	merchantMobs := room.GetMobs(rooms.FindMerchant)
 
 	if len(merchantPlayers) == 0 && len(merchantMobs) == 0 {
+		mudlog.Debug("PURCHASE", "msg", "no merchants in room", "roomId", room.RoomId, "user", user.Character.Name)
 		user.SendText("Visit a merchant to purchase objects or services.")
 		return true, nil
 	}
@@ -72,11 +87,36 @@ func Buy(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			continue
 		}
 
-		if success = tryPurchase(itemname, user, room, nil, shopUser); success {
-			user.Character.OnStatUse("charisma", user.UserId)
+		if tryPurchase(itemname, user, room, nil, shopUser) {
+			user.Character.OnSkillUse(string(skills.Bartering), user.UserId)
+			purchased := 1
+			for purchased < quantity {
+				if !tryPurchase(itemname, user, room, nil, shopUser) {
+					break
+				}
+				user.Character.OnSkillUse(string(skills.Bartering), user.UserId)
+				purchased++
+			}
+			if quantity > 1 && purchased < quantity {
+				user.SendText(fmt.Sprintf(`<ansi fg="yellow">Purchased %d of %d before running short.</ansi>`, purchased, quantity))
+			}
+			success = true
+
+			// Quest engine: command notification
+			bridge := questengine.NewGameBridge(user, room.RoomId)
+			questengine.GetEngine().Notify("command", questengine.EventDetails{
+				UserId:  user.UserId,
+				RoomId:  room.RoomId,
+				Command: "buy",
+			}, bridge, bridge)
+
 			return true, nil
 		}
 	}
+
+	mudlog.Debug("PURCHASE", "msg", "merchant scan",
+		"merchantMobCount", len(merchantMobs), "merchantPlayerCount", len(merchantPlayers),
+		"roomId", room.RoomId, "user", user.Character.Name)
 
 	for _, miid := range merchantMobs {
 		if targetMobInstanceId > 0 && miid != targetMobInstanceId {
@@ -85,15 +125,46 @@ func Buy(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 
 		shopMob := mobs.GetInstance(miid)
 		if shopMob == nil {
+			mudlog.Debug("PURCHASE", "msg", "mob instance nil", "instanceId", miid)
 			continue
 		}
 
-		shopMob.Character.Shop.Restock()
+		// Check for ShopInventory-backed merchant first; fall back to legacy Shop.
+		shopInv := shops.GetShopInventory(shopMob.Zone, int(shopMob.MobId), shopMob.HomeRoomId)
+		purchaseFn := tryPurchase
+		if shopInv != nil {
+			purchaseFn = func(request string, u *users.UserRecord, r *rooms.Room, sm *mobs.Mob, su *users.UserRecord) bool {
+				return tryPurchaseFromInventory(request, u, r, sm, shopInv)
+			}
+		} else {
+			shopMob.Character.Shop.Restock()
+		}
 
-		if success = tryPurchase(itemname, user, room, shopMob, nil); success {
-			user.Character.OnStatUse("charisma", user.UserId)
-			// Stage 38.5.5: Merchant mob gains charisma from trade interactions
+		if purchaseFn(itemname, user, room, shopMob, nil) {
+			user.Character.OnSkillUse(string(skills.Bartering), user.UserId)
 			shopMob.Character.OnStatUse("charisma", 0)
+			purchased := 1
+			for purchased < quantity {
+				if !purchaseFn(itemname, user, room, shopMob, nil) {
+					break
+				}
+				user.Character.OnSkillUse(string(skills.Bartering), user.UserId)
+				shopMob.Character.OnStatUse("charisma", 0)
+				purchased++
+			}
+			if quantity > 1 && purchased < quantity {
+				user.SendText(fmt.Sprintf(`<ansi fg="yellow">Purchased %d of %d before running short.</ansi>`, purchased, quantity))
+			}
+			success = true
+
+			// Quest engine: command notification
+			bridge := questengine.NewGameBridge(user, room.RoomId)
+			questengine.GetEngine().Notify("command", questengine.EventDetails{
+				UserId:  user.UserId,
+				RoomId:  room.RoomId,
+				Command: "buy",
+			}, bridge, bridge)
+
 			return true, nil
 		}
 	}
@@ -238,6 +309,10 @@ func tryPurchase(request string, user *users.UserRecord, room *rooms.Room, shopM
 
 	if match == `` {
 
+		mudlog.Debug("PURCHASE", "msg", "no item match found",
+			"request", request, "availableItems", allNames,
+			"user", user.Character.Name)
+
 		if shopMob != nil {
 			extraSay := ``
 
@@ -260,6 +335,10 @@ func tryPurchase(request string, user *users.UserRecord, room *rooms.Room, shopM
 
 		return false
 	}
+
+	mudlog.Debug("PURCHASE", "msg", "item matched",
+		"request", request, "match", match, "user", user.Character.Name,
+		"userGold", user.Character.Gold)
 
 	ctx, ok := validatePurchase(user, shopMob, shopUser, nameToShopItem[match], itemPrices, mercPrices, buffPrices, petPrices)
 	if !ok {
@@ -293,6 +372,10 @@ func validatePurchase(user *users.UserRecord, shopMob *mobs.Mob, shopUser *users
 ) (purchaseContext, bool) {
 
 	if !matchedShopItem.Available() {
+		mudlog.Debug("PURCHASE", "msg", "item not available (stock depleted)",
+			"itemId", matchedShopItem.ItemId, "mobId", matchedShopItem.MobId,
+			"quantity", matchedShopItem.Quantity, "quantityMax", matchedShopItem.QuantityMax,
+			"user", user.Character.Name)
 		if shopMob != nil {
 			shopMob.Command(`say I don't have that for sale right now.`)
 		} else if shopUser != nil {
@@ -313,6 +396,9 @@ func validatePurchase(user *users.UserRecord, shopMob *mobs.Mob, shopUser *users
 	}
 
 	if user.Character.Gold < price {
+		mudlog.Debug("PURCHASE", "msg", "insufficient gold",
+			"userGold", user.Character.Gold, "price", price,
+			"itemId", matchedShopItem.ItemId, "user", user.Character.Name)
 		sendMerchantMessage(user, shopMob, shopUser,
 			`say You don't have enough gold for that.`,
 			`You don't have enough gold for that.`)
@@ -425,7 +511,7 @@ func executePurchaseItem(user *users.UserRecord, room *rooms.Room, shopMob *mobs
 		user.SendText(
 			fmt.Sprintf(`You purchase the <ansi fg="itemname">%s</ansi> from <ansi fg="mobname">%s</ansi> for %s.`, newItm.DisplayName(), shopMob.Character.Name, tradeInString),
 		)
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> purchases the <ansi fg="itemname">%s</ansi> from <ansi fg="mobname">%s</ansi>.`, user.Character.Name, newItm.DisplayName(), shopMob.Character.Name),
 			user.UserId,
 		)
@@ -440,7 +526,7 @@ func executePurchaseItem(user *users.UserRecord, room *rooms.Room, shopMob *mobs
 
 		shopUser.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> purchased the <ansi fg="itemname">%s</ansi> you were selling for %s.`, user.Character.Name, newItm.DisplayName(), tradeInString))
 
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> purchases the <ansi fg="itemname">%s</ansi> from <ansi fg="mobname">%s</ansi>.`, user.Character.Name, newItm.DisplayName(), shopUser.Character.Name),
 			user.UserId, shopUser.UserId)
 	}
@@ -460,6 +546,20 @@ func executePurchaseMerc(user *users.UserRecord, room *rooms.Room, shopMob *mobs
 	// Give them the merc
 
 	newMob := mobs.NewMobById(mobs.MobId(matchedShopItem.MobId), user.Character.RoomId)
+
+	// Anti-recursion: strip any companions the new mob had before charming it.
+	// (Fresh mobs from template rarely have charmed mobs, but guard regardless.)
+	for _, subId := range newMob.Character.GetCharmIds() {
+		if subMob := mobs.GetInstance(subId); subMob != nil {
+			subMob.Character.RemoveCharm()
+			if subRoom := rooms.LoadRoom(subMob.Character.RoomId); subRoom != nil {
+				subRoom.RemoveMob(subId)
+			}
+			mobs.DestroyInstance(subId)
+		}
+	}
+	newMob.Character.CharmedMobs = nil
+
 	// Charm 'em
 	newMob.Character.Charm(user.UserId, -2, characters.CharmExpiredRevert)
 	user.Character.TrackCharmed(newMob.InstanceId, true)
@@ -474,7 +574,7 @@ func executePurchaseMerc(user *users.UserRecord, room *rooms.Room, shopMob *mobs
 			fmt.Sprintf(`You pay %s to <ansi fg="mobname">%s</ansi>.`, tradeInString, shopMob.Character.Name),
 		)
 
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> pays %s to <ansi fg="mobname">%s</ansi>.`, user.Character.Name, tradeInString, shopMob.Character.Name),
 			user.UserId,
 		)
@@ -488,7 +588,7 @@ func executePurchaseMerc(user *users.UserRecord, room *rooms.Room, shopMob *mobs
 
 		shopUser.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> hired your <ansi fg="mobname">%s</ansi> you were selling for %s.`, user.Character.Name, newMob.Character.Name, tradeInString))
 
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> hires a <ansi fg="mobname">%s</ansi> from <ansi fg="username">%s</ansi>.`, user.Character.Name, newMob.Character.Name, shopUser.Character.Name),
 			user.UserId, shopUser.UserId)
 
@@ -511,7 +611,7 @@ func executePurchaseBuff(user *users.UserRecord, room *rooms.Room, shopMob *mobs
 			fmt.Sprintf(`You pay %s to <ansi fg="mobname">%s</ansi>.`, tradeInString, shopMob.Character.Name),
 		)
 
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> pays %s to <ansi fg="mobname">%s</ansi>.`, user.Character.Name, tradeInString, shopMob.Character.Name),
 			user.UserId,
 		)
@@ -526,7 +626,7 @@ func executePurchaseBuff(user *users.UserRecord, room *rooms.Room, shopMob *mobs
 
 		shopUser.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> pays you %s for an enchantment.`, user.Character.Name, tradeInString))
 
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> pays to <ansi fg="username">%s</ansi> for an enchantment.`, user.Character.Name, shopUser.Character.Name),
 			user.UserId, shopUser.UserId)
 
@@ -548,6 +648,156 @@ func executePurchaseBuff(user *users.UserRecord, room *rooms.Room, shopMob *mobs
 	return true
 }
 
+// effectiveRestock returns the normalizer for pricing calculations.
+// Materials use their RestockQty. Crafted goods (RestockQty==0) use half MaxStock.
+func effectiveRestock(entry *shops.StockEntry) int {
+	if entry.RestockQty > 0 {
+		return entry.RestockQty
+	}
+	norm := entry.MaxStock / 2
+	if norm < 1 {
+		norm = 1
+	}
+	return norm
+}
+
+// tryPurchaseFromInventory handles purchases from a ShopInventory-backed merchant.
+// It mirrors tryPurchase but reads stock from shopInv and uses dynamic pricing.
+// Buff/merc/pet purchases are NOT handled here — those remain legacy-only.
+func tryPurchaseFromInventory(request string, user *users.UserRecord, room *rooms.Room, shopMob *mobs.Mob, shopInv *shops.ShopInventory) bool {
+
+	cfg := shops.PricingConfigFromBalance()
+
+	type invEntry struct {
+		entry     *shops.StockEntry
+		item      items.Item
+		plainName string
+		price     int
+	}
+
+	var available []invEntry
+	var itemNames []string
+	var itemNamesFancy []string
+
+	for i := range shopInv.Stock {
+		entry := &shopInv.Stock[i]
+		if entry.Current <= 0 {
+			continue
+		}
+		itm := items.New(entry.ItemId)
+		if itm.ItemId == 0 {
+			continue
+		}
+		spec := itm.GetSpec()
+		restock := effectiveRestock(entry)
+		basePrice := shops.CalcSellPrice(spec.Value, entry.Current, restock, cfg)
+
+		// Apply bartering discount
+		barterSkill := user.Character.GetSkillLevel(skills.Bartering)
+		if barterSkill > 0 {
+			discount := float64(barterSkill) / 50.0 * 0.15 // max 15% at skill 50
+			basePrice = shops.ApplyBarterSellDiscount(basePrice, discount)
+		}
+
+		available = append(available, invEntry{
+			entry:     entry,
+			item:      itm,
+			plainName: spec.Name,
+			price:     basePrice,
+		})
+		itemNames = append(itemNames, spec.Name)
+		itemNamesFancy = append(itemNamesFancy, itm.DisplayName())
+	}
+
+	match, closeMatch := util.FindMatchIn(request, itemNames...)
+	if match == `` {
+		match = closeMatch
+	}
+
+	if match == `` {
+		mudlog.Debug("PURCHASE", "msg", "no item match found (ShopInventory)",
+			"request", request, "availableItems", itemNames,
+			"user", user.Character.Name)
+
+		if shopMob != nil {
+			extraSay := ``
+			if len(itemNamesFancy) > 0 {
+				randSelection := util.Rand(len(itemNamesFancy))
+				extraSay = fmt.Sprintf(` Any interest in this <ansi fg="itemname">%s</ansi>?`, itemNamesFancy[randSelection])
+			}
+			shopMob.Command(`say Sorry, I can't offer that right now.` + extraSay)
+		}
+		return false
+	}
+
+	// Find the matched entry
+	var matched *invEntry
+	for i := range available {
+		if available[i].plainName == match {
+			matched = &available[i]
+			break
+		}
+	}
+	if matched == nil {
+		return false
+	}
+
+	mudlog.Debug("PURCHASE", "msg", "item matched (ShopInventory)",
+		"request", request, "match", match, "user", user.Character.Name,
+		"userGold", user.Character.Gold, "price", matched.price)
+
+	// Stock check
+	if matched.entry.Current <= 0 {
+		if shopMob != nil {
+			shopMob.Command(`say I don't have that for sale right now.`)
+		}
+		return false
+	}
+
+	// Gold check
+	if user.Character.Gold < matched.price {
+		mudlog.Debug("PURCHASE", "msg", "insufficient gold (ShopInventory)",
+			"userGold", user.Character.Gold, "price", matched.price,
+			"itemId", matched.entry.ItemId, "user", user.Character.Name)
+		if shopMob != nil {
+			shopMob.Command(`say You don't have enough gold for that.`)
+		} else {
+			user.SendText(`You don't have enough gold for that.`)
+		}
+		return false
+	}
+
+	// Deduct stock
+	if shopInv.RemoveStock(matched.entry.ItemId, 1) == 0 {
+		if shopMob != nil {
+			shopMob.Command(`say I don't have that item right now.`)
+		}
+		return false
+	}
+
+	// Transfer gold
+	events.AddToQueue(events.EquipmentChange{
+		UserId:     user.UserId,
+		GoldChange: -matched.price,
+	})
+	user.Character.Gold -= matched.price
+	shopInv.Gold += matched.price
+
+	// Persist shop state
+	if err := shops.SaveShop(shopInv.Zone, shopInv.MobId, shopInv.RoomId); err != nil {
+		mudlog.Error("PURCHASE", "msg", "SaveShop failed", "error", err)
+	}
+
+	tradeInString := fmt.Sprintf(`<ansi fg="gold">%d gold</ansi>`, matched.price)
+	if matched.price == 0 {
+		tradeInString = `nothing`
+	}
+
+	return executePurchaseItem(user, room, shopMob, nil,
+		characters.ShopItem{ItemId: matched.entry.ItemId},
+		matched.price, tradeInString)
+}
+
 func executePurchasePet(user *users.UserRecord, room *rooms.Room, shopMob *mobs.Mob, shopUser *users.UserRecord, matchedShopItem characters.ShopItem, price int, tradeInString string) bool {
 
 	petInfo := pets.GetPetCopy(matchedShopItem.PetType)
@@ -560,7 +810,7 @@ func executePurchasePet(user *users.UserRecord, room *rooms.Room, shopMob *mobs.
 			fmt.Sprintf(`You pay %s to <ansi fg="mobname">%s</ansi>.`, tradeInString, shopMob.Character.Name),
 		)
 
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> pays %s to <ansi fg="mobname">%s</ansi>.`, user.Character.Name, tradeInString, shopMob.Character.Name),
 			user.UserId,
 		)
@@ -575,7 +825,7 @@ func executePurchasePet(user *users.UserRecord, room *rooms.Room, shopMob *mobs.
 
 		shopUser.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> pays you %s for the %s.`, user.Character.Name, tradeInString, petInfo.DisplayName()))
 
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> pays to <ansi fg="username">%s</ansi> for the %s.`, user.Character.Name, shopUser.Character.Name, petInfo.DisplayName()),
 			user.UserId, shopUser.UserId)
 
@@ -591,14 +841,14 @@ func executePurchasePet(user *users.UserRecord, room *rooms.Room, shopMob *mobs.
 
 		if len(user.Character.Pet.Items) > 0 {
 
-			room.SendText(fmt.Sprintf(`%s drops everything they were carrying.`, user.Character.Pet.DisplayName()))
+			room.SendTextVisual(fmt.Sprintf(`%s drops everything they were carrying.`, user.Character.Pet.DisplayName()))
 
 			for _, item := range user.Character.Pet.Items {
 				room.AddItem(item, false)
 			}
 		}
 
-		room.SendText(fmt.Sprintf(`%s sadly slinks away into the shadows. Never to be seen again.`, user.Character.Pet.DisplayName()))
+		room.SendTextVisual(fmt.Sprintf(`%s sadly slinks away into the shadows. Never to be seen again.`, user.Character.Pet.DisplayName()))
 	}
 
 	for i := 0; i < 5; i++ {

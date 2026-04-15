@@ -3,6 +3,8 @@ zone: Watchers Crossing
 archetype: fighting
 statpool: 14
 itemdropchance: 10
+items:
+  - itemid: 40048
 hostile: true
 maxwander: 1
 groups:

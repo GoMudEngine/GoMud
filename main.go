@@ -35,7 +35,9 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/keywords"
 	"github.com/GoMudEngine/GoMud/internal/language"
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/migration"
+	"github.com/GoMudEngine/GoMud/internal/mobcommands"
 	"github.com/GoMudEngine/GoMud/internal/usercommands"
 	"github.com/GoMudEngine/GoMud/internal/version"
 	"github.com/gorilla/websocket"
@@ -49,6 +51,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mutators"
 	"github.com/GoMudEngine/GoMud/internal/pets"
 	"github.com/GoMudEngine/GoMud/internal/plugins"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/quests"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -255,6 +258,14 @@ func main() {
 	)
 
 	web.SetWebPlugin(plugins.GetPluginRegistry())
+
+	// Audit command registry parity between user and mob command sets.
+	// Logs warnings for any unexpected gaps (i.e. commands present on one side
+	// but absent on the other that aren't in the intentional allowlists).
+	actions.AuditCommandParity(
+		usercommands.GetAllUserCommands(),
+		mobcommands.GetAllMobCommands(),
+	)
 
 	//
 	// Capture OS signals to gracefully shutdown the server
@@ -1046,6 +1057,7 @@ func loadAllDataFiles(isReload bool) {
 	mobs.LoadDataFiles()
 	pets.LoadDataFiles()
 	quests.LoadDataFiles()
+	questengine.LoadDataFiles()
 	templates.LoadAliases(plugins.GetPluginRegistry())
 	keywords.LoadAliases(plugins.GetPluginRegistry())
 	mutators.LoadDataFiles()

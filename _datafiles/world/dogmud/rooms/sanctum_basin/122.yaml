@@ -10,16 +10,14 @@ description: >
 mapsymbol: L
 maplegend: Loom
 biome: city
+coord:
+  x: -8
+  y: 8
+  z: 0
 station: loom
 exits:
   north:
     roomid: 109
-items:
-  - itemid: 40012
-  - itemid: 40012
-  - itemid: 40012
-  - itemid: 40013
-  - itemid: 40013
 spawninfo:
 - itemid: 40007
   message: A cloth strip lies folded on the weaving bench.

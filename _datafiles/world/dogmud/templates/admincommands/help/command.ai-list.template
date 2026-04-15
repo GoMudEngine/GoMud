@@ -1,0 +1,5 @@
+The <ansi fg="command">ai-list</ansi> command shows all online AI accounts.
+
+<ansi fg="command">ai-list</ansi>
+Lists all currently connected accounts that are either flagged as AI
+or connected via the AI port. Shows [flagged] and [AI port] tags.

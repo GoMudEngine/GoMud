@@ -1,23 +1,18 @@
-<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">sonic-shout</ansi> mutation
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="yellow">Sonic Shout</ansi> mutation
 
-<ansi fg="white-bold">Sonic Shout</ansi> is an active-ability mutation. Your vocal
-cords have mutated into a resonating chamber capable of
-unleashing devastating shockwaves of sound.
+Your vocal cords have mutated into something inhuman — a resonating
+chamber that can unleash devastating shockwaves of sound. The power
+comes at a cost; your voice is permanently harsh and grating.
 
-<ansi fg="yellow">Usage:</ansi>
+<ansi fg="yellow">Type:</ansi>     Active Ability
+<ansi fg="yellow">Rarity:</ansi>   Very Rare
 
-  <ansi fg="command">sonic-shout</ansi>        Unleash a deafening shout that stuns
-                     nearby enemies.
+<ansi fg="yellow">Benefits:</ansi>
+  Active ability: unleash a deafening sonic shockwave that stuns
+  nearby enemies
 
-<ansi fg="yellow">Pros:</ansi>
-  Grants the <ansi fg="command">sonic-shout</ansi> active ability.
-
-<ansi fg="yellow">Cons:</ansi>
-  Permanently reduces Charisma by 15. Your voice is harsh
-  and grating — a side effect of the mutation.
-
-<ansi fg="yellow">Visual:</ansi>
-  Their throat bulges unnaturally, thick cords of muscle
-  visible beneath the skin.
+<ansi fg="yellow">Drawbacks:</ansi>
+  Moderately reduced charisma — your grating, inhuman voice puts
+  people on edge
 
 <ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help mutations</ansi>

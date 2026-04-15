@@ -1,0 +1,47 @@
+roomid: 4052
+zone: North Road
+title: Bandit Camp
+description: >
+  A clearing hacked from the scrub, large enough for a dozen
+  people to live rough. A firepit sits at the center, its ash
+  grey but still warm. Bedrolls are arranged in a rough circle
+  around it, each one positioned with a clear line of sight to
+  the entrance. A makeshift lean-to of branches and oilcloth
+  shelters a pile of supplies. This is a working camp, not a
+  hideout — these people have been here long enough to settle
+  in, and they plan to stay.
+biome: farmland
+coord:
+  x: -13
+  y: -11
+  z: 0
+exits:
+  east:
+    roomid: 4051
+nouns:
+  firepit: A ring of blackened stones around a mound of grey
+    ash. The ash is still warm near the center. A spit of green
+    wood spans the ring, a charred haunch of something hanging
+    from it. Cooking grease has pooled in the stones below.
+    These people eat well for bandits.
+  supplies: Under the lean-to -- coils of rope, a set of
+    lockpicks in a leather roll, a hand-drawn map of the road
+    with waypoint distances marked in a neat hand, several
+    empty sacks, and a wooden crate sealed with iron bands.
+    This is not opportunistic theft — this is planning.
+  bedrolls: A dozen bedrolls arranged in a circle around the
+    firepit, each positioned to face the camp entrance. Military
+    discipline, or at least someone's idea of it. A few personal
+    items — a whetstone, a flask, a deck of worn playing cards —
+    sit beside the nearest bedroll. One bedroll is notably better
+    than the others, set slightly apart, with a saddlebag beside
+    it.
+idlemessages:
+- Embers shift in the firepit, a brief glow then dark again.
+- Wind flaps the oilcloth lean-to, snapping it taut then slack.
+- A crow lands on the lean-to's ridge pole and begins pulling
+  at something.
+spawninfo:
+  - mobid: 284
+  - mobid: 285
+  - mobid: 286

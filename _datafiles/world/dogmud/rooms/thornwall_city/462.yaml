@@ -9,6 +9,10 @@ description: The center of Main Street is marked by a worn stone fountain that h
   leads toward the Craftsmen's Quarter. The buildings here are better maintained --
   fresh paint, clean windows, the occasional decorative ironwork.
 biome: city
+coord:
+  x: 2
+  y: 0
+  z: 0
 exits:
   west:
     roomid: 461

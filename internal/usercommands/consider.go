@@ -41,47 +41,51 @@ func Consider(rest string, user *users.UserRecord, room *rooms.Room, flags event
 			if playerId > 0 {
 				u := users.GetByUserId(playerId)
 
-				p1 := combat.PowerRanking(*user.Character, *u.Character)
-				p2 := combat.PowerRanking(*u.Character, *user.Character)
-
-				ratio = p1 / p2
+				p1 := combat.PowerScore(*user.Character)
+				p2 := combat.PowerScore(*u.Character)
+				if p2 > 0 {
+					ratio = p1 / p2
+				}
 				considerType = "user"
 				considerName = u.Character.Name
 
 			} else if mobId > 0 {
 
 				m := mobs.GetInstance(mobId)
+				if m == nil {
+					user.SendText("You don't see them here.")
+					return true, nil
+				}
 
-				p1 := combat.PowerRanking(*user.Character, m.Character)
-				p2 := combat.PowerRanking(m.Character, *user.Character)
-
-				ratio = p1 / p2
+				p1 := combat.PowerScore(*user.Character)
+				p2 := combat.PowerScore(m.Character)
+				if p2 > 0 {
+					ratio = p1 / p2
+				}
 				considerType = "mob"
 				considerName = m.Character.Name
 			}
 
-			prediction := `Unknown`
+			prediction := `<ansi fg="red-bold">You will not survive this fight</ansi>`
 			if ratio > 4 {
-				prediction = `<ansi fg="blue-bold">Very Favorable</ansi>`
+				prediction = `<ansi fg="blue-bold">They pose no threat to you</ansi>`
 			} else if ratio > 3 {
-				prediction = `<ansi fg="green">Favorable</ansi>`
+				prediction = `<ansi fg="green">You hold a clear advantage</ansi>`
 			} else if ratio > 2 {
-				prediction = `<ansi fg="green">Good</ansi>`
+				prediction = `<ansi fg="green">The odds favor you</ansi>`
 			} else if ratio > 1 {
-				prediction = `<ansi fg="yellow">Okay</ansi>`
+				prediction = `<ansi fg="yellow">An even contest — tread carefully</ansi>`
 			} else if ratio > 0.5 {
-				prediction = `<ansi fg="red-bold">Bad</ansi>`
+				prediction = `<ansi fg="red-bold">They have the upper hand</ansi>`
 			} else if ratio > 0 {
-				prediction = `<ansi fg="red-bold">Very Bad</ansi>`
-			} else {
-				prediction = `<ansi fg="red-bold">YOU WILL DIE</ansi>`
+				prediction = `<ansi fg="red-bold">You are severely outmatched</ansi>`
 			}
 
 			user.SendText(
 				fmt.Sprintf(`You consider <ansi fg="%sname">%s</ansi>...`, considerType, considerName),
 			)
 			user.SendText(
-				fmt.Sprintf(`It is estimated that your chances to kill <ansi fg="%sname">%s</ansi> are %s (%f)`, considerType, considerName, prediction, ratio),
+				fmt.Sprintf(`Your instincts tell you: %s`, prediction),
 			)
 		}
 	}

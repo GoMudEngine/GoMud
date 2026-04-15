@@ -1,0 +1,42 @@
+roomid: 4019
+zone: Ashwick
+title: East Edge
+description: >
+  The hamlet ends here with an abruptness that feels almost
+  intentional. Behind you, the last house on Chapel Lane
+  stands with its back to the wilderness. Ahead, dense mixed
+  woodland begins past the last fence -- canopy dark and
+  close, the transition from tended land to wild happening
+  in a single step. A narrow path leads north into the trees.
+  To the south, a cottage sits apart from the others, its
+  garden overgrown and a faded sign on its door.
+biome: farmland
+coord:
+  x: -3
+  y: -13
+  z: 0
+exits:
+  west:
+    roomid: 4018
+  north:
+    roomid: 4029
+  south:
+    roomid: 4023
+nouns:
+  treeline: Dense mixed woodland starting just past the last
+    fence. Hardwood and evergreen canopy interlocks overhead,
+    dark and close, admitting little light to the forest
+    floor. The undergrowth is thick with ferns and bramble.
+    Bird calls come from within, and the air smells of leaf
+    mold and damp earth. The forest does not invite, but
+    neither does it threaten -- it simply begins.
+  fence: The last fence in Ashwick -- a low wooden rail fence
+    marking the boundary between tended land and wild. The
+    posts are sturdy but the rails show claw marks from
+    animals rubbing against them. Beyond this point, no one
+    maintains anything. The fence creaks in the wind.
+idlemessages:
+- Bird calls echo from the forest, strange after the hamlet's
+  quiet.
+- The last fence creaks as wind pushes against its rails.
+- Leaves blow from the treeline across the packed earth.

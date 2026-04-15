@@ -1,0 +1,27 @@
+roomid: 490
+zone: Thornwall City
+title: Grate Shaft
+description: >
+  A vertical shaft rising into darkness, capped by an iron grate far
+  overhead. Faint grey light filters down -- this shaft connects to the
+  street above, probably a storm drain. The grate is bolted from the
+  outside and far out of reach. Rope marks on the stone walls suggest
+  someone has climbed up and down here before, but there is no rope now.
+  The shaft is a dead end without equipment.
+biome: cave
+coord:
+  x: 3
+  y: -3
+  z: -2
+exits:
+  west:
+    roomid: 489
+nouns:
+  grate: An iron grate far above, letting in a thin column of grey light.
+    Street noise filters down faintly -- footsteps, the creak of a cart
+    wheel. The grate is bolted shut from the surface.
+  shaft: The shaft rises straight up for twenty feet or more. The stone
+    is worn smooth in places where ropes have rubbed against it.
+idlemessages:
+- Faint street noise drifts down through the grate far above.
+- A thin column of grey light illuminates dust motes in the shaft.

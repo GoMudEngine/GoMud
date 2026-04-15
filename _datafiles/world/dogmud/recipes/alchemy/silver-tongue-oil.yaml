@@ -1,0 +1,20 @@
+id: silver-tongue-oil
+name: Silver Tongue Oil
+skill: alchemy
+skill_minimum: 20
+station: alchemy_bench
+time_rounds: 5
+ingredients:
+  - item_tag: moonpetal
+    quantity: 1
+  - item_tag: chrysalis-core
+    quantity: 1
+  - item_tag: dustwalk-herb
+    quantity: 1
+  - item_tag: bottle
+    quantity: 1
+output:
+  item_id: 30050
+  quantity: 1
+success_message: "An opalescent oil forms on the surface, shimmering with persuasive energy. A silver tongue oil!"
+failure_message: "The oil separates and refuses to blend. The materials are wasted."

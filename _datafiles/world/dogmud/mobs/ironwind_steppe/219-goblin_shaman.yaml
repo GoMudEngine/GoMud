@@ -17,6 +17,9 @@ idlecommands:
   - ''
   - 'emote traces a symbol in the air with a clawed finger'
 activitylevel: 20
+reaction_delay: 1.2
+tactical_discipline: 0.55
+tactic_preset: defensive_caster
 character:
   name: goblin shaman
   description: |

@@ -3,14 +3,15 @@ package usercommands
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
-	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
@@ -86,56 +87,11 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			}
 		}
 
-	} else if rest[0] == '*' { // choose a target at random. Friend or foe.
-
-		if rest == `*` { // * ANYONE
-
-			allMobs := room.GetMobs()
-			allPlayers := []int{}
-			for _, userId := range room.GetPlayers() {
-				if userId == user.UserId {
-					continue
-				}
-				allPlayers = append(allPlayers, userId)
-			}
-
-			randomSelection := util.Rand(len(allMobs) + len(allPlayers))
-
-			if randomSelection < len(allMobs) {
-				attackMobInstanceId = allMobs[randomSelection]
-			} else {
-				randomSelection -= len(allMobs)
-				attackPlayerId = allPlayers[randomSelection]
-			}
-
-		} else if rest == `*mob` { // *mob ANY MOB
-
-			if allMobs := room.GetMobs(); len(allMobs) > 0 {
-				attackMobInstanceId = allMobs[util.Rand(len(allMobs))]
-			}
-
-		} else { // *user etc. ANY PLAYER
-
-			allPlayers := []int{}
-			for _, userId := range room.GetPlayers() {
-				if userId == user.UserId {
-					continue
-				}
-				allPlayers = append(allPlayers, userId)
-			}
-
-			if len(allPlayers) > 0 {
-				attackPlayerId = allPlayers[util.Rand(len(allPlayers))]
-			}
-
-		}
-
 	} else {
-		attackPlayerId, attackMobInstanceId = room.FindByName(rest)
-	}
-
-	if attackPlayerId == user.UserId { // Can't attack self!
-		attackPlayerId = 0
+		// Wildcard and named-target resolution delegated to shared helper.
+		t := actions.FindAttackTarget(rest, room, user.UserId, 0)
+		attackPlayerId = t.UserId
+		attackMobInstanceId = t.MobInstanceId
 	}
 
 	if attackMobInstanceId == 0 && attackPlayerId == 0 {
@@ -202,6 +158,11 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				return true, nil
 			}
 
+			if m.IsNonCombatant() {
+				user.SendText(fmt.Sprintf(`You can't attack <ansi fg="mobname">%s</ansi>.`, m.Character.Name))
+				return true, nil
+			}
+
 			if party := parties.Get(user.UserId); party != nil {
 				for _, id := range party.UserIds {
 					if id == user.UserId {
@@ -211,9 +172,26 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 						if partyUser.Character.RoomId == user.Character.RoomId &&
 							partyUser.Character.GetSetting("autoattack") != "off" &&
 							partyUser.Character.Aggro == nil {
+							// Surprise attack for hidden party members before they join combat
+							if partyUser.Character.HasBuffFlag(buffs.Hidden) {
+								partyCfg := configs.GetBalanceConfig()
+								if partyUser.Character.TryCooldown("special-move",
+									fmt.Sprintf("%d rounds", partyCfg.SpecialMoveCooldown)) {
+									executeSurpriseAttack(partyUser, room, attackMobInstanceId, 0)
+								}
+							}
 							partyUser.Command(fmt.Sprintf(`attack #%d`, attackMobInstanceId))
 						}
 					}
+				}
+			}
+
+			// Surprise attack from stealth — fires before normal combat begins
+			if isSneaking {
+				cfg := configs.GetBalanceConfig()
+				if user.Character.TryCooldown("special-move",
+					fmt.Sprintf("%d rounds", cfg.SpecialMoveCooldown)) {
+					executeSurpriseAttack(user, room, attackMobInstanceId, 0)
 				}
 			}
 
@@ -224,7 +202,7 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			)
 
 			if !isSneaking {
-				room.SendText(
+				room.SendTextVisual(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> prepares to fight %s.`, user.Character.Name, mName),
 					user.UserId,
 				)
@@ -273,6 +251,15 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				}
 			}
 
+			// Surprise attack from stealth — fires before normal combat begins
+			if isSneaking {
+				cfg := configs.GetBalanceConfig()
+				if user.Character.TryCooldown("special-move",
+					fmt.Sprintf("%d rounds", cfg.SpecialMoveCooldown)) {
+					executeSurpriseAttack(user, room, 0, attackPlayerId)
+				}
+			}
+
 			user.Character.SetAggro(attackPlayerId, 0, characters.DefaultAttack)
 
 			user.SendText(
@@ -285,7 +272,7 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> prepares to fight you!`, user.Character.Name),
 				)
 
-				room.SendText(
+				room.SendTextVisual(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> prepares to fight <ansi fg="mobname">%s</ansi>.`, user.Character.Name, p.Character.Name),
 					user.UserId, attackPlayerId)
 			}

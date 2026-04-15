@@ -1,0 +1,27 @@
+spellid: conjure-fire
+name: Conjure Fire Elemental
+description: Wrenches a fire elemental into existence and shackles it to
+  your will. Strikes back at anyone who hits it with bare flesh.
+type: neutral
+schools:
+  - manifestation
+cost: 350
+waitrounds: 4
+difficulty: 40
+primarystat: willpower
+base_folds: 10
+target_defense_type: none
+effect_type: none
+effect_magnitude: 0
+cast_user_text: >-
+  You reach through the veil into the roiling fire plane, pulling
+  at something that burns even through the gap...
+cast_room_text: >-
+  {source}'s hands glow red as searing heat bleeds through an
+  unseen gap in the air.
+wait_user_text: >-
+  The heat is nearly unbearable. Something blazing and furious is
+  being dragged through against its will...
+summon_mob_id: 313
+summon_base_pool: 85
+summon_scaling_divisor: 500

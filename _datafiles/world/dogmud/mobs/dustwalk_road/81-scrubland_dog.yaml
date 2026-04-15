@@ -8,6 +8,8 @@ maxwander: 2
 groups:
   - animal
   - canine
+hates:
+  - rodent
 idlecommands:
   - 'emote sniffs the ground in quick, nervous movements'
   - 'emote raises its hackles and growls at nothing visible'
@@ -30,7 +32,7 @@ character:
     yellow eyes hold the flat, assessing stare of a predator that has learned to
     weigh every encounter in terms of risk and reward. It moves in a low crouch,
     ready to bolt or bite depending on how things go.
-  speciesid: 21
+  speciesid: 2
   level: 1
   gold: 0
   stats:

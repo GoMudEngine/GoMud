@@ -1,0 +1,16 @@
+itemid: 20075
+name: stone ring
+namesimple: ring
+description: >-
+  A thick band of smoothed granite worn featureless by elemental
+  pressure. It has no adornment, no inscription — just dense
+  stone shaped into a perfect circle. Wearing it feels like
+  being slightly heavier, grounded, resistant. The wearer's
+  grip strengthens noticeably.
+type: ring
+subtype: wearable
+statmods:
+  strength: 5
+  vitality: 4
+value: 40
+weight: 0.5

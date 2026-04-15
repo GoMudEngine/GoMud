@@ -1,0 +1,7 @@
+buffid: 54
+name: Healing Salve
+description: Warmth spreads through your body, mending injuries.
+triggerrate: 1 round
+triggercount: 150
+statmods:
+  healthrecovery: 3

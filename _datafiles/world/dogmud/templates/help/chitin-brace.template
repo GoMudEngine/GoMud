@@ -1,0 +1,21 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="yellow">Chitin-Brace</ansi> (enchanting recipe)
+
+Chitinous ridges harden the bracer, turning defense into exoskeleton.
+
+<ansi fg="yellow">━━━ Recipe ━━━</ansi>
+
+  <ansi fg="yellow">Skill:</ansi>       enchanting (minimum 2)
+  <ansi fg="yellow">Station:</ansi>     enchanting circle
+  <ansi fg="yellow">Target:</ansi>      wrist (must be equipped)
+  <ansi fg="yellow">Ingredients:</ansi> binding paste (x1), healers root (x2)
+  <ansi fg="yellow">Time:</ansi>        3 rounds
+  <ansi fg="yellow">Reserve:</ansi>     health (1% at tier 0, scaling with tier)
+
+<ansi fg="yellow">━━━ Effect ━━━</ansi>
+
+Provides physical damage mitigation.
+
+The enchantment grows stronger through combat use, advancing
+through five tiers of increasing power and reserve cost.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help enchanting</ansi>, <ansi fg="command">help craft</ansi>

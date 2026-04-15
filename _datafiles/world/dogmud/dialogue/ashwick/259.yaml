@@ -1,0 +1,89 @@
+mobid: 259
+zone: Ashwick
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Mind the jars if you are coming in. Some of them bite."
+      - "Welcome. I would offer you tea but I am out of half the ingredients."
+
+  - keywords: ["buy", "sell", "shop", "stock", "wares"]
+    responses:
+      - "What I have is on the table. It is not much at the moment."
+
+  - keywords: ["gossip", "news", "rumor", "rumors"]
+    responses:
+      - "I hear what the plants tell me. They have been telling me they are being stolen."
+
+  - keywords: [""]
+    responses:
+      - "Was there something else?"
+      - "Mm. Let me know if you need something."
+
+tree:
+  root:
+    text: "I am Delia. I tend herbs, brew remedies, and try to keep this hamlet from falling apart one poultice at a time. Lately the falling apart has been winning."
+    hints: "You could ask about a quest or task, the herb shortage, or search."
+
+  nodes:
+    - id: quest_start
+      triggers: ["quest", "task", "help", "problem", "herbs", "shortage"]
+      questExcluded: ["16-start", "16-end"]
+      grantsQuest: "16-start"
+      text: "Someone has been taking the wild herbs from the forest before I can harvest them. Feverfew, bitter-thistle, healers-root -- the things I cannot grow fast enough in the garden. I have been rationing stock for weeks. If you are heading into the forest north of the east edge, see if you can find out who is stripping my supply."
+      hints: "Follow the forest path north from the east edge of Ashwick. Look for signs of whoever has been taking the herbs."
+      moodChange: friendly
+
+    - id: quest_active
+      triggers: ["quest", "task", "herbs", "shortage", "progress"]
+      questRequired: ["16-start"]
+      questExcluded: ["16-end"]
+      text: "Still short on stock. Have you found anything in the forest?"
+      hints: "Explore deeper into the forest. The herb clearing and forager's camp may hold answers."
+
+    - id: quest_complete_herbs
+      triggers: ["herbs", "found", "brought", "here", "deliver", "grove"]
+      questRequired: ["16-start"]
+      questExcluded: ["16-end"]
+      requiresItem: 40040
+      grantsQuest: "16-end"
+      text: "Where did you find these? This is feverfew and bitter-thistle of a quality I have not seen in months. The color, the potency -- whatever soil grew these, it is touched by something deeper than rainfall. My stock will be full again within the week."
+      hints: "Quest complete. Delia now offers search training and serves as an herb vendor."
+      moodChange: friendly
+
+    - id: quest_complete_forager
+      triggers: ["forager", "help", "arrangement", "worker", "sev", "person", "woods"]
+      questRequired: ["16-start", "16-forager"]
+      questExcluded: ["16-end"]
+      grantsQuest: "16-end"
+      text: "Another herbalist? Living in the forest? And they know feverfew from fireweed? If they are willing to work and I do not have to explain the difference between a poultice and a soup, I will take the help. Send them to me."
+      hints: "Quest complete. Delia now offers search training and serves as an herb vendor."
+      moodChange: friendly
+
+    - id: quest_done
+      triggers: ["quest", "task", "herbs", "shortage"]
+      questRequired: ["16-end"]
+      text: "The stock is recovering. You solved a problem I had been struggling with for weeks. My worktable is available if you want to do any herbalism work -- mortar, pestle, jars, everything you need for alchemy. Help yourself."
+
+    - id: apprentice_surface
+      triggers: ["girl", "apprentice", "trained", "student", "teach"]
+      questExcluded: ["17-letter"]
+      text: "I trained someone once. She had good hands. Quick with a mortar, patient with a slow extraction. She left. People leave small places."
+      hints: "Delia seems reluctant to say more about this."
+
+    - id: apprentice_deep
+      triggers: ["girl", "apprentice", "maren", "trained", "student", "left"]
+      questRequired: ["17-letter"]
+      text: "Her name was Maren. She left because she had to. I knew what she was before she told me, and I trained her anyway, because good hands are good hands and the Chrysalis has nothing to do with whether someone can tell comfrey from cress. She was the best student I have had. I hope she is somewhere safe."
+      hints: "Delia clearly cared about this person. The name Maren may be worth remembering."
+      moodChange: friendly
+
+    - id: worktable_access
+      triggers: ["teach", "train", "search", "learn", "craft", "alchemy", "worktable"]
+      questRequired: ["16-end"]
+      text: "You want to work with herbs? The worktable is yours to use. Mortar, pestle, jars -- everything you need. Start by looking at what grows where and asking why. Every plant is an answer to a question the soil asked."
+      hints: "The worktable in this room functions as an alchemy bench. You can craft here."
+
+memory:
+  expiryPeriod: ""

@@ -9,11 +9,15 @@ description: A shallow depression in the steppe, sheltered on three
   entrances. A natural gathering spot for wildlife seeking respite
   from the relentless steppe wind.
 biome: land
+coord:
+  x: 12
+  y: 4
+  z: 0
 exits:
   south:
-    roomid: 3026
+    roomid: 3022
   east:
-    roomid: 3037
+    roomid: 3025
   north:
     roomid: 3028
 nouns:

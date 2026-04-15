@@ -1,0 +1,15 @@
+itemid: 20068
+name: bandit's leather vest
+namesimple: vest
+description: >
+  A vest of boiled leather, darkened with use and patched in
+  several places where blades found their way through. The
+  stitching is rough but functional — field repairs by someone
+  who knows how to keep gear working without a proper workshop.
+  It smells of woodsmoke and sweat and the particular mustiness
+  of leather that has been rained on too many times.
+type: body
+subtype: wearable
+physical_mitigation: 5
+value: 20
+weight: 5.0

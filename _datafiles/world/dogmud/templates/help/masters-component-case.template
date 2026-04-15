@@ -1,0 +1,20 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">master's component case</ansi> (tailoring recipe)
+
+A <ansi fg="itemname">master's component case</ansi> of boiled leather and bone,
+lined with silk and divided into dozens of labeled slots.
+The ultimate crafting material storage for serious artisans.
+
+<ansi fg="yellow">━━━ Stats ━━━</ansi>
+
+  <ansi fg="yellow">Capacity:</ansi>          75 items
+  <ansi fg="yellow">Weight Reduction:</ansi>  45% of stored component weight
+  <ansi fg="yellow">Slot:</ansi>              Components
+
+<ansi fg="yellow">━━━ Crafting ━━━</ansi>
+
+  <ansi fg="yellow">Skill:</ansi>       tailoring (minimum 30)
+  <ansi fg="yellow">Station:</ansi>     loom
+  <ansi fg="yellow">Ingredients:</ansi> leather strip (x3), cloth strip (x2),
+               thread spool (x2), bone needle (x2)
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help tailoring</ansi>, <ansi fg="command">help sort</ansi>

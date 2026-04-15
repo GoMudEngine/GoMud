@@ -59,15 +59,20 @@ type Character struct {
 	Health           int                            // The health of the character
 	Stamina          int                            // The stamina of the character (physical energy)
 	Conviction       int                            // The conviction of the character (mental/spiritual energy)
+	Toxicity         float64                        `yaml:"toxicity,omitempty"`      // Current toxicity from potions
 	ActionPoints     int                            // The resevoir of action points the character has to spend on movement etc.
 	Gold             int                            // The gold the character is holding
 	Bank             int                            // The gold the character has in the bank
+	StorageFeeLastMonth int `yaml:"storagefee_lastmonth,omitempty"` // Game month when storage fees were last charged
 	Shop             Shop                           `yaml:"shop,omitempty"`          // Definition of shop services/items this character stocks (or just has at the moment)
 	SpellBook        map[string]int                 `yaml:"spellbook,omitempty"`     // The spells the character has learned
 	KnownRecipes     map[string]int                 `yaml:"knownrecipes,omitempty"`  // The crafting recipes the character has discovered
 	Charmed          *CharmInfo                     `yaml:"-"`                       // If they are charmed, this is the info
+	EverCharmed      bool                           `yaml:"-"`                       // True if this mob was ever a companion (survives dismiss)
 	CharmedMobs      []int                          `yaml:"-"`                       // If they have charmed anyone, this is the list of mob instance ids
 	Items            []items.Item                   `yaml:"items,omitempty"`         // The items the character is holding
+	ComponentItems   []items.Item                   `yaml:"componentitems,omitempty"` // Contents of equipped component bag
+	PotionItems      []items.Item                   `yaml:"potionitems,omitempty"`   // Contents of equipped potion bandolier
 	Buffs            buffs.Buffs                    `yaml:"buffs,omitempty"`         // The buffs the character has active
 	Equipment        Worn                           `yaml:"equipment,omitempty"`     // The equipment the character is wearing
 	HealthMax        stats.StatInfo                 `yaml:"-"`                       // The maximum health of the character. Don't write to yaml since is dynamically calculated.
@@ -92,14 +97,18 @@ type Character struct {
 	Cooldowns        Cooldowns                      `yaml:"cooldowns,omitempty"`     // How many rounds until it is cooled down
 	Settings         map[string]string              `yaml:"settings,omitempty"`      // custom setting tracking, used for anything.
 	QuestProgress    map[int]string                 `yaml:"questprogress,omitempty"` // quest progress tracking
+	QuestFlags       map[string]string              `yaml:"questflags,omitempty"`    // quest flag tracking (e.g., "11-branch" → "rhett")
+	LastQuestId      int                            `yaml:"lastquestid,omitempty"`   // most recently progressed quest
 	KeyRing          map[string]string              `yaml:"keyring,omitempty"`       // key is the lock id, value is the sequence
 	KD               KDStats                        `yaml:"kd,omitempty"`            // Kill/Death stats
 	MiscData         map[string]any                 `yaml:"miscdata,omitempty"`      // Any random other data that needs to be stored
+	Discoveries      map[int][]string               `yaml:"discoveries,omitempty"`   // Per-room hidden object discoveries
 	ExtraLives       int                            `yaml:"extralives,omitempty"`    // How many lives remain. If enabled, players can perma-die if they die at zero
 	MobMastery       MobMasteries                   `yaml:"mobmastery,omitempty"`    // Tracks particular masteries around a given mob
 	SkillUseCount    map[string]int                 `yaml:"skillusecount,omitempty"` // Tracks how many times each skill has been used
 	StatUseCount     map[string]int                 `yaml:"statusecount,omitempty"`  // Tracks how many times each stat has been checked
 	Pet              pets.Pet                       `yaml:"pet,omitempty"`           // Do they have a pet?
+	Companions       []CompanionInfo                `yaml:"companions,omitempty"`    // Active companions (manifestation system)
 	Created          time.Time                      `yaml:"created"`                 // When this character was created
 	Timers           map[string]gametime.RoundTimer `yaml:"timers,omitempty"`        // any special timers added to this character
 	roomHistory      []int                          // A stack FILO of the last X rooms the character has been in
@@ -136,6 +145,7 @@ func New() *Character {
 		CombatPosition: PositionStanding, // Stage 8.1: Default combat position
 		Cooldowns:      make(Cooldowns),  // Initialize cooldowns map
 		MiscData:       make(map[string]any),
+		Discoveries:    make(map[int][]string),
 		SkillUseCount:  make(map[string]int),
 		StatUseCount:   make(map[string]int),
 		roomHistory:    make([]int, 0, 10),
@@ -222,11 +232,24 @@ func RollCharacterStats() stats.Statistics {
 // which points to another description location.
 func (c *Character) GetDescription() string {
 
-	if !strings.HasPrefix(c.Description, `h:`) {
-		return c.Description
+	desc := c.Description
+	if strings.HasPrefix(desc, `h:`) {
+		hash := strings.TrimPrefix(desc, `h:`)
+		desc = descriptionCache[hash]
 	}
-	hash := strings.TrimPrefix(c.Description, `h:`)
-	return descriptionCache[hash]
+
+	// Normalize line breaks: collapse single newlines to spaces
+	// (continuation wrapping) while preserving double newlines
+	// (intentional paragraph breaks).
+	desc = strings.ReplaceAll(desc, "\r\n", "\n")
+	desc = strings.ReplaceAll(desc, "\n\n", "\x00") // protect paragraph breaks
+	desc = strings.ReplaceAll(desc, "\n", " ")
+	desc = strings.ReplaceAll(desc, "\x00", "\n\n") // restore paragraph breaks
+	for strings.Contains(desc, "  ") {
+		desc = strings.ReplaceAll(desc, "  ", " ")
+	}
+
+	return desc
 }
 
 // GetMutationVisuals returns a space-joined string of all owned mutation visual
@@ -288,9 +311,6 @@ func (c *Character) GetBaseCastSuccessChance(spellId string) int {
 	// add spell level bonus
 	// 10-30
 	skillLevel := c.GetSkillLevel(skills.Spellcasting)
-	if skillLevel == 0 {
-		skillLevel = c.GetSkillLevel(skills.Cast) // backward compat with legacy Cast skill
-	}
 	//targetNumber += (skillLevel * 5)
 	//targetNumber -= 5 // cancel out the first level
 
@@ -333,53 +353,62 @@ func (c *Character) GetBaseCastSuccessChance(spellId string) int {
 	return targetNumber
 }
 
-// CarryCapacity returns weight capacity in pounds (Strength × 3)
+// CarryCapacity returns weight capacity in pounds (Strength × config multiplier)
 func (c *Character) CarryCapacity() float64 {
-	return float64(c.Stats.Strength.ValueAdj) * 3.0
+	bal := configs.GetBalanceConfig()
+	return float64(c.Stats.Strength.ValueAdj) * float64(bal.CarryCapacityMultiplier)
 }
 
 // GetCarriedWeight returns the total weight of all carried items in pounds
 func (c *Character) GetCarriedWeight() float64 {
-	totalWeight := 0.0
-
-	// Add weight from inventory items
+	// Backpack item weights
+	backpackWeight := 0.0
 	for _, item := range c.Items {
-		totalWeight += item.GetSpec().GetWeight()
+		backpackWeight += item.GetSpec().GetWeight()
+	}
+	// Apply Back slot weight reduction to backpack contents
+	if c.Equipment.Back.ItemId > 0 {
+		reduction := c.Equipment.Back.GetSpec().WeightReduction
+		if reduction > 0 && reduction <= 1.0 {
+			backpackWeight *= (1.0 - reduction)
+		}
 	}
 
-	// Add weight from equipped items
-	if c.Equipment.Weapon.ItemId > 0 {
-		totalWeight += c.Equipment.Weapon.GetSpec().GetWeight()
+	// Component bag item weights
+	componentWeight := 0.0
+	for _, item := range c.ComponentItems {
+		componentWeight += item.GetSpec().GetWeight()
 	}
-	if c.Equipment.Offhand.ItemId > 0 {
-		totalWeight += c.Equipment.Offhand.GetSpec().GetWeight()
+	// Apply ComponentBag weight reduction
+	if c.Equipment.ComponentBag.ItemId > 0 {
+		reduction := c.Equipment.ComponentBag.GetSpec().WeightReduction
+		if reduction > 0 && reduction <= 1.0 {
+			componentWeight *= (1.0 - reduction)
+		}
 	}
-	if c.Equipment.Head.ItemId > 0 {
-		totalWeight += c.Equipment.Head.GetSpec().GetWeight()
+
+	// Potion bandolier item weights
+	potionWeight := 0.0
+	for _, item := range c.PotionItems {
+		potionWeight += item.GetSpec().GetWeight()
 	}
-	if c.Equipment.Neck.ItemId > 0 {
-		totalWeight += c.Equipment.Neck.GetSpec().GetWeight()
-	}
-	if c.Equipment.Body.ItemId > 0 {
-		totalWeight += c.Equipment.Body.GetSpec().GetWeight()
-	}
+	// Apply bandolier weight reduction
 	if c.Equipment.Belt.ItemId > 0 {
-		totalWeight += c.Equipment.Belt.GetSpec().GetWeight()
-	}
-	if c.Equipment.Gloves.ItemId > 0 {
-		totalWeight += c.Equipment.Gloves.GetSpec().GetWeight()
-	}
-	if c.Equipment.Ring.ItemId > 0 {
-		totalWeight += c.Equipment.Ring.GetSpec().GetWeight()
-	}
-	if c.Equipment.Legs.ItemId > 0 {
-		totalWeight += c.Equipment.Legs.GetSpec().GetWeight()
-	}
-	if c.Equipment.Feet.ItemId > 0 {
-		totalWeight += c.Equipment.Feet.GetSpec().GetWeight()
+		beltSpec := c.Equipment.Belt.GetSpec()
+		if beltSpec.IsBandolier && beltSpec.WeightReduction > 0 && beltSpec.WeightReduction <= 1.0 {
+			potionWeight *= (1.0 - beltSpec.WeightReduction)
+		}
 	}
 
-	return totalWeight
+	// Equipped item weights (all slots via GetAllItems)
+	// Equipped items count at 50% weight — wearing something distributes
+	// its load across your body rather than stuffing it in a bag.
+	equippedWeight := 0.0
+	for _, item := range c.Equipment.GetAllItems() {
+		equippedWeight += item.GetSpec().GetWeight() * 0.5
+	}
+
+	return backpackWeight + componentWeight + potionWeight + equippedWeight
 }
 
 func (c *Character) DeductActionPoints(amount int) bool {
@@ -438,6 +467,11 @@ func (c *Character) GetMovementStaminaCost(terrainMultiplier float64) int {
 	// Phase 24.2: Apply mutation movement speed modifier (Hasted, Extra Legs, etc.)
 	if moveMod := mutations.GetMovementSpeedModifier(c.Mutations); moveMod != 0 {
 		cost *= (1.0 - moveMod) // positive moveMod = faster = less cost
+	}
+
+	// Sneaking costs extra stamina — moving carefully is harder
+	if c.HasBuffFlag(buffs.Hidden) {
+		cost *= 1.5
 	}
 
 	// Cap at maximum stamina cost
@@ -547,6 +581,28 @@ func (c *Character) GetMiscDataKeys(prefixMatch ...string) []string {
 	}
 
 	return retKeys
+}
+
+func (c *Character) HasDiscovery(roomId int, key string) bool {
+	if c.Discoveries == nil {
+		return false
+	}
+	for _, k := range c.Discoveries[roomId] {
+		if k == key {
+			return true
+		}
+	}
+	return false
+}
+
+func (c *Character) AddDiscovery(roomId int, key string) {
+	if c.HasDiscovery(roomId, key) {
+		return
+	}
+	if c.Discoveries == nil {
+		c.Discoveries = make(map[int][]string)
+	}
+	c.Discoveries[roomId] = append(c.Discoveries[roomId], key)
 }
 
 func (c *Character) FindKeyInBackpack(lockId string) (items.Item, bool) {
@@ -781,12 +837,238 @@ func (c *Character) TrackSpellCast(spellName string) bool {
 	return false
 }
 
+// pairedSpells maps spells that are always learned together.
+// Learning either spell automatically grants the other.
+var pairedSpells = map[string]string{
+	"fold-anchor": "fold-recall",
+	"fold-recall": "fold-anchor",
+}
+
 func (c *Character) LearnSpell(spellName string) bool {
-	if _, ok := c.SpellBook[spellName]; !ok {
-		c.SpellBook[spellName] = 1
-		return true
+	if _, ok := c.SpellBook[spellName]; ok {
+		return false
 	}
-	return false
+	c.SpellBook[spellName] = 1
+
+	// Grant paired spell if one exists
+	if paired, ok := pairedSpells[spellName]; ok {
+		if _, known := c.SpellBook[paired]; !known {
+			c.SpellBook[paired] = 1
+		}
+	}
+
+	return true
+}
+
+// MigratePairedSpells is a one-time migration that grants missing
+// paired spells to existing characters. Call on character load.
+// Uses MiscData flag to run only once per character.
+func (c *Character) MigratePairedSpells() {
+	const migrationKey = "migration-fold-pair-done"
+	if c.GetMiscData(migrationKey) != nil {
+		return
+	}
+	for spell, paired := range pairedSpells {
+		if _, known := c.SpellBook[spell]; known {
+			if _, hasPartner := c.SpellBook[paired]; !hasPartner {
+				c.SpellBook[paired] = 1
+			}
+		}
+	}
+	c.SetMiscData(migrationKey, "1")
+}
+
+// MigrateNeckToBack is a one-time migration that moves cloak/cape items
+// from the Neck slot to the Back slot. Runs on character load.
+func (c *Character) MigrateNeckToBack() {
+	const migrationKey = "migration-neck-to-back-done"
+	if c.GetMiscData(migrationKey) != nil {
+		return
+	}
+	// If neck item is a back-type item (cloak data was updated), move it
+	if c.Equipment.Neck.ItemId > 0 {
+		spec := c.Equipment.Neck.GetSpec()
+		if spec.Type == items.Back {
+			// Only move if back slot is empty
+			if c.Equipment.Back.ItemId <= 0 && !c.Equipment.Back.IsDisabled() {
+				c.Equipment.Back = c.Equipment.Neck
+				c.Equipment.Neck = items.Item{}
+			}
+		}
+	}
+	c.SetMiscData(migrationKey, "1")
+}
+
+// MigrateQuestSpells is a one-time migration that grants spells to
+// characters who completed quests before spell rewards were added.
+func (c *Character) MigrateQuestSpells() {
+	const migrationKey = "migration-quest-spells-done"
+	if c.GetMiscData(migrationKey) != nil {
+		return
+	}
+	// Quest 12 (Warden's Covenant) should grant summon-steppe-spirit
+	if c.HasQuest("12-end") {
+		c.LearnSpell("summon-steppe-spirit")
+	}
+	c.SetMiscData(migrationKey, "1")
+}
+
+// MigrateDescriptionWrapping strips embedded line breaks from player
+// descriptions so wrapping only happens at display time.
+func (c *Character) MigrateDescriptionWrapping() {
+	const migrationKey = "migration-desc-unwrap-done"
+	if c.GetMiscData(migrationKey) != nil {
+		return
+	}
+
+	if c.Description != "" && !strings.HasPrefix(c.Description, "h:") {
+		// Collapse \r\n and \n back to spaces
+		d := strings.ReplaceAll(c.Description, "\r\n", " ")
+		d = strings.ReplaceAll(d, "\n", " ")
+		// Collapse any double spaces from the join
+		for strings.Contains(d, "  ") {
+			d = strings.ReplaceAll(d, "  ", " ")
+		}
+		c.Description = strings.TrimSpace(d)
+	}
+
+	c.SetMiscData(migrationKey, "1")
+}
+
+// MigrateAlchemyPotions replaces old potion items with new equivalents.
+func (c *Character) MigrateAlchemyPotions() {
+	const migrationKey = "migration-alchemy-potions-done"
+	if c.GetMiscData(migrationKey) != nil {
+		return
+	}
+
+	potionMap := map[int]int{
+		30010: 30036, // Healing Poultice → Healing Salve
+		30011: 30037, // Stamina Draught → Stamina Tonic
+		30012: 30038, // Conviction Draught → Conviction Draught
+		30028: 30046, // Minor Antidote → Stone Stomach
+		30029: 30044, // Clarity Tonic → Mindshield Elixir
+		30030: 30043, // Fire Resistance → Ironhide Brew
+		30031: 30042, // Greater Healing → Elixir of Renewal
+		30032: 30049, // Berserker Elixir → Berserker Elixir
+	}
+
+	migrateSlice := func(slice []items.Item) []items.Item {
+		for i := range slice {
+			if newId, ok := potionMap[slice[i].ItemId]; ok {
+				slice[i].ItemId = newId
+				slice[i].CraftedRound = util.GetRoundCount()
+				slice[i].CraftSkill = 10
+				slice[i].BottleMultiplier = 1.0 // Glass vial baseline
+			}
+		}
+		return slice
+	}
+
+	c.Items = migrateSlice(c.Items)
+	c.PotionItems = migrateSlice(c.PotionItems)
+
+	c.SetMiscData(migrationKey, "1")
+}
+
+// MigrateAlchemyRecipes grants new recipe equivalents for old known recipes.
+func (c *Character) MigrateAlchemyRecipes() {
+	const migrationKey = "migration-alchemy-recipes-done"
+	if c.GetMiscData(migrationKey) != nil {
+		return
+	}
+
+	recipeMap := map[string]string{
+		"healing-poultice":        "healing-salve",
+		"stamina-draught":         "stamina-tonic",
+		"conviction-draught":      "conviction-draught",
+		"minor-antidote":          "stone-stomach",
+		"clarity-tonic":           "mindshield-elixir",
+		"fire-resistance-draught": "ironhide-brew",
+		"greater-healing-poultice": "elixir-of-renewal",
+		"berserker-elixir":        "berserker-elixir",
+	}
+
+	if c.KnownRecipes != nil {
+		for oldId, newId := range recipeMap {
+			if _, known := c.KnownRecipes[oldId]; known {
+				c.KnownRecipes[newId] = 1
+			}
+		}
+	}
+
+	c.SetMiscData(migrationKey, "1")
+}
+
+// MigrateQuestFlags infers quest flags from downstream quest progress.
+// For Quest 11's branch flag: if the player has Q12 progress, they took
+// the Sylara path; if Q13 progress, the Rhett path.
+func (c *Character) MigrateQuestFlags() {
+	if c.QuestFlags != nil {
+		return // already has flags — skip
+	}
+
+	// Infer Q11 branch from Q12/Q13 progress
+	q12Progress := c.QuestProgress[12]
+	q13Progress := c.QuestProgress[13]
+
+	if q12Progress != "" {
+		c.SetQuestFlag("11-branch", "sylara")
+	} else if q13Progress != "" {
+		c.SetQuestFlag("11-branch", "rhett")
+	}
+	// If neither Q12 nor Q13 started, leave unset —
+	// the player will pick a branch when they next interact.
+}
+
+// MigrateLegacyPotions replaces removed alchemy items and recipes
+// with their current equivalents.
+// 30010 (healing poultice) → 30036 (healing salve)
+// 30011 (stamina draught)  → 30037 (stamina tonic)
+// 30031 (greater healing poultice) → 30036 (healing salve)
+func (c *Character) MigrateLegacyPotions() {
+	// Replace items in backpack
+	for i := range c.Items {
+		switch c.Items[i].ItemId {
+		case 30010, 30031:
+			c.Items[i].ItemId = 30036
+		case 30011:
+			c.Items[i].ItemId = 30037
+		}
+	}
+
+	// Replace items in component bag
+	for i := range c.ComponentItems {
+		switch c.ComponentItems[i].ItemId {
+		case 30010, 30031:
+			c.ComponentItems[i].ItemId = 30036
+		case 30011:
+			c.ComponentItems[i].ItemId = 30037
+		}
+	}
+
+	// Replace items in potion bandolier
+	for i := range c.PotionItems {
+		switch c.PotionItems[i].ItemId {
+		case 30010, 30031:
+			c.PotionItems[i].ItemId = 30036
+		case 30011:
+			c.PotionItems[i].ItemId = 30037
+		}
+	}
+
+	// Replace recipe knowledge
+	if c.KnownRecipes != nil {
+		if _, ok := c.KnownRecipes["healing-poultice"]; ok {
+			delete(c.KnownRecipes, "healing-poultice")
+			c.KnownRecipes["healing-salve"] = 1
+		}
+		if _, ok := c.KnownRecipes["stamina-draught"]; ok {
+			delete(c.KnownRecipes, "stamina-draught")
+			c.KnownRecipes["stamina-tonic"] = 1
+		}
+		delete(c.KnownRecipes, "greater-healing-poultice")
+	}
 }
 
 func (c *Character) HasRecipe(recipeId string) bool {
@@ -828,9 +1110,10 @@ func (c *Character) GetCharmIds() []int {
 
 func (c *Character) Charm(userId int, rounds int, expireCommand string) {
 	c.SetAdjective(`charmed`, true)
+	c.EverCharmed = true
 	c.Charmed = NewCharm(userId, rounds, expireCommand)
 	if c.Aggro != nil && c.Aggro.UserId == userId {
-		c.Aggro = nil
+		c.EndAggro()
 	}
 }
 
@@ -967,7 +1250,7 @@ func (c *Character) GetPhysicalMitigation() float64 {
 		c.Equipment.ExtraArm1, c.Equipment.ExtraArm2,
 		c.Equipment.Head, c.Equipment.Neck, c.Equipment.Body,
 		c.Equipment.Belt, c.Equipment.Gloves, c.Equipment.Ring,
-		c.Equipment.Legs, c.Equipment.Feet,
+		c.Equipment.Legs, c.Equipment.Feet, c.Equipment.Tail,
 	}
 	for _, slot := range slots {
 		if slot.ItemId <= 0 {
@@ -1001,7 +1284,7 @@ func (c *Character) GetMagicalMitigation() float64 {
 		c.Equipment.ExtraArm1, c.Equipment.ExtraArm2,
 		c.Equipment.Head, c.Equipment.Neck, c.Equipment.Body,
 		c.Equipment.Belt, c.Equipment.Gloves, c.Equipment.Ring,
-		c.Equipment.Legs, c.Equipment.Feet,
+		c.Equipment.Legs, c.Equipment.Feet, c.Equipment.Tail,
 	}
 	for _, slot := range slots {
 		if slot.ItemId <= 0 {
@@ -1014,11 +1297,14 @@ func (c *Character) GetMagicalMitigation() float64 {
 	// Mutation magical resistance (returned as fraction 0.0–1.0, convert to percentage points)
 	total += int(mutations.GetMagicalResistance(c.Mutations) * 100)
 
+	// Buff statmods (e.g. Iron Will, Chrysalis Shell)
+	total += c.StatMod("magical_mitigation")
+
 	return float64(total) / 100.0
 }
 
 // GetConvictionMitigation returns total conviction mitigation as a fraction (0.0–1.0).
-// Sources: equipment conviction_mitigation, mutation conviction resistance.
+// Sources: equipment conviction_mitigation, mutation conviction resistance, buff statmods.
 func (c *Character) GetConvictionMitigation() float64 {
 	total := 0
 
@@ -1027,7 +1313,7 @@ func (c *Character) GetConvictionMitigation() float64 {
 		c.Equipment.ExtraArm1, c.Equipment.ExtraArm2,
 		c.Equipment.Head, c.Equipment.Neck, c.Equipment.Body,
 		c.Equipment.Belt, c.Equipment.Gloves, c.Equipment.Ring,
-		c.Equipment.Legs, c.Equipment.Feet,
+		c.Equipment.Legs, c.Equipment.Feet, c.Equipment.Tail,
 	}
 	for _, slot := range slots {
 		if slot.ItemId <= 0 {
@@ -1039,6 +1325,9 @@ func (c *Character) GetConvictionMitigation() float64 {
 
 	// Mutation conviction resistance (returned as fraction 0.0–1.0, convert to percentage points)
 	total += int(mutations.GetConvictionResistance(c.Mutations) * 100)
+
+	// Buff statmods (e.g. Iron Will, Chrysalis Shell)
+	total += c.StatMod("conviction_mitigation")
 
 	return float64(total) / 100.0
 }
@@ -1058,6 +1347,16 @@ func (c *Character) GetMobNameIndexed(viewingUserId int, dupIndex int, renderFla
 
 func (c *Character) GetPlayerName(viewingUserId int, renderFlags ...NameRenderFlag) FormattedName {
 	return c.getFormattedName(viewingUserId, `username`, renderFlags...)
+}
+
+// GetCharacterName returns the character's name as a plain string (ansi=false)
+// or as an ANSI-tagged display string (ansi=true). Works for both player and
+// mob characters; uses the username color tag for ANSI display.
+func (c *Character) GetCharacterName(ansi bool) string {
+	if !ansi {
+		return c.Name
+	}
+	return c.getFormattedName(0, `username`).String()
 }
 
 func (c *Character) HasAdjective(adj string) bool {
@@ -1275,6 +1574,25 @@ func (c *Character) StoreItem(i items.Item) bool {
 		return false
 	}
 
+	// Auto-route component items to the component bag
+	iSpec := i.GetSpec()
+	if iSpec.IsComponent && c.Equipment.ComponentBag.ItemId > 0 {
+		bagSpec := c.Equipment.ComponentBag.GetSpec()
+		if bagSpec.BagCapacity > 0 && len(c.ComponentItems) < bagSpec.BagCapacity {
+			c.ComponentItems = append(c.ComponentItems, i)
+			return true
+		}
+	}
+
+	// Auto-route potions and throwables to the bandolier
+	if (iSpec.Type == items.Potion || (iSpec.Subtype == items.Drinkable && len(iSpec.BuffIds) > 0) || iSpec.Subtype == items.Throwable) && c.Equipment.Belt.ItemId > 0 {
+		beltSpec := c.Equipment.Belt.GetSpec()
+		if beltSpec.IsBandolier && beltSpec.BandolierCapacity > 0 && len(c.PotionItems) < beltSpec.BandolierCapacity {
+			c.PotionItems = append(c.PotionItems, i)
+			return true
+		}
+	}
+
 	c.Items = append(c.Items, i)
 
 	return true
@@ -1284,6 +1602,18 @@ func (c *Character) RemoveItem(i items.Item) bool {
 	for j := len(c.Items) - 1; j >= 0; j-- {
 		if c.Items[j].Equals(i) {
 			c.Items = append(c.Items[:j], c.Items[j+1:]...)
+			return true
+		}
+	}
+	for j := len(c.ComponentItems) - 1; j >= 0; j-- {
+		if c.ComponentItems[j].Equals(i) {
+			c.ComponentItems = append(c.ComponentItems[:j], c.ComponentItems[j+1:]...)
+			return true
+		}
+	}
+	for j := len(c.PotionItems) - 1; j >= 0; j-- {
+		if c.PotionItems[j].Equals(i) {
+			c.PotionItems = append(c.PotionItems[:j], c.PotionItems[j+1:]...)
 			return true
 		}
 	}
@@ -1355,6 +1685,70 @@ func (c *Character) UseItem(i items.Item) int {
 	return 0
 }
 
+// FindInPotions searches the bandolier for a matching potion, oldest first.
+func (c *Character) FindInPotions(itemName string) (items.Item, bool) {
+	if itemName == `` || len(c.PotionItems) == 0 {
+		return items.Item{}, false
+	}
+
+	// Sort by CraftedRound ascending (oldest first) for consumption priority
+	oldestIdx := -1
+	var oldestRound uint64 = ^uint64(0)
+
+	for idx := range c.PotionItems {
+		closeMatch, fullMatch := items.FindMatchIn(itemName, c.PotionItems[idx])
+		matched := fullMatch.ItemId != 0 || closeMatch.ItemId != 0
+		if matched && c.PotionItems[idx].CraftedRound < oldestRound {
+			oldestIdx = idx
+			oldestRound = c.PotionItems[idx].CraftedRound
+		}
+	}
+
+	if oldestIdx >= 0 {
+		return c.PotionItems[oldestIdx], true
+	}
+
+	return items.Item{}, false
+}
+
+// UseItemFromPotions consumes a potion from the bandolier.
+func (c *Character) UseItemFromPotions(i items.Item) int {
+	for j := len(c.PotionItems) - 1; j >= 0; j-- {
+		if c.PotionItems[j].Equals(i) {
+			usesLeft := c.PotionItems[j].Uses
+			if usesLeft > 0 {
+				usesLeft--
+			}
+			if usesLeft <= 0 {
+				c.PotionItems = append(c.PotionItems[:j], c.PotionItems[j+1:]...)
+			} else {
+				c.PotionItems[j].Uses = usesLeft
+				c.PotionItems[j].LastUsedRound = util.GetRoundCount()
+			}
+			return usesLeft
+		}
+	}
+	return 0
+}
+
+func (c *Character) FindInComponents(itemName string) (items.Item, bool) {
+	if itemName == `` || len(c.ComponentItems) == 0 {
+		return items.Item{}, false
+	}
+
+	closeMatchItem, matchItem := items.FindMatchIn(itemName, c.ComponentItems...)
+
+	if matchItem.ItemId != 0 {
+		return matchItem, true
+	}
+
+	if closeMatchItem.ItemId != 0 {
+		return closeMatchItem, true
+	}
+
+	return items.Item{}, false
+}
+
 func (c *Character) FindInBackpack(itemName string) (items.Item, bool) {
 
 	if itemName == `` {
@@ -1385,14 +1779,27 @@ func (c *Character) FindOnBody(itemName string) (items.Item, bool) {
 		c.Equipment.Offhand,
 		c.Equipment.ExtraArm1,
 		c.Equipment.ExtraArm2,
+		c.Equipment.ExtraArm3,
+		c.Equipment.ExtraArm4,
 		c.Equipment.Head,
 		c.Equipment.Neck,
+		c.Equipment.Shoulders,
 		c.Equipment.Body,
+		c.Equipment.Back,
 		c.Equipment.Belt,
+		c.Equipment.Wrist1,
+		c.Equipment.Wrist2,
+		c.Equipment.ExtraWrist1,
+		c.Equipment.ExtraWrist2,
+		c.Equipment.ExtraWrist3,
+		c.Equipment.ExtraWrist4,
 		c.Equipment.Gloves,
 		c.Equipment.Ring,
+		c.Equipment.Ring2,
 		c.Equipment.Legs,
-		c.Equipment.Feet)
+		c.Equipment.Feet,
+		c.Equipment.Tail,
+		c.Equipment.ComponentBag)
 
 	if fullMatch.ItemId != 0 {
 		return fullMatch, true
@@ -1403,6 +1810,96 @@ func (c *Character) FindOnBody(itemName string) (items.Item, bool) {
 	}
 
 	return items.Item{}, false
+}
+
+// FindItem searches backpack and equipped items as a single pool for
+// disambiguation. Returns the item, a source description, and whether found.
+func (c *Character) FindItem(itemName string) (items.Item, string, bool) {
+	if itemName == "" {
+		return items.Item{}, "", false
+	}
+
+	// Build combined pool of all items with source labels
+	type candidate struct {
+		item   items.Item
+		source string
+	}
+	var pool []candidate
+
+	for _, item := range c.Items {
+		if item.ItemId > 0 {
+			pool = append(pool, candidate{item, "in your backpack"})
+		}
+	}
+
+	for _, item := range c.PotionItems {
+		if item.ItemId > 0 {
+			pool = append(pool, candidate{item, "in your bandolier"})
+		}
+	}
+
+	slotItems := []struct {
+		item   items.Item
+		source string
+	}{
+		{c.Equipment.Weapon, "wielded"},
+		{c.Equipment.Offhand, "offhand"},
+		{c.Equipment.ExtraArm1, "extra arm"},
+		{c.Equipment.ExtraArm2, "extra arm"},
+		{c.Equipment.ExtraArm3, "extra arm 3"},
+		{c.Equipment.ExtraArm4, "extra arm 4"},
+		{c.Equipment.Head, "worn - head"},
+		{c.Equipment.Neck, "worn - neck"},
+		{c.Equipment.Shoulders, "worn - shoulders"},
+		{c.Equipment.Body, "worn - body"},
+		{c.Equipment.Back, "worn - back"},
+		{c.Equipment.Belt, "worn - belt"},
+		{c.Equipment.Wrist1, "worn - wrist"},
+		{c.Equipment.Wrist2, "worn - wrist"},
+		{c.Equipment.ExtraWrist1, "extra wrist 1"},
+		{c.Equipment.ExtraWrist2, "extra wrist 2"},
+		{c.Equipment.ExtraWrist3, "extra wrist 3"},
+		{c.Equipment.ExtraWrist4, "extra wrist 4"},
+		{c.Equipment.Gloves, "worn - gloves"},
+		{c.Equipment.Ring, "worn - ring"},
+		{c.Equipment.Ring2, "worn - ring"},
+		{c.Equipment.Legs, "worn - legs"},
+		{c.Equipment.Feet, "worn - feet"},
+		{c.Equipment.Tail, "worn - tail"},
+		{c.Equipment.ComponentBag, "worn - componentbag"},
+	}
+	for _, slot := range slotItems {
+		if slot.item.ItemId > 0 {
+			pool = append(pool, candidate{slot.item, slot.source})
+		}
+	}
+
+	// Extract items for FindMatchIn
+	poolItems := make([]items.Item, len(pool))
+	for i, c := range pool {
+		poolItems[i] = c.item
+	}
+
+	closeMatch, fullMatch := items.FindMatchIn(itemName, poolItems...)
+
+	// Find source for the match
+	findSource := func(match items.Item) string {
+		for _, c := range pool {
+			if c.item.ItemId == match.ItemId && c.item.UUID == match.UUID {
+				return c.source
+			}
+		}
+		return "in your backpack"
+	}
+
+	if fullMatch.ItemId != 0 {
+		return fullMatch, findSource(fullMatch), true
+	}
+	if closeMatch.ItemId != 0 {
+		return closeMatch, findSource(closeMatch), true
+	}
+
+	return items.Item{}, "", false
 }
 
 func (c *Character) GetSkills() map[string]int {
@@ -1476,12 +1973,17 @@ func (c *Character) GetSkillLevelCost(currentLevel int) int {
 
 // IncreaseSkill increments the named skill by 1.
 // No hard cap — progression is governed by the soft cap in CheckSkillProgression.
+// Returns true only when the visible rank description actually changes (e.g.
+// novice → apprentice), so callers can show "Your X skill reaches Y!" only on
+// a genuine tier-up rather than every internal counter increment.
 func (c *Character) IncreaseSkill(skillName string) bool {
 	if c.Skills == nil {
 		c.Skills = make(map[string]int)
 	}
-	c.Skills[skillName] = c.Skills[skillName] + 1
-	return true
+	oldLevel := c.Skills[skillName]
+	c.Skills[skillName] = oldLevel + 1
+	newLevel := c.Skills[skillName]
+	return skills.GetSkillRankDescription(newLevel) != skills.GetSkillRankDescription(oldLevel)
 }
 
 // IncreaseStat increments the Training field of the named stat by the given amount,
@@ -1530,15 +2032,21 @@ func (c *Character) GetStatValue(statName string) int {
 // the character's equipped weapon type.
 func (c *Character) GetCombatSkillTag() skills.SkillTag {
 	if c.Equipment.Weapon.ItemId > 0 {
-		weaponSpec := c.Equipment.Weapon.GetSpec()
-		if weaponSpec.Subtype == items.Shooting {
-			return skills.RangedCombat
-		}
-		if weaponSpec.Subtype != items.Claws {
-			return skills.WeaponCombat
-		}
+		return CombatSkillTagForItem(c.Equipment.Weapon)
 	}
 	return skills.UnarmedCombat
+}
+
+// CombatSkillTagForItem returns the combat skill tag for a specific weapon item.
+func CombatSkillTagForItem(weapon items.Item) skills.SkillTag {
+	if weapon.ItemId == 0 {
+		return skills.UnarmedCombat
+	}
+	spec := weapon.GetSpec()
+	if spec.Subtype == items.Claws || spec.Subtype == items.Fist {
+		return skills.UnarmedCombat
+	}
+	return skills.WeaponCombat
 }
 
 // GetCombatSkillLevel returns an effective combat skill value for use in
@@ -1595,14 +2103,14 @@ const (
 	DefenseBlock string = "block"
 )
 
-// HasShield returns true if the character is wielding a shield in offhand
+// HasShield returns true if the character is wielding a shield in offhand,
+// or if the species has natural bash ability (earth elemental, etc.).
 func (c *Character) HasShield() bool {
-	if c.Equipment.Offhand.ItemId <= 0 {
-		return false
+	// Species-based natural bash (elementals, golems, etc.)
+	if sp := species.GetSpecies(c.SpeciesId); sp != nil && sp.NaturalBash {
+		return true
 	}
-	spec := c.Equipment.Offhand.GetSpec()
-	// Shield detection: type offhand + has damage reduction or subtype wearable
-	return spec.Type == items.Offhand && (spec.DamageReduction > 0 || spec.Subtype == items.Wearable)
+	return c.HasAnyShield()
 }
 
 // IsDualWielding returns true if character has weapons in both hands
@@ -1621,6 +2129,17 @@ func (c *Character) IsUnarmed() bool {
 	return c.Equipment.Weapon.ItemId <= 0
 }
 
+// IsUnarmedStyle returns true if the character fights with fists, claws, or
+// bare hands — anything that uses unarmed-combat skill. These fighters cannot
+// parry (no weapon to deflect with) but get a speed bonus instead.
+func (c *Character) IsUnarmedStyle() bool {
+	if c.Equipment.Weapon.ItemId <= 0 {
+		return true
+	}
+	sub := c.Equipment.Weapon.GetSpec().Subtype
+	return sub == items.Fist || sub == items.Claws
+}
+
 // GetDefenseSequence returns ordered defenses based on equipment (Stage 7.1)
 func (c *Character) GetDefenseSequence() []string {
 	defenses := []string{}
@@ -1628,8 +2147,8 @@ func (c *Character) GetDefenseSequence() []string {
 	// Everyone can dodge
 	defenses = append(defenses, DefenseDodge)
 
-	// If unarmed, only dodge
-	if c.IsUnarmed() {
+	// Unarmed-style fighters (bare hands, fists, claws) only dodge — no parry
+	if c.IsUnarmedStyle() {
 		return defenses
 	}
 
@@ -1677,22 +2196,16 @@ func (c *Character) GetDefenseScore(defenseType string) float64 {
 		return score
 
 	case DefenseParry:
-		// Parry: Dexterity + WeaponCombat skill + weapon ParryRating
+		// Parry: Dexterity + WeaponCombat skill + best weapon ParryRating
 		weaponSkill := float64(c.GetSkillLevel(skills.WeaponCombat)) * skillWeight
-		parryRating := 0
-		if c.Equipment.Weapon.ItemId > 0 {
-			parryRating = c.Equipment.Weapon.GetSpec().ParryRating
-		}
+		parryRating := c.BestParryRating()
 		return dex + weaponSkill + float64(parryRating)
 
 	case DefenseBlock:
-		// Block: (Strength + Dexterity)/2 + WeaponCombat skill + shield BlockRating
+		// Block: (Strength + Dexterity)/2 + WeaponCombat skill + best shield BlockRating
 		str := float64(c.Stats.Strength.ValueAdj)
 		weaponSkill := float64(c.GetSkillLevel(skills.WeaponCombat)) * skillWeight
-		blockRating := 0
-		if c.HasShield() {
-			blockRating = c.Equipment.Offhand.GetSpec().BlockRating
-		}
+		blockRating := c.BestBlockRating()
 		return (str+dex)/2 + weaponSkill + float64(blockRating)
 
 	default:
@@ -1833,6 +2346,7 @@ func (c *Character) GiveQuestToken(questToken string) bool {
 
 	if quests.IsTokenAfter(currentToken, questToken) {
 		c.QuestProgress[questId] = newStep
+		c.LastQuestId = questId
 		return true
 	}
 
@@ -1848,6 +2362,42 @@ func (c *Character) ClearQuestToken(questToken string) {
 	questId, _ := quests.TokenToParts(questToken)
 
 	delete(c.QuestProgress, questId)
+}
+
+func (c *Character) SetQuestFlag(key, value string) {
+	if c.QuestFlags == nil {
+		c.QuestFlags = make(map[string]string)
+	}
+	// Runtime defense-in-depth: log if flag isn't in the registry.
+	// Skip if registry is empty (test environment / data not loaded yet).
+	if len(quests.GetFlagRegistry()) > 0 {
+		if err := quests.ValidateFlag(key, value); err != nil {
+			mudlog.Error("SetQuestFlag", "warning", err.Error())
+		}
+	}
+	c.QuestFlags[key] = value
+}
+
+func (c *Character) GetQuestFlag(key string) string {
+	if c.QuestFlags == nil {
+		return ""
+	}
+	return c.QuestFlags[key]
+}
+
+func (c *Character) HasQuestFlag(key string) bool {
+	if c.QuestFlags == nil {
+		return false
+	}
+	_, ok := c.QuestFlags[key]
+	return ok
+}
+
+func (c *Character) ClearQuestFlag(key string) {
+	if c.QuestFlags == nil {
+		return
+	}
+	delete(c.QuestFlags, key)
 }
 
 func (c *Character) SetAggroRemote(exitName string, userId int, mobInstanceId int, aggroType AggroType, roundsWaitTime ...int) {
@@ -1982,6 +2532,16 @@ func (c *Character) HasBuff(buffId int) bool {
 func (c *Character) AddBuff(buffId int, isPermanent bool) error {
 	buffId = int(math.Abs(float64(buffId)))
 	if !c.Buffs.AddBuff(buffId, isPermanent) {
+		return fmt.Errorf(`failed to add buff. target: "%s" buffId: %d`, c.Name, buffId)
+	}
+	c.Validate()
+	return nil
+}
+
+// AddBuffScaled adds a buff with its duration scaled by durationMult.
+func (c *Character) AddBuffScaled(buffId int, durationMult float64) error {
+	buffId = int(math.Abs(float64(buffId)))
+	if !c.Buffs.AddBuffScaled(buffId, durationMult) {
 		return fmt.Errorf(`failed to add buff. target: "%s" buffId: %d`, c.Name, buffId)
 	}
 	c.Validate()
@@ -2129,6 +2689,43 @@ func (c *Character) ConvictionPerRound() int {
 		base = 1
 	}
 	return base
+}
+
+// GetToxicityMax returns the maximum toxicity this character can handle.
+// Formula: BaseMax + Vitality / VitalityScale
+func (c *Character) GetToxicityMax() float64 {
+	bal := configs.GetBalanceConfig()
+	return float64(bal.ToxicityBaseMax) + float64(c.Stats.Vitality.ValueAdj)/float64(bal.ToxicityVitalityScale)
+}
+
+// AddToxicity attempts to add toxicity. Returns false if it would exceed max.
+func (c *Character) AddToxicity(amount float64) bool {
+	if c.Toxicity+amount > c.GetToxicityMax() {
+		return false
+	}
+	c.Toxicity += amount
+	return true
+}
+
+// GetToxicityPenalties returns stat multipliers based on toxicity threshold.
+// Returns (regenMult, perceptionMult, dexterityMult) where 1.0 = no penalty.
+func (c *Character) GetToxicityPenalties() (float64, float64, float64) {
+	max := c.GetToxicityMax()
+	if max <= 0 {
+		return 1.0, 1.0, 1.0
+	}
+	ratio := c.Toxicity / max
+
+	switch {
+	case ratio >= 0.90:
+		return 0.60, 0.80, 0.90 // -40% regen, -20% Per, -10% Dex
+	case ratio >= 0.75:
+		return 0.80, 0.90, 0.90 // -20% regen, -10% Per, -10% Dex
+	case ratio >= 0.50:
+		return 0.90, 0.90, 1.0  // -10% regen, -10% Per
+	default:
+		return 1.0, 1.0, 1.0   // no penalty
+	}
 }
 
 // Where 1000 = a full round
@@ -2370,7 +2967,7 @@ func (c *Character) GetPoolReservation(pool string, poolMax int) int {
 		if !itm.HasChrysalisEnchantment() || itm.ReservePool != pool {
 			continue
 		}
-		pct := enchantments.GetTierReservePct(itm.EnchantType, itm.EnchantTier)
+		pct := enchantments.GetTierReservePct(itm.EnchantType, itm.EnchantTier, itm.GetSpec().Hands)
 		total += int(math.Floor(float64(poolMax) * pct))
 	}
 	return total
@@ -2383,6 +2980,15 @@ func (c *Character) CanDualWield() bool {
 
 // Returns whether a correction was in order
 func (c *Character) Validate(recalcPermaBuffs ...bool) error {
+
+	// ── Skill rename migrations ─────────────────────────────────
+	// Rename legacy skill keys so existing saves pick up new names.
+	if c.Skills != nil {
+		if v, ok := c.Skills["stealth"]; ok {
+			c.Skills["skullduggery"] = v
+			delete(c.Skills, "stealth")
+		}
+	}
 
 	if len(c.Description) == 0 {
 		c.Description = "They seem thoroughly uninteresting."
@@ -2419,11 +3025,11 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 		c.Mutations = make(map[string]int)
 	}
 
-	// Derive ExtraArms from mutation level (capped at 2)
+	// Derive ExtraArms from mutation level (capped at 4)
 	if lvl, ok := c.Mutations["extra-arms"]; ok && lvl > 0 {
 		c.ExtraArms = lvl
-		if c.ExtraArms > 2 {
-			c.ExtraArms = 2
+		if c.ExtraArms > 4 {
+			c.ExtraArms = 4
 		}
 	} else {
 		c.ExtraArms = 0
@@ -2437,6 +3043,41 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 		c.Name = defaultName
 	}
 	c.Buffs.Validate()
+
+	// Migrate tracking/foraging → search (must run before ensureAllSkills)
+	if _, hasTracking := c.Skills["tracking"]; hasTracking {
+		trackRank := c.Skills["tracking"]
+		forageRank := c.Skills["foraging"]
+		searchRank := max(trackRank, forageRank)
+		if searchRank < 1 {
+			searchRank = 1
+		}
+		c.Skills["search"] = searchRank
+		if c.SkillUseCount == nil {
+			c.SkillUseCount = make(map[string]int)
+		}
+		c.SkillUseCount["search"] = c.SkillUseCount["tracking"] + c.SkillUseCount["foraging"]
+		delete(c.Skills, "tracking")
+		delete(c.Skills, "foraging")
+		delete(c.SkillUseCount, "tracking")
+		delete(c.SkillUseCount, "foraging")
+	} else if _, hasForaging := c.Skills["foraging"]; hasForaging {
+		c.Skills["search"] = max(c.Skills["foraging"], 1)
+		if c.SkillUseCount == nil {
+			c.SkillUseCount = make(map[string]int)
+		}
+		c.SkillUseCount["search"] = c.SkillUseCount["foraging"]
+		delete(c.Skills, "foraging")
+		delete(c.SkillUseCount, "foraging")
+	}
+
+	// Remove retired skills (cast, ranged-combat, first-aid)
+	for _, dead := range []string{"cast", "ranged-combat", "first-aid"} {
+		delete(c.Skills, dead)
+		if c.SkillUseCount != nil {
+			delete(c.SkillUseCount, dead)
+		}
+	}
 
 	// Ensure all known skills exist at rank 1 minimum (retroactive for existing characters)
 	c.Skills = ensureAllSkills(c.Skills)
@@ -2486,6 +3127,7 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 	c.Equipment.Ring.Validate()
 	c.Equipment.Legs.Validate()
 	c.Equipment.Feet.Validate()
+	c.Equipment.Tail.Validate()
 	// Done with validation
 
 	if speciesInfo := species.GetSpecies(c.SpeciesId); speciesInfo != nil {
@@ -2550,6 +3192,38 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 						itemFoundInDisabledSlot = c.Equipment.Feet
 					}
 					c.Equipment.Feet = items.ItemDisabledSlot
+				case items.Wrist:
+					if c.Equipment.Wrist1.ItemId > 0 {
+						itemFoundInDisabledSlot = c.Equipment.Wrist1
+					}
+					c.Equipment.Wrist1 = items.ItemDisabledSlot
+					if c.Equipment.Wrist2.ItemId > 0 {
+						c.StoreItem(c.Equipment.Wrist2)
+					}
+					c.Equipment.Wrist2 = items.ItemDisabledSlot
+				case items.Back:
+					if c.Equipment.Back.ItemId > 0 {
+						itemFoundInDisabledSlot = c.Equipment.Back
+					}
+					c.Equipment.Back = items.ItemDisabledSlot
+				case items.Shoulders:
+					if c.Equipment.Shoulders.ItemId > 0 {
+						itemFoundInDisabledSlot = c.Equipment.Shoulders
+					}
+					c.Equipment.Shoulders = items.ItemDisabledSlot
+				case items.ComponentBag:
+					if c.Equipment.ComponentBag.ItemId > 0 {
+						itemFoundInDisabledSlot = c.Equipment.ComponentBag
+					}
+					c.Equipment.ComponentBag = items.ItemDisabledSlot
+				}
+
+				// Handle non-ItemType disabled slots (string-keyed)
+				if disabledSlot == "ring2" {
+					if c.Equipment.Ring2.ItemId > 0 {
+						itemFoundInDisabledSlot = c.Equipment.Ring2
+					}
+					c.Equipment.Ring2 = items.ItemDisabledSlot
 				}
 
 				if !itemFoundInDisabledSlot.IsDisabled() {
@@ -2564,12 +3238,36 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 
 	// Handle extra arm slots based on ExtraArms mutation level
 	// If character lacks enough extra arms, move items back to backpack
+	if c.ExtraArms < 4 {
+		if c.Equipment.ExtraArm4.ItemId > 0 {
+			c.StoreItem(c.Equipment.ExtraArm4)
+		}
+		c.Equipment.ExtraArm4 = items.ItemDisabledSlot
+		if c.Equipment.ExtraWrist4.ItemId > 0 {
+			c.StoreItem(c.Equipment.ExtraWrist4)
+		}
+		c.Equipment.ExtraWrist4 = items.ItemDisabledSlot
+	}
+	if c.ExtraArms < 3 {
+		if c.Equipment.ExtraArm3.ItemId > 0 {
+			c.StoreItem(c.Equipment.ExtraArm3)
+		}
+		c.Equipment.ExtraArm3 = items.ItemDisabledSlot
+		if c.Equipment.ExtraWrist3.ItemId > 0 {
+			c.StoreItem(c.Equipment.ExtraWrist3)
+		}
+		c.Equipment.ExtraWrist3 = items.ItemDisabledSlot
+	}
 	if c.ExtraArms < 2 {
 		if c.Equipment.ExtraArm2.ItemId > 0 {
 			c.StoreItem(c.Equipment.ExtraArm2)
 			mudlog.Debug("Extra Arms Check", "info", "Item returned from extra arm 2 slot", "name", c.Equipment.ExtraArm2.Name(), "character", c.Name)
 		}
 		c.Equipment.ExtraArm2 = items.ItemDisabledSlot
+		if c.Equipment.ExtraWrist2.ItemId > 0 {
+			c.StoreItem(c.Equipment.ExtraWrist2)
+		}
+		c.Equipment.ExtraWrist2 = items.ItemDisabledSlot
 	}
 	if c.ExtraArms < 1 {
 		if c.Equipment.ExtraArm1.ItemId > 0 {
@@ -2577,6 +3275,32 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 			mudlog.Debug("Extra Arms Check", "info", "Item returned from extra arm 1 slot", "name", c.Equipment.ExtraArm1.Name(), "character", c.Name)
 		}
 		c.Equipment.ExtraArm1 = items.ItemDisabledSlot
+		if c.Equipment.ExtraWrist1.ItemId > 0 {
+			c.StoreItem(c.Equipment.ExtraWrist1)
+		}
+		c.Equipment.ExtraWrist1 = items.ItemDisabledSlot
+	}
+
+	// Derive tail mutation: enable tail slot if mutation present, disable otherwise.
+	// Must run AFTER EnableAll() which resets all slots.
+	if _, hasTail := c.Mutations["tail"]; hasTail {
+		if c.Equipment.Tail.ItemId < 0 {
+			c.Equipment.Tail = items.Item{}
+		}
+	} else {
+		if c.Equipment.Tail.ItemId > 0 {
+			c.StoreItem(c.Equipment.Tail)
+		}
+		c.Equipment.Tail = items.ItemDisabledSlot
+	}
+
+	// Tail mutation disables legs slot
+	if flags := mutations.GetMutationFlags(c.Mutations); flags["disable-legs"] {
+		if c.Equipment.Legs.ItemId > 0 {
+			c.StoreItem(c.Equipment.Legs)
+			mudlog.Debug("Mutation Check", "info", "Item returned from legs slot (tail mutation)", "name", c.Equipment.Legs.Name(), "character", c.Name)
+		}
+		c.Equipment.Legs = items.ItemDisabledSlot
 	}
 
 	if len(recalcPermaBuffs) > 0 && recalcPermaBuffs[0] {
@@ -2595,6 +3319,15 @@ func (c *Character) Species() string {
 
 func (c *Character) GetAllBackpackItems() []items.Item {
 	return append([]items.Item{}, c.Items...)
+}
+
+// GetAllCarriedItems returns items from all pools (backpack, component bag, bandolier).
+// Used by scripting APIs that need to find items regardless of which pool they're in.
+func (c *Character) GetAllCarriedItems() []items.Item {
+	all := append([]items.Item{}, c.Items...)
+	all = append(all, c.ComponentItems...)
+	all = append(all, c.PotionItems...)
+	return all
 }
 
 func (c *Character) GetAllWornItems() []items.Item {
@@ -2694,94 +3427,120 @@ func (c *Character) Wear(i items.Item) (returnItems []items.Item, newItemWorn bo
 		return returnItems, false, `That requires too many hands.`
 	}
 
-	// are botht he currently equipped weapon and this weapon claws?
-	bothMartial := false
-	if spec.Subtype == items.Claws && c.Equipment.Weapon.GetSpec().Subtype == items.Claws {
-		bothMartial = true
-	}
-
 	canDualWield := c.CanDualWield()
 
-	// Weapons can go in either hand.
-	// Only do this if this is a 1 handed weapon
-	if spec.Type == items.Weapon && iHandsRequired < 2 {
+	// ── Pair-based weapon/shield placement ──────────────────────────
+	if spec.Type == items.Weapon || spec.Type == items.Offhand {
+		pairs := c.GetHandPairs()
+		isShield := spec.Type == items.Offhand
 
-		// If they can dual wield
-		if canDualWield || bothMartial {
+		if iHandsRequired >= 2 {
+			// 2H weapon: find a free pair, or displace the cheapest pair
+			freePair := FindFirstFreePair(pairs)
+			if freePair == nil {
+				freePair = FindCheapestPairToDisplace(pairs)
+			}
+			if freePair == nil {
+				return returnItems, false, `You have no free pair of hands for a two-handed weapon.`
+			}
 
-			// If they have a weapon equippment and it is 1 handed
-			if c.Equipment.Weapon.ItemId != 0 && c.HandsRequired(c.Equipment.Weapon) == 1 {
-				// If nothing is in their offhand
-				if c.Equipment.Offhand.ItemId == 0 {
-					// Put it in the offhand.
-					//returnItems = append(returnItems, c.Equipment.Offhand)
-					c.Equipment.Offhand = i
+			// Check for cursed items in the pair
+			if !freePair.First.IsEmpty() && freePair.First.ItemPtr.IsCursed() {
+				return returnItems, false, `Your ` + freePair.First.ItemPtr.DisplayName() + ` is cursed and prevents you from removing it.`
+			}
+			if !freePair.Second.IsEmpty() && freePair.Second.ItemPtr.IsCursed() {
+				return returnItems, false, `Your ` + freePair.Second.ItemPtr.DisplayName() + ` is cursed and prevents you from removing it.`
+			}
 
-					c.reapplyPermabuffs()
+			// Displace existing items
+			if !freePair.First.IsEmpty() {
+				returnItems = append(returnItems, *freePair.First.ItemPtr)
+			}
+			if !freePair.IsHalfPair() && !freePair.Second.IsEmpty() {
+				returnItems = append(returnItems, *freePair.Second.ItemPtr)
+			}
 
-					return returnItems, true, ``
+			// Place 2H in first slot, clear second
+			*freePair.First.ItemPtr = i
+			if !freePair.IsHalfPair() {
+				*freePair.Second.ItemPtr = items.Item{}
+			}
+
+			c.reapplyPermabuffs()
+			return returnItems, true, ``
+		}
+
+		// 1H weapon or shield
+		if isShield {
+			// Shields go in arms 2-6 (not arm 1 / Weapon slot)
+			slot := c.FindFirstEmptySlot(pairs, true)
+			if slot != nil {
+				*slot.ItemPtr = i
+				c.reapplyPermabuffs()
+				return returnItems, true, ``
+			}
+			// No empty slot — displace offhand (Pair A second slot)
+			if pairs[0].First.Is2H(c) {
+				return returnItems, false, `Your two-handed weapon leaves no room for a shield.`
+			}
+			if pairs[0].Second.ItemPtr.IsCursed() {
+				return returnItems, false, `Your ` + pairs[0].Second.ItemPtr.DisplayName() + ` is cursed and prevents you from removing it.`
+			}
+			returnItems = append(returnItems, *pairs[0].Second.ItemPtr)
+			*pairs[0].Second.ItemPtr = i
+			c.reapplyPermabuffs()
+			return returnItems, true, ``
+		}
+
+		// 1H weapon
+		bothMartial := spec.Subtype == items.Claws && c.Equipment.Weapon.GetSpec().Subtype == items.Claws
+
+		// Try to find an empty slot across all pairs
+		slot := c.FindFirstEmptySlot(pairs, false)
+		if slot != nil {
+			// If placing in Pair A offhand, need dual-wield or martial
+			if slot.Label == "offhand" && !canDualWield && !bothMartial {
+				// Skip offhand, try extra arms instead
+				slot = nil
+				for pi := 1; pi < len(pairs); pi++ {
+					p := &pairs[pi]
+					if p.First.Is2H(c) {
+						continue
+					}
+					if p.First.IsEmpty() {
+						slot = &p.First
+						break
+					}
+					if !p.IsHalfPair() && p.Second.IsEmpty() {
+						slot = &p.Second
+						break
+					}
 				}
 			}
-
-		}
-
-	}
-
-	// Extra arms: if main hand and offhand are both occupied, try extra arm slots
-	if spec.Type == items.Weapon && iHandsRequired < 2 && c.ExtraArms > 0 {
-		if c.Equipment.Weapon.ItemId > 0 && c.Equipment.Offhand.ItemId > 0 {
-			if c.ExtraArms >= 1 && !c.Equipment.ExtraArm1.IsDisabled() && c.Equipment.ExtraArm1.ItemId == 0 {
-				c.Equipment.ExtraArm1 = i
-				c.reapplyPermabuffs()
-				return returnItems, true, ``
-			}
-			if c.ExtraArms >= 2 && !c.Equipment.ExtraArm2.IsDisabled() && c.Equipment.ExtraArm2.ItemId == 0 {
-				c.Equipment.ExtraArm2 = i
+			if slot != nil {
+				*slot.ItemPtr = i
 				c.reapplyPermabuffs()
 				return returnItems, true, ``
 			}
 		}
-	}
 
-	// First handle weapon/offhand, since they are special cases
-	switch spec.Type {
-	case items.Weapon:
-		if c.Equipment.Weapon.IsDisabled() { // Don't allow equipping on a disabled slot
-			return returnItems, false, `You can't use a weapon.`
-		}
-
-		if !c.Equipment.Offhand.IsDisabled() { // Don't allow equipping on a disabled slot
-			// If it's a 2 handed weapon, remove whatever is in the offhand
-			if iHandsRequired == 2 || !canDualWield && c.Equipment.Offhand.GetSpec().Type == items.Weapon {
-				returnItems = append(returnItems, c.Equipment.Offhand)
-				c.Equipment.Offhand = items.Item{}
-			}
-		}
-
+		// No empty slots — displace Weapon slot (arm 1)
 		if c.Equipment.Weapon.IsCursed() {
 			return returnItems, false, `Your ` + c.Equipment.Weapon.DisplayName() + ` is cursed and prevents you from removing it.`
 		}
-
+		// If current weapon is 2H, also clear offhand
+		if pairs[0].First.Is2H(c) && !pairs[0].Second.IsEmpty() {
+			returnItems = append(returnItems, *pairs[0].Second.ItemPtr)
+			*pairs[0].Second.ItemPtr = items.Item{}
+		}
 		returnItems = append(returnItems, c.Equipment.Weapon)
 		c.Equipment.Weapon = i
-	case items.Offhand:
-		if c.Equipment.Offhand.IsDisabled() { // Don't allow equipping on a disabled slot
-			return returnItems, false, `You can't hold things in an offhand.`
-		}
+		c.reapplyPermabuffs()
+		return returnItems, true, ``
+	}
 
-		if !c.Equipment.Weapon.IsDisabled() { // Don't allow equipping on a disabled slot
-			// If they have a 2h weapon equipped, remove it
-			if c.HandsRequired(c.Equipment.Weapon) == 2 {
-				// If the weapon is cursed, do not allow the offhand to be equipped
-				if c.Equipment.Weapon.IsCursed() {
-					return returnItems, false, `Your ` + c.Equipment.Weapon.DisplayName() + ` is cursed and prevents you from removing it.`
-				}
-				returnItems = append(returnItems, c.Equipment.Weapon)
-				c.Equipment.Weapon = items.Item{}
-			}
-		}
-		returnItems = append(returnItems, c.Equipment.Offhand)
-		c.Equipment.Offhand = i
+	// ── Armor slots ─────────────────────────────────────────────────
+	switch spec.Type {
 	case items.Head:
 		if c.Equipment.Head.IsDisabled() { // Don't allow equipping on a disabled slot
 			return returnItems, false, `You can't wear things on your head.`
@@ -2813,11 +3572,56 @@ func (c *Character) Wear(i items.Item) (returnItems []items.Item, newItemWorn bo
 		returnItems = append(returnItems, c.Equipment.Gloves)
 		c.Equipment.Gloves = i
 	case items.Ring:
-		if c.Equipment.Ring.IsDisabled() { // Don't allow equipping on a disabled slot
+		if c.Equipment.Ring.IsDisabled() && c.Equipment.Ring2.IsDisabled() {
 			return returnItems, false, `You can't wear rings.`
 		}
-		returnItems = append(returnItems, c.Equipment.Ring)
-		c.Equipment.Ring = i
+		if !c.Equipment.Ring.IsDisabled() && c.Equipment.Ring.ItemId == 0 {
+			c.Equipment.Ring = i
+		} else if !c.Equipment.Ring2.IsDisabled() && c.Equipment.Ring2.ItemId == 0 {
+			c.Equipment.Ring2 = i
+		} else {
+			returnItems = append(returnItems, c.Equipment.Ring)
+			c.Equipment.Ring = i
+		}
+	case items.Wrist:
+		if c.Equipment.Wrist1.IsDisabled() && c.Equipment.Wrist2.IsDisabled() {
+			return returnItems, false, `You can't wear things on your wrists.`
+		}
+		if !c.Equipment.Wrist1.IsDisabled() && c.Equipment.Wrist1.ItemId == 0 {
+			c.Equipment.Wrist1 = i
+		} else if !c.Equipment.Wrist2.IsDisabled() && c.Equipment.Wrist2.ItemId == 0 {
+			c.Equipment.Wrist2 = i
+		} else if c.ExtraArms >= 1 && !c.Equipment.ExtraWrist1.IsDisabled() && c.Equipment.ExtraWrist1.ItemId == 0 {
+			c.Equipment.ExtraWrist1 = i
+		} else if c.ExtraArms >= 2 && !c.Equipment.ExtraWrist2.IsDisabled() && c.Equipment.ExtraWrist2.ItemId == 0 {
+			c.Equipment.ExtraWrist2 = i
+		} else if c.ExtraArms >= 3 && !c.Equipment.ExtraWrist3.IsDisabled() && c.Equipment.ExtraWrist3.ItemId == 0 {
+			c.Equipment.ExtraWrist3 = i
+		} else if c.ExtraArms >= 4 && !c.Equipment.ExtraWrist4.IsDisabled() && c.Equipment.ExtraWrist4.ItemId == 0 {
+			c.Equipment.ExtraWrist4 = i
+		} else {
+			returnItems = append(returnItems, c.Equipment.Wrist1)
+			c.Equipment.Wrist1 = i
+		}
+	case items.Back:
+		if c.Equipment.Back.IsDisabled() {
+			return returnItems, false, `You can't wear things on your back.`
+		}
+		returnItems = append(returnItems, c.Equipment.Back)
+		c.Equipment.Back = i
+	case items.Shoulders:
+		if c.Equipment.Shoulders.IsDisabled() {
+			return returnItems, false, `You can't wear things on your shoulders.`
+		}
+		returnItems = append(returnItems, c.Equipment.Shoulders)
+		c.Equipment.Shoulders = i
+	case items.ComponentBag:
+		if c.Equipment.ComponentBag.IsDisabled() {
+			return returnItems, false, `You can't equip a component bag.`
+		}
+		returnItems = append(returnItems, c.Equipment.ComponentBag)
+		c.Equipment.ComponentBag = i
+		c.SortComponentItems()
 	case items.Legs:
 		if c.Equipment.Legs.IsDisabled() { // Don't allow equipping on a disabled slot
 			return returnItems, false, `You can't wear things on your legs.`
@@ -2830,6 +3634,12 @@ func (c *Character) Wear(i items.Item) (returnItems []items.Item, newItemWorn bo
 		}
 		returnItems = append(returnItems, c.Equipment.Feet)
 		c.Equipment.Feet = i
+	case items.Tail:
+		if c.Equipment.Tail.IsDisabled() {
+			return returnItems, false, `You don't have a tail to attach that to.`
+		}
+		returnItems = append(returnItems, c.Equipment.Tail)
+		c.Equipment.Tail = i
 	default:
 		return returnItems, false, `Unrecognized object.`
 	}
@@ -2837,6 +3647,62 @@ func (c *Character) Wear(i items.Item) (returnItems []items.Item, newItemWorn bo
 	c.reapplyPermabuffs(returnItems...)
 
 	return returnItems, true, ``
+}
+
+// SortComponentItems moves is_component items from backpack into ComponentItems
+// up to the equipped bag's capacity. Returns the count of items moved.
+func (c *Character) SortComponentItems() int {
+	if c.Equipment.ComponentBag.ItemId < 1 {
+		return 0
+	}
+	bagSpec := c.Equipment.ComponentBag.GetSpec()
+	capacity := bagSpec.BagCapacity
+	if capacity <= 0 {
+		return 0
+	}
+
+	moved := 0
+	remaining := make([]items.Item, 0, len(c.Items))
+	for _, item := range c.Items {
+		if item.GetSpec().IsComponent && len(c.ComponentItems) < capacity {
+			c.ComponentItems = append(c.ComponentItems, item)
+			moved++
+		} else {
+			remaining = append(remaining, item)
+		}
+	}
+	c.Items = remaining
+	return moved
+}
+
+// SortPotionItems moves drinkable items from backpack into PotionItems
+// up to the equipped bandolier's capacity. Returns the count of items moved.
+func (c *Character) SortPotionItems() int {
+	if c.Equipment.Belt.ItemId < 1 {
+		return 0
+	}
+	beltSpec := c.Equipment.Belt.GetSpec()
+	if !beltSpec.IsBandolier {
+		return 0
+	}
+	capacity := beltSpec.BandolierCapacity
+	if capacity <= 0 {
+		return 0
+	}
+
+	moved := 0
+	remaining := make([]items.Item, 0, len(c.Items))
+	for _, item := range c.Items {
+		sub := item.GetSpec().Subtype
+		if (sub == items.Drinkable || sub == items.Throwable) && len(c.PotionItems) < capacity {
+			c.PotionItems = append(c.PotionItems, item)
+			moved++
+		} else {
+			remaining = append(remaining, item)
+		}
+	}
+	c.Items = remaining
+	return moved
 }
 
 func (c *Character) RemoveFromBody(i items.Item) bool {
@@ -2856,6 +3722,14 @@ func (c *Character) RemoveFromBody(i items.Item) bool {
 	} else if i.Equals(c.Equipment.Body) {
 		c.Equipment.Body = items.Item{}
 	} else if i.Equals(c.Equipment.Belt) {
+		// If removing a bandolier, spill potions to backpack
+		beltSpec := c.Equipment.Belt.GetSpec()
+		if beltSpec.IsBandolier && len(c.PotionItems) > 0 {
+			for _, pi := range c.PotionItems {
+				c.Items = append(c.Items, pi)
+			}
+			c.PotionItems = nil
+		}
 		c.Equipment.Belt = items.Item{}
 	} else if i.Equals(c.Equipment.Gloves) {
 		c.Equipment.Gloves = items.Item{}
@@ -2865,6 +3739,37 @@ func (c *Character) RemoveFromBody(i items.Item) bool {
 		c.Equipment.Legs = items.Item{}
 	} else if i.Equals(c.Equipment.Feet) {
 		c.Equipment.Feet = items.Item{}
+	} else if i.Equals(c.Equipment.ExtraArm3) {
+		c.Equipment.ExtraArm3 = items.Item{}
+	} else if i.Equals(c.Equipment.ExtraArm4) {
+		c.Equipment.ExtraArm4 = items.Item{}
+	} else if i.Equals(c.Equipment.Shoulders) {
+		c.Equipment.Shoulders = items.Item{}
+	} else if i.Equals(c.Equipment.Back) {
+		c.Equipment.Back = items.Item{}
+	} else if i.Equals(c.Equipment.Wrist1) {
+		c.Equipment.Wrist1 = items.Item{}
+	} else if i.Equals(c.Equipment.Wrist2) {
+		c.Equipment.Wrist2 = items.Item{}
+	} else if i.Equals(c.Equipment.ExtraWrist1) {
+		c.Equipment.ExtraWrist1 = items.Item{}
+	} else if i.Equals(c.Equipment.ExtraWrist2) {
+		c.Equipment.ExtraWrist2 = items.Item{}
+	} else if i.Equals(c.Equipment.ExtraWrist3) {
+		c.Equipment.ExtraWrist3 = items.Item{}
+	} else if i.Equals(c.Equipment.ExtraWrist4) {
+		c.Equipment.ExtraWrist4 = items.Item{}
+	} else if i.Equals(c.Equipment.Ring2) {
+		c.Equipment.Ring2 = items.Item{}
+	} else if i.Equals(c.Equipment.Tail) {
+		c.Equipment.Tail = items.Item{}
+	} else if i.Equals(c.Equipment.ComponentBag) {
+		// Spill component bag contents back to backpack
+		for _, ci := range c.ComponentItems {
+			c.Items = append(c.Items, ci)
+		}
+		c.ComponentItems = nil
+		c.Equipment.ComponentBag = items.Item{}
 	} else {
 		return false
 	}
@@ -2877,6 +3782,18 @@ func (c *Character) RemoveFromBody(i items.Item) bool {
 // Used with SpawnInfo to gift spawning mobs with permabuffs
 func (c *Character) SetPermaBuffs(buffIds []int) {
 	c.permaBuffIds = buffIds
+}
+
+// RemovePermaBuff removes a buff ID from the permanent buff list so
+// it won't be re-applied during Validate(). Use this when a permabuff
+// should be permanently lost (e.g., revealing a hidden mob).
+func (c *Character) RemovePermaBuff(buffId int) {
+	for i, id := range c.permaBuffIds {
+		if id == buffId {
+			c.permaBuffIds = append(c.permaBuffIds[:i], c.permaBuffIds[i+1:]...)
+			return
+		}
+	}
 }
 
 func (c *Character) reapplyPermabuffs(removedItems ...items.Item) {

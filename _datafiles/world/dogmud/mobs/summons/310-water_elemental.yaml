@@ -1,0 +1,38 @@
+mobid: 310
+zone: Summons
+archetype: fighting
+statpool: 80
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - summon
+  - elemental
+idlecommands:
+  - 'emote undulates quietly, water spiraling through its form'
+  - ''
+  - 'emote ripples outward and contracts, as if breathing'
+  - ''
+  - 'emote drips softly, a puddle forming and vanishing beneath it'
+activitylevel: 40
+combatcommands:
+  - ''
+  - ''
+character:
+  name: water elemental
+  description: |
+    A churning mass of animated water, roughly shaped into a towering
+    bipedal form. No face or features are visible — only the ceaseless
+    churn of currents within currents, occasionally lit from within by
+    pale bioluminescence. Water streams from its body in rivulets that
+    rejoin at its feet as if gravity means nothing to it. The air nearby
+    tastes of rain and deep wells.
+  speciesid: 36
+  level: 1
+  stats:
+    strength:
+      training: 10
+    vitality:
+      training: 15
+    perception:
+      training: 5

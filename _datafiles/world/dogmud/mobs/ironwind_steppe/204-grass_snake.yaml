@@ -7,6 +7,9 @@ maxwander: 2
 groups:
   - vermin
   - animal
+hates:
+  - rodent
+  - insectoid
 idlecommands:
   - 'emote coils tighter, tongue flickering'
   - ''

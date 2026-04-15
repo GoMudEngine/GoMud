@@ -1,0 +1,12 @@
+buffid: 75
+name: Nausea
+description: Your stomach heaves and your vision swims. That potion was foul.
+triggerrate: 1 round
+triggercount: 30
+statmods:
+  strength: -15
+  dexterity: -15
+  perception: -15
+  vitality: -15
+  willpower: -15
+  charisma: -15

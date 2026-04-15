@@ -1,24 +1,35 @@
-<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">foraging</ansi> (skill)
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">forage</ansi>
 
-Foraging is the skill of gathering useful materials directly from the environment —
-herbs, wood, ore, and other raw resources. What you find depends on where you are and
-how sharp your eye is. The skill is governed by <ansi fg="yellow">Perception</ansi>.
+Foraging is the skill of gathering useful materials directly from the
+environment — herbs, wood, ore, and other raw resources. What you find
+depends on where you are and how sharp your eye is.
 
-At higher skill levels foraging yields better-quality materials and items that are
-harder to find. A novice scrapes together weeds; a skilled forager finds rare roots
-and choice timber.
+The biome you're in determines what materials might be available. A forest
+yields timber and herbs; a mountainside offers ore and stone; a swamp holds
+rare alchemical ingredients.
 
-<ansi fg="yellow">━━━ Commands ━━━</ansi>
+<ansi fg="yellow">━━━ Governed Skill ━━━</ansi>
+
+The <ansi fg="skill">search</ansi> skill governs your foraging ability. Your
+<ansi fg="yellow">Perception</ansi> stat sharpens your eye. Together, they
+determine what quality materials you can find.
+
+At higher <ansi fg="skill">search</ansi> skill levels, you can uncover
+better-quality materials and items that are harder to find. A novice scrapes
+together weeds; a skilled forager finds rare roots and choice timber.
+
+<ansi fg="yellow">━━━ The forage Command ━━━</ansi>
 
   <ansi fg="command">forage</ansi>          Search the current room for harvestable materials.
 
-Some rooms have nothing to forage. Wilderness, dungeons, and natural environments tend
-to yield more than city streets or polished floors.
+Some rooms have nothing to forage. Wilderness, dungeons, and natural
+environments tend to yield more than city streets or polished floors.
 
 <ansi fg="yellow">━━━ Connection to Crafting ━━━</ansi>
 
-Materials you gather through foraging feed directly into crafting recipes. Herbs gathered
-in the wild become alchemy ingredients; ore and wood become blacksmithing stock.
+Materials you gather through foraging feed directly into crafting recipes.
+Herbs gathered in the wild become alchemy ingredients; ore and wood become
+blacksmithing stock.
 
 You can also find crafting materials by:
   - Picking them up from the floor in crafting rooms.
@@ -26,29 +37,36 @@ You can also find crafting materials by:
 
 <ansi fg="yellow">━━━ Skill Progression ━━━</ansi>
 
-Foraging improves through use. Each forage attempt has a chance to advance your skill.
-The more you forage, the wider the range of materials you can find.
+Foraging improves through use. Each forage attempt has a chance to advance
+your <ansi fg="skill">search</ansi> skill. The higher your rank, the wider
+the range of materials you can find.
 
 <ansi fg="yellow">━━━ Material Types ━━━</ansi>
 
-  <ansi fg="yellow">healers-root</ansi>     Used in: Healing Poultice, Conviction Draught (alchemy)
-  <ansi fg="yellow">bitter-thistle</ansi>   Used in: Stamina Draught, Conviction Draught (alchemy)
+  <ansi fg="yellow">healers-root</ansi>     Used in: Healing Poultice, Conviction
+                      Draught (alchemy)
+  <ansi fg="yellow">bitter-thistle</ansi>   Used in: Stamina Draught, Conviction
+                      Draught (alchemy)
   <ansi fg="yellow">cloth-strip</ansi>      Used in: Healing Poultice (alchemy)
-  <ansi fg="yellow">iron-ingot</ansi>       Used in: Iron Dagger, Iron Buckler (blacksmithing)
+  <ansi fg="yellow">iron-ingot</ansi>       Found in: caves, mountains
+                      (blacksmithing)
   <ansi fg="yellow">leather-strip</ansi>    Used in: Iron Dagger (blacksmithing)
   <ansi fg="yellow">wooden-plank</ansi>     Used in: Iron Buckler (blacksmithing)
-  <ansi fg="yellow">small-vial</ansi>       Used in: Stamina Draught, Conviction Draught (alchemy)
-  <ansi fg="yellow">polished-stone</ansi>   Found in: mountains, cliffs (jewelcrafting)
+  <ansi fg="yellow">small-vial</ansi>       Used in: Stamina Draught, Conviction
+                      Draught (alchemy)
+  <ansi fg="yellow">polished-stone</ansi>   Found in: mountains, cliffs
+                      (jewelcrafting)
   <ansi fg="yellow">raw-gem</ansi>          Found in: caves (jewelcrafting)
   <ansi fg="yellow">gem-dust</ansi>         Found in: caves (jewelcrafting)
   <ansi fg="yellow">chrysalis-shard</ansi>  Found in: caves, rare (enchanting)
   <ansi fg="yellow">mutation-catalyst</ansi> Found in: caves, very rare (enchanting)
 
-Some rare materials can only be found in dangerous places. The deeper
-you go, the stranger the things you find.
+Some rare materials can only be found in dangerous places. The deeper you
+go, the stranger the things you find.
 
 <ansi fg="yellow">See Also:</ansi>
 
-  <ansi fg="command">help craft</ansi>, <ansi fg="command">help alchemy</ansi>, <ansi fg="command">help blacksmithing</ansi>,
-  <ansi fg="command">help jewelcrafting</ansi>, <ansi fg="command">help enchanting</ansi>, <ansi fg="command">help skills</ansi>
-
+  <ansi fg="command">help craft</ansi>, <ansi fg="command">help alchemy</ansi>,
+  <ansi fg="command">help blacksmithing</ansi>, <ansi fg="command">help jewelcrafting</ansi>,
+  <ansi fg="command">help enchanting</ansi>, <ansi fg="command">help search</ansi>,
+  <ansi fg="command">help skills</ansi>

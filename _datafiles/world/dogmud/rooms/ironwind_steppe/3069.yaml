@@ -10,15 +10,17 @@ description: A large cooking fire burns in the center of a cleared
   the flames, arguing over portions with sharp gestures and
   sharper words.
 biome: cliffs
+coord:
+  x: 16
+  y: -12
+  z: 0
 exits:
   north:
     roomid: 3068
-  west:
-    roomid: 3067
-  south:
-    roomid: 3071
   east:
     roomid: 3070
+  south:
+    roomid: 3071
 nouns:
   fire: A large campfire of scavenged wood, burning hot in a
     ring of blackened stones. The coals are deep and well-

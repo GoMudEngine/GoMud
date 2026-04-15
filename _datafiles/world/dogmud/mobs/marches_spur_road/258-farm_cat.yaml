@@ -1,0 +1,33 @@
+mobid: 258
+zone: Marches Spur Road
+statpool: 15
+itemdropchance: 0
+hostile: false
+maxwander: 2
+groups:
+  - animal
+  - feline
+idlecommands:
+  - 'emote cleans one paw with deliberate attention'
+  - ''
+  - 'emote watches something invisible with intense focus'
+  - ''
+  - 'emote stretches luxuriously in a patch of sunlight'
+  - ''
+activitylevel: 20
+character:
+  name: farm cat
+  description: |
+    A tabby cat with torn ears and a proprietary air, the kind
+    of animal that has decided this stretch of farmland is its
+    jurisdiction and conducts regular patrols accordingly. It
+    regards you with the flat assessment of something that has
+    weighed you and found you uninteresting.
+  speciesid: 21
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 10
+    perception:
+      training: 12

@@ -1,0 +1,19 @@
+roomid: 5008
+zone: Instance Arena
+title: Champion's Pit
+description: >-
+  A vast circular chamber, its stone walls rising sixty feet
+  to a vaulted ceiling lost in shadow. The floor is packed
+  earth over stone, black with old blood in the center where
+  the fighting always ends up. Iron gates in the far wall are
+  sealed shut — they only open when there is nothing left
+  in the room that can open them. The arena champion waits
+  here. It has been waiting a very long time.
+exits:
+  south:
+    roomid: 5007
+    mapdirection: south
+spawninfo:
+  - mobid: 324
+    statpool: 4
+    respawnrate: "120m"

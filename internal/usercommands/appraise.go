@@ -44,14 +44,12 @@ func Appraise(rest string, user *users.UserRecord, room *rooms.Room, flags event
 			return true, nil
 		}
 
-		type inspectDetails struct {
-			InspectLevel int
+		type identifyDetails struct {
 			Item         *items.Item
 			ItemSpec     *items.ItemSpec
 		}
 
-		details := inspectDetails{
-			InspectLevel: 3,
+		details := identifyDetails{
 			Item:         &item,
 			ItemSpec:     &itemSpec,
 		}
@@ -74,9 +72,9 @@ func Appraise(rest string, user *users.UserRecord, room *rooms.Room, flags event
 		})
 
 		user.SendText(fmt.Sprintf(`You give <ansi fg="mobname">%s</ansi> %d gold to appraise <ansi fg="itemname">%s</ansi>.`, mob.Character.Name, appraisePrice, itemSpec.Name))
-		room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> appraises <ansi fg="itemname">%s</ansi>.`, user.Character.Name, itemSpec.Name), user.UserId)
+		room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> appraises <ansi fg="itemname">%s</ansi>.`, user.Character.Name, itemSpec.Name), user.UserId)
 
-		inspectTxt, _ := templates.Process("descriptions/inspect", details, user.UserId)
+		inspectTxt, _ := templates.Process("descriptions/identify", details, user.UserId)
 		user.SendText(inspectTxt)
 
 		break

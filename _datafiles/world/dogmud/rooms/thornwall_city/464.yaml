@@ -9,13 +9,17 @@ description: The western edge of Market Square is dominated by food vendors -- s
   up a cart with a brazier, selling skewered meat and roasted roots to the market
   crowd.
 biome: city
+coord:
+  x: 4
+  y: 0
+  z: 0
 exits:
   west:
     roomid: 463
   east:
     roomid: 465
   south:
-    roomid: 470
+    roomid: 471
 nouns:
   stalls: Wooden stalls with canvas roofs, each one displaying goods on planked
     counters. The food vendors keep their wares fresh under damp cloth, shooing

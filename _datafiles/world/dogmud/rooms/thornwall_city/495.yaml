@@ -1,0 +1,30 @@
+roomid: 495
+zone: Thornwall City
+title: The Split
+description: >
+  The tunnel reaches a fork where the original drainage channel splits.
+  The eastern branch is sealed with a wall of loose-fitted stone -- blocked
+  intentionally but not permanently. The western passage descends at a
+  slight grade, the air growing warmer and drier as it goes. Chalk marks
+  on the wall at the fork show a crude arrow pointing west, with a symbol
+  beneath it that might be a key or a fish hook.
+biome: cave
+coord:
+  x: 2
+  y: -6
+  z: -2
+exits:
+  north:
+    roomid: 493
+  west:
+    roomid: 496
+nouns:
+  wall: A wall of loose-fitted stone blocking the eastern branch. The
+    mortar is fresh -- this was sealed recently. Whatever lies beyond
+    has been deliberately cut off.
+  marks: Chalk marks on the stone. A crude arrow pointing west, and below
+    it a symbol -- a curved line with a hook at the end. A signature or
+    a warning.
+idlemessages:
+- The air is warmer here, rising from the western passage.
+- Chalk dust clings to the wall where someone drew the arrow.

@@ -10,11 +10,15 @@ description: A ring of charred stones marks where someone has been
   value. The camp is currently unoccupied, but recent footprints
   suggest it sees regular use.
 biome: land
+coord:
+  x: 10
+  y: 1
+  z: 0
 exits:
   west:
     roomid: 3002
   south:
-    roomid: 3006
+    roomid: 3003
 nouns:
   stones: A ring of fire-blackened stones arranged in a rough circle,
     large enough for a decent cooking fire. Ash and charcoal fill the

@@ -49,7 +49,7 @@ func Spawn(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			user.SendText(
 				fmt.Sprintf(`You wave your hands around and <ansi fg="container">%s</ansi> appears from thin air and falls to the ground.`, containerName),
 			)
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> waves their hands around and <ansi fg="container">%s</ansi> appears from thin air and falls to the ground.`, user.Character.Name, containerName),
 				user.UserId,
 			)
@@ -75,7 +75,7 @@ func Spawn(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			user.SendText(
 				fmt.Sprintf(`You wave your hands around and <ansi fg="gold">%d gold</ansi> appears from thin air and falls to the ground.`, goldAmt),
 			)
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> waves their hands around and <ansi fg="gold">%d gold</ansi> appears from thin air and falls to the ground.`, user.Character.Name, goldAmt),
 				user.UserId,
 			)
@@ -88,7 +88,7 @@ func Spawn(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	user.SendText(
 		"You wave your hands around pathetically.",
 	)
-	room.SendText(
+	room.SendTextVisual(
 		fmt.Sprintf(`<ansi fg="username">%s</ansi> waves their hands around pathetically.`, user.Character.Name),
 		user.UserId,
 	)

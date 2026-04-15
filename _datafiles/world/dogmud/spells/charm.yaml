@@ -1,0 +1,20 @@
+spellid: charm
+name: Charm
+description: |
+  You reach into the mind of a hostile creature and bend its
+  will to yours, turning it into a loyal companion. The charm
+  requires intense focus and is much harder against creatures
+  already in combat. Stronger creatures resist more fiercely.
+cost: 120
+base_folds: 36
+type: harmsingle
+schools:
+  - manifestation
+difficulty: 60
+effect_type: charm
+cast_user_text: >-
+  You fix your gaze on your target, pressing your will
+  against its mind...
+cast_room_text: >-
+  {source} stares intently at {target}, brow furrowed with
+  fierce concentration.

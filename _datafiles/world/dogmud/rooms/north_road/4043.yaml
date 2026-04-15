@@ -1,0 +1,42 @@
+roomid: 4043
+zone: North Road
+title: North Road
+description: >
+  The road north of the village is wider here, the packed earth
+  showing the weight of regular wagon traffic. Boot prints and
+  hoofprints overlap in the mud — travelers, farmers, and
+  something heavier. Patrol horses, by the even spacing. A
+  stand of scrub trees crowds the western side of the road,
+  thick enough to hide in. A figure loiters near the treeline,
+  watching the road with the studied casualness of someone
+  pretending not to watch.
+biome: farmland
+coord:
+  x: -11
+  y: -10
+  z: 0
+exits:
+  south:
+    roomid: 4042
+  north:
+    roomid: 4044
+  west:
+    roomid: 4051
+nouns:
+  prints: Boot prints and hoofprints pressed into the mud,
+    overlapping in layers. Most are the broad, flat marks of
+    working boots — farmers and traders. A few are narrower,
+    heavier, with the precise spacing of riders who know
+    exactly where they are going. These are newer than the
+    rest.
+  scrub: A thick stand of scrub oak and bramble crowding the
+    western edge of the road. Dense enough to block the view
+    beyond. A narrow gap in the undergrowth might be a path,
+    or might be where a deer pushed through.
+idlemessages:
+- The figure near the scrub trees shifts position, glancing
+  down the road.
+- A magpie chatters from the scrub, then falls silent.
+- Wind moves through the scrub trees with a dry rattle.
+spawninfo:
+  - mobid: 283

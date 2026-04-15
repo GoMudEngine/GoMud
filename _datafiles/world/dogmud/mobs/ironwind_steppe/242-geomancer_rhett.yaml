@@ -3,17 +3,36 @@ zone: Ironwind Steppe
 statpool: 90
 itemdropchance: 0
 hostile: false
+charm_immune: true
 maxwander: 0
 archetype: casting
 groups:
   - humanoid
 idlecommands:
   - 'emote holds a crystal shard up to the light, squinting at it'
+  - 'cast conviction-armor'
   - ''
   - 'emote scribbles notes in a battered leather journal'
+  - 'cast iron-will'
   - ''
   - 'emote taps a rock with a small hammer, listening intently'
-activitylevel: 15
+combatcommands:
+  - 'cast pyretic-surge'
+  - ''
+  - 'cast kinetic-hurl'
+  - ''
+  - 'cast mind-spike'
+  - ''
+  - 'cast sparks'
+  - ''
+activitylevel: 25
+reaction_delay: 1.0
+tactical_discipline: 0.70
+tactic_preset: aggressive_melee
+tactics:
+  - trigger: combat_start
+    action: cast conviction-armor
+    priority: 11
 character:
   name: Geomancer Rhett
   description: |
@@ -28,6 +47,15 @@ character:
   speciesid: 1
   level: 1
   gold: 0
+  spellbook:
+    conviction-armor: 8
+    iron-will: 6
+    pyretic-surge: 10
+    kinetic-hurl: 8
+    mind-spike: 12
+    sparks: 6
+  skills:
+    spellcasting: 18
   stats:
     willpower:
       training: 10

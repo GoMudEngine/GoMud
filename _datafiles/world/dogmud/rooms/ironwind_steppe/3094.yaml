@@ -9,15 +9,17 @@ description: A broad, flat expanse of cracked mud stretching between
   the hoofprints and pawprints preserved in the dried mud like
   fossils.
 biome: land
+coord:
+  x: 15
+  y: -10
+  z: 0
 exits:
-  west:
-    roomid: 3091
   north:
     roomid: 3089
+  west:
+    roomid: 3092
   south:
-    roomid: 3088
-  east:
-    roomid: 3095
+    roomid: 3096
 nouns:
   cracks: The mud surface is divided into hundreds of irregular
     polygons by deep drying cracks. Each section is slightly

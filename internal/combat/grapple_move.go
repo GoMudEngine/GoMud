@@ -43,7 +43,6 @@ func ExecuteGrappleMove(attacker, defender *characters.Character,
 
 			disarm := AttemptCritDisarm(attacker, defender, 15.0)
 			if disarm.Success {
-				room.AddItem(disarm.Weapon, false)
 				result.DisarmResult = &disarm
 			}
 		}

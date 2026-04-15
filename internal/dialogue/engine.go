@@ -6,9 +6,9 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
-// checkQuestGate returns true if the player satisfies quest/item conditions.
+// checkQuestGate returns true if the player satisfies quest/item/flag conditions.
 // When ps is nil all checks pass (backward compat for mob-to-mob or non-user contexts).
-func checkQuestGate(questRequired, questExcluded []string, requiresItem int, ps *PlayerState) bool {
+func checkQuestGate(questRequired, questExcluded []string, requiresItem int, flagRequired, flagExcluded map[string]string, ps *PlayerState) bool {
 	if ps == nil {
 		return true
 	}
@@ -29,11 +29,25 @@ func checkQuestGate(questRequired, questExcluded []string, requiresItem int, ps 
 		return false
 	}
 
+	// Quest flag checks
+	if ps.GetQuestFlag != nil {
+		for key, val := range flagRequired {
+			if ps.GetQuestFlag(key) != val {
+				return false
+			}
+		}
+		for key, val := range flagExcluded {
+			if ps.GetQuestFlag(key) == val {
+				return false
+			}
+		}
+	}
+
 	return true
 }
 
-// applyQuestEffects fires quest grants and item consumption after a node/pattern matches.
-func applyQuestEffects(grantsQuest string, requiresItem int, ps *PlayerState) {
+// applyQuestEffects fires quest grants, item consumption, item giving, and flag sets after a node/pattern matches.
+func applyQuestEffects(grantsQuest string, requiresItem int, givesItem int, flagSet *QuestFlagSet, ps *PlayerState) {
 	if ps == nil {
 		return
 	}
@@ -42,6 +56,12 @@ func applyQuestEffects(grantsQuest string, requiresItem int, ps *PlayerState) {
 	}
 	if grantsQuest != "" {
 		ps.GiveQuest(grantsQuest)
+	}
+	if givesItem > 0 && ps.GiveItem != nil {
+		ps.GiveItem(givesItem)
+	}
+	if flagSet != nil && ps.SetQuestFlag != nil {
+		ps.SetQuestFlag(flagSet.Key, flagSet.Value)
 	}
 }
 
@@ -75,7 +95,7 @@ func Match(df *DialogueFile, mobInstanceId int, topic string, ps *PlayerState) (
 		}
 
 		// Apply quest/item gate
-		if !checkQuestGate(p.QuestRequired, p.QuestExcluded, p.RequiresItem, ps) {
+		if !checkQuestGate(p.QuestRequired, p.QuestExcluded, p.RequiresItem, p.QuestFlagRequired, p.QuestFlagExcluded, ps) {
 			continue
 		}
 
@@ -107,7 +127,7 @@ func Match(df *DialogueFile, mobInstanceId int, topic string, ps *PlayerState) (
 		return "", "", false
 	}
 
-	applyQuestEffects(matched.GrantsQuest, matched.RequiresItem, ps)
+	applyQuestEffects(matched.GrantsQuest, matched.RequiresItem, matched.GivesItem, matched.SetsQuestFlag, ps)
 
 	response := matched.Responses[util.Rand(len(matched.Responses))]
 	return response, matched.MoodChange, true
@@ -159,12 +179,12 @@ func TreeAdvance(df *DialogueFile, mobInstanceId, userId int, topic string, ps *
 		}
 
 		// Enforce quest/item gate
-		if !checkQuestGate(node.QuestRequired, node.QuestExcluded, node.RequiresItem, ps) {
+		if !checkQuestGate(node.QuestRequired, node.QuestExcluded, node.RequiresItem, node.QuestFlagRequired, node.QuestFlagExcluded, ps) {
 			continue
 		}
 
 		// Node matched — fire quest effects and update memory
-		applyQuestEffects(node.GrantsQuest, node.RequiresItem, ps)
+		applyQuestEffects(node.GrantsQuest, node.RequiresItem, node.GivesItem, node.SetsQuestFlag, ps)
 		UpdateMemory(mobInstanceId, userId, node.Id, node.Unlocks, topic)
 
 		return node.Text, node.Hints, node.MoodChange, true
@@ -199,7 +219,8 @@ func Greet(df *DialogueFile, mobInstanceId, userId int, ps *PlayerState) (string
 	// Check quest-variant greetings first
 	if ps != nil {
 		for _, v := range df.Tree.Root.Variants {
-			if checkQuestGate(v.QuestRequired, v.QuestExcluded, 0, ps) {
+			if checkQuestGate(v.QuestRequired, v.QuestExcluded, 0, v.QuestFlagRequired, v.QuestFlagExcluded, ps) {
+				applyQuestEffects(v.GrantsQuest, v.RequiresItem, v.GivesItem, v.SetsQuestFlag, ps)
 				return v.Text, v.Hints, true
 			}
 		}

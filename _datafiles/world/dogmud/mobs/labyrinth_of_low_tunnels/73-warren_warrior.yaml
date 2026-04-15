@@ -4,6 +4,7 @@ archetype: fighting
 statpool: 12
 itemdropchance: 15
 hostile: true
+peacefulquest: "2-end"
 maxwander: 1
 buffids: [29]
 groups:
@@ -22,6 +23,13 @@ combatcommands:
   - 'emote lets out a guttural war cry that reverberates off the low ceiling'
   - ''
 activitylevel: 25
+reaction_delay: 1.5
+tactical_discipline: 0.40
+tactic_preset: aggressive_melee
+tactics:
+  - trigger: health_below:20
+    action: call_for_help
+    priority: 11
 aiprofile: brawler
 specialmovechance: 15
 spawnmutations: [dense-muscles, tough-skin]

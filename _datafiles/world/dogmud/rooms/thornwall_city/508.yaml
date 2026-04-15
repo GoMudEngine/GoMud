@@ -1,0 +1,74 @@
+roomid: 508
+zone: Thornwall City
+title: Chitin Throne
+description: >
+  A chamber that should feel grand and instead feels wrong. At its center
+  stands a chair carved from a single massive piece of chrysalis chitin,
+  its surface covered in iridescent whorls that shift colour when you move.
+  No two angles show the same pattern. The air shimmers faintly with
+  residual mutation energy -- a pressure behind the eyes, a sense that
+  space here is slightly thinner than it should be. Trophies hang from
+  the walls on iron hooks: guard badges from three different city watch
+  units, a merchant guild seal still attached to its ribbon, a broken
+  sword with a noble crest on the guard. Whatever sits in that throne
+  has been active for a long time. The room smells of chrysalis and
+  of something that is almost fear but is not quite.
+biome: cave
+coord:
+  x: 2
+  y: -6
+  z: -3
+exits:
+  north:
+    roomid: 505
+  south:
+    roomid: 509
+    lock:
+      difficulty: 30
+      relockinterval: 15 real minutes
+      trapbuffids: [39, 40]
+spawninfo:
+  - mobid: 272
+    respawnrate: 30 real minutes
+nouns:
+  throne: >
+    A chair carved from a single massive piece of chrysalis chitin,
+    the cuts made with something that could handle a material harder
+    than iron. The surface is iridescent -- shifting blues, greens,
+    blacks as you move around it. It is warm to the touch. Sitting
+    in it would feel like being watched from inside the chair itself.
+  trophies: >
+    Iron hooks driven into the walls hold a collection of taken
+    things -- a city watch badge from the South Gate unit, one from
+    the River Watch, one from a unit whose name was scratched off.
+    A merchant guild seal, bronze and heavy. A broken sword with a
+    crest -- a minor noble house, or a guard captain. All taken
+    from people who are no longer a problem.
+  guard badges: >
+    Three watch badges in different metals -- one iron, one brass,
+    one with an enameled city crest that is now chipped. They were
+    not purchased or found. They were removed from their owners. The
+    brass badge has a dent that might be a thumbprint pressed hard
+    into soft metal by a very strong hand.
+  merchant seals: >
+    A bronze merchant guild seal, still attached to its original
+    ribbon of crimson cloth. The ribbon has a rust-coloured stain
+    at one end. This was taken at close range from someone who did
+    not give it willingly.
+  broken sword: >
+    A sword broken at the base of the blade, the guard still intact.
+    The noble crest on the guard -- a stylized tree over crossed
+    keys -- is from a house that had guards posted on the east
+    commercial road. Had. Past tense.
+  chrysalis whorls: >
+    The surface of the throne is covered in these -- natural patterns
+    in the chitin, each unique, each shifting colour depending on
+    angle and light. Looking at them too long produces a mild
+    disorientation. The mutation energy in this room seems to
+    concentrate near the throne.
+idlemessages:
+- The throne's surface shifts colour in the corner of your eye -- settled
+  when you look directly at it.
+- The residual mutation energy presses faintly against your thoughts,
+  like a door leaned shut but not latched.
+- Trophies on the wall do not move. They just hang there, testifying.

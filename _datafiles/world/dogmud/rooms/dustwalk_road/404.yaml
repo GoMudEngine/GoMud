@@ -8,6 +8,10 @@ description: The road crosses a broad expanse of open grassland where the scrub 
   standing where the road bends slightly west. The openness feels exposed after the
   scrubland. Anything on this road can be seen from a long way off.
 biome: plains
+coord:
+  x: -10
+  y: 2
+  z: 0
 exits:
   north:
     roomid: 402

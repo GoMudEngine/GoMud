@@ -12,8 +12,11 @@ groups:
   - humanoid
   - mutant
 hates:
-  - rats
-  - animal
+  - rodent
+  - canine
+  - boar
+  - feline
+  - reptile
 idlecommands:
   - 'emote drags its thick, calcified knuckles along the cave wall, leaving pale grooves in the stone'
   - 'emote sniffs the damp air with a flattened nose, nostrils flaring wide'

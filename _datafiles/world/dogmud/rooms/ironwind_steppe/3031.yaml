@@ -9,15 +9,19 @@ description: A narrow trail switchbacks up the western face of the
   view to the west is already impressive -- the sagebrush flats
   spread out below like a rumpled grey-green carpet.
 biome: cliffs
+coord:
+  x: 14
+  y: 1
+  z: 0
 exits:
-  southwest:
-    roomid: 3015
+  west:
+    roomid: 3020
   south:
     roomid: 3030
   north:
     roomid: 3034
   east:
-    roomid: 3035
+    roomid: 3036
 nouns:
   trail: A narrow switchback trail worn into the ridge face by
     the passage of animals over many years. The surface is a mix

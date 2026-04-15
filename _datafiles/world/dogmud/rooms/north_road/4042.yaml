@@ -1,0 +1,51 @@
+roomid: 4042
+zone: North Road
+title: Crossroads Village Square
+description: >
+  A handful of buildings huddle around a muddy square, the kind
+  of place that exists because two roads cross and people need
+  to eat. Smoke rises from the chimney of a stone-and-timber
+  tavern on the western side. A well stands in the center, its
+  bucket rope frayed to threads. The buildings are practical —
+  stone foundations, timber upper floors, thatched roofs patched
+  with varying degrees of care. A few chickens scratch in the
+  mud. The village has no name posted anywhere, as if naming it
+  would imply ambitions it does not have.
+biome: farmland
+coord:
+  x: -11
+  y: -11
+  z: 0
+exits:
+  south:
+    roomid: 4041
+  north:
+    roomid: 4043
+  west:
+    roomid: 4045
+nouns:
+  well: A stone well at the center of the square, its rim worn
+    smooth by decades of rope and bucket. The rope attached to
+    the windlass is frayed nearly through — someone should
+    replace it, and probably no one will for another season.
+    The water below is dark and still. A wooden cup hangs from
+    a nail on the post, communal and unchained.
+  tavern: A two-story building of fieldstone and dark timber,
+    the largest structure in the village. A painted sign hangs
+    over the door — a crude tankard above the name "Haral's."
+    Firelight flickers behind the ground-floor windows. The
+    smell of cooking fat and woodsmoke leaks from every gap
+    in the frame.
+  chickens: A half-dozen scrawny chickens picking through the
+    mud around the well, unbothered by foot traffic. One rooster
+    stands on a fence post, surveying his domain with the
+    absolute confidence of a creature that has never been
+    challenged.
+idlemessages:
+- The tavern door opens briefly, releasing a gust of warm air
+  and the murmur of conversation before swinging shut.
+- A chicken flaps across the square, pursued by nothing.
+- Someone empties a bucket of grey water from an upper window
+  of the tavern.
+spawninfo:
+  - mobid: 281

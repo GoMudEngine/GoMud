@@ -1,0 +1,11 @@
+itemid: 32
+name: Salvage Kit
+displayname: salvage kit
+description: >-
+  A compact roll of sturdy picks, pry bars, and cutting
+  tools designed for disassembling crafted goods. The
+  handles are worn smooth from frequent use.
+type: object
+value: 1
+weight: 1.5
+component_tag: salvage-kit

@@ -1,0 +1,19 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="yellow">Dense Muscles</ansi> mutation
+
+Your muscles condense into cables of extraordinary power. Strength
+surges, but endurance suffers.
+
+<ansi fg="yellow">Type:</ansi>     Passive
+<ansi fg="yellow">Rarity:</ansi>   Uncommon
+
+<ansi fg="yellow">Benefits:</ansi>
+  Moderately increased strength — your condensed muscle fibers
+  generate extraordinary force
+
+<ansi fg="yellow">Drawbacks:</ansi>
+  Slightly slower stamina recovery — the dense tissue demands more
+  energy to sustain
+
+<ansi fg="yellow">Conflicts:</ansi> Hollow Bones
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help mutations</ansi>

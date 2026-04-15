@@ -25,7 +25,8 @@ type SkillMoveParams struct {
 	DamagePercent   float64 // config knob (e.g. BashDamagePercent)
 	KnockdownChance int     // config knob (e.g. BashKnockdownChance)
 	SkillRank       int     // for SkillMultiplier in damage calc
-	DamageStat      int     // stat for CalcRawDamage (always Strength)
+	DamageStat           int     // stat for CalcRawDamage (always Strength)
+	MitigationMultiplier float64 // 1.0 = full, 0.5 = half mitigation (stomp)
 }
 
 // ExecuteSkillMove performs the core combat resolution for bash/kick/trip.
@@ -45,7 +46,11 @@ func ExecuteSkillMove(p SkillMoveParams) SkillMoveResult {
 	// Damage pipeline: CalcRawDamage → ApplyMitigation → dice.RollStat
 	rawDmg := CalcRawDamage(p.DamageStat, p.SkillRank, p.DamagePercent, ChannelPhysical)
 	targetMitig := p.Defender.GetPhysicalMitigation()
-	dmgMean := ApplyMitigation(rawDmg, targetMitig, MitigationCap(ChannelPhysical))
+	mitigMult := p.MitigationMultiplier
+	if mitigMult <= 0 {
+		mitigMult = 1.0
+	}
+	dmgMean := ApplyMitigation(rawDmg, targetMitig*mitigMult, MitigationCap(ChannelPhysical))
 	dmgRoll := dice.RollStat(dmgMean)
 	baseDamage := int(dmgRoll.Value)
 	if baseDamage < 1 {

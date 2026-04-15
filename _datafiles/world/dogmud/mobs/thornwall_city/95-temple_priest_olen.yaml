@@ -4,17 +4,27 @@ archetype: casting
 statpool: 88
 itemdropchance: 0
 hostile: false
+charm_immune: true
 maxwander: 0
 groups:
   - humanoid
   - priest
 idlecommands:
   - 'emote adjusts a candle on the altar, centering it precisely'
+  - 'cast conviction-ward'
+  - ''
   - 'emote turns the pages of a heavy ledger, lips moving silently'
   - ''
   - 'emote folds hands and stares at the altar with a contemplative expression'
   - ''
-activitylevel: 10
+combatcommands:
+  - 'cast heal'
+  - ''
+  - 'cast mend-wounds'
+  - ''
+  - 'cast cleansing-wave'
+  - ''
+activitylevel: 25
 character:
   name: temple priest Olen
   description: |
@@ -34,6 +44,13 @@ character:
       itemid: 10017
     body:
       itemid: 20046
+  spellbook:
+    conviction-ward: 8
+    heal: 12
+    mend-wounds: 10
+    cleansing-wave: 5
+  skills:
+    spellcasting: 15
   stats:
     willpower:
       training: 15

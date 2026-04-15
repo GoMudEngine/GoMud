@@ -1,0 +1,24 @@
+itemid: 20066
+name: spellweaver robes
+namesimple: robes
+description: >
+  Robes of layered silk and linen, threadbare at the cuffs and
+  hem but reinforced at the chest and shoulders with chrysalis
+  fiber woven directly into the fabric. The weave is dense and
+  deliberate -- not decorative but functional, each thread placed
+  to channel and diffuse magical energy. The cloth is warm to the
+  touch and shifts colour faintly in strong light, dark blue to
+  deep violet. Decades of reagent stains mark the front. These
+  robes were not bought -- they were made by someone who understood
+  exactly what they needed protection from.
+type: body
+subtype: wearable
+damagereduction: 2
+physical_mitigation: 3
+magical_mitigation: 12
+conviction_mitigation: 5
+weight: 3.0
+value: 180
+statmods:
+  willpower: 10
+  perception: 3

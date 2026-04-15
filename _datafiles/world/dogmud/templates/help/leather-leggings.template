@@ -1,0 +1,13 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">leather-leggings</ansi> (tailoring recipe)
+
+Shaped hide laced into snug leggings that offer light protection
+without restricting movement — favored by scouts and skirmishers.
+
+<ansi fg="yellow">━━━ Crafting ━━━</ansi>
+
+  <ansi fg="yellow">Skill:</ansi>       tailoring (minimum 15)
+  <ansi fg="yellow">Station:</ansi>     loom
+  <ansi fg="yellow">Ingredients:</ansi> leather strip (x2), thread spool (x1),
+                 bone needle (x1)
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help tailoring</ansi>, <ansi fg="command">help craft</ansi>

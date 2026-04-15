@@ -62,36 +62,45 @@ const (
 	VisitorMob  = "mob"
 )
 
+// HiddenNoun represents a discoverable noun in a room that is invisible
+// until found via the search command (tier 3).
+type HiddenNoun struct {
+	Description       string `yaml:"description"`
+	HiddenDescription string `yaml:"hidden_description"`
+}
+
 type Room struct {
 	//mutex
-	RoomId            int                               `yaml:"roomid"`                              // a unique numeric index of the room. Also the filename.
-	Zone              string                            `yaml:"zone"`                                // zone is a way to partition rooms into groups. Also into folders.
-	MusicFile         string                            `yaml:"musicfile,omitempty"`                 // background music to play when in this room
-	IsBank            bool                              `yaml:"isbank,omitempty"`                    // Is this a bank room? If so, players can deposit/withdraw gold here.
-	IsStorage         bool                              `yaml:"isstorage,omitempty"`                 // Is this a storage room? If so, players can add/remove objects here.
-	IsCharacterRoom   bool                              `yaml:"ischaracterroom,omitempty"`           // Is this a room where characters can create new characters to swap between them?
-	Title             string                            `yaml:"title"`                               // Title shown to the user
-	Description       string                            `yaml:"description"`                         // Description shown to the user
-	MapSymbol         string                            `yaml:"mapsymbol,omitempty"`                 // The symbol to use when generating a map of the zone
-	MapLegend         string                            `yaml:"maplegend,omitempty"`                 // The text to display in the legend for this room. Should be one word.
-	Biome             string                            `yaml:"biome,omitempty"`                     // The biome of the room. Used for weather generation.
+	RoomId            int                               `yaml:"roomid" instance:"skip"`              // a unique numeric index of the room. Also the filename.
+	Zone              string                            `yaml:"zone" instance:"skip"`                // zone is a way to partition rooms into groups. Also into folders.
+	MusicFile         string                            `yaml:"musicfile,omitempty" instance:"skip"` // background music to play when in this room
+	IsBank            bool                              `yaml:"isbank,omitempty" instance:"skip"`    // Is this a bank room? If so, players can deposit/withdraw gold here.
+	IsStorage         bool                              `yaml:"isstorage,omitempty" instance:"skip"` // Is this a storage room? If so, players can add/remove objects here.
+	StorageCapacity   int                               `yaml:"storagecapacity,omitempty" instance:"skip"` // Max items in storage (0 = default 20)
+	IsCharacterRoom   bool                              `yaml:"ischaracterroom,omitempty" instance:"skip"` // Is this a room where characters can create new characters to swap between them?
+	Title             string                            `yaml:"title" instance:"skip"`               // Title shown to the user
+	Description       string                            `yaml:"description" instance:"skip"`         // Description shown to the user
+	MapSymbol         string                            `yaml:"mapsymbol,omitempty" instance:"skip"` // The symbol to use when generating a map of the zone
+	MapLegend         string                            `yaml:"maplegend,omitempty" instance:"skip"` // The text to display in the legend for this room. Should be one word.
+	Biome             string                            `yaml:"biome,omitempty" instance:"skip"`     // The biome of the room. Used for weather generation.
 	Containers        map[string]Container              `yaml:"containers,omitempty"`                // If this room has a chest, what is in it?
-	Exits             map[string]exit.RoomExit          `yaml:"exits"`                               // Exits to other rooms
+	Exits             map[string]exit.RoomExit          `yaml:"exits" instance:"skip"`               // Exits to other rooms
 	ExitsTemp         map[string]exit.TemporaryRoomExit `yaml:"-"`                                   // Temporary exits that will be removed after a certain time. Don't bother saving on sever shutting down.
-	Nouns             map[string]string                 `yaml:"nouns,omitempty"`                     // Interesting nouns to highlight in the room or reveal on succesful searches.
+	Nouns             map[string]string                 `yaml:"nouns,omitempty" instance:"skip"`     // Interesting nouns to highlight in the room or reveal on succesful searches.
+	HiddenNouns       map[string]HiddenNoun            `yaml:"hidden_nouns,omitempty" instance:"skip"` // Nouns invisible until discovered via search.
 	Items             []items.Item                      `yaml:"items,omitempty"`                     // Items on the floor
 	Stash             []items.Item                      `yaml:"stash,omitempty"`                     // list of items in the room that are not visible to players
 	Corpses           []Corpse                          `yaml:"-"`                                   // Any corpses laying around from recent deaths
 	Gold              int                               `yaml:"gold,omitempty"`                      // How much gold is on the ground?
 	SpawnInfo         []SpawnInfo                       `yaml:"spawninfo,omitempty" instance:"skip"` // key is creature ID, value is spawn chance
-	SkillTraining     map[string]TrainingRange          `yaml:"skilltraining,omitempty"`             // list of skills that can be trained in this room
+	SkillTraining     map[string]TrainingRange          `yaml:"skilltraining,omitempty" instance:"skip"` // list of skills that can be trained in this room
 	Signs             []Sign                            `yaml:"sign,omitempty"`                      // list of scribbles in the room
-	IdleMessages      []string                          `yaml:"idlemessages,omitempty" `             // list of messages that can be displayed to players in the room
+	IdleMessages      []string                          `yaml:"idlemessages,omitempty" instance:"skip"` // list of messages that can be displayed to players in the room
 	LastIdleMessage   uint8                             `yaml:"-"`                                   // index of the last idle message displayed
 	LongTermDataStore map[string]any                    `yaml:"longtermdatastore,omitempty"`         // Long term data store for the room
 	Mutators          mutators.MutatorList              `yaml:"mutators,omitempty"`                  // mutators this room spawns with.
-	Pvp               bool                              `yaml:"pvp,omitempty"`                       // if config pvp is set to `limited`, uses this value
-	Station           string                            `yaml:"station,omitempty"`                   // Crafting station type present in this room (Stage 13.1)
+	Pvp               bool                              `yaml:"pvp,omitempty" instance:"skip"`       // if config pvp is set to `limited`, uses this value
+	Station           string                            `yaml:"station,omitempty" instance:"skip"`   // Crafting station type present in this room (Stage 13.1)
 	// Unexported/private
 	players       []int                          // list of user IDs currently in the room
 	mobs          []int                          // list of mob instance IDs currently in the room. Does not get saved.
@@ -253,6 +262,34 @@ func (r *Room) SendText(txt string, excludeUserIds ...int) {
 		IsQuiet:        false,
 	})
 
+}
+
+// SendTextVisual sends a visual message that requires sight. In dark rooms,
+// only players with nightvision receive the message. Use this instead of
+// SendText when the message contains character names or visual descriptions
+// that shouldn't be visible in darkness.
+func (r *Room) SendTextVisual(txt string, excludeUserIds ...int) {
+	if r.GetVisibility() >= 1 {
+		r.SendText(txt, excludeUserIds...)
+		return
+	}
+	// Dark room — send only to nightvision players
+	for _, uid := range r.GetPlayers() {
+		excluded := false
+		for _, eid := range excludeUserIds {
+			if uid == eid {
+				excluded = true
+				break
+			}
+		}
+		if excluded {
+			continue
+		}
+		u := users.GetByUserId(uid)
+		if u != nil && u.Character.HasFlagFromAnySource(buffs.NightVision) {
+			u.SendText(txt)
+		}
+	}
 }
 
 func (r *Room) PlaySound(soundId string, category string, excludeUserIds ...int) {
@@ -426,8 +463,9 @@ func (r *Room) RemoveTemporaryExit(t exit.TemporaryRoomExit) bool {
 	return false
 }
 
-// Can't add twoof the same exitName
-// Will return false if it already exists
+// AddTemporaryExit adds (or replaces) a temporary exit. Replacing an
+// existing exit with the same key allows instance portals to be
+// upgraded without waiting for the old timer to expire.
 func (r *Room) AddTemporaryExit(exitName string, t exit.TemporaryRoomExit) bool {
 
 	t.SpawnedRound = util.GetRoundCount()
@@ -438,9 +476,6 @@ func (r *Room) AddTemporaryExit(exitName string, t exit.TemporaryRoomExit) bool 
 
 	if len(t.Title) == 0 {
 		t.Title = exitName
-	}
-	if _, ok := r.ExitsTemp[exitName]; ok {
-		return false
 	}
 	r.ExitsTemp[exitName] = t
 	return true
@@ -645,6 +680,20 @@ func (r *Room) Prepare(checkAdjacentRooms bool) {
 				}
 
 				mob.Character.Zone = r.Zone
+
+				// Instance loot: generate and equip affixed items from loot pool
+				if goldPaid, ok := r.GetTempData("gold_paid").(int); ok && goldPaid > 0 {
+					if len(mob.LootPool) > 0 {
+						scalar := float64(configs.GetBalanceConfig().LootBudgetScalar)
+						for _, baseItemId := range mob.LootPool {
+							affixedItem := items.GenerateAffixedItem(baseItemId, goldPaid, scalar)
+							if affixedItem.ItemId > 0 {
+								mob.Character.Wear(affixedItem)
+							}
+						}
+					}
+				}
+
 				mob.Validate()
 
 				r.mobs = append(r.mobs, mob.InstanceId)
@@ -1619,6 +1668,31 @@ func (r *Room) FindContainerByName(containerNameSearch string) string {
 	}
 
 	return closeMatch
+}
+
+// FindHiddenNoun looks up a hidden noun by key. Returns the noun key,
+// the HiddenNoun, and true if found. Returns empty values and false if not.
+func (r *Room) FindHiddenNoun(search string) (string, HiddenNoun, bool) {
+	if r.HiddenNouns == nil {
+		return "", HiddenNoun{}, false
+	}
+	// Try exact match first
+	if hn, ok := r.HiddenNouns[search]; ok {
+		return search, hn, true
+	}
+	// Build candidate list for fuzzy matching
+	keys := make([]string, 0, len(r.HiddenNouns))
+	for k := range r.HiddenNouns {
+		keys = append(keys, k)
+	}
+	exact, close := util.FindMatchIn(search, keys...)
+	if exact != "" {
+		return exact, r.HiddenNouns[exact], true
+	}
+	if close != "" {
+		return close, r.HiddenNouns[close], true
+	}
+	return "", HiddenNoun{}, false
 }
 
 func (r *Room) FindNoun(noun string) (foundNoun string, nounDescription string) {

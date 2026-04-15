@@ -33,6 +33,11 @@ var (
 	promptFindTagsRegex        = regexp.MustCompile(`\{[a-zA-Z%:\-]+\}`)
 )
 
+// RenderVitalBar is the exported version of renderVitalBar.
+func RenderVitalBar(current, max, reserved int) string {
+	return renderVitalBar(current, max, reserved)
+}
+
 // renderVitalBar returns a 10-block ANSI progress bar for a vital stat.
 // Color breakpoints match the web client vitals window gradient:
 //
@@ -374,6 +379,33 @@ func (u *UserRecord) ProcessPromptString(promptStr string) string {
 				promptOut.WriteString(renderVitalBar(u.Character.Conviction, u.Character.ConvictionMax.Value,
 					u.Character.GetPoolReservation("conviction", u.Character.ConvictionMax.Value)))
 
+			case `{pet_hp}`:
+				if len(u.Character.Companions) > 0 && u.Character.Companions[0].InstanceId > 0 {
+					if pet := mobs.GetInstance(u.Character.Companions[0].InstanceId); pet != nil && pet.Character.HealthMax.Value > 0 {
+						petClass := fmt.Sprintf(`health-%d`, util.QuantizeTens(pet.Character.Health, pet.Character.HealthMax.Value))
+						pct := int(math.Floor(float64(pet.Character.Health) / float64(pet.Character.HealthMax.Value) * 100))
+						promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%d%%</ansi>`, petClass, pct))
+					}
+				}
+
+			case `{pet_sp}`:
+				if len(u.Character.Companions) > 0 && u.Character.Companions[0].InstanceId > 0 {
+					if pet := mobs.GetInstance(u.Character.Companions[0].InstanceId); pet != nil && pet.Character.StaminaMax.Value > 0 {
+						petClass := fmt.Sprintf(`health-%d`, util.QuantizeTens(pet.Character.Stamina, pet.Character.StaminaMax.Value))
+						pct := int(math.Floor(float64(pet.Character.Stamina) / float64(pet.Character.StaminaMax.Value) * 100))
+						promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%d%%</ansi>`, petClass, pct))
+					}
+				}
+
+			case `{pet_cp}`:
+				if len(u.Character.Companions) > 0 && u.Character.Companions[0].InstanceId > 0 {
+					if pet := mobs.GetInstance(u.Character.Companions[0].InstanceId); pet != nil && pet.Character.ConvictionMax.Value > 0 {
+						petClass := fmt.Sprintf(`mana-%d`, util.QuantizeTens(pet.Character.Conviction, pet.Character.ConvictionMax.Value))
+						pct := int(math.Floor(float64(pet.Character.Conviction) / float64(pet.Character.ConvictionMax.Value) * 100))
+						promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%d%%</ansi>`, petClass, pct))
+					}
+				}
+
 			case `{target}`:
 				if u.Character.Aggro != nil {
 					if u.Character.Aggro.MobInstanceId > 0 {
@@ -473,6 +505,29 @@ func (u *UserRecord) ProcessPromptString(promptStr string) string {
 
 			case `{g}`:
 				promptOut.WriteString(strconv.Itoa(u.Character.Gold))
+
+			case `{enc}`:
+				weight := u.Character.GetCarriedWeight()
+				capacity := u.Character.CarryCapacity()
+				var encLabel, encColor string
+				if capacity <= 0 {
+					encLabel, encColor = "crushed", "magenta-bold"
+				} else {
+					ratio := weight / capacity
+					switch {
+					case ratio <= 0.25:
+						encLabel, encColor = "light", "green"
+					case ratio <= 0.50:
+						encLabel, encColor = "moderate", "yellow"
+					case ratio <= 0.75:
+						encLabel, encColor = "heavy", "red"
+					case ratio <= 1.00:
+						encLabel, encColor = "overburdened", "red-bold"
+					default:
+						encLabel, encColor = "crushed", "magenta-bold"
+					}
+				}
+				promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%s</ansi>`, encColor, encLabel))
 
 			case `{i}`:
 				promptOut.WriteString(strconv.Itoa(len(u.Character.Items)))

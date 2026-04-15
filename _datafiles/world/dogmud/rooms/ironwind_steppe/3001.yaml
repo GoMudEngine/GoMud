@@ -8,9 +8,15 @@ description: The wagon track continues east through a stretch of flattened
   few scraggly bushes cling to life along the track's edges. To the
   south, a shallow drainage ditch carries runoff from the city wall.
 biome: land
+coord:
+  x: 9
+  y: 0
+  z: 0
 exits:
   west:
     roomid: 3000
+  north:
+    roomid: 3002
   east:
     roomid: 3003
   south:

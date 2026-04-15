@@ -43,7 +43,7 @@ func seedRegistry() {
 			RecipeId:     "healing-poultice",
 			Name:         "Healing Poultice",
 			Skill:        "alchemy",
-			SkillMinimum: 0,
+			SkillMinimum: 1,
 			Station:      "alchemy_bench",
 			TimeRounds:   2,
 			Ingredients: []RecipeIngredient{
@@ -54,12 +54,49 @@ func seedRegistry() {
 			SuccessMessage: "You grind the roots into cloth.",
 			FailureMessage: "The mixture crumbles.",
 		},
+		"healing-salve": {
+			RecipeId:     "healing-salve",
+			Name:         "Healing Salve",
+			Skill:        "alchemy",
+			SkillMinimum: 0,
+			Station:      "alchemy_bench",
+			TimeRounds:   3,
+			Ingredients: []RecipeIngredient{
+				{ItemTag: "healers-root", Quantity: 2},
+				{ItemTag: "bottle", Quantity: 1},
+			},
+			Output:         RecipeOutput{ItemId: 30036, Quantity: 1},
+			SuccessMessage: "You seal the salve in the bottle.",
+			FailureMessage: "The mixture separates.",
+		},
 	}
 }
 
 // makeItem creates a test item with a given ComponentTag, without touching the global registry.
 func makeItem(tag string) items.Item {
 	return items.Item{Spec: &items.ItemSpec{ComponentTag: tag}}
+}
+
+// ─── GetRecipeByOutputItemId ─────────────────────────────────────────────────
+
+func TestGetRecipeByOutputItemId(t *testing.T) {
+	seedRegistry()
+	recipeByOutputId = nil // force rebuild
+
+	// Should find iron dagger recipe by its output item ID
+	recipe := GetRecipeByOutputItemId(10005)
+	if recipe == nil {
+		t.Fatal("expected to find recipe for item 10005")
+	}
+	if recipe.RecipeId != "iron-dagger" {
+		t.Errorf("expected iron-dagger, got %s", recipe.RecipeId)
+	}
+
+	// Should return nil for unknown item ID
+	recipe = GetRecipeByOutputItemId(999999)
+	if recipe != nil {
+		t.Errorf("expected nil for unknown item ID, got %s", recipe.RecipeId)
+	}
 }
 
 // ─── CalcSuccessChance ────────────────────────────────────────────────────────
@@ -94,7 +131,7 @@ func TestHasIngredients(t *testing.T) {
 	recipe := allRecipes["iron-dagger"] // needs 1x iron-ingot + 1x leather-strip
 
 	// Empty inventory → missing iron-ingot
-	ok, missing := HasIngredients([]items.Item{}, recipe)
+	ok, missing := HasIngredients([]items.Item{}, []items.Item{}, recipe)
 	if ok {
 		t.Error("empty inv: expected false")
 	}
@@ -104,7 +141,7 @@ func TestHasIngredients(t *testing.T) {
 
 	// Has iron-ingot but not leather-strip
 	inv := []items.Item{makeItem("iron-ingot")}
-	ok, missing = HasIngredients(inv, recipe)
+	ok, missing = HasIngredients(inv, []items.Item{}, recipe)
 	if ok {
 		t.Error("missing leather-strip: expected false")
 	}
@@ -114,7 +151,7 @@ func TestHasIngredients(t *testing.T) {
 
 	// Has both → success
 	inv = []items.Item{makeItem("iron-ingot"), makeItem("leather-strip")}
-	ok, missing = HasIngredients(inv, recipe)
+	ok, missing = HasIngredients(inv, []items.Item{}, recipe)
 	if !ok {
 		t.Errorf("exact match: expected true, missing=%q", missing)
 	}
@@ -122,7 +159,7 @@ func TestHasIngredients(t *testing.T) {
 	// Short count for iron-buckler (needs 2x iron-ingot)
 	buckler := allRecipes["iron-buckler"]
 	inv = []items.Item{makeItem("iron-ingot"), makeItem("wooden-plank")}
-	ok, missing = HasIngredients(inv, buckler)
+	ok, missing = HasIngredients(inv, []items.Item{}, buckler)
 	if ok {
 		t.Error("only 1 iron-ingot for buckler: expected false")
 	}
@@ -132,7 +169,7 @@ func TestHasIngredients(t *testing.T) {
 
 	// Exactly 2x iron-ingot + 1x wooden-plank → success
 	inv = []items.Item{makeItem("iron-ingot"), makeItem("iron-ingot"), makeItem("wooden-plank")}
-	ok, _ = HasIngredients(inv, buckler)
+	ok, _ = HasIngredients(inv, []items.Item{}, buckler)
 	if !ok {
 		t.Error("2x iron-ingot + wooden-plank: expected true")
 	}
@@ -152,7 +189,7 @@ func TestConsumeIngredients(t *testing.T) {
 		makeItem("iron-ingot"), // extra iron-ingot should NOT be consumed
 	}
 
-	result := ConsumeIngredients(inv, recipe)
+	result, _ := ConsumeIngredients(inv, []items.Item{}, recipe)
 
 	if len(result) != 2 {
 		t.Errorf("expected 2 items remaining, got %d", len(result))
@@ -211,12 +248,13 @@ func TestGetStarterRecipes(t *testing.T) {
 
 	starters := GetStarterRecipes()
 
-	// iron-dagger (SkillMinimum=0) and healing-poultice (SkillMinimum=0) should be starters
+	// iron-dagger (SkillMinimum=0) should be a starter
 	if _, ok := starters["iron-dagger"]; !ok {
 		t.Error("expected iron-dagger in starter recipes")
 	}
-	if _, ok := starters["healing-poultice"]; !ok {
-		t.Error("expected healing-poultice in starter recipes")
+	// healing-poultice (SkillMinimum=1) should NOT be a starter
+	if _, ok := starters["healing-poultice"]; ok {
+		t.Error("healing-poultice should not be a starter recipe (SkillMinimum=1)")
 	}
 	// iron-buckler (SkillMinimum=5) should NOT be a starter
 	if _, ok := starters["iron-buckler"]; ok {
@@ -245,7 +283,7 @@ func TestGetEligibleRecipes(t *testing.T) {
 		"alchemy":       0,
 	}
 
-	eligible := GetEligibleRecipes(known, skills)
+	eligible := GetEligibleRecipes(known, skills, "blacksmithing")
 
 	// iron-buckler (SkillMinimum=5, blacksmithing) should be eligible
 	found := false
@@ -264,10 +302,19 @@ func TestGetEligibleRecipes(t *testing.T) {
 
 	// If skill is too low, nothing should be eligible
 	skills["blacksmithing"] = 3
-	eligible = GetEligibleRecipes(known, skills)
+	eligible = GetEligibleRecipes(known, skills, "blacksmithing")
 	for _, id := range eligible {
 		if id == "iron-buckler" {
 			t.Error("iron-buckler should not be eligible with blacksmithing=3")
+		}
+	}
+
+	// Recipes from a different skill should never appear when filtering by blacksmithing
+	skills["blacksmithing"] = 5
+	eligible = GetEligibleRecipes(known, skills, "blacksmithing")
+	for _, id := range eligible {
+		if r := GetRecipe(id); r != nil && r.Skill != "blacksmithing" {
+			t.Errorf("recipe %q (skill=%s) should not appear when filtering for blacksmithing", id, r.Skill)
 		}
 	}
 
@@ -277,66 +324,9 @@ func TestGetEligibleRecipes(t *testing.T) {
 		"healing-poultice": 1,
 		"iron-buckler":     1,
 	}
-	eligible = GetEligibleRecipes(allKnown, map[string]int{"blacksmithing": 50, "alchemy": 50})
+	eligible = GetEligibleRecipes(allKnown, map[string]int{"blacksmithing": 50, "alchemy": 50}, "blacksmithing")
 	if len(eligible) != 0 {
 		t.Errorf("all known: expected 0 eligible, got %d", len(eligible))
 	}
 }
 
-// ─── Stage 40.2: FindTargetItem ─────────────────────────────────────────────
-
-func TestFindTargetItem(t *testing.T) {
-	tests := []struct {
-		name       string
-		inv        []items.Item
-		targetType string
-		wantIdx    int
-		wantFound  bool
-	}{
-		{
-			name:       "empty inventory",
-			inv:        []items.Item{},
-			targetType: "weapon",
-			wantIdx:    -1,
-			wantFound:  false,
-		},
-		{
-			name: "found",
-			inv: []items.Item{
-				{ItemId: 1, Spec: &items.ItemSpec{Type: items.Weapon}},
-				{ItemId: 2, Spec: &items.ItemSpec{Type: items.Body}},
-			},
-			targetType: "weapon",
-			wantIdx:    0,
-			wantFound:  true,
-		},
-		{
-			name: "not found",
-			inv: []items.Item{
-				{ItemId: 1, Spec: &items.ItemSpec{Type: items.Body}},
-			},
-			targetType: "weapon",
-			wantIdx:    -1,
-			wantFound:  false,
-		},
-		{
-			name: "skips zero ItemId",
-			inv: []items.Item{
-				{ItemId: 0, Spec: &items.ItemSpec{Type: items.Weapon}},
-				{ItemId: 1, Spec: &items.ItemSpec{Type: items.Weapon}},
-			},
-			targetType: "weapon",
-			wantIdx:    1,
-			wantFound:  true,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			idx, found := FindTargetItem(tt.inv, tt.targetType)
-			if idx != tt.wantIdx || found != tt.wantFound {
-				t.Errorf("FindTargetItem() = (%d, %v), want (%d, %v)", idx, found, tt.wantIdx, tt.wantFound)
-			}
-		})
-	}
-}

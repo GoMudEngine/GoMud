@@ -1,0 +1,38 @@
+roomid: 4006
+zone: Marches Spur Road
+title: Farmland Transition
+description: The scrubland is gone. The road passes between fallow fields
+  of dark turned earth, neatly plowed in long furrows that stretch toward
+  the horizon. The smell changes here -- dry sage replaced by the rich
+  scent of loam and moisture. A farm track branches west through a gap
+  in overgrown hedgerows, the shape of a structure barely visible through
+  the tangled branches. The main road continues south toward the sound of
+  distant activity.
+biome: farmland
+coord:
+  x: -8
+  y: -7
+  z: 0
+exits:
+  north:
+    roomid: 4005
+  west:
+    roomid: 4007
+  south:
+    roomid: 4008
+nouns:
+  fields: Fallow fields stretch on both sides of the road, their soil
+    dark and freshly turned. The furrows are straight and even -- someone
+    is maintaining this land even if nothing is planted at the moment.
+    Clods of earth sit in the sun, drying and crumbling.
+  hedgerows: Overgrown hedgerows line the farm track to the west, their
+    branches tangled and thick with years of unchecked growth. Through
+    gaps in the foliage, the shape of a large building is visible --
+    walls and a partial roofline, half-hidden by vines and brush.
+spawninfo:
+- mobid: 256
+- mobid: 258
+idlemessages:
+- A crow lands in the nearest field and begins picking at the turned earth.
+- The smell of fresh soil rises on the warm air, rich and damp.
+- Leaves rustle in the hedgerows as a breeze pushes through.

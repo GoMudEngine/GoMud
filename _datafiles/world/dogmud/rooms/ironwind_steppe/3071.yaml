@@ -9,11 +9,13 @@ description: A low-ceilinged cave hollowed from the base of the coulee
   possessions -- weapons, trinkets, stolen goods -- are piled
   beside each nest with obsessive territorial precision.
 biome: cave
+coord:
+  x: 16
+  y: -13
+  z: 0
 exits:
   north:
     roomid: 3069
-  west:
-    roomid: 3070
   south:
     roomid: 3072
 nouns:

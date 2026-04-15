@@ -1,0 +1,42 @@
+roomid: 4040
+zone: North Road
+title: Hedgerow Bend
+description: >
+  The road curves north here around a dense hedgerow that has
+  grown wild enough to block the view ahead. Farm gates line
+  the eastern side, their posts leaning at comfortable angles.
+  At the bend stands a boundary marker — a squat stone pillar,
+  waist-height, carved with the Chrysalis spiral. The spiral's
+  center has been worn smooth by years of hands laid on it in
+  passing. The stone is warm to the touch even in the autumn
+  chill.
+biome: farmland
+coord:
+  x: -11
+  y: -13
+  z: 0
+exits:
+  east:
+    roomid: 4039
+  north:
+    roomid: 4041
+nouns:
+  marker: A squat stone pillar set into the ground at the bend,
+    carved with the Chrysalis spiral. The design is old — the
+    edges of the carving are soft with age — but the center of
+    the spiral has been worn glassy-smooth by countless hands
+    laid on it over the years. Below the spiral, faded letters
+    read "In this territory, all who carry the gift are under
+    the protection of the Chrysalis." A designation for the
+    nearest temple district is carved beneath, but weather has
+    made it unreadable.
+  gates: Wooden farm gates set into the hedgerow at intervals,
+    each leading to a different field. The posts lean at angles
+    that suggest decades of use and occasional repair. One gate
+    hangs open, its latch broken, revealing a muddy track leading
+    to a farmhouse barely visible through the trees.
+idlemessages:
+- A farmer passes through one of the gates, nodding without
+  breaking stride.
+- The hedgerow creaks in the wind, thorns catching at nothing.
+- A cart rattles somewhere beyond the bend, heading south.

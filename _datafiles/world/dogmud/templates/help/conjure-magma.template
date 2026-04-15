@@ -1,0 +1,30 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">conjure-magma</ansi> spell
+
+The <ansi fg="command">Conjure Magma Elemental</ansi> spell forces a magma elemental through the
+planar boundary and binds it as your companion. The magma elemental
+combines the crushing mass of an earth elemental with the searing heat
+of fire — capable of knocking enemies prone and burning anyone foolish
+enough to strike it with bare flesh. The toll this binding places on
+the conjurer's conviction is devastating; this spell is not cast
+lightly or by the unprepared.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">cast conjure-magma</ansi>
+
+<ansi fg="yellow">Details: </ansi>
+
+  <ansi fg="yellow">Type:        </ansi> Neutral
+  <ansi fg="yellow">School:      </ansi> Manifestation
+  <ansi fg="yellow">Base Folds:  </ansi> 14
+  <ansi fg="yellow">Conv. Cost:  </ansi> Devastating
+
+<ansi fg="white-bold">Notes:</ansi>
+  - No component is required to cast this spell.
+  - The magma elemental has a natural bash ability and returns
+    burn damage to enemies that strike it with flesh or claws.
+  - The elemental persists until destroyed or dismissed.
+  - Scaling improves with your Charisma and Manifestation skill.
+  - You cannot exceed your companion limit with this spell.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help spells</ansi>, <ansi fg="command">help cast</ansi>, <ansi fg="command">help companion</ansi>

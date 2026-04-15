@@ -1,0 +1,46 @@
+roomid: 4044
+zone: North Road
+title: Drainage Ditch
+description: >
+  An embankment runs alongside the road here, heavy with the
+  dead scrub of late autumn. A drainage ditch cuts between
+  the road and the fields to the east, its banks muddy and
+  steep. In the scrub along the embankment, a narrow gap where
+  the branches have been recently disturbed — someone crouched
+  here, parting the dead growth to watch the road. A dirt path
+  leads west toward a farmstead visible in the distance. The
+  road continues north where the ground roughens and the
+  sound of running water begins to build.
+biome: farmland
+coord:
+  x: -11
+  y: -9
+  z: 0
+exits:
+  south:
+    roomid: 4043
+  north:
+    roomid: 4053
+  west:
+    roomid: 4048
+nouns:
+  scrub: A narrow gap in the dead scrub along the embankment.
+    The branches have been pushed aside recently — they are
+    cracked rather than bent, and a few leaves are crushed flat
+    where someone knelt. The inner bank of the ditch is scuffed
+    where a boot slipped. Whoever hid here was watching the road
+    and did not want to be seen.
+  ditch: A drainage ditch running parallel to the road, three
+    feet deep and steep-sided. The bottom is thick with standing
+    water and dead leaves. Not the kind of place you would choose
+    to hide unless you had no better option. A few stones have
+    been placed as rough stepping points across the narrowest
+    section.
+  path: A dirt track leading west through harvested fields
+    toward a low farmstead. Sheep are visible in the near field.
+    Smoke rises from the farmhouse chimney.
+idlemessages:
+- Water trickles in the drainage ditch, a thin sound in the
+  quiet.
+- Wind stirs the dead scrub on the embankment, making it rattle.
+- A sheep bleats somewhere to the west.

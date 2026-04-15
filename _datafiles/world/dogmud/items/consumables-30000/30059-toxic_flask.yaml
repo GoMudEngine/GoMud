@@ -1,0 +1,18 @@
+itemid: 30059
+name: toxic flask
+namesimple: flask
+description: >-
+  A thin-walled vial of concentrated poison that shatters
+  easily, releasing a cloud of choking fumes.
+type: object
+subtype: throwable
+uses: 1
+value: 18
+weight: 0.2
+buffids:
+  - 78
+aging:
+  ferment_rounds: 2000
+  peak_rounds: 8000
+  decay_rounds: 20000
+  spoil_rounds: 30000

@@ -114,7 +114,6 @@ var (
 		"divFloat":     func(a int, b int) float64 { return float64(a) / float64(b) },
 		"stringor":     stringOr,
 		"splitstring":    util.SplitStringNL,
-		"normalizewrap": util.NormalizeAndWrapNL,
 		"ansiparse":    TplAnsiParse,
 		"buffname": func(buffId int) string {
 			buffSpec := buffs.GetBuffSpec(buffId)
@@ -146,9 +145,10 @@ var (
 			return util.FormatDiceRoll(a, d, s, b, []int{})
 		},
 		"profession": func(char characters.Character) string {
-
-			allRanks := char.GetAllSkillRanks()
-			return skills.GetProfession(allRanks)
+			return skills.GetTitle(char.Mutations, char.GetAllSkillRanks(), char.Stats)
+		},
+		"title": func(char characters.Character) string {
+			return skills.GetTitle(char.Mutations, char.GetAllSkillRanks(), char.Stats)
 		},
 		"roundstotime": func(rounds int) string {
 			if rounds >= buffs.TriggersLeftUnlimited {
@@ -218,15 +218,15 @@ var (
 			case value <= 75:
 				return "poor"
 			case value <= 90:
-				return "below average"
+				return "modest"
 			case value <= 110:
 				return "average"
 			case value <= 130:
-				return "above average"
+				return "keen"
 			case value <= 150:
 				return "exceptional"
 			case value <= 200:
-				return "extraordinary"
+				return "remarkable"
 			case value <= 300:
 				return "transcendent"
 			default:
@@ -294,6 +294,62 @@ var (
 				return "fortified"
 			}
 		},
+		"damageQuality": func(mult float64) string {
+			switch {
+			case mult < 0.3:
+				return "negligible striking power"
+			case mult < 0.6:
+				return "feeble striking power"
+			case mult < 1.0:
+				return "light striking power"
+			case mult < 1.5:
+				return "moderate striking power"
+			case mult < 2.5:
+				return "strong striking power"
+			case mult < 4.0:
+				return "devastating striking power"
+			default:
+				return "legendary striking power"
+			}
+		},
+		"spellDamageQuality": func(mult float64) string {
+			switch {
+			case mult < 0.5:
+				return "negligible arcane resonance"
+			case mult < 0.8:
+				return "faint arcane resonance"
+			case mult < 1.2:
+				return "mild arcane resonance"
+			case mult < 1.6:
+				return "moderate arcane resonance"
+			case mult < 2.5:
+				return "strong arcane resonance"
+			case mult < 4.0:
+				return "intense arcane resonance"
+			default:
+				return "legendary arcane resonance"
+			}
+		},
+		"statModDescription": func(statName string, value int) string {
+			var prefix string
+			switch {
+			case value >= 20:
+				prefix = "greatly bolsters"
+			case value >= 10:
+				prefix = "bolsters"
+			case value >= 1:
+				prefix = "slightly bolsters"
+			case value <= -20:
+				prefix = "greatly saps"
+			case value <= -10:
+				prefix = "saps"
+			case value <= -1:
+				prefix = "slightly saps"
+			default:
+				return ""
+			}
+			return prefix + " your " + statName
+		},
 		"mutationLevel": func(level int) string {
 			switch level {
 			case 1:
@@ -302,29 +358,13 @@ var (
 				return "moderate"
 			case 3:
 				return "major"
+			case 4:
+				return "extreme"
 			default:
 				return "unknown"
 			}
 		},
-		// skillRank converts a numeric skill level (1–50) to a qualitative tier name.
-		"skillRank": func(level int) string {
-			switch {
-			case level <= 0:
-				return "unknown"
-			case level <= 1:
-				return "novice"
-			case level <= 9:
-				return "apprentice"
-			case level <= 19:
-				return "journeyman"
-			case level <= 34:
-				return "adept"
-			case level <= 49:
-				return "expert"
-			default:
-				return "master"
-			}
-		},
+		"skillRank": skills.GetSkillRankDescription,
 		"durationQuality": func(rounds int) string {
 			switch {
 			case rounds <= 0:

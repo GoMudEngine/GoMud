@@ -8,15 +8,17 @@ description: Several large boulders are scattered across the flats here,
   in pale green and orange. The boulders provide welcome windbreaks
   and the air in their lee is noticeably calmer.
 biome: land
+coord:
+  x: 13
+  y: 2
+  z: 0
 exits:
   west:
     roomid: 3019
   south:
     roomid: 3020
-  east:
-    roomid: 3023
   north:
-    roomid: 3034
+    roomid: 3023
 nouns:
   boulders: Dark basalt boulders, each the size of a wagon or larger.
     Their surfaces are rough and pitted, colonized by lichen and

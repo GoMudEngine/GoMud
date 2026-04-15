@@ -8,15 +8,17 @@ description: The creek banks rise sharply here into low bluffs of
   stony, squeezed between the bluff walls. Small caves and overhangs
   in the bluff faces show signs of animal habitation.
 biome: land
+coord:
+  x: 12
+  y: -5
+  z: 0
 exits:
   north:
+    roomid: 3046
+  east:
     roomid: 3049
   south:
-    roomid: 3055
-  east:
     roomid: 3054
-  west:
-    roomid: 3075
 nouns:
   bluffs: Sandstone bluffs sculpted by water erosion into smooth,
     flowing shapes. The pale stone is streaked with darker bands

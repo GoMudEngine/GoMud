@@ -1,0 +1,18 @@
+id: swiftfoot-essence
+name: Swiftfoot Essence
+skill: alchemy
+skill_minimum: 15
+station: alchemy_bench
+time_rounds: 5
+ingredients:
+  - item_tag: dustwalk-herb
+    quantity: 2
+  - item_tag: moonpetal
+    quantity: 1
+  - item_tag: bottle
+    quantity: 1
+output:
+  item_id: 30048
+  quantity: 1
+success_message: "The liquid becomes almost weightless in the bottle. A swiftfoot essence!"
+failure_message: "The herbs wilt before the essence can form. The materials are wasted."

@@ -9,15 +9,15 @@ description: A massive, ancient tree once grew here on the creek bank.
   and shelters. The fallen trunk has been reduced to a long mound
   of rotting wood colonized by fungi.
 biome: land
+coord:
+  x: 14
+  y: -5
+  z: 0
 exits:
-  north:
-    roomid: 3044
   west:
-    roomid: 3047
+    roomid: 3049
   south:
     roomid: 3053
-  east:
-    roomid: 3063
 nouns:
   roots: An enormous tangle of dead tree roots, still firmly
     anchored in the bank. The individual roots are as thick as

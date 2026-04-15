@@ -41,15 +41,15 @@ tree:
     variants:
       - questRequired: ["9-start"]
         questExcluded: ["9-end"]
-        text: "Have you found anything? The tithe ledger from the market should show the discrepancies. I need to see those numbers before I can act."
-        hints: "Find the tithe ledger and bring it to Priest Olen."
+        text: "Have you found anything? The tithe ledger should show the discrepancies. Try the Records Office -- clerk Pell keeps copies of all temple filings. I need to see those numbers before I can act."
+        hints: "Visit clerk Pell at the Records Office and ask about the tithe ledger. Then bring it back to Olen."
       - questRequired: ["9-end"]
         text: "The audit is underway. Both sides are unhappy, which means we are probably close to the truth. Thank you for bringing it to light."
 
   nodes:
     - id: tithe_problem
       triggers: ["tithe", "problem", "help", "quest", "task", "ledger", "matter"]
-      questExcluded: ["9-start"]
+      questExcluded: ["9-start", "9-end"]
       grantsQuest: "9-start"
       text: "The temple collects tithes from the market merchants -- it has for generations. Recently, the payments have dropped. Significantly. Either the merchants have all suddenly become poorer, or they are under-reporting their income. I need someone outside the temple to look into it. Talk to the merchants, find the tithe ledger, compare the numbers. I want the truth, even if it is uncomfortable."
       hints: "Talk to merchants in the market about their tithes, then find the tithe ledger."
@@ -63,7 +63,6 @@ tree:
 
     - id: ledger_return
       triggers: ["ledger", "found", "evidence", "records", "numbers", "quest", "task"]
-      requires: ["tithe_problem"]
       questRequired: ["9-start"]
       questExcluded: ["9-end"]
       requiresItem: 29
@@ -72,4 +71,4 @@ tree:
       moodChange: grateful
 
 memory:
-  expiryPeriod: "1h"
+  expiryPeriod: ""

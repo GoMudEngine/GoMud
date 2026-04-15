@@ -1,0 +1,22 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">chrysalis-aid</ansi> spell
+
+The <ansi fg="command">Chrysalis Aid</ansi> spell channels stabilizing Chrysalis energy into a
+fallen ally, pulling them back from the threshold of death. It is
+applied through the <ansi fg="command">aid</ansi> skill rather than cast directly in combat.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">aid [target]</ansi>     Automatically applies when you aid a fallen ally.
+
+<ansi fg="yellow">Details: </ansi>
+
+  <ansi fg="yellow">Type:        </ansi> Help Single
+  <ansi fg="yellow">School:      </ansi> Vital
+  <ansi fg="yellow">Base Folds:  </ansi> N/A (triggered by aid skill)
+  <ansi fg="yellow">Conv. Cost:  </ansi> 0
+
+<ansi fg="white-bold">Notes:</ansi>
+  - This spell is not cast manually — it fires when using the aid skill.
+  - Requires the aid skill to be trained before it functions.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help spells</ansi>, <ansi fg="command">help cast</ansi>, <ansi fg="command">help aid</ansi>

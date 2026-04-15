@@ -282,7 +282,7 @@ func cmdCharacterChange(user *users.UserRecord, room *rooms.Room, cmdPrompt *pro
 		user.EventLog.Add(`char`, `Changed from <ansi fg="username">`+oldName+`</ansi> to alt character: <ansi fg="username">`+char.Name+`</ansi>`)
 
 		user.SendText(term.CRLFStr + `You dematerialize as <ansi fg="username">` + oldName + `</ansi>. and rematerialize as <ansi fg="username">` + char.Name + `</ansi>!` + term.CRLFStr)
-		room.SendText(`<ansi fg="username">`+oldName+`</ansi> vanishes, and <ansi fg="username">`+char.Name+`</ansi> appears in a shower of sparks!`, user.UserId)
+		room.SendTextVisual(`<ansi fg="username">`+oldName+`</ansi> vanishes, and <ansi fg="username">`+char.Name+`</ansi> appears in a shower of sparks!`, user.UserId)
 
 		user.ClearPrompt()
 		return true, nil
@@ -406,13 +406,25 @@ func cmdCharacterHire(user *users.UserRecord, room *rooms.Room, cmdPrompt *promp
 
 		room.AddMob(m.InstanceId)
 
+		// Anti-recursion: strip any companions the hired mob had before charming.
+		for _, subId := range m.Character.GetCharmIds() {
+			if subMob := mobs.GetInstance(subId); subMob != nil {
+				subMob.Character.RemoveCharm()
+				if subRoom := rooms.LoadRoom(subMob.Character.RoomId); subRoom != nil {
+					subRoom.RemoveMob(subId)
+				}
+				mobs.DestroyInstance(subId)
+			}
+		}
+		m.Character.CharmedMobs = nil
+
 		m.Character.Charm(user.UserId, -1, `suicide vanish`)
 		user.Character.TrackCharmed(m.InstanceId, true)
 
 		user.EventLog.Add(`char`, `Hired an alt character to help you out: <ansi fg="username">`+m.Character.Name+`</ansi>`)
 
 		user.SendText(`<ansi fg="username">` + m.Character.Name + `</ansi> appears to help you out!`)
-		room.SendText(`<ansi fg="username">`+m.Character.Name+`</ansi> appears to help <ansi fg="username">`+user.Character.Name+`</ansi>!`, user.UserId)
+		room.SendTextVisual(`<ansi fg="username">`+m.Character.Name+`</ansi> appears to help <ansi fg="username">`+user.Character.Name+`</ansi>!`, user.UserId)
 
 		m.Command(`emote waves sheepishly.`, 2)
 
@@ -429,7 +441,7 @@ func cmdCharacterHire(user *users.UserRecord, room *rooms.Room, cmdPrompt *promp
 
 func getAltTable(nameToAlt map[string]characters.Character, charmedChars map[string]characters.Character, viewingUserId int) string {
 
-	headers := []string{"Name", "Species", "Profession", "Status"}
+	headers := []string{"Name", "Species", "Title", "Status"}
 	rows := [][]string{}
 
 	for _, char := range nameToAlt {
@@ -450,7 +462,7 @@ func getAltTable(nameToAlt map[string]characters.Character, charmedChars map[str
 		rows = append(rows, []string{
 			fmt.Sprintf(`<ansi fg="username">%s</ansi>`, char.Name),
 			raceName,
-			skills.GetProfession(allRanks),
+			skills.GetTitle(char.Mutations, allRanks, char.Stats),
 			mobBusy,
 		})
 

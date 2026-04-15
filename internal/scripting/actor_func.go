@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
@@ -194,6 +195,22 @@ func (a ScriptActor) HasQuest(questId string) bool {
 	return a.characterRecord.HasQuest(questId)
 }
 
+func (a ScriptActor) GetSetting(key string) string {
+	return a.characterRecord.GetSetting(key)
+}
+
+func (a ScriptActor) GetQuestFlag(key string) string {
+	return a.characterRecord.GetQuestFlag(key)
+}
+
+func (a ScriptActor) SetQuestFlag(key, value string) {
+	a.characterRecord.SetQuestFlag(key, value)
+}
+
+func (a ScriptActor) HasQuestFlag(key string) bool {
+	return a.characterRecord.HasQuestFlag(key)
+}
+
 func (a ScriptActor) GiveQuest(questId string) {
 
 	if a.userRecord != nil {
@@ -262,6 +279,10 @@ func (a ScriptActor) GetPartyMembers() []ScriptActor {
 	}
 
 	return append(partyMembers, mobPartyMembers...)
+}
+
+func (a ScriptActor) GetGold() int {
+	return a.characterRecord.Gold
 }
 
 func (a ScriptActor) AddGold(amt int, bankAmt ...int) {
@@ -377,6 +398,11 @@ func (a ScriptActor) TrainSkill(skillName string, skillLevel int) bool {
 
 func (a ScriptActor) GetSkillLevel(skillName string) int {
 	return a.characterRecord.GetSkillLevel(skills.SkillTag(skillName))
+}
+
+// EndCombat clears the actor's aggro and exits combat cleanly.
+func (a ScriptActor) EndCombat() {
+	a.characterRecord.EndAggro()
 }
 
 func (a ScriptActor) MoveRoom(destRoomId int, leaveCharmedMobs ...bool) {
@@ -528,7 +554,7 @@ func (a ScriptActor) RemoveBuff(buffId int) bool {
 }
 
 func (a ScriptActor) HasItemId(itemId int, excludeWorn ...bool) bool {
-	for _, itm := range a.characterRecord.GetAllBackpackItems() {
+	for _, itm := range a.characterRecord.GetAllCarriedItems() {
 		if itm.ItemId == itemId {
 			return true
 		}
@@ -545,7 +571,7 @@ func (a ScriptActor) HasItemId(itemId int, excludeWorn ...bool) bool {
 
 func (a ScriptActor) GetBackpackItems() []ScriptItem {
 	itms := make([]ScriptItem, 0, 5)
-	for _, item := range a.characterRecord.GetAllBackpackItems() {
+	for _, item := range a.characterRecord.GetAllCarriedItems() {
 		itms = append(itms, newScriptItem(item))
 	}
 	return itms
@@ -716,6 +742,11 @@ func (a ScriptActor) GetCharmedUserId() int {
 	return a.characterRecord.GetCharmedUserId()
 }
 
+// HasCharmedMobs returns true if this actor has any active charmed mobs.
+func (a ScriptActor) HasCharmedMobs() bool {
+	return len(a.characterRecord.CharmedMobs) > 0
+}
+
 func (a ScriptActor) CharmSet(userId int, charmRounds int, onRevertCommand ...string) {
 
 	// If the player is in a party, add the mob to their party
@@ -726,10 +757,47 @@ func (a ScriptActor) CharmSet(userId int, charmRounds int, onRevertCommand ...st
 	if len(onRevertCommand) < 1 {
 		onRevertCommand = append(onRevertCommand, ``)
 	}
+
+	// Anti-recursion: strip any companions this mob itself had before
+	// charming it, so we never create companion chains.
+	for _, subId := range a.characterRecord.GetCharmIds() {
+		if subMob := mobs.GetInstance(subId); subMob != nil {
+			subMob.Character.RemoveCharm()
+			if subRoom := rooms.LoadRoom(subMob.Character.RoomId); subRoom != nil {
+				subRoom.RemoveMob(subId)
+			}
+			mobs.DestroyInstance(subId)
+		}
+	}
+	a.characterRecord.CharmedMobs = nil
+
 	a.characterRecord.Charm(userId, charmRounds, onRevertCommand[0])
+
+	// Clear the newly charmed mob's own aggro
+	a.characterRecord.EndAggro()
 
 	if user := users.GetByUserId(userId); user != nil {
 		user.Character.TrackCharmed(a.mobInstanceId, true)
+
+		// Clear aggro from all of the owner's other companions toward
+		// the newly charmed mob (they're on the same team now).
+		for _, charmId := range user.Character.GetCharmIds() {
+			if charmId == a.mobInstanceId {
+				continue
+			}
+			if companion := mobs.GetInstance(charmId); companion != nil {
+				if companion.Character.Aggro != nil &&
+					companion.Character.Aggro.MobInstanceId == a.mobInstanceId {
+					companion.Character.EndAggro()
+				}
+			}
+		}
+
+		// Clear the owner's own aggro if targeting the charmed mob
+		if user.Character.Aggro != nil &&
+			user.Character.Aggro.MobInstanceId == a.mobInstanceId {
+			user.Character.EndAggro()
+		}
 	}
 
 }
@@ -747,6 +815,133 @@ func (a ScriptActor) CharmRemove() {
 
 func (a ScriptActor) CharmExpire() {
 	a.characterRecord.Charmed.Expire()
+}
+
+// AddCompanion registers a mob instance as a companion of this actor.
+// sourceType should be one of: "summoned", "conjured", "charmed", "raised", "pet".
+// Also calls TrackCharmed so the mob participates in combat assist.
+// Returns true on success, false if the actor is already at companion cap.
+func (a ScriptActor) AddCompanion(mobInstanceId int, sourceType string, name string) bool {
+	info := characters.CompanionInfo{
+		SourceType: characters.CompanionSourceType(sourceType),
+		Name:       name,
+		BaseName:   name,
+		AutoAssist: true,
+		InstanceId: mobInstanceId,
+	}
+	if mob := mobs.GetInstance(mobInstanceId); mob != nil {
+		info.MobId = int(mob.MobId)
+	}
+	// For charmed companions, auto-calculate duration from caster stats
+	if characters.CompanionSourceType(sourceType) == characters.CompanionCharmed {
+		cha := a.characterRecord.Stats.Charisma.ValueAdj
+		manifestSkill := a.characterRecord.GetSkillLevel(skills.Manifestation)
+		info.CharmDuration = 50 + cha/2 + manifestSkill*3
+	}
+	if !a.characterRecord.AddCompanion(info) {
+		return false
+	}
+	// Also wire into the existing charm-based combat assist so the mob
+	// follows and auto-assists the owner without duplicating logic.
+	if a.userRecord != nil {
+		a.userRecord.Character.TrackCharmed(mobInstanceId, true)
+	}
+	return true
+}
+
+// HasCompanion returns true if this actor has any active companions.
+func (a ScriptActor) HasCompanion() bool {
+	return len(a.characterRecord.Companions) > 0
+}
+
+// GetCompanionCount returns the number of active companions.
+func (a ScriptActor) GetCompanionCount() int {
+	return len(a.characterRecord.Companions)
+}
+
+// GetMaxCompanionCount returns the maximum companions this actor may have.
+func (a ScriptActor) GetMaxCompanionCount() int {
+	return a.characterRecord.GetMaxCompanions()
+}
+
+// RemoveCompanion removes a companion by mob instance ID.
+// Returns true if a companion was found and removed.
+func (a ScriptActor) RemoveCompanion(mobInstanceId int) bool {
+	removed := a.characterRecord.RemoveCompanion(mobInstanceId)
+	if removed == nil {
+		return false
+	}
+	// Un-wire from charm tracking so combat assist stops.
+	if a.userRecord != nil {
+		a.userRecord.Character.TrackCharmed(mobInstanceId, false)
+	}
+	return true
+}
+
+// IsCharmImmune returns true if this actor is a mob whose template has
+// CharmImmune set — such creatures cannot be affected by charm spells.
+func (a ScriptActor) IsCharmImmune() bool {
+	if a.mobRecord == nil {
+		return false
+	}
+	spec := mobs.GetMobSpec(a.mobRecord.MobId)
+	if spec == nil {
+		return false
+	}
+	return spec.CharmImmune
+}
+
+// SetCompanionCharmDuration sets the CharmDuration field on the CompanionInfo
+// entry matching mobInstanceId. Returns false if the entry is not found.
+func (a ScriptActor) SetCompanionCharmDuration(mobInstanceId int, duration int) bool {
+	ci := a.characterRecord.GetCompanionByInstanceId(mobInstanceId)
+	if ci == nil {
+		return false
+	}
+	ci.CharmDuration = duration
+	return true
+}
+
+// GetStatTrainingTotal returns the sum of all six stat Training values.
+// Used as a proxy for how much a creature has been developed — stronger
+// creatures accumulate more total training and thus resist charm better.
+func (a ScriptActor) GetStatTrainingTotal() int {
+	s := a.characterRecord.Stats
+	return s.Strength.Training +
+		s.Dexterity.Training +
+		s.Perception.Training +
+		s.Vitality.Training +
+		s.Willpower.Training +
+		s.Charisma.Training
+}
+
+// RollOpposed wraps dice.OpposedRollStat for use in JS spell scripts.
+// Returns true if the attacker wins the opposed roll.
+func (a ScriptActor) RollOpposed(attackScore int, defenseScore int) bool {
+	success, _, _, _ := dice.OpposedRollStat(float64(attackScore), float64(defenseScore))
+	return success
+}
+
+// SetHostile flips the mob's hostile flag so it will attack players on sight.
+// No-op for player actors.
+func (a ScriptActor) SetHostile(hostile bool) {
+	if a.mobRecord != nil {
+		a.mobRecord.Hostile = hostile
+	}
+}
+
+// IsAggroed returns true if this character currently has an active Aggro target.
+func (a ScriptActor) IsAggroed() bool {
+	return a.characterRecord.Aggro != nil
+}
+
+// GetAggroUserId returns the UserId that this character is aggro'd on.
+// Returns 0 if not aggroed or if aggroed on a mob rather than a player.
+func (a ScriptActor) GetAggroUserId() int {
+	if a.characterRecord.Aggro == nil {
+		return 0
+	}
+	return a.characterRecord.Aggro.UserId
 }
 
 func (a ScriptActor) getScript() string {

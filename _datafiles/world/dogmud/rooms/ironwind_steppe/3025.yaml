@@ -9,17 +9,17 @@ description: The sagebrush flats end here at a gradual rise where the
   increasingly rocky ground. A well-worn animal trail leads north
   into the rising terrain.
 biome: land
+coord:
+  x: 13
+  y: 4
+  z: 0
 exits:
   south:
     roomid: 3023
-  east:
-    roomid: 3024
   west:
-    roomid: 3022
+    roomid: 3027
   north:
     roomid: 3026
-  northeast:
-    roomid: 3035
 nouns:
   trail: A broad animal trail heading north, the ground beaten
     bare by regular traffic. Multiple sets of tracks overlay

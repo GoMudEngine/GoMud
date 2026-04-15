@@ -34,6 +34,13 @@ The `internal/characters` package is the core character system for DOGMud, handl
 - **15 legacy GoMud skills**: Still functional alongside DOG skills
 - **Combat skill routing**: `GetCombatSkillTag()` selects weapon-appropriate skill
 
+### Difficulty-Scaled Progression
+`OnSkillUseScaled(skillName, userId, bonusMultiplier)` accepts a difficulty
+bonus that flows into `CheckSkillProgression`. `OnSkillUse` delegates with
+1.0 for backwards compatibility. Spell resolution passes
+`1.0 + difficulty * SpellDifficultyProgressionScale`, craft completion passes
+`1.0 + skillMinimum * CraftDifficultyProgressionScale`.
+
 ### Regen-Based Stat Progression
 Every regen tick (every 3 rounds), each resource pool has a small chance to
 trigger stat progression based on how depleted it is. This replaced the old
@@ -41,7 +48,7 @@ hard 25%-threshold `OnLowResource` system.
 
 **Formula:** `chance = RegenProgressionBase × (1 - current/max) ^ RegenProgressionCurve`
 
-**Config knobs:** `RegenProgressionBase` (default 0.005), `RegenProgressionCurve` (default 3.0)
+**Config knobs:** `RegenProgressionBase` (default 0.01), `RegenProgressionCurve` (default 3.0)
 
 **Resource → Stat Mappings:**
 - Health → Vitality, Willpower (enduring injury toughens body + mind)
@@ -232,6 +239,26 @@ if !user.Character.Cooldowns.Try("combat-special", fmt.Sprintf("%d rounds", cfg.
 - Clan membership support
 - Pet ownership and management
 - Quest progress tracking
+
+## Shop Inventory Decoupling (Living Economy)
+
+Merchant NPCs separate trade inventory from character inventory:
+
+- **`ShopInventory`** (in `internal/shops/`) is the live trade state — stock
+  levels, dynamic prices, NPC gold for transactions, restock timers. This is
+  what `buy`/`sell` commands interact with.
+- **`Character.Shop`** (the legacy `[]ShopItem` slice) remains as template /
+  seed data and a fallback for non-migrated merchants. It is NOT the live
+  inventory.
+- **`Character.Gold`** is the NPC's personal gold (loot on death). NPC gold
+  for trade transactions is tracked in `ShopInventory.Gold`, not here.
+- **`Character.Items`** (backpack) is NOT used for merchant trade stock.
+  Crafter mobs do use the backpack transiently to hold raw materials between
+  restock and craft, but finished goods go directly into `ShopInventory`.
+
+When reading or writing merchant code, always distinguish between these three
+gold/inventory sources to avoid double-counting or routing items to the
+wrong pool.
 
 ## Dependencies
 - `internal/stats`: Core statistics definitions

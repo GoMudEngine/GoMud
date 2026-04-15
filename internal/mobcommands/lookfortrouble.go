@@ -76,6 +76,11 @@ func LookForTrouble(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) 
 				}
 			}
 
+			// peacefulquest: mob won't attack players who have this token
+			if mob.PeacefulQuest != "" && user.Character.HasQuest(mob.PeacefulQuest) {
+				continue
+			}
+
 			if mob.Hostile { // Does it always attack players?
 
 				allPotentialTargets = append(allPotentialTargets, playerId)
@@ -154,13 +159,12 @@ func LookForTrouble(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) 
 	userCt := len(nonDownedUserTargets)
 	mobCt := len(possibleMobTargets)
 
-	if userCt > 0 || mobCt > 0 {
-		randRoll := util.Rand(userCt + mobCt)
-		if randRoll < userCt {
-			targetUserId = nonDownedUserTargets[randRoll]
-		} else {
-			targetMobInstanceId = possibleMobTargets[randRoll-userCt]
-		}
+	// Prefer player targets over companions/mobs. Only fall back to mob
+	// targets when no eligible players are available.
+	if userCt > 0 {
+		targetUserId = nonDownedUserTargets[util.Rand(userCt)]
+	} else if mobCt > 0 {
+		targetMobInstanceId = possibleMobTargets[util.Rand(mobCt)]
 	}
 
 	if targetUserId > 0 {

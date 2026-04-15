@@ -1,0 +1,42 @@
+mobid: 249
+zone: Thornwall City
+defaultMood: hostile
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["hostile"]
+    responses:
+      - "You should not be here. Turn around while you still can."
+      - "This is a private operation. You are trespassing."
+
+  - keywords: [""]
+    responses:
+      - "I have nothing to say to you."
+      - "Leave. Now."
+
+tree:
+  root:
+    text: "You have come a long way to die in a hole. I do not know how you found this place, but you will not be leaving to tell anyone about it. The key to that strongbox stays with me, and so do the names inside it."
+    hints: "He does not look like he will hand over the key willingly. You could try to reason with him, or attack."
+
+  nodes:
+    - id: refuse
+      triggers: ["no", "refuse", "never", "fight", "stay", "attack", "stop"]
+      text: "Then we have nothing more to discuss."
+      moodChange: hostile
+
+    - id: stand_down
+      triggers: ["leave", "go", "peace", "calm", "back", "sorry"]
+      text: "Smart. Walk north and do not look back. If I see you again down here, there will be no conversation."
+      hints: "He seems willing to let you leave. You could go north."
+
+    - id: smuggling
+      triggers: ["smuggle", "tunnel", "operation", "goods", "cargo"]
+      text: "Call it what you like. I call it commerce without the city's boot on its neck. The tariffs strangle honest trade. I mapped these tunnels as a city surveyor and I saw what they could be -- a way to move goods without paying tribute to corrupt officials who skim half of every shipment anyway."
+
+    - id: bribe
+      triggers: ["bribe", "corrupt", "officials", "ledger", "names"]
+      text: "Everyone takes a cut. Gate captains, customs clerks, warehouse inspectors. I just wrote it down. Insurance, you understand. If I go down, so do they. That ledger is worth more than everything else in this room combined."
+
+memory:
+  expiryPeriod: ""

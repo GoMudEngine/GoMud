@@ -1,0 +1,14 @@
+itemid: 20055
+name: reinforced travel pack
+namesimple: pack
+description: A masterwork travel pack of layered leather and canvas,
+  with an internal frame of bent bone stays. The construction
+  distributes heavy loads across the hips and shoulders, letting
+  even a laden traveler move with surprising ease. Steel buckles
+  and waxed stitching keep everything secure through rough weather.
+type: back
+subtype: wearable
+value: 75
+weight: 3.0
+weight_reduction: 0.50
+physical_mitigation: 1

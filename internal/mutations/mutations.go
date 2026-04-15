@@ -43,6 +43,11 @@ type MutationSpec struct {
 	// Conflicts lists mutation IDs that cannot coexist with this mutation.
 	// If a character owns any conflicting mutation, this one is excluded from the pool.
 	Conflicts []string `yaml:"conflicts,omitempty"`
+
+	// RequiresArms filters this mutation out of the pool for species with disabled
+	// weapon/offhand slots (e.g., wolves, bears). Only relevant for mutations that
+	// grant arm-related abilities.
+	RequiresArms bool `yaml:"requires_arms,omitempty"`
 }
 
 // Id implements fileloader.Loadable.
@@ -177,10 +182,46 @@ func HasConflict(owned map[string]int, candidateId string) bool {
 	return false
 }
 
+// calcRarityBonus computes a pool weight reduction based on the player's
+// average mutation level. Higher average levels shift new discoveries
+// toward rarer mutations.
+//
+//	avgLevel 1 → bonus 0 (normal weights)
+//	avgLevel 2 → bonus 1
+//	avgLevel 3 → bonus 2
+//	avgLevel 4 → bonus 3
+func calcRarityBonus(owned map[string]int) int {
+	if len(owned) == 0 {
+		return 0
+	}
+	totalLevels := 0
+	for _, level := range owned {
+		totalLevels += level
+	}
+	avgLevel := totalLevels / len(owned) // integer division = floor
+	bonus := avgLevel - 1
+	if bonus < 0 {
+		bonus = 0
+	}
+	return bonus
+}
+
 // GetWeightedPool builds a weighted slice of mutation IDs suitable for random selection.
 // Each mutation appears (11 - Rarity) times so rarer mutations are less likely.
 // Mutations already owned or conflicting with owned mutations are excluded.
-func GetWeightedPool(owned map[string]int) []string {
+// disabledSlots filters out mutations requiring arms for species that lack arm slots.
+func GetWeightedPool(owned map[string]int, disabledSlots ...[]string) []string {
+	slotDisabled := map[string]bool{}
+	if len(disabledSlots) > 0 && disabledSlots[0] != nil {
+		for _, slot := range disabledSlots[0] {
+			slotDisabled[slot] = true
+		}
+	}
+	hasArms := !slotDisabled["weapon"] && !slotDisabled["offhand"]
+
+	// Rarity uplift: reduce common mutation weights for advanced players
+	rarityBonus := calcRarityBonus(owned)
+
 	pool := make([]string, 0, len(allMutations)*5)
 	for id, spec := range allMutations {
 		if _, has := owned[id]; has {
@@ -189,7 +230,10 @@ func GetWeightedPool(owned map[string]int) []string {
 		if HasConflict(owned, id) {
 			continue
 		}
-		weight := 11 - spec.Rarity
+		if spec.RequiresArms && !hasArms {
+			continue
+		}
+		weight := 11 - spec.Rarity - rarityBonus
 		if weight < 1 {
 			weight = 1
 		}
@@ -213,8 +257,8 @@ func RollAcquisition(pool []string) string {
 // All accept the character's mutations map (mutationId → level).
 
 // LevelMultiplier returns the effect scaling factor for a given mutation level.
-// L1 → 1.0×, L2 → MutationLevel2Multiplier×, L3 → MutationLevel3Multiplier×.
-// Any other value defaults to 1.0.
+// L1 → 1.0×, L2 → MutationLevel2Multiplier×, L3 → MutationLevel3Multiplier×,
+// L4 → MutationLevel4Multiplier×. Any other value defaults to 1.0.
 func LevelMultiplier(level int) float64 {
 	b := configs.GetBalanceConfig()
 	switch level {
@@ -222,6 +266,8 @@ func LevelMultiplier(level int) float64 {
 		return float64(b.MutationLevel2Multiplier)
 	case 3:
 		return float64(b.MutationLevel3Multiplier)
+	case 4:
+		return float64(b.MutationLevel4Multiplier)
 	default:
 		return 1.0
 	}
@@ -430,6 +476,12 @@ func GetConditionalHealthRegenMultiplier(owned map[string]int, biomeIsLit bool) 
 // Apply by adding to the dodge defense score in combat.
 func GetDodgeModifier(owned map[string]int) float64 {
 	return sumEffects(owned, "dodge_modifier", "")
+}
+
+// GetStealthBonus returns the flat bonus to sneak score from mutations.
+// Applied additively to the sneak score before opposed rolls.
+func GetStealthBonus(owned map[string]int) float64 {
+	return sumEffects(owned, "stealth_bonus", "")
 }
 
 // GetDamageMultiplier returns the net outgoing physical damage multiplier.

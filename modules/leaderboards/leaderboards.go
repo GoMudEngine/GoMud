@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/plugins"
@@ -80,12 +81,10 @@ type LeaderboardModule struct {
 
 	lastCalculated time.Time // When the LB's were last generated
 
-	LBSize      int
-	GoldEnabled bool
-	KillsEnabled bool
+	LBSize       int
+	PowerEnabled bool
 
-	LB_Gold  leaderboardData `yaml:"LB_Gold,omitempty"`
-	LB_Kills leaderboardData `yaml:"LB_Kills,omitempty"`
+	LB_Power leaderboardData `yaml:"LB_Power,omitempty"`
 }
 
 func (l *LeaderboardModule) webLeaderboardData(r *http.Request) map[string]any {
@@ -102,11 +101,8 @@ func (l *LeaderboardModule) loadLBs() {
 
 	l.plug.ReadIntoStruct(`latest-leaderboards`, &l)
 
-	l.GoldEnabled = true
-	l.LB_Gold = leaderboardData{Name: `Gold`, ValueColor: `experience`}
-
-	l.KillsEnabled = true
-	l.LB_Kills = leaderboardData{Name: `Kills`, ValueColor: `red-bold`}
+	l.PowerEnabled = true
+	l.LB_Power = leaderboardData{Name: `Power`, ValueColor: `yellow-bold`}
 }
 
 func (l *LeaderboardModule) saveLBs() {
@@ -119,7 +115,7 @@ func (l *LeaderboardModule) leaderboardCommand(rest string, user *users.UserReco
 
 		title := fmt.Sprintf(`%s Leaderboard`, lb.Name)
 
-		headers := []string{`Rank`, `Character`, `Profession`, lb.Name}
+		headers := []string{`Rank`, `Character`, `Title`, lb.Name}
 
 		rows := [][]string{}
 
@@ -141,7 +137,7 @@ func (l *LeaderboardModule) leaderboardCommand(rest string, user *users.UserReco
 				continue
 			}
 
-			newRow := []string{`#` + strconv.Itoa(i+1), entry.CharacterName, entry.CharacterClass, util.FormatNumber(entry.ScoreValue)}
+			newRow := []string{`#` + strconv.Itoa(i+1), entry.CharacterName, entry.CharacterTitle, util.FormatNumber(entry.ScoreValue)}
 
 			rows = append(rows, newRow)
 		}
@@ -156,23 +152,18 @@ func (l *LeaderboardModule) leaderboardCommand(rest string, user *users.UserReco
 }
 
 func (l *LeaderboardModule) Reset(maxSize int) {
-	l.LB_Gold.Reset(maxSize)
-	l.LB_Kills.Reset(maxSize)
+	l.LB_Power.Reset(maxSize)
 }
 
 func (l *LeaderboardModule) RefreshConfig() {
 
-	l.LBSize = 10
+	l.LBSize = 20
 	if size, ok := l.plug.Config.Get(`Size`).(int); ok {
 		l.LBSize = size
 	}
 
-	if goldEnabled, ok := l.plug.Config.Get(`GoldEnabled`).(bool); ok {
-		l.GoldEnabled = goldEnabled
-	}
-
-	if killsEnabled, ok := l.plug.Config.Get(`KillsEnabled`).(bool); ok {
-		l.KillsEnabled = killsEnabled
+	if powerEnabled, ok := l.plug.Config.Get(`PowerEnabled`).(bool); ok {
+		l.PowerEnabled = powerEnabled
 	}
 }
 
@@ -189,26 +180,17 @@ func (l *LeaderboardModule) Update() {
 		userCount++
 		characterCount++
 
-		if l.GoldEnabled {
-			l.LB_Gold.Consider(u.UserId, *u.Character, u.Character.Gold+u.Character.Bank)
-		}
-
-
-		if l.KillsEnabled {
-			l.LB_Kills.Consider(u.UserId, *u.Character, u.Character.KD.TotalKills)
+		if l.PowerEnabled {
+			l.LB_Power.Consider(u.UserId, *u.Character, int(combat.PowerScore(*u.Character)))
 		}
 
 		for _, char := range characters.LoadAlts(u.UserId) {
 
 			characterCount++
 
-			if l.GoldEnabled {
-				l.LB_Gold.Consider(u.UserId, char, char.Gold+char.Bank)
-			}
-
-
-			if l.KillsEnabled {
-				l.LB_Kills.Consider(u.UserId, char, char.KD.TotalKills)
+			if l.PowerEnabled {
+				char.RecalculateStats()
+				l.LB_Power.Consider(u.UserId, char, int(combat.PowerScore(char)))
 			}
 
 		}
@@ -221,26 +203,18 @@ func (l *LeaderboardModule) Update() {
 		userCount++
 		characterCount++
 
-		if l.GoldEnabled {
-			l.LB_Gold.Consider(u.UserId, *u.Character, u.Character.Gold+u.Character.Bank)
-		}
-
-
-		if l.KillsEnabled {
-			l.LB_Kills.Consider(u.UserId, *u.Character, u.Character.KD.TotalKills)
+		if l.PowerEnabled {
+			u.Character.RecalculateStats()
+			l.LB_Power.Consider(u.UserId, *u.Character, int(combat.PowerScore(*u.Character)))
 		}
 
 		for _, char := range characters.LoadAlts(u.UserId) {
 
 			characterCount++
 
-			if l.GoldEnabled {
-				l.LB_Gold.Consider(u.UserId, char, char.Gold+char.Bank)
-			}
-
-
-			if l.KillsEnabled {
-				l.LB_Kills.Consider(u.UserId, char, char.KD.TotalKills)
+			if l.PowerEnabled {
+				char.RecalculateStats()
+				l.LB_Power.Consider(u.UserId, char, int(combat.PowerScore(char)))
 			}
 
 		}
@@ -279,12 +253,8 @@ func (l *LeaderboardModule) getCurrentLeaderboards() []leaderboardData {
 
 	ret := []leaderboardData{}
 
-	if l.GoldEnabled {
-		ret = append(ret, l.LB_Gold)
-	}
-
-	if l.KillsEnabled {
-		ret = append(ret, l.LB_Kills)
+	if l.PowerEnabled {
+		ret = append(ret, l.LB_Power)
 	}
 
 	return ret
@@ -293,7 +263,7 @@ func (l *LeaderboardModule) getCurrentLeaderboards() []leaderboardData {
 type leaderboardEntry struct {
 	UserId         int    `yaml:"UserId,omitempty"`
 	CharacterName  string `yaml:"CharacterName,omitempty"`
-	CharacterClass string `yaml:"CharacterClass,omitempty"`
+	CharacterTitle string `yaml:"CharacterTitle,omitempty"`
 	ScoreValue     int    `yaml:"ScoreValue,omitempty"`
 }
 
@@ -345,7 +315,7 @@ func (l *leaderboardData) Consider(userId int, char characters.Character, val in
 		l.Top[addPosition] = leaderboardEntry{
 			UserId:         userId,
 			CharacterName:  char.Name,
-			CharacterClass: skills.GetProfession(char.GetAllSkillRanks()),
+			CharacterTitle: skills.GetTitle(char.Mutations, char.GetAllSkillRanks(), char.Stats),
 			ScoreValue:     val,
 		}
 

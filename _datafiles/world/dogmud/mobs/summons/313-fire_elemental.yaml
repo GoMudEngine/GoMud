@@ -1,0 +1,42 @@
+mobid: 313
+zone: Summons
+archetype: fighting
+statpool: 85
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - summon
+  - elemental
+idlecommands:
+  - 'emote crackles softly, throwing dancing shadows across the room'
+  - ''
+  - 'emote flickers and surges taller for a moment, then settles'
+  - ''
+  - 'emote pops with a sharp snap of combustion'
+  - ''
+  - 'emote roils inward, flames streaming upward in a tight column'
+activitylevel: 45
+combatcommands:
+  - ''
+  - ''
+  - ''
+character:
+  name: fire elemental
+  description: |
+    A living column of flame that burns with unnatural focus, its fire
+    deep orange at the core and shading to pale blue-white at the tips.
+    The heat it radiates is intense enough to make the air shimmer for
+    several feet in every direction. No fuel sustains it — it simply
+    burns, driven by pure elemental will. Anything combustible nearby
+    smolders without quite catching. Its movements leave scorched
+    footprints that glow briefly before fading.
+  speciesid: 39
+  level: 1
+  stats:
+    dexterity:
+      training: 20
+    willpower:
+      training: 15
+    perception:
+      training: 10

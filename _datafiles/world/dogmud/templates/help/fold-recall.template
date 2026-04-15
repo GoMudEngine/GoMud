@@ -1,0 +1,18 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">fold-recall</ansi> spell
+
+<ansi fg="white-bold">Fold Recall</ansi> teleports you back to your Chrysalis anchor.
+You must first set an anchor with <ansi fg="command">cast fold-anchor</ansi>.
+
+If you have no anchor set, or you are already standing on it,
+the cast will fail and no conviction is spent.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">cast fold-recall</ansi>     Teleport to your anchor.
+
+<ansi fg="yellow">Base Folds:  </ansi> <ansi fg="white-bold">6</ansi>
+<ansi fg="yellow">Target:      </ansi> <ansi fg="white-bold">Self</ansi>
+<ansi fg="yellow">Conv. Cost:  </ansi> <ansi fg="white-bold">50</ansi>
+<ansi fg="yellow">School:      </ansi> <ansi fg="white-bold">Enhancement</ansi>
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help fold-anchor</ansi>, <ansi fg="command">help cast</ansi>, <ansi fg="command">help spells</ansi>

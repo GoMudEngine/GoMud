@@ -1,0 +1,21 @@
+itemid: 10029
+name: crystal sceptre
+namesimple: sceptre
+description: >-
+  A sceptre of pale blue crystal that tapers to a faceted point,
+  its interior riddled with fractures that scatter light in cold
+  prismatic fans. The handle is smooth as glass and never warms
+  to the touch. Channeling spells through it feels like pushing
+  power through a prism — it sharpens and intensifies the output
+  at the cost of a slight chill that climbs the arm.
+type: weapon
+hands: 1
+subtype: sceptre
+damage_multiplier: 0.65
+spell_damage_multiplier: 1.45
+speedmultiplier: 0.9
+parryrating: 4
+weight: 3.5
+value: 80
+statmods:
+  willpower: 3

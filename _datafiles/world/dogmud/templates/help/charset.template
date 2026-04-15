@@ -1,29 +1,23 @@
-<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for</ansi> Drawing Charset test
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">charset</ansi>
 
-<ansi fg="yellow">Box Test: </ansi>
- 1)+-++  2)┌─┬┐  3)╒═╤╕  4)╓─╥╖  5)╔═╦╗  
-   | ||    │ ││    │ ││    ║ ║║    ║ ║║
-   +-++    ├─┼┤    ╞═╪╡    ╟─╫╢    ╠═╬╣
-   +-++    └─┴┘    ╘═╧╛    ╙─╨╜    ╚═╩╝
+The <ansi fg="command">set charset</ansi> command toggles between UTF-8 and ASCII
+display modes.
 
-<ansi fg="yellow">Block Test: </ansi>
- 1)▄▄▄▄▄  2)░░░  3)▒▒▒  4)▓▓▓
-   ▌ █ ▐    ░ ░    ▒ ▒    ▓ ▓
-   ▀▀▀▀▀    ░░░    ▒▒▒    ▓▓▓
+<ansi fg="yellow">UTF-8 (default):</ansi>
+  Tables, borders, and decorations use Unicode box-drawing
+  characters for a polished look. Most modern MUD clients
+  (Mudlet, Blightmud, web client) handle these correctly.
 
-<ansi fg="yellow">Specific Characters Test: </ansi>
+<ansi fg="yellow">ASCII:</ansi>
+  All box-drawing and decorative characters are converted to
+  plain ASCII equivalents (+, -, |, =, #, etc). Use this if
+  your client shows garbled characters in tables, status bars,
+  or the message of the day.
 
-  1)§   2)«   3)»   4)¤   5)×   6)ø   7)+   8)☠   9)☺ 
- 10)♚  11)♥  12)♦  13)⚑  14)⚒  15)⚔  16)⚘  17)☀️  18)☹  
- 19)⚰  20)λ  21)★  22)♨  23)⚛  24)⚠  25)⚭  26)☣  27)☘
- 28)♣  29)•  30)Ʌ  31)☇  32)Δ  33)Θ  34)ϟ  35)ж  36)҉
- 37)ೱ  38)☍  39)⚔  40)⚕  41)⚘  42)⦿  43)⦾  44)⩕  45)⩬
- 46)⬨  47)⬧  48)⬯  49)⬮  50)꠪  51)꠫  52)Ø   53)  54)🔑
- 55)☾
- 
+<ansi fg="yellow">Usage:</ansi>
+  <ansi fg="command">set charset</ansi>    Toggle between UTF-8 and ASCII
+  <ansi fg="command">set</ansi>            View your current charset setting
 
-<ansi fg="yellow">Dice Test: </ansi>
+Your preference is saved and persists across sessions.
 
- ⚀ ⚁ ⚂ ⚃ ⚄ ⚅
-
-
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help set</ansi>

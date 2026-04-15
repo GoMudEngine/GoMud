@@ -1,0 +1,19 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="yellow">Elongated Limbs</ansi> mutation
+
+Your arms and fingers stretch beyond their natural proportions. Reach
+and deftness improve, but raw power suffers from the altered leverage.
+
+<ansi fg="yellow">Type:</ansi>     Passive
+<ansi fg="yellow">Rarity:</ansi>   Rare
+
+<ansi fg="yellow">Benefits:</ansi>
+  Moderately improved dexterity — the extra reach and lengthened
+  fingers grant surprising finesse
+
+<ansi fg="yellow">Drawbacks:</ansi>
+  Slightly reduced strength — the altered proportions sacrifice
+  leverage and raw striking power
+
+<ansi fg="yellow">Conflicts:</ansi> Extra Arms
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help mutations</ansi>

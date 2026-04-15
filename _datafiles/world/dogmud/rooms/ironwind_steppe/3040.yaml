@@ -9,9 +9,15 @@ description: A natural alcove in the ridge's eastern face, sheltered
   scratched marks on the wall that might be tallies or crude maps.
   The space is dry, sheltered, and defensible.
 biome: cliffs
+coord:
+  x: 16
+  y: 3
+  z: 0
 exits:
   west:
-    roomid: 3035
+    roomid: 3037
+  north:
+    roomid: 3039
   south:
     roomid: 3041
 nouns:

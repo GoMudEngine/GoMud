@@ -1,0 +1,26 @@
+roomid: 496
+zone: Thornwall City
+title: Lower Run
+description: >
+  The passage descends steadily, the dressed stone giving way to rough
+  bedrock. The ceiling is higher here -- enough to stand upright -- and
+  the tunnel is wider, as if carved to accommodate cargo. Rope guides are
+  strung along both walls, knotted at intervals for grip. The floor is
+  worn smooth by the passage of heavy loads dragged along it. The tunnel
+  continues south toward a faint glow.
+biome: cave
+coord:
+  x: 1
+  y: -6
+  z: -2
+exits:
+  east:
+    roomid: 495
+  south:
+    roomid: 497
+spawninfo:
+  - mobid: 246
+idlemessages:
+- The rope guide creaks as you brush against it.
+- A faint glow emanates from somewhere to the south.
+- Drag marks score the smooth stone floor.

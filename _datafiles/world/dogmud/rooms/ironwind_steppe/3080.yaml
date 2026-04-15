@@ -9,15 +9,13 @@ description: The ravine splits here into two branches -- one
   of wolves using it as a scratching post. The stream surfaces
   briefly here before vanishing underground again.
 biome: land
+coord:
+  x: 11
+  y: -11
+  z: 0
 exits:
   east:
     roomid: 3079
-  north:
-    roomid: 3058
-  south:
-    roomid: 3086
-  southwest:
-    roomid: 3091
 nouns:
   boulder: A huge boulder jammed between the ravine walls,
     forming a natural bridge overhead. Its surface is deeply

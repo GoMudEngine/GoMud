@@ -9,14 +9,18 @@ description: The ground is riddled with small holes -- dozens of burrow
   underground. The colony sprawls across a wide area of flat,
   well-drained ground.
 biome: land
+coord:
+  x: 13
+  y: 3
+  z: 0
 exits:
-  east:
+  west:
     roomid: 3022
   south:
     roomid: 3021
   north:
     roomid: 3025
-  west:
+  east:
     roomid: 3024
 nouns:
   holes: Dozens of burrow entrances, each about the width of a fist,

@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
-	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -40,7 +40,7 @@ func Drop(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		return true, nil
 	}
 
-	// Drop 10 gold
+	// Drop N gold
 	if len(args) >= 2 && args[1] == "gold" {
 		g, _ := strconv.ParseInt(args[0], 10, 32)
 		dropAmt := int(g)
@@ -49,13 +49,10 @@ func Drop(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		}
 
 		if dropAmt <= mob.Character.Gold {
-
-			room.Gold += dropAmt
-			mob.Character.Gold -= dropAmt
-
-			room.SendText(
-				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> drops <ansi fg="gold">%d gold</ansi>.`, mob.Character.Name, dropAmt))
-
+			if err := actions.FloorDropGold(dropAmt, &mob.Character, room); err == nil {
+				room.SendTextVisual(
+					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> drops <ansi fg="gold">%d gold</ansi>.`, mob.Character.Name, dropAmt))
+			}
 			return true, nil
 		}
 	}
@@ -64,23 +61,13 @@ func Drop(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		return true, nil
 	}
 
-	// Check whether the user has an item in their inventory that matches
-	matchItem, found := mob.Character.FindInBackpack(rest)
+	// Single-item drop path
+	actor := &actions.MobActor{Mob: mob, Room: room}
+	result := actions.DropItem(actor, rest)
 
-	if found {
-
-		// Swap the item location
-		room.AddItem(matchItem, false)
-		mob.Character.RemoveItem(matchItem)
-
-		events.AddToQueue(events.ItemOwnership{
-			MobInstanceId: mob.InstanceId,
-			Item:          matchItem,
-			Gained:        false,
-		})
-
-		room.SendText(
-			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> drops their <ansi fg="item">%s</ansi>...`, mob.Character.Name, matchItem.DisplayName()))
+	if result.Found {
+		room.SendTextVisual(
+			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> drops their <ansi fg="item">%s</ansi>...`, mob.Character.Name, result.Item.DisplayName()))
 	}
 
 	return true, nil

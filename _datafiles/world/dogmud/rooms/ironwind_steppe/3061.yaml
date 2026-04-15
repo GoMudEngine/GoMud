@@ -9,17 +9,17 @@ description: A tight channel between basalt walls, barely shoulder-
   and small insects. The passage twists and turns, making it
   impossible to see more than a few paces in any direction.
 biome: cliffs
+coord:
+  x: 16
+  y: -7
+  z: 0
 exits:
   north:
     roomid: 3060
-  west:
-    roomid: 3057
   south:
     roomid: 3062
   east:
     roomid: 3063
-  northwest:
-    roomid: 3036
 nouns:
   webs: Thick spider webs spanning the narrow gap between the
     walls, dusty and old. Dead insects hang in the silk like

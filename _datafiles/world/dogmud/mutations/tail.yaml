@@ -1,0 +1,24 @@
+mutationid: tail
+name: Tail
+description: A thick, muscular tail has grown from the base of your spine.
+  It grants a powerful sweep attack and can be fitted with attachments,
+  but makes wearing leg armor impossible.
+rarity: 8
+visual: A thick, muscular tail extends from the base of their spine,
+  swaying with each movement.
+conflicts:
+  - small
+pros:
+  - type: stat_flat
+    target: dexterity
+    value: 5
+  - type: flag
+    target: tail
+    value: 1
+cons:
+  - type: stat_flat
+    target: charisma
+    value: -15
+  - type: flag
+    target: disable-legs
+    value: 1

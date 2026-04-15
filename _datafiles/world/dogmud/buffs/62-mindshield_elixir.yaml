@@ -1,0 +1,8 @@
+buffid: 62
+name: Mindshield Elixir
+description: A shell of mental clarity blunts arcane assault, though your arms feel heavy.
+triggerrate: 1 round
+triggercount: 400
+statmods:
+  magical_mitigation: 15
+  strength: -10

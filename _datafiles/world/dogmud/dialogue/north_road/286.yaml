@@ -1,0 +1,59 @@
+mobid: 286
+zone: North Road
+defaultMood: neutral
+
+tree:
+  root:
+    text: "You have walked into the wrong camp, friend. Turn
+      around, or state your business."
+    hints: "You could ask about the bandits' business, mention
+      the caravan, or attack."
+
+  nodes:
+    - id: business
+      triggers: ["business", "why", "camp", "doing here", "who"]
+      text: "We are collecting what is owed to us. A caravan
+        master contracted our crew for escort work two months
+        ago. We did the work. He did not pay. Now we take what
+        he owes from his cargo."
+      hints: "You could ask about the crate or negotiate."
+      unlocks: ["crate_demand", "negotiate"]
+
+    - id: crate_demand
+      triggers: ["crate", "owed", "cargo", "want", "demand"]
+      questRequired: ["17-start"]
+      questExcluded: ["17-end"]
+      text: "There is a sealed crate in his wagon, iron-banded.
+        That crate is worth more than what he owes us, but I
+        will call it even. Bring me the crate and we leave this
+        stretch of road. No blood. No trouble. Clean."
+      hints: "You could go back to the caravan master and ask
+        about the crate."
+      unlocks: ["give_crate"]
+
+    - id: negotiate
+      triggers: ["negotiate", "deal", "peace", "talk", "leave"]
+      questRequired: ["17-start"]
+      questExcluded: ["17-end"]
+      text: "I do not want blood. I want what is owed. The crate.
+        That is the price of this road being safe again. You
+        bring it, we go. Simple."
+      unlocks: ["give_crate"]
+
+    - id: give_crate
+      triggers: ["here", "crate", "take", "brought"]
+      questRequired: ["17-start"]
+      questExcluded: ["17-end"]
+      requiresItem: 52
+      grantsQuest: "17-end"
+      setsQuestFlag:
+        key: "17-resolution"
+        value: "diplomacy"
+      text: "The crate. Good. We are done here. Tell the caravan
+        master his debt is paid. And tell him next time he hires
+        a crew, he should pay them. This did not have to be
+        complicated."
+      moodChange: neutral
+
+memory:
+  expiryPeriod: ""

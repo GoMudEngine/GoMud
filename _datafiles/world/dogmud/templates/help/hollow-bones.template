@@ -1,0 +1,19 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="yellow">Hollow Bones</ansi> mutation
+
+Your skeleton lightens and reshapes, freeing muscle potential.
+Strength improves, but you become more fragile.
+
+<ansi fg="yellow">Type:</ansi>     Passive
+<ansi fg="yellow">Rarity:</ansi>   Rare
+
+<ansi fg="yellow">Benefits:</ansi>
+  Moderately increased strength — the lightened skeleton lets your
+  muscles express their full potential
+
+<ansi fg="yellow">Drawbacks:</ansi>
+  Moderately reduced maximum health — hollow bones fracture more
+  readily under punishment
+
+<ansi fg="yellow">Conflicts:</ansi> Dense Muscles
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help mutations</ansi>

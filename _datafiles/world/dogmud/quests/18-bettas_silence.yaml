@@ -1,0 +1,27 @@
+questid: 18
+name: Betta's Silence
+description: Betta, a farm wife north of the crossroads village,
+  has asked you not to mention a traveler who recently sheltered
+  in her barn. A bloodline agent on the road is asking questions.
+secret: false
+
+flags:
+  - key: resolution
+    values: [quiet, told, killed]
+    description: "How the player handled the bloodline agent"
+
+steps:
+  - id: start
+    description: "Betta has asked you to keep quiet about the
+      girl who slept in her barn."
+    hint: "A bloodline agent is patrolling the north road,
+      asking about a young woman traveling north. When you
+      encounter the agent, you will have to decide what to say."
+  - id: end
+    description: "The matter of the girl in the barn has been
+      resolved, one way or another."
+
+rewards:
+  playermessage: "What happened on the north road stays on the
+    north road."
+  roommessage: ""

@@ -302,3 +302,26 @@ func OverwriteClientSettings(id ConnectionId, cs ClientSettings) {
 		cd.clientSettings = cs
 	}
 }
+
+// RegisterTestConnection registers a mock connection for testing purposes
+func RegisterTestConnection(id ConnectionId) {
+	lock.Lock()
+	defer lock.Unlock()
+
+	if id == 0 {
+		id = 1
+	}
+
+	netConnections[id] = &ConnectionDetails{
+		connectionId:   id,
+		clientSettings: ClientSettings{},
+	}
+}
+
+// UnregisterTestConnection removes a test connection (for cleanup)
+func UnregisterTestConnection(id ConnectionId) {
+	lock.Lock()
+	defer lock.Unlock()
+
+	delete(netConnections, id)
+}

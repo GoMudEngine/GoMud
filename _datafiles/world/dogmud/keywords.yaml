@@ -15,7 +15,7 @@ help:
       - cooldowns
 
       - inventory
-      - jobs
+      - title
       - keyring
       - skills
       - spells
@@ -63,7 +63,11 @@ help:
       - shoot
       - stamina
       - stand
+      - rally
+      - taunt
+      - throw
       - trip
+      - warcry
     crafting:
       - craft
     information:
@@ -90,12 +94,18 @@ help:
       - read
       - put
     general:
+      - instances
+      - arena
+      - oasis
+      - motd
       - online
       - quit
+      - scan
     parties:
       - party
       - share
     locks:
+      - defuse
       - lock
       - picklock
       - unlock
@@ -117,6 +127,8 @@ help:
       - enchanting
   admin:
     all:
+      - ai-flag
+      - ai-list
       - badcommands
       - buff
       - build
@@ -125,8 +137,8 @@ help:
       - deafen
       - devtool
       - item
-      - grant
       - locate
+      - mob
       - modify
       - mudmail
       - mute
@@ -138,15 +150,18 @@ help:
       - rename
       - room
       - server
+      - setmotd
       - skillset
       - spawn
+      - spell
       - syslogs
+      - teleport
       - zap
       - zone
 # Aliases for keywords when typing: help <keyword>
 # Key is the target keyword, value is the list of aliases
 help-aliases:
-  stealth:          [sneak, pickpocket]
+  skullduggery:     [stealth, surprise attack, surprise]
   combat:           [fighting, battle]
   cooldowns:        [cooldown]
   defense:          [dodge, parry, block, defenses]
@@ -161,6 +176,10 @@ help-aliases:
   tailoring:        [tailor, sewing, weaving, clothwork]
   cooking:          [cook, baking, food, meals]
   jewelcrafting:    [jeweler, jewelry, gemwork, gemcutting, jewel]
+  manifestation:    [manifest, summon, conjure, necromancy, raise]
+  charm:            [mesmerize, dominate, control, bewitch, enthral]
+  assess:           [examine corpse, study corpse, evaluate corpse, inspect corpse]
+  throw:            [grenade, grenades, flashbang, firebomb, toxic flask]
   enchanting:       [enchant, enchantment, enchantments, imbue]
   disenchant:       [unenchant, remove-enchant, strip-enchant]
   storage:          [store, unstore]
@@ -172,7 +191,8 @@ help-aliases:
   perception:       [per, percep, percept]
   health:           [hp]
   species:          [race, races]
-  picklock:         [pick]
+  defuse:           [disarm, disarm trap, defuse trap]
+  picklock:         [pick, pick lock, lockpicking]
   picklock-example: [pick-example]
   keyring:          [key, keys]
   equip:            [wear, wield, hold]
@@ -186,7 +206,12 @@ help-aliases:
   macros:           [macro]
   history:          ['log']
   pvp:              ['pk']
+  title:            [jobs, job, profession, class, titles, archetypes, archetype]
+  suggest:          [idea, suggestion, ideas]
   about:            ['gomud', 'dogmud', 'dog', 'lore', 'world', 'setting', 'background']
+  instances:        [instance, rift, rifts, riftkeeper, portal, portals, instanced]
+  arena:            [arena instance, pit, fighting pit, gauntlet]
+  oasis:            [oasis instance, planar oasis, elemental oasis, cube, elemental cube]
 
 # Default aliases for commands
 # For example: inv -> inventory
@@ -205,15 +230,14 @@ command-aliases:
   scribe:             ['scribble', 'write']
   equip:              ['wear', 'wield', 'hold']
   remove:             ['rem', 'unequip', 'unwear', 'unwield']
-  throw:              ['toss']
   attack:             ['a', 'k', 'kill', 'fight']
   get:                ['g', 'take']
   command:            ['cmd']
   macros:             ['=?', 'macro']
   sneak:              ['sn']
   spells:             ['spellbook']
-  backstab:           ['bs']
   killstats:          ['kills', 'kd', 'killstat']
+  title:              ['jobs', 'job', 'profession', 'class', 'titles']
   mutations:          ['mutation']
   quests:             ['q', 'quest']
   shout:              ['yell', 'scream', 'holler']
@@ -234,6 +258,8 @@ command-aliases:
   'storage remove':   ['unstore']
   'rank back':        ['backrank']
   'rank front':       ['frontrank']
+  defuse:             ['disarm']
+  suggest:            ['idea']
   'help about':       ['about']
   'set screenreader': ['screenreader']
   

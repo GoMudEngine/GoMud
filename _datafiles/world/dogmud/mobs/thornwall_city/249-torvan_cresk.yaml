@@ -1,0 +1,58 @@
+mobid: 249
+zone: Thornwall City
+archetype: fighting
+statpool: 80
+itemdropchance: 100
+hostile: false
+charm_immune: true
+maxwander: 0
+scripttag: torvan
+groups:
+  - humanoid
+  - smuggler
+idlecommands:
+  - 'sneak'
+  - 'emote studies a map on the table, tracing a route with one finger'
+  - 'emote rests a hand on the strongbox key at his belt, watching you'
+  - ''
+  - ''
+combatcommands:
+  - 'emote draws a blackened blade and strikes with practiced precision'
+  - ''
+  - 'emote pivots and slashes in a tight arc'
+  - ''
+activitylevel: 10
+aiprofile: tactical
+character:
+  name: Torvan Cresk
+  description: |
+    A man in his middle years with the bearing of an officer and the
+    eyes of a merchant. Torvan Cresk is lean and precise in his
+    movements, dressed in well-made but practical clothing -- dark
+    wool, oiled leather boots, a belt that holds both a fine dagger
+    and a set of surveyor's instruments. His face is angular and
+    sharp-featured, framed by close-cropped grey hair. He carries
+    himself with the quiet authority of someone who is used to being
+    obeyed, and the careful watchfulness of someone who knows he has
+    enemies. A former city surveyor turned smuggling kingpin, he
+    mapped these tunnels and saw opportunity where the city saw
+    infrastructure.
+  speciesid: 1
+  level: 1
+  gold: 75
+  stats:
+    strength:
+      training: 12
+    dexterity:
+      training: 15
+    perception:
+      training: 10
+    vitality:
+      training: 8
+    willpower:
+      training: 5
+  skills:
+    skullduggery: 12
+  items:
+    - itemid: 10023
+    - itemid: 40034

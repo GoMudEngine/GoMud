@@ -1,0 +1,10 @@
+itemid: 20056
+name: weighted tail cap
+namesimple: tail cap
+description: A leather-wrapped iron weight that straps to the end of a
+  tail. The added mass turns a sweep into a devastating blow.
+type: tail
+subtype: wearable
+value: 20
+weight: 2.0
+damage_multiplier: 15

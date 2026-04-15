@@ -1,0 +1,23 @@
+itemid: 40042
+name: herbalism recipe page
+namesimple: recipe
+description: A single page torn from a notebook, covered in
+  neat handwriting -- the careful script of someone young who
+  was learning to be precise. It describes a technique for
+  extracting fever-bark essence in a clay reduction, with
+  annotations in a second, older hand correcting the
+  proportions and adding notes like "patience" and "lower
+  heat, longer time." A teacher's corrections on a student's
+  work. The technique described is sound -- studying it
+  clarifies something you have been working toward in your
+  own practice.
+type: object
+subtype: usable
+uses: 1
+weight: 0.1
+on_use_train_skill: search
+on_use_train_amount: 1
+on_use_user_text: "You study the recipe page, tracing the careful handwriting and\
+  \ the teacher's corrections. The technique for fever-bark extraction is elegant\
+  \ in its simplicity -- lower heat, longer time, patience as an ingredient.\
+  \ Something clicks in your understanding of how plants yield their properties."

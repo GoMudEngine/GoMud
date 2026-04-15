@@ -1,13 +1,18 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">get</ansi>
 
-The <ansi fg="command">get</ansi> command picks up an item on the ground and puts it in your backpack.
+The <ansi fg="command">get</ansi> command picks up an item on the ground and puts
+it in your backpack.
 
 <ansi fg="yellow">Usage: </ansi>
 
-  <ansi fg="command">get stick</ansi>
-  This would get a stick from the ground and put it in your backpack.
-  <ansi fg="command">get stick from stash</ansi>
-  This would get a stick stashed in the area and put it in your backpack.
+  <ansi fg="command">get stick</ansi>              Pick up a stick from the ground.
+  <ansi fg="command">get 2.stick</ansi>            Pick up the second stick.
+  <ansi fg="command">get all</ansi>                Pick up everything on the ground.
+  <ansi fg="command">get all.stick</ansi>          Pick up all sticks.
+  <ansi fg="command">get stick from stash</ansi>   Get a stick from the stash.
 
-Find out more about referring to items by name by typing <ansi fg="command">help item-names</ansi>.
+Find out more about referring to items by name by typing
+<ansi fg="command">help item-names</ansi>.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help drop</ansi>, <ansi fg="command">help inventory</ansi>, <ansi fg="command">help item-names</ansi>
 

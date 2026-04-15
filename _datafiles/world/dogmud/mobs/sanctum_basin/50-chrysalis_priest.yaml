@@ -3,6 +3,7 @@ zone: Sanctum Basin
 archetype: casting
 statpool: 90
 hostile: false
+charm_immune: true
 maxwander: 0
 idlecommands:
   - 'emote traces the Chrysalis sigil in the air with one finger, a faint shimmer following the motion'

@@ -10,7 +10,9 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
+	"github.com/GoMudEngine/GoMud/internal/mobai"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -29,6 +31,34 @@ func DoCombat(e events.Event) events.ListenerReturn {
 
 	// Do any resolution or extra checks based on everyone that has been involved in combat this round.
 	handleAffected(append(affectedPlayers1, affectedPlayers2...), append(affectedMobs1, affectedMobs2...))
+
+	// Post-combat retarget pass: players with no aggro who have mobs
+	// attacking them (or their companions) should pick up a target.
+	// This catches cases where mobs initiated combat during handleMobCombat
+	// but the player's retarget scan in handlePlayerCombat ran too early.
+	for _, userId := range users.GetOnlineUserIds() {
+		user := users.GetByUserId(userId)
+		if user == nil || user.Character.Aggro != nil {
+			continue
+		}
+		uRoom := rooms.LoadRoom(user.Character.RoomId)
+		if uRoom == nil {
+			continue
+		}
+		if RetargetOrEnd(user.Character, uRoom, user.UserId, 0) {
+			targetName := "something"
+			if user.Character.Aggro.MobInstanceId > 0 {
+				if m := mobs.GetInstance(user.Character.Aggro.MobInstanceId); m != nil {
+					targetName = m.Character.Name
+				}
+			} else if user.Character.Aggro.UserId > 0 {
+				if u := users.GetByUserId(user.Character.Aggro.UserId); u != nil {
+					targetName = u.Character.Name
+				}
+			}
+			user.SendText(fmt.Sprintf("You shift your focus to <ansi fg=\"mobname\">%s</ansi>!", targetName))
+		}
+	}
 
 	return events.Continue
 }
@@ -59,6 +89,23 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 
 		if user.Character.Aggro == nil {
 			continue
+		}
+
+		// Validate aggro target still exists and is alive; retarget if possible
+		if !ValidateAggro(user.Character) {
+			uRoom := rooms.LoadRoom(user.Character.RoomId)
+			if uRoom != nil {
+				if RetargetOrEnd(user.Character, uRoom, user.UserId, 0) {
+					if mob := mobs.GetInstance(user.Character.Aggro.MobInstanceId); mob != nil {
+						user.SendText(fmt.Sprintf("You turn your attention to <ansi fg=\"mobname\">%s</ansi>!", mob.Character.Name))
+					} else if defUser := users.GetByUserId(user.Character.Aggro.UserId); defUser != nil {
+						user.SendText(fmt.Sprintf("You turn your attention to <ansi fg=\"username\">%s</ansi>!", defUser.Character.Name))
+					}
+				}
+			}
+			if user.Character.Aggro == nil {
+				continue
+			}
 		}
 
 		user.Character.CancelBuffsWithFlag(buffs.CancelIfCombat)
@@ -97,7 +144,7 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 
 		mob := mobs.GetInstance(mobId)
 
-		if mob == nil || mob.Character.Aggro == nil || mob.Character.Health <= 0 {
+		if mob == nil || mob.Character.Health <= 0 {
 			continue
 		}
 
@@ -105,28 +152,94 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 			continue
 		}
 
-		mobRoom := rooms.LoadRoom(mob.Character.RoomId)
-		if mobRoom == nil {
-			mob.Character.Aggro = nil
+		// Non-combatant mobs (merchants, quest NPCs) should never fight.
+		// If they somehow got aggro (e.g., from pack scatter), clear it.
+		if mob.IsNonCombatant() {
+			if mob.Character.Aggro != nil {
+				mob.Character.EndAggro()
+			}
 			continue
 		}
 
-		mob.Character.CancelBuffsWithFlag(buffs.CancelIfCombat)
+		mobRoom := rooms.LoadRoom(mob.Character.RoomId)
+		if mobRoom == nil {
+			if mob.Character.Aggro != nil {
+				mob.Character.EndAggro()
+			}
+			continue
+		}
 
-		// Mob shield decay (symmetric with handlePlayerShieldDecay)
-		if mob.Character.HasCondition(characters.ConditionShield) {
-			if mob.Character.GetConditionDuration(characters.ConditionShield) <= 1 {
-				mob.Character.RemoveCondition(characters.ConditionShield)
-				mobRoom.SendText(fmt.Sprintf(
-					`<ansi fg="blue"><ansi fg="mobname">%s</ansi>'s Minor Shield dissipates.</ansi>`,
-					mob.Character.Name))
-			} else {
-				mob.Character.DecrementCondition(characters.ConditionShield)
+		// Only run the full combat prep (buff stripping, shield decay, etc.) when
+		// actually fighting or when the mob might enter combat this round.
+		if mob.Character.Aggro != nil {
+			// Strip combat-cancelling buffs (Hidden, etc.)
+			// Also remove Hidden from permabuffs so Validate doesn't re-add it
+			if mob.Character.HasBuffFlag(buffs.Hidden) {
+				mob.Character.RemovePermaBuff(9)
+			}
+			mob.Character.CancelBuffsWithFlag(buffs.CancelIfCombat)
+
+			// Mob shield decay (symmetric with handlePlayerShieldDecay)
+			if mob.Character.HasCondition(characters.ConditionShield) {
+				if mob.Character.GetConditionDuration(characters.ConditionShield) <= 1 {
+					mob.Character.RemoveCondition(characters.ConditionShield)
+					mobRoom.SendText(fmt.Sprintf(
+						`<ansi fg="blue"><ansi fg="mobname">%s</ansi>'s Minor Shield dissipates.</ansi>`,
+						mob.Character.Name))
+				} else {
+					mob.Character.DecrementCondition(characters.ConditionShield)
+				}
+			}
+
+			if handleMobFoldCasting(mob, mobRoom) {
+				continue
+			}
+
+			// Validate mob's aggro target still exists and is alive; retarget if possible
+			if !ValidateAggro(&mob.Character) {
+				if mobRoom != nil {
+					RetargetOrEnd(&mob.Character, mobRoom, 0, mob.InstanceId)
+				}
 			}
 		}
 
-		if handleMobFoldCasting(mob, mobRoom) {
+		// Idle companions with autoassist scan for threats to owner
+		if mob.Character.Aggro == nil && mob.Character.IsCharmed() {
+			CompanionAutoTarget(mob, mobRoom)
+			if mob.Character.Aggro == nil {
+				continue
+			}
+		} else if mob.Character.Aggro == nil {
 			continue
+		}
+
+		// Emit combat_start signal on the first round of engagement.
+		// CombatMemory being nil indicates the mob has not yet been in combat
+		// with this target, so we set the memory and fire the signal once.
+		if mob.CombatMemory == nil && mob.Character.Aggro != nil {
+			mudlog.Debug("MobAI", "emit", "combat_start", "mob", mob.Character.Name, "mobId", mob.InstanceId)
+			mob.CombatMemory = mobai.SetMemory(
+				mob.Character.Aggro.UserId,
+				mob.Character.Aggro.MobInstanceId,
+				mob.Character.RoomId,
+				evt.RoundNumber,
+			)
+			events.AddToQueue(events.MobAISignal{
+				MobInstanceId: mob.InstanceId,
+				SignalType:    "combat_start",
+				RoomId:        mob.Character.RoomId,
+			})
+		}
+
+		// Emit combat_round signal every round for mobs already in combat.
+		// This allows per-round triggers (health_below, multiple_targets, etc.)
+		// to fire the reactive AI on an ongoing basis.
+		if mob.CombatMemory != nil && mob.Character.Aggro != nil {
+			events.AddToQueue(events.MobAISignal{
+				MobInstanceId: mob.InstanceId,
+				SignalType:    "combat_round",
+				RoomId:        mob.Character.RoomId,
+			})
 		}
 
 		c := configs.GetConfig()
@@ -195,12 +308,12 @@ func processGrappleProgression(char1 *characters.Character, char2 *characters.Ch
 	if result.Changed {
 		if result.NewPosition == characters.PositionStanding {
 			// Both broke apart
-			room.SendText(
+			sendVisualRoomText(room, 
 				fmt.Sprintf(`<ansi fg="combat">%s</ansi>`, result.RoomMessage),
 			)
 		} else if result.NewPosition == characters.PositionGrounded {
 			// Advanced to grounded
-			room.SendText(
+			sendVisualRoomText(room, 
 				fmt.Sprintf(`<ansi fg="combat"><ansi fg="username">%s</ansi> takes <ansi fg="mobname">%s</ansi> to the ground!</ansi>`,
 					controllerName, controlledName),
 			)

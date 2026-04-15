@@ -1,0 +1,20 @@
+id: masters-component-case
+name: Master's Component Case
+skill: tailoring
+skill_minimum: 30
+station: loom
+time_rounds: 8
+ingredients:
+  - item_tag: leather-strip
+    quantity: 3
+  - item_tag: cloth-strip
+    quantity: 2
+  - item_tag: thread-spool
+    quantity: 2
+  - item_tag: bone-needle
+    quantity: 2
+output:
+  item_id: 30035
+  quantity: 1
+success_message: "You line the rigid case with silk, carve labeled dividers, and fit the interlocking seal. A master's component case!"
+failure_message: "The bone reinforcement cracks and the silk lining tears. The materials are ruined."

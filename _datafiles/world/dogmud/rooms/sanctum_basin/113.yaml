@@ -10,6 +10,10 @@ description: The main hall of the Chrysalis Academy is a high-ceilinged building
   entrance, still and unhurried, ready to perform the Awakening Rite for those who
   are newly arrived in Gaius.
 biome: city
+coord:
+  x: -9
+  y: 10
+  z: 0
 mapsymbol: A
 maplegend: Academy Hall
 exits:

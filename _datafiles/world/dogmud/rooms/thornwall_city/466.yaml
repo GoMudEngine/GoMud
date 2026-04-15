@@ -8,6 +8,10 @@ description: The eastern edge of the market thins into a row of permanent shops 
   alley runs south between the buildings, leading to the less respectable parts of
   the city. To the east, a gated archway leads to the Old Citadel Plaza.
 biome: city
+coord:
+  x: 6
+  y: 0
+  z: 0
 exits:
   west:
     roomid: 465

@@ -59,13 +59,40 @@ quest nodes with proper gating. For each dialogue file:
 - Every `grantsQuest` pattern entry MUST include `"quest"` and `"task"` in
   `keywords`
 - Use `questRequired` and `questExcluded` for proper step gating
+  - **End-token exclusion:** every `grantsQuest` node must exclude BOTH
+    the granted token AND `{questid}-end` in `questExcluded` — prevents
+    re-offering completed quests
 - Item delivery steps need BOTH a dialogue path AND an `onGive` script
+- **Narrative voice:** NPC `text` must use first person ("I", "my"). Hints
+  must describe player options from the player's perspective. Never write
+  3rd-person self-references like "Ask about why she left" — write "You
+  could ask why she left" or "You could ask about the marriage."
+- **Trigger discoverability:** Every trigger word must appear in a hint,
+  NPC dialogue text, room description, or quest log. If a hint says "calm
+  her down", the triggers MUST include "calm". Undiscoverable = broken.
+- **Prefer `questRequired` over `requires`** for quest-gated dialogue
+  nodes. `requires` depends on per-player memory that can expire and brick
+  quests. Only use `requires` for non-quest conversational branching.
+- **`expiryPeriod` should almost never be set.** Memory expiry bricks
+  quests when `requires`-gated nodes become unreachable. Only use it
+  for quests where urgency is the explicit design intent (e.g., "deliver
+  this before the trolls attack"). Default: leave empty or omit.
 
 **4d. Room scripts** — create `.js` files for item pickups / command
 intercepts. Confirm the noun appears in the room's `description` or `nouns`
 section so `get <noun>` feels natural.
 
 **4e. Mob scripts** — create `.js` files for `onGive` handlers.
+**CRITICAL: give.go transfers the item to the mob BEFORE onGive fires.** This
+means:
+- Quest-accepting NPCs: `onGive` just grants the quest token (item is already
+  consumed by the transfer)
+- "Wrong NPC" handlers (quest giver who should NOT keep the item): `onGive`
+  must call `user.GiveItem(itemId)` to return a copy to the player
+- Every NPC involved in item-delivery quests needs an `onGive` script, or the
+  player loses the item to the default "considers the item" behavior
+- Quest givers who hand out items via `givesItem` need a recovery dialogue node
+  (fires when player has the quest but not the item) that gives a replacement
 
 **4f. Mob YAML modifications** — group changes, spawninfo additions. Verify
 quest NPCs are NOT in hostile mob groups.

@@ -27,6 +27,7 @@ func setRoomFunctions(vm *goja.Runtime) {
 	vm.Set(`GetMap`, GetMap)
 	vm.Set(`CreateInstancesFromRoomIds`, CreateInstancesFromRoomIds)
 	vm.Set(`CreateInstancesFromZone`, CreateInstancesFromZone)
+	vm.Set(`CreateInstance`, CreateInstance)
 }
 
 type ScriptRoom struct {
@@ -315,6 +316,18 @@ func (r ScriptRoom) SpawnMob(mobId int) *ScriptActor {
 	return nil
 }
 
+// SpawnMobScaled spawns a mob and overrides its stat pool with the given
+// value. Use CalcCompanionStatPool (characters package) to compute the
+// scaled value before calling this. Returns nil if the mob could not be
+// created.
+func (r ScriptRoom) SpawnMobScaled(mobId int, statPool int) *ScriptActor {
+	if mob := mobs.NewMobById(mobs.MobId(mobId), r.roomId, statPool); mob != nil {
+		r.roomRecord.AddMob(mob.InstanceId)
+		return GetMob(mob.InstanceId)
+	}
+	return nil
+}
+
 func (r ScriptRoom) SendText(msg string, excludeIds ...int) {
 
 	msg = roomTextWrap.Wrap(msg)
@@ -347,7 +360,9 @@ func (r ScriptRoom) AddTemporaryExit(exitNameSimple string, exitNameFancy string
 	}
 
 	// Spawn a portal in the room that leads to the portal location
-	return r.roomRecord.AddTemporaryExit(exitNameSimple, tmpExit)
+	result := r.roomRecord.AddTemporaryExit(exitNameSimple, tmpExit)
+	mudlog.Info("ScriptRoom.AddTemporaryExit", "exitName", exitNameSimple, "title", exitNameFancy, "roomId", exitRoomId, "expires", expiresTimeString, "result", result, "targetRoom", r.roomId, "exitsTemp", len(r.roomRecord.ExitsTemp))
+	return result
 }
 
 func (r ScriptRoom) RemoveTemporaryExit(exitNameSimple string, exitNameFancy string, exitRoomId int) bool {
@@ -381,11 +396,109 @@ func (r ScriptRoom) IsEphemeral() bool {
 	return rooms.IsEphemeralRoomId(r.roomRecord.RoomId)
 }
 
+// ScriptCorpse is a lightweight JS-accessible wrapper around a room corpse.
+type ScriptCorpse struct {
+	corpse rooms.Corpse
+	index  int
+}
+
+// Name returns the name of the character whose corpse this is.
+func (sc ScriptCorpse) Name() string {
+	return sc.corpse.Character.Name
+}
+
+// MobId returns the mob type ID, or 0 for player corpses.
+func (sc ScriptCorpse) MobId() int {
+	return sc.corpse.MobId
+}
+
+// IsPlayerCorpse returns true when the corpse belongs to a player character.
+func (sc ScriptCorpse) IsPlayerCorpse() bool {
+	return sc.corpse.UserId > 0
+}
+
+// GetStatTrainingTotal returns the sum of all 6 stat Training values.
+// This is the "corpse statpool" used for necromancy companion scaling.
+func (sc ScriptCorpse) GetStatTrainingTotal() int {
+	c := &sc.corpse.Character
+	return c.Stats.Strength.Training +
+		c.Stats.Dexterity.Training +
+		c.Stats.Perception.Training +
+		c.Stats.Vitality.Training +
+		c.Stats.Willpower.Training +
+		c.Stats.Charisma.Training
+}
+
+// WasCompanion returns true if this corpse was a charmed/summoned companion
+// when it died. Companion corpses should not be raiseable.
+func (sc ScriptCorpse) WasCompanion() bool {
+	return sc.corpse.WasCharmed
+}
+
+// Index returns the position of this corpse in the room's Corpses slice.
+// Pass this value to RemoveCorpse to consume the corpse.
+func (sc ScriptCorpse) Index() int {
+	return sc.index
+}
+
+// GetCorpses returns all non-prunable corpses currently in the room,
+// each wrapped in a ScriptCorpse for JS access.
+func (r ScriptRoom) GetCorpses() []ScriptCorpse {
+	result := make([]ScriptCorpse, 0, len(r.roomRecord.Corpses))
+	for idx, c := range r.roomRecord.Corpses {
+		if c.Prunable {
+			continue
+		}
+		result = append(result, ScriptCorpse{corpse: c, index: idx})
+	}
+	return result
+}
+
+// RemoveCorpse removes the corpse at the given index from the room.
+// Returns true if the index was valid and the corpse was removed.
+func (r ScriptRoom) RemoveCorpse(index int) bool {
+	corpses := r.roomRecord.Corpses
+	if index < 0 || index >= len(corpses) {
+		return false
+	}
+	r.roomRecord.Corpses = append(corpses[:index], corpses[index+1:]...)
+	return true
+}
+
 // ////////////////////////////////////////////////////////
 //
 // # These functions get exported to the scripting engine
 //
 // ////////////////////////////////////////////////////////
+
+// CreateInstance creates a full instanced zone for the given user (and their
+// party members). A portal exit named "instance portal" is added to the
+// overworld room (roomId) pointing into the instance entry room.
+// Returns true on success, false on any failure.
+// CreateInstance clones an instanced zone and returns the ephemeral entry
+// room ID (0 on failure). The caller is responsible for creating the
+// overworld portal via room.AddTemporaryExit in the script.
+func CreateInstance(zoneName string, goldPaid int, userId int, roomId int) int {
+
+	// Build the authorized user list: owner + party members.
+	authorizedUsers := []int{userId}
+	if party := parties.Get(userId); party != nil {
+		for _, memberId := range party.GetMembers() {
+			if memberId != userId {
+				authorizedUsers = append(authorizedUsers, memberId)
+			}
+		}
+	}
+
+	inst, err := rooms.CreateZoneInstance(zoneName, goldPaid, userId, authorizedUsers, roomId)
+	if err != nil {
+		mudlog.Error("CreateInstance", "zone", zoneName, "userId", userId, "error", err)
+		return 0
+	}
+
+	return inst.EntryRoomId
+}
+
 func CreateInstancesFromRoomIds(roomList []int) map[int]int {
 	ret, _ := rooms.CreateEphemeralRoomIds(roomList...)
 	return ret

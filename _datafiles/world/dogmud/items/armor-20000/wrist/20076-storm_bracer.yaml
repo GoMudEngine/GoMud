@@ -1,0 +1,16 @@
+itemid: 20076
+name: storm bracer
+namesimple: bracer
+description: >-
+  A bracer of storm-fused crystal and compressed lightning,
+  its surface crackling with a faint static charge that raises
+  arm hair through clothing. The inner surface is smooth and
+  cool. Conviction flows through the wearer's arm differently
+  with this on — words carry more weight, presence feels more
+  charged. The occasional spark is a minor inconvenience.
+type: wrist
+subtype: wearable
+conviction_mitigation: 6
+magical_mitigation: 3
+value: 45
+weight: 1.0

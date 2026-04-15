@@ -1,0 +1,18 @@
+id: ironhide-brew
+name: Ironhide Brew
+skill: alchemy
+skill_minimum: 8
+station: alchemy_bench
+time_rounds: 4
+ingredients:
+  - item_tag: ironbark
+    quantity: 2
+  - item_tag: healers-root
+    quantity: 1
+  - item_tag: bottle
+    quantity: 1
+output:
+  item_id: 30043
+  quantity: 1
+success_message: "The ironbark dissolves into a dark, gritty solution. An ironhide brew!"
+failure_message: "The ironbark refuses to dissolve. The materials are wasted."

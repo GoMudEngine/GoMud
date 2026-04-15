@@ -1,0 +1,84 @@
+mobid: 250
+zone: Marches Spur Road
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Road's been long. Yours too, I'd wager."
+      - "Welcome to the camp. Such as it is."
+
+  - keywords: ["gossip", "news", "rumor", "rumors"]
+    responses:
+      - "I hear things on the road. Mostly complaints about the road."
+      - "Talk to Thessa at the inn if you want the real news. She hears everything."
+
+  - keywords: ["buy", "sell", "trade", "shop", "wares", "goods"]
+    responses:
+      - "I have road supplies -- rope, oil, dried food, the basics. Take a look."
+
+  - keywords: [""]
+    responses:
+      - "Mm. Something I can help with?"
+
+tree:
+  root:
+    text: "You look like you have been walking a while. I am Malk -- road peddler, when the road cooperates. It has not been cooperating."
+    hints: "You could ask about a quest or task, goods, the road, or New Plymouth."
+
+  nodes:
+    - id: quest_start
+      triggers: ["quest", "task", "help", "problem", "trouble", "freight", "shipment"]
+      questExcluded: ["15-start", "15-end"]
+      grantsQuest: "15-start"
+      text: "I have been camped here for a week waiting on a freight shipment that should have come up from the crossroads. Paid in advance, which I do not usually do, but the supplier was reliable. Was. The crate never arrived. I cannot go check myself -- one man with a cart on a road with bandits is an invitation. If you are heading south, keep an eye out. Sturdy wooden crate, iron straps, my stencil on the side."
+      hints: "The bandits have been seen near an old barn west of the farmland stretch. Look for a ruined barn off the road."
+      moodChange: friendly
+
+    - id: quest_active
+      triggers: ["quest", "task", "freight", "shipment", "crate"]
+      questRequired: ["15-start"]
+      questExcluded: ["15-end"]
+      text: "Still waiting on that freight. If you find the crate, bring it back here. Sturdy wood, iron straps, my stencil."
+      hints: "Check the ruined barn west of the farmland. The bandits may have stashed it there."
+
+    - id: quest_complete_dialogue
+      triggers: ["freight", "crate", "shipment", "found", "here", "brought", "deliver"]
+      questRequired: ["15-start"]
+      questExcluded: ["15-end"]
+      requiresItem: 40039
+      grantsQuest: "15-end"
+      text: "That is the one! The iron straps, the stencil marks -- that is my consignment. Let me check the contents... rope, oil, provisions, all accounted for, near enough. Some of it has been opened but nothing critical is missing. You have done me a real favor."
+      hints: "Quest complete. Malk now offers you better prices on his road supplies."
+      moodChange: friendly
+
+    - id: quest_done
+      triggers: ["quest", "task", "freight", "shipment", "crate"]
+      questRequired: ["15-end"]
+      text: "You already brought my shipment back. I am in your debt. Road prices from me, better than road prices in fact. Any time."
+
+    - id: lost_item
+      triggers: ["lost", "dropped", "missing", "where"]
+      questRequired: ["15-start"]
+      questExcluded: ["15-end"]
+      text: "Lost the shipment? Should still be at that barn if no one has moved it. West of the farmland stretch, off the main road."
+
+    - id: road_talk
+      triggers: ["road", "travel", "south", "north", "route"]
+      text: "The road south to the crossroads has been rough lately. Bandits working the stretch between here and the farmland. I would not travel it alone if I had the choice, which I do not, which is why I am still sitting here."
+      hints: "You could ask about New Plymouth, the bloodline, or the crossroads."
+
+    - id: new_plymouth
+      triggers: ["new plymouth", "plymouth", "city", "coast"]
+      text: "That is where the real money is -- docks district, everything flows through there. I have made the run twice. It is a week's travel from the crossroads if the weather holds. Worth it, if you have goods to move."
+
+    - id: bloodline_talk
+      triggers: ["bloodline", "agents", "patrols"]
+      text: "More patrols on the north road than I have seen in years. The kind that ask questions without buying anything. Looking for someone, if you believe the talk. I do not ask. Asking gets you remembered."
+
+    - id: crossroads_talk
+      triggers: ["crossroads", "south", "amber", "confluence", "stillwater"]
+      text: "The crossroads south of here connects to half the Marches. Amber Valley, the Confluence, all the river trade. Stillwater is a day or two further. Good people there, mostly."
+
+memory:
+  expiryPeriod: ""

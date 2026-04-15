@@ -1,0 +1,27 @@
+spellid: conjure-water
+name: Conjure Water Elemental
+description: Tears a water elemental from the elemental plane and binds it
+  to your will. A dependable tank with regenerative endurance.
+type: neutral
+schools:
+  - manifestation
+cost: 150
+waitrounds: 2
+difficulty: 15
+primarystat: willpower
+base_folds: 4
+target_defense_type: none
+effect_type: none
+effect_magnitude: 0
+cast_user_text: >-
+  You reach into the elemental plane, feeling the cold rush of
+  deep water answer your call...
+cast_room_text: >-
+  {source} gestures outward, and the air grows heavy with the
+  smell of rain and deep wells.
+wait_user_text: >-
+  The moisture in the air thickens. Water begins to spiral
+  inward from every direction...
+summon_mob_id: 310
+summon_base_pool: 80
+summon_scaling_divisor: 500

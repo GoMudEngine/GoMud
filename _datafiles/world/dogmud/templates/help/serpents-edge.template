@@ -1,0 +1,24 @@
+<parameter name="file_path">/c/Users/Calabe Davis/workspace/DOGMud/_datafiles/world/dogmud/templates/help/serpents-edge.template
+<parameter name="content"><ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="yellow">Serpents-Edge</ansi> (enchanting recipe)
+
+Reptilian scales form along the blade, imbuing it with serpentine
+lethality.
+
+<ansi fg="yellow">━━━ Recipe ━━━</ansi>
+
+  <ansi fg="yellow">Skill:</ansi>       enchanting (minimum 8)
+  <ansi fg="yellow">Station:</ansi>     enchanting circle
+  <ansi fg="yellow">Target:</ansi>      weapon (must be equipped)
+  <ansi fg="yellow">Ingredients:</ansi> chrysalis setting (x1), mutation catalyst (x1),
+                binding paste (x1)
+  <ansi fg="yellow">Time:</ansi>        4 rounds
+  <ansi fg="yellow">Reserve:</ansi>     stamina (1% at tier 0, scaling with tier)
+
+<ansi fg="yellow">━━━ Effect ━━━</ansi>
+
+Increases physical damage.
+
+The enchantment grows stronger through combat use, advancing
+through five tiers of increasing power and reserve cost.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help enchanting</ansi>, <ansi fg="command">help craft</ansi>

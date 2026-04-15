@@ -2,11 +2,18 @@
 spellid: mend-all
 name: Mend All
 description: Radiates healing energy, mending all nearby allies.
-type: helpmulti
+type: helparea
 schools:
   - vital
 cost: 50
 healthcost: 3
 waitrounds: 2
-difficulty: 10
+difficulty: 30
 primarystat: willpower
+base_folds: 10
+effect_type: heal
+effect_magnitude: 3
+cast_user_text: "You radiate Chrysalis healing energy outward to all nearby allies."
+cast_room_text: "{source} spreads their arms as warm energy radiates outward."
+wait_user_text: "You continue channeling healing energy..."
+wait_room_text: "{source} continues radiating warm energy..."

@@ -1,0 +1,14 @@
+itemid: 51
+name: letter of introduction
+namesimple: letter
+description: >
+  A folded parchment sealed with a blob of brown wax bearing
+  a merchant's mark — two crossed wagon wheels. The letter
+  introduces the bearer as someone who rendered service to the
+  caravan and recommends favorable trading terms. The handwriting
+  is practical and legible, the kind of hand that writes invoices
+  all day.
+type: object
+subtype: mundane
+weight: 0.1
+value: 0

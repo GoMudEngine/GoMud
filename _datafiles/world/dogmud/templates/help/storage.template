@@ -1,13 +1,24 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">storage</ansi>
 
-The <ansi fg="command">storage</ansi> command lets you store and unstore items. 
-These items can be retrieved at various locations in the world.
+The <ansi fg="command">storage</ansi> command lets you store and
+retrieve items at storage locations around the world.
 
 <ansi fg="yellow">Usage: </ansi>
 
-  <ansi fg="command">storage</ansi> - See what you have in storage
+  <ansi fg="command">storage</ansi> - See what you have in
+  storage
 
-  <ansi fg="command">unstore [item]</ansi> - Remove an item from storage
-  
-  <ansi fg="command">store [item]</ansi> - Add an item in storage
+  <ansi fg="command">storage add [item/all]</ansi> - Add an item
+  to storage
+
+  <ansi fg="command">storage remove [item/all]</ansi> - Remove an
+  item from storage
+
+<ansi fg="yellow">Locations: </ansi>
+
+Most storage locations hold up to 20 items. The Thornwall
+Bank (south of Market Square) offers unlimited storage
+but charges a monthly fee of 1 gold per item, deducted
+from your bank balance. Type <ansi fg="command">help
+bank</ansi> for details.
 

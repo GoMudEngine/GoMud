@@ -1,0 +1,142 @@
+mobid: 277
+zone: North Road
+defaultMood: neutral
+
+tree:
+  root:
+    text: "Yes?"
+    hints: "You could ask about the farm, her sheep, or the road."
+    variants:
+      - questRequired: ["18-start"]
+        questExcluded: ["18-end"]
+        questFlagRequired:
+          "18-resolution": "quiet"
+        grantsQuest: "18-end"
+        givesItem: 50
+        text: "You kept quiet. Corvin made this -- he makes them
+          for people he decides are worth it. He does not decide
+          often. The road north is quieter than it looks. People
+          watch out for each other, in their way."
+        hints: "Betta trusts you."
+      - questRequired: ["18-start"]
+        questExcluded: ["18-end"]
+        questFlagRequired:
+          "18-resolution": "told"
+        grantsQuest: "18-end"
+        text: "I can smell it on you. You told them. We have
+          nothing more to say to each other."
+      - questRequired: ["18-start"]
+        questExcluded: ["18-end"]
+        questFlagRequired:
+          "18-resolution": "killed"
+        grantsQuest: "18-end"
+        text: "You think killing one of them helps? Now they
+          will send more. Now they will pay attention to this
+          stretch of road. I asked for silence, not slaughter."
+      - questRequired: ["18-start"]
+        questExcluded: ["18-end"]
+        text: "You know what I asked. I have nothing more to say
+          about it."
+        hints: "A bloodline agent is patrolling the road. Find
+          them and decide what to say."
+      - questRequired: ["18-end"]
+        questFlagRequired:
+          "18-resolution": "quiet"
+        text: "You kept your word. That matters."
+      - questRequired: ["18-end"]
+        questFlagRequired:
+          "18-resolution": "told"
+        text: "..."
+      - questRequired: ["18-end"]
+        questFlagRequired:
+          "18-resolution": "killed"
+        text: "You should go."
+
+  nodes:
+    - id: farm
+      triggers: ["farm", "sheep", "land", "turnips"]
+      text: "It is a farm. The sheep need shearing and the
+        turnips need pulling and the fence needs mending. It
+        has always been this way."
+
+    - id: weather
+      triggers: ["weather", "cold", "rain", "wind"]
+      text: "Winter is coming early this year. You can tell by
+        the wool -- the sheep know before we do."
+
+    - id: road
+      triggers: ["road", "travel", "riders"]
+      text: "People pass through. I do not keep track."
+      hints: "Betta does not seem forthcoming. Perhaps there
+        is something in the barn worth looking at."
+
+    - id: barn_trace
+      triggers: ["barn", "bedroll", "stayed", "girl", "someone",
+        "sleeping"]
+      questExcluded: ["18-start", "18-end"]
+      text: "You looked in my barn. Fine. Yes, someone stayed
+        there. A girl, heading north. She did not steal, she
+        did not cause trouble, she slept one night and left
+        before dawn."
+      hints: "You could ask Betta to tell you more, or ask if
+        she needs anything."
+      unlocks: ["ask_silence"]
+      moodChange: neutral
+
+    - id: ask_silence
+      triggers: ["help", "quiet", "silence", "secret", "need",
+        "anything", "quest", "task"]
+      questExcluded: ["18-start", "18-end"]
+      grantsQuest: "18-start"
+      text: "There are people on the road asking about her.
+        Official-looking. If they ask you, you did not see
+        anything in my barn. You did not hear anything from me.
+        That is all I am asking."
+      moodChange: neutral
+
+    - id: reward_quiet
+      triggers: ["done", "quiet", "kept", "said nothing", "back",
+        "report"]
+      questRequired: ["18-start"]
+      questExcluded: ["18-end"]
+      questFlagRequired:
+        "18-resolution": "quiet"
+      grantsQuest: "18-end"
+      givesItem: 50
+      text: "You kept quiet. Corvin made this -- he makes them
+        for people he decides are worth it. He does not decide
+        often. The road north is quieter than it looks. People
+        watch out for each other, in their way. That is all I
+        know."
+      moodChange: friendly
+
+    - id: result_told
+      triggers: ["done", "told", "agent", "back", "report"]
+      questRequired: ["18-start"]
+      questExcluded: ["18-end"]
+      questFlagRequired:
+        "18-resolution": "told"
+      grantsQuest: "18-end"
+      text: "I have nothing to say to you."
+      moodChange: hostile
+
+    - id: result_killed
+      triggers: ["done", "killed", "dead", "agent", "back",
+        "report"]
+      questRequired: ["18-start"]
+      questExcluded: ["18-end"]
+      questFlagRequired:
+        "18-resolution": "killed"
+      grantsQuest: "18-end"
+      text: "You think killing one of them helps? Now they will
+        send more. Now they will pay attention to this stretch
+        of road. I asked you for silence, not slaughter."
+      moodChange: hostile
+
+    - id: corvin
+      triggers: ["corvin", "son", "boy"]
+      text: "He is a good boy. Too trusting for the road, but
+        that will change. It always does."
+
+memory:
+  expiryPeriod: ""

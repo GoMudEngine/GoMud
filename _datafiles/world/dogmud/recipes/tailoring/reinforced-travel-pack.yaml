@@ -1,0 +1,20 @@
+id: reinforced-travel-pack
+name: Reinforced Travel Pack
+skill: tailoring
+skill_minimum: 25
+station: loom
+time_rounds: 8
+ingredients:
+  - item_tag: leather-strip
+    quantity: 4
+  - item_tag: cloth-strip
+    quantity: 2
+  - item_tag: thread-spool
+    quantity: 2
+  - item_tag: bone-needle
+    quantity: 2
+output:
+  item_id: 20055
+  quantity: 1
+success_message: "You layer leather over canvas, bend bone stays into a frame, and stitch it all together with waxed thread. A masterwork travel pack!"
+failure_message: "The frame buckles and the layers separate. The materials are ruined."

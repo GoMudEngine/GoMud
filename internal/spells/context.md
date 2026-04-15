@@ -65,6 +65,16 @@ type SpellData struct {
 }
 ```
 
+### Spell Difficulty and Target Types
+
+**Difficulty Field:** The `Difficulty` integer (range 0–75) affects skill
+progression via difficulty-scaled bonus multiplier (applied in spell resolution).
+Values: 0 (utility), 1–15 (weak combat), 15–30 (moderate), 30–50 (strong),
+50–75 (apex combat spells).
+
+**TargetTypeString:** `Neutral` spells now return "Self" instead of "Unknown"
+for display purposes.
+
 ### Spell Types
 ```go
 const (
@@ -178,7 +188,7 @@ conviction-barrage, cleansing-wave.
 conviction-surge, iron-will, chrysalis-haste, mind-fog, nerve-disruption,
 empathic-shroud, vital-surge, chrysalis-regeneration, skill-attunement,
 mutation-catalyst, psychic-anchor, sensory-overload, conviction-armor,
-veil-sight, fold-anchor, fold-recall, mass-mend.
+veil-sight, fold-anchor (set/recall toggle), mass-mend.
 
 ### Summon Spells (2)
 chrysalis-construct, summon-hive-swarm.

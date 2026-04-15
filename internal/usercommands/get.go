@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
@@ -28,6 +29,63 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	}
 
 	if args[0] == "all" {
+
+		// get all bag/case/pouch — move everything from component bag to backpack
+		if len(args) >= 2 {
+			allLastArg := args[len(args)-1]
+			if allLastArg == "bag" || allLastArg == "case" || allLastArg == "pouch" || allLastArg == "components" {
+				if len(user.Character.ComponentItems) == 0 {
+					user.SendText(`Your component bag is empty.`)
+				} else {
+					ct := len(user.Character.ComponentItems)
+					user.Character.Items = append(user.Character.Items, user.Character.ComponentItems...)
+					user.Character.ComponentItems = nil
+					user.SendText(fmt.Sprintf(`You move %d item(s) from your component bag to your backpack.`, ct))
+				}
+				return true, nil
+			}
+			if allLastArg == "bandolier" || allLastArg == "potions" {
+				if len(user.Character.PotionItems) == 0 {
+					user.SendText(`Your bandolier is empty.`)
+				} else {
+					ct := len(user.Character.PotionItems)
+					user.Character.Items = append(user.Character.Items, user.Character.PotionItems...)
+					user.Character.PotionItems = nil
+					user.SendText(fmt.Sprintf(`You move %d potion(s) from your bandolier to your backpack.`, ct))
+				}
+				return true, nil
+			}
+		}
+
+		// get all <container> — grab everything from a specific container
+		if len(args) >= 2 {
+			cName := room.FindContainerByName(args[len(args)-1])
+			if cName != `` {
+				if c, exists := room.Containers[cName]; exists && c.Hidden {
+					if user == nil || !user.Character.HasDiscovery(room.RoomId, cName) {
+						cName = ``
+					}
+				}
+			}
+			if cName != `` {
+				container := room.Containers[cName]
+				if container.Gold > 0 {
+					Get(fmt.Sprintf("gold %s", cName), user, room, flags)
+				}
+				if len(container.Items) > 0 {
+					iCopies := append([]items.Item{}, container.Items...)
+					for _, item := range iCopies {
+						Get(fmt.Sprintf("%s %s", item.Name(), cName), user, room, flags)
+					}
+				}
+				if container.Gold < 1 && len(container.Items) < 1 {
+					user.SendText(fmt.Sprintf(`There's nothing in the <ansi fg="container">%s</ansi>.`, cName))
+				}
+				return true, nil
+			}
+		}
+
+		// get all — grab everything from the floor
 		if room.Gold > 0 {
 			Get(`gold`, user, room, flags)
 		}
@@ -41,6 +99,54 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		}
 
 		return true, nil
+	}
+
+	// Handle "get all.item" — pick up all matching items from the floor
+	{
+		itemName, matchNum := util.GetMatchNumber(args[0])
+		if matchNum == -1 {
+			picked := 0
+			for {
+				matchItem, found := room.FindOnFloor(itemName, false)
+				if !found {
+					break
+				}
+
+				if matchItem.HasAdjective(`exploding`) {
+					break
+				}
+
+				user.Character.CancelBuffsWithFlag(buffs.Hidden)
+
+				if user.Character.StoreItem(matchItem) {
+					room.RemoveItem(matchItem, false)
+
+					events.AddToQueue(events.ItemOwnership{
+						UserId: user.UserId,
+						Item:   matchItem,
+						Gained: true,
+					})
+
+					picked++
+				} else {
+					user.SendText(
+						fmt.Sprintf(`You can't carry the <ansi fg="itemname">%s</ansi> - you're already overloaded!`, matchItem.DisplayName()),
+					)
+					break
+				}
+			}
+			if picked == 0 {
+				user.SendText(fmt.Sprintf(`You don't see any "%s" to pick up.`, itemName))
+			} else {
+				user.SendText(fmt.Sprintf(`You pick up %d item(s).`, picked))
+				room.SendTextVisual(
+					fmt.Sprintf(`<ansi fg="username">%s</ansi> picks up some items.`, user.Character.Name),
+					user.UserId,
+				)
+				sendEncumbranceWarning(user)
+			}
+			return true, nil
+		}
 	}
 
 	getFromStash := false
@@ -67,7 +173,59 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			}
 		}
 
+		// Check for "get X from bag/case/pouch/bandolier" — pull from component bag or bandolier
+		lastArg := args[len(args)-1]
+		isBagGet := lastArg == "bag" || lastArg == "case" || lastArg == "pouch" || lastArg == "components"
+		isBandolierGet := lastArg == "bandolier" || lastArg == "potions"
+
+		if isBagGet || isBandolierGet {
+			if len(args) >= 3 && args[len(args)-2] == "from" {
+				rest = strings.Join(args[0:len(args)-2], " ")
+			} else {
+				rest = strings.Join(args[0:len(args)-1], " ")
+			}
+
+			var sourceItems *[]items.Item
+			var label string
+			if isBagGet {
+				sourceItems = &user.Character.ComponentItems
+				label = "component bag"
+			} else {
+				sourceItems = &user.Character.PotionItems
+				label = "bandolier"
+			}
+
+			closeMatch, exactMatch := items.FindMatchIn(rest, *sourceItems...)
+			foundItem := exactMatch
+			if foundItem.ItemId == 0 {
+				foundItem = closeMatch
+			}
+
+			if foundItem.ItemId == 0 {
+				user.SendText(fmt.Sprintf(`You don't see a "%s" in your %s.`, rest, label))
+				return true, nil
+			}
+
+			// Remove from source and add to backpack
+			for j := len(*sourceItems) - 1; j >= 0; j-- {
+				if (*sourceItems)[j].Equals(foundItem) {
+					*sourceItems = append((*sourceItems)[:j], (*sourceItems)[j+1:]...)
+					break
+				}
+			}
+			user.Character.Items = append(user.Character.Items, foundItem)
+			user.SendText(fmt.Sprintf(`You move the <ansi fg="itemname">%s</ansi> from your %s to your backpack.`, foundItem.DisplayName(), label))
+			return true, nil
+		}
+
 		containerName = room.FindContainerByName(args[len(args)-1])
+		if containerName != `` {
+			if c, exists := room.Containers[containerName]; exists && c.Hidden {
+				if user == nil || !user.Character.HasDiscovery(room.RoomId, containerName) {
+					containerName = ``
+				}
+			}
+		}
 		if containerName != `` {
 			getFromStash = false
 			if args[len(args)-2] == "from" {
@@ -127,7 +285,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 					user.SendText(
 						fmt.Sprintf(`You remove a <ansi fg="itemname">%s</ansi> from %s.`, matchItem.DisplayName(), user.Character.Pet.DisplayName()),
 					)
-					room.SendText(
+					room.SendTextVisual(
 						fmt.Sprintf(`<ansi fg="username">%s</ansi> removes a <ansi fg="itemname">%s</ansi> from %s...`, user.Character.Name, matchItem.DisplayName(), user.Character.Pet.DisplayName()),
 						user.UserId,
 					)
@@ -168,7 +326,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 				user.SendText(
 					fmt.Sprintf(`You pick up <ansi fg="gold">%d gold</ansi> from the <ansi fg="container">%s</ansi>.`, goldAmt, containerName),
 				)
-				room.SendText(
+				room.SendTextVisual(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> picks up some <ansi fg="gold">gold</ansi> from the <ansi fg="container">%s</ansi>.`, user.Character.Name, containerName),
 					user.UserId,
 				)
@@ -201,7 +359,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 				user.SendText(
 					fmt.Sprintf(`You take the <ansi fg="itemname">%s</ansi> from the <ansi fg="container">%s</ansi>.`, matchItem.DisplayName(), containerName),
 				)
-				room.SendText(
+				room.SendTextVisual(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> picks up the <ansi fg="itemname">%s</ansi> from the <ansi fg="container">%s</ansi>...`, user.Character.Name, matchItem.DisplayName(), containerName),
 					user.UserId,
 				)
@@ -231,90 +389,103 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 				user.Character.CancelBuffsWithFlag(buffs.Hidden) // No longer sneaking
 
 				goldAmt := room.Gold
-				user.Character.Gold += goldAmt
-				room.Gold -= goldAmt
+				if err := actions.GetGoldFromFloor(&actions.UserActor{User: user, Room: room}, goldAmt); err == nil {
+					events.AddToQueue(events.EquipmentChange{
+						UserId:     user.UserId,
+						GoldChange: -goldAmt,
+					})
 
-				events.AddToQueue(events.EquipmentChange{
-					UserId:     user.UserId,
-					GoldChange: -goldAmt,
-				})
-
-				user.SendText(
-					fmt.Sprintf(`You pick up <ansi fg="gold">%d gold</ansi>.`, goldAmt),
-				)
-				room.SendText(
-					fmt.Sprintf(`<ansi fg="username">%s</ansi> picks up some <ansi fg="gold">gold</ansi>.`, user.Character.Name),
-					user.UserId,
-				)
+					user.SendText(
+						fmt.Sprintf(`You pick up <ansi fg="gold">%d gold</ansi>.`, goldAmt),
+					)
+					room.SendTextVisual(
+						fmt.Sprintf(`<ansi fg="username">%s</ansi> picks up some <ansi fg="gold">gold</ansi>.`, user.Character.Name),
+						user.UserId,
+					)
+				}
 			}
 
 			return true, nil
 		}
 
 		// Check whether the user has an item in their inventory that matches
-		matchItem, found := room.FindOnFloor(rest, getFromStash)
+		var matchItem items.Item
+		var found bool
 
-		// Check if user is specifying an item they stashed
+		// First try the requested source (floor or stash)
+		{
+			// Peek at the item before transferring so we can guard against exploding items
+			peekItem, peekFound := room.FindOnFloor(rest, getFromStash)
+			if peekFound && peekItem.HasAdjective(`exploding`) {
+				user.SendText(`You can't pick that up, it's about to explode!`)
+				return true, nil
+			}
+			if peekFound {
+				result := actions.GetItemFromFloor(&actions.UserActor{User: user, Room: room}, rest, getFromStash)
+				if result.Found {
+					matchItem = result.Item
+					found = true
+					if result.Err != nil {
+						// Capacity exceeded — item was rolled back to floor
+						user.SendText(
+							fmt.Sprintf(`You can't carry the <ansi fg="itemname">%s</ansi> - you're already overloaded!`, matchItem.DisplayName()),
+						)
+						return true, nil
+					}
+				}
+			}
+		}
+
+		// Check if user is specifying an item they stashed (auto-detect)
 		if !found && !getFromStash {
 			stashItemMatch, stashFound := room.FindOnFloor(rest, true)
 			if stashFound && stashItemMatch.StashedBy == user.UserId {
-				found = true
 				getFromStash = true
-				matchItem = stashItemMatch
+				result := actions.GetItemFromFloor(&actions.UserActor{User: user, Room: room}, rest, true)
+				if result.Found {
+					found = true
+					matchItem = result.Item
+					if result.Err != nil {
+						user.SendText(
+							fmt.Sprintf(`You can't carry the <ansi fg="itemname">%s</ansi> - you're already overloaded!`, matchItem.DisplayName()),
+						)
+						return true, nil
+					}
+					// Clear stash owner tag on the in-inventory copy
+					for i, inv := range user.Character.Items {
+						if inv.Equals(matchItem) && inv.StashedBy == user.UserId {
+							user.Character.Items[i].StashedBy = 0
+							matchItem = user.Character.Items[i]
+							break
+						}
+					}
+				}
 			}
 		}
 
 		if found {
-
-			if matchItem.HasAdjective(`exploding`) {
-				user.SendText(`You can't pick that up, it's about to explode!`)
-				return true, nil
-			}
-
 			user.Character.CancelBuffsWithFlag(buffs.Hidden) // No longer sneaking
 
-			// If it was in the stash, remove the stash owner tag
 			if getFromStash {
-				matchItem.StashedBy = 0
-			}
-
-			if user.Character.StoreItem(matchItem) {
-
-				// Swap the item location
-				room.RemoveItem(matchItem, getFromStash)
-
-				events.AddToQueue(events.ItemOwnership{
-					UserId: user.UserId,
-					Item:   matchItem,
-					Gained: true,
-				})
-
-				if getFromStash {
-					user.SendText(
-						fmt.Sprintf(`You dig out the <ansi fg="itemname">%s</ansi> from where it was stashed.`, matchItem.DisplayName()),
-					)
-					room.SendText(
-						fmt.Sprintf(`<ansi fg="username">%s</ansi> digs around in the area and picks something up...`, user.Character.Name),
-						user.UserId,
-					)
-				} else {
-					user.SendText(
-						fmt.Sprintf(`You pick up the <ansi fg="itemname">%s</ansi>.`, matchItem.DisplayName()),
-					)
-					room.SendText(
-						fmt.Sprintf(`<ansi fg="username">%s</ansi> picks up the <ansi fg="itemname">%s</ansi>...`, user.Character.Name, matchItem.DisplayName()),
-						user.UserId,
-					)
-				}
-
-				// Check encumbrance and warn player
-				sendEncumbranceWarning(user)
-
+				user.SendText(
+					fmt.Sprintf(`You dig out the <ansi fg="itemname">%s</ansi> from where it was stashed.`, matchItem.DisplayName()),
+				)
+				room.SendTextVisual(
+					fmt.Sprintf(`<ansi fg="username">%s</ansi> digs around in the area and picks something up...`, user.Character.Name),
+					user.UserId,
+				)
 			} else {
 				user.SendText(
-					fmt.Sprintf(`You can't carry the <ansi fg="itemname">%s</ansi> - you're already overloaded!`, matchItem.DisplayName()),
+					fmt.Sprintf(`You pick up the <ansi fg="itemname">%s</ansi>.`, matchItem.DisplayName()),
+				)
+				room.SendTextVisual(
+					fmt.Sprintf(`<ansi fg="username">%s</ansi> picks up the <ansi fg="itemname">%s</ansi>...`, user.Character.Name, matchItem.DisplayName()),
+					user.UserId,
 				)
 			}
+
+			// Check encumbrance and warn player
+			sendEncumbranceWarning(user)
 
 			return true, nil
 		}
@@ -326,7 +497,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		if len(foundNoun) > 0 {
 
 			user.SendText(fmt.Sprintf(`You can't get the <ansi fg="noun">%s</ansi>`, foundNoun))
-			room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> is grasping at the air.`, user.Character.Name), user.UserId)
+			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> is grasping at the air.`, user.Character.Name), user.UserId)
 
 			return true, nil
 		}
@@ -339,6 +510,13 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	}
 
 	containerName = room.FindContainerByName(rest)
+	if containerName != `` {
+		if c, exists := room.Containers[containerName]; exists && c.Hidden {
+			if user == nil || !user.Character.HasDiscovery(room.RoomId, containerName) {
+				containerName = ``
+			}
+		}
+	}
 	if containerName != `` {
 		user.SendText(fmt.Sprintf(`You can't pick up the <ansi fg="container">%s</ansi>. Try looking at it.`, containerName))
 	} else {

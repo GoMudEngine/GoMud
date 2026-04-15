@@ -55,6 +55,30 @@ The mobs system is built around several key components:
 - Idle, angry, and combat command sets
 - Boredom tracking and player interaction memory
 - Conversation participation with other NPCs
+- **Reactive Tactical AI** — event-driven combat decisions via `internal/mobai/`
+
+### 2b. **Reactive Tactical AI (mobai package)**
+Mobs with `tactic_preset` and/or `tactics` in their YAML gain event-driven
+combat intelligence that fires alongside (and can override) the legacy AI.
+
+**Signal flow:**
+1. `combat_start` signal emits when a mob first enters combat (from both
+   `handlePlayerVsMob` and `handleMobCombat`)
+2. `combat_round` signal emits every round for mobs already in combat
+3. `HandleMobAISignal` evaluates tactics against current `TriggerContext`
+4. Matching tactic queued as `PendingReaction` with delay
+5. `ProcessMobReactions` fires reactions on NewTurn (50ms tick)
+6. `handleMobAIDecision` defers legacy AI when reactive AI recently acted
+
+**YAML fields:** `tactic_preset`, `tactics` (list of trigger/action/priority),
+`reaction_delay` (seconds), `tactical_discipline` (0-1 follow-through chance)
+
+**Presets:** `aggressive_melee`, `defensive_caster`, `ambusher`, `tank`
+Custom tactics merge with preset rules (custom priorities override preset).
+
+**Targeting preference:** `LookForTrouble` and `RetargetOrEnd` both prefer
+player targets over companions/mobs. Companions only get targeted when no
+eligible players are available.
 
 ### 3. **Social and Combat Dynamics**
 - Group-based allegiance system
@@ -1052,3 +1076,53 @@ if copyScript == ScriptTemplateQuest {
 - **Cache Synchronization**: Immediate update of in-memory caches after creation
 
 This comprehensive mob system provides sophisticated NPC management with AI behaviors, social dynamics, scripting integration, file management capabilities, and seamless integration with all other game systems.
+
+---
+
+## Shop Persistence & Living Economy
+
+### Shop State Files
+Shop economic state (stock levels, NPC gold, restock timers) persists
+separately from mob instance data:
+
+- **Path:** `_datafiles/world/dogmud/shops/{zone}/{mobid}-room{roomid}.yaml`
+- **NOT** the same as `mobs.instances/` — do not include in instance save
+  cleanup SOP
+- Deleting a shop file resets that merchant to template defaults (500g
+  starting gold, base stock levels from mob YAML)
+
+### Initialization
+`RegisterMobShop(mob *Mob)` is called at mob spawn time. It loads the
+persisted `ShopInventory` if the file exists; otherwise it initializes
+from the mob's `Character.Shop` seed data (the legacy `[]ShopItem` slice).
+
+### Non-Combatant Flag
+Mobs with `non_combatant: true` in their YAML are protected from attack,
+theft, and harmful spell targeting. Intended for shop NPCs and other
+peaceful characters the player should never be able to kill outright.
+
+### Dynamic Pricing
+Prices range from 0.25x (overstocked) to 5.0x (out of stock), driven by
+the `ShopAbundanceThreshold` config knob and normalized per item by restock
+quantity.
+
+Config knobs (in `config.balance.go`):
+- `ShopBuyRatio` — fraction of item value paid when buying player items
+- `ShopPriceFloor` / `ShopPriceCeiling` — dynamic price multiplier bounds
+- `ShopAbundanceThreshold` — stock level that triggers floor pricing
+- `ShopMaterialReserve` — units of each material the NPC holds back
+- `ShopGoldReserveRatio` — fraction of StartingGold the NPC won't spend
+- `BarterMaxDiscount` / `BarterMaxBonus` — barter skill effect bounds
+
+### NPC Craft Decision Priority
+When a crafter mob evaluates what to do on a restock tick, it ranks
+candidates in this order:
+
+1. **Self-gear upgrade** — craft equipment that is strictly better than
+   what the mob currently wears (`IsUpgrade()` comparison)
+2. **Profitable stock** — craft items where product value > material cost
+3. **Profitable salvage** — break down overstock into scarce materials
+
+The `ShopMaterialReserve` limit prevents NPCs from consuming all materials
+on self-gear. The `ShopGoldReserveRatio × StartingGold` floor prevents
+NPCs from spending themselves into poverty on gear upgrades.

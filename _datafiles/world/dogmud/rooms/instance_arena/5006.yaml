@@ -1,0 +1,25 @@
+roomid: 5006
+zone: Instance Arena
+title: The Gauntlet
+description: >-
+  A long corridor of rough-cut stone, wide enough for two
+  fighters abreast. Iron torch brackets line the walls at
+  intervals, casting overlapping pools of orange light and
+  deep shadow. The floor is worn smooth by the passage of
+  many boots, and the walls at shoulder height are marked by
+  scrapes of metal. Whatever gets put in here has to be
+  fought through — there is no route around it.
+exits:
+  south:
+    roomid: 5002
+    mapdirection: south
+  north:
+    roomid: 5007
+    mapdirection: north
+spawninfo:
+  - mobid: 316
+    statpool: 1
+    respawnrate: "1h"
+  - mobid: 323
+    statpool: 2
+    respawnrate: "1h 30m"

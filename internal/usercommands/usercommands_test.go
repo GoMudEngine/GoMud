@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/exit"
 	"github.com/GoMudEngine/GoMud/internal/items"
@@ -1310,14 +1311,14 @@ func TestUse(t *testing.T) {
 	})
 }
 
-// ─── Jobs ───────────────────────────────────────────────────────────────────
+// ─── Title ──────────────────────────────────────────────────────────────────
 
-func TestJobs(t *testing.T) {
+func TestTitle(t *testing.T) {
 	cleanup := seedAllRegistries()
 	defer cleanup()
 
 	user, room := getTestUserAndRoom(t)
-	handled, err := Jobs("", user, room, 0)
+	handled, err := Title("", user, room, 0)
 	assert.True(t, handled)
 	assert.NoError(t, err)
 }
@@ -1533,17 +1534,6 @@ func TestUnlock(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-// ─── Inspect ────────────────────────────────────────────────────────────────
-
-func TestInspect(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	user, room := getTestUserAndRoom(t)
-	handled, err := Inspect("skeleton", user, room, 0)
-	assert.True(t, handled)
-	assert.NoError(t, err)
-}
 
 // ─── Search ─────────────────────────────────────────────────────────────────
 
@@ -2260,18 +2250,6 @@ func TestCharacter(t *testing.T) {
 	})
 }
 
-func TestTrain(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	user, room := getTestUserAndRoom(t)
-
-	t.Run("no_training_room", func(t *testing.T) {
-		handled, err := Train("", user, room, 0)
-		assert.NoError(t, err)
-		_ = handled // May return false if room has no training
-	})
-}
 
 func TestCraft(t *testing.T) {
 	cleanup := seedAllRegistries()
@@ -2348,6 +2326,10 @@ func TestPicklock(t *testing.T) {
 	defer cleanup()
 
 	user, room := getTestUserAndRoom(t)
+	if user.Character.Skills == nil {
+		user.Character.Skills = make(map[string]int)
+	}
+	user.Character.Skills["skullduggery"] = 1
 
 	t.Run("no_args", func(t *testing.T) {
 		handled, err := Picklock("", user, room, 0)
@@ -2474,13 +2456,13 @@ func TestAsk(t *testing.T) {
 	})
 }
 
-func TestPickpocket(t *testing.T) {
+func TestSteal(t *testing.T) {
 	cleanup := seedAllRegistries()
 	defer cleanup()
 
 	user, room := getTestUserAndRoom(t)
-	// No stealth skill - should return
-	handled, err := Pickpocket("skeleton", user, room, 0)
+	// No skullduggery skill - should return false, nil
+	handled, err := Steal("skeleton", user, room, 0)
 	assert.NoError(t, err)
 	_ = handled
 }
@@ -3674,32 +3656,6 @@ func TestMacrosWithData(t *testing.T) {
 	})
 }
 
-// ─── Deeper Coverage: Inspect branches ──────────────────────────────────────
-
-func TestInspectBranches(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	user, room := getTestUserAndRoom(t)
-
-	t.Run("inspect_no_args", func(t *testing.T) {
-		handled, err := Inspect("", user, room, 0)
-		assert.True(t, handled)
-		assert.NoError(t, err)
-	})
-
-	t.Run("inspect_player", func(t *testing.T) {
-		handled, err := Inspect("bobrick", user, room, 0)
-		assert.True(t, handled)
-		assert.NoError(t, err)
-	})
-
-	t.Run("inspect_nonexistent", func(t *testing.T) {
-		handled, err := Inspect("zzz_nobody", user, room, 0)
-		assert.True(t, handled)
-		assert.NoError(t, err)
-	})
-}
 
 // ─── Deeper Coverage: Whisper branches ──────────────────────────────────────
 
@@ -5189,6 +5145,10 @@ func TestPicklockDeep(t *testing.T) {
 	defer cleanup()
 
 	user, room := getTestUserAndRoom(t)
+	if user.Character.Skills == nil {
+		user.Character.Skills = make(map[string]int)
+	}
+	user.Character.Skills["skullduggery"] = 1
 
 	t.Run("picklock_direction", func(t *testing.T) {
 		handled, err := Picklock("north", user, room, 0)
@@ -5911,6 +5871,41 @@ func TestSetWimpyBranch(t *testing.T) {
 	})
 }
 
+// ─── Charset ────────────────────────────────────────────────────────────────
+
+func TestSetCharset(t *testing.T) {
+	cleanup := seedAllRegistries()
+	defer cleanup()
+
+	user, room := getTestUserAndRoom(t)
+
+	// Register test connections for the user
+	connections.RegisterTestConnection(user.ConnectionId())
+	defer connections.UnregisterTestConnection(user.ConnectionId())
+
+	// Default should be false (UTF-8)
+	assert.False(t, user.AsciiMode)
+
+	// Toggle to ASCII
+	handled, err := Set("charset", user, room, 0)
+	assert.True(t, handled)
+	assert.NoError(t, err)
+	assert.True(t, user.AsciiMode)
+
+	// Verify connection setting was updated
+	cs := connections.GetClientSettings(user.ConnectionId())
+	assert.True(t, cs.AsciiMode)
+
+	// Toggle back to UTF-8
+	handled, err = Set("charset", user, room, 0)
+	assert.True(t, handled)
+	assert.NoError(t, err)
+	assert.False(t, user.AsciiMode)
+
+	cs = connections.GetClientSettings(user.ConnectionId())
+	assert.False(t, cs.AsciiMode)
+}
+
 // ─── Craft branches ────────────────────────────────────────────────────────
 
 func TestCraftBranches(t *testing.T) {
@@ -6244,6 +6239,10 @@ func TestPicklockBranches(t *testing.T) {
 	defer cleanup()
 
 	user, room := getTestUserAndRoom(t)
+	if user.Character.Skills == nil {
+		user.Character.Skills = make(map[string]int)
+	}
+	user.Character.Skills["skullduggery"] = 1
 
 	t.Run("picklock_no_args", func(t *testing.T) {
 		handled, err := Picklock("", user, room, 0)
@@ -6989,9 +6988,9 @@ func TestCommandsBranchCoverage(t *testing.T) {
 		_ = err
 	})
 
-	// Jobs
-	t.Run("jobs_command", func(t *testing.T) {
-		handled, err := Jobs("", user, room, 0)
+	// Title
+	t.Run("title_command", func(t *testing.T) {
+		handled, err := Title("", user, room, 0)
 		assert.True(t, handled)
 		_ = err
 	})

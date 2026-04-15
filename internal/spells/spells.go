@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/textutil"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/pkg/errors"
 )
@@ -34,6 +35,23 @@ type SpellData struct {
 	DamageMultiplier    float64 `yaml:"damage_multiplier,omitempty"`   // Spell damage multiplier for new pipeline (Stage 34)
 	EffectDuration      int    `yaml:"effect_duration,omitempty"`      // DoT tick count (default 0 = use 3)
 	BuffIds             []int  `yaml:"buff_ids,omitempty"`             // Buff IDs to apply (for "buff" effect type)
+	QuestRequired       string `yaml:"quest_required,omitempty"`       // Quest token required before spell can be discovered
+
+	// Companion summoning fields — replaces JS onMagic for summon spells
+	SummonMobId          int    `yaml:"summon_mob_id,omitempty"`
+	SummonBasePool       int    `yaml:"summon_base_pool,omitempty"`
+	SummonScalingDivisor int    `yaml:"summon_scaling_divisor,omitempty"`
+	SummonComponentId    int    `yaml:"summon_component_id,omitempty"`
+	SummonRequiresCorpse bool   `yaml:"summon_requires_corpse,omitempty"`
+	SummonMinCorpsePool  int    `yaml:"summon_min_corpse_pool,omitempty"`
+
+	// YAML text fields — flavor text sent by the engine (replaces JS messaging)
+	CastUserText  string `yaml:"cast_user_text,omitempty"`
+	CastRoomText  string `yaml:"cast_room_text,omitempty"`
+	WaitUserText  string `yaml:"wait_user_text,omitempty"`
+	WaitRoomText  string `yaml:"wait_room_text,omitempty"`
+	MagicUserText string `yaml:"magic_user_text,omitempty"`
+	MagicRoomText string `yaml:"magic_room_text,omitempty"`
 }
 
 const (
@@ -48,10 +66,11 @@ const (
 	HelpArea   SpellType = "helparea"   // Hits everyone in the room, even if hidden
 
 	// DOG Spell Schools
-	SchoolElemental   = "elemental"   // Fire, ice, lightning, earth, wind - offensive elemental magic
-	SchoolEnhancement = "enhancement" // Buffs, shields, enchantments - augmentation magic
-	SchoolMental      = "mental"      // Illusions, charms, telepathy - mind-affecting magic (Psionics skill)
-	SchoolVital       = "vital"       // Healing, curing, life/death manipulation - vital force magic
+	SchoolElemental     = "elemental"     // Fire, ice, lightning, earth, wind - offensive elemental magic
+	SchoolEnhancement   = "enhancement"   // Buffs, shields, enchantments - augmentation magic
+	SchoolMental        = "mental"        // Illusions, charms, telepathy - mind-affecting magic (Psionics skill)
+	SchoolVital         = "vital"         // Healing, curing, life/death manipulation - vital force magic
+	SchoolManifestation = "manifestation" // Companion summoning, charming, binding - uses Charisma+manifestation
 )
 
 var (
@@ -75,7 +94,7 @@ func (s SpellType) TargetTypeString(short ...bool) string {
 	if len(short) > 0 && short[0] {
 		switch s {
 		case Neutral:
-			return `Unknown`
+			return `Self`
 		case HelpSingle, HarmSingle:
 			return `Single`
 		case HelpMulti, HarmMulti:
@@ -88,7 +107,7 @@ func (s SpellType) TargetTypeString(short ...bool) string {
 	// Regular handling
 	switch s {
 	case Neutral:
-		return `Unknown`
+		return `Self`
 	case HelpSingle:
 		return `Single Target`
 	case HarmSingle:
@@ -169,11 +188,40 @@ func (s *SpellData) Validate() error {
 		s.Difficulty = 100
 	}
 
+	// Validate YAML text tokens
+	for _, text := range []string{
+		s.CastUserText, s.CastRoomText,
+		s.WaitUserText, s.WaitRoomText,
+		s.MagicUserText, s.MagicRoomText,
+	} {
+		for _, w := range textutil.ValidateTokens(text) {
+			mudlog.Warn("Spell.Validate", "spellId", s.SpellId, "warning", w)
+		}
+	}
+
+	// Validate summon fields
+	if s.SummonMobId > 0 && s.SummonBasePool == 0 {
+		mudlog.Warn("Spell.Validate", "spellId", s.SpellId, "warning", "summon_mob_id set but summon_base_pool is 0")
+	}
+	if s.SummonRequiresCorpse && s.SummonMinCorpsePool == 0 {
+		mudlog.Warn("Spell.Validate", "spellId", s.SpellId, "warning", "summon_requires_corpse set but summon_min_corpse_pool is 0")
+	}
+
 	return nil
 }
 
 func (s *SpellData) GetDifficulty() int {
 	return s.Difficulty
+}
+
+// HasSchool returns true if the spell belongs to the given school.
+func (s *SpellData) HasSchool(school string) bool {
+	for _, sc := range s.Schools {
+		if sc == school {
+			return true
+		}
+	}
+	return false
 }
 
 // GetSchoolsString returns a comma-separated string of spell schools
@@ -246,12 +294,37 @@ func MaxFoldsForSkill(skillLevel int) int {
 }
 
 // GetEligibleSpells returns spell IDs the player could discover (not in spellBook, within fold threshold).
-func GetEligibleSpells(spellBook map[string]int, castingSkillLevel int) []string {
-	maxFolds := MaxFoldsForSkill(castingSkillLevel)
+// When schools are provided, only spells belonging to at least one of those schools are returned.
+// When schools is empty, all non-manifestation spells are returned (backward compat).
+// Spells with QuestRequired set are never returned by discovery.
+func GetEligibleSpells(spellBook map[string]int, skillLevel int, schools ...string) []string {
+	maxFolds := MaxFoldsForSkill(skillLevel)
 	var eligible []string
 	for id, sp := range allSpells {
 		if _, known := spellBook[id]; known {
 			continue
+		}
+		// Quest-gated spells are never discovered organically.
+		if sp.QuestRequired != "" {
+			continue
+		}
+		// School filtering.
+		if len(schools) > 0 {
+			matched := false
+			for _, school := range schools {
+				if sp.HasSchool(school) {
+					matched = true
+					break
+				}
+			}
+			if !matched {
+				continue
+			}
+		} else {
+			// Backward compat: no school filter means all non-manifestation spells.
+			if sp.HasSchool(SchoolManifestation) {
+				continue
+			}
 		}
 		folds := sp.BaseFolds
 		if folds == 0 {

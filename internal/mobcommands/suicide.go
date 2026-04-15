@@ -11,9 +11,9 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
-	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
+	"github.com/GoMudEngine/GoMud/internal/worldevents"
 )
 
 func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
@@ -24,7 +24,7 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 		mob.Character.Health = mob.Character.HealthMax.Value
 
-		room.SendText(`<ansi fg="mobname">` + mob.Character.Name + `</ansi> is suddenly revived in a shower of sparks!`)
+		room.SendTextVisual(`<ansi fg="mobname">` + mob.Character.Name + `</ansi> is suddenly revived in a shower of sparks!`)
 
 		mob.Character.CancelBuffsWithFlag(buffs.ReviveOnDeath)
 
@@ -86,6 +86,33 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		PlayerDamage:  mob.Character.PlayerDamage,
 	})
 
+	// Emit world event for gossip system when a player kills a mob
+	if len(mob.Character.PlayerDamage) > 0 && mob.Character.Zone != `Training` {
+		// Find the first attacker name for the event description
+		killerName := "an adventurer"
+		for uId := range mob.Character.PlayerDamage {
+			if user := users.GetByUserId(uId); user != nil {
+				killerName = user.Character.Name
+				break
+			}
+		}
+		sig := worldevents.Local
+		region := ""
+		if zCfg := rooms.GetZoneConfig(mob.Character.Zone); zCfg != nil {
+			region = zCfg.Region
+		}
+		worldevents.EmitWorldEvent(worldevents.WorldEvent{
+			Type:         worldevents.MobKilledByPlayer,
+			Significance: sig,
+			ZoneName:     mob.Character.Zone,
+			RegionName:   region,
+			MobName:      mob.Character.Name,
+			PlayerName:   killerName,
+			Description: fmt.Sprintf("%s slew %s out in %s.",
+				killerName, mob.Character.Name, mob.Character.Zone),
+		})
+	}
+
 	// Stage 3.5: No XP awarded. Progression is skill-based via combat hooks.
 	// Still track kills and taming.
 
@@ -98,7 +125,7 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 				if user.Character.Aggro != nil {
 					if user.Character.Aggro.MobInstanceId == mob.InstanceId {
-						user.Character.Aggro = nil
+						user.Character.EndAggro()
 					}
 				}
 
@@ -109,34 +136,6 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 					// Check for first kill of this mob type
 					if user.Character.KD.GetMobKills(int(mob.MobId)) == 1 {
 						user.Character.OnFirstMobKill(user.UserId)
-					}
-				}
-
-				// Chance to learn to tame the creature (skill-based, no level comparison)
-				skillsDelta := int((float64(user.Character.Stats.Charisma.ValueAdj-mob.Character.Stats.Charisma.ValueAdj) + float64(user.Character.Stats.Perception.ValueAdj-mob.Character.Stats.Perception.ValueAdj)) / 2)
-				if skillsDelta < 0 {
-					skillsDelta = 0
-				}
-				targetNumber := skillsDelta + user.Character.GetCombatSkillLevel()*2
-				if targetNumber < 1 {
-					targetNumber = 1
-				}
-
-				mudlog.Debug("Tame Chance", "skillsDelta", skillsDelta, "targetNumber", targetNumber)
-
-				if util.Rand(1000) < targetNumber {
-					if mob.IsTameable() && user.Character.GetSkillLevel(skills.Spellcasting) > 0 {
-
-						currentSkill := user.Character.MobMastery.GetTame(int(mob.MobId))
-						if currentSkill < 50 {
-							user.Character.MobMastery.SetTame(int(mob.MobId), currentSkill+1)
-							if currentSkill == -1 {
-								user.SendText(fmt.Sprintf(`<ansi fg="magenta">***</ansi> You've learned how to tame a <ansi fg="mobname">%s</ansi>! <ansi fg="magenta">***</ansi>`, mob.Character.Name))
-							} else {
-								user.SendText(fmt.Sprintf(`<ansi fg="magenta">***</ansi> Your <ansi fg="mobname">%s</ansi> taming skills get a little better! <ansi fg="magenta">***</ansi>`, mob.Character.Name))
-							}
-						}
-
 					}
 				}
 
@@ -233,6 +232,7 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			MobId:        int(mob.MobId),
 			Character:    mob.Character,
 			RoundCreated: currentRound,
+			WasCharmed:   mob.Character.IsCharmed() || mob.Character.EverCharmed,
 		})
 	}
 

@@ -9,6 +9,10 @@ description: A dirt track winds north between low stone walls, connecting the
   The contrast tells a story of a community under pressure, some holding on and
   others giving up.
 biome: farmland
+coord:
+  x: -4
+  y: 1
+  z: 0
 exits:
   south:
     roomid: 440

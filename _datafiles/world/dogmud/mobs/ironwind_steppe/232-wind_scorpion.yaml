@@ -6,6 +6,8 @@ hostile: true
 maxwander: 2
 groups:
   - vermin
+hates:
+  - insectoid
 idlecommands:
   - 'emote raises its pincers defensively, tail curling overhead'
   - ''

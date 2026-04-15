@@ -126,7 +126,7 @@ func item_Spawn(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 			user.SendText(
 				fmt.Sprintf(`You wave your hands around and <ansi fg="item">%s</ansi> appears from thin air and falls to the ground.`, itm.DisplayName()),
 			)
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> waves their hands around and <ansi fg="item">%s</ansi> appears from thin air and falls to the ground.`, user.Character.Name, itm.DisplayName()),
 				user.UserId,
 			)

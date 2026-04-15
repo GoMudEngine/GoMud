@@ -4,8 +4,15 @@ The <ansi fg="command">buy</ansi> command buys an item for sale at a merchant.
 
 <ansi fg="yellow">Usage: </ansi>
 
-  <ansi fg="command">buy sword</ansi>
-  This would a sword, if you have the gold and the merchant carries the object.
+  <ansi fg="command">buy sword</ansi>              Buy one sword.
+  <ansi fg="command">buy 5 iron ingot</ansi>       Buy five iron ingots at once.
+  <ansi fg="command">buy sword from kerra</ansi>   Buy from a specific merchant.
 
-Find out more about referring to items by name by typing <ansi fg="command">help item-names</ansi>.
+When buying multiple items, the purchase stops early if you
+run out of gold or cannot carry any more.
+
+Find out more about referring to items by name by typing
+<ansi fg="command">help item-names</ansi>.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help list</ansi>, <ansi fg="command">help sell</ansi>, <ansi fg="command">help item-names</ansi>
 

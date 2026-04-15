@@ -1,0 +1,19 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">fold-anchor</ansi> spell
+
+<ansi fg="white-bold">Fold Anchor</ansi> sets a Chrysalis anchor at your current location.
+You can only have one anchor at a time. Casting again at a new
+location overwrites the previous anchor.
+
+Use <ansi fg="command">cast fold-recall</ansi> from anywhere else to teleport back
+to your anchor.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">cast fold-anchor</ansi>     Set anchor at current location.
+
+<ansi fg="yellow">Base Folds:  </ansi> <ansi fg="white-bold">6</ansi>
+<ansi fg="yellow">Target:      </ansi> <ansi fg="white-bold">Self</ansi>
+<ansi fg="yellow">Conv. Cost:  </ansi> <ansi fg="white-bold">50</ansi>
+<ansi fg="yellow">School:      </ansi> <ansi fg="white-bold">Enhancement</ansi>
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help fold-recall</ansi>, <ansi fg="command">help cast</ansi>, <ansi fg="command">help spells</ansi>

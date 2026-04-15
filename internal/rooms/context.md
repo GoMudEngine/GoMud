@@ -46,6 +46,8 @@ The `internal/rooms` package is the core world management system for GoMud, hand
 - **Lock system**: Difficulty-based locks requiring skills to open
 - **Recipe system**: Crafting recipes that trigger when ingredients are present
 - **Temporary containers**: Time-limited containers that despawn automatically
+- **Hidden containers**: Optional `Hidden` bool field hides container until discovered via search
+- **Discovery tracking**: Per-player tracking of which containers have been discovered
 
 ### Ephemeral Rooms (`ephemeral.go`)
 - **Dynamic room creation**: Runtime creation of temporary room copies
@@ -53,6 +55,47 @@ The `internal/rooms` package is the core world management system for GoMud, hand
 - **Memory optimization**: Automatic cleanup when rooms are no longer needed
 - **Zone duplication**: Creating temporary copies of entire zones
 - **ID mapping**: Tracking relationships between original and ephemeral rooms
+
+## Hidden Object Discovery System
+
+### Overview
+Rooms can contain hidden objects (containers, nouns) that are invisible until players discover them via the `search` skill. This system supports world-building secrets, optional exploration, and discovery-based puzzle elements.
+
+### HiddenNoun Structure
+```go
+type HiddenNoun struct {
+    Description       string // What `look <noun>` shows after discovery
+    HiddenDescription string // Text appended to room description for discoverers
+}
+```
+
+**Field meanings:**
+- `Description` — Rich text shown when player runs `look <noun>` after finding it
+- `HiddenDescription` — Flavor text appended to the room description when a discoverer enters the room (e.g., "You notice strange scratchmarks on the wall here.")
+- No formal parent link; references to parent objects are pure prose (e.g., "gouged into the wooden wall")
+- Hidden nouns are stored on `Room.HiddenNouns map[string]*HiddenNoun`
+- Marked `instance:"skip"` in the YAML schema — always loaded from template, never overridden by instance saves
+
+### Container Hidden Field
+```go
+type Container struct {
+    // ... other fields ...
+    Hidden bool // If true, container is invisible until discovered
+}
+```
+
+**Behavior:**
+- When `Hidden` is `true`, the container doesn't appear in room descriptions or `look` output
+- After discovery via `search`, all players see the container in room details
+- Discovery is tracked per-player in the character's discovery map
+- The container noun in the room description should be subtly highlighted with `<ansi fg="itemname">noun</ansi>` for discoverability hints
+
+### Authoring Convention
+When writing hidden noun descriptions:
+1. Reference parent objects in prose, not via formal links — e.g., "You see strange markings gouged into the **wooden wall**" rather than `parent: wall`
+2. Keep `description` focused on the hidden object itself
+3. Keep `hidden_description` brief (1-2 sentences) for room ambiance
+4. Template-driven design: hidden nouns come from `rooms/zone/roomid.yaml`, not instance saves
 
 ## Key Features
 

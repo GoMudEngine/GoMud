@@ -45,7 +45,7 @@ func SayTo(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 		} else {
 			toUser.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> says to you, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, rest))
-			room.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> says to <ansi fg="username">%s</ansi>, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, toUser.Character.Name, rest), toUser.UserId)
+			room.SendTextVisual(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> says to <ansi fg="username">%s</ansi>, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, toUser.Character.Name, rest), toUser.UserId)
 
 			events.AddToQueue(events.Communication{
 				SourceMobInstanceId: mob.InstanceId,
@@ -62,7 +62,7 @@ func SayTo(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		isSneaking := mob.Character.HasBuffFlag(buffs.Hidden)
 
 		if !isSneaking {
-			room.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> says to <ansi fg="mobname">%s</ansi>, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, toMob.Character.Name, rest))
+			room.SendTextVisual(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> says to <ansi fg="mobname">%s</ansi>, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, toMob.Character.Name, rest))
 
 			events.AddToQueue(events.Communication{
 				SourceMobInstanceId: mob.InstanceId,
@@ -139,7 +139,7 @@ func ReplyTo(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			toUser.SendText(fmt.Sprintf(`someone replies to you, "<ansi fg="saytext-mob">%s</ansi>"`, rest))
 		} else {
 			toUser.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> replies to you, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, rest))
-			room.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> replies to <ansi fg="username">%s</ansi>, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, toUser.Character.Name, rest), toUser.UserId)
+			room.SendTextVisual(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> replies to <ansi fg="username">%s</ansi>, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, toUser.Character.Name, rest), toUser.UserId)
 		}
 	} else if mobInstanceId > 0 {
 
@@ -149,7 +149,7 @@ func ReplyTo(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		isSneaking := mob.Character.HasBuffFlag(buffs.Hidden)
 
 		if !isSneaking {
-			room.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> replies to <ansi fg="mobname">%s</ansi>, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, toMob.Character.Name, rest))
+			room.SendTextVisual(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> replies to <ansi fg="mobname">%s</ansi>, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, toMob.Character.Name, rest))
 		}
 	}
 

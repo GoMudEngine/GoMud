@@ -9,13 +9,17 @@ description: Open grassland stretches east beyond the ravine and
   feels wild and empty, the steppe at its most primal -- just
   grass, wind, and sky.
 biome: land
+coord:
+  x: 15
+  y: -9
+  z: 0
 exits:
-  west:
-    roomid: 3088
   north:
-    roomid: 3094
-  south:
     roomid: 3095
+  south:
+    roomid: 3094
+  west:
+    roomid: 3091
 nouns:
   grass: Tall golden-brown grass stretching to the horizon,
     undulating in continuous waves as the wind combs through

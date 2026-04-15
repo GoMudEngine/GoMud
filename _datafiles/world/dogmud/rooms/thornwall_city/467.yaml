@@ -8,13 +8,18 @@ description: A quieter part of the city, set apart from the market's noise by a 
   temple staff. The cobblestones here are cleaner than the rest of the city, swept
   daily by acolytes. The air smells of incense and old stone.
 biome: city
+coord:
+  x: 2
+  y: 1
+  z: 0
 exits:
   south:
     roomid: 462
-  east:
-    roomid: 478
   north:
     roomid: 468
+  east:
+    roomid: 5000
+    mapdirection: east
 nouns:
   temple: The temple is built of pale limestone that has aged to a warm honey colour.
     Its architecture is old -- pointed arches, narrow windows, a spire that tapers

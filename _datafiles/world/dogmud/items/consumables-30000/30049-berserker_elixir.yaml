@@ -1,0 +1,19 @@
+itemid: 30049
+name: berserker elixir
+namesimple: elixir
+description: A blood-red elixir that burns going down.
+  Rage builds behind your eyes before the bottle leaves
+  your lips.
+type: potion
+subtype: drinkable
+uses: 1
+buffids:
+  - 67
+value: 30
+weight: 0.4
+toxicity: 25
+aging:
+  ferment_rounds: 1500
+  peak_rounds: 6000
+  decay_rounds: 18000
+  spoil_rounds: 30000

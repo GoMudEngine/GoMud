@@ -1,0 +1,100 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">equipment</ansi>
+
+Your character has a set of equipment slots. Use
+<ansi fg="command">equip &lt;item&gt;</ansi> to wear or wield gear and
+<ansi fg="command">remove &lt;item&gt;</ansi> to take it off. Use <ansi fg="command">inventory</ansi>
+to see everything you have equipped and carried.
+
+<ansi fg="yellow">━━━ Equipment Slots ━━━</ansi>
+
+  <ansi fg="yellow">Weapon</ansi>       Your primary weapon.
+  <ansi fg="yellow">Offhand</ansi>      A shield, parrying dagger, or second weapon.
+  <ansi fg="yellow">Head</ansi>         Helmets, hoods, circlets.
+  <ansi fg="yellow">Neck</ansi>         Amulets, pendants, necklaces.
+  <ansi fg="yellow">Shoulders</ansi>    Pauldrons, mantles, shawls.
+  <ansi fg="yellow">Body</ansi>         Chest and torso armor.
+  <ansi fg="yellow">Back</ansi>         Cloaks or backpacks (see below).
+  <ansi fg="yellow">Belt</ansi>         Belts or bandoliers (see below).
+  <ansi fg="yellow">Wrist</ansi>        Bracers and bracelets (two slots).
+  <ansi fg="yellow">Gloves</ansi>       Gauntlets, gloves, wraps.
+  <ansi fg="yellow">Ring</ansi>         Rings (two slots).
+  <ansi fg="yellow">Legs</ansi>         Greaves, leggings, robes.
+  <ansi fg="yellow">Feet</ansi>         Boots, sandals, sabatons.
+  <ansi fg="yellow">Components</ansi>   A crafting component bag (see below).
+
+<ansi fg="yellow">━━━ Back Slot: Cloaks vs. Backpacks ━━━</ansi>
+
+The back slot presents a meaningful choice between defense
+and carrying power.
+
+A <ansi fg="itemname">cloak</ansi> provides armor and stat bonuses like any
+other piece of gear. Good for combat-focused characters.
+
+A <ansi fg="itemname">backpack</ansi> provides no armor, but reduces the weight
+of everything inside it. If you find yourself constantly
+overburdened, a backpack lets you carry significantly more
+before penalties kick in. The trade-off is giving up
+whatever protection a cloak would provide.
+
+<ansi fg="yellow">━━━ Belt Slot: Belts vs. Bandoliers ━━━</ansi>
+
+Similar to the back slot, the belt slot has a trade-off
+between armor and utility.
+
+A <ansi fg="itemname">belt</ansi> provides armor and stat bonuses as normal.
+
+A <ansi fg="itemname">bandolier</ansi> offers no armor but stores potions in
+easy-to-reach loops. Potions you pick up are automatically
+stored in the bandolier. When you <ansi fg="command">drink</ansi> a potion,
+the bandolier is checked first, serving the oldest potion
+of that type. This is ideal for characters who rely on
+potions in combat — quick access without digging through
+your pack.
+
+Use <ansi fg="command">get &lt;potion&gt; from bandolier</ansi> to manually
+retrieve a stored potion. Removing the bandolier spills
+its contents into your backpack.
+
+Bandoliers can be crafted via tailoring. See
+<ansi fg="command">help leather-bandolier</ansi> for details.
+
+<ansi fg="yellow">━━━ Component Bag ━━━</ansi>
+
+The component bag is a dedicated slot for crafting
+materials. When equipped, materials you pick up or buy are
+automatically routed into the bag instead of cluttering
+your backpack. The bag has a limited capacity and reduces
+the weight of its contents.
+
+If you already have loose materials in your backpack, use
+<ansi fg="command">sort</ansi> to move them into the bag. Your component bag
+contents appear in a separate section of your
+<ansi fg="command">inventory</ansi>.
+
+Three tiers of bag are available, each with greater
+capacity and weight reduction. See <ansi fg="command">help component-bag</ansi>
+for the full list.
+
+Removing the bag spills its contents back into your
+backpack.
+
+<ansi fg="yellow">━━━ Mutations ━━━</ansi>
+
+Some mutations alter your available slots:
+
+  <ansi fg="yellow">Extra Arms</ansi>   Unlocks additional arm and wrist slots,
+               grouped in pairs:
+               Level 1-2: Pair B (arms 3-4, wrists 3-4)
+               Level 3-4: Pair C (arms 5-6, wrists 5-6)
+
+               Two-handed weapons fill a whole pair. Shields
+               and one-handed weapons fill a single slot.
+               Arm 1 holds weapons only; arms 2-6 hold
+               weapons or shields.
+
+  <ansi fg="yellow">Tail</ansi>         Replaces your legs slot with a tail slot.
+               Changes how certain combat moves work.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help armor</ansi>, <ansi fg="command">help inventory</ansi>,
+  <ansi fg="command">help component-bag</ansi>, <ansi fg="command">help leather-bandolier</ansi>,
+  <ansi fg="command">help equip</ansi>

@@ -17,6 +17,9 @@ idlecommands:
   - ''
   - 'emote picks at something between its teeth with a dirty claw'
 activitylevel: 25
+reaction_delay: 1.5
+tactical_discipline: 0.30
+tactic_preset: aggressive_melee
 character:
   name: goblin scrapper
   description: |

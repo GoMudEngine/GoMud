@@ -179,6 +179,13 @@ func LoginUser(user *UserRecord, connectionId connections.ConnectionId) (*UserRe
 
 				user.connectionId = connectionId
 
+				// Apply persisted charset preference to connection
+				if user.AsciiMode {
+					cs := connections.GetClientSettings(connectionId)
+					cs.AsciiMode = true
+					connections.OverwriteClientSettings(connectionId, cs)
+				}
+
 				userManager.Users[user.UserId] = user
 				userManager.Usernames[user.Username] = user.UserId
 				userManager.Connections[user.connectionId] = user.UserId
@@ -210,6 +217,13 @@ func LoginUser(user *UserRecord, connectionId connections.ConnectionId) (*UserRe
 	user.SetLastInputRound(util.GetRoundCount())
 
 	user.connectionId = connectionId
+
+	// Apply persisted charset preference to connection
+	if user.AsciiMode {
+		cs := connections.GetClientSettings(connectionId)
+		cs.AsciiMode = true
+		connections.OverwriteClientSettings(connectionId, cs)
+	}
 
 	userManager.Users[user.UserId] = user
 	userManager.Usernames[user.Username] = user.UserId
@@ -338,6 +352,17 @@ func LoadUser(username string, skipValidation ...bool) (*UserRecord, error) {
 		}
 	}
 
+	// One-time migrations
+	loadedUser.Character.MigratePairedSpells()
+	loadedUser.Character.MigrateNeckToBack()
+	loadedUser.Character.MigrateQuestSpells()
+	loadedUser.Character.MigrateAlchemyPotions()
+	loadedUser.Character.MigrateAlchemyRecipes()
+	loadedUser.Character.MigrateDescriptionWrapping()
+	loadedUser.Character.MigrateQuestFlags()
+	loadedUser.Character.MigrateLegacyPotions()
+	loadedUser.Character.MigrateEnchantments()
+
 	if loadedUser.Joined.IsZero() {
 		loadedUser.Joined = time.Now()
 	}
@@ -425,6 +450,10 @@ func ValidateName(name string) error {
 		return errors.New("that username is in use")
 	}
 
+	if CompanionNameExists(name) {
+		return errors.New("that name is in use by a companion")
+	}
+
 	return nil
 }
 
@@ -468,6 +497,35 @@ func CharacterNameSearch(nameToFind string) (foundUserId int, foundUserName stri
 	})
 
 	return foundUserId, foundUserName
+}
+
+// CompanionNameExists checks whether any player (online or offline) has a
+// companion whose Nickname matches the given string (case-insensitive exact
+// match). Used to prevent new characters from taking a name already in use
+// by a companion. Names are freed when companions die or are dismissed.
+func CompanionNameExists(name string) bool {
+	// Check online users first (fast path).
+	for _, u := range GetAllActiveUsers() {
+		for _, comp := range u.Character.Companions {
+			if strings.EqualFold(comp.Nickname, name) {
+				return true
+			}
+		}
+	}
+
+	// Check offline users.
+	found := false
+	SearchOfflineUsers(func(u *UserRecord) bool {
+		for _, comp := range u.Character.Companions {
+			if strings.EqualFold(comp.Nickname, name) {
+				found = true
+				return false // stop searching
+			}
+		}
+		return true
+	})
+
+	return found
 }
 
 func SaveUser(u UserRecord, isAutoSave ...bool) error {

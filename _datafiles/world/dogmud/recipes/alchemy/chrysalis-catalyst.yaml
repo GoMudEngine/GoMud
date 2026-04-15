@@ -1,0 +1,22 @@
+id: chrysalis-catalyst
+name: Chrysalis Catalyst
+skill: alchemy
+skill_minimum: 40
+station: alchemy_bench
+time_rounds: 12
+ingredients:
+  - item_tag: veilbloom
+    quantity: 2
+  - item_tag: chrysalis-core
+    quantity: 2
+  - item_tag: hive-fragment
+    quantity: 1
+  - item_tag: moonpetal
+    quantity: 1
+  - item_tag: bottle
+    quantity: 1
+output:
+  item_id: 30056
+  quantity: 1
+success_message: "The dense liquid hums against the glass, saturated with chrysalis energy. A chrysalis catalyst!"
+failure_message: "The chrysalis energy overwhelms the vessel and dissipates. The materials are wasted."

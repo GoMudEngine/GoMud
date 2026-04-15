@@ -1,0 +1,18 @@
+itemid: 30050
+name: silver tongue oil
+namesimple: oil
+description: An opalescent oil with a faint floral scent.
+  Words feel sharper and more persuasive after a sip.
+type: potion
+subtype: drinkable
+uses: 1
+buffids:
+  - 68
+value: 30
+weight: 0.3
+toxicity: 22
+aging:
+  ferment_rounds: 1500
+  peak_rounds: 6000
+  decay_rounds: 18000
+  spoil_rounds: 30000

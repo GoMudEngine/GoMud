@@ -140,17 +140,17 @@ func TestCharacter_GetMiscDataKeys(t *testing.T) {
 	}
 }
 func TestCharacter_CarryCapacity(t *testing.T) {
-	// CarryCapacity() = float64(strengthAdj) * 3.0
+	// CarryCapacity() = float64(strengthAdj) * Balance.CarryCapacityMultiplier (default 0.65)
 	tests := []struct {
 		name        string
 		strengthAdj int
 		expectedCap float64
 	}{
 		{"Strength 0", 0, 0.0},
-		{"Strength 2", 2, 6.0},
-		{"Strength 10", 10, 30.0},
-		{"Strength 100", 100, 300.0},
-		{"Negative Strength", -3, -9.0},
+		{"Strength 2", 2, 1.3},
+		{"Strength 10", 10, 6.5},
+		{"Strength 100", 100, 65.0},
+		{"Negative Strength", -3, -1.9500000000000002},
 	}
 
 	for _, tt := range tests {
@@ -2059,8 +2059,8 @@ func TestCharacter_GetSkillLevel(t *testing.T) {
 		{
 			name: "Skill exists with zero value",
 			args: args{
-				skillsMap: map[string]int{string(skills.Cast): 0},
-				skillTag:  skills.Cast,
+				skillsMap: map[string]int{string(skills.Spellcasting): 0},
+				skillTag:  skills.Spellcasting,
 			},
 			expected: 0,
 		},
@@ -2068,7 +2068,7 @@ func TestCharacter_GetSkillLevel(t *testing.T) {
 			name: "Skill does not exist",
 			args: args{
 				skillsMap: map[string]int{string(skills.Spellcasting): 2},
-				skillTag:  skills.Cast,
+				skillTag:  skills.Search,
 			},
 			expected: 0,
 		},
@@ -2076,7 +2076,7 @@ func TestCharacter_GetSkillLevel(t *testing.T) {
 			name: "Nil Skills map",
 			args: args{
 				skillsMap: nil,
-				skillTag:  skills.Tracking,
+				skillTag:  skills.Search,
 			},
 			expected: 0,
 		},
@@ -2084,19 +2084,19 @@ func TestCharacter_GetSkillLevel(t *testing.T) {
 			name: "Multiple skills, get correct one",
 			args: args{
 				skillsMap: map[string]int{
-					string(skills.Cast):      2,
+					string(skills.Spellcasting):  2,
 					string(skills.WeaponCombat): 1,
-					string(skills.Tracking):       4,
+					string(skills.Search):       4,
 				},
-				skillTag: skills.Tracking,
+				skillTag: skills.Search,
 			},
 			expected: 4,
 		},
 		{
 			name: "Skill exists with negative value",
 			args: args{
-				skillsMap: map[string]int{string(skills.Cast): -2},
-				skillTag:  skills.Cast,
+				skillsMap: map[string]int{string(skills.Bartering): -2},
+				skillTag:  skills.Bartering,
 			},
 			expected: -2,
 		},
@@ -2556,4 +2556,70 @@ func TestGetDefenseStaminaCost(t *testing.T) {
 			assert.Equal(t, tt.want, got)
 		})
 	}
+}
+
+func TestCharacter_Discoveries(t *testing.T) {
+	c := New()
+
+	// No discoveries initially
+	assert.False(t, c.HasDiscovery(100, "compartment"))
+
+	// Add a discovery
+	c.AddDiscovery(100, "compartment")
+	assert.True(t, c.HasDiscovery(100, "compartment"))
+
+	// Idempotent — adding again doesn't duplicate
+	c.AddDiscovery(100, "compartment")
+	assert.Equal(t, 1, len(c.Discoveries[100]))
+
+	// Different room, different namespace
+	assert.False(t, c.HasDiscovery(200, "compartment"))
+
+	// Multiple discoveries in same room
+	c.AddDiscovery(100, "chest")
+	assert.True(t, c.HasDiscovery(100, "chest"))
+	assert.Equal(t, 2, len(c.Discoveries[100]))
+}
+
+func TestCharacter_SkillMigration_TrackingAndForaging(t *testing.T) {
+	c := New()
+	c.Skills["tracking"] = 5
+	c.Skills["foraging"] = 3
+	c.SkillUseCount["tracking"] = 100
+	c.SkillUseCount["foraging"] = 50
+	delete(c.Skills, "search")
+
+	c.Validate()
+
+	assert.Equal(t, 5, c.Skills["search"], "search should be max(tracking, foraging)")
+	assert.Equal(t, 150, c.SkillUseCount["search"], "use counts should be summed")
+	assert.Zero(t, c.Skills["tracking"], "tracking should be removed")
+	assert.Zero(t, c.Skills["foraging"], "foraging should be removed")
+	assert.Zero(t, c.SkillUseCount["tracking"])
+	assert.Zero(t, c.SkillUseCount["foraging"])
+}
+
+func TestCharacter_SkillMigration_ForagingOnly(t *testing.T) {
+	c := New()
+	c.Skills["foraging"] = 7
+	c.SkillUseCount["foraging"] = 200
+	delete(c.Skills, "search")
+	delete(c.Skills, "tracking")
+
+	c.Validate()
+
+	assert.Equal(t, 7, c.Skills["search"])
+	assert.Equal(t, 200, c.SkillUseCount["search"])
+	assert.Zero(t, c.Skills["foraging"])
+}
+
+func TestCharacter_SkillMigration_Idempotent(t *testing.T) {
+	c := New()
+	c.Skills["search"] = 10
+	c.SkillUseCount["search"] = 500
+
+	c.Validate()
+
+	assert.Equal(t, 10, c.Skills["search"], "should not change existing search")
+	assert.Equal(t, 500, c.SkillUseCount["search"])
 }

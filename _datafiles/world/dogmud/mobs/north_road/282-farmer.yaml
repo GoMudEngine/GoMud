@@ -1,0 +1,33 @@
+mobid: 282
+zone: North Road
+statpool: 35
+itemdropchance: 0
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 3
+groups:
+  - humanoid
+idlecommands:
+  - 'emote adjusts a heavy sack across one shoulder'
+  - 'wander'
+  - 'emote shields eyes against the wind and squints down the road'
+  - ''
+  - 'emote nods in passing, not breaking stride'
+  - 'wander'
+activitylevel: 20
+character:
+  name: farmer
+  description: A weather-beaten figure in rough homespun, moving with the
+    unhurried pace of someone who measures distance in daylight rather than
+    miles. A sack of something heavy is slung over one shoulder. The kind of
+    person who has walked this road a thousand times and will walk it a
+    thousand more.
+  speciesid: 1
+  level: 1
+  gold: 1
+  stats:
+    strength:
+      training: 8
+    vitality:
+      training: 6

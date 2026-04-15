@@ -10,13 +10,17 @@ description: The cave walls here are riddled with small tunnels and
   sounds come from the walls in every direction, an unsettling
   reminder that you are surrounded by unseen inhabitants.
 biome: cave
+coord:
+  x: 14
+  y: 8
+  z: 0
 exits:
+  north:
+    roomid: 3110
   south:
     roomid: 3104
   west:
     roomid: 3103
-  north:
-    roomid: 3110
 nouns:
   tunnels: Small tunnels gnawed into the cave walls by deep
     gnawers, each about the width of two fists. The edges are

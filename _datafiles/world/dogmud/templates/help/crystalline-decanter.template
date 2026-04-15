@@ -1,0 +1,15 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">crystalline-decanter</ansi> (jewelcrafting recipe)
+
+A masterwork vessel of crystal-clear glass fused with gemstone
+dust and sealed with chrysalis energy. Potions stored in a
+crystalline decanter age at a quarter of the normal rate --
+the finest preservation money can buy.
+
+<ansi fg="yellow">━━━ Crafting ━━━</ansi>
+
+  <ansi fg="yellow">Skill:</ansi>       jewelcrafting (minimum 20)
+  <ansi fg="yellow">Station:</ansi>     jeweler bench
+  <ansi fg="yellow">Ingredients:</ansi> raw gem (x1), chrysalis shard (x1),
+                 glass vial (x2)
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help jewelcrafting</ansi>, <ansi fg="command">help craft</ansi>

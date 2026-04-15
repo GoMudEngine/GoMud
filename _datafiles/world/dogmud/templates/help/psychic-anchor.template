@@ -1,0 +1,21 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">psychic-anchor</ansi> spell
+
+The <ansi fg="command">Psychic Anchor</ansi> spell drives a psionic anchor into the target's
+consciousness, rooting their mind to the present location and severing
+their ability to move or teleport away. An anchored target cannot
+flee or escape through magical means.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">cast psychic-anchor [target]</ansi>
+
+<ansi fg="yellow">Details: </ansi>
+
+  <ansi fg="yellow">Type:        </ansi> Harm Single
+  <ansi fg="yellow">School:      </ansi> Mental
+  <ansi fg="yellow">Base Folds:  </ansi> 8
+  <ansi fg="yellow">Conv. Cost:  </ansi> 60
+  <ansi fg="yellow">Defense:     </ansi> Mental — willpower resists the anchoring
+  <ansi fg="yellow">Effect:      </ansi> Immobilizes the target, preventing movement or teleport
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help spells</ansi>, <ansi fg="command">help cast</ansi>

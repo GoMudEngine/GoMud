@@ -21,6 +21,13 @@ idlecommands:
   - ''
   - 'emote shifts its bulk with a grinding of stone and scale'
 activitylevel: 10
+reaction_delay: 0.8
+tactical_discipline: 0.85
+tactic_preset: aggressive_melee
+tactics:
+  - trigger: multiple_targets
+    action: retarget_strongest
+    priority: 8
 character:
   name: windscour wyrm
   description: |

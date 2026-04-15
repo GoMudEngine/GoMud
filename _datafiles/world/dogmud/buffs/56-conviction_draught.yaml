@@ -1,0 +1,7 @@
+buffid: 56
+name: Conviction Draught
+description: Renewed purpose sharpens your focus.
+triggerrate: 1 round
+triggercount: 150
+statmods:
+  convictionrecovery: 3

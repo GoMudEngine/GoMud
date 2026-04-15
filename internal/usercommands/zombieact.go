@@ -18,7 +18,7 @@ func ZombieAct(rest string, user *users.UserRecord, room *rooms.Room, flags even
 	}
 
 	if util.Rand(5) == 0 {
-		room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> moans, groans and sways a bit...`, user.Character.Name), user.UserId)
+		room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> moans, groans and sways a bit...`, user.Character.Name), user.UserId)
 	}
 
 	return true, nil

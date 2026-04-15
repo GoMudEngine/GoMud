@@ -9,17 +9,15 @@ description: The ridge descends northward here, the spine of rock
   unpredictable directions. A faint trail picks its way through
   the gaps, heading down toward the cliff country to the north.
 biome: cliffs
+coord:
+  x: 16
+  y: 4
+  z: 0
 exits:
-  south:
-    roomid: 3038
-  southwest:
-    roomid: 3028
   west:
-    roomid: 3037
-  north:
-    roomid: 3101
-  east:
-    roomid: 3064
+    roomid: 3038
+  south:
+    roomid: 3040
 nouns:
   boulders: Massive blocks of broken basalt, tumbled from the
     ridge crest and piled in chaotic heaps. Some are taller

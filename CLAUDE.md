@@ -11,11 +11,10 @@ Follow the branch strategy in `github_guide.md`:
 - Merge features into development with `--no-ff`
 - Use conventional commit messages (feat:, fix:, refactor:, docs:, chore:)
 
-## Stage Completion SOP
-After completing each substage (e.g., 3.6, 3.7, etc.):
-1. Update `DEVELOPMENT_PLAN.md` — mark the stage as ✅ COMPLETED with merge commit hash
-2. Update the timeline table status (e.g., "3.1–3.7 Complete")
-3. Update the "Current Stage" line at the bottom to reflect the next stage
+## Pre-Push SOP
+Before pushing to prod (origin/master), update `PATCH_NOTES.md` in the
+project root with dated entries describing the work being pushed. Group
+changes by category (features, fixes, balance, etc.).
 
 ## Room Instance Saves (Important!)
 When editing room YAML templates in `_datafiles/world/dogmud/rooms/`, always check for **instance saves** in `_datafiles/world/dogmud/rooms.instances/` that may override your changes. The engine loads templates first, then overwrites with instance data if present. After editing room templates:
@@ -24,6 +23,23 @@ When editing room YAML templates in `_datafiles/world/dogmud/rooms/`, always che
 3. Remind the user to restart the server after cleanup
 
 Known issue: The instance save system can silently override template edits, making it appear that file changes aren't taking effect.
+
+## Shop Persistence (Living Economy)
+Shop economic state (stock levels, NPC gold, restock timers) persists in
+`_datafiles/world/dogmud/shops/{zone}/{mobid}-room{roomid}.yaml`. This
+directory is completely separate from `rooms.instances/` and
+`mobs.instances/` and is NOT cleaned by the instance save cleanup SOP.
+Deleting a shop file resets that merchant to template defaults (500g
+starting gold, base stock levels).
+
+Dynamic pricing ranges from 0.25x (overstocked) to 5.0x (out of stock),
+driven by the `ShopAbundanceThreshold` and normalized per item by restock
+quantity. Config knobs: `ShopBuyRatio`, `ShopPriceFloor`, `ShopPriceCeiling`,
+`ShopAbundanceThreshold`, `ShopMaterialReserve`, `ShopGoldReserveRatio`,
+`BarterMaxDiscount`, `BarterMaxBonus`.
+
+Non-combatant mobs (`non_combatant: true` in YAML) cannot be attacked,
+stolen from, or targeted by harm spells.
 
 ## Project Context
 - DOGMud (Delusions of Grandeur) is a MUD built on the GoMud engine
@@ -157,11 +173,153 @@ Never display raw numeric values (damage, healing, armor points, round counts, e
 
 Displaying raw numbers breaks immersion and leaks internal balance values to players. The exception is the `status` command's stat sheet — that is a deliberate mechanical display.
 
+## Quest Re-Grant Prevention SOP
+Every dialogue node or pattern with `grantsQuest` must include the quest's
+**end token** (e.g., `{questid}-end`) in `questExcluded`, not just the token
+being granted. Without this, a player who completed the quest can get it
+re-offered. Example: `grantsQuest: "10-start"` requires
+`questExcluded: ["10-start", "10-end"]`. The dialogue loader logs a warning
+at runtime if this exclusion is missing.
+
 ## Quest NPC Dialogue SOP
 Every quest-granting dialogue node (any tree node with `grantsQuest`) MUST include
 `"quest"` and `"task"` in its `triggers` list. Similarly, quest-introducing
 `patterns` entries must include `"quest"` and `"task"` in `keywords`. This ensures
 `ask <npcname> quest` always works for discovering available quests.
+
+## Dialogue Voice & Trigger Discoverability
+- NPC `text` fields are spoken by the NPC — always first person ("I", "my", "me").
+- `hints` are narrator text for the player — describe options from the player's
+  perspective. **NEVER** write 3rd-person self-references like "Ask about why she
+  left" when "she" is the speaking NPC. Write "You could ask why she left" or
+  "You could ask about the marriage."
+- Every trigger word MUST be discoverable — it must appear in a hint, NPC text,
+  room description, or quest log. Undiscoverable triggers are broken triggers.
+- Prefer `questRequired` over `requires` for quest-gated nodes. `requires` depends
+  on per-player memory that can expire and brick quests.
+- `expiryPeriod` should almost never be set. The ONLY valid use is quests
+  where urgency is the design intent (e.g., timed delivery before an attack).
+  For all other NPCs, leave it empty or omit entirely.
+
+## Quest Item Delivery — give.go Gotcha
+**CRITICAL:** `give.go` transfers the item from the player to the mob BEFORE the
+`onGive` script fires. The script cannot prevent or undo the transfer. Consequences:
+- Every NPC that should accept a quest item needs an `onGive` script (otherwise
+  the mob does the default "considers the item" emote and the quest doesn't advance)
+- NPCs that should NOT keep the item (e.g., the quest giver who handed it out)
+  need an `onGive` script that calls `user.GiveItem(itemId)` to return a copy
+- Quest givers who hand out physical items via `givesItem` must also have a
+  recovery dialogue node that gives a replacement if the player lost the item
+
+## Dialogue Engine: givesItem
+Tree nodes and patterns support `givesItem: <itemId>`. When a node fires with
+`givesItem` set, the player receives the item and sees "You receive a <itemname>."
+Use this for NPCs handing quest items to the player during dialogue.
+
+## Quest Flags System
+Quest flags store arbitrary metadata about quest choices. Primary use case:
+tracking which branch a player took in an opposed/branching quest.
+
+### Flag Declaration (Quest YAML)
+Quests declare expected flags with allowed values. **Undeclared flag
+references cause a server panic at startup** — this catches typos before
+they reach production.
+
+```yaml
+flags:
+  - key: branch
+    values: [sylara, rhett]
+    description: "Which NPC the player sided with"
+```
+
+Flag key convention: `"{questId}-{flagName}"` (e.g., `"11-branch"`).
+
+### Dialogue Integration
+- `setsQuestFlag: {key: "11-branch", value: "rhett"}` — set a flag on
+  node match
+- `questFlagRequired: {"11-branch": "rhett"}` — gate on flag value
+- `questFlagExcluded: {"11-branch": "sylara"}` — hide if flag matches
+
+### Quest Engine Integration
+- Conditions: `has_flag: {"11-branch": "rhett"}`, `missing_flag: ...`
+- Action: `set_flag: {key: "11-branch", value: "rhett"}`
+
+### Admin/Scripting
+- `questtoken flags` — show all flags on your character
+- `questtoken flag <key> [value]` — view or set a flag
+- JS scripting: `user.GetQuestFlag(key)`, `user.SetQuestFlag(key, value)`,
+  `user.HasQuestFlag(key)`
+
+### Branching Quest SOP
+Every branching quest MUST have:
+1. Flag declaration in quest YAML with all valid values
+2. `setsQuestFlag` on each branch NPC's quest-start dialogue node
+3. `questFlagRequired` on followup quest offers to gate by branch
+4. **Dismissal nodes** at the TOP of each NPC's tree nodes list for
+   wrong-path players — without these, keyword patterns fire and
+   players think there's a hidden quest
+5. Root variants with `questFlagRequired` for path-specific greetings
+6. Mid-quest root variants for cross-NPC visits during the OTHER quest
+
+## Equipment Slots
+Default slots: Weapon, Offhand, Head, Neck, Shoulders, Body, Back, Belt,
+Wrist (x2), Gloves, Ring (x2), Legs, Feet, Component Bag.
+
+Mutation-gated slots (Extra Arms mutation, levels 1-4):
+- Each level unlocks one ExtraArm + one ExtraWrist slot
+- Level 1: Arm 3 + Wrist 3. Level 2: Arm 4 + Wrist 4.
+  Level 3: Arm 5 + Wrist 5. Level 4: Arm 6 + Wrist 6.
+- Escalating penalties: charisma -28/-42/-56/-70, aggro 1.0/1.5/2.0/2.5x
+- Combat hit penalty: +20 per arm beyond offhand
+
+Back slot: Cloaks (stats) or backpacks (weight reduction on backpack
+contents). Component Bag slot: Holds crafting materials. `is_component:
+true` items auto-route on pickup. `sort` command migrates existing
+materials. `bag_capacity` limits items. Weight reduction on component bag
+contents (typical 30%).
+
+ItemSpec fields: `is_component` (bool), `weight_reduction` (float64 0-1),
+`bag_capacity` (int). New ItemTypes: `wrist`, `back`, `shoulders`,
+`componentbag`.
+
+Tail mutation: adds Tail slot, disables Legs slot. `tail` ItemType. Trip
+reskins to tailsweep with enhanced damage/knockdown when mutation active.
+
+## Spell Duration System
+All spell durations use `calcSpellDuration(baseFolds, skill, willpower)`:
+`duration = baseFolds × (10 + wil/20 + skill/2)`. Effect-specific scaling:
+shield = full, heal = ÷2, DoT = ÷3.
+
+## Buff/Ward Spell System
+- Shield spells scale by `effect_magnitude` (100 = 1.0x baseline).
+  Conviction Ward = 75, Chrysalis Cocoon = 125.
+- Shield duration: via `calcSpellDuration`. Crits +50% strength.
+- Buff statmods `magical_mitigation` and `conviction_mitigation` flow
+  through `GetMagicalMitigation()` / `GetConvictionMitigation()`.
+- Kick command auto-selects variant: kick (standing), stomp (prone),
+  knee (grapple+control). Config: `KickDamagePercent` (0.80),
+  `StompDamagePercent` (1.20), `KneeDamagePercent` (1.00).
+- Hidden mob detection on room entry: Perception+Search vs Dex+Skullduggery
+  opposed roll in `go.go`. Mobs can spawn hidden via `buffids: [9]`.
+
+## Inventory & Item Disambiguation
+- **Disambiguation formats:** Players can use `N.item` (diku-style) or `item#N`
+  (hash-style) to target a specific item when multiples exist. `all.item` targets
+  all matching items (supported by `get` and `drop`).
+- **Unified FindItem:** `look` and `identify` search backpack + equipped items as
+  a single pool for disambiguation. `dagger#2` can reach a wielded dagger if the
+  first match is in backpack. Source is reported ("in your backpack" / "wielded").
+- **Inventory stacking:** Display-only. Items with same ItemId + EnchantType +
+  EnchantTier + Uses are grouped with `(xN)` count. Storage is unchanged.
+- **Carry capacity:** `Strength × Balance.CarryCapacityMultiplier` (default 0.65).
+  Displayed as colored encumbrance tiers (light/moderate/heavy/overburdened/crushed),
+  never raw numbers. `{enc}` prompt token available.
+- **Encumbrance penalties:** Movement stamina 1-5x multiplier when over capacity
+  (`go.go`). Combat swings reduced up to 50% when over capacity (`combat_helpers.go`).
+- **Multi-buy:** `buy 5 iron ingot` purchases N copies, stops early on insufficient
+  funds or carry capacity.
+- **Enchanting targeting:** `craft <recipe> <item-name>` targets a specific item.
+  Searches both backpack and equipped items. Shows numbered list when ambiguous.
 
 ## Content Generation Commands
 Use slash commands to generate new data files. Claude automatically loads world.md,
@@ -179,6 +337,20 @@ Full workflow: `docs/CONTENT_GENERATION_GUIDE.md`
 
 After generating any file: restart server. If editing an existing zone, check
 `_datafiles/world/dogmud/rooms.instances/` for stale instance saves.
+
+## AI Testing
+Run autonomous AI testers against the MUD server:
+- `/test-mud local feature-tester phase2-summons.yaml` — test specific features locally
+- `/test-mud prod bug-finder` — exploratory bug hunting on production
+- `/test-mud local feel-tester` — natural play session for UX feedback
+
+Config: `tools/testing/targets.yaml` (server credentials)
+Roles: `tools/testing/roles/` (bug-finder, feature-tester, feel-tester)
+Goals: `tools/testing/goals/` (session-specific test objectives)
+Reports: `tools/testing/reports/` (output, gitignored)
+
+Prerequisites: test character must exist, be AI-flagged, and have
+tutorial completed. Edit player YAML directly for setup.
 
 ## Mob Stat Archetypes
 Mobs have an optional `archetype` field that controls stat pool distribution:
@@ -202,3 +374,74 @@ damage when the weapon is equipped. This is independent of `damage_multiplier`
 
 `spell_damage_multiplier` is applied in `calcSpellDamage()` and
 `calcMobSpellDamage()` in `internal/hooks/spell_resolution.go`.
+
+## Alchemy & Potions System
+Potions use a witcher-style design with aging, toxicity, and craft-skill scaling.
+
+### Potion Aging
+- Five phases: Fresh (1.0x) → Fermented (1.15x) → Peak (1.30x) → Declining (1.30→0.5x) → Spoiled (harmful)
+- Thresholds defined per-potion in `aging:` YAML field (ferment/peak/decay/spoil rounds)
+- Aging speed = `bottleMultiplier × (1.0 - craftSkill/200)` — higher = faster aging
+- `items.GetAgingPhase()` and `items.CalcEffectiveAgingSpeed()` in `internal/items/aging.go`
+
+### Bottle Tiers
+| Bottle | ItemID | Aging Multiplier | component_tag |
+|--------|--------|-----------------|---------------|
+| Clay Flask | 40043 | 3.0x (fastest) | bottle |
+| Glass Vial | 40006 | 1.0x (baseline) | bottle |
+| Sealed Phial | 40044 | 0.5x | bottle |
+| Crystalline Decanter | 40045 | 0.25x (slowest) | bottle |
+
+All share `component_tag: bottle`. Crafting consumes the first match. The bottle's `BottleAgingMultiplier` is stamped on the output item's `BottleMultiplier` field.
+
+### Toxicity
+- Each potion has a `toxicity` field (int) on ItemSpec
+- `Character.Toxicity` accumulates; decays by `ToxicityDecayPerTick` per regen tick
+- `GetToxicityMax() = ToxicityBaseMax + Vitality/ToxicityVitalityScale`
+- Threshold penalties via `GetToxicityPenalties()`: regen/Per/Dex penalties at 50/75/90%
+- Spoiled potions apply 3x toxicity + nausea debuff (buff 75)
+
+### Craft Skill Scaling
+- Duration: `baseDuration × (1.0 + craftSkill/100) × agingPotencyMultiplier`
+- Aging speed reduction: skill 30 = 15% slower aging
+- Applied in `drink.go` via `AddBuffScaled()`
+
+### Potion Bandolier
+- Belt-slot item with `is_bandolier: true` and `bandolier_capacity` field
+- Auto-routes potions in `StoreItem()`, consumed first by `drink` (oldest first)
+- Removal spills to backpack. Weight reduction applies to contents.
+- `Character.PotionItems` slice, displayed in inventory "Potions:" section
+
+### Buff IDs
+- 54-60: Pool regen potions (healing salve through elixir of renewal)
+- 61-70: Combat/utility potions (ironhide through purging draught)
+- 71-74: Progression potions (essence of growth through chrysalis catalyst)
+- 75: Spoiled potion nausea debuff
+- 76: Purging draught weakness debuff
+
+### Item IDs
+- 30036-30056: New potion items
+- 40043-40049: New alchemy materials (bottles + forage/drop ingredients)
+
+## Salvage System
+Players can break down crafted items (or items with `salvage_returns` on
+their ItemSpec) to recover materials. New standalone skill: `salvage`,
+primary stat: Perception, progression multiplier 2.0.
+
+### How It Works
+- `salvage <item>` starts a multi-round activity (1-5 rounds based on
+  ingredient gold value).
+- Each ingredient is rolled independently. Chance scales with skill:
+  `chance = min + (max - min) * sqrt(skill / softCap)`.
+- Config: `SalvageMinChance` (0.15), `SalvageMaxChance` (0.85),
+  `SalvageSoftCap` (50).
+- Item is always consumed, even if no materials recovered.
+
+### Stations & Tool
+- Free at the recipe's crafting station (forge, alchemy bench, etc.).
+- Salvage Kit (sold by Fence Dealer Siv, 1g) allows salvage anywhere.
+- Tagged items (non-crafted with `salvage_returns`) require the tool.
+
+### ItemSpec Fields
+- `salvage_returns`: list of `{item_tag, quantity}` for non-crafted items.
+  Every `item_tag` must match a valid `component_tag` on an existing item.

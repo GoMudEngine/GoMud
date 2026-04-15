@@ -53,6 +53,11 @@ func ItemTypes() []ItemTypeInfo {
 		{string(Ring), `This can be worn in the players ring equipment slot.`, 0, 20000, 29999},
 		{string(Legs), `This can be worn in the players legs equipment slot.`, 0, 20000, 29999},
 		{string(Feet), `This can be worn in the players feet equipment slot.`, 0, 20000, 29999},
+		{string(Tail), `Worn on the tail.`, 0, 20000, 29999},
+		{string(Wrist), `Worn on the wrist.`, 0, 20000, 29999},
+		{string(Back), `Worn on the back.`, 0, 20000, 29999},
+		{string(Shoulders), `Worn on the shoulders.`, 0, 20000, 29999},
+		{string(ComponentBag), `A bag for crafting materials.`, 0, 30000, 39999},
 		// Consumables
 		{string(Potion), `This is a magic potion.`, 0, 30000, 39999},
 		{string(Food), `This is food.`, 0, 30000, 39999},
@@ -88,6 +93,7 @@ func ItemSubtypes() []ItemTypeInfo {
 		{string(Slashing), `A slicing and slashing weapon.`, 0, 0, 0},
 		{string(Shooting), `A ranged weapon.`, 0, 0, 0},
 		{string(Claws), `A slashing weapon worn on the hands.`, 0, 0, 0},
+		{string(Fist), `A weapon that enhances unarmed strikes.`, 0, 0, 0},
 		{string(Whipping), `A whipping weapon.`, 0, 0, 0},
 		{string(Wand), `A caster weapon that boosts spell damage.`, 0, 0, 0},
 		{string(Sceptre), `A caster weapon that boosts spell damage.`, 0, 0, 0},
@@ -109,8 +115,13 @@ const (
 	Belt    ItemType = "belt"
 	Gloves  ItemType = "gloves"
 	Ring    ItemType = "ring"
+	Wrist   ItemType = "wrist"        // Bracelets, bracers
+	Back    ItemType = "back"         // Cloaks, backpacks
+	Shoulders ItemType = "shoulders"    // Pauldrons, mantles
+	ComponentBag ItemType = "componentbag" // Crafting material bags
 	Legs    ItemType = "legs"
 	Feet    ItemType = "feet"
+	Tail    ItemType = "tail"             // Tail attachments (tail mutation slot)
 	// Consumables
 	Potion  ItemType = "potion"
 	Food    ItemType = "food"
@@ -145,6 +156,7 @@ const (
 	Slashing    ItemSubType = "slashing"
 	Shooting    ItemSubType = "shooting" // bows, crossbows, guns, etc.
 	Claws       ItemSubType = "claws"
+	Fist        ItemSubType = "fist"
 	Bite        ItemSubType = "bite"
 	Sting       ItemSubType = "sting"
 	Gore        ItemSubType = "gore"
@@ -190,6 +202,7 @@ const (
 	TokenDefender     TokenName = "{defender}" // Stage 9.3: defensive action messages
 	TokenAttacker     TokenName = "{attacker}" // Stage 9.3: defensive action messages
 	TokenWeapon       TokenName = "{weapon}"   // Stage 9.3: defensive action messages
+	TokenAttack       TokenName = "{attack}"   // Generic "strike"/"blow" for unarmed, weapon name for armed
 	TokenStance       TokenName = "{stance}"   // Stage 9.4: combat stance (aggressive/defensive/balanced/reckless)
 	TokenPosition     TokenName = "{position}" // Stage 9.4: combat position (standing/prone/clinched/grounded)
 	TokenMomentum     TokenName = "{momentum}" // Stage 9.4: combat momentum (offensive/defensive/pressured/in control)
@@ -253,6 +266,27 @@ type ItemSpec struct {
 	Cursed          bool              `yaml:"cursed,omitempty"`      // Can't be removed once equipped
 	KeyLockId       string            `yaml:"keylockid,omitempty"`   // Example: `778-north` - If it's a key, what lock does it open? roomid-exitname etc.
 	ComponentTag    string            `yaml:"component_tag,omitempty"` // Spell component tag (e.g. "stone" for throw-stone)
+	IsComponent           bool              `yaml:"is_component,omitempty"`            // Auto-routes to component bag on pickup
+	WeightReduction       float64           `yaml:"weight_reduction,omitempty"`        // 0.0-1.0, fraction of contents weight reduced
+	BagCapacity           int               `yaml:"bag_capacity,omitempty"`            // Max items storable in component bag
+	Aging                 AgingThresholds   `yaml:"aging,omitempty"`                   // Potion aging phase thresholds
+	BottleAgingMultiplier float64           `yaml:"bottle_aging_multiplier,omitempty"` // Bottle aging speed (clay=3.0, glass=1.0, phial=0.5, decanter=0.25)
+	Toxicity              int               `yaml:"toxicity,omitempty"`                // Toxicity cost when consumed
+	IsBandolier           bool              `yaml:"is_bandolier,omitempty"`            // Belt item that holds potions
+	BandolierCapacity     int               `yaml:"bandolier_capacity,omitempty"`      // Max potions storable in bandolier
+	SalvageReturns        []SalvageReturn   `yaml:"salvage_returns,omitempty"`         // Custom salvage returns for non-crafted items
+
+	// YAML-driven use effects — replaces JS onUse/onCommand_use
+	OnUseTrainSkill  string `yaml:"on_use_train_skill,omitempty"`
+	OnUseTrainAmount int    `yaml:"on_use_train_amount,omitempty"`
+	OnUseUserText    string `yaml:"on_use_user_text,omitempty"`
+	OnUseRoomText    string `yaml:"on_use_room_text,omitempty"`
+}
+
+// SalvageReturn defines a material recovered when salvaging a tagged item.
+type SalvageReturn struct {
+	ItemTag  string `yaml:"item_tag"`
+	Quantity int    `yaml:"quantity"`
 }
 
 func (i Element) String() string {
@@ -542,6 +576,17 @@ func GetItemSpec(itemId int) *ItemSpec {
 	if itemId > 0 {
 		spec, ok := items[itemId]
 		if ok {
+			return spec
+		}
+	}
+	return nil
+}
+
+// FindSpecByComponentTag returns the first ItemSpec with a matching ComponentTag,
+// or nil if none is found.
+func FindSpecByComponentTag(tag string) *ItemSpec {
+	for _, spec := range items {
+		if spec.ComponentTag == tag {
 			return spec
 		}
 	}

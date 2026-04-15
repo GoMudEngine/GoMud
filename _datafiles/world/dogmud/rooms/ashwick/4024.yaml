@@ -1,0 +1,41 @@
+roomid: 4024
+zone: Ashwick
+title: Cottage Garden
+description: >
+  The garden behind Maren's cottage, gone wild in three years
+  of neglect. Raised beds are still visible under the weeds,
+  their orderly layout a ghost of careful planning -- Delia's
+  training visible in the spacing and placement. Self-seeded
+  comfrey and wild sage fight for space among the thistles
+  and grass. Fennel has taken over one entire bed, its yellow
+  flowers nodding in the breeze. The garden was good once.
+  The neglect is deep but not total -- the herbs survived
+  because they were planted well.
+biome: farmland
+coord:
+  x: -3
+  y: -15
+  z: 0
+exits:
+  north:
+    roomid: 4023
+nouns:
+  garden: A kitchen garden overwhelmed by neglect. Raised
+    wooden beds are visible under the overgrowth, their
+    layout orderly -- herbs grouped by use, sun-lovers on
+    the south side, shade-tolerant plants along the cottage
+    wall. Someone trained in herbalism planned this. Three
+    years of abandonment have not erased the design.
+  herbs: Self-seeded comfrey, wild sage, and fennel growing
+    among the weeds. The plants are leggy and competing for
+    light but still alive, still producing. Someone who knew
+    herbs could harvest useful material from this tangle.
+    The fennel has gone particularly wild, its yellow umbels
+    bright against the green chaos.
+idlemessages:
+- Insects drone through the overgrown beds, busy among the
+  fennel flowers.
+- A bird lands on a fence post, considers the garden, and
+  flies off.
+- Wind moves through the wild herbs, releasing a wave of
+  sage and fennel scent.

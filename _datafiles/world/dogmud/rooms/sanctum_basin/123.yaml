@@ -9,9 +9,13 @@ description: >
   and a clay water jug sits in the shade. The site has the feel of a place
   that travelers return to again and again.
 biome: land
+coord:
+  x: -12
+  y: 8
+  z: 0
 station: cooking_fire
 exits:
-  north:
+  northeast:
     roomid: 106
 items:
   - itemid: 40014

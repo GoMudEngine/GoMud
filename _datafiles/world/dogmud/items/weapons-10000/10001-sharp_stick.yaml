@@ -14,3 +14,4 @@ damage:
   variance: 1
 damage_multiplier: 0.15
 parryrating: 6
+value: 1

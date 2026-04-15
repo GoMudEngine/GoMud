@@ -1,0 +1,38 @@
+roomid: 510
+zone: Thornwall City
+title: Thornwall Bank
+description: A solid stone building with iron-banded doors and narrow
+  windows. Inside, a long counter of dark wood separates the public
+  lobby from the vault area behind. Heavy ledgers line the shelves,
+  and the faint clink of counted coins drifts from a back room. The
+  air smells of ink, old paper, and the metallic tang of gold. A
+  large iron strongbox sits against the far wall, its lock the size
+  of a fist.
+biome: city
+isbank: true
+isstorage: true
+storagecapacity: 1000
+coord:
+  x: 5
+  y: -1
+  z: 0
+exits:
+  north:
+    roomid: 465
+nouns:
+  counter: A long counter of dark polished wood, worn smooth by years
+    of transactions. Behind it, cubbyholes stuffed with rolled
+    parchment and wax-sealed documents line the wall.
+  strongbox: A massive iron strongbox bolted to the stone floor. The
+    lock mechanism is dwarven-made -- intricate and unforgiving.
+  ledgers: Rows of leather-bound ledgers, their spines cracked with
+    use. The most recent one lies open, its pages dense with neat
+    columns of figures.
+spawninfo:
+- mobid: 120
+  message: A bank clerk looks up from behind the counter.
+  respawnrate: 2 real minutes
+idlemessages:
+- The clink of coins being counted drifts from the back room.
+- A clerk runs a finger down a column of figures, lips moving.
+- Someone in the vault area shifts a heavy strongbox with a grunt.

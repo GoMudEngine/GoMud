@@ -1,0 +1,40 @@
+mobid: 311
+zone: Summons
+archetype: fighting
+statpool: 90
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - summon
+  - elemental
+idlecommands:
+  - 'emote shifts its weight, stones grinding against each other'
+  - ''
+  - 'emote reaches down and absently drags a furrow in the ground'
+  - ''
+  - 'emote settles with a heavy thud, pebbles rolling from its shoulders'
+activitylevel: 45
+combatcommands:
+  - 'bash'
+  - ''
+  - ''
+character:
+  name: earth elemental
+  description: |
+    A massive figure assembled from compacted earth, granite slabs, and
+    knotted root. It moves with ponderous deliberation, each step cracking
+    the ground beneath its immense weight. Layers of soil and stone shift
+    across its surface like tectonic plates in miniature. Its eyes — if
+    they can be called that — are two deep fissures glowing faintly amber
+    with compressed heat from below. The smell of freshly turned earth
+    follows it everywhere.
+  speciesid: 37
+  level: 1
+  stats:
+    strength:
+      training: 20
+    vitality:
+      training: 20
+    perception:
+      training: 5

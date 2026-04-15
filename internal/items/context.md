@@ -712,3 +712,26 @@ message = message.SetTokenValue(items.TokenTarget, "orc")
 ```
 
 This comprehensive item system provides the foundation for all equipment, consumables, and objects in GoMud, supporting complex interactions, modifications, and integration with all other game systems.
+
+---
+
+## Item Comparison Utilities (Living Economy)
+
+Two utility functions support NPC crafting decisions in the living economy
+system:
+
+```go
+// ItemPower returns a rough numeric power score for an ItemSpec by summing
+// stat mods, damage values, and mitigation fields. Used to compare two
+// items of the same slot type without caring about gold value.
+func ItemPower(spec ItemSpec) float64
+
+// IsUpgrade returns true if candidate is strictly better than current for
+// the same slot type. Compares ItemPower scores. Used by crafter mobs to
+// decide whether to craft self-gear.
+func IsUpgrade(current, candidate ItemSpec) bool
+```
+
+These functions are intentionally simple (sum-based, not weighted). They
+are only used internally by the NPC craft AI — players never see the raw
+scores.

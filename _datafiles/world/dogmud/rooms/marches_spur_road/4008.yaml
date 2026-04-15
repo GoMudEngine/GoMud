@@ -1,0 +1,37 @@
+roomid: 4008
+zone: Marches Spur Road
+title: Wagon Ruts
+description: The road widens here, its surface packed hard by heavy
+  traffic. Deep wagon ruts score the earth in parallel lines, wide-set
+  for the large freight wagons that serve the farms. Active farmland
+  stretches on both sides -- low green crops in neat rows, fed by
+  narrow irrigation ditches that glint with water. The road is better
+  maintained in this stretch, with gravel packed into the worst ruts
+  and drainage channels cut along the edges.
+biome: farmland
+coord:
+  x: -8
+  y: -8
+  z: 0
+exits:
+  north:
+    roomid: 4006
+  south:
+    roomid: 4009
+nouns:
+  ruts: Deep ruts worn into the road by heavy wagon wheels, wide-set
+    and running in parallel grooves. The spacing suggests large freight
+    wagons, not the lighter carts of peddlers. Gravel has been packed
+    into the worst sections to keep the road passable in wet weather.
+  crops: Low green rows of some root vegetable stretch across the fields
+    on both sides of the road, their leaves broad and dark. Narrow
+    irrigation ditches run between the rows, carrying water from some
+    unseen source. The plants have been recently tended -- weeded and
+    hilled with fresh earth.
+spawninfo:
+- mobid: 258
+idlemessages:
+- Water trickles quietly in the irrigation ditches beside the road.
+- A farm cat watches from between the crop rows, only its ears visible.
+- The distant clang of a tool on metal carries from somewhere in the
+  fields.

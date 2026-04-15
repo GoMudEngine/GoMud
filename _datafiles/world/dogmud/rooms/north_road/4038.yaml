@@ -1,0 +1,44 @@
+roomid: 4038
+zone: North Road
+title: Road Fork
+description: >
+  The spur road from Ashwick meets the main highway here, the
+  packed earth widening where two streams of traffic have worn
+  the ground smooth. A weathered signpost stands at the fork,
+  its arms pointing north and south along the highway, east
+  back toward the hamlet. Wagon ruts cut deep grooves in the
+  mud — heavier traffic than anything on the spur road. The
+  air smells of turned earth and woodsmoke from a farmstead
+  somewhere downwind.
+biome: farmland
+coord:
+  x: -9
+  y: -13
+  z: 0
+exits:
+  east:
+    roomid: 4014
+    zone: Marches Spur Road
+  west:
+    roomid: 4039
+nouns:
+  signpost: A tall wooden post with three arms. North reads
+    "Stillwater, 3 days." South reads "Amber Valley, 5 days."
+    East reads "Ashwick, half day." The north-pointing arm has
+    been repainted recently. Someone has scratched a crude skull
+    into the wood beneath the Stillwater sign — a warning, or
+    a joke.
+  ruts: Deep wheel ruts scored into the packed earth, some fresh
+    and sharp-edged, others softened by rain into shallow troughs.
+    The heaviest traffic runs north-south. A few lighter tracks
+    branch east toward Ashwick. Mixed in with the wheel marks are
+    hoofprints — patrol horses, by the spacing.
+idlemessages:
+- A cold gust funnels down the highway, carrying the smell of
+  distant rain.
+- A crow settles on the signpost, regards you with one black eye,
+  then launches itself north.
+- Somewhere south, a wagon creaks along the road.
+spawninfo:
+  - mobid: 276
+  - mobid: 287

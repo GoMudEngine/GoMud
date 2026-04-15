@@ -1,0 +1,48 @@
+roomid: 4011
+zone: Marches Spur Road
+title: Waypoint Inn Yard
+description: The road opens into a packed-earth yard before a solid
+  fieldstone-and-timber building. A painted wooden sign hangs above the
+  door -- a yoke split in half, the two halves pointing in opposite
+  directions. A hitching post stands near the entrance with two draft
+  horses tied and dozing. A water trough sits beside the post, clean
+  and recently filled. A notice board near the door is pinned with
+  papers and hand-written notes. A firewood stack against the west
+  wall reaches head-height, neatly split and seasoned.
+biome: farmland
+coord:
+  x: -8
+  y: -11
+  z: 0
+exits:
+  north:
+    roomid: 4010
+  west:
+    roomid: 4012
+  south:
+    roomid: 4013
+nouns:
+  sign: A painted wooden sign hanging from an iron bracket above the
+    door. It depicts a yoke split cleanly in half, the two halves
+    pointing in opposite directions. Beneath the image, in plain
+    letters -- "The Broken Yoke." The paint is faded but maintained,
+    touched up where the weather has worn it.
+  board: A wooden notice board mounted beside the inn door, bristling
+    with pinned papers. Job postings for farm labor, a road warning
+    about washed-out bridges to the south, a faded bounty notice for
+    someone called "Darrow the Lean." Among the official notices, a
+    hand-written note in rough script asks if anyone has information
+    about a missing freight shipment that never arrived from the north.
+  horses: Two heavy draft horses stand at the hitching post, hipshot
+    and drowsing in the warmth. Their coats are dusty from the road
+    and their harness hangs loose. Working animals resting between
+    pulls.
+  trough: A stone water trough fed by a hand pump, the water clean and
+    clear. A thin film of dust floats on the surface near the edges
+    where the horses have not drunk. The overflow runs into a shallow
+    channel that drains toward the fields.
+idlemessages:
+- One of the horses stamps and shifts at the hitching post.
+- The inn door opens and closes as someone steps out, letting a gust of
+  warm bread-scented air escape.
+- A paper flutters on the notice board, tugging at its pin.

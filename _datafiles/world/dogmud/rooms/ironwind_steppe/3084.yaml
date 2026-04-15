@@ -9,13 +9,15 @@ description: A rocky ledge projects from the ravine wall here,
   a considerable distance. The ledge is about shoulder-height
   above the ravine floor, accessible by a worn scramble.
 biome: land
+coord:
+  x: 13
+  y: -12
+  z: 0
 exits:
   north:
     roomid: 3083
   south:
     roomid: 3085
-  west:
-    roomid: 3078
 nouns:
   ledge: A flat stone ledge jutting from the ravine wall, about
     six feet above the ravine floor. The surface is worn smooth

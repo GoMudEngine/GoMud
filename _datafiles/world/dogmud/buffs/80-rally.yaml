@@ -1,0 +1,5 @@
+buffid: 80
+name: Rally
+description: An inspiring shout steadies your defenses.
+triggerrate: 1 round
+triggercount: 25

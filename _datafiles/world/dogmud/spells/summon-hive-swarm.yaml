@@ -3,12 +3,25 @@ name: Summon Hive Swarm
 description: Shatters a Hive Fragment into a permanent swarm servant.
 type: helpsingle
 schools:
-  - mental
+  - manifestation
 cost: 50
 waitrounds: 3
-difficulty: 0
+difficulty: 45
 primarystat: willpower
 base_folds: 24
 target_defense_type: none
 effect_type: none
 effect_magnitude: 0
+cast_user_text: >-
+  You crush the Hive Fragment in your fist, feeling thousands of
+  tiny lives stir within...
+cast_room_text: >-
+  {source} crushes a chitinous fragment, a faint buzzing filling
+  the air.
+wait_user_text: >-
+  The buzzing intensifies as countless tiny organisms pour from
+  the shattered fragment...
+summon_mob_id: 111
+summon_base_pool: 18
+summon_scaling_divisor: 200
+summon_component_id: 40011

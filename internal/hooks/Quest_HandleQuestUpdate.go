@@ -11,6 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/quests"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -50,9 +51,15 @@ func HandleQuestUpdate(e events.Event) events.ListenerReturn {
 		questUser.Character.ClearQuestToken(evt.QuestToken)
 		return events.Continue
 	}
-	// This only succees if the user doesn't have the quest yet or the quest is a later step of one they've started
+	// Try to advance the quest. If it fails, check whether the quest engine
+	// already set this token (GrantQuest sets it synchronously for chain
+	// evaluation, then fires this event for rewards). In that case, proceed
+	// with reward processing.
 	if !questUser.Character.GiveQuestToken(evt.QuestToken) {
-		return events.Continue
+		// Already at this step? The quest engine pre-set it. Continue to rewards.
+		if !questUser.Character.HasQuest(evt.QuestToken) {
+			return events.Continue
+		}
 	}
 
 	_, stepName := quests.TokenToParts(evt.QuestToken)
@@ -81,7 +88,7 @@ func HandleQuestUpdate(e events.Event) events.ListenerReturn {
 		// Message to room?
 		if len(questInfo.Rewards.RoomMessage) > 0 {
 			if room := rooms.LoadRoom(questUser.Character.RoomId); room != nil {
-				room.SendText(questInfo.Rewards.RoomMessage, questUser.UserId)
+				sendVisualRoomText(room, questInfo.Rewards.RoomMessage, questUser.UserId)
 			}
 		}
 		// New quest to start?
@@ -149,12 +156,22 @@ func HandleQuestUpdate(e events.Event) events.ListenerReturn {
 
 			}
 		}
+		// Spell reward?
+		if questInfo.Rewards.SpellId != "" {
+			if questUser.Character.LearnSpell(questInfo.Rewards.SpellId) {
+				if spellData := spells.GetSpell(questInfo.Rewards.SpellId); spellData != nil {
+					questUser.SendText(fmt.Sprintf(
+						`<ansi fg="magenta-bold">You have learned the spell: <ansi fg="cyan-bold">%s</ansi></ansi>`,
+						spellData.Name))
+				}
+			}
+		}
 		// Move them to another room/area?
 		if questInfo.Rewards.RoomId > 0 {
 			questUser.SendText(`You are suddenly moved to a new place!`)
 
 			if room := rooms.LoadRoom(questUser.Character.RoomId); room != nil {
-				room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> is suddenly moved to a new place!`, questUser.Character.Name), questUser.UserId)
+				sendVisualRoomText(room, fmt.Sprintf(`<ansi fg="username">%s</ansi> is suddenly moved to a new place!`, questUser.Character.Name), questUser.UserId)
 			}
 
 			rooms.MoveToRoom(questUser.UserId, questInfo.Rewards.RoomId)

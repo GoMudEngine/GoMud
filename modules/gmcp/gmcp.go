@@ -69,9 +69,8 @@ func init() {
 
 func isGMCPEnabled(connectionId uint64) bool {
 
-	//return true
 	if gmcpData, ok := gmcpModule.cache.Get(connectionId); ok {
-		return gmcpData.GMCPAccepted
+		return gmcpData.GMCPAccepted && gmcpData.HelloReceived
 	}
 
 	return false
@@ -120,6 +119,7 @@ type GMCPSettings struct {
 		IsMudlet bool // Knowing whether is a mudlet client can be useful, since Mudlet hates certain ANSI/Escape codes.
 	}
 	GMCPAccepted   bool           // Do they accept GMCP data?
+	HelloReceived  bool           // Has the client sent Core.Hello? Prevents sending data to legacy clients that blindly accept telopts.
 	EnabledModules map[string]int // What modules/versions are accepted? Might not be used properly by clients.
 }
 
@@ -144,6 +144,7 @@ func (g *GMCPModule) onNetConnect(n plugins.NetConnection) {
 		setting.Client.Name = `WebClient`
 		setting.Client.Version = `1.0.0`
 		setting.GMCPAccepted = true
+		setting.HelloReceived = true // WebSocket clients bypass telnet negotiation
 		g.cache.Add(n.ConnectionId(), setting)
 		return
 	}
@@ -280,6 +281,7 @@ func (g *GMCPModule) HandleIAC(connectionId uint64, iacCmd []byte) bool {
 					gmcpData.GMCPAccepted = true
 				}
 
+				gmcpData.HelloReceived = true
 				gmcpData.Client.Name = decoded.Client
 				gmcpData.Client.Version = decoded.Version
 
@@ -435,8 +437,8 @@ func (g *GMCPModule) dispatchGMCP(e events.Event) events.ListenerReturn {
 			return events.Continue
 		}
 
-		// Get enabled modules... if none, skip out.
-		if !gmcpSettings.GMCPAccepted {
+		// Skip if client hasn't fully negotiated GMCP (accepted + sent Core.Hello)
+		if !gmcpSettings.GMCPAccepted || !gmcpSettings.HelloReceived {
 			return events.Continue
 		}
 	} else {

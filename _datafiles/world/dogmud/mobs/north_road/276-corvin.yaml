@@ -1,0 +1,34 @@
+mobid: 276
+zone: North Road
+statpool: 30
+itemdropchance: 0
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote whittles at a small piece of wood, tongue poking out in concentration'
+  - ''
+  - 'emote adjusts a turnip in his cart and checks the wheel again'
+  - ''
+  - 'emote glances down the road toward the farmstead, then back to his work'
+  - ''
+activitylevel: 12
+character:
+  name: Corvin
+  description: A boy of about ten, wiry and sunburnt, with dirt under his
+    fingernails and a smear of something across one cheek. He stands beside a
+    small cart loaded with large purple turnips, one wheel caught in a rut. A
+    folding knife and a half-carved piece of wood poke from his belt. He has
+    the watchful steadiness of a child who has been given responsibilities and
+    takes them seriously.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 5
+    perception:
+      training: 8

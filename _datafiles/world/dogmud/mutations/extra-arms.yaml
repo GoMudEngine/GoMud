@@ -3,6 +3,7 @@ name: Extra Arms
 description: A second pair of arms has sprouted from your torso, granting you the ability to wield additional weapons. The grotesque sight of four flailing limbs draws hostile attention and unsettles everyone around you.
 rarity: 9
 visual: A second pair of arms extends from their torso, moving with surprising coordination.
+requires_arms: true
 conflicts:
   - clawed-hands
   - elongated-limbs
@@ -16,7 +17,7 @@ pros:
 cons:
   - type: stat_flat
     target: charisma
-    value: -30
+    value: -28
   - type: aggro_magnet
     target: aggro
-    value: 1.5
+    value: 1.0

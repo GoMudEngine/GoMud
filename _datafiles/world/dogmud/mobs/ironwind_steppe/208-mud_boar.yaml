@@ -6,7 +6,8 @@ hostile: true
 maxwander: 3
 groups:
   - steppe-boar
-  - animal
+hates:
+  - canine
 archetype: fighting
 mutationchance: 15
 combatcommands:

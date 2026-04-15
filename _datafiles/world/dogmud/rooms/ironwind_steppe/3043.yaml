@@ -9,13 +9,15 @@ description: A broad, flat outcrop on the ridge's south face provides
   into the boar wallows and wolf ravines. The wind is steady but
   not violent here, blocked partially by the ridge above.
 biome: cliffs
+coord:
+  x: 16
+  y: 0
+  z: 0
 exits:
   north:
     roomid: 3042
-  east:
-    roomid: 3044
   south:
-    roomid: 3049
+    roomid: 3044
 nouns:
   outcrop: A flat slab of basalt jutting from the ridge face,
     about ten paces across and remarkably level. The stone is

@@ -9,17 +9,15 @@ description: The ravine shallows and widens here as it approaches
   beyond here their patrols are less frequent. The terrain
   opens into rolling grassland.
 biome: land
+coord:
+  x: 13
+  y: -14
+  z: 0
 exits:
   north:
     roomid: 3085
-  west:
-    roomid: 3080
   east:
-    roomid: 3081
-  south:
     roomid: 3088
-  southwest:
-    roomid: 3093
 nouns:
   banks: Low earthen banks, barely waist-high, marking the last
     traces of the ravine system. They diminish southward until

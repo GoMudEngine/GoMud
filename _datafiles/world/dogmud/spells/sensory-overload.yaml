@@ -6,10 +6,12 @@ schools:
   - mental
 cost: 80
 waitrounds: 2
-difficulty: 0
+difficulty: 40
 primarystat: willpower
 base_folds: 10
 target_defense_type: mental
 effect_type: buff
 buff_ids:
   - 37
+cast_user_text: "You unleash a barrage of sensory input at the target's mind."
+cast_room_text: "{source} grimaces as they project overwhelming sensory energy."

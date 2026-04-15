@@ -1,0 +1,25 @@
+roomid: 5007
+zone: Instance Arena
+title: Veteran's Ring
+description: >-
+  A wide rectangular chamber with a raised stone ring at the
+  center — a fighting platform worn down at the corners by
+  years of boots finding purchase. The walls are hung with
+  old weapons too damaged for further use: broken spear hafts,
+  split shields, a sword bent nearly double. Not trophies.
+  Warnings. The fighters kept here are the ones who put them
+  there.
+exits:
+  south:
+    roomid: 5006
+    mapdirection: south
+  north:
+    roomid: 5008
+    mapdirection: north
+spawninfo:
+  - mobid: 323
+    statpool: 2
+    respawnrate: "1h 30m"
+  - mobid: 325
+    statpool: 2
+    respawnrate: "1h 30m"

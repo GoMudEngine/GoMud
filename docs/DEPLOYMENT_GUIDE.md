@@ -564,6 +564,22 @@ The server will be briefly unavailable during the rebuild
 (typically 30–60 seconds). Players connected via telnet will be
 disconnected.
 
+> **IMPORTANT: Always use `-f compose.production.yml`.**
+> The repo contains two compose files:
+>
+> | File                      | Purpose                        |
+> |---------------------------|--------------------------------|
+> | `compose.yml`             | **Local development only**     |
+> | `compose.production.yml`  | **Production server**          |
+>
+> If you forget `-f compose.production.yml`, Docker uses
+> `compose.yml` by default. The dev compose binds port 80
+> directly on the MUD server (no Caddy), spawns extra containers
+> (busybox logger, terminal), and lacks the production config
+> mount. Running it on the server will conflict with Caddy and
+> break HTTPS. **Every** `docker compose` command on the prod
+> server must include `-f compose.production.yml`.
+
 ### 10.2 Viewing Logs
 
 **Follow logs in real-time:**
@@ -781,6 +797,119 @@ Common causes:
 - Missing or malformed YAML in `_datafiles/`
 - Port conflict (another service using port 33333 or 80)
 
+### "port is already allocated" error on startup
+
+This usually means you accidentally ran `docker compose up`
+without `-f compose.production.yml`, which started containers
+from the dev `compose.yml`. The dev compose binds port 80 on
+the MUD server, and the production compose also needs port 80
+for Caddy — so they conflict.
+
+To fix, stop **all** containers from **both** compose files:
+
+```bash
+cd ~/DOGMud
+
+# Stop dev containers (uses compose.yml by default)
+docker compose down
+
+# Stop production containers
+docker compose -f compose.production.yml down
+
+# Verify nothing is holding port 80
+sudo lsof -i :80
+```
+
+If `lsof` still shows something, kill it or wait for it to
+stop. Then start production properly:
+
+```bash
+docker compose -f compose.production.yml up -d --build
+```
+
+**Prevention:** Every `docker compose` command on the prod
+server must include `-f compose.production.yml`. Without the
+`-f` flag, Docker defaults to `compose.yml` (the dev file).
+
+### `git pull` succeeds but changes don't appear
+
+This is the most common deploy issue. The server repo may be in
+a detached HEAD state, on the wrong branch, or have local changes
+blocking the pull. To diagnose:
+
+```bash
+cd ~/DOGMud
+git status
+git log --oneline -1
+```
+
+Compare the commit hash to what you pushed from your dev machine.
+If they don't match, force the server to match the remote:
+
+```bash
+git fetch origin
+git checkout master
+git reset --hard origin/master
+```
+
+Then rebuild:
+
+```bash
+docker compose -f compose.production.yml up -d --build
+```
+
+**Why this happens:** If someone (or a script) ran `git checkout`
+to a specific commit, or if a merge conflict occurred during
+`git pull`, the repo can end up in a state where `pull` silently
+does nothing. The `fetch` + `reset --hard` approach bypasses all
+of that by forcing the working tree to match the remote exactly.
+
+### Docker rebuilds but old code is still running
+
+Docker caches build layers aggressively. If `git pull` updated
+the code but the build still uses old files, force a clean
+rebuild:
+
+```bash
+docker compose -f compose.production.yml up -d --build --no-cache
+```
+
+This is slower (full rebuild from scratch) but guarantees no
+stale layers. You generally only need this if a normal `--build`
+isn't picking up changes.
+
+### Full deploy checklist (copy-paste)
+
+If the normal one-liner isn't working, run this step by step:
+
+```bash
+cd ~/DOGMud
+
+# 1. Stop any running containers (both dev and prod)
+docker compose down 2>/dev/null
+docker compose -f compose.production.yml down
+
+# 2. Verify you're on master
+git branch
+
+# 3. Fetch and force-sync with remote
+git fetch origin
+git checkout master
+git reset --hard origin/master
+
+# 4. Verify the commit matches what you pushed
+git log --oneline -1
+
+# 5. Rebuild with no cache and restart
+docker compose -f compose.production.yml up -d --build --no-cache
+
+# 6. Verify the container is running
+docker compose -f compose.production.yml ps
+
+# 7. Tail logs to confirm startup (Ctrl+C to stop watching)
+docker compose -f compose.production.yml logs -f server
+```
+
 ### SSH connection refused after firewall setup
 
 If you lock yourself out, use DigitalOcean's **Console** tab on
@@ -790,4 +919,27 @@ firewall:
 ```bash
 sudo ufw allow 22/tcp
 sudo ufw reload
+```
+
+### Copying files from the prod server
+
+To pull files (logs, bug reports, player data) from the server
+to your local machine, use `scp` from your **local** terminal
+(not while SSH'd into the server):
+
+```bash
+scp mudadmin@YOUR_SERVER_IP:~/DOGMud/path/to/file ./local/path/
+```
+
+Example — pull bug reports:
+
+```bash
+scp mudadmin@YOUR_SERVER_IP:~/DOGMud/_datafiles/feedback/bugs.txt \
+  ./_datafiles/feedback/bugs-prod.txt
+```
+
+To push a file to the server:
+
+```bash
+scp ./local/file mudadmin@YOUR_SERVER_IP:~/DOGMud/path/to/dest
 ```

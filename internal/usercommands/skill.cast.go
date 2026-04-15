@@ -4,15 +4,18 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
-	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
+	"github.com/GoMudEngine/GoMud/internal/textutil"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -28,9 +31,11 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
-	// 1. Spellcasting skill required
+	// 1. Spellcasting or manifestation skill required (checked again after spell
+	//    lookup for a better error message, but we need at least one non-zero).
 	skillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
-	if skillLevel == 0 {
+	manifestLevel := user.Character.GetSkillLevel(skills.Manifestation)
+	if skillLevel == 0 && manifestLevel == 0 {
 		user.SendText(`<ansi fg="red">You have no spellcasting skill.</ansi>`)
 		return true, nil
 	}
@@ -49,19 +54,37 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		targetName = strings.TrimSpace(parts[1])
 	}
 
-	// 3. Verify spell exists and user knows it
-	// Try spell ID first (e.g. "mm"), then fall back to display-name prefix match (e.g. "magic missile")
+	// 3. Verify spell exists — lookup first so we can give a useful error
+	//    message before spending a cooldown. InitiateCast will repeat the
+	//    lookup; the second lookup is cheap (map key hit).
 	spellInfo := spells.GetSpell(spellName)
 	if spellInfo == nil {
 		spellInfo = spells.FindSpellByName(spellName)
 	}
 	if spellInfo == nil {
-		user.SendText(fmt.Sprintf(`<ansi fg="red">No spell found for "%s". Use the spell ID (e.g. <ansi fg="cyan-bold">mm</ansi>, <ansi fg="cyan-bold">heal</ansi>). Type <ansi fg="cyan-bold">spells</ansi> to list what you know.</ansi>`, spellName))
+		user.SendText(fmt.Sprintf(
+			`<ansi fg="red">No spell found for "%s". Use the spell ID (e.g. `+
+				`<ansi fg="cyan-bold">mm</ansi>, <ansi fg="cyan-bold">heal</ansi>). `+
+				`Type <ansi fg="cyan-bold">spells</ansi> to list what you know.</ansi>`,
+			spellName))
 		return true, nil
 	}
 	if !user.Character.HasSpell(spellInfo.SpellId) {
 		user.SendText(fmt.Sprintf(`<ansi fg="red">You haven't learned the spell "%s".</ansi>`, spellInfo.Name))
 		return true, nil
+	}
+
+	// 3b. Verify the player has the skill appropriate for this spell's school.
+	if spellInfo.HasSchool(spells.SchoolManifestation) {
+		if manifestLevel == 0 {
+			user.SendText(`<ansi fg="red">You have no manifestation skill.</ansi>`)
+			return true, nil
+		}
+	} else {
+		if skillLevel == 0 {
+			user.SendText(`<ansi fg="red">You have no spellcasting skill.</ansi>`)
+			return true, nil
+		}
 	}
 
 	// 4. Already casting?
@@ -71,8 +94,14 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
-	// 5. Conviction check — must have enough for the full cast
-	// Stage 12.1: Apply conviction_cost_multiplier from Magical Resistance mutation
+	// 4.5. Can't cast while crafting
+	if user.Character.CraftingState != nil {
+		user.SendText(`You are busy crafting.`)
+		return true, nil
+	}
+
+	// 5. Conviction check — must have enough for the full cast.
+	// Stage 12.1: Apply conviction_cost_multiplier from Magical Resistance mutation.
 	convMult := 1.0 + mutations.GetConvictionCostMultiplier(user.Character.Mutations)
 	totalConvictionCost := spellInfo.GetTotalConvictionCost(convMult)
 	if totalConvictionCost > 0 && user.Character.Conviction < totalConvictionCost {
@@ -88,123 +117,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
-	// Initiation roll
-	initiationChance := characters.CalcInitiationChance(user.Character.Stats.Willpower.ValueAdj, skillLevel)
-	roll := util.Rand(100)
-	util.LogRoll(`Spell Initiation`, roll, initiationChance)
-
-	if roll >= initiationChance {
-		// Failed — apply 2-round cooldown and inform user
-		user.Character.TryCooldown(`cast-init`, `2 rounds`)
-		user.SendText(`<ansi fg="red">` + spells.GetCastMessage("concentration_slipped", spellInfo.Name) + `</ansi>`)
-		room.SendText(fmt.Sprintf(
-			`<ansi fg="username">%s</ansi> <ansi fg="red">loses their concentration.</ansi>`,
-			user.Character.Name), user.UserId)
-		return true, nil
-	}
-
-	// 7. Resolve folds needed and rate
-	baseFolds := spellInfo.BaseFolds
-	if baseFolds == 0 {
-		baseFolds = 4
-	}
-	foldsNeeded := characters.NextPowerOfTwo(baseFolds)
-
-	// Stage 17.2: The Eye modulates Perception → folds-per-round for mutated casters.
-	perForCast := user.Character.Stats.Perception.ValueAdj
-	if len(user.Character.Mutations) > 0 {
-		eyeFrac := (gametime.GetEyePhase() - 0.5) * 2 * float64(configs.GetBalanceConfig().MoonStatModMax)
-		perForCast += int(float64(perForCast) * eyeFrac)
-	}
-	foldsPerRound := characters.CalcFoldsPerRound(perForCast, skillLevel)
-
-	// 8. Resolve targets
-	targetUserIds := []int{}
-	targetMobInstanceIds := []int{}
-	spellRest := ``
-
-	switch spellInfo.Type {
-	case spells.HarmSingle:
-		if targetName != `` {
-			pId, mId := room.FindByName(targetName)
-			if mId > 0 {
-				targetMobInstanceIds = append(targetMobInstanceIds, mId)
-			} else if pId > 0 {
-				targetUserIds = append(targetUserIds, pId)
-			} else {
-				user.SendText(fmt.Sprintf(`<ansi fg="red">You don't see "%s" here.</ansi>`, targetName))
-				return true, nil
-			}
-		} else if user.Character.Aggro != nil && user.Character.Aggro.MobInstanceId > 0 {
-			targetMobInstanceIds = append(targetMobInstanceIds, user.Character.Aggro.MobInstanceId)
-		} else if user.Character.Aggro != nil && user.Character.Aggro.UserId > 0 {
-			targetUserIds = append(targetUserIds, user.Character.Aggro.UserId)
-		} else if party := parties.Get(user.UserId); party != nil {
-			// Fallback: use party leader's current target if available in this room
-			if leaderUser := users.GetByUserId(party.LeaderUserId); leaderUser != nil {
-				if leaderUser.Character.RoomId == user.Character.RoomId && leaderUser.Character.Aggro != nil {
-					if leaderUser.Character.Aggro.MobInstanceId > 0 {
-						targetMobInstanceIds = append(targetMobInstanceIds, leaderUser.Character.Aggro.MobInstanceId)
-					} else if leaderUser.Character.Aggro.UserId > 0 {
-						targetUserIds = append(targetUserIds, leaderUser.Character.Aggro.UserId)
-					}
-				}
-			}
-			if len(targetMobInstanceIds) == 0 && len(targetUserIds) == 0 {
-				user.SendText(`<ansi fg="red">You need a target to cast that spell.</ansi>`)
-				return true, nil
-			}
-		} else {
-			user.SendText(`<ansi fg="red">You need a target to cast that spell.</ansi>`)
-			return true, nil
-		}
-
-	case spells.HarmMulti:
-		if targetName != `` {
-			pId, mId := room.FindByName(targetName)
-			if mId > 0 {
-				targetMobInstanceIds = append(targetMobInstanceIds, mId)
-			} else if pId > 0 {
-				targetUserIds = append(targetUserIds, pId)
-			}
-		} else if user.Character.Aggro != nil && user.Character.Aggro.MobInstanceId > 0 {
-			targetMobInstanceIds = append(targetMobInstanceIds, user.Character.Aggro.MobInstanceId)
-		} else if user.Character.Aggro != nil && user.Character.Aggro.UserId > 0 {
-			targetUserIds = append(targetUserIds, user.Character.Aggro.UserId)
-		} else if party := parties.Get(user.UserId); party != nil {
-			// Fallback: use party leader's current target if available in this room
-			if leaderUser := users.GetByUserId(party.LeaderUserId); leaderUser != nil {
-				if leaderUser.Character.RoomId == user.Character.RoomId && leaderUser.Character.Aggro != nil {
-					if leaderUser.Character.Aggro.MobInstanceId > 0 {
-						targetMobInstanceIds = append(targetMobInstanceIds, leaderUser.Character.Aggro.MobInstanceId)
-					} else if leaderUser.Character.Aggro.UserId > 0 {
-						targetUserIds = append(targetUserIds, leaderUser.Character.Aggro.UserId)
-					}
-				}
-			}
-		}
-
-	case spells.HelpSingle:
-		if targetName != `` && targetName != user.Character.Name {
-			pId, _ := room.FindByName(targetName)
-			if pId > 0 {
-				targetUserIds = append(targetUserIds, pId)
-			} else {
-				user.SendText(fmt.Sprintf(`<ansi fg="red">You don't see "%s" here.</ansi>`, targetName))
-				return true, nil
-			}
-		} else {
-			targetUserIds = append(targetUserIds, user.UserId) // default to self
-		}
-
-	case spells.HelpMulti:
-		targetUserIds = append(targetUserIds, user.UserId) // self; spell script expands to party
-
-	case spells.HarmArea, spells.HelpArea, spells.Neutral:
-		spellRest = targetName // pass through for spell script
-	}
-
-	// 8.5. Component check — must have the required item in inventory before committing
+	// 6.5. Component check — must have the required item in inventory.
 	if spellInfo.ComponentTag != "" {
 		found := false
 		for _, itm := range user.Character.Items {
@@ -221,35 +134,132 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		}
 	}
 
-	// 9. Cooldown gate — casting shares the special-move slot (prevents cast+bash same round)
-	cfg := configs.GetBalanceConfig()
-	if !user.Character.TryCooldown(`special-move`, fmt.Sprintf(`%d rounds`, cfg.SpecialMoveCooldown)) {
-		user.SendText(`You need a moment before you can do that.`)
+	// 7. Initiation roll — player-only gate.
+	initiationChance := characters.CalcInitiationChance(user.Character.Stats.Willpower.ValueAdj, skillLevel)
+	roll := util.Rand(100)
+	util.LogRoll(`Spell Initiation`, roll, initiationChance)
+
+	if roll >= initiationChance {
+		// Failed — apply 2-round cooldown and inform user
+		user.Character.TryCooldown(`cast-init`, `2 rounds`)
+		user.SendText(`<ansi fg="red">` + spells.GetCastMessage("concentration_slipped", spellInfo.Name) + `</ansi>`)
+		room.SendTextVisual(fmt.Sprintf(
+			`<ansi fg="username">%s</ansi> <ansi fg="red">loses their concentration.</ansi>`,
+			user.Character.Name), user.UserId)
 		return true, nil
 	}
 
-	// 10. Set CastingState — folds accumulate each combat round
-	user.Character.CastingState = &characters.CastingState{
-		SpellId:              spellInfo.SpellId,
-		FoldsNeeded:          foldsNeeded,
-		FoldsAccumulated:     0,
-		FoldsPerRound:        foldsPerRound,
-		TotalConvictionCost:  totalConvictionCost,
-		ConvictionSpent:      0,
-		TargetUserIds:        targetUserIds,
-		TargetMobInstanceIds: targetMobInstanceIds,
-		SpellRest:            spellRest,
+	// 8. Stage 17.2: The Eye modulates Perception → folds-per-round for mutated
+	// traditional casters. Manifestation spells use Charisma instead and are
+	// NOT modulated by The Eye.
+	isManifestation := spellInfo.HasSchool(spells.SchoolManifestation)
+	var primaryStatForCast int
+	if isManifestation {
+		primaryStatForCast = user.Character.Stats.Charisma.ValueAdj
+	} else {
+		primaryStatForCast = user.Character.Stats.Perception.ValueAdj
+		if len(user.Character.Mutations) > 0 {
+			eyeFrac := (gametime.GetEyePhase() - 0.5) * 2 * float64(configs.GetBalanceConfig().MoonStatModMax)
+			primaryStatForCast += int(float64(primaryStatForCast) * eyeFrac)
+		}
 	}
 
-	// 10. Announce and fire skill-used event
-	events.AddToQueue(events.SkillUsed{
-		UserId:  user.UserId,
-		Skill:   skills.Spellcasting,
-		Details: spellInfo.Name,
-	})
+	// 9. Shared initiation logic.
+	actor := &actions.UserActor{User: user, Room: room}
+	result := actions.InitiateCast(actor, spellName, targetName)
 
+	switch {
+	case result.OnCooldown:
+		user.SendText(`You need a moment before you can do that.`)
+		return true, nil
+	case result.NoTarget:
+		// HarmSingle / HelpSingle can set this; supply a context-aware message.
+		if spellInfo.Type == spells.HelpSingle {
+			user.SendText(fmt.Sprintf(`<ansi fg="red">You don't see "%s" here.</ansi>`, targetName))
+		} else {
+			user.SendText(`<ansi fg="red">You need a target to cast that spell.</ansi>`)
+		}
+		return true, nil
+	case !result.Initiated:
+		// Catch-all for any other early exit (AlreadyCasting was handled above;
+		// InvalidSpell was handled above). Should not normally be reached.
+		return true, nil
+	}
+
+	// 10. Apply stat override for folds-per-round.
+	// For traditional spells, this captures The Eye modulation of Perception.
+	// For manifestation spells, this ensures Charisma is used (InitiateCast
+	// already used it, but we recompute with the correct skill level here).
+	var baseStatForCast int
+	if isManifestation {
+		baseStatForCast = user.Character.Stats.Charisma.ValueAdj
+	} else {
+		baseStatForCast = user.Character.Stats.Perception.ValueAdj
+	}
+	if primaryStatForCast != baseStatForCast {
+		manifestSkill := user.Character.GetSkillLevel(skills.Manifestation)
+		castSkill := user.Character.GetSkillLevel(skills.Spellcasting)
+		var overrideSkill int
+		if isManifestation {
+			overrideSkill = manifestSkill
+		} else {
+			overrideSkill = castSkill
+		}
+		result.CastingState.FoldsPerRound = characters.CalcFoldsPerRound(
+			primaryStatForCast, overrideSkill)
+	}
+
+	// 11. Apply conviction cost multiplier to the CastingState.
+	result.CastingState.TotalConvictionCost = totalConvictionCost
+
+	// 12. Commit CastingState.
+	user.Character.CastingState = result.CastingState
+
+	// 12b. Send YAML cast text (if defined).
+	if spellInfo.CastUserText != "" || spellInfo.CastRoomText != "" {
+		castRoom := rooms.LoadRoom(user.Character.RoomId)
+		tCtx := textutil.TokenContext{
+			SourceName:      user.Character.GetCharacterName(true),
+			SourcePlainName: user.Character.GetCharacterName(false),
+		}
+		if len(result.TargetUserIds) > 0 {
+			if tUser := users.GetByUserId(result.TargetUserIds[0]); tUser != nil {
+				tCtx.TargetName = tUser.Character.GetCharacterName(true)
+				tCtx.TargetPlainName = tUser.Character.GetCharacterName(false)
+			}
+		} else if len(result.TargetMobInstanceIds) > 0 {
+			if tMob := mobs.GetInstance(result.TargetMobInstanceIds[0]); tMob != nil {
+				tCtx.TargetName = tMob.Character.GetCharacterName(true)
+				tCtx.TargetPlainName = tMob.Character.GetCharacterName(false)
+			}
+		}
+		cfg := textutil.SendTextConfig{
+			UserSendFunc: func(msg string) { user.SendText(msg) },
+			RoomSendFunc: func(msg string, skip ...int) {
+				if castRoom != nil {
+					castRoom.SendText(msg, skip...)
+				}
+			},
+			ExcludeId: user.UserId,
+		}
+		textutil.SendPhaseText(spellInfo.CastUserText, spellInfo.CastRoomText, tCtx, "pink", cfg)
+	}
+
+	// 13. Fire onCast spell script (if present) — can cancel the cast.
+	spellAggro := characters.SpellAggroInfo{
+		SpellId:              spellInfo.SpellId,
+		SpellRest:            result.SpellRest,
+		TargetUserIds:        result.TargetUserIds,
+		TargetMobInstanceIds: result.TargetMobInstanceIds,
+	}
+	if allowContinue, err := scripting.TrySpellScriptEvent("onCast", user.UserId, 0, spellAggro); err == nil && !allowContinue {
+		user.Character.CastingState = nil
+		return true, nil
+	}
+
+	// 14. Announce the cast start (skill progression now fires in InitiateCast).
 	user.SendText(`<ansi fg="cyan">` + spells.GetCastMessage("cast_started", spellInfo.Name) + `</ansi>`)
-	room.SendText(fmt.Sprintf(
+	room.SendTextVisual(fmt.Sprintf(
 		`<ansi fg="username">%s</ansi> closes their eyes in concentration.`,
 		user.Character.Name), user.UserId)
 

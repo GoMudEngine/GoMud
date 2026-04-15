@@ -10,16 +10,16 @@ description: The last of the city's detritus -- broken pottery, a
   trail threads southeast through the grass, worn by animals moving
   between the city fringe and the open plains.
 biome: land
+coord:
+  x: 11
+  y: -1
+  z: 0
 exits:
   north:
     roomid: 3006
   west:
     roomid: 3007
-  northwest:
-    roomid: 3008
   east:
-    roomid: 3011
-  southeast:
     roomid: 3013
 nouns:
   skull: A sun-bleached animal skull, probably a dog or large fox.

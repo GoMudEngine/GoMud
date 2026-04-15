@@ -1,6 +1,7 @@
 package hooks
 
 import (
+	"fmt"
 	"math"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
@@ -8,10 +9,12 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
+	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -155,38 +158,147 @@ func tryWeaponBreak(defender *characters.Character, roundResult combat.AttackRes
 	return result
 }
 
-// CritEffectResult holds the outcome of applying crit effects from defense.
+// CritEffectResult holds the outcome of applying defense crit effects.
 type CritEffectResult struct {
-	Disarmed    bool
-	DisarmItem  combat.DisarmResult
-	GrappleSet  bool
+	// Parry crit → riposte (free counter-attack)
+	Riposte       bool
+	RiposteDamage int
+	RiposteMaxHP  int
+	// Dodge crit → auto-trip (ignores cooldown)
+	AutoTrip      bool
+	TripResult    combat.SkillMoveResult
+	// Block crit → auto-bash (ignores cooldown)
+	AutoBash      bool
+	BashResult    combat.SkillMoveResult
+	// Messages for all crit effects
+	DefenderMsg   string
+	AttackerMsg   string
+	RoomMsg       string
 }
 
-// applyCritEffects processes parry/dodge crit effects for any combat pairing.
-// The defender is the one who parried/dodged (and gains the crit benefit).
-// The attacker is the one whose weapon may be disarmed or guard penetrated.
-// Returns a result struct so callers can route messages appropriately.
+// applyCritEffects processes parry/dodge/block crit effects for any combat
+// pairing. The attacker is the one who swung. The defender is the one who
+// rolled the defense crit and gains the benefit.
 func applyCritEffects(attacker, defender *characters.Character, roundResult combat.AttackResult, room *rooms.Room) CritEffectResult {
 	result := CritEffectResult{}
+	cfg := configs.GetBalanceConfig()
 
-	// Parry crit: defender disarms attacker (10% chance)
+	// ── Parry crit → riposte: free counter-swing ────────────────────────
 	if roundResult.ParryCritDetected {
-		disarmResult := combat.AttemptCritDisarm(defender, attacker, 10.0)
-		if disarmResult.Success {
-			if room != nil {
-				room.AddItem(disarmResult.Weapon, false)
+		raw := combat.CalcRawDamage(
+			defender.Stats.Strength.ValueAdj,
+			defender.GetCombatSkillLevel(),
+			0.5, // riposte hits at half weapon damage
+			combat.ChannelPhysical,
+		)
+		dmgMean := combat.ApplyMitigation(raw, attacker.GetPhysicalMitigation(),
+			combat.MitigationCap(combat.ChannelPhysical))
+		roll := dice.RollStat(dmgMean)
+		dmg := int(roll.Value)
+		if dmg < 1 {
+			dmg = 1
+		}
+
+		attacker.Health -= dmg
+		if attacker.Health < 0 {
+			attacker.Health = 0
+		}
+		result.Riposte = true
+		result.RiposteDamage = dmg
+		result.RiposteMaxHP = attacker.HealthMax.Value
+
+		dmgDesc := combat.GetDamageDescription(dmg, attacker.HealthMax.Value)
+		result.DefenderMsg = fmt.Sprintf(
+			`<ansi fg="cyan-bold">⚔ RIPOSTE!</ansi> You turn the parry into a swift counter-strike! (<ansi fg="damage">%s</ansi>)`, dmgDesc)
+		result.AttackerMsg = fmt.Sprintf(
+			`<ansi fg="cyan-bold">⚔ RIPOSTE!</ansi> %s turns the parry into a lightning counter-strike! (<ansi fg="damage">%s</ansi>)`, defender.Name, dmgDesc)
+		result.RoomMsg = fmt.Sprintf(
+			`<ansi fg="cyan-bold">⚔ RIPOSTE!</ansi> %s turns a deft parry into a counter-strike against %s!`, defender.Name, attacker.Name)
+	}
+
+	// ── Dodge crit → auto-trip (ignores cooldown) ───────────────────────
+	if roundResult.DodgeCritDetected {
+		tripResult := combat.ExecuteSkillMove(combat.SkillMoveParams{
+			Attacker:        defender,
+			Defender:        attacker,
+			AttackStat:      defender.Stats.Dexterity.ValueAdj,
+			AttackSkill:     defender.GetSkillLevel(skills.UnarmedCombat),
+			DefenseStat:     attacker.Stats.Dexterity.ValueAdj,
+			DefenseSkill:    attacker.GetCombatSkillLevel(),
+			DamagePercent:   float64(cfg.TripDamagePercent),
+			KnockdownChance: int(cfg.TripKnockdownChance),
+			SkillRank:       defender.GetSkillLevel(skills.UnarmedCombat),
+			DamageStat:      defender.Stats.Dexterity.ValueAdj,
+		})
+		result.AutoTrip = true
+		result.TripResult = tripResult
+
+		if tripResult.Hit {
+			dmgDesc := combat.GetDamageDescription(tripResult.Damage, tripResult.TargetMaxHP)
+			if tripResult.KnockedDown {
+				result.DefenderMsg = fmt.Sprintf(
+					`<ansi fg="cyan-bold">⚡ SWEEP!</ansi> You dodge and sweep their legs out! They crash to the ground! (<ansi fg="damage">%s</ansi>)`, dmgDesc)
+				result.AttackerMsg = fmt.Sprintf(
+					`<ansi fg="cyan-bold">⚡ SWEEP!</ansi> %s dodges and sweeps your legs! You crash to the ground! (<ansi fg="damage">%s</ansi>)`, defender.Name, dmgDesc)
+				result.RoomMsg = fmt.Sprintf(
+					`<ansi fg="cyan-bold">⚡ SWEEP!</ansi> %s dodges and sweeps %s to the ground!`, defender.Name, attacker.Name)
+			} else {
+				result.DefenderMsg = fmt.Sprintf(
+					`<ansi fg="cyan-bold">⚡ SWEEP!</ansi> You dodge and lash out at their legs! (<ansi fg="damage">%s</ansi>)`, dmgDesc)
+				result.AttackerMsg = fmt.Sprintf(
+					`<ansi fg="cyan-bold">⚡ SWEEP!</ansi> %s dodges and lashes out at your legs! (<ansi fg="damage">%s</ansi>)`, defender.Name, dmgDesc)
+				result.RoomMsg = fmt.Sprintf(
+					`<ansi fg="cyan-bold">⚡ SWEEP!</ansi> %s dodges and kicks at %s's legs!`, defender.Name, attacker.Name)
 			}
-			result.Disarmed = true
-			result.DisarmItem = disarmResult
+		} else {
+			result.DefenderMsg = `<ansi fg="cyan-bold">⚡ SWEEP!</ansi> You dodge and try to sweep their legs, but they keep their footing!`
+			result.AttackerMsg = fmt.Sprintf(
+				`<ansi fg="cyan-bold">⚡ SWEEP!</ansi> %s dodges and tries to sweep your legs, but you keep your footing!`, defender.Name)
+			result.RoomMsg = fmt.Sprintf(
+				`<ansi fg="cyan-bold">⚡ SWEEP!</ansi> %s dodges and tries to sweep %s's legs, but misses!`, defender.Name, attacker.Name)
 		}
 	}
 
-	// Dodge crit: defender gets grapple opportunity
-	// Bug fix: always check cooldown (PvM path was missing this)
-	if roundResult.DodgeCritDetected {
-		if defender.Cooldowns["special-move"] <= 0 {
-			combat.SetGrappleOpportunity(defender)
-			result.GrappleSet = true
+	// ── Block crit → auto-bash (ignores cooldown) ───────────────────────
+	if roundResult.BlockCritDetected {
+		bashResult := combat.ExecuteSkillMove(combat.SkillMoveParams{
+			Attacker:        defender,
+			Defender:        attacker,
+			AttackStat:      defender.Stats.Strength.ValueAdj,
+			AttackSkill:     defender.GetSkillLevel(skills.WeaponCombat),
+			DefenseStat:     attacker.Stats.Dexterity.ValueAdj,
+			DefenseSkill:    attacker.GetCombatSkillLevel(),
+			DamagePercent:   float64(cfg.BashDamagePercent),
+			KnockdownChance: int(cfg.BashKnockdownChance),
+			SkillRank:       defender.GetSkillLevel(skills.WeaponCombat),
+			DamageStat:      defender.Stats.Strength.ValueAdj,
+		})
+		result.AutoBash = true
+		result.BashResult = bashResult
+
+		if bashResult.Hit {
+			dmgDesc := combat.GetDamageDescription(bashResult.Damage, bashResult.TargetMaxHP)
+			if bashResult.KnockedDown {
+				result.DefenderMsg = fmt.Sprintf(
+					`<ansi fg="cyan-bold">🛡 SHIELD SLAM!</ansi> You catch the blow on your shield and slam them back! They stumble and fall! (<ansi fg="damage">%s</ansi>)`, dmgDesc)
+				result.AttackerMsg = fmt.Sprintf(
+					`<ansi fg="cyan-bold">🛡 SHIELD SLAM!</ansi> %s catches your blow on their shield and slams you back! You stumble and fall! (<ansi fg="damage">%s</ansi>)`, defender.Name, dmgDesc)
+				result.RoomMsg = fmt.Sprintf(
+					`<ansi fg="cyan-bold">🛡 SHIELD SLAM!</ansi> %s blocks and shield-slams %s to the ground!`, defender.Name, attacker.Name)
+			} else {
+				result.DefenderMsg = fmt.Sprintf(
+					`<ansi fg="cyan-bold">🛡 SHIELD SLAM!</ansi> You catch the blow and slam your shield into them! (<ansi fg="damage">%s</ansi>)`, dmgDesc)
+				result.AttackerMsg = fmt.Sprintf(
+					`<ansi fg="cyan-bold">🛡 SHIELD SLAM!</ansi> %s catches your blow and slams their shield into you! (<ansi fg="damage">%s</ansi>)`, defender.Name, dmgDesc)
+				result.RoomMsg = fmt.Sprintf(
+					`<ansi fg="cyan-bold">🛡 SHIELD SLAM!</ansi> %s blocks and slams their shield into %s!`, defender.Name, attacker.Name)
+			}
+		} else {
+			result.DefenderMsg = `<ansi fg="cyan-bold">🛡 SHIELD SLAM!</ansi> You catch the blow and try to slam them, but they brace against it!`
+			result.AttackerMsg = fmt.Sprintf(
+				`<ansi fg="cyan-bold">🛡 SHIELD SLAM!</ansi> %s catches your blow and tries to slam you, but you brace against it!`, defender.Name)
+			result.RoomMsg = fmt.Sprintf(
+				`<ansi fg="cyan-bold">🛡 SHIELD SLAM!</ansi> %s blocks and tries to slam %s, but they hold firm!`, defender.Name, attacker.Name)
 		}
 	}
 
@@ -242,4 +354,126 @@ func advanceFolds(cs *characters.CastingState) bool {
 		}
 	}
 	return false
+}
+
+// =============================================================================
+// processFoldRound — shared fold casting step for both players and mobs.
+//
+// Handles all state mutations that are identical for every caster type:
+//   - Prone → concentration break
+//   - Target-gone check
+//   - Simulate fold advance → compute conviction cost
+//   - Insufficient conviction → break
+//   - Deduct conviction + advance folds
+//
+// The caller (handlePlayerFoldCasting / handleMobFoldCasting) is responsible
+// for all messaging and spell resolution, because those differ by caster type.
+// =============================================================================
+
+// FoldRoundResult describes the outcome of a single fold casting step.
+// Exactly one of the boolean fields will be true; StillCasting and
+// CastComplete are mutually exclusive; the break fields are all terminal.
+type FoldRoundResult struct {
+	// Terminal states — caller should return after messaging.
+	ProneBroke             bool // caster fell prone, concentration broken
+	TargetGone             bool // all targets are dead/gone
+	SpellDataMissing       bool // spells.GetSpell returned nil
+	InsufficientConviction bool // not enough CP to pay this fold's cost
+
+	// Ongoing states.
+	StillCasting bool // folds advanced but not yet complete; send in-progress msg
+	CastComplete bool // folds complete; caller should resolve the spell
+
+	// Values the caller needs for messaging / resolution.
+	FoldDelta      int                  // folds simulated this round
+	ConvictionCost int                  // CP deducted from caster this round
+	SpellData      *spells.SpellData    // non-nil when SpellDataMissing==false
+	CastingState   *characters.CastingState // same pointer as char.CastingState
+}
+
+// processFoldRound advances one round of fold casting for any caster character.
+// It mutates char.CastingState (deducting conviction, advancing folds, or
+// clearing the state on terminal conditions).  Returns a FoldRoundResult
+// describing what happened so the caller can emit the right messages.
+func processFoldRound(char *characters.Character) FoldRoundResult {
+	cs := char.CastingState // caller must have verified non-nil
+
+	// Prone → immediate concentration break.
+	if char.CombatPosition == characters.PositionProne {
+		char.CastingState = nil
+		return FoldRoundResult{ProneBroke: true, CastingState: cs}
+	}
+
+	// Target-gone check: any dead/nil target breaks the spell.
+	spellData := spells.GetSpell(cs.SpellId)
+	targetGone := false
+	for _, mobInstId := range cs.TargetMobInstanceIds {
+		m := mobs.GetInstance(mobInstId)
+		if m == nil || m.Character.Health < 1 {
+			targetGone = true
+			break
+		}
+	}
+	if !targetGone {
+		for _, targetUserId := range cs.TargetUserIds {
+			u := users.GetByUserId(targetUserId)
+			if u == nil {
+				targetGone = true
+				break
+			}
+			// For harm spells, downed players count as gone.
+			if u.Character.Health < 1 && spellData != nil &&
+				(spellData.Type == spells.HarmSingle || spellData.Type == spells.HarmArea || spellData.Type == spells.HarmMulti) {
+				targetGone = true
+				break
+			}
+		}
+	}
+	if targetGone {
+		char.CastingState = nil
+		return FoldRoundResult{TargetGone: true, CastingState: cs}
+	}
+
+	if spellData == nil {
+		char.CastingState = nil
+		return FoldRoundResult{SpellDataMissing: true, CastingState: cs}
+	}
+
+	// Simulate fold advance → compute conviction cost.
+	foldDelta := simulateFoldRound(cs)
+	roundCost := calcFoldConvictionCost(cs, foldDelta)
+
+	if roundCost > 0 && char.Conviction < roundCost {
+		char.CastingState = nil
+		return FoldRoundResult{
+			InsufficientConviction: true,
+			FoldDelta:              foldDelta,
+			ConvictionCost:         roundCost,
+			SpellData:              spellData,
+			CastingState:           cs,
+		}
+	}
+
+	// Deduct conviction and advance folds.
+	char.Conviction -= roundCost
+	cs.ConvictionSpent += roundCost
+
+	complete := advanceFolds(cs)
+	if complete {
+		char.CastingState = nil
+		return FoldRoundResult{
+			CastComplete:   true,
+			FoldDelta:      foldDelta,
+			ConvictionCost: roundCost,
+			SpellData:      spellData,
+			CastingState:   cs,
+		}
+	}
+	return FoldRoundResult{
+		StillCasting:   true,
+		FoldDelta:      foldDelta,
+		ConvictionCost: roundCost,
+		SpellData:      spellData,
+		CastingState:   cs,
+	}
 }

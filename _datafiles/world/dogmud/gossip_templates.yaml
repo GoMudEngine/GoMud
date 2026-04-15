@@ -2,6 +2,19 @@
 # Keyed by "EventType-Significance". {desc} is replaced with the event description.
 # Each key has 2-4 variants picked at random.
 
+# Distance variants: "-Local" for same-zone events, "-Distant" for other zones.
+# Falls back to the base key (no suffix) if no distance variant exists.
+
+MobCraftedRare-Regional-Local:
+  - "Right here in town, {desc} Imagine that."
+  - "One of ours made something worth talking about. {desc}"
+  - "{desc} And it happened right under our noses."
+
+MobCraftedRare-Regional-Distant:
+  - "Word from outside the walls is that {desc}"
+  - "Traders brought news -- {desc} Rare work, if true."
+  - "I heard something from the road. {desc}"
+
 MobCraftedRare-Regional:
   - "Word from the market is that {desc}"
   - "I heard something interesting -- {desc}"
@@ -11,6 +24,15 @@ MobCraftedRare-Global:
   - "Now THIS is worth mentioning. {desc}"
   - "Everyone is talking about it. {desc}"
   - "I have not heard of work like this in years. {desc}"
+
+MobMutationGained-Regional-Local:
+  - "Something strange right here. {desc}"
+  - "{desc} And it is close. Too close."
+  - "I saw it myself. Well, heard about it. {desc}"
+
+MobMutationGained-Regional-Distant:
+  - "Something strange out in the wilds. {desc}"
+  - "Word came in from the road. {desc} The wilds are changing."
 
 MobMutationGained-Regional:
   - "Something strange out there. {desc}"
@@ -29,6 +51,14 @@ MobMutationAdvanced-Global:
   - "Listen to this. {desc} That is not natural."
   - "Something is very wrong out there. {desc}"
 
+MobStatMilestone-Regional-Local:
+  - "Something nearby is getting stronger. {desc}"
+  - "{desc} And it is not far from here."
+
+MobStatMilestone-Regional-Distant:
+  - "There is something tougher out there now. {desc}"
+  - "Word from the road -- {desc} Watch yourself."
+
 MobStatMilestone-Regional:
   - "There is something tougher out there now. {desc}"
   - "I heard {desc} Watch yourself."
@@ -44,6 +74,14 @@ PackStrengthened-Regional:
 PackStrengthened-Global:
   - "This is trouble. {desc} A proper pack, that is."
   - "You do not see this often. {desc}"
+
+PlayerCraftedRare-Regional-Local:
+  - "Someone right here made something impressive. {desc}"
+  - "{desc} Happened not far from where you are standing."
+
+PlayerCraftedRare-Regional-Distant:
+  - "Word came in that someone out there made something. {desc}"
+  - "Traders say {desc} Decent work."
 
 PlayerCraftedRare-Regional:
   - "Someone made something impressive. {desc}"
@@ -69,6 +107,49 @@ IronwindEvent-Regional:
 IronwindEvent-Global:
   - "The whole steppe is talking about this. {desc}"
   - "This one came from the Ironwind frontier. {desc}"
+
+PlayerDiedPvE-Local-Local:
+  - "I heard some fool got themselves killed right near here. {desc}"
+  - "Not far from where we sit, {desc} did someone in."
+  - "It happened close by. {desc} claimed another."
+
+PlayerDiedPvE-Local-Distant:
+  - "I heard some fool went and got themselves killed. {desc}"
+  - "Word is somebody died to {desc} out there."
+
+PlayerDiedPvE-Local:
+  - "I heard some fool went and got themselves killed by {desc}. What a waste."
+  - "Word is somebody died to {desc}. You would think people would be more careful."
+  - "Another body for the Shadow Realm. {desc} got the better of some poor soul."
+  - "Someone was not careful enough and {desc} did them in. Happens more than you think."
+
+PlayerDiedPvE-Regional:
+  - "Word came in that someone got killed by {desc} out there. The wilds do not forgive."
+  - "Travellers are saying somebody died to {desc}. Another one gone."
+  - "I heard {desc} claimed another life. You would think people would learn."
+  - "Some poor soul ran into {desc} and did not make it back. Grim business."
+
+PlayerDiedPvE-Global:
+  - "Everyone is talking about it. Someone got killed by {desc}. Nasty way to go."
+  - "Did you hear? {desc} killed someone. Word travels fast when people die."
+  - "The whole town is buzzing. {desc} got the better of some adventurer."
+  - "A death out there. {desc}. You hate to hear it, but you always do."
+
+MobKilledByPlayer-Local-Local:
+  - "I heard {desc} Happened right nearby."
+  - "{desc} And it was not far from here."
+  - "Close to home, that. {desc}"
+
+MobKilledByPlayer-Local-Distant:
+  - "News from the road -- {desc}"
+  - "Word came in. {desc} Someone is busy out there."
+
+MobKilledByPlayer-Local:
+  - "I heard {desc} Another one bites the dust."
+  - "Word is {desc} Someone is keeping busy out there."
+  - "They say {desc} Good riddance, if you ask me."
+  - "Someone was talking about it. {desc}"
+  - "News from outside the walls -- {desc}"
 
 fallback:
   - "Quiet day. Nothing worth repeating."

@@ -1,0 +1,4 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">rep</ansi>
+
+See <ansi fg="command">help report</ansi> — <ansi fg="command">rep</ansi> is shorthand for
+<ansi fg="command">report</ansi>.

@@ -1,0 +1,44 @@
+roomid: 4020
+zone: Ashwick
+title: Farmstead
+description: >
+  A working farm tucked south of the hamlet road. A fenced
+  paddock holds a few goats and a patient draft horse that
+  watches you with mild interest. A small barn stands open,
+  tools hanging on pegs inside. Rows of root vegetables
+  stretch behind the house in neat lines, recently weeded --
+  the work of someone maintaining this place alone. Farmer
+  Hesta's home, sturdy and practical, with none of the
+  neglect visible elsewhere in Ashwick.
+biome: farmland
+coord:
+  x: -6
+  y: -14
+  z: 0
+exits:
+  north:
+    roomid: 4016
+nouns:
+  paddock: A fenced enclosure holding a handful of goats and
+    one patient draft horse. The goats press against the fence
+    at your approach, hoping for food. The horse watches from
+    the far side, unimpressed. The fence is well-maintained,
+    posts recently replaced where needed.
+  barn: A small functional barn with its doors standing open.
+    Tools hang on pegs along the walls -- hoe, rake, scythe,
+    all clean and oiled. Hay bales stacked in the loft. The
+    work of someone who takes care of their tools because
+    there is no one else to sharpen them.
+  crops: Root vegetables planted in neat rows -- turnips,
+    parsnips, beets. Recently weeded, the soil dark and
+    turned between the rows. The work is meticulous but
+    the scale is small -- one person's labor, stretched
+    across what two or three once managed.
+spawninfo:
+- mobid: 261
+idlemessages:
+- A goat bleats from the paddock, pressing its nose through
+  the fence rails.
+- Tools clink softly in the barn as the wind catches them on
+  their pegs.
+- The draft horse stamps once and resumes its patient stillness.

@@ -1,0 +1,21 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">blood-boil</ansi> spell
+
+The <ansi fg="command">Blood Boil</ansi> spell superheats the target's blood from within,
+rupturing vessels and causing severe hemorrhage that persists over
+several rounds. The target's physical defenses resist the onset but
+cannot stop the damage once the blood begins to cook.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">cast blood-boil [target]</ansi>
+
+<ansi fg="yellow">Details: </ansi>
+
+  <ansi fg="yellow">Type:        </ansi> Harm Single
+  <ansi fg="yellow">School:      </ansi> Vital
+  <ansi fg="yellow">Base Folds:  </ansi> 6
+  <ansi fg="yellow">Conv. Cost:  </ansi> 50
+  <ansi fg="yellow">Defense:     </ansi> Physical — target's armor and toughness resist
+  <ansi fg="yellow">Effect:      </ansi> Damage over time — bleeds for several rounds
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help spells</ansi>, <ansi fg="command">help cast</ansi>

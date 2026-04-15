@@ -1,0 +1,28 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">conjure-air</ansi> spell
+
+The <ansi fg="command">Conjure Air Elemental</ansi> spell tears an air elemental from the
+elemental plane and binds it to your command. Air elementals are the
+fastest creatures a conjurer can call — blindingly quick, capable of
+striking several times before a foe can land a counter. Their fragility
+is their trade-off; what they lack in staying power they repay with
+relentless aggression and an almost uncatchable evasion.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">cast conjure-air</ansi>
+
+<ansi fg="yellow">Details: </ansi>
+
+  <ansi fg="yellow">Type:        </ansi> Neutral
+  <ansi fg="yellow">School:      </ansi> Manifestation
+  <ansi fg="yellow">Base Folds:  </ansi> 8
+  <ansi fg="yellow">Conv. Cost:  </ansi> Staggering
+
+<ansi fg="white-bold">Notes:</ansi>
+  - No component is required to cast this spell.
+  - Air elementals excel at evasion and high-speed harassment.
+  - The elemental persists until destroyed or dismissed.
+  - Scaling improves with your Charisma and Manifestation skill.
+  - You cannot exceed your companion limit with this spell.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help spells</ansi>, <ansi fg="command">help cast</ansi>, <ansi fg="command">help companion</ansi>

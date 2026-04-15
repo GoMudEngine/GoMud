@@ -896,7 +896,7 @@ func TestOnlineInfo(t *testing.T) {
 	info := OnlineInfo{
 		Username:      "alice",
 		CharacterName: "Aliceia",
-		Profession:    "Warrior",
+		Title:         "scrub warrior",
 		OnlineTime:    3600,
 		OnlineTimeStr: "1h0m",
 		IsAFK:         false,

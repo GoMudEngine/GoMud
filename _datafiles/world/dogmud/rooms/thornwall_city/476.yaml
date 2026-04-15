@@ -10,6 +10,10 @@ description: A stone building with barred windows and a heavy door, the Records 
   and sealing wax. This is where tax records, property deeds, citizen rolls, and
   official correspondence are kept -- the paper skeleton of the city.
 biome: city
+coord:
+  x: 3
+  y: 1
+  z: 0
 exits:
   south:
     roomid: 463
@@ -23,6 +27,8 @@ nouns:
     Processing time varies. Do not ring bell more than once."
 spawninfo:
 - mobid: 99
+- itemid: 29
+  respawnrate: 5 real minutes
 idlemessages:
 - A page turns somewhere deep in the stacks, a dry whisper of parchment.
 - The clerk stamps a document with a heavy seal, the sound sharp in the quiet room.

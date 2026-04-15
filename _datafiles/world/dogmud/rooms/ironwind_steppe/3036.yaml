@@ -9,17 +9,17 @@ description: The ridge's southern slope is gentler than the western
   and grass has taken hold. The wind is blocked by the ridge
   crest above, making this slope relatively sheltered.
 biome: cliffs
+coord:
+  x: 15
+  y: 1
+  z: 0
 exits:
   north:
     roomid: 3035
   west:
-    roomid: 3026
-  northwest:
-    roomid: 3033
-  south:
-    roomid: 3048
+    roomid: 3031
   east:
-    roomid: 3061
+    roomid: 3042
 nouns:
   slope: A gravel-covered slope descending southward, steep enough
     to require careful footwork. The loose stone shifts and slides,

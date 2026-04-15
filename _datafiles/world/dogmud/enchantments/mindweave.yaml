@@ -4,35 +4,35 @@ reserve_pool: conviction
 target_type: head
 tiers:
   - tier: 0
-    reserve_pct: 0.02
+    reserve_pct: 0.01
     effects:
       willpower_statmod: 1
     adjective: pulsing
     description_suffix: "The helm pulses in rhythm with your thoughts."
     tier_up_message: ""
   - tier: 1
-    reserve_pct: 0.04
+    reserve_pct: 0.02
     effects:
       willpower_statmod: 2
     adjective: neural-threaded
     description_suffix: "Neural threads extend through your mind, pulsing gently."
     tier_up_message: "Your thoughts become one with the Chrysalis's whisper."
   - tier: 2
-    reserve_pct: 0.06
+    reserve_pct: 0.04
     effects:
       willpower_statmod: 3
     adjective: mind-linked
     description_suffix: "Your mind is linked to something vast and ancient."
     tier_up_message: "The Chrysalis dwells in your consciousness now, eternal."
   - tier: 3
-    reserve_pct: 0.08
+    reserve_pct: 0.06
     effects:
       willpower_statmod: 4
     adjective: crown-tendriled
     description_suffix: "Tendrils of force crown your thoughts—invasive, transforming."
     tier_up_message: "You are no longer alone in your mind. The Chrysalis is you."
   - tier: 4
-    reserve_pct: 0.10
+    reserve_pct: 0.08
     effects:
       willpower_statmod: 5
     adjective: neural-web

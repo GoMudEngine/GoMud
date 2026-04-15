@@ -1,0 +1,32 @@
+mobid: 267
+zone: Ashwick
+statpool: 3
+hostile: false
+maxwander: 1
+groups:
+  - animal
+itemdropchance: 0
+idlecommands:
+  - 'emote scurries along the baseboard and freezes, whiskers twitching'
+  - ''
+  - ''
+  - 'emote watches you from a crack in the wall with bright dark eyes'
+  - ''
+  - 'emote disappears into a gap between the floorboards'
+  - ''
+activitylevel: 20
+character:
+  name: cottage mouse
+  description: |
+    A small brown mouse living in the gaps and crevices of the
+    abandoned cottage. It has the well-fed look of something that has
+    had the run of a building for years without competition. It
+    regards you as a temporary inconvenience rather than a threat.
+  speciesid: 21
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 15
+    perception:
+      training: 12

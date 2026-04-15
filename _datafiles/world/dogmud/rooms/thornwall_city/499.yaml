@@ -1,0 +1,28 @@
+roomid: 499
+zone: Thornwall City
+title: Escape Shaft
+description: >
+  A narrow shaft angling upward at a steep grade, fitted with iron rungs
+  driven into the stone. The shaft is barely wide enough for one person
+  and rises into darkness above. A draught of fresh air flows down from
+  above -- this connects to the surface somewhere outside the city walls.
+  Scuff marks on the rungs show regular use. This is the smugglers' escape
+  route -- and probably how goods enter the tunnel system from outside.
+biome: cave
+coord:
+  x: 2
+  y: -8
+  z: -2
+exits:
+  west:
+    roomid: 498
+nouns:
+  rungs: Iron rungs driven into the stone at regular intervals, forming a
+    crude ladder. The metal is worn smooth from climbing. The shaft above
+    is too narrow to carry anything bulky -- goods must come down on ropes.
+  shaft: The shaft rises at a steep angle, too narrow for anything but a
+    single climber. Fresh air flows down from the top -- the exit must
+    open somewhere beyond the city walls.
+idlemessages:
+- Fresh air flows down the shaft, carrying the smell of open ground.
+- An iron rung creaks faintly as the stone around it shifts.

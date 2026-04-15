@@ -21,6 +21,13 @@ func Unlock(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	}
 
 	containerName := room.FindContainerByName(args[0])
+	if containerName != `` {
+		if c, exists := room.Containers[containerName]; exists && c.Hidden {
+			if user == nil || !user.Character.HasDiscovery(room.RoomId, containerName) {
+				containerName = ``
+			}
+		}
+	}
 	exitName, _ := room.FindExitByName(args[0])
 
 	if containerName != `` {
@@ -48,7 +55,7 @@ func Unlock(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			room.PlaySound(`change`, `other`)
 
 			user.SendText(fmt.Sprintf(`You use a key to unlock the <ansi fg="container">%s</ansi>.`, containerName))
-			room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="container">%s</ansi>.`, user.Character.Name, containerName), user.UserId)
+			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="container">%s</ansi>.`, user.Character.Name, containerName), user.UserId)
 		} else if hasBackpackKey {
 
 			itmSpec := backpackKeyItm.GetSpec()
@@ -70,7 +77,7 @@ func Unlock(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			room.PlaySound(`change`, `other`)
 
 			user.SendText(fmt.Sprintf(`You use your <ansi fg="item">%s</ansi> to unlock the <ansi fg="container">%s</ansi>, and add it to your key ring for the future.`, itmSpec.Name, containerName))
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="container">%s</ansi>.`, user.Character.Name, containerName),
 				user.UserId)
 		} else {
@@ -104,7 +111,7 @@ func Unlock(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			room.PlaySound(`change`, `other`)
 
 			user.SendText(fmt.Sprintf(`You use a key to unlock the <ansi fg="exit">%s</ansi> lock.`, exitName))
-			room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="exit">%s</ansi> lock`, user.Character.Name, exitName), user.UserId)
+			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="exit">%s</ansi> lock`, user.Character.Name, exitName), user.UserId)
 		} else if hasBackpackKey {
 
 			itmSpec := backpackKeyItm.GetSpec()
@@ -126,7 +133,7 @@ func Unlock(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			room.PlaySound(`change`, `other`)
 
 			user.SendText(fmt.Sprintf(`You use your <ansi fg="item">%s</ansi> to unlock the <ansi fg="exit">%s</ansi> exit, and add it to your key ring for the future.`, itmSpec.Name, exitName))
-			room.SendText(
+			room.SendTextVisual(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="exit">%s</ansi> lock`, user.Character.Name, exitName),
 				user.UserId)
 		} else {

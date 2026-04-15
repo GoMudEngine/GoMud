@@ -1,0 +1,16 @@
+id: healing-salve
+name: Healing Salve
+skill: alchemy
+skill_minimum: 0
+station: alchemy_bench
+time_rounds: 3
+ingredients:
+  - item_tag: healers-root
+    quantity: 2
+  - item_tag: bottle
+    quantity: 1
+output:
+  item_id: 30036
+  quantity: 1
+success_message: "You grind the root to paste, mix it with water, and seal it in the bottle. A healing salve!"
+failure_message: "The mixture separates and goes cloudy. The materials are wasted."

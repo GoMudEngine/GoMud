@@ -1,0 +1,54 @@
+roomid: 507
+zone: Thornwall City
+title: The Listening Post
+description: >
+  A narrow niche carved into the rock east of the den, separated from it
+  by a thin wall with a horizontal slit at eye height -- enough to watch
+  the entire chamber below without being seen. A crude speaking tube of
+  fitted copper pipe runs up through the rock and terminates in a funnel,
+  bringing sound from somewhere above. Maps of Thornwall's sewer system
+  cover one wall, pinned with chrysalis resin tacks and annotated in a
+  cramped, careful hand -- entry points circled, patrol routes marked in
+  different inks, guard post locations crossed out and redrawn over months
+  of changes. In the shadows at the far end, a hooded figure sits behind
+  a low table, very still, waiting.
+biome: cave
+coord:
+  x: 3
+  y: -5
+  z: -3
+exits:
+  west:
+    roomid: 505
+spawninfo:
+  - mobid: 273
+    respawnrate: 5 real minutes
+nouns:
+  wall slit: >
+    A horizontal gap in the thin stone wall, roughly two hands wide
+    and one hand tall, set at eye height for a crouching figure. The
+    edges are smooth -- it was cut deliberately, precisely. Through
+    it, the entire den is visible in dim bioluminescent light.
+  speaking tube: >
+    A length of fitted copper pipe running up through the ceiling at
+    a steep angle. The lower end opens into a listening cone of
+    hammered copper; the upper end presumably exits somewhere in the
+    tunnels above. Voices at the cone end come out muffled but
+    intelligible. Someone uses this to monitor above without
+    climbing up.
+  sewer maps: >
+    Multiple overlapping maps of Thornwall's underground drainage
+    system, pinned to the wall at various angles. The annotation is
+    in at least three different hands -- this is ongoing intelligence,
+    gathered over a long time. Patrol routes, guard schedules, access
+    points. A valuable thing. A dangerous thing to be caught with.
+  resin tacks: >
+    Chrysalis resin used to pin papers to the wall, each tack a
+    small amber circle. They hold better than iron -- and unlike
+    nails, they leave no permanent hole that would betray a hidden
+    room to someone looking at the wrong side of the wall.
+idlemessages:
+- The speaking tube catches faint sounds from above -- footsteps, voices,
+  street noise. The city goes about its business, unaware of what listens.
+- The maps rustle faintly when the air stirs from the den to the west.
+- The hooded figure at the far end sits without moving, watching the slit.

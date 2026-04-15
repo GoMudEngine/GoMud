@@ -1,0 +1,20 @@
+id: mutagen-brew
+name: Mutagen Brew
+skill: alchemy
+skill_minimum: 35
+station: alchemy_bench
+time_rounds: 10
+ingredients:
+  - item_tag: veilbloom
+    quantity: 1
+  - item_tag: chrysalis-core
+    quantity: 2
+  - item_tag: hive-fragment
+    quantity: 1
+  - item_tag: bottle
+    quantity: 1
+output:
+  item_id: 30055
+  quantity: 1
+success_message: "The brew shifts color constantly, never settling. A mutagen brew!"
+failure_message: "The mutation catalyst destabilizes violently. The materials are wasted."

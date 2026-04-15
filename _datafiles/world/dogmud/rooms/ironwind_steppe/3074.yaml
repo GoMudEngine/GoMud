@@ -9,13 +9,13 @@ description: The easternmost coulee channel opens here onto a broad
   winds south toward the wolf ravines. The ground is unstable,
   a mix of loose stone and packed earth.
 biome: cliffs
+coord:
+  x: 18
+  y: -10
+  z: 0
 exits:
   west:
     roomid: 3073
-  north:
-    roomid: 3070
-  south:
-    roomid: 3082
 nouns:
   slope: A broad slope of mixed stone and earth, descending
     southeast toward lower terrain. The footing is uncertain,

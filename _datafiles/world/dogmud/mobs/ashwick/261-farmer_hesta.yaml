@@ -1,0 +1,36 @@
+mobid: 261
+zone: Ashwick
+statpool: 30
+hostile: false
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote leans on a fence post, surveying the crops with a practiced eye'
+  - ''
+  - 'emote scratches a goat behind the ears'
+  - ''
+  - 'emote wipes her forehead with her sleeve and gets back to work'
+  - ''
+activitylevel: 15
+character:
+  name: Farmer Hesta
+  description: |
+    A broad-shouldered woman in work clothes, her hands permanently
+    dark with soil. She has the steady, unimpressed gaze of someone
+    who has been farming the same land for twenty years and has heard
+    every kind of nonsense the world has to offer. Her mutation is in
+    her arms -- slightly longer than normal, the extra reach useful
+    for the kind of work she does, the joints moving with a fluid
+    ease that is not quite human.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 8
+    vitality:
+      training: 6
+    perception:
+      training: 4

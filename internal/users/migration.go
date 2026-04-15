@@ -7,6 +7,8 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/quests"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -21,7 +23,65 @@ var (
 func DoUserMigrations() {
 
 	DoFilenameMigrationV1()
+	DoQuestStepMigration()
 
+}
+
+// DoQuestStepMigration checks all players for quest progress on steps that
+// no longer exist (removed during quest engine port). Players stuck on
+// deleted steps are bumped to "start" so they can redo the quest cleanly.
+func DoQuestStepMigration() {
+	migrated := 0
+
+	SearchOfflineUsers(func(u *UserRecord) bool {
+		if u.Character.QuestProgress == nil {
+			return true
+		}
+
+		changed := false
+		for questId, currentStep := range u.Character.QuestProgress {
+			q := quests.GetQuest(quests.PartsToToken(questId, currentStep))
+			if q == nil {
+				// Quest itself was deleted (e.g., Q17) — remove progress
+				delete(u.Character.QuestProgress, questId)
+				mudlog.Info("DoQuestStepMigration", "info",
+					"Removed deleted quest progress",
+					"user", u.Username, "questId", questId, "step", currentStep)
+				changed = true
+				continue
+			}
+
+			// Check if the step still exists in the quest definition
+			stepExists := false
+			for _, step := range q.Steps {
+				if step.Id == currentStep {
+					stepExists = true
+					break
+				}
+			}
+
+			if !stepExists {
+				// Step was removed — reset to "start"
+				u.Character.QuestProgress[questId] = "start"
+				mudlog.Info("DoQuestStepMigration", "info",
+					"Migrated removed quest step to start",
+					"user", u.Username, "questId", questId,
+					"oldStep", currentStep, "newStep", "start")
+				changed = true
+			}
+		}
+
+		if changed {
+			migrated++
+			SaveUser(*u)
+		}
+		return true
+	})
+
+	if migrated > 0 {
+		mudlog.Info("DoQuestStepMigration", "info",
+			"Quest step migration complete", "usersUpdated", migrated)
+	}
 }
 
 func DoFilenameMigrationV1() error {

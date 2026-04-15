@@ -9,11 +9,15 @@ description: A tumble of flat stones lies half-buried in the steppe
   of scaled bodies, leaving bare patches of sandy earth. Step
   carefully here.
 biome: land
+coord:
+  x: 12
+  y: 5
+  z: 0
 exits:
   south:
     roomid: 3027
   east:
-    roomid: 3038
+    roomid: 3026
   north:
     roomid: 3029
 nouns:

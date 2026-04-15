@@ -1,0 +1,48 @@
+mobid: 271
+zone: Thornwall City
+archetype: fighting
+statpool: 70
+itemdropchance: 0
+hostile: true
+maxwander: 2
+groups:
+  - predatory
+idlecommands:
+  - 'emote lifts its nose and samples the air, nostrils working'
+  - 'emote paces a tight circle, claws clicking on stone'
+  - ''
+  - 'emote freezes, ears flattening, attention locked on something unseen'
+  - ''
+combatcommands:
+  - 'emote snaps at your weapon arm, trying to drag it down'
+  - ''
+  - 'emote throws its weight against your legs, growling low in its chest'
+  - ''
+  - 'emote lunges for your throat with both forefeet off the ground'
+  - ''
+activitylevel: 50
+aiprofile: aggressive
+character:
+  name: resin hound
+  description: |
+    A large, lean dog with a coat thickened and stiffened by repeated
+    contact with chrysalis resin -- the compound has bonded to its fur
+    in patches, giving it an uneven texture somewhere between leather
+    and scale. Its eyes are pale and over-attentive, tracking movement
+    with a precision that feels wrong for an animal. The chrysalis
+    exposure has heightened something in its senses. It picks up scent
+    through walls and detects sound at frequencies that should register
+    as silence. It does not bark. It arrives at a dead run, already
+    committed, from a direction you did not expect.
+  speciesid: 2
+  level: 1
+  gold: 0
+  stats:
+    perception:
+      training: 15
+    dexterity:
+      training: 12
+    vitality:
+      training: 8
+  skills:
+    unarmed-combat: 6

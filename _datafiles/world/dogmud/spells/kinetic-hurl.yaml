@@ -6,10 +6,12 @@ schools:
   - elemental
 cost: 15
 waitrounds: 1
-difficulty: 0
+difficulty: 15
 primarystat: willpower
 base_folds: 4
 target_defense_type: physical
 effect_type: damage
 effect_magnitude: 300
 damage_multiplier: 1.00
+cast_user_text: "You gather telekinetic force, the air between your hands distorting."
+cast_room_text: "{source} gathers telekinetic force, the air distorting around their hands."

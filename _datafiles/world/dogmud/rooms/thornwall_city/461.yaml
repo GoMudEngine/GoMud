@@ -9,6 +9,10 @@ description: Main Street runs east through the city, wide enough for two carts a
   rougher character than the city center -- the shops are smaller, the paint is
   peeling, and the people move with the hurried purpose of those who work for a living.
 biome: city
+coord:
+  x: 1
+  y: 0
+  z: 0
 exits:
   west:
     roomid: 460

@@ -1,0 +1,20 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">mutation-catalyst</ansi> spell
+
+The <ansi fg="command">Mutation Catalyst</ansi> spell accelerates the target's mutagenic processes,
+pushing Chrysalis transformation into overdrive. For those already
+touched by the Chrysalis, this spell can awaken dormant traits and
+speed the evolution of their mutations.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">cast mutation-catalyst [target]</ansi>
+
+<ansi fg="yellow">Details: </ansi>
+
+  <ansi fg="yellow">Type:        </ansi> Help Single
+  <ansi fg="yellow">School:      </ansi> Vital
+  <ansi fg="yellow">Base Folds:  </ansi> 12
+  <ansi fg="yellow">Conv. Cost:  </ansi> 270
+  <ansi fg="yellow">Effect:      </ansi> Mutation catalyst buff — accelerates mutagenic change
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help spells</ansi>, <ansi fg="command">help cast</ansi>

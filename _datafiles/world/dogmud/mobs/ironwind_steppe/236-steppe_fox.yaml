@@ -7,6 +7,9 @@ maxwander: 4
 groups:
   - animal
   - canine
+hates:
+  - rodent
+  - insectoid
 archetype: fighting
 idlecommands:
   - 'emote watches from a distance, ears pricked forward'

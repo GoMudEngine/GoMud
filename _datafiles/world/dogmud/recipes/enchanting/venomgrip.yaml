@@ -1,0 +1,20 @@
+id: venomgrip
+name: "Venomgrip"
+skill: enchanting
+skill_minimum: 22
+station: enchanting_circle
+time_rounds: 5
+target_type: gloves
+enchant_type: venomgrip
+ingredients:
+  - item_tag: chrysalis-setting
+    quantity: 2
+  - item_tag: mutation-catalyst
+    quantity: 1
+  - item_tag: binding-paste
+    quantity: 1
+output:
+  item_id: 0
+  quantity: 0
+success_message: "Venom seeps from the settings into the glove leather, hardening into chitin across the knuckles. Your grip tightens with newfound strength."
+failure_message: "The catalyst rejects the binding. The materials crumble to dust, but the gloves are unharmed."

@@ -9,15 +9,17 @@ description: The ravine deepens into a narrow, shadowed corridor
   is the deepest part of Wolf Run, where the pack retreats
   during storms or extreme heat.
 biome: land
+coord:
+  x: 13
+  y: -13
+  z: 0
 exits:
   north:
     roomid: 3084
-  west:
-    roomid: 3079
-  south:
-    roomid: 3086
   east:
     roomid: 3087
+  south:
+    roomid: 3086
 nouns:
   walls: Sheer ravine walls of packed earth and exposed stone,
     rising well above head height. The lower sections are damp

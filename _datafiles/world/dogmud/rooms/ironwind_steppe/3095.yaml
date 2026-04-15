@@ -9,13 +9,13 @@ description: A broad, shallow pool of brownish water persists here
   and on the dry steppe that is enough to draw every creature
   for miles. Watchful eyes observe from the surrounding cover.
 biome: land
+coord:
+  x: 15
+  y: -8
+  z: 0
 exits:
-  west:
-    roomid: 3094
-  north:
-    roomid: 3089
   south:
-    roomid: 3092
+    roomid: 3089
 nouns:
   pool: A shallow pool of warm, murky water about twenty paces
     across. The water is brown and slightly silty, disturbed by

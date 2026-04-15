@@ -1,106 +1,92 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">combat</ansi>
 
-Combat in DOGMud features a tactical, skill-based system with layered defenses, special
-moves, and resource management. Understanding these mechanics is key to survival.
+Combat in DOGMud features a tactical, skill-based system with layered
+defenses, special moves, and resource management.
 
 <ansi fg="yellow">━━━ Starting Combat ━━━</ansi>
 
-Use <ansi fg="command">attack <target></ansi> to engage in combat. Once started, combat continues each
-round until someone flees or dies. See <ansi fg="command">help attack</ansi> for details.
+Use <ansi fg="command">attack <target></ansi> to engage. Once started, combat
+continues each round until someone flees or dies.
 
 <ansi fg="yellow">━━━ Attack Mechanics ━━━</ansi>
 
 Your attack success is based on:
-  - <ansi fg="stat">Combat Skill:</ansi> Weapon Combat (armed) or Unarmed Combat
-  - <ansi fg="stat">Dexterity:</ansi> Affects accuracy
-  - <ansi fg="stat">Stamina:</ansi> Low stamina (<50%) reduces hit chance and damage
+  - <ansi fg="stat">Combat Skill:</ansi> Weapon, Unarmed, or Ranged Combat
+  - <ansi fg="stat">Dexterity:</ansi> Affects accuracy and swing count
+  - <ansi fg="stat">Stamina:</ansi> Low stamina reduces hit chance and damage
 
 <ansi fg="red">Critical Hits:</ansi> Skill advantage increases crit chance
 <ansi fg="red">Fumbles:</ansi> Always ~2.5% chance to completely miss
 
+<ansi fg="yellow">━━━ Unarmed Combat ━━━</ansi>
+
+Fighting with fists, claws, or bare hands:
+  - <ansi fg="stat">Both Hands:</ansi> Attack with all empty hands (up to 6 fists
+    with extra arms mutation)
+  - <ansi fg="stat">Fist/Claws Weapons:</ansi> Count as unarmed, train the skill
+  - <ansi fg="stat">Speed Bonus:</ansi> Faster attack speed than armed fighters
+  - <ansi fg="stat">No Parry:</ansi> Can only dodge — no weapon to deflect with
+  - <ansi fg="stat">No Penalty:</ansi> Natural weapons ignore dual-wield penalty
+  - <ansi fg="stat">Mixed Setup:</ansi> Sword in one hand + empty hand still
+    punches with the free hand
+
 <ansi fg="yellow">━━━ Layered Defense System ━━━</ansi>
 
-When attacked, you get multiple chances to avoid damage (in order):
+When attacked, all available defenses are rolled simultaneously.
+The defense that wins by the widest margin is used:
 
   1. <ansi fg="stat">Dodge:</ansi> Unarmed Combat + Dexterity
-     - Available to everyone, costs 2 stamina
-     - Reduced by heavy armor and encumbrance
-
+     - Available to everyone
   2. <ansi fg="stat">Parry:</ansi> Weapon Combat + weapon parry rating
-     - Only with a weapon equipped, costs 4 stamina
-     - Two-handed weapons get bonus
-
+     - Requires a weapon (not fists/claws)
   3. <ansi fg="stat">Block:</ansi> Weapon Combat + shield block rating
-     - Only with a shield equipped, costs 5 stamina
-     - Most stamina-intensive but effective
+     - Requires a shield equipped
 
-First successful defense avoids the attack. Each defense costs stamina, so long fights
-become wars of attrition. Run out of stamina and your defenses collapse!
+<ansi fg="yellow">━━━ Defense Crits ━━━</ansi>
+
+An extraordinary defense roll (z-score > 2.0) triggers a powerful
+counter-move against the attacker:
+
+  <ansi fg="cyan-bold">⚔ Parry Crit → RIPOSTE:</ansi> Free counter-attack at half damage.
+    Your blade turns their strike aside and bites back.
+  <ansi fg="cyan-bold">⚡ Dodge Crit → SWEEP:</ansi> Automatic trip attempt (ignores
+    cooldown). Dodge under their swing and sweep their legs.
+  <ansi fg="cyan-bold">🛡 Block Crit → SHIELD SLAM:</ansi> Automatic bash attempt
+    (ignores cooldown). Catch the blow and slam them back.
 
 <ansi fg="yellow">━━━ Dual Wielding ━━━</ansi>
 
 Wield two weapons for extra attacks, but with tradeoffs:
-  - <ansi fg="stat">Extra Attacks:</ansi> Offhand weapon gets reduced attacks (×0.5 base)
-  - <ansi fg="stat">Accuracy Penalty:</ansi> Reduced hit chance with offhand attacks
-  - <ansi fg="stat">Skill Progression:</ansi> Both weapons train your combat skill
+  - <ansi fg="stat">Extra Attacks:</ansi> Offhand weapon gets reduced swing count
+  - <ansi fg="stat">Accuracy Penalty:</ansi> Reduced hit chance (scales with skill)
+  - <ansi fg="stat">Skill Progression:</ansi> Each weapon trains its own skill
   - <ansi fg="stat">Defense:</ansi> Can parry with either weapon
-
-Simply equip two weapons to dual wield automatically.
-
-<ansi fg="yellow">━━━ Unarmed Combat ━━━</ansi>
-
-Fighting without weapons scales with skill:
-  - <ansi fg="stat">Base Damage:</ansi> Low early, scales with Unarmed Combat skill
-  - <ansi fg="stat">Attacks:</ansi> 1 attack base, up to 4 attacks at high skill
-  - <ansi fg="stat">Special Moves:</ansi> Trip and kick use Unarmed Combat
-  - <ansi fg="stat">Defense:</ansi> Can only dodge (no parry/block)
 
 <ansi fg="yellow">━━━ Special Combat Moves ━━━</ansi>
 
-Tactical moves with cooldowns that can turn the tide of battle:
+Tactical moves with cooldowns that can turn the tide:
 
-  <ansi fg="command">bash</ansi>   - Shield bash (50% damage, 40% knockdown, requires shield)
-  <ansi fg="command">trip</ansi>   - Leg sweep (25% damage, 60% knockdown, tactical)
-  <ansi fg="command">kick</ansi>   - Power kick (40% damage, 35% knockdown, balanced)
-  <ansi fg="command">taunt</ansi>  - Verbal assault (conviction damage, Charisma-based)
+  <ansi fg="command">bash</ansi>   - Shield bash (50% dmg, 40% knockdown)
+  <ansi fg="command">trip</ansi>   - Leg sweep (25% dmg, 60% knockdown)
+  <ansi fg="command">kick</ansi>   - Power kick (40% dmg, 35% knockdown)
+  <ansi fg="command">taunt</ansi>  - Verbal assault (conviction damage)
 
-All four share a <ansi fg="red">5-round cooldown</ansi>. Choose wisely! Successful knockdowns
-apply the <ansi fg="red">prone</ansi> condition. See <ansi fg="command">help prone</ansi> for details.
+All share a <ansi fg="red">5-round cooldown</ansi>. Knockdowns apply prone.
 
 <ansi fg="yellow">━━━ Target Switching ━━━</ansi>
 
-In combat with multiple enemies, you can switch targets:
   - Use <ansi fg="command">attack <new-target></ansi> to retarget mid-combat
-  - Automatic targeting when your current target dies
-  - Party members can coordinate on the same target
+  - Free switch when your current target is dead or gone
+  - Contested switch against a living target costs a round
 
 <ansi fg="yellow">━━━ Resource Management ━━━</ansi>
 
-  <ansi fg="stat">Stamina:</ansi>
-    - Used for: Defenses, special moves, standing up
-    - Regenerates slowly during combat
-    - Low stamina (<50%) imposes severe penalties
-    - Manage carefully in long fights!
-
-  <ansi fg="stat">Conviction:</ansi>
-    - Used for: Casting spells, psionic abilities
-    - Can be attacked directly via <ansi fg="command">taunt</ansi>
-    - Reach 0 conviction and you're downed
-    - Regenerates over time
-    - See <ansi fg="command">help cast</ansi> and <ansi fg="command">help taunt</ansi>
-
-  <ansi fg="stat">Health:</ansi>
-    - Reach 0 health and you're downed (unconscious)
-    - Recover slowly or use healing items/spells
-    - Death possible if downed too long
-
-<ansi fg="yellow">━━━ Ending Combat ━━━</ansi>
-
-  <ansi fg="command">flee</ansi>      - Attempt to escape (costs stamina, may fail)
-  Victory       - Kill or down all opponents
-  Defeat        - Reach 0 health (downed state)
+  <ansi fg="stat">Stamina:</ansi> Fuels attacks, defenses, special moves
+  <ansi fg="stat">Conviction:</ansi> Fuels spells, attacked by taunts
+  <ansi fg="stat">Health:</ansi> Reach 0 and you're downed
 
 <ansi fg="yellow">See Also:</ansi>
 
-  <ansi fg="command">help attack</ansi>, <ansi fg="command">help flee</ansi>, <ansi fg="command">help bash</ansi>, <ansi fg="command">help trip</ansi>, <ansi fg="command">help kick</ansi>
-  <ansi fg="command">help taunt</ansi>, <ansi fg="command">help prone</ansi>, <ansi fg="command">help dual-wield</ansi>, <ansi fg="command">help skills</ansi>
+  <ansi fg="command">help attack</ansi>, <ansi fg="command">help flee</ansi>, <ansi fg="command">help bash</ansi>, <ansi fg="command">help trip</ansi>
+  <ansi fg="command">help kick</ansi>, <ansi fg="command">help taunt</ansi>, <ansi fg="command">help prone</ansi>
+  <ansi fg="command">help unarmed-combat</ansi>, <ansi fg="command">help skills</ansi>

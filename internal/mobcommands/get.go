@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
-	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -45,11 +45,11 @@ func Get(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 			mob.Character.CancelBuffsWithFlag(buffs.Hidden) // No longer sneaking
 
+			actor := &actions.MobActor{Mob: mob, Room: room}
 			goldAmt := room.Gold
-			mob.Character.Gold += goldAmt
-			room.Gold -= goldAmt
-
-			room.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> picks up <ansi fg="gold">%d gold</ansi>.`, mob.Character.Name, goldAmt))
+			if err := actions.GetGoldFromFloor(actor, goldAmt); err == nil {
+				room.SendTextVisual(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> picks up <ansi fg="gold">%d gold</ansi>.`, mob.Character.Name, goldAmt))
+			}
 		}
 
 		return true, nil
@@ -79,25 +79,15 @@ func Get(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	}
 
-	// Check whether the user has an item in their inventory that matches
-	matchItem, found := room.FindOnFloor(rest, getFromStash)
+	// Check whether the mob has an item on the floor that matches
+	actor := &actions.MobActor{Mob: mob, Room: room}
+	result := actions.GetItemFromFloor(actor, rest, getFromStash)
 
-	if found {
-
+	if result.Found && result.Err == nil {
 		mob.Character.CancelBuffsWithFlag(buffs.Hidden) // No longer sneaking
 
-		// Swap the item location
-		room.RemoveItem(matchItem, getFromStash)
-		mob.Character.StoreItem(matchItem)
-
-		events.AddToQueue(events.ItemOwnership{
-			MobInstanceId: mob.InstanceId,
-			Item:          matchItem,
-			Gained:        true,
-		})
-
-		room.SendText(
-			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> picks up the <ansi fg="itemname">%s</ansi>...`, mob.Character.Name, matchItem.DisplayName()))
+		room.SendTextVisual(
+			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> picks up the <ansi fg="itemname">%s</ansi>...`, mob.Character.Name, result.Item.DisplayName()))
 	}
 
 	return true, nil

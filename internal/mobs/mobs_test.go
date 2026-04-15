@@ -34,7 +34,7 @@ func seedRegistry() func() {
 			Archetype:     "fighting",
 			Character: characters.Character{
 				Name:      "Skeleton Warrior",
-				SpeciesId: 0,
+				SpeciesId: 1,
 			},
 		},
 		2: {
@@ -68,7 +68,7 @@ func seedRegistry() func() {
 			Archetype:     "casting",
 			Character: characters.Character{
 				Name:      "Shadow Wolf",
-				SpeciesId: 0,
+				SpeciesId: 2,
 			},
 		},
 		4: {
@@ -81,7 +81,7 @@ func seedRegistry() func() {
 			Hates:         []string{"beasts"},
 			Character: characters.Character{
 				Name:      "Ghostly Wisp",
-				SpeciesId: 0,
+				SpeciesId: 1, // same species as Skeleton Warrior
 			},
 		},
 		5: {
@@ -125,7 +125,7 @@ func seedRegistry() func() {
 			Hates:      []string{"townfolk"},
 			Character: characters.Character{
 				Name:      "Skeleton Warrior",
-				SpeciesId: 0,
+				SpeciesId: 1,
 			},
 		},
 		101: {
@@ -148,7 +148,7 @@ func seedRegistry() func() {
 			Hates:      []string{"*"},
 			Character: characters.Character{
 				Name:      "Shadow Wolf",
-				SpeciesId: 0,
+				SpeciesId: 2,
 			},
 		},
 	}
@@ -300,27 +300,27 @@ func TestConsidersAnAlly(t *testing.T) {
 		assert.True(t, m1.ConsidersAnAlly(m2))
 	})
 
-	t.Run("shared group is ally", func(t *testing.T) {
-		m1 := GetInstance(100) // groups: undead, dungeon
-		m2 := &Mob{MobId: 99, Groups: []string{"undead"}}
+	t.Run("same species is ally", func(t *testing.T) {
+		m1 := GetInstance(100) // SpeciesId: 1
+		m2 := &Mob{MobId: 99, Character: characters.Character{SpeciesId: 1}}
 		assert.True(t, m1.ConsidersAnAlly(m2))
 	})
 
-	t.Run("no groups on either side = ally", func(t *testing.T) {
-		m1 := &Mob{MobId: 10, Groups: []string{}}
-		m2 := &Mob{MobId: 11, Groups: []string{}}
-		assert.True(t, m1.ConsidersAnAlly(m2))
-	})
-
-	t.Run("no shared groups = not ally", func(t *testing.T) {
-		m1 := GetInstance(100)                                      // undead, dungeon
-		m2 := &Mob{MobId: 99, Groups: []string{"beasts", "wild"}} // no overlap
+	t.Run("different species = not ally", func(t *testing.T) {
+		m1 := GetInstance(100) // SpeciesId: 1
+		m2 := &Mob{MobId: 99, Character: characters.Character{SpeciesId: 2}}
 		assert.False(t, m1.ConsidersAnAlly(m2))
 	})
 
-	t.Run("one has groups other doesn't = not ally", func(t *testing.T) {
-		m1 := GetInstance(100) // undead, dungeon
-		m2 := &Mob{MobId: 99, Groups: []string{}}
+	t.Run("zero species on either side = not ally", func(t *testing.T) {
+		m1 := &Mob{MobId: 10, Character: characters.Character{SpeciesId: 0}}
+		m2 := &Mob{MobId: 11, Character: characters.Character{SpeciesId: 0}}
+		assert.False(t, m1.ConsidersAnAlly(m2))
+	})
+
+	t.Run("one has species other doesn't = not ally", func(t *testing.T) {
+		m1 := GetInstance(100) // SpeciesId: 1
+		m2 := &Mob{MobId: 99, Character: characters.Character{SpeciesId: 0}}
 		assert.False(t, m1.ConsidersAnAlly(m2))
 	})
 }

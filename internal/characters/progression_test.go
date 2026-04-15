@@ -4,6 +4,7 @@ import (
 	"math"
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 )
 
@@ -98,9 +99,9 @@ func TestCalculateProgressionChance_StatSoftCap(t *testing.T) {
 
 func TestIncreaseSkill_Basic(t *testing.T) {
 	c := New()
-	// All skills start at rank 1 (Stage 3.5). Should increase from 1 to 2.
+	// All skills start at rank 1 (Stage 3.5). 1→2 crosses novice→apprentice boundary.
 	if !c.IncreaseSkill("unarmed-combat") {
-		t.Error("Expected IncreaseSkill to return true for level 1→2")
+		t.Error("Expected IncreaseSkill to return true for level 1→2 (rank change)")
 	}
 	if c.Skills["unarmed-combat"] != 2 {
 		t.Errorf("Expected skill level 2, got %d", c.Skills["unarmed-combat"])
@@ -110,10 +111,10 @@ func TestIncreaseSkill_Basic(t *testing.T) {
 func TestIncreaseSkill_NoCap(t *testing.T) {
 	c := New()
 	c.Skills["unarmed-combat"] = 4
-	// No hard cap — should increase past 4
-	if !c.IncreaseSkill("unarmed-combat") {
-		t.Error("Expected IncreaseSkill to return true (no hard cap)")
-	}
+	// 4→5: both are "apprentice", so returns false (no visible rank change).
+	// The counter still increments — this tests that IncreaseSkill always advances
+	// the internal counter regardless of return value.
+	_ = c.IncreaseSkill("unarmed-combat")
 	if c.Skills["unarmed-combat"] != 5 {
 		t.Errorf("Expected skill level 5, got %d", c.Skills["unarmed-combat"])
 	}
@@ -121,14 +122,32 @@ func TestIncreaseSkill_NoCap(t *testing.T) {
 
 func TestIncreaseSkill_Incremental(t *testing.T) {
 	c := New()
-	// All skills start at rank 1 (Stage 3.5). Increase several times.
-	for expected := 2; expected <= 6; expected++ {
-		if !c.IncreaseSkill("cast") {
-			t.Errorf("Expected IncreaseSkill to return true for level %d", expected)
+	// Start from 0. The rank description boundaries are:
+	//   0→1: "" → "novice"     (true)
+	//   1→2: "novice" → "apprentice" (true)
+	//   2→9: all "apprentice"  (false)
+	//   9→10: "apprentice" → "journeyman" (true)
+	c.Skills["spellcasting"] = 0
+	rankChanged := c.IncreaseSkill("spellcasting") // 0→1 novice
+	if !rankChanged {
+		t.Error("Expected true for 0→1 (unknown→novice)")
+	}
+	rankChanged = c.IncreaseSkill("spellcasting") // 1→2 apprentice
+	if !rankChanged {
+		t.Error("Expected true for 1→2 (novice→apprentice)")
+	}
+	// 2→9: all within apprentice, should return false
+	for i := 2; i < 9; i++ {
+		if c.IncreaseSkill("spellcasting") {
+			t.Errorf("Expected false at level %d→%d (still apprentice)", i, i+1)
 		}
-		if c.Skills["cast"] != expected {
-			t.Errorf("Expected skill level %d, got %d", expected, c.Skills["cast"])
-		}
+	}
+	// 9→10: apprentice→journeyman, should return true
+	if !c.IncreaseSkill("spellcasting") {
+		t.Error("Expected true for 9→10 (apprentice→journeyman)")
+	}
+	if c.Skills["spellcasting"] != 10 {
+		t.Errorf("Expected skill level 10, got %d", c.Skills["spellcasting"])
 	}
 }
 
@@ -169,9 +188,9 @@ func TestResolveSkillName_PassThrough(t *testing.T) {
 	if result != "weapon-combat" {
 		t.Errorf("Expected 'weapon-combat' to pass through, got '%s'", result)
 	}
-	result = resolveSkillName("cast")
-	if result != "cast" {
-		t.Errorf("Expected 'cast' to pass through as 'cast', got '%s'", result)
+	result = resolveSkillName("spellcasting")
+	if result != "spellcasting" {
+		t.Errorf("Expected 'spellcasting' to pass through, got '%s'", result)
 	}
 }
 
@@ -189,7 +208,6 @@ func TestGetCombatSkillLevel_BrawlingFallback(t *testing.T) {
 	c := New()
 	delete(c.Skills, "unarmed-combat")
 	delete(c.Skills, "weapon-combat")
-	delete(c.Skills, "ranged-combat")
 	if got := c.GetCombatSkillLevel(); got != 1 {
 		t.Errorf("Expected combat skill minimum 1 with no skills, got %d", got)
 	}
@@ -201,7 +219,6 @@ func TestGetCombatSkillLevel_NoSkillsReturns1(t *testing.T) {
 	delete(c.Skills, "unarmed-combat")
 	delete(c.Skills, "brawling")
 	delete(c.Skills, "weapon-combat")
-	delete(c.Skills, "ranged-combat")
 	if got := c.GetCombatSkillLevel(); got != 1 {
 		t.Errorf("Expected combat skill 1 (minimum), got %d", got)
 	}
@@ -245,14 +262,10 @@ func TestGetProgressionMultiplier(t *testing.T) {
 	}{
 		{"weapon-combat", 0.3},
 		{"unarmed-combat", 0.3},
-		{"ranged-combat", 0.3},
 		{"spellcasting", 0.5},
-		{"cast", 0.5},
-		{"tracking", 2.0},
+		{"search", 2.0},
 		{"bartering", 2.0},
-		{"foraging", 2.0},
-		{"first-aid", 2.0},
-		{"stealth", 2.0},
+		{"skullduggery", 2.0},
 		{"unknown-skill", 1.0},
 	}
 
@@ -261,5 +274,43 @@ func TestGetProgressionMultiplier(t *testing.T) {
 		if got != tt.expected {
 			t.Errorf("GetProgressionMultiplier(%q) = %.1f, want %.1f", tt.skill, got, tt.expected)
 		}
+	}
+}
+
+func TestOnSkillUseScaled_PassesBonusMultiplier(t *testing.T) {
+	// Initialize logger for this test
+	mudlog.SetupLogger(nil, "", "", false)
+
+	// OnSkillUseScaled should exist and accept a bonus multiplier.
+	// We can't easily test the full progression pipeline in a unit test
+	// (it depends on configs and RNG), but we can verify the method exists
+	// and tracks skill usage by checking it compiles and doesn't panic.
+	c := Character{
+		Name:          "TestChar",
+		Skills:        map[string]int{string(skills.Spellcasting): 5},
+		SkillUseCount: map[string]int{},
+		StatUseCount:  map[string]int{},
+	}
+	// Should not panic and should track the skill use
+	c.OnSkillUseScaled(string(skills.Spellcasting), 0, 1.5)
+	if c.SkillUseCount[string(skills.Spellcasting)] != 1 {
+		t.Errorf("Expected use count 1 after OnSkillUseScaled, got %d", c.SkillUseCount[string(skills.Spellcasting)])
+	}
+}
+
+func TestOnSkillUse_DelegatesToScaled(t *testing.T) {
+	// Initialize logger for this test
+	mudlog.SetupLogger(nil, "", "", false)
+
+	// OnSkillUse should work exactly as before (delegates with bonus=1.0)
+	c := Character{
+		Name:          "TestChar",
+		Skills:        map[string]int{string(skills.Spellcasting): 5},
+		SkillUseCount: map[string]int{},
+		StatUseCount:  map[string]int{},
+	}
+	c.OnSkillUse(string(skills.Spellcasting), 0)
+	if c.SkillUseCount[string(skills.Spellcasting)] != 1 {
+		t.Errorf("Expected use count 1, got %d", c.SkillUseCount[string(skills.Spellcasting)])
 	}
 }

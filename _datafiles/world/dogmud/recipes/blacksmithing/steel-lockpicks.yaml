@@ -1,0 +1,16 @@
+id: steel-lockpicks
+name: Steel Lockpicks
+skill: blacksmithing
+skill_minimum: 12
+station: forge
+time_rounds: 4
+ingredients:
+  - item_tag: iron-ingot
+    quantity: 3
+  - item_tag: binding-paste
+    quantity: 2
+output:
+  item_id: 34
+  quantity: 1
+success_message: "You draw the iron into fine blanks, grind precise tips, and bind them in a tight roll. Steel lockpicks!"
+failure_message: "The picks snap during tempering -- the tips are too brittle to salvage. The materials are lost."

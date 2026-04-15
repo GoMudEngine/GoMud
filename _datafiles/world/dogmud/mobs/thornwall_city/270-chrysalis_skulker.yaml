@@ -1,0 +1,59 @@
+mobid: 270
+zone: Thornwall City
+buffids: [9]
+archetype: fighting
+statpool: 110
+itemdropchance: 10
+hostile: true
+maxwander: 1
+groups:
+  - humanoid
+  - smuggler
+idlecommands:
+  - 'sneak'
+  - 'emote melts into the shadows along the wall, barely a shape in the dark'
+  - ''
+  - 'emote runs a thumb along a resin-coated blade, checking the edge'
+  - ''
+  - 'emote crouches low and goes still, watching the corridor entrance'
+  - ''
+combatcommands:
+  - 'emote lunges from cover, striking for the throat'
+  - ''
+  - 'emote twists behind you and drives an elbow toward your kidney'
+  - ''
+  - 'flee'
+  - 'emote breaks contact and vanishes into the nearest shadow'
+  - ''
+activitylevel: 60
+reaction_delay: 1.0
+tactical_discipline: 0.60
+tactic_preset: ambusher
+character:
+  name: chrysalis skulker
+  description: |
+    A lean figure wrapped in dark cloth treated with chrysalis resin to
+    kill the sheen. Every edge of their clothing is sealed against
+    catching light or snagging on stone. The skulker moves in a low,
+    rolling crouch, weight always forward, never settling. Their face is
+    wrapped below the eyes. What shows above the wrap is alert and
+    calculating -- the look of someone who has survived exclusively by
+    seeing trouble before trouble sees them. A resin-coated blade hangs
+    at one hip. The other hip is empty, but the hand rests near it
+    anyway, habit or misdirection.
+  speciesid: 1
+  level: 1
+  gold: 8
+  stats:
+    dexterity:
+      training: 30
+    perception:
+      training: 20
+    strength:
+      training: 15
+  skills:
+    skullduggery: 12
+    weapon-combat: 8
+    unarmed-combat: 6
+  items:
+    - itemid: 10023

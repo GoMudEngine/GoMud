@@ -9,13 +9,15 @@ description: A sprawling mound of refuse and broken goods from the city
   the squalor, the heap clearly supports an entire ecosystem of vermin
   and scavengers who thrive on the city's waste.
 biome: land
+coord:
+  x: 9
+  y: 1
+  z: 0
 exits:
-  southwest:
-    roomid: 3000
   east:
     roomid: 3005
   south:
-    roomid: 3003
+    roomid: 3001
 nouns:
   heap: A mound of refuse standing twice the height of a person, composed
     of broken crates, spoiled food, worn-out clothing, and miscellaneous

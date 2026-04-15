@@ -9,6 +9,10 @@ description: You stand beneath the massive stone arch of Thornwall's western gat
   of people and commerce. Behind you, the quiet farmland stretches west under an
   open sky. This is the threshold between the rural outskirts and the city proper.
 biome: farmland
+coord:
+  x: -1
+  y: 0
+  z: 0
 exits:
   west:
     roomid: 446

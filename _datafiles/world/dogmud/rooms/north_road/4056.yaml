@@ -1,0 +1,50 @@
+roomid: 4056
+zone: North Road
+title: River Ford
+description: >
+  The road descends to the river and meets it directly.
+  Flat stones have been laid in the riverbed to form a
+  crossing: irregular slabs, some tilted, placed close
+  enough together that a careful walker can cross dry.
+  The water runs ankle-deep over the ford, cold enough
+  to ache. It pulls at the stones with each step, and
+  one or two shift underfoot with a grinding scrape.
+  The smell here is all cold water and wet stone.
+  Nothing decorative about this crossing — it is purely
+  functional, and has been since someone first decided
+  the creek needed a road over it.
+biome: farmland
+coord:
+  x: -11
+  y: -5
+  z: 0
+exits:
+  south:
+    roomid: 4055
+  north:
+    roomid: 4057
+nouns:
+  ford: Flat stones laid across the riverbed, worn smooth
+    on their upper faces. The spacing is deliberate —
+    close enough to step between comfortably, though a
+    few gaps have opened as stones shifted. Sediment has
+    built up against the upstream face of each slab,
+    forming small ridges. Two of the larger stones bear
+    chisel marks on their edges, suggesting they were
+    shaped rather than simply selected.
+  water: Clear where the river runs shallow over the ford
+    stones, the water shows its sandy bed in detail. Cold
+    enough to be painful after a few seconds, with the
+    hard mineral bite of snowmelt from somewhere higher
+    up. Underwater, sand swirls between the stones in
+    small eddies where each footstep disturbs the bed.
+spawninfo:
+  - mobid: 326
+    respawnrate: 4h
+idlemessages:
+- Water rushes cold and steady across the ford stones,
+  a wide shallow sound.
+- A stone shifts underfoot with a deep grinding scrape
+  against the riverbed.
+- Fine sand swirls up from the river bottom and drifts
+  downstream in a slow cloud.

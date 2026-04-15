@@ -1,0 +1,33 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">chrysalis-cocoon</ansi> spell
+
+The <ansi fg="command">Chrysalis Cocoon</ansi> spell envelops a target in a shimmering chrysalis of
+hardened conviction energy. It is the most powerful shield spell available,
+providing substantial protection against physical, magical, and rhetoric
+damage alike.
+
+The cocoon's strength scales with the caster's willpower and spellcasting
+skill. It costs more than lighter wards but lasts considerably longer.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">cast chrysalis-cocoon</ansi>              Cocoons yourself.
+  <ansi fg="command">cast chrysalis-cocoon [target]</ansi>     Cocoons a nearby ally.
+
+<ansi fg="yellow">Base Folds:  </ansi> <ansi fg="white-bold">8</ansi>
+<ansi fg="yellow">Target:      </ansi> <ansi fg="white-bold">Single ally (or self)</ansi>
+<ansi fg="yellow">Defense:     </ansi> <ansi fg="white-bold">None — help spells always apply</ansi>
+<ansi fg="yellow">Duration:    </ansi> <ansi fg="white-bold">Scales with spellcasting skill (long)</ansi>
+<ansi fg="yellow">Strength:    </ansi> <ansi fg="white-bold">125% of baseline shield — strongest available</ansi>
+<ansi fg="yellow">Mitigation:  </ansi> <ansi fg="white-bold">Physical, magical, and conviction damage</ansi>
+<ansi fg="yellow">Conv. Cost:  </ansi> <ansi fg="white-bold">8</ansi>
+<ansi fg="yellow">School:      </ansi> <ansi fg="white-bold">Enhancement</ansi>
+
+<ansi fg="white-bold">Notes:</ansi>
+  - Provides the broadest protection of any shield spell, covering all
+    three damage channels.
+  - Worth the cost when preparing for a tough fight or a caster enemy.
+  - Crits boost the cocoon's strength by roughly half again.
+  - Casting again while a cocoon is active overwrites the existing one.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help cast</ansi>, <ansi fg="command">help spells</ansi>, <ansi fg="command">help conviction-ward</ansi>,
+          <ansi fg="command">help minor-shield</ansi>

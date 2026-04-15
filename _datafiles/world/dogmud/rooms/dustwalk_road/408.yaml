@@ -9,6 +9,10 @@ description: The gully dead-ends at a shallow overhang of eroded sandstone where
   someone who knows how to pick ground. The smell of unwashed bodies and stale cook
   smoke hangs in the still air.
 biome: plains
+coord:
+  x: -10
+  y: -2
+  z: 0
 exits:
   north:
     roomid: 407

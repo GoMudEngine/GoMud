@@ -1,0 +1,37 @@
+mobid: 259
+zone: Ashwick
+statpool: 36
+hostile: false
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote grinds herbs in the mortar with practiced rhythm'
+  - ''
+  - 'emote examines a jar and shakes her head'
+  - ''
+  - 'emote ties a bundle of sage to the drying rack'
+  - ''
+activitylevel: 12
+character:
+  name: Delia
+  description: |
+    A woman past middle age with calloused hands from a lifetime of
+    working with plants. Her hair is gray-streaked and tied back with
+    a strip of cloth, and her apron is permanently stained with plant
+    juices in colors that don't all come from known herbs. She moves
+    with the brisk economy of someone who has too much to do and not
+    enough materials to do it with. Her mutation is subtle -- the skin
+    on her palms has a faint green tint, as if the herbs she handles
+    have stained her at a level deeper than washing can reach.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    charisma:
+      training: 8
+    perception:
+      training: 6
+    willpower:
+      training: 4

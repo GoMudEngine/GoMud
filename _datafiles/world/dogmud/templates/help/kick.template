@@ -1,31 +1,33 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">kick</ansi>
 
-The <ansi fg="command">kick</ansi> command delivers a powerful kick to your opponent during combat,
-dealing moderate damage with a chance to knock them to the ground.
+A powerful unarmed strike using your legs. The kick command
+automatically adapts to the combat situation:
 
-<ansi fg="yellow">Requirements:</ansi>
+<ansi fg="yellow">━━━ Kick (standing target) ━━━</ansi>
 
-  - Must be in active combat
-  - Cannot be used if special move cooldown is active
+  A solid kick with a chance to knock the target prone.
+  Good damage and the knockdown opens up follow-up stomps.
 
-<ansi fg="yellow">Usage:</ansi>
+<ansi fg="yellow">━━━ Stomp (prone target) ━━━</ansi>
 
-  <ansi fg="command">kick</ansi>
-  Kick your current combat target
+  When the target is already on the ground, your kick becomes
+  a devastating stomp that bypasses half their armor. Also
+  extends how long they stay down. This is the payoff for
+  knocking someone prone.
 
-<ansi fg="yellow">Mechanics:</ansi>
+<ansi fg="yellow">━━━ Knee (grapple, in control) ━━━</ansi>
 
-  <ansi fg="stat">Damage:</ansi> 40% of your Strength (balanced damage)
-  <ansi fg="stat">Knockdown Chance:</ansi> 35% base, modified by opposed skill check
-    - Attacker: Unarmed Combat skill + Strength
-    - Defender: Combat skill + Dexterity
-  <ansi fg="stat">Cooldown:</ansi> 5 rounds (shared with bash and trip)
-  <ansi fg="stat">Skill:</ansi> Progresses Unarmed Combat
+  When you have control in a clinch or ground grapple, your
+  kick becomes a close-range knee strike. Strong damage that
+  works where kicks can't.
 
-Kick offers a good balance between damage and knockdown potential, making it versatile
-for both offense and tactical control. If the knockdown succeeds, your target becomes
-<ansi fg="red">prone</ansi> for a minimum of 1 full round. See <ansi fg="command">help prone</ansi> for details.
+<ansi fg="yellow">Usage: </ansi>
 
-<ansi fg="yellow">See Also:</ansi>
+  <ansi fg="command">kick</ansi>       Auto-selects variant based on position.
+  <ansi fg="command">stomp</ansi>      Alias for kick (stomps if target is prone).
+  <ansi fg="command">knee</ansi>       Alias for kick (knees if in grapple control).
 
-  <ansi fg="command">help bash</ansi>, <ansi fg="command">help trip</ansi>, <ansi fg="command">help stand</ansi>, <ansi fg="command">help prone</ansi>, <ansi fg="command">help combat</ansi>
+Requires being in combat. Shares a cooldown with other
+special moves (bash, trip). Uses the <ansi fg="skill">unarmed-combat</ansi> skill.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help bash</ansi>, <ansi fg="command">help trip</ansi>, <ansi fg="command">help grapple</ansi>

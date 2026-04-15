@@ -8,15 +8,15 @@ description: A muddy, trampled path winds south through the sagebrush
   musky smell. This is a regular route for boars moving between
   the wallows to the south and grazing grounds to the north.
 biome: land
+coord:
+  x: 13
+  y: 5
+  z: 0
 exits:
   south:
     roomid: 3025
-  east:
-    roomid: 3024
-  north:
-    roomid: 3027
   west:
-    roomid: 3036
+    roomid: 3028
 nouns:
   path: A broad track of churned mud and crushed vegetation made
     by the passage of large animals. The hoofprints are deep

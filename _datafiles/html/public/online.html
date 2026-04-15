@@ -8,7 +8,7 @@
             <tr>
                 <th>#</th>
                 <th>Character</th>
-                <th>Profession</th>
+                <th>Title</th>
                 <th>Time Online</th>
                 <th>Role</th>
             </tr>
@@ -16,7 +16,7 @@
             <tr>
                 <td align="right">{{ add $index 1 }}.</td>
                 <td align="center"><b>{{ $uInfo.CharacterName }}</b></td>
-                <td align="center">{{ $uInfo.Profession }}</td>
+                <td align="center">{{ $uInfo.Title }}</td>
                 <td align="center">{{ $uInfo.OnlineTimeStr }}{{ if $uInfo.IsAFK }} (AFK){{end}}</td>
                 <td align="center">{{ $uInfo.Role }}</td>
             </tr>

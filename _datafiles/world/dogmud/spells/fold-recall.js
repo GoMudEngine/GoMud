@@ -1,34 +1,59 @@
-// Fold Recall spell script — teleports to fold-anchor location
+// Fold Recall spell script — teleport to your Chrysalis anchor
 
 function onCast(sourceActor, targetActor) {
-    var anchorRoom = sourceActor.GetMiscCharacterData('fold-anchor-room');
-    if (!anchorRoom || anchorRoom === '' || anchorRoom === '0') {
-        SendUserMessage(sourceActor.UserId(), 'You have no Fold Anchor set. Cast Fold Anchor first.');
+    var currentRoomId = sourceActor.GetRoomId();
+    var currentRoom = GetRoom(currentRoomId);
+
+    // Check if recall is blocked in this room (instanced zones with allow_recall: false)
+    if (currentRoom && currentRoom.GetTempData('allow_recall') === false) {
+        SendUserMessage(sourceActor.UserId(),
+            'Something about this place prevents you from recalling.');
         return false;
     }
-    SendUserMessage(sourceActor.UserId(), 'You reach through the Veil toward your anchor point...');
-    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true)+' reaches into the Veil, reality blurring around them.', sourceActor.UserId());
+
+    var anchorRoom = Number(
+        sourceActor.GetMiscCharacterData('fold-anchor-room')) || 0;
+
+    if (anchorRoom <= 0) {
+        SendUserMessage(sourceActor.UserId(),
+            'You reach for the Veil, but there is no anchor to ' +
+            'pull you. Set one first with ' +
+            '<ansi fg="command">cast fold-anchor</ansi>.');
+        return false;
+    }
+
+    if (anchorRoom == currentRoomId) {
+        SendUserMessage(sourceActor.UserId(),
+            'You are already standing on your anchor.');
+        return false;
+    }
+
     return true;
 }
 
-function onWait(sourceActor, targetActor) {
-    SendUserMessage(sourceActor.UserId(), 'The Veil thins as you pull yourself toward the anchor...');
-}
-
 function onMagic(sourceActor, targetActor) {
-    var anchorRoom = sourceActor.GetMiscCharacterData('fold-anchor-room');
-    if (!anchorRoom || anchorRoom === '' || anchorRoom === '0') {
-        SendUserMessage(sourceActor.UserId(), 'Your Fold Anchor has dissipated.');
-        return;
-    }
-    var roomId = parseInt(anchorRoom);
-    if (roomId < 1) {
-        SendUserMessage(sourceActor.UserId(), 'Your Fold Anchor has dissipated.');
+    var anchorRoom = Number(
+        sourceActor.GetMiscCharacterData('fold-anchor-room')) || 0;
+    var currentRoom = sourceActor.GetRoomId();
+
+    if (anchorRoom <= 0 || anchorRoom == currentRoom) {
+        SendUserMessage(sourceActor.UserId(),
+            'The fold collapses — no valid anchor found.');
         return;
     }
 
-    SendRoomMessage(sourceActor.GetRoomId(), sourceActor.GetCharacterName(true)+' folds through the Veil and vanishes!', sourceActor.UserId());
-    sourceActor.MoveRoom(roomId);
-    SendUserMessage(sourceActor.UserId(), 'You fold through the Veil and arrive at your anchor point!');
-    SendRoomMessage(roomId, sourceActor.GetCharacterName(true)+' folds through the Veil and appears!', sourceActor.UserId());
+    // Clear combat state before teleporting
+    sourceActor.EndCombat();
+
+    SendRoomMessage(currentRoom,
+        sourceActor.GetCharacterName(true) +
+        ' folds through the Veil and vanishes!',
+        sourceActor.UserId());
+    sourceActor.MoveRoom(anchorRoom);
+    SendUserMessage(sourceActor.UserId(),
+        'You fold through the Veil and arrive at your anchor point!');
+    SendRoomMessage(anchorRoom,
+        sourceActor.GetCharacterName(true) +
+        ' folds through the Veil and appears!',
+        sourceActor.UserId());
 }

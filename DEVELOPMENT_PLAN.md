@@ -4414,7 +4414,7 @@ neural-toxin, conviction-barrage, cleansing-wave.
 13 new buff specs (IDs 26–38) + 17 new spells (~60 files). Buffs include damage bonuses,
 stat modifiers, HoT, stealth, skill progression boost, mutation rate boost, anti-teleport.
 Hook integration: DamageBonus (+15% physical damage), SkillProgress (2x skill progression),
-MutationRate (2x mutation progress). Utility spells include fold-anchor/fold-recall teleport
+MutationRate (2x mutation progress). Utility spells include fold-anchor teleport (set/recall toggle)
 system, veil-sight, mass-mend.
 
 ### Stage 25.4: Summon Spells + Component Items ✅ COMPLETED

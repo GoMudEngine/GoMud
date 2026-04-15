@@ -1,0 +1,71 @@
+mobid: 286
+zone: North Road
+archetype: fighting
+statpool: 250
+itemdropchance: 100
+items:
+  - itemid: 20067
+  - itemid: 10026
+hostile: true
+pack_flee_immune: true
+maxwander: 0
+groups:
+  - humanoid
+  - bandit
+idlecommands:
+  - 'emote studies a hand-drawn map, tracing routes with one finger'
+  - ''
+  - 'emote cleans under a fingernail with a knife point, unhurried'
+  - ''
+  - 'emote looks toward the road approach and listens, head tilted'
+  - ''
+combatcommands:
+  - 'emote moves with controlled economy, each strike placed rather than thrown'
+  - ''
+  - 'emote absorbs a blow on the buckler and counters in the same motion'
+  - ''
+activitylevel: 10
+reaction_delay: 0.6
+tactical_discipline: 0.90
+tactic_preset: aggressive_melee
+tactics:
+  - trigger: health_below:30
+    action: call_for_help
+    priority: 8
+character:
+  name: Soren
+  description: |
+    The camp's leader, recognizable by bearing rather than
+    insignia. A man in his late thirties with a soldier's
+    posture that civilian life has not fully erased. His face
+    is lean, scarred along the jaw, and his eyes carry the
+    patient calculation of someone who plans three moves ahead.
+    A battered ironbound buckler rests within arm's reach at
+    all times. He does not look like a common bandit. He looks
+    like someone who ended up here by a road that started
+    somewhere more respectable.
+  speciesid: 1
+  level: 1
+  gold: 60
+  items:
+    - itemid: 54
+  equipment:
+    weapon:
+      itemid: 10026
+    offhand:
+      itemid: 20067
+    body:
+      itemid: 20068
+  stats:
+    strength:
+      training: 20
+    dexterity:
+      training: 15
+    vitality:
+      training: 18
+    perception:
+      training: 10
+    willpower:
+      training: 8
+  skills:
+    weapon-combat: 20

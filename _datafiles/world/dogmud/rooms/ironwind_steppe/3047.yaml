@@ -9,15 +9,15 @@ description: A shallow pool of murky water persists here where the
   and water striders skate across the surface. This is the most
   reliable water source on the steppe.
 biome: land
+coord:
+  x: 13
+  y: -3
+  z: 0
 exits:
   north:
-    roomid: 3046
-  northwest:
     roomid: 3018
-  south:
-    roomid: 3051
-  east:
-    roomid: 3050
+  west:
+    roomid: 3045
 nouns:
   pool: A shallow pool of muddy water, perhaps ten paces across
     and no deeper than knee-height at its center. The water is

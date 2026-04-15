@@ -12,6 +12,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/statmods"
+	"github.com/GoMudEngine/GoMud/internal/textutil"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/pkg/errors"
 )
@@ -94,6 +95,21 @@ type BuffSpec struct {
 	TriggerCount  int               `yaml:"triggercount,omitempty"`  // How many times it triggers before it is removed
 	StatMods      statmods.StatMods `yaml:"statmods,omitempty"`      // stat mods for the duration of the buff
 	Flags         []Flag            `yaml:"flags,omitempty"`         // A list of actions and such that this buff prevents or enables
+
+	// YAML text fields — flavor text sent by the engine (replaces JS messaging)
+	StartUserText   string `yaml:"start_user_text,omitempty"`
+	StartRoomText   string `yaml:"start_room_text,omitempty"`
+	TriggerUserText string `yaml:"trigger_user_text,omitempty"`
+	TriggerRoomText string `yaml:"trigger_room_text,omitempty"`
+	EndUserText     string `yaml:"end_user_text,omitempty"`
+	EndRoomText     string `yaml:"end_room_text,omitempty"`
+
+	// Config-driven tick fields — replaces JS onTrigger for heal/DoT buffs
+	TickPool         string  `yaml:"tick_pool,omitempty"`           // "health", "stamina", "conviction"
+	TickPercent      float64 `yaml:"tick_percent,omitempty"`        // Base % of max pool. Positive=heal, negative=damage
+	TickVariance     float64 `yaml:"tick_variance,omitempty"`       // Random variance added to percent
+	TickMin          int     `yaml:"tick_min,omitempty"`            // Minimum absolute tick amount (default 1)
+	StartRemoveBuffs []int   `yaml:"start_remove_buffs,omitempty"` // Buff IDs to remove when this buff starts
 }
 
 // Calculates the value of this buff
@@ -180,6 +196,30 @@ func (b *BuffSpec) Id() int {
 
 // Presumably to ensure the datafile hasn't messed something up.
 func (b *BuffSpec) Validate() error {
+
+	// Validate YAML text tokens
+	for _, text := range []string{
+		b.StartUserText, b.StartRoomText,
+		b.TriggerUserText, b.TriggerRoomText,
+		b.EndUserText, b.EndRoomText,
+	} {
+		for _, w := range textutil.ValidateTokens(text) {
+			mudlog.Warn("Buff.Validate", "buffId", b.BuffId, "warning", w)
+		}
+	}
+
+	// Validate tick fields
+	if b.TickPool != "" {
+		switch b.TickPool {
+		case "health", "stamina", "conviction":
+			// valid
+		default:
+			return fmt.Errorf("buffId %d (%s) has invalid tick_pool %q (must be health/stamina/conviction)", b.BuffId, b.Name, b.TickPool)
+		}
+		if b.TickPercent == 0 {
+			mudlog.Warn("Buff.Validate", "buffId", b.BuffId, "warning", "tick_pool set but tick_percent is 0")
+		}
+	}
 
 	// If this is the quit/meditating buff, override the trigger count
 	if b.BuffId == 0 {

@@ -9,17 +9,19 @@ description: Broad, shallow pits of churned mud mark the outer
   Trampled reeds and flattened grass surround each wallow in
   a ring of destruction.
 biome: land
+coord:
+  x: 14
+  y: -9
+  z: 0
 exits:
   north:
     roomid: 3090
+  east:
+    roomid: 3089
   south:
     roomid: 3092
-  east:
-    roomid: 3094
   west:
-    roomid: 3058
-  northeast:
-    roomid: 3080
+    roomid: 3081
 nouns:
   wallows: Broad, shallow pits scooped in the muddy earth by
     boar bodies, each large enough for a single animal. The

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -18,33 +19,18 @@ func Say(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		return true, nil
 	}
 
-	isSneaking := user.Character.HasBuffFlag(buffs.Hidden)
-	isDrunk := user.Character.HasBuffFlag(buffs.Drunk)
-
-	if isDrunk {
-		// modify the text to look like it's the speech of a drunk person
+	if user.Character.HasBuffFlag(buffs.Drunk) {
 		rest = drunkify(rest)
 	}
 
-	// Wrap long dialogue text to 65 chars to account for "Name says, ..."
-	rest = util.NormalizeAndWrap(rest, 65)
+	actor := &actions.UserActor{User: user, Room: room}
+	result := actions.Say(actor, rest)
 
-	if isSneaking {
-		room.SendTextCommunication(fmt.Sprintf(`someone says, "<ansi fg="saytext">%s</ansi>"`, rest), user.UserId)
-	} else {
-		room.SendTextCommunication(fmt.Sprintf(`<ansi fg="username">%s</ansi> says, "<ansi fg="saytext">%s</ansi>"`, user.Character.Name, rest), user.UserId)
-	}
+	roomMsg := actions.FormatSayText(user.Character.Name, result.Text, result.IsSneaking, "username", "saytext")
+	room.SendTextCommunication(roomMsg, user.UserId)
 
-	user.SendText(fmt.Sprintf(`You say, "<ansi fg="saytext">%s</ansi>"`, rest))
-
-	room.SendTextToExits(`You hear someone talking.`, true)
-
-	events.AddToQueue(events.Communication{
-		SourceUserId: user.UserId,
-		CommType:     `say`,
-		Name:         user.Character.Name,
-		Message:      rest,
-	})
+	selfMsg := fmt.Sprintf(`You say, "<ansi fg="saytext">%s</ansi>"`, result.Text)
+	user.SendText(util.SplitStringNL(selfMsg, 80))
 
 	return true, nil
 }

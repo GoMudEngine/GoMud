@@ -9,13 +9,17 @@ description: The coulee narrows to a dead end where the basalt walls
   of unwashed bodies and old cooking fires lingers. This is the
   outer edge of a goblin encampment.
 biome: cliffs
+coord:
+  x: 16
+  y: -10
+  z: 0
 exits:
   north:
     roomid: 3064
-  west:
-    roomid: 3063
   south:
     roomid: 3068
+  east:
+    roomid: 3073
 nouns:
   shelter: A crude lean-to built against the dead-end wall from
     flat stone slabs and salvaged planks. The interior is just

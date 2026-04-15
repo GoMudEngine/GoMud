@@ -1,0 +1,20 @@
+id: battle-trance
+name: Battle Trance
+skill: alchemy
+skill_minimum: 25
+station: alchemy_bench
+time_rounds: 6
+ingredients:
+  - item_tag: ironbark
+    quantity: 1
+  - item_tag: chrysalis-core
+    quantity: 1
+  - item_tag: moonpetal
+    quantity: 1
+  - item_tag: bottle
+    quantity: 1
+output:
+  item_id: 30051
+  quantity: 1
+success_message: "The brew turns pitch-black and seems to absorb the light around it. A battle trance draught!"
+failure_message: "The ironbark and chrysalis resist each other. The brew fails. The materials are wasted."

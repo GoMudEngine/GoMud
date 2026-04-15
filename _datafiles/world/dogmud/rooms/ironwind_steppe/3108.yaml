@@ -9,13 +9,17 @@ description: A long, narrow gallery where the ceiling drops low
   still and cold, with a faint, musty animal smell. You have the
   persistent, uncomfortable feeling of being watched.
 biome: cave
+coord:
+  x: 12
+  y: 10
+  z: 0
 exits:
-  south:
-    roomid: 3105
-  east:
-    roomid: 3109
   north:
     roomid: 3111
+  east:
+    roomid: 3109
+  south:
+    roomid: 3105
 nouns:
   ceiling: The gallery ceiling drops to within four feet of the
     floor, forcing anyone human-sized to crouch. The stone is

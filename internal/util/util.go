@@ -58,10 +58,9 @@ var (
 	// \w: alphanumeric
 	// \p{P}: punctuation
 	// \p{S}: symbol
-	wordRegex        = regexp.MustCompile(`(</?ansi[^>]*>|[\p{Han}\p{Hiragana}\p{Katakana}\p{Hangul}]|\w+|[\p{P}\p{S}\s]+)`)
+	wordRegex        = regexp.MustCompile(`(</?ansi[^>]*>|[\p{Han}\p{Hiragana}\p{Katakana}\p{Hangul}]|\w+|[^\w<\p{Han}\p{Hiragana}\p{Katakana}\p{Hangul}]+|<)`)
 	punctuationRegex = regexp.MustCompile(`[\p{P}]+`)
-	paragraphBreak   = regexp.MustCompile(`\n\s*\n`)
-	ansiTagRegex     = regexp.MustCompile(`</?ansi[^>]*>`)
+	ansiTagRegex = regexp.MustCompile(`</?ansi[^>]*>`)
 
 	mudLock = sync.RWMutex{}
 )
@@ -184,8 +183,8 @@ func LogRoll(name string, rollResult int, targetNumber int) {
 	mudlog.Debug(`Rand Result`, `Name`, name, `Result`, fmt.Sprintf(`%d < %d`, rollResult, targetNumber), `Success`, success)
 }
 
-// visibleWidth returns the display width of a string, ignoring <ansi> markup tags.
-func visibleWidth(s string) int {
+// VisibleWidth returns the display width of a string, ignoring <ansi> markup tags.
+func VisibleWidth(s string) int {
 	return runewidth.StringWidth(ansiTagRegex.ReplaceAllString(s, ``))
 }
 
@@ -208,10 +207,10 @@ func SplitString(input string, lineWidth int) []string {
 				continue
 			}
 
-			wordLen := visibleWidth(word)
+			wordLen := VisibleWidth(word)
 
 			if idx < l-1 && punctuationRegex.MatchString(words[idx+1]) {
-				wordLen += visibleWidth(words[idx+1])
+				wordLen += VisibleWidth(words[idx+1])
 				word += words[idx+1]
 				skip = true
 			} else {
@@ -229,7 +228,7 @@ func SplitString(input string, lineWidth int) []string {
 				}
 				// clear spaces at the beginning of the line
 				currentLine = strings.TrimLeft(word, " ")
-				currentLen = visibleWidth(currentLine)
+				currentLen = VisibleWidth(currentLine)
 			} else {
 				currentLine += word
 				currentLen += wordLen
@@ -258,61 +257,6 @@ func SplitStringNL(input string, lineWidth int, nlPrefix ...string) string {
 	return strings.Join(lines, term.CRLFStr+linePrefix)
 }
 
-// NormalizeAndWrap collapses single newlines into spaces (preserving paragraph
-// breaks denoted by double-newlines), then word-wraps to lineWidth.
-// This prevents the ugly short-line problem when YAML text is pre-wrapped at a
-// different width than the display width.
-func NormalizeAndWrap(input string, lineWidth int) string {
-	if input == "" {
-		return ""
-	}
-
-	// Split on double-newlines to preserve paragraph breaks
-	paragraphs := paragraphBreak.Split(input, -1)
-
-	var wrapped []string
-	for _, para := range paragraphs {
-		// Collapse single newlines and surrounding whitespace into a single space
-		normalized := strings.Join(strings.Fields(para), " ")
-		if normalized == "" {
-			wrapped = append(wrapped, "")
-			continue
-		}
-		wrapped = append(wrapped, SplitStringNL(normalized, lineWidth))
-	}
-
-	return strings.Join(wrapped, term.CRLFStr+term.CRLFStr)
-}
-
-// NormalizeAndWrapNL is like NormalizeAndWrap but accepts an optional newline
-// prefix (same signature as SplitStringNL) for use as a template function.
-func NormalizeAndWrapNL(input string, lineWidth int, nlPrefix ...string) string {
-	if input == "" {
-		return ""
-	}
-
-	linePrefix := ""
-	if len(nlPrefix) > 0 {
-		linePrefix = nlPrefix[0]
-	}
-
-	// Split on double-newlines to preserve paragraph breaks
-	paragraphs := paragraphBreak.Split(input, -1)
-
-	var wrapped []string
-	for _, para := range paragraphs {
-		// Collapse single newlines and surrounding whitespace into a single space
-		normalized := strings.Join(strings.Fields(para), " ")
-		if normalized == "" {
-			wrapped = append(wrapped, "")
-			continue
-		}
-		wrapped = append(wrapped, SplitStringNL(normalized, lineWidth, linePrefix))
-	}
-
-	return strings.Join(wrapped, term.CRLFStr+linePrefix+term.CRLFStr+linePrefix)
-}
-
 func SplitButRespectQuotes(s string) []string {
 
 	// This regex matches either a quoted string (with either single or double quotes) or a non-space sequence.
@@ -339,24 +283,41 @@ func SplitButRespectQuotes(s string) []string {
 	return finalMatches
 }
 
-// accepts an input and splits it along a # if any.
-// By default returns the full string and 1 as the number.
+// GetMatchNumber accepts an input and extracts a match number.
+// Supports three formats:
+//   - "N.item"   (diku-style) → ("item", N)
+//   - "all.item"              → ("item", -1)  sentinel for "all matches"
+//   - "item#N"   (existing)   → ("item", N)
+//   - plain "item"            → ("item", 1)
 func GetMatchNumber(input string) (string, int) {
-	// Clean up the input
 	input = strings.TrimSpace(strings.ToLower(input))
-	// See if the item has a # and if so grab the left as the name, and the right as the number
-	if !strings.Contains(input, "#") {
-		return input, 1
+
+	// Check for N.item or all.item prefix
+	if dotIdx := strings.IndexByte(input, '.'); dotIdx > 0 {
+		prefix := input[:dotIdx]
+		rest := input[dotIdx+1:]
+		if len(rest) > 0 {
+			if prefix == "all" {
+				return rest, -1
+			}
+			if n, err := strconv.Atoi(prefix); err == nil && n >= 1 {
+				return rest, n
+			}
+		}
 	}
 
-	parts := strings.Split(input, "#")
-	input = parts[0]
-	inputNumber, _ := strconv.Atoi(strings.Join(parts[1:], "#"))
-	if inputNumber < 1 {
-		inputNumber = 1
+	// Check for item#N suffix (existing logic)
+	if strings.Contains(input, "#") {
+		parts := strings.Split(input, "#")
+		input = parts[0]
+		inputNumber, _ := strconv.Atoi(strings.Join(parts[1:], "#"))
+		if inputNumber < 1 {
+			inputNumber = 1
+		}
+		return input, inputNumber
 	}
 
-	return input, inputNumber
+	return input, 1
 }
 
 func FindMatchIn(searchName string, items ...string) (match string, closeMatch string) {
@@ -1026,4 +987,58 @@ func StripCharsForScreenReaders(s string) string {
 	}
 
 	return b.String()
+}
+
+// ConvertToAscii replaces UTF-8 box-drawing, block element, and other
+// decorative Unicode characters with ASCII visual equivalents.
+// ANSI escape sequences pass through unchanged.
+// Fast-paths when input contains no bytes >= 0x80.
+func ConvertToAscii(s string) string {
+	// Fast path: if no high bytes, nothing to convert
+	hasHighByte := false
+	for i := 0; i < len(s); i++ {
+		if s[i] >= 0x80 {
+			hasHighByte = true
+			break
+		}
+	}
+	if !hasHighByte {
+		return s
+	}
+
+	var b strings.Builder
+	b.Grow(len(s))
+
+	for _, r := range s {
+		if ascii, ok := unicodeToAscii[r]; ok {
+			b.WriteByte(ascii)
+		} else {
+			b.WriteRune(r)
+		}
+	}
+	return b.String()
+}
+
+// unicodeToAscii maps decorative Unicode runes to ASCII byte equivalents.
+var unicodeToAscii = map[rune]byte{
+	// Box-drawing: light
+	'─': '-', '│': '|',
+	'┌': '+', '┐': '+', '└': '+', '┘': '+',
+	'├': '+', '┤': '+', '┬': '+', '┴': '+', '┼': '+',
+	// Box-drawing: double
+	'═': '=', '║': '|',
+	'╔': '+', '╗': '+', '╚': '+', '╝': '+',
+	'╠': '+', '╣': '+', '╦': '+', '╩': '+', '╬': '+',
+	// Box-drawing: mixed single/double
+	'╒': '+', '╕': '+', '╘': '+', '╛': '+',
+	'╞': '+', '╡': '+', '╤': '+', '╧': '+', '╪': '+',
+	'╓': '+', '╖': '+', '╙': '+', '╜': '+',
+	'╟': '+', '╢': '+', '╥': '+', '╨': '+', '╫': '+',
+	// Block elements
+	'█': '#', '▓': '#', '▒': ':', '░': '.',
+	'▄': '-', '▀': '_', '▌': '|', '▐': '|',
+	// Bullet / misc
+	'•': '*',
+	// Diagonal lines
+	'╲': '\\', '╱': '/',
 }

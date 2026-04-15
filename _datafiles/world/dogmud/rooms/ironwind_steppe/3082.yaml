@@ -10,15 +10,19 @@ description: A clearing in the ravine where the wolves bring their
   is strong and primal. Crows and other scavengers hop around
   the edges, waiting for the wolves to finish.
 biome: land
+coord:
+  x: 13
+  y: -10
+  z: 0
 exits:
   north:
     roomid: 3081
+  east:
+    roomid: 3092
   west:
-    roomid: 3076
+    roomid: 3078
   south:
     roomid: 3083
-  east:
-    roomid: 3074
 nouns:
   bones: A grim scatter of prey animal remains in varying
     states of decay. Fresh bones with scraps of meat still
@@ -32,6 +36,10 @@ nouns:
     carved from steppe cedar with a leather cord at the base. It
     looks out of place among the carnage -- clearly not prey
     remains. Someone might want this back.
+containers:
+  bones:
+    items:
+      - itemid: 40033
 spawninfo:
 - mobid: 205
 - mobid: 215

@@ -17,10 +17,10 @@ options:
       toattacker:
         beginner:
         - 'You plant your <ansi fg="item">{itemname}</ansi> and ready yourself against <ansi fg="{targettype}">{target}</ansi>.'
-        - 'You grip your <ansi fg="item">{itemname}</ansi> with both hands, sigils flickering along its length.'
+        - 'You grip your <ansi fg="item">{itemname}</ansi> with tremendous force, sigils flickering along its length.'
         - 'You raise your <ansi fg="item">{itemname}</ansi>, adopting a defensive posture against <ansi fg="{targettype}">{target}</ansi>.'
         expert:
-        - 'You settle into a {stance} stance, your <ansi fg="item">{itemname}</ansi> balanced between both hands.'
+        - 'You settle into a {stance} stance, your <ansi fg="item">{itemname}</ansi> balanced and ready.'
         - 'While {position}, you level your <ansi fg="item">{itemname}</ansi> at <ansi fg="{targettype}">{target}</ansi> with measured control.'
         - 'You rotate your <ansi fg="item">{itemname}</ansi> slowly, the iron-shod ends tracing careful arcs.'
         master:
@@ -30,7 +30,7 @@ options:
       todefender:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> plants their <ansi fg="item">{itemname}</ansi> and readies for battle.'
-        - '<ansi fg="{sourcetype}">{source}</ansi> grips their <ansi fg="item">{itemname}</ansi> with both hands, sigils flickering.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> grips their <ansi fg="item">{itemname}</ansi> with tremendous force, sigils flickering.'
         expert:
         - '<ansi fg="{sourcetype}">{source}</ansi> settles into a {stance} stance with their <ansi fg="item">{itemname}</ansi> balanced.'
         - '<ansi fg="{sourcetype}">{source}</ansi> levels their <ansi fg="item">{itemname}</ansi> at you with measured control.'
@@ -40,7 +40,7 @@ options:
       toroom:
         beginner:
         - '<ansi fg="{sourcetype}">{source}</ansi> plants their <ansi fg="item">{itemname}</ansi> and readies against <ansi fg="{targettype}">{target}</ansi>.'
-        - '<ansi fg="{sourcetype}">{source}</ansi> grips their <ansi fg="item">{itemname}</ansi> with both hands, facing <ansi fg="{targettype}">{target}</ansi>.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> grips their <ansi fg="item">{itemname}</ansi> with tremendous force, facing <ansi fg="{targettype}">{target}</ansi>.'
         expert:
         - '<ansi fg="{sourcetype}">{source}</ansi> settles into a {stance} stance, <ansi fg="item">{itemname}</ansi> balanced.'
         - '<ansi fg="{sourcetype}">{source}</ansi> levels their <ansi fg="item">{itemname}</ansi> at <ansi fg="{targettype}">{target}</ansi> with control.'
@@ -165,7 +165,7 @@ options:
         - 'Reading their stance, you strike with staff-fighting precision!'
         - 'You draw their guard high and sweep low into <ansi fg="{targettype}">{target}</ansi>!'
         master:
-        - 'You press your advantage with a powerful two-handed sweep!'
+        - 'You press your advantage with a powerful sweeping strike!'
         - 'You exploit an opening and thrust decisively at <ansi fg="{targettype}">{target}</ansi>!'
         - 'Your <ansi fg="item">{itemname}</ansi> hums as you deliver a commanding strike!'
         - '{momentum}, your staff cracks solidly into <ansi fg="{targettype}">{target}</ansi>!'
@@ -179,7 +179,7 @@ options:
         - '<ansi fg="{sourcetype}">{source}</ansi> steps in and delivers a solid sweep!'
         - '<ansi fg="{sourcetype}">{source}</ansi> feints a thrust and sweeps low into you!'
         master:
-        - '<ansi fg="{sourcetype}">{source}</ansi> presses their advantage with a two-handed sweep!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> presses their advantage with a sweeping strike!'
         - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> hums as it strikes you!'
         - '<ansi fg="{sourcetype}">{source}</ansi> cracks their staff into your {bodypart}!'
       toroom:
@@ -190,22 +190,22 @@ options:
         - '<ansi fg="{sourcetype}">{source}</ansi> steps forward and delivers a solid sweep!'
         - '<ansi fg="{sourcetype}">{source}</ansi> feints a thrust and sweeps low into <ansi fg="{targettype}">{target}</ansi>!'
         master:
-        - '<ansi fg="{sourcetype}">{source}</ansi> presses forward with a powerful two-handed sweep!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> presses forward with a powerful sweeping strike!'
         - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> hums as it strikes <ansi fg="{targettype}">{target}</ansi>!'
   heavy:
     together:
       toattacker:
         beginner:
-        - 'You slam your <ansi fg="item">{itemname}</ansi> into <ansi fg="{targettype}">{target}</ansi> with both hands!'
+        - 'You slam your <ansi fg="item">{itemname}</ansi> into <ansi fg="{targettype}">{target}</ansi> with tremendous force!'
         - 'Your <ansi fg="item">{itemname}</ansi> crashes into <ansi fg="{targettype}">{target}</ansi>, sigils blazing!'
-        - 'You deliver a crushing two-handed blow with your <ansi fg="item">{itemname}</ansi>!'
+        - 'You deliver a crushing blow with your <ansi fg="item">{itemname}</ansi>!'
         expert:
         - 'You step in and deliver a devastating sweep to <ansi fg="{targettype}">{target}</ansi>!'
         - 'From your {stance} stance, you drive the iron-shod end with tremendous force!'
         - '{momentum}, you press forward and crash your <ansi fg="item">{itemname}</ansi> into <ansi fg="{targettype}">{target}</ansi>!'
         - 'Feinting a retreat, you surge forward with a heavy overhead swing!'
         master:
-        - 'You draw their guard aside and unleash a punishing two-handed strike!'
+        - 'You draw their guard aside and unleash a punishing strike!'
         - 'Reading their weakness, you channel devastating force through your staff!'
         - 'Your {stance} approach pays off as you deliver a bone-rattling blow!'
         - 'Seizing the advantage, you slam both iron-shod ends into <ansi fg="{targettype}">{target}</ansi>!'
@@ -213,7 +213,7 @@ options:
         - 'You drive the iron-shod end of your staff into <ansi fg="{targettype}">{target}</ansi>''s {bodypart} with bone-rattling force!'
       todefender:
         beginner:
-        - '<ansi fg="{sourcetype}">{source}</ansi> slams their <ansi fg="item">{itemname}</ansi> into you with both hands!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> slams their <ansi fg="item">{itemname}</ansi> into you with tremendous force!'
         - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> crashes into you, sigils blazing!'
         expert:
         - '<ansi fg="{sourcetype}">{source}</ansi> steps in and delivers a devastating sweep!'
@@ -225,13 +225,13 @@ options:
         - '<ansi fg="{sourcetype}">{source}</ansi> drives the iron-shod end into your {bodypart} with devastating force!'
       toroom:
         beginner:
-        - '<ansi fg="{sourcetype}">{source}</ansi> slams their <ansi fg="item">{itemname}</ansi> into <ansi fg="{targettype}">{target}</ansi> with both hands!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> slams their <ansi fg="item">{itemname}</ansi> into <ansi fg="{targettype}">{target}</ansi> with tremendous force!'
         - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> crashes into <ansi fg="{targettype}">{target}</ansi>, sigils blazing!'
         expert:
         - '<ansi fg="{sourcetype}">{source}</ansi> steps in and delivers a devastating sweep to <ansi fg="{targettype}">{target}</ansi>!'
         - '<ansi fg="{sourcetype}">{source}</ansi> surges forward with a heavy overhead swing!'
         master:
-        - '<ansi fg="{sourcetype}">{source}</ansi> draws the guard and unleashes a punishing two-handed strike!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> draws the guard and unleashes a punishing strike!'
         - '<ansi fg="{sourcetype}">{source}</ansi> channels devastating force through the sigil-carved shaft!'
   critical:
     together:
@@ -273,18 +273,18 @@ options:
     together:
       toattacker:
         beginner:
-        - 'Your <ansi fg="item">{itemname}</ansi> <ansi fg="red-bold">FUMBLES</ansi> as you lose your two-handed grip!'
+        - 'Your <ansi fg="item">{itemname}</ansi> <ansi fg="red-bold">FUMBLES</ansi> as you lose your grip!'
         - 'You <ansi fg="red-bold">FUMBLE</ansi> and tangle your own feet with the staff!'
         - 'You overextend your sweep and <ansi fg="red-bold">FUMBLE</ansi>, nearly dropping your weapon!'
         expert:
         - 'Your tactical sweep fails catastrophically - you <ansi fg="red-bold">FUMBLE</ansi>!'
-        - 'You misjudge the distance and <ansi fg="red-bold">FUMBLE</ansi> your two-handed strike!'
+        - 'You misjudge the distance and <ansi fg="red-bold">FUMBLE</ansi> your strike!'
         master:
         - '<ansi fg="{targettype}">{target}</ansi>''s unexpected counter forces you to <ansi fg="red-bold">FUMBLE</ansi>!'
         - 'Despite perfect form, a misstep causes you to <ansi fg="red-bold">FUMBLE</ansi>!'
       todefender:
         beginner:
-        - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> <ansi fg="red-bold">FUMBLES</ansi> as they lose their grip!'
+        - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> <ansi fg="red-bold">FUMBLES</ansi> as they fumble their grip!'
         - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> and tangles their own feet!'
         expert:
         - '<ansi fg="{sourcetype}">{source}''s</ansi> tactical sweep fails - they <ansi fg="red-bold">FUMBLE</ansi>!'
@@ -294,7 +294,7 @@ options:
         - 'Despite their skill, <ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi>!'
       toroom:
         beginner:
-        - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> <ansi fg="red-bold">FUMBLES</ansi> as they lose their grip!'
+        - '<ansi fg="{sourcetype}">{source}''s</ansi> <ansi fg="item">{itemname}</ansi> <ansi fg="red-bold">FUMBLES</ansi> as they fumble their grip!'
         - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> their sweep against <ansi fg="{targettype}">{target}</ansi>!'
         expert:
         - '<ansi fg="{sourcetype}">{source}''s</ansi> tactical sweep fails - they <ansi fg="red-bold">FUMBLE</ansi>!'

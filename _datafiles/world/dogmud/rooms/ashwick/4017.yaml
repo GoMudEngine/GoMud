@@ -1,0 +1,53 @@
+roomid: 4017
+zone: Ashwick
+title: Central Green
+description: >
+  The hamlet's heart -- a patch of green where roads converge
+  from every direction. A spreading oak dominates the space,
+  its canopy shading a worn wooden bench and a notice post
+  bristling with pinned papers. The grass is trampled flat
+  near the bench but grows thick under the tree's drip line.
+  Houses face the green from the west and east, and a narrow
+  lane leads south toward what might be a ritual circle. To
+  the north, a tidy cottage with herb bundles visible through
+  the window.
+biome: farmland
+coord:
+  x: -5
+  y: -13
+  z: 0
+exits:
+  west:
+    roomid: 4016
+  east:
+    roomid: 4018
+  south:
+    roomid: 4021
+  north:
+    roomid: 4027
+nouns:
+  oak: An ancient spreading oak, easily the oldest living thing
+    in Ashwick. Its trunk is thick enough that two people could
+    not link arms around it, and its canopy shades most of the
+    green. Carved initials and dates mark the bark at waist
+    height -- generations of lovers and children leaving their
+    marks. The tree was here before the hamlet, and will likely
+    outlast it.
+  bench: A wooden bench beneath the oak, worn smooth by years
+    of sitting. Carved initials cover the armrests and seat
+    back -- some deep and old, others shallow and recent. The
+    wood is silvered with age but solid. A comfortable place
+    to rest and watch the hamlet go about its business.
+  post: A wooden post driven into the ground near the bench,
+    its surface bristling with pinned notices. A lost goat
+    notice with a rough sketch. A reminder about market day
+    in Watchers Crossing. And one older notice, its paper
+    yellowed and curling, requesting that "unusual absences
+    be reported to the deacon." No one has taken it down.
+spawninfo:
+- mobid: 266
+idlemessages:
+- Children's voices carry from somewhere behind the houses.
+- Leaves rustle in the oak's broad canopy, dappling the green
+  with shifting light.
+- A breeze stirs the notices on the post, paper edges fluttering.

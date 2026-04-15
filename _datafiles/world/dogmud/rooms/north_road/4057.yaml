@@ -1,0 +1,50 @@
+roomid: 4057
+zone: North Road
+title: River Road, North
+description: >
+  Past the ford the road climbs a low rise and opens
+  out. The river bends east, pulling away from the road,
+  and the willows thin. The terrain here is more exposed:
+  rolling scrubland broken by low rocky outcrops, the
+  sky wide overhead. The road is heavier here — deeper
+  ruts, a wider track, gravel that has been replenished
+  recently. Traffic picks up north of the crossing. To
+  the east, above the river valley, the faint rhythmic
+  knock of axes carries on the wind.
+biome: farmland
+coord:
+  x: -11
+  y: -4
+  z: 0
+exits:
+  south:
+    roomid: 4056
+  north:
+    roomid: 4058
+nouns:
+  tracks: The ruts here are wider and deeper than those
+    to the south — cut by heavier vehicles moving in
+    both directions. Between the ruts, boot prints
+    overlap in layers — broad working boots, narrower
+    traveler's soles, a few with the rounded heel of
+    riding boots. In the soft shoulder of the road,
+    a set of prints where someone stepped aside to let
+    a cart pass, then resumed walking north.
+  view: From the top of the rise, the road opens north
+    into rolling scrubland — rocky outcrops and bent
+    thornbushes stretching toward low hills. To the
+    south, the river valley is a dark line of willows.
+    On the horizon to the north, barely visible, a grey
+    smudge that might be smoke or distance haze or the
+    rooflines of something larger.
+spawninfo:
+  - mobid: 327
+    respawnrate: 4h
+idlemessages:
+- Wind moves across the open ground with a low steady
+  push, bending the scrub flat.
+- The rhythmic knock of axes carries from somewhere to
+  the east, then fades.
+- A cart passes in the distance to the north, its wheels
+  rattling on the gravel before it disappears over the
+  hill.

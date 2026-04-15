@@ -3,16 +3,16 @@ name: Conviction Draught
 skill: alchemy
 skill_minimum: 3
 station: alchemy_bench
-time_rounds: 2
+time_rounds: 3
 ingredients:
   - item_tag: healers-root
     quantity: 1
   - item_tag: bitter-thistle
     quantity: 1
-  - item_tag: small-vial
+  - item_tag: bottle
     quantity: 1
 output:
-  item_id: 30012
+  item_id: 30038
   quantity: 1
-success_message: "You combine the root and thistle in the vial and seal it. A conviction draught!"
-failure_message: "The mixture goes cloudy and bitter-smelling. The materials are wasted."
+success_message: "Root and thistle blend into a bittersweet draught. A conviction draught!"
+failure_message: "The ingredients refuse to combine properly. The materials are wasted."

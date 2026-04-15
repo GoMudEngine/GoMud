@@ -9,13 +9,15 @@ description: The sagebrush flats reach their northern extent here,
   pockets of earth it can find. Animal trails converge here
   before branching into the rougher terrain ahead.
 biome: land
+coord:
+  x: 12
+  y: 6
+  z: 0
 exits:
-  south:
-    roomid: 3028
-  east:
-    roomid: 3039
   north:
     roomid: 3100
+  south:
+    roomid: 3028
 nouns:
   cliffs: Distant cliff faces of pale stone, streaked with dark
     mineral stains. Wind-carved hollows and overhangs are visible

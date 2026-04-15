@@ -10,11 +10,13 @@ description: The earth here has been thoroughly excavated by boar
   along the furrows, picking up easy meals disturbed by the
   digging.
 biome: land
+coord:
+  x: 15
+  y: -12
+  z: 0
 exits:
   north:
     roomid: 3096
-  east:
-    roomid: 3099
   south:
     roomid: 3098
 nouns:

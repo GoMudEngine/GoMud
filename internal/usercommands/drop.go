@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
@@ -25,12 +26,14 @@ func Drop(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 	if args[0] == "all" {
 
-		iCopies := []items.Item{}
-
-		if user.Character.Gold > 0 {
+		// "drop all gold" — drop all gold explicitly
+		if len(args) >= 2 && args[1] == "gold" && user.Character.Gold > 0 {
 			Drop(fmt.Sprintf("%d gold", user.Character.Gold), user, room, flags)
+			return true, nil
 		}
 
+		// "drop all" — drop all items but not gold
+		iCopies := []items.Item{}
 		iCopies = append(iCopies, user.Character.Items...)
 
 		for _, item := range iCopies {
@@ -40,7 +43,7 @@ func Drop(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
-	// Drop 10 gold
+	// Drop N gold
 	if len(args) >= 2 && args[1] == "gold" {
 		g, _ := strconv.ParseInt(args[0], 10, 32)
 		dropAmt := int(g)
@@ -56,8 +59,10 @@ func Drop(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 		user.Character.CancelBuffsWithFlag(buffs.Hidden)
 
-		room.Gold += dropAmt
-		user.Character.Gold -= dropAmt
+		if err := actions.FloorDropGold(dropAmt, user.Character, room); err != nil {
+			user.SendText("Oops!")
+			return true, nil
+		}
 
 		events.AddToQueue(events.EquipmentChange{
 			UserId:     user.UserId,
@@ -67,7 +72,7 @@ func Drop(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		user.SendText(
 			fmt.Sprintf(`You drop <ansi fg="gold">%d gold</ansi> on the floor.`, dropAmt),
 		)
-		room.SendText(
+		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> drops <ansi fg="gold">%d gold</ansi>.`, user.Character.Name, dropAmt),
 			user.UserId,
 		)
@@ -75,43 +80,54 @@ func Drop(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
-	// Check whether the user has an item in their inventory that matches
-	matchItem, found := user.Character.FindInBackpack(rest)
+	// Parse match number for all.item support (e.g. "drop all.potion")
+	itemName, matchNum := util.GetMatchNumber(rest)
+	if matchNum == -1 {
+		actor := &actions.UserActor{User: user, Room: room}
+		dropped := 0
+		for {
+			result := actions.DropItem(actor, itemName)
+			if !result.Found {
+				break
+			}
+			user.Character.CancelBuffsWithFlag(buffs.Hidden)
+			dropped++
+		}
+		if dropped == 0 {
+			user.SendText(fmt.Sprintf(`You don't have any "%s" to drop.`, itemName))
+		} else {
+			user.SendText(fmt.Sprintf(`You drop %d item(s).`, dropped))
+			room.SendTextVisual(
+				fmt.Sprintf(`<ansi fg="username">%s</ansi> drops some items.`, user.Character.Name),
+				user.UserId,
+			)
+		}
+		return true, nil
+	}
 
-	if !found {
+	// Single-item drop path
+	actor := &actions.UserActor{User: user, Room: room}
+	result := actions.DropItem(actor, rest)
+
+	if !result.Found {
 		user.SendText(fmt.Sprintf("You don't have a %s to drop.", rest))
 	} else {
-
 		user.Character.CancelBuffsWithFlag(buffs.Hidden)
 
-		iSpec := matchItem.GetSpec()
-
-		// Swap the item location
-		user.Character.RemoveItem(matchItem)
-
-		events.AddToQueue(events.ItemOwnership{
-			UserId: user.UserId,
-			Item:   matchItem,
-			Gained: false,
-		})
+		iSpec := result.Item.GetSpec()
 
 		user.SendText(
-			fmt.Sprintf(`You drop the <ansi fg="item">%s</ansi>.`, matchItem.DisplayName()),
+			fmt.Sprintf(`You drop the <ansi fg="item">%s</ansi>.`, result.Item.DisplayName()),
 		)
-		room.SendText(
-			fmt.Sprintf(`<ansi fg="username">%s</ansi> drops their <ansi fg="item">%s</ansi>...`, user.Character.Name, matchItem.DisplayName()),
+		room.SendTextVisual(
+			fmt.Sprintf(`<ansi fg="username">%s</ansi> drops their <ansi fg="item">%s</ansi>...`, user.Character.Name, result.Item.DisplayName()),
 			user.UserId,
 		)
 
 		// If grenades are dropped, they explode and affect everyone in the room!
 		if iSpec.Type == items.Grenade {
-
 			user.SendText(`Todo. Grenades disabled for now.`)
-
 		}
-
-		room.AddItem(matchItem, false)
-
 	}
 
 	return true, nil

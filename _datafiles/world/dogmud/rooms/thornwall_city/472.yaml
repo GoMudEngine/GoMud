@@ -7,16 +7,18 @@ description: A low-ceilinged tavern tucked into the south end of the Craftsmen's
   were built. The interior is dim, smoky, and comfortable in the way of places that
   have soaked up decades of conversation and spilled ale. Mismatched tables fill the
   room, and the <ansi fg="itemname">bar</ansi> is a single slab of scarred oak on trestle legs. A staircase
-  leads down to a cellar, and a back door opens onto a narrow alley. Past the far
+  leads down to a cellar. Past the far
   end of the bar, a moth-eaten curtain half-hides a back corner where the old
   regulars hold court. The tavern has the feel of a place where people come to
   talk seriously over cheap drinks.
 biome: city
+coord:
+  x: 2
+  y: -2
+  z: 0
 exits:
   north:
     roomid: 469
-  east:
-    roomid: 475
   west:
     roomid: 481
   south:
@@ -30,7 +32,7 @@ nouns:
     legs. The surface is carved with initials, ring-marked by a thousand mugs, and
     polished smooth in the spots where elbows rest. Behind it, shelves hold bottles,
     kegs, and an impressive collection of mismatched cups.
-  back corner: Past the end of the bar, a moth-eaten curtain hangs from a
+  alcove: Past the end of the bar, a moth-eaten curtain hangs from a
     sagging rope, half-screening a cramped alcove where three old men sit
     around a battered table. The space looks like it has been claimed for
     decades -- no one else would dare sit there.

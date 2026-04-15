@@ -1,0 +1,9 @@
+buffid: 9
+name: Hidden
+description: You're very sneaky.
+secret: false
+triggerrate: 1 round
+triggercount: 15
+flags:
+  - hidden
+  - cancel-on-combat

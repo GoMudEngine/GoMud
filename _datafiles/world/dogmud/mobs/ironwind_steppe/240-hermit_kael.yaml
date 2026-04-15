@@ -3,6 +3,7 @@ zone: Ironwind Steppe
 statpool: 100
 itemdropchance: 0
 hostile: false
+charm_immune: true
 maxwander: 0
 archetype: fighting
 groups:
@@ -14,6 +15,9 @@ idlecommands:
   - ''
   - 'emote scratches a mark on the alcove wall'
 activitylevel: 10
+reaction_delay: 1.0
+tactical_discipline: 0.70
+tactic_preset: tank
 character:
   name: Hermit Kael
   description: |

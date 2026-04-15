@@ -9,13 +9,17 @@ description: A thin stream of clear water runs along the ravine floor
   greener and lusher than anything above, fed by the reliable
   moisture.
 biome: land
+coord:
+  x: 12
+  y: -9
+  z: 0
 exits:
   north:
     roomid: 3076
+  east:
+    roomid: 3081
   south:
     roomid: 3078
-  east:
-    roomid: 3083
 nouns:
   stream: A narrow stream of clear water, barely a foot wide and
     only a few inches deep, running over a bed of smooth stones.

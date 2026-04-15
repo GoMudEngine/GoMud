@@ -6,10 +6,12 @@ schools:
   - mental
 cost: 120
 waitrounds: 2
-difficulty: 0
+difficulty: 50
 primarystat: willpower
 base_folds: 16
 target_defense_type: mental
 effect_type: damage
 effect_magnitude: 600
 damage_multiplier: 1.80
+cast_user_text: "You flood your consciousness toward the target, overwhelming their synapses."
+cast_room_text: "{source} locks eyes with their target, veins pulsing at the temples."

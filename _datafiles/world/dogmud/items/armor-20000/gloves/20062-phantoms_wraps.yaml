@@ -1,0 +1,14 @@
+itemid: 20062
+name: phantom's wraps
+namesimple: wraps
+description: >-
+  Lengths of chrysalis membrane wound tightly around the hands and
+  fingers, almost translucent at the knuckles where the material
+  thins. They are barely visible in low light and leave no warmth
+  on anything they touch.
+type: gloves
+subtype: wearable
+magical_mitigation: 5
+statmods:
+  dexterity: 5
+value: 30

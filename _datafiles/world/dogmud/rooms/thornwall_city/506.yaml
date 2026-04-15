@@ -1,0 +1,65 @@
+roomid: 506
+zone: Thornwall City
+title: Resin Armory
+description: >
+  A compact alcove packed with chrysalis-hardened equipment. Racks along
+  both walls hold daggers with resin-coated blades and gauntlets studded
+  with crystallized chrysalis nodes. A workbench dominates the center,
+  its surface dusted with chrysalis shavings and gritty with cured resin
+  powder. A small pot of binding paste sits open beside iron molds still
+  bearing impressions of knuckle weapons. Everything here was made, not
+  looted -- crafted to a standard by someone who knows exactly what they
+  want their tools to do. The air smells of heated metal and the sharp
+  mineral tang of chrysalis compound.
+biome: cave
+coord:
+  x: 1
+  y: -5
+  z: -3
+exits:
+  east:
+    roomid: 505
+spawninfo:
+  - itemid: 10024
+    respawnrate: 30 real minutes
+  - itemid: 20062
+    respawnrate: 30 real minutes
+nouns:
+  weapon racks: >
+    Wall-mounted racks holding a dozen blades in neat rows. Each
+    dagger has been coated in a thin layer of chrysalis resin -- not
+    the natural kind, but processed, refined to a consistency that
+    hardens on contact with air. The coating preserves the edge and
+    adds a faint amber sheen. A few of the racks are empty, their
+    weapons already distributed.
+  workbench: >
+    A heavy plank bench scarred with cuts and burns. The surface
+    near the center is dusted with chrysalis shavings -- fine
+    filaments cut from hardened growths during the shaping process.
+    A small hand-file with a chrysalis-encrusted handle lies at
+    the near edge.
+  shavings: >
+    Curled chrysalis shavings scattered across the workbench and
+    floor near it. Under lamplight they catch and refract -- each
+    tiny curl holding a spectrum of colour. They are sharp; picking
+    through them barehanded would be unwise.
+  paste pot: >
+    A squat iron pot of binding paste, its lid set to one side. The
+    paste is dark amber, semi-liquid, and it smells of rendered fat
+    and mineral compounds. Used to bond chrysalis shards to weapon
+    surfaces and cure them hard. The pot is three-quarters full --
+    fresh work has been done recently.
+  molds: >
+    Iron molds in the shape of paired knuckle weapons, each cavity
+    still bearing faint impressions from the last pour. The metal
+    has a light dusting of dried paste at the seams where chrysalis
+    compound was injected. Someone makes these weapons in batches.
+  dagger rack: >
+    The nearest rack holds six daggers in individual loops of oiled
+    leather. Each blade has a faint iridescent sheen from the resin
+    coat and a simple wrapped handle. They are not decorated -- they
+    are tools, made to kill cleanly and leave no identifying marks.
+idlemessages:
+- The paste pot's surface skins over where it meets the air, wrinkling slowly.
+- Chrysalis shavings on the floor catch the faint light and scatter it.
+- The workbench smells of recent use -- metal shavings, heat, and paste.

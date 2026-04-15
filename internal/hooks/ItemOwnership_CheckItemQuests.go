@@ -3,7 +3,9 @@ package hooks
 import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
+	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
 //
@@ -34,6 +36,16 @@ func CheckItemQuests(e events.Event) events.ListenerReturn {
 		}
 
 		scripting.TryItemScriptEvent(`onFound`, evt.Item, evt.UserId)
+
+		// Quest engine: item_gain notification
+		if u := users.GetByUserId(evt.UserId); u != nil {
+			bridge := questengine.NewGameBridge(u, u.Character.RoomId)
+			questengine.GetEngine().Notify("item_gain", questengine.EventDetails{
+				UserId: evt.UserId,
+				RoomId: u.Character.RoomId,
+				ItemId: evt.Item.ItemId,
+			}, bridge, bridge)
+		}
 
 	} else {
 

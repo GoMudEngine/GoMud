@@ -1,0 +1,10 @@
+buffid: 66
+name: Swiftfoot Essence
+description: The world slows around you as your reflexes sharpen.
+triggerrate: 1 round
+triggercount: 350
+statmods:
+  dexterity: 15
+  vitality: -10
+flags:
+  - haste

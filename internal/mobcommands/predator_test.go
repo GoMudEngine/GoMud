@@ -307,42 +307,6 @@ func TestHowl_InCombat(t *testing.T) {
 	mob.Character.Aggro = nil
 }
 
-// ─── Roar ───────────────────────────────────────────────────────────────────
-
-func TestRoar_NotInCombat(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	mob, room := getTestMobAndRoom(t)
-	mob.Character.Aggro = nil
-
-	handled, err := Roar("", mob, room)
-	assert.True(t, handled)
-	assert.NoError(t, err)
-}
-
-func TestRoar_InCombat(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	mob, room := getTestMobAndRoom(t)
-
-	mob.Character.Aggro = &characters.Aggro{UserId: 1}
-	mob.Character.Stats.Charisma.ValueAdj = 80
-	mob.Character.ConvictionMax.Value = 50
-	mob.Character.Conviction = 50
-
-	handled, err := Roar("", mob, room)
-	assert.True(t, handled)
-	assert.NoError(t, err)
-
-	if mob.Character.Aggro != nil {
-		assert.Equal(t, 1, mob.Character.Aggro.RoundsWaiting)
-	}
-
-	mob.Character.Aggro = nil
-}
-
 // ─── Cooldown Interaction ───────────────────────────────────────────────────
 
 func TestSpecialMoveCooldown_SharedAcrossCommands(t *testing.T) {
@@ -388,5 +352,4 @@ func TestPredatorCommandsRegistered(t *testing.T) {
 	assert.True(t, found["flee"], "flee should be registered")
 	assert.True(t, found["hamstring"], "hamstring should be registered")
 	assert.True(t, found["howl"], "howl should be registered")
-	assert.True(t, found["roar"], "roar should be registered")
 }

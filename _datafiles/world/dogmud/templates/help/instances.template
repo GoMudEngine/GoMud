@@ -1,0 +1,51 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">instances</ansi>
+
+Instanced zones are dangerous, private areas you can enter
+by paying a Riftkeeper NPC. The more gold you invest, the
+tougher the enemies -- and the better the potential loot.
+
+<ansi fg="yellow">How It Works:</ansi>
+
+  1. Find the Riftkeeper (east of Temple District).
+  2. <ansi fg="command">ask sable portals</ansi> to see available zones.
+  3. <ansi fg="command">ask sable arena 200</ansi> to open a rift to the
+     Arena with 200 gold invested. The gold is deducted
+     immediately. Minimum investment is 100 gold.
+  4. Sable will tell you the exit command to enter.
+
+  The gold you invest determines how tough the enemies
+  are and how good the loot can be. Invest more for a
+  greater challenge and greater rewards.
+
+<ansi fg="yellow">Important Rules:</ansi>
+
+  Party up BEFORE purchasing! Only party members at the
+  time of purchase can enter. Members added later cannot.
+
+  Each rift stays open for 30 minutes. When it closes,
+  you can still leave through the return portal inside.
+  The instance stays open as long as anyone is in it.
+
+  Your companions follow you in automatically.
+
+<ansi fg="yellow">Loot:</ansi>
+
+  Tougher enemies inside carry unique equipment with
+  random properties. Every item is different. The more
+  gold invested, the better the base quality.
+
+<ansi fg="yellow">Death:</ansi>
+
+  Some zones allow re-entry after dying. Others expel
+  you permanently on death. Check each zone's help page.
+
+<ansi fg="yellow">Available Zones:</ansi>
+
+  <ansi fg="command">Arena</ansi>    A brutal linear gauntlet. Death ends
+             your run. No recall. Fast and dangerous.
+  <ansi fg="command">Oasis</ansi>    A three-dimensional elemental maze.
+             Death allows re-entry. Recall works.
+             Methodical exploration rewarded.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help arena</ansi>,
+  <ansi fg="command">help oasis</ansi>, <ansi fg="command">help party</ansi>, <ansi fg="command">help combat</ansi>

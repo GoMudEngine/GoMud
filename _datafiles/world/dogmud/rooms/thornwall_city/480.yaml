@@ -10,18 +10,16 @@ description: >
 mapsymbol: L
 maplegend: Loom
 biome: city
+coord:
+  x: 6
+  y: 1
+  z: 0
 station: loom
 exits:
   south:
     roomid: 466
   east:
     roomid: 482
-items:
-  - itemid: 40012
-  - itemid: 40012
-  - itemid: 40012
-  - itemid: 40013
-  - itemid: 40013
 spawninfo:
 - mobid: 113
 idlemessages:

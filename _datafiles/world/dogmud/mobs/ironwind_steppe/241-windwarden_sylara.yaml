@@ -3,17 +3,44 @@ zone: Ironwind Steppe
 statpool: 110
 itemdropchance: 0
 hostile: false
+charm_immune: true
 maxwander: 0
 archetype: casting
 groups:
   - humanoid
 idlecommands:
   - 'emote traces a circle in the air with one finger, murmuring softly'
+  - 'cast empathic-shroud'
   - ''
   - 'emote kneels to press a palm against the bare earth'
+  - 'cast vital-surge'
   - ''
   - 'emote gazes toward the stone circle with reverent attention'
-activitylevel: 10
+combatcommands:
+  - 'cast sparks'
+  - ''
+  - 'cast conviction-spike'
+  - ''
+  - 'cast hemorrhagic-burst'
+  - ''
+  - 'cast heal'
+  - ''
+activitylevel: 25
+reaction_delay: 0.8
+tactical_discipline: 0.80
+tactics:
+  - trigger: health_below:30
+    action: cast heal
+    priority: 11
+  - trigger: missing_buff:2
+    action: cast chrysalis-cocoon
+    priority: 10
+  - trigger: combat_start
+    action: cast conviction-ward
+    priority: 9
+  - trigger: target_casting
+    action: bash
+    priority: 8
 character:
   name: Windwarden Sylara
   description: |
@@ -28,6 +55,15 @@ character:
   speciesid: 1
   level: 1
   gold: 0
+  spellbook:
+    empathic-shroud: 6
+    vital-surge: 8
+    sparks: 10
+    conviction-spike: 8
+    hemorrhagic-burst: 5
+    heal: 10
+  skills:
+    spellcasting: 16
   stats:
     willpower:
       training: 20

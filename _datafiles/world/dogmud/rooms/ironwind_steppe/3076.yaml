@@ -9,13 +9,15 @@ description: The ravine descends through dense scrub and exposed rock.
   is soft earth littered with bones, fur, and wolf droppings. The
   sound of water is closer now, a thin trickle.
 biome: land
+coord:
+  x: 12
+  y: -8
+  z: 0
 exits:
   north:
     roomid: 3075
   south:
     roomid: 3077
-  east:
-    roomid: 3082
 nouns:
   trails: Narrow paths through the dense brush, worn by wolf
     traffic to smooth, packed earth. They twist and branch,

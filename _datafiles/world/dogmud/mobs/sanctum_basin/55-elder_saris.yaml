@@ -3,13 +3,24 @@ zone: Sanctum Basin
 archetype: casting
 statpool: 120
 hostile: false
+charm_immune: true
 maxwander: 0
 idlecommands:
   - 'emote observes the moons through the bronze sighting device'
+  - 'cast conviction-ward'
+  - ''
   - 'emote makes a small notation in a slim leather-bound journal'
+  - 'cast iron-will'
   - ''
   - ''
-activitylevel: 10
+combatcommands:
+  - 'cast heal'
+  - ''
+  - 'cast mend-wounds'
+  - ''
+  - 'cast conviction-ward'
+  - ''
+activitylevel: 25
 llmprofile:
   model: "llama3.2:3b"
   maxwords: 100
@@ -113,6 +124,14 @@ llmprofile:
 
 character:
   name: Elder Saris
+  spellbook:
+    conviction-ward: 10
+    iron-will: 8
+    heal: 15
+    mend-wounds: 12
+    chrysalis-regeneration: 5
+  skills:
+    spellcasting: 20
   description: 'Elder Saris is old in the way that certain basalt formations are old --
     weathered to essentials, nothing extraneous remaining. Their eyes carry the particular
     calm of someone who has spent decades watching the three moons and thinking about

@@ -1,5 +1,5 @@
 id: hungering-touch
-name: "Hungering Touch"
+name: "Hungering-Touch"
 skill: enchanting
 skill_minimum: 30
 station: enchanting_circle
@@ -16,5 +16,5 @@ ingredients:
 output:
   item_id: 0
   quantity: 0
-success_message: "Twin catalysts writhe within the settings, fusing into the blade's edge. The weapon trembles with an insatiable hunger for battle."
+success_message: "Twin catalysts writhe within the settings, fusing into the blade's edge. The weapon trembles with an insatiable hunger."
 failure_message: "The catalyst rejects the binding. The materials crumble to dust, but the weapon is unharmed."

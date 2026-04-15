@@ -8,15 +8,19 @@ description: The dry creek bed cuts deep here, its banks rising well
   past water levels. It feels like walking through a narrow canyon.
   The sky is a ribbon of blue above the steep banks.
 biome: land
+coord:
+  x: 13
+  y: -7
+  z: 0
 exits:
   north:
-    roomid: 3054
-  west:
+    roomid: 3051
+  east:
     roomid: 3056
   south:
     roomid: 3058
-  east:
-    roomid: 3061
+  west:
+    roomid: 3075
 nouns:
   boulders: Large, smooth boulders in the creek bed, rounded by
     years of tumbling in floodwater. They are wedged tightly

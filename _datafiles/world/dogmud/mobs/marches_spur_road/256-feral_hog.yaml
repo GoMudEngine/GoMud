@@ -1,0 +1,37 @@
+mobid: 256
+zone: Marches Spur Road
+statpool: 55
+itemdropchance: 5
+hostile: true
+maxwander: 1
+archetype: fighting
+groups:
+  - animal
+  - boar
+idlecommands:
+  - 'emote roots through the dirt with its snout, grunting'
+  - ''
+  - 'emote stamps a hoof and snorts loudly'
+  - ''
+  - 'emote shakes its bristled head, ears flicking'
+  - ''
+activitylevel: 12
+character:
+  name: feral hog
+  description: |
+    A bristle-backed hog gone wild, tusks yellowed and small
+    eyes red-rimmed with suspicion. It has the stocky,
+    low-centered build of something that charges first and
+    considers the situation afterward. The farmland has enough
+    to eat that it has grown heavy, and the heaviness has made
+    it confident, and the confidence has made it territorial.
+  speciesid: 7
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 8
+    vitality:
+      training: 10
+    dexterity:
+      training: -5

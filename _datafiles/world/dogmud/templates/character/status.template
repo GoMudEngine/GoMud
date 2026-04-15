@@ -1,17 +1,18 @@
 
- <ansi fg="black-bold">.:</ansi> <ansi fg="username">{{ .Character.Name }}</ansi> the {{ profession .Character }}
- ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Info</ansi> ──────────────────────┐ ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Attributes</ansi> ───────────────────────────┐
- │ <ansi fg="yellow">Area:   </ansi>{{ printf "%-22s" .Character.Zone              }}│ │ <ansi fg="yellow">Strength:  </ansi>{{ padRight 14 (statQuality .Character.Stats.Strength.Value) }} <ansi fg="yellow">Vitality:  </ansi>{{ padRight 14 (statQuality .Character.Stats.Vitality.Value) }} │
- │ <ansi fg="yellow">Species:</ansi>{{ printf "%-22s" .Character.Species           }}│ │ <ansi fg="yellow">Dexterity: </ansi>{{ padRight 14 (statQuality .Character.Stats.Dexterity.Value) }} <ansi fg="yellow">Willpower: </ansi>{{ padRight 14 (statQuality .Character.Stats.Willpower.Value) }} │
- │                               │ │ <ansi fg="yellow">Perception:</ansi>{{ padRight 14 (statQuality .Character.Stats.Perception.Value) }} <ansi fg="yellow">Charisma:  </ansi>{{ padRight 14 (statQuality .Character.Stats.Charisma.Value) }} │
- │ <ansi fg="yellow">Health:    </ansi>{{ vitalQuality .Character.Health .Character.HealthMax.Value 22 }}  └──────────────────────────────────────────┘
- │ <ansi fg="yellow">Stamina:   </ansi>{{ vitalQuality .Character.Stamina .Character.StaminaMax.Value 22 }}  ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Wealth</ansi> ────────┐
- │ <ansi fg="yellow">Conviction:</ansi>{{ vitalQuality .Character.Conviction .Character.ConvictionMax.Value 22 }}  │ <ansi fg="yellow">Gold: </ansi>{{ printf "%-11s" (numberFormat .Character.Gold) }} │
- │                               │    │ <ansi fg="yellow">Bank: </ansi>{{ printf "%-11s" (numberFormat .Character.Bank) }} │
- │ <ansi fg="yellow">Physical:  </ansi>{{ printf "%-19s" (mitigationQuality (.Character.GetPhysicalMitigation)) }}│    └───────────────────┘
- │ <ansi fg="yellow">Magical:   </ansi>{{ printf "%-19s" (mitigationQuality (.Character.GetMagicalMitigation)) }}│
- │ <ansi fg="yellow">Conviction:</ansi>{{ printf "%-6s" (mitigationQuality (.Character.GetConvictionMitigation)) }} {{ if permadeath }}<ansi fg="yellow">Lives: </ansi>{{ printf "%-5d" .Character.ExtraLives }}{{ else }}              {{ end }}│
- └───────────────────────────────┘
+ <ansi fg="black-bold">.:</ansi> <ansi fg="username">{{ .Character.Name }}</ansi> the {{ title .Character }}
+ ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Attributes</ansi> ──────────────────────────────────────────────────────────────┐
+ │ <ansi fg="yellow">Strength:   </ansi>{{ padRight 13 (statQuality .Character.Stats.Strength.Value) }}<ansi fg="yellow">Dexterity:  </ansi>{{ padRight 13 (statQuality .Character.Stats.Dexterity.Value) }}<ansi fg="yellow">Perception: </ansi>{{ padRight 13 (statQuality .Character.Stats.Perception.Value) }} │
+ │ <ansi fg="yellow">Vitality:   </ansi>{{ padRight 13 (statQuality .Character.Stats.Vitality.Value) }}<ansi fg="yellow">Willpower:  </ansi>{{ padRight 13 (statQuality .Character.Stats.Willpower.Value) }}<ansi fg="yellow">Charisma:   </ansi>{{ padRight 13 (statQuality .Character.Stats.Charisma.Value) }} │
+ └─────────────────────────────────────────────────────────────────────────────┘
+ ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Vitals</ansi> ──────────────────────────────────────────────────────────────────┐
+ │ <ansi fg="yellow">Health:     </ansi>{{ vitalQuality .Character.Health .Character.HealthMax.Value 13 }}<ansi fg="yellow">Stamina:    </ansi>{{ vitalQuality .Character.Stamina .Character.StaminaMax.Value 13 }}<ansi fg="yellow">Conviction: </ansi>{{ vitalQuality .Character.Conviction .Character.ConvictionMax.Value 13 }} │
+ └─────────────────────────────────────────────────────────────────────────────┘
+ ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Defenses</ansi> ────────────────────────────────────────────────────────────────┐
+ │ <ansi fg="yellow">Physical:   </ansi>{{ padRight 13 (mitigationQuality (.Character.GetPhysicalMitigation)) }}<ansi fg="yellow">Magical:    </ansi>{{ padRight 13 (mitigationQuality (.Character.GetMagicalMitigation)) }}<ansi fg="yellow">Conviction: </ansi>{{ padRight 13 (mitigationQuality (.Character.GetConvictionMitigation)) }} │
+ └─────────────────────────────────────────────────────────────────────────────┘
+ ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Info</ansi> ────────────────────────────────────────────────────────────────────┐
+ │ <ansi fg="yellow">Species:    </ansi>{{ padRight 13 .Character.Species }}<ansi fg="yellow">Gold:       </ansi>{{ padRight 13 (numberFormat .Character.Gold) }}<ansi fg="yellow">Bank:       </ansi>{{ padRight 13 (numberFormat .Character.Bank) }} │
+ └─────────────────────────────────────────────────────────────────────────────┘
 {{- if .Character.Mutations }}
  <ansi fg="black-bold">.:</ansi><ansi fg="20">Mutations</ansi><ansi fg="black-bold">:.</ansi>
 {{- range $id, $level := .Character.Mutations }}

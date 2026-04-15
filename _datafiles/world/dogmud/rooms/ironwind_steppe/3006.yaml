@@ -10,15 +10,17 @@ description: The last traces of the city's influence end here. The wagon
   that might be boulders or bushes. The wind is constant here,
   pressing against you with dry, warm gusts.
 biome: land
+coord:
+  x: 11
+  y: 0
+  z: 0
 exits:
   west:
     roomid: 3003
-  north:
-    roomid: 3005
-  east:
-    roomid: 3010
   south:
     roomid: 3009
+  east:
+    roomid: 3010
 nouns:
   ruts: The wagon ruts are barely visible here, little more than
     shallow depressions where the grass grows slightly thinner. A

@@ -10,6 +10,10 @@ description: The road opens into a wide plaza before the western gate of Thornwa
   doors that stand open during daylight hours. Guards in Thornwall livery flank the
   entrance, checking arrivals with varying degrees of thoroughness.
 biome: farmland
+coord:
+  x: -2
+  y: 0
+  z: 0
 exits:
   west:
     roomid: 445

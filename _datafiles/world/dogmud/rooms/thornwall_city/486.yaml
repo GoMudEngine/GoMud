@@ -1,0 +1,29 @@
+roomid: 486
+zone: Thornwall City
+title: Drainage Junction
+description: >
+  The bottom of a rough shaft opens into a junction where three old drainage
+  channels meet. The stonework here is ancient -- heavy blocks fitted without
+  mortar, green with moisture and slime. The ceiling is barely head height,
+  forcing a crouch. Water trickles along a central channel cut into the
+  floor, running south into deeper darkness. The eastern passage is partially
+  collapsed, choked with rubble and broken timber. The air is stale and
+  heavy, thick with the smell of wet stone and something organic.
+biome: cave
+coord:
+  x: 1
+  y: -2
+  z: -2
+exits:
+  up:
+    roomid: 485
+  east:
+    roomid: 487
+  south:
+    roomid: 488
+spawninfo:
+  - mobid: 244
+idlemessages:
+- Water trickles along the drainage channel, barely audible.
+- Something chittering echoes from the collapsed eastern passage.
+- A draught shifts the stale air, bringing a whiff of rot.

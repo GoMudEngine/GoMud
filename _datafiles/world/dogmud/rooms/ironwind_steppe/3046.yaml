@@ -8,15 +8,17 @@ description: The dry creek bends sharply here, the outer bank cut steep
   roots half-exposed by erosion, trailing dried leaves. The sand is
   soft and deep, slowing your steps.
 biome: land
+coord:
+  x: 12
+  y: -4
+  z: 0
 exits:
   north:
     roomid: 3045
-  northwest:
-    roomid: 3014
-  south:
-    roomid: 3047
   east:
-    roomid: 3049
+    roomid: 3048
+  south:
+    roomid: 3052
 nouns:
   sandbar: A wide deposit of fine sand on the inner bank of the
     creek bend, packed with overlapping animal tracks. Boar

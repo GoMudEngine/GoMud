@@ -1,0 +1,5 @@
+buffid: 70
+name: Purging Draught
+description: Your body convulses as every alchemical trace is violently expelled.
+triggerrate: 1 round
+triggercount: 1

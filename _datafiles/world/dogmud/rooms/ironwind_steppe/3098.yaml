@@ -9,11 +9,17 @@ description: A dense thicket of thorny bushes that the boars have
   The thicket provides shade, shelter from wind, and a measure
   of security from the wolves that patrol nearby.
 biome: land
+coord:
+  x: 15
+  y: -13
+  z: 0
 exits:
   north:
     roomid: 3097
+  south:
+    roomid: 3099
   west:
-    roomid: 3096
+    roomid: 3087
 nouns:
   thicket: A dense tangle of thorny bushes, partially destroyed
     by boar traffic but still providing shelter. The branches

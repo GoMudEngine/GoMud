@@ -1,0 +1,18 @@
+itemid: 30055
+name: mutagen brew
+namesimple: brew
+description: A shifting, iridescent brew that never looks
+  the same colour twice. It tastes like change.
+type: potion
+subtype: drinkable
+uses: 1
+buffids:
+  - 73
+value: 80
+weight: 0.5
+toxicity: 80
+aging:
+  ferment_rounds: 3000
+  peak_rounds: 12000
+  decay_rounds: 30000
+  spoil_rounds: 50000

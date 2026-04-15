@@ -1,0 +1,17 @@
+itemid: 20073
+name: ice crown
+namesimple: crown
+description: >-
+  A circlet of translucent elemental ice that refuses to melt,
+  its spires carved into sharp geometric teeth. A faint cold
+  mist drifts from the surface. The air around the wearer's
+  head grows noticeably cooler and smells of deep winter.
+  Those nearby can sometimes see their breath. Conviction and
+  spells both feel more precise with this on — something about
+  the cold clarifies intent.
+type: head
+subtype: wearable
+magical_mitigation: 9
+conviction_mitigation: 5
+value: 85
+weight: 1.5

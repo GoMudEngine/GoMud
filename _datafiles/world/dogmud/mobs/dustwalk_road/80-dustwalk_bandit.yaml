@@ -20,6 +20,12 @@ combatcommands:
   - 'emote spits and snarls, circling for an opening'
   - ''
 activitylevel: 25
+reaction_delay: 1.5
+tactical_discipline: 0.25
+tactics:
+  - trigger: health_below:30
+    action: flee
+    priority: 10
 character:
   name: dustwalk bandit
   description: |
@@ -31,7 +37,7 @@ character:
     hunger, opportunity, and a willingness to use violence.
   speciesid: 1
   level: 1
-  gold: 2
+  gold: 15
   equipment:
     weapon:
       itemid: 10021

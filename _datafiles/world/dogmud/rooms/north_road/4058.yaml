@@ -1,0 +1,45 @@
+roomid: 4058
+zone: North Road
+title: Woodcutter's Track
+description: >
+  A narrow track breaks away from the main road heading east,
+  cutting into the tree line. Fresh stumps crowd both sides —
+  pale wood, not yet weathered, their cut faces still oozing
+  sap that catches the light in amber beads. Deep drag marks
+  score the track where logs have been hauled out, stripping
+  bark and gouging the earth. The air here carries the sharp
+  clean bite of split wood and pine resin. Further east, the
+  forest closes in and the light goes green and close.
+biome: forest
+coord:
+  x: -11
+  y: -3
+  z: 0
+exits:
+  south:
+    roomid: 4057
+  east:
+    roomid: 4059
+  north:
+    roomid: 4060
+nouns:
+  stumps: Fresh-cut stumps line both sides of the track,
+    their pale top faces bright against the dark soil.
+    The cuts are clean — a sharp axe, well swung. Sawdust
+    rings each stump in a fine yellow halo, and where the
+    sap has run it has begun to crystallise into small
+    amber drops along the cut edge. Insects have already
+    found them.
+  path: The track is narrow — wide enough for a man
+    dragging a log, not wide enough for a cart. The earth
+    is stripped bare and scored with long gouges where
+    timber has been hauled through. Boot prints overlap in
+    the soft ground, deep-heeled, heavy-footed. Whoever
+    works here makes multiple trips each day.
+idlemessages:
+- The rhythmic thud of an axe carries from somewhere
+  deeper in the trees, then stops.
+- Resin-thick air settles around you, warm and sharp,
+  like the inside of a pine box.
+- A bird bursts from the top of a nearby stump and beats
+  away through the branches, startled by nothing obvious.

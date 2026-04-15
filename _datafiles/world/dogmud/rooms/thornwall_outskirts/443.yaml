@@ -9,6 +9,10 @@ description: What was once a productive farm plot is now a tangled wilderness of
   been nailed to it -- official-looking parchment bearing a wax seal. The field has
   the melancholy feel of something that was cared for once and then simply stopped.
 biome: farmland
+coord:
+  x: -3
+  y: 2
+  z: 0
 exits:
   west:
     roomid: 442

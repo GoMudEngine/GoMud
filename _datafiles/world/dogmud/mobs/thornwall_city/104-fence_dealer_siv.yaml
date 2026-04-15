@@ -1,8 +1,10 @@
 mobid: 104
 zone: Thornwall City
-statpool: 48
+statpool: 150
 itemdropchance: 0
 hostile: false
+charm_immune: true
+non_combatant: true
 maxwander: 0
 groups:
   - humanoid
@@ -12,6 +14,8 @@ idlecommands:
   - 'emote makes a notation in a small, well-hidden notebook'
   - ''
   - 'emote glances toward the door, then the viewing slot, then back'
+  - ''
+  - 'say Damn tunnel rats are cutting into my profits. Used to be I was the only game in town.'
   - ''
 activitylevel: 10
 character:
@@ -26,10 +30,12 @@ character:
     and absolutely disinterested in your reasons for selling.
   speciesid: 1
   level: 1
-  gold: 10
+  gold: 500
   equipment:
     weapon:
       itemid: 10009
+  items:
+    - itemid: 10013
   stats:
     perception:
       training: 10
@@ -37,3 +43,16 @@ character:
       training: 8
     charisma:
       training: 5
+  shop:
+    - itemid: 32
+      quantity: 0
+      quantitymax: 0
+      price: 1
+    - itemid: 33
+      quantity: 0
+      quantitymax: 0
+      price: 5
+    - itemid: 36
+      quantity: 0
+      quantitymax: 0
+      price: 30

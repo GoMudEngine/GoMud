@@ -1,0 +1,37 @@
+roomid: 4002
+zone: Marches Spur Road
+title: Waypoint Shrine
+description: A small stone shrine sits beside the road, knee-high and
+  worn smooth by weather and the touch of countless hands. It marks a
+  junction where a faint track branches west toward what looks like a
+  camp, while the main road continues south. Dried flowers and small
+  offerings cluster at the shrine's base, left by travelers seeking
+  safe passage. The stone is old -- older than the road, perhaps --
+  carved in a style that predates current Chrysalis iconography.
+biome: plains
+coord:
+  x: -8
+  y: -4
+  z: 0
+exits:
+  north:
+    roomid: 4001
+  west:
+    roomid: 4003
+  south:
+    roomid: 4004
+nouns:
+  shrine: The shrine is a single block of pale limestone, shaped into a
+    rough arch and carved with a blessing in old script. The carving style
+    is angular and deep, predating the flowing Chrysalis iconography by
+    generations. The stone has been worn smooth on top where hands have
+    rested in passing. Someone has wedged a copper coin into a crack.
+  offerings: A small pile of dried wildflowers, a heel of road-bread gone
+    hard as stone, and a scattering of copper coins. Among the older
+    offerings sits a recent addition -- a small carved wooden prayer
+    tablet asking for safe passage for freight wagons on the south road.
+    The carving is fresh, the wood still pale.
+idlemessages:
+- A dried flower crumbles in the breeze and scatters across the road.
+- Sunlight catches the copper coins at the shrine's base, winking.
+- The wind shifts, carrying a faint smell of woodsmoke from the west.

@@ -1,0 +1,18 @@
+id: sealed-phial
+name: Sealed Phial
+skill: jewelcrafting
+skill_minimum: 8
+station: jeweler_bench
+time_rounds: 3
+ingredients:
+  - item_tag: copper-wire
+    quantity: 1
+  - item_tag: chrysalis-shard
+    quantity: 1
+  - item_tag: bottle
+    quantity: 1
+output:
+  item_id: 40044
+  quantity: 1
+success_message: "You wrap the vial in copper wire and press a chrysalis-infused stopper into place. The seal shimmers faintly. A sealed phial!"
+failure_message: "The stopper cracks and the chrysalis shard crumbles. The materials are wasted."

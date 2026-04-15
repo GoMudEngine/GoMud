@@ -9,15 +9,19 @@ description: A medium-sized cave chamber where water seeps through
   sound. Pools of clear water collect in natural depressions,
   their surfaces rippling with each drop.
 biome: cave
+coord:
+  x: 13
+  y: 8
+  z: 0
 exits:
-  south:
-    roomid: 3101
-  west:
-    roomid: 3102
   north:
     roomid: 3106
   east:
     roomid: 3107
+  south:
+    roomid: 3101
+  west:
+    roomid: 3102
 nouns:
   stalagmites: Small mineral formations rising from the cave floor,
     none taller than a foot. They are built grain by grain from

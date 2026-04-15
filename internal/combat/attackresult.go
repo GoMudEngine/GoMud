@@ -10,6 +10,15 @@ const (
 	DefenseBlock DefenseType = "block"
 )
 
+// WeaponHitInfo tracks whether a specific weapon landed at least one hit
+// during a combat round, for per-weapon skill progression.
+type WeaponHitInfo struct {
+	SkillTag string // e.g., "weapon-combat", "unarmed-combat", "ranged-combat"
+	Hit      bool
+	Crit     bool
+	Fumble   bool
+}
+
 // SwingEvent captures per-swing analytics data for accurate hit rate tracking.
 type SwingEvent struct {
 	Hit           bool
@@ -22,6 +31,7 @@ type SwingEvent struct {
 	DefenseUsed   DefenseType
 	AttackZScore  float64
 	DefenseZScore float64
+	AttackType    string // "weapon", "unarmed", "ranged" — per-swing weapon type for analytics
 }
 
 type AttackResult struct {
@@ -39,9 +49,12 @@ type AttackResult struct {
 	DefenseAttempts         []DefenseType // Sequence of defenses attempted (Stage 7.1)
 	DefenseZScore           float64      // Defense roll z-score (Stage 8.4)
 	AttackZScore            float64      // Attack roll z-score (Stage 8.4)
-	ParryCritDetected       bool         // Flag for parry crit (Stage 8.4)
-	DodgeCritDetected       bool         // Flag for dodge crit (Stage 8.4)
-	SwingEvents             []SwingEvent // Per-swing analytics (Stage 30.2)
+	ParryCritDetected       bool         // Flag for parry crit → riposte
+	DodgeCritDetected       bool         // Flag for dodge crit → auto-trip
+	BlockCritDetected       bool         // Flag for block crit → auto-bash
+	SwingEvents             []SwingEvent    // Per-swing analytics (Stage 30.2)
+	WeaponHits              []WeaponHitInfo // Per-weapon hit tracking for skill progression
+	DefenderWasAttacked     bool            // True if any swing was attempted against defender
 	MessagesToSource        []string
 	MessagesToTarget        []string
 	MessagesToSourceRoom    []string

@@ -1,0 +1,39 @@
+roomid: 4048
+zone: North Road
+title: Betta's Path
+description: >
+  A dirt track leads west from the road through a field of
+  harvested turnip rows, the soil dark and freshly turned. A
+  quarter-mile ahead, a low farmstead hunches against the wind,
+  its stone walls the same grey as the sky. Sheep dot the near
+  field, their wool thick for winter, heads down in the grass.
+  The smell of lanolin and woodsmoke carries on the breeze.
+  The track is narrow but well-worn — someone walks this path
+  every day.
+biome: farmland
+coord:
+  x: -12
+  y: -9
+  z: 0
+exits:
+  east:
+    roomid: 4044
+  west:
+    roomid: 4049
+nouns:
+  turnips: Rows of harvested turnip beds, the soil ridged and
+    dark. A few turnips remain — large and very purple, the
+    good kind that store through winter without going soft.
+    Someone grew these with attention. The leaves have been
+    stripped for feed, leaving only the crowns poking from
+    the earth.
+  sheep: A small flock of sheep grazing in the field beside
+    the track, their fleece thick and pale against the dark
+    soil. They watch you with the flat, untroubled gaze of
+    animals that have never been given a reason to be afraid
+    of people. One stamps a hoof and returns to grazing.
+idlemessages:
+- A sheep bleats, and another answers from across the field.
+- The farmstead chimney sends a thin column of smoke straight
+  up in the still air.
+- The track squelches underfoot where the soil is soft.

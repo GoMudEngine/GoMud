@@ -8,15 +8,19 @@ description: The creek has carved a deep undercut into the bank here,
   fur, and gnawed bones. The creek bed below is narrow and rocky,
   the stones larger here where the current was once strongest.
 biome: land
+coord:
+  x: 13
+  y: -5
+  z: 0
 exits:
   north:
-    roomid: 3046
-  west:
     roomid: 3048
-  south:
+  west:
     roomid: 3052
-  northwest:
-    roomid: 3043
+  east:
+    roomid: 3050
+  south:
+    roomid: 3051
 nouns:
   undercut: A hollow carved beneath the creek bank by flowing
     water, about four feet deep and wide enough for a large

@@ -4,14 +4,13 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/characters"
-	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
-	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/scripting"
-	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
+	"github.com/GoMudEngine/GoMud/internal/textutil"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -21,12 +20,6 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	args := util.SplitButRespectQuotes(strings.ToLower(rest))
 
 	if len(args) < 1 {
-		return true, nil
-	}
-
-	// Gate: mobs share the special-move cooldown slot with bash/trip/kick
-	cfg := configs.GetBalanceConfig()
-	if !mob.Character.TryCooldown(`special-move`, fmt.Sprintf(`%d rounds`, cfg.SpecialMoveCooldown)) {
 		return true, nil
 	}
 
@@ -41,231 +34,79 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	spellArg := strings.Join(args, ` `)
 
-	spellInfo := spells.GetSpell(spellName)
+	// Delegate shared setup to the unified action.
+	actor := &actions.MobActor{Mob: mob, Room: room}
+	result := actions.InitiateCast(actor, spellName, spellArg)
 
-	if spellInfo == nil {
+	if !result.Initiated {
+		// Any early exit (invalid spell, no target, cooldown) — silently bail.
 		return true, nil
 	}
-	/*
-		if mob.Character.Conviction < spellInfo.Cost {
-			return true, nil
-		}
-	*/
-	targetPlayerId := 0
-	targetMobInstanceId := 0
 
-	if spellArg != `` {
-		targetPlayerId, targetMobInstanceId = room.FindByName(spellArg)
-	}
+	spellInfo := result.SpellInfo
 
+	// Build aggro info for the onCast script.
 	spellAggro := characters.SpellAggroInfo{
 		SpellId:              spellInfo.SpellId,
-		SpellRest:            ``,
-		TargetUserIds:        make([]int, 0),
-		TargetMobInstanceIds: make([]int, 0),
+		SpellRest:            result.SpellRest,
+		TargetUserIds:        result.TargetUserIds,
+		TargetMobInstanceIds: result.TargetMobInstanceIds,
 	}
 
-	if spellInfo.Type == spells.Neutral {
-
-		spellAggro.SpellRest = spellArg
-
-	} else if spellInfo.Type == spells.HelpSingle {
-
-		if spellArg == `` {
-
-			// No target specified? Default to self
-			spellAggro.TargetMobInstanceIds = append(spellAggro.TargetMobInstanceIds, mob.InstanceId)
-
-		} else {
-
-			if targetPlayerId > 0 {
-				spellAggro.TargetUserIds = append(spellAggro.TargetUserIds, targetPlayerId)
-			} else if targetMobInstanceId > 0 {
-				spellAggro.TargetMobInstanceIds = append(spellAggro.TargetMobInstanceIds, targetMobInstanceId)
-			}
-
+	// Send YAML cast text (if defined).
+	if spellInfo.CastUserText != "" || spellInfo.CastRoomText != "" {
+		castRoom := rooms.LoadRoom(mob.Character.RoomId)
+		tCtx := textutil.TokenContext{
+			SourceName:      mob.Character.GetCharacterName(true),
+			SourcePlainName: mob.Character.GetCharacterName(false),
 		}
-
-	} else if spellInfo.Type == spells.HarmSingle {
-
-		if spellArg == `` {
-
-			if mob.Character.Aggro != nil {
-				// No target specified? Default to self
-				if mob.Character.Aggro.UserId > 0 {
-					spellAggro.TargetUserIds = append(spellAggro.TargetUserIds, mob.Character.Aggro.UserId)
-				} else if mob.Character.Aggro.MobInstanceId > 0 {
-					spellAggro.TargetMobInstanceIds = append(spellAggro.TargetMobInstanceIds, mob.Character.Aggro.MobInstanceId)
-				}
-			} else {
-
-				playersFightingMobs := room.GetPlayers(rooms.FindFightingMob)
-				if len(playersFightingMobs) > 0 {
-
-					for _, pUserId := range playersFightingMobs {
-
-						if u := users.GetByUserId(pUserId); u != nil {
-							if u.Character.IsAggro(0, mob.InstanceId) {
-								spellAggro.TargetUserIds = append(spellAggro.TargetUserIds, pUserId)
-								break
-							}
-						}
-
-					}
-
-				}
-
-				// If no mobs found, try finding an aggro player
-				if len(spellAggro.TargetMobInstanceIds) < 1 {
-					mobsFightingMobs := room.GetMobs(rooms.FindFightingMob)
-					if len(mobsFightingMobs) > 0 {
-
-						for _, mId := range mobsFightingMobs {
-
-							if m := mobs.GetInstance(mId); m != nil {
-								if m.Character.IsAggro(0, mob.InstanceId) {
-									spellAggro.TargetMobInstanceIds = append(spellAggro.TargetMobInstanceIds, mId)
-									break
-								}
-							}
-
-						}
-
-					}
-				}
-
+		if len(result.TargetUserIds) > 0 {
+			if tUser := users.GetByUserId(result.TargetUserIds[0]); tUser != nil {
+				tCtx.TargetName = tUser.Character.GetCharacterName(true)
+				tCtx.TargetPlainName = tUser.Character.GetCharacterName(false)
 			}
-
-		} else {
-
-			if targetPlayerId > 0 {
-				spellAggro.TargetUserIds = append(spellAggro.TargetUserIds, targetPlayerId)
-			} else if targetMobInstanceId > 0 {
-				spellAggro.TargetMobInstanceIds = append(spellAggro.TargetMobInstanceIds, targetMobInstanceId)
-			}
-
-		}
-
-	} else if spellInfo.Type == spells.HelpMulti {
-
-		spellAggro.TargetMobInstanceIds = append(spellAggro.TargetMobInstanceIds, mob.InstanceId)
-
-		if !mob.Character.IsCharmed() {
-
-			for _, mobInstId := range room.GetMobs() {
-
-				if m := mobs.GetInstance(mobInstId); m != nil {
-					// Cast on same kind
-					if m.MobId == mob.MobId {
-						spellAggro.TargetMobInstanceIds = append(spellAggro.TargetMobInstanceIds, mobInstId)
-					}
-				}
-			}
-
-		} else {
-
-			spellAggro.TargetUserIds = append(spellAggro.TargetUserIds, mob.Character.Charmed.UserId)
-
-			// Targets self and all in party
-			if p := parties.Get(mob.Character.Charmed.UserId); p != nil {
-
-				for _, partyUserId := range p.GetMembers() {
-
-					if partyUserId == mob.Character.Charmed.UserId {
-						continue
-					}
-
-					if partyUser := users.GetByUserId(partyUserId); partyUser != nil {
-						spellAggro.TargetUserIds = append(spellAggro.TargetUserIds, partyUserId)
-						spellAggro.TargetMobInstanceIds = append(spellAggro.TargetMobInstanceIds, partyUser.Character.GetCharmIds()...)
-					}
-
-				}
-
-			}
-
-		}
-
-	} else if spellInfo.Type == spells.HarmMulti {
-
-		// Targets all mobs aggro towards player
-		// Targets all players aggro towards player and their parties
-
-		// If not currently aggro, only targets all mobs in the room
-
-		mobsFightingMobs := room.GetMobs(rooms.FindFightingMob)
-		for _, mobInstId := range mobsFightingMobs {
-			if m := mobs.GetInstance(mobInstId); m != nil {
-				if m.Character.IsAggro(0, mob.InstanceId) || m.HatesSpecies(m.Character.Species()) {
-					spellAggro.TargetMobInstanceIds = append(spellAggro.TargetMobInstanceIds, mobInstId)
-				}
+		} else if len(result.TargetMobInstanceIds) > 0 {
+			if tMob := mobs.GetInstance(result.TargetMobInstanceIds[0]); tMob != nil {
+				tCtx.TargetName = tMob.Character.GetCharacterName(true)
+				tCtx.TargetPlainName = tMob.Character.GetCharacterName(false)
 			}
 		}
-
-		playersFightingMobs := room.GetPlayers(rooms.FindFightingMob)
-		for _, uId := range playersFightingMobs {
-			if u := users.GetByUserId(uId); u != nil {
-				if u.Character.IsAggro(0, mob.InstanceId) {
-					spellAggro.TargetUserIds = append(spellAggro.TargetUserIds, uId)
+		cfg := textutil.SendTextConfig{
+			RoomSendFunc: func(msg string, skip ...int) {
+				if castRoom != nil {
+					castRoom.SendText(msg, skip...)
 				}
-			}
+			},
 		}
-
-	} else if spellInfo.Type == spells.HelpArea || spellInfo.Type == spells.HarmArea {
-
-		spellAggro.TargetUserIds = room.GetPlayers()
-		spellAggro.TargetMobInstanceIds = room.GetMobs()
-
+		textutil.SendPhaseText("", spellInfo.CastRoomText, tCtx, "pink", cfg)
 	}
 
-	if len(spellAggro.TargetUserIds) > 0 || len(spellAggro.TargetMobInstanceIds) > 0 || len(spellAggro.SpellRest) > 0 {
+	if allowContinueCasting, err := scripting.TrySpellScriptEvent(`onCast`, 0, mob.InstanceId, spellAggro); err != nil || !allowContinueCasting {
+		return true, nil
+	}
 
-		continueCasting := true
-		if allowContinueCasting, err := scripting.TrySpellScriptEvent(`onCast`, 0, mob.InstanceId, spellAggro); err == nil {
-			continueCasting = allowContinueCasting
+	// First-round conviction slice — mob pays a portion up-front.
+	firstRoundCost := spellInfo.Cost / result.FoldsNeeded
+	if firstRoundCost < 1 {
+		firstRoundCost = 1
+	}
+	mob.Character.Conviction -= firstRoundCost
+
+	// Commit CastingState, recording the first-round payment.
+	result.CastingState.ConvictionSpent = firstRoundCost
+	mob.Character.CastingState = result.CastingState
+
+	sendRoomText(room, fmt.Sprintf(
+		`<ansi fg="mobname">%s</ansi> begins weaving a spell.`, mob.Character.Name))
+
+	// Initiate combat aggro immediately when targeting a player with an offensive spell.
+	// This ensures the mob enters the combat loop so the player is flagged as in combat.
+	// The casting block in the combat tick safely handles CastingState and skips melee.
+	switch spellInfo.Type {
+	case spells.HarmSingle, spells.HarmMulti, spells.HarmArea:
+		if mob.Character.Aggro == nil && len(result.TargetUserIds) > 0 {
+			mob.Character.SetAggro(result.TargetUserIds[0], 0, characters.DefaultAttack)
 		}
-
-		if continueCasting {
-			skillLevel := mob.Character.GetSkillLevel(skills.Spellcasting)
-			baseFolds := spellInfo.BaseFolds
-			if baseFolds < 1 {
-				baseFolds = 4
-			}
-			foldsNeeded := characters.NextPowerOfTwo(baseFolds)
-			foldsPerRound := characters.CalcFoldsPerRound(mob.Character.Stats.Perception.ValueAdj, skillLevel)
-
-			// First-round conviction slice
-			firstRoundCost := spellInfo.Cost / foldsNeeded
-			if firstRoundCost < 1 {
-				firstRoundCost = 1
-			}
-			mob.Character.Conviction -= firstRoundCost
-
-			mob.Character.CastingState = &characters.CastingState{
-				SpellId:              spellInfo.SpellId,
-				FoldsNeeded:          foldsNeeded,
-				FoldsAccumulated:     0,
-				FoldsPerRound:        foldsPerRound,
-				TotalConvictionCost:  spellInfo.Cost,
-				ConvictionSpent:      firstRoundCost,
-				TargetUserIds:        spellAggro.TargetUserIds,
-				TargetMobInstanceIds: spellAggro.TargetMobInstanceIds,
-				SpellRest:            spellAggro.SpellRest,
-			}
-			room.SendText(fmt.Sprintf(
-				`<ansi fg="mobname">%s</ansi> begins weaving a spell.`, mob.Character.Name), 0)
-
-			// Initiate combat aggro immediately when targeting a player with an offensive spell.
-			// This ensures the mob enters the combat loop so the player is flagged as in combat.
-			// The casting block in the combat tick safely handles CastingState and skips melee.
-			switch spellInfo.Type {
-			case spells.HarmSingle, spells.HarmMulti, spells.HarmArea:
-				if mob.Character.Aggro == nil && len(spellAggro.TargetUserIds) > 0 {
-					mob.Character.SetAggro(spellAggro.TargetUserIds[0], 0, characters.DefaultAttack)
-				}
-			}
-		}
-
 	}
 
 	return true, nil

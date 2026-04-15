@@ -9,13 +9,15 @@ description: The terrain descends into a broad, muddy lowland that
   through. This is the northern approach to the main wallowing
   grounds -- boar territory proper.
 biome: land
+coord:
+  x: 14
+  y: -8
+  z: 0
 exits:
   north:
     roomid: 3056
   south:
     roomid: 3091
-  east:
-    roomid: 3093
 nouns:
   mud: Thick, churned mud mixed with standing water, torn up
     by heavy boar hooves. The mud extends in every direction,

@@ -7,6 +7,10 @@ description: A low tunnel of raw basalt opens here in the northern cliff face --
   echoes from within. A lamp bracket is fixed to the wall beside the entrance, suggesting
   this is a known route.
 biome: cave
+coord:
+  x: -9
+  y: 11
+  z: 0
 mutators:
 - mutatorid: bioluminescent-caves
 exits:

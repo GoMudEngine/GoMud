@@ -9,6 +9,7 @@ groups:
   - bandit
   - humanoid
 idlecommands:
+  - 'sneak'
   - 'emote loiters at the roadside, watching passing traffic with calculating eyes'
   - 'emote flips a coin absently, catching it without looking'
   - ''
@@ -18,7 +19,21 @@ combatcommands:
   - ''
   - 'emote feints left, then strikes from the right'
   - ''
+  - ''
+  - ''
 activitylevel: 25
+reaction_delay: 1.2
+tactical_discipline: 0.40
+tactics:
+  - trigger: health_below:25
+    action: flee
+    priority: 10
+  - trigger: no_aggro
+    action: hide
+    priority: 9
+  - trigger: target_casting
+    action: trip
+    priority: 8
 character:
   name: thornwall highwayman
   description: |
@@ -44,3 +59,5 @@ character:
       training: 5
     strength:
       training: 3
+  skills:
+    skullduggery: 8
