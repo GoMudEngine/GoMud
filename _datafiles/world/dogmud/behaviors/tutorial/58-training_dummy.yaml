@@ -1,0 +1,18 @@
+# Training Dummy — Behavior Tree
+# On death: crumble flavor text + teacher mob (57) reacts.
+
+tree:
+  type: sequence
+  event: mob_die
+  children:
+    - type: action
+      do: respond
+      room_text: "<ansi fg=\"mobname\">{source}</ansi> crumbles to dust."
+    - type: action
+      do: command_mob
+      mob_id: 57
+      cmd: "say You did it! As you can see you gain experience for combat victories."
+    - type: action
+      do: command_mob
+      mob_id: 57
+      cmd: 'say Now head <ansi fg="exit">west</ansi> to complete your training.'
