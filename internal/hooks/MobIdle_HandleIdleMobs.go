@@ -15,7 +15,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/GoMudEngine/GoMud/internal/worldevents"
@@ -147,7 +146,7 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 		}
 	}
 
-	// Behavior tree: try before JS
+	// Behavior tree: handle idle before default behavior
 	if behaviortree.TryMobBehavior(mob.InstanceId, behaviortree.EventContext{
 		EventType: "mob_idle",
 		RoomId:    mob.Character.RoomId,
@@ -155,10 +154,7 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 		return events.Continue
 	}
 
-	// If they have idle commands, maybe do one of them?
-	handled, _ := scripting.TryMobScriptEvent("onIdle", mob.InstanceId, 0, ``, nil)
-	if !handled {
-
+	{
 		if isCharmed {
 			// Only some mobs can apply first aid
 			// If a charmed mob can aid someone, try.

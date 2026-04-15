@@ -13,7 +13,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
-	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/textutil"
@@ -194,14 +193,6 @@ func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData
 		}
 		return
 	}
-
-	spellAggro := characters.SpellAggroInfo{
-		SpellId:              cs.SpellId,
-		SpellRest:            cs.SpellRest,
-		TargetUserIds:        cs.TargetUserIds,
-		TargetMobInstanceIds: cs.TargetMobInstanceIds,
-	}
-	scripting.TrySpellScriptEvent("onMagic", user.UserId, 0, spellAggro)
 
 	// --- Consume component if required ---
 	if spellData.ComponentTag != "" {

@@ -15,7 +15,6 @@ func RegisterListeners() {
 	events.RegisterListener(events.RoomChange{}, CleanupEphemeralRooms)
 
 	// NewRound Listeners
-	events.RegisterListener(events.NewRound{}, PruneVMs)
 	events.RegisterListener(events.NewRound{}, InactivePlayers)
 	events.RegisterListener(events.NewRound{}, UpdateZoneMutators)
 	events.RegisterListener(events.NewRound{}, CheckNewDay)

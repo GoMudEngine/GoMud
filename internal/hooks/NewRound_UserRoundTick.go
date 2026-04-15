@@ -17,7 +17,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/textutil"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -42,11 +41,6 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 				EventType: "room_idle",
 				RoomId:    roomId,
 			})
-			if handled, err := scripting.TryRoomIdleEvent(roomId); err == nil {
-				if handled { // For this event, handled represents whether to reject the move.
-					allowIdleMessages = false
-				}
-			}
 
 			if allowIdleMessages {
 
@@ -202,11 +196,7 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 							}
 						}
 
-						_, err := scripting.TryBuffScriptEvent(`onTrigger`, uId, 0, buff.BuffId)
-
-						if buff.TriggersLeft != buffs.TriggersLeftUnlimited || err != scripting.ErrEventNotFound {
-							triggeredBuffIds = append(triggeredBuffIds, buff.BuffId)
-						}
+						triggeredBuffIds = append(triggeredBuffIds, buff.BuffId)
 
 					}
 
