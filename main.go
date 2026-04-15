@@ -55,7 +55,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/quests"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/suggestions"
 	"github.com/GoMudEngine/GoMud/internal/templates"
@@ -247,8 +246,6 @@ func main() {
 	}
 
 	gametime.GetZodiac(1) // The first time this is called it randomizes all zodiacs
-
-	scripting.Setup(int(c.Scripting.LoadTimeoutMs), int(c.Scripting.RoomTimeoutMs))
 
 	mudlog.Info(`========================`)
 
@@ -1040,9 +1037,6 @@ func loadAllDataFiles(isReload bool) {
 		}()
 
 	}
-
-	// Force clear all cached VM's
-	scripting.PruneVMs(true)
 
 	// Load biomes before rooms since rooms reference biomes
 	rooms.LoadBiomeDataFiles()
