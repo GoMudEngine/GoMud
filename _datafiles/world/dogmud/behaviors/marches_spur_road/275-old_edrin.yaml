@@ -1,0 +1,195 @@
+# Old Edrin — Multi-Phase Caster Boss Behavior Tree
+#
+# Phase 0 (player_enter): Self-buff + summon 3 elemental companions.
+#   Wrapped in a cooldown so it fires once per ~100 rounds, not on
+#   every player entry.
+#
+# Phase 1 (mob_hurt): First-time reveal — drops the hermit act, sets
+#   "revealed" state so later phases know he is unmasked.
+#
+# Phase 2 (mob_idle): Tactical combat once revealed.
+#   Re-casts conviction-ward periodically. Uses AoE vs single-target
+#   spell depending on number of enemies.
+#
+# Phase 3 (mob_die): Flavor text, unlock west exit, spawn loot in
+#   back room (4037).
+
+tree:
+  type: selector
+  children:
+
+    # ── PHASE 0: player_enter — self-buff and summon elementals ──
+    - type: decorator
+      mod: cooldown
+      rounds: 100
+      child:
+        type: sequence
+        event: player_enter
+        children:
+          # Only pre-buff if not yet in active combat
+          - type: decorator
+            mod: invert
+            child:
+              type: condition
+              check: mob_in_combat
+          - type: action
+            do: cast
+            spell: conviction-ward
+          - type: action
+            do: summon_companion
+            mob_id: 313
+            count: 1
+            base_pool: 60
+          - type: action
+            do: summon_companion
+            mob_id: 311
+            count: 1
+            base_pool: 60
+          - type: action
+            do: summon_companion
+            mob_id: 310
+            count: 1
+            base_pool: 60
+
+    # ── PHASE 1: mob_hurt — revelation (fires once) ──
+    - type: sequence
+      event: mob_hurt
+      children:
+        # Only reveal once
+        - type: decorator
+          mod: invert
+          child:
+            type: condition
+            check: state_equals
+            key: revealed
+            value: "true"
+        - type: action
+          do: set_state
+          key: revealed
+          value: "true"
+        - type: action
+          do: command
+          cmd: >-
+            say ...ah.
+        - type: action
+          do: emote
+          text: >-
+            straightens slowly, the stoop vanishing from his spine.
+            His milky eyes clear to sharp, pale blue. The tremor in
+            his hands stops.
+        - type: action
+          do: respond
+          room_text: >-
+            Old Edrin raises his staff and speaks three words in a
+            language that predates the road, the fence, and the colony
+            itself.
+        - type: action
+          do: summon_companion
+          mob_id: 313
+          count: 1
+          base_pool: 60
+        - type: action
+          do: summon_companion
+          mob_id: 311
+          count: 1
+          base_pool: 60
+        - type: action
+          do: summon_companion
+          mob_id: 310
+          count: 1
+          base_pool: 60
+        - type: action
+          do: respond
+          room_text: >-
+            The air splits. Fire gathers from nothing. Stone tears
+            itself from the ground. Water condenses from the humidity
+            and takes shape. Three elementals stand beside the old man,
+            burning and grinding and flowing.
+        - type: action
+          do: say
+          text: You should not have done that.
+        - type: action
+          do: emote
+          text: >-
+            levels his staff at you, and the air between you and him
+            begins to shimmer with heat.
+
+    # ── PHASE 2: mob_idle — tactical combat once revealed ──
+    - type: sequence
+      event: mob_idle
+      children:
+        # Only act when revealed
+        - type: condition
+          check: state_equals
+          key: revealed
+          value: "true"
+        # Only act during combat
+        - type: condition
+          check: mob_in_combat
+        # Re-cast conviction-ward every 20 rounds
+        - type: selector
+          children:
+            - type: decorator
+              mod: cooldown
+              rounds: 20
+              child:
+                type: action
+                do: cast
+                spell: conviction-ward
+            # AoE if multiple enemies, otherwise single target
+            - type: sequence
+              children:
+                - type: condition
+                  check: multiple_enemies
+                - type: action
+                  do: cast
+                  spell: hemorrhagic-burst
+            - type: action
+              do: cast
+              spell: mind-spike
+
+    # ── PHASE 3: mob_die — flavor, unlock room, spawn loot ──
+    - type: sequence
+      event: mob_die
+      children:
+        - type: action
+          do: respond
+          room_text: >-
+            Old Edrin sinks to one knee, staff cracking beneath him.
+            The elementals shudder and dissolve -- fire guttering,
+            stone crumbling, water splashing to nothing.
+        - type: action
+          do: respond
+          room_text: >-
+            The old man looks up with those clear, pale eyes.
+            "Hm," he says. "Stronger than you looked."
+            And then he is still.
+        - type: action
+          do: set_room_locked
+          direction: west
+          locked: "false"
+        - type: action
+          do: respond
+          room_text: >-
+            The grass curtain over the back doorway falls away, the
+            ward holding it shut broken with its maker.
+        - type: action
+          do: spawn_item_in_room
+          item_id: 40010
+          room_id: 4037
+          chance: 75
+        - type: action
+          do: spawn_item_in_room
+          item_id: 40027
+          room_id: 4037
+          chance: 75
+        - type: action
+          do: spawn_item_in_room
+          item_id: 40004
+          room_id: 4037
+          chance: 75
+        - type: action
+          do: spawn_item_in_room
+          item_id: 40009
+          room_id: 4037
+          chance: 75

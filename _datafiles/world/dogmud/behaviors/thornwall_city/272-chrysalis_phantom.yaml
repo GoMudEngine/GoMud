@@ -1,0 +1,128 @@
+# Chrysalis Phantom — Behavior Tree (Mob 272)
+# Hit-and-run assassin. Spawns hidden (buff 9). Surprise-strikes any
+# player in the room, then immediately flees. During recovery it
+# re-sneaks, re-hides, then waits for the player to return before
+# striking again.
+#
+# State keys:
+#   recovery  (int)    — countdown ticks after a flee: 3→2→1→0
+#   engaged   (string) — "true" once the phantom has seen a player
+#
+# Recovery sequence (each mob_idle tick decrements by one):
+#   3 — just fled, waiting
+#   2 — sneak + re-apply hidden buff (buff 9), then decrement
+#   1 — waiting for cooldown to expire
+#   0 — done; resume normal hidden-attack loop
+
+tree:
+  type: selector
+  children:
+
+    # ── MOB_FLEE: start recovery countdown ──
+    - type: sequence
+      event: mob_flee
+      children:
+        - type: action
+          do: set_state
+          key: recovery
+          value: 3
+
+    # ── MOB_HURT: mark as engaged so idle loop tracks players ──
+    - type: sequence
+      event: mob_hurt
+      children:
+        - type: action
+          do: set_state
+          key: engaged
+          value: "true"
+
+    # ── MOB_IDLE: main behavior loop ──
+    - type: selector
+      event: mob_idle
+      children:
+
+        # -- Recovery tick: recovery=3, just decrement and wait --
+        - type: sequence
+          children:
+            - type: condition
+              check: state_equals
+              key: recovery
+              value: "3"
+            - type: action
+              do: decrement_state
+              key: recovery
+
+        # -- Recovery tick: recovery=2, re-sneak + re-hide, decrement --
+        - type: sequence
+          children:
+            - type: condition
+              check: state_equals
+              key: recovery
+              value: "2"
+            - type: action
+              do: command
+              cmd: sneak
+            - type: action
+              do: add_buff
+              buff_id: 9
+            - type: action
+              do: decrement_state
+              key: recovery
+
+        # -- Recovery tick: recovery=1, wait one more tick, decrement --
+        - type: sequence
+          children:
+            - type: condition
+              check: state_equals
+              key: recovery
+              value: "1"
+            - type: action
+              do: decrement_state
+              key: recovery
+
+        # -- In combat: flee immediately --
+        - type: sequence
+          children:
+            - type: condition
+              check: mob_in_combat
+            - type: action
+              do: flee
+
+        # -- Hidden + players present: surprise attack --
+        - type: sequence
+          children:
+            - type: condition
+              check: mob_has_buff
+              buff_id: 9
+            - type: condition
+              check: players_in_room
+            - type: action
+              do: attack
+
+        # -- Engaged but not hidden and not fighting: re-sneak + re-hide,
+        #    then attack on next idle tick when buff is active --
+        - type: sequence
+          children:
+            - type: condition
+              check: state_equals
+              key: engaged
+              value: "true"
+            - type: decorator
+              mod: invert
+              child:
+                type: condition
+                check: mob_in_combat
+            - type: decorator
+              mod: invert
+              child:
+                type: condition
+                check: mob_has_buff
+                buff_id: 9
+            - type: condition
+              check: players_in_room
+            - type: action
+              do: command
+              cmd: sneak
+            - type: action
+              do: add_buff
+              buff_id: 9

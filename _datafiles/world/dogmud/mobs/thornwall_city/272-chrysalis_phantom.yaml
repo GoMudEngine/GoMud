@@ -78,6 +78,7 @@ character:
     skullduggery: 20
     unarmed-combat: 15
     weapon-combat: 10
+    search: 22
   equipment:
     weapon:
       itemid: 10024
