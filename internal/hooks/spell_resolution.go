@@ -176,6 +176,25 @@ func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData
 		}
 	}
 
+	// --- Go spell hooks — dispatch before JS scripts ---
+	switch cs.SpellId {
+	case "fold-anchor":
+		resolveFoldAnchor(user)
+		return
+	case "fold-recall":
+		resolveFoldRecall(user)
+		return
+	case "purge-affliction":
+		if len(cs.TargetUserIds) > 0 {
+			if targetUser := users.GetByUserId(cs.TargetUserIds[0]); targetUser != nil {
+				resolvePurgeAffliction(user, targetUser)
+			}
+		} else {
+			resolvePurgeAffliction(user, user) // self-cast
+		}
+		return
+	}
+
 	spellAggro := characters.SpellAggroInfo{
 		SpellId:              cs.SpellId,
 		SpellRest:            cs.SpellRest,

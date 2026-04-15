@@ -245,7 +245,43 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		textutil.SendPhaseText(spellInfo.CastUserText, spellInfo.CastRoomText, tCtx, "pink", cfg)
 	}
 
-	// 13. Fire onCast spell script (if present) — can cancel the cast.
+	// 13. Go onCast hooks — run before JS, can abort the cast.
+	if spellInfo.SpellId == "fold-recall" {
+		currentRoomId := user.Character.RoomId
+		blocked := false
+		if currentRoom := rooms.LoadRoom(currentRoomId); currentRoom != nil {
+			if allowed, ok := currentRoom.GetTempData("allow_recall").(bool); ok && !allowed {
+				user.SendText("Something about this place prevents you from recalling.")
+				blocked = true
+			}
+		}
+		if !blocked {
+			anchorRoom := 0
+			if v := user.Character.GetMiscData("fold-anchor-room"); v != nil {
+				switch val := v.(type) {
+				case int:
+					anchorRoom = val
+				case float64:
+					anchorRoom = int(val)
+				}
+			}
+			if anchorRoom <= 0 {
+				user.SendText(`You reach for the Veil, but there is no anchor to ` +
+					`pull you. Set one first with ` +
+					`<ansi fg="command">cast fold-anchor</ansi>.`)
+				blocked = true
+			} else if anchorRoom == currentRoomId {
+				user.SendText("You are already standing on your anchor.")
+				blocked = true
+			}
+		}
+		if blocked {
+			user.Character.CastingState = nil
+			return true, nil
+		}
+	}
+
+	// 13b. Fire onCast spell script (if present) — can cancel the cast.
 	spellAggro := characters.SpellAggroInfo{
 		SpellId:              spellInfo.SpellId,
 		SpellRest:            result.SpellRest,
