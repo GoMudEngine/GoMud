@@ -804,10 +804,10 @@ func (b *Balance) Validate() {
 		b.MobReactionDelayMin = 0.25
 	}
 	if b.MobReactionDelayMax <= 0 {
-		b.MobReactionDelayMax = 4.0
+		b.MobReactionDelayMax = 2.0
 	}
 	if b.MobBTreeReactionBase <= 0 {
-		b.MobBTreeReactionBase = 3.0
+		b.MobBTreeReactionBase = 2.0
 	}
 	if b.MobBTreeReactionPerceptionScale < 1 {
 		b.MobBTreeReactionPerceptionScale = 100

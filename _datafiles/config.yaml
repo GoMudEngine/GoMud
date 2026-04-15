@@ -834,7 +834,8 @@ Balance:
   CombatMemoryDuration: 300       # Rounds before mob forgets combat target
   MobAIEnabled: true              # Global toggle for reactive mob AI
   MobReactionDelayMin: 0.25       # Minimum reaction delay (seconds)
-  MobReactionDelayMax: 4.0        # Maximum reaction delay (seconds)
+  MobReactionDelayMax: 2.0        # Maximum reaction delay (seconds)
+  MobBTreeReactionBase: 2.0       # Base delay before perception reduction (seconds)
 
   # ── GOSSIP SYSTEM ───────────────────────────────────────────────────────────
   GossipIntervalRounds: 75  # Rounds between gossip broadcasts for "gossiper" mobs (min 20)
