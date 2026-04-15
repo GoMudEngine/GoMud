@@ -3,6 +3,7 @@ package mobcommands
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -115,6 +116,20 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	// Stage 3.5: No XP awarded. Progression is skill-based via combat hooks.
 	// Still track kills and taming.
+
+	// Behavior tree: fire mob_die once with primary killer
+	if len(mob.Character.PlayerDamage) > 0 {
+		var killerUserId int
+		for uId := range mob.Character.PlayerDamage {
+			killerUserId = uId
+			break
+		}
+		behaviortree.TryMobBehavior(mob.InstanceId, behaviortree.EventContext{
+			EventType: "mob_die",
+			UserId:    killerUserId,
+			RoomId:    room.RoomId,
+		})
+	}
 
 	if len(mob.Character.PlayerDamage) > 0 {
 

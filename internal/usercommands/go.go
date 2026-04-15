@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
+	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/dice"
@@ -485,6 +486,21 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 
 					mob.Command(rest)
 
+				}
+
+				// Behavior tree: notify mobs that a player entered
+				if !isSneaking {
+					for _, mobInstId := range destRoom.GetMobs(rooms.FindAll) {
+						mob := mobs.GetInstance(mobInstId)
+						if mob == nil || mob.Character.IsCharmed() {
+							continue
+						}
+						behaviortree.TryMobBehavior(mobInstId, behaviortree.EventContext{
+							EventType: "player_enter",
+							UserId:    user.UserId,
+							RoomId:    destRoom.RoomId,
+						})
+					}
 				}
 
 				//
