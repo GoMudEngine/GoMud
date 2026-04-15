@@ -254,6 +254,13 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 			enterFromExit = fmt.Sprintf(`the <ansi fg="exit">%s</ansi>`, enterFromExit)
 		}
 
+		behaviortree.TryRoomBehavior(room.RoomId, behaviortree.EventContext{
+			EventType: "room_exit",
+			UserId:    user.UserId,
+			RoomId:    room.RoomId,
+			Direction: exitName,
+		})
+
 		if err := rooms.MoveToRoom(user.UserId, destRoom.RoomId); err != nil {
 			user.SendText("Oops, couldn't move there!")
 		} else {
@@ -487,6 +494,14 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 					mob.Command(rest)
 
 				}
+
+				// Room behavior tree: fire room_enter for the destination room
+				behaviortree.TryRoomBehavior(destRoom.RoomId, behaviortree.EventContext{
+					EventType: "room_enter",
+					UserId:    user.UserId,
+					RoomId:    destRoom.RoomId,
+					Direction: exitName,
+				})
 
 				// Behavior tree: notify mobs that a player entered
 				if !isSneaking {

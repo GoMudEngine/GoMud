@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
+	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/keywords"
@@ -329,6 +330,19 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 		skipScript := flags.Has(events.CmdSkipScripts)
 		if info, ok := userCommands[alias]; ok && info.AdminOnly {
 			skipScript = true
+		}
+
+		// Room behavior tree: check before room scripts and command dispatch
+		if !skipScript {
+			if behaviortree.TryRoomBehavior(user.Character.RoomId, behaviortree.EventContext{
+				EventType: "room_command",
+				UserId:    user.UserId,
+				RoomId:    user.Character.RoomId,
+				Command:   cmd,
+				Rest:      rest,
+			}) {
+				return true, nil // room tree intercepted the command
+			}
 		}
 
 		if !skipScript {

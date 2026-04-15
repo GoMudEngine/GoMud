@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/crafting"
@@ -37,6 +38,10 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 			room.RoundTick()
 
 			allowIdleMessages := true
+			behaviortree.TryRoomBehavior(roomId, behaviortree.EventContext{
+				EventType: "room_idle",
+				RoomId:    roomId,
+			})
 			if handled, err := scripting.TryRoomIdleEvent(roomId); err == nil {
 				if handled { // For this event, handled represents whether to reject the move.
 					allowIdleMessages = false
