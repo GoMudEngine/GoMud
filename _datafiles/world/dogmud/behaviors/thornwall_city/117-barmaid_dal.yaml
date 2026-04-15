@@ -1,0 +1,144 @@
+# Barmaid Dal — Behavior Tree
+# Room cycling between main tavern (home) and back corner.
+# Gossip redirect on ask. All dialogue handled here.
+#
+# State:
+#   location — "home" or "back" (tracks where she is)
+
+tree:
+  type: selector
+  children:
+
+    # ── ASK EVENT: gossip redirect ──
+    - type: sequence
+      event: player_ask
+      children:
+        - type: condition
+          check: keyword_match
+          keywords: [gossip, news, rumor, rumors, talk, word, hear]
+        - type: action
+          do: respond
+          user_text: "You want gossip? Ask the old men in the back corner. They have more stories than sense."
+
+    # ── IDLE EVENT: room cycling ──
+    - type: selector
+      event: mob_idle
+      children:
+
+        # At home: after cooldown, chance to visit back room
+        - type: sequence
+          children:
+            - type: condition
+              check: mob_at_home
+            - type: decorator
+              mod: cooldown
+              rounds: 75
+              child:
+                type: decorator
+                mod: random
+                percent: 15
+                child:
+                  type: sequence
+                  children:
+                    - type: action
+                      do: set_state
+                      key: location
+                      value: "back"
+                    - type: action
+                      do: emote
+                      text: gathers a tray of cups and heads toward the back corner.
+                    - type: action
+                      do: move
+                      direction: south
+
+        # Away from home: patron heckling
+        - type: sequence
+          children:
+            - type: decorator
+              mod: invert
+              child:
+                type: condition
+                check: mob_at_home
+            - type: decorator
+              mod: cooldown
+              rounds: 20
+              child:
+                type: decorator
+                mod: random
+                percent: 40
+                child:
+                  type: selector
+                  children:
+                    - type: decorator
+                      mod: random
+                      percent: 25
+                      child:
+                        type: sequence
+                        children:
+                          - type: action
+                            do: command_mob
+                            mob_id: 114
+                            cmd: "emote nudges his cup forward with one finger, grinning."
+                          - type: action
+                            do: emote
+                            text: "smacks the cup back without looking. \"Ask nicer.\""
+                    - type: decorator
+                      mod: random
+                      percent: 33
+                      child:
+                        type: sequence
+                        children:
+                          - type: action
+                            do: command_mob
+                            mob_id: 115
+                            cmd: "say Dal, you get prettier every year."
+                          - type: action
+                            do: emote
+                            text: "does not look up from the tray. \"And you get older. Funny how that works.\""
+                    - type: decorator
+                      mod: random
+                      percent: 50
+                      child:
+                        type: sequence
+                        children:
+                          - type: action
+                            do: command_mob
+                            mob_id: 116
+                            cmd: "emote reaches for the bread and accidentally brushes her arm."
+                          - type: action
+                            do: emote
+                            text: "pulls her arm back and gives him a look that could curdle milk."
+                    - type: sequence
+                      children:
+                        - type: action
+                          do: command_mob
+                          mob_id: 114
+                          cmd: "say How about a smile with that ale, Dal?"
+                        - type: action
+                          do: emote
+                          text: "sets the cup down hard enough to slosh. \"How about a tip?\""
+
+        # Away from home: after cooldown, return
+        - type: sequence
+          children:
+            - type: decorator
+              mod: invert
+              child:
+                type: condition
+                check: mob_at_home
+            - type: decorator
+              mod: cooldown
+              rounds: 15
+              child:
+                type: sequence
+                children:
+                  - type: action
+                    do: set_state
+                    key: location
+                    value: "home"
+                  - type: action
+                    do: emote
+                    text: wipes her hands on her apron and heads back to the bar.
+                  - type: action
+                    do: command
+                    cmd: pathto home

@@ -6,13 +6,13 @@ import (
 	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
+	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/keywords"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -331,12 +331,32 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 			skipScript = true
 		}
 
+		// Room behavior tree: check before room scripts and command dispatch
 		if !skipScript {
-			// Instead of calling scripting.TryRoomCommand directly,
-			// use our new function that sends GMCP notifications for blocked directions
-			handled, err := TryRoomScripts(cmd+` `+rest, alias, rest, userId)
-			if handled {
-				return true, err
+			if behaviortree.TryRoomBehavior(user.Character.RoomId, behaviortree.EventContext{
+				EventType: "room_command",
+				UserId:    user.UserId,
+				RoomId:    user.Character.RoomId,
+				Command:   cmd,
+				Rest:      rest,
+			}) {
+				return true, nil // room tree intercepted the command
+			}
+		}
+
+		if !skipScript {
+			// Quest engine: room_interact notification
+			if room := rooms.LoadRoom(user.Character.RoomId); room != nil {
+				bridge := questengine.NewGameBridge(user, room.RoomId)
+				result := questengine.GetEngine().Notify("room_interact", questengine.EventDetails{
+					UserId: user.UserId,
+					RoomId: room.RoomId,
+					Verb:   alias,
+					Noun:   strings.ToLower(rest),
+				}, bridge, bridge)
+				if result.Handled {
+					return true, nil
+				}
 			}
 		}
 
@@ -359,18 +379,6 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 	} else {
 
 		userDisabled = user.Character.IsDisabled()
-
-		// Check if the "rest" is an item the character has
-		matchingItem, _, found := user.Character.FindItem(rest)
-
-		if found {
-			// If the item has a script, run it
-			if handled, err := scripting.TryItemCommand(cmd, matchingItem, user.UserId); err == nil {
-				if handled { // For this event, handled represents whether to reject the move.
-					return handled, err
-				}
-			}
-		}
 
 	}
 
@@ -525,49 +533,3 @@ func RegisterCommand(command string, handlerFunc UserCommand, disabledWhenDowned
 	}
 }
 
-// TryRoomScripts is called to try both the onCommand_X direct route and also onCommand with a 'cmd' parameter.
-// Returns true if a script handled it. False if not.
-func TryRoomScripts(input, alias, rest string, userId int) (bool, error) {
-
-	// Quest engine: room_interact notification
-	// Fires before JS scripts so triggers can replace onCommand handlers.
-	user := users.GetByUserId(userId)
-	if user != nil {
-		room := rooms.LoadRoom(user.Character.RoomId)
-		if room != nil {
-			bridge := questengine.NewGameBridge(user, room.RoomId)
-			result := questengine.GetEngine().Notify("room_interact", questengine.EventDetails{
-				UserId: user.UserId,
-				RoomId: room.RoomId,
-				Verb:   alias,
-				Noun:   strings.ToLower(rest),
-			}, bridge, bridge)
-			if result.Handled {
-				return true, nil
-			}
-		}
-	}
-
-	// Try direct command room script first
-	cmdHandled, err := scripting.TryRoomCommand(alias, rest, userId)
-
-	if cmdHandled {
-
-		// Check if it's a directional command and send GMCP for wrong direction
-		user := users.GetByUserId(userId)
-		if user != nil && (alias == "north" || alias == "south" || alias == "east" || alias == "west" ||
-			alias == "up" || alias == "down" || alias == "northwest" || alias == "northeast" ||
-			alias == "southwest" || alias == "southeast") {
-
-			// Send GMCP message for script-blocked direction
-			if f, ok := GetExportedFunction(`SendGMCPEvent`); ok {
-				if gmcpSendFunc, ok := f.(func(int, string, any)); ok { // make sure the func definition is `func(int, string, any)`
-					gmcpSendFunc(user.UserId, `Room.WrongDir`, fmt.Sprintf(`"%s"`, alias))
-				}
-			}
-
-		}
-	}
-
-	return cmdHandled, err
-}

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
+	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/dice"
@@ -14,7 +15,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -253,11 +253,17 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 			enterFromExit = fmt.Sprintf(`the <ansi fg="exit">%s</ansi>`, enterFromExit)
 		}
 
+		behaviortree.TryRoomBehavior(room.RoomId, behaviortree.EventContext{
+			EventType: "room_exit",
+			UserId:    user.UserId,
+			RoomId:    room.RoomId,
+			Direction: exitName,
+		})
+
 		if err := rooms.MoveToRoom(user.UserId, destRoom.RoomId); err != nil {
 			user.SendText("Oops, couldn't move there!")
 		} else {
 
-			scripting.TryRoomScriptEvent(`onExit`, user.UserId, originRoomId)
 
 			// Quest engine: room_enter notification
 			bridge := questengine.NewGameBridge(user, destRoom.RoomId)
@@ -487,6 +493,29 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 
 				}
 
+				// Room behavior tree: fire room_enter for the destination room
+				behaviortree.TryRoomBehavior(destRoom.RoomId, behaviortree.EventContext{
+					EventType: "room_enter",
+					UserId:    user.UserId,
+					RoomId:    destRoom.RoomId,
+					Direction: exitName,
+				})
+
+				// Behavior tree: notify mobs that a player entered
+				if !isSneaking {
+					for _, mobInstId := range destRoom.GetMobs(rooms.FindAll) {
+						mob := mobs.GetInstance(mobInstId)
+						if mob == nil || mob.Character.IsCharmed() {
+							continue
+						}
+						behaviortree.TryMobBehavior(mobInstId, behaviortree.EventContext{
+							EventType: "player_enter",
+							UserId:    user.UserId,
+							RoomId:    destRoom.RoomId,
+						})
+					}
+				}
+
 				//
 				// When entering a room, mobs might be waiting to attack
 				//
@@ -538,7 +567,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 			// to a player they can't see. Still show the room via Look.
 			if isSneaking {
 				Look(``, user, destRoom, events.CmdSecretly)
-			} else if doLook, err := scripting.TryRoomScriptEvent(`onEnter`, user.UserId, destRoom.RoomId); err != nil || doLook {
+			} else {
 				Look(``, user, destRoom, events.CmdSecretly)
 			}
 

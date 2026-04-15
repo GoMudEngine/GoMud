@@ -4041,19 +4041,6 @@ func TestTryCommand(t *testing.T) {
 	})
 }
 
-// ─── TryRoomScripts ─────────────────────────────────────────────────────────
-
-func TestTryRoomScripts(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	t.Run("no_scripts", func(t *testing.T) {
-		handled, err := TryRoomScripts("look ", "look", "", 1)
-		assert.False(t, handled)
-		_ = err // May return "no script" error
-	})
-}
-
 // ─── Admin Room deeper ──────────────────────────────────────────────────────
 
 func TestAdminRoomDeep(t *testing.T) {

@@ -1,0 +1,10 @@
+description: Smoke test Phase 4a behavior tree engine on three PoC mobs
+goals:
+  - Travel to the Temple Interior (room 468) and verify Olen idles with emotes
+  - Ask Olen about the tithe quest — verify dialogue tree responds
+  - Give a non-quest item to Olen — verify rejection message from behavior tree
+  - Travel to the Ruined Barn (room 4007) and observe Bandit Leader behavior
+  - Wait without talking — verify the leader eventually attacks after delay
+  - Travel to The Drowning Post Tavern (room 472) and watch Barmaid Dal
+  - Wait for Dal to cycle to the back room and return
+  - Ask Dal about gossip — verify redirect to old regulars

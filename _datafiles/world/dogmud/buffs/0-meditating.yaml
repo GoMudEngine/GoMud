@@ -1,5 +1,5 @@
-# 
-# buff zero (0) is a special buff that when naturally expires, 
+#
+# buff zero (0) is a special buff that when naturally expires,
 # will remove the player from the game without zombie status.
 #
 buffid: 0
@@ -10,3 +10,7 @@ triggercount: 5
 flags:
 - cancel-on-action
 - cancel-on-combat
+start_user_text: "You sit down and begin your meditation."
+start_room_text: "{sourcename} sits down and begins to meditate."
+trigger_user_text: "You continue your meditation..."
+trigger_room_text: "{sourcename} continues meditating."

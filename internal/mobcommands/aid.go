@@ -5,7 +5,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/textutil"
@@ -73,17 +72,9 @@ func Aid(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 				textutil.SendPhaseText("", spellInfo.CastRoomText, tCtx, "pink", cfg)
 			}
 
-			continueCasting := true
-			if allowToContinue, err := scripting.TrySpellScriptEvent(`onCast`, 0, mob.InstanceId, spellAggro); err == nil {
-				continueCasting = allowToContinue
-			}
-
-			if continueCasting {
-
-				mob.Character.CancelBuffsWithFlag(buffs.Hidden)
-				if spellInfo != nil {
-					mob.Character.SetCast(spellInfo.WaitRounds, spellAggro)
-				}
+			mob.Character.CancelBuffsWithFlag(buffs.Hidden)
+			if spellInfo != nil {
+				mob.Character.SetCast(spellInfo.WaitRounds, spellAggro)
 			}
 
 		}

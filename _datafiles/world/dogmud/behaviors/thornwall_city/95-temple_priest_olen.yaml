@@ -1,0 +1,52 @@
+# Temple Priest Olen — Behavior Tree
+# Handles: idle emotes (with cooldown), non-quest item rejection
+# Dialogue (ask events) stays in dialogue YAML for now.
+
+tree:
+  type: selector
+  children:
+
+    # ── GIVE EVENT: reject non-quest items ──
+    # Quest engine handles the tithe ledger (item 29) before this fires.
+    # This catches everything else.
+    - type: sequence
+      event: player_give
+      children:
+        - type: action
+          do: respond
+          user_text: "The temple accepts tithes in coin, not goods."
+
+    # ── IDLE EVENT: emotes with cooldown ──
+    - type: selector
+      event: mob_idle
+      children:
+        - type: decorator
+          mod: cooldown
+          rounds: 10
+          child:
+            type: selector
+            children:
+              - type: decorator
+                mod: random
+                percent: 25
+                child:
+                  type: action
+                  do: emote
+                  text: adjusts a candle on the altar, centering it precisely.
+              - type: decorator
+                mod: random
+                percent: 25
+                child:
+                  type: action
+                  do: command
+                  cmd: cast conviction-ward
+              - type: decorator
+                mod: random
+                percent: 33
+                child:
+                  type: action
+                  do: emote
+                  text: turns the pages of a heavy ledger, lips moving silently.
+              - type: action
+                do: emote
+                text: folds hands and stares at the altar with a contemplative expression.

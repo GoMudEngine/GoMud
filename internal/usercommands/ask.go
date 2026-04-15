@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/dialogue"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -11,7 +12,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/util"
 
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -108,10 +108,17 @@ func Ask(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		// Build PlayerState for quest/item gating in dialogue
 		ps := buildPlayerState(user)
 
-		jsHandled := false
-		if handled, err := scripting.TryMobScriptEvent(`onAsk`, mobId, user.UserId, `user`, map[string]any{"askText": rest}); err == nil && handled {
-			jsHandled = true
+		// Behavior tree: try before JS
+		if behaviortree.TryMobBehavior(mobId, behaviortree.EventContext{
+			EventType: "player_ask",
+			UserId:    user.UserId,
+			Text:      rest,
+			RoomId:    room.RoomId,
+		}) {
+			return true, nil
 		}
+
+		jsHandled := false
 
 		// LLM path: fires if JS didn't handle it and the mob has an LLM profile configured.
 		if !jsHandled && mob.LLMProfile != nil && bool(configs.GetLLMConfig().Enabled) {

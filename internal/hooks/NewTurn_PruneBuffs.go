@@ -6,7 +6,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/textutil"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -58,8 +57,6 @@ func PruneBuffs(e events.Event) events.ListenerReturn {
 							textutil.SendPhaseText(endBuffSpec.EndUserText, endBuffSpec.EndRoomText, tCtx, "cyan", cfg)
 						}
 
-						scripting.TryBuffScriptEvent(`onEnd`, uId, 0, buffInfo.BuffId)
-
 						if buffInfo.BuffId == 0 { // Log them out // logoff // logout
 							if !user.Character.HasAdjective(`zombie`) { // if they are currently a zombie, we don't log them out from this buff being removed
 								logOff = true
@@ -102,8 +99,6 @@ func PruneBuffs(e events.Event) events.ListenerReturn {
 					}
 					textutil.SendPhaseText("", endBuffSpec.EndRoomText, tCtx, "cyan", cfg)
 				}
-
-				scripting.TryBuffScriptEvent(`onEnd`, 0, mobInstanceId, buffInfo.BuffId)
 			}
 
 			mob.Character.Validate()

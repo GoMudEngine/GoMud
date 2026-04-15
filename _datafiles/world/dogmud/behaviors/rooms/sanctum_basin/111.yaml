@@ -1,0 +1,108 @@
+# The Alchemist's Workshop — Room 111
+# Alchemist Yenna (mob 53) gives materials and teaches alchemy.
+# Sub-steps: alchemy_arrive -> alchemy_craft
+# Quest advances on craft attempt — outcome is secondary to the lesson.
+
+tree:
+  type: selector
+  children:
+
+    # ── ROOM ENTER: first arrival after crafting trial ──
+    - type: sequence
+      event: room_enter
+      children:
+        - type: condition
+          check: player_has_quest
+          quest: "1-crafting_craft"
+        - type: condition
+          check: player_missing_quest
+          quest: "1-alchemy_arrive"
+        - type: condition
+          check: mob_in_room
+          mob_id: 53
+        - type: action
+          do: give_item
+          item_id: 40004
+        - type: action
+          do: give_item
+          item_id: 40004
+        - type: action
+          do: give_item
+          item_id: 40006
+        - type: action
+          do: mob_say
+          mob_id: 53
+          text: >-
+            Alchemy is pattern recognition. The world has rules and
+            compounds have relationships.
+          delay: 1.0
+        - type: action
+          do: mob_say
+          mob_id: 53
+          text: >-
+            A healing salve is ground healer's root mixed with
+            water and sealed in a vial. Simple, but effective.
+          delay: 2.5
+        - type: action
+          do: mob_say
+          mob_id: 53
+          text: >-
+            I have put two healer's roots and a glass vial in your
+            pack.
+          delay: 4.5
+        - type: action
+          do: mob_say
+          mob_id: 53
+          text: >-
+            Type <ansi fg="command">craft</ansi> to see your
+            options. Then type
+            <ansi fg="command">craft healing salve</ansi>. One
+            attempt.
+          delay: 6.0
+        - type: action
+          do: grant_quest
+          quest: "1-alchemy_arrive"
+
+    # ── ROOM COMMAND: craft attempt ──
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [craft]
+        - type: condition
+          check: player_has_quest
+          quest: "1-alchemy_arrive"
+        - type: condition
+          check: player_missing_quest
+          quest: "1-alchemy_craft"
+        - type: condition
+          check: mob_in_room
+          mob_id: 53
+        - type: action
+          do: mob_emote
+          mob_id: 53
+          text: examines the work with a brief, approving look.
+          delay: 0.5
+        - type: action
+          do: mob_say
+          mob_id: 53
+          text: You understood what you were doing.
+          delay: 1.5
+        - type: action
+          do: mob_say
+          mob_id: 53
+          text: >-
+            To use a consumable: type
+            <ansi fg="command">drink [item]</ansi>. It applies a
+            regen effect -- you will see it listed when you type
+            <ansi fg="command">condition</ansi>.
+          delay: 2.5
+        - type: action
+          do: mob_say
+          mob_id: 53
+          text: Find Fen in the West Meadow -- go south from here.
+          delay: 4.0
+        - type: action
+          do: grant_quest
+          quest: "1-alchemy_craft"

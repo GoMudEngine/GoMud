@@ -9,7 +9,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -95,9 +94,6 @@ func Show(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				user.SendText(
 					fmt.Sprintf(`You show the <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, showItem.DisplayName(), targetMob.Character.Name),
 				)
-
-				// Do trigger of onShow
-				scripting.TryMobScriptEvent(`onShow`, targetMob.InstanceId, user.UserId, `user`, map[string]any{`gold`: 0, `item`: showItem})
 
 				room.SendTextVisual(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> shows their <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, user.Character.Name, showItem.DisplayName(), targetMob.Character.Name),

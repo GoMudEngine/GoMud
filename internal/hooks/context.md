@@ -56,10 +56,9 @@ The hooks system is built around several key categories:
 
 ## Event Listener Categories
 
-### NewRound Event Handlers (15 handlers)
+### NewRound Event Handlers (14 handlers)
 ```go
 // Core game loop processing every round
-events.RegisterListener(events.NewRound{}, PruneVMs)              // Clean up JavaScript VMs
 events.RegisterListener(events.NewRound{}, InactivePlayers)       // Handle AFK players
 events.RegisterListener(events.NewRound{}, UpdateZoneMutators)    // Update zone effects
 events.RegisterListener(events.NewRound{}, CheckNewDay)           // Day/night cycle
@@ -185,13 +184,6 @@ func HandleJoin(e events.Event) events.PlayerSpawn {
         return events.Cancel
     }
     
-    // Execute join scripts
-    if room := rooms.LoadRoom(user.Character.RoomId); room != nil {
-        if room.HasScript() {
-            scripting.TryRoomScriptEvent("onPlayerEnter", room.RoomId, evt.UserId, 0)
-        }
-    }
-    
     // Handle first-time login
     if user.Character.Level == 1 && user.Character.Experience == 0 {
         handleNewPlayerSetup(user)
@@ -221,13 +213,6 @@ func HandleLeave(e events.Event) events.ListenerReturn {
     
     // Clean up combat state
     user.Character.ClearAggro()
-    
-    // Execute leave scripts
-    if room := rooms.LoadRoom(user.Character.RoomId); room != nil {
-        if room.HasScript() {
-            scripting.TryRoomScriptEvent("onPlayerLeave", room.RoomId, evt.UserId, 0)
-        }
-    }
     
     // Broadcast leave message
     broadcastPlayerLeave(user)
@@ -447,7 +432,6 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 - rooms.LoadRoom()                // Room system integration
 - mobs.GetInstance()              // Mob system integration
 - combat.AttackPlayerVsMob()      // Combat system integration
-- scripting.TryRoomScriptEvent()  // Scripting system integration
 ```
 
 ## Usage Examples
@@ -523,7 +507,6 @@ func SystemMaintenance(e events.Event) events.ListenerReturn {
 - `internal/combat` - Combat system for battle resolution
 - `internal/quests` - Quest system for progression tracking
 - `internal/rooms` - Room management for location-based events
-- `internal/scripting` - JavaScript runtime for script execution
 - `internal/buffs` - Status effects for buff management
 - `internal/configs` - Configuration management for system settings
 - `internal/mutations` - Mutation system for mob mutation acquisition

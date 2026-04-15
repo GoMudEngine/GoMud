@@ -13,7 +13,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
-	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/textutil"
@@ -176,13 +175,24 @@ func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData
 		}
 	}
 
-	spellAggro := characters.SpellAggroInfo{
-		SpellId:              cs.SpellId,
-		SpellRest:            cs.SpellRest,
-		TargetUserIds:        cs.TargetUserIds,
-		TargetMobInstanceIds: cs.TargetMobInstanceIds,
+	// --- Go spell hooks — dispatch before JS scripts ---
+	switch cs.SpellId {
+	case "fold-anchor":
+		resolveFoldAnchor(user)
+		return
+	case "fold-recall":
+		resolveFoldRecall(user)
+		return
+	case "purge-affliction":
+		if len(cs.TargetUserIds) > 0 {
+			if targetUser := users.GetByUserId(cs.TargetUserIds[0]); targetUser != nil {
+				resolvePurgeAffliction(user, targetUser)
+			}
+		} else {
+			resolvePurgeAffliction(user, user) // self-cast
+		}
+		return
 	}
-	scripting.TrySpellScriptEvent("onMagic", user.UserId, 0, spellAggro)
 
 	// --- Consume component if required ---
 	if spellData.ComponentTag != "" {

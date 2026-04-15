@@ -1,0 +1,206 @@
+# Basin Gate — Room 102
+# Warden (mob 56) manages the south gate lock and greets players
+# based on quest progress. Gate starts locked (set in room YAML).
+
+tree:
+  type: selector
+  children:
+
+    # ── ROOM ENTER: graduated player — brief acknowledgment ──
+    - type: sequence
+      event: room_enter
+      children:
+        - type: condition
+          check: player_has_quest
+          quest: "1-end"
+        - type: action
+          do: set_room_locked
+          direction: south
+          locked: "false"
+        - type: action
+          do: mob_emote
+          mob_id: 56
+          text: gives a brief nod of recognition.
+          delay: 0.5
+        - type: action
+          do: mob_say
+          mob_id: 56
+          text: Safe travels out there.
+          delay: 1.5
+
+    # ── ROOM ENTER: warden speech done, gate open ──
+    - type: sequence
+      event: room_enter
+      children:
+        - type: condition
+          check: player_has_quest
+          quest: "1-warden"
+        - type: action
+          do: set_room_locked
+          direction: south
+          locked: "false"
+        - type: action
+          do: mob_emote
+          mob_id: 56
+          text: nods toward the open gate.
+          delay: 0.5
+
+    # ── ROOM ENTER: first-time graduation — full speech ──
+    - type: sequence
+      event: room_enter
+      children:
+        - type: condition
+          check: player_has_quest
+          quest: "1-cave"
+        - type: condition
+          check: player_missing_quest
+          quest: "1-warden"
+        - type: action
+          do: mob_say
+          mob_id: 56
+          text: >-
+            Your record is complete. Six trials, six instructors --
+            and the cave.
+          delay: 1.0
+        - type: action
+          do: mob_say
+          mob_id: 56
+          text: >-
+            The Basin Warden has one function: to ensure that no one
+            leaves Sanctum Basin unprepared. You are prepared.
+          delay: 2.5
+        - type: action
+          do: mob_say
+          mob_id: 56
+          text: >-
+            The gate is open. Whatever you find south of here --
+            remember what you learned in the basin.
+          delay: 4.0
+        - type: action
+          do: mob_say
+          mob_id: 56
+          text: >-
+            One last thing: the world is larger than what six
+            instructors can cover. Type <ansi fg="command">help</ansi>
+            to see what documentation is available -- there is more to
+            learn out there than what we teach here.
+          delay: 5.5
+        - type: action
+          do: mob_say
+          mob_id: 56
+          text: >-
+            The south road reaches Confluence within a day's walk.
+            Follow the river north from there and you will find New
+            Plymouth -- the largest settlement in this part of Gaius.
+            That is where most people head first.
+          delay: 7.0
+        - type: action
+          do: mob_emote
+          mob_id: 56
+          text: steps aside and gestures toward the road south.
+          delay: 9.0
+        - type: action
+          do: set_room_locked
+          direction: south
+          locked: "false"
+        - type: action
+          do: grant_quest
+          quest: "1-warden"
+        - type: action
+          do: grant_quest
+          quest: "1-end"
+
+    # ── ROOM ENTER: hasn't started trials ──
+    - type: sequence
+      event: room_enter
+      children:
+        - type: condition
+          check: player_missing_quest
+          quest: "1-start"
+        - type: action
+          do: mob_say
+          mob_id: 56
+          text: Hold.
+          delay: 1.0
+        - type: action
+          do: mob_say
+          mob_id: 56
+          text: >-
+            You have not begun the Sanctum Trials. Speak with the
+            Chrysalis Priest in the Academy Hall -- north to Town
+            Square, then north and east.
+          delay: 2.0
+
+    # ── ROOM ENTER: trials in progress ──
+    - type: sequence
+      event: room_enter
+      children:
+        - type: condition
+          check: player_has_quest
+          quest: "1-start"
+        - type: action
+          do: mob_emote
+          mob_id: 56
+          text: glances at you and returns their gaze to the road.
+          delay: 0.5
+        - type: action
+          do: mob_say
+          mob_id: 56
+          text: Not yet. Finish your trials and come back.
+          delay: 1.5
+        - type: action
+          do: mob_say
+          mob_id: 56
+          text: >-
+            Type <ansi fg="command">quest</ansi> if you have lost
+            your way.
+          delay: 2.5
+
+    # ── ROOM COMMAND: talk ──
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [talk]
+        - type: condition
+          check: mob_in_room
+          mob_id: 56
+        - type: selector
+          children:
+            - type: sequence
+              children:
+                - type: condition
+                  check: player_has_quest
+                  quest: "1-end"
+                - type: action
+                  do: mob_say
+                  mob_id: 56
+                  text: The world is wide. Come back if you need to.
+            - type: sequence
+              children:
+                - type: condition
+                  check: player_has_quest
+                  quest: "1-cave"
+                - type: action
+                  do: mob_say
+                  mob_id: 56
+                  text: The gate is open. Move when you are ready.
+            - type: sequence
+              children:
+                - type: condition
+                  check: player_has_quest
+                  quest: "1-start"
+                - type: action
+                  do: mob_say
+                  mob_id: 56
+                  text: >-
+                    Your trials are not complete. Type
+                    <ansi fg="command">quest</ansi> to see what
+                    remains.
+            - type: action
+              do: mob_say
+              mob_id: 56
+              text: >-
+                Find the Chrysalis Priest in the Academy Hall.
+                North to Town Square, then north and east.

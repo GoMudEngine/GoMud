@@ -5,6 +5,7 @@ import (
 	"math"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
@@ -19,7 +20,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/species"
-	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/GoMudEngine/GoMud/internal/worldevents"
@@ -153,7 +153,6 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 					}
 				}
 
-				scripting.TryBuffScriptEvent(`onTrigger`, 0, mobInstanceId, buff.BuffId)
 				triggeredBuffIds = append(triggeredBuffIds, buff.BuffId)
 			}
 
@@ -408,6 +407,9 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 		}
 
 	}
+
+	// Drain behavior tree delayed action queue
+	behaviortree.GetEngine().DrainQueue()
 
 	return events.Continue
 }

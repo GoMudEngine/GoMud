@@ -5,6 +5,7 @@ import (
 	"math"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
@@ -19,7 +20,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/species"
-	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/textutil"
@@ -247,13 +247,6 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 	case result.CastComplete:
 		cs := result.CastingState
 		spellData := result.SpellData
-		// Run spell script onWait one last time before resolution.
-		spellAggro := characters.SpellAggroInfo{
-			SpellId:              cs.SpellId,
-			SpellRest:            cs.SpellRest,
-			TargetUserIds:        cs.TargetUserIds,
-			TargetMobInstanceIds: cs.TargetMobInstanceIds,
-		}
 		// Send YAML wait text (if defined).
 		if spellData != nil && (spellData.WaitUserText != "" || spellData.WaitRoomText != "") {
 			tCtx := textutil.TokenContext{
@@ -271,7 +264,6 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 			}
 			textutil.SendPhaseText(spellData.WaitUserText, spellData.WaitRoomText, tCtx, "pink", cfg)
 		}
-		scripting.TrySpellScriptEvent("onWait", user.UserId, 0, spellAggro)
 
 		resolveRoom := rooms.LoadRoom(user.Character.RoomId)
 		if resolveRoom != nil {
@@ -350,13 +342,6 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 
 	case result.StillCasting:
 		cs := result.CastingState
-		// Run spell script onWait (if present) — flavor text during fold accumulation.
-		spellAggro := characters.SpellAggroInfo{
-			SpellId:              cs.SpellId,
-			SpellRest:            cs.SpellRest,
-			TargetUserIds:        cs.TargetUserIds,
-			TargetMobInstanceIds: cs.TargetMobInstanceIds,
-		}
 		// Send YAML wait text (if defined).
 		waitSpellInfo := spells.GetSpell(cs.SpellId)
 		if waitSpellInfo != nil && (waitSpellInfo.WaitUserText != "" || waitSpellInfo.WaitRoomText != "") {
@@ -375,7 +360,6 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 			}
 			textutil.SendPhaseText(waitSpellInfo.WaitUserText, waitSpellInfo.WaitRoomText, tCtx, "pink", cfg)
 		}
-		scripting.TrySpellScriptEvent("onWait", user.UserId, 0, spellAggro)
 		user.SendText(`<ansi fg="cyan">` + spells.GetCastMessage("cast_started", cs.SpellId) + `</ansi>`)
 	}
 
@@ -561,10 +545,7 @@ func handlePlayerFlee(user *users.UserRecord, uRoom *rooms.Room, userId int) boo
 
 	user.Character.EndAggro()
 
-	originRoomId := user.Character.RoomId
 	if err := rooms.MoveToRoom(user.UserId, exitRoomId); err == nil {
-
-		scripting.TryRoomScriptEvent(`onExit`, user.UserId, originRoomId)
 
 		for _, instId := range uRoom.GetMobs(rooms.FindCharmed) {
 			if mob := mobs.GetInstance(instId); mob != nil {
@@ -575,10 +556,7 @@ func handlePlayerFlee(user *users.UserRecord, uRoom *rooms.Room, userId int) boo
 		}
 
 		newRoom := rooms.LoadRoom(exitRoomId)
-
-		if doLook, err := scripting.TryRoomScriptEvent(`onEnter`, user.UserId, exitRoomId); err != nil || doLook {
-			usercommands.Look(``, user, newRoom, events.CmdSecretly)
-		}
+		usercommands.Look(``, user, newRoom, events.CmdSecretly)
 	}
 
 	return true
@@ -1322,7 +1300,12 @@ func handlePlayerVsMob(user *users.UserRecord, uRoom *rooms.Room, evt events.New
 
 	// Handle any scripted behavior now.
 	if roundResult.Hit {
-		scripting.TryMobScriptEvent(`onHurt`, defMob.InstanceId, user.UserId, `user`, map[string]any{`damage`: roundResult.DamageToTarget, `crit`: roundResult.Crit})
+		// Behavior tree: fire-and-forget
+		behaviortree.TryMobBehavior(defMob.InstanceId, behaviortree.EventContext{
+			EventType: "mob_hurt",
+			UserId:    user.UserId,
+			RoomId:    defMob.Character.RoomId,
+		})
 	}
 
 	// Stage 38.3: Player attacker progression — per-weapon skill tracking
@@ -1766,7 +1749,12 @@ func handleMobVsMob(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, aff
 
 	// Handle any scripted behavior now.
 	if roundResult.Hit {
-		scripting.TryMobScriptEvent(`onHurt`, defMob.InstanceId, mob.InstanceId, `mob`, map[string]any{`damage`: roundResult.DamageToTarget, `crit`: roundResult.Crit})
+		// Behavior tree: fire-and-forget
+		behaviortree.TryMobBehavior(defMob.InstanceId, behaviortree.EventContext{
+			EventType: "mob_hurt",
+			MobId:     mob.InstanceId,
+			RoomId:    defMob.Character.RoomId,
+		})
 	}
 
 	// Mobs get aggro when attacked

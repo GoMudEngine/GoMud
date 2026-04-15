@@ -1071,6 +1071,17 @@ func (c *Character) MigrateLegacyPotions() {
 	}
 }
 
+// MigrateChrysalisAidRemoved prunes the deleted chrysalis-aid spell from
+// any spellbook that still contains it. Runs once per character on load.
+func (c *Character) MigrateChrysalisAidRemoved() {
+	const migrationKey = "migration-chrysalis-aid-removed"
+	if c.GetMiscData(migrationKey) != nil {
+		return
+	}
+	delete(c.SpellBook, "chrysalis-aid")
+	c.SetMiscData(migrationKey, "1")
+}
+
 func (c *Character) HasRecipe(recipeId string) bool {
 	if c.KnownRecipes == nil {
 		return false

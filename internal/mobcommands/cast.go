@@ -8,7 +8,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/textutil"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -45,14 +44,6 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	spellInfo := result.SpellInfo
 
-	// Build aggro info for the onCast script.
-	spellAggro := characters.SpellAggroInfo{
-		SpellId:              spellInfo.SpellId,
-		SpellRest:            result.SpellRest,
-		TargetUserIds:        result.TargetUserIds,
-		TargetMobInstanceIds: result.TargetMobInstanceIds,
-	}
-
 	// Send YAML cast text (if defined).
 	if spellInfo.CastUserText != "" || spellInfo.CastRoomText != "" {
 		castRoom := rooms.LoadRoom(mob.Character.RoomId)
@@ -79,10 +70,6 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			},
 		}
 		textutil.SendPhaseText("", spellInfo.CastRoomText, tCtx, "pink", cfg)
-	}
-
-	if allowContinueCasting, err := scripting.TrySpellScriptEvent(`onCast`, 0, mob.InstanceId, spellAggro); err != nil || !allowContinueCasting {
-		return true, nil
 	}
 
 	// First-round conviction slice — mob pays a portion up-front.

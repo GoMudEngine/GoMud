@@ -4,7 +4,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
-	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -35,8 +34,6 @@ func CheckItemQuests(e events.Event) events.ListenerReturn {
 			})
 		}
 
-		scripting.TryItemScriptEvent(`onFound`, evt.Item, evt.UserId)
-
 		// Quest engine: item_gain notification
 		if u := users.GetByUserId(evt.UserId); u != nil {
 			bridge := questengine.NewGameBridge(u, u.Character.RoomId)
@@ -47,11 +44,8 @@ func CheckItemQuests(e events.Event) events.ListenerReturn {
 			}, bridge, bridge)
 		}
 
-	} else {
-
-		scripting.TryItemScriptEvent(`onLost`, evt.Item, evt.UserId)
-
 	}
+
 
 	return events.Continue
 }

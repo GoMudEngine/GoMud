@@ -7,7 +7,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -102,9 +101,6 @@ func Use(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 				room.SendTextVisual(itemSpec.OnUseRoomText, user.UserId)
 			}
 		}
-
-		// JS onUse hook — fires if the item has a script with an onUse function
-		scripting.TryItemScriptEvent(`onUse`, matchItem, user.UserId) //nolint:errcheck
 
 		// If no more uses, will be lost, so trigger event
 		if usesLeft := user.Character.UseItem(matchItem); usesLeft < 1 {

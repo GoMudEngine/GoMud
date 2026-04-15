@@ -1,0 +1,56 @@
+# Road Warden Tessara — Behavior Tree
+# Handles: player_give event for item rejection only.
+# Quest 4 advancement and flavor text are handled by the quest engine's
+# item_give trigger in the quest YAML. The behavior tree only rejects
+# items that don't match quest expectations.
+
+tree:
+  type: selector
+  children:
+
+    # ── GIVE: bandit's purse, Q4 active — let quest engine handle it ──
+    # (no branch needed — fall through to quest engine)
+
+    # ── GIVE: bandit's purse, Q4 already complete — return it ──
+    - type: sequence
+      event: player_give
+      children:
+        - type: condition
+          check: item_matches
+          item_id: 16
+        - type: condition
+          check: player_has_quest
+          quest: "4-end"
+        - type: action
+          do: say
+          text: >-
+            You have already done your part. The Watchers
+            remember it.
+        - type: action
+          do: return_item
+
+    # ── GIVE: any non-quest item — reject and return ──
+    - type: sequence
+      event: player_give
+      children:
+        - type: condition
+          check: player_has_quest
+          quest: "4-end"
+        - type: action
+          do: say
+          text: I appreciate the thought, but I do not need that.
+        - type: action
+          do: return_item
+
+    # ── GIVE: not on quest at all — reject and return ──
+    - type: sequence
+      event: player_give
+      children:
+        - type: condition
+          check: player_missing_quest
+          quest: "4-start"
+        - type: action
+          do: say
+          text: I appreciate the thought, but I do not need that.
+        - type: action
+          do: return_item

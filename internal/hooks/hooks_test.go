@@ -1107,26 +1107,6 @@ func TestInactivePlayers_LowRoundNumber(t *testing.T) {
 	assert.Equal(t, events.Continue, result)
 }
 
-// ─── PruneVMs ─────────────────────────────────────────────────────────────────
-
-func TestPruneVMs_NonDivisibleRound(t *testing.T) {
-	evt := events.NewRound{RoundNumber: 7}
-	result := PruneVMs(evt)
-	assert.Equal(t, events.Continue, result)
-}
-
-func TestPruneVMs_DivisibleRound(t *testing.T) {
-	evt := events.NewRound{RoundNumber: 100}
-	result := PruneVMs(evt)
-	assert.Equal(t, events.Continue, result)
-}
-
-func TestPruneVMs_ZeroRound(t *testing.T) {
-	evt := events.NewRound{RoundNumber: 0}
-	result := PruneVMs(evt)
-	assert.Equal(t, events.Continue, result)
-}
-
 // ─── UpdateZoneMutators ───────────────────────────────────────────────────────
 
 func TestUpdateZoneMutators_NoPanic(t *testing.T) {

@@ -10,7 +10,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -184,9 +183,7 @@ func HandleJoin(e events.Event) events.ListenerReturn {
 			RoomId: user.Character.RoomId,
 		}, bridge, bridge)
 
-		if doLook, err := scripting.TryRoomScriptEvent(`onEnter`, user.UserId, user.Character.RoomId); err != nil || doLook {
-			user.CommandFlagged(`look`, events.CmdSecretly) // Do a secret look.
-		}
+		user.CommandFlagged(`look`, events.CmdSecretly) // Do a secret look.
 	}
 
 	return events.Continue

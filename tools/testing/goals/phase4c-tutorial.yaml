@@ -1,0 +1,88 @@
+description: >
+  Fresh character tutorial walkthrough. Tests all 9 Sanctum Basin
+  room behavior trees, the ceremony, quest progression, and
+  graduation. Character starts from scratch — follow the quest
+  log exactly.
+
+goals:
+  # --- Character Creation ---
+  - >
+    After logging in, you will be in the starting area. Type
+    'start' to begin character creation. Choose any species.
+    Follow all prompts until you are placed in the world.
+
+  # --- Academy Hall Ceremony (Room 113) ---
+  - >
+    You should arrive in or near the Academy Hall. If not,
+    find it. The Chrysalis Priest should begin the Awakening
+    Rite automatically when you enter. DO NOT try to leave
+    during the ceremony — exits are locked. Wait for the
+    priest to finish speaking (about 30 seconds).
+  - >
+    After the ceremony, verify: you received a mutation (type
+    'mutations'), you have 10 gold ('wealth'), and the quest
+    started ('quest'). Type 'look mosaic' to see the floor map.
+
+  # --- Market Street (Room 108) ---
+  - >
+    Go south from Academy Hall to Market Street. The Merchant
+    should greet you and explain commerce. Type 'buy' to
+    purchase something (you have 10 gold). Then type
+    'equip' or 'wield' or 'wear' on an item. Check 'quest'
+    to see if both steps completed.
+
+  # --- The Forge (Room 109) ---
+  - >
+    Find the Forge (east from Market Street area). The
+    Blacksmith should give you an iron ingot and leather
+    strip. Type 'craft iron dagger' to attempt crafting.
+    Check 'quest' for progression.
+
+  # --- Alchemist's Workshop (Room 111) ---
+  - >
+    Find the Alchemist (west of the well area). She should
+    give you healer's root and a glass vial. Type
+    'craft healing salve'. Check 'quest'.
+
+  # --- West Meadow (Room 106) ---
+  - >
+    Find the West Meadow. The Wilderness Guide should teach
+    foraging. Type 'forage'. After the guide responds, type
+    'track'. Check 'quest' for both steps.
+
+  # --- Training Yard (Room 114) ---
+  - >
+    Find the Training Yard (east area). The Combat Trainer
+    should explain fighting. Attack the training dummy — type
+    'kill dummy' or 'attack dummy'. Kill it. Check 'quest'.
+
+  # --- Observatory (Room 116) ---
+  - >
+    Find the Observatory (above the Alchemist). The Elder
+    should teach spellcasting. Type 'cast sparks' (or
+    whatever spell you have). Check 'quest'.
+
+  # --- Boss Cave (Room 120) ---
+  - >
+    The quest log should direct you to the cave. Find the
+    Aberrant Chrysalis boss and kill it. Be careful with
+    your health — flee if needed. Check 'quest' after.
+
+  # --- Basin Gate (Room 102) ---
+  - >
+    Return to the Basin Gate (south exit of the basin).
+    The Warden should congratulate you and unlock the gate.
+    Go south to leave the Sanctum Basin.
+
+  # --- General Observations ---
+  - >
+    Throughout testing, note whether NPC responses feel
+    naturally paced (there should be slight delays before
+    mobs speak — perception-scaled reaction delays).
+  - >
+    Report any cases where quest steps don't advance after
+    performing the required action, or where NPCs don't
+    respond at all.
+  - >
+    Report any YAML parse errors or behavior tree failures
+    visible in the server log.

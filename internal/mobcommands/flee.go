@@ -3,6 +3,7 @@ package mobcommands
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -96,6 +97,11 @@ func Flee(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	// Move via the existing Go command
 	Go(exitName, mob, room)
+
+	behaviortree.TryMobBehavior(mob.InstanceId, behaviortree.EventContext{
+		EventType: "mob_flee",
+		RoomId:    mob.Character.RoomId,
+	})
 
 	return true, nil
 }

@@ -1,0 +1,18 @@
+tree:
+  type: sequence
+  event: room_enter
+  children:
+    - type: condition
+      check: player_has_quest
+      quest: "4-start"
+    - type: condition
+      check: player_missing_quest
+      quest: "4-investigate"
+    - type: action
+      do: grant_quest
+      quest: "4-investigate"
+    - type: action
+      do: send_user_text
+      text: "The scattered debris and fresh boot prints confirm it -- this is\
+        \ where the bandits have been operating. There may be more evidence\
+        \ deeper in the gully."

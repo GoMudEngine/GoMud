@@ -14,7 +14,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/pets"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/shops"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -529,12 +528,6 @@ func executePurchaseItem(user *users.UserRecord, room *rooms.Room, shopMob *mobs
 		room.SendTextVisual(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> purchases the <ansi fg="itemname">%s</ansi> from <ansi fg="mobname">%s</ansi>.`, user.Character.Name, newItm.DisplayName(), shopUser.Character.Name),
 			user.UserId, shopUser.UserId)
-	}
-
-	if keepItem, err := scripting.TryItemScriptEvent(`onPurchase`, newItm, user.UserId); err == nil {
-		if !keepItem { // For this event, handled represents whether to reject the move.
-			return true
-		}
 	}
 
 	user.Character.StoreItem(newItm)

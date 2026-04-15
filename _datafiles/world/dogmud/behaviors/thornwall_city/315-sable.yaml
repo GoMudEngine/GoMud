@@ -1,0 +1,119 @@
+# Sable — Mob 315 — Rift Archway Vendor
+# Handles portal-listing chatter and "<zone> <gold>" purchase requests.
+# The open_instance_portal action manages the full purchase flow:
+# validates zone name, checks gold, charges, clones the instance,
+# adds a temporary exit, and speaks the result.
+
+tree:
+  type: selector
+  children:
+
+    # ── ASK: greetings / general help ──────────────────────────────────────
+    - type: sequence
+      event: player_ask
+      children:
+        - type: condition
+          check: keyword_match
+          keywords: [hello, hi, help, who, what, quest]
+        - type: action
+          do: say
+          text: I am Sable. I open rifts to places best left undisturbed.
+        - type: action
+          do: say
+          text: >-
+            For the right price in gold, I can send you and your party
+            somewhere dangerous.
+        - type: action
+          do: say
+          text: Ask me about portals if you want to know more.
+        - type: action
+          do: send_user_text
+          text: '<ansi fg="181">  [Try: ask sable portals]</ansi>'
+
+    # ── ASK: list available portals ────────────────────────────────────────
+    - type: sequence
+      event: player_ask
+      children:
+        - type: condition
+          check: keyword_match
+          keywords: [portal, portals, zones, instance, instances, rift, rifts]
+        - type: action
+          do: say
+          text: I can open rifts to dangerous places, for a price.
+        - type: action
+          do: say
+          text: Currently I can reach the Arena and the Planar Oasis.
+        - type: action
+          do: say
+          text: Tell me the place and how much gold you wish to invest.
+        - type: action
+          do: say
+          text: The more gold, the more dangerous -- and rewarding.
+        - type: action
+          do: send_user_text
+          text: >-
+            <ansi fg="181">  [Try: ask sable arena 200 or ask sable
+            oasis 300]</ansi>
+
+    # ── ASK: portal purchase "<zone> <gold>" ──────────────────────────────
+    # open_instance_portal parses the ask text for "arena 200" or "oasis 300",
+    # validates gold, clones the instance, and wires up the temporary exit.
+    # It returns Failure when the text doesn't match the "<zone> <number>"
+    # pattern, falling through to the info branches below.
+    # MUST be above arena/oasis info branches so "arena 200" isn't caught
+    # by the keyword_match on "arena" first.
+    - type: sequence
+      event: player_ask
+      children:
+        - type: action
+          do: open_instance_portal
+          min_gold: 100
+          exit_expires: "30 real minutes"
+          zones:
+            arena: "Instance Arena"
+            oasis: "Instance Planar Oasis"
+
+    # ── ASK: arena info ────────────────────────────────────────────────────
+    - type: sequence
+      event: player_ask
+      children:
+        - type: condition
+          check: keyword_match
+          keywords: [arena]
+        - type: action
+          do: say
+          text: The Arena is a brutal proving ground. Death means expulsion.
+        - type: action
+          do: say
+          text: >-
+            You cannot recall from within. Tell me how much gold to invest.
+
+    # ── ASK: oasis info ───────────────────────────────────────────────────
+    - type: sequence
+      event: player_ask
+      children:
+        - type: condition
+          check: keyword_match
+          keywords: [oasis]
+        - type: action
+          do: say
+          text: >-
+            The Planar Oasis shimmers between worlds. Dangerous, but you
+            may return if you fall.
+        - type: action
+          do: say
+          text: Recall magic still works there. Tell me how much gold to invest.
+
+    # ── COMMAND: talk ──────────────────────────────────────────────────────
+    - type: sequence
+      event: player_ask
+      children:
+        - type: condition
+          check: keyword_match
+          keywords: [talk]
+        - type: action
+          do: say
+          text: I am Sable. I tend the rift archway.
+        - type: action
+          do: say
+          text: If you seek passage to dangerous places, ask me about portals.

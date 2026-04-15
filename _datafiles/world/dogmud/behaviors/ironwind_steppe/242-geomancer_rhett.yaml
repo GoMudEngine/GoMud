@@ -1,0 +1,62 @@
+# Geomancer Rhett — Behavior Tree
+# Handles: player_give for Quest 11 (The Windwarden's Dilemma).
+# When a player gives the windstone sample (item 40032) and is on
+# quest step 11-start, advance to 11-end with flavor lines.
+# All conversation handled by dialogue YAML.
+
+tree:
+  type: selector
+  children:
+
+    # ── GIVE: windstone sample, Q11 active — accept and advance ──
+    - type: sequence
+      event: player_give
+      children:
+        - type: condition
+          check: item_matches
+          item_id: 40032
+        - type: condition
+          check: player_has_quest
+          quest: "11-start"
+        - type: condition
+          check: player_missing_quest
+          quest: "11-end"
+        - type: action
+          do: say
+          text: Look at that lattice structure!
+        - type: action
+          do: say
+          text: >-
+            The resonance potential is even higher than my estimates.
+            These are perfect.
+        - type: action
+          do: say
+          text: >-
+            Ask me about further work when you are ready.
+            I have plans for this crystal.
+        - type: action
+          do: grant_quest
+          quest: "11-end"
+
+    # ── GIVE: windstone sample, Q11 already complete ──
+    - type: sequence
+      event: player_give
+      children:
+        - type: condition
+          check: item_matches
+          item_id: 40032
+        - type: action
+          do: say
+          text: I already have what I need. Thank you though!
+        - type: action
+          do: return_item
+
+    # ── GIVE: any other item — reject and return ──
+    - type: sequence
+      event: player_give
+      children:
+        - type: action
+          do: say
+          text: Interesting, but not what I need right now.
+        - type: action
+          do: return_item

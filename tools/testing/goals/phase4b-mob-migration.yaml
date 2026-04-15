@@ -1,0 +1,60 @@
+description: >
+  Smoke test Phase 4b behavior tree migrations. Tests quest NPC item
+  rejection, Dal patron heckling, training dummy death, and Edrin boss
+  reveal. Smoketester starts near Thornwall. Focus on observing behavior
+  tree responses — not quest completion (most quests aren't active).
+
+goals:
+  # --- Dal patron heckling (The Drowning Post Tavern) ---
+  - >
+    Travel to The Drowning Post Tavern (room 472) in Thornwall City.
+    Use 'look' to find Barmaid Dal.
+  - >
+    Wait and observe Dal for 2-3 minutes (use 'wait' or 'look'
+    repeatedly). Watch for her to walk south to the back corner and
+    return. Note any NPC-NPC interactions — patrons heckling Dal
+    and her snappy responses.
+  - >
+    Ask Dal about gossip — verify she responds via dialogue.
+
+  # --- Records Clerk Pell (Temple Interior) ---
+  - >
+    Travel to the Temple Interior (room 468). Find Records Clerk Pell.
+  - >
+    Try giving Pell a random non-quest item (anything from your
+    inventory). Verify Pell gives a bureaucratic rejection and returns
+    the item to you.
+
+  # --- Road Warden Tessara (Warden's Post) ---
+  - >
+    Travel west along Dustwalk Road to the Warden's Post (room 405).
+    Find Road Warden Tessara.
+  - >
+    Try giving Tessara a random non-quest item. Verify she rejects
+    it with flavor text and returns the item.
+
+  # --- Old Edrin boss reveal (Marches Spur Road) ---
+  - >
+    Travel to The Hermit's Cottage (room 4036) on Marches Spur Road.
+    This is south from Dustwalk Road. Look around — you should see
+    Old Edrin, a seemingly harmless old man.
+  - >
+    Attack Old Edrin. Watch for his reveal sequence — he should
+    straighten up, eyes clear, and say something threatening. He may
+    also summon elemental companions and cast conviction-ward.
+  - >
+    IMPORTANT: Edrin is a tough boss. If your health drops below 50%,
+    flee immediately. Do not die — you have more tests to complete.
+    Note whether he uses different spells depending on how many
+    targets are present.
+
+  # --- General observations ---
+  - >
+    Throughout testing, note whether mob responses feel delayed
+    (perception-scaled reaction delays are active). Mobs should not
+    respond instantly — there should be a brief pause before they
+    speak or act.
+  - >
+    Report any cases where giving an item to an NPC causes the item
+    to vanish without any response text — this would indicate a
+    missing behavior tree handler.

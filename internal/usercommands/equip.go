@@ -10,7 +10,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -193,9 +192,7 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			if len(iSpec.WornBuffIds) > 0 {
 				for _, buff := range user.Character.Buffs.List {
 					if buff.OnStartWaiting {
-						if _, err := scripting.TryBuffScriptEvent(`onStart`, user.UserId, 0, buff.BuffId); err == nil {
-							user.Character.TrackBuffStarted(buff.BuffId)
-						}
+						user.Character.TrackBuffStarted(buff.BuffId)
 					}
 				}
 			}
@@ -251,9 +248,7 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			if len(result.Item.GetSpec().WornBuffIds) > 0 {
 				for _, buff := range user.Character.Buffs.List {
 					if buff.OnStartWaiting {
-						if _, err := scripting.TryBuffScriptEvent(`onStart`, user.UserId, 0, buff.BuffId); err == nil {
-							user.Character.TrackBuffStarted(buff.BuffId)
-						}
+						user.Character.TrackBuffStarted(buff.BuffId)
 					}
 				}
 			}

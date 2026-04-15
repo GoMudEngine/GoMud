@@ -21,7 +21,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/prompt"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/term"
 	"github.com/GoMudEngine/GoMud/internal/usercommands"
@@ -782,8 +781,8 @@ loop:
 
 			// TODO: Move this to events
 			util.LockMud()
-			scripting.PruneRoomVMs(rooms.RoomMaintenance()...)
-			scripting.PruneRoomVMs(rooms.EphemeralRoomMaintenance()...)
+			rooms.RoomMaintenance()
+			rooms.EphemeralRoomMaintenance()
 			rooms.GetInstanceRegistry().CheckPortalTimers()
 			rooms.GetInstanceRegistry().CleanupEmptyInstances()
 			util.UnlockMud()

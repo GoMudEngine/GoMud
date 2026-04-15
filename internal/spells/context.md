@@ -35,12 +35,6 @@ flexible targeting. Spells use Conviction (not mana) as their resource.
 - Harm/help classification for spell effects
 - Difficulty scaling for success calculations
 
-**Scripting Integration:**
-- JavaScript implementation for spell effects
-- Automatic script template generation by spell type
-- Custom script path resolution and loading
-- Event-driven spell execution (onCast, onWait, onMagic)
-
 ---
 
 ## SpellData Structure
@@ -110,7 +104,7 @@ const (
 | `dot` | Applies ConditionPoisoned; ticks for EffectDuration cycles (each cycle = 3 rounds in AutoHeal) |
 | `knockdown` | Deals damage + sets target prone (CombatPosition = PositionProne, 1 round min) |
 | `purge` | Removes poison buffs and ConditionPoisoned from target(s) |
-| `none` | No automatic effect — JS script handles everything (used by buff spells, summons, utility) |
+| `none` | No automatic effect — spell behavior handled in Go hooks (used by buff spells, summons, utility) |
 
 ---
 
@@ -160,13 +154,13 @@ Several buff flags affect spell and combat systems:
 
 ## Summon Spells (Phase 25.4)
 
-Two permanent summon spells use components and JS scripting:
+Two permanent summon spells use components, resolved in Go hooks:
 - `chrysalis-construct` (20 folds) — requires Chrysalis Core (item 40010), spawns mob 110
 - `summon-hive-swarm` (24 folds) — requires Hive Fragment (item 40011), spawns mob 111
 
-Summons persist until killed, one per type per caster. JS scripts handle component
-checking/consumption, mob spawning via `room.SpawnMob()`, and permanent charm via
-`CharmSet(userId, 99999)`.
+Summons persist until killed, one per type per caster. Go hooks in
+`spell_resolution.go` handle component checking/consumption, mob spawning,
+and permanent charm via `CharmSet(userId, 99999)`.
 
 ---
 

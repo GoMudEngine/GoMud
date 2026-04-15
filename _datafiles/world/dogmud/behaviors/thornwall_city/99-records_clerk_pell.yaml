@@ -1,0 +1,102 @@
+# Records Clerk Pell — Behavior Tree
+# Handles: player_give for rejection/redirect only.
+# Quest 6 (bridge report) advancement is handled by the quest engine's
+# item_give trigger. Quest 9 (tithe ledger) redirect to Olen stays here.
+
+tree:
+  type: selector
+  children:
+
+    # ── GIVE: bridge report (item 31), already filed — return it ──
+    - type: sequence
+      event: player_give
+      children:
+        - type: condition
+          check: item_matches
+          item_id: 31
+        - type: condition
+          check: player_has_quest
+          quest: "6-report"
+        - type: action
+          do: say
+          text: >-
+            The report has already been filed. Reference
+            number 4-7-12-B.
+        - type: action
+          do: return_item
+
+    # ── GIVE: bridge report (item 31), Q6 active — let quest engine handle ──
+    # (no branch — falls through to quest engine item_give trigger)
+
+    # ── GIVE: bridge report (item 31), no active quest — reject ──
+    - type: sequence
+      event: player_give
+      children:
+        - type: condition
+          check: item_matches
+          item_id: 31
+        - type: condition
+          check: player_missing_quest
+          quest: "6-start"
+        - type: action
+          do: say
+          text: >-
+            I do not accept unsolicited documents. File a
+            request first.
+        - type: action
+          do: return_item
+
+    # ── GIVE: tithe ledger (item 29), Q9 active — redirect to Olen ──
+    - type: sequence
+      event: player_give
+      children:
+        - type: condition
+          check: item_matches
+          item_id: 29
+        - type: condition
+          check: player_has_quest
+          quest: "9-start"
+        - type: condition
+          check: player_missing_quest
+          quest: "9-end"
+        - type: action
+          do: say
+          text: The tithe ledger? I filed the copy. This is the original.
+        - type: action
+          do: say
+          text: >-
+            I am a clerk, not an auditor. Take it to Priest
+            Olen at the temple -- he is the one who requested
+            the investigation.
+        - type: action
+          do: return_item
+
+    # ── GIVE: tithe ledger (item 29), no Q9 — reject ──
+    - type: sequence
+      event: player_give
+      children:
+        - type: condition
+          check: item_matches
+          item_id: 29
+        - type: condition
+          check: player_missing_quest
+          quest: "9-start"
+        - type: action
+          do: say
+          text: >-
+            A tithe ledger? I have no open request for this.
+            File a form first.
+        - type: action
+          do: return_item
+
+    # ── GIVE: any other item — bureaucratic rejection ──
+    - type: sequence
+      event: player_give
+      children:
+        - type: action
+          do: say
+          text: >-
+            If you need something filed, state its purpose.
+            I do not accept random documents.
+        - type: action
+          do: return_item

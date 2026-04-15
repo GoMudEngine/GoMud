@@ -3,6 +3,7 @@ package mobcommands
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -10,7 +11,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/scripting"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/GoMudEngine/GoMud/internal/worldevents"
@@ -116,9 +116,21 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	// Stage 3.5: No XP awarded. Progression is skill-based via combat hooks.
 	// Still track kills and taming.
 
+	// Behavior tree: fire mob_die once with primary killer
 	if len(mob.Character.PlayerDamage) > 0 {
+		var killerUserId int
+		for uId := range mob.Character.PlayerDamage {
+			killerUserId = uId
+			break
+		}
+		behaviortree.TryMobBehavior(mob.InstanceId, behaviortree.EventContext{
+			EventType: "mob_die",
+			UserId:    killerUserId,
+			RoomId:    room.RoomId,
+		})
+	}
 
-		attackerCt := len(mob.Character.PlayerDamage)
+	if len(mob.Character.PlayerDamage) > 0 {
 
 		for uId := range mob.Character.PlayerDamage {
 			if user := users.GetByUserId(uId); user != nil {
@@ -128,8 +140,6 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 						user.Character.EndAggro()
 					}
 				}
-
-				scripting.TryMobScriptEvent(`onDie`, mob.InstanceId, uId, `user`, map[string]any{`attackerCount`: attackerCt})
 
 				if mob.Character.Zone != `Training` { // Don't track any kills in the training zone
 					user.Character.KD.AddMobKill(int(mob.MobId))

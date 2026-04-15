@@ -1,12 +1,5 @@
 The <ansi fg="command">mob</ansi> command can be used in the following ways:
 
-<ansi fg="command">mob create</ansi>
-Asks a series of questions and then creates a new mob type and writes the file
-to the appropriate folder.
-
-<ansi fg="command">mob create [name/MobId]</ansi>
-Same as above, but starts with a copy of the mob named.
-
 <ansi fg="command">mob spawn loot goblin</ansi>
 A special case mob spawn command that puts the loot goblin into play.
 
