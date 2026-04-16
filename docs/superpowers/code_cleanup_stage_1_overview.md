@@ -11,19 +11,20 @@ Each substage gets its own spec → plan → implementation cycle.
 
 | # | Stage | Effort | Risk | Status |
 |---|-------|--------|------|--------|
-| 1.1 | Behavior Tree Package Split | 3h | Low | Not started |
+| 1.1 | Behavior Tree Package Split | 3h | Low | Complete |
 | 1.2 | God-Function Refactor | 10h | Medium | Not started |
-| 1.3 | Config File Split | 2h | Low | Not started |
-| 1.4 | Dead Code Sweep | 3h | Low | Not started |
+| 1.3 | Config File Split | 2h | Low | Complete |
+| 1.4 | Dead Code Sweep (Go code) | 3h | Low | In progress |
+| 1.4b | Help Template Audit | 3h | Low | Not started |
 | 1.5 | Error Handling Audit | 4h | Medium | Not started |
 | 1.6 | Test Coverage for New Systems | 5h | Low | Not started |
 | 1.7 | Performance Pass | 10h | Mixed | Not started |
 | 1.8 | Behavior Tree Engine Robustness | 4h | Low | Not started |
 
-**Total: ~40 hours**
+**Total: ~44 hours**
 
-**Recommended execution order:** 1.1 → 1.3 → 1.4 → 1.7 → 1.2 → 1.5
-→ 1.8 → 1.6
+**Recommended execution order:** 1.1 → 1.3 → 1.4 → 1.4b → 1.7 → 1.2
+→ 1.5 → 1.8 → 1.6
 
 ---
 
@@ -132,10 +133,12 @@ all sharing the same `Balance` struct.
 - Move helper functions (like `GetStatProgressionMultiplier`) into
   the same file as their related fields
 
-## Stage 1.4: Dead Code Sweep
+## Stage 1.4: Dead Code Sweep (Go code)
 
-Post-JS-removal audit. What's unused now that the scripting bridge
-is gone?
+Post-JS-removal audit of Go code. What's unused now that the
+scripting bridge is gone? This stage focuses on `.go` files only;
+orphaned help templates and other data-file dead weight are handled
+in Stage 1.4b.
 
 **Investigate:**
 - `util.Hash` — only used by the SHA256→bcrypt migration path. Once
@@ -155,6 +158,37 @@ is gone?
 - Verify zero callers before removing anything (grep + test run)
 - Delete files that have no references
 - Document decisions in the spec's "KEPT" section
+
+## Stage 1.4b: Help Template Audit
+
+Audit `_datafiles/world/dogmud/templates/help/` and related
+template directories for orphaned help files — templates that
+reference commands, concepts, or systems that no longer exist.
+
+**Process:**
+- List every `.template` file in the help directory (~100 files)
+- For each template, grep the codebase for references:
+  - Is the filename referenced directly anywhere?
+  - Is there a command that calls `templates.Process()` with this
+    name?
+  - Is there a keyword mapping in `internal/keywords/` that routes
+    to this template?
+- Flag templates with no references as candidates for removal
+- Verify no hidden dynamic references (e.g., `{keyword}.template`
+  patterns where the keyword is user input)
+
+**Target categories:**
+- Help files for removed commands (e.g., admin mob/spell create
+  from Phase 5)
+- Help files for JS-era concepts
+- Duplicate / superseded help files
+- Old `set <subcommand>` help files that no longer exist
+
+**Constraints:**
+- High caution — a missing help template is a player-visible gap
+- Prefer to update stale help content over deleting it
+- If a template could plausibly still be useful (e.g., a feature
+  planned for later), leave it alone and document
 
 ## Stage 1.5: Error Handling Audit
 
