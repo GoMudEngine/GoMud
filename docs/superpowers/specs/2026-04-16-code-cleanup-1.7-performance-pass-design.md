@@ -129,6 +129,11 @@ No code path mutates `user.Character.RoomId` without also calling
 `AddPlayer` or `RemovePlayer` on the relevant rooms. Verified by
 grep across all production files.
 
+**Empty Zone string.** `zonePlayerCount[""]` is a valid key if a
+room happens to have an empty `Zone` field. This is harmless: the
+count simply tracks players in un-zoned rooms as a pseudo-zone.
+Existing data has no un-zoned rooms in practice.
+
 ### Active/Idle Lane Split
 
 **Split #1 — `handleMobCombat`** (`internal/hooks/NewRound_DoCombat.go:138`)
@@ -353,7 +358,7 @@ lane split.
 
 | Risk | Likelihood | Impact | Mitigation |
 |------|-----------|--------|------------|
-| Zone counter drifts (missed call path) | Low | Mobs freeze in a zone that should be active | `VerifyZonePlayerCount()` scheduled every N minutes; logs + self-heals drift |
+| Zone counter drifts (missed call path) | Low | Mobs freeze in a zone that should be active | `VerifyZonePlayerCount()` exposed via admin diagnostics page + covered by unit tests on every AddPlayer/RemovePlayer path. No automatic scheduled sweep in v1 — add one only if drift is observed in the wild |
 | Idle-lane helper skips something needed | Low | Invisible bug in idle zones | Scope is strictly explicit: 5 helpers run always. No player can witness a diff in an idle zone by definition |
 | Mutex deadlock | Low | Server hang | Fine-grained locks; no cross-package holds; `go vet` + `-race` in CI |
 | Combat-memory expires before player returns | Medium (by design) | Returning player's attacker is neutral | Intended. Previous behavior left aggro forever, which was the actual bug |
