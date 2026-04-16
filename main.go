@@ -100,11 +100,11 @@ func main() {
 		}
 	}()
 
-	// Setup logging
+	// Phase 1: Basic stderr logging (config not loaded yet)
 	mudlog.SetupLogger(
 		events.GetLogger(),
 		os.Getenv(`LOG_LEVEL`),
-		os.Getenv(`LOG_PATH`),
+		``,
 		os.Getenv(`LOG_NOCOLOR`) == ``,
 	)
 
@@ -112,6 +112,26 @@ func main() {
 
 	configs.ReloadConfig()
 	c := configs.GetConfig()
+
+	// Phase 2: Reconfigure logging with file output if enabled in config.
+	// Env vars take precedence over config for backward compatibility.
+	{
+		logCfg := configs.GetLoggingConfig()
+		logLevel := os.Getenv(`LOG_LEVEL`)
+		if logLevel == `` {
+			logLevel = string(logCfg.LogLevel)
+		}
+		logPath := os.Getenv(`LOG_PATH`)
+		if logPath == `` && bool(logCfg.LogToFile) {
+			logPath = string(logCfg.LogFilePath)
+		}
+		mudlog.SetupLogger(
+			events.GetLogger(),
+			logLevel,
+			logPath,
+			os.Getenv(`LOG_NOCOLOR`) == ``,
+		)
+	}
 
 	// Apply the global roll-spread factor from config to the dice package.
 	// This is the single knob that scales stdDev for every stat-based roll.

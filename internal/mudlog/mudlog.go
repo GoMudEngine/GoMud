@@ -3,6 +3,7 @@ package mudlog
 import (
 	"context"
 	"fmt"
+	"io"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -73,8 +74,11 @@ func SetupLogger(inGameLogger teeLogger, logLevel string, logPath string, colorL
 		Compress:   true, // Compress rotated files
 	}
 
+	// Write to both terminal and file
+	multiOut := io.MultiWriter(os.Stderr, lj)
+
 	slogInstance = slog.New(
-		getLogHandler(lj, inGameLogger, colorLogs),
+		getLogHandler(multiOut, inGameLogger, colorLogs),
 	)
 
 }
