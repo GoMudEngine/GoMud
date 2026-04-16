@@ -210,10 +210,12 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 			for _, instId := range room.GetMobs(rooms.FindCharmed) {
 				if m := mobs.GetInstance(instId); m != nil {
-					if m.Character.Aggro == nil && m.Character.IsCharmed(user.UserId) { // Charmed mobs help the player
-
-						m.Command(fmt.Sprintf(`attack #%d`, attackMobInstanceId)) // # denotes a specific mob instanceId
-
+					if m.Character.Aggro == nil && m.Character.IsCharmed(user.UserId) {
+						// Only auto-assist if the companion has AutoAssist enabled
+						comp := user.Character.GetCompanionByInstanceId(instId)
+						if comp != nil && comp.AutoAssist {
+							m.Command(fmt.Sprintf(`attack #%d`, attackMobInstanceId))
+						}
 					}
 				}
 			}
