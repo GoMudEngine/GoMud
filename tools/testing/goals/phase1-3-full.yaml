@@ -1,0 +1,41 @@
+description: Full smoke test of JS Audit Phases 1-3 plus sethome command
+goals:
+  # Setup
+  - Equip available gear from inventory and verify with status
+  - Run sethome to see current home, then sethome thornwall to change it
+  - Run sethome again to confirm it changed
+  - Run help sethome to verify the help file works
+
+  # Phase 1 - YAML text fields (spell flavor text)
+  - Cast sparks or conviction-spike on a hostile mob — verify cast/wait/resolution text all appear
+  - Cast conviction-surge on self — verify cast text, buff start text, and buff end text when it expires
+  - Cast chrysalis-glow — verify cast text appears
+  - Cast mend-wounds on self — verify cast text appears and healing buff applies
+
+  # Phase 2 - Companion summoning
+  - Cast conjure-earth — verify earth elemental spawns as companion
+  - Find and kill a hostile mob to create a corpse
+  - If a humanoid-type corpse is available, cast raise-skeleton — verify companion spawns and corpse consumed
+  - Run help raise-skeleton and assess any corpse before attempting raise spells
+  - Cast summon-hive-swarm — verify hive fragment component consumed from inventory
+  - Try to summon past companion cap — verify error message
+
+  # Phase 2 - Config-driven buff ticks
+  - Drink a healing potion — verify healing buff applies with periodic tick messages
+  - Check conditions during active healing buff — verify buff name shows
+  - Wait for the buff to expire — verify end text appears
+
+  # Phase 3 - Charm spell
+  - Find a non-immune hostile mob and cast charm on it — verify opposed roll messaging
+  - If charm succeeds, verify the mob becomes a companion
+  - If charm fails, verify failure text appears (try again if needed)
+
+  # Phase 2 - Antidote cure
+  - If you get poisoned during combat, drink an antidote — verify poison buff removed and healing starts
+  - If not poisoned, skip this test
+
+  # General
+  - Run spells command to check spell list displays correctly
+  - Run conditions during various active buffs to verify display
+  - Fight at least 2 different mobs using a mix of melee and spells
+  - Check status periodically to verify HP/SP/CP are tracking correctly

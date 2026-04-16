@@ -59,23 +59,6 @@ func (n *ConditionNode) Evaluate(ctx *EvalContext) Result {
 	return n.Fn(n.Params, ctx)
 }
 
-// --- helpers ---
-
-func getIntParam(params map[string]any, key string) int {
-	switch v := params[key].(type) {
-	case int:
-		return v
-	case float64:
-		return int(v)
-	}
-	return 0
-}
-
-func getStringParam(params map[string]any, key string) string {
-	v, _ := params[key].(string)
-	return v
-}
-
 // --- condition implementations ---
 
 func condKeywordMatch(params map[string]any, ctx *EvalContext) Result {

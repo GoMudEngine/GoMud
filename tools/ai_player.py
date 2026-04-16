@@ -1,22 +1,22 @@
 """
 DOGMud AI Player/Tester
 
-Connects to the MUD on the AI port, logs in, and uses a local Ollama model
+Connects to the MUD on the AI port, logs in, and uses the Anthropic Claude API
 to play the game autonomously. Designed for broad system coverage testing.
 
 Prerequisites:
-    pip install telnetlib3 aiohttp
+    pip install telnetlib3 anthropic
 
 Usage:
     python tools/ai_player.py
 
-    Environment variables (all optional):
-        MUD_HOST        default: dogmud.org:55555
-        MUD_PORT        default: 55555
-        OLLAMA_URL      default: http://localhost:11434/api/chat
-        OLLAMA_MODEL    default: gemma3:12b
-        AI_USERNAME     default: aitester
-        AI_PASSWORD     default: testpass123
+    Environment variables:
+        ANTHROPIC_API_KEY   required — your Anthropic API key
+        MUD_HOST            default: dogmud.org
+        MUD_PORT            default: 55555
+        CLAUDE_MODEL        default: claude-sonnet-4-6
+        AI_USERNAME         default: aitester
+        AI_PASSWORD         default: testpass123
 
 First run:
     1. Start the MUD server with AIPort enabled
@@ -29,12 +29,11 @@ import asyncio
 import os
 import re
 import sys
-import time
 import traceback
 from collections import deque
 from datetime import datetime
 
-import aiohttp
+import anthropic
 import telnetlib3
 
 # ---------------------------------------------------------------------------
@@ -43,10 +42,17 @@ import telnetlib3
 
 MUD_HOST = os.environ.get("MUD_HOST", "dogmud.org")
 MUD_PORT = int(os.environ.get("MUD_PORT", "55555"))
-OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://localhost:11434/api/chat")
-OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "gemma3:12b")
+CLAUDE_MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-6")
 AI_USERNAME = os.environ.get("AI_USERNAME", "aitester")
 AI_PASSWORD = os.environ.get("AI_PASSWORD", "testpass123")
+
+# Anthropic client (reads ANTHROPIC_API_KEY from env automatically)
+try:
+    claude_client = anthropic.Anthropic()
+except anthropic.AuthenticationError:
+    print("ERROR: ANTHROPIC_API_KEY environment variable is not set.")
+    print("  Set it with: export ANTHROPIC_API_KEY='sk-ant-...'")
+    sys.exit(1)
 
 # How long to wait between commands (seconds). The server enforces 2 cmds/round
 # (4s rounds), so 4s is the sweet spot. Going faster just gets throttled.
@@ -62,6 +68,16 @@ LOOP_THRESHOLD = 3
 
 # How often (in commands) to inject a periodic status/quest check reminder.
 PERIODIC_CHECK_INTERVAL = 25
+
+# Token budget: stop playing when reserve threshold is reached.
+# TOKEN_BUDGET: total tokens the session is allowed to consume (input + output).
+#   Default 250k — roughly 25% of a 1M-context session.
+# BUDGET_RESERVE_PCT: stop at this fraction remaining (0.20 = stop at 80% used).
+TOKEN_BUDGET = int(os.environ.get("TOKEN_BUDGET", "250000"))
+BUDGET_RESERVE_PCT = float(os.environ.get("BUDGET_RESERVE_PCT", "0.20"))
+
+# Where to write the end-of-session feedback report.
+REPORT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)))
 
 # ---------------------------------------------------------------------------
 # System prompt
@@ -400,31 +416,36 @@ def detect_loop(recent_commands: deque) -> str | None:
     return None
 
 
-async def query_ollama(history: list[dict], session: aiohttp.ClientSession) -> str:
-    """Send conversation history to Ollama and get a command back."""
-    payload = {
-        "model": OLLAMA_MODEL,
-        "messages": [{"role": "system", "content": SYSTEM_PROMPT}] + history[-MAX_HISTORY:],
-        "stream": False,
-        "options": {
-            "temperature": 0.7,
-            "num_predict": 40,  # commands are short
-        }
-    }
+async def query_claude(history: list[dict], system: str = None,
+                       max_tokens: int = 60) -> tuple[str, int, int]:
+    """Send conversation history to Claude and get a command back.
+
+    Returns (text, input_tokens, output_tokens).
+    """
+    if system is None:
+        system = SYSTEM_PROMPT
     try:
-        async with session.post(OLLAMA_URL, json=payload, timeout=aiohttp.ClientTimeout(total=30)) as resp:
-            if resp.status != 200:
-                body = await resp.text()
-                print(f"  [{timestamp()}] OLLAMA HTTP {resp.status}: {body[:200]}")
-                return "look"
-            data = await resp.json()
-            return data["message"]["content"]
-    except asyncio.TimeoutError:
-        print(f"  [{timestamp()}] OLLAMA timeout")
-        return "look"
+        # Run the synchronous Anthropic call in a thread to avoid blocking
+        loop = asyncio.get_event_loop()
+        response = await loop.run_in_executor(None, lambda: claude_client.messages.create(
+            model=CLAUDE_MODEL,
+            max_tokens=max_tokens,
+            temperature=0.7,
+            system=system,
+            messages=history[-MAX_HISTORY:],
+        ))
+        in_tok = response.usage.input_tokens
+        out_tok = response.usage.output_tokens
+        return response.content[0].text, in_tok, out_tok
+    except anthropic.APITimeoutError:
+        print(f"  [{timestamp()}] CLAUDE timeout")
+        return "look", 0, 0
+    except anthropic.APIError as e:
+        print(f"  [{timestamp()}] CLAUDE API error: {e}")
+        return "look", 0, 0
     except Exception as e:
-        print(f"  [{timestamp()}] OLLAMA error: {e}")
-        return "look"
+        print(f"  [{timestamp()}] CLAUDE error: {e}")
+        return "look", 0, 0
 
 
 # ---------------------------------------------------------------------------
@@ -615,13 +636,94 @@ async def create_account():
 
 
 # ---------------------------------------------------------------------------
+# End-of-session report
+# ---------------------------------------------------------------------------
+
+REPORT_PROMPT = """\
+You are reviewing your play-testing session of DOGMud. You will receive the
+conversation history from your session (MUD output interleaved with the
+commands you sent). Write a structured feedback report in Markdown.
+
+Include these sections:
+
+## Session Summary
+Brief overview: how far you got, what zones you visited, quests attempted.
+
+## Bugs Found
+List every bug you reported via the "bug" command, plus any you noticed but
+didn't report. Include the room/area, what you tried, and what went wrong.
+If none, say "None observed."
+
+## Suggestions
+List every suggestion you filed via "suggest", plus any additional ideas.
+
+## Quest Progress
+Which quests you started, completed, or got stuck on. For stuck quests,
+describe exactly where you got stuck and what you tried.
+
+## Combat & Balance Notes
+Observations about fight difficulty, gear progression, skill usage, any
+fights that felt too easy or too hard.
+
+## Systems Tested
+Which game systems you exercised (crafting, shopping, dialogue, spells,
+combat moves, foraging, etc.) and how well they worked.
+
+## Session Stats
+Commands sent, bugs reported, suggestions filed, tokens consumed.
+
+Be specific and honest. This report is for the game developer.
+"""
+
+
+async def generate_report(history: list[dict], commands_sent: int,
+                          bugs_reported: int, suggestions_sent: int,
+                          tokens_used: int, stop_reason: str) -> tuple[str, int]:
+    """Generate a feedback report from the session history.
+
+    Returns (report_text, tokens_consumed_by_report).
+    """
+    # Build a condensed transcript for the report prompt
+    transcript_lines = []
+    for msg in history:
+        prefix = "MUD>" if msg["role"] == "user" else "CMD>"
+        # Truncate long MUD outputs for the report context
+        content = msg["content"][:500]
+        transcript_lines.append(f"{prefix} {content}")
+    transcript = "\n".join(transcript_lines[-80:])  # last 80 exchanges
+
+    stats = (
+        f"\n\nSession stats: {commands_sent} commands sent, "
+        f"{bugs_reported} bugs reported, {suggestions_sent} suggestions filed, "
+        f"{tokens_used:,} tokens consumed. Stop reason: {stop_reason}."
+    )
+
+    report_messages = [{"role": "user", "content": transcript + stats}]
+
+    text, in_tok, out_tok = await query_claude(
+        report_messages, system=REPORT_PROMPT, max_tokens=4096
+    )
+
+    # Prepend a header
+    header = (
+        f"# DOGMud AI Playtest Report\n"
+        f"**Date:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
+        f"**Model:** {CLAUDE_MODEL}\n"
+        f"**Account:** {AI_USERNAME}\n"
+        f"**Stop reason:** {stop_reason}\n\n"
+    )
+
+    return header + text, in_tok + out_tok
+
+
+# ---------------------------------------------------------------------------
 # Main loop
 # ---------------------------------------------------------------------------
 
 async def main():
     print(f"[{timestamp()}] DOGMud AI Player starting")
     print(f"  Host: {MUD_HOST}:{MUD_PORT}")
-    print(f"  Model: {OLLAMA_MODEL}")
+    print(f"  Model: {CLAUDE_MODEL}")
     print(f"  Account: {AI_USERNAME}")
     print()
 
@@ -643,6 +745,9 @@ async def main():
             sys.exit(1)
 
     print(f"[{timestamp()}] Login complete. Starting game loop.\n")
+    budget_limit = int(TOKEN_BUDGET * (1.0 - BUDGET_RESERVE_PCT))
+    print(f"  Token budget: {TOKEN_BUDGET:,} total, stop at {budget_limit:,} "
+          f"({BUDGET_RESERVE_PCT:.0%} reserved for report)")
     print("=" * 70)
 
     # --- Game loop ---
@@ -651,94 +756,137 @@ async def main():
     commands_sent = 0
     bugs_reported = 0
     suggestions_sent = 0
+    tokens_used = 0
+    stop_reason = "unknown"
 
-    async with aiohttp.ClientSession() as session:
-        # First action: look around
-        writer.write("look\r\n")
-        commands_sent += 1
-        await asyncio.sleep(COMMAND_INTERVAL)
+    # First action: look around
+    writer.write("look\r\n")
+    commands_sent += 1
+    await asyncio.sleep(COMMAND_INTERVAL)
 
-        while True:
-            try:
-                # Read whatever the MUD sent
-                text = clean_text(await read_until_pause(reader, 2.5))
-
-                if not text:
-                    # Nothing received — poke with look
-                    text = "(no output received)"
-
-                # Log MUD output (truncated for console)
-                display = text[:600]
-                if len(text) > 600:
-                    display += f"\n  ... ({len(text)} chars total)"
-                print(f"\n[{timestamp()}] MUD OUTPUT:\n{display}\n")
-
-                # Feed to LLM
-                history.append({"role": "user", "content": text[:3000]})
-
-                # Loop detection: inject a nudge if the AI is stuck
-                loop_nudge = detect_loop(recent_commands)
-                if loop_nudge:
-                    print(f"  [{timestamp()}] LOOP DETECTED — injecting nudge")
-                    history.append({"role": "user", "content": loop_nudge})
-
-                # Periodic orientation: every N commands, remind AI to check quests
-                if commands_sent > 0 and commands_sent % PERIODIC_CHECK_INTERVAL == 0:
-                    periodic_msg = (
-                        "[SYSTEM: Periodic check — run 'quests' to review your progress, "
-                        "or 'status' to check your health and resources. If you have been "
-                        "in the same area for a while, consider exploring a new direction.]"
-                    )
-                    history.append({"role": "user", "content": periodic_msg})
-                    print(f"  [{timestamp()}] PERIODIC CHECK injected (cmd #{commands_sent})")
-
-                # Trim history
-                if len(history) > MAX_HISTORY + 10:
-                    history = history[-MAX_HISTORY:]
-
-                # Get command from LLM
-                raw_response = await query_ollama(history, session)
-                command = sanitize_command(raw_response)
-
-                # Track reporting commands
-                if command.lower().startswith("bug "):
-                    bugs_reported += 1
-                elif command.lower().startswith("suggest "):
-                    suggestions_sent += 1
-
-                commands_sent += 1
-                recent_commands.append(command.lower())
-                history.append({"role": "assistant", "content": command})
-
-                print(f"[{timestamp()}] AI COMMAND #{commands_sent}: {command}")
-                print(f"  (bugs: {bugs_reported}, suggestions: {suggestions_sent})")
-
-                # Send command
-                writer.write(command + "\r\n")
-
-                # Pace ourselves
-                await asyncio.sleep(COMMAND_INTERVAL)
-
-            except KeyboardInterrupt:
-                print(f"\n[{timestamp()}] Interrupted by user. Logging out...")
-                writer.write("quit\r\n")
-                await asyncio.sleep(1)
+    while True:
+        try:
+            # --- Budget check ---
+            if tokens_used >= budget_limit:
+                stop_reason = "budget"
+                print(f"\n[{timestamp()}] TOKEN BUDGET reached "
+                      f"({tokens_used:,}/{budget_limit:,}). Stopping game loop.")
                 break
-            except Exception as e:
-                print(f"\n[{timestamp()}] ERROR: {e}")
-                traceback.print_exc()
-                # Try to recover
-                await asyncio.sleep(5)
-                try:
-                    writer.write("look\r\n")
-                except:
-                    print(f"[{timestamp()}] Connection lost. Exiting.")
-                    break
+
+            # Read whatever the MUD sent
+            text = clean_text(await read_until_pause(reader, 2.5))
+
+            if not text:
+                # Nothing received — poke with look
+                text = "(no output received)"
+
+            # Log MUD output (truncated for console)
+            display = text[:600]
+            if len(text) > 600:
+                display += f"\n  ... ({len(text)} chars total)"
+            print(f"\n[{timestamp()}] MUD OUTPUT:\n{display}\n")
+
+            # Feed to LLM
+            history.append({"role": "user", "content": text[:3000]})
+
+            # Loop detection: inject a nudge if the AI is stuck
+            loop_nudge = detect_loop(recent_commands)
+            if loop_nudge:
+                print(f"  [{timestamp()}] LOOP DETECTED — injecting nudge")
+                history.append({"role": "user", "content": loop_nudge})
+
+            # Periodic orientation: every N commands, remind AI to check quests
+            if commands_sent > 0 and commands_sent % PERIODIC_CHECK_INTERVAL == 0:
+                periodic_msg = (
+                    "[SYSTEM: Periodic check — run 'quests' to review your progress, "
+                    "or 'status' to check your health and resources. If you have been "
+                    "in the same area for a while, consider exploring a new direction.]"
+                )
+                history.append({"role": "user", "content": periodic_msg})
+                print(f"  [{timestamp()}] PERIODIC CHECK injected (cmd #{commands_sent})")
+
+            # Trim history — ensure alternating user/assistant pattern for Claude
+            if len(history) > MAX_HISTORY + 10:
+                history = history[-MAX_HISTORY:]
+
+            # Merge consecutive user messages (Claude requires alternating roles)
+            merged_history = []
+            for msg in history:
+                if merged_history and merged_history[-1]["role"] == msg["role"]:
+                    merged_history[-1]["content"] += "\n\n" + msg["content"]
+                else:
+                    merged_history.append(dict(msg))
+
+            # Get command from LLM
+            raw_response, in_tok, out_tok = await query_claude(merged_history)
+            tokens_used += in_tok + out_tok
+            command = sanitize_command(raw_response)
+
+            # Track reporting commands
+            if command.lower().startswith("bug "):
+                bugs_reported += 1
+            elif command.lower().startswith("suggest "):
+                suggestions_sent += 1
+
+            commands_sent += 1
+            recent_commands.append(command.lower())
+            history.append({"role": "assistant", "content": command})
+
+            pct_used = tokens_used / TOKEN_BUDGET * 100
+            print(f"[{timestamp()}] AI COMMAND #{commands_sent}: {command}")
+            print(f"  (bugs: {bugs_reported}, suggestions: {suggestions_sent}, "
+                  f"tokens: {tokens_used:,}/{TOKEN_BUDGET:,} [{pct_used:.1f}%])")
+
+            # Send command
+            writer.write(command + "\r\n")
+
+            # Pace ourselves
+            await asyncio.sleep(COMMAND_INTERVAL)
+
+        except KeyboardInterrupt:
+            stop_reason = "interrupted"
+            print(f"\n[{timestamp()}] Interrupted by user.")
+            break
+        except Exception as e:
+            print(f"\n[{timestamp()}] ERROR: {e}")
+            traceback.print_exc()
+            # Try to recover
+            await asyncio.sleep(5)
+            try:
+                writer.write("look\r\n")
+            except:
+                stop_reason = "disconnect"
+                print(f"[{timestamp()}] Connection lost.")
+                break
+
+    # --- End-of-session report ---
+    print(f"\n[{timestamp()}] Generating feedback report "
+          f"(tokens remaining: {TOKEN_BUDGET - tokens_used:,})...")
+
+    report = await generate_report(history, commands_sent, bugs_reported,
+                                   suggestions_sent, tokens_used, stop_reason)
+    tokens_used += report[1]
+
+    report_name = f"ai_playtest_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md"
+    report_path = os.path.join(REPORT_DIR, report_name)
+    with open(report_path, "w", encoding="utf-8") as f:
+        f.write(report[0])
+    print(f"[{timestamp()}] Report written to: {report_path}")
+
+    # Log out
+    try:
+        writer.write("quit\r\n")
+        await asyncio.sleep(1)
+    except Exception:
+        pass
 
     print(f"\n[{timestamp()}] Session complete.")
     print(f"  Commands sent: {commands_sent}")
     print(f"  Bugs reported: {bugs_reported}")
-    print(f"  Suggestions: {suggestions_sent}")
+    print(f"  Suggestions:   {suggestions_sent}")
+    print(f"  Tokens used:   {tokens_used:,}/{TOKEN_BUDGET:,}")
+    print(f"  Stop reason:   {stop_reason}")
+    print(f"  Report:        {report_path}")
 
 
 if __name__ == "__main__":
