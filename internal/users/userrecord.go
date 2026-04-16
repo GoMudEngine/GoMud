@@ -17,7 +17,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/prompt"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/util"
-	//
+	"golang.org/x/crypto/bcrypt"
 )
 
 var (
@@ -94,19 +94,21 @@ func (u *UserRecord) ClientSettings() connections.ClientSettings {
 
 func (u *UserRecord) PasswordMatches(input string) bool {
 
-	if input == u.Password {
+	// Try bcrypt first (new format).
+	if err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(input)); err == nil {
 		return true
 	}
 
+	// Migration: check if stored password is old unsalted SHA256 format.
 	if u.Password == util.Hash(input) {
+		// Re-hash with bcrypt so subsequent logins use the secure path.
+		if hash, err := bcrypt.GenerateFromPassword([]byte(input), bcrypt.DefaultCost); err == nil {
+			u.Password = string(hash)
+		}
 		return true
 	}
 
-	// In case we reset the password to a plaintext string
-	if input == util.Hash(u.Password) {
-		return true
-	}
-
+	// No plaintext fallback. No hash-of-hash bypass.
 	return false
 }
 
@@ -484,7 +486,11 @@ func (u *UserRecord) SetPassword(pw string) error {
 		return fmt.Errorf("password must be between %d and %d characters long", validation.PasswordSizeMin, validation.PasswordSizeMax)
 	}
 
-	u.Password = util.Hash(pw)
+	hash, err := bcrypt.GenerateFromPassword([]byte(pw), bcrypt.DefaultCost)
+	if err != nil {
+		return fmt.Errorf("failed to hash password: %w", err)
+	}
+	u.Password = string(hash)
 	return nil
 }
 
