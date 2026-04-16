@@ -1,0 +1,73 @@
+package configs
+
+// validateShops sets defaults for shop economy, bartering, storage,
+// crafting, and recipe discovery fields.
+func (b *Balance) validateShops() {
+	// ── SHOP ECONOMY ─────────────────────────────────────────────────────────
+	if b.ShopBuyRatio <= 0 {
+		b.ShopBuyRatio = 0.50
+	}
+	if b.ShopPriceFloor <= 0 {
+		b.ShopPriceFloor = 0.25
+	}
+	if b.ShopPriceCeiling <= 0 {
+		b.ShopPriceCeiling = 5.0
+	}
+	if b.ShopAbundanceThreshold <= 0 {
+		b.ShopAbundanceThreshold = 3.0
+	}
+	if b.ShopMaterialReserve < 0 {
+		b.ShopMaterialReserve = 1
+	}
+	if b.ShopGoldReserveRatio <= 0 {
+		b.ShopGoldReserveRatio = 0.50
+	}
+
+	// ── BARTERING ────────────────────────────────────────────────────────────
+	if b.BarterMaxDiscount <= 0 {
+		b.BarterMaxDiscount = 0.15
+	}
+	if b.BarterMaxBonus <= 0 {
+		b.BarterMaxBonus = 0.15
+	}
+
+	// ── STORAGE FEES ─────────────────────────────────────────────────────────
+	if b.StorageFeePerItem < 0 {
+		b.StorageFeePerItem = 1
+	}
+
+	// ── CRAFTER MOBS ─────────────────────────────────────────────────────────
+	if b.CrafterMaterialRestockRate < 1 {
+		b.CrafterMaterialRestockRate = 200
+	}
+	if b.CrafterRareThreshold < 1 {
+		b.CrafterRareThreshold = 3
+	}
+
+	// ── CRAFTING ──────────────────────────────────────────────────────────────
+	if b.CraftingBaseSuccessChance <= 0 || b.CraftingBaseSuccessChance > 100 {
+		b.CraftingBaseSuccessChance = 50
+	}
+	if b.CraftingSkillBonusPerLevel <= 0 {
+		b.CraftingSkillBonusPerLevel = 5
+	}
+	if b.CraftingMinSuccessChance < 1 {
+		b.CraftingMinSuccessChance = 5
+	}
+	if b.CraftingMaxSuccessChance <= 0 || b.CraftingMaxSuccessChance > 100 {
+		b.CraftingMaxSuccessChance = 95
+	}
+
+	// ── CRAFT DIFFICULTY ─────────────────────────────────────────────────────
+	if b.CraftDifficultyProgressionScale <= 0 {
+		b.CraftDifficultyProgressionScale = 0.02
+	}
+
+	// ── RECIPE DISCOVERY ─────────────────────────────────────────────────────
+	if b.RecipeDiscoveryBaseChance <= 0 {
+		b.RecipeDiscoveryBaseChance = 8.0
+	}
+	if b.RecipeDiscoveryDecayRate <= 0 {
+		b.RecipeDiscoveryDecayRate = 0.1
+	}
+}
