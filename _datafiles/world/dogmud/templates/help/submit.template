@@ -1,11 +1,20 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">submit</ansi>
 
-The <ansi fg="command">submit</ansi> command yields in combat — you stop fighting and offer
-surrender. Enemies that accept your submission will stop attacking.
-Some hostile creatures will not accept surrender and keep attacking.
+The <ansi fg="command">submit</ansi> command forces a grappled opponent to yield. You must
+be in control of a grounded grapple to attempt it. It's a special
+move — it shares the combat cooldown with <ansi fg="command">kick</ansi>, <ansi fg="command">bash</ansi>, and <ansi fg="command">trip</ansi>.
 
 <ansi fg="yellow">Usage: </ansi>
 
-  <ansi fg="command">submit</ansi>              Yield combat to your current opponent(s).
+  <ansi fg="command">submit</ansi>              Force your grappled opponent to yield.
 
-<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help flee</ansi>, <ansi fg="command">help attack</ansi>
+<ansi fg="yellow">Outcomes: </ansi>
+
+  <ansi fg="green">Yield</ansi>     — the opponent submits and combat ends.
+  <ansi fg="yellow">Resist</ansi>    — the opponent refuses; you wrench them for damage.
+  <ansi fg="red">Failure</ansi>    — you overcommit and fall to the ground.
+
+Wounded player opponents are more likely to yield. Mobs always
+resist. The attempt progresses your Unarmed Combat skill.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help grapple</ansi>, <ansi fg="command">help attack</ansi>, <ansi fg="command">help flee</ansi>
