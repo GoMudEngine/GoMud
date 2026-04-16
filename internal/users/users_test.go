@@ -2,6 +2,7 @@ package users
 
 import (
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
@@ -10,6 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/stretchr/testify/assert"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func TestMain(m *testing.M) {
@@ -560,14 +562,29 @@ func TestUserRecord_TempName(t *testing.T) {
 }
 
 func TestUserRecord_PasswordMatches(t *testing.T) {
-	u := &UserRecord{Password: "plaintext123"}
+	// Set bcrypt hash directly (bypasses config-dependent SetPassword validation)
+	bcryptHash, _ := bcrypt.GenerateFromPassword([]byte("testpass123"), bcrypt.DefaultCost)
+	u := &UserRecord{Password: string(bcryptHash)}
 
-	t.Run("exact plaintext match", func(t *testing.T) {
-		assert.True(t, u.PasswordMatches("plaintext123"))
+	t.Run("bcrypt match", func(t *testing.T) {
+		assert.True(t, u.PasswordMatches("testpass123"))
 	})
 
-	t.Run("no match", func(t *testing.T) {
+	t.Run("wrong password", func(t *testing.T) {
 		assert.False(t, u.PasswordMatches("wrong"))
+	})
+
+	t.Run("plaintext no longer matches", func(t *testing.T) {
+		u2 := &UserRecord{Password: "plaintext123"}
+		assert.False(t, u2.PasswordMatches("plaintext123"))
+	})
+
+	t.Run("sha256 migration", func(t *testing.T) {
+		// Simulate old SHA256-hashed password
+		u3 := &UserRecord{Password: util.Hash("oldpass")}
+		assert.True(t, u3.PasswordMatches("oldpass"))
+		// After migration, password should be bcrypt
+		assert.True(t, strings.HasPrefix(u3.Password, "$2a$"))
 	})
 }
 
@@ -878,15 +895,12 @@ func TestSetZombieUserNonexistent(t *testing.T) {
 // ─── PasswordMatches additional paths ─────────────────────────────────────
 
 func TestUserRecord_PasswordMatchesHashed(t *testing.T) {
-	u := &UserRecord{Password: "somepassword"}
-
-	// Hash of the password should match if stored as plaintext
-	t.Run("hash of stored password matches", func(t *testing.T) {
-		// This tests the third path: input == Hash(stored)
-		// When password is stored as plaintext and input is the hash
-		// This is a less common path
-		hashed := util.Hash("somepassword")
-		assert.True(t, u.PasswordMatches(hashed))
+	t.Run("hash-of-hash bypass blocked", func(t *testing.T) {
+		// Old vulnerability: attacker with file access could compute
+		// SHA256 of stored hash to log in. This must be blocked.
+		u := &UserRecord{Password: util.Hash("somepassword")}
+		hashOfHash := util.Hash(u.Password)
+		assert.False(t, u.PasswordMatches(hashOfHash))
 	})
 }
 

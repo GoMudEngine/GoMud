@@ -554,7 +554,7 @@ func SaveUser(u UserRecord, isAutoSave ...bool) error {
 		saveFilePath += `.new`
 	}
 
-	err = os.WriteFile(saveFilePath, data, 0777)
+	err = os.WriteFile(saveFilePath, data, 0600)
 	if err != nil {
 		return err
 	}
