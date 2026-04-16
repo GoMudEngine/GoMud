@@ -1,4 +1,4 @@
-FROM golang:1.24.1-alpine3.21 AS builder
+FROM golang:1.25.0-alpine AS builder
 
 ARG BIN=go-mud-server
 ENV BIN=${BIN}
