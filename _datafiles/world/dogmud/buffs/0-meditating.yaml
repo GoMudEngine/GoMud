@@ -11,6 +11,6 @@ flags:
 - cancel-on-action
 - cancel-on-combat
 start_user_text: "You sit down and begin your meditation."
-start_room_text: "{sourcename} sits down and begins to meditate."
+start_room_text: "{source} sits down and begins to meditate."
 trigger_user_text: "You continue your meditation..."
-trigger_room_text: "{sourcename} continues meditating."
+trigger_room_text: "{source} continues meditating."
