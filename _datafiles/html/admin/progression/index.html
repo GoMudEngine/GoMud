@@ -123,7 +123,8 @@
 
   <!-- PLAYER OVERVIEW -->
   <div id="tab-players" style="display:none">
-    <div class="card">
+    <div class="card mb-3">
+      <div class="card-header"><strong>Skills</strong></div>
       <div class="card-body">
         <table class="table table-sm table-striped" id="playerTable">
           <thead>
@@ -132,6 +133,17 @@
               <th>Activity</th>
               <th id="skillHeaders"></th>
             </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><strong>Stats</strong></div>
+      <div class="card-body">
+        <table class="table table-sm table-striped" id="playerStatTable">
+          <thead>
+            <tr></tr>
           </thead>
           <tbody></tbody>
         </table>
@@ -328,6 +340,34 @@
     });
   }
 
+  function updatePlayerStatTable(d) {
+    var statOrder = ['strength','dexterity','perception','vitality','willpower','charisma'];
+
+    var thead = document.querySelector('#playerStatTable thead tr');
+    thead.innerHTML = '<th>Player</th>';
+    statOrder.forEach(function(st) {
+      thead.innerHTML += '<th>'+st.charAt(0).toUpperCase()+st.slice(1)+'</th>';
+    });
+
+    var tbody = document.querySelector('#playerStatTable tbody');
+    tbody.innerHTML = '';
+    d.players.forEach(function(p) {
+      var row = '<tr><td>'+p.name+'</td>';
+      statOrder.forEach(function(st) {
+        var s = p.stats[st];
+        if (s) {
+          var v = s.value;
+          var clr = v < 90 ? '#e74c3c' : v < 100 ? '#e67e22' : v < 120 ? '#3498db' : v < 150 ? '#2ecc71' : '#f1c40f';
+          row += '<td title="training='+s.training+' | uses='+s.use_count+'" style="color:'+clr+'">'+v+'</td>';
+        } else {
+          row += '<td>-</td>';
+        }
+      });
+      row += '</tr>';
+      tbody.innerHTML += row;
+    });
+  }
+
   function populateSkillDropdown(d) {
     var sel = document.getElementById('distSkillSelect');
     var prev = sel.value;
@@ -352,6 +392,7 @@
         updateStatDistChart(d);
         updateDiscoveryTables(d);
         updatePlayerTable(d);
+        updatePlayerStatTable(d);
       });
   }
 

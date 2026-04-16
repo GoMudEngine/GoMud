@@ -103,6 +103,27 @@ func clamp(v, lo, hi float64) float64 {
 	return v
 }
 
+// getStatBaseValue returns Base + Training for a stat, bypassing the
+// computed Value field which may not be populated for disk-loaded users.
+func getStatBaseValue(c *characters.Character, statName string) int {
+	switch statName {
+	case "strength":
+		return c.Stats.Strength.Base + c.Stats.Strength.Training
+	case "dexterity":
+		return c.Stats.Dexterity.Base + c.Stats.Dexterity.Training
+	case "perception":
+		return c.Stats.Perception.Base + c.Stats.Perception.Training
+	case "vitality":
+		return c.Stats.Vitality.Base + c.Stats.Vitality.Training
+	case "willpower":
+		return c.Stats.Willpower.Base + c.Stats.Willpower.Training
+	case "charisma":
+		return c.Stats.Charisma.Base + c.Stats.Charisma.Training
+	default:
+		return 0
+	}
+}
+
 func getStatTraining(c *characters.Character, statName string) int {
 	switch statName {
 	case "strength":
@@ -611,7 +632,7 @@ func buildPlayerOverview(playerList []*users.UserRecord) []playerJSON {
 		statsMap := make(map[string]playerStatJSON, len(statNames))
 		for _, statName := range statNames {
 			statsMap[statName] = playerStatJSON{
-				Value:    c.GetStatValue(statName),
+				Value:    getStatBaseValue(c, statName),
 				Training: getStatTraining(c, statName),
 				UseCount: c.GetStatUseCount(statName),
 			}
