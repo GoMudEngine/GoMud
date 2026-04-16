@@ -1017,24 +1017,6 @@ Logging:
 
 ################################################################################
 #
-#   SCRIPTING
-#   Configurations to put limits on run away scripts etc.
-#
-################################################################################
-Scripting:
-  # - LoadTimeoutMs -
-  #   When a script is first loaded, compiled, and run, it is given this long to
-  #   complete. If it takes longer, it is killed. This includes the onLoad() function
-  #   in scripts. Allowing a script to take longer to load might be okay to prepare some
-  #   heavier data.
-  LoadTimeoutMs: 1000
-  # - RoomTimeoutMs -
-  #   How long a room script can run before it is killed. This is a safety feature to
-  #   prevent long running scripts from bogging down the server.
-  RoomTimeoutMs: 50
-
-################################################################################
-#
 #   Special Rooms
 #   You probably won't need to change these.
 #
