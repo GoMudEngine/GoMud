@@ -140,6 +140,14 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 	moonMod := float64(configs.GetBalanceConfig().MoonStatModMax)
 	tStart := time.Now()
 
+	// Sweep: kill any mob stuck at 0 HP from a previous round (e.g., DOT
+	// damage, dismissed companion beaten down, or missed death check).
+	for _, mobId := range mobs.GetAllMobInstanceIds() {
+		if mob := mobs.GetInstance(mobId); mob != nil && mob.Character.Health <= 0 {
+			mob.Command(`suicide`)
+		}
+	}
+
 	for _, mobId := range mobs.GetAllMobInstanceIds() {
 
 		mob := mobs.GetInstance(mobId)

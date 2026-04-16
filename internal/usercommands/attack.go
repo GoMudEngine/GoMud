@@ -153,8 +153,8 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			dupIdx := room.GetMobDuplicateIndex(m.InstanceId)
 			mName := m.Character.GetMobNameIndexed(user.UserId, dupIdx).String()
 
-			if m.Character.IsCharmed(user.UserId) {
-				user.SendText(fmt.Sprintf(`%s is your friend!`, mName))
+			if m.Character.IsCharmed() {
+				user.SendText(fmt.Sprintf(`%s is someone's companion!`, mName))
 				return true, nil
 			}
 

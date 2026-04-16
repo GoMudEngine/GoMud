@@ -69,9 +69,9 @@ func Target(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			return true, nil
 		}
 
-		// Can't target charmed mobs
-		if m.Character.IsCharmed(user.UserId) {
-			user.SendText(fmt.Sprintf("<ansi fg=\"mobname\">%s</ansi> is your friend!", m.Character.Name))
+		// Can't target any companion
+		if m.Character.IsCharmed() {
+			user.SendText(fmt.Sprintf("<ansi fg=\"mobname\">%s</ansi> is someone's companion!", m.Character.Name))
 			return true, nil
 		}
 	}

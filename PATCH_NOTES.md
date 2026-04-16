@@ -1,5 +1,24 @@
 # DOGMud Patch Notes
 
+## 2026-04-15 — Bugfixes & QOL (Hotfix 2)
+
+### Bug Fixes
+- **Companions can no longer be targeted by other players** — taunt,
+  attack, target, and throw now block ALL companions, not just your
+  own.
+- **Mobs no longer sit downed for minutes** — dead mobs at 0 HP are
+  now swept every combat round. Fixes dismissed companions and DOT
+  kills lingering in downed state.
+- **Buff text tokens fixed** — meditating, illumination, stunned,
+  blinded, hidden now show character names instead of raw
+  `{sourcename}` tokens.
+
+### Security
+- **Bcrypt password hashing** — ported from upstream GoMud. Replaces
+  unsalted SHA256. Existing players migrate transparently on login.
+  Plaintext and hash-of-hash bypasses removed. File permissions
+  tightened (0777 to 0600).
+
 ## 2026-04-15 — Bugfixes & QOL
 
 ### Bug Fixes
