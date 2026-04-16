@@ -106,8 +106,8 @@ func Throw(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			continue
 		}
 
-		// Skip friendly companions (charmed by the thrower)
-		if mob.Character.IsCharmed(user.UserId) {
+		// Skip all companions
+		if mob.Character.IsCharmed() {
 			continue
 		}
 

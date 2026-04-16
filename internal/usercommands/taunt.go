@@ -36,8 +36,8 @@ func Taunt(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 					user.SendText(fmt.Sprintf(`You can't attack <ansi fg="mobname">%s</ansi>.`, m.Character.Name))
 					return true, nil
 				}
-				if m.Character.IsCharmed(user.UserId) {
-					user.SendText(`You can't taunt your own companion.`)
+				if m.Character.IsCharmed() {
+					user.SendText(`You can't taunt a companion.`)
 					return true, nil
 				}
 			}
