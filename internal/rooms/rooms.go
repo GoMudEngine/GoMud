@@ -3,7 +3,6 @@ package rooms
 import (
 	"errors"
 	"fmt"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -413,25 +412,6 @@ func (r *Room) GetTempData(key string) any {
 		return value
 	}
 	return nil
-}
-
-func (r *Room) GetScript() string {
-
-	scriptPath := r.GetScriptPath()
-
-	// Load the script into a string
-	if _, err := os.Stat(scriptPath); err == nil {
-		if bytes, err := os.ReadFile(scriptPath); err == nil {
-			return string(bytes)
-		}
-	}
-
-	return ``
-}
-
-func (r *Room) GetScriptPath() string {
-	// Load any script for the room
-	return strings.Replace(configs.GetFilePathsConfig().DataFiles.String()+`/rooms/`+r.Filepath(), `.yaml`, `.js`, 1)
 }
 
 func (r *Room) FindTemporaryExitByUserId(userId int) (exit.TemporaryRoomExit, bool) {

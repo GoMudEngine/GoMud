@@ -3,7 +3,6 @@ package items
 import (
 	"fmt"
 	"math"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -551,25 +550,6 @@ func (i *ItemSpec) Filename() string {
 
 func (i *ItemSpec) Filepath() string {
 	return i.ItemFolder() + `/` + i.Filename()
-}
-
-func (i ItemSpec) GetScript() string {
-
-	scriptPath := i.GetScriptPath()
-
-	// Load the script into a string
-	if _, err := os.Stat(scriptPath); err == nil {
-		if bytes, err := os.ReadFile(scriptPath); err == nil {
-			return string(bytes)
-		}
-	}
-
-	return ``
-}
-
-func (i *ItemSpec) GetScriptPath() string {
-	// Load any script for the room
-	return strings.Replace(string(configs.GetFilePathsConfig().DataFiles)+`/items/`+i.Filepath(), `.yaml`, `.js`, 1)
 }
 
 func GetItemSpec(itemId int) *ItemSpec {

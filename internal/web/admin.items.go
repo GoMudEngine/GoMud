@@ -1,7 +1,6 @@
 package web
 
 import (
-	"html"
 	"net/http"
 	"sort"
 	"strconv"
@@ -107,8 +106,6 @@ func itemData(w http.ResponseWriter, r *http.Request) {
 
 	tplData[`itemTypes`] = items.ItemTypes()
 	tplData[`itemSubtypes`] = items.ItemSubtypes()
-
-	tplData[`script`] = html.EscapeString(itemSpec.GetScript())
 
 	if err := tmpl.Execute(w, tplData); err != nil {
 		mudlog.Error("HTML Execute", "error", err)

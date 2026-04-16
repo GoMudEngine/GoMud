@@ -905,50 +905,6 @@ func (r *Mob) Save() error {
 	return nil
 }
 
-func (m *Mob) HasScript() bool {
-
-	scriptPath := m.GetScriptPath()
-	// Load the script into a string
-	if _, err := os.Stat(scriptPath); err == nil {
-		return true
-	}
-
-	return false
-}
-
-func (m *Mob) GetScript() string {
-
-	scriptPath := m.GetScriptPath()
-	// Load the script into a string
-	if _, err := os.Stat(scriptPath); err == nil {
-		if bytes, err := os.ReadFile(scriptPath); err == nil {
-			return string(bytes)
-		}
-	}
-
-	return ``
-}
-
-func (m *Mob) GetScriptPath() string {
-	// Load any script for the room
-
-	mobFilePath := m.Filename()
-
-	newExt := `.js`
-	if m.ScriptTag != `` {
-		newExt = fmt.Sprintf(`-%s.js`, m.ScriptTag)
-	}
-
-	scriptFilePath := `scripts/` + strings.Replace(mobFilePath, `.yaml`, newExt, 1)
-	fullScriptPath := strings.Replace(configs.GetFilePathsConfig().DataFiles.String()+`/mobs/`+m.Filepath(),
-		mobFilePath,
-		scriptFilePath,
-		1)
-
-	//mudlog.Info("SCRIPT PATH", "path", util.FilePath(fullScriptPath))
-	return util.FilePath(fullScriptPath)
-}
-
 func ReduceHostility() {
 
 	for groupName, group := range mobsHatePlayers {
