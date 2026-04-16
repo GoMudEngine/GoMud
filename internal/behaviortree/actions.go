@@ -15,7 +15,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
-	"github.com/GoMudEngine/GoMud/internal/textutil"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -153,70 +152,6 @@ func (n *ActionNode) Evaluate(ctx *EvalContext) Result {
 }
 
 // --- action implementations ---
-
-func actRespond(params map[string]any, ctx *EvalContext) Result {
-	user := users.GetByUserId(ctx.Event.UserId)
-	if user == nil {
-		return Failure
-	}
-	mob := mobs.GetInstance(ctx.InstanceId)
-	if mob == nil {
-		return Failure
-	}
-
-	tokenCtx := textutil.TokenContext{
-		SourceName:      fmt.Sprintf(`<ansi fg="mobname">%s</ansi>`, mob.Character.Name),
-		SourcePlainName: mob.Character.Name,
-		TargetName:      user.Character.Name,
-		TargetPlainName: user.Character.Name,
-	}
-
-	userText := getStringParam(params, "user_text")
-	if userText != "" {
-		user.SendText(textutil.SubstituteTokens(userText, tokenCtx))
-	}
-
-	roomText := getStringParam(params, "room_text")
-	if roomText != "" {
-		room := rooms.LoadRoom(ctx.RoomId)
-		if room != nil {
-			room.SendTextVisual(textutil.SubstituteTokens(roomText, tokenCtx), ctx.Event.UserId)
-		}
-	}
-
-	hints := getStringParam(params, "hints")
-	if hints != "" {
-		user.SendText(fmt.Sprintf(`<ansi fg="181">  [%s]</ansi>`, hints))
-	}
-
-	return Success
-}
-
-func actSay(params map[string]any, ctx *EvalContext) Result {
-	mob := mobs.GetInstance(ctx.InstanceId)
-	if mob == nil {
-		return Failure
-	}
-	text := getStringParam(params, "text")
-	if text == "" {
-		return Failure
-	}
-	mob.Command("say " + text)
-	return Success
-}
-
-func actEmote(params map[string]any, ctx *EvalContext) Result {
-	mob := mobs.GetInstance(ctx.InstanceId)
-	if mob == nil {
-		return Failure
-	}
-	text := getStringParam(params, "text")
-	if text == "" {
-		return Failure
-	}
-	mob.Command("emote " + text)
-	return Success
-}
 
 func actGrantQuest(params map[string]any, ctx *EvalContext) Result {
 	user := users.GetByUserId(ctx.Event.UserId)
@@ -501,46 +436,6 @@ func actSetMiscData(params map[string]any, ctx *EvalContext) Result {
 	return Success
 }
 
-// actMobSay finds the first mob in the room with the given mob_id and makes
-// it speak.
-// params: mob_id (int), text (string)
-func actMobSay(params map[string]any, ctx *EvalContext) Result {
-	mobId := getIntParam(params, "mob_id")
-	text := getStringParam(params, "text")
-	room := rooms.LoadRoom(ctx.RoomId)
-	if room == nil {
-		return Failure
-	}
-	for _, instId := range room.GetMobs(rooms.FindAll) {
-		m := mobs.GetInstance(instId)
-		if m != nil && int(m.MobId) == mobId {
-			m.Command("say " + text)
-			return Success
-		}
-	}
-	return Failure
-}
-
-// actMobEmote finds the first mob in the room with the given mob_id and makes
-// it emote.
-// params: mob_id (int), text (string)
-func actMobEmote(params map[string]any, ctx *EvalContext) Result {
-	mobId := getIntParam(params, "mob_id")
-	text := getStringParam(params, "text")
-	room := rooms.LoadRoom(ctx.RoomId)
-	if room == nil {
-		return Failure
-	}
-	for _, instId := range room.GetMobs(rooms.FindAll) {
-		m := mobs.GetInstance(instId)
-		if m != nil && int(m.MobId) == mobId {
-			m.Command("emote " + text)
-			return Success
-		}
-	}
-	return Failure
-}
-
 // actGrantMutation rolls and grants a random mutation to the triggering player
 // from the weighted acquisition pool. Returns Success even if no mutations are
 // available (no eligible mutations is not an error).
@@ -562,30 +457,6 @@ func actGrantMutation(params map[string]any, ctx *EvalContext) Result {
 	}
 	user.Character.Mutations[mutId] = 1
 	user.Character.Validate()
-	return Success
-}
-
-// actSendUserText sends a text message to the triggering player.
-// params: text (string)
-func actSendUserText(params map[string]any, ctx *EvalContext) Result {
-	user := users.GetByUserId(ctx.Event.UserId)
-	if user == nil {
-		return Failure
-	}
-	text := getStringParam(params, "text")
-	user.SendText(text)
-	return Success
-}
-
-// actSendRoomText sends a text message to everyone in the room.
-// params: text (string)
-func actSendRoomText(params map[string]any, ctx *EvalContext) Result {
-	room := rooms.LoadRoom(ctx.RoomId)
-	if room == nil {
-		return Failure
-	}
-	text := getStringParam(params, "text")
-	room.SendText(text)
 	return Success
 }
 
