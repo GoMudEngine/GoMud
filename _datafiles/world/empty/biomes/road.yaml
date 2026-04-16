@@ -1,9 +1,0 @@
-biomeid: road
-name: Road
-symbol: •
-description: Roads are well worn paths, generally well traveled.
-darkarea: false
-litarea: false
-requireditemid: 0
-usesitem: false
-burns: false
