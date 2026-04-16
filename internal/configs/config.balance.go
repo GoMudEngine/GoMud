@@ -303,12 +303,6 @@ func (b *Balance) Validate() {
 	if b.BlockEffectiveness <= 0 {
 		b.BlockEffectiveness = 1.0
 	}
-	if b.MinDefenseChance < 0 || b.MinDefenseChance > 0.50 {
-		b.MinDefenseChance = 0.15
-	}
-	if b.MinAttackHitChance < 0 || b.MinAttackHitChance > 0.50 {
-		b.MinAttackHitChance = 0.15
-	}
 
 	// ── COMBAT: PRONE & GRAPPLE ──────────────────────────────────────────────
 	if b.ProneAttackMultiplier <= 0 {
@@ -329,84 +323,15 @@ func (b *Balance) Validate() {
 	if b.ProneVulnerabilityMultiplier <= 0 {
 		b.ProneVulnerabilityMultiplier = 1.15
 	}
-	if b.StandStaminaCost <= 0 || b.StandStaminaCost > 1.0 {
-		b.StandStaminaCost = 0.15
-	}
-	if b.StandMinStamina <= 0 || b.StandMinStamina > 1.0 {
-		b.StandMinStamina = 0.15
-	}
-	if b.ThirdPartyGrapplePenalty <= 0 || b.ThirdPartyGrapplePenalty > 1.0 {
-		b.ThirdPartyGrapplePenalty = 0.70
-	}
-	if b.ClinchDodgePenalty <= 0 || b.ClinchDodgePenalty > 1.0 {
-		b.ClinchDodgePenalty = 0.80
-	}
-	if b.ClinchParryPenalty <= 0 || b.ClinchParryPenalty > 1.0 {
-		b.ClinchParryPenalty = 0.83
-	}
-	if b.ClinchBlockPenalty <= 0 || b.ClinchBlockPenalty > 1.0 {
-		b.ClinchBlockPenalty = 0.85
-	}
-	if b.GroundedDodgePenalty <= 0 || b.GroundedDodgePenalty > 1.0 {
-		b.GroundedDodgePenalty = 0.75
-	}
-	if b.GroundedParryPenalty <= 0 || b.GroundedParryPenalty > 1.0 {
-		b.GroundedParryPenalty = 0.77
-	}
-	if b.GroundedBlockPenalty <= 0 || b.GroundedBlockPenalty > 1.0 {
-		b.GroundedBlockPenalty = 0.80
-	}
 
 	// ── COMBAT: SPECIAL MOVES ────────────────────────────────────────────────
 	if b.SpecialMoveCooldown < 1 {
 		b.SpecialMoveCooldown = 5
 	}
-	if b.BashDamagePercent <= 0 || b.BashDamagePercent > 1.0 {
-		b.BashDamagePercent = 0.50
-	}
-	if b.BashKnockdownChance < 0 || b.BashKnockdownChance > 100 {
-		b.BashKnockdownChance = 40
-	}
-	if b.TripDamagePercent <= 0 || b.TripDamagePercent > 1.0 {
-		b.TripDamagePercent = 0.25
-	}
-	if b.TripKnockdownChance < 0 || b.TripKnockdownChance > 100 {
-		b.TripKnockdownChance = 60
-	}
-	if b.KickDamagePercent <= 0 || b.KickDamagePercent > 2.0 {
-		b.KickDamagePercent = 0.80
-	}
-	if b.KickKnockdownChance < 0 || b.KickKnockdownChance > 100 {
-		b.KickKnockdownChance = 35
-	}
-	if b.StompDamagePercent <= 0 || b.StompDamagePercent > 3.0 {
-		b.StompDamagePercent = 1.20
-	}
-	if b.KneeDamagePercent <= 0 || b.KneeDamagePercent > 2.0 {
-		b.KneeDamagePercent = 1.00
-	}
-	if b.CoupDeGraceRounds < 0 {
-		b.CoupDeGraceRounds = 1
-	}
 
 	// ── SKULLDUGGERY ─────────────────────────────────────────────────────────
 	if b.SneakFailCooldown < 0 {
 		b.SneakFailCooldown = 3
-	}
-	if b.SurpriseAttackOffhandPenalty < 0 || b.SurpriseAttackOffhandPenalty > 1.0 {
-		b.SurpriseAttackOffhandPenalty = 0.10
-	}
-	if b.SurpriseAttackExtraArm1Penalty < 0 || b.SurpriseAttackExtraArm1Penalty > 1.0 {
-		b.SurpriseAttackExtraArm1Penalty = 0.25
-	}
-	if b.SurpriseAttackExtraArm2Penalty < 0 || b.SurpriseAttackExtraArm2Penalty > 1.0 {
-		b.SurpriseAttackExtraArm2Penalty = 0.40
-	}
-	if b.SurpriseAttackExtraArm3Penalty < 0 || b.SurpriseAttackExtraArm3Penalty > 1.0 {
-		b.SurpriseAttackExtraArm3Penalty = 0.55
-	}
-	if b.SurpriseAttackExtraArm4Penalty < 0 || b.SurpriseAttackExtraArm4Penalty > 1.0 {
-		b.SurpriseAttackExtraArm4Penalty = 0.70
 	}
 	if b.StealSkillMultiplier <= 0 {
 		b.StealSkillMultiplier = 1.0
@@ -435,36 +360,6 @@ func (b *Balance) Validate() {
 	}
 
 	// ── COMBAT: DAMAGE ───────────────────────────────────────────────────────
-	if b.UnarmedBaseDamage <= 0 {
-		b.UnarmedBaseDamage = 2.0
-	}
-	if b.UnarmedStrengthDivisor <= 0 {
-		b.UnarmedStrengthDivisor = 25.0
-	}
-	if b.UnarmedSkillDivisor <= 0 {
-		b.UnarmedSkillDivisor = 10.0
-	}
-	if b.UnarmedBaseVariance <= 0 {
-		b.UnarmedBaseVariance = 3.0
-	}
-	if b.UnarmedDamageMultiplier <= 0 {
-		b.UnarmedDamageMultiplier = 0.30
-	}
-	if b.UnarmedSpeedMultiplier <= 0 {
-		b.UnarmedSpeedMultiplier = 1.8
-	}
-	if b.HasteSwingMultiplier <= 0 {
-		b.HasteSwingMultiplier = 1.50
-	}
-	if b.SkillMultiplierBase <= 0 {
-		b.SkillMultiplierBase = 1.0
-	}
-	if b.SkillMultiplierMax <= 0 {
-		b.SkillMultiplierMax = 3.0
-	}
-	if b.SkillWeight <= 0 {
-		b.SkillWeight = 2.0
-	}
 	if b.MeleeDamageScale <= 0 {
 		b.MeleeDamageScale = 0.30
 	}
@@ -476,9 +371,6 @@ func (b *Balance) Validate() {
 	}
 	if b.MobDamageMultiplier <= 0 {
 		b.MobDamageMultiplier = 1.0
-	}
-	if b.GlobalDamageMultiplier <= 0 {
-		b.GlobalDamageMultiplier = 1.0
 	}
 	if b.PhysicalMitigationCap <= 0 || b.PhysicalMitigationCap > 1.0 {
 		b.PhysicalMitigationCap = 0.75
@@ -495,20 +387,8 @@ func (b *Balance) Validate() {
 	if b.RhetoricAvoidanceDamageMultiplier <= 0 || b.RhetoricAvoidanceDamageMultiplier > 1.0 {
 		b.RhetoricAvoidanceDamageMultiplier = 0.50
 	}
-	if b.ResourcePenaltyCurve <= 0 {
-		b.ResourcePenaltyCurve = 2.0
-	}
-	if b.HealthPenaltyMax <= 0 || b.HealthPenaltyMax > 1.0 {
-		b.HealthPenaltyMax = 0.28
-	}
-	if b.StaminaPenaltyMax <= 0 || b.StaminaPenaltyMax > 1.0 {
-		b.StaminaPenaltyMax = 0.28
-	}
-	if b.ConvictionPenaltyMax <= 0 || b.ConvictionPenaltyMax > 1.0 {
-		b.ConvictionPenaltyMax = 0.28
-	}
 
-	// ── REGEN RATES ──────────────────────────────────────────────────────────
+	// ── REGEN RATES (mob) ────────────────────────────────────────────────────
 	clampPct := func(v *ConfigFloat, def ConfigFloat) {
 		if *v <= 0 {
 			*v = def
@@ -517,52 +397,9 @@ func (b *Balance) Validate() {
 			*v = 1.0
 		}
 	}
-	clampPct(&b.PlayerHealthRegenPct, 0.01)
-	clampPct(&b.PlayerStaminaRegenPct, 0.01)
-	clampPct(&b.PlayerConvictionRegenPct, 0.01)
 	clampPct(&b.MobHealthRegenPct, 0.01)
 	clampPct(&b.MobStaminaRegenPct, 0.02)
 	clampPct(&b.MobConvictionRegenPct, 0.02)
-
-	// ── STAMINA & CONVICTION ──────────────────────────────────────────────────
-	if b.MovementBaseStaminaCost <= 0 {
-		b.MovementBaseStaminaCost = 2.0
-	}
-	if b.MovementMaxStaminaCost <= 0 {
-		b.MovementMaxStaminaCost = 20.0
-	}
-	if b.UnarmedAttackStaminaCost < 1 {
-		b.UnarmedAttackStaminaCost = 4
-	}
-
-	// ── RESOURCE MAXIMUMS ─────────────────────────────────────────────────────
-	if b.HealthBase < 0 {
-		b.HealthBase = 5
-	}
-	if b.HealthPerStrength < 0 {
-		b.HealthPerStrength = 1
-	}
-	if b.HealthPerVitality < 0 {
-		b.HealthPerVitality = 4
-	}
-	if b.StaminaBase < 0 {
-		b.StaminaBase = 5
-	}
-	if b.StaminaPerStrength < 0 {
-		b.StaminaPerStrength = 1
-	}
-	if b.StaminaPerWillpower < 0 {
-		b.StaminaPerWillpower = 1
-	}
-	if b.StaminaPerVitality < 0 {
-		b.StaminaPerVitality = 3
-	}
-	if b.ConvictionBase < 0 {
-		b.ConvictionBase = 5
-	}
-	if b.ConvictionPerWilCha < 0 {
-		b.ConvictionPerWilCha = 2
-	}
 
 	// ── PROGRESSION ───────────────────────────────────────────────────────────
 	if b.SkillSoftCap < 1 {
@@ -630,73 +467,6 @@ func (b *Balance) Validate() {
 		if v <= 0 {
 			delete(b.SkillProgressionMultipliers, k)
 		}
-	}
-
-	// ── CHARACTER CREATION ────────────────────────────────────────────────────
-	if b.StatRollMean <= 0 {
-		b.StatRollMean = 100.0
-	}
-	if b.StatRollStdDev <= 0 {
-		b.StatRollStdDev = 15.0
-	}
-	if b.StatRollMin <= 0 {
-		b.StatRollMin = 70.0
-	}
-	if b.StatRollMax <= 0 {
-		b.StatRollMax = 130.0
-	}
-	if b.StartingHealth < 1 {
-		b.StartingHealth = 10
-	}
-
-	// ── CRAFTING ──────────────────────────────────────────────────────────────
-	if b.CraftingBaseSuccessChance <= 0 || b.CraftingBaseSuccessChance > 100 {
-		b.CraftingBaseSuccessChance = 50
-	}
-	if b.CraftingSkillBonusPerLevel <= 0 {
-		b.CraftingSkillBonusPerLevel = 5
-	}
-	if b.CraftingMinSuccessChance < 1 {
-		b.CraftingMinSuccessChance = 5
-	}
-	if b.CraftingMaxSuccessChance <= 0 || b.CraftingMaxSuccessChance > 100 {
-		b.CraftingMaxSuccessChance = 95
-	}
-
-	// ── RECIPE DISCOVERY ─────────────────────────────────────────────────────
-	if b.RecipeDiscoveryBaseChance <= 0 {
-		b.RecipeDiscoveryBaseChance = 8.0
-	}
-	if b.RecipeDiscoveryDecayRate <= 0 {
-		b.RecipeDiscoveryDecayRate = 0.1
-	}
-
-	// ── SALVAGE ──────────────────────────────────────────────────────────────
-	if b.SalvageMinChance <= 0 {
-		b.SalvageMinChance = 0.15
-	}
-	if b.SalvageMaxChance <= 0 {
-		b.SalvageMaxChance = 0.85
-	}
-	if b.SalvageSoftCap < 1 {
-		b.SalvageSoftCap = 50
-	}
-	if b.SalvageGoldPerRound < 1 {
-		b.SalvageGoldPerRound = 10
-	}
-	if b.SalvageMaxRounds < 1 {
-		b.SalvageMaxRounds = 5
-	}
-
-	// ── QUEST ENGINE ─────────────────────────────────────────────────────────
-	if b.QuestLogLevel == "" {
-		b.QuestLogLevel = "verbose"
-	}
-	if b.QuestChainDepthLimit < 1 {
-		b.QuestChainDepthLimit = 10
-	}
-	if b.QuestPerformanceWarnMs < 1 {
-		b.QuestPerformanceWarnMs = 50
 	}
 
 	// ── MUTATIONS ─────────────────────────────────────────────────────────────
@@ -783,11 +553,6 @@ func (b *Balance) Validate() {
 		b.EnchantMaxTier = 4
 	}
 
-	// ── WORLD EVENTS ─────────────────────────────────────────────────────────
-	if b.WorldEventBufferSize < 10 {
-		b.WorldEventBufferSize = 200
-	}
-
 	// ── MOB MUTATIONS ────────────────────────────────────────────────────────
 	if b.MobMutationRate <= 0 || b.MobMutationRate > 1.0 {
 		b.MobMutationRate = 0.3
@@ -850,11 +615,6 @@ func (b *Balance) Validate() {
 		b.MoonStatModMax = 0.05
 	}
 
-	// ── CARRY CAPACITY ──────────────────────────────────────────────────────
-	if b.CarryCapacityMultiplier < 0.1 || b.CarryCapacityMultiplier > 10.0 {
-		b.CarryCapacityMultiplier = 0.65
-	}
-
 	// ── TOXICITY ────────────────────────────────────────────────────────────
 	if b.ToxicityDecayPerTick <= 0 {
 		b.ToxicityDecayPerTick = 1.0
@@ -905,15 +665,29 @@ func (b *Balance) Validate() {
 		b.StorageFeePerItem = 1
 	}
 
-	// ── LOOT ──────────────────────────────────────────────────────────────────
-	if b.LootBudgetScalar <= 0 {
-		b.LootBudgetScalar = 7.0
+	// ── CRAFTING ──────────────────────────────────────────────────────────────
+	if b.CraftingBaseSuccessChance <= 0 || b.CraftingBaseSuccessChance > 100 {
+		b.CraftingBaseSuccessChance = 50
+	}
+	if b.CraftingSkillBonusPerLevel <= 0 {
+		b.CraftingSkillBonusPerLevel = 5
+	}
+	if b.CraftingMinSuccessChance < 1 {
+		b.CraftingMinSuccessChance = 5
+	}
+	if b.CraftingMaxSuccessChance <= 0 || b.CraftingMaxSuccessChance > 100 {
+		b.CraftingMaxSuccessChance = 95
 	}
 
-	// ── INSTANCES ────────────────────────────────────────────────────────────
-	if b.InstanceStatPoolCap < 1 {
-		b.InstanceStatPoolCap = 50000
+	// ── RECIPE DISCOVERY ─────────────────────────────────────────────────────
+	if b.RecipeDiscoveryBaseChance <= 0 {
+		b.RecipeDiscoveryBaseChance = 8.0
 	}
+	if b.RecipeDiscoveryDecayRate <= 0 {
+		b.RecipeDiscoveryDecayRate = 0.1
+	}
+
+	b.validateMisc()
 }
 
 func GetBalanceConfig() Balance {
