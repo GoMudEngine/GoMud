@@ -21,13 +21,6 @@ func Assess(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		return true, nil
 	}
 
-	if !user.Character.TryCooldown(`assess`, "6 rounds") {
-		user.SendText(
-			fmt.Sprintf("You need to wait %d more rounds before you can assess again.", user.Character.GetCooldown(`assess`)),
-		)
-		return true, nil
-	}
-
 	corpse, found := room.FindCorpse(rest)
 	if !found {
 		user.SendText(`You don't see those remains here.`)
@@ -36,6 +29,13 @@ func Assess(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	if corpse.Character.IsCharmed() {
 		user.SendText(`These remains were bound to a master. The essence is spent — there is nothing left to raise.`)
+		return true, nil
+	}
+
+	if !user.Character.TryCooldown(`assess`, "6 rounds") {
+		user.SendText(
+			fmt.Sprintf("You need to wait %d more rounds before you can assess again.", user.Character.GetCooldown(`assess`)),
+		)
 		return true, nil
 	}
 

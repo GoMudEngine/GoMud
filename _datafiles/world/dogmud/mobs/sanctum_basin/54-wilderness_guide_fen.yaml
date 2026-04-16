@@ -3,6 +3,7 @@ zone: Sanctum Basin
 archetype: fighting
 statpool: 105
 hostile: false
+non_combatant: true
 maxwander: 0
 idlecommands:
   - 'emote scans the horizon with a weathered hand shading their eyes'

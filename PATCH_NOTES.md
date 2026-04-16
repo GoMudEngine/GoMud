@@ -1,5 +1,32 @@
 # DOGMud Patch Notes
 
+## 2026-04-15 — Bugfixes & QOL
+
+### Bug Fixes
+- **Spell typos no longer waste cooldown** — casting at an invalid
+  target or misspelling a spell name no longer triggers the special
+  move cooldown timer.
+- **Assess without corpse no longer wastes cooldown** — same fix
+  for the assess command.
+- **Companion autoassist toggle now works** — `companion <name>
+  assist off` actually prevents the companion from joining combat.
+  Fixed in all three engagement paths (player attacks, mob attacks
+  player, PvP).
+- **Tutorial NPCs are now non-combatant** — 8 Sanctum Basin quest
+  NPCs (priest, trainer, korvath, yenna, fen, saris, warden,
+  scholar) can no longer be attacked or stolen from.
+
+### Balance
+- Skill progression multipliers increased:
+  weapon-combat and unarmed-combat +25%, spellcasting +25%,
+  manifestation +25%, rhetoric +15%.
+
+### Admin Tools
+- **Player stats table** added to the progression dashboard's
+  Player Overview tab (base+training values, color-coded).
+- **File-based logging** — new `Logging` config section in
+  config.yaml. Logs to both terminal and rotating file when enabled.
+
 ## 2026-04-15 — JS Audit Complete (Phases 4-5)
 
 ### Death System Simplified

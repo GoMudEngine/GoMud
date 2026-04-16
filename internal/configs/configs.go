@@ -57,6 +57,8 @@ type Config struct {
 
 	Analytics Analytics `yaml:"Analytics"`
 
+	Logging Logging `yaml:"Logging"`
+
 	// End config subsections
 
 	seedInt int64 `yaml:"-"`

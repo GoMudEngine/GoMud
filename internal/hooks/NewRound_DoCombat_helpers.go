@@ -618,11 +618,19 @@ func handleCompanionOwnerAssist(defMob *mobs.Mob, attackerDesc string) {
 }
 
 // handleCharmedMobAssist triggers charmed mobs to assist their owner when attacked.
+// Only engages companions that have AutoAssist enabled.
 func handleCharmedMobAssist(room *rooms.Room, defId int, targetDesc string) {
+	defUser := users.GetByUserId(defId)
+	if defUser == nil {
+		return
+	}
 	for _, instanceId := range room.GetMobs(rooms.FindCharmed) {
 		if charmedMob := mobs.GetInstance(instanceId); charmedMob != nil {
 			if charmedMob.Character.IsCharmed(defId) && charmedMob.Character.Aggro == nil {
-				charmedMob.Command(fmt.Sprintf("attack %s", targetDesc))
+				comp := defUser.Character.GetCompanionByInstanceId(instanceId)
+				if comp != nil && comp.AutoAssist {
+					charmedMob.Command(fmt.Sprintf("attack %s", targetDesc))
+				}
 			}
 		}
 	}

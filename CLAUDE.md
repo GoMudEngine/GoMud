@@ -12,9 +12,10 @@ Follow the branch strategy in `github_guide.md`:
 - Use conventional commit messages (feat:, fix:, refactor:, docs:, chore:)
 
 ## Pre-Push SOP
-Before pushing to prod (origin/master), update `PATCH_NOTES.md` in the
-project root with dated entries describing the work being pushed. Group
-changes by category (features, fixes, balance, etc.).
+Before pushing to prod (origin/master):
+1. Update `PATCH_NOTES.md` with dated entries describing the work.
+2. Set `Logging.LogToFile: false` in `_datafiles/config.yaml` (prod
+   droplet has limited disk space).
 
 ## Room Instance Saves (Important!)
 When editing room YAML templates in `_datafiles/world/dogmud/rooms/`, always check for **instance saves** in `_datafiles/world/dogmud/rooms.instances/` that may override your changes. The engine loads templates first, then overwrites with instance data if present. After editing room templates:

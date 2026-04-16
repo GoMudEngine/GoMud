@@ -635,12 +635,12 @@ Balance:
   # Combat skills fire many times per round (low mult), utility skills
   # fire rarely (high mult). Only skills listed here override the defaults.
   SkillProgressionMultipliers:
-    weapon-combat: 0.18   # Tuned 39.5: bumped ~20% from 0.15 for better progression feel
-    unarmed-combat: 0.18  # Tuned 39.5: same as weapon-combat
-    spellcasting: 0.5
-    rhetoric: 0.5
+    weapon-combat: 0.23   # Tuned 39.6: +25% from 0.18
+    unarmed-combat: 0.23  # Tuned 39.6: +25% from 0.18
+    spellcasting: 0.63    # Tuned 39.6: +25% from 0.5
+    rhetoric: 0.58        # Tuned 39.6: +15% from 0.5
     bartering: 2.0
-    manifestation: 0.3    # Companion management — moderate use frequency
+    manifestation: 0.38   # Tuned 39.6: +25% from 0.3
     blacksmithing: 3.5  # Crafting skills fire rarely (once per craft); boosted for feel
     alchemy: 3.5
     tailoring: 3.5
@@ -1002,6 +1002,18 @@ Network:
   #   How many rounds of meditation a player must complete before they are
   #   logged out. If interrupted, they must start over.
   LogoutRounds: 3
+
+################################################################################
+#
+#   LOGGING
+#   File-based logging configuration. Env vars LOG_LEVEL, LOG_PATH,
+#   LOG_NOCOLOR take precedence if set.
+#
+################################################################################
+Logging:
+  LogToFile: false                             # Write logs to file + terminal
+  LogFilePath: "_datafiles/logs/server.log"    # Log file path (rotated at 100MB)
+  LogLevel: "debug"                            # debug, info, warn, error
 
 ################################################################################
 #
