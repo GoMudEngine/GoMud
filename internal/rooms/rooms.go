@@ -1930,8 +1930,7 @@ func (r *Room) PruneSigns() []Sign {
 
 func (r *Room) PruneVisitors() int {
 
-	if r.visitors == nil {
-		r.visitors = make(map[VisitorType]map[int]uint64)
+	if len(r.visitors) == 0 {
 		return 0
 	}
 

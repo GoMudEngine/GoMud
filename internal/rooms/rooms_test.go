@@ -1770,7 +1770,7 @@ func TestRoom_PruneVisitors_NilMap(t *testing.T) {
 	r := &Room{visitors: nil}
 	ct := r.PruneVisitors()
 	assert.Equal(t, 0, ct)
-	assert.NotNil(t, r.visitors)
+	assert.Nil(t, r.visitors) // Fast path: no allocation for nil map
 }
 
 // ─── Room.Nouns empty ───────────────────────────────────────────────────────
@@ -2479,5 +2479,28 @@ func TestFindNoun(t *testing.T) {
 					tt.inputNoun, gotFound, gotDesc, tt.wantFoundNoun, tt.wantDesc)
 			}
 		})
+	}
+}
+
+func TestPruneVisitors_EmptyMapFastPath(t *testing.T) {
+	r := &Room{
+		RoomId:   9991,
+		Zone:     "test-zone",
+		visitors: nil, // nil map is valid and should short-circuit
+	}
+
+	// Should not panic on nil map.
+	r.PruneVisitors()
+
+	// Map should still be nil (no allocation performed).
+	if r.visitors != nil {
+		t.Fatalf("expected visitors to stay nil, got %v", r.visitors)
+	}
+
+	// Also works on explicit empty map.
+	r.visitors = map[VisitorType]map[int]uint64{}
+	r.PruneVisitors()
+	if len(r.visitors) != 0 {
+		t.Fatalf("expected empty visitors, got %d entries", len(r.visitors))
 	}
 }
