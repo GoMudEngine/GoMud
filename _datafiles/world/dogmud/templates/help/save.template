@@ -1,0 +1,11 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">save</ansi>
+
+The <ansi fg="command">save</ansi> command writes your character's current state to disk.
+The server also autosaves periodically, so you rarely need to run
+this manually.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">save</ansi>                Save your character now.
+
+Safe to run at any time.

@@ -1,0 +1,14 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">cancel</ansi>
+
+The <ansi fg="command">cancel</ansi> command stops an in-progress action, such as a fold-cast spell
+you are holding, a crafting activity, or a multi-round command.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">cancel</ansi>              Abort whatever you are currently doing.
+
+If you are holding spell folds, cancelling loses the conviction you
+already spent. If no cancellable action is active, the command is a
+no-op.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help cast</ansi>, <ansi fg="command">help craft</ansi>
