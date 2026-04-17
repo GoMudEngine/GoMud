@@ -11,7 +11,6 @@
 <ansi fg="yellow-bold">Temp Exits:</ansi>     {{ if eq (len $room.ExitsTemp) 0 }}None{{ else }}
 {{- range $command, $exitInfo := $room.ExitsTemp }}[<ansi fg="exit">{{ $command }}</ansi> ⇒ <ansi fg="red">{{ $exitInfo.RoomId }}</ansi>] {{ end -}}{{ end }}
 <ansi fg="yellow-bold">Training:</ansi>       {{ if eq (len $room.SkillTraining) 0 }}None{{ else }}{{- range $index, $skill := $room.SkillTraining }}[{{ $skill }}] {{ end -}}{{ end }}
-<ansi fg="yellow-bold">Script:</ansi>         {{ if gt (len $room.GetScript) 0 }}<ansi fg="green">Yes</ansi> - <ansi fg="129">{{ $room.GetScriptPath }}</ansi>{{ else }}<ansi fg="red">No</ansi>{{ end }}
 <ansi fg="yellow-bold">Room Mutators:</ansi>  {{ range $i, $a := $room.Mutators }}<ansi fg="mutator">{{ $a.MutatorId }}</ansi> {{ if $a.Live }}<ansi fg="12">(active)</ansi>{{else}}<ansi fg="red">(inactive)</ansi>{{ end }}
            {{ end }}
 <ansi fg="yellow-bold">Zone Mutators:</ansi>  {{ range $i, $a := $zone.Mutators }}<ansi fg="mutator">{{ $a.MutatorId }}</ansi> {{ if $a.Live }}<ansi fg="12">(active)</ansi>{{else}}<ansi fg="red">(inactive)</ansi>{{ end }}

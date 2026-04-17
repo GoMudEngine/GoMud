@@ -2753,107 +2753,81 @@ func (c *Character) StatMod(statName string) int {
 // returns true if something has changed.
 func (c *Character) RecalculateStats() {
 
-	// Make sure racial base stats are set
 	beforeHealthMax := c.HealthMax
 	beforeStats := c.Stats
 
+	// Build per-stat entries once, referencing live pointers into c.Stats.
+	type statEntry struct {
+		ptr     *stats.StatInfo
+		modName string // statmods.StatName string
+		mutKey  string // mutations key, e.g. "strength"
+	}
+	entries := []statEntry{
+		{&c.Stats.Strength, string(statmods.Strength), "strength"},
+		{&c.Stats.Dexterity, string(statmods.Dexterity), "dexterity"},
+		{&c.Stats.Perception, string(statmods.Perception), "perception"},
+		{&c.Stats.Vitality, string(statmods.Vitality), "vitality"},
+		{&c.Stats.Willpower, string(statmods.Willpower), "willpower"},
+		{&c.Stats.Charisma, string(statmods.Charisma), "charisma"},
+	}
+
+	// Pass 1 — species-base hydration (only when Base is 0, per original logic).
 	if speciesInfo := species.GetSpecies(c.SpeciesId); speciesInfo != nil {
-
-		// Only set base stats from racial if they haven't been rolled yet
-		// (Base values of 0 indicate uninitialized stats)
-		// Rolled stats (from RollCharacterStats) will be 85-115, so they won't be overwritten
-		if c.Stats.Strength.Base == 0 {
-			c.Stats.Strength.Base = speciesInfo.Stats.Strength.Base
+		speciesEntries := []struct {
+			ptr  *stats.StatInfo
+			base int
+		}{
+			{&c.Stats.Strength, speciesInfo.Stats.Strength.Base},
+			{&c.Stats.Dexterity, speciesInfo.Stats.Dexterity.Base},
+			{&c.Stats.Perception, speciesInfo.Stats.Perception.Base},
+			{&c.Stats.Vitality, speciesInfo.Stats.Vitality.Base},
+			{&c.Stats.Willpower, speciesInfo.Stats.Willpower.Base},
+			{&c.Stats.Charisma, speciesInfo.Stats.Charisma.Base},
 		}
-		if c.Stats.Dexterity.Base == 0 {
-			c.Stats.Dexterity.Base = speciesInfo.Stats.Dexterity.Base
-		}
-		if c.Stats.Perception.Base == 0 {
-			c.Stats.Perception.Base = speciesInfo.Stats.Perception.Base
-		}
-		if c.Stats.Vitality.Base == 0 {
-			c.Stats.Vitality.Base = speciesInfo.Stats.Vitality.Base
-		}
-		if c.Stats.Willpower.Base == 0 {
-			c.Stats.Willpower.Base = speciesInfo.Stats.Willpower.Base
-		}
-		if c.Stats.Charisma.Base == 0 {
-			c.Stats.Charisma.Base = speciesInfo.Stats.Charisma.Base
+		for _, e := range speciesEntries {
+			if e.ptr.Base == 0 {
+				e.ptr.Base = e.base
+			}
 		}
 	}
 
-	// Add any mods for equipment
-	c.Stats.Strength.Mods = c.StatMod(string(statmods.Strength))
-	c.Stats.Dexterity.Mods = c.StatMod(string(statmods.Dexterity))
-	c.Stats.Perception.Mods = c.StatMod(string(statmods.Perception))
-	c.Stats.Vitality.Mods = c.StatMod(string(statmods.Vitality))
-	c.Stats.Willpower.Mods = c.StatMod(string(statmods.Willpower))
-	c.Stats.Charisma.Mods = c.StatMod(string(statmods.Charisma))
-
-	// Stage 12.1: Apply stat_flat mutation bonuses to Mods before Recalculate()
-	c.Stats.Strength.Mods += mutations.GetStatFlat(c.Mutations, "strength")
-	c.Stats.Dexterity.Mods += mutations.GetStatFlat(c.Mutations, "dexterity")
-	c.Stats.Perception.Mods += mutations.GetStatFlat(c.Mutations, "perception")
-	c.Stats.Vitality.Mods += mutations.GetStatFlat(c.Mutations, "vitality")
-	c.Stats.Willpower.Mods += mutations.GetStatFlat(c.Mutations, "willpower")
-	c.Stats.Charisma.Mods += mutations.GetStatFlat(c.Mutations, "charisma")
-
-	// Recalculate stats
-	// Stats are basically:
-	// level*base + training + mods
-	c.Stats.Strength.Recalculate()
-	c.Stats.Dexterity.Recalculate()
-	c.Stats.Perception.Recalculate()
-	c.Stats.Vitality.Recalculate()
-	c.Stats.Willpower.Recalculate()
-	c.Stats.Charisma.Recalculate()
-
-	// Stage 12.1: Apply stat_multiplier mutations after Recalculate()
-	if v := mutations.GetStatMultiplier(c.Mutations, "strength"); v != 0 {
-		c.Stats.Strength.ValueAdj = int(float64(c.Stats.Strength.ValueAdj) * (1.0 + v))
-	}
-	if v := mutations.GetStatMultiplier(c.Mutations, "dexterity"); v != 0 {
-		c.Stats.Dexterity.ValueAdj = int(float64(c.Stats.Dexterity.ValueAdj) * (1.0 + v))
-	}
-	if v := mutations.GetStatMultiplier(c.Mutations, "perception"); v != 0 {
-		c.Stats.Perception.ValueAdj = int(float64(c.Stats.Perception.ValueAdj) * (1.0 + v))
-	}
-	if v := mutations.GetStatMultiplier(c.Mutations, "vitality"); v != 0 {
-		c.Stats.Vitality.ValueAdj = int(float64(c.Stats.Vitality.ValueAdj) * (1.0 + v))
-	}
-	if v := mutations.GetStatMultiplier(c.Mutations, "willpower"); v != 0 {
-		c.Stats.Willpower.ValueAdj = int(float64(c.Stats.Willpower.ValueAdj) * (1.0 + v))
-	}
-	if v := mutations.GetStatMultiplier(c.Mutations, "charisma"); v != 0 {
-		c.Stats.Charisma.ValueAdj = int(float64(c.Stats.Charisma.ValueAdj) * (1.0 + v))
+	// Pass 2 — apply equipment mods and mutation stat_flat, then Recalculate().
+	for _, e := range entries {
+		e.ptr.Mods = c.StatMod(e.modName)
+		e.ptr.Mods += mutations.GetStatFlat(c.Mutations, e.mutKey)
+		e.ptr.Recalculate()
 	}
 
-	// Set HP/Stamina/Conviction maxes (skill-based, no level dependency)
-	// This relies on the above stats so has to be calculated afterwards
+	// Pass 3 — apply mutation stat_multiplier to ValueAdj.
+	for _, e := range entries {
+		if v := mutations.GetStatMultiplier(c.Mutations, e.mutKey); v != 0 {
+			e.ptr.ValueAdj = int(float64(e.ptr.ValueAdj) * (1.0 + v))
+		}
+	}
+
+	// ── Derive pool maxes from stats (unchanged from pre-refactor) ─────
 	rb := configs.GetBalanceConfig()
 	c.HealthMax.Mods = int(rb.HealthBase) +
-		c.StatMod(string(statmods.HealthMax)) + // Any sort of spell buffs etc. are just direct modifiers
-		c.Stats.Strength.ValueAdj*int(rb.HealthPerStrength) + // Strength contributes to health
-		c.Stats.Vitality.ValueAdj*int(rb.HealthPerVitality) // Vitality is primary health stat
+		c.StatMod(string(statmods.HealthMax)) +
+		c.Stats.Strength.ValueAdj*int(rb.HealthPerStrength) +
+		c.Stats.Vitality.ValueAdj*int(rb.HealthPerVitality)
 
 	c.StaminaMax.Mods = int(rb.StaminaBase) +
-		c.Stats.Strength.ValueAdj*int(rb.StaminaPerStrength) + // Strength contributes to stamina
-		c.Stats.Willpower.ValueAdj*int(rb.StaminaPerWillpower) + // Willpower contributes to stamina
-		c.Stats.Vitality.ValueAdj*int(rb.StaminaPerVitality) // Vitality is primary stamina stat
+		c.Stats.Strength.ValueAdj*int(rb.StaminaPerStrength) +
+		c.Stats.Willpower.ValueAdj*int(rb.StaminaPerWillpower) +
+		c.Stats.Vitality.ValueAdj*int(rb.StaminaPerVitality)
 
 	c.ConvictionMax.Mods = int(rb.ConvictionBase) +
-		(c.Stats.Willpower.ValueAdj+c.Stats.Charisma.ValueAdj)*int(rb.ConvictionPerWilCha) // Willpower+Charisma drive conviction
+		(c.Stats.Willpower.ValueAdj+c.Stats.Charisma.ValueAdj)*int(rb.ConvictionPerWilCha)
 
-	// Set max action points
 	c.ActionPointsMax.Mods = 200 // hard coded for now
 
-	// Recalculate HP/Stamina/Conviction stats
 	c.HealthMax.Recalculate()
 	c.StaminaMax.Recalculate()
 	c.ConvictionMax.Recalculate()
 	c.ActionPointsMax.Recalculate()
 
-	// Stage 12.1: Apply health_multiplier mutations after HealthMax.Recalculate()
+	// Stage 12.1: health_multiplier mutation after HealthMax.Recalculate().
 	if hMult := mutations.GetHealthMultiplier(c.Mutations); hMult != 0 {
 		c.HealthMax.Value = int(float64(c.HealthMax.Value) * (1.0 + hMult))
 		if c.HealthMax.Value < 1 {
@@ -2861,7 +2835,7 @@ func (c *Character) RecalculateStats() {
 		}
 	}
 
-	// HP can't max less than 1, Stamina/Conviction can't max less than 0
+	// Floors.
 	if c.StaminaMax.Value < 0 {
 		c.StaminaMax.Value = 0
 	}
@@ -2875,7 +2849,7 @@ func (c *Character) RecalculateStats() {
 		c.ActionPointsMax.Value = 50
 	}
 
-	// Chrysalis enchantment pool reservation: clamp current pools to effective max
+	// Chrysalis pool reservation clamping (unchanged).
 	if hpRes := c.GetPoolReservation("health", c.HealthMax.Value); hpRes > 0 {
 		effectiveHP := c.HealthMax.Value - hpRes
 		if effectiveHP < 1 {
@@ -2904,10 +2878,9 @@ func (c *Character) RecalculateStats() {
 		}
 	}
 
-	// Stage 31.6: Enchant withdrawal condition — temporarily reduces pool max
+	// Stage 31.6: Enchant withdrawal condition — unchanged.
 	if c.HasCondition(ConditionEnchantWithdrawal) {
 		mag := c.GetConditionMagnitude(ConditionEnchantWithdrawal)
-		// Source stores which pool to penalize
 		for _, cond := range c.Conditions {
 			if cond.Type == ConditionEnchantWithdrawal {
 				penalty := int(math.Floor(float64(c.HealthMax.Value) * mag))
@@ -2944,9 +2917,9 @@ func (c *Character) RecalculateStats() {
 		}
 	}
 
+	// Emit CharacterStatsChanged if any tracked value changed.
 	if c.userId != 0 {
 		changed := false
-		// return true if something has changed.
 		if beforeStats.Strength.ValueAdj != c.Stats.Strength.ValueAdj {
 			changed = true
 		} else if beforeStats.Dexterity.ValueAdj != c.Stats.Dexterity.ValueAdj {
@@ -2989,73 +2962,20 @@ func (c *Character) CanDualWield() bool {
 	return c.GetSkillLevel(skills.WeaponCombat) > 0
 }
 
-// Returns whether a correction was in order
-func (c *Character) Validate(recalcPermaBuffs ...bool) error {
-
-	// ── Skill rename migrations ─────────────────────────────────
-	// Rename legacy skill keys so existing saves pick up new names.
-	if c.Skills != nil {
-		if v, ok := c.Skills["stealth"]; ok {
-			c.Skills["skullduggery"] = v
-			delete(c.Skills, "stealth")
-		}
+// validateSkillMigrations renames legacy skills, merges retired skills,
+// and removes dead skill keys. Must run BEFORE ensureAllSkills.
+func (c *Character) validateSkillMigrations() {
+	if c.Skills == nil {
+		return
 	}
 
-	if len(c.Description) == 0 {
-		c.Description = "They seem thoroughly uninteresting."
+	// stealth → skullduggery rename.
+	if v, ok := c.Skills["stealth"]; ok {
+		c.Skills["skullduggery"] = v
+		delete(c.Skills, "stealth")
 	}
 
-	if sp := species.GetSpecies(c.SpeciesId); sp == nil {
-		c.SpeciesId = 1
-	}
-
-	if c.Created.IsZero() {
-		c.Created = time.Now()
-	}
-
-	if c.Pet.Exists() {
-		c.Pet.Validate()
-	}
-
-	if c.SpellBook == nil {
-		c.SpellBook = make(map[string]int)
-	}
-
-	if c.KnownRecipes == nil {
-		c.KnownRecipes = crafting.GetStarterRecipes()
-	} else {
-		// Backfill any new starter recipes added since character creation
-		for id, val := range crafting.GetStarterRecipes() {
-			if _, ok := c.KnownRecipes[id]; !ok {
-				c.KnownRecipes[id] = val
-			}
-		}
-	}
-
-	if c.Mutations == nil {
-		c.Mutations = make(map[string]int)
-	}
-
-	// Derive ExtraArms from mutation level (capped at 4)
-	if lvl, ok := c.Mutations["extra-arms"]; ok && lvl > 0 {
-		c.ExtraArms = lvl
-		if c.ExtraArms > 4 {
-			c.ExtraArms = 4
-		}
-	} else {
-		c.ExtraArms = 0
-	}
-
-	if c.Zone == "" {
-		c.Zone = startingZone
-	}
-
-	if c.Name == "" {
-		c.Name = defaultName
-	}
-	c.Buffs.Validate()
-
-	// Migrate tracking/foraging → search (must run before ensureAllSkills)
+	// tracking + foraging → search merge.
 	if _, hasTracking := c.Skills["tracking"]; hasTracking {
 		trackRank := c.Skills["tracking"]
 		forageRank := c.Skills["foraging"]
@@ -3082,22 +3002,18 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 		delete(c.SkillUseCount, "foraging")
 	}
 
-	// Remove retired skills (cast, ranged-combat, first-aid)
+	// Remove retired skills.
 	for _, dead := range []string{"cast", "ranged-combat", "first-aid"} {
 		delete(c.Skills, dead)
 		if c.SkillUseCount != nil {
 			delete(c.SkillUseCount, dead)
 		}
 	}
+}
 
-	// Ensure all known skills exist at rank 1 minimum (retroactive for existing characters)
-	c.Skills = ensureAllSkills(c.Skills)
-
-	// Do a stats recalc based on equipment, race, level, etc.
-	c.RecalculateStats()
-
-	// Recalculate health, stamina, and conviction
-
+// validatePoolClamps clamps current Health/Stamina/Conviction into their
+// legal ranges after RecalculateStats has been called.
+func (c *Character) validatePoolClamps() {
 	if c.Stamina > c.StaminaMax.Value {
 		c.Stamina = c.StaminaMax.Value
 	}
@@ -3107,22 +3023,20 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 	if c.Health > c.HealthMax.Value {
 		c.Health = c.HealthMax.Value
 	}
-
 	if c.Health < -10 {
 		c.Health = -10
 	}
-
 	if c.Stamina < 0 {
 		c.Stamina = 0
 	}
 	if c.Conviction < 0 {
 		c.Conviction = 0
 	}
+}
 
-	c.Cooldowns.Prune()
-
-	// Validate possessed/worn items
-	// This helps ensure all in-play items have a uid
+// validateEquipmentItems calls items.Item.Validate() on every backpack and
+// worn item to ensure all in-play items have a uid.
+func (c *Character) validateEquipmentItems() {
 	for i := range c.Items {
 		c.Items[i].Validate()
 	}
@@ -3139,116 +3053,130 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 	c.Equipment.Legs.Validate()
 	c.Equipment.Feet.Validate()
 	c.Equipment.Tail.Validate()
-	// Done with validation
+}
 
-	if speciesInfo := species.GetSpecies(c.SpeciesId); speciesInfo != nil {
-
-		c.Equipment.EnableAll()
-
-		// Are there slots that SHOULD be disabled?
-		if len(speciesInfo.DisabledSlots) > 0 {
-
-			for _, disabledSlot := range speciesInfo.DisabledSlots {
-
-				var itemFoundInDisabledSlot items.Item = items.ItemDisabledSlot
-
-				switch items.ItemType(disabledSlot) {
-				case items.Weapon:
-					if c.Equipment.Weapon.ItemId > 0 { // Did we find somethign in a disabled slot?
-						itemFoundInDisabledSlot = c.Equipment.Weapon
-					}
-					c.Equipment.Weapon = items.ItemDisabledSlot
-				case items.Offhand:
-					if c.Equipment.Offhand.ItemId > 0 { // Did we find somethign in a disabled slot?
-						itemFoundInDisabledSlot = c.Equipment.Offhand
-					}
-					c.Equipment.Offhand = items.ItemDisabledSlot
-				case items.Head:
-					if c.Equipment.Head.ItemId > 0 { // Did we find somethign in a disabled slot?
-						itemFoundInDisabledSlot = c.Equipment.Head
-					}
-					c.Equipment.Head = items.ItemDisabledSlot
-				case items.Neck:
-					if c.Equipment.Neck.ItemId > 0 { // Did we find somethign in a disabled slot?
-						itemFoundInDisabledSlot = c.Equipment.Neck
-					}
-					c.Equipment.Neck = items.ItemDisabledSlot
-				case items.Body:
-					if c.Equipment.Body.ItemId > 0 { // Did we find somethign in a disabled slot?
-						itemFoundInDisabledSlot = c.Equipment.Body
-					}
-					c.Equipment.Body = items.ItemDisabledSlot
-				case items.Belt:
-					if c.Equipment.Belt.ItemId > 0 { // Did we find somethign in a disabled slot?
-						itemFoundInDisabledSlot = c.Equipment.Belt
-					}
-					c.Equipment.Belt = items.ItemDisabledSlot
-				case items.Gloves:
-					if c.Equipment.Gloves.ItemId > 0 { // Did we find somethign in a disabled slot?
-						itemFoundInDisabledSlot = c.Equipment.Gloves
-					}
-					c.Equipment.Gloves = items.ItemDisabledSlot
-				case items.Ring:
-					if c.Equipment.Ring.ItemId > 0 { // Did we find somethign in a disabled slot?
-						itemFoundInDisabledSlot = c.Equipment.Ring
-					}
-					c.Equipment.Ring = items.ItemDisabledSlot
-				case items.Legs:
-					if c.Equipment.Legs.ItemId > 0 { // Did we find somethign in a disabled slot?
-						itemFoundInDisabledSlot = c.Equipment.Legs
-					}
-					c.Equipment.Legs = items.ItemDisabledSlot
-				case items.Feet:
-					if c.Equipment.Feet.ItemId > 0 { // Did we find somethign in a disabled slot?
-						itemFoundInDisabledSlot = c.Equipment.Feet
-					}
-					c.Equipment.Feet = items.ItemDisabledSlot
-				case items.Wrist:
-					if c.Equipment.Wrist1.ItemId > 0 {
-						itemFoundInDisabledSlot = c.Equipment.Wrist1
-					}
-					c.Equipment.Wrist1 = items.ItemDisabledSlot
-					if c.Equipment.Wrist2.ItemId > 0 {
-						c.StoreItem(c.Equipment.Wrist2)
-					}
-					c.Equipment.Wrist2 = items.ItemDisabledSlot
-				case items.Back:
-					if c.Equipment.Back.ItemId > 0 {
-						itemFoundInDisabledSlot = c.Equipment.Back
-					}
-					c.Equipment.Back = items.ItemDisabledSlot
-				case items.Shoulders:
-					if c.Equipment.Shoulders.ItemId > 0 {
-						itemFoundInDisabledSlot = c.Equipment.Shoulders
-					}
-					c.Equipment.Shoulders = items.ItemDisabledSlot
-				case items.ComponentBag:
-					if c.Equipment.ComponentBag.ItemId > 0 {
-						itemFoundInDisabledSlot = c.Equipment.ComponentBag
-					}
-					c.Equipment.ComponentBag = items.ItemDisabledSlot
-				}
-
-				// Handle non-ItemType disabled slots (string-keyed)
-				if disabledSlot == "ring2" {
-					if c.Equipment.Ring2.ItemId > 0 {
-						itemFoundInDisabledSlot = c.Equipment.Ring2
-					}
-					c.Equipment.Ring2 = items.ItemDisabledSlot
-				}
-
-				if !itemFoundInDisabledSlot.IsDisabled() {
-					c.StoreItem(itemFoundInDisabledSlot)
-					mudlog.Debug("Disabled Check", "error", "Item found in disabled slot", "name", itemFoundInDisabledSlot.Name(), "slot", disabledSlot, "character", c.Name)
-				}
-			}
-
-		}
-
+// validateDisabledSlotsForSpecies enables all slots, then disables the ones
+// the species requires to be disabled. Items found in to-be-disabled slots
+// are moved to the backpack.
+func (c *Character) validateDisabledSlotsForSpecies() {
+	speciesInfo := species.GetSpecies(c.SpeciesId)
+	if speciesInfo == nil {
+		return
 	}
 
-	// Handle extra arm slots based on ExtraArms mutation level
-	// If character lacks enough extra arms, move items back to backpack
+	if len(speciesInfo.DisabledSlots) == 0 {
+		return
+	}
+
+	for _, disabledSlot := range speciesInfo.DisabledSlots {
+		var itemFoundInDisabledSlot items.Item = items.ItemDisabledSlot
+
+		switch items.ItemType(disabledSlot) {
+		case items.Weapon:
+			if c.Equipment.Weapon.ItemId > 0 {
+				itemFoundInDisabledSlot = c.Equipment.Weapon
+			}
+			c.Equipment.Weapon = items.ItemDisabledSlot
+		case items.Offhand:
+			if c.Equipment.Offhand.ItemId > 0 {
+				itemFoundInDisabledSlot = c.Equipment.Offhand
+			}
+			c.Equipment.Offhand = items.ItemDisabledSlot
+		case items.Head:
+			if c.Equipment.Head.ItemId > 0 {
+				itemFoundInDisabledSlot = c.Equipment.Head
+			}
+			c.Equipment.Head = items.ItemDisabledSlot
+		case items.Neck:
+			if c.Equipment.Neck.ItemId > 0 {
+				itemFoundInDisabledSlot = c.Equipment.Neck
+			}
+			c.Equipment.Neck = items.ItemDisabledSlot
+		case items.Body:
+			if c.Equipment.Body.ItemId > 0 {
+				itemFoundInDisabledSlot = c.Equipment.Body
+			}
+			c.Equipment.Body = items.ItemDisabledSlot
+		case items.Belt:
+			if c.Equipment.Belt.ItemId > 0 {
+				itemFoundInDisabledSlot = c.Equipment.Belt
+			}
+			c.Equipment.Belt = items.ItemDisabledSlot
+		case items.Gloves:
+			if c.Equipment.Gloves.ItemId > 0 {
+				itemFoundInDisabledSlot = c.Equipment.Gloves
+			}
+			c.Equipment.Gloves = items.ItemDisabledSlot
+		case items.Ring:
+			if c.Equipment.Ring.ItemId > 0 {
+				itemFoundInDisabledSlot = c.Equipment.Ring
+			}
+			c.Equipment.Ring = items.ItemDisabledSlot
+		case items.Legs:
+			if c.Equipment.Legs.ItemId > 0 {
+				itemFoundInDisabledSlot = c.Equipment.Legs
+			}
+			c.Equipment.Legs = items.ItemDisabledSlot
+		case items.Feet:
+			if c.Equipment.Feet.ItemId > 0 {
+				itemFoundInDisabledSlot = c.Equipment.Feet
+			}
+			c.Equipment.Feet = items.ItemDisabledSlot
+		case items.Wrist:
+			if c.Equipment.Wrist1.ItemId > 0 {
+				itemFoundInDisabledSlot = c.Equipment.Wrist1
+			}
+			c.Equipment.Wrist1 = items.ItemDisabledSlot
+			if c.Equipment.Wrist2.ItemId > 0 {
+				c.StoreItem(c.Equipment.Wrist2)
+			}
+			c.Equipment.Wrist2 = items.ItemDisabledSlot
+		case items.Back:
+			if c.Equipment.Back.ItemId > 0 {
+				itemFoundInDisabledSlot = c.Equipment.Back
+			}
+			c.Equipment.Back = items.ItemDisabledSlot
+		case items.Shoulders:
+			if c.Equipment.Shoulders.ItemId > 0 {
+				itemFoundInDisabledSlot = c.Equipment.Shoulders
+			}
+			c.Equipment.Shoulders = items.ItemDisabledSlot
+		case items.ComponentBag:
+			if c.Equipment.ComponentBag.ItemId > 0 {
+				itemFoundInDisabledSlot = c.Equipment.ComponentBag
+			}
+			c.Equipment.ComponentBag = items.ItemDisabledSlot
+		}
+
+		// Non-ItemType disabled slots (string-keyed).
+		if disabledSlot == "ring2" {
+			if c.Equipment.Ring2.ItemId > 0 {
+				itemFoundInDisabledSlot = c.Equipment.Ring2
+			}
+			c.Equipment.Ring2 = items.ItemDisabledSlot
+		}
+
+		if !itemFoundInDisabledSlot.IsDisabled() {
+			c.StoreItem(itemFoundInDisabledSlot)
+			mudlog.Debug("Disabled Check", "error", "Item found in disabled slot", "name", itemFoundInDisabledSlot.Name(), "slot", disabledSlot, "character", c.Name)
+		}
+	}
+}
+
+// validateMutationSlots enforces extra-arm / tail slot availability based on
+// the character's current ExtraArms count and tail mutation.
+func (c *Character) validateMutationSlots() {
+	// Derive ExtraArms from mutation level (capped at 4).
+	if lvl, ok := c.Mutations["extra-arms"]; ok && lvl > 0 {
+		c.ExtraArms = lvl
+		if c.ExtraArms > 4 {
+			c.ExtraArms = 4
+		}
+	} else {
+		c.ExtraArms = 0
+	}
+
+	// Extra arms: unavailable levels move items back to backpack.
 	if c.ExtraArms < 4 {
 		if c.Equipment.ExtraArm4.ItemId > 0 {
 			c.StoreItem(c.Equipment.ExtraArm4)
@@ -3292,8 +3220,7 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 		c.Equipment.ExtraWrist1 = items.ItemDisabledSlot
 	}
 
-	// Derive tail mutation: enable tail slot if mutation present, disable otherwise.
-	// Must run AFTER EnableAll() which resets all slots.
+	// Tail mutation: enable tail slot if mutation present, disable otherwise.
 	if _, hasTail := c.Mutations["tail"]; hasTail {
 		if c.Equipment.Tail.ItemId < 0 {
 			c.Equipment.Tail = items.Item{}
@@ -3305,7 +3232,7 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 		c.Equipment.Tail = items.ItemDisabledSlot
 	}
 
-	// Tail mutation disables legs slot
+	// Tail mutation disables legs slot via disable-legs flag.
 	if flags := mutations.GetMutationFlags(c.Mutations); flags["disable-legs"] {
 		if c.Equipment.Legs.ItemId > 0 {
 			c.StoreItem(c.Equipment.Legs)
@@ -3313,6 +3240,79 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 		}
 		c.Equipment.Legs = items.ItemDisabledSlot
 	}
+}
+
+// Returns whether a correction was in order
+func (c *Character) Validate(recalcPermaBuffs ...bool) error {
+
+	// ── Skill migrations must run before ensureAllSkills ────────────
+	c.validateSkillMigrations()
+
+	if len(c.Description) == 0 {
+		c.Description = "They seem thoroughly uninteresting."
+	}
+
+	if sp := species.GetSpecies(c.SpeciesId); sp == nil {
+		c.SpeciesId = 1
+	}
+
+	if c.Created.IsZero() {
+		c.Created = time.Now()
+	}
+
+	if c.Pet.Exists() {
+		c.Pet.Validate()
+	}
+
+	if c.SpellBook == nil {
+		c.SpellBook = make(map[string]int)
+	}
+
+	if c.KnownRecipes == nil {
+		c.KnownRecipes = crafting.GetStarterRecipes()
+	} else {
+		// Backfill any new starter recipes added since character creation
+		for id, val := range crafting.GetStarterRecipes() {
+			if _, ok := c.KnownRecipes[id]; !ok {
+				c.KnownRecipes[id] = val
+			}
+		}
+	}
+
+	if c.Mutations == nil {
+		c.Mutations = make(map[string]int)
+	}
+
+	if c.Zone == "" {
+		c.Zone = startingZone
+	}
+
+	if c.Name == "" {
+		c.Name = defaultName
+	}
+	c.Buffs.Validate()
+
+	// Ensure all known skills exist at rank 1 minimum.
+	c.Skills = ensureAllSkills(c.Skills)
+
+	// Stats recalc based on equipment, race, level, etc.
+	c.RecalculateStats()
+
+	// Pool clamping after recalc.
+	c.validatePoolClamps()
+
+	c.Cooldowns.Prune()
+
+	// Validate possessed/worn items (UIDs).
+	c.validateEquipmentItems()
+	// Reset all slots; both helpers below layer their rules on top.
+	c.Equipment.EnableAll()
+
+	// Apply species-disabled slot rules (requires validateEquipmentItems first).
+	c.validateDisabledSlotsForSpecies()
+
+	// Apply mutation-driven slot rules (extra arms, tail, disable-legs).
+	c.validateMutationSlots()
 
 	if len(recalcPermaBuffs) > 0 && recalcPermaBuffs[0] {
 		c.reapplyPermabuffs()
@@ -3423,161 +3423,136 @@ func (c *Character) GetGearValue() int {
 	return value
 }
 
-func (c *Character) Wear(i items.Item) (returnItems []items.Item, newItemWorn bool, failureReason string) {
+// wearWeaponOrShield handles pair-based placement for weapons and offhands.
+// Returns the same tuple as Wear. Caller is responsible for calling
+// reapplyPermabuffs (this helper calls it for 2H and shield cases internally
+// to preserve pre-refactor semantics).
+func (c *Character) wearWeaponOrShield(i items.Item, spec items.ItemSpec, iHandsRequired int, canDualWield bool) (returnItems []items.Item, newItemWorn bool, failureReason string) {
+	pairs := c.GetHandPairs()
+	isShield := spec.Type == items.Offhand
 
-	i.Validate()
-
-	spec := i.GetSpec()
-
-	if spec.Type != items.Weapon && spec.Subtype != items.Wearable {
-		return returnItems, false, `That item cannot be equipped.`
-	}
-
-	iHandsRequired := c.HandsRequired(i)
-	if iHandsRequired > 2 {
-		return returnItems, false, `That requires too many hands.`
-	}
-
-	canDualWield := c.CanDualWield()
-
-	// ── Pair-based weapon/shield placement ──────────────────────────
-	if spec.Type == items.Weapon || spec.Type == items.Offhand {
-		pairs := c.GetHandPairs()
-		isShield := spec.Type == items.Offhand
-
-		if iHandsRequired >= 2 {
-			// 2H weapon: find a free pair, or displace the cheapest pair
-			freePair := FindFirstFreePair(pairs)
-			if freePair == nil {
-				freePair = FindCheapestPairToDisplace(pairs)
-			}
-			if freePair == nil {
-				return returnItems, false, `You have no free pair of hands for a two-handed weapon.`
-			}
-
-			// Check for cursed items in the pair
-			if !freePair.First.IsEmpty() && freePair.First.ItemPtr.IsCursed() {
-				return returnItems, false, `Your ` + freePair.First.ItemPtr.DisplayName() + ` is cursed and prevents you from removing it.`
-			}
-			if !freePair.Second.IsEmpty() && freePair.Second.ItemPtr.IsCursed() {
-				return returnItems, false, `Your ` + freePair.Second.ItemPtr.DisplayName() + ` is cursed and prevents you from removing it.`
-			}
-
-			// Displace existing items
-			if !freePair.First.IsEmpty() {
-				returnItems = append(returnItems, *freePair.First.ItemPtr)
-			}
-			if !freePair.IsHalfPair() && !freePair.Second.IsEmpty() {
-				returnItems = append(returnItems, *freePair.Second.ItemPtr)
-			}
-
-			// Place 2H in first slot, clear second
-			*freePair.First.ItemPtr = i
-			if !freePair.IsHalfPair() {
-				*freePair.Second.ItemPtr = items.Item{}
-			}
-
-			c.reapplyPermabuffs()
-			return returnItems, true, ``
+	if iHandsRequired >= 2 {
+		freePair := FindFirstFreePair(pairs)
+		if freePair == nil {
+			freePair = FindCheapestPairToDisplace(pairs)
 		}
-
-		// 1H weapon or shield
-		if isShield {
-			// Shields go in arms 2-6 (not arm 1 / Weapon slot)
-			slot := c.FindFirstEmptySlot(pairs, true)
-			if slot != nil {
-				*slot.ItemPtr = i
-				c.reapplyPermabuffs()
-				return returnItems, true, ``
-			}
-			// No empty slot — displace offhand (Pair A second slot)
-			if pairs[0].First.Is2H(c) {
-				return returnItems, false, `Your two-handed weapon leaves no room for a shield.`
-			}
-			if pairs[0].Second.ItemPtr.IsCursed() {
-				return returnItems, false, `Your ` + pairs[0].Second.ItemPtr.DisplayName() + ` is cursed and prevents you from removing it.`
-			}
-			returnItems = append(returnItems, *pairs[0].Second.ItemPtr)
-			*pairs[0].Second.ItemPtr = i
-			c.reapplyPermabuffs()
-			return returnItems, true, ``
+		if freePair == nil {
+			return returnItems, false, `You have no free pair of hands for a two-handed weapon.`
 		}
-
-		// 1H weapon
-		bothMartial := spec.Subtype == items.Claws && c.Equipment.Weapon.GetSpec().Subtype == items.Claws
-
-		// Try to find an empty slot across all pairs
-		slot := c.FindFirstEmptySlot(pairs, false)
-		if slot != nil {
-			// If placing in Pair A offhand, need dual-wield or martial
-			if slot.Label == "offhand" && !canDualWield && !bothMartial {
-				// Skip offhand, try extra arms instead
-				slot = nil
-				for pi := 1; pi < len(pairs); pi++ {
-					p := &pairs[pi]
-					if p.First.Is2H(c) {
-						continue
-					}
-					if p.First.IsEmpty() {
-						slot = &p.First
-						break
-					}
-					if !p.IsHalfPair() && p.Second.IsEmpty() {
-						slot = &p.Second
-						break
-					}
-				}
-			}
-			if slot != nil {
-				*slot.ItemPtr = i
-				c.reapplyPermabuffs()
-				return returnItems, true, ``
-			}
+		if !freePair.First.IsEmpty() && freePair.First.ItemPtr.IsCursed() {
+			return returnItems, false, `Your ` + freePair.First.ItemPtr.DisplayName() + ` is cursed and prevents you from removing it.`
 		}
-
-		// No empty slots — displace Weapon slot (arm 1)
-		if c.Equipment.Weapon.IsCursed() {
-			return returnItems, false, `Your ` + c.Equipment.Weapon.DisplayName() + ` is cursed and prevents you from removing it.`
+		if !freePair.Second.IsEmpty() && freePair.Second.ItemPtr.IsCursed() {
+			return returnItems, false, `Your ` + freePair.Second.ItemPtr.DisplayName() + ` is cursed and prevents you from removing it.`
 		}
-		// If current weapon is 2H, also clear offhand
-		if pairs[0].First.Is2H(c) && !pairs[0].Second.IsEmpty() {
-			returnItems = append(returnItems, *pairs[0].Second.ItemPtr)
-			*pairs[0].Second.ItemPtr = items.Item{}
+		if !freePair.First.IsEmpty() {
+			returnItems = append(returnItems, *freePair.First.ItemPtr)
 		}
-		returnItems = append(returnItems, c.Equipment.Weapon)
-		c.Equipment.Weapon = i
+		if !freePair.IsHalfPair() && !freePair.Second.IsEmpty() {
+			returnItems = append(returnItems, *freePair.Second.ItemPtr)
+		}
+		*freePair.First.ItemPtr = i
+		if !freePair.IsHalfPair() {
+			*freePair.Second.ItemPtr = items.Item{}
+		}
 		c.reapplyPermabuffs()
 		return returnItems, true, ``
 	}
 
-	// ── Armor slots ─────────────────────────────────────────────────
+	if isShield {
+		slot := c.FindFirstEmptySlot(pairs, true)
+		if slot != nil {
+			*slot.ItemPtr = i
+			c.reapplyPermabuffs()
+			return returnItems, true, ``
+		}
+		if pairs[0].First.Is2H(c) {
+			return returnItems, false, `Your two-handed weapon leaves no room for a shield.`
+		}
+		if pairs[0].Second.ItemPtr.IsCursed() {
+			return returnItems, false, `Your ` + pairs[0].Second.ItemPtr.DisplayName() + ` is cursed and prevents you from removing it.`
+		}
+		returnItems = append(returnItems, *pairs[0].Second.ItemPtr)
+		*pairs[0].Second.ItemPtr = i
+		c.reapplyPermabuffs()
+		return returnItems, true, ``
+	}
+
+	// 1H weapon
+	bothMartial := spec.Subtype == items.Claws && c.Equipment.Weapon.GetSpec().Subtype == items.Claws
+
+	slot := c.FindFirstEmptySlot(pairs, false)
+	if slot != nil {
+		if slot.Label == "offhand" && !canDualWield && !bothMartial {
+			slot = nil
+			for pi := 1; pi < len(pairs); pi++ {
+				p := &pairs[pi]
+				if p.First.Is2H(c) {
+					continue
+				}
+				if p.First.IsEmpty() {
+					slot = &p.First
+					break
+				}
+				if !p.IsHalfPair() && p.Second.IsEmpty() {
+					slot = &p.Second
+					break
+				}
+			}
+		}
+		if slot != nil {
+			*slot.ItemPtr = i
+			c.reapplyPermabuffs()
+			return returnItems, true, ``
+		}
+	}
+
+	// No empty slots — displace Weapon slot (arm 1)
+	if c.Equipment.Weapon.IsCursed() {
+		return returnItems, false, `Your ` + c.Equipment.Weapon.DisplayName() + ` is cursed and prevents you from removing it.`
+	}
+	if pairs[0].First.Is2H(c) && !pairs[0].Second.IsEmpty() {
+		returnItems = append(returnItems, *pairs[0].Second.ItemPtr)
+		*pairs[0].Second.ItemPtr = items.Item{}
+	}
+	returnItems = append(returnItems, c.Equipment.Weapon)
+	c.Equipment.Weapon = i
+	c.reapplyPermabuffs()
+	return returnItems, true, ``
+}
+
+// wearArmorSlot handles placement for non-weapon equipment (armor, rings, wrists,
+// back, shoulders, component bag, tail). Returns the same tuple as Wear.
+// Does NOT call reapplyPermabuffs — the caller handles that (to preserve the
+// pre-refactor semantics where reapplyPermabuffs is called with returnItems).
+func (c *Character) wearArmorSlot(i items.Item, spec items.ItemSpec) (returnItems []items.Item, newItemWorn bool, failureReason string) {
 	switch spec.Type {
 	case items.Head:
-		if c.Equipment.Head.IsDisabled() { // Don't allow equipping on a disabled slot
+		if c.Equipment.Head.IsDisabled() {
 			return returnItems, false, `You can't wear things on your head.`
 		}
 		returnItems = append(returnItems, c.Equipment.Head)
 		c.Equipment.Head = i
 	case items.Neck:
-		if c.Equipment.Neck.IsDisabled() { // Don't allow equipping on a disabled slot
+		if c.Equipment.Neck.IsDisabled() {
 			return returnItems, false, `You can't wear things on your neck.`
 		}
 		returnItems = append(returnItems, c.Equipment.Neck)
 		c.Equipment.Neck = i
 	case items.Body:
-		if c.Equipment.Body.IsDisabled() { // Don't allow equipping on a disabled slot
+		if c.Equipment.Body.IsDisabled() {
 			return returnItems, false, `You can't wear things on your body.`
 		}
 		returnItems = append(returnItems, c.Equipment.Body)
 		c.Equipment.Body = i
 	case items.Belt:
-		if c.Equipment.Belt.IsDisabled() { // Don't allow equipping on a disabled slot
+		if c.Equipment.Belt.IsDisabled() {
 			return returnItems, false, `You can't wear things on your head.`
 		}
 		returnItems = append(returnItems, c.Equipment.Belt)
 		c.Equipment.Belt = i
 	case items.Gloves:
-		if c.Equipment.Gloves.IsDisabled() { // Don't allow equipping on a disabled slot
+		if c.Equipment.Gloves.IsDisabled() {
 			return returnItems, false, `You can't wear things as gloves.`
 		}
 		returnItems = append(returnItems, c.Equipment.Gloves)
@@ -3634,13 +3609,13 @@ func (c *Character) Wear(i items.Item) (returnItems []items.Item, newItemWorn bo
 		c.Equipment.ComponentBag = i
 		c.SortComponentItems()
 	case items.Legs:
-		if c.Equipment.Legs.IsDisabled() { // Don't allow equipping on a disabled slot
+		if c.Equipment.Legs.IsDisabled() {
 			return returnItems, false, `You can't wear things on your legs.`
 		}
 		returnItems = append(returnItems, c.Equipment.Legs)
 		c.Equipment.Legs = i
 	case items.Feet:
-		if c.Equipment.Feet.IsDisabled() { // Don't allow equipping on a disabled slot
+		if c.Equipment.Feet.IsDisabled() {
 			return returnItems, false, `You can't wear things on your feet.`
 		}
 		returnItems = append(returnItems, c.Equipment.Feet)
@@ -3654,10 +3629,35 @@ func (c *Character) Wear(i items.Item) (returnItems []items.Item, newItemWorn bo
 	default:
 		return returnItems, false, `Unrecognized object.`
 	}
-
-	c.reapplyPermabuffs(returnItems...)
-
 	return returnItems, true, ``
+}
+
+func (c *Character) Wear(i items.Item) (returnItems []items.Item, newItemWorn bool, failureReason string) {
+
+	i.Validate()
+
+	spec := i.GetSpec()
+
+	if spec.Type != items.Weapon && spec.Subtype != items.Wearable {
+		return returnItems, false, `That item cannot be equipped.`
+	}
+
+	iHandsRequired := c.HandsRequired(i)
+	if iHandsRequired > 2 {
+		return returnItems, false, `That requires too many hands.`
+	}
+
+	// Weapon + shield placement uses pair-based logic.
+	if spec.Type == items.Weapon || spec.Type == items.Offhand {
+		return c.wearWeaponOrShield(i, spec, iHandsRequired, c.CanDualWield())
+	}
+
+	// Armor + non-weapon slots use the simple switch.
+	returnItems, newItemWorn, failureReason = c.wearArmorSlot(i, spec)
+	if newItemWorn {
+		c.reapplyPermabuffs(returnItems...)
+	}
+	return returnItems, newItemWorn, failureReason
 }
 
 // SortComponentItems moves is_component items from backpack into ComponentItems

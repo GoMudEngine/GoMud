@@ -14,7 +14,7 @@
                             <option value="">Select an Mob to View</option>
                             <option value="0">Add New Mob</option>
                             {{range $index, $mobData := .Mobs}}
-                                <option data-content="<span class='badge badge-secondary'>{{ $mobData.MobId }}</span> {{ if gt (len $mobData.QuestFlags) 0 }}<span class='text-warning'>&#x2605;</span> {{end}}<span class='font-weight-bold'>{{ $mobData.Character.Name }}</span> {{ if gt ( len $mobData.Character.Shop ) 0 }}<span class='badge badge-pill badge-warning'>shop</span> {{end}}{{ if ne $mobData.GetScript "" }} <span class='badge badge-pill badge-info'>Script</span>{{end}}" value="{{ $mobData.MobId }}">{{ rpad 7 $mobData.MobId "&nbsp;&nbsp;" }} {{ $mobData.Character.Name }}</option>
+                                <option data-content="<span class='badge badge-secondary'>{{ $mobData.MobId }}</span> {{ if gt (len $mobData.QuestFlags) 0 }}<span class='text-warning'>&#x2605;</span> {{end}}<span class='font-weight-bold'>{{ $mobData.Character.Name }}</span> {{ if gt ( len $mobData.Character.Shop ) 0 }}<span class='badge badge-pill badge-warning'>shop</span> {{end}}" value="{{ $mobData.MobId }}">{{ rpad 7 $mobData.MobId "&nbsp;&nbsp;" }} {{ $mobData.Character.Name }}</option>
                             {{end}}
                         </select>
                     </div>

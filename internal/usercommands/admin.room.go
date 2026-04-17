@@ -10,7 +10,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/prompt"
 	"github.com/GoMudEngine/GoMud/internal/events"
-	"github.com/GoMudEngine/GoMud/internal/exit"
 	"github.com/GoMudEngine/GoMud/internal/gamelock"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mutators"
@@ -36,22 +35,15 @@ func Room(rest string, user *users.UserRecord, liveRoom *rooms.Room, flags event
 
 	handled := true
 
-	// args should look like one of the following:
-	// info <optional room id>
-	// <move to room id>
-
 	args := util.SplitButRespectQuotes(rest)
 
 	if len(args) == 0 {
-		// send some sort of help info?
 		infoOutput, _ := templates.Process("admincommands/help/command.room", nil, user.UserId)
 		user.SendText(infoOutput)
-
 		return handled, nil
 	}
 
 	var room *rooms.Room
-
 	if liveRoom.IsEphemeral() {
 		room = liveRoom
 	} else {
@@ -64,355 +56,40 @@ func Room(rest string, user *users.UserRecord, liveRoom *rooms.Room, flags event
 		return true, err
 	}
 
-	var roomId int = 0
 	roomCmd := strings.ToLower(args[0])
 
-	// Interactive Editing
-	if roomCmd == `edit` {
-
-		if !user.HasRolePermission(`room.edit`) {
-			user.SendText(`you do not have <ansi fg="command">room.edit</ansi> permission`)
-			return true, nil
-		}
-
-		if rest == `edit container` || rest == `edit containers` {
-
-			if !user.HasRolePermission(`room.edit.container`) {
-				user.SendText(`you do not have <ansi fg="command">room.edit.container</ansi> permission`)
-				return true, nil
-			}
-
-			return room_Edit_Containers(``, user, room, flags)
-		}
-
-		if rest == `edit exit` || rest == `edit exits` {
-
-			if !user.HasRolePermission(`room.edit.exits`) {
-				user.SendText(`you do not have <ansi fg="command">room.edit.container</ansi> permission`)
-				return true, nil
-			}
-
-			return room_Edit_Exits(``, user, room, flags)
-		}
-
-		if rest == `edit mutator` || rest == `edit mutators` {
-
-			if !user.HasRolePermission(`room.edit.mutators`) {
-				user.SendText(`you do not have <ansi fg="command">room.edit.container</ansi> permission`)
-				return true, nil
-			}
-
-			return room_Edit_Mutators(``, user, room, flags)
-		}
-
-		user.SendText(`<ansi fg="red">edit WHAT?</ansi> Try:`)
-		user.SendText(`    <ansi fg="command">room edit containers</ansi>`)
-		user.SendText(`    <ansi fg="command">room edit exits</ansi>`)
-		user.SendText(`    <ansi fg="command">room edit mutators</ansi>`)
-
-		return true, nil
-	}
-
-	if roomCmd == `noun` || roomCmd == `nouns` {
-
-		if !user.HasRolePermission(`room.nouns`) {
-			user.SendText(`you do not have <ansi fg="command">room.noun</ansi> permission`)
-			return true, nil
-		}
-
-		// room noun chair "a chair for sitting"
-		if len(args) > 2 {
-			noun := args[1]
-			description := strings.Join(args[2:], ` `)
-
-			if room.Nouns == nil {
-				room.Nouns = map[string]string{}
-			}
-			room.Nouns[noun] = description
-
-			user.SendText(`Noun Added:`)
-			user.SendText(fmt.Sprintf(`<ansi fg="noun">%s</ansi> - %s`, strings.Repeat(` `, 20-len(noun))+noun, description))
-
-			rooms.SaveRoomTemplate(*room)
-
-			return true, nil
-		}
-
-		// room noun chair
-		if len(args) == 2 || (len(args) == 3 && len(args[2]) == 0) {
-
-			if _, ok := room.Nouns[args[1]]; ok {
-				delete(room.Nouns, args[1])
-				user.SendText(`Noun deleted.`)
-			} else {
-				user.SendText(`Noun not found.`)
-			}
-
-			return true, nil
-		}
-
-		// room noun
-		// room nouns
-		user.SendText(`Room Nouns:`)
-		for noun, description := range room.Nouns {
-			user.SendText(fmt.Sprintf(`<ansi fg="noun">%s</ansi> - %s`, strings.Repeat(` `, 20-len(noun))+noun, description))
-		}
-		return true, nil
-	}
-
-	if roomCmd == "copy" && len(args) >= 3 {
-
-		if !user.HasRolePermission(`room.copy`) {
-			user.SendText(`you do not have <ansi fg="command">room.copy</ansi> permission`)
-			return true, nil
-		}
-
-		property := args[1]
-
-		if property == "spawninfo" {
-			sourceRoom, _ := strconv.Atoi(args[2])
-			// copy something from another room
-			if sourceRoom := rooms.LoadRoom(sourceRoom); sourceRoom != nil {
-
-				room.SpawnInfo = sourceRoom.SpawnInfo
-				rooms.SaveRoomTemplate(*room)
-
-				user.SendText("Spawn info copied/overwritten.")
-			}
-		}
-
-		if property == "idlemessages" {
-			sourceRoom, _ := strconv.Atoi(args[2])
-			// copy something from another room
-			if sourceRoom := rooms.LoadRoom(sourceRoom); sourceRoom != nil {
-
-				room.IdleMessages = append(room.IdleMessages, sourceRoom.IdleMessages...)
-				rooms.SaveRoomTemplate(*room)
-
-				user.SendText("IdleMessages copied/overwritten.")
-			}
-		}
-
-		if property == "mutator" || property == "mutators" {
-			sourceRoom, _ := strconv.Atoi(args[2])
-			// copy something from another room
-			if sourceRoom := rooms.LoadRoom(sourceRoom); sourceRoom != nil {
-
-				room.Mutators = append(room.Mutators, sourceRoom.Mutators...)
-				rooms.SaveRoomTemplate(*room)
-
-				user.SendText("Mutators copied/overwritten.")
-			}
-		}
-
-	} else if roomCmd == "info" {
-
-		if !user.HasRolePermission(`room.info`) {
-			user.SendText(`you do not have <ansi fg="command">room.info</ansi> permission`)
-			return true, nil
-		}
-
-		if len(args) == 1 {
-			roomId = room.RoomId
-		} else {
-			roomId, _ = strconv.Atoi(args[1])
-		}
-
-		targetRoom := rooms.LoadRoom(roomId)
-		if targetRoom == nil {
-			user.SendText(fmt.Sprintf("Room %d not found.", roomId))
-			return false, fmt.Errorf("room %d not found", roomId)
-		}
-
-		roomInfo := map[string]any{
-			`room`: targetRoom,
-			`zone`: rooms.GetZoneConfig(targetRoom.Zone),
-		}
-
-		infoOutput, _ := templates.Process("admincommands/ingame/roominfo", roomInfo, user.UserId)
-		user.SendText(infoOutput)
-
-	} else if len(args) >= 2 && roomCmd == "exit" {
-
-		if !user.HasRolePermission(`room.exits`) {
-			user.SendText(`you do not have <ansi fg="command">room.exit</ansi> permission`)
-			return true, nil
-		}
-
-		// exit west 159 <- Create/change exit with roomId as target room
-		// exit up climb <- Rename exit
-
-		direction := strings.ToLower(args[1])
-		roomId = 0
-		var numError error = nil
-		exitRename := ``
-
-		if len(args) > 2 {
-			roomId, numError = strconv.Atoi(args[2])
-			if numError != nil {
-				exitRename = args[2]
-			}
-		}
-
-		// Will be erasing it.
-		if len(args) < 3 { // If NO room number/name supplied, delete
-			if _, ok := room.Exits[direction]; !ok {
-				user.SendText(fmt.Sprintf("Exit %s does not exist.", direction))
-				return handled, nil
-			}
-			delete(room.Exits, direction)
+	switch roomCmd {
+	case `edit`:
+		return adminRoom_Edit(rest, user, room, flags)
+	case `noun`, `nouns`:
+		return adminRoom_Noun(args, user, room)
+	case `info`:
+		return adminRoom_Info(args, user, room)
+	case `secretexit`:
+		if len(args) < 2 {
+			user.SendText(fmt.Sprintf(`Invalid room command: <ansi fg="command">%s</ansi>`, roomCmd))
 			return handled, nil
 		}
-
-		if currentExit, ok := room.Exits[direction]; ok {
-			user.SendText(fmt.Sprintf("Exit %s already exists (overwriting).", direction))
-
-			if exitRename != `` {
-				delete(room.Exits, direction)
-				room.Exits[exitRename] = currentExit
-
-				user.SendText(fmt.Sprintf("Exit %s renamed to %s.", direction, exitRename))
-				return true, nil
-			}
-		}
-
-		targetRoom := rooms.LoadRoom(roomId)
-		if targetRoom == nil {
-			err := fmt.Errorf(`room %d not found`, roomId)
-			user.SendText(err.Error())
+		return adminRoom_SecretExit(args, user, room)
+	case `copy`:
+		if len(args) < 3 {
+			user.SendText(fmt.Sprintf(`Invalid room command: <ansi fg="command">%s</ansi>`, roomCmd))
 			return handled, nil
 		}
-
-		rooms.ConnectRoom(room.RoomId, targetRoom.RoomId, direction)
-		user.SendText(fmt.Sprintf("Exit %s added.", direction))
-
-	} else if len(args) >= 2 && roomCmd == "secretexit" {
-
-		if !user.HasRolePermission(`room.exits`) {
-			user.SendText(`you do not have <ansi fg="command">room.exit</ansi> permission`)
-			return true, nil
+		return adminRoom_Copy(args, user, room)
+	case `exit`:
+		if len(args) < 2 {
+			user.SendText(fmt.Sprintf(`Invalid room command: <ansi fg="command">%s</ansi>`, roomCmd))
+			return handled, nil
 		}
-
-		direction := args[1]
-		if exit, ok := room.Exits[direction]; ok {
-			if exit.Secret {
-				exit.Secret = false
-				room.Exits[direction] = exit
-				rooms.SaveRoomTemplate(*room)
-				user.SendText(fmt.Sprintf("Exit %s secrecy REMOVED.", direction))
-			} else {
-				exit.Secret = true
-				room.Exits[direction] = exit
-				rooms.SaveRoomTemplate(*room)
-				user.SendText(fmt.Sprintf("Exit %s secrecy ADDED.", direction))
-			}
-		} else {
-			user.SendText(fmt.Sprintf("Exit %s not found.", direction))
+		return adminRoom_Exit(args, user, room)
+	case `set`:
+		if len(args) < 2 {
+			user.SendText(fmt.Sprintf(`Invalid room command: <ansi fg="command">%s</ansi>`, roomCmd))
+			return handled, nil
 		}
-
-	} else if len(args) >= 2 && roomCmd == "set" {
-
-		if !user.HasRolePermission(`room.set`) {
-			user.SendText(`you do not have <ansi fg="command">room.set</ansi> permission`)
-			return true, nil
-		}
-
-		propertyName := args[1]
-		propertyValue := ``
-		if len(args) > 2 {
-			propertyValue = strings.Join(args[2:], ` `)
-		}
-
-		propertyValue = strings.Trim(propertyValue, `"`)
-
-		if propertyName == "mutator" || propertyName == "mutators" {
-
-			if propertyValue == `` { // If none specified, list all mutators
-
-				user.SendText(`<ansi fg="table-title">Mutators:</ansi>`)
-				if len(room.Mutators) == 0 {
-					user.SendText(`  None.`)
-				}
-				for _, mut := range room.Mutators {
-					user.SendText(`  <ansi fg="mutator">` + mut.MutatorId + `</ansi>`)
-				}
-				user.SendText(``)
-
-			} else { // Otherwise, toggle the mentioned mutator on/off
-
-				user.SendText(``)
-
-				if !mutators.IsMutator(propertyValue) {
-					user.SendText(`<ansi fg="table-title"><ansi fg="mutator">` + propertyValue + `</ansi> is an invalid mutator id.</ansi>`)
-					user.SendText(`<ansi fg="table-title">  Here is a list of valid mutator id's:</ansi>`)
-					for _, name := range mutators.GetAllMutatorIds() {
-						user.SendText(`    <ansi fg="mutator">` + name + `</ansi>`)
-					}
-				} else if room.Mutators.Remove(propertyValue) {
-					user.SendText(`<ansi fg="table-title">Mutator <ansi fg="mutator">` + propertyValue + `</ansi> Removed.</ansi>`)
-				} else if room.Mutators.Add(propertyValue) {
-					user.SendText(`<ansi fg="table-title">Mutator <ansi fg="mutator">` + propertyValue + `</ansi> Added.</ansi>`)
-				}
-
-				user.SendText(``)
-			}
-
-			return true, nil
-		}
-
-		if propertyName == "spawninfo" {
-			if propertyValue == `clear` {
-				room.SpawnInfo = room.SpawnInfo[:0]
-				rooms.SaveRoomTemplate(*room)
-			}
-
-		} else if propertyName == "title" {
-			if propertyValue == `` {
-				propertyValue = `[no title]`
-			}
-			room.Title = propertyValue
-			rooms.SaveRoomTemplate(*room)
-		} else if propertyName == "description" {
-			if propertyValue == `` {
-				propertyValue = `[no description]`
-			}
-			propertyValue = strings.ReplaceAll(propertyValue, `\n`, "\n")
-			room.Description = propertyValue
-			rooms.SaveRoomTemplate(*room)
-		} else if propertyName == "idlemessages" {
-			room.IdleMessages = []string{}
-			for _, idleMsg := range strings.Split(propertyValue, ";") {
-				idleMsg = strings.TrimSpace(idleMsg)
-				if len(idleMsg) < 1 {
-					continue
-				}
-				room.IdleMessages = append(room.IdleMessages, idleMsg)
-			}
-			rooms.SaveRoomTemplate(*room)
-		} else if propertyName == "symbol" || propertyName == "mapsymbol" {
-			room.MapSymbol = propertyValue
-			rooms.SaveRoomTemplate(*room)
-		} else if propertyName == "legend" || propertyName == "maplegend" {
-			room.MapLegend = propertyValue
-			rooms.SaveRoomTemplate(*room)
-		} else if propertyName == "zone" {
-			// Try moving it to the new zone.
-			if err := rooms.MoveToZone(room.RoomId, propertyValue); err != nil {
-				user.SendText(err.Error())
-				return handled, nil
-			}
-
-		} else if propertyName == "biome" {
-			room.Biome = strings.ToLower(propertyValue)
-		} else {
-			user.SendText(
-				`Invalid property provided to <ansi fg="command">room set</ansi>.`,
-			)
-			return false, fmt.Errorf("room %d not found", roomId)
-		}
-
-		user.SendText(fmt.Sprintf("Room %s set to %s.", propertyName, propertyValue))
-	} else {
+		return adminRoom_Set(args, user, room)
+	default:
 		user.SendText(fmt.Sprintf(`Invalid room command: <ansi fg="command">%s</ansi>`, roomCmd))
 	}
 
@@ -640,261 +317,6 @@ func room_Edit_Containers_SendRecipes(user *users.UserRecord, recipeResultItemId
 	}
 
 	user.SendText(``)
-}
-
-func room_Edit_Exits(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
-
-	// This basic struct will be used to keep track of what we're editing
-	type ExitEdit struct {
-		Name    string
-		NameNew string
-		Exit    exit.RoomExit
-		Exists  bool
-	}
-
-	exitOptions := []templates.NameDescription{}
-
-	for name, c := range room.Exits {
-
-		exitOpt := templates.NameDescription{Name: name}
-
-		if c.Lock.Difficulty > 0 {
-			exitOpt.Description += fmt.Sprintf(`[Lvl %d Lock] `, c.Lock.Difficulty)
-		}
-
-		if c.Secret {
-			exitOpt.Description += `[hidden] `
-		}
-
-		exitOptions = append(exitOptions, exitOpt)
-
-	}
-
-	// Must sort since maps will often change between iterations
-	sort.SliceStable(exitOptions, func(i, j int) bool {
-		return exitOptions[i].Name < exitOptions[j].Name
-	})
-
-	//
-	// Create a holder for exit editing data
-	//
-	currentlyEditing := ExitEdit{}
-
-	cmdPrompt, _ := user.StartPrompt(`room edit exits`, rest)
-
-	question := cmdPrompt.Ask(`Choose one:`, []string{`new`}, `new`)
-	if !question.Done {
-		tplTxt, _ := templates.Process("tables/numbered-list", exitOptions, user.UserId)
-		user.SendText(tplTxt)
-		return true, nil
-	}
-
-	currentlyEditing.Name = question.Response
-
-	if restNum, err := strconv.Atoi(currentlyEditing.Name); err == nil {
-		if restNum > 0 && restNum <= len(exitOptions) {
-			currentlyEditing.Name = exitOptions[restNum-1].Name
-		}
-	}
-
-	for _, o := range exitOptions {
-		if strings.EqualFold(o.Name, currentlyEditing.Name) {
-			currentlyEditing.Name = o.Name
-			break
-		}
-	}
-
-	// Load the (possible) existing exit
-	currentlyEditing.Exit, currentlyEditing.Exists = room.Exits[currentlyEditing.Name]
-
-	// If they entered a exit name...
-	if currentlyEditing.Name != `new` {
-
-		// Does the exit name they entered not exist? Failure!
-		if !currentlyEditing.Exists {
-			user.SendText("Invalid option selected.")
-			user.SendText("Aborting...")
-			user.ClearPrompt()
-			return true, nil
-		}
-
-		// Since they picked a exit that exists, lets get the question of delete out of the way immediately.
-		question := cmdPrompt.Ask(`Delete this exit?`, []string{`yes`, `no`}, `no`)
-		if !question.Done {
-			return true, nil
-		}
-
-		// Delete the exit if that's what they want!
-		if question.Response == `yes` {
-
-			delete(room.Exits, currentlyEditing.Name)
-			rooms.SaveRoomTemplate(*room)
-
-			user.SendText(``)
-			user.SendText(fmt.Sprintf(`<ansi fg="exit">%s</ansi> deleted from the room.`, currentlyEditing.Name))
-			user.SendText(``)
-
-			user.ClearPrompt()
-			return true, nil
-		}
-
-	}
-
-	//
-	// Name Selection
-	//
-	{
-		// If they are creating a new exit, we don't want that to become a viable exit name, lets empty it
-		if currentlyEditing.Name == `new` {
-			currentlyEditing.Name = ``
-		}
-
-		// allow them to name/rename the exit.
-		question := cmdPrompt.Ask(`Choose a name for this exit:`, []string{currentlyEditing.Name}, currentlyEditing.Name)
-		if !question.Done {
-			return true, nil
-		}
-		currentlyEditing.NameNew = question.Response
-
-		// Make sure they aren't using any reserved names.
-		if currentlyEditing.NameNew == `quit` || currentlyEditing.NameNew == `new` {
-			user.SendText("Invalid new name selected.")
-			user.SendText("Aborting...")
-			user.ClearPrompt()
-			return true, nil
-		}
-
-		// Make sure the new name isn't a duplicate
-		if currentlyEditing.Name != currentlyEditing.NameNew {
-			if _, ok := room.Exits[currentlyEditing.NameNew]; ok {
-
-				user.SendText(`<ansi fg="red">An exit with that name already exists!</ansi>`)
-				question.RejectResponse()
-				return true, nil
-
-			}
-		}
-
-	}
-
-	//
-	// Target RoomId
-	//
-	{
-		// allow them to name/rename the exit.
-		question := cmdPrompt.Ask(`What RoomId will this exit lead to?`, []string{strconv.Itoa(currentlyEditing.Exit.RoomId)}, strconv.Itoa(currentlyEditing.Exit.RoomId))
-		if !question.Done {
-			return true, nil
-		}
-
-		currentlyEditing.Exit.RoomId, _ = strconv.Atoi(question.Response)
-
-		// Make sure they aren't using any reserved names.
-		if rooms.LoadRoom(currentlyEditing.Exit.RoomId) == nil {
-			user.SendText("Invalid RoomId provided.")
-			question.RejectResponse()
-			return true, nil
-		}
-
-	}
-
-	//
-	// Exit message?
-	//
-	{
-		secretExitDefault := `no`
-		if currentlyEditing.Exit.Secret {
-			secretExitDefault = `yes`
-		}
-
-		// allow them to name/rename the exit.
-		question := cmdPrompt.Ask(`Is this a hidden exit?`, []string{`yes`, `no`}, secretExitDefault)
-		if !question.Done {
-			return true, nil
-		}
-
-		currentlyEditing.Exit.Secret = question.Response == `yes`
-	}
-
-	//
-	// Secret exit?
-	//
-	{
-		secretExitDefault := `no`
-		if currentlyEditing.Exit.Secret {
-			secretExitDefault = `yes`
-		}
-
-		// allow them to name/rename the exit.
-		question := cmdPrompt.Ask(`Is this a hidden exit?`, []string{`yes`, `no`}, secretExitDefault)
-		if !question.Done {
-			return true, nil
-		}
-
-		currentlyEditing.Exit.Secret = question.Response == `yes`
-	}
-
-	//
-	// Special message when using the exit?
-	//
-	{
-		defaultMessage := currentlyEditing.Exit.ExitMessage
-		if defaultMessage == `` {
-			defaultMessage = `none`
-		}
-		// allow them to name/rename the exit.
-		question := cmdPrompt.Ask(`Special message when using the exit?`, []string{defaultMessage}, defaultMessage)
-		if !question.Done {
-			return true, nil
-		}
-
-		if question.Response != `none` {
-			currentlyEditing.Exit.ExitMessage = question.Response
-		}
-
-	}
-
-	//
-	// Lock Options
-	//
-	{
-		var pending bool
-		currentlyEditing.Exit.Lock, pending = editLockAndTrap(cmdPrompt, user, currentlyEditing.Exit.Lock, `exit`)
-		if pending {
-			return true, nil
-		}
-	}
-
-	//
-	// Done editing. Save results
-	//
-	if currentlyEditing.Name != `` {
-		delete(room.Exits, currentlyEditing.Name)
-	}
-
-	room.Exits[currentlyEditing.NameNew] = currentlyEditing.Exit
-	rooms.SaveRoomTemplate(*room)
-
-	user.SendText(``)
-
-	if currentlyEditing.Exit.Lock.Difficulty > 0 {
-		lockId := fmt.Sprintf(`%d-%s`, room.RoomId, currentlyEditing.NameNew)
-		user.SendText(fmt.Sprintf(`<ansi fg="red">To Create Key -  LockId: <ansi fg="231" bg="5">%s</ansi></ansi>`, lockId))
-
-		seqString := ``
-		for _, dir := range util.GetLockSequence(lockId, int(currentlyEditing.Exit.Lock.Difficulty), string(configs.GetServerConfig().Seed)) {
-			seqString += string(dir) + " "
-		}
-		user.SendText(fmt.Sprintf(`<ansi fg="red">To pick lock - Sequence: <ansi fg="green">%s</ansi></ansi>`, seqString))
-	}
-
-	user.SendText(``)
-	user.SendText(`Changes saved.`)
-	user.SendText(``)
-
-	user.ClearPrompt()
-
-	return true, nil
 }
 
 // editLockAndTrap handles the lock/trap questionnaire shared by containers and exits.
