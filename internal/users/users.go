@@ -348,6 +348,21 @@ func LogOutUserByConnectionId(connectionId connections.ConnectionId) error {
 	}
 
 	u := userManager.Users[userId]
+
+	// Capture deletion keys while we hold the lock. We'll do I/O next
+	// (outside the lock), then delete by these locals — not by re-reading
+	// u after a concurrent login might have replaced the map entries.
+	var (
+		delUserId       int
+		delUsername     string
+		delConnectionId connections.ConnectionId
+	)
+	if u != nil {
+		delUserId = u.UserId
+		delUsername = u.Username
+		delConnectionId = u.connectionId
+	}
+
 	userManager.mu.Unlock()
 
 	// Validate + save outside lock (I/O and cross-package calls)
@@ -360,10 +375,10 @@ func LogOutUserByConnectionId(connectionId connections.ConnectionId) error {
 	defer userManager.mu.Unlock()
 
 	if u != nil {
-		delete(userManager.Users, u.UserId)
-		delete(userManager.Usernames, u.Username)
-		delete(userManager.Connections, u.connectionId)
-		delete(userManager.UserConnections, u.UserId)
+		delete(userManager.Users, delUserId)
+		delete(userManager.Usernames, delUsername)
+		delete(userManager.Connections, delConnectionId)
+		delete(userManager.UserConnections, delUserId)
 	}
 
 	return nil
