@@ -98,7 +98,7 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 		tickMobProneRecovery(mob)
 		tickMobCharmDuration(mob)
 		tickMobBuffs(mob, mobInstanceId)
-		tickMobMutationAcquisition(mob, mb)
+		tickMobMutationAcquisition(mob, &mb)
 		tickMobCharmState(mob)
 		tickMobCrafting(mob)
 		tickMobConditions(mob)
@@ -188,7 +188,7 @@ func tickMobBuffs(mob *mobs.Mob, mobInstanceId int) {
 }
 
 // tickMobMutationAcquisition — current inline block at lines 162–260.
-func tickMobMutationAcquisition(mob *mobs.Mob, mb configs.Balance) {
+func tickMobMutationAcquisition(mob *mobs.Mob, mb *configs.Balance) {
 	if !(bool(mb.MobMutationEnabled) && mob.Character.Aggro != nil) {
 		return
 	}
