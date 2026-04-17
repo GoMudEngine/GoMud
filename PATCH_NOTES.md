@@ -1,7 +1,8 @@
 # DOGMud Patch Notes
 
-## 2026-04-16 — Code Cleanup 1.7: Performance Pass
+## 2026-04-16 — Code Cleanup 1.7: Performance Pass + Bug Fixes
 
+### Performance (Stage 1.7)
 - **Zone-activity lane split:** mobs in zones with zero players skip
   combat, progression, mutation acquisition, charm-state, and crafting
   every round. Idle mobs still tick cooldowns, buff/condition durations,
@@ -11,6 +12,25 @@
   now use `sync.RWMutex`. Closes a latent race between the HTTP admin
   dashboard and the main game loop.
 - **PruneVisitors fast path:** empty-map early return on room cleanup.
+
+### Bug Fixes
+- **Companions no longer pack-scatter with wild mobs** — the prior
+  partial fix only guarded the death-triggered flee. Per-round pack
+  membership now skips charmed/summoned mobs entirely, so your pet
+  elemental stays put when a wild pack alpha dies nearby.
+- **Merchants can no longer be killed via group hostility** — when you
+  attacked a combat mob that shares a faction group with a merchant
+  (e.g., both in "townfolk"), the merchant was picking up aggro on
+  their next room entry or behavior-tree tick. Non-combatants now
+  ignore group hostility entirely, matching the direct-attack guard
+  that was already in place.
+- **Vitality progression farm via HP reservation closed** — regen-based
+  stat progression used the full HealthMax as its denominator, but
+  Chrysalis-enchantment HP reservation clamps current HP to a lower
+  effective cap. Result: a player at "effective full" HP still
+  counted as depleted and rolled vitality progression every 3 rounds
+  forever. The regen calculation now subtracts reservation from the
+  max, so at effective cap you hit the proper short-circuit.
 
 ## 2026-04-15 — Bugfixes & QOL (Hotfix 2)
 
