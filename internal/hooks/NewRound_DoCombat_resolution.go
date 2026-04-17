@@ -62,7 +62,7 @@ func applyCombatDamageBonuses_PvM(roundResult *combat.AttackResult, user *users.
 				defMobName := mobDisplayName(defMob, defRoom, user.UserId)
 				sendVisualRoomText(uRoom, fmt.Sprintf(
 					`<ansi fg="red">%s recoils from striking %s! (%s)</ansi>`,
-					user.Character.Name, defMobName, dmgDesc))
+					user.Character.Name, defMobName, dmgDesc), user.UserId)
 				user.SendText(fmt.Sprintf(
 					`<ansi fg="red">You recoil from striking %s! (%s)</ansi>`,
 					defMobName, dmgDesc))
