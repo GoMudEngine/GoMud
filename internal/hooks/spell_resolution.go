@@ -238,6 +238,23 @@ func resolveAgainstMob(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, 
 	combat.RecordSpell(combat.User, combat.Mob, true, isCrit, false, false, dmgDealt, atkRoll.ZScore, user.Character, &mob.Character, round)
 }
 
+// setMobSpellAggro sets reciprocal aggro between the caster and the
+// mob target immediately after a hostile spell lands.
+//
+// Note: applyMobEffect_buff does NOT call this helper — its aggro block
+// is gated on spell Type being Harm*. Kept inline there.
+func setMobSpellAggro(user *users.UserRecord, mob *mobs.Mob) {
+	if mob.Character.Aggro == nil {
+		mob.PreventIdle = true
+		if user != nil {
+			mob.Character.SetAggro(user.UserId, 0, characters.DefaultAttack)
+		}
+	}
+	if user != nil && user.Character.Aggro == nil {
+		user.Character.SetAggro(0, mob.InstanceId, characters.DefaultAttack)
+	}
+}
+
 // applyMobEffect_damage handles the "damage" EffectType case for applyMobEffect.
 // Returns damage dealt to the mob.
 func applyMobEffect_damage(
@@ -269,16 +286,7 @@ func applyMobEffect_damage(
 		}
 	}
 	mob.Character.Health -= dmg
-	// Set aggro on both sides immediately
-	if mob.Character.Aggro == nil {
-		mob.PreventIdle = true
-		if user != nil {
-			mob.Character.SetAggro(user.UserId, 0, characters.DefaultAttack)
-		}
-	}
-	if user != nil && user.Character.Aggro == nil {
-		user.Character.SetAggro(0, mob.InstanceId, characters.DefaultAttack)
-	}
+	setMobSpellAggro(user, mob)
 	if user != nil {
 		if critDeflect {
 			user.SendText(fmt.Sprintf(
@@ -328,16 +336,7 @@ func applyMobEffect_dot(
 		dotDuration = 3
 	}
 	mob.Character.AddCondition(characters.ConditionPoisoned, dotDuration, float64(magnitude), "spell")
-	// Set aggro on both sides immediately
-	if mob.Character.Aggro == nil {
-		mob.PreventIdle = true
-		if user != nil {
-			mob.Character.SetAggro(user.UserId, 0, characters.DefaultAttack)
-		}
-	}
-	if user != nil && user.Character.Aggro == nil {
-		user.Character.SetAggro(0, mob.InstanceId, characters.DefaultAttack)
-	}
+	setMobSpellAggro(user, mob)
 	if user != nil {
 		user.SendText(fmt.Sprintf(
 			`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> afflicts %s!%s</ansi>`,
@@ -378,16 +377,7 @@ func applyMobEffect_knockdown(
 	mob.Character.Health -= dmg
 	mob.Character.CombatPosition = characters.PositionProne
 	mob.Character.PositionRoundsMin = 1
-	// Set aggro on both sides immediately
-	if mob.Character.Aggro == nil {
-		mob.PreventIdle = true
-		if user != nil {
-			mob.Character.SetAggro(user.UserId, 0, characters.DefaultAttack)
-		}
-	}
-	if user != nil && user.Character.Aggro == nil {
-		user.Character.SetAggro(0, mob.InstanceId, characters.DefaultAttack)
-	}
+	setMobSpellAggro(user, mob)
 	if user != nil {
 		if kdDeflected {
 			user.SendText(fmt.Sprintf(
