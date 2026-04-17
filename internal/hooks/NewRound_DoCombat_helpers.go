@@ -1369,7 +1369,8 @@ func handleMobVsPlayer(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, 
 	roundResult = combat.AttackMobVsPlayer(mob, defUser)
 	restore()
 
-	// Stage 11.4: Minor Shield reduces physical weapon damage
+	// Stage 11.4: Minor Shield reduces physical weapon damage (MvP-only —
+	// ConditionShield lives on player defenders).
 	if roundResult.Hit && defUser.Character.HasCondition(characters.ConditionShield) {
 		reduction := int(defUser.Character.GetConditionMagnitude(characters.ConditionShield)) / 2
 		if roundResult.DamageToTarget > reduction+1 {
@@ -1387,91 +1388,9 @@ func handleMobVsPlayer(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, 
 	}
 	combat.RecordAttack(roundResult, combat.Mob, combat.User, mvpAtkType, &mob.Character, defUser.Character, evt.RoundNumber)
 
-	// Crit effects (player defending)
-	mvpCritResult := applyCritEffects(&mob.Character, defUser.Character, roundResult, mobRoom)
-	if mvpCritResult.DefenderMsg != "" {
-		defUser.SendText(mvpCritResult.DefenderMsg)
-	}
-	if mvpCritResult.RoomMsg != "" {
-		mobRoom.SendText(mvpCritResult.RoomMsg, defUser.UserId)
-	}
-
-	// Charmed mob assist
-	roomId := mob.Character.RoomId
-	room := rooms.LoadRoom(roomId)
-	handleCharmedMobAssist(room, defUser.UserId, fmt.Sprintf("#%d", mob.InstanceId))
-
-	// Apply darkness message replacement for blind defender
-	mvpTgtCanSee := canSeeInRoom(defUser.Character, defRoom)
-	replaceDarknessMessages(&roundResult, true, mvpTgtCanSee) // mob source doesn't need text replacement
-
-	for _, buffId := range roundResult.BuffSource {
-		mob.AddBuff(buffId, `combat`)
-	}
-	for _, buffId := range roundResult.BuffTarget {
-		defUser.AddBuff(buffId, `combat`)
-	}
-	for _, msg := range roundResult.MessagesToTarget {
-		defUser.SendText(msg)
-	}
-	for _, msg := range roundResult.MessagesToSourceRoom {
-		sendVisualRoomText(mobRoom, msg, defUser.UserId)
-	}
-	for _, msg := range roundResult.MessagesToTargetRoom {
-		sendVisualRoomText(defRoom, msg, defUser.UserId)
-	}
-	sendDarkRoomCombatFallback(mobRoom, defUser.UserId)
-	if defRoom != mobRoom {
-		sendDarkRoomCombatFallback(defRoom, defUser.UserId)
-	}
-
-	handlePlayerConcentrationBreak(defUser, roundResult, defRoom)
-	handleOffhandBreakUserDef(roundResult, defUser, defRoom)
-
-	// Physical crit received → vitality progression for defender
-	if roundResult.Hit && roundResult.Crit {
-		defUser.Character.OnCritReceived("physical", defUser.UserId)
-	}
-
-	// Stage 38.3: Mob attacker progression — per-weapon skill tracking
-	statMobName := mobDisplayName(mob, mobRoom, 0)
-	if gained := mob.Character.OnStatUse("strength", 0); gained {
-		if tmpl, ok := characters.MobStatGainMessages["strength"]; ok {
-			mobRoom.SendText(fmt.Sprintf(tmpl, statMobName))
-		}
-	}
-	if gained := mob.Character.OnStatUse("dexterity", 0); gained {
-		if tmpl, ok := characters.MobStatGainMessages["dexterity"]; ok {
-			mobRoom.SendText(fmt.Sprintf(tmpl, statMobName))
-		}
-	}
-	for _, wh := range roundResult.WeaponHits {
-		if wh.Hit {
-			mob.Character.OnSkillUse(wh.SkillTag, 0)
-			if wh.Crit {
-				mob.Character.OnCriticalSuccess(wh.SkillTag, 0)
-			}
-		} else if wh.Fumble {
-			mob.Character.OnCriticalFailure(wh.SkillTag, 0)
-		}
-	}
-	if len(roundResult.WeaponHits) == 0 && roundResult.Hit {
-		mob.Character.OnSkillUse(string(skills.UnarmedCombat), 0)
-	}
-
-	// Defender progression — dodge/parry/block train specific skills
-	processDefenderProgression(defUser.Character, defUser.UserId, roundResult)
-
-	if mob.Character.Health <= 0 || defUser.Character.Health <= 0 {
-		defUser.Character.EndAggro()
-		if mob.Character.Health > 0 {
-			RetargetOrEnd(&mob.Character, mobRoom, 0, mob.InstanceId)
-		} else {
-			mob.Character.EndAggro()
-		}
-	} else {
-		mob.Character.SetAggro(defUser.UserId, 0, characters.DefaultAttack)
-	}
+	handleMvPCritAndMessaging(&roundResult, mob, defUser, mobRoom, defRoom)
+	handleMvPProgression(&roundResult, mob, defUser, mobRoom, defRoom)
+	handleMvPRoundResolution(mob, defUser, mobRoom)
 }
 
 // handleMobVsMob processes a mob attacking another mob.
