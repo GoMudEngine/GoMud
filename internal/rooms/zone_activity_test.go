@@ -5,7 +5,7 @@ import (
 )
 
 func TestZoneActivity_IncrementDecrement(t *testing.T) {
-	ResetZonePlayerCount()
+	resetZonePlayerCount()
 
 	incrementZonePlayerCount("alpha")
 	if !ZoneHasPlayers("alpha") {
@@ -28,7 +28,7 @@ func TestZoneActivity_IncrementDecrement(t *testing.T) {
 }
 
 func TestZoneActivity_DecrementClampsAtZero(t *testing.T) {
-	ResetZonePlayerCount()
+	resetZonePlayerCount()
 	decrementZonePlayerCount("alpha") // underflow attempt
 	if ZoneHasPlayers("alpha") {
 		t.Fatal("underflowed zone must not be 'active'")
@@ -37,7 +37,7 @@ func TestZoneActivity_DecrementClampsAtZero(t *testing.T) {
 }
 
 func TestZoneActivity_SnapshotActiveZones(t *testing.T) {
-	ResetZonePlayerCount()
+	resetZonePlayerCount()
 	incrementZonePlayerCount("alpha")
 	incrementZonePlayerCount("beta")
 	incrementZonePlayerCount("beta")
@@ -58,7 +58,7 @@ func TestZoneActivity_SnapshotActiveZones(t *testing.T) {
 }
 
 func TestZoneActivity_EmptyZoneStringWorks(t *testing.T) {
-	ResetZonePlayerCount()
+	resetZonePlayerCount()
 	incrementZonePlayerCount("")
 	if !ZoneHasPlayers("") {
 		t.Fatal(`empty zone string is a valid key`)
@@ -66,7 +66,7 @@ func TestZoneActivity_EmptyZoneStringWorks(t *testing.T) {
 }
 
 func TestZoneActivity_VerifyDetectsDrift(t *testing.T) {
-	ResetZonePlayerCount()
+	resetZonePlayerCount()
 	// Set up a room with 2 players.
 	r := &Room{RoomId: 1001, Zone: "alpha", players: []int{10, 20}}
 	originalManager := roomManager

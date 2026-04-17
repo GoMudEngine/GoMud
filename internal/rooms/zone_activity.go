@@ -30,7 +30,8 @@ func SnapshotActiveZones() map[string]bool {
 }
 
 // incrementZonePlayerCount is called from Room.AddPlayer when a new
-// userId is appended to r.players (after dedupe).
+// userId is appended to r.players (after dedupe). Unconditional +1;
+// does not create the key if absent (Go maps handle that automatically).
 func incrementZonePlayerCount(zone string) {
 	zonePlayerCountMu.Lock()
 	zonePlayerCount[zone]++
@@ -38,8 +39,10 @@ func incrementZonePlayerCount(zone string) {
 }
 
 // decrementZonePlayerCount is called from Room.RemovePlayer when a
-// userId is actually removed from r.players. Clamps at zero defensively —
-// drift is still logged via VerifyZonePlayerCount diagnostics.
+// userId is actually removed from r.players. Defensively clamps at
+// zero — a call with an already-zero (or missing) key is a no-op, not
+// an underflow. Drift from missed increments is still surfaced by
+// VerifyZonePlayerCount diagnostics.
 func decrementZonePlayerCount(zone string) {
 	zonePlayerCountMu.Lock()
 	if zonePlayerCount[zone] > 0 {
@@ -48,16 +51,22 @@ func decrementZonePlayerCount(zone string) {
 	zonePlayerCountMu.Unlock()
 }
 
-// ResetZonePlayerCount is a test helper — clears all state.
-func ResetZonePlayerCount() {
+// resetZonePlayerCount clears all state. Test-only helper.
+func resetZonePlayerCount() {
 	zonePlayerCountMu.Lock()
 	zonePlayerCount = map[string]int{}
 	zonePlayerCountMu.Unlock()
 }
 
 // RebuildZonePlayerCount recomputes the counter from the authoritative
-// room.players slices. Called at server startup and from the admin
-// diagnostics page.
+// room.players slices. Intended for server startup (before any player
+// is connected) and admin diagnostics (manual trigger during a lull).
+//
+// NOT safe to call concurrently with live AddPlayer/RemovePlayer — a
+// player who enters between the wipe and the scan's read of that room
+// will be missed. Startup is single-threaded so the counter is correct.
+// Admin use on a live server is best-effort and should be followed by a
+// VerifyZonePlayerCount to confirm drift.
 func RebuildZonePlayerCount() {
 	zonePlayerCountMu.Lock()
 	zonePlayerCount = map[string]int{}
