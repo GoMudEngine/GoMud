@@ -3064,8 +3064,6 @@ func (c *Character) validateDisabledSlotsForSpecies() {
 		return
 	}
 
-	c.Equipment.EnableAll()
-
 	if len(speciesInfo.DisabledSlots) == 0 {
 		return
 	}
@@ -3168,6 +3166,16 @@ func (c *Character) validateDisabledSlotsForSpecies() {
 // validateMutationSlots enforces extra-arm / tail slot availability based on
 // the character's current ExtraArms count and tail mutation.
 func (c *Character) validateMutationSlots() {
+	// Derive ExtraArms from mutation level (capped at 4).
+	if lvl, ok := c.Mutations["extra-arms"]; ok && lvl > 0 {
+		c.ExtraArms = lvl
+		if c.ExtraArms > 4 {
+			c.ExtraArms = 4
+		}
+	} else {
+		c.ExtraArms = 0
+	}
+
 	// Extra arms: unavailable levels move items back to backpack.
 	if c.ExtraArms < 4 {
 		if c.Equipment.ExtraArm4.ItemId > 0 {
@@ -3213,7 +3221,6 @@ func (c *Character) validateMutationSlots() {
 	}
 
 	// Tail mutation: enable tail slot if mutation present, disable otherwise.
-	// Must run AFTER EnableAll() (which ran in validateDisabledSlotsForSpecies).
 	if _, hasTail := c.Mutations["tail"]; hasTail {
 		if c.Equipment.Tail.ItemId < 0 {
 			c.Equipment.Tail = items.Item{}
@@ -3276,16 +3283,6 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 		c.Mutations = make(map[string]int)
 	}
 
-	// Derive ExtraArms from mutation level (capped at 4)
-	if lvl, ok := c.Mutations["extra-arms"]; ok && lvl > 0 {
-		c.ExtraArms = lvl
-		if c.ExtraArms > 4 {
-			c.ExtraArms = 4
-		}
-	} else {
-		c.ExtraArms = 0
-	}
-
 	if c.Zone == "" {
 		c.Zone = startingZone
 	}
@@ -3308,6 +3305,8 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 
 	// Validate possessed/worn items (UIDs).
 	c.validateEquipmentItems()
+	// Reset all slots; both helpers below layer their rules on top.
+	c.Equipment.EnableAll()
 
 	// Apply species-disabled slot rules (requires validateEquipmentItems first).
 	c.validateDisabledSlotsForSpecies()
