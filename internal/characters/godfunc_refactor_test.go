@@ -12,6 +12,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/statmods"
 	"github.com/GoMudEngine/GoMud/internal/stats"
 	"github.com/stretchr/testify/assert"
@@ -45,12 +46,35 @@ func validStats() stats.Statistics {
 // ─────────────────────────────────────────────────────────────────────────────
 
 // TestRecalculateStats_BaseStatHydrationFromSpecies verifies the species-hydration
-// guard: non-zero stat bases survive RecalculateStats unchanged; zero bases are
-// only overwritten when species data is loaded (in unit tests without data files,
-// GetSpecies returns nil so the hydration block is skipped entirely — the current
-// behavior is that zero bases stay zero).
+// block at character.go:2760-2783.
+//
+// Two sub-cases are tested:
+//
+//  1. Non-zero Base values are NEVER overwritten by species hydration — the guard
+//     condition (Base == 0) prevents it, regardless of whether species data is loaded.
+//
+//  2. Zero Base values ARE populated from the seeded species when GetSpecies returns
+//     a non-nil result. This sub-case uses species.SeedSpeciesForTest to inject known
+//     test data so the hydration block is genuinely exercised (previously the test
+//     hit only the nil-species short-circuit because no data files are loaded in the
+//     unit-test binary).
 func TestRecalculateStats_BaseStatHydrationFromSpecies(t *testing.T) {
-	// Non-zero base → must NOT be overwritten regardless of data-file state.
+	// Seed a test species with known base stat values for the duration of this test.
+	testSpecies := &species.Species{
+		SpeciesId: 1,
+		Stats: stats.Statistics{
+			Strength:   stats.StatInfo{Base: 80},
+			Dexterity:  stats.StatInfo{Base: 90},
+			Perception: stats.StatInfo{Base: 85},
+			Vitality:   stats.StatInfo{Base: 95},
+			Willpower:  stats.StatInfo{Base: 75},
+			Charisma:   stats.StatInfo{Base: 70},
+		},
+	}
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{1: testSpecies})
+	t.Cleanup(cleanup)
+
+	// Sub-case 1: non-zero Base → must NOT be overwritten.
 	c := &Character{
 		SpeciesId: 1,
 		Stats: stats.Statistics{
@@ -68,8 +92,8 @@ func TestRecalculateStats_BaseStatHydrationFromSpecies(t *testing.T) {
 	assert.Equal(t, 123, c.Stats.Strength.Base, "rolled Strength.Base must not be overwritten by species hydration")
 	assert.Equal(t, 100, c.Stats.Dexterity.Base, "rolled Dexterity.Base must not be overwritten")
 
-	// Zero base → current unit-test behavior: GetSpecies returns nil (no data files),
-	// so the hydration block is skipped and Base stays 0.
+	// Sub-case 2: zero Base → hydration block copies values from the seeded species.
+	// This exercises character.go:2760-2783, which was previously unreachable in tests.
 	c2 := &Character{
 		SpeciesId: 1,
 		Stats: stats.Statistics{
@@ -84,11 +108,12 @@ func TestRecalculateStats_BaseStatHydrationFromSpecies(t *testing.T) {
 		Buffs:     newTestBuffs(),
 	}
 	c2.RecalculateStats()
-	// Characterization: without species data loaded, Base stays 0.
-	// If this assertion ever fails, species data is being loaded in the test binary
-	// (e.g. via a TestMain), and the correct value would be > 0.
-	assert.Equal(t, 0, c2.Stats.Strength.Base,
-		"without species data loaded, zero Base is not hydrated (no GetSpecies data)")
+	assert.Equal(t, 80, c2.Stats.Strength.Base, "zero Strength.Base must be hydrated from species data")
+	assert.Equal(t, 90, c2.Stats.Dexterity.Base, "zero Dexterity.Base must be hydrated from species data")
+	assert.Equal(t, 85, c2.Stats.Perception.Base, "zero Perception.Base must be hydrated from species data")
+	assert.Equal(t, 95, c2.Stats.Vitality.Base, "zero Vitality.Base must be hydrated from species data")
+	assert.Equal(t, 75, c2.Stats.Willpower.Base, "zero Willpower.Base must be hydrated from species data")
+	assert.Equal(t, 70, c2.Stats.Charisma.Base, "zero Charisma.Base must be hydrated from species data")
 }
 
 // TestRecalculateStats_PoolMaxDerivation verifies that pool maximums are
@@ -201,14 +226,16 @@ func TestRecalculateStats_PoolReservationClamping(t *testing.T) {
 		"GetPoolReservation(conviction) should be 0 with no chrysalis items")
 }
 
-// TestRecalculateStats_ChangedEventEmission verifies that a second RecalculateStats
-// call with no state changes does NOT alter ValueAdj (state-diff proxy for event
-// emission correctness).
+// TestRecalculateStats_IdempotencyAcrossRepeatedCalls verifies that a second
+// RecalculateStats call with no state changes produces identical ValueAdj values
+// to the first call. This proves the change-detection path's inputs are stable:
+// if no stat adjustments drift between calls, the engine's internal "changed"
+// guard has nothing to act on.
 //
-// Note: events.Clear() does not exist in this codebase. We verify the "no
-// spurious change" invariant by comparing stat values before and after an
-// idempotent call — if stats don't change, no CharacterStatsChanged event fires.
-func TestRecalculateStats_ChangedEventEmission(t *testing.T) {
+// Note: event-emission itself cannot be directly observed in unit tests (no
+// events.Clear() exists). This test covers the prerequisite invariant — stable
+// inputs — not the event dispatch outcome.
+func TestRecalculateStats_IdempotencyAcrossRepeatedCalls(t *testing.T) {
 	c := &Character{
 		SpeciesId: 1,
 		userId:    42, // non-zero triggers event emission path
@@ -239,8 +266,6 @@ func TestRecalculateStats_ChangedEventEmission(t *testing.T) {
 	assert.Equal(t, snapWil, c.Stats.Willpower.ValueAdj, "Willpower.ValueAdj must not drift on second call")
 	assert.Equal(t, snapCha, c.Stats.Charisma.ValueAdj, "Charisma.ValueAdj must not drift on second call")
 	assert.Equal(t, snapHPMax, c.HealthMax.Value, "HealthMax must not drift on second call")
-	// If none of these change, the event-emission guard correctly suppresses the
-	// CharacterStatsChanged event — which is the behavior we want to preserve.
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
