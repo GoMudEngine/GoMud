@@ -16,7 +16,9 @@ import (
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -427,5 +429,142 @@ func TestActMovePlayer_TeleportsUser(t *testing.T) {
 	// room_id == 0 → Failure.
 	if result := fn(map[string]any{"room_id": 0}, ctx); result != Failure {
 		t.Errorf("expected Failure for room_id=0, got %v", result)
+	}
+}
+
+// ─── summon_companion (hostile branch) ───────────────────────────────
+
+func TestActSummonCompanion_HostileSetsAggroAndEngages(t *testing.T) {
+	fn := LookupAction("summon_companion")
+	if fn == nil {
+		t.Fatal("summon_companion not registered")
+	}
+
+	// Seed room 1.
+	cleanRoom := seedTestRoom(t, 1, "TestZone")
+	defer cleanRoom()
+
+	// Seed caller (template 1, instance 100) AND companion template (template 7)
+	// in a single SeedMobsForTest call so both specs are present when
+	// NewMobById(7, ...) is called inside the action.
+	// SeedMobsForTest sets instanceCounter = 200, so the first NewMobById
+	// call will produce instance ID 201.
+	callerSpec := &mobs.Mob{
+		MobId: mobs.MobId(1),
+		Character: characters.Character{
+			Name:   "TestCaller",
+			RoomId: 1,
+			Buffs:  buffs.New(),
+		},
+	}
+	callerInstance := &mobs.Mob{
+		MobId:      mobs.MobId(1),
+		InstanceId: 100,
+		HomeRoomId: 1,
+		Character: characters.Character{
+			Name:   "TestCaller",
+			RoomId: 1,
+			Buffs:  buffs.New(),
+		},
+	}
+	companionSpec := &mobs.Mob{
+		MobId: mobs.MobId(7),
+		Character: characters.Character{
+			Name:   "TestCompanion",
+			RoomId: 1,
+			Buffs:  buffs.New(),
+		},
+	}
+	cleanMobs := mobs.SeedMobsForTest(
+		map[int]*mobs.Mob{1: callerSpec, 7: companionSpec},
+		map[int]*mobs.Mob{100: callerInstance},
+	)
+	defer cleanMobs()
+
+	// Place caller instance in room 1.
+	rooms.LoadRoom(1).AddMob(100)
+
+	// Seed user 1 in room 1.
+	cleanUser := seedTestUser(t, 1, "alice", "Aliceia", 1)
+	defer cleanUser()
+
+	// Pre-action snapshot: room should contain only instance 100.
+	room := rooms.LoadRoom(1)
+	preMobs := room.GetMobs(rooms.FindAll)
+	if len(preMobs) != 1 || preMobs[0] != 100 {
+		t.Fatalf("precondition: expected room to contain only instance 100, got %v", preMobs)
+	}
+
+	// Install Input listener to capture queued commands.
+	captured, mu, cleanupListener := captureInputs(t)
+	defer cleanupListener()
+
+	// Act: hostile="true" is a STRING literal — matches actions_mob.go:71
+	// `getStringParam(params, "hostile") == "true"`.
+	params := map[string]any{
+		"mob_id":    7,
+		"hostile":   "true",
+		"count":     1,
+		"base_pool": 50,
+	}
+	ctx := &EvalContext{
+		InstanceId: 100,
+		RoomId:     1,
+		Event:      EventContext{UserId: 1},
+	}
+	if result := fn(params, ctx); result != Success {
+		t.Fatalf("expected Success, got %v", result)
+	}
+
+	// Fire queued events so the Input listener captures the lookfortrouble command.
+	events.ProcessEvents()
+
+	// ── Assert 1: room has one MORE mob than before. ──────────────────
+	postMobs := room.GetMobs(rooms.FindAll)
+	if len(postMobs) != len(preMobs)+1 {
+		t.Fatalf("expected %d mobs in room after summon, got %d: %v", len(preMobs)+1, len(postMobs), postMobs)
+	}
+
+	// Find the new instance ID by set-difference.
+	preSet := make(map[int]bool, len(preMobs))
+	for _, id := range preMobs {
+		preSet[id] = true
+	}
+	newInstanceId := 0
+	for _, id := range postMobs {
+		if !preSet[id] {
+			newInstanceId = id
+			break
+		}
+	}
+	if newInstanceId == 0 {
+		t.Fatalf("could not find new instance ID in post-summon mob list %v", postMobs)
+	}
+
+	// ── Assert 2: new instance has Aggro targeting user 1. ───────────
+	companion := mobs.GetInstance(newInstanceId)
+	if companion == nil {
+		t.Fatalf("mobs.GetInstance(%d) returned nil after summon", newInstanceId)
+	}
+	if companion.Character.Aggro == nil {
+		t.Fatalf("expected companion.Character.Aggro != nil, got nil")
+	}
+	if companion.Character.Aggro.UserId != 1 {
+		t.Errorf("expected Aggro.UserId=1, got %d", companion.Character.Aggro.UserId)
+	}
+
+	// ── Assert 3: "lookfortrouble" was queued on the new instance. ────
+	mu.Lock()
+	defer mu.Unlock()
+	found := false
+	for _, in := range *captured {
+		if in.MobInstanceId == newInstanceId && in.InputText == "lookfortrouble" {
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Errorf("expected 'lookfortrouble' Input event for instance %d, got %d events: %+v",
+			newInstanceId, len(*captured), *captured)
 	}
 }
