@@ -1289,42 +1289,6 @@ func (c *Character) getFormattedName(viewingUserId int, uType string, renderFlag
 	return f
 }
 
-func (c *Character) PruneCooldowns() {
-	if len(c.Cooldowns) == 0 {
-		return
-	}
-
-	c.Cooldowns.Prune()
-}
-
-func (c *Character) GetCooldown(trackingTag string) int {
-	if c.Cooldowns == nil {
-		c.Cooldowns = make(Cooldowns)
-	}
-	return c.Cooldowns[trackingTag]
-}
-
-func (c *Character) GetAllCooldowns() map[string]int {
-
-	ret := map[string]int{}
-
-	if c.Cooldowns == nil {
-		return ret
-	}
-
-	maps.Copy(ret, c.Cooldowns)
-
-	return ret
-}
-
-func (c *Character) TryCooldown(trackingTag string, cooldownTime string) bool {
-	if c.Cooldowns == nil {
-		c.Cooldowns = make(Cooldowns)
-	}
-
-	return c.Cooldowns.Try(trackingTag, cooldownTime)
-}
-
 func (c *Character) SetSetting(settingName string, settingValue string) {
 	if c.Settings == nil {
 		c.Settings = make(map[string]string)
@@ -2349,44 +2313,6 @@ func (c *Character) RemoveBuff(buffId int) {
 	buffId = int(math.Abs(float64(buffId)))
 	c.Buffs.RemoveBuff(buffId)
 	c.Validate()
-}
-
-func (c *Character) TimerSet(name, period string) {
-	if c.Timers == nil {
-		c.Timers = map[string]gametime.RoundTimer{}
-	}
-	c.Timers[name] = gametime.RoundTimer{
-		RoundStart: util.GetRoundCount(),
-		Period:     period,
-	}
-}
-
-func (c *Character) TimerExpired(name string) bool {
-	if c.Timers == nil {
-		return true
-	}
-
-	t, ok := c.Timers[name]
-
-	if !ok {
-		return true
-	}
-
-	if t.Expired() {
-		delete(c.Timers, name)
-		return true
-	}
-
-	return false
-}
-
-func (c *Character) TimerExists(name string) bool {
-	if c.Timers == nil {
-		return false
-	}
-
-	_, ok := c.Timers[name]
-	return ok
 }
 
 func (c *Character) ApplyHealthChange(healthChange int) int {
