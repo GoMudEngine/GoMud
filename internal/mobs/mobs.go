@@ -494,10 +494,9 @@ func NewMobById(mobId MobId, homeRoomId int, forceStatPool ...int) *Mob {
 		// Save the mob instance
 		mobInstancesMu.Lock()
 		mobInstances[mob.InstanceId] = &mob
-		result := mobInstances[mob.InstanceId]
 		mobInstancesMu.Unlock()
 
-		return result
+		return &mob
 	}
 	return nil
 }
