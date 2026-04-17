@@ -1161,25 +1161,13 @@ func handlePlayerVsMob(user *users.UserRecord, uRoom *rooms.Room, evt events.New
 		return
 	}
 
-	if user.Character.Aggro.RoundsWaiting > 0 {
-		mudlog.Debug(`RoundsWaiting`, `User`, user.Character.Name, `Rounds`, user.Character.Aggro.RoundsWaiting)
-		user.Character.Aggro.RoundsWaiting--
-
-		roundResult := combat.GetWaitMessages(items.Wait, user.Character, &defMob.Character, combat.User, combat.Mob)
-
-		for _, msg := range roundResult.MessagesToSource {
-			user.SendText(msg)
-		}
-		for _, msg := range roundResult.MessagesToSourceRoom {
-			sendVisualRoomText(uRoom, msg, user.UserId)
-		}
-		for _, msg := range roundResult.MessagesToTargetRoom {
-			sendVisualRoomText(defRoom, msg, user.UserId)
-		}
-		sendDarkRoomCombatFallback(uRoom, user.UserId)
-		if defRoom != uRoom {
-			sendDarkRoomCombatFallback(defRoom, user.UserId)
-		}
+	if handleCombatWaitRound(
+		user.Character, &defMob.Character,
+		combat.User, combat.Mob,
+		user, nil,
+		uRoom, defRoom,
+		user.UserId,
+	) {
 		return
 	}
 
@@ -1364,25 +1352,13 @@ func handleMobVsPlayer(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, 
 
 	handleMobWeaponPickup(mob)
 
-	if mob.Character.Aggro.RoundsWaiting > 0 {
-		mudlog.Debug(`RoundsWaiting`, `User`, mob.Character.Name, `Rounds`, mob.Character.Aggro.RoundsWaiting)
-		mob.Character.Aggro.RoundsWaiting--
-
-		roundResult := combat.GetWaitMessages(items.Wait, &mob.Character, defUser.Character, combat.Mob, combat.User)
-
-		for _, msg := range roundResult.MessagesToTarget {
-			defUser.SendText(msg)
-		}
-		for _, msg := range roundResult.MessagesToSourceRoom {
-			sendVisualRoomText(mobRoom, msg, defUser.UserId)
-		}
-		for _, msg := range roundResult.MessagesToTargetRoom {
-			sendVisualRoomText(defRoom, msg, defUser.UserId)
-		}
-		sendDarkRoomCombatFallback(mobRoom, defUser.UserId)
-		if defRoom != mobRoom {
-			sendDarkRoomCombatFallback(defRoom, defUser.UserId)
-		}
+	if handleCombatWaitRound(
+		&mob.Character, defUser.Character,
+		combat.Mob, combat.User,
+		nil, defUser,
+		mobRoom, defRoom,
+		defUser.UserId,
+	) {
 		return
 	}
 
