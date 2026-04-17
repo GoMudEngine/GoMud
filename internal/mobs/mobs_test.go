@@ -918,46 +918,6 @@ func TestRecentlyDiedMultiple(t *testing.T) {
 	assert.False(t, RecentlyDied(4))
 }
 
-// ─── GetScriptPath ─────────────────────────────────────────────────────────
-
-func TestGetScriptPath(t *testing.T) {
-	cleanup := seedRegistry()
-	defer cleanup()
-
-	t.Run("without script tag", func(t *testing.T) {
-		mob := &Mob{MobId: 1, Zone: "Sanctum Basin"}
-		path := mob.GetScriptPath()
-		assert.Contains(t, path, "scripts")
-		assert.Contains(t, path, ".js")
-	})
-
-	t.Run("with script tag", func(t *testing.T) {
-		mob := &Mob{MobId: 1, Zone: "Sanctum Basin", ScriptTag: "custom"}
-		path := mob.GetScriptPath()
-		assert.Contains(t, path, "-custom.js")
-	})
-}
-
-// ─── HasScript / GetScript (file doesn't exist) ───────────────────────────
-
-func TestHasScript(t *testing.T) {
-	cleanup := seedRegistry()
-	defer cleanup()
-
-	mob := &Mob{MobId: 1, Zone: "Sanctum Basin"}
-	// Script file won't exist in test env
-	assert.False(t, mob.HasScript())
-}
-
-func TestGetScript(t *testing.T) {
-	cleanup := seedRegistry()
-	defer cleanup()
-
-	mob := &Mob{MobId: 1, Zone: "Sanctum Basin"}
-	// Script file won't exist in test env
-	assert.Equal(t, "", mob.GetScript())
-}
-
 // ─── Sleep ─────────────────────────────────────────────────────────────────
 
 func TestSleep(t *testing.T) {

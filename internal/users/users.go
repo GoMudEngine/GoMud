@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
@@ -26,6 +27,7 @@ var (
 )
 
 type ActiveUsers struct {
+	mu                sync.RWMutex                        // guards all five maps below
 	Users             map[int]*UserRecord                 // userId to UserRecord
 	Usernames         map[string]int                      // username to userId
 	Connections       map[connections.ConnectionId]int    // connectionId to userId
@@ -43,28 +45,52 @@ func newUserManager() *ActiveUsers {
 	}
 }
 
-func RemoveZombieUser(userId int) {
+// ── unguarded helpers (called only while mu is already held) ──────────────
 
-	if u := userManager.Users[userId]; u != nil {
-		u.Character.SetAdjective(`zombie`, false)
-	}
+func isZombieConnectionLocked(connectionId connections.ConnectionId) bool {
+	_, ok := userManager.ZombieConnections[connectionId]
+	return ok
+}
+
+func removeZombieConnectionLocked(connectionId connections.ConnectionId) {
+	delete(userManager.ZombieConnections, connectionId)
+}
+
+// ── exported API ──────────────────────────────────────────────────────────
+
+func RemoveZombieUser(userId int) {
+	userManager.mu.Lock()
+	u := userManager.Users[userId]
 	if connId, ok := userManager.UserConnections[userId]; ok {
 		delete(userManager.ZombieConnections, connId)
+	}
+	userManager.mu.Unlock()
+
+	if u != nil {
+		u.Character.SetAdjective(`zombie`, false)
 	}
 }
 
 func IsZombieConnection(connectionId connections.ConnectionId) bool {
+	userManager.mu.RLock()
+	defer userManager.mu.RUnlock()
+
 	_, ok := userManager.ZombieConnections[connectionId]
 	return ok
 }
 
 func RemoveZombieConnection(connectionId connections.ConnectionId) {
+	userManager.mu.Lock()
+	defer userManager.mu.Unlock()
+
 	delete(userManager.ZombieConnections, connectionId)
 }
 
 // Returns a slice of userId's
 // These userId's are zombies that have reached expiration
 func GetExpiredZombies(expirationTurn uint64) []int {
+	userManager.mu.RLock()
+	defer userManager.mu.RUnlock()
 
 	expiredUsers := make([]int, 0)
 
@@ -78,6 +104,9 @@ func GetExpiredZombies(expirationTurn uint64) []int {
 }
 
 func GetConnectionId(userId int) connections.ConnectionId {
+	userManager.mu.RLock()
+	defer userManager.mu.RUnlock()
+
 	if user, ok := userManager.Users[userId]; ok {
 		return user.connectionId
 	}
@@ -85,6 +114,8 @@ func GetConnectionId(userId int) connections.ConnectionId {
 }
 
 func GetConnectionIds(userIds []int) []connections.ConnectionId {
+	userManager.mu.RLock()
+	defer userManager.mu.RUnlock()
 
 	connectionIds := make([]connections.ConnectionId, 0, len(userIds))
 	for _, userId := range userIds {
@@ -97,8 +128,10 @@ func GetConnectionIds(userIds []int) []connections.ConnectionId {
 }
 
 func GetAllActiveUsers() []*UserRecord {
-	ret := []*UserRecord{}
+	userManager.mu.RLock()
+	defer userManager.mu.RUnlock()
 
+	ret := make([]*UserRecord, 0, len(userManager.Users))
 	for _, userPtr := range userManager.Users {
 		if !userPtr.isZombie {
 			ret = append(ret, userPtr)
@@ -109,6 +142,8 @@ func GetAllActiveUsers() []*UserRecord {
 }
 
 func GetOnlineUserIds() []int {
+	userManager.mu.RLock()
+	defer userManager.mu.RUnlock()
 
 	onlineList := make([]int, 0, len(userManager.Users))
 	for _, user := range userManager.Users {
@@ -118,6 +153,8 @@ func GetOnlineUserIds() []int {
 }
 
 func GetByCharacterName(name string) *UserRecord {
+	userManager.mu.RLock()
+	defer userManager.mu.RUnlock()
 
 	var closeMatch *UserRecord = nil
 
@@ -136,6 +173,8 @@ func GetByCharacterName(name string) *UserRecord {
 }
 
 func GetByUserId(userId int) *UserRecord {
+	userManager.mu.RLock()
+	defer userManager.mu.RUnlock()
 
 	if user, ok := userManager.Users[userId]; ok {
 		return user
@@ -145,6 +184,8 @@ func GetByUserId(userId int) *UserRecord {
 }
 
 func GetByConnectionId(connectionId connections.ConnectionId) *UserRecord {
+	userManager.mu.RLock()
+	defer userManager.mu.RUnlock()
 
 	if userId, ok := userManager.Connections[connectionId]; ok {
 		return userManager.Users[userId]
@@ -160,6 +201,8 @@ func LoginUser(user *UserRecord, connectionId connections.ConnectionId) (*UserRe
 
 	user.Character.SetAdjective(`zombie`, false)
 
+	userManager.mu.Lock()
+
 	// If they're already logged in
 	if userId, ok := userManager.Usernames[user.Username]; ok {
 
@@ -167,7 +210,7 @@ func LoginUser(user *UserRecord, connectionId connections.ConnectionId) (*UserRe
 		if otherConnId, ok := userManager.UserConnections[userId]; ok {
 
 			// Is it a zombie connection? If so, lets make this new connection the owner
-			if IsZombieConnection(otherConnId) {
+			if isZombieConnectionLocked(otherConnId) {
 
 				mudlog.Info("LoginUser()", "Zombie", true)
 
@@ -175,21 +218,23 @@ func LoginUser(user *UserRecord, connectionId connections.ConnectionId) (*UserRe
 					user = zombieUser
 				}
 
-				RemoveZombieConnection(otherConnId)
+				removeZombieConnectionLocked(otherConnId)
 
 				user.connectionId = connectionId
-
-				// Apply persisted charset preference to connection
-				if user.AsciiMode {
-					cs := connections.GetClientSettings(connectionId)
-					cs.AsciiMode = true
-					connections.OverwriteClientSettings(connectionId, cs)
-				}
 
 				userManager.Users[user.UserId] = user
 				userManager.Usernames[user.Username] = user.UserId
 				userManager.Connections[user.connectionId] = user.UserId
 				userManager.UserConnections[user.UserId] = user.connectionId
+
+				userManager.mu.Unlock()
+
+				// Apply persisted charset preference to connection (I/O — outside lock)
+				if user.AsciiMode {
+					cs := connections.GetClientSettings(connectionId)
+					cs.AsciiMode = true
+					connections.OverwriteClientSettings(connectionId, cs)
+				}
 
 				for _, mobInstId := range user.Character.GetCharmIds() {
 					if !mobs.MobInstanceExists(mobInstId) {
@@ -207,30 +252,33 @@ func LoginUser(user *UserRecord, connectionId connections.ConnectionId) (*UserRe
 
 		}
 
+		userManager.mu.Unlock()
 		// Otherwise, someone else is logged in, can't double-login!
 		return nil, "That user is already logged in.", errors.New("user is already logged in")
 	}
 
 	mudlog.Info("LoginUser()", "Zombie", false)
 
-	// Set their input round to current to track idle time fresh
-	user.SetLastInputRound(util.GetRoundCount())
-
 	user.connectionId = connectionId
-
-	// Apply persisted charset preference to connection
-	if user.AsciiMode {
-		cs := connections.GetClientSettings(connectionId)
-		cs.AsciiMode = true
-		connections.OverwriteClientSettings(connectionId, cs)
-	}
 
 	userManager.Users[user.UserId] = user
 	userManager.Usernames[user.Username] = user.UserId
 	userManager.Connections[user.connectionId] = user.UserId
 	userManager.UserConnections[user.UserId] = user.connectionId
 
+	userManager.mu.Unlock()
+
+	// Apply persisted charset preference to connection (I/O — outside lock)
+	if user.AsciiMode {
+		cs := connections.GetClientSettings(connectionId)
+		cs.AsciiMode = true
+		connections.OverwriteClientSettings(connectionId, cs)
+	}
+
 	mudlog.Info("LOGIN", "userId", user.UserId)
+
+	// Set their input round to current to track idle time fresh
+	user.SetLastInputRound(util.GetRoundCount())
 
 	user.EventLog.Add(`conn`, `Connected`)
 
@@ -244,60 +292,96 @@ func LoginUser(user *UserRecord, connectionId connections.ConnectionId) (*UserRe
 }
 
 func SetZombieUser(userId int) {
+	userManager.mu.Lock()
 
-	if u, ok := userManager.Users[userId]; ok {
-
-		u.Character.RemoveBuff(0)
-		u.Character.SetAdjective(`zombie`, true)
-
-		// Prevent guide mob dupes
-		for _, miid := range u.Character.CharmedMobs {
-			if m := mobs.GetInstance(miid); m != nil {
-				if m.MobId == 38 {
-					m.Character.Charmed.RoundsRemaining = 0
-				}
-			}
-		}
-
-		if _, ok := userManager.ZombieConnections[u.connectionId]; ok {
-			return
-		}
-
-		userManager.ZombieConnections[u.connectionId] = util.GetTurnCount()
+	u, ok := userManager.Users[userId]
+	if !ok {
+		userManager.mu.Unlock()
+		return
 	}
 
+	if _, alreadyZombie := userManager.ZombieConnections[u.connectionId]; alreadyZombie {
+		userManager.mu.Unlock()
+		return
+	}
+
+	connId := u.connectionId
+	userManager.ZombieConnections[connId] = util.GetTurnCount()
+	userManager.mu.Unlock()
+
+	// Cross-package calls outside lock
+	u.Character.SetAdjective(`zombie`, true)
+	u.Character.RemoveBuff(0)
+
+	// Prevent guide mob dupes
+	for _, miid := range u.Character.CharmedMobs {
+		if m := mobs.GetInstance(miid); m != nil {
+			if m.MobId == 38 {
+				m.Character.Charmed.RoundsRemaining = 0
+			}
+		}
+	}
 }
 
 func SaveAllUsers(isAutoSave ...bool) {
-
+	userManager.mu.RLock()
+	snapshot := make([]*UserRecord, 0, len(userManager.Users))
 	for _, u := range userManager.Users {
+		snapshot = append(snapshot, u)
+	}
+	userManager.mu.RUnlock()
+
+	for _, u := range snapshot {
 		if err := SaveUser(*u, isAutoSave...); err != nil {
 			mudlog.Error("SaveAllUsers()", "error", err.Error())
 		}
 	}
-
 }
 
 func LogOutUserByConnectionId(connectionId connections.ConnectionId) error {
+	userManager.mu.Lock()
 
-	u := GetByConnectionId(connectionId)
-
-	if _, ok := userManager.Connections[connectionId]; ok {
-
-		// Make sure the user data is saved to a file.
-		if u != nil {
-			u.Character.Validate()
-			SaveUser(*u)
-		}
-
-		delete(userManager.Users, u.UserId)
-		delete(userManager.Usernames, u.Username)
-		delete(userManager.Connections, u.connectionId)
-		delete(userManager.UserConnections, u.UserId)
-
-		return nil
+	userId, ok := userManager.Connections[connectionId]
+	if !ok {
+		userManager.mu.Unlock()
+		return errors.New("user not found for connection")
 	}
-	return errors.New("user not found for connection")
+
+	u := userManager.Users[userId]
+
+	// Capture deletion keys while we hold the lock. We'll do I/O next
+	// (outside the lock), then delete by these locals — not by re-reading
+	// u after a concurrent login might have replaced the map entries.
+	var (
+		delUserId       int
+		delUsername     string
+		delConnectionId connections.ConnectionId
+	)
+	if u != nil {
+		delUserId = u.UserId
+		delUsername = u.Username
+		delConnectionId = u.connectionId
+	}
+
+	userManager.mu.Unlock()
+
+	// Validate + save outside lock (I/O and cross-package calls)
+	if u != nil {
+		u.Character.Validate()
+		SaveUser(*u)
+	}
+
+	userManager.mu.Lock()
+	defer userManager.mu.Unlock()
+
+	if u != nil {
+		delete(userManager.Users, delUserId)
+		delete(userManager.Usernames, delUsername)
+		delete(userManager.Connections, delConnectionId)
+		delete(userManager.UserConnections, delUserId)
+	}
+
+	return nil
 }
 
 // First time creating a user.
@@ -316,6 +400,9 @@ func CreateUser(u *UserRecord) error {
 	if err := SaveUser(*u); err != nil {
 		return err
 	}
+
+	userManager.mu.Lock()
+	defer userManager.mu.Unlock()
 
 	userManager.Users[u.UserId] = u
 	userManager.Usernames[u.Username] = u.UserId
@@ -410,7 +497,10 @@ func SearchOfflineUsers(searchFunc func(u *UserRecord) bool) {
 			}
 
 			// If this is an online user, skip it
-			if _, ok := userManager.Usernames[uRecord.Username]; ok {
+			userManager.mu.RLock()
+			_, isOnline := userManager.Usernames[uRecord.Username]
+			userManager.mu.RUnlock()
+			if isOnline {
 				return nil
 			}
 

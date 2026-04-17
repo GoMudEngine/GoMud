@@ -1,9 +1,0 @@
-biomeid: desert
-name: Desert
-symbol: '*'
-description: Harsh and dry.
-darkarea: false
-litarea: false
-requireditemid: 0
-usesitem: false
-burns: false

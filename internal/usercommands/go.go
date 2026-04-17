@@ -531,6 +531,11 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 					if mob.Character.IsCharmed() {
 						continue
 					}
+					// Non-combatants never aggro on entry even if their
+					// group has been flagged hostile by prior attacks.
+					if mob.IsNonCombatant() {
+						continue
+					}
 
 					isHostile := mob.Hostile // Is it automatically hostile?
 					if !isHostile {

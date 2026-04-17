@@ -139,9 +139,12 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 
 	moonMod := float64(configs.GetBalanceConfig().MoonStatModMax)
 	tStart := time.Now()
+	activeZones := rooms.SnapshotActiveZones()
 
 	// Sweep: kill any mob stuck at 0 HP from a previous round (e.g., DOT
 	// damage, dismissed companion beaten down, or missed death check).
+	// Sweep runs for every mob regardless of zone activity — dead mobs
+	// should not linger even in idle zones.
 	for _, mobId := range mobs.GetAllMobInstanceIds() {
 		if mob := mobs.GetInstance(mobId); mob != nil && mob.Character.Health <= 0 {
 			mob.Command(`suicide`)
@@ -174,6 +177,13 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 			if mob.Character.Aggro != nil {
 				mob.Character.EndAggro()
 			}
+			continue
+		}
+
+		// Idle zone → skip combat entirely. Mobs "in combat" whose last
+		// opponent left the zone sit frozen until combat-memory expiry
+		// (handled in the idle lane of MobRoundTick) clears the flag.
+		if !activeZones[mobRoom.Zone] {
 			continue
 		}
 

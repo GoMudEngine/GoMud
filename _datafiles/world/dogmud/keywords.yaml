@@ -5,35 +5,44 @@
 help:
   command:
     configuration:
+      - afk
       - alias
       - macros
-      - set
       - password
+      - save
+      - set
+      - setdesc
+      - sethome
     character:
-
+      - bury
+      - character
+      - companion
       - conditions
       - cooldowns
-
+      - death
+      - dismiss
+      - encumbrance
       - inventory
-      - title
       - keyring
+      - killstats
+      - mutations
+      - pet
+      - pets
       - skills
       - spells
       - status
-      - killstats
-      - encumbrance
-      - death
-      - character
-      - pets
-      - bury
+      - suicide
+      - title
     communication:
+      - broadcast
       - emote
+      - inbox
+      - reply
+      - report
       - say
       - shout
-      - broadcast
       - talk
       - whisper
-      - inbox
     shops:
       - appraise
       - bank
@@ -50,57 +59,83 @@ help:
       - ask
       - quests
     combat:
+      - assess
       - assist
       - attack
       - bash
+      - blinding-flash
+      - blinding-spit
       - break
+      - cancel
       - cast
       - consider
       - cooldowns
       - defense
       - flee
+      - grapple
+      - healing-gel
       - kick
+      - pacifism-aura
+      - pvp
+      - rally
+      - shadow
       - shoot
+      - sneak
+      - sonic-shout
       - stamina
       - stand
-      - rally
+      - steal
+      - submit
+      - target
       - taunt
       - throw
+      - toxic-bite
       - trip
       - warcry
     crafting:
       - craft
+      - disenchant
+      - forage
+      - plant
+      - salvage
     information:
       - biome
       - exits
       - help
+      - hint
+      - history
       - look
       - online
       - species
       - who
-      - history
     items:
-      - drop
       - drink
+      - drop
       - eat
       - equip
+      - gearup
       - get
       - give
+      - put
+      - read
       - remove
       - show
+      - sort
       - stash
+      - storage
       - trash
       - use
-      - read
-      - put
     general:
-      - instances
       - arena
-      - oasis
+      - bug
+      - go
+      - instances
       - motd
+      - oasis
       - online
       - quit
       - scan
+      - suggest
     parties:
       - party
       - share
@@ -144,6 +179,7 @@ help:
       - mute
       - paz
       - prepare
+      - questdebug
       - questtoken
       - redescribe
       - reload
@@ -156,6 +192,8 @@ help:
       - spell
       - syslogs
       - teleport
+      - undeafen
+      - unmute
       - zap
       - zone
 # Aliases for keywords when typing: help <keyword>

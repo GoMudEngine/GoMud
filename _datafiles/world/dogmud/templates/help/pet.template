@@ -1,0 +1,15 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">pet</ansi>
+
+The <ansi fg="command">pet</ansi> command affectionately pets another player's pet in the
+room, or gives your own pet a nickname.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">pet <petname></ansi>      Pet another player's pet in the room.
+  <ansi fg="command">pet name <newname></ansi> Give your own pet a nickname (once only).
+
+Pet names follow the same rules as player names — no prohibited
+patterns, no conflicts with existing characters or creature types.
+A pet can only be named once.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help pets</ansi>, <ansi fg="command">help companion</ansi>

@@ -1,0 +1,4 @@
+quit
+You sit down and begin your meditation.
+[☀️ HP:########## SP:########## CP:##########]:You continue your meditation...
+[☀️ HP:########## SP:########## CP:##########]:

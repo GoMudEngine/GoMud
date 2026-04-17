@@ -63,7 +63,7 @@ Server:
   - checkclient
   # - Motd -
   #   Message of the day. This is displayed when the motd command is run.
-  Motd: '{{ t "CHANGE: Death simplified — you now respawn at your home location with full pools. No more Shadow Realm detour. Stat/skill penalties still apply. Type help death for details.\nNEW: Mob AI upgrades — Old Edrin is now a multi-phase caster boss with elemental summons. The Chrysalis Phantom is a hit-and-run assassin. Barmaid Dal heckles back at patrons.\nNEW: Sable the rift vendor is open for business in the Rift Chamber beneath Thornwall. Ask about portals to enter the Arena or Planar Oasis.\nFull patch notes: https://github.com/pruuk/DOGMud/blob/master/PATCH_NOTES.md" }}'
+  Motd: '{{ t "PERFORMANCE: Zones with no players now idle more cheaply — server should feel snappier during peak combat. Mobs in empty zones pause progression and combat but still tick buffs, conditions, and death checks.\nFIX: Companions no longer scatter with wild packs when an unrelated alpha dies. Your pet elemental stays put.\nFIX: Merchants can no longer be killed by aggro bleeding over from nearby combat — non-combatants now ignore group hostility.\nFIX: Vitality progression farm via HP-reservation enchants closed. Effective-full HP now correctly short-circuits regen-based stat rolls.\nFull patch notes: https://github.com/pruuk/DOGMud/blob/master/PATCH_NOTES.md" }}'
   # - NextRoomID -
   # This number is auto-updated to the highest number of rooms in the game.
   #   If creating your own rooms but don't want to risk an update conflicting,
@@ -1014,24 +1014,6 @@ Logging:
   LogToFile: false                             # Write logs to file + terminal
   LogFilePath: "_datafiles/logs/server.log"    # Log file path (rotated at 100MB)
   LogLevel: "debug"                            # debug, info, warn, error
-
-################################################################################
-#
-#   SCRIPTING
-#   Configurations to put limits on run away scripts etc.
-#
-################################################################################
-Scripting:
-  # - LoadTimeoutMs -
-  #   When a script is first loaded, compiled, and run, it is given this long to
-  #   complete. If it takes longer, it is killed. This includes the onLoad() function
-  #   in scripts. Allowing a script to take longer to load might be okay to prepare some
-  #   heavier data.
-  LoadTimeoutMs: 1000
-  # - RoomTimeoutMs -
-  #   How long a room script can run before it is killed. This is a safety feature to
-  #   prevent long running scripts from bogging down the server.
-  RoomTimeoutMs: 50
 
 ################################################################################
 #

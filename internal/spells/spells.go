@@ -2,7 +2,6 @@ package spells
 
 import (
 	"fmt"
-	"os"
 	"strings"
 	"time"
 
@@ -246,25 +245,6 @@ func (s *SpellData) GetTotalHealthCost(multiplier float64) int {
 		multiplier = 1.0
 	}
 	return int(float64(s.HealthCost) * multiplier)
-}
-
-func (s *SpellData) GetScript() string {
-
-	scriptPath := s.GetScriptPath()
-
-	// Load the script into a string
-	if _, err := os.Stat(scriptPath); err == nil {
-		if bytes, err := os.ReadFile(scriptPath); err == nil {
-			return string(bytes)
-		}
-	}
-
-	return ``
-}
-
-func (s *SpellData) GetScriptPath() string {
-	// Load any script for the room
-	return strings.Replace(string(configs.GetFilePathsConfig().DataFiles)+`/spells/`+s.Filepath(), `.yaml`, `.js`, 1)
 }
 
 // MaxFoldsForSkill returns the highest base_folds a player can discover at a given casting skill level.

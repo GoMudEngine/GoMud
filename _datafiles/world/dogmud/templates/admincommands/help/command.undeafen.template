@@ -1,0 +1,10 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">undeafen</ansi> <ansi fg="red">(admin)</ansi>
+
+The <ansi fg="command">undeafen</ansi> command reverses a prior <ansi fg="command">deafen</ansi>, restoring a player's
+ability to hear room text, shouts, and other communication.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">undeafen <player></ansi>  Restore hearing for the named player.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help deafen</ansi>

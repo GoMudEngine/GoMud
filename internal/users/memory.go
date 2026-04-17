@@ -3,6 +3,8 @@ package users
 import "github.com/GoMudEngine/GoMud/internal/util"
 
 func GetMemoryUsage() map[string]util.MemoryResult {
+	userManager.mu.RLock()
+	defer userManager.mu.RUnlock()
 
 	ret := map[string]util.MemoryResult{}
 

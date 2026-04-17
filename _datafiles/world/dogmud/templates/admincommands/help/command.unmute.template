@@ -1,0 +1,10 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">unmute</ansi> <ansi fg="red">(admin)</ansi>
+
+The <ansi fg="command">unmute</ansi> command reverses a prior <ansi fg="command">mute</ansi>, restoring a player's
+ability to speak, shout, and broadcast.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">unmute <player></ansi>    Restore speech for the named player.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help mute</ansi>

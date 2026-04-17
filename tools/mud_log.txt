@@ -1,0 +1,2106 @@
+
+[10:38:51] SPLASH
+����"������*��Z�������Z!!MUSIC(static/audio/music/intro.mp3 V=20 L=-1 C=1)��
+
+      .    *      .       *    .           *      .       *    .     
+          *      .                   .          *                    
+   .          .       *        .          .            *        .    
+        *           .      *         *          .      *            
+             .            .      .         .              .     *    
+
+ ____   ___   ____ __  __           _ 
+|  _ \ / _ \ / ___|  \/  |_   _  __| |
+| | | | | | | |  _| |\/| | | | |/ _` |
+| |_| | |_| | |_| | |  | | |_| | (_| |
+|____/ \___/ \____|_|  |_|\__,_|\__,_|
+
+        D e l u s i o n s   o f   G r a n d e u r
+
+      *    .      *       .    *           .      *       .    *     
+
+.: Welcome to Delusions of Grandeur, a MUD set on the world of Gaius.
+                                                      The Chrysalis awaits.
+
+================================================================================
+Note: Some legacy clients (zMUD, etc.) are not supported.
+We recommend Mudlet or the web client for the best experience.
+
+This port is for AI clients. Human players, please connect on port 33333.
+
+AI players: connect on port 55555. Using this port as an AI risks a ban.
+username (or "new"):
+
+[10:38:54] LOGIN_USER
+password:
+
+[10:38:57] LOGIN_PASS
+Invalid login.
+
+[10:38:57] SPLASH2
+����"������*��Z�������Z!!MUSIC(static/audio/music/intro.mp3 V=20 L=-1 C=1)��
+
+      .    *      .       *    .           *      .       *    .     
+          *      .                   .          *                    
+   .          .       *        .          .            *        .    
+        *           .      *         *          .      *            
+             .            .      .         .              .     *    
+
+ ____   ___   ____ __  __           _ 
+|  _ \ / _ \ / ___|  \/  |_   _  __| |
+| | | | | | | |  _| |\/| | | | |/ _` |
+| |_| | |_| | |_| | |  | | |_| | (_| |
+|____/ \___/ \____|_|  |_|\__,_|\__,_|
+
+        D e l u s i o n s   o f   G r a n d e u r
+
+      *    .      *       .    *           .      *       .    *     
+
+.: Welcome to Delusions of Grandeur, a MUD set on the world of Gaius.
+                                                      The Chrysalis awaits.
+
+================================================================================
+Note: Some legacy clients (zMUD, etc.) are not supported.
+We recommend Mudlet or the web client for the best experience.
+
+This port is for AI clients. Human players, please connect on port 33333.
+
+AI players: connect on port 55555. Using this port as an AI risks a ban.
+username (or "new"):
+
+[10:39:00] CREATE_NEW
+This will be both your login name and your character name.
+
+Choose your username:
+
+[10:39:02] CREATE_USERNAME
+Choose your password:
+
+[10:39:05] CREATE_PASS
+Repeat your password:
+
+[10:39:07] CREATE_PASS2
+Email Address (optional):
+
+[10:39:09] CREATE_EMAIL
+Are you using a screen reader? [y/n]:
+
+[10:39:12] CREATE_SCREENREADER
+Would you like to create a new user/login named smoketester? [y/n]:
+
+[10:39:15] CREATE_CONFIRM
+��Z!!MUSIC(Off)��
+Warning: This account is not flagged as AI but connected on the AI port.
+
+*******************************************************************************
+
+ You have been given a new quest: The Sanctum Trials!
+ type quests to track your progress on quests.
+
+*******************************************************************************
+
+ ╔══════════════════════════════════════════════════════════════════════════════╗
+ ║  .:  M E S S A G E   O F   T H E   D A Y                                    ║
+ ╠══════════════════════════════════════════════════════════════════════════════╣
+ ║ NEW: Instanced Zones! Pay the Riftkeeper in Thornwall to open rifts to the  ║
+ ║ Arena and Planar Oasis.                                                     ║
+ ║ NEW: Randomized loot — unique weapons and armor drop from instance        ║
+ ║ bosses. More gold = tougher enemies = better gear.                          ║
+ ║ NEW: Arena is a brutal gauntlet where death ends your run. Oasis is a 3D    ║
+ ║ elemental maze to explore and clear.                                        ║
+ ║ Type help instances, help arena, or help oasis for details.                 ║
+ ║ Full patch notes:                                                           ║
+ ║ https://github.com/pruuk/DOGMud/blob/master/PATCH_NOTES.md                  ║
+ ╚══════════════════════════════════════════════════════════════════════════════╝
+
+.: 3 users online
+╒═════════════╕═══════════════════════════╕════════╕═══════╕
+│ Name        │ Title                     │ Online │ Role  │
+└─────────────┘───────────────────────────┘────────┘───────┘
+│ quester0    │ Awakened apprentice rogue │ 1m     │ user  │
+│ Megalomania │ Exalted master generalist │ 7s     │ admin │
+│ smoketester │ novice generalist         │ 0s     │ user  │
+└─────────────┘───────────────────────────┘────────┘───────┘
+
+You have 0 unread messages and 0 old messages. Type inbox to view your messages.
+mudletmap not recognized. Type help for commands.
+
+.: [•] Academy Hall [Sanctum Basin]
+The main hall of the Chrysalis Academy is a high-ceilinged building of   ╔═════╗
+basalt blocks, its walls hung with hand-drawn diagrams and annotated     ║*─⌬─⌬║
+charts. Set directly into the floor near the entrance is a large mosaic  ║│ │  ║
+map of the Windward Marches -- settlements picked out in pale marble,    ║•─@─Y║
+roads in dark basalt, and wide blank spaces left where surveys remain    ║│ │ │║
+incomplete. Long tables fill the interior, and at the far end stands a   ║T─•─•║
+speaking dais. The Chrysalis Priest waits near the entrance, still and   ╚═════╝
+unhurried, ready to perform the Awakening Rite for those who are newly
+arrived in Gaius.
+
+Also here: Chrysalis Priest (100%)
+
+On the Ground: mosaic map
+
+Exits: east, north, south, west
+
+[☾ HP:██████████ SP:██████████ CP:██████████]:Chrysalis Priest says, "Be still."
+[☾ HP:██████████ SP:██████████ CP:██████████]:Chrysalis Priest draws a circle in the air with one hand. The chalk diagrams on
+the walls begin to glow faintly.
+[☾ HP:██████████ SP:██████████ CP:██████████]:
+
+[10:39:18] SEND_CMD
+set charset
+
+[10:39:21] RESPONSE
+set charset
+Charset mode set to ASCII.
+Box-drawing characters will be converted to ASCII equivalents.
+Use set charset again to switch back to UTF-8.
+[☾ HP:########## SP:########## CP:##########]:Chrysalis Priest says, "In Gaius, the body changes through effort and conflict.
+We call these changes Mutations."
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:39:23] SEND_CMD
+status
+
+[10:39:26] RESPONSE
+status
+
+ .: smoketester the novice generalist
+ +- .:Attributes --------------------------------------------------------------+
+ | Strength:   keen         Dexterity:  average      Perception: average       |
+ | Vitality:   keen         Willpower:  keen         Charisma:   average       |
+ +-----------------------------------------------------------------------------+
+ +- .:Vitals ------------------------------------------------------------------+
+ | Health:     full         Stamina:    full         Conviction: full          |
+ +-----------------------------------------------------------------------------+
+ +- .:Defenses ----------------------------------------------------------------+
+ | Physical:   none         Magical:    none         Conviction: none          |
+ +-----------------------------------------------------------------------------+
+ +- .:Info --------------------------------------------------------------------+
+ | Species:    human        Gold:       25           Bank:       100           |
+ +-----------------------------------------------------------------------------+
+
+[☾ HP:########## SP:########## CP:##########]:Chrysalis Priest steps forward and places two fingers lightly on your forehead.
+The air hums.
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:39:28] BG_OUTPUT
+You receive 10 gold.
+[☾ HP:########## SP:########## CP:##########]:
+*******************************************************************************
+
+ You've made progress on the quest: The Sanctum Trials!
+ type quests to track your progress on quests.
+
+*******************************************************************************
+
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:39:33] BG_OUTPUT
+Chrysalis Priest closes their eyes. The glow intensifies, then fades.
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:39:35] SEND_CMD
+look
+
+[10:39:38] RESPONSE
+look
+
+.: [*] Academy Hall [Sanctum Basin]
+The main hall of the Chrysalis Academy is a high-ceilinged building of   +=====+
+basalt blocks, its walls hung with hand-drawn diagrams and annotated     |*-⌬-⌬|
+charts. Set directly into the floor near the entrance is a large mosaic  || |  |
+map of the Windward Marches -- settlements picked out in pale marble,    |*-@-Y|
+roads in dark basalt, and wide blank spaces left where surveys remain    || | ||
+incomplete. Long tables fill the interior, and at the far end stands a   |T-*-*|
+speaking dais. The Chrysalis Priest waits near the entrance, still and   +=====+
+unhurried, ready to perform the Awakening Rite for those who are newly
+arrived in Gaius.
+
+Also here: Chrysalis Priest (100%)
+
+On the Ground: mosaic map
+
+Exits: east, north, south, west
+
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:39:44] BG_OUTPUT
+Chrysalis Priest withdraws their hand. The hum fades. Something has changed.
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:39:55] BG_OUTPUT
+Chrysalis Priest says, "It is done. Type mutations to see what the change has
+wrought."
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:40:08] BG_OUTPUT
+Chrysalis Priest says, "You have six trials before the Basin Warden will let you
+pass. Start with the Merchant -- south of here. Type hint if you lose your way."
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:40:12] SEND_CMD
+mutations
+
+[10:40:15] RESPONSE
+mutations
+
+ .:. Your Mutations .:.
+
+  Keen Eyes (Level 1)
+    Your eyes develop a crystalline clarity. Perception sharpens dramatically, though coordination suffers.
+
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:40:21] SEND_CMD
+quest
+
+[10:40:24] RESPONSE
+quest
+ +- .:Quests ( 1 out of 1 shown ) ------------------------------------------+
+   The Sanctum Trials                        ###...................... 15% 
+   Visit Merchant Adela on Market Street and buy equipment. Type hint for
+   directions.
+ +--------------------------------------------------------------------------+
+ 
+
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:40:35] BG_OUTPUT
+Chrysalis Priest stands quietly, eyes half-closed, listening to something no one
+else can hear
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:40:52] SEND_CMD
+look mosaic
+
+[10:40:55] RESPONSE
+look mosaic
+
++------------------------------------------------------+
+|  THE WINDWARD MARCHES                                |
+|  (partial -- much of Gaius remains uncharted)        |
++------------------------------------------------------+
+|                                                      |
+|  [NEW PLYMOUTH *]               [? ? ?]             |
+|        |         \                                   |
+|   [TIDEMARK]      \         [STILLWATER]            |
+|        |           \              |                 |
+|   [GREENFORD]   [AMBER VALLEY]   |                 |
+|         \              \          |                 |
+|          \---------[CONFLUENCE]                    |
+|                         |                           |
+|                   . . . . . . .                     |
+|                  .   unmapped   .                   |
+|                   . . . . . . .                     |
+|                    /~~~~~~~~~~~\                    |
+|                   |  SANCTUM    |                   |
+|                   |   BASIN     |  <- you are here  |
+|                    \~~~~~~~~~~~/                    |
++------------------------------------------------------+
+| * city  ~ plateau rim  . unmapped  \ road           |
++------------------------------------------------------+
+
+[☾ HP:########## SP:########## CP:##########]:The hall smells of parchment, chalk dust, and the faint mineral tang of basalt.
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:41:07] BG_OUTPUT
+Chrysalis Priest traces the Chrysalis sigil in the air with one finger, a faint
+shimmer following the motion
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:41:14] SEND_CMD
+south
+
+[10:41:17] RESPONSE
+south
+    >>> You head towards the south exit.
+
+.: [*] Market Street [Sanctum Basin]
+A short cobbled street runs through the market district of Sanctum       +=====+
+Basin. Open-fronted stalls display basic supplies -- trail rations,      |*-A-Y|
+rope, lanterns, water skins. The merchants are a mix of gruff locals and || | ||
+traveling traders who supply the Chrysalis academy. The smells of spiced |T-@-*|
+food and tanned leather mix in the dry air.                              ||   ||
+                                                                         |G   L|
+                                                                         +=====+
+
+Also here: Merchant Adela (100%|shop)
+
+Exits: east, north, west
+
+TIP: Type list to see what merchants have for sale.
+
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:41:19] BG_OUTPUT
+Merchant Adela looks up from the counter as you approach.
+[☾ HP:########## SP:########## CP:##########]:Merchant Adela says, "New arrival. Good. Let me show you how this works."
+[☾ HP:########## SP:########## CP:##########]:Merchant Adela says, "Type list to see what I carry. Every merchant in Gaius
+uses the same command."
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:41:23] BG_OUTPUT
+Merchant Adela says, "When you find something you want, type buy [item name].
+You can buy a sharp stick for three gold, a cotton shirt for three, or a small
+red potion for five."
+[☾ HP:########## SP:########## CP:##########]:Merchant Adela says, "The Academy gave you a small stipend when you arrived. It
+should cover at least one purchase."
+[☾ HP:########## SP:########## CP:##########]:Merchant Adela says, "Go ahead. Type list, then buy something."
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:41:48] SEND_CMD
+buy sharp stick
+
+[10:41:50] RESPONSE
+buy sharp stick
+��Z!!SOUND(static/audio/sound/other/buy.mp3 T=other V=100)��You purchase the sharp stick from Merchant Adela for 3 gold.
+*** Your bartering skill reaches apprentice! ***
+
+*******************************************************************************
+
+ You've made progress on the quest: The Sanctum Trials!
+ type quests to track your progress on quests.
+
+*******************************************************************************
+
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:41:56] SEND_CMD
+wield sharp stick
+
+[10:42:00] RESPONSE
+wield sharp stick
+You wield your sharp stick. You're feeling dangerous.
+[☾ HP:########## SP:########## CP:##########]:Merchant Adela says, "That is commerce. Simple enough."
+[☾ HP:########## SP:########## CP:##########]:Merchant Adela says, "I also buy things. If you have something you do not need,
+type sell [item] while you are here."
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:42:03] BG_OUTPUT
+Merchant Adela says, "One more thing: type status to see your full character
+sheet -- stats, health, stamina, everything."
+[☾ HP:########## SP:########## CP:##########]:Merchant Adela says, "The Combat Trainer is in the Training Yard. From Town
+Square, go north then east."
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:42:14] SEND_CMD
+quest
+
+[10:42:17] RESPONSE
+quest
+ +- .:Quests ( 1 out of 1 shown ) ------------------------------------------+
+   The Sanctum Trials                        #######.................. 30% 
+   Defeat the training dummy in the Training Yard. Type hint for
+   directions.
+ +--------------------------------------------------------------------------+
+ 
+
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:42:42] SEND_CMD
+hint
+
+[10:42:45] RESPONSE
+hint
+Quest Hint (The Sanctum Trials): From Market Street, go north then east (1 north, 1 east). Type attack dummy to start the fight.
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:42:48] BG_OUTPUT
++-------------------------------------------------------------------------+
+
+                         .           .          *     
+                                 .  .  .  .            
+                              .               .       
+                           .                     .    
+                         .                         .  
+                       .                             .
+                       .                             .
+                       .                             .
+                         .                         .  
+                           .                     .    
+                              .               .       
+                                 .  .  .  .            
+                         *           *          .     
+                    Swiftmoon dims and vanishes —    
+                       it will return before long.   
+
++-------------------------------------------------------------------------+
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:43:28] BG_OUTPUT
+The smell of roasting desert root vegetable drifts from a nearby brazier.
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:43:32] SEND_CMD
+north
+
+[10:43:34] RESPONSE
+north
+    >>> You head towards the north exit.
+
+.: [*] Academy Hall [Sanctum Basin]
+The main hall of the Chrysalis Academy is a high-ceilinged building of   +=====+
+basalt blocks, its walls hung with hand-drawn diagrams and annotated     |*-⌬-⌬|
+charts. Set directly into the floor near the entrance is a large mosaic  || |  |
+map of the Windward Marches -- settlements picked out in pale marble,    |*-@-Y|
+roads in dark basalt, and wide blank spaces left where surveys remain    || | ||
+incomplete. Long tables fill the interior, and at the far end stands a   |T-*-*|
+speaking dais. The Chrysalis Priest waits near the entrance, still and   +=====+
+unhurried, ready to perform the Awakening Rite for those who are newly
+arrived in Gaius.
+
+Also here: Chrysalis Priest (100%)
+
+On the Ground: mosaic map
+
+Exits: east, north, south, west
+
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:43:35] SEND_CMD
+east
+
+[10:43:38] RESPONSE
+east
+    >>> You head towards the east exit.
+
+.: [*] Training Yard [Sanctum Basin]
+A wide open yard of packed basalt dust serves as the combat training     +=====+
+ground of the Chrysalis Academy. Wooden posts, straw targets, and        |⌬-⌬-B|
+armored training dummies are arranged around the space. A combat trainer ||    |
+moves through slow practice forms at the center of the yard, pausing to  |A-@-♣|
+watch for students in need of instruction.                               || | ||
+                                                                         |*-*-*|
+                                                                         +=====+
+
+Also here: Combat Trainer (100%) and Training Dummy (100%)
+
+Exits: east, south, west
+
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:43:40] BG_OUTPUT
+Combat Trainer says, "You are here for combat training."
+[☾ HP:########## SP:########## CP:##########]:Combat Trainer says, "The fundamentals are simple: close distance, maintain
+balance, apply force. Everything else is variation."
+[☾ HP:########## SP:########## CP:##########]:Combat Trainer says, "The training dummy is an easy opponent. It will not
+overwhelm you."
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:43:44] BG_OUTPUT
+A training dummy sways slightly from a recent impact.
+Combat Trainer says, "Defeat it. Use attack dummy to start the fight. Do not
+stop until it falls."
+[☾ HP:########## SP:########## CP:##########]:Combat Trainer watches with arms folded, the faintest smile on their face.
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:43:47] SEND_CMD
+attack dummy
+
+[10:43:50] RESPONSE
+attack dummy
+You prepare to enter into mortal combat with Training Dummy.
+[☾ HP:########## SP:########## CP:##########] » training dummy[|healthy] :��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You deliver a powerful blow to Training Dummy!
+training dummy dodges your attack!
+You swing wildly at Training Dummy but miss!
+[Tip] Check the help command for a full list of topics. You might learn about mechanics you didn't know about.
+training dummy prepares to fight you!
+[☾ HP:########## SP:########## CP:##########] » training dummy[|healthy] :
+
+[10:43:52] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��Your sharp stick CRITICALLY SMASHES Training Dummy!
+You stumble forward and accidentally deliver a CRUSHING BLOW!
+You clumsily bat the attack away!
+Training Dummy lunges clumsily and misses!
+Combat Trainer steps through a low guard transition, weight perfectly balanced
+[☾ HP:########## SP:########## CP:##########] » training dummy[|healthy] :
+
+[10:43:56] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You deliver a powerful blow to Training Dummy!
+You throw everything you have into a wild swing at Training Dummy!
+You frantically raise your defense, just catching the blow!
+Training Dummy swings wildly, missing you entirely!
+[☾ HP:########## SP:########## CP:##########] » training dummy[|healthy] :
+
+[10:44:00] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��Your sharp stick CRUSHES Training Dummy!
+Windmilling your fists, you crash into Training Dummy!
+You bat away the attack with your weapon!
+Training Dummy swings wildly, missing you entirely!
+*** Your dexterity grows stronger! ***
+Combat Trainer lets out a short laugh.
+[☾ HP:########## SP:########## CP:##########] » training dummy[|healthy] :Combat Trainer says, "I may have understated what the dummy is capable of. Keep
+going."
+[☾ HP:########## SP:########## CP:##########] » training dummy[|healthy] :Combat Trainer says, "While you are at it -- combat is not just striking. Try 
+kick, grapple, or trip to mix it up."
+[☾ HP:########## SP:########## CP:##########] » training dummy[|healthy] :
+
+[10:44:04] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You bash Training Dummy with your sharp stick!
+training dummy dodges your attack!
+You swing wildly at Training Dummy but miss!
+��Z!!SOUND(static/audio/sound/combat/hit-self.mp3 T=combat V=100)��A lucky hit from Training Dummy CRUSHES you!
+Combat Trainer says, "If you had a shield, bash is also available -- shield work
+comes later. For now, get it on the ground."
+[☾ HP:########## SP:########## CP:##########] » training dummy[|healthy] :Combat Trainer says, "One more thing. Not every fight is won with a blade. Try 
+taunt -- a sharp tongue can break an opponent as surely as a sharp edge."
+[☾ HP:########## SP:########## CP:##########] » training dummy[|healthy] :
+
+[10:44:08] BG_OUTPUT
+*** Your strength grows stronger! ***
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��In a sweeping motion, you bash Training Dummy with your sharp stick!
+Windmilling your fists, you crash into Training Dummy!
+You desperately catch the blow on your weapon!
+Training Dummy swings wildly, missing you entirely!
+[☾ HP:########## SP:#########. CP:##########] » training dummy[|healthy] :
+
+[10:44:12] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��training dummy dodges your attack!
+Your swing at Training Dummy misses completely!
+You throw everything you have into a wild swing at Training Dummy!
+You desperately catch the blow on your weapon!
+Training Dummy swings wildly, missing you entirely!
+[☾ HP:########## SP:########## CP:##########] » training dummy[|healthy] :
+
+[10:44:16] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You deliver a CRITICAL BASH to Training Dummy with your sharp stick!
+You throw a desperate swing that CONNECTS PERFECTLY with Training Dummy!
+You barely parry training dummy's attack!
+Training Dummy lunges clumsily and misses!
+[☾ HP:########## SP:#########. CP:##########] » training dummy[|healthy] :
+
+[10:44:20] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��Your sharp stick pounds heavily into Training Dummy!
+training dummy dodges your attack!
+Your clumsy swing catches nothing but air!
+training dummy tries to grapple you, but you slip away!
+Combat Trainer steps through a low guard transition, weight perfectly balanced
+[☾ HP:########## SP:#########. CP:##########] » training dummy[|bruised] :
+
+[10:44:24] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��Your sharp stick CRUSHES Training Dummy!
+training dummy dodges your attack!
+Your clumsy swing catches nothing but air!
+Training Dummy circles dangerously.
+Combat Trainer practices forms -- a slow, deliberate sequence of strikes and
+footwork
+[☾ HP:########## SP:#########. CP:##########] » training dummy[|bruised] :
+
+[10:44:28] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��training dummy dodges your attack!
+You stumble and miss badly!
+You throw a desperate swing that CONNECTS PERFECTLY with Training Dummy!
+You meet the strike weapon-to-weapon!
+Training Dummy swings wildly, missing you entirely!
+[☾ HP:########## SP:#########. CP:##########] » training dummy[|bruised] :
+
+[10:44:32] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��Your sharp stick CRUSHES Training Dummy!
+!!! You swing wildly and FUMBLE, nearly falling over! !!!
+You counter the strike with a firm parry!
+Training Dummy swings wildly, missing you entirely!
+Combat Trainer steps through a low guard transition, weight perfectly balanced
+[☾ HP:########## SP:#########. CP:##########] » training dummy[|bruised] :
+
+[10:44:37] BG_OUTPUT
+The combat trainer counts strikes under their breath.
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You deliver a CRITICAL BASH to Training Dummy with your sharp stick!
+You charge into Training Dummy and slam them with your fists!
+You deflect high, turning the attack away!
+Training Dummy swings wildly, missing you entirely!
+[☾ HP:########## SP:#########. CP:##########] » training dummy[|bruised] :
+
+[10:44:41] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/miss1.mp3 T=combat V=100)��!!! You overcommit to your swing and FUMBLE, nearly losing your balance! !!!
+training dummy dodges your attack!
+You swing wildly at Training Dummy but miss!
+You frantically raise your defense, just catching the blow!
+Training Dummy lunges clumsily and misses!
+[☾ HP:########## SP:#########. CP:##########] » training dummy[|bruised] :
+
+[10:44:45] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You land a DEVASTATING HIT on Training Dummy!
+training dummy dodges your attack!
+You lunge at Training Dummy but stumble past!
+Your guard almost fails, but you manage to deflect!
+Training Dummy lunges clumsily and misses!
+[☾ HP:########## SP:#########. CP:##########] » training dummy[|bruised] :
+
+[10:44:49] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You land a DEVASTATING HIT on Training Dummy!
+You throw everything you have into a wild swing at Training Dummy!
+You frantically raise your defense, just catching the blow!
+Training Dummy lunges clumsily and misses!
+[☾ HP:########## SP:#########. CP:##########] » training dummy[|bruised] :
+
+[10:44:53] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��In a sweeping motion, you bash Training Dummy with your sharp stick!
+You throw everything you have into a wild swing at Training Dummy!
+You deflect the strike at the last moment!
+Training Dummy swings wildly, missing you entirely!
+[☾ HP:########## SP:#########. CP:##########] » training dummy[|bruised] :
+
+[10:44:57] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��In a sweeping motion, you bash Training Dummy with your sharp stick!
+You stumble forward and accidentally deliver a CRUSHING BLOW!
+⚔ RIPOSTE! You turn the parry into a swift counter-strike! (negligible damage)
+You turn the clumsy blow with contemptuous ease!
+Training Dummy lunges clumsily and misses!
+Combat Trainer practices forms -- a slow, deliberate sequence of strikes and
+footwork
+[☾ HP:########## SP:#########. CP:##########] » training dummy[|wounded] :
+
+[10:45:01] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��Your sharp stick pounds heavily into Training Dummy!
+You stumble forward and accidentally deliver a CRUSHING BLOW!
+��Z!!SOUND(static/audio/sound/combat/hit-self.mp3 T=combat V=100)��A lucky hit from Training Dummy CRUSHES you!
+[☾ HP:########## SP:#########. CP:##########] » training dummy[|wounded] :
+
+[10:45:05] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��Your sharp stick pounds heavily into Training Dummy!
+You stumble forward and accidentally deliver a CRUSHING BLOW!
+You clumsily bat the attack away!
+Training Dummy swings wildly, missing you entirely!
+[☾ HP:########## SP:########.. CP:##########] » training dummy[|wounded] :
+
+[10:45:09] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��Your sharp stick CRUSHES Training Dummy!
+You charge into Training Dummy and slam them with your fists!
+You knock the attack aside!
+Training Dummy lunges clumsily and misses!
+[☾ HP:########## SP:########.. CP:##########] » training dummy[|wounded] :
+
+[10:45:13] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You swing with all your might and hit hard!
+You stumble forward and accidentally deliver a CRUSHING BLOW!
+You frantically raise your defense, just catching the blow!
+Training Dummy swings wildly, missing you entirely!
+*** Your weapon-combat skill reaches apprentice! ***
+[☾ HP:########## SP:########.. CP:##########] » training dummy[|wounded] :
+
+[10:45:17] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You deliver a powerful blow to Training Dummy!
+You throw a desperate swing that CONNECTS PERFECTLY with Training Dummy!
+*** Your dexterity grows stronger! ***
+You deflect the strike at the last moment!
+Training Dummy swings wildly, missing you entirely!
+[☾ HP:########## SP:########.. CP:##########] » training dummy[|badly wounded] :
+
+[10:45:21] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��Your sharp stick CRUSHES Training Dummy!
+You charge into Training Dummy and slam them with your fists!
+You narrowly redirect the strike with your weapon!
+Training Dummy swings wildly, missing you entirely!
+[☾ HP:########## SP:########.. CP:##########] » training dummy[|badly wounded] :
+
+[10:45:25] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You land a DEVASTATING HIT on Training Dummy!
+Windmilling your fists, you crash into Training Dummy!
+Your guard almost fails, but you manage to deflect!
+Training Dummy swings wildly, missing you entirely!
+[☾ HP:########## SP:########.. CP:##########] » training dummy[|badly wounded] :
+
+[10:45:29] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You deliver a powerful blow to Training Dummy!
+!!! You swing wildly and FUMBLE, nearly falling over! !!!
+training dummy tries to grapple you, but you slip away!
+[☾ HP:########## SP:########.. CP:##########] » training dummy[|badly wounded] :
+
+[10:45:33] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��Your sharp stick pounds heavily into Training Dummy!
+training dummy dodges your attack!
+You lunge at Training Dummy but stumble past!
+Training Dummy circles dangerously.
+[☾ HP:########## SP:########.. CP:##########] » training dummy[|badly wounded] :
+
+[10:45:37] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You land a DEVASTATING HIT on Training Dummy!
+You charge into Training Dummy and slam them with your fists!
+��Z!!SOUND(static/audio/sound/combat/hit-self.mp3 T=combat V=100)��Training Dummy CONNECTS PERFECTLY with a wild swing!
+[☾ HP:########## SP:########.. CP:##########] » training dummy[|badly wounded] :
+
+[10:45:41] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You swing with all your might and hit hard!
+You charge into Training Dummy and slam them with your fists!
+You catch the blow on your guard!
+Training Dummy swings wildly, missing you entirely!
+[☾ HP:########## SP:########.. CP:##########] » training dummy[|badly wounded] :
+
+[10:45:45] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You land a DEVASTATING HIT on Training Dummy!
+You throw everything you have into a wild swing at Training Dummy!
+You frantically raise your defense, just catching the blow!
+Training Dummy swings wildly, missing you entirely!
+[☾ HP:########## SP:########.. CP:##########] » training dummy[|near death] :
+
+[10:45:49] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You deliver a CRITICAL BASH to Training Dummy with your sharp stick!
+You stumble forward and accidentally deliver a CRUSHING BLOW!
+Your guard almost fails, but you manage to deflect!
+Training Dummy lunges clumsily and misses!
+[☾ HP:########## SP:########.. CP:##########] » training dummy[|near death] :
+
+[10:45:53] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��*** Your sharp stick CRITICALLY SMASHES Training Dummy! ***
+You barrel into Training Dummy and land a sloppy hit!
+You angle your weapon, redirecting the force!
+Training Dummy swings wildly, missing you entirely!
+[☾ HP:########## SP:#######... CP:##########] » training dummy[|near death] :
+
+[10:45:57] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You deliver a CRITICAL BASH to Training Dummy with your sharp stick!
+You throw a desperate swing that CONNECTS PERFECTLY with Training Dummy!
+You guide the blow aside with practiced skill!
+Training Dummy lunges clumsily and misses!
+[☾ HP:########## SP:#######... CP:##########] » training dummy[|near death] :
+
+[10:46:01] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��training dummy dodges your attack!
+You stumble and miss badly!
+You stumble forward and accidentally deliver a CRUSHING BLOW!
+You deflect high, turning the attack away!
+Training Dummy lunges clumsily and misses!
+[☾ HP:########## SP:#######... CP:##########] » training dummy[|near death] :
+
+[10:46:05] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��In a sweeping motion, you bash Training Dummy with your sharp stick!
+You throw a desperate swing that CONNECTS PERFECTLY with Training Dummy!
+training dummy has died.
+*** You feel your combat skills sharpening! ***
+*** Defeating a new foe hones your combat instincts! ***
+
+*******************************************************************************
+
+ You've made progress on the quest: The Sanctum Trials!
+ type quests to track your progress on quests.
+
+*******************************************************************************
+
+[☾ HP:########## SP:#######... CP:##########]:
+
+[10:46:13] BG_OUTPUT
+[☾ HP:########## SP:########.. CP:##########]:
+
+[10:46:15] SEND_CMD
+quest
+
+[10:46:18] RESPONSE
+quest
+ +- .:Quests ( 1 out of 1 shown ) ------------------------------------------+
+   The Sanctum Trials                        #########................ 38% 
+   Visit Korvath at The Forge and craft an iron dagger.
+ +--------------------------------------------------------------------------+
+ 
+
+[☾ HP:########## SP:########.. CP:##########]:
+
+[10:46:26] SEND_CMD
+hint
+
+[10:46:29] RESPONSE
+hint
+Quest Hint (The Sanctum Trials): From the Training Yard, go south (1 south). Korvath will give you materials. Type craft iron dagger.
+[☾ HP:########## SP:#########. CP:##########]:
+
+[10:47:18] BG_OUTPUT
+Combat Trainer lets out a short laugh.
+[☾ HP:########## SP:########## CP:##########]:Combat Trainer says, "I may have understated what the dummy is capable of. Keep
+going."
+[☾ HP:########## SP:########## CP:##########]:Combat Trainer says, "While you are at it -- combat is not just striking. Try 
+kick, grapple, or trip to mix it up."
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:47:22] BG_OUTPUT
+Combat Trainer says, "If you had a shield, bash is also available -- shield work
+comes later. For now, get it on the ground."
+[☾ HP:########## SP:########## CP:##########]:Combat Trainer says, "One more thing. Not every fight is won with a blade. Try 
+taunt -- a sharp tongue can break an opponent as surely as a sharp edge."
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:47:30] BG_OUTPUT
+The sound of practiced footwork on packed basalt fills the air.
+Combat Trainer practices forms -- a slow, deliberate sequence of strikes and
+footwork
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:48:06] BG_OUTPUT
+A training dummy sways slightly from a recent impact.
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:48:18] BG_OUTPUT
+The combat trainer counts strikes under their breath.
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:48:22] BG_OUTPUT
+Combat Trainer practices forms -- a slow, deliberate sequence of strikes and
+footwork
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:48:30] BG_OUTPUT
+The sound of practiced footwork on packed basalt fills the air.
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:48:45] SEND_CMD
+south
+
+[10:48:48] RESPONSE
+south
+    >>> You head towards the south exit.
+
+You receive a iron ingot.
+
+You receive a leather strip.
+
+.: [*] The Forge [Sanctum Basin]
+The clang of hammer on steel rings out from an open-sided smithy built   +=====+
+against the eastern wall of the basin. The heat from the forge is        |A-Y-♣|
+intense in the already warm desert air. Basalt columns support a heavy   || | ||
+roof of slate, and the walls are hung with tools, half-finished blades,  |*-@-*|
+and racks of metal stock. Blacksmith Korvath works here, a figure of     |  |  |
+soot and muscle.                                                         |  L  |
+                                                                         +=====+
+
+Also here: Korvath (100%|shop)
+
+Exits: east, north, south, west
+
+TIP: Type list to see what merchants have for sale.
+
+[☾ HP:########## SP:########## CP:##########]:Korvath sets down the hammer and turns to face you. The forge has been burning
+continuously for decades -- the heat in this room is a permanent condition.
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:48:50] BG_OUTPUT
+[Tip] Your stats improve through use. Swing a sword enough and your Strength grows over time.
+Korvath says, "Crafting is belief made material. You take raw substance and
+impose a shape on it through skill and intent."
+[☾ HP:########## SP:########## CP:##########]:Korvath says, "The forge does not care about your feelings. It cares about your
+technique."
+[☾ HP:########## SP:########## CP:##########]:Korvath says, "Heat the metal until it tells you it is ready -- color, texture,
+the sound it makes. Then shape it before doubt sets in."
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:48:53] SEND_CMD
+craft iron dagger
+
+[10:48:56] RESPONSE
+craft iron dagger
+You begin crafting Iron Dagger... (quick)
+
+*******************************************************************************
+
+ You've made progress on the quest: The Sanctum Trials!
+ type quests to track your progress on quests.
+
+*******************************************************************************
+
+[☾ HP:########## SP:########## CP:##########]:You continue working on iron-dagger... (1/3)
+Korvath says, "I have put an iron ingot and a leather strip in your pack."
+[☾ HP:########## SP:########## CP:##########]:Korvath says, "Type craft to see your options. Then type craft iron dagger. One
+attempt. Go."
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:48:59] BG_OUTPUT
+You continue working on iron-dagger... (2/3)
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:49:03] BG_OUTPUT
+You hammer the iron into shape and wrap the grip tightly. An iron dagger!
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:49:07] BG_OUTPUT
+Korvath hammers at the anvil with practiced, rhythmic blows
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:49:15] BG_OUTPUT
+Korvath hammers at the anvil with practiced, rhythmic blows
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:49:20] SEND_CMD
+quest
+
+[10:49:23] RESPONSE
+quest
+ +- .:Quests ( 1 out of 1 shown ) ------------------------------------------+
+   The Sanctum Trials                        ###########.............. 46% 
+   Visit Alchemist Yenna and brew a healing salve.
+ +--------------------------------------------------------------------------+
+ 
+
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:49:35] BG_OUTPUT
+Korvath examines a half-finished blade against the forge light
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:49:47] SEND_CMD
+hint
+
+[10:49:50] RESPONSE
+hint
+Quest Hint (The Sanctum Trials): From The Forge, go west, west, north, west (3 west, 1 north). Yenna will give you materials. Type craft healing salve.
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:50:10] SEND_CMD
+west
+
+[10:50:12] RESPONSE
+west
+    >>> You head towards the west exit.
+
+.: [*] Market Street [Sanctum Basin]
+A short cobbled street runs through the market district of Sanctum       +=====+
+Basin. Open-fronted stalls display basic supplies -- trail rations,      |*-A-Y|
+rope, lanterns, water skins. The merchants are a mix of gruff locals and || | ||
+traveling traders who supply the Chrysalis academy. The smells of spiced |T-@-*|
+food and tanned leather mix in the dry air.                              ||   ||
+                                                                         |G   L|
+                                                                         +=====+
+
+Also here: Merchant Adela (100%|shop)
+
+Exits: east, north, west
+
+TIP: Type list to see what merchants have for sale.
+
+[☾ HP:########## SP:########## CP:##########]:Merchant Adela looks up from the counter as you approach.
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:50:13] SEND_CMD
+west
+
+[10:50:16] RESPONSE
+west
+    >>> You head towards the west exit.
+
+.: [*] Town Square [Sanctum Basin]
+You stand in the center of Sanctum Basin's small settlement -- a broad   +=====+
+flagged square of dark stone surrounded by low buildings of basalt       |*-*-A|
+brick. A carved sign post stands at the center, hung with a painted map  || | ||
+of the basin and its facilities. Citizens and initiates move through the |*-@-*|
+square, their voices low in the dry air. Roads lead in all directions    |  |  |
+from this central hub.                                                   |*-G  |
+                                                                         +=====+
+
+Exits: east, north, south, west
+
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:50:17] SEND_CMD
+north
+
+[10:50:20] RESPONSE
+north
+    >>> You head towards the north exit.
+
+.: [*] Chrysalis Well Court [Sanctum Basin]
+A circular courtyard surrounds a deep well of polished basalt -- one of  +=====+
+the basin's primary water sources. Stone benches ring the space, and     |O-*-⌬|
+initiates gather here between training sessions to rest and speak. The   || | ||
+sound of the bucket on the windlass echoes across the quiet courtyard.   |*-@-A|
+Paths lead in all cardinal directions.                                   || | ||
+                                                                         |*-T-*|
+                                                                         +=====+
+
+Exits: east, north, south, west
+
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:50:22] SEND_CMD
+west
+
+[10:50:25] RESPONSE
+west
+    >>> You head towards the west exit.
+
+You receive a healer's root.
+
+You receive a healer's root.
+
+You receive a glass vial.
+
+.: [*] The Alchemist's Workshop [Sanctum Basin]
+A low building of basalt and clay houses the alchemist's workshop, its   +=====+
+walls stained with decades of experimental compounds. Shelves of clay    |  O-*|
+pots and glass vessels line every surface. The air smells of herbs,      |  | ||
+sulfur, and something sweetly metallic. Steam curls from a pot on a      |  @-*|
+small iron stove where Alchemist Yenna works with quiet focus.           |  | ||
+                                                                         |  *-T|
+                                                                         +=====+
+
+Also here: Alchemist Yenna (100%|shop)
+
+Exits: east, north, south
+
+TIP: Type list to see what merchants have for sale.
+
+[☾ HP:########## SP:########## CP:##########]:Alchemist Yenna says, "Alchemy is pattern recognition. The world has rules and
+compounds have relationships."
+[☾ HP:########## SP:########## CP:##########]:Alchemist Yenna makes notes in a worn ledger, muttering to herself
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:50:27] BG_OUTPUT
+Alchemist Yenna says, "A healing salve is ground healer's root mixed with water
+and sealed in a vial. Simple, but effective."
+[☾ HP:########## SP:########## CP:##########]:Alchemist Yenna says, "I have put two healer's roots and a glass vial in your
+pack."
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:50:31] BG_OUTPUT
+Alchemist Yenna says, "Type craft to see your options. Then type craft healing
+salve. One attempt."
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:50:33] SEND_CMD
+craft healing salve
+
+[10:50:36] RESPONSE
+craft healing salve
+You begin crafting Healing Salve... (quick)
+
+*******************************************************************************
+
+ You've made progress on the quest: The Sanctum Trials!
+ type quests to track your progress on quests.
+
+*******************************************************************************
+
+[☾ HP:########## SP:########## CP:##########]:Glass vessels clink as the alchemist makes careful notes in a worn ledger.
+You continue working on healing-salve... (1/3)
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:50:39] BG_OUTPUT
+You continue working on healing-salve... (2/3)
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:50:43] BG_OUTPUT
+You grind the root to paste, mix it with water, and seal it in the bottle. A healing salve!
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:50:52] SEND_CMD
+quest
+
+[10:50:55] RESPONSE
+quest
+ +- .:Quests ( 1 out of 1 shown ) ------------------------------------------+
+   The Sanctum Trials                        #############............ 53% 
+   Visit Wilderness Guide Fen and forage for materials.
+ +--------------------------------------------------------------------------+
+ 
+
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:50:57] SEND_CMD
+hint
+
+[10:50:59] RESPONSE
+hint
+Quest Hint (The Sanctum Trials): From the Alchemist's Workshop, go south (1 south). Type forage to search the area.
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:51:05] SEND_CMD
+south
+
+[10:51:08] RESPONSE
+south
+    >>> You head towards the south exit.
+
+.: [*] West Meadow [Sanctum Basin]
+A stretch of thin scrubland opens here at the western reach of Sanctum   +=====+
+Basin. Hardy gray-green brush clusters around crumbling outcrops of      |  *-*|
+basalt, and the soil is pale and cracked. The smell of sage is strong.   |  | ||
+Animal tracks crisscross the dusty ground, and clusters of wild herbs    |  @-T|
+grow between the rocks. A wilderness guide studies the terrain from a    | /  ||
+low rock, occasionally pointing out features of interest to passing      |* *-G|
+initiates.                                                               +=====+
+
+Also here: Wilderness Guide Fen (100%)
+
+Exits: east, north, southwest
+
+[☾ HP:########## SP:########## CP:##########]:Wilderness Guide Fen straightens up from examining a patch of scrub.
+[☾ HP:########## SP:########## CP:##########]:Wilderness Guide Fen says, "Survival in the open country is about reading what
+is already there."
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:51:11] BG_OUTPUT
+Wilderness Guide Fen says, "You do not fight the desert. You learn its logic.
+Water collects where the basalt dips. Shelter is where the largest outcrops
+cluster."
+[☾ HP:########## SP:########## CP:##########]:Wilderness Guide Fen says, "The grey-green brush here -- desert sage. Edible,
+medicinal if prepared correctly."
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:51:15] BG_OUTPUT
+Wilderness Guide Fen says, "Try it now. Type forage and the land will give you
+what it has."
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:51:19] SEND_CMD
+forage
+
+[10:51:22] RESPONSE
+forage
+
+*******************************************************************************
+
+ You've made progress on the quest: The Sanctum Trials!
+ type quests to track your progress on quests.
+
+*******************************************************************************
+
+You crouch low and begin searching the ground carefully...
+You find a healer's root.
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:51:40] BG_OUTPUT
+Something small moves through the brush with a dry rustle.
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:51:45] SEND_CMD
+track
+
+[10:51:48] RESPONSE
+track
+ +- .:Recent Visitors -----------------------------------------------------+
+   [Good] meadow lizard 
+ +-------------------------------------------------------------------------+
+
+[☾ HP:########## SP:########## CP:##########]:Wilderness Guide Fen studies you for a moment, then nods.
+[☾ HP:########## SP:########## CP:##########]:Wilderness Guide Fen says, "You are reading it. That is the start."
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:51:52] BG_OUTPUT
+Wilderness Guide Fen says, "One more thing. In the open, being seen is a
+choice. Type sneak before you move and you become harder to notice."
+[☾ HP:########## SP:########## CP:##########]:Wilderness Guide Fen says, "The Elder is above the Alchemist, at the
+Observatory. Go."
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:51:52] SEND_CMD
+quest
+
+[10:51:55] RESPONSE
+quest
+ +- .:Quests ( 1 out of 1 shown ) ------------------------------------------+
+   The Sanctum Trials                        #################........ 69% 
+   Visit Elder Saris at the Observatory and cast a spell.
+ +--------------------------------------------------------------------------+
+ 
+
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:51:57] SEND_CMD
+hint
+
+[10:51:59] RESPONSE
+hint
+Quest Hint (The Sanctum Trials): From the West Meadow, go north, north (2 north). Type cast conviction-spike echo.
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:52:07] SEND_CMD
+quest
+
+[10:52:10] RESPONSE
+quest
+ +- .:Quests ( 1 out of 1 shown ) ------------------------------------------+
+   The Sanctum Trials                        #################........ 69% 
+   Visit Elder Saris at the Observatory and cast a spell.
+ +--------------------------------------------------------------------------+
+ 
+
+[☾ HP:########## SP:########## CP:##########]:Wilderness Guide Fen crouches to examine a patch of ground, reading signs
+invisible to others
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:52:14] SEND_CMD
+north
+
+[10:52:17] RESPONSE
+north
+    >>> You head towards the north exit.
+
+You receive a healer's root.
+
+You receive a healer's root.
+
+You receive a glass vial.
+
+.: [*] The Alchemist's Workshop [Sanctum Basin]
+A low building of basalt and clay houses the alchemist's workshop, its   +=====+
+walls stained with decades of experimental compounds. Shelves of clay    |  O-*|
+pots and glass vessels line every surface. The air smells of herbs,      |  | ||
+sulfur, and something sweetly metallic. Steam curls from a pot on a      |  @-*|
+small iron stove where Alchemist Yenna works with quiet focus.           |  | ||
+                                                                         |  *-T|
+                                                                         +=====+
+
+Also here: Alchemist Yenna (100%|shop)
+
+Exits: east, north, south
+
+TIP: Type list to see what merchants have for sale.
+
+[☾ HP:########## SP:########## CP:##########]:Alchemist Yenna says, "Alchemy is pattern recognition. The world has rules and
+compounds have relationships."
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:52:18] SEND_CMD
+north
+
+[10:52:21] RESPONSE
+north
+    >>> You head towards the north exit.
+
+.: [*] Observatory [Sanctum Basin]
+An elevated platform of basalt slabs commands the highest point of       +=====+
+Sanctum Basin's western plateau. A small circular structure at its       |     |
+center supports a bronze sighting device aimed at the sky. The view from |     |
+here is unobstructed in all directions -- the basin spread below, the    |  @-*|
+desert plateau beyond, and the three moons visible even by day as faint  |  | ||
+discs against the pale sky. Elder Saris stands at the sighting device,   |  *-*|
+observing.                                                               +=====+
+
+Also here: Elder Saris (100%) and Chrysalis Echo (100%)
+
+Exits: east, south
+
+[☾ HP:########## SP:########## CP:##########]:Elder Saris turns from the sighting device without haste.
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:52:24] BG_OUTPUT
+Elder Saris says, "The old records call them the Witnesses -- three moons, each
+on a different cycle. Swiftmoon turns in under five days. The Wanderer takes
+ten. The Eye takes twenty-one."
+[☾ HP:########## SP:########## CP:##########]:Elder Saris says, "Spellcasting begins with precision. Form a clear image of
+what you want to be true. Not a wish. Not a hope. An image. Hold it precisely."
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:52:28] BG_OUTPUT
+A dry wind sweeps across the elevated platform, carrying the smell of heated
+stone.
+Elder Saris says, "Then bifurcate it. Split your inner vision into two identical
+copies and hold both simultaneously. Then split again. Four. Eight."
+[☾ HP:########## SP:########## CP:##########]:Elder Saris says, "Each doubling is a fold. Simple effects require only a few
+folds. Complex ones require many more."
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:52:32] BG_OUTPUT
+Elder Saris says, "The more you cast, the more patterns crystallize in your
+mind. New spells emerge from practice -- not from books or teachers."
+Chrysalis Echo flickers faintly, its outline shifting like heat distortion
+[☾ HP:########## SP:########## CP:##########]:Elder Saris says, "You already carry the seed of one pattern: Conviction Spike."
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:52:36] BG_OUTPUT
+Saving users...Done.
+Saving rooms...Done.
+Saving other...Done.
+Elder Saris gestures toward the faintly shimmering figure nearby.
+[☾ HP:########## SP:########## CP:##########]:Elder Saris says, "That is a Chrysalis Echo -- a harmless remnant of a past
+Awakening. I keep it here for practice."
+[☾ HP:########## SP:########## CP:##########]:Elder Saris says, "Try your spell on it. Type cast conviction-spike echo."
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:52:42] SEND_CMD
+cast conviction-spike echo
+
+[10:52:45] RESPONSE
+cast conviction-spike echo
+You focus your conviction into a sharp point of force.
+Your consciousness splinters as the folds of Conviction Spike begin to take shape...
+[☾ HP:########## SP:########## CP:##########]:You feel the threads of reality bend as you reach for conviction-spike...
+[☾ HP:########## SP:########## CP:#########.]:
+
+[10:52:48] BG_OUTPUT
+Your Conviction Spike strikes Chrysalis Echo! (light wounds)
+*** Your willpower grows stronger! ***
+You narrowly redirect the strike with your weapon!
+Chrysalis Echo swings wildly, missing you entirely!
+
+*******************************************************************************
+
+ You've made progress on the quest: The Sanctum Trials!
+ type quests to track your progress on quests.
+
+*******************************************************************************
+
+[☾ HP:########## SP:########## CP:#########.] » Chrysalis Echo[|healthy] :
+
+[10:52:52] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You swing with all your might and hit hard!
+You throw everything you have into a wild swing at Chrysalis Echo!
+Chrysalis Echo tries to grapple you, but you slip away!
+[☾ HP:########## SP:########## CP:##########] » Chrysalis Echo[|healthy] :
+
+[10:52:56] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��Your sharp stick pounds heavily into Chrysalis Echo!
+You throw a desperate swing that CONNECTS PERFECTLY with Chrysalis Echo!
+Chrysalis Echo circles dangerously.
+[☾ HP:########## SP:########## CP:##########] » Chrysalis Echo[|bruised] :
+
+[10:53:00] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You swing and hit Chrysalis Echo solidly!
+You stumble forward and accidentally deliver a CRUSHING BLOW!
+��Z!!SOUND(static/audio/sound/combat/hit-self.mp3 T=combat V=100)��Chrysalis Echo swings their sticks into you!
+[☾ HP:########## SP:########## CP:##########] » Chrysalis Echo[|bruised] :
+
+[10:53:04] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You land a DEVASTATING HIT on Chrysalis Echo!
+You stumble forward and accidentally deliver a CRUSHING BLOW!
+You awkwardly intercept Chrysalis Echo's strike!
+Chrysalis Echo lunges clumsily and misses!
+[☾ HP:########## SP:########## CP:##########] » Chrysalis Echo[|bruised] :
+
+[10:53:08] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��Chrysalis Echo dodges your attack!
+You smash at Chrysalis Echo but fail to connect!
+You throw a desperate swing that CONNECTS PERFECTLY with Chrysalis Echo!
+Chrysalis Echo tries to grapple you, but you slip away!
+[☾ HP:########## SP:########## CP:##########] » Chrysalis Echo[|bruised] :
+
+[10:53:13] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��Your sharp stick CRUSHES Chrysalis Echo!
+You throw a desperate swing that CONNECTS PERFECTLY with Chrysalis Echo!
+Chrysalis Echo watches you intently, waiting to strike.
+[☾ HP:########## SP:#########. CP:##########] » Chrysalis Echo[|bruised] :
+
+[10:53:17] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/miss1.mp3 T=combat V=100)��Chrysalis Echo dodges your attack!
+You stumble and miss badly!
+Chrysalis Echo dodges your attack!
+Your clumsy swing catches nothing but air!
+��Z!!SOUND(static/audio/sound/combat/hit-self.mp3 T=combat V=100)��Chrysalis Echo throws a wild haymaker that connects!
+Elder Saris focuses intently, a steely aura forming.
+[☾ HP:########## SP:########## CP:##########] » Chrysalis Echo[|bruised] :
+
+[10:53:21] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��*** You feel your weapon-combat skills sharpening! ***
+Your sharp stick CRITICALLY SMASHES Chrysalis Echo!
+You throw a desperate swing that CONNECTS PERFECTLY with Chrysalis Echo!
+You clumsily bat the attack away!
+Chrysalis Echo swings wildly, missing you entirely!
+[☾ HP:########## SP:#########. CP:##########] » Chrysalis Echo[|bruised] :
+
+[10:53:25] BG_OUTPUT
+*** Your dexterity grows stronger! ***
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You deliver a CRITICAL BASH to Chrysalis Echo with your sharp stick!
+You throw a desperate swing that CONNECTS PERFECTLY with Chrysalis Echo!
+You intercept the attack cleanly!
+Chrysalis Echo lunges clumsily and misses!
+[☾ HP:########## SP:#########. CP:##########] » Chrysalis Echo[|wounded] :
+
+[10:53:29] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��Chrysalis Echo dodges your attack!
+You smash at Chrysalis Echo but fail to connect!
+You throw everything you have into a wild swing at Chrysalis Echo!
+��Z!!SOUND(static/audio/sound/combat/hit-self.mp3 T=combat V=100)��Chrysalis Echo barrels into you with a sloppy hit!
+[☾ HP:########## SP:#########. CP:##########] » Chrysalis Echo[|wounded] :
+
+[10:53:33] BG_OUTPUT
+The three moons of Gaius are faint but visible, even in daylight.
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You deliver a powerful blow to Chrysalis Echo!
+You stumble forward and accidentally deliver a CRUSHING BLOW!
+*** Your strength grows stronger! ***
+You barely parry Chrysalis Echo's attack!
+Chrysalis Echo swings wildly, missing you entirely!
+[☾ HP:########## SP:#########. CP:##########] » Chrysalis Echo[|wounded] :
+
+[10:53:37] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��Your sharp stick CRUSHES Chrysalis Echo!
+You throw a desperate swing that CONNECTS PERFECTLY with Chrysalis Echo!
+You narrowly redirect the strike with your weapon!
+Chrysalis Echo lunges clumsily and misses!
+[☾ HP:########## SP:#########. CP:##########] » Chrysalis Echo[|wounded] :
+
+[10:53:41] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��In a sweeping motion, you bash Chrysalis Echo with your sharp stick!
+You throw everything you have into a wild swing at Chrysalis Echo!
+You deflect the strike at the last moment!
+Chrysalis Echo swings wildly, missing you entirely!
+[☾ HP:########## SP:#########. CP:##########] » Chrysalis Echo[|wounded] :
+
+[10:53:45] BG_OUTPUT
+A dry wind sweeps across the elevated platform, carrying the smell of heated
+stone.
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��Chrysalis Echo dodges your attack!
+You swing your sharp stick at Chrysalis Echo, to no avail!
+You stumble forward and accidentally deliver a CRUSHING BLOW!
+��Z!!SOUND(static/audio/sound/combat/hit-self.mp3 T=combat V=100)��Chrysalis Echo CONNECTS PERFECTLY with a wild swing!
+[☾ HP:########## SP:#########. CP:##########] » Chrysalis Echo[|badly wounded] :
+
+[10:53:49] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��In a sweeping motion, you bash Chrysalis Echo with your sharp stick!
+You throw a desperate swing that CONNECTS PERFECTLY with Chrysalis Echo!
+You frantically raise your defense, just catching the blow!
+Chrysalis Echo lunges clumsily and misses!
+[☾ HP:########## SP:#########. CP:##########] » Chrysalis Echo[|badly wounded] :
+
+[10:53:53] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��In a sweeping motion, you bash Chrysalis Echo with your sharp stick!
+You throw a desperate swing that CONNECTS PERFECTLY with Chrysalis Echo!
+You guide the blow aside with practiced skill!
+Chrysalis Echo lunges clumsily and misses!
+[Tip] Recipes and new spells are discovered by using crafting skills and spellcasting in the game world.
+[☾ HP:########## SP:#########. CP:##########] » Chrysalis Echo[|badly wounded] :
+
+[10:53:57] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You swing with all your might and hit hard!
+You stumble forward and accidentally deliver a CRUSHING BLOW!
+You clumsily bat the attack away!
+Chrysalis Echo lunges clumsily and misses!
+Elder Saris spreads their arms as conviction shimmers into a ward.
+[☾ HP:########## SP:#########. CP:##########] » Chrysalis Echo[|badly wounded] :
+
+[10:54:01] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You deliver a powerful blow to Chrysalis Echo!
+You stumble forward and accidentally deliver a CRUSHING BLOW!
+You clumsily bat the attack away!
+Chrysalis Echo swings wildly, missing you entirely!
+[☾ HP:########## SP:#########. CP:##########] » Chrysalis Echo[|badly wounded] :
+
+[10:54:05] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You land a DEVASTATING HIT on Chrysalis Echo!
+You charge into Chrysalis Echo and slam them with your fists!
+You deflect the strike at the last moment!
+Chrysalis Echo lunges clumsily and misses!
+[☾ HP:########## SP:#########. CP:##########] » Chrysalis Echo[|near death] :
+
+[10:54:09] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��Chrysalis Echo dodges your attack!
+You smash at Chrysalis Echo but fail to connect!
+You stumble forward and accidentally deliver a CRUSHING BLOW!
+You awkwardly intercept Chrysalis Echo's strike!
+Chrysalis Echo swings wildly, missing you entirely!
+[☾ HP:########## SP:########.. CP:##########] » Chrysalis Echo[|near death] :
+
+[10:54:13] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You deliver a powerful blow to Chrysalis Echo!
+You throw a desperate swing that CONNECTS PERFECTLY with Chrysalis Echo!
+You awkwardly intercept Chrysalis Echo's strike!
+Chrysalis Echo swings wildly, missing you entirely!
+[☾ HP:########## SP:########.. CP:##########] » Chrysalis Echo[|near death] :
+
+[10:54:17] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��Chrysalis Echo dodges your attack!
+You smash at Chrysalis Echo but fail to connect!
+Windmilling your fists, you crash into Chrysalis Echo!
+You barely parry Chrysalis Echo's attack!
+Chrysalis Echo lunges clumsily and misses!
+[☾ HP:########## SP:########.. CP:##########] » Chrysalis Echo[|near death] :
+
+[10:54:21] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You deliver a CRITICAL BASH to Chrysalis Echo with your sharp stick!
+You throw everything you have into a wild swing at Chrysalis Echo!
+*** Your dexterity grows stronger! ***
+!!! Chrysalis Echo trips and FUMBLES their attack! !!!
+[☾ HP:########## SP:########.. CP:##########] » Chrysalis Echo[|near death] :
+
+[10:54:25] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You land a DEVASTATING HIT on Chrysalis Echo!
+You charge into Chrysalis Echo and slam them with your fists!
+Chrysalis Echo has died.
+*** You feel your combat skills sharpening! ***
+*** Defeating a new foe hones your combat instincts! ***
+[☾ HP:########## SP:########.. CP:##########]:
+
+[10:54:29] BG_OUTPUT
+[☾ HP:########## SP:#########. CP:##########]:
+
+[10:54:38] SEND_CMD
+quest
+
+[10:54:41] RESPONSE
+quest
+ +- .:Quests ( 1 out of 1 shown ) ------------------------------------------+
+   The Sanctum Trials                        ###################...... 76% 
+   Defeat the Aberrant Chrysalis in the cave.
+ +--------------------------------------------------------------------------+
+ 
+
+[☾ HP:########## SP:#########. CP:##########]:
+
+[10:54:42] SEND_CMD
+hint
+
+[10:54:45] RESPONSE
+hint
+Quest Hint (The Sanctum Trials): From the Observatory, go east, east, east, east (4 east) into the Boss Cave. Defeat the Aberrant.
+[☾ HP:########## SP:########## CP:##########]:Elder Saris focuses intently, a steely aura forming.
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:54:59] SEND_CMD
+quest
+
+[10:55:02] RESPONSE
+quest
+ +- .:Quests ( 1 out of 1 shown ) ------------------------------------------+
+   The Sanctum Trials                        ###################...... 76% 
+   Defeat the Aberrant Chrysalis in the cave.
+ +--------------------------------------------------------------------------+
+ 
+
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:55:07] SEND_CMD
+east
+
+[10:55:10] RESPONSE
+east
+    >>> You head towards the east exit.
+
+.: [*] Observatory Path [Sanctum Basin]
+A well-trodden switchback path climbs the western rise toward the        +=====+
+observatory above. The basalt is worn smooth by many feet, and handholds |     |
+have been carved into the steeper sections. The path offers a fine view  |     |
+of the Academy Hall and training yard below, and the cave entrance is    |O-@-⌬|
+visible to the east.                                                     || | ||
+                                                                         |*-*-A|
+                                                                         +=====+
+
+Also here: Basin Scholar (100%)
+
+Exits: east, south, west
+
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:55:12] SEND_CMD
+east
+
+[10:55:15] RESPONSE
+east
+    >>> You head towards the east exit.
+
+cave bat notices you as you enter!
+
+.: [⌬] Cave Path [Sanctum Basin]
+A low tunnel of raw basalt opens here in the northern cliff face -- the  +=====+
+entrance to a cave system that penetrates the plateau. The air inside is |     |
+noticeably cooler, carrying the damp mineral smell of deep stone. The    |     |
+distant sound of wing-beats echoes from within. A lamp bracket is fixed  |*-@-⌬|
+to the wall beside the entrance, suggesting this is a known route.       || |  |
+                                                                         |*-A-Y|
+                                                                         +=====+
+ Bioluminescent lichen clings to the walls, casting a dim blue-green glow.
+
+Also here: Cave Bat (100%)
+
+Exits: east, south, west
+
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:55:16] SEND_CMD
+east
+
+[10:55:18] RESPONSE
+east
+    >>> You head towards the east exit.
+
+cave goblin guard notices you as you enter!
+
+.: [⌬] Cave Depths [Sanctum Basin]
+The cave tunnel opens into a broader chamber here, its ceiling lost in   +=====+
+shadow. Bioluminescent lichen provides faint blue-green light along the  |     |
+walls. The cave goblins that have made this space their home have built  |     |
+crude furniture from scavenged wood and stone, and they regard newcomers |⌬-@-B|
+with hostile suspicion. There is no way forward or back except through   ||    |
+the tunnel to the west.                                                  |A-Y-♣|
+                                                                         +=====+
+ Bioluminescent lichen clings to the walls, casting a dim blue-green glow.
+
+Also here: Cave Goblin Guard (100%)
+
+Exits: east, west
+
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:55:19] SEND_CMD
+east
+
+[10:55:22] RESPONSE
+east
+    >>> You head towards the east exit.
+
+The air in this chamber is wrong. The moisture on the walls has no source you can identify, and there is a pressure here that is not quite sound.
+
+At the far end of the cave, a shape moves. It is roughly person-shaped, but the proportions have drifted. The Chrysalis process does this sometimes -- a Becoming that lost direction. The Academy calls them Aberrants. This one does not speak. It does not need to.
+
+Aberrant Chrysalis notices you as you enter!
+
+.: [⌬] Boss Cave [Sanctum Basin]
+The deepest chamber of the cave system is vast, its ceiling a dome of    +=====+
+black basalt hung with mineral formations that catch the faint light. At |     |
+the center crouches the Aberrant Chrysalis -- a creature that was once   |     |
+on the path to transformation but was overtaken by something wrong. It   |⌬-@  |
+is larger than a person, its limbs jointed at impossible angles,         |     |
+radiating waves of distorted belief that make the air shimmer and the    |Y-♣  |
+mind ache.                                                               +=====+
+ Bioluminescent lichen clings to the walls, casting a dim blue-green glow.
+
+Also here: Aberrant Chrysalis (100%)
+
+Exits: west
+
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:55:24] BG_OUTPUT
+Aberrant Chrysalis prepares to fight you!
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:55:25] BG_OUTPUT
+You angle your weapon, redirecting the force!
+Aberrant Chrysalis lunges clumsily and misses!
+[☾ HP:########## SP:########## CP:##########] » Aberrant Chrysalis[|healthy] :
+
+[10:55:29] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You land a DEVASTATING HIT on Aberrant Chrysalis!
+Aberrant Chrysalis flinches back reflexively, narrowly escaping!
+Your clumsy swing catches nothing but air!
+Aberrant Chrysalis tries to grapple you, but you slip away!
+[☾ HP:########## SP:########## CP:##########] » Aberrant Chrysalis[|healthy] :
+
+[10:55:32] SEND_CMD
+attack aberrant
+
+[10:55:35] RESPONSE
+attack aberrant
+You prepare to enter into mortal combat with Aberrant Chrysalis.
+[☾ HP:########## SP:########## CP:##########] » Aberrant Chrysalis[|healthy] :��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��Aberrant Chrysalis rolls away clumsily, avoiding by inches!
+You smash at Aberrant Chrysalis but fail to connect!
+Windmilling your fists, you crash into Aberrant Chrysalis!
+Aberrant Chrysalis watches you intently, waiting to strike.
+[☾ HP:########## SP:########## CP:##########] » Aberrant Chrysalis[|healthy] :
+
+[10:55:37] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��Aberrant Chrysalis dodges your attack!
+You stumble and miss badly!
+You charge into Aberrant Chrysalis and slam them with your fists!
+You deflect the strike at the last moment!
+Aberrant Chrysalis swings wildly, missing you entirely!
+[☾ HP:########## SP:########## CP:##########] » Aberrant Chrysalis[|healthy] :
+
+[10:55:41] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You swing with all your might and hit hard!
+Aberrant Chrysalis leans back sharply as your weapon grazes past!
+You lunge at Aberrant Chrysalis but stumble past!
+*** You feel your weapon-combat skills sharpening! ***
+You deflect the strike at the last moment!
+Aberrant Chrysalis lunges clumsily and misses!
+[☾ HP:########## SP:########## CP:##########] » Aberrant Chrysalis[|healthy] :
+
+[10:55:45] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��Your sharp stick CRITICALLY SMASHES Aberrant Chrysalis!
+You stumble forward and accidentally deliver a CRUSHING BLOW!
+!!! Aberrant Chrysalis trips and FUMBLES their attack! !!!
+Aberrant Chrysalis seems to grow more powerful.
+[☾ HP:########## SP:########## CP:##########] » Aberrant Chrysalis[|healthy] :
+
+[10:55:50] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��Your sharp stick pounds heavily into Aberrant Chrysalis!
+You stumble forward and accidentally deliver a CRUSHING BLOW!
+You sweep the strike away with your blade!
+Aberrant Chrysalis lunges clumsily and misses!
+[☾ HP:########## SP:#########. CP:##########] » Aberrant Chrysalis[|bruised] :
+
+[10:55:54] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You swing with all your might and hit hard!
+You throw a desperate swing that CONNECTS PERFECTLY with Aberrant Chrysalis!
+You bat away the attack with your weapon!
+Aberrant Chrysalis swings wildly, missing you entirely!
+[☾ HP:########## SP:########## CP:##########] » Aberrant Chrysalis[|bruised] :
+
+[10:55:58] BG_OUTPUT
+*** Your strength grows stronger! ***
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��!!! Your weapon FUMBLES awkwardly as your bash goes completely wild! !!!
+You stumble forward and accidentally deliver a CRUSHING BLOW!
+��Z!!SOUND(static/audio/sound/combat/hit-self.mp3 T=combat V=100)��Aberrant Chrysalis throws everything into a wild swing at you!
+[☾ HP:#########. SP:#########. CP:##########] » Aberrant Chrysalis[|bruised] :
+
+[10:56:02] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��Your sharp stick CRITICALLY SMASHES Aberrant Chrysalis!
+You charge into Aberrant Chrysalis and slam them with your fists!
+Your guard almost fails, but you manage to deflect!
+Aberrant Chrysalis swings wildly, missing you entirely!
+[☾ HP:#########. SP:#########. CP:##########] » Aberrant Chrysalis[|bruised] :
+
+[10:56:06] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��Aberrant Chrysalis dodges your attack!
+You stumble and miss badly!
+You throw everything you have into a wild swing at Aberrant Chrysalis!
+You desperately catch the blow on your weapon!
+Aberrant Chrysalis swings wildly, missing you entirely!
+[☾ HP:#########. SP:#########. CP:##########] » Aberrant Chrysalis[|wounded] :
+
+[10:56:10] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You swing with all your might and hit hard!
+Windmilling your fists, you crash into Aberrant Chrysalis!
+Your guard almost fails, but you manage to deflect!
+Aberrant Chrysalis swings wildly, missing you entirely!
+[☾ HP:#########. SP:#########. CP:##########] » Aberrant Chrysalis[|wounded] :
+
+[10:56:14] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��In a sweeping motion, you bash Aberrant Chrysalis with your sharp stick!
+Windmilling your fists, you crash into Aberrant Chrysalis!
+You awkwardly intercept Aberrant Chrysalis's strike!
+Aberrant Chrysalis lunges clumsily and misses!
+[☾ HP:#########. SP:#########. CP:##########] » Aberrant Chrysalis[|wounded] :
+
+[10:56:18] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��Aberrant Chrysalis dodges your attack!
+You smash at Aberrant Chrysalis but fail to connect!
+Windmilling your fists, you crash into Aberrant Chrysalis!
+You clumsily bat the attack away!
+Aberrant Chrysalis swings wildly, missing you entirely!
+[☾ HP:#########. SP:#########. CP:##########] » Aberrant Chrysalis[|wounded] :
+
+[10:56:22] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You deliver a powerful blow to Aberrant Chrysalis!
+You throw a desperate swing that CONNECTS PERFECTLY with Aberrant Chrysalis!
+⚡ SWEEP! You dodge and sweep their legs out! They crash to the ground! (negligible damage)
+You smoothly glide away from the obvious attack!
+Aberrant Chrysalis lunges clumsily and misses!
+[☾ HP:#########. SP:#########. CP:##########] » Aberrant Chrysalis[prone|badly wounded] :
+
+[10:56:26] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��You land a DEVASTATING HIT on Aberrant Chrysalis!
+You throw a desperate swing that CONNECTS PERFECTLY with Aberrant Chrysalis!
+You desperately catch the blow on your weapon!
+Aberrant Chrysalis lunges clumsily and misses!
+*** Your strength grows stronger! ***
+[☾ HP:#########. SP:#########. CP:##########] » Aberrant Chrysalis[prone|badly wounded] :
+
+[10:56:30] BG_OUTPUT
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��Aberrant Chrysalis dodges your attack!
+You swing your sharp stick at Aberrant Chrysalis, to no avail!
+You stumble forward and accidentally deliver a CRUSHING BLOW!
+You awkwardly intercept Aberrant Chrysalis's strike!
+Aberrant Chrysalis swings wildly, missing you entirely!
+[☾ HP:#########. SP:#########. CP:##########] » Aberrant Chrysalis[prone|badly wounded] :
+
+[10:56:34] BG_OUTPUT
+Aberrant Chrysalis attempts to stand, but slips and falls in the chaos of battle.
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��*** You deliver a CRITICAL BASH to Aberrant Chrysalis with your sharp stick! ***
+You throw a desperate swing that CONNECTS PERFECTLY with Aberrant Chrysalis!
+Your guard almost fails, but you manage to deflect!
+Aberrant Chrysalis swings wildly, missing you entirely!
+[☾ HP:#########. SP:#########. CP:##########] » Aberrant Chrysalis[prone|badly wounded] :
+
+[10:56:38] BG_OUTPUT
+Aberrant Chrysalis attempts to stand, but slips and falls in the chaos of battle.
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��Your sharp stick CRUSHES Aberrant Chrysalis!
+You throw everything you have into a wild swing at Aberrant Chrysalis!
+You scramble to block, barely turning aside the strike!
+Aberrant Chrysalis lunges clumsily and misses!
+[☾ HP:#########. SP:########.. CP:##########] » Aberrant Chrysalis[prone|near death] :
+
+[10:56:42] BG_OUTPUT
+Aberrant Chrysalis attempts to stand, but slips and falls in the chaos of battle.
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��Your sharp stick CRUSHES Aberrant Chrysalis!
+You throw everything you have into a wild swing at Aberrant Chrysalis!
+*** You feel your weapon-combat skills sharpening! ***
+You narrowly redirect the strike with your weapon!
+Aberrant Chrysalis swings wildly, missing you entirely!
+[☾ HP:#########. SP:#########. CP:##########] » Aberrant Chrysalis[prone|near death] :
+
+[10:56:46] BG_OUTPUT
+Aberrant Chrysalis attempts to stand, but slips and falls in the chaos of battle.
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��⚡ SWEEP! Aberrant Chrysalis dodges and tries to sweep your legs, but you keep your footing!
+Aberrant Chrysalis flows away with contemptuous ease!
+Your swing at Aberrant Chrysalis misses completely!
+You throw a desperate swing that CONNECTS PERFECTLY with Aberrant Chrysalis!
+You narrowly redirect the strike with your weapon!
+Aberrant Chrysalis lunges clumsily and misses!
+[☾ HP:#########. SP:########.. CP:##########] » Aberrant Chrysalis[prone|near death] :
+
+[10:56:50] BG_OUTPUT
+Aberrant Chrysalis attempts to stand, but slips and falls in the chaos of battle.
+��Z!!SOUND(static/audio/sound/combat/hit-other.mp3 T=combat V=100)��Your sharp stick CRITICALLY SMASHES Aberrant Chrysalis!
+You throw everything you have into a wild swing at Aberrant Chrysalis!
+Aberrant Chrysalis has died.
+Chrysalis Core drops to the ground.
+10 gold drops to the ground.
+[☾ HP:#########. SP:########.. CP:##########]:
+
+[10:57:38] BG_OUTPUT
+The Aberrant Chrysalis shifts its weight, and the floor vibrates.
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:57:46] SEND_CMD
+get all
+
+[10:57:49] RESPONSE
+get all
+You pick up 10 gold.
+You pick up the Chrysalis Core.
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:57:50] SEND_CMD
+quest
+
+[10:57:53] RESPONSE
+quest
+ +- .:Quests ( 1 out of 1 shown ) ------------------------------------------+
+   The Sanctum Trials                        #####################.... 84% 
+   Report to the Basin Warden at the south gate.
+ +--------------------------------------------------------------------------+
+ 
+
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:57:58] BG_OUTPUT
+The mineral formations above catch the faint light and scatter it in wrong
+directions.
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:57:59] SEND_CMD
+hint
+
+[10:58:02] RESPONSE
+hint
+Quest Hint (The Sanctum Trials): From the Boss Cave, go west, west, west, south, south, south (3 west, 3 south) to Basin Gate.
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:58:08] SEND_CMD
+west
+
+[10:58:11] RESPONSE
+west
+    >>> You head towards the west exit.
+
+cave goblin guard notices you as you enter!
+
+.: [⌬] Cave Depths [Sanctum Basin]
+The cave tunnel opens into a broader chamber here, its ceiling lost in   +=====+
+shadow. Bioluminescent lichen provides faint blue-green light along the  |     |
+walls. The cave goblins that have made this space their home have built  |     |
+crude furniture from scavenged wood and stone, and they regard newcomers |⌬-@-B|
+with hostile suspicion. There is no way forward or back except through   ||    |
+the tunnel to the west.                                                  |A-Y-♣|
+                                                                         +=====+
+ Bioluminescent lichen clings to the walls, casting a dim blue-green glow.
+
+Also here: Cave Goblin Guard (100%)
+
+Exits: east, west
+
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:58:12] SEND_CMD
+west
+
+[10:58:15] RESPONSE
+west
+    >>> You head towards the west exit.
+
+cave bat notices you as you enter!
+
+.: [⌬] Cave Path [Sanctum Basin]
+A low tunnel of raw basalt opens here in the northern cliff face -- the  +=====+
+entrance to a cave system that penetrates the plateau. The air inside is |     |
+noticeably cooler, carrying the damp mineral smell of deep stone. The    |     |
+distant sound of wing-beats echoes from within. A lamp bracket is fixed  |*-@-⌬|
+to the wall beside the entrance, suggesting this is a known route.       || |  |
+                                                                         |*-A-Y|
+                                                                         +=====+
+ Bioluminescent lichen clings to the walls, casting a dim blue-green glow.
+
+Also here: Cave Bat (100%)
+
+Exits: east, south, west
+
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:58:16] BG_OUTPUT
+cave bat prepares to fight you!
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:58:16] SEND_CMD
+west
+
+[10:58:19] RESPONSE
+west
+    >>> You head towards the west exit.
+
+.: [*] Observatory Path [Sanctum Basin]
+A well-trodden switchback path climbs the western rise toward the        +=====+
+observatory above. The basalt is worn smooth by many feet, and handholds |     |
+have been carved into the steeper sections. The path offers a fine view  |     |
+of the Academy Hall and training yard below, and the cave entrance is    |O-@-⌬|
+visible to the east.                                                     || | ||
+                                                                         |*-*-A|
+                                                                         +=====+
+
+Also here: Basin Scholar (100%)
+
+Exits: east, south, west
+
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:58:20] SEND_CMD
+south
+
+[10:58:23] RESPONSE
+south
+    >>> You head towards the south exit.
+
+.: [*] Chrysalis Well Court [Sanctum Basin]
+A circular courtyard surrounds a deep well of polished basalt -- one of  +=====+
+the basin's primary water sources. Stone benches ring the space, and     |O-*-⌬|
+initiates gather here between training sessions to rest and speak. The   || | ||
+sound of the bucket on the windlass echoes across the quiet courtyard.   |*-@-A|
+Paths lead in all cardinal directions.                                   || | ||
+                                                                         |*-T-*|
+                                                                         +=====+
+
+Exits: east, north, south, west
+
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:58:25] SEND_CMD
+south
+
+[10:58:28] RESPONSE
+south
+    >>> You head towards the south exit.
+
+.: [*] Town Square [Sanctum Basin]
+You stand in the center of Sanctum Basin's small settlement -- a broad   +=====+
+flagged square of dark stone surrounded by low buildings of basalt       |*-*-A|
+brick. A carved sign post stands at the center, hung with a painted map  || | ||
+of the basin and its facilities. Citizens and initiates move through the |*-@-*|
+square, their voices low in the dry air. Roads lead in all directions    |  |  |
+from this central hub.                                                   |*-G  |
+                                                                         +=====+
+
+Exits: east, north, south, west
+
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:58:29] SEND_CMD
+south
+
+[10:58:32] RESPONSE
+south
+    >>> You head towards the south exit.
+
+.: [*] Basin Gate [Sanctum Basin]
+A massive archway of black basalt spans the path here, carved with       +=====+
+warding glyphs that glow faintly in the desert sun. The Basin Warden     |*-T-*|
+stands at attention beneath the arch, eyes sweeping the road. To the     |  |  |
+north lies the basin proper; to the south, a gated road leads down       |*-@  |
+toward the wider world. A sign reads -- By order of the Chrysalis        |  ⚷  |
+Council, no citizen may pass south without demonstrating readiness.      |     |
+                                                                         +=====+
+
+Also here: Basin Warden (100%)
+
+Exits: north, south (unlocked), west
+
+[☾ HP:########## SP:########## CP:##########]:Basin Warden says, "Your record is complete. Six trials, six instructors -- and
+the cave."
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:58:33] BG_OUTPUT
+Basin Warden says, "The Basin Warden has one function: to ensure that no one
+leaves Sanctum Basin unprepared. You are prepared."
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:58:37] BG_OUTPUT
+Basin Warden says, "The gate is open. Whatever you find south of here --
+remember what you learned in the basin."
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:58:43] BG_OUTPUT
+Basin Warden says, "One last thing: the world is larger than what six
+instructors can cover. Type help to see what documentation is available -- there
+is more to learn out there than what we teach here."
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:58:50] BG_OUTPUT
+Basin Warden says, "The south road reaches Confluence within a day's walk.
+Follow the river north from there and you will find New Plymouth -- the largest
+settlement in this part of Gaius. That is where most people head first."
+[☾ HP:########## SP:########## CP:##########]:
+
+[10:58:55] BG_OUTPUT
+[Tip] The three moons affect your abilities. Watch for moon phase announcements and plan accordingly.
+ +-------------------------------------------------------------------------+
+
+                                      |                   
+                          \           |           /       
+                           \                     /        
+                                  #########               
+                               ###############            
+                             ###################          
+                     ---    #####################    ---  
+                   ~~~~~ ~~ ~~~~~~~~~~~~~~~~~~~~~ ~~ ~~~~~
+                   ~    ~    ~~~~~~~~~~~~~ ~~~~~       ~~ 
+                     ~     ~   ~~~~~~  ~~ ~~~   ~ ~~ ~~~  
+                     ~  ~~       ~~ ~~~~~~~       ~~  ~~  
+                                The sun rises.            
+
+                       It is day 324 of year 6. 
+                       The month is Keldris.
+                       It is the year of the Manta Ray
+
+ +-------------------------------------------------------------------------+
+ [☀️ HP:########## SP:########## CP:##########]:
+
+[10:58:55] SEND_CMD
+quest
+
+[10:58:58] RESPONSE
+quest
+ +- .:Quests ( 0 out of 1 shown ) ------------------------------------------+
+ +--------------------------------------------------------------------------+
+ To see all quests (including completed), use quests all
+ 
+
+[☀️ HP:########## SP:########## CP:##########]:
+
+[10:58:59] BG_OUTPUT
+Basin Warden steps aside and gestures toward the road south.
+[☀️ HP:########## SP:########## CP:##########]:Basin Warden says, "Your record is complete. Six trials, six instructors -- and
+the cave."
+[☀️ HP:########## SP:########## CP:##########]:Basin Warden says, "The Basin Warden has one function: to ensure that no one
+leaves Sanctum Basin unprepared. You are prepared."
+[☀️ HP:########## SP:########## CP:##########]:Basin Warden says, "The gate is open. Whatever you find south of here --
+remember what you learned in the basin."
+[☀️ HP:########## SP:########## CP:##########]:Basin Warden says, "One last thing: the world is larger than what six
+instructors can cover. Type help to see what documentation is available -- there
+is more to learn out there than what we teach here."
+[☀️ HP:########## SP:########## CP:##########]:Basin Warden says, "The south road reaches Confluence within a day's walk.
+Follow the river north from there and you will find New Plymouth -- the largest
+settlement in this part of Gaius. That is where most people head first."
+[☀️ HP:########## SP:########## CP:##########]:Basin Warden steps aside and gestures toward the road south.
+[☀️ HP:########## SP:########## CP:##########]:Basin Warden adjusts their grip on the long blade at their hip
+[☀️ HP:########## SP:########## CP:##########]:
+
+[10:59:04] SEND_CMD
+south
+
+[10:59:07] RESPONSE
+south
+    >>> You head towards the south exit.
+
+.: [*] World Gate [Sanctum Basin]
+The road narrows here to a single flagged causeway of polished basalt,   +=====+
+the edge dropping sharply to either side. A tall iron gate stands open   |*-G  |
+but clearly watched, its bars twisted into the shape of unfurling        |  |  |
+wings -- the Chrysalis sigil. The gate opens south onto a weathered      |T-@-*|
+track that descends from the plateau and into the wider world of Gaius.  |  |  |
+To the east, a trail follows the rim of the plateau.                     |  *  |
+                                                                         +=====+
+
+Exits: east, north, south, west
+
+[☀️ HP:########## SP:########## CP:##########]:
+
+[10:59:13] SEND_CMD
+quit
+
+[10:59:16] RESPONSE
+quit
+You sit down and begin your meditation.
+[☀️ HP:########## SP:########## CP:##########]:You continue your meditation...
+[☀️ HP:########## SP:########## CP:##########]:

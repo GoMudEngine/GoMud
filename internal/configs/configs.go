@@ -44,7 +44,6 @@ type Config struct {
 	TextFormats  TextFormats  `yaml:"TextFormats"`
 	Translation  Translation  `yaml:"Translation"`
 	Network      Network      `yaml:"Network"`
-	Scripting    Scripting    `yaml:"Scripting"`
 	SpecialRooms SpecialRooms `yaml:"SpecialRooms"`
 	Validation   Validation   `yaml:"Validation"`
 	Roles        Roles        `yaml:"Roles"`
@@ -202,7 +201,6 @@ func (c *Config) Validate() {
 	c.TextFormats.Validate()
 	c.Translation.Validate()
 	c.Network.Validate()
-	c.Scripting.Validate()
 	c.SpecialRooms.Validate()
 	c.Validation.Validate()
 	c.Modules.Validate()

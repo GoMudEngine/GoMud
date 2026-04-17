@@ -1,0 +1,14 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">gearup</ansi>
+
+The <ansi fg="command">gearup</ansi> command quickly equips the best items you own for each
+empty equipment slot. Useful after reviving, looting, or switching
+kits.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">gearup</ansi>              Equip best available item in each empty slot.
+
+Cannot be used in combat. Items already equipped are not replaced —
+remove them first if you want to swap.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help equip</ansi>, <ansi fg="command">help remove</ansi>, <ansi fg="command">help inventory</ansi>

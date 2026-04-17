@@ -3,7 +3,6 @@ package rooms
 import (
 	"errors"
 	"fmt"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -413,25 +412,6 @@ func (r *Room) GetTempData(key string) any {
 		return value
 	}
 	return nil
-}
-
-func (r *Room) GetScript() string {
-
-	scriptPath := r.GetScriptPath()
-
-	// Load the script into a string
-	if _, err := os.Stat(scriptPath); err == nil {
-		if bytes, err := os.ReadFile(scriptPath); err == nil {
-			return string(bytes)
-		}
-	}
-
-	return ``
-}
-
-func (r *Room) GetScriptPath() string {
-	// Load any script for the room
-	return strings.Replace(configs.GetFilePathsConfig().DataFiles.String()+`/rooms/`+r.Filepath(), `.yaml`, `.js`, 1)
 }
 
 func (r *Room) FindTemporaryExitByUserId(userId int) (exit.TemporaryRoomExit, bool) {
@@ -1950,8 +1930,7 @@ func (r *Room) PruneSigns() []Sign {
 
 func (r *Room) PruneVisitors() int {
 
-	if r.visitors == nil {
-		r.visitors = make(map[VisitorType]map[int]uint64)
+	if len(r.visitors) == 0 {
 		return 0
 	}
 
@@ -2163,6 +2142,7 @@ func (r *Room) AddPlayer(userId int) int {
 	}
 
 	r.players = append(r.players, userId)
+	incrementZonePlayerCount(r.Zone)
 
 	return len(r.players)
 }
@@ -2173,6 +2153,7 @@ func (r *Room) RemovePlayer(userId int) (int, bool) {
 	for i, v := range r.players {
 		if v == userId {
 			r.players = append(r.players[:i], r.players[i+1:]...)
+			decrementZonePlayerCount(r.Zone)
 			return len(r.players), true
 		}
 	}
