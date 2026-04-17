@@ -495,24 +495,6 @@ func room_Edit_Exits(rest string, user *users.UserRecord, room *rooms.Room, flag
 	}
 
 	//
-	// Secret exit?
-	//
-	{
-		secretExitDefault := `no`
-		if currentlyEditing.Exit.Secret {
-			secretExitDefault = `yes`
-		}
-
-		// allow them to name/rename the exit.
-		question := cmdPrompt.Ask(`Is this a hidden exit?`, []string{`yes`, `no`}, secretExitDefault)
-		if !question.Done {
-			return true, nil
-		}
-
-		currentlyEditing.Exit.Secret = question.Response == `yes`
-	}
-
-	//
 	// Special message when using the exit?
 	//
 	{

@@ -30,7 +30,7 @@ func adminRoom_Edit(rest string, user *users.UserRecord, room *rooms.Room, flags
 
 	if rest == `edit exit` || rest == `edit exits` {
 		if !user.HasRolePermission(`room.edit.exits`) {
-			user.SendText(`you do not have <ansi fg="command">room.edit.container</ansi> permission`)
+			user.SendText(`you do not have <ansi fg="command">room.edit.exits</ansi> permission`)
 			return true, nil
 		}
 		return room_Edit_Exits(``, user, room, flags)
@@ -38,7 +38,7 @@ func adminRoom_Edit(rest string, user *users.UserRecord, room *rooms.Room, flags
 
 	if rest == `edit mutator` || rest == `edit mutators` {
 		if !user.HasRolePermission(`room.edit.mutators`) {
-			user.SendText(`you do not have <ansi fg="command">room.edit.container</ansi> permission`)
+			user.SendText(`you do not have <ansi fg="command">room.edit.mutators</ansi> permission`)
 			return true, nil
 		}
 		return room_Edit_Mutators(``, user, room, flags)
