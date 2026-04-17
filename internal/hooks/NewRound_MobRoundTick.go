@@ -85,6 +85,8 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 	// Do mob round maintenance
 	//
 	mb := configs.GetBalanceConfig()
+	activeZones := rooms.SnapshotActiveZones()
+
 	for _, mobInstanceId := range mobs.GetAllMobInstanceIds() {
 
 		mob := mobs.GetInstance(mobInstanceId)
@@ -93,22 +95,37 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 			continue
 		}
 
+		room := rooms.LoadRoom(mob.Character.RoomId)
+		active := room != nil && activeZones[room.Zone]
+
+		// Idle lane — runs every round regardless of zone activity.
+		// Players returning to a cold zone expect timers to have been
+		// counting, and DoT ticks can still kill a mob.
 		tickMobCooldowns(mob)
 		expireMobCombatMemory(mob)
-		tickMobProneRecovery(mob)
 		tickMobCharmDuration(mob)
 		tickMobBuffs(mob, mobInstanceId)
+		tickMobConditions(mob)
+
+		// Death check always runs — a DoT tick in an idle zone should
+		// still kill the mob. Skip the rest of the loop when the mob dies.
+		if mob.Character.Health <= 0 {
+			mob.Command(`suicide`)
+			continue
+		}
+
+		if !active {
+			continue
+		}
+
+		// Active-only — skipped entirely in idle zones. Progression,
+		// state machines coupled to combat, and player-facing work
+		// (crafting) all gate behind at least one player in the zone.
+		tickMobProneRecovery(mob)
 		tickMobMutationAcquisition(mob, &mb)
 		tickMobCharmState(mob)
 		tickMobCrafting(mob)
-		tickMobConditions(mob)
 		revalidateMobStats(mob)
-
-		if mob.Character.Health <= 0 {
-			// Mob died
-			mob.Command(`suicide`)
-		}
-
 	}
 
 	// Drain behavior tree delayed action queue
