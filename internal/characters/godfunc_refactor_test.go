@@ -165,9 +165,10 @@ func TestRecalculateStats_MutationFlatAndMultiplier(t *testing.T) {
 
 	// RecalculateStats must be idempotent — a second call with no changes must
 	// produce identical ValueAdj values.
+	baseDex := c.Stats.Dexterity.ValueAdj
 	c.RecalculateStats()
 	assert.Equal(t, baseStr, c.Stats.Strength.ValueAdj, "RecalculateStats must be idempotent on Strength.ValueAdj")
-	assert.Equal(t, c.Stats.Dexterity.ValueAdj, c.Stats.Dexterity.ValueAdj, "Dexterity.ValueAdj stable")
+	assert.Equal(t, baseDex, c.Stats.Dexterity.ValueAdj, "Dexterity.ValueAdj idempotent")
 }
 
 // TestRecalculateStats_PoolReservationClamping verifies that current pool values
