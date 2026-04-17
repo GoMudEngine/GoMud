@@ -272,24 +272,6 @@ func (c *Character) GetMutationVisuals() string {
 	return strings.Join(parts, " ")
 }
 
-// returns description unless description is a hash
-// which points to another description location.
-func (c *Character) TrackPlayerDamage(userId int, damageAmt int) {
-
-	roundNow := util.GetRoundCount()
-	if len(c.PlayerDamage) == 0 {
-		c.PlayerDamage = map[int]int{}
-	} else {
-		if roundNow-c.LastPlayerDamage > 30 {
-			clear(c.PlayerDamage)
-		}
-	}
-
-	c.PlayerDamage[userId] = c.PlayerDamage[userId] + damageAmt
-	c.LastPlayerDamage = roundNow
-
-}
-
 /*
 All spells should have a 10% minimum chance of success.
 */
@@ -2027,45 +2009,6 @@ func (c *Character) ClearQuestFlag(key string) {
 	delete(c.QuestFlags, key)
 }
 
-func (c *Character) SetAggroRemote(exitName string, userId int, mobInstanceId int, aggroType AggroType, roundsWaitTime ...int) {
-	c.SetAggro(userId, mobInstanceId, aggroType, roundsWaitTime...)
-	c.Aggro.ExitName = exitName
-}
-
-func (c *Character) SetAggro(userId int, mobInstanceId int, aggroType AggroType, roundsWaitTime ...int) {
-
-	// Stage 8.3: Clear grapple state if switching targets
-	if c.Aggro != nil {
-		if c.Aggro.UserId != userId || c.Aggro.MobInstanceId != mobInstanceId {
-			c.ClearGrappleState()
-		}
-	}
-
-	var combatAddlWaitRounds int = 0
-
-	if len(roundsWaitTime) > 0 {
-		for _, waitAmt := range roundsWaitTime {
-			combatAddlWaitRounds += waitAmt
-		}
-	} else {
-		combatAddlWaitRounds = c.Equipment.Weapon.GetSpec().WaitRounds + c.Equipment.Offhand.GetSpec().WaitRounds
-	}
-
-	if aggroType == DefaultAttack {
-		if c.Equipment.Weapon.GetSpec().Subtype == items.Shooting {
-			aggroType = Shooting
-		}
-	}
-
-	c.Aggro = &Aggro{
-		UserId:        userId,
-		MobInstanceId: mobInstanceId,
-		Type:          aggroType,
-		RoundsWaiting: combatAddlWaitRounds,
-	}
-
-}
-
 func (c *Character) SetCast(roundsWaitTime int, sInfo SpellAggroInfo) {
 
 	c.Aggro = &Aggro{
@@ -2074,56 +2017,6 @@ func (c *Character) SetCast(roundsWaitTime int, sInfo SpellAggroInfo) {
 		SpellInfo:     sInfo,
 	}
 
-}
-
-func (c *Character) EndAggro() {
-	c.Aggro = nil
-	c.ClearGrappleState()
-}
-
-// ClearGrappleState clears all grapple-related state
-// Stage 8.3: Called when combat ends, targets change, or participant dies
-func (c *Character) ClearGrappleState() {
-	c.GrappleControllerId = 0
-	c.RemoveCondition(ConditionGrappleController)
-	// Reset to standing if in a grapple position
-	if c.CombatPosition.IsGrapplePosition() {
-		c.CombatPosition = PositionStanding
-	}
-}
-
-func (c *Character) IsAggro(targetUserId int, targetMobInstanceId int) bool {
-
-	if c.Aggro != nil {
-
-		if c.Aggro.MobInstanceId > 0 && c.Aggro.MobInstanceId == targetMobInstanceId {
-			return true
-		}
-
-		if c.Aggro.UserId > 0 && c.Aggro.UserId == targetUserId {
-			return true
-		}
-
-		if c.Aggro.Type == SpellCast {
-			if len(c.Aggro.SpellInfo.TargetUserIds) > 0 {
-				for _, uId := range c.Aggro.SpellInfo.TargetUserIds {
-					if uId == targetUserId {
-						return true
-					}
-				}
-			}
-
-			if len(c.Aggro.SpellInfo.TargetMobInstanceIds) > 0 {
-				for _, mId := range c.Aggro.SpellInfo.TargetMobInstanceIds {
-					if mId == targetMobInstanceId {
-						return true
-					}
-				}
-			}
-		}
-
-	}
-	return false
 }
 
 func (c *Character) IsDisabled() bool {
