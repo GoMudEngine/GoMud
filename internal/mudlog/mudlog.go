@@ -2,8 +2,8 @@ package mudlog
 
 import (
 	"context"
-	"fmt"
 	"io"
+	"log"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -53,18 +53,18 @@ func SetupLogger(inGameLogger teeLogger, logLevel string, logPath string, colorL
 	fileInfo, err := os.Stat(logPath)
 	if err == nil {
 		if fileInfo.IsDir() {
-			panic(fmt.Errorf("log file path is a directory: %s", logPath))
+			log.Fatalf("log file path is a directory: %s", logPath)
 		}
 
 	} else if os.IsNotExist(err) {
 		// File does not exist; check if the directory exists
 		dir := filepath.Dir(logPath)
 		if _, err := os.Stat(dir); os.IsNotExist(err) {
-			panic(fmt.Errorf("directory for log file does not exist: %s", dir))
+			log.Fatalf("directory for log file does not exist: %s", dir)
 		}
 	} else {
 		// Some other error
-		panic(fmt.Errorf("error accessing log file path: %v", err))
+		log.Fatalf("error accessing log file path: %v", err)
 	}
 
 	lj := &lumberjack.Logger{
