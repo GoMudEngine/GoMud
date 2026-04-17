@@ -881,30 +881,6 @@ func (c *Character) LearnRecipe(recipeId string) bool {
 	return false
 }
 
-func (c *Character) TrackCharmed(mobId int, add bool) {
-	for pos, mobInstanceId := range c.CharmedMobs {
-		if mobInstanceId == mobId {
-			if !add {
-				c.CharmedMobs = slices.Delete(c.CharmedMobs, pos, pos+1)
-			}
-			return
-		}
-	}
-	c.CharmedMobs = append(c.CharmedMobs, mobId)
-}
-
-func (c *Character) GetCharmIds() []int {
-	return append([]int{}, c.CharmedMobs...)
-}
-
-func (c *Character) Charm(userId int, rounds int, expireCommand string) {
-	c.SetAdjective(`charmed`, true)
-	c.EverCharmed = true
-	c.Charmed = NewCharm(userId, rounds, expireCommand)
-	if c.Aggro != nil && c.Aggro.UserId == userId {
-		c.EndAggro()
-	}
-}
 
 func (c *Character) KnowsFirstAid() bool {
 	if r := species.GetSpecies(c.SpeciesId); r != nil {
@@ -913,39 +889,6 @@ func (c *Character) KnowsFirstAid() bool {
 	return false
 }
 
-func (c *Character) GetCharmedUserId() int {
-	if c.Charmed != nil {
-		return c.Charmed.UserId
-	}
-	return 0
-}
-
-func (c *Character) IsCharmed(userId ...int) bool {
-
-	if c.Charmed == nil {
-		return false
-	}
-
-	if len(userId) == 0 {
-		return c.Charmed != nil
-	}
-
-	if c.Charmed == nil {
-		return false
-	}
-	return slices.Contains(userId, c.Charmed.UserId)
-}
-
-// Returns userId of whoever had charmed them
-func (c *Character) RemoveCharm() int {
-	charmUserId := 0
-	c.SetAdjective(`charmed`, false)
-	if c.Charmed != nil {
-		charmUserId = c.Charmed.UserId
-		c.Charmed = nil
-	}
-	return charmUserId
-}
 
 func (c *Character) GetRandomItem() (items.Item, bool) {
 	if len(c.Items) == 0 {
@@ -2004,11 +1947,6 @@ func (c *Character) DeductDefenseStamina(defenseType string) bool {
 	return false
 }
 
-func (c *Character) GetMaxCharmedCreatures() int {
-	// Taming is now handled via spellcasting; base charm capacity from spellcasting skill
-	lvl := c.GetSkillLevel(skills.Spellcasting)
-	return lvl + 1
-}
 
 func (c *Character) GetMemoryCapacity() int {
 	// Map is now a free command; memory capacity based on Perception
