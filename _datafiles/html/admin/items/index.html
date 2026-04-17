@@ -27,7 +27,7 @@
                                 <option data-divider="true">Divider</option>
                                 {{$lastItemType = ($itemspec.ItemFolder true) }}
                                 {{ end }}
-                                <option data-content="<span class='badge badge-secondary'>{{ $itemspec.ItemId }}</span> {{ if ne $itemspec.QuestToken "" }}<span class='text-warning'>&#x2605;</span> {{end}}<span class='font-weight-bold'>{{ $itemspec.Name }}</span>{{ if $itemspec.Cursed }} <span class='badge badge-pill badge-danger'>Cursed</span>{{ end }}{{ if ne $itemspec.GetScript "" }} <span class='badge badge-pill badge-info'>Script</span>{{end}}" value="{{ $itemspec.ItemId }}">{{ rpad 7 $itemspec.ItemId "&nbsp;&nbsp;" }} {{ $itemspec.Name }}</option>
+                                <option data-content="<span class='badge badge-secondary'>{{ $itemspec.ItemId }}</span> {{ if ne $itemspec.QuestToken "" }}<span class='text-warning'>&#x2605;</span> {{end}}<span class='font-weight-bold'>{{ $itemspec.Name }}</span>{{ if $itemspec.Cursed }} <span class='badge badge-pill badge-danger'>Cursed</span>{{ end }}" value="{{ $itemspec.ItemId }}">{{ rpad 7 $itemspec.ItemId "&nbsp;&nbsp;" }} {{ $itemspec.Name }}</option>
                             {{end}}
                         </select>
                     </div>
