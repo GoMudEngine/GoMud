@@ -1101,63 +1101,11 @@ func handlePlayerVsPlayer(user *users.UserRecord, uRoom *rooms.Room, evt events.
 // handlePlayerVsMob processes a player attacking a mob.
 func handlePlayerVsMob(user *users.UserRecord, uRoom *rooms.Room, evt events.NewRound, moonMod float64, affectedPlayerIds *[]int, affectedMobInstanceIds *[]int) {
 	c := configs.GetConfig()
-	roomId := user.Character.RoomId
 
 	*affectedMobInstanceIds = append(*affectedMobInstanceIds, user.Character.Aggro.MobInstanceId)
 
-	defMob := mobs.GetInstance(user.Character.Aggro.MobInstanceId)
-
-	targetFound := true
-	if defMob == nil {
-		targetFound = false
-	} else if defMob.Character.RoomId != user.Character.RoomId {
-		if user.Character.Aggro.ExitName == `` {
-			targetFound = false
-		} else {
-			if uRoom == nil {
-				user.Character.EndAggro()
-				return
-			}
-			if _, exitRoomId := uRoom.FindExitByName(user.Character.Aggro.ExitName); exitRoomId != defMob.Character.RoomId {
-				targetFound = false
-			}
-		}
-	}
-
-	if !targetFound {
-		user.SendText("Your target can't be found.")
-		user.Character.EndAggro()
-		return
-	}
-
-	defRoom := rooms.LoadRoom(defMob.Character.RoomId)
-	if defRoom == nil {
-		user.Character.EndAggro()
-		return
-	}
-
-	// Emit combat_start for the defender mob if this is its first round
-	// in combat. We do this here (before the attack roll) so mobs that
-	// die in round 1 still get their reactive AI signal fired.
-	if defMob.CombatMemory == nil && defMob.Character.Aggro != nil {
-		mudlog.Debug("MobAI", "emit", "combat_start", "mob", defMob.Character.Name, "mobId", defMob.InstanceId, "source", "handlePlayerVsMob")
-		defMob.CombatMemory = mobai.SetMemory(
-			defMob.Character.Aggro.UserId,
-			defMob.Character.Aggro.MobInstanceId,
-			defMob.Character.RoomId,
-			evt.RoundNumber,
-		)
-		events.AddToQueue(events.MobAISignal{
-			MobInstanceId: defMob.InstanceId,
-			SignalType:    "combat_start",
-			RoomId:        defMob.Character.RoomId,
-		})
-	}
-
-	defMob.Character.CancelBuffsWithFlag(buffs.CancelIfCombat)
-
-	if defMob.Character.Health < 1 {
-		user.Character.EndAggro()
+	defMob, defRoom, ok := resolvePlayerVsMobTarget(user, uRoom, evt)
+	if !ok {
 		return
 	}
 
@@ -1180,133 +1128,15 @@ func handlePlayerVsMob(user *users.UserRecord, uRoom *rooms.Room, evt events.New
 
 	processGrappleProgression(user.Character, &defMob.Character, user.Character.Name, defMob.Character.Name, uRoom, user.UserId, 0)
 
-	var roundResult combat.AttackResult
-
 	// Stage 17.2: Moon phase stat modifiers
 	restore := applyMoonMods(user.Character, moonMod)
-	roundResult = combat.AttackPlayerVsMob(user, defMob)
+	roundResult := combat.AttackPlayerVsMob(user, defMob)
 	restore()
 
 	applyCombatDamageBonuses_PvM(&roundResult, user, defMob, uRoom, defRoom)
-
-	// Stage 30.1: Record combat analytics
-	pvmAtkType := "unarmed"
-	if user.Character.Equipment.Weapon.ItemId > 0 {
-		pvmAtkType = "weapon"
-	}
-	combat.RecordAttack(roundResult, combat.User, combat.Mob, pvmAtkType, user.Character, &defMob.Character, evt.RoundNumber)
-
-	pvmCritResult := applyCritEffects(user.Character, &defMob.Character, roundResult, uRoom)
-	dispatchCritEffectsPvM(pvmCritResult, user, defMob, uRoom)
-
-	// Apply darkness message replacement for blind attacker
-	pvmSrcCanSee := canSeeInRoom(user.Character, uRoom)
-	replaceDarknessMessages(&roundResult, pvmSrcCanSee, true) // mobs don't receive text messages
-
-	for _, buffId := range roundResult.BuffSource {
-		user.AddBuff(buffId, `combat`)
-	}
-	for _, buffId := range roundResult.BuffTarget {
-		defMob.AddBuff(buffId, `combat`)
-	}
-	for _, msg := range roundResult.MessagesToSource {
-		user.SendText(msg)
-	}
-	for _, msg := range roundResult.MessagesToSourceRoom {
-		sendVisualRoomText(uRoom, msg, user.UserId)
-	}
-	for _, msg := range roundResult.MessagesToTargetRoom {
-		sendVisualRoomText(defRoom, msg, user.UserId)
-	}
-	sendDarkRoomCombatFallback(uRoom, user.UserId)
-	if defRoom != uRoom {
-		sendDarkRoomCombatFallback(defRoom, user.UserId)
-	}
-
-	// Stage 11.5: Mob concentration break when hit
-	if checkConcentrationBreak(&defMob.Character, roundResult.DamageToTarget) {
-		recordConcentrationFailure(combat.Mob, combat.User, &defMob.Character, castingTargetChar(defMob.Character.CastingState))
-		defMob.Character.CastingState = nil
-		uRoom.SendText(fmt.Sprintf(
-			`<ansi fg="mobname">%s</ansi>'s concentration breaks.`, defMob.Character.Name))
-	}
-
-	// Handle any scripted behavior now.
-	if roundResult.Hit {
-		// Behavior tree: fire-and-forget
-		behaviortree.TryMobBehavior(defMob.InstanceId, behaviortree.EventContext{
-			EventType: "mob_hurt",
-			UserId:    user.UserId,
-			RoomId:    defMob.Character.RoomId,
-		})
-	}
-
-	// Stage 38.3: Player attacker progression — per-weapon skill tracking
-	user.Character.OnStatUse("strength", user.UserId)
-	user.Character.OnStatUse("dexterity", user.UserId)
-	for _, wh := range roundResult.WeaponHits {
-		if wh.Hit {
-			user.Character.OnSkillUse(wh.SkillTag, user.UserId)
-			if wh.Crit {
-				user.Character.OnCriticalSuccess(wh.SkillTag, user.UserId)
-			}
-		} else if wh.Fumble {
-			user.Character.OnCriticalFailure(wh.SkillTag, user.UserId)
-		}
-	}
-	// Unarmed progression when fighting with no weapons at all
-	if len(roundResult.WeaponHits) == 0 && roundResult.Hit {
-		user.Character.OnSkillUse(string(skills.UnarmedCombat), user.UserId)
-	}
-
-	// Defender progression — dodge/parry/block train specific skills
-	processDefenderProgression(&defMob.Character, 0, roundResult)
-
-	// Hostility
-	for _, groupName := range defMob.Groups {
-		mobs.MakeHostile(groupName, user.UserId, c.Timing.MinutesToRounds(2)-user.Character.Stats.Charisma.ValueAdj)
-	}
-
-	// Mobs get aggro when attacked
-	if defMob.Character.Aggro == nil {
-		defMob.PreventIdle = true
-		if user.Character.RoomId != defMob.Character.RoomId {
-			if mobRoom := rooms.LoadRoom(defMob.Character.RoomId); mobRoom != nil {
-				for exitName, exitInfo := range mobRoom.Exits {
-					if exitInfo.RoomId == user.Character.RoomId {
-						defMob.Command(fmt.Sprintf(`go %s`, exitName))
-						if actionStr := defMob.GetAngryCommand(); actionStr != `` {
-							defMob.Command(actionStr)
-						}
-						break
-					}
-				}
-			}
-		}
-		defMob.Command(fmt.Sprintf("attack @%d", user.UserId))
-	}
-
-	// Bidirectional autoassist: companion owner fights back when their companion is attacked.
-	handleCompanionOwnerAssist(defMob, fmt.Sprintf("@%d", user.UserId))
-
-	if user.Character.Health <= 0 || defMob.Character.Health <= 0 {
-		defMob.Character.EndAggro()
-		if user.Character.Health > 0 {
-			if RetargetOrEnd(user.Character, uRoom, user.UserId, 0) {
-				if mob := mobs.GetInstance(user.Character.Aggro.MobInstanceId); mob != nil {
-					user.SendText(fmt.Sprintf("You turn your attention to <ansi fg=\"mobname\">%s</ansi>!", mob.Character.Name))
-				} else if newDef := users.GetByUserId(user.Character.Aggro.UserId); newDef != nil {
-					user.SendText(fmt.Sprintf("You turn your attention to <ansi fg=\"username\">%s</ansi>!", newDef.Character.Name))
-				}
-			}
-		} else {
-			user.Character.EndAggro()
-		}
-	} else {
-		user.Character.SetAggro(0, defMob.InstanceId, characters.DefaultAttack)
-	}
-
-	_ = roomId // used implicitly via uRoom
+	handlePvMCritAndMessaging(&roundResult, user, defMob, uRoom, defRoom, evt.RoundNumber)
+	handlePvMProgressionAndAggro(&roundResult, user, defMob, uRoom, &c)
+	handlePvMRoundResolution(user, defMob, uRoom)
 }
 
 // handleMobVsPlayer processes a mob attacking a player.
