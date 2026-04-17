@@ -2142,6 +2142,7 @@ func (r *Room) AddPlayer(userId int) int {
 	}
 
 	r.players = append(r.players, userId)
+	incrementZonePlayerCount(r.Zone)
 
 	return len(r.players)
 }
@@ -2152,6 +2153,7 @@ func (r *Room) RemovePlayer(userId int) (int, bool) {
 	for i, v := range r.players {
 		if v == userId {
 			r.players = append(r.players[:i], r.players[i+1:]...)
+			decrementZonePlayerCount(r.Zone)
 			return len(r.players), true
 		}
 	}

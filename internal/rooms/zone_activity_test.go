@@ -83,3 +83,68 @@ func TestZoneActivity_VerifyDetectsDrift(t *testing.T) {
 		t.Fatalf("expected drift of +1 for alpha (ground truth 2, counter 1), got %v", drift)
 	}
 }
+
+func TestAddPlayer_IncrementsZone(t *testing.T) {
+	resetZonePlayerCount()
+
+	r := &Room{RoomId: 2001, Zone: "alpha"}
+	r.AddPlayer(10)
+
+	if !ZoneHasPlayers("alpha") {
+		t.Fatal("alpha should be active after AddPlayer")
+	}
+}
+
+func TestAddPlayer_DedupeDoesNotDoubleCount(t *testing.T) {
+	resetZonePlayerCount()
+
+	r := &Room{RoomId: 2002, Zone: "alpha"}
+
+	originalManager := roomManager
+	defer func() { roomManager = originalManager }()
+	roomManager = &RoomManager{rooms: map[int]*Room{2002: r}}
+
+	r.AddPlayer(10)
+	r.AddPlayer(10) // duplicate — should no-op
+
+	drift := VerifyZonePlayerCount()
+	if len(drift) != 0 {
+		t.Fatalf("counter should match ground truth, drift=%v", drift)
+	}
+}
+
+func TestRemovePlayer_DecrementsZone(t *testing.T) {
+	resetZonePlayerCount()
+
+	r := &Room{RoomId: 2003, Zone: "alpha"}
+	r.AddPlayer(10)
+	if !ZoneHasPlayers("alpha") {
+		t.Fatal("precondition: alpha should be active")
+	}
+
+	r.RemovePlayer(10)
+	if ZoneHasPlayers("alpha") {
+		t.Fatal("alpha should be inactive after removal")
+	}
+}
+
+func TestRemovePlayer_NotMember_NoDecrement(t *testing.T) {
+	resetZonePlayerCount()
+	incrementZonePlayerCount("alpha") // simulate prior player in zone
+
+	r := &Room{RoomId: 2004, Zone: "alpha"} // this room has no players
+	r.RemovePlayer(999)                     // userId 999 is not a member
+
+	if !ZoneHasPlayers("alpha") {
+		t.Fatal("alpha should still be active — we didn't actually remove anyone")
+	}
+}
+
+func TestAddPlayer_EmptyZoneStringDoesNotCrash(t *testing.T) {
+	resetZonePlayerCount()
+	r := &Room{RoomId: 2005, Zone: ""}
+	r.AddPlayer(10) // must not panic; empty zone is a valid key
+	if !ZoneHasPlayers("") {
+		t.Fatal(`empty zone string should key into the map`)
+	}
+}
