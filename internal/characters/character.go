@@ -3,7 +3,6 @@ package characters
 import (
 	"fmt"
 	"math"
-	"strconv"
 	"strings"
 	"time"
 
@@ -1064,32 +1063,6 @@ func (c *Character) GetConvictionMitigation() float64 {
 	return float64(total) / 100.0
 }
 
-func (c *Character) GetMobName(viewingUserId int, renderFlags ...NameRenderFlag) FormattedName {
-	return c.getFormattedName(viewingUserId, `mobname`, renderFlags...)
-}
-
-// GetMobNameIndexed returns a formatted mob name with a duplicate index marker.
-// When dupIndex > 0, the name displays as "name #N" with shifted colors for
-// indices 2+. Use this when multiple mobs share the same name in a room.
-func (c *Character) GetMobNameIndexed(viewingUserId int, dupIndex int, renderFlags ...NameRenderFlag) FormattedName {
-	f := c.getFormattedName(viewingUserId, `mobname`, renderFlags...)
-	f.DuplicateIndex = dupIndex
-	return f
-}
-
-func (c *Character) GetPlayerName(viewingUserId int, renderFlags ...NameRenderFlag) FormattedName {
-	return c.getFormattedName(viewingUserId, `username`, renderFlags...)
-}
-
-// GetCharacterName returns the character's name as a plain string (ansi=false)
-// or as an ANSI-tagged display string (ansi=true). Works for both player and
-// mob characters; uses the username color tag for ANSI display.
-func (c *Character) GetCharacterName(ansi bool) string {
-	if !ansi {
-		return c.Name
-	}
-	return c.getFormattedName(0, `username`).String()
-}
 
 func (c *Character) HasAdjective(adj string) bool {
 	return slices.Contains(c.Adjectives, adj)
@@ -1194,43 +1167,6 @@ func (c *Character) AttemptRecovery(statValue int) (bool, bool) {
 	return true, success
 }
 
-func (c *Character) getFormattedName(viewingUserId int, uType string, renderFlags ...NameRenderFlag) FormattedName {
-
-	f := FormattedName{
-		Name:       c.Name,
-		Type:       uType,
-		Adjectives: make([]string, 0, len(c.Adjectives)),
-	}
-
-	includeHealth := false
-	for _, flag := range renderFlags {
-		if flag == RenderHealth {
-			includeHealth = true
-		} else if flag == RenderShortAdjectives {
-			f.UseShortAdjectives = true
-		}
-	}
-
-	// If including health, only do so if not downed, because downed shows as its own adjective.
-	if includeHealth && c.Health > 0 {
-		pctHealth := int(math.Ceil(float64(c.Health) / float64(c.HealthMax.Value) * 100))
-		f.Adjectives = append(f.Adjectives, strconv.Itoa(pctHealth)+`%`)
-	}
-
-	f.Adjectives = append(f.Adjectives, c.GetAdjectives()...)
-
-	if c.Health < 1 {
-		f.Suffix = `downed`
-	} else if c.Aggro != nil && c.Aggro.UserId == viewingUserId {
-		f.Suffix = `aggro`
-	}
-
-	if c.Pet.Exists() {
-		f.PetName = c.Pet.DisplayName()
-	}
-
-	return f
-}
 
 func (c *Character) SetSetting(settingName string, settingValue string) {
 	if c.Settings == nil {
