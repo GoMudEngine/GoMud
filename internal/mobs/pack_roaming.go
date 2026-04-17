@@ -119,6 +119,11 @@ func tickPackRoamingWithMaxSize(maxSize int) {
 		if mob.ScatterRounds > 0 {
 			continue
 		}
+		// Charmed / companion mobs don't participate in wild pack behavior.
+		// They follow their player instead.
+		if mob.Character.IsCharmed() {
+			continue
+		}
 		for _, g := range mob.Groups {
 			key := roomGroup{roomId: mob.Character.RoomId, groupTag: g}
 			rgMembers[key] = append(rgMembers[key], instId)
@@ -219,6 +224,10 @@ func handleAlphaDeathWithScatter(deadMob *Mob, roomMobIds []int, scatterRounds i
 	for _, instId := range roomMobIds {
 		mob := GetInstance(instId)
 		if mob == nil || mob.InstanceId == deadMob.InstanceId {
+			continue
+		}
+		// Charmed / companion mobs don't scatter with wild packs.
+		if mob.Character.IsCharmed() {
 			continue
 		}
 

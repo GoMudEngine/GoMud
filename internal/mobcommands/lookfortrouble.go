@@ -22,6 +22,13 @@ func LookForTrouble(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) 
 		return true, nil
 	}
 
+	// Non-combatants (merchants, quest NPCs) never pick fights — even if
+	// their group has been flagged hostile by a player attacking a
+	// combatant in the same faction.
+	if mob.IsNonCombatant() {
+		return true, nil
+	}
+
 	// Make a list of all players this gorup is hostile to in this room.
 	isCharmed := mob.Character.IsCharmed()
 

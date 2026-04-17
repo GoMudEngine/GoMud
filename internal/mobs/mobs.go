@@ -5,6 +5,7 @@ import (
 	"math"
 	"os"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
@@ -26,14 +27,22 @@ import (
 )
 
 var (
-	instanceCounter int = 0
-	mobs                = map[int]*Mob{}
-	allMobNames         = []string{}
-	mobInstances        = map[int]*Mob{}
-	mobsHatePlayers     = map[string]map[int]int{}
-	mobNameCache        = map[MobId]string{}
+	instanceCounter int         = 0
+	mobs                         = map[int]*Mob{}
+	mobsMu          sync.RWMutex // guards mobs + allMobNames
+	allMobNames                  = []string{}
 
-	recentlyDied = map[int]int{}
+	mobInstances   = map[int]*Mob{}
+	mobInstancesMu sync.RWMutex // guards mobInstances + instanceCounter
+
+	mobsHatePlayers   = map[string]map[int]int{}
+	mobsHatePlayersMu sync.RWMutex
+
+	mobNameCache   = map[MobId]string{}
+	mobNameCacheMu sync.RWMutex
+
+	recentlyDied   = map[int]int{}
+	recentlyDiedMu sync.RWMutex
 )
 
 type ItemTrade struct {
@@ -119,7 +128,8 @@ type Mob struct {
 }
 
 func MobInstanceExists(instanceId int) bool {
-
+	mobInstancesMu.RLock()
+	defer mobInstancesMu.RUnlock()
 	_, ok := mobInstances[instanceId]
 	return ok
 }
@@ -209,7 +219,9 @@ func (m *Mob) GetCombatMemory() *mobai.CombatMemory {
 
 // Gets a copy of all mob info
 func GetAllMobInfo() []Mob {
-	ret := []Mob{}
+	mobsMu.RLock()
+	defer mobsMu.RUnlock()
+	ret := make([]Mob, 0, len(mobs))
 	for _, m := range mobs {
 		ret = append(ret, *m)
 	}
@@ -217,14 +229,23 @@ func GetAllMobInfo() []Mob {
 }
 
 func GetAllMobNames() []string {
-	return append([]string{}, allMobNames...)
+	mobsMu.RLock()
+	defer mobsMu.RUnlock()
+	out := make([]string, len(allMobNames))
+	copy(out, allMobNames)
+	return out
 }
 
 func TrackRecentDeath(instanceId int) {
+	recentlyDiedMu.Lock()
 	recentlyDied[instanceId] = int(util.GetRoundCount())
+	recentlyDiedMu.Unlock()
 }
 
 func RecentlyDied(instanceId int) bool {
+
+	recentlyDiedMu.Lock()
+	defer recentlyDiedMu.Unlock()
 
 	if len(recentlyDied) > 30 {
 		roundNow := int(util.GetRoundCount())
@@ -242,13 +263,21 @@ func RecentlyDied(instanceId int) bool {
 
 func MobIdByName(mobName string) MobId {
 
-	match, partial := util.FindMatchIn(mobName, allMobNames...)
+	mobsMu.RLock()
+	names := make([]string, len(allMobNames))
+	copy(names, allMobNames)
+	mobsMu.RUnlock()
+
+	match, partial := util.FindMatchIn(mobName, names...)
 	if match == "" {
 		match = partial
 	}
 	if match == "" {
 		return 0
 	}
+
+	mobsMu.RLock()
+	defer mobsMu.RUnlock()
 
 	for _, m := range mobs {
 		if m.Character.Name == match {
@@ -273,15 +302,22 @@ func MobIdByName(mobName string) MobId {
 
 func NewMobById(mobId MobId, homeRoomId int, forceStatPool ...int) *Mob {
 
-	if m, ok := mobs[int(mobId)]; ok {
+	mobsMu.RLock()
+	m, ok := mobs[int(mobId)]
+	mobsMu.RUnlock()
 
+	if ok {
+
+		mobInstancesMu.Lock()
 		instanceCounter++
+		newInstanceId := instanceCounter
+		mobInstancesMu.Unlock()
 
 		mob := *m // Make a copy of the mob
+		mob.InstanceId = newInstanceId
 
 		mob.HomeRoomId = homeRoomId
 		mob.Character.RoomId = homeRoomId
-		mob.InstanceId = instanceCounter
 		mob.Character.IsMob = true
 		mob.Character.PlayerDamage = make(map[int]int)
 
@@ -456,14 +492,18 @@ func NewMobById(mobId MobId, homeRoomId int, forceStatPool ...int) *Mob {
 		RegisterMobShop(&mob)
 
 		// Save the mob instance
+		mobInstancesMu.Lock()
 		mobInstances[mob.InstanceId] = &mob
+		mobInstancesMu.Unlock()
 
-		return mobInstances[mob.InstanceId]
+		return &mob
 	}
 	return nil
 }
 
 func GetMobSpec(mobId MobId) *Mob {
+	mobsMu.RLock()
+	defer mobsMu.RUnlock()
 	if m, ok := mobs[int(mobId)]; ok {
 		mob := *m // Make a copy of the mob
 		return &mob
@@ -472,7 +512,8 @@ func GetMobSpec(mobId MobId) *Mob {
 }
 
 func GetInstance(instanceId int) *Mob {
-
+	mobInstancesMu.RLock()
+	defer mobInstancesMu.RUnlock()
 	if m, ok := mobInstances[instanceId]; ok {
 		return m
 	}
@@ -480,8 +521,9 @@ func GetInstance(instanceId int) *Mob {
 }
 
 func GetAllMobInstanceIds() []int {
-
-	ids := make([]int, 0)
+	mobInstancesMu.RLock()
+	defer mobInstancesMu.RUnlock()
+	ids := make([]int, 0, len(mobInstances))
 	for id := range mobInstances {
 		ids = append(ids, id)
 	}
@@ -489,8 +531,9 @@ func GetAllMobInstanceIds() []int {
 }
 
 func DestroyInstance(instanceId int) {
-
+	mobInstancesMu.Lock()
 	delete(mobInstances, instanceId)
+	mobInstancesMu.Unlock()
 }
 
 func (m *Mob) ShorthandId() string {
@@ -873,7 +916,10 @@ func (r *Mob) Validate() error {
 }
 
 func (m *Mob) Filename() string {
-	if name, ok := mobNameCache[m.MobId]; ok {
+	mobNameCacheMu.RLock()
+	name, ok := mobNameCache[m.MobId]
+	mobNameCacheMu.RUnlock()
+	if ok {
 		return fmt.Sprintf("%d-%s.yaml", m.Id(), util.ConvertForFilename(name))
 	}
 	// Failover to character name
@@ -906,6 +952,8 @@ func (r *Mob) Save() error {
 }
 
 func ReduceHostility() {
+	mobsHatePlayersMu.Lock()
+	defer mobsHatePlayersMu.Unlock()
 
 	for groupName, group := range mobsHatePlayers {
 		for userId, rounds := range group {
@@ -923,6 +971,8 @@ func ReduceHostility() {
 }
 
 func IsHostile(groupName string, userId int) bool {
+	mobsHatePlayersMu.RLock()
+	defer mobsHatePlayersMu.RUnlock()
 
 	if _, ok := mobsHatePlayers[groupName]; !ok {
 		return false
@@ -936,6 +986,8 @@ func IsHostile(groupName string, userId int) bool {
 }
 
 func MakeHostile(groupName string, userId int, rounds int) {
+	mobsHatePlayersMu.Lock()
+	defer mobsHatePlayersMu.Unlock()
 
 	if _, ok := mobsHatePlayers[groupName]; !ok {
 		mobsHatePlayers[groupName] = make(map[int]int)
@@ -968,17 +1020,24 @@ func LoadDataFiles() {
 		panic(errors.Wrap(err, `filepath: `+dataPath))
 	}
 
-	mobs = tmpMobs
-
-	clear(mobNameCache)
-
-	for _, mob := range mobs {
+	// Build the derived caches outside the lock (no contention risk during startup).
+	tmpNames := make([]string, 0, len(tmpMobs))
+	tmpNameCache := make(map[MobId]string, len(tmpMobs))
+	for _, mob := range tmpMobs {
 		mob.Character.CacheDescription()
-		allMobNames = append(allMobNames, mob.Character.Name)
-		// Keep track of all original names associated with a given mobId
-		mobNameCache[mob.MobId] = mob.Character.Name
+		tmpNames = append(tmpNames, mob.Character.Name)
+		tmpNameCache[mob.MobId] = mob.Character.Name
 	}
 
-	mudlog.Info("mobs.LoadDataFiles()", "loadedCount", len(mobs), "Time Taken", time.Since(start))
+	mobsMu.Lock()
+	mobs = tmpMobs
+	allMobNames = tmpNames
+	mobsMu.Unlock()
+
+	mobNameCacheMu.Lock()
+	mobNameCache = tmpNameCache
+	mobNameCacheMu.Unlock()
+
+	mudlog.Info("mobs.LoadDataFiles()", "loadedCount", len(tmpMobs), "Time Taken", time.Since(start))
 
 }

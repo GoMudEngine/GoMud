@@ -242,15 +242,22 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 			user.Character.Conviction = user.Character.ConvictionMax.Value
 		}
 
-		// Regen-based stat progression: smooth chance based on pool depletion
+		// Regen-based stat progression: smooth chance based on pool depletion.
+		// Subtract Chrysalis-enchant pool reservation from the max — a player
+		// at their effective cap (unable to heal higher) should NOT count as
+		// "depleted" or the reserved fraction becomes a permanent progression
+		// farm. See fyttyn vitality exploit (2026-04-16).
+		healthMax := user.Character.HealthMax.Value - user.Character.GetPoolReservation("health", user.Character.HealthMax.Value)
+		staminaMax := user.Character.StaminaMax.Value - user.Character.GetPoolReservation("stamina", user.Character.StaminaMax.Value)
+		convictionMax := user.Character.ConvictionMax.Value - user.Character.GetPoolReservation("conviction", user.Character.ConvictionMax.Value)
 		user.Character.OnRegenTick(
-			user.Character.Health, user.Character.HealthMax.Value,
+			user.Character.Health, healthMax,
 			[]string{"vitality", "willpower"}, user.UserId)
 		user.Character.OnRegenTick(
-			user.Character.Stamina, user.Character.StaminaMax.Value,
+			user.Character.Stamina, staminaMax,
 			[]string{"strength", "vitality"}, user.UserId)
 		user.Character.OnRegenTick(
-			user.Character.Conviction, user.Character.ConvictionMax.Value,
+			user.Character.Conviction, convictionMax,
 			[]string{"willpower", "charisma"}, user.UserId)
 
 		// If it has changed, send an update
@@ -334,15 +341,20 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 			mob.Character.Conviction = mob.Character.ConvictionMax.Value
 		}
 
-		// Regen-based stat progression for mobs (gated inside OnRegenTick)
+		// Regen-based stat progression for mobs (gated inside OnRegenTick).
+		// Subtract equipment pool reservation (companions can inherit
+		// chrysalis-enchanted gear).
+		mobHealthMax := mob.Character.HealthMax.Value - mob.Character.GetPoolReservation("health", mob.Character.HealthMax.Value)
+		mobStaminaMax := mob.Character.StaminaMax.Value - mob.Character.GetPoolReservation("stamina", mob.Character.StaminaMax.Value)
+		mobConvictionMax := mob.Character.ConvictionMax.Value - mob.Character.GetPoolReservation("conviction", mob.Character.ConvictionMax.Value)
 		mob.Character.OnRegenTick(
-			mob.Character.Health, mob.Character.HealthMax.Value,
+			mob.Character.Health, mobHealthMax,
 			[]string{"vitality", "willpower"}, 0)
 		mob.Character.OnRegenTick(
-			mob.Character.Stamina, mob.Character.StaminaMax.Value,
+			mob.Character.Stamina, mobStaminaMax,
 			[]string{"strength", "vitality"}, 0)
 		mob.Character.OnRegenTick(
-			mob.Character.Conviction, mob.Character.ConvictionMax.Value,
+			mob.Character.Conviction, mobConvictionMax,
 			[]string{"willpower", "charisma"}, 0)
 
 		// Phase 25.1: Apply poison DoT damage to mobs

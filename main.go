@@ -1065,6 +1065,7 @@ func loadAllDataFiles(isReload bool) {
 	enchantments.LoadEnchantmentFiles()
 	crafting.LoadRecipeFiles()
 	rooms.LoadDataFiles()
+	rooms.RebuildZonePlayerCount() // build the zone → player-count index
 	buffs.LoadDataFiles() // Load buffs before items for cost calculation reasons
 	items.LoadDataFiles()
 	species.LoadDataFiles()

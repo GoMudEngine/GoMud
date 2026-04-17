@@ -1930,8 +1930,7 @@ func (r *Room) PruneSigns() []Sign {
 
 func (r *Room) PruneVisitors() int {
 
-	if r.visitors == nil {
-		r.visitors = make(map[VisitorType]map[int]uint64)
+	if len(r.visitors) == 0 {
 		return 0
 	}
 
@@ -2143,6 +2142,7 @@ func (r *Room) AddPlayer(userId int) int {
 	}
 
 	r.players = append(r.players, userId)
+	incrementZonePlayerCount(r.Zone)
 
 	return len(r.players)
 }
@@ -2153,6 +2153,7 @@ func (r *Room) RemovePlayer(userId int) (int, bool) {
 	for i, v := range r.players {
 		if v == userId {
 			r.players = append(r.players[:i], r.players[i+1:]...)
+			decrementZonePlayerCount(r.Zone)
 			return len(r.players), true
 		}
 	}
