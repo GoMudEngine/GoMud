@@ -60,13 +60,14 @@ func removeZombieConnectionLocked(connectionId connections.ConnectionId) {
 
 func RemoveZombieUser(userId int) {
 	userManager.mu.Lock()
-	defer userManager.mu.Unlock()
-
-	if u := userManager.Users[userId]; u != nil {
-		u.Character.SetAdjective(`zombie`, false)
-	}
+	u := userManager.Users[userId]
 	if connId, ok := userManager.UserConnections[userId]; ok {
 		delete(userManager.ZombieConnections, connId)
+	}
+	userManager.mu.Unlock()
+
+	if u != nil {
+		u.Character.SetAdjective(`zombie`, false)
 	}
 }
 
@@ -299,8 +300,6 @@ func SetZombieUser(userId int) {
 		return
 	}
 
-	u.Character.SetAdjective(`zombie`, true)
-
 	if _, alreadyZombie := userManager.ZombieConnections[u.connectionId]; alreadyZombie {
 		userManager.mu.Unlock()
 		return
@@ -311,6 +310,7 @@ func SetZombieUser(userId int) {
 	userManager.mu.Unlock()
 
 	// Cross-package calls outside lock
+	u.Character.SetAdjective(`zombie`, true)
 	u.Character.RemoveBuff(0)
 
 	// Prevent guide mob dupes
