@@ -405,18 +405,134 @@ func applyMobEffect_knockdown(
 	return dmg
 }
 
+func applyMobEffect_buff(
+	user *users.UserRecord,
+	mob *mobs.Mob,
+	room *rooms.Room,
+	spellData *spells.SpellData,
+	critTag string,
+	mName string,
+) int {
+	for _, buffId := range spellData.BuffIds {
+		mob.AddBuff(buffId, "spell")
+		// Compute tick snapshot for config-driven buffs
+		if user != nil {
+			if buffSpec := buffs.GetBuffSpec(buffId); buffSpec != nil && buffSpec.TickPool != "" {
+				skillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
+				scalingMult := combat.SkillMultiplier(skillLevel)
+				// Apply weapon spell damage multiplier if equipped
+				if user.Character.Equipment.Weapon.ItemId > 0 {
+					if weaponSpec := items.GetItemSpec(user.Character.Equipment.Weapon.ItemId); weaponSpec != nil && weaponSpec.SpellDamageMultiplier > 0 {
+						scalingMult *= weaponSpec.SpellDamageMultiplier
+					}
+				}
+				var maxPool int
+				switch buffSpec.TickPool {
+				case "health":
+					maxPool = mob.Character.HealthMax.Value
+				case "stamina":
+					maxPool = mob.Character.StaminaMax.Value
+				case "conviction":
+					maxPool = mob.Character.ConvictionMax.Value
+				}
+				tickAmt := buffs.ComputeTickAmount(maxPool, buffSpec.TickPercent, buffSpec.TickVariance, buffSpec.TickMin, scalingMult)
+				mob.Character.Buffs.SetTickAmount(buffId, tickAmt)
+			}
+		}
+	}
+	// Conditional aggro for harmful buff spells — kept inline because it is
+	// gated on Harm* spell types; not consolidated in Task 7's setMobSpellAggro.
+	if spellData.Type == spells.HarmSingle || spellData.Type == spells.HarmArea || spellData.Type == spells.HarmMulti {
+		if mob.Character.Aggro == nil {
+			mob.PreventIdle = true
+			if user != nil {
+				mob.Character.SetAggro(user.UserId, 0, characters.DefaultAttack)
+			}
+		}
+		if user != nil && user.Character.Aggro == nil {
+			user.Character.SetAggro(0, mob.InstanceId, characters.DefaultAttack)
+		}
+	}
+	if user != nil {
+		user.SendText(fmt.Sprintf(
+			`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> takes effect on %s!%s</ansi>`,
+			spellData.Name, mName, critTag))
+		sendVisualRoomText(room, fmt.Sprintf(
+			`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> affects %s!`,
+			user.Character.Name, spellData.Name, mName), user.UserId)
+	}
+	return 0
+}
+
+func applyMobEffect_tame(
+	user *users.UserRecord,
+	mob *mobs.Mob,
+	room *rooms.Room,
+	mName string,
+) int {
+	// Tame is restricted to animal group mobs
+	isAnimal := false
+	for _, g := range mob.Groups {
+		if g == "animal" {
+			isAnimal = true
+			break
+		}
+	}
+	if !isAnimal {
+		if user != nil {
+			user.SendText(fmt.Sprintf(
+				`<ansi fg="red">%s cannot be tamed — it is not a wild animal.</ansi>`,
+				mName))
+		}
+		return 0
+	}
+	if user != nil {
+		// Anti-recursion: strip any companions the mob itself had before
+		// charming it, so we never create companion chains.
+		for _, subId := range mob.Character.GetCharmIds() {
+			if subMob := mobs.GetInstance(subId); subMob != nil {
+				subMob.Character.RemoveCharm()
+				if subRoom := rooms.LoadRoom(subMob.Character.RoomId); subRoom != nil {
+					subRoom.RemoveMob(subId)
+				}
+				mobs.DestroyInstance(subId)
+			}
+		}
+		mob.Character.CharmedMobs = nil
+		mob.Character.Charm(user.UserId, 24, "")
+		mob.Character.EndAggro()
+		user.Character.TrackCharmed(mob.InstanceId, true)
+		user.SendText(fmt.Sprintf(
+			`<ansi fg="cyan">%s calms and becomes your companion!</ansi>`,
+			mName))
+		sendVisualRoomText(room, fmt.Sprintf(
+			`%s becomes docile and follows <ansi fg="username">%s</ansi>.`,
+			mName, user.Character.Name), user.UserId)
+	}
+	return 0
+}
+
+func applyMobEffect_default(
+	user *users.UserRecord,
+	spellData *spells.SpellData,
+	mName string,
+) int {
+	if user != nil {
+		user.SendText(fmt.Sprintf(
+			`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> takes effect on %s.</ansi>`,
+			spellData.Name, mName))
+	}
+	return 0
+}
+
 // applyMobEffect applies the spell effect to a mob and returns damage dealt (0 for non-damage effects).
 // user may be nil when the caster is a mob (guards all user.* references).
 // casterChar is the caster's Character pointer (may be nil for mob-on-mob when unavailable).
 func applyMobEffect(user *users.UserRecord, casterChar *characters.Character, mob *mobs.Mob, room *rooms.Room, spellData *spells.SpellData, magnitude int, isCrit bool) int {
-
-	dmgDealt := 0
-
 	critTag := ""
 	if isCrit {
 		critTag = ` <ansi fg="yellow">[CRIT!]</ansi>`
 	}
-
 	viewerId := 0
 	if user != nil {
 		viewerId = user.UserId
@@ -425,110 +541,18 @@ func applyMobEffect(user *users.UserRecord, casterChar *characters.Character, mo
 
 	switch spellData.EffectType {
 	case "damage":
-		dmgDealt = applyMobEffect_damage(user, casterChar, mob, room, spellData, magnitude, isCrit, critTag, mName)
+		return applyMobEffect_damage(user, casterChar, mob, room, spellData, magnitude, isCrit, critTag, mName)
 	case "dot":
-		dmgDealt = applyMobEffect_dot(user, mob, room, spellData, magnitude, critTag, mName)
+		return applyMobEffect_dot(user, mob, room, spellData, magnitude, critTag, mName)
 	case "knockdown":
-		dmgDealt = applyMobEffect_knockdown(user, casterChar, mob, room, spellData, magnitude, isCrit, critTag, mName)
-
+		return applyMobEffect_knockdown(user, casterChar, mob, room, spellData, magnitude, isCrit, critTag, mName)
 	case "buff":
-		for _, buffId := range spellData.BuffIds {
-			mob.AddBuff(buffId, "spell")
-			// Compute tick snapshot for config-driven buffs
-			if user != nil {
-				if buffSpec := buffs.GetBuffSpec(buffId); buffSpec != nil && buffSpec.TickPool != "" {
-					skillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
-					scalingMult := combat.SkillMultiplier(skillLevel)
-					// Apply weapon spell damage multiplier if equipped
-					if user.Character.Equipment.Weapon.ItemId > 0 {
-						if weaponSpec := items.GetItemSpec(user.Character.Equipment.Weapon.ItemId); weaponSpec != nil && weaponSpec.SpellDamageMultiplier > 0 {
-							scalingMult *= weaponSpec.SpellDamageMultiplier
-						}
-					}
-					var maxPool int
-					switch buffSpec.TickPool {
-					case "health":
-						maxPool = mob.Character.HealthMax.Value
-					case "stamina":
-						maxPool = mob.Character.StaminaMax.Value
-					case "conviction":
-						maxPool = mob.Character.ConvictionMax.Value
-					}
-					tickAmt := buffs.ComputeTickAmount(maxPool, buffSpec.TickPercent, buffSpec.TickVariance, buffSpec.TickMin, scalingMult)
-					mob.Character.Buffs.SetTickAmount(buffId, tickAmt)
-				}
-			}
-		}
-		// Set aggro for harmful buff spells
-		if spellData.Type == spells.HarmSingle || spellData.Type == spells.HarmArea || spellData.Type == spells.HarmMulti {
-			if mob.Character.Aggro == nil {
-				mob.PreventIdle = true
-				if user != nil {
-					mob.Character.SetAggro(user.UserId, 0, characters.DefaultAttack)
-				}
-			}
-			if user != nil && user.Character.Aggro == nil {
-				user.Character.SetAggro(0, mob.InstanceId, characters.DefaultAttack)
-			}
-		}
-		if user != nil {
-			user.SendText(fmt.Sprintf(
-				`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> takes effect on %s!%s</ansi>`,
-				spellData.Name, mName, critTag))
-			sendVisualRoomText(room, fmt.Sprintf(
-				`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> affects %s!`,
-				user.Character.Name, spellData.Name, mName), user.UserId)
-		}
-
+		return applyMobEffect_buff(user, mob, room, spellData, critTag, mName)
 	case "tame":
-		// Tame is restricted to animal group mobs
-		isAnimal := false
-		for _, g := range mob.Groups {
-			if g == "animal" {
-				isAnimal = true
-				break
-			}
-		}
-		if !isAnimal {
-			if user != nil {
-				user.SendText(fmt.Sprintf(
-					`<ansi fg="red">%s cannot be tamed — it is not a wild animal.</ansi>`,
-					mName))
-			}
-			return 0
-		}
-		if user != nil {
-			// Anti-recursion: strip any companions the mob itself had before
-			// charming it, so we never create companion chains.
-			for _, subId := range mob.Character.GetCharmIds() {
-				if subMob := mobs.GetInstance(subId); subMob != nil {
-					subMob.Character.RemoveCharm()
-					if subRoom := rooms.LoadRoom(subMob.Character.RoomId); subRoom != nil {
-						subRoom.RemoveMob(subId)
-					}
-					mobs.DestroyInstance(subId)
-				}
-			}
-			mob.Character.CharmedMobs = nil
-			mob.Character.Charm(user.UserId, 24, "")
-			mob.Character.EndAggro()
-			user.Character.TrackCharmed(mob.InstanceId, true)
-			user.SendText(fmt.Sprintf(
-				`<ansi fg="cyan">%s calms and becomes your companion!</ansi>`,
-				mName))
-			sendVisualRoomText(room, fmt.Sprintf(
-				`%s becomes docile and follows <ansi fg="username">%s</ansi>.`,
-				mName, user.Character.Name), user.UserId)
-		}
-
+		return applyMobEffect_tame(user, mob, room, mName)
 	default:
-		if user != nil {
-			user.SendText(fmt.Sprintf(
-				`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> takes effect on %s.</ansi>`,
-				spellData.Name, mName))
-		}
+		return applyMobEffect_default(user, spellData, mName)
 	}
-	return dmgDealt
 }
 
 // resolveAgainstPlayer performs the opposed roll and applies the effect to a player.
