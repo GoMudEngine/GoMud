@@ -12,19 +12,21 @@ Each substage gets its own spec → plan → implementation cycle.
 | # | Stage | Effort | Risk | Status |
 |---|-------|--------|------|--------|
 | 1.1 | Behavior Tree Package Split | 3h | Low | Complete |
-| 1.2 | God-Function Refactor | 10h | Medium | Not started |
+| 1.2a | God-Function Refactor — Combat + Spell | 5h | Medium | Not started |
+| 1.2b | God-Function Refactor — Character + Admin | 5h | Low-Med | Planning |
+| 1.2c | `character.go` File Split | 3h | Low | Not started |
 | 1.3 | Config File Split | 2h | Low | Complete |
-| 1.4 | Dead Code Sweep (Go code) | 3h | Low | In progress |
+| 1.4 | Dead Code Sweep (Go code) | 3h | Low | Complete |
 | 1.4b | Help Template Audit | 3h | Low | Complete |
 | 1.5 | Error Handling Audit | 4h | Medium | Not started |
 | 1.6 | Test Coverage for New Systems | 5h | Low | Not started |
 | 1.7 | Performance Pass | 10h | Mixed | Complete |
 | 1.8 | Behavior Tree Engine Robustness | 4h | Low | Not started |
 
-**Total: ~44 hours**
+**Total: ~47 hours**
 
-**Recommended execution order:** 1.1 → 1.3 → 1.4 → 1.4b → 1.7 → 1.2
-→ 1.5 → 1.8 → 1.6
+**Recommended execution order:** 1.1 → 1.3 → 1.4 → 1.4b → 1.7 → **1.2b
+→ 1.2c → 1.2a** → 1.5 → 1.8 → 1.6
 
 ---
 
@@ -82,29 +84,58 @@ Eight functions >200 lines after Phase 37. Break them up using the
 same patterns as 37.1a/b/c — extract helpers, reduce nesting, make
 each function do one thing.
 
-**Targets:**
+Split into two substages by domain so each has a focused review surface:
 
-1. `Room()` — `admin.room.go` (385 lines) — subcommand dispatcher
-2. `Character.Validate()` — `character.go` (329 lines) — subsystem
-   validators (skills, spells, equipment, stats)
-3. `handlePlayerVsMob()` — `NewRound_DoCombat_helpers.go` (283 lines)
+### 1.2a — Combat + Spell (3 functions, ~5h, Medium risk)
+
+Touches the hottest, most test-sensitive code paths. Scheduled after
+1.2b and 1.2c ship so combat has time to settle before another
+refactor.
+
+1. `handlePlayerVsMob()` — `NewRound_DoCombat_helpers.go` (286 lines)
    — combat phase extraction
-4. `room_Edit_Exits()` — `admin.room.go` (253 lines) — prompt state
-   machine split
-5. `applyMobEffect()` — `spell_resolution.go` (243 lines) —
+2. `handleMobVsPlayer()` — `NewRound_DoCombat_helpers.go` (236 lines)
+   — combat phase extraction
+3. `applyMobEffect()` — `spell_resolution.go` (246 lines) —
    channel-specific helpers
-6. `Character.Wear()` — `character.go` (235 lines) — slot selection
-   helpers
-7. `RecalculateStats()` — `character.go` (217 lines) — loop over
-   stats array instead of 6 repeated blocks
-8. `handleMobVsPlayer()` — `NewRound_DoCombat_helpers.go` (233 lines)
-   — combat phase extraction
 
-**Constraints:**
+### 1.2b — Character + Admin (5 functions, ~5h, Low-Medium risk)
+
+Function-level refactor in existing files. Characterization tests
+written BEFORE refactoring the character functions (first tests ever
+for these). Admin functions verified via manual smoke.
+
+1. `Character.RecalculateStats()` — `character.go` (239 lines) — loop
+   over stats array instead of 6 repeated blocks
+2. `Character.Wear()` — `character.go` (~235 lines) — slot selection
+   helpers
+3. `Character.Validate()` — `character.go` (433 lines) — subsystem
+   validators (skills, spells, equipment, stats)
+4. `Room()` — `admin.room.go` (387 lines) — subcommand dispatcher
+   (new file `admin.room.dispatcher.go`)
+5. `room_Edit_Exits()` — `admin.room.go` (257 lines) — prompt state
+   machine split (new file `admin.room.exits.go`)
+
+### 1.2c — `character.go` File Split (~3h, Low risk)
+
+`character.go` is ~3925 lines with many unrelated concerns
+(init, description, keys, spells, migrations, charm, combat dice,
+mitigation, etc.). Split into themed files following the pattern
+already established in the package (`progression.go`, `cooldowns.go`,
+`hand_slots.go`, `charminfo.go`, etc.). Proposed files TBD in spec.
+
+Runs after 1.2b so that the refactored `RecalculateStats`, `Validate`,
+and `Wear` + their new helpers can be moved as cohesive units into
+their themed file(s).
+
+**Constraints (apply to all three substages):**
 - Zero behavior change
 - `go build`, `go vet`, `go test` clean after each function
 - Manual smoke test: combat, admin room edit, spell effects
 - Each extracted helper should be <80 lines
+- Clear bugs/vulnerabilities discovered during refactoring may be
+  fixed inline with a clearly-scoped commit and comment; ambiguous
+  cases pause for user review
 
 ## Stage 1.3: Config File Split
 
