@@ -454,54 +454,6 @@ func applyMobEffect_buff(
 	return 0
 }
 
-func applyMobEffect_tame(
-	user *users.UserRecord,
-	mob *mobs.Mob,
-	room *rooms.Room,
-	mName string,
-) int {
-	// Tame is restricted to animal group mobs
-	isAnimal := false
-	for _, g := range mob.Groups {
-		if g == "animal" {
-			isAnimal = true
-			break
-		}
-	}
-	if !isAnimal {
-		if user != nil {
-			user.SendText(fmt.Sprintf(
-				`<ansi fg="red">%s cannot be tamed — it is not a wild animal.</ansi>`,
-				mName))
-		}
-		return 0
-	}
-	if user != nil {
-		// Anti-recursion: strip any companions the mob itself had before
-		// charming it, so we never create companion chains.
-		for _, subId := range mob.Character.GetCharmIds() {
-			if subMob := mobs.GetInstance(subId); subMob != nil {
-				subMob.Character.RemoveCharm()
-				if subRoom := rooms.LoadRoom(subMob.Character.RoomId); subRoom != nil {
-					subRoom.RemoveMob(subId)
-				}
-				mobs.DestroyInstance(subId)
-			}
-		}
-		mob.Character.CharmedMobs = nil
-		mob.Character.Charm(user.UserId, 24, "")
-		mob.Character.EndAggro()
-		user.Character.TrackCharmed(mob.InstanceId, true)
-		user.SendText(fmt.Sprintf(
-			`<ansi fg="cyan">%s calms and becomes your companion!</ansi>`,
-			mName))
-		sendVisualRoomText(room, fmt.Sprintf(
-			`%s becomes docile and follows <ansi fg="username">%s</ansi>.`,
-			mName, user.Character.Name), user.UserId)
-	}
-	return 0
-}
-
 func applyMobEffect_default(
 	user *users.UserRecord,
 	spellData *spells.SpellData,
@@ -538,8 +490,6 @@ func applyMobEffect(user *users.UserRecord, casterChar *characters.Character, mo
 		return applyMobEffect_knockdown(user, casterChar, mob, room, spellData, magnitude, isCrit, critTag, mName)
 	case "buff":
 		return applyMobEffect_buff(user, mob, room, spellData, critTag, mName)
-	case "tame":
-		return applyMobEffect_tame(user, mob, room, mName)
 	default:
 		return applyMobEffect_default(user, spellData, mName)
 	}

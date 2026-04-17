@@ -29,7 +29,7 @@ type SpellData struct {
 	BaseFolds           int    `yaml:"base_folds,omitempty"`           // 0 = default to 4
 	TargetDefenseType   string `yaml:"target_defense_type,omitempty"`  // "physical", "mental", "" = none
 	ComponentTag        string `yaml:"component_tag,omitempty"`        // Required item component tag (e.g. "stone")
-	EffectType          string  `yaml:"effect_type,omitempty"`          // "damage"|"heal"|"buff"|"tame"|"shield"
+	EffectType          string  `yaml:"effect_type,omitempty"`          // "damage"|"heal"|"buff"|"shield"|"dot"|"knockdown"|"charm"
 	EffectMagnitude     int     `yaml:"effect_magnitude,omitempty"`     // Legacy: base damage/heal amount
 	DamageMultiplier    float64 `yaml:"damage_multiplier,omitempty"`   // Spell damage multiplier for new pipeline (Stage 34)
 	EffectDuration      int    `yaml:"effect_duration,omitempty"`      // DoT tick count (default 0 = use 3)

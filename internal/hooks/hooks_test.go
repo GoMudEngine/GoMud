@@ -2343,23 +2343,6 @@ func TestApplyMobEffect_Buff(t *testing.T) {
 	assert.Equal(t, 0, dmg)
 }
 
-func TestApplyMobEffect_Tame_NotAnimal(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-	u := users.GetByUserId(1)
-	mob := mobs.GetInstance(100)
-	room := rooms.LoadRoom(1)
-
-	tameSpell := &spells.SpellData{
-		SpellId:    "tame",
-		Name:       "Tame",
-		Type:       spells.HarmSingle,
-		EffectType: "tame",
-	}
-	dmg := applyMobEffect(u, u.Character, mob, room, tameSpell, 0, false)
-	assert.Equal(t, 0, dmg)
-}
-
 func TestApplyMobEffect_DefaultEffect(t *testing.T) {
 	cleanup := seedAllRegistries()
 	defer cleanup()
