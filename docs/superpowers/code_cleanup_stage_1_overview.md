@@ -13,7 +13,7 @@ Each substage gets its own spec → plan → implementation cycle.
 |---|-------|--------|------|--------|
 | 1.1 | Behavior Tree Package Split | 3h | Low | Complete |
 | 1.2a | God-Function Refactor — Combat + Spell | 5h | Medium | Not started |
-| 1.2b | God-Function Refactor — Character + Admin | 5h | Low-Med | Planning |
+| 1.2b | God-Function Refactor — Character + Admin | 5h | Low-Med | Complete |
 | 1.2c | `character.go` File Split | 3h | Low | Not started |
 | 1.3 | Config File Split | 2h | Low | Complete |
 | 1.4 | Dead Code Sweep (Go code) | 3h | Low | Complete |
