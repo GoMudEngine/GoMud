@@ -1,5 +1,17 @@
 # DOGMud Patch Notes
 
+## 2026-04-16 — Code Cleanup 1.7: Performance Pass
+
+- **Zone-activity lane split:** mobs in zones with zero players skip
+  combat, progression, mutation acquisition, charm-state, and crafting
+  every round. Idle mobs still tick cooldowns, buff/condition durations,
+  charm duration, combat-memory expiry, and death checks so timers and
+  DoTs keep working. Active-zone behavior is unchanged.
+- **Registry mutexes:** `internal/mobs` and `internal/users` global maps
+  now use `sync.RWMutex`. Closes a latent race between the HTTP admin
+  dashboard and the main game loop.
+- **PruneVisitors fast path:** empty-map early return on room cleanup.
+
 ## 2026-04-15 — Bugfixes & QOL (Hotfix 2)
 
 ### Bug Fixes
