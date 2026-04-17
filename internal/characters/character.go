@@ -2753,107 +2753,81 @@ func (c *Character) StatMod(statName string) int {
 // returns true if something has changed.
 func (c *Character) RecalculateStats() {
 
-	// Make sure racial base stats are set
 	beforeHealthMax := c.HealthMax
 	beforeStats := c.Stats
 
+	// Build per-stat entries once, referencing live pointers into c.Stats.
+	type statEntry struct {
+		ptr     *stats.StatInfo
+		modName string // statmods.StatName string
+		mutKey  string // mutations key, e.g. "strength"
+	}
+	entries := []statEntry{
+		{&c.Stats.Strength, string(statmods.Strength), "strength"},
+		{&c.Stats.Dexterity, string(statmods.Dexterity), "dexterity"},
+		{&c.Stats.Perception, string(statmods.Perception), "perception"},
+		{&c.Stats.Vitality, string(statmods.Vitality), "vitality"},
+		{&c.Stats.Willpower, string(statmods.Willpower), "willpower"},
+		{&c.Stats.Charisma, string(statmods.Charisma), "charisma"},
+	}
+
+	// Pass 1 — species-base hydration (only when Base is 0, per original logic).
 	if speciesInfo := species.GetSpecies(c.SpeciesId); speciesInfo != nil {
-
-		// Only set base stats from racial if they haven't been rolled yet
-		// (Base values of 0 indicate uninitialized stats)
-		// Rolled stats (from RollCharacterStats) will be 85-115, so they won't be overwritten
-		if c.Stats.Strength.Base == 0 {
-			c.Stats.Strength.Base = speciesInfo.Stats.Strength.Base
+		speciesEntries := []struct {
+			ptr  *stats.StatInfo
+			base int
+		}{
+			{&c.Stats.Strength, speciesInfo.Stats.Strength.Base},
+			{&c.Stats.Dexterity, speciesInfo.Stats.Dexterity.Base},
+			{&c.Stats.Perception, speciesInfo.Stats.Perception.Base},
+			{&c.Stats.Vitality, speciesInfo.Stats.Vitality.Base},
+			{&c.Stats.Willpower, speciesInfo.Stats.Willpower.Base},
+			{&c.Stats.Charisma, speciesInfo.Stats.Charisma.Base},
 		}
-		if c.Stats.Dexterity.Base == 0 {
-			c.Stats.Dexterity.Base = speciesInfo.Stats.Dexterity.Base
-		}
-		if c.Stats.Perception.Base == 0 {
-			c.Stats.Perception.Base = speciesInfo.Stats.Perception.Base
-		}
-		if c.Stats.Vitality.Base == 0 {
-			c.Stats.Vitality.Base = speciesInfo.Stats.Vitality.Base
-		}
-		if c.Stats.Willpower.Base == 0 {
-			c.Stats.Willpower.Base = speciesInfo.Stats.Willpower.Base
-		}
-		if c.Stats.Charisma.Base == 0 {
-			c.Stats.Charisma.Base = speciesInfo.Stats.Charisma.Base
+		for _, e := range speciesEntries {
+			if e.ptr.Base == 0 {
+				e.ptr.Base = e.base
+			}
 		}
 	}
 
-	// Add any mods for equipment
-	c.Stats.Strength.Mods = c.StatMod(string(statmods.Strength))
-	c.Stats.Dexterity.Mods = c.StatMod(string(statmods.Dexterity))
-	c.Stats.Perception.Mods = c.StatMod(string(statmods.Perception))
-	c.Stats.Vitality.Mods = c.StatMod(string(statmods.Vitality))
-	c.Stats.Willpower.Mods = c.StatMod(string(statmods.Willpower))
-	c.Stats.Charisma.Mods = c.StatMod(string(statmods.Charisma))
-
-	// Stage 12.1: Apply stat_flat mutation bonuses to Mods before Recalculate()
-	c.Stats.Strength.Mods += mutations.GetStatFlat(c.Mutations, "strength")
-	c.Stats.Dexterity.Mods += mutations.GetStatFlat(c.Mutations, "dexterity")
-	c.Stats.Perception.Mods += mutations.GetStatFlat(c.Mutations, "perception")
-	c.Stats.Vitality.Mods += mutations.GetStatFlat(c.Mutations, "vitality")
-	c.Stats.Willpower.Mods += mutations.GetStatFlat(c.Mutations, "willpower")
-	c.Stats.Charisma.Mods += mutations.GetStatFlat(c.Mutations, "charisma")
-
-	// Recalculate stats
-	// Stats are basically:
-	// level*base + training + mods
-	c.Stats.Strength.Recalculate()
-	c.Stats.Dexterity.Recalculate()
-	c.Stats.Perception.Recalculate()
-	c.Stats.Vitality.Recalculate()
-	c.Stats.Willpower.Recalculate()
-	c.Stats.Charisma.Recalculate()
-
-	// Stage 12.1: Apply stat_multiplier mutations after Recalculate()
-	if v := mutations.GetStatMultiplier(c.Mutations, "strength"); v != 0 {
-		c.Stats.Strength.ValueAdj = int(float64(c.Stats.Strength.ValueAdj) * (1.0 + v))
-	}
-	if v := mutations.GetStatMultiplier(c.Mutations, "dexterity"); v != 0 {
-		c.Stats.Dexterity.ValueAdj = int(float64(c.Stats.Dexterity.ValueAdj) * (1.0 + v))
-	}
-	if v := mutations.GetStatMultiplier(c.Mutations, "perception"); v != 0 {
-		c.Stats.Perception.ValueAdj = int(float64(c.Stats.Perception.ValueAdj) * (1.0 + v))
-	}
-	if v := mutations.GetStatMultiplier(c.Mutations, "vitality"); v != 0 {
-		c.Stats.Vitality.ValueAdj = int(float64(c.Stats.Vitality.ValueAdj) * (1.0 + v))
-	}
-	if v := mutations.GetStatMultiplier(c.Mutations, "willpower"); v != 0 {
-		c.Stats.Willpower.ValueAdj = int(float64(c.Stats.Willpower.ValueAdj) * (1.0 + v))
-	}
-	if v := mutations.GetStatMultiplier(c.Mutations, "charisma"); v != 0 {
-		c.Stats.Charisma.ValueAdj = int(float64(c.Stats.Charisma.ValueAdj) * (1.0 + v))
+	// Pass 2 — apply equipment mods and mutation stat_flat, then Recalculate().
+	for _, e := range entries {
+		e.ptr.Mods = c.StatMod(e.modName)
+		e.ptr.Mods += mutations.GetStatFlat(c.Mutations, e.mutKey)
+		e.ptr.Recalculate()
 	}
 
-	// Set HP/Stamina/Conviction maxes (skill-based, no level dependency)
-	// This relies on the above stats so has to be calculated afterwards
+	// Pass 3 — apply mutation stat_multiplier to ValueAdj.
+	for _, e := range entries {
+		if v := mutations.GetStatMultiplier(c.Mutations, e.mutKey); v != 0 {
+			e.ptr.ValueAdj = int(float64(e.ptr.ValueAdj) * (1.0 + v))
+		}
+	}
+
+	// ── Derive pool maxes from stats (unchanged from pre-refactor) ─────
 	rb := configs.GetBalanceConfig()
 	c.HealthMax.Mods = int(rb.HealthBase) +
-		c.StatMod(string(statmods.HealthMax)) + // Any sort of spell buffs etc. are just direct modifiers
-		c.Stats.Strength.ValueAdj*int(rb.HealthPerStrength) + // Strength contributes to health
-		c.Stats.Vitality.ValueAdj*int(rb.HealthPerVitality) // Vitality is primary health stat
+		c.StatMod(string(statmods.HealthMax)) +
+		c.Stats.Strength.ValueAdj*int(rb.HealthPerStrength) +
+		c.Stats.Vitality.ValueAdj*int(rb.HealthPerVitality)
 
 	c.StaminaMax.Mods = int(rb.StaminaBase) +
-		c.Stats.Strength.ValueAdj*int(rb.StaminaPerStrength) + // Strength contributes to stamina
-		c.Stats.Willpower.ValueAdj*int(rb.StaminaPerWillpower) + // Willpower contributes to stamina
-		c.Stats.Vitality.ValueAdj*int(rb.StaminaPerVitality) // Vitality is primary stamina stat
+		c.Stats.Strength.ValueAdj*int(rb.StaminaPerStrength) +
+		c.Stats.Willpower.ValueAdj*int(rb.StaminaPerWillpower) +
+		c.Stats.Vitality.ValueAdj*int(rb.StaminaPerVitality)
 
 	c.ConvictionMax.Mods = int(rb.ConvictionBase) +
-		(c.Stats.Willpower.ValueAdj+c.Stats.Charisma.ValueAdj)*int(rb.ConvictionPerWilCha) // Willpower+Charisma drive conviction
+		(c.Stats.Willpower.ValueAdj+c.Stats.Charisma.ValueAdj)*int(rb.ConvictionPerWilCha)
 
-	// Set max action points
 	c.ActionPointsMax.Mods = 200 // hard coded for now
 
-	// Recalculate HP/Stamina/Conviction stats
 	c.HealthMax.Recalculate()
 	c.StaminaMax.Recalculate()
 	c.ConvictionMax.Recalculate()
 	c.ActionPointsMax.Recalculate()
 
-	// Stage 12.1: Apply health_multiplier mutations after HealthMax.Recalculate()
+	// Stage 12.1: health_multiplier mutation after HealthMax.Recalculate().
 	if hMult := mutations.GetHealthMultiplier(c.Mutations); hMult != 0 {
 		c.HealthMax.Value = int(float64(c.HealthMax.Value) * (1.0 + hMult))
 		if c.HealthMax.Value < 1 {
@@ -2861,7 +2835,7 @@ func (c *Character) RecalculateStats() {
 		}
 	}
 
-	// HP can't max less than 1, Stamina/Conviction can't max less than 0
+	// Floors.
 	if c.StaminaMax.Value < 0 {
 		c.StaminaMax.Value = 0
 	}
@@ -2875,7 +2849,7 @@ func (c *Character) RecalculateStats() {
 		c.ActionPointsMax.Value = 50
 	}
 
-	// Chrysalis enchantment pool reservation: clamp current pools to effective max
+	// Chrysalis pool reservation clamping (unchanged).
 	if hpRes := c.GetPoolReservation("health", c.HealthMax.Value); hpRes > 0 {
 		effectiveHP := c.HealthMax.Value - hpRes
 		if effectiveHP < 1 {
@@ -2904,10 +2878,9 @@ func (c *Character) RecalculateStats() {
 		}
 	}
 
-	// Stage 31.6: Enchant withdrawal condition — temporarily reduces pool max
+	// Stage 31.6: Enchant withdrawal condition — unchanged.
 	if c.HasCondition(ConditionEnchantWithdrawal) {
 		mag := c.GetConditionMagnitude(ConditionEnchantWithdrawal)
-		// Source stores which pool to penalize
 		for _, cond := range c.Conditions {
 			if cond.Type == ConditionEnchantWithdrawal {
 				penalty := int(math.Floor(float64(c.HealthMax.Value) * mag))
@@ -2944,9 +2917,9 @@ func (c *Character) RecalculateStats() {
 		}
 	}
 
+	// Emit CharacterStatsChanged if any tracked value changed.
 	if c.userId != 0 {
 		changed := false
-		// return true if something has changed.
 		if beforeStats.Strength.ValueAdj != c.Stats.Strength.ValueAdj {
 			changed = true
 		} else if beforeStats.Dexterity.ValueAdj != c.Stats.Dexterity.ValueAdj {
