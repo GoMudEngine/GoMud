@@ -2962,17 +2962,284 @@ func (c *Character) CanDualWield() bool {
 	return c.GetSkillLevel(skills.WeaponCombat) > 0
 }
 
+// validateSkillMigrations renames legacy skills, merges retired skills,
+// and removes dead skill keys. Must run BEFORE ensureAllSkills.
+func (c *Character) validateSkillMigrations() {
+	if c.Skills == nil {
+		return
+	}
+
+	// stealth → skullduggery rename.
+	if v, ok := c.Skills["stealth"]; ok {
+		c.Skills["skullduggery"] = v
+		delete(c.Skills, "stealth")
+	}
+
+	// tracking + foraging → search merge.
+	if _, hasTracking := c.Skills["tracking"]; hasTracking {
+		trackRank := c.Skills["tracking"]
+		forageRank := c.Skills["foraging"]
+		searchRank := max(trackRank, forageRank)
+		if searchRank < 1 {
+			searchRank = 1
+		}
+		c.Skills["search"] = searchRank
+		if c.SkillUseCount == nil {
+			c.SkillUseCount = make(map[string]int)
+		}
+		c.SkillUseCount["search"] = c.SkillUseCount["tracking"] + c.SkillUseCount["foraging"]
+		delete(c.Skills, "tracking")
+		delete(c.Skills, "foraging")
+		delete(c.SkillUseCount, "tracking")
+		delete(c.SkillUseCount, "foraging")
+	} else if _, hasForaging := c.Skills["foraging"]; hasForaging {
+		c.Skills["search"] = max(c.Skills["foraging"], 1)
+		if c.SkillUseCount == nil {
+			c.SkillUseCount = make(map[string]int)
+		}
+		c.SkillUseCount["search"] = c.SkillUseCount["foraging"]
+		delete(c.Skills, "foraging")
+		delete(c.SkillUseCount, "foraging")
+	}
+
+	// Remove retired skills.
+	for _, dead := range []string{"cast", "ranged-combat", "first-aid"} {
+		delete(c.Skills, dead)
+		if c.SkillUseCount != nil {
+			delete(c.SkillUseCount, dead)
+		}
+	}
+}
+
+// validatePoolClamps clamps current Health/Stamina/Conviction into their
+// legal ranges after RecalculateStats has been called.
+func (c *Character) validatePoolClamps() {
+	if c.Stamina > c.StaminaMax.Value {
+		c.Stamina = c.StaminaMax.Value
+	}
+	if c.Conviction > c.ConvictionMax.Value {
+		c.Conviction = c.ConvictionMax.Value
+	}
+	if c.Health > c.HealthMax.Value {
+		c.Health = c.HealthMax.Value
+	}
+	if c.Health < -10 {
+		c.Health = -10
+	}
+	if c.Stamina < 0 {
+		c.Stamina = 0
+	}
+	if c.Conviction < 0 {
+		c.Conviction = 0
+	}
+}
+
+// validateEquipmentItems calls items.Item.Validate() on every backpack and
+// worn item to ensure all in-play items have a uid.
+func (c *Character) validateEquipmentItems() {
+	for i := range c.Items {
+		c.Items[i].Validate()
+	}
+	c.Equipment.Weapon.Validate()
+	c.Equipment.Offhand.Validate()
+	c.Equipment.ExtraArm1.Validate()
+	c.Equipment.ExtraArm2.Validate()
+	c.Equipment.Head.Validate()
+	c.Equipment.Neck.Validate()
+	c.Equipment.Body.Validate()
+	c.Equipment.Belt.Validate()
+	c.Equipment.Gloves.Validate()
+	c.Equipment.Ring.Validate()
+	c.Equipment.Legs.Validate()
+	c.Equipment.Feet.Validate()
+	c.Equipment.Tail.Validate()
+}
+
+// validateDisabledSlotsForSpecies enables all slots, then disables the ones
+// the species requires to be disabled. Items found in to-be-disabled slots
+// are moved to the backpack.
+func (c *Character) validateDisabledSlotsForSpecies() {
+	speciesInfo := species.GetSpecies(c.SpeciesId)
+	if speciesInfo == nil {
+		return
+	}
+
+	c.Equipment.EnableAll()
+
+	if len(speciesInfo.DisabledSlots) == 0 {
+		return
+	}
+
+	for _, disabledSlot := range speciesInfo.DisabledSlots {
+		var itemFoundInDisabledSlot items.Item = items.ItemDisabledSlot
+
+		switch items.ItemType(disabledSlot) {
+		case items.Weapon:
+			if c.Equipment.Weapon.ItemId > 0 {
+				itemFoundInDisabledSlot = c.Equipment.Weapon
+			}
+			c.Equipment.Weapon = items.ItemDisabledSlot
+		case items.Offhand:
+			if c.Equipment.Offhand.ItemId > 0 {
+				itemFoundInDisabledSlot = c.Equipment.Offhand
+			}
+			c.Equipment.Offhand = items.ItemDisabledSlot
+		case items.Head:
+			if c.Equipment.Head.ItemId > 0 {
+				itemFoundInDisabledSlot = c.Equipment.Head
+			}
+			c.Equipment.Head = items.ItemDisabledSlot
+		case items.Neck:
+			if c.Equipment.Neck.ItemId > 0 {
+				itemFoundInDisabledSlot = c.Equipment.Neck
+			}
+			c.Equipment.Neck = items.ItemDisabledSlot
+		case items.Body:
+			if c.Equipment.Body.ItemId > 0 {
+				itemFoundInDisabledSlot = c.Equipment.Body
+			}
+			c.Equipment.Body = items.ItemDisabledSlot
+		case items.Belt:
+			if c.Equipment.Belt.ItemId > 0 {
+				itemFoundInDisabledSlot = c.Equipment.Belt
+			}
+			c.Equipment.Belt = items.ItemDisabledSlot
+		case items.Gloves:
+			if c.Equipment.Gloves.ItemId > 0 {
+				itemFoundInDisabledSlot = c.Equipment.Gloves
+			}
+			c.Equipment.Gloves = items.ItemDisabledSlot
+		case items.Ring:
+			if c.Equipment.Ring.ItemId > 0 {
+				itemFoundInDisabledSlot = c.Equipment.Ring
+			}
+			c.Equipment.Ring = items.ItemDisabledSlot
+		case items.Legs:
+			if c.Equipment.Legs.ItemId > 0 {
+				itemFoundInDisabledSlot = c.Equipment.Legs
+			}
+			c.Equipment.Legs = items.ItemDisabledSlot
+		case items.Feet:
+			if c.Equipment.Feet.ItemId > 0 {
+				itemFoundInDisabledSlot = c.Equipment.Feet
+			}
+			c.Equipment.Feet = items.ItemDisabledSlot
+		case items.Wrist:
+			if c.Equipment.Wrist1.ItemId > 0 {
+				itemFoundInDisabledSlot = c.Equipment.Wrist1
+			}
+			c.Equipment.Wrist1 = items.ItemDisabledSlot
+			if c.Equipment.Wrist2.ItemId > 0 {
+				c.StoreItem(c.Equipment.Wrist2)
+			}
+			c.Equipment.Wrist2 = items.ItemDisabledSlot
+		case items.Back:
+			if c.Equipment.Back.ItemId > 0 {
+				itemFoundInDisabledSlot = c.Equipment.Back
+			}
+			c.Equipment.Back = items.ItemDisabledSlot
+		case items.Shoulders:
+			if c.Equipment.Shoulders.ItemId > 0 {
+				itemFoundInDisabledSlot = c.Equipment.Shoulders
+			}
+			c.Equipment.Shoulders = items.ItemDisabledSlot
+		case items.ComponentBag:
+			if c.Equipment.ComponentBag.ItemId > 0 {
+				itemFoundInDisabledSlot = c.Equipment.ComponentBag
+			}
+			c.Equipment.ComponentBag = items.ItemDisabledSlot
+		}
+
+		// Non-ItemType disabled slots (string-keyed).
+		if disabledSlot == "ring2" {
+			if c.Equipment.Ring2.ItemId > 0 {
+				itemFoundInDisabledSlot = c.Equipment.Ring2
+			}
+			c.Equipment.Ring2 = items.ItemDisabledSlot
+		}
+
+		if !itemFoundInDisabledSlot.IsDisabled() {
+			c.StoreItem(itemFoundInDisabledSlot)
+			mudlog.Debug("Disabled Check", "error", "Item found in disabled slot", "name", itemFoundInDisabledSlot.Name(), "slot", disabledSlot, "character", c.Name)
+		}
+	}
+}
+
+// validateMutationSlots enforces extra-arm / tail slot availability based on
+// the character's current ExtraArms count and tail mutation.
+func (c *Character) validateMutationSlots() {
+	// Extra arms: unavailable levels move items back to backpack.
+	if c.ExtraArms < 4 {
+		if c.Equipment.ExtraArm4.ItemId > 0 {
+			c.StoreItem(c.Equipment.ExtraArm4)
+		}
+		c.Equipment.ExtraArm4 = items.ItemDisabledSlot
+		if c.Equipment.ExtraWrist4.ItemId > 0 {
+			c.StoreItem(c.Equipment.ExtraWrist4)
+		}
+		c.Equipment.ExtraWrist4 = items.ItemDisabledSlot
+	}
+	if c.ExtraArms < 3 {
+		if c.Equipment.ExtraArm3.ItemId > 0 {
+			c.StoreItem(c.Equipment.ExtraArm3)
+		}
+		c.Equipment.ExtraArm3 = items.ItemDisabledSlot
+		if c.Equipment.ExtraWrist3.ItemId > 0 {
+			c.StoreItem(c.Equipment.ExtraWrist3)
+		}
+		c.Equipment.ExtraWrist3 = items.ItemDisabledSlot
+	}
+	if c.ExtraArms < 2 {
+		if c.Equipment.ExtraArm2.ItemId > 0 {
+			c.StoreItem(c.Equipment.ExtraArm2)
+			mudlog.Debug("Extra Arms Check", "info", "Item returned from extra arm 2 slot", "name", c.Equipment.ExtraArm2.Name(), "character", c.Name)
+		}
+		c.Equipment.ExtraArm2 = items.ItemDisabledSlot
+		if c.Equipment.ExtraWrist2.ItemId > 0 {
+			c.StoreItem(c.Equipment.ExtraWrist2)
+		}
+		c.Equipment.ExtraWrist2 = items.ItemDisabledSlot
+	}
+	if c.ExtraArms < 1 {
+		if c.Equipment.ExtraArm1.ItemId > 0 {
+			c.StoreItem(c.Equipment.ExtraArm1)
+			mudlog.Debug("Extra Arms Check", "info", "Item returned from extra arm 1 slot", "name", c.Equipment.ExtraArm1.Name(), "character", c.Name)
+		}
+		c.Equipment.ExtraArm1 = items.ItemDisabledSlot
+		if c.Equipment.ExtraWrist1.ItemId > 0 {
+			c.StoreItem(c.Equipment.ExtraWrist1)
+		}
+		c.Equipment.ExtraWrist1 = items.ItemDisabledSlot
+	}
+
+	// Tail mutation: enable tail slot if mutation present, disable otherwise.
+	// Must run AFTER EnableAll() (which ran in validateDisabledSlotsForSpecies).
+	if _, hasTail := c.Mutations["tail"]; hasTail {
+		if c.Equipment.Tail.ItemId < 0 {
+			c.Equipment.Tail = items.Item{}
+		}
+	} else {
+		if c.Equipment.Tail.ItemId > 0 {
+			c.StoreItem(c.Equipment.Tail)
+		}
+		c.Equipment.Tail = items.ItemDisabledSlot
+	}
+
+	// Tail mutation disables legs slot via disable-legs flag.
+	if flags := mutations.GetMutationFlags(c.Mutations); flags["disable-legs"] {
+		if c.Equipment.Legs.ItemId > 0 {
+			c.StoreItem(c.Equipment.Legs)
+			mudlog.Debug("Mutation Check", "info", "Item returned from legs slot (tail mutation)", "name", c.Equipment.Legs.Name(), "character", c.Name)
+		}
+		c.Equipment.Legs = items.ItemDisabledSlot
+	}
+}
+
 // Returns whether a correction was in order
 func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 
-	// ── Skill rename migrations ─────────────────────────────────
-	// Rename legacy skill keys so existing saves pick up new names.
-	if c.Skills != nil {
-		if v, ok := c.Skills["stealth"]; ok {
-			c.Skills["skullduggery"] = v
-			delete(c.Skills, "stealth")
-		}
-	}
+	// ── Skill migrations must run before ensureAllSkills ────────────
+	c.validateSkillMigrations()
 
 	if len(c.Description) == 0 {
 		c.Description = "They seem thoroughly uninteresting."
@@ -3028,264 +3295,25 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 	}
 	c.Buffs.Validate()
 
-	// Migrate tracking/foraging → search (must run before ensureAllSkills)
-	if _, hasTracking := c.Skills["tracking"]; hasTracking {
-		trackRank := c.Skills["tracking"]
-		forageRank := c.Skills["foraging"]
-		searchRank := max(trackRank, forageRank)
-		if searchRank < 1 {
-			searchRank = 1
-		}
-		c.Skills["search"] = searchRank
-		if c.SkillUseCount == nil {
-			c.SkillUseCount = make(map[string]int)
-		}
-		c.SkillUseCount["search"] = c.SkillUseCount["tracking"] + c.SkillUseCount["foraging"]
-		delete(c.Skills, "tracking")
-		delete(c.Skills, "foraging")
-		delete(c.SkillUseCount, "tracking")
-		delete(c.SkillUseCount, "foraging")
-	} else if _, hasForaging := c.Skills["foraging"]; hasForaging {
-		c.Skills["search"] = max(c.Skills["foraging"], 1)
-		if c.SkillUseCount == nil {
-			c.SkillUseCount = make(map[string]int)
-		}
-		c.SkillUseCount["search"] = c.SkillUseCount["foraging"]
-		delete(c.Skills, "foraging")
-		delete(c.SkillUseCount, "foraging")
-	}
-
-	// Remove retired skills (cast, ranged-combat, first-aid)
-	for _, dead := range []string{"cast", "ranged-combat", "first-aid"} {
-		delete(c.Skills, dead)
-		if c.SkillUseCount != nil {
-			delete(c.SkillUseCount, dead)
-		}
-	}
-
-	// Ensure all known skills exist at rank 1 minimum (retroactive for existing characters)
+	// Ensure all known skills exist at rank 1 minimum.
 	c.Skills = ensureAllSkills(c.Skills)
 
-	// Do a stats recalc based on equipment, race, level, etc.
+	// Stats recalc based on equipment, race, level, etc.
 	c.RecalculateStats()
 
-	// Recalculate health, stamina, and conviction
-
-	if c.Stamina > c.StaminaMax.Value {
-		c.Stamina = c.StaminaMax.Value
-	}
-	if c.Conviction > c.ConvictionMax.Value {
-		c.Conviction = c.ConvictionMax.Value
-	}
-	if c.Health > c.HealthMax.Value {
-		c.Health = c.HealthMax.Value
-	}
-
-	if c.Health < -10 {
-		c.Health = -10
-	}
-
-	if c.Stamina < 0 {
-		c.Stamina = 0
-	}
-	if c.Conviction < 0 {
-		c.Conviction = 0
-	}
+	// Pool clamping after recalc.
+	c.validatePoolClamps()
 
 	c.Cooldowns.Prune()
 
-	// Validate possessed/worn items
-	// This helps ensure all in-play items have a uid
-	for i := range c.Items {
-		c.Items[i].Validate()
-	}
-	c.Equipment.Weapon.Validate()
-	c.Equipment.Offhand.Validate()
-	c.Equipment.ExtraArm1.Validate()
-	c.Equipment.ExtraArm2.Validate()
-	c.Equipment.Head.Validate()
-	c.Equipment.Neck.Validate()
-	c.Equipment.Body.Validate()
-	c.Equipment.Belt.Validate()
-	c.Equipment.Gloves.Validate()
-	c.Equipment.Ring.Validate()
-	c.Equipment.Legs.Validate()
-	c.Equipment.Feet.Validate()
-	c.Equipment.Tail.Validate()
-	// Done with validation
+	// Validate possessed/worn items (UIDs).
+	c.validateEquipmentItems()
 
-	if speciesInfo := species.GetSpecies(c.SpeciesId); speciesInfo != nil {
+	// Apply species-disabled slot rules (requires validateEquipmentItems first).
+	c.validateDisabledSlotsForSpecies()
 
-		c.Equipment.EnableAll()
-
-		// Are there slots that SHOULD be disabled?
-		if len(speciesInfo.DisabledSlots) > 0 {
-
-			for _, disabledSlot := range speciesInfo.DisabledSlots {
-
-				var itemFoundInDisabledSlot items.Item = items.ItemDisabledSlot
-
-				switch items.ItemType(disabledSlot) {
-				case items.Weapon:
-					if c.Equipment.Weapon.ItemId > 0 { // Did we find somethign in a disabled slot?
-						itemFoundInDisabledSlot = c.Equipment.Weapon
-					}
-					c.Equipment.Weapon = items.ItemDisabledSlot
-				case items.Offhand:
-					if c.Equipment.Offhand.ItemId > 0 { // Did we find somethign in a disabled slot?
-						itemFoundInDisabledSlot = c.Equipment.Offhand
-					}
-					c.Equipment.Offhand = items.ItemDisabledSlot
-				case items.Head:
-					if c.Equipment.Head.ItemId > 0 { // Did we find somethign in a disabled slot?
-						itemFoundInDisabledSlot = c.Equipment.Head
-					}
-					c.Equipment.Head = items.ItemDisabledSlot
-				case items.Neck:
-					if c.Equipment.Neck.ItemId > 0 { // Did we find somethign in a disabled slot?
-						itemFoundInDisabledSlot = c.Equipment.Neck
-					}
-					c.Equipment.Neck = items.ItemDisabledSlot
-				case items.Body:
-					if c.Equipment.Body.ItemId > 0 { // Did we find somethign in a disabled slot?
-						itemFoundInDisabledSlot = c.Equipment.Body
-					}
-					c.Equipment.Body = items.ItemDisabledSlot
-				case items.Belt:
-					if c.Equipment.Belt.ItemId > 0 { // Did we find somethign in a disabled slot?
-						itemFoundInDisabledSlot = c.Equipment.Belt
-					}
-					c.Equipment.Belt = items.ItemDisabledSlot
-				case items.Gloves:
-					if c.Equipment.Gloves.ItemId > 0 { // Did we find somethign in a disabled slot?
-						itemFoundInDisabledSlot = c.Equipment.Gloves
-					}
-					c.Equipment.Gloves = items.ItemDisabledSlot
-				case items.Ring:
-					if c.Equipment.Ring.ItemId > 0 { // Did we find somethign in a disabled slot?
-						itemFoundInDisabledSlot = c.Equipment.Ring
-					}
-					c.Equipment.Ring = items.ItemDisabledSlot
-				case items.Legs:
-					if c.Equipment.Legs.ItemId > 0 { // Did we find somethign in a disabled slot?
-						itemFoundInDisabledSlot = c.Equipment.Legs
-					}
-					c.Equipment.Legs = items.ItemDisabledSlot
-				case items.Feet:
-					if c.Equipment.Feet.ItemId > 0 { // Did we find somethign in a disabled slot?
-						itemFoundInDisabledSlot = c.Equipment.Feet
-					}
-					c.Equipment.Feet = items.ItemDisabledSlot
-				case items.Wrist:
-					if c.Equipment.Wrist1.ItemId > 0 {
-						itemFoundInDisabledSlot = c.Equipment.Wrist1
-					}
-					c.Equipment.Wrist1 = items.ItemDisabledSlot
-					if c.Equipment.Wrist2.ItemId > 0 {
-						c.StoreItem(c.Equipment.Wrist2)
-					}
-					c.Equipment.Wrist2 = items.ItemDisabledSlot
-				case items.Back:
-					if c.Equipment.Back.ItemId > 0 {
-						itemFoundInDisabledSlot = c.Equipment.Back
-					}
-					c.Equipment.Back = items.ItemDisabledSlot
-				case items.Shoulders:
-					if c.Equipment.Shoulders.ItemId > 0 {
-						itemFoundInDisabledSlot = c.Equipment.Shoulders
-					}
-					c.Equipment.Shoulders = items.ItemDisabledSlot
-				case items.ComponentBag:
-					if c.Equipment.ComponentBag.ItemId > 0 {
-						itemFoundInDisabledSlot = c.Equipment.ComponentBag
-					}
-					c.Equipment.ComponentBag = items.ItemDisabledSlot
-				}
-
-				// Handle non-ItemType disabled slots (string-keyed)
-				if disabledSlot == "ring2" {
-					if c.Equipment.Ring2.ItemId > 0 {
-						itemFoundInDisabledSlot = c.Equipment.Ring2
-					}
-					c.Equipment.Ring2 = items.ItemDisabledSlot
-				}
-
-				if !itemFoundInDisabledSlot.IsDisabled() {
-					c.StoreItem(itemFoundInDisabledSlot)
-					mudlog.Debug("Disabled Check", "error", "Item found in disabled slot", "name", itemFoundInDisabledSlot.Name(), "slot", disabledSlot, "character", c.Name)
-				}
-			}
-
-		}
-
-	}
-
-	// Handle extra arm slots based on ExtraArms mutation level
-	// If character lacks enough extra arms, move items back to backpack
-	if c.ExtraArms < 4 {
-		if c.Equipment.ExtraArm4.ItemId > 0 {
-			c.StoreItem(c.Equipment.ExtraArm4)
-		}
-		c.Equipment.ExtraArm4 = items.ItemDisabledSlot
-		if c.Equipment.ExtraWrist4.ItemId > 0 {
-			c.StoreItem(c.Equipment.ExtraWrist4)
-		}
-		c.Equipment.ExtraWrist4 = items.ItemDisabledSlot
-	}
-	if c.ExtraArms < 3 {
-		if c.Equipment.ExtraArm3.ItemId > 0 {
-			c.StoreItem(c.Equipment.ExtraArm3)
-		}
-		c.Equipment.ExtraArm3 = items.ItemDisabledSlot
-		if c.Equipment.ExtraWrist3.ItemId > 0 {
-			c.StoreItem(c.Equipment.ExtraWrist3)
-		}
-		c.Equipment.ExtraWrist3 = items.ItemDisabledSlot
-	}
-	if c.ExtraArms < 2 {
-		if c.Equipment.ExtraArm2.ItemId > 0 {
-			c.StoreItem(c.Equipment.ExtraArm2)
-			mudlog.Debug("Extra Arms Check", "info", "Item returned from extra arm 2 slot", "name", c.Equipment.ExtraArm2.Name(), "character", c.Name)
-		}
-		c.Equipment.ExtraArm2 = items.ItemDisabledSlot
-		if c.Equipment.ExtraWrist2.ItemId > 0 {
-			c.StoreItem(c.Equipment.ExtraWrist2)
-		}
-		c.Equipment.ExtraWrist2 = items.ItemDisabledSlot
-	}
-	if c.ExtraArms < 1 {
-		if c.Equipment.ExtraArm1.ItemId > 0 {
-			c.StoreItem(c.Equipment.ExtraArm1)
-			mudlog.Debug("Extra Arms Check", "info", "Item returned from extra arm 1 slot", "name", c.Equipment.ExtraArm1.Name(), "character", c.Name)
-		}
-		c.Equipment.ExtraArm1 = items.ItemDisabledSlot
-		if c.Equipment.ExtraWrist1.ItemId > 0 {
-			c.StoreItem(c.Equipment.ExtraWrist1)
-		}
-		c.Equipment.ExtraWrist1 = items.ItemDisabledSlot
-	}
-
-	// Derive tail mutation: enable tail slot if mutation present, disable otherwise.
-	// Must run AFTER EnableAll() which resets all slots.
-	if _, hasTail := c.Mutations["tail"]; hasTail {
-		if c.Equipment.Tail.ItemId < 0 {
-			c.Equipment.Tail = items.Item{}
-		}
-	} else {
-		if c.Equipment.Tail.ItemId > 0 {
-			c.StoreItem(c.Equipment.Tail)
-		}
-		c.Equipment.Tail = items.ItemDisabledSlot
-	}
-
-	// Tail mutation disables legs slot
-	if flags := mutations.GetMutationFlags(c.Mutations); flags["disable-legs"] {
-		if c.Equipment.Legs.ItemId > 0 {
-			c.StoreItem(c.Equipment.Legs)
-			mudlog.Debug("Mutation Check", "info", "Item returned from legs slot (tail mutation)", "name", c.Equipment.Legs.Name(), "character", c.Name)
-		}
-		c.Equipment.Legs = items.ItemDisabledSlot
-	}
+	// Apply mutation-driven slot rules (extra arms, tail, disable-legs).
+	c.validateMutationSlots()
 
 	if len(recalcPermaBuffs) > 0 && recalcPermaBuffs[0] {
 		c.reapplyPermabuffs()
