@@ -3396,161 +3396,136 @@ func (c *Character) GetGearValue() int {
 	return value
 }
 
-func (c *Character) Wear(i items.Item) (returnItems []items.Item, newItemWorn bool, failureReason string) {
+// wearWeaponOrShield handles pair-based placement for weapons and offhands.
+// Returns the same tuple as Wear. Caller is responsible for calling
+// reapplyPermabuffs (this helper calls it for 2H and shield cases internally
+// to preserve pre-refactor semantics).
+func (c *Character) wearWeaponOrShield(i items.Item, spec items.ItemSpec, iHandsRequired int, canDualWield bool) (returnItems []items.Item, newItemWorn bool, failureReason string) {
+	pairs := c.GetHandPairs()
+	isShield := spec.Type == items.Offhand
 
-	i.Validate()
-
-	spec := i.GetSpec()
-
-	if spec.Type != items.Weapon && spec.Subtype != items.Wearable {
-		return returnItems, false, `That item cannot be equipped.`
-	}
-
-	iHandsRequired := c.HandsRequired(i)
-	if iHandsRequired > 2 {
-		return returnItems, false, `That requires too many hands.`
-	}
-
-	canDualWield := c.CanDualWield()
-
-	// ── Pair-based weapon/shield placement ──────────────────────────
-	if spec.Type == items.Weapon || spec.Type == items.Offhand {
-		pairs := c.GetHandPairs()
-		isShield := spec.Type == items.Offhand
-
-		if iHandsRequired >= 2 {
-			// 2H weapon: find a free pair, or displace the cheapest pair
-			freePair := FindFirstFreePair(pairs)
-			if freePair == nil {
-				freePair = FindCheapestPairToDisplace(pairs)
-			}
-			if freePair == nil {
-				return returnItems, false, `You have no free pair of hands for a two-handed weapon.`
-			}
-
-			// Check for cursed items in the pair
-			if !freePair.First.IsEmpty() && freePair.First.ItemPtr.IsCursed() {
-				return returnItems, false, `Your ` + freePair.First.ItemPtr.DisplayName() + ` is cursed and prevents you from removing it.`
-			}
-			if !freePair.Second.IsEmpty() && freePair.Second.ItemPtr.IsCursed() {
-				return returnItems, false, `Your ` + freePair.Second.ItemPtr.DisplayName() + ` is cursed and prevents you from removing it.`
-			}
-
-			// Displace existing items
-			if !freePair.First.IsEmpty() {
-				returnItems = append(returnItems, *freePair.First.ItemPtr)
-			}
-			if !freePair.IsHalfPair() && !freePair.Second.IsEmpty() {
-				returnItems = append(returnItems, *freePair.Second.ItemPtr)
-			}
-
-			// Place 2H in first slot, clear second
-			*freePair.First.ItemPtr = i
-			if !freePair.IsHalfPair() {
-				*freePair.Second.ItemPtr = items.Item{}
-			}
-
-			c.reapplyPermabuffs()
-			return returnItems, true, ``
+	if iHandsRequired >= 2 {
+		freePair := FindFirstFreePair(pairs)
+		if freePair == nil {
+			freePair = FindCheapestPairToDisplace(pairs)
 		}
-
-		// 1H weapon or shield
-		if isShield {
-			// Shields go in arms 2-6 (not arm 1 / Weapon slot)
-			slot := c.FindFirstEmptySlot(pairs, true)
-			if slot != nil {
-				*slot.ItemPtr = i
-				c.reapplyPermabuffs()
-				return returnItems, true, ``
-			}
-			// No empty slot — displace offhand (Pair A second slot)
-			if pairs[0].First.Is2H(c) {
-				return returnItems, false, `Your two-handed weapon leaves no room for a shield.`
-			}
-			if pairs[0].Second.ItemPtr.IsCursed() {
-				return returnItems, false, `Your ` + pairs[0].Second.ItemPtr.DisplayName() + ` is cursed and prevents you from removing it.`
-			}
-			returnItems = append(returnItems, *pairs[0].Second.ItemPtr)
-			*pairs[0].Second.ItemPtr = i
-			c.reapplyPermabuffs()
-			return returnItems, true, ``
+		if freePair == nil {
+			return returnItems, false, `You have no free pair of hands for a two-handed weapon.`
 		}
-
-		// 1H weapon
-		bothMartial := spec.Subtype == items.Claws && c.Equipment.Weapon.GetSpec().Subtype == items.Claws
-
-		// Try to find an empty slot across all pairs
-		slot := c.FindFirstEmptySlot(pairs, false)
-		if slot != nil {
-			// If placing in Pair A offhand, need dual-wield or martial
-			if slot.Label == "offhand" && !canDualWield && !bothMartial {
-				// Skip offhand, try extra arms instead
-				slot = nil
-				for pi := 1; pi < len(pairs); pi++ {
-					p := &pairs[pi]
-					if p.First.Is2H(c) {
-						continue
-					}
-					if p.First.IsEmpty() {
-						slot = &p.First
-						break
-					}
-					if !p.IsHalfPair() && p.Second.IsEmpty() {
-						slot = &p.Second
-						break
-					}
-				}
-			}
-			if slot != nil {
-				*slot.ItemPtr = i
-				c.reapplyPermabuffs()
-				return returnItems, true, ``
-			}
+		if !freePair.First.IsEmpty() && freePair.First.ItemPtr.IsCursed() {
+			return returnItems, false, `Your ` + freePair.First.ItemPtr.DisplayName() + ` is cursed and prevents you from removing it.`
 		}
-
-		// No empty slots — displace Weapon slot (arm 1)
-		if c.Equipment.Weapon.IsCursed() {
-			return returnItems, false, `Your ` + c.Equipment.Weapon.DisplayName() + ` is cursed and prevents you from removing it.`
+		if !freePair.Second.IsEmpty() && freePair.Second.ItemPtr.IsCursed() {
+			return returnItems, false, `Your ` + freePair.Second.ItemPtr.DisplayName() + ` is cursed and prevents you from removing it.`
 		}
-		// If current weapon is 2H, also clear offhand
-		if pairs[0].First.Is2H(c) && !pairs[0].Second.IsEmpty() {
-			returnItems = append(returnItems, *pairs[0].Second.ItemPtr)
-			*pairs[0].Second.ItemPtr = items.Item{}
+		if !freePair.First.IsEmpty() {
+			returnItems = append(returnItems, *freePair.First.ItemPtr)
 		}
-		returnItems = append(returnItems, c.Equipment.Weapon)
-		c.Equipment.Weapon = i
+		if !freePair.IsHalfPair() && !freePair.Second.IsEmpty() {
+			returnItems = append(returnItems, *freePair.Second.ItemPtr)
+		}
+		*freePair.First.ItemPtr = i
+		if !freePair.IsHalfPair() {
+			*freePair.Second.ItemPtr = items.Item{}
+		}
 		c.reapplyPermabuffs()
 		return returnItems, true, ``
 	}
 
-	// ── Armor slots ─────────────────────────────────────────────────
+	if isShield {
+		slot := c.FindFirstEmptySlot(pairs, true)
+		if slot != nil {
+			*slot.ItemPtr = i
+			c.reapplyPermabuffs()
+			return returnItems, true, ``
+		}
+		if pairs[0].First.Is2H(c) {
+			return returnItems, false, `Your two-handed weapon leaves no room for a shield.`
+		}
+		if pairs[0].Second.ItemPtr.IsCursed() {
+			return returnItems, false, `Your ` + pairs[0].Second.ItemPtr.DisplayName() + ` is cursed and prevents you from removing it.`
+		}
+		returnItems = append(returnItems, *pairs[0].Second.ItemPtr)
+		*pairs[0].Second.ItemPtr = i
+		c.reapplyPermabuffs()
+		return returnItems, true, ``
+	}
+
+	// 1H weapon
+	bothMartial := spec.Subtype == items.Claws && c.Equipment.Weapon.GetSpec().Subtype == items.Claws
+
+	slot := c.FindFirstEmptySlot(pairs, false)
+	if slot != nil {
+		if slot.Label == "offhand" && !canDualWield && !bothMartial {
+			slot = nil
+			for pi := 1; pi < len(pairs); pi++ {
+				p := &pairs[pi]
+				if p.First.Is2H(c) {
+					continue
+				}
+				if p.First.IsEmpty() {
+					slot = &p.First
+					break
+				}
+				if !p.IsHalfPair() && p.Second.IsEmpty() {
+					slot = &p.Second
+					break
+				}
+			}
+		}
+		if slot != nil {
+			*slot.ItemPtr = i
+			c.reapplyPermabuffs()
+			return returnItems, true, ``
+		}
+	}
+
+	// No empty slots — displace Weapon slot (arm 1)
+	if c.Equipment.Weapon.IsCursed() {
+		return returnItems, false, `Your ` + c.Equipment.Weapon.DisplayName() + ` is cursed and prevents you from removing it.`
+	}
+	if pairs[0].First.Is2H(c) && !pairs[0].Second.IsEmpty() {
+		returnItems = append(returnItems, *pairs[0].Second.ItemPtr)
+		*pairs[0].Second.ItemPtr = items.Item{}
+	}
+	returnItems = append(returnItems, c.Equipment.Weapon)
+	c.Equipment.Weapon = i
+	c.reapplyPermabuffs()
+	return returnItems, true, ``
+}
+
+// wearArmorSlot handles placement for non-weapon equipment (armor, rings, wrists,
+// back, shoulders, component bag, tail). Returns the same tuple as Wear.
+// Does NOT call reapplyPermabuffs — the caller handles that (to preserve the
+// pre-refactor semantics where reapplyPermabuffs is called with returnItems).
+func (c *Character) wearArmorSlot(i items.Item, spec items.ItemSpec) (returnItems []items.Item, newItemWorn bool, failureReason string) {
 	switch spec.Type {
 	case items.Head:
-		if c.Equipment.Head.IsDisabled() { // Don't allow equipping on a disabled slot
+		if c.Equipment.Head.IsDisabled() {
 			return returnItems, false, `You can't wear things on your head.`
 		}
 		returnItems = append(returnItems, c.Equipment.Head)
 		c.Equipment.Head = i
 	case items.Neck:
-		if c.Equipment.Neck.IsDisabled() { // Don't allow equipping on a disabled slot
+		if c.Equipment.Neck.IsDisabled() {
 			return returnItems, false, `You can't wear things on your neck.`
 		}
 		returnItems = append(returnItems, c.Equipment.Neck)
 		c.Equipment.Neck = i
 	case items.Body:
-		if c.Equipment.Body.IsDisabled() { // Don't allow equipping on a disabled slot
+		if c.Equipment.Body.IsDisabled() {
 			return returnItems, false, `You can't wear things on your body.`
 		}
 		returnItems = append(returnItems, c.Equipment.Body)
 		c.Equipment.Body = i
 	case items.Belt:
-		if c.Equipment.Belt.IsDisabled() { // Don't allow equipping on a disabled slot
+		if c.Equipment.Belt.IsDisabled() {
 			return returnItems, false, `You can't wear things on your head.`
 		}
 		returnItems = append(returnItems, c.Equipment.Belt)
 		c.Equipment.Belt = i
 	case items.Gloves:
-		if c.Equipment.Gloves.IsDisabled() { // Don't allow equipping on a disabled slot
+		if c.Equipment.Gloves.IsDisabled() {
 			return returnItems, false, `You can't wear things as gloves.`
 		}
 		returnItems = append(returnItems, c.Equipment.Gloves)
@@ -3607,13 +3582,13 @@ func (c *Character) Wear(i items.Item) (returnItems []items.Item, newItemWorn bo
 		c.Equipment.ComponentBag = i
 		c.SortComponentItems()
 	case items.Legs:
-		if c.Equipment.Legs.IsDisabled() { // Don't allow equipping on a disabled slot
+		if c.Equipment.Legs.IsDisabled() {
 			return returnItems, false, `You can't wear things on your legs.`
 		}
 		returnItems = append(returnItems, c.Equipment.Legs)
 		c.Equipment.Legs = i
 	case items.Feet:
-		if c.Equipment.Feet.IsDisabled() { // Don't allow equipping on a disabled slot
+		if c.Equipment.Feet.IsDisabled() {
 			return returnItems, false, `You can't wear things on your feet.`
 		}
 		returnItems = append(returnItems, c.Equipment.Feet)
@@ -3627,10 +3602,35 @@ func (c *Character) Wear(i items.Item) (returnItems []items.Item, newItemWorn bo
 	default:
 		return returnItems, false, `Unrecognized object.`
 	}
-
-	c.reapplyPermabuffs(returnItems...)
-
 	return returnItems, true, ``
+}
+
+func (c *Character) Wear(i items.Item) (returnItems []items.Item, newItemWorn bool, failureReason string) {
+
+	i.Validate()
+
+	spec := i.GetSpec()
+
+	if spec.Type != items.Weapon && spec.Subtype != items.Wearable {
+		return returnItems, false, `That item cannot be equipped.`
+	}
+
+	iHandsRequired := c.HandsRequired(i)
+	if iHandsRequired > 2 {
+		return returnItems, false, `That requires too many hands.`
+	}
+
+	// Weapon + shield placement uses pair-based logic.
+	if spec.Type == items.Weapon || spec.Type == items.Offhand {
+		return c.wearWeaponOrShield(i, spec, iHandsRequired, c.CanDualWield())
+	}
+
+	// Armor + non-weapon slots use the simple switch.
+	returnItems, newItemWorn, failureReason = c.wearArmorSlot(i, spec)
+	if newItemWorn {
+		c.reapplyPermabuffs(returnItems...)
+	}
+	return returnItems, newItemWorn, failureReason
 }
 
 // SortComponentItems moves is_component items from backpack into ComponentItems
