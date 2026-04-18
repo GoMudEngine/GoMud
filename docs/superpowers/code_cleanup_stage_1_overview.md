@@ -21,7 +21,7 @@ Each substage gets its own spec → plan → implementation cycle.
 | 1.5 | Error Handling Audit | 4h | Medium | Complete |
 | 1.6 | Test Coverage for New Systems | 5h | Low | Complete |
 | 1.7 | Performance Pass | 10h | Mixed | Complete |
-| 1.8 | Behavior Tree Engine Robustness | 4h | Low | Not started |
+| 1.8 | Behavior Tree Engine Robustness | 4h | Low | Complete |
 
 **Total: ~47 hours**
 
