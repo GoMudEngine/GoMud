@@ -20,6 +20,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/dice"
 
 	"github.com/GoMudEngine/GoMud/internal/audio"
+	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/colorpatterns"
@@ -222,6 +223,11 @@ func main() {
 	})
 
 	hooks.RegisterListeners()
+
+	// Wire the rooms package's btree-eviction callback to behaviortree's
+	// implementation. Avoids an internal/rooms → internal/behaviortree
+	// import cycle (behaviortree already imports rooms).
+	rooms.SetBTreeStateEvictor(behaviortree.EvictRoomBTreeState)
 
 	// Discord integration
 	if webhookUrl := string(c.Integrations.Discord.WebhookUrl); webhookUrl != "" {

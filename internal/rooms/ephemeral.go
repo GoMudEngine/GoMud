@@ -171,7 +171,8 @@ func TryEphemeralCleanup(ephemeralRoomId int) []int {
 		}
 
 		// Don't clean up rooms belonging to an active instance —
-		// instance cleanup is handled separately via CleanupEmptyInstances.
+		// instance cleanup is handled by the TTL chain in CheckPortalTimers
+		// (which calls Remove(inst) before calling TryEphemeralCleanup).
 		if instanceRegistry.FindByRoomId(ephemeralRoomId) != nil {
 			return []int{}
 		}
