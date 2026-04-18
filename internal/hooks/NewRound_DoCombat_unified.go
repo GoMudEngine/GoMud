@@ -123,10 +123,10 @@ func handleCombatRound(
 	fireDefenderBehaviorTrigger(atk, def, res)
 
 	// Phase 7: aggro propagation + companion/party assist.
-	handleAggroAndAssist(atk, def, res, cfg)
+	handleAggroAndAssist(atk, def, cfg)
 
 	// Phase 8: end-of-round death/retarget resolution.
-	resolveCombatRound(atk, def, &res)
+	resolveCombatRound(atk, def)
 }
 
 // ────────────────────────────────────────────────────────────────────────
@@ -615,7 +615,7 @@ func fireDefenderBehaviorTrigger(atk, def actions.Actor, res combat.AttackResult
 //        def.IsPlayer(). Today only players can form parties so this
 //        naturally no-ops for mob defenders, but the gate is structured
 //        so a future mob-party feature routes through the same path.
-func handleAggroAndAssist(atk, def actions.Actor, res combat.AttackResult, cfg *configs.Config) {
+func handleAggroAndAssist(atk, def actions.Actor, cfg *configs.Config) {
 	atkChar := atk.GetCharacter()
 	defChar := def.GetCharacter()
 	atkRoom := atk.GetRoom()
@@ -723,7 +723,7 @@ func partyExistsFor(a actions.Actor) bool {
 // Intentional divergence:
 //   - #9 Retarget-on-death "You turn your attention to..." only when the
 //        survivor is a player.
-func resolveCombatRound(atk, def actions.Actor, res *combat.AttackResult) {
+func resolveCombatRound(atk, def actions.Actor) {
 	atkChar := atk.GetCharacter()
 	defChar := def.GetCharacter()
 

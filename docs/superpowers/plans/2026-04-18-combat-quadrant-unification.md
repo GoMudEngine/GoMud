@@ -1573,7 +1573,35 @@ func TestHandleCombatRound_AllQuadrantsRouteCorrectly(t *testing.T) {
 }
 ```
 
-Ground the recorder / seeding in whatever `hooks_test.go` already provides. If no text-capture helper exists, skim existing tests for a pattern — there is almost certainly something like a `recordedText` slice on test-scope. If not, the assertions can instead check flag counters (e.g., `defChar.OnCritReceivedCount()` for MU/UM/UU/MM differences) which is strictly weaker but still proves routing is happening.
+**REQUIRED — drive through `handleCombatRound` end-to-end:** The test
+MUST invoke `handleCombatRound(atk, def, evt, ...)` as the entry
+point. Calling phase helpers (`dispatchCritAndMessaging`,
+`applyCombatProgression`, etc.) directly is **NOT acceptable** — that
+defeats the whole point of the structural routing test. This is the
+integration coverage Stage 1 deferred to Stage 2 (per the user's
+agreed plan), and it is the only test in the suite that proves
+the unified handler routes correctly across all four quadrants.
+
+If `hooks_test.go` lacks the necessary harness — a deterministic dice
+facility, a text-capture recorder per actor, a way to fixture two
+combat-ready actors — **build it as part of this task**. Acceptable
+patterns:
+
+- Deterministic dice: introduce a test-only seed/swap on `dice.Rand`
+  (or whatever the package exposes), or buff stats so attack rolls
+  cannot miss. Either is fine; do NOT skip the dice problem by
+  asserting only on side effects that don't require a hit.
+- Text capture per actor: register an `events.Message` listener that
+  routes to per-recipient slices keyed by `Aggro.UserId` /
+  `Aggro.MobInstanceId`, or wrap `actor.SendText` / `actor.SendRoomText`
+  via a test-scope spy. Either works; pick whichever is least
+  invasive.
+- Mob-vs-mob fixture: `mobs.GetInstance(100)` and `mobs.GetInstance(101)`
+  both seeded to the same `RoomId`. Set Aggro on the attacker.
+
+If genuinely impossible to build (e.g., a dependency you can't seed
+from the test side), STOP and escalate to the user. Do NOT fall back
+to direct method invocation — that re-creates the Stage 1 weakness.
 
 ### Verify
 
