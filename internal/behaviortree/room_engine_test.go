@@ -257,3 +257,98 @@ func TestEnsureRoomBTreeState_PersistsAcrossCalls(t *testing.T) {
 		}
 	}
 }
+
+// TestQueueDelayed_RecoversFromPanic verifies that a panicking delayed-action
+// closure does not crash DrainQueue and does not abort subsequent ready
+// closures in the same DrainQueue call. The engine-level safeExecuteDelayed
+// wrapper recovers the panic and logs at mudlog.Error.
+func TestQueueDelayed_RecoversFromPanic(t *testing.T) {
+	e := GetEngine()
+
+	firstRan := false
+	secondRan := false
+
+	e.QueueDelayed(0, func() {
+		firstRan = true
+		panic("intentional test panic")
+	})
+	e.QueueDelayed(0, func() {
+		secondRan = true
+	})
+
+	// Must not propagate the panic — DrainQueue returns normally.
+	e.DrainQueue()
+
+	if !firstRan {
+		t.Errorf("first closure did not run before panicking")
+	}
+	if !secondRan {
+		t.Errorf("second closure did not run after first panicked — wrapper failed to contain the panic")
+	}
+}
+
+// TestQueueDelayed_RunsSucceededClosure verifies the happy-path contract: a
+// normal closure submitted via QueueDelayed runs exactly once when DrainQueue
+// is called. Locks the contract that the wrapper does not swallow non-panic
+// returns or run a closure twice.
+func TestQueueDelayed_RunsSucceededClosure(t *testing.T) {
+	e := GetEngine()
+
+	var mu sync.Mutex
+	ran := 0
+
+	e.QueueDelayed(0, func() {
+		mu.Lock()
+		ran++
+		mu.Unlock()
+	})
+
+	e.DrainQueue()
+
+	mu.Lock()
+	defer mu.Unlock()
+	if ran != 1 {
+		t.Errorf("expected closure to run exactly once, got %d", ran)
+	}
+}
+
+// TestEvictRoomBTreeState_RemovesEntry verifies that after eviction, the next
+// EnsureRoomBTreeState call returns a freshly-allocated *BehaviorState pointer
+// (proves the prior entry was actually removed, not just overwritten in place).
+func TestEvictRoomBTreeState_RemovesEntry(t *testing.T) {
+	const roomId = 99908
+
+	defer clearRoomStates(t, roomId)
+
+	state1 := EnsureRoomBTreeState(roomId)
+	if state1 == nil {
+		t.Fatal("first EnsureRoomBTreeState returned nil")
+	}
+
+	EvictRoomBTreeState(roomId)
+
+	state2 := EnsureRoomBTreeState(roomId)
+	if state2 == nil {
+		t.Fatal("post-evict EnsureRoomBTreeState returned nil")
+	}
+
+	if state1 == state2 {
+		t.Errorf("expected different pointer after eviction: got same %p", state1)
+	}
+}
+
+// TestEvictRoomBTreeState_NoOpOnMissing verifies that evicting an unseeded
+// roomId does not panic and does not break a subsequent Ensure call.
+func TestEvictRoomBTreeState_NoOpOnMissing(t *testing.T) {
+	const roomId = 99909
+
+	defer clearRoomStates(t, roomId)
+
+	// Must not panic — key was never seeded.
+	EvictRoomBTreeState(roomId)
+
+	state := EnsureRoomBTreeState(roomId)
+	if state == nil {
+		t.Errorf("EnsureRoomBTreeState after no-op evict returned nil")
+	}
+}
