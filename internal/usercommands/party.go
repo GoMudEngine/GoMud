@@ -5,6 +5,7 @@ import (
 	"math"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
@@ -164,21 +165,25 @@ func cmdPartyInvite(user *users.UserRecord, room *rooms.Room, currentParty *part
 		return true, nil
 	}
 
-	invitePlayerId, mobInstId := room.FindByName(rest)
-
-	if invitePlayerId == 0 && mobInstId == 0 {
+	target, err := actions.ResolveTargetActor(room, rest)
+	if err != nil {
 		user.SendText(fmt.Sprintf(`%s not found.`, rest))
 		return true, nil
 	}
+	if !target.IsPlayer() {
+		user.SendText(`You can only invite players to your party.`)
+		return true, nil
+	}
+
+	invitedUser := target.(*actions.UserActor).User
+	invitePlayerId := invitedUser.UserId
 
 	if invitedParty := parties.Get(invitePlayerId); invitedParty != nil {
 		user.SendText(`That player is already in a party.`)
 		return true, nil
 	}
 
-	invitedUser := users.GetByUserId(invitePlayerId)
-
-	if invitedUser != nil && currentParty.InvitePlayer(invitePlayerId) {
+	if currentParty.InvitePlayer(invitePlayerId) {
 		user.SendText(fmt.Sprintf(`You invited <ansi fg="username">%s</ansi> to your party.`, invitedUser.Character.Name))
 		invitedUser.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> invited you to their party. Type <ansi fg="command">party accept</ansi> or <ansi fg="command">party decline</ansi> to respond.`, user.Character.Name))
 	} else {

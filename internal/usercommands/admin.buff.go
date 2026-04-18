@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -76,7 +77,15 @@ func Buff(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 					return false, fmt.Errorf(`room %d not found`, user.Character.RoomId)
 				}
 
-				targetUserId, targetMobInstanceId = room.FindByName(args[0])
+				if target, err := actions.ResolveTargetActor(room, args[0]); err == nil {
+					if target.IsPlayer() {
+						targetUserId = target.(*actions.UserActor).User.UserId
+					} else {
+						targetMobInstanceId = target.(*actions.MobActor).Mob.InstanceId
+					}
+				}
+				// (on err, both IDs stay 0; downstream `if targetUserId > 0` /
+				// `if targetMobInstanceId > 0` branches won't fire)
 
 				buffId, _ = strconv.Atoi(args[1])
 				if buffId == 0 {

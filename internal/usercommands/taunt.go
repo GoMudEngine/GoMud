@@ -7,7 +7,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/events"
-	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -21,35 +20,38 @@ func Taunt(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			user.SendText("Taunt whom?")
 			return true, nil
 		}
-		targetPId, targetMId := room.FindByName(rest)
-		if targetPId == user.UserId {
-			user.SendText("You can't taunt yourself.")
-			return true, nil
-		}
-		if targetPId == 0 && targetMId == 0 {
+
+		target, err := actions.ResolveTargetActor(room, rest, actions.ResolveTargetOptions{
+			ExcludeUserId: user.UserId,
+		})
+		if err != nil {
+			// Self-exclusion collapses to NotFound; pre-check for self-targeting message.
+			if pId, _ := room.FindByName(rest); pId == user.UserId {
+				user.SendText("You can't taunt yourself.")
+				return true, nil
+			}
 			user.SendText("You don't see them here.")
 			return true, nil
 		}
-		if targetMId > 0 {
-			if m := mobs.GetInstance(targetMId); m != nil {
-				if m.IsNonCombatant() {
-					user.SendText(fmt.Sprintf(`You can't attack <ansi fg="mobname">%s</ansi>.`, m.Character.Name))
-					return true, nil
-				}
-				if m.Character.IsCharmed() {
-					user.SendText(`You can't taunt a companion.`)
-					return true, nil
-				}
+
+		if !target.IsPlayer() {
+			mob := target.(*actions.MobActor).Mob
+			if mob.IsNonCombatant() {
+				user.SendText(fmt.Sprintf(`You can't attack <ansi fg="mobname">%s</ansi>.`, mob.Character.Name))
+				return true, nil
 			}
-			user.Character.SetAggro(0, targetMId, characters.DefaultAttack)
+			if mob.Character.IsCharmed() {
+				user.SendText(`You can't taunt a companion.`)
+				return true, nil
+			}
+			user.Character.SetAggro(0, mob.InstanceId, characters.DefaultAttack)
 		} else {
-			if p := users.GetByUserId(targetPId); p != nil {
-				if pvpErr := room.CanPvp(user, p); pvpErr != nil {
-					user.SendText(pvpErr.Error())
-					return true, nil
-				}
+			p := target.(*actions.UserActor).User
+			if pvpErr := room.CanPvp(user, p); pvpErr != nil {
+				user.SendText(pvpErr.Error())
+				return true, nil
 			}
-			user.Character.SetAggro(targetPId, 0, characters.DefaultAttack)
+			user.Character.SetAggro(p.UserId, 0, characters.DefaultAttack)
 		}
 	}
 

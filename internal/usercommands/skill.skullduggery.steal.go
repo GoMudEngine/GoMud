@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
@@ -76,15 +77,13 @@ func Steal(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	}
 
 	// Try to find a mob or player by name
-	targetPlayerId, targetMobInstanceId := room.FindByName(args[0])
-
-	if targetPlayerId > 0 {
-		user.SendText("You can't steal from other players.")
-		return true, nil
-	}
-
-	if targetMobInstanceId > 0 {
-		return stealFromMob(targetMobInstanceId, attackerScore, rank, user, room, cfg)
+	target, err := actions.ResolveTargetActor(room, args[0])
+	if err == nil {
+		if target.IsPlayer() {
+			user.SendText("You can't steal from other players.")
+			return true, nil
+		}
+		return stealFromMob(target.(*actions.MobActor).Mob.InstanceId, attackerScore, rank, user, room, cfg)
 	}
 
 	// Try container steal

@@ -3,6 +3,7 @@ package usercommands
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
@@ -22,22 +23,17 @@ func Deafen(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		return true, nil
 	}
 
-	targetUserId, _ := room.FindByName(rest)
-
-	if targetUserId > 0 {
-
-		if u := users.GetByUserId(targetUserId); u != nil {
-
-			u.Deafened = true
-
-			user.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> (<ansi fg="username">%s</ansi>) has been <ansi fg="alert-5">DEAFENED</ansi>`, u.Username, u.Character.Name))
-
-			return true, nil
-		}
-
+	target, err := actions.ResolveTargetActor(room, rest)
+	if err != nil || !target.IsPlayer() {
+		user.SendText("Could not find user.")
+		return true, nil
 	}
 
-	user.SendText("Could not find user.")
+	u := target.(*actions.UserActor).User
+	u.Deafened = true
+
+	user.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> (<ansi fg="username">%s</ansi>) has been <ansi fg="alert-5">DEAFENED</ansi>`, u.Username, u.Character.Name))
+
 	return true, nil
 }
 
@@ -49,21 +45,16 @@ func UnDeafen(rest string, user *users.UserRecord, room *rooms.Room, flags event
 		return true, nil
 	}
 
-	targetUserId, _ := room.FindByName(rest)
-
-	if targetUserId > 0 {
-
-		if u := users.GetByUserId(targetUserId); u != nil {
-
-			u.Deafened = false
-
-			user.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> (<ansi fg="username">%s</ansi>) has been <ansi fg="alert-1">UNDEAFENED</ansi>`, u.Username, u.Character.Name))
-
-			return true, nil
-		}
-
+	target, err := actions.ResolveTargetActor(room, rest)
+	if err != nil || !target.IsPlayer() {
+		user.SendText("Could not find user.")
+		return true, nil
 	}
 
-	user.SendText("Could not find user.")
+	u := target.(*actions.UserActor).User
+	u.Deafened = false
+
+	user.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> (<ansi fg="username">%s</ansi>) has been <ansi fg="alert-1">UNDEAFENED</ansi>`, u.Username, u.Character.Name))
+
 	return true, nil
 }

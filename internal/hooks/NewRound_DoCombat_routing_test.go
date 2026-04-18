@@ -209,18 +209,18 @@ func TestHandleCombatRound_AllQuadrantsRouteCorrectly(t *testing.T) {
 			if tc.atkIsPlayer {
 				u1 := users.GetByUserId(1)
 				require.NotNil(t, u1)
-				atk = &actions.UserActor{User: u1, Room: room1}
+				atk = actions.NewUserActorInRoom(u1, room1)
 				atkUserId = 1
 			} else {
 				m := mobs.GetInstance(100)
 				require.NotNil(t, m)
-				atk = &actions.MobActor{Mob: m, Room: room1}
+				atk = actions.NewMobActorInRoom(m, room1)
 			}
 
 			if tc.defIsPlayer {
 				u2 := users.GetByUserId(2)
 				require.NotNil(t, u2)
-				def = &actions.UserActor{User: u2, Room: room1}
+				def = actions.NewUserActorInRoom(u2, room1)
 				defUserId = 2
 			} else {
 				// MM uses instance 101; UM uses instance 100.
@@ -230,7 +230,7 @@ func TestHandleCombatRound_AllQuadrantsRouteCorrectly(t *testing.T) {
 				}
 				m := mobs.GetInstance(defInstId)
 				require.NotNil(t, m, "defender mob instance %d should exist", defInstId)
-				def = &actions.MobActor{Mob: m, Room: room1}
+				def = actions.NewMobActorInRoom(m, room1)
 			}
 
 			// Set Aggro on the attacker so resolveCombatTarget passes.

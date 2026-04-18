@@ -14,6 +14,21 @@ type UserActor struct {
 
 var _ Actor = (*UserActor)(nil)
 
+// NewUserActor wraps a UserRecord in an Actor for polymorphic combat and
+// target-resolution code paths. The returned Actor has Room == nil; callers
+// that need GetRoom() to return non-nil should use NewUserActorInRoom or
+// set the Room field directly on the resulting concrete *UserActor.
+func NewUserActor(u *users.UserRecord) Actor {
+	return &UserActor{User: u}
+}
+
+// NewUserActorInRoom is NewUserActor with a pre-populated room reference.
+// Use this at sites where downstream code calls GetRoom() / SendRoomText()
+// on the returned Actor.
+func NewUserActorInRoom(u *users.UserRecord, room *rooms.Room) Actor {
+	return &UserActor{User: u, Room: room}
+}
+
 func (a *UserActor) GetCharacter() *characters.Character {
 	return a.User.Character
 }

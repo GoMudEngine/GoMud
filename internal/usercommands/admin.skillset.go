@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
@@ -41,9 +42,8 @@ func Skillset(rest string, user *users.UserRecord, room *rooms.Room, flags event
 
 	var targetUser *users.UserRecord = user
 
-	foundUser, _ := room.FindByName(args[0])
-	if foundUser > 0 {
-		targetUser = users.GetByUserId(foundUser)
+	if target, err := actions.ResolveTargetActor(room, args[0]); err == nil && target.IsPlayer() {
+		targetUser = target.(*actions.UserActor).User
 		args = args[1:]
 	}
 
