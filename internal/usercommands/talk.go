@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/dialogue"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -36,18 +37,13 @@ func Talk(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 	searchName := args[0]
 
-	_, mobId := room.FindByName(searchName)
-
-	if mobId <= 0 {
+	target, err := actions.ResolveTargetActor(room, searchName)
+	if err != nil || target.IsPlayer() {
 		user.SendText(`Talk to whom?`)
 		return true, nil
 	}
-
-	mob := mobs.GetInstance(mobId)
-	if mob == nil {
-		user.SendText(`Talk to whom?`)
-		return true, nil
-	}
+	mob := target.(*actions.MobActor).Mob
+	mobId := mob.InstanceId
 
 	room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> approaches <ansi fg="mobname">%s</ansi> for a conversation.`, user.Character.Name, mob.Character.Name), user.UserId)
 

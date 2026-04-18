@@ -3,6 +3,7 @@ package mobcommands
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -26,33 +27,31 @@ func Befriend(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		return true, nil
 	}
 
-	playerId, _ := room.FindByName(rest)
-
-	if playerId > 0 {
-
-		// Anti-recursion: strip any companions the mob itself had before
-		// charming it, so we never create companion chains.
-		for _, subId := range mob.Character.GetCharmIds() {
-			if subMob := mobs.GetInstance(subId); subMob != nil {
-				subMob.Character.RemoveCharm()
-				if subRoom := rooms.LoadRoom(subMob.Character.RoomId); subRoom != nil {
-					subRoom.RemoveMob(subId)
-				}
-				mobs.DestroyInstance(subId)
-			}
-		}
-		mob.Character.CharmedMobs = nil
-
-		mob.Character.Charm(playerId, characters.CharmPermanent, characters.CharmExpiredRevert)
-
-		if charmedUser := users.GetByUserId(playerId); charmedUser != nil {
-			charmedUser.Character.TrackCharmed(mob.InstanceId, true)
-		}
-
-		sendRoomText(room,
-			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> looks very friendly.`, mob.Character.Name))
-
+	target, err := actions.ResolveTargetActor(room, rest)
+	if err != nil || !target.IsPlayer() {
+		return true, nil
 	}
+	charmedUser := target.(*actions.UserActor).User
+	playerId := charmedUser.UserId
+
+	// Anti-recursion: strip any companions the mob itself had before
+	// charming it, so we never create companion chains.
+	for _, subId := range mob.Character.GetCharmIds() {
+		if subMob := mobs.GetInstance(subId); subMob != nil {
+			subMob.Character.RemoveCharm()
+			if subRoom := rooms.LoadRoom(subMob.Character.RoomId); subRoom != nil {
+				subRoom.RemoveMob(subId)
+			}
+			mobs.DestroyInstance(subId)
+		}
+	}
+	mob.Character.CharmedMobs = nil
+
+	mob.Character.Charm(playerId, characters.CharmPermanent, characters.CharmExpiredRevert)
+	charmedUser.Character.TrackCharmed(mob.InstanceId, true)
+
+	sendRoomText(room,
+		fmt.Sprintf(`<ansi fg="mobname">%s</ansi> looks very friendly.`, mob.Character.Name))
 
 	return true, nil
 }

@@ -10,7 +10,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -53,13 +52,15 @@ func Give(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	}
 
-	playerId, mobId := room.FindByName(giveWho)
+	target, err := actions.ResolveTargetActor(room, giveWho)
+	if err != nil {
+		return true, nil
+	}
 
-	if playerId > 0 {
+	if target.IsPlayer() {
 
+		targetUser := target.(*actions.UserActor).User
 		mob.Character.CancelBuffsWithFlag(buffs.Hidden)
-
-		targetUser := users.GetByUserId(playerId)
 
 		// Swap the item location
 		if giveItem.ItemId > 0 {
@@ -87,45 +88,35 @@ func Give(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		}
 
 		return true, nil
-
 	}
 
 	//
-	// Look for an NPC
+	// Mob target
 	//
-	if mobId > 0 {
+	m := target.(*actions.MobActor).Mob
+	mob.Character.CancelBuffsWithFlag(buffs.Hidden)
 
-		mob.Character.CancelBuffsWithFlag(buffs.Hidden)
-
-		m := mobs.GetInstance(mobId)
-
-		if m != nil {
-
-			// Swap the item location
-			if giveItem.ItemId > 0 {
-				mobActor := &actions.MobActor{Mob: mob, Room: room}
-				result := actions.GiveItemToChar(mobActor, giveWhat, &m.Character, 0, m.InstanceId)
-				if result.Err != nil {
-					return true, nil
-				}
-
-				room.SendTextVisual(
-					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> gave their <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, mob.Character.Name, result.Item.DisplayName(), m.Character.Name),
-				)
-			} else if giveGoldAmount > 0 {
-
-				mobActor := &actions.MobActor{Mob: mob, Room: room}
-				if err := actions.GiveGoldToChar(mobActor, giveGoldAmount, &m.Character); err != nil {
-					return true, nil
-				}
-
-				room.SendTextVisual(
-					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> gave some gold to <ansi fg="mobname">%s</ansi>.`, mob.Character.Name, m.Character.Name),
-				)
-			}
-
+	// Swap the item location
+	if giveItem.ItemId > 0 {
+		mobActor := &actions.MobActor{Mob: mob, Room: room}
+		result := actions.GiveItemToChar(mobActor, giveWhat, &m.Character, 0, m.InstanceId)
+		if result.Err != nil {
+			return true, nil
 		}
 
+		room.SendTextVisual(
+			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> gave their <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, mob.Character.Name, result.Item.DisplayName(), m.Character.Name),
+		)
+	} else if giveGoldAmount > 0 {
+
+		mobActor := &actions.MobActor{Mob: mob, Room: room}
+		if err := actions.GiveGoldToChar(mobActor, giveGoldAmount, &m.Character); err != nil {
+			return true, nil
+		}
+
+		room.SendTextVisual(
+			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> gave some gold to <ansi fg="mobname">%s</ansi>.`, mob.Character.Name, m.Character.Name),
+		)
 	}
 
 	return true, nil
