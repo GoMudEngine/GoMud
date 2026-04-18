@@ -179,10 +179,27 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	user.Character.EndAggro()
 	user.Character.CastingState = nil
 
-	// Restore pools to full — no shadow realm detour needed.
-	user.Character.Health = user.Character.HealthMax.Value
-	user.Character.Stamina = user.Character.StaminaMax.Value
-	user.Character.Conviction = user.Character.ConvictionMax.Value
+	// Respawn at a fraction of max pools. Acts as a brake on "death run"
+	// strategies — the player has to recover before their next attempt at
+	// whatever killed them. Default 0.05 (5%); configurable via
+	// Death.RespawnPoolFraction. Minimum 1 in each pool so the respawn
+	// doesn't immediately re-trigger the death check.
+	respawnPct := float64(config.Death.RespawnPoolFraction)
+	respawnHealth := int(float64(user.Character.HealthMax.Value) * respawnPct)
+	if respawnHealth < 1 {
+		respawnHealth = 1
+	}
+	respawnStamina := int(float64(user.Character.StaminaMax.Value) * respawnPct)
+	if respawnStamina < 1 {
+		respawnStamina = 1
+	}
+	respawnConviction := int(float64(user.Character.ConvictionMax.Value) * respawnPct)
+	if respawnConviction < 1 {
+		respawnConviction = 1
+	}
+	user.Character.Health = respawnHealth
+	user.Character.Stamina = respawnStamina
+	user.Character.Conviction = respawnConviction
 	events.AddToQueue(events.CharacterVitalsChanged{UserId: user.UserId})
 
 	clear(user.Character.PlayerDamage)
