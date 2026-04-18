@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
@@ -94,15 +95,13 @@ func Plant(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	}
 
 	// Resolve target — mob or container only, not players
-	targetPlayerId, targetMobInstanceId := room.FindByName(targetName)
-
-	if targetPlayerId > 0 {
-		user.SendText("You can't plant items on other players.")
-		return true, nil
-	}
-
-	if targetMobInstanceId > 0 {
-		return plantOnMob(targetMobInstanceId, plantItem, attackerScore, rank, user, room)
+	target, err := actions.ResolveTargetActor(room, targetName)
+	if err == nil {
+		if target.IsPlayer() {
+			user.SendText("You can't plant items on other players.")
+			return true, nil
+		}
+		return plantOnMob(target.(*actions.MobActor).Mob.InstanceId, plantItem, attackerScore, rank, user, room)
 	}
 
 	// Try container

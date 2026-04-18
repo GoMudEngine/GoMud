@@ -1,8 +1,11 @@
 package behaviortree
 
 import (
+	"fmt"
 	"sync"
 	"time"
+
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 )
 
 // Engine manages behavior tree loading, caching, and evaluation.
@@ -48,6 +51,20 @@ func (e *Engine) LoadTree(mobId int, path string) error {
 	e.mu.Unlock()
 	return nil
 }
+
+// Negative cache (noTree / noRoomTree) — design note.
+//
+// The negative cache records mob/room ids whose behavior tree YAML does
+// not exist on disk (or whose load failed at file-stat time). Once set,
+// an entry only clears on a successful subsequent LoadTree / LoadRoomTree.
+//
+// This is correct ONLY because behavior tree files are static for the
+// process lifetime — there is no hot-reload of YAML on disk change. If
+// hot-reload is ever added, the negative cache becomes a stale-cache bug:
+// a file appearing on disk after the negative entry is set will be
+// invisible until the engine restarts.
+//
+// TODO(hot-reload): bust cache on file change if/when hot-reload is added.
 
 // HasNoTree reports whether the negative cache has recorded that mobId has no
 // behavior tree file on disk. Callers should check this before os.Stat.
@@ -155,6 +172,19 @@ func (e *Engine) DrainQueue() {
 	e.mu.Unlock()
 
 	for _, da := range ready {
-		da.Action()
+		safeExecuteDelayed("behaviortree.delayed_action", da.Action)
 	}
+}
+
+// safeExecuteDelayed runs a delayed-action closure with panic recovery so a
+// single misbehaving action (e.g., one closing over a mob/user/room that has
+// since been destroyed) does not crash the engine round tick. Panics are
+// logged at mudlog.Error with the supplied name as the operation label.
+func safeExecuteDelayed(name string, fn func()) {
+	defer func() {
+		if r := recover(); r != nil {
+			mudlog.Error(name, "error", fmt.Sprintf("delayed action panicked: %v", r))
+		}
+	}()
+	fn()
 }

@@ -5,13 +5,13 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/keywords"
 	"github.com/GoMudEngine/GoMud/internal/mapper"
-	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
@@ -76,19 +76,15 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	// look for any mobs, players, npcs
 	//
 
-	playerId, mobId := room.FindByName(lookAt)
-
-	if playerId > 0 || mobId > 0 {
+	target, err := actions.ResolveTargetActor(room, lookAt)
+	if err == nil {
 
 		// Track perception use when examining a target
 		user.Character.OnStatUse("perception", user.UserId)
 
-		statusTxt := ""
-		invTxt := ""
+		if target.IsPlayer() {
 
-		if playerId > 0 {
-
-			u := *users.GetByUserId(playerId)
+			u := target.(*actions.UserActor).User
 
 			if !isSneaking {
 				u.SendText(
@@ -116,13 +112,9 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			inventoryTxt, _ := templates.Process("character/inventory-look", invData, user.UserId)
 			user.SendText(inventoryTxt)
 
-		} else if mobId > 0 {
+		} else {
 
-			m := mobs.GetInstance(mobId)
-			if m == nil {
-				user.SendText("You don't see them here.")
-				return true, nil
-			}
+			m := target.(*actions.MobActor).Mob
 
 			if !isSneaking {
 				targetName := m.Character.GetMobName(0).String()
@@ -149,12 +141,10 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			user.SendText(inventoryTxt)
 		}
 
-		user.SendText(statusTxt)
-		user.SendText(invTxt)
-
 		return true, nil
 
 	}
+	// fall through to container / noun / pet lookup branches below
 
 	containerName := room.FindContainerByName(lookAt)
 	if containerName != `` {

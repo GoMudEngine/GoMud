@@ -3,8 +3,19 @@ package rooms
 import (
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/stretchr/testify/assert"
 )
+
+// init wires up mudlog for the rooms test binary. Several code paths
+// exercised by these tests (e.g. TryEphemeralCleanup) call mudlog.Info
+// unconditionally, which panics if the slog instance is nil. Mirrors the
+// pattern in actions_test.go, hooks_test.go, etc.
+func init() {
+	mudlog.SetupLogger(nil, "", "", false)
+}
 
 func TestInstanceRegistry_CreateAndLookup(t *testing.T) {
 	registry := NewInstanceRegistry()
@@ -321,4 +332,199 @@ func TestScaleSpawnStatPools_NoCap(t *testing.T) {
 	}
 	ScaleSpawnStatPools(spawns, 20000, 0)
 	assert.Equal(t, 60000, spawns[0].StatPool)
+}
+
+// ─── CheckPortalTimers cleanup chain ────────────────────────────────────────
+//
+// These tests lock the TTL-triggered cleanup chain landed in
+// `feat(rooms): TTL-triggered instance cleanup chain in CheckPortalTimers`.
+// The chain runs: boot players → Remove(inst) → btree eviction → ephemeral
+// cleanup. Tests use a fresh InstanceRegistry per case (the production
+// CheckPortalTimers is a method on *InstanceRegistry, so no need to mutate
+// the package-level singleton). The package-level btreeStateEvictor is
+// snapshot+restored via defer where touched.
+
+func TestCheckPortalTimers_TtlExpiryDeregisters(t *testing.T) {
+	ir := NewInstanceRegistry()
+
+	ephEntry := ephemeralRoomIdMinimum + 100
+	ephExtra := ephemeralRoomIdMinimum + 101
+	inst := &ZoneInstance{
+		InstanceId:      ephEntry,
+		TemplateZone:    "TestZone",
+		AuthorizedUsers: []int{},
+		OwnerUserId:     0,
+		CreatedRound:    0, // long past
+		PortalDuration:  "1m",
+		OverworldRoomId: 1,
+		EntryRoomId:     ephEntry,
+		RoomIdMap: map[int]int{
+			1: ephEntry,
+			2: ephExtra,
+		},
+	}
+	ir.Add(inst)
+
+	ir.CheckPortalTimers()
+
+	// Expired instance is removed from the registry.
+	assert.Nil(t, ir.FindByRoomId(inst.EntryRoomId))
+	assert.Nil(t, ir.FindByRoomId(ephExtra))
+	assert.Len(t, ir.All(), 0)
+}
+
+func TestCheckPortalTimers_TtlExpiryEvictsBtreeState(t *testing.T) {
+	// Snapshot/restore the package-level evictor.
+	origEvictor := btreeStateEvictor
+	defer SetBTreeStateEvictor(origEvictor)
+
+	evicted := []int{}
+	SetBTreeStateEvictor(func(roomId int) {
+		evicted = append(evicted, roomId)
+	})
+
+	ir := NewInstanceRegistry()
+
+	ephEntry := ephemeralRoomIdMinimum + 200
+	ephExtra := ephemeralRoomIdMinimum + 201
+	inst := &ZoneInstance{
+		InstanceId:      ephEntry,
+		TemplateZone:    "TestZone",
+		AuthorizedUsers: []int{},
+		OwnerUserId:     0,
+		CreatedRound:    0,
+		PortalDuration:  "1m",
+		OverworldRoomId: 1,
+		EntryRoomId:     ephEntry,
+		RoomIdMap: map[int]int{
+			1: ephEntry,
+			2: ephExtra,
+		},
+	}
+	ir.Add(inst)
+
+	ir.CheckPortalTimers()
+
+	// The registered btree-eviction callback fires once per ephemeral
+	// room id in the instance's RoomIdMap.
+	assert.Len(t, evicted, len(inst.RoomIdMap))
+	assert.Contains(t, evicted, ephEntry)
+	assert.Contains(t, evicted, ephExtra)
+}
+
+func TestCheckPortalTimers_TtlExpiryBootsPlayers(t *testing.T) {
+	// Snapshot/restore the package-level evictor (chain calls it; we don't
+	// care about its side effects here, just keep the package state clean).
+	origEvictor := btreeStateEvictor
+	defer SetBTreeStateEvictor(origEvictor)
+	SetBTreeStateEvictor(func(int) {})
+
+	overworldId := 4242
+	ephEntry := ephemeralRoomIdMinimum + 300
+
+	overworldRoom := &Room{
+		RoomId:  overworldId,
+		Zone:    "Overworld",
+		Title:   "Town Square",
+		players: []int{},
+	}
+	ephRoom := &Room{
+		RoomId:  ephEntry,
+		Zone:    "TestZone",
+		Title:   "Ephemeral Hall",
+		players: []int{},
+	}
+
+	cleanupRooms := SeedRoomsForTest(
+		map[int]*Room{
+			overworldId: overworldRoom,
+			ephEntry:    ephRoom,
+		},
+		map[string]*ZoneConfig{
+			"Overworld": {Name: "Overworld", RoomId: overworldId, RoomIds: map[int]struct{}{overworldId: {}}},
+			"TestZone":  {Name: "TestZone", RoomId: ephEntry, RoomIds: map[int]struct{}{ephEntry: {}}},
+		},
+	)
+	defer cleanupRooms()
+
+	// Seed a real user inside the ephemeral room. NewTestUser sets
+	// RoomId=1 by default; align it with the ephemeral room so the
+	// MoveToRoom currentRoom lookup matches.
+	const userId = 99
+	u := users.NewTestUser(userId, "tester", "Tester", uint64(userId))
+	u.Character.RoomId = ephEntry
+	cleanupUsers := users.SeedUsersForTest(map[int]*users.UserRecord{userId: u})
+	defer cleanupUsers()
+
+	ephRoom.AddPlayer(userId)
+	MarkRoomOccupancy(ephEntry, 1, 0)
+
+	ir := NewInstanceRegistry()
+	inst := &ZoneInstance{
+		InstanceId:      ephEntry,
+		TemplateZone:    "TestZone",
+		AuthorizedUsers: []int{userId},
+		OwnerUserId:     userId,
+		CreatedRound:    0,
+		PortalDuration:  "1m",
+		OverworldRoomId: overworldId,
+		EntryRoomId:     ephEntry,
+		RoomIdMap: map[int]int{
+			1: ephEntry,
+		},
+	}
+	ir.Add(inst)
+
+	ir.CheckPortalTimers()
+
+	// Boot phase moved the player to the overworld room.
+	assert.Equal(t, overworldId, u.Character.RoomId,
+		"player should be moved out of expired ephemeral room")
+
+	// roomsWithUsers no longer tracks the drained ephemeral room
+	// (MoveToRoom deletes the entry when the last player leaves).
+	assert.Equal(t, 0, roomManager.roomsWithUsers[ephEntry])
+
+	// And the overworld destination now tracks the moved-in player.
+	assert.Equal(t, 1, roomManager.roomsWithUsers[overworldId])
+
+	// Instance is deregistered after the chain.
+	assert.Nil(t, ir.FindByRoomId(ephEntry))
+}
+
+func TestCheckPortalTimers_NotExpiredNoOp(t *testing.T) {
+	origEvictor := btreeStateEvictor
+	defer SetBTreeStateEvictor(origEvictor)
+
+	evicted := []int{}
+	SetBTreeStateEvictor(func(roomId int) {
+		evicted = append(evicted, roomId)
+	})
+
+	ir := NewInstanceRegistry()
+
+	ephEntry := ephemeralRoomIdMinimum + 400
+	inst := &ZoneInstance{
+		InstanceId:      ephEntry,
+		TemplateZone:    "TestZone",
+		AuthorizedUsers: []int{},
+		OwnerUserId:     0,
+		CreatedRound:    util.GetRoundCount(),
+		PortalDuration:  "999 real hours",
+		OverworldRoomId: 1,
+		EntryRoomId:     ephEntry,
+		RoomIdMap: map[int]int{
+			1: ephEntry,
+		},
+	}
+	ir.Add(inst)
+
+	ir.CheckPortalTimers()
+
+	// Not-yet-expired instance is untouched: still findable, registry intact.
+	assert.NotNil(t, ir.FindByRoomId(inst.EntryRoomId))
+	assert.Len(t, ir.All(), 1)
+
+	// No btree eviction calls — the chain only runs for expired instances.
+	assert.Empty(t, evicted)
 }

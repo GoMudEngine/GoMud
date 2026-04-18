@@ -26,7 +26,7 @@ func RedrawPrompt_SendRedraw(e events.Event) events.ListenerReturn {
 			oldCmdPrompt := user.GetTempData(`cmdprompt`)
 
 			// If the prompt hasn't changed, skip redrawing
-			if oldCmdPrompt != nil && oldCmdPrompt.(string) == newCmdPrompt {
+			if s, ok := oldCmdPrompt.(string); ok && s == newCmdPrompt {
 				return events.Continue
 			}
 

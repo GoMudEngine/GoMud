@@ -18,6 +18,21 @@ type MobActor struct {
 
 var _ Actor = (*MobActor)(nil)
 
+// NewMobActor wraps a Mob in an Actor for polymorphic combat and
+// target-resolution code paths. The returned Actor has Room == nil; callers
+// that need GetRoom() to return non-nil should use NewMobActorInRoom or set
+// the Room field directly on the resulting concrete *MobActor.
+func NewMobActor(m *mobs.Mob) Actor {
+	return &MobActor{Mob: m}
+}
+
+// NewMobActorInRoom is NewMobActor with a pre-populated room reference.
+// Use this at sites where downstream code calls GetRoom() / SendRoomText()
+// on the returned Actor.
+func NewMobActorInRoom(m *mobs.Mob, room *rooms.Room) Actor {
+	return &MobActor{Mob: m, Room: room}
+}
+
 func (a *MobActor) GetCharacter() *characters.Character {
 	return &a.Mob.Character
 }

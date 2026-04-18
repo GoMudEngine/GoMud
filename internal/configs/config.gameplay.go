@@ -37,6 +37,7 @@ type GameplayDeath struct {
 	SkillRustAmount       ConfigInt `yaml:"SkillRustAmount"`       // Skill ranks lost per decayed skill (default 1)
 	SkillRecencyThreshold ConfigInt `yaml:"SkillRecencyThreshold"` // Use count above which skills are protected (default 50)
 	DeathsShadowBuffId    ConfigInt `yaml:"DeathsShadowBuffId"`    // Buff ID for Death's Shadow debuff (default 25)
+	RespawnPoolFraction   ConfigFloat `yaml:"RespawnPoolFraction"` // Fraction of max pools (Health/Stamina/Conviction) restored on respawn (default 0.05). Keeps "death run" strategies honest — players respawn weakened and have to recover before their next attempt.
 }
 
 func (g *GamePlay) Validate() {
@@ -48,6 +49,10 @@ func (g *GamePlay) Validate() {
 
 	if g.Death.EquipmentDropChance < 0.0 || g.Death.EquipmentDropChance > 1.0 {
 		g.Death.EquipmentDropChance = 0.0 // default
+	}
+
+	if g.Death.RespawnPoolFraction <= 0.0 || g.Death.RespawnPoolFraction > 1.0 {
+		g.Death.RespawnPoolFraction = 0.05 // default — respawn at 5% of max pools
 	}
 
 	if g.Death.ProtectionSkillRanks < 0 {

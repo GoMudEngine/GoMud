@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -55,18 +56,19 @@ func Report(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	if rest != "" {
 		// Find target player in room
-		targetUserId, _ := room.FindByName(rest)
-		if targetUserId == 0 {
+		target, err := actions.ResolveTargetActor(room, rest)
+		if err == actions.ErrTargetVanished {
+			user.SendText("They are no longer here.")
+			return true, nil
+		}
+		if err != nil || !target.IsPlayer() {
 			user.SendText(fmt.Sprintf(`You don't see "%s" here.`, rest))
 			return true, nil
 		}
-		if targetUserId == user.UserId {
+
+		targetUser := target.(*actions.UserActor).User
+		if targetUser.UserId == user.UserId {
 			user.SendText(fmt.Sprintf(`You check yourself: %s`, barText))
-			return true, nil
-		}
-		targetUser := users.GetByUserId(targetUserId)
-		if targetUser == nil {
-			user.SendText("They are no longer here.")
 			return true, nil
 		}
 

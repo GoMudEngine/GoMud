@@ -6,6 +6,7 @@ import (
 	"math"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -222,28 +223,22 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	//
 	if roll.Value >= 175 {
 
-		foundPlayerId, foundMobId := room.FindByName(rest, rooms.FindAll)
-
-		if foundPlayerId > 0 {
-			foundUser := users.GetByUserId(foundPlayerId)
-			if foundUser != nil {
+		target, err := actions.ResolveTargetActor(room, rest, actions.ResolveTargetOptions{
+			FindFlags: []rooms.FindFlag{rooms.FindAll},
+		})
+		if err == nil {
+			if target.IsPlayer() {
+				u := target.(*actions.UserActor).User
 				user.SendText(
-					fmt.Sprintf(`<ansi fg="username">%s</ansi> is in the room with you!`, foundUser.Character.Name))
-				return true, nil
-
-			}
-
-		}
-
-		if foundMobId > 0 {
-			foundMob := mobs.GetInstance(foundMobId)
-			if foundMob != nil {
+					fmt.Sprintf(`<ansi fg="username">%s</ansi> is in the room with you!`, u.Character.Name))
+			} else {
+				m := target.(*actions.MobActor).Mob
 				user.SendText(
-					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> is in the room with you!`, foundMob.Character.Name))
-				return true, nil
-
+					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> is in the room with you!`, m.Character.Name))
 			}
+			return true, nil
 		}
+		// fall through to active-tracking / nearby-room scan below
 
 		// active tracking when roll is high enough
 		if roll.Value >= 175 {

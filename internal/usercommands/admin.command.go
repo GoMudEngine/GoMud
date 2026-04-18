@@ -3,6 +3,7 @@ package usercommands
 import (
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobcommands"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -38,7 +39,13 @@ func Command(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	cmd := strings.TrimPrefix(rest, searchName+` `)
 	//cmd := strings.Join(args, ` `)
 
-	playerId, mobId := room.FindByName(searchName)
+	target, err := actions.ResolveTargetActor(room, searchName)
+	if err != nil {
+		return true, nil
+	}
+
+	playerId := target.GetUserId()
+	mobId := target.GetMobInstanceId()
 
 	// Use the index for how many turns to defer the extra commands
 	readyTurn := util.GetTurnCount()

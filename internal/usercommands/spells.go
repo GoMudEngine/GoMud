@@ -32,8 +32,6 @@ func spellCategory(sp *spells.SpellData) int {
 		return 2
 	case "damage", "dot", "knockdown":
 		return 3
-	case "tame":
-		return 4 // summon/companion
 	}
 	// Manifestation school spells (raise/conjure) are neutral type with no effect_type
 	if sp.HasSchool(spells.SchoolManifestation) {

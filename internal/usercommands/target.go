@@ -3,6 +3,7 @@ package usercommands
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -33,19 +34,21 @@ func Target(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	}
 
 	// Find the new target
-	newTargetPlayerId, newTargetMobInstanceId := room.FindByName(rest)
-
-	// Can't target self
-	if newTargetPlayerId == user.UserId {
-		user.SendText("You can't target yourself!")
-		return true, nil
-	}
-
-	// Must have a valid target
-	if newTargetPlayerId == 0 && newTargetMobInstanceId == 0 {
+	target, err := actions.ResolveTargetActor(room, rest, actions.ResolveTargetOptions{
+		ExcludeUserId: user.UserId,
+	})
+	if err != nil {
+		// Distinguish self-targeting vs not-found via the original wording.
+		if pId, _ := room.FindByName(rest); pId == user.UserId {
+			user.SendText("You can't target yourself!")
+			return true, nil
+		}
 		user.SendText(fmt.Sprintf("You don't see '%s' here.", rest))
 		return true, nil
 	}
+
+	newTargetPlayerId := target.GetUserId()
+	newTargetMobInstanceId := target.GetMobInstanceId()
 
 	// Check if already targeting this entity
 	currentTargetUserId := user.Character.Aggro.UserId

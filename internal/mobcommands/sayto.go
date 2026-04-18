@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -24,10 +24,13 @@ func SayTo(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		return true, nil
 	}
 
-	playerId, mobInstanceId := room.FindByName(args[0])
-	if playerId > 0 {
+	target, err := actions.ResolveTargetActor(room, args[0])
+	if err != nil {
+		return true, nil
+	}
+	if target.IsPlayer() {
 
-		toUser := users.GetByUserId(playerId)
+		toUser := target.(*actions.UserActor).User
 
 		rest = strings.TrimSpace(rest[len(args[0]):])
 		isSneaking := mob.Character.HasBuffFlag(buffs.Hidden)
@@ -54,9 +57,9 @@ func SayTo(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 				Message:             rest,
 			})
 		}
-	} else if mobInstanceId > 0 {
+	} else {
 
-		toMob := mobs.GetInstance(mobInstanceId)
+		toMob := target.(*actions.MobActor).Mob
 
 		rest = strings.TrimSpace(rest[len(args[0]):])
 		isSneaking := mob.Character.HasBuffFlag(buffs.Hidden)
@@ -89,28 +92,28 @@ func SayToOnly(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		return true, nil
 	}
 
-	playerId, _ := room.FindByName(args[0])
-	if playerId > 0 {
-
-		toUser := users.GetByUserId(playerId)
-
-		rest = strings.TrimSpace(rest[len(args[0]):])
-		isSneaking := mob.Character.HasBuffFlag(buffs.Hidden)
-
-		if isSneaking {
-			toUser.SendText(fmt.Sprintf(`someone says to you, "<ansi fg="saytext-mob">%s</ansi>"`, rest))
-		} else {
-			toUser.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> says to you, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, rest))
-		}
-
-		events.AddToQueue(events.Communication{
-			SourceMobInstanceId: mob.InstanceId,
-			TargetUserId:        toUser.UserId,
-			CommType:            `say`,
-			Name:                mob.Character.Name,
-			Message:             rest,
-		})
+	target, err := actions.ResolveTargetActor(room, args[0])
+	if err != nil || !target.IsPlayer() {
+		return true, nil
 	}
+	toUser := target.(*actions.UserActor).User
+
+	rest = strings.TrimSpace(rest[len(args[0]):])
+	isSneaking := mob.Character.HasBuffFlag(buffs.Hidden)
+
+	if isSneaking {
+		toUser.SendText(fmt.Sprintf(`someone says to you, "<ansi fg="saytext-mob">%s</ansi>"`, rest))
+	} else {
+		toUser.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> says to you, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, rest))
+	}
+
+	events.AddToQueue(events.Communication{
+		SourceMobInstanceId: mob.InstanceId,
+		TargetUserId:        toUser.UserId,
+		CommType:            `say`,
+		Name:                mob.Character.Name,
+		Message:             rest,
+	})
 
 	return true, nil
 }
@@ -127,10 +130,13 @@ func ReplyTo(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		return true, nil
 	}
 
-	playerId, mobInstanceId := room.FindByName(args[0])
-	if playerId > 0 {
+	target, err := actions.ResolveTargetActor(room, args[0])
+	if err != nil {
+		return true, nil
+	}
+	if target.IsPlayer() {
 
-		toUser := users.GetByUserId(playerId)
+		toUser := target.(*actions.UserActor).User
 
 		rest = strings.TrimSpace(rest[len(args[0]):])
 		isSneaking := mob.Character.HasBuffFlag(buffs.Hidden)
@@ -141,9 +147,9 @@ func ReplyTo(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			toUser.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> replies to you, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, rest))
 			room.SendTextVisual(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> replies to <ansi fg="username">%s</ansi>, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, toUser.Character.Name, rest), toUser.UserId)
 		}
-	} else if mobInstanceId > 0 {
+	} else {
 
-		toMob := mobs.GetInstance(mobInstanceId)
+		toMob := target.(*actions.MobActor).Mob
 
 		rest = strings.TrimSpace(rest[len(args[0]):])
 		isSneaking := mob.Character.HasBuffFlag(buffs.Hidden)

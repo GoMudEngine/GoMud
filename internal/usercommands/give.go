@@ -10,7 +10,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
-	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -64,101 +63,56 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 	}
 
-	playerId, mobId := room.FindByName(giveWho)
+	target, err := actions.ResolveTargetActor(room, giveWho)
+	if err == nil {
+		if target.IsPlayer() {
 
-	if playerId > 0 {
+			targetUser := target.(*actions.UserActor).User
 
-		user.Character.CancelBuffsWithFlag(buffs.Hidden)
+			user.Character.CancelBuffsWithFlag(buffs.Hidden)
 
-		targetUser := users.GetByUserId(playerId)
-
-		// Swap the item location
-		if giveItem.ItemId > 0 {
-			userActor := &actions.UserActor{User: user, Room: room}
-			result := actions.GiveItemToChar(userActor, giveWhat, targetUser.Character, targetUser.UserId, 0)
-			if result.Err != nil {
-				user.SendText("Something went wrong.")
-				return true, nil
-			}
-
-			user.SendText(
-				fmt.Sprintf(`You give the <ansi fg="item">%s</ansi> to <ansi fg="username">%s</ansi>.`, result.Item.DisplayName(), targetUser.Character.Name),
-			)
-			targetUser.SendText(
-				fmt.Sprintf(`<ansi fg="username">%s</ansi> gives you their <ansi fg="item">%s</ansi>.`, user.Character.Name, result.Item.DisplayName()),
-			)
-			room.SendTextVisual(
-				fmt.Sprintf(`<ansi fg="username">%s</ansi> gives <ansi fg="username">%s</ansi> a <ansi fg="itemname">%s</ansi>.`, user.Character.Name, targetUser.Character.Name, result.Item.NameSimple()),
-				user.UserId,
-				targetUser.UserId)
-
-		} else if giveGoldAmount > 0 {
-
-			if targetUser.UserId == user.UserId {
-
-				user.SendText(
-					fmt.Sprintf(`You count out <ansi fg="gold">%d gold</ansi> and put it back in your pocket.`, giveGoldAmount),
-				)
-				room.SendTextVisual(
-					fmt.Sprintf(`<ansi fg="username">%s</ansi> counts out some <ansi fg="gold">gold</ansi> and put it back in their pocket.`, user.Character.Name),
-					user.UserId)
-
-			} else {
+			// Swap the item location
+			if giveItem.ItemId > 0 {
 				userActor := &actions.UserActor{User: user, Room: room}
-				if err := actions.GiveGoldToChar(userActor, giveGoldAmount, targetUser.Character); err != nil {
+				result := actions.GiveItemToChar(userActor, giveWhat, targetUser.Character, targetUser.UserId, 0)
+				if result.Err != nil {
 					user.SendText("Something went wrong.")
 					return true, nil
 				}
 
-				events.AddToQueue(events.EquipmentChange{
-					UserId:     targetUser.UserId,
-					GoldChange: giveGoldAmount,
-				})
-
-				events.AddToQueue(events.EquipmentChange{
-					UserId:     user.UserId,
-					GoldChange: -giveGoldAmount,
-				})
-
 				user.SendText(
-					fmt.Sprintf(`You give <ansi fg="gold">%d gold</ansi> to <ansi fg="username">%s</ansi>.`, giveGoldAmount, targetUser.Character.Name),
+					fmt.Sprintf(`You give the <ansi fg="item">%s</ansi> to <ansi fg="username">%s</ansi>.`, result.Item.DisplayName(), targetUser.Character.Name),
 				)
 				targetUser.SendText(
-					fmt.Sprintf(`<ansi fg="username">%s</ansi> gives you <ansi fg="gold">%d gold</ansi>.`, user.Character.Name, giveGoldAmount),
+					fmt.Sprintf(`<ansi fg="username">%s</ansi> gives you their <ansi fg="item">%s</ansi>.`, user.Character.Name, result.Item.DisplayName()),
 				)
 				room.SendTextVisual(
-					fmt.Sprintf(`<ansi fg="username">%s</ansi> gives <ansi fg="username">%s</ansi> some <ansi fg="gold">gold</ansi>.`, user.Character.Name, targetUser.Character.Name),
+					fmt.Sprintf(`<ansi fg="username">%s</ansi> gives <ansi fg="username">%s</ansi> a <ansi fg="itemname">%s</ansi>.`, user.Character.Name, targetUser.Character.Name, result.Item.NameSimple()),
 					user.UserId,
 					targetUser.UserId)
-			}
-		} else {
-			user.SendText("Something went wrong.")
-		}
 
-		return true, nil
+			} else if giveGoldAmount > 0 {
 
-	}
+				if targetUser.UserId == user.UserId {
 
-	//
-	// Look for an NPC
-	//
-	if mobId > 0 {
+					user.SendText(
+						fmt.Sprintf(`You count out <ansi fg="gold">%d gold</ansi> and put it back in your pocket.`, giveGoldAmount),
+					)
+					room.SendTextVisual(
+						fmt.Sprintf(`<ansi fg="username">%s</ansi> counts out some <ansi fg="gold">gold</ansi> and put it back in their pocket.`, user.Character.Name),
+						user.UserId)
 
-		user.Character.CancelBuffsWithFlag(buffs.Hidden)
-
-		m := mobs.GetInstance(mobId)
-
-		if m != nil {
-
-			// Swap the item location
-			if giveItem.ItemId > 0 || giveGoldAmount > 0 {
-
-				if giveGoldAmount > 0 {
+				} else {
 					userActor := &actions.UserActor{User: user, Room: room}
-					if err := actions.GiveGoldToChar(userActor, giveGoldAmount, &m.Character); err != nil {
+					if err := actions.GiveGoldToChar(userActor, giveGoldAmount, targetUser.Character); err != nil {
 						user.SendText("Something went wrong.")
 						return true, nil
 					}
+
+					events.AddToQueue(events.EquipmentChange{
+						UserId:     targetUser.UserId,
+						GoldChange: giveGoldAmount,
+					})
 
 					events.AddToQueue(events.EquipmentChange{
 						UserId:     user.UserId,
@@ -166,55 +120,68 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 					})
 
 					user.SendText(
-						fmt.Sprintf(`You give <ansi fg="gold">%d gold</ansi> to <ansi fg="username">%s</ansi>.`, giveGoldAmount, m.Character.Name),
+						fmt.Sprintf(`You give <ansi fg="gold">%d gold</ansi> to <ansi fg="username">%s</ansi>.`, giveGoldAmount, targetUser.Character.Name),
+					)
+					targetUser.SendText(
+						fmt.Sprintf(`<ansi fg="username">%s</ansi> gives you <ansi fg="gold">%d gold</ansi>.`, user.Character.Name, giveGoldAmount),
 					)
 					room.SendTextVisual(
-						fmt.Sprintf(`<ansi fg="username">%s</ansi> gave some gold to <ansi fg="mobname">%s</ansi>.`, user.Character.Name, m.Character.Name),
+						fmt.Sprintf(`<ansi fg="username">%s</ansi> gives <ansi fg="username">%s</ansi> some <ansi fg="gold">gold</ansi>.`, user.Character.Name, targetUser.Character.Name),
 						user.UserId,
-					)
-				} else {
+						targetUser.UserId)
+				}
+			} else {
+				user.SendText("Something went wrong.")
+			}
 
-					// Check quest engine first — it may intercept the give before
-					// the item is transferred to the mob.
-					bridge := questengine.NewGameBridge(user, room.RoomId)
-					qResult := questengine.GetEngine().Notify("item_give", questengine.EventDetails{
-						UserId: user.UserId,
-						RoomId: room.RoomId,
-						MobId:  int(m.MobId),
-						ItemId: giveItem.ItemId,
-					}, bridge, bridge)
+			return true, nil
+		}
 
-					if qResult.Handled && qResult.ConsumeItem {
-						// Quest engine consumed the item — remove from player only,
-						// do NOT transfer to mob and do NOT fire onGive script.
-						user.Character.RemoveItem(giveItem)
+		//
+		// Mob target
+		//
+		m := target.(*actions.MobActor).Mob
 
-						user.SendText(
-							fmt.Sprintf(`You give the <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, giveItem.DisplayName(), m.Character.Name),
-						)
-						room.SendTextVisual(
-							fmt.Sprintf(`<ansi fg="username">%s</ansi> gave their <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, user.Character.Name, giveItem.DisplayName(), m.Character.Name),
-							user.UserId,
-						)
+		user.Character.CancelBuffsWithFlag(buffs.Hidden)
 
-						events.AddToQueue(events.ItemOwnership{
-							UserId: user.UserId,
-							Item:   giveItem,
-							Gained: false,
-						})
+		// Swap the item location
+		if giveItem.ItemId > 0 || giveGoldAmount > 0 {
 
-						return true, nil
-					}
+			if giveGoldAmount > 0 {
+				userActor := &actions.UserActor{User: user, Room: room}
+				if err := actions.GiveGoldToChar(userActor, giveGoldAmount, &m.Character); err != nil {
+					user.SendText("Something went wrong.")
+					return true, nil
+				}
 
-					// Normal flow — transfer item to mob via atomic transfer.
-					userActor := &actions.UserActor{User: user, Room: room}
-					result := actions.GiveItemToChar(userActor, giveWhat, &m.Character, 0, m.InstanceId)
-					if result.Err != nil {
-						user.SendText("Something went wrong.")
-						return true, nil
-					}
-					// Update giveItem so onGive scripting below has the live value.
-					giveItem = result.Item
+				events.AddToQueue(events.EquipmentChange{
+					UserId:     user.UserId,
+					GoldChange: -giveGoldAmount,
+				})
+
+				user.SendText(
+					fmt.Sprintf(`You give <ansi fg="gold">%d gold</ansi> to <ansi fg="username">%s</ansi>.`, giveGoldAmount, m.Character.Name),
+				)
+				room.SendTextVisual(
+					fmt.Sprintf(`<ansi fg="username">%s</ansi> gave some gold to <ansi fg="mobname">%s</ansi>.`, user.Character.Name, m.Character.Name),
+					user.UserId,
+				)
+			} else {
+
+				// Check quest engine first — it may intercept the give before
+				// the item is transferred to the mob.
+				bridge := questengine.NewGameBridge(user, room.RoomId)
+				qResult := questengine.GetEngine().Notify("item_give", questengine.EventDetails{
+					UserId: user.UserId,
+					RoomId: room.RoomId,
+					MobId:  int(m.MobId),
+					ItemId: giveItem.ItemId,
+				}, bridge, bridge)
+
+				if qResult.Handled && qResult.ConsumeItem {
+					// Quest engine consumed the item — remove from player only,
+					// do NOT transfer to mob and do NOT fire onGive script.
+					user.Character.RemoveItem(giveItem)
 
 					user.SendText(
 						fmt.Sprintf(`You give the <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, giveItem.DisplayName(), m.Character.Name),
@@ -224,28 +191,53 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 						user.UserId,
 					)
 
-				}
+					events.AddToQueue(events.ItemOwnership{
+						UserId: user.UserId,
+						Item:   giveItem,
+						Gained: false,
+					})
 
-				// Behavior tree: try before JS
-				if behaviortree.TryMobBehavior(m.InstanceId, behaviortree.EventContext{
-					EventType: "player_give",
-					UserId:    user.UserId,
-					ItemId:    giveItem.ItemId,
-					RoomId:    room.RoomId,
-				}) {
 					return true, nil
 				}
 
-				if giveGoldAmount > 0 {
-					m.Command(`emote counts his gold coins and chuckles a bit.`)
-				} else {
-					m.Command(fmt.Sprintf(`emote considers the <ansi fg="itemname">%s</ansi> for a moment.`, giveItem.DisplayName()))
-					m.Command(fmt.Sprintf(`gearup !%d`, giveItem.ItemId))
+				// Normal flow — transfer item to mob via atomic transfer.
+				userActor := &actions.UserActor{User: user, Room: room}
+				result := actions.GiveItemToChar(userActor, giveWhat, &m.Character, 0, m.InstanceId)
+				if result.Err != nil {
+					user.SendText("Something went wrong.")
+					return true, nil
 				}
-			} else {
-				user.SendText("Something went wrong.")
+				// Update giveItem so onGive scripting below has the live value.
+				giveItem = result.Item
+
+				user.SendText(
+					fmt.Sprintf(`You give the <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, giveItem.DisplayName(), m.Character.Name),
+				)
+				room.SendTextVisual(
+					fmt.Sprintf(`<ansi fg="username">%s</ansi> gave their <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, user.Character.Name, giveItem.DisplayName(), m.Character.Name),
+					user.UserId,
+				)
+
 			}
 
+			// Behavior tree: try before JS
+			if behaviortree.TryMobBehavior(m.InstanceId, behaviortree.EventContext{
+				EventType: "player_give",
+				UserId:    user.UserId,
+				ItemId:    giveItem.ItemId,
+				RoomId:    room.RoomId,
+			}) {
+				return true, nil
+			}
+
+			if giveGoldAmount > 0 {
+				m.Command(`emote counts his gold coins and chuckles a bit.`)
+			} else {
+				m.Command(fmt.Sprintf(`emote considers the <ansi fg="itemname">%s</ansi> for a moment.`, giveItem.DisplayName()))
+				m.Command(fmt.Sprintf(`gearup !%d`, giveItem.ItemId))
+			}
+		} else {
+			user.SendText("Something went wrong.")
 		}
 
 		return true, nil

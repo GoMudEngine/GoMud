@@ -1375,6 +1375,30 @@ func TestRoom_AddTemporaryExit(t *testing.T) {
 		assert.Len(t, r.ExitsTemp, 1)
 	})
 
+	t.Run("ephemeral_overwrite_allowed", func(t *testing.T) {
+		r2 := &Room{}
+		r2.AddTemporaryExit("eph_portal", exit.TemporaryRoomExit{RoomId: ephemeralRoomIdMinimum + 10, UserId: 1})
+		added := r2.AddTemporaryExit("eph_portal", exit.TemporaryRoomExit{RoomId: ephemeralRoomIdMinimum + 20, UserId: 2})
+		assert.True(t, added)
+		assert.Equal(t, ephemeralRoomIdMinimum+20, r2.ExitsTemp["eph_portal"].RoomId)
+	})
+
+	t.Run("mixed_existing_ephemeral_new_normal_rejected", func(t *testing.T) {
+		r3 := &Room{}
+		r3.AddTemporaryExit("eph_portal", exit.TemporaryRoomExit{RoomId: ephemeralRoomIdMinimum + 30, UserId: 1})
+		added := r3.AddTemporaryExit("eph_portal", exit.TemporaryRoomExit{RoomId: 500, UserId: 2})
+		assert.False(t, added)
+		assert.Equal(t, ephemeralRoomIdMinimum+30, r3.ExitsTemp["eph_portal"].RoomId)
+	})
+
+	t.Run("mixed_existing_normal_new_ephemeral_rejected", func(t *testing.T) {
+		r4 := &Room{}
+		r4.AddTemporaryExit("portal", exit.TemporaryRoomExit{RoomId: 600, UserId: 1})
+		added := r4.AddTemporaryExit("portal", exit.TemporaryRoomExit{RoomId: ephemeralRoomIdMinimum + 40, UserId: 2})
+		assert.False(t, added)
+		assert.Equal(t, 600, r4.ExitsTemp["portal"].RoomId)
+	})
+
 	t.Run("empty title defaults to exit name", func(t *testing.T) {
 		added := r.AddTemporaryExit("rift", exit.TemporaryRoomExit{RoomId: 300, UserId: 3})
 		assert.True(t, added)

@@ -77,7 +77,7 @@ func BroadcastHints(e events.Event) events.ListenerReturn {
 
 		// Check opt-out: hints default to ON (nil = on)
 		hintsOpt := u.GetConfigOption(hintConfigKey)
-		if hintsOpt != nil && !hintsOpt.(bool) {
+		if b, ok := hintsOpt.(bool); ok && !b {
 			continue
 		}
 

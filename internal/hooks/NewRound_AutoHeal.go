@@ -5,6 +5,7 @@ import (
 	"math"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
@@ -59,35 +60,16 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 		inCombat := user.Character.Aggro != nil
 		healthStart := user.Character.Health
 
-		// ── Downed state: health bleedout only ───────────────────────
-		// Only health causes death. Stamina and conviction bottom out at
-		// 0 and recover via normal regen — the resource depletion penalties
-		// already provide meaningful gameplay consequences for low pools.
+		// Death on zero — any path that dropped Health below 1 (damage,
+		// DoT, grenade, etc.) gets caught here on the next round tick and
+		// converted into a suicide (drops items/money, transports to the
+		// land of the dead). DoCombat's end-of-round resolution handles
+		// the same check for in-combat deaths; AutoHeal is the catch-all
+		// for non-combat deaths (grenade, DoT outside combat, etc.).
 		if user.Character.Health < 1 {
-
-			if user.Character.Health <= -10 {
-				user.Command(`suicide`)
-				continue
-			}
-			user.Character.Health -= 2
-			user.SendText(`<ansi fg="red">you are bleeding out!</ansi>`)
-			if room := rooms.LoadRoom(user.Character.RoomId); room != nil {
-				sendVisualRoomText(room, fmt.Sprintf(
-					`<ansi fg="username">%s</ansi> is <ansi fg="red">bleeding out</ansi>!`,
-					user.Character.Name), user.UserId)
-			}
-
-			// If it has changed, send an update
-			if user.Character.Health-healthStart != 0 {
-				events.AddToQueue(events.RedrawPrompt{UserId: user.UserId, OnlyIfChanged: true}, 100)
-				events.AddToQueue(events.CharacterVitalsChanged{UserId: user.UserId})
-			}
-
-			continue // Skip all regen while health is depleted
+			user.Command(`suicide`)
+			continue
 		}
-
-		// ── Not downed: reset downed counter, normal regen ──────────
-		user.Character.DownedRounds = 0
 
 		// Toxicity decay
 		if user.Character.Toxicity > 0 {
@@ -178,6 +160,14 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 				}
 				user.Character.Heal(healAmt)
 
+				// Emit tick feedback while a heal-spell ConditionRegen is active
+				// so players get confirmation their mend-wounds (or similar) is working.
+				if user.Character.HasCondition(characters.ConditionRegen) {
+					user.SendText(fmt.Sprintf(
+						`<ansi fg="green">Your wounds knit closed. (%s)</ansi>`,
+						combat.GetHealDescription(healAmt, user.Character.HealthMax.Value)))
+				}
+
 			} else {
 				// In combat: no base regen, but ConditionRegen (heal spell) still applies
 				if user.Character.HasCondition(characters.ConditionRegen) {
@@ -187,6 +177,9 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 						healAmt = 1
 					}
 					user.Character.Heal(healAmt)
+					user.SendText(fmt.Sprintf(
+						`<ansi fg="green">Your wounds knit closed. (%s)</ansi>`,
+						combat.GetHealDescription(healAmt, user.Character.HealthMax.Value)))
 				}
 			}
 
@@ -197,9 +190,6 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 					poisonDmg = 1
 				}
 				user.Character.Health -= poisonDmg
-				if user.Character.Health < -10 {
-					user.Character.Health = -10
-				}
 				user.SendText(`<ansi fg="green">The poison burns through your veins!</ansi>`)
 			}
 
@@ -210,9 +200,6 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 					bleedDmg = 1
 				}
 				user.Character.Health -= bleedDmg
-				if user.Character.Health < -10 {
-					user.Character.Health = -10
-				}
 				user.SendText(`<ansi fg="red">Blood seeps from your wounds!</ansi>`)
 			}
 		}

@@ -2,6 +2,8 @@ package behaviortree
 
 import (
 	"testing"
+
+	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
 
 func TestCondKeywordMatch_Hit(t *testing.T) {
@@ -277,5 +279,102 @@ func TestCondAllNewRegistered(t *testing.T) {
 		if LookupCondition(name) == nil {
 			t.Errorf("condition %q not registered", name)
 		}
+	}
+}
+
+// Phase 4c condition tests
+
+func TestCondCommandMatches_Hit(t *testing.T) {
+	fn := LookupCondition("command_matches")
+	if fn == nil {
+		t.Fatal("command_matches not registered")
+	}
+
+	params := map[string]any{"commands": []any{"look", "examine"}}
+	ctx := &EvalContext{Event: EventContext{Command: "look"}}
+	if result := fn(params, ctx); result != Success {
+		t.Errorf("expected Success for command 'look', got %v", result)
+	}
+}
+
+func TestCondCommandMatches_Miss(t *testing.T) {
+	fn := LookupCondition("command_matches")
+
+	params := map[string]any{"commands": []any{"look", "examine"}}
+	ctx := &EvalContext{Event: EventContext{Command: "east"}}
+	if result := fn(params, ctx); result != Failure {
+		t.Errorf("expected Failure for command 'east', got %v", result)
+	}
+}
+
+func TestCondCommandMatches_MissingParam(t *testing.T) {
+	fn := LookupCondition("command_matches")
+
+	params := map[string]any{}
+	ctx := &EvalContext{Event: EventContext{Command: "look"}}
+	if result := fn(params, ctx); result != Failure {
+		t.Errorf("expected Failure when 'commands' param absent, got %v", result)
+	}
+}
+
+func TestCondCommandRestContains_Hit(t *testing.T) {
+	fn := LookupCondition("command_rest_contains")
+	if fn == nil {
+		t.Fatal("command_rest_contains not registered")
+	}
+
+	// "chest" in mixed-case rest — verify case-insensitive match
+	params := map[string]any{"keywords": []any{"chest"}}
+	ctx := &EvalContext{Event: EventContext{Rest: "open the wooden CHEST"}}
+	if result := fn(params, ctx); result != Success {
+		t.Errorf("expected Success for case-insensitive rest match, got %v", result)
+	}
+}
+
+func TestCondCommandRestContains_EmptyRest(t *testing.T) {
+	fn := LookupCondition("command_rest_contains")
+
+	params := map[string]any{"keywords": []any{"chest"}}
+	ctx := &EvalContext{Event: EventContext{Rest: ""}}
+	if result := fn(params, ctx); result != Failure {
+		t.Errorf("expected Failure for empty rest, got %v", result)
+	}
+}
+
+func TestCondMobInRoom_Hit(t *testing.T) {
+	fn := LookupCondition("mob_in_room")
+	if fn == nil {
+		t.Fatal("mob_in_room not registered")
+	}
+
+	cleanRoom := seedTestRoom(t, 1, "TestZone")
+	defer cleanRoom()
+	cleanMob := seedTestMob(t, 5, 105, 1, "Goblin")
+	defer cleanMob()
+
+	// seedTestMob registers the instance in the mob registry but does NOT
+	// wire it into the room's mob list — add it explicitly.
+	room := rooms.LoadRoom(1)
+	if room == nil {
+		t.Fatal("seedTestRoom did not register room 1")
+	}
+	room.AddMob(105)
+
+	params := map[string]any{"mob_id": 5}
+	ctx := &EvalContext{RoomId: 1}
+	if result := fn(params, ctx); result != Success {
+		t.Errorf("expected Success when mob template 5 is in room, got %v", result)
+	}
+}
+
+func TestCondMobInRoom_NoRoom(t *testing.T) {
+	fn := LookupCondition("mob_in_room")
+
+	// No room seeded — LoadRoom(99) should return nil; condition must Fail
+	// without panicking.
+	params := map[string]any{"mob_id": 5}
+	ctx := &EvalContext{RoomId: 99}
+	if result := fn(params, ctx); result != Failure {
+		t.Errorf("expected Failure when room does not exist, got %v", result)
 	}
 }

@@ -40,19 +40,19 @@ tree:
             mob_id: 313
             count: 1
             base_pool: 60
-            hostile: "true"
+            hostile: true
           - type: action
             do: summon_companion
             mob_id: 311
             count: 1
             base_pool: 60
-            hostile: "true"
+            hostile: true
           - type: action
             do: summon_companion
             mob_id: 310
             count: 1
             base_pool: 60
-            hostile: "true"
+            hostile: true
 
     # ── PHASE 1: mob_hurt — revelation (fires once) ──
     - type: sequence
@@ -91,19 +91,19 @@ tree:
           mob_id: 313
           count: 1
           base_pool: 60
-          hostile: "true"
+          hostile: true
         - type: action
           do: summon_companion
           mob_id: 311
           count: 1
           base_pool: 60
-          hostile: "true"
+          hostile: true
         - type: action
           do: summon_companion
           mob_id: 310
           count: 1
           base_pool: 60
-          hostile: "true"
+          hostile: true
         - type: action
           do: send_room_text
           text: >-

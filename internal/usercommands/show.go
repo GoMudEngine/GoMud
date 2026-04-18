@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
-	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -39,77 +39,56 @@ func Show(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
-	playerId, mobId := room.FindByName(targetName)
-
-	if playerId > 0 {
-
-		user.Character.CancelBuffsWithFlag(buffs.Hidden)
-
-		targetUser := users.GetByUserId(playerId)
-
-		// Swap the item location
-		if showItem.ItemId > 0 {
-
-			// Tell the shower
-			user.SendText(
-				fmt.Sprintf(`You show the <ansi fg="item">%s</ansi> to <ansi fg="username">%s</ansi>.`, showItem.DisplayName(), targetUser.Character.Name),
-			)
-
-			// Tell the Showee
-			targetUser.SendText(
-				fmt.Sprintf(`<ansi fg="username">%s</ansi> shows you their <ansi fg="item">%s</ansi>.`, user.Character.Name, showItem.DisplayName()),
-			)
-
-			targetUser.SendText(
-				"\n" + showItem.GetLongDescription() + "\n",
-			)
-
-			// Tell the rest of the room
-			room.SendTextVisual(
-				fmt.Sprintf(`<ansi fg="username">%s</ansi> shows their <ansi fg="item">%s</ansi> to <ansi fg="username">%s</ansi>.`, user.Character.Name, showItem.DisplayName(), targetUser.Character.Name),
-				targetUser.UserId,
-				user.UserId)
-
-		} else {
-			user.SendText("Something went wrong.")
-		}
-
-		return true, nil
-
-	}
-
-	//
-	// Look for an NPC
-	//
-	if mobId > 0 {
-
-		user.Character.CancelBuffsWithFlag(buffs.Hidden)
-
-		targetMob := mobs.GetInstance(mobId)
-
-		if targetMob != nil {
-
-			if showItem.ItemId > 0 {
-
-				user.SendText(
-					fmt.Sprintf(`You show the <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, showItem.DisplayName(), targetMob.Character.Name),
-				)
-
-				room.SendTextVisual(
-					fmt.Sprintf(`<ansi fg="username">%s</ansi> shows their <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, user.Character.Name, showItem.DisplayName(), targetMob.Character.Name),
-					user.UserId,
-				)
-
-			} else {
-				user.SendText("Something went wrong.")
-			}
-
-		}
-
+	target, err := actions.ResolveTargetActor(room, targetName)
+	if err != nil {
+		user.SendText("Who???")
 		return true, nil
 	}
 
-	user.SendText("Who???")
+	user.Character.CancelBuffsWithFlag(buffs.Hidden)
+
+	if showItem.ItemId == 0 {
+		user.SendText("Something went wrong.")
+		return true, nil
+	}
+
+	if target.IsPlayer() {
+
+		targetUser := target.(*actions.UserActor).User
+
+		// Tell the shower
+		user.SendText(
+			fmt.Sprintf(`You show the <ansi fg="item">%s</ansi> to <ansi fg="username">%s</ansi>.`, showItem.DisplayName(), targetUser.Character.Name),
+		)
+
+		// Tell the Showee
+		targetUser.SendText(
+			fmt.Sprintf(`<ansi fg="username">%s</ansi> shows you their <ansi fg="item">%s</ansi>.`, user.Character.Name, showItem.DisplayName()),
+		)
+
+		targetUser.SendText(
+			"\n" + showItem.GetLongDescription() + "\n",
+		)
+
+		// Tell the rest of the room
+		room.SendTextVisual(
+			fmt.Sprintf(`<ansi fg="username">%s</ansi> shows their <ansi fg="item">%s</ansi> to <ansi fg="username">%s</ansi>.`, user.Character.Name, showItem.DisplayName(), targetUser.Character.Name),
+			targetUser.UserId,
+			user.UserId)
+
+	} else {
+
+		targetMob := target.(*actions.MobActor).Mob
+
+		user.SendText(
+			fmt.Sprintf(`You show the <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, showItem.DisplayName(), targetMob.Character.Name),
+		)
+
+		room.SendTextVisual(
+			fmt.Sprintf(`<ansi fg="username">%s</ansi> shows their <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, user.Character.Name, showItem.DisplayName(), targetMob.Character.Name),
+			user.UserId,
+		)
+	}
 
 	return true, nil
 }

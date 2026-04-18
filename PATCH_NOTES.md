@@ -1,5 +1,186 @@
 # DOGMud Patch Notes
 
+## 2026-04-18 — Combat unification, target resolution, bleedout removal, lots of fixes
+
+### Gameplay
+
+- **Bleedout removed.** Health <= 0 = dead, for both players and mobs.
+  No more "downed" two-tier rule, no PlayerDrop event, no
+  CoupDeGraceRounds. One-shot kills and DoT kills are now possible.
+  ~270 lines of bleedout-specific code removed.
+- **Death respawn at 5% of max pools (was 100% since the shadow-realm
+  removal).** Restores the "death run brake" that was unintentionally
+  dropped during the JS Audit Phase 4c. Respawning weakened means you
+  have to recover before your next attempt at whatever killed you.
+  Configurable via new `Death.RespawnPoolFraction` knob; per-pool
+  minimum of 1 so respawn doesn't immediately re-trigger the death
+  check. Operators who want full restore can set 1.0.
+- **PvP combat gains parity with PvE.** As part of the
+  combat-quadrant unification (see below), PvP now correctly applies:
+  - Adrenaline buff (low-HP stamina boost)
+  - Return damage (thorns / spikes / spell deflection feedback)
+  - Lifesteal (vampiric weapon enchant)
+  - Moon-mod stat shifts on mutated combatants
+  These were all missing from the legacy PvP-only handler.
+
+### Combat & AI Fixes
+
+- **MvM (mob vs mob) parity gaps closed:**
+  - Defender mobs now receive `OnCritReceived` on crit hits (PvM/MvP/PvP
+    already did).
+  - Attacker mobs now fire `OnCriticalSuccess` / `OnCriticalFailure`
+    callbacks on crit rolls (was only firing OnSkillUse).
+  - Attacker mobs now emit room-visible stat-gain messages when
+    `OnStatUse` returns true (was discarding the bool).
+- **PvM defender `combat_start` AI signal preserved.** Previously
+  emitted in a function that the unification was about to delete; now
+  in the unified resolver, gated to PvM only. Reactive AI for first-
+  round mob deaths no longer silently breaks.
+- **Legacy MvP ConditionShield double-dip removed.** Player defenders
+  with Minor Shield were getting magnitude/2 reduction applied on top
+  of the magnitude already counted by the mitigation layer. Stage 11.4
+  leftover from before mitigation was unified. Single application now.
+- **Crit feedback on PvM/MvP no longer drops attacker text.** The
+  return-damage room broadcast in PvM correctly excludes the
+  attacking player from the third-person message.
+- **Edrin engages after his revelation.** Was firing `combat_start`
+  once and then sitting idle while you fought his elementals. Now has
+  a `single_target` fallback tactic.
+- **Behavior tree `hostile` param is now a real bool** (was string
+  `"true"`). Backward compatible via `getBoolParam` helper that
+  accepts both forms.
+- **Knuckles only progress unarmed-combat.** Dual-wielding knuckles
+  was incorrectly triggering weapon-combat progression alongside
+  unarmed-combat. Extracted `isDualWieldingWeaponCombat` helper that
+  checks at least one weapon routes to weapon-combat before granting
+  its progression.
+- **Dismiss is peaceful for crafted companions.** Mage-crafted
+  companions (Summoned, Conjured, Raised) dissolve immediately
+  instead of going hostile and lingering for 5 minutes. Charmed wild
+  creatures keep the betrayal-turns-hostile behavior (thematically
+  correct).
+
+### Spell Fixes
+
+- **Summon spells check their component before casting.** Previously
+  summon-steppe-spirit / raise-* / conjure-* validated only their
+  ComponentTag, missing SummonComponentId. The full cast animation
+  ran and consumed conviction before failing at resolution with
+  "You lack the required component." Now caught at cast init.
+- **Fumbled spells no longer succeed.** Summon, charm, fold-anchor,
+  fold-recall, and purge-affliction used to run their primary effect
+  even on a fumbled cast (you took backfire damage AND got the
+  summon). Now the fumble cleanly aborts the effect; component
+  consumption stays unconditional (failed binding ate the catalyst).
+  Covers 13 summon spells + charm + 3 Go hooks.
+- **`ConditionRegen` heal-tick text** now emits per-tick "wounds knit
+  closed" feedback while the regen is active.
+
+### Commands
+
+- **`rally` and `warcry` no longer slip through during crafting.**
+  Both now check `IsCrafting()` and refuse with a thematic message,
+  matching the `craft.go` re-entry pattern. (Broader audit of other
+  active commands tracked as future work.)
+
+### Refactor: Combat-quadrant unification
+
+- **Four parallel `handle{P,M}vs{P,M}` combat handlers collapsed into
+  a single `handleCombatRound(atk, def actions.Actor, ...)`** in
+  `internal/hooks/NewRound_DoCombat_unified.go`. Eight named phase
+  helpers (target resolve, wait round, attack roll, damage bonuses,
+  crit + messaging, progression, behavior trigger, aggro + assist,
+  round resolution). Routing strategy: `IsPlayer()` checks at leaf
+  sites where divergence is required; no Quadrant enum.
+- Future parity gaps are now structurally impossible — any new
+  combat logic added to the unified handler applies to all four
+  quadrants by default. Quadrant divergence requires explicit
+  `IsPlayer()` gating + reason comment.
+- New cross-package test harness:
+  `behaviortree.SetMobTreeForTest`,
+  `items.SeedAttackMessagesForTest`. Structural routing test drives
+  all four quadrant pairs (UU / UM / MU / MM) through
+  `handleCombatRound` end-to-end.
+
+### Refactor: Target resolution
+
+- **`actions.ResolveTargetActor(room, name, opts...) (Actor, error)`**
+  consolidates the `room.FindByName + GetInstance + nil-check` chain
+  that was reimplemented ~37 times across user/mob commands with
+  subtle variations. Sentinel errors (`ErrTargetNotFound`,
+  `ErrTargetVanished`) let callers give precise error messages.
+- New `actions.NewUserActor` / `NewMobActor` /
+  `NewUserActorInRoom` / `NewMobActorInRoom` constructors.
+- Closes the latent-nil-crash class (e.g., `attack.go:27` was
+  derefing a nil mob via `m.Character.Aggro` unguarded).
+- Two minor UX wins fall out: `ask <player>` now errors cleanly
+  ("You can't ask another player.") instead of silently
+  fall-through; `party invite <mob>` errors cleanly ("You can only
+  invite players to your party.") instead of "Something went wrong."
+
+### Refactor: Rooms package
+
+- **`AddTemporaryExit` now correctly enforces no-overwrite contract**
+  while explicitly allowing the legitimate ephemeral-portal →
+  ephemeral-portal overwrite case. Closes a long-standing failing
+  test from the Stage 1.5 audit.
+- **Instance cleanup chain consolidated in `CheckPortalTimers`** —
+  TTL-triggered chain (boot players → Remove ephemeral rooms →
+  EvictRoomBTreeState via callback → TryEphemeralCleanup) replaces
+  the deleted CleanupEmptyInstances. Resolves the catch-22 where
+  ephemeral rooms couldn't garbage-collect while their instance
+  stayed registered.
+- **`behaviortree.EvictRoomBTreeState` wired up via callback in
+  `main.go`**, avoiding the rooms→behaviortree import cycle.
+
+## 2026-04-17 — Code Cleanup Stage 1 complete (1.2a, 1.5, 1.6, 1.8)
+
+**Stage 1 of the code cleanup roadmap is now complete (substages
+1.1–1.8).** Four substages this day; see prior notes for 1.1 / 1.2b
+/ 1.2c / 1.3 / 1.4 / 1.7.
+
+### Stage 1.2a — Combat + Spell god-function refactor
+
+- `handlePlayerVsMob` 286 → 39 lines.
+- `handleMobVsPlayer` 236 → 82 lines.
+- `applyMobEffect` 246 → 26 lines.
+- New `internal/hooks/NewRound_DoCombat_resolution.go` holds combat
+  phase helpers; spell case helpers inlined.
+- Includes parity fix: PvM return-damage room broadcast now excludes
+  the attacker (MvP already did).
+- Removed dead "tame" EffectType (superseded by charm).
+
+### Stage 1.5 — Error Handling Audit
+
+- Audited code paths added after Phase 37.3a/b sweep.
+- 3 Critical fixed: `spell_purgeaffliction` nil guard, two unsafe
+  type assertions in `NewRound_BroadcastHints` and
+  `RedrawPrompt_SendRedraw`.
+- `mudlog.SetupLogger` panics → `log.Fatalf` (only intentional
+  behavior change — the panic was uncatchable).
+- Sable portal refund paths + admin dashboard nil-checks +
+  behaviortree codebase all verified clean.
+
+### Stage 1.6 — Test Coverage for New Systems
+
+- 24 additive Go unit tests across 4 files: 6 room btree engine,
+  7 Phase 4c conditions, 9 Phase 4c actions, 1 actSummonCompanion
+  hostile, 1 give.go quest-engine vs btree handoff regression.
+- Zero production code change.
+
+### Stage 1.8 — Behavior Tree Engine Robustness
+
+- **Panic-safe `DrainQueue`** via `safeExecuteDelayed` wrapper.
+  Panics in delayed-action closures (typically caused by closures
+  over destroyed mobs/rooms/users) are now recovered and logged
+  at `mudlog.Error` instead of crashing the engine round tick.
+- **`EvictRoomBTreeState(roomId)` API** with no-op-on-missing
+  semantics. Wired up via callback in 2026-04-18's rooms-package
+  pass.
+- Negative-cache hot-reload assumption documented with
+  `TODO(hot-reload)` marker. (No hot-reload exists today, so the
+  cache is correct; comment for future-you when it's added.)
+
 ## 2026-04-16 — Code Cleanup 1.7: Performance Pass + Bug Fixes
 
 ### Performance (Stage 1.7)

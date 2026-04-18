@@ -443,9 +443,19 @@ func (r *Room) RemoveTemporaryExit(t exit.TemporaryRoomExit) bool {
 	return false
 }
 
-// AddTemporaryExit adds (or replaces) a temporary exit. Replacing an
-// existing exit with the same key allows instance portals to be
-// upgraded without waiting for the old timer to expire.
+// AddTemporaryExit adds a temporary exit by exitName. Returns true if
+// the exit was stored, false if rejected.
+//
+// Three-path rule:
+//   - No existing exit with this name → store, return true.
+//   - Existing exit with this name AND both the existing and new
+//     exits target ephemeral RoomIds (instance-portal upgrade case,
+//     e.g. Sable opening a second portal of the same name to a new
+//     ephemeral entry while the old portal is still in TTL) →
+//     overwrite, return true.
+//   - Existing exit with this name in any other case → leave the
+//     existing exit alone, return false. Don't stomp a regular temp
+//     exit with a portal, and don't stomp a portal with a non-portal.
 func (r *Room) AddTemporaryExit(exitName string, t exit.TemporaryRoomExit) bool {
 
 	t.SpawnedRound = util.GetRoundCount()
@@ -457,6 +467,13 @@ func (r *Room) AddTemporaryExit(exitName string, t exit.TemporaryRoomExit) bool 
 	if len(t.Title) == 0 {
 		t.Title = exitName
 	}
+
+	if existing, present := r.ExitsTemp[exitName]; present {
+		if !(IsEphemeralRoomId(existing.RoomId) && IsEphemeralRoomId(t.RoomId)) {
+			return false
+		}
+	}
+
 	r.ExitsTemp[exitName] = t
 	return true
 }
