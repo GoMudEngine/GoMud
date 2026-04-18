@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -117,6 +118,10 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	}
 
 	// 6.5. Component check — must have the required item in inventory.
+	// Two separate mechanisms: ComponentTag (generic tag-based, consumed at
+	// resolution) and SummonComponentId (specific item id, used by summon
+	// spells and consumed in companion_summon.go). Both pre-validated here
+	// so a missing component rejects the cast BEFORE the animation runs.
 	if spellInfo.ComponentTag != "" {
 		found := false
 		for _, itm := range user.Character.Items {
@@ -129,6 +134,27 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			user.SendText(fmt.Sprintf(
 				`<ansi fg="red">%s requires a %s in your inventory.</ansi>`,
 				spellInfo.Name, spellInfo.ComponentTag))
+			return true, nil
+		}
+	}
+	if spellInfo.SummonComponentId > 0 {
+		found := false
+		for _, itm := range user.Character.Items {
+			if itm.ItemId == spellInfo.SummonComponentId {
+				found = true
+				break
+			}
+		}
+		if !found {
+			componentName := fmt.Sprintf("item #%d", spellInfo.SummonComponentId)
+			if spec := items.GetItemSpec(spellInfo.SummonComponentId); spec != nil && spec.NameSimple != "" {
+				componentName = spec.NameSimple
+			} else if spec != nil && spec.Name != "" {
+				componentName = spec.Name
+			}
+			user.SendText(fmt.Sprintf(
+				`<ansi fg="red">%s requires a %s in your inventory.</ansi>`,
+				spellInfo.Name, componentName))
 			return true, nil
 		}
 	}
