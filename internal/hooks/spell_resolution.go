@@ -86,6 +86,10 @@ func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData
 	}
 
 	// --- Resolve against mob targets ---
+	// castFumbled tracks whether ANY per-target roll fumbled (ZScore <= -2.0).
+	// A fumble gates the post-target effects (summon, charm, Go hooks) below
+	// so a summon-spell caster who fumbles doesn't still get the companion.
+	castFumbled := false
 	targetsResolved := 0
 	for _, mobInstId := range cs.TargetMobInstanceIds {
 		mob := mobs.GetInstance(mobInstId)
@@ -95,7 +99,9 @@ func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData
 		if mob.Character.RoomId != room.RoomId {
 			continue // target left the room before spell resolved
 		}
-		resolveAgainstMob(user, mob, room, spellData, spellAttack, magnitude)
+		if resolveAgainstMob(user, mob, room, spellData, spellAttack, magnitude) {
+			castFumbled = true
+		}
 		targetsResolved++
 	}
 
@@ -118,7 +124,9 @@ func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData
 			// Help spell with no defense — always applies
 			applyPlayerEffect(user, targetUser, room, spellData, magnitude, false)
 		} else {
-			resolveAgainstPlayer(user, targetUser, room, spellData, spellAttack, magnitude)
+			if resolveAgainstPlayer(user, targetUser, room, spellData, spellAttack, magnitude) {
+				castFumbled = true
+			}
 		}
 		targetsResolved++
 	}
@@ -162,12 +170,22 @@ func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData
 		}
 		textutil.SendPhaseText(spellData.MagicUserText, spellData.MagicRoomText, tCtx, "pink", cfg)
 	}
+	// Fumble gate for the post-target effects (summon / charm / Go hooks).
+	// A fumbled cast consumed conviction + component but should NOT also land
+	// the primary effect. A single flavor message; individual blocks skip
+	// silently so we don't spam the player.
+	if castFumbled && spellData != nil &&
+		(spellData.SummonMobId > 0 || spellData.EffectType == "charm" ||
+			cs.SpellId == "fold-anchor" || cs.SpellId == "fold-recall" || cs.SpellId == "purge-affliction") {
+		user.SendText(`<ansi fg="red">The weave unravels — the spell fails to take shape.</ansi>`)
+	}
+
 	// Resolve companion summon (if configured)
-	if spellData != nil && spellData.SummonMobId > 0 {
+	if !castFumbled && spellData != nil && spellData.SummonMobId > 0 {
 		resolveCompanionSummon(user, spellData, cs.SpellRest, room)
 	}
 	// Resolve charm spell
-	if spellData != nil && spellData.EffectType == "charm" {
+	if !castFumbled && spellData != nil && spellData.EffectType == "charm" {
 		if len(cs.TargetMobInstanceIds) > 0 {
 			if targetMob := mobs.GetInstance(cs.TargetMobInstanceIds[0]); targetMob != nil {
 				resolveCharmSpell(user, targetMob, room)
@@ -176,22 +194,26 @@ func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData
 	}
 
 	// --- Go spell hooks — dispatch before JS scripts ---
-	switch cs.SpellId {
-	case "fold-anchor":
-		resolveFoldAnchor(user)
-		return
-	case "fold-recall":
-		resolveFoldRecall(user)
-		return
-	case "purge-affliction":
-		if len(cs.TargetUserIds) > 0 {
-			if targetUser := users.GetByUserId(cs.TargetUserIds[0]); targetUser != nil {
-				resolvePurgeAffliction(user, targetUser)
+	// Fumble aborts the hook body but falls through to the component-consume
+	// block below so the catalyst is still used up.
+	if !castFumbled {
+		switch cs.SpellId {
+		case "fold-anchor":
+			resolveFoldAnchor(user)
+			return
+		case "fold-recall":
+			resolveFoldRecall(user)
+			return
+		case "purge-affliction":
+			if len(cs.TargetUserIds) > 0 {
+				if targetUser := users.GetByUserId(cs.TargetUserIds[0]); targetUser != nil {
+					resolvePurgeAffliction(user, targetUser)
+				}
+			} else {
+				resolvePurgeAffliction(user, user) // self-cast
 			}
-		} else {
-			resolvePurgeAffliction(user, user) // self-cast
+			return
 		}
-		return
 	}
 
 	// --- Consume component if required ---
@@ -201,7 +223,11 @@ func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData
 }
 
 // resolveAgainstMob performs the opposed roll and applies the effect to a mob.
-func resolveAgainstMob(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spellData *spells.SpellData, spellAttack float64, magnitude int) {
+// Returns true if the cast fumbled (ZScore <= -2.0). A fumble aborts any
+// post-target spell effects (summon, charm, Go hooks) in the caller's main
+// flow; component consumption still fires (the failed binding uses up the
+// catalyst regardless).
+func resolveAgainstMob(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, spellData *spells.SpellData, spellAttack float64, magnitude int) (fumbled bool) {
 
 	defVal := spellDefenseValue(spellData.TargetDefenseType, &mob.Character)
 	success, _, atkRoll, _ := dice.OpposedRollStat(spellAttack, defVal)
@@ -220,7 +246,7 @@ func resolveAgainstMob(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, 
 			`<ansi fg="red"><ansi fg="username">%s</ansi>'s spell backfires!</ansi>`, user.Character.Name), user.UserId)
 		// Stage 30.1: Record backfire
 		combat.RecordSpell(combat.User, combat.Mob, false, false, true, false, 0, atkRoll.ZScore, user.Character, &mob.Character, round)
-		return
+		return true
 	}
 
 	if !success {
@@ -229,13 +255,14 @@ func resolveAgainstMob(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, 
 			spellData.Name, mobDisplayName(mob, room, user.UserId)))
 		// Stage 30.1: Record fizzle
 		combat.RecordSpell(combat.User, combat.Mob, false, false, false, true, 0, atkRoll.ZScore, user.Character, &mob.Character, round)
-		return
+		return false
 	}
 
 	isCrit := atkRoll.ZScore >= 2.0
 	dmgDealt := applyMobEffect(user, user.Character, mob, room, spellData, magnitude, isCrit)
 	// Stage 30.1: Record spell hit with actual damage
 	combat.RecordSpell(combat.User, combat.Mob, true, isCrit, false, false, dmgDealt, atkRoll.ZScore, user.Character, &mob.Character, round)
+	return false
 }
 
 // setMobSpellAggro sets reciprocal aggro between the caster and the
@@ -496,7 +523,9 @@ func applyMobEffect(user *users.UserRecord, casterChar *characters.Character, mo
 }
 
 // resolveAgainstPlayer performs the opposed roll and applies the effect to a player.
-func resolveAgainstPlayer(user *users.UserRecord, target *users.UserRecord, room *rooms.Room, spellData *spells.SpellData, spellAttack float64, magnitude int) {
+// Returns true if the cast fumbled (ZScore <= -2.0). See resolveAgainstMob for
+// the fumble semantics carrying over to summon/charm/Go-hook gating.
+func resolveAgainstPlayer(user *users.UserRecord, target *users.UserRecord, room *rooms.Room, spellData *spells.SpellData, spellAttack float64, magnitude int) (fumbled bool) {
 
 	defVal := spellDefenseValue(spellData.TargetDefenseType, target.Character)
 	success, _, atkRoll, _ := dice.OpposedRollStat(spellAttack, defVal)
@@ -511,14 +540,14 @@ func resolveAgainstPlayer(user *users.UserRecord, target *users.UserRecord, room
 		user.SendText(`<ansi fg="red">Your spell backfires violently, wounding you!</ansi>`)
 		sendVisualRoomText(room, fmt.Sprintf(
 			`<ansi fg="red"><ansi fg="username">%s</ansi>'s spell backfires!</ansi>`, user.Character.Name), user.UserId)
-		return
+		return true
 	}
 
 	if !success {
 		user.SendText(fmt.Sprintf(
 			`<ansi fg="yellow">Your %s fizzles against <ansi fg="username">%s</ansi>.</ansi>`,
 			spellData.Name, target.Character.Name))
-		return
+		return false
 	}
 
 	isCrit := atkRoll.ZScore >= 2.0
@@ -542,6 +571,7 @@ func resolveAgainstPlayer(user *users.UserRecord, target *users.UserRecord, room
 			target.Character.SetAggro(user.UserId, 0, characters.DefaultAttack)
 		}
 	}
+	return false
 }
 
 // applyPlayerEffect applies the spell effect to a player target.
