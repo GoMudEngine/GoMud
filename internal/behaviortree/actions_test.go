@@ -19,6 +19,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -158,14 +159,6 @@ func TestActMobEmote_FindsMobInRoomAndQueuesCommand(t *testing.T) {
 }
 
 // ─── grant_mutation ──────────────────────────────────────────────────
-//
-// Note: mutations.allMutations is package-private and there is no public
-// SeedMutationsForTest helper. Adding one would mean exposing internals
-// purely for this test. Per Task 4 Step 3 decision tree, we cover only:
-//   - empty-pool happy path (Success without modifying Mutations)
-//   - nil-user failure path
-// Non-empty-pool coverage is deferred — see
-// project_error_handling_audit_findings.md (## Open / In-Progress).
 
 func TestActGrantMutation_AddsMutationToCharacter(t *testing.T) {
 	fn := LookupAction("grant_mutation")
@@ -187,6 +180,41 @@ func TestActGrantMutation_AddsMutationToCharacter(t *testing.T) {
 	missingCtx := &EvalContext{Event: EventContext{UserId: 99}}
 	if result := fn(nil, missingCtx); result != Failure {
 		t.Errorf("expected Failure for missing user, got %v", result)
+	}
+}
+
+func TestActGrantMutation_WritesMutationKeyWhenPoolNonEmpty(t *testing.T) {
+	fn := LookupAction("grant_mutation")
+	if fn == nil {
+		t.Fatal("grant_mutation not registered")
+	}
+
+	cleanUser := seedTestUser(t, 1, "alice", "Aliceia", 1)
+	defer cleanUser()
+
+	// Seed one rollable mutation into the registry. With an empty ownership
+	// map, GetWeightedPool has no conflicts to prune, so this mutation ends
+	// up as the only entry in the weighted pool.
+	cleanMuts := mutations.SeedMutationsForTest(map[string]*mutations.MutationSpec{
+		"test-mut-1": {
+			MutationId: "test-mut-1",
+			Name:       "Test Mutation",
+			Rarity:     1,
+			Pros:       []mutations.MutationEffect{{Type: "stat_flat", Target: "strength", Value: 1}},
+		},
+	})
+	defer cleanMuts()
+
+	user := requireUser(t, 1)
+	user.Character.Mutations = map[string]int{}
+
+	ctx := &EvalContext{Event: EventContext{UserId: 1}}
+	if result := fn(nil, ctx); result != Success {
+		t.Fatalf("expected Success on non-empty pool, got %v", result)
+	}
+	if _, ok := user.Character.Mutations["test-mut-1"]; !ok {
+		t.Errorf("expected test-mut-1 in user.Character.Mutations, got %v",
+			user.Character.Mutations)
 	}
 }
 
