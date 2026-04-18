@@ -91,20 +91,22 @@ func ResolveTargetActor(r *rooms.Room, name string, opts ...ResolveTargetOptions
 		mobInstanceId = 0
 	}
 
-	// Players take precedence over mobs (see docstring).
+	// Players take precedence over mobs (see docstring). Wrap with the
+	// InRoom variants so target.GetRoom() / SendRoomText() work without
+	// callers having to re-resolve the room.
 	if playerId > 0 {
 		u := users.GetByUserId(playerId)
 		if u == nil {
 			return nil, ErrTargetVanished
 		}
-		return NewUserActor(u), nil
+		return NewUserActorInRoom(u, r), nil
 	}
 	if mobInstanceId > 0 {
 		m := mobs.GetInstance(mobInstanceId)
 		if m == nil {
 			return nil, ErrTargetVanished
 		}
-		return NewMobActor(m), nil
+		return NewMobActorInRoom(m, r), nil
 	}
 	return nil, ErrTargetNotFound
 }

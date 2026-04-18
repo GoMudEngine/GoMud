@@ -137,6 +137,10 @@ func TestResolveTargetActor_PlayerMatch(t *testing.T) {
 	// on the concrete type should succeed for downstream user-only paths.
 	_, ok := target.(*UserActor)
 	assert.True(t, ok, "expected concrete *UserActor for player match")
+
+	// Room is wired through so target.GetRoom() / SendRoomText work
+	// without callers having to re-resolve.
+	assert.Equal(t, room, target.GetRoom(), "expected target.GetRoom() to return the resolution room")
 }
 
 // TestResolveTargetActor_MobMatch: name resolves to a mob; helper returns
@@ -159,6 +163,9 @@ func TestResolveTargetActor_MobMatch(t *testing.T) {
 	// Concrete-type sanity for mob-only branches.
 	_, ok := target.(*MobActor)
 	assert.True(t, ok, "expected concrete *MobActor for mob match")
+
+	// Room is wired through (see PlayerMatch test for the same promise).
+	assert.Equal(t, room, target.GetRoom(), "expected target.GetRoom() to return the resolution room")
 }
 
 // TestResolveTargetActor_NotFound: no match in room → ErrTargetNotFound.
