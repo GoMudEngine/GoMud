@@ -1168,15 +1168,11 @@ func handleMobVsPlayer(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, 
 	roundResult = combat.AttackMobVsPlayer(mob, defUser)
 	restore()
 
-	// Stage 11.4: Minor Shield reduces physical weapon damage (MvP-only —
-	// ConditionShield lives on player defenders).
-	if roundResult.Hit && defUser.Character.HasCondition(characters.ConditionShield) {
-		reduction := int(defUser.Character.GetConditionMagnitude(characters.ConditionShield)) / 2
-		if roundResult.DamageToTarget > reduction+1 {
-			roundResult.DamageToTarget -= reduction
-			roundResult.DamageToTargetReduction += reduction
-		}
-	}
+	// Gap 4: Removed an inline ConditionShield reduction that double-counted
+	// the magnitude already added inside the mitigation layer
+	// (characters/combat.go GetDefense:161 and GetPhysicalMitigation:200).
+	// The mitigation layer applies it exactly once for both player and mob
+	// defenders; this MvP-only inline block was a Stage 11.4 leftover.
 
 	applyCombatDamageBonuses_MvP(&roundResult, mob, defUser, mobRoom)
 
@@ -1310,6 +1306,11 @@ func handleMobVsMob(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, aff
 	}
 	combat.RecordAttack(roundResult, combat.Mob, combat.Mob, mmAtkType, &mob.Character, &defMob.Character, evt.RoundNumber)
 
+	// Parity: MvM defender OnCritReceived (PvM/MvP/PvP already fire; Gap 1).
+	if roundResult.Hit && roundResult.Crit {
+		defMob.Character.OnCritReceived("physical", 0)
+	}
+
 	for _, buffId := range roundResult.BuffSource {
 		mob.AddBuff(buffId, `combat`)
 	}
@@ -1351,12 +1352,29 @@ func handleMobVsMob(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, aff
 
 	handleOffhandBreakMobDef(roundResult, defMob)
 
-	// Stage 38.3: Mob attacker progression (skip room messages for MvM)
-	mob.Character.OnStatUse("strength", 0)
-	mob.Character.OnStatUse("dexterity", 0)
+	// Stage 38.3: Mob attacker progression — per-weapon skill tracking.
+	// Parity with handleMvPProgression (Gaps 2 + 3): emit room-visible
+	// stat-gain message when OnStatUse returns true, and fire crit-success
+	// / crit-failure callbacks per weapon hit.
+	mmStatMobName := mobDisplayName(mob, mobRoom, 0)
+	if gained := mob.Character.OnStatUse("strength", 0); gained {
+		if tmpl, ok := characters.MobStatGainMessages["strength"]; ok {
+			mobRoom.SendText(fmt.Sprintf(tmpl, mmStatMobName))
+		}
+	}
+	if gained := mob.Character.OnStatUse("dexterity", 0); gained {
+		if tmpl, ok := characters.MobStatGainMessages["dexterity"]; ok {
+			mobRoom.SendText(fmt.Sprintf(tmpl, mmStatMobName))
+		}
+	}
 	for _, wh := range roundResult.WeaponHits {
 		if wh.Hit {
 			mob.Character.OnSkillUse(wh.SkillTag, 0)
+			if wh.Crit {
+				mob.Character.OnCriticalSuccess(wh.SkillTag, 0)
+			}
+		} else if wh.Fumble {
+			mob.Character.OnCriticalFailure(wh.SkillTag, 0)
 		}
 	}
 	if len(roundResult.WeaponHits) == 0 && roundResult.Hit {
