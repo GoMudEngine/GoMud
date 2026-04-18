@@ -311,3 +311,44 @@ func TestQueueDelayed_RunsSucceededClosure(t *testing.T) {
 		t.Errorf("expected closure to run exactly once, got %d", ran)
 	}
 }
+
+// TestEvictRoomBTreeState_RemovesEntry verifies that after eviction, the next
+// EnsureRoomBTreeState call returns a freshly-allocated *BehaviorState pointer
+// (proves the prior entry was actually removed, not just overwritten in place).
+func TestEvictRoomBTreeState_RemovesEntry(t *testing.T) {
+	const roomId = 99908
+
+	defer clearRoomStates(t, roomId)
+
+	state1 := EnsureRoomBTreeState(roomId)
+	if state1 == nil {
+		t.Fatal("first EnsureRoomBTreeState returned nil")
+	}
+
+	EvictRoomBTreeState(roomId)
+
+	state2 := EnsureRoomBTreeState(roomId)
+	if state2 == nil {
+		t.Fatal("post-evict EnsureRoomBTreeState returned nil")
+	}
+
+	if state1 == state2 {
+		t.Errorf("expected different pointer after eviction: got same %p", state1)
+	}
+}
+
+// TestEvictRoomBTreeState_NoOpOnMissing verifies that evicting an unseeded
+// roomId does not panic and does not break a subsequent Ensure call.
+func TestEvictRoomBTreeState_NoOpOnMissing(t *testing.T) {
+	const roomId = 99909
+
+	defer clearRoomStates(t, roomId)
+
+	// Must not panic — key was never seeded.
+	EvictRoomBTreeState(roomId)
+
+	state := EnsureRoomBTreeState(roomId)
+	if state == nil {
+		t.Errorf("EnsureRoomBTreeState after no-op evict returned nil")
+	}
+}
