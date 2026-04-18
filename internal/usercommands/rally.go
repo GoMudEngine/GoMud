@@ -17,6 +17,11 @@ import (
 
 func Rally(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
+	if user.Character.IsCrafting() {
+		user.SendText(`<ansi fg="red">You can't rally while focused on your work. Finish or be interrupted first.</ansi>`)
+		return true, nil
+	}
+
 	cfg := configs.GetBalanceConfig()
 	if !user.Character.Cooldowns.Try("special-move", fmt.Sprintf("%d rounds", cfg.SpecialMoveCooldown)) {
 		user.SendText("You need a moment to recover before attempting another special move.")
