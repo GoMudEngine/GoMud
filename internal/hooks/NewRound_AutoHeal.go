@@ -5,6 +5,7 @@ import (
 	"math"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
@@ -178,6 +179,14 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 				}
 				user.Character.Heal(healAmt)
 
+				// Emit tick feedback while a heal-spell ConditionRegen is active
+				// so players get confirmation their mend-wounds (or similar) is working.
+				if user.Character.HasCondition(characters.ConditionRegen) {
+					user.SendText(fmt.Sprintf(
+						`<ansi fg="green">Your wounds knit closed. (%s)</ansi>`,
+						combat.GetHealDescription(healAmt, user.Character.HealthMax.Value)))
+				}
+
 			} else {
 				// In combat: no base regen, but ConditionRegen (heal spell) still applies
 				if user.Character.HasCondition(characters.ConditionRegen) {
@@ -187,6 +196,9 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 						healAmt = 1
 					}
 					user.Character.Heal(healAmt)
+					user.SendText(fmt.Sprintf(
+						`<ansi fg="green">Your wounds knit closed. (%s)</ansi>`,
+						combat.GetHealDescription(healAmt, user.Character.HealthMax.Value)))
 				}
 			}
 
