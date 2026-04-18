@@ -527,11 +527,11 @@ func TestActSummonCompanion_HostileSetsAggroAndEngages(t *testing.T) {
 	captured, mu, cleanupListener := captureInputs(t)
 	defer cleanupListener()
 
-	// Act: hostile="true" is a STRING literal — matches actions_mob.go:71
-	// `getStringParam(params, "hostile") == "true"`.
+	// Act: hostile is now a proper bool (getBoolParam still accepts the
+	// legacy string "true" form for backward compat — see params.go).
 	params := map[string]any{
 		"mob_id":    7,
-		"hostile":   "true",
+		"hostile":   true,
 		"count":     1,
 		"base_pool": 50,
 	}
