@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
@@ -119,14 +120,25 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 			continue
 		}
 
-		// PvP combat
-		if user.Character.Aggro != nil && user.Character.Aggro.UserId > 0 {
-			handlePlayerVsPlayer(user, uRoom, evt, &affectedPlayerIds)
-		}
-
-		// PvM combat
-		if user.Character.Aggro != nil && user.Character.Aggro.MobInstanceId > 0 {
-			handlePlayerVsMob(user, uRoom, evt, moonMod, &affectedPlayerIds, &affectedMobInstanceIds)
+		// Unified combat dispatch (replaces PvP/PvM branch).
+		if user.Character.Aggro != nil {
+			var def actions.Actor
+			if user.Character.Aggro.UserId > 0 {
+				if defUser := users.GetByUserId(user.Character.Aggro.UserId); defUser != nil {
+					defRoom := rooms.LoadRoom(defUser.Character.RoomId)
+					def = &actions.UserActor{User: defUser, Room: defRoom}
+				}
+			} else if user.Character.Aggro.MobInstanceId > 0 {
+				if defMob := mobs.GetInstance(user.Character.Aggro.MobInstanceId); defMob != nil {
+					defRoom := rooms.LoadRoom(defMob.Character.RoomId)
+					def = &actions.MobActor{Mob: defMob, Room: defRoom}
+				}
+			}
+			if def != nil {
+				atk := &actions.UserActor{User: user, Room: uRoom}
+				cfg := configs.GetConfig()
+				handleCombatRound(atk, def, evt, moonMod, &cfg, &affectedPlayerIds, &affectedMobInstanceIds)
+			}
 		}
 	}
 
@@ -267,14 +279,25 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 
 		affectedMobInstanceIds = append(affectedMobInstanceIds, mob.InstanceId)
 
-		// MvP combat
-		if mob.Character.Aggro != nil && mob.Character.Aggro.UserId > 0 {
-			handleMobVsPlayer(mob, mobRoom, evt, moonMod, &affectedPlayerIds)
-		}
-
-		// MvM combat
-		if mob.Character.Aggro != nil && mob.Character.Aggro.MobInstanceId > 0 {
-			handleMobVsMob(mob, mobRoom, evt, &affectedMobInstanceIds)
+		// Unified combat dispatch (replaces MvP/MvM branch).
+		if mob.Character.Aggro != nil {
+			var def actions.Actor
+			if mob.Character.Aggro.UserId > 0 {
+				if defUser := users.GetByUserId(mob.Character.Aggro.UserId); defUser != nil {
+					defRoom := rooms.LoadRoom(defUser.Character.RoomId)
+					def = &actions.UserActor{User: defUser, Room: defRoom}
+				}
+			} else if mob.Character.Aggro.MobInstanceId > 0 {
+				if defMob := mobs.GetInstance(mob.Character.Aggro.MobInstanceId); defMob != nil {
+					defRoom := rooms.LoadRoom(defMob.Character.RoomId)
+					def = &actions.MobActor{Mob: defMob, Room: defRoom}
+				}
+			}
+			if def != nil {
+				atk := &actions.MobActor{Mob: mob, Room: mobRoom}
+				cfg := configs.GetConfig()
+				handleCombatRound(atk, def, evt, moonMod, &cfg, &affectedPlayerIds, &affectedMobInstanceIds)
+			}
 		}
 	}
 

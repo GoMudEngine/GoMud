@@ -1831,89 +1831,6 @@ func TestHandleLeave_UserNotFound(t *testing.T) {
 	assert.Equal(t, events.Cancel, result)
 }
 
-// ─── Combat Helper: dispatchCritEffectsPvP ────────────────────────────────────
-
-func TestDispatchCritEffectsPvP_NoCrit(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-	u1 := users.GetByUserId(1)
-	u2 := users.GetByUserId(2)
-	room := rooms.LoadRoom(1)
-	result := CritEffectResult{}
-	dispatchCritEffectsPvP(result, u1, u2, room)
-	// no panic
-}
-
-func TestDispatchCritEffectsPvP_Riposte(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-	u1 := users.GetByUserId(1)
-	u2 := users.GetByUserId(2)
-	room := rooms.LoadRoom(1)
-	result := CritEffectResult{
-		Riposte:     true,
-		DefenderMsg: "You riposte!",
-		AttackerMsg: "They riposte!",
-		RoomMsg:     "A riposte!",
-	}
-	dispatchCritEffectsPvP(result, u1, u2, room)
-}
-
-func TestDispatchCritEffectsPvP_AutoTrip(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-	u1 := users.GetByUserId(1)
-	u2 := users.GetByUserId(2)
-	room := rooms.LoadRoom(1)
-	result := CritEffectResult{
-		AutoTrip:    true,
-		DefenderMsg: "You sweep!",
-		AttackerMsg: "Swept!",
-		RoomMsg:     "A sweep!",
-	}
-	dispatchCritEffectsPvP(result, u1, u2, room)
-}
-
-// ─── Combat Helper: dispatchCritEffectsPvM ────────────────────────────────────
-
-func TestDispatchCritEffectsPvM_NoCrit(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-	u1 := users.GetByUserId(1)
-	mob := mobs.GetInstance(100)
-	room := rooms.LoadRoom(1)
-	result := CritEffectResult{}
-	dispatchCritEffectsPvM(result, u1, mob, room)
-}
-
-func TestDispatchCritEffectsPvM_Riposte(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-	u1 := users.GetByUserId(1)
-	mob := mobs.GetInstance(100)
-	room := rooms.LoadRoom(1)
-	result := CritEffectResult{
-		Riposte:     true,
-		AttackerMsg: "You get riposted!",
-		RoomMsg:     "Room riposte!",
-	}
-	dispatchCritEffectsPvM(result, u1, mob, room)
-}
-
-func TestDispatchCritEffectsPvM_AutoBash(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-	u1 := users.GetByUserId(1)
-	mob := mobs.GetInstance(100)
-	room := rooms.LoadRoom(1)
-	result := CritEffectResult{
-		AutoBash:    true,
-		AttackerMsg: "Shield slammed!",
-		RoomMsg:     "A shield slam!",
-	}
-	dispatchCritEffectsPvM(result, u1, mob, room)
-}
-
 // ─── Combat Helper: handleCharmedMobAssist ────────────────────────────────────
 
 func TestHandleCharmedMobAssist_NoCharmedMobs(t *testing.T) {
@@ -1957,32 +1874,6 @@ func TestHandlePlayerConcentrationBreak_WithCasting(t *testing.T) {
 	}
 	// Large damage to break concentration
 	handlePlayerConcentrationBreak(u, combat.AttackResult{DamageToTarget: 999}, room)
-}
-
-// ─── Combat Helper: dispatchCombatMessages ────────────────────────────────────
-
-func TestDispatchCombatMessages_Empty(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-	u1 := users.GetByUserId(1)
-	u2 := users.GetByUserId(2)
-	room := rooms.LoadRoom(1)
-	dispatchCombatMessages(combat.AttackResult{}, u1, u2, room, room)
-}
-
-func TestDispatchCombatMessages_WithMessages(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-	u1 := users.GetByUserId(1)
-	u2 := users.GetByUserId(2)
-	room := rooms.LoadRoom(1)
-	result := combat.AttackResult{
-		MessagesToSource:     []string{"You hit!"},
-		MessagesToTarget:     []string{"You were hit!"},
-		MessagesToSourceRoom: []string{"Attack lands!"},
-		MessagesToTargetRoom: []string{"Attack lands!"},
-	}
-	dispatchCombatMessages(result, u1, u2, room, room)
 }
 
 // ─── Combat Helper: handleMobTargetSwitch ─────────────────────────────────────

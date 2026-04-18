@@ -11,7 +11,9 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/mobai"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -57,7 +59,7 @@ func handleCombatRound(
 	affectedMobInstanceIds *[]int,
 ) {
 	// Phase 0: defender lookup + alive/in-room validation.
-	if !resolveCombatTarget(atk, def) {
+	if !resolveCombatTarget(atk, def, evt.RoundNumber) {
 		return
 	}
 
@@ -138,7 +140,10 @@ func handleCombatRound(
 //
 // Merges the first ~15 lines of each of handlePlayerVsPlayer /
 // handlePlayerVsMob / handleMobVsPlayer / handleMobVsMob.
-func resolveCombatTarget(atk, def actions.Actor) bool {
+//
+// roundNumber is used to seed the defender mob's CombatMemory when we
+// emit a first-round combat_start signal (PvM-only — see body).
+func resolveCombatTarget(atk, def actions.Actor, roundNumber uint64) bool {
 	atkChar := atk.GetCharacter()
 	if atkChar == nil {
 		return false
@@ -194,6 +199,30 @@ func resolveCombatTarget(atk, def actions.Actor) bool {
 		// Mob attackers in any quadrant: no cross-room pursuit.
 		atkChar.EndAggro()
 		return false
+	}
+
+	// PvM-only: emit combat_start for the defender mob if this is its
+	// first round in combat. Mirrors legacy resolvePlayerVsMobTarget so
+	// mobs that die in round 1 still get their reactive AI signal fired
+	// before the attack roll. (Mob-attacker combat_start is fired in
+	// handleMobCombat itself.)
+	if atk.IsPlayer() && !def.IsPlayer() {
+		if defMob := asMobOrNil(def); defMob != nil {
+			if defMob.CombatMemory == nil && defChar.Aggro != nil {
+				mudlog.Debug("MobAI", "emit", "combat_start", "mob", defChar.Name, "mobId", defMob.InstanceId, "source", "handleCombatRound")
+				defMob.CombatMemory = mobai.SetMemory(
+					defChar.Aggro.UserId,
+					defChar.Aggro.MobInstanceId,
+					defChar.RoomId,
+					roundNumber,
+				)
+				events.AddToQueue(events.MobAISignal{
+					MobInstanceId: defMob.InstanceId,
+					SignalType:    "combat_start",
+					RoomId:        defChar.RoomId,
+				})
+			}
+		}
 	}
 
 	// Defender liveness.
