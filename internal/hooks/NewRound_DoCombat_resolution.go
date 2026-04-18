@@ -450,6 +450,12 @@ func handlePvMProgressionAndAggro(roundResult *combat.AttackResult, user *users.
 		})
 	}
 
+	// Physical crit received → vitality progression for defender mob
+	// (parity with handleMvPProgression — see project_pvm_mvp_parity_gaps.md)
+	if roundResult.Hit && roundResult.Crit {
+		defMob.Character.OnCritReceived("physical", 0)
+	}
+
 	// Stage 38.3: Player attacker progression — per-weapon skill tracking
 	user.Character.OnStatUse("strength", user.UserId)
 	user.Character.OnStatUse("dexterity", user.UserId)
