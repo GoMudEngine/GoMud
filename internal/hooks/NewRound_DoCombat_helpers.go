@@ -890,41 +890,6 @@ func handleMobWeaponPickup(mob *mobs.Mob) {
 	}
 }
 
-// handleMobDownedGrace processes the downed grace period for a mob attacking a disabled player.
-// Returns true if the player is in grace period or was finished off (combat should stop).
-func handleMobDownedGrace(mob *mobs.Mob, defUser *users.UserRecord, defRoom *rooms.Room, affectedPlayerIds *[]int) bool {
-	if !defUser.Character.IsDisabled() {
-		return false
-	}
-
-	bal := configs.GetBalanceConfig()
-	graceRounds := int(bal.CoupDeGraceRounds)
-	if graceRounds <= 0 {
-		mob.Character.EndAggro()
-		return true
-	}
-	defUser.Character.DownedRounds++
-	mobName := mobDisplayName(mob, defRoom, 0)
-	if defUser.Character.DownedRounds <= graceRounds {
-		defRoom.SendText(fmt.Sprintf(
-			`%s circles <ansi fg="username">%s</ansi>'s fallen body...`,
-			mobName, defUser.Character.Name))
-		return true
-	}
-	// Coup de grâce — finishing blow
-	defUser.Character.Health = -10
-	defUser.SendText(fmt.Sprintf(
-		`<ansi fg="red">%s delivers a final, merciless blow!</ansi>`,
-		mobName))
-	defRoom.SendText(fmt.Sprintf(
-		`<ansi fg="red">%s delivers a finishing blow to <ansi fg="username">%s</ansi>!</ansi>`,
-		mobName, defUser.Character.Name), defUser.UserId)
-	mob.Character.EndAggro()
-	defUser.Character.EndAggro()
-	*affectedPlayerIds = append(*affectedPlayerIds, defUser.UserId)
-	return true
-}
-
 // handlePartyAutoAttack triggers auto-attack for party members when one is attacked by a mob.
 // Uses the persistent per-character "autoattack" setting instead of the party-level list.
 func handlePartyAutoAttack(mob *mobs.Mob, defUser *users.UserRecord) {
@@ -1155,8 +1120,12 @@ func handleMobVsPlayer(mob *mobs.Mob, mobRoom *rooms.Room, evt events.NewRound, 
 
 	defUser.Character.CancelBuffsWithFlag(buffs.CancelIfCombat)
 
-	// Downed grace period
-	if handleMobDownedGrace(mob, defUser, defRoom, affectedPlayerIds) {
+	// Defender already dead (Health <= 0): end mob aggro, skip the round.
+	// Under the post-bleedout-removal rule there's no "downed but alive"
+	// state — IsDisabled() now implies the player is dead and will be
+	// processed by the round-end suicide path.
+	if defUser.Character.IsDisabled() {
+		mob.Character.EndAggro()
 		return
 	}
 

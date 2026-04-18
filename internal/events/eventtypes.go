@@ -230,13 +230,6 @@ type Log struct {
 
 func (l Log) Type() string { return `Log` }
 
-type PlayerDrop struct {
-	UserId int
-	RoomId int
-}
-
-func (l PlayerDrop) Type() string { return `PlayerDrop` }
-
 type PlayerDeath struct {
 	UserId        int
 	RoomId        int

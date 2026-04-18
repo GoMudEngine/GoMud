@@ -290,9 +290,8 @@ func (c *Character) validatePoolClamps() {
 	if c.Health > c.HealthMax.Value {
 		c.Health = c.HealthMax.Value
 	}
-	if c.Health < -10 {
-		c.Health = -10
-	}
+	// No lower Health clamp: Health <= 0 means dead, handled by the per-
+	// round death check (NewRound_DoCombat / NewRound_AutoHeal → suicide).
 	if c.Stamina < 0 {
 		c.Stamina = 0
 	}

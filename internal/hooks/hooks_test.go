@@ -613,19 +613,6 @@ func TestAutoHeal_HealsOnDivisibleRound(t *testing.T) {
 	assert.Greater(t, u1.Character.Health, 50, "health should increase on regen round")
 }
 
-func TestAutoHeal_BleedOutWhenHealthBelowOne(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	u1 := users.GetByUserId(1)
-	u1.Character.Health = -5 // downed, but not dead yet
-
-	evt := events.NewRound{RoundNumber: 6}
-	AutoHeal(evt)
-
-	assert.Equal(t, -7, u1.Character.Health, "should decrease by 2 when bleeding out")
-}
-
 func TestAutoHeal_StaminaRegenOutOfCombat(t *testing.T) {
 	cleanup := seedAllRegistries()
 	defer cleanup()
@@ -1718,38 +1705,6 @@ func TestHandleJoin_Success(t *testing.T) {
 	assert.Equal(t, events.Continue, result)
 }
 
-// ─── HandlePlayerDrop ─────────────────────────────────────────────────────────
-
-func TestHandlePlayerDrop_WrongEvent(t *testing.T) {
-	result := HandlePlayerDrop(events.NewRound{RoundNumber: 1})
-	assert.Equal(t, events.Cancel, result)
-}
-
-func TestHandlePlayerDrop_UserNotFound(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-	result := HandlePlayerDrop(events.PlayerDrop{UserId: 999, RoomId: 1})
-	assert.Equal(t, events.Cancel, result)
-}
-
-func TestHandlePlayerDrop_Success(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-	u := users.GetByUserId(1)
-	u.Character.Health = 0
-
-	result := HandlePlayerDrop(events.PlayerDrop{UserId: 1, RoomId: 1})
-	assert.Equal(t, events.Continue, result)
-	assert.Equal(t, 0, u.Character.DownedRounds)
-}
-
-func TestHandlePlayerDrop_RoomNotFound(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-	result := HandlePlayerDrop(events.PlayerDrop{UserId: 1, RoomId: 999})
-	assert.Equal(t, events.Continue, result)
-}
-
 // ─── HandleLookHints ──────────────────────────────────────────────────────────
 
 func TestHandleLookHints_WrongEvent(t *testing.T) {
@@ -2061,33 +2016,6 @@ func TestHandleMobWeaponPickup_NoItems(t *testing.T) {
 	mob.Character.Items = nil
 	handleMobWeaponPickup(mob)
 	// Should return early, no items
-}
-
-// ─── Combat Helper: handleMobDownedGrace ──────────────────────────────────────
-
-func TestHandleMobDownedGrace_NotDisabled(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-	mob := mobs.GetInstance(100)
-	u := users.GetByUserId(1)
-	room := rooms.LoadRoom(1)
-	u.Character.Health = 100
-	affected := []int{}
-	result := handleMobDownedGrace(mob, u, room, &affected)
-	assert.False(t, result)
-}
-
-func TestHandleMobDownedGrace_GracePeriod(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-	mob := mobs.GetInstance(100)
-	u := users.GetByUserId(1)
-	room := rooms.LoadRoom(1)
-	u.Character.Health = 0
-	u.Character.DownedRounds = 0
-	affected := []int{}
-	result := handleMobDownedGrace(mob, u, room, &affected)
-	assert.True(t, result)
 }
 
 // ─── Combat Helper: handlePlayerFlee ──────────────────────────────────────────
@@ -2666,23 +2594,6 @@ func TestHandlePartyAutoAttack_NoParty(t *testing.T) {
 	u := users.GetByUserId(1)
 	handlePartyAutoAttack(mob, u)
 	// No party, should not panic
-}
-
-// ─── Combat Helper: handleMobDownedGrace finishing blow ───────────────────────
-
-func TestHandleMobDownedGrace_FinishingBlow(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-	mob := mobs.GetInstance(100)
-	u := users.GetByUserId(1)
-	room := rooms.LoadRoom(1)
-	u.Character.Health = 0
-	mob.Character.SetAggro(u.UserId, 0, characters.DefaultAttack)
-	affected := []int{}
-	result := handleMobDownedGrace(mob, u, room, &affected)
-	assert.True(t, result)
-	// With CoupDeGraceRounds=0 (default), mob disengages immediately
-	assert.Nil(t, mob.Character.Aggro)
 }
 
 // ─── HandleIdleMobs with a mob that can idle ──────────────────────────────────

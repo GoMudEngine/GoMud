@@ -457,9 +457,10 @@ func TestValidate_ExtraArmsDerivation(t *testing.T) {
 	}
 }
 
-// TestValidate_HealthClamping verifies that Validate clamps pool values to their
-// legal ranges: Health ∈ [-10, HealthMax], Stamina ∈ [0, StaminaMax],
-// Conviction ∈ [0, ConvictionMax].
+// TestValidate_HealthClamping verifies that Validate clamps pool values to
+// their legal upper bounds: Health ≤ HealthMax, Stamina ∈ [0, StaminaMax],
+// Conviction ∈ [0, ConvictionMax]. Health has no lower floor — negative
+// Health is a valid dead state, processed by the per-round death check.
 func TestValidate_HealthClamping(t *testing.T) {
 	c := &Character{
 		Stats:      validStats(),
@@ -478,10 +479,10 @@ func TestValidate_HealthClamping(t *testing.T) {
 	assert.Equal(t, 0, c.Stamina, "Stamina floor is 0")
 	assert.Equal(t, 0, c.Conviction, "Conviction floor is 0")
 
-	// Death-floor: Health must not go below -10.
+	// No lower Health floor: negative Health is valid dead state.
 	c.Health = -9999
 	_ = c.Validate()
-	assert.Equal(t, -10, c.Health, "Health death-floor is -10")
+	assert.Equal(t, -9999, c.Health, "Validate must not floor negative Health")
 }
 
 // TestValidate_ReturnsNilForValidCharacter verifies that a freshly-constructed

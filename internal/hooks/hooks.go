@@ -70,7 +70,6 @@ func RegisterListeners() {
 	// User Settings change
 	events.RegisterListener(events.UserSettingChanged{}, ClearSettingCaches)
 
-	events.RegisterListener(events.PlayerDrop{}, HandlePlayerDrop)
 	events.RegisterListener(events.WebClientCommand{}, WebClientCommand_SendWebClientCommand)
 
 	events.RegisterListener(events.CharacterCreated{}, BroadcastNewChar)

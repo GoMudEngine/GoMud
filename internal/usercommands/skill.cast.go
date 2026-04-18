@@ -25,9 +25,9 @@ import (
 // then Stage 11.4 resolves the actual spell effect.
 func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
-	// 0. Can't cast while bleeding out
+	// 0. Dead characters can't cast (Health <= 0).
 	if user.Character.IsDisabled() {
-		user.SendText(`<ansi fg="red">You can't focus enough to cast while bleeding out.</ansi>`)
+		user.SendText(`<ansi fg="red">You can't cast — you're dead.</ansi>`)
 		return true, nil
 	}
 

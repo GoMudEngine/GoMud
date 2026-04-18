@@ -61,9 +61,6 @@ func checkSpoiledGrenades(user *users.UserRecord, room *rooms.Room) {
 					dmg = 1
 				}
 				user.Character.Health -= dmg
-				if user.Character.Health < -10 {
-					user.Character.Health = -10
-				}
 				user.SendText(fmt.Sprintf(
 					`<ansi fg="red-bold">A <ansi fg="itemname">%s</ansi> in your pack detonates! (%s)</ansi>`,
 					item.DisplayName(),
