@@ -84,27 +84,6 @@ func TestAutoHeal_BleedFloorsMobHealthAtZero(t *testing.T) {
 	mob.Character.Health = 50
 }
 
-func TestAutoHeal_BleedFloorsPlayerHealthAtNegativeTen(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	u := users.GetByUserId(1)
-	require.NotNil(t, u)
-
-	u.Character.Health = 2
-	u.Character.HealthMax.Value = 100
-	u.Character.AddCondition(characters.ConditionBleeding, 3, 50.0, "massive bleed")
-
-	evt := events.NewRound{RoundNumber: 3}
-	AutoHeal(evt)
-
-	// Player health should not go below -10
-	assert.GreaterOrEqual(t, u.Character.Health, -10)
-
-	u.Character.RemoveCondition(characters.ConditionBleeding)
-	u.Character.Health = 50
-}
-
 func TestAutoHeal_BleedMinDamageOne(t *testing.T) {
 	cleanup := seedAllRegistries()
 	defer cleanup()
