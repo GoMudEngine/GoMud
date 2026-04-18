@@ -209,9 +209,6 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 					poisonDmg = 1
 				}
 				user.Character.Health -= poisonDmg
-				if user.Character.Health < -10 {
-					user.Character.Health = -10
-				}
 				user.SendText(`<ansi fg="green">The poison burns through your veins!</ansi>`)
 			}
 
@@ -222,9 +219,6 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 					bleedDmg = 1
 				}
 				user.Character.Health -= bleedDmg
-				if user.Character.Health < -10 {
-					user.Character.Health = -10
-				}
 				user.SendText(`<ansi fg="red">Blood seeps from your wounds!</ansi>`)
 			}
 		}
