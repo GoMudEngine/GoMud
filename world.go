@@ -784,7 +784,6 @@ loop:
 			rooms.RoomMaintenance()
 			rooms.EphemeralRoomMaintenance()
 			rooms.GetInstanceRegistry().CheckPortalTimers()
-			rooms.GetInstanceRegistry().CleanupEmptyInstances()
 			util.UnlockMud()
 
 			roomUpdateTimer.Reset(roomMaintenancePeriod)
