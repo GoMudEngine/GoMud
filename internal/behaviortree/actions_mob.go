@@ -68,7 +68,7 @@ func actSummonCompanion(params map[string]any, ctx *EvalContext) Result {
 	if basePool <= 0 {
 		basePool = 50
 	}
-	hostile := getStringParam(params, "hostile") == "true"
+	hostile := getBoolParam(params, "hostile")
 	pool := characters.CalcCompanionStatPool(basePool, charisma, manifestSkill)
 	for i := 0; i < count; i++ {
 		companion := mobs.NewMobById(mobs.MobId(mobId), room.RoomId, pool)
