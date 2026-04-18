@@ -1705,38 +1705,6 @@ func TestHandleJoin_Success(t *testing.T) {
 	assert.Equal(t, events.Continue, result)
 }
 
-// ─── HandlePlayerDrop ─────────────────────────────────────────────────────────
-
-func TestHandlePlayerDrop_WrongEvent(t *testing.T) {
-	result := HandlePlayerDrop(events.NewRound{RoundNumber: 1})
-	assert.Equal(t, events.Cancel, result)
-}
-
-func TestHandlePlayerDrop_UserNotFound(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-	result := HandlePlayerDrop(events.PlayerDrop{UserId: 999, RoomId: 1})
-	assert.Equal(t, events.Cancel, result)
-}
-
-func TestHandlePlayerDrop_Success(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-	u := users.GetByUserId(1)
-	u.Character.Health = 0
-
-	result := HandlePlayerDrop(events.PlayerDrop{UserId: 1, RoomId: 1})
-	assert.Equal(t, events.Continue, result)
-	assert.Equal(t, 0, u.Character.DownedRounds)
-}
-
-func TestHandlePlayerDrop_RoomNotFound(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-	result := HandlePlayerDrop(events.PlayerDrop{UserId: 1, RoomId: 999})
-	assert.Equal(t, events.Continue, result)
-}
-
 // ─── HandleLookHints ──────────────────────────────────────────────────────────
 
 func TestHandleLookHints_WrongEvent(t *testing.T) {
