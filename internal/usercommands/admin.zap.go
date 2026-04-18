@@ -3,6 +3,7 @@ package usercommands
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/colorpatterns"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -21,39 +22,36 @@ func Zap(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 
 	if rest != `` {
 
-		playerId, mobId := room.FindByName(rest)
+		target, err := actions.ResolveTargetActor(room, rest)
+		if err == actions.ErrTargetVanished {
+			user.SendText("Zap target not found.")
+			return true, nil
+		}
+		if err == nil {
+			if !target.IsPlayer() {
+				mob := target.(*actions.MobActor).Mob
+				user.SendText(fmt.Sprintf(`You zap <ansi fg="mobname">%s</ansi> with a %s!`, mob.Character.Name, boltOfLightning))
+				room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> zaps <ansi fg="mobname">%s</ansi> with a %s!`, user.Character.Name, mob.Character.Name, boltOfLightning), user.UserId)
 
-		if mobId > 0 {
+				mob.Character.Health = 1
+				mob.Character.Conviction = 1
 
-			mob := mobs.GetInstance(mobId)
-			if mob == nil {
-				user.SendText("Zap Mob not found.")
 				return true, nil
 			}
 
-			user.SendText(fmt.Sprintf(`You zap <ansi fg="mobname">%s</ansi> with a %s!`, mob.Character.Name, boltOfLightning))
-			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> zaps <ansi fg="mobname">%s</ansi> with a %s!`, user.Character.Name, mob.Character.Name, boltOfLightning), user.UserId)
+			u := target.(*actions.UserActor).User
+			user.SendText(fmt.Sprintf(`You zap <ansi fg="username">%s</ansi> with a %s!`, u.Character.Name, boltOfLightning))
+			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> zaps <ansi fg="username">%s</ansi> with a %s!`, user.Character.Name, u.Character.Name, boltOfLightning), user.UserId, u.UserId)
+			u.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> zaps you with a %s!`, user.Character.Name, boltOfLightning))
 
-			mob.Character.Health = 1
-			mob.Character.Conviction = 1
+			u.Character.Health = 1
+			u.Character.Conviction = 1
+
+			events.AddToQueue(events.CharacterVitalsChanged{UserId: u.UserId})
 
 			return true, nil
 		}
-
-		if playerId > 0 {
-			if u := users.GetByUserId(playerId); u != nil {
-				user.SendText(fmt.Sprintf(`You zap <ansi fg="username">%s</ansi> with a %s!`, u.Character.Name, boltOfLightning))
-				room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> zaps <ansi fg="username">%s</ansi> with a %s!`, user.Character.Name, u.Character.Name, boltOfLightning), user.UserId, u.UserId)
-				u.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> zaps you with a %s!`, user.Character.Name, boltOfLightning))
-
-				u.Character.Health = 1
-				u.Character.Conviction = 1
-
-				events.AddToQueue(events.CharacterVitalsChanged{UserId: u.UserId})
-
-				return true, nil
-			}
-		}
+		// err == ErrTargetNotFound → fall through to no-arg path
 
 	}
 
