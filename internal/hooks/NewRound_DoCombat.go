@@ -126,16 +126,16 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 			if user.Character.Aggro.UserId > 0 {
 				if defUser := users.GetByUserId(user.Character.Aggro.UserId); defUser != nil {
 					defRoom := rooms.LoadRoom(defUser.Character.RoomId)
-					def = &actions.UserActor{User: defUser, Room: defRoom}
+					def = actions.NewUserActorInRoom(defUser, defRoom)
 				}
 			} else if user.Character.Aggro.MobInstanceId > 0 {
 				if defMob := mobs.GetInstance(user.Character.Aggro.MobInstanceId); defMob != nil {
 					defRoom := rooms.LoadRoom(defMob.Character.RoomId)
-					def = &actions.MobActor{Mob: defMob, Room: defRoom}
+					def = actions.NewMobActorInRoom(defMob, defRoom)
 				}
 			}
 			if def != nil {
-				atk := &actions.UserActor{User: user, Room: uRoom}
+				atk := actions.NewUserActorInRoom(user, uRoom)
 				cfg := configs.GetConfig()
 				handleCombatRound(atk, def, evt, moonMod, &cfg, &affectedPlayerIds, &affectedMobInstanceIds)
 			}
@@ -285,16 +285,16 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 			if mob.Character.Aggro.UserId > 0 {
 				if defUser := users.GetByUserId(mob.Character.Aggro.UserId); defUser != nil {
 					defRoom := rooms.LoadRoom(defUser.Character.RoomId)
-					def = &actions.UserActor{User: defUser, Room: defRoom}
+					def = actions.NewUserActorInRoom(defUser, defRoom)
 				}
 			} else if mob.Character.Aggro.MobInstanceId > 0 {
 				if defMob := mobs.GetInstance(mob.Character.Aggro.MobInstanceId); defMob != nil {
 					defRoom := rooms.LoadRoom(defMob.Character.RoomId)
-					def = &actions.MobActor{Mob: defMob, Room: defRoom}
+					def = actions.NewMobActorInRoom(defMob, defRoom)
 				}
 			}
 			if def != nil {
-				atk := &actions.MobActor{Mob: mob, Room: mobRoom}
+				atk := actions.NewMobActorInRoom(mob, mobRoom)
 				cfg := configs.GetConfig()
 				handleCombatRound(atk, def, evt, moonMod, &cfg, &affectedPlayerIds, &affectedMobInstanceIds)
 			}
