@@ -1,8 +1,11 @@
 package behaviortree
 
 import (
+	"fmt"
 	"sync"
 	"time"
+
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 )
 
 // Engine manages behavior tree loading, caching, and evaluation.
@@ -169,6 +172,19 @@ func (e *Engine) DrainQueue() {
 	e.mu.Unlock()
 
 	for _, da := range ready {
-		da.Action()
+		safeExecuteDelayed("behaviortree.delayed_action", da.Action)
 	}
+}
+
+// safeExecuteDelayed runs a delayed-action closure with panic recovery so a
+// single misbehaving action (e.g., one closing over a mob/user/room that has
+// since been destroyed) does not crash the engine round tick. Panics are
+// logged at mudlog.Error with the supplied name as the operation label.
+func safeExecuteDelayed(name string, fn func()) {
+	defer func() {
+		if r := recover(); r != nil {
+			mudlog.Error(name, "error", fmt.Sprintf("delayed action panicked: %v", r))
+		}
+	}()
+	fn()
 }

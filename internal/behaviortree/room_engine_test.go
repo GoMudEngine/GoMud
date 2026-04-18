@@ -257,3 +257,57 @@ func TestEnsureRoomBTreeState_PersistsAcrossCalls(t *testing.T) {
 		}
 	}
 }
+
+// TestQueueDelayed_RecoversFromPanic verifies that a panicking delayed-action
+// closure does not crash DrainQueue and does not abort subsequent ready
+// closures in the same DrainQueue call. The engine-level safeExecuteDelayed
+// wrapper recovers the panic and logs at mudlog.Error.
+func TestQueueDelayed_RecoversFromPanic(t *testing.T) {
+	e := GetEngine()
+
+	firstRan := false
+	secondRan := false
+
+	e.QueueDelayed(0, func() {
+		firstRan = true
+		panic("intentional test panic")
+	})
+	e.QueueDelayed(0, func() {
+		secondRan = true
+	})
+
+	// Must not propagate the panic — DrainQueue returns normally.
+	e.DrainQueue()
+
+	if !firstRan {
+		t.Errorf("first closure did not run before panicking")
+	}
+	if !secondRan {
+		t.Errorf("second closure did not run after first panicked — wrapper failed to contain the panic")
+	}
+}
+
+// TestQueueDelayed_RunsSucceededClosure verifies the happy-path contract: a
+// normal closure submitted via QueueDelayed runs exactly once when DrainQueue
+// is called. Locks the contract that the wrapper does not swallow non-panic
+// returns or run a closure twice.
+func TestQueueDelayed_RunsSucceededClosure(t *testing.T) {
+	e := GetEngine()
+
+	var mu sync.Mutex
+	ran := 0
+
+	e.QueueDelayed(0, func() {
+		mu.Lock()
+		ran++
+		mu.Unlock()
+	})
+
+	e.DrainQueue()
+
+	mu.Lock()
+	defer mu.Unlock()
+	if ran != 1 {
+		t.Errorf("expected closure to run exactly once, got %d", ran)
+	}
+}
