@@ -1,6 +1,7 @@
 mobid: 312
 zone: Summons
 archetype: fighting
+behavior_archetype: melee_self_buff
 statpool: 70
 itemdropchance: 0
 hostile: false
@@ -19,7 +20,7 @@ idlecommands:
 activitylevel: 50
 combatcommands:
   - ''
-  - ''
+  - 'emote crackles and spins faster, striking from unexpected angles'
   - ''
 character:
   name: air elemental
@@ -33,6 +34,9 @@ character:
     moving far too fast through too small a space.
   speciesid: 38
   level: 1
+  spellbook:
+    iron-will: 3
+    conviction-ward: 4
   stats:
     dexterity:
       training: 20
