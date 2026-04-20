@@ -119,7 +119,8 @@ type Mob struct {
 	IsPackAlpha             bool     `yaml:"-"`                                 // Whether this mob is currently the pack alpha
 	ScatterRounds           int      `yaml:"-"`                                 // Rounds remaining where mob skips wander (after alpha death)
 	crafterLastRestockRound uint64                                              // Last round materials were restocked (transient)
-	BTreeState              any `yaml:"-"` // Behavior tree per-instance state (*behaviortree.BehaviorState)
+	BehaviorArchetype       string `yaml:"behavior_archetype,omitempty"` // Archetype name (e.g., "melee_self_buff") — resolved to behaviors/archetypes/<name>.yaml if per-mob tree absent.
+	BTreeState              any    `yaml:"-"`                            // Behavior tree per-instance state (*behaviortree.BehaviorState)
 	tempDataStore           map[string]any
 	conversationId  int              // Identifier of conversation currently involved in.
 	Path            PathQueue        `yaml:"-"` // a pre-calculated path the mob is following.
