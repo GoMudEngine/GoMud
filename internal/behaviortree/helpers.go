@@ -78,6 +78,17 @@ func GetRoomBehaviorPath(roomId int, zone string) string {
 		strconv.Itoa(roomId)+`.yaml`)
 }
 
+// GetArchetypePath constructs the filesystem path to an archetype btree YAML.
+// Path: {dataFiles}/behaviors/archetypes/{name}.yaml
+// Archetype names are treated as filesystem-safe tokens; callers are
+// responsible for sanitization (we do not apply ConvertForFilename
+// because archetype names are authored, not user-derived).
+func GetArchetypePath(name string) string {
+	dataFiles := configs.GetFilePathsConfig().DataFiles.String()
+	return util.FilePath(dataFiles, `/`, `behaviors`, `/`, `archetypes`, `/`,
+		name+`.yaml`)
+}
+
 // TryRoomBehavior is the main entry point for room behavior tree event dispatch.
 // For room_command events it returns ctx.Intercepted; for all others it returns
 // true when the tree evaluates to Success.
@@ -126,6 +137,11 @@ func TryRoomBehavior(roomId int, event EventContext) bool {
 
 // TryMobBehavior is the main entry point for event dispatch.
 // Returns true if the behavior tree handled the event (Success).
+//
+// Resolution order:
+//  1. Per-mob btree file (behaviors/<zone>/<mobId>-<name>.yaml)
+//  2. Archetype tree (if mob.BehaviorArchetype is set)
+//  3. No tree — returns false
 func TryMobBehavior(mobInstanceId int, event EventContext) bool {
 	mob := mobs.GetInstance(mobInstanceId)
 	if mob == nil {
@@ -133,29 +149,43 @@ func TryMobBehavior(mobInstanceId int, event EventContext) bool {
 	}
 
 	mobId := int(mob.MobId)
+	engine := GetEngine()
 
-	// Lazy-load tree if not cached
-	tree := GetEngine().GetTree(mobId)
-	if tree == nil {
-		// Fast-path: negative cache avoids repeated os.Stat for mobs with no file.
-		if GetEngine().HasNoTree(mobId) {
-			return false
-		}
+	// 1. Try the per-mob btree (by mobId).
+	tree := engine.GetTree(mobId)
+	if tree == nil && !engine.HasNoTree(mobId) {
 		path := GetBehaviorPath(mobId, mob.Zone, mob.Character.Name)
-		// Check if file exists; record miss in negative cache so we skip next time.
 		if _, err := os.Stat(path); err != nil {
-			GetEngine().SetNoTree(mobId)
-			return false // No behavior tree for this mob
-		}
-		if err := GetEngine().LoadTree(mobId, path); err != nil {
+			engine.SetNoTree(mobId)
+		} else if err := engine.LoadTree(mobId, path); err != nil {
 			mudlog.Error("TryMobBehavior", "error", fmt.Sprintf("failed to load behavior tree for mob %d (%s): %v", mobId, path, err))
-			GetEngine().SetNoTree(mobId) // Don't retry on parse errors
-			return false
+			engine.SetNoTree(mobId)
+		} else {
+			tree = engine.GetTree(mobId)
 		}
-		tree = GetEngine().GetTree(mobId)
-		if tree == nil {
-			return false
+	}
+
+	// 2. Fall through to archetype if per-mob tree absent AND mob declares an archetype.
+	if tree == nil && mob.BehaviorArchetype != "" {
+		name := mob.BehaviorArchetype
+		tree = engine.GetArchetype(name)
+		if tree == nil && !engine.HasNoArchetype(name) {
+			path := GetArchetypePath(name)
+			if _, err := os.Stat(path); err != nil {
+				engine.SetNoArchetype(name)
+				mudlog.Warn("TryMobBehavior", "archetype", name, "warning", fmt.Sprintf("archetype file not found: %s", path))
+			} else if err := engine.LoadArchetype(name, path); err != nil {
+				mudlog.Error("TryMobBehavior", "error", fmt.Sprintf("failed to load archetype %s (%s): %v", name, path, err))
+				engine.SetNoArchetype(name)
+			} else {
+				tree = engine.GetArchetype(name)
+			}
 		}
+	}
+
+	// 3. No tree — caller runs legacy path.
+	if tree == nil {
+		return false
 	}
 
 	state := EnsureBTreeState(mob)
