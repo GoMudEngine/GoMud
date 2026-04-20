@@ -10,12 +10,14 @@ import (
 
 // Engine manages behavior tree loading, caching, and evaluation.
 type Engine struct {
-	mu         sync.RWMutex
-	trees      map[int]Node // mobId → compiled root node
-	noTree     map[int]bool // mobId → no behavior file exists on disk
-	roomTrees  map[int]Node // roomId → compiled root node
-	noRoomTree map[int]bool // roomId → no behavior file exists on disk
-	queue      []DelayedAction
+	mu          sync.RWMutex
+	trees       map[int]Node    // mobId → compiled root node
+	noTree      map[int]bool    // mobId → no behavior file exists on disk
+	roomTrees   map[int]Node    // roomId → compiled root node
+	noRoomTree  map[int]bool    // roomId → no behavior file exists on disk
+	archetypes  map[string]Node // archetype name → compiled root node
+	noArchetype map[string]bool // archetype name → no archetype file exists on disk
+	queue       []DelayedAction
 }
 
 type DelayedAction struct {
@@ -27,10 +29,12 @@ var globalEngine *Engine
 
 func init() {
 	globalEngine = &Engine{
-		trees:      make(map[int]Node),
-		noTree:     make(map[int]bool),
-		roomTrees:  make(map[int]Node),
-		noRoomTree: make(map[int]bool),
+		trees:       make(map[int]Node),
+		noTree:      make(map[int]bool),
+		roomTrees:   make(map[int]Node),
+		noRoomTree:  make(map[int]bool),
+		archetypes:  make(map[string]Node),
+		noArchetype: make(map[string]bool),
 	}
 }
 
@@ -126,6 +130,45 @@ func (e *Engine) GetRoomTree(roomId int) Node {
 	e.mu.RLock()
 	defer e.mu.RUnlock()
 	return e.roomTrees[roomId]
+}
+
+// LoadArchetype loads and caches a behavior tree for an archetype name.
+// Clears any negative-cache entry so newly added files are picked up at runtime.
+func (e *Engine) LoadArchetype(name string, path string) error {
+	node, err := LoadTreeFromFile(path)
+	if err != nil {
+		return err
+	}
+	e.mu.Lock()
+	e.archetypes[name] = node
+	delete(e.noArchetype, name)
+	e.mu.Unlock()
+	return nil
+}
+
+// HasNoArchetype reports whether the negative cache has recorded that
+// the named archetype has no file on disk. Callers should check this
+// before os.Stat.
+func (e *Engine) HasNoArchetype(name string) bool {
+	e.mu.RLock()
+	defer e.mu.RUnlock()
+	return e.noArchetype[name]
+}
+
+// SetNoArchetype records that the named archetype has no file on disk,
+// suppressing future os.Stat calls until the engine is restarted or
+// a tree is successfully loaded via LoadArchetype.
+func (e *Engine) SetNoArchetype(name string) {
+	e.mu.Lock()
+	e.noArchetype[name] = true
+	e.mu.Unlock()
+}
+
+// GetArchetype returns the cached archetype tree by name, or nil.
+func (e *Engine) GetArchetype(name string) Node {
+	e.mu.RLock()
+	defer e.mu.RUnlock()
+	return e.archetypes[name]
 }
 
 // EvaluateEvent triggers immediate tree evaluation for a mob instance.

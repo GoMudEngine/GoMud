@@ -1,5 +1,47 @@
 # DOGMud Patch Notes
 
+## 2026-04-20 — Companion AI Phase 4 (Melee Self-Buff Archetype)
+
+### Gameplay
+
+- **Vampires, air elementals, and fire elementals now maintain
+  self-buffs intelligently during combat.** Each picks the
+  highest-value buff it knows from its spellbook, skips buffs
+  already active, respects the shared cast cooldown, and falls
+  back to normal attacks when buffs are covered. A fresh vampire's
+  first combat sequence casts conviction-surge for its offensive
+  boost, then iron-will, then conviction-ward across the first
+  ~10 rounds — then attacks with bite and flavor emotes.
+- **Companions now follow their summoner through every movement
+  path** — walking, recall, portal, fold-recall, sable, admin
+  teleport. Mid-cast wind-ups are aborted to follow (conviction
+  already spent is forfeit, same as a player self-interrupt).
+  Aggro on a target that isn't in the new room ends automatically.
+
+### Under the hood
+
+- **Behavior-tree archetypes are now a first-class concept.** Mob
+  YAML gains an optional `behavior_archetype: <name>` field that
+  resolves to a shared tree file at
+  `_datafiles/world/dogmud/behaviors/archetypes/<name>.yaml`.
+  Resolution order: per-mob btree file wins, then archetype, then
+  legacy. This unlocks future work where NPCs can switch archetypes
+  at runtime (e.g., a caravan guard taking up banditry).
+- **Spells gain an optional `categories:` field.** Free-form string
+  list used by archetype AI to filter spellbooks by purpose. Today:
+  `self_defense` (iron-will, conviction-ward, conviction-armor) and
+  `self_offense` (conviction-surge).
+- **New behavior-tree action `cast_best_in_category`** picks the
+  highest-scoring (`base_folds × cost`) spell in a category from the
+  mob's spellbook, skipping already-active buffs, components,
+  summons, and insufficient CP. Self-gates on the shared
+  special-move cooldown, so mobs naturally alternate between cast
+  rounds and attack rounds.
+- **New event `mob_combat_round`** fires at the top of
+  `handleCombatRound` for every mob combatant. Mobs with a matching
+  btree get first shot at this round's action; if the tree handles
+  it (initiates a cast), the legacy combat swing is skipped.
+
 ## 2026-04-18 — Combat unification, target resolution, bleedout removal, lots of fixes
 
 ### Gameplay

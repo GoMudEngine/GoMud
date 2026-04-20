@@ -238,6 +238,51 @@ func SetDebug(on bool) {
 	eventDebugging = on
 }
 
+// InspectQueuedInputForTest scans the global events queue (without draining it)
+// for the first Input event with a matching MobInstanceId whose InputText has
+// the given prefix. Returns the InputText on match, or "" if not found.
+//
+// FOR TEST USE ONLY. Not safe to call from production paths.
+func InspectQueuedInputForTest(instanceId int, prefix string) string {
+	qLock.Lock()
+	defer qLock.Unlock()
+	for _, pe := range globalQueue {
+		inp, ok := pe.event.(Input)
+		if !ok {
+			continue
+		}
+		if inp.MobInstanceId != instanceId {
+			continue
+		}
+		if prefix == "" || len(inp.InputText) >= len(prefix) && inp.InputText[:len(prefix)] == prefix {
+			return inp.InputText
+		}
+	}
+	return ""
+}
+
+// DrainQueuedInputsForTest removes all Input events from the global queue for
+// the given mob instance id and returns their InputText values.
+//
+// FOR TEST USE ONLY. Mutates the queue.
+func DrainQueuedInputsForTest(instanceId int) []string {
+	qLock.Lock()
+	defer qLock.Unlock()
+	var found []string
+	remaining := make(priorityQueue, 0, len(globalQueue))
+	for _, pe := range globalQueue {
+		inp, ok := pe.event.(Input)
+		if ok && inp.MobInstanceId == instanceId {
+			found = append(found, inp.InputText)
+			continue
+		}
+		remaining = append(remaining, pe)
+	}
+	globalQueue = remaining
+	heap.Init(&globalQueue)
+	return found
+}
+
 // Initialize the priority queue.
 func init() {
 	heap.Init(&globalQueue)
