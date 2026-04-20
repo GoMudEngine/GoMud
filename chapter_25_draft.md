@@ -262,12 +262,12 @@ fire small enough to hide in the lee of the wall. Davan filled the
 kettle. Aldric unsaddled the bay and tethered her at the leeward
 wall and rubbed her down with a folded sack.
 
-They were at the eastern edge of Irongate country now. From the
-fold the road ahead ran out of the gap and opened east — heath
-going russet, wide long, the broken bones of other folds scattered
-across it, and in the far distance a darker line that might have
-been a further ridge or the beginning of the coast weather a day
-ahead.
+They were an hour past the eastern edge of Irongate country now,
+camped on heath that ran russet and wide around them, broken bones
+of other folds scattered at intervals across it. The road behind
+climbed back toward the gap they had come through. Ahead it went
+on east toward a darker line in the far distance — a further ridge,
+or the beginning of the coast weather a day ahead.
 
 Vane stood at the mouth of the fold for a long time looking back.
 Not forward. Back. West, the way they had come. He knew what she

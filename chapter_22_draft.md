@@ -31,7 +31,7 @@ Her hands shook at the fingertips when she laced the boots. Fine tremor. She wor
 
 ---
 
-Maren was asleep in the other bed. Dark hair across the pillow. Face slack in the way a face went slack only after three years of vigilance — the vigilance dropped, briefly, because she had judged the room safe enough to drop it in. Vane filed the trust and did not let it move her.
+Maren was asleep in the other bed. Dark hair across the pillow. Face slack in the way a face went slack only after three years of vigilance — the vigilance dropped, briefly, because she had judged the room safe enough to drop it in. Vane registered the trust and did not let it move her.
 
 She crossed to the door and picked up her coat from the hook. She did not wake Maren. Waking Maren would have required explanation, and the explanation was not speakable yet.
 

@@ -158,13 +158,14 @@ enough to send you off a cliff?
 - **Role**: POV character. Hunter thread, reluctant-ally trajectory.
 - **Physical**: Bark-skin patches spreading from wrists up arms. Mid-bicep
   by Ch. 4; **upper arm / nearing shoulder by Ch. 18** (author-locked
-  escalation — Ch. 18 draft's "past the elbow" phrasing reads as
-  regression and should be revised to "above the elbow now, upper arm
-  nearly to the shoulder" or similar). Should NOT regress during
-  withdrawal — regression is gradual and post-withdrawal (outline
-  consistency flag). Lean and economical in how she occupies space.
-  Manuscript implies she is not tall but moves with professional
-  precision.
+  escalation). Ch. 22 onward: edges begin receding as she stops feeding
+  the Chrysalis via Bloom — **the "un-feeding" metaphor (Ch. 26 canon)**:
+  the mutation retreats not because of healing but because the fuel is
+  gone. Drier wrist-patch, looser shoulder-edge, elbow-inside starting
+  to yield by Day 3 east. Do NOT render this as reward or relief — it
+  is withdrawal's body-cost at a quieter register than tremor or sweat.
+  Lean and economical in how she occupies space. Manuscript implies she
+  is not tall but moves with professional precision.
 - **Carries**: Bloom wafer tin (nearly empty by Ch. 18; decision made not
   to use by end of Ch. 18 — tin stays in her pack, she doesn't discard it).
   Tracking tools implied but not specified. Professional kit.
