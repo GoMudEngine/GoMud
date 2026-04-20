@@ -913,6 +913,27 @@ func applyMobSelfEffect(mob *mobs.Mob, room *rooms.Room, spellData *spells.Spell
 		mob.Character.AddCondition(characters.ConditionRegen, durationRounds, regenMult, "heal spell")
 		sendVisualRoomText(room, fmt.Sprintf(
 			`%s channels restorative magic.`, mobDisplayName(mob, room, 0)))
+	case "buff":
+		for _, buffId := range spellData.BuffIds {
+			mob.AddBuff(buffId, "spell")
+			// Compute tick snapshot for config-driven buffs (matches
+			// applyMobEffect_buff for consistency across all caster paths).
+			if buffSpec := buffs.GetBuffSpec(buffId); buffSpec != nil && buffSpec.TickPool != "" {
+				skillLevel := mob.Character.GetSkillLevel(skills.Spellcasting)
+				scalingMult := combat.SkillMultiplier(skillLevel)
+				var maxPool int
+				switch buffSpec.TickPool {
+				case "health":
+					maxPool = mob.Character.HealthMax.Value
+				case "stamina":
+					maxPool = mob.Character.StaminaMax.Value
+				case "conviction":
+					maxPool = mob.Character.ConvictionMax.Value
+				}
+				tickAmt := buffs.ComputeTickAmount(maxPool, buffSpec.TickPercent, buffSpec.TickVariance, buffSpec.TickMin, scalingMult)
+				mob.Character.Buffs.SetTickAmount(buffId, tickAmt)
+			}
+		}
 	case "shield":
 		skillLevel := mob.Character.GetSkillLevel(skills.Spellcasting)
 		weightedSkill := int(math.Round(float64(skillLevel) * float64(configs.GetBalanceConfig().SkillWeight)))

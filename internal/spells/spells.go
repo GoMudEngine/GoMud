@@ -20,7 +20,8 @@ type SpellData struct {
 	Name        string     `yaml:"name,omitempty"`
 	Description string     `yaml:"description,omitempty"`
 	Type        SpellType  `yaml:"type,omitempty"`
-	Schools     []string   `yaml:"schools,omitempty"` // Can have multiple school tags
+	Schools     []string   `yaml:"schools,omitempty"`    // Can have multiple school tags
+	Categories  []string   `yaml:"categories,omitempty"` // AI categorization: self_defense, self_offense, etc. Free-form strings.
 	Cost        int        `yaml:"cost,omitempty"`    // Conviction cost
 	HealthCost  int        `yaml:"healthcost,omitempty"` // Optional Health cost for life-force magic
 	WaitRounds  int        `yaml:"waitrounds,omitempty"`

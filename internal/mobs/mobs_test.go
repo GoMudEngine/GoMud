@@ -6,6 +6,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/yaml.v2"
 )
 
 // seedRegistry populates all global mobs maps with diverse test data.
@@ -1338,6 +1339,37 @@ func TestLoadMobInstanceNoFile(t *testing.T) {
 func TestDeleteMobInstanceNoFile(t *testing.T) {
 	// Should not panic even when file doesn't exist
 	DeleteMobInstance(999, "nowhere", "ghost", 999)
+}
+
+// ─── BehaviorArchetype YAML roundtrip ────────────────────────────────────
+
+func TestMob_BehaviorArchetypeYAMLRoundtrip(t *testing.T) {
+	data := []byte(`
+mobid: 999
+zone: Test
+behavior_archetype: melee_self_buff
+`)
+	var m Mob
+	if err := yaml.Unmarshal(data, &m); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if m.BehaviorArchetype != "melee_self_buff" {
+		t.Fatalf("want melee_self_buff, got %q", m.BehaviorArchetype)
+	}
+}
+
+func TestMob_BehaviorArchetypeOmittedWhenAbsent(t *testing.T) {
+	data := []byte(`
+mobid: 999
+zone: Test
+`)
+	var m Mob
+	if err := yaml.Unmarshal(data, &m); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if m.BehaviorArchetype != "" {
+		t.Fatalf("want empty string, got %q", m.BehaviorArchetype)
+	}
 }
 
 // ─── PathQueue ────────────────────────────────────────────────────────────
