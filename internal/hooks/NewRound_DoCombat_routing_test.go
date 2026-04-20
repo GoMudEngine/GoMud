@@ -306,22 +306,29 @@ func TestHandleCombatRound_AllQuadrantsRouteCorrectly(t *testing.T) {
 					directRecipients)
 			}
 
-			// ─── Assertion 2: mob_hurt dispatch ──────────────────────────────
+			// ─── Assertion 2: mob_hurt / mob_combat_round dispatch ───────────
 			//
 			// Per Divergence #2 in the design spec, mob_hurt fires only when
 			// the defender is a mob. Player defenders never receive mob_hurt
 			// (they have no behavior tree).
+			//
+			// mob_combat_round fires for mob attackers (Task 9). In the MM
+			// quadrant both attacker and defender share MobId=1, so the same
+			// recording tree may capture mob_combat_round (from the attacker)
+			// in addition to mob_hurt (from the defender). When the tree
+			// returns Success for mob_combat_round the swing is suppressed, so
+			// mob_hurt may not fire — that's intentional and permissible.
 			if !tc.defIsPlayer {
 				// The recordingNode receives the EvalContext for any event
-				// dispatched to the defender mob's tree. We expect at least
+				// dispatched to a mob's tree. We expect at least
 				// one mob_hurt dispatch IF the attack hit; on a miss, no
-				// mob_hurt fires. Therefore we assert weak: any recorded
-				// event of type "mob_hurt" is permissible, and absence is
-				// permissible (miss). What we cannot tolerate is a non-
-				// mob_hurt event landing in the recorder.
+				// mob_hurt fires. mob_combat_round is also permissible (mob
+				// attacker getting first shot at the round). What we cannot
+				// tolerate is any other event type landing in the recorder.
+				allowedEvents := map[string]bool{"mob_hurt": true, "mob_combat_round": true}
 				for _, evt := range recorder.calls {
-					assert.Equal(t, "mob_hurt", evt.EventType,
-						"%s: defender mob's tree should only receive mob_hurt events from this code path; got %q",
+					assert.True(t, allowedEvents[evt.EventType],
+						"%s: mob tree should only receive mob_hurt or mob_combat_round events from this code path; got %q",
 						tc.name, evt.EventType)
 				}
 			} else {

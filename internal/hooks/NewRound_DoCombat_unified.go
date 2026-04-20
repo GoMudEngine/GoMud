@@ -71,6 +71,23 @@ func handleCombatRound(
 		return
 	}
 
+	// Fire mob_combat_round for mob attackers — gives the btree engine
+	// first shot at deciding this round's action (cast/attack/etc).
+	// If the tree handles the round (returns Success), skip the legacy
+	// combat swing entirely. Does not apply to player attackers.
+	if !atk.IsPlayer() {
+		if mobAtk, ok := atk.(*actions.MobActor); ok && mobAtk.Mob != nil {
+			ctxBT := behaviortree.EventContext{
+				EventType: "mob_combat_round",
+				RoomId:    mobAtk.Mob.Character.RoomId,
+			}
+			if behaviortree.TryMobBehavior(mobAtk.Mob.InstanceId, ctxBT) {
+				// Tree handled the round (e.g., initiated a cast). Skip the swing.
+				return
+			}
+		}
+	}
+
 	// Hidden defender bails the round (existing per-quadrant behavior).
 	if def.GetCharacter().HasBuffFlag(buffs.Hidden) {
 		// Divergence: only player attackers get the "can't seem to find
