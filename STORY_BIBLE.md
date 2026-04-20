@@ -125,7 +125,12 @@ enough to send you off a cliff?
   (manufactured), southeastern recess shaped like a coin/disc with the
   inner orbit symbol. Rides west to New Plymouth after. Arrives Ch. 21.
   Act 3: reads the ship's records (Ch. 29) — what his 30 years of
-  scholarship was for.
+  scholarship was for. **Ch. 25 arc beat (institutional identity shift):**
+  the realization that *"the next Keeper was going to be the one who
+  took the floor up"* — load-bearing phrase for Ch. 29/30, marks the
+  moment Aldric stops being a steward of questions and accepts becoming
+  a disruptive presence. Realization, not decision; the decision lands
+  later.
 - **Voice signature (manuscript-confirmed, updated after prose audit)**:
   Aldric holds two languages in his head — scholarship and priesthood —
   and they are in open conflict whenever he encounters the objects. The
