@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
+	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
@@ -270,6 +271,23 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 				SignalType:    "combat_round",
 				RoomId:        mob.Character.RoomId,
 			})
+		}
+
+		// Fire mob_combat_round for the attacking mob BEFORE the legacy
+		// handleMobAIDecision. Mobs with a matching btree (per-mob file or
+		// archetype via BehaviorArchetype) get first shot at this round's
+		// action; if the tree returns Success (e.g., initiated a cast) we
+		// skip both the legacy AI and handleCombatRound for this mob.
+		//
+		// Legacy preferredSpell has a hardcoded priority (shield → heal →
+		// harm-list) that would otherwise preempt archetype self-buffs every
+		// round. Firing here makes the archetype authoritative.
+		btCtx := behaviortree.EventContext{
+			EventType: "mob_combat_round",
+			RoomId:    mob.Character.RoomId,
+		}
+		if behaviortree.TryMobBehavior(mob.InstanceId, btCtx) {
+			continue
 		}
 
 		c := configs.GetConfig()
