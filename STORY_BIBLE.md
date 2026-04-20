@@ -429,7 +429,27 @@ preserves the truth as legend.
 - **The hill east of New Plymouth**: Crash site. "The hill that moves in
   the light" — metallic hull catches sunlight at certain angles, appears
   to shift. Old songs say not to go there. Five days east of New Plymouth
-  (Ch. 22 closing).
+  (Ch. 22 closing). **Ch. 27 canon:** Long east-southeast swell with a
+  level middle-crest; flanks curve at an even rate, the wrongness only
+  legible up close. Surface (where growth has given way or been cleared)
+  is smooth *the way the disc is smooth, at the scale of a room* —
+  cool-that-doesn't-travel, not stone, felt like stone but not. The
+  four nested arcs of the inner orbit symbol run along the hillside as
+  shallow lines in the material; roots grow *along* the depressions
+  rather than into them because the lines predate the soil. The
+  southeastern recess (disc-sized, symbol on its inner face) is the
+  authentication port.
+
+  **On activation (Ch. 27 closing — Ch. 28 drafters inherit this
+  baseline):** the disc's ongoing hum *stops* at seating (first silence
+  in three years); a sub-audible bone-register sound begins beneath
+  the hill; the air between body and hillside shifts from ambient to
+  *interior-cool* (the air of a closed room opening); the disc's
+  symbol under the user's thumb lights a color new to the disc — warm
+  leaf-through-sunlight, settling and holding rather than pulsing; the
+  four arcs of the hillside's symbol begin *faintly* to glow through
+  the overgrowth, a suggestion of no-longer-inert material. Beyond
+  these external perceivables lies the Ch. 28 interior, sealed.
 - **Greenford**: Brennan's location. Aldric rides east to it (Ch. 13),
   then west to New Plymouth (Ch. 17).
 
@@ -987,13 +1007,22 @@ can perceive), not start from silence.
 ### Author Canon — Locked Decisions (as of this bible revision)
 
 - **Maren's father is dead.** He went east ten years ago and did not return.
-  Finding his remains is a traumatic event for Maren — placement is
-  drafter/author call but a strong candidate is Ch. 27 (approach to the
-  hill, before or during the disc-recess sequence), where the discovery
-  grounds the reveal in grief and stakes rather than puzzle-solving. The
-  remains do not need to be preserved — environment, predators, and
-  ten years can account for whatever state he's in. Reader should feel
-  the weight without needing a graphic description.
+  Finding his remains is a traumatic event for Maren. **Ch. 27 canon
+  (drafted):** remains lie four paces from the southeastern recess, a
+  hand-line outstretched toward it — the tragic geometry of key and
+  lock present but ten years apart (the disc was with his infant
+  daughter; he reached the hill without it). Belongings salvageable:
+  grey wool coat (dark cuff-facings and a grandmother's shoulder-seam,
+  details Ulla would recognize from her Ch. 11 description); leather
+  pack-strap; leather satchel containing a small bound book wrapped in
+  oiled cloth (now failed), a fire-tin with flint, and a river-smoothed
+  egg-sized stone he had picked up somewhere. Bones inside the coat
+  are sparse (animals, weather, ten years). Maren does not weep
+  on-page; she leaves the satchel and contents at the remains in
+  Ch. 27 — **the bound book is a deliberate Ch. 28/29/30 callback
+  hook** the author may choose to pick up. Reader should feel the
+  weight without needing graphic description. Handled with restraint
+  per the "traumatic event without making it about the body" directive.
 - **Horst's team is approximately 5.** Not all 5 need to appear on-page.
   Horst + 2 confirmed in New Plymouth (Ch. 14, Merchant Quarter). One
   follows east (Ch. 26, Ch. 29). Remaining 1-2 are available as narrative
