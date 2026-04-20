@@ -492,6 +492,44 @@ preserves the truth as legend.
     (the hill exterior at activation). Holding as function is itself
     what the material does — a form of keeping the Chrysalis cannot
     reach.
+
+  **Ch. 29 additions (inside the hull — Aldric's reading):**
+  - **Written records format:** Small two-hand objects, flat-on-one-
+    side / curved-on-the-other. Each bears a *catalog number on its
+    edge* and a heading combining the *inner orbit symbol* (mission
+    emblem) with an *office seal* (distinct sub-stamp identifying
+    the source department aboard the ship). Readable by sight in
+    the walls' cold-precise light.
+  - **The voiced wall (parallel register to the written records):**
+    One wall section holds a palm-activation panel that plays back
+    logged voice entries. Same catalog dates as the written records;
+    a second register of the same archive rather than a separate
+    archive. Palm contact activates; playback is in a language no
+    character on Gaius can parse.
+  - **"Native-resistant baseline"** — the ship's own locked technical
+    vocabulary for unchanged/immune humans. This is the authoritative
+    term the records use where Gaius theology says "chosen" or "bloodline."
+    Aldric notes the ritual tongue's *chosen* against the technical
+    *native-resistant baseline* — same population, opposite framings.
+  - **Hold IV** — the formal designation for the lander's stern
+    compartment that housed the genetic-archive containers. The
+    archive went to the Confluence site (originally a secondary
+    equipment cache, later the temple was built atop it). "Hold IV"
+    is now the characters' shorthand for the archive's origin
+    compartment and, by extension, the archive itself.
+  - **Bio-lock specificity (load-bearing for Ch. 30):** The bio-lock
+    on the genetic archive is not just "Chrysalis users cannot open
+    it." Ten thousand years of Chrysalis integration means the
+    organism is present in every currently-living human on Gaius —
+    *including the immune-lineage bloodline*, whose immunity kept
+    the organism inactive in themselves but did not exclude it from
+    their biology. **No living person on Gaius qualifies to open
+    the archive.** Opening would require first un-making the
+    Chrysalis from some specific population — a multi-generational
+    biological project the characters cannot execute in their
+    lifetimes. This sharpens the Ch. 30 ethical choice from moral
+    ("should we un-make ourselves") to genetic-temporal ("no one
+    alive can open it; would we make a line of people who could?").
 - **Greenford**: Brennan's location. Aldric rides east to it (Ch. 13),
   then west to New Plymouth (Ch. 17).
 
