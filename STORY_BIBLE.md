@@ -413,7 +413,13 @@ preserves the truth as legend.
   going DOWN — NOT to be confused with the cooperage).
 - **Eastern highlands / Irongate country**: Route east of New Plymouth.
   Contour lines thickening. Davan's empathic sense reads something older
-  underneath (Ch. 24).
+  underneath (Ch. 24). **Irongate** specifically (Ch. 25): a glacier-
+  carved iron-rich gap in the range, east-northeast orientation,
+  rust-red north-shoulder scree, a stream threading the gap bottom.
+  Group passes through on Day 3; camps at the eastern edge of the
+  country that evening. The debris-field canon (see Section 5) now
+  extends across five known sites spanning approximately sixty miles,
+  Confluence at the western end and the hill formation at the eastern.
 - **The hill east of New Plymouth**: Crash site. "The hill that moves in
   the light" — metallic hull catches sunlight at certain angles, appears
   to shift. Old songs say not to go there. Five days east of New Plymouth
@@ -608,6 +614,11 @@ the giver bleeds through the wafer.
   duration is not precisely specified and may vary by user, proximity,
   or conditions — intentional in-world ambiguity, as the characters
   themselves don't fully understand the mechanism.
+- **Deactivation fade-order (Ch. 25 canon):** When the display fades,
+  the blue-green world fades first; the burning-point-at-centre (the
+  star) fades last. Held across both Aldric's and Edvar's units; likely
+  consistent across all functional faces recovered from the debris
+  field.
 - **Intentional display discrepancy**: Aldric's face = "irregular, damaged."
   Edvar's face = "smaller, further away." Both are correct data from
   different vantage points. Must remain distinct and consistent through
