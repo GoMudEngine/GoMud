@@ -696,6 +696,15 @@ the giver bleeds through the wafer.
   i.e., he is one inferential step from the truth the cooperage group
   will get to independently. Aldric carries this phrase with him west
   without yet knowing what it means; it becomes fully legible by Ch. 20.
+- **Brennan's survey data (Ch. 24 canon):** Beyond the letter, Brennan
+  has supplemental survey material indicating **metallic signatures at
+  depth under the Temple of Confluence itself** — a separate debris-
+  scatter from Reth's eastern-highland formation (~11 miles NE) and
+  from Corvel's marshland find. Implication: the Confluence was built
+  atop a secondary debris site from the same crash. Aldric's sealed
+  chamber + the face + the four containers are thus retroactively
+  recontextualized — not discoveries hidden in the temple but debris
+  the temple was built to cover. Confirmed by drafter; folded in.
 
 ### Inner Orbit Symbol
 - **Physical description (LOCKED, Ch. 9 manuscript):** four nested arcs
