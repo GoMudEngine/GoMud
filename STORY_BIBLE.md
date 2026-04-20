@@ -918,6 +918,17 @@ table in Section 6 corrected accordingly.
 
 ### Draft-Level Revision Directives (for the revision agent)
 
+- **Partial moons-look in Ch. 23 (constraint for Chs. 24–26 drafters).**
+  Ch. 23 ends with Maren looking up at the three moons for the first
+  time in three years — a *soft*, exhausted, pre-sleep gesture
+  immediately undercut by a disc pulse. Not a revelation. The
+  continuity pass deemed this safe but conditional: **do NOT promote
+  this beat in Chs. 24–26 into "the moment she started to understand."
+  Hold the look unresolved through at least Ch. 26.** Ch. 30's locked
+  communal closing image (all four POVs present, full revelation weight)
+  must remain structurally distinct.
+
+
 - **Ch. 18 bark-skin direction (author-locked).** Draft's "past the
   elbow now" reads as regression from the Ch. 4 mid-bicep baseline.
   Author direction: escalate further. Target: upper arm nearly to the

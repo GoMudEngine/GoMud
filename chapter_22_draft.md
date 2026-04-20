@@ -441,7 +441,7 @@ He came up the stairs quietly and knocked quietly and Maren let him in. He looke
 
 "Marrick is coming."
 
-"He's coming. He says Tela will come too."
+"He's coming. Tela's riding decoy through the east gate. One of the Inkwalk boys with her."
 
 Vane turned her face toward the wall. Her eyes had started to water for no reason she could name. She closed them.
 
