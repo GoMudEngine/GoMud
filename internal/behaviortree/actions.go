@@ -25,6 +25,7 @@ func init() {
 	actionRegistry["attack"] = actAttack
 	actionRegistry["flee"] = actFlee
 	actionRegistry["cast"] = actCast
+	actionRegistry["cast_best_in_category"] = actCastBestInCategory
 	actionRegistry["spawn_mob"] = actSpawnMob
 	actionRegistry["add_temp_exit"] = actAddTempExit
 	actionRegistry["set_state"] = actSetState
@@ -77,8 +78,9 @@ var delayedActions = map[string]bool{
 	"emote":       true,
 	"attack":      true,
 	"flee":        true,
-	"cast":        true,
-	"move":        true,
+	"cast":                     true,
+	"cast_best_in_category":   true,
+	"move":                     true,
 	"add_buff":    true,
 	"command_mob": true,
 	"mob_say":     true,
