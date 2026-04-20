@@ -37,10 +37,26 @@
   summons, and insufficient CP. Self-gates on the shared
   special-move cooldown, so mobs naturally alternate between cast
   rounds and attack rounds.
-- **New event `mob_combat_round`** fires at the top of
-  `handleCombatRound` for every mob combatant. Mobs with a matching
-  btree get first shot at this round's action; if the tree handles
-  it (initiates a cast), the legacy combat swing is skipped.
+- **New event `mob_combat_round`** fires per mob combatant BEFORE the
+  legacy AI decision, so behavior-tree archetypes are authoritative
+  for mobs that declare one. Legacy `preferredSpell` (shield-first
+  priority) no longer preempts the archetype.
+
+### Latent-bug fixes surfaced by Phase 4
+
+These were pre-existing engine gaps that no prior code path exercised;
+Phase 4's archetype is the first thing that asks a mob to self-cast
+non-shield buffs, and the first to track the magical shield a
+mob-cast ward applies.
+
+- **`applyMobSelfEffect` now handles `buff` effect_type.** Used to only
+  handle `heal` and `shield` — buff-type spells (conviction-surge,
+  iron-will) fell through silently when mobs self-cast them. They
+  now correctly apply, including per-buff tick snapshots.
+- **Shield-active detection uses `ConditionShield`** instead of the
+  equipment-layer `HasShield()` helper. The magical shield a spell
+  applies via `AddCondition(ConditionShield, ...)` is what the
+  archetype needs to check against for "already active."
 
 ## 2026-04-18 — Combat unification, target resolution, bleedout removal, lots of fixes
 
