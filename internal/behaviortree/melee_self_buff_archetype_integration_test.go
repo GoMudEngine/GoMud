@@ -17,23 +17,18 @@ const archetypeYAML = "../../_datafiles/world/dogmud/behaviors/archetypes/melee_
 
 // Integration tests for the melee_self_buff archetype.
 //
-// Architecture note: cast_best_in_category is a "delayed action". The
-// ActionNode.Evaluate() detects the reaction-delay and queues the actual
-// fn call via GetEngine().QueueDelayed(), returning Success immediately.
-// This means the SelectorNode sees Success from the first child it tries,
-// and does NOT fall through to the second child in the same round.
-//
-// Pipeline for Test 1 (full end-to-end):
+// All three tests use the full end-to-end pipeline:
 //  1. LoadArchetypeForTest loads the real melee_self_buff.yaml
 //  2. A mob with BehaviorArchetype:"melee_self_buff" is seeded
-//  3. TryMobBehavior fires mob_combat_round → selector picks self_offense
-//     delayed action → returns Success
-//  4. DrainAllDelayedActionsForTest flushes the delayed-action queue
-//  5. events.InspectQueuedInputForTest verifies the "cast X" command
+//  3. TryMobBehavior fires mob_combat_round → selector evaluates children
+//  4. cast_best_in_category runs synchronously (not in delayedActions),
+//     so mob.Command fires inline → "cast X" is queued in events
+//  5. events.InspectQueuedInputForTest verifies the cast command
 //
-// Tests 2 and 3 exercise the spell-selection logic directly via
-// actCastBestInCategory (bypassing the delay layer), which is the correct
-// scope for verifying "which spell wins the ranking" behavior.
+// Test 1: fresh mob with an offense spell → casts self_offense
+// Test 2: surge buff already active, only defense spells → selector
+//         falls through offense (Failure) → casts self_defense
+// Test 3: defense-only mob → offense always Failure → casts self_defense
 
 // seedArchetypeSpells installs the four real spells used by melee_self_buff.
 // Returns a cleanup function.
@@ -135,21 +130,14 @@ func TestMeleeSelfBuff_FreshMobCastsSelfOffense(t *testing.T) {
 	}
 }
 
-// TestMeleeSelfBuff_WithSurgeActiveFallsToDefense verifies the spell-selection
-// logic when the offense buff (surge, buff 26) is already active:
-// actCastBestInCategory skips the surge spell and selects the highest-scoring
-// defense spell instead.
-//
-// This test calls actCastBestInCategory directly (bypassing the delay layer)
-// because the delayed-action scheduling makes the selector return Success from
-// the offense node before falling through to defense in the same round.
-// The logic test is still meaningful: it proves that with surge active,
-// the defense action picks the correct winner.
-//
-// Spellbook: conviction-ward (score 4×30=120) vs iron-will (score 6×45=270).
-// iron-will wins by score.
-func TestMeleeSelfBuff_WithSurgeActiveFallsToDefense(t *testing.T) {
+// TestMeleeSelfBuff_WithSurgeActiveCastsIronWill verifies the full selector
+// fallthrough: when the offense buff (surge, buff 26) is already active, the
+// offense child returns Failure and the selector falls through to defense.
+// The defense action picks iron-will (score 6×45=270) over conviction-ward
+// (score 4×30=120).
+func TestMeleeSelfBuff_WithSurgeActiveCastsIronWill(t *testing.T) {
 	defer seedArchetypeSpells(t)()
+	LoadArchetypeForTest(t, "melee_self_buff", archetypeYAML)
 
 	mob, cleanup := seedArchetypeMob(t, 90002, map[string]int{
 		"conviction-ward": 4, // self_defense, score 120
@@ -158,16 +146,14 @@ func TestMeleeSelfBuff_WithSurgeActiveFallsToDefense(t *testing.T) {
 	defer cleanup()
 	defer events.DrainQueuedInputsForTest(mob.InstanceId)
 
-	// Mark surge buff 26 as active — conviction-surge would be skipped if present.
+	// Mark surge buff 26 as active so the offense child finds no eligible
+	// spell and returns Failure, forcing the selector to try defense.
 	cleanupBuff := seedBuffOnChar(t, &mob.Character, 26)
 	defer cleanupBuff()
 
-	// Directly invoke the defense action (bypasses delay layer).
-	ctx := &EvalContext{InstanceId: mob.InstanceId}
-	params := map[string]any{"category": "self_defense"}
-	result := actCastBestInCategory(params, ctx)
-	if result != Success {
-		t.Fatalf("actCastBestInCategory(self_defense): expected Success, got %v", result)
+	ok := TryMobBehavior(mob.InstanceId, EventContext{EventType: "mob_combat_round"})
+	if !ok {
+		t.Fatalf("TryMobBehavior: expected Success (tree handled event), got false")
 	}
 
 	cmd := events.InspectQueuedInputForTest(mob.InstanceId, "cast ")
@@ -176,15 +162,13 @@ func TestMeleeSelfBuff_WithSurgeActiveFallsToDefense(t *testing.T) {
 	}
 }
 
-// TestMeleeSelfBuff_DefenseOnlyMobCastsTopRankedDefense verifies that a mob
-// with only self_defense spells picks the highest-scoring one (iron-will, 270)
-// over lower-scoring alternatives (conviction-ward, 120).
-//
-// This test calls actCastBestInCategory directly for the same reason as
-// TestMeleeSelfBuff_WithSurgeActiveFallsToDefense — to isolate the logic
-// from the delay scheduling.
-func TestMeleeSelfBuff_DefenseOnlyMobCastsTopRankedDefense(t *testing.T) {
+// TestMeleeSelfBuff_AirElementalCastsDefenseOnly verifies that a mob with
+// only self_defense spells correctly falls through the offense child (Failure)
+// and casts the highest-scoring defense spell (iron-will, 270 > ward, 120).
+// This covers the air/fire elemental archetype case.
+func TestMeleeSelfBuff_AirElementalCastsDefenseOnly(t *testing.T) {
 	defer seedArchetypeSpells(t)()
+	LoadArchetypeForTest(t, "melee_self_buff", archetypeYAML)
 
 	mob, cleanup := seedArchetypeMob(t, 90003, map[string]int{
 		"iron-will":       4, // self_defense, score 6×45=270
@@ -193,12 +177,9 @@ func TestMeleeSelfBuff_DefenseOnlyMobCastsTopRankedDefense(t *testing.T) {
 	defer cleanup()
 	defer events.DrainQueuedInputsForTest(mob.InstanceId)
 
-	// Directly invoke the defense action (bypasses delay layer).
-	ctx := &EvalContext{InstanceId: mob.InstanceId}
-	params := map[string]any{"category": "self_defense"}
-	result := actCastBestInCategory(params, ctx)
-	if result != Success {
-		t.Fatalf("actCastBestInCategory(self_defense): expected Success, got %v", result)
+	ok := TryMobBehavior(mob.InstanceId, EventContext{EventType: "mob_combat_round"})
+	if !ok {
+		t.Fatalf("TryMobBehavior: expected Success (tree handled event), got false")
 	}
 
 	cmd := events.InspectQueuedInputForTest(mob.InstanceId, "cast ")

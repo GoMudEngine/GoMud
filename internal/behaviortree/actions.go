@@ -79,7 +79,6 @@ var delayedActions = map[string]bool{
 	"attack":      true,
 	"flee":        true,
 	"cast":                     true,
-	"cast_best_in_category":   true,
 	"move":                     true,
 	"add_buff":    true,
 	"command_mob": true,
