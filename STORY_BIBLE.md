@@ -106,8 +106,9 @@ enough to send you off a cliff?
   Must pay off Ch. 16. (Barge companion Lera — name resolved to manuscript
   spelling; outline updated.)
 
-### Aldric
-- **Age/status**: 53, Keeper at the Temple of Confluence.
+### Aldric Voss
+- **Age/status**: 53, Keeper at the Temple of Confluence. Surname
+  "Voss" introduced in Ch. 21 draft; author-confirmed canon.
 - **Role**: POV character. Institutional/theological thread.
 - **Physical**: Compulsive lamp-pinching tic — checks and extinguishes
   lamps even when already cold, callused fingertips from years of this.
@@ -210,7 +211,12 @@ cooperage meeting Ch. 20 — his nod is the only welcoming gesture Maren
 registers on entry; trims lamp wicks mid-scene (a small physical reset
 that punctuates the argument).
 
-**Edvar** — 60s, mapmaker and collector, Crafting Quarter. Has a second
+**Edvar Marrick** — 60s, mapmaker and collector, Crafting Quarter.
+Surname "Marrick" introduced in Ch. 21 draft; author-confirmed canon.
+His shop card reads *E. Marrick, Cartographer and Chartmaker* and sits
+along the Inkwalk (see New Plymouth geography). Mid-60s, spare-built,
+ink-stained fingers, the attentiveness of a man pulled reluctantly from
+his worktable. Has a second
 face (found in collapsed building 20 years ago). Has two maps with margin
 notation (three and four). Worked the question 20 years alone. Takes three
 Thursdays to decide Davan is worth showing the maps (Ch. 15 third visit).
@@ -299,11 +305,32 @@ Cade. Address: Lintel Street, canal district — stone stairs going DOWN.
 The underground room corridor matches Vane's involuntary visions exactly.
 Vane turns around and leaves without purchasing; the interaction ends there.
 
-**Young cartographer** — Unnamed. Female. Fresh ink stains on the heel
-of her writing hand (cartographer's tell). Stops note-taking to observe
-Maren openly when Maren enters the basement (Ch. 20). Role and
-relationships deliberately underdeveloped pending a decision on her
-purpose — good candidate to carry a later beat or reveal if needed.
+**Tela** — Young cartographer (family name not yet canonized; Aldric
+did not catch it on first hearing in Ch. 21 and did not press). Female.
+Fresh ink stains on the heel of her writing hand. Stops note-taking
+to observe Maren openly when Maren enters the basement (Ch. 20). Looks
+at Aldric the way Marrick did — the open directness of a person who
+has decided courtesies can wait (Ch. 21). Role and relationships
+still underdeveloped pending a decision on her purpose — good
+candidate to carry a later beat or reveal.
+
+**Yelin** — New Plymouth temple-district Keeper, order-colleague Aldric
+contacts on arrival (Ch. 21). Professional practice of not probing what
+is offered. Registers Aldric's slip when he asks about a traveling
+Keeper — a small filing-motion in his eyes that Aldric reads correctly
+as consequence. Yelin is not a villain; he is the evidence that Crane's
+reach has extended to the New Plymouth office by ordinary bureaucratic
+paths.
+
+**The Bloom-giver ("Junie")** — The captive Hollow woman Vane frees in
+Ch. 22. Frond-like fused fingers (established Ch. 18), diminished
+bioluminescence, grey-green eyes. Scar at the corner of the mouth.
+Unbidden name "Junie" arrives in Vane's interior in Ch. 18; she asks
+Vane for a name-for-the-road in Ch. 22 and Vane offers it. "Junie" is
+thus her road-name, not her given name (which the book does not
+establish). Fate after freeing (Ch. 22): walks the coast road south
+toward a cousin, a coin in her shoe, Vane's coat around her shoulders.
+Not established whether she recurs.
 
 ---
 
@@ -368,10 +395,15 @@ preserves the truth as legend.
 - **Stillwater**: Crossroads town. Maren's uncle (dead 2 yrs), Ulla. North
   of Betta's farm.
 - **New Plymouth**: Major city. Docks district (Pip, Davan's work),
-  Crafting Quarter (Edvar), Merchant Quarter (Horst, Ch. 14), Noble
+  Crafting Quarter (Edvar, the Inkwalk — a curving lane locals call
+  that for reasons no longer clear, where the cartographers, scribes,
+  and chartmakers cluster), Merchant Quarter (Horst, Ch. 14), Noble
   Quarter (bloodline domestic office deliveries, implied). Archive:
-  Restricted Collection, bloodline access only. Cooperage yard with gate
-  on far side (Vane's safe meeting point, Ch. 14). Temple district
+  Restricted Collection, bloodline access only. **Sellcross Road** and
+  **Marlin's Walk** (Ch. 22): streets near the cooperage that Vane uses
+  to read Horst's search pattern — Sellcross north of the cooperage
+  by four streets, Marlin's Walk south by three. Cooperage yard with
+  gate on far side (Vane's safe meeting point, Ch. 14). Temple district
   (Aldric avoids, Ch. 21). **Cooperage basement** (meeting site, Ch. 20):
   stone basement accessed via narrow stairs from the workshop above; low
   ceiling; two central lamps with corners left in shadow; smell of
