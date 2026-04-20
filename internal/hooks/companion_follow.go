@@ -73,27 +73,31 @@ func TransportCompanions(owner *users.UserRecord, oldRoomId, newRoomId int) {
 
 		// End aggro if the current target is no longer in the destination room.
 		if mob.Character.Aggro != nil {
-			targetStillPresent := false
 			aggro := mob.Character.Aggro
-
-			if aggro.UserId != 0 {
-				for _, pId := range destRoom.GetPlayers() {
-					if pId == aggro.UserId {
-						targetStillPresent = true
-						break
+			// Only strip aggro when it has a concrete target to check for;
+			// an Aggro struct with both IDs zero is mid-setup state and
+			// must not be clobbered by the move (see code review d6b9fc19).
+			if aggro.UserId != 0 || aggro.MobInstanceId != 0 {
+				targetStillPresent := false
+				if aggro.UserId != 0 {
+					for _, pId := range destRoom.GetPlayers() {
+						if pId == aggro.UserId {
+							targetStillPresent = true
+							break
+						}
 					}
 				}
-			}
-			if !targetStillPresent && aggro.MobInstanceId != 0 {
-				for _, mId := range destRoom.GetMobs() {
-					if mId == aggro.MobInstanceId {
-						targetStillPresent = true
-						break
+				if !targetStillPresent && aggro.MobInstanceId != 0 {
+					for _, mId := range destRoom.GetMobs() {
+						if mId == aggro.MobInstanceId {
+							targetStillPresent = true
+							break
+						}
 					}
 				}
-			}
-			if !targetStillPresent {
-				mob.Character.EndAggro()
+				if !targetStillPresent {
+					mob.Character.EndAggro()
+				}
 			}
 		}
 	}
