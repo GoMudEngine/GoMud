@@ -22,6 +22,17 @@ import (
 	pkgerrors "github.com/pkg/errors"
 )
 
+// companionTransport is set at startup by main.go to wire the
+// hooks.TransportCompanions helper into MoveToRoom without creating
+// an import cycle (rooms → hooks would cycle).
+var companionTransport func(userId, oldRoomId, newRoomId int)
+
+// SetCompanionTransport registers the companion-follow hook that fires
+// after every user move. Called from main.go at startup.
+func SetCompanionTransport(fn func(userId, oldRoomId, newRoomId int)) {
+	companionTransport = fn
+}
+
 var (
 	roomManager = &RoomManager{
 		rooms:             make(map[int]*Room),
@@ -355,6 +366,13 @@ func MoveToRoom(userId int, toRoomId int, isSpawn ...bool) error {
 		ToRoomId:   newRoom.RoomId,
 		Unseen:     user.Character.HasBuffFlag(buffs.Hidden),
 	})
+
+	// Companion follow: move every live companion of this user into the
+	// new room. Aborts in-progress casts. Registered callback — may be
+	// nil during early startup or in tests that don't wire it.
+	if companionTransport != nil && fromRoomId != newRoom.RoomId {
+		companionTransport(userId, fromRoomId, newRoom.RoomId)
+	}
 
 	return nil
 }

@@ -9,6 +9,17 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
+// CompanionTransportCallback adapts TransportCompanions to the
+// rooms.SetCompanionTransport signature (which takes only userId so
+// rooms doesn't need to import users).
+func CompanionTransportCallback(userId, oldRoomId, newRoomId int) {
+	user := users.GetByUserId(userId)
+	if user == nil {
+		return
+	}
+	TransportCompanions(user, oldRoomId, newRoomId)
+}
+
 // TransportCompanions moves every live companion of owner into the owner's
 // new room. Called after a successful owner room change (go, recall, portal,
 // fold-recall, etc). Aborts any in-progress cast (conviction already spent is

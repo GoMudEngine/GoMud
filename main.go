@@ -229,6 +229,10 @@ func main() {
 	// import cycle (behaviortree already imports rooms).
 	rooms.SetBTreeStateEvictor(behaviortree.EvictRoomBTreeState)
 
+	// Wire companion follow-movement into MoveToRoom. Avoids the
+	// internal/rooms → internal/hooks import cycle (hooks imports rooms).
+	rooms.SetCompanionTransport(hooks.CompanionTransportCallback)
+
 	// Discord integration
 	if webhookUrl := string(c.Integrations.Discord.WebhookUrl); webhookUrl != "" {
 		discord.Init(webhookUrl)
