@@ -90,8 +90,16 @@ enough to send you off a cliff?
   obsessively (Pip names Edvar when he sees it). Empathic sense reading
   emotional residue in rooms, spikes near strong feeling, fired on Corvel's
   container (Ch. 15) and on Edvar's face (Ch. 19 — green-gold sustained,
-  full recognition register). Will produce a skin-light color he's never
-  produced before inside the ship (Ch. 28).
+  full recognition register). **Ch. 28 (drafted):** produces a skin-light
+  color he has never produced before inside the ship, rendered in Davan's
+  half-thought register as two uncommitted approximations: *"honey held
+  up to a lamp, only cooler"* AND *"the edge of dawn a morning nobody had
+  seen, a morning the country was having for the first time."* The latter
+  is the Ch. 30 callback anchor — future drafters should reference that
+  formulation when the color reappears. Not green, not amber, not gold.
+  The color does not fade or pulse; it settles and holds. The ship's
+  interior walls absorb and release it at close range (see material
+  canon in Section 5).
 - **Voice signature (manuscript-confirmed)**: Open-grained, observational.
   Processes by circling rather than concluding. Connects to people through
   noticing specific things — a smell, a shadow, a way someone holds
@@ -448,8 +456,42 @@ preserves the truth as legend.
   symbol under the user's thumb lights a color new to the disc — warm
   leaf-through-sunlight, settling and holding rather than pulsing; the
   four arcs of the hillside's symbol begin *faintly* to glow through
-  the overgrowth, a suggestion of no-longer-inert material. Beyond
-  these external perceivables lies the Ch. 28 interior, sealed.
+  the overgrowth, a suggestion of no-longer-inert material.
+
+  **Ch. 28 activation canon (inside the hull):**
+  - **Breach geometry:** The original crash-tear on one hull section,
+    sealed by ten millennia of hillside growth. On authentication, the
+    growth "unbuilds itself along the seam" — vines slack, roots
+    release, thorn-branches come away at the root. The reopened passage
+    is narrow, widening at chest-height and narrowing toward the top
+    — the shape of the original tear re-revealed. Not a door opening.
+  - **Interior surfaces:** Same dark Chrysalis-resistant material as
+    face/disc/container (see Section 5). Floor, walls, shelves all of
+    the material. Shelves are wall-deepenings, not fitted. Interior
+    light is cold-precise, issuing from the walls themselves.
+  - **Storage room:** A low oblong chamber roughly the size of a
+    winter byre. Two long walls with hip-height shelves along the
+    length. Records are small two-hand-size objects, flat-on-one-side
+    / curved-on-the-other, dark, regularly spaced in a system rather
+    than a row.
+  - **Two distinct registers** future drafters must preserve:
+    1. **The bone-sound** — local activation register, continuous under
+       the hillside while the disc is seated. Maren feels it at the
+       recess; the hill's arcs glow faintly through growth as its
+       audible correlate.
+    2. **The orbital resonance** — a separate register perceivable
+       from INSIDE the hull as "a pressure at the back of the inner
+       ear" / "a saying-and-answer at a distance the word *distance*
+       was not built for." This is the orbital infrastructure's
+       response to the signal. Unnamed by characters; the narrator
+       does NOT identify it as orbital/moons/ships. Readers infer.
+  - **Storage-as-holding (Davan's fourth proximity-sense register):**
+    The hull material "holds" as its purpose — distinct from the
+    instrument register (Edvar's face / Aldric's face), the sealed
+    register (Corvel's container), and the opening-outward register
+    (the hill exterior at activation). Holding as function is itself
+    what the material does — a form of keeping the Chrysalis cannot
+    reach.
 - **Greenford**: Brennan's location. Aldric rides east to it (Ch. 13),
   then west to New Plymouth (Ch. 17).
 
@@ -593,16 +635,26 @@ the giver bleeds through the wafer.
 - **Possession**: Maren throughout. On table at Ch. 20 cooperage meeting.
   Container sits next to it, inert. Only the disc responds.
 - **Material equivalence**: The disc, the face (both Aldric's and Edvar's),
-  and Corvel's container are all made of the same pre-crash material —
-  dark, light-absorbing, dense, not stone / metal / wood as understood on
-  Gaius. Characters converge on this recognition progressively: Davan's
-  empathic sense registers the equivalence across the three (Ch. 15 +
-  Ch. 19), Edvar confirms face-to-container in Ch. 19, Maren observes
-  disc-to-container in Ch. 20 ("different words, same language, same
-  voice"). Reader-side this is author canon; in-world no character has
-  stated all three are identical material yet, which is good muddiness
-  to preserve — different characters perceive the equivalence from
-  different angles.
+  Corvel's container, and the hull interior of the hill itself are all
+  made of the same pre-crash material — dark, light-absorbing, dense,
+  not stone / metal / wood as understood on Gaius. Characters converge
+  on this recognition progressively: Davan's empathic sense registers
+  the equivalence across the first three (Ch. 15 + Ch. 19), Edvar
+  confirms face-to-container in Ch. 19, Maren observes disc-to-container
+  in Ch. 20 ("different words, same language, same voice"), and Ch. 28
+  establishes the hull interior as the same family at scale. Reader-side
+  this is author canon; in-world no character has stated all identical
+  material yet, which is good muddiness to preserve.
+
+- **Material property — Chrysalis-resistant AND keeps-color (Ch. 28
+  canon):** The material resisted the Chrysalis organism over ten
+  millennia, which is why storage inside the hull is intact while
+  organic material has decayed. It also **absorbs and releases
+  bioluminescent light at close range** — Davan's new skin-light, held
+  close to a wall, is absorbed a hand's-breadth into the material and
+  then given back. The material *keeps* color because keeping is what
+  the material does. Thematic resonance with the storage-as-holding
+  function.
 
 ### The Face (Aldric's, Confluence Undercroft)
 - **Description**: Flat dark screen that responds to touch. Produces light
