@@ -137,7 +137,11 @@ func spellHasCategory(sd *spells.SpellData, category string) bool {
 // spellEffectAlreadyActive returns true when the effect this spell would
 // grant is already on the character. Branches:
 //   - spell.BuffIds non-empty: skip if any is active (HasBuff)
-//   - spell.EffectType == "shield": skip if character has any active shield
+//   - spell.EffectType == "shield": skip if ConditionShield is already on
+//     the target. (Spell resolution lands shield-type casts via
+//     AddCondition(ConditionShield, ...) — see spell_resolution.go:758.
+//     NOT Character.HasShield(), which checks for equipped shield items
+//     or species natural-bash, neither of which is what this spell grants.)
 //
 // If neither mechanism matches, returns false (conservative — may recast but
 // won't silently stall the tree).
@@ -147,7 +151,7 @@ func spellEffectAlreadyActive(char *characters.Character, sd *spells.SpellData) 
 			return true
 		}
 	}
-	if sd.EffectType == "shield" && char.HasShield() {
+	if sd.EffectType == "shield" && char.HasCondition(characters.ConditionShield) {
 		return true
 	}
 	return false
