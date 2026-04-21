@@ -32,6 +32,23 @@ type Aggro struct {
 	RoundsWaiting int            // How many rounds must pass before this triggers
 }
 
+// userUntargetableFn is registered from hooks at boot. Returns true if
+// the user with the given id is protected from incoming aggro (e.g.,
+// post-respawn grace period). Called from SetAggro before setting
+// aggro on a player target. nil = no check (safe default for tests).
+var userUntargetableFn func(userId int) bool
+
+// SetUserUntargetableCheck registers the untargetable-user check used
+// by SetAggro's player-target gate. Follows the callback pattern used
+// by rooms.SetCompanionTransport / rooms.SetBTreeStateEvictor to
+// avoid the users→characters import cycle (characters cannot import
+// users directly).
+//
+// Repeated registrations overwrite; pass nil to disable.
+func SetUserUntargetableCheck(fn func(userId int) bool) {
+	userUntargetableFn = fn
+}
+
 // returns description unless description is a hash
 // which points to another description location.
 func (c *Character) TrackPlayerDamage(userId int, damageAmt int) {
@@ -56,6 +73,11 @@ func (c *Character) SetAggroRemote(exitName string, userId int, mobInstanceId in
 }
 
 func (c *Character) SetAggro(userId int, mobInstanceId int, aggroType AggroType, roundsWaitTime ...int) {
+	// Grace-period guard: don't acquire aggro on a grace-protected
+	// player. Other target shapes (mob, spellcast) are unaffected.
+	if userId > 0 && userUntargetableFn != nil && userUntargetableFn(userId) {
+		return
+	}
 
 	// Stage 8.3: Clear grapple state if switching targets
 	if c.Aggro != nil {
