@@ -59,6 +59,7 @@ var (
 		"pathto":         {Pathto, false},
 		"portal":         {Portal, false},
 		"put":            {Put, false},
+		"rally":          {Rally, false},
 		"remove":         {Remove, false},
 		"replyto":        {ReplyTo, true},
 		"say":            {Say, true},
