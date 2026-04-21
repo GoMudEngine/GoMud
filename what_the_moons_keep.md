@@ -565,7 +565,7 @@ He had stood in the doorway of her room for a moment after the grandson was seen
 
 ---
 
-He had dismissed it. This was the correct response, professionally speaking. People in their final hours said many things. The mind, moving toward its end, sometimes produced fragments of old stories, half-remembered songs, images that had accumulated in a life and were being released without particular order or intention. The Fathers' Boats tradition was old — pre-Chrysalis in origin, the church had long regarded it as colorful superstition from the early settlement days, the kind of story that arose in any community trying to explain how it came to be somewhere. *We came in boats.* Of course they had. Metaphorically. Everyone comes from somewhere.
+He had dismissed it. This was the correct response — pastorally, doctrinally, in every register his training had given him. People in their final hours said many things. The mind, moving toward its end, sometimes produced fragments of old stories, half-remembered songs, images that had accumulated in a life and were being released without particular order or intention. The Fathers' Boats tradition was old — pre-Chrysalis in origin, the church had long regarded it as colorful superstition from the early settlement days, the kind of story that arose in any community trying to explain how it came to be somewhere. *We came in boats.* Of course they had. Metaphorically. Everyone comes from somewhere.
 
 He had dismissed it and gone to bed and lain awake until the false dawn watching the ceiling and thinking about what it would mean, specifically, if the moons were not moons.
 
@@ -629,7 +629,7 @@ The images were small and seemed to recede as if seen from a great distance. Mov
 
 He stood and looked at it until the cold began to work through his feet and legs, which was perhaps an hour, and he understood almost nothing, and he could not make himself go back upstairs. The quality of his attention troubled him — not its intensity, which was natural enough given the circumstances, but its steadiness. His mind had settled into the shifting light the way a hand that hasn't held a pen in twenty years still knows the motion. Something in him had been built for this kind of looking, and he had spent a long time arranging his life so that there was nothing to look at.
 
-He had been a priest for thirty years. He had a functional theology of mystery — he believed that the Chrysalis was vast and old and that human understanding of it was partial and would always be partial, and he had built a comfortable and honest intellectual life around this belief. He was not a man who expected to understand everything. He had made his peace with not understanding everything.
+He had been a priest for thirty years. He had a functional theology of mystery — he believed that the Chrysalis was vast and old and that human understanding of it was partial and would always be partial, and he had built a comfortable and honest intellectual life around this belief. He was not a man who expected to understand everything. He had made his peace with the provisional reach of what a Keeper was given to know.
 
 But there was a particular quality to the thing on the shelf that did not feel like mystery in that sense. It did not feel like the mystery of the deeply sacred, which was a kind of fullness, a sense of something enormous behind a veil. It felt like a different kind of mystery. The mystery of a question that has an answer, and the answer exists somewhere, and you simply do not have it yet.
 
@@ -689,7 +689,7 @@ He wrote the shelf number in his journal. Then he wrote it on a separate small p
 
 He went back to his duties.
 
-That night, sitting in the chapel after evening prayers had ended and the other brothers had gone, he stayed. He sat in the dark with the lamp unlit and looked at the carved symbol above the doorway — the spiraling form that marked every Chrysalis temple, the sign of the change-within-change. He had looked at this symbol, or one like it, every day of his adult life. He knew it the way he knew his own face, which was to say he had long ago stopped seeing it.
+That night, sitting in the chapel after evening prayers had ended and the other brothers had gone, he stayed. It was not vigil as the liturgy defined it — no feast-day, no candle, no observance the calendar would recognize — but the shape of his sitting there was vigil-shaped, and he noticed this and did not move. He sat in the dark with the lamp unlit and looked at the carved symbol above the doorway — the spiraling form that marked every Chrysalis temple, the sign of the change-within-change. He had looked at this symbol, or one like it, every day of his adult life. He knew it the way he knew his own face, which was to say he had long ago stopped seeing it.
 
 He became aware, at some point, that his right thumb and forefinger were pressed together in his lap. The automatic reach, the pinch, the confirmation. Finding nothing. He had been sitting in a dark room with no flame burning and his hand had still gone looking for one to put out.
 
@@ -1105,19 +1105,15 @@ He stopped on the ridge above the valley and looked at it.
 
 Not the largest city on Thera. He knew this from asking about it on the road, where he'd learned that New Plymouth to the north made this look like what it was: a river-junction town that had grown prosperous and dense and somewhat tangled, buildings climbing the valley sides in an arrangement that suggested less planning than accumulated decision. Three bridges. A temple dominating the eastern bank, older than the buildings around it, its stone a different color — darker, rougher — than anything nearby. A market square he could identify from here by the quality of its noise, a particular active frequency distinct from the general roar.
 
-He took a moment to get his bearings, the way you did from any high point after weeks on foot. He'd been walking for three weeks from Amber Valley, three hundred miles south in a straight line, though his route had not been straight. The Confluence sat roughly in the middle of the north-south road, where it earned its name. New Plymouth lay another two hundred miles north, more easily reached by river from here than by road. To the east the country rose into highlands — Irongate territory, he'd been told, closed and self-sufficient. He was not going east. He was going where the water went.
-
-He had come here with no specific plan except that the Confluence was on the way north and large enough to be anonymous in, the two qualities he currently valued in a place. He had enough money for two days of simple living if he was careful, possibly three. After that he would need to find work or keep moving or both.
+He took a moment to get his bearings. Three weeks from Amber Valley. The Confluence was on the way north and large enough to be anonymous in, the two qualities he currently valued in a place. He had enough money for two or three days of simple living if he was careful. After that he would need to find work or keep moving or both.
 
 He went down into the city.
 
 ---
 
-The market was everything he'd heard markets could be and had not, growing up in Amber Valley, had much reason to verify. He moved through it slowly, not shopping — he couldn't afford to shop — but taking it in with the attention that had become habitual over three weeks of walking. The available, the scarce, the priced beyond reason and the priced below it. Amber Valley had a market but it was a modest thing, the same faces each week, the same goods in roughly the same arrangement. This was different in kind rather than degree: a dozen people selling dried fish alone, three grades of lamp oil, cloth in weights and colors he'd never seen, a spice merchant whose stall reached him before he saw it, a wall of warm complicated smell that stopped him in the street.
+The market was everything he'd heard markets could be. He moved through it slowly, not shopping — he couldn't afford to shop — but taking it in with the attention that had become habitual over three weeks of walking. A dozen people selling dried fish alone. Three grades of lamp oil. A spice merchant whose stall reached him before he saw it, a wall of warm complicated smell that stopped him in the street.
 
-The people were different also. In Amber Valley, the changes were common and visible and mostly familiar — he'd grown up with the same forty or so people's mutations, watched them develop over years, had a personal history with each one. Here he was passing strangers who carried changes he had no reference for. A woman whose fingers ended in small curved hooks, efficient and precise as she counted coins. A man whose skin had gone to a fine pale iridescence that caught the light when he moved and threw small rainbows onto the stall canvas beside him, apparently unaware of this effect, or aware and indifferent. A child, perhaps seven, who was probably pre-change but whose eyes tracked movement with an acuity that suggested otherwise.
-
-He looked at all of it. Wonder or envy or simply the peculiar emotional weather of being a long way from home — something that arrived as a kind of humidity in the chest, not painful, just present.
+In Amber Valley the changes were familiar — he'd grown up with the same forty or so people's mutations, watched them develop over years. Here he was passing strangers with changes he had no reference for, and the not-recognizing arrived as a kind of humidity in the chest, not painful, just present.
 
 Then the woman selling river-eel two stalls down had a brief sharp argument with a customer that produced a spike of anger so specific and so localized that Davan turned without meaning to, looking for the source, as if the anger had been a sound rather than — what? He stood very still for a moment. The argument resolved itself, the customer paid and left, the woman's anger dropped away. The pressure in Davan's chest dropped with it.
 
@@ -1137,7 +1133,7 @@ The man said nothing. He stood. The gap around him widened slightly. A woman wit
 
 Davan watched this from three stalls away and the compound feeling was clearer now. Not one person's emotion but many, overlapping — the vendor's rigid refusal, the mother's quick uneasy calculation, and from the ring of people nearest the gap, a low-frequency hum of something Davan could only call *wrongness-directed-outward.* As if the man's presence, his ordinary unremarkable presence, was producing a reaction in the people around him that had nothing to do with anything he was doing and everything to do with something he wasn't. Something missing. Something that should have been there and wasn't — the baseline warmth, the Chrysalis signature, the thing that meant *one of us* at a level below thought.
 
-He wasn't showing a change. Davan looked for one — the hooks, the iridescence, the reflective eyes, any of the dozen variations he'd seen in the last hour — and found nothing. The man looked simply, entirely, human. Unchanged. And the crowd around him was responding to that absence the way a body responds to a splinter — with a local inflammation, a focused rejection, an effort to push out the thing that didn't belong.
+He wasn't showing a change. Davan looked for one — any of the dozen variations he'd seen in the last hour — and found nothing. The man looked simply, entirely, human. Unchanged. And the crowd around him was responding to that absence the way a body responds to a splinter — with a local inflammation, a focused rejection, an effort to push out the thing that didn't belong.
 
 The man bought nothing. After a long moment he shouldered his bag, which already held purchases from elsewhere — other stalls, other vendors, ones who had apparently been willing — and walked on. He did not look at anyone. He walked the way Davan imagined you walked after a lifetime of this: steadily, without expecting anything different, the posture of someone carrying a weight that didn't show but had settled into the bones.
 
@@ -1157,7 +1153,7 @@ Davan watched him go and then turned to the door.
 
 Above the door: the Chrysalis symbol, carved in the stone lintel in the old formal style, large enough to see clearly from the courtyard. He had looked at this symbol in some form his entire life — above the village shrine, on the traveling priests' vestments, pressed into the wax of official documents. He had always read the interior spiral as a spiral. Every Blooming ceremony in Amber Valley had begun with the Recitation — *And the Three Witnesses moved through the dark, and they saw the world below* — and the spiral was supposed to be the Chrysalis descending, the gift entering the Founders, the beautiful orderly story of a world being given to the people who deserved it.
 
-He looked at the symbol now and something in him responded — not his eyes, not his mind, but the part of him that had flinched from the eel-seller's anger. The empathic sense, or whatever it was becoming. The symbol felt like something. Not sacred, not decorative. Lonely. The loneliness of a thing going around and around and around, held in place by something it couldn't leave and couldn't reach. Not a spiral. Not a descent. A vigil. He stood in the courtyard with the feeling of it washing through him until one of the junior priests asked if he needed assistance, and he said yes, and went about the practical business of negotiating a night's lodging in exchange for the record crates.
+He looked at the symbol now and something in him responded — not his eyes, not his mind, but the part of him that had flinched from the eel-seller's anger. The empathic sense, or whatever it was becoming. The symbol felt like something. Not sacred, not decorative. Lonely. The loneliness of a thing going around and around and around, held in place by something it couldn't leave and couldn't reach. Not a descent. A vigil. He stood in the courtyard with the feeling of it washing through him until one of the junior priests asked if he needed assistance, and he said yes, and went about the practical business of negotiating a night's lodging in exchange for the record crates.
 
 He did not stop thinking about what he'd seen in the symbol.
 
@@ -1337,7 +1333,7 @@ The worst had been Petra.
 
 Petra was the junior archivist — twenty-three, careful, devoted to the work in the way of someone who had not yet learned to separate devotion from expectation. She had come to him on the second week with a question about her own conduct: a discrepancy in the archive catalog, a gap where records should have been, and she was unsure whether to report it through the standard channels or raise it with him directly, and she wanted his guidance because — she said this, looking up at him with the trust a novice gives a confessor — he was the most honest man she knew.
 
-He had given her the correct advice. He had told her that discrepancies should always be reported through proper channels, that the integrity of the archive depended on transparent accounting, that she should never allow convenience or uncertainty to compromise her professional obligations. Every word was doctrine — the same doctrine he had preached on Sundays to people who trusted him to mean it — and it came out of his mouth in a voice indistinguishable from the voice that had meant it last year, and three floors below him was a sealed room he had not reported, containing objects he had not cataloged, which he was visiting in secret at three-day intervals. She had thanked him and left, and he had sat at his desk for a long time and had not been able to determine whether this was hypocrisy or the specific cruelty of a man who still believed the principle he was in the process of violating.
+He had given her the correct advice. He had told her that discrepancies should always be reported through proper channels, that the integrity of the archive depended on transparent accounting, that she should never allow convenience or uncertainty to compromise her professional obligations. Every word was doctrine — the same doctrine he had preached on Sundays to people who trusted him to mean it — and it came out of his mouth in a voice indistinguishable from the voice that had meant it last year, and three floors below him was a sealed room he had not reported, containing objects he had not cataloged, which he was visiting in secret at three-day intervals. She had thanked him and left, and he had sat at his desk for a long time and had not been able to determine whether this was hypocrisy or the specific cruelty of a man who still believed the principle he was in the process of violating. There was no catechism for the distinction. There should have been.
 
 He had also been going back to the chamber every three nights.
 
@@ -1409,7 +1405,7 @@ Then he went and told the hostelmaster to prepare the east guest rooms for the P
 
 The weeks of Crane's presence established a new rhythm. She was everywhere and nowhere — present at morning prayers, absent for stretches of the day, reappearing at meals with the pleasant undemanding manner of a very good house guest, the kind who requires nothing and therefore cannot be anticipated. He began to sense where she had recently been by the alertness she left behind, a quality that lingered in a room the way important things tended to.
 
-She was reviewing the archive. He knew this because the junior archivist, Petra, had mentioned it with the bright careful neutrality of someone who had been told to be helpful and was being helpful in a way that communicated exactly how helpful she was being and nothing further. Crane was working through the eastern catalog. She had questions about certain acquisition dates. She was very thorough.
+She was reviewing the archive. He knew this because the junior archivist, Petra, had mentioned it with the bright institutional neutrality of someone who had been told to be helpful and was being helpful in a way that communicated exactly how helpful she was being and nothing further. Crane was working through the eastern catalog. She had questions about certain acquisition dates. She was very thorough.
 
 He had tried to stop.
 
@@ -1513,7 +1509,7 @@ Thirty years ago, when he was young and full of the dream of doing something his
 
 He was beginning to think the answer had not been waiting for him to want it.
 
-He listened to the temple settle around him. Stone and timber, centuries of accumulated decision, the weight of a place where a great many people had come to find something they needed and had sometimes found it. He had served this place faithfully. He still believed in the service. He was less certain, with each passing night, what he was serving it toward.
+He listened to the temple settle around him. Stone and timber, centuries of accumulated decision, the weight of a place where a great many people had come to find something they needed and had sometimes found it. He had served this place faithfully. He still believed in the service. He was less certain, with each passing night, what sanctum his service had been built over.
 
 In the morning he was in the corridor before the dawn bell and the lamp outside the record room was cold and he pinched it anyway, thumb and forefinger, the familiar nothing of it, and walked on toward the chapel to say the words he had been saying for thirty years and meant and was not sure anymore in what direction.
 
@@ -2215,9 +2211,9 @@ Vane thought about what that meant: someone had read the letter before it reache
 
 Maren looked at her with a slightly startled quality, as if the question was not what she'd been expecting from this direction. Then she shook her head.
 
-She unfolded the letter. Vane watched her face rather than the letter and read it from there — the small careful movements of someone going through something dense, line by line, the face of someone receiving more information than expected, in a different shape.
+She unfolded the letter. Vane watched her face rather than the letter and read it from there — the small deliberate movements of someone going through something dense, line by line, the face of someone receiving more information than expected, in a different shape.
 
-When she looked up her expression was one Vane had not seen on her before. Not frightened, not angry. Something more like someone revising a map in real time, the landmarks not where they'd been before but the terrain itself unchanged.
+When she looked up her expression was one Vane had not seen on her before — something more like someone revising a map in real time, the landmarks not where they'd been before but the terrain itself unchanged.
 
 "My father came through Stillwater ten years ago," Maren said. "Heading east, traveling fast, didn't stop more than a day." She paused. "He said he was going to the hill. That there was something there he had to see before they caught him."
 
@@ -2354,7 +2350,7 @@ Edvar picked up the carving. He turned it in his hands with the specific handlin
 
 "The surround felt like it had been added later. Like two things that had been joined."
 
-Edvar looked at him with a quality of attention that was different from before. Not warmer. More present. "Most people who notice that decide they've made an error and correct back to the standard reading."
+Edvar looked at him with a quality of attention that was different from before, something closer and more deliberate. "Most people who notice that decide they've made an error and correct back to the standard reading."
 
 "It didn't feel like an error."
 
@@ -2412,7 +2408,9 @@ For a moment he thought she was going to leave. She shifted her weight forward �
 
 She settled back.
 
-The feeling sharpened. He became aware, slowly, of the weight of the pine carving in his coat pocket — the small figure he'd made on the road north without deciding to, the one with the arm that wouldn't hang right. He had not looked at it closely since he'd made it. He didn't need to. The girl sitting six feet from him was holding her left arm the same way — close, guarded, tucked against her ribs with the specific care of someone who'd been carrying that posture so long it had stopped being a choice and become simply how she sat. His hands had carved that gesture weeks ago, working from something he hadn't understood, and now it was sitting beside him on a dock in the fading light. A sudden strong reluctance came over him — not because the carving was frightening, but because looking at it would mean acknowledging something his hands had known before the rest of him was ready. He wasn't ready.
+The feeling sharpened, and then — before he understood it was happening — his skin-light came up. Not bright. A low blue-calm glow along the insides of his wrists, faint enough that the dock's last light almost hid it, warm enough that he felt it under the cuffs of his coat before he saw it. It came up the way breath came up — not decided, not performed, the body answering a question the mind had not yet permitted itself to ask. He glanced down and saw it and pressed his palms flat against his thighs without thinking, which did nothing. The light stayed. The girl six feet away did not seem to notice, or did not let him see that she had. His own body had recognized her before he had. The blue was the blue that came when a thing was true and he did not yet know what to do with the truth.
+
+He became aware, slowly, of the weight of the pine carving in his coat pocket — the small figure he'd made on the road north without deciding to, the one with the arm that wouldn't hang right. He had not looked at it closely since he'd made it. He didn't need to. The girl sitting six feet from him was holding her left arm the same way — close, guarded, tucked against her ribs with the specific care of someone who'd been carrying that posture so long it had stopped being a choice and become simply how she sat. His hands had carved that gesture weeks ago, working from something he hadn't understood, and now it was sitting beside him on a dock in the fading light. A sudden strong reluctance came over him — not because the carving was frightening, but because looking at it would mean acknowledging something his hands had known before the rest of him was ready. He wasn't ready.
 
 He waited.
 
@@ -2447,21 +2445,15 @@ He did not take the pine carving out of his pocket.
 
 ---
 
-Brennan's letter arrived on a Thursday, tucked between a supply invoice and a pastoral circular from the New Plymouth office, which was either a coincidence or a demonstration that someone handling correspondence had a sense of irony. Aldric found it at his desk in the late afternoon, identified it by the handwriting on the outside — Brennan had written in the same cramped leftward script since seminary, apparently on the principle that a man's hand was formed young and not worth revising — and set it aside until he had finished the supply invoice and the pastoral circular and the three other items requiring his attention first.
-
-This took him forty minutes. He was aware, during those forty minutes, of the letter sitting at the corner of his desk with the patient weight of something that had traveled a long way to arrive.
+Brennan's letter arrived on a Thursday, tucked between a supply invoice and a pastoral circular from the New Plymouth office. Aldric identified it by the handwriting — Brennan's cramped leftward script, unchanged since seminary — and set it aside until he had worked through his afternoon correspondence first, aware the whole time of its patient weight at the corner of the desk.
 
 He opened it.
 
 ---
 
-Brennan was a scholar of old languages and what he called *material culture*, by which he meant things — objects, structures, residues of how people had actually lived rather than how they'd described themselves as living. He had spent thirty years in Greenford's university district accumulating a reputation for being rigorously careful and mildly inconvenient to the official accounts of various things. He and Aldric had maintained a correspondence for twenty years that served, for both of them, as a kind of intellectual weather station — the place you sent an observation that didn't fit the current theory and waited to see what came back.
-
 Aldric had sent his observation. Brennan had sent back a storm.
 
-The letter was eight pages. Brennan wrote the way he talked, densely and without apology, with the assumption that the reader was keeping up and could be expected to do some of the work. Aldric read it twice, the whole thing, before permitting himself to think about any individual part of it.
-
-The first four pages were what he'd asked for: the Fathers' Boats tradition, its variants, its geographical distribution, its age. What Brennan had found went considerably deeper than the two pages in the Confluence archive. The tradition was old — older than the standard Chrysalis theology by a margin suggesting it predated the religion that had absorbed it. In the oldest versions, the boats were not metaphorical. They were specific: four of them, arriving from elsewhere, three of which remained. The fourth was described variously as fallen, broken, gone into the ground.
+The letter was eight pages. The first four were what he'd asked for: the Fathers' Boats tradition, its variants, its geographical distribution, its age. What Brennan had found went considerably deeper than the two pages in the Confluence archive. The tradition was old — older than the standard Chrysalis theology by a margin suggesting it predated the religion that had absorbed it. In the oldest versions, the boats were not metaphorical. They were specific: four of them, arriving from elsewhere, three of which remained. The fourth was described variously as fallen, broken, gone into the ground.
 
 Aldric set the page down and pressed his fingers to the bridge of his nose. He was hearing, with a clarity that felt almost physical, the voice of every child in every temple yard he'd ever walked through: *four fires in the sky, one came down to die, three stayed up to cry.* A skipping rhyme. Considered by the Temple to be harmless folk tradition. He had considered it harmless himself, for thirty years, the way you consider wallpaper harmless — it was simply there, too familiar to examine. The children had been singing the count the theology had quietly revised, and no one had noticed because no one listens to what children are singing.
 
@@ -2471,17 +2463,15 @@ He picked the page back up. In several versions, the inhabitants of the fourth b
 
 Something that had been in them.
 
-Aldric put the letter down. He pinched the desk lamp out of habit — still burning, had been burning for an hour, he pinched it anyway and sat for a moment in the dimmer light of the room's remaining lamp before he caught himself and let it go and relit the first lamp with a taper.
+Aldric pinched the desk lamp out of habit — still burning, had been burning for an hour, he pinched it anyway and sat in the dimmer light before he caught himself and relit it with a taper.
 
 He read the next four pages.
 
 ---
 
-Brennan had a source he hadn't named in prior correspondence, a contact in the New Plymouth archive who had, under circumstances Brennan declined to specify, seen portions of the Restricted Collection. Not the full collection. A fraction of it. But a specific fraction: the material relating to what Brennan called, in the careful language of a man who knew his letters were read by people other than their intended recipient, *the old cartography*.
+Brennan had a source he hadn't named in prior correspondence, a contact in the New Plymouth archive who had, under circumstances Brennan declined to specify, seen portions of the Restricted Collection. Not the full collection. A fraction of it. But a specific fraction: the material relating to what Brennan called, in the guarded language of a man who knew his letters were read by people other than their intended recipient, *the old cartography*.
 
-The old cartography, as Brennan described it, showed Gaius from an angle that conventional Gaian cartography did not use. Not a plan view, not a coastal survey, not the road-and-river maps that governed daily life. The angle from above. Not from a hill or a tower. From considerably further above than that.
-
-The maps showed features no ground-level survey would capture — the shape of the continent from outside the continent, the curve of the coastline as something continuous rather than a series of connected local surveys. And in several versions, in the borders and margins, a notation recurring across multiple maps in what appeared to be multiple hands and multiple time periods, as if different people with different purposes had found occasion to write the same thing.
+The old cartography, as Brennan described it, showed Gaius from an angle conventional Gaian cartography did not use. The angle from above — further above than any hill or tower could account for. The shape of the continent from outside the continent. In several versions, in the borders and margins, a notation recurring across multiple maps and multiple hands.
 
 The notation used a symbol Brennan had reproduced in the margin of his letter. Aldric looked at it.
 
@@ -2489,39 +2479,39 @@ The inner orbit. The symbol from the temple doorway, isolated from the Chrysalis
 
 Beside it, in each map, a number. Always one of three: three, four, or one.
 
-Brennan's interpretation — offered carefully, prefaced with the appropriate scholarly qualifications about the limits of inference from fragmentary sources — was that the notation was a count. Of something in a fixed position relative to the world. Something that could be counted from the position from which the maps had been made.
+Brennan's interpretation was that the notation was a count. Of something in a fixed position relative to the world. Something counted from the position the maps had been drawn from.
 
 Three, four, or one.
 
 *Three moons,* Aldric thought. *Four moons before. One came down.*
 
-He sat at his desk for a very long time. Then he read on.
+He read on.
 
 ---
 
-Brennan's contact had seen something else in the New Plymouth restricted materials. He had written it carefully, in his oblique way, tucking it among the cartographic discussion as though it were a footnote rather than what it clearly was: another piece of a pattern.
+Brennan's contact had seen something else in the restricted materials, tucked into the cartographic discussion as though it were a footnote rather than what it clearly was: another piece of a pattern.
 
 *Among the catalogued objects from what the archive's internal notation calls the Founding period,* Brennan wrote, *my source identified three distinct categories of material. The first corresponds to what you described finding — containers of the same unidentified gray material, sealed, apparently inert. The archive lists several of these, all recovered from the eastern highlands over the past two centuries. The second category is objects of navigation or display — instruments whose purpose is not entirely clear, but whose construction matches the containers in material and apparent age. Something in your description of the glass face in the sealed room suggests it may belong to this category, though I would want to examine it before saying so with confidence.*
 
-*The third category is more difficult. The archive notation refers to it obliquely, using the phrase "the Voice" in some records and "instrument of authority" in others. From what my source was able to gather, this is a weapon — or something that functions as one. It appears only once in any historical account with enough specificity to be confirmed: the Stilling of the Brace, three hundred years ago, when the bloodline suppressed the Brace uprising and left a mark on the palace steps that has never been explained and that people with the Chrysalis change cannot look at directly. The legend attributes this to a weapon the bloodline used and then secured. The archive materials suggest the weapon was not manufactured by the bloodline, but recovered, like the containers — a Founding-era artifact they had learned to operate.*
+*The third category is more difficult. The archive notation refers to it obliquely as "the Voice" or "instrument of authority." From what my source could gather, it is a weapon. It appears once in any confirmed historical account: the Stilling of the Brace, three hundred years ago, when the bloodline suppressed the Brace uprising and left a mark on the palace steps that has never been explained and that people with the Chrysalis change cannot look at directly. The archive materials suggest the weapon was not manufactured by the bloodline but recovered — a Founding-era artifact they had learned to operate.*
 
-*The significant detail — and this is where I would ask you to proceed carefully, because I am reasoning from fragments and fragments can mislead — is the qualification attached to all three categories. The annotation "for unchanged hands" appears in the margin of the relevant catalog page, in a hand that is not the archivist's. It is the kind of note that gets written when someone is recording not just what a thing is, but what it requires.*
+*The qualification attached to all three categories: the annotation "for unchanged hands" appears in the margin of the relevant catalog page, in a hand that is not the archivist's. It is the kind of note written when someone is recording not just what a thing is, but what it requires.*
 
-*If the containers, the navigation objects, the weapon, and whatever else belongs to this collection were all made for the same hands — and if "unchanged" means what I think it means in this context — then you are looking at a collection built for and operated by people who carry no Chrysalis change. The bloodline's claim to be the only such people is the foundation of their authority. And the weapon at the Stilling of the Brace is the most visible proof they have ever offered of that authority's physical reality.*
+*If the containers, the navigation objects, and the weapon were all built for and operated by people who carry no Chrysalis change, then the bloodline's claim to be the only such people is the foundation of their authority — and the weapon at the Stilling is the most visible proof they have ever offered of that authority's physical reality.*
 
-*I think the container you found, the glass you found, and the weapon secured in the palace vaults may all be from the same original collection. I think someone assembled these objects for a specific purpose, before the Chrysalis, and that the bloodline has spent three hundred years presenting their ability to use what they found as evidence of their singular nature. I do not know what this means for anything. But it seems to me that you should know it.*
+*I think the container you found, the glass you found, and the weapon in the palace vaults may all be from the same original collection. I do not know what this means for anything. But it seems to me that you should know it.*
 
 Aldric set the page down.
 
-He was a careful man, and careful men did not leap from fragments to conclusions. He noted that Brennan had offered the same caution himself. But a pattern was a pattern, and three categories of artifacts with the same annotation, in the same archive, pointing toward the same history — that was not a fragment. That was a shape.
+He was a careful man, and careful men did not leap from fragments to conclusions. But three categories of artifacts with the same annotation, in the same archive, pointing toward the same history — that was not a fragment. That was a shape.
 
 He read the final page.
 
 ---
 
-*I have to tell you something that is going to sound like the product of an old man's anxiety,* Brennan wrote, *but I want you to take it seriously. I have been asking, carefully, about the Restricted Collection for six months. In the last two months I have been aware that someone has been asking about me asking. Not a scholar. Not a librarian. Someone with access to the kind of information about my movements requiring either a very well-connected patron or a formal arrangement with the bloodline's domestic office.*
+*I have to tell you something that will sound like the product of an old man's anxiety,* Brennan wrote, *but take it seriously. I have been asking about the Restricted Collection for six months. In the last two I have been aware that someone has been asking about me asking. Not a scholar, not a librarian. Someone with access to the kind of information about my movements that requires a well-connected patron or a formal arrangement with the bloodline's domestic office.*
 
-*I am telling you this because you asked me to look, and I looked, and I found more than either of us expected, and I think you should know that this territory has people in it who are watching for exactly this kind of looking.*
+*This territory has people in it who are watching for exactly this kind of looking.*
 
 *I am also telling you that I think you should come to Greenford. Not by letter. Some of what I have cannot be written down. There is a man here, a surveyor who worked the eastern highlands forty years ago and has not discussed what he found there since, and I think he will talk to you in a way he won't talk to me, because you are a Keeper and I am merely inconvenient.*
 
@@ -2536,7 +2526,7 @@ Aldric folded the letter and held it in his hands and thought about what it mean
 
 He had been a careful man for thirty years. Carefulness had served him — a major waypoint temple, a Keeper's rank, the respect of his peers and superiors — and had served the temple, and had served, he had always assumed, the god he had given the whole of his adult life to. He believed in process. He believed in working through the appropriate channels, even when the appropriate channels were slow, because the channels existed for reasons and the reasons generally remained valid even when individual situations made them inconvenient.
 
-Sitting at his desk in the late afternoon with Brennan's letter in his hands, he understood that he was reasoning around it the way he'd been reasoning around the sealed room and the face and the symbol above the doorway. Making careful loops. Not arriving.
+Sitting at his desk in the late afternoon with Brennan's letter in his hands, he understood that he was reasoning around it the way he'd been reasoning around the sealed room and the face and the symbol above the doorway. Making orbital loops. Not arriving.
 
 He thought about Prioress Crane.
 
@@ -2560,7 +2550,7 @@ The face in the sealed room below him. The fourth shape around the blue-green wo
 
 He thought: I have been reasoning around this for two months because to arrive at the conclusion is to be in a situation with no institutional remedy. The institution is part of the situation.
 
-The thought had the quiet of a chapel after the last bell. He let it stay.
+The thought had the quiet of a chapel after the last bell. He let it stay. There was no liturgy for this — no rite, no rubric, no page in any book he had studied that would tell him what a Keeper did when the Keeper's work had been erected over wreckage.
 
 Then Crane, who had not been a person to him for weeks — only a careful adversary navigating the same corridors, a function he could work against — arrived in his mind as what she was. A Prioress who had spent her career in service to the same principles he had served, who had risen through the same combination of competence and dedication and willingness to do unglamorous work that had brought him to his. She believed in the institution. He believed in the institution. They disagreed, if they disagreed at all, only about what the institution was for.
 
@@ -2610,7 +2600,7 @@ The pencil was on the wrong side.
 
 He kept the pencil to the left of the journal's spine, always, the habit of a left-leaning writer who reached for his tools in a specific order established over twenty years. It was on the right. He stood at the open drawer and tried to remember the last time he'd written in it — two nights ago, the entry about Greenford, the oblique shorthand. He had put the pencil back. He always put the pencil back in the same place, because the habit was below the level of decision and did not require his attention.
 
-He picked up the journal and opened it to the current page. The entry was there. Nothing had been added. Nothing had been removed. He turned back several pages and found the oblique shorthand intact, the careful cipher undisturbed. He could not tell whether someone had read it. The shorthand was his own, and reading it required either knowing the cipher or being very patient with the kind of substitution patterns he'd used, and Crane was — he thought about Crane — very patient.
+He picked up the journal and opened it to the current page. The entry was there. Nothing had been added. Nothing had been removed. He turned back several pages and found the oblique shorthand intact, the cipher undisturbed. He could not tell whether someone had read it. The shorthand was his own, and reading it required either knowing the cipher or being very patient with the kind of substitution patterns he'd used, and Crane was — he thought about Crane — very patient.
 
 He could not be certain — not about the pencil alone. A pencil on the wrong side of a journal was not evidence. It was a pencil on the wrong side of a journal. He might have moved it himself without noticing. He might have been careless. But the chair had been moved, and the lamps had been moved, and a Prioress had chosen to be seen standing at his window without a stated reason, and the pencil was the fourth thing and not the first. She was accumulating rather than confronting, which was considerably worse.
 
@@ -2656,6 +2646,8 @@ Behind him, at the end of the corridor, Prioress Crane watched him go.
 
 He did not look back. He had always found it more useful to know which direction you were heading than what you were leaving.
 
+The four in the chamber he had left sealed. He had not opened them because he had not known what opening would do, and he had not known whether the not-knowing was prudence or cowardice or a third thing he did not yet have a name for, and he had not been willing, on the eve of leaving, to decide.
+
 The road east was cold and clear, and the moons were down, and the sky before him was the particular pale gray of early morning promising either a good traveling day or rain before noon, and couldn't yet be told which.
 
 He rode into it.
@@ -2669,7 +2661,7 @@ He rode into it.
 
 Vane did not want her leaving the room.
 
-She hadn't said this directly — she rarely said anything directly that she could say through arrangement instead — but the shape of it was clear from the first morning: the careful inventory of the room's exits, the window assessment, the specific instructions about the sound to make in the alley below before coming up. The room was defensible. The city was not. The former was preferable for as long as they could manage it.
+She hadn't said this directly — she rarely said anything directly that she could say through arrangement instead — but the shape of it was clear from the first morning: the silent inventory of the room's exits, the window assessment, the specific instructions about the sound to make in the alley below before coming up. The room was defensible. The city was not. The former was preferable for as long as they could manage it.
 
 Maren had pushed back on the second morning.
 
