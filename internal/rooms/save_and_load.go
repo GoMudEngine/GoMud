@@ -118,9 +118,38 @@ func LoadRoomInstance(roomId int) *Room {
 		if err := yaml.Unmarshal(bytes, room); err != nil {
 			mudlog.Warn("LoadRoom", "roomId", roomId, "filepath", filepath, "error", err)
 		}
+		// yaml.Unmarshal only honors `yaml:` tags; the `instance:"skip"`
+		// annotation is invisible to it. Reload a fresh template copy and
+		// restore every skip-tagged field so template-owned state
+		// (title/description/exits/nouns/zone/etc.) cannot be corrupted
+		// by stale data in pre-fix instance files. See
+		// docs/superpowers/specs/2026-04-21-room-instance-load-respects-skip-tag-design.md.
+		if freshTemplate := LoadRoomTemplate(roomId); freshTemplate != nil {
+			restoreSkipTaggedFields(room, freshTemplate)
+		}
 	}
 
 	return room
+}
+
+// restoreSkipTaggedFields copies every exported Room field tagged
+// `instance:"skip"` from src onto dst. Used after an instance-file
+// overlay unmarshal to ensure template-owned fields are not corrupted
+// by stale data in pre-fix instance files.
+func restoreSkipTaggedFields(dst, src *Room) {
+	srcVal := reflect.ValueOf(*src)
+	dstVal := reflect.ValueOf(dst).Elem()
+	t := srcVal.Type()
+	for i := 0; i < t.NumField(); i++ {
+		field := t.Field(i)
+		if field.PkgPath != "" {
+			continue
+		}
+		if field.Tag.Get("instance") != "skip" {
+			continue
+		}
+		dstVal.Field(i).Set(srcVal.Field(i))
+	}
 }
 
 // Only loads the template data, ignores instance data.
