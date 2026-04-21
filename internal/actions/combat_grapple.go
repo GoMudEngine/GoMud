@@ -27,6 +27,9 @@ type GrappleResult struct {
 	// OnCooldown is true when the special-move cooldown blocked the grapple.
 	OnCooldown bool
 
+	// Crafting is true when the actor is mid-craft and cannot grapple.
+	Crafting bool
+
 	// NoTarget is true when there is no aggro target or the target is gone.
 	NoTarget bool
 
@@ -46,6 +49,11 @@ type GrappleResult struct {
 // grapple).
 func ExecuteGrapple(actor Actor) GrappleResult {
 	char := actor.GetCharacter()
+
+	// Don't interrupt a craft to grapple.
+	if char.IsCrafting() {
+		return GrappleResult{Crafting: true}
+	}
 
 	// Must be in combat (aggro set) before this function is called.
 	if char.Aggro == nil {

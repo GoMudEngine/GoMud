@@ -12,6 +12,10 @@ import (
 )
 
 func Bash(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
+	if user.Character.IsCrafting() {
+		user.SendText(`<ansi fg="red">You can't bash while focused on your work. Finish or be interrupted first.</ansi>`)
+		return true, nil
+	}
 
 	// Must be in combat or specify a target to use bash.
 	if user.Character.Aggro == nil {
@@ -52,6 +56,12 @@ func Bash(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 	// Delegate core bash logic to the shared action.
 	bashResult := actions.ExecuteBash(&actions.UserActor{User: user, Room: room})
+
+	if bashResult.Crafting {
+		// Safety net — should have been caught by the pre-reject above.
+		user.SendText(`<ansi fg="red">You can't bash while focused on your work. Finish or be interrupted first.</ansi>`)
+		return true, nil
+	}
 
 	switch {
 	case bashResult.NoShield:

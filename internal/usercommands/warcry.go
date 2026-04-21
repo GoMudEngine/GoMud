@@ -22,6 +22,11 @@ func Warcry(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		return true, nil
 	}
 
+	if result.AlreadyActive {
+		user.SendText("Your warcry still echoes — you can't shout it louder.")
+		return true, nil
+	}
+
 	if result.OnCooldown {
 		user.SendText("You need a moment to recover before attempting another special move.")
 		return true, nil

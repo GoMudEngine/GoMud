@@ -3,6 +3,7 @@ package actions
 import (
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/stretchr/testify/assert"
@@ -21,6 +22,7 @@ func newTestMob(t *testing.T, cfg func(*mobs.Mob)) *mobs.Mob {
 	m.Character.Conviction = 999
 	m.Character.ConvictionMax.Value = 999
 	m.Character.CombatPosition = characters.PositionStanding
+	m.Character.Buffs = buffs.New() // Properly initialize buffs maps
 	m.Character.SetAggro(1, 0, characters.DefaultAttack) // user 1 as generic target
 	if cfg != nil {
 		cfg(m)
@@ -30,41 +32,47 @@ func newTestMob(t *testing.T, cfg func(*mobs.Mob)) *mobs.Mob {
 
 func TestCommandIsReady_UnknownCommand(t *testing.T) {
 	m := newTestMob(t, nil)
-	assert.False(t, CommandIsReady(m, "does_not_exist"))
+	actor := &MobActor{Mob: m, Room: nil}
+	assert.False(t, CommandIsReady(actor, "does_not_exist"))
 }
 
-func TestCommandIsReady_NilMob(t *testing.T) {
+func TestCommandIsReady_NilActor(t *testing.T) {
 	assert.False(t, CommandIsReady(nil, "taunt"))
 }
 
 func TestCommandIsReady_Taunt_NoAggroFalse(t *testing.T) {
 	m := newTestMob(t, func(m *mobs.Mob) { m.Character.EndAggro() })
-	assert.False(t, CommandIsReady(m, "taunt"))
+	actor := &MobActor{Mob: m, Room: nil}
+	assert.False(t, CommandIsReady(actor, "taunt"))
 }
 
 func TestCommandIsReady_Taunt_OnCooldownFalse(t *testing.T) {
 	m := newTestMob(t, func(m *mobs.Mob) {
 		m.Character.Cooldowns = characters.Cooldowns{"special-move": 3}
 	})
-	assert.False(t, CommandIsReady(m, "taunt"))
+	actor := &MobActor{Mob: m, Room: nil}
+	assert.False(t, CommandIsReady(actor, "taunt"))
 }
 
 func TestCommandIsReady_Taunt_ReadyTrue(t *testing.T) {
 	m := newTestMob(t, nil)
-	assert.True(t, CommandIsReady(m, "taunt"))
+	actor := &MobActor{Mob: m, Room: nil}
+	assert.True(t, CommandIsReady(actor, "taunt"))
 }
 
 func TestCommandIsReady_Rally_NoAggroStillTrue(t *testing.T) {
 	// Rally doesn't require an aggro target.
 	m := newTestMob(t, func(m *mobs.Mob) { m.Character.EndAggro() })
-	assert.True(t, CommandIsReady(m, "rally"))
+	actor := &MobActor{Mob: m, Room: nil}
+	assert.True(t, CommandIsReady(actor, "rally"))
 }
 
 func TestCommandIsReady_Warcry_OnCooldownFalse(t *testing.T) {
 	m := newTestMob(t, func(m *mobs.Mob) {
 		m.Character.Cooldowns = characters.Cooldowns{"special-move": 1}
 	})
-	assert.False(t, CommandIsReady(m, "warcry"))
+	actor := &MobActor{Mob: m, Room: nil}
+	assert.False(t, CommandIsReady(actor, "warcry"))
 }
 
 func TestCommandIsReady_Trip_TargetAlreadyProneFalse(t *testing.T) {
@@ -75,14 +83,16 @@ func TestCommandIsReady_Trip_TargetAlreadyProneFalse(t *testing.T) {
 	mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
 	defer mobs.SetInstanceForTest(targetMob.InstanceId, nil)
 	m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
-	assert.False(t, CommandIsReady(m, "trip"))
+	actor := &MobActor{Mob: m, Room: nil}
+	assert.False(t, CommandIsReady(actor, "trip"))
 }
 
 func TestCommandIsReady_Bash_NoShieldNoNaturalBashFalse(t *testing.T) {
 	m := newTestMob(t, func(m *mobs.Mob) {
 		m.Character.SpeciesId = 1 // human (no naturalbash)
 	})
-	assert.False(t, CommandIsReady(m, "bash"))
+	actor := &MobActor{Mob: m, Room: nil}
+	assert.False(t, CommandIsReady(actor, "bash"))
 }
 
 func TestCommandIsReady_Grapple_TargetAlreadyClinchedFalse(t *testing.T) {
@@ -93,10 +103,79 @@ func TestCommandIsReady_Grapple_TargetAlreadyClinchedFalse(t *testing.T) {
 	mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
 	defer mobs.SetInstanceForTest(targetMob.InstanceId, nil)
 	m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
-	assert.False(t, CommandIsReady(m, "grapple"))
+	actor := &MobActor{Mob: m, Room: nil}
+	assert.False(t, CommandIsReady(actor, "grapple"))
 }
 
 func TestCommandIsReady_Kick_ReadyTrue(t *testing.T) {
 	m := newTestMob(t, nil)
-	assert.True(t, CommandIsReady(m, "kick"))
+	actor := &MobActor{Mob: m, Room: nil}
+	assert.True(t, CommandIsReady(actor, "kick"))
+}
+
+// ─── IsCrafting (universal) ────────────────────────────────────────────────
+
+func TestCommandIsReady_IsCrafting_BlocksEveryCommand(t *testing.T) {
+	for _, cmd := range []string{"taunt", "rally", "warcry", "trip", "bash", "grapple", "kick"} {
+		t.Run(cmd, func(t *testing.T) {
+			m := newTestMob(t, func(m *mobs.Mob) {
+				m.Character.CraftingState = &characters.CraftingState{
+					RecipeId:    "test",
+					RoundsTotal: 1,
+				}
+			})
+			actor := &MobActor{Mob: m, Room: nil}
+			assert.False(t, CommandIsReady(actor, cmd),
+				"crafting mob should NOT be ready for %s", cmd)
+		})
+	}
+}
+
+func seedBuffsForTest() func() {
+	return buffs.SeedBuffsForTest(map[int]*buffs.BuffSpec{
+		79: {BuffId: 79, Name: "Warcry", TriggerCount: 10, RoundInterval: 1},
+		80: {BuffId: 80, Name: "Rally", TriggerCount: 10, RoundInterval: 1},
+	})
+}
+
+// ─── Rally AlreadyActive ───────────────────────────────────────────────────
+
+func TestCommandIsReady_Rally_BuffAlreadyActive_False(t *testing.T) {
+	cleanup := seedBuffsForTest()
+	defer cleanup()
+
+	m := newTestMob(t, nil)
+	m.Character.AddBuff(80, false)
+	actor := &MobActor{Mob: m, Room: nil}
+	assert.False(t, CommandIsReady(actor, "rally"))
+}
+
+func TestCommandIsReady_Rally_BuffNotActive_True(t *testing.T) {
+	cleanup := seedBuffsForTest()
+	defer cleanup()
+
+	m := newTestMob(t, nil)
+	actor := &MobActor{Mob: m, Room: nil}
+	assert.True(t, CommandIsReady(actor, "rally"))
+}
+
+// ─── Warcry AlreadyActive ──────────────────────────────────────────────────
+
+func TestCommandIsReady_Warcry_BuffAlreadyActive_False(t *testing.T) {
+	cleanup := seedBuffsForTest()
+	defer cleanup()
+
+	m := newTestMob(t, nil)
+	m.Character.AddBuff(79, false)
+	actor := &MobActor{Mob: m, Room: nil}
+	assert.False(t, CommandIsReady(actor, "warcry"))
+}
+
+func TestCommandIsReady_Warcry_BuffNotActive_True(t *testing.T) {
+	cleanup := seedBuffsForTest()
+	defer cleanup()
+
+	m := newTestMob(t, nil)
+	actor := &MobActor{Mob: m, Room: nil}
+	assert.True(t, CommandIsReady(actor, "warcry"))
 }

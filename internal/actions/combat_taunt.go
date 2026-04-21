@@ -38,6 +38,9 @@ type TauntResult struct {
 	// Fumble reports whether the attack was a critical failure (ZScore <= -2.0).
 	Fumble bool
 
+	// Crafting is true when the actor is mid-craft and cannot taunt.
+	Crafting bool
+
 	// Damage is the conviction damage dealt to the target on a hit.
 	Damage int
 
@@ -72,6 +75,11 @@ type TauntResult struct {
 // out-of-combat aggro setup (e.g. player targeting before entering combat).
 func ExecuteTaunt(actor Actor) TauntResult {
 	char := actor.GetCharacter()
+
+	// Don't interrupt a craft to taunt.
+	if char.IsCrafting() {
+		return TauntResult{Crafting: true}
+	}
 
 	// Must be in combat (aggro set) before calling.
 	if char.Aggro == nil {

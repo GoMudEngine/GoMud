@@ -39,6 +39,9 @@ type TripResult struct {
 	// OnCooldown is true when the special-move cooldown blocked the trip.
 	OnCooldown bool
 
+	// Crafting is true when the actor is mid-craft and cannot trip.
+	Crafting bool
+
 	// NoTarget is true when there is no aggro target or the target is gone.
 	NoTarget bool
 }
@@ -56,6 +59,11 @@ type TripResult struct {
 // any combat-initiation logic (e.g. SetAggro for player out-of-combat trip).
 func ExecuteTrip(actor Actor) TripResult {
 	char := actor.GetCharacter()
+
+	// Don't interrupt a craft to trip someone.
+	if char.IsCrafting() {
+		return TripResult{Crafting: true}
+	}
 
 	// Must be in combat (aggro set) before this function is called.
 	if char.Aggro == nil {

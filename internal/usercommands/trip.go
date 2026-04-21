@@ -12,6 +12,10 @@ import (
 )
 
 func Trip(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
+	if user.Character.IsCrafting() {
+		user.SendText(`<ansi fg="red">You can't trip someone while focused on your work. Finish or be interrupted first.</ansi>`)
+		return true, nil
+	}
 
 	// Must be in combat or specify a target to use trip
 	if user.Character.Aggro == nil {
@@ -51,6 +55,12 @@ func Trip(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	}
 
 	res := actions.ExecuteTrip(&actions.UserActor{User: user, Room: room})
+
+	if res.Crafting {
+		// Safety net — should have been caught by the pre-reject above.
+		user.SendText(`<ansi fg="red">You can't trip someone while focused on your work. Finish or be interrupted first.</ansi>`)
+		return true, nil
+	}
 
 	if res.OnCooldown {
 		user.SendText("You need a moment to recover before attempting another special move.")
