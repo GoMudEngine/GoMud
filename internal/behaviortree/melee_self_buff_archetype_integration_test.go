@@ -162,17 +162,17 @@ func TestMeleeSelfBuff_WithSurgeActiveCastsIronWill(t *testing.T) {
 	}
 }
 
-// TestMeleeSelfBuff_AirElementalCastsDefenseOnly verifies that a mob with
+// TestMeleeSelfBuff_FireElementalCastsDefenseOnly verifies that a mob with
 // only self_defense spells correctly falls through the offense child (Failure)
-// and casts the highest-scoring defense spell (iron-will, 270 > ward, 120).
-// This covers the air/fire elemental archetype case.
-func TestMeleeSelfBuff_AirElementalCastsDefenseOnly(t *testing.T) {
+// and casts the highest-scoring defense spell (conviction-armor, 300 > ward, 120).
+// This covers the fire elemental archetype case (stays on melee_self_buff).
+func TestMeleeSelfBuff_FireElementalCastsDefenseOnly(t *testing.T) {
 	defer seedArchetypeSpells(t)()
 	LoadArchetypeForTest(t, "melee_self_buff", archetypeYAML)
 
-	mob, cleanup := seedArchetypeMob(t, 90003, map[string]int{
-		"iron-will":       4, // self_defense, score 6×45=270
-		"conviction-ward": 4, // self_defense, score 4×30=120
+	mob, cleanup := seedArchetypeMob(t, 90004, map[string]int{
+		"conviction-armor": 3, // self_defense, score 6×50=300
+		"conviction-ward":  3, // self_defense, score 4×30=120
 	})
 	defer cleanup()
 	defer events.DrainQueuedInputsForTest(mob.InstanceId)
@@ -183,7 +183,7 @@ func TestMeleeSelfBuff_AirElementalCastsDefenseOnly(t *testing.T) {
 	}
 
 	cmd := events.InspectQueuedInputForTest(mob.InstanceId, "cast ")
-	if !strings.HasPrefix(cmd, "cast iron-will") {
-		t.Fatalf("defense-only mob should cast iron-will (score 270 > ward 120), got %q", cmd)
+	if !strings.HasPrefix(cmd, "cast conviction-armor") {
+		t.Fatalf("defense-only mob should cast conviction-armor (score 300 > ward 120), got %q", cmd)
 	}
 }
