@@ -1,6 +1,7 @@
 package mobs
 
 import (
+	"os"
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
@@ -1442,4 +1443,65 @@ func TestPathQueue(t *testing.T) {
 		wp := pq.Waypoints()
 		assert.Contains(t, wp, 1) // current is a waypoint
 	})
+}
+
+// ─── NewMobByIdFresh ──────────────────────────────────────────────────────
+
+// TestNewMobByIdFresh_IgnoresInstanceFile verifies that NewMobByIdFresh
+// does not load any existing mobs.instances/ file for the mob — companion
+// spawns must always start from the template.
+func TestNewMobByIdFresh_IgnoresInstanceFile(t *testing.T) {
+	cleanup := seedRegistry()
+	defer cleanup()
+
+	withMobProgressionEnabled(t)
+
+	// Seed an instance file by saving an uncharmed mob with progression.
+	organic := NewMobById(1, 100)
+	if organic == nil {
+		t.Fatal("NewMobById returned nil")
+	}
+	organic.Character.Stats.Strength.Training = 999
+	if err := SaveMobInstance(organic); err != nil {
+		t.Fatalf("seed SaveMobInstance: %v", err)
+	}
+	path := instancePath(organic.MobId, organic.Zone, organic.Character.Name, organic.HomeRoomId)
+	t.Cleanup(func() { _ = os.Remove(path) })
+
+	// Now call NewMobByIdFresh with the SAME (mobId, homeRoomId).
+	fresh := NewMobByIdFresh(1, 100)
+	if fresh == nil {
+		t.Fatal("NewMobByIdFresh returned nil")
+	}
+
+	// Fresh mob must NOT inherit the 999 training value.
+	assert.NotEqual(t, 999, fresh.Character.Stats.Strength.Training,
+		"NewMobByIdFresh must not load from mobs.instances/")
+}
+
+// TestNewMobById_StillLoadsInstanceFile is the control case — existing
+// organic spawn behavior is preserved.
+func TestNewMobById_StillLoadsInstanceFile(t *testing.T) {
+	cleanup := seedRegistry()
+	defer cleanup()
+
+	withMobProgressionEnabled(t)
+
+	seed := NewMobById(1, 100)
+	if seed == nil {
+		t.Fatal("NewMobById returned nil")
+	}
+	seed.Character.Stats.Strength.Training = 777
+	if err := SaveMobInstance(seed); err != nil {
+		t.Fatalf("seed SaveMobInstance: %v", err)
+	}
+	path := instancePath(seed.MobId, seed.Zone, seed.Character.Name, seed.HomeRoomId)
+	t.Cleanup(func() { _ = os.Remove(path) })
+
+	organic := NewMobById(1, 100)
+	if organic == nil {
+		t.Fatal("NewMobById returned nil")
+	}
+	assert.Equal(t, 777, organic.Character.Stats.Strength.Training,
+		"NewMobById must still load from mobs.instances/")
 }

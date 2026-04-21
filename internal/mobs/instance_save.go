@@ -45,7 +45,18 @@ func instancePath(mobId MobId, zone string, mobName string, homeRoomId int) stri
 
 // SaveMobInstance writes a mob's progression data to disk so it survives
 // server restarts. Only called for mobs with progression enabled.
+//
+// Charmed mobs are skipped — their progression is the owner's
+// responsibility (CompanionInfo on the owner's user YAML). The file
+// layer would otherwise be a redundant, room-keyed second persistence
+// that leaks across player-summon cycles. See
+// docs/superpowers/specs/2026-04-21-summons-dont-persist-design.md.
 func SaveMobInstance(mob *Mob) error {
+	// Companions live on CompanionInfo, not in mobs.instances/.
+	if mob.Character.IsCharmed() {
+		return nil
+	}
+
 	b := configs.GetBalanceConfig()
 	if !bool(b.MobProgressionEnabled) {
 		return nil
@@ -161,6 +172,38 @@ func PruneStaleInstances(maxAgeDays int) {
 	if pruned > 0 {
 		mudlog.Info("mobs.PruneStaleInstances", "pruned", pruned, "maxAgeDays", maxAgeDays)
 	}
+}
+
+// NukeSummonsInstances removes every file under
+// _datafiles/.../mobs.instances/summons/ at boot. Companion persistence
+// lives on CompanionInfo on the owner's user YAML; any file in this
+// directory is stale and would poison the next summon of the same
+// template in the same room. No-op if the directory doesn't exist.
+// Returns the count of files removed (for logging).
+func NukeSummonsInstances() int {
+	baseDir := util.FilePath(
+		configs.GetFilePathsConfig().DataFiles.String(), `/`, `mobs.instances`, `/`, `summons`,
+	)
+
+	pruned := 0
+	filepath.Walk(baseDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return nil // Skip errors (e.g., directory doesn't exist)
+		}
+		if info.IsDir() {
+			return nil
+		}
+		if removeErr := os.Remove(path); removeErr == nil {
+			pruned++
+		}
+		return nil
+	})
+
+	if pruned > 0 {
+		mudlog.Info("mobs.NukeSummonsInstances", "pruned", pruned)
+	}
+
+	return pruned
 }
 
 // hasProgression returns true if the mob has any non-zero progression data

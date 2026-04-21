@@ -198,6 +198,7 @@ func main() {
 	os.Mkdir(util.FilePath(configs.GetFilePathsConfig().DataFiles.String(), `/`, `mobs.instances`), os.ModeDir|0755)
 
 	// Prune stale mob instance saves
+	mobs.NukeSummonsInstances()
 	mobs.PruneStaleInstances(int(configs.GetBalanceConfig().MobInstanceMaxAgeDays))
 
 	// Register the plugin filesystem with the template system

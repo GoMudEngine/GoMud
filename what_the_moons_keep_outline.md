@@ -24,7 +24,7 @@ The fourth ship is still there. Buried under centuries of overgrowth in the east
 - Davan: bioluminescent skin (color-coded emotion: amber=fear, blue=calm, green-gold=recognition/happiness), developing empathic sense — currently reads rooms and people as emotional residue; becoming more acute
 - Vane: enhanced smell (primary sensory data); bark-skin patches spreading from wrists up arms
 - Sella: membrane-thin translucent skin, bones fully visible, past the threshold where the change simply is her
-- Sable: translucent luminous arms, longer fingers, dark iridescent nails, gray-gold eyes — still in motion toward something
+- Lera: translucent luminous arms, longer fingers, dark iridescent nails, gray-gold eyes — still in motion toward something
 - Various: copper skin, reflective silver eyes, hooked fingers, enhanced tracking vision, additional joint in each finger
 
 **The Bloodline** — Descendants of the immune crew. Genetically resistant to the Chrysalis. Maintain technology monopoly: the Wound-maker (energy weapon, used once at the Stilling of the Brace three hundred years ago, now mostly legend), orbital access, communications, and — crucially — the ability to interact with pre-crash objects. They believe only the bloodline can operate Founding-era technology. They are wrong about this, but have had ten thousand years to make the belief look like fact. They hunt uninfected people born outside their line not from cruelty but from genuine fear: a hollow person with a crew ID chip is a key they cannot control.
@@ -83,7 +83,7 @@ She reads the world primarily through smell — fear is cold-metal, protectivene
 
 **Asha** — ~30, glassblower. Quieter than Renner but not softer. Has the craftsperson's directness of assessment. Argues that the bloodline's account of their own abilities is circular evidence. Her position: the gap in the record is real and the question of who else might interact with Founding-era objects has never been tested because no one had reason to test it.
 
-**Corvel** — tanner, square-built, measures words in public. Has a sealed pre-crash container (the fifth object from the sealed chamber at Confluence — or a second such container; this needs confirmation against the outline). Brought it to the group two years ago. Nobody has been able to open it. Davan felt something from it.
+**Corvel** — tanner, square-built, measures words in public. Has a sealed pre-crash container — separate crash debris (resolved Ch. 19: found in marshland south of the ridge, half-buried in clay, during Quiet Century geological surveys). Same material as the face. Brought it to the group eight years ago. Nobody has been able to open it. Davan felt something from it.
 
 **Brennan** — Aldric's old seminary friend, now Greenford scholar of old languages and material culture. Sent eight-page letter: Fathers' Boats tradition older than the Chrysalis theology, four boats with the fourth's people as apparent source of the Chrysalis (this is the sophisticated-but-wrong scholarly conclusion — it inverts the true causation but points in the right direction). Warning: someone has been watching him ask questions. Wants Aldric to come in person.
 
@@ -91,7 +91,7 @@ She reads the world primarily through smell — fear is cold-metal, protectivene
 
 **Horst** — Vane's former handler. Now in New Plymouth personally, Merchant Quarter, two men, looking for Maren. His presence means the contract is considered high-priority at the bloodline's domestic office level.
 
-**Sable** — met Davan on the barge to New Plymouth. Translucent luminous arms, longer fingers, gray-gold eyes. Offered the map-is-wrong-but-useful framing of Chrysalis theology. Said: "your mutation will become what you believe it is."
+**Lera** — met Davan on the barge to New Plymouth. Translucent luminous arms, longer fingers, gray-gold eyes. Offered the map-is-wrong-but-useful framing of Chrysalis theology. Said: "your mutation will become what you believe it is."
 
 **Betta** — farm wife north of the crossroads village. Helped Maren. Told the bloodline's agents nothing. Told Vane north and east.
 
@@ -195,7 +195,7 @@ Arrives in Greenford. Brennan's house: cluttered, collegial, the warmth of two m
 Vane's Bloom supply is running low. She knows a contact in the docks district. The purchase requires going to a specific address — and what she finds there is what she's been filing for years: the room, low stone ceiling, the source. What Vane does with this information is the chapter's question. She doesn't free the person. She doesn't purchase the wafer. She stands in the street outside for a long time and then goes back to the room and tells Maren what's in her pack, what it's cost, and what she's decided. The wafer tin stays in her pack for now. The decision has been made but not acted on.
 
 **Chapter 19 — Davan — "What Edvar Keeps"**
-Edvar shows Davan the face. It responds to touch — the orbital display, four shapes, one irregular. Davan's skin-light goes green-gold, sustained, the recognition-register. He counts four. He tells Edvar what the fourth shape is. Edvar has known it was damaged for twenty years; he's never let himself complete the thought about what damaged it means. Davan completes it for him. They sit with what that implies for the rest of the evening. Davan asks about the container — whether it could be from the same source. Edvar looks at him with the expression of someone who has been waiting for someone to ask that question.
+Edvar shows Davan the face. It responds to touch — the orbital display, four shapes around a blue-green world, the fourth smaller, as if seen from further away or as if it had always been the most distant. (INTENTIONAL DISTINCTION from Aldric's face in Ch. 3 / Ch. 7 where the fourth shape reads as irregular/damaged — Edvar's and Aldric's faces are the same data from different viewing positions in the debris field. Ch. 25 reconciles them. Drafters of Ch. 24-25 must preserve this distinction.) Davan's skin-light goes green-gold, sustained, the recognition-register. He counts four. "It came down." Edvar has sat alone with this implication for twenty years; he has never let himself complete the thought. Davan completes it for him. They sit with what it implies for the rest of the evening. Davan asks about the container — whether it could be from the same source. Edvar looks at him with the expression of someone who has been waiting for someone to ask that question.
 
 **Chapter 20 — Maren — "The Restricted Collection"**
 Renner. Maren is brought to the group by Davan — properly this time, vouched for, with the disc. The argument about the bloodline's capacity to operate Founding-era objects reaches Maren directly: Renner's position that no hollow person has ever been tested. Maren puts the disc on the table. The room goes quiet. This is not an argument anymore. This is a test with someone in it. The chapter ends with the disc on the table and everyone looking at it, and Maren understanding for the first time the full weight of what she's been carrying.
@@ -250,7 +250,7 @@ The last image: the three moons, full-bright together over the eastern hills, an
 
 **Institutions and the truths they manage** — The church's Restricted Collection, the bloodline's succession rites, Aldric's thirty years of careful honesty within a structure that turns out to contain a structural dishonesty. What you owe an institution and what the institution owes you.
 
-**Mutations as self-made-real** — Sable's map: the story is the envelope, what's inside matters. The Chrysalis responds to belief. This is not magic — it's biological — but it means that ten thousand years of people believing they were gifts and gifts only has shaped what the Chrysalis has produced.
+**Mutations as self-made-real** — Lera's map: the story is the envelope, what's inside matters. The Chrysalis responds to belief. This is not magic — it's biological — but it means that ten thousand years of people believing they were gifts and gifts only has shaped what the Chrysalis has produced.
 
 **The cost of seeing clearly** — Aldric's institutional crisis, Vane's contamination, Maren's exposure, Davan's empathic bleed. Each character is paying for the clarity they're arriving at. The novel does not suggest the cost was too high.
 
@@ -266,7 +266,7 @@ The last image: the three moons, full-bright together over the eastern hills, an
 - **"Solar" / Earth-specific language**: Avoid. Use "burning point at center," "star," "the sun of this system."
 - **The face**: Named consistently as "the face" (surface that looks back, produces light from within). Not "the panel."
 - **Three objects in the sealed chamber**: The face was one of five objects found. Four smooth containers and one flat dark object. The four containers' contents and fate require confirmation before later chapters.
-- **Corvel's container**: Either the fifth object from the Confluence chamber or a second such container from a different debris field location. Needs clarification — if it's the same type, the debris field is wider than the cooperage group knows.
+- **Corvel's container**: RESOLVED — separate crash debris from the marshland south of the ridge, NOT the fifth Confluence chamber object. Same material as the face. Debris field is wider than the cooperage group knows, which is itself a discovery.
 - **"Careful"**: Overused across all chapters. Flag for manuscript pass.
 - **"Not quite a smile" / "corner of Vane's mouth"**: Used three times across Chapters 10 and 14. Flag for manuscript pass.
 - **Vane's bark-skin**: Spreading to mid-bicep at Chapter 4. Should not regress during withdrawal; the regression is gradual and post-withdrawal.
