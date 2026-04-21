@@ -1,7 +1,7 @@
 mobid: 312
 zone: Summons
 archetype: fighting
-behavior_archetype: melee_self_buff
+behavior_archetype: pure_caster
 statpool: 70
 itemdropchance: 0
 hostile: false
@@ -37,6 +37,9 @@ character:
   spellbook:
     iron-will: 3
     conviction-ward: 4
+    heal: 3
+    mind-spike: 3
+    sparks: 3
   stats:
     dexterity:
       training: 20
