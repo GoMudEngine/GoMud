@@ -50,7 +50,7 @@ var (
 		"gearup":         {Gearup, false},
 		"hamstring":      {Hamstring, false},
 		"howl":           {Howl, false},
-		"taunt":          {Howl, false},
+		"taunt":          {Taunt, false},
 		"go":             {Go, false},
 		"kick":           {Kick, false},
 		"look":           {Look, false},
