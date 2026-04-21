@@ -31,7 +31,6 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 	}
 
 	deathRecoveryRoomId := int(configs.GetSpecialRoomsConfig().DeathRecoveryRoom)
-	testingArenaEntrance := 200 // Fast regen room for testing (Arena Entrance)
 
 	onlineIds := users.GetOnlineUserIds()
 	for _, userId := range onlineIds {
@@ -41,21 +40,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 			continue
 		}
 
-		// Fast regen in testing area
-		regenMultiplier := 1.0
-		if user.Character.RoomId == testingArenaEntrance {
-			regenMultiplier = 10.0 // 10x faster regen for testing
-		}
-
-		// 5x regen in Sanctum Basin tutorial zone (rooms 101–120)
-		if user.Character.RoomId >= 101 && user.Character.RoomId <= 120 {
-			regenMultiplier = 5.0
-		}
-
-		// 5x regen in Thornwall Temple (room 468)
-		if user.Character.RoomId == 468 {
-			regenMultiplier = 5.0
-		}
+		regenMultiplier := roomRegenMultiplier(user.Character.RoomId)
 
 		inCombat := user.Character.Aggro != nil
 		healthStart := user.Character.Health
@@ -278,18 +263,24 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 		}
 
 		mobInCombat := mob.Character.Aggro != nil
+		mobRegenMult := roomRegenMultiplier(mob.Character.RoomId)
 
 		// Health regen (out of combat only, unless heal-spell ConditionRegen)
 		if !mobInCombat {
-			hpRegen := mob.Character.HealthPerRound()
+			hpRegen := float64(mob.Character.HealthPerRound())
 			// ConditionRegen acts as a multiplier on base regen
 			if mob.Character.HasCondition(characters.ConditionRegen) {
 				regenMult := mob.Character.GetConditionMagnitude(characters.ConditionRegen)
 				if regenMult > 1.0 {
-					hpRegen = int(float64(hpRegen) * regenMult)
+					hpRegen *= regenMult
 				}
 			}
-			mob.Character.Health += hpRegen
+			hpRegen *= mobRegenMult
+			hpAmt := int(math.Floor(hpRegen))
+			if hpAmt < 1 {
+				hpAmt = 1
+			}
+			mob.Character.Health += hpAmt
 			if mob.Character.Health > mob.Character.HealthMax.Value {
 				mob.Character.Health = mob.Character.HealthMax.Value
 			}
@@ -297,11 +288,11 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 			// In combat: only ConditionRegen applies
 			if mob.Character.HasCondition(characters.ConditionRegen) {
 				regenMult := mob.Character.GetConditionMagnitude(characters.ConditionRegen)
-				hpRegen := int(float64(mob.Character.HealthPerRound()) * regenMult)
-				if hpRegen < 1 {
-					hpRegen = 1
+				hpAmt := int(math.Floor(float64(mob.Character.HealthPerRound()) * regenMult * mobRegenMult))
+				if hpAmt < 1 {
+					hpAmt = 1
 				}
-				mob.Character.Health += hpRegen
+				mob.Character.Health += hpAmt
 				if mob.Character.Health > mob.Character.HealthMax.Value {
 					mob.Character.Health = mob.Character.HealthMax.Value
 				}
@@ -309,21 +300,26 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 		}
 
 		// Stamina regen (1/4 rate in combat)
-		spRegen := mob.Character.StaminaPerRound()
+		spRegen := float64(mob.Character.StaminaPerRound())
 		if mobInCombat {
 			spRegen = spRegen / 4
-			if spRegen < 1 {
-				spRegen = 1
-			}
 		}
-		mob.Character.Stamina += spRegen
+		spRegen *= mobRegenMult
+		spAmt := int(math.Floor(spRegen))
+		if spAmt < 1 {
+			spAmt = 1
+		}
+		mob.Character.Stamina += spAmt
 		if mob.Character.Stamina > mob.Character.StaminaMax.Value {
 			mob.Character.Stamina = mob.Character.StaminaMax.Value
 		}
 
 		// Conviction regen
-		cpRegen := mob.Character.ConvictionPerRound()
-		mob.Character.Conviction += cpRegen
+		cpAmt := int(math.Floor(float64(mob.Character.ConvictionPerRound()) * mobRegenMult))
+		if cpAmt < 1 {
+			cpAmt = 1
+		}
+		mob.Character.Conviction += cpAmt
 		if mob.Character.Conviction > mob.Character.ConvictionMax.Value {
 			mob.Character.Conviction = mob.Character.ConvictionMax.Value
 		}
@@ -370,4 +366,22 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 	}
 
 	return events.Continue
+}
+
+// roomRegenMultiplier returns the regen multiplier applied to HP/SP/CP
+// regen for any actor (player or mob) in the given room. 1.0 means no
+// bonus. Special rooms (testing arena entrance, tutorial zone, Thornwall
+// Temple) boost regen. Applied AFTER all other regen modifiers.
+func roomRegenMultiplier(roomId int) float64 {
+	const testingArenaEntrance = 200
+
+	switch {
+	case roomId == testingArenaEntrance:
+		return 10.0 // Fast regen for testing
+	case roomId >= 101 && roomId <= 120:
+		return 5.0 // Sanctum Basin tutorial zone
+	case roomId == 468:
+		return 5.0 // Thornwall Temple (players AND companions)
+	}
+	return 1.0
 }
