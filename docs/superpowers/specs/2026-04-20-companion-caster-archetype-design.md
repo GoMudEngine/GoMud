@@ -25,7 +25,6 @@ The archetype is a pure composition of existing btree primitives: both required 
 
 - **Not** rolling out to non-summon casters in the world (deferred to the legacy-deprecation project)
 - **Not** adding a perception-boost buff spell (none exists today; iron-will's willpower boost covers the caster stat slot)
-- **Not** building `hostile_only` filter on `multiple_enemies` condition — logged as follow-up
 
 ---
 
@@ -200,16 +199,82 @@ All four archetype children have at least one matching spell per mob — no empt
 
 ## 4. Engine Changes
 
-**None.**
+### One bug fix: `multiple_enemies` condition perspective-awareness
 
-This archetype is pure composition. Verified:
+**File:** `internal/behaviortree/conditions_player.go`
+
+**Current behavior:** `condMultipleEnemies` counts `players + charmed-mobs` in the room. This was correct for the condition's original callers (wild hostile mobs like `bandit_leader`), where players and charmed companions ARE the enemies. But it's wrong from a charmed/summoned mob's perspective — the summoner (a player) and fellow companions (charmed mobs of same owner) are *friendly*, not hostile.
+
+**Fix:** Make the condition perspective-aware. For a charmed mob, skip the summoner from the player count and fellow same-owner companions from the mob count. For a wild mob, preserve today's behavior (count all players + all charmed mobs).
+
+```go
+func condMultipleEnemies(params map[string]any, ctx *EvalContext) Result {
+	room := rooms.LoadRoom(ctx.RoomId)
+	if room == nil {
+		return Failure
+	}
+
+	mob := mobs.GetInstance(ctx.InstanceId)
+	charmedByUserId := 0
+	if mob != nil {
+		charmedByUserId = mob.Character.GetCharmedUserId()
+	}
+
+	count := 0
+
+	// Players — skip the summoner if this is a charmed mob
+	for _, pId := range room.GetPlayers() {
+		if charmedByUserId > 0 && pId == charmedByUserId {
+			continue
+		}
+		count++
+	}
+
+	// Mobs — from a charmed mob's POV, fellow same-owner companions are
+	// friends; count only wild mobs + mobs charmed by someone else.
+	// From a wild mob's POV, preserve original behavior (count charmed
+	// companions; wild mobs don't count other wild mobs as enemies).
+	for _, mId := range room.GetMobs() {
+		if mob != nil && mId == mob.InstanceId {
+			continue // don't count self
+		}
+		m := mobs.GetInstance(mId)
+		if m == nil {
+			continue
+		}
+		if charmedByUserId > 0 {
+			// Charmed mob: skip fellow companions of same owner
+			if m.Character.IsCharmed(charmedByUserId) {
+				continue
+			}
+			count++
+		} else {
+			// Wild mob: original behavior — only charmed companions count
+			if m.Character.IsCharmed() {
+				count++
+			}
+		}
+	}
+
+	if count > 1 {
+		return Success
+	}
+	return Failure
+}
+```
+
+**APIs used** (all already exist):
+- `Character.GetCharmedUserId() int` — 0 if not charmed, else owner's userId
+- `Character.IsCharmed(userId ...int) bool` — with userId param: matches specific owner; without: any-owner check
+
+**Regression safety:** Wild mobs (where `charmedByUserId == 0`) fall into the `else` branch which replicates the original `len(players) + len(GetMobs(FindCharmed))` semantics. Existing users (`bandit_leader`) see zero behavior change.
+
+### Verified, no changes needed
+
 - `mob_health_below` condition exists (`internal/behaviortree/conditions_mob.go`), param name is `percent`
-- `multiple_enemies` condition exists (`internal/behaviortree/conditions_player.go`), threshold hardcoded at `count > 1`
 - `cast_best_in_category` already handles `target: self` and implicit target (mob.Command with no target → aggro for HarmSingle, room-wide for HarmArea)
 - `mob_combat_round` event firing at `NewRound_DoCombat.go:276` is shared with `melee_self_buff` — no new fire point needed
 - Phase 4's `applyMobSelfEffect` already handles `buff`, `heal`, `shield` effect types — heal-on-self for caster works via the existing `heal` case
-
-No new Go code. No new framework concepts. This spec is ~100% YAML + spellbook authoring.
 
 ## 5. Error Handling & Edge Cases
 
@@ -227,7 +292,7 @@ No new Go code. No new framework concepts. This spec is ~100% YAML + spellbook a
 |---|---|
 | Mob has no `self_heal` spells in spellbook but HP < 40% | Child 1 returns Failure at cast-time → selector tries child 2 (defense) |
 | All buffs active AND CP < any harm spell cost | Selector fails → legacy combat → default melee (feeble for these mobs, but flavor via emotes) |
-| Mob is a summoned caster, `multiple_enemies` over-counts (includes summoner) | May trigger AoE branch in 1v1 fights with companion present. Wasted CP only — spell_resolution filters out summoner + fellow companions from actual damage targets. Logged as future-refinement via a `hostile_only` param on the condition. |
+| Mob is a summoned caster, `multiple_enemies` over-counts (pre-fix) | **Fixed in this spec** (see §4). Condition is now perspective-aware — summoner and fellow same-owner companions are excluded from the count for charmed mobs. |
 
 ### Deliberately not added
 
@@ -239,7 +304,14 @@ No new Go code. No new framework concepts. This spec is ~100% YAML + spellbook a
 
 ### Unit tests
 
-Nothing new needed — `cast_best_in_category` and the two conditions already have unit test coverage in Phase 4 and earlier work.
+**New test coverage for `multiple_enemies` fix** — extend `internal/behaviortree/conditions_test.go`:
+- Wild mob (not charmed) + 1 player + 1 charmed mob → Success (2 enemies) — regression check for existing callers
+- Wild mob + 0 players + 0 charmed mobs → Failure (0 enemies)
+- Charmed mob (owner = user 5) + user 5 + fellow companion charmed-by-5 → Failure (summoner + fellow are friends; count = 0)
+- Charmed mob (owner = user 5) + user 5 + 2 wild mobs → Success (2 wild enemies; summoner excluded)
+- Charmed mob (owner = user 5) + user 6 + wild mob → Success (1 hostile player + 1 wild mob = 2)
+
+`cast_best_in_category` and `mob_health_below` already have coverage from Phase 4 and earlier work.
 
 ### Integration test
 
@@ -275,6 +347,8 @@ Extend `internal/behaviortree/melee_self_buff_archetype_integration_test.go` OR 
 
 ### Modified files
 
+- `internal/behaviortree/conditions_player.go` — perspective-aware `multiple_enemies` fix (§4)
+- `internal/behaviortree/conditions_test.go` — extended coverage for the fix (§6)
 - `_datafiles/world/dogmud/spells/heal.yaml` — add `categories: [self_heal]`
 - `_datafiles/world/dogmud/spells/mind-spike.yaml` — add `categories: [harm_single]`
 - `_datafiles/world/dogmud/spells/conviction-spike.yaml` — add `categories: [harm_single]`
@@ -291,7 +365,7 @@ Extend `internal/behaviortree/melee_self_buff_archetype_integration_test.go` OR 
 
 ### Explicitly not touched
 
-- `internal/behaviortree/` framework code — zero changes
+- `internal/behaviortree/` — only `conditions_player.go` + `conditions_test.go` (the fix). No other framework changes.
 - `internal/hooks/` — zero changes
 - `internal/spells/` Go code — zero changes
 - `internal/mobs/` Go code — zero changes
@@ -300,11 +374,10 @@ Extend `internal/behaviortree/melee_self_buff_archetype_integration_test.go` OR 
 
 - Tank/Taunter archetype (earth/magma elemental, flesh golem) — next spec
 - Legacy-system deprecation project — audit all 187 mobs, migrate to archetypes, delete `mobai` + `preferredSpell` + `ChooseCastAction`
-- `hostile_only` param on `multiple_enemies` condition — refines AoE-trigger for summoned casters
 - Perception-boosting buff spell — none exists today; would need a new buff definition + spell
 - Healer archetype (heals allies, not just self)
 - Per-companion-type spell accumulation cleanup — players' `CompanionInfo.SpellBook` retains discovered spells across summons, which pollutes the archetype's category-filtered selection. Fix is a UI/admin tool to reset companion spellbook to template; not urgent.
 
 ## Summary
 
-One new archetype file, three new spell-category tags, three mob YAMLs edited, one Phase 4 test file updated. Zero new Go code. Rides entirely on the framework built in Phase 4.
+One new archetype file, three new spell-category tags, three mob YAMLs edited, one Phase 4 test file updated, plus one small Go fix (perspective-aware `multiple_enemies` condition) with test coverage. Rides almost entirely on the framework built in Phase 4.
