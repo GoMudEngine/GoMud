@@ -13,5 +13,7 @@ target_defense_type: physical
 effect_type: damage
 effect_magnitude: 700
 damage_multiplier: 2.00
+categories:
+  - harm_multi
 cast_user_text: "You compress your conviction into hundreds of razor-sharp fragments!"
 cast_room_text: "{source} raises their arms as the air fills with crackling shards of light!"
