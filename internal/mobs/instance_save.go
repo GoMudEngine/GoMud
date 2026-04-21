@@ -174,6 +174,39 @@ func PruneStaleInstances(maxAgeDays int) {
 	}
 }
 
+// NukeSummonsInstances removes every file under
+// _datafiles/.../mobs.instances/summons/ at boot. Companion persistence
+// lives on CompanionInfo on the owner's user YAML; any file in this
+// directory is stale and would poison the next summon of the same
+// template in the same room. No-op if the directory doesn't exist.
+// Returns the count of files removed (for logging).
+func NukeSummonsInstances() int {
+	baseDir := util.FilePath(
+		configs.GetFilePathsConfig().DataFiles.String(), `/`, `mobs.instances`, `/`, `summons`,
+	)
+
+	pruned := 0
+	filepath.Walk(baseDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return nil // Skip errors (e.g., directory doesn't exist)
+		}
+		if info.IsDir() {
+			return nil
+		}
+		if removeErr := os.Remove(path); removeErr == nil {
+			pruned++
+		}
+		return nil
+	})
+
+	// Only log if we're in a properly initialized environment (not tests)
+	if pruned > 0 && mudlog.HasLogger() {
+		mudlog.Info("mobs.NukeSummonsInstances", "pruned", pruned)
+	}
+
+	return pruned
+}
+
 // hasProgression returns true if the mob has any non-zero progression data
 // worth persisting (any stat training, skills, use counts, or mutations).
 func hasProgression(mob *Mob) bool {

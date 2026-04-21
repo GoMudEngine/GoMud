@@ -98,3 +98,9 @@ func Warn(msg string, args ...any) {
 func Error(msg string, args ...any) {
 	slogInstance.Log(context.Background(), slog.LevelError, msg, args...)
 }
+
+// HasLogger returns true if the logger has been initialized via SetupLogger.
+// Used to guard logging calls in functions that may be called during tests.
+func HasLogger() bool {
+	return slogInstance != nil
+}
