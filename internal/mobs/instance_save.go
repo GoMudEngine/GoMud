@@ -199,8 +199,7 @@ func NukeSummonsInstances() int {
 		return nil
 	})
 
-	// Only log if we're in a properly initialized environment (not tests)
-	if pruned > 0 && mudlog.HasLogger() {
+	if pruned > 0 {
 		mudlog.Info("mobs.NukeSummonsInstances", "pruned", pruned)
 	}
 
