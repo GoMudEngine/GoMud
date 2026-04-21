@@ -13,6 +13,10 @@ import (
 )
 
 func Taunt(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
+	if user.Character.IsCrafting() {
+		user.SendText(`<ansi fg="red">You can't taunt while focused on your work. Finish or be interrupted first.</ansi>`)
+		return true, nil
+	}
 
 	// Must be in combat or specify a target to use taunt.
 	if user.Character.Aggro == nil {
@@ -57,6 +61,12 @@ func Taunt(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	actor := &actions.UserActor{User: user, Room: room}
 	result := actions.ExecuteTaunt(actor)
+
+	if result.Crafting {
+		// Safety net — should have been caught by the pre-reject above.
+		user.SendText(`<ansi fg="red">You can't taunt while focused on your work. Finish or be interrupted first.</ansi>`)
+		return true, nil
+	}
 
 	if result.OnCooldown {
 		user.SendText("You need a moment to recover before attempting another special move.")
