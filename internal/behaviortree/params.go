@@ -32,3 +32,20 @@ func getBoolParam(params map[string]any, key string) bool {
 	}
 	return false
 }
+
+// getStringListParam reads a []string parameter from the params map.
+// YAML unmarshals lists as []any, so we type-assert each element to string.
+// Returns nil if missing or wrong type.
+func getStringListParam(params map[string]any, key string) []string {
+	v, ok := params[key].([]any)
+	if !ok {
+		return nil
+	}
+	out := make([]string, 0, len(v))
+	for _, el := range v {
+		if s, ok := el.(string); ok {
+			out = append(out, s)
+		}
+	}
+	return out
+}

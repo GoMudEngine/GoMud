@@ -1,8 +1,8 @@
 package behaviortree
 
 // actions_mob.go — mob movement, spawning, and instance actions:
-// actSpawnMob, actSummonCompanion, actCommand, actCommandMob, actMove,
-// actOpenInstancePortal, actCreateInstance
+// actSpawnMob, actSummonCompanion, actCommand, actCommandMob, actCommandBestOf,
+// actMove, actOpenInstancePortal, actCreateInstance
 // helpers: splitTwo, parseIntStr
 
 import (
@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/exit"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -133,6 +134,29 @@ func actCommandMob(params map[string]any, ctx *EvalContext) Result {
 		m := mobs.GetInstance(instId)
 		if m != nil && int(m.MobId) == targetMobId {
 			m.Command(cmd)
+			return Success
+		}
+	}
+	return Failure
+}
+
+// actCommandBestOf iterates the `cmds` list in order; for each, checks
+// actions.CommandIsReady and issues the first ready command via mob.Command.
+// Returns Success if any command was issued, Failure if all were not-ready.
+//
+// Mirrors cast_best_in_category for command-style moves. Used by the
+// tank_taunter and generic_fighter archetypes.
+//
+// params: cmds (list of strings — command names in priority order)
+func actCommandBestOf(params map[string]any, ctx *EvalContext) Result {
+	mob := mobs.GetInstance(ctx.InstanceId)
+	if mob == nil {
+		return Failure
+	}
+	cmds := getStringListParam(params, "cmds")
+	for _, cmd := range cmds {
+		if actions.CommandIsReady(mob, cmd) {
+			mob.Command(cmd)
 			return Success
 		}
 	}

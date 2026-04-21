@@ -39,3 +39,15 @@ func SeedMobsForTest(specs map[int]*Mob, instances map[int]*Mob) func() {
 		instanceCounter = origInstanceCounter
 	}
 }
+
+// SetInstanceForTest registers or removes a mob instance for tests.
+// Pass nil to remove. Not safe for concurrent use.
+func SetInstanceForTest(instId int, mob *Mob) {
+	mobInstancesMu.Lock()
+	defer mobInstancesMu.Unlock()
+	if mob == nil {
+		delete(mobInstances, instId)
+		return
+	}
+	mobInstances[instId] = mob
+}

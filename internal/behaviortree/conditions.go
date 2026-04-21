@@ -30,6 +30,9 @@ func init() {
 	conditionRegistry["command_matches"] = condCommandMatches
 	conditionRegistry["command_rest_contains"] = condCommandRestContains
 	conditionRegistry["mob_in_room"] = condMobInRoom
+	conditionRegistry["target_is_casting"] = condTargetIsCasting
+	conditionRegistry["target_aggro_not_on_me"] = condTargetAggroNotOnMe
+	conditionRegistry["target_not_standing"] = condTargetNotStanding
 }
 
 // LookupCondition returns the condition function for the given name,

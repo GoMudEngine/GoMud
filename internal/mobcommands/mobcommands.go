@@ -50,6 +50,7 @@ var (
 		"gearup":         {Gearup, false},
 		"hamstring":      {Hamstring, false},
 		"howl":           {Howl, false},
+		"taunt":          {Taunt, false},
 		"go":             {Go, false},
 		"kick":           {Kick, false},
 		"look":           {Look, false},
@@ -59,6 +60,7 @@ var (
 		"pathto":         {Pathto, false},
 		"portal":         {Portal, false},
 		"put":            {Put, false},
+		"rally":          {Rally, false},
 		"remove":         {Remove, false},
 		"replyto":        {ReplyTo, true},
 		"say":            {Say, true},
@@ -72,8 +74,9 @@ var (
 		"submit":         {Submit, false},
 		"suicide":        {Suicide, true},
 		//		"stash":  {Stash, false},
-		"trip":   {Trip, false},
-		"wander": {Wander, false},
+		"trip":    {Trip, false},
+		"warcry":  {Warcry, false},
+		"wander":  {Wander, false},
 	}
 )
 

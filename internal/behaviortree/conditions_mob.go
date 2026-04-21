@@ -1,6 +1,8 @@
 package behaviortree
 
 import (
+	"github.com/GoMudEngine/GoMud/internal/actions"
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
@@ -69,6 +71,65 @@ func condMobInRoom(params map[string]any, ctx *EvalContext) Result {
 		if m != nil && int(m.MobId) == mobId {
 			return Success
 		}
+	}
+	return Failure
+}
+
+// condTargetIsCasting returns Success if the mob's current aggro target
+// is mid-cast. Used by archetypes that want to prioritize interrupts.
+func condTargetIsCasting(params map[string]any, ctx *EvalContext) Result {
+	mob := mobs.GetInstance(ctx.InstanceId)
+	if mob == nil || mob.Character.Aggro == nil {
+		return Failure
+	}
+	target := actions.ResolveAggroTarget(mob.Character.Aggro)
+	if !target.Found {
+		return Failure
+	}
+	if target.Char.IsCasting() {
+		return Success
+	}
+	return Failure
+}
+
+// condTargetAggroNotOnMe returns Success if the mob's current aggro
+// target is NOT attacking the mob — either has no aggro, or aggros
+// someone else. Used by tank archetypes to gate taunt so they only
+// taunt when they're not already the focus.
+func condTargetAggroNotOnMe(params map[string]any, ctx *EvalContext) Result {
+	mob := mobs.GetInstance(ctx.InstanceId)
+	if mob == nil || mob.Character.Aggro == nil {
+		return Failure
+	}
+	target := actions.ResolveAggroTarget(mob.Character.Aggro)
+	if !target.Found {
+		return Failure
+	}
+	if target.Char.Aggro == nil {
+		return Success
+	}
+	// Target's aggro is on me (mob) iff Aggro.MobInstanceId == mob.InstanceId
+	// AND Aggro.UserId == 0 (mob target, not player target).
+	if target.Char.Aggro.MobInstanceId == mob.InstanceId && target.Char.Aggro.UserId == 0 {
+		return Failure
+	}
+	return Success
+}
+
+// condTargetNotStanding returns Success if the mob's current aggro target
+// is in any non-standing position (prone / clinched / grounded).
+// Used to gate bonus-damage kicks (stomp when prone, knee when clinched).
+func condTargetNotStanding(params map[string]any, ctx *EvalContext) Result {
+	mob := mobs.GetInstance(ctx.InstanceId)
+	if mob == nil || mob.Character.Aggro == nil {
+		return Failure
+	}
+	target := actions.ResolveAggroTarget(mob.Character.Aggro)
+	if !target.Found {
+		return Failure
+	}
+	if target.Char.CombatPosition != characters.PositionStanding {
+		return Success
 	}
 	return Failure
 }
