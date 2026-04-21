@@ -1,28 +1,20 @@
 roomid: 483
 zone: Thornwall City
 title: Enchanter's Circle
-description: >
-  A circular chamber carved from dark stone, its floor inlaid with a
-  ring of pale, luminescent crystals that pulse with a slow, organic
-  rhythm. The air hums with chrysalis energy — faint, persistent, and
-  slightly unsettling. Diagrams of mutation patterns and binding sigils
-  cover the walls in faded ink, their lines suggesting anatomies that
-  are not quite human. A heavy iron stand in the center holds a shallow
-  basin where catalysts are mixed and enchantments are born.
+description: |
+  A circular chamber carved from dark stone, its floor inlaid with a ring of pale, luminescent crystals that pulse with a slow, organic rhythm. The air hums with chrysalis energy — faint, persistent, and slightly unsettling. Diagrams of mutation patterns and binding sigils cover the walls in faded ink, their lines suggesting anatomies that are not quite human. A heavy iron stand in the center holds a shallow basin where catalysts are mixed and enchantments are born.
 mapsymbol: E
 maplegend: Enchanter
 biome: city
-coord:
-  x: 8
-  y: 1
-  z: 0
-station: enchanting_circle
 exits:
   west:
     roomid: 482
 spawninfo:
 - mobid: 109
+  respawnrate: 15 real minutes
 idlemessages:
-- The pale crystals in the floor flicker, casting shadows that seem to move on their own.
+- The pale crystals in the floor flicker, casting shadows that seem to move on their
+  own.
 - A faint vibration runs through the stone beneath your feet.
 - The binding diagrams on the walls seem to shift when you look away.
+station: enchanting_circle

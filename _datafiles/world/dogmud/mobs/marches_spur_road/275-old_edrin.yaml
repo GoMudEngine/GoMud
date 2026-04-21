@@ -48,6 +48,12 @@ tactics:
   - trigger: multiple_targets
     action: cast hemorrhagic-burst
     priority: 8
+  # Fallback: keep casting offensive spells on any single-target round.
+  # Without this, combat_start fires once and Edrin just watches the
+  # rest of the fight — see project_edrin_summon_on_entry.md.
+  - trigger: single_target
+    action: cast pyretic-surge
+    priority: 5
 character:
   name: Old Edrin
   description: |

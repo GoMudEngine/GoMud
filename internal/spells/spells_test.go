@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/yaml.v2"
 )
 
 // seedRegistry populates the in-memory spell registry for tests without disk access.
@@ -326,4 +327,39 @@ func TestGetEligibleSpells_QuestGatedExcluded(t *testing.T) {
 	assert.True(t, found["sparks"], "sparks (no quest required) should be discoverable")
 	assert.False(t, found["summon-steppe-spirit"],
 		"summon-steppe-spirit has QuestRequired set and must never appear in eligible list")
+}
+
+// ─── Categories field ────────────────────────────────────────────────────────
+
+func TestSpellData_CategoriesYAMLRoundtrip(t *testing.T) {
+	data := []byte(`
+spellid: test-spell
+name: Test Spell
+categories:
+  - self_defense
+  - mental_defense
+`)
+	var sd SpellData
+	if err := yaml.Unmarshal(data, &sd); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if len(sd.Categories) != 2 {
+		t.Fatalf("want 2 categories, got %d", len(sd.Categories))
+	}
+	if sd.Categories[0] != "self_defense" || sd.Categories[1] != "mental_defense" {
+		t.Fatalf("categories: %v", sd.Categories)
+	}
+}
+
+func TestSpellData_CategoriesOmittedWhenEmpty(t *testing.T) {
+	data := []byte(`spellid: test-spell
+name: Test Spell
+`)
+	var sd SpellData
+	if err := yaml.Unmarshal(data, &sd); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if sd.Categories != nil {
+		t.Fatalf("want nil categories when field absent, got %v", sd.Categories)
+	}
 }

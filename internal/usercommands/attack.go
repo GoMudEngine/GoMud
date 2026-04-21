@@ -25,7 +25,7 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		// If no argument supplied, attack whoever is attacking the player currently.
 		for _, mId := range room.GetMobs(rooms.FindFightingPlayer) {
 			m := mobs.GetInstance(mId)
-			if m.Character.Aggro == nil {
+			if m == nil || m.Character.Aggro == nil {
 				continue
 			}
 

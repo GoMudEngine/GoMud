@@ -63,8 +63,11 @@ func AttackPlayerVsMob(user *users.UserRecord, mob *mobs.Mob) AttackResult {
 		if attackResult.Crit {
 			user.Character.OnCriticalSuccess(combatSkill, user.UserId)
 		}
-		// Track weapon-combat when dual wielding (dual wield governed by weapon-combat)
-		if user.Character.Equipment.Weapon.ItemId > 0 && user.Character.Equipment.Offhand.ItemId > 0 && user.Character.Equipment.Offhand.GetSpec().Type == items.Weapon {
+		// Track weapon-combat when dual wielding (dual wield governed by weapon-combat).
+		// Exception: dual-wielding unarmed weapons (fist/claws, e.g., knuckles in both
+		// hands) stays on unarmed-combat only — weapon-combat progression would be
+		// inappropriate for pure unarmed combat.
+		if isDualWieldingWeaponCombat(user.Character) {
 			user.Character.OnSkillUse(string(skills.WeaponCombat), user.UserId)
 		}
 	} else {
@@ -76,6 +79,22 @@ func AttackPlayerVsMob(user *users.UserRecord, mob *mobs.Mob) AttackResult {
 	}
 
 	return attackResult
+}
+
+// isDualWieldingWeaponCombat reports whether the character is wielding two
+// weapons where at least one trains weapon-combat. Returns false when both
+// hands are empty, when only one hand is armed, when the offhand is a shield
+// (type != Weapon), or when both weapons are unarmed subtypes (fist/claws).
+func isDualWieldingWeaponCombat(c *characters.Character) bool {
+	if c.Equipment.Weapon.ItemId == 0 || c.Equipment.Offhand.ItemId == 0 {
+		return false
+	}
+	if c.Equipment.Offhand.GetSpec().Type != items.Weapon {
+		return false
+	}
+	mainTag := characters.CombatSkillTagForItem(c.Equipment.Weapon)
+	offTag := characters.CombatSkillTagForItem(c.Equipment.Offhand)
+	return mainTag == skills.WeaponCombat || offTag == skills.WeaponCombat
 }
 
 // Performs a combat round from a player to a player
@@ -112,8 +131,8 @@ func AttackPlayerVsPlayer(userAtk *users.UserRecord, userDef *users.UserRecord) 
 		if attackResult.Crit {
 			userAtk.Character.OnCriticalSuccess(combatSkill, userAtk.UserId)
 		}
-		// Track weapon-combat when dual wielding (dual wield governed by weapon-combat)
-		if userAtk.Character.Equipment.Weapon.ItemId > 0 && userAtk.Character.Equipment.Offhand.ItemId > 0 && userAtk.Character.Equipment.Offhand.GetSpec().Type == items.Weapon {
+		// Track weapon-combat when dual wielding real weapons (see helper below)
+		if isDualWieldingWeaponCombat(userAtk.Character) {
 			userAtk.Character.OnSkillUse(string(skills.WeaponCombat), userAtk.UserId)
 		}
 	} else {

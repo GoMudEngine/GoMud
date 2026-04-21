@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -45,15 +46,21 @@ func Buy(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	args := util.SplitButRespectQuotes(strings.ToLower(rest))
 	if len(args) >= 3 {
 		if args[len(args)-2] == `from` {
-			targetUserId, targetMobInstanceId = room.FindByName(args[len(args)-1])
-
-			if user.UserId == targetUserId {
-				user.SendText("You can't buy from yourself.")
-				return true, nil
-			}
-
-			// If nobody found when clearly specified somebody, send an error and abort
-			if targetUserId == 0 && targetMobInstanceId == 0 {
+			target, terr := actions.ResolveTargetActor(room, args[len(args)-1], actions.ResolveTargetOptions{
+				ExcludeUserId: user.UserId,
+			})
+			if terr == nil {
+				if target.IsPlayer() {
+					targetUserId = target.(*actions.UserActor).User.UserId
+				} else {
+					targetMobInstanceId = target.(*actions.MobActor).Mob.InstanceId
+				}
+			} else {
+				// Self-targeting collapses to NotFound under ExcludeUserId; check explicitly.
+				if pId, _ := room.FindByName(args[len(args)-1]); pId == user.UserId {
+					user.SendText("You can't buy from yourself.")
+					return true, nil
+				}
 				user.SendText("Visit a merchant to purchase objects or services.")
 				return true, nil
 			}

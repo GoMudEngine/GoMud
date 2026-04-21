@@ -9,7 +9,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
-	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -76,39 +75,36 @@ func Shadow(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	}
 
 	// Resolve target in the current room
-	targetPlayerId, targetMobId := room.FindByName(strings.ToLower(rest))
-
-	if targetPlayerId == 0 && targetMobId == 0 {
+	target, err := actions.ResolveTargetActor(room, strings.ToLower(rest), actions.ResolveTargetOptions{
+		ExcludeUserId: user.UserId,
+	})
+	if err == actions.ErrTargetVanished {
+		user.SendText("They seem to have vanished.")
+		return true, nil
+	}
+	if err != nil {
+		// ErrTargetNotFound — could be self-exclusion or genuinely not found.
+		if pId, _ := room.FindByName(strings.ToLower(rest)); pId == user.UserId {
+			user.SendText("You can't shadow yourself.")
+			return true, nil
+		}
 		user.SendText("Shadow whom?")
 		return true, nil
 	}
 
 	// Store the shadow target
-	if targetPlayerId > 0 {
-		targetUser := users.GetByUserId(targetPlayerId)
-		if targetUser == nil {
-			user.SendText("They seem to have vanished.")
-			return true, nil
-		}
-		// Can't shadow yourself
-		if targetPlayerId == user.UserId {
-			user.SendText("You can't shadow yourself.")
-			return true, nil
-		}
-		user.Character.SetMiscData("shadow-target-user", targetPlayerId)
+	if target.IsPlayer() {
+		targetUser := target.(*actions.UserActor).User
+		user.Character.SetMiscData("shadow-target-user", targetUser.UserId)
 		user.Character.SetMiscData("shadow-target-mob", nil)
 		user.SendText(fmt.Sprintf(
 			`You begin shadowing <ansi fg="username">%s</ansi>, `+
 				`watching their every move.`,
 			targetUser.Character.Name))
 	} else {
-		mob := mobs.GetInstance(targetMobId)
-		if mob == nil {
-			user.SendText("They seem to have vanished.")
-			return true, nil
-		}
+		mob := target.(*actions.MobActor).Mob
 		user.Character.SetMiscData("shadow-target-user", nil)
-		user.Character.SetMiscData("shadow-target-mob", targetMobId)
+		user.Character.SetMiscData("shadow-target-mob", mob.InstanceId)
 		user.SendText(fmt.Sprintf(
 			`You begin shadowing <ansi fg="mobname">%s</ansi>, `+
 				`moving silently in their wake.`,

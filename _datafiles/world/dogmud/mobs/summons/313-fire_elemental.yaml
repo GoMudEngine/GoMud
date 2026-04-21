@@ -1,6 +1,7 @@
 mobid: 313
 zone: Summons
 archetype: fighting
+behavior_archetype: melee_self_buff
 statpool: 85
 itemdropchance: 0
 hostile: false
@@ -19,7 +20,7 @@ idlecommands:
 activitylevel: 45
 combatcommands:
   - ''
-  - ''
+  - 'emote flares brightly, flames licking in all directions at once'
   - ''
 character:
   name: fire elemental
@@ -33,6 +34,9 @@ character:
     footprints that glow briefly before fading.
   speciesid: 39
   level: 1
+  spellbook:
+    conviction-armor: 3
+    conviction-ward: 3
   stats:
     dexterity:
       training: 20

@@ -1,6 +1,7 @@
 mobid: 304
 zone: Summons
 archetype: fighting
+behavior_archetype: melee_self_buff
 aiprofile: caster
 statpool: 100
 itemdropchance: 0
@@ -22,7 +23,7 @@ combatcommands:
   - ''
   - 'emote moves with impossible speed, closing distance in a single step'
   - ''
-  - 'cast conviction-ward'
+  - 'emote traces one finger along its jaw, watching with pale, flat eyes'
   - ''
 character:
   name: vampire
@@ -37,6 +38,7 @@ character:
   spellbook:
     conviction-ward: 6
     iron-will: 4
+    conviction-surge: 3
   skills:
     spellcasting: 8
   stats:

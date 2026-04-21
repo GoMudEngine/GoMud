@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -88,13 +89,12 @@ func Look(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	// look for any mobs, players, npcs
 	//
 
-	playerId, mobId := room.FindByName(lookAt)
+	target, err := actions.ResolveTargetActor(room, lookAt)
+	if err == nil {
 
-	if playerId > 0 || mobId > 0 {
+		if target.IsPlayer() {
 
-		if playerId > 0 {
-
-			u := *users.GetByUserId(playerId)
+			u := target.(*actions.UserActor).User
 
 			if !isSneaking {
 				u.SendText(
@@ -106,12 +106,9 @@ func Look(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 					u.UserId)
 			}
 
-		} else if mobId > 0 {
+		} else {
 
-			m := mobs.GetInstance(mobId)
-			if m == nil {
-				return true, nil
-			}
+			m := target.(*actions.MobActor).Mob
 
 			if !isSneaking {
 				targetName := m.Character.GetMobName(0).String()
@@ -125,6 +122,7 @@ func Look(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		return true, nil
 
 	}
+	// fall through to body-equipment / noun / pet lookups below
 
 	//
 	// Check for any equipment they are wearing they might want to look at

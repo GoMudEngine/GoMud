@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -25,11 +26,10 @@ func AiFlag(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	rest = strings.TrimSpace(rest)
 
 	// Try to find the user by character name (in room first, then globally)
-	targetUserId, _ := room.FindByName(rest)
+	target, err := actions.ResolveTargetActor(room, rest)
 	var targetUser *users.UserRecord
-
-	if targetUserId > 0 {
-		targetUser = users.GetByUserId(targetUserId)
+	if err == nil && target.IsPlayer() {
+		targetUser = target.(*actions.UserActor).User
 	}
 
 	// If not found in room, try by character name globally

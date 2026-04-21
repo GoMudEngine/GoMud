@@ -18,3 +18,17 @@ func getStringParam(params map[string]any, key string) string {
 	v, _ := params[key].(string)
 	return v
 }
+
+// getBoolParam reads a boolean parameter from the params map. Accepts
+// proper YAML bool (`hostile: true`) as the canonical form and tolerates
+// the legacy string form (`hostile: "true"`) for backward compatibility.
+// Returns false if missing or wrong type.
+func getBoolParam(params map[string]any, key string) bool {
+	switch v := params[key].(type) {
+	case bool:
+		return v
+	case string:
+		return v == "true"
+	}
+	return false
+}

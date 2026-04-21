@@ -12,8 +12,14 @@ import (
 )
 
 // Dismiss severs the player's bond with a companion.
-// For living mobs the charm is broken, the mob turns hostile, and summoned /
-// conjured / raised companions are queued for a delayed despawn.
+// Behavior depends on how the companion came to be bound:
+//   - Charmed (wild animal charmed via the charm spell): the bond-break
+//     is thematically a betrayal — the mob turns hostile and remains in
+//     the world as a natural mob.
+//   - Summoned / Conjured / Raised (companions the player created):
+//     these are mage-crafted beings, not independent creatures. Dismiss
+//     dissolves them peacefully — no aggro, immediate despawn.
+//
 // Syntax: dismiss <name>
 func Dismiss(rest string, user *users.UserRecord,
 	room *rooms.Room, flags events.EventFlag) (bool, error) {
@@ -65,10 +71,31 @@ func Dismiss(rest string, user *users.UserRecord,
 	// room-wide combat logic.
 	user.Character.RemoveCompanion(instanceId)
 
-	// Make the mob hostile toward the player.
+	isPlayerCrafted := sourceType == characters.CompanionSummoned ||
+		sourceType == characters.CompanionConjured ||
+		sourceType == characters.CompanionRaised
+
+	if isPlayerCrafted {
+		// Mage-crafted companion dissolves peacefully — no aggro, immediate despawn.
+		user.SendText(fmt.Sprintf(
+			`You release <ansi fg="mobname">%s</ansi> — it dissolves back into the energies that shaped it.`,
+			compName,
+		))
+		room.SendTextVisual(
+			fmt.Sprintf(
+				`<ansi fg="username">%s</ansi> dismisses `+
+					`<ansi fg="mobname">%s</ansi>; it dissolves away.`,
+				user.Character.Name, compName,
+			),
+			user.UserId,
+		)
+		mob.Command("despawn")
+		return true, nil
+	}
+
+	// Charmed wild creature — the bond-break is a betrayal; it turns hostile.
 	mob.Character.SetAggro(user.UserId, 0, characters.DefaultAttack)
 
-	// Player message.
 	user.SendText(fmt.Sprintf(
 		`You sever the bond with <ansi fg="mobname">%s</ansi>.`,
 		compName,
@@ -94,16 +121,6 @@ func Dismiss(rest string, user *users.UserRecord,
 		),
 		user.UserId,
 	)
-
-	// Summoned, conjured, and raised companions should not persist in the
-	// world indefinitely — queue a 5-minute delayed despawn so they expire
-	// naturally rather than wandering as a permanent hostile.
-	switch sourceType {
-	case characters.CompanionSummoned,
-		characters.CompanionConjured,
-		characters.CompanionRaised:
-		mob.Command("despawn", 300)
-	}
 
 	return true, nil
 }

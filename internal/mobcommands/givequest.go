@@ -3,6 +3,7 @@ package mobcommands
 import (
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -30,13 +31,12 @@ func GiveQuest(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	}
 
 	if targetUser != `` {
-		if uid, _ := room.FindByName(targetUser); uid > 0 {
-
+		target, err := actions.ResolveTargetActor(room, targetUser)
+		if err == nil && target.IsPlayer() {
 			events.AddToQueue(events.Quest{
-				UserId:     uid,
+				UserId:     target.GetUserId(),
 				QuestToken: questToken,
 			})
-
 		}
 	} else {
 		for _, pId := range room.GetPlayers() {

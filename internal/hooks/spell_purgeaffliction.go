@@ -5,11 +5,16 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
 func resolvePurgeAffliction(user *users.UserRecord, target *users.UserRecord) {
+	if user == nil || target == nil {
+		mudlog.Error("resolvePurgeAffliction", "error", "nil user or target")
+		return
+	}
 	room := rooms.LoadRoom(user.Character.RoomId)
 
 	if user.UserId != target.UserId {

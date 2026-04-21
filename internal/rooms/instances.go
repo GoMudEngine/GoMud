@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/exit"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
+	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -119,50 +120,33 @@ func (ir *InstanceRegistry) All() []*ZoneInstance {
 	return result
 }
 
-// CleanupEmptyInstances removes registry entries for instances whose
-// ephemeral rooms have been destroyed, and removes their overworld portals.
-func (ir *InstanceRegistry) CleanupEmptyInstances() {
-	ir.mu.Lock()
-	defer ir.mu.Unlock()
-
-	remaining := make([]*ZoneInstance, 0, len(ir.instances))
-	for _, inst := range ir.instances {
-		// Check if any room in the instance still exists in memory
-		alive := false
-		for _, ephId := range inst.RoomIdMap {
-			if LoadRoom(ephId) != nil {
-				alive = true
-				break
-			}
-		}
-		if alive {
-			remaining = append(remaining, inst)
-		} else {
-			// Clean up room index entries
-			for _, ephId := range inst.RoomIdMap {
-				delete(ir.roomIndex, ephId)
-			}
-			// Remove the entry portal from the overworld room
-			if owRoom := LoadRoom(inst.OverworldRoomId); owRoom != nil {
-				for k, v := range owRoom.ExitsTemp {
-					if v.RoomId == inst.EntryRoomId {
-						delete(owRoom.ExitsTemp, k)
-						break
-					}
-				}
-			}
-		}
-	}
-	ir.instances = remaining
-}
-
-// CheckPortalTimers broadcasts warning messages to players inside instances
-// when the portal timer is running low (5 minutes and 1 minute remaining).
+// CheckPortalTimers runs the per-tick instance lifecycle pass:
+//   - Broadcasts 5-minute and 1-minute warning messages to players
+//     inside instances whose portal is about to expire.
+//   - On TTL expiry, runs the consolidated cleanup chain: boot any
+//     remaining players to OverworldRoomId with a flavor message,
+//     deregister the instance, evict each ephemeral room's btree
+//     state via the registered callback, and free the ephemeral
+//     chunk via TryEphemeralCleanup.
+//
+// Runs inside util.LockMud() (called from world.go's per-tick loop),
+// so concurrent player movement is serialized against the chain.
+//
+// The TryEphemeralCleanup call here overlaps with the existing
+// RoomChange_CleanupEphemeralRooms hook (which fires when a player
+// leaves an ephemeral room with no remaining players). Both paths
+// are correct: the hook handles "last player left, no TTL yet"
+// (typical), and this TTL chain handles "TTL expired, players may or
+// may not still be inside" (the leak case). The function self-
+// protects against double-free via its instance-active and
+// players-present guards.
 func (ir *InstanceRegistry) CheckPortalTimers() {
+	// Phase A: under RLock, snapshot the expired instances and emit
+	// the 5-minute / 1-minute warnings for in-TTL ones.
 	ir.mu.RLock()
-	defer ir.mu.RUnlock()
 
 	if len(ir.instances) == 0 {
+		ir.mu.RUnlock()
 		return
 	}
 
@@ -172,6 +156,7 @@ func (ir *InstanceRegistry) CheckPortalTimers() {
 	fiveMinRounds := uint64(c.Timing.MinutesToRounds(5))
 	oneMinRounds := uint64(c.Timing.MinutesToRounds(1))
 
+	var expired []*ZoneInstance
 	for _, inst := range ir.instances {
 		if inst.PortalDuration == `` {
 			continue
@@ -181,7 +166,8 @@ func (ir *InstanceRegistry) CheckPortalTimers() {
 		expiryRound := g.AddPeriod(inst.PortalDuration)
 
 		if currentRound >= expiryRound {
-			continue // already expired — cleanup handled elsewhere
+			expired = append(expired, inst)
+			continue
 		}
 
 		remainingRounds := expiryRound - currentRound
@@ -204,10 +190,68 @@ func (ir *InstanceRegistry) CheckPortalTimers() {
 			}
 		}
 	}
+	// Drop the RLock BEFORE Phase B — Remove(inst) takes its own
+	// write lock, which would deadlock against an outer RLock.
+	ir.mu.RUnlock()
+
+	// Phase B: process each expired instance OUTSIDE the RLock.
+	const collapseMsg = `<ansi fg="red">The portal's shimmer collapses around you — the instance unravels.</ansi>`
+	for _, inst := range expired {
+		// 1. Boot phase — O(1) populated-room check via roomsWithUsers.
+		//    Send the flavor message BEFORE MoveToRoom so players see
+		//    it in the ephemeral room context, not after teleport.
+		for _, ephId := range inst.RoomIdMap {
+			if roomManager.roomsWithUsers[ephId] == 0 {
+				continue
+			}
+			room := LoadRoom(ephId)
+			if room == nil {
+				continue
+			}
+			for _, userId := range room.GetPlayers() {
+				if u := users.GetByUserId(userId); u != nil {
+					u.SendText(collapseMsg)
+				}
+				MoveToRoom(userId, inst.OverworldRoomId)
+			}
+		}
+
+		// 2. Deregister phase (Remove takes its own ir.mu.Lock).
+		ir.Remove(inst)
+
+		// 3. Btree eviction phase — callback-mediated to avoid an
+		//    internal/rooms → internal/behaviortree import cycle.
+		//    inst.EntryRoomId is stored in RoomIdMap as a self-mapping
+		//    by CreateZoneInstance, so iterating RoomIdMap covers it.
+		if btreeStateEvictor != nil {
+			for _, ephId := range inst.RoomIdMap {
+				btreeStateEvictor(ephId)
+			}
+		}
+
+		// 4. Ephemeral chunk free phase. TryEphemeralCleanup self-
+		//    protects (returns []int{} if any room has players or an
+		//    active instance). After steps 1+2 both gates are clear.
+		TryEphemeralCleanup(inst.EntryRoomId)
+	}
 }
 
 // Package-level singleton.
 var instanceRegistry = NewInstanceRegistry()
+
+// btreeStateEvictor is set at startup by main.go to wire the
+// rooms→behaviortree dependency direction without an import cycle.
+// nil-safe: a nil evictor is a no-op (used in tests that don't care
+// about btree state).
+var btreeStateEvictor func(roomId int)
+
+// SetBTreeStateEvictor registers the per-room btree state eviction
+// callback. Called once at startup from main.go with
+// behaviortree.EvictRoomBTreeState. Safe to leave unregistered in
+// tests that don't exercise btree state.
+func SetBTreeStateEvictor(fn func(int)) {
+	btreeStateEvictor = fn
+}
 
 // GetInstanceRegistry returns the global instance registry.
 func GetInstanceRegistry() *InstanceRegistry {

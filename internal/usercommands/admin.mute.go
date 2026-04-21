@@ -3,6 +3,7 @@ package usercommands
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
@@ -22,22 +23,17 @@ func Mute(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
-	targetUserId, _ := room.FindByName(rest)
-
-	if targetUserId > 0 {
-
-		if u := users.GetByUserId(targetUserId); u != nil {
-
-			u.Muted = true
-
-			user.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> (<ansi fg="username">%s</ansi>) has been <ansi fg="alert-5">MUTED</ansi>`, u.Username, u.Character.Name))
-
-			return true, nil
-		}
-
+	target, err := actions.ResolveTargetActor(room, rest)
+	if err != nil || !target.IsPlayer() {
+		user.SendText("Could not find user.")
+		return true, nil
 	}
 
-	user.SendText("Could not find user.")
+	u := target.(*actions.UserActor).User
+	u.Muted = true
+
+	user.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> (<ansi fg="username">%s</ansi>) has been <ansi fg="alert-5">MUTED</ansi>`, u.Username, u.Character.Name))
+
 	return true, nil
 }
 
@@ -49,21 +45,16 @@ func UnMute(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		return true, nil
 	}
 
-	targetUserId, _ := room.FindByName(rest)
-
-	if targetUserId > 0 {
-
-		if u := users.GetByUserId(targetUserId); u != nil {
-
-			u.Muted = false
-
-			user.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> (<ansi fg="username">%s</ansi>) has been <ansi fg="alert-1">UNMUTED</ansi>`, u.Username, u.Character.Name))
-
-			return true, nil
-		}
-
+	target, err := actions.ResolveTargetActor(room, rest)
+	if err != nil || !target.IsPlayer() {
+		user.SendText("Could not find user.")
+		return true, nil
 	}
 
-	user.SendText("Could not find user.")
+	u := target.(*actions.UserActor).User
+	u.Muted = false
+
+	user.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> (<ansi fg="username">%s</ansi>) has been <ansi fg="alert-1">UNMUTED</ansi>`, u.Username, u.Character.Name))
+
 	return true, nil
 }
