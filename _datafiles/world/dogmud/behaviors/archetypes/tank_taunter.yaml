@@ -9,8 +9,8 @@
 #   1. Interrupt — bash/trip a casting target
 #   2. Taunt — if I'm not already the target's aggro
 #   3. Bonus-damage kick — target prone (stomp) or clinched (knee)
-#   4. Rally — mitigation buff, skip if already active (buff id 80)
-#   5. Warcry — damage buff, skip if already active (buff id 79)
+#   4. Rally — mitigation buff (CommandIsReady skips if already active)
+#   5. Warcry — damage buff (CommandIsReady skips if already active)
 #   6-8. Knockdown cascade: bash (first if qualified) → grapple
 #        (single-enemy only) → trip (final fallback)
 #   fall through to legacy attack
@@ -43,29 +43,13 @@ tree:
           do: command_best_of
           cmds: [kick]
 
-    - type: sequence
-      children:
-        - type: decorator
-          mod: invert
-          child:
-            type: condition
-            check: mob_has_buff
-            buff_id: 80
-        - type: action
-          do: command_best_of
-          cmds: [rally]
+    - type: action
+      do: command_best_of
+      cmds: [rally]
 
-    - type: sequence
-      children:
-        - type: decorator
-          mod: invert
-          child:
-            type: condition
-            check: mob_has_buff
-            buff_id: 79
-        - type: action
-          do: command_best_of
-          cmds: [warcry]
+    - type: action
+      do: command_best_of
+      cmds: [warcry]
 
     - type: action
       do: command_best_of
