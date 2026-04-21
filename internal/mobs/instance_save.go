@@ -45,7 +45,18 @@ func instancePath(mobId MobId, zone string, mobName string, homeRoomId int) stri
 
 // SaveMobInstance writes a mob's progression data to disk so it survives
 // server restarts. Only called for mobs with progression enabled.
+//
+// Charmed mobs are skipped — their progression is the owner's
+// responsibility (CompanionInfo on the owner's user YAML). The file
+// layer would otherwise be a redundant, room-keyed second persistence
+// that leaks across player-summon cycles. See
+// docs/superpowers/specs/2026-04-21-summons-dont-persist-design.md.
 func SaveMobInstance(mob *Mob) error {
+	// Companions live on CompanionInfo, not in mobs.instances/.
+	if mob.Character.IsCharmed() {
+		return nil
+	}
+
 	b := configs.GetBalanceConfig()
 	if !bool(b.MobProgressionEnabled) {
 		return nil
