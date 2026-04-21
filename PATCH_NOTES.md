@@ -1,5 +1,40 @@
 # DOGMud Patch Notes
 
+## 2026-04-20 — Pure Caster Archetype
+
+### Gameplay
+
+- **Wraiths, spectres, and air elementals are now proper mages.**
+  Each maintains defensive buffs, emergency-heals when HP drops below
+  40%, picks AoE damage when enemies are grouped, and single-target
+  damage otherwise. Watch for `heal`, `sparks`, `conviction-barrage`,
+  `mind-spike`, `conviction-spike`, and `nerve-disruption` depending
+  on the mob and situation.
+- **Air elemental is now a caster** (was a melee specialist in the
+  previous Phase 4 release). Its stats were always caster-shaped —
+  dex 20, perception 20, willpower 10 — and this update gives it the
+  spellbook to match. Vampire and fire elemental stay on melee.
+
+### Under the hood
+
+- **New archetype `pure_caster`** sits alongside `melee_self_buff`.
+  Both share the same framework — only the tree YAML and mob
+  spellbook tags differ. Decision order: emergency heal → maintain
+  defense → AoE if multiple enemies → single-target harm → legacy
+  fallthrough.
+- **`multiple_enemies` btree condition is now perspective-aware.**
+  Previously it counted `players + charmed mobs` regardless of the
+  calling mob's perspective, so a summoned caster with a fellow
+  companion in the room saw "multiple enemies" when fighting a
+  single wild mob. Now, from a charmed mob's POV, the summoner and
+  fellow same-owner companions are excluded. Wild mobs (like
+  bandit_leader) preserve original behavior for regression safety.
+- **Three new spell categories** — `self_heal`, `harm_single`,
+  `harm_multi` — tag the spells archetypes filter for. Applied to
+  8 existing spells (heal, mind-spike, conviction-spike,
+  nerve-disruption, sparks, conviction-barrage, hemorrhagic-wave,
+  hemorrhagic-burst).
+
 ## 2026-04-20 — Companion AI Phase 4 (Melee Self-Buff Archetype)
 
 ### Gameplay
