@@ -1,28 +1,34 @@
 package actions
 
-import (
-	"github.com/GoMudEngine/GoMud/internal/mobs"
-)
-
 // CommandIsReady returns true iff the named mob command would actually
-// execute its effect right now. Checks cover: shared special-move
-// cooldown, aggro target (where required), and target state (where
-// relevant — e.g., trip needs standing target, grapple needs non-
-// clinched target). Resource costs (stamina/conviction) are NOT checked
-// — if a mob is resource-starved the command will no-op at execution
-// time. For v1 this is acceptable because the shared cooldown is the
-// dominant gate.
+// execute its effect right now. Mirrors the early-return gates in each
+// Execute* function so the behavior tree's command_best_of action can
+// self-gate and fall through cleanly.
+//
+// Takes an Actor (not a *mobs.Mob) so player-side callers can self-gate
+// too if needed in the future. Actor also gives us GetCharacter() for
+// the universal state checks.
 //
 // Unknown command names return false. This lets a behavior tree safely
 // include commands that don't exist yet without firing a spurious
 // Success.
-func CommandIsReady(mob *mobs.Mob, cmd string) bool {
-	if mob == nil {
+//
+// SYNC POINT: if this function gains a new gate, update the
+// corresponding Execute* function. Drift is caught by
+// TestCommandReadinessDrift in command_readiness_drift_test.go.
+func CommandIsReady(actor Actor, cmd string) bool {
+	if actor == nil {
 		return false
 	}
-	char := &mob.Character
+	char := actor.GetCharacter()
+	if char == nil {
+		return false
+	}
 
-	// All supported commands share the special-move cooldown.
+	// Universal gates (apply to every command).
+	if char.IsCrafting() {
+		return false
+	}
 	if char.GetCooldown("special-move") > 0 {
 		return false
 	}
@@ -31,8 +37,11 @@ func CommandIsReady(mob *mobs.Mob, cmd string) bool {
 	case "taunt":
 		return char.Aggro != nil
 
-	case "rally", "warcry":
-		return true
+	case "rally":
+		return !char.HasBuff(80)
+
+	case "warcry":
+		return !char.HasBuff(79)
 
 	case "trip":
 		if char.Aggro == nil {

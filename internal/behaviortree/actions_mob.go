@@ -155,7 +155,7 @@ func actCommandBestOf(params map[string]any, ctx *EvalContext) Result {
 	}
 	cmds := getStringListParam(params, "cmds")
 	for _, cmd := range cmds {
-		if actions.CommandIsReady(mob, cmd) {
+		if actions.CommandIsReady(&actions.MobActor{Mob: mob}, cmd) {
 			mob.Command(cmd)
 			return Success
 		}
