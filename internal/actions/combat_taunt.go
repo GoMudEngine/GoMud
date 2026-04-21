@@ -221,15 +221,27 @@ func ExecuteTaunt(actor Actor) TauntResult {
 			char, target.Char, util.GetRoundCount())
 
 		// Tank taunt: force mob target to switch aggro to the taunter.
+		// Works for both player and mob taunters; the archetype tree for
+		// tank_taunter relies on this mob-side path to prevent infinite
+		// taunt loops.
 		agroPulled := false
 		if target.MobInstanceId > 0 {
-			mob := mobs.GetInstance(target.MobInstanceId)
-			if mob != nil && mob.Character.Aggro != nil {
-				currentTargetUserId := mob.Character.Aggro.UserId
+			targetMob := mobs.GetInstance(target.MobInstanceId)
+			if targetMob != nil && targetMob.Character.Aggro != nil {
 				attackerUserId := actor.GetUserId()
-				if attackerUserId > 0 && currentTargetUserId != attackerUserId {
-					mob.Character.SetAggro(attackerUserId, 0, characters.DefaultAttack)
-					agroPulled = true
+				attackerMobId := actor.GetMobInstanceId()
+				if attackerUserId > 0 {
+					// Player taunter.
+					if targetMob.Character.Aggro.UserId != attackerUserId {
+						targetMob.Character.SetAggro(attackerUserId, 0, characters.DefaultAttack)
+						agroPulled = true
+					}
+				} else if attackerMobId > 0 {
+					// Mob taunter.
+					if targetMob.Character.Aggro.MobInstanceId != attackerMobId || targetMob.Character.Aggro.UserId != 0 {
+						targetMob.Character.SetAggro(0, attackerMobId, characters.DefaultAttack)
+						agroPulled = true
+					}
 				}
 			}
 		}
