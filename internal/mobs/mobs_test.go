@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
-	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v2"
@@ -1455,12 +1454,7 @@ func TestNewMobByIdFresh_IgnoresInstanceFile(t *testing.T) {
 	cleanup := seedRegistry()
 	defer cleanup()
 
-	// Enable MobProgressionEnabled so SaveMobInstance writes a file.
-	prevBal := configs.GetBalanceConfig()
-	configs.AddOverlayOverrides(map[string]any{"Balance.MobProgressionEnabled": true})
-	t.Cleanup(func() {
-		configs.AddOverlayOverrides(map[string]any{"Balance.MobProgressionEnabled": bool(prevBal.MobProgressionEnabled)})
-	})
+	withMobProgressionEnabled(t)
 
 	// Seed an instance file by saving an uncharmed mob with progression.
 	organic := NewMobById(1, 100)
@@ -1491,11 +1485,7 @@ func TestNewMobById_StillLoadsInstanceFile(t *testing.T) {
 	cleanup := seedRegistry()
 	defer cleanup()
 
-	prevBal := configs.GetBalanceConfig()
-	configs.AddOverlayOverrides(map[string]any{"Balance.MobProgressionEnabled": true})
-	t.Cleanup(func() {
-		configs.AddOverlayOverrides(map[string]any{"Balance.MobProgressionEnabled": bool(prevBal.MobProgressionEnabled)})
-	})
+	withMobProgressionEnabled(t)
 
 	seed := NewMobById(1, 100)
 	if seed == nil {

@@ -9,6 +9,19 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// withMobProgressionEnabled turns on Balance.MobProgressionEnabled for
+// the duration of a test and restores the prior value via t.Cleanup.
+// Several tests in this package need progression active so that
+// SaveMobInstance actually writes a file.
+func withMobProgressionEnabled(t *testing.T) {
+	t.Helper()
+	prev := configs.GetBalanceConfig()
+	configs.AddOverlayOverrides(map[string]any{"Balance.MobProgressionEnabled": true})
+	t.Cleanup(func() {
+		configs.AddOverlayOverrides(map[string]any{"Balance.MobProgressionEnabled": bool(prev.MobProgressionEnabled)})
+	})
+}
+
 // TestSaveMobInstance_CharmedMobSkipsWrite verifies the guard added to
 // SaveMobInstance: any mob charmed to a user must not write to
 // mobs.instances/ because its progression lives on CompanionInfo on the
@@ -17,16 +30,7 @@ func TestSaveMobInstance_CharmedMobSkipsWrite(t *testing.T) {
 	cleanup := seedRegistry()
 	defer cleanup()
 
-	// Enable mob progression for this test
-	prevBal := configs.GetBalanceConfig()
-	t.Cleanup(func() {
-		configs.AddOverlayOverrides(map[string]any{
-			"Balance.MobProgressionEnabled": prevBal.MobProgressionEnabled,
-		})
-	})
-	configs.AddOverlayOverrides(map[string]any{
-		"Balance.MobProgressionEnabled": true,
-	})
+	withMobProgressionEnabled(t)
 
 	mob := NewMobById(1, 100)
 	if mob == nil {
@@ -64,16 +68,7 @@ func TestSaveMobInstance_UncharmedMobWritesFile(t *testing.T) {
 	cleanup := seedRegistry()
 	defer cleanup()
 
-	// Enable mob progression for this test
-	prevBal := configs.GetBalanceConfig()
-	t.Cleanup(func() {
-		configs.AddOverlayOverrides(map[string]any{
-			"Balance.MobProgressionEnabled": prevBal.MobProgressionEnabled,
-		})
-	})
-	configs.AddOverlayOverrides(map[string]any{
-		"Balance.MobProgressionEnabled": true,
-	})
+	withMobProgressionEnabled(t)
 
 	mob := NewMobById(1, 100)
 	if mob == nil {
@@ -98,4 +93,78 @@ func TestSaveMobInstance_UncharmedMobWritesFile(t *testing.T) {
 	// Cleanup.
 	_ = os.Remove(path)
 	_ = os.Remove(filepath.Dir(path))
+}
+
+// TestNukeSummonsInstances_RemovesAllFiles verifies the boot-cleanup
+// nuke — every file under mobs.instances/summons/ is removed, and the
+// count is returned for logging.
+func TestNukeSummonsInstances_RemovesAllFiles(t *testing.T) {
+	baseDir := filepath.Join(
+		configs.GetFilePathsConfig().DataFiles.String(),
+		"mobs.instances", "summons")
+
+	// Seed three fake files under summons/.
+	if err := os.MkdirAll(baseDir, 0755); err != nil {
+		t.Fatalf("mkdir: %v", err)
+	}
+	defer os.RemoveAll(baseDir)
+
+	for _, name := range []string{"1-foo-room1.yaml", "2-bar-room2.yaml", "3-baz-room3.yaml"} {
+		if err := os.WriteFile(filepath.Join(baseDir, name), []byte("x"), 0644); err != nil {
+			t.Fatalf("write: %v", err)
+		}
+	}
+
+	pruned := NukeSummonsInstances()
+	assert.Equal(t, 3, pruned, "expected 3 files nuked")
+
+	// Directory should be empty (may still exist).
+	entries, err := os.ReadDir(baseDir)
+	if err == nil {
+		assert.Empty(t, entries, "summons/ should have no files remaining")
+	}
+}
+
+// TestNukeSummonsInstances_IgnoresOtherZones verifies the nuke only
+// targets summons/ — legitimate world-mob instance files under other
+// zones are untouched.
+func TestNukeSummonsInstances_IgnoresOtherZones(t *testing.T) {
+	base := filepath.Join(
+		configs.GetFilePathsConfig().DataFiles.String(),
+		"mobs.instances")
+
+	summonsDir := filepath.Join(base, "summons")
+	worldDir := filepath.Join(base, "thornwall_city")
+
+	if err := os.MkdirAll(summonsDir, 0755); err != nil {
+		t.Fatalf("mkdir summons: %v", err)
+	}
+	if err := os.MkdirAll(worldDir, 0755); err != nil {
+		t.Fatalf("mkdir world: %v", err)
+	}
+	defer os.RemoveAll(summonsDir)
+	defer os.RemoveAll(worldDir)
+
+	_ = os.WriteFile(filepath.Join(summonsDir, "1-foo-room1.yaml"), []byte("x"), 0644)
+	worldFile := filepath.Join(worldDir, "2-wolf-room200.yaml")
+	_ = os.WriteFile(worldFile, []byte("x"), 0644)
+
+	pruned := NukeSummonsInstances()
+	assert.Equal(t, 1, pruned)
+
+	// World-zone file must still exist.
+	_, err := os.Stat(worldFile)
+	assert.NoError(t, err, "world-mob instance file must not be touched")
+}
+
+// TestNukeSummonsInstances_NoDirectory verifies the nuke is a no-op
+// (no panic, returns 0) when the summons/ directory doesn't exist.
+func TestNukeSummonsInstances_NoDirectory(t *testing.T) {
+	base := filepath.Join(
+		configs.GetFilePathsConfig().DataFiles.String(),
+		"mobs.instances", "summons")
+	_ = os.RemoveAll(base)
+
+	pruned := NukeSummonsInstances()
+	assert.Equal(t, 0, pruned)
 }
