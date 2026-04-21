@@ -9,7 +9,19 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/stretchr/testify/assert"
 )
+
+// newTestMob seeds a mob at instance 100 and registers it via
+// mobs.SetInstanceForTest. Auto-cleans at test end.
+func newTestMob(t *testing.T) *mobs.Mob {
+	t.Helper()
+	m := &mobs.Mob{MobId: 1, InstanceId: 100}
+	m.Character.Name = "TestMob"
+	mobs.SetInstanceForTest(m.InstanceId, m)
+	t.Cleanup(func() { mobs.SetInstanceForTest(m.InstanceId, nil) })
+	return m
+}
 
 func TestCondKeywordMatch_Hit(t *testing.T) {
 	fn := LookupCondition("keyword_match")
@@ -562,4 +574,124 @@ func TestCondMultipleEnemies_EmptyRoom_Failure(t *testing.T) {
 	if got := condMultipleEnemies(nil, ctx); got != Failure {
 		t.Fatalf("empty-room wild mob expected Failure, got %v", got)
 	}
+}
+
+// ─── target_is_casting ──────────────────────────────────────────────────────
+
+func TestCondTargetIsCasting_TargetCasting_ReturnsSuccess(t *testing.T) {
+	mob := newTestMob(t)
+	target := &mobs.Mob{InstanceId: 200}
+	target.Character.Name = "Target"
+	target.Character.CastingState = &characters.CastingState{}
+	mobs.SetInstanceForTest(target.InstanceId, target)
+	defer mobs.SetInstanceForTest(target.InstanceId, nil)
+	mob.Character.SetAggro(0, target.InstanceId, characters.DefaultAttack)
+
+	ctx := &EvalContext{InstanceId: mob.InstanceId}
+	assert.Equal(t, Success, condTargetIsCasting(nil, ctx))
+}
+
+func TestCondTargetIsCasting_TargetNotCasting_ReturnsFailure(t *testing.T) {
+	mob := newTestMob(t)
+	target := &mobs.Mob{InstanceId: 201}
+	target.Character.Name = "Target"
+	// CastingState nil = not casting
+	mobs.SetInstanceForTest(target.InstanceId, target)
+	defer mobs.SetInstanceForTest(target.InstanceId, nil)
+	mob.Character.SetAggro(0, target.InstanceId, characters.DefaultAttack)
+
+	ctx := &EvalContext{InstanceId: mob.InstanceId}
+	assert.Equal(t, Failure, condTargetIsCasting(nil, ctx))
+}
+
+func TestCondTargetIsCasting_NoTarget_ReturnsFailure(t *testing.T) {
+	mob := newTestMob(t)
+	mob.Character.EndAggro()
+
+	ctx := &EvalContext{InstanceId: mob.InstanceId}
+	assert.Equal(t, Failure, condTargetIsCasting(nil, ctx))
+}
+
+// ─── target_aggro_not_on_me ────────────────────────────────────────────────
+
+func TestCondTargetAggroNotOnMe_TargetAggrosMe_ReturnsFailure(t *testing.T) {
+	mob := newTestMob(t) // instance 100
+	target := &mobs.Mob{InstanceId: 202}
+	target.Character.Name = "Target"
+	target.Character.SetAggro(0, mob.InstanceId, characters.DefaultAttack)
+	mobs.SetInstanceForTest(target.InstanceId, target)
+	defer mobs.SetInstanceForTest(target.InstanceId, nil)
+	mob.Character.SetAggro(0, target.InstanceId, characters.DefaultAttack)
+
+	ctx := &EvalContext{InstanceId: mob.InstanceId}
+	assert.Equal(t, Failure, condTargetAggroNotOnMe(nil, ctx),
+		"target aggros me → should NOT taunt")
+}
+
+func TestCondTargetAggroNotOnMe_TargetAggrosSomeoneElse_ReturnsSuccess(t *testing.T) {
+	mob := newTestMob(t)
+	target := &mobs.Mob{InstanceId: 203}
+	target.Character.Name = "Target"
+	target.Character.SetAggro(42, 0, characters.DefaultAttack) // aggros user 42
+	mobs.SetInstanceForTest(target.InstanceId, target)
+	defer mobs.SetInstanceForTest(target.InstanceId, nil)
+	mob.Character.SetAggro(0, target.InstanceId, characters.DefaultAttack)
+
+	ctx := &EvalContext{InstanceId: mob.InstanceId}
+	assert.Equal(t, Success, condTargetAggroNotOnMe(nil, ctx),
+		"target aggros someone else → SHOULD taunt")
+}
+
+func TestCondTargetAggroNotOnMe_TargetHasNoAggro_ReturnsSuccess(t *testing.T) {
+	mob := newTestMob(t)
+	target := &mobs.Mob{InstanceId: 204}
+	target.Character.Name = "Target"
+	// target.Character.Aggro is nil
+	mobs.SetInstanceForTest(target.InstanceId, target)
+	defer mobs.SetInstanceForTest(target.InstanceId, nil)
+	mob.Character.SetAggro(0, target.InstanceId, characters.DefaultAttack)
+
+	ctx := &EvalContext{InstanceId: mob.InstanceId}
+	assert.Equal(t, Success, condTargetAggroNotOnMe(nil, ctx))
+}
+
+// ─── target_not_standing ───────────────────────────────────────────────────
+
+func TestCondTargetNotStanding_TargetStanding_ReturnsFailure(t *testing.T) {
+	mob := newTestMob(t)
+	target := &mobs.Mob{InstanceId: 205}
+	target.Character.Name = "Target"
+	target.Character.CombatPosition = characters.PositionStanding
+	mobs.SetInstanceForTest(target.InstanceId, target)
+	defer mobs.SetInstanceForTest(target.InstanceId, nil)
+	mob.Character.SetAggro(0, target.InstanceId, characters.DefaultAttack)
+
+	ctx := &EvalContext{InstanceId: mob.InstanceId}
+	assert.Equal(t, Failure, condTargetNotStanding(nil, ctx))
+}
+
+func TestCondTargetNotStanding_TargetProne_ReturnsSuccess(t *testing.T) {
+	mob := newTestMob(t)
+	target := &mobs.Mob{InstanceId: 206}
+	target.Character.Name = "Target"
+	target.Character.CombatPosition = characters.PositionProne
+	mobs.SetInstanceForTest(target.InstanceId, target)
+	defer mobs.SetInstanceForTest(target.InstanceId, nil)
+	mob.Character.SetAggro(0, target.InstanceId, characters.DefaultAttack)
+
+	ctx := &EvalContext{InstanceId: mob.InstanceId}
+	assert.Equal(t, Success, condTargetNotStanding(nil, ctx))
+}
+
+func TestCondTargetNotStanding_TargetClinched_ReturnsSuccess(t *testing.T) {
+	mob := newTestMob(t)
+	target := &mobs.Mob{InstanceId: 207}
+	target.Character.Name = "Target"
+	target.Character.CombatPosition = characters.PositionClinched
+	mobs.SetInstanceForTest(target.InstanceId, target)
+	defer mobs.SetInstanceForTest(target.InstanceId, nil)
+	mob.Character.SetAggro(0, target.InstanceId, characters.DefaultAttack)
+
+	ctx := &EvalContext{InstanceId: mob.InstanceId}
+	assert.Equal(t, Success, condTargetNotStanding(nil, ctx))
 }
