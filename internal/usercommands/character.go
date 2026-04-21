@@ -393,7 +393,7 @@ func cmdCharacterHire(user *users.UserRecord, room *rooms.Room, cmdPrompt *promp
 
 		user.Character.Gold -= charValue
 
-		m := mobs.NewMobById(59, user.Character.RoomId)
+		m := mobs.NewMobByIdFresh(59, user.Character.RoomId)
 		m.Character = char
 
 		// To prevent dupes/exploits, clear vulnerable copied data
