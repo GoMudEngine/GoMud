@@ -44,6 +44,9 @@ type KickResult struct {
 	// OnCooldown is true when the special-move cooldown blocked the kick.
 	OnCooldown bool
 
+	// Crafting is true when the actor is mid-craft and cannot kick.
+	Crafting bool
+
 	// NoTarget is true when there is no aggro target or the target is gone.
 	NoTarget bool
 }
@@ -61,6 +64,11 @@ type KickResult struct {
 // any combat-initiation logic (e.g. SetAggro for player out-of-combat kick).
 func ExecuteKick(actor Actor) KickResult {
 	char := actor.GetCharacter()
+
+	// Don't interrupt a craft to kick.
+	if char.IsCrafting() {
+		return KickResult{Crafting: true}
+	}
 
 	// Must be in combat (aggro set) before this function is called.
 	if char.Aggro == nil {
