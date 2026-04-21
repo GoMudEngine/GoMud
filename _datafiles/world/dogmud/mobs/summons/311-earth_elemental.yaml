@@ -1,6 +1,7 @@
 mobid: 311
 zone: Summons
 archetype: fighting
+behavior_archetype: tank_taunter
 statpool: 90
 itemdropchance: 0
 hostile: false
