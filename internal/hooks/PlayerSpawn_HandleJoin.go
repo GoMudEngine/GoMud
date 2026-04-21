@@ -59,7 +59,7 @@ func respawnCompanions(user *users.UserRecord) {
 			continue
 		}
 
-		mob := mobs.NewMobById(mobs.MobId(comp.MobId), user.Character.RoomId)
+		mob := mobs.NewMobByIdFresh(mobs.MobId(comp.MobId), user.Character.RoomId)
 		if mob == nil {
 			mudlog.Error("respawnCompanions", "error", fmt.Sprintf("mob template %d not found for companion %s", comp.MobId, comp.Name))
 			continue

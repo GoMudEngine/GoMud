@@ -545,7 +545,7 @@ func executePurchaseItem(user *users.UserRecord, room *rooms.Room, shopMob *mobs
 func executePurchaseMerc(user *users.UserRecord, room *rooms.Room, shopMob *mobs.Mob, shopUser *users.UserRecord, matchedShopItem characters.ShopItem, price int, tradeInString string) bool {
 	// Give them the merc
 
-	newMob := mobs.NewMobById(mobs.MobId(matchedShopItem.MobId), user.Character.RoomId)
+	newMob := mobs.NewMobByIdFresh(mobs.MobId(matchedShopItem.MobId), user.Character.RoomId)
 
 	// Anti-recursion: strip any companions the new mob had before charming it.
 	// (Fresh mobs from template rarely have charmed mobs, but guard regardless.)

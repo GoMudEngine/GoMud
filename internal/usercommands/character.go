@@ -325,7 +325,7 @@ func cmdCharacterView(user *users.UserRecord, room *rooms.Room, cmdPrompt *promp
 
 		user.Character = tmpChar
 
-		m := mobs.NewMobById(59, user.Character.RoomId)
+		m := mobs.NewMobByIdFresh(59, user.Character.RoomId)
 		m.Character = char
 		room.AddMob(m.InstanceId)
 		m.Character.Charm(user.UserId, -1, `suicide vanish`)

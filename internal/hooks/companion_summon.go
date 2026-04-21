@@ -124,7 +124,7 @@ func resolveCompanionSummon(user *users.UserRecord, spellData *spells.SpellData,
 	}
 
 	// ── 5. Spawn and register ───────────────────────────────────────────
-	mob := mobs.NewMobById(mobs.MobId(spellData.SummonMobId), room.RoomId, pool)
+	mob := mobs.NewMobByIdFresh(mobs.MobId(spellData.SummonMobId), room.RoomId, pool)
 	if mob == nil {
 		user.SendText("The summoning fails — something is wrong.")
 		return false
