@@ -596,3 +596,105 @@ func TestActSummonCompanion_HostileSetsAggroAndEngages(t *testing.T) {
 			newInstanceId, len(*captured), *captured)
 	}
 }
+
+// ─── command_best_of ───────────────────────────────────────────────────────
+
+func TestActCommandBestOf_FiresFirstReady(t *testing.T) {
+	mob := newTestMob(t)
+	// Set up aggro so taunt is ready
+	mob.Character.SetAggro(0, 0, characters.DefaultAttack)
+	mob.Character.Cooldowns = characters.Cooldowns{}
+
+	params := map[string]any{"cmds": []any{"taunt", "trip"}}
+	ctx := &EvalContext{InstanceId: mob.InstanceId}
+
+	result := LookupAction("command_best_of")(params, ctx)
+	if result != Success {
+		t.Errorf("expected Success, got %v", result)
+	}
+}
+
+func TestActCommandBestOf_SkipsNotReadyFiresReady(t *testing.T) {
+	mob := newTestMob(t)
+	// Put special-move on cooldown so taunt will not be ready.
+	// trip also requires aggro and standing target, so it won't be ready either.
+	// But kick only requires aggro, no target state check.
+	mob.Character.Cooldowns = characters.Cooldowns{"special-move": 5}
+	mob.Character.SetAggro(0, 0, characters.DefaultAttack)
+
+	params := map[string]any{"cmds": []any{"taunt", "kick"}}
+	ctx := &EvalContext{InstanceId: mob.InstanceId}
+
+	result := LookupAction("command_best_of")(params, ctx)
+	// With special-move cooldown, all commands fail
+	if result != Failure {
+		t.Errorf("expected Failure (special-move cooldown blocks all), got %v", result)
+	}
+}
+
+func TestActCommandBestOf_SkipsUnavailableCommands(t *testing.T) {
+	mob := newTestMob(t)
+	// bash requires a shield, which the mob doesn't have
+	// trip requires standing target, which isn't set up
+	// kick just needs aggro, which we set up
+	mob.Character.Cooldowns = characters.Cooldowns{}
+	mob.Character.SetAggro(0, 0, characters.DefaultAttack)
+
+	params := map[string]any{"cmds": []any{"bash", "trip", "kick"}}
+	ctx := &EvalContext{InstanceId: mob.InstanceId}
+
+	result := LookupAction("command_best_of")(params, ctx)
+	if result != Success {
+		t.Errorf("expected Success (kick should be ready), got %v", result)
+	}
+}
+
+func TestActCommandBestOf_AllFailReturnsFailure(t *testing.T) {
+	mob := newTestMob(t)
+	// bash requires shield (not present)
+	// trip requires standing target with aggro (target not set up)
+	mob.Character.Cooldowns = characters.Cooldowns{}
+
+	params := map[string]any{"cmds": []any{"bash", "trip"}}
+	ctx := &EvalContext{InstanceId: mob.InstanceId}
+
+	result := LookupAction("command_best_of")(params, ctx)
+	if result != Failure {
+		t.Errorf("expected Failure (all commands not ready), got %v", result)
+	}
+}
+
+func TestActCommandBestOf_MissingMobReturnsFailure(t *testing.T) {
+	params := map[string]any{"cmds": []any{"taunt", "trip"}}
+	ctx := &EvalContext{InstanceId: 999} // non-existent mob
+
+	result := LookupAction("command_best_of")(params, ctx)
+	if result != Failure {
+		t.Errorf("expected Failure (missing mob), got %v", result)
+	}
+}
+
+func TestActCommandBestOf_EmptyListReturnsFailure(t *testing.T) {
+	mob := newTestMob(t)
+	mob.Character.Cooldowns = characters.Cooldowns{}
+
+	params := map[string]any{"cmds": []any{}}
+	ctx := &EvalContext{InstanceId: mob.InstanceId}
+
+	result := LookupAction("command_best_of")(params, ctx)
+	if result != Failure {
+		t.Errorf("expected Failure (empty command list), got %v", result)
+	}
+}
+
+func TestActCommandBestOf_InvalidParamReturnsFailure(t *testing.T) {
+	mob := newTestMob(t)
+
+	params := map[string]any{}
+	ctx := &EvalContext{InstanceId: mob.InstanceId}
+
+	result := LookupAction("command_best_of")(params, ctx)
+	if result != Failure {
+		t.Errorf("expected Failure (invalid param), got %v", result)
+	}
+}

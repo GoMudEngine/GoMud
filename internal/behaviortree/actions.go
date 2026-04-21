@@ -30,6 +30,7 @@ func init() {
 	actionRegistry["add_temp_exit"] = actAddTempExit
 	actionRegistry["set_state"] = actSetState
 	actionRegistry["command"] = actCommand
+	actionRegistry["command_best_of"] = actCommandBestOf
 
 	// New actions for boss mob / quest NPC behavior
 	actionRegistry["summon_companion"] = actSummonCompanion
@@ -80,10 +81,11 @@ var delayedActions = map[string]bool{
 	"flee":        true,
 	"cast":        true,
 	"move":        true,
-	"add_buff":    true,
-	"command_mob": true,
-	"mob_say":     true,
-	"mob_emote":   true,
+	"add_buff":       true,
+	"command_mob":    true,
+	"command_best_of": true,
+	"mob_say":        true,
+	"mob_emote":      true,
 }
 
 func (n *ActionNode) Evaluate(ctx *EvalContext) Result {
