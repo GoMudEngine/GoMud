@@ -74,18 +74,17 @@ type ActionNode struct {
 // perception-scaled reaction delays. Internal bookkeeping actions
 // (state, quest, item) remain instant.
 var delayedActions = map[string]bool{
-	"respond":     true,
-	"say":         true,
-	"emote":       true,
-	"attack":      true,
-	"flee":        true,
-	"cast":        true,
-	"move":        true,
-	"add_buff":       true,
-	"command_mob":    true,
-	"command_best_of": true,
-	"mob_say":        true,
-	"mob_emote":      true,
+	"respond":      true,
+	"say":          true,
+	"emote":        true,
+	"attack":       true,
+	"flee":         true,
+	"cast":         true,
+	"move":         true,
+	"add_buff":     true,
+	"command_mob":  true,
+	"mob_say":      true,
+	"mob_emote":    true,
 }
 
 func (n *ActionNode) Evaluate(ctx *EvalContext) Result {
