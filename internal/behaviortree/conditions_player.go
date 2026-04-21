@@ -1,6 +1,7 @@
 package behaviortree
 
 import (
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -122,8 +123,49 @@ func condMultipleEnemies(params map[string]any, ctx *EvalContext) Result {
 	if room == nil {
 		return Failure
 	}
-	// Count players plus charmed companion mobs
-	count := len(room.GetPlayers()) + len(room.GetMobs(rooms.FindCharmed))
+
+	mob := mobs.GetInstance(ctx.InstanceId)
+	charmedByUserId := 0
+	if mob != nil {
+		charmedByUserId = mob.Character.GetCharmedUserId()
+	}
+
+	count := 0
+
+	// Players — skip the summoner if this is a charmed mob.
+	for _, pId := range room.GetPlayers() {
+		if charmedByUserId > 0 && pId == charmedByUserId {
+			continue
+		}
+		count++
+	}
+
+	// Mobs — from a charmed mob's POV, fellow same-owner companions are
+	// friends; count wild mobs + mobs charmed by someone else.
+	// From a wild mob's POV, preserve original behavior (count charmed
+	// companions; wild mobs don't count other wild mobs as enemies).
+	for _, mId := range room.GetMobs() {
+		if mob != nil && mId == mob.InstanceId {
+			continue // don't count self
+		}
+		m := mobs.GetInstance(mId)
+		if m == nil {
+			continue
+		}
+		if charmedByUserId > 0 {
+			// Charmed mob: skip fellow companions of same owner.
+			if m.Character.IsCharmed(charmedByUserId) {
+				continue
+			}
+			count++
+		} else {
+			// Wild mob: original behavior — only charmed companions count.
+			if m.Character.IsCharmed() {
+				count++
+			}
+		}
+	}
+
 	if count > 1 {
 		return Success
 	}

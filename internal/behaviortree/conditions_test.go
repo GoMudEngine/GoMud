@@ -3,7 +3,12 @@ package behaviortree
 import (
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/buffs"
+	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/exit"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
 func TestCondKeywordMatch_Hit(t *testing.T) {
@@ -376,5 +381,185 @@ func TestCondMobInRoom_NoRoom(t *testing.T) {
 	ctx := &EvalContext{RoomId: 99}
 	if result := fn(params, ctx); result != Failure {
 		t.Errorf("expected Failure when room does not exist, got %v", result)
+	}
+}
+
+// condMultipleEnemies perspective-awareness tests
+//
+// seedMultipleEnemiesRoom is a test helper that seeds mobs, users, and a room
+// in one shot (avoids the single-entity-per-call limitation of the package
+// seedTestMob/seedTestUser helpers). Returns a combined cleanup function.
+//
+// mobDefs is a map of instanceId → (templateId, name, charmedByUserId).
+// userIds is a slice of userIds to place in the room.
+func seedMultipleEnemiesRoom(
+	t *testing.T,
+	roomId int,
+	userIds []int,
+	mobDefs map[int][3]int, // instanceId → [templateId, charmedByUserId, unused]
+	mobNames map[int]string, // instanceId → name
+) func() {
+	t.Helper()
+
+	// Seed users.
+	userMap := map[int]*users.UserRecord{}
+	for _, uid := range userIds {
+		u := users.NewTestUser(uid, "testuser", "TestUser", uint64(uid))
+		u.Character.RoomId = roomId
+		userMap[uid] = u
+	}
+	cleanupUsers := users.SeedUsersForTest(userMap)
+
+	// Seed mobs.
+	specs := map[int]*mobs.Mob{}
+	instances := map[int]*mobs.Mob{}
+	for iid, def := range mobDefs {
+		tid := def[0]
+		charmedBy := def[1]
+		name := mobNames[iid]
+		charm := (*characters.CharmInfo)(nil)
+		if charmedBy > 0 {
+			charm = characters.NewCharm(charmedBy, -1, "")
+		}
+		specs[tid] = &mobs.Mob{
+			MobId: mobs.MobId(tid),
+			Character: characters.Character{
+				Name:  name,
+				RoomId: roomId,
+				Buffs: buffs.New(),
+			},
+		}
+		instances[iid] = &mobs.Mob{
+			MobId:      mobs.MobId(tid),
+			InstanceId: iid,
+			HomeRoomId: roomId,
+			Character: characters.Character{
+				Name:    name,
+				RoomId:  roomId,
+				Charmed: charm,
+				Buffs:   buffs.New(),
+			},
+		}
+	}
+	cleanupMobs := mobs.SeedMobsForTest(specs, instances)
+
+	// Seed room.
+	r := &rooms.Room{
+		RoomId: roomId,
+		Zone:   "test",
+		Title:  "Test Room",
+		Exits:  map[string]exit.RoomExit{},
+	}
+	cleanupRooms := rooms.SeedRoomsForTest(
+		map[int]*rooms.Room{roomId: r},
+		map[string]*rooms.ZoneConfig{},
+	)
+
+	// Wire players and mobs into the room.
+	room := rooms.LoadRoom(roomId)
+	for _, uid := range userIds {
+		room.AddPlayer(uid)
+	}
+	for iid := range mobDefs {
+		room.AddMob(iid)
+	}
+
+	return func() {
+		cleanupRooms()
+		cleanupMobs()
+		cleanupUsers()
+	}
+}
+
+func TestCondMultipleEnemies_WildMob_CountsPlayersAndCharmed(t *testing.T) {
+	// Wild mob (no owner): existing behavior preserved.
+	// Room: 1 player + charmed mob 9101 + wild caller 9102.
+	// From wild mob's POV: 1 player + 1 charmed companion = 2 → Success.
+	defer seedMultipleEnemiesRoom(t, 7501,
+		[]int{501},
+		map[int][3]int{
+			9101: {9101, 501, 0}, // charmed by 501
+			9102: {9102, 0, 0},   // wild, this is the caller
+		},
+		map[int]string{9101: "testvamp", 9102: "testwild"},
+	)()
+
+	ctx := &EvalContext{InstanceId: 9102, RoomId: 7501}
+	if got := condMultipleEnemies(nil, ctx); got != Success {
+		t.Fatalf("wild mob with 1 player + 1 charmed expected Success, got %v", got)
+	}
+}
+
+func TestCondMultipleEnemies_CharmedMob_SkipsSummonerAndFellows(t *testing.T) {
+	// Summoned mob (owner=501). Room: owner + fellow companion 9202 + wild mob
+	// 9203. From caster 9201's POV: skip owner (501) + skip fellow (9202).
+	// Only wild mob counts → count=1 → Failure.
+	defer seedMultipleEnemiesRoom(t, 7502,
+		[]int{501},
+		map[int][3]int{
+			9201: {9201, 501, 0}, // caller, charmed by 501
+			9202: {9202, 501, 0}, // fellow companion, charmed by 501
+			9203: {9203, 0, 0},   // wild mob
+		},
+		map[int]string{9201: "caster", 9202: "fellow", 9203: "wild"},
+	)()
+
+	ctx := &EvalContext{InstanceId: 9201, RoomId: 7502}
+	if got := condMultipleEnemies(nil, ctx); got != Failure {
+		t.Fatalf("summoned mob with only 1 wild enemy expected Failure, got %v", got)
+	}
+}
+
+func TestCondMultipleEnemies_CharmedMob_WildMobsCount(t *testing.T) {
+	// Summoned mob (owner=501). Room: owner + 2 wild mobs.
+	// From caster 9301's POV: skip owner → 2 wild enemies → Success.
+	defer seedMultipleEnemiesRoom(t, 7503,
+		[]int{501},
+		map[int][3]int{
+			9301: {9301, 501, 0}, // caller, charmed by 501
+			9302: {9302, 0, 0},   // wild
+			9303: {9303, 0, 0},   // wild
+		},
+		map[int]string{9301: "caster", 9302: "wild1", 9303: "wild2"},
+	)()
+
+	ctx := &EvalContext{InstanceId: 9301, RoomId: 7503}
+	if got := condMultipleEnemies(nil, ctx); got != Success {
+		t.Fatalf("summoned mob with 2 wild enemies expected Success, got %v", got)
+	}
+}
+
+func TestCondMultipleEnemies_CharmedMob_OtherPlayerHostile(t *testing.T) {
+	// Summoned mob (owner=501). Room: owner 501 + other player 502 + wild mob.
+	// From caster 9401's POV: skip owner 501; count player 502 + wild → 2
+	// → Success.
+	defer seedMultipleEnemiesRoom(t, 7504,
+		[]int{501, 502},
+		map[int][3]int{
+			9401: {9401, 501, 0}, // caller, charmed by 501
+			9402: {9402, 0, 0},   // wild
+		},
+		map[int]string{9401: "caster", 9402: "wild"},
+	)()
+
+	ctx := &EvalContext{InstanceId: 9401, RoomId: 7504}
+	if got := condMultipleEnemies(nil, ctx); got != Success {
+		t.Fatalf("charmed mob with hostile player + wild mob expected Success, got %v", got)
+	}
+}
+
+func TestCondMultipleEnemies_EmptyRoom_Failure(t *testing.T) {
+	// Wild mob alone in room → 0 enemies → Failure.
+	defer seedMultipleEnemiesRoom(t, 7505,
+		[]int{},
+		map[int][3]int{
+			9501: {9501, 0, 0}, // wild loner, the caller
+		},
+		map[int]string{9501: "loner"},
+	)()
+
+	ctx := &EvalContext{InstanceId: 9501, RoomId: 7505}
+	if got := condMultipleEnemies(nil, ctx); got != Failure {
+		t.Fatalf("empty-room wild mob expected Failure, got %v", got)
 	}
 }

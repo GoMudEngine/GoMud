@@ -1,6 +1,7 @@
 mobid: 303
 zone: Summons
 archetype: casting
+behavior_archetype: pure_caster
 aiprofile: caster
 statpool: 90
 itemdropchance: 0
@@ -18,11 +19,8 @@ idlecommands:
   - ''
 activitylevel: 75
 combatcommands:
-  - 'cast conviction-spike'
   - ''
   - 'emote projects a wave of pure dread that presses on the chest like a stone'
-  - ''
-  - 'cast conviction-ward'
   - ''
 character:
   name: spectre
@@ -37,7 +35,9 @@ character:
   spellbook:
     conviction-spike: 5
     conviction-ward: 4
-    conviction-surge: 3
+    iron-will: 3
+    heal: 3
+    conviction-barrage: 3
   skills:
     spellcasting: 10
   stats:

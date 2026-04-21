@@ -12,3 +12,5 @@ primarystat: willpower
 base_folds: 4
 effect_type: heal
 effect_magnitude: 3
+categories:
+  - self_heal

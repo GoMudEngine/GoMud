@@ -1,6 +1,7 @@
 mobid: 302
 zone: Summons
 archetype: casting
+behavior_archetype: pure_caster
 aiprofile: caster
 statpool: 70
 itemdropchance: 0
@@ -18,11 +19,8 @@ idlecommands:
   - ''
 activitylevel: 70
 combatcommands:
-  - 'cast mind-spike'
   - ''
   - 'emote phases through its target, trailing cold that cuts to the bone'
-  - ''
-  - 'cast nerve-disruption'
   - ''
 character:
   name: wraith
@@ -38,6 +36,8 @@ character:
     mind-spike: 5
     nerve-disruption: 3
     conviction-ward: 4
+    heal: 3
+    sparks: 3
   skills:
     spellcasting: 10
   stats:

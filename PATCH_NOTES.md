@@ -1,62 +1,73 @@
 # DOGMud Patch Notes
 
-## 2026-04-20 — Companion AI Phase 4 (Melee Self-Buff Archetype)
+## 2026-04-20 — Companion AI Overhaul (Two Archetypes + Follow + Regen)
 
 ### Gameplay
 
-- **Vampires, air elementals, and fire elementals now maintain
-  self-buffs intelligently during combat.** Each picks the
-  highest-value buff it knows from its spellbook, skips buffs
-  already active, respects the shared cast cooldown, and falls
-  back to normal attacks when buffs are covered. A fresh vampire's
-  first combat sequence casts conviction-surge for its offensive
-  boost, then iron-will, then conviction-ward across the first
-  ~10 rounds — then attacks with bite and flavor emotes.
+- **Summoned companions now fight intelligently.** Two new AI
+  archetypes cover the five mage-crafted summons:
+  - **Melee self-buffers** (vampire, fire elemental): maintain
+    offensive + defensive self-buffs, then attack with bite /
+    flavor moves between casts. A fresh vampire's first combat
+    sequence casts conviction-surge, then iron-will, then
+    conviction-ward across the first ~10 rounds.
+  - **Pure casters** (wraith, spectre, air elemental): emergency-
+    heal when HP drops below 40%, maintain defense, cast AoE
+    damage when enemies are grouped, else single-target harm.
+    Watch for heal, sparks, conviction-barrage, mind-spike,
+    conviction-spike, and nerve-disruption depending on the mob
+    and situation.
+- **Air elemental reclassified as a caster.** Its stats (dex 20,
+  perception 20, willpower 10) were always caster-shaped; this
+  update gives it the spellbook and archetype to match.
 - **Companions now follow their summoner through every movement
   path** — walking, recall, portal, fold-recall, sable, admin
-  teleport. Mid-cast wind-ups are aborted to follow (conviction
-  already spent is forfeit, same as a player self-interrupt).
-  Aggro on a target that isn't in the new room ends automatically.
+  teleport. Mid-cast wind-ups abort cleanly to keep up (conviction
+  spent during a cancelled cast is forfeit, same as a player
+  self-interrupt). Aggro on a target no longer in the new room
+  ends automatically.
+- **Thornwall Temple (and other sanctuary rooms) now heal your
+  companions too.** The 5x regen boost in the temple previously
+  only applied to players; your pet sitting next to you at Olen's
+  altar got normal regen. Now it matches yours. Same fix extends
+  to the Sanctum Basin tutorial rooms and the testing arena.
 
 ### Under the hood
 
 - **Behavior-tree archetypes are now a first-class concept.** Mob
-  YAML gains an optional `behavior_archetype: <name>` field that
-  resolves to a shared tree file at
-  `_datafiles/world/dogmud/behaviors/archetypes/<name>.yaml`.
-  Resolution order: per-mob btree file wins, then archetype, then
-  legacy. This unlocks future work where NPCs can switch archetypes
-  at runtime (e.g., a caravan guard taking up banditry).
-- **Spells gain an optional `categories:` field.** Free-form string
-  list used by archetype AI to filter spellbooks by purpose. Today:
-  `self_defense` (iron-will, conviction-ward, conviction-armor) and
-  `self_offense` (conviction-surge).
-- **New behavior-tree action `cast_best_in_category`** picks the
+  YAML gains a `behavior_archetype: <name>` field that resolves to a
+  shared tree file at `behaviors/archetypes/<name>.yaml`. Resolution
+  order: per-mob btree file wins, then archetype, then legacy. This
+  unlocks future work where NPCs can switch archetypes at runtime
+  (e.g., a caravan guard taking up banditry).
+- **Spells carry `categories:` tags.** Free-form strings used by
+  archetype AI to filter a mob's spellbook by purpose:
+  `self_defense`, `self_offense`, `self_heal`, `harm_single`,
+  `harm_multi`. Applied to 12 existing spells.
+- **New btree action `cast_best_in_category`** picks the
   highest-scoring (`base_folds × cost`) spell in a category from the
   mob's spellbook, skipping already-active buffs, components,
   summons, and insufficient CP. Self-gates on the shared
   special-move cooldown, so mobs naturally alternate between cast
   rounds and attack rounds.
-- **New event `mob_combat_round`** fires per mob combatant BEFORE the
-  legacy AI decision, so behavior-tree archetypes are authoritative
-  for mobs that declare one. Legacy `preferredSpell` (shield-first
-  priority) no longer preempts the archetype.
+- **New event `mob_combat_round`** fires per mob combatant BEFORE
+  legacy AI, so archetypes are authoritative for mobs that declare
+  one. Legacy `preferredSpell` (shield-first priority) no longer
+  preempts the archetype.
+- **`multiple_enemies` btree condition is now perspective-aware.**
+  A summoned caster no longer treats its summoner and fellow
+  companions as "enemies" when deciding AoE vs single-target. Wild
+  mobs (like bandit_leader) preserve original behavior.
 
-### Latent-bug fixes surfaced by Phase 4
+### Latent engine fixes surfaced by this work
 
-These were pre-existing engine gaps that no prior code path exercised;
-Phase 4's archetype is the first thing that asks a mob to self-cast
-non-shield buffs, and the first to track the magical shield a
-mob-cast ward applies.
-
-- **`applyMobSelfEffect` now handles `buff` effect_type.** Used to only
-  handle `heal` and `shield` — buff-type spells (conviction-surge,
-  iron-will) fell through silently when mobs self-cast them. They
-  now correctly apply, including per-buff tick snapshots.
+- **`applyMobSelfEffect` now handles `buff` effect_type.** Used to
+  only handle heal and shield — buff-type spells (conviction-surge,
+  iron-will) fell through silently when mobs self-cast them. Now
+  they correctly apply, including per-buff tick snapshots.
 - **Shield-active detection uses `ConditionShield`** instead of the
   equipment-layer `HasShield()` helper. The magical shield a spell
-  applies via `AddCondition(ConditionShield, ...)` is what the
-  archetype needs to check against for "already active."
+  applies is tracked as a condition, not as worn equipment.
 
 ## 2026-04-18 — Combat unification, target resolution, bleedout removal, lots of fixes
 
