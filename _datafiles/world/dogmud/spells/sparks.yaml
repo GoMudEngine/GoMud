@@ -13,5 +13,7 @@ target_defense_type: physical
 effect_type: damage
 effect_magnitude: 120
 damage_multiplier: 0.45
+categories:
+  - harm_multi
 cast_user_text: "You shatter your conviction into razor-sharp fragments."
 cast_room_text: "{source} clenches a fist as shards of light crackle around them."
