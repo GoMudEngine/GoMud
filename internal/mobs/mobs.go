@@ -301,7 +301,30 @@ func MobIdByName(mobName string) MobId {
 	return 0
 }
 
+// NewMobById creates a new mob instance from the template `mobId`,
+// placed at `homeRoomId`. If a saved instance file exists for this
+// (mobId, zone, mobName, homeRoomId) tuple, its progression is loaded
+// onto the new mob. This is the constructor for organic world spawns.
+//
+// Companion-spawning callers (summon / raise / conjure / charm-respawn)
+// must use NewMobByIdFresh instead — their progression lives on
+// CompanionInfo, not on the file system. See
+// docs/superpowers/specs/2026-04-21-summons-dont-persist-design.md.
 func NewMobById(mobId MobId, homeRoomId int, forceStatPool ...int) *Mob {
+	return newMobByIdInternal(mobId, homeRoomId, false, forceStatPool...)
+}
+
+// NewMobByIdFresh creates a mob instance from the template without
+// reading any saved progression file. Used by companion-spawning code
+// paths (summon / raise / conjure / login-respawn of companions /
+// companion-vending NPCs / admin suicide-vanish). Template defaults
+// (including random stat pool distribution) apply as if no instance
+// file existed.
+func NewMobByIdFresh(mobId MobId, homeRoomId int, forceStatPool ...int) *Mob {
+	return newMobByIdInternal(mobId, homeRoomId, true, forceStatPool...)
+}
+
+func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forceStatPool ...int) *Mob {
 
 	mobsMu.RLock()
 	m, ok := mobs[int(mobId)]
@@ -342,7 +365,10 @@ func NewMobById(mobId MobId, homeRoomId int, forceStatPool ...int) *Mob {
 
 		// Stage 38.4: Try to load a saved instance (progression data from disk).
 		// If found, apply saved training values instead of randomizing.
-		savedInstance := LoadMobInstance(mob.MobId, mob.Zone, mob.Character.Name, homeRoomId)
+		var savedInstance *MobInstanceData
+		if !skipInstanceLoad {
+			savedInstance = LoadMobInstance(mob.MobId, mob.Zone, mob.Character.Name, homeRoomId)
+		}
 		if savedInstance != nil {
 			// Restore saved progression
 			mob.Character.Stats.Strength.Training = savedInstance.StrengthTraining
