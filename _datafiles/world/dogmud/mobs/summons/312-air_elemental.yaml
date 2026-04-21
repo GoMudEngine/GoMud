@@ -1,8 +1,8 @@
 mobid: 312
 zone: Summons
-archetype: fighting
+archetype: casting
 behavior_archetype: pure_caster
-statpool: 70
+statpool: 85
 itemdropchance: 0
 hostile: false
 maxwander: 0
