@@ -21,6 +21,10 @@ func Rally(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		user.SendText(`<ansi fg="red">You can't rally while focused on your work. Finish or be interrupted first.</ansi>`)
 		return true, nil
 	}
+	if result.AlreadyActive {
+		user.SendText("You're already rallied — save it for when it matters.")
+		return true, nil
+	}
 	if result.OnCooldown {
 		user.SendText("You need a moment to recover before attempting another special move.")
 		return true, nil

@@ -11,11 +11,12 @@ import (
 
 // RallyResult reports the outcome of a rally cooldown+buff application.
 type RallyResult struct {
-	Executed   bool    // true if the rally actually applied
-	OnCooldown bool    // blocked by shared special-move cooldown
-	Crafting   bool    // blocked because a player is mid-craft (player-only)
-	Bonus      float64 // mitigation bonus the condition carries (0.05..0.20)
-	Duration   int     // condition duration in rounds
+	Executed      bool    // true if the rally actually applied
+	OnCooldown    bool    // blocked by shared special-move cooldown
+	Crafting      bool    // blocked because the actor is mid-craft
+	AlreadyActive bool    // blocked because the rally buff is already on this actor
+	Bonus         float64 // mitigation bonus the condition carries (0.05..0.20)
+	Duration      int     // condition duration in rounds
 }
 
 // ExecuteRally performs the cooldown check + self-buff application shared by
@@ -25,9 +26,17 @@ type RallyResult struct {
 func ExecuteRally(actor Actor) RallyResult {
 	char := actor.GetCharacter()
 
-	// IsCrafting applies to players only; mobs never craft.
-	if actor.IsPlayer() && char.IsCrafting() {
+	// IsCrafting applies universally — mobs can craft too (future
+	// crafter archetype) and should not interrupt their craft to
+	// rally.
+	if char.IsCrafting() {
 		return RallyResult{Crafting: true}
+	}
+
+	// Skip if the rally buff is already active on this actor —
+	// re-casting would just burn the cooldown for no new effect.
+	if char.HasBuff(80) {
+		return RallyResult{AlreadyActive: true}
 	}
 
 	cfg := configs.GetBalanceConfig()
