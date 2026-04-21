@@ -73,8 +73,9 @@ var (
 		"submit":         {Submit, false},
 		"suicide":        {Suicide, true},
 		//		"stash":  {Stash, false},
-		"trip":   {Trip, false},
-		"wander": {Wander, false},
+		"trip":    {Trip, false},
+		"warcry":  {Warcry, false},
+		"wander":  {Wander, false},
 	}
 )
 

@@ -2,10 +2,9 @@ package usercommands
 
 import (
 	"fmt"
-	"math"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/characters"
-	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
@@ -16,34 +15,17 @@ import (
 )
 
 func Warcry(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
+	result := actions.ExecuteWarcry(&actions.UserActor{User: user, Room: room})
 
-	if user.Character.IsCrafting() {
+	if result.Crafting {
 		user.SendText(`<ansi fg="red">You can't muster a warcry while focused on your work. Finish or be interrupted first.</ansi>`)
 		return true, nil
 	}
 
-	cfg := configs.GetBalanceConfig()
-	if !user.Character.Cooldowns.Try("special-move", fmt.Sprintf("%d rounds", cfg.SpecialMoveCooldown)) {
+	if result.OnCooldown {
 		user.SendText("You need a moment to recover before attempting another special move.")
 		return true, nil
 	}
-
-	// Calculate magnitude: 0.05 + 0.15 * sqrt((rhetoric/75) * (charisma/175))
-	rhetoric := float64(user.Character.GetSkillLevel(skills.Rhetoric))
-	charisma := float64(user.Character.Stats.Charisma.ValueAdj)
-	bonus := 0.05 + 0.15*math.Sqrt((rhetoric/75.0)*(charisma/175.0))
-	if bonus < 0.05 {
-		bonus = 0.05
-	}
-	if bonus > 0.20 {
-		bonus = 0.20
-	}
-
-	duration := 25
-
-	// Apply to self
-	user.Character.AddCondition(characters.ConditionWarcry, duration, bonus, "warcry")
-	user.Character.AddBuff(79, false)
 
 	user.SendText(`<ansi fg="red-bold">You let out a thunderous warcry that ignites the fighting spirit of your allies!</ansi>`)
 	room.SendTextVisual(
@@ -59,20 +41,20 @@ func Warcry(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			}
 			if memberUser := users.GetByUserId(memberId); memberUser != nil {
 				if memberUser.Character.RoomId == user.Character.RoomId {
-					memberUser.Character.AddCondition(characters.ConditionWarcry, duration, bonus, "warcry")
+					memberUser.Character.AddCondition(characters.ConditionWarcry, result.Duration, result.Bonus, "warcry")
 					memberUser.Character.AddBuff(79, false)
 					memberUser.SendText(
 						fmt.Sprintf(`<ansi fg="red-bold"><ansi fg="username">%s</ansi>'s warcry stirs your blood!</ansi>`, user.Character.Name))
 
 					// Apply to this party member's companions in the room
-					applyWarcryToCompanions(memberUser, room, bonus, duration)
+					applyWarcryToCompanions(memberUser, room, result.Bonus, result.Duration)
 				}
 			}
 		}
 	}
 
 	// Apply to caster's own companions in the room
-	applyWarcryToCompanions(user, room, bonus, duration)
+	applyWarcryToCompanions(user, room, result.Bonus, result.Duration)
 
 	// Skill and stat progression
 	// OnSkillUse handles rhetoric progression + charisma stat use internally.
@@ -81,11 +63,6 @@ func Warcry(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		user.Character.OnSkillUse(string(skills.Rhetoric), user.UserId)
 	} else if util.Rand(100) < 50 {
 		user.Character.OnSkillUse(string(skills.Rhetoric), user.UserId)
-	}
-
-	// Set combat wait if in combat
-	if user.Character.Aggro != nil {
-		user.Character.Aggro.RoundsWaiting = 1
 	}
 
 	return true, nil
