@@ -530,6 +530,95 @@ preserves the truth as legend.
     lifetimes. This sharpens the Ch. 30 ethical choice from moral
     ("should we un-make ourselves") to genetic-temporal ("no one
     alive can open it; would we make a line of people who could?").
+
+  **Ch. 30 canon (the book ending — LOCKED):**
+  - **Orbital-pair mechanism for record playback:** The ship's voiced-
+    wall record plays unparseably on solo activation (Ch. 29). When
+    the orbital resonance arrives at close register, the answer pairs
+    with the record: the foreign-language voice plus the orbital
+    answer lay over each other "like a transparent page," producing
+    **paired sense** — characters hear the vowels and consonants of
+    the dead tongue in one ear and the meaning in another. Not
+    translation. Overlay. The mechanism requires both the signal-
+    out (the record) and the signal-back (orbital response) aligned
+    in time.
+  - **The captain's message (locked content):** Acknowledges the
+    descent failure. Reports that cargo moved to the secondary cache
+    ("what could be moved") — this retroactively explains the
+    Confluence debris field as the lander's deliberate secondary
+    store, not random scatter. Releases the orbital crews from their
+    post: *"You are not coming for us... hold your post as long as
+    the post will hold you. When it does not hold you any longer,
+    go home."* Names the mission with care. Ends on a personal image:
+    "there is a morning outside and I am going to go sit in it...
+    there is a hillside to the east that moves in the light. It is
+    our own hull. Imagine. I am going to go look at it." A tired
+    man getting up from a desk. Restraint. Not prophecy.
+  - **Implication for orbital canon:** The three ships have stayed on
+    station by CHOICE, not protocol alone. They have had permission to
+    leave since the captain's final log. That they stayed is
+    stewardship — adds depth to "doing what they had always done."
+  - **The four archive positions (the closing disagreement, LOCKED):**
+    - **Vane: "leave as found."** Refuse the question. We leave the
+      room as we found it. Someone else will come.
+    - **Aldric: "build the table."** His is process, not act. Not
+      deciding today; building the channel the decision will
+      eventually be made through. Direct extension of Ch. 29's
+      "channel would have to be elsewhere."
+    - **Davan: "never open."** "I am the Chrysalis now. What I owe
+      the originals is the attention, not the un-making." His bodily
+      kin-knowledge resolves into letting them rest.
+    - **Maren: "open eventually, for company."** The surprise position.
+      Driven by the captain's own voice naming her generation as "a
+      people worth the coming." She wants her father's people in the
+      world as people, not absence. Explicitly tempered — "small hour
+      in the long room" — held alongside her knowing that she will not
+      get her way and that is correct. The bio-lock's multi-
+      generational requirement is ambient reader-knowledge; her
+      position does not solve the math, and that unsolved-ness is
+      part of its truth.
+  - **The agent's fate:** Captured alive, bound, released to carry a
+    falsified report — *"the signature did not register"* — back to
+    Horst, under credible threat that Vane will find him if his
+    report deviates. Not killed, not turned, not injured beyond
+    control. The first moment of reckoning, not the war.
+  - **Horst team accounting (final):** 5 total. 1 captured at the
+    hill (Ch. 30). 1 on the valley road. 2 with Horst in New Plymouth.
+    1 in Stillwater. All accounted; immediate threat is deferred but
+    not erased.
+  - **The disc remains seated in the recess permanently.** Maren lifts
+    her thumb; the disc stays. The ship remains open. The bone-sound
+    continues. The archive is reachable by anyone who comes after.
+    This is the hinge that lets the book's ending be open without
+    being unfinished.
+  - **Father's voice reaches Maren through recovered childhood memory,
+    not through the bound book.** The book stays at the remains
+    (deliberate hold). The memory: her father lifting her onto his
+    shoulder at dusk and making her look at the sky. *"He had been
+    making her look. She had forgotten."*
+  - **The "old patient grief" closing quality (novel's thesis):** The
+    Tidemark harbor-master's canonical phrase (from earlier in the
+    manuscript) is rendered in Ch. 30 as register rather than quoted,
+    surfacing through a "clerk-compiled manuscript she had read at
+    eleven without remembering." Three sentences land it in Maren:
+    "Grief that did not belong to her personally. / Grief that was
+    hers anyway. / She let it be hers." No tears. No relief. No
+    triumph.
+  - **The closing image, in order:** Three moons full-bright together
+    above the eastern hills (the orbital response manifested as
+    visible light — "an under-register under the daylight"). Maren
+    looks up at them — her **first true look-at** the moons in the
+    novel, after three years of looking-away. Then she walks. The
+    final sentence: ***"She kept walking."*** A continuative verb —
+    she was walking; she did not stop. Arc-coherent with her prior
+    walking-beats (Chs. 5, 9, 16). The moons are the image; the
+    walking is the commitment past it.
+  - **Structural bookend:** Ch. 30's four-POV architecture echoes
+    the prologue's eight-account First Coming structure — multi-
+    vantage-on-the-same-event at the close mirrors multi-vantage-on-
+    the-same-event at the open. "No single account contains the
+    whole" transposed from retrospective testimony to simultaneous
+    reception.
 - **Greenford**: Brennan's location. Aldric rides east to it (Ch. 13),
   then west to New Plymouth (Ch. 17).
 
