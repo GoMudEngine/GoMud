@@ -1,6 +1,8 @@
 mobid: 285
 zone: North Road
 archetype: casting
+behavior_archetype: support_caster
+routine: bandit_camp_guard
 statpool: 160
 itemdropchance: 20
 hostile: true

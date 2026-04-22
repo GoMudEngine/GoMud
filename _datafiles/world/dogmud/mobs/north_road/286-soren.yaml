@@ -1,6 +1,8 @@
 mobid: 286
 zone: North Road
 archetype: fighting
+behavior_archetype: leader
+routine: bandit_camp_guard
 statpool: 250
 itemdropchance: 100
 items:

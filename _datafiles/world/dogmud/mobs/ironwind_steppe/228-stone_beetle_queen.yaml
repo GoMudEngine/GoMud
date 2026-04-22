@@ -1,5 +1,7 @@
 mobid: 228
 zone: Ironwind Steppe
+behavior_archetype: leader
+routine: cave_pack_ironwind
 statpool: 220
 itemdropchance: 30
 hostile: true

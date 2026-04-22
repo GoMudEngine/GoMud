@@ -5,6 +5,15 @@
 # Reused by wraith, spectre, air elemental, plus any future caster mobs
 # that opt in via behavior_archetype: pure_caster on their mob YAML.
 #
+# Pack-tactics support: prioritizes healing wounded packmates when any
+# same-room packmate is below 40% HP (packmate_hurt handler). Falls
+# through to normal combat cascade (mob_combat_round).
+#
+# Decision order per packmate_hurt:
+#   1. If any packmate is below 40% HP: cast heal_friendly on the most
+#      wounded packmate
+#   2. Otherwise: engage the attacker (set Aggro)
+#
 # Decision order per mob_combat_round:
 #   1. Emergency heal if HP < 40%
 #   2. Maintain defensive buffs (shields / will+mitigation)
@@ -20,35 +29,56 @@
 
 tree:
   type: selector
-  event: mob_combat_round
   children:
-    # 1. Emergency heal — survival priority
-    - type: sequence
+    # ── packmate_hurt: opportunistic heal, else engage ───────────
+    - type: selector
+      event: packmate_hurt
       children:
-        - type: condition
-          check: mob_health_below
-          percent: 40
+        # 1. Heal most-wounded packmate if one is below 40% HP
+        - type: sequence
+          children:
+            - type: condition
+              check: packmate_below_hp_ratio
+              threshold: 0.40
+            - type: action
+              do: cast_best_in_category
+              category: heal_friendly
+              target: most_wounded_packmate
+        # 2. Fall through: engage the attacker
+        - type: action
+          do: attack
+
+    # ── mob_combat_round: original cascade (unchanged) ───────────
+    - type: selector
+      event: mob_combat_round
+      children:
+        # 1. Emergency heal — survival priority
+        - type: sequence
+          children:
+            - type: condition
+              check: mob_health_below
+              percent: 40
+            - type: action
+              do: cast_best_in_category
+              category: self_heal
+              target: self
+
+        # 2. Maintain defensive buffs (reuses melee archetype's category)
         - type: action
           do: cast_best_in_category
-          category: self_heal
+          category: self_defense
           target: self
 
-    # 2. Maintain defensive buffs (reuses melee archetype's category)
-    - type: action
-      do: cast_best_in_category
-      category: self_defense
-      target: self
+        # 3. AoE harm when multiple enemies in room
+        - type: sequence
+          children:
+            - type: condition
+              check: multiple_enemies
+            - type: action
+              do: cast_best_in_category
+              category: harm_multi
 
-    # 3. AoE harm when multiple enemies in room
-    - type: sequence
-      children:
-        - type: condition
-          check: multiple_enemies
+        # 4. Single-target harm (default offensive)
         - type: action
           do: cast_best_in_category
-          category: harm_multi
-
-    # 4. Single-target harm (default offensive)
-    - type: action
-      do: cast_best_in_category
-      category: harm_single
+          category: harm_single

@@ -5,6 +5,10 @@
 # melee-specialist mobs that opt in via behavior_archetype: melee_self_buff
 # on their mob YAML.
 #
+# On packmate_hurt (a same-room routine-matched packmate was attacked):
+#   engage the attacker via the existing attack action (sets Aggro from
+#   ctx.Event.UserId). Self-buffs fire on the next mob_combat_round.
+#
 # Decision flow per mob_combat_round:
 #   1. Try to cast the best self_offense buff (highest base_folds × cost)
 #      that isn't already active and the mob can afford
@@ -18,14 +22,22 @@
 
 tree:
   type: selector
-  event: mob_combat_round
   children:
+    # ── packmate_hurt: engage the attacker ───────────────────────
     - type: action
-      do: cast_best_in_category
-      category: self_offense
-      target: self
+      event: packmate_hurt
+      do: attack
 
-    - type: action
-      do: cast_best_in_category
-      category: self_defense
-      target: self
+    # ── mob_combat_round: original cascade (unchanged) ───────────
+    - type: selector
+      event: mob_combat_round
+      children:
+        - type: action
+          do: cast_best_in_category
+          category: self_offense
+          target: self
+
+        - type: action
+          do: cast_best_in_category
+          category: self_defense
+          target: self

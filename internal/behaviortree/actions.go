@@ -55,6 +55,9 @@ func init() {
 	actionRegistry["move_player"] = actMovePlayer
 	actionRegistry["create_instance"] = actCreateInstance
 	actionRegistry["open_instance_portal"] = actOpenInstancePortal
+
+	// Pack tactics actions
+	actionRegistry["go_to_caller_room"] = actGoToCallerRoom
 }
 
 // LookupAction returns the action function for the given name,

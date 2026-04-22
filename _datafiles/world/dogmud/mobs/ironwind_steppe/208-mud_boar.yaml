@@ -1,5 +1,7 @@
 mobid: 208
 zone: Ironwind Steppe
+behavior_archetype: generic_fighter
+routine: boar_herd_ironwind
 statpool: 65
 itemdropchance: 10
 hostile: true

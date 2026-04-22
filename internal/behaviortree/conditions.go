@@ -33,6 +33,8 @@ func init() {
 	conditionRegistry["target_is_casting"] = condTargetIsCasting
 	conditionRegistry["target_aggro_not_on_me"] = condTargetAggroNotOnMe
 	conditionRegistry["target_not_standing"] = condTargetNotStanding
+	conditionRegistry["packmate_below_hp_ratio"] = condPackmateBelowHpRatio
+	conditionRegistry["packmate_is_tanking"] = condPackmateIsTanking
 }
 
 // LookupCondition returns the condition function for the given name,

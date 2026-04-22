@@ -1,0 +1,40 @@
+# lookout archetype
+#
+# Stationed watcher. When a packmate is hurt or the lookout itself is
+# hurt, it first calls for help — bringing in packmates from adjacent
+# rooms via the callforhelp command — and then engages the attacker
+# via the existing attack action (which reads ctx.Event.UserId and
+# sets Aggro).
+#
+# Example users: bandit scouts watching the road, city watch sentries,
+# posted guards. Distinguished from `generic_fighter` by the
+# callforhelp-first behavior.
+#
+# Spec: docs/superpowers/specs/2026-04-22-pack-tactics-revamp-design.md
+
+tree:
+  type: selector
+  children:
+    - type: sequence
+      event: packmate_hurt
+      children:
+        - type: action
+          do: command
+          cmd: callforhelp
+        - type: action
+          do: attack
+
+    - type: sequence
+      event: mob_hurt
+      children:
+        - type: action
+          do: command
+          cmd: callforhelp
+        - type: action
+          do: attack
+
+    # ── heard_callforhelp: when a packmate in an adjacent room calls
+    #    for help, the lookout navigates toward them.
+    - type: action
+      event: heard_callforhelp
+      do: go_to_caller_room

@@ -1,6 +1,8 @@
 mobid: 323
 zone: Instance Arena
 archetype: fighting
+behavior_archetype: generic_fighter
+routine: arena_gauntlet
 statpool: 2
 hostile: true
 groups:

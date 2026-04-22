@@ -17,10 +17,14 @@ import (
 // Params:
 //
 //	category (string, required): the category tag to filter by
-//	target (string, optional): "self" for this phase; others reserved
+//	target (string, optional): "self" (default), "most_wounded_packmate",
+//	  or "tanking_packmate". Packmate targets resolve via
+//	  mobs.FindPackmatesInRoom and address the cast via "#<instanceId>"
+//	  syntax on the cast command.
 //
 // Returns Failure when: category is empty, mob is missing, mob is on the
-// special-move cooldown, mob is already casting, or no eligible spell is found.
+// special-move cooldown, mob is already casting, no eligible spell is found,
+// or a packmate target is specified but no packmate matches.
 // Returns Success when it successfully initiates a cast via mob.Command.
 func actCastBestInCategory(params map[string]any, ctx *EvalContext) Result {
 	category := getStringParam(params, "category")
@@ -44,6 +48,31 @@ func actCastBestInCategory(params map[string]any, ctx *EvalContext) Result {
 
 	// Already casting — don't double-initiate.
 	if mob.Character.CastingState != nil {
+		return Failure
+	}
+
+	// Resolve packmate target before spell selection so we can fail fast
+	// if no packmate matches (avoids running the sort when the cast would
+	// fail anyway).
+	var targetInstId int
+	switch target {
+	case "self":
+		// no target prefix on the cast command — resolves to self.
+	case "most_wounded_packmate":
+		pm := findMostWoundedPackmate(mob)
+		if pm == nil {
+			return Failure
+		}
+		targetInstId = pm.InstanceId
+	case "tanking_packmate":
+		pm := findTankingPackmate(mob)
+		if pm == nil {
+			return Failure
+		}
+		targetInstId = pm.InstanceId
+	default:
+		mudlog.Warn("cast_best_in_category", "warning",
+			fmt.Sprintf("unknown target %q; treating as failure", target))
 		return Failure
 	}
 
@@ -71,10 +100,47 @@ func actCastBestInCategory(params map[string]any, ctx *EvalContext) Result {
 
 	chosen := candidates[0]
 
-	// target=self is the MVP shape. mob.Command("cast X") with no target
-	// resolves HelpSingle-type spells to self via the existing cast pipeline.
-	mob.Command("cast " + chosen.SpellId)
+	// Packmate targets are addressed via `cast <spell> #<instanceId>`.
+	// target=self issues the cast without a target suffix; HelpSingle-type
+	// spells resolve to self via the existing cast pipeline.
+	if targetInstId > 0 {
+		mob.Command(fmt.Sprintf("cast %s #%d", chosen.SpellId, targetInstId))
+	} else {
+		mob.Command("cast " + chosen.SpellId)
+	}
 	return Success
+}
+
+// findMostWoundedPackmate returns the same-room packmate with the lowest
+// HP ratio. Returns nil if no packmates match or all packmates have
+// HealthMax.Value <= 0 (broken state).
+func findMostWoundedPackmate(self *mobs.Mob) *mobs.Mob {
+	var best *mobs.Mob
+	bestRatio := 2.0 // impossible ratio so any candidate wins
+	for _, pm := range mobs.FindPackmatesInRoom(self) {
+		maxHp := pm.Character.HealthMax.Value
+		if maxHp <= 0 {
+			continue
+		}
+		ratio := float64(pm.Character.Health) / float64(maxHp)
+		if ratio < bestRatio {
+			bestRatio = ratio
+			best = pm
+		}
+	}
+	return best
+}
+
+// findTankingPackmate returns the first same-room packmate with an
+// active Aggro (engaged in combat). Returns nil if no packmate is
+// actively tanking.
+func findTankingPackmate(self *mobs.Mob) *mobs.Mob {
+	for _, pm := range mobs.FindPackmatesInRoom(self) {
+		if pm.Character.Aggro != nil {
+			return pm
+		}
+	}
+	return nil
 }
 
 // collectCategoryCandidates returns spells from the spellbook that match the

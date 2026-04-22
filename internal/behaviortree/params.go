@@ -33,6 +33,20 @@ func getBoolParam(params map[string]any, key string) bool {
 	return false
 }
 
+// getFloatParam reads a float parameter from the params map.
+// Handles both float64 (canonical YAML) and int (if an integer literal
+// was provided). Returns the defaultVal if the key is missing or an
+// unsupported type.
+func getFloatParam(params map[string]any, key string, defaultVal float64) float64 {
+	switch v := params[key].(type) {
+	case float64:
+		return v
+	case int:
+		return float64(v)
+	}
+	return defaultVal
+}
+
 // getStringListParam reads a []string parameter from the params map.
 // YAML unmarshals lists as []any, so we type-assert each element to string.
 // Returns nil if missing or wrong type.

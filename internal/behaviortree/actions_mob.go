@@ -163,6 +163,39 @@ func actCommandBestOf(params map[string]any, ctx *EvalContext) Result {
 	return Failure
 }
 
+// actGoToCallerRoom resolves the event's caller mob (ctx.Event.MobId)
+// and issues a `go <exit>` command toward the exit in the self's room
+// that leads to the caller's room. Returns Failure if the caller mob
+// or the connecting exit can't be resolved.
+//
+// Used by heard_callforhelp handlers in archetypes (generic_fighter,
+// lookout) to navigate back toward a packmate who called for help.
+func actGoToCallerRoom(params map[string]any, ctx *EvalContext) Result {
+	self := mobs.GetInstance(ctx.InstanceId)
+	if self == nil {
+		return Failure
+	}
+	callerId := ctx.Event.MobId
+	if callerId == 0 {
+		return Failure
+	}
+	caller := mobs.GetInstance(callerId)
+	if caller == nil {
+		return Failure
+	}
+	myRoom := rooms.LoadRoom(self.Character.RoomId)
+	if myRoom == nil {
+		return Failure
+	}
+	for exitName, info := range myRoom.Exits {
+		if info.RoomId == caller.Character.RoomId {
+			self.Command(fmt.Sprintf("go %s", exitName))
+			return Success
+		}
+	}
+	return Failure
+}
+
 func actMove(params map[string]any, ctx *EvalContext) Result {
 	mob := mobs.GetInstance(ctx.InstanceId)
 	if mob == nil {
