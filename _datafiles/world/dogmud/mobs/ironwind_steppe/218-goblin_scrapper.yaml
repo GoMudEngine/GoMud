@@ -1,5 +1,7 @@
 mobid: 218
 zone: Ironwind Steppe
+behavior_archetype: generic_fighter
+routine: goblin_warband
 statpool: 120
 itemdropchance: 20
 hostile: true
