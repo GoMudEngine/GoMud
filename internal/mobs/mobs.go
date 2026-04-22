@@ -35,9 +35,6 @@ var (
 	mobInstances   = map[int]*Mob{}
 	mobInstancesMu sync.RWMutex // guards mobInstances + instanceCounter
 
-	mobsHatePlayers   = map[string]map[int]int{}
-	mobsHatePlayersMu sync.RWMutex
-
 	mobNameCache   = map[MobId]string{}
 	mobNameCacheMu sync.RWMutex
 
@@ -1004,54 +1001,6 @@ func (r *Mob) Save() error {
 	}
 
 	return nil
-}
-
-func ReduceHostility() {
-	mobsHatePlayersMu.Lock()
-	defer mobsHatePlayersMu.Unlock()
-
-	for groupName, group := range mobsHatePlayers {
-		for userId, rounds := range group {
-			rounds--
-			if rounds < 1 {
-				delete(mobsHatePlayers[groupName], userId)
-			} else {
-				mobsHatePlayers[groupName][userId] = rounds
-			}
-		}
-		if len(mobsHatePlayers[groupName]) < 1 {
-			delete(mobsHatePlayers, groupName)
-		}
-	}
-}
-
-func IsHostile(groupName string, userId int) bool {
-	mobsHatePlayersMu.RLock()
-	defer mobsHatePlayersMu.RUnlock()
-
-	if _, ok := mobsHatePlayers[groupName]; !ok {
-		return false
-	}
-
-	if _, ok := mobsHatePlayers[groupName][userId]; !ok {
-		return false
-	}
-
-	return true
-}
-
-func MakeHostile(groupName string, userId int, rounds int) {
-	mobsHatePlayersMu.Lock()
-	defer mobsHatePlayersMu.Unlock()
-
-	if _, ok := mobsHatePlayers[groupName]; !ok {
-		mobsHatePlayers[groupName] = make(map[int]int)
-		mobsHatePlayers[groupName][userId] = rounds
-		return
-	}
-	if mobsHatePlayers[groupName][userId] < rounds {
-		mobsHatePlayers[groupName][userId] = rounds
-	}
 }
 
 func ZoneNameSanitize(zone string) string {

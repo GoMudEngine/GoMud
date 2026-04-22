@@ -123,21 +123,6 @@ func LookForTrouble(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) 
 				continue
 			}
 
-			// Hostility default to 5 minutes
-			for _, groupName := range mob.Groups {
-				// Does this group hate this player?
-				if mobs.IsHostile(groupName, playerId) {
-
-					allPotentialTargets = append(allPotentialTargets, playerId)
-
-					if !ignoreUser {
-						for i := 0; i < entries; i++ {
-							nonDownedUserTargets = append(nonDownedUserTargets, playerId)
-						}
-					}
-					break
-				}
-			}
 		}
 
 		// Still nothing, look for trouble in mobs they hate

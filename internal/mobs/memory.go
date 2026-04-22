@@ -17,10 +17,6 @@ func GetMemoryUsage() map[string]util.MemoryResult {
 	ret["mobInstances"] = util.MemoryResult{Memory: util.MemoryUsage(mobInstances), Count: len(mobInstances)}
 	mobInstancesMu.RUnlock()
 
-	mobsHatePlayersMu.RLock()
-	ret["mobsHatePlayers"] = util.MemoryResult{Memory: util.MemoryUsage(mobsHatePlayers), Count: len(mobsHatePlayers)}
-	mobsHatePlayersMu.RUnlock()
-
 	return ret
 }
 

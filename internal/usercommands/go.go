@@ -537,17 +537,8 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 						continue
 					}
 
-					isHostile := mob.Hostile // Is it automatically hostile?
-					if !isHostile {
-						for _, groupName := range mob.Groups {
-							if mobs.IsHostile(groupName, user.UserId) {
-								isHostile = true
-								break
-							}
-						}
-						if !isHostile { // is it still not hostile?
-							continue
-						}
+					if !mob.Hostile { // Is it automatically hostile?
+						continue
 					}
 
 					// Hidden mobs attack silently — no "notices you" message.

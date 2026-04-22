@@ -684,57 +684,6 @@ func TestLookForTrouble(t *testing.T) {
 	_ = err
 }
 
-// Regression: a passive mob whose group has been flagged hostile (e.g.,
-// another bandit of the same "humanoid" group was recently attacked)
-// must not re-target a grace-protected respawning player. Without the
-// early-continue in LookForTrouble, the mob re-issues an attack every
-// idle tick — SetAggro's guard bounces each one but the "prepares to
-// fight" text is sent anyway, and combat resumes the moment grace
-// expires.
-func TestLookForTrouble_SkipsGraceProtectedPlayer(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	cleanupGraceBuff := buffs.SeedBuffsForTest(map[int]*buffs.BuffSpec{
-		81: {
-			BuffId:        81,
-			Name:          "Respawn Grace",
-			RoundInterval: 1,
-			TriggerCount:  3,
-			Flags:         []buffs.Flag{buffs.NoAggroTarget},
-		},
-	})
-	defer cleanupGraceBuff()
-
-	// Reuse merchant (200): hostile:false, add a shared group.
-	mob := mobs.GetInstance(200)
-	require.NotNil(t, mob)
-	mob.Groups = []string{"humanoid"}
-	room := rooms.LoadRoom(mob.Character.RoomId)
-	require.NotNil(t, room)
-
-	// Simulate "player just attacked another humanoid" by flagging the
-	// group hostile toward user 1.
-	mobs.MakeHostile("humanoid", 1, 60)
-
-	u1 := users.GetByUserId(1)
-	require.NotNil(t, u1)
-	u1.Character.Health = 100
-	require.NoError(t, u1.Character.AddBuff(81, false))
-	require.True(t, u1.Character.HasBuffFlag(buffs.NoAggroTarget),
-		"grace buff must register NoAggroTarget flag")
-
-	// Exercises the new early-continue path. The assertion is "no panic
-	// and function returns handled" — the full end-to-end "no attack
-	// queued" verification lives in in-game smoke, since mob.Command is
-	// async and needs the event loop to observe.
-	handled, err := LookForTrouble("", mob, room)
-	require.NoError(t, err)
-	require.True(t, handled)
-	require.Nil(t, mob.Character.Aggro,
-		"grace-protected player must not cause aggro acquisition")
-}
-
 func TestLookForAid(t *testing.T) {
 	cleanup := seedAllRegistries()
 	defer cleanup()

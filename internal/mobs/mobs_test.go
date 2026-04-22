@@ -16,7 +16,6 @@ func seedRegistry() func() {
 	origMobs := mobs
 	origAllMobNames := allMobNames
 	origMobInstances := mobInstances
-	origMobsHatePlayers := mobsHatePlayers
 	origMobNameCache := mobNameCache
 	origRecentlyDied := recentlyDied
 	origInstanceCounter := instanceCounter
@@ -155,7 +154,6 @@ func seedRegistry() func() {
 		},
 	}
 
-	mobsHatePlayers = map[string]map[int]int{}
 	recentlyDied = map[int]int{}
 	instanceCounter = 200
 
@@ -163,7 +161,6 @@ func seedRegistry() func() {
 		mobs = origMobs
 		allMobNames = origAllMobNames
 		mobInstances = origMobInstances
-		mobsHatePlayers = origMobsHatePlayers
 		mobNameCache = origMobNameCache
 		recentlyDied = origRecentlyDied
 		instanceCounter = origInstanceCounter
@@ -382,59 +379,6 @@ func TestGetAngryCommand(t *testing.T) {
 
 // ─── Hostility Tracking ────────────────────────────────────────────────────
 
-func TestMakeHostileAndIsHostile(t *testing.T) {
-	cleanup := seedRegistry()
-	defer cleanup()
-
-	t.Run("not hostile initially", func(t *testing.T) {
-		assert.False(t, IsHostile("undead", 1))
-	})
-
-	t.Run("make hostile then check", func(t *testing.T) {
-		MakeHostile("undead", 1, 5)
-		assert.True(t, IsHostile("undead", 1))
-	})
-
-	t.Run("different group not hostile", func(t *testing.T) {
-		MakeHostile("undead", 1, 5)
-		assert.False(t, IsHostile("townfolk", 1))
-	})
-
-	t.Run("different user not hostile", func(t *testing.T) {
-		MakeHostile("undead", 1, 5)
-		assert.False(t, IsHostile("undead", 2))
-	})
-
-	t.Run("extend hostility keeps higher", func(t *testing.T) {
-		MakeHostile("beasts", 3, 2)
-		MakeHostile("beasts", 3, 10)
-		assert.True(t, IsHostile("beasts", 3))
-	})
-
-	t.Run("does not reduce hostility when lower rounds", func(t *testing.T) {
-		MakeHostile("beasts", 3, 10)
-		MakeHostile("beasts", 3, 1) // should NOT reduce
-		assert.True(t, IsHostile("beasts", 3))
-	})
-}
-
-func TestReduceHostility(t *testing.T) {
-	cleanup := seedRegistry()
-	defer cleanup()
-
-	MakeHostile("undead", 1, 3)
-	MakeHostile("undead", 2, 1)
-
-	// After one reduction, user 2 should be gone (was at 1)
-	ReduceHostility()
-	assert.True(t, IsHostile("undead", 1))
-	assert.False(t, IsHostile("undead", 2))
-
-	// Two more reductions, user 1 should be gone
-	ReduceHostility()
-	ReduceHostility()
-	assert.False(t, IsHostile("undead", 1))
-}
 
 // ─── Player Attack Tracking ────────────────────────────────────────────────
 
@@ -746,7 +690,6 @@ func TestGetMemoryUsage(t *testing.T) {
 	assert.Contains(t, mem, "mobs")
 	assert.Contains(t, mem, "allMobNames")
 	assert.Contains(t, mem, "mobInstances")
-	assert.Contains(t, mem, "mobsHatePlayers")
 	assert.Equal(t, 5, mem["mobs"].Count)
 	assert.Equal(t, 5, mem["allMobNames"].Count)
 	assert.Equal(t, 3, mem["mobInstances"].Count)
@@ -780,39 +723,6 @@ func TestGetSellPrice(t *testing.T) {
 		specialItem := items.Item{ItemId: 1, Blob: "special-data"}
 		assert.Equal(t, 0, mob.GetSellPrice(specialItem))
 	})
-}
-
-// ─── Multiple hostility groups ─────────────────────────────────────────────
-
-func TestHostilityMultipleGroups(t *testing.T) {
-	cleanup := seedRegistry()
-	defer cleanup()
-
-	MakeHostile("undead", 1, 3)
-	MakeHostile("beasts", 1, 5)
-
-	assert.True(t, IsHostile("undead", 1))
-	assert.True(t, IsHostile("beasts", 1))
-
-	// Reduce 3 times - undead should expire, beasts should remain
-	ReduceHostility()
-	ReduceHostility()
-	ReduceHostility()
-	assert.False(t, IsHostile("undead", 1))
-	assert.True(t, IsHostile("beasts", 1))
-}
-
-// ─── ReduceHostility cleanup of empty groups ───────────────────────────────
-
-func TestReduceHostilityCleanup(t *testing.T) {
-	cleanup := seedRegistry()
-	defer cleanup()
-
-	MakeHostile("testgroup", 1, 1)
-	assert.True(t, IsHostile("testgroup", 1))
-
-	ReduceHostility()
-	assert.False(t, IsHostile("testgroup", 1))
 }
 
 // ─── MobIdByName additional coverage ───────────────────────────────────────
