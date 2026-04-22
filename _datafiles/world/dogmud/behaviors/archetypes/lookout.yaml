@@ -32,3 +32,9 @@ tree:
           cmd: callforhelp
         - type: action
           do: attack
+
+    # ── heard_callforhelp: when a packmate in an adjacent room calls
+    #    for help, the lookout navigates toward them.
+    - type: action
+      event: heard_callforhelp
+      do: go_to_caller_room

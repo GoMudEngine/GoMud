@@ -23,6 +23,13 @@ tree:
       event: packmate_hurt
       do: attack
 
+    # ── heard_callforhelp: a routine-matched packmate in an adjacent
+    #    room called for help. Navigate toward the caller; engagement
+    #    happens automatically once in their room (combat loop picks up).
+    - type: action
+      event: heard_callforhelp
+      do: go_to_caller_room
+
     # ── mob_combat_round: original combat cascade (unchanged) ────
     - type: selector
       event: mob_combat_round
