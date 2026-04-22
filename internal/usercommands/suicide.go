@@ -176,8 +176,30 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	user.SendText(`<ansi fg="yellow">You feel weakened by the brush with death.</ansi>`)
 
 	user.Character.CancelBuffsWithFlag(buffs.All)
+	user.Character.Conditions = nil   // Fix B: wipe all combat conditions (poison, bleeding, rally, etc.)
 	user.Character.EndAggro()
 	user.Character.CastingState = nil
+
+	// Fix A: clear inbound aggro (mobs in the pre-respawn room
+	// targeting this player) and companion aggro. Cleared BEFORE
+	// MoveToRoom so companions arrive in home room with a blank
+	// slate — they follow via TransportCompanions.
+	for _, mobInstId := range room.GetMobs(rooms.FindFighting) {
+		mob := mobs.GetInstance(mobInstId)
+		if mob == nil || mob.Character.Aggro == nil {
+			continue
+		}
+		if mob.Character.Aggro.UserId == user.UserId {
+			mob.Character.EndAggro()
+		}
+	}
+	for _, compInstId := range user.Character.GetCharmIds() {
+		comp := mobs.GetInstance(compInstId)
+		if comp == nil {
+			continue
+		}
+		comp.Character.EndAggro()
+	}
 
 	// Respawn at a fraction of max pools. Acts as a brake on "death run"
 	// strategies — the player has to recover before their next attempt at
@@ -215,6 +237,13 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	}
 
 	user.SendText(`<ansi fg="yellow">Darkness swallows you. When you open your eyes, you are somewhere safe.</ansi>`)
+
+	// Fix C: apply respawn grace buff. Prevents mobs from acquiring
+	// aggro on the respawning player for N rounds. Knob:
+	// Death.RespawnGraceRounds (default 3; 0 = disabled).
+	if int(config.Death.RespawnGraceRounds) > 0 {
+		user.Character.AddBuff(81, false)
+	}
 
 	// Resolve home room from player settings, falling back to default.
 	homeSetting := user.Character.GetSetting("home")
