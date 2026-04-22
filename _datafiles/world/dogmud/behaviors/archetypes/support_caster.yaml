@@ -1,0 +1,48 @@
+# support_caster archetype
+#
+# Packmate-focused caster. Priority order on packmate_hurt:
+#   1. If a same-room packmate is tanking (has Aggro), cast best
+#      buff_friendly spell on the tank (conviction-ward, etc.).
+#      Supports the front-liner holding aggro.
+#   2. Else if any same-room packmate is below 70% HP, cast best
+#      heal_friendly spell on the most-wounded packmate.
+#   3. Else engage the attacker.
+#
+# Pairs with pure_caster: pure = self-focused, support = packmate-
+# focused. Applies to healers, supportive priests, bandit support
+# casters, etc.
+#
+# Spec: docs/superpowers/specs/2026-04-22-pack-tactics-revamp-design.md
+
+tree:
+  type: selector
+  children:
+    - type: selector
+      event: packmate_hurt
+      children:
+        # 1. Shield the tank if one is tanking (uses cast_best_in_category
+        # which self-gates on already-active buffs — if the tank already
+        # has a ward, the cast returns Failure and we fall through).
+        - type: sequence
+          children:
+            - type: condition
+              check: packmate_is_tanking
+            - type: action
+              do: cast_best_in_category
+              category: buff_friendly
+              target: tanking_packmate
+
+        # 2. Heal a wounded packmate (<70% HP).
+        - type: sequence
+          children:
+            - type: condition
+              check: packmate_below_hp_ratio
+              threshold: 0.70
+            - type: action
+              do: cast_best_in_category
+              category: heal_friendly
+              target: most_wounded_packmate
+
+        # 3. Fallthrough: engage the attacker.
+        - type: action
+          do: attack
