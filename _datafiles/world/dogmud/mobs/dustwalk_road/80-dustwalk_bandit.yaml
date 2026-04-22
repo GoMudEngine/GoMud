@@ -1,6 +1,8 @@
 mobid: 80
 zone: Dustwalk Road
 archetype: fighting
+behavior_archetype: generic_fighter
+routine: dustwalk_bandit_camp
 statpool: 10
 itemdropchance: 15
 hostile: true
