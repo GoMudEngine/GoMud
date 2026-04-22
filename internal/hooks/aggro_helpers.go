@@ -18,9 +18,13 @@ func ValidateAggro(char *characters.Character) bool {
 		return false
 	}
 
-	// Aggro with no target is invalid (can happen from stale state)
+	// Aggro with no target is invalid (can happen from stale state).
+	// SpellCast and Flee intentionally have no target — they act on self
+	// or the room, not another character — so they are valid no-target
+	// states.
 	if char.Aggro.MobInstanceId == 0 && char.Aggro.UserId == 0 &&
-		char.Aggro.Type != characters.SpellCast {
+		char.Aggro.Type != characters.SpellCast &&
+		char.Aggro.Type != characters.Flee {
 		char.EndAggro()
 		return false
 	}
