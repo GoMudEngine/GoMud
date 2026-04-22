@@ -684,6 +684,46 @@ func TestLookForTrouble(t *testing.T) {
 	_ = err
 }
 
+// Regression for Fix A (shipped 2026-04-22): LookForTrouble must
+// skip players with the NoAggroTarget buff flag (respawn grace).
+// Without the early-continue, a hostile mob in the player's room
+// would re-issue attack commands every idle tick; SetAggro bounces
+// them, but the "prepares to fight" text fires anyway and combat
+// resumes the moment grace expires.
+func TestLookForTrouble_SkipsGraceProtectedPlayer(t *testing.T) {
+	cleanup := seedAllRegistries()
+	defer cleanup()
+
+	cleanupGraceBuff := buffs.SeedBuffsForTest(map[int]*buffs.BuffSpec{
+		81: {
+			BuffId:        81,
+			Name:          "Respawn Grace",
+			RoundInterval: 1,
+			TriggerCount:  3,
+			Flags:         []buffs.Flag{buffs.NoAggroTarget},
+		},
+	})
+	defer cleanupGraceBuff()
+
+	// Mob 100 (seeded in seedAllRegistries) is hostile:true and in
+	// room 1 alongside user 1. A normal LookForTrouble pass would
+	// pick user 1 as a target; the grace buff must prevent that.
+	mob, room := getTestMobAndRoom(t)
+
+	u1 := users.GetByUserId(1)
+	require.NotNil(t, u1)
+	u1.Character.Health = 100
+	require.NoError(t, u1.Character.AddBuff(81, false))
+	require.True(t, u1.Character.HasBuffFlag(buffs.NoAggroTarget),
+		"grace buff must register NoAggroTarget flag")
+
+	handled, err := LookForTrouble("", mob, room)
+	require.NoError(t, err)
+	require.True(t, handled)
+	require.Nil(t, mob.Character.Aggro,
+		"grace-protected player must not cause aggro acquisition")
+}
+
 func TestLookForAid(t *testing.T) {
 	cleanup := seedAllRegistries()
 	defer cleanup()
