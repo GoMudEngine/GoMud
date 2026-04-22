@@ -38,6 +38,7 @@ type GameplayDeath struct {
 	SkillRecencyThreshold ConfigInt `yaml:"SkillRecencyThreshold"` // Use count above which skills are protected (default 50)
 	DeathsShadowBuffId    ConfigInt `yaml:"DeathsShadowBuffId"`    // Buff ID for Death's Shadow debuff (default 25)
 	RespawnPoolFraction   ConfigFloat `yaml:"RespawnPoolFraction"` // Fraction of max pools (Health/Stamina/Conviction) restored on respawn (default 0.05). Keeps "death run" strategies honest — players respawn weakened and have to recover before their next attempt.
+	RespawnGraceRounds    ConfigInt   `yaml:"RespawnGraceRounds"`  // Rounds of no-aggro-target protection after respawn (default 3). Set to 0 to disable grace period.
 }
 
 func (g *GamePlay) Validate() {
@@ -53,6 +54,10 @@ func (g *GamePlay) Validate() {
 
 	if g.Death.RespawnPoolFraction <= 0.0 || g.Death.RespawnPoolFraction > 1.0 {
 		g.Death.RespawnPoolFraction = 0.05 // default — respawn at 5% of max pools
+	}
+
+	if g.Death.RespawnGraceRounds < 0 {
+		g.Death.RespawnGraceRounds = 3 // default — 3 rounds of grace protection
 	}
 
 	if g.Death.ProtectionSkillRanks < 0 {
