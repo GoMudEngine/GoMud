@@ -662,12 +662,12 @@ func handleAggroAndAssist(atk, def actions.Actor, cfg *configs.Config) {
 		//     (Divergence #4).
 		//   - Companion-owner assist if defender mob is charmed.
 		defMob := asMob(def)
-		if cfg != nil {
-			for _, groupName := range defMob.Groups {
-				mobs.MakeHostile(groupName, atk.GetUserId(),
-					cfg.Timing.MinutesToRounds(2)-atkChar.Stats.Charisma.ValueAdj)
-			}
-		}
+		// Pack-tactics revamp: same-room routine-matching packmates
+		// receive packmate_hurt. Replaces the former mobs.MakeHostile
+		// group-flag propagation (which flagged every taxonomic group
+		// the defender belonged to, causing priests to aggro on
+		// respawning players who had attacked bandits).
+		dispatchPackmateHurt(defMob, atk.GetUserId(), 0)
 		if defChar.Aggro == nil {
 			defMob.PreventIdle = true
 			if atkChar.RoomId != defChar.RoomId {
