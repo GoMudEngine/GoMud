@@ -24,7 +24,7 @@ stats:
   willpower:
     base: 15
   charisma:
-    base: 5
+    base: 115
 damage:
   basedamage: 8
   variance: 3
