@@ -164,8 +164,11 @@ archetype; the engine skips dispatch.
 ### Deletion list
 
 - `internal/mobs/mobs.go`: delete `MakeHostile`, `IsHostile`,
-  `mobsHatePlayers` map and its mutex, `PruneHostility` / similar
-  tick helpers if present.
+  `ReduceHostility`, `mobsHatePlayers` map, `mobsHatePlayersMu` mutex.
+- `internal/mobs/memory.go:20-22`: delete the `mobsHatePlayers`
+  memory-usage reporting block.
+- `internal/hooks/NewRound_MobRoundTick.go:46`: delete the
+  `mobs.ReduceHostility()` call.
 - `internal/hooks/NewRound_DoCombat_unified.go`: remove the
   `MakeHostile` call at lines 666–669 in the PvM branch. Replace with
   `dispatchPackmateHurt(defMob, atk.GetUserId(), 0)`.
@@ -173,8 +176,9 @@ archetype; the engine skips dispatch.
   branch (the `for _, groupName := range mob.Groups` block that calls
   `mobs.IsHostile`). Keep Fix A's NoAggroTarget early-continue intact.
   Keep `mob.Hostile`, `HatesSpecies`, `HatesMob` branches intact.
-- `internal/mobs/mobs_test.go`: delete `TestMakeHostileAndIsHostile`
-  and the other tests that exercise the removed functions.
+- `internal/mobs/mobs_test.go`: delete `TestMakeHostileAndIsHostile`,
+  `TestReduceHostility`, and any other tests that exercise the
+  removed functions.
 
 ## Data flow
 
@@ -330,9 +334,13 @@ Single feature branch. One merge.
 ## Files touched (approximate)
 
 Go:
-- `internal/mobs/mobs.go` — `Routine`, `RoutineLinks` fields; delete
-  `MakeHostile` / `IsHostile` / `mobsHatePlayers` / mutex / any tick
-  helpers.
+- `internal/mobs/mobs.go` — `Routine`, `RoutineLinks` fields on
+  `Mob`; delete `MakeHostile`, `IsHostile`, `ReduceHostility`,
+  `mobsHatePlayers`, `mobsHatePlayersMu`.
+- `internal/mobs/memory.go` — drop the `mobsHatePlayers` reporting
+  block.
+- `internal/hooks/NewRound_MobRoundTick.go` — drop the
+  `ReduceHostility` call.
 - `internal/mobs/packmates.go` (new) — `FindPackmatesInRoom`.
 - `internal/mobs/mobs_test.go` — delete tests for removed functions;
   add `TestFindPackmatesInRoom_*`.
