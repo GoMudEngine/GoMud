@@ -115,10 +115,12 @@ func New() *Character {
 		Skills:         initAllSkills(),
 		Gold:           25,
 		Bank:           100,
-		// Phase 25.1: Starting spells — attack + utility light for dark zones.
+		// Starting spells — attack, utility light for dark zones, and
+		// basic item inspection so new players can evaluate drops.
 		SpellBook: map[string]int{
 			"conviction-spike": 1, // Conviction Spike — starting attack spell
 			"chrysalis-glow":   1, // Chrysalis Glow — light source for caves
+			"identify":         1, // Identify — inspect item properties
 		},
 		KnownRecipes: crafting.GetStarterRecipes(), // All recipes with skill_minimum == 0
 		CharmedMobs:    []int{},
