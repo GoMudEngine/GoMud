@@ -1,5 +1,44 @@
 # DOGMud Patch Notes
 
+## 2026-04-22 — Combat Bug Fixes + Novel Canon Correction
+
+### Fixes
+
+- **Two-handed weapons no longer grant a spurious fist attack.** When
+  you equip a 2H weapon, the pair-partner slot (offhand for the main
+  hand, extra arm 2 for extra arm 1, extra arm 4 for extra arm 3) is
+  cleared to an empty-item marker. The attack-collection code read
+  that as "empty arm → generate fist" and produced a bonus unarmed
+  swing from the arm physically occupied by the 2H weapon. Most
+  visible on a 2H + extra-arm-shield loadout: the bogus fist then
+  swung 3–4× per round via the normal swing-count formula, producing
+  noticeable extra unarmed hits every round. That arm is now
+  correctly treated as occupied.
+- **Flee now actually flees.** The flee command sets aggro to a
+  Flee-type state with no target so the combat loop can run the
+  escape attempt on the next round. The round-start aggro validator
+  was invalidating that no-target aggro (only SpellCast was in the
+  allowlist), and the fallback then grabbed a new target before the
+  flee attempt could run — silently losing you a round of attacks
+  and keeping you in combat. Flee is now on the allowlist alongside
+  SpellCast.
+
+### Novel
+
+- **Bloom-harvest canon consistency fix in "What the Moons Keep"
+  (Chapters 18 and 22).** The scenes showing the captive woman on
+  the pallet described her as "heavily mutated" with elongated
+  limbs and frond-fingers — contradicting the book's rule that
+  *hollow* means the absence of the Chrysalis change, and that
+  Bloom is produced from hollow people by definition. Rewritten to
+  show her unchanged but in visible reaction to something her
+  captors introduced: puncture marks at both elbows and the hollow
+  of the throat, skin flushed and faintly raised at each site,
+  sweat despite the cold stone. Vane's spoken summary to Maren and
+  her Ch 22 return-visit observations updated to match. Two parallel
+  audit agents (Ch 1-17 and Ch 19-30) found no other instances of
+  the same contradiction.
+
 ## 2026-04-21 — Tank Companions, Death Cleanup, and Two Instance-Save Fixes
 
 ### Gameplay

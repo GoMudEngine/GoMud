@@ -3868,15 +3868,18 @@ Vane knew this the way she'd learned to know it over the past
 months — by the quality of the skin, by the particular
 translucency at the temples and inner wrists, by the faint
 luminescence that hollows carried like a watermark. This
-person's luminescence was dim. Banked. The mutations were
-extensive — limbs elongated, joints thickened, fingers fused
-past the second knuckle into something that looked more like
-frond than hand. A strand of dark hair had come loose from
-where someone had tied it back and lay across her cheek. The
-features under it were still readable as human: young, with
-a narrow nose and a small white scar at the corner of the
-mouth, the kind you got as a child from falling wrong onto a
-step. Vane looked. She made herself look.
+person's luminescence was dim. Banked. There were puncture
+marks at the inside of each elbow and at the hollow of the
+throat, the skin around each one angry and faintly raised,
+the way skin went when the body was fighting something that
+had been put into it and would not leave. Sweat beaded at
+the hairline despite the stone cold. A strand of dark hair
+had come loose from where someone had tied it back and lay
+across her cheek. The features under it were ordinary:
+young, with a narrow nose and a small white scar at the
+corner of the mouth, the kind you got as a child from
+falling wrong onto a step. Vane looked. She made herself
+look.
 
 *Junie,* the thought arrived, unbidden — not a name she knew
 this woman by, not a name at all, just the kind of name a
@@ -3917,8 +3920,8 @@ once followed the thread to its source because following the
 thread would have required standing where she was standing now.
 
 The woman's chest rose and fell. The condensation trays
-caught the light. Her fused fingers twitched once in sleep
-and were still.
+caught the light. Her fingers twitched once in sleep and
+were still.
 
 Vane turned around and walked back up the stairs.
 
@@ -4062,7 +4065,9 @@ that quality of attention that was itself a kind of silence —
 active, receiving, not filling the space.
 
 "One person," Vane said. "In a stone room under the canal
-district. Female. Heavily mutated. Restrained." She paused.
+district. Female. Young. Restrained. Sedated. Needle marks
+at both arms and the throat. They put something into her and
+collect what her body makes fighting it." She paused.
 Breathed once. "The room matched the visions I've been having
 during episodes. I've been seeing the source for months and
 cataloguing it as sensory noise."
@@ -5175,9 +5180,9 @@ The room at the end. The door, ajar. The same pallet. The same low ceiling. The 
 
 The woman was awake.
 
-That was new. Four days ago she had been in the induced sleep, her breathing thick and slow, her fused fingers twitching in her dreams. Today her eyes were open. They tracked Vane as she entered the room with the same slow deliberate movement that a small animal used when it was deciding whether you were a danger it could outrun.
+That was new. Four days ago she had been in the induced sleep, her breathing thick and slow, her fingers twitching in her dreams. Today her eyes were open. They tracked Vane as she entered the room with the same slow deliberate movement that a small animal used when it was deciding whether you were a danger it could outrun.
 
-The mutations were the same. The frond-fingers, the translucency at temples and wrists. The small white scar at the corner of her mouth was the same. She was thinner than she had been four days ago. Four days was not long enough for hunger to have caused that; it was the slow sustained thinness of someone whose body was being tapped at a rate that exceeded her ability to replace what was taken.
+The marks were the same. The puncture sites at the insides of both elbows and at the hollow of her throat, still flushed and faintly raised — worked more recently, too, the inflammation fresher at the right elbow than it had been four days ago. The small white scar at the corner of her mouth was the same. She was thinner than she had been four days ago. Four days was not long enough for hunger to have caused that; it was the slow sustained thinness of someone whose body was being tapped at a rate that exceeded her ability to replace what was taken.
 
 Vane crossed the room. She did not speak yet. She knelt beside the pallet.
 

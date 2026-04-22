@@ -158,28 +158,35 @@ func collectAttackWeapons(sourceChar *characters.Character) []items.Item {
 		attackWeapons = append(attackWeapons, sourceChar.Equipment.ExtraArm4)
 	}
 
-	// Empty hand slots become fist attacks (unless holding a shield).
+	// Empty hand slots become fist attacks (unless holding a shield or
+	// blocked by a 2H weapon in the pair-partner slot — a 2H physically
+	// occupies the partner arm even though its ItemId reads as 0).
 	emptyArm := items.Item{ItemId: 0}
 
-	// Main hand empty → fist (ItemId 0 = empty, -1 = disabled)
+	// Main hand empty → fist. Weapon is always the first slot of pair A,
+	// so it can never be blocked by a 2H.
 	if sourceChar.Equipment.Weapon.ItemId == 0 {
 		attackWeapons = append(attackWeapons, emptyArm)
 	}
-	// Offhand empty → fist (shields/weapons already collected above)
-	if sourceChar.Equipment.Offhand.ItemId == 0 {
+	// Offhand empty → fist, unless blocked by a 2H in the main hand.
+	if sourceChar.Equipment.Offhand.ItemId == 0 &&
+		!sourceChar.Equipment.IsBlockedBy2H("offhand") {
 		attackWeapons = append(attackWeapons, emptyArm)
 	}
-	// Extra arm empty slots → fist
+	// Extra arm empty slots → fist. Even-numbered extras (2, 4) may be
+	// blocked by a 2H in the paired odd-numbered slot (1, 3).
 	if sourceChar.ExtraArms >= 1 && sourceChar.Equipment.ExtraArm1.ItemId == 0 {
 		attackWeapons = append(attackWeapons, emptyArm)
 	}
-	if sourceChar.ExtraArms >= 2 && sourceChar.Equipment.ExtraArm2.ItemId == 0 {
+	if sourceChar.ExtraArms >= 2 && sourceChar.Equipment.ExtraArm2.ItemId == 0 &&
+		!sourceChar.Equipment.IsBlockedBy2H("extra arm 2") {
 		attackWeapons = append(attackWeapons, emptyArm)
 	}
 	if sourceChar.ExtraArms >= 3 && sourceChar.Equipment.ExtraArm3.ItemId == 0 {
 		attackWeapons = append(attackWeapons, emptyArm)
 	}
-	if sourceChar.ExtraArms >= 4 && sourceChar.Equipment.ExtraArm4.ItemId == 0 {
+	if sourceChar.ExtraArms >= 4 && sourceChar.Equipment.ExtraArm4.ItemId == 0 &&
+		!sourceChar.Equipment.IsBlockedBy2H("extra arm 4") {
 		attackWeapons = append(attackWeapons, emptyArm)
 	}
 
