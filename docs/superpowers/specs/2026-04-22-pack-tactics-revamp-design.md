@@ -64,6 +64,17 @@ naturally from the routine/role structure.
    rollout. Infrastructure + default archetype handlers + content
    migration for priority zones + deletion ship as one unit to avoid
    a window of missing pack behavior.
+7. **Archetype name validation at load time.** `behavior_archetype`
+   remains a freeform string in mob YAML, but on load the engine
+   verifies the name resolves to an archetype YAML in
+   `_datafiles/world/dogmud/behaviors/archetypes/`. A typo fails
+   startup loudly rather than silently falling back. (If this
+   validation isn't already in place from Companion Phase 4, adding
+   it is part of this revamp's infrastructure work.)
+8. **Routine / routine_links are not validated** against any
+   registry. Content authors invent routine strings per zone; the
+   engine only compares them with equality. Matches the existing
+   convention for `groups` and spell `component_tag`.
 
 ## Architecture
 
@@ -149,12 +160,23 @@ the mob arrives and sees an active combat, its `mob_combat_round` or
   elemental 314): taunt + engage.
 - `melee_self_buff` (vampire 304, air elemental 312, fire elemental
   313): cast best self-buff, then engage.
+- `pure_caster` (wraith 302, spectre 303): opportunistic heal —
+  check for a same-room packmate below ~40% HP and cast heal on
+  them; otherwise fall through to the existing solo decision tree
+  (self-heal → self-buff → AoE/single harm → legacy attack). The
+  existing tree is self-focused; the `packmate_hurt` handler adds a
+  *light* packmate-awareness on top without turning the pure_caster
+  into a dedicated support unit.
 
 **New archetypes:**
 - `lookout` — first tick: `callforhelp`. Next tick: engage.
-- `healer_support` — find the most-wounded same-room packmate (HP
-  ratio < threshold); cast heal on them; if no wounded packmates,
-  fall through to engage.
+- `support_caster` — packmate-focused support caster. On
+  `packmate_hurt`: find the most-wounded same-room packmate with
+  HP ratio below ~70% and cast heal on them; cast beneficial buff
+  on an unbuffed packmate if no one needs healing; only engage the
+  attacker directly if no packmate needs support. Pair name with
+  `pure_caster` makes the axis explicit: pure = self-focused
+  caster, support = packmate-focused caster.
 - `leader` — rally/warcry (existing commands); then engage. Shares
   most of `tank_taunter`'s body but without the mandatory taunt.
 
@@ -314,9 +336,11 @@ Single feature branch. One merge.
    `callforhelp` with adjacent-room broadcast.
 2. **Archetype authoring** —
    - Add `packmate_hurt` handlers to `generic_fighter`,
-     `tank_taunter`, `melee_self_buff`.
-   - Create `lookout`, `healer_support`, `leader` archetypes as new
+     `tank_taunter`, `melee_self_buff`, `pure_caster`.
+   - Create `lookout`, `support_caster`, `leader` archetypes as new
      YAML files in `_datafiles/world/dogmud/behaviors/archetypes/`.
+   - Add the archetype-name load-time validation if it isn't
+     already present (see key decision 7).
 3. **Content migration — priority zones:**
    - `north_road`: bandits (fighter, caster, soren the leader),
      bloodline agent (remains unarchetyped, solo mob).
@@ -357,10 +381,10 @@ Go:
 
 YAML:
 - `_datafiles/world/dogmud/behaviors/archetypes/generic_fighter.yaml`,
-  `tank_taunter.yaml`, `melee_self_buff.yaml` — add `packmate_hurt`
-  handlers.
+  `tank_taunter.yaml`, `melee_self_buff.yaml`, `pure_caster.yaml` —
+  add `packmate_hurt` handlers.
 - `_datafiles/world/dogmud/behaviors/archetypes/lookout.yaml`,
-  `healer_support.yaml`, `leader.yaml` — new files.
+  `support_caster.yaml`, `leader.yaml` — new files.
 - `_datafiles/world/dogmud/mobs/north_road/*.yaml`,
   `ironwind_steppe/*.yaml`, `instance_arena/*.yaml`,
   `instance_planar_oasis/*.yaml`, `dustwalk_road/*.yaml` — add
