@@ -414,6 +414,24 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 					} else {
 						statIdx = 3 + util.Rand(3)
 					}
+				case "tank":
+					// Tank/taunter: 25% Cha (taunt), 20% Vit (HP buffer),
+					// 15% each Str/Dex/Wil, 10% Per.
+					r := util.Rand(100)
+					switch {
+					case r < 25:
+						statIdx = 5 // Charisma
+					case r < 45:
+						statIdx = 2 // Vitality
+					case r < 60:
+						statIdx = 0 // Strength
+					case r < 75:
+						statIdx = 1 // Dexterity
+					case r < 90:
+						statIdx = 4 // Willpower
+					default:
+						statIdx = 3 // Perception
+					}
 				default:
 					// Even distribution across all 6 stats
 					statIdx = util.Rand(6)
