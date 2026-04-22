@@ -161,7 +161,8 @@
 
   var tierColors = {
     'unknown':'#6c757d','novice':'#6c757d','apprentice':'#28a745',
-    'journeyman':'#007bff','adept':'#6f42c1','expert':'#fd7e14','master':'#dc3545'
+    'journeyman':'#007bff','adept':'#6f42c1','expert':'#fd7e14',
+    'master':'#dc3545','grandmaster':'#f1c40f'
   };
 
   function healthBadge(score) {
@@ -333,7 +334,12 @@
       var row = '<tr><td>'+p.name+'</td><td>'+p.total_activity+'</td>';
       allSkills.forEach(function(sk) {
         var s = p.skills[sk];
-        row += '<td>'+ (s ? tierBadge(s.tier) : '-') +'</td>';
+        if (s) {
+          row += '<td title="uses='+s.use_count+' | next='+s.progression_chance.toFixed(3)+'">'+
+            s.rank+' '+tierBadge(s.tier)+'</td>';
+        } else {
+          row += '<td>-</td>';
+        }
       });
       row += '</tr>';
       tbody.innerHTML += row;
