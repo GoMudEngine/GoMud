@@ -3,6 +3,7 @@ package hooks
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -150,6 +151,13 @@ func CompanionAutoTarget(mob *mobs.Mob, room *rooms.Room) {
 
 	owner := users.GetByUserId(ownerId)
 	if owner == nil {
+		return
+	}
+
+	// Grace-period defense-in-depth: if the owner is grace-protected,
+	// no mob should be aggressing them (SetAggro already gates at the
+	// source), and the companion has nothing to defend against.
+	if owner.Character.HasBuffFlag(buffs.NoAggroTarget) {
 		return
 	}
 

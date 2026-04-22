@@ -96,6 +96,7 @@ type Character struct {
 	roomHistory      []int                          // A stack FILO of the last X rooms the character has been in
 	PlayerDamage     map[int]int                    `yaml:"-"` // key = who, value = how much
 	LastPlayerDamage uint64                         `yaml:"-"` // last round a player damaged this character
+	LastSuicideRound uint64                         `yaml:"-"` // runtime only — round of last Suicide execution, for double-fire dedupe
 	CastingState     *CastingState                  `yaml:"-"` // Active fold-based cast in progress (Stage 11.2). Not persisted.
 	CraftingState    *CraftingState                 `yaml:"-"` // Active crafting in progress (Stage 13.1). Not persisted.
 	permaBuffIds     []int                          // Buff Id's that are always present for this character

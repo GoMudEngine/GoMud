@@ -36,6 +36,7 @@ const (
 	NoCombat       Flag = `no-combat`
 	NoMovement     Flag = `no-go`
 	NoFlee         Flag = `no-flee`
+	NoAggroTarget  Flag = `no-aggro-target`   // grace-period protection: mobs cannot acquire aggro on the bearer
 	CancelIfCombat Flag = `cancel-on-combat`
 	CancelOnAction Flag = `cancel-on-action`
 	CancelOnWater  Flag = `cancel-on-water`
