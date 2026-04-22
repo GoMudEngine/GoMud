@@ -28,6 +28,16 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		return true, errors.New(`already dead`)
 	}
 
+	// Dedupe double-fire: the combat loop can queue `suicide` multiple
+	// times before the first one executes (damage from multiple
+	// sources in the same round, or rapid re-checks). Skip the second
+	// and subsequent fires in the same round to avoid stacking stat
+	// decay + skill rust.
+	if user.Character.LastSuicideRound == currentRound {
+		return true, nil
+	}
+	user.Character.LastSuicideRound = currentRound
+
 	if user.Character.HasBuffFlag(buffs.ReviveOnDeath) {
 
 		user.Character.Health = user.Character.HealthMax.Value
