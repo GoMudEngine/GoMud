@@ -11,13 +11,12 @@ description: >-
   The riftkeeper Sable tends the archway with practiced care.
 biome: city
 coord:
-  x: 3
+  x: 2
   y: 1
-  z: 0
+  z: -1
 exits:
-  west:
+  up:
     roomid: 467
-    mapdirection: west
 spawninfo:
   - mobid: 315
     respawnrate: "1s"
