@@ -189,8 +189,20 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		if mob == nil || mob.Character.Aggro == nil {
 			continue
 		}
+		// Standard aggro targeting this player (UserId shape).
 		if mob.Character.Aggro.UserId == user.UserId {
 			mob.Character.EndAggro()
+			continue
+		}
+		// Spell-cast-shape aggro: check SpellInfo.TargetUserIds if
+		// it contains this player. Abort the in-flight cast.
+		if mob.Character.Aggro.Type == characters.SpellCast {
+			for _, tid := range mob.Character.Aggro.SpellInfo.TargetUserIds {
+				if tid == user.UserId {
+					mob.Character.EndAggro()
+					break
+				}
+			}
 		}
 	}
 	for _, compInstId := range user.Character.GetCharmIds() {
@@ -255,7 +267,7 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 
 	// Belt-and-suspenders: re-clear aggro after room move in case any
 	// code path (e.g., mob combat round processing) assigned aggro
-	// between our first clear (line 179) and the room move.
+	// between our initial EndAggro above and the room move.
 	user.Character.EndAggro()
 
 	if config.Death.CorpsesEnabled {
