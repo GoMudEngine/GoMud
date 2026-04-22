@@ -14,58 +14,70 @@
 #   6-8. Knockdown cascade: bash (first if qualified) → grapple
 #        (single-enemy only) → trip (final fallback)
 #   fall through to legacy attack
+#
+# On packmate_hurt (a same-room routine-matched packmate was attacked):
+#   engage the attacker via the existing attack action (sets Aggro from
+#   ctx.Event.UserId). Taunt will fire on the next mob_combat_round.
 
 tree:
   type: selector
-  event: mob_combat_round
   children:
-    - type: sequence
+    # ── packmate_hurt: engage the attacker ───────────────────────
+    - type: action
+      event: packmate_hurt
+      do: attack
+
+    # ── mob_combat_round: original cascade (unchanged) ───────────
+    - type: selector
+      event: mob_combat_round
       children:
-        - type: condition
-          check: target_is_casting
+        - type: sequence
+          children:
+            - type: condition
+              check: target_is_casting
+            - type: action
+              do: command_best_of
+              cmds: [bash, trip]
+
+        - type: sequence
+          children:
+            - type: condition
+              check: target_aggro_not_on_me
+            - type: action
+              do: command_best_of
+              cmds: [taunt]
+
+        - type: sequence
+          children:
+            - type: condition
+              check: target_not_standing
+            - type: action
+              do: command_best_of
+              cmds: [kick]
+
         - type: action
           do: command_best_of
-          cmds: [bash, trip]
+          cmds: [rally]
 
-    - type: sequence
-      children:
-        - type: condition
-          check: target_aggro_not_on_me
         - type: action
           do: command_best_of
-          cmds: [taunt]
+          cmds: [warcry]
 
-    - type: sequence
-      children:
-        - type: condition
-          check: target_not_standing
         - type: action
           do: command_best_of
-          cmds: [kick]
+          cmds: [bash]
 
-    - type: action
-      do: command_best_of
-      cmds: [rally]
+        - type: sequence
+          children:
+            - type: decorator
+              mod: invert
+              child:
+                type: condition
+                check: multiple_enemies
+            - type: action
+              do: command_best_of
+              cmds: [grapple]
 
-    - type: action
-      do: command_best_of
-      cmds: [warcry]
-
-    - type: action
-      do: command_best_of
-      cmds: [bash]
-
-    - type: sequence
-      children:
-        - type: decorator
-          mod: invert
-          child:
-            type: condition
-            check: multiple_enemies
         - type: action
           do: command_best_of
-          cmds: [grapple]
-
-    - type: action
-      do: command_best_of
-      cmds: [trip]
+          cmds: [trip]
