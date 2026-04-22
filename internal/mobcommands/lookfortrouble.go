@@ -49,6 +49,16 @@ func LookForTrouble(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) 
 				continue
 			}
 
+			// Respawn grace: grace-protected players are invisible to mob
+			// targeting entirely, not just un-settable via SetAggro. Without
+			// this, mobs whose group is flagged hostile re-issue attack
+			// commands every idle tick. The commands bounce at SetAggro but
+			// the "prepares to fight" message is still sent each time, and
+			// the mob starts fighting the instant grace expires.
+			if user.Character.HasBuffFlag(buffs.NoAggroTarget) {
+				continue
+			}
+
 			raceInfo := species.GetSpecies(user.Character.SpeciesId)
 			if raceInfo == nil {
 				mudlog.Error("SpeciesError", "Not Found", user.Character.SpeciesId)
