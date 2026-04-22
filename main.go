@@ -234,6 +234,18 @@ func main() {
 	// internal/rooms → internal/hooks import cycle (hooks imports rooms).
 	rooms.SetCompanionTransport(hooks.CompanionTransportCallback)
 
+	// Register the grace-period untargetable-user check so SetAggro
+	// can short-circuit against grace-protected respawning players
+	// without characters/aggro.go needing to import users (would
+	// create a cycle).
+	characters.SetUserUntargetableCheck(func(userId int) bool {
+		user := users.GetByUserId(userId)
+		if user == nil {
+			return false
+		}
+		return user.Character.HasBuffFlag(buffs.NoAggroTarget)
+	})
+
 	// Discord integration
 	if webhookUrl := string(c.Integrations.Discord.WebhookUrl); webhookUrl != "" {
 		discord.Init(webhookUrl)
