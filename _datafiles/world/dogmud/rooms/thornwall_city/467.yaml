@@ -17,9 +17,8 @@ exits:
     roomid: 462
   north:
     roomid: 468
-  east:
+  down:
     roomid: 5000
-    mapdirection: east
 nouns:
   temple: The temple is built of pale limestone that has aged to a warm honey colour.
     Its architecture is old -- pointed arches, narrow windows, a spire that tapers

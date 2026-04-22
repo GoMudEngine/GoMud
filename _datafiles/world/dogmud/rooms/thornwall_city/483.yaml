@@ -6,6 +6,10 @@ description: |
 mapsymbol: E
 maplegend: Enchanter
 biome: city
+coord:
+  x: 8
+  y: 1
+  z: 0
 exits:
   west:
     roomid: 482
