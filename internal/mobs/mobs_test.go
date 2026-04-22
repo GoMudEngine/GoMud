@@ -1505,3 +1505,43 @@ func TestNewMobById_StillLoadsInstanceFile(t *testing.T) {
 	assert.Equal(t, 777, organic.Character.Stats.Strength.Training,
 		"NewMobById must still load from mobs.instances/")
 }
+
+// ─── Tank archetype distribution ────────────────────────────────────────────
+
+// TestNewMobById_TankArchetypeDistributesStats verifies the new tank
+// archetype allocates ~25% Cha and ~20% Vit out of the stat pool,
+// with ~15% each Str/Dex/Wil and ~10% Per. Large pool (1000) shrinks
+// random variance; assertions use generous slack bands.
+func TestNewMobById_TankArchetypeDistributesStats(t *testing.T) {
+	cleanup := seedRegistry()
+	defer cleanup()
+
+	// Register a minimal tank mob template (reuse mobId 1's
+	// character scaffold, override Archetype + StatPool).
+	mobsMu.Lock()
+	mobs[1].Archetype = "tank"
+	mobs[1].StatPool = 1000
+	mobsMu.Unlock()
+
+	mob := NewMobById(1, 100)
+	if mob == nil {
+		t.Fatal("NewMobById returned nil")
+	}
+
+	total := mob.Character.Stats.Strength.Training +
+		mob.Character.Stats.Dexterity.Training +
+		mob.Character.Stats.Vitality.Training +
+		mob.Character.Stats.Perception.Training +
+		mob.Character.Stats.Willpower.Training +
+		mob.Character.Stats.Charisma.Training
+
+	assert.Equal(t, 1000, total, "tank stat pool must sum to 1000 with no leakage")
+
+	// Slack bands: expected ±25% of target share (1000-unit pool).
+	assert.GreaterOrEqual(t, mob.Character.Stats.Charisma.Training, 200,
+		"Cha training should be ≥200 (~25% target)")
+	assert.GreaterOrEqual(t, mob.Character.Stats.Vitality.Training, 150,
+		"Vit training should be ≥150 (~20% target)")
+	assert.LessOrEqual(t, mob.Character.Stats.Perception.Training, 150,
+		"Per training should be ≤150 (~10% target)")
+}

@@ -1,6 +1,6 @@
 mobid: 305
 zone: Summons
-archetype: fighting
+archetype: tank
 behavior_archetype: tank_taunter
 statpool: 120
 itemdropchance: 0
@@ -37,6 +37,8 @@ character:
     mill wheel.
   speciesid: 35
   level: 1
+  skills:
+    rhetoric: 10
   stats:
     strength:
       training: 25

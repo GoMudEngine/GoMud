@@ -1,6 +1,6 @@
 mobid: 314
 zone: Summons
-archetype: fighting
+archetype: tank
 behavior_archetype: tank_taunter
 statpool: 130
 itemdropchance: 0
@@ -34,6 +34,8 @@ character:
     plates.
   speciesid: 40
   level: 1
+  skills:
+    rhetoric: 10
   stats:
     strength:
       training: 25
