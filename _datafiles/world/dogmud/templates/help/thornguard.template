@@ -7,7 +7,7 @@ strike it.
 
   <ansi fg="yellow">Skill:</ansi>       enchanting (minimum 18)
   <ansi fg="yellow">Station:</ansi>     enchanting circle
-  <ansi fg="yellow">Target:</ansi>      shield / offhand (must be equipped)
+  <ansi fg="yellow">Target:</ansi>      offhand (must be equipped)
   <ansi fg="yellow">Ingredients:</ansi> chrysalis setting (x1), mutation catalyst (x1),
                 binding paste (x2)
   <ansi fg="yellow">Time:</ansi>        5 rounds

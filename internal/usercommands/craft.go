@@ -261,14 +261,20 @@ func craftList(user *users.UserRecord, room *rooms.Room) bool {
 			if r.Station != "" {
 				stationStr = fmt.Sprintf(" [%s]", strings.ReplaceAll(r.Station, "_", " "))
 			}
+			// Enchanting recipes target an equipped item; annotate the
+			// recipe name with the slot for at-a-glance lookup.
+			displayName := r.Name
+			if crafting.IsEnchantingRecipe(r) && r.TargetType != "" {
+				displayName = fmt.Sprintf("%s (%s)", r.Name, r.TargetType)
+			}
 			if reason != "" {
 				user.SendText(fmt.Sprintf(
-					`  <ansi fg="red">[%s]</ansi> <ansi fg="white">%-22s</ansi> — %s  <ansi fg="red">%s</ansi><ansi fg="dark-cyan">%s, %s</ansi>`,
-					indicator, r.Name, ingredientList, reason, stationStr, craftTimeDesc(r.TimeRounds)))
+					`  <ansi fg="red">[%s]</ansi> <ansi fg="white">%-26s</ansi> — %s  <ansi fg="red">%s</ansi><ansi fg="dark-cyan">%s, %s</ansi>`,
+					indicator, displayName, ingredientList, reason, stationStr, craftTimeDesc(r.TimeRounds)))
 			} else {
 				user.SendText(fmt.Sprintf(
-					`  <ansi fg="green">[%s]</ansi> <ansi fg="white">%-22s</ansi> — %s  <ansi fg="dark-cyan">%s, %s</ansi>`,
-					indicator, r.Name, ingredientList, stationStr, craftTimeDesc(r.TimeRounds)))
+					`  <ansi fg="green">[%s]</ansi> <ansi fg="white">%-26s</ansi> — %s  <ansi fg="dark-cyan">%s, %s</ansi>`,
+					indicator, displayName, ingredientList, stationStr, craftTimeDesc(r.TimeRounds)))
 			}
 		}
 	}
