@@ -1545,3 +1545,23 @@ func TestNewMobById_TankArchetypeDistributesStats(t *testing.T) {
 	assert.LessOrEqual(t, mob.Character.Stats.Perception.Training, 150,
 		"Per training should be ≤150 (~10% target)")
 }
+
+// ─── Routine and RoutineLinks ─────────────────────────────────────────────
+
+func TestMobYAMLLoadsRoutineAndRoutineLinks(t *testing.T) {
+	yamlSrc := []byte(`
+mobid: 999
+zone: TestZone
+routine: bandit_camp_guard
+routine_links:
+  - watch_north_road
+  - bandit_back_camp
+character:
+  name: test bandit
+`)
+	var m Mob
+	err := yaml.Unmarshal(yamlSrc, &m)
+	assert.NoError(t, err)
+	assert.Equal(t, "bandit_camp_guard", m.Routine)
+	assert.Equal(t, []string{"watch_north_road", "bandit_back_camp"}, m.RoutineLinks)
+}

@@ -80,6 +80,16 @@ type Mob struct {
 	LastIdleCommand uint8    `yaml:"-"` // Track what hte last used idlecommand was
 	BoredomCounter  uint8    `yaml:"-"` // how many rounds have passed since this mob has seen a player
 	Groups          []string // What group do they identify with? Helps with teamwork
+	// Pack-combat routine (v2-ready — see docs/superpowers/specs/2026-04-22-pack-tactics-revamp-design.md).
+	// Freeform string compared with equality to other mobs' Routine for pack
+	// identification. Mobs without a routine don't participate in packs.
+	Routine      string   `yaml:"routine,omitempty"`
+
+	// Other routine strings this mob also reacts to. Example: a bandit
+	// lookout with routine "watch_north_road" might list "bandit_camp_guard"
+	// here so it receives the camp's call-for-help.
+	RoutineLinks []string `yaml:"routine_links,omitempty"`
+
 	Hates           []string `yaml:"hates,omitempty"`        // What NPC groups or races do they hate and probably fight if encountered?
 	IdleCommands      []string       `yaml:"idlecommands,omitempty"`   // Commands they may do while idle (not in combat)
 	AngryCommands     []string                                         // randomly chosen to queue when they are angry/entering combat.
