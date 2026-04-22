@@ -1,5 +1,93 @@
 # DOGMud Patch Notes
 
+## 2026-04-21 — Tank Companions, Death Cleanup, and Two Instance-Save Fixes
+
+### Gameplay
+
+- **Tank companions (flesh golem, earth elemental, magma elemental)
+  now actually hold aggro.** Previously their taunts missed ~70% of
+  the time because their stat distribution and base charisma were
+  tuned for general brawlers, not front-liners. Two changes stack:
+  - A new "tank" stat archetype allocates 25% Charisma and 20%
+    Vitality out of the stat pool (up from ~7% Charisma under the
+    old "fighting" archetype).
+  - Species base Charisma raised on all three: flesh golem 5→115
+    (top-tier raised pet), earth elemental 5→70, magma elemental 5→80.
+    These are imposing, otherworldly creatures; low-single-digit
+    Charisma was a default that never got tuned.
+- **Tank + generic fighter companion AI archetypes.** Flesh golem,
+  earth elemental, and magma elemental run a tank routine:
+  interrupt-on-cast, taunt-if-not-holding-aggro, bonus-damage kick
+  when the target's prone or clinched, rally + warcry self-buffs,
+  then a bash/grapple/trip knockdown cascade. Steppe spirit wolf and
+  zombie run a simpler generic CC rotation. Tank archetype uses the
+  new generic "bellows a thunderous challenge" taunt text instead
+  of the wolf-themed howl.
+- **Death no longer kills you twice.** Three long-standing respawn
+  bugs fixed together:
+  - **Poison, bleeding, and other conditions now clear on death.**
+    Previously a poisoned player respawned at 5% HP still poisoned —
+    the next DoT tick killed them again. Now the Conditions slice
+    wipes alongside buffs.
+  - **Inbound aggro clears on death.** Every mob in your combat room
+    that was targeting you ends aggro when you die, and your
+    companions' aggro clears too. Respawn arrives in a clean slate.
+  - **3-round grace period post-respawn.** New `Respawn Grace` buff
+    (id 81, NoAggroTarget flag) prevents mobs from acquiring aggro
+    on you for 3 rounds after respawn. Configurable via
+    `Death.RespawnGraceRounds` (default 3; 0 disables). PvP
+    griefers: you can no longer chain-kill a respawning player.
+- **Single combat hit no longer applies stacked penalties.** A
+  pre-existing bug: the combat loop could queue the death-processing
+  `suicide` command multiple times in the same round, applying two
+  (or more) separate stat-decay + skill-rust rolls from one death
+  event. A round-based dedupe flag (`Character.LastSuicideRound`) now
+  guards against this.
+- **Crafting blocks all 7 combat commands consistently.** Previously
+  only rally and warcry checked `IsCrafting`; bash / trip / grapple /
+  kick / taunt would let you swing your way out of a craft. All 7
+  now universally reject with a friendly "focused on your work" message.
+- **Tank companion rally/warcry don't burn cooldowns re-casting.**
+  The behavior tree now skips rally/warcry when the buff is already
+  active on the companion; they move on to other moves in the
+  priority list instead.
+
+### Fixes
+
+- **Sable portal and other room-exit routes no longer break
+  randomly.** An asymmetric bug in the room instance-save system:
+  the save side correctly skipped structural fields (exits,
+  description, nouns, etc.) via `instance:"skip"` struct tags, but
+  the load side used raw `yaml.Unmarshal` which doesn't see the tag.
+  Pre-fix corrupt files kept overwriting the template on every
+  load. `LoadRoomInstance` now restores skip-tagged fields from a
+  fresh template copy after the overlay unmarshal.
+- **Summoned companions always start fresh.** The old
+  `mobs.instances/summons/` file-based persistence was keyed by
+  room, not by owner, and leaked progression across
+  summon-dismiss-resummon cycles and across players. Removed the
+  file layer entirely; companions now persist only via
+  `CompanionInfo` on the owner's user YAML.
+
+### Under the hood
+
+- **`actions.CommandIsReady` is the single source of truth for
+  combat-command gating.** New btree action `command_best_of` used
+  by the archetypes queries CommandIsReady before issuing; a drift-
+  detection test enforces that CommandIsReady and each Execute*
+  agree on readiness. Signature flipped from `*mobs.Mob` → `Actor`.
+- **New "tank" stat archetype** (internal/mobs/mobs.go) — 25% Cha,
+  20% Vit, 15% each Str/Dex/Wil, 10% Per. Joins the existing
+  "fighting" and "casting" archetypes.
+- **`NoAggroTarget` buff flag + `characters.SetUserUntargetableCheck`
+  callback.** Avoids the users↔characters import cycle; follows the
+  same pattern as `rooms.SetCompanionTransport` and
+  `rooms.SetBTreeStateEvictor`.
+- **Tank-taunt aggro-pull now works for mob taunters.** Was
+  previously gated on `attackerUserId > 0` (player-only); now also
+  handles the mob-taunter path via `actor.GetMobInstanceId()`, so
+  companion tanks' taunts actually switch the target's aggro.
+
 ## 2026-04-20 — Companion AI Overhaul (Two Archetypes + Follow + Regen)
 
 ### Gameplay
