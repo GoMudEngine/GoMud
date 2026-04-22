@@ -1,6 +1,6 @@
 mobid: 311
 zone: Summons
-archetype: fighting
+archetype: tank
 behavior_archetype: tank_taunter
 statpool: 90
 itemdropchance: 0
@@ -32,6 +32,8 @@ character:
     follows it everywhere.
   speciesid: 37
   level: 1
+  skills:
+    rhetoric: 10
   stats:
     strength:
       training: 20
