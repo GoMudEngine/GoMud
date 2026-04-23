@@ -1,5 +1,70 @@
 # DOGMud Patch Notes
 
+## 2026-04-22 (evening) — Pack Tactics Revamp + QOL Batch
+
+### Gameplay
+
+- **Priests and unrelated civilians no longer aggro you after fighting
+  bandits.** The old group-hostility system flagged every mob sharing
+  any group tag (including taxonomic ones like `humanoid`) as hostile
+  when you hurt a bandit. Bandits and temple priests both have
+  `humanoid`, so attacking bandits made Olen the priest swing at you
+  on sight. Replaced with a routine-scoped pack-reaction system:
+  packmates now have to share a specific `routine` string
+  (`bandit_camp_guard`, `wolf_pack_ironwind`, etc.) to react to each
+  other being attacked. Priests, merchants, guards, and wildlife
+  unrelated to your fight stay peaceful.
+- **Packs coordinate via behavior trees now.** A bandit fighter,
+  caster, lookout, and leader in the same camp respond to one of
+  them being attacked the way their role suggests. Fighters pile in.
+  Casters shield the tank, then heal the most-wounded packmate, then
+  engage. Leaders open with rally + warcry self-buffs, then engage.
+  Lookouts yell for help, then engage.
+- **Pack cries carry to adjacent rooms.** Mobs in neighboring rooms
+  whose routine matches the caller's now move toward the commotion.
+  Previously each room's mobs stayed oblivious to a fight next door.
+- **Charmed wild creatures no longer snitch on their pack.** A
+  charmed mob counts as your companion, not a packmate, so the
+  pack doesn't react when you fight its former brothers.
+
+### Fixes
+
+- **`lookfortrouble` now respects the respawn grace buff.** Mobs
+  scanning for targets when you arrive in a new room will skip a
+  grace-protected player entirely instead of picking you as the
+  "best" target and attacking through the grace check in the combat
+  pipeline. Closes the Duard prod repro where mobs started on a
+  respawning player inside the 3-round grace window.
+- **Thornwall — Rift Chamber no longer overlaps Records Office.**
+  The Rift Chamber was geographically beneath the Temple District
+  but was authored with east-exit adjacency to the Records Office,
+  putting both rooms at the same coordinate on the mapper. Rift
+  Chamber is now reached by `down` from the Temple District.
+- **North Road — Bandit Camp no longer overlaps the Inn's common
+  room.** The Camp Approach intermediate room had been bent south
+  to dodge one overlap and ended up dropped on top of another.
+  Removed the Approach entirely; the bandit camp now hangs off the
+  main road at a single exit.
+
+### Quality of Life
+
+- **`craft` listing shows the enchant target slot.** Enchanting
+  recipes now print `(targets: weapon)`, `(targets: body armor)`,
+  etc. so you know which slot an enchantment will land on before
+  you spend materials.
+- **Companion roster shows mutations.** `companions` now lists each
+  mutation your companion has acquired underneath its name, stats,
+  and status line. `companions <name>` shows the full set in the
+  detail view.
+- **Progression dashboard shows exact rank and grandmaster tier.**
+  The player overview on the skill progression web page now shows
+  the raw rank next to the tier description, and skills above 75
+  display as "Grandmaster" instead of falling off the top of the
+  previous tier chart.
+- **`identify` is in the starter spellbook.** New characters can
+  identify unidentified items without waiting for a scroll drop or
+  shop purchase.
+
 ## 2026-04-22 — Combat Bug Fixes + Novel Canon Correction
 
 ### Fixes
