@@ -41,7 +41,7 @@ back on themselves and elementals roam freely.
 
 <ansi fg="yellow">How to Enter:</ansi>
 
-  Visit the Rift Chamber (east of Temple District).
+  Visit the Rift Chamber (down from Temple District).
   <ansi fg="command">ask sable oasis 200</ansi> — invest any amount over 100
   gold. Sable will tell you the exit command.
 

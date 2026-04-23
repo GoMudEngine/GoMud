@@ -1,5 +1,7 @@
 mobid: 229
 zone: Ironwind Steppe
+behavior_archetype: generic_fighter
+routine: cave_pack_ironwind
 statpool: 250
 itemdropchance: 40
 hostile: true

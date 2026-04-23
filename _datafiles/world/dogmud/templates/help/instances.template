@@ -6,7 +6,7 @@ tougher the enemies -- and the better the potential loot.
 
 <ansi fg="yellow">How It Works:</ansi>
 
-  1. Find the Riftkeeper (east of Temple District).
+  1. Find the Riftkeeper (down from Temple District).
   2. <ansi fg="command">ask sable portals</ansi> to see available zones.
   3. <ansi fg="command">ask sable arena 200</ansi> to open a rift to the
      Arena with 200 gold invested. The gold is deducted

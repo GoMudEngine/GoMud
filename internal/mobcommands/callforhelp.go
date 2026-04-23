@@ -5,10 +5,16 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/mapper"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
+
+// dispatchEventFn is a package-level indirection so tests can spy on the
+// behaviortree call without firing a real tree. Production value is
+// behaviortree.TryMobBehavior.
+var dispatchEventFn = behaviortree.TryMobBehavior
 
 // Should check adjacent rooms for mobs and call them into the room to help if of the same group
 // Format should be:
@@ -63,6 +69,17 @@ func CallForHelp(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 			if mobInfo := mobs.GetInstance(nearbyMobInstanceId); mobInfo != nil {
 
+				// Pack-tactics: fire heard_callforhelp on routine-matched
+				// mobs in this adjacent room. Handled by archetypes'
+				// heard_callforhelp handlers (see T16). Runs in addition
+				// to the legacy ConsidersAnAlly path.
+				if routineMatch(mob, mobInfo) {
+					dispatchEventFn(mobInfo.InstanceId, behaviortree.EventContext{
+						EventType: "heard_callforhelp",
+						MobId:     mob.InstanceId, // caller instance id
+					})
+				}
+
 				if mobNameSearch == `` {
 					if !mobInfo.ConsidersAnAlly(mob) { // Only help allies
 						continue
@@ -100,4 +117,29 @@ func CallForHelp(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	}
 
 	return true, nil
+}
+
+// routineMatch returns true if a and b share a routine (or one's
+// Routine appears in the other's RoutineLinks). Mirror of the helper
+// in mobs.FindPackmatesInRoom — kept local to avoid exporting from
+// the mobs package; the two are scoped differently (same-room vs
+// cross-room) but the predicate is identical.
+func routineMatch(a, b *mobs.Mob) bool {
+	if a == nil || b == nil {
+		return false
+	}
+	if a.Routine != "" && a.Routine == b.Routine {
+		return true
+	}
+	for _, linked := range b.RoutineLinks {
+		if linked != "" && linked == a.Routine {
+			return true
+		}
+	}
+	for _, linked := range a.RoutineLinks {
+		if linked != "" && linked == b.Routine {
+			return true
+		}
+	}
+	return false
 }

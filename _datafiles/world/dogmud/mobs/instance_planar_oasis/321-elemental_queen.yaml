@@ -1,6 +1,8 @@
 mobid: 321
 zone: Instance Planar Oasis
 archetype: casting
+behavior_archetype: support_caster
+routine: planar_oasis_pack
 statpool: 4
 hostile: true
 groups:

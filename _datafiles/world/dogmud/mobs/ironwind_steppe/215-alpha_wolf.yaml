@@ -1,5 +1,7 @@
 mobid: 215
 zone: Ironwind Steppe
+behavior_archetype: leader
+routine: wolf_pack_ironwind
 statpool: 120
 itemdropchance: 15
 hostile: true

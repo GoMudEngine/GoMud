@@ -40,11 +40,6 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 		}
 	}
 
-	//
-	// Reduce existing hostility (if any)
-	//
-	mobs.ReduceHostility()
-
 	// Stage 38.5.3: Pack scaling — award bonuses and emit events
 	for _, bonus := range mobs.TickPackSurvival() {
 		sig := worldevents.Local

@@ -1,6 +1,8 @@
 mobid: 320
 zone: Instance Planar Oasis
 archetype: fighting
+behavior_archetype: leader
+routine: planar_oasis_pack
 statpool: 4
 hostile: true
 groups:

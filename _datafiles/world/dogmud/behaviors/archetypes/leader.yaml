@@ -1,0 +1,35 @@
+# leader archetype
+#
+# Pack leader. On packmate_hurt or mob_hurt, rally or warcry to buff
+# packmates (command_best_of fires the first ready one — CommandIsReady
+# skips if the buff is already active), then engage the attacker via
+# the existing attack action.
+#
+# Shares most offensive intent with tank_taunter but without the
+# signature taunt — a leader commands support rather than drawing
+# focus themselves.
+#
+# Applies to bandit chiefs, wolf alphas, sergeant-style mobs.
+#
+# Spec: docs/superpowers/specs/2026-04-22-pack-tactics-revamp-design.md
+
+tree:
+  type: selector
+  children:
+    - type: sequence
+      event: packmate_hurt
+      children:
+        - type: action
+          do: command_best_of
+          cmds: [rally, warcry]
+        - type: action
+          do: attack
+
+    - type: sequence
+      event: mob_hurt
+      children:
+        - type: action
+          do: command_best_of
+          cmds: [rally, warcry]
+        - type: action
+          do: attack

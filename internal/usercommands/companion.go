@@ -2,11 +2,13 @@ package usercommands
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -72,6 +74,9 @@ func Companion(rest string, user *users.UserRecord,
 				`    HP: %s  SP: %s  CP: %s`,
 				hpBar, spBar, cpBar,
 			))
+			if mutList := formatCompanionMutations(mob.Character.Mutations); mutList != "" {
+				user.SendText(fmt.Sprintf(`    Mutations: %s`, mutList))
+			}
 		}
 		return true, nil
 	}
@@ -189,9 +194,43 @@ func Companion(rest string, user *users.UserRecord,
 		statQualityDesc(mob.Character.Stats.Charisma.ValueAdj),
 	))
 
+	if mutList := formatCompanionMutations(mob.Character.Mutations); mutList != "" {
+		user.SendText(fmt.Sprintf(`  <ansi fg="yellow">Mutations:</ansi>  %s`, mutList))
+	}
+
 	user.SendText(fmt.Sprintf(`  Auto-Assist: %s`, assistStr))
 
 	return true, nil
+}
+
+// formatCompanionMutations renders a companion's mutation list as a
+// comma-separated string of display names, with "(Ln)" suffix for levels
+// greater than 1. Returns "" if the mob has no mutations.
+func formatCompanionMutations(muts map[string]int) string {
+	if len(muts) == 0 {
+		return ""
+	}
+
+	ids := make([]string, 0, len(muts))
+	for id := range muts {
+		ids = append(ids, id)
+	}
+	sort.Strings(ids)
+
+	parts := make([]string, 0, len(ids))
+	for _, id := range ids {
+		spec := mutations.GetMutation(id)
+		name := id
+		if spec != nil && spec.Name != "" {
+			name = spec.Name
+		}
+		if lvl := muts[id]; lvl > 1 {
+			parts = append(parts, fmt.Sprintf("%s (L%d)", name, lvl))
+		} else {
+			parts = append(parts, name)
+		}
+	}
+	return strings.Join(parts, ", ")
 }
 
 // vitalDesc returns a qualitative description of a vital resource pool.

@@ -116,6 +116,49 @@ func condTargetAggroNotOnMe(params map[string]any, ctx *EvalContext) Result {
 	return Success
 }
 
+// condPackmateBelowHpRatio returns Success if any same-room packmate
+// (per mobs.FindPackmatesInRoom) has HP ratio strictly below the
+// `threshold` param (default 0.40 — matches pure_caster's
+// opportunistic-heal gate).
+//
+// Used by the pure_caster and support_caster archetypes'
+// packmate_hurt handlers to gate heal-wounded-packmate branches.
+func condPackmateBelowHpRatio(params map[string]any, ctx *EvalContext) Result {
+	self := mobs.GetInstance(ctx.InstanceId)
+	if self == nil {
+		return Failure
+	}
+	threshold := getFloatParam(params, "threshold", 0.40)
+	for _, pm := range mobs.FindPackmatesInRoom(self) {
+		maxHp := pm.Character.HealthMax.Value
+		if maxHp <= 0 {
+			continue
+		}
+		ratio := float64(pm.Character.Health) / float64(maxHp)
+		if ratio < threshold {
+			return Success
+		}
+	}
+	return Failure
+}
+
+// condPackmateIsTanking returns Success if any same-room packmate has
+// an active Aggro (is engaged in combat). Used by the support_caster
+// archetype to gate "shield the tank" behavior — if a packmate is
+// actively tanking, prioritize casting defensive buffs on them.
+func condPackmateIsTanking(params map[string]any, ctx *EvalContext) Result {
+	self := mobs.GetInstance(ctx.InstanceId)
+	if self == nil {
+		return Failure
+	}
+	for _, pm := range mobs.FindPackmatesInRoom(self) {
+		if pm.Character.Aggro != nil {
+			return Success
+		}
+	}
+	return Failure
+}
+
 // condTargetNotStanding returns Success if the mob's current aggro target
 // is in any non-standing position (prone / clinched / grounded).
 // Used to gate bonus-damage kicks (stomp when prone, knee when clinched).

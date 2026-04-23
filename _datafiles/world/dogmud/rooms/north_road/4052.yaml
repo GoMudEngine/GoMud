@@ -12,12 +12,12 @@ description: >
   in, and they plan to stay.
 biome: farmland
 coord:
-  x: -13
-  y: -11
+  x: -12
+  y: -10
   z: 0
 exits:
   east:
-    roomid: 4051
+    roomid: 4043
 nouns:
   firepit: A ring of blackened stones around a mound of grey
     ash. The ash is still warm near the center. A spit of green

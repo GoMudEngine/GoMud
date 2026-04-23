@@ -1,5 +1,7 @@
 mobid: 219
 zone: Ironwind Steppe
+behavior_archetype: support_caster
+routine: goblin_warband
 statpool: 130
 itemdropchance: 25
 hostile: true

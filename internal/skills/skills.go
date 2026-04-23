@@ -311,7 +311,9 @@ var SkillProgressionMultipliers = map[SkillTag]float64{
 	Salvage:       2.0,
 }
 
-// GetSkillRankDescription converts a numeric skill level (1–50) to a qualitative tier name.
+// GetSkillRankDescription converts a numeric skill level to a qualitative
+// tier name. Skills soft-cap at 50 (master); grandmaster tier rewards the
+// slow progression above the cap.
 func GetSkillRankDescription(level int) string {
 	switch {
 	case level <= 0:
@@ -326,8 +328,10 @@ func GetSkillRankDescription(level int) string {
 		return "adept"
 	case level <= 49:
 		return "expert"
-	default:
+	case level <= 64:
 		return "master"
+	default:
+		return "grandmaster"
 	}
 }
 

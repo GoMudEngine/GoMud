@@ -7,7 +7,6 @@ func SeedMobsForTest(specs map[int]*Mob, instances map[int]*Mob) func() {
 	origMobs := mobs
 	origAllMobNames := allMobNames
 	origMobInstances := mobInstances
-	origMobsHatePlayers := mobsHatePlayers
 	origMobNameCache := mobNameCache
 	origRecentlyDied := recentlyDied
 	origInstanceCounter := instanceCounter
@@ -25,7 +24,6 @@ func SeedMobsForTest(specs map[int]*Mob, instances map[int]*Mob) func() {
 	allMobNames = names
 	mobNameCache = cache
 
-	mobsHatePlayers = map[string]map[int]int{}
 	recentlyDied = map[int]int{}
 	instanceCounter = 200
 
@@ -33,7 +31,6 @@ func SeedMobsForTest(specs map[int]*Mob, instances map[int]*Mob) func() {
 		mobs = origMobs
 		allMobNames = origAllMobNames
 		mobInstances = origMobInstances
-		mobsHatePlayers = origMobsHatePlayers
 		mobNameCache = origMobNameCache
 		recentlyDied = origRecentlyDied
 		instanceCounter = origInstanceCounter

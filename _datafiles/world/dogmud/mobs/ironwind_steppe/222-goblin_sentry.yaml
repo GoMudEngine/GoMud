@@ -1,5 +1,9 @@
 mobid: 222
 zone: Ironwind Steppe
+behavior_archetype: lookout
+routine: watch_ironwind_goblins
+routine_links:
+  - goblin_warband
 statpool: 115
 itemdropchance: 20
 hostile: true
