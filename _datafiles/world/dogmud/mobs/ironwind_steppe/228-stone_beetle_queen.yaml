@@ -43,7 +43,7 @@ character:
     strength:
       training: 15
     vitality:
-      training: 15
+      training: 75
     dexterity:
       training: -5
     perception:
