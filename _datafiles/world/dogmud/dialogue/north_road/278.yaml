@@ -42,6 +42,19 @@ patterns:
         what he says about the bandits with a grain of salt --
         he has never been north of the ditch."
 
+  # System mention: bartering (innkeeper's trade voice)
+  - keywords: ["barter", "haggle", "price", "cheaper", "deal"]
+    responses:
+      - "Room rates are fixed. The ale is not. A polite offer and an honest face'll shave a copper or two. Insult me and the price goes up."
+      - "I've haggled with caravan masters and with farmers. The caravan masters have less patience."
+
+  # System mention: tavern gossip (this IS a tavern)
+  - keywords: ["gossip", "news", "rumor", "heard", "talk"]
+    responses:
+      - "This tavern hears everything. The bandits to the north are bolder than they were last season. A woman passed through yesterday who said the Warren is spilling further than it used to. Make of that what you will."
+      - "Listen to the other tables more than you listen to me. The gossip channel carries what the whole region is saying. A smart traveler keeps an ear on it."
+    moodChange: friendly
+
   - keywords: [""]
     responses:
       - "I keep the bar. I do not keep track of questions."

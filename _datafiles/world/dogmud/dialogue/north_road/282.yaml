@@ -1,0 +1,35 @@
+mobid: 282
+zone: North Road
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Afternoon. Careful where you step — the rows are tighter than they look."
+      - "You're not from around here, are you? Well. Welcome, I suppose."
+      - "Morning. Or evening. Hard to tell when the sun's behind the hill."
+
+  - keywords: ["farm", "crop", "work", "harvest", "field"]
+    responses:
+      - "The soil here is thin. I get two decent crops a year out of it and count myself lucky. Used to be three, back when my knees still cooperated."
+      - "Whatever you're thinking about farming as a profession — don't. Find honest work. Dig ditches."
+
+  - keywords: ["road", "travelers", "caravan", "seen"]
+    responses:
+      - "I see every caravan that passes. They don't see me much. I'm fine with the arrangement."
+      - "There were more travelers last year. Fewer now. Ask Haral at the tavern — he gets the real news."
+
+  - keywords: ["bandit", "danger", "trouble", "afraid"]
+    responses:
+      - "The bandits leave me alone. Nothing to take from a farmer that isn't heavy and doesn't travel well. Smartest ones know that."
+      - "Been here forty years. I don't scare easy anymore. What there is to fear, I've already met."
+
+  - keywords: [""]
+    responses:
+      - "Didn't catch that."
+      - "Speak up. Wind's loud out here."
+
+tree:
+  root:
+    text: "I'm just the farmer. Road runs past my field. Ask what you like — I'll answer when I feel like it."
+    hints: "You could ask about the farm, the road, travelers, or bandits."

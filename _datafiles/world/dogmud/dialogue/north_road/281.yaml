@@ -2,13 +2,27 @@ mobid: 281
 zone: North Road
 defaultMood: neutral
 
+patterns:
+  # System mention: bartering (fits caravan master's mercantile voice)
+  - keywords: ["barter", "haggle", "deal", "bargain", "negotiate"]
+    responses:
+      - "Everything's a negotiation. Don't insult me with first offers. A practiced tongue shaves coin off every purchase — ask any merchant who has lost to one."
+      - "Haggling is a skill you build one transaction at a time. The best hagglers never seem to be haggling. That's the point."
+
+  # System mention: pack tactics (fits caravan master's risk-assessment voice)
+  - keywords: ["wolves", "pack", "bandits", "travel dangers", "road danger"]
+    responses:
+      - "I've lost wagons to packs. Never one wolf, never one bandit — always three, four, more. They hear each other. They come. A lone traveler is a fool; a lone merchant is a dead fool."
+      - "On the road you watch treelines and ridges, not just the path. Where one of them shows itself, the rest are positioning."
+    moodChange: friendly
+
 tree:
   root:
     text: "Good day. I am waiting for the road to clear before
       heading north. These bandits have made a mess of my
       schedule."
     hints: "You could ask about the bandits, offer to help,
-      or ask about his cargo."
+      ask about his cargo, bartering, or the packs on the road."
     variants:
       - questRequired: ["17-start"]
         questExcluded: ["17-end"]
