@@ -56,13 +56,20 @@ func ApplyBuffs(e events.Event) events.ListenerReturn {
 		return events.Continue
 	}
 
+	// Snapshot whether the buff was already active BEFORE we add/refresh.
+	// Used below to suppress start text on a pure refresh — refreshing an
+	// already-active buff (e.g. ambusher's mob_idle → add_buff 9 tick)
+	// shouldn't re-fire "{source} disappears into the shadows." every round.
+	wasAlreadyActive := targetChar.HasBuff(evt.BuffId)
+
 	// Apply the buff
 	targetChar.AddBuff(evt.BuffId, false)
 
 	//
-	// Send YAML start text (if defined).
+	// Send YAML start text (if defined) — only on first application,
+	// not on refresh of an already-active buff.
 	//
-	if buffInfo.StartUserText != "" || buffInfo.StartRoomText != "" {
+	if !wasAlreadyActive && (buffInfo.StartUserText != "" || buffInfo.StartRoomText != "") {
 		var charName, charPlainName string
 		var sendFunc func(string)
 		var roomId, excludeId int

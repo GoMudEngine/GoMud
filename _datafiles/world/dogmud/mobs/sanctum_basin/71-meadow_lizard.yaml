@@ -2,6 +2,8 @@ mobid: 71
 zone: Sanctum Basin
 statpool: 2
 hostile: false
+non_combatant: true
+behavior_archetype: noncombat_passive
 maxwander: 3
 groups:
   - animal

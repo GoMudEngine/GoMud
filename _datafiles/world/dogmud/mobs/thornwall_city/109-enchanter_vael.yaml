@@ -1,6 +1,7 @@
 mobid: 109
 zone: Thornwall City
 archetype: casting
+behavior_archetype: noncombat_shopkeeper
 statpool: 54
 itemdropchance: 0
 hostile: false

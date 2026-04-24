@@ -1,6 +1,7 @@
 mobid: 83
 zone: Dustwalk Road
 archetype: fighting
+behavior_archetype: noncombat_questgiver
 statpool: 60
 hostile: false
 charm_immune: true

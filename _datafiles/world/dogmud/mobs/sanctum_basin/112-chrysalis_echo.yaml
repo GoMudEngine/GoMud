@@ -2,6 +2,7 @@ mobid: 112
 zone: Sanctum Basin
 statpool: 1
 hostile: false
+behavior_archetype: noncombat_passive
 maxwander: 0
 idlecommands:
   - 'emote flickers faintly, its outline shifting like heat distortion'

@@ -58,6 +58,13 @@ patterns:
       - "I appreciate the offer, but I have everything I need. Just
         tired legs."
 
+  # System mention: pack tactics + fleeing (fits the traveler's weathered caution)
+  - keywords: ["alone", "travel alone", "pack", "wolves", "flee", "run"]
+    responses:
+      - "I don't travel at night anymore. The packs learned the road before I did, and they hunt in numbers. If you hear one call, the others are already positioning. Flee on the first call, not the third."
+      - "The word they don't teach young hunters: running is a tactic. I've walked home from fights I had no business surviving because I ran the right way at the right time."
+    moodChange: friendly
+
   - keywords: [""]
     responses:
       - "Forgive me — I am resting. Is there something specific I can

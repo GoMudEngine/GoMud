@@ -7,6 +7,7 @@ maxwander: 3
 groups:
   - animal
   - bird
+behavior_archetype: prey
 idlecommands:
   - 'emote chirps twice from a fence post'
   - ''

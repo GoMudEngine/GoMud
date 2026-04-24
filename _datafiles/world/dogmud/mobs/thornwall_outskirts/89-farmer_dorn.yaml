@@ -1,5 +1,6 @@
 mobid: 89
 zone: Thornwall Outskirts
+behavior_archetype: noncombat_questgiver
 statpool: 54
 itemdropchance: 0
 hostile: false

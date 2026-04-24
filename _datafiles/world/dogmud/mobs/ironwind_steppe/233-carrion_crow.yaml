@@ -1,4 +1,5 @@
 mobid: 233
+behavior_archetype: generic_fighter
 zone: Ironwind Steppe
 statpool: 30
 itemdropchance: 5

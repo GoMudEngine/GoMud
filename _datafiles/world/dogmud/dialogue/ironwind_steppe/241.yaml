@@ -6,89 +6,76 @@ patterns:
   - keywords: ["hello", "hi", "greet", "hey"]
     moods: ["hostile", "neutral"]
     responses:
-      - "Sylara's pale eyes fix on you with unsettling intensity. 'The steppe does not welcome idle visitors. State your purpose or move on.'"
-      - "The Windwarden regards you with the wariness of a hawk watching a snake. 'You are far from the road, stranger.'"
+      - "The steppe does not welcome idle visitors. State your purpose or move on."
+      - "You are far from the road, stranger. The wind tells me what kind of person you are. So far it tells me very little."
 
   - keywords: ["hello", "hi", "greet"]
     moods: ["friendly", "grateful"]
     responses:
-      - "Sylara inclines her head. 'The wind knows you now. You are welcome here.'"
+      - "The wind knows you now. You are welcome here."
 
   - keywords: ["help", "quest", "task"]
     moods: ["hostile", "neutral"]
     responses:
-      - "'Help? You want to help?' She laughs, short and sharp. 'Everyone who comes here wants to help themselves. If you are different, prove it.'"
+      - "Help? You want to help? Everyone who comes here wants to help themselves. If you are different, prove it."
 
   - keywords: ["circle", "stone", "sacred", "spiritual"]
     responses:
-      - "'The stone circle is older than any city on Gaius. The wind-paths converge here -- spiritual currents that sustain the steppe's balance. Disturb them and the land itself will sicken.'"
+      - "The stone circle is older than any city on Gaius. The wind-paths converge here -- spiritual currents that sustain the steppe's balance. Disturb them and the land itself will sicken."
 
   - keywords: ["rhett", "geomancer", "scholar", "crystal"]
     responses:
-      - "Sylara's expression hardens. 'The scholar sees only rock and profit. He does not hear the wind's voice in the stone. He does not feel the ancestors watching. He would crack the circle's foundation for trinkets and call it progress.'"
+      - "The scholar sees only rock and profit. He does not hear the wind's voice in the stone. He does not feel the ancestors watching. He would crack the circle's foundation for trinkets and call it progress."
 
   - keywords: ["goblin", "ancestors", "spirits"]
     responses:
-      - "'The goblin clans have honoured this circle for generations. Their ancestors rest in the wind-paths. Destroying the circle would scatter those spirits like dust. Even if you do not believe, the harm is real.'"
+      - "The goblin clans have honoured this circle for generations. Their ancestors rest in the wind-paths. Destroying the circle would scatter those spirits like dust. Even if you do not believe, the harm is real."
 
   - keywords: [""]
     responses:
-      - "Sylara turns her gaze back to the stone circle."
-      - "The Windwarden says nothing, listening to the wind."
+      - "The wind has nothing further to say."
+      - "Speak plainly, or do not speak."
 
 tree:
   root:
-    text: "A tall woman in layered wool and bone ornaments stands before a circle of ancient standing stones. She plants her staff -- a gnarled cedar branch topped with a bleached wolf skull -- and fixes you with pale green eyes. 'Another one drawn by the wind. Or by the crystal. Which is it?'"
-    hints: "Ask about the circle, the conflict, or what she needs."
+    text: "Another one drawn by the wind. Or by the crystal. Which is it?"
+    hints: "A tall woman in layered wool and bone ornaments stands before a circle of ancient standing stones, planting a gnarled cedar staff topped with a bleached wolf skull. You could ask about the circle, the conflict, or what she needs."
     variants:
       - questRequired: ["11-start"]
         questExcluded: ["11-end"]
         questFlagRequired:
           "11-branch": "sylara"
-        text: "Sylara regards you with slightly less hostility than
-          before. 'You listened. That is more than most manage. Have
-          you found my totem? The wolves dragged it into their kill
-          ground to the southwest. Search the bone pile there.'"
-        hints: "Search the bone pile at the wolf kill ground southwest
-          of here for the carved wolf totem."
+        text: "You listened. That is more than most manage. Have you found my totem? The wolves dragged it into their kill ground to the southwest. Search the bone pile there."
+        hints: "Search the bone pile at the wolf kill ground southwest of here for the carved wolf totem."
       - questRequired: ["11-start"]
         questExcluded: ["11-end"]
         questFlagRequired:
           "11-branch": "rhett"
-        text: "Sylara's pale eyes narrow. 'I can smell the scholar's
-          chalk dust on you. You have made your choice. The wind-paths
-          have no words for those who would crack the earth for
-          trinkets.' She turns her back."
+        text: "I can smell the scholar's chalk dust on you. You have made your choice. The wind-paths have no words for those who would crack the earth for trinkets."
+        hints: "She turns her back to you."
       - questRequired: ["12-start"]
         questExcluded: ["12-ritual"]
-        text: "Sylara's eyes brighten. 'You chose the covenant. The spirits will be pleased. I can teach you to hear the steppe's voice -- to call upon the wolf spirits that guard the wind-paths. Are you ready for the ritual?'"
+        text: "You chose the covenant. The spirits will be pleased. I can teach you to hear the steppe's voice -- to call upon the wolf spirits that guard the wind-paths. Are you ready for the ritual?"
         hints: "You could tell her you are ready for the ritual."
       - questRequired: ["12-end"]
-        text: "Sylara smiles -- warm and genuine, transforming her stern features. 'The spirits know you now. You carry the steppe with you wherever you go. If you need more fetishes for the summoning, you have only to ask.'"
+        text: "The spirits know you now. You carry the steppe with you wherever you go. If you need more fetishes for the summoning, you have only to ask."
       - questRequired: ["13-start"]
         questExcluded: ["13-end"]
-        text: "Sylara's expression darkens. 'You are helping the
-          scholar crack the ridge. I can feel it in the wind-paths.'
-          She grips her staff tighter and says nothing more."
+        text: "You are helping the scholar crack the ridge. I can feel it in the wind-paths."
+        hints: "She grips her staff tighter and says nothing more."
       - questRequired: ["13-end"]
-        text: "Sylara's expression is carefully neutral, but grief shows in her eyes. 'You chose the scholar's path. The circle will endure... diminished. I will tend what remains.' She turns away."
+        text: "You chose the scholar's path. The circle will endure... diminished. I will tend what remains."
+        hints: "She turns away."
       - questRequired: ["11-end"]
         questExcluded: ["12-start", "13-start"]
         questFlagRequired:
           "11-branch": "rhett"
-        text: "Sylara regards you with cold respect. 'You helped the
-          scholar dig his crystal from the ridge. The wind-paths felt
-          it.' She turns back to the standing stones. 'The covenant
-          is not for those who crack the earth for trinkets.'"
+        text: "You helped the scholar dig his crystal from the ridge. The wind-paths felt it. The covenant is not for those who crack the earth for trinkets."
       - questRequired: ["11-end"]
         questExcluded: ["12-start", "13-start"]
         questFlagRequired:
           "11-branch": "sylara"
-        text: "Sylara regards you with newfound respect. 'You proved
-          yourself on the steppe. The spirits noticed.' Her voice
-          softens. 'I could teach you the old covenant -- to call
-          upon the wolf spirits that guard the wind-paths. It is not
-          offered lightly.'"
+        text: "You proved yourself on the steppe. The spirits noticed. I could teach you the old covenant -- to call upon the wolf spirits that guard the wind-paths. It is not offered lightly."
         hints: "You could ask about the covenant."
 
   nodes:
@@ -98,10 +85,7 @@ tree:
       questRequired: ["11-start"]
       questFlagRequired:
         "11-branch": "rhett"
-      text: "The wind-paths remember what you did. You helped the
-        scholar crack the earth for his crystals. I will tend what
-        remains of the circle, but the covenant is not for those who
-        side with the one who would destroy it."
+      text: "The wind-paths remember what you did. You helped the scholar crack the earth for his crystals. I will tend what remains of the circle, but the covenant is not for those who side with the one who would destroy it."
 
     - id: her_cause
       triggers: ["circle", "conflict", "wind", "problem", "sacred", "cause", "why", "quest", "task", "help"]
@@ -110,7 +94,7 @@ tree:
       setsQuestFlag:
         key: "11-branch"
         value: "sylara"
-      text: "'This circle has stood since before the first goblin clan lit a fire on the steppe. The wind-paths -- currents of spiritual energy -- converge here. They sustain the land, the creatures, the balance of everything that lives on the open grass.' She grips her staff tighter. 'A Thornwall scholar has found windstone crystal in the ridge. To extract it, he would crack the bedrock beneath the circle. The wind-paths would scatter. The goblin ancestors who rest in those currents would be lost.' Her voice drops. 'I will not allow it. If you would stand with me, prove it. The wolves dragged my carved totem into their kill ground to the southwest. Search the bone pile and bring it back. Then I will know you are sincere.'"
+      text: "This circle has stood since before the first goblin clan lit a fire on the steppe. The wind-paths -- currents of spiritual energy -- converge here. They sustain the land, the creatures, the balance of everything that lives on the open grass. A Thornwall scholar has found windstone crystal in the ridge. To extract it, he would crack the bedrock beneath the circle. The wind-paths would scatter. The goblin ancestors who rest in those currents would be lost. I will not allow it. If you would stand with me, prove it. The wolves dragged my carved totem into their kill ground to the southwest. Search the bone pile and bring it back. Then I will know you are sincere."
       hints: "Search the bone pile at the wolf kill ground to the southwest for the carved wolf totem."
       moodChange: neutral
 
@@ -120,7 +104,8 @@ tree:
       questExcluded: ["11-end"]
       requiresItem: 40033
       grantsQuest: "11-end"
-      text: "Sylara takes the totem with both hands, pressing it to her chest. For a moment her composure cracks and something raw and grateful shows through. 'You found it. The wolf spirit's voice -- I can hear it again.' She composes herself. 'Thank you. You have done more than you know.' Her expression shifts -- not softer, but deeper. 'The spirits noticed what you did. I could teach you the old covenant -- to call upon the wolf spirits that guard the wind-paths. Ask me about it when you are ready.'"
+      text: "You found it. The wolf spirit's voice -- I can hear it again. Thank you. You have done more than you know. The spirits noticed what you did. I could teach you the old covenant -- to call upon the wolf spirits that guard the wind-paths. Ask me about it when you are ready."
+      hints: "She takes the totem with both hands and presses it to her chest. For a moment her composure cracks."
       moodChange: friendly
 
     - id: offer_covenant
@@ -130,7 +115,7 @@ tree:
       questFlagRequired:
         "11-branch": "sylara"
       grantsQuest: "12-start"
-      text: "'The covenant is ancient -- older than any clan, older than the circle itself. The wolf spirits that guard the wind-paths will answer the call of one the steppe trusts.' Sylara's eyes burn with quiet intensity. 'I will teach you the ritual of binding. When it is done, you will carry the steppe's voice with you wherever you go. The spirits will come when you call.' She gestures toward the standing stones. 'Tell me when you are ready to begin.'"
+      text: "The covenant is ancient -- older than any clan, older than the circle itself. The wolf spirits that guard the wind-paths will answer the call of one the steppe trusts. I will teach you the ritual of binding. When it is done, you will carry the steppe's voice with you wherever you go. The spirits will come when you call. Tell me when you are ready to begin."
       hints: "You could tell her you are ready for the ritual."
       moodChange: friendly
 
@@ -155,14 +140,16 @@ tree:
       triggers: ["fetish", "component", "spirit", "summon", "more", "need"]
       questRequired: ["12-end"]
       givesItem: 40031
-      text: "Sylara nods and reaches into a pouch at her belt. She produces a spirit fetish -- a small bundle of steppe grass, wolf fur, and windstone dust bound with sinew. 'For the calling. Use it with respect.'"
+      text: "For the calling. Use it with respect."
+      hints: "She reaches into a pouch at her belt and produces a spirit fetish -- a small bundle of steppe grass, wolf fur, and windstone dust bound with sinew."
       moodChange: friendly
 
     - id: give_fetish_noqust
       triggers: ["fetish", "component", "spirit", "summon"]
       questExcluded: ["12-end"]
       givesItem: 40031
-      text: "Sylara studies you for a long moment, then nods slowly. 'The wind tells me you already know the calling. I do not know how, but the spirits do not lie.' She reaches into a pouch at her belt and produces a spirit fetish. 'Use it with respect. The steppe remembers those who dishonour its gifts.'"
+      text: "The wind tells me you already know the calling. I do not know how, but the spirits do not lie. Use it with respect. The steppe remembers those who dishonour its gifts."
+      hints: "She studies you for a long moment, then reaches into a pouch at her belt and produces a spirit fetish."
       moodChange: friendly
 
 memory:

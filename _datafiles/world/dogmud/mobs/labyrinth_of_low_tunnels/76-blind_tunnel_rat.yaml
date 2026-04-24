@@ -5,6 +5,7 @@ itemdropchance: 3
 hostile: false
 maxwander: 2
 buffids: [29]
+behavior_archetype: generic_fighter
 groups:
   - rats
   - animal

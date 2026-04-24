@@ -63,7 +63,7 @@ Server:
   - checkclient
   # - Motd -
   #   Message of the day. This is displayed when the motd command is run.
-  Motd: '{{ t "PACK TACTICS REVAMP: Unrelated mobs no longer aggro you after a fight. Priests, merchants, and wildlife ignore your bandit-slaying résumé — only mobs sharing a specific routine (bandit_camp_guard, wolf_pack_ironwind, etc.) react when one of their own is hit. Packs now coordinate via behavior trees: fighters pile in, casters shield the tank then heal the wounded, leaders open with rally + warcry, lookouts yell for backup.\nCRIES CARRY ACROSS ROOMS: A pack member yelling for help pulls routine-matched mobs from adjacent rooms toward the fight. No more fighting one bandit in peace while five of his friends stand oblivious next door.\nRESPAWN GRACE HARDENED: Mobs scanning for targets now skip grace-protected players entirely — closes the prod repro where you got aggro''d inside the 3-round grace window.\nQOL BATCH: Craft listing shows enchant target slot. Companion roster shows mutations. Progression dashboard shows exact rank + grandmaster tier. Identify is now a starter spell.\nZONE FIXES: Thornwall Rift Chamber and North Road bandit camp no longer overlap neighbors on the mapper.\nFull patch notes: https://github.com/pruuk/DOGMud/blob/master/PATCH_NOTES.md" }}'
+  Motd: '{{ t "WORLD MOB AUDIT COMPLETE: Every zone now runs on the behavior archetype system. Pack tactics, lookouts, leaders, ambushers, prey, and shopkeepers all behave consistently across Sanctum Basin, Thornwall City, Ironwind Steppe, North Road, Ashwick, the Marches, the Labyrinth, and every other live zone.\nDISCOVERY BOOST: Spell and recipe discovery now scales with Perception + relevant skill. A seasoned character with invested stats discovers roughly 1.8x faster at 20 known. Either Per or skill alone gives a partial boost; combine them for the full effect.\nAMBUSHERS: Cave stalkers (pale lurker, blind stalker), the chrysalis skulker beneath Thornwall, and other named lurkers strike from hidden with surprise-attack damage, flee when hurt, and slip back into the shadows. They will hit you proactively if you linger in their room.\nBOSS BEHAVIORS: Stone Beetle Queen calls her swarm; Windscour Wyrm enrages below 50% HP with tail-sweep knockdowns. Vitality bumped on both to support the pacing.\nTUTORIAL NPCS TEACH MECHANICS: Sanctum Basin instructors cover newer systems through dialogue — ask Yenna about the bandolier, Korvath about salvage, Saris about spell discovery, the Combat Trainer about rally/warcry, and so on.\nHIDDEN-TAG + SURPRISE-STRIKE FIXES: Combat text no longer shows ''(hidden)'' mid-fight. Surprise attacks now properly trigger the *[SURPRISE ATTACK]* prefix and backstab crit. Multiple long-standing buff/mutation issues quietly fixed.\nFull patch notes: https://github.com/pruuk/DOGMud/blob/master/PATCH_NOTES.md" }}'
   # - NextRoomID -
   # This number is auto-updated to the highest number of rooms in the game.
   #   If creating your own rooms but don't want to risk an update conflicting,
@@ -781,6 +781,9 @@ Balance:
   #   chance = 5 / (1 + 3×0.1) = 3.8%
   SpellDiscoveryBaseChance: 5.0
   SpellDiscoveryDecayRate: 0.1
+  DiscoveryPerceptionScale: 200.0
+  DiscoverySkillScale: 100.0
+  DiscoveryMaxDecayOffset: 0.8
   #
   # Initiation: chance to successfully begin casting.
   # Formula: chance = Base + Willpower/WillpowerDivisor + SpellcastingLevel × SkillFactor

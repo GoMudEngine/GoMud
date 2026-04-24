@@ -7,6 +7,7 @@ maxwander: 2
 groups:
   - animal
   - feline
+behavior_archetype: prey
 idlecommands:
   - 'emote cleans one paw with deliberate attention'
   - ''

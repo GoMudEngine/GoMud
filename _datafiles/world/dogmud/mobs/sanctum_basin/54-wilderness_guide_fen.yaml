@@ -4,6 +4,7 @@ archetype: fighting
 statpool: 105
 hostile: false
 non_combatant: true
+behavior_archetype: noncombat_questgiver
 maxwander: 0
 idlecommands:
   - 'emote scans the horizon with a weathered hand shading their eyes'

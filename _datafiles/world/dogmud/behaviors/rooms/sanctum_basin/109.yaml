@@ -118,5 +118,14 @@ tree:
             where you are.
           delay: 4.0
         - type: action
+          do: mob_say
+          mob_id: 52
+          text: >-
+            One more thing -- if a craft ever goes wrong on ye,
+            <ansi fg="command">salvage</ansi> the piece at a
+            station. Ye get some of yer material back. Better than
+            trash.
+          delay: 5.5
+        - type: action
           do: grant_quest
           quest: "1-crafting_craft"

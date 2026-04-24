@@ -165,7 +165,7 @@ func (c *Character) ApplyHealthChange(healthChange int) int {
 		// Any drop below 0 means dead; cancel combat-scoped buffs. Death
 		// itself is processed by the per-round hooks (NewRound_DoCombat +
 		// NewRound_AutoHeal); this function only applies the raw change.
-		c.CancelBuffsWithFlag(buffs.CancelIfCombat)
+		c.CancelCombatBuffs()
 	} else if newHealth > c.HealthMax.Value {
 		newHealth = c.HealthMax.Value
 	}

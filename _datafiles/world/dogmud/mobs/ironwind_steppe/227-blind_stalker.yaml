@@ -1,6 +1,6 @@
 mobid: 227
 zone: Ironwind Steppe
-behavior_archetype: generic_fighter
+behavior_archetype: ambusher
 routine: cave_pack_ironwind
 buffids: [9]
 statpool: 200

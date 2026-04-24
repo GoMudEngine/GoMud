@@ -160,6 +160,7 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 			if m.IsNonCombatant() {
 				user.SendText(fmt.Sprintf(`You can't attack <ansi fg="mobname">%s</ansi>.`, m.Character.Name))
+				mobs.FireAttackRejected(m, user.UserId)
 				return true, nil
 			}
 

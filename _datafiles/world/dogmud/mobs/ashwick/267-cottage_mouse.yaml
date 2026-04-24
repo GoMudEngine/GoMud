@@ -6,6 +6,7 @@ maxwander: 1
 groups:
   - animal
 itemdropchance: 0
+behavior_archetype: prey
 idlecommands:
   - 'emote scurries along the baseboard and freezes, whiskers twitching'
   - ''

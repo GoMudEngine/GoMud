@@ -1,5 +1,158 @@
 # DOGMud Patch Notes
 
+## 2026-04-24 (late night) — World Mob Audit Complete + Engine Polish
+
+### Gameplay
+
+- **Every zone now uses the behavior archetype system.** North Road,
+  Thornwall City, Marches Spur Road, Ashwick, Watchers Crossing,
+  Thornwall Outskirts, Dustwalk Road, and the Labyrinth of Low Tunnels
+  joined Sanctum Basin and Ironwind Steppe in the migration. Mobs in
+  these zones now react consistently — fighters pile on, lookouts
+  call for help, leaders rally their packs, shopkeepers and questgivers
+  decline politely instead of fighting back.
+- **Pack reactions across the world.** New routines connect mobs that
+  belong together: bandit packs on Marches Spur Road, the smuggler
+  ring beneath Thornwall City, and the chrysalis-touched mobs in the
+  lower district. Hit one and the rest hear it.
+- **Thornwall City has its own ambusher.** The chrysalis skulker
+  joins the cave's pale lurker and blind stalker as hit-and-fade
+  predators — strike from hidden, flee on hurt, slip into shadow,
+  strike again.
+- **Wilderness now has prey.** Hares, grouse, sparrows, squirrels,
+  toads, mice, chickens, and similar small wildlife flee instead of
+  fighting. They're still attackable for food and reagents — they
+  just don't stand and die anymore.
+- **Sylara of the steppe now speaks naturally.** Her dialogue was
+  written with third-person stage directions ("Sylara inclines her
+  head...") that the engine spoke aloud. Rewritten to first-person
+  speech with stage directions moved into the bracketed narrator
+  hints where they belong.
+
+### Fixes
+
+- **Hidden-tag no longer lingers mid-combat.** Three fixes layered:
+  (1) `CancelCombatBuffs` now strips permabuff entries with the
+  cancel-on-combat flag — previously the active buff was expired but
+  Validate re-applied it from the permabuff list. (2) The `camo-skin`
+  mutation switched from granting a permanent `hidden` flag to a
+  proper `stealth_bonus` (matches `chameleon-skin`'s pattern) —
+  mutations no longer leak the hidden tag into combat text.
+  (3) The buff system suppresses start text when refreshing an
+  already-active buff, so ambusher idle ticks don't spam "{mob}
+  disappears into the shadows" every round.
+- **Surprise strikes now show their dedicated text.** The btree's
+  `actAttack` was always setting `DefaultAttack` aggro — even when
+  the attacking mob was hidden. Mobs now properly promote to
+  `SurpriseAttack` when striking from hidden, triggering the
+  `*[SURPRISE ATTACK]*` prefix and the backstab crit bonus that
+  ambushers were supposed to get all along.
+- **Ambushers attack proactively when a player is in their room.**
+  Previous design only fired on `player_enter`; if a player came
+  back to a room where an ambusher had re-hid, the ambusher just
+  sat there. Now they fire surprise strikes whenever they find
+  themselves idle, hidden, and with a player present.
+
+### Behind the scenes
+
+- Dead startland and tutorial zones removed (players couldn't reach
+  them; default `StartRoom: 113` lives in Sanctum Basin). Mob IDs
+  1–5, 57, 58 freed for reuse.
+- Effective archetype coverage: 100% of stock-combat mobs across
+  every zone. The handful of skips (Old Edrin, Olen, Phantom, Sable,
+  Pell, Dal, loot goblin) all have custom per-mob behavior trees
+  that override archetype anyway.
+
+## 2026-04-24 (late evening) — Ironwind Steppe Audit + Boss Behaviors
+
+### Gameplay
+
+- **Cave stalkers now ambush from the dark.** Pale lurkers and blind
+  stalkers spawn hidden, open with a surprise strike when a player
+  enters their room, then flee the moment they take damage and
+  re-hide in an adjacent room. Maximum-nuisance hit-and-fade cycle.
+- **Stone Beetle Queen calls her swarm.** Boss behavior: when wounded
+  or when one of her brood is hurt, she calls for help — pulling
+  cave beetles from adjacent rooms. Vitality bumped to match her
+  tank role.
+- **Windscour Wyrm goes two-phase.** Above 50% HP the wyrm fights
+  its slow, devastating baseline rotation. Below 50% HP it rages —
+  tail-sweep knockdown rotations on every round. Vitality bumped to
+  support the pacing.
+- **Prey animals flee when hit.** Hares, grouse, lizards, squirrels,
+  toads, moths, tumble beetles, and dry creek crayfish now retreat
+  to an adjacent room when attacked instead of standing and dying.
+  They remain attackable for hunting.
+
+### Behind the scenes
+
+- Two new behavior archetypes: `ambusher` and `prey`.
+- Custom per-mob btrees for the Stone Beetle Queen (228) and
+  Windscour Wyrm (229).
+- Ironwind Steppe now has 43/43 archetype coverage.
+- No engine changes — all behaviors reuse existing primitives.
+
+## 2026-04-24 (evening) — Sanctum Basin Mob Audit + Tutorial Content
+
+### Gameplay
+
+- **Sanctum Basin NPCs now offer tutorial guidance for newer gameplay
+  systems.** Each of the nine non-combat NPCs covers a curated set of
+  topics through their dialogue: ask Korvath about salvage or
+  enchanting, ask Yenna about potion aging or the bandolier, ask Saris
+  about spell discovery or manifestation, ask the Combat Trainer about
+  rally/warcry or companions, ask Fen about tracking or packs, ask the
+  Warden about respawn grace or aggro, ask the Scholar about mutations,
+  ask the Chrysalis Priest about the Awakening, ask Merchant Adela about
+  bartering or encumbrance.
+- **Non-combatants now react when you try to attack them.** Trying to
+  attack (or target with a harmful spell) an NPC who cannot be attacked
+  now triggers an in-character emote from that NPC — a raised eyebrow
+  from a questgiver, a step back from a shopkeeper. Rate-limited to one
+  reaction per NPC per round so companion and party auto-assist cannot
+  spam it.
+
+### Behind the scenes
+
+- Four new behavior archetypes: `noncombat_questgiver`,
+  `noncombat_shopkeeper`, `noncombat_passive`, `combat_passive`. Every
+  Sanctum Basin mob is now tagged with a `behavior_archetype` value.
+  This is the first zone in a larger migration to the archetype system.
+- New btree event `player_attack_rejected` fired from attack.go and
+  from HarmSingle spell rejection in cast.go.
+- All tutorial content is delivered via dialogue YAML `patterns`, which
+  is deterministic and prod-safe (no LLM dependency).
+
+## 2026-04-24 — Discovery Rate Stat Offset
+
+### Gameplay
+
+- **Spell and recipe discovery now scales with Perception + skill.**
+  The decay that slows discovery as you learn more spells/recipes
+  is now partially offset by your Perception stat and the relevant
+  skill (Spellcasting for traditional spells, Manifestation for
+  manifestation-school spells, or the specific crafting skill for
+  each recipe). A newbie discovers at the current rate; a seasoned
+  character with invested Per + skill discovers roughly 1.8× faster
+  at 20 known — closing the late-game discovery drought without
+  flooding new characters with learn-messages.
+- **Offset mechanic:** Per contribution reaches 1.0 at Per=300,
+  skill contribution reaches 1.0 at rank 100, combined via
+  `1 - (1 - per)(1 - skill)` and capped at 0.8 (effective decay
+  floor = 20% of base). Either Per or skill alone gives a partial
+  benefit; the combination unlocks the full cap.
+- **Mobs benefit too.** Caster mobs with high Per + Spellcasting
+  will expand their spell repertoire faster than before — a
+  battle-hardened mob learning from repeated casts.
+
+### Config
+
+- New `Balance` knobs: `DiscoveryPerceptionScale` (default 200),
+  `DiscoverySkillScale` (default 100), `DiscoveryMaxDecayOffset`
+  (default 0.8). Set `DiscoveryMaxDecayOffset: 0` to disable the
+  offset mechanic entirely and revert to the prior flat-chance
+  formula.
+
 ## 2026-04-22 (evening) — Pack Tactics Revamp + QOL Batch
 
 ### Gameplay

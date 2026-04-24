@@ -1,6 +1,7 @@
 mobid: 287
 zone: North Road
 archetype: fighting
+behavior_archetype: generic_fighter
 statpool: 350
 itemdropchance: 15
 hostile: false

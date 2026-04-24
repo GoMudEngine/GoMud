@@ -50,7 +50,7 @@ character:
     strength:
       training: 20
     vitality:
-      training: 20
+      training: 100
     dexterity:
       training: -5
     perception:

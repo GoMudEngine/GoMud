@@ -1,5 +1,6 @@
 mobid: 280
 zone: North Road
+behavior_archetype: noncombat_questgiver
 statpool: 40
 itemdropchance: 0
 hostile: false

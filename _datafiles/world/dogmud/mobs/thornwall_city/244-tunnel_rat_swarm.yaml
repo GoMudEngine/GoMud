@@ -1,5 +1,7 @@
 mobid: 244
 zone: Thornwall City
+behavior_archetype: generic_fighter
+routine: thornwall_tunnels
 statpool: 8
 itemdropchance: 0
 hostile: true

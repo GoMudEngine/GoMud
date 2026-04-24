@@ -4,6 +4,7 @@ archetype: fighting
 statpool: 120
 hostile: false
 non_combatant: true
+behavior_archetype: noncombat_questgiver
 maxwander: 0
 idlecommands:
   - 'emote stands watch at the gate, eyes moving steadily across the road'

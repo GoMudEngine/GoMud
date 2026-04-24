@@ -124,6 +124,16 @@ func GetRoundCount() uint64 {
 	return roundCount
 }
 
+// SetRoundCountForTest overrides the round count for test use.
+func SetRoundCountForTest(r uint64) {
+	roundCount = r
+}
+
+// ResetRoundCountForTest resets the round count to RoundCountMinimum.
+func ResetRoundCountForTest() {
+	roundCount = RoundCountMinimum
+}
+
 func TrackTime(name string, timePassed float64) {
 	if _, ok := timeTrackers[name]; !ok {
 		timeTrackers[name] = &Accumulator{

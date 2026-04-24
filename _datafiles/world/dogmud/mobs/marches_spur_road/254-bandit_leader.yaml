@@ -6,6 +6,7 @@ hostile: false
 charm_immune: true
 maxwander: 0
 archetype: fighting
+behavior_archetype: leader
 groups:
   - humanoid
   - bandit

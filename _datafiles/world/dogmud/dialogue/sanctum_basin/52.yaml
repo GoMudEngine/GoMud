@@ -43,6 +43,25 @@ patterns:
     responses:
       - "I can show ye the basics of the anvil if ye've got the patience for it. Come back when ye're ready to work."
 
+  # System mention: salvage (framed as smith's practice of reclaiming material)
+  - keywords: ["salvage", "scrap", "reclaim", "recover", "bent", "broken", "failed"]
+    responses:
+      - "Aye. Bad metal's not wasted metal. Any smith worth the apron knows how to pull usable stock out of a ruined piece. Same goes for failed crafts — don't toss it. Break it down."
+      - "I'll salvage reagents from a failed batch as quick as I'll forge a new blade. Skill comes into it — the better ye are, the more ye recover."
+
+  # System mention: enchanting (slot-targeted)
+  - keywords: ["enchant", "enchanting", "rune", "runes", "magic weapon"]
+    responses:
+      - "Enchanting? Aye. Patterns get bound to a specific slot — weapons, armor, what have ye. Look at the recipe before ye spend materials; it'll tell ye where the pattern lands."
+      - "I don't do the binding myself. That's for folk with the pattern-sense. But I forge the vessels, and I'll tell ye which slot a rune is meant for before ye waste a good blade."
+    moodChange: friendly
+
+  # System mention: 2H weapons
+  - keywords: ["two-handed", "two hand", "twohand", "2h", "great sword", "maul", "polearm"]
+    responses:
+      - "Two hands on a weapon means no shield, no offhand. Ye trade protection for reach and a heavier strike. Some folk swear by it. Others end up dead."
+      - "A proper 2H blade needs strength to wield well. If ye can't bear the weight, ye'd do better with a sword and shield."
+
   - keywords: [""]
     responses:
       - "I'm busy. Ask me about weapons or the forge."
@@ -51,7 +70,7 @@ patterns:
 tree:
   root:
     text: "What can I do for ye, stranger?"
-    hints: "Try: ask korvath weapons, ask korvath sanctum, or ask korvath quest."
+    hints: "Try: ask korvath weapons, ask korvath salvage, ask korvath enchanting, ask korvath 2h, or ask korvath quest."
 
   nodes:
     - id: weapons

@@ -1,6 +1,7 @@
 mobid: 75
 zone: Labyrinth of Low Tunnels
 archetype: fighting
+behavior_archetype: leader
 statpool: 25
 hostile: false
 charm_immune: true

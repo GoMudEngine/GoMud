@@ -45,6 +45,33 @@ patterns:
       - "The three moons follow their own counsel. I have watched them long enough to know they keep secrets I will never fully understand."
       - "When all three are full at once, the old records say the Fold weakens. I have only seen it twice. Both times, strange things walked in from the dark."
 
+  - keywords: ["discovery", "new spell", "learn spell", "reveal", "unfamiliar"]
+    responses:
+      - "Spells are not memorized like dry facts. A caster who works with intent finds patterns crystallize in her mind — new spells, gifted by practice. Patience and perception bring them faster than study alone."
+      - "The old texts called it 'the moons' gift.' I call it attentive practice. Either way — cast often, cast with care, and the patterns multiply."
+    moodChange: friendly
+
+  - keywords: ["manifestation", "manifest", "channel", "conduit", "school"]
+    responses:
+      - "Traditional spellcasting draws patterns out of the weave. Manifestation is different — the body becomes the conduit. A manifestor speaks with charisma and conviction where a caster speaks with will. Both are valid. Few master both."
+      - "Manifestation is the harder path. It asks more of the self. But those who walk it are rarely surprised by what the world gives them."
+
+  - keywords: ["magic mutation", "spell mutation", "caster body", "change from casting"]
+    responses:
+      - "Cast the same pattern often enough, deeply enough, and the body remembers. It shifts. Most dismiss these marks as coincidence. I do not."
+      - "I have seen a fold-binder whose fingers bent inward over years. A healer whose skin glowed faintly in the dark. The body adapts to what it is repeatedly asked to do."
+
+  - keywords: ["companion", "summon", "conjure", "charm", "raise", "familiar"]
+    responses:
+      - "A caster need not fight alone. Summon a steppe spirit. Charm a wolf. Conjure an elemental from the fold. Raise a body to serve. The schools differ; the principle is the same — you are not one mind in the fight."
+      - "Each companion has its cost. Summons drain conviction. Charm demands persistence of will. The dead answer only those with the stomach for it. Choose the path that matches your temperament."
+    moodChange: friendly
+
+  - keywords: ["become a manifestor", "manifest path", "how to manifest", "learn manifestation"]
+    responses:
+      - "You begin by noticing that some spells resist the usual patterns. They want to be spoken, not drawn. That is the first sign. The rest is practice, patience, and the willingness to carry the spell in your body, not your hand."
+      - "A manifestor need not abandon spellcasting. But at some point the two paths diverge. Those who walk both are rare, and tired. Those who choose one go further."
+
   - keywords: [""]
     responses:
       - "Ask with care. My time, like yours, is finite."
@@ -54,7 +81,7 @@ patterns:
 tree:
   root:
     text: "You seek the counsel of an old mind. Very well — ask what weighs on you."
-    hints: "Try: ask saris fold, ask saris moons, ask saris tunnels, or ask saris quest."
+    hints: "Try: ask saris fold, ask saris moons, ask saris manifestation, ask saris spell discovery, ask saris magic mutation, or ask saris companions."
 
   nodes:
     - id: fold

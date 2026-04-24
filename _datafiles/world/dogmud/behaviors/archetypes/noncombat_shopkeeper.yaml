@@ -1,0 +1,33 @@
+# noncombat_shopkeeper archetype
+#
+# Used by non-combat merchants with shops. Sanctum Basin: korvath,
+# alchemist_yenna, merchant_adela.
+#
+# Behaviorally identical to noncombat_questgiver today, with
+# shopkeeper-flavored emote text. Kept as a separate archetype so
+# future shop-specific events can attach here without disturbing
+# questgiver NPCs.
+#
+# Spec: docs/superpowers/specs/2026-04-24-sanctum-basin-mob-audit-design.md
+
+tree:
+  type: selector
+  children:
+    - type: action
+      event: player_enter
+      do: emote
+      text: "nods in greeting from behind the counter."
+
+    - type: action
+      event: player_attack_rejected
+      do: emote
+      text: "steps back, looking mildly affronted."
+
+    - type: sequence
+      event: player_give
+      children:
+        - type: action
+          do: emote
+          text: "declines politely and hands it back."
+        - type: action
+          do: return_item
