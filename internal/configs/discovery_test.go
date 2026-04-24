@@ -42,7 +42,7 @@ func TestDiscoveryChance(t *testing.T) {
 
 		// Edge cases
 		{"known=0 returns base", 5.0, 0.1, 0, 100, 0, 5.00},
-		{"per below baseline clamps to 0", 5.0, 0.1, 10, 50, 50, 3.33},
+		{"per below baseline contributes 0 (skill still offsets)", 5.0, 0.1, 10, 50, 50, 3.33},
 		{"skill above scale clamps to 1", 5.0, 0.1, 10, 100, 200, 4.17},
 		{"offset caps at 0.8 (very high per+skill)", 5.0, 0.1, 20, 300, 200, 3.57},
 		{"pure per build (skill=0)", 5.0, 0.1, 10, 200, 0, 3.33},
@@ -74,9 +74,13 @@ func TestDiscoveryChance_NegativeKnownClampsToZero(t *testing.T) {
 }
 
 func TestDiscoveryChance_DefaultsApplied(t *testing.T) {
-	// When Balance has not been set, DiscoveryChance should still work
-	// using the validator-applied defaults.
-	b := &Balance{}
+	// Validator applies defaults only to negative values. Zero is now allowed
+	// as an explicit way to disable the offset mechanic (per PATCH_NOTES.md).
+	b := &Balance{
+		DiscoveryPerceptionScale: -1, // trigger default
+		DiscoverySkillScale:      -1, // trigger default
+		DiscoveryMaxDecayOffset:  -1, // trigger default
+	}
 	b.validateDiscovery()
 	assert.InDelta(t, 200.0, float64(b.DiscoveryPerceptionScale), 0.001)
 	assert.InDelta(t, 100.0, float64(b.DiscoverySkillScale), 0.001)
