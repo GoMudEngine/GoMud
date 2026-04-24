@@ -64,7 +64,9 @@ func handleCombatRound(
 	}
 
 	// Defender's combat-cancel buffs always strip on combat engagement.
-	def.GetCharacter().CancelBuffsWithFlag(buffs.CancelIfCombat)
+	// CancelCombatBuffs also strips permabuff entries so Validate() won't
+	// re-apply them (notably: Hidden seeded via buffids on ambushers).
+	def.GetCharacter().CancelCombatBuffs()
 
 	// Phase 1: wait-round short-circuit.
 	if phase1WaitRound(atk, def) {

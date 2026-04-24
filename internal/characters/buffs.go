@@ -36,6 +36,40 @@ func (c *Character) CancelBuffsWithFlag(buffFlag buffs.Flag) bool {
 	return false
 }
 
+// CancelCombatBuffs cancels all active buffs with the CancelIfCombat flag
+// AND strips matching buffs from the permaBuffIds list so they don't
+// re-apply during Validate(). Call this when a character enters combat
+// (as attacker or defender) or dies.
+//
+// Without the permabuff strip, mobs seeded with CancelIfCombat-tagged
+// buffs via `buffids:` (e.g. Hidden on ambushers) would see the buff
+// re-applied every Validate() call — the combat system would strip the
+// active instance but the next Validate would put it right back. This
+// surfaced as "(hidden)" tags persisting on ambushers mid-combat.
+func (c *Character) CancelCombatBuffs() {
+	filtered := make([]int, 0, len(c.permaBuffIds))
+	for _, id := range c.permaBuffIds {
+		spec := buffs.GetBuffSpec(id)
+		if spec == nil {
+			filtered = append(filtered, id)
+			continue
+		}
+		keep := true
+		for _, f := range spec.Flags {
+			if f == buffs.CancelIfCombat {
+				keep = false
+				break
+			}
+		}
+		if keep {
+			filtered = append(filtered, id)
+		}
+	}
+	c.permaBuffIds = filtered
+
+	c.CancelBuffsWithFlag(buffs.CancelIfCombat)
+}
+
 func (c *Character) HasBuff(buffId int) bool {
 	return c.Buffs.HasBuff(buffId)
 }
