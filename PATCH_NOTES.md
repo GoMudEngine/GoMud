@@ -1,5 +1,35 @@
 # DOGMud Patch Notes
 
+## 2026-04-24 — Discovery Rate Stat Offset
+
+### Gameplay
+
+- **Spell and recipe discovery now scales with Perception + skill.**
+  The decay that slows discovery as you learn more spells/recipes
+  is now partially offset by your Perception stat and the relevant
+  skill (Spellcasting for traditional spells, Manifestation for
+  manifestation-school spells, or the specific crafting skill for
+  each recipe). A newbie discovers at the current rate; a seasoned
+  character with invested Per + skill discovers roughly 1.8× faster
+  at 20 known — closing the late-game discovery drought without
+  flooding new characters with learn-messages.
+- **Offset mechanic:** Per contribution reaches 1.0 at Per=300,
+  skill contribution reaches 1.0 at rank 100, combined via
+  `1 - (1 - per)(1 - skill)` and capped at 0.8 (effective decay
+  floor = 20% of base). Either Per or skill alone gives a partial
+  benefit; the combination unlocks the full cap.
+- **Mobs benefit too.** Caster mobs with high Per + Spellcasting
+  will expand their spell repertoire faster than before — a
+  battle-hardened mob learning from repeated casts.
+
+### Config
+
+- New `Balance` knobs: `DiscoveryPerceptionScale` (default 200),
+  `DiscoverySkillScale` (default 100), `DiscoveryMaxDecayOffset`
+  (default 0.8). Set `DiscoveryMaxDecayOffset: 0` to disable the
+  offset mechanic entirely and revert to the prior flat-chance
+  formula.
+
 ## 2026-04-22 (evening) — Pack Tactics Revamp + QOL Batch
 
 ### Gameplay
