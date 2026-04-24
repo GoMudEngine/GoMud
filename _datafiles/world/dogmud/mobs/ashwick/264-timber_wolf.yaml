@@ -8,6 +8,7 @@ groups:
   - canine
   - predator
 archetype: fighting
+behavior_archetype: generic_fighter
 idlecommands:
   - 'emote paces at the edge of the clearing, hackles raised'
   - ''

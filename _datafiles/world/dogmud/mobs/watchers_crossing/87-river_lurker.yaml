@@ -1,6 +1,7 @@
 mobid: 87
 zone: Watchers Crossing
 archetype: fighting
+behavior_archetype: generic_fighter
 statpool: 14
 itemdropchance: 10
 items:

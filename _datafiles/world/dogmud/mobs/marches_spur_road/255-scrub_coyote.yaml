@@ -5,6 +5,7 @@ itemdropchance: 5
 hostile: false
 maxwander: 2
 archetype: fighting
+behavior_archetype: generic_fighter
 groups:
   - animal
   - canine

@@ -1,5 +1,6 @@
 mobid: 251
 zone: Marches Spur Road
+behavior_archetype: noncombat_questgiver
 statpool: 85
 itemdropchance: 0
 hostile: false

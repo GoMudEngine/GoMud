@@ -1,6 +1,7 @@
 mobid: 74
 zone: Labyrinth of Low Tunnels
 archetype: casting
+behavior_archetype: support_caster
 statpool: 15
 hostile: false
 charm_immune: true
