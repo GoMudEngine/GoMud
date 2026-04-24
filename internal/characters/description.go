@@ -137,7 +137,11 @@ func (c *Character) GetAdjectives() []string {
 		retAdjectives = append(retAdjectives, `lit`)
 	}
 
-	if c.HasFlagFromAnySource(buffs.Hidden) {
+	// Hidden adjective: show when the character has the Hidden flag
+	// (from buff OR mutation) AND is not actively in combat. Once aggro
+	// is set, the mob is visibly fighting and the "hidden" tag becomes
+	// a lie to any viewer, regardless of how the flag was granted.
+	if c.HasFlagFromAnySource(buffs.Hidden) && c.Aggro == nil {
 		retAdjectives = append(retAdjectives, `hidden`)
 	}
 
