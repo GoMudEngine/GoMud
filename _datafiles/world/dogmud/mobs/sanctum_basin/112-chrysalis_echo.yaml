@@ -2,7 +2,6 @@ mobid: 112
 zone: Sanctum Basin
 statpool: 1
 hostile: false
-non_combatant: true
 behavior_archetype: noncombat_passive
 maxwander: 0
 idlecommands:
