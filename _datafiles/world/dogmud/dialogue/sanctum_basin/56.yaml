@@ -1,0 +1,50 @@
+mobid: 56
+zone: Sanctum Basin
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "I watch these passages so that adventurers like you can pass safely. What's your business?"
+      - "The Basin's dungeons are dangerous. Safe passage is earned, not given."
+      - "Hail, traveler. Have you come seeking challenge or fleeing it?"
+
+  # System mention: aggro system (mobs attacking on sight)
+  - keywords: ["aggro", "aggressive", "attack", "hostile", "why attack", "anger"]
+    responses:
+      - "Some things down here don't parley. They attack on sight. Prepare for it. If a creature runs straight at you, running back is no shame."
+      - "Aggression in the dungeon isn't a choice. It's survival. Creatures of darkness don't negotiate. They bite."
+      - "You'll know an aggressor when you see one. No talking. No warning. Just teeth and claws. Watch for them. They watch for you."
+    moodChange: somber
+
+  # System mention: respawn grace / death mechanics
+  - keywords: ["respawn", "death", "grace", "grace period", "dying", "kill", "death run"]
+    responses:
+      - "You die, you wake up back in the Basin. Breathing. Hurting. That's the grace of this place. But it won't hold you forever. Keep dying and the dungeon grows tired of you."
+      - "Death is not the end here. You respawn. But each time you come back, you're weaker. If you're smart, you won't test that limit too far."
+      - "The Basin gives the fallen a second chance. Use it. Learn. Don't waste it charging blindly back into the same trap."
+    moodChange: friendly
+
+  # System mention: dungeon pacing (slow careful approach vs rushing)
+  - keywords: ["pace", "slow", "careful", "rush", "hurry", "rest", "prepare"]
+    responses:
+      - "The dungeon doesn't tire. You do. If you rush, you fall. If you creep forward, listen, and prepare, you live longer."
+      - "Every step matters down there. The creatures feel your presence. Moving slowly means they don't notice you. Rushing means you'll meet them on their terms, not yours."
+      - "There's no prize for speed. Patience wins. Rest when you can. Prepare spells and weapons. Then move. The dungeon respects deliberation."
+    moodChange: friendly
+
+  # System mention: challenge and levels
+  - keywords: ["challenge", "easy", "hard", "difficulty", "level", "strong"]
+    responses:
+      - "Some dungeons are for training. Some demand respect. Know which one you're entering before you enter."
+      - "The deeper you go, the smarter and harder the creatures. That's how it works. Start easy. Learn the patterns. Then push deeper."
+
+  - keywords: [""]
+    responses:
+      - "I have little patience for idle talk. Ask something useful."
+      - "Speak plainly or seek elsewhere."
+
+tree:
+  root:
+    text: "I am the Basin Warden. I maintain the dungeons and guide those who seek to survive them. Enter with caution."
+    hints: "You could ask about aggro, respawn grace, dungeon pacing, or challenge."
