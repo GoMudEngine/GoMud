@@ -110,7 +110,7 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 			}
 		}
 
-		user.Character.CancelBuffsWithFlag(buffs.CancelIfCombat)
+		user.Character.CancelCombatBuffs()
 
 		uRoom := rooms.LoadRoom(user.Character.RoomId)
 		if uRoom == nil {
@@ -203,12 +203,9 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 		// Only run the full combat prep (buff stripping, shield decay, etc.) when
 		// actually fighting or when the mob might enter combat this round.
 		if mob.Character.Aggro != nil {
-			// Strip combat-cancelling buffs (Hidden, etc.)
-			// Also remove Hidden from permabuffs so Validate doesn't re-add it
-			if mob.Character.HasBuffFlag(buffs.Hidden) {
-				mob.Character.RemovePermaBuff(9)
-			}
-			mob.Character.CancelBuffsWithFlag(buffs.CancelIfCombat)
+			// Strip combat-cancelling buffs (Hidden, etc.) and remove
+			// their permabuff entries so Validate() doesn't re-apply them.
+			mob.Character.CancelCombatBuffs()
 
 			// Mob shield decay (symmetric with handlePlayerShieldDecay)
 			if mob.Character.HasCondition(characters.ConditionShield) {

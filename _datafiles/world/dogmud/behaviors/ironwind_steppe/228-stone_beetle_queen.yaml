@@ -1,0 +1,46 @@
+# Stone Beetle Queen (228) — Maternal Tank Boss
+#
+# Matriarch of the cave beetle colony. Heavy defensive tank. Calls
+# swarm (via callforhelp → packmates from adjacent rooms) aggressively
+# once wounded. Basic attacks handle DPS.
+#
+# Tuning: vitality bumped to support the tank role (see mob YAML).
+
+tree:
+  type: selector
+  children:
+    # Packmate hit? Rally the swarm and pile in
+    - type: sequence
+      event: packmate_hurt
+      children:
+        - type: action
+          do: command
+          cmd: callforhelp
+        - type: action
+          do: attack
+
+    # Mob_hurt: call swarm once wounded
+    - type: sequence
+      event: mob_hurt
+      children:
+        - type: action
+          do: command
+          cmd: callforhelp
+        - type: action
+          do: attack
+
+    # Combat round: at 60% HP, call swarm again (desperation)
+    - type: sequence
+      event: mob_combat_round
+      children:
+        - type: condition
+          check: mob_health_below
+          percent: 60
+        - type: action
+          do: command
+          cmd: callforhelp
+
+    # heard_callforhelp: rally toward the caller (mirrors lookout)
+    - type: action
+      event: heard_callforhelp
+      do: go_to_caller_room

@@ -1,4 +1,5 @@
 mobid: 240
+behavior_archetype: noncombat_questgiver
 zone: Ironwind Steppe
 statpool: 100
 itemdropchance: 0

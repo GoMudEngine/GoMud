@@ -1,5 +1,34 @@
 # DOGMud Patch Notes
 
+## 2026-04-24 (late evening) — Ironwind Steppe Audit + Boss Behaviors
+
+### Gameplay
+
+- **Cave stalkers now ambush from the dark.** Pale lurkers and blind
+  stalkers spawn hidden, open with a surprise strike when a player
+  enters their room, then flee the moment they take damage and
+  re-hide in an adjacent room. Maximum-nuisance hit-and-fade cycle.
+- **Stone Beetle Queen calls her swarm.** Boss behavior: when wounded
+  or when one of her brood is hurt, she calls for help — pulling
+  cave beetles from adjacent rooms. Vitality bumped to match her
+  tank role.
+- **Windscour Wyrm goes two-phase.** Above 50% HP the wyrm fights
+  its slow, devastating baseline rotation. Below 50% HP it rages —
+  tail-sweep knockdown rotations on every round. Vitality bumped to
+  support the pacing.
+- **Prey animals flee when hit.** Hares, grouse, lizards, squirrels,
+  toads, moths, tumble beetles, and dry creek crayfish now retreat
+  to an adjacent room when attacked instead of standing and dying.
+  They remain attackable for hunting.
+
+### Behind the scenes
+
+- Two new behavior archetypes: `ambusher` and `prey`.
+- Custom per-mob btrees for the Stone Beetle Queen (228) and
+  Windscour Wyrm (229).
+- Ironwind Steppe now has 43/43 archetype coverage.
+- No engine changes — all behaviors reuse existing primitives.
+
 ## 2026-04-24 (evening) — Sanctum Basin Mob Audit + Tutorial Content
 
 ### Gameplay

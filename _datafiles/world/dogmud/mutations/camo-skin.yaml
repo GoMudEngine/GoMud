@@ -7,9 +7,8 @@ conflicts:
   - bioluminescence
   - pheromone-glands
 pros:
-  - type: flag
-    target: hidden
-    value: 1
+  - type: stealth_bonus
+    value: 20
   - type: dodge_modifier
     value: 15
 cons:
