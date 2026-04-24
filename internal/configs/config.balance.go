@@ -193,6 +193,12 @@ type Balance struct {
 	// ── SPELLCASTING ─────────────────────────────────────────────────────
 	SpellDiscoveryBaseChance        ConfigFloat `yaml:"SpellDiscoveryBaseChance"`        // Base % to discover a new spell per successful cast (default 5.0)
 	SpellDiscoveryDecayRate         ConfigFloat `yaml:"SpellDiscoveryDecayRate"`         // Decay per known spell: chance = base / (1 + known*this) (default 0.1)
+
+	// ── DISCOVERY OFFSET (shared: spells + recipes) ──────────────────────────
+	DiscoveryPerceptionScale ConfigFloat `yaml:"DiscoveryPerceptionScale"` // Raw Per contribution reaches 1.0 at (Per - 100) / this (default 200)
+	DiscoverySkillScale      ConfigFloat `yaml:"DiscoverySkillScale"`      // Raw skill contribution reaches 1.0 at rank / this (default 100)
+	DiscoveryMaxDecayOffset  ConfigFloat `yaml:"DiscoveryMaxDecayOffset"`  // Hard ceiling on combined offset; effective decay floor = Decay × (1 - this) (default 0.8)
+
 	SpellInitiationBase             ConfigInt   `yaml:"SpellInitiationBase"`             // Base % chance to initiate a spell (default 60)
 	SpellInitiationWillpowerDivisor ConfigInt   `yaml:"SpellInitiationWillpowerDivisor"` // Willpower / this = initiation bonus (default 4)
 	SpellInitiationSkillFactor      ConfigInt   `yaml:"SpellInitiationSkillFactor"`      // Spellcasting level * this = initiation bonus (default 5)
@@ -281,6 +287,7 @@ func (b *Balance) Validate() {
 	b.validateProgression()
 	b.validateMobs()
 	b.validateSpells()
+	b.validateDiscovery()
 	b.validateShops()
 	b.validateMisc()
 }

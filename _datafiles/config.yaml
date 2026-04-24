@@ -781,6 +781,9 @@ Balance:
   #   chance = 5 / (1 + 3×0.1) = 3.8%
   SpellDiscoveryBaseChance: 5.0
   SpellDiscoveryDecayRate: 0.1
+  DiscoveryPerceptionScale: 200.0
+  DiscoverySkillScale: 100.0
+  DiscoveryMaxDecayOffset: 0.8
   #
   # Initiation: chance to successfully begin casting.
   # Formula: chance = Base + Willpower/WillpowerDivisor + SpellcastingLevel × SkillFactor
