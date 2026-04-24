@@ -8,6 +8,7 @@ groups:
   - bird
   - predator
 archetype: fighting
+behavior_archetype: generic_fighter
 idlecommands:
   - 'emote circles above the clearing on broad wings'
   - ''

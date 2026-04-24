@@ -1,6 +1,7 @@
 mobid: 81
 zone: Dustwalk Road
 archetype: fighting
+behavior_archetype: generic_fighter
 statpool: 6
 itemdropchance: 5
 hostile: true

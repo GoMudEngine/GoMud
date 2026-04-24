@@ -7,6 +7,7 @@ groups:
   - animal
   - canine
 archetype: fighting
+behavior_archetype: prey
 idlecommands:
   - 'emote watches from the undergrowth, ears flat and alert'
   - ''

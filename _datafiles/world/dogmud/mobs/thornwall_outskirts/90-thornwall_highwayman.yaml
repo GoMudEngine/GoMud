@@ -1,6 +1,7 @@
 mobid: 90
 zone: Thornwall Outskirts
 archetype: fighting
+behavior_archetype: generic_fighter
 statpool: 12
 itemdropchance: 12
 hostile: true

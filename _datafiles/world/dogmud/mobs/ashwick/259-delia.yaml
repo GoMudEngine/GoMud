@@ -1,5 +1,6 @@
 mobid: 259
 zone: Ashwick
+behavior_archetype: noncombat_questgiver
 statpool: 36
 hostile: false
 charm_immune: true

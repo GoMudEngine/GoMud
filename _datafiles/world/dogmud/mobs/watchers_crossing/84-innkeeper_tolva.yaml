@@ -1,5 +1,6 @@
 mobid: 84
 zone: Watchers Crossing
+behavior_archetype: noncombat_questgiver
 statpool: 100
 itemdropchance: 0
 hostile: false

@@ -5,6 +5,7 @@ itemdropchance: 5
 hostile: true
 maxwander: 1
 archetype: fighting
+behavior_archetype: generic_fighter
 groups:
   - animal
   - boar
