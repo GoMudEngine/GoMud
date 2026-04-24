@@ -434,9 +434,16 @@ func handleMobFoldCasting(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 			castSkillLevel := mob.Character.GetSkillLevel(skills.Spellcasting)
 			knownCount := len(mob.Character.SpellBook)
 			bal := configs.GetBalanceConfig()
-			discoveryChance := float64(bal.SpellDiscoveryBaseChance) / (1.0 + float64(knownCount)*float64(bal.SpellDiscoveryDecayRate))
+			perception := mob.Character.Stats.Perception.ValueAdj
+			traditionalChance := configs.DiscoveryChance(configs.DiscoveryParams{
+				Base:       float64(bal.SpellDiscoveryBaseChance),
+				Decay:      float64(bal.SpellDiscoveryDecayRate),
+				Known:      knownCount,
+				Perception: perception,
+				Skill:      castSkillLevel,
+			})
 			// Traditional school discovery.
-			if util.Rand(100) < int(discoveryChance) {
+			if util.Rand(100) < int(traditionalChance) {
 				eligible := spells.GetEligibleSpells(mob.Character.SpellBook, castSkillLevel,
 					spells.SchoolElemental, spells.SchoolEnhancement, spells.SchoolMental, spells.SchoolVital)
 				if len(eligible) > 0 {
@@ -447,7 +454,14 @@ func handleMobFoldCasting(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 			// Manifestation school discovery — only if mob has manifestation skill.
 			manifestSkillLevel := mob.Character.GetSkillLevel(skills.Manifestation)
 			if manifestSkillLevel > 0 {
-				if util.Rand(100) < int(discoveryChance) {
+				manifestChance := configs.DiscoveryChance(configs.DiscoveryParams{
+					Base:       float64(bal.SpellDiscoveryBaseChance),
+					Decay:      float64(bal.SpellDiscoveryDecayRate),
+					Known:      knownCount,
+					Perception: perception,
+					Skill:      manifestSkillLevel,
+				})
+				if util.Rand(100) < int(manifestChance) {
 					eligible := spells.GetEligibleSpells(mob.Character.SpellBook, manifestSkillLevel,
 						spells.SchoolManifestation)
 					if len(eligible) > 0 {
