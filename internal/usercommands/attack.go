@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
-	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
@@ -13,25 +12,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
-	"github.com/GoMudEngine/GoMud/internal/util"
 )
-
-// attackTryMobBehavior is a test-swappable wrapper around behaviortree.TryMobBehavior.
-var attackTryMobBehavior = behaviortree.TryMobBehavior
-
-// fireAttackRejected fires the player_attack_rejected btree event on the
-// given mob, subject to round-based dedupe on Character.LastAttackRejectedRound.
-func fireAttackRejected(mob *mobs.Mob, userId int) {
-	currentRound := util.GetRoundCount()
-	if currentRound <= mob.Character.LastAttackRejectedRound {
-		return
-	}
-	mob.Character.LastAttackRejectedRound = currentRound
-	attackTryMobBehavior(mob.InstanceId, behaviortree.EventContext{
-		EventType: "player_attack_rejected",
-		UserId:    userId,
-	})
-}
 
 func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
@@ -179,7 +160,7 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 			if m.IsNonCombatant() {
 				user.SendText(fmt.Sprintf(`You can't attack <ansi fg="mobname">%s</ansi>.`, m.Character.Name))
-				fireAttackRejected(m, user.UserId)
+				mobs.FireAttackRejected(m, user.UserId)
 				return true, nil
 			}
 
