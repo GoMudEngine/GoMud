@@ -1,5 +1,6 @@
 mobid: 329
 zone: North Road
+behavior_archetype: noncombat_questgiver
 statpool: 100
 hostile: false
 non_combatant: true
