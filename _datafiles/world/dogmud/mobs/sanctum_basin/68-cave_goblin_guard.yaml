@@ -4,6 +4,7 @@ archetype: fighting
 statpool: 5
 itemdropchance: 15
 hostile: true
+behavior_archetype: generic_fighter
 maxwander: 1
 groups:
   - goblins

@@ -4,6 +4,7 @@ archetype: casting
 statpool: 120
 hostile: false
 non_combatant: true
+behavior_archetype: noncombat_shopkeeper
 charm_immune: true
 maxwander: 0
 idlecommands:
