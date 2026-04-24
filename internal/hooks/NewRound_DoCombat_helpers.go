@@ -301,8 +301,15 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 		castSkillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
 		knownCount := len(user.Character.SpellBook)
 		bal := configs.GetBalanceConfig()
-		discoveryChance := float64(bal.SpellDiscoveryBaseChance) / (1.0 + float64(knownCount)*float64(bal.SpellDiscoveryDecayRate))
-		if util.Rand(100) < int(discoveryChance) {
+		perception := user.Character.Stats.Perception.ValueAdj
+		traditionalChance := configs.DiscoveryChance(configs.DiscoveryParams{
+			Base:       float64(bal.SpellDiscoveryBaseChance),
+			Decay:      float64(bal.SpellDiscoveryDecayRate),
+			Known:      knownCount,
+			Perception: perception,
+			Skill:      castSkillLevel,
+		})
+		if util.Rand(100) < int(traditionalChance) {
 			eligible := spells.GetEligibleSpells(user.Character.SpellBook, castSkillLevel,
 				spells.SchoolElemental, spells.SchoolEnhancement, spells.SchoolMental, spells.SchoolVital)
 			if len(eligible) > 0 {
@@ -320,7 +327,14 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 		// Only runs if the player has any manifestation skill.
 		manifestSkillLevel := user.Character.GetSkillLevel(skills.Manifestation)
 		if manifestSkillLevel > 0 {
-			if util.Rand(100) < int(discoveryChance) {
+			manifestChance := configs.DiscoveryChance(configs.DiscoveryParams{
+				Base:       float64(bal.SpellDiscoveryBaseChance),
+				Decay:      float64(bal.SpellDiscoveryDecayRate),
+				Known:      knownCount,
+				Perception: perception,
+				Skill:      manifestSkillLevel,
+			})
+			if util.Rand(100) < int(manifestChance) {
 				eligible := spells.GetEligibleSpells(user.Character.SpellBook, manifestSkillLevel,
 					spells.SchoolManifestation)
 				if len(eligible) > 0 {
