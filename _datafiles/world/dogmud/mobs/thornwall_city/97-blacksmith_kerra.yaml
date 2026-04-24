@@ -1,6 +1,7 @@
 mobid: 97
 zone: Thornwall City
 archetype: fighting
+behavior_archetype: noncombat_shopkeeper
 statpool: 66
 itemdropchance: 0
 hostile: false
