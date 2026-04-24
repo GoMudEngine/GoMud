@@ -1,4 +1,5 @@
 mobid: 230
+behavior_archetype: prey
 zone: Ironwind Steppe
 statpool: 25
 itemdropchance: 0
