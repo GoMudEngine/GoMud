@@ -11,27 +11,45 @@ steps:
   - id: mutation
     description: "Visit Merchant Adela on Market Street and buy equipment. Type hint for directions."
     hint: "From the Academy Hall, go south (1 south). Type list to see her wares, then buy something."
+  - id: shopping_arrive
+    description: "Arrive at Merchant Adela's stall to learn about shopping."
+    hint: "Merchant Adela is on Market Street, south from the Academy Hall."
   - id: shopping_buy
     description: "Equip what you just bought. Type hint if you need help."
     hint: "Type wield [weapon] or wear [armor] to put on your purchase. Type inventory to see what you have."
   - id: shopping_equip
     description: "Defeat the training dummy in the Training Yard. Type hint for directions."
     hint: "From Market Street, go north then east (1 north, 1 east). Type attack dummy to start the fight."
+  - id: combat_arrive
+    description: "Arrive at the Training Yard to practice combat."
+    hint: "The Training Yard is north-east from Market Street."
   - id: combat_defeat
     description: "Visit Korvath at The Forge and craft an iron dagger."
     hint: "From the Training Yard, go south (1 south). Korvath will give you materials. Type craft iron dagger."
+  - id: crafting_arrive
+    description: "Arrive at The Forge for smithing lessons."
+    hint: "The Forge is south from the Training Yard. Talk to Korvath."
   - id: crafting_craft
     description: "Visit Alchemist Yenna and brew a healing salve."
     hint: "From The Forge, go west, west, north, west (3 west, 1 north). Yenna will give you materials. Type craft healing salve."
+  - id: alchemy_arrive
+    description: "Arrive at the Alchemist's Workshop for brewing lessons."
+    hint: "From The Forge, go west, west, north, west to Alchemist Yenna's workshop."
   - id: alchemy_craft
     description: "Visit Wilderness Guide Fen and forage for materials."
     hint: "From the Alchemist's Workshop, go south (1 south). Type forage to search the area."
+  - id: wilderness_arrive
+    description: "Arrive at the West Meadow for wilderness lessons."
+    hint: "From the Alchemist's Workshop, go south to the West Meadow. Talk to Fen."
   - id: wilderness_forage
     description: "Track a creature in the wilderness."
     hint: "Stay in the West Meadow. Type track to read the signs."
   - id: wilderness_track
     description: "Visit Elder Saris at the Observatory and cast a spell."
     hint: "From the West Meadow, go north, north (2 north). Type cast conviction-spike echo."
+  - id: magic_arrive
+    description: "Arrive at the Observatory for spellcraft lessons."
+    hint: "From the West Meadow, go north twice to the Observatory. Talk to Elder Saris."
   - id: magic_cast
     description: "Defeat the Aberrant Chrysalis in the cave."
     hint: "From the Observatory, go east, east, east, east (4 east) into the Boss Cave. Defeat the Aberrant."
