@@ -4,6 +4,7 @@ package behaviortree
 // actAttack, actFlee, actCast, actAddBuff, actRemoveBuff
 
 import (
+	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -29,7 +30,14 @@ func actAttack(params map[string]any, ctx *EvalContext) Result {
 		}
 		targetUserId = players[util.Rand(len(players))]
 	}
-	mob.Character.SetAggro(targetUserId, 0, characters.DefaultAttack)
+	// Promote to SurpriseAttack when hidden so the combat pipeline
+	// applies the backstab crit + "*[SURPRISE ATTACK]*" prefix.
+	// Mirrors the pattern in mobcommands/attack.go.
+	aggroType := characters.DefaultAttack
+	if mob.Character.HasBuffFlag(buffs.Hidden) {
+		aggroType = characters.SurpriseAttack
+	}
+	mob.Character.SetAggro(targetUserId, 0, aggroType)
 	return Success
 }
 
