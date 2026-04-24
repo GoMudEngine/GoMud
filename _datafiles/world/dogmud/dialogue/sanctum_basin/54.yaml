@@ -1,0 +1,49 @@
+mobid: 54
+zone: Sanctum Basin
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Well now. Another soul wandering the wilds?"
+      - "The forest speaks to those who listen. Are you one of them?"
+      - "Welcome, traveler. What brings you to the wild places?"
+
+  # System mention: foraging
+  - keywords: ["forage", "food", "gather", "herbs", "plants", "wild edibles"]
+    responses:
+      - "The land provides if you know where to look. Edible plants grow where the water runs sweet. Mushrooms favor the dark and damp. Berries cluster on the south slope of hills."
+      - "Foraging is patience and knowledge. Know what you're looking for before you look. Eat the wrong plant and you'll wish you hadn't."
+      - "I've lived off the land for forty years. Every season has something to offer. You just have to see it."
+    moodChange: friendly
+
+  # System mention: tracking
+  - keywords: ["tracking", "track", "follow", "trail", "traces", "hunting", "sign"]
+    responses:
+      - "A trail is a story if you know how to read it. Broken branches, disturbed earth, blood on stone. Each tells you something — which way, how fast, how long ago."
+      - "Tracking is the wilderness asking your permission to follow. The land remembers everything. A boot print lasts days. A scuff in bark, weeks. You just have to learn to see."
+      - "Anything that moves leaves a trace. Deer run one way when they're fleeing. Another way when they feed. The difference is written on the ground."
+
+  # System mention: pack tactics
+  - keywords: ["pack", "pack tactics", "group fight", "flank", "coordinated", "teamwork"]
+    responses:
+      - "A lone wolf dies. A pack eats. In the wilds, strength is numbers. When you fight with allies, you hit harder. When they hit, you strike from behind. That's how packs win."
+      - "Wolves don't hunt a stag alone. Neither should you. When your companions strike, you circle. When you strike, they have your back. That's the old way. That's the smart way."
+    moodChange: friendly
+
+  # System mention: fleeing/tactics
+  - keywords: ["flee", "run", "escape", "evade", "leave", "retreat", "withdraw"]
+    responses:
+      - "A hunter who stands when the wounded prey turns is a fool. Knowing when to run is as important as knowing when to fight. The wilderness respects the survivor."
+      - "Fleeing is not shameful. It's sense. The smartest hunter lives to hunt another day. The reckless one feeds the vultures."
+      - "I've run from bears three times. I'll run from a fourth if it comes. Pride is a weight you carry into the grave."
+
+  - keywords: [""]
+    responses:
+      - "The wild has taught me patience. But not for endless chatter."
+      - "Speak or be silent. Both have their place."
+
+tree:
+  root:
+    text: "I am Fen, Wilderness Guide. The deep places are my home. If you seek to survive them, listen well."
+    hints: "You could ask about foraging, tracking, pack tactics, or fleeing."
