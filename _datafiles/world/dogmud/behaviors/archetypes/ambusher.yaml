@@ -1,0 +1,35 @@
+# ambusher archetype
+#
+# Hit-and-fade predator. Cycle:
+#   1. Mob starts hidden (buff 9) via buffids in mob YAML.
+#   2. player_enter while Hidden → surprise strike (attack).
+#   3. Combat cancels buff 9 via CancelIfCombat flag.
+#   4. mob_hurt → flee to adjacent room.
+#   5. In new room (not in combat) → mob_idle fires → re-apply buff 9.
+#   6. Cycle back to step 1 when next player enters.
+#
+# Spec: docs/superpowers/plans/2026-04-24-ironwind-steppe-mob-audit.md
+
+tree:
+  type: selector
+  children:
+    # Surprise strike when hidden and a player arrives
+    - type: sequence
+      event: player_enter
+      children:
+        - type: condition
+          check: mob_has_buff
+          buff_id: 9
+        - type: action
+          do: attack
+
+    # Flee after being hit (the ambush has cost us our cover)
+    - type: action
+      event: mob_hurt
+      do: flee
+
+    # Re-apply Hidden when idle (mob_idle only fires out-of-combat)
+    - type: action
+      event: mob_idle
+      do: add_buff
+      buff_id: 9
