@@ -15,7 +15,7 @@ func setupDiscoveryTestBalance(t *testing.T) {
 		DiscoverySkillScale:      100.0,
 		DiscoveryMaxDecayOffset:  0.8,
 	}
-	setBalanceForTest(b)
+	setBalanceForTest(t, b)
 }
 
 func TestDiscoveryChance(t *testing.T) {
@@ -91,7 +91,7 @@ func TestDiscoveryChance_ReadsConfiguredBalance(t *testing.T) {
 		DiscoverySkillScale:      100.0,
 		DiscoveryMaxDecayOffset:  0.0, // cap at 0 → no offset ever applied
 	}
-	setBalanceForTest(b)
+	setBalanceForTest(t, b)
 
 	// With MaxOffset=0, Per+Skill irrelevant; pure baseline formula.
 	got := DiscoveryChance(DiscoveryParams{
