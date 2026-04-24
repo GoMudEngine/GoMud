@@ -1,6 +1,8 @@
 mobid: 271
 zone: Thornwall City
 archetype: fighting
+behavior_archetype: generic_fighter
+routine: thornwall_chrysalis
 statpool: 70
 itemdropchance: 0
 hostile: true

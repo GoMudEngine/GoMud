@@ -1,5 +1,6 @@
 mobid: 120
 zone: Thornwall City
+behavior_archetype: noncombat_questgiver
 statpool: 80
 itemdropchance: 0
 hostile: false

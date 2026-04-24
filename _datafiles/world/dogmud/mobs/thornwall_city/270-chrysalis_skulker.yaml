@@ -2,6 +2,8 @@ mobid: 270
 zone: Thornwall City
 buffids: [9]
 archetype: fighting
+behavior_archetype: ambusher
+routine: thornwall_chrysalis
 statpool: 110
 itemdropchance: 10
 hostile: true
