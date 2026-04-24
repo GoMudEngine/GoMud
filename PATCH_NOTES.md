@@ -1,5 +1,42 @@
 # DOGMud Patch Notes
 
+## 2026-04-24 (evening) — Sanctum Basin NPC Audit
+
+### Content
+
+- **Five new NPC dialogue files added to Sanctum Basin.** Comprehensive
+  system-lore dialogue for Combat Trainer Ren (mob 51), Alchemist Yenna
+  (mob 53), Wilderness Guide Fen (mob 54), Basin Warden (mob 56), and
+  Merchant Adela (mob 63).
+  - **Ren (51)**: Rally/warcry rhetoric shouts, companion archetypes
+    (summon/charm/necromancy/conjure), combat mutations, and position
+    mechanics (prone/grapple). Gruff military voice.
+  - **Yenna (53)**: Bandolier potion storage, grenade types (flashbang/
+    firebomb/toxic flask), potion aging phases (fresh/ferment/peak/
+    decline/spoil), and salvage system (material recovery). Dry,
+    matter-of-fact tone.
+  - **Fen (54)**: Foraging (edible plants/mushrooms/berries), tracking
+    (reading trails and signs), pack tactics (coordinated multi-target
+    fights), and fleeing (tactical withdrawal as survival). Weathered,
+    gruff tone.
+  - **Basin Warden (56)**: Aggro creatures (attack on sight, no talking),
+    respawn/grace system (death as learning tool), dungeon pacing (slow
+    approach vs rushing), and challenge scaling (harder deeper). Cautious,
+    protective tone.
+  - **Adela (63)**: Bartering system (trade goods for goods or coin
+    discounts), gossip (news and rumors), encumbrance (carrying weight
+    penalties), and shopping mechanics. Friendly, pragmatic tone.
+
+### Content Standards
+
+- All dialogue hardwraps at 80 characters and uses system-lore language
+  (no raw numbers, themed descriptions, discoverable triggers).
+- Each NPC voice is distinct and thematic to their role. Root greeting
+  text always specifies their name and purpose. Hints list all query
+  keywords.
+- Mood changes on friendly-tier information (companions, gossip,
+  bartering).
+
 ## 2026-04-24 — Discovery Rate Stat Offset
 
 ### Gameplay
