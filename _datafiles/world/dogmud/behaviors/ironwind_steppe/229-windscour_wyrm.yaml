@@ -1,0 +1,24 @@
+# Windscour Wyrm (229) — Two-Phase Apex Boss
+#
+# Phase 1 (HP ≥ 50%): Default combat — slow, devastating base attacks.
+#   Handled entirely by the combat loop's default behavior.
+# Phase 2 (HP < 50%): Enraged — rotates tail-sweep knockdown moves
+#   (trip + bash) on every combat round.
+#
+# No pack behavior — the wyrm is solitary.
+#
+# Tuning: vitality bumped significantly to support the two-phase pacing.
+
+tree:
+  type: selector
+  children:
+    # Phase 2: enraged below 50% HP — tail-sweep / knockdown rotation
+    - type: sequence
+      event: mob_combat_round
+      children:
+        - type: condition
+          check: mob_health_below
+          percent: 50
+        - type: action
+          do: command_best_of
+          commands: ["trip", "bash"]
