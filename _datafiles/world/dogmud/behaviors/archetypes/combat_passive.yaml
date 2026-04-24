@@ -1,0 +1,15 @@
+# combat_passive archetype
+#
+# Can be attacked and will fight back with basic attacks via the default
+# combat loop — but has no special-move tactical tree. Mobs with this
+# archetype never select bash/trip/grapple/kick/taunt/cast specials.
+#
+# Sanctum Basin: training_dummy (65).
+#
+# Intentionally empty tree.
+#
+# Spec: docs/superpowers/specs/2026-04-24-sanctum-basin-mob-audit-design.md
+
+tree:
+  type: selector
+  children: []

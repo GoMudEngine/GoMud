@@ -3,6 +3,7 @@ zone: Sanctum Basin
 archetype: fighting
 statpool: 8
 hostile: true
+behavior_archetype: generic_fighter
 maxwander: 3
 activitylevel: 25
 itemdropchance: 15

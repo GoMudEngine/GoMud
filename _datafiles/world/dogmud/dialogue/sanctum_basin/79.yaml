@@ -63,6 +63,17 @@ patterns:
     responses:
       - "Talk to them? They would not welcome me. The last researcher who entered those tunnels was... well, it did not end well for her. Direct study is not an option."
 
+  - keywords: ["my mutation", "my body", "my change", "new limb", "changed self", "am i changing"]
+    responses:
+      - "You are asking because you have felt it. Good. The Chrysalis-touch varies — some gain reach, some gain resilience, some gain senses they had no name for. The key is: it emerges from what you do repeatedly. Your body shapes itself around your habits."
+      - "I cannot tell you which mutations you will awaken to. I can tell you that combat, repeated magic, and hardship all nudge the body. What emerges depends on the self."
+    moodChange: friendly
+
+  - keywords: ["priest", "faith", "spiritual", "meaning", "why"]
+    responses:
+      - "If you want the spiritual angle on all this — the Chrysalis Priest is in the temple to the east. I study the biology. He studies the meaning. We rarely agree and rarely fight about it."
+      - "You can ask the priest about faith. He asks better questions about it than I do."
+
   - keywords: [""]
     responses:
       - "Is there something else? I should get back to my notes."
@@ -71,7 +82,7 @@ patterns:
 tree:
   root:
     text: "Oh! Hello. Forgive me, I was sketching the cave entrance from up here. Wonderful view. Are you familiar with the tunnels below?"
-    hints: "Try: ask scholar research, ask scholar tunnels, or ask scholar quest."
+    hints: "Try: ask scholar research, ask scholar tunnels, ask scholar quest, or ask scholar about mutations."
     variants:
       - questRequired: ["3-start"]
         questExcluded: ["3-partial"]

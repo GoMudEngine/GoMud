@@ -4,6 +4,7 @@ statpool: 120
 hostile: false
 charm_immune: true
 non_combatant: true
+behavior_archetype: noncombat_shopkeeper
 maxwander: 0
 idlecommands:
   - 'emote straightens a row of items on the display counter'

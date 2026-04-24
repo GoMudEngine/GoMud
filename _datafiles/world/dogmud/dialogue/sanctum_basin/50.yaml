@@ -41,6 +41,25 @@ patterns:
       - "The Basin has its tensions. The Chrysalis does not take sides in conflicts of steel. We tend to those caught in the aftermath."
       - "Violence is a kind of change, too — though rarely the kind we would choose. We do what we can."
 
+  # System mention: mutations (framed as spiritual transformation)
+  - keywords: ["mutation", "mutant", "change", "transform", "body", "flesh"]
+    responses:
+      - "The Chrysalis touches the body as well as the spirit. What the world calls mutation, we call the outward sign of inward change. Neither to be feared nor sought — only witnessed."
+      - "Some are changed by the Chrysalis in visible ways. The priesthood keeps no registry of who bears such marks. It is personal, between the bearer and the silence."
+    moodChange: friendly
+
+  # System mention: spell discovery (framed as revelation)
+  - keywords: ["discovery", "learn", "learning", "revealed", "revelation", "pattern"]
+    responses:
+      - "Patterns reveal themselves to the patient. Repeat a casting often enough, with clear intent, and new patterns crystallize from the work. This is the priesthood's quiet secret."
+      - "The Awakening teaches that nothing is static — not even a spellcaster's repertoire. Practice opens doors that study alone cannot."
+
+  # System mention: faith / conviction
+  - keywords: ["conviction", "faith", "will", "willpower", "resolve"]
+    responses:
+      - "Conviction is the fuel of both spell and sermon. It does not come cheap — and when spent, it takes time to return."
+      - "We teach that conviction regenerates with rest and with righteous action. The body does not separate courage from magic. Neither should you."
+
   - keywords: [""]
     responses:
       - "Speak your question clearly. I am listening."
@@ -49,7 +68,7 @@ patterns:
 tree:
   root:
     text: "Seeker. You have come to the right place at the right time, I think. What weighs on you?"
-    hints: "Try: ask priest chrysalis, ask priest awakening, or ask priest quest."
+    hints: "Try: ask priest chrysalis, ask priest awakening, ask priest mutations, ask priest discovery, ask priest conviction, or ask priest quest."
 
   nodes:
     - id: chrysalis

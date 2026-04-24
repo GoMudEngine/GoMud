@@ -103,6 +103,7 @@ func InitiateCast(actor Actor, spellName, targetName string) CastResult {
 						}
 						if m.IsNonCombatant() {
 							actor.SendText(fmt.Sprintf("You can't target %s with a harmful spell.", m.Character.Name))
+							mobs.FireAttackRejected(m, actor.GetUserId())
 							return CastResult{SpellInfo: spellInfo, NoTarget: true}
 						}
 					}

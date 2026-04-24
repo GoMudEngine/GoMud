@@ -104,5 +104,13 @@ tree:
           text: Find Fen in the West Meadow -- go south from here.
           delay: 4.0
         - type: action
+          do: mob_say
+          mob_id: 53
+          text: >-
+            And if a brew turns on you -- do not throw it out. Type
+            <ansi fg="command">salvage</ansi>. You get reagents back.
+            Waste is mostly impatience.
+          delay: 5.5
+        - type: action
           do: grant_quest
           quest: "1-alchemy_craft"

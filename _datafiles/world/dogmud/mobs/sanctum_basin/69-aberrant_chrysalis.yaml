@@ -4,6 +4,7 @@ archetype: fighting
 statpool: 6
 itemdropchance: 50
 hostile: true
+behavior_archetype: generic_fighter
 maxwander: 0
 groups:
   - aberrant

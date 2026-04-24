@@ -5,6 +5,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 )
 
@@ -35,6 +36,14 @@ func init() {
 		noRoomTree:  make(map[int]bool),
 		archetypes:  make(map[string]Node),
 		noArchetype: make(map[string]bool),
+	}
+	// Register the attack rejection callback so FireAttackRejected can fire btree events
+	mobs.AttackRejectedTryMobBehavior = func(mobInstanceId int, ctx mobs.EventContext) bool {
+		return TryMobBehavior(mobInstanceId, EventContext{
+			EventType: ctx.EventType,
+			UserId:    ctx.UserId,
+			MobId:     ctx.MobId,
+		})
 	}
 }
 

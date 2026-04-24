@@ -1,5 +1,36 @@
 # DOGMud Patch Notes
 
+## 2026-04-24 (evening) — Sanctum Basin Mob Audit + Tutorial Content
+
+### Gameplay
+
+- **Sanctum Basin NPCs now offer tutorial guidance for newer gameplay
+  systems.** Each of the nine non-combat NPCs covers a curated set of
+  topics through their dialogue: ask Korvath about salvage or
+  enchanting, ask Yenna about potion aging or the bandolier, ask Saris
+  about spell discovery or manifestation, ask the Combat Trainer about
+  rally/warcry or companions, ask Fen about tracking or packs, ask the
+  Warden about respawn grace or aggro, ask the Scholar about mutations,
+  ask the Chrysalis Priest about the Awakening, ask Merchant Adela about
+  bartering or encumbrance.
+- **Non-combatants now react when you try to attack them.** Trying to
+  attack (or target with a harmful spell) an NPC who cannot be attacked
+  now triggers an in-character emote from that NPC — a raised eyebrow
+  from a questgiver, a step back from a shopkeeper. Rate-limited to one
+  reaction per NPC per round so companion and party auto-assist cannot
+  spam it.
+
+### Behind the scenes
+
+- Four new behavior archetypes: `noncombat_questgiver`,
+  `noncombat_shopkeeper`, `noncombat_passive`, `combat_passive`. Every
+  Sanctum Basin mob is now tagged with a `behavior_archetype` value.
+  This is the first zone in a larger migration to the archetype system.
+- New btree event `player_attack_rejected` fired from attack.go and
+  from HarmSingle spell rejection in cast.go.
+- All tutorial content is delivered via dialogue YAML `patterns`, which
+  is deterministic and prod-safe (no LLM dependency).
+
 ## 2026-04-24 — Discovery Rate Stat Offset
 
 ### Gameplay

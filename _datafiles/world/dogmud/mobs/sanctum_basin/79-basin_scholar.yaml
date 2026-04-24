@@ -4,6 +4,7 @@ archetype: casting
 statpool: 36
 hostile: false
 non_combatant: true
+behavior_archetype: noncombat_questgiver
 charm_immune: true
 maxwander: 0
 groups:
