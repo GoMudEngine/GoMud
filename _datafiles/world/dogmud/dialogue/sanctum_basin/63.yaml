@@ -1,50 +1,45 @@
 mobid: 63
 zone: Sanctum Basin
-defaultMood: neutral
+defaultMood: friendly
 
 patterns:
   - keywords: ["hello", "hi", "greet", "hey"]
     responses:
-      - "Welcome, traveler! Looking to trade?"
-      - "Hello there. Come to do business?"
-      - "What brings you to my stall today?"
+      - "Hello there. Looking to buy, sell, or just pass the time? All three are welcome."
+      - "Ah, a face I don't know. That always makes my day more interesting."
+      - "Come in, come in. My prices are fair and my gossip is free."
 
-  # System mention: bartering system
-  - keywords: ["barter", "trade", "bargain", "deal", "negotiate", "discount"]
+  # System mention: bartering / haggling
+  - keywords: ["barter", "haggle", "bargain", "discount", "price", "cheaper"]
     responses:
-      - "I don't just deal in coin. Bring me goods and I'll trade. If you're clever, you'll get a better rate than gold would buy."
-      - "Bartering is an art. Some traders add. Some traders cut. I'm fair to those who give me something worth keeping."
-      - "You have wares? I might have coin, or I might offer goods for goods. Let's see what you have."
+      - "Everything's negotiable — within reason. A smooth tongue saves you coin. I'll take offers down to a point. Below that and I lose money, and I don't lose money on purpose."
+      - "Bartering is a skill like any other. The more you practice, the better the deals you get. Try me — but don't insult me."
     moodChange: friendly
 
-  # System mention: gossip / information
-  - keywords: ["gossip", "news", "rumor", "hear", "story", "tale"]
+  # System mention: tavern gossip
+  - keywords: ["gossip", "news", "rumor", "rumors", "hear", "heard"]
     responses:
-      - "I hear things. Merchants always do. You want to know something? Sit for a drink and I'll tell you what I know."
-      - "The roads carry stories the way they carry goods. I've heard tales that would make your hair stand. What's your pleasure?"
-      - "Gossip is good for business. It brings people in. It loosens tongues. I hear more truths at my stall than in temples."
-    moodChange: friendly
+      - "Oh, I hear plenty. The wardens say the warren is getting louder. The priest keeps looking at the southern hills and won't say why. Fen brought back a pelt she couldn't name. Bits and pieces. Listen for yourself."
+      - "Taverns are where the real news is. If you pass one, sit a while. The gossip channel tells you what the whole town is talking about."
 
-  # System mention: encumbrance / carrying capacity
-  - keywords: ["carry", "encumbrance", "load", "heavy", "weight", "burden", "overburdened"]
+  # System mention: encumbrance / carry capacity
+  - keywords: ["carry", "heavy", "encumbrance", "weight", "load", "pack"]
     responses:
-      - "Carrying too much slows you down. Hurts your movement. Makes you sluggish in a fight. Know your limits or pay the price."
-      - "A smart traveler knows what they can carry and stops before that point. The difference between a light pack and a heavy one? Survival."
-      - "I've seen adventurers collapse under their own gear. The stuff you carry should serve you, not bury you. Stop and sell what you can't use."
+      - "Strength sets your carry weight. Overload and you slow down in a fight. A backpack helps — it lightens what it holds. Same for a bandolier. Same for a component bag."
+      - "If you are slogging because your pack is full, sell the junk. That's what my shop is for. Well — half of it. The other half is for the things you actually need."
 
-  # System mention: shopping / buying
-  - keywords: ["buy", "purchase", "sell", "cost", "price", "shop"]
+  # Shop direction
+  - keywords: ["buy", "sell", "shop", "wares", "goods", "stock"]
     responses:
-      - "I have goods and I have prices. Speak to me about buying or selling and we'll talk numbers."
-      - "I'm a merchant. My trade is moving goods between those who have them and those who need them. Fair prices for fair dealings."
-    moodChange: friendly
+      - "I keep a general stock — bandages, basic potions, a few oddments. What I don't carry, Yenna or Korvath probably do."
+      - "If you have something to sell, let me see it. I don't buy junk — actually, I do buy junk. Just don't expect riches for it."
 
   - keywords: [""]
     responses:
-      - "Speak up. I've got other customers waiting."
-      - "What do you want? Coin's ticking."
+      - "Hm? I was mid-thought. Ask again."
+      - "Not quite sure what you mean, dear. Try something specific."
 
 tree:
   root:
-    text: "Adela, at your service. I trade in goods and gossip, both of which are currency in the Basin."
-    hints: "You could ask about bartering, gossip, encumbrance, or shopping."
+    text: "Adela. General goods. I buy, I sell, I gossip. What will it be today?"
+    hints: "You could ask about the shop, bartering, gossip, or carrying gear."

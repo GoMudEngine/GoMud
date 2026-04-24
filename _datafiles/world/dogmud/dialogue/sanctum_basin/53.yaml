@@ -5,45 +5,48 @@ defaultMood: neutral
 patterns:
   - keywords: ["hello", "hi", "greet", "hey"]
     responses:
-      - "Mmm. Yes. What do you need, wanderer?"
-      - "Welcome to my workspace. Mind the bottles. Some of them bite."
-      - "Alchemy waits for no one. What is it?"
+      - "Three drops, not four. Yes? Yes. Welcome. Mind the table — some of the compounds stain."
+      - "Distracted. Sorry. Moment. Yes? What did you need?"
+      - "Ah. A visitor. Good. Don't touch the green flask."
 
-  # System mention: bandolier system
-  - keywords: ["bandolier", "potion belt", "carrying potions", "potion storage"]
+  # System mention: bandolier
+  - keywords: ["bandolier", "carry potion", "potion belt", "vial belt", "slots"]
     responses:
-      - "A bandolier is made for the serious alchemist. It sits at your belt and holds potions like a backpack holds food. Fits more than your hands can carry."
-      - "The bandolier keeps your potions organized and close. Drink from it and the oldest potion comes out first. That's how you avoid waste."
+      - "A potion bandolier keeps vials in reach without digging through a pack. The belt routes any potion you pick up straight to a slot. Worth it if you drink mid-fight. Worth it even if you don't."
+      - "Ah — bandoliers. Yes. Belt-slot item. Picks up potions automatically. Holds a few. Saves your life when the fight is loud and your bag is deep."
     moodChange: friendly
 
-  # System mention: grenades (flashbang, firebomb, toxic flask)
-  - keywords: ["grenade", "flashbang", "firebomb", "toxic flask", "throw"]
+  # System mention: grenades
+  - keywords: ["grenade", "flashbang", "firebomb", "toxic flask", "thrown"]
     responses:
-      - "Grenades are potions with attitude. Flash a room blind. Set fires. Spread poison. They age like any potion — badly thrown, they explode sooner. Well thrown, they explode later."
-      - "A firebomb in the right hand at the right moment ends a fight. A flashbang makes the next fight easier. Toxic fumes in a closed room? Even I wouldn't do that twice."
-      - "Grenades spoil just like potions. Spoiled grenades detonate on their own. Keep them sealed, keep them cool, and throw them while they still work."
+      - "Dangerous work. Flashbangs blind. Firebombs burn. Toxic flasks sicken. I brew all three. They age like potions — do not hoard them."
+      - "Grenades go in the bandolier too. Throw them, don't drink them. I have had to correct this more than once."
 
-  # System mention: potion aging
-  - keywords: ["aging", "age", "ferment", "peak", "decline", "spoil", "bottle"]
+  # System mention: potion aging + toxicity
+  - keywords: ["potion aging", "potion age", "aging", "fresh", "peak", "spoiled", "expire"]
     responses:
-      - "All potions age. They start fresh and weak. Ferment and they grow stronger. Peak is the sweet spot — stable and powerful. Then they decline. Then they spoil and become poison."
-      - "The bottle matters. Clay ages fast. Glass is standard. Sealed phials age slow. Crystalline decanters? Practically eternal. Pick your bottle, mark your calendar, drink on time."
-      - "Potion aging isn't magic gone wrong. It's chemistry running its course. The older it is doesn't mean the stronger — it means the closer to spoiling."
-    moodChange: friendly
+      - "Every potion has a peak. Fresh is weaker than it could be. Peak is best. Decay has already started losing you strength. Spoiled is worse than nothing — it will hurt you. Read the label, if there is one. Ask me if not."
+      - "Toxicity stacks faster than most think. Drink too many in a day and the body rebels — regen slows, perception dulls, dexterity goes wobbly. Space your potions. Pace yourself."
 
-  # System mention: salvage system
-  - keywords: ["salvage", "break down", "salvage kit", "recover materials", "dismantle"]
+  # System mention: salvage after failed craft
+  - keywords: ["salvage", "wasted", "failed", "ruined", "bad batch"]
     responses:
-      - "Salvage is breaking down what you've made and recovering what you can. You might get half the materials back. You might get nothing. The more skilled you are, the better the odds."
-      - "I sell salvage kits for those who want to break things down anywhere. Salvage at a bench? Free. Salvage in the wild? You'll need a kit."
-      - "Not all items salvage. Crafted gear does. Some special finds do. But a rusty dagger the merchant sold you? That's staying rusty."
+      - "Not wasted. If you have the knack, you pull reagents back from a bad batch. The smiths do the same with bent metal. Waste is mostly a failure of patience."
+      - "Salvage is a skill. The better you get, the more you reclaim. And you will have bad batches — it is alchemy, not arithmetic."
+
+  # Shop direction
+  - keywords: ["buy", "sell", "shop", "potion", "reagent", "wares"]
+    responses:
+      - "What is on the table is what I have. Prices are fair. Quantity is limited. No haggling on the rare ones."
+      - "You can buy reagents, simple potions, and an empty bottle or two. Brewing your own is better — if you have the patience for three drops, not four."
 
   - keywords: [""]
     responses:
-      - "I'm busy. Ask something useful or step aside."
-      - "Speak, or don't."
+      - "Mm. Precision, that is the thing."
+      - "Trail off. Snap back. Yes?"
+      - "I was not listening. Again, please."
 
 tree:
   root:
-    text: "I am Yenna. I brew. I distill. I age and study. Most call me the alchemist. Some call me by less polite names after their potions spoil."
-    hints: "You could ask about bandoliers, grenades, potion aging, or salvage."
+    text: "I am Yenna. Alchemy, potions, reagents. Fen sent you for lessons? Good. Three drops, not four."
+    hints: "You could ask about potions, grenades, the bandolier, potion aging, salvage, or the shop."

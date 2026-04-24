@@ -1,49 +1,45 @@
 mobid: 54
 zone: Sanctum Basin
-defaultMood: neutral
+defaultMood: friendly
 
 patterns:
   - keywords: ["hello", "hi", "greet", "hey"]
     responses:
-      - "Well now. Another soul wandering the wilds?"
-      - "The forest speaks to those who listen. Are you one of them?"
-      - "Welcome, traveler. What brings you to the wild places?"
+      - "Good to meet you. Boots dry? The wet grass out there fools half the newcomers."
+      - "Welcome. If you've been in the tunnels, you'll smell of cave. That fades."
+      - "You have the look of someone who's been lost and doesn't want to say so. It's fine. Most of us have been."
 
   # System mention: foraging
-  - keywords: ["forage", "food", "gather", "herbs", "plants", "wild edibles"]
+  - keywords: ["forage", "foraging", "gather", "ingredient", "plant", "herb"]
     responses:
-      - "The land provides if you know where to look. Edible plants grow where the water runs sweet. Mushrooms favor the dark and damp. Berries cluster on the south slope of hills."
-      - "Foraging is patience and knowledge. Know what you're looking for before you look. Eat the wrong plant and you'll wish you hadn't."
-      - "I've lived off the land for forty years. Every season has something to offer. You just have to see it."
+      - "The meadow and the forest edge both yield something, if you know what to look for. I teach the basics — which roots Yenna pays for, which leaves burn in a firebomb, which berries make a traveler sick if eaten raw."
+      - "Foraging is a skill like any other. The more you do it, the better you see the land. Start with what you recognize; build from there."
     moodChange: friendly
 
-  # System mention: tracking
-  - keywords: ["tracking", "track", "follow", "trail", "traces", "hunting", "sign"]
+  # System mention: pack tactics awareness
+  - keywords: ["pack", "wolves", "group", "pack tactics", "bandits together"]
     responses:
-      - "A trail is a story if you know how to read it. Broken branches, disturbed earth, blood on stone. Each tells you something — which way, how fast, how long ago."
-      - "Tracking is the wilderness asking your permission to follow. The land remembers everything. A boot print lasts days. A scuff in bark, weeks. You just have to learn to see."
-      - "Anything that moves leaves a trace. Deer run one way when they're fleeing. Another way when they feed. The difference is written on the ground."
+      - "Nothing dangerous fights alone out here. If you see one wolf, there are three more you don't see. Bandits run in packs. Even the boars hunt in family groups. Plan accordingly."
+      - "A pack will call for help. Hit one, the others hear. Hit one near a camp, the whole camp knows. Pick your ground."
 
-  # System mention: pack tactics
-  - keywords: ["pack", "pack tactics", "group fight", "flank", "coordinated", "teamwork"]
+  # System mention: scent/track
+  - keywords: ["track", "tracking", "scent", "trail", "footprint"]
     responses:
-      - "A lone wolf dies. A pack eats. In the wilds, strength is numbers. When you fight with allies, you hit harder. When they hit, you strike from behind. That's how packs win."
-      - "Wolves don't hunt a stag alone. Neither should you. When your companions strike, you circle. When you strike, they have your back. That's the old way. That's the smart way."
-    moodChange: friendly
+      - "Tracking is watching the world remember what walked through it. Bent grass, broken twigs, clawed bark. Takes practice, but the land keeps records better than most scribes."
+      - "Every creature leaves sign. Rats scratch. Goblins piss on their borders. Trolls break whatever they push past. Learn the difference."
 
-  # System mention: fleeing/tactics
-  - keywords: ["flee", "run", "escape", "evade", "leave", "retreat", "withdraw"]
+  # System mention: fleeing
+  - keywords: ["flee", "run away", "retreat", "escape"]
     responses:
-      - "A hunter who stands when the wounded prey turns is a fool. Knowing when to run is as important as knowing when to fight. The wilderness respects the survivor."
-      - "Fleeing is not shameful. It's sense. The smartest hunter lives to hunt another day. The reckless one feeds the vultures."
-      - "I've run from bears three times. I'll run from a fourth if it comes. Pride is a weight you carry into the grave."
+      - "Running is a tactic, not a failure. If a fight is going wrong, flee. You lose a round of ground but you keep your blood inside you. That trade is almost always worth making."
+      - "The exits out of a fight aren't always obvious. Know your exits before the fight starts. A dead scout is a scout who forgot."
 
   - keywords: [""]
     responses:
-      - "The wild has taught me patience. But not for endless chatter."
-      - "Speak or be silent. Both have their place."
+      - "Hmm. Ask again — different words, maybe."
+      - "Not sure what you mean. The land's honest; try honest words."
 
 tree:
   root:
-    text: "I am Fen, Wilderness Guide. The deep places are my home. If you seek to survive them, listen well."
-    hints: "You could ask about foraging, tracking, pack tactics, or fleeing."
+    text: "Fen. Wilderness guide. I track, I forage, I teach a little of both. What brings you out of the Basin?"
+    hints: "You could ask about foraging, tracking, packs, fleeing, or the wilderness."
