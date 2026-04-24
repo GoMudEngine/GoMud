@@ -388,8 +388,14 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 									// Stage 31.1: Recipe discovery roll
 									bal := configs.GetBalanceConfig()
 									knownCount := len(user.Character.KnownRecipes)
-									discChance := float64(bal.RecipeDiscoveryBaseChance) /
-										(1.0 + float64(knownCount)*float64(bal.RecipeDiscoveryDecayRate))
+									craftSkillLevel := user.Character.GetSkillLevel(skills.SkillTag(recipe.Skill))
+									discChance := configs.DiscoveryChance(configs.DiscoveryParams{
+										Base:       float64(bal.RecipeDiscoveryBaseChance),
+										Decay:      float64(bal.RecipeDiscoveryDecayRate),
+										Known:      knownCount,
+										Perception: user.Character.Stats.Perception.ValueAdj,
+										Skill:      craftSkillLevel,
+									})
 									if util.Rand(100) < int(discChance) {
 										eligible := crafting.GetEligibleRecipes(
 											user.Character.KnownRecipes,
