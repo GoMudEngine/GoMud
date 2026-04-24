@@ -1,0 +1,49 @@
+mobid: 53
+zone: Sanctum Basin
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Mmm. Yes. What do you need, wanderer?"
+      - "Welcome to my workspace. Mind the bottles. Some of them bite."
+      - "Alchemy waits for no one. What is it?"
+
+  # System mention: bandolier system
+  - keywords: ["bandolier", "potion belt", "carrying potions", "potion storage"]
+    responses:
+      - "A bandolier is made for the serious alchemist. It sits at your belt and holds potions like a backpack holds food. Fits more than your hands can carry."
+      - "The bandolier keeps your potions organized and close. Drink from it and the oldest potion comes out first. That's how you avoid waste."
+    moodChange: friendly
+
+  # System mention: grenades (flashbang, firebomb, toxic flask)
+  - keywords: ["grenade", "flashbang", "firebomb", "toxic flask", "throw"]
+    responses:
+      - "Grenades are potions with attitude. Flash a room blind. Set fires. Spread poison. They age like any potion — badly thrown, they explode sooner. Well thrown, they explode later."
+      - "A firebomb in the right hand at the right moment ends a fight. A flashbang makes the next fight easier. Toxic fumes in a closed room? Even I wouldn't do that twice."
+      - "Grenades spoil just like potions. Spoiled grenades detonate on their own. Keep them sealed, keep them cool, and throw them while they still work."
+
+  # System mention: potion aging
+  - keywords: ["aging", "age", "ferment", "peak", "decline", "spoil", "bottle"]
+    responses:
+      - "All potions age. They start fresh and weak. Ferment and they grow stronger. Peak is the sweet spot — stable and powerful. Then they decline. Then they spoil and become poison."
+      - "The bottle matters. Clay ages fast. Glass is standard. Sealed phials age slow. Crystalline decanters? Practically eternal. Pick your bottle, mark your calendar, drink on time."
+      - "Potion aging isn't magic gone wrong. It's chemistry running its course. The older it is doesn't mean the stronger — it means the closer to spoiling."
+    moodChange: friendly
+
+  # System mention: salvage system
+  - keywords: ["salvage", "break down", "salvage kit", "recover materials", "dismantle"]
+    responses:
+      - "Salvage is breaking down what you've made and recovering what you can. You might get half the materials back. You might get nothing. The more skilled you are, the better the odds."
+      - "I sell salvage kits for those who want to break things down anywhere. Salvage at a bench? Free. Salvage in the wild? You'll need a kit."
+      - "Not all items salvage. Crafted gear does. Some special finds do. But a rusty dagger the merchant sold you? That's staying rusty."
+
+  - keywords: [""]
+    responses:
+      - "I'm busy. Ask something useful or step aside."
+      - "Speak, or don't."
+
+tree:
+  root:
+    text: "I am Yenna. I brew. I distill. I age and study. Most call me the alchemist. Some call me by less polite names after their potions spoil."
+    hints: "You could ask about bandoliers, grenades, potion aging, or salvage."
