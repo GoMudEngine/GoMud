@@ -1,7 +1,6 @@
 package configs
 
 import (
-	"math"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -100,5 +99,4 @@ func TestDiscoveryChance_ReadsConfiguredBalance(t *testing.T) {
 	})
 	want := 5.0 / (1.0 + 10.0*0.1) // 2.5
 	assert.InDelta(t, want, got, 0.01)
-	_ = math.Abs // silence unused-import if compiler is picky
 }

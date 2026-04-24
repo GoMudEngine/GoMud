@@ -28,31 +28,15 @@ func DiscoveryChance(p DiscoveryParams) float64 {
 	maxOffset := float64(bal.DiscoveryMaxDecayOffset)
 
 	perContrib := (float64(p.Perception) - 100.0) / perScale
-	if perContrib < 0 {
-		perContrib = 0
-	}
-	if perContrib > 1 {
-		perContrib = 1
-	}
+	perContrib = max(0, min(1, perContrib))
 
 	skillContrib := float64(p.Skill) / skillScale
-	if skillContrib < 0 {
-		skillContrib = 0
-	}
-	if skillContrib > 1 {
-		skillContrib = 1
-	}
+	skillContrib = max(0, min(1, skillContrib))
 
-	offset := 1.0 - (1.0-perContrib)*(1.0-skillContrib)
-	if offset > maxOffset {
-		offset = maxOffset
-	}
+	offset := min(maxOffset, 1.0-(1.0-perContrib)*(1.0-skillContrib))
 
 	effDecay := p.Decay * (1.0 - offset)
 
-	known := p.Known
-	if known < 0 {
-		known = 0
-	}
+	known := max(0, p.Known)
 	return p.Base / (1.0 + float64(known)*effDecay)
 }
