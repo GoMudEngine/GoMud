@@ -121,7 +121,7 @@ func (b *Balance) validateMisc() {
 
 	// ── CHARACTER MANAGEMENT ────────────────────────────────────────────────
 	if b.CharacterRenameCooldownHours < 0 {
-		b.CharacterRenameCooldownHours = 168
+		b.CharacterRenameCooldownHours = 0
 	}
 
 	// ── CARRY CAPACITY ──────────────────────────────────────────────────────
