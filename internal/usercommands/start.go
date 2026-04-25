@@ -48,6 +48,9 @@ func Start(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			return true, nil
 		}
 
+		// Signup sets Character.Name = Username as a placeholder; this prompt
+		// is how the player replaces it. Prevent them from just re-entering
+		// their account Username (which would leave the placeholder unchanged).
 		if strings.EqualFold(question.Response, user.Username) {
 			user.SendText(`Your username cannot match your character name!`)
 			question.RejectResponse()
