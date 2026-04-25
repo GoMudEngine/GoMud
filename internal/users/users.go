@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -514,38 +513,7 @@ func SearchOfflineUsers(searchFunc func(u *UserRecord) bool) {
 }
 
 func ValidateName(name string) error {
-
-	validation := configs.GetValidationConfig()
-
-	if len(name) < int(validation.NameSizeMin) || len(name) > int(validation.NameSizeMax) {
-		return fmt.Errorf("name must be between %d and %d characters long", validation.NameSizeMin, validation.NameSizeMax)
-	}
-
-	if validation.NameRejectRegex != `` {
-		if !regexp.MustCompile(validation.NameRejectRegex.String()).MatchString(name) {
-			return errors.New(validation.NameRejectReason.String())
-		}
-	}
-
-	if bannedPattern, ok := configs.GetConfig().IsBannedName(name); ok {
-		return errors.New(`that username matched the prohibited name pattern: "` + bannedPattern + `"`)
-	}
-
-	for _, mobName := range mobs.GetAllMobNames() {
-		if strings.EqualFold(mobName, name) {
-			return errors.New("that username is in use")
-		}
-	}
-
-	if Exists(name) {
-		return errors.New("that username is in use")
-	}
-
-	if CompanionNameExists(name) {
-		return errors.New("that name is in use by a companion")
-	}
-
-	return nil
+	return ValidateActorName(name, ValidateActorOpts{})
 }
 
 func ValidatePassword(pw string) error {
