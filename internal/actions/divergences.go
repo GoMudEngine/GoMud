@@ -32,7 +32,7 @@ var userOnlyCommands = map[string]string{
 	"questtoken":  "admin",
 	"redescribe":  "admin",
 	"reload":      "admin",
-	"rename":      "admin",
+	"renameitem":  "admin",
 	"room":        "admin",
 	"server":      "admin",
 	"setmotd":     "admin",

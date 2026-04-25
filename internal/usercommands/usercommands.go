@@ -147,7 +147,7 @@ var (
 		`reply`:       {Reply, true, true, false},
 		`remove`:      {Remove, false, false, false},  // Can't remove equipment in combat
 		`report`:      {Report, true, true, false},
-		`rename`:      {Rename, false, true, true},    // Admin only
+		`renameitem`:  {Rename, false, true, true},    // Admin only — renames an item in inventory
 		`redescribe`:  {Redescribe, false, true, true}, // Admin only
 		`room`:        {Room, false, true, true},       // Admin only
 		`save`:        {Save, true, true, false},
