@@ -1069,3 +1069,87 @@ func TestSaveAllUsers(t *testing.T) {
 	// Should not panic even though file paths don't exist
 	SaveAllUsers(true)
 }
+
+// ─── RenameUser ───────────────────────────────────────────────────────────
+
+// seedActiveUser injects a single UserRecord into the global userManager and
+// returns the record. The seeded entry is removed when the test ends via
+// t.Cleanup. Username is stored lowercase in the Usernames map (matching the
+// real engine convention).
+func seedActiveUser(t *testing.T, userId int, name string) *UserRecord {
+	t.Helper()
+
+	usernameLower := strings.ToLower(name)
+
+	u := &UserRecord{
+		UserId:   userId,
+		Username: name,
+		Role:     RoleUser,
+		Character: &characters.Character{
+			Name: name,
+		},
+	}
+
+	userManager.mu.Lock()
+	origUser, hadUser := userManager.Users[userId]
+	origId, hadUsername := userManager.Usernames[usernameLower]
+	userManager.Users[userId] = u
+	userManager.Usernames[usernameLower] = userId
+	userManager.mu.Unlock()
+
+	t.Cleanup(func() {
+		userManager.mu.Lock()
+		if hadUser {
+			userManager.Users[userId] = origUser
+		} else {
+			delete(userManager.Users, userId)
+		}
+		if hadUsername {
+			userManager.Usernames[usernameLower] = origId
+		} else {
+			delete(userManager.Usernames, usernameLower)
+		}
+		userManager.mu.Unlock()
+	})
+
+	return u
+}
+
+func TestRenameUser_Success(t *testing.T) {
+	u := seedActiveUser(t, 100, "Alice")
+
+	if err := RenameUser(u, "Bobbi"); err != nil {
+		t.Fatalf("expected nil err, got %v", err)
+	}
+	if u.Username != "Bobbi" {
+		t.Errorf("Username = %q, want Bobbi", u.Username)
+	}
+	if u.Character.Name != "Bobbi" {
+		t.Errorf("Character.Name = %q, want Bobbi", u.Character.Name)
+	}
+
+	// Old name freed from index:
+	userManager.mu.RLock()
+	_, aliceExists := userManager.Usernames["alice"]
+	bobbiId := userManager.Usernames["bobbi"]
+	userManager.mu.RUnlock()
+
+	if aliceExists {
+		t.Error("expected alice to be freed from the Usernames index")
+	}
+	if bobbiId != 100 {
+		t.Errorf("bobbi should resolve to userId 100, got %d", bobbiId)
+	}
+}
+
+func TestRenameUser_NameAlreadyClaimed(t *testing.T) {
+	seedActiveUser(t, 200, "Alice")
+	other := seedActiveUser(t, 201, "Charlie")
+
+	if err := RenameUser(other, "Alice"); err == nil {
+		t.Fatal("expected error renaming to claimed name, got nil")
+	}
+	if other.Username != "Charlie" {
+		t.Errorf("Username should be untouched, got %q", other.Username)
+	}
+}

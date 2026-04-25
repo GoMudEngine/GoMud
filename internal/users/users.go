@@ -693,3 +693,24 @@ func FindUserId(username string) int {
 	userid, _ := idx.FindByUsername(username)
 	return int(userid)
 }
+
+// RenameUser atomically updates Username + Character.Name + the Usernames
+// index under the manager lock. The caller is responsible for calling
+// SaveUser (which writes to the existing UserId-keyed file — no disk rename
+// needed) and for setting LastRenameAt before saving.
+func RenameUser(u *UserRecord, newName string) error {
+	userManager.mu.Lock()
+	defer userManager.mu.Unlock()
+
+	oldName := u.Username
+	if _, exists := userManager.Usernames[strings.ToLower(newName)]; exists {
+		return errors.New("name was just claimed")
+	}
+	delete(userManager.Usernames, strings.ToLower(oldName))
+	userManager.Usernames[strings.ToLower(newName)] = u.UserId
+	u.Username = newName
+	if u.Character != nil {
+		u.Character.Name = newName
+	}
+	return nil
+}
