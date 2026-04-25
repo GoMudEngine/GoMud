@@ -168,18 +168,31 @@ After the planning document, remind the user:
 > convenience):
 >
 > ```
-> [ ] Walked every room. Each title and description reads cleanly.
-> [ ] Verified every exit. Every room reachable.
-> [ ] No `mapsymbol`/`maplegend` set on non-landmark rooms.
-> [ ] Cartesian consistency: no overlapping (X,Y,Z) within zone or
->     against `docs/coordinate_map.md`. Update coordinate_map.md
->     with the new zone's coordinates.
-> [ ] Fought ≥1 mob of each combat archetype used in the zone.
-> [ ] Killed at least one mob and looted the corpse.
-> [ ] Identified at least one zone-specific item.
-> [ ] Triggered any non-combat archetype interaction worth testing.
-> [ ] No instance saves committed.
-> [ ] No stale instance saves blocking template edits.
+> [ ] Walked every room. Each title and description reads cleanly (no
+>     missing punctuation, broken ANSI tags, dropped sentences).
+> [ ] Verified every exit. Every room reachable; no one-way dead-ends
+>     that weren't intentional.
+> [ ] No `mapsymbol`/`maplegend` set on non-landmark rooms (those break
+>     the mini-map). Restart server, check the map renders cleanly.
+> [ ] Cartesian consistency: ran `map` from each room (or from a few
+>     spread-out rooms) and confirmed no two rooms in the new zone
+>     overlap. Cross-referenced `docs/coordinate_map.md` to confirm no
+>     new-zone room shares (X,Y,Z) with an adjacent existing zone's
+>     rooms. Update `docs/coordinate_map.md` with the new zone's
+>     coordinates as part of this step.
+> [ ] Fought ≥1 mob of each combat archetype used in the zone. Confirm
+>     the archetype actually drives the behavior you expected (e.g., a
+>     `tank_taunter` actually taunts, an `ambusher` actually ambushes).
+> [ ] Killed at least one mob and looted the corpse. Spawn loot drops
+>     fire correctly.
+> [ ] Identified at least one zone-specific item. Stats render cleanly,
+>     no raw numbers leak into descriptions.
+> [ ] Triggered any non-combat archetype interaction worth testing
+>     (questgiver dialogue, shopkeeper buy/sell, prey flee).
+> [ ] No instance saves committed: rooms.instances/<zone>/,
+>     mobs.instances/, shops/<zone>/ are NOT in `git status`.
+> [ ] No stale instance saves blocking template edits — see CLAUDE.md
+>     "Room Instance Saves" SOP.
 > [ ] go build ./... clean. go test ./... clean.
 > ```
 >
