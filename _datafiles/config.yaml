@@ -829,6 +829,11 @@ Balance:
   EnchantRemovalPenaltyRounds: 50   # Rounds of withdrawal debuff after disenchant
   EnchantMaxTier: 4                 # Maximum tier (tiers 0–4 = 5 levels total)
 
+  # ── CHARACTER MANAGEMENT ────────────────────────────────────────────────────
+  # Hours between player rename uses. 0 disables the cooldown (rename
+  # anytime). Default 168 (7 real-time days).
+  CharacterRenameCooldownHours: 168
+
   # ── MOB MUTATIONS ──────────────────────────────────────────────────────────
   MobMutationEnabled: true   # Mobs can acquire mutations through combat
   MobMutationRate: 0.3       # Mutation progress rate vs players (default 0.3)
