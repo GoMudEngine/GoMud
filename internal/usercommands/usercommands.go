@@ -80,7 +80,8 @@ var (
 		`consider`:    {Consider, true, true, false},
 		`deafen`:      {Deafen, true, true, true}, // Admin only
 		`devtool`:     {Devtool, false, true, true}, // Admin only
-		`default`:     {Default, false, true, false},
+		`default`:          {Default, false, true, false},
+		`deletecharacter`:  {DeleteCharacter, false, false, false}, // Player account deletion
 		`defuse`:      {Defuse, false, true, false},
 		`disenchant`:  {Disenchant, false, false, false}, // Can't disenchant in combat
 		`dismiss`:     {Dismiss, false, true, false},
