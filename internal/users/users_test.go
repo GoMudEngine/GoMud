@@ -2,10 +2,13 @@ package users
 
 import (
 	"os"
+	"path/filepath"
+	"strconv"
 	"strings"
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
@@ -1151,5 +1154,43 @@ func TestRenameUser_NameAlreadyClaimed(t *testing.T) {
 	}
 	if other.Username != "Charlie" {
 		t.Errorf("Username should be untouched, got %q", other.Username)
+	}
+}
+
+// ─── RemoveUserAndDisconnect ──────────────────────────────────────────────────
+
+func TestRemoveUserAndDisconnect_FreesName(t *testing.T) {
+	u := seedActiveUser(t, 300, "Doomed")
+	_ = u
+
+	if err := RemoveUserAndDisconnect(300); err != nil {
+		t.Fatalf("expected nil err, got %v", err)
+	}
+
+	// Username index must be freed
+	userManager.mu.RLock()
+	_, stillThere := userManager.Usernames["doomed"]
+	userManager.mu.RUnlock()
+	if stillThere {
+		t.Error("expected 'doomed' to be removed from Usernames map")
+	}
+
+	// File deletion: T12's helper also tries to delete the on-disk file
+	// (keyed by UserId). For tests, the file may not exist (we never
+	// wrote it). The helper should treat ENOENT as non-fatal.
+	path := filepath.Join(string(configs.GetFilePathsConfig().DataFiles), "users", strconv.Itoa(300)+".yaml")
+	if _, err := os.Stat(path); !os.IsNotExist(err) {
+		// If it exists, that's surprising for a test fixture. Allow either:
+		// doesn't exist (expected) or got cleaned up by the helper.
+		t.Errorf("user file unexpectedly present after delete: stat err=%v", err)
+	}
+}
+
+func TestRemoveUserAndDisconnect_NotFound(t *testing.T) {
+	cleanup := seedRegistry()
+	defer cleanup()
+
+	if err := RemoveUserAndDisconnect(99999); err == nil {
+		t.Fatal("expected error for unknown userId, got nil")
 	}
 }
