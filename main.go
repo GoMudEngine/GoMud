@@ -1093,6 +1093,12 @@ func loadAllDataFiles(isReload bool) {
 	items.LoadDataFiles()
 	species.LoadDataFiles()
 	mobs.LoadDataFiles()
+	mobs.AuditMobNameCollisions(func(name string) (int, bool) {
+		if userId, _ := users.CharacterNameSearch(name); userId > 0 {
+			return userId, true
+		}
+		return 0, false
+	})
 	pets.LoadDataFiles()
 	quests.LoadDataFiles()
 	questengine.LoadDataFiles()

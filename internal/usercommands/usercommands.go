@@ -80,7 +80,8 @@ var (
 		`consider`:    {Consider, true, true, false},
 		`deafen`:      {Deafen, true, true, true}, // Admin only
 		`devtool`:     {Devtool, false, true, true}, // Admin only
-		`default`:     {Default, false, true, false},
+		`default`:          {Default, false, true, false},
+		`deletecharacter`:  {DeleteCharacter, false, false, false}, // Player account deletion
 		`defuse`:      {Defuse, false, true, false},
 		`disenchant`:  {Disenchant, false, false, false}, // Can't disenchant in combat
 		`dismiss`:     {Dismiss, false, true, false},
@@ -147,7 +148,8 @@ var (
 		`reply`:       {Reply, true, true, false},
 		`remove`:      {Remove, false, false, false},  // Can't remove equipment in combat
 		`report`:      {Report, true, true, false},
-		`rename`:      {Rename, false, true, true},    // Admin only
+		`rename`:      {RenameSelf, false, true, false},  // Player rename — cooldown-gated
+		`renameitem`:  {Rename, false, true, true},    // Admin only — renames an item in inventory
 		`redescribe`:  {Redescribe, false, true, true}, // Admin only
 		`room`:        {Room, false, true, true},       // Admin only
 		`save`:        {Save, true, true, false},

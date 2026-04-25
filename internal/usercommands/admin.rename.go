@@ -13,7 +13,7 @@ import (
 
 /*
 * Role Permissions:
-* rename 				(All)
+* renameitem 			(Admin)
  */
 func Rename(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
@@ -21,7 +21,7 @@ func Rename(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	if len(args) < 2 {
 		// send some sort of help info?
-		infoOutput, _ := templates.Process("admincommands/help/command.rename", nil, user.UserId)
+		infoOutput, _ := templates.Process("admincommands/help/command.renameitem", nil, user.UserId)
 		user.SendText(infoOutput)
 		return true, nil
 	}

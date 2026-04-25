@@ -1,0 +1,17 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">rename</ansi>
+
+The <ansi fg="command">rename</ansi> command lets you change your character's name. The new
+name must be unique across all players, companions, and mob templates.
+After a successful rename, you cannot rename again until the cooldown
+has passed (default: 7 days).
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">rename</ansi> <ansi fg="cyan">&lt;newname&gt;</ansi>     Change your character's name.
+
+You will be asked to confirm before the rename takes effect.
+Type <ansi fg="51">yes</ansi> to proceed, anything else to abort.
+
+<ansi fg="yellow">Example: </ansi>
+
+  <ansi fg="command">rename Bobblesworth</ansi>

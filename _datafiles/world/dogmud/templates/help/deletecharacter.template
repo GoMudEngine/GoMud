@@ -1,0 +1,13 @@
+<ansi fg="red-bold">deletecharacter</ansi>
+
+Permanently deletes your account. Your character, gear, gold, bank,
+companions, and quest progress are all lost. Your name will become
+available for someone else to claim.
+
+This cannot be undone.
+
+You will be asked to confirm twice:
+1. <ansi fg="51">yes</ansi> / <ansi fg="51">no</ansi> (defaults to no)
+2. Type your character's name exactly to proceed.
+
+Anything else aborts the deletion.

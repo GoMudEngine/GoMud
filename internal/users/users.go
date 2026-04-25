@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -514,38 +513,7 @@ func SearchOfflineUsers(searchFunc func(u *UserRecord) bool) {
 }
 
 func ValidateName(name string) error {
-
-	validation := configs.GetValidationConfig()
-
-	if len(name) < int(validation.NameSizeMin) || len(name) > int(validation.NameSizeMax) {
-		return fmt.Errorf("name must be between %d and %d characters long", validation.NameSizeMin, validation.NameSizeMax)
-	}
-
-	if validation.NameRejectRegex != `` {
-		if !regexp.MustCompile(validation.NameRejectRegex.String()).MatchString(name) {
-			return errors.New(validation.NameRejectReason.String())
-		}
-	}
-
-	if bannedPattern, ok := configs.GetConfig().IsBannedName(name); ok {
-		return errors.New(`that username matched the prohibited name pattern: "` + bannedPattern + `"`)
-	}
-
-	for _, mobName := range mobs.GetAllMobNames() {
-		if strings.EqualFold(mobName, name) {
-			return errors.New("that username is in use")
-		}
-	}
-
-	if Exists(name) {
-		return errors.New("that username is in use")
-	}
-
-	if CompanionNameExists(name) {
-		return errors.New("that name is in use by a companion")
-	}
-
-	return nil
+	return ValidateActorName(name, ValidateActorOpts{})
 }
 
 func ValidatePassword(pw string) error {
@@ -724,4 +692,88 @@ func FindUserId(username string) int {
 	idx := NewUserIndex()
 	userid, _ := idx.FindByUsername(username)
 	return int(userid)
+}
+
+// RemoveUserAndDisconnect tears down a user account: uncharms mobs, logs the
+// user out (which saves and removes them from the in-memory indexes), deletes
+// the on-disk save file, removes the username from the persistent UserIndex,
+// and closes the network connection. ENOENT on the save file is non-fatal —
+// the file simply may not exist in test environments.
+func RemoveUserAndDisconnect(userId int) error {
+	u := GetByUserId(userId)
+	if u == nil {
+		return errors.New("user not found")
+	}
+
+	// Uncharm any mobs before logging out so they don't dangle.
+	if u.Character != nil {
+		for _, mobInstanceId := range u.Character.GetCharmIds() {
+			if m := mobs.GetInstance(mobInstanceId); m != nil {
+				m.Character.RemoveCharm()
+			}
+		}
+	}
+
+	// Capture values before logout clears them from the manager.
+	username := u.Username
+	connId := u.connectionId
+	userFilePath := util.FilePath(string(configs.GetFilePathsConfig().DataFiles), `/`, `users`, `/`, strconv.Itoa(u.UserId)+`.yaml`)
+
+	// LogOutUserByConnectionId saves + removes the user from all in-memory maps.
+	// If the user has no real connection (e.g. test seed with connectionId==0),
+	// the lookup by connection will fail. In that case we fall back to manual
+	// map cleanup.
+	if connId != 0 {
+		if err := LogOutUserByConnectionId(connId); err != nil {
+			mudlog.Error("RemoveUserAndDisconnect", "logoutErr", err.Error())
+		}
+	} else {
+		// No connection — manually clean up the in-memory maps.
+		userManager.mu.Lock()
+		delete(userManager.Users, userId)
+		delete(userManager.Usernames, strings.ToLower(username))
+		userManager.mu.Unlock()
+	}
+
+	// Delete the on-disk save file. ENOENT is non-fatal.
+	if err := os.Remove(userFilePath); err != nil && !os.IsNotExist(err) {
+		return fmt.Errorf("failed to delete user file: %w", err)
+	}
+
+	// Remove the username from the persistent UserIndex so cold lookups
+	// (Exists, FindUserId, LoadUser) no longer find this account.
+	idx := NewUserIndex()
+	if idx.Exists() {
+		if err := idx.RemoveByUsername(username); err != nil && !errors.Is(err, ErrNotFound) {
+			mudlog.Error("RemoveUserAndDisconnect", "idxRemoveErr", err.Error())
+		}
+	}
+
+	// Close the network connection if one exists.
+	if connId != 0 {
+		connections.Remove(connId) // error is non-fatal (connection may already be closed)
+	}
+
+	return nil
+}
+
+// RenameUser atomically updates Username + Character.Name + the Usernames
+// index under the manager lock. The caller is responsible for calling
+// SaveUser (which writes to the existing UserId-keyed file — no disk rename
+// needed) and for setting LastRenameAt before saving.
+func RenameUser(u *UserRecord, newName string) error {
+	userManager.mu.Lock()
+	defer userManager.mu.Unlock()
+
+	oldName := u.Username
+	if _, exists := userManager.Usernames[strings.ToLower(newName)]; exists {
+		return errors.New("name was just claimed")
+	}
+	delete(userManager.Usernames, strings.ToLower(oldName))
+	userManager.Usernames[strings.ToLower(newName)] = u.UserId
+	u.Username = newName
+	if u.Character != nil {
+		u.Character.Name = newName
+	}
+	return nil
 }

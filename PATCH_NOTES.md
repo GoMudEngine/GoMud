@@ -1,5 +1,34 @@
 # DOGMud Patch Notes
 
+## 2026-04-25 — Player Rename + Account Delete + Name Collision Prevention
+
+### Gameplay
+
+- **Players can now rename their character.** Use `rename <newname>` to
+  request a new name. Rename is cooldown-gated (default 7 days, configurable
+  via `Balance.CharacterRenameCooldownHours`). You'll see a yes/no confirmation
+  (default no) before the change takes effect.
+- **Players can permanently delete their character and free the username.**
+  Use `deletecharacter` for a two-stage confirmation: first yes/no (default no),
+  then type your exact character name to confirm. The deletion is immediate
+  and irreversible — your user file is removed and the name becomes available
+  for a new character.
+- **Companion naming now correctly prevents mob-template collisions.**
+  When naming a companion or pet, the system now checks that the name doesn't
+  match any mob template in the world — previously this check was missing,
+  allowing companions to shadow core NPCs or monsters.
+
+### Engine & Balance
+
+- **Centralized name validation.** All player, companion, character, and pet
+  name checks now flow through `users.ValidateActorName()`, ensuring consistent
+  rules across the game.
+- **Boot-time name collision audit.** On server startup, if any mob template
+  name matches an existing player character, the server logs a warning. This
+  helps catch and prevent collisions in production without blocking startup.
+- **Admin command rename → renameitem.** The admin `rename` command for items
+  moved to `renameitem` to free up the `rename` verb for player use.
+
 ## 2026-04-24 (late night) — World Mob Audit Complete + Engine Polish
 
 ### Gameplay
