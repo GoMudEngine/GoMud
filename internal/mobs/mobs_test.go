@@ -653,6 +653,57 @@ func TestTempData(t *testing.T) {
 	})
 }
 
+// ─── Audit Mob Name Collisions ──────────────────────────────────────────────
+
+func TestAuditMobNameCollisions_NoCollisions(t *testing.T) {
+	cleanup := seedRegistry()
+	defer cleanup()
+
+	callCount := 0
+	AuditMobNameCollisions(func(name string) (int, bool) {
+		callCount++
+		return 0, false
+	})
+	if callCount == 0 {
+		t.Error("expected lookup to be invoked at least once")
+	}
+}
+
+func TestAuditMobNameCollisions_OneCollision(t *testing.T) {
+	cleanup := seedRegistry()
+	defer cleanup()
+
+	found := false
+	AuditMobNameCollisions(func(name string) (int, bool) {
+		if name == "Skeleton Warrior" {
+			found = true
+			return 42, true
+		}
+		return 0, false
+	})
+	if !found {
+		t.Error("expected lookup to be called with 'Skeleton Warrior'")
+	}
+}
+
+func TestAuditMobNameCollisions_MultipleCollisions(t *testing.T) {
+	cleanup := seedRegistry()
+	defer cleanup()
+
+	collisionCount := 0
+	AuditMobNameCollisions(func(name string) (int, bool) {
+		// Return true for two mobs
+		if name == "Skeleton Warrior" || name == "Shadow Wolf" {
+			collisionCount++
+			return 99, true
+		}
+		return 0, false
+	})
+	if collisionCount != 2 {
+		t.Errorf("expected 2 collisions, got %d", collisionCount)
+	}
+}
+
 // ─── Filepath ──────────────────────────────────────────────────────────────
 
 func TestFilepath(t *testing.T) {

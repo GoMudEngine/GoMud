@@ -119,6 +119,11 @@ func (b *Balance) validateMisc() {
 		b.WorldEventBufferSize = 200
 	}
 
+	// ── CHARACTER MANAGEMENT ────────────────────────────────────────────────
+	if b.CharacterRenameCooldownHours < 0 {
+		b.CharacterRenameCooldownHours = 0
+	}
+
 	// ── CARRY CAPACITY ──────────────────────────────────────────────────────
 	if b.CarryCapacityMultiplier < 0.1 || b.CarryCapacityMultiplier > 10.0 {
 		b.CarryCapacityMultiplier = 0.65

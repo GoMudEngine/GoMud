@@ -27,6 +27,10 @@ _datafiles/world/dogmud/mobs/{zone_folder}/scripts/{mobid}-{ConvertForFilename(n
 - `tutorial/`
 - `test/`
 
+**Workflow:** new mobs are usually built as part of a zone — see
+`docs/CONTENT_GENERATION_GUIDE.md` Section 2 for the full zone-build
+SOP including the `behavior_archetype` priority order.
+
 ---
 
 ## 2. Field Reference
@@ -48,12 +52,13 @@ _datafiles/world/dogmud/mobs/{zone_folder}/scripts/{mobid}-{ConvertForFilename(n
 | `buffids` | list | no | Buff IDs always applied when mob spawns. |
 | `questflags` | list | no | Quest flag strings set on this mob. |
 | `scripttag` | string | no | Tag appended to the script filename. Must match the `.js` file. |
-| `aiprofile` | string | no | Legacy combat AI profile: `"default"`, `"aggressive"`, `"defensive"`, `"grappler"`, `"brawler"`, `"tactical"`. |
+| `behavior_archetype` | string | no | Filename (without `.yaml`) of an archetype in `_datafiles/world/dogmud/behaviors/archetypes/`. Drives the mob's behavior tree. **Strongly preferred over legacy `aiprofile`/`combatcommands`/`tactic_preset` for new mobs.** See "Behavior Archetypes" below. |
+| `aiprofile` | string | no | Legacy combat AI profile: `"default"`, `"aggressive"`, `"defensive"`, `"grappler"`, `"brawler"`, `"tactical"`. (legacy — prefer `behavior_archetype`) |
 | `specialmovechance` | int | no | Base % chance to use special moves in combat (0–100). |
-| `tactic_preset` | string | no | Reactive AI preset: `"aggressive_melee"`, `"defensive_caster"`, `"ambusher"`, `"tank"`. See Reactive AI below. |
-| `tactics` | list | no | Custom tactic rules. Each entry: `trigger`, `action`, `priority`. Merged with preset. |
-| `reaction_delay` | float | no | Seconds before reactive AI acts (0.25–4.0). Lower = faster reactions. |
-| `tactical_discipline` | float | no | 0.0–1.0. Probability the mob follows through on a tactic. Higher = more reliable. |
+| `tactic_preset` | string | no | Reactive AI preset: `"aggressive_melee"`, `"defensive_caster"`, `"ambusher"`, `"tank"`. See Reactive AI below. (legacy — prefer `behavior_archetype`) |
+| `tactics` | list | no | Custom tactic rules. Each entry: `trigger`, `action`, `priority`. Merged with preset. (legacy — prefer `behavior_archetype`) |
+| `reaction_delay` | float | no | Seconds before reactive AI acts (0.25–4.0). Lower = faster reactions. (legacy — prefer `behavior_archetype`) |
+| `tactical_discipline` | float | no | 0.0–1.0. Probability the mob follows through on a tactic. Higher = more reliable. (legacy — prefer `behavior_archetype`) |
 | `idlecommands` | list | no | Commands executed while not in combat. Use `""` for empty (wait) turns. |
 | `combatcommands` | list | no | Commands executed while in combat. |
 | `spawnmutations` | list | no | Mutation IDs always granted at level 1 on spawn (Phase 24.3). |
@@ -190,3 +195,53 @@ Stats in `statpool` are weighted by `archetype` at spawn: `"fighting"` favors St
 
 **`level` in `character:` sets baseline — statpool modifies it.**
 The engine calls `AutoTrain()` after distributing statpool points. Do not set both a high level and a large statpool expecting them to stack cleanly.
+
+---
+
+## 5. Behavior Archetypes
+
+`behavior_archetype` selects a behavior-tree YAML from
+`_datafiles/world/dogmud/behaviors/archetypes/`. The archetype drives
+combat decision-making, packmate awareness, and reactive AI without
+needing to author per-mob `combatcommands`/`tactics`.
+
+### Available archetypes
+
+| Archetype | Role |
+|-----------|------|
+| `generic_fighter` | Melee with bash/trip/grapple toolkit. Default for non-tank fighters. |
+| `tank_taunter` | Melee with signature taunt + self-buffs. For high-priority threats. |
+| `melee_self_buff` | Melee fighter who pre-buffs before engaging. |
+| `ambusher` | Hidden until engagement; high opening burst. |
+| `pure_caster` | Spell-focused; flees from melee, kites with damage. |
+| `support_caster` | Buffs/heals packmates; rarely the front-line target. |
+| `leader` | Commands packmates, calls for help, coordinates. |
+| `prey` | Flees on engagement; non-aggressive. |
+| `lookout` | Stationary observer; calls for help when triggered. |
+| `combat_passive` | In combat but doesn't attack — atmospheric or quest fodder. |
+| `noncombat_passive` | Walks idles, no combat behavior. |
+| `noncombat_questgiver` | Stationary, dialogue-only NPC. |
+| `noncombat_shopkeeper` | Stationary shop NPC. |
+
+### Priority for new mobs
+
+When authoring a new mob:
+
+1. **Reuse** an existing archetype if one fits.
+2. **Author a new archetype YAML** under `behaviors/archetypes/` if
+   the behavior pattern is reusable across multiple mobs.
+3. **Custom legacy** (`aiprofile` + `combatcommands` + `tactic_preset`)
+   ONLY for bosses or signature one-off NPCs.
+
+See `docs/CONTENT_GENERATION_GUIDE.md` "Building a Full Zone" for the
+full zone-build workflow including the smoke-test checklist.
+
+### Pairing with stat distribution
+
+`behavior_archetype` and `archetype` (stat distribution) usually pair
+naturally:
+
+- `pure_caster` / `support_caster` → `archetype: "casting"`
+- `generic_fighter` / `tank_taunter` / `ambusher` /
+  `melee_self_buff` → `archetype: "fighting"`
+- `prey` / `noncombat_*` → `archetype: ""` (uniform)

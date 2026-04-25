@@ -10,7 +10,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
-	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/term"
@@ -49,6 +48,9 @@ func Start(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			return true, nil
 		}
 
+		// Signup sets Character.Name = Username as a placeholder; this prompt
+		// is how the player replaces it. Prevent them from just re-entering
+		// their account Username (which would leave the placeholder unchanged).
 		if strings.EqualFold(question.Response, user.Username) {
 			user.SendText(`Your username cannot match your character name!`)
 			question.RejectResponse()
@@ -63,30 +65,10 @@ func Start(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			}
 		}
 
-		if err := users.ValidateName(question.Response); err != nil {
-			user.SendText(`that name is not allowed: ` + err.Error())
+		if err := users.ValidateActorName(question.Response, users.ValidateActorOpts{}); err != nil {
+			user.SendText(`That name won't work: ` + err.Error())
 			question.RejectResponse()
 			return true, nil
-		}
-
-		if bannedPattern, ok := configs.GetConfig().IsBannedName(question.Response); ok {
-			user.SendText(`that username matched the prohibited name pattern: "` + bannedPattern + `"`)
-			question.RejectResponse()
-			return true, nil
-		}
-
-		if foundUserId, _ := users.CharacterNameSearch(question.Response); foundUserId > 0 {
-			user.SendText(`that character name is already in use.`)
-			question.RejectResponse()
-			return true, nil
-		}
-
-		for _, name := range mobs.GetAllMobNames() {
-			if strings.EqualFold(name, question.Response) {
-				user.SendText("that name is in use")
-				question.RejectResponse()
-				return true, nil
-			}
 		}
 
 		usernameSelected := question.Response

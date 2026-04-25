@@ -220,6 +220,9 @@ type Balance struct {
 	// ── WORLD EVENTS ─────────────────────────────────────────────────────────
 	WorldEventBufferSize ConfigInt `yaml:"WorldEventBufferSize"` // Max events in the ring buffer (default 200)
 
+	// ── CHARACTER MANAGEMENT ──────────────────────────────────────────────────
+	CharacterRenameCooldownHours ConfigInt `yaml:"CharacterRenameCooldownHours"` // Hours between player renames (0 disables; default 168 = 7 days)
+
 	// ── MOB MUTATIONS ────────────────────────────────────────────────────────
 	MobMutationEnabled ConfigBool  `yaml:"MobMutationEnabled"` // Enable mob mutation acquisition in combat (default false)
 	MobMutationRate    ConfigFloat `yaml:"MobMutationRate"`    // Multiplier on mutation progress vs players (default 0.3)

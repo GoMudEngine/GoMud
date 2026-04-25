@@ -33,6 +33,7 @@ type UserRecord struct {
 	Username       string                `yaml:"username"`
 	Password       string                `yaml:"password"`
 	Joined         time.Time             `yaml:"joined"`
+	LastRenameAt   time.Time             `yaml:"lastrenameat,omitempty"` // Last time the player used the rename command; cooldown uses this
 	Macros         map[string]string     `yaml:"macros,omitempty"`  // Up to 10 macros, just string commands.
 	Aliases        map[string]string     `yaml:"aliases,omitempty"` // string=>string remapping of commands
 	Character      *characters.Character `yaml:"character,omitempty"`

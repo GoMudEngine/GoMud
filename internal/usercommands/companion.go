@@ -5,7 +5,6 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
@@ -281,34 +280,24 @@ func statQualityDesc(value int) string {
 }
 
 // validateCompanionName checks a proposed companion nickname against the
-// banned-names list, existing player character names, and existing companion
-// nicknames. Names are freed when companions die or are dismissed.
+// banned-names list, mob names, existing player character names, and existing
+// companion nicknames. Names are freed when companions die or are dismissed.
 func validateCompanionName(name string) error {
+	// Companion names use a stricter character set than general validation
+	// (letters only, 2-20 chars). Run that gate first.
 	if len(name) < 2 || len(name) > 20 {
 		return fmt.Errorf("Companion names must be between 2 and 20 characters.")
 	}
-
-	// Only allow letters (no numbers, symbols, spaces).
 	for _, ch := range name {
 		if (ch < 'a' || ch > 'z') && (ch < 'A' || ch > 'Z') {
 			return fmt.Errorf("Companion names may only contain letters.")
 		}
 	}
 
-	if bannedPattern, ok := configs.GetConfig().IsBannedName(name); ok {
-		return fmt.Errorf("That name matched the prohibited pattern: %q.", bannedPattern)
+	// Standard collision checks (banned, mob, player, companion).
+	if err := users.ValidateActorName(name, users.ValidateActorOpts{}); err != nil {
+		return err
 	}
-
-	// Check against existing player character names.
-	if foundUserId, _ := users.CharacterNameSearch(name); foundUserId > 0 {
-		return fmt.Errorf("That name is already in use by a player.")
-	}
-
-	// Check against other companions' nicknames.
-	if users.CompanionNameExists(name) {
-		return fmt.Errorf("That name is already in use by another companion.")
-	}
-
 	return nil
 }
 

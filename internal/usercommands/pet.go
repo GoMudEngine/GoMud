@@ -4,9 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
-	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -35,25 +33,8 @@ func Pet(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 
 		newName := strings.Join(args[1:], ` `)
 
-		if err := users.ValidateName(newName); err != nil {
-			user.SendText(`That name is not allowed: ` + err.Error())
-			return true, nil
-		}
-
-		if bannedPattern, ok := configs.GetConfig().IsBannedName(newName); ok {
-			user.SendText(`that username matched the prohibited name pattern: "` + bannedPattern + `"`)
-			return true, nil
-		}
-
-		for _, name := range mobs.GetAllMobNames() {
-			if strings.EqualFold(name, newName) {
-				user.SendText(`That name is prohibited.`)
-				return true, nil
-			}
-		}
-
-		if foundUserId, _ := users.CharacterNameSearch(newName); foundUserId > 0 {
-			user.SendText(`There's a character with that name. That would be too confusing!`)
+		if err := users.ValidateActorName(newName, users.ValidateActorOpts{}); err != nil {
+			user.SendText(`That name won't work: ` + err.Error())
 			return true, nil
 		}
 

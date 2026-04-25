@@ -1045,3 +1045,29 @@ func LoadDataFiles() {
 	mudlog.Info("mobs.LoadDataFiles()", "loadedCount", len(tmpMobs), "Time Taken", time.Since(start))
 
 }
+
+// AuditMobNameCollisions scans loaded mob template names against the
+// supplied playerNameLookup and warns on each collision. Warn-only —
+// never blocks startup. Called once after LoadDataFiles completes and
+// the user index is reachable. Dependency injection keeps this package
+// free of a users-package import.
+func AuditMobNameCollisions(playerNameLookup func(name string) (userId int, ok bool)) {
+	mobsMu.RLock()
+	names := make([]string, len(allMobNames))
+	copy(names, allMobNames)
+	mobsMu.RUnlock()
+
+	collisions := 0
+	for _, mobName := range names {
+		if userId, ok := playerNameLookup(mobName); ok {
+			mudlog.Warn("mob/player name collision",
+				"mobName", mobName,
+				"playerUserId", userId,
+				"advice", "rename mob template or notify player to use rename command")
+			collisions++
+		}
+	}
+	if collisions > 0 {
+		mudlog.Warn("mob name collision audit complete", "collisions", collisions)
+	}
+}

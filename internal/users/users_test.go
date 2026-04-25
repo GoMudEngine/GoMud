@@ -2,10 +2,13 @@ package users
 
 import (
 	"os"
+	"path/filepath"
+	"strconv"
 	"strings"
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
@@ -1068,4 +1071,126 @@ func TestSaveAllUsers(t *testing.T) {
 
 	// Should not panic even though file paths don't exist
 	SaveAllUsers(true)
+}
+
+// ─── RenameUser ───────────────────────────────────────────────────────────
+
+// seedActiveUser injects a single UserRecord into the global userManager and
+// returns the record. The seeded entry is removed when the test ends via
+// t.Cleanup. Username is stored lowercase in the Usernames map (matching the
+// real engine convention).
+func seedActiveUser(t *testing.T, userId int, name string) *UserRecord {
+	t.Helper()
+
+	usernameLower := strings.ToLower(name)
+
+	u := &UserRecord{
+		UserId:   userId,
+		Username: name,
+		Role:     RoleUser,
+		Character: &characters.Character{
+			Name: name,
+		},
+	}
+
+	userManager.mu.Lock()
+	origUser, hadUser := userManager.Users[userId]
+	origId, hadUsername := userManager.Usernames[usernameLower]
+	userManager.Users[userId] = u
+	userManager.Usernames[usernameLower] = userId
+	userManager.mu.Unlock()
+
+	t.Cleanup(func() {
+		userManager.mu.Lock()
+		if hadUser {
+			userManager.Users[userId] = origUser
+		} else {
+			delete(userManager.Users, userId)
+		}
+		if hadUsername {
+			userManager.Usernames[usernameLower] = origId
+		} else {
+			delete(userManager.Usernames, usernameLower)
+		}
+		userManager.mu.Unlock()
+	})
+
+	return u
+}
+
+func TestRenameUser_Success(t *testing.T) {
+	u := seedActiveUser(t, 100, "Alice")
+
+	if err := RenameUser(u, "Bobbi"); err != nil {
+		t.Fatalf("expected nil err, got %v", err)
+	}
+	if u.Username != "Bobbi" {
+		t.Errorf("Username = %q, want Bobbi", u.Username)
+	}
+	if u.Character.Name != "Bobbi" {
+		t.Errorf("Character.Name = %q, want Bobbi", u.Character.Name)
+	}
+
+	// Old name freed from index:
+	userManager.mu.RLock()
+	_, aliceExists := userManager.Usernames["alice"]
+	bobbiId := userManager.Usernames["bobbi"]
+	userManager.mu.RUnlock()
+
+	if aliceExists {
+		t.Error("expected alice to be freed from the Usernames index")
+	}
+	if bobbiId != 100 {
+		t.Errorf("bobbi should resolve to userId 100, got %d", bobbiId)
+	}
+}
+
+func TestRenameUser_NameAlreadyClaimed(t *testing.T) {
+	seedActiveUser(t, 200, "Alice")
+	other := seedActiveUser(t, 201, "Charlie")
+
+	if err := RenameUser(other, "Alice"); err == nil {
+		t.Fatal("expected error renaming to claimed name, got nil")
+	}
+	if other.Username != "Charlie" {
+		t.Errorf("Username should be untouched, got %q", other.Username)
+	}
+}
+
+// ─── RemoveUserAndDisconnect ──────────────────────────────────────────────────
+
+func TestRemoveUserAndDisconnect_FreesName(t *testing.T) {
+	u := seedActiveUser(t, 300, "Doomed")
+	_ = u
+
+	if err := RemoveUserAndDisconnect(300); err != nil {
+		t.Fatalf("expected nil err, got %v", err)
+	}
+
+	// Username index must be freed
+	userManager.mu.RLock()
+	_, stillThere := userManager.Usernames["doomed"]
+	userManager.mu.RUnlock()
+	if stillThere {
+		t.Error("expected 'doomed' to be removed from Usernames map")
+	}
+
+	// File deletion: T12's helper also tries to delete the on-disk file
+	// (keyed by UserId). For tests, the file may not exist (we never
+	// wrote it). The helper should treat ENOENT as non-fatal.
+	path := filepath.Join(string(configs.GetFilePathsConfig().DataFiles), "users", strconv.Itoa(300)+".yaml")
+	if _, err := os.Stat(path); !os.IsNotExist(err) {
+		// If it exists, that's surprising for a test fixture. Allow either:
+		// doesn't exist (expected) or got cleaned up by the helper.
+		t.Errorf("user file unexpectedly present after delete: stat err=%v", err)
+	}
+}
+
+func TestRemoveUserAndDisconnect_NotFound(t *testing.T) {
+	cleanup := seedRegistry()
+	defer cleanup()
+
+	if err := RemoveUserAndDisconnect(99999); err == nil {
+		t.Fatal("expected error for unknown userId, got nil")
+	}
 }
