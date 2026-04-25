@@ -14,8 +14,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/term"
 	"github.com/GoMudEngine/GoMud/internal/users"
-
-	"github.com/GoMudEngine/GoMud/internal/mobs"
 )
 
 var (
@@ -165,26 +163,9 @@ func ValidateCharacterName(input string, results map[string]string) (string, err
 		return "", errors.New("your character name cannot match your account username")
 	}
 
-	// Standard name validation (length, regex, banned names, mob names, existing user)
-	if err := users.ValidateName(input); err != nil {
+	// Centralised validation: length, regex, banned names, mob names, existing character/user
+	if err := users.ValidateActorName(input, users.ValidateActorOpts{}); err != nil {
 		return "", err
-	}
-
-	// Check if a character already has this name
-	if foundUserId, _ := users.CharacterNameSearch(input); foundUserId > 0 {
-		return "", errors.New("that character name is already in use")
-	}
-
-	// Check against mob names (belt-and-suspenders with ValidateName)
-	for _, name := range mobs.GetAllMobNames() {
-		if strings.EqualFold(name, input) {
-			return "", errors.New("that name is in use")
-		}
-	}
-
-	// Banned name patterns
-	if bannedPattern, ok := configs.GetConfig().IsBannedName(input); ok {
-		return "", fmt.Errorf("that name matched the prohibited pattern: %q", bannedPattern)
 	}
 
 	return input, nil
