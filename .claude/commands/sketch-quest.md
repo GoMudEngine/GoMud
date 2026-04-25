@@ -4,6 +4,19 @@ Plan a new quest for DOGMud. Produces a quest design document for human review. 
 
 ## Instructions
 
+**Phase 2 only.** Per the Zone-Building SOP in
+`docs/CONTENT_GENERATION_GUIDE.md` Section 2, quests are built AFTER
+the zone smoke-test checklist passes. If the zone for this quest
+hasn't been smoke-tested:
+
+- Stop and finish the smoke checklist first.
+- If the zone is older and the checklist was never formally run,
+  walk through it now anyway. Quest issues we've seen historically
+  trace back to layout/balance problems that smoke would have
+  caught.
+
+If the smoke is genuinely done, proceed.
+
 You are planning a new quest for the DOGMud MUD. This is a design document — output only, no game files written.
 
 ### Step 1 — Load context

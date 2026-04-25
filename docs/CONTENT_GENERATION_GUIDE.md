@@ -26,68 +26,122 @@ a `.js` file if the spell/buff needs custom logic.
 
 ---
 
-## 2. Building a Full Zone: `/zone-sketch` → `/new-room` × N
+## 2. Building a Full Zone: Phase 1 → Smoke → Phase 2
 
-The recommended workflow for adding a new area:
+DOGMud zones are built in **two phases** with a **smoke gate** between
+them. This ordering came out of repeated quest-related issues — quests
+built in parallel with rooms/mobs entangle changes and make iteration
+painful. Build the zone first; tune it; *then* layer quests on top.
 
-### Step 1: Plan with `/zone-sketch`
+### Phase 1 — Zone Build
+
+Build everything except quests:
+
+- Rooms (descriptions, exits, biome, spawninfo placeholders)
+- Mobs (using `behavior_archetype` — see priority order below)
+- Items (loot tables, drops, crafting components)
+- Spawn placement (`spawninfo` filled in on rooms)
+
+Slash commands: `/zone-sketch` → `/new-room` (loop) → `/new-mob`
+(loop) → `/new-item` (loop) → manually edit `spawninfo` blocks.
+
+#### Step 1: Plan with `/zone-sketch`
 
 ```
 /zone-sketch "flooded salt flats east of Sanctum Basin, 6 rooms, inhospitable terrain"
 ```
 
-The command reads `world.md`, studies an existing zone for structural reference, and produces:
-- Zone display name and folder name
-- Suggested roomid range
-- A room list with titles and one-line descriptions
-- An adjacency map showing exit connections
-- Boundary connections to existing zones
-- Mob and item suggestions
-- Tone notes
+Produces zone metadata, room list with adjacency, mob suggestions
+(with proposed `behavior_archetype` for each), item suggestions, and
+the smoke checklist. Writes nothing — review and adjust.
 
-**No files are written.** Review the output, adjust room titles and connections as needed, then proceed to step 2.
+#### Step 2: Generate rooms with `/new-room`
 
-### Step 2: Generate rooms with `/new-room`
-
-Work in ID order (start from the suggested base ID):
+Work in ID order:
 
 ```
 /new-room "cracked salt flat, bleached expanse of fractured earth, Flooded Salt Flats, east to room 202"
 /new-room "sunken tidal channel, narrow cut with mineral-stained walls, Flooded Salt Flats, north to room 203, west to room 201"
 ```
 
-Each call:
-1. Reads `world.md` and `docs/schemas/room.md`
-2. Samples existing rooms as style examples
-3. Generates the YAML
-4. Writes it to the correct path
-5. Reminds you about reverse exits
+#### Step 3: Update boundary rooms
 
-### Step 3: Update boundary rooms
+For each room in an existing zone that should connect to the new
+zone, edit that room's YAML to add the exit. Check for instance saves
+(see Section 4) if editing an existing zone.
 
-For each room in an existing zone that should connect to the new zone, edit that room's YAML to add the exit:
+#### Step 4: Generate mobs with `/new-mob`
 
-```yaml
-exits:
-  east:
-    roomid: 201   # new zone entry room
+`/new-mob` will offer the `behavior_archetype` priority order — see
+"Mob Behavior Archetype Priority" below.
+
+#### Step 5: Generate items with `/new-item`
+
+Then manually add `spawninfo` entries to room YAMLs to place mobs and
+items.
+
+### Smoke Gate — must pass before Phase 2
+
+Run through this checklist for the new zone before opening
+`/sketch-quest`:
+
+```
+[ ] Walked every room. Each title and description reads cleanly (no
+    missing punctuation, broken ANSI tags, dropped sentences).
+[ ] Verified every exit. Every room reachable; no one-way dead-ends
+    that weren't intentional.
+[ ] No `mapsymbol`/`maplegend` set on non-landmark rooms (those break
+    the mini-map). Restart server, check the map renders cleanly.
+[ ] Cartesian consistency: ran `map` from each room (or from a few
+    spread-out rooms) and confirmed no two rooms in the new zone
+    overlap. Cross-referenced `docs/coordinate_map.md` to confirm no
+    new-zone room shares (X,Y,Z) with an adjacent existing zone's
+    rooms. Update `docs/coordinate_map.md` with the new zone's
+    coordinates as part of this step.
+[ ] Fought ≥1 mob of each combat archetype used in the zone. Confirm
+    the archetype actually drives the behavior you expected (e.g., a
+    `tank_taunter` actually taunts, an `ambusher` actually ambushes).
+[ ] Killed at least one mob and looted the corpse. Spawn loot drops
+    fire correctly.
+[ ] Identified at least one zone-specific item. Stats render cleanly,
+    no raw numbers leak into descriptions.
+[ ] Triggered any non-combat archetype interaction worth testing
+    (questgiver dialogue, shopkeeper buy/sell, prey flee).
+[ ] No instance saves committed: rooms.instances/<zone>/,
+    mobs.instances/, shops/<zone>/ are NOT in `git status`.
+[ ] No stale instance saves blocking template edits — see CLAUDE.md
+    "Room Instance Saves" SOP.
+[ ] go build ./... clean. go test ./... clean.
 ```
 
-Check for instance saves (see Section 4) if editing an existing zone.
+### Phase 2 — Quest Pass
 
-### Step 4: Add mobs and items
+Only after the smoke checklist is fully ticked off. See Section 6
+("Building a Quest") for the workflow.
 
-Run `/new-mob` for creatures. Then add `spawninfo` entries to room YAMLs to place them.
+This way, if a quest reveals a balance or layout issue, you fix the
+zone freely without any quest state to migrate. Quests are the topmost
+layer; they should never be load-bearing for zone iteration.
 
-Run `/new-item` for loot/props. Add items to mob `character.items` lists or room `spawninfo`.
+### Mob Behavior Archetype Priority
 
-### Step 5: Restart and walk the zone
+When generating a new mob, choose `behavior_archetype` in this order:
 
-Restart the server and walk through the zone. Verify:
-- All exits connect correctly (test both directions)
-- Mob descriptions display as intended
-- Items work when picked up / used
-- No startup errors in the server log
+1. **Reuse an existing archetype.** The 13 in
+   `_datafiles/world/dogmud/behaviors/archetypes/` cover the common
+   roles. If one fits, use it.
+2. **Author a new archetype YAML** if the behavior pattern is reusable
+   (i.e., other mobs in this or future zones will share it). Add a new
+   file under `behaviors/archetypes/`.
+3. **Fall back to legacy `aiprofile` / `combatcommands` /
+   `tactic_preset`** *only* for bosses or signature one-off NPCs whose
+   behavior is genuinely unique.
+
+`/new-mob` offers these in this order. Picking option 3 should be a
+deliberate choice, not the path of least resistance.
+
+See `docs/schemas/mob.md` "Behavior Archetypes" for the list of all 13
+archetypes with role descriptions and pairing notes.
 
 ---
 
@@ -144,41 +198,30 @@ Before a file is finalized, verify:
 
 ## 5. Smoke-Test Workflow
 
-After generating content, verify it in-game:
+The full zone-build smoke checklist lives in Section 2 ("Building a
+Full Zone" → "Smoke Gate"). For single-room or single-mob/item smoke
+tests outside of a zone build, the same general approach applies:
 
-**For a new room:**
-1. Restart the server
-2. Teleport or walk to the room (use `goto {roomid}` if you have admin access)
-3. Verify the title and description display correctly
-4. Test each exit direction — confirm the reverse exit exists
-5. Check the map if `mapsymbol` was set
-
-**For a new mob:**
-1. Restart the server
-2. Walk to a room with that mob's `spawninfo` entry
-3. Wait for the mob to spawn (or force-spawn if admin tools are available)
-4. `look {mobname}` — verify description
-5. If the mob is an NPC, `say hello` — verify dialogue responds
-6. If hostile, initiate combat — verify it behaves as intended
-
-**For a new item:**
-1. Restart the server
-2. Find the item in the world (carried by a mob, in a room, etc.)
-3. `get {item}` — verify it can be picked up
-4. `look {item}` or `examine {item}` — verify description
-5. If wearable: `wear {item}` — verify it equips to the right slot
-6. If consumable: `use {item}` — verify the buff applies
-
-**For a new zone:**
-1. Walk the full path from the boundary connection into the zone
-2. Test all exit connections (go in, come back)
-3. Verify all rooms render correctly
-4. Check that mobs spawn and behave
-5. Check the server log for any YAML parse errors at startup
+- Restart the server.
+- Walk to the relevant room (use `goto {roomid}` if admin).
+- Verify the title, description, and any spawned mobs/items render
+  correctly.
+- Check the server log for YAML parse errors at startup.
+- For mobs: `look {mobname}`, `say hello` (if NPC), or initiate
+  combat (if hostile) — verify behavior matches the
+  `behavior_archetype` you chose.
+- For items: `get`, `look`, `wear`/`use` as appropriate.
 
 ---
 
 ## 6. Building a Quest: `/sketch-quest` → `/new-quest`
+
+**Phase 2 — only after the smoke checklist passes.** See Section 2's
+"Smoke Gate." If the zone for this quest hasn't been smoke-tested,
+stop and finish the smoke checklist first. If the zone is older and
+the checklist was never formally run, walk through it now anyway —
+quest issues we've seen historically trace back to layout/balance
+problems that smoke would have caught.
 
 The recommended workflow for adding a new quest:
 

@@ -4,6 +4,12 @@ Plan a new zone for DOGMud: produce a room list, adjacency map, and zone metadat
 
 ## Instructions
 
+**This is a Phase 1 planning command.** Per the Zone-Building SOP in
+`docs/CONTENT_GENERATION_GUIDE.md` Section 2, zones are built in two
+phases: rooms+mobs+items+spawns first, then quests as a separate
+pass. Do NOT plan or sketch quests here. Quest planning happens in
+`/sketch-quest` after the smoke checklist passes.
+
 You are planning a new zone for the DOGMud MUD. This is a design document — output only, no files written.
 
 ### Step 1 — Load context
@@ -11,6 +17,7 @@ You are planning a new zone for the DOGMud MUD. This is a design document — ou
 Read these files before generating anything:
 1. `world.md` — lore, geography, tone, existing zones and their relationships
 2. `docs/schemas/room.md` — room field reference (biome, exits, etc.)
+3. List archetypes available: glob `_datafiles/world/dogmud/behaviors/archetypes/*.yaml`. Note the 13 archetype filenames — these are the values you'll suggest for `behavior_archetype` on each mob in Step 4 below.
 
 Then read one existing zone as a structural reference. Glob:
 ```
@@ -98,11 +105,36 @@ List any rooms in existing zones that should link into this new zone (room ID, d
 
 ---
 
-**MOB AND ITEM SUGGESTIONS** (brief, no YAML)
+**MOB SUGGESTIONS**
 
-List 3–5 creature types or NPCs that would feel appropriate in this zone. For each: name, one sentence on role/behavior. These are suggestions only — generate with `/new-mob` afterward.
+Suggest 3–5 creatures that fit the zone. For each, propose a
+`behavior_archetype` from the 13 available — reuse first; flag
+"candidate for new archetype" if no existing one fits; flag "boss/
+signature, custom legacy" only for unique encounters.
 
-List 2–3 items that could be found or crafted here. These are suggestions only — generate with `/new-item` afterward.
+Format:
+```
+{creature concept} — archetype: {existing_archetype_name}
+  {one sentence on what makes them feel zone-appropriate}
+
+{creature concept} — archetype: NEW (proposed: {name})
+  {one sentence — and a sentence on why no existing archetype fits}
+
+{boss name} — archetype: CUSTOM (boss/signature)
+  {one sentence on why this needs hand-tuned behavior}
+```
+
+Aim for ≥80% of suggestions to reuse existing archetypes. If you
+find yourself proposing more than one NEW archetype per zone,
+reconsider — you may be over-specifying behavior.
+
+---
+
+**ITEM SUGGESTIONS**
+
+List 2–3 zone-flavored items that could be found, looted, or
+crafted here. These are suggestions only — generate with `/new-item`
+afterward.
 
 ---
 
@@ -116,15 +148,56 @@ List 2–3 items that could be found or crafted here. These are suggestions only
 
 After the planning document, remind the user:
 
-> This is a planning document only — no files have been written.
+> This is a Phase 1 planning document — no files have been written.
 >
-> To build this zone:
-> 1. Review and adjust the room list and adjacency map.
-> 2. Run `/new-room "{room title and description}, {Zone Name}, {exit connections}"` for each room in ID order.
-> 3. Run `/new-mob` for any creatures you want to populate the zone with.
-> 4. Add `spawninfo` to room YAMLs to place mobs and items.
-> 5. Update any existing zone rooms that should link into this new zone.
-> 6. Restart the server and walk through the zone to verify.
+> **Phase 1 build sequence:**
+> 1. Review and adjust the room list, adjacency map, and
+>    mob/archetype suggestions.
+> 2. Run `/new-room "..."` for each room in ID order.
+> 3. Run `/new-mob "..."` for each mob — `/new-mob` will surface the
+>    archetype priority order (reuse → new archetype → custom legacy
+>    for bosses).
+> 4. Run `/new-item "..."` for each new item.
+> 5. Manually edit room YAMLs to add `spawninfo` blocks placing mobs
+>    and items.
+> 6. Update existing zone rooms that link into this new zone.
+> 7. Restart the server.
+>
+> **Then run the smoke checklist** (full text from
+> `docs/CONTENT_GENERATION_GUIDE.md` Section 2, copied here for
+> convenience):
+>
+> ```
+> [ ] Walked every room. Each title and description reads cleanly (no
+>     missing punctuation, broken ANSI tags, dropped sentences).
+> [ ] Verified every exit. Every room reachable; no one-way dead-ends
+>     that weren't intentional.
+> [ ] No `mapsymbol`/`maplegend` set on non-landmark rooms (those break
+>     the mini-map). Restart server, check the map renders cleanly.
+> [ ] Cartesian consistency: ran `map` from each room (or from a few
+>     spread-out rooms) and confirmed no two rooms in the new zone
+>     overlap. Cross-referenced `docs/coordinate_map.md` to confirm no
+>     new-zone room shares (X,Y,Z) with an adjacent existing zone's
+>     rooms. Update `docs/coordinate_map.md` with the new zone's
+>     coordinates as part of this step.
+> [ ] Fought ≥1 mob of each combat archetype used in the zone. Confirm
+>     the archetype actually drives the behavior you expected (e.g., a
+>     `tank_taunter` actually taunts, an `ambusher` actually ambushes).
+> [ ] Killed at least one mob and looted the corpse. Spawn loot drops
+>     fire correctly.
+> [ ] Identified at least one zone-specific item. Stats render cleanly,
+>     no raw numbers leak into descriptions.
+> [ ] Triggered any non-combat archetype interaction worth testing
+>     (questgiver dialogue, shopkeeper buy/sell, prey flee).
+> [ ] No instance saves committed: rooms.instances/<zone>/,
+>     mobs.instances/, shops/<zone>/ are NOT in `git status`.
+> [ ] No stale instance saves blocking template edits — see CLAUDE.md
+>     "Room Instance Saves" SOP.
+> [ ] go build ./... clean. go test ./... clean.
+> ```
+>
+> Only when this is fully ticked off — run `/sketch-quest` to begin
+> Phase 2.
 
 ---
 
