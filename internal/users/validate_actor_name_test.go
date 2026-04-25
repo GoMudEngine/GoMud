@@ -3,9 +3,19 @@ package users
 import (
 	"strings"
 	"testing"
+
+	"github.com/GoMudEngine/GoMud/internal/configs"
 )
 
 func TestValidateActorName(t *testing.T) {
+	// Ensure validation config has sane bounds — default zero-value fails
+	// all non-empty names because NameSizeMax == 0.
+	_ = configs.AddOverlayOverrides(map[string]any{
+		"Validation.NameSizeMin": 1,
+		"Validation.NameSizeMax": 20,
+	})
+
+
 	tests := []struct {
 		name      string
 		input     string
