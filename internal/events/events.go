@@ -283,6 +283,28 @@ func DrainQueuedInputsForTest(instanceId int) []string {
 	return found
 }
 
+// DrainQueuedMessagesForTest removes all Message events from the global queue
+// for the given userId and returns their Text values.
+//
+// FOR TEST USE ONLY. Mutates the queue.
+func DrainQueuedMessagesForTest(userId int) []string {
+	qLock.Lock()
+	defer qLock.Unlock()
+	var found []string
+	remaining := make(priorityQueue, 0, len(globalQueue))
+	for _, pe := range globalQueue {
+		msg, ok := pe.event.(Message)
+		if ok && msg.UserId == userId {
+			found = append(found, msg.Text)
+			continue
+		}
+		remaining = append(remaining, pe)
+	}
+	globalQueue = remaining
+	heap.Init(&globalQueue)
+	return found
+}
+
 // Initialize the priority queue.
 func init() {
 	heap.Init(&globalQueue)
