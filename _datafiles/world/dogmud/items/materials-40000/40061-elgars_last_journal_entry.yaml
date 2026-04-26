@@ -1,0 +1,16 @@
+itemid: 40061
+name: Elgar's last journal entry
+namesimple: journal
+description: A single folded sheet of grey paper, water-stained at
+  one corner, written in a careful hand that pressed harder as the
+  page went on. The first lines read level and steady — a record
+  of where the four spiral-marked sites stand on the land and what
+  Elgar believes they were for. The middle of the page describes
+  what he expects to find in the deep sump. The last paragraph is
+  for Ulla — what to tell her if he does not come back, and what
+  not to. The signature at the bottom is unfinished; he was in a
+  hurry.
+type: object
+subtype: mundane
+weight: 0.05
+value: 0

@@ -1,0 +1,15 @@
+itemid: 40060
+name: Elgar's carved kingfisher
+namesimple: kingfisher
+description: A small carved kingfisher in dark close-grained wood,
+  perhaps a hand long from beak to tail-tip. The carving captures
+  the bird in mid-dive — wings folded back along the body, neck
+  outstretched, the small painted eye an alert black bead. The
+  detail-work on the flight-feathers is unmistakably the same hand
+  that left the half-finished bird in the bench-vise of the workshop
+  above Ulla's parlor. Worn smooth in places by long handling, as
+  though someone has carried it in a pocket for years.
+type: object
+subtype: mundane
+weight: 0.05
+value: 0

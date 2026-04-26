@@ -1,0 +1,48 @@
+mobid: 347
+zone: Stillwater
+behavior_archetype: noncombat_questgiver
+statpool: 58
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+groups:
+  - humanoid
+  - widow
+idlecommands:
+  - 'emote sits at the parlor table with her hands folded around an empty
+    cup, not drinking'
+  - ''
+  - 'emote looks toward the window that faces the workshop and then looks
+    away'
+  - ''
+  - 'emote turns a small object over in her hands -- something worn smooth
+    by long handling'
+  - ''
+  - 'emote exhales slowly and straightens her shoulders as though
+    remembering to hold herself upright'
+  - ''
+activitylevel: 8
+character:
+  name: Ulla
+  description: |
+    A still, dark-eyed woman past the middle of her years, with the kind
+    of contained grief that has calcified into habit. Ulla's husband Voss
+    died twelve years ago in circumstances the town accepts without question
+    and she has never stopped turning over in her mind. She keeps the
+    cottage tidy and the workshop locked. His niece Maren, who weaves in
+    Thornwall City, writes occasionally; Ulla answers when she can find the
+    words. There is something she knows about her husband's last weeks that
+    she has not told anyone -- not the constable, not the priest -- and it
+    sits in her like a stone. She would speak of it, if someone asked
+    the right questions.
+  speciesid: 1
+  gold: 10
+  stats:
+    perception:
+      training: 10
+    willpower:
+      training: 12
+    charisma:
+      training: 6

@@ -1,0 +1,113 @@
+mobid: 337
+zone: Stillwater
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Welcome to the smithy. Mind the heat near the forge."
+      - "Smith Brindle. State your work."
+
+  - keywords: ["who", "you", "yourself", "brindle"]
+    responses:
+      - "Brindle. Smith here since my father died. I forge what folk need and a little more besides. Plain work, mostly."
+
+  - keywords: ["forge", "iron", "smith", "work"]
+    responses:
+      - "I work iron and the lake-iron nodules out of the marsh. Lake-iron holds an edge longer than common stock -- the smith who can work it has a job for life around here."
+
+  - keywords: ["lake-iron", "nodule"]
+    responses:
+      - "Lake-iron nodules, harvested from the shallows. Smelt them down and the iron that comes out is finer-grained than ordinary stock. I sell the raw nodules and I forge the finished work. Either way you pay a premium."
+
+  - keywords: ["spear", "hook-spear", "half-finished"]
+    responses:
+      - "There is a spear on the bench at the back -- a hook-spear that has been there a long time. I keep meaning to finish it. I have kept meaning to finish it for years."
+
+  - keywords: [""]
+    responses:
+      - "Was there something you needed?"
+      - "Speak up. The forge is loud."
+
+tree:
+  root:
+    text: "Welcome to the smithy. State your work."
+    hints: "You could ask Brindle about his trade, the lake-iron he
+      works, or the half-finished spear on his bench."
+    variants:
+      # === Post-quest 20: full ===
+      - questRequired: ["20-end"]
+        text: "Ulla brought it down? Good. I could not bring myself to
+          take it to her, and she could not bear to ask. The spear
+          should not have sat that long. Wear it well."
+        hints: "You could ask Brindle about his trade or the lake-iron."
+
+      # === Has 20-bone_shoals_cache, before confession ===
+      - questRequired: ["20-bone_shoals_cache"]
+        questExcluded: ["20-brindle_confession"]
+        text: "You have been in the deep. I can see it on you. And
+          you have something to ask, by the way you are standing."
+        hints: "Ask Brindle about Elgar -- he was Brindle's friend.
+          You could also ask about the spiral or the note you found."
+
+      # === Pre-cache progress (workshop or further but no cache yet) ===
+      - questRequired: ["20-workshop_carving"]
+        questExcluded: ["20-bone_shoals_cache"]
+        text: "Asking about the spiral, are you? The temple priest
+          knows more about that than I do. Start there."
+        hints: "Speak to Temple Priest Seren at the Temple of
+          Stillwater for more on the spiral motif."
+
+  nodes:
+    # ============================================================
+    # QUEST GRANT: confession (after Bone Shoals cache found)
+    # ============================================================
+    - id: confession
+      triggers: ["quest", "task", "elgar", "spiral", "note", "cache",
+        "spear"]
+      questRequired: ["20-bone_shoals_cache"]
+      questExcluded: ["20-brindle_confession", "20-end"]
+      grantsQuest: "20-brindle_confession"
+      text: "You found his cache. I did not know he had hidden anything
+        down there -- but I am not surprised. He was my friend. He came
+        to me with the sites and the spiral and the alignment. I told
+        him I would help. I had a piece of work I needed to finish
+        first -- a fool piece of work, a commission for someone who is
+        long dead now -- and I told him to wait a day. He did not
+        wait. He went down alone. I have spent twelve years finishing
+        the spear he ordered from me, and I have spent twelve years
+        not finishing it. You should speak to Vella. Elgar's sister.
+        Healer's cottage west of Ulla's. There is something she
+        buried at his grave for whoever came looking."
+      hints: "Visit Stillwater Cemetery and search Elgar's grave, then
+        take what you find there to Vella Thorne at the healer's
+        cottage."
+      moodChange: friendly
+
+    # ============================================================
+    # REDIRECT (no quest): can't talk about Elgar to strangers
+    # ============================================================
+    - id: redirect_no_quest
+      triggers: ["elgar", "voss", "spiral"]
+      questExcluded: ["20-start", "20-end"]
+      text: "Elgar Voss. Old name in this town. He is at the cemetery
+        now -- empty grave, no body recovered. I do not have much to
+        say about him to a stranger. If Ulla has sent you, come back
+        when you have something to bring me from her."
+      hints: "Speak to Ulla at her parlor if you have business about
+        her late husband."
+
+    # ============================================================
+    # CARAVAN: lake-iron stock arrivals + Lars
+    # ============================================================
+    - id: caravan_orders
+      triggers: ["caravan", "ketil", "lars", "stock", "orders"]
+      questRequired: ["19-end"]
+      text: "Ketil's crew brings my lake-iron stock from the smelters
+        in Thornwall. Lars is a good kid even if he writes the orders
+        down wrong half the time. I let him think I am annoyed about
+        it because his father expects me to. I am not."
+
+memory:
+  expiryPeriod: ""
