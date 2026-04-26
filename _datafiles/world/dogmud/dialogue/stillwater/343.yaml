@@ -1,0 +1,135 @@
+mobid: 343
+zone: Stillwater
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Hodder. Pull up a bollard if you are staying. The net is
+        not going anywhere."
+      - "Hm. Sit if you like. I can talk and mend at the same time.
+        Forty years of practice."
+
+  - keywords: ["hello", "hi"]
+    moods: ["grateful"]
+    responses:
+      - "You again. Good. Sit down. I want to know what is in
+        those caves, and you look like you have seen it."
+
+  - keywords: ["nets", "mending", "mesh", "knots"]
+    responses:
+      - "I have been mending nets for forty years and I will mend
+        them until my hands stop working. The bounty in the caves
+        is what stopped the chewing -- the cave things were pushing
+        into the shallows and tearing through the mesh every other
+        night. Better now. Still work to do."
+      - "The mesh is finer than it used to be -- we switched to a
+        tighter weave after the shrimp-trouble. More knots, more
+        time. But a net with a reputation for holding is worth the
+        work."
+
+  - keywords: ["forty", "years", "old", "long", "fishermen", "docks"]
+    responses:
+      - "Forty years on this dock. I knew men who fished before the
+        boat-yard was here -- in my grandfather's day the boats were
+        dragged up the bank. This dock is an improvement. Most
+        things are."
+
+  - keywords: ["dead", "gone", "past", "names", "remember"]
+    responses:
+      - "Erik Sundval. Piet Korr. Old Brenna, who smelled of pipe-
+        smoke and could set a net in the dark. Gone now, all of
+        them. Different reasons. The lake takes some and the years
+        take the rest. I still know where Sundval liked to fish --
+        just south of the second marker-stake. The fish do not
+        remember him, but I do."
+
+  - keywords: ["voss", "elgar", "docks", "deep"]
+    responses:
+      - "I knew Elgar Voss from the docks, before he went. He asked
+        good questions about the deep water -- where the currents
+        run, which way the bottom shelves. Not the questions of a
+        man planning a fishing trip. I did not ask what he was
+        planning. I should have, maybe."
+
+  - keywords: ["tov", "young", "brann", "apprentice"]
+    responses:
+      - "Tov started at the stall when he was about this high. His
+        father ran it before him, and his father's father before
+        that. I taught his father the same net-repairs I am teaching
+        him now, which is not teaching so much as standing here until
+        the lesson takes."
+
+  - keywords: ["ketil", "caravan", "arrivals", "crew"]
+    responses:
+      - "Ketil's crew is in town. I can tell by the footprint of
+        the wagon near the square and the fact that Lars has been
+        running past the dock-yard twice a morning with a slate.
+        Good that the road is quiet enough for regular runs. Was
+        not always that way."
+
+  - keywords: [""]
+    responses:
+      - "Sit and watch the water. That is what I am doing."
+      - "Anything else you want to know about the lake, just ask.
+        I have had forty years to fill."
+
+tree:
+  root:
+    text: "Hodder. Sit if you like. The net is not going anywhere,
+      and neither am I."
+    hints: "You could ask Hodder about the nets, the old fishermen
+      he knew, or what he knows of the deep water."
+    variants:
+      - questRequired: ["19-end"]
+        questFlagRequired:
+          "19-completion": "full"
+        text: "The deep thing is dead, then. Good. Sundval and Korr
+          and three others I could name went down in bad seasons.
+          Some of those were the lake. Maybe not all of them. The
+          nets are mending. That is what matters now."
+        hints: "You could ask Hodder about the lake or the old
+          fishermen he knew."
+
+      - questRequired: ["19-end"]
+        text: "The shallows are quieter. I can tell by the way
+          the mesh is coming back clean. The lake is still the
+          lake, but at least what is pushing out of the caves
+          has been pushed back."
+        hints: "You could ask Hodder about the lake or the nets."
+
+  nodes:
+    - id: old_fishermen
+      triggers: ["dead", "gone", "past", "names", "remember",
+        "sundval", "korr", "brenna", "lost"]
+      text: "Erik Sundval. Piet Korr. Old Brenna with her pipe. A
+        dozen others I could name if you gave me time and a clear
+        evening. The lake is not kind to everyone and the years
+        are not kind to anyone. I keep the names because someone
+        should. The dock does not remember them. The water does
+        not remember them. I do."
+
+    - id: deep_water
+      triggers: ["deep", "water", "current", "bottom", "cave",
+        "shallows", "tide"]
+      text: "The deep water runs differently than it used to -- the
+        cave outlets changed the current patterns two, three years
+        back, maybe more. I felt it in the boat before my knee
+        went bad. Something shifted down there. The fish felt it
+        first; then the nets; then the boats. That is how the lake
+        tells you things -- in order of size, smallest first."
+
+    - id: mending_knowledge
+      triggers: ["nets", "mending", "mesh", "knots", "repair",
+        "technique"]
+      text: "The knot that holds under strain is the half-hitch
+        doubled -- everything else slides. I have been telling
+        Tov's generation that since before Tov was born and they
+        all nod and then half of them use the running-loop anyway
+        and their nets come back torn. You do not learn it until
+        you have fixed enough torn ones. Same lesson, every
+        generation."
+
+memory:
+  expiryPeriod: ""

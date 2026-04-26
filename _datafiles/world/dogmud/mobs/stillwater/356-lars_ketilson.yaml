@@ -1,0 +1,48 @@
+mobid: 356
+zone: Stillwater
+behavior_archetype: noncombat_passive
+statpool: 70
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 3
+groups:
+  - humanoid
+  - traveler
+idlecommands:
+  - 'emote checks his slate-list of orders and grimaces faintly'
+  - ''
+  - 'emote tries to read his father''s handwriting on the slate, fails politely, holds it sideways'
+  - ''
+  - 'say I am supposed to be running these to the smith. Five minutes more.'
+  - ''
+  - 'emote tucks the slate under one arm and leans on the well, watching the square'
+  - ''
+  - 'say They make me run the deliveries because I am the youngest. I am told this is character-building.'
+  - ''
+  - 'emote pats the side of one of the wagons absently as he passes it'
+  - ''
+activitylevel: 14
+character:
+  name: lars
+  description: |
+    A wiry teen with a sun-darkened face, a too-large oilskin jacket
+    hand-me-down from his father, and the alert quiet of someone who
+    has spent the last three days holding the reins on a wagon that
+    Did Not Want To Be Held. Lars Ketilson is the Stillwater--Thornwall
+    caravan's youngest hand -- the one his father makes do all the
+    in-town deliveries and errand-running on layover, the one who
+    carries the slate-list of which shopkeeper gets which crate. He
+    would rather be on a guard's pay grade than running notes around
+    town, but he does not say that out loud and he does not sulk.
+    Mostly he deflects with a small joke and gets the job done.
+  speciesid: 1
+  gold: 12
+  stats:
+    dexterity:
+      training: 10
+    perception:
+      training: 12
+    charisma:
+      training: 6

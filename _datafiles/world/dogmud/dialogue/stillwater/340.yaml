@@ -1,0 +1,105 @@
+mobid: 340
+zone: Stillwater
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Pearl-carver Kess. Looking for something specific, or
+        just looking?"
+      - "Welcome. I am finishing a setting -- give me a moment
+        or state your need."
+
+  - keywords: ["hello", "hi"]
+    moods: ["grateful"]
+    responses:
+      - "Back again. Good. I have something on the frame you may
+        want to see."
+
+  - keywords: ["pearls", "pearl", "nacre", "black"]
+    responses:
+      - "Stillwater black pearls. I came fourteen years ago for them
+        and stayed. The nacre depth on a good one is finer than
+        anything the sea yields -- I have worked both, and I will
+        not be argued out of that opinion."
+      - "The pearl-grade varies by depth. The shallows give you
+        smaller stones, cleaner. The deep shallows gave the best
+        ones, before the cave trouble pushed the divers out."
+
+  - keywords: ["silver", "wire", "setting", "work"]
+    responses:
+      - "I draw my own wire. Bought wire has inconsistencies I
+        cannot work around. The reduction plate is slow, but the
+        result holds the stone properly. You can tell the difference
+        in ten years."
+
+  - keywords: ["divers", "diving", "deep", "shallows"]
+    responses:
+      - "There used to be men and women who dived the deep shallows
+        for the better pearls -- the ones the surface current does
+        not bring up. They knew the bottom, knew where to look.
+        Most of them have stopped since the cave trouble started.
+        I do not blame them. I miss the quality."
+
+  - keywords: ["vella", "medicinal", "healing"]
+    responses:
+      - "Vella comes up sometimes for the smaller, imperfect
+        stones -- the ones I cannot use for settings. She grinds
+        them for something medicinal. I do not ask exactly what.
+        She pays a fair price and does not haggle, which I
+        appreciate."
+
+  - keywords: ["tov", "fishermen", "boat"]
+    responses:
+      - "Tov Brann at the stall would know which fishermen still go
+        deep enough to find the best pearls. He hears what the
+        boats bring in before anyone else does. Tell him I am still
+        buying if anyone is diving again."
+
+  - keywords: [""]
+    responses:
+      - "State your need plainly."
+      - "I am here."
+
+tree:
+  root:
+    text: "Pearl-carver Kess. What brings you in?"
+    hints: "You could ask Kess about the pearls she works, her silver
+      settings, or the divers who used to bring the best stones."
+
+  nodes:
+    - id: pearl_quality
+      triggers: ["pearls", "pearl", "nacre", "black", "quality",
+        "grade", "stone"]
+      text: "The lake gives two grades in practice. The shallow
+        pearls -- from the near-shore beds -- are small and clean,
+        good for drop-settings. The deep-shallow pearls are larger,
+        darker, with a blue cast in the nacre that the sea never
+        matched in anything I have handled. The divers who knew
+        the deep beds have been staying close to shore. The cave
+        trouble changed the water down there."
+
+    - id: silver_work
+      triggers: ["silver", "wire", "setting", "pendant", "ring",
+        "bracelet", "work"]
+      text: "I draw the wire here, set the stones here, engrave the
+        bezels here. Everything in this garret is my own work.
+        I came from a coast town where the jewellers bought their
+        wire and bought their blanks and called themselves craftsmen.
+        I do not work that way. It takes longer. The results are
+        different."
+
+    - id: divers_gone
+      triggers: ["divers", "diving", "deep", "shallows", "before",
+        "used"]
+      text: "Before the cave trouble, I had four or five regular
+        divers who would bring me stones from the deep beds. One of
+        them could tell a good pearl by weight before he surfaced --
+        just by the feel in his palm. He was a fisherman's friend
+        of Tov's. The others went to safer water when the currents
+        changed. I work with what I receive. I am still here if they
+        want to come back."
+
+memory:
+  expiryPeriod: ""

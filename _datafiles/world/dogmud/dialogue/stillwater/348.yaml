@@ -1,0 +1,113 @@
+mobid: 348
+zone: Stillwater
+defaultMood: friendly
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Welcome. Bram -- miller here. Mind the flour dust, it gets
+        in everything."
+      - "Miller Bram. Buying flour, or just curious about the
+        wheel?"
+
+  - keywords: ["hello", "hi"]
+    moods: ["grateful"]
+    responses:
+      - "Good to see you. The wheel is running well today -- hear
+        that pitch? That is a clean bearing."
+
+  - keywords: ["wheel", "mill", "grind", "millstone", "grain"]
+    responses:
+      - "Watermill, creek-fed. The wheel turns the upper stone
+        against the lower and the grain goes to flour between
+        them. Simple in principle, complicated in practice. I have
+        been at it nine years and I learn something about the
+        mechanism every winter when I take it apart to clean it."
+      - "The stone is dressed for medium-grain work -- the rye and
+        barley the households bring me. I can mill finer if someone
+        needs pastry flour, but I have to reset the gap, which
+        takes an hour."
+
+  - keywords: ["flood", "water", "creek", "seasonal", "spring"]
+    responses:
+      - "The creek floods every spring, about six weeks after the
+        last hard frost. I know it within three days most years
+        just from the snowmelt up-valley. I run the wheel hard in
+        the weeks before -- everyone brings their grain in before
+        the water goes high -- then I shut down and let it pass.
+        The wheel would snap under flood-current."
+
+  - keywords: ["drunn", "bridge", "mill-bridge"]
+    responses:
+      - "The mill-bridge is Drunn's responsibility in the ledger
+        and mine in practice. He pays for the timber from the
+        constabulary fund when it needs replacing; I do the
+        replacing. We have a good arrangement. It has held for
+        eight years now, which is longer than either of us
+        expected."
+
+  - keywords: ["edda", "cattail", "harvest", "bank"]
+    responses:
+      - "Edda comes down to harvest cattail from the northwest bank
+        every late summer. I know to run the wheel slow for her
+        morning and leave the gate open. She brings a cloak at
+        Yule in exchange, which I did not ask for. I have three
+        now and they all last. Good work."
+
+  - keywords: ["bakehouse", "bread", "flour", "household"]
+    responses:
+      - "The bakehouse takes the largest order. After that the
+        households, who bring their own grain and I mill it for
+        a fee. A few buy sacks direct from me when their own
+        grain runs short. I keep a reserve for that -- the lean
+        months come sooner than people remember from one year to
+        the next."
+
+  - keywords: [""]
+    responses:
+      - "Anything else? I have a millstone that will not dress
+        itself."
+      - "The flour is on the shelf if you are buying."
+
+tree:
+  root:
+    text: "Welcome. Mind the dust. What can I do for you?"
+    hints: "You could ask Bram about the mill, the seasonal flood,
+      or the creek that drives the wheel."
+
+  nodes:
+    - id: mill_workings
+      triggers: ["wheel", "mill", "millstone", "grind", "mechanism",
+        "stone", "grain"]
+      text: "The wheel is a twenty-spoke overshot -- the creek
+        drops from a sluice above and the weight of the water
+        drives it around. The millstones are lake-granite, dressed
+        every winter. I like the work because the physics of it
+        never changes -- water, weight, rotation, grain. Same
+        every day, until something breaks, and then it is a
+        puzzle worth solving."
+
+    - id: seasonal_flood
+      triggers: ["flood", "water", "creek", "seasonal", "spring",
+        "melt", "snowmelt", "high"]
+      text: "The creek floods six weeks after the last frost,
+        near enough. I run the wheel hard the week before --
+        full load, long hours, everyone gets their grain milled.
+        Then I lift the sluice gate and let the flood go through
+        without touching the stones. Comes down in a week, usually.
+        Then I lower the gate, clean the race, and start again.
+        It is the rhythm of the year here."
+
+    - id: bridge_drunn
+      triggers: ["drunn", "bridge", "mill-bridge", "timber",
+        "repair"]
+      text: "Drunn pays for the timber and I do the building.
+        That is not quite how the ledger reads it -- the ledger
+        says I maintain the bridge under town-works agreement --
+        but that is how it works in practice. The bridge serves
+        the mill, the path, and the cattail bank. Drunn is
+        practical about it. I appreciate that in a constable."
+
+memory:
+  expiryPeriod: ""

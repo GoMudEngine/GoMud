@@ -1,0 +1,132 @@
+mobid: 349
+zone: Stillwater
+defaultMood: friendly
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Well, hello. Sit if you like -- there is a stool against
+        the rail. I have been watching the lane since morning."
+      - "Gyda. And you are a stranger, which is interesting. Sit
+        down and tell me where you have come from."
+
+  - keywords: ["hello", "hi"]
+    moods: ["grateful"]
+    responses:
+      - "You again! Sit, sit. I have been hoping someone would
+        come by -- the lane has been quiet today."
+
+  - keywords: ["porch", "sitting", "watch", "lane", "street"]
+    responses:
+      - "I have been on this porch thirty-some years. My daughter
+        wants me to come inside. I tell her I see more from this
+        chair than she sees in a week of walking. She knows I am
+        right. She does not say so."
+      - "Everything worth knowing in this town walks down this lane
+        at least once. You just have to be patient and have
+        something to do with your hands."
+
+  - keywords: ["days", "old", "grandmother", "history", "remember"]
+    responses:
+      - "My grandmother's day, the lake was twice as busy. Boats
+        going out before first light. The bakehouse stayed open
+        until dark. The dock-yard ran two shifts. That was before
+        the bad winters, before the catches started thinning.
+        Things were different then. Not better, necessarily. Just
+        more of them."
+
+  - keywords: ["town", "stillwater", "news", "gossip", "who"]
+    responses:
+      - "I know everyone on Cooper's Lane and most of the square.
+        You want specific names, you ask me specific questions."
+      - "The town is smaller than it was in my grandmother's day.
+        Some families left. Some just stopped having children. The
+        lake gives less than it used to, and the young folk go
+        where the work is. Those that stay -- they are the ones
+        the lake has in it."
+
+  - keywords: ["sigrid", "pike", "lantern", "inn"]
+    responses:
+      - "Sigrid has been running the Pike and Lantern since her
+        mother passed -- which is twelve years at least, maybe
+        more. Before Sigrid's mother there was a man named Esvald
+        who let the roof go and served bad ale. Sigrid is an
+        improvement on both counts."
+
+  - keywords: ["ulla", "vella", "voss"]
+    moods: ["neutral", "friendly", "cautious"]
+    questExcluded: ["20-end"]
+    responses:
+      - "Ulla Voss has been in that cottage alone since her husband
+        went into the lake. Twelve years. I send herbs over with
+        my daughter sometimes -- not because Ulla asks, but because
+        nobody should be that alone. Vella visits, I think. I am
+        glad of it."
+
+  - keywords: ["ulla", "vella", "voss"]
+    questRequired: ["20-end"]
+    responses:
+      - "Ulla came out this week. First time I have seen her on
+        this lane in years. She looked like herself. Whoever did
+        that for her -- good. Some things want the help of a
+        stranger."
+
+  - keywords: [""]
+    responses:
+      - "Ask me anything. I know more than I should."
+      - "The lane is quiet today. Tell me something interesting."
+
+tree:
+  root:
+    text: "Well, hello. Sit on the stool if you are staying. Who
+      are you and where have you come from?"
+    hints: "You could ask Gyda about the town, its history, or what
+      she has seen from her porch lately."
+    variants:
+      - questRequired: ["20-end"]
+        text: "Ulla came down the lane this week. I have not seen
+          her out like that in years. She stopped to say good
+          morning. I did not make a fuss about it -- she does not
+          like fuss. I just said good morning back. That was
+          enough."
+        hints: "You could ask Gyda about the town, its history,
+          or the neighbours."
+
+  nodes:
+    - id: town_history
+      triggers: ["days", "old", "grandmother", "history", "remember",
+        "before", "past"]
+      text: "My grandmother came to Stillwater as a young woman
+        and raised four children on the lake-catch. The dock-yard
+        ran two shifts in her day and the bakehouse stayed open
+        until dark. The town has been quieter since -- slow
+        shrinkage, not a single event. A family here, a family
+        there, following the work north. What is left is what
+        the lake keeps. I do not say that as a complaint."
+
+    - id: gossip_neighbours
+      triggers: ["porch", "lane", "who", "gossip", "neighbours",
+        "cooper", "sigrid", "news"]
+      text: "The Halvord family at number seven lost a fishing
+        boat two seasons back and the son went to Thornwall to
+        find work. The Brekke widow at the corner has a dog that
+        barks at the caravan wagon every layover without fail.
+        Sigrid at the inn has more grey in her hair than last
+        year but she is still the most capable person in the
+        square, which I have been saying for a decade. Nothing
+        on this lane escapes me."
+
+    - id: vella_deliveries
+      triggers: ["vella", "deliveries", "elders", "herbs",
+        "healer"]
+      text: "Vella comes down the lane a few times a week -- she
+        checks in on the older folk, brings remedies when the
+        season turns. She knocked on my door last winter when the
+        cold was bad and sat with me for an hour. She did not
+        charge for it. That is the kind of healer she is. I send
+        her what I dry from my own garden in trade. Neither of us
+        calls it payment."
+
+memory:
+  expiryPeriod: ""
