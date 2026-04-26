@@ -12,7 +12,7 @@ description: >
   from below when the current kicks against the pilings.
 biome: farmland
 coord:
-  x: -11
+  x: -18
   y: -7
   z: 0
 exits:

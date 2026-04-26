@@ -1,0 +1,20 @@
+id: drowned-veil
+name: "Drowned Veil"
+skill: enchanting
+skill_minimum: 40
+station: enchanting_circle
+time_rounds: 8
+target_type: back
+enchant_type: drowned-veil
+ingredients:
+  - item_tag: stillwater-pearl
+    quantity: 2
+  - item_tag: chrysalis-setting
+    quantity: 2
+  - item_tag: binding-paste
+    quantity: 1
+output:
+  item_id: 0
+  quantity: 0
+success_message: "The two pearls dissolve into the cloak's weave with a long slow sigh. A pearl-grey sheen spreads through the fabric and settles. The cloak is heavier in the hand; nothing in the world is heavier on the eye."
+failure_message: "The pearls refuse the binding, dimming and going dark. The catalyst burns out. The materials are lost; the cloak is unharmed."

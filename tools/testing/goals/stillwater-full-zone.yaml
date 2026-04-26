@@ -1,0 +1,457 @@
+description: >
+  Full-zone smoke test of Stillwater (Zone 2.2) — all 47
+  rooms built (4100-4146), 7 crafting stations placed,
+  22 NPCs now populate the zone (mobs 333-354), 3 cave
+  mobs spawn in the dungeon (skitter shrimp swarm, drowned
+  hunter ambusher, sump dweller boss). 5 forage materials
+  added to swamp/water biomes, plus 4 new craftable recipes.
+  Smoketester starts at room 4100 (Stillwater Gate,
+  Southern Approach).
+
+  CRITICAL — cave hazards: the lake caves now contain LIVE
+  mobs, including the sump dweller boss (statpool 375, vit
+  +120, regen + thick-hide + dense-muscles mutations) which
+  WILL kill an unprepared character. The drowned hunter
+  (statpool 275, ambusher with cold-blooded + camo-skin) can
+  also one-shot a low-tier tester. Treat the cave dungeon
+  as observe-and-report, not kill-everything. Engage the
+  skitter shrimp swarm (statpool 30, prey) for a baseline
+  combat read, then back off from the others if outmatched.
+
+  IMPORTANT — for cave navigation: caves are dark and you
+  cannot see room descriptions, exits, or notices without
+  light. Cast `chrysalis-glow` from your spellbook BEFORE
+  descending into the lake caves (room 4127 onward). The
+  Cave Mouth (4121) is also dark in current state — cast
+  glow before approaching from Lake Path Bend if you want
+  to read the constabulary's posted bounty notice. Once
+  the spell is up, all four cave dungeon rooms (Antechamber,
+  Pool Chamber, Submerged Passage, Bone Shoals, Hollow Sump)
+  read normally. Re-cast as needed; the spell expires.
+
+  Quest hooks woven across the zone: lake-cave bounty
+  (mentioned 4×: gate notice-board, Crier's notice-frame,
+  constabulary postings, Cave Mouth notice); missing
+  fisherman Elgar Voss (notice-board → Bone Shoals cache
+  with note → Stillwater Cemetery empty grave); pre-
+  Chrysalis spiral motif (Temple pillars → Temple Garden
+  hidden marker → Bone Shoals → Uncle's Workshop hidden
+  bench-vise carving → Old Chapel Ruin altar stone →
+  Wardstone Circle altar slab); forage materials
+  (Reedy Foreshore: cattail/marsh willow/lake mint;
+  Crab-Trap Beach: freshwater clams; Sluice Pond: lake
+  iron; Hollow Sump boss: Stillwater Black Pearl).
+
+goals:
+  # --- Town spine north-south walk ---
+  - >
+    From 4100, walk the south-to-north spine: north → 4101
+    → 4102 (Lakefront Square — 'map' should show 'T' glyph
+    if the engine bug is fixed; legend should list 'T
+    Townsquare' regardless) → 4105 (Tinder & Tackle) →
+    4109 (North Square) → 4111 (North Gate). Confirm the
+    walk works in both directions, smoothly. Note: there
+    used to be a 2-row-jump bug between 4102 and 4109
+    (4105 was missing in the middle); confirm that's now
+    fixed.
+
+  # --- The merged inn & constabulary ---
+  - >
+    From Lakefront Square (4102), go west into 4103 The
+    Pike & Lantern. This is the merged inn — the previous
+    "Pike Yard" room is now folded into the common room
+    description, and you should see yard nouns (hitching
+    rail, net bunting, sign) referenced as "visible
+    through the open front door." 'look yard', 'look
+    hitching rail', 'look net bunting' should all fire.
+    Then 'up' to the Lodging Loft (4104). Confirm 'up'
+    works as inn-entry (it shouldn't; the inn is at
+    street level with the loft above as a real second
+    floor — only the up-to-loft is `up`).
+
+  - >
+    From North Square (4109), go east to 4110 Constabulary.
+    This is the merged constabulary — the holding cell is
+    now visible at the back through iron bars rather than
+    being a separate basement room. 'look bars', 'look
+    cell', 'look bench' (cell bench), 'look slop bucket'
+    should all fire from inside the office. Confirm there
+    is no `down` exit (the basement cell is gone).
+
+  # --- Lakeside loop & temple cluster ---
+  - >
+    From Lakefront Square, go east → 4108 Crier's Step →
+    east → 4113 Lake-View Promenade. Walk the lakeside
+    loop: north 4116 (Fishing Docks — examine the raided
+    nets) → 4117 → east 4118 (Boat Pier) → north 4120 →
+    east 4121 Cave Mouth. Confirm the constabulary's
+    bounty-doubled notice is visible at the cave entrance.
+
+  - >
+    From Cave Mouth, cast `chrysalis-glow` for light, then
+    descend: 'down' → 4127 Dripping Antechamber → north
+    4128 Pool Chamber → west 4129 Submerged Passage →
+    south 4130 Bone Shoals. In Bone Shoals, type 'search'
+    — there should be a hidden_noun 'cache' you can
+    discover (search difficulty is high — Tier 3 target
+    175, roughly 2-3% per attempt for a low-Search
+    character; expect to need many tries, or to discover
+    by typing 'look cache' if you know the room contains
+    one). After discovery, 'look cache' reveals a folded
+    note from "E.V." to "Brindle" (the smith) about the
+    cave being dangerous, plus a small Stillwater Black
+    Pearl.
+
+  - >
+    From Pool Chamber (4128), go north → 4131 Hollow Sump
+    (the boss room). No mob is spawned yet, but the room
+    description should set up the sump-dweller boss
+    encounter clearly. Confirm the bones+net rim, the
+    high water mark, and the heavy water-displacement
+    text all read. Reverse out: south → 4128 → south →
+    4127 → up → 4121.
+
+  - >
+    From Crab-Trap Beach (4115), type 'search' to discover
+    the hidden 'loose driftwood' cache. From Reedy
+    Foreshore (4114), look at the cattails, marsh willow,
+    and lake mint nouns — these are the forage materials
+    referenced earlier in the inn loft's herbs noun.
+    Continuity check: are they consistent?
+
+  - >
+    Visit the temple cluster: 4122 Temple Approach (note
+    the spiral motif on the pillars) → 4123 Temple of
+    Stillwater (mapsymbol '+' — same engine bug as the
+    'T' on the square; legend should still list it).
+    Then 4124 Temple Garden — type 'search' to discover
+    the buried pre-Chrysalis marker under the crab-apple.
+    Then 4125 Healer's Alcove. Then up from 4123 → 4126
+    Pearl-Carver's Garret (real second floor — confirm
+    `jeweler_bench` station is recognized; type 'craft'
+    and look for jeweler recipes).
+
+  # --- West quarter: Cooper, Mill, Healer, Ulla, etc. ---
+  - >
+    From South Approach (4101), go west → 4132 Cooper's
+    Lane (note the merged street + workshop). Then south
+    → 4134 Bakehouse (confirm `cooking_fire` station
+    here — type 'craft' to see cooking recipes; you have
+    grilled meat / trail rations recipes from your
+    starting load). Then west → 4133 Mill Creek
+    Footbridge → north → 4135 Watermill (merged yard +
+    mill interior).
+
+  - >
+    From Watermill, go north → 4112 Stable Yard, then
+    east → 4103 Pike & Lantern. Now from Pike & Lantern,
+    you can also reach the western residential cluster:
+    4109 North Square → west → 4137 Ulla's Parlor (Ulla
+    is the merged front step + parlor). 'up' from Ulla's
+    → 4138 Uncle's Workshop (real second floor with
+    sawdust). Type 'search' in Uncle's Workshop to
+    discover the hidden 'bench-vise carving' (the
+    spiral motif again — Ulla's husband knew the symbol).
+
+  - >
+    From Ulla's, go west → 4136 Healer's Cottage (merged
+    cottage + stillroom — confirm `alchemy_bench` station;
+    type 'craft' for alchemy recipes). Then west → 4140
+    Stillwater Cemetery. Find Elgar Voss's empty grave.
+    Type 'search' to discover the hidden cache "beneath
+    Elgar's marker" — should reveal Ulla's husband's
+    carved kingfisher + a note from "V." (Vella the
+    healer) saying "He was your brother." This ties Ulla,
+    Vella, and Elgar Voss together as a family unit.
+
+  - >
+    From Healer's, go north → 4141 Sluice Pond. Look at
+    the lake iron noun (forage material for blacksmithing).
+    Then north → 4143 Tailor's Cottage (confirm `loom`
+    station — type 'craft' for tailoring recipes). Then
+    north → 4145 Wardstone Circle (confirm
+    `enchanting_circle` station). Walk west to 4144 Old
+    Chapel Ruin — note the spiral motif on the altar
+    stone matches the wardstone circle's altar slab.
+
+  # --- Outskirts loop ---
+  - >
+    From Wardstone Circle, return south to Tailor's
+    Cottage, then east → 4142 Travelers' Camp (note the
+    peddler's wagon and grey mule named Patience). Then
+    southeast (a diagonal!) → 4111 North Gate. Confirm
+    the diagonal exit works in both directions
+    (4111 northwest → 4142). Then south → 4109 → south
+    → 4105 → south → 4102 → south → 4101 → south → 4100
+    → south → 4062 (north_road).
+
+  # --- Boat-Builder's Yard ---
+  - >
+    From Fishing Docks (4116), go east → 4146 Boat-
+    Builder's Yard. Confirm the half-finished hull,
+    shavings, brazier, and slipway nouns all fire.
+    Reverse west to docks.
+
+  # --- All 7 crafting stations ---
+  - >
+    Station inventory check — confirm 'craft' command
+    recognizes the station in each:
+    4103 Pike & Lantern (cooking_fire),
+    4106 Brindle's Smithy (forge),
+    4126 Pearl-Carver's Garret (jeweler_bench),
+    4134 Bakehouse (cooking_fire — second one in the
+    zone, both should work),
+    4136 Healer's Cottage (alchemy_bench),
+    4143 Tailor's Cottage (loom),
+    4145 Wardstone Circle (enchanting_circle).
+    Report any station that doesn't register.
+
+  # --- Mapper render check ---
+  - >
+    From multiple vantages, run 'map' and check the
+    rendered glyphs. Two rooms have non-default
+    mapsymbols: 4102 Lakefront Square (T Townsquare),
+    4123 Temple of Stillwater (+ Temple), 4144 Old
+    Chapel Ruin (R Ruins, `ruins` biome — non-city,
+    so this might actually render correctly), 4145
+    Wardstone Circle (W Wardstone, `ruins` biome —
+    same). Compare which symbols actually render vs
+    just appearing in the legend. The known engine
+    bug is "city-biome rooms override per-room mapsymbol
+    at draw time" — so 4102 and 4123 will likely fail
+    the render but 4144 and 4145 may succeed. This
+    test confirms the bug's scope.
+
+  # --- Server log scan ---
+  - >
+    With Logging.LogToFile now enabled, after the test
+    session check `_datafiles/logs/server.log` for any
+    YAML parse errors, missing-exit warnings, station-
+    registration warnings, or anything else that fired
+    while loading the 35 new Stage B+C rooms. Report
+    everything found, even minor.
+
+  # --- Overall feel ---
+  - >
+    OVERALL FEEL — after walking the full zone, write a
+    summary covering:
+    (1) Does Stillwater feel cohesive? Town center, lake
+        district, temple cluster, west residential, and
+        outskirts should all feel like one place but with
+        distinct neighborhood characters.
+    (2) Is the cross-room narrative thread (Elgar Voss /
+        Brindle Voss / Ulla / Vella / the cemetery cache)
+        legible to a player who walks the zone in order?
+    (3) Is the pre-Chrysalis spiral lore breadcrumb
+        (temple pillars → garden marker → bone shoals
+        cache → uncle's workshop carving → old chapel
+        ruin altar → wardstone altar slab) discoverable
+        and intriguing?
+    (4) Does the forage-material seeding (inn loft herbs
+        noun foreshadowing → actual forage rooms in
+        Stage B/C) pay off?
+    (5) Any rooms that felt empty, generic, overstuffed,
+        or wordy?
+    (6) Any inconsistencies between rooms (a noun
+        referenced in one room that doesn't match what
+        you find when you go look for it)?
+    (7) Did any cardinal direction or `up`/`down` feel
+        forced or geometrically wrong?
+
+  # ============================================================
+  # PHASE 1B EXTENSION — NPCs, mobs, forage, new recipes/items
+  # All goals below test content added AFTER the original walk.
+  # ============================================================
+
+  # --- NPC roster check (22 NPCs, mobs 333-354) ---
+  - >
+    NPC SPAWN AUDIT — visit every room expected to contain a
+    named NPC and confirm the right mob is present. Use
+    `look <name>` on each to verify descriptions render
+    cleanly (no broken ANSI tags, no truncation):
+    4103 Pike & Lantern — innkeeper Sigrid (333) AND barmaid
+      Neva (334)
+    4102 Lakefront Square — fishmonger Tov Brann (336),
+      caravan driver Ketil (351), caravan guard Marta (352),
+      beggar Oswin (354)
+    4106 Brindle's Smithy — smith Brindle (337)
+    4105 Tinder & Tackle — storekeeper Wulf (341)
+    4109 North Square — traveling pilgrim Fenwick (353)
+    4110 Constabulary — constable Drunn (335)
+    4115 Crab-Trap Beach — young fisherman Luc (346)
+    4116 Fishing Docks — dock master Arn (342)
+    4117 Net Yard — old fisherman Hodder (343)
+    4119 Lakeshore North — child Pip (350)
+    4122 Temple Approach — temple acolyte Finn (345)
+    4123 Temple of Stillwater — temple priest Seren (344)
+    4125 Healer's Alcove — apothecary Ilsa (338)
+    4126 Pearl-Carver's Garret — pearl-carver Kess (340)
+    4132 Cooper's Lane — old cottager Gyda (349)
+    4135 Watermill — miller Bram (348)
+    4137 Ulla's Parlor — Ulla (347)
+    4143 Tailor's Cottage — weaver Edda (339)
+    Note: caravan driver Ketil and constable Drunn have
+    `maxwander: 1-2` so they may not always be in the
+    listed room. Report any expected NPC that is missing.
+
+  # --- Ulla's grief writing ---
+  - >
+    Visit Ulla (4137 Ulla's Parlor) and `look Ulla` carefully.
+    Her description is the heaviest character writing in the
+    zone (calcified grief, the locked workshop, "she would
+    speak of it if someone asked the right questions").
+    Confirm:
+    (a) Description renders fully without truncation
+    (b) The reference to "his niece Maren, who weaves in
+        Thornwall City" is intact (canon link to mob 113)
+    (c) The hint at the unspoken thing reads as deliberate
+        mystery, not a missing dialogue tree
+    (d) Try `ask Ulla quest`, `ask Ulla husband`, `ask Ulla
+        Voss` — these will likely have NO response yet (quest
+        dialogue is Phase 2). Report what happens (silence?
+        generic refusal? error?).
+
+  # --- Bounty-hook redundancy ---
+  - >
+    Both constable Drunn (4110) and dock master Arn (4116)
+    are designed to be lake-caves bounty hooks. Try `ask
+    drunn caves`, `ask drunn bounty`, `ask arn caves`, `ask
+    arn nets`, `ask arn cave`. Report what fires (likely
+    nothing, since dialogue trees are Phase 2 — but the
+    notice-board postings around town should still mention
+    the bounty). Confirm the constabulary postings (4110)
+    and the dock raided-nets noun (4116) BOTH read as
+    pointing to the same problem.
+
+  # --- Gossiper ambient (Hodder + Gyda) ---
+  - >
+    Sit in 4117 Net Yard near old fisherman Hodder (343) for
+    AT LEAST 100 rounds (use `regen` or just idle). He's
+    tagged `groups: gossiper` so the engine's Stage 42.5
+    gossip system should periodically have him `say` lines
+    pulled from `gossip_templates.yaml` based on recent
+    world events ("Word from the market is that...", etc.).
+    Same for old cottager Gyda (349) at 4132 Cooper's Lane.
+    Report whether either of them actually broadcasts during
+    your idle window. Note: if no recent world events have
+    fired, the system may have nothing to say — this is
+    expected and not a bug.
+
+  # --- Forage system (3 rooms, 5 new materials) ---
+  - >
+    FORAGE TEST — exercise the new biome yields. Each
+    `forage` is a 6-round cooldown. Try at minimum 5
+    forages per room.
+    4114 Reedy Foreshore (`biome: swamp`) — should yield a
+      mix of: bitter thistle (40005), healers root (40004),
+      cattail down (40055), marsh willow bark (40056), lake
+      mint (40057). Cattail and lake mint should each appear
+      ~25% of successful rolls.
+    4115 Crab-Trap Beach (`biome: water`) — should yield
+      mostly freshwater clams (40058) with occasional
+      lake-iron nodules (40059) — roughly 5:1 ratio.
+    4141 Sluice Pond (`biome: water`) — same yield table as
+      Crab-Trap Beach.
+    Report what you actually got. The `water` biome was
+    added in this round — if forage at 4115/4141 returns
+    "There is nothing here worth foraging," that is a bug.
+
+  # --- New recipes & crafting stations ---
+  - >
+    Type `recipes` in town center and confirm 4 new recipes
+    are listed (assuming the smoketester knows them — if
+    not, this goal is informational only):
+    - Lake-Iron Hook-Spear (blacksmithing 22, forge)
+    - Lake-Tonic of Steady Hand (alchemy 18, alchemy_bench)
+    - Cattail-Down Cloak (tailoring 20, loom)
+    - Stillwater Lake Chowder (cooking 12, cooking_fire)
+    The smoketester likely lacks the materials and skills
+    to craft these; instead, try `look <itemname>` on each
+    output item if you can find one in a shop or NPC's
+    items, and report whether descriptions render.
+
+  # --- Shop dynamic pricing ---
+  - >
+    Visit smith Brindle (4106), pearl-carver Kess (4126),
+    apothecary Ilsa (4125), weaver Edda (4143), and
+    fishmonger Tov Brann (4102). At each, type `list` and
+    examine prices — the dynamic-pricing system should
+    scale prices based on stock levels (0.25x overstocked
+    → 5.0x out-of-stock per CLAUDE.md). Premium items to
+    note specifically:
+    (a) Stillwater black pearl at Kess (base value 400 —
+        was 80 before the 5x mat-price bump)
+    (b) Lake-iron nodule at Brindle (base value 60 — was 12)
+    (c) Leviathan tooth at Tov (base value 175 — was 35)
+    Report the displayed shop prices for each. Are they
+    in a sensible range relative to base value?
+
+  # --- Cave combat: live mobs ---
+  - >
+    CAVE COMBAT — engage carefully. Cast chrysalis-glow,
+    descend to 4127, proceed to 4128 Pool Chamber. The
+    skitter shrimp swarm (mob 330) should be present —
+    `behavior_archetype: prey`, statpool 30. Attack it
+    once or twice to confirm:
+    (a) Combat fires cleanly (no panic, no missing combat
+        text)
+    (b) The prey archetype actually drives flee behavior —
+        the swarm should try to escape
+    (c) On kill, it should drop a skitter-shrimp shell
+        (40051). Loot the corpse to confirm.
+    Then continue to 4129/4130. The drowned hunter (mob
+    331, ambusher) may surprise-attack on entry. Engage
+    ONLY if you can survive — otherwise observe, then back
+    out. If you survive a drowned hunter encounter,
+    confirm the per-item DropChance system: drowned-hunter
+    hide (40052) should always drop, but the sump dweller's
+    Stillwater black pearl (40053) is dropchance: 15 (15%).
+
+  # --- Sethome + sump-dweller death test (intentional death) ---
+  - >
+    SETHOME + DEATH TEST — this goal intentionally kills the
+    tester to validate the Stillwater respawn anchor.
+    Sequence:
+    (1) BEFORE descending into the caves, travel to 4123
+        Temple of Stillwater and type `set home stillwater`.
+        Confirm the response indicates the anchor was set
+        (the engine change added "stillwater" → 4123 to
+        sethome.go).
+    (2) Buff up however you like, then descend to 4131
+        Hollow Sump and engage the sump dweller (mob 332,
+        statpool 375 boss). Expected outcome: you die.
+        Don't fight smart — this is a test of the death
+        flow, not a kill attempt.
+    (3) On death, confirm:
+        (a) Respawn lands you at 4123 Temple of Stillwater
+            (NOT Thornwall or wherever the previous home
+            was). If you respawn elsewhere, the sethome
+            anchor is broken — report which room.
+        (b) Death penalty applies cleanly (death-recovery
+            buff, gold loss).
+    DO NOT walk back to 4131 to recover anything — this MUD
+    has no corpse recovery, and the sump dweller will just
+    kill you again. After respawn, the test is done.
+    This is the cleanest validation of both the sethome
+    anchor and the boss difficulty — a low-tier character
+    should NOT be able to survive the sump dweller solo.
+
+  # --- Sigrid's chowder ---
+  - >
+    Visit innkeeper Sigrid (4103 Pike & Lantern) and `list`.
+    She should sell stillwater lake chowder (30061),
+    pre-made. Buy one if you have gold. `eat chowder` and
+    confirm the buff applies. The chowder has both buff 42
+    (Hearty Meal) and buff 43 (Stamina Boost) — `status`
+    or `buffs` should show both stacked.
+
+  # --- 5x mat price bump observation ---
+  - >
+    PRICING SANITY — sell a freshwater clam (40058, base
+    value 15) to the fishmonger and observe the buyback
+    price. Should be roughly 60% of value × stock multiplier.
+    Then sell a lake-iron nodule (40059, base value 60) to
+    the smith. Then sell a stillwater black pearl (40053,
+    base value 400) to the pearl-carver. The pearl sale
+    should net the most by far, properly reflecting its
+    premium tier. Report buyback offers.

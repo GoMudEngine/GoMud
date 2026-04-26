@@ -1,0 +1,90 @@
+roomid: 4140
+zone: Stillwater
+title: Stillwater Cemetery
+description: >
+  A small walled <ansi fg="itemname">cemetery</ansi> sits
+  at the western edge of town, perhaps forty
+  <ansi fg="itemname">graves</ansi> arranged in patient
+  rows along narrow gravel paths. The wall is low and
+  mossy, the gate iron and propped open. The wind here
+  comes off the lake unobstructed, and the silence under
+  it is the kind small towns reserve for their dead. Most
+  of the markers are small carved lake-stone slabs,
+  weathered to varying degrees, the names sometimes still
+  readable. A larger central
+  <ansi fg="itemname">monument</ansi> bears a longer list
+  — the lake's drowned, the sailors and fishermen the
+  water has taken back over the years. Near the eastern
+  wall, set apart, a smaller plot holds a single newer
+  marker — Elgar Voss's empty grave, no body ever
+  recovered, the name carved in a hand the grief in which
+  is still legible.
+biome: ruins
+coord:
+  x: -21
+  y: 5
+  z: 0
+exits:
+  east:
+    roomid: 4136
+nouns:
+  cemetery: A small walled cemetery of perhaps forty
+    graves at the western edge of town, the wall low
+    and mossy and the iron gate propped open in fair
+    weather. Narrow gravel paths divide the rows. The
+    cemetery is older than the present temple; some
+    of the deepest-set markers predate the Chrysalis
+    theology entirely, in a lettering most modern
+    readers cannot parse.
+  graves: Small carved lake-stone slabs in patient
+    rows, weathered to varying degrees by the
+    lake-wind. The names on the older slabs are mostly
+    illegible; the newer markers carry recent dates
+    and the smaller carved fish-sigil that marks a
+    Stillwater-born resident. Several fresh-cut
+    flowers lie at one or two of the more recent
+    graves.
+  monument: A larger central monument bears a longer
+    list of names — the lake's drowned, the sailors
+    and fishermen the water has taken back over the
+    years. The list is added to a few times each
+    decade, in a different hand each time. Some of
+    the names recur in pairs and triples — fathers
+    and sons, brothers, cousins. The lake takes
+    families.
+  Elgar's grave: Set apart near the eastern wall, a
+    smaller plot holds a single newer marker carved
+    in a careful hand still legible with grief —
+    ELGAR VOSS, FISHERMAN, LOST TO THE LAKE. No
+    body was ever recovered; the grave is empty. The
+    dates suggest he went into the water perhaps
+    fifteen years ago. A small carved fish-sigil at
+    the foot of the marker is identical to the
+    sigil on the Stillwater-built skiffs and on
+    the railing of Mill Creek Footbridge.
+  wall: A low mortared lake-stone wall encloses the
+    cemetery on three sides, mossed and weathered.
+    The fourth side is open to the lake — a deliberate
+    choice when the cemetery was first laid out, so
+    that the lake-drowned might have a clear sight
+    line back to the water. The gate is iron and
+    propped open with a smooth river-stone.
+hidden_nouns:
+  disturbance:
+    description: |
+      Beneath the loose turf at the foot of Elgar Voss's marker
+      a small wooden box has been buried, perhaps a hand's
+      breadth down — placed there by someone who knew the
+      grave was empty and wanted to give Elgar something to lie
+      with anyway. Inside, a folded oilskin holds a single
+      small carved kingfisher in dark wood, the carving
+      unmistakably Ulla's husband's hand, and a short note in
+      a different hand reading "He was your brother. — V."
+    hidden_description: |
+      The turf at the foot of Elgar's marker is slightly raised, as if disturbed and patted back not long ago. Try `look disturbance`.
+idlemessages:
+- The lake-wind moves through the cemetery with a low constant rush.
+- A piece of old lichen frays loose from a marker and is carried briefly across the gravel.
+- A <ansi fg="mobname">crow</ansi> calls once from the wall, then again, then is silent.
+- A single white petal drifts down from a fresh-cut flower at one of the recent graves.
+- The iron gate creaks softly as a stronger gust catches it.

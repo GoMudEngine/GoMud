@@ -1,0 +1,77 @@
+roomid: 4135
+zone: Stillwater
+title: The Watermill
+description: >
+  The deep slow rumble of a working millstone fills the
+  stone-built mill from the moment you step into its open
+  yard — a low constant grinding that the millers'
+  children grow up sleeping through. A great wooden
+  <ansi fg="itemname">water wheel</ansi> turns slowly on
+  the building's western wall, fed by the creek's diverted
+  flow through a moss-slick wooden flume. Through the wide
+  open door the
+  <ansi fg="itemname">millstones</ansi> are visible at
+  work, the lower stone a slow steady rotation under the
+  upper, fine pale flour drifting in the air. Sacks of
+  ground meal stand stacked along the eastern wall;
+  unground <ansi fg="itemname">grain</ansi> waits in the
+  yard outside in heavy canvas-wrapped bundles. The
+  miller's slate above the door names the prices for the
+  current sack-weights.
+biome: city
+coord:
+  x: -20
+  y: 2
+  z: 0
+exits:
+  north:
+    roomid: 4112
+  south:
+    roomid: 4133
+  east:
+    roomid: 4132
+nouns:
+  water wheel: A great undershot wooden wheel mounted
+    on the mill's western wall, fed by the creek's
+    diverted flow through a moss-slick wooden flume.
+    The wheel turns slowly and steadily, the paddles
+    dripping water back into the creek with each
+    revolution. The shaft inside the building drives
+    the millstones through a wooden gear train the
+    current miller's grandfather built.
+  millstones: A pair of round dressed millstones
+    inside the open mill — the lower stone fixed and
+    the upper stone slowly rotating above it, the
+    grain falling through a wooden hopper between them
+    to be ground to flour and out the side. Fine pale
+    flour-dust hangs in the air around the stones; the
+    miller's apron is permanently white. The grooves
+    cut into the stones are recut by a travelling
+    stonecutter every other year.
+  grain: Heavy canvas-wrapped bundles of unground
+    grain stand in the yard outside, each tagged with
+    a small wooden disc naming whose grain it is and
+    when it was brought in. The miller works a strict
+    queue, regardless of how impatient any farmer
+    becomes.
+  sacks: Sacks of ground meal stacked along the
+    eastern wall, each weighed and labelled and sealed
+    with a small twist of waxed twine. Wheat meal
+    mostly, a few rye, one or two barley. The
+    bakehouse takes the bulk of the wheat meal at
+    a standing order.
+  slate: A square of slate hung above the open mill
+    door listing the prices for current sack-weights,
+    in copper. The miller's percentage of every sack
+    ground is also chalked here — a plain
+    transparency that the farmers in the area have
+    appreciated for two generations.
+idlemessages:
+- The millstones grind on with their slow deep rumble.
+- The water wheel's paddles drip back into the creek as the wheel turns.
+- A sack of meal is hefted onto the stack with a soft thump and a small puff of flour-dust.
+- A farmer's wagon arrives in the yard, calls a horse to a stop, and is greeted briefly.
+- Flour-dust drifts visibly across a beam of sun coming through the open door.
+spawninfo:
+- mobid: 348
+  cooldown: 600 rounds

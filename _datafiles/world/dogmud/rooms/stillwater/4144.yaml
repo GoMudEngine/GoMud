@@ -1,0 +1,76 @@
+roomid: 4144
+zone: Stillwater
+title: Old Chapel Ruin
+description: >
+  The broken stone foundation of a small chapel sits in a
+  mossy hollow west of the wardstone circle — three
+  surviving courses of mortared lake-stone and a single
+  intact corner where a doorpost still stands. The
+  <ansi fg="itemname">foundation</ansi> outlines a single
+  modest room perhaps fifteen paces across, the floor
+  long given to grass and creeping moss. A weathered
+  carved <ansi fg="itemname">altar stone</ansi> remains
+  at the eastern end, the surface inscribed with a long
+  tight spiral inside an outer circle — the work of a
+  hand that long predates the present temple, in a
+  carving style no current mason in town would
+  recognise. The lake-wind passes through the broken
+  doorframe with a low even sound. Nothing else moves
+  here; the chapel was abandoned generations before
+  anyone alive remembers, and the present temple in town
+  carefully does not discuss what stood here before.
+biome: ruins
+mapsymbol: R
+maplegend: Ruins
+coord:
+  x: -21
+  y: 8
+  z: 0
+exits:
+  east:
+    roomid: 4145
+nouns:
+  foundation: Three surviving courses of mortared
+    lake-stone outline a single modest room perhaps
+    fifteen paces across — the foundation of a small
+    chapel that stood here before the present temple
+    in town existed. The mortar is older and harder
+    than anything currently being made in Stillwater;
+    the stones were dressed with a precision the
+    present masons would acknowledge.
+  altar stone: A weathered carved stone slab remains
+    at the eastern end of the foundation, the
+    surface inscribed with a long tight spiral set
+    inside an outer circle. The carving is older than
+    the Chrysalis theology by some considerable
+    margin — neither the present temple nor any of
+    the present masons would acknowledge the work.
+    Whatever it meant, there is no longer anyone alive
+    in town who can readily explain it.
+  doorpost: A single intact stone doorpost still
+    stands at the foundation's western corner — the
+    other long fallen and gone. The wind passes
+    through the broken doorframe with a low even
+    sound that the locals avoid commenting on. A
+    faint groove in the doorpost's inner face shows
+    where a wooden door once swung; the iron pivot
+    is gone.
+  moss: A thick green moss has crept across the
+    foundation's interior, softening the broken
+    stones and the long-fallen rubble. In several
+    places the moss has begun to fill the cracks
+    between courses and slowly lever them apart —
+    the patient work of decades.
+  hollow: The chapel sits in a small natural hollow,
+    sheltered on three sides by low ridges of
+    weathered basalt and open to the east where a
+    narrow path runs to the wardstone circle. The
+    hollow's floor is gentler ground than the stone
+    around it; an early settler chose this spot for
+    reasons of shelter and approach.
+idlemessages:
+- The lake-wind passes through the broken doorframe with a low even sound.
+- A piece of old mortar gives way somewhere in the foundation and clicks down through the moss.
+- A <ansi fg="mobname">raven</ansi> drops onto the doorpost, considers the foundation, and lifts away.
+- A small clump of moss frays loose from a stone and tumbles down the foundation's outer face.
+- A breeze stirs the long grass on the foundation's interior into a slow even ripple.

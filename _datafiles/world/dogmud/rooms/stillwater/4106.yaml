@@ -1,0 +1,68 @@
+roomid: 4106
+zone: Stillwater
+title: Brindle's Smithy
+description: >
+  The hammer-strikes ring before you reach the door — three
+  measured blows, then silence, then three more. The smithy
+  is a low timber-framed building open along its southern
+  wall to vent the forge-heat, the air inside shimmering
+  faintly above an <ansi fg="itemname">anvil</ansi> set on
+  a thick oak stump near the center. The
+  <ansi fg="itemname">forge</ansi> itself takes the eastern
+  wall, banked low with grey ash even when no one is
+  working it. Most of the iron <ansi fg="itemname">stock</ansi>
+  racked along the northern wall is small — fishing-hooks,
+  gaff-rings, net-needles, a dozen kinds of hinge. A few
+  longer pieces in the back say the smith can do other work
+  when she is asked.
+biome: city
+station: forge
+coord:
+  x: -19
+  y: 4
+  z: 0
+exits:
+  south:
+    roomid: 4103
+  east:
+    roomid: 4105
+  west:
+    roomid: 4107
+nouns:
+  anvil: A solid block of forged iron mounted on an oak
+    stump as thick as a person, the working face polished
+    to a soft grey gleam from years of work. The horn
+    bears half a dozen scarring rings where rope was bent
+    against it. A small scuttle of water sits at the
+    stump's base for tempering.
+  forge: A waist-high stone-and-clay hearth set into the
+    eastern wall, the bellows hung on a wooden arm at its
+    side. Even when banked, the coals breathe out a dry
+    steady warmth that you can feel across the room. The
+    chimney above is dark with old soot, the bricks at its
+    base discoloured pale from the heat.
+  stock: A long timber rack along the northern wall,
+    sorted with the kind of order that comes from knowing
+    exactly what every customer asks for — fishing-hooks
+    in graduated sizes, gaff-rings, net-needles, hinges,
+    latches, small chain by the yard. A separate rack in
+    the back holds longer flat-stock and a few finished
+    blades wrapped in oilcloth.
+  bellows: A pair of large leather lung-bags hung on a
+    pivoting wooden arm beside the forge, the handle
+    polished smooth by use. A single pump from a grown
+    person's weight raises a noticeable tongue of flame
+    in the coals.
+  scuttle: A wide iron bucket of water at the base of the
+    anvil-stump, the surface filmed with grey ash and a
+    faint iridescence from quenched oil. Used for
+    tempering hot work.
+idlemessages:
+- A coal in the forge cracks softly and settles deeper into the bed.
+- The bellows-arm creaks faintly even at rest, swaying in the heat-currents.
+- A hammer rings on iron — three measured blows, then silence.
+- The lake-wind shifts and a draft pulls the forge-smell briefly toward the door.
+- A finished hook drops into the cold-bin with a small bright clink.
+spawninfo:
+- mobid: 337
+  cooldown: 600 rounds

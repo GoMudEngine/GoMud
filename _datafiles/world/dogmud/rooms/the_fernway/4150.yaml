@@ -1,0 +1,61 @@
+roomid: 4150
+zone: The Fernway
+title: Heron Reach
+description: >
+  The trail runs alongside a quiet
+  <ansi fg="itemname">backwater</ansi> here — a slow widening
+  of the creek where the current pools dark and still
+  beneath overhanging willows. A long-legged grey
+  <ansi fg="itemname">heron</ansi> stands one-legged in the
+  shallows so still it could be mistaken for a stick of
+  driftwood, head cocked to one side, watching the water
+  with absolute patience. The path curves around the
+  pool's edge, the soft earth printed with crossing tracks
+  — heron, deer, fox, the cleated bootprint of someone who
+  passed this morning. A faint trail south leads down to
+  the water itself.
+biome: forest
+coord:
+  x: -12
+  y: -13
+  z: 0
+exits:
+  east:
+    roomid: 4149
+  west:
+    roomid: 4151
+  south:
+    roomid: 4155
+nouns:
+  backwater: A slow widening of the creek where the
+    current pools dark and still beneath overhanging
+    willows — perhaps a long bowshot across, the bottom
+    invisible. The water's surface reflects the canopy
+    above and the rare patches of open sky between in
+    perfect dark mirror. Frogs cluster in the shallows
+    near the southern bank.
+  heron: A tall grey heron stands one-legged at the
+    pool's edge, neck curved into an S, head held still
+    enough that water-flies land on it without protest.
+    Its patience is total; its strike, when it comes,
+    is faster than the eye can follow. Most travelers
+    walk past without seeing it; the heron prefers it
+    that way.
+  tracks: The soft path-earth at the pool's edge is
+    printed with crossing tracks — the long thin
+    triangular print of the heron, the cloven small
+    print of a roe deer drinking, a fox's narrow oval,
+    and the cleated bootprint of someone whose stride
+    suggests they were hurrying. The bootprint is
+    fresh enough to still be sharp at the edges.
+  willows: A line of grey-barked willows leans over the
+    pool from the southern bank, their long silver-
+    backed leaves trailing in the water. The bark is
+    harvested by healers for pain-medicine; the
+    flexible withies are cut by basket-weavers in
+    spring.
+idlemessages:
+- The heron shifts its weight from one leg to the other and freezes again.
+- A frog plunks into the shallows from somewhere on the southern bank.
+- A willow-leaf drops from above and drifts slowly across the pool's surface.
+- A small fish surfaces, takes a bug, and is gone.

@@ -1,0 +1,66 @@
+roomid: 4113
+zone: Stillwater
+title: Lake-View Promenade
+description: >
+  The lane east of the square opens into a long stone
+  promenade running along the top of the lake's eastern
+  retaining wall — and from this height the lake itself
+  spreads enormous to the horizon, flat and silver in the
+  day, the far shore lost in haze. A waist-high
+  <ansi fg="itemname">retaining wall</ansi> of dressed
+  basalt drops two human-heights to the water and the
+  fishing docks below. A weathered iron
+  <ansi fg="itemname">lamp post</ansi> stands at the
+  promenade's midpoint, its glass smoke-blackened. A
+  worn stone <ansi fg="itemname">bench</ansi> faces the
+  lake — generations of travelers have sat here to make
+  the same calculations about distance and time.
+biome: city
+coord:
+  x: -16
+  y: 3
+  z: 0
+exits:
+  west:
+    roomid: 4108
+  north:
+    roomid: 4116
+  south:
+    roomid: 4114
+  east:
+    roomid: 4122
+nouns:
+  retaining wall: A waist-high run of dressed basalt
+    along the promenade's eastern edge, dropping sheer
+    to the lakeshore below. The capstones are polished
+    glassy where idle travelers have sat to watch the
+    fishing-skiffs work the shallows. A small bronze
+    plaque set into the wall names the year the
+    promenade was raised — a date that means nothing to
+    most who pass it.
+  lake: From the promenade the surface stretches
+    enormous and flat, the far shore lost in haze even
+    on a clear day. Skiffs work the shallows below;
+    further out, a single barge crosses on its way
+    somewhere distant. Gulls argue over something on
+    the wind. The water is the colour of weathered tin.
+  lamp post: A weathered iron lamp post at the
+    promenade's midpoint, the glass blackened by years
+    of fish-oil smoke. The constable's man fills it at
+    dusk and snuffs it at first light. Even unlit, the
+    soot-smell of old oil lingers around it.
+  bench: A worn stone bench facing the lake, the seat
+    polished glassy by generations of sitting. A patch
+    of darker stone near the front lip is a stain that
+    no rain has been able to lift. From here the docks
+    and the temple are both within an easy stroll.
+  docks: Visible below over the retaining wall — three
+    plank wharves jutting into the shallows, a
+    fishmonger's table, drying racks, the steady creak
+    of moored boats.
+idlemessages:
+- A pair of <ansi fg="mobname">gulls</ansi> wheel low past the wall, shouting at each other.
+- The lake-wind shifts and the smell of drying fish carries up from the docks below.
+- A skiff's mooring rope creaks audibly somewhere down at the wharves.
+- A wagon passes behind you on the lane, hooves slow on the flagstones.
+- The lamp post creaks softly as the wind catches its iron fittings.

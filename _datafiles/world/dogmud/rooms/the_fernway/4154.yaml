@@ -1,0 +1,60 @@
+roomid: 4154
+zone: The Fernway
+title: Old Weddell Farmstead
+description: >
+  The side-track from Twin Oaks Bend ends at a small
+  abandoned <ansi fg="itemname">farmstead</ansi> — a
+  collapsed cottage of timber and field-stone, the roof
+  long gone, the walls open to the sky. The yard around it
+  has gone back to wild grass and bracken, but the
+  outline of an old <ansi fg="itemname">kitchen garden</ansi>
+  is still visible in the regular rows of escaped herbs
+  that have outlived the cooking they once served. A
+  twisted old <ansi fg="itemname">apple tree</ansi> still
+  bears small bitter fruit at the yard's eastern edge —
+  the only thing the Weddells left that endures. The
+  silence here is different from the trail's; this is the
+  silence of a place once lived in.
+biome: forest
+coord:
+  x: -11
+  y: -14
+  z: 0
+exits:
+  north:
+    roomid: 4149
+nouns:
+  farmstead: A small collapsed cottage of mortared
+    field-stone and rotted timber, the roof long gone
+    and the walls open to the sky. The shape of three
+    rooms is still readable in the foundation —
+    kitchen with hearth, sleeping-room, small back
+    pantry. A child's tin cup rusted past use lies
+    where a window-sill once was.
+  kitchen garden: The regular rows of escaped herbs
+    are still visible in the yard's western half —
+    rosemary gone wild and woody, sage in low silver
+    clumps, mint that has taken over more than its
+    share, thyme along what would have been a stone
+    path edge. A forager could fill a basket here
+    without effort, though the flavors are stronger
+    and rougher than from a tended garden.
+  apple tree: A twisted old apple tree still bears
+    small bitter green-and-red fruit at the yard's
+    eastern edge, the trunk leaning at a steep angle
+    and the bark deeply seamed. The apples are
+    sour enough to set teeth on edge raw; cooked
+    down with sugar they make a fair jelly. The
+    Weddells left the tree behind; the tree is the
+    only thing that minded.
+  hearth: The hearth-stones of the collapsed kitchen
+    are still in their ring, blackened by a century
+    of cooking-fires. A small iron pot-hook lies
+    rusted in the ash. Whoever scavenged the cottage
+    after the family left took the iron arm but
+    missed the hook in the ash.
+idlemessages:
+- A breeze stirs the wild rosemary and the smell rises briefly across the yard.
+- A small bird picks at the sour apples and flies away unsatisfied.
+- The empty windows of the cottage frame patches of bracken and sky.
+- A piece of rotted timber creaks somewhere in the cottage's frame and is silent.

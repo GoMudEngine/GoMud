@@ -6,6 +6,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/language"
+	"github.com/GoMudEngine/GoMud/internal/mapper"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -37,6 +38,9 @@ func Reload(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		} else {
 			user.SendText(`Translations reloaded.`)
 		}
+	case `mapcache`:
+		mapper.ClearCache()
+		user.SendText(`Mapper cache cleared. Next 'map' command will rebuild from current room data.`)
 	default:
 		user.SendText(`Unknown reload command.`)
 	}

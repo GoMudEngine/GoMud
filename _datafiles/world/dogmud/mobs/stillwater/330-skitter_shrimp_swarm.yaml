@@ -1,0 +1,39 @@
+mobid: 330
+zone: Stillwater
+behavior_archetype: prey
+statpool: 30
+itemdropchance: 60
+hostile: false
+maxwander: 1
+groups:
+  - lake-cave
+  - aquatic
+archetype: ""
+mutationchance: 5
+idlecommands:
+  - 'emote skitters across the wet stone in a small cloud'
+  - ''
+  - 'emote pools briefly in a depression of the wet floor'
+  - ''
+  - 'emote disperses for a moment and reforms a few paces away'
+activitylevel: 30
+character:
+  name: skitter-shrimp swarm
+  description: |
+    A small loose swarm of mutated freshwater skitter-shrimp,
+    each no larger than a thumb-joint and translucent enough that
+    their dark thread-thin nerves are visible through the chitin.
+    The swarm moves as a single shifting cloud across the wet
+    stone, splitting and reforming around obstacles. Individually
+    each shrimp is harmless; en masse and provoked, they can bite
+    a careless ankle through cloth.
+  speciesid: 12
+  stats:
+    dexterity:
+      training: 4
+    perception:
+      training: 3
+    vitality:
+      training: -2
+  items:
+    - itemid: 40051

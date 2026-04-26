@@ -1,0 +1,79 @@
+mobid: 337
+zone: Stillwater
+behavior_archetype: noncombat_shopkeeper
+statpool: 100
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+groups:
+  - humanoid
+  - merchant
+  - blacksmith
+idlecommands:
+  - 'emote works the bellows with steady, metronomic pulls, building the
+    forge heat'
+  - 'emote taps a piece of hot iron on the anvil, listening to the ring'
+  - ''
+  - 'emote thrusts a blade into the slack tub and watches the steam rise'
+  - ''
+  - 'emote wipes soot from his forearms with a leather scrap and examines
+    his hands'
+  - ''
+activitylevel: 16
+crafter: true
+crafterskill: blacksmithing
+crafterrecipeids:
+  - iron-dagger
+  - iron-short-sword
+  - steel-ingot
+  - iron-buckler
+  - lake-iron-hook-spear
+  - chain-links
+  - reinforced-disarm-kit
+crafterrestockmaterials:
+  - 40001
+  - 40002
+  - 40059
+character:
+  name: smith Brindle
+  description: |
+    A big, quiet man with arms like dock rope and a face that has absorbed
+    years of forge heat into a permanent brick-red flush. Brindle inherited
+    the smithy from his father and has never wanted to be anywhere else. He
+    speaks slowly and rarely, but his work speaks for itself -- clean lines,
+    solid welds, nothing fancy. He can work lake-iron nodules pulled from the
+    shallows into serviceable blades, which is a rare skill on the North Road.
+    There is a half-finished hook-spear on the bench behind him that he keeps
+    returning to between other jobs.
+  speciesid: 1
+  gold: 300
+  skills:
+    blacksmithing: 14
+  stats:
+    strength:
+      training: 14
+    vitality:
+      training: 8
+    perception:
+      training: 5
+    dexterity:
+      training: 6
+  shop:
+    - itemid: 40001
+      quantity: 0
+      quantitymax: 0
+      price: 3
+    - itemid: 40059
+      quantity: 0
+      quantitymax: 0
+      price: 8
+    - itemid: 40002
+      quantity: 0
+      quantitymax: 0
+      price: 2
+    - itemid: 32
+      quantity: 1
+      quantitymax: 3
+      price: 1

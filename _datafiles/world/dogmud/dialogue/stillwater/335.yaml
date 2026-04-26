@@ -1,0 +1,203 @@
+mobid: 335
+zone: Stillwater
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Constable Drunn. What brings you to my door?"
+      - "Welcome to Stillwater. Keep it civil and we will not have a problem."
+
+  - keywords: ["hello", "hi"]
+    moods: ["grateful"]
+    responses:
+      - "Good to see you again. The shallows have been quieter since you came through."
+
+  - keywords: ["who", "you", "constable", "yourself"]
+    responses:
+      - "Drunn. Sole constable in Stillwater for eleven years and counting. The town keeps me busier some weeks than others."
+
+  - keywords: ["stillwater", "town", "place"]
+    responses:
+      - "Honest town. Mostly fishing folk, a few craftsmen, the inn at the square. We get travelers off the North Road, and we get the trouble that travels with them. The lake gives us most of what we need, when the lake is in a giving mood."
+
+  - keywords: ["lake", "fish", "fishing"]
+    responses:
+      - "The lake is the town. Always has been. Lately the catches have been short and the nets have been coming back chewed -- something is wrong out there in the deep, and the dock master will not stop bending my ear about it."
+
+  - keywords: ["caravan", "ketil", "road", "north", "lars"]
+    responses:
+      - "Ketil's lot is in town a couple days every fortnight or so. The road has been quieter since the bounty cleared the worst of Soren's lot -- I check in on the crew when they're through, just so they know who runs the patrols. The kid Lars is a fixture by the well most layovers."
+
+  - keywords: [""]
+    responses:
+      - "Speak plainly. I have a duty roster that will not write itself."
+      - "Was there something you needed?"
+
+tree:
+  root:
+    text: "Constable. State your business."
+    hints: "You could ask Drunn about the bounty, the caves, or the town."
+    variants:
+      # --- post-quest variants (full path) ---
+      - questRequired: ["19-end"]
+        questFlagRequired:
+          "19-completion": "full"
+        text: "The hero of the lake-caves. Stillwater has been calmer since
+          you put the sump dweller down. Sit any time. The constabulary
+          owes you more than the purse covers."
+        hints: "You could ask Drunn about the town, or just trade gossip."
+
+      # --- post-quest variants (partial path) ---
+      - questRequired: ["19-end"]
+        questFlagRequired:
+          "19-completion": "partial"
+        text: "The shallows are quieter than they were. That is worth what
+          we paid. The big thing in the sump is still down there, but that
+          is a matter for another day and another sword."
+        hints: "You could ask Drunn about the town, or about the caves."
+
+      # --- ready to sign upgraded bounty ---
+      - questRequired: ["19-shrimp", "19-hunter"]
+        questExcluded: ["19-signed", "19-end"]
+        text: "Back so soon, and looking the worse for it. I will take that
+          to mean you cleared the shallows."
+        hints: "Ask Drunn about the bounty to report your progress."
+
+      # --- signed; choice between tooth or partial ---
+      - questRequired: ["19-signed"]
+        questExcluded: ["19-end"]
+        text: "Bounty is signed and posted. The choice now is yours --
+          finish the job in the deep sump for the full reward, or close
+          out the bounty and take what you have already earned."
+        hints: "Hand Drunn a leviathan tooth from the sump dweller for
+          the full reward, or ask him about the bounty again to close it
+          for the partial payment."
+
+      # --- in progress, only shrimp killed ---
+      - questRequired: ["19-start", "19-shrimp"]
+        questExcluded: ["19-hunter", "19-end"]
+        text: "Shallow swarm broken? Good. There is at least one drowned
+          hunter still down there in the dark passages. Net the rest of
+          the work and come back."
+        hints: "Walk back to the lake caves and clear at least one
+          drowned hunter, then return."
+
+      # --- in progress, only hunter killed ---
+      - questRequired: ["19-start", "19-hunter"]
+        questExcluded: ["19-shrimp", "19-end"]
+        text: "A drowned hunter down? That is the harder kill. There are
+          still skitter swarms in the cave shallows -- clear at least
+          one of those too before I sign the upgraded bounty."
+        hints: "Walk back to the lake caves and break a skitter-shrimp
+          swarm, then return."
+
+      # --- in progress, neither cleared yet ---
+      - questRequired: ["19-start"]
+        questExcluded: ["19-shrimp", "19-hunter", "19-end"]
+        text: "Still on the bounty? The caves are east of the fishing
+          docks. Bring a light. Try not to bleed on my floor when you
+          come back."
+        hints: "Walk to the lake caves, clear shrimp and at least one
+          drowned hunter, then return to report."
+
+  nodes:
+    # ============================================================
+    # QUEST GRANT: accept the bounty (no quest yet)
+    # ============================================================
+    - id: accept_bounty
+      triggers: ["quest", "task", "bounty", "caves", "cave", "fishermen",
+        "nets"]
+      questExcluded: ["19-start", "19-end"]
+      grantsQuest: "19-start"
+      text: "I have a bounty posted. Something in the lake caves is
+        spilling into the shallows -- skitter-shrimp swarms shredding
+        the fishing nets, and at least one big drowned hunter that has
+        killed two fishermen this season. The dock master swears
+        something worse lives in the deep sump, but that one I will
+        believe when I see proof. Clear the shallows of shrimp, kill at
+        least one of the drowned hunters, then come back to me. I will
+        sign an upgraded bounty for the bigger threat after that. The
+        caves are dark -- bring a light, your chrysalis-glow if you have
+        the spell, a lantern if you do not. The cave mouth is east of
+        the fishing docks."
+      hints: "Walk east through town to the docks, then east again to
+        the cave mouth. Bring a light. Clear shrimp swarms and at least
+        one drowned hunter, then return here to report."
+      moodChange: friendly
+
+    # ============================================================
+    # QUEST GRANT: sign the upgraded bounty (after shrimp + hunter)
+    # ============================================================
+    - id: sign_bounty
+      triggers: ["quest", "task", "bounty", "report", "tooth", "boss",
+        "sump", "dweller"]
+      questRequired: ["19-shrimp", "19-hunter"]
+      questExcluded: ["19-signed", "19-end"]
+      grantsQuest: "19-signed"
+      text: "Both done? Good. The shallows will breathe easier for a
+        while. Now -- the dock master's deep-water rumour. I am signing
+        the upgraded bounty. If there is a sump dweller down there, I
+        want proof: a leviathan tooth, large enough that no one can
+        argue. Bring me the tooth and the constabulary pays the full
+        reward. Or -- close out the bounty here and take the partial
+        payment for what you have already done. No shame in either
+        choice. Some of those caves are deeper than they look."
+      hints: "Hand Drunn a leviathan tooth from the sump dweller for the
+        full reward, or ask him about the bounty again to close it for
+        the partial payment now. Dock master Arn at the docks will also
+        accept the tooth if you would rather."
+      moodChange: friendly
+
+    # ============================================================
+    # QUEST GRANT: close out the bounty for partial (after signed)
+    # ============================================================
+    - id: take_partial
+      triggers: ["quest", "task", "bounty", "close", "pay", "payment",
+        "done"]
+      questRequired: ["19-signed"]
+      questExcluded: ["19-end"]
+      grantsQuest: "19-end"
+      setsQuestFlag:
+        key: "19-completion"
+        value: "partial"
+      text: "Closing out the bounty, then. The shallows are quieter,
+        which is what we paid for. The bigger thing in the sump can
+        wait for someone with more steel. Take the purse. It is
+        earned."
+      moodChange: grateful
+
+    # ============================================================
+    # INFO NODES (no quest grants, just guidance)
+    # ============================================================
+    - id: caves_info
+      triggers: ["where", "location", "find", "directions"]
+      questRequired: ["19-start"]
+      questExcluded: ["19-end"]
+      text: "East of the docks. Walk through the square to the lakeside,
+        then north along the docks until the path turns east. The cave
+        mouth is past the boat pier -- you will see the bounty notice
+        nailed up at the entrance. Bring a light."
+
+    - id: light_warning
+      triggers: ["light", "dark", "lantern", "glow", "chrysalis-glow"]
+      questRequired: ["19-start"]
+      questExcluded: ["19-end"]
+      text: "The caves are properly dark. If you know the chrysalis-glow
+        spell, cast it before you go down. If not, the storekeeper at
+        Tinder & Tackle keeps lanterns, or the innkeeper at the Pike &
+        Lantern can sell you one in a pinch."
+
+    - id: tooth_info
+      triggers: ["leviathan", "trophy"]
+      questRequired: ["19-signed"]
+      questExcluded: ["19-end"]
+      text: "The sump dweller is the deepest thing in those caves --
+        the dock-drunks call it a leviathan. A tooth from one of those
+        is the kind of proof I can take to the magistrate without
+        being laughed at. If you bring one back, the full bounty is
+        yours. If you do not, no shame. Close out the partial."
+
+memory:
+  expiryPeriod: ""

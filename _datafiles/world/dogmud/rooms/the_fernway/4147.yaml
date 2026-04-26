@@ -1,0 +1,56 @@
+roomid: 4147
+zone: The Fernway
+title: Fernway, Eastern Trailhead
+description: >
+  The packed-earth road from Ashwick narrows abruptly here
+  to a single-file footpath winding into a country of
+  shoulder-high <ansi fg="itemname">bracken</ansi> and
+  scattered alder. The cultivated edge of the hamlet falls
+  away within a dozen paces; the air smells suddenly of
+  damp earth, fern-must, and the green-cool weight of leaf
+  litter. A weathered <ansi fg="itemname">trail marker</ansi>
+  of split cedar leans at the path's mouth, its painted
+  arrow nearly faded out, the destination "STILLWATER" still
+  legible. A scattering of last year's
+  <ansi fg="itemname">alder cones</ansi> lies where the
+  brush opens.
+biome: forest
+coord:
+  x: -9
+  y: -13
+  z: 0
+exits:
+  east:
+    roomid: 4014
+    zone: Marches Spur Road
+  west:
+    roomid: 4148
+nouns:
+  bracken: Shoulder-high stands of bracken-fern crowd both
+    sides of the path, the fronds a deep summer green and
+    the undersides paler and silver-veined. Brushed
+    against, they release a faint musty smell that clings
+    to clothes for hours after. Foragers know to harvest
+    the young curled fiddleheads in early spring; this
+    late, the plants are past edible and into flavor only.
+  trail marker: A split-cedar post leaning slightly off
+    plumb, the painted arrow weathered nearly to bare
+    wood. STILLWATER is still readable in flaking white
+    paint; the distance numeral that used to sit beneath
+    it has gone entirely. Travelers add their own thumb-
+    smudges to the post in passing — a small habit the
+    locals have.
+  alder cones: A scattering of small dark cones from last
+    year's growth lies where the bracken opens around the
+    trail marker. The cones are dry, faintly aromatic, and
+    favored by certain alchemists for the small dark resin
+    each one yields when crushed and steeped.
+  road: Behind you, the cultivated road back toward
+    Ashwick — packed earth between hedge-rows, leading to
+    the hamlet's familiar fields. Ahead, the path
+    narrows.
+idlemessages:
+- A <ansi fg="mobname">wood pigeon</ansi> calls twice from somewhere deep in the bracken, then is silent.
+- A breeze stirs the fern-tops into a long slow ripple.
+- The smell of damp earth strengthens briefly as a gust comes from deeper in the trail.
+- A small dry crackle from the underbrush — something small, moving away.

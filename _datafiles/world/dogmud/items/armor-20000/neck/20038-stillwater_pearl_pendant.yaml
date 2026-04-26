@@ -1,0 +1,25 @@
+itemid: 20038
+name: stillwater pearl pendant
+namesimple: pendant
+description: >-
+  A small dark pearl from the Stillwater lake caves set in a
+  silver bezel, the chain woven of fine wire and clasped at
+  the back of the neck. From any angle the pearl seems to
+  swallow the light that should reflect from it — a perfect
+  matte blackness with only the faintest blue-grey lustre at
+  its very surface. Wearers report a faint hollow feeling not
+  long after putting it on. Not pain; just a quiet
+  drinking-away of the certainty in oneself, in exchange for a
+  kind of armor against magic that nothing else in Stillwater
+  is known to grant. Mother Vasse the pearl-carver does not
+  promise the pendant is safe to wear for long stretches; she
+  is also clear that for the right need, it is exactly the
+  thing.
+type: neck
+subtype: wearable
+physical_mitigation: 0
+magical_mitigation: 12
+weight: 0.1
+value: 200
+statmods:
+  willpower: -2

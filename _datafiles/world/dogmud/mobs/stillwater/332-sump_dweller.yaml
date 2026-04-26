@@ -1,0 +1,79 @@
+mobid: 332
+zone: Stillwater
+statpool: 375
+itemdropchance: 100
+hostile: true
+maxwander: 0
+groups:
+  - lake-cave
+  - aquatic
+  - boss
+archetype: fighting
+aiprofile: aggressive
+mutationchance: 80
+spawnmutations:
+  - regenerative-tissue
+  - thick-hide
+  - dense-muscles
+idlecommands:
+  - 'emote displaces a heavy slow ring of water at the pool''s centre, then sinks again out of sight'
+  - ''
+  - ''
+  - 'emote lifts once to take the cave''s air, exposing a massive curved back of mottled grey-black hide'
+  - ''
+  - 'emote rumbles low and deep from somewhere underwater — felt through the boots more than heard'
+activitylevel: 5
+reaction_delay: 0.5
+tactical_discipline: 0.85
+tactic_preset: aggressive_melee
+tactics:
+  - trigger: combat_start
+    action: bash
+    priority: 12
+  - trigger: target_prone
+    action: kick
+    priority: 11
+  - trigger: health_below:50
+    action: call_for_help
+    priority: 10
+  - trigger: health_below:25
+    action: retarget_strongest
+    priority: 9
+combatcommands:
+  - bash
+  - bite
+  - ''
+character:
+  name: sump dweller
+  description: |
+    The thing that has been raiding Stillwater's fishing nets
+    for years rises now from the black sump-pool at the cave's
+    deepest point — a massive amphibious predator perhaps four
+    times the bulk of the largest drowned hunter, with the same
+    mottled grey-black hide and the same pale sightless eyes
+    but on a scale that takes the breath out of a careful
+    fighter. A double row of backward-curving teeth lines a
+    mouth wide enough to swallow a person to the waist. The
+    sump dweller does not need to swallow whole; the teeth and
+    the sheer crushing weight of it are enough. It is older
+    than anyone in Stillwater alive remembers, and patient,
+    and very hungry.
+  speciesid: 23
+  stats:
+    strength:
+      training: 22
+    dexterity:
+      training: 0
+    perception:
+      training: 12
+    vitality:
+      training: 120
+    willpower:
+      training: 12
+  skills:
+    weapon-combat: 30
+    unarmed-combat: 25
+  items:
+    - itemid: 40054
+    - itemid: 40053
+      dropchance: 15

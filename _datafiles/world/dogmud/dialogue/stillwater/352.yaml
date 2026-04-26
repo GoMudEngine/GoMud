@@ -1,0 +1,49 @@
+mobid: 352
+zone: Stillwater
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Marta. I guard the wagon."
+      - "Caravan guard. State your business."
+
+  - keywords: ["hello", "hi"]
+    moods: ["grateful"]
+    responses:
+      - "You again. Still alive. Good."
+
+  - keywords: ["road", "bandit", "travel", "safe", "north"]
+    responses:
+      - "Road has been quieter than last summer. Make of that
+        what you will."
+      - "The North Road is manageable. We keep a sword on the
+        wagon and we have not needed it this run. I expect
+        that to change eventually. It always does."
+
+  - keywords: ["sword", "oil", "weapon", "fight", "guard"]
+    responses:
+      - "I oil the sword because a clean blade is a fast blade.
+        I have time during layover and nothing better to do
+        with it."
+
+  - keywords: ["ketil", "wagon", "caravan", "marta"]
+    responses:
+      - "Ketil runs the wagon well. I guard it. Lars delivers
+        the orders. It works because we each do one thing and
+        do not get in each other's way."
+
+  - keywords: [""]
+    responses:
+      - "That is all I have to say."
+      - "I am watching the square."
+
+tree:
+  root:
+    text: "Marta. I guard the wagon. Did you need something,
+      or are you just looking?"
+    hints: "You could ask Marta about the road or the caravan."
+
+memory:
+  expiryPeriod: ""

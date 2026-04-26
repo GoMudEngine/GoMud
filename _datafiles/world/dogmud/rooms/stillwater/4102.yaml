@@ -1,0 +1,82 @@
+roomid: 4102
+zone: Stillwater
+title: Lakefront Square
+description: >
+  The square opens out around you — a broad apron of
+  flagstone wider than it is long, hemmed by a low retaining
+  wall on the eastern side that drops two human-heights to
+  the lakeshore. From this height the lake spreads enormous
+  to the horizon, flat and silver in the day, the far shore
+  lost in haze. A <ansi fg="itemname">stone well</ansi>
+  stands square in the center of the open paving, its bucket
+  on a rope and a long-handled iron dipper hung from a hook
+  on the rim. The smell here is the lake's smell: cold
+  stone, brackish reed, the faint sweetness of fish drying
+  on racks somewhere east. A slate
+  <ansi fg="itemname">map board</ansi> on the well's eastern
+  face names the roads that run from this square.
+biome: city
+coord:
+  x: -18
+  y: 3
+  z: 0
+mapsymbol: T
+maplegend: Townsquare
+exits:
+  south:
+    roomid: 4101
+  west:
+    roomid: 4103
+  north:
+    roomid: 4105
+  east:
+    roomid: 4108
+nouns:
+  well: A circular wall of mortared lake-stone, chest-high,
+    capped with a slab worn smooth in two semicircles where
+    generations have leaned to crank the rope. The bucket is
+    of oak banded in iron — too heavy to be stolen casually
+    — and a long-handled iron dipper hangs from a hook for
+    any traveler who needs only a drink. Looking down the
+    shaft, the water is dark and very still and surprisingly
+    close.
+  map board: A slab of slate fixed to the well's eastern
+    face, chalked over and re-chalked countless times. The
+    current rendering names the four roads from the square
+    and a small hand-drawn arrow east, in fresher chalk,
+    points to a single word, "lake." A second fresher arrow
+    north reads simply "constabulary, north square."
+  lake: From the retaining wall on the eastern side of the
+    square the surface spreads enormous and flat. Skiffs sit
+    moored at the docks below; a paler line of water marks
+    the far shore. Gulls argue over something on the wind.
+    Even at noon, the lake feels older than anything human
+    in this town.
+  retaining wall: A waist-high run of dressed stone along
+    the eastern edge of the square, dropping sheer to the
+    lakeshore two human-heights below. The capstones are
+    polished glassy where children and idle travelers have
+    sat to watch the water.
+  flagstone: A broad apron of weathered grey paving, the
+    seams gone uneven over time. Worn paths run through the
+    weathering — a clear track from the southern road to the
+    well, another from the well west toward the inn yard.
+    People have walked here often enough to leave a record
+    in stone.
+idlemessages:
+- A pail clangs against the well's stone lip as someone draws water.
+- Two <ansi fg="mobname">gulls</ansi> wheel low over the square, shouting at each other.
+- A wagon turns in from the south road, its driver calling a horse to a stop near the western lane.
+- The lake-wind shifts and the smell of drying fish carries through the square for a moment.
+- Somewhere east, a hammer rings on iron — three measured strokes, then silence, then three more.
+spawninfo:
+- mobid: 336
+  cooldown: 600 rounds
+- mobid: 351
+  cooldown: 600 rounds
+- mobid: 352
+  cooldown: 600 rounds
+- mobid: 354
+  cooldown: 300 rounds
+- mobid: 356
+  cooldown: 600 rounds

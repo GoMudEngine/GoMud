@@ -1,0 +1,15 @@
+itemid: 40058
+name: freshwater clam
+namesimple: clam
+description: A palm-sized bivalve with a pale grey fluted
+  shell still beaded with lake-water. The meat inside is sweet,
+  rich, and dense — the soul of any chowder worth the name.
+  Cooks pry the shells open with a thin knife; the empty
+  shells go to the midden behind the fishmonger's table or
+  back into the lake for the next year's clams to grow on.
+type: object
+subtype: mundane
+component_tag: freshwater-clam
+weight: 0.2
+value: 15
+is_component: true

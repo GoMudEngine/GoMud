@@ -1,0 +1,60 @@
+mobid: 344
+zone: Stillwater
+archetype: casting
+behavior_archetype: noncombat_questgiver
+statpool: 85
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+groups:
+  - humanoid
+  - priest
+idlecommands:
+  - 'emote lights a stick of lake-reed incense and places it in the brass
+    holder at the altar base'
+  - ''
+  - 'emote kneels at the altar rail for a moment, head bowed'
+  - 'cast conviction-ward'
+  - ''
+  - 'emote opens the donation ledger and updates a line of figures with
+    careful attention'
+  - ''
+combatcommands:
+  - 'cast heal'
+  - ''
+  - 'cast mend-wounds'
+  - ''
+activitylevel: 22
+character:
+  name: temple priest Seren
+  description: |
+    A calm woman with a round, open face and the unhurried manner of someone
+    whose faith is a working tool rather than a performance. Seren came to
+    Stillwater eight years ago from a larger temple in Thornwall, assigned to
+    this modest posting without complaint, and has stayed because she finds
+    the lake town suits her. She tends the altar, hears confessions, and
+    handles the occasional healing with equal seriousness. There is a quiet
+    grief in her lately -- one of the older fishing families has not been at
+    services, and she suspects the trouble on the lake is the reason.
+  speciesid: 1
+  gold: 0
+  equipment:
+    weapon:
+      itemid: 10017
+    body:
+      itemid: 20046
+  spellbook:
+    conviction-ward: 8
+    heal: 10
+    mend-wounds: 8
+  skills:
+    spellcasting: 12
+  stats:
+    willpower:
+      training: 14
+    charisma:
+      training: 10
+    perception:
+      training: 5

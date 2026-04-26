@@ -1,0 +1,118 @@
+mobid: 344
+zone: Stillwater
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Welcome to the Temple of Stillwater. The Chrysalis watches over those who pass through."
+      - "Peace be on you, traveler. Sit on the back bench if you have come to think."
+
+  - keywords: ["who", "you", "yourself", "seren"]
+    responses:
+      - "Priest Seren. I keep the temple, write the burial records, and hold what little spiritual authority Stillwater has need of. The Chrysalis order is small in this town -- I am the whole of it on most days."
+
+  - keywords: ["temple", "chrysalis", "order", "faith"]
+    responses:
+      - "The Temple of Stillwater is one of the smaller chapels of the Chrysalis order. We are not Sanctum Basin -- we are the country cousin, doing the necessary work the larger temples do not have time for."
+
+  - keywords: ["pillars", "stone", "carving"]
+    responses:
+      - "The pillars carry a spiral design that predates the temple by some centuries. We do not know who carved them. We re-used the stones when the temple was built two hundred years ago, and the design was already old then. The Chrysalis order does not officially acknowledge what came before -- but the stones are what they are."
+
+  - keywords: ["garden", "marker"]
+    responses:
+      - "The temple garden has a buried marker beneath the crab-apple tree -- the same spiral as the pillars. I do not weed too close to it. Vella the healer harvests her marsh-sage there, and she does not weed close to it either. We respect what we do not understand."
+
+  - keywords: ["lake", "deep", "sump", "caves"]
+    responses:
+      - "The lake is older than the town and deeper than most folk credit. The Chrysalis order does not rule on what is in the lake. We bury the drowned and we say the right words. What lives in the deep is not our business -- nor anyone else's, on most days."
+
+  - keywords: ["elgar", "voss"]
+    responses:
+      - "Elgar Voss. Empty grave at the cemetery. He came to me a few times in the year before he disappeared, asking about the older lore -- the things the Chrysalis order has officially forgotten. I told him what I knew, which was less than he wanted. I have wondered since whether I should have told him less."
+
+  - keywords: ["caravan", "ketil", "donation", "alms"]
+    responses:
+      - "Ketil keeps a small donation envelope for the temple each run. I do not pry about what is in it. The amount is consistent enough that I suspect his wife in Thornwall set the rate, not him."
+
+  - keywords: [""]
+    responses:
+      - "Speak your question."
+      - "I am here. The temple is open."
+
+tree:
+  root:
+    text: "Welcome to the Temple of Stillwater. State your purpose, or
+      sit on the bench at the back if you have come to think."
+    hints: "You could ask Priest Seren about the temple, the pillars,
+      or the older lore."
+    variants:
+      # === Mid-quest: workshop_carving found, can advance via dialogue ===
+      - questRequired: ["20-workshop_carving"]
+        questExcluded: ["20-temple_pillars", "20-end"]
+        text: "You have come asking about the spiral. I can tell from
+          the look you brought in with you. Sit. There is no short
+          answer to that question."
+        hints: "Ask Seren about the spiral, the pillars, or the older
+          lore."
+
+      # === Mid-quest: pillars known, hasn't found garden marker ===
+      - questRequired: ["20-temple_pillars"]
+        questExcluded: ["20-garden_marker"]
+        text: "Have you found the marker in the garden yet? Beneath the
+          crab-apple. Search there if you have not."
+        hints: "Search the temple garden for the buried marker."
+
+      # === Post-quest: full ===
+      - questRequired: ["20-end"]
+        text: "The matter of Elgar Voss. So that is laid open at last.
+          Vella was his sister; I should have known they shared the
+          burden differently. Walk in peace."
+
+  nodes:
+    # ============================================================
+    # QUEST GRANT (alt path): acknowledge the spiral
+    # ============================================================
+    - id: acknowledge_spiral
+      triggers: ["quest", "task", "spiral", "pillars", "elgar", "lore"]
+      questRequired: ["20-workshop_carving"]
+      questExcluded: ["20-temple_pillars", "20-end"]
+      grantsQuest: "20-temple_pillars"
+      text: "The spiral. The same one Elgar came asking about, the
+        winter before he went into the lake. The four pillars at the
+        corners of the temple carry the design. The buried marker in
+        the temple garden carries it too. The old chapel ruin to the
+        west and the wardstone circle beyond -- both. The four sites
+        form a line. I have not walked the line, but Elgar walked it.
+        He believed the line meant something. The Chrysalis order
+        does not officially endorse what I have just told you. But
+        the stones are what they are."
+      hints: "Examine the temple pillars and search the temple garden
+        for the buried marker. Then walk west to the old chapel ruin
+        and the wardstone circle."
+      moodChange: friendly
+
+    # ============================================================
+    # INFO NODES (no grants)
+    # ============================================================
+    - id: older_lore
+      triggers: ["older", "lore", "predates", "before", "ancient"]
+      questRequired: ["20-temple_pillars"]
+      text: "The Chrysalis order is not the first order to have held
+        Stillwater as a place. The chapel to the west fell long before
+        the temple was built. The wardstone circle is older than that
+        -- older than the records I keep. The spiral on the four sites
+        is older than all of them. We do not know who carved them or
+        why. We respect them because the stones are what they are."
+
+    - id: alignment
+      triggers: ["alignment", "line", "geography", "cave"]
+      questRequired: ["20-wardstone_altar"]
+      text: "If the four sites form a line and the line ends in the
+        deep, that is a thing for someone braver than me to follow.
+        I will say the words at the marker if you do not come back."
+
+memory:
+  expiryPeriod: ""

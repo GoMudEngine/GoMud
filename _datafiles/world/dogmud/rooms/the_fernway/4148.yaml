@@ -1,0 +1,58 @@
+roomid: 4148
+zone: The Fernway
+title: Stoneford Crossing
+description: >
+  A clear shallow <ansi fg="itemname">creek</ansi> cuts the
+  trail at a stretch of flat water-rounded stones — the ford
+  the path's name comes from. The water is ankle-deep at
+  the crossing and slightly colder than the air, with a
+  faint mineral-iron edge that suggests deeper springs
+  somewhere upstream. Mossed
+  <ansi fg="itemname">stepping stones</ansi> mark the dry
+  passage for those who want to keep their boots clean.
+  Patches of bright green <ansi fg="itemname">watercress</ansi>
+  cluster at the creek's slower bends; small brown
+  trout-shadows hold against the current near the deeper
+  pools.
+biome: forest
+coord:
+  x: -10
+  y: -13
+  z: 0
+exits:
+  east:
+    roomid: 4147
+  west:
+    roomid: 4149
+nouns:
+  creek: A clear shallow creek runs north-south across the
+    trail, the bed of pale water-rounded stones visible
+    through the moving surface. The water carries a faint
+    mineral-iron taste — the same edge the smiths in
+    Stillwater speak of when they describe their lake-iron
+    forage. A small heron-print is pressed into the soft
+    earth at the western bank.
+  stepping stones: A line of flat mossed stones set
+    deliberately across the ford, the placing wide enough
+    for a long-stride and narrow enough that a child can
+    manage. The moss on their tops is worn pale where
+    boots have crossed; the moss on their sides is full
+    deep green.
+  watercress: Bright green leafy clusters of watercress
+    grow in the creek's slower bends — the kind kitchen-
+    gardens cultivate but here growing wild and abundant.
+    Foragers gather it for salads and for the slight
+    peppery edge it lends to soup. The leaves above the
+    waterline are darker and stronger-tasting than the
+    pale ones beneath.
+  trout: Small brown trout-shadows hold against the current
+    near the deeper pools, dark backs almost invisible
+    against the bottom-stones. They scatter at any
+    disturbance and return slowly. Local children spend
+    summer afternoons trying to tickle them into a basket;
+    they are mostly unsuccessful.
+idlemessages:
+- The creek burbles steadily over the ford-stones.
+- A trout darts briefly into the shallows, then retreats.
+- A breeze moves through the alders along the bank with a soft dry rustle.
+- A water-dipper bird darts low across the ford and is gone.

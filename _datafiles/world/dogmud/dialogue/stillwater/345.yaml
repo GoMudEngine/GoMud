@@ -1,0 +1,53 @@
+mobid: 345
+zone: Stillwater
+defaultMood: friendly
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Welcome. I am Finn -- acolyte here. Is there something
+        you need, or shall I fetch Priest Seren?"
+      - "Hello. Mind the broom -- I am still doing the steps.
+        Come in if you need the temple."
+
+  - keywords: ["hello", "hi"]
+    moods: ["grateful"]
+    responses:
+      - "Good to see you again. Priest Seren is inside if you
+        need her. I will just -- let me finish this row."
+
+  - keywords: ["seren", "priest", "temple", "faith"]
+    responses:
+      - "Priest Seren is inside most mornings. She is generous
+        with her time for anyone who comes with a genuine
+        question. I am still learning the liturgy -- eight
+        months in -- so for anything spiritual or complicated,
+        she is the one to ask."
+      - "The Chrysalis watches over those who come here. Priest
+        Seren says the outer work -- sweeping, watering, the
+        lamps -- is part of the practice, not a distraction
+        from it. I am trying to believe that when the steps
+        are wet."
+
+  - keywords: ["acolyte", "study", "learn", "liturgy"]
+    responses:
+      - "Eight months. I know the morning prayers and the
+        burial words and most of the evening liturgy. There
+        is a great deal more. Seren does not hurry me, which
+        I am grateful for."
+
+  - keywords: [""]
+    responses:
+      - "Let me know if you need anything."
+      - "Priest Seren is inside if it is something serious."
+
+tree:
+  root:
+    text: "Welcome. I am Finn, the acolyte. Can I help, or
+      shall I fetch Priest Seren?"
+    hints: "You could ask Finn about the temple or Priest
+      Seren."
+
+memory:
+  expiryPeriod: ""

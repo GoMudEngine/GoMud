@@ -1,0 +1,57 @@
+roomid: 4108
+zone: Stillwater
+title: Crier's Step
+description: >
+  A single broad slab of lake-stone sits at the corner where
+  the square's eastern lane begins to narrow toward the
+  promenade. Generations of standing have polished its upper
+  face glassy. A small iron
+  <ansi fg="itemname">notice frame</ansi> bolted to the
+  wall beside it holds the day's posted reading — currently
+  a half-page of constabulary notices weighted with a small
+  brass pin. This is where the town crier stands at noon
+  and again at sunset to read out the day's news. At other
+  hours, the <ansi fg="itemname">step</ansi> is just a step,
+  and a good place for travelers to sit and watch the square
+  go about its business. East of here the lane bends toward
+  the lake.
+biome: city
+coord:
+  x: -17
+  y: 3
+  z: 0
+exits:
+  west:
+    roomid: 4102
+  east:
+    roomid: 4113
+nouns:
+  step: A single broad slab of lake-stone, large enough for
+    two people to sit on side by side. The upper face is
+    polished glassy from generations of standing and
+    sitting; the front lip is worn rounded where shoes
+    have scuffed it. A small dark patch near one corner
+    is a stain that no rain has been able to lift.
+  notice frame: A simple iron frame bolted to the wall
+    beside the step, holding the day's posted reading
+    behind a sheet of greased oilcloth that keeps the
+    rain off. The current reading is half a page of
+    constabulary notices — bait-shop hours, a reminder
+    about the moorage rotation, and a fresher note about
+    the lake-cave bounty being doubled.
+  wall: The wall behind the step is the eastern flank of
+    the square's largest building — a long mortared stone
+    face, weathered and lichened, with the notice frame
+    bolted to it and a dark stain streaking down from a
+    long-clogged drain near the roofline.
+  lane: A narrow lane runs east from the step toward the
+    lake, the flagstones giving way after a few paces to
+    packed earth and then to the gravel of the lakeshore
+    path. From this corner you can hear the gulls clearer
+    than you can see them.
+idlemessages:
+- A breeze lifts the corner of the oilcloth in the notice frame and sets it down.
+- A child runs past at full tilt, slaps the step's polished top with one hand, and is gone.
+- Two voices argue lazily in the square — about a price, by the sound.
+- A <ansi fg="mobname">gull</ansi> drops onto the step's far end, considers you, and lifts away.
+- The brass pin in the notice frame catches a stray beam of sunlight and throws it onto the flagstones.

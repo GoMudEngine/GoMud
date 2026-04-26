@@ -1,0 +1,61 @@
+roomid: 4104
+zone: Stillwater
+title: The Pike & Lantern, Lodging Loft
+description: >
+  The smell up here is altogether different — clean linen,
+  beeswax candle, and the faint mineral cool of lake-air
+  through a half-shuttered <ansi fg="itemname">window</ansi>
+  in the eastern gable. The loft runs the long axis of the
+  inn beneath a steep timbered roof, the rafters hung with
+  drying <ansi fg="itemname">herbs</ansi> and a tarred rope
+  long enough to lower a trunk down to the yard. Plain
+  rope-strung <ansi fg="itemname">bedsteads</ansi> stand in
+  two rows, each with a folded grey blanket and a small
+  lockable travel-chest at its foot. A
+  <ansi fg="itemname">washstand</ansi> against the southern
+  wall holds a chipped enamel basin and a clay jug. The
+  plank floor is swept and the boards creak honestly.
+biome: city
+coord:
+  x: -19
+  y: 3
+  z: 1
+exits:
+  down:
+    roomid: 4103
+nouns:
+  window: A small shuttered window in the eastern gable,
+    looking out across the slate roofs toward the lake. The
+    shutter is propped half-open with a stick. From this
+    height the water stretches enormous, the masts of the
+    fishing-skiffs at the docks just visible past the
+    chimney pots. The lake's wet, cool breath comes in
+    through the gap.
+  bedsteads: Six plain wooden frames strung with rope laced
+    in a tight diamond pattern — uncomfortable for a single
+    night, surprisingly forgiving on the second, and after
+    a week of road-sleep nearly luxurious. Each is dressed
+    with a folded grey blanket and a thin straw bolster.
+    A small travel-chest sits at the foot of each bed for a
+    guest's private things; the iron hasps take a traveler's
+    own padlock.
+  rope: A length of tarred manila rope coiled neatly on a
+    peg by the eastern gable. Long enough, by the look, to
+    reach the yard below — useful when a trunk is too heavy
+    to wrestle down the stairs, or for some other purpose
+    a guest might find for it.
+  herbs: Bunches of drying lake-mint, marsh-sage, and what
+    looks like marsh-willow bark, hung from the rafters
+    above the eastern window where the lake-air keeps them
+    sweet. Flavor for the kitchen, mostly. A few bunches
+    look freshly cut.
+  washstand: A simple plank table against the southern wall,
+    holding a chipped enamel basin and a clay jug of water.
+    A folded square of rough towel is draped over the rim
+    of the basin. Functional, uncomplicated.
+idlemessages:
+- The shutter at the gable knocks softly against the frame in the lake-wind.
+- Below, in the common room, a low murmur of voices rises briefly, then settles.
+- A bunch of drying lake-mint releases a thin sweet smell as the breeze stirs the rafters.
+- The plank floor creaks once, on its own — old wood remembering the shape of someone who isn't there.
+- A <ansi fg="mobname">sparrow</ansi> alights briefly on the windowsill, peers in, and is gone.

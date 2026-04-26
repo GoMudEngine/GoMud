@@ -1,0 +1,128 @@
+mobid: 353
+zone: Stillwater
+defaultMood: friendly
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Good day. Fenwick -- just passing through. Resting my
+        feet before the north road."
+      - "Pilgrim Fenwick. I apologize for the road-dust. Sit if
+        you like."
+
+  - keywords: ["hello", "hi"]
+    moods: ["grateful"]
+    responses:
+      - "You again. Good. I was hoping to ask you something about
+        the road ahead."
+
+  - keywords: ["road", "travel", "north", "journey", "pilgrim"]
+    responses:
+      - "I came south from the high road and will go north again
+        in a day or two. The walking is the point of it, mostly.
+        I am not in a hurry to arrive anywhere in particular,
+        which is either wisdom or very good footwear -- I have
+        not decided which."
+      - "Three days south of here the road splits. East toward
+        the coast, west toward the highlands. I came the west
+        fork. I will go back the east fork. That is the extent
+        of my itinerary."
+
+  - keywords: ["news", "from", "elsewhere", "word", "heard"]
+    responses:
+      - "The road carries news faster than most people credit.
+        I have heard that the harvest was thin north of the pass
+        -- that will mean tighter grain prices before winter.
+        There was a fire at a waystation two days east of here
+        last month. The usual small catastrophes of a busy road."
+      - "News from the south is better -- the roads are open, no
+        serious bandit activity that I saw. Quieter than last
+        summer, as the caravan guard here will tell you if you ask."
+
+  - keywords: ["sanctum", "basin", "sanctum basin"]
+    responses:
+      - "I have been to Sanctum Basin. Fine city. The temples
+        there are properly grand in a way that the small chapels
+        on the road are not. I respect the small chapels more,
+        personally. The Chrysalis order in a town like this does
+        more daily work than the towers in the city do in a
+        season."
+
+  - keywords: ["maren", "thornwall", "weaver"]
+    responses:
+      - "I stopped two nights in Thornwall on the way here. There
+        is a weaver in the market there -- Maren, I think -- who
+        does exceptional work. I bought nothing; pilgrims travel
+        light. But I looked for a long time. She said she was from
+        here, originally."
+
+  - keywords: ["ketil", "caravan", "road", "condition"]
+    responses:
+      - "The caravan driver Ketil would know the road better than
+        I do -- he runs it regularly and notes the conditions. I
+        walk it once. He drives it dozens of times. His assessment
+        of the ruts and the crossings will be more useful than
+        mine."
+
+  - keywords: ["stillwater", "town", "lake", "observe"]
+    responses:
+      - "What strikes me about Stillwater is that the town faces
+        the lake rather than the road. Most towns turn toward
+        traffic. This one turns toward water. That tells you what
+        the town thinks is important."
+
+  - keywords: [""]
+    responses:
+      - "Ask away. I have time."
+      - "I am resting. Happy to talk."
+
+tree:
+  root:
+    text: "Good day. Fenwick -- just resting my feet before the
+      north road continues. You look like someone who has been
+      on the same road from the other direction."
+    hints: "You could ask Fenwick about news from the road, what he
+      saw in Thornwall, or where he is headed."
+    variants:
+      - questRequired: ["20-end"]
+        text: "I heard something from Ketil's driver this morning
+          about the matter at the lake. You look like the person
+          it concerns. The road carries stories faster than
+          it carries feet. Safe travels."
+        hints: "You could ask Fenwick about news from the road or
+          Thornwall."
+
+  nodes:
+    - id: road_news
+      triggers: ["road", "news", "travel", "from", "elsewhere",
+        "heard", "word"]
+      text: "Three things I carry from the road: the harvest was
+        thin north of the pass; the waystation at the east fork
+        burned last month and is being rebuilt; and the bandit
+        activity that was troubling the North Road has thinned
+        considerably. That last one I heard from Ketil as well,
+        who has more stake in it than I do. I note things and
+        pass them on. That is part of what pilgrims are for."
+
+    - id: thornwall_maren
+      triggers: ["maren", "thornwall", "weaver", "city"]
+      text: "I passed through Thornwall two days before Stillwater.
+        There is a weaver in the cloth-market who does work I
+        would have called remarkable if I were not traveling
+        light. Maren, I think. She mentioned Stillwater when I
+        said where I was heading -- said she was from the lake
+        originally, that her uncle had lived here. She had a
+        careful way of saying it. I did not pry."
+
+    - id: ketil_road_conditions
+      triggers: ["ketil", "caravan", "road", "condition",
+        "ruts", "crossing"]
+      text: "Ketil has the road memorized. The ditch at the second
+        crossing goes deep after heavy rain -- he mentioned it and
+        I found it true. The path north of the lake widens about
+        half a day out, which is good. The surface is reasonable
+        now. Ask him for the details; I only walked it once."
+
+memory:
+  expiryPeriod: ""

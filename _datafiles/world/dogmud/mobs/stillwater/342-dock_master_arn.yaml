@@ -1,0 +1,43 @@
+mobid: 342
+zone: Stillwater
+behavior_archetype: noncombat_questgiver
+statpool: 90
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+groups:
+  - humanoid
+  - dockmaster
+idlecommands:
+  - 'emote marks something in the dock ledger with a short, hard stroke'
+  - ''
+  - 'emote shades his eyes and looks out at the fishing boats in the shallows'
+  - ''
+  - 'emote gestures toward the cave mouth in the distance and mutters under
+    his breath'
+  - ''
+activitylevel: 16
+character:
+  name: dock master Arn
+  description: |
+    A weathered man with a sun-scored face and eyes the color of deep water.
+    Arn has managed the Stillwater docks for over two decades, keeping the
+    boat ledgers, settling disputes over moorings, and knowing which tides
+    run where. He is not easily alarmed, which makes his current mood notable
+    -- three boats have returned in the past fortnight with nets shredded and
+    catches barely half what they should be, and the damage pattern points
+    straight to the lake caves. He is looking for someone capable of looking
+    into the matter and would pay well to see it resolved.
+  speciesid: 1
+  gold: 80
+  stats:
+    strength:
+      training: 8
+    perception:
+      training: 10
+    vitality:
+      training: 6
+    charisma:
+      training: 5

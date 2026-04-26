@@ -1,0 +1,53 @@
+roomid: 4101
+zone: Stillwater
+title: South Approach
+description: >
+  The road runs straight here for the last short stretch
+  before reaching the square, hemmed in by the back walls of
+  cottages and the long flank of a coopering yard. Slate
+  roofs lift left and right, with pale grey woodsmoke
+  drifting from a half-dozen kitchen chimneys at this hour.
+  The road's loose gravel gives way underfoot to dark
+  blue-grey <ansi fg="itemname">flagstone</ansi> laid in a
+  long-ago paving — the seams worn deep, holding rainwater
+  in their grooves. A wet, mineral coolness slips between
+  the cottages from somewhere east; the lake is closer than
+  it sounds. A waist-high <ansi fg="itemname">milestone</ansi>
+  stands at the road's shoulder, half-buried in moss.
+biome: city
+coord:
+  x: -18
+  y: 2
+  z: 0
+exits:
+  south:
+    roomid: 4100
+  north:
+    roomid: 4102
+  west:
+    roomid: 4132
+nouns:
+  milestone: A waist-high block of dressed lake-stone, the
+    inscribed face turned toward the road. The carving names
+    the distances to towns most travelers will already have
+    walked through — Ashwick (south), Watchers Crossing
+    (south-east), Thornwall (east). The northward face is
+    blank — Stillwater stops being a milestone-worth here.
+    The base is wrapped in moss thick enough that a finger
+    sinks in.
+  flagstone: Dark blue-grey paving stones, set in a herringbone
+    pattern that has long since gone uneven. The seams hold
+    standing water from the last rain, and a pale film of
+    algae glazes the joints. Whoever paved this road did it
+    once and did it well; whoever has maintained it since has
+    done less.
+  cottages: Modest single-story houses of plank and mortar,
+    backs turned to the road. Kitchen-smoke threads up from
+    half a dozen chimneys. Through one open shutter, a woman
+    is humming as she works dough on a board.
+idlemessages:
+- A woman's voice, low and tuneless, drifts from a kitchen window — a working-song without words.
+- Pale woodsmoke catches the breeze and bends sideways above the slate roofs.
+- A tabby <ansi fg="mobname">cat</ansi> watches from a window-ledge, tail flicking once at your passing.
+- The wet mineral cool of the lake reaches you between the cottages, then is gone.
+- A door bangs in the distance and someone calls a name — too far to make out, too brief to need an answer.

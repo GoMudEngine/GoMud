@@ -1,0 +1,66 @@
+# Mistress Vella Thorne — Behavior Tree
+# Handles: player_give safety nets for quest items.
+# Quest 20 advancement (kingfisher → journal handover) is in the quest
+# engine's item_give triggers in quests/20-ullas_silence.yaml. This tree
+# only handles rejection cases:
+# - Kingfisher (40060) before 20-kingfisher_found: shouldn't be possible,
+#   but return safely anyway.
+# - Kingfisher (40060) after 20-vella_journal: already handed over before;
+#   return.
+# - Journal (40061) any time: it's for Ulla, not Vella. Return.
+
+tree:
+  type: selector
+  children:
+
+    # ── GIVE: kingfisher, quest already past handover — return ──
+    - type: sequence
+      event: player_give
+      children:
+        - type: condition
+          check: item_matches
+          item_id: 40060
+        - type: condition
+          check: player_has_quest
+          quest: "20-vella_journal"
+        - type: action
+          do: say
+          text: >-
+            You have already brought it. Keep this one -- Ulla may
+            want it on the mantel beside his other birds.
+        - type: action
+          do: return_item
+
+    # ── GIVE: kingfisher BEFORE quest reached cemetery step — return ──
+    - type: sequence
+      event: player_give
+      children:
+        - type: condition
+          check: item_matches
+          item_id: 40060
+        - type: condition
+          check: player_missing_quest
+          quest: "20-kingfisher_found"
+        - type: action
+          do: say
+          text: >-
+            That carving did not come from where it was supposed to.
+            I cannot accept it like this. Take it back.
+        - type: action
+          do: return_item
+
+    # ── GIVE: Elgar's journal — return with redirect to Ulla ──
+    - type: sequence
+      event: player_give
+      children:
+        - type: condition
+          check: item_matches
+          item_id: 40061
+        - type: action
+          do: say
+          text: >-
+            That page is for Ulla, not me. I wrote it down for him
+            and held it for her. Take it to her parlor and give it
+            to her hand to hand.
+        - type: action
+          do: return_item

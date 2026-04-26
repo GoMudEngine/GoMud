@@ -1,0 +1,164 @@
+mobid: 355
+zone: Stillwater
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Welcome to the cottage. Sit on the bench by the door if you have a complaint to bring me."
+      - "Mistress Thorne. State the trouble plainly -- I have herbs simmering."
+
+  - keywords: ["hello", "hi"]
+    moods: ["grateful"]
+    responses:
+      - "Sit. I will pour you a tea before you go."
+
+  - keywords: ["who", "you", "yourself", "vella", "thorne"]
+    responses:
+      - "Mistress Vella Thorne. I have run this cottage thirty years -- folk medicine, tinctures, the small things the temple priest does not handle. Most of the town comes through this door at least once."
+
+  - keywords: ["herbs", "tinctures", "remedy", "fever"]
+    responses:
+      - "Marsh-willow for fevers. Lake-mint for the stomach. Elderberry for the cough. The town knows what I sell. If you need something specific, name it."
+
+  - keywords: ["temple", "priest", "seren"]
+    responses:
+      - "Seren keeps the temple. She handles what I do not -- the spiritual side, the ceremonies, the burials. We work together when we have to. We disagree when we have to as well."
+
+  - keywords: ["elgar", "voss", "brother"]
+    moods: ["neutral", "friendly", "cautious"]
+    questExcluded: ["20-vella_journal"]
+    responses:
+      - "Elgar was my brother. He went down into the deep twelve years ago. I do not speak of it to most folk. If you have business about him, ask plainly."
+
+  - keywords: ["elgar", "voss", "brother"]
+    questRequired: ["20-vella_journal"]
+    responses:
+      - "He is at peace, more than he was. Thank you for that."
+
+  - keywords: ["lake", "caves", "deep", "sump"]
+    responses:
+      - "The deep does not give back what it takes. Most years I tell people that to comfort them. This year I tell it to remind myself."
+
+  - keywords: [""]
+    responses:
+      - "Speak plainly. I have herbs simmering."
+      - "Was there something else?"
+
+tree:
+  root:
+    text: "Welcome. I am Mistress Thorne. State the trouble or the
+      question; I will help if I can."
+    hints: "You could ask Vella about her tinctures, the temple priest,
+      or her brother Elgar."
+    variants:
+      # === Post-quest: full quest done ===
+      - questRequired: ["20-end"]
+        text: "Sit. The kettle is on. The town is quieter for what you
+          did, and so am I. I have not slept that well in twelve years.
+          The kingfisher sits on Ulla's mantel now. I went to see it
+          last week."
+        hints: "You could ask Vella about her tinctures or the town."
+
+      # === Has kingfisher, hasn't given it yet ===
+      - questRequired: ["20-kingfisher_found"]
+        questExcluded: ["20-vella_journal"]
+        text: "You have something in your hand that I left in the
+          ground. Twelve years ago. Show me."
+        hints: "Hand Vella the carved kingfisher."
+
+      # === Sent here by Brindle, hasn't been to cemetery ===
+      - questRequired: ["20-brindle_confession"]
+        questExcluded: ["20-kingfisher_found"]
+        text: "You have spoken to Brindle. I can see that on you.
+          What you came here for is not in this cottage. It is at the
+          cemetery. Go to my brother's marker and search."
+        hints: "Visit Stillwater Cemetery and search Elgar's grave."
+
+      # === Mid-quest, no Brindle confession yet ===
+      - questRequired: ["20-start"]
+        questExcluded: ["20-brindle_confession"]
+        text: "You are looking for something about my brother. I can
+          see it on you. I have nothing to say to a stranger about
+          Elgar -- not yet. Speak to Brindle the smith first; he was
+          Elgar's friend. Then come back to me."
+        hints: "Speak to Smith Brindle at the smithy in town first."
+
+  nodes:
+    # ============================================================
+    # REDIRECT: no quest, asking about Elgar/quest
+    # ============================================================
+    - id: redirect_no_quest
+      triggers: ["quest", "task", "elgar", "brother", "help"]
+      questExcluded: ["20-start", "20-end"]
+      text: "If you have come about Elgar, you have come about something
+        twelve years cold. I do not have words for strangers about him.
+        If Ulla has asked you to look into his things, come back when
+        you have something to bring me. Otherwise -- leave him be."
+      hints: "Speak to Ulla at her parlor first if you wish to look
+        into her late husband's affairs."
+
+    # ============================================================
+    # ALT PATH: ask vella kingfisher/carving with the item in hand
+    # ============================================================
+    - id: ask_kingfisher
+      triggers: ["kingfisher", "carving", "bird"]
+      questRequired: ["20-kingfisher_found"]
+      questExcluded: ["20-vella_journal"]
+      requiresItem: 40060
+      grantsQuest: "20-vella_journal"
+      givesItem: 40061
+      text: "He carried this in his pocket for years. I knew where
+        it ended up. I left the note. I left it because I hoped
+        that some day someone would come looking for him who was
+        not me, and I could not bring myself to be the first to
+        say it. Take this -- it is the page he wrote the morning
+        he went down. He left it with me to give to Ulla. I have
+        not had the strength."
+      moodChange: friendly
+
+    # ============================================================
+    # LOST ITEM RECOVERY: replacement journal
+    # ============================================================
+    - id: lost_journal
+      triggers: ["journal", "lost", "another", "again"]
+      questRequired: ["20-vella_journal"]
+      questExcluded: ["20-end"]
+      givesItem: 40061
+      text: "Lost the page? Here. I kept a copy in case the first did
+        not reach her. Take this one straight to Ulla. Do not lose
+        this one."
+
+    # ============================================================
+    # INFO NODES (post-acceptance, no grants)
+    # ============================================================
+    - id: spiral_info
+      triggers: ["spiral", "motif", "design", "alignment"]
+      questRequired: ["20-kingfisher_found"]
+      text: "The spiral is older than the temple, older than the
+        cottage. My grandmother knew it from her grandmother. The
+        sites form a line -- chapel, temple, garden, wardstone --
+        pointing at the deep. Elgar said the line was a road. I told
+        him roads are walked both ways."
+
+    - id: blame_info
+      triggers: ["blame", "guilt", "fault", "stop", "stopped"]
+      questRequired: ["20-vella_journal"]
+      questExcluded: ["20-end"]
+      text: "I knew he was going to go. I could have told Brindle.
+        I could have told Ulla. I told neither. I have lived with
+        that twelve years now, and there is no morning yet that the
+        kettle does not remind me. Tell Ulla what you like. The
+        choice is yours."
+
+    - id: marker_info
+      triggers: ["marker", "grave", "cemetery", "fifteen"]
+      questRequired: ["20-brindle_confession"]
+      text: "Brindle paid for the marker and gave the wrong date to
+        the carver -- fifteen years instead of twelve. He said it
+        was kinder to round up. I did not argue with him. I should
+        have. The dates matter. They matter to anyone who knows."
+
+memory:
+  expiryPeriod: ""

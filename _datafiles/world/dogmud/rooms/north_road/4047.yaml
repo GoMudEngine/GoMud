@@ -12,7 +12,7 @@ description: >
   wall leads back to the road.
 biome: farmland
 coord:
-  x: -11
+  x: -18
   y: -13
   z: -1
 exits:

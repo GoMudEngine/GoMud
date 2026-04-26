@@ -1,0 +1,129 @@
+description: >
+  Smoke test of Stillwater (Zone 2.2) — Stage A partial build.
+  Six rooms exist so far: 4100 South Gate, 4101 South Approach,
+  4102 Lakefront Square (town hub), 4103 Pike & Lantern Yard,
+  4104 Pike Common Room (cooking_fire station), and 4105 Pike
+  Lodging Loft. The boundary into north_road (4062) is wired.
+  No NPCs, mobs, or items are placed in Stillwater yet — this is
+  pure environment + map + flavor testing.
+
+  Many exits in the new rooms point to Stage B/C rooms that don't
+  exist yet (4107, 4109, 4110, 4114). Those exits are deliberately
+  OMITTED from the YAML, so the directions should simply not be
+  available. Report if any "broken exit" / "missing room" errors
+  surface.
+
+goals:
+  # --- Entry and First Impressions ---
+  - >
+    You start at room 4100 — Stillwater Gate, Southern Approach.
+    'look' to read the room. Then 'look chime', 'look
+    fishing-floats', 'look notice-board', 'look arch'. Report
+    whether the room reads as evocative arrival prose and whether
+    each noun rewards examination. Also report whether the
+    notice-board content seeded any quest curiosity (specifically:
+    the lake-caves bounty and the missing fisherman Elgar Voss).
+
+  # --- Walking the Spine ---
+  - >
+    Walk north into 4101 South Approach. 'look', then 'look
+    milestone', 'look flagstone', 'look cottages'. Report whether
+    the transition from road to town feels right and whether the
+    descriptions vary in sensory lead from the gate room.
+
+  - >
+    Walk north into 4102 Lakefront Square. 'look'. Then 'map' —
+    verify the room shows on the mini-map as 'Townsquare' (the
+    'T' mapsymbol). Look at every noun: well, map-board, lake,
+    retaining-wall, flagstone. Report whether the square feels
+    like a town hub.
+
+  # --- Map Sanity ---
+  - >
+    From 4102 Lakefront Square, try 'east' and 'north' — those
+    exits are intentionally not yet built. Confirm the engine
+    handles the missing direction gracefully (e.g., "You can't go
+    that way") rather than crashing or showing a broken-exit
+    error. Same test from 4103 Pike Yard: try 'north' and 'west'.
+    Report exactly what message you receive.
+
+  # --- The Inn Cluster ---
+  - >
+    Go west from the square into 4103 The Pike & Lantern, Yard.
+    'look', then look at hitching-rail, net-bunting, sign, inn.
+    Report whether the inn yard reads as a real waypoint with
+    history.
+
+  - >
+    Type 'enter' to go inside to 4104 The Pike & Lantern, Common
+    Room. 'look', then look at every noun: bar, hearth, slate,
+    tables, stair, kitchen. Report on the inn's atmosphere and
+    whether it feels distinct from the yard outside.
+
+  - >
+    4104 has a cooking_fire station. Type 'recipes' to list what
+    you know. If 'grilled-meat' or 'trail-rations' is in the list,
+    try 'craft grilled-meat' or 'craft trail-rations' here. Report
+    whether the cooking station is recognized in this room and
+    whether the craft attempt works (success or graceful failure
+    with a clear message — both are acceptable, a crash is not).
+
+  - >
+    Type 'up' to go to 4105 Lodging Loft. 'look', then look at
+    every noun: window, bedsteads, rope, herbs, washstand. Report
+    on the loft's atmosphere. Note especially whether the 'herbs'
+    noun mentioning lake-mint, marsh-sage, and marsh-willow bark
+    seeds curiosity about local materials.
+
+  # --- Idle Messages ---
+  - >
+    Sit in the loft for at least 60 seconds without doing
+    anything. Watch for idle messages (the room should periodically
+    display ambient flavor). Report which idle messages fired and
+    whether the rhythm felt right or annoying.
+
+  - >
+    Repeat the idle-message test in 4102 Lakefront Square — sit
+    there for 60 seconds and report the messages you see.
+
+  # --- Reverse Journey & Boundary ---
+  - >
+    Reverse the entire journey: down to 4104, leave to 4103, east
+    to 4102, south to 4101, south to 4100, south to 4062 (this
+    last step crosses the zone boundary into north_road's North
+    Road End). Confirm every exit works in both directions and
+    report any one-way issues, broken returns, or unexpected
+    behavior at the zone boundary.
+
+  - >
+    From 4062 (North Road End, in the north_road zone), type
+    'map' — confirm the new Stillwater rooms appear on the map
+    and that the connection between the two zones renders cleanly
+    (no overlaps, no weird coordinate jumps). Report any visual
+    issues or coordinate clashes.
+
+  # --- Overall Feel ---
+  - >
+    OVERALL FEEL — after walking the cluster, write a summary
+    covering:
+    (1) whether Stillwater feels like a *different place* than
+    the road you came from (the canonical brief is "first
+    finished town after a long road");
+    (2) whether the rooms have enough flavor without feeling
+    bloated or overstuffed;
+    (3) any rooms that felt empty, generic, or underwhelming;
+    (4) any rooms that felt overstuffed or word-soup;
+    (5) whether the seeded quest hooks (Lake Caves bounty,
+    missing fisherman, Sumac the lost dog) made you curious to
+    investigate further;
+    (6) any inconsistencies between rooms (e.g., a noun referenced
+    in one room that doesn't match what you find when you go
+    look for it).
+
+  # --- Server Log ---
+  - >
+    SERVER LOG — after the test session, check the server log
+    for any errors related to Stillwater rooms or to north_road
+    4062: YAML parse errors, missing-exit warnings, mapsymbol
+    failures, station registration warnings. Report any that
+    appear.

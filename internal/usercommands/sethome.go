@@ -11,14 +11,16 @@ import (
 
 // Valid home locations: name -> room ID
 var homeLocations = map[string]int{
-	"default":   0,   // Sanctum Basin entrance (room 0 = engine default)
-	"thornwall": 468, // Temple Interior, Thornwall City
+	"default":    0,    // Sanctum Basin entrance (room 0 = engine default)
+	"thornwall":  468,  // Temple Interior, Thornwall City
+	"stillwater": 4123, // Temple of Stillwater
 }
 
 // Display names for the locations
 var homeLocationNames = map[string]string{
-	"default":   "Sanctum Basin",
-	"thornwall": "Thornwall City (Temple Interior)",
+	"default":    "Sanctum Basin",
+	"thornwall":  "Thornwall City (Temple Interior)",
+	"stillwater": "Stillwater (Temple of Stillwater)",
 }
 
 func SetHome(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {

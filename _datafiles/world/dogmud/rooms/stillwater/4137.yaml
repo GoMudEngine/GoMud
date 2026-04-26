@@ -1,0 +1,81 @@
+roomid: 4137
+zone: Stillwater
+title: Ulla's Parlor
+description: >
+  A neat sparsely-furnished room — the kind of order kept
+  by someone who has decided to live alone and chosen to
+  do so well. A single carved
+  <ansi fg="itemname">chair</ansi> sits by the small
+  hearth, a folded grey shawl draped over its back. A
+  weaving <ansi fg="itemname">loom</ansi> stands at the
+  southern window where the light is best, a half-finished
+  wool blanket in mid-row. A clean swept slate floor, a
+  row of carved wooden <ansi fg="itemname">birds</ansi>
+  along the mantelpiece — each one a different species,
+  each one her late husband's work — and a worn plank
+  <ansi fg="itemname">stair</ansi> climbs the eastern wall
+  to a half-landing and up to the workshop above. Ulla
+  rarely leaves this room, and when she speaks her voice
+  is quiet enough that the loom's clack is the loudest
+  thing in the parlor most days.
+biome: city
+coord:
+  x: -19
+  y: 5
+  z: 0
+exits:
+  west:
+    roomid: 4136
+  east:
+    roomid: 4109
+  up:
+    roomid: 4138
+  north:
+    roomid: 4139
+nouns:
+  chair: A high-backed wooden chair by the small
+    hearth, the seat carved with a worn pattern of
+    interleaved fish-scales. A folded grey wool shawl
+    is draped over the back; a small footstool sits
+    in front. This is the chair Ulla sits in most
+    days; the cushion is permanently shaped to her.
+  loom: A floor-mounted weaving loom at the southern
+    window where the light falls best — an unfinished
+    grey wool blanket in mid-row across its frame, the
+    shuttle parked patiently mid-pass. The loom is
+    older than Ulla; her mother used it before her,
+    and the wood is darkened along the heddle bars
+    by generations of hands.
+  birds: A row of small carved wooden birds along the
+    mantelpiece — each a different species, each
+    rendered with patient skill — a kingfisher in
+    mid-dive, a heron stalking, a wagtail, a winter
+    sparrow, a leaping pike that is technically not a
+    bird but Ulla keeps it with the others. Her
+    husband's work. He made them through the long
+    winters and gave one to Ulla each spring.
+  stair: A worn plank stair climbs the eastern wall to
+    a half-landing, then turns and climbs again to the
+    upper workshop — Ulla's husband's old workspace,
+    still kept as he left it. The treads are dusted
+    only down to the half-landing; above that, the
+    dust lies undisturbed.
+  hearth: A small simple hearth on the western wall,
+    kept burning slow even in summer for the kettle
+    and for company. A copper kettle sits on the iron
+    arm; a small brown teapot waits beside it on a
+    shelf.
+  shawl: A folded grey wool shawl on the chair's back,
+    woven by Ulla on the loom by the window — close
+    rib pattern, plain and well-made. The same shawl
+    she has worn for as long as the neighbours
+    remember.
+idlemessages:
+- Ulla's loom-shuttle clacks once across the warp, pauses, and clacks back the other way.
+- The kettle on the iron arm clicks softly as the hearth shifts.
+- A piece of the unfinished blanket is examined briefly between finger and thumb, then released.
+- A draft from the chimney stirs the carved birds along the mantelpiece into faint silhouette-dance.
+- The plank stair to the workshop above creaks once on its own — old wood remembering.
+spawninfo:
+- mobid: 347
+  cooldown: 600 rounds

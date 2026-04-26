@@ -1,0 +1,61 @@
+mobid: 333
+zone: Stillwater
+behavior_archetype: noncombat_questgiver
+statpool: 120
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+groups:
+  - humanoid
+  - innkeeper
+idlecommands:
+  - 'emote wipes the bar top in slow circles, eyes moving across the room'
+  - 'emote sets a fresh candle in the iron bracket above the bar'
+  - ''
+  - 'emote leans on the counter and watches the door with a practiced quiet'
+  - ''
+  - 'emote straightens a row of cups with the deliberate care of someone who
+    has done it ten thousand times'
+  - ''
+activitylevel: 15
+character:
+  name: innkeeper Sigrid
+  description: |
+    A broad-shouldered woman with sun-bleached hair pulled back in a tight
+    braid, Sigrid has run the Pike & Lantern since her mother left her the
+    keys and moved south. Her hands are always moving -- polishing, stacking,
+    setting things right -- and she tracks every person who walks through the
+    door with the easy attention of someone who has learned that trouble
+    usually announces itself before it acts. She is friendly in the way of
+    someone who needs your coin but would also like you to leave promptly.
+    There is a watchfulness in her gray eyes that suggests she hears more of
+    what is said in her common room than she lets on.
+  speciesid: 1
+  gold: 200
+  equipment:
+    weapon:
+      itemid: 10009
+  stats:
+    strength:
+      training: 8
+    charisma:
+      training: 10
+    perception:
+      training: 6
+    willpower:
+      training: 4
+  shop:
+    - itemid: 30061
+      quantity: 3
+      quantitymax: 6
+      price: 4
+    - itemid: 40016
+      quantity: 5
+      quantitymax: 10
+      price: 1
+    - itemid: 30021
+      quantity: 3
+      quantitymax: 8
+      price: 2

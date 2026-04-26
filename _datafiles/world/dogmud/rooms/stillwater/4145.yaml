@@ -1,0 +1,78 @@
+roomid: 4145
+zone: Stillwater
+title: Wardstone Circle
+description: >
+  Seven tall standing <ansi fg="itemname">wardstones</ansi>
+  of weathered basalt rise in a ragged circle on a low
+  rise above the town, each stone roughly twice a person's
+  height, each leaning slightly inward toward the
+  circle's centre. The grass within the circle is short
+  and cropped close in a way no goat could account for.
+  At the centre, a flat carved <ansi fg="itemname">altar slab</ansi>
+  of darker stone bears a long tight spiral worn deep
+  enough to fit a finger into — the carving older than
+  the wardstones around it, and the wardstones are old.
+  A small simple
+  <ansi fg="itemname">hut</ansi> of split timber and
+  thatched reed leans against the southernmost wardstone,
+  smoke threading up steady from a small chimney. Renn
+  the Wardweaver lives here; he speaks little and works
+  the old ward-craft when asked.
+biome: ruins
+mapsymbol: W
+maplegend: Wardstone
+station: enchanting_circle
+coord:
+  x: -20
+  y: 8
+  z: 0
+exits:
+  south:
+    roomid: 4143
+  west:
+    roomid: 4144
+nouns:
+  wardstones: Seven tall standing stones of weathered
+    basalt rise in a ragged circle on the low rise,
+    each stone roughly twice a grown person's height
+    and each leaning slightly inward toward the
+    circle's centre. The lichen on the southern face
+    of each is in different stages — older than the
+    foundation of the chapel ruin to the west, much
+    older than the present town. Several of the
+    stones bear small carved marks at hand-height
+    that the eye almost recognises before deciding
+    not to.
+  altar slab: A flat carved slab of dark stone at the
+    circle's centre, bearing a long tight spiral worn
+    deep enough to fit a fingertip into. The carving
+    has been re-cut more than once over the centuries,
+    each generation respecting the line before — the
+    work is older than the wardstones around it, and
+    the wardstones are old. Whatever the symbol means,
+    it has been repeated by enough hands across enough
+    time that it must mean something in common.
+  hut: A small simple hut of split timber and
+    thatched reed leans against the southernmost
+    wardstone — Renn the Wardweaver's lodging. Smoke
+    threads up steady from a small chimney; a single
+    small unglazed window faces south. A worn track
+    runs from the hut to the altar slab and back; a
+    second track to the small kitchen-garden behind
+    the hut.
+  grass: The grass within the circle is short and
+    cropped close in a way no goat could account for —
+    too even for a tool, too neat for the weather.
+    The grass beyond the wardstones is the long
+    coarse stuff of any unmanaged hilltop.
+  marks: Small carved marks at hand-height on several
+    of the wardstones — old work, the lines worn
+    soft. The eye almost recognises the patterns
+    before deciding not to. Renn could tell you what
+    they were if you asked, and probably will not.
+idlemessages:
+- The lake-wind moves between the wardstones with a low resonant sound, almost a chord.
+- Smoke threads steady from the hut's small chimney.
+- A piece of old lichen frays loose from a wardstone and is carried briefly across the cropped grass.
+- A <ansi fg="mobname">crow</ansi> drops onto the central altar slab, considers the spiral, and lifts away.
+- The altar slab's spiral catches a stray beam of sunlight and seems briefly to deepen.

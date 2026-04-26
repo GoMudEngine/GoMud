@@ -1,0 +1,23 @@
+itemid: 20077
+name: hunter-eel scale vest
+namesimple: vest
+description: >-
+  A close-fitting vest of overlapping scales taken from a drowned
+  hunter — the dark slip-skin of the cave-eel, mottled grey and
+  black, light enough that it might be mistaken for thick cloth
+  and supple enough to bend with the wearer's smallest motion.
+  The scales overlap loose, not locked plate, so a knife-arm
+  swings unhindered and a lockpick's fingers stay free. The
+  surface is unsettlingly slick — water beads off it, and so do
+  many things a wearer would rather have slip past. Cave-divers
+  who can afford one prefer it under their outerwear when they
+  expect to need their hands free.
+type: body
+subtype: wearable
+physical_mitigation: 5
+magical_mitigation: 2
+weight: 3.0
+value: 85
+statmods:
+  dexterity: 3
+  skullduggery: 7

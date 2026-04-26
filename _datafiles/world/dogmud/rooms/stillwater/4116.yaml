@@ -1,0 +1,81 @@
+roomid: 4116
+zone: Stillwater
+title: Fishing Docks
+description: >
+  Brine, wet wood, fish-oil, and tar — the working dock's
+  smell hits before the sound of mooring rope creaking
+  against bollards reaches you. Three plank
+  <ansi fg="itemname">wharves</ansi> jut into the shallows
+  on rust-flaked iron pilings, fishing-skiffs moored two and
+  three to a wharf, the lake-light bouncing under their
+  hulls. A long oak <ansi fg="itemname">table</ansi> on
+  trestles serves as the fishmonger's gutting and selling
+  bench, sluiced clean with lake water at the end of every
+  day. A row of <ansi fg="itemname">drying racks</ansi> at
+  the southern end of the dock holds rows of split fish
+  curing in the lake-wind. Most striking — and most
+  troubling — is the bundle of torn <ansi fg="itemname">nets</ansi>
+  laid out on the planks for inspection, the tears too clean
+  and too wide to be ordinary wear.
+biome: water
+coord:
+  x: -16
+  y: 4
+  z: 0
+exits:
+  south:
+    roomid: 4113
+  north:
+    roomid: 4117
+  east:
+    roomid: 4146
+nouns:
+  wharves: Three parallel plank wharves jutting into the
+    shallows on iron pilings flaked rust-orange at the
+    waterline. Two of them carry working skiffs moored
+    bow-and-stern; the third is currently empty save for
+    a coiled mooring rope and a small heap of mended net.
+    The planks are dark with old fish-water and slick
+    in the early morning.
+  table: A long oak gutting-and-selling bench on heavy
+    trestles, the surface scarred by a thousand
+    knife-cuts and stained dark by the work. A canvas
+    pouch of small change hangs from a nail beneath the
+    customer side. Sluiced clean every evening with two
+    buckets of lake water; smells, regardless, of fish
+    no matter the hour.
+  drying racks: A row of timber racks at the southern
+    end of the dock, holding rows of split fish curing
+    in the lake-wind — pike mostly, gutted and salted,
+    drying for trade up the road in winter. A small
+    wooden tally hangs at one end with chalked numbers
+    that mean fish to whoever counts them.
+  nets: A bundle of torn fishing-nets laid out on the
+    planks for inspection. The tears are too clean and
+    too wide for ordinary wear — long parallel rents in
+    several places, as if drawn open by something with
+    purchase enough to pull. The constabulary's
+    posted bounty is for whoever can stop whatever has
+    been doing this. The fishmonger here can tell you
+    more if asked.
+  skiffs: Half a dozen working fishing-skiffs moored
+    against the wharves, their hulls dark from years of
+    pitch and lake-water, oars stowed and nets hung
+    over the gunnels. Most carry the small leaping-pike
+    sigil burned into the bow that marks them as
+    Stillwater-built. A few carry no sigil at all.
+  pilings: Iron piles driven into the lake's gravel
+    bed, flaked rust-orange at the waterline and crusted
+    with small freshwater barnacles below. Replacing
+    them was the project of the last constable's third
+    summer — most of the older ones are stamped with
+    a smith's mark you can almost make out.
+idlemessages:
+- A skiff's mooring rope creaks slowly against an iron bollard.
+- A <ansi fg="mobname">gull</ansi> drops to the table, snatches a scrap, and lifts away.
+- The lake-water under the wharves slaps once against the pilings, then settles.
+- The wind shifts and the smell of drying fish strengthens for a moment.
+- Somewhere out on the water, an oar-stroke sounds — slow, patient, a fisherman returning.
+spawninfo:
+- mobid: 342
+  cooldown: 600 rounds

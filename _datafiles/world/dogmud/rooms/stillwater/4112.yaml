@@ -1,0 +1,63 @@
+roomid: 4112
+zone: Stillwater
+title: Stable Yard
+description: >
+  Hay and horse — that is the smell of the place, warm and
+  sweet and animal. The yard is packed earth gone to dust
+  in the high traffic-paths, fenced on three sides by a
+  three-rail timber paddock and on the fourth by the long
+  flank of a low <ansi fg="itemname">stable</ansi> building.
+  A <ansi fg="itemname">water trough</ansi> of mossed stone
+  stands against the stable's wall, kept full from a hand
+  pump worked by whoever is on stable duty that hour. A
+  <ansi fg="itemname">hayloft</ansi> hangs out over the
+  stable's front, the loose straw of last winter's bedding
+  still littering the loft's edge.
+biome: city
+coord:
+  x: -20
+  y: 3
+  z: 0
+exits:
+  east:
+    roomid: 4103
+  south:
+    roomid: 4135
+nouns:
+  stable: A long low timber building running the yard's
+    western edge — three working stalls along its open
+    front, divided by half-walls of pegged plank, with
+    iron rings set into the dividers for tying. Two of
+    the stalls are usually occupied by the inn's draft
+    horses; the third is kept for travelers' mounts at
+    a copper a night.
+  hayloft: A timber loft hanging out over the stable's
+    front, reached by a rough ladder propped against
+    the stable's south wall. Loose straw from last
+    winter's bedding still litters the loft's edge, and
+    the smell of cured hay drifts down from the bales
+    stacked deeper inside. A folded wool blanket and a
+    battered tin cup near the ladder's head suggest
+    someone sleeps up there.
+  water trough: A long basin of mossed stone, cool to
+    the touch even in summer, kept brim-full from a hand
+    pump worked by the stable boy. Mosquito-larvae
+    wriggle in the surface film when no one has skimmed
+    it lately. A tin dipper hangs on a nail above the
+    pump for human use.
+  paddock: A three-rail timber paddock fences the yard's
+    other three sides, the rails worn smooth where horses
+    have leaned across them. Inside the fence, a single
+    large pied gelding regards you with the mild interest
+    of a working horse who has seen many strangers come
+    and go.
+  pump: A simple cast-iron hand pump bolted to a wooden
+    plinth beside the trough, the handle's paint long
+    worn to bare iron. A few firm pulls bring up cold
+    lake-aquifer water.
+idlemessages:
+- A horse stamps in one of the stalls and blows a long breath through its nose.
+- A few wisps of straw drift down from the hayloft's edge.
+- The pied gelding shifts its weight against the paddock rail, making it creak.
+- A pigeon walks across the stable's roof in slow, considered steps.
+- The smell of hay strengthens briefly as a breeze stirs the loft.

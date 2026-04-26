@@ -1,0 +1,67 @@
+roomid: 4121
+zone: Stillwater
+title: Cave Mouth
+description: >
+  Cool wet air sighs steadily out of a dark slot at the
+  base of the basalt ledge — a smell of old water and
+  stone-cold mineral, the kind of air that has not seen
+  the sun. The opening is only just wide enough to enter
+  at a stoop, half-flooded, the water pooling deeper just
+  inside. A snarl of frayed
+  <ansi fg="itemname">fishing line</ansi> tangled around
+  a snag at the cave's lip suggests something has dragged
+  netting in here. A small constabulary
+  <ansi fg="itemname">notice</ansi> nailed to a wooden
+  board beside the entrance reads SOMETHING IN HERE.
+  BOUNTY DOUBLED. ASK CONSTABLE. Beneath it is a
+  hand-drawn sketch of a torn net.
+biome: cave
+coord:
+  x: -14
+  y: 6
+  z: 0
+exits:
+  west:
+    roomid: 4120
+  down:
+    roomid: 4127
+nouns:
+  slot: A narrow dark opening in the basalt at the
+    base of the ledge — wide enough for a person to
+    enter at a stoop, half-flooded, the water inside
+    deeper than the lake outside by a hand's breadth.
+    The stone around the opening is polished smooth
+    by generations of water flowing in and out.
+  fishing line: A snarl of frayed waxed-linen fishing
+    line caught around a snag at the cave's lip,
+    several yards trailing inward and disappearing
+    into the dark. Whatever pulled it in here was
+    strong enough to tear it free of whoever was
+    holding the other end. There is also a small bit
+    of net mesh tangled in among the line.
+  notice: A small constabulary notice nailed to a
+    wooden board beside the cave entrance — printed
+    in heavy black ink, the bounty for clearing the
+    cave doubled in fresher chalk-and-charcoal
+    underline. Below the heading is a hand-drawn
+    sketch of a torn net and an arrow pointing into
+    the cave. The constabulary in town can settle
+    the bounty for a body or a confirmed kill.
+  air: A steady cool wet exhale of air comes out of
+    the cave even when the lake is calm — the kind of
+    underground breathing that means the cavern goes
+    deeper than the slot suggests. The smell is old
+    water, mineral stone, and faintly something
+    organic that does not match the rest.
+  snag: A wedge of basalt at the cave's lip catches
+    the fishing line and holds it taut. Several
+    other lines in different states of decay are
+    caught on the same snag, suggesting this is not
+    the first time something has come and gone this
+    way.
+idlemessages:
+- A long slow exhale of cool wet air sighs out of the cave's mouth.
+- A drop of water inside the cave sounds and echoes faintly.
+- The fishing-line tangle stirs slightly in a draft from below.
+- A <ansi fg="mobname">water-rat</ansi> emerges briefly from the slot, sees you, and retreats.
+- The snarl of net mesh around the snag stirs once, then is still.

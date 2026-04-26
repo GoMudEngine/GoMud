@@ -1,0 +1,18 @@
+id: stillwater-pearl-pendant
+name: Stillwater Pearl Pendant
+skill: jewelcrafting
+skill_minimum: 30
+station: jeweler_bench
+time_rounds: 8
+ingredients:
+  - item_tag: stillwater-pearl
+    quantity: 1
+  - item_tag: silver-wire
+    quantity: 2
+  - item_tag: chain-link
+    quantity: 1
+output:
+  item_id: 20038
+  quantity: 1
+success_message: "You set the dark pearl in a silver bezel and weave the chain fine, finishing with the small clasp. The pearl seems to drink the lamplight as you work. A stillwater pearl pendant!"
+failure_message: "The bezel will not seat right against the pearl, and the wire fights every twist. The materials are ruined; the pearl is unharmed."

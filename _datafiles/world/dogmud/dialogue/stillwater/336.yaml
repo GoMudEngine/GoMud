@@ -1,0 +1,109 @@
+mobid: 336
+zone: Stillwater
+defaultMood: friendly
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Fresh catch this morning -- clams and river-perch both. What can
+        I get you?"
+      - "Tov Brann. What are you after?"
+
+  - keywords: ["hello", "hi"]
+    moods: ["grateful"]
+    responses:
+      - "Back again? Good to see you. The clams are at their best today,
+        if you can believe it."
+
+  - keywords: ["clams", "fish", "catch", "stall", "monger"]
+    responses:
+      - "I sell what the boats bring in. Clams out of the shallows, perch
+        from the middle water, sometimes a fine lake-trout if someone
+        had a good morning. Lately the catch is shorter than it was --
+        but the nets are mending, which is a start."
+
+  - keywords: ["nets", "mending", "repair"]
+    responses:
+      - "Hodder does the mending at the dock-yard -- he's got forty years
+        of knot-craft in those hands. The constable's bounty cleared out
+        what was chewing through the mesh. Slow improvement, but I'll
+        take it."
+
+  - keywords: ["lake", "lean", "short", "decline"]
+    responses:
+      - "Lean year. Two lean years, if I am honest. The cave trouble hit
+        the shallows first and the nets paid for it. I have been
+        covering my stall costs on clam sales mostly. The lake will
+        come back -- it always does -- but I will not pretend the
+        timing is good."
+
+  - keywords: ["drunn", "bounty", "constable"]
+    responses:
+      - "Drunn got the bounty moving. About time. The dock master was
+        bending his ear for months. I do not know what went on down
+        there in the caves, but the shallows have been quieter since.
+        My nets come back in one piece now, mostly."
+
+  - keywords: ["hodder", "dock", "fisherman", "old"]
+    responses:
+      - "Hodder knows more about this lake than a man ought to. He
+        will tell you that too, if you give him long enough. He
+        taught half the fishermen on this dock, myself included.
+        Knees are bad now -- he stays out of the boat -- but he
+        keeps the nets in good shape for the rest of us."
+
+  - keywords: [""]
+    responses:
+      - "Fresh clams, river-perch. Have a look."
+      - "Anything you need, just ask."
+
+tree:
+  root:
+    text: "Fresh catch this morning -- clams and river-perch both.
+      What can I get you?"
+    hints: "You could ask Tov about the catch, the lean year, or what
+      he knows of the lake trouble."
+    variants:
+      - questRequired: ["19-end"]
+        questFlagRequired:
+          "19-completion": "full"
+        text: "The cave trouble is settled, I hear. The nets are coming
+          back whole now -- first time in two seasons. You've got my
+          gratitude and the fishmonger's best rate."
+        hints: "You could ask Tov about the catch or the lake."
+
+      - questRequired: ["19-end"]
+        text: "The shallows are calmer. Nets coming back in better shape.
+          I am not sure what happened down there in the caves, but the
+          difference shows."
+        hints: "You could ask Tov about the catch or the lake."
+
+  nodes:
+    - id: lean_year
+      triggers: ["lake", "lean", "catch", "decline", "short", "season"]
+      text: "Two short seasons, back to back. First the nets started
+        coming back chewed -- something in the caves was pushing into
+        the shallows. Then the boats themselves stopped going out as
+        far. You cannot fish water you do not trust. I have kept the
+        stall open on clams and what the nearshore boats bring in.
+        The lake gives enough for that. For now."
+
+    - id: nets_mending
+      triggers: ["nets", "mending", "hodder", "repair", "mesh"]
+      text: "Hodder mends them in the yard off the docks. He has been
+        at it every morning for forty years and his patch-work holds
+        better than the original knots. The bounty in the caves is
+        what actually stopped the damage -- but Hodder keeps the
+        fleet seaworthy. The two go together."
+
+    - id: about_diving
+      triggers: ["dive", "diver", "pearls", "kess", "deep"]
+      text: "There used to be men who dived for pearls in the deep
+        shallows -- before my time mostly, but Hodder would know them.
+        Kess at the carver's garret still buys from anyone who brings
+        a good one up. Not many people go that deep anymore. The
+        water has been strange."
+
+memory:
+  expiryPeriod: ""

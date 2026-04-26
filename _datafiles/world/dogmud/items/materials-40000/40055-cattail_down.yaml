@@ -1,0 +1,14 @@
+itemid: 40055
+name: cattail down
+namesimple: down
+description: A loose handful of pale tan fluff combed from the
+  burst seedheads of marsh cattails. Light enough to float on
+  a breath, slow to clump, and surprisingly warm packed against
+  the skin. Tailors line winter cloaks with it; lake-folk stuff
+  it into pillows. It smells faintly of pond and dry summer.
+type: object
+subtype: mundane
+component_tag: cattail-down
+weight: 0.1
+value: 10
+is_component: true

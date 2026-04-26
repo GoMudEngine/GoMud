@@ -1,0 +1,15 @@
+itemid: 40057
+name: lake mint
+namesimple: mint
+description: A small bundle of bright green leaves with a
+  darker central vein and a sharper, colder smell than garden
+  mint. Crushed between finger and thumb the smell redoubles
+  and lingers for hours. Alchemists prize it for steady-hand
+  tonics; lake-folk add a leaf to fish chowder or chew one to
+  settle the stomach after a hard pull on the oars.
+type: object
+subtype: mundane
+component_tag: lake-mint
+weight: 0.05
+value: 10
+is_component: true

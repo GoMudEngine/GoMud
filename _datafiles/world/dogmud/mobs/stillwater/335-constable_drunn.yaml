@@ -1,0 +1,48 @@
+mobid: 335
+zone: Stillwater
+archetype: fighting
+behavior_archetype: noncombat_questgiver
+statpool: 80
+itemdropchance: 0
+hostile: false
+charm_immune: true
+maxwander: 2
+groups:
+  - humanoid
+  - guard
+idlecommands:
+  - 'emote stands at the door of the constabulary, arms folded, watching
+    the square'
+  - ''
+  - 'emote drums two fingers on the head of his club, eyes on the street'
+  - ''
+  - 'emote scans the waterfront road with a long, unhurried sweep of his gaze'
+  - ''
+activitylevel: 18
+character:
+  name: constable Drunn
+  description: |
+    A heavyset man with a short grey beard and the measured movements of
+    someone who stopped hurrying decades ago and has not regretted it since.
+    Drunn has been Stillwater's sole constable for eleven years and knows
+    every face in town, every feud, and most of the gossip. He carries a
+    well-worn club at his belt more out of habit than expectation. His real
+    concern at the moment is the fishing nets -- three boats have come in
+    half-empty since the cave flooding, and the dock master has been bending
+    his ear about it daily.
+  speciesid: 1
+  gold: 20
+  equipment:
+    weapon:
+      itemid: 10010
+    body:
+      itemid: 20011
+  stats:
+    strength:
+      training: 8
+    perception:
+      training: 8
+    vitality:
+      training: 5
+    charisma:
+      training: 5

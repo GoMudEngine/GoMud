@@ -12,7 +12,7 @@ description: >
   pretending not to watch.
 biome: farmland
 coord:
-  x: -11
+  x: -18
   y: -10
   z: 0
 exits:

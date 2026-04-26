@@ -1,0 +1,68 @@
+roomid: 4117
+zone: Stillwater
+title: Net Yard
+description: >
+  The creak of timber drying-frames swaying in the lake-wind
+  fills the small fenced yard north of the docks — a long
+  open space with two rows of tall A-shaped
+  <ansi fg="itemname">frames</ansi> spread with mended
+  fishing nets stretched taut to dry. Wooden
+  <ansi fg="itemname">shuttle</ansi>-needles and balls of
+  waxed twine sit in a basket beside a low working
+  <ansi fg="itemname">bench</ansi>, where the day's mending
+  is done in long patient sessions. A bucket of
+  <ansi fg="itemname">tallow</ansi> stands ready for
+  sealing knots. The yard smells of pitch and fish-oil and
+  the dry sweet must of cured cordage.
+biome: city
+coord:
+  x: -16
+  y: 5
+  z: 0
+exits:
+  south:
+    roomid: 4116
+  north:
+    roomid: 4119
+  east:
+    roomid: 4118
+nouns:
+  frames: Two rows of tall A-shaped timber frames
+    spaced down the yard, each spread with a fishing
+    net stretched taut for drying after mending. The
+    crossbeams are worn smooth at hand-height where
+    generations of net-menders have steadied themselves
+    while reaching. The frames creak softly even in
+    light wind.
+  shuttle: A scatter of carved wooden net-needles in a
+    woven basket beside the bench — the simple
+    flat-bladed shuttles a net-mender uses to weave
+    knot after knot of waxed twine. Several have been
+    polished smooth by long use; one or two are
+    freshly carved and still pale at the edges.
+  bench: A low working bench against the yard's
+    southern wall, the working surface kept clean and
+    waxed against the damp. A small hand-loop of
+    half-mended netting is currently pinned to a clamp
+    at one end — someone's work in progress, abandoned
+    when the bell rang for the noon break.
+  tallow: A small wooden bucket of yellowish tallow
+    sits beside the bench, a wooden paddle propped
+    against its rim. Used for sealing knots in the
+    waxed twine and for greasing the shuttle-needles
+    so they slide smoothly through the mesh. The smell
+    is faintly mutton.
+  twine: Balls of waxed linen twine in graduated
+    weights, stacked in a small wall-rack near the
+    bench. The thinnest is for fine work — repairing
+    fly-tackle and small mesh; the heaviest could
+    moor a barge.
+idlemessages:
+- A drying frame creaks once as the wind catches the netting.
+- Somewhere in the yard a wooden shuttle clicks against a frame.
+- A small <ansi fg="mobname">spider</ansi> picks its way along the top of a frame, ignoring the net entirely.
+- The smell of warm tallow drifts briefly across the yard from somewhere unseen.
+- A clutch of half-cured net-twine is stirred by the wind and clicks against itself.
+spawninfo:
+- mobid: 343
+  cooldown: 300 rounds

@@ -1,0 +1,75 @@
+roomid: 4146
+zone: Stillwater
+title: Boat-Builder's Yard
+description: >
+  Hot pitch and shaved oak — the smell of a working
+  boat-yard hits before the sight of the half-finished
+  <ansi fg="itemname">hull</ansi> on its slipway dominates
+  the open work-yard east of the fishing docks. The hull is
+  a new lake-skiff in mid-build, the keel laid and the
+  ribs raised but the planking only halfway up. Wood
+  <ansi fg="itemname">shavings</ansi> drift across the
+  yard in any breeze. A long working
+  <ansi fg="itemname">bench</ansi> against the northern
+  wall holds the day's tools — drawknives, planes, a row
+  of carved wooden patterns for the boat's curves. A
+  small <ansi fg="itemname">brazier</ansi> in the corner
+  keeps the pitch warm in a hanging iron pot. Pell Halt
+  builds boats here; his brother Efren rents them out at
+  the pier when they are finished.
+biome: city
+coord:
+  x: -15
+  y: 4
+  z: 0
+exits:
+  west:
+    roomid: 4116
+nouns:
+  hull: A new lake-skiff in mid-build dominates the
+    yard's open centre — the keel laid, the ribs
+    raised in their patient curving rows, the
+    planking running about halfway up the hull's
+    side. The wood is freshly cut oak, pale at the
+    sawn ends and darker where the day's pitch has
+    been worked into the seams. The bow already
+    bears the small leaping-pike sigil burned in
+    that marks every Stillwater-built boat.
+  shavings: A loose carpet of wood shavings drifts
+    across the yard in any breeze — long curls from
+    the drawknife's work and finer pale dust from
+    the plane. Children from the nearby cottages
+    sometimes come by to fill a small basket of
+    them for kindling.
+  bench: A long working bench against the northern
+    wall holds the boat-builder's tools in patient
+    order — drawknives in graduated sizes, two
+    long-handled planes, a row of carved wooden
+    patterns for the boat's curves, a small set of
+    bronze fastening-pegs, an iron square. A
+    leather apron hangs from a hook beside the
+    bench.
+  brazier: A small iron brazier in the yard's
+    eastern corner keeps the pitch warm — a heavy
+    iron pot hangs from a wooden tripod above the
+    coals, the pitch slowly molten. A long-handled
+    brush leans against the tripod for working the
+    hot pitch into the hull's seams.
+  patterns: A row of carved wooden patterns hangs on
+    pegs above the bench — the curves and shapes a
+    Stillwater skiff is built to. Each pattern is
+    labelled in small letters at its edge with the
+    name of the boat-shape it serves. Pell's father's
+    work; the boat-builder before him used the same
+    patterns and Pell sees no reason to change them.
+  slipway: A heavy timber slipway angles down from
+    the yard toward the lake's edge — the runway
+    along which a finished hull is launched into the
+    water. Currently empty between launches; the
+    next launch is perhaps three weeks out.
+idlemessages:
+- A drawknife pulls along an oak plank with a long satisfying scrape.
+- The pitch in the iron pot mutters faintly as the brazier shifts.
+- A wood shaving lifts in the breeze and catches briefly against your boot.
+- A wooden mallet taps a peg into place with a small flat report.
+- The lake-wind shifts and the smell of warm pitch strengthens for a moment.

@@ -101,6 +101,17 @@ var (
 	roomIdToMapperCache = map[int]string{}     // roomId to mapperZoneCache key
 )
 
+// ClearCache wipes every cached zone-mapper. The next call to GetMapper for
+// any room will rebuild that zone's mapper from the current room data on
+// disk. Use this when room files have changed at runtime (new rooms added,
+// exits modified, mapsymbols set) and the cached layout is stale. The
+// engine never auto-invalidates this cache, so this is the only way short
+// of a server restart to refresh the `map` command's output.
+func ClearCache() {
+	mapperZoneCache = map[string]*mapper{}
+	roomIdToMapperCache = map[int]string{}
+}
+
 // This is a useful function to help enforce map coherence when building
 func GetReciprocalExit(exitDirection string) string {
 	// first validate the exitName

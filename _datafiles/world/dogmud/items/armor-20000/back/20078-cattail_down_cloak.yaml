@@ -1,0 +1,18 @@
+itemid: 20078
+name: cattail-down cloak
+namesimple: cloak
+description: A long quilted cloak of close-woven linen lined with
+  loose cattail down, finished with a horn toggle and a soft hood.
+  Light as held breath across the shoulders, warm out of all
+  proportion to its weight, and quiet — the down soaks up the
+  rustle of cloth on cloth. Lake-folk wear them under their
+  outerwear in the cold months; trappers swear by them for the
+  long hours of stillness a hide demands.
+type: back
+subtype: wearable
+weight: 1.5
+value: 110
+physical_mitigation: 2
+statmods:
+  dexterity: 2
+  search: 4

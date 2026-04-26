@@ -1,0 +1,62 @@
+roomid: 4111
+zone: Stillwater
+title: North Gate
+description: >
+  The road out of town narrows again as it passes through a
+  simple <ansi fg="itemname">arch</ansi> set across the
+  road's northern shoulder. Beyond the arch, the paving
+  gives way to pressed gravel, and the road runs northward
+  into rolling country before bending out of sight. A
+  weathered <ansi fg="itemname">milestone</ansi> stands at
+  the road's shoulder under the arch — its inscribed face
+  turned northward, naming a destination most travelers in
+  this town will never see. The lake-wind comes harder
+  through the gap here than it does in the square. A faint
+  scent of woodsmoke drifts back from a campsite somewhere
+  out of sight.
+biome: plains
+coord:
+  x: -18
+  y: 6
+  z: 0
+exits:
+  south:
+    roomid: 4109
+  northwest:
+    roomid: 4142
+nouns:
+  arch: A simple timber arch — two upright squared posts
+    of dark cedar with a single crossbeam, its bark long
+    weathered away to silver. A small iron lantern hangs
+    from a hook at the crossbeam's center, lit at dusk
+    by the constable's evening rounds. There is no gate
+    as such; the town does not need one.
+  milestone: A waist-high block of dressed lake-stone
+    standing under the arch, the carved face turned
+    north toward the road ahead. The carving names a
+    single distant destination — NEW PLYMOUTH — and a
+    number of leagues that most travelers will hear
+    from a wagon-driver before they ever reach the
+    next milestone confirming it.
+  road: Beyond the arch the paving gives way to pressed
+    gravel, well-laid and freshly topped near the gate
+    but visibly thinning further north. Wagon ruts run
+    deep in the verges; the road carries real traffic
+    in spring and fall.
+  lantern: A small iron lantern hung from the arch's
+    crossbeam, the glass smoke-blackened along its
+    upper rim. It is lit at dusk and snuffed at first
+    light. Even unlit, the soot-smell of old oil
+    lingers faintly around it.
+  view: From under the arch the country opens out —
+    rolling pasture and hedgerow stretching north until
+    the road bends out of sight behind a low rise. On
+    a clear day a smudge of distant smoke on the
+    northern horizon might be a farmstead; on a cloudy
+    day it is just the cloud.
+idlemessages:
+- The lake-wind whistles softly between the arch's posts.
+- A wagon passes on the road north, the driver lifting a hand to the constable's lantern as he goes under.
+- The arch's lantern creaks softly as the wind catches it.
+- A pair of <ansi fg="mobname">crows</ansi> cross the sky above the road, calling once and then again.
+- The smell of distant woodsmoke briefly strengthens as the wind shifts.

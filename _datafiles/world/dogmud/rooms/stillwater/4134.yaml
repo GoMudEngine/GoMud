@@ -1,0 +1,67 @@
+roomid: 4134
+zone: Stillwater
+title: The Bakehouse
+description: >
+  Bread — the smell hits before the sight, warm and yeasty
+  and almost solid in the air around a low stone-built
+  bakehouse with smoke rising steady from a tall stone
+  <ansi fg="itemname">chimney</ansi> at the back. The
+  shopfront is just a wide sill and a wooden serving
+  <ansi fg="itemname">counter</ansi> facing the lane, with
+  the day's bake stacked behind glass — round country
+  loaves, a few darker rye rounds, hand-shaped buns, a
+  short row of small pastries. Through the open door
+  behind the counter a brick <ansi fg="itemname">oven</ansi>
+  glows orange in the gloom, its iron door propped open
+  with a long peel. The baker's slate hangs above the
+  counter listing the prices in copper — bread is cheap
+  here, kept that way deliberately.
+biome: city
+station: cooking_fire
+coord:
+  x: -19
+  y: 1
+  z: 0
+exits:
+  north:
+    roomid: 4132
+  west:
+    roomid: 4133
+nouns:
+  chimney: A tall stone chimney rises from the
+    bakehouse's back wall, smoke threading up steadily
+    from dawn to dusk. The bricks at its base are
+    discoloured pale from the heat. On the coldest
+    mornings of winter the chimney is the warmest
+    surface in this part of town.
+  counter: A wide pine serving counter facing the lane,
+    scarred by years of handling and dusted with a
+    permanent fine flour-haze. The day's loaves are
+    stacked behind a glass screen at one end; copper
+    coins go into a small wooden box on the baker's
+    side of the counter.
+  oven: Through the open door behind the counter, a
+    large brick oven glows orange in the gloom — the
+    fire-brick interior held at the temperature of
+    serious heat by a fire of slow-burning hardwood
+    in a side-chamber. The long-handled wooden peel
+    hangs ready beside the oven; the baker's mitts
+    sit folded on a hook.
+  loaves: Round country loaves, a few darker rye
+    rounds, hand-shaped buns, and a short row of small
+    pastries — currants, a sweet apple swirl, a
+    something-in-puff that the baker calls a fish-eye.
+    The day's bake is sold by midday in good weather
+    and is half gone by mid-morning on market days.
+  slate: A square of slate hung above the counter
+    listing prices in copper in a careful round hand
+    — bread is deliberately cheap here. The baker's
+    grandfather set the prices generations ago and
+    her father swore on his deathbed not to raise
+    them, and she has kept the oath.
+idlemessages:
+- The smell of fresh bread strengthens briefly as the oven door is opened and shut.
+- The baker's wooden peel scrapes briefly across the brick floor of the oven.
+- A loaf is set down on the counter with a small dry sound.
+- A child counts copper at the counter, then leaves with a hand-shaped bun.
+- Smoke threads up from the chimney in a slow steady column.

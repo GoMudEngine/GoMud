@@ -1,0 +1,71 @@
+roomid: 4122
+zone: Stillwater
+title: Temple Approach
+description: >
+  A short flagged <ansi fg="itemname">path</ansi> runs east
+  from the promenade between two tall lake-stone
+  <ansi fg="itemname">pillars</ansi>, weathered and
+  lichen-streaked, that frame the approach to the temple
+  beyond. Above the further door, a worn carved
+  <ansi fg="itemname">inscription</ansi> in the lintel
+  reads STILL THE WATERS, STILL THE HEART — the temple's
+  founding prayer. The air here is quieter than the
+  promenade behind you; even the lake-wind seems to drop
+  half a degree when it reaches the pillars. Worshippers
+  pass through this approach in a slow steady trickle from
+  dawn to dusk.
+biome: city
+coord:
+  x: -15
+  y: 3
+  z: 0
+exits:
+  west:
+    roomid: 4113
+  east:
+    roomid: 4123
+  south:
+    roomid: 4115
+nouns:
+  path: A short flagged path of dressed lake-stone
+    runs east from the promenade to the temple door,
+    the seams kept tight by the temple's groundskeeper
+    and the surface swept clean each morning. The
+    flagstones here are paler than the promenade's,
+    quarried separately and laid more carefully.
+  pillars: Two tall pillars of dressed lake-stone
+    flank the approach, weathered and lichen-streaked
+    and older than the current temple building behind
+    them. Each is carved with a long spiral motif at
+    waist-height — neither the Chrysalis spiral the
+    larger temples use, nor anything else most
+    travelers would recognize. A few pilgrims pause
+    here to touch the stone before walking on.
+  inscription: A worn carved inscription in the lintel
+    above the temple's further door reads STILL THE
+    WATERS, STILL THE HEART. The lettering is older
+    than the present door-frame and likely older than
+    the present temple. A bracket below it once held
+    a lamp; the lamp itself is long gone.
+  air: The air here is quieter than the promenade
+    behind, the lake-wind seeming to drop half a
+    degree when it reaches the pillars and another
+    half-degree at the temple door. Whether the
+    effect is acoustic, architectural, or theological
+    depends on the listener's framework.
+  worshippers: A slow trickle of figures move through
+    the approach from dawn to dusk — fishermen
+    pausing on their way to the docks, an old woman
+    with a basket of garden-cut flowers, a small
+    party of pilgrims from up the road. None of them
+    linger here long; the pillars are an entry, not
+    a destination.
+idlemessages:
+- An old woman with a basket of cut flowers walks past you toward the temple, head bent.
+- A wind-bell hung somewhere out of sight rings once, very faintly.
+- A fisherman in oilskin coat pauses at the pillars, touches one of them, and walks on.
+- The lake-wind drops noticeably as a stronger gust moves over the lake outside.
+- A faint chant carries briefly from inside the temple, then fades.
+spawninfo:
+- mobid: 345
+  cooldown: 300 rounds

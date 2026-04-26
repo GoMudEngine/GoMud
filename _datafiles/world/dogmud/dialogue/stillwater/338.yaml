@@ -1,0 +1,105 @@
+mobid: 338
+zone: Stillwater
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Apothecary Ilsa. State the complaint plainly -- I have herbs
+        simmering."
+      - "Welcome. If you are injured, sit on the bench. If you are
+        buying, the shelf is to your left."
+
+  - keywords: ["hello", "hi"]
+    moods: ["grateful"]
+    responses:
+      - "Good to see you in better shape than last time. Sit. I will
+        pour you something warm."
+
+  - keywords: ["tinctures", "remedy", "tonic", "potion", "salve"]
+    responses:
+      - "I mix what the lake plants give me -- marsh-willow for fevers,
+        lake-mint for the stomach, elderberry for the chest. I trained
+        in Thornwall for seven years and I have been working Stillwater
+        plants for nine more. The formulas are my own."
+      - "Healing salves, stamina tonics, antidotes for the marsh-things.
+        I make them myself. Ask if you want to know what something
+        does."
+
+  - keywords: ["willow", "bark", "mint", "herbs", "lake-mint"]
+    responses:
+      - "Marsh-willow bark is the backbone of most of what I make. I
+        harvest it from the shallows myself. The lake-mint grows closer
+        to the cave outlets -- I have been short of it since the
+        trouble in the caves started."
+
+  - keywords: ["fishermen", "patients", "patched", "wounds"]
+    responses:
+      - "Half the docks have been through this cottage at one point or
+        another. Tov took a hook to the palm two seasons back. Hodder
+        comes in for his knee when the cold gets bad. One of the younger
+        lads -- Luc -- had a nasty gash from a cave-edge stone last
+        autumn. I set the herbs out before he knocked; I could see him
+        coming from the window."
+
+  - keywords: ["vella", "thorne", "healer"]
+    responses:
+      - "Vella is the elder practice in this town -- she was here before
+        me, and she trained herself rather than being trained, which I
+        respect more than I probably should. We use different methods.
+        We agree on more than we disagree. She takes the harder cases
+        when I am short of the right herb; I take the alchemy work
+        when she is short of time."
+
+  - keywords: ["cave", "lake", "trouble", "mint"]
+    responses:
+      - "The cave trouble has pushed into my supply of lake-mint --
+        the plants grow closest to the outlets and I have not been
+        able to harvest there properly. I am managing with dried stock,
+        but dried is not fresh and anyone who knows potions will tell
+        you the difference shows."
+
+  - keywords: [""]
+    responses:
+      - "Speak plainly. I have work to get back to."
+      - "Was there something else?"
+
+tree:
+  root:
+    text: "Apothecary Ilsa. State the complaint or the question."
+    hints: "You could ask Ilsa about her tinctures, her patients, or her
+      senior counterpart Vella Thorne."
+
+  nodes:
+    - id: remedy_trade
+      triggers: ["tinctures", "remedy", "tonic", "salve", "potion",
+        "buy", "stock"]
+      text: "Healing salves, stamina tonics, a minor antidote for the
+        marsh-creature venom. I mix to order and keep a shelf of
+        finished stock when the materials allow it. The quality of
+        lake-mint has been short since the cave trouble -- I make
+        do with what I have. Ask specifically and I will tell you
+        what I can fill."
+
+    - id: fishermen_patients
+      triggers: ["fishermen", "patients", "patched", "wounds", "luc",
+        "hodder", "tov"]
+      text: "This town fishes for a living, and fishing folk get hurt.
+        I keep iodine and clean cloth on the front shelf for the
+        quick visits. Hodder's knee is a permanent patient -- cold
+        water and forty years of boat-work. Luc came in last autumn
+        with cave-stone cuts that needed proper cleaning. I told him
+        to stay out of the deep outlets. He nodded like he was
+        listening."
+
+    - id: vella_reference
+      triggers: ["vella", "thorne", "senior", "healer", "cottage"]
+      text: "Vella's cottage is west of the square. She handles the
+        matters I do not -- the grief-work, the long-term infirm,
+        the things that need more than herbs. I send the overflow
+        to her and she sends hers to me. Stillwater is too small
+        for two apothecaries to be rivals. We manage."
+
+memory:
+  expiryPeriod: ""

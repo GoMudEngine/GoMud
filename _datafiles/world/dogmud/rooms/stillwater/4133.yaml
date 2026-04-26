@@ -1,0 +1,61 @@
+roomid: 4133
+zone: Stillwater
+title: Mill Creek Footbridge
+description: >
+  A narrow timber <ansi fg="itemname">footbridge</ansi> of
+  three planks wide spans a clear running
+  <ansi fg="itemname">creek</ansi> at the western edge of
+  town — Mill Creek, fed from the sluice pond above the
+  watermill and running south here to empty into the lake
+  beyond. The bridge's hand-rails are worn smooth where
+  generations of millers and water-haulers have leaned
+  against them. The water below is shallow and clear, the
+  bottom dark with peat. A stone <ansi fg="itemname">bench</ansi>
+  sits at the western end of the bridge for the older
+  miller's wife who used to stop here on her water-runs.
+  The watermill yard rises just to the north.
+biome: water
+coord:
+  x: -20
+  y: 1
+  z: 0
+exits:
+  north:
+    roomid: 4135
+  east:
+    roomid: 4134
+nouns:
+  footbridge: A narrow timber footbridge three planks
+    wide, the deck dark with old water and the
+    hand-rails worn smooth at chest-height. The bridge
+    is rebuilt by the miller every other generation;
+    the current span is in its second decade and
+    starting to go soft at the southern landing.
+  creek: A clear shallow creek runs south under the
+    bridge, the bottom dark with peat. The water at
+    the bridge moves slowly enough that the miller's
+    children sometimes catch crayfish from the bank
+    with bent-pin tackle. South of the bridge the
+    creek runs out of sight toward the lake.
+  bench: A flat stone bench at the western end of the
+    bridge, the seat worn smooth and slightly hollowed
+    by years of use. A small mossed marker beside it
+    bears a name and two dates that the rain has
+    almost taken — the older miller's wife, who used
+    to stop here on her water-runs.
+  rails: Polished smooth at chest-height by generations
+    of leaning hands. The wood at the western post
+    bears a small carved leaping-pike sigil, the same
+    one that appears on the Stillwater-built skiffs at
+    the docks.
+  water: Shallow clear creek water, peat-dark at the
+    bottom and slightly warmer than the lake by a
+    degree or two. A small school of minnows holds
+    against the current near the western bank,
+    occasionally dispersing and reforming.
+idlemessages:
+- The creek runs steadily under the bridge with a low constant burble.
+- A dipper-bird darts down to the water, vanishes briefly under the surface, and lifts away.
+- A piece of moss frays loose from the railing and is carried south on the current.
+- The bridge's planks creak softly even when no one crosses them.
+- A breeze stirs the surface and the minnow-school scatters and reforms.

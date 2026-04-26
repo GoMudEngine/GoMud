@@ -1,0 +1,61 @@
+mobid: 350
+zone: Stillwater
+defaultMood: friendly
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Hello! Are you going in the water? I am not supposed
+        to go in the water today."
+      - "Hi. Did you see anything in the shallows? I saw
+        something move this morning."
+
+  - keywords: ["hello", "hi"]
+    moods: ["grateful"]
+    responses:
+      - "You came back! Did you go in the caves? Da says
+        I am not allowed but I want to know what is in
+        there."
+
+  - keywords: ["fisherman", "fish", "da", "father", "boat"]
+    responses:
+      - "My da is a fisherman. He goes out every morning
+        before I wake up. I am going to be a fisherman
+        too when I am big enough. Da says I have to
+        learn swimming first. I am learning."
+      - "Da's boat is the red one at the third mooring.
+        He lets me help with the net sometimes if I am
+        careful."
+
+  - keywords: ["shallows", "lake", "water", "see", "fish",
+        "splash"]
+    responses:
+      - "There is something that swims in the shallows in
+        the mornings that makes a bigger ripple than a
+        fish. I keep counting the rings. A fish makes
+        three rings. This makes five or six. I think it
+        is something big."
+
+  - keywords: ["caves", "deep", "cave"]
+    responses:
+      - "I am not allowed in the caves. Da was very
+        specific about the caves. But you are allowed
+        because you are grown up. What is in there?"
+
+  - keywords: [""]
+    responses:
+      - "Do you have anything interesting in your pack?"
+      - "I have been here since morning. Did you know
+        if you are very still the fish come up near
+        your feet?"
+
+tree:
+  root:
+    text: "Hi! Are you going in the water? I am not supposed
+      to but I watch it every day."
+    hints: "You could ask Pip about the lake, the shallows,
+      or his da the fisherman."
+
+memory:
+  expiryPeriod: ""

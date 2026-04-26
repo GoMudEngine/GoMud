@@ -1,0 +1,49 @@
+# Dock Master Arn — Behavior Tree
+# Handles: player_give event safety net for the leviathan tooth (40054).
+# Quest 19 advancement is handled by the quest engine's item_give trigger
+# in the quest YAML. This tree only rejects the tooth when handover would
+# fail the quest engine's preconditions, returning the item to the player
+# instead of silently consuming it.
+
+tree:
+  type: selector
+  children:
+
+    # ── GIVE: leviathan tooth, quest already complete — return it ──
+    - type: sequence
+      event: player_give
+      children:
+        - type: condition
+          check: item_matches
+          item_id: 40054
+        - type: condition
+          check: player_has_quest
+          quest: "19-end"
+        - type: action
+          do: say
+          text: The bounty is paid out. Keep the tooth -- it is worth a story.
+        - type: action
+          do: return_item
+
+    # ── GIVE: leviathan tooth before signed bounty — return it ──
+    - type: sequence
+      event: player_give
+      children:
+        - type: condition
+          check: item_matches
+          item_id: 40054
+        - type: condition
+          check: player_missing_quest
+          quest: "19-signed"
+        - type: action
+          do: say
+          text: >-
+            That is the proof, all right -- but the dock fund only pays
+            on a bounty the constable has signed. See Drunn first, then
+            come back.
+        - type: action
+          do: return_item
+
+    # (GIVE: leviathan tooth WITH 19-signed and missing 19-end falls through
+    #  to the quest engine's item_give trigger, which grants 19-end with
+    #  flag completion: full and consumes the tooth.)

@@ -1,0 +1,18 @@
+id: lake-iron-hook-spear
+name: Lake-Iron Hook-Spear
+skill: blacksmithing
+skill_minimum: 22
+station: forge
+time_rounds: 5
+ingredients:
+  - item_tag: lake-iron-nodule
+    quantity: 3
+  - item_tag: iron-ingot
+    quantity: 1
+  - item_tag: leather-strip
+    quantity: 1
+output:
+  item_id: 10031
+  quantity: 1
+success_message: "You smelt the lake-iron nodules in a hot fire and draw the metal out long and keen, then weld a back-curving hook to the socket. The leaf-blade rings true on the anvil. A lake-iron hook-spear!"
+failure_message: "The lake-iron will not weld evenly to the socket. The hook tears free under the first hammer-blow and the work is wasted."

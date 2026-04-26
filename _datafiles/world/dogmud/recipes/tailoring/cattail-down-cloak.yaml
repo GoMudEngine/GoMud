@@ -1,0 +1,18 @@
+id: cattail-down-cloak
+name: Cattail-Down Cloak
+skill: tailoring
+skill_minimum: 20
+station: loom
+time_rounds: 5
+ingredients:
+  - item_tag: cattail-down
+    quantity: 4
+  - item_tag: cloth-strip
+    quantity: 3
+  - item_tag: thread-spool
+    quantity: 2
+output:
+  item_id: 20078
+  quantity: 1
+success_message: "You quilt the down between two layers of close-woven linen, working in narrow channels so the fluff cannot bunch, and finish with a horn toggle and a soft hood. A cattail-down cloak!"
+failure_message: "The down clumps in the channels no matter how carefully you stitch, and the cloak hangs lopsided and heavy on the shoulders. The work is wasted."

@@ -1,0 +1,46 @@
+mobid: 334
+zone: Stillwater
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "What can I get you?"
+      - "Neva. Ale, wine, or something from the chowder pot?"
+
+  - keywords: ["hello", "hi"]
+    moods: ["grateful"]
+    responses:
+      - "Back again. I will pour before you sit down."
+
+  - keywords: ["ale", "wine", "drink", "refill", "chowder"]
+    responses:
+      - "Ale on tap. Wine when the caravan brings it -- Ketil's
+        lot is in town, so there is wine today. The chowder is
+        from this morning's clams. Ask before the pot runs low."
+
+  - keywords: ["boat", "fishing", "lake", "father", "water"]
+    responses:
+      - "My father's boat needed repairs two seasons back. I came
+        here for the coin. I am still here. The lake is still
+        there. I keep the window table clear so I can see it
+        while I work."
+
+  - keywords: ["news", "gossip", "town", "heard"]
+    responses:
+      - "I hear everything in this room and I remember most of it.
+        Ask Sigrid if you want it organized. I just carry cups."
+
+  - keywords: [""]
+    responses:
+      - "I have three other tables. State your order."
+      - "Something else?"
+
+tree:
+  root:
+    text: "What can I get you?"
+    hints: "You could ask Neva about what is on offer today."
+
+memory:
+  expiryPeriod: ""

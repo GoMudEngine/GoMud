@@ -1,0 +1,47 @@
+mobid: 348
+zone: Stillwater
+behavior_archetype: noncombat_passive
+statpool: 75
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+groups:
+  - humanoid
+  - merchant
+idlecommands:
+  - 'emote adjusts the millstone brake and listens to the wheel-creak
+    change pitch'
+  - ''
+  - 'emote scoops a handful of flour from the bin, rubs it between his
+    palms, and nods'
+  - ''
+  - 'emote wipes white dust from a gear tooth with a rag and squints at
+    the bearing'
+  - ''
+activitylevel: 12
+character:
+  name: miller Bram
+  description: |
+    A flour-dusted man with a broad back and the satisfied air of someone
+    doing a job he enjoys. Bram runs the watermill at the creek's edge,
+    grinding grain for the households and the bakehouse. He is cheerful in
+    an uncomplicated way, interested in weather and water-flow, and happy
+    to explain the mill's workings to anyone who shows curiosity. His flour
+    is reliably good. He sells it direct from the mill by the sack, and he
+    will also mill grain you bring yourself for a modest fee.
+  speciesid: 1
+  gold: 100
+  stats:
+    strength:
+      training: 10
+    vitality:
+      training: 6
+    perception:
+      training: 5
+  shop:
+    - itemid: 40015
+      quantity: 5
+      quantitymax: 12
+      price: 1

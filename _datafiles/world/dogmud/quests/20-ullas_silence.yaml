@@ -1,0 +1,417 @@
+questid: 20
+name: Ulla's Silence
+description: Ulla has asked you to look through her late husband Elgar's
+  things in the workshop above her parlor. The town accepts that he was
+  lost on a fishing trip twelve years ago. Ulla has always sensed there
+  was more.
+secret: false
+
+flags:
+  - key: truth
+    values: [whole, partial]
+    description: "Whether the player told Ulla the full truth about
+      Vella's role in Elgar's death, or just gave her the journal"
+
+steps:
+  - id: start
+    description: "Ulla has asked you to look through her late husband
+      Elgar's things in the workshop above her parlor. She cannot bring
+      herself to do it. She wants to know what was on his mind in the
+      months before he disappeared."
+    hint: "Climb the stair from Ulla's parlor up to the workshop and
+      search what you find there. The dust has not been disturbed in
+      years. Look at the bench, the tools, the unfinished carving in
+      the vise."
+  - id: workshop_carving
+    description: "Beneath the cast-iron handle of Elgar's bench-vise,
+      a long tight spiral inside an outer circle has been scratched
+      into the metal. Old work. Older than the cottage. Whoever
+      scratched it knew the symbol meant something."
+    hint: "The spiral motif is older than Elgar's cottage. The temple's
+      pillars carry the same design -- speak to the temple priest, or
+      examine the pillars yourself."
+  - id: temple_pillars
+    description: "The four pillars at the corners of the Temple of
+      Stillwater each carry the same spiral motif as Elgar's workshop.
+      Priest Seren confirms the symbol predates the present Chrysalis
+      order. There is a buried marker in the temple garden that bears
+      the same design."
+    hint: "Search the temple garden for the buried marker beneath the
+      crab-apple tree."
+  - id: garden_marker
+    description: "The marker beneath the crab-apple tree carries the
+      same spiral. Older than the temple. The carving points westward
+      -- toward the old chapel ruin and the wardstone circle beyond."
+    hint: "Walk west to the old chapel ruin and the wardstone circle.
+      The spiral motif appears at both."
+  - id: chapel_altar
+    description: "The chapel altar stone bears the same spiral, framed
+      by the lake-side compass directions. The old chapel stood on
+      this spot before the temple was built in town."
+    hint: "Continue west to the wardstone circle. The spiral connects
+      the sites in a line."
+  - id: wardstone_altar
+    description: "The wardstone circle's central altar slab carries
+      the spiral too -- and a worn line, almost a channel, pointing
+      east toward the lake. The four sites form a line across the
+      geography of Stillwater. The line ends in the lake."
+    hint: "The line ends in the deep lake -- somewhere only the cave
+      system can reach. Search the bone shoals in the lake caves for
+      what Elgar found."
+  - id: bone_shoals_cache
+    description: "Elgar's cache lay where he hid it before going
+      deeper: an oilskin pouch with a folded note to Brindle the
+      smith, a small Stillwater Black Pearl, and a curl of waxed
+      line. The note explains the spiral -- the sites form alignment
+      markers; the lake caves connect to the wardstone via the deep
+      sump. Elgar wrote that he was going down alone because he could
+      not wait for Brindle to finish the work he was doing. The note
+      is dated the day he disappeared."
+    hint: "Speak to Smith Brindle. He needs to know you found this.
+      Ask him about the quest at the smithy in town."
+  - id: brindle_confession
+    description: "Brindle was Elgar's friend and was supposed to descend
+      with him. He didn't go that day. He has been finishing Elgar's
+      hook-spear ever since, never quite able to give it to anyone. He
+      directs you to Vella the healer -- Elgar's sister -- who has
+      been carrying her own version of the same silence."
+    hint: "Visit Vella Thorne at the healer's cottage west of Ulla's
+      parlor. Look first at Elgar's grave at the cemetery -- there is
+      something buried there for whoever knows to look."
+  - id: kingfisher_found
+    description: "Beneath Elgar's empty marker, Vella buried a small
+      wooden box with a single carved kingfisher and a note in her
+      own hand reading 'He was your brother.' The kingfisher is
+      unmistakably Elgar's work."
+    hint: "Bring the carved kingfisher to Vella Thorne at the healer's
+      cottage. She is the one the note is for."
+  - id: vella_journal
+    description: "Vella has accepted the kingfisher and entrusted you
+      with Elgar's last journal entry -- the page he wrote the
+      morning before he descended. The page records what he expected
+      to find, and what he wanted Ulla to know if he didn't come back."
+    hint: "Bring Elgar's journal entry to Ulla at her parlor."
+  - id: end
+    description: "The matter of Elgar Voss has been laid open. Ulla
+      has read his last words and can finally grieve in the open
+      instead of behind closed doors. The hook-spear Brindle never
+      finished is yours now."
+
+rewards:
+  playermessage: "Ulla unfolds the journal page slowly. She reads it
+    twice. The second time she sets it on her knee and puts both hands
+    flat over it for a long moment, as if to keep it from blowing
+    away. When she looks up, her eyes are wet but steady for the
+    first time in years.\n\n'I knew it was something,' she says
+    quietly. 'I knew it was something he could not say.'\n\nShe rises
+    with effort, walks to the workshop stair, and brings down a long
+    wrapped bundle that has been sitting up there for years -- the
+    hook-spear Brindle finished and never delivered. She places it
+    in your hands without ceremony.\n\n'It was meant for someone who
+    would understand. He'd want it to be you.'"
+  roommessage: "is given a long wrapped bundle by Ulla, who closes her
+    hand over hers for a moment before letting go."
+  gold: 100
+  itemid: 10032
+
+triggers:
+  # ============================================================
+  # ROOM_INTERACT: spiral-motif breadcrumb trail
+  # ============================================================
+
+  # ── Step 2: workshop carving (4138) — covers `look carving`,
+  #    `examine carving`, and the legacy verbose `bench-vise carving` ──
+  - event: room_interact
+    room: 4138
+    noun: carving
+    conditions:
+      has: ["20-start"]
+      missing: ["20-workshop_carving"]
+    actions:
+      - grant: "20-workshop_carving"
+      - send_text: "A long tight spiral inside an outer ring, scratched
+          into the iron with a patient hand. The cuts are dark with
+          age -- old work, set where it would not be noticed by anyone
+          who did not know to look. Not a Chrysalis sigil and not a
+          Stillwater fish-mark. The temple priest in town keeps
+          records of older lore; she may know what the symbol means."
+  - event: room_interact
+    room: 4138
+    noun: bench-vise carving
+    conditions:
+      has: ["20-start"]
+      missing: ["20-workshop_carving"]
+    actions:
+      - grant: "20-workshop_carving"
+      - send_text: "A long tight spiral inside an outer ring, scratched
+          into the iron with a patient hand. The cuts are dark with
+          age -- old work, set where it would not be noticed by anyone
+          who did not know to look. Not a Chrysalis sigil and not a
+          Stillwater fish-mark. The temple priest in town keeps
+          records of older lore; she may know what the symbol means."
+
+  # ── Step 3a: temple pillars (4123) — covers `pillars` and `pillar` ──
+  - event: room_interact
+    room: 4123
+    noun: pillars
+    conditions:
+      has: ["20-workshop_carving"]
+      missing: ["20-temple_pillars"]
+    actions:
+      - grant: "20-temple_pillars"
+      - send_text: "The four pillars at the corners of the temple
+          carry the same spiral that Elgar scratched into his bench-
+          vise -- worked into the stone with patience and skill, far
+          older than the present temple. The temple garden behind
+          this room may hold more of the same."
+  - event: room_interact
+    room: 4123
+    noun: pillar
+    conditions:
+      has: ["20-workshop_carving"]
+      missing: ["20-temple_pillars"]
+    actions:
+      - grant: "20-temple_pillars"
+      - send_text: "The four pillars at the corners of the temple
+          carry the same spiral that Elgar scratched into his bench-
+          vise -- worked into the stone with patience and skill, far
+          older than the present temple. The temple garden behind
+          this room may hold more of the same."
+
+  # ── Step 4: buried marker in the temple garden (4124) — covers
+  #    `marker` and the verbose `buried marker` ──
+  - event: room_interact
+    room: 4124
+    noun: marker
+    conditions:
+      has: ["20-temple_pillars"]
+      missing: ["20-garden_marker"]
+    actions:
+      - grant: "20-garden_marker"
+      - send_text: "The buried marker beneath the crab-apple carries
+          the same spiral. Older than the garden it sits in. There
+          are ruins to the west of town -- an old chapel and a
+          standing-stone circle further on -- where the symbol may
+          appear again."
+  - event: room_interact
+    room: 4124
+    noun: buried marker
+    conditions:
+      has: ["20-temple_pillars"]
+      missing: ["20-garden_marker"]
+    actions:
+      - grant: "20-garden_marker"
+      - send_text: "The buried marker beneath the crab-apple carries
+          the same spiral. Older than the garden it sits in. There
+          are ruins to the west of town -- an old chapel and a
+          standing-stone circle further on -- where the symbol may
+          appear again."
+  - event: room_interact
+    room: 4124
+    noun: stone
+    conditions:
+      has: ["20-temple_pillars"]
+      missing: ["20-garden_marker"]
+    actions:
+      - grant: "20-garden_marker"
+      - send_text: "The buried marker beneath the crab-apple carries
+          the same spiral. Older than the garden it sits in. There
+          are ruins to the west of town -- an old chapel and a
+          standing-stone circle further on -- where the symbol may
+          appear again."
+
+  # ── Step 5: chapel altar stone (4144) — covers `altar stone`,
+  #    `altar`, and `stone` ──
+  - event: room_interact
+    room: 4144
+    noun: altar stone
+    conditions:
+      has: ["20-garden_marker"]
+      missing: ["20-chapel_altar"]
+    actions:
+      - grant: "20-chapel_altar"
+      - send_text: "The chapel altar carries the same spiral -- the
+          third site you have found. The wardstone circle to the east
+          may be the fourth."
+  - event: room_interact
+    room: 4144
+    noun: altar
+    conditions:
+      has: ["20-garden_marker"]
+      missing: ["20-chapel_altar"]
+    actions:
+      - grant: "20-chapel_altar"
+      - send_text: "The chapel altar carries the same spiral -- the
+          third site you have found. The wardstone circle to the east
+          may be the fourth."
+  - event: room_interact
+    room: 4144
+    noun: stone
+    conditions:
+      has: ["20-garden_marker"]
+      missing: ["20-chapel_altar"]
+    actions:
+      - grant: "20-chapel_altar"
+      - send_text: "The chapel altar carries the same spiral -- the
+          third site you have found. The wardstone circle to the east
+          may be the fourth."
+
+  # ── Step 6: wardstone altar slab (4145) — covers `altar slab`,
+  #    `altar`, and `slab` ──
+  - event: room_interact
+    room: 4145
+    noun: altar slab
+    conditions:
+      has: ["20-chapel_altar"]
+      missing: ["20-wardstone_altar"]
+    actions:
+      - grant: "20-wardstone_altar"
+      - send_text: "The wardstone slab carries the spiral worn deep
+          enough to set a finger into. Standing at the circle's
+          centre and looking eastward back along the route you
+          walked, you can sight the alignment plainly: this slab,
+          the chapel ruin you just came from, the temple's pillars
+          in town beyond it. The four sites form a line. The line
+          continues east of town -- out into the lake, and downward,
+          somewhere only the cave system can reach."
+  - event: room_interact
+    room: 4145
+    noun: altar
+    conditions:
+      has: ["20-chapel_altar"]
+      missing: ["20-wardstone_altar"]
+    actions:
+      - grant: "20-wardstone_altar"
+      - send_text: "The wardstone slab carries the spiral worn deep
+          enough to set a finger into. Standing at the circle's
+          centre and looking eastward back along the route you
+          walked, you can sight the alignment plainly: this slab,
+          the chapel ruin you just came from, the temple's pillars
+          in town beyond it. The four sites form a line. The line
+          continues east of town -- out into the lake, and downward,
+          somewhere only the cave system can reach."
+  - event: room_interact
+    room: 4145
+    noun: slab
+    conditions:
+      has: ["20-chapel_altar"]
+      missing: ["20-wardstone_altar"]
+    actions:
+      - grant: "20-wardstone_altar"
+      - send_text: "The wardstone slab carries the spiral worn deep
+          enough to set a finger into. Standing at the circle's
+          centre and looking eastward back along the route you
+          walked, you can sight the alignment plainly: this slab,
+          the chapel ruin you just came from, the temple's pillars
+          in town beyond it. The four sites form a line. The line
+          continues east of town -- out into the lake, and downward,
+          somewhere only the cave system can reach."
+
+  # ── Step 7: Bone Shoals cache (4130) ──
+  - event: room_interact
+    room: 4130
+    noun: cache
+    conditions:
+      has: ["20-wardstone_altar"]
+      missing: ["20-bone_shoals_cache"]
+    actions:
+      - grant: "20-bone_shoals_cache"
+      - send_text: "The oilskin pouch holds a folded note in Elgar's
+          hand, addressed to Brindle the smith. The note explains the
+          spiral -- alignment points connecting the chapel, the
+          temple, the wardstone circle, and the deep sump beneath the
+          lake. Elgar wrote that he was going down alone because he
+          could not wait for Brindle to finish the work he was doing.
+          The note is dated the day he disappeared. Brindle needs to
+          know you found this."
+
+  # ── Step 9: cemetery disturbance (4140) — covers `disturbance` and
+  #    legacy `beneath Elgar's marker`. Gives kingfisher. ──
+  - event: room_interact
+    room: 4140
+    noun: disturbance
+    conditions:
+      has: ["20-brindle_confession"]
+      missing: ["20-kingfisher_found"]
+    actions:
+      - grant: "20-kingfisher_found"
+      - give_item: 40060
+      - send_text: "Inside the buried wooden box: a single small
+          carved kingfisher in dark wood -- unmistakably Elgar's work
+          -- and a folded note in a different hand reading 'He was
+          your brother. -- V.' The kingfisher is yours now. Bring it
+          to Vella at the healer's cottage."
+  - event: room_interact
+    room: 4140
+    noun: beneath Elgar's marker
+    conditions:
+      has: ["20-brindle_confession"]
+      missing: ["20-kingfisher_found"]
+    actions:
+      - grant: "20-kingfisher_found"
+      - give_item: 40060
+      - send_text: "Inside the buried wooden box: a single small
+          carved kingfisher in dark wood -- unmistakably Elgar's work
+          -- and a folded note in a different hand reading 'He was
+          your brother. -- V.' The kingfisher is yours now. Bring it
+          to Vella at the healer's cottage."
+
+  # ── Step 9 RECOVERY: replacement kingfisher if player lost it ──
+  - event: room_interact
+    room: 4140
+    noun: disturbance
+    conditions:
+      has: ["20-kingfisher_found"]
+      missing: ["20-vella_journal"]
+      missing_item: 40060
+    actions:
+      - give_item: 40060
+      - send_text: "There was another small carving wrapped beneath
+          the first -- you can take this one to Vella in place of
+          the one you lost."
+
+  # ============================================================
+  # ITEM_GIVE: kingfisher → Vella → grants step 10, gives journal
+  # consume_item suppresses give.go's behavior-tree fallthrough so
+  # the noncombat_questgiver archetype's "declines politely" emote
+  # does not fire after the quest engine accepts the handover.
+  # ============================================================
+  - event: item_give
+    mob: 355
+    item: 40060
+    conditions:
+      has: ["20-kingfisher_found"]
+      missing: ["20-vella_journal"]
+    actions:
+      - consume_item: 40060
+      - grant: "20-vella_journal"
+      - give_item: 40061
+      - npc_say:
+          mob: 355
+          lines:
+            - {delay: 1, text: "He carried this in his pocket for
+                years. I knew where it ended up."}
+            - {delay: 5, text: "I left the note. I left it because I
+                hoped that some day someone would come looking for him
+                who was not me, and I could not bring myself to be
+                the first to say it."}
+            - {delay: 10, text: "Take this. It is the page he wrote
+                the morning he went down. He left it with me to give
+                to Ulla. I have not had the strength."}
+
+  # ============================================================
+  # ITEM_GIVE: journal → Ulla → grants end + sets default flag
+  # consume_item suppresses give.go's behavior-tree fallthrough.
+  # ============================================================
+  - event: item_give
+    mob: 347
+    item: 40061
+    conditions:
+      has: ["20-vella_journal"]
+      missing: ["20-end"]
+    actions:
+      - consume_item: 40061
+      - grant: "20-end"
+      - set_flag:
+          key: "20-truth"
+          value: "partial"

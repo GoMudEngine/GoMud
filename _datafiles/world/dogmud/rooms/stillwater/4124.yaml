@@ -1,0 +1,80 @@
+roomid: 4124
+zone: Stillwater
+title: Temple Garden
+description: >
+  Behind the temple, a small walled <ansi fg="itemname">garden</ansi>
+  catches the southern sun and shelters from the
+  lake-wind — narrow gravel paths between raised
+  <ansi fg="itemname">beds</ansi> of culinary and medicinal
+  herbs, each bed labelled in a careful round hand. The
+  smell is layered — rosemary and thyme dominant near the
+  wall, marsh-sage and lake-mint in the wetter beds nearer
+  the back, and something sweeter that resolves itself into
+  late-flowering elderberry along the eastern fence. A
+  small stone <ansi fg="itemname">bench</ansi> sits in the
+  shade of an old crab-apple. The temple's acolyte tends
+  the garden when not otherwise occupied; visitors are
+  welcome to walk the paths in quiet.
+biome: plains
+coord:
+  x: -14
+  y: 2
+  z: 0
+exits:
+  north:
+    roomid: 4123
+  west:
+    roomid: 4115
+nouns:
+  garden: A small walled garden of perhaps thirty
+    paces by twenty, sheltered from the lake-wind by
+    the temple to the north and a low stone wall on
+    the other three sides. Narrow gravel paths divide
+    raised beds of culinary and medicinal herbs, each
+    bed labelled in a careful round hand on a small
+    slate driven into the bed's near edge.
+  beds: Half a dozen raised beds of timber and turned
+    earth, each labelled — rosemary and thyme nearest
+    the temple wall, marsh-sage and lake-mint in the
+    wetter section nearer the back fence, garden-sage
+    and a few other common kitchen herbs in the
+    middle. The wetter section is fed by a small
+    runoff pipe from the font inside the temple, so
+    the beds never quite dry out even in high summer.
+  bench: A small stone bench in the shade of an old
+    crab-apple tree near the garden's western corner.
+    Worn smooth where the acolyte sits to take her
+    midday meal in fair weather. A wooden cup is left
+    at one end of the bench, half-filled with rain.
+  crab-apple: An old crab-apple tree in the garden's
+    western corner, bent slightly toward the south,
+    its leaves dark green and its small bitter fruit
+    still green this season. Used by the kitchen at
+    the inn for jelly in autumn. The acolyte ties a
+    small ribbon around the trunk each spring for
+    luck.
+  elderberry: A long row of late-flowering elderberry
+    along the eastern fence, the flat creamy
+    flower-heads still open this late, the sweet
+    smell strongest in the afternoon sun. Used by
+    the alchemist down the road for cordial and by
+    the inn-cook for the pies that come out at
+    midsummer.
+hidden_nouns:
+  buried marker:
+    description: |
+      A flat slab of weathered stone half-buried at the foot of
+      the crab-apple tree, the carving on its upper face worn
+      almost smooth — but still readable as a long spiral set
+      inside an outer ring, neither Chrysalis nor anything else
+      currently taught in the temple. Far older than the present
+      garden. Whoever planted the crab-apple chose to plant it
+      directly over the marker.
+    hidden_description: |
+      A flat slab of weathered stone is half-buried at the foot of the crab-apple tree.
+idlemessages:
+- A bee moves slowly between the elderberry flowers along the eastern fence.
+- A breeze lifts the smell of crushed marsh-sage briefly across the garden.
+- A small <ansi fg="mobname">finch</ansi> drops onto the bench, considers you, and lifts away.
+- A half-ripe crab-apple drops from the old tree and rolls a short way along the gravel path.
+- The garden's small fountain-runoff trickles steadily from the wall near the back.

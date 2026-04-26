@@ -1,0 +1,37 @@
+mobid: 350
+zone: Stillwater
+behavior_archetype: noncombat_passive
+statpool: 20
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 1
+groups:
+  - humanoid
+idlecommands:
+  - 'emote dangles bare feet over the water and watches the ripples'
+  - ''
+  - 'emote tosses a pebble into the lake and counts the rings'
+  - ''
+  - 'emote squints at something moving just under the surface with great
+    concentration'
+  - ''
+activitylevel: 8
+character:
+  name: child Pip
+  description: |
+    A small, gap-toothed child of perhaps nine years, with muddy knees and
+    an expression of complete absorption in whatever is happening in the
+    shallows below. Pip lives on the lake path and considers the entire
+    lakeshore a personal territory. Pip is happy to talk to travelers and
+    will ask where they are going, what they are carrying, and whether they
+    have seen anything interesting in the water lately. The question about
+    the water is asked with slightly more anxiety than the others.
+  speciesid: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 6
+    perception:
+      training: 8

@@ -1,0 +1,27 @@
+itemid: 10032
+name: Elgar's hook-spear
+namesimple: spear
+description: >-
+  A long-shafted hook-spear of refined lake-iron, finished by hands
+  that knew exactly what the original carver had wanted. The leaf-blade
+  is keener than common stock, the back-curving hook polished smooth
+  from waiting on a smith's bench too long. A small fish-sigil is
+  burned into the underside of the leather grip — Stillwater-born,
+  Stillwater-finished. The spear feels alive in the hand, like it has
+  been waiting to be carried.
+type: weapon
+hands: 1
+subtype: piercing
+weight: 5.0
+speedmultiplier: 0.70
+staminacost: 7
+grapplemodifier: -3.0
+damage:
+  basedamage: 7
+  variance: 2
+damage_multiplier: 1.10
+parryrating: 10
+value: 250
+statmods:
+  perception: 9
+  weapon-combat: 4

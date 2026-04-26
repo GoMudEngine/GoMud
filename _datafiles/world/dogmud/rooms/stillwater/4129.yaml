@@ -1,0 +1,67 @@
+roomid: 4129
+zone: Stillwater
+title: Submerged Passage
+description: >
+  The passage tightens to a narrow flooded slot, the
+  stone <ansi fg="itemname">ledge</ansi> pinching to a
+  single boot-width above water that drops away to
+  unknown depth. Cold water rises to your calves at the
+  passage's pinch — colder than the pool behind you,
+  moving more, suggesting a current you cannot see in
+  the dark. A snarl of frayed
+  <ansi fg="itemname">net mesh</ansi> is caught on a
+  basalt <ansi fg="itemname">snag</ansi> at the passage's
+  far end — the same waxed-linen weave the docks above
+  send out, torn the same way as the nets on the
+  fishmonger's bench. Whatever has been savaging the
+  fishing comes and goes through here.
+biome: cave
+coord:
+  x: -15
+  y: 7
+  z: -1
+exits:
+  east:
+    roomid: 4128
+  south:
+    roomid: 4130
+nouns:
+  ledge: A single-boot-width strip of slick basalt
+    above water that drops away to unknown depth —
+    the passage's pinch-point. A slip here would
+    not be easily recovered from. The lake's higher
+    seasons probably submerge the ledge entirely.
+  net mesh: A snarl of frayed waxed-linen net mesh
+    caught on a basalt snag at the passage's far
+    end — torn in the same long parallel rents as
+    the nets laid out on the fishmonger's bench
+    above. Pulled in here, by something. Several
+    weights of mesh and at least three different
+    seasons' work, judging by the fading.
+  snag: A wedge of broken basalt protruding from
+    the passage wall at chest height, the lichen
+    on its outer face scraped off by the netting
+    that has caught on it over time. A small bit
+    of bone is also caught on the snag — fish, by
+    the look, but larger than anything that should
+    swim in shallow lake water.
+  current: The water at the pinch is colder than
+    the pool behind and moves visibly when
+    disturbed, suggesting a current flowing
+    through from somewhere — perhaps a deeper
+    cave passage feeding the lake from below.
+  water: Cold dark water rises to your calves at
+    the passage's narrowest point, the bottom
+    invisible. The water here has a faint mineral
+    edge the pool did not — something is dissolved
+    in it that wasn't in the pool above.
+idlemessages:
+- A wave of disturbed water laps faintly against the ledge and recedes.
+- The net-mesh on the snag stirs once in the current and is still.
+- A drip from the ceiling lands somewhere in the dark ahead.
+- The temperature in the passage drops perceptibly as the current shifts.
+- A faint pale shape glides briefly past your boots and is gone.
+spawninfo:
+- mobid: 331
+  message: A drowned hunter slides up from the deeper water of the submerged passage.
+  respawnrate: 10 real minutes

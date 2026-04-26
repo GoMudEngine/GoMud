@@ -1,0 +1,15 @@
+itemid: 40056
+name: marsh willow bark
+namesimple: bark
+description: A few curls of grey-silver bark stripped from a
+  young marsh-willow sapling. The inner side is pale and
+  slightly damp, with a clean astringent smell. Healers steep
+  it for fevers and aching joints; alchemists prefer it as a
+  binding base for steady-hand work, where its calming
+  properties balance the harsher reagents.
+type: object
+subtype: mundane
+component_tag: marsh-willow-bark
+weight: 0.1
+value: 15
+is_component: true

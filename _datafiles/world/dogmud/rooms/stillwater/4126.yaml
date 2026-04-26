@@ -1,0 +1,82 @@
+roomid: 4126
+zone: Stillwater
+title: Pearl-Carver's Garret
+description: >
+  A small upper room under the temple's slate roof, lit by
+  a pair of tall north-facing gable
+  <ansi fg="itemname">windows</ansi> that catch the cool
+  steady light a jeweler needs for fine work. A long
+  cluttered working <ansi fg="itemname">bench</ansi> runs
+  the length of the eastern wall, its surface a quiet
+  organized chaos of small tools and half-finished pieces.
+  A glazed display <ansi fg="itemname">case</ansi> stands
+  against the southern wall, holding a small but striking
+  collection of finished work — pendants, rings, a single
+  finely-worked clasp. A high tall stool sits at the bench;
+  a smaller chair waits at the case for a customer. The
+  smell is beeswax polish and the faint metallic tang of
+  freshly-filed silver.
+biome: city
+station: jeweler_bench
+coord:
+  x: -14
+  y: 3
+  z: 1
+exits:
+  down:
+    roomid: 4123
+nouns:
+  windows: A pair of tall arched windows set into the
+    northern gable, glazed in clear lake-glass without
+    the pale-green wash of the temple's main windows
+    — a deliberate choice to give the carver's bench
+    the cool steady true-light that fine work
+    requires. The windows are kept scrupulously
+    clean.
+  bench: A long working bench scarred and waxed by
+    years of small precise work, the surface a
+    quiet organized chaos that is only chaos to a
+    visitor — every tool within an arm's reach of
+    where it is most often needed. A small leather
+    apron hangs from a hook at the bench's eastern
+    end. A polishing wheel powered by a treadle sits
+    beneath the bench at the western end.
+  tools: A scattered but organized array on and around
+    the bench — small loupes in graduated magnifications,
+    a row of fine files, drills with bow-and-string,
+    pliers in half a dozen jaw-shapes, scribes,
+    burnishers. The handles are worn smooth; the
+    business ends are sharp.
+  case: A glazed display case against the southern
+    wall, holding perhaps a dozen finished pieces —
+    a silver pendant carved as a leaping pike, a
+    plain copper ring with an inset of polished
+    river-pearl, a finely-worked silver clasp with
+    a single dark Stillwater pearl at its center.
+    Prices are listed on small slate tags. The
+    pearls are the carver's specialty; the silver
+    pieces are taken on commission as the work
+    requires.
+  pearls: Several small jars on a shelf above the
+    bench hold the carver's stock of pearls — pale
+    river-pearls in graduated sizes, a few smaller
+    lake-pearls, and a single larger jar at the back
+    holding three dark Stillwater black pearls
+    behind a small brass screen. The black pearls
+    are extremely rare; only the boldest divers in
+    the lake's deeper caves bring one back at all,
+    and most of the ones that come back are too
+    small or too damaged to carve.
+  stool: A high tall stool at the bench, the seat
+    worn glassy where the carver sits for long
+    hours. A small footrest runs the length of the
+    bench at stool-height for the same reason.
+idlemessages:
+- A small file scrapes briefly against silver somewhere along the bench, then stops.
+- The temple's font-trickle is faintly audible from below.
+- A piece of polishing-cloth drifts from a hook in a draft from the windows.
+- The display-case glass catches a bar of north-light and throws it across the floor.
+- A finished piece on the bench is turned in the light, examined, and set down again.
+spawninfo:
+- mobid: 340
+  cooldown: 600 rounds

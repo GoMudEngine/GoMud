@@ -1,0 +1,56 @@
+mobid: 346
+zone: Stillwater
+defaultMood: friendly
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Hey. Luc -- I fish the shallows mostly. You here
+        about the lake, or just passing?"
+      - "Luc. Nearshore fisherman. What are you after?"
+
+  - keywords: ["hello", "hi"]
+    moods: ["grateful"]
+    responses:
+      - "You are back. Good. Sit -- I want to hear what you
+        found in the caves."
+
+  - keywords: ["lake", "fishing", "shallows", "catch", "rod"]
+    responses:
+      - "I keep to the nearshore since the currents shifted.
+        Hodder says watch the tides and I am watching the
+        tides. The catch is short but it is not zero. I
+        can live with short if it stays safe."
+
+  - keywords: ["hodder", "old", "fisherman", "technique", "learn"]
+    responses:
+      - "Hodder knows the lake better than anyone. I watch
+        how he reads the water -- the colour, the current
+        direction, which way the birds are sitting. He does
+        not teach, exactly. He just does things in front
+        of you and waits for you to copy them. It takes
+        a while but it works."
+
+  - keywords: ["cave", "deep", "water", "current", "strange"]
+    responses:
+      - "The cave currents have been off since two seasons
+        back. I can feel it in the shallows when the wind
+        drops -- the water moves the wrong way. Hodder said
+        stay east of the second marker-stake, so I stay
+        east of the second marker-stake."
+
+  - keywords: [""]
+    responses:
+      - "The lake is right there if you want to look."
+      - "Ask what you need."
+
+tree:
+  root:
+    text: "Hey. Luc -- I am just fishing the shallows today.
+      You look like you are heading somewhere interesting."
+    hints: "You could ask Luc about the fishing, the strange
+      currents, or what old Hodder taught him."
+
+memory:
+  expiryPeriod: ""

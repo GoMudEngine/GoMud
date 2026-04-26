@@ -1,0 +1,68 @@
+mobid: 341
+zone: Stillwater
+behavior_archetype: noncombat_shopkeeper
+statpool: 65
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+groups:
+  - humanoid
+  - merchant
+idlecommands:
+  - 'emote restacks a shelf of tin goods with methodical care, turning each
+    label outward'
+  - ''
+  - 'emote writes a figure in a ledger, taps the pen twice on the page, and
+    closes it'
+  - ''
+  - 'emote peers at a customer from behind the counter with calm professional
+    attention'
+  - ''
+activitylevel: 10
+character:
+  name: storekeeper Wulf
+  description: |
+    A round-faced man with the unhurried manner of someone who has never
+    needed to rush and has no intention of starting. Wulf runs Tinder &
+    Tackle as a general store -- a little of everything, most of it useful,
+    none of it particularly cheap. He is the kind of merchant who remembers
+    exactly what he paid for every item on his shelves and will cheerfully
+    tell you if you ask. His store smells of lantern oil, salt, and old rope,
+    and there is a cat asleep behind the counter that he swears keeps the
+    mice out.
+  speciesid: 1
+  gold: 400
+  stats:
+    charisma:
+      training: 8
+    perception:
+      training: 8
+    willpower:
+      training: 5
+  shop:
+    - itemid: 32
+      quantity: 2
+      quantitymax: 5
+      price: 1
+    - itemid: 40038
+      quantity: 2
+      quantitymax: 5
+      price: 5
+    - itemid: 40016
+      quantity: 5
+      quantitymax: 10
+      price: 1
+    - itemid: 40015
+      quantity: 5
+      quantitymax: 10
+      price: 1
+    - itemid: 40017
+      quantity: 3
+      quantitymax: 8
+      price: 2
+    - itemid: 30021
+      quantity: 3
+      quantitymax: 8
+      price: 2

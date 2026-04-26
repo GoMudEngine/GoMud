@@ -1,0 +1,77 @@
+roomid: 4128
+zone: Stillwater
+title: Pool Chamber
+description: >
+  The cavern opens into a wide low-ceilinged chamber
+  half-filled by a deep, very still
+  <ansi fg="itemname">pool</ansi> of black water, the far
+  edge lost in the dark. A narrow stone
+  <ansi fg="itemname">ledge</ansi> runs around the pool's
+  near margin, just wide enough to walk on. The pool's
+  <ansi fg="itemname">surface</ansi> ripples occasionally
+  without wind, and pale moving things glide just below it
+  — too fast to follow, too pale to identify, never quite
+  breaking the water. A passage continues north into
+  darker stone; another opens west across a tighter
+  watery gap.
+biome: cave
+coord:
+  x: -14
+  y: 7
+  z: -1
+exits:
+  south:
+    roomid: 4127
+  north:
+    roomid: 4131
+  west:
+    roomid: 4129
+nouns:
+  pool: A deep still black pool fills most of the
+    chamber's floor, the far edge lost in the dark.
+    Disturbed water settles back to glass within a
+    minute. The bottom is invisible from where you
+    stand and dropping a stone produces a single
+    plop and then nothing — no second clack of
+    stone-on-stone, suggesting the bottom is
+    several human-heights down.
+  surface: The pool's surface ripples occasionally
+    without wind, and the ripple-pattern radiates
+    outward from points well away from the ledge —
+    something is moving down there. Pale moving
+    shapes glide just below the surface from time
+    to time, too fast to follow, never breaking the
+    water. The surface itself reflects the cave's
+    dimness back as a flat dark mirror.
+  ledge: A narrow stone ledge runs around the pool's
+    near margin, perhaps two boot-widths wide,
+    polished dark by water and unwary feet. Stepping
+    onto it requires a single committed move; the
+    water is deep enough that a slip would be a
+    serious matter.
+  ceiling: The ceiling is low and uneven, broken into
+    slow drips at irregular intervals. Faint pale
+    striations in the basalt suggest the water-level
+    has been higher in some seasons. The chamber's
+    acoustics amplify any sound — a footstep, a
+    breath, a stone dropped.
+  passage: A second passage opens west across a
+    narrower watery gap — the ledge pinches there
+    to a single boot-width and the water deepens
+    sharply. Another opens north into deeper
+    darker stone where the ledge becomes a series
+    of stepping-stones above water that does not
+    look promising to fall into.
+idlemessages:
+- A pale shape glides briefly under the pool's surface and is gone.
+- A drip from the ceiling lands in the pool and sends a slow ring outward.
+- The pool's surface ripples once at its center, the source invisible.
+- A small splash a stone's-throw out marks something coming briefly to the surface.
+- The cave's acoustics amplify your own breathing into something distantly unfamiliar.
+spawninfo:
+- mobid: 330
+  message: A small swarm of skitter-shrimp boils to the pool's edge and disperses across the ledge.
+  respawnrate: 3 real minutes
+- mobid: 331
+  message: A pale shimmer in the deeper water resolves into the unblinking eyes of a drowned hunter.
+  respawnrate: 8 real minutes

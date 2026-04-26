@@ -1,0 +1,64 @@
+mobid: 331
+zone: Stillwater
+behavior_archetype: ambusher
+buffids: [9]
+statpool: 275
+itemdropchance: 100
+hostile: true
+maxwander: 1
+groups:
+  - lake-cave
+  - aquatic
+archetype: fighting
+mutationchance: 50
+spawnmutations:
+  - cold-blooded
+  - camo-skin
+idlecommands:
+  - 'emote hangs motionless in the dark water, only the pale eye-shimmer giving it away'
+  - ''
+  - ''
+  - 'emote shifts with a wet sliding sound and is still again'
+  - ''
+  - 'emote opens a wide pale mouth in a silent yawn, lined with backward-curving teeth'
+activitylevel: 8
+reaction_delay: 0.7
+tactical_discipline: 0.65
+tactic_preset: ambusher
+tactics:
+  - trigger: health_below:25
+    action: flee
+    priority: 11
+combatcommands:
+  - bite
+  - ''
+  - ''
+character:
+  name: drowned hunter
+  description: |
+    A long elongated mutated lake-eel, perhaps the length of a
+    grown person from snout to tail-tip and as thick as a
+    person's calf at the body's middle. Its skin is mottled
+    grey-black and slick with cold water; pale lampreys' eyes
+    sit flush with the head, betraying the hunter's position
+    only by their faint shimmer in the dark. The drowned hunter
+    waits motionless in the deepest water of a cave-pool until
+    something edible passes within reach, then strikes faster
+    than the eye can follow. Local fishermen call it the cave-
+    eel; whatever it is, it has been savaging the nets at the
+    docks for years.
+  speciesid: 13
+  stats:
+    strength:
+      training: 12
+    dexterity:
+      training: 12
+    perception:
+      training: 8
+    vitality:
+      training: 10
+  skills:
+    skullduggery: 14
+    weapon-combat: 10
+  items:
+    - itemid: 40052

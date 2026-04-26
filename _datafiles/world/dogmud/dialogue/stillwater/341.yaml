@@ -1,0 +1,107 @@
+mobid: 341
+zone: Stillwater
+defaultMood: friendly
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Welcome to Tinder and Tackle. What can I find you?"
+      - "Wulf. Looking for something specific, or just browsing?"
+
+  - keywords: ["hello", "hi"]
+    moods: ["grateful"]
+    responses:
+      - "Good to see you. The shelf on the left just got restocked --
+        caravan came through."
+
+  - keywords: ["salvage", "kit", "lantern", "oil", "lamp"]
+    responses:
+      - "Lanterns and lamp oil are on the shelf to the left -- I keep
+        a good stock because the caves draw more than the usual number
+        of people who forgot to bring a light. Salvage kit is behind
+        the counter; I do not put it out front because the last one
+        walked out in someone's pack by accident."
+      - "Salvage kits, lanterns, lamp oil, rope, salt. A little of
+        everything useful. Nothing glamorous. That is the trade."
+
+  - keywords: ["caravan", "ketil", "stock", "arrivals", "delivery"]
+    responses:
+      - "Ketil's run just came in. I take whatever else is worth
+        carrying -- the things Brindle and Ilsa and Edda do not
+        already have standing orders for. Lars brings my crate
+        round with a slate that has my name mis-spelled on it every
+        single run, and I pay him anyway."
+
+  - keywords: ["orders", "everyone", "regular", "know"]
+    responses:
+      - "I know what everyone in this town needs before they need
+        it. Brindle takes lake-iron stock. Ilsa takes the small
+        glass vials. Edda takes thread-spool. Arn at the docks
+        takes mooring rope. I handle the rest. Twelve years behind
+        this counter. You learn."
+
+  - keywords: ["cat", "mice", "mouser"]
+    responses:
+      - "The cat behind the counter keeps the mice out of the salt
+        sacks. That is the theory. The practice is that she sleeps
+        fourteen hours a day and I set traps anyway. We both pretend
+        the arrangement is working."
+
+  - keywords: ["caves", "dungeon", "explore", "light"]
+    responses:
+      - "If you are going into the lake caves, take a lantern and
+        extra oil. The chrysalis-glow spell is fine if you have it,
+        but it goes out when you are surprised and the caves are
+        properly dark. Do not say I did not tell you."
+
+  - keywords: [""]
+    responses:
+      - "Anything you need, it is probably on the shelf."
+      - "Have a look around. I am right here."
+
+tree:
+  root:
+    text: "Welcome to Tinder and Tackle. What can I find you?"
+    hints: "You could ask Wulf about his stock, what came in with
+      the caravan, or lanterns and kit for the lake caves."
+    variants:
+      - questRequired: ["19-end"]
+        text: "The cave trouble settled? Good. My lantern sales
+          will go back to the normal trickle now. I kept extra
+          stock on hand all season -- now Ketil can bring me
+          something more useful."
+        hints: "You could ask Wulf about his stock or the caravan."
+
+  nodes:
+    - id: stock_general
+      triggers: ["salvage", "kit", "lantern", "oil", "rope", "salt",
+        "stock", "buy", "sell"]
+      text: "Lanterns, lamp oil, rope by the fathom, salt, salvage
+        kits, fishing line, fire-steel. If it is useful and it
+        travels well, I probably have it. Ask specifically and I
+        will tell you what is in stock and what is not. The caravan
+        just came through so most shelves are full."
+
+    - id: caravan_stock
+      triggers: ["caravan", "ketil", "lars", "delivery", "arrivals",
+        "restocked"]
+      text: "Ketil's crew came in this week. Lars brought my crate
+        over with the usual slate -- everything accounted for, name
+        mis-spelled, same as always. I know his handwriting now, so
+        I check against the crate rather than the paper. Between the
+        two of them it comes out right. I have taken on extra lamp
+        oil and rope this run; the caves have been busy."
+
+    - id: knows_everyone
+      triggers: ["orders", "regular", "everyone", "know", "customers",
+        "town"]
+      text: "I have twelve years of standing orders in my head.
+        Brindle's lake-iron, Ilsa's vials, Edda's thread-spool,
+        Arn's mooring rope. I know when someone is out of what
+        before they do, and I usually have it on the shelf by the
+        time they realise. It is not a complicated skill but it
+        is a useful one."
+
+memory:
+  expiryPeriod: ""

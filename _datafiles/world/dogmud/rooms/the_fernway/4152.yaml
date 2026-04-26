@@ -1,0 +1,61 @@
+roomid: 4152
+zone: The Fernway
+title: Foxglade
+description: >
+  A small open clearing where the bracken thins and a
+  patch of taller grass and scattered
+  <ansi fg="itemname">foxglove</ansi> opens to the sky —
+  the path's name comes from the small russet shapes that
+  sometimes cross the glade at dusk. Pale
+  <ansi fg="itemname">wild garlic</ansi> grows along the
+  glade's western edge, the broad green leaves
+  unmistakable and the smell unmistakable too. A faint
+  musky <ansi fg="itemname">scent</ansi> hangs around the
+  glade's southern verge — fox-marking, fresh enough to
+  still be sharp. A small earth-track branches south
+  toward what looks like a den-mouth.
+biome: forest
+coord:
+  x: -14
+  y: -13
+  z: 0
+exits:
+  east:
+    roomid: 4151
+  west:
+    roomid: 4153
+  south:
+    roomid: 4156
+nouns:
+  foxglove: Tall pink-flowered foxglove stands in the
+    glade's open ground, the same plant as the foxgloves
+    near the Twin Oaks bend but here in greater
+    numbers — perhaps fifty plants in a loose scatter.
+    Beautiful, poisonous, and useful in small careful
+    doses. The fox-glade gets its name from the
+    flowers, by some accounts; from the foxes themselves,
+    by others.
+  wild garlic: Pale broad-leaved wild garlic carpets the
+    glade's western edge, the bulbs hidden beneath but
+    the smell rising at every touch. Foragers gather the
+    leaves through spring and the bulbs through summer.
+    The flavor is sharper and cleaner than cultivated
+    garlic, much prized by inn-cooks who can get their
+    hands on a basket.
+  scent: A faint musky scent hangs in the glade's
+    southern air — fresh fox-marking, recognizable to
+    anyone who has spent time in country like this.
+    Not unpleasant; just unmistakable. The marking
+    gets stronger toward the southern edge of the
+    glade.
+  grass: Tall pale grasses grow where the bracken
+    thins, the seedheads heavy and bowed in the
+    afternoon light. Several patches show beaten-down
+    impressions where deer have bedded — and a few
+    smaller impressions where foxes have done the
+    same.
+idlemessages:
+- The wind moves through the foxglove flowers and the bells nod in unison.
+- A pheasant calls once from somewhere east in the glade and is silent.
+- The smell of wild garlic strengthens briefly as a breeze stirs the western edge.
+- A red-brown shape crosses the southern verge of the glade and is gone before you can fix on it.

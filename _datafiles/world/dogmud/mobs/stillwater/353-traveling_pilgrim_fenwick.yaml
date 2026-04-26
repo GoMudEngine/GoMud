@@ -1,0 +1,46 @@
+mobid: 353
+zone: Stillwater
+behavior_archetype: noncombat_passive
+statpool: 40
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 1
+groups:
+  - humanoid
+  - traveler
+idlecommands:
+  - 'emote opens a small, well-read book and reads a passage with moving
+    lips'
+  - ''
+  - 'emote looks around the square with the careful attention of someone
+    memorizing a place'
+  - ''
+  - 'emote adjusts a walking staff across his knees and rotates his
+    ankles'
+  - ''
+activitylevel: 9
+character:
+  name: traveling pilgrim Fenwick
+  description: |
+    A mild-looking man of uncertain age, wearing travel-stained robes and
+    carrying a walking staff worn smooth at the grip. Fenwick is passing
+    through Stillwater on a longer pilgrimage -- to what end he is vague, in
+    the manner of pilgrims who consider the walking the point. He is educated,
+    gentle-spoken, and observant. He notices things about Stillwater that a
+    local would not -- the particular quality of the water, the age of the
+    buildings, the way the town faces the lake rather than the road. He is
+    resting his feet before continuing north.
+  speciesid: 1
+  gold: 5
+  equipment:
+    weapon:
+      itemid: 10020
+  stats:
+    willpower:
+      training: 8
+    perception:
+      training: 8
+    charisma:
+      training: 6

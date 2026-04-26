@@ -12,7 +12,7 @@ description: >
   a makeshift straw bedroll has been recently disturbed.
 biome: farmland
 coord:
-  x: -13
+  x: -20
   y: -10
   z: 0
 exits:

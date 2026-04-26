@@ -1,0 +1,70 @@
+roomid: 4127
+zone: Stillwater
+title: Dripping Antechamber
+description: >
+  Cold dark water is suddenly ankle-deep around your boots
+  inside the cave's first chamber, and the only sound is
+  the steady measured <ansi fg="itemname">drip</ansi> of
+  water from somewhere in the dark ahead. The ceiling is
+  low enough to stoop, the walls slick black basalt with
+  a thin film of cold water running steadily down them. A
+  faint <ansi fg="itemname">light</ansi> reaches in from
+  the cave-mouth above and behind you, enough to make out
+  the chamber's shape but not its details. The
+  <ansi fg="itemname">passage</ansi> continues north into
+  deeper darkness, and a smaller side passage opens west,
+  the water there shallower.
+biome: cave
+coord:
+  x: -14
+  y: 6
+  z: -1
+exits:
+  up:
+    roomid: 4121
+  north:
+    roomid: 4128
+  west:
+    roomid: 4130
+nouns:
+  drip: A steady measured drip of water sounds from
+    somewhere in the dark ahead — perhaps every two
+    breaths, perhaps slightly less. The acoustics
+    of the cave amplify each drop into a small
+    echoing report. Whatever the drop's source, it
+    has been falling at this rhythm for longer than
+    anyone has been listening to it.
+  water: Cold dark lake-water pools ankle-deep across
+    the chamber floor, draining slowly through some
+    crack in the basalt below. Disturbed, it
+    clouds with sediment, but settles again within
+    a minute. The smell is cold mineral with
+    something faintly organic beneath.
+  light: A pale wash of daylight reaches in from the
+    cave-mouth above and behind you, enough to make
+    out the chamber's general shape but not enough
+    to distinguish detail in the corners. Eyes
+    adjust quickly; the cave's deeper rooms are
+    darker still.
+  passage: The cavern continues north into deeper
+    darkness, the floor sloping gradually downward
+    and the water deepening as you go. Whatever has
+    been savaging the fishing nets came and went
+    that way.
+  walls: Slick black basalt with a thin steady film
+    of cold water running down it, the surface
+    polished glassy by the running. In the
+    cave-mouth's reflected light, here and there
+    you can make out faint long parallel
+    scratch-marks on the lower courses — recent,
+    not lichen-filled.
+idlemessages:
+- The steady drip from somewhere ahead sounds again.
+- A small wave of disturbed water laps faintly against the basalt.
+- The cave-mouth light flickers briefly as something moves outside.
+- A second drip, off-rhythm with the first, sounds further in and is gone.
+- A piece of basalt grit rolls down the slick wall and clicks once on the floor.
+spawninfo:
+- mobid: 330
+  message: A small swarm of skitter-shrimp washes in from the water and disperses across the wet stone.
+  respawnrate: 3 real minutes

@@ -1,0 +1,138 @@
+mobid: 333
+zone: Stillwater
+defaultMood: friendly
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Welcome to the Pike & Lantern. Sit anywhere, the common room is quiet this hour."
+      - "Welcome. Mind the slate -- second tread on the stairs is loose."
+
+  - keywords: ["hello", "hi"]
+    moods: ["grateful"]
+    responses:
+      - "You. Sit. The good seat by the hearth is open. First drink is on me."
+
+  - keywords: ["who", "you", "yourself", "sigrid"]
+    responses:
+      - "Sigrid. I have run the Pike & Lantern since my mother left me the keys, which is longer than most marriages last in this town. I sleep upstairs, I work downstairs, and I hear most of what is said in either."
+
+  - keywords: ["ale", "wine", "drink", "menu", "beer"]
+    responses:
+      - "Ale on tap from a brewer in Ashwick. Wine when the caravan brings it -- which is now, as it happens. The chowder is from the morning's clams. Whatever else you want, ask."
+
+  - keywords: ["room", "lodging", "bed", "upstairs", "loft", "stay"]
+    responses:
+      - "There is a loft upstairs with three pallets and a window over the lake. Quiet enough most nights. Cheap by Thornwall standards. Bath is downstairs and you have to ask before sundown if you want it warm."
+
+  - keywords: ["caravan", "ketil", "lars", "marta"]
+    responses:
+      - "Ketil's lot is in town. They came in Tuesday, leaving morning after next, weather holding. Lars is the kid who runs around with the slate-list -- he is the one who actually gets the deliveries done. Marta says about three words a day and one of them is usually 'no'."
+
+  - keywords: ["bandits", "road", "north", "soren"]
+    responses:
+      - "Quieter than it was. Soren's lot was the worst of it; the bounty cleared most of them. Drunn does the town credit on that score. Ketil's crew still keeps a sword on the wagon, and Marta is not for show."
+
+  - keywords: ["lake", "fish", "catch", "decline"]
+    responses:
+      - "Catch was short last year. Tov down at the stall says the nets are mending now -- the bounty in the caves did the trick. Slow recovery. Lake-folk are patient."
+
+  - keywords: [""]
+    responses:
+      - "Need something? I am right here."
+      - "Speak up. The common room can be loud even when it is empty."
+
+tree:
+  root:
+    text: "Sit anywhere. Common room is quiet this hour. What can I get
+      you?"
+    hints: "You could ask Sigrid about the inn, the caravan crew, news
+      from Thornwall, or the town."
+    variants:
+      # Post-quest 20: Voss family resolution
+      - questRequired: ["20-end"]
+        text: "Ulla came in for a drink last week. First time in years.
+          That is your doing. The seat by the window is hers when she
+          comes. I have kept it that way."
+        hints: "You could ask Sigrid about the inn, the town, or the
+          caravan."
+
+      # Post-quest 19: full sump dweller kill
+      - questRequired: ["19-end"]
+        questFlagRequired:
+          "19-completion": "full"
+        text: "Drunn told me you put the deep-water thing down in the
+          caves. Drinks are on the house tonight -- sit where you like."
+        hints: "You could ask Sigrid about the inn, the town, or the
+          caravan."
+
+  nodes:
+    # ============================================================
+    # INFO: lake decline
+    # ============================================================
+    - id: lake_decline
+      triggers: ["lake", "fish", "catch", "decline", "nets"]
+      text: "Catch was short last year. Tov down at the stall says the
+        nets are mending now -- the bounty in the caves did the trick.
+        Slow recovery. Lake-folk are patient."
+
+    # ============================================================
+    # INFO: caravan news
+    # ============================================================
+    - id: caravan_news
+      triggers: ["caravan", "ketil", "lars", "marta", "thornwall",
+        "letters"]
+      text: "Ketil's lot brought letters and goods from Thornwall. The
+        usual run -- bottles for the apothecary, lake-iron stock for
+        Brindle, thread-spool for Edda. Lars runs around the square
+        with a slate-list trying to read his father's handwriting.
+        Sometimes a letter from Maren in Thornwall for Ulla; Ketil
+        doesn't open them, which is why I trust him."
+
+    # ============================================================
+    # INFO: Voss aftermath (post-quest 20 only)
+    # ============================================================
+    - id: voss_delicate
+      triggers: ["voss", "ulla", "vella", "elgar"]
+      questRequired: ["20-end"]
+      text: "I kept Ulla's chair by the window. She came in last week
+        with Vella. Neither of them said much. They did not need to.
+        It was enough that they both came in. Some things take twelve
+        years and some person who is not from the town to break them
+        loose."
+
+    # ============================================================
+    # INFO: town history
+    # ============================================================
+    - id: town_history
+      triggers: ["history", "mother", "inn", "pike", "lantern"]
+      text: "My mother had this place before me. She would barely
+        recognise the common room now -- I rebuilt the bar after the
+        '12 fire and the loft above five years after that. Same
+        building, mostly different wood. Same family, mostly the
+        same hands."
+
+    # ============================================================
+    # INFO: gossip about Drunn
+    # ============================================================
+    - id: gossip_drunn
+      triggers: ["drunn", "constable", "guard"]
+      text: "Drunn is a fixture. Slightly understaffed for the work he
+        has, slightly too many years in to want to leave the post
+        empty, but he handles what comes. Comes in for a meal twice a
+        week. Pays for his ale, which is more than I can say for some
+        constables I have met."
+
+    # ============================================================
+    # INFO: lodging rates (flavor only, no mechanic)
+    # ============================================================
+    - id: lodging_rates
+      triggers: ["loft", "rent", "lodging", "rate"]
+      text: "Three pallets in the loft, a window over the lake, a
+        chamber-pot in the corner that is your responsibility. Quieter
+        than the common room downstairs, mostly, except when Lars is
+        on layover -- the kid talks in his sleep about wagon-wheels."
+
+memory:
+  expiryPeriod: ""

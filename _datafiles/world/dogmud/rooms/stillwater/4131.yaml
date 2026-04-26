@@ -1,0 +1,74 @@
+roomid: 4131
+zone: Stillwater
+title: Hollow Sump
+description: >
+  The cavern opens out into a tall bowl-shaped chamber
+  with a single wide black <ansi fg="itemname">pool</ansi>
+  filling most of its floor — the lowest point in the
+  cave system, where the basalt sumps the lake's deeper
+  water. The pool's surface is broken at irregular
+  intervals by a heavy slow displacement of water from
+  somewhere below — something large is down there, and
+  it surfaces now and then to take the cave's air. The
+  pool's rim is heaped with <ansi fg="itemname">bones</ansi>
+  and torn fishing-net <ansi fg="itemname">mesh</ansi> in
+  thick layers — years of it. A high
+  <ansi fg="itemname">water mark</ansi> on the basalt
+  walls runs at chest-height, well above the current
+  level. The cave's air is colder and stiller here than
+  anywhere behind you.
+biome: cave
+coord:
+  x: -14
+  y: 8
+  z: -1
+exits:
+  south:
+    roomid: 4128
+nouns:
+  pool: A wide black sump-pool fills most of the
+    chamber's floor, the surface broken now and again
+    by the heavy slow displacement of something large
+    moving below. The water is the coldest in the
+    cave system. The bottom is invisible and probably
+    much further down than the antechamber's pool —
+    this is the deepest point.
+  bones: A heavy thick layered drift of bones around
+    the pool's rim — fish bones in their thousands,
+    bird bones, and among them the longer paler
+    bones of larger things. Several pieces of
+    skull-bone in particular are worth not looking
+    at too closely. The smell is old water and
+    something faintly worse.
+  mesh: Drifts of torn fishing-net mesh tangled in
+    among the bones — years of stolen netting, in
+    several different weights and weaves, the older
+    layers grey-rotten beneath the newer rents. A
+    careful eye could probably reconstruct which
+    nets came from which season's work.
+  water mark: A clear high water mark stains the
+    basalt walls at chest-height — well above the
+    current pool's surface, suggesting the lake's
+    higher seasons fill the chamber to that
+    line. The mark glistens faintly with mineral
+    deposit.
+  walls: Sheer black basalt walls rise to a domed
+    ceiling lost in the dark. Several deeper
+    fissures crack the lower courses; the cold
+    current the fishermen feel on certain days
+    above probably moves through one of them.
+  air: The cave's air is colder and stiller here
+    than anywhere behind, with a heavier mineral
+    weight to it and a faint wrong undernote that
+    is unmistakably organic. The air moves slightly
+    each time the water displaces.
+idlemessages:
+- The pool's surface lifts briefly as something heavy below shifts position.
+- A drift of bones at the pool's rim settles further as the air moves.
+- A long slow exhale of cold air comes from somewhere in the cracked basalt walls.
+- A piece of net mesh in the bone-rim stirs once in a draft and is still.
+- The water displaces in the pool's centre, releasing a slow heavy ring outward.
+spawninfo:
+- mobid: 332
+  message: A massive shape lifts from the black sump-pool — the sump dweller surfaces.
+  respawnrate: 4 real hours

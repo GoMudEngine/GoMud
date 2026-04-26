@@ -1,0 +1,68 @@
+roomid: 4132
+zone: Stillwater
+title: Cooper's Lane
+description: >
+  The rasp of an adze against oak, then a long pull of a
+  drawknife, then the same rasp again — Hodge the cooper
+  works on a half-finished <ansi fg="itemname">barrel</ansi>
+  on a low working trestle in front of his shop, and the
+  sound has set the rhythm of this stretch of street for
+  thirty years. Cooper's Lane runs west off the main road,
+  a narrow paved residential lane with the cooper's open
+  shop-front on the southern side and three small
+  <ansi fg="itemname">cottages</ansi> opposite. Stacked
+  finished casks and racks of bent <ansi fg="itemname">staves</ansi>
+  line the southern frontage. The smell here is sweet
+  shaved oak and the faint mustiness of barrel-pitch.
+biome: city
+coord:
+  x: -19
+  y: 2
+  z: 0
+exits:
+  east:
+    roomid: 4101
+  south:
+    roomid: 4134
+  west:
+    roomid: 4135
+nouns:
+  barrel: A half-finished oak barrel held in a knee-high
+    cradle on a low working trestle in front of the
+    cooper's shop. The staves are sprung but not yet
+    hooped, and a leather strap clamps them temporarily
+    while the cooper works the bevel on the next stave.
+    A small wooden gauge sits beside the barrel for
+    checking the angle.
+  cottages: Three small stone-and-plank cottages line the
+    northern side of the lane, fronts facing the cooper's
+    shop. Painted shutters in three different colours,
+    a window-box of marsh-mint at one, a pair of working
+    boots set out to dry by another door. People live
+    here.
+  staves: Racks of bent oak staves stacked under the
+    cooper's open shop-front, each batch labelled with a
+    chalked tally for the size of cask it will become.
+    The wood is shaved smooth on the outer face and
+    bevelled on the edges where the staves will meet.
+  shop: Hodge Bardel's open-fronted cooper's shop fills
+    the southern frontage of the lane — no door, just
+    a wide hinged shutter that comes down at dusk. A
+    long working bench, a row of hand-tools racked
+    above it, finished casks stacked along the back
+    wall, and a small brazier kept low through the day
+    for warming pitch.
+  pitch: A small wooden bucket of barrel-pitch sits by
+    the brazier, the surface darkened and slightly
+    skinned over. Heated and brushed into the seams
+    of a finished cask to seal them watertight. The
+    smell is faintly tarry.
+idlemessages:
+- The cooper's adze rasps against oak, pauses, and rasps again.
+- A drawknife pulls along a stave with a long satisfying scrape.
+- A child runs past at full tilt from one of the cottages, slaps a stacked cask, and is gone.
+- Pitch-smell strengthens briefly as the cooper stirs the bucket on the brazier.
+- A wooden hoop is dropped onto a cask with a flat hollow ring.
+spawninfo:
+- mobid: 349
+  cooldown: 300 rounds

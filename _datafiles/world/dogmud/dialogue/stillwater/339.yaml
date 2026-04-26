@@ -1,0 +1,110 @@
+mobid: 339
+zone: Stillwater
+defaultMood: friendly
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Welcome. Mind the threads on the floor -- they get underfoot."
+      - "Weaver Edda. Looking to buy or to browse?"
+
+  - keywords: ["hello", "hi"]
+    moods: ["grateful"]
+    responses:
+      - "Good to see you again. Come in. The loom is running but I can
+        talk while I work."
+
+  - keywords: ["cattail", "weaving", "loom", "wool", "cloth"]
+    responses:
+      - "I dye with what the lake margins give me -- cattail, reed-bark,
+        marsh-willow grey. The palette is muted, but it holds in wash.
+        Thornwall cloth is finer, but mine lasts longer, and I will
+        say it plainly."
+      - "Cattail-down for the cloaks, wool-warp for the heavier work.
+        I buy my wool-spool from Ketil's caravan when it comes through.
+        The cattail I harvest myself when the bank is dry enough."
+
+  - keywords: ["maren", "thornwall", "weaver"]
+    responses:
+      - "Maren is a finer weaver than I am. I know it; she knows it;
+        the work shows it. She trained under a guild-master in
+        Thornwall City and I learned at my mother's loom. Different
+        foundations. I am not ashamed of mine. She writes to her
+        aunt Ulla sometimes -- Ketil carries the letters. She has
+        never come back to visit, as far as I know."
+
+  - keywords: ["chapel", "ruin", "cottage", "cold", "wind"]
+    responses:
+      - "The old chapel ruin is behind my cottage. I knew about it
+        before I bought the lot, which is why the price was what it
+        was. The wind off it is colder than it should be for the
+        direction, and I close the back shutters early. I have got
+        used to it. Mostly."
+
+  - keywords: ["ulla", "loom", "solidarity"]
+    responses:
+      - "Ulla weaves too -- or she did, before things went quiet in
+        her cottage. I have left her be. Some people come to the
+        loom for company; some come to the loom to be alone with
+        themselves. I do not knock on a door that is not open."
+
+  - keywords: ["caravan", "ketil", "thread", "spool"]
+    responses:
+      - "Ketil brings thread-spool by the dozen each run. He knows my
+        standing order without me writing it down -- which is either
+        impressive or a little unsettling, I have not decided which.
+        Lars writes it on the slate anyway. Belt and braces, that
+        family."
+
+  - keywords: [""]
+    responses:
+      - "Anything you need, just ask."
+      - "I am here. The loom is running."
+
+tree:
+  root:
+    text: "Welcome. Mind the threads on the floor. What can I do
+      for you?"
+    hints: "You could ask Edda about her cloth, the cattail she uses,
+      or the weaver Maren in Thornwall."
+    variants:
+      - questRequired: ["20-end"]
+        text: "I heard Ulla came out to the Pike & Lantern last week.
+          First time in years. I sent a note round afterward -- just
+          a short one. She has not written back yet, but I think
+          she will. Some things open slowly."
+        hints: "You could ask Edda about her cloth or the town."
+
+  nodes:
+    - id: weaving_trade
+      triggers: ["cattail", "wool", "cloth", "weaving", "loom",
+        "cloak", "garment"]
+      text: "My cloaks come in two weights -- the cattail-down for
+        spring and autumn, the wool for the cold months. The dye is
+        lake-natural: grey, green, the dark brown of reed-bark. Not
+        fashionable by Thornwall standards. Practical by Stillwater
+        ones. I sell finished work and raw material both; either is
+        priced fairly."
+
+    - id: maren_comparison
+      triggers: ["maren", "thornwall", "guild", "finer", "better"]
+      text: "Maren trained under the guild and her work is guild-grade.
+        I learned here, worked here, sell here. She makes cloth for
+        people who wear it to be seen; I make cloth for people who
+        wear it to stay warm. Neither of us is wrong. I would rather
+        be known for work that holds than for work that dazzles -- but
+        I will not pretend I do not look at her finished pieces when
+        Ketil brings one through."
+
+    - id: cattail_harvest
+      triggers: ["cattail", "harvest", "bram", "bank", "season"]
+      text: "I take the cattail from the northwest bank of the creek,
+        after Bram runs the mill-wheel slow in late summer. The
+        flooding dries out by then and the plants are at their best
+        before the cold sets in. Bram knows to expect me and he
+        leaves the bank gate open. We have the same arrangement
+        every year."
+
+memory:
+  expiryPeriod: ""

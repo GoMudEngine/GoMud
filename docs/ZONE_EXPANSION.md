@@ -956,31 +956,38 @@ is the payoff — verbal directions to the crash site.
 
 ## Build Priority Summary
 
-| Priority | Zone | Rooms | Mini-stages |
-|----------|------|-------|-------------|
-| 1 | Marches Spur Road | 15 | 2 |
-| 2 | Ashwick | 20 | 2 |
-| 3 | North Road — Southern | 20 | 2 |
-| 4 | Stillwater | 30 | 3 |
-| 5 | North Road — Northern | 15 | 2 |
-| 6 | NP Outskirts | 20 | 2 |
-| 7 | NP Docks District | 30 | 3 |
-| 8 | NP Crafting Quarter | 25 | 3 |
-| 9 | NP Merchant Quarter | 25 | 3 |
-| 10 | NP Temple District | 25 | 3 |
-| 11 | NP Noble Quarter | 20 | 2 |
-| 12 | NP Common Quarter | 25 | 3 |
-| 13 | NP Sewers | 20 | 2 |
-| 14 | South Road | 15 | 2 |
-| 15 | Amber Valley | 35 | 4 |
-| 16 | River Road to Confluence | 15 | 2 |
-| 17 | The Confluence | 70 | 7 |
-| 18 | East Road to Greenford | 15 | 2 |
-| 19 | Greenford | 45 | 5 |
-| 20 | Cascade Pass Road | 20 | 2 |
-| 21 | Eastern Highlands | 30 | 3 |
-| 22 | Crash Site Interior | 20 | 2 |
-| **TOTAL** | **22 zones** | **~600 rooms** | **61 mini-stages** |
+**Status legend:** ✅ Built · 🟡 Sketched (Phase 1 plan exists, not built) · 🔧 Building · ⬜ Not started
+
+Update the Status column whenever a zone advances. After each
+mini-stage build pass, also note the roomid range used in the Notes
+column so the next zone-builder knows what's free.
+
+| Priority | Zone | Rooms | Mini-stages | Status | Notes |
+|----------|------|-------|-------------|--------|-------|
+| 1 | Marches Spur Road | 15 | 2 | ✅ Built | rooms 4000–4014 |
+| 2 | Ashwick | 20 | 2 | ✅ Built | rooms 4015–4034 |
+| 3 | North Road — Southern | 20 | 2 | ✅ Built | rooms 4038–4062 (25 used incl. inn interior) |
+| 4 | Stillwater | 47 | 3 | 🔧 Smoke-pending | roomid range 4100–4146 (all rooms built; full zone walk validated — 0 exit errors); 7-station crafting hub (forge, alchemy_bench ×2, loom, cooking_fire ×2, jeweler_bench, enchanting_circle); designed as showcase for NPC AI features (daily routines, forager-driven shop restock, Stillwater↔Thornwall caravan, Stillwater↔Ironwind material trade); **2026-04-25: ALL stillwater rooms shifted west by 7 to resolve 4 coord collisions with Dustwalk Road and Labyrinth (mapper now renders correctly)**; Temple of Stillwater (4123) needs sethome already wired (sethome stillwater); NPCs and mob spawns not yet placed |
+| 3.5 | The Fernway (interlude zone) | 10 | 1 | ✅ Built | roomid range 4147–4156; inserted east-west between Ashwick Crossroads (4014) and North Road Road Fork (4038) to push Stillwater + north_road westward away from Dustwalk Road / Labyrinth coord overlap. Outdoorsy bracken-and-fern wilderness with foragable plants (wild thyme, watercress, wood sorrel, foxglove, wild garlic, marsh chamomile, alder cones, elderberry, marsh willow). 7-room east-west spine + 3 side rooms (Old Weddell Farmstead, Heron Pond, Fox Den). No mobs/quests yet — pure flavor + foraging connector. |
+| 5 | North Road — Northern | 15 | 2 | ⬜ Not started | |
+| 6 | NP Outskirts | 20 | 2 | ⬜ Not started | |
+| 7 | NP Docks District | 30 | 3 | ⬜ Not started | |
+| 8 | NP Crafting Quarter | 25 | 3 | ⬜ Not started | |
+| 9 | NP Merchant Quarter | 25 | 3 | ⬜ Not started | |
+| 10 | NP Temple District | 25 | 3 | ⬜ Not started | |
+| 11 | NP Noble Quarter | 20 | 2 | ⬜ Not started | |
+| 12 | NP Common Quarter | 25 | 3 | ⬜ Not started | |
+| 13 | NP Sewers | 20 | 2 | ⬜ Not started | |
+| 14 | South Road | 15 | 2 | ⬜ Not started | |
+| 15 | Amber Valley | 35 | 4 | ⬜ Not started | |
+| 16 | River Road to Confluence | 15 | 2 | ⬜ Not started | |
+| 17 | The Confluence | 70 | 7 | ⬜ Not started | |
+| 18 | East Road to Greenford | 15 | 2 | ⬜ Not started | |
+| 19 | Greenford | 45 | 5 | ⬜ Not started | |
+| 20 | Cascade Pass Road | 20 | 2 | ⬜ Not started | |
+| 21 | Eastern Highlands | 30 | 3 | ⬜ Not started | |
+| 22 | Crash Site Interior | 20 | 2 | ⬜ Not started | |
+| **TOTAL** | **23 zones** | **~627 rooms** | **62 mini-stages** | **4 / 23 built** | Phase 1 done; Stillwater 47 rooms built + shifted west; Fernway 10-room interlude zone added to fix coord collisions. Smoke test pending. |
 
 *New Plymouth's 170 initial rooms include 21 expansion stubs (3 per
 district) that are visible but inaccessible. When all stubs are built

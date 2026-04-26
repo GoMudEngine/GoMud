@@ -1,0 +1,55 @@
+mobid: 354
+zone: Stillwater
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Oswin. I used to fish. I watch now."
+      - "Hello. I am not asking for much -- a coin if you
+        have one to spare."
+
+  - keywords: ["hello", "hi"]
+    moods: ["grateful"]
+    responses:
+      - "Thank you. I mean it. Sit a moment if you have time."
+
+  - keywords: ["boat", "fish", "fisherman", "old", "used"]
+    responses:
+      - "I fished for twelve years. My boat went down two
+        seasons back -- took on water at the seam and was
+        not worth repairing. Since then I have been doing
+        what odd work comes by. Not enough of it."
+
+  - keywords: ["boat", "sank", "08", "eight", "sink"]
+    responses:
+      - "There was a boat went down in the deep channel in
+        the year eight. Not mine -- I remember it though.
+        The dock master logged it as a storm casualty but
+        the weather that night was clear. I was on the
+        shallows and I saw the light go out. Nobody talked
+        about it much. I have thought about it since."
+
+  - keywords: ["lake", "deep", "shallows", "water", "fish"]
+    responses:
+      - "The lake has moods. I have been watching it for
+        twenty years between fishing and sitting here. When
+        it goes quiet like this, with the boats staying
+        close -- the lake is trying to tell you something.
+        I do not know what, exactly. Something."
+
+  - keywords: [""]
+    responses:
+      - "I am just sitting."
+      - "Spare a coin? I will not ask twice."
+
+tree:
+  root:
+    text: "Oswin. I used to fish. A coin if you have one
+      to spare."
+    hints: "You could ask Oswin about his fishing days or
+      what he saw on the lake."
+
+memory:
+  expiryPeriod: ""
