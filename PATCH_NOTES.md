@@ -1,5 +1,119 @@
 # DOGMud Patch Notes
 
+## 2026-04-25 (late evening) — Stillwater Zone + Two Quests + Town Flavor + Engine Polish
+
+### New Zone — Stillwater (Zone 2.2)
+
+- **47 new rooms** opening north of Ashwick via a 10-room interlude
+  (the Fernway road). Town spine: gate, lakefront square, Pike &
+  Lantern inn, Brindle's smithy, constabulary, north square. Lake
+  quarter: docks, Crab-Trap Beach, the Reedy Foreshore, boat pier,
+  cave mouth, and a 4-room cave dungeon ending at the Hollow Sump.
+  West quarter: cooper's lane, healer's cottage, Ulla's parlor +
+  her late husband's untouched workshop, cemetery, sluice pond,
+  watermill, tailor's cottage, travelers' camp, the old chapel
+  ruin, the wardstone circle, and a boat-builder's yard.
+- **22 named NPCs.** Innkeeper Sigrid, weaver Edda, smith Brindle,
+  apothecary Ilsa, pearl-carver Kess, storekeeper Wulf, fishmonger
+  Tov Brann, dock master Arn, constable Drunn, temple priest Seren,
+  miller Bram, old fisherman Hodder, old cottager Gyda, Ulla, the
+  child Pip, the caravan crew (Ketil + Marta + Lars), and assorted
+  others. Each carries dialogue with cross-references to other
+  townsfolk; gossipers (Hodder, Gyda, the barmaid Neva) broadcast
+  world-event news on the engine's gossip system.
+- **All seven crafting stations on-site:** forge (Brindle's smithy),
+  alchemy bench (healer's cottage), loom (tailor's), cooking fire
+  (Pike & Lantern + bakehouse), jeweler bench (pearl-carver's
+  garret), enchanting circle (wardstone), watermill grain.
+- **Sethome anchor:** `set home stillwater` respawns at the Temple
+  of Stillwater (room 4123).
+
+### Two New Quests
+
+- **Quest 19 — The Lake-Caves Bounty** (combat / bounty). Constable
+  Drunn posts an escalating bounty on the cave creatures spilling
+  into the shallows. Five steps with multiple completion paths:
+  partial reward (150g) for clearing the shrimp + drowned hunters,
+  full reward (500g) for bringing back a leviathan tooth from the
+  sump dweller boss. Both Drunn and dock master Arn will accept
+  the tooth. Dialogue acknowledges your choice.
+- **Quest 20 — Ulla's Silence** (lore / investigation). Ulla
+  finally asks someone to look through her late husband Elgar's
+  things in the workshop above her parlor. The trail leads through
+  six spiral-marked sites across town and the western ruins — a
+  pre-Chrysalis breadcrumb that Elgar was researching when he went
+  into the deep. Smith Brindle was supposed to descend with him
+  and didn't, and has been finishing the spear Elgar ordered ever
+  since. The kingfisher Vella buried at the cemetery is for
+  whoever knows enough to look. Eleven steps, single zone, with a
+  flag-tracked ending choice (whole truth vs partial). Players
+  who completed Quest 19 with the full path receive an extra
+  acknowledgment from Ulla.
+
+### Crafting & Items
+
+- **Forage extension.** New `water` biome added to the foraging
+  system; swamp + water yields extended with five new materials:
+  cattail-down (40055), marsh-willow bark (40056), lake mint
+  (40057), freshwater clams (40058), lake-iron nodules (40059).
+- **Four new craftable recipes:** Lake-Iron Hook-Spear
+  (blacksmithing), Lake-Tonic of Steady Hand (alchemy → buff 82
+  Steady Hand), Cattail-Down Cloak (tailoring), Stillwater Lake
+  Chowder (cooking). Plus three quest-related craftables:
+  Hunter-Eel Scale Vest (skullduggery affix), Stillwater Pearl
+  Pendant, and the Drowned-Veil enchantment (back-slot, conviction
+  reservoir).
+- **New cave drops:** skitter-shrimp shell, drowned-hunter hide,
+  Stillwater black pearl (boss-drop, 15% chance), leviathan tooth
+  trophy (boss-drop, 100% chance — the proof for the bounty).
+
+### Engine & Balance
+
+- **Vitality progression rebalanced.** `StatProgressionMultipliers.
+  vitality` bumped from 1.0 to 4.0. Vitality has no high-frequency
+  caller (no skill primaries it), so its actual call count was
+  ~4-5x lower than other 1.0-multiplier stats — players who
+  weren't tank-styled (taking constant damage to trigger the
+  regen-progression curve) saw vitality lag behind every other
+  stat. The 4x multiplier brings effective progression rate in line.
+- **Per-item drop chance.** New `Item.DropChance` field plus
+  `ShouldDrop()` helper. Mob suicide refactored so equipped and
+  carried items use the same drop-gating helper. Lets boss
+  signature drops (Stillwater black pearl) ride a 15% roll
+  instead of always dropping.
+- **Skill-affix progression patch.** `Character.GetSkillLevel()`
+  now includes StatMod contribution — fixes the orphaned skill-
+  affix path so item statmods like `skullduggery: +7` actually
+  count toward the player's effective skill level. Volcanic plate
+  and similar instance-loot skill bonuses now work as intended.
+- **Mapper cache reload.** New `mapcache` argument to admin
+  `reload` command flushes the per-zone mapper cache without a
+  server restart — useful after editing room mapsymbol/maplegend
+  fields.
+- **Quest engine SOP hardening** (sketch-quest skill). New
+  required gates: player-POV walkthrough per step, trigger-
+  mechanic ranking table (★★★★ ask-quest down to ☆ unguessable
+  magic words), thousand-mudder test, narrator-overreach guard,
+  and the `consume_item` requirement on every quest-engine
+  item_give trigger to suppress give.go's behavior-tree
+  fallthrough (which was firing the noncombat archetype's
+  "declines politely" emote AFTER quest acceptance).
+
+### Story / World
+
+- **"What the Moons Keep" — V3 polish pass.** The novel went
+  through a multi-round adversarial review pass: Section 1-3
+  critical/HIGH severity fixes, Round 2 voice consistency fixes,
+  Round 3 verbal-tic sweep, V3 aggregate review, V3 polish
+  pre-DE pass. ~270 lines added, ~300 lines removed across the
+  full ~735KB manuscript.
+- **Stillwater carries a quiet unsolved mystery.** The pre-
+  Chrysalis spiral motif appears at five sites the player can
+  find, plus a sixth in Elgar's workshop. The Voss family quest
+  reveals what Elgar was researching, but not the deeper question
+  of WHAT the symbol meant or WHO carved them. Sealed for future
+  content.
+
 ## 2026-04-25 — Player Rename + Account Delete + Name Collision Prevention
 
 ### Gameplay
