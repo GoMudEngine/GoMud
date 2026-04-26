@@ -1,0 +1,57 @@
+# Smith Brindle — Behavior Tree
+# Handles: player_give safety nets for quest items.
+# - Leviathan tooth (40054): bounty proof, not a craft material.
+# - Elgar's journal (40061): for Ulla, not for Brindle.
+# - Elgar's kingfisher (40060): for Vella, not for Brindle.
+
+tree:
+  type: selector
+  children:
+
+    # ── GIVE: leviathan tooth — return with redirect ──
+    - type: sequence
+      event: player_give
+      children:
+        - type: condition
+          check: item_matches
+          item_id: 40054
+        - type: action
+          do: say
+          text: >-
+            That is bounty work, not smithing. Take it to Constable
+            Drunn at the constabulary or to dock master Arn at the
+            docks -- they pay for proof of the deep-water kill. I just
+            forge the spears that go after it.
+        - type: action
+          do: return_item
+
+    # ── GIVE: Elgar's journal — return with redirect to Ulla ──
+    - type: sequence
+      event: player_give
+      children:
+        - type: condition
+          check: item_matches
+          item_id: 40061
+        - type: action
+          do: say
+          text: >-
+            That belongs in Ulla's hands, not mine. I have made my
+            peace with what I know. Take it to her.
+        - type: action
+          do: return_item
+
+    # ── GIVE: Elgar's kingfisher — return with redirect to Vella ──
+    - type: sequence
+      event: player_give
+      children:
+        - type: condition
+          check: item_matches
+          item_id: 40060
+        - type: action
+          do: say
+          text: >-
+            I cannot take that from you. Vella buried it for a reason
+            -- she will know what to do with it. Healer's cottage,
+            west of Ulla's.
+        - type: action
+          do: return_item

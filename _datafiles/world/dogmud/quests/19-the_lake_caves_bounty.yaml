@@ -1,0 +1,127 @@
+questid: 19
+name: The Lake-Caves Bounty
+description: Constable Drunn has posted a bounty on the lake-cave creatures
+  spilling into the shallows. Clear the shrimp swarms and the drowned hunters,
+  then return to the constabulary for further instructions. Bringing back a
+  leviathan tooth from the sump dweller pays the full reward.
+secret: false
+
+flags:
+  - key: completion
+    values: [partial, full]
+    description: "Whether the player closed the bounty for the partial payment
+      after signing, or pushed for the boss kill and brought back the tooth"
+
+steps:
+  - id: start
+    description: "Constable Drunn has posted a bounty on the lake-cave creatures.
+      Clear the shallows of shrimp swarms, deal with at least one drowned
+      hunter, then come back to the constabulary for further instructions."
+    hint: "Take a light source -- your chrysalis-glow spell or a lantern. The
+      caves are dark. The cave mouth is east of the fishing docks."
+  - id: shrimp
+    description: "You have cleared a swarm of skitter-shrimp from the cave
+      shallows. The fishing nets will hold longer."
+    hint: "A drowned hunter still lurks deeper in the cave system. Clear at
+      least one, then walk back to Constable Drunn at the constabulary and
+      ask him about the quest to report."
+  - id: hunter
+    description: "You have killed a drowned hunter. The shallows are
+      meaningfully safer."
+    hint: "Walk back to Constable Drunn at the constabulary and ask him about
+      the quest to report. (If you have not cleared a shrimp swarm yet, do
+      that first.)"
+  - id: signed
+    description: "Drunn has signed the upgraded bounty. The constabulary will
+      pay handsomely for proof that the deepest threat in the sump has been
+      put down -- but the warrant is now yours to pursue or to walk away
+      from. Either way you have earned the partial payment."
+    hint: "Hand Drunn a leviathan tooth from the sump dweller for the full
+      reward, or ask him about the quest again to close the bounty for the
+      partial payment now. You can also turn in the tooth to dock master
+      Arn at the fishing docks if you would rather."
+  - id: end
+    description: "The lake-caves bounty is closed. The shallows are safer.
+      The lake-folk owe you a quiet round at the inn."
+
+rewards:
+  playermessage: "The lake-caves bounty is closed. A purse changes hands."
+  roommessage: "is paid out the lake-caves bounty."
+  gold: 150
+
+triggers:
+  # ── SHRIMP: kill a skitter shrimp swarm (mob 330) ──
+  - event: mob_death
+    mob: 330
+    conditions:
+      has: ["19-start"]
+      missing: ["19-shrimp"]
+    actions:
+      - grant: "19-shrimp"
+      - send_text: "The skitter-shrimp swarm has been broken. The lake-folk's
+          nets will hold longer for it."
+
+  # ── HUNTER: kill a drowned hunter (mob 331) ──
+  - event: mob_death
+    mob: 331
+    conditions:
+      has: ["19-start"]
+      missing: ["19-hunter"]
+    actions:
+      - grant: "19-hunter"
+      - send_text: "The drowned hunter is dead. The shallows are meaningfully
+          safer."
+
+  # ── END (FULL): give leviathan tooth to Drunn ──
+  # Baseline 150g comes from the rewards block; the give_gold here is the
+  # full-path bonus on top, bringing the full reward to 500g total.
+  # consume_item suppresses give.go's behavior-tree fallthrough so the
+  # noncombat_questgiver archetype's "declines politely" emote does not
+  # fire after the quest engine accepts the tooth.
+  - event: item_give
+    mob: 335
+    item: 40054
+    conditions:
+      has: ["19-signed"]
+      missing: ["19-end"]
+    actions:
+      - consume_item: 40054
+      - grant: "19-end"
+      - set_flag:
+          key: "19-completion"
+          value: "full"
+      - give_gold: 350
+      - npc_say:
+          mob: 335
+          lines:
+            - {delay: 1, text: "By the lake. So there really WAS something
+                down there."}
+            - {delay: 4, text: "I had half-decided that thing was a story
+                the dock-drunks made up. Stillwater owes you for this."}
+            - {delay: 8, text: "Drinks at the Pike & Lantern are on the
+                constabulary tonight. Tell Sigrid I sent you."}
+
+  # ── END (FULL): give leviathan tooth to Arn ──
+  # Same full-path bonus as Drunn's path — 350g on top of the 150g baseline.
+  # consume_item suppresses behavior-tree fallthrough — see Drunn note.
+  - event: item_give
+    mob: 342
+    item: 40054
+    conditions:
+      has: ["19-signed"]
+      missing: ["19-end"]
+    actions:
+      - consume_item: 40054
+      - grant: "19-end"
+      - set_flag:
+          key: "19-completion"
+          value: "full"
+      - give_gold: 350
+      - npc_say:
+          mob: 342
+          lines:
+            - {delay: 1, text: "I will be damned. There really WAS one."}
+            - {delay: 4, text: "I have not got Drunn's purse, but the
+                dockmen keep a fund for things like this. Take it."}
+            - {delay: 7, text: "And -- thank you. For the men I sent down
+                there before I knew what was waiting."}

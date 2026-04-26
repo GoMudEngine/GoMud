@@ -1,0 +1,140 @@
+mobid: 342
+zone: Stillwater
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Welcome to the docks. Mind your step on the planks -- some are older than I am."
+      - "Dock master Arn. Looking for a boat, a fisherman, or just a quiet stretch of lake?"
+
+  - keywords: ["hello", "hi"]
+    moods: ["grateful"]
+    responses:
+      - "You are back. Sit on the bollard if you like; the lake is being civil today."
+
+  - keywords: ["who", "you", "yourself", "arn"]
+    responses:
+      - "Arn. I keep the dock ledgers, settle the mooring disputes, and try to know which tides run where. Twenty-two years on these planks. The lake teaches you more than you ever wanted to know."
+
+  - keywords: ["docks", "boats", "fishing"]
+    responses:
+      - "Stillwater fishes the shallows mostly -- the lake is bigger than people from inland think, but the deep water is treacherous and we leave it alone. Or we used to. Lately the trouble has come to us instead."
+
+  - keywords: ["fishermen", "missing", "elgar", "voss", "lost"]
+    responses:
+      - "Two men this season. One I sent down myself. I will live with that. The other was Elgar Voss -- went out alone after dark. We found his boat. We did not find him."
+
+  - keywords: ["caravan", "ketil", "wagon", "freight"]
+    responses:
+      - "Ketil and I trade weather and lake-condition reports each layover. The docks load some Thornwall-bound freight onto his wagons -- smoked fish, tanned hides, the small things that travel well. Marta keeps a courteous distance from my paperwork. We get along."
+
+  - keywords: [""]
+    responses:
+      - "Speak up. The lake is loud today."
+      - "Was there something else?"
+
+tree:
+  root:
+    text: "Welcome to the Stillwater docks. State your business or take a
+      bench."
+    hints: "You could ask Arn about the docks, the bounty on the lake
+      caves, or the missing fishermen."
+    variants:
+      # --- post-quest variants (full path) ---
+      - questRequired: ["19-end"]
+        questFlagRequired:
+          "19-completion": "full"
+        text: "The man who killed the sump dweller. Sit any time. The
+          docks rest easier with that thing dead. I will not forget it."
+        hints: "You could ask Arn about the docks, or just trade gossip."
+
+      # --- post-quest variants (partial path) ---
+      - questRequired: ["19-end"]
+        questFlagRequired:
+          "19-completion": "partial"
+        text: "The shallows are quieter than they were. That is something.
+          The deep is still the deep, but at least the nets come back
+          whole now."
+        hints: "You could ask Arn about the docks or the lake."
+
+      # --- signed; player can turn in tooth or close partial here too ---
+      - questRequired: ["19-signed"]
+        questExcluded: ["19-end"]
+        text: "You signed the upgraded bounty? Drunn told me. If you
+          finished the job in the deep sump, hand me the proof and I
+          will pay out from the dock fund."
+        hints: "Hand Arn a leviathan tooth from the sump dweller for the
+          full reward, or ask him about the bounty to close it for the
+          partial payment now."
+
+      # --- in progress (any state between start and signed) ---
+      - questRequired: ["19-start"]
+        questExcluded: ["19-signed", "19-end"]
+        text: "Still on the constable's bounty? The cave mouth is east
+          along the docks, past the boat pier. You will see the notice
+          nailed up. Mind the dark."
+        hints: "Walk east along the docks to reach the cave mouth.
+          Report back to Constable Drunn at the constabulary when
+          you have cleared the threats."
+
+  nodes:
+    # ============================================================
+    # REDIRECT TO DRUNN (no grant, just points at the constabulary)
+    # ============================================================
+    - id: redirect_to_drunn
+      triggers: ["quest", "task", "bounty", "caves", "cave", "fishermen",
+        "nets", "drunn", "constable", "constabulary"]
+      questExcluded: ["19-start", "19-end"]
+      text: "Bounty? Yes -- the cave creatures have been raiding the nets
+        and the constable has had it posted for nearly a fortnight now.
+        I am not the one who pays it though. Constable Drunn handles the
+        official bounty -- you will find him at the constabulary in the
+        square, north of here. Tell him I sent you if you like."
+      hints: "Walk north to the square and ask Constable Drunn at the
+        constabulary about the bounty."
+      moodChange: friendly
+
+    # ============================================================
+    # QUEST GRANT: close out the bounty for partial (after signed)
+    # ============================================================
+    - id: take_partial
+      triggers: ["quest", "task", "bounty", "close", "pay", "payment",
+        "done"]
+      questRequired: ["19-signed"]
+      questExcluded: ["19-end"]
+      grantsQuest: "19-end"
+      setsQuestFlag:
+        key: "19-completion"
+        value: "partial"
+      text: "Closing out the bounty here? That is fine. The shallows
+        are safer and the lake-folk owe you for that. The dock fund
+        will cover the partial -- take it and have a drink at the Pike
+        & Lantern on us."
+      moodChange: grateful
+
+    # ============================================================
+    # INFO NODES (no quest grants)
+    # ============================================================
+    - id: caves_info
+      triggers: ["where", "location", "find", "directions"]
+      questRequired: ["19-start"]
+      questExcluded: ["19-end"]
+      text: "East along the docks. Past the net yard, past the boat
+        pier, and the path turns east toward the lakeshore. The cave
+        mouth is at the end -- you cannot miss the bounty notice the
+        constable nailed up. Mind the dark when you go in."
+
+    - id: tooth_info
+      triggers: ["leviathan", "trophy", "sump", "dweller", "tooth"]
+      questRequired: ["19-signed"]
+      questExcluded: ["19-end"]
+      text: "The sump dweller is the thing in the deep that I should
+        have warned my men about before I let them go down there. If
+        you killed it -- and brought back a tooth -- bring it to me or
+        to Drunn. Either of us will pay out the full bounty. I will
+        believe it when I see the tooth."
+
+memory:
+  expiryPeriod: ""
