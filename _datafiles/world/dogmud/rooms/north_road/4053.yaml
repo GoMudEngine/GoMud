@@ -12,7 +12,7 @@ description: >
   clean.
 biome: farmland
 coord:
-  x: -11
+  x: -18
   y: -8
   z: 0
 exits:

@@ -1,0 +1,82 @@
+roomid: 4136
+zone: Stillwater
+title: Healer's Cottage
+description: >
+  The smell hits as you cross the threshold — drying herbs
+  layered over the sharper resinous edge of tinctures
+  brewing somewhere on the back wall. Mistress Vella
+  Thorne's cottage is a single long room that doubles as
+  her front office and her stillroom — patients waiting on
+  a low padded <ansi fg="itemname">bench</ansi> by the
+  hearth, the working <ansi fg="itemname">bench</ansi> with
+  its mortar and pestle and brass scales running the
+  northern wall, and the alchemy
+  <ansi fg="itemname">still</ansi> standing on a slate
+  shelf by the hearth where the smoke can carry off the
+  vapour. Bunches of <ansi fg="itemname">herbs</ansi> hang
+  from every rafter — marsh-sage, lake-mint, willow-bark,
+  elderberry, a dozen others — and a row of small labelled
+  earthenware <ansi fg="itemname">jars</ansi> lines the
+  shelf above the hearth.
+biome: city
+station: alchemy_bench
+coord:
+  x: -20
+  y: 5
+  z: 0
+exits:
+  east:
+    roomid: 4137
+  west:
+    roomid: 4140
+  north:
+    roomid: 4141
+nouns:
+  bench: A single long working bench runs the northern
+    wall — a granite mortar at the eastern end, a
+    smaller marble one beside it, brass scales in
+    graduated weights, a row of small silver knives
+    and shears, and a few scarred wooden cutting
+    boards. The whole surface is kept waxed against
+    the inevitable spills.
+  still: A copper alchemy still stands on a slate
+    shelf beside the hearth, its bulbous body and long
+    coiling condenser-arm scrubbed bright. A small
+    glass collection-vial sits at the condenser's
+    foot. The still is the cottage's pride; Vella
+    inherited it from her teacher and would no more
+    sell it than her own hands.
+  herbs: Bunches of drying herbs hang from every
+    rafter — marsh-sage and lake-mint freshly cut from
+    the temple garden, willow-bark in long curling
+    strips, elderberry-flower from the temple wall,
+    rosemary and thyme from the kitchen-garden out
+    back, and a dozen others most travellers cannot
+    name. Each bundle is tagged with a small slate
+    naming when it was hung.
+  jars: A long shelf above the hearth holds perhaps
+    sixty small earthenware jars, each labelled in a
+    careful round hand — finished tinctures and
+    powders, ready for sale. The labels list the
+    contents and the year. Some of the back-row jars
+    are older than Vella's grandchildren.
+  hearth: A low working hearth in the centre of the
+    eastern wall, kept burning slow even in summer
+    for the still and for the kettle that is always
+    on. A small iron arm swings out for the kettle
+    and a row of brass hooks above the mantelpiece
+    holds the long-handled tools.
+  patient bench: A low padded bench by the door for
+    patients waiting their turn — the upholstery is
+    threadbare, the pillows well-worn but clean. A
+    small clay bowl on a side-table holds boiled
+    sweets for children, replaced each week.
+idlemessages:
+- The kettle on the iron arm begins to mutter, then steadies into a low simmer.
+- A drop falls from the still's condenser into the collection-vial with a small bright tink.
+- A bundle of drying lake-mint releases a thin sharp smell as the air stirs.
+- A jar is lifted from the shelf, examined, and replaced with a small clay-on-clay click.
+- The hearth-fire shifts and a small puff of fragrant smoke threads up through the chimney.
+spawninfo:
+- mobid: 355
+  cooldown: 600 rounds

@@ -1,0 +1,45 @@
+enchantid: drowned-veil
+name: "Drowned Veil"
+reserve_pool: conviction
+target_type: back
+tiers:
+  - tier: 0
+    reserve_pct: 0.02
+    effects:
+      charisma_statmod: 1
+      magical_mitigation_bonus: 3
+    adjective: pearl-veiled
+    description_suffix: "A faint pearl sheen runs through the cloak's weave; magic seems to slip from it."
+    tier_up_message: ""
+  - tier: 1
+    reserve_pct: 0.04
+    effects:
+      charisma_statmod: 2
+      magical_mitigation_bonus: 5
+    adjective: deep-pearled
+    description_suffix: "The cloak's pearl sheen has deepened — magic slides off it like water off a fish's back."
+    tier_up_message: "The veil drinks deeper. Words leave your mouth and they carry; spells reach your skin and they slow."
+  - tier: 2
+    reserve_pct: 0.06
+    effects:
+      charisma_statmod: 3
+      magical_mitigation_bonus: 7
+    adjective: shadow-pearled
+    description_suffix: "The cloak swallows light the way the deep pool swallows light. Eyes turn to you in any room."
+    tier_up_message: "The pearl-light at the cloak's edge dims further, and the room's attention bends a little more in your favor."
+  - tier: 3
+    reserve_pct: 0.08
+    effects:
+      charisma_statmod: 4
+      magical_mitigation_bonus: 9
+    adjective: deep-veiled
+    description_suffix: "Magic that strikes the cloak diminishes audibly, a small wet hush. Your voice carries into rooms it should not reach."
+    tier_up_message: "The veil reaches its working depth. The drowned thing in the cloak knows your name now."
+  - tier: 4
+    reserve_pct: 0.10
+    effects:
+      charisma_statmod: 5
+      magical_mitigation_bonus: 12
+    adjective: drowned-veiled
+    description_suffix: "You wear the deep on your shoulders. Magic dies on the cloak's face; presence radiates through it like heat from a stove."
+    tier_up_message: "The veil has finished forming. What you say is heard; what is cast at you is swallowed. The cloak weighs nothing and weighs everything."

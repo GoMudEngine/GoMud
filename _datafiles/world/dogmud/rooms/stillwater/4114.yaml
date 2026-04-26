@@ -1,0 +1,68 @@
+roomid: 4114
+zone: Stillwater
+title: Reedy Foreshore
+description: >
+  Frogs croak unevenly across a marshy stretch of shallows
+  where a small creek drains south into the lake — the
+  reeds reach over your head in places, and the path
+  threads between them on a series of flat plank
+  duckboards. The smell is wet earth, marsh-sage, and the
+  faint sweet rot of last year's growth. Tall stands of
+  <ansi fg="itemname">cattails</ansi> dominate the wet
+  ground, their seedheads fat and brown. Slender grey
+  <ansi fg="itemname">marsh willow</ansi> saplings rise
+  from the firmer hummocks, their bark traditionally
+  stripped for poultice work. Closer to the path, a
+  <ansi fg="itemname">lake mint</ansi> patch crowds the
+  edge of the duckboards — bruise a leaf and the smell
+  doubles in the air.
+biome: swamp
+coord:
+  x: -16
+  y: 2
+  z: 0
+exits:
+  north:
+    roomid: 4113
+  east:
+    roomid: 4115
+nouns:
+  cattails: Tall stands of cattails crowd the wet ground
+    on either side of the path, their seedheads fat and
+    brown and ready to burst. The fibrous down inside
+    the heads is what tailors carry off in basket-loads
+    in early autumn — light, warm, and slow to clump.
+    Several heads near the path show fresh thumbprint
+    bruises where someone has tested the down between
+    finger and thumb.
+  marsh willow: Slender grey-barked saplings rise from
+    the firmer hummocks among the reeds, their leaves
+    long and silver-backed. The bark, stripped in early
+    summer and dried, makes a poultice for fevers and
+    a tonic for aching joints — known to anyone who
+    has ever spent a winter on the lake. A few saplings
+    near the path show fresh ring-cuts where a forager
+    has been at them.
+  lake mint: A patch of low ground-hugging mint crowds
+    the path's edge near the foreshore — bright green
+    leaves with a darker vein, and a sharper, colder
+    smell than garden mint. Used by alchemists for
+    steady-hand tonics; bruise a leaf and the smell
+    redoubles. Several leaves on the edge of the patch
+    show fresh pinch-marks.
+  duckboards: A run of flat plank boards laid on rough
+    timber sleepers across the wettest ground, kept up
+    by whoever fishes the channel that week. The
+    timber is silvered with age and slick where the
+    moss has crept in. Walk steady — the southernmost
+    plank is loose and one end is missing entirely.
+  creek: A small clear creek runs south through the
+    foreshore on its way to the lake, the bottom dark
+    with peat. Frogs cluster in the slower bends. The
+    water tastes faintly of marsh-iron at the source.
+idlemessages:
+- A bullfrog throats a long bass note from somewhere in the reeds, then is answered by another.
+- A red-winged <ansi fg="mobname">blackbird</ansi> rasps from a swaying cattail, then drops out of sight.
+- The duckboards underfoot creak softly with your weight, then settle.
+- A breeze moves through the reeds with a long dry rustle.
+- The sweet sharp smell of crushed lake mint rises briefly from somewhere near your feet.

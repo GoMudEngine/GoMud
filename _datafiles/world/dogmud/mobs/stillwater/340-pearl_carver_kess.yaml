@@ -1,0 +1,75 @@
+mobid: 340
+zone: Stillwater
+behavior_archetype: noncombat_shopkeeper
+statpool: 55
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+groups:
+  - humanoid
+  - merchant
+idlecommands:
+  - 'emote turns a pearl slowly under a lens, checking the nacre for
+    blemishes'
+  - ''
+  - 'emote draws a fine wire through a reduction plate, stretching it
+    thinner'
+  - ''
+  - 'emote sets a finished pendant on a square of dark cloth and tilts it
+    toward the window-light'
+  - ''
+activitylevel: 10
+crafter: true
+crafterskill: jewelcrafting
+crafterrecipeids:
+  - silver-ring
+  - simple-pendant
+  - stillwater-pearl-pendant
+  - polished-stone-amulet
+  - engraved-bracelet
+crafterrestockmaterials:
+  - 40022
+  - 40019
+  - 40024
+  - 40053
+character:
+  name: pearl-carver Kess
+  description: |
+    A precise woman with small, careful hands and grey-streaked hair wound
+    close to her head. Kess came to Stillwater from the coast fourteen years
+    ago, drawn by the lake's black pearls, which she considers finer than
+    anything the sea yields. She carves and sets them herself, working with
+    silver wire and polished stones from the shallows. Her garret smells of
+    metal filings and beeswax. She is not unfriendly, but she is economical
+    with words and attention, and her eyes return to whatever she is working
+    on before you have quite finished speaking.
+  speciesid: 1
+  gold: 300
+  skills:
+    jewelcrafting: 13
+  stats:
+    dexterity:
+      training: 14
+    perception:
+      training: 10
+    willpower:
+      training: 5
+  shop:
+    - itemid: 40022
+      quantity: 0
+      quantitymax: 0
+      price: 5
+    - itemid: 40019
+      quantity: 0
+      quantitymax: 0
+      price: 3
+    - itemid: 40024
+      quantity: 0
+      quantitymax: 0
+      price: 2
+    - itemid: 40053
+      quantity: 1
+      quantitymax: 2
+      price: 40

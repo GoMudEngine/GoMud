@@ -1,0 +1,44 @@
+mobid: 343
+zone: Stillwater
+behavior_archetype: noncombat_passive
+statpool: 36
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+groups:
+  - humanoid
+  - gossiper
+idlecommands:
+  - 'emote works a needle through a torn mesh with the slow patience of
+    someone in no hurry to finish'
+  - ''
+  - 'emote mutters something to himself and shakes his head at the net'
+  - ''
+  - 'emote pauses his mending to watch a boat move out across the lake,
+    squinting'
+  - ''
+  - 'emote pulls at a knot with both thumbs and grunts when it holds'
+  - ''
+activitylevel: 7
+character:
+  name: old fisherman Hodder
+  description: |
+    A gaunt, rope-armed man with a white beard and knuckles that have been
+    broken and set too many times to be fully straight. Hodder mends nets in
+    the yard every morning and has been doing it for forty years. He no longer
+    takes his own boat out -- a bad season three winters back left him with a
+    knee that does not trust cold water -- but he is a fixture of the docks
+    and knows the lake better than anyone younger. He mutters observations
+    while he works, half to himself and half to whoever happens to be nearby,
+    and his observations are usually correct.
+  speciesid: 1
+  gold: 0
+  stats:
+    perception:
+      training: 12
+    willpower:
+      training: 8
+    dexterity:
+      training: 5

@@ -1,0 +1,89 @@
+mobid: 339
+zone: Stillwater
+behavior_archetype: noncombat_shopkeeper
+statpool: 55
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+groups:
+  - humanoid
+  - merchant
+idlecommands:
+  - 'emote threads the shuttle through a shed of cattail-dyed warp threads
+    with a steady rhythm'
+  - ''
+  - 'emote pins a length of finished cloth to the wall and steps back to
+    examine the fall of it'
+  - ''
+  - 'emote snips a thread end and folds the trimming into a scrap basket
+    at her feet'
+  - ''
+  - 'say I know it''s strange having the old chapel ruin behind the
+    cottage. The price reflected it -- nobody else would take the lot.
+    The wind off it is colder than it ought to be, but I have got used
+    to closing the back shutters early.'
+  - ''
+  - 'emote glances briefly toward the back wall, then returns to the
+    loom'
+  - ''
+activitylevel: 11
+crafter: true
+crafterskill: tailoring
+crafterrecipeids:
+  - cloth-pants
+  - linen-tunic
+  - leather-vest
+  - wool-cloak
+  - cattail-down-cloak
+  - leather-leggings
+  - cloth-bandage
+crafterrestockmaterials:
+  - 40007
+  - 40012
+  - 40013
+  - 40055
+character:
+  name: weaver Edda
+  description: |
+    A soft-spoken woman with ink-dark hair and the kind of stillness that
+    comes from years at a loom. Edda dyes her cloth with plants from the
+    lake margins -- cattail, reed, and the grey-green bark of marsh willow --
+    and her work has a muted, watery palette that is distinctly Stillwater's
+    own. She sells finished garments and raw materials both. Her cottage
+    smells of lanolin and damp wool, and there is always a cloak on the
+    frame in some stage of completion. She is not Maren of Thornwall, and
+    she knows it; her work is simpler, but it lasts.
+  speciesid: 1
+  gold: 200
+  skills:
+    tailoring: 12
+  stats:
+    dexterity:
+      training: 12
+    perception:
+      training: 7
+    willpower:
+      training: 5
+  shop:
+    - itemid: 40007
+      quantity: 0
+      quantitymax: 0
+      price: 1
+    - itemid: 40012
+      quantity: 0
+      quantitymax: 0
+      price: 1
+    - itemid: 40013
+      quantity: 0
+      quantitymax: 0
+      price: 3
+    - itemid: 40055
+      quantity: 0
+      quantitymax: 0
+      price: 4
+    - itemid: 40002
+      quantity: 0
+      quantitymax: 0
+      price: 2

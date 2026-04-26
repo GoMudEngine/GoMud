@@ -1,0 +1,79 @@
+roomid: 4130
+zone: Stillwater
+title: Bone Shoals
+description: >
+  A small dry alcove off the cave's western branch, the
+  floor a low gravel <ansi fg="itemname">shoal</ansi>
+  rising clear of the water. The alcove is rimmed and
+  scattered with <ansi fg="itemname">bones</ansi> — fish
+  bones mostly, picked clean and small, but among them
+  the longer pale arc of what might be a wading-bird's
+  leg, and one or two pieces too large or oddly shaped
+  to identify confidently. A small basalt
+  <ansi fg="itemname">cairn</ansi> at the back of the
+  alcove looks placed rather than natural — someone, or
+  something, has been here long enough to make habits.
+biome: cave
+coord:
+  x: -15
+  y: 6
+  z: -1
+exits:
+  east:
+    roomid: 4127
+  north:
+    roomid: 4129
+nouns:
+  shoal: A low gravel rise that lifts the alcove's
+    floor clear of the surrounding water, the
+    pebbles smaller and finer than the lake's
+    pebbled strands above. Water pools shallow
+    around the shoal's edge and drains slowly back
+    through the gravel.
+  bones: Fish bones mostly, picked clean and
+    scattered in small drifts around the shoal's
+    edge — pike, carp, and the smaller bones of
+    perch and minnow. Among them, the longer pale
+    arc of what looks like a wading-bird's leg.
+    And — at the back of the shoal — one or two
+    longer pieces too large to be lake fish and
+    oddly notched along their length. The notching
+    is regular. Tooth-work, possibly.
+  cairn: A small carefully-built cairn of basalt
+    chips at the back of the alcove, perhaps as
+    high as your knee, the stones clearly placed
+    rather than fallen. The pattern suggests
+    someone or something with manipulative
+    appendages and a settled habit. The cairn's
+    base hides a small natural depression in the
+    floor.
+  alcove: A small dry pocket off the cave's western
+    branch, perhaps four paces by three, the
+    ceiling low enough to brush a tall person's
+    head. The dryness suggests the alcove sits
+    above the water's higher seasons; the bones
+    suggest it has been used as a den or a
+    larder by something living deeper in.
+hidden_nouns:
+  cache:
+    description: |
+      Lifting the topmost stones of the cairn reveals a small
+      natural depression in the floor — and inside it, an
+      oilskin pouch, a curl of fine waxed line, a single small
+      dark Stillwater black pearl wrapped in a square of cloth,
+      and a folded note in a careful round hand reading "Brindle —
+      if you ever read this, the boy was right about the cave.
+      Don't come looking. — E.V." The pearl is small but real.
+      The note is older than its careful folding suggests.
+    hidden_description: |
+      The cairn's base hides a small cache — moved-stone shadows betray a depression in the floor below.
+idlemessages:
+- A piece of fish-bone shifts in the gravel as a draft moves through the alcove.
+- A drip from the western passage echoes in briefly and is gone.
+- The smell of cold mineral water strengthens briefly with a shift in the cave's air.
+- A small bone clicks against another somewhere in the rim of the shoal.
+- A faint splash from the eastern chamber carries briefly into the alcove.
+spawninfo:
+- mobid: 331
+  message: A drowned hunter slides up from beneath the bone-shoal's wet gravel.
+  respawnrate: 10 real minutes

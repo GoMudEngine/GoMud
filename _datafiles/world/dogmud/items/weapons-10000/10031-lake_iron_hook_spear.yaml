@@ -1,0 +1,23 @@
+itemid: 10031
+name: lake-iron hook-spear
+namesimple: spear
+description: A long-shafted spear forged from refined lake-iron, the
+  head broad and leaf-shaped with a back-curving hook welded to the
+  socket — the smith's adaptation of a fisher's gaff for a fighter's
+  hand. The shaft is seasoned ash, wrapped in oiled leather at the
+  grip. The lake-iron edge holds keener than common stock; the hook
+  catches a parrying weapon and drags it offline. Heavier than the
+  garrison spear it is not, but more particular about its wielder.
+type: weapon
+hands: 1
+subtype: piercing
+weight: 5.0
+speedmultiplier: 0.70
+staminacost: 7
+grapplemodifier: -3.0
+damage:
+  basedamage: 7
+  variance: 2
+damage_multiplier: 0.95
+parryrating: 10
+value: 60

@@ -1,0 +1,20 @@
+id: hunter-eel-scale-vest
+name: Hunter-Eel Scale Vest
+skill: tailoring
+skill_minimum: 25
+station: loom
+time_rounds: 6
+ingredients:
+  - item_tag: hunter-eel-hide
+    quantity: 1
+  - item_tag: leather-strip
+    quantity: 2
+  - item_tag: thread-spool
+    quantity: 2
+  - item_tag: bone-needle
+    quantity: 1
+output:
+  item_id: 20077
+  quantity: 1
+success_message: "You overlap the hunter-eel scales loose along thin leather backing and stitch each row with patient care. The slick scales lay perfectly flat. A hunter-eel scale vest!"
+failure_message: "The scales bunch and slide against each other no matter how you stitch them. The hide tears at the seams and the work is wasted."

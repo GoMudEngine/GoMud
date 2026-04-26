@@ -1,0 +1,64 @@
+roomid: 4107
+zone: Stillwater
+title: Coalsmoke Alley
+description: >
+  The alley between the smithy's western wall and the
+  cottages behind it is barely wide enough for two people
+  to pass without turning sideways. The smithy's stone
+  <ansi fg="itemname">wall</ansi> on your right radiates a
+  dry baked heat even at this distance from the forge, and
+  a film of dark soot blacks the lower courses of the
+  cottages opposite. A <ansi fg="itemname">slag heap</ansi>
+  takes up most of the alley's far end — the smithy's
+  accumulated tailings, cooled to glassy black lumps. Wooden
+  <ansi fg="itemname">crates</ansi> of charcoal stacked
+  shoulder-high crowd one wall, the topmost lids cracked
+  open. The light is poor here even at noon.
+biome: city
+coord:
+  x: -20
+  y: 4
+  z: 0
+exits:
+  east:
+    roomid: 4106
+nouns:
+  slag heap: A heap of cooled forge-tailings against the
+    alley's western dead end — glassy black lumps that
+    look almost like obsidian until you feel their weight.
+    Some have rolled down the side of the heap onto the
+    alley's packed dirt. The smith carts them away once
+    a season; this winter's load has not yet been hauled.
+  crates: A row of wooden charcoal-crates stacked
+    shoulder-high along the eastern wall, lidded and
+    iron-banded. The topmost crates have their lids
+    cracked open, and the smell of charcoal-dust threads
+    up through the gap. A cat sleeps on the very top,
+    paws tucked under, ignoring you.
+  wall: The smithy's western wall is bare lake-stone, the
+    lower courses blackened and the upper courses still
+    showing their pale grey. The stone radiates a dry
+    baked heat even when you are not touching it, and on
+    a cold day this is one of the warmest spots in town.
+  cottages: The backs of small wooden cottages line the
+    alley's western side, their lower courses sooted
+    nearly black from generations of forge-smoke blowing
+    across in the lake-wind. Most have their rear shutters
+    firmly closed.
+hidden_nouns:
+  loose stone:
+    description: |
+      A flat slate stone in the smithy's wall, set apart from
+      the others by the way it sits slightly proud of the
+      mortar line. Behind it, a hand-deep cavity in the wall
+      holds a small oilskin pouch — empty for now, but someone
+      has used this hiding-place often enough to know exactly
+      which stone to push.
+    hidden_description: |
+      One of the wall stones looks deliberately set apart from the rest — not loose, but moved often.
+idlemessages:
+- A coal-cinder somewhere in the slag heap shifts and clicks.
+- The cat on the charcoal-crates opens one eye, regards you, and closes it again.
+- Heat rolls off the smithy wall in a slow visible shimmer above the slag heap.
+- A faint clinking of a hammer carries through the smithy wall — muffled, rhythmic.
+- A draft pulls a brief thread of charcoal-dust up into the lake-wind overhead.

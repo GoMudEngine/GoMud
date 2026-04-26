@@ -1,0 +1,59 @@
+roomid: 4149
+zone: The Fernway
+title: Twin Oaks Bend
+description: >
+  Two enormous old <ansi fg="itemname">oaks</ansi> rise on
+  either side of a sharp bend in the path — twins by the
+  look of them, perhaps three centuries old apiece, their
+  upper branches interlaced into a single canopy that
+  throws cool dappled light onto the trail below. The
+  understory is thinner here under the oaks' shade, the
+  bracken giving way to ground-hugging
+  <ansi fg="itemname">wood sorrel</ansi> and the occasional
+  flash of <ansi fg="itemname">foxglove</ansi> in pink
+  bloom. A small brown
+  <ansi fg="itemname">side-track</ansi> branches south
+  toward what looks like an old farmstead.
+biome: forest
+coord:
+  x: -11
+  y: -13
+  z: 0
+exits:
+  east:
+    roomid: 4148
+  west:
+    roomid: 4150
+  south:
+    roomid: 4154
+nouns:
+  oaks: Two enormous old oak trees stand on either side of
+    the path's bend, their trunks broader than two grown
+    persons could span hand-to-hand and their bark deeply
+    seamed and lichen-streaked. The upper branches lace
+    into a single shared canopy — a feat of long
+    competitive growth. Both trees bear deep marks at
+    waist height where generations of travelers have
+    carved initials and small symbols.
+  wood sorrel: Low ground-hugging clumps of clover-leafed
+    wood sorrel cover the ground beneath the oaks where
+    bracken cannot grow. Foragers gather it for the
+    sharp lemony tang the leaves give a salad or a
+    cold-water tonic. A few of the deepest patches show
+    small white star-flowers above the leaves.
+  foxglove: Tall pink-flowered foxglove rises in scattered
+    patches at the edge of the oaks' shade — beautiful and
+    poisonous in equal measure. The leaves are a known
+    heart-medicine in small careful doses and a known
+    killer in any larger one. Most healers refuse to
+    handle them; the few who can, use them sparingly.
+  side-track: A small brown footpath branches south off
+    the main trail, the underbrush flattened from
+    occasional use but not maintained. A weathered
+    wooden marker reads simply WEDDELL — perhaps the name
+    of the family that once held the land down that way.
+idlemessages:
+- A jay screams from somewhere high in the oaks' canopy and is answered by another.
+- An acorn drops from above and clicks softly down through the branches.
+- The oaks' canopy filters the light into a slow shifting dapple on the trail.
+- A red-brown <ansi fg="mobname">squirrel</ansi> chases another up one of the trunks and out of sight.

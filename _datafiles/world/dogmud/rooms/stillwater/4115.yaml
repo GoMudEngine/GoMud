@@ -1,0 +1,82 @@
+roomid: 4115
+zone: Stillwater
+title: Crab-Trap Beach
+description: >
+  Pebbles roll and click underfoot on a narrow strand of
+  black basalt and water-rounded gravel, the lake lapping
+  in slow tongues at your boots. A row of lobed wicker
+  <ansi fg="itemname">crab traps</ansi> sits drying along
+  the high-water line, woven from soaked withies and weighted
+  with stones — the local way of catching the freshwater
+  crayfish that scuttle through the shallows here. The
+  <ansi fg="itemname">water line</ansi> is marked with a
+  long ribbon of dried weed and small bleached bivalve
+  shells, evidence of richer days. A single weathered grey
+  <ansi fg="itemname">log</ansi> of driftwood, smoothed
+  glass-pale by the lake, lies just beyond the high water.
+biome: water
+coord:
+  x: -15
+  y: 2
+  z: 0
+exits:
+  west:
+    roomid: 4114
+  north:
+    roomid: 4122
+  east:
+    roomid: 4124
+nouns:
+  crab traps: A dozen lobed wicker baskets drying along
+    the gravel, woven from soaked withies and weighted
+    with smooth river-stones. Each has a narrow inward
+    funnel that lets a freshwater crayfish in but not
+    out — the local way of catching the small clawed
+    things that scuttle through the shallows. A few of
+    the older traps show weed-tangled bait still
+    clinging in the bottom.
+  water line: A long ribbon of dried weed, small
+    bleached <ansi fg="itemname">freshwater clams</ansi>,
+    and a few crayfish-claw fragments, marking where
+    the lake reached at last full water. The clams are
+    the kind harvested by anyone with patience and a
+    bucket — the meat goes into the chowder at the
+    inn, the shells into a midden behind the
+    fishmonger's table.
+  freshwater clams: Small bleached bivalve shells
+    scatter the high-water line — the meat-filled live
+    ones are out in the shallows, half-buried in the
+    silt, but you can see the dimpled shadows of them
+    when the surface goes still. A bucket and an
+    afternoon's patience would fill a sack. The
+    chowder at the inn would not exist without them.
+  log: A single weathered grey driftwood log lies just
+    beyond the high water, smoothed glass-pale by the
+    lake's working. Long enough to sit on, dry enough
+    to be a bench in fair weather. Faint claw-marks on
+    one end are too big for a crayfish.
+  pebbles: A narrow strand of black basalt and
+    water-rounded gravel, rolling and clicking
+    underfoot. Each step sounds louder than your
+    weight should warrant. Skipping-stones in
+    abundance — flat, palm-sized, perfect for the
+    long arcing throws.
+hidden_nouns:
+  loose driftwood:
+    description: |
+      A wedge of driftwood, set just inside the larger log,
+      shifts when you press it — and beneath it, half-buried
+      in the gravel, is a small oilskin pouch that someone has
+      cached here recently. The cache is empty for now.
+      A fisherman's discreet stash, perhaps; or a smuggler's.
+    hidden_description: |
+      A wedge of smaller driftwood is set just inside the larger log — too neat to be the lake's work.
+idlemessages:
+- A pebble shifts under the lap of a small wave with a flat dry click.
+- A <ansi fg="mobname">gull</ansi> drops onto the driftwood log, considers you, and lifts away.
+- One of the crab traps creaks faintly as a draught moves through the row.
+- The lake exhales a single small wave that runs to your boots and recedes.
+- A faint splash a stone's-throw out marks a fish coming up after a bug.
+spawninfo:
+- mobid: 346
+  cooldown: 300 rounds

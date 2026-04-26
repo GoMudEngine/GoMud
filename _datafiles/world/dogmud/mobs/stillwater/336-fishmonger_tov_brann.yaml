@@ -1,0 +1,51 @@
+mobid: 336
+zone: Stillwater
+behavior_archetype: noncombat_shopkeeper
+statpool: 58
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+groups:
+  - humanoid
+  - merchant
+idlecommands:
+  - 'emote rearranges a tray of fish on chipped ice, nudging each one
+    into a tighter row'
+  - ''
+  - 'emote calls out to no one in particular, "Fresh catch, pulled this
+    morning!"'
+  - ''
+  - 'emote wraps a parcel of fish in rush-paper with practiced speed'
+  - ''
+activitylevel: 14
+character:
+  name: fishmonger Tov Brann
+  description: |
+    A compact, quick-eyed man who smells permanently of brine and cold
+    water. Tov has worked the lakefront stall since he was old enough to
+    carry a crate, and he knows which boats came in full and which came in
+    light before the dock master does. His hands never stop -- sorting,
+    wrapping, passing coin -- and his patter is cheerful even when the
+    catch is poor. He sells freshwater clam and raw fish from the
+    morning haul. Business is thin lately, with half the nets coming
+    back torn.
+  speciesid: 1
+  gold: 150
+  stats:
+    dexterity:
+      training: 10
+    charisma:
+      training: 8
+    perception:
+      training: 6
+  shop:
+    - itemid: 40058
+      quantity: 5
+      quantitymax: 10
+      price: 10
+    - itemid: 40014
+      quantity: 5
+      quantitymax: 10
+      price: 1

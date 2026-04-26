@@ -1,0 +1,76 @@
+roomid: 4139
+zone: Stillwater
+title: Tannery Shed
+description: >
+  A long low timber shed built apart from the residential
+  cottages — the smell explains the distance, sharp with
+  oak-bark tannin and the underlying organic note of
+  curing hide that the Stillwater wind never quite carries
+  away. Stretched <ansi fg="itemname">hides</ansi> hang on
+  upright wooden frames along the western wall in
+  graduated stages of cure, from raw fresh-skinned at one
+  end to fully tanned russet leather at the other. A long
+  <ansi fg="itemname">vat</ansi> of tannin solution
+  dominates the centre of the shed, the surface dark with
+  oak-bark steeped to its working strength. A
+  <ansi fg="itemname">scraping bench</ansi> against the
+  northern wall holds the half-fleshed lake-eel hide that
+  the cave-divers brought in last week — the latest in a
+  long row of unusual hides Garth Peltman has been quietly
+  building a private market for.
+biome: city
+coord:
+  x: -19
+  y: 6
+  z: 0
+exits:
+  south:
+    roomid: 4137
+  north:
+    roomid: 4142
+  west:
+    roomid: 4141
+nouns:
+  hides: A row of stretched hides on upright wooden
+    frames along the western wall, in graduated stages
+    of cure — the freshest at the southern end still
+    bearing flecks of fat, the next pale and salted
+    and waiting for the vat, the next steeping
+    indirectly under wet cloths, and the fully cured
+    russet leather at the northern end ready to roll.
+    Most are common hides — sheep, goat, a small calf
+    — but several at the back are the dark mottled
+    skin of mutated lake creatures that the
+    cave-divers occasionally bring in.
+  vat: A long timber vat of dark tannin solution
+    dominates the shed's centre — the working bath
+    where the salted hides go to take the bark's
+    dye and become leather. A long-handled wooden
+    paddle leans against the rim. The tannin smell
+    is strongest right here.
+  scraping bench: A long wooden bench against the
+    northern wall, the surface dark with old work
+    and slightly hollowed in the centre where the
+    fleshing-knife is most often drawn. A
+    half-fleshed mottled lake-eel hide is currently
+    pinned to the bench, the fleshing only partly
+    done — Garth's afternoon work, set aside when
+    the bell rang for noon.
+  tools: A row of fleshing-knives, scrapers, and
+    bone-handled awls hang from leather loops above
+    the scraping bench. The blades are kept honed
+    and the handles kept oiled. A separate row holds
+    the finer tools for the unusual hides — needles,
+    delicate scrapers, a small set of bone files.
+  paddle: A long-handled wooden paddle leans against
+    the vat for stirring the tannin solution and for
+    lifting the hides during their slow steep. The
+    business end is dark with years of use; the
+    handle is wrapped in a tight binding of waxed
+    leather where the tanner grips it.
+idlemessages:
+- A drop falls from one of the steeping hides into a small puddle on the floor.
+- The tannin vat is briefly stirred by the paddle, then settles back to a dark mirror.
+- A breeze moves through the open door and the smell sharpens momentarily.
+- A hide on its frame creaks softly as the wood expands in the day's warming.
+- A wooden tool is set down on the scraping bench with a small careful tap.

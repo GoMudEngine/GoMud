@@ -1,0 +1,79 @@
+roomid: 4141
+zone: Stillwater
+title: Sluice Pond
+description: >
+  A wide quiet <ansi fg="itemname">pond</ansi> opens out
+  above the watermill where the creek pools behind a
+  low timber sluice-gate before being diverted to drive
+  the water-wheel below. The water is glass-still in
+  fair weather, mirroring the sky and the line of
+  willows along the western bank. A wooden
+  <ansi fg="itemname">sluice gate</ansi> at the southern
+  end controls the flow to the mill, raised half a
+  hand's breadth at the moment to keep the wheel
+  turning at a working pace. Closer to the bank, a
+  small accumulation of dark heavy nodules glints under
+  the shallow water — <ansi fg="itemname">lake iron</ansi>,
+  precipitated out by some process of the marsh and the
+  creek's slow movement, the kind of forage the smith
+  in town pays a premium for.
+biome: water
+coord:
+  x: -20
+  y: 6
+  z: 0
+exits:
+  south:
+    roomid: 4136
+  north:
+    roomid: 4143
+  east:
+    roomid: 4139
+nouns:
+  pond: A wide quiet pond perhaps thirty paces across,
+    fed from above by the creek's upper reaches and
+    drained from below through the sluice-gate to
+    the mill. In fair weather the surface is glass-
+    still and mirrors the sky perfectly; in wind
+    the surface breaks into small bright wavelets.
+    The water is clean and safe to drink and several
+    of the cottages haul their drinking water from
+    here.
+  sluice gate: A simple wooden sluice-gate at the
+    southern end of the pond, raised and lowered by
+    a hand-crank on the bank. The miller's son
+    adjusts it twice daily to keep the wheel below
+    turning at a working pace. The gate is currently
+    raised half a hand's breadth — the steady working
+    setting.
+  lake iron: A small accumulation of dark heavy nodules
+    glints under the shallow water near the eastern
+    bank — lake-iron, precipitated out of the marsh
+    water by some slow process the smiths understand
+    better than the alchemists. Each nodule is the
+    size of a knucklebone or smaller and weighs
+    surprisingly heavy in the hand. The smith in
+    town pays a premium for a sack of these; she uses
+    them in fine work where ordinary iron-stock
+    will not serve.
+  willows: A line of grey-barked willows along the
+    western bank lean over the water, leaves silvering
+    in any breeze. The bark of these particular
+    willows is harvested by the healer for stronger
+    medicines than the marsh-willow at the foreshore
+    — the pond willows take up more of the iron from
+    the water and the bark becomes correspondingly
+    more potent.
+  bank: A grassy bank slopes gently down to the
+    water's edge on the eastern and southern sides,
+    worn into a small clear path by the comings and
+    goings of those who haul water from here. A
+    small flat slab of stone serves as a kneeling
+    pad at the water-edge; an iron crook drives into
+    the bank beside it for hanging a bucket.
+idlemessages:
+- The pond's surface is perfectly still, then a single ring expands from a fish coming up after a bug.
+- The sluice gate's flow trickles steadily over its top edge with a low constant murmur.
+- A willow leaf drops onto the pond and drifts slowly south toward the gate.
+- A pair of <ansi fg="mobname">dippers</ansi> chase each other across the eastern bank and are gone.
+- The wind stirs the pond's surface into small bright wavelets, then drops and the surface settles.

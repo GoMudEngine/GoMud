@@ -1,0 +1,66 @@
+roomid: 4120
+zone: Stillwater
+title: Lake Path Bend
+description: >
+  The path narrows to a single-file passage where the
+  lakeshore is pinched between the open water and a low
+  basalt <ansi fg="itemname">ledge</ansi> rising twice a
+  human's height on the landward side. The ground
+  underfoot turns from pebbled strand to bare wet stone
+  scoured by the lake's higher seasons. A long
+  driftwood <ansi fg="itemname">log</ansi> wedges across
+  the lake-side of the path here, a slip-or-step decision
+  that locals know to navigate without thinking. East,
+  the basalt ledge curves out to meet the water and a
+  dark slot opens at its base — the cave the constabulary
+  has placed a bounty on.
+biome: water
+coord:
+  x: -15
+  y: 6
+  z: 0
+exits:
+  west:
+    roomid: 4119
+  south:
+    roomid: 4118
+  east:
+    roomid: 4121
+nouns:
+  ledge: A low basalt ledge rising twice a human's
+    height on the landward side of the path, the rock
+    dark and faintly glistening where lichen clings.
+    The lichen is what gives the air here its faint
+    mineral smell. Old crampon-marks scar the ledge
+    here and there — climbers, or someone with reason
+    to keep their hands free.
+  log: A long grey driftwood log wedges across the
+    lake-side of the path, the wood worn glass-pale
+    and slick when wet. You can step over it without
+    thinking once you've done it once; the first time,
+    most travelers test their balance on the wet stone
+    underneath before committing.
+  path: The path narrows to single-file here, the
+    ground turning from pebbled strand to bare wet
+    stone scoured smooth by the lake's higher
+    seasons. Boot-prints and small clawed tracks run
+    along the same line, the smaller marks fresher
+    than they should be.
+  water: The lake comes right to the path's edge here,
+    the bottom dropping off quickly into deeper darker
+    water. A few stones of broken basalt show just
+    below the surface where the ledge has shed pieces
+    over the years.
+  cave: Visible east where the basalt ledge curves
+    out to meet the water — a dark slot at the base
+    of the rock, half-flooded, just wide enough for
+    a person to enter at a stoop. The constabulary
+    has placed a bounty on whatever has been
+    savaging the fishing nets, and most of the town
+    believes it lives in there.
+idlemessages:
+- A small wave reaches the wet stone underfoot and runs back with a hiss.
+- Wind through the basalt ledge above produces a low brief whistle.
+- A piece of broken basalt clicks somewhere along the strand to the west.
+- A <ansi fg="mobname">water-rat</ansi> darts along the foot of the ledge and is gone.
+- The smell of cool wet stone strengthens briefly as the breeze shifts toward the cave.

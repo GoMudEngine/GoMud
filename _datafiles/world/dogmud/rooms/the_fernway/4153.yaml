@@ -1,0 +1,54 @@
+roomid: 4153
+zone: The Fernway
+title: Fernway, Western Trailhead
+description: >
+  The path widens again here, and the bracken pulls back to
+  let the open road through. Ahead, the country opens out
+  into rolling pasture and hedgerow — the cultivated fields
+  the North Road runs through, with the smell of cut hay
+  and grazing carrying back on the wind. A weathered cedar
+  <ansi fg="itemname">trail marker</ansi> twin to the one
+  at the Fernway's eastern end stands at the path's mouth,
+  its painted arrow pointing back the way you came toward
+  ASHWICK. A patch of late
+  <ansi fg="itemname">elderberry</ansi> in heavy white
+  bloom dominates the trailhead's southern verge.
+biome: forest
+coord:
+  x: -15
+  y: -13
+  z: 0
+exits:
+  east:
+    roomid: 4152
+  west:
+    roomid: 4038
+    zone: North Road
+nouns:
+  trail marker: A weathered cedar post twin to the one at
+    the Fernway's eastern end, the painted arrow pointing
+    back the way you came toward ASHWICK. The destination
+    numeral has long faded out. Travelers add their thumb-
+    smudges to the post in passing — the same small
+    habit, the same patient cumulative mark.
+  elderberry: A patch of mature elderberry occupies the
+    southern verge of the trailhead, the broad creamy
+    flower-heads heavy in late bloom. Foragers gather
+    the flowers for cordial in early summer and the
+    berries for jam in autumn. The healer in Stillwater
+    pays well for either, in season.
+  pasture: Beyond the trailhead, the country opens into
+    rolling pasture and hedgerow — the cultivated fields
+    the North Road runs through, sheep grazing in the
+    middle distance and a wooden farmhouse roof
+    visible perhaps a furlong west. The smell of cut
+    hay carries on the wind from somewhere closer.
+  road: The North Road itself begins where the Fernway
+    ends — a wider track of packed earth and gravel
+    visible past the trailhead, running west through
+    open country toward the lake-town beyond.
+idlemessages:
+- A bumblebee works its slow careful way through the elderberry flowers.
+- A breeze brings the smell of cut hay briefly across the trailhead from the west.
+- A <ansi fg="mobname">sparrow</ansi> drops onto the trail-marker, considers you, and lifts away.
+- The bracken behind you stirs in a longer gust and the green wall ripples.

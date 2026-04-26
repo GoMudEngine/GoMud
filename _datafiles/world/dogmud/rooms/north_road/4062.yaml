@@ -14,12 +14,14 @@ description: >
   this is as far as the wilds reach.
 biome: farmland
 coord:
-  x: -11
+  x: -18
   y: 0
   z: 0
 exits:
   south:
     roomid: 4061
+  north:
+    roomid: 4100
 nouns:
   smoke: Thin columns rise from the direction of Stillwater,
     bending north in the wind before dispersing. There are

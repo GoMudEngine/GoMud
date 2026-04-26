@@ -1,0 +1,42 @@
+mobid: 345
+zone: Stillwater
+behavior_archetype: noncombat_passive
+statpool: 36
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 1
+groups:
+  - humanoid
+  - priest
+idlecommands:
+  - 'emote sweeps the temple steps with a wide broom, working slowly
+    toward the door'
+  - ''
+  - 'emote waters the garden herbs with a clay pitcher, moving along the
+    row'
+  - ''
+  - 'emote pauses to look at the lake through the temple archway, then
+    returns to work'
+  - ''
+activitylevel: 10
+character:
+  name: temple acolyte Finn
+  description: |
+    A young man, perhaps sixteen, with an earnest face and the slightly
+    overwhelmed air of someone still learning how much there is to learn.
+    Finn has been Priest Seren's acolyte for eight months and approaches
+    every task with sincere effort and moderate competence. He is assigned
+    the outer work -- sweeping, watering, trimming lamp wicks -- while he
+    studies the liturgy in the evenings. He is friendly to visitors and
+    quick to fetch the priest if asked.
+  speciesid: 1
+  gold: 0
+  stats:
+    willpower:
+      training: 5
+    charisma:
+      training: 5
+    perception:
+      training: 4

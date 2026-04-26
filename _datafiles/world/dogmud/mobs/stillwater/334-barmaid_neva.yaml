@@ -1,0 +1,40 @@
+mobid: 334
+zone: Stillwater
+behavior_archetype: noncombat_passive
+statpool: 36
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 1
+groups:
+  - humanoid
+  - barmaid
+  - gossiper
+idlecommands:
+  - 'emote collects empty cups from a table, stacking them on one arm'
+  - ''
+  - 'emote wipes down a bench with a grey rag and moves on without slowing'
+  - ''
+  - 'emote glances out the window toward the lake, then back to her work'
+  - ''
+activitylevel: 12
+character:
+  name: barmaid Neva
+  description: |
+    A freckled young woman with lake-weathered skin and a practical bun that
+    is always slightly coming undone. Neva grew up on the water and took the
+    job at the Pike & Lantern two seasons ago when her father's boat needed
+    repairs and the family needed coin. She does the work without complaint
+    but has the distracted manner of someone whose heart is still out on the
+    water. She is generous with refills and stingy with conversation, which
+    most of the regulars seem to prefer.
+  speciesid: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 8
+    charisma:
+      training: 6
+    perception:
+      training: 5

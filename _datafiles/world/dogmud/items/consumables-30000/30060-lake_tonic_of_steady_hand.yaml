@@ -1,0 +1,21 @@
+itemid: 30060
+name: lake-tonic of steady hand
+namesimple: tonic
+description: A pale green tonic that smells sharply of lake-mint
+  and willow bark. A sip and the small tremors of fatigue and
+  fear go quiet — the world holds still long enough to land a
+  precise cut, thread a needle, or pick a lock that will not
+  forgive a fumble.
+type: potion
+subtype: drinkable
+uses: 1
+buffids:
+  - 82
+value: 18
+weight: 0.3
+toxicity: 10
+aging:
+  ferment_rounds: 800
+  peak_rounds: 4000
+  decay_rounds: 12000
+  spoil_rounds: 20000

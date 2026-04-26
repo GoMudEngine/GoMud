@@ -1,0 +1,114 @@
+roomid: 4103
+zone: Stillwater
+title: The Pike & Lantern
+description: >
+  Warm yellow lamplight, the smell of frying butter, and the
+  low murmur of voices fill the inn's common room — a long
+  low space under a beamed ceiling, with a long pine
+  <ansi fg="itemname">bar</ansi> running the northern wall
+  and a stone <ansi fg="itemname">hearth</ansi> on the
+  eastern that radiates heat across the room even at midday.
+  Half a dozen <ansi fg="itemname">tables</ansi> of mixed
+  sizes scatter the dark-plank floor, with a slate of the
+  day's fare hung beside the bar. The front door stands open
+  onto the inn's <ansi fg="itemname">yard</ansi> — a
+  packed-earth waiting space hung with weathered fishing-net
+  bunting and bordered by a hitching rail, a carved
+  <ansi fg="itemname">sign</ansi> of a leaping pike swaying
+  over the threshold. A plank
+  <ansi fg="itemname">stair</ansi> climbs the southwestern
+  corner toward the lodging loft above.
+biome: city
+station: cooking_fire
+coord:
+  x: -19
+  y: 3
+  z: 0
+exits:
+  east:
+    roomid: 4102
+  north:
+    roomid: 4106
+  west:
+    roomid: 4112
+  up:
+    roomid: 4104
+nouns:
+  bar: A long counter of pine planks, the surface kept oiled
+    and the iron foot-rail polished to a soft gleam. Behind
+    it, shelves of stoneware mugs and plates, and a row of
+    green glass bottles whose contents are best identified
+    by asking. A small bronze bell on a leather thong sits
+    where the innkeeper can ring it at closing time.
+  hearth: A wide stone fireplace, the back-stones dark with
+    a century of soot. An iron arm swings out over the fire
+    so the kettle can be lifted without singeing a sleeve;
+    a long-handled fish-pan rests on the grill above the
+    coals. The fire is kept low through the day and built
+    high for the evening trade. The whole eastern wall
+    radiates a settled warmth.
+  slate: A square of slate hung beside the bar, chalked
+    with the day's fare in a careful round hand — pike fried
+    in butter, chowder of clams and river-leek, bread fresh
+    this morning, an apple kept from autumn. The prices are
+    chalked in copper, not silver.
+  tables: Half a dozen wooden tables of mixed sizes scattered
+    across the room — small two-seaters near the bar, one
+    long bench-table by the hearth that fills up at
+    nightfall, and a corner table half-screened from the
+    rest where two people can talk without being part of
+    the room.
+  stair: A flight of plank stairs in the southwestern corner,
+    the treads worn deep down their middles. It climbs to a
+    half-landing where a window looks out on the yard, then
+    turns and climbs again to the lodging loft above.
+  kitchen: Behind the bar a short open arch leads to a
+    galley kitchen, glimpsed in flashes when the cook moves
+    — a long counter, a row of hanging copper pots, the
+    flicker of the cooking-fire's reflection on the
+    stonework. The smell of butter and onion is constant.
+  yard: Through the open front door, the inn's yard is
+    visible — packed earth gone gravelled in patches,
+    bordered by a low timber hitching rail along its
+    northern edge. A long rectangle of weathered tan
+    fishing-net is strung between the eaves and an iron
+    post at the yard's western corner, dotted with cork
+    floats and small brass bells that tink in any breeze.
+    A muddy wagon-track leads off west to the stable yard.
+  hitching rail: Visible through the open door — a length
+    of peeled birch-trunk set into iron sleeves at either
+    end, chest-high. Three iron rings are driven into the
+    upper face at different heights — one sized for pony,
+    two for working horses. The bark has been rubbed away
+    to pale bare wood at the rope-line, polished almost
+    glassy in places.
+  net bunting: Visible through the open door — a rectangle
+    of weathered tan fishing-net strung between the inn's
+    eaves and a tall iron post at the yard's western
+    corner. Bits of cork float and small brass bells are
+    knotted into the meshes at random. Travelers who ask
+    are told it was hung for a wedding "before the old
+    constable's time" and that no one now wants to be the
+    one to take it down.
+  sign: Visible above the open door — a weathered plank of
+    cedar carved with a leaping pike, the painted scales
+    long faded and the lettering almost gone. THE PIKE &
+    LANTERN can still be made out by a careful reader, in
+    script that was probably once handsome.
+  door: The inn's main door, propped open in fair weather
+    with a smooth river-stone the size of a fist. The frame
+    above it bears the carved leaping-pike sign; through
+    the opening, the yard and the road beyond.
+idlemessages:
+- A log shifts in the hearth, sending up a small puff of sparks.
+- Someone at the corner table laughs softly at a joke nobody else can hear.
+- A bell on the net bunting in the yard tinks faintly as the wind catches it.
+- The kettle on the iron arm begins to mutter — not yet a whistle.
+- A door bangs open in the back kitchen and a tray of empty mugs is carried out.
+- The smell of frying butter strengthens as the cook turns a fillet in the pan.
+- Hooves clop across the yard outside — a rider returning from the western lane.
+spawninfo:
+- mobid: 333
+  cooldown: 600 rounds
+- mobid: 334
+  cooldown: 300 rounds

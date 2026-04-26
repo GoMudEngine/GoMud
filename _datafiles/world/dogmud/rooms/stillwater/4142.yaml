@@ -1,0 +1,77 @@
+roomid: 4142
+zone: Stillwater
+title: Travelers' Camp
+description: >
+  A flat trampled <ansi fg="itemname">clearing</ansi> just
+  outside the town's north gate, where wagon parties
+  paused for years now have worn the grass to bare earth
+  in three or four predictable circles. Two
+  <ansi fg="itemname">fire rings</ansi> of fieldstone are
+  spaced along the clearing's edge, each holding a bed of
+  cold grey ash with a flat stone at the lip for cooking.
+  An old wooden <ansi fg="itemname">hitching post</ansi>
+  stands at the southern end, iron rings driven into its
+  side at three different rope heights. A peddler's
+  painted <ansi fg="itemname">wagon</ansi> is currently
+  parked at the western edge of the clearing — a
+  high-walled cart of seasoned timber with shutters that
+  unfold into a small selling counter, hitched to a quiet
+  grey mule cropping the verge.
+biome: plains
+coord:
+  x: -19
+  y: 7
+  z: 0
+exits:
+  south:
+    roomid: 4139
+  west:
+    roomid: 4143
+  southeast:
+    roomid: 4111
+nouns:
+  clearing: A flat trampled clearing of perhaps fifty
+    paces across, the grass worn to bare earth in
+    three or four predictable circles where wagon
+    parties have stopped year after year. The
+    underlying soil is hard-packed and shows years of
+    boot and wheel marks. The townspeople do not
+    cross into the clearing without asking; the camp
+    is by long custom the travelers' own ground for
+    the duration of their stay.
+  fire rings: Two rings of fieldstone spaced along
+    the clearing's edge, each holding a bed of cold
+    grey ash with a flat stone at the lip that
+    serves as a seat or a cooking surface. The
+    nearest ring's ash is fresh enough to still be
+    powdery; the further is wind-scattered and
+    several days old.
+  hitching post: A peeled-log hitching post at the
+    clearing's southern end, set deep into the ground
+    and braced with two angled stakes. Three iron
+    rings are driven into its upper half at different
+    rope heights — for pony, for working horse, for
+    draft animal. The bark is worn pale at the
+    rope-line.
+  wagon: A high-walled peddler's cart of seasoned
+    timber, the boards painted in a faded blue and
+    green pattern that was once cheerful, the
+    shutters along the southern side unfolding into a
+    selling counter currently raised in fair weather.
+    Inside, glimpsed through the small back window —
+    racks of small goods, knives in oilcloth, spools
+    of ribbon, jars of southern preserves, a small
+    bin of metal needles.
+  mule: A quiet grey mule is hitched to a long lead at
+    the wagon's rear, currently cropping the verge
+    with patient indifference to your presence. The
+    harness is well-kept; the brass buckles have been
+    polished within the last month. A small wooden
+    name-plate on the harness reads "Patience" in
+    the same painted hand as the wagon.
+idlemessages:
+- A small breeze stirs the cold ash in the nearest fire ring and lifts a thin grey thread.
+- The mule shifts its weight against the hitch and blows a long breath through its nose.
+- The wagon's painted shutters creak softly in a stronger gust.
+- A loose wagon-canvas flaps once and settles.
+- The smell of road-dust strengthens briefly as the wind shifts to the west.

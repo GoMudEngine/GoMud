@@ -13,7 +13,7 @@ description: >
   maintained, nothing is new.
 biome: farmland
 coord:
-  x: -13
+  x: -20
   y: -9
   z: 0
 exits:

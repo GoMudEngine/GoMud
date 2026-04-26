@@ -1,0 +1,43 @@
+mobid: 349
+zone: Stillwater
+behavior_archetype: noncombat_passive
+statpool: 30
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+groups:
+  - humanoid
+  - gossiper
+idlecommands:
+  - 'emote rocks slowly in her chair, watching the lane with half-lidded
+    eyes'
+  - ''
+  - 'emote sorts a bundle of dried herbs on her knee, tying them off in
+    small bundles'
+  - ''
+  - 'emote calls out a greeting to someone passing in the lane'
+  - ''
+  - 'emote adjusts her shawl and resumes watching the street'
+  - ''
+activitylevel: 6
+character:
+  name: old cottager Gyda
+  description: |
+    A small, round woman of considerable age who appears to have taken up
+    permanent residence on her front porch. Gyda has lived on Cooper's Lane
+    for as long as anyone can remember and knows the history of every house
+    on it. She is openly curious about strangers and will ask direct questions
+    without apology. She also volunteers information freely -- who lives where,
+    who was seen talking to whom, and who has been behaving oddly since the
+    lake trouble started. Her hearing is sharper than it looks.
+  speciesid: 1
+  gold: 0
+  stats:
+    perception:
+      training: 14
+    charisma:
+      training: 8
+    willpower:
+      training: 6

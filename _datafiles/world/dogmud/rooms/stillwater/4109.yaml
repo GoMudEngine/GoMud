@@ -1,0 +1,60 @@
+roomid: 4109
+zone: Stillwater
+title: North Square
+description: >
+  A second, smaller square — half the size of the lakefront
+  one, paved in the same blue-grey
+  <ansi fg="itemname">flagstone</ansi> but feeling much more
+  domestic. A <ansi fg="itemname">dovecote</ansi> on a tall
+  wooden post stands at the center, the wood weathered
+  silver, the slate roof streaked white with bird droppings.
+  The square is hemmed by the back walls of shops on its
+  southern side and the stone faces of small
+  <ansi fg="itemname">houses</ansi> on the others. A worn
+  flagstone path leads east to the constabulary's front
+  door; the road continues north to the gate.
+biome: city
+coord:
+  x: -18
+  y: 5
+  z: 0
+exits:
+  south:
+    roomid: 4105
+  north:
+    roomid: 4111
+  east:
+    roomid: 4110
+  west:
+    roomid: 4137
+nouns:
+  dovecote: A weathered silver-grey wooden tower on a tall
+    post at the square's center, riddled with palm-sized
+    nesting holes. A dozen pigeons go in and out at any
+    given hour, and the slate roof is streaked white with
+    generations of droppings. A small ladder is bolted to
+    the post for the keeper's monthly cleaning.
+  pigeons: Half a dozen visible right now — pacing the
+    cote's small landing-rail, arguing over a perch, one
+    larger bird turning a slow circle in the air above
+    the roof. None of them seem concerned about your
+    presence.
+  flagstone: The same blue-grey paving as the lakefront
+    square below, but the wear pattern is different — a
+    clear path to the constabulary, another to the north
+    gate, another to a particular door on the western
+    side. Domestic traffic.
+  houses: Small stone-and-plank houses line the square on
+    its northern and western sides, their fronts facing
+    inward — neat shutters, painted doors, a hanging
+    basket of marsh-mint at one window. People live here,
+    but the square does not feel like theirs alone.
+idlemessages:
+- A pigeon launches from the dovecote with a sudden clap of wings.
+- A door on the western side opens, and a woman shakes out a rug into the square.
+- The pigeons squabble briefly on the dovecote's landing-rail and then settle.
+- Someone is humming through an open shutter — a fragment of a tune you almost recognize.
+- A dropped slate clatters somewhere on the constabulary's roof and is silent.
+spawninfo:
+- mobid: 353
+  cooldown: 300 rounds

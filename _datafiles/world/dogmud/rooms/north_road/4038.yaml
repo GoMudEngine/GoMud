@@ -12,13 +12,13 @@ description: >
   somewhere downwind.
 biome: farmland
 coord:
-  x: -9
+  x: -16
   y: -13
   z: 0
 exits:
   east:
-    roomid: 4014
-    zone: Marches Spur Road
+    roomid: 4153
+    zone: The Fernway
   west:
     roomid: 4039
 nouns:

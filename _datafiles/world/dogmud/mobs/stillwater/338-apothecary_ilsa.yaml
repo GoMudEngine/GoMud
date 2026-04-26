@@ -1,0 +1,89 @@
+mobid: 338
+zone: Stillwater
+behavior_archetype: noncombat_shopkeeper
+statpool: 72
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+groups:
+  - humanoid
+  - merchant
+  - apothecary
+idlecommands:
+  - 'emote crushes dried marsh-willow bark with a stone pestle, releasing
+    a faint green smell'
+  - ''
+  - 'emote holds a glass vial up to the light and checks for cloudiness'
+  - ''
+  - 'emote labels a small clay jar in a careful hand and sets it on the
+    shelf with the others'
+  - ''
+activitylevel: 12
+crafter: true
+crafterskill: alchemy
+crafterrecipeids:
+  - healing-salve
+  - stamina-tonic
+  - minor-antidote
+  - lake-tonic-of-steady-hand
+  - herbal-tea
+  - clarity-tonic
+crafterrestockmaterials:
+  - 40006
+  - 40043
+  - 40056
+  - 40057
+character:
+  name: apothecary Ilsa
+  description: |
+    A thin woman in her middle years with herb-stained fingers and reading
+    spectacles pushed up into greying hair. Ilsa trained under an apothecary
+    in Thornwall for seven years before coming back to Stillwater, and she
+    has been the town's healer ever since -- treating fevers, setting bones,
+    and sending people away with potions she mixes herself from lake plants.
+    She is brisk and competent, with the quiet impatience of someone who
+    sees too many patients who waited too long to seek help. The lake mint
+    she uses in her tonics grows in the shallows, and she has been short of
+    it since the cave trouble started.
+  speciesid: 1
+  gold: 200
+  skills:
+    alchemy: 12
+  stats:
+    perception:
+      training: 12
+    willpower:
+      training: 8
+    dexterity:
+      training: 8
+  shop:
+    - itemid: 30036
+      quantity: 0
+      quantitymax: 0
+      price: 8
+    - itemid: 30037
+      quantity: 0
+      quantitymax: 0
+      price: 8
+    - itemid: 30060
+      quantity: 0
+      quantitymax: 0
+      price: 12
+    - itemid: 40006
+      quantity: 0
+      quantitymax: 0
+      price: 1
+    - itemid: 40043
+      quantity: 0
+      quantitymax: 0
+      price: 1
+    - itemid: 40056
+      quantity: 3
+      quantitymax: 8
+      price: 2
+    - itemid: 40057
+      quantity: 3
+      quantitymax: 8
+      price: 2

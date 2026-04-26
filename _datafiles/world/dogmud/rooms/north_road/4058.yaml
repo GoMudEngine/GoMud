@@ -12,7 +12,7 @@ description: >
   forest closes in and the light goes green and close.
 biome: forest
 coord:
-  x: -11
+  x: -18
   y: -3
   z: 0
 exits:

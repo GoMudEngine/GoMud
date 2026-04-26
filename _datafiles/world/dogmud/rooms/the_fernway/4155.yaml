@@ -1,0 +1,60 @@
+roomid: 4155
+zone: The Fernway
+title: Heron Pond
+description: >
+  The faint trail down from Heron Reach ends at the soft
+  southern bank of the <ansi fg="itemname">pond</ansi>
+  itself — a wider, more sheltered view of the same dark
+  still water you saw from above. The bottom drops away
+  quickly here; the water is deeper than at the trail-side
+  view and darker still. Stands of
+  <ansi fg="itemname">cattails</ansi> and bullrushes line
+  the bank in dense clumps, and a flash of bright green
+  along the waterline marks
+  <ansi fg="itemname">marsh chamomile</ansi> in low
+  flower. A flat <ansi fg="itemname">stone</ansi> by the
+  bank has been worn smooth by generations of fishermen
+  and forager's knees.
+biome: swamp
+coord:
+  x: -12
+  y: -14
+  z: 0
+exits:
+  north:
+    roomid: 4150
+nouns:
+  pond: The same backwater you glimpsed from the trail
+    above, but deeper and darker from this lower
+    vantage. The bottom drops away within a stride of
+    the bank. Pale things move occasionally in the
+    deeper water — small fish, perhaps; perhaps
+    something larger. A long-legged shadow at the
+    far edge resolves on second look as the heron from
+    the trail above.
+  cattails: Dense stands of cattails and bullrushes
+    line the southern bank in patient clumps, the
+    seedheads fat and brown and ready to release their
+    cottony down. The same plant the tailors in
+    Stillwater speak of when they describe their
+    cattail-down forage — but here in greater plenty
+    than the lake's foreshore offers, and unworked.
+  marsh chamomile: A flash of bright green along the
+    waterline marks marsh chamomile in low flower —
+    smaller than garden chamomile, with the same
+    daisy-like white-and-yellow blossoms but a sharper
+    cleaner smell. Healers use it in calming infusions
+    for nervous patients and for anyone who cannot
+    sleep.
+  stone: A flat stone the size of a small chair has
+    been worn smooth at its top by generations of
+    fishermen and foragers kneeling to reach the
+    water. A pair of small initials carved into the
+    stone's southern face are too weathered to read
+    cleanly — though the patient hand that carved
+    them is unmistakable across the years.
+idlemessages:
+- The pond's surface ripples once at its center, the source invisible.
+- A bullfrog throats a long bass note from the cattails.
+- A breeze rustles the bullrush-heads with a soft dry sound.
+- A dragonfly hovers briefly over the water and zips away.

@@ -1,0 +1,67 @@
+roomid: 4105
+zone: Stillwater
+title: Tinder & Tackle
+description: >
+  Pitch and twine and the dry-paper smell of stored
+  provisions — the general store fills the western half of
+  a long timber building, the bait-and-tackle counter taking
+  up the eastern half where the lake-wind can carry the
+  smell of fish-scraps out the back. A wall of
+  <ansi fg="itemname">tackle</ansi> hangs on iron pegs from
+  floor to ceiling along the eastern wall, hooks of every
+  gauge sorted into shallow cedar drawers. The western wall
+  holds the dry stock — sacks of meal, jars of preserves,
+  ropes of dried apple, oilcloth-wrapped salt. A scarred
+  plank <ansi fg="itemname">counter</ansi> divides the
+  room, the <ansi fg="itemname">slate</ansi> behind it
+  scrawled over with the current prices.
+biome: city
+coord:
+  x: -18
+  y: 4
+  z: 0
+exits:
+  south:
+    roomid: 4102
+  north:
+    roomid: 4109
+  west:
+    roomid: 4106
+nouns:
+  tackle: A wall of fishing gear hung on iron pegs from
+    floor to ceiling — hooks of half a dozen gauges sorted
+    into shallow cedar drawers, spools of waxed linen
+    line, lead sinkers in graduated sizes, a rack of
+    gaff-poles in the corner. Most of it is plain working
+    stock; one rack near the counter holds finer hooks of
+    bright copper-wire, kept behind a small brass screen.
+  counter: A long plank counter scarred by years of
+    handling — a deep gouge near the eastern end where a
+    knife slipped, a darker stain where someone spilled
+    tar and the surface never quite recovered. The slate
+    behind it is chalked with current prices in a small,
+    neat hand.
+  provisions: Sacks and jars and oilcloth bundles stacked
+    along the western wall — meal, salt-pork, dried apple,
+    hard biscuit, preserves of last summer's berries in
+    dark glass jars. Each item has its price chalked on a
+    small slate hung above its bin.
+  slate: A square of slate hung behind the counter,
+    chalked over with the day's prices in a small careful
+    hand. Bait-fish, hooks by the dozen, line by the spool,
+    salt by the pound. The numbers suggest a shopkeeper
+    who knows her margins.
+  shutters: Wide hinged shutters fold open along the
+    storefront when the shop is doing business, letting
+    the lake-light in and the smell of dried herbs out.
+    They are propped on iron hooks against the outer
+    wall.
+idlemessages:
+- The scrape of a chalk-stub against slate as someone updates a price.
+- A spool of waxed line ticks once against another, then is still.
+- The smell of the lake briefly strengthens as the back door opens and shuts.
+- A small brass <ansi fg="itemname">bell</ansi> on the counter pings as something brushes it.
+- Outside, a wagon creaks past on the road — the driver does not stop.
+spawninfo:
+- mobid: 341
+  cooldown: 600 rounds

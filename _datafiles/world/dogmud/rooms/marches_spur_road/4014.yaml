@@ -19,8 +19,8 @@ exits:
   north:
     roomid: 4013
   west:
-    roomid: 4038
-    zone: North Road
+    roomid: 4147
+    zone: The Fernway
   east:
     roomid: 4015
     zone: Ashwick

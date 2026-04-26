@@ -1,0 +1,95 @@
+roomid: 4110
+zone: Stillwater
+title: Constabulary
+description: >
+  A low building of mortared lake-stone with a slate roof
+  and an iron-banded door propped open in fair weather. The
+  air inside smells of old paper, ink, and the lake-cool
+  draft from a high western <ansi fg="itemname">window</ansi>.
+  A long pine <ansi fg="itemname">counter</ansi> divides the
+  room front-to-back, and behind it a heavy iron
+  <ansi fg="itemname">strongbox</ansi> sits bolted to the
+  floor in the corner. The northern wall is a layered
+  patchwork of <ansi fg="itemname">postings</ansi> — wanted
+  notices, bounty offers, public-record entries, faded
+  curling sheets that no one has been bothered to take down.
+  The back of the room is closed off by a row of thick iron
+  <ansi fg="itemname">bars</ansi>, with a single barred door
+  at their center, separating the office from a small
+  one-person <ansi fg="itemname">cell</ansi> furnished with
+  a plank bench, a wooden slop bucket with a fitted lid, and
+  clean straw on a packed-earth floor.
+biome: city
+coord:
+  x: -17
+  y: 5
+  z: 0
+exits:
+  west:
+    roomid: 4109
+nouns:
+  counter: A long pine counter dividing the room
+    front-to-back, the surface kept oiled and the public
+    side stained dark by generations of leaning elbows.
+    A bell sits within easy reach for ringing the
+    constable from the back room. Two careful chalk-marks
+    on the counter's edge mark the height where
+    complainants are supposed to stop pressing their case.
+  strongbox: A heavy iron coffer the size of a large keg,
+    bolted through its bottom into the planking and
+    through the planking into a stone slab below. The lid
+    takes two keys, both of which the constable wears.
+    Confiscated goods, town funds, the occasional valuable
+    held as evidence.
+  postings: A thick layered patchwork of paper across the
+    northern wall — wanted notices, bounty offers,
+    public-record entries, bait-shop hours, a fresher
+    notice doubling the lake-cave bounty. The older sheets
+    curl at the corners and bleed through the newer in
+    damp weather. Some have been there long enough that
+    the wanted face is unrecognizable.
+  bars: A row of thick iron bars set vertically into stone
+    sockets at floor and ceiling, separating the front
+    office from the holding cell at the back of the
+    building. The barred door at their center takes a
+    single heavy key worn on the constable's belt. The
+    bars are polished smooth at hand-height by every drunk
+    and pickpocket the constable has ever housed here.
+  cell: A single small holding-cell behind the iron bars at
+    the back of the room — three walls of mortared
+    lake-stone cool to the touch even in summer, a wooden
+    plank bench long enough for a grown person to stretch
+    out on, a folded grey blanket at one end, and a wooden
+    slop bucket with a fitted lid in the corner. The floor
+    is packed earth strewn with clean straw. The cell is
+    usually empty. Usually. Faint scratches in the mortar
+    mark tally-counts and one carved fish from a previous
+    occupant's afternoon.
+  bench: Visible through the bars at the back of the
+    room — a long plank of weathered pine pegged to the
+    cell's back wall, wide enough to stretch out on and
+    worn smooth in the middle where every prisoner has
+    eventually given up and lain down. A folded wool
+    blanket sits at one end, coarse and clean and faintly
+    smelling of cedar.
+  slop bucket: Visible in the cell's far corner — a wooden
+    bucket with a tight-fitting lid. The lid takes a plain
+    iron handle that has been polished bright by use. The
+    constable empties it daily; on the rare occasions he
+    forgets, the cell's previous occupant tends to find
+    ways of reminding him.
+  window: A high western window, narrow and barred, set
+    just below the eaves. It lets in lake-light and a
+    steady cool draft, and is too small for a grown person
+    to climb through.
+idlemessages:
+- A page on the postings-wall lifts in the draft and settles back.
+- A scratchy-pen sound comes briefly from where the constable works at his ledger.
+- The strongbox's bolts settle with a small audible click as the floor shifts.
+- A horse passes outside, hooves slow on the flagstones.
+- The bell on the counter trembles once in the western draft, but does not ring.
+- Cool stone-air sighs out from behind the bars at the back of the room.
+- A piece of straw drifts across the cell's floor in a draft from the window.
+spawninfo:
+- mobid: 335
+  cooldown: 600 rounds

@@ -1,0 +1,18 @@
+id: lake-tonic-of-steady-hand
+name: Lake-Tonic of Steady Hand
+skill: alchemy
+skill_minimum: 18
+station: alchemy_bench
+time_rounds: 4
+ingredients:
+  - item_tag: marsh-willow-bark
+    quantity: 2
+  - item_tag: lake-mint
+    quantity: 3
+  - item_tag: bottle
+    quantity: 1
+output:
+  item_id: 30060
+  quantity: 1
+success_message: "You steep the willow bark to a clear pale broth and crush the mint leaves in at the last moment, then decant the tonic before the colour can fade. A lake-tonic of steady hand!"
+failure_message: "The mint releases its oil too quickly and the willow turns the brew grey and bitter. The tonic is wasted."

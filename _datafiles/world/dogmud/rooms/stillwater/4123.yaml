@@ -1,0 +1,89 @@
+roomid: 4123
+zone: Stillwater
+title: Temple of Stillwater
+description: >
+  The sound is the first thing — a steady soft trickle of
+  water from a dark stone <ansi fg="itemname">font</ansi>
+  set into the temple's western wall, the basin overflowing
+  in a thin sheet to a runnel below that returns the water
+  somewhere out of sight. The sanctuary is a single high
+  stone room with arched <ansi fg="itemname">windows</ansi>
+  set high in the eastern and northern walls and a worn
+  flagstone <ansi fg="itemname">mosaic</ansi> on the floor
+  depicting a leaping pike inside a circle. A simple stone
+  <ansi fg="itemname">altar</ansi> stands at the eastern
+  end with three white candles burning even at midday. A
+  narrow plank <ansi fg="itemname">stair</ansi> climbs the
+  southern wall to a small upper room. A side door north
+  leads into the healer's alcove; a door south opens onto
+  the herb garden behind.
+biome: city
+mapsymbol: '+'
+maplegend: Temple
+coord:
+  x: -14
+  y: 3
+  z: 0
+exits:
+  west:
+    roomid: 4122
+  north:
+    roomid: 4125
+  south:
+    roomid: 4124
+  up:
+    roomid: 4126
+nouns:
+  font: A dark stone basin set into the western wall,
+    waist-high, overflowing in a thin steady sheet to
+    a stone runnel below. The runnel returns the water
+    somewhere into the temple's foundation — the
+    spring beneath the building has fed the font for
+    longer than the present temple has stood. Pilgrims
+    dip their fingers in passing; some drink.
+  altar: A simple block of carved lake-stone at the
+    sanctuary's eastern end, draped in a length of
+    pale unbleached linen, three white beeswax
+    candles burning steadily in a row of iron holders.
+    A small offering-bowl at the altar's foot holds a
+    handful of copper coins and a few cut flowers.
+  candles: Three white beeswax candles burning steady
+    on the altar's iron holders, replenished by the
+    temple's acolyte at dawn and dusk so that the
+    flame is never out. The smell is faintly honey
+    beneath the deeper smell of the font water.
+  windows: Tall narrow arched windows set high in the
+    eastern and northern walls, glazed with small
+    panels of pale-green lake-glass that wash the
+    interior with a soft cool light. The eastern
+    windows brighten visibly at sunrise; the northern
+    pair lets in steadier indirect light through
+    most of the day.
+  mosaic: A worn flagstone mosaic covers the central
+    floor — a leaping pike enclosed in a simple
+    circle, the tiles laid generations ago in
+    blue-grey and bone-white slate. The pattern is
+    older than the current Chrysalis theology and
+    most of the temple's functionaries simply do not
+    discuss what it might once have meant.
+  stair: A narrow plank stair climbs the southern
+    wall to a small upper room — Mother Vasse the
+    pearl-carver's bench, by long-standing
+    arrangement with the temple. Worshippers leave
+    her alone and she leaves them alone, and the
+    arrangement suits both.
+  spring: The water source itself is somewhere
+    beneath the temple — pilgrims who have asked
+    are told only that the spring has fed the font
+    for as long as anyone remembers, and that the
+    present building sits where it does because the
+    spring sat there first.
+idlemessages:
+- The font's overflow runs in its steady soft sheet, the same sound it has always made.
+- A candle on the altar gutters once and recovers.
+- A worshipper enters quietly, kneels at the altar for a moment, and leaves the way they came.
+- The eastern windows brighten as a cloud passes off the sun outside.
+- A faint scrape of file-on-stone carries down from the upper room.
+spawninfo:
+- mobid: 344
+  cooldown: 600 rounds

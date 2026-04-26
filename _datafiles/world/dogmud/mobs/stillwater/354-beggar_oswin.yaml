@@ -1,0 +1,42 @@
+mobid: 354
+zone: Stillwater
+behavior_archetype: noncombat_passive
+statpool: 30
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote pulls his coat tighter and stares at the ground between his
+    feet'
+  - ''
+  - 'emote holds out a hand to a passerby and then lets it fall'
+  - ''
+  - 'emote shifts position against the wall and winces'
+  - ''
+  - 'emote watches the fishmonger stall with quiet, patient attention'
+  - ''
+activitylevel: 6
+character:
+  name: beggar Oswin
+  description: |
+    A thin man with a grey stubble beard and the sunken look of someone
+    who has been sleeping rough for a while. Oswin was a fisherman until
+    his boat took on water two seasons back and was not worth the repair.
+    Since then he has been doing odd jobs and not finding enough of them.
+    He is not aggressive and does not beg with drama -- just a hand out,
+    a brief moment of eye contact, and acceptance of whatever follows. He
+    knows the square and the waterfront well and is happy to talk if
+    someone has a spare coin and a moment.
+  speciesid: 1
+  gold: 0
+  stats:
+    perception:
+      training: 8
+    charisma:
+      training: 4
+    vitality:
+      training: 4

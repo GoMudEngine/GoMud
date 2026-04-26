@@ -1,0 +1,62 @@
+roomid: 4118
+zone: Stillwater
+title: Boat Rental Pier
+description: >
+  Three flat-bottomed <ansi fg="itemname">skiffs</ansi> are
+  drawn up at a short timber pier east of the net yard —
+  light shallow craft built for one or two persons, with
+  oars stowed inboard and a single small sail furled at the
+  mast. A small painted <ansi fg="itemname">sign</ansi>
+  nailed to the pier's outer post lists the day rate in
+  copper. A bronze <ansi fg="itemname">bell</ansi> hangs
+  from a wooden frame near the pier's landward end — the
+  way travelers summon the boatman from his cottage when he
+  is not at the pier himself. The water here is calm and
+  clear enough to count the gravel on the bottom.
+biome: water
+coord:
+  x: -15
+  y: 5
+  z: 0
+exits:
+  west:
+    roomid: 4117
+  north:
+    roomid: 4120
+nouns:
+  skiffs: Three flat-bottomed lake skiffs moored
+    bow-and-stern to the pier — light craft a single
+    person can row easily and a stronger wind will
+    push along under the small furled sail at each
+    mast. The hulls are dark with pitch, the gunwales
+    worn smooth. Each boat has its name carved into
+    the bow — Patience, Old Marda, and a third whose
+    name has been scratched out and not yet replaced.
+  sign: A small painted board nailed to the pier's
+    outer post listing the day rate in copper. The
+    boatman charges separately for fishing tackle and
+    for losing the boat, the second penalty
+    significantly steeper than the first.
+  bell: A bronze handbell hung from a wooden frame at
+    the pier's landward end, the rope worn pale where
+    travelers' hands have pulled it. A single ring
+    will bring the boatman from his nearby cottage
+    within a few minutes if he is at home; two rings
+    is the customary signal for an emergency on the
+    water.
+  pier: A short timber pier of weathered planks, the
+    fastening-pegs slightly proud where the wood has
+    swelled and shrunk through dozens of seasons. The
+    eastern end has a small ladder for reaching a
+    skiff at low water.
+  water: Calm and clear here at the pier's foot, the
+    lake's gravel bed visible perhaps two human-heights
+    down — small darting fish, a pale crayfish-shadow,
+    the occasional larger shape that resolves into a
+    pike if it holds still long enough to identify.
+idlemessages:
+- A skiff bumps gently against the pier with a hollow timber knock.
+- The bronze bell trembles in a stronger gust but does not ring.
+- A <ansi fg="mobname">heron</ansi> stands one-legged a stone's throw out, focused on the water.
+- The wind shifts and a longer wave runs down the pier with a soft slap.
+- One of the skiff's furled sails ripples briefly in a stronger gust.

@@ -1,0 +1,17 @@
+itemid: 30061
+name: stillwater lake chowder
+namesimple: chowder
+description: A steaming wooden bowl of pale chowder, thick with
+  freshwater clams, soft cubes of root vegetable, and a few green
+  flecks of lake-mint floating on the surface. It smells of the
+  lake on a fair morning and a kitchen on a cold one. The first
+  spoonful drives the chill out of the bones; the second puts it
+  back into your shoulders for whatever comes next.
+type: food
+subtype: edible
+uses: 1
+buffids:
+  - 42
+  - 43
+value: 12
+weight: 1.0

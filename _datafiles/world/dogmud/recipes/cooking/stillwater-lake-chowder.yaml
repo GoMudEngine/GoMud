@@ -1,0 +1,20 @@
+id: stillwater-lake-chowder
+name: Stillwater Lake Chowder
+skill: cooking
+skill_minimum: 12
+station: cooking_fire
+time_rounds: 4
+ingredients:
+  - item_tag: freshwater-clam
+    quantity: 3
+  - item_tag: wild-vegetables
+    quantity: 1
+  - item_tag: lake-mint
+    quantity: 1
+  - item_tag: water-flask
+    quantity: 1
+output:
+  item_id: 30061
+  quantity: 1
+success_message: "You shuck the clams over the pot, soften the root vegetables in the broth, and float the mint leaves in at the last moment. The chowder smells of the lake on a fair morning. Stillwater lake chowder!"
+failure_message: "The clams oversteep and the chowder turns grey and stringy. The pot is ruined."

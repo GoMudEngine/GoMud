@@ -1,0 +1,16 @@
+itemid: 40059
+name: lake-iron nodule
+namesimple: nodule
+description: A dark heavy lump the size of a knucklebone,
+  precipitated out of the marsh-water by some slow process the
+  smiths understand better than the alchemists. It weighs
+  surprisingly heavy in the hand and the surface is faintly
+  bumpy, almost beaded. Smiths pay a premium for these — the
+  iron drawn out of them is finer-grained and holds an edge
+  longer than ordinary stock.
+type: object
+subtype: mundane
+component_tag: lake-iron-nodule
+weight: 0.4
+value: 60
+is_component: true

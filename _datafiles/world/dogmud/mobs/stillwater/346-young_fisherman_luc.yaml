@@ -1,0 +1,41 @@
+mobid: 346
+zone: Stillwater
+behavior_archetype: noncombat_passive
+statpool: 42
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 1
+groups:
+  - humanoid
+idlecommands:
+  - 'emote casts a line out over the shallows with a practiced flick of
+    the wrist'
+  - ''
+  - 'emote reels in slowly, watching the line with focused eyes'
+  - ''
+  - 'emote sits back on his heels and watches a small fish jump at the
+    surface'
+  - ''
+activitylevel: 10
+character:
+  name: young fisherman Luc
+  description: |
+    A lean young man with sun-darkened skin and paint-chipped boots that
+    have seen every weather the lake produces. Luc is not quite twenty and
+    has been fishing the shallows since he could hold a rod. He is easy
+    company, direct in the manner of someone who has not yet learned to be
+    guarded, and genuinely enthusiastic about the lake and its moods. He
+    has been keeping to the beach lately rather than the deeper water, which
+    he will tell you plainly is because the cave currents have been strange
+    and the old fisherman says to watch the tides.
+  speciesid: 1
+  gold: 5
+  stats:
+    dexterity:
+      training: 8
+    perception:
+      training: 7
+    vitality:
+      training: 5

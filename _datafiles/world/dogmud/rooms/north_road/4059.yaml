@@ -14,7 +14,7 @@ description: >
   else.
 biome: forest
 coord:
-  x: -10
+  x: -17
   y: -3
   z: 0
 exits:

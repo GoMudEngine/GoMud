@@ -1,0 +1,66 @@
+roomid: 4119
+zone: Stillwater
+title: Lakeshore North
+description: >
+  The shore opens out and the air goes a degree colder as
+  the wind comes off the open water unobstructed by docks
+  or buildings. The flagstone path gives way to a
+  pebbled <ansi fg="itemname">strand</ansi> of small dark
+  stones, with a low rocky <ansi fg="itemname">cairn</ansi>
+  raised at the path's bend by some long-passed pilgrim
+  marking the spot where the lake first comes into clear
+  view from the north. A grey <ansi fg="itemname">log</ansi>
+  of bleached driftwood lies beyond the high water. The
+  lake here is more itself — fewer skiffs, fewer voices,
+  more wind, more sky.
+biome: water
+coord:
+  x: -16
+  y: 6
+  z: 0
+exits:
+  south:
+    roomid: 4117
+  east:
+    roomid: 4120
+nouns:
+  strand: A narrow pebbled strand of small dark
+    water-rounded stones, sloping gently to the
+    waterline. The stones click and shift with each
+    small wave. Fewer footprints here than at the
+    southern beach — most of the town's fishing
+    happens off the docks; this stretch is quiet.
+  cairn: A small rocky cairn raised on a flat slab at
+    the path's bend, perhaps thirty stones tall, the
+    topmost ones placed recently. Pilgrim's work — the
+    lake is significant in the Chrysalis theology, and
+    travelers passing through sometimes add a stone
+    in thanks for the journey or in petition for the
+    one ahead. Several stones near the base are
+    inscribed with small names too weathered to read.
+  log: A long grey log of driftwood lies beyond the
+    high water, the bark long gone and the wood worn
+    glass-pale by the lake's working. Long enough to
+    sit on. Several other smaller pieces have washed
+    up around it — a small handful of someone's
+    afternoon's gathering, maybe.
+  view: From this stretch of shore the lake is more
+    itself than from anywhere south — open water to
+    the eastern horizon, the far shore a smudge of
+    dark on the haze, gulls moving high in slow
+    circles. To the south, the docks and the town
+    feel briefly small.
+  wind: The lake-wind comes off the open water here
+    unobstructed, colder by a degree or two than in
+    the sheltered stretches south, and carrying the
+    full weight of brackish-cool lake air. It is the
+    wind that tells you the lake is large.
+idlemessages:
+- A wave runs up the pebbled strand and recedes with a long dry click.
+- A <ansi fg="mobname">gull</ansi> turns a slow circle high overhead, calling once.
+- The wind gusts and a small flutter of grit lifts off the cairn's lower stones.
+- A piece of driftwood shifts somewhere along the strand and is still.
+- The lake exhales a longer cold breath that cuts briefly through your sleeves.
+spawninfo:
+- mobid: 350
+  cooldown: 300 rounds

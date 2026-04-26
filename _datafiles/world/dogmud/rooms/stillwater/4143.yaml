@@ -1,0 +1,80 @@
+roomid: 4143
+zone: Stillwater
+title: Tailor's Cottage
+description: >
+  The clack and slide of a heavy floor loom fills the long
+  front room of a cottage at the town's northern edge —
+  Linny Greaves at her work, weaving the wool blanket
+  trade Stillwater is quietly known for among the road's
+  travelers. A heavy oak <ansi fg="itemname">loom</ansi>
+  dominates the southern half of the room, the warp
+  threads stretched taut in long parallel rows and the
+  shuttle currently parked mid-pass. A long working
+  <ansi fg="itemname">bench</ansi> against the western
+  wall holds the day's hand-stitching — a folded shirt
+  needing collar-work, a pile of mended fishing-net,
+  three pairs of patched trousers awaiting collection. A
+  rack of finished <ansi fg="itemname">cloth</ansi>
+  stands ready by the door — bolts of plain wool, a
+  shorter row of cattail-down lined cloaks for the cold
+  travel north, and a small folded stack of dyed lake-mint
+  green that the temple's acolyte has bought twice and
+  may yet buy a third time.
+biome: city
+station: loom
+coord:
+  x: -20
+  y: 7
+  z: 0
+exits:
+  south:
+    roomid: 4141
+  east:
+    roomid: 4142
+  north:
+    roomid: 4145
+nouns:
+  loom: A heavy oak floor loom dominates the southern
+    half of the room, the warp threads stretched taut
+    in long parallel rows and the shuttle currently
+    parked mid-pass. A grey wool blanket is in mid-row,
+    perhaps a hand's breadth from the finishing edge.
+    The loom is a generation older than Linny and was
+    her teacher's before her.
+  bench: A long working bench against the western
+    wall holds the day's hand-stitching — a folded
+    linen shirt needing its collar-work, a heavy pile
+    of mended fishing-net brought up from the docks,
+    three pairs of patched trousers awaiting their
+    owners. A pin-cushion stuck with a forest of
+    needles sits at one end; a small basket of waxed
+    thread sits at the other.
+  cloth: A wooden rack of finished cloth stands ready
+    by the door — bolts of plain wool in three weights,
+    a shorter row of cattail-down lined cloaks suitable
+    for cold travel north, several plain undyed linen
+    shifts, and a small folded stack of dyed lake-mint
+    green wool the temple acolyte has bought twice and
+    may yet buy a third time. Prices are pinned to each
+    bolt with a small wooden tag.
+  shuttle: A polished wooden shuttle parked mid-pass
+    across the loom's warp, dark with age and use,
+    the bobbin inside half-full of grey wool yarn.
+    Linny's mother carved this shuttle; Linny's
+    grandmother carved the one in the basket of
+    spares.
+  basket: A round willow basket beside the loom holds
+    spare shuttles, balls of yarn in graduated weights,
+    and a small set of tools — needles, awls, a
+    tapestry-bone, a small pair of shears. The basket
+    is older than the shuttles; the willow has gone
+    silver-pale with handling.
+idlemessages:
+- The loom-shuttle clacks once across the warp, pauses, and clacks back the other way.
+- A small thread is bitten off with a small dry sound.
+- A rack of cloth bolts is shifted slightly to even up a leaning bolt.
+- A folded shirt is set down on the bench's mending pile with a small soft sound.
+- The afternoon light through the southern window crosses the loom slowly as the day moves.
+spawninfo:
+- mobid: 339
+  cooldown: 600 rounds

@@ -1,0 +1,8 @@
+buffid: 82
+name: Steady Hand
+description: Your hands are perfectly still. Every motion feels measured and exact.
+triggerrate: 1 round
+triggercount: 200
+statmods:
+  dexterity: 12
+  perception: 6

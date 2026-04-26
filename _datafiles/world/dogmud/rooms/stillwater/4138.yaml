@@ -1,0 +1,76 @@
+roomid: 4138
+zone: Stillwater
+title: Uncle's Workshop
+description: >
+  Sawdust — fine and grey and undisturbed for years — coats
+  every surface in the small upper workshop above Ulla's
+  parlor. The room runs the length of the cottage beneath
+  a steep timbered roof, lit by a small dust-grimed gable
+  window in the western wall. A heavy oak working
+  <ansi fg="itemname">bench</ansi> with a built-in
+  bench-vise stands against the southern wall, tools racked
+  above it in the same patient order in which they were
+  left. A half-finished carved wooden
+  <ansi fg="itemname">bird</ansi> sits in a clamp, the
+  detail-work on one wing complete and the other still
+  blocked rough. Ulla's husband died — the neighbors say —
+  twelve years ago, on a fishing trip east. Nothing in this
+  room has been moved since.
+biome: city
+coord:
+  x: -19
+  y: 5
+  z: 1
+exits:
+  down:
+    roomid: 4137
+nouns:
+  bench: A heavy oak working bench against the southern
+    wall, the surface scarred and stained by long use,
+    a built-in iron bench-vise mounted at the eastern
+    end. The vise's cast-iron handle is dark with old
+    grime. Look closely at the handle — there is
+    something scratched into the underside.
+  bird: A half-finished carved wooden bird sits in the
+    bench-vise's clamp, one wing's flight-feathers
+    detailed to the barbs and the other still blocked
+    rough where the carver set down the tool one
+    afternoon and never picked it up again. It would
+    have been a kingfisher, by the proportions.
+  tools: A row of carving tools racked above the
+    bench in patient order — gouges in graduated
+    sizes, fine knives, a small mallet, a row of tiny
+    files. A leather apron hangs from a hook beside
+    the rack, a fine layer of dust on its shoulders.
+  window: A small grimed gable window in the western
+    wall, propped open with a thin stick. The dust
+    on the sill is undisturbed. From the window you
+    can see the neighbour's roof and a sliver of the
+    lake beyond.
+  sawdust: A fine grey layer of accumulated sawdust
+    coats every horizontal surface in the workshop —
+    the bench, the floor, the tops of the tools.
+    Disturbed by your passing, it lifts in slow soft
+    drifts and resettles. Footprints on the floor
+    show where Ulla still climbs up here from time
+    to time, but only as far as the bench, and not
+    often.
+hidden_nouns:
+  carving:
+    description: |
+      The cast-iron handle of the bench-vise has a small
+      design scratched into the underside, where you would
+      not see it without lifting the handle to look — a long
+      tight spiral set inside an outer circle. Old work,
+      older than the cottage; the kind of mark someone
+      makes when they want to remember a thing without
+      explaining it. Whoever scratched it here knew the
+      symbol meant something.
+    hidden_description: |
+      The bench-vise's cast-iron handle has a small mark scratched on its underside — too regular to be wear. Try `look carving`.
+idlemessages:
+- A drift of sawdust lifts from the bench in a soft draft and resettles.
+- The window's prop-stick creaks faintly as the wind catches the sash.
+- A tool on the rack swings half a fingerwidth in a stronger gust.
+- The plank floor settles audibly with a small old creak.
+- A bar of light from the gable window crosses the bench slowly as the day moves.

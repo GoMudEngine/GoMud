@@ -1,0 +1,69 @@
+roomid: 4125
+zone: Stillwater
+title: Healer's Alcove
+description: >
+  A small side room off the temple's northern wall, smelling
+  of herbs and beeswax — a low plank <ansi fg="itemname">cot</ansi>
+  along the western wall, a long working
+  <ansi fg="itemname">bench</ansi> opposite, and a row of
+  small earthenware <ansi fg="itemname">bowls</ansi> on a
+  shelf above the bench, each labelled in the same careful
+  round hand that labels the garden beds. A single tall
+  beeswax candle burns in an iron holder beside the bench,
+  giving steady warm light even when the temple's high
+  windows do not. A copper kettle hangs from a hook above
+  a small banked brazier in the eastern corner.
+biome: city
+coord:
+  x: -14
+  y: 4
+  z: 0
+exits:
+  south:
+    roomid: 4123
+nouns:
+  cot: A low plank cot along the western wall, dressed
+    with a folded grey blanket and a small straw
+    bolster — narrow, firm, intended for setting a
+    bone or letting a feverish patient rest the
+    afternoon. A small wooden box at the cot's foot
+    holds the wraps and bandages a healer reaches
+    for first.
+  bench: A long working bench against the eastern
+    wall, scarred by years of mortar-and-pestle work
+    and stained dark from many spilled tinctures. A
+    set of small bronze scales sits at one end, a
+    granite mortar at the other. The surface is kept
+    waxed against the damp.
+  bowls: A row of perhaps twenty small earthenware
+    bowls on a shelf above the bench, each labelled
+    in a careful round hand — marsh-sage, lake-mint,
+    elder-flower, willow-bark, and a dozen others
+    most travelers will not have heard of. The
+    contents are fresh-dried and replaced as needed
+    from the garden out back.
+  candle: A single tall beeswax candle in a heavy
+    iron holder beside the bench, the wax dripping in
+    long slow runs down its side. The smell is faintly
+    honey beneath the heavier herb-smell. Replaced
+    when it burns to a stub; never allowed to go out.
+  kettle: A small copper kettle hangs from an iron
+    hook above a banked brazier in the eastern
+    corner — for tinctures, for tea, for whatever the
+    healer needs to bring to a slow patient simmer.
+    The copper is dented and dulled but well kept.
+  brazier: A small banked iron brazier in the
+    eastern corner, the coals kept low through the
+    day and built up only when the kettle is needed
+    or when a patient is cold. Warm enough to make
+    the alcove distinctly less drafty than the main
+    sanctuary outside.
+idlemessages:
+- The candle on the bench gutters once and recovers.
+- The kettle on its hook clicks softly as the brazier shifts.
+- A faint smell of crushed marsh-sage drifts up from the bench.
+- A piece of wax runs down the candle's side and pools at its base.
+- Through the southern doorway the font's steady trickle is briefly louder.
+spawninfo:
+- mobid: 338
+  cooldown: 600 rounds
