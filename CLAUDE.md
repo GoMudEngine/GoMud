@@ -16,6 +16,15 @@ Before pushing to prod (origin/master):
 1. Update `PATCH_NOTES.md` with dated entries describing the work.
 2. Set `Logging.LogToFile: false` in `_datafiles/config.yaml` (prod
    droplet has limited disk space).
+3. **Boot the server locally and confirm it starts cleanly past
+   data-file loading.** `go build` only checks compilation; YAML
+   data files (mobs, items, quests, dialogues, rooms) panic at
+   server startup if there's a filename/name-field mismatch, an
+   invalid trigger event, an ID collision, or any other load-time
+   issue that the build can't see. Spinning the server up locally
+   and watching for `mobs.LoadDataFiles() loadedCount=...`,
+   `quests.LoadDataFiles() loadedCount=...`, etc. without panics
+   is the only reliable check before promoting to prod.
 
 ## Room Instance Saves (Important!)
 When editing room YAML templates in `_datafiles/world/dogmud/rooms/`, always check for **instance saves** in `_datafiles/world/dogmud/rooms.instances/` that may override your changes. The engine loads templates first, then overwrites with instance data if present. After editing room templates:
