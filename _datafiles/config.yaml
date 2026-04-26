@@ -1019,7 +1019,7 @@ Network:
 #
 ################################################################################
 Logging:
-  LogToFile: false                             # Write logs to file + terminal
+  LogToFile: true                              # Write logs to file + terminal (TEMP: enabled for Stillwater build smoke testing — flip back to false before pushing to prod per CLAUDE.md pre-push SOP)
   LogFilePath: "_datafiles/logs/server.log"    # Log file path (rotated at 100MB)
   LogLevel: "debug"                            # debug, info, warn, error
 
