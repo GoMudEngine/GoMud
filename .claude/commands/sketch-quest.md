@@ -66,7 +66,14 @@ Glob `_datafiles/world/dogmud/quests/*.yaml`, find the highest questid
 
 ### Step 4 — Generate the quest sketch
 
-Output a structured planning document with the following sections:
+Output a structured planning document with the following sections.
+
+**Before writing the step chain**, work through Step 4a (the player POV
+walkthrough) — it is the single most important guard against unguessable
+quests. The most common quest failure mode is writing a beautiful lore
+puzzle that requires the player to type a magic word they can't possibly
+derive. Step 4a forces you to verify each step is actually playable by
+someone who only has the game's normal output to go on.
 
 ---
 
@@ -76,6 +83,67 @@ Output a structured planning document with the following sections:
 **Type:** {fetch/delivery/investigation/combat/multi-zone}
 **Quest giver:** {NPC name} (mob {id}, room {id}, zone)
 **Completion NPC:** {NPC name} (mob {id}, room {id}, zone)
+
+---
+
+**STEP 4A — PLAYER POV WALKTHROUGH** (MANDATORY)
+
+For each step in the chain below, write a 2-line entry from the
+player's keyboard:
+
+```
+Step N: {step name}
+  Player thinks: "{what the player has just been told or shown}"
+  Player types:  "{the literal command the player would naturally type}"
+  Discovers via: "{where in the game the player learned to type this —
+                   NPC dialogue, room description, hint text, item name,
+                   or universal MUD intuition}"
+```
+
+If you can't fill in "Discovers via:" with a specific in-game source
+the player has already encountered by this point in the quest, the
+step is broken. Redesign before continuing.
+
+**TRIGGER MECHANICS — RANKED BY PLAYER-DISCOVERABILITY**
+
+Use the highest-discoverability mechanic that fits the design. Default
+to the top of this list and only drop down for genuine reasons.
+
+| Tier | Mechanic | Why discoverable |
+|------|----------|------------------|
+| ★★★★ | `ask <npc> quest` (or `task`) | Universal SOP; players try this on every NPC |
+| ★★★★ | `give <item-just-received> <npc-just-talked-to>` | Players naturally hand off items they were just given |
+| ★★★★ | `attack <obvious hostile mob>` / mob_death of named target | Players fight what's in the room |
+| ★★★ | `<cardinal direction>` to a clearly described room | Players walk through visible exits |
+| ★★★ | `search` (verb only, no noun) in a room with hidden_nouns | Players try `search` in suspicious rooms; trigger on `room_interact` with `verb: search` (any noun) gated by room and quest tokens |
+| ★★★ | `look <noun in room description>` (regular noun, ANSI-tagged in description) | Players look at things highlighted in room text |
+| ★★ | `look <noun discovered via search>` IF hidden_description includes a literal `look <key>` hint AND the key is a single intuitive word | Players follow explicit hints |
+| ★ | `look <noun>` where the noun key is multi-word, OR is a verbose phrase | Players have to type the exact magic phrase; brittle. Mitigate with multiple trigger entries (one per plausible phrasing) |
+| ☆ | Anything requiring the player to derive a keyword from out-of-band knowledge | DON'T USE — this is the unguessable-magic-word trap |
+
+**Concrete preferences for hidden_noun discovery:**
+- The cleanest pattern is `verb: search` + `room: <id>` + `missing: <token>`
+  conditions on the trigger — fires when the player searches the room
+  successfully (no specific noun required). The send_text can describe
+  what they find in narrative prose.
+- If the trigger MUST be specific to a noun (e.g., the room has multiple
+  hidden_nouns and only one advances the quest), make the hidden_noun key
+  a single intuitive word (e.g., `carving`, `marker`, `disturbance` —
+  NOT `bench-vise carving` or `beneath Elgar's marker`) AND embed
+  ``Try `look <key>`.`` in the hidden_description so the player knows
+  exactly what to type after `search` succeeds.
+- For ANY `room_interact` trigger keyed on a multi-word noun, write
+  multiple trigger entries — one per plausible noun phrasing the player
+  might type (`altar stone`, `altar`, `stone`). All entries share the
+  same conditions and actions; the `missing: <token>` condition prevents
+  re-fire. The quest engine matches the noun field exactly against
+  `strings.ToLower(rest)`; it does NOT use the room's noun aliasing.
+
+**The thousand-mudder test:**
+For each step, ask: "Out of 1000 random mudders playing through this
+quest, how many would advance past this step without external help?" If
+the honest answer is less than ~700, the step is broken. Hard puzzles
+are fine; unguessable keywords are not.
 
 ---
 
@@ -209,6 +277,34 @@ complete:
 - [ ] **Trigger discoverability:** every trigger word appears in a hint,
       NPC dialogue, room description, or quest log entry. If the player
       has to guess a keyword, the quest is broken.
+- [ ] **Player POV walkthrough complete (Step 4a):** every step has
+      `Player thinks / Player types / Discovers via` filled in with a
+      concrete in-game source the player has reached by that point. No
+      "the player would intuit it" hand-waves.
+- [ ] **Trigger mechanic at the right tier:** every step uses the
+      highest-discoverability mechanic that fits, per the ranking table
+      in Step 4a. Quest-engine `room_interact` triggers prefer
+      `verb: search` (any noun) over noun-specific keys. Noun-specific
+      `room_interact` triggers ONLY use single-word hidden_noun keys
+      with `look <key>` hints in the hidden_description, OR provide
+      multiple trigger entries covering plausible phrasings.
+- [ ] **Thousand-mudder test:** would 700+ out of 1000 random mudders
+      advance past each step without help? If not, redesign — hard
+      puzzles are fine, unguessable magic words are not.
+- [ ] **Narrator never overreaches:** quest engine `send_text`,
+      room descriptions, and noun descriptions stick to what the
+      player can directly observe — physical details, things the
+      player just did, contents of notes/journals/dialogue the
+      player is actually reading. NEVER attribute internal motives
+      or thoughts to absent/dead characters ("Elgar knew this symbol
+      and felt the need to scratch it"), and NEVER invent details
+      not present in the room being described ("a second mark on
+      the slab points east" when the slab's noun text mentions no
+      such mark). Forward-step hints are fine ("the temple priest
+      may know what this means") because they're narrator guidance,
+      not character mind-reading. When in doubt, ask: could the
+      player observe this with their own eyes right now? If no,
+      redesign.
 - [ ] **Prefer `questRequired` over `requires`** for quest-gated nodes.
       `requires` depends on memory that can expire. Quest tokens are permanent.
 - [ ] **`expiryPeriod` should almost never be set.** Memory expiry bricks
@@ -218,11 +314,25 @@ complete:
       leave empty or omit entirely.
 - [ ] Item delivery steps have BOTH dialogue path AND quest YAML `item_give`
       trigger for the quest-accepting NPC
-- [ ] **give.go gotcha:** `give.go` transfers the item to the mob BEFORE
-      any handler fires. The handler cannot undo the transfer. Quest
-      advancement uses the quest engine `item_give` trigger. NPCs that
-      should NOT keep a quest item (e.g., the quest giver who handed it out)
-      need a behavior tree `player_give` handler with `return_item` action.
+- [ ] **give.go flow & `consume_item` requirement:** `give.go` calls
+      the quest engine FIRST, then (if not consumed) transfers the
+      item to the mob, then runs the behavior tree `player_give`
+      handler. **Every quest engine `item_give` trigger that
+      represents a successful handover MUST include `consume_item:
+      <itemId>` as one of its actions** — without it, give.go falls
+      through to the behavior tree, and the NPC's archetype default
+      (`noncombat_questgiver` and `noncombat_shopkeeper` both have a
+      "declines politely and hands it back" `player_give` branch)
+      fires AFTER the quest already accepted the handover, so the
+      player sees a confusing decline AND gets the item bounced
+      back. With `consume_item` set, give.go marks the result
+      Handled and skips both the transfer and the behavior tree.
+- [ ] **`return_item` on the rejection paths:** NPCs that should NOT
+      keep a wrong item (e.g., quest giver receiving the wrong item
+      type) need a behavior tree `player_give` handler with
+      `return_item` action. This is separate from the `consume_item`
+      requirement above — they cover the wrong-item-given case where
+      no quest engine trigger matches.
 - [ ] **Lost item recovery:** Every quest giver who hands out a physical item
       must have a recovery dialogue node (e.g., `lost_report`) that gives a
       replacement copy if the player has the quest but lost the item.
