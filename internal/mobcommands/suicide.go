@@ -181,26 +181,27 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 		lootDropped := false
 
-		// Check for any dropped loot...
+		// Carried items: default to 100% drop (preserves prior behavior of
+		// always dropping inventory items) unless the item has its own
+		// per-instance DropChance set in the mob YAML (e.g., a rare boss
+		// drop with `dropchance: 15`).
 		for _, item := range mob.Character.Items {
+			if !item.ShouldDrop(100) {
+				continue
+			}
 			msg := fmt.Sprintf(`<ansi fg="item">%s</ansi> drops to the ground.`, item.DisplayName())
 			sendMovementMessage(room, msg, ``)
 			room.AddItem(item, false)
 			lootDropped = true
 		}
 
-		allWornItems := mob.Character.Equipment.GetAllItems()
-
-		for _, item := range allWornItems {
-
-			roll := util.Rand(100)
-
-			util.LogRoll(`Drop Item`, roll, mob.ItemDropChance)
-
-			if roll >= mob.ItemDropChance {
+		// Equipped items: default to mob.ItemDropChance (preserves prior
+		// behavior of gating worn gear by the mob-wide chance) unless the
+		// item has its own per-instance DropChance set.
+		for _, item := range mob.Character.Equipment.GetAllItems() {
+			if !item.ShouldDrop(mob.ItemDropChance) {
 				continue
 			}
-
 			msg := fmt.Sprintf(`<ansi fg="item">%s</ansi> drops to the ground.`, item.DisplayName())
 			sendMovementMessage(room, msg, ``)
 			room.AddItem(item, false)

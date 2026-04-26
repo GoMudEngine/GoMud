@@ -42,6 +42,7 @@ type Item struct {
 	UUID          uuid.UUID      `yaml:"-"`                       // `yaml:"uuid,omitempty"`
 	Blob          string         `yaml:"blob,omitempty"`          // Does this item have a blob? Should be base64 encoded.
 	Uses          int            `yaml:"uses,omitempty"`          // How many uses it has left
+	DropChance    int            `yaml:"dropchance,omitempty"`    // Per-instance drop chance 1-100 used by ShouldDrop. 0 = use caller's defaultChance.
 	LastUsedRound uint64         `yaml:"lastusedround,omitempty"` // Last round this item was used
 	CraftedRound     uint64         `yaml:"crafted_round,omitempty"`     // Round when this item was crafted
 	CraftSkill       int            `yaml:"craft_skill,omitempty"`       // Crafter's skill level at craft time
@@ -74,6 +75,28 @@ func New(itemId int) Item {
 	newItm.Validate()
 
 	return newItm
+}
+
+// ShouldDrop rolls 1-100 against this item's per-instance DropChance and
+// returns true if the item should drop. If DropChance is unset (<= 0),
+// uses defaultChance instead. If neither is set, defaults to 100% (always
+// drops). Used by mob death-loot logic for both carried and equipped items
+// — the only difference is what defaultChance the call site passes:
+// carried items typically pass 100 (current behavior — always drop unless
+// per-item chance lowers it); equipped items typically pass mob.ItemDropChance
+// (current behavior — gated by the mob-wide chance unless per-item overrides).
+func (i Item) ShouldDrop(defaultChance int) bool {
+	chance := i.DropChance
+	if chance <= 0 {
+		chance = defaultChance
+	}
+	if chance <= 0 {
+		chance = 100
+	}
+	if chance >= 100 {
+		return true
+	}
+	return util.Rand(100) < chance
 }
 
 func (i *Item) HasAdjective(adj string) bool {

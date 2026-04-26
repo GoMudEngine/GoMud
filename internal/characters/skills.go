@@ -134,16 +134,31 @@ func (c *Character) TrainSkill(skillName string, targetLevel ...int) int {
 	return skillLevel
 }
 
-// Gets the current value of the skillname provided
+// Gets the current value of the skillname provided.
+//
+// Returns the trained rank from c.Skills plus any equipment / buff / pet
+// StatMod contributions matching the skill name. Equipment can carry skill
+// bonuses via the same StatMods map that holds stat bonuses (the affix
+// generator at items/affixgen.go writes skill names into StatMods directly,
+// and now individual armor YAMLs can do the same). Equipment-derived skill
+// bonuses adjust the moment-to-moment roll only — they do NOT contribute
+// to skill XP, soft-cap checks, or the stored rank in c.Skills (the
+// progression code in characters/progression.go reads c.Skills[name]
+// directly to keep the stored rank pristine).
 func (c *Character) GetSkillLevel(skillName skills.SkillTag) int {
 	if c.Skills == nil {
 		c.Skills = make(map[string]int)
 	}
 
+	base := 0
 	if level, ok := c.Skills[string(skillName)]; ok {
-		return level
+		base = level
 	}
-	return 0
+
+	// Equipment / buff / pet StatMods can buff skill rolls.
+	bonus := c.StatMod(string(skillName))
+
+	return base + bonus
 }
 
 func (c *Character) GetSkillLevelCost(currentLevel int) int {
