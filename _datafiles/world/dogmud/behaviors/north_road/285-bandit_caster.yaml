@@ -1,0 +1,41 @@
+# Bandit Caster (285) — NPC party smoke-test consumer
+# Leader = Soren (mob 286). Home = Bandit Camp (room 4052).
+#
+# Camps in room 4052. Responds to the lookout's call for help.
+# In combat it assists the leader's target. At the home camp it
+# stands its ground.
+
+tree:
+  type: selector
+  children:
+
+    # ── Always: ensure party membership (idempotent) ──────────────────
+    - type: action
+      do: party_ensure_npc_party
+      leader_mob_id: 286
+      home_room_id: 4052
+
+    # ── COMBAT (mob_idle): assist the leader's target ─────────────────
+    - type: sequence
+      event: mob_idle
+      children:
+        - type: condition
+          check: party_in_combat
+        - type: action
+          do: party_assist_target
+
+    # ── HOME ROOM (mob_idle): hold the camp, suppress flee ────────────
+    - type: sequence
+      event: mob_idle
+      children:
+        - type: condition
+          check: party_at_home
+        - type: action
+          do: party_at_home_stand
+
+    # ── OUT OF COMBAT, NOT AT HOME: respond to help if called ─────────
+    - type: sequence
+      event: mob_idle
+      children:
+        - type: action
+          do: party_respond_to_help

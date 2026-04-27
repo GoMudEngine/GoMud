@@ -425,3 +425,209 @@ func TestActPartyFleeToRoom_NoRoomIdReturnsFailure(t *testing.T) {
 		t.Errorf("expected Failure when room_id not provided, got %v", result)
 	}
 }
+
+// ─── party_ensure_npc_party ───────────────────────────────────────────────────
+
+func TestActPartyEnsureNpcParty_AlreadyInPartyReturnsSuccess(t *testing.T) {
+	fn := LookupAction("party_ensure_npc_party")
+	if fn == nil {
+		t.Fatal("party_ensure_npc_party not registered")
+	}
+
+	cleanRoom := seedTestRoom(t, 60, "TestZone")
+	defer cleanRoom()
+
+	// makePartyMob seeds the mob AND creates a party for it.
+	mob, p := makePartyMob(t, 6001, 60)
+	_ = mob
+
+	params := map[string]any{"leader_mob_id": 286, "home_room_id": 4052}
+	ctx := &EvalContext{InstanceId: 6001, RoomId: 60}
+	if result := fn(params, ctx); result != Success {
+		t.Fatalf("expected Success when already in party, got %v", result)
+	}
+	// Party should be unchanged — still only the one member.
+	if len(p.Members) != 1 {
+		t.Errorf("expected party to still have 1 member, got %d", len(p.Members))
+	}
+}
+
+func TestActPartyEnsureNpcParty_MissingParamsReturnsFailure(t *testing.T) {
+	fn := LookupAction("party_ensure_npc_party")
+
+	cleanRoom := seedTestRoom(t, 61, "TestZone")
+	defer cleanRoom()
+
+	// Seed a mob instance that is NOT yet in any party.
+	mob := &mobs.Mob{MobId: mobs.MobId(1), InstanceId: 6002, HomeRoomId: 61}
+	mob.Character.Name = "TestEnsure"
+	mob.Character.RoomId = 61
+	mob.Character.Buffs = buffs.New()
+	mobs.SetInstanceForTest(6002, mob)
+	t.Cleanup(func() { mobs.SetInstanceForTest(6002, nil) })
+
+	ctx := &EvalContext{InstanceId: 6002, RoomId: 61}
+
+	// Missing both params.
+	if result := fn(map[string]any{}, ctx); result != Failure {
+		t.Errorf("expected Failure with no params, got %v", result)
+	}
+	// Missing home_room_id.
+	if result := fn(map[string]any{"leader_mob_id": 286}, ctx); result != Failure {
+		t.Errorf("expected Failure when home_room_id missing, got %v", result)
+	}
+	// Missing leader_mob_id.
+	if result := fn(map[string]any{"home_room_id": 4052}, ctx); result != Failure {
+		t.Errorf("expected Failure when leader_mob_id missing, got %v", result)
+	}
+}
+
+func TestActPartyEnsureNpcParty_NoLeaderSpawnedCallerBecomesLeader(t *testing.T) {
+	fn := LookupAction("party_ensure_npc_party")
+
+	cleanRoom := seedTestRoom(t, 62, "TestZone")
+	defer cleanRoom()
+
+	// Seed the calling mob — template 285 (not 286 leader). Leader 286 not loaded.
+	mob := &mobs.Mob{MobId: mobs.MobId(285), InstanceId: 6003, HomeRoomId: 62}
+	mob.Character.Name = "bandit caster"
+	mob.Character.RoomId = 62
+	mob.Character.Buffs = buffs.New()
+	mobs.SetInstanceForTest(6003, mob)
+	t.Cleanup(func() { mobs.SetInstanceForTest(6003, nil) })
+
+	params := map[string]any{"leader_mob_id": 286, "home_room_id": 4052}
+	ctx := &EvalContext{InstanceId: 6003, RoomId: 62}
+
+	result := fn(params, ctx)
+	if result != Success {
+		t.Fatalf("expected Success when leader not spawned, got %v", result)
+	}
+
+	// Caller should now be in a party.
+	p := parties.GetByMobInstanceId(6003)
+	if p == nil {
+		t.Fatal("expected caller to be in a party after ensure, got nil")
+	}
+	t.Cleanup(func() { p.Dissolve("test-cleanup") })
+
+	if p.HomeRoomId != 4052 {
+		t.Errorf("expected HomeRoomId=4052, got %d", p.HomeRoomId)
+	}
+}
+
+func TestActPartyEnsureNpcParty_LeaderSpawnedFirstCreatesParty(t *testing.T) {
+	fn := LookupAction("party_ensure_npc_party")
+
+	cleanRoom := seedTestRoom(t, 63, "TestZone")
+	defer cleanRoom()
+
+	// Seed leader mob (template 286, instance 6100) — not yet in any party.
+	leaderMob := &mobs.Mob{MobId: mobs.MobId(286), InstanceId: 6100, HomeRoomId: 63}
+	leaderMob.Character.Name = "Soren"
+	leaderMob.Character.RoomId = 63
+	leaderMob.Character.Buffs = buffs.New()
+	mobs.SetInstanceForTest(6100, leaderMob)
+	t.Cleanup(func() { mobs.SetInstanceForTest(6100, nil) })
+
+	// Seed member mob (template 284, instance 6004) — not yet in any party.
+	memberMob := &mobs.Mob{MobId: mobs.MobId(284), InstanceId: 6004, HomeRoomId: 63}
+	memberMob.Character.Name = "bandit fighter"
+	memberMob.Character.RoomId = 63
+	memberMob.Character.Buffs = buffs.New()
+	mobs.SetInstanceForTest(6004, memberMob)
+	t.Cleanup(func() { mobs.SetInstanceForTest(6004, nil) })
+
+	params := map[string]any{"leader_mob_id": 286, "home_room_id": 4052}
+	ctx := &EvalContext{InstanceId: 6004, RoomId: 63}
+
+	result := fn(params, ctx)
+	if result != Success {
+		t.Fatalf("expected Success when leader exists, got %v", result)
+	}
+
+	// A party should exist and the member should be in it.
+	p := parties.GetByMobInstanceId(6004)
+	if p == nil {
+		t.Fatal("expected member to be in a party after ensure, got nil")
+	}
+	t.Cleanup(func() { p.Dissolve("test-cleanup") })
+
+	if p.HomeRoomId != 4052 {
+		t.Errorf("expected HomeRoomId=4052, got %d", p.HomeRoomId)
+	}
+	// Leader should also be in this party.
+	leaderParty := parties.GetByMobInstanceId(6100)
+	if leaderParty == nil {
+		t.Fatal("expected leader to be in a party after ensure, got nil")
+	}
+	if leaderParty != p {
+		t.Error("expected leader and member to be in the same party")
+	}
+}
+
+func TestActPartyEnsureNpcParty_LeaderCallsEnsureOnSelf(t *testing.T) {
+	fn := LookupAction("party_ensure_npc_party")
+
+	cleanRoom := seedTestRoom(t, 64, "TestZone")
+	defer cleanRoom()
+
+	// Leader mob calls ensure with its own template ID as leader_mob_id.
+	leaderMob := &mobs.Mob{MobId: mobs.MobId(286), InstanceId: 6005, HomeRoomId: 64}
+	leaderMob.Character.Name = "Soren"
+	leaderMob.Character.RoomId = 64
+	leaderMob.Character.Buffs = buffs.New()
+	mobs.SetInstanceForTest(6005, leaderMob)
+	t.Cleanup(func() { mobs.SetInstanceForTest(6005, nil) })
+
+	params := map[string]any{"leader_mob_id": 286, "home_room_id": 4052}
+	ctx := &EvalContext{InstanceId: 6005, RoomId: 64}
+
+	result := fn(params, ctx)
+	if result != Success {
+		t.Fatalf("expected Success when leader calls ensure on self, got %v", result)
+	}
+
+	p := parties.GetByMobInstanceId(6005)
+	if p == nil {
+		t.Fatal("expected leader to be in a party after self-ensure, got nil")
+	}
+	t.Cleanup(func() { p.Dissolve("test-cleanup") })
+
+	if p.HomeRoomId != 4052 {
+		t.Errorf("expected HomeRoomId=4052, got %d", p.HomeRoomId)
+	}
+	// Should have exactly 1 member (the leader itself).
+	if len(p.Members) != 1 {
+		t.Errorf("expected 1 party member (leader only), got %d", len(p.Members))
+	}
+}
+
+// ─── bandit btree YAML load validation ───────────────────────────────────────
+
+// TestBanditBtreeYAMLLoads verifies that all four bandit behavior-tree YAML
+// files parse and compile without error. This catches YAML syntax errors or
+// unknown action/condition names before a server-boot regression reaches prod.
+func TestBanditBtreeYAMLLoads(t *testing.T) {
+	files := []struct {
+		mobId int
+		path  string
+	}{
+		{283, "../../_datafiles/world/dogmud/behaviors/north_road/283-bandit_lookout.yaml"},
+		{284, "../../_datafiles/world/dogmud/behaviors/north_road/284-bandit_fighter.yaml"},
+		{285, "../../_datafiles/world/dogmud/behaviors/north_road/285-bandit_caster.yaml"},
+		{286, "../../_datafiles/world/dogmud/behaviors/north_road/286-soren.yaml"},
+	}
+	for _, f := range files {
+		f := f
+		t.Run(f.path, func(t *testing.T) {
+			node, err := LoadTreeFromFile(f.path)
+			if err != nil {
+				t.Fatalf("LoadTreeFromFile(%s): %v", f.path, err)
+			}
+			if node == nil {
+				t.Fatalf("LoadTreeFromFile(%s): returned nil node", f.path)
+			}
+		})
+	}
+}

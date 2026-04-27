@@ -22,15 +22,119 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
+	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
 
 func init() {
 	actionRegistry["party_call_help"] = actPartyCallHelp
+	actionRegistry["party_ensure_npc_party"] = actPartyEnsureNpcParty
 	actionRegistry["party_respond_to_help"] = actPartyRespondToHelp
 	actionRegistry["party_follow_leader"] = actPartyFollowLeader
 	actionRegistry["party_assist_target"] = actPartyAssistTarget
 	actionRegistry["party_flee_to_room"] = actPartyFleeToRoom
 	actionRegistry["party_at_home_stand"] = actPartyAtHomeStand
+}
+
+// actPartyEnsureNpcParty creates or joins an NPC party on demand. Idempotent:
+// if the calling mob is already in a party the action returns Success without
+// any state change. This is intended to be the first node in every bandit-pack
+// behavior tree so the party is guaranteed to exist before any subsequent
+// party_* actions run.
+//
+// Params:
+//
+//	leader_mob_id (int) — mob template ID of the designated leader
+//	home_room_id  (int) — room ID to use as the party's HomeRoomId
+//
+// Behavior:
+//  1. Already in a party → Success (no-op).
+//  2. Find the leader mob instance by scanning all loaded instances for a
+//     matching MobId. If not found (not yet spawned), the calling mob becomes
+//     the interim leader and creates the party itself.
+//  3. If the leader instance exists and already has a party, add the caller to
+//     that party. If not, create a new party with the leader as leader.
+//  4. Set HomeRoomId = home_room_id.
+func actPartyEnsureNpcParty(params map[string]any, ctx *EvalContext) Result {
+	// 1. Already in a party — idempotent success.
+	if parties.GetByMobInstanceId(ctx.InstanceId) != nil {
+		return Success
+	}
+
+	leaderMobId := getIntParam(params, "leader_mob_id")
+	homeRoomId := getIntParam(params, "home_room_id")
+	if leaderMobId == 0 || homeRoomId == 0 {
+		return Failure
+	}
+
+	// Find the calling mob's instance.
+	callerMob := mobs.GetInstance(ctx.InstanceId)
+	if callerMob == nil {
+		return Failure
+	}
+	callerActor := &npcActor{mob: callerMob}
+
+	// 2. Find the leader mob instance — scan all loaded instances.
+	leaderMob := findMobInstanceByTemplateId(leaderMobId)
+	if leaderMob == nil {
+		// Leader not yet spawned; caller becomes interim leader.
+		p := parties.NewByActor(callerActor)
+		if p == nil {
+			// Caller somehow joined a party between the check above and here.
+			return Success
+		}
+		p.HomeRoomId = homeRoomId
+		return Success
+	}
+
+	leaderActor := &npcActor{mob: leaderMob}
+
+	// 3. Get-or-create the party keyed on the leader.
+	p := parties.GetByActor(leaderActor)
+	if p == nil {
+		p = parties.NewByActor(leaderActor)
+		if p == nil {
+			// Leader already in a party we can't see — shouldn't happen.
+			return Failure
+		}
+		p.HomeRoomId = homeRoomId
+	}
+
+	// If the caller IS the leader, NewByActor already added them.
+	if callerMob.InstanceId == leaderMob.InstanceId {
+		return Success
+	}
+
+	// 4. Add the caller as a member (AddActor is idempotent for unknowns).
+	p.AddActor(callerActor)
+	return Success
+}
+
+// npcActor is a minimal partyActor adapter built directly inside
+// actions_party.go to avoid importing actions (which imports parties,
+// creating a cycle). It satisfies the partyActor interface via structural
+// typing — the same interface that actions.MobActor satisfies.
+type npcActor struct {
+	mob *mobs.Mob
+}
+
+func (a *npcActor) IsPlayer() bool                             { return false }
+func (a *npcActor) GetUserId() int                             { return 0 }
+func (a *npcActor) GetMobInstanceId() int                      { return a.mob.InstanceId }
+func (a *npcActor) GetCharacter() *characters.Character        { return &a.mob.Character }
+func (a *npcActor) GetRoom() *rooms.Room                       { return rooms.LoadRoom(a.mob.Character.RoomId) }
+func (a *npcActor) GetName() string                            { return a.mob.Character.Name }
+
+// findMobInstanceByTemplateId scans all loaded mob instances and returns the
+// first one whose MobId matches the given template ID. Returns nil if no
+// matching instance is loaded.
+func findMobInstanceByTemplateId(templateMobId int) *mobs.Mob {
+	for _, instId := range mobs.GetAllMobInstanceIds() {
+		m := mobs.GetInstance(instId)
+		if m != nil && int(m.MobId) == templateMobId {
+			return m
+		}
+	}
+	return nil
 }
 
 // actPartyCallHelp marks the caller's party as needing help in the caller's

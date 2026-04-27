@@ -1,0 +1,49 @@
+# Bandit Leader Soren (286) — NPC party smoke-test consumer
+# Leader = self (mob 286). Home = Bandit Camp (room 4052).
+#
+# Soren runs the camp from room 4052. He forms the party on his first
+# idle tick and drives group targeting. When any party member's HP
+# drops below 30%, he orders a retreat to the camp. He holds the camp
+# and suppresses flee behavior when already home.
+
+tree:
+  type: selector
+  children:
+
+    # ── Always: ensure party exists with self as leader (idempotent) ──
+    - type: action
+      do: party_ensure_npc_party
+      leader_mob_id: 286
+      home_room_id: 4052
+
+    # ── COMBAT (mob_idle): drive group targeting ───────────────────────
+    - type: sequence
+      event: mob_idle
+      children:
+        - type: condition
+          check: party_in_combat
+        - type: action
+          do: party_assist_target
+
+    # ── LEADER FLEE TRIGGER: retreat when any member is badly hurt ─────
+    - type: sequence
+      event: mob_idle
+      children:
+        - type: condition
+          check: party_in_combat
+        - type: condition
+          check: party_member_below_pct
+          pool: hp
+          percent: 30
+        - type: action
+          do: party_flee_to_room
+          room_id: 4052
+
+    # ── HOME ROOM (mob_idle): hold the camp, suppress flee ────────────
+    - type: sequence
+      event: mob_idle
+      children:
+        - type: condition
+          check: party_at_home
+        - type: action
+          do: party_at_home_stand
