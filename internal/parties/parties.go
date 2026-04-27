@@ -1,15 +1,58 @@
 package parties
 
+import (
+	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/rooms"
+)
+
+// partyActor is the local interface for actor-based Party operations.
+// It extends actorIdentity (IsPlayer/GetUserId/GetMobInstanceId) with the
+// wider set of methods Party operations will need. Using a local interface
+// avoids the import cycle with internal/actions, which already imports
+// internal/parties. Any actions.Actor satisfies partyActor via Go's
+// structural typing.
+type partyActor interface {
+	actorIdentity // IsPlayer, GetUserId, GetMobInstanceId
+
+	// GetCharacter returns the underlying character data.
+	GetCharacter() *characters.Character
+
+	// GetRoom returns the room the actor currently occupies.
+	GetRoom() *rooms.Room
+
+	// GetName returns the display name of the actor.
+	GetName() string
+}
+
 type Party struct {
+	// ── Legacy player-only fields (kept for backward compat) ──
 	LeaderUserId  int
 	UserIds       []int
 	InviteUserIds []int
 	AutoAttackers []int
 	Position      map[int]string
+
+	// ── New actor-based fields (Stage 1 NPC support) ──
+	Leader             partyActor
+	Members            []partyActor
+	Invitees           []partyActor
+	AutoAttackerActors []partyActor
+	ActorPosition      map[ActorKey]string
+
+	// ── NPC party state ──
+	HomeRoomId int // 0 if none designated; for party_at_home_stand
+	HelpRoomId int // 0 if no active call; rally room when set
 }
 
 var (
-	partyMap = map[int]*Party{} // key is leader user id, value is party
+	// Existing player-keyed registry (kept as-is for backward compat).
+	// Key is leader user id, value is party.
+	partyMap = map[int]*Party{}
+
+	// New actor-keyed registry. Both player AND NPC parties live here;
+	// player parties get DOUBLE-registered (in partyMap by UserId, here
+	// by ActorKey) for the duration of Stage 1.
+	actorPartyMap = map[ActorKey]*Party{}
 )
 
 func New(userId int) *Party {
