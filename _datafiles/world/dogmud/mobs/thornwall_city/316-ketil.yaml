@@ -1,0 +1,52 @@
+mobid: 316
+zone: Thornwall City
+archetype: fighting
+behavior_archetype: ""           # per-mob btree handles all behavior
+statpool: 220                    # leader, statted to anchor a 3v4 win
+itemdropchance: 0
+groups:
+  - caravan
+  - merchant_train
+hostile: false
+non_combatant: false             # crew fights bandits
+player_attack_immune: true       # players cannot attack -- rebuff like shopkeepers
+maxwander: -1                    # -1 = unlimited; caravan crosses zones
+charm_immune: true
+buffids: []
+idlecommands:
+  - 'emote checks the harness on the lead horse, frowning at a worn buckle'
+  - ''
+  - 'emote runs a calloused hand along the wagon rail, listening for cracks'
+  - ''
+  - 'emote spits in the dust and squints toward the road'
+character:
+  name: Ketil
+  description: |
+    A weathered man in his middle years, broad through the shoulders
+    and slow to anger but not slow to act. He wears a heavy traveling
+    coat of waxed canvas over a coat of mail mended in three places.
+    A long sword hangs at his hip and a kite shield rides on his back.
+    His eyes track movement on the road with the practiced wariness of
+    someone who has run this route more times than he can count.
+  speciesid: 1
+  level: 1
+  gold: 50
+  # Equipment TBD -- defaulting to fists for v1 stat-pool tuning. If
+  # fights at 4052 don't go the caravan's way, kit Ketil with a real
+  # weapon/shield/armor from items/.
+  stats:
+    strength:
+      training: 30
+    dexterity:
+      training: 18
+    vitality:
+      training: 25
+    perception:
+      training: 15
+    willpower:
+      training: 10
+    charisma:
+      training: 12
+  skills:
+    weapon-combat: 25
+    block: 15
