@@ -273,4 +273,12 @@ func (b *Balance) validateMisc() {
 	if b.SkillWeight <= 0 {
 		b.SkillWeight = 2.0
 	}
+
+	// ── CARAVAN SYSTEM ───────────────────────────────────────────────────────
+	if len(b.CaravanServedZones) == 0 {
+		b.CaravanServedZones = []string{"Stillwater", "Thornwall City"}
+	}
+	if b.CaravanDepotDwellRounds == 0 {
+		b.CaravanDepotDwellRounds = 360
+	}
 }

@@ -855,6 +855,18 @@ Balance:
   ManifestStatScaleChaFactor: 150    # Charisma divisor — stronger Cha contribution to companion pools
   ManifestStatScaleSkillFactor: 0.02 # Manifestation skill additive factor per rank
 
+  # ── CARAVAN SYSTEM ───────────────────────────────────────────────────────────
+  # Zones whose vendors restock on caravan visit only (per-mob
+  # TickMobShopRestock is suppressed). Vendors in zones not listed here
+  # keep the legacy auto-restock tick.
+  CaravanServedZones:
+    - "Stillwater"
+    - "Thornwall City"
+
+  # Rounds the caravan rests at each depot between transit legs.
+  # 360 rounds ≈ 24 min real ≈ half an in-game day.
+  CaravanDepotDwellRounds: 360
+
 ################################################################################
 #
 #   LLM

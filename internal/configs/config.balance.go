@@ -283,6 +283,16 @@ type Balance struct {
 
 	// ── INSTANCES ────────────────────────────────────────────────────────────
 	InstanceStatPoolCap ConfigInt `yaml:"InstanceStatPoolCap"` // Max stat pool per mob in instances (default 50000, 0=uncapped)
+
+	// ── CARAVAN SYSTEM ───────────────────────────────────────────────────────
+	// CaravanServedZones lists zone display names whose vendor mobs do NOT
+	// auto-restock — they restock only on caravan visit. Mobs in zones not
+	// in this list keep the legacy per-mob restock tick.
+	CaravanServedZones []string `yaml:"CaravanServedZones"`
+
+	// CaravanDepotDwellRounds is the number of rounds the caravan rests at
+	// each depot between transit legs. ~360 ≈ 24 min real ≈ half a game day.
+	CaravanDepotDwellRounds ConfigInt `yaml:"CaravanDepotDwellRounds"`
 }
 
 func (b *Balance) Validate() {
@@ -325,4 +335,16 @@ func (b *Balance) GetSkillProgressionMultiplier(skillName string) (float64, bool
 		}
 	}
 	return 0, false
+}
+
+// IsCaravanServedZone reports whether the named zone is in the
+// CaravanServedZones list. Case-sensitive — match the zone display
+// name exactly.
+func (b Balance) IsCaravanServedZone(zone string) bool {
+	for _, z := range b.CaravanServedZones {
+		if z == zone {
+			return true
+		}
+	}
+	return false
 }
