@@ -105,6 +105,18 @@ node.
 | `item_matches` | `item_id` (int) | Event ItemId matches. For `player_give`. |
 | `multiple_enemies` | none | More than one player + charmed mob in room. |
 
+### Party (NPC Party System — Stage 1)
+
+| Condition | Params | Description |
+|-----------|--------|-------------|
+| `party_member_below_pct` | `pool` ("hp"\|"sp"\|"cp"), `percent` (int) | True if any party member's pool is below the threshold percent. |
+| `party_in_combat` | none | True if any party member is currently in combat (Aggro != nil). |
+| `party_leader_in_combat` | none | True if specifically the leader is in combat. |
+| `party_in_room` | none | True if all party members are in the same room. |
+| `party_at_home` | none | True if all party members are in the party's HomeRoomId. Returns false if HomeRoomId is 0 (no home designated). |
+
+All party conditions return false (not panic) when the caller isn't in a party, so behavior tree selectors fall through gracefully.
+
 ---
 
 ## Actions
@@ -178,6 +190,29 @@ Also subject to reaction delays.
 | `decrement_state` | `key` (string), `amount` (int, default 1) | Subtracts N from a numeric BehaviorState key. |
 | `set_misc_data` | `key` (string), `value` (string) | Sets arbitrary misc data on the triggering player. |
 | `command` | `cmd` (string) | Executes an arbitrary mob command string. Escape hatch. |
+
+### Party (NPC Party System — Stage 1)
+
+NPC parties coordinate group behavior across multiple mobs (movement, combat targeting, retreat). The actions below operate on the calling mob's party (looked up via `parties.GetByMobInstanceId(ctx.InstanceId)`). All return Failure when the caller isn't in a party.
+
+| Action | Params | Description |
+|--------|--------|-------------|
+| `party_ensure_npc_party` | `leader_mob_id` (int), `home_room_id` (int) | Idempotent party creation/join. Place at the start of NPC party-member behavior trees so the party exists by the time later party_* actions run. If the designated leader mob is loaded, joins its party; otherwise the caller forms a new party as interim leader. |
+| `party_call_help` | none | Marks the party's HelpRoomId to the caller's current room and fires `PartyHelpRequested` event. Used by lookouts on intruder spot AND by any member needing reinforcements. |
+| `party_respond_to_help` | none | Navigates the caller one step toward `party.HelpRoomId`. Returns Success if already there. |
+| `party_follow_leader` | none | Default movement: navigates one step toward the leader's room. Returns Success if already in same room. |
+| `party_assist_target` | none | Sets the caller's combat aggro to match the leader's current target. Returns Failure if leader isn't in combat. |
+| `party_flee_to_room` | `room_id` (int) | All party members navigate one step toward `room_id` (typically `party.HomeRoomId`). Triggered by leader-side btree on group-pressure threshold. |
+| `party_at_home_stand` | none | If caller is at `party.HomeRoomId`, sets a `party_standing` BehaviorState flag to suppress flee branches in subsequent btree evaluation. Used at the camp/home for last-stand behavior. |
+
+**Party events** (fired by party actions or by the `MobDeath_PackFlee` hook):
+
+| Event | Fired by | Payload |
+|-------|----------|---------|
+| `PartyHelpRequested` | `party_call_help` action | `PartyId`, `CallerActorId`, `CallerIsPlayer`, `RallyRoomId` |
+| `PartyDissolved` | `Party.Dissolve(reason)` (called by `MobDeath_PackFlee` when a party leader dies, or by explicit disband) | `PartyId`, `Reason` ("leader_died"\|"disbanded"\|"all_dead"), `MemberActorIds` |
+
+**Leader death model:** Stage 1 uses dissolution ("cut the head off the snake") — when a leader dies, `PartyDissolved` fires for all members and the party is removed from the registry. Members revert to solo behavior via their individual btrees. Promotion-style succession is explicitly out of scope; future opt-in via a `party_succession_chain` field on the party if needed.
 
 ---
 
