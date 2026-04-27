@@ -1,6 +1,8 @@
 package parties
 
 import (
+	"fmt"
+
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -362,6 +364,14 @@ func (p *Party) PartyIdInternal() int {
 		nextPartyId++
 	}
 	return p.partyId
+}
+
+// GetByMobInstanceId returns the party containing the mob with the given
+// instance ID, or nil. Useful for behavior tree actions that have
+// InstanceId in EvalContext but no full actions.Actor handle.
+func GetByMobInstanceId(mobInstanceId int) *Party {
+	key := ActorKey(fmt.Sprintf("mob:%d", mobInstanceId))
+	return actorPartyMap[key]
 }
 
 // Dissolve removes all members, invitees, and auto-attackers from both

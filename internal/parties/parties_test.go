@@ -113,6 +113,20 @@ func TestRemoveActor_RemovesFromMembers(t *testing.T) {
 	}
 }
 
+func TestGetByMobInstanceId_FindsParty(t *testing.T) {
+	leader := newTestActor(0, 500)
+	p := NewByActor(leader)
+	if got := GetByMobInstanceId(500); got != p {
+		t.Error("GetByMobInstanceId did not find the party")
+	}
+}
+
+func TestGetByMobInstanceId_NilForUnknown(t *testing.T) {
+	if GetByMobInstanceId(99999) != nil {
+		t.Error("expected nil for unknown mob instance")
+	}
+}
+
 func TestDissolve_RemovesAllMembersFromRegistry(t *testing.T) {
 	leader := newTestActor(0, 430)
 	m1 := newTestActor(0, 431)
