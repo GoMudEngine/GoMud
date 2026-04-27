@@ -24,6 +24,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
 func init() {
@@ -186,6 +187,7 @@ func actPartyCallHelp(params map[string]any, ctx *EvalContext) Result {
 		return Failure
 	}
 	p.HelpRoomId = ctx.RoomId
+	p.HelpCallerInstanceId = ctx.InstanceId
 	mudlog.Info("party_call_help", "result", "ok", "caller", ctx.InstanceId,
 		"party", p.PartyIdInternal(), "members", len(p.Members), "help_room", ctx.RoomId)
 	events.AddToQueue(events.PartyHelpRequested{
@@ -198,8 +200,14 @@ func actPartyCallHelp(params map[string]any, ctx *EvalContext) Result {
 }
 
 // actPartyRespondToHelp navigates the caller one step toward their party's
-// HelpRoomId (set by party_call_help). Returns Success if already there or
-// if movement was initiated; Failure if no party / no help room set.
+// HelpRoomId (set by party_call_help). On arrival at the rally room it
+// engages a hostile-target player in the room synchronously by setting
+// Aggro — putting the responder into combat THIS tick, before the engine's
+// next-round wander-home check (which would otherwise immediately path
+// MaxWander=0 mobs back to their home room).
+//
+// Returns Success when movement was initiated or aggro was set; Failure
+// when no party / no help room / no engageable target.
 func actPartyRespondToHelp(params map[string]any, ctx *EvalContext) Result {
 	p := parties.GetByMobInstanceId(ctx.InstanceId)
 	if p == nil {
@@ -211,9 +219,19 @@ func actPartyRespondToHelp(params map[string]any, ctx *EvalContext) Result {
 		return Failure
 	}
 	if ctx.RoomId == p.HelpRoomId {
-		mudlog.Info("party_respond_to_help", "result", "already_there", "caller", ctx.InstanceId,
+		// Arrived. Engage a hostile-target player in the room so the mob
+		// enters combat and isn't pulled home by the wander check next round.
+		if engaged := engageHostilePlayerInRoom(ctx.InstanceId, ctx.RoomId); engaged {
+			mudlog.Info("party_respond_to_help", "result", "engaged", "caller", ctx.InstanceId,
+				"party", p.PartyIdInternal(), "room", ctx.RoomId)
+			return Success
+		}
+		// No player to engage in the rally room — let the selector fall
+		// through. If HelpRoomId is still set the caller will eventually
+		// die or otherwise resolve, and the death handler clears the call.
+		mudlog.Info("party_respond_to_help", "result", "arrived_no_target", "caller", ctx.InstanceId,
 			"party", p.PartyIdInternal(), "room", ctx.RoomId)
-		return Success
+		return Failure
 	}
 	if !moveMobTowardRoom(ctx.InstanceId, p.HelpRoomId) {
 		mudlog.Info("party_respond_to_help", "result", "move_failed", "caller", ctx.InstanceId,
@@ -223,6 +241,45 @@ func actPartyRespondToHelp(params map[string]any, ctx *EvalContext) Result {
 	mudlog.Info("party_respond_to_help", "result", "moving", "caller", ctx.InstanceId,
 		"party", p.PartyIdInternal(), "from", ctx.RoomId, "to", p.HelpRoomId)
 	return Success
+}
+
+// engageHostilePlayerInRoom finds a player in the given room and sets the
+// caller mob's Aggro to that player, but only if the mob is hostile and
+// not already in combat. Synchronous (not queued via mob.Command) so the
+// mob's Aggro is set before the engine's next-round wander check fires.
+//
+// Returns true if Aggro was set or the mob was already in combat.
+func engageHostilePlayerInRoom(mobInstanceId int, roomId int) bool {
+	mob := mobs.GetInstance(mobInstanceId)
+	if mob == nil {
+		return false
+	}
+	if mob.Character.Aggro != nil {
+		return true // already engaged
+	}
+	if !mob.Hostile {
+		return false
+	}
+	room := rooms.LoadRoom(roomId)
+	if room == nil {
+		return false
+	}
+	for _, uid := range room.GetPlayers() {
+		u := users.GetByUserId(uid)
+		if u == nil {
+			continue
+		}
+		// Honor peacefulquest immunity — same gate as mobcommands.LookForTrouble.
+		if mob.PeacefulQuest != "" && u.Character.HasQuest(mob.PeacefulQuest) {
+			continue
+		}
+		mob.Character.SetAggro(uid, 0, characters.DefaultAttack)
+		// SetAggro silently no-ops on grace-protected players; verify it stuck.
+		if mob.Character.Aggro != nil {
+			return true
+		}
+	}
+	return false
 }
 
 // actPartyFollowLeader navigates the caller one step toward the leader's

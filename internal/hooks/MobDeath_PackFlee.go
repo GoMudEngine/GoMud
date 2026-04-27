@@ -23,6 +23,14 @@ func PackFlee(e events.Event) events.ListenerReturn {
 	// for that case — the dissolution handler is responsible for any
 	// post-leader-death behavior.
 	if p := parties.GetByMobInstanceId(evt.InstanceId); p != nil {
+		// If the dead mob raised the active help call, clear it so any
+		// in-flight responders stop trekking to the now-empty rally room.
+		// This runs BEFORE leader-dissolution so it fires whether the
+		// caller was the leader or a regular member.
+		if p.HelpCallerInstanceId == evt.InstanceId {
+			p.HelpRoomId = 0
+			p.HelpCallerInstanceId = 0
+		}
 		if p.Leader != nil && p.Leader.GetMobInstanceId() == evt.InstanceId {
 			p.Dissolve("leader_died")
 			return events.Continue

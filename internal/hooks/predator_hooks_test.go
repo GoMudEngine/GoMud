@@ -6,11 +6,28 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+// helpCallerActor is a minimal partyActor used only by TestPackFlee_*
+// tests below to seed a non-leader caller into a party so we can verify
+// the caller-death cleanup. It avoids importing internal/actions just
+// for test scaffolding.
+type helpCallerActor struct {
+	mobInstanceId int
+	name          string
+}
+
+func (h *helpCallerActor) IsPlayer() bool                            { return false }
+func (h *helpCallerActor) GetUserId() int                            { return 0 }
+func (h *helpCallerActor) GetMobInstanceId() int                     { return h.mobInstanceId }
+func (h *helpCallerActor) GetCharacter() *characters.Character       { return nil }
+func (h *helpCallerActor) GetRoom() *rooms.Room                      { return nil }
+func (h *helpCallerActor) GetName() string                           { return h.name }
 
 // ─── Bleed DoT in AutoHeal ─────────────────────────────────────────────────
 
@@ -186,6 +203,88 @@ func TestPackFlee_TriggersForGroupmates(t *testing.T) {
 	// It won't execute them (Command queues for later), but it should not panic
 	result := PackFlee(evt)
 	assert.Equal(t, events.Continue, result)
+}
+
+// TestPackFlee_ClearsHelpRoomOnCallerDeath verifies that when a non-leader
+// party member who raised a help call dies, the death handler clears the
+// party's HelpRoomId and HelpCallerInstanceId so in-flight responders stop
+// trekking to the now-empty rally room.
+//
+// Models the bandit pack scenario: lookout (non-leader) calls help, dies
+// to the player, and the camp mobs walking up to the rally point should
+// not infinitely oscillate after the fight is over.
+func TestPackFlee_ClearsHelpRoomOnCallerDeath(t *testing.T) {
+	cleanup := seedAllRegistries()
+	defer cleanup()
+
+	// Build a party: leader (instance 8000) + caller (instance 8001).
+	leader := &helpCallerActor{mobInstanceId: 8000, name: "Soren"}
+	caller := &helpCallerActor{mobInstanceId: 8001, name: "Lookout"}
+
+	p := parties.NewByActor(leader)
+	require.NotNil(t, p, "NewByActor failed for leader")
+	t.Cleanup(func() { p.Dissolve("test-cleanup") })
+
+	require.True(t, p.AddActor(caller), "AddActor failed for caller")
+
+	// Simulate party_call_help having fired from the caller.
+	p.HelpRoomId = 4043
+	p.HelpCallerInstanceId = 8001
+
+	// The caller dies. The leader is still alive, so the party should NOT
+	// dissolve — but the help call MUST clear because the rallying point
+	// no longer has a fight to come to.
+	evt := events.MobDeath{
+		MobId:         283, // bandit lookout template
+		InstanceId:    8001,
+		RoomId:        4043,
+		CharacterName: "bandit lookout",
+	}
+	result := PackFlee(evt)
+	assert.Equal(t, events.Continue, result)
+
+	// Party still exists (leader didn't die).
+	stillThere := parties.GetByMobInstanceId(8000)
+	require.NotNil(t, stillThere, "leader should still be in their party")
+	assert.Equal(t, p, stillThere)
+
+	// Help call cleared.
+	assert.Equal(t, 0, p.HelpRoomId, "HelpRoomId should be cleared after caller death")
+	assert.Equal(t, 0, p.HelpCallerInstanceId, "HelpCallerInstanceId should be cleared after caller death")
+}
+
+// TestPackFlee_PreservesHelpRoomOnNonCallerDeath verifies that when a
+// non-caller member dies, the help call stays active so other responders
+// keep coming. Only the caller's death clears the call.
+func TestPackFlee_PreservesHelpRoomOnNonCallerDeath(t *testing.T) {
+	cleanup := seedAllRegistries()
+	defer cleanup()
+
+	leader := &helpCallerActor{mobInstanceId: 8010, name: "Soren"}
+	caller := &helpCallerActor{mobInstanceId: 8011, name: "Lookout"}
+	other := &helpCallerActor{mobInstanceId: 8012, name: "Fighter"}
+
+	p := parties.NewByActor(leader)
+	require.NotNil(t, p)
+	t.Cleanup(func() { p.Dissolve("test-cleanup") })
+	require.True(t, p.AddActor(caller))
+	require.True(t, p.AddActor(other))
+
+	p.HelpRoomId = 4043
+	p.HelpCallerInstanceId = 8011 // lookout is the caller
+
+	// Fighter (the non-caller) dies.
+	evt := events.MobDeath{
+		MobId:         284, // bandit fighter template
+		InstanceId:    8012,
+		RoomId:        4043,
+		CharacterName: "bandit fighter",
+	}
+	PackFlee(evt)
+
+	// Help call should be unchanged — caller is still alive.
+	assert.Equal(t, 4043, p.HelpRoomId, "HelpRoomId should persist when a non-caller dies")
+	assert.Equal(t, 8011, p.HelpCallerInstanceId, "HelpCallerInstanceId should persist when a non-caller dies")
 }
 
 func TestPackFlee_SkipsNonGroupmates(t *testing.T) {

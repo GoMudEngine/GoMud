@@ -45,6 +45,13 @@ tree:
             - type: action
               do: party_assist_target
 
+        # ── RESPOND TO HELP: rally with the pack when called ──────────
+        - type: sequence
+          event: mob_idle
+          children:
+            - type: action
+              do: party_respond_to_help
+
         # ── HOME ROOM (mob_idle): hold the camp, suppress flee ────────
         - type: sequence
           event: mob_idle

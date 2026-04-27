@@ -215,18 +215,23 @@ func TestActPartyRespondToHelp_NoHelpRoomReturnsFailure(t *testing.T) {
 	}
 }
 
-func TestActPartyRespondToHelp_AlreadyAtHelpRoomReturnsSuccess(t *testing.T) {
+func TestActPartyRespondToHelp_AlreadyAtHelpRoomNoTargetReturnsFailure(t *testing.T) {
+	// On arrival at the rally room the responder tries to engage a hostile
+	// player in the room (synchronous SetAggro). When the room has no
+	// engageable target — e.g., the caller already died and the player
+	// has moved on — the action returns Failure so the selector falls
+	// through to legacy idle behavior (which will path the mob home).
 	fn := LookupAction("party_respond_to_help")
 
 	cleanRoom := seedTestRoom(t, 54, "TestZone")
 	defer cleanRoom()
 
 	_, p := makePartyMob(t, 5006, 54)
-	p.HelpRoomId = 54 // caller is already at the rally room
+	p.HelpRoomId = 54 // caller is already at the rally room — no player here
 
 	ctx := &EvalContext{InstanceId: 5006, RoomId: 54}
-	if result := fn(nil, ctx); result != Success {
-		t.Errorf("expected Success when already at HelpRoomId, got %v", result)
+	if result := fn(nil, ctx); result != Failure {
+		t.Errorf("expected Failure when arrived with no engageable target, got %v", result)
 	}
 }
 

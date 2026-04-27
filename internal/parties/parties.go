@@ -50,6 +50,13 @@ type Party struct {
 	HomeRoomId int // 0 if none designated; for party_at_home_stand
 	HelpRoomId int // 0 if no active call; rally room when set
 
+	// HelpCallerInstanceId is the mob instance ID of the member that
+	// raised the active help call, or 0 when none. Used so the death
+	// handler can clear HelpRoomId when the original caller dies — once
+	// the caller is gone there's no fight to rally to, and remaining
+	// responders should stop trekking to the (now empty) rally room.
+	HelpCallerInstanceId int
+
 	// IntendedLeaderMobId is non-zero when this party was created by a
 	// follower acting as interim leader because the real leader's mob
 	// instance had not yet been loaded (lazy room loading races). When
