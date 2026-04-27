@@ -1,4 +1,4 @@
-# Caravan master Ketil (316) -- Stage 2 caravan leader.
+# Caravan master Ketil (357) -- Stage 2 caravan leader.
 # Drives the state machine via caravan_step. Engages bandits via
 # Stage 1 party_assist_target when in combat. Forms the caravan party
 # at first idle tick.
@@ -10,7 +10,7 @@ tree:
     # -- Always: ensure caravan party (idempotent) ----------------------
     - type: action
       do: party_ensure_npc_party
-      leader_mob_id: 316
+      leader_mob_id: 357
       home_room_id: 465      # Thornwall depot
 
     - type: selector
