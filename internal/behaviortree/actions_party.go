@@ -21,6 +21,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
@@ -63,12 +64,15 @@ func actPartyEnsureNpcParty(params map[string]any, ctx *EvalContext) Result {
 	leaderMobId := getIntParam(params, "leader_mob_id")
 	homeRoomId := getIntParam(params, "home_room_id")
 	if leaderMobId == 0 || homeRoomId == 0 {
+		mudlog.Info("party_ensure_npc_party", "result", "missing_params",
+			"caller", ctx.InstanceId, "leader_mob_id", leaderMobId, "home_room_id", homeRoomId)
 		return Failure
 	}
 
 	// Find the calling mob's instance.
 	callerMob := mobs.GetInstance(ctx.InstanceId)
 	if callerMob == nil {
+		mudlog.Info("party_ensure_npc_party", "result", "no_caller_instance", "caller", ctx.InstanceId)
 		return Failure
 	}
 	callerActor := &npcActor{mob: callerMob}
@@ -83,6 +87,8 @@ func actPartyEnsureNpcParty(params map[string]any, ctx *EvalContext) Result {
 			return Success
 		}
 		p.HomeRoomId = homeRoomId
+		mudlog.Info("party_ensure_npc_party", "result", "interim_leader",
+			"caller", ctx.InstanceId, "party", p.PartyIdInternal())
 		return Success
 	}
 
@@ -90,22 +96,30 @@ func actPartyEnsureNpcParty(params map[string]any, ctx *EvalContext) Result {
 
 	// 3. Get-or-create the party keyed on the leader.
 	p := parties.GetByActor(leaderActor)
+	created := false
 	if p == nil {
 		p = parties.NewByActor(leaderActor)
 		if p == nil {
-			// Leader already in a party we can't see — shouldn't happen.
+			mudlog.Info("party_ensure_npc_party", "result", "newbyactor_nil",
+				"caller", ctx.InstanceId, "leader_inst", leaderMob.InstanceId)
 			return Failure
 		}
 		p.HomeRoomId = homeRoomId
+		created = true
 	}
 
 	// If the caller IS the leader, NewByActor already added them.
 	if callerMob.InstanceId == leaderMob.InstanceId {
+		mudlog.Info("party_ensure_npc_party", "result", "leader_self",
+			"caller", ctx.InstanceId, "party", p.PartyIdInternal(), "created", created)
 		return Success
 	}
 
 	// 4. Add the caller as a member (AddActor is idempotent for unknowns).
 	p.AddActor(callerActor)
+	mudlog.Info("party_ensure_npc_party", "result", "joined",
+		"caller", ctx.InstanceId, "leader_inst", leaderMob.InstanceId,
+		"party", p.PartyIdInternal(), "members", len(p.Members), "created", created)
 	return Success
 }
 
@@ -143,9 +157,12 @@ func findMobInstanceByTemplateId(templateMobId int) *mobs.Mob {
 func actPartyCallHelp(params map[string]any, ctx *EvalContext) Result {
 	p := parties.GetByMobInstanceId(ctx.InstanceId)
 	if p == nil {
+		mudlog.Info("party_call_help", "result", "no_party", "caller", ctx.InstanceId)
 		return Failure
 	}
 	p.HelpRoomId = ctx.RoomId
+	mudlog.Info("party_call_help", "result", "ok", "caller", ctx.InstanceId,
+		"party", p.PartyIdInternal(), "members", len(p.Members), "help_room", ctx.RoomId)
 	events.AddToQueue(events.PartyHelpRequested{
 		PartyId:        p.PartyIdInternal(),
 		CallerActorId:  ctx.InstanceId,
@@ -160,15 +177,26 @@ func actPartyCallHelp(params map[string]any, ctx *EvalContext) Result {
 // if movement was initiated; Failure if no party / no help room set.
 func actPartyRespondToHelp(params map[string]any, ctx *EvalContext) Result {
 	p := parties.GetByMobInstanceId(ctx.InstanceId)
-	if p == nil || p.HelpRoomId == 0 {
+	if p == nil {
+		mudlog.Info("party_respond_to_help", "result", "no_party", "caller", ctx.InstanceId)
+		return Failure
+	}
+	if p.HelpRoomId == 0 {
+		// Common steady state — don't log, would be very noisy.
 		return Failure
 	}
 	if ctx.RoomId == p.HelpRoomId {
+		mudlog.Info("party_respond_to_help", "result", "already_there", "caller", ctx.InstanceId,
+			"party", p.PartyIdInternal(), "room", ctx.RoomId)
 		return Success
 	}
 	if !moveMobTowardRoom(ctx.InstanceId, p.HelpRoomId) {
+		mudlog.Info("party_respond_to_help", "result", "move_failed", "caller", ctx.InstanceId,
+			"party", p.PartyIdInternal(), "from", ctx.RoomId, "to", p.HelpRoomId)
 		return Failure
 	}
+	mudlog.Info("party_respond_to_help", "result", "moving", "caller", ctx.InstanceId,
+		"party", p.PartyIdInternal(), "from", ctx.RoomId, "to", p.HelpRoomId)
 	return Success
 }
 
