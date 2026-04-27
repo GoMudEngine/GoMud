@@ -31,6 +31,9 @@ spawninfo:
 - mobid: 102
 - mobid: 106
   respawnrate: 8 real minutes
+- mobid: 316        # Ketil — caravan master (Stage 2)
+- mobid: 317        # Marta — caravan guard
+- mobid: 318        # Lars — caravan guard
 idlemessages:
 - A merchant on the platform holds up a bolt of cloth, calling for bids.
 - The crowd shifts and eddies like a slow river, pausing at stalls.
