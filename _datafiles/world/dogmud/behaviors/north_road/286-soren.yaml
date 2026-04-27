@@ -22,10 +22,25 @@ tree:
     - type: selector
       children:
 
-        # ── LEADER FLEE TRIGGER: retreat when any member is badly hurt ─
+        # ── RESPOND TO HELP (highest priority): rally with the pack when
+        #    called, and engage on arrival. Runs before flee so Soren
+        #    doesn't order a retreat from the rally point he just walked
+        #    into.
         - type: sequence
           event: mob_idle
           children:
+            - type: action
+              do: party_respond_to_help
+
+        # ── LEADER FLEE TRIGGER: retreat when any member is badly hurt.
+        #    Suppressed during an active help call (party_help_inactive)
+        #    so a low-HP member at the rally point doesn't trigger a
+        #    blanket retreat that abandons the rallying.
+        - type: sequence
+          event: mob_idle
+          children:
+            - type: condition
+              check: party_help_inactive
             - type: condition
               check: party_in_combat
             - type: condition
@@ -44,13 +59,6 @@ tree:
               check: party_in_combat
             - type: action
               do: party_assist_target
-
-        # ── RESPOND TO HELP: rally with the pack when called ──────────
-        - type: sequence
-          event: mob_idle
-          children:
-            - type: action
-              do: party_respond_to_help
 
         # ── HOME ROOM (mob_idle): hold the camp, suppress flee ────────
         - type: sequence

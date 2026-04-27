@@ -38,6 +38,7 @@ func TestCondPartyAllRegistered(t *testing.T) {
 		"party_leader_in_combat",
 		"party_in_room",
 		"party_at_home",
+		"party_help_inactive",
 	} {
 		if LookupCondition(name) == nil {
 			t.Errorf("condition %q not registered", name)
@@ -85,6 +86,50 @@ func TestCondPartyAtHome_NoParty(t *testing.T) {
 	ctx := &EvalContext{InstanceId: 89005}
 	if result := fn(nil, ctx); result != Failure {
 		t.Errorf("expected Failure for caller not in party, got %v", result)
+	}
+}
+
+func TestCondPartyHelpInactive_NoParty(t *testing.T) {
+	fn := LookupCondition("party_help_inactive")
+	ctx := &EvalContext{InstanceId: 89006}
+	if result := fn(nil, ctx); result != Failure {
+		t.Errorf("expected Failure for caller not in party, got %v", result)
+	}
+}
+
+// TestCondPartyHelpInactive_HelpRoomZero verifies that the condition succeeds
+// when the party has no active help call. This is the gate that lets flee /
+// retreat branches fire only when the party isn't currently rallying.
+func TestCondPartyHelpInactive_HelpRoomZero(t *testing.T) {
+	fn := LookupCondition("party_help_inactive")
+
+	cleanRoom := seedTestRoom(t, 80, "TestZone")
+	defer cleanRoom()
+
+	_, p := makePartyMob(t, 9001, 80)
+	p.HelpRoomId = 0 // explicit: no active call
+
+	ctx := &EvalContext{InstanceId: 9001, RoomId: 80}
+	if result := fn(nil, ctx); result != Success {
+		t.Errorf("expected Success when HelpRoomId == 0, got %v", result)
+	}
+}
+
+// TestCondPartyHelpInactive_HelpRoomSet verifies that the condition fails
+// during an active help call — this is what prevents the leader's flee
+// branch from triggering a blanket retreat from the rally room.
+func TestCondPartyHelpInactive_HelpRoomSet(t *testing.T) {
+	fn := LookupCondition("party_help_inactive")
+
+	cleanRoom := seedTestRoom(t, 81, "TestZone")
+	defer cleanRoom()
+
+	_, p := makePartyMob(t, 9002, 81)
+	p.HelpRoomId = 4043 // active call in progress
+
+	ctx := &EvalContext{InstanceId: 9002, RoomId: 81}
+	if result := fn(nil, ctx); result != Failure {
+		t.Errorf("expected Failure when HelpRoomId != 0, got %v", result)
 	}
 }
 

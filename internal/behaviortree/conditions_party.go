@@ -18,6 +18,7 @@ func init() {
 	conditionRegistry["party_leader_in_combat"] = condPartyLeaderInCombat
 	conditionRegistry["party_in_room"] = condPartyInRoom
 	conditionRegistry["party_at_home"] = condPartyAtHome
+	conditionRegistry["party_help_inactive"] = condPartyHelpInactive
 }
 
 // condPartyMemberBelowPct returns Success if any party member's resource
@@ -112,6 +113,25 @@ func condPartyInRoom(params map[string]any, ctx *EvalContext) Result {
 		}
 	}
 	return Success
+}
+
+// condPartyHelpInactive returns Success when the party has no active help
+// call (HelpRoomId == 0). Used to suppress retreat / flee branches while a
+// rally is in progress — without this gate, a leader who just arrived at
+// the rally room would immediately order the whole party back home if any
+// fighting member's HP was already below the flee threshold.
+//
+// Returns Failure when the caller is not in a party.
+// No params.
+func condPartyHelpInactive(params map[string]any, ctx *EvalContext) Result {
+	p := parties.GetByMobInstanceId(ctx.InstanceId)
+	if p == nil {
+		return Failure
+	}
+	if p.HelpRoomId == 0 {
+		return Success
+	}
+	return Failure
 }
 
 // condPartyAtHome returns Success if all party members are in the party's
