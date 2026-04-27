@@ -55,6 +55,46 @@ var (
 	actorPartyMap = map[ActorKey]*Party{}
 )
 
+// NewByActor creates a new party with the given actor as leader. Returns
+// nil if the actor is already in another party. Player and NPC parties
+// share the same registry (actorPartyMap).
+func NewByActor(leader partyActor) *Party {
+	key := ActorKeyFor(leader)
+	if _, ok := actorPartyMap[key]; ok {
+		return nil
+	}
+	p := &Party{
+		Leader:             leader,
+		Members:            []partyActor{leader},
+		Invitees:           []partyActor{},
+		AutoAttackerActors: []partyActor{},
+		ActorPosition:      map[ActorKey]string{},
+	}
+	actorPartyMap[key] = p
+	// For player leaders, also populate the legacy UserId-keyed registry
+	// so existing code paths continue to find the party.
+	if leader.IsPlayer() {
+		uid := leader.GetUserId()
+		p.LeaderUserId = uid
+		p.UserIds = []int{uid}
+		p.InviteUserIds = []int{}
+		p.AutoAttackers = []int{}
+		p.Position = map[int]string{}
+		partyMap[uid] = p
+	}
+	return p
+}
+
+// GetByActor returns the party containing the given actor (as leader,
+// member, or invitee), or nil if not found.
+func GetByActor(a partyActor) *Party {
+	key := ActorKeyFor(a)
+	if p, ok := actorPartyMap[key]; ok {
+		return p
+	}
+	return nil
+}
+
 func New(userId int) *Party {
 	if _, ok := partyMap[userId]; ok {
 		return nil
