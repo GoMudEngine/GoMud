@@ -48,16 +48,22 @@ func Wander(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	if rest == `loot` {
 		for exitName, exit := range room.Exits {
 			exitRoom := rooms.LoadRoom(exit.RoomId)
+			if exitRoom == nil {
+				continue
+			}
 			if len(exitRoom.Items) > 0 || exitRoom.Gold > 0 {
 				exitOptions = append(exitOptions, exitName)
 			}
 		}
 	}
 
-	// First only consider adjacent rooms with loot in them
+	// First only consider adjacent rooms with players in them
 	if rest == `players` {
 		for exitName, exit := range room.Exits {
 			exitRoom := rooms.LoadRoom(exit.RoomId)
+			if exitRoom == nil {
+				continue
+			}
 			if exitRoom.PlayerCt() > 0 {
 				exitOptions = append(exitOptions, exitName)
 			}
