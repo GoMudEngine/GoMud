@@ -1526,3 +1526,25 @@ character:
 	assert.Equal(t, "bandit_camp_guard", m.Routine)
 	assert.Equal(t, []string{"watch_north_road", "bandit_back_camp"}, m.RoutineLinks)
 }
+
+// ─── PlayerAttackImmune YAML round-trip ───────────────────────────────────
+
+func TestMob_PlayerAttackImmuneYAMLRoundTrip(t *testing.T) {
+	src := []byte("mobid: 1\nplayer_attack_immune: true\n")
+	var m Mob
+	if err := yaml.Unmarshal(src, &m); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if !m.PlayerAttackImmune {
+		t.Error("PlayerAttackImmune should be true after YAML load")
+	}
+
+	// Defaults to false when unset.
+	var m2 Mob
+	if err := yaml.Unmarshal([]byte("mobid: 2\n"), &m2); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if m2.PlayerAttackImmune {
+		t.Error("PlayerAttackImmune should default to false when YAML omits the field")
+	}
+}
