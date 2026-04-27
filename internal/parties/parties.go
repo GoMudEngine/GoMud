@@ -287,3 +287,82 @@ func (p *Party) GetMembers() []int {
 func (p *Party) GetInvited() []int {
 	return append([]int{}, p.InviteUserIds...)
 }
+
+// AddActor adds an actor to the party as a member. Returns false if the
+// actor is already in another party.
+func (p *Party) AddActor(a partyActor) bool {
+	key := ActorKeyFor(a)
+	if _, ok := actorPartyMap[key]; ok {
+		return false
+	}
+	p.Members = append(p.Members, a)
+	actorPartyMap[key] = p
+	if a.IsPlayer() {
+		uid := a.GetUserId()
+		p.UserIds = append(p.UserIds, uid)
+		partyMap[uid] = p
+	}
+	return true
+}
+
+// RemoveActor removes an actor from the party (members, invitees, or
+// auto-attackers). Returns true if the actor was found and removed.
+func (p *Party) RemoveActor(a partyActor) bool {
+	key := ActorKeyFor(a)
+	if _, ok := actorPartyMap[key]; !ok {
+		return false
+	}
+	delete(actorPartyMap, key)
+	for i, m := range p.Members {
+		if ActorKeyFor(m) == key {
+			p.Members = append(p.Members[:i], p.Members[i+1:]...)
+			break
+		}
+	}
+	for i, m := range p.Invitees {
+		if ActorKeyFor(m) == key {
+			p.Invitees = append(p.Invitees[:i], p.Invitees[i+1:]...)
+			break
+		}
+	}
+	for i, m := range p.AutoAttackerActors {
+		if ActorKeyFor(m) == key {
+			p.AutoAttackerActors = append(p.AutoAttackerActors[:i], p.AutoAttackerActors[i+1:]...)
+			break
+		}
+	}
+	delete(p.ActorPosition, key)
+	if a.IsPlayer() {
+		uid := a.GetUserId()
+		delete(partyMap, uid)
+		for i, id := range p.UserIds {
+			if id == uid {
+				p.UserIds = append(p.UserIds[:i], p.UserIds[i+1:]...)
+				break
+			}
+		}
+	}
+	return true
+}
+
+// Dissolve removes all members, invitees, and auto-attackers from both
+// registries. The reason parameter is currently informational only;
+// Task 6 wires it to fire a party_dissolved event for member awareness.
+func (p *Party) Dissolve(reason string) {
+	for _, a := range p.Members {
+		delete(actorPartyMap, ActorKeyFor(a))
+		if a.IsPlayer() {
+			delete(partyMap, a.GetUserId())
+		}
+	}
+	for _, a := range p.Invitees {
+		delete(actorPartyMap, ActorKeyFor(a))
+		if a.IsPlayer() {
+			delete(partyMap, a.GetUserId())
+		}
+	}
+	// party_dissolved event fired in Task 6 — added then.
+	p.Members = nil
+	p.Invitees = nil
+	p.AutoAttackerActors = nil
+}
