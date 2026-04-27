@@ -270,8 +270,17 @@ func actPartyFollowLeader(params map[string]any, ctx *EvalContext) Result {
 }
 
 // actPartyAssistTarget makes the caller target whatever the leader is
-// targeting. Returns Failure if leader isn't in combat or caller isn't
-// in a party.
+// targeting. Returns Failure if leader isn't in combat, caller isn't
+// in a party, or caller is not in the same room as the leader.
+//
+// The same-room gate is essential: setting aggro on a target in a
+// different room puts the caller into combat (NewRound_IdleMobs skips
+// mobs with non-nil Aggro), preventing party_follow_leader from
+// running on subsequent ticks. Without the gate, distant followers
+// strand themselves "in combat" with a mob they can't reach. Once the
+// follower physically arrives in the leader's room (via
+// party_follow_leader running on prior ticks), assist fires and
+// engagement happens normally.
 func actPartyAssistTarget(params map[string]any, ctx *EvalContext) Result {
 	p := parties.GetByMobInstanceId(ctx.InstanceId)
 	if p == nil || p.Leader == nil {
@@ -283,6 +292,10 @@ func actPartyAssistTarget(params map[string]any, ctx *EvalContext) Result {
 	}
 	self := mobs.GetInstance(ctx.InstanceId)
 	if self == nil {
+		return Failure
+	}
+	leaderRoom := p.Leader.GetRoom()
+	if leaderRoom == nil || self.Character.RoomId != leaderRoom.RoomId {
 		return Failure
 	}
 	self.Character.SetAggro(

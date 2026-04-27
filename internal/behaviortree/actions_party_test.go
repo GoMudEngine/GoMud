@@ -369,14 +369,19 @@ func TestActPartyAssistTarget_CopiesLeaderAggro(t *testing.T) {
 	mobs.SetInstanceForTest(5200, leaderMob)
 	t.Cleanup(func() { mobs.SetInstanceForTest(5200, nil) })
 
-	leaderActor := &actions.MobActor{Mob: leaderMob}
+	// MobActor.GetRoom() returns the stored .Room field (not a live lookup),
+	// so we must set it for the same-room gate in party_assist_target to
+	// resolve properly. In live caravan/bandit code the leader is an
+	// npcActor, which does live lookup via rooms.LoadRoom.
+	leaderRoom := rooms.LoadRoom(58)
+	leaderActor := &actions.MobActor{Mob: leaderMob, Room: leaderRoom}
 	p := parties.NewByActor(leaderActor)
 	if p == nil {
 		t.Fatal("NewByActor returned nil for leaderActor")
 	}
 	t.Cleanup(func() { p.Dissolve("test-cleanup") })
 
-	// Member mob (instance 5010).
+	// Member mob (instance 5010), same room as leader.
 	memberMob := &mobs.Mob{
 		MobId:      mobs.MobId(1),
 		InstanceId: 5010,
@@ -388,7 +393,7 @@ func TestActPartyAssistTarget_CopiesLeaderAggro(t *testing.T) {
 	mobs.SetInstanceForTest(5010, memberMob)
 	t.Cleanup(func() { mobs.SetInstanceForTest(5010, nil) })
 
-	memberActor := &actions.MobActor{Mob: memberMob}
+	memberActor := &actions.MobActor{Mob: memberMob, Room: leaderRoom}
 	p.AddActor(memberActor)
 	t.Cleanup(func() { p.RemoveActor(memberActor) })
 
@@ -401,6 +406,66 @@ func TestActPartyAssistTarget_CopiesLeaderAggro(t *testing.T) {
 	}
 	if memberMob.Character.Aggro.UserId != 7 {
 		t.Errorf("expected member Aggro.UserId=7, got %d", memberMob.Character.Aggro.UserId)
+	}
+}
+
+// TestActPartyAssistTarget_DifferentRoomReturnsFailure pins the same-room
+// gate added to fix the caravan smoke-test bug where followers stranded
+// themselves "in combat" with a target in a different room. The aggro
+// they got from blindly assisting the leader's distant target made
+// NewRound_IdleMobs skip them, freezing party_follow_leader.
+func TestActPartyAssistTarget_DifferentRoomReturnsFailure(t *testing.T) {
+	fn := LookupAction("party_assist_target")
+
+	// Leader is in room 58, member is in room 59.
+	cleanLeaderRoom := seedTestRoom(t, 58, "TestZone")
+	defer cleanLeaderRoom()
+	cleanMemberRoom := seedTestRoom(t, 59, "TestZone")
+	defer cleanMemberRoom()
+
+	leaderMob := &mobs.Mob{
+		MobId:      mobs.MobId(2),
+		InstanceId: 5300,
+		HomeRoomId: 58,
+	}
+	leaderMob.Character.Name = "Leader"
+	leaderMob.Character.RoomId = 58
+	leaderMob.Character.Buffs = buffs.New()
+	leaderMob.Character.Aggro = &characters.Aggro{
+		UserId: 7,
+		Type:   characters.DefaultAttack,
+	}
+	mobs.SetInstanceForTest(5300, leaderMob)
+	t.Cleanup(func() { mobs.SetInstanceForTest(5300, nil) })
+
+	leaderActor := &actions.MobActor{Mob: leaderMob, Room: rooms.LoadRoom(58)}
+	p := parties.NewByActor(leaderActor)
+	if p == nil {
+		t.Fatal("NewByActor returned nil")
+	}
+	t.Cleanup(func() { p.Dissolve("test-cleanup") })
+
+	memberMob := &mobs.Mob{
+		MobId:      mobs.MobId(1),
+		InstanceId: 5301,
+		HomeRoomId: 59,
+	}
+	memberMob.Character.Name = "Member"
+	memberMob.Character.RoomId = 59 // different room from leader
+	memberMob.Character.Buffs = buffs.New()
+	mobs.SetInstanceForTest(5301, memberMob)
+	t.Cleanup(func() { mobs.SetInstanceForTest(5301, nil) })
+
+	memberActor := &actions.MobActor{Mob: memberMob, Room: rooms.LoadRoom(59)}
+	p.AddActor(memberActor)
+	t.Cleanup(func() { p.RemoveActor(memberActor) })
+
+	ctx := &EvalContext{InstanceId: 5301, RoomId: 59}
+	if result := fn(nil, ctx); result != Failure {
+		t.Errorf("expected Failure when member is in a different room from leader, got %v", result)
+	}
+	if memberMob.Character.Aggro != nil {
+		t.Error("member should not have Aggro set when in a different room from leader")
 	}
 }
 
