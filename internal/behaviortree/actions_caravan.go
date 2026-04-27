@@ -102,9 +102,18 @@ func tickDwell(cur caravan.CaravanState, mob *mobs.Mob, ctx *EvalContext) Result
 // tickTransit: walking toward the destination depot. Issues pathto on
 // each tick; the engine's path step + mob walk loop handle progress.
 // On arrival, transition to the route phase.
+//
+// Halts (returns Failure) if any mob in the current room is on the
+// caller's hates list — this lets the legacy idle path fire
+// lookfortrouble, which sets aggro on the hostile mob and engages
+// combat. Without this halt, the caravan would issue another pathto
+// step and keep walking past a brawl in progress.
 func tickTransit(cur caravan.CaravanState, mob *mobs.Mob, ctx *EvalContext) Result {
 	route := caravan.RouteForState(cur)
 	if route == nil {
+		return Failure
+	}
+	if hostilesInRoom(mob, ctx.RoomId) {
 		return Failure
 	}
 	if ctx.RoomId == route.ArriveAtRoomId {
@@ -118,9 +127,15 @@ func tickTransit(cur caravan.CaravanState, mob *mobs.Mob, ctx *EvalContext) Resu
 // tickRoute: visiting vendor stops in order. On arrival at the next
 // stop, fire VisitVendorsInRoom + emit flavor + advance the index. When
 // all stops done, transition to the depot dwell state.
+//
+// Same hostile-halt as tickTransit: if any hated mob is in the room,
+// stop and let combat resolve before continuing the route.
 func tickRoute(cur caravan.CaravanState, mob *mobs.Mob, ctx *EvalContext) Result {
 	route := caravan.RouteForState(cur)
 	if route == nil {
+		return Failure
+	}
+	if hostilesInRoom(mob, ctx.RoomId) {
 		return Failure
 	}
 	idxStr := ctx.MobState.GetString("caravan_route_index")
@@ -150,4 +165,31 @@ func tickRoute(cur caravan.CaravanState, mob *mobs.Mob, ctx *EvalContext) Result
 	// Not at the next stop yet — pathto it.
 	mob.Command(fmt.Sprintf("pathto %d", nextRoom))
 	return Success
+}
+
+// hostilesInRoom reports whether any other mob in the given room is on
+// the caller's hates list (via mob.HatesMob). Used by transit/route
+// ticks to halt movement so the legacy idle path can fire
+// lookfortrouble + engage combat.
+func hostilesInRoom(mob *mobs.Mob, roomId int) bool {
+	if len(mob.Hates) == 0 {
+		return false
+	}
+	room := rooms.LoadRoom(roomId)
+	if room == nil {
+		return false
+	}
+	for _, instId := range room.GetMobs(rooms.FindAll) {
+		if instId == mob.InstanceId {
+			continue
+		}
+		other := mobs.GetInstance(instId)
+		if other == nil {
+			continue
+		}
+		if mob.HatesMob(other) {
+			return true
+		}
+	}
+	return false
 }
