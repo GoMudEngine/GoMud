@@ -148,8 +148,12 @@ func TickMobCraft(mob *Mob) *CraftResult {
 	shopInv := shops.GetShopInventory(mob.Zone, int(mob.MobId), mob.HomeRoomId)
 
 	if shopInv != nil {
-		// Supply cart delivery
-		restocked := shopInv.Restock()
+		// Supply cart delivery — suppressed for caravan-served zones.
+		// Caravan events deliver materials instead; crafting itself continues.
+		restocked := false
+		if !b.IsCaravanServedZone(mob.Zone) {
+			restocked = shopInv.Restock()
+		}
 
 		cfg := shops.DefaultPricingConfig()
 		reserve := 1 // Keep at least 1 of each ingredient in stock
@@ -214,11 +218,13 @@ func TickMobCraft(mob *Mob) *CraftResult {
 	}
 
 	// ── Legacy path (no ShopInventory) ────────────────────────────────────
-	// Restock materials into backpack
-	for _, itemId := range mob.CrafterRestockMaterials {
-		itm := items.New(itemId)
-		if itm.ItemId > 0 {
-			mob.Character.StoreItem(itm)
+	// Restock materials into backpack — suppressed for caravan-served zones.
+	if !b.IsCaravanServedZone(mob.Zone) {
+		for _, itemId := range mob.CrafterRestockMaterials {
+			itm := items.New(itemId)
+			if itm.ItemId > 0 {
+				mob.Character.StoreItem(itm)
+			}
 		}
 	}
 
