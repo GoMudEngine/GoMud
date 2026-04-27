@@ -1,0 +1,39 @@
+# Caravan guard Marta (317) -- follower of Ketil.
+# Follows the leader through transit, assists on target in combat,
+# counter-attacks on hurt.
+
+tree:
+  type: sequence
+  children:
+
+    # -- Always: ensure caravan party (idempotent) ----------------------
+    - type: action
+      do: party_ensure_npc_party
+      leader_mob_id: 316
+      home_room_id: 465
+
+    - type: selector
+      children:
+
+        # -- COMBAT: assist whoever the leader is targeting
+        - type: sequence
+          event: mob_idle
+          children:
+            - type: condition
+              check: party_in_combat
+            - type: action
+              do: party_assist_target
+
+        # -- TRANSIT: follow the leader
+        - type: sequence
+          event: mob_idle
+          children:
+            - type: action
+              do: party_follow_leader
+
+        # -- On hit: counter-attack
+        - type: sequence
+          event: mob_hurt
+          children:
+            - type: action
+              do: attack

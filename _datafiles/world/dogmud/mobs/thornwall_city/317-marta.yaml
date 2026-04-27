@@ -1,0 +1,49 @@
+mobid: 317
+zone: Thornwall City
+archetype: fighting
+behavior_archetype: ""
+statpool: 180
+itemdropchance: 0
+groups:
+  - caravan
+  - merchant_train
+hostile: false
+non_combatant: false
+player_attack_immune: true
+maxwander: -1
+charm_immune: true
+buffids: []
+idlecommands:
+  - 'emote rolls her shoulders, working out road-stiffness'
+  - ''
+  - 'emote leans on her hammer and watches the road northward'
+  - ''
+  - 'emote unwraps a strip of dried meat and chews thoughtfully'
+character:
+  name: Marta
+  description: |
+    A heavyset woman with arms like cooper's bands, dressed in a
+    quilted gambeson and a sturdy leather skirt. A two-handed war
+    hammer rests across her back, the head dark with old use. Her
+    expression is mild, almost amused -- the look of someone who has
+    been underestimated her whole life and stopped caring.
+  speciesid: 1
+  level: 1
+  gold: 15
+  # Equipment TBD per Ketil's pattern -- fists for v1 stat tuning.
+  stats:
+    strength:
+      training: 32
+    dexterity:
+      training: 12
+    vitality:
+      training: 28
+    perception:
+      training: 12
+    willpower:
+      training: 10
+    charisma:
+      training: 8
+  skills:
+    weapon-combat: 22
+    unarmed-combat: 18
