@@ -127,6 +127,25 @@ func TestGetByMobInstanceId_NilForUnknown(t *testing.T) {
 	}
 }
 
+func TestListAllParties_DeduplicatesByPointer(t *testing.T) {
+	leader := newTestActor(0, 600)
+	m1 := newTestActor(0, 601)
+	m2 := newTestActor(0, 602)
+	p := NewByActor(leader)
+	p.AddActor(m1)
+	p.AddActor(m2)
+	all := ListAllParties()
+	count := 0
+	for _, party := range all {
+		if party == p {
+			count++
+		}
+	}
+	if count != 1 {
+		t.Errorf("party should appear once in ListAllParties, got %d", count)
+	}
+}
+
 func TestDissolve_RemovesAllMembersFromRegistry(t *testing.T) {
 	leader := newTestActor(0, 430)
 	m1 := newTestActor(0, 431)

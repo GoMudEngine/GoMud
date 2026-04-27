@@ -3,6 +3,7 @@ package usercommands
 import (
 	"fmt"
 	"math"
+	"strconv"
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
@@ -27,6 +28,10 @@ func Party(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	}
 
 	currentParty := parties.Get(user.UserId)
+
+	if partyCommand == `admin` {
+		return cmdPartyAdmin(user, rest)
+	}
 
 	if partyCommand == `create` || partyCommand == `new` || partyCommand == `start` {
 		return cmdPartyCreate(user, currentParty)
@@ -581,4 +586,155 @@ func cmdPartyChat(user *users.UserRecord, currentParty *parties.Party, rest stri
 		Name:         user.Character.Name,
 		Message:      rest,
 	})
+}
+
+// cmdPartyAdmin dispatches party admin subcommands. All subcommands require
+// the party.debug role permission (admin users always pass).
+func cmdPartyAdmin(user *users.UserRecord, rest string) (bool, error) {
+	if !user.HasRolePermission(`party.debug`) {
+		user.SendText(`You do not have <ansi fg="command">party.debug</ansi> permission.`)
+		return true, nil
+	}
+
+	args := util.SplitButRespectQuotes(rest)
+	sub := ``
+	if len(args) > 0 {
+		sub = strings.ToLower(args[0])
+	}
+
+	switch sub {
+	case `list-npc`:
+		cmdPartyAdminListNPC(user)
+	case `show`:
+		idStr := ``
+		if len(args) > 1 {
+			idStr = args[1]
+		}
+		cmdPartyAdminShow(user, idStr)
+	default:
+		user.SendText(`Usage: <ansi fg="command">party admin list-npc</ansi>`)
+		user.SendText(`       <ansi fg="command">party admin show <id></ansi>`)
+	}
+	return true, nil
+}
+
+// cmdPartyAdminListNPC lists all parties whose leader is an NPC.
+func cmdPartyAdminListNPC(user *users.UserRecord) {
+	all := parties.ListAllParties()
+	lines := []string{}
+	for _, p := range all {
+		if p.Leader == nil || p.Leader.IsPlayer() {
+			continue
+		}
+		homeStr := `-`
+		if p.HomeRoomId != 0 {
+			homeStr = strconv.Itoa(p.HomeRoomId)
+		}
+		helpStr := `-`
+		if p.HelpRoomId != 0 {
+			helpStr = strconv.Itoa(p.HelpRoomId)
+		}
+		lines = append(lines, fmt.Sprintf(
+			`  #%-3d  Leader: %-30s Members: %-3d HomeRoom: %-6s HelpRoom: %s`,
+			p.PartyIdInternal(),
+			fmt.Sprintf(`%s (mob %d)`, p.Leader.GetName(), p.Leader.GetMobInstanceId()),
+			len(p.Members),
+			homeStr,
+			helpStr,
+		))
+	}
+	if len(lines) == 0 {
+		user.SendText(`No active NPC parties.`)
+		return
+	}
+	user.SendText(`NPC Parties:`)
+	for _, l := range lines {
+		user.SendText(l)
+	}
+}
+
+// cmdPartyAdminShow dumps full state of one party by PartyIdInternal().
+func cmdPartyAdminShow(user *users.UserRecord, idStr string) {
+	if idStr == `` {
+		user.SendText(`Usage: <ansi fg="command">party admin show <id></ansi>`)
+		return
+	}
+	targetId, err := strconv.Atoi(idStr)
+	if err != nil || targetId <= 0 {
+		user.SendText(fmt.Sprintf(`Invalid party id: %s`, idStr))
+		return
+	}
+
+	var found *parties.Party
+	for _, p := range parties.ListAllParties() {
+		if p.PartyIdInternal() == targetId {
+			found = p
+			break
+		}
+	}
+	if found == nil {
+		user.SendText(fmt.Sprintf(`No party with id %d.`, targetId))
+		return
+	}
+
+	homeStr := `(none)`
+	if found.HomeRoomId != 0 {
+		homeStr = strconv.Itoa(found.HomeRoomId)
+	}
+	helpStr := `(none)`
+	if found.HelpRoomId != 0 {
+		helpStr = strconv.Itoa(found.HelpRoomId)
+	}
+
+	user.SendText(fmt.Sprintf(`Party #%d`, found.PartyIdInternal()))
+
+	if found.Leader != nil {
+		leaderRoom := 0
+		if r := found.Leader.GetRoom(); r != nil {
+			leaderRoom = r.RoomId
+		}
+		if found.Leader.IsPlayer() {
+			user.SendText(fmt.Sprintf(
+				`  Leader: %s (player %d, room %d)`,
+				found.Leader.GetName(),
+				found.Leader.GetUserId(),
+				leaderRoom,
+			))
+		} else {
+			user.SendText(fmt.Sprintf(
+				`  Leader: %s (mob %d, room %d)`,
+				found.Leader.GetName(),
+				found.Leader.GetMobInstanceId(),
+				leaderRoom,
+			))
+		}
+	} else {
+		user.SendText(`  Leader: (none)`)
+	}
+
+	user.SendText(`  Members:`)
+	for _, m := range found.Members {
+		memberRoom := 0
+		if r := m.GetRoom(); r != nil {
+			memberRoom = r.RoomId
+		}
+		leaderTag := ``
+		if found.Leader != nil && m == found.Leader {
+			leaderTag = ` [LEADER]`
+		}
+		if m.IsPlayer() {
+			user.SendText(fmt.Sprintf(
+				`    %s (player %d, room %d)%s`,
+				m.GetName(), m.GetUserId(), memberRoom, leaderTag,
+			))
+		} else {
+			user.SendText(fmt.Sprintf(
+				`    %s (mob %d, room %d)%s`,
+				m.GetName(), m.GetMobInstanceId(), memberRoom, leaderTag,
+			))
+		}
+	}
+
+	user.SendText(fmt.Sprintf(`  Home room: %s`, homeStr))
+	user.SendText(fmt.Sprintf(`  Help room: %s`, helpStr))
 }

@@ -374,6 +374,20 @@ func GetByMobInstanceId(mobInstanceId int) *Party {
 	return actorPartyMap[key]
 }
 
+// ListAllParties returns all parties currently in the registry,
+// deduplicated by Party pointer. Used by admin commands and debug tooling.
+func ListAllParties() []*Party {
+	seen := map[*Party]bool{}
+	out := []*Party{}
+	for _, p := range actorPartyMap {
+		if !seen[p] {
+			seen[p] = true
+			out = append(out, p)
+		}
+	}
+	return out
+}
+
 // Dissolve removes all members, invitees, and auto-attackers from both
 // registries and fires a PartyDissolved event so that member behavior
 // trees can react before reverting to solo behavior.
