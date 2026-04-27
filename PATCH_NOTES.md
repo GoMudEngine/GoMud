@@ -1,5 +1,42 @@
 # DOGMud Patch Notes
 
+## 2026-04-27 — Stage 2: Thornwall ↔ Stillwater Caravan System
+
+- Added the **Thornwall ↔ Stillwater caravan**: a three-NPC delivery
+  crew (Ketil, Marta, Lars) that runs a continuous loop visiting every
+  vendor in both towns and triggering restock on arrival. Cycle takes
+  roughly **one in-game day** (~1 hour real time). The caravan rests at
+  the Thornwall Market Square depot, departs for Stillwater, visits
+  each Stillwater vendor in order, rests at Stillwater's North Square,
+  returns to Thornwall, visits each Thornwall vendor, then loops.
+- Vendor mobs in caravan-served zones (Stillwater, Thornwall City) **no
+  longer auto-restock** on a per-mob timer — they restock only when the
+  caravan visits. Vendors in non-served zones (Watchers Crossing,
+  Sanctum Basin, etc.) keep the legacy auto-restock unchanged. Both the
+  non-crafter merchant tick and the crafter material tick respect the
+  served-zone gate.
+- The caravan crew can be examined and talked to but **cannot be
+  attacked by players** — same rebuff as a shopkeeper. Wired into
+  attack/bash/grapple/kick/shoot/taunt/throw/trip and steal commands
+  via a new `Mob.PlayerAttackImmune` flag. Caravan crew will fight
+  bandits along the road and have been statted to win.
+- **Bandit pack at the North Road camp** (lookout, fighter, caster,
+  Soren) detuned by ~25–30% across the board so the road is challenging
+  but passable for solo and small-group players. The pack also picks
+  up `hates: caravan` so they engage the caravan when it passes through
+  4052 — every cycle the brawl plays out, the bandits respawn for the
+  next pass.
+- **New `caravan_step` btree action** drives the cycle (`internal/caravan`
+  package owns route data + state machine; `actions_caravan.go` wires
+  it into the behavior tree).
+- **New config knobs** (`Balance.CaravanServedZones`,
+  `Balance.CaravanDepotDwellRounds`) so cadence and zone coverage are
+  tunable live.
+- **`lookfortrouble` mob command extended** to scan for hostile mobs by
+  group hate (in addition to the existing player + species-hate scans).
+  Bandits with `hates: [caravan]` aggro on caravan-group mobs in their
+  room.
+
 ## 2026-04-25 (late evening) — Stillwater Zone + Two Quests + Town Flavor + Engine Polish
 
 ### New Zone — Stillwater (Zone 2.2)

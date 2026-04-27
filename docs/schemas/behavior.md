@@ -204,6 +204,7 @@ NPC parties coordinate group behavior across multiple mobs (movement, combat tar
 | `party_assist_target` | none | Sets the caller's combat aggro to match the leader's current target. Returns Failure if leader isn't in combat. |
 | `party_flee_to_room` | `room_id` (int) | All party members navigate one step toward `room_id` (typically `party.HomeRoomId`). Triggered by leader-side btree on group-pressure threshold. |
 | `party_at_home_stand` | none | If caller is at `party.HomeRoomId`, sets a `party_standing` BehaviorState flag to suppress flee branches in subsequent btree evaluation. Used at the camp/home for last-stand behavior. |
+| `caravan_step` | none | Drives the Stage 2 caravan state machine. Reads the caller's `MobState["caravan_state"]`, dispatches based on state category (dwell / transit / route), advances state on the right environmental conditions (timer expired / arrival / all stops visited). Used only on the caravan leader; follower btrees use `party_follow_leader` + `party_assist_target`. State persistence keys: `caravan_state`, `caravan_state_started_round`, `caravan_route_index`. |
 
 **Party events** (fired by party actions or by the `MobDeath_PackFlee` hook):
 

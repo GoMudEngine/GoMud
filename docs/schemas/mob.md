@@ -42,6 +42,10 @@ SOP including the `behavior_archetype` priority order.
 | `mobid` | int | **yes** | Unique integer. Must match filename. |
 | `zone` | string | **yes** | Display name of the zone (e.g. `"Sanctum Basin"`). |
 | `hostile` | bool | no | Whether this mob attacks players on sight. Default: false. |
+| `non_combatant` | bool | no | When true, mob cannot be attacked or stolen from — same gate that protects shopkeepers. Mob also won't aggro on player entry. Default: false. |
+| `player_attack_immune` | bool | no | When true, mob rebuffs player-originated attacks (attack/bash/grapple/kick/shoot/taunt/throw/trip and steal) with a "you can't attack" message — like `non_combatant` — but still participates in mob-vs-mob combat. Used by caravan crew, who fight bandits but cannot be attacked by players. Default: false. |
+| `charm_immune` | bool | no | Mob cannot be charmed (resists charm spells/effects). Default: false. |
+| `pack_flee_immune` | bool | no | Mob does not flee when a packmate dies (overrides species-based pack flee). Default: false. |
 | `maxwander` | int | no | Max rooms the mob will wander from its home room. 0 = stationary. |
 | `activitylevel` | int | no | 1–100. How often the mob executes idle commands. Higher = more active. |
 | `itemdropchance` | int | no | Percent chance (0–100) to drop carried items on death. |
