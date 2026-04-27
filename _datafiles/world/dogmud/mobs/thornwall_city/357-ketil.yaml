@@ -7,6 +7,8 @@ itemdropchance: 0
 groups:
   - caravan
   - merchant_train
+hates:
+  - bandit
 hostile: false
 non_combatant: false             # crew fights bandits
 player_attack_immune: true       # players cannot attack -- rebuff like shopkeepers
