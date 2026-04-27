@@ -48,25 +48,38 @@ func init() {
 //	home_room_id  (int) — room ID to use as the party's HomeRoomId
 //
 // Behavior:
-//  1. Already in a party → Success (no-op).
-//  2. Find the leader mob instance by scanning all loaded instances for a
+//  1. Already in a real party → Success (no-op).
+//  2. Already in an interim party AND real leader has now spawned →
+//     dissolve interim, fall through to join real party.
+//  3. Find the leader mob instance by scanning all loaded instances for a
 //     matching MobId. If not found (not yet spawned), the calling mob becomes
-//     the interim leader and creates the party itself.
-//  3. If the leader instance exists and already has a party, add the caller to
-//     that party. If not, create a new party with the leader as leader.
-//  4. Set HomeRoomId = home_room_id.
+//     the interim leader and creates the party itself, marked with
+//     IntendedLeaderMobId so a later ensure call can consolidate.
+//  4. If the leader instance exists, get-or-create its party and absorb any
+//     interim parties whose IntendedLeaderMobId matches.
 func actPartyEnsureNpcParty(params map[string]any, ctx *EvalContext) Result {
-	// 1. Already in a party — idempotent success.
-	if parties.GetByMobInstanceId(ctx.InstanceId) != nil {
-		return Success
-	}
-
 	leaderMobId := getIntParam(params, "leader_mob_id")
 	homeRoomId := getIntParam(params, "home_room_id")
 	if leaderMobId == 0 || homeRoomId == 0 {
 		mudlog.Info("party_ensure_npc_party", "result", "missing_params",
 			"caller", ctx.InstanceId, "leader_mob_id", leaderMobId, "home_room_id", homeRoomId)
 		return Failure
+	}
+
+	// 1/2. Already in a party — usually a no-op, but check for the
+	// interim-consolidation case.
+	if existing := parties.GetByMobInstanceId(ctx.InstanceId); existing != nil {
+		// Real party (no intended-leader marker, OR caller IS the real leader): no-op.
+		if existing.IntendedLeaderMobId == 0 {
+			return Success
+		}
+		// Interim party. Has the real leader spawned yet?
+		realLeader := findMobInstanceByTemplateId(existing.IntendedLeaderMobId)
+		if realLeader == nil {
+			return Success // still waiting for the real leader to load
+		}
+		// Real leader is here — let consolidation fire below by falling through
+		// to the real-leader branch. AbsorbInterimParties will pull us in.
 	}
 
 	// Find the calling mob's instance.
@@ -77,24 +90,25 @@ func actPartyEnsureNpcParty(params map[string]any, ctx *EvalContext) Result {
 	}
 	callerActor := &npcActor{mob: callerMob}
 
-	// 2. Find the leader mob instance — scan all loaded instances.
+	// 3. Find the leader mob instance — scan all loaded instances.
 	leaderMob := findMobInstanceByTemplateId(leaderMobId)
 	if leaderMob == nil {
 		// Leader not yet spawned; caller becomes interim leader.
 		p := parties.NewByActor(callerActor)
 		if p == nil {
-			// Caller somehow joined a party between the check above and here.
+			// Caller is already in a party (probably their own interim from a prior tick).
 			return Success
 		}
 		p.HomeRoomId = homeRoomId
+		p.IntendedLeaderMobId = leaderMobId
 		mudlog.Info("party_ensure_npc_party", "result", "interim_leader",
-			"caller", ctx.InstanceId, "party", p.PartyIdInternal())
+			"caller", ctx.InstanceId, "party", p.PartyIdInternal(), "intended_leader", leaderMobId)
 		return Success
 	}
 
 	leaderActor := &npcActor{mob: leaderMob}
 
-	// 3. Get-or-create the party keyed on the leader.
+	// 4. Get-or-create the party keyed on the leader.
 	p := parties.GetByActor(leaderActor)
 	created := false
 	if p == nil {
@@ -108,6 +122,15 @@ func actPartyEnsureNpcParty(params map[string]any, ctx *EvalContext) Result {
 		created = true
 	}
 
+	// Absorb any interim parties whose IntendedLeaderMobId matches — this
+	// reconciles the startup-race case where followers self-formed before
+	// the real leader's mob instance loaded.
+	if absorbed := p.AbsorbInterimParties(leaderMobId); absorbed > 0 {
+		mudlog.Info("party_ensure_npc_party", "result", "absorbed_interim",
+			"caller", ctx.InstanceId, "party", p.PartyIdInternal(),
+			"absorbed", absorbed, "members", len(p.Members), "help_room", p.HelpRoomId)
+	}
+
 	// If the caller IS the leader, NewByActor already added them.
 	if callerMob.InstanceId == leaderMob.InstanceId {
 		mudlog.Info("party_ensure_npc_party", "result", "leader_self",
@@ -115,8 +138,10 @@ func actPartyEnsureNpcParty(params map[string]any, ctx *EvalContext) Result {
 		return Success
 	}
 
-	// 4. Add the caller as a member (AddActor is idempotent for unknowns).
-	p.AddActor(callerActor)
+	// Add the caller as a member (idempotent for already-present actors).
+	if parties.GetByMobInstanceId(callerMob.InstanceId) != p {
+		p.AddActor(callerActor)
+	}
 	mudlog.Info("party_ensure_npc_party", "result", "joined",
 		"caller", ctx.InstanceId, "leader_inst", leaderMob.InstanceId,
 		"party", p.PartyIdInternal(), "members", len(p.Members), "created", created)

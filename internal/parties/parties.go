@@ -50,6 +50,14 @@ type Party struct {
 	HomeRoomId int // 0 if none designated; for party_at_home_stand
 	HelpRoomId int // 0 if no active call; rally room when set
 
+	// IntendedLeaderMobId is non-zero when this party was created by a
+	// follower acting as interim leader because the real leader's mob
+	// instance had not yet been loaded (lazy room loading races). When
+	// the real leader finally appears, party_ensure_npc_party uses this
+	// to consolidate the interim party into the real leader's party.
+	// 0 for player parties and parties already led by their real leader.
+	IntendedLeaderMobId int
+
 	// ── Internal bookkeeping ──
 	partyId int // lazy-assigned numeric ID; see PartyIdInternal()
 }
@@ -372,6 +380,57 @@ func (p *Party) PartyIdInternal() int {
 func GetByMobInstanceId(mobInstanceId int) *Party {
 	key := ActorKey(fmt.Sprintf("mob:%d", mobInstanceId))
 	return actorPartyMap[key]
+}
+
+// AbsorbInterimParties scans the registry for "interim" parties whose
+// IntendedLeaderMobId matches leaderMobId, and migrates each member into
+// p. Used by party_ensure_npc_party to reconcile after a startup race
+// where a follower mob's behavior tree fired before its leader's mob
+// instance was loaded — the follower self-formed an interim party that
+// must be merged once the real leader appears.
+//
+// Migration semantics:
+//   - Each member is removed from its interim party and added to p
+//     (skipping any that are already in p, e.g. the leader itself).
+//   - HelpRoomId from the interim party is preserved into p only if p
+//     has no active call (HelpRoomId == 0).
+//   - The interim party's own IntendedLeaderMobId is cleared and the
+//     party is dissolved with reason "interim_consolidated".
+//   - p must be the real leader's party (Leader is the actual leader
+//     mob, not an interim follower).
+//
+// Returns the number of interim parties consolidated.
+func (p *Party) AbsorbInterimParties(leaderMobId int) int {
+	consolidated := 0
+	for _, interim := range ListAllParties() {
+		if interim == p {
+			continue
+		}
+		if interim.IntendedLeaderMobId != leaderMobId {
+			continue
+		}
+		// Snapshot members + state before mutation; RemoveActor + AddActor
+		// mutate the interim's slice mid-iteration otherwise.
+		snapshot := make([]partyActor, len(interim.Members))
+		copy(snapshot, interim.Members)
+		helpRoom := interim.HelpRoomId
+		for _, m := range snapshot {
+			interim.RemoveActor(m)
+			// Skip if member is already in p (defensive; shouldn't happen
+			// since RemoveActor cleared the registry entry, but cheap).
+			if GetByMobInstanceId(m.GetMobInstanceId()) != nil {
+				continue
+			}
+			p.AddActor(m)
+		}
+		if helpRoom != 0 && p.HelpRoomId == 0 {
+			p.HelpRoomId = helpRoom
+		}
+		interim.IntendedLeaderMobId = 0
+		interim.Dissolve("interim_consolidated")
+		consolidated++
+	}
+	return consolidated
 }
 
 // ListAllParties returns all parties currently in the registry,

@@ -566,6 +566,124 @@ func TestActPartyEnsureNpcParty_LeaderSpawnedFirstCreatesParty(t *testing.T) {
 	}
 }
 
+// TestActPartyEnsureNpcParty_InterimConsolidation simulates the production
+// startup race that produced the original bug: a follower mob's btree fires
+// before the leader's mob instance is loaded, so the follower self-forms an
+// "interim" party. When the real leader later loads and runs ensure, the
+// interim party must be consolidated into the real party, carrying any
+// HelpRoomId set in the meantime.
+func TestActPartyEnsureNpcParty_InterimConsolidation(t *testing.T) {
+	fn := LookupAction("party_ensure_npc_party")
+
+	cleanRoom := seedTestRoom(t, 65, "TestZone")
+	defer cleanRoom()
+
+	// Phase 1: lookout (instance 7001, template 283) ensures with leader 286.
+	// Leader 286 is NOT loaded yet → lookout becomes interim leader.
+	lookoutMob := &mobs.Mob{MobId: mobs.MobId(283), InstanceId: 7001, HomeRoomId: 65}
+	lookoutMob.Character.Name = "bandit lookout"
+	lookoutMob.Character.RoomId = 65
+	lookoutMob.Character.Buffs = buffs.New()
+	mobs.SetInstanceForTest(7001, lookoutMob)
+	t.Cleanup(func() { mobs.SetInstanceForTest(7001, nil) })
+
+	params := map[string]any{"leader_mob_id": 286, "home_room_id": 4052}
+	if got := fn(params, &EvalContext{InstanceId: 7001, RoomId: 65}); got != Success {
+		t.Fatalf("phase 1 ensure (lookout, leader absent): want Success, got %v", got)
+	}
+	interim := parties.GetByMobInstanceId(7001)
+	if interim == nil {
+		t.Fatal("phase 1: lookout should be in an interim party")
+	}
+	if interim.IntendedLeaderMobId != 286 {
+		t.Errorf("phase 1: interim party IntendedLeaderMobId = %d, want 286", interim.IntendedLeaderMobId)
+	}
+	// Simulate the lookout calling for help — sets HelpRoomId on the interim party.
+	interim.HelpRoomId = 9999
+
+	// Phase 2: real leader (instance 7002, template 286) loads and ensures.
+	// Should detect interim party with matching IntendedLeaderMobId and
+	// absorb the lookout, carrying HelpRoomId across.
+	leaderMob := &mobs.Mob{MobId: mobs.MobId(286), InstanceId: 7002, HomeRoomId: 65}
+	leaderMob.Character.Name = "Soren"
+	leaderMob.Character.RoomId = 65
+	leaderMob.Character.Buffs = buffs.New()
+	mobs.SetInstanceForTest(7002, leaderMob)
+	t.Cleanup(func() { mobs.SetInstanceForTest(7002, nil) })
+
+	if got := fn(params, &EvalContext{InstanceId: 7002, RoomId: 65}); got != Success {
+		t.Fatalf("phase 2 ensure (leader loads): want Success, got %v", got)
+	}
+
+	leaderParty := parties.GetByMobInstanceId(7002)
+	if leaderParty == nil {
+		t.Fatal("phase 2: leader should be in a party")
+	}
+	t.Cleanup(func() { leaderParty.Dissolve("test-cleanup") })
+
+	// All four invariants:
+	//   1. Lookout is now in the leader's party (not the interim).
+	lookoutParty := parties.GetByMobInstanceId(7001)
+	if lookoutParty != leaderParty {
+		t.Errorf("phase 2: lookout party = %v, want leader party %v", lookoutParty, leaderParty)
+	}
+	//   2. Interim party is dissolved (its IntendedLeaderMobId is cleared).
+	if interim.IntendedLeaderMobId != 0 {
+		t.Errorf("phase 2: dissolved interim still has IntendedLeaderMobId=%d", interim.IntendedLeaderMobId)
+	}
+	//   3. HelpRoomId carried over to the leader's party.
+	if leaderParty.HelpRoomId != 9999 {
+		t.Errorf("phase 2: leader party HelpRoomId = %d, want 9999 (carried from interim)", leaderParty.HelpRoomId)
+	}
+	//   4. Leader's party has both members (leader + lookout).
+	if len(leaderParty.Members) != 2 {
+		t.Errorf("phase 2: leader party has %d members, want 2 (leader + absorbed lookout)", len(leaderParty.Members))
+	}
+}
+
+// TestActPartyEnsureNpcParty_InterimNoOpUntilLeaderLoads verifies that a
+// follower stuck in an interim party does NOT consolidate itself before the
+// real leader appears — repeated ensure calls should remain a no-op.
+func TestActPartyEnsureNpcParty_InterimNoOpUntilLeaderLoads(t *testing.T) {
+	fn := LookupAction("party_ensure_npc_party")
+
+	cleanRoom := seedTestRoom(t, 66, "TestZone")
+	defer cleanRoom()
+
+	mob := &mobs.Mob{MobId: mobs.MobId(283), InstanceId: 7010, HomeRoomId: 66}
+	mob.Character.Name = "bandit lookout"
+	mob.Character.RoomId = 66
+	mob.Character.Buffs = buffs.New()
+	mobs.SetInstanceForTest(7010, mob)
+	t.Cleanup(func() { mobs.SetInstanceForTest(7010, nil) })
+
+	params := map[string]any{"leader_mob_id": 286, "home_room_id": 4052}
+
+	// First ensure: becomes interim leader (leader 286 not loaded).
+	if got := fn(params, &EvalContext{InstanceId: 7010, RoomId: 66}); got != Success {
+		t.Fatalf("first ensure: want Success, got %v", got)
+	}
+	first := parties.GetByMobInstanceId(7010)
+	if first == nil {
+		t.Fatal("expected interim party after first ensure")
+	}
+	t.Cleanup(func() {
+		// May have been dissolved by an earlier consolidation; safe to re-call.
+		if p := parties.GetByMobInstanceId(7010); p != nil {
+			p.Dissolve("test-cleanup")
+		}
+	})
+
+	// Second ensure: still no leader → must remain in same interim party (no-op).
+	if got := fn(params, &EvalContext{InstanceId: 7010, RoomId: 66}); got != Success {
+		t.Fatalf("second ensure: want Success, got %v", got)
+	}
+	second := parties.GetByMobInstanceId(7010)
+	if second != first {
+		t.Errorf("second ensure changed party (interim should be a no-op until leader loads)")
+	}
+}
+
 func TestActPartyEnsureNpcParty_LeaderCallsEnsureOnSelf(t *testing.T) {
 	fn := LookupAction("party_ensure_npc_party")
 
