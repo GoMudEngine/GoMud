@@ -4,34 +4,24 @@ zone: Thornwall City
 patterns:
   - keywords: [hello, hi, greetings, hail]
     responses:
-      - '<ansi fg="mobname">Ketil</ansi> nods at you without breaking
-        stride. "Aye. Just got the wagons checked over. Long road today."'
+      - 'Aye. Wagons are checked over. Long road today.'
 
   - keywords: [road, trip, journey, where, going]
     responses:
-      - '<ansi fg="mobname">Ketil</ansi> jerks his chin toward the gate.
-        "North to Stillwater, then back. Same as always. The bandits on
-        the spur road test us every time, and every time they lose.
-        Keeps the road honest."'
+      - 'North to Stillwater, then back. Same as always. The bandits on the spur road test us every time, and every time they lose. Keeps the road honest.'
 
   - keywords: [bandit, bandits, danger, robber]
     responses:
-      - '<ansi fg="mobname">Ketil</ansi> rests a hand on the pommel of
-        his sword. "Fools who think a wagon means easy coin. They learn
-        otherwise. Marta and Lars earn their wages on every run."'
+      - 'Fools who think a wagon means easy coin. They learn otherwise. Marta and Lars earn their wages on every run.'
 
   - keywords: [wagon, supplies, cargo, goods, deliver]
     responses:
-      - '"Bulk goods. Things that move better in volume than a shopkeeper
-        can stock alone. Stillwater needs Thornwall iron; Thornwall needs
-        Stillwater pearl. We bridge the difference."'
+      - 'Bulk goods. Things that move better in volume than a shopkeeper can stock alone. Stillwater needs Thornwall iron, Thornwall needs Stillwater pearl. We bridge the difference.'
 
   - keywords: [marta, lars, crew, guards]
     responses:
-      - '"Marta hits like a falling tree. Lars can pin a sparrow at fifty
-        paces. I trust them with my life and have, more than once."'
+      - 'Marta hits like a falling tree. Lars can pin a sparrow at fifty paces. I trust them with my life and have, more than once.'
 
   - keywords: [""]
     responses:
-      - '<ansi fg="mobname">Ketil</ansi> grunts noncommittally and
-        returns his attention to the wagon.'
+      - 'Hmh.'

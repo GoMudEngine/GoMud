@@ -11,6 +11,7 @@ hostile: false
 non_combatant: false             # crew fights bandits
 player_attack_immune: true       # players cannot attack -- rebuff like shopkeepers
 maxwander: -1                    # -1 = unlimited; caravan crosses zones
+activitylevel: 15                # ~15% chance/tick to fire an idlecommand
 charm_immune: true
 buffids: []
 idlecommands:

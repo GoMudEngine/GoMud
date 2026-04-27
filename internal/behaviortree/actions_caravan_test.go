@@ -23,10 +23,11 @@ func TestActCaravanStep_DefaultsToThornwallDwellOnFirstTick(t *testing.T) {
 		RoomId:     caravan.ThornwallDepotRoomId,
 		MobState:   state,
 	}
-	result := fn(nil, ctx)
-	if result == Failure {
-		t.Errorf("caravan_step returned Failure on first tick; want Success")
-	}
+	// First tick initializes state to thornwall_dwell. tickDwell returns
+	// Failure while the dwell timer is unexpired (so legacy idle takes
+	// over and fires idlecommands). The state is what we assert on, not
+	// the result.
+	fn(nil, ctx)
 	got := state.GetString("caravan_state")
 	if got != caravan.StateThornwallDwell.Name() {
 		t.Errorf("caravan_state after first tick = %q, want %q",

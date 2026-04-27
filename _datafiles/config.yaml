@@ -865,7 +865,7 @@ Balance:
 
   # Rounds the caravan rests at each depot between transit legs.
   # 360 rounds ≈ 24 min real ≈ half an in-game day.
-  CaravanDepotDwellRounds: 360
+  CaravanDepotDwellRounds: 30   # TEMP smoke-test value; restore to 360 (~24 min real, half a game day) after testing
 
 ################################################################################
 #

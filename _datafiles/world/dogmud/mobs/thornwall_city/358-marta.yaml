@@ -11,6 +11,7 @@ hostile: false
 non_combatant: false
 player_attack_immune: true
 maxwander: -1
+activitylevel: 15
 charm_immune: true
 buffids: []
 idlecommands:

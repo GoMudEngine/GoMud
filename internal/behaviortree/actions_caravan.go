@@ -80,6 +80,12 @@ func transitionTo(s *BehaviorState, next caravan.CaravanState) {
 }
 
 // tickDwell: at depot, waiting for the dwell timer to elapse.
+//
+// Returns Success only when the dwell timer expires and the state actually
+// advances. While still waiting, returns Failure so the btree falls through
+// to legacy idle (which fires the mob's idlecommands and lookfortrouble).
+// Without this, the caravan crew sits silent at the depot for the entire
+// dwell — no flavor emotes from idlecommands.
 func tickDwell(cur caravan.CaravanState, mob *mobs.Mob, ctx *EvalContext) Result {
 	startedStr := ctx.MobState.GetString("caravan_state_started_round")
 	started, _ := strconv.ParseUint(startedStr, 10, 64)
@@ -88,8 +94,9 @@ func tickDwell(cur caravan.CaravanState, mob *mobs.Mob, ctx *EvalContext) Result
 		transitionTo(ctx.MobState, caravan.AdvanceState(cur))
 		return Success
 	}
-	// Still resting — no-op success so the btree branch consumes mob_idle.
-	return Success
+	// Still resting — let legacy idle path (lookfortrouble + idlecommands)
+	// handle the round so the crew shows flavor emotes during dwell.
+	return Failure
 }
 
 // tickTransit: walking toward the destination depot. Issues pathto on

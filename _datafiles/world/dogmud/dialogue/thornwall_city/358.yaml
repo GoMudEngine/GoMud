@@ -4,26 +4,20 @@ zone: Thornwall City
 patterns:
   - keywords: [hello, hi, greetings, hail]
     responses:
-      - '<ansi fg="mobname">Marta</ansi> gives you a slow, friendly nod.
-        "Hey."'
+      - 'Hey.'
 
   - keywords: [hammer, weapon, fight]
     responses:
-      - '"Old girl''s seen things." She pats the haft. "Most folk who
-        look at her think twice. The ones who don''t think at all
-        stop thinking soon enough."'
+      - 'Old girl has seen things. Most folk who look at her think twice. The ones who do not think at all stop thinking soon enough.'
 
   - keywords: [bandit, bandits, road]
     responses:
-      - '<ansi fg="mobname">Marta</ansi> shrugs. "Same crew, every run.
-        They never seem to learn. Suits me. Keeps me in practice."'
+      - 'Same crew, every run. They never seem to learn. Suits me. Keeps me in practice.'
 
   - keywords: [ketil, lars, crew]
     responses:
-      - '"Boss is steady. Lars hits what he aims at. Wouldn''t run with
-        anyone else."'
+      - 'Boss is steady. Lars hits what he aims at. Would not run with anyone else.'
 
   - keywords: [""]
     responses:
-      - '<ansi fg="mobname">Marta</ansi> gives you a small smile and
-        goes back to whatever she was doing.'
+      - 'Hm.'
