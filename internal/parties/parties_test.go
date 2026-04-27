@@ -146,6 +146,46 @@ func TestListAllParties_DeduplicatesByPointer(t *testing.T) {
 	}
 }
 
+func TestRemoveActorByMobInstanceId_RemovesMember(t *testing.T) {
+	leader := newTestActor(0, 440)
+	member := newTestActor(0, 441)
+	p := NewByActor(leader)
+	p.AddActor(member)
+	if !p.RemoveActorByMobInstanceId(441) {
+		t.Error("RemoveActorByMobInstanceId returned false for present member")
+	}
+	if len(p.Members) != 1 {
+		t.Errorf("Members len after remove = %d, want 1", len(p.Members))
+	}
+	if GetByMobInstanceId(441) != nil {
+		t.Error("member should no longer be in registry")
+	}
+}
+
+func TestRemoveActorByMobInstanceId_ReturnsFalseForUnknown(t *testing.T) {
+	leader := newTestActor(0, 450)
+	p := NewByActor(leader)
+	if p.RemoveActorByMobInstanceId(99998) {
+		t.Error("RemoveActorByMobInstanceId should return false for unknown mob")
+	}
+}
+
+func TestRemoveActorByMobInstanceId_RemovesLeader(t *testing.T) {
+	leader := newTestActor(0, 460)
+	member := newTestActor(0, 461)
+	p := NewByActor(leader)
+	p.AddActor(member)
+	if !p.RemoveActorByMobInstanceId(460) {
+		t.Error("RemoveActorByMobInstanceId returned false for leader")
+	}
+	if len(p.Members) != 1 {
+		t.Errorf("Members len after leader remove = %d, want 1", len(p.Members))
+	}
+	if GetByMobInstanceId(460) != nil {
+		t.Error("leader should no longer be in registry")
+	}
+}
+
 func TestDissolve_RemovesAllMembersFromRegistry(t *testing.T) {
 	leader := newTestActor(0, 430)
 	m1 := newTestActor(0, 431)

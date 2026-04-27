@@ -388,6 +388,37 @@ func ListAllParties() []*Party {
 	return out
 }
 
+// RemoveActorByMobInstanceId removes a mob from the party by its instance
+// ID. Used when the mob is dying and a full Actor isn't readily
+// constructible. Returns true if the mob was found and removed.
+func (p *Party) RemoveActorByMobInstanceId(mobInstanceId int) bool {
+	key := ActorKey(fmt.Sprintf("mob:%d", mobInstanceId))
+	if _, ok := actorPartyMap[key]; !ok {
+		return false
+	}
+	delete(actorPartyMap, key)
+	for i, m := range p.Members {
+		if ActorKeyFor(m) == key {
+			p.Members = append(p.Members[:i], p.Members[i+1:]...)
+			break
+		}
+	}
+	for i, m := range p.Invitees {
+		if ActorKeyFor(m) == key {
+			p.Invitees = append(p.Invitees[:i], p.Invitees[i+1:]...)
+			break
+		}
+	}
+	for i, m := range p.AutoAttackerActors {
+		if ActorKeyFor(m) == key {
+			p.AutoAttackerActors = append(p.AutoAttackerActors[:i], p.AutoAttackerActors[i+1:]...)
+			break
+		}
+	}
+	delete(p.ActorPosition, key)
+	return true
+}
+
 // Dissolve removes all members, invitees, and auto-attackers from both
 // registries and fires a PartyDissolved event so that member behavior
 // trees can react before reverting to solo behavior.
