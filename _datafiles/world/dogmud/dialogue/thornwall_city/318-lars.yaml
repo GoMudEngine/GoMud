@@ -1,0 +1,27 @@
+mobid: 318
+zone: Thornwall City
+
+patterns:
+  - keywords: [hello, hi, greetings, hail]
+    responses:
+      - '<ansi fg="mobname">Lars</ansi> looks up, makes a brief eye-contact
+        acknowledgement, and goes back to checking his bowstring.'
+
+  - keywords: [bow, weapon, arrow]
+    responses:
+      - '"Yew. Cured slow. The bowyer up in Stillwater knows his trade.
+        Not pretty but it shoots true."'
+
+  - keywords: [bandit, bandits, road]
+    responses:
+      - '<ansi fg="mobname">Lars</ansi> shrugs. "I see them before they
+        see us. After that it''s just arithmetic."'
+
+  - keywords: [ketil, marta, crew]
+    responses:
+      - '"Good people. Run a tight wagon. I get paid on time."'
+
+  - keywords: [""]
+    responses:
+      - '<ansi fg="mobname">Lars</ansi> nods politely and returns to his
+        gear.'

@@ -1,0 +1,49 @@
+mobid: 318
+zone: Thornwall City
+archetype: fighting
+behavior_archetype: ""
+statpool: 170
+itemdropchance: 0
+groups:
+  - caravan
+  - merchant_train
+hostile: false
+non_combatant: false
+player_attack_immune: true
+maxwander: -1
+charm_immune: true
+buffids: []
+idlecommands:
+  - 'emote restrings his bow with quick, practiced motions'
+  - ''
+  - 'emote scans the rooftops with a habitual, half-attentive sweep'
+  - ''
+  - 'emote checks the count in his quiver, lips moving silently'
+character:
+  name: Lars
+  description: |
+    A lean, sharp-eyed man in dark traveling leathers, a hunting bow
+    over one shoulder and a quiver of fletched arrows at his hip. A
+    long knife rides on his belt for close work. He has the still,
+    economical stance of someone who learned early that small motions
+    waste less energy than large ones.
+  speciesid: 1
+  level: 1
+  gold: 12
+  # Equipment TBD per Ketil's pattern.
+  stats:
+    strength:
+      training: 18
+    dexterity:
+      training: 30
+    vitality:
+      training: 18
+    perception:
+      training: 25
+    willpower:
+      training: 12
+    charisma:
+      training: 10
+  skills:
+    weapon-combat: 18
+    ranged-combat: 24
