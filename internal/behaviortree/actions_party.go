@@ -21,7 +21,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
-	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -62,8 +61,6 @@ func actPartyEnsureNpcParty(params map[string]any, ctx *EvalContext) Result {
 	leaderMobId := getIntParam(params, "leader_mob_id")
 	homeRoomId := getIntParam(params, "home_room_id")
 	if leaderMobId == 0 || homeRoomId == 0 {
-		mudlog.Info("party_ensure_npc_party", "result", "missing_params",
-			"caller", ctx.InstanceId, "leader_mob_id", leaderMobId, "home_room_id", homeRoomId)
 		return Failure
 	}
 
@@ -86,7 +83,6 @@ func actPartyEnsureNpcParty(params map[string]any, ctx *EvalContext) Result {
 	// Find the calling mob's instance.
 	callerMob := mobs.GetInstance(ctx.InstanceId)
 	if callerMob == nil {
-		mudlog.Info("party_ensure_npc_party", "result", "no_caller_instance", "caller", ctx.InstanceId)
 		return Failure
 	}
 	callerActor := &npcActor{mob: callerMob}
@@ -102,8 +98,6 @@ func actPartyEnsureNpcParty(params map[string]any, ctx *EvalContext) Result {
 		}
 		p.HomeRoomId = homeRoomId
 		p.IntendedLeaderMobId = leaderMobId
-		mudlog.Info("party_ensure_npc_party", "result", "interim_leader",
-			"caller", ctx.InstanceId, "party", p.PartyIdInternal(), "intended_leader", leaderMobId)
 		return Success
 	}
 
@@ -111,31 +105,21 @@ func actPartyEnsureNpcParty(params map[string]any, ctx *EvalContext) Result {
 
 	// 4. Get-or-create the party keyed on the leader.
 	p := parties.GetByActor(leaderActor)
-	created := false
 	if p == nil {
 		p = parties.NewByActor(leaderActor)
 		if p == nil {
-			mudlog.Info("party_ensure_npc_party", "result", "newbyactor_nil",
-				"caller", ctx.InstanceId, "leader_inst", leaderMob.InstanceId)
 			return Failure
 		}
 		p.HomeRoomId = homeRoomId
-		created = true
 	}
 
 	// Absorb any interim parties whose IntendedLeaderMobId matches — this
 	// reconciles the startup-race case where followers self-formed before
 	// the real leader's mob instance loaded.
-	if absorbed := p.AbsorbInterimParties(leaderMobId); absorbed > 0 {
-		mudlog.Info("party_ensure_npc_party", "result", "absorbed_interim",
-			"caller", ctx.InstanceId, "party", p.PartyIdInternal(),
-			"absorbed", absorbed, "members", len(p.Members), "help_room", p.HelpRoomId)
-	}
+	p.AbsorbInterimParties(leaderMobId)
 
 	// If the caller IS the leader, NewByActor already added them.
 	if callerMob.InstanceId == leaderMob.InstanceId {
-		mudlog.Info("party_ensure_npc_party", "result", "leader_self",
-			"caller", ctx.InstanceId, "party", p.PartyIdInternal(), "created", created)
 		return Success
 	}
 
@@ -143,9 +127,6 @@ func actPartyEnsureNpcParty(params map[string]any, ctx *EvalContext) Result {
 	if parties.GetByMobInstanceId(callerMob.InstanceId) != p {
 		p.AddActor(callerActor)
 	}
-	mudlog.Info("party_ensure_npc_party", "result", "joined",
-		"caller", ctx.InstanceId, "leader_inst", leaderMob.InstanceId,
-		"party", p.PartyIdInternal(), "members", len(p.Members), "created", created)
 	return Success
 }
 
@@ -183,13 +164,10 @@ func findMobInstanceByTemplateId(templateMobId int) *mobs.Mob {
 func actPartyCallHelp(params map[string]any, ctx *EvalContext) Result {
 	p := parties.GetByMobInstanceId(ctx.InstanceId)
 	if p == nil {
-		mudlog.Info("party_call_help", "result", "no_party", "caller", ctx.InstanceId)
 		return Failure
 	}
 	p.HelpRoomId = ctx.RoomId
 	p.HelpCallerInstanceId = ctx.InstanceId
-	mudlog.Info("party_call_help", "result", "ok", "caller", ctx.InstanceId,
-		"party", p.PartyIdInternal(), "members", len(p.Members), "help_room", ctx.RoomId)
 	events.AddToQueue(events.PartyHelpRequested{
 		PartyId:        p.PartyIdInternal(),
 		CallerActorId:  ctx.InstanceId,
@@ -210,36 +188,23 @@ func actPartyCallHelp(params map[string]any, ctx *EvalContext) Result {
 // when no party / no help room / no engageable target.
 func actPartyRespondToHelp(params map[string]any, ctx *EvalContext) Result {
 	p := parties.GetByMobInstanceId(ctx.InstanceId)
-	if p == nil {
-		mudlog.Info("party_respond_to_help", "result", "no_party", "caller", ctx.InstanceId)
-		return Failure
-	}
-	if p.HelpRoomId == 0 {
-		// Common steady state — don't log, would be very noisy.
+	if p == nil || p.HelpRoomId == 0 {
 		return Failure
 	}
 	if ctx.RoomId == p.HelpRoomId {
 		// Arrived. Engage a hostile-target player in the room so the mob
 		// enters combat and isn't pulled home by the wander check next round.
-		if engaged := engageHostilePlayerInRoom(ctx.InstanceId, ctx.RoomId); engaged {
-			mudlog.Info("party_respond_to_help", "result", "engaged", "caller", ctx.InstanceId,
-				"party", p.PartyIdInternal(), "room", ctx.RoomId)
+		if engageHostilePlayerInRoom(ctx.InstanceId, ctx.RoomId) {
 			return Success
 		}
 		// No player to engage in the rally room — let the selector fall
 		// through. If HelpRoomId is still set the caller will eventually
 		// die or otherwise resolve, and the death handler clears the call.
-		mudlog.Info("party_respond_to_help", "result", "arrived_no_target", "caller", ctx.InstanceId,
-			"party", p.PartyIdInternal(), "room", ctx.RoomId)
 		return Failure
 	}
 	if !moveMobTowardRoom(ctx.InstanceId, p.HelpRoomId) {
-		mudlog.Info("party_respond_to_help", "result", "move_failed", "caller", ctx.InstanceId,
-			"party", p.PartyIdInternal(), "from", ctx.RoomId, "to", p.HelpRoomId)
 		return Failure
 	}
-	mudlog.Info("party_respond_to_help", "result", "moving", "caller", ctx.InstanceId,
-		"party", p.PartyIdInternal(), "from", ctx.RoomId, "to", p.HelpRoomId)
 	return Success
 }
 
