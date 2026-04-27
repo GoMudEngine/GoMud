@@ -40,7 +40,7 @@ func Kick(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 		if !target.IsPlayer() {
 			mob := target.(*actions.MobActor).Mob
-			if mob.IsNonCombatant() {
+			if mob.IsNonCombatant() || mob.PlayerAttackImmune {
 				user.SendText(fmt.Sprintf(`You can't attack <ansi fg="mobname">%s</ansi>.`, mob.Character.Name))
 				return true, nil
 			}

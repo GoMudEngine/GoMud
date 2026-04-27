@@ -106,7 +106,7 @@ func stealFromMob(mobInstanceId int, attackerScore float64, rank int,
 		return true, nil
 	}
 
-	if m.IsNonCombatant() {
+	if m.IsNonCombatant() || m.PlayerAttackImmune {
 		user.SendText(fmt.Sprintf(`You can't steal from <ansi fg="mobname">%s</ansi>.`, m.Character.Name))
 		return true, nil
 	}
