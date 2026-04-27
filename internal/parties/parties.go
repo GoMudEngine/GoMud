@@ -2,8 +2,13 @@ package parties
 
 import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
+
+// nextPartyId is a monotonically increasing counter used to assign
+// unique numeric IDs to Party instances for event payloads.
+var nextPartyId int = 1
 
 // partyActor is the local interface for actor-based Party operations.
 // It extends actorIdentity (IsPlayer/GetUserId/GetMobInstanceId) with the
@@ -42,6 +47,9 @@ type Party struct {
 	// ── NPC party state ──
 	HomeRoomId int // 0 if none designated; for party_at_home_stand
 	HelpRoomId int // 0 if no active call; rally room when set
+
+	// ── Internal bookkeeping ──
+	partyId int // lazy-assigned numeric ID; see PartyIdInternal()
 }
 
 var (
@@ -345,10 +353,37 @@ func (p *Party) RemoveActor(a partyActor) bool {
 	return true
 }
 
+// PartyIdInternal returns the party's internal numeric ID. The ID is
+// lazy-assigned on first call using a package-level counter. Used by
+// behavior tree actions and events that need a stable party reference.
+func (p *Party) PartyIdInternal() int {
+	if p.partyId == 0 {
+		p.partyId = nextPartyId
+		nextPartyId++
+	}
+	return p.partyId
+}
+
 // Dissolve removes all members, invitees, and auto-attackers from both
-// registries. The reason parameter is currently informational only;
-// Task 6 wires it to fire a party_dissolved event for member awareness.
+// registries and fires a PartyDissolved event so that member behavior
+// trees can react before reverting to solo behavior.
 func (p *Party) Dissolve(reason string) {
+	// Collect member actor IDs before clearing slices.
+	memberIds := make([]int, 0, len(p.Members))
+	for _, a := range p.Members {
+		if a.IsPlayer() {
+			memberIds = append(memberIds, a.GetUserId())
+		} else {
+			memberIds = append(memberIds, a.GetMobInstanceId())
+		}
+	}
+
+	events.AddToQueue(events.PartyDissolved{
+		PartyId:        p.PartyIdInternal(),
+		Reason:         reason,
+		MemberActorIds: memberIds,
+	})
+
 	for _, a := range p.Members {
 		delete(actorPartyMap, ActorKeyFor(a))
 		if a.IsPlayer() {
@@ -361,7 +396,6 @@ func (p *Party) Dissolve(reason string) {
 			delete(partyMap, a.GetUserId())
 		}
 	}
-	// party_dissolved event fired in Task 6 — added then.
 	p.Members = nil
 	p.Invitees = nil
 	p.AutoAttackerActors = nil
