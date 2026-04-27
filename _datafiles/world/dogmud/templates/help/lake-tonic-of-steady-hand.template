@@ -1,0 +1,15 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">lake-tonic-of-steady-hand</ansi> (alchemy recipe)
+
+A pale green tonic that smells sharply of lake-mint and willow
+bark. A sip and the small tremors of fatigue and fear go quiet —
+the world holds still long enough to land a precise cut, thread
+a needle, or pick a lock that will not forgive a fumble.
+
+<ansi fg="yellow">━━━ Crafting ━━━</ansi>
+
+  <ansi fg="yellow">Skill:</ansi>       alchemy (minimum 18)
+  <ansi fg="yellow">Station:</ansi>     alchemy bench
+  <ansi fg="yellow">Ingredients:</ansi> marsh-willow bark (x2), lake mint (x3),
+                 bottle (x1)
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help alchemy</ansi>, <ansi fg="command">help craft</ansi>

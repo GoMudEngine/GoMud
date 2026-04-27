@@ -1,0 +1,16 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">drowned-veil</ansi> (enchanting recipe)
+
+A back-slot enchantment drawing on the conviction reservoir of the
+wearer. The enchantment confers tiered charisma and magical
+mitigation bonuses — the cloak seems to shimmer faintly when the
+wearer is observed too directly. Uses two stillwater pearls per
+casting.
+
+<ansi fg="yellow">━━━ Crafting ━━━</ansi>
+
+  <ansi fg="yellow">Skill:</ansi>       enchanting (minimum 40)
+  <ansi fg="yellow">Station:</ansi>     enchanting circle
+  <ansi fg="yellow">Ingredients:</ansi> stillwater pearl (x2), chrysalis setting (x2),
+                 binding paste (x1)
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help enchanting</ansi>, <ansi fg="command">help craft</ansi>
