@@ -5,9 +5,12 @@
 # player_enter it whistles and calls for pack help. In combat it assists
 # the leader's target. At the home camp it stands its ground. Otherwise
 # it responds to help calls from packmates.
+#
+# Top-level sequence so the always-Success party_ensure_npc_party step
+# does not short-circuit the selector beneath it.
 
 tree:
-  type: selector
+  type: sequence
   children:
 
     # ── Always: ensure party membership (idempotent) ──────────────────
@@ -16,37 +19,40 @@ tree:
       leader_mob_id: 286
       home_room_id: 4052
 
-    # ── PLAYER_ENTER: hostile player spotted — alert the pack ─────────
-    - type: sequence
-      event: player_enter
+    - type: selector
       children:
-        - type: action
-          do: emote
-          text: "whistles sharply, eyes snapping to the intruder"
-        - type: action
-          do: party_call_help
 
-    # ── COMBAT (mob_idle): assist the leader's target ─────────────────
-    - type: sequence
-      event: mob_idle
-      children:
-        - type: condition
-          check: party_in_combat
-        - type: action
-          do: party_assist_target
+        # ── PLAYER_ENTER: hostile player spotted — alert the pack ─────
+        - type: sequence
+          event: player_enter
+          children:
+            - type: action
+              do: emote
+              text: "whistles sharply, eyes snapping to the intruder"
+            - type: action
+              do: party_call_help
 
-    # ── HOME ROOM (mob_idle): hold the camp, suppress flee ────────────
-    - type: sequence
-      event: mob_idle
-      children:
-        - type: condition
-          check: party_at_home
-        - type: action
-          do: party_at_home_stand
+        # ── COMBAT (mob_idle): assist the leader's target ─────────────
+        - type: sequence
+          event: mob_idle
+          children:
+            - type: condition
+              check: party_in_combat
+            - type: action
+              do: party_assist_target
 
-    # ── OUT OF COMBAT, NOT AT HOME: respond to help if called ─────────
-    - type: sequence
-      event: mob_idle
-      children:
-        - type: action
-          do: party_respond_to_help
+        # ── HOME ROOM (mob_idle): hold the camp, suppress flee ────────
+        - type: sequence
+          event: mob_idle
+          children:
+            - type: condition
+              check: party_at_home
+            - type: action
+              do: party_at_home_stand
+
+        # ── OUT OF COMBAT, NOT AT HOME: respond to help if called ─────
+        - type: sequence
+          event: mob_idle
+          children:
+            - type: action
+              do: party_respond_to_help
