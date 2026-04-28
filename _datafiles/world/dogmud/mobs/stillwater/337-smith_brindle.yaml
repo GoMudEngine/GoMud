@@ -61,19 +61,40 @@ character:
     dexterity:
       training: 6
   shop:
-    - itemid: 40001
-      quantity: 0
-      quantitymax: 0
-      price: 3
-    - itemid: 40059
+    # Stillwater unique (forager-fed)
+    - itemid: 40059    # lake-iron nodule
       quantity: 0
       quantitymax: 0
       price: 8
-    - itemid: 40002
+    # Thornwall refined (caravan-fed from Kerra)
+    - itemid: 40018    # steel ingot
+      quantity: 0
+      quantitymax: 0
+      price: 30
+    # Fernway forest (caravan-fed)
+    - itemid: 40067    # pine pitch
+      quantity: 0
+      quantitymax: 0
+      price: 35
+    # Base smithing
+    - itemid: 40001    # iron ingot
+      quantity: 0
+      quantitymax: 0
+      price: 3
+    - itemid: 40003    # wooden plank
       quantity: 0
       quantitymax: 0
       price: 2
+    - itemid: 40019    # chain link
+      quantity: 0
+      quantitymax: 0
+      price: 4
+    - itemid: 40020    # coal dust
+      quantity: 0
+      quantitymax: 0
+      price: 4
+    # Existing tool item
     - itemid: 32
-      quantity: 1
-      quantitymax: 3
-      price: 1
+      quantity: 0
+      quantitymax: 0
+      price: 0
