@@ -1,0 +1,35 @@
+speciesid: 24
+name: mustelid
+description: |
+  The mustelid family covers badgers, weasels, otters, ferrets, and
+  martens — small to medium carnivores with thick muscular bodies,
+  short legs, and a willingness to fight things twice their size.
+  Heavy-jawed and stubborn; what they bite they tend to keep.
+buffids:
+  - 29 # Night Vision (mostly nocturnal hunters)
+size: small
+unarmedname: jaws
+selectable: false
+tameable: false
+angrycommands:
+  - 'emote bares its teeth and chitters a low warning'
+  - 'emote hisses and arches its back'
+  - 'emote snaps its jaws audibly'
+stats:
+  strength:
+    base: 70
+  dexterity:
+    base: 130
+  perception:
+    base: 110
+  vitality:
+    base: 90
+  willpower:
+    base: 25
+  charisma:
+    base: 10
+damage:
+  basedamage: 6
+  variance: 2
+damage_multiplier: 0.55
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet']
