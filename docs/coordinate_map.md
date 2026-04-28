@@ -8,7 +8,7 @@ southwest=X-1/Y-1, up=Z+1, down=Z-1, enter/leave=same position
 
 ## Reachable Rooms by Zone
 
-Total reachable: 274 rooms across multiple zones
+Total reachable: 304 rooms across multiple zones
 
 | Room ID | Zone | Title | X | Y | Z |
 |---------|------|-------|---|---|---|
@@ -235,6 +235,36 @@ Total reachable: 274 rooms across multiple zones
 | 425 | Watchers Crossing | River Bank | -8 | -1 | 0 |
 | 426 | Watchers Crossing | Under the Bridge | -6 | -1 | 0 |
 | 427 | Watchers Crossing | Watchers Crossing, East Road | -5 | 0 | 0 |
+| 4147 | The Fernway | Fernway, Eastern Trailhead | -9 | -13 | 0 |
+| 4148 | The Fernway | Stoneford Crossing | -10 | -13 | 0 |
+| 4149 | The Fernway | Twin Oaks Bend | -11 | -13 | 0 |
+| 4150 | The Fernway | Heron Reach | -12 | -13 | 0 |
+| 4151 | The Fernway | Bracken Mile | -13 | -13 | 0 |
+| 4152 | The Fernway | Foxglade | -14 | -13 | 0 |
+| 4153 | The Fernway | Fernway, Western Trailhead | -15 | -13 | 0 |
+| 4154 | The Fernway | Old Weddell Farmstead | -16 | -13 | 0 |
+| 4155 | The Fernway | Heron Pond | -15 | -12 | 0 |
+| 4156 | The Fernway | Fox Den | -14 | -14 | 0 |
+| 4157 | The Fernway South | Briar Tangle | -14 | -15 | 0 |
+| 4158 | The Fernway South | Beewood Hollow | -15 | -15 | 0 |
+| 4159 | The Fernway South | Hare-Run Meadow | -13 | -15 | 0 |
+| 4160 | The Fernway South | Old Burn Scar | -14 | -16 | 0 |
+| 4161 | The Fernway South | Pine Stand | -13 | -16 | 0 |
+| 4162 | The Fernway South | Boar Wallow | -15 | -16 | 0 |
+| 4163 | The Fernway South | Twin Beech Glade | -14 | -17 | 0 |
+| 4164 | The Fernway South | Brook Rise | -15 | -17 | 0 |
+| 4165 | The Fernway South | Heron Pool | -15 | -18 | 0 |
+| 4166 | The Fernway South | Watercress Bend | -15 | -19 | 0 |
+| 4167 | The Fernway South | Deer Browse | -13 | -17 | 0 |
+| 4168 | The Fernway South | Birch Stand | -13 | -18 | 0 |
+| 4169 | The Fernway South | Salt Lick | -13 | -19 | 0 |
+| 4170 | The Fernway South | Tangled Bracken | -14 | -18 | 0 |
+| 4171 | The Fernway South | Old Stand | -14 | -19 | 0 |
+| 4172 | The Fernway South | Badger Sett | -15 | -21 | 0 |
+| 4173 | The Fernway South | Foxglove Clearing | -13 | -21 | 0 |
+| 4174 | The Fernway South | Twisted Hawthorn | -14 | -21 | 0 |
+| 4175 | The Fernway South | Steppe Edge | -14 | -22 | 0 |
+| 4176 | The Fernway South | Birdsong Glade | -14 | -20 | 0 |
 | 2001 | World Road | The Northern Road | -10 | 6 | 0 |
 | 4000 | Marches Spur Road | Spur Road, Southern Fork | -8 | -2 | 0 |
 | 4001 | Marches Spur Road | Scrubland Bend | -8 | -3 | 0 |
@@ -417,7 +447,7 @@ Total unreachable: 120 rooms across 6 zones
 ## Coordinate Range Summary
 
 - X range: -13 to 18 (width: 32)
-- Y range: -14 to 11 (height: 26)
+- Y range: -22 to 11 (height: 34)
 - Z range: -2 to 0 (depth: 3)
 
 ## Coordinate Overlaps

@@ -1,5 +1,31 @@
 # DOGMud Patch Notes
 
+## 2026-04-28 — Stage 3.0c: Fernway South Zone (dev only)
+
+**Note:** Dev-only landing. The full economy stack ships to prod (`master`)
+as a coherent update once Stage 3.4 lands.
+
+- New 20-room zone south of the existing Fernway, themed as deep
+  forest tapering to the steppe edge. Connects from Fox Den (4156)
+  via a new south exit; terminates at Steppe Edge (4175, biome:
+  plains) with a one-way view of the Dustwalk beyond.
+- New mustelid species (24) — fills a real gap in the species set
+  (we had rodent and canine but nothing for badgers, weasels,
+  otters). First consumer is the forest badger; future zones with
+  otters or weasels reuse immediately.
+- Six new wildlife mobs (360-365): wild hare, roe deer, honey bees,
+  feral boar, timber wolf, forest badger. Only the badger is
+  hostile to players — the rest are atmosphere or forage support.
+  Wolf is `hostile: false` but `hates: [boar]` — emergent
+  intra-zone hunt dynamic where the wolf may engage boars without
+  threatening the player.
+- The 6 existing Fernway forage mats (oak bark, shadowcap mushroom,
+  wild hare meat, beeswax, blood-moss, pine pitch from 3.0b) gain
+  fresh territory to spawn in. No new mats added.
+- Stage 3.0c is the territory groundwork for Stage 3.1 forager
+  NPCs — the forest is now big enough for a Fernway-based forager
+  to wander, gather, and recall to depot when injured.
+
 ## 2026-04-28 — Stage 3.0d: NPC Fold-Recall (dev only)
 
 **Note:** Dev-only landing. The full economy stack ships to prod (`master`)
