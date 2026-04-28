@@ -11,8 +11,10 @@ ingredients:
     quantity: 1
   - item_tag: leather-strip
     quantity: 1
+  - item_tag: sinew
+    quantity: 1
 output:
   item_id: 10031
   quantity: 1
-success_message: "You smelt the lake-iron nodules in a hot fire and draw the metal out long and keen, then weld a back-curving hook to the socket. The leaf-blade rings true on the anvil. A lake-iron hook-spear!"
+success_message: "You smelt the lake-iron nodules in a hot fire and draw the metal out long and keen, then weld a back-curving hook to the socket. You wrap the haft in leather and lash it tight with sinew. The leaf-blade rings true on the anvil. A lake-iron hook-spear!"
 failure_message: "The lake-iron will not weld evenly to the socket. The hook tears free under the first hammer-blow and the work is wasted."
