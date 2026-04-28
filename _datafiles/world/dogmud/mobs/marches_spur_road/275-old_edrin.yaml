@@ -2,7 +2,7 @@ mobid: 275
 zone: Marches Spur Road
 buffids: [52, 61]
 archetype: casting
-statpool: 2000   # TEMP (3.0d smoke): bumped from 500 so he survives long enough to react. Revert before merging.
+statpool: 500
 spawnmutations: [regenerative-tissue, magical-resistance, psychic-resistance, thick-hide, brazen-resolve]
 itemdropchance: 10
 hostile: false
@@ -34,35 +34,30 @@ activitylevel: 50
 reaction_delay: 1.0
 tactical_discipline: 0.85
 tactics:
-  # TEMP (3.0d smoke): threshold raised from 30 to 80 so panic-recall fires
-  # early in the fight. Revert to 30 before merging.
-  - trigger: health_below:80
+  - trigger: health_below:30
     action: cast fold-recall
     priority: 13
-  # TEMP (3.0d smoke): all other cast tactics are commented out so they
-  # can't claim CastingState before fold-recall reaches InitiateCast.
-  # The tactics dispatcher queues casts via mob.Command which goes through
-  # the input queue with delay — whichever cast reaches InitiateCast first
-  # wins the CastingState slot, regardless of tactic priority. Restore the
-  # full tactics block before merging.
   - trigger: health_below:25
     action: flee
     priority: 12
-  # - trigger: health_below:50
-  #   action: cast heal
-  #   priority: 11
-  # - trigger: combat_start
-  #   action: cast conviction-ward
-  #   priority: 10
-  # - trigger: target_casting
-  #   action: cast mind-spike
-  #   priority: 9
-  # - trigger: multiple_targets
-  #   action: cast hemorrhagic-burst
-  #   priority: 8
-  # - trigger: single_target
-  #   action: cast pyretic-surge
-  #   priority: 5
+  - trigger: health_below:50
+    action: cast heal
+    priority: 11
+  - trigger: combat_start
+    action: cast conviction-ward
+    priority: 10
+  - trigger: target_casting
+    action: cast mind-spike
+    priority: 9
+  - trigger: multiple_targets
+    action: cast hemorrhagic-burst
+    priority: 8
+  # Fallback: keep casting offensive spells on any single-target round.
+  # Without this, combat_start fires once and Edrin just watches the
+  # rest of the fight — see project_edrin_summon_on_entry.md.
+  - trigger: single_target
+    action: cast pyretic-surge
+    priority: 5
 character:
   name: Old Edrin
   description: |
