@@ -1,0 +1,65 @@
+roomid: 4185
+zone: Stillwater Marsh
+title: Otter Slide
+description: >
+  West of the open pond the bank steepens briefly, a short dark
+  rise of peaty earth that is the only real elevation in the marsh
+  interior. Worn smooth into the bank-face is an
+  <ansi fg="itemname">otter-slide</ansi> — a polished groove of
+  hard mud curving from the crest down into the water, used so
+  often the surface has gone slick and dark. A thin
+  <ansi fg="itemname">fur-musk</ansi> hangs around the slide-mouth,
+  not unpleasant to those who know what they are smelling — river
+  otter, distinctive and close. Wet
+  <ansi fg="itemname">water-tracks</ansi> lead from the slide's
+  lower end a few paces along the bank-edge, webbed prints pressed
+  clear in the mud before vanishing into the water. Whether the
+  otter is here or gone is something the tracks alone cannot settle.
+biome: water
+coord:
+  x: -23
+  y: 0
+  z: 0
+exits:
+  east:
+    roomid: 4184
+  west:
+    roomid: 4186
+  south:
+    roomid: 4189
+nouns:
+  otter-slide: |
+    A polished groove of hard mud curves from the bank-top down into
+    the water — the otter's launching path, used so often the surface
+    has gone slick and bright underneath. The slide is a body-length
+    long, worn smooth by repeated use, the edges still soft and dark
+    where the bank has not been compressed.
+  bank: |
+    A short steep bank of dark peaty earth — the only real elevation
+    in the marsh interior here, perhaps a body's height above the
+    water's surface. The peat holds the bank's shape well; the
+    bank-face is firm underfoot where it has been packed by the
+    otter's comings and goings.
+  fur-musk: |
+    A thin musky animal smell hangs around the slide and the
+    bank-mouth — river otter, a warm oily scent that catches in
+    the throat briefly before the marsh-smell swallows it again.
+    Not unpleasant to those who know it; unmistakable once you do.
+  water-track: |
+    Wet paw-prints lead from the base of the slide a few paces
+    along the bank-edge before disappearing into the water —
+    webbed, four-toed, pressed clear in the soft mud. Fresh enough
+    to show the individual toe-pads. The otter came through here
+    recently.
+  water-tracks: |
+    Wet paw-prints lead from the base of the slide a few paces
+    along the bank-edge before disappearing into the water —
+    webbed, four-toed, pressed clear in the soft mud. Fresh enough
+    to show the individual toe-pads. The otter came through here
+    recently.
+idlemessages:
+- a small splash from the water near the slide-bottom
+- ''
+- the fur-musk briefly strengthens, then fades back into the marsh-smell
+- ''
+- a single ripple expands from where the slide meets the water and goes still
