@@ -7,6 +7,8 @@ time_rounds: 3
 ingredients:
   - item_tag: raw-meat
     quantity: 1
+  - item_tag: wild-hare-meat
+    quantity: 1
   - item_tag: wild-vegetables
     quantity: 1
   - item_tag: water-flask
