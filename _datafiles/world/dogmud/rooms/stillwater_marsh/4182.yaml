@@ -1,0 +1,64 @@
+roomid: 4182
+zone: Stillwater Marsh
+title: Willow Grove
+description: >
+  The trail ends here. Six or seven grey-barked
+  <ansi fg="itemname">willows</ansi> form a small grove at the
+  last piece of solid ground on this spur, their trunks leaning
+  out over standing water at angles that suggest the ground
+  beneath them has been settling for decades. The
+  <ansi fg="itemname">willow-bark</ansi> is finely furrowed and
+  greyish, bitter to the touch, the kind the Stillwater healer
+  uses for her stronger pain-medicines. A
+  <ansi fg="itemname">leaf-shimmer</ansi> moves through the
+  canopy in any passing breeze — the willow leaves are narrow
+  and silvery on their undersides, and when the wind finds them
+  the whole grove flashes briefly pale before settling. The
+  <ansi fg="itemname">trail-end</ansi> is unmarked; the last
+  plank-foot is simply lost in the mud where the willows take
+  over, and the air here is noticeably cooler than the open
+  reed-beds behind — damper, stiller, with the faint green
+  smell of wet bark. There is nothing further west you can
+  reach today.
+biome: water
+coord:
+  x: -24
+  y: 1
+  z: 0
+exits:
+  east:
+    roomid: 4181
+nouns:
+  willow: |
+    A grey-barked marsh-willow, its trunk leaning over the
+    standing water at the grove's edge, the same species the
+    Stillwater healer harvests for stronger pain-medicines than
+    the common marsh herbs provide. The bark is finely furrowed
+    and bitter to the tongue.
+  willows: |
+    Six or seven grey-barked marsh-willows form a small grove
+    at the trail's end, leaning out over standing water at
+    angles that suggest the ground beneath has been settling
+    for decades. The same species the Stillwater healer
+    harvests for stronger pain-medicines.
+  willow-bark: |
+    The bark is greyish and finely furrowed — bitter to the
+    tongue and known to ease aches and reduce fevers when
+    properly prepared. The healer in Stillwater pays well for
+    a clean strip harvested at the right time of year.
+  leaf-shimmer: |
+    The willow leaves are narrow and silvery on their
+    undersides; in any breeze the grove shimmers as the leaves
+    turn, the canopy flashing briefly pale before the wind
+    drops and the leaves settle green again.
+  trail-end: |
+    The trail simply ends here — the last plank-foot lost in
+    the mud where the willows take over and nothing has bothered
+    to walk further west. There is nothing west of here you can
+    reach today.
+idlemessages:
+- willow-leaves shimmer briefly silver in a passing breeze
+- ''
+- a leaf detaches and lands flat on the still water
+- ''
+- a frog plops into the marsh somewhere in the grove

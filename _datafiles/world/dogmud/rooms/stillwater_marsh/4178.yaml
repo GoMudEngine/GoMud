@@ -1,0 +1,65 @@
+roomid: 4178
+zone: Stillwater Marsh
+title: Cattail Verge
+description: >
+  West of Marsh Track the board-trail narrows to a packed-mud
+  track and the character of the marsh changes —
+  <ansi fg="itemname">cattails</ansi> close in on both sides,
+  standing head-high, their brown sausage-shaped seed-heads ripe
+  and splitting where the season is furthest along. Tufts of
+  <ansi fg="itemname">cattail-down</ansi> drift in the still air
+  at eye-level, slow as cottonwood, settling on shoulders and
+  hair. Where the <ansi fg="itemname">cattails</ansi> thin at the
+  verges, ragged patches of <ansi fg="itemname">lake-mint</ansi>
+  take hold — low and silver-green, releasing a sharp green smell
+  with every step that crushes a leaf. The
+  <ansi fg="itemname">mud-track</ansi> underfoot is darker and
+  softer here than on the boards, the footing sound but yielding,
+  and the peat-smell the marsh always carries is now joined by
+  the pungency of the mint.
+biome: water
+coord:
+  x: -22
+  y: 1
+  z: 0
+exits:
+  east:
+    roomid: 4177
+  west:
+    roomid: 4181
+nouns:
+  cattail: |
+    Tall cattails stand head-high on both sides of the trail,
+    the brown sausage-shaped seed-heads ripe and splitting open
+    in places — the silky down they release drifts slowly in
+    any movement of air. Stillwater spinners work the down into
+    thread for cold-weather cloak linings when the season brings
+    enough of it.
+  cattails: |
+    Tall cattails stand head-high on both sides of the trail,
+    the brown sausage-shaped seed-heads ripe and splitting open
+    in places — the silky down they release drifts slowly in
+    any movement of air. Stillwater spinners work the down into
+    thread for cold-weather cloak linings when the season brings
+    enough of it.
+  cattail-down: |
+    Drifts of soft cattail-down hang in the air at this time of
+    season — released from split seed-heads and drifting slowly
+    in any breath of wind. The tufts are fine and clinging; they
+    settle on dark cloth and hair and do not brush free easily.
+  lake-mint: |
+    Patches of lake-mint grow at the verges where the cattails
+    thin — low and persistent, the small leaves silver-green and
+    pungent when crushed underfoot. The smell is sharp and clean
+    against the background peat of the marsh.
+  mud-track: |
+    The board-trail gives over here to a packed-mud track,
+    narrower and softer underfoot — the marsh swallows the boards
+    if the millers do not replace them often enough, and this
+    stretch has not seen new timber in some time.
+idlemessages:
+- a tuft of cattail-down drifts past at head-height
+- ''
+- lake-mint releases a sharp green smell where you step
+- ''
+- a cattail-head splits audibly somewhere off the trail

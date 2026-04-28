@@ -1,0 +1,66 @@
+roomid: 4181
+zone: Stillwater Marsh
+title: Reed Beds
+description: >
+  The cattails fall away and the largest
+  <ansi fg="itemname">reed-beds</ansi> in the zone take over
+  entirely — an acre or more of head-high marsh-reed pressing
+  in on the trail from every angle, green and yellow-green in
+  alternating bands where old growth meets new. The
+  <ansi fg="itemname">wind-rustle</ansi> is constant and loud
+  here, a high continuous sound that fills the air whenever
+  any breeze moves through, drowning out the subtler sounds
+  of the marsh behind it. The
+  <ansi fg="itemname">mud-bottom</ansi> below the track is
+  soft enough that boots leave deep prints, and off the trail
+  the ground disappears into standing water within a few paces
+  — invisible beneath the reed stems. There is a
+  <ansi fg="itemname">lost-feel</ansi> to this stretch; the
+  visual sameness of the reed-wall in every direction makes
+  the trail feel thinner than it is, and ten paces into the
+  bed without a landmark would take considerable effort to
+  undo.
+biome: water
+coord:
+  x: -23
+  y: 1
+  z: 0
+exits:
+  east:
+    roomid: 4178
+  west:
+    roomid: 4182
+nouns:
+  reed-bed: |
+    The largest single stand of reeds in the zone — perhaps an
+    acre of head-high marsh-reed pressing in on the trail from
+    every side, the green stems thick as a finger and dense
+    enough that ten paces in is invisible from the track.
+  reed-beds: |
+    The largest single stand of reeds in the zone — perhaps an
+    acre of head-high marsh-reed pressing in on the trail from
+    every side, the green stems thick as a finger and dense
+    enough that ten paces in is invisible from the track.
+  mud-bottom: |
+    The trail is little more than packed mud here, soft enough
+    that boots leave deep prints at every step. Off the trail
+    the mud is bottomless — knee-deep at first, then suddenly
+    deeper — hidden below standing water and reed roots that
+    give no warning before they give way.
+  wind-rustle: |
+    The reeds move continuously in any breath of air, a steady
+    high rustle that fills the whole room and drowns out
+    subtler sounds — bird-calls, water-sounds, footsteps a
+    dozen paces away. The sound rises and falls with the wind
+    but never quite stops.
+  lost-feel: |
+    The visual sameness of the reeds in every direction makes
+    orientation difficult — the sky is the only landmark, and
+    the trail itself is the only safe ground. Leaving it even
+    briefly is a reliable way to spend time finding it again.
+idlemessages:
+- wind moves through the reeds in a long high rustle
+- ''
+- a marsh-bird calls once from somewhere unseen
+- ''
+- the trail surface trembles slightly underfoot — soft mud below
