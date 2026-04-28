@@ -11,7 +11,7 @@ groups:
   - animal
   - boar
 items:
-  - itemid: 40064
+  - itemid: 40068
 idlecommands:
   - 'emote roots in the wallow mud with its snout'
   - ''
