@@ -1,0 +1,39 @@
+mobid: 365
+zone: The Fernway South
+behavior_archetype: generic_fighter
+archetype: fighting
+statpool: 70
+itemdropchance: 0
+hostile: true
+charm_immune: false
+maxwander: 1
+groups:
+  - animal
+  - mustelid
+idlecommands:
+  - 'emote bares its teeth and chitters from a burrow mouth'
+  - ''
+  - 'emote stalks a tight circle at the sett edge'
+  - ''
+  - 'emote drags a small bone deeper into the burrow'
+  - ''
+activitylevel: 25
+character:
+  name: forest badger
+  description: |
+    A sett-defending forest badger — black-and-white striped face,
+    short heavy body, claws that mean it. Smaller than you
+    expected. Meaner than you expected. The musk-smell tells you
+    it has not retreated.
+  speciesid: 24
+  level: 3
+  gold: 0
+  stats:
+    strength:
+      training: 12
+    dexterity:
+      training: 16
+    perception:
+      training: 14
+    vitality:
+      training: 18

@@ -1,0 +1,42 @@
+mobid: 360
+zone: The Fernway South
+behavior_archetype: prey
+archetype: fighting
+statpool: 25
+itemdropchance: 75
+hostile: false
+charm_immune: false
+maxwander: 3
+groups:
+  - animal
+  - rodent
+  - prey
+items:
+  - itemid: 40064
+idlecommands:
+  - 'emote freezes, ears up, listening'
+  - ''
+  - 'emote crops a few mouthfuls of meadow-grass'
+  - ''
+  - 'emote thumps a hind-foot once and bolts a few paces'
+  - ''
+activitylevel: 30
+character:
+  name: wild hare
+  description: |
+    A long-legged forest hare, dun-brown with black-tipped ears,
+    sitting motionless in the meadow grass. It is built for one
+    thing: to stop being where you can see it. The big dark eyes
+    track you steadily.
+  speciesid: 10
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 5
+    dexterity:
+      training: 18
+    perception:
+      training: 16
+    vitality:
+      training: 6
