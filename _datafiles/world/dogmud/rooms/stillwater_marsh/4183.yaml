@@ -28,6 +28,11 @@ exits:
   west:
     roomid: 4184
 nouns:
+  board-trail: |
+    Split-cedar boards laid two-wide across the soft marsh ground —
+    the same board-trail that begins at the entry; here it bends
+    sharply west to skirt the cattail stand. A few of the boards
+    at the bend itself are warped or pulled.
   bend: |
     The trail makes a sharp swing west here, pressed around a dense
     stand of cattails that extends too far into the water to go
