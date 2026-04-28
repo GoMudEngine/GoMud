@@ -60,3 +60,6 @@ idlemessages:
 - somewhere distant, a deep cough that is not a deer
 - ''
 - the wind moves through the pines with a low whisper
+spawninfo:
+- mobid: 364
+  cooldown: 1200 rounds

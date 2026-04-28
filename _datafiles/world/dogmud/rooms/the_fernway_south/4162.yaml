@@ -57,3 +57,6 @@ idlemessages:
 - a distant grunt from the brush
 - ''
 - bubbles rise and pop in the wallow mud
+spawninfo:
+- mobid: 363
+  cooldown: 900 rounds

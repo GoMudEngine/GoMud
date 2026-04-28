@@ -54,3 +54,6 @@ idlemessages:
 - the badger-musk gets briefly stronger
 - ''
 - something heavy moves in the burrow nearest the trail
+spawninfo:
+- mobid: 365
+  cooldown: 1800 rounds

@@ -57,3 +57,6 @@ idlemessages:
 - a sapling springs back from being bent
 - ''
 - a distant snort from the brush — a buck warning
+spawninfo:
+- mobid: 361
+  cooldown: 600 rounds

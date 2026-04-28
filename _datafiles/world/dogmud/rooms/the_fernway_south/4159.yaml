@@ -56,3 +56,6 @@ idlemessages:
 - meadow grass bends in a passing wind
 - ''
 - a hawk shadow crosses the open patch
+spawninfo:
+- mobid: 360
+  cooldown: 300 rounds

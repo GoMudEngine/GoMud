@@ -62,3 +62,6 @@ idlemessages:
 - the iron-salt tang on the air is briefly stronger
 - ''
 - a beetle scuttles across the bare earth of the lick
+spawninfo:
+- mobid: 361
+  cooldown: 600 rounds

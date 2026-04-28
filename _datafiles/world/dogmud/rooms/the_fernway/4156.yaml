@@ -22,6 +22,9 @@ coord:
 exits:
   north:
     roomid: 4152
+  south:
+    roomid: 4157
+    zone: The Fernway South
 nouns:
   embankment: A low raised earth-bank rises along the
     western side of the small hollow, perhaps twice a

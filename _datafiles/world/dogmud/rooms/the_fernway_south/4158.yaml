@@ -56,3 +56,6 @@ idlemessages:
 - the hum of the swarm rises and falls
 - ''
 - a wax-flake drifts down and lands on the leaf litter
+spawninfo:
+- mobid: 362
+  cooldown: 600 rounds
