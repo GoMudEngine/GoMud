@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
@@ -199,7 +200,7 @@ func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData
 	if !castFumbled {
 		switch cs.SpellId {
 		case "fold-anchor":
-			resolveFoldAnchor(user)
+			resolveFoldAnchor(actions.NewUserActorInRoom(user, room))
 			return
 		case "fold-recall":
 			resolveFoldRecall(user)
