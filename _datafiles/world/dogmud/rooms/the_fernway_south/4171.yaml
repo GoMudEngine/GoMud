@@ -1,0 +1,57 @@
+roomid: 4171
+zone: The Fernway South
+title: Old Stand
+description: >
+  The bracken gives way here to a cathedral hush. The
+  <ansi fg="itemname">old-oak</ansi> trees that gather in this
+  stand are the largest in the southern wood — trunks so thick
+  three people could not reach around them, their roots
+  spreading wide and deep into the dark earth underfoot. The
+  canopy overhead is so dense that <ansi fg="itemname">deep-shade</ansi>
+  holds even in full afternoon, the light reduced to a cold
+  diffuse green that makes the ground look like the floor of a
+  still pool. The <ansi fg="itemname">oak-bark</ansi> is deeply
+  furrowed and grey-brown, centuries of weather worked into
+  each ridge and crack. At the base of the largest tree a mass
+  of exposed roots has curled and weathered into a natural
+  <ansi fg="itemname">root-throne</ansi> that could seat a
+  person comfortably — generations of foragers have rested
+  there before pressing south.
+biome: forest
+coord:
+  x: -14
+  y: -19
+  z: 0
+exits:
+  north:
+    roomid: 4170
+  south:
+    roomid: 4176
+nouns:
+  old-oak: |
+    Generation-old oaks, trunks thicker than three people could
+    reach around, branches spreading wide enough to crowd out
+    their neighbors. The nearest one shows no scar of storm or
+    axe — it has simply grown, season after season, until it
+    owns this piece of ground.
+  oak-bark: |
+    The bark is deeply furrowed and grey-brown, each ridge worn
+    smooth in places by decades of weather. The tannin is thick
+    in it — alchemists value bark from oaks this old for the
+    compounds it yields.
+  deep-shade: |
+    Less light reaches this stand than anywhere else in the
+    southern wood. The canopy closes too completely for sun to
+    find a gap; the air underneath is cooler and feels older,
+    the kind of shade that holds damp long into dry seasons.
+  root-throne: |
+    The largest oak's exposed roots have curled and split over
+    decades into a natural seat at the base of the trunk —
+    wide enough to sit in, roots armresting on each side. The
+    bark where people have leaned is worn smooth and dark.
+idlemessages:
+- an acorn drops and rolls to a stop in the leaf litter
+- ''
+- deep silence here, even the wind muted
+- ''
+- a single ray of sun finds a gap in the canopy and moves on

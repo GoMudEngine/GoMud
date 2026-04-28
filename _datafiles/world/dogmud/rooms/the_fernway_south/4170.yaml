@@ -1,0 +1,57 @@
+roomid: 4170
+zone: The Fernway South
+title: Tangled Bracken
+description: >
+  The trail narrows here to a single dark line pressed through
+  a wall of <ansi fg="itemname">bracken-wall</ansi> that rises
+  well above head-height on both sides — green and dense and
+  close, the fronds arching overhead until the sky is little
+  more than a shifting green ribbon above the path. The smell
+  is thick with fern-must and damp earth, the air greenish and
+  still. Each <ansi fg="itemname">fern-frond</ansi> catches at
+  sleeves and shoulders as you push through, leaving streaks of
+  moisture where they brush skin. It is impossible to see more
+  than a few paces ahead or behind; the <ansi fg="itemname">narrow-trail</ansi>
+  simply vanishes into the green wall in both directions. Deep
+  in the bracken the constant low <ansi fg="itemname">insect-hum</ansi>
+  fills the silence — flies, beetles, and other things that
+  live unseen in the tangle.
+biome: forest
+coord:
+  x: -14
+  y: -18
+  z: 0
+exits:
+  north:
+    roomid: 4163
+  south:
+    roomid: 4171
+nouns:
+  bracken-wall: |
+    Bracken-fern grown taller than head-height crowds both sides
+    of the trail in a woven green mass — the fronds overlap and
+    interlock so densely there is no seeing into the tangle more
+    than an arm's length. The green is deep and uniform, the kind
+    of color that swallows light.
+  narrow-trail: |
+    The trail through the bracken is little more than a beaten
+    dark line through the ferns — single-file, claustrophobic,
+    the earth underfoot wet and soft where the fronds shade it
+    from drying. A person walking without care will step off it
+    and into the tangle before realizing.
+  fern-frond: |
+    The arching fern fronds catch at clothes and shoulders as
+    you move through, leaving smears of moisture. Each one is
+    a full arm-span or longer, green-black near the base and
+    bright at the uncoiling tips.
+  insect-hum: |
+    A steady low hum rises from the bracken on both sides —
+    flies and beetles and smaller things living in the fern-shade
+    where the light never quite reaches. It is not loud but it
+    is constant, the sound of the bracken being alive.
+idlemessages:
+- a fern frond brushes your arm
+- ''
+- something small crashes through the bracken east of the trail
+- ''
+- the insect-hum rises briefly and falls back

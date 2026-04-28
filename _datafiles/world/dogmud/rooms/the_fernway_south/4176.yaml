@@ -1,0 +1,56 @@
+roomid: 4176
+zone: The Fernway South
+title: Birdsong Glade
+description: >
+  After the cathedral hush of the Old Stand the glade hits
+  like a opened window — <ansi fg="itemname">bird-chorus</ansi>
+  fills the air from every direction at once, overlapping calls
+  of finches and warblers and chickadees that seem to treat
+  this clearing as common ground. A <ansi fg="itemname">sun-patch</ansi>
+  in the clearing's center catches direct light for much of the
+  day, warming the <ansi fg="itemname">long-grass</ansi> that
+  grows knee-high where the canopy pulls back. Across the
+  clearing a <ansi fg="itemname">fallen-log</ansi> — an old
+  beech that came down years ago — lies half-grown-over with
+  moss and bracket, the bark lifting in long dry sheets,
+  offering a natural bench at the right height for a sitting
+  rest. The forest resumes south of the glade, but here for a
+  moment the sky is wide and the air is warm and the birds do
+  not stop.
+biome: forest
+coord:
+  x: -14
+  y: -20
+  z: 0
+exits:
+  north:
+    roomid: 4171
+  south:
+    roomid: 4174
+nouns:
+  bird-chorus: |
+    A constant overlapping song from finches, chickadees, and
+    warblers — the most birdsong anywhere in the zone, all of
+    them calling at once in a cheerful clatter that fills the
+    glade from edge to edge. The sound is louder than expected
+    after the hush of the Old Stand to the north.
+  sun-patch: |
+    The clearing's center catches direct sun for much of the
+    day — a warm bright circle where the canopy pulls back and
+    the sky is actually visible. The grass there is drier and
+    paler than in the shade.
+  fallen-log: |
+    An old beech that fell years ago lies across the clearing's
+    edge, half-grown-over with moss and bracket fungus, the
+    bark lifting in long dry sheets. The height is just right
+    for sitting; the wood is solid under the outer rot.
+  long-grass: |
+    Knee-high grass grows in the sun-patch where the canopy
+    doesn't reach — dry and rustling in any breeze, the blades
+    pale at the tips from full sun exposure.
+idlemessages:
+- a chickadee calls dee-dee-dee somewhere very close
+- ''
+- a warbler answers from across the glade
+- ''
+- long-grass bends in a passing wind
