@@ -12,6 +12,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
@@ -843,6 +844,17 @@ func consumeSpellComponent(user *users.UserRecord, tag string) {
 //   - No onMagic script, no component consumption.
 //   - Per-target helpers are entirely separate from the player equivalents.
 func resolveMobSpell(mob *mobs.Mob, cs *characters.CastingState, spellData *spells.SpellData, room *rooms.Room) {
+	// TEMP DEBUG (Stage 3.0d smoke): trace every mob spell attempt so we can
+	// verify Edrin (and caravan) are reaching the dispatcher. Remove once
+	// the in-game smoke test confirms fold-recall fires.
+	mudlog.Info("[3.0d-debug] mob cast",
+		"mob", mob.Character.Name,
+		"mobId", int(mob.MobId),
+		"spell", cs.SpellId,
+		"hp", mob.Character.Health,
+		"hpMax", mob.Character.HealthMax.Value,
+	)
+
 	// Go spell hooks — dispatch position-mutating / non-target spells before
 	// the type-based effect routing below. Mirrors the player path in
 	// resolveSpell. Stage 3.0d.
@@ -853,8 +865,17 @@ func resolveMobSpell(mob *mobs.Mob, cs *characters.CastingState, spellData *spel
 	case "fold-recall":
 		actor := actions.NewMobActorInRoom(mob, room)
 		if !validateFoldRecall(actor) {
+			mudlog.Info("[3.0d-debug] fold-recall validate REJECTED",
+				"mob", mob.Character.Name,
+				"anchorRoom", actor.GetCharacter().GetMiscData("fold-anchor-room"),
+				"currentRoom", mob.Character.RoomId,
+			)
 			return
 		}
+		mudlog.Info("[3.0d-debug] fold-recall validate PASSED, resolving",
+			"mob", mob.Character.Name,
+			"anchorRoom", actor.GetCharacter().GetMiscData("fold-anchor-room"),
+		)
 		resolveFoldRecall(actor)
 		return
 	}
