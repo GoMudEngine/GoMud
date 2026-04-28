@@ -61,19 +61,43 @@ character:
     charisma:
       training: 5
   shop:
-    - itemid: 40021
+    # Thornwall refined (in-shop crafted)
+    - itemid: 40021    # copper wire
       quantity: 0
       quantitymax: 0
-      price: 2
-    - itemid: 40022
+      price: 10
+    - itemid: 40022    # silver wire
+      quantity: 0
+      quantitymax: 0
+      price: 22
+    - itemid: 40023    # gold wire
+      quantity: 0
+      quantitymax: 0
+      price: 55
+    - itemid: 40024    # polished stone
+      quantity: 0
+      quantitymax: 0
+      price: 7
+    - itemid: 40025    # raw gem
+      quantity: 0
+      quantitymax: 0
+      price: 35
+    - itemid: 40026    # gem dust
       quantity: 0
       quantitymax: 0
       price: 5
-    - itemid: 40023
+    # Stillwater unique (caravan-fed from Kess)
+    - itemid: 40053    # Stillwater black pearl
       quantity: 0
       quantitymax: 0
-      price: 12
-    - itemid: 40026
+      price: 600
+    # Thornwall chrysalis (in-shop / Vael overlap)
+    - itemid: 40030    # chrysalis setting
       quantity: 0
       quantitymax: 0
-      price: 2
+      price: 80
+    # Base jewelcraft
+    - itemid: 40019    # chain link
+      quantity: 0
+      quantitymax: 0
+      price: 4

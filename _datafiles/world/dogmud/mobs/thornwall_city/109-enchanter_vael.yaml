@@ -42,7 +42,38 @@ character:
     charisma:
       training: -10
   shop:
-    - itemid: 40028
-      quantity: 15
-      quantitymax: 15
-      price: 3
+    # Thornwall chrysalis (in-shop crafted) — Vael's specialty
+    - itemid: 40010    # Chrysalis Core
+      quantity: 0
+      quantitymax: 0
+      price: 75
+    - itemid: 40027    # chrysalis shard
+      quantity: 0
+      quantitymax: 0
+      price: 20
+    - itemid: 40028    # binding paste
+      quantity: 0
+      quantitymax: 0
+      price: 25
+    - itemid: 40029    # mutation catalyst
+      quantity: 0
+      quantitymax: 0
+      price: 55
+    - itemid: 40030    # chrysalis setting
+      quantity: 0
+      quantitymax: 0
+      price: 75
+    - itemid: 40011    # Hive Fragment
+      quantity: 0
+      quantitymax: 0
+      price: 30
+    # Fernway forest (caravan-fed) — oak bark for ward inscriptions
+    - itemid: 40062    # oak bark
+      quantity: 0
+      quantitymax: 0
+      price: 35
+    # Stillwater unique (caravan-fed from Kess) — pearl for high-tier enchants
+    - itemid: 40053    # Stillwater black pearl
+      quantity: 0
+      quantitymax: 0
+      price: 600
