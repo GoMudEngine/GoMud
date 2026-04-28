@@ -46,10 +46,14 @@ corpses:
    0.85, softCap 50, governed by Perception + salvage skill).
 5. **Drop:** materials go into player inventory (or ground if backpack
    full, like other loot).
-6. **Mark salvaged:** `corpse.Salvaged = true` blocks subsequent
-   attempts. Corpses already decay on the existing decay timer; the
-   Salvaged flag is in-memory only (corpses don't survive server
-   restart).
+6. **Consume the corpse:** on successful completion of the salvage
+   activity, the corpse is removed from the room. Matches the
+   existing tagged-item salvage behavior (which fully consumes the
+   target, even on a fully-failed roll). Cleaner room state, no
+   "picked clean" clutter, no Salvaged-flag bookkeeping. If the
+   activity is interrupted (player moves, combat starts), the
+   corpse stays untouched per the existing salvage cancellation
+   path.
 
 **Salvage table** (single Go map):
 
@@ -117,18 +121,27 @@ exist; we can layer more sinew recipes in later if needed.
 **No new recipes invented.** Strictly ingredient additions to existing
 recipes within the existing 6 craft schools.
 
-## Salvaged flag persistence
+## Corpse consumption on salvage
 
-The `Salvaged bool` field on the `Corpse` struct in
-`internal/rooms/corpse.go` is in-memory only. Corpses don't survive
-server restart per the existing decay system, so no save-state work
-is needed. The flag prevents duplicate salvage attempts on the same
-corpse within a single server lifecycle.
+On successful completion of the salvage activity, the corpse is
+removed from the room (via `room.RemoveCorpse` or equivalent — exact
+API picked during plan task 0). No `Salvaged` flag, no remaining
+"picked clean" husk in the room — the salvage cleanly takes the
+corpse with it.
 
-If a player skin-tries on a corpse and rolls all-misses, the corpse is
-still flagged Salvaged. Failure consumes the attempt. This matches
-the existing tagged-item salvage behavior where a failed roll still
-consumes the item.
+This mirrors how the existing tagged-item salvage works on inventory
+items: the item is fully consumed by the salvage activity, even when
+all rolls miss. Same intent here — the activity has cost regardless
+of outcome.
+
+If the activity is **interrupted** (player moves out of the room,
+enters combat, etc.) the corpse stays untouched per the existing
+salvage cancellation path. Only successful completion consumes it.
+
+Side-effect: a player wanting to use the corpse for the manifestation
+skill (`assess <corpse>` for undead animation) needs to use that path
+BEFORE running salvage. Choosing salvage over manifestation is a
+meaningful in-fiction tradeoff.
 
 ## Group precedence
 
@@ -183,9 +196,7 @@ in a follow-up commit.
 |---|---|---|
 | CREATE | `internal/crafting/corpse_salvage.go` | Group → salvage_returns table + `LookupCorpseSalvage` helper |
 | CREATE | `internal/crafting/corpse_salvage_test.go` | Unit tests for the table lookup |
-| MODIFY | `internal/usercommands/salvage.go` | Parser extension: room corpses if inventory match fails |
-| MODIFY | `internal/rooms/corpse.go` | Add `Salvaged bool` field |
-| MODIFY | `internal/rooms/corpse_test.go` (if exists) | Test the flag flow |
+| MODIFY | `internal/usercommands/salvage.go` | Parser extension: room corpses if inventory match fails; remove corpse on successful completion |
 | CREATE | `_datafiles/world/dogmud/items/materials-40000/40068-sinew.yaml` | New animal-tendon mat |
 | MODIFY | `_datafiles/world/dogmud/recipes/tailoring/{recipe}.yaml` | Add sinew to one existing recipe |
 | MODIFY | `_datafiles/world/dogmud/recipes/blacksmithing/{recipe}.yaml` | Add sinew to one existing recipe |
@@ -198,7 +209,6 @@ in a follow-up commit.
 **Phase 1 — unit tests:**
 - `go test ./internal/crafting/...` — table lookup correct for animal,
   humanoid, no-match, multi-group corpses
-- `go test ./internal/rooms/...` — Salvaged flag flow
 
 **Phase 2 — boot test:**
 - `go build ./...` clean
@@ -209,9 +219,9 @@ in a follow-up commit.
 
 **Phase 3 — in-game smoke test:**
 1. Kill a wild dog or wolf → corpse on ground
-2. `salvage corpse` (or `salvage dog`) → multi-round activity → leather strip + maybe sinew drop into inventory
-3. `salvage corpse` again → "already picked clean" message
-4. Kill a bandit → `salvage corpse` → cloth strip + maybe leather strip drops
+2. `salvage corpse` (or `salvage dog`) → multi-round activity → leather strip + maybe sinew drop into inventory; corpse removed from room
+3. `look` confirms the corpse is gone
+4. Kill a bandit → `salvage corpse` → cloth strip + maybe leather strip drops; corpse removed
 5. Kill a chrysalis-touched mob (no `animal` / `humanoid` group) → `salvage corpse` fails with "nothing useful to recover"
 6. Confirm the 2 new sinew recipes craft when player has all ingredients
 7. Confirm salvage skill progresses on use (existing OnSkillUse flow)
@@ -244,11 +254,10 @@ in a follow-up commit.
 Approximate ordering. Plan task 0 will refine.
 
 1. Add sinew mat YAML (small)
-2. Add `Salvaged` field to Corpse struct + tests (small)
-3. Create `corpse_salvage.go` with the group table + lookup + tests (small)
-4. Extend `salvage` command to handle corpses (medium — touches user-facing parsing + activity wire-up)
-5. Wire 2 sinew recipe edits (small, one per school)
-6. Update audit matrix + schema docs + PATCH_NOTES (small)
-7. Verification + in-game smoke test (manual)
+2. Create `corpse_salvage.go` with the group table + lookup + tests (small)
+3. Extend `salvage` command to handle corpses + remove on completion (medium — touches user-facing parsing + activity wire-up)
+4. Wire 2 sinew recipe edits (small, one per school)
+5. Update audit matrix + schema docs + PATCH_NOTES (small)
+6. Verification + in-game smoke test (manual)
 
-~8 tasks total. Smaller spec than 3.0b.
+~6 tasks total. Smaller spec than 3.0b.
