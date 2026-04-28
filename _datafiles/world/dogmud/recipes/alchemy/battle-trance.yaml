@@ -11,6 +11,8 @@ ingredients:
     quantity: 1
   - item_tag: moonpetal
     quantity: 1
+  - item_tag: blood-moss
+    quantity: 1
   - item_tag: bottle
     quantity: 1
 output:
