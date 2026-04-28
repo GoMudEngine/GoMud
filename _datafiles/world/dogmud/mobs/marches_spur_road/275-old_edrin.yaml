@@ -2,7 +2,7 @@ mobid: 275
 zone: Marches Spur Road
 buffids: [52, 61]
 archetype: casting
-statpool: 500
+statpool: 2000   # TEMP (3.0d smoke): bumped from 500 so he survives long enough to react. Revert before merging.
 spawnmutations: [regenerative-tissue, magical-resistance, psychic-resistance, thick-hide, brazen-resolve]
 itemdropchance: 10
 hostile: false
@@ -34,7 +34,9 @@ activitylevel: 50
 reaction_delay: 1.0
 tactical_discipline: 0.85
 tactics:
-  - trigger: health_below:30
+  # TEMP (3.0d smoke): threshold raised from 30 to 80 so panic-recall fires
+  # early in the fight. Revert to 30 before merging.
+  - trigger: health_below:80
     action: cast fold-recall
     priority: 13
   - trigger: health_below:25
