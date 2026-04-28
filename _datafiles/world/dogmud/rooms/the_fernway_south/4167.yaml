@@ -1,0 +1,59 @@
+roomid: 4167
+zone: The Fernway South
+title: Deer Browse
+description: >
+  East of the twin beeches the forest opens unexpectedly, the
+  understory stripped back by generations of deer until the
+  <ansi fg="itemname">browse-line</ansi> runs as clean and
+  level as a trimmed hedge — every sapling-tip and accessible
+  branch bitten off at exactly the same height, the height of
+  a roe deer's reach. The ground-cover is cropped close and
+  the sightlines are longer here than anywhere in the fernway,
+  the thinned canopy letting in more light than the older
+  stands allow. <ansi fg="itemname">Hoof-prints</ansi> press
+  into the soft earth in overlapping sets — the same paths
+  walked so often the prints have deepened into grooves. A
+  <ansi fg="itemname">scrape</ansi> of bare earth near the
+  nearest oak shows where a buck has pawed away the leaf-litter
+  in some earlier season, and small piles of dark
+  <ansi fg="itemname">droppings</ansi> dot the browse-line's
+  edge in the tidy clusters deer leave behind.
+biome: forest
+coord:
+  x: -13
+  y: -17
+  z: 0
+exits:
+  west:
+    roomid: 4163
+  south:
+    roomid: 4168
+nouns:
+  browse-line: |
+    Every sapling and young tree at deer-reach height has
+    been browsed to a flat line — no upward twig escapes
+    the reach, and none below it is spared. The regularity
+    of it is almost architectural, a living fence made by
+    years of small careful mouths.
+  hoof-prints: |
+    Cloven-hoof prints press clean and deep into the soft
+    earth, narrower and smaller than the boar-sign north of
+    here — roe deer, more than one, following the same
+    routes so consistently the prints overlap into worn
+    channels.
+  scrape: |
+    A patch of bare dark earth where the leaf-litter has
+    been pawed away, the soil turned and packed smooth
+    around the edges — a buck marking territory or seeking
+    minerals, the sign old enough to be dry at the surface.
+  droppings: |
+    Small dark deer droppings in tidy clusters along the
+    browse-line's edge — the neat, pellet-form sign of
+    animals that passed through casually, grazing as they
+    moved, unhurried.
+idlemessages:
+- a doe steps into the open, freezes, and is gone
+- ''
+- a sapling springs back from being bent
+- ''
+- a distant snort from the brush — a buck warning
