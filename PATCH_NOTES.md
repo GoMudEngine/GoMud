@@ -1,5 +1,30 @@
 # DOGMud Patch Notes
 
+## 2026-04-28 — Stage 3.0d: NPC Fold-Recall (dev only)
+
+**Note:** Dev-only landing. The full economy stack ships to prod (`master`)
+as a coherent update once Stage 3.4 lands.
+
+- `fold-anchor` and `fold-recall` resolvers now accept `actions.Actor`
+  rather than `*users.UserRecord`. Mobs can cast both spells via the
+  existing tactics dispatcher and the new Go-hook switch in
+  `resolveMobSpell`. Player behavior is unchanged.
+- New mob YAML field `fold_anchor_room: <roomId>` pre-stamps a mob's
+  fold-recall anchor at spawn. The runtime is then identical to a
+  player who already cast `fold-anchor`.
+- Old Edrin (mob 275) gets `fold-recall` as a panic spell at
+  `health_below:30` priority above his existing flee — he recalls to
+  the cluttered back room (4037) when injured. Useful smoke-test rig
+  for the new pipeline.
+- Caravan crew Ketil/Marta/Lars (mobs 357-359) get the same treatment
+  with anchor at the Thornwall Market Square depot (465). Wipe
+  insurance for the bandit camp ambush — if their HP drops they
+  recall instead of dying, keeping the restock service running.
+- Stage 3.0d does NOT add forager NPCs or logistic recall triggers
+  (e.g., `inventory_full → cast fold-recall`). Those are Stage 3.1's
+  job. Caravan recall is individual, not group-aware: each crew
+  member recalls on their own panic threshold.
+
 ## 2026-04-28 — Stage 3.0e: Corpse Salvage (dev only)
 
 **Note:** Dev-only landing. The full economy stack ships to prod (`master`)
