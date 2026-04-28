@@ -13,6 +13,7 @@ groups:
   - humanoid
   - hermit
 scriptag: 275-old_edrin
+fold_anchor_room: 4037
 idlecommands:
   - 'emote mutters something about the wrong season for binding paste'
   - ''
@@ -33,6 +34,9 @@ activitylevel: 50
 reaction_delay: 1.0
 tactical_discipline: 0.85
 tactics:
+  - trigger: health_below:30
+    action: cast fold-recall
+    priority: 13
   - trigger: health_below:25
     action: flee
     priority: 12
@@ -81,6 +85,7 @@ character:
     vitality:
       training: 50
   spellbook:
+    fold-recall: 30
     hemorrhagic-burst: 20
     veil-rend: 15
     pyretic-surge: 15

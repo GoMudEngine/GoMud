@@ -15,6 +15,7 @@ player_attack_immune: true       # players cannot attack -- rebuff like shopkeep
 maxwander: -1                    # -1 = unlimited; caravan crosses zones
 activitylevel: 15                # ~15% chance/tick to fire an idlecommand
 charm_immune: true
+fold_anchor_room: 465
 buffids: []
 idlecommands:
   - 'emote checks the harness on the lead horse, frowning at a worn buckle'
@@ -50,6 +51,12 @@ character:
       training: 10
     charisma:
       training: 12
+  spellbook:
+    fold-recall: 20
+  tactics:
+    - trigger: health_below:30
+      action: cast fold-recall
+      priority: 13
   skills:
     weapon-combat: 25
     block: 15

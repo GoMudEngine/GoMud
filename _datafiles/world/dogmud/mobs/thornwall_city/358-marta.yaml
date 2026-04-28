@@ -15,6 +15,7 @@ player_attack_immune: true
 maxwander: -1
 activitylevel: 15
 charm_immune: true
+fold_anchor_room: 465
 buffids: []
 idlecommands:
   - 'emote rolls her shoulders, working out road-stiffness'
@@ -47,6 +48,12 @@ character:
       training: 10
     charisma:
       training: 8
+  spellbook:
+    fold-recall: 20
+  tactics:
+    - trigger: health_below:30
+      action: cast fold-recall
+      priority: 13
   skills:
     weapon-combat: 22
     unarmed-combat: 18
