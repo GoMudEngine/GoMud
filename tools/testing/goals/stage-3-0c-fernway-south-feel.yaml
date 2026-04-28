@@ -1,0 +1,29 @@
+description: Explore the new Fernway South zone — voice, layout, wildlife
+goals:
+  - Confirm where you spawn — `look` first thing. If you're in Briar Tangle (room 4157, The Fernway South) you're already in the zone. If you're elsewhere (e.g., Dustwalk Road room 406, the old smoketester home), the server hasn't picked up the new player YAML yet — walk to the zone via Marches Spur Road → The Fernway → Fox Den → south, OR ask the user to restart and reconnect.
+  - Walk every one of the 20 rooms in the zone (4157-4176). Note any prose that reads awkwardly, has typos, has broken ANSI tags (you'd see literal `<ansi fg="...">` text bleeding through), or has obvious voice-mismatches with the existing Fernway zone style.
+  - In each room, try `look <noun>` for the named ANSI nouns in the description (e.g., `look bramble`, `look thorn-windfall`, etc.). Verify every noun has a real definition (not a "you don't see that here" fallback).
+  - Pay special attention to room 4175 Steppe Edge — its biome is `plains`, the only non-forest room in the zone. Confirm the description and noun set match the steppe theme (pale grass, scoured stones, south horizon view to the Dustwalk).
+  - Test the central hub at room 4163 Twin Beech Glade — confirm it has 4 exits (north back to Old Burn Scar, south to Tangled Bracken, east to Deer Browse, west to Brook Rise). Walk each branch.
+  - Test the south hub at room 4174 Twisted Hawthorn — also 4 exits (n/s/e/w connecting to Birdsong Glade / Steppe Edge / Foxglove Clearing / Badger Sett).
+  - Try to encounter each of the 6 mob spawns. They have cooldowns so some may not be present immediately:
+      • 4158 Beewood Hollow — honey bees (mob 362), passive
+      • 4159 Hare-Run Meadow — wild hare (mob 360), prey/flees
+      • 4161 Pine Stand — timber wolf (mob 364), `hostile: false` to player but `hates: [boar]`
+      • 4162 Boar Wallow — feral boar (mob 363), passive but hits hard if attacked
+      • 4167 Deer Browse — roe deer (mob 361), prey/flees
+      • 4169 Salt Lick — roe deer (mob 361), prey/flees
+      • 4172 Badger Sett — forest badger (mob 365), HOSTILE to all on sight
+  - Critical wildlife test — verify the **wolf-vs-boar emergent dynamic**. The wolf has `hostile: false` to players but `hates: [boar]`. If the wolf wanders to where a boar is (or vice versa), they should fight without your help. Wait near 4160 Old Burn Scar (the spine room between Pine Stand and Boar Wallow) and watch for combat messages. This may take patience — wolf maxwander is 5.
+  - Verify the wolf does NOT attack you. Walk into Pine Stand (4161) when the wolf is present. Stand there. Confirm no aggro.
+  - Verify the badger DOES attack you. Walk into Badger Sett (4172). Expect immediate combat.
+  - Test the boundary edit — from Briar Tangle (4157), `north` should put you in Fox Den (4156, The Fernway). Confirm. Then go `south` back into Briar Tangle. Confirm round-trip works.
+  - Verify the cartesian / map renders cleanly. Run `map` from a few rooms in the zone — confirm the 20 rooms display in a coherent layout matching the plan (spine + west valley + east ridge + south branches + plains terminus). No overlap with neighboring Fernway / Marches Spur rooms.
+  - Note any forage drops. Killing the boar / hare / deer should drop wild hare meat (item 40064). Killing the bees should drop beeswax (40065). Wolf and badger drop nothing intentionally.
+
+notes:
+  - Server runs locally at localhost:55555. Stage 3.0c shipped 9 commits ending dd76eb7e. Smoketester's roomid was edited to 4157; if the server hasn't restarted since the player YAML edit, smoketester is still at room 406 (Dustwalk Road) and you'll need to walk west.
+  - Use `set charset` first to get ASCII per the SOP.
+  - Movement is north/south/east/west. The terminal rooms (4166, 4169, 4172, 4173, 4175) have only one exit each; trying others should give a normal "you can't go that way" rebuff.
+  - Report every PASS / FAIL / BLOCKED + any wordcraft issues (typos, awkward sentences, broken tags, voice drift). The voice should match `_datafiles/world/dogmud/rooms/the_fernway/4156.yaml` (Fox Den) in tone — sensory-led, naturalist, no second-person psychology.
+  - If you find a noun without a definition or a literal `<ansi ...>` tag bleeding through, that's a BUG. Otherwise note voice issues as OBSERVATIONs.
