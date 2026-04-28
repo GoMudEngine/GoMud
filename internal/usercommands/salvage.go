@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/crafting"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -30,12 +31,17 @@ func Salvage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		return true, nil
 	}
 
-	// Find item in backpack (not equipped — must unequip first)
+	// Try inventory item first; fall through to room corpses if no
+	// inventory match.
 	itm, source, found := user.Character.FindItem(rest)
 	if !found {
-		user.SendText(fmt.Sprintf(
-			`<ansi fg="red">You don't have "%s".</ansi>`, rest))
-		return true, nil
+		corpse, corpseFound := room.FindCorpse(rest)
+		if !corpseFound {
+			user.SendText(fmt.Sprintf(
+				`<ansi fg="red">You don't have "%s" and there's no corpse of that name here.</ansi>`, rest))
+			return true, nil
+		}
+		return startCorpseSalvage(user, corpse)
 	}
 
 	// Require item to be in backpack, not equipped
@@ -140,6 +146,60 @@ func userHasSalvageKit(user *users.UserRecord) bool {
 		}
 	}
 	return false
+}
+
+// startCorpseSalvage initiates a corpse salvage activity. Called from
+// Salvage when the player's argument matches a room corpse rather than
+// an inventory item.
+func startCorpseSalvage(user *users.UserRecord, corpse rooms.Corpse) (bool, error) {
+
+	// Player corpses are out of scope for v1.
+	if corpse.MobId <= 0 {
+		user.SendText(`<ansi fg="red">You can't bring yourself to salvage that.</ansi>`)
+		return true, nil
+	}
+
+	mobSpec := mobs.GetMobSpec(mobs.MobId(corpse.MobId))
+	if mobSpec == nil {
+		user.SendText(`<ansi fg="red">Something is wrong with that corpse.</ansi>`)
+		return true, nil
+	}
+
+	returns := crafting.LookupCorpseSalvage(mobSpec.Groups)
+	if len(returns) == 0 {
+		user.SendText(`<ansi fg="red">There's nothing useful to recover here.</ansi>`)
+		return true, nil
+	}
+
+	// Salvage kit always required for corpses.
+	if !userHasSalvageKit(user) {
+		user.SendText(`<ansi fg="red">You need a salvage kit to skin a corpse.</ansi>`)
+		return true, nil
+	}
+
+	bal := configs.GetBalanceConfig()
+	totalGold := crafting.CalcSalvageReturnGoldValue(returns)
+	rounds := crafting.CalcSalvageRounds(totalGold,
+		int(bal.SalvageGoldPerRound), int(bal.SalvageMaxRounds))
+
+	// Stash corpse identity for the resolver. mobid + roundCreated
+	// uniquely identifies the corpse within the room. Store as int to
+	// avoid type-assertion issues if MiscData ever round-trips through
+	// YAML (uint64 can come back coerced).
+	user.Character.SetMiscData("salvage_corpse_round_created", int(corpse.RoundCreated))
+	user.Character.SetMiscData("salvage_corpse_name", corpse.Character.Name)
+	user.Character.SetMiscData("salvage_uses_kit", true)
+
+	user.Character.CraftingState = &characters.CraftingState{
+		RecipeId:    fmt.Sprintf("salvage-corpse:%d", corpse.MobId),
+		RoundsTotal: rounds,
+	}
+
+	user.SendText(fmt.Sprintf(
+		`<ansi fg="yellow">You begin carefully working over the <ansi fg="mobname">%s corpse</ansi>...</ansi>`,
+		corpse.Character.Name))
+
+	return true, nil
 }
 
 // NOTE: Salvage resolution happens in hooks/NewRound_UserRoundTick.go resolveSalvage()
