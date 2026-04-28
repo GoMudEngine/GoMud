@@ -203,7 +203,7 @@ func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData
 			resolveFoldAnchor(actions.NewUserActorInRoom(user, room))
 			return
 		case "fold-recall":
-			resolveFoldRecall(user)
+			resolveFoldRecall(actions.NewUserActorInRoom(user, room))
 			return
 		case "purge-affliction":
 			if len(cs.TargetUserIds) > 0 {
