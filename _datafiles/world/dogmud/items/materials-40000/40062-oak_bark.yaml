@@ -1,0 +1,15 @@
+itemid: 40062
+name: oak bark
+namesimple: bark
+description: A rough strip of bark peeled from a mature oak in
+  the Fernway, the inner side dark with tannins. Alchemists steep
+  it for astringents that draw out heat and toxins; enchanters
+  grind it to a coarse powder and mix it into binding washes
+  before painting wards. The smell is dry and faintly bitter,
+  with a vegetal sharpness that lingers on the fingers.
+type: object
+subtype: mundane
+component_tag: oak-bark
+weight: 0.1
+value: 35
+is_component: true
