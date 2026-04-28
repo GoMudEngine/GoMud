@@ -60,23 +60,22 @@ character:
     willpower:
       training: 5
   shop:
-    - itemid: 40007
-      quantity: 0
-      quantitymax: 0
-      price: 1
-    - itemid: 40012
-      quantity: 0
-      quantitymax: 0
-      price: 1
-    - itemid: 40002
+    # Base sewing tools
+    - itemid: 40012    # thread spool
       quantity: 0
       quantitymax: 0
       price: 2
-    - itemid: 40013
+    - itemid: 40013    # bone needle
       quantity: 0
       quantitymax: 0
-      price: 3
+      price: 1
+    # Fernway beeswax
+    - itemid: 40065    # beeswax
+      quantity: 0
+      quantitymax: 0
+      price: 30
+    # Existing specialty
     - itemid: 30033
       quantity: 0
       quantitymax: 0
-      price: 25
+      price: 0
