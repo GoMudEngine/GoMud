@@ -1,0 +1,15 @@
+itemid: 40067
+name: pine pitch
+namesimple: pitch
+description: A black, sticky lump of resin tapped from
+  Fernway pines and cooled into a workable mass. Smiths smear
+  it on iron to keep rust off through a wet season; alchemists
+  use it as a sticky base when compound brews need something
+  to hold their layers together. Warm enough to soften in the
+  hand, sharp enough to scent a whole shop when worked.
+type: object
+subtype: mundane
+component_tag: pine-pitch
+weight: 0.2
+value: 35
+is_component: true

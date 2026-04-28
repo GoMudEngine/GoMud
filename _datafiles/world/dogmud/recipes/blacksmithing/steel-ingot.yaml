@@ -9,6 +9,8 @@ ingredients:
     quantity: 3
   - item_tag: coal-dust
     quantity: 1
+  - item_tag: pine-pitch
+    quantity: 1
 output:
   item_id: 40018
   quantity: 1
