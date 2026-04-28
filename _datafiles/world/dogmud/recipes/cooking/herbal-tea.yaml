@@ -7,6 +7,8 @@ time_rounds: 2
 ingredients:
   - item_tag: healers-root
     quantity: 1
+  - item_tag: shadowcap
+    quantity: 1
   - item_tag: water-flask
     quantity: 1
 output:

@@ -1,0 +1,15 @@
+itemid: 40063
+name: shadowcap mushroom
+namesimple: shadowcap
+description: A dark, broad-capped mushroom that grows in the
+  deep shade of the Fernway's older oaks, the gills underneath
+  almost black. Cooks chop them into stews for an earthy
+  richness that improves the longer it simmers; alchemists dry
+  the caps and grind them into tinctures said to sharpen the
+  vision in low light. The smell raw is musty and forest-floor.
+type: object
+subtype: mundane
+component_tag: shadowcap
+weight: 0.1
+value: 40
+is_component: true
