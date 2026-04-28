@@ -96,7 +96,12 @@ func InitiateCast(actor Actor, spellName, targetName string) CastResult {
 	// 2. Already casting?
 	if char.CastingState != nil {
 		if debug {
-			mudlog.Info("[3.0d-debug] InitiateCast EXIT: already casting", "actor", actor.GetName())
+			mudlog.Info("[3.0d-debug] InitiateCast EXIT: already casting",
+				"actor", actor.GetName(),
+				"in_progress_spell", char.CastingState.SpellId,
+				"folds_accumulated", char.CastingState.FoldsAccumulated,
+				"folds_needed", char.CastingState.FoldsNeeded,
+			)
 		}
 		return CastResult{SpellInfo: spellInfo, AlreadyCasting: true}
 	}
