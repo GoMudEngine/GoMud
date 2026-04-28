@@ -541,6 +541,9 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 		mob.Validate()
 		mob.Character.Validate(true)
 
+		// Stage 3.0d: pre-stamp fold-recall anchor if the YAML template set one.
+		stampFoldAnchor(&mob.Character, m.FoldAnchorRoom)
+
 		// Register the mob's shop with the living economy system if applicable.
 		// Must happen after HomeRoomId and Zone are set (they key the shop store).
 		RegisterMobShop(&mob)
@@ -553,6 +556,17 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 		return &mob
 	}
 	return nil
+}
+
+// stampFoldAnchor pre-stamps a mob's fold-recall anchor in MiscData. Called
+// from newMobByIdInternal at spawn time. No-op when anchorRoom <= 0 so the
+// default YAML value (omitted field) doesn't create a spurious anchor at
+// room 0. Stage 3.0d.
+func stampFoldAnchor(c *characters.Character, anchorRoom int) {
+	if anchorRoom <= 0 {
+		return
+	}
+	c.SetMiscData("fold-anchor-room", anchorRoom)
 }
 
 func GetMobSpec(mobId MobId) *Mob {
